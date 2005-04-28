@@ -958,7 +958,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			bTriedToCopy = true;
 
 			CString sFromDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_SUBDIR;
-			CString sToDir = MEM_CARD_MOUNT_POINT[pn] + PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDITS_SUBDIR;
+			CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDITS_SUBDIR;
 
 			int iNumAttempted = 0;
 			int iNumSuccessful = 0;
@@ -999,7 +999,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 			bTriedToCopy = true;
 
-			CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDITS_SUBDIR;
+			CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDITS_SUBDIR;
 			CString sToDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_SUBDIR;
 
 			int iNumAttempted = 0;

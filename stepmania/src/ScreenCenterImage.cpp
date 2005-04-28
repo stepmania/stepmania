@@ -56,8 +56,10 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 	{
 		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_SPACE )
 		{
-			PREFSMAN->m_iCenterImageTranslateX = PREFSMAN->m_iCenterImageTranslateY = 0;
-			PREFSMAN->m_fCenterImageAddWidth = PREFSMAN->m_fCenterImageAddHeight = 0;
+			PREFSMAN->m_iCenterImageTranslateX = 0;
+			PREFSMAN->m_iCenterImageTranslateY = 0;
+			PREFSMAN->m_fCenterImageAddWidth = 0;
+			PREFSMAN->m_fCenterImageAddHeight = 0;
 			return;
 		}
 
@@ -152,7 +154,7 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 
 void ScreenCenterImage::Move( Axis axis, float fDelta )
 {
-	int *piValues[4] =
+	Preference<int> *piValues[4] =
 	{
 		&PREFSMAN->m_iCenterImageTranslateX,
 		&PREFSMAN->m_iCenterImageTranslateY,
@@ -160,7 +162,7 @@ void ScreenCenterImage::Move( Axis axis, float fDelta )
 		&PREFSMAN->m_fCenterImageAddHeight
 	};
 
-	*piValues[axis] += lrintf( fDelta );
+	*piValues[axis] = *piValues[axis] + lrintf( fDelta );
 
 	DISPLAY->ChangeCentering(
 		PREFSMAN->m_iCenterImageTranslateX, 

@@ -76,34 +76,15 @@ static void MoveMap( int &sel, T &opt, bool ToSel, const T *mapping, unsigned cn
  * MoveMap for a generic preference.  
  * TODO: make this templated.
  */
-static void MoveMap( int &sel, IPreference &pOption, bool ToSel, const float *mapping, unsigned cnt )
+template <class T>
+static void MoveMap( int &sel, Preference<T> &pOption, bool ToSel, const T *mapping, unsigned cnt )
 {
 	if( ToSel )
 	{
-		/* opt -> sel.  Find the closest entry in mapping. */
-		CString sStr = pOption.ToString();
-		float fValue = strtof( sStr, NULL );
-			
-		sel = FindClosestEntry( fValue, mapping, cnt );
+		sel = FindClosestEntry( (T)pOption, mapping, cnt );
 	} else {
 		/* sel -> opt */
-		CString sStr = ssprintf( "%f", mapping[sel] );
-		pOption.FromString( sStr );
-	}
-}
-static void MoveMap( int &sel, IPreference &pOption, bool ToSel, const int *mapping, unsigned cnt )
-{
-	if( ToSel )
-	{
-		/* opt -> sel.  Find the closest entry in mapping. */
-		CString sStr = pOption.ToString();
-		int iValue = atoi( sStr );
-			
-		sel = FindClosestEntry( iValue, mapping, cnt );
-	} else {
-		/* sel -> opt */
-		CString sStr = ssprintf( "%i", mapping[sel] );
-		pOption.FromString( sStr );
+		pOption = mapping[sel];
 	}
 }
 
@@ -332,8 +313,8 @@ MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
 
 static void MarvelousTiming( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const int mapping[] = { PrefsManager::MARVELOUS_NEVER, PrefsManager::MARVELOUS_COURSES_ONLY, PrefsManager::MARVELOUS_EVERYWHERE };
-	MoveMap( sel, PREFSMAN->m_iMarvelousTiming, ToSel, mapping, ARRAYSIZE(mapping) );
+	const PrefsManager::MarvelousTiming mapping[] = { PrefsManager::MARVELOUS_NEVER, PrefsManager::MARVELOUS_COURSES_ONLY, PrefsManager::MARVELOUS_EVERYWHERE };
+	MoveMap( sel, PREFSMAN->m_MarvelousTiming, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void CoinModeM( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -362,16 +343,14 @@ static void PremiumM( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	IPreference *pPref = PREFSMAN->GetPreferenceByName( pConfOption->name );
-	ASSERT( pPref != NULL );
-
-	const float mapping[] = { 1,2,3,4,5,6,7 };
-	MoveMap( sel, *pPref, ToSel, mapping, ARRAYSIZE(mapping) );
+	const int mapping[] = { 1,2,3,4,5,6,7 };
+	MoveMap( sel, PREFSMAN->m_iSongsPerPlay, ToSel, mapping, ARRAYSIZE(mapping) );
 }
+
 static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const float mapping[] = { 1,2,3,4,5,6,7,8 };
-	MoveMap( sel, PREFSMAN->m_iNumArcadeStages, ToSel, mapping, ARRAYSIZE(mapping) );
+	const int mapping[] = { 1,2,3,4,5,6,7,8 };
+	MoveMap( sel, PREFSMAN->m_iSongsPerPlay, ToSel, mapping, ARRAYSIZE(mapping) );
 
 	if( ToSel && PREFSMAN->m_bEventMode )
 		sel = 7;

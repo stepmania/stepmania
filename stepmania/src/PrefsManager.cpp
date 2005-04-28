@@ -68,16 +68,10 @@ PrefsManager::PrefsManager() :
 	m_iMaxTextureResolution	( Options, "MaxTextureResolution",	2048 ),
 	m_iRefreshRate			( Options, "RefreshRate",			REFRESH_DEFAULT ),
 	m_fDisplayAspectRatio	( Options, "DisplayAspectRatio",	4/3.0f ),
-	m_bShowStats			( Options, "ShowStats",				
-#ifdef DEBUG
-	true
-#else
-	false
-#endif
-	),
+	m_bShowStats			( Options, "ShowStats",				false ),
 	m_bShowBanners			( Options, "ShowBanners",			true ),
 
-	m_iBackgroundMode		( Options, "BackgroundMode",		BGMODE_ANIMATIONS ),
+	m_BackgroundMode		( Options, "BackgroundMode",		BGMODE_ANIMATIONS ),
 	m_iNumBackgrounds		( Options, "NumBackgrounds",		8 ),
 	m_fBGBrightness			( Options, "BGBrightness",			0.8f ),
 	m_bHiddenSongs			( Options, "HiddenSongs",			false ),	/* I'd rather get occasional people asking for support for this even though it's already here than lots of people asking why songs aren't being displayed. */
@@ -89,7 +83,7 @@ PrefsManager::PrefsManager() :
 	m_bTexturePreload		( Options, "TexturePreload",		false ),
 	m_bDelayedScreenLoad	( Options, "DelayedScreenLoad",		false ),
 	m_bDelayedModelDelete	( Options, "DelayedModelDelete",	false ),
-	m_iBannerCache			( Options, "BannerCache",			BNCACHE_LOW_RES_PRELOAD ),
+	m_BannerCache			( Options, "BannerCache",			BNCACHE_LOW_RES_PRELOAD ),
 	m_bPalettedBannerCache	( Options, "PalettedBannerCache",	false ),
 	m_bFastLoad				( Options, "FastLoad",				true ),
 
@@ -192,11 +186,63 @@ PrefsManager::PrefsManager() :
 	m_MusicWheelUsesSections	( Options, "MusicWheelUsesSections",	ALWAYS ),
 	m_iMusicWheelSwitchSpeed	( Options, "MusicWheelSwitchSpeed",		10 ),
 	m_bEasterEggs				( Options, "EasterEggs",				true ),
-	m_iMarvelousTiming			( Options, "MarvelousTiming",			MARVELOUS_EVERYWHERE ),
+	m_MarvelousTiming			( Options, "MarvelousTiming",			MARVELOUS_EVERYWHERE ),
 	m_bEventMode				( Options, "EventMode",					false ),
 	m_iCoinsPerCredit			( Options, "CoinsPerCredit",			1 ),
-	m_iNumArcadeStages			( Options, "SongsPerPlay",				3 ),
-	m_fGlobalOffsetSeconds		( Options, "GlobalOffsetSeconds",		0 )
+	m_iSongsPerPlay				( Options, "SongsPerPlay",				3 ),
+
+	m_CoinMode						( Options, "CoinMode",					COIN_HOME ),
+	m_Premium						( Options, "Premium",					PREMIUM_NONE ),
+	m_bDelayedCreditsReconcile		( Options, "DelayedCreditsReconcile",	false ),
+	m_bPickExtraStage				( Options, "PickExtraStage",			false ),
+
+	m_bComboContinuesBetweenSongs	( Options, "ComboContinuesBetweenSongs",false ),
+	m_fLongVerSongSeconds			( Options, "LongVerSongSeconds",		60*2.5f ),	// Dynamite Rave is 2:55
+	m_fMarathonVerSongSeconds		( Options, "MarathonVerSongSeconds",	60*5.f ),
+	m_ShowSongOptions				( Options, "ShowSongOptions",			YES ),
+	m_bSoloSingle					( Options, "SoloSingle",				false ),
+	m_bDancePointsForOni			( Options, "DancePointsForOni",			false ),
+	m_bPercentageScoring			( Options, "PercentageScoring",		false ),
+	m_fMinPercentageForMachineSongHighScore		( Options, "MinPercentageForMachineSongHighScore",		0.5f ),
+	m_fMinPercentageForMachineCourseHighScore	( Options, "MinPercentageForMachineCourseHighScore",	0.0001f ),	// don't save course scores with 0 percentage
+	m_bDisqualification				( Options, "Disqualification",			false ),
+	m_bShowLyrics					( Options, "ShowLyrics",				true ),
+	m_bAutogenSteps					( Options, "AutogenSteps",				true ),
+	m_bAutogenGroupCourses			( Options, "AutogenGroupCourses",		true ),
+	m_bBreakComboToGetItem			( Options, "BreakComboToGetItem",		false ),
+	m_bLockCourseDifficulties		( Options, "LockCourseDifficulties",	true ),
+	m_ShowDancingCharacters			( Options, "ShowDancingCharacters",		CO_OFF ),
+	m_bUseUnlockSystem				( Options, "UseUnlockSystem",			false ),
+	m_bFirstRun						( Options, "FirstRun",					true ),
+	m_bAutoMapOnJoyChange			( Options, "AutoMapOnJoyChange",		true ),
+	m_fGlobalOffsetSeconds			( Options, "GlobalOffsetSeconds",		0 ),
+	m_iProgressiveLifebar			( Options, "ProgressiveLifebar",		0 ),
+	m_iProgressiveStageLifebar		( Options, "ProgressiveStageLifebar",	0 ),
+	m_iProgressiveNonstopLifebar	( Options, "ProgressiveNonstopLifebar",	0 ),
+	m_bShowBeginnerHelper			( Options, "ShowBeginnerHelper",		false ),
+	m_bEndlessBreakEnabled			( Options, "EndlessBreakEnabled",		true ),
+	m_iEndlessNumStagesUntilBreak	( Options, "EndlessNumStagesUntilBreak",5 ),
+	m_iEndlessBreakLength			( Options, "EndlessBreakLength",		5 ),
+	m_bDisableScreenSaver			( Options, "DisableScreenSaver",		true ),
+	m_sLanguage						( Options, "Language",					"" ),	// ThemeManager will deal with this invalid language
+	m_sMemoryCardProfileSubdir		( Options, "MemoryCardProfileSubdir",	PRODUCT_NAME ),
+	m_iProductID					( Options, "ProductID",					1 ),
+	
+	m_bMemoryCards					( Options, "MemoryCards",		false ),
+	
+	m_iCenterImageTranslateX		( Options, "CenterImageTranslateX",	0 ),
+	m_iCenterImageTranslateY		( Options, "CenterImageTranslateY",	0 ),
+	m_fCenterImageAddWidth			( Options, "CenterImageAddWidth",	0 ),
+	m_fCenterImageAddHeight			( Options, "CenterImageAddHeight",	0 ),
+	m_iAttractSoundFrequency		( Options, "AttractSoundFrequency",	1 ),
+	m_bAllowExtraStage				( Options, "AllowExtraStage",		true ),
+	m_bHideDefaultNoteSkin			( Options, "HideDefaultNoteSkin",	false ),
+	m_iMaxHighScoresPerListForMachine		( Options, "MaxHighScoresPerListForMachine",		10 ),
+	m_iMaxHighScoresPerListForPlayer		( Options, "MaxHighScoresPerListForPlayer",			3 ),
+	m_iMaxRecentScoresForMachine			( Options, "MaxRecentScoresForMachine",				100 ),
+	m_iMaxRecentScoresForPlayer				( Options, "MaxRecentScoresForPlayer",				20 ),
+	m_bAllowMultipleHighScoreWithSameName	( Options, "AllowMultipleHighScoreWithSameName",	true ),
+	m_bCelShadeModels						( Options, "CelShadeModels",						false )	// Work-In-Progress.. disable by default.
 {
 	Init();
 	ReadGlobalPrefsFromDisk();
@@ -204,47 +250,10 @@ PrefsManager::PrefsManager() :
 
 void PrefsManager::Init()
 {
-	m_bCelShadeModels = false;		// Work-In-Progress.. disable by default.
 	m_fConstantUpdateDeltaSeconds = 0;	
 	
-	m_bSoloSingle = false;
-	m_CoinMode = COIN_HOME;
-	m_Premium = PREMIUM_NONE;
-	m_bDelayedCreditsReconcile = false;
 	m_iBoostAppPriority = -1;
 	m_bSmoothLines = false;
-	m_ShowSongOptions = YES;
-	m_bDancePointsForOni = false;
-	m_bPercentageScoring = false;
-	m_fMinPercentageForMachineSongHighScore = 0.5f;
-	m_fMinPercentageForMachineCourseHighScore = 0.0001f;	// don't save course scores with 0 percentage
-	m_bDisqualification = false;
-	m_bShowLyrics = true;
-	m_bAutogenSteps = true;
-	m_bAutogenGroupCourses = true;
-	m_bBreakComboToGetItem = false;
-	m_bLockCourseDifficulties = true;
-	m_ShowDancingCharacters = CO_OFF;
-	m_bUseUnlockSystem = false;
-	m_bFirstRun = true;
-	m_bAutoMapOnJoyChange = true;
-	m_bShowBeginnerHelper = false;
-	m_bEndlessBreakEnabled = true;
-	m_iEndlessNumStagesUntilBreak = 5;
-	m_iEndlessBreakLength = 5;
-	m_bDisableScreenSaver = true;
-
-	// set to 0 so people aren't shocked at first
-	m_iProgressiveLifebar = 0;
-	m_iProgressiveNonstopLifebar = 0;
-	m_iProgressiveStageLifebar = 0;
-
-	/* DDR Extreme-style extra stage support.
-	 * Default off so people used to the current behavior (or those with extra
-	 * stage CRS files) don't get it changed around on them. */
-	m_bPickExtraStage = false;
-
-	m_bComboContinuesBetweenSongs = false;
 
 	// default to old sort order
 	m_iCourseSortOrder = COURSE_SORT_SONGS;
@@ -254,25 +263,7 @@ void PrefsManager::Init()
 
 	m_iGetRankingName = RANKING_ON;
 
-	m_fLongVerSongSeconds = 60*2.5f;	// Dynamite Rave is 2:55
-	m_fMarathonVerSongSeconds = 60*5.f;
 
-
-	m_sLanguage = "";	// ThemeManager will deal with this invalid language
-
-	m_iCenterImageTranslateX = 0;
-	m_iCenterImageTranslateY = 0;
-	m_fCenterImageAddWidth = 0;
-	m_fCenterImageAddHeight = 0;
-
-	m_iAttractSoundFrequency = 1;
-	m_bAllowExtraStage = true;
-	m_bHideDefaultNoteSkin = false;
-	m_iMaxHighScoresPerListForMachine = 10;
-	m_iMaxHighScoresPerListForPlayer = 3;
-	m_iMaxRecentScoresForMachine = 100;
-	m_iMaxRecentScoresForPlayer = 20;
-	m_bAllowMultipleHighScoreWithSameName = true;
 	m_fPadStickSeconds = 0;
 	m_bForceMipMaps = false;
 	m_bTrilinearFiltering = false;
@@ -326,8 +317,6 @@ void PrefsManager::Init()
 	m_bLogCheckpoints = false;
 	m_bShowLoadingWindow = true;
 
-	m_bMemoryCards = false;
-
 	FOREACH_PlayerNumber( p )
 	{
 		m_iMemoryCardUsbBus[p] = -1;
@@ -335,9 +324,6 @@ void PrefsManager::Init()
 		m_iMemoryCardUsbLevel[p] = -1;
 	}
 	
-	m_sMemoryCardProfileSubdir = PRODUCT_NAME;
-	m_iProductID = 1;
-
 #if defined(XBOX)
 	m_bEnableVirtualMemory = true;
 	m_iPageFileSize = 384;
@@ -383,7 +369,6 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 
 void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 {
-	ini.GetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
 	ini.GetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
 	
 	ini.GetValue( "Options", "SoundDrivers",					m_sSoundDrivers );
@@ -394,18 +379,10 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	ini.GetValue( "Options", "SoundVolume",						m_fSoundVolume );
 	ini.GetValue( "Options", "LightsDriver",					m_sLightsDriver );
 	ini.GetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
-	ini.GetValue( "Options", "CoinMode",						(int&)m_CoinMode );
 	
 	m_iCoinsPerCredit = max( (int)m_iCoinsPerCredit, 1);
 
-	ini.GetValue( "Options", "Premium",							(int&)m_Premium );
-	ini.GetValue( "Options", "DelayedCreditsReconcile",			m_bDelayedCreditsReconcile );
 	ini.GetValue( "Options", "BoostAppPriority",				m_iBoostAppPriority );
-	ini.GetValue( "Options", "PickExtraStage",					m_bPickExtraStage );
-	ini.GetValue( "Options", "ComboContinuesBetweenSongs",		m_bComboContinuesBetweenSongs );
-	ini.GetValue( "Options", "LongVerSeconds",					m_fLongVerSongSeconds );
-	ini.GetValue( "Options", "MarathonVerSeconds",				m_fMarathonVerSongSeconds );
-	ini.GetValue( "Options", "ShowSongOptions",					(int&)m_ShowSongOptions );
 	ini.GetValue( "Options", "LightsStepsDifficulty",			m_sLightsStepsDifficulty );
 	ini.GetValue( "Options", "BlinkGameplayButtonLightsOnNote",	m_bBlinkGameplayButtonLightsOnNote );
 	ini.GetValue( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
@@ -414,18 +391,6 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	ini.GetValue( "Options", "ScreenTestMode",					m_bScreenTestMode );
 	ini.GetValue( "Options", "MachineName",						m_sMachineName );
 	ini.GetValue( "Options", "IgnoredMessageWindows",			m_sIgnoredMessageWindows );
-	ini.GetValue( "Options", "SoloSingle",						m_bSoloSingle );
-	ini.GetValue( "Options", "DancePointsForOni",				m_bDancePointsForOni );
-	ini.GetValue( "Options", "PercentageScoring",				m_bPercentageScoring );
-	ini.GetValue( "Options", "MinPercentageForMachineSongHighScore",	m_fMinPercentageForMachineSongHighScore );
-	ini.GetValue( "Options", "MinPercentageForMachineCourseHighScore",	m_fMinPercentageForMachineCourseHighScore );
-	ini.GetValue( "Options", "Disqualification",				m_bDisqualification );
-	ini.GetValue( "Options", "ShowLyrics",						m_bShowLyrics );
-	ini.GetValue( "Options", "AutogenSteps",					m_bAutogenSteps );
-	ini.GetValue( "Options", "AutogenGroupCourses",				m_bAutogenGroupCourses );
-	ini.GetValue( "Options", "BreakComboToGetItem",				m_bBreakComboToGetItem );
-	ini.GetValue( "Options", "LockCourseDifficulties",			m_bLockCourseDifficulties );
-	ini.GetValue( "Options", "ShowDancingCharacters",			(int&)m_ShowDancingCharacters );
 
 	ini.GetValue( "Options", "CourseSortOrder",					(int&)m_iCourseSortOrder );
 	ini.GetValue( "Options", "MoveRandomToEnd",					m_bMoveRandomToEnd );
@@ -433,14 +398,6 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 
 	ini.GetValue( "Options", "ScoringType",						(int&)m_iScoringType );
 
-	ini.GetValue( "Options", "ProgressiveLifebar",				m_iProgressiveLifebar );
-	ini.GetValue( "Options", "ProgressiveNonstopLifebar", 		m_iProgressiveNonstopLifebar );
-	ini.GetValue( "Options", "ProgressiveStageLifebar",			m_iProgressiveStageLifebar );
-
-	ini.GetValue( "Options", "UseUnlockSystem",					m_bUseUnlockSystem );
-
-	ini.GetValue( "Options", "FirstRun",						m_bFirstRun );
-	ini.GetValue( "Options", "AutoMapJoysticks",				m_bAutoMapOnJoyChange );
 	ini.GetValue( "Options", "VideoRenderers",					m_sVideoRenderers );
 	ini.GetValue( "Options", "LastSeenVideoDriver",				m_sLastSeenVideoDriver );
 	ini.GetValue( "Options", "LastSeenInputDevices",			m_sLastSeenInputDevices );
@@ -450,16 +407,7 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	ini.GetValue( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
 	ini.GetValue( "Options", "GetRankingName",					(int&)m_iGetRankingName);
 	ini.GetValue( "Options", "SmoothLines",						m_bSmoothLines );
-	ini.GetValue( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
-	ini.GetValue( "Options", "Language",						m_sLanguage );
-	ini.GetValue( "Options", "EndlessBreakEnabled",				m_bEndlessBreakEnabled );
-	ini.GetValue( "Options", "EndlessStagesUntilBreak",			m_iEndlessNumStagesUntilBreak );
-	ini.GetValue( "Options", "EndlessBreakLength",				m_iEndlessBreakLength );
-	ini.GetValue( "Options", "DisableScreenSaver",				m_bDisableScreenSaver );
 
-	ini.GetValue( "Options", "MemoryCardProfileSubdir",			m_sMemoryCardProfileSubdir );
-	ini.GetValue( "Options", "ProductID",						m_iProductID );
-	ini.GetValue( "Options", "MemoryCards",						m_bMemoryCards );
 	FOREACH_PlayerNumber( p )
 	{
 		ini.GetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );
@@ -470,18 +418,6 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 		ini.GetValue( "Options", ssprintf("MemoryCardUsbLevelP%d",p+1),		m_iMemoryCardUsbLevel[p] );
 	}
 
-	ini.GetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );
-	ini.GetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );
-	ini.GetValue( "Options", "CenterImageAddWidth",				m_fCenterImageAddWidth );
-	ini.GetValue( "Options", "CenterImageAddHeight",			m_fCenterImageAddHeight );
-	ini.GetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
-	ini.GetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
-	ini.GetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
-	ini.GetValue( "Options", "MaxHighScoresPerListForMachine",	m_iMaxHighScoresPerListForMachine );
-	ini.GetValue( "Options", "MaxHighScoresPerListForPlayer",	m_iMaxHighScoresPerListForPlayer );
-	ini.GetValue( "Options", "MaxRecentScoresForMachine",	m_iMaxRecentScoresForMachine );
-	ini.GetValue( "Options", "MaxRecentScoresForPlayer",	m_iMaxRecentScoresForPlayer );
-	ini.GetValue( "Options", "AllowMultipleHighScoreWithSameName",	m_bAllowMultipleHighScoreWithSameName );
 	ini.GetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
 	ini.GetValue( "Options", "ForceMipMaps",					m_bForceMipMaps );
 	ini.GetValue( "Options", "TrilinearFiltering",				m_bTrilinearFiltering );
@@ -525,9 +461,8 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 
 void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 {
-	ini.SetValue( "Options", "CelShadeModels",					m_bCelShadeModels );
 	ini.SetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
-	ini.SetValue( "Options", "BackgroundMode",					m_iBackgroundMode);
+	ini.SetValue( "Options", "BackgroundMode",					m_BackgroundMode);
 	ini.SetValue( "Options", "NumBackgrounds",					m_iNumBackgrounds);
 	ini.SetValue( "Options", "BGBrightness",					m_fBGBrightness );
 
@@ -543,15 +478,6 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 	ini.SetValue( "Options", "JudgeWindowSecondsMine",			m_fJudgeWindowSecondsMine );
 	ini.SetValue( "Options", "JudgeWindowSecondsAttack",		m_fJudgeWindowSecondsAttack );
 	ini.SetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
-	ini.SetValue( "Options", "LifeDeltaPercentChangeMarvelous",	m_fLifeDeltaPercentChangeMarvelous );
-	ini.SetValue( "Options", "LifeDeltaPercentChangePerfect",	m_fLifeDeltaPercentChangePerfect );
-	ini.SetValue( "Options", "LifeDeltaPercentChangeGreat",		m_fLifeDeltaPercentChangeGreat );
-	ini.SetValue( "Options", "LifeDeltaPercentChangeGood",		m_fLifeDeltaPercentChangeGood );
-	ini.SetValue( "Options", "LifeDeltaPercentChangeBoo",		m_fLifeDeltaPercentChangeBoo );
-	ini.SetValue( "Options", "LifeDeltaPercentChangeMiss",		m_fLifeDeltaPercentChangeMiss );
-	ini.SetValue( "Options", "LifeDeltaPercentChangeHitMine",	m_fLifeDeltaPercentChangeHitMine );
-	ini.SetValue( "Options", "LifeDeltaPercentChangeOK",		m_fLifeDeltaPercentChangeOK );
-	ini.SetValue( "Options", "LifeDeltaPercentChangeNG",		m_fLifeDeltaPercentChangeNG );
 
 	ini.SetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
 	ini.SetValue( "Options", "Vsync",							m_bVsync );
@@ -562,19 +488,9 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 	ini.SetValue( "Options", "TexturePreload",					m_bTexturePreload );
 	ini.SetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
 	ini.SetValue( "Options", "DelayedModelDelete",				m_bDelayedModelDelete );
-	ini.SetValue( "Options", "BannerCache",						m_iBannerCache );
-	ini.SetValue( "Options", "PalettedBannerCache",				m_bPalettedBannerCache );
 	ini.SetValue( "Options", "FastLoad",						m_bFastLoad );
 	ini.SetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
-	ini.SetValue( "Options", "CoinMode",						m_CoinMode );
-	ini.SetValue( "Options", "Premium",							m_Premium );
-	ini.SetValue( "Options", "DelayedCreditsReconcile",			m_bDelayedCreditsReconcile );
 	ini.SetValue( "Options", "BoostAppPriority",				m_iBoostAppPriority );
-	ini.SetValue( "Options", "PickExtraStage",					m_bPickExtraStage );
-	ini.SetValue( "Options", "ComboContinuesBetweenSongs",		m_bComboContinuesBetweenSongs );
-	ini.SetValue( "Options", "LongVerSeconds",					m_fLongVerSongSeconds );
-	ini.SetValue( "Options", "MarathonVerSeconds",				m_fMarathonVerSongSeconds );
-	ini.SetValue( "Options", "ShowSongOptions",					m_ShowSongOptions );
 	ini.SetValue( "Options", "LightsStepsDifficulty",			m_sLightsStepsDifficulty );
 	ini.SetValue( "Options", "BlinkGameplayButtonLightsOnNote",	m_bBlinkGameplayButtonLightsOnNote );
 	ini.SetValue( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
@@ -583,21 +499,6 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 	ini.SetValue( "Options", "ScreenTestMode",					m_bScreenTestMode );
 	ini.SetValue( "Options", "MachineName",						m_sMachineName );
 	ini.SetValue( "Options", "IgnoredMessageWindows",			m_sIgnoredMessageWindows );
-	ini.SetValue( "Options", "SoloSingle",						m_bSoloSingle );
-	ini.SetValue( "Options", "DancePointsForOni",				m_bDancePointsForOni );
-	ini.SetValue( "Options", "PercentageScoring",				m_bPercentageScoring );
-	ini.SetValue( "Options", "MinPercentageForMachineSongHighScore",	m_fMinPercentageForMachineSongHighScore );
-	ini.SetValue( "Options", "MinPercentageForMachineCourseHighScore",	m_fMinPercentageForMachineCourseHighScore );
-	ini.SetValue( "Options", "Disqualification",				m_bDisqualification );
-	ini.SetValue( "Options", "ShowLyrics",						m_bShowLyrics );
-	ini.SetValue( "Options", "AutogenSteps",					m_bAutogenSteps );
-	ini.SetValue( "Options", "AutogenGroupCourses",				m_bAutogenGroupCourses );
-	ini.SetValue( "Options", "BreakComboToGetItem",				m_bBreakComboToGetItem );
-	ini.SetValue( "Options", "LockCourseDifficulties",			m_bLockCourseDifficulties );
-	ini.SetValue( "Options", "ShowDancingCharacters",			m_ShowDancingCharacters );
-	ini.SetValue( "Options", "UseUnlockSystem",					m_bUseUnlockSystem );
-	ini.SetValue( "Options", "FirstRun",						m_bFirstRun );
-	ini.SetValue( "Options", "AutoMapJoysticks",				m_bAutoMapOnJoyChange );
 	ini.SetValue( "Options", "VideoRenderers",					m_sVideoRenderers );
 	ini.SetValue( "Options", "LastSeenVideoDriver",				m_sLastSeenVideoDriver );
 	ini.SetValue( "Options", "LastSeenInputDevices",			m_sLastSeenInputDevices );
@@ -614,19 +515,6 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 
 	ini.SetValue( "Options", "ScoringType",						m_iScoringType );
 
-	ini.SetValue( "Options", "ProgressiveLifebar",				m_iProgressiveLifebar );
-	ini.SetValue( "Options", "ProgressiveStageLifebar",			m_iProgressiveStageLifebar );
-	ini.SetValue( "Options", "ProgressiveNonstopLifebar",		m_iProgressiveNonstopLifebar );
-	ini.SetValue( "Options", "ShowBeginnerHelper",				m_bShowBeginnerHelper );
-	ini.SetValue( "Options", "Language",						m_sLanguage );
-	ini.SetValue( "Options", "EndlessBreakEnabled",				m_bEndlessBreakEnabled );
-	ini.SetValue( "Options", "EndlessStagesUntilBreak",			m_iEndlessNumStagesUntilBreak );
-	ini.SetValue( "Options", "EndlessBreakLength",				m_iEndlessBreakLength );
-	ini.SetValue( "Options", "DisableScreenSaver",				m_bDisableScreenSaver );
-
-	ini.SetValue( "Options", "MemoryCardProfileSubdir",			m_sMemoryCardProfileSubdir );
-	ini.SetValue( "Options", "ProductID",						m_iProductID );
-	ini.SetValue( "Options", "MemoryCards",						m_bMemoryCards );
 	FOREACH_PlayerNumber( p )
 	{
 		ini.SetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );
@@ -636,18 +524,6 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 		ini.SetValue( "Options", ssprintf("MemoryCardUsbLevelP%d",p+1),		m_iMemoryCardUsbLevel[p] );
 	}
 
-	ini.SetValue( "Options", "CenterImageTranslateX",			m_iCenterImageTranslateX );
-	ini.SetValue( "Options", "CenterImageTranslateY",			m_iCenterImageTranslateY );
-	ini.SetValue( "Options", "CenterImageAddWidth",				m_fCenterImageAddWidth );
-	ini.SetValue( "Options", "CenterImageAddHeight",			m_fCenterImageAddHeight );
-	ini.SetValue( "Options", "AttractSoundFrequency",			m_iAttractSoundFrequency );
-	ini.SetValue( "Options", "AllowExtraStage",					m_bAllowExtraStage );
-	ini.SetValue( "Options", "HideDefaultNoteSkin",				m_bHideDefaultNoteSkin );
-	ini.SetValue( "Options", "MaxHighScoresPerListForMachine",	m_iMaxHighScoresPerListForMachine );
-	ini.SetValue( "Options", "MaxHighScoresPerListForPlayer",	m_iMaxHighScoresPerListForPlayer );
-	ini.SetValue( "Options", "MaxRecentScoresForMachine",	m_iMaxRecentScoresForMachine );
-	ini.SetValue( "Options", "MaxRecentScoresForPlayer",	m_iMaxRecentScoresForPlayer );
-	ini.SetValue( "Options", "AllowMultipleHighScoreWithSameName",	m_bAllowMultipleHighScoreWithSameName );	
 	ini.SetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
 	ini.SetValue( "Options", "ForceMipMaps",					m_bForceMipMaps );
 	ini.SetValue( "Options", "TrilinearFiltering",				m_bTrilinearFiltering );

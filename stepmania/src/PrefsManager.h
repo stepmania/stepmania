@@ -31,8 +31,8 @@ public:
 	Preference<bool>	m_bShowStats;
 	Preference<bool>	m_bShowBanners;
 
-	enum { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES };
-	Preference<int>		m_iBackgroundMode;
+	enum BackgroundMode { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES };
+	Preference<BackgroundMode>		m_BackgroundMode;
 	Preference<int>		m_iNumBackgrounds;
 	Preference<float>	m_fBGBrightness;
 	Preference<bool>	m_bHiddenSongs;
@@ -43,11 +43,12 @@ public:
 	Preference<bool>	m_bTexturePreload;
 	Preference<bool>	m_bDelayedScreenLoad;
 	Preference<bool>	m_bDelayedModelDelete;
-	enum { BNCACHE_OFF,
+	enum BannerCache {
+		BNCACHE_OFF,
 		BNCACHE_LOW_RES_PRELOAD, // preload low-res on start
 		BNCACHE_LOW_RES_LOAD_ON_DEMAND, // preload low-res on screen load
 		BNCACHE_FULL };
-	Preference<int>		m_iBannerCache;
+	Preference<BannerCache>		m_BannerCache;
 	Preference<bool>	m_bPalettedBannerCache;
 	Preference<bool>	m_bFastLoad;
 
@@ -154,74 +155,74 @@ public:
 	Preference<bool>	m_bShowNativeLanguage;
 	Preference<bool>	m_bArcadeOptionsNavigation;
 	enum MusicWheelUsesSections { NEVER, ALWAYS, ABC_ONLY };
-	Preference<int>		m_MusicWheelUsesSections;
+	Preference<MusicWheelUsesSections>		m_MusicWheelUsesSections;
 	Preference<int>		m_iMusicWheelSwitchSpeed;
 	Preference<bool>	m_bEasterEggs;
 	enum MarvelousTiming { MARVELOUS_NEVER, MARVELOUS_COURSES_ONLY, MARVELOUS_EVERYWHERE };
-	Preference<int>		m_iMarvelousTiming;
+	Preference<MarvelousTiming>		m_MarvelousTiming;
 	Preference<bool>	m_bEventMode;
 	Preference<int>		m_iCoinsPerCredit;
-	Preference<int>		m_iNumArcadeStages;
+	Preference<int>		m_iSongsPerPlay;
 
 	// These options have weird interactions depending on m_bEventMode, 
 	// so wrap them.
-	CoinMode		m_CoinMode;
-	Premium			m_Premium;
+	Preference<CoinMode>	m_CoinMode;
+	Preference<Premium>		m_Premium;
 
-	bool			m_bDelayedCreditsReconcile;
-	bool			m_bPickExtraStage;
-	bool			m_bComboContinuesBetweenSongs;
-	float			m_fLongVerSongSeconds;
-	float			m_fMarathonVerSongSeconds;
+	Preference<bool>	m_bDelayedCreditsReconcile;
+	Preference<bool>	m_bPickExtraStage;	// DDR Extreme-style extra stage support.
+	Preference<bool>	m_bComboContinuesBetweenSongs;
+	Preference<float>	m_fLongVerSongSeconds;
+	Preference<float>	m_fMarathonVerSongSeconds;
 	enum Maybe { ASK = -1, NO = 0, YES = 1 };
-	Maybe			m_ShowSongOptions;
-	bool			m_bSoloSingle;
-	bool			m_bDancePointsForOni;	//DDR-Extreme style dance points instead of max2 percent
-	bool			m_bPercentageScoring;
-	float			m_fMinPercentageForMachineSongHighScore;
-	float			m_fMinPercentageForMachineCourseHighScore;
-	bool			m_bDisqualification;
-	bool			m_bShowLyrics;
-	bool			m_bAutogenSteps;
-	bool			m_bAutogenGroupCourses;
-	bool			m_bBreakComboToGetItem;
-	bool			m_bLockCourseDifficulties;
+	Preference<Maybe>		m_ShowSongOptions;
+	Preference<bool>	m_bSoloSingle;
+	Preference<bool>	m_bDancePointsForOni;	//DDR-Extreme style dance points instead of max2 percent
+	Preference<bool>	m_bPercentageScoring;
+	Preference<float>	m_fMinPercentageForMachineSongHighScore;
+	Preference<float>	m_fMinPercentageForMachineCourseHighScore;
+	Preference<bool>	m_bDisqualification;
+	Preference<bool>	m_bShowLyrics;
+	Preference<bool>	m_bAutogenSteps;
+	Preference<bool>	m_bAutogenGroupCourses;
+	Preference<bool>	m_bBreakComboToGetItem;
+	Preference<bool>	m_bLockCourseDifficulties;
 	enum CharacterOption { CO_OFF = 0, CO_RANDOM = 1, CO_SELECT = 2};
-	CharacterOption	m_ShowDancingCharacters;
-	bool			m_bUseUnlockSystem;
-	bool			m_bFirstRun;
-	bool			m_bAutoMapOnJoyChange;
+	Preference<CharacterOption>		m_ShowDancingCharacters;
+	Preference<bool>	m_bUseUnlockSystem;
+	Preference<bool>	m_bFirstRun;
+	Preference<bool>	m_bAutoMapOnJoyChange;
 	Preference<float>	m_fGlobalOffsetSeconds;
-	int				m_iProgressiveLifebar;
-	int				m_iProgressiveStageLifebar;
-	int				m_iProgressiveNonstopLifebar;
-	bool			m_bShowBeginnerHelper;
-	bool			m_bEndlessBreakEnabled;
-	int				m_iEndlessNumStagesUntilBreak;
-	int				m_iEndlessBreakLength;
-	bool			m_bDisableScreenSaver;
-	CString			m_sLanguage;
-	CString			m_sMemoryCardProfileSubdir;	// the directory on a memory card to look in for a profile
-	int				m_iProductID;		// Saved in HighScore to track what software version a score came from.
-	CString			m_sDefaultLocalProfileID[NUM_PLAYERS];
-	bool			m_bMemoryCards;
-	CString			m_sMemoryCardOsMountPoint[NUM_PLAYERS];	// if set, always use the device that mounts to this point
-	int				m_iMemoryCardUsbBus[NUM_PLAYERS];	// look for this bus when assigning cards.  -1 = match any
-	int				m_iMemoryCardUsbPort[NUM_PLAYERS];	// look for this port when assigning cards.  -1 = match any
-	int				m_iMemoryCardUsbLevel[NUM_PLAYERS];	// look for this level when assigning cards.  -1 = match any
-	int				m_iCenterImageTranslateX;
-	int				m_iCenterImageTranslateY;
-	int				m_fCenterImageAddWidth;
-	int				m_fCenterImageAddHeight;
-	int				m_iAttractSoundFrequency;	// 0 = never, 1 = every time
-	bool			m_bAllowExtraStage;
-	bool			m_bHideDefaultNoteSkin;
-	int				m_iMaxHighScoresPerListForMachine;
-	int				m_iMaxHighScoresPerListForPlayer;
-	int				m_iMaxRecentScoresForMachine;
-	int				m_iMaxRecentScoresForPlayer;
-	bool			m_bAllowMultipleHighScoreWithSameName;
-	bool			m_bCelShadeModels;
+	Preference<int>		m_iProgressiveLifebar;
+	Preference<int>		m_iProgressiveStageLifebar;
+	Preference<int>		m_iProgressiveNonstopLifebar;
+	Preference<bool>	m_bShowBeginnerHelper;
+	Preference<bool>	m_bEndlessBreakEnabled;
+	Preference<int>		m_iEndlessNumStagesUntilBreak;
+	Preference<int>		m_iEndlessBreakLength;
+	Preference<bool>	m_bDisableScreenSaver;
+	Preference<CString>	m_sLanguage;
+	Preference<CString>	m_sMemoryCardProfileSubdir;	// the directory on a memory card to look in for a profile
+	Preference<int>		m_iProductID;		// Saved in HighScore to track what software version a score came from.
+	CString				m_sDefaultLocalProfileID[NUM_PLAYERS];
+	Preference<bool>	m_bMemoryCards;
+	CString				m_sMemoryCardOsMountPoint[NUM_PLAYERS];	// if set, always use the device that mounts to this point
+	int					m_iMemoryCardUsbBus[NUM_PLAYERS];	// look for this bus when assigning cards.  -1 = match any
+	int					m_iMemoryCardUsbPort[NUM_PLAYERS];	// look for this port when assigning cards.  -1 = match any
+	int					m_iMemoryCardUsbLevel[NUM_PLAYERS];	// look for this level when assigning cards.  -1 = match any
+	Preference<int>		m_iCenterImageTranslateX;
+	Preference<int>		m_iCenterImageTranslateY;
+	Preference<int>		m_fCenterImageAddWidth;
+	Preference<int>		m_fCenterImageAddHeight;
+	Preference<int>		m_iAttractSoundFrequency;	// 0 = never, 1 = every time
+	Preference<bool>	m_bAllowExtraStage;
+	Preference<bool>	m_bHideDefaultNoteSkin;
+	Preference<int>		m_iMaxHighScoresPerListForMachine;
+	Preference<int>		m_iMaxHighScoresPerListForPlayer;
+	Preference<int>		m_iMaxRecentScoresForMachine;
+	Preference<int>		m_iMaxRecentScoresForPlayer;
+	Preference<bool>	m_bAllowMultipleHighScoreWithSameName;
+	Preference<bool>	m_bCelShadeModels;
 
 	/* experimental: force a specific update rate.  This prevents big 
 	 * animation jumps on frame skips. */

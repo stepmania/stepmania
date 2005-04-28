@@ -233,7 +233,7 @@ CString Background::CreateRandomBGA( CString sPreferredSubDir )
 	if( sPreferredSubDir.Right(1) != "/" )
 		sPreferredSubDir += '/';
 
-	if( PREFSMAN->m_iBackgroundMode == PrefsManager::BGMODE_OFF )
+	if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_OFF )
 		return "";
 
 	/* If we already have enough random BGAs loaded, use them round-robin. */
@@ -250,10 +250,10 @@ CString Background::CreateRandomBGA( CString sPreferredSubDir )
 	CStringArray arrayPaths;
 	for( int i=0; i<2; i++ )
 	{
-		switch( PREFSMAN->m_iBackgroundMode )
+		switch( PREFSMAN->m_BackgroundMode )
 		{
 		default:
-			FAIL_M( ssprintf("Invalid BackgroundMode: %i", (int)PREFSMAN->m_iBackgroundMode) );
+			FAIL_M( ssprintf("Invalid BackgroundMode: %i", (PrefsManager::BackgroundMode)PREFSMAN->m_BackgroundMode) );
 			break;
 
 		case PrefsManager::BGMODE_ANIMATIONS:
@@ -308,7 +308,7 @@ CString Background::CreateRandomBGA( CString sPreferredSubDir )
 	}
 
 	Actor *ret;
-	switch( PREFSMAN->m_iBackgroundMode )
+	switch( PREFSMAN->m_BackgroundMode )
 	{
 	case PrefsManager::BGMODE_ANIMATIONS:
 	{
@@ -319,7 +319,7 @@ CString Background::CreateRandomBGA( CString sPreferredSubDir )
 	}
 	case PrefsManager::BGMODE_MOVIEVIS:		ret = MakeVisualization( file ); break;
 	case PrefsManager::BGMODE_RANDOMMOVIES: ret = MakeMovie( file ); break;
-	default: FAIL_M( ssprintf("%i", (int) PREFSMAN->m_iBackgroundMode) );
+	default: FAIL_M( ssprintf("%i", (int) PREFSMAN->m_BackgroundMode) );
 	}
 
 	m_BGAnimations[file] = ret;

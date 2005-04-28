@@ -41,28 +41,36 @@ void IPreference::SetFromStack( lua_State *L )
 	lua_pop( L, 1 );
 }
 
-#define READFROM_AND_WRITETO( type ) \
+#define READFROM_AND_WRITETO( type, cast ) \
 	void Preference<type>::FromString( const CString &s ) \
 	{ \
-		::FromString( s, m_currentValue ); \
+		::FromString( s, (cast)m_currentValue ); \
 	} \
 	CString Preference<type>::ToString() const \
 	{ \
-		return ::ToString( m_currentValue ); \
+		return ::ToString( (cast)m_currentValue ); \
 	} \
 	void Preference<type>::PushValue( lua_State *L ) const \
 	{ \
-		LuaHelpers::PushStack( m_currentValue, L ); \
+		LuaHelpers::PushStack( (cast)m_currentValue, L ); \
 	} \
 	void Preference<type>::SetFromStack( lua_State *L ) \
 	{ \
-		LuaHelpers::PopStack( m_currentValue, L ); \
+		LuaHelpers::PopStack( (cast)m_currentValue, L ); \
 	}
 
-READFROM_AND_WRITETO( int )
-READFROM_AND_WRITETO( float )
-READFROM_AND_WRITETO( bool )
-READFROM_AND_WRITETO( CString )
+READFROM_AND_WRITETO( int, int )
+READFROM_AND_WRITETO( float, float )
+READFROM_AND_WRITETO( bool, bool )
+READFROM_AND_WRITETO( CString, CString )
+READFROM_AND_WRITETO( PrefsManager::BackgroundMode, int& )
+READFROM_AND_WRITETO( PrefsManager::BannerCache, int& )
+READFROM_AND_WRITETO( PrefsManager::MusicWheelUsesSections, int& )
+READFROM_AND_WRITETO( PrefsManager::MarvelousTiming, int& )
+READFROM_AND_WRITETO( CoinMode, int& )
+READFROM_AND_WRITETO( Premium, int& )
+READFROM_AND_WRITETO( PrefsManager::Maybe, int& )
+READFROM_AND_WRITETO( PrefsManager::CharacterOption, int& )
 
 void IPreference::ReadFrom( const IniFile &ini )
 {

@@ -283,7 +283,7 @@ void SongManager::LoadGroupSymLinks(CString sDir, CString sGroupFolder)
 void SongManager::PreloadSongImages()
 {
 	ASSERT( TEXTUREMAN );
-	if( PREFSMAN->m_iBannerCache != PrefsManager::BNCACHE_FULL )
+	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_FULL )
 		return;
 
 	const vector<Song*> &songs = SONGMAN->GetAllSongs();

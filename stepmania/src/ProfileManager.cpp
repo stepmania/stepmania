@@ -180,7 +180,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 	/* If we imported a profile fallback directory, change the memory card
 	 * directory back to the preferred directory: never write over imported
 	 * scores. */
-	m_sProfileDir[pn] = MEM_CARD_MOUNT_POINT[pn] + PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	m_sProfileDir[pn] = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
 
 	/* Load edits from all fallback directories, newest first. */
 	for( unsigned i = 0; i < asDirsToTry.size(); ++i )

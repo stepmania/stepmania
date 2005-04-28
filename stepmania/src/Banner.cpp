@@ -20,7 +20,7 @@ Banner::Banner()
 
 void Banner::CacheGlobalBanners()
 {
-	if( PREFSMAN->m_iBannerCache == PrefsManager::BNCACHE_OFF )
+	if( PREFSMAN->m_BannerCache == PrefsManager::BNCACHE_OFF )
 		return;
 
 	TEXTUREMAN->CacheTexture( SongBannerTexture(THEME->GetPathG("Banner","all music")) );

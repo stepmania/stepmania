@@ -253,7 +253,7 @@ void MusicWheel::Load( CString sType )
 	// checking for event mode shouldn't be necessary here
 	// but someone mentioned it does it sometimes.
 	if( GAMESTATE->m_pCurSong != NULL && 
-		SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong ) + GAMESTATE->m_iCurrentStageIndex > PREFSMAN->m_iNumArcadeStages
+		SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong ) + GAMESTATE->m_iCurrentStageIndex > PREFSMAN->m_iSongsPerPlay
 		&& !GAMESTATE->IsEventMode()
 		&& !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
 	{

@@ -934,7 +934,7 @@ void ScreenGameplay::LoadNextSong()
 		{
 			m_pLifeMeter[p]->UpdateNonstopLifebar(
 				GAMESTATE->GetStageIndex(), 
-				PREFSMAN->m_iNumArcadeStages, 
+				PREFSMAN->m_iSongsPerPlay, 
 				PREFSMAN->m_iProgressiveStageLifebar);
 		}
 		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BAR && GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP )

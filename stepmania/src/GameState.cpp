@@ -403,7 +403,7 @@ static int GetNumStagesForCurrentSong()
 	 * if a long/marathon song is selected explicitly in the theme with a GameCommand,
 	 * and PREFSMAN->m_iNumArcadeStages is less than the number of stages that
 	 * song takes. */
-	int iNumStagesLeft = PREFSMAN->m_iNumArcadeStages - GAMESTATE->m_iCurrentStageIndex;
+	int iNumStagesLeft = PREFSMAN->m_iSongsPerPlay - GAMESTATE->m_iCurrentStageIndex;
 	iNumStagesOfThisSong = min( iNumStagesOfThisSong, iNumStagesLeft );
 	iNumStagesOfThisSong = max( iNumStagesOfThisSong, 1 );
 
@@ -692,7 +692,7 @@ int GameState::GetNumStagesLeft() const
 		return 1;
 	if( GAMESTATE->IsEventMode() )
 		return 999;
-	return PREFSMAN->m_iNumArcadeStages - m_iCurrentStageIndex;
+	return PREFSMAN->m_iSongsPerPlay - m_iCurrentStageIndex;
 }
 
 bool GameState::IsFinalStage() const
@@ -707,21 +707,21 @@ bool GameState::IsFinalStage() const
 	int iPredictedStageForCurSong = GetNumStagesForCurrentSong();
 	if( iPredictedStageForCurSong == -1 )
 		iPredictedStageForCurSong = 1;
-	return m_iCurrentStageIndex + iPredictedStageForCurSong == PREFSMAN->m_iNumArcadeStages;
+	return m_iCurrentStageIndex + iPredictedStageForCurSong == PREFSMAN->m_iSongsPerPlay;
 }
 
 bool GameState::IsExtraStage() const
 {
 	if( GAMESTATE->IsEventMode() )
 		return false;
-	return m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages;
+	return m_iCurrentStageIndex == PREFSMAN->m_iSongsPerPlay;
 }
 
 bool GameState::IsExtraStage2() const
 {
 	if( GAMESTATE->IsEventMode() )
 		return false;
-	return m_iCurrentStageIndex == PREFSMAN->m_iNumArcadeStages+1;
+	return m_iCurrentStageIndex == PREFSMAN->m_iSongsPerPlay+1;
 }
 
 CString GameState::GetStageText() const
@@ -749,7 +749,7 @@ void GameState::GetAllStageTexts( CStringArray &out ) const
 	out.push_back( "final" );
 	out.push_back( "extra1" );
 	out.push_back( "extra2" );
-	for( int stage = 0; stage < PREFSMAN->m_iNumArcadeStages; ++stage )
+	for( int stage = 0; stage < PREFSMAN->m_iSongsPerPlay; ++stage )
 		out.push_back( ssprintf("%d",stage+1) );
 }
 
@@ -1321,7 +1321,7 @@ SongOptions::FailType GameState::GetPlayerFailType( PlayerNumber pn ) const
 
 bool GameState::ShowMarvelous() const
 {
-	switch( PREFSMAN->m_iMarvelousTiming )
+	switch( PREFSMAN->m_MarvelousTiming )
 	{
 	case PrefsManager::MARVELOUS_NEVER:			return false;
 	case PrefsManager::MARVELOUS_COURSES_ONLY:	return IsCourseMode();
