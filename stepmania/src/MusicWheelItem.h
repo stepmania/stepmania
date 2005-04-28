@@ -29,24 +29,15 @@ public:
 	WheelItemData *data;
 	float				m_fPercentGray;
 
-	// for TYPE_SECTION and TYPE_ROULETTE
-	Sprite				m_sprSectionBar;
-	// for TYPE_SECTION
-	BitmapText			m_textSectionName;
-	// for TYPE_ROULETTE
-	BitmapText			m_textRoulette;
-
-	// for a TYPE_MUSIC
 	Sprite				m_sprSongBar;
+	Sprite				m_sprSectionBar;
 	WheelNotifyIcon		m_WheelNotifyIcon;
 	TextBanner			m_TextBanner;
-	GradeDisplay		m_GradeDisplay[NUM_PLAYERS];
-
-	// for TYPE_COURSE
+	BitmapText			m_textSectionName;
+	BitmapText			m_textRoulette;
 	BitmapText			m_textCourse;
-
-	// for TYPE_SORT
 	BitmapText			m_textSort;
+	GradeDisplay		m_GradeDisplay[NUM_PLAYERS];
 };
 
 enum WheelItemType 

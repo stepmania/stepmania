@@ -52,6 +52,14 @@ MusicWheelItem::MusicWheelItem()
 
 	SetName( "MusicWheelItem" );
 
+	m_sprSongBar.Load( THEME->GetPathG("MusicWheelItem","song") );
+	m_sprSongBar.SetXY( 0, 0 );
+	this->AddChild( &m_sprSongBar );
+
+	m_sprSectionBar.Load( THEME->GetPathG("MusicWheelItem","section") );
+	m_sprSectionBar.SetXY( 0, 0 );
+	this->AddChild( &m_sprSectionBar );
+
 	m_fPercentGray = 0;
 	m_WheelNotifyIcon.SetXY( ICON_X, ICON_Y );
 	m_WheelNotifyIcon.RunCommands( ICON_ON_COMMAND );
@@ -61,14 +69,6 @@ MusicWheelItem::MusicWheelItem()
 	m_TextBanner.SetXY( SONG_NAME_X, SONG_NAME_Y );
 	m_TextBanner.RunCommands( SONG_NAME_ON_COMMAND );
 	this->AddChild( &m_TextBanner );
-
-	m_sprSongBar.Load( THEME->GetPathG("MusicWheelItem","song") );
-	m_sprSongBar.SetXY( 0, 0 );
-	this->AddChild( &m_sprSongBar );
-
-	m_sprSectionBar.Load( THEME->GetPathG("MusicWheelItem","section") );
-	m_sprSectionBar.SetXY( 0, 0 );
-	this->AddChild( &m_sprSectionBar );
 
 	m_textSectionName.LoadFromFont( THEME->GetPathF("MusicWheelItem","section") );
 	m_textSectionName.SetShadowLength( 0 );
@@ -83,14 +83,6 @@ MusicWheelItem::MusicWheelItem()
 	m_textRoulette.RunCommands( ROULETTE_ON_COMMAND );
 	this->AddChild( &m_textRoulette );
 
-	FOREACH_PlayerNumber( p )
-	{
-		m_GradeDisplay[p].Load( THEME->GetPathG("MusicWheelItem","grades") );
-		m_GradeDisplay[p].SetZoom( 1.0f );
-		m_GradeDisplay[p].SetXY( GRADE_X.GetValue(p), 0 );
-		this->AddChild( &m_GradeDisplay[p] );
-	}
-
 	m_textCourse.SetName( "CourseName" );
 	m_textCourse.LoadFromFont( THEME->GetPathF("MusicWheelItem","course") );
 	SET_XY_AND_ON_COMMAND( &m_textCourse );
@@ -100,27 +92,37 @@ MusicWheelItem::MusicWheelItem()
 	m_textSort.LoadFromFont( THEME->GetPathF("MusicWheelItem","sort") );
 	SET_XY_AND_ON_COMMAND( &m_textSort );
 	this->AddChild( &m_textSort );
+
+	FOREACH_PlayerNumber( p )
+	{
+		m_GradeDisplay[p].Load( THEME->GetPathG("MusicWheelItem","grades") );
+		m_GradeDisplay[p].SetZoom( 1.0f );
+		m_GradeDisplay[p].SetXY( GRADE_X.GetValue(p), 0 );
+		this->AddChild( &m_GradeDisplay[p] );
+	}
 }
 
 
 void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 {
 	ASSERT( pWID != NULL );
-	
-	
-	
 	data = pWID;
-	/*
-	// copy all data items
-	this->m_Type	= pWID->m_Type;
-	this->m_sSectionName	= pWID->m_sSectionName;
-	this->m_pCourse			= pWID->m_pCourse;
-	this->m_pSong			= pWID->m_pSong;
-	this->m_color			= pWID->m_color;
-	this->m_Type		= pWID->m_Type; */
 
 
-	// init type specific stuff
+	// hide all
+	m_WheelNotifyIcon.SetHidden( true );
+	m_TextBanner.SetHidden( true );
+	m_sprSongBar.SetHidden( true );
+	m_sprSectionBar.SetHidden( true );
+	m_textSectionName.SetHidden( true );
+	m_textRoulette.SetHidden( true );
+	FOREACH_PlayerNumber( p )
+		m_GradeDisplay[p].SetHidden( true );
+	m_textCourse.SetHidden( true );
+	m_textSort.SetHidden( true );
+
+
+	// init and unhide type specific stuff
 	switch( pWID->m_Type )
 	{
 	case TYPE_SECTION:
@@ -151,37 +153,61 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID )
 			bt->SetText( sDisplayName, sTranslitName );
 			bt->SetDiffuse( data->m_color );
 			bt->TurnRainbowOff();
+			bt->SetHidden( false );
 		}
 		break;
 	case TYPE_SONG:
 		{
 			m_TextBanner.LoadFromSong( data->m_pSong );
 			m_TextBanner.SetDiffuse( data->m_color );
+			m_TextBanner.SetHidden( false );
+
 			m_WheelNotifyIcon.SetFlags( data->m_Flags );
+			m_WheelNotifyIcon.SetHidden( false );
 			RefreshGrades();
 		}
 		break;
 	case TYPE_ROULETTE:
 		m_textRoulette.SetText( THEME->GetMetric("MusicWheel","Roulette") );
+		m_textRoulette.SetHidden( false );
 		break;
 
 	case TYPE_RANDOM:
 		m_textRoulette.SetText( THEME->GetMetric("MusicWheel","Random") );
+		m_textRoulette.SetHidden( false );
 		break;
 
 	case TYPE_PORTAL:
 		m_textRoulette.SetText( THEME->GetMetric("MusicWheel","Portal") );
+		m_textRoulette.SetHidden( false );
 		break;
 
 	default:
 		ASSERT( 0 );	// invalid type
 	}
+
+	switch( data->m_Type )
+	{
+	case TYPE_SECTION: 
+	case TYPE_ROULETTE:
+	case TYPE_RANDOM:
+	case TYPE_PORTAL:
+	case TYPE_SORT:
+		m_sprSectionBar.SetHidden( false );
+		break;
+	case TYPE_SONG:		
+	case TYPE_COURSE:
+		m_sprSongBar.SetHidden( false );
+		break;
+	default: ASSERT(0);
+	}
+
 }
 
 void MusicWheelItem::RefreshGrades()
 {
 	// Refresh Grades
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
 		if( !data->m_pSong  ||	// this isn't a song display
 			!GAMESTATE->IsHumanPlayer(p) )
@@ -209,99 +235,21 @@ void MusicWheelItem::RefreshGrades()
 
 void MusicWheelItem::Update( float fDeltaTime )
 {
-	Actor::Update( fDeltaTime );
-	// update manually
-
-	switch( data->m_Type )
-	{
-	case TYPE_SECTION:
-		m_sprSectionBar.Update( fDeltaTime );
-		m_textSectionName.Update( fDeltaTime );
-		break;
-	case TYPE_ROULETTE:
-	case TYPE_RANDOM:
-	case TYPE_PORTAL:
-		m_sprSectionBar.Update( fDeltaTime );
-		m_textRoulette.Update( fDeltaTime );
-		break;
-	case TYPE_SONG:
-		{
-			m_sprSongBar.Update( fDeltaTime );
-			m_WheelNotifyIcon.Update( fDeltaTime );
-			m_TextBanner.Update( fDeltaTime );
-			FOREACH_PlayerNumber( p )
-				m_GradeDisplay[p].Update( fDeltaTime );
-		}
-		break;
-	case TYPE_COURSE:
-		m_sprSongBar.Update( fDeltaTime );
-		m_textCourse.Update( fDeltaTime );
-		break;
-	case TYPE_SORT:
-		m_sprSectionBar.Update( fDeltaTime );
-		m_textSort.Update( fDeltaTime );
-		break;
-	default:
-		ASSERT(0);
-	}
+	ActorFrame::Update( fDeltaTime );
 }
 
 void MusicWheelItem::DrawPrimitives()
 {
-	// draw manually
-
-	Sprite *bar = NULL;
-	switch( data->m_Type )
-	{
-	case TYPE_SECTION: 
-	case TYPE_ROULETTE:
-	case TYPE_RANDOM:
-	case TYPE_PORTAL:
-	case TYPE_SORT:
-		bar = &m_sprSectionBar; 
-		break;
-	case TYPE_SONG:		
-	case TYPE_COURSE:
-		bar = &m_sprSongBar; 
-		break;
-	default: ASSERT(0);
-	}
-	
-	bar->Draw();
-
-	switch( data->m_Type )
-	{
-	case TYPE_SECTION:
-		m_textSectionName.Draw();
-		break;
-	case TYPE_ROULETTE:
-	case TYPE_RANDOM:
-	case TYPE_PORTAL:
-		m_textRoulette.Draw();
-		break;
-	case TYPE_SONG:		
-		m_TextBanner.Draw();
-		m_WheelNotifyIcon.Draw();
-		FOREACH_PlayerNumber( p )
-			m_GradeDisplay[p].Draw();
-		break;
-	case TYPE_COURSE:
-		m_textCourse.Draw();
-		break;
-	case TYPE_SORT:
-		m_textSort.Draw();
-		break;
-	default:
-		ASSERT(0);
-	}
+	ActorFrame::DrawPrimitives();
 
 	if( m_fPercentGray > 0 )
 	{
-		bar->SetGlow( RageColor(0,0,0,m_fPercentGray) );
-		bar->SetDiffuse( RageColor(0,0,0,0) );
-		bar->Draw();
-		bar->SetDiffuse( RageColor(0,0,0,1) );
-		bar->SetGlow( RageColor(0,0,0,0) );
+		Sprite &bar = m_sprSectionBar.GetHidden() ? m_sprSongBar : m_sprSectionBar;
+		bar.SetGlow( RageColor(0,0,0,m_fPercentGray) );
+		bar.SetDiffuse( RageColor(0,0,0,0) );
+		bar.Draw();
+		bar.SetDiffuse( RageColor(0,0,0,1) );
+		bar.SetGlow( RageColor(0,0,0,0) );
 	}
 }
 
