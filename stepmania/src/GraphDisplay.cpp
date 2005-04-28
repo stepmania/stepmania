@@ -154,7 +154,7 @@ void GraphDisplay::UpdateVerts()
 	}
 
 	const RectF *tex = m_pTexture->GetTextureCoordRect( 0 );
-	for( int i = 0; i < ARRAYSIZE(Slices); ++i )
+	for( unsigned i = 0; i < ARRAYSIZE(Slices); ++i )
 	{
 		Slices[i].t = RageVector2( 
 			SCALE( Slices[i].p.x, m_quadVertices.left, m_quadVertices.right, tex->left, tex->right ),
