@@ -1618,9 +1618,8 @@ void ScreenGameplay::UpdateLights()
 	{
 		float fPositionSeconds = GAMESTATE->m_fMusicSeconds + LIGHTS_FALLOFF_SECONDS/2;	// trigger the light a tiny bit early
 		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+		const int iSongRow = BeatToNoteRowNotRounded( fSongBeat );
 
-		int iSongRow = BeatToNoteRowNotRounded( fSongBeat );
-		iSongRow = max( 0, iSongRow );
 		static int iRowLastCrossed = 0;
 
 		float fBeatLast = roundf(NoteRowToBeat(iRowLastCrossed));
