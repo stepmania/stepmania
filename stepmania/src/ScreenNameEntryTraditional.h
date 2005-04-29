@@ -26,6 +26,7 @@ public:
 	BitmapText m_textRank;
 	BitmapText m_textName;
 	BitmapText m_textScore;
+	BitmapText m_textDate;
 };
 
 class HighScoreWheel : public ActorScroller

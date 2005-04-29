@@ -69,6 +69,13 @@ void HighScoreWheelItem::Load( int iRankIndex, const HighScore& hs )
 	m_textScore.SetShadowLength( 2 );
 	this->AddChild( &m_textScore );
 	SET_XY_AND_ON_COMMAND( m_textScore );
+
+	m_textDate.SetName( "Date" );
+	m_textDate.LoadFromFont( THEME->GetPathF(m_sName,"date") );
+	m_textDate.SetText( ssprintf("%02d/%02d", hs.dateTime.tm_mon+1, hs.dateTime.tm_mday) );
+	m_textDate.SetShadowLength( 2 );
+	this->AddChild( &m_textDate );
+	SET_XY_AND_ON_COMMAND( m_textDate );
 }
 
 void HighScoreWheelItem::LoadBlank( int iRankIndex )
@@ -83,6 +90,7 @@ void HighScoreWheelItem::ShowFocus()
 	m_textRank.RunCommands( c );
 	m_textName.RunCommands( c );
 	m_textScore.RunCommands( c );
+	m_textDate.RunCommands( c );
 }
 
 void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
@@ -160,6 +168,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				hs.grade = GRADE_TIER03;
 				hs.fPercentDP = ss.m_player[p].GetPercentDancePoints();
 				hs.iScore = ss.m_player[p].iScore;
+				hs.dateTime = DateTime::GetNowDateTime();
 				int a, b;
 				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], pSteps, p, hs, a, b );
 				PROFILEMAN->AddStepsScore( ss.vpPlayedSongs[0], pSteps, p, hs, a, b );
