@@ -181,8 +181,9 @@ bool Screen::ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventTy
 		return false;
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_F3 )
 	{
-		((int&)PREFSMAN->m_CoinMode)++;
-		wrap( (int&)PREFSMAN->m_CoinMode, NUM_COIN_MODES );
+		CoinMode cm = (CoinMode)(PREFSMAN->m_CoinMode+1);
+		wrap( (int&)cm, NUM_COIN_MODES );
+		PREFSMAN->m_CoinMode = cm;
 
 		/* Show the real coin mode, not GetCoinMode(), or F3 will go "home, free, free"
 		 * in event mode.  XXX: move GetCoinMode to GameState to keep PrefsManager dumb? */
