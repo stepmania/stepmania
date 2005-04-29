@@ -511,7 +511,6 @@ void GameSoundManager::Update( float fDeltaTime )
 	{
 		/* Load up the new timing data. */
 		g_Playing->m_Timing = g_Playing->m_NewTiming;
-		g_Playing->m_LightData = g_Playing->m_NewLightData;
 		g_Playing->m_bTimingDelayed = false;
 	}
 
