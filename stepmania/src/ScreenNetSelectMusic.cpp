@@ -468,8 +468,7 @@ void ScreenNetSelectMusic::StartSelectedSong()
 		GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 	}
 
-	GAMESTATE->m_PreferredSortOrder = m_MusicWheel.GetSortOrder();
-	GAMESTATE->m_SortOrder = m_MusicWheel.GetSortOrder();
+	GAMESTATE->m_PreferredSortOrder = GAMESTATE->m_SortOrder;
 	GAMESTATE->m_pPreferredSong = pSong;
 	
 	TweenOffScreen();

@@ -200,21 +200,18 @@ void MusicWheel::Load( CString sType )
 		GAMESTATE->m_SongOptions = so;
 	}
 
-	m_SortOrder = GAMESTATE->m_PreferredSortOrder;
+	GAMESTATE->m_SortOrder = GAMESTATE->m_PreferredSortOrder;
 
 	/* Never start in the mode menu; some elements may not initialize correctly. */
-	if( m_SortOrder == SORT_MODE_MENU )
-		m_SortOrder = SORT_INVALID;
+	if( GAMESTATE->m_SortOrder == SORT_MODE_MENU )
+		GAMESTATE->m_SortOrder = SORT_INVALID;
 
-	m_SortOrder = ForceAppropriateSort( GAMESTATE->m_PlayMode, m_SortOrder );
+	GAMESTATE->m_SortOrder = ForceAppropriateSort( GAMESTATE->m_PlayMode, GAMESTATE->m_SortOrder );
 
 	/* Only save the sort order if the player didn't already have one.  If he did, don't
 	 * overwrite it. */
 	if( GAMESTATE->m_PreferredSortOrder == SORT_INVALID )
-	{
-		GAMESTATE->m_PreferredSortOrder = m_SortOrder;
-		GAMESTATE->m_SortOrder = m_SortOrder;
-	}
+		GAMESTATE->m_PreferredSortOrder = GAMESTATE->m_SortOrder;
 
 	/* Update for SORT_MOST_PLAYED. */
 	SONGMAN->UpdateBest();
@@ -290,7 +287,7 @@ bool MusicWheel::SelectSongOrCourse()
 		return true;
 
 	// Select the first selectable song based on the sort order...
-	vector<WheelItemData> &wiWheelItems = m_WheelItemDatas[m_SortOrder];
+	vector<WheelItemData> &wiWheelItems = m_WheelItemDatas[GAMESTATE->m_SortOrder];
 	for( unsigned i = 0; i < wiWheelItems.size(); i++ )
 	{
 		if( wiWheelItems[i].m_pSong )
@@ -325,7 +322,7 @@ bool MusicWheel::SelectSong( Song *p )
 		return false;
 
 	unsigned i;
-	vector<WheelItemData> &from = m_WheelItemDatas[m_SortOrder];
+	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];
 	for( i=0; i<from.size(); i++ )
 	{
 		if( from[i].m_pSong == p )
@@ -355,7 +352,7 @@ bool MusicWheel::SelectCourse( Course *p )
 	GAMESTATE->m_pCurCourse = p;
 
 	unsigned i;
-	vector<WheelItemData> &from = m_WheelItemDatas[m_SortOrder];
+	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];
 	for( i=0; i<from.size(); i++ )
 	{
 		if( from[i].m_pCourse == p )
@@ -381,7 +378,7 @@ bool MusicWheel::SelectCourse( Course *p )
 bool MusicWheel::SelectModeMenuItem()
 {
 	/* Select the last-chosen option. */
-	const vector<WheelItemData> &from = m_WheelItemDatas[m_SortOrder];
+	const vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];
 	unsigned i;
 	for( i=0; i<from.size(); i++ )
 	{
@@ -1044,14 +1041,14 @@ void MusicWheel::Update( float fDeltaTime )
 
 				SCREENMAN->PostMessageToTopScreen( SM_SortOrderChanged, 0 );
 				
-				SetOpenGroup(SongUtil::GetSectionNameFromSongAndSort( pPrevSelectedSong, m_SortOrder ));
+				SetOpenGroup(SongUtil::GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SortOrder ));
 
 				m_iSelection = 0;
 
 				//
 				// Select the previously selected item
 				//
-				switch( m_SortOrder )
+				switch( GAMESTATE->m_SortOrder )
 				{
 				default:
 					// Look for the last selected song or course
@@ -1066,7 +1063,7 @@ void MusicWheel::Update( float fDeltaTime )
 				// Change difficulty for sorts by meter - XXX: do this with GameCommand?
 				//
 				Difficulty dc = DIFFICULTY_INVALID;
-				switch( m_SortOrder )
+				switch( GAMESTATE->m_SortOrder )
 				{
 				case SORT_EASY_METER:		dc = DIFFICULTY_EASY;		break;
 				case SORT_MEDIUM_METER:		dc = DIFFICULTY_MEDIUM;		break;
@@ -1248,7 +1245,7 @@ void MusicWheel::ChangeMusic(int dist)
 bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change successful
 {
 	ASSERT( new_so < NUM_SORT_ORDERS );
-	if( m_SortOrder == new_so )
+	if( GAMESTATE->m_SortOrder == new_so )
 		return false;
 
 	/* Don't change to SORT_MODE_MENU if it doesn't have at least two choices. */
@@ -1275,7 +1272,7 @@ bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change success
 		GAMESTATE->m_PreferredSortOrder = new_so;
 	GAMESTATE->m_SortOrder = new_so;
 
-	m_SortOrder = new_so;
+	GAMESTATE->m_SortOrder = new_so;
 	
 	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
 	return true;
@@ -1284,12 +1281,12 @@ bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change success
 bool MusicWheel::NextSort()		// return true if change successful
 {
 	// don't allow NextSort when on the sort menu or mode menu
-	if( m_SortOrder == SORT_MODE_MENU )
+	if( GAMESTATE->m_SortOrder == SORT_MODE_MENU )
 		return false;
 
 	// find the index of the current sort
 	int cur = 0;
-	while( cur < int(SONG_SORT_ORDERS.size()) && SONG_SORT_ORDERS[cur] != m_SortOrder )
+	while( cur < int(SONG_SORT_ORDERS.size()) && SONG_SORT_ORDERS[cur] != GAMESTATE->m_SortOrder )
 		++cur;
 
 	// move to the next sort with wrapping
@@ -1409,7 +1406,7 @@ void MusicWheel::StartRandom()
 void MusicWheel::SetOpenGroup(CString group, SortOrder so)
 {
 	if( so != SORT_INVALID )
-		m_SortOrder = so;
+		GAMESTATE->m_SortOrder = so;
 
 	m_sExpandedSectionName = group;
 
@@ -1418,7 +1415,7 @@ void MusicWheel::SetOpenGroup(CString group, SortOrder so)
 		old = m_CurWheelItemData[m_iSelection];
 
 	m_CurWheelItemData.clear();
-	vector<WheelItemData> &from = m_WheelItemDatas[m_SortOrder];
+	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];
 	for( unsigned i = 0; i < from.size(); ++i )
 	{
 		WheelItemData &d = from[i];
@@ -1646,7 +1643,7 @@ Song *MusicWheel::GetPreferredSelectionForRandomOrPortal()
 	}
 
 	CString sPreferredGroup = m_sExpandedSectionName;
-	vector<WheelItemData> &wid = m_WheelItemDatas[m_SortOrder];
+	vector<WheelItemData> &wid = m_WheelItemDatas[GAMESTATE->m_SortOrder];
 
 	StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 

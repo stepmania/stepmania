@@ -68,7 +68,6 @@ public:
 	bool SelectSong( Song *p );
 	bool SelectSection( const CString & SectionName );
 	void SetOpenGroup(CString group, SortOrder so = SORT_INVALID);
-	SortOrder GetSortOrder() const { return m_SortOrder; }
 
 protected:
 	void GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sPreferredGroup );
@@ -88,7 +87,6 @@ protected:
 	int					m_iSelection;		// index into m_CurWheelItemData
 	CString				m_sExpandedSectionName;
 	CString				m_sLastModeMenuItem;
-	SortOrder			m_SortOrder;
 
 	int					m_iSwitchesLeftInSpinDown;		
 	float				m_fLockedWheelVelocity;

@@ -319,7 +319,7 @@ void ScreenSelectMusic::Init()
 	}	
 
 	m_MusicSortDisplay.SetName( "SortIcon" );
-	m_MusicSortDisplay.Set( m_MusicWheel.GetSortOrder() );
+	m_MusicSortDisplay.Set( GAMESTATE->m_SortOrder );
 	SET_XY( m_MusicSortDisplay );
 	this->AddChild( &m_MusicSortDisplay );
 
@@ -521,7 +521,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	TweenSongPartsOnScreen( true );
 	TweenCoursePartsOnScreen( true );
 
-	switch( m_MusicWheel.GetSortOrder() )
+	switch( GAMESTATE->m_SortOrder )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
@@ -578,7 +578,7 @@ void ScreenSelectMusic::TweenOnScreen()
 
 void ScreenSelectMusic::TweenOffScreen()
 {
-	switch( m_MusicWheel.GetSortOrder() )
+	switch( GAMESTATE->m_SortOrder )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
@@ -672,7 +672,7 @@ void ScreenSelectMusic::TweenScoreOnAndOffAfterChangeSort()
 		m_sprHighScoreFrame[p].RunCommands( SCORE_FRAME_SORT_CHANGE_COMMAND(p) );
 	}
 
-	switch( m_MusicWheel.GetSortOrder() )
+	switch( GAMESTATE->m_SortOrder )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
@@ -1361,7 +1361,7 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 		m_GrooveRadar.SetFromSteps( pn, pSteps );
 		m_MusicWheel.NotesOrTrailChanged( pn );
 		if( SHOW_PANES )
-			m_PaneDisplay[pn].SetFromGameState( m_MusicWheel.GetSortOrder() );
+			m_PaneDisplay[pn].SetFromGameState( GAMESTATE->m_SortOrder );
 	}
 
 	if( SHOW_DIFFICULTY_LIST )
@@ -1414,7 +1414,7 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 		m_GrooveRadar.SetEmpty( pn );
 		m_MusicWheel.NotesOrTrailChanged( pn );
 		if( SHOW_PANES )
-			m_PaneDisplay[pn].SetFromGameState( m_MusicWheel.GetSortOrder() );
+			m_PaneDisplay[pn].SetFromGameState( GAMESTATE->m_SortOrder );
 	}
 
 	if( SHOW_DIFFICULTY_LIST )
@@ -1539,11 +1539,11 @@ void ScreenSelectMusic::AfterMusicChange()
 	bool bWantBanner = true;
 
 	static SortOrder s_lastSortOrder = SORT_INVALID;
-	if( m_MusicWheel.GetSortOrder() != s_lastSortOrder )
+	if( GAMESTATE->m_SortOrder != s_lastSortOrder )
 	{
 		// Reload to let Lua metrics have a chance to change the help text.
 		LoadHelpText();
-		s_lastSortOrder = m_MusicWheel.GetSortOrder();
+		s_lastSortOrder = GAMESTATE->m_SortOrder;
 	}
 
 	switch( m_MusicWheel.GetSelectedType() )
@@ -1573,7 +1573,7 @@ void ScreenSelectMusic::AfterMusicChange()
 				break;
 			case TYPE_SORT:
 				bWantBanner = false; /* we load it ourself */
-				switch( m_MusicWheel.GetSortOrder() )
+				switch( GAMESTATE->m_SortOrder )
 				{
 				case SORT_MODE_MENU:
 					m_Banner.LoadMode();
@@ -1887,12 +1887,12 @@ void ScreenSelectMusic::UpdateOptionsDisplays()
 
 void ScreenSelectMusic::SortOrderChanged()
 {
-	m_MusicSortDisplay.Set( m_MusicWheel.GetSortOrder() );
+	m_MusicSortDisplay.Set( GAMESTATE->m_SortOrder );
 	if( SHOW_PANES )
 		FOREACH_HumanPlayer(pn)
-			m_PaneDisplay[pn].SetFromGameState( m_MusicWheel.GetSortOrder() );
+			m_PaneDisplay[pn].SetFromGameState( GAMESTATE->m_SortOrder );
 
-	switch( m_MusicWheel.GetSortOrder() )
+	switch( GAMESTATE->m_SortOrder )
 	{
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
