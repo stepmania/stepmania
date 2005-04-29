@@ -472,7 +472,7 @@ void ScreenOptions::DrawPrimitives()
 	Screen::DrawPrimitives();
 }
 
-void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType selectType, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	/* Allow input when transitioning in (m_In.IsTransitioning()), but ignore it
 	 * when we're transitioning out. */
@@ -482,11 +482,12 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType sele
 	if( !GAMESTATE->IsHumanPlayer(MenuI.player) )
 		return;
 
-	if( selectType == IET_RELEASE )
+	if( type == IET_RELEASE )
 	{
 		switch( MenuI.button )
 		{
 		case MENU_BUTTON_START:
+		case MENU_BUTTON_SELECT:
 		case MENU_BUTTON_RIGHT:
 		case MENU_BUTTON_LEFT:
 			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_START) );
@@ -496,7 +497,7 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType sele
 	}
 
 	// default input handler
-	Screen::Input( DeviceI, selectType, GameI, MenuI, StyleI );
+	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
