@@ -104,9 +104,21 @@ public:
 		return 0;
 	}
 
+	static int gettips( T* p, lua_State *L )
+	{
+		CStringArray arrayTips, arrayTipsAlt;
+		p->GetTips( arrayTips, arrayTipsAlt );
+
+		LuaHelpers::CreateTableFromArray( arrayTips, LUA->L );
+		LuaHelpers::CreateTableFromArray( arrayTipsAlt, LUA->L );
+
+		return 2;
+	}
+
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( settips )
+		ADD_METHOD( gettips )
 		LunaActor<T>::Register( L );
 	}
 };

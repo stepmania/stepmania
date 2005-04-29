@@ -19,6 +19,7 @@ public:
 
 	void SetTips( const CStringArray &arrayTips ) { SetTips( arrayTips, arrayTips ); }
 	void SetTips( const CStringArray &arrayTips, const CStringArray &arrayTipsAlt );
+	void GetTips( CStringArray &arrayTipsOut, CStringArray &arrayTipsAltOut ) const { arrayTipsOut = m_arrayTips; arrayTipsAltOut = m_arrayTipsAlt; }
 
 	virtual void Update( float fDeltaTime );
 	virtual void SetName( const CString &sName, const CString &sID = "" );
