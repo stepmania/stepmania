@@ -503,27 +503,25 @@ void GameSoundManager::Update( float fDeltaTime )
 		sLastFile = ThisFile;
 	}
 
-	if( g_Playing->m_TimingDelayed )
+	if( g_Playing->m_TimingDelayed && !approximate )
 	{
-		if( approximate )
-		{
-			/* We're still waiting for the new sound to start playing, so keep using the
-			 * old timing data and fake the time. */
-			CHECKPOINT_M( ssprintf("%f, delta %f", GAMESTATE->m_fMusicSeconds, fDeltaTime) );
-			GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Playing->m_Timing );
-			return;
-		}
-		else
-		{
-			/* We've passed the start position of the new sound, so we should be OK.
-			 * Load up the new timing data. */
-			g_Playing->m_Timing = g_Playing->m_NewTiming;
-			g_Playing->m_TimingDelayed = false;
-		}
+		/* We've passed the start position of the new sound, so we should be OK.
+		 * Load up the new timing data. */
+		g_Playing->m_Timing = g_Playing->m_NewTiming;
+		g_Playing->m_LightData = g_Playing->m_NewLightData;
+		g_Playing->m_TimingDelayed = false;
 	}
 
-	CHECKPOINT_M( ssprintf("%f", fSeconds) );
-	GAMESTATE->UpdateSongPosition( fSeconds+fAdjust, g_Playing->m_Timing, tm+fAdjust );
+	if( g_Playing->m_TimingDelayed )
+	{
+		/* We're still waiting for the new sound to start playing, so keep using the
+		 * old timing data and fake the time. */
+		GAMESTATE->UpdateSongPosition( GAMESTATE->m_fMusicSeconds + fDeltaTime, g_Playing->m_Timing );
+	}
+	else
+	{
+		GAMESTATE->UpdateSongPosition( fSeconds + fAdjust, g_Playing->m_Timing, tm + fAdjust );
+	}
 }
 
 
