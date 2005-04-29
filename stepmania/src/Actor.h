@@ -32,7 +32,7 @@ public:
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 	static void SetBGMTime( float fTime, float fBeat );
-	static void SetBGMLights( const float *abCabinetLights );
+	static void SetBGMLight( int iLightNumber, float fCabinetLights );
 
 	enum TweenType { 
 		TWEEN_LINEAR, 

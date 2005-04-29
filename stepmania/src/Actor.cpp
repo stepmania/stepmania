@@ -25,7 +25,7 @@ LUA_REGISTER_CLASS( Actor )
 
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 
-static float g_bCabinetLights[NUM_CABINET_LIGHTS];
+static float g_fCabinetLights[NUM_CABINET_LIGHTS];
 
 void Actor::SetBGMTime( float fTime, float fBeat )
 {
@@ -33,9 +33,10 @@ void Actor::SetBGMTime( float fTime, float fBeat )
 	g_fCurrentBGMBeat = fBeat;
 }
 
-void Actor::SetBGMLights( const float *bCabinetLights )
+void Actor::SetBGMLight( int iLightNumber, float fCabinetLights )
 {
-	memcpy( g_bCabinetLights, bCabinetLights, sizeof(float) * NUM_CABINET_LIGHTS );
+	ASSERT( iLightNumber < NUM_CABINET_LIGHTS );
+	g_fCabinetLights[iLightNumber] = fCabinetLights;
 }
 
 /* This is Reset instead of Init since many derived classes have Init() functions
@@ -493,8 +494,8 @@ void Actor::Update( float fDeltaTime )
 		if( m_EffectClock >= CLOCK_LIGHT_1 && m_EffectClock <= CLOCK_LIGHT_LAST )
 		{
 			int i = m_EffectClock - CLOCK_LIGHT_1;
-			m_fEffectDelta = g_bCabinetLights[i] - m_fSecsIntoEffect;
-			m_fSecsIntoEffect = g_bCabinetLights[i];
+			m_fEffectDelta = g_fCabinetLights[i] - m_fSecsIntoEffect;
+			m_fSecsIntoEffect = g_fCabinetLights[i];
 		}
 		break;
 	}
