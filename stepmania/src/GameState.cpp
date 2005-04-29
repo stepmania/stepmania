@@ -1997,6 +1997,7 @@ public:
 	static int IsExtraStage2( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage2() ); return 1; }
 	static int GetEasiestStepsDifficulty( T* p, lua_State *L ){ lua_pushnumber(L, p->GetEasiestStepsDifficulty() ); return 1; }
 	static int IsEventMode( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsEventMode() ); return 1; }
+	static int GetNumPlayersEnabled( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumPlayersEnabled() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -2029,6 +2030,7 @@ public:
 		ADD_METHOD( IsExtraStage2 )
 		ADD_METHOD( GetEasiestStepsDifficulty )
 		ADD_METHOD( IsEventMode )
+		ADD_METHOD( GetNumPlayersEnabled )
 
 		Luna<T>::Register( L );
 
