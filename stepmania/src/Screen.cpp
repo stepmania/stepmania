@@ -146,6 +146,7 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 	case MENU_BUTTON_RIGHT:	this->MenuRight( MenuI.player, type );	return;
 	case MENU_BUTTON_BACK:	this->MenuBack( MenuI.player, type );	return;
 	case MENU_BUTTON_START:	this->MenuStart( MenuI.player, type );	return;
+	case MENU_BUTTON_SELECT:this->MenuSelect( MenuI.player, type );	return;
 	case MENU_BUTTON_COIN:	this->MenuCoin( MenuI.player, type );	return;
 	}
 }

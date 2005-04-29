@@ -63,6 +63,7 @@ public:
 	virtual void MenuLeft(	PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuLeft(pn); }
 	virtual void MenuRight( PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuRight(pn); }
 	virtual void MenuStart( PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuStart(pn); }
+	virtual void MenuSelect( PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuSelect(pn); }
 	virtual void MenuBack(	PlayerNumber pn, const InputEventType type );
 	virtual void MenuCoin(	PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuCoin(pn); }
 
@@ -71,6 +72,7 @@ public:
 	virtual void MenuLeft(	PlayerNumber pn )	{}
 	virtual void MenuRight( PlayerNumber pn )	{}
 	virtual void MenuStart( PlayerNumber pn )	{}
+	virtual void MenuSelect( PlayerNumber pn )	{}
 	virtual void MenuBack(	PlayerNumber pn )	{}
 	virtual void MenuCoin(	PlayerNumber pn );
 };
