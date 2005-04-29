@@ -1908,8 +1908,14 @@ bool NoteDataUtil::AnyTapsAndHoldsInTrackRange( const NoteData& in, int iTrack, 
 	// for each index we crossed since the last update:
 	FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, iTrack, r, iStart, iEnd )
 	{
-		if( in.GetTapNote( iTrack, r ).type != TapNote::empty )
+		switch( in.GetTapNote( iTrack, r ).type )
+		{
+		case TapNote::empty:
+		case TapNote::mine:
+			continue;
+		default:
 			return true;
+		}
 	}
 
 	if( in.IsHoldNoteAtBeat( iTrack, iEnd ) )
