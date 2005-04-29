@@ -142,7 +142,7 @@ namespace LuaHelpers
 		lua_newtable( L );
 		for( unsigned i = 0; i < aIn.size(); ++i )
 		{
-			aIn[i]->PushSelf( L );
+			LuaHelpers::Push( aIn[i], L );
 			lua_rawseti( L, -2, i+1 );
 		}
 	}
