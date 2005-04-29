@@ -1087,8 +1087,11 @@ void ScreenSelectMusic::ChangeDifficulty( PlayerNumber pn, int dir )
 			AfterStepsChange( vpns );
 		}
 		break;
+	case TYPE_SORT:
+		break;
 	default:
-		ASSERT(0);
+		WARN( ssprintf("%i", m_MusicWheel.GetSelectedType()) );
+		break;
 	}
 }
 
