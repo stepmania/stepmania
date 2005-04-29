@@ -294,16 +294,16 @@ static void child_process()
 #else
 	reason = Signal;
 #endif
-	switch( crash.signal )
+	/* Linux puts the PID that sent the signal in si_addr for SI_USER. */
+	if( crash.si.si_code == SI_USER )
+		reason += ssprintf( " from pid %li", (long) crash.si.si_addr );
+	else switch( crash.signal )
 	{
 	case SIGILL:
 	case SIGFPE:
 	case SIGSEGV:
 	case SIGBUS:
-	    if( crash.si.si_code == SI_USER )
-		    reason += ssprintf( " from pid %li", (long) crash.si.si_addr );
-	    else
-		    reason += ssprintf( " at 0x%0*lx", int(sizeof(void*)*2), (unsigned long) crash.si.si_addr );
+		reason += ssprintf( " at 0x%0*lx", int(sizeof(void*)*2), (unsigned long) crash.si.si_addr );
 	}
 	break;
     }
