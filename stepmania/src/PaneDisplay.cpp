@@ -298,11 +298,28 @@ void PaneDisplay::SetContent( PaneContents c )
 		switch( c )
 		{
 		case SONG_MACHINE_HIGH_NAME:
-			str = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().sName;
+			if( PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).vHighScores.empty() )
+			{
+				str = "";
+			}
+			else
+			{
+				str = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().sName;
+				if( str.empty() )
+					str = "????";
+			}
 			break;
 		case COURSE_MACHINE_HIGH_NAME:
-
-			str = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().sName;
+			if( PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).vHighScores.empty() )
+			{
+				str = "";
+			}
+			else
+			{
+				str = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().sName;
+				if( str.empty() )
+					str = "????";
+			}
 			break;
 
 		case SONG_MACHINE_HIGH_SCORE:
