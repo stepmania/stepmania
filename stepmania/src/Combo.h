@@ -4,10 +4,9 @@
 #define COMBO_H
 
 #include "ActorFrame.h"
-#include "Sprite.h"
+#include "AutoActor.h"
 #include "BitmapText.h"
 #include "PlayerNumber.h"
-#include "GameConstantsAndTypes.h"	// for TapNoteScore
 #include "ThemeMetric.h"
 
 
@@ -33,7 +32,6 @@ protected:
 	ThemeMetric<float>				NUMBER_MAX_ZOOM_AT;
 	ThemeMetric<apActorCommands>	PULSE_COMMAND;
 	ThemeMetric<float>				TWEEN_SECONDS;
-
 	ThemeMetric<apActorCommands>	FULL_COMBO_GREATS_COMMAND;
 	ThemeMetric<apActorCommands>	FULL_COMBO_PERFECTS_COMMAND;
 	ThemeMetric<apActorCommands>	FULL_COMBO_MARVELOUSES_COMMAND;
@@ -42,9 +40,12 @@ protected:
 
 	PlayerNumber m_PlayerNumber;
 
-	Sprite		m_sprComboLabel;
-	Sprite		m_sprMissesLabel;
+	AutoActor	m_sprMilestone;
+	AutoActor	m_sprComboLabel;
+	AutoActor	m_sprMissesLabel;
 	BitmapText	m_textNumber;
+
+	int m_iLastSeenCombo;
 };
 
 #endif
