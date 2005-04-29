@@ -147,6 +147,10 @@ void ArrowGetReverseShiftAndScale( const PlayerState* pPlayerState, int iCol, fl
 	/* XXX: Hack: we need to scale the reverse shift by the zoom. */
 	float fMiniPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
 	float fZoom = 1 - fMiniPercent*0.5f;
+	
+	// don't divide by 0
+	if( fabsf(fZoom) < 0.01 )
+		fZoom = 0.01f;
 
 	float fPercentReverse = pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(iCol);
 	fShiftOut = SCALE( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
