@@ -68,6 +68,7 @@ protected:
 	void MenuRight( PlayerNumber pn, const InputEventType type )	{ ChangeValueInRow(pn,+1,type != IET_FIRST_PRESS); }
 	void MenuUp( PlayerNumber pn, const InputEventType type );
 	void MenuDown( PlayerNumber pn, const InputEventType type );
+	void MenuSelect( PlayerNumber pn, const InputEventType type );
 	void MenuUpDown( PlayerNumber pn, const InputEventType type, int iDir );	// iDir == -1 or iDir == +1
 
 	/* Returns -1 if on a row with no OptionRowDefinition (eg. EXIT). */

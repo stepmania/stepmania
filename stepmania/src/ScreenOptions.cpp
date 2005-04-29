@@ -1091,6 +1091,11 @@ void ScreenOptions::MenuDown( PlayerNumber pn, const InputEventType type )
 	MenuUpDown( pn, type, +1 );
 }
 
+void ScreenOptions::MenuSelect( PlayerNumber pn, const InputEventType type )
+{
+	MenuUpDown( pn, type, -1 );
+}
+
 void ScreenOptions::MenuUpDown( PlayerNumber pn, const InputEventType type, int iDir )
 {
 	ASSERT( iDir == -1 || iDir == +1 );
