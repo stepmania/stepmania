@@ -313,8 +313,6 @@ void PaneDisplay::SetContent( PaneContents c )
 			 * be any higher, we don't need to display the decimal places.
 			 * Display 1.0 as "100%" instead. */
 			str = PercentageDisplay::FormatPercentScore( val );
-			if( str == "100.00%" )
-				str = "100%";
 			break;
 		case SONG_NUM_STEPS:
 		case SONG_JUMPS:
