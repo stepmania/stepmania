@@ -1619,25 +1619,25 @@ void ScreenGameplay::UpdateLights()
 		float fPositionSeconds = GAMESTATE->m_fMusicSeconds + LIGHTS_FALLOFF_SECONDS/2;	// trigger the light a tiny bit early
 		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
-		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
-		iRowNow = max( 0, iRowNow );
+		int iSongRow = BeatToNoteRowNotRounded( fSongBeat );
+		iSongRow = max( 0, iSongRow );
 		static int iRowLastCrossed = 0;
 
 		float fBeatLast = roundf(NoteRowToBeat(iRowLastCrossed));
-		float fBeatNow = roundf(NoteRowToBeat(iRowNow));
+		float fBeatNow = roundf(NoteRowToBeat(iSongRow));
 
 		bCrossedABeat = fBeatLast != fBeatNow;
 
 		FOREACH_CabinetLight( cl )
 		{	
 			// for each index we crossed since the last update:
-			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_CabinetLightsNoteData, cl, r, iRowLastCrossed+1, iRowNow+1 )
+			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_CabinetLightsNoteData, cl, r, iRowLastCrossed+1, iSongRow+1 )
 			{
 				bool bBlink = (m_CabinetLightsNoteData.GetTapNote( cl, r ).type != TapNote::empty );
 				bBlinkCabinetLight[cl] |= bBlink;
 			}
 
-			if( m_CabinetLightsNoteData.IsHoldNoteAtBeat( cl, iRowNow ) )
+			if( m_CabinetLightsNoteData.IsHoldNoteAtBeat( cl, iSongRow ) )
 				bBlinkCabinetLight[cl] |= true;
 		}
 
@@ -1646,7 +1646,7 @@ void ScreenGameplay::UpdateLights()
 			for( int t=0; t<m_Player[pn].m_NoteData.GetNumTracks(); t++ )
 			{
 				// for each index we crossed since the last update:
-				FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_Player[pn].m_NoteData, t, r, iRowLastCrossed+1, iRowNow+1 )
+				FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_Player[pn].m_NoteData, t, r, iRowLastCrossed+1, iSongRow+1 )
 				{
 					TapNote tn = m_Player[pn].m_NoteData.GetTapNote(t,r);
 					bool bBlink = (tn.type != TapNote::empty && tn.type != TapNote::mine);
@@ -1660,7 +1660,7 @@ void ScreenGameplay::UpdateLights()
 			}
 		}
 
-		iRowLastCrossed = iRowNow;
+		iRowLastCrossed = iSongRow;
 	}
 
 	{
