@@ -1900,6 +1900,24 @@ int NoteDataUtil::GetNumUsedTracks( const NoteData& in )
 	return in.GetNumTracks();
 }
 
+bool NoteDataUtil::AnyTapsAndHoldsInTrackRange( const NoteData& in, int iTrack, int iStart, int iEnd )
+{
+	if( iStart >= iEnd )
+		return false;
+
+	// for each index we crossed since the last update:
+	FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( in, iTrack, r, iStart, iEnd )
+	{
+		if( in.GetTapNote( iTrack, r ).type != TapNote::empty )
+			return true;
+	}
+
+	if( in.IsHoldNoteAtBeat( iTrack, iEnd ) )
+		return true;
+
+	return false;
+}
+
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
