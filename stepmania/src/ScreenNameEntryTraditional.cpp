@@ -622,6 +622,8 @@ void ScreenNameEntryTraditional::UpdateSelectionText( int pn )
 
 void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventType type )
 {
+	/* The screen may have started out with nobody entering, in which case we're
+	 * just showing scores and the first Start press moves on. */
 	if( !AnyStillEntering() )
 	{
 		AllFinished();
@@ -643,16 +645,7 @@ void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventTyp
 		break;
 
 	case CHAR_BACK:
-		if( !m_sSelection[pn].size()  )
-		{
-			m_soundInvalid.Play();
-			break;
-		}
-
-		m_sSelection[pn].erase( m_sSelection[pn].size()-1, 1 );
-		UpdateSelectionText( pn );
-		m_soundKey.Play();
-
+		Backspace( pn );
 		break;
 
 	default:
@@ -673,6 +666,16 @@ void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventTyp
 	}
 }
 
+void ScreenNameEntryTraditional::MenuSelect( PlayerNumber pn, const InputEventType type )
+{
+	if( !m_bStillEnteringName[pn] )
+		return;	// ignore
+	if( type != IET_FIRST_PRESS )
+		return;		// ignore
+
+	Backspace( pn );
+}
+
 void ScreenNameEntryTraditional::SelectChar( PlayerNumber pn, int c )
 {
 	FOREACH( int, m_AlphabetLetter[pn], letter )
@@ -685,6 +688,19 @@ void ScreenNameEntryTraditional::SelectChar( PlayerNumber pn, int c )
 		}
 	}
 	ASSERT( false );	// character not found
+}
+
+void ScreenNameEntryTraditional::Backspace( PlayerNumber pn )
+{
+	if( !m_sSelection[pn].size()  )
+	{
+		m_soundInvalid.Play();
+		return;
+	}
+
+	m_sSelection[pn].erase( m_sSelection[pn].size()-1, 1 );
+	UpdateSelectionText( pn );
+	m_soundKey.Play();
 }
 
 void ScreenNameEntryTraditional::MenuLeft( PlayerNumber pn, const InputEventType type )

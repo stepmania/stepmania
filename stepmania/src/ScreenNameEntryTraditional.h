@@ -52,6 +52,7 @@ public:
 	void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
 	void MenuStart( PlayerNumber pn, const InputEventType type );
+	void MenuSelect( PlayerNumber pn, const InputEventType type );
 	void MenuLeft( PlayerNumber pn, const InputEventType type );
 	void MenuRight( PlayerNumber pn, const InputEventType type );
 
@@ -63,6 +64,7 @@ private:
 	void UpdateSelectionText( int pn );
 	void ChangeDisplayedFeat();
 	void SelectChar( PlayerNumber pn, int c );
+	void Backspace( PlayerNumber pn );
 
 	ThemeMetric<float> FOV;
 	ThemeMetric<float> ALPHABET_GAP_X;
