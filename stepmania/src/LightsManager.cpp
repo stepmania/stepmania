@@ -8,7 +8,6 @@
 #include "InputMapper.h"
 #include "Game.h"
 #include "PrefsManager.h"
-#include "NoteData.h"
 #include "Actor.h"
 
 #include "arch/arch.h"
@@ -73,34 +72,6 @@ static float g_fCabinetLights[NUM_CABINET_LIGHTS];
 void LightsManager::BlinkActorLight( CabinetLight cl )
 {
 	g_fCabinetLightDuration[cl] = g_fLightEffectRiseSeconds;
-}
-
-/*
- * Using data from pLightData, blink actor lights (eg. "effectclock,MarqueeLrRight")
- * within [iStart,iEnd).  This is available even if no light driver is active.
- */
-void LightsManager::BlinkActorLightsBetween( int iStart, int iEnd, const NoteData *pLightData )
-{
-	if( iStart >= iEnd )
-		return;
-
-	FOREACH_CabinetLight( cl )
-	{
-		bool bBlinkCabinetLight = false;
-
-		// for each index we crossed since the last update:
-		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *pLightData, cl, r, iStart, iEnd )
-		{
-			if( pLightData->GetTapNote( cl, r ).type != TapNote::empty )
-				bBlinkCabinetLight |= true;
-		}
-
-		if( pLightData->IsHoldNoteAtBeat( cl, iEnd ) )
-			bBlinkCabinetLight |= true;
-
-		if( bBlinkCabinetLight )
-			g_fCabinetLightDuration[cl] = g_fLightEffectRiseSeconds;
-	}
 }
 
 float LightsManager::GetActorLightLatencySeconds() const
