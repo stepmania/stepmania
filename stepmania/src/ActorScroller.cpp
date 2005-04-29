@@ -53,7 +53,8 @@ void ActorScroller::Load(
 	const RageVector3	&vRotationDegrees,
 	const RageVector3	&vTranslateTerm0,
 	const RageVector3	&vTranslateTerm1,
-	const RageVector3	&vTranslateTerm2
+	const RageVector3	&vTranslateTerm2,
+	bool bUseMask
 	)
 {
 	m_fSecondsPerItem = fSecondsPerItem;
@@ -63,6 +64,7 @@ void ActorScroller::Load(
 	m_vTranslateTerm1 = vTranslateTerm1;
 	m_vTranslateTerm2 = vTranslateTerm2;
 	m_fQuantizePixels = 0;
+	m_bUseMask = bUseMask;
 
 	m_bLoaded = true;
 }

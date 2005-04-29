@@ -33,7 +33,8 @@ public:
 		const RageVector3	&vRotationDegrees,
 		const RageVector3	&vTranslateTerm0,
 		const RageVector3	&vTranslateTerm1,
-		const RageVector3	&vTranslateTerm2 );
+		const RageVector3	&vTranslateTerm2,
+		bool bUseMask = false );
 
 	void Load2(
 		float fNumItemsToDraw, 

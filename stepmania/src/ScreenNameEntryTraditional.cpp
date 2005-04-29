@@ -103,11 +103,12 @@ void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
 
 	ActorScroller::Load( 
 		0.2f,	// fSecondsPerItem
-		8,		// fNumItemsToDraw
+		9,		// fNumItemsToDraw
 		RageVector3(18,0,0),	// vRotationDegrees
 		RageVector3(0,0,90),	// vTranslateTerm0
 		RageVector3(0,0,0),		// vTranslateTerm1
-		RageVector3(0,0,0)		// vTranslateTerm2
+		RageVector3(0,0,0),		// vTranslateTerm2
+		true
 		);
 	Scroll();
 }
