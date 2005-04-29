@@ -45,6 +45,8 @@ LightsManager::LightsManager(CString sDriver)
 {
 	ZERO( m_fSecsLeftInCabinetLightBlink );
 	ZERO( m_fSecsLeftInGameButtonBlink );
+	ZERO( m_fActorLights );
+	ZERO( m_fSecsLeftInActorLightBlink );
 
 	m_LightsMode = LIGHTSMODE_JOINING;
 	m_pDriver = MakeLightsDriver(sDriver);
@@ -63,15 +65,9 @@ LightsManager::~LightsManager()
 static const float g_fLightEffectRiseSeconds = 0.075f;
 static const float g_fLightEffectFalloffSeconds = 0.35f;
 
-// duration to "power" an actor light
-static float g_fCabinetLightDuration[NUM_CABINET_LIGHTS];
-
-// current "power" of each actor light
-static float g_fCabinetLights[NUM_CABINET_LIGHTS];
-
 void LightsManager::BlinkActorLight( CabinetLight cl )
 {
-	g_fCabinetLightDuration[cl] = g_fLightEffectRiseSeconds;
+	m_fCabinetLightDuration[cl] = g_fLightEffectRiseSeconds;
 }
 
 float LightsManager::GetActorLightLatencySeconds() const
@@ -87,23 +83,23 @@ void LightsManager::Update( float fDeltaTime )
 	FOREACH_CabinetLight( cl )
 	{
 		float fTime = fDeltaTime;
-		float &fDuration = g_fCabinetLightDuration[cl];
+		float &fDuration = m_fCabinetLightDuration[cl];
 		if( fDuration > 0 )
 		{
 			/* The light has power left.  Brighten it. */
 			float fSeconds = min( fDuration, fTime );
 			fDuration -= fSeconds;
 			fTime -= fSeconds;
-			fapproach( g_fCabinetLights[cl], 1, fSeconds / g_fLightEffectRiseSeconds );
+			fapproach( m_fCabinetLights[cl], 1, fSeconds / g_fLightEffectRiseSeconds );
 		}
 
 		if( fTime > 0 )
 		{
 			/* The light is out of power.  Dim it. */
-			fapproach( g_fCabinetLights[cl], 0, fTime / g_fLightEffectFalloffSeconds );
+			fapproach( m_fCabinetLights[cl], 0, fTime / g_fLightEffectFalloffSeconds );
 		}
 
-		Actor::SetBGMLight( cl, g_fCabinetLights[cl] );
+		Actor::SetBGMLight( cl, m_fCabinetLights[cl] );
 	}
 
 	if( !IsEnabled() )

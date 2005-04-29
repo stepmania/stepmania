@@ -80,6 +80,8 @@ private:
 
 	float m_fSecsLeftInCabinetLightBlink[NUM_CABINET_LIGHTS];
 	float m_fSecsLeftInGameButtonBlink[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];
+	float m_fActorLights[NUM_CABINET_LIGHTS];	// current "power" of each actor light
+	float m_fSecsLeftInActorLightBlink[NUM_CABINET_LIGHTS];	// duration to "power" an actor light
 
 	LightsDriver* m_pDriver;
 	LightsMode m_LightsMode;
