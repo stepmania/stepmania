@@ -386,6 +386,14 @@ void RageLog::UnmapLog(const CString &key)
 	UpdateMappedLog();
 }
 
+void ShowWarning( const char *file, int line, const char *message )
+{
+	if( LOG != NULL )
+		LOG->Warn( "%s:%i: %s", file, line, message );
+	else
+		fprintf( stderr, "%s:%i: %s", file, line, message );
+}
+
 /*
  * Copyright (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.

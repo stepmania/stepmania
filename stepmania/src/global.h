@@ -106,6 +106,9 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
 #define ASSERT_M(COND, MESSAGE) { if(!(COND)) { FAIL_M(MESSAGE); } }
 #define ASSERT(COND) ASSERT_M((COND), "Assertion '" #COND "' failed")
 
+void ShowWarning( const char *file, int line, const char *message ); // don't pull in LOG here
+#define WARN(MESSAGE) (ShowWarning(__FILE__, __LINE__, MESSAGE))
+
 #ifdef DEBUG
 #define DEBUG_ASSERT(x)	ASSERT(x)
 #else
