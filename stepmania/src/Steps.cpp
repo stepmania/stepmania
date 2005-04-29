@@ -237,6 +237,13 @@ void Steps::Decompress() const
 
 void Steps::Compress() const
 {
+	/* Always leave lights data uncompressed. */
+	if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET && m_bNoteDataIsFilled )
+	{
+		m_sNoteDataCompressed = CString("");
+		return;
+	}
+
 	if( !m_sFilename.empty() )
 	{
 		/* We have a file on disk; clear all data in memory. */
