@@ -90,16 +90,16 @@ void LightsManager::Update( float fDeltaTime )
 			float fSeconds = min( fDuration, fTime );
 			fDuration -= fSeconds;
 			fTime -= fSeconds;
-			fapproach( g_fActorLights[cl], 1, fSeconds / g_fLightEffectRiseSeconds );
+			fapproach( m_fActorLights[cl], 1, fSeconds / g_fLightEffectRiseSeconds );
 		}
 
 		if( fTime > 0 )
 		{
 			/* The light is out of power.  Dim it. */
-			fapproach( g_fActorLights[cl], 0, fTime / g_fLightEffectFalloffSeconds );
+			fapproach( m_fActorLights[cl], 0, fTime / g_fLightEffectFalloffSeconds );
 		}
 
-		Actor::SetBGMLight( cl, g_fActorLights[cl] );
+		Actor::SetBGMLight( cl, m_fActorLights[cl] );
 	}
 
 	if( !IsEnabled() )
