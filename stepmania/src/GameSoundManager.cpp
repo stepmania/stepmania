@@ -39,12 +39,12 @@ static float g_fDimDurationRemaining = 0.0f;
 
 struct MusicPlaying
 {
-	bool m_TimingDelayed;
-	bool m_HasTiming;
+	bool m_bTimingDelayed;
+	bool m_bHasTiming;
 	/* The timing data that we're currently using. */
 	TimingData m_Timing;
 
-	/* If m_TimingDelayed is true, this will be the timing data for the song that's starting.
+	/* If m_bTimingDelayed is true, this will be the timing data for the song that's starting.
 	 * We'll copy it to m_Timing once sound is heard. */
 	TimingData m_NewTiming;
 	RageSound *m_Music;
@@ -52,8 +52,8 @@ struct MusicPlaying
 	{
 		m_Timing.AddBPMSegment( BPMSegment(0,120) );
 		m_NewTiming.AddBPMSegment( BPMSegment(0,120) );
-		m_HasTiming = false;
-		m_TimingDelayed = false;
+		m_bHasTiming = false;
+		m_bTimingDelayed = false;
 		m_Music = Music;
 	}
 
@@ -176,7 +176,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 
 	/* If we have an active timer, try to start on the next update.  Otherwise,
 	 * start now. */
-	if( !g_Playing->m_HasTiming && !g_UpdatingTimer )
+	if( !g_Playing->m_bHasTiming && !g_UpdatingTimer )
 		StartImmediately = true;
 	if( !ToPlay.align_beat )
 		StartImmediately = true;
@@ -209,10 +209,10 @@ static void StartMusic( MusicToPlay &ToPlay )
 	/* Important: don't hold the mutex while we load and seek the actual sound. */
 	L.Unlock();
 	{
-		NewMusic->m_HasTiming = ToPlay.HasTiming;
+		NewMusic->m_bHasTiming = ToPlay.HasTiming;
 		if( ToPlay.HasTiming )
 			NewMusic->m_NewTiming = ToPlay.timing_data;
-		NewMusic->m_TimingDelayed = true;
+		NewMusic->m_bTimingDelayed = true;
 //		NewMusic->m_Music->Load( ToPlay.file, false );
 
 		RageSoundParams p;
@@ -477,17 +477,17 @@ void GameSoundManager::Update( float fDeltaTime )
 	}
 
 	/* There's a delay between us calling Play() and the sound actually playing.
-	 * During this time, approximate will be true.  Keep using the previous timing
+	 * During this time, m_bApproximate will be true.  Keep using the previous timing
 	 * data until we get a non-approximate time, indicating that the sound has actually
 	 * started playing. */
-	bool approximate;
+	bool m_bApproximate;
 	RageTimer tm;
-	const float fSeconds = g_Playing->m_Music->GetPositionSeconds( &approximate, &tm );
+	const float fSeconds = g_Playing->m_Music->GetPositionSeconds( &m_bApproximate, &tm );
 
 	//
 	// Check for song timing skips.
 	//
-	if( PREFSMAN->m_bLogSkips && !g_Playing->m_TimingDelayed )
+	if( PREFSMAN->m_bLogSkips && !g_Playing->m_bTimingDelayed )
 	{
 		const float fExpectedTimePassed = (tm - GAMESTATE->m_LastBeatUpdate) * g_Playing->m_Music->GetPlaybackRate();
 		const float fSoundTimePassed = fSeconds - GAMESTATE->m_fMusicSeconds;
@@ -503,16 +503,19 @@ void GameSoundManager::Update( float fDeltaTime )
 		sLastFile = ThisFile;
 	}
 
-	if( g_Playing->m_TimingDelayed && !approximate )
+	//
+	// If g_Playing->m_bTimingDelayed, we're waiting for the new music to actually start
+	// playing.
+	//
+	if( g_Playing->m_bTimingDelayed && !m_bApproximate )
 	{
-		/* We've passed the start position of the new sound, so we should be OK.
-		 * Load up the new timing data. */
+		/* Load up the new timing data. */
 		g_Playing->m_Timing = g_Playing->m_NewTiming;
 		g_Playing->m_LightData = g_Playing->m_NewLightData;
-		g_Playing->m_TimingDelayed = false;
+		g_Playing->m_bTimingDelayed = false;
 	}
 
-	if( g_Playing->m_TimingDelayed )
+	if( g_Playing->m_bTimingDelayed )
 	{
 		/* We're still waiting for the new sound to start playing, so keep using the
 		 * old timing data and fake the time. */
