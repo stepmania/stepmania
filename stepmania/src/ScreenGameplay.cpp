@@ -1632,57 +1632,43 @@ void ScreenGameplay::UpdateLights()
 			// for each index we crossed since the last update:
 			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_CabinetLightsNoteData, cl, r, iRowLastCrossed+1, iSongRow+1 )
 			{
-				bool bBlink = (m_CabinetLightsNoteData.GetTapNote( cl, r ).type != TapNote::empty );
-				bBlinkCabinetLight[cl] |= bBlink;
+				if( m_CabinetLightsNoteData.GetTapNote( cl, r ).type != TapNote::empty )
+					bBlinkCabinetLight[cl] = true;
 			}
 
 			if( m_CabinetLightsNoteData.IsHoldNoteAtBeat( cl, iSongRow ) )
-				bBlinkCabinetLight[cl] |= true;
+				bBlinkCabinetLight[cl] = true;
 		}
 
 		FOREACH_EnabledPlayer( pn )
 		{
 			for( int t=0; t<m_Player[pn].m_NoteData.GetNumTracks(); t++ )
 			{
+				bool bBlink = false;
+
 				// for each index we crossed since the last update:
 				FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( m_Player[pn].m_NoteData, t, r, iRowLastCrossed+1, iSongRow+1 )
 				{
 					TapNote tn = m_Player[pn].m_NoteData.GetTapNote(t,r);
-					bool bBlink = (tn.type != TapNote::empty && tn.type != TapNote::mine);
-					if( bBlink )
-					{
-						StyleInput si( pn, t );
-						GameInput gi = pStyle->StyleInputToGameInput( si );
-						bBlinkGameButton[gi.controller][gi.button] |= bBlink;
-					}
+					if( tn.type != TapNote::empty && tn.type != TapNote::mine )
+						bBlink = true;
+				}
+
+				// check if a hold should be active
+				if( m_Player[pn].m_NoteData.IsHoldNoteAtBeat( t, iSongRow ) )
+					bBlink = true;
+
+				if( bBlink )
+				{
+					StyleInput si( pn, t );
+					GameInput gi = pStyle->StyleInputToGameInput( si );
+					bBlinkGameButton[gi.controller][gi.button] = true;
 				}
 			}
 		}
 
 		iRowLastCrossed = iSongRow;
 	}
-
-	{
-		// check for active HoldNotes
-		float fPositionSeconds = GAMESTATE->m_fMusicSeconds + LIGHTS_FALLOFF_SECONDS/2;	// trigger the light a tiny bit early
-		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
-		const int iSongRow = BeatToNoteRow( fSongBeat );
-
-		FOREACH_EnabledPlayer( pn )
-		{
-			// check if a hold should be active
-			for( int t=0; t < m_Player[pn].m_NoteData.GetNumTracks(); ++t )
-			{
-				if( m_Player[pn].m_NoteData.IsHoldNoteAtBeat( t, iSongRow ) )
-				{
-					StyleInput si( pn, t );
-					GameInput gi = pStyle->StyleInputToGameInput( si );
-					bBlinkGameButton[gi.controller][gi.button] |= true;
-				}
-			}
-		}
-	}
-
 
 	// Before the first beat of the song, blink all cabinet lights (except for 
 	// menu buttons) on the beat.
