@@ -67,7 +67,7 @@ static const float g_fLightEffectFalloffSeconds = 0.35f;
 
 void LightsManager::BlinkActorLight( CabinetLight cl )
 {
-	m_fCabinetLightDuration[cl] = g_fLightEffectRiseSeconds;
+	m_fSecsLeftInActorLightBlink[cl] = g_fLightEffectRiseSeconds;
 }
 
 float LightsManager::GetActorLightLatencySeconds() const
@@ -83,23 +83,23 @@ void LightsManager::Update( float fDeltaTime )
 	FOREACH_CabinetLight( cl )
 	{
 		float fTime = fDeltaTime;
-		float &fDuration = m_fCabinetLightDuration[cl];
+		float &fDuration = m_fSecsLeftInActorLightBlink[cl];
 		if( fDuration > 0 )
 		{
 			/* The light has power left.  Brighten it. */
 			float fSeconds = min( fDuration, fTime );
 			fDuration -= fSeconds;
 			fTime -= fSeconds;
-			fapproach( m_fCabinetLights[cl], 1, fSeconds / g_fLightEffectRiseSeconds );
+			fapproach( g_fActorLights[cl], 1, fSeconds / g_fLightEffectRiseSeconds );
 		}
 
 		if( fTime > 0 )
 		{
 			/* The light is out of power.  Dim it. */
-			fapproach( m_fCabinetLights[cl], 0, fTime / g_fLightEffectFalloffSeconds );
+			fapproach( g_fActorLights[cl], 0, fTime / g_fLightEffectFalloffSeconds );
 		}
 
-		Actor::SetBGMLight( cl, m_fCabinetLights[cl] );
+		Actor::SetBGMLight( cl, g_fActorLights[cl] );
 	}
 
 	if( !IsEnabled() )
