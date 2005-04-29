@@ -1713,11 +1713,17 @@ void ScreenGameplay::SendCrossedMessages()
 	FOREACH_EnabledPlayer( p )
 	{
 		if( GAMESTATE->m_pCurSteps[p]->GetDifficulty() == DIFFICULTY_BEGINNER )
+		{
 			pn = p;
+			break;
+		}
 	}
 	if( pn == PLAYER_INVALID )
 		return;
 
+	NoteData &nd = m_Player[pn].m_NoteData;
+
+	static int iRowLastCrossedAll[NUM_MESSAGES_TO_SEND] = { 0, 0, 0, 0 };
 	for( int i=0; i<NUM_MESSAGES_TO_SEND; i++ )
 	{
 		float fOffsetFromCurrentSeconds = MESSAGE_SPACING_SECONDS * i;
@@ -1727,12 +1733,11 @@ void ScreenGameplay::SendCrossedMessages()
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 		iRowNow = max( 0, iRowNow );
-		static int iRowLastCrossedAll[NUM_MESSAGES_TO_SEND] = { 0, 0, 0, 0 };
 		int &iRowLastCrossed = iRowLastCrossedAll[i];
 
-		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( m_Player[pn].m_NoteData, r, iRowLastCrossed+1, iRowNow+1 )
+		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, iRowLastCrossed+1, iRowNow+1 )
 		{
-			if( m_CabinetLightsNoteData.IsThereATapOrHoldHeadAtRow(r) )
+			if( nd.IsThereATapOrHoldHeadAtRow(r) )
 			{
 				LOG->Trace( "r = %d", r );
 				MESSAGEMAN->Broadcast( (Message)(MESSAGE_NOTE_CROSSED + i) );
