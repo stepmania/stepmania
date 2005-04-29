@@ -8,6 +8,8 @@
 #include "InputMapper.h"
 #include "Game.h"
 #include "PrefsManager.h"
+#include "NoteData.h"
+#include "Actor.h"
 
 #include "arch/arch.h"
 
@@ -58,8 +60,76 @@ LightsManager::~LightsManager()
 	SAFE_DELETE( m_pDriver );
 }
 
+// XXX: make themable
+static const float g_fLightEffectRiseSeconds = 0.075f;
+static const float g_fLightEffectFalloffSeconds = 0.35f;
+
+// duration to "power" an actor light
+static float g_fCabinetLightDuration[NUM_CABINET_LIGHTS];
+
+// current "power" of each actor light
+static float g_fCabinetLights[NUM_CABINET_LIGHTS];
+
+/*
+ * Using data from pLightData, blink actor lights (eg. "effectclock,MarqueeLrRight")
+ * within [iStart,iEnd).  This is available even if no light driver is active.
+ */
+void LightsManager::BlinkActorLightsBetween( int iStart, int iEnd, const NoteData *pLightData )
+{
+	if( iStart >= iEnd )
+		return;
+
+	FOREACH_CabinetLight( cl )
+	{
+		bool bBlinkCabinetLight = false;
+
+		// for each index we crossed since the last update:
+		FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( *pLightData, cl, r, iStart, iEnd )
+		{
+			if( pLightData->GetTapNote( cl, r ).type != TapNote::empty )
+				bBlinkCabinetLight |= true;
+		}
+
+		if( pLightData->IsHoldNoteAtBeat( cl, iEnd ) )
+			bBlinkCabinetLight |= true;
+
+		if( bBlinkCabinetLight )
+			g_fCabinetLightDuration[cl] = g_fLightEffectRiseSeconds;
+	}
+}
+
+float LightsManager::GetActorLightLatencySeconds() const
+{
+	return g_fLightEffectRiseSeconds;
+}
+
 void LightsManager::Update( float fDeltaTime )
 {
+	//
+	// Update actor effect lights.
+	//
+	FOREACH_CabinetLight( cl )
+	{
+		float fTime = fDeltaTime;
+		float &fDuration = g_fCabinetLightDuration[cl];
+		if( fDuration > 0 )
+		{
+			/* The light has power left.  Brighten it. */
+			float fSeconds = min( fDuration, fTime );
+			fDuration -= fSeconds;
+			fTime -= fSeconds;
+			fapproach( g_fCabinetLights[cl], 1, fSeconds / g_fLightEffectRiseSeconds );
+		}
+
+		if( fTime > 0 )
+		{
+			/* The light is out of power.  Dim it. */
+			fapproach( g_fCabinetLights[cl], 0, fTime / g_fLightEffectFalloffSeconds );
+		}
+
+		Actor::SetBGMLight( cl, g_fCabinetLights[cl] );
+	}
+
 	if( !IsEnabled() )
 		return;
 
