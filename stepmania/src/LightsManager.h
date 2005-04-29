@@ -61,6 +61,7 @@ public:
 
 	void BlinkCabinetLight( CabinetLight cl );
 	void BlinkGameButton( GameInput gi );
+	void BlinkActorLight( CabinetLight cl );
 	void BlinkActorLightsBetween( int iStart, int iEnd, const NoteData *pLightData );
 	float GetActorLightLatencySeconds() const;
 

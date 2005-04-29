@@ -70,6 +70,11 @@ static float g_fCabinetLightDuration[NUM_CABINET_LIGHTS];
 // current "power" of each actor light
 static float g_fCabinetLights[NUM_CABINET_LIGHTS];
 
+void LightsManager::BlinkActorLight( CabinetLight cl )
+{
+	g_fCabinetLightDuration[cl] = g_fLightEffectRiseSeconds;
+}
+
 /*
  * Using data from pLightData, blink actor lights (eg. "effectclock,MarqueeLrRight")
  * within [iStart,iEnd).  This is available even if no light driver is active.
