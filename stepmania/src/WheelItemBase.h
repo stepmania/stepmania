@@ -16,7 +16,13 @@ struct WheelItemBaseData;
 enum WheelItemType 
 {
 	TYPE_GENERIC,
-	TYPE_GROUP
+	TYPE_SECTION, 
+	TYPE_SONG, 
+	TYPE_ROULETTE, 
+	TYPE_RANDOM, 
+	TYPE_PORTAL, 
+	TYPE_COURSE, 
+	TYPE_SORT 
 };
 
 class WheelItemBase : public ActorFrame
@@ -25,23 +31,18 @@ public:
 	WheelItemBase();
 	WheelItemBaseData* data;
 	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
-	virtual void SetZTestMode( ZTestMode mode );
-	virtual void SetZWrite( bool b );
+	virtual void DrawPrimitives(Sprite& bar);
+	virtual void DrawPrimitives() { DrawPrimitives( m_sprBar ); }
 	
 	virtual void LoadFromWheelItemBaseData( WheelItemBaseData* pWID );
 
 	float				m_fPercentGray;
 
-	// for TYPE_GENERIC
 	Sprite	m_sprBar;
 	BitmapText m_text;
-
 	WheelItemType m_Type;
 	RageColor m_color;
 
-	// for TYPE_SORT
-	ActorFrame m_All;
 };
 
 struct WheelItemBaseData
@@ -53,10 +54,6 @@ struct WheelItemBaseData
 	CString			m_sText;
 	RageColor		m_color;	// either text color or section background color
 	WheelNotifyIcon::Flags  m_Flags;
-
-	// for TYPE_SORT
-//	CString			m_sLabel;
-//	GameCommand		m_Action;
 };
 
 #endif

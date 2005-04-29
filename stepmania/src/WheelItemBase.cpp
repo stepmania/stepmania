@@ -14,19 +14,11 @@
 #include "Course.h"
 #include "ProfileManager.h"
 #include "ActorUtil.h"
+#include "ThemeMetric.h"
 
-
-// WheelItem stuff
-#define ICON_X			THEME->GetMetricF("WheelItemBase","IconX")
-#define SONG_NAME_X		THEME->GetMetricF("WheelItemBase","SongNameX")
-#define SECTION_NAME_X	THEME->GetMetricF("WheelItemBase","SectionNameX")
-#define SECTION_ZOOM	THEME->GetMetricF("WheelItemBase","SectionZoom")
-#define ROULETTE_X		THEME->GetMetricF("WheelItemBase","RouletteX")
-#define ROULETTE_ZOOM	THEME->GetMetricF("WheelItemBase","RouletteZoom")
-#define GRADE_X( p )	THEME->GetMetricF("WheelItemBase",ssprintf("GradeP%dX",p+1))
-
-
-
+ThemeMetric<float>				TEXT_X			("WheelItemBase","TextX");
+ThemeMetric<float>				TEXT_Y			("WheelItemBase","TextY");
+ThemeMetric<apActorCommands>	TEXT_ON_COMMAND	("WheelItemBase","TextOnCommand");
 
 WheelItemBaseData::WheelItemBaseData( WheelItemType wit, CString sText, RageColor color )
 {
@@ -39,22 +31,19 @@ WheelItemBaseData::WheelItemBaseData( WheelItemType wit, CString sText, RageColo
 
 WheelItemBase::WheelItemBase()
 {
-//	data = new WheelItemBaseData;
-//	data->m_Type = TYPE_GENERIC;
 	SetName( "WheelItemBase" );
 
 	m_fPercentGray = 0;
 
 	m_sprBar.Load( THEME->GetPathG("WheelItemBase","bar") );
 	m_sprBar.SetXY( 0, 0 );
-	m_All.AddChild( &m_sprBar );
+	this->AddChild( &m_sprBar );
 
 	m_text.LoadFromFont( THEME->GetPathF("WheelItemBase","text") );
 	m_text.SetShadowLength( 0 );
-	m_text.SetVertAlign( align_middle );
-	m_text.SetXY( SECTION_NAME_X, 0 );
-	m_text.SetZoom( SECTION_ZOOM );
-	m_All.AddChild( &m_text );
+	m_text.SetXY( TEXT_X, TEXT_Y );
+	m_text.RunCommands( TEXT_ON_COMMAND );
+	this->AddChild( &m_text );
 }
 
 void WheelItemBase::LoadFromWheelItemBaseData( WheelItemBaseData* pWID )
@@ -84,69 +73,22 @@ void WheelItemBase::LoadFromWheelItemBaseData( WheelItemBaseData* pWID )
 void WheelItemBase::Update( float fDeltaTime )
 {
 	Actor::Update( fDeltaTime );
-	
-	switch( data->m_Type )
-	{
-	case TYPE_GENERIC:
-		m_sprBar.Update( fDeltaTime );
-		m_text.Update( fDeltaTime );
-		break;
-	default:
-		break;//ASSERT(0);
-	}
 }
 
-void WheelItemBase::DrawPrimitives()
+void WheelItemBase::DrawPrimitives(Sprite& bar)
 {
-	Sprite *bar = NULL;
-
-	switch( data->m_Type )
-	{
-	case TYPE_GENERIC: 
-		bar = &m_sprBar; 
-		break;
-	default: ASSERT(0);
-	}
-
-	bar = &m_sprBar;
-	bar->Draw();
-	m_text.Draw();
-	switch( data->m_Type )
-	{
-	case TYPE_GENERIC:
-		m_text.Draw();
-		break;
-	default:
-		ASSERT(0);
-	}
+	ActorFrame::DrawPrimitives();
 
 	if( m_fPercentGray > 0 )
 	{
-		bar->SetGlow( RageColor(0,0,0,m_fPercentGray) );
-		bar->SetDiffuse( RageColor(0,0,0,0) );
-		bar->Draw();
-		bar->SetDiffuse( RageColor(0,0,0,1) );
-		bar->SetGlow( RageColor(0,0,0,0) );
+		bar.SetGlow( RageColor(0,0,0,m_fPercentGray) );
+		bar.SetDiffuse( RageColor(0,0,0,0) );
+		bar.Draw();
+		bar.SetDiffuse( RageColor(0,0,0,1) );
+		bar.SetGlow( RageColor(0,0,0,0) );
 	}
 }
-
-
-void WheelItemBase::SetZTestMode( ZTestMode mode )
-{
-	ActorFrame::SetZTestMode( mode );
-
-	// set all sub-Actors
-	m_All.SetZTestMode( mode );
-}
-
-void WheelItemBase::SetZWrite( bool b )
-{
-	ActorFrame::SetZWrite( b );
-
-	// set all sub-Actors
-	m_All.SetZWrite( b );
-}
-
+  
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard, Josh Allen
  * All rights reserved.

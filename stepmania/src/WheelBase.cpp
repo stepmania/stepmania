@@ -17,12 +17,7 @@
 #include "ThemeMetric.h"
 #include "ScreenDimensions.h"
 
-#define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
 
-// leaving this one under ScreenSelectMusic because that is the only place it takes effect anyway.
-//ThemeMetric<CString> DEFAULT_SORT				("ScreenSelectMusic","DefaultSort");
-
-//static CString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",int(i+1)); }
 static CString CHOICE_NAME( CString s )			{ return ssprintf("Choice%s",s.c_str()); }
 		
 const int MAX_WHEEL_SOUND_SPEED = 15;
@@ -49,7 +44,6 @@ void WheelBase::Load( CString sType )
 
 	LoadFromMetrics( sType );
 	LoadVariables();
-//	SECTION_COLORS				.Load(sType,SECTION_COLORS_NAME,NUM_SECTION_COLORS);
 
 	FOREACH( WheelItemBase*, m_WheelBaseItems, i )
 		SAFE_DELETE( *i );
@@ -184,11 +178,8 @@ void WheelBase::DrawPrimitives()
 }
 
 
-void WheelBase::DrawItem( int i )
+void WheelBase::DrawItem( int i, WheelItemBase *display, const float fThisBannerPositionOffsetFromSelection)
 {
-	WheelItemBase *display = m_WheelBaseItems[i];
-
-	const float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 	if( fabsf(fThisBannerPositionOffsetFromSelection) > NUM_WHEEL_ITEMS_TO_DRAW/2 )
 		return;
 
@@ -210,10 +201,9 @@ void WheelBase::DrawItem( int i )
 	display->Draw();
 }
 
-
-void WheelBase::UpdateScrollbar()
+void WheelBase::UpdateScrollbar(unsigned int size)
 {
-	int total_num_items = m_WheelBaseItemsData.size();
+	int total_num_items = size;
 	float item_at=m_iSelection - m_fPositionOffsetFromSelection;
 
 	if(NUM_WHEEL_ITEMS >= total_num_items)
@@ -245,11 +235,8 @@ void WheelBase::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	for( unsigned i = 0; i < unsigned(NUM_WHEEL_ITEMS); i++)
-	{
-		m_WheelBaseItems[i]->Update( fDeltaTime );
-	}
-/*
+	UpdateItems(fDeltaTime);
+
 	//Moved to CommonUpdateProcedure, seems to work fine
 	//Revert if it happens to break something
 	UpdateScrollbar();
@@ -259,58 +246,14 @@ void WheelBase::Update( float fDeltaTime )
 		m_TimeBeforeMovingBegins -= fDeltaTime;
 		m_TimeBeforeMovingBegins = max(m_TimeBeforeMovingBegins, 0);
 	}
-*/
+
 	// update wheel state
 	m_fTimeLeftInState -= fDeltaTime;
 	if( m_fTimeLeftInState <= 0 )	// time to go to a new state
 	{
-		switch( m_WheelState )
-		{
-		case STATE_TWEENING_ON_SCREEN:
-			m_fTimeLeftInState = 0;
-			if( (GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage) || GAMESTATE->IsExtraStage2() )
-			{
-				m_WheelState = STATE_LOCKED;
-				SCREENMAN->PlayStartSound();
-				m_fLockedWheelVelocity = 0;
-			}
-			else
-			{
-				m_WheelState = STATE_SELECTING_GENERIC;
-			}
-			break;
-		case STATE_TWEENING_OFF_SCREEN:
-			m_WheelState = STATE_WAITING_OFF_SCREEN;
-			m_fTimeLeftInState = 0;
-			break;
-		case STATE_SELECTING_GENERIC:
-			m_fTimeLeftInState = 0;
-			break;
-		case STATE_WAITING_OFF_SCREEN:
-			break;
-		case STATE_LOCKED:
-			break;
-		default:
-			ASSERT(0);	// all state changes should be handled explicitly
-			break;
-		}
+		UpdateSwitch();
 	}
 
-	CommonUpdateProcedure(fDeltaTime);
-}
-
-void WheelBase::CommonUpdateProcedure(float fDeltaTime) {
-
-	//This bit of code now happens after it's normal execution, but it seems to work fine.
-	UpdateScrollbar();
-
-	if( m_Moving )
-	{
-		m_TimeBeforeMovingBegins -= fDeltaTime;
-		m_TimeBeforeMovingBegins = max(m_TimeBeforeMovingBegins, 0);
-	}
-
-	//The following code is just fine here.
 	if( m_WheelState == STATE_LOCKED )
 	{
 		/* Do this in at most .1 sec chunks, so we don't get weird if we
@@ -388,6 +331,46 @@ void WheelBase::CommonUpdateProcedure(float fDeltaTime) {
 	}
 }
 
+void WheelBase::UpdateItems(float fDeltaTime) {
+	for( unsigned i = 0; i < unsigned(NUM_WHEEL_ITEMS); i++)
+	{
+		m_WheelBaseItems[i]->Update( fDeltaTime );
+	}
+}
+
+void WheelBase::UpdateSwitch() {
+	switch( m_WheelState )
+	{
+	case STATE_TWEENING_ON_SCREEN:
+		m_fTimeLeftInState = 0;
+		if( (GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage) || GAMESTATE->IsExtraStage2() )
+		{
+			m_WheelState = STATE_LOCKED;
+			SCREENMAN->PlayStartSound();
+			m_fLockedWheelVelocity = 0;
+		}
+	else
+		{
+			m_WheelState = STATE_SELECTING_GENERIC;
+		}
+		break;
+	case STATE_TWEENING_OFF_SCREEN:
+		m_WheelState = STATE_WAITING_OFF_SCREEN;
+		m_fTimeLeftInState = 0;
+		break;
+	case STATE_SELECTING_GENERIC:
+		m_fTimeLeftInState = 0;
+		break;
+	case STATE_WAITING_OFF_SCREEN:
+		break;
+	case STATE_LOCKED:
+		break;
+	default:
+		ASSERT(0);	// all state changes should be handled explicitly
+		break;
+	}
+}
+
 bool WheelBase::Select()	// return true if this selection ends the screen
 {
 	LOG->Trace( "WheelBase::Select()" );
@@ -450,6 +433,15 @@ void WheelBase::TweenOnScreen(bool changing_sort)
 	m_ScrollBar.BeginTweening( 0.2f , Actor::TWEEN_ACCELERATE );
 	m_ScrollBar.AddX( -30 );
 
+	TweenOnScreenUpdateItems(changing_sort);
+
+	if( changing_sort )
+		HurryTweening( 0.25f );
+
+	m_fTimeLeftInState = GetTweenTimeLeft() + 0.100f;
+}
+
+void WheelBase::TweenOnScreenUpdateItems(bool changing_sort) {
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		WheelItemBase *display = m_WheelBaseItems[i];
@@ -463,11 +455,6 @@ void WheelBase::TweenOnScreen(bool changing_sort)
 		if( changing_sort )
 			display->HurryTweening( 0.25f );
 	}
-
-	if( changing_sort )
-		HurryTweening( 0.25f );
-
-	m_fTimeLeftInState = GetTweenTimeLeft() + 0.100f;
 }
 						   
 void WheelBase::TweenOffScreen(bool changing_sort)
@@ -493,6 +480,16 @@ void WheelBase::TweenOffScreen(bool changing_sort)
 	m_ScrollBar.BeginTweening( 0.2f, Actor::TWEEN_ACCELERATE );
 	m_ScrollBar.SetX( SCROLL_BAR_X+30 );	
 
+	TweenOffScreenUpdateItems(changing_sort);
+
+	if( changing_sort )
+		HurryTweening( 0.25f );
+
+	m_fTimeLeftInState = GetTweenTimeLeft() + 0.100f;
+}
+
+void WheelBase::TweenOffScreenUpdateItems(bool changing_sort)
+{
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 	{
 		WheelItemBase *display = m_WheelBaseItems[i];
@@ -506,11 +503,6 @@ void WheelBase::TweenOffScreen(bool changing_sort)
 		if( changing_sort )
 			display->HurryTweening( 0.25f );
 	}
-
-	if( changing_sort )
-		HurryTweening( 0.25f );
-
-	m_fTimeLeftInState = GetTweenTimeLeft() + 0.100f;
 }
 
 void WheelBase::Move(int n)
@@ -529,6 +521,18 @@ void WheelBase::Move(int n)
 		return;
 	}
 
+	if (!MoveSpecific(n))
+		return;
+
+	m_TimeBeforeMovingBegins = 1/4.0f;
+	m_SpinSpeed = float(PREFSMAN->m_iMusicWheelSwitchSpeed);
+	m_Moving = n;
+	
+	if(m_Moving)
+		ChangeMusic(m_Moving);
+}
+
+bool WheelBase::MoveSpecific(int n) {
 	/* If we're not selecting, discard this.  We won't ignore it; we'll
 	 * get called again every time the key is repeated. */
 	/* Still process Move(0) so we sometimes continue moving immediate 
@@ -541,10 +545,10 @@ void WheelBase::Move(int n)
 	case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 	case STATE_FLYING_ON_AFTER_NEXT_SORT:
 		if( n!= 0 )
-			return;
+			return false;
 		break;
 	default:
-		return;	// don't continue
+		return false;	// don't continue
 	}
 
 	if(m_Moving != 0 && n == 0 && m_TimeBeforeMovingBegins == 0)
@@ -560,12 +564,7 @@ void WheelBase::Move(int n)
 //		SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 	}
 
-	m_TimeBeforeMovingBegins = 1/4.0f;
-	m_SpinSpeed = float(PREFSMAN->m_iMusicWheelSwitchSpeed);
-	m_Moving = n;
-	
-	if(m_Moving)
-		ChangeMusic(m_Moving);
+	return true;
 }
 
 void WheelBase::AddItem(WheelItemBaseData* itemdata)

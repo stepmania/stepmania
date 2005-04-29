@@ -13,9 +13,7 @@
 #include "WheelItemBase.h"
 #include "ThemeMetric.h"
 
-//AutoScreenMessage( SM_SongChanged );		// TODO: Replace this with a Message and MESSAGEMAN
-
-//struct CompareSongPointerArrayBySectionName;
+#define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
 
 class WheelBase : public ActorFrame
 {
@@ -26,24 +24,25 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-	void DrawItem( int index );
+	virtual void DrawItem( int i, WheelItemBase *display, const float fThisBannerPositionOffsetFromSelection);
+	virtual void DrawItem( int i ) { DrawItem( i, m_WheelBaseItems[i], i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection ); }
 
-	virtual void TweenOnScreen(bool changing_sort);
-	virtual void TweenOffScreen(bool changing_sort);
-	virtual void TweenOnScreen() { TweenOnScreen(false); }
-	virtual void TweenOffScreen() { TweenOffScreen(false); }
+	void TweenOnScreen(bool changing_sort);
+	void TweenOffScreen(bool changing_sort);
+	void TweenOnScreen() { TweenOnScreen(false); }
+	void TweenOffScreen() { TweenOffScreen(false); }
 
 	void Move(int n);
 	virtual void ChangeMusic(int dist); /* +1 or -1 */
 
 	/* Return true if we're moving fast automatically. */
 	int IsMoving() const;
-	bool IsSettled() const;
+	virtual bool IsSettled() const;
 
 	void GetItemPosition( float fPosOffsetsFromMiddle, float& fX_out, float& fY_out, float& fZ_out, float& fRotationX_out );
 	void SetItemPosition( Actor &item, float fPosOffsetsFromMiddle );
 
-	bool Select();	// return true if this selection ends the screen
+	virtual bool Select();	// return true if this selection ends the screen
 
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
 	void RebuildWheelItems( int dist = -999999 );	// -999999 = refresh all
@@ -53,12 +52,15 @@ public:
 	WheelItemBaseData* LastSelected();
 
 protected:
-	virtual void LoadFromMetrics( CString sType );
+	void LoadFromMetrics( CString sType );
 	void LoadVariables();
-	void CommonUpdateProcedure(float fDeltaTime);
+	virtual void UpdateSwitch();
+	virtual void UpdateItems(float fDeltaTime);
+	virtual void TweenOnScreenUpdateItems(bool changing_sort);
+	virtual void TweenOffScreenUpdateItems(bool changing_sort);
+	virtual bool MoveSpecific(int n);
 
 	virtual void BuildWheelItemsData( vector<WheelItemBaseData *> &arrayWheelItemDatas );
-//	bool SelectModeMenuItem();
 	int FirstVisibleIndex();
 
 	ScrollBar			m_ScrollBar;
@@ -102,7 +104,8 @@ protected:
 	RageSound m_soundLocked;
 
 //	bool WheelItemIsVisible(int n);
-	void UpdateScrollbar();
+	virtual inline void UpdateScrollbar() { UpdateScrollbar(m_WheelBaseItemsData.size()); }
+	void UpdateScrollbar(unsigned int size);
 
 	ThemeMetric<float>	SWITCH_SECONDS;
 	ThemeMetric<float> LOCKED_INITIAL_VELOCITY;
@@ -119,7 +122,6 @@ protected:
 	ThemeMetric<float> WHEEL_ITEM_ON_DELAY_OFFSET;
 	ThemeMetric<float> WHEEL_ITEM_OFF_DELAY_CENTER;
 	ThemeMetric<float> WHEEL_ITEM_OFF_DELAY_OFFSET;
-//	ThemeMetric1D<RageColor> SECTION_COLORS;
 };
 
 #endif
