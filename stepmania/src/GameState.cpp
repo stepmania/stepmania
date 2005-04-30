@@ -1998,6 +1998,7 @@ public:
 	static int GetEasiestStepsDifficulty( T* p, lua_State *L ){ lua_pushnumber(L, p->GetEasiestStepsDifficulty() ); return 1; }
 	static int IsEventMode( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsEventMode() ); return 1; }
 	static int GetNumPlayersEnabled( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumPlayersEnabled() ); return 1; }
+	static int GetSongBeat( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_fSongBeat ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -2031,6 +2032,7 @@ public:
 		ADD_METHOD( GetEasiestStepsDifficulty )
 		ADD_METHOD( IsEventMode )
 		ADD_METHOD( GetNumPlayersEnabled )
+		ADD_METHOD( GetSongBeat )
 
 		Luna<T>::Register( L );
 
