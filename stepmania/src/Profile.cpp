@@ -715,10 +715,10 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 // Loading and saving
 //
 
-#define WARN	LOG->Warn("Error parsing file at %s:%d",__FILE__,__LINE__);
-#define WARN_AND_RETURN { WARN; return; }
-#define WARN_AND_CONTINUE { WARN; continue; }
-#define WARN_AND_BREAK { WARN; break; }
+#define WARN_PARSER	LOG->Warn("Error parsing file at %s:%d",__FILE__,__LINE__);
+#define WARN_AND_RETURN { WARN_PARSER; return; }
+#define WARN_AND_CONTINUE { WARN_PARSER; continue; }
+#define WARN_AND_BREAK { WARN_PARSER; break; }
 #define WARN_M(m)	LOG->Warn("Error parsing file at %s:%d: %s",__FILE__,__LINE__, (const char*) (m) );
 #define WARN_AND_RETURN_M(m) { WARN_M(m); return; }
 #define WARN_AND_CONTINUE_M(m) { WARN_M(m); continue; }
