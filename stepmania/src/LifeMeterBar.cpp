@@ -102,9 +102,6 @@ LifeMeterBar::~LifeMeterBar()
 void LifeMeterBar::Load( PlayerNumber pn )
 {
 	LifeMeter::Load( pn );
-
-	if( pn == PLAYER_2 )
-		m_pStream->SetZoomX( -1 );
 }
 
 void LifeMeterBar::ChangeLife( TapNoteScore score )
