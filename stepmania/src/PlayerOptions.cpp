@@ -195,31 +195,11 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 	CStringArray asBits;
 	split( sOptions, ",", asBits, true );
 
-	for( unsigned i=0; i<asBits.size(); i++ )
+	FOREACH( CString, asBits, bit )
 	{
-		CString& sBit = asBits[i];
+		CString& sBit = *bit;
 		TrimLeft(sBit);
 		TrimRight(sBit);
-
-		int i1;
-
-		Regex mult("^([0-9]+(\\.[0-9]+)?)x$");
-		vector<CString> matches;
-		if( mult.Compare(sBit, matches) )
-		{
-			m_fTimeSpacing = 0.0f;
-			char *p = NULL;
-			m_fScrollSpeed = strtof( matches[0], &p );
-			ASSERT( p != matches[0] );
-			continue;
-		}
-
-		else if( sscanf( sBit, "c%d", &i1 ) == 1 )
-		{
-			m_fTimeSpacing = 1.0f;
-			m_fScrollBPM = (float) i1;
-			continue;
-		}
 
 		/* "drunk"
 		 * "no drunk"
@@ -251,11 +231,27 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 				sscanf( *s, "*%f", &speed );
 			}
 		}
+
+		
 		sBit = asParts.back();
 
 #define SET_FLOAT( opt ) { m_ ## opt = level; m_Speed ## opt = speed; }
 		const bool on = (level > 0.5f);
-			 if( sBit == "clearall" )	Init();
+
+		Regex mult("^([0-9]+(\\.[0-9]+)?)x$");
+		vector<CString> matches;
+		if( mult.Compare(sBit, matches) )
+		{
+			char *p = NULL;
+			level = strtof( matches[0], &p );
+			ASSERT( p != matches[0] );
+			SET_FLOAT( fScrollSpeed )
+		}
+		else if( sscanf( sBit, "c%f", &level ) == 1 )
+		{
+			SET_FLOAT( fScrollBPM )
+		}
+		else if( sBit == "clearall" )	Init();
 		else if( sBit == "boost" )		SET_FLOAT( fAccels[ACCEL_BOOST] )
 		else if( sBit == "brake" || sBit == "land" ) SET_FLOAT( fAccels[ACCEL_BRAKE] )
 		else if( sBit == "wave" )		SET_FLOAT( fAccels[ACCEL_WAVE] )
