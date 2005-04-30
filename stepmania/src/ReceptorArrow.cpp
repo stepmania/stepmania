@@ -10,10 +10,14 @@
 #include "Game.h"
 #include "PlayerState.h"
 
+// eventually, these will replace the pressblocks
+const CString PRESS_COMMAND_NAME = "Press";
+const CString LIFT_COMMAND_NAME = "Lift";
 
 ReceptorArrow::ReceptorArrow()
 {
 	m_bIsPressed = false;
+	m_bWasPressed = false;
 	StopAnimating();
 }
 
@@ -54,14 +58,28 @@ void ReceptorArrow::Update( float fDeltaTime )
 	// update pressblock alignment based on scroll direction
 	bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(m_iColNo) > 0.5;
 	m_pPressBlock->SetVertAlign( bReverse ? Actor::align_bottom : Actor::align_top );
+
+
+	m_pReceptorGo->SetHidden( !GAMESTATE->m_bPastHereWeGo );
+	m_pReceptorWaiting->SetHidden( GAMESTATE->m_bPastHereWeGo );
+
+
+	m_pPressBlock->SetHidden( !m_bIsPressed );
+
+
+	if( m_bWasPressed  &&  !m_bIsPressed )
+	{
+		m_pReceptorGo->PlayCommand( LIFT_COMMAND_NAME );
+		m_pReceptorWaiting->PlayCommand( LIFT_COMMAND_NAME );	
+	}
+
+	
+	m_bWasPressed = m_bIsPressed;
+	m_bIsPressed = false;	// it may get turned back on next update
 }
 
 void ReceptorArrow::DrawPrimitives()
 {
-	m_pReceptorGo->SetHidden( !GAMESTATE->m_bPastHereWeGo );
-	m_pReceptorWaiting->SetHidden( GAMESTATE->m_bPastHereWeGo );
-	m_pPressBlock->SetHidden( !m_bIsPressed );
-	m_bIsPressed = false;	// it may get turned back on next update
 
 	ActorFrame::DrawPrimitives();
 }
@@ -72,6 +90,9 @@ void ReceptorArrow::Step( TapNoteScore score )
 	m_pReceptorWaiting->FinishTweening();
 	m_pReceptorGo->RunCommands( *m_sScoreCommand[score] );
 	m_pReceptorWaiting->RunCommands( *m_sScoreCommand[score] );
+
+	m_pReceptorGo->PlayCommand( PRESS_COMMAND_NAME );
+	m_pReceptorWaiting->PlayCommand( PRESS_COMMAND_NAME );	
 }
 
 /*

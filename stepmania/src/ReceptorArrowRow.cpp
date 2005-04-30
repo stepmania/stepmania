@@ -37,7 +37,7 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 	for( int c=0; c<m_iNumCols; c++ )
 	{
 		m_ReceptorArrow[c].Update( fDeltaTime );
-		m_ReceptorArrow[c].SetDiffuse( RageColor(1,1,1,1 - m_pPlayerState->m_CurrentPlayerOptions.m_fDark) );
+		m_ReceptorArrow[c].SetBaseAlpha( 1 - m_pPlayerState->m_CurrentPlayerOptions.m_fDark );
 
 		// set arrow XYZ
 		const float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
