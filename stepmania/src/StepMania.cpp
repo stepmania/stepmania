@@ -71,7 +71,7 @@
 #include "Archutils/Xbox/VirtualMemory.h"
 #endif
 
-#if defined(WIN32)
+#if defined(WIN32) && !defined(XBOX)
 #include <windows.h>
 #endif
 

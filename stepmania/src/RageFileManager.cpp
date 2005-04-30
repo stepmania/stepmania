@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 #endif
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(XBOX)
 #include <windows.h>
 #endif
 
