@@ -5,8 +5,11 @@
 #include <xgraphics.h>
 #include <stdio.h>
 
+// Xbox base path
+#define SYS_BASE_PATH "D:\\"
+
 /* Stubs: */
-HRESULT CoInitialize( LPVOID pvReserved ) { return S_OK; }
-void CoUninitialize() { }
+inline HRESULT CoInitialize( LPVOID pvReserved ) { return S_OK; }
+inline void CoUninitialize() { }
 
 #endif
