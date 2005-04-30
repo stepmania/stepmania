@@ -10,59 +10,42 @@
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
 #include "GameCommand.h"
+#include "WheelItemBase.h"
+
 class Course;
 class Song;
 
 struct WheelItemData;
 
-class MusicWheelItem : public ActorFrame
+class MusicWheelItem : public WheelItemBase
 {
 public:
 	MusicWheelItem();
 
-	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
-
-	void LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded );
+	virtual void LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded );
 	void RefreshGrades();
 
 	WheelItemData *data;
-	float				m_fPercentGray;
 
-	Sprite				m_sprSongBar;
 	Sprite				m_sprSectionBar;
 	Sprite				m_sprExpandedBar;
 	WheelNotifyIcon		m_WheelNotifyIcon;
 	TextBanner			m_TextBanner;
-	BitmapText			m_textSectionName;
 	BitmapText			m_textRoulette;
 	BitmapText			m_textCourse;
 	BitmapText			m_textSort;
 	GradeDisplay		m_GradeDisplay[NUM_PLAYERS];
+
+void DrawPrimitives() { WheelItemBase::DrawPrimitives(m_sprBar.GetVisible() ? m_sprBar : (m_sprSectionBar.GetVisible() ? m_sprSectionBar : m_sprExpandedBar)); }
 };
 
-enum WheelItemType 
-{
-	TYPE_SECTION, 
-	TYPE_SONG, 
-	TYPE_ROULETTE, 
-	TYPE_RANDOM, 
-	TYPE_PORTAL, 
-	TYPE_COURSE, 
-	TYPE_SORT 
-};
-
-struct WheelItemData
+struct WheelItemData : public WheelItemBaseData
 {
 	WheelItemData() {}
 	WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color );
 
-	WheelItemType	m_Type;
-	CString			m_sSectionName;
 	Course*			m_pCourse;
 	Song*			m_pSong;
-	RageColor		m_color;	// either text color or section background color
-	WheelNotifyIcon::Flags  m_Flags;
 
 	// for TYPE_SORT
 	CString			m_sLabel;

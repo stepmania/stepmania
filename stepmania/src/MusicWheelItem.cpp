@@ -36,13 +36,10 @@ ThemeMetric1D<float>			GRADE_Y				("MusicWheelItem",GRADE_Y_NAME,NUM_PLAYERS);
 
 
 WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color )
+	:WheelItemBaseData(wit, sSectionName, color)
 {
-	m_Type = wit;
 	m_pSong = pSong;
-	m_sSectionName = sSectionName;
 	m_pCourse = pCourse;
-	m_color = color;
-	m_Flags = WheelNotifyIcon::Flags();
 }
 
 
@@ -52,9 +49,9 @@ MusicWheelItem::MusicWheelItem()
 
 	SetName( "MusicWheelItem" );
 
-	m_sprSongBar.Load( THEME->GetPathG("MusicWheelItem","song") );
-	m_sprSongBar.SetXY( 0, 0 );
-	this->AddChild( &m_sprSongBar );
+	m_sprBar.Load( THEME->GetPathG("MusicWheelItem","song") );
+	m_sprBar.SetXY( 0, 0 );
+	this->AddChild( &m_sprBar );
 
 	m_sprSectionBar.Load( THEME->GetPathG("MusicWheelItem","section") );
 	m_sprSectionBar.SetXY( 0, 0 );
@@ -74,11 +71,11 @@ MusicWheelItem::MusicWheelItem()
 	m_TextBanner.RunCommands( SONG_NAME_ON_COMMAND );
 	this->AddChild( &m_TextBanner );
 
-	m_textSectionName.LoadFromFont( THEME->GetPathF("MusicWheelItem","section") );
-	m_textSectionName.SetShadowLength( 0 );
-	m_textSectionName.SetXY( SECTION_X, SECTION_Y );
-	m_textSectionName.RunCommands( SECTION_ON_COMMAND );
-	this->AddChild( &m_textSectionName );
+	m_text.LoadFromFont( THEME->GetPathF("MusicWheelItem","section") );
+	m_text.SetShadowLength( 0 );
+	m_text.SetXY( SECTION_X, SECTION_Y );
+	m_text.RunCommands( SECTION_ON_COMMAND );
+	this->AddChild( &m_text );
 
 	m_textRoulette.LoadFromFont( THEME->GetPathF("MusicWheelItem","roulette") );
 	m_textRoulette.SetShadowLength( 0 );
@@ -116,10 +113,10 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 	// hide all
 	m_WheelNotifyIcon.SetHidden( true );
 	m_TextBanner.SetHidden( true );
-	m_sprSongBar.SetHidden( true );
+	m_sprBar.SetHidden( true );
 	m_sprSectionBar.SetHidden( true );
 	m_sprExpandedBar.SetHidden( true );
-	m_textSectionName.SetHidden( true );
+	m_text.SetHidden( true );
 	m_textRoulette.SetHidden( true );
 	FOREACH_PlayerNumber( p )
 		m_GradeDisplay[p].SetHidden( true );
@@ -139,8 +136,8 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 			switch( pWID->m_Type )
 			{
 				case TYPE_SECTION:
-					sDisplayName = SONGMAN->ShortenGroupName(data->m_sSectionName);
-					bt = &m_textSectionName;
+					sDisplayName = SONGMAN->ShortenGroupName(data->m_sText);
+					bt = &m_text;
 					break;
 				case TYPE_COURSE:
 					sDisplayName = data->m_pCourse->GetFullDisplayTitle();
@@ -202,7 +199,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 		break;
 	case TYPE_SONG:		
 	case TYPE_COURSE:
-		m_sprSongBar.SetHidden( false );
+		m_sprBar.SetHidden( false );
 		break;
 	default: ASSERT(0);
 	}
@@ -235,28 +232,6 @@ void MusicWheelItem::RefreshGrades()
 		m_GradeDisplay[p].SetGrade( p, grade );
 	}
 }
-
-
-void MusicWheelItem::Update( float fDeltaTime )
-{
-	ActorFrame::Update( fDeltaTime );
-}
-
-void MusicWheelItem::DrawPrimitives()
-{
-	ActorFrame::DrawPrimitives();
-
-	if( m_fPercentGray > 0 )
-	{
-		Sprite &bar = m_sprSongBar.GetVisible() ? m_sprSongBar : (m_sprSectionBar.GetVisible() ? m_sprSectionBar : m_sprExpandedBar);
-		bar.SetGlow( RageColor(0,0,0,m_fPercentGray) );
-		bar.SetDiffuse( RageColor(0,0,0,0) );
-		bar.Draw();
-		bar.SetDiffuse( RageColor(0,0,0,1) );
-		bar.SetGlow( RageColor(0,0,0,0) );
-	}
-}
-
 
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard
