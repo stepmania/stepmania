@@ -426,12 +426,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenJukebox.h">
 			</File>
 			<File
-				RelativePath="ScreenJukeboxMenu.cpp">
-			</File>
-			<File
-				RelativePath="ScreenJukeboxMenu.h">
-			</File>
-			<File
 				RelativePath="ScreenLogo.cpp">
 			</File>
 			<File
@@ -442,6 +436,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenMapControllers.h">
+			</File>
+			<File
+				RelativePath=".\ScreenMessage.cpp">
 			</File>
 			<File
 				RelativePath="ScreenMessage.h">
@@ -703,6 +700,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			Name="Data Structures"
 			Filter="">
 			<File
+				RelativePath=".\ActorCommands.cpp">
+			</File>
+			<File
+				RelativePath=".\ActorCommands.h">
+			</File>
+			<File
 				RelativePath="Attack.cpp">
 			</File>
 			<File
@@ -743,6 +746,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\Command.h">
+			</File>
+			<File
+				RelativePath=".\CommonMetrics.cpp">
+			</File>
+			<File
+				RelativePath=".\CommonMetrics.h">
 			</File>
 			<File
 				RelativePath="Course.cpp">
@@ -838,10 +847,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="LuaFunctions.h">
 			</File>
 			<File
-				RelativePath="LuaHelpers.cpp">
+				RelativePath=".\LuaReference.cpp">
 			</File>
 			<File
-				RelativePath="LuaHelpers.h">
+				RelativePath=".\LuaReference.h">
 			</File>
 			<File
 				RelativePath="LyricsLoader.cpp">
@@ -925,6 +934,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="NoteTypes.h">
 			</File>
 			<File
+				RelativePath=".\OptionRowHandler.cpp">
+			</File>
+			<File
+				RelativePath=".\OptionRowHandler.h">
+			</File>
+			<File
 				RelativePath="PlayerAI.cpp">
 			</File>
 			<File
@@ -941,6 +956,18 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="PlayerOptions.h">
+			</File>
+			<File
+				RelativePath=".\PlayerStageStats.cpp">
+			</File>
+			<File
+				RelativePath=".\PlayerStageStats.h">
+			</File>
+			<File
+				RelativePath=".\PlayerState.cpp">
+			</File>
+			<File
+				RelativePath=".\PlayerState.h">
 			</File>
 			<File
 				RelativePath=".\Preference.cpp">
@@ -1124,12 +1151,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				<File
 					RelativePath="arch\arch_platform.h">
 				</File>
-				<File
-					RelativePath="arch\arch_Win32.h">
-				</File>
-				<File
-					RelativePath="arch\arch_xbox.h">
-				</File>
 				<Filter
 					Name="LoadingWindow"
 					Filter="">
@@ -1160,6 +1181,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_DSound.h">
+					</File>
+					<File
+						RelativePath=".\arch\Sound\RageSoundDriver_DSound_Software.cpp">
+					</File>
+					<File
+						RelativePath=".\arch\Sound\RageSoundDriver_DSound_Software.h">
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_Generic_Software.cpp">
@@ -1211,6 +1238,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					<File
 						RelativePath="arch\InputHandler\InputHandler_Xbox.h">
 					</File>
+					<File
+						RelativePath=".\arch\InputHandler\Selector_InputHandler.h">
+					</File>
 				</Filter>
 				<Filter
 					Name="MovieTexture"
@@ -1222,18 +1252,24 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 						RelativePath="arch\MovieTexture\MovieTexture.h">
 					</File>
 					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_FFMpeg.cpp">
+					</File>
+					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_FFMpeg.h">
+					</File>
+					<File
 						RelativePath="arch\MovieTexture\MovieTexture_Null.cpp">
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_Null.h">
 					</File>
+					<File
+						RelativePath=".\arch\MovieTexture\Selector_MovieTexture.h">
+					</File>
 				</Filter>
 				<Filter
 					Name="Lights"
 					Filter="">
-					<File
-						RelativePath="arch\Lights\LightsDriver.cpp">
-					</File>
 					<File
 						RelativePath="arch\Lights\LightsDriver.h">
 					</File>
@@ -1294,7 +1330,37 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath="archutils\Win32\arch_setup.cpp">
 				</File>
 				<File
+					RelativePath=".\archutils\Xbox\arch_setup.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug|Xbox">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Xbox">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="archutils\Win32\arch_setup.h">
+				</File>
+				<File
+					RelativePath=".\archutils\Xbox\arch_setup.h">
 				</File>
 				<File
 					RelativePath="archutils\Xbox\custom_launch_params.cpp">
@@ -1354,6 +1420,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="MeterDisplay.h">
+			</File>
+			<File
+				RelativePath=".\StreamDisplay.cpp">
+			</File>
+			<File
+				RelativePath=".\StreamDisplay.h">
 			</File>
 			<File
 				RelativePath="Transition.cpp">
@@ -1480,18 +1552,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="HelpDisplay.h">
 			</File>
 			<File
-				RelativePath="JukeboxMenu.cpp">
-			</File>
-			<File
-				RelativePath="JukeboxMenu.h">
-			</File>
-			<File
-				RelativePath="ListDisplay.cpp">
-			</File>
-			<File
-				RelativePath="ListDisplay.h">
-			</File>
-			<File
 				RelativePath="MemoryCardDisplay.cpp">
 			</File>
 			<File
@@ -1552,6 +1612,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="OptionIconRow.h">
 			</File>
 			<File
+				RelativePath=".\OptionRow.cpp">
+			</File>
+			<File
+				RelativePath=".\OptionRow.h">
+			</File>
+			<File
 				RelativePath="OptionsCursor.cpp">
 			</File>
 			<File
@@ -1582,12 +1648,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="SnapDisplay.h">
 			</File>
 			<File
-				RelativePath="SongCreditDisplay.cpp">
-			</File>
-			<File
-				RelativePath="SongCreditDisplay.h">
-			</File>
-			<File
 				RelativePath=".\TextBanner.cpp">
 			</File>
 			<File
@@ -1608,12 +1668,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ActiveAttackList.h">
-			</File>
-			<File
-				RelativePath="ArrowBackdrop.cpp">
-			</File>
-			<File
-				RelativePath="ArrowBackdrop.h">
 			</File>
 			<File
 				RelativePath=".\ArrowEffects.cpp">
@@ -1718,6 +1772,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="LifeMeterBattery.h">
 			</File>
 			<File
+				RelativePath=".\LifeMeterTime.cpp">
+			</File>
+			<File
+				RelativePath=".\LifeMeterTime.h">
+			</File>
+			<File
 				RelativePath="LyricDisplay.cpp">
 			</File>
 			<File
@@ -1748,12 +1808,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\Player.h">
 			</File>
 			<File
-				RelativePath="ProTimingDisplay.cpp">
-			</File>
-			<File
-				RelativePath="ProTimingDisplay.h">
-			</File>
-			<File
 				RelativePath=".\ReceptorArrow.cpp">
 			</File>
 			<File
@@ -1776,6 +1830,18 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScoreDisplayBattle.h">
+			</File>
+			<File
+				RelativePath=".\ScoreDisplayCalories.cpp">
+			</File>
+			<File
+				RelativePath=".\ScoreDisplayCalories.h">
+			</File>
+			<File
+				RelativePath=".\ScoreDisplayLifeTime.cpp">
+			</File>
+			<File
+				RelativePath=".\ScoreDisplayLifeTime.h">
 			</File>
 			<File
 				RelativePath="ScoreDisplayNormal.cpp">
@@ -1882,6 +1948,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\RageFileDriverSlice.h">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverTimeout.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverTimeout.h">
 			</File>
 			<File
 				RelativePath="RageFileDriverZip.cpp">
@@ -2067,16 +2139,34 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageSurface_Save_BMP.h">
 			</File>
 			<File
+				RelativePath=".\RageSurface_Save_JPEG.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSurface_Save_JPEG.h">
+			</File>
+			<File
 				RelativePath="RageSurfaceUtils.cpp">
 			</File>
 			<File
 				RelativePath="RageSurfaceUtils.h">
 			</File>
 			<File
+				RelativePath=".\RageSurfaceUtils_Dither.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSurfaceUtils_Dither.h">
+			</File>
+			<File
 				RelativePath="RageSurfaceUtils_Palettize.cpp">
 			</File>
 			<File
 				RelativePath="RageSurfaceUtils_Palettize.h">
+			</File>
+			<File
+				RelativePath=".\RageSurfaceUtils_Zoom.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSurfaceUtils_Zoom.h">
 			</File>
 			<File
 				RelativePath=".\RageTexture.cpp">
@@ -2118,6 +2208,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\RageUtil.h">
 			</File>
 			<File
+				RelativePath=".\RageUtil_AutoPtr.h">
+			</File>
+			<File
 				RelativePath="RageUtil_BackgroundLoader.cpp">
 			</File>
 			<File
@@ -2138,6 +2231,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<File
 				RelativePath="RageUtil_FileDB.h">
 			</File>
+			<File
+				RelativePath=".\RageUtil_WorkerThread.cpp">
+			</File>
+			<File
+				RelativePath=".\RageUtil_WorkerThread.h">
+			</File>
 			<Filter
 				Name="Helpers"
 				Filter="">
@@ -2149,24 +2248,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				</File>
 				<File
 					RelativePath="glext.h">
-				</File>
-				<File
-					RelativePath="SDL_dither.cpp">
-				</File>
-				<File
-					RelativePath="SDL_dither.h">
-				</File>
-				<File
-					RelativePath="SDL_rotozoom.cpp">
-				</File>
-				<File
-					RelativePath="SDL_rotozoom.h">
-				</File>
-				<File
-					RelativePath="SDL_SaveJPEG.cpp">
-				</File>
-				<File
-					RelativePath="SDL_SaveJPEG.h">
 				</File>
 				<Filter
 					Name="pcre"
@@ -2223,6 +2304,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ActorUtil.h">
 			</File>
 			<File
+				RelativePath=".\AutoActor.cpp">
+			</File>
+			<File
+				RelativePath=".\AutoActor.h">
+			</File>
+			<File
 				RelativePath=".\BitmapText.cpp">
 			</File>
 			<File
@@ -2248,6 +2335,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="Quad.h">
+			</File>
+			<File
+				RelativePath=".\RollingNumbers.cpp">
+			</File>
+			<File
+				RelativePath=".\RollingNumbers.h">
 			</File>
 			<File
 				RelativePath=".\Sprite.cpp">
@@ -2332,10 +2425,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="LightsManager.h">
 			</File>
 			<File
+				RelativePath=".\LuaManager.cpp">
+			</File>
+			<File
+				RelativePath=".\LuaManager.h">
+			</File>
+			<File
 				RelativePath="MemoryCardManager.cpp">
 			</File>
 			<File
 				RelativePath="MemoryCardManager.h">
+			</File>
+			<File
+				RelativePath=".\MessageManager.cpp">
+			</File>
+			<File
+				RelativePath=".\MessageManager.h">
 			</File>
 			<File
 				RelativePath="NetworkSyncManager.cpp">
@@ -2380,22 +2485,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\SongManager.h">
 			</File>
 			<File
+				RelativePath=".\StatsManager.cpp">
+			</File>
+			<File
+				RelativePath=".\StatsManager.h">
+			</File>
+			<File
 				RelativePath=".\ThemeManager.cpp">
 			</File>
 			<File
 				RelativePath=".\ThemeManager.h">
 			</File>
 			<File
-				RelativePath="UnlockSystem.cpp">
+				RelativePath=".\UnlockManager.cpp">
 			</File>
 			<File
-				RelativePath="UnlockSystem.h">
-			</File>
-			<File
-				RelativePath=".\VirtualKeyboard.cpp">
-			</File>
-			<File
-				RelativePath=".\VirtualKeyboard.h">
+				RelativePath=".\UnlockManager.h">
 			</File>
 		</Filter>
 		<Filter
@@ -2456,169 +2561,139 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				Name="crypto++"
 				Filter="">
 				<File
-					RelativePath="crypto51\algebra.cpp">
+					RelativePath=".\crypto51\algebra.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\algebra.h">
+					RelativePath=".\crypto51\algebra.h">
 				</File>
 				<File
-					RelativePath="crypto51\algparam.cpp">
+					RelativePath=".\crypto51\algparam.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\algparam.h">
+					RelativePath=".\crypto51\algparam.h">
 				</File>
 				<File
-					RelativePath="crypto51\argnames.h">
+					RelativePath=".\crypto51\argnames.h">
 				</File>
 				<File
-					RelativePath="crypto51\asn.cpp">
+					RelativePath=".\crypto51\asn.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\asn.h">
+					RelativePath=".\crypto51\asn.h">
 				</File>
 				<File
-					RelativePath="crypto51\config.h">
+					RelativePath=".\crypto51\config.h">
 				</File>
 				<File
-					RelativePath="crypto51\cryptlib.cpp">
+					RelativePath=".\crypto51\cryptlib.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\cryptlib.h">
+					RelativePath=".\crypto51\cryptlib.h">
 				</File>
 				<File
-					RelativePath="crypto51\files.cpp">
+					RelativePath=".\crypto51\files.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\files.h">
+					RelativePath=".\crypto51\files.h">
 				</File>
 				<File
-					RelativePath="crypto51\filters.cpp">
+					RelativePath=".\crypto51\filters.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\filters.h">
+					RelativePath=".\crypto51\filters.h">
 				</File>
 				<File
-					RelativePath="crypto51\fltrimpl.h">
+					RelativePath=".\crypto51\fltrimpl.h">
 				</File>
 				<File
-					RelativePath="crypto51\integer.cpp">
+					RelativePath=".\crypto51\integer.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\integer.h">
+					RelativePath=".\crypto51\integer.h">
 				</File>
 				<File
-					RelativePath="crypto51\iterhash.cpp">
+					RelativePath=".\crypto51\iterhash.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\iterhash.h">
+					RelativePath=".\crypto51\iterhash.h">
 				</File>
 				<File
-					RelativePath="crypto51\mdc.h">
+					RelativePath=".\crypto51\misc.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\misc.cpp">
+					RelativePath=".\crypto51\misc.h">
 				</File>
 				<File
-					RelativePath="crypto51\misc.h">
+					RelativePath=".\crypto51\modarith.h">
 				</File>
 				<File
-					RelativePath="crypto51\modarith.h">
+					RelativePath=".\crypto51\mqueue.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\modes.cpp">
+					RelativePath=".\crypto51\mqueue.h">
 				</File>
 				<File
-					RelativePath="crypto51\modes.h">
+					RelativePath=".\crypto51\nbtheory.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\mqueue.cpp">
+					RelativePath=".\crypto51\nbtheory.h">
 				</File>
 				<File
-					RelativePath="crypto51\mqueue.h">
+					RelativePath=".\crypto51\oids.h">
 				</File>
 				<File
-					RelativePath="crypto51\nbtheory.cpp">
+					RelativePath=".\crypto51\osrng.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\nbtheory.h">
+					RelativePath=".\crypto51\osrng.h">
 				</File>
 				<File
-					RelativePath="crypto51\oaep.cpp">
+					RelativePath=".\crypto51\pch.h">
 				</File>
 				<File
-					RelativePath="crypto51\oaep.h">
+					RelativePath=".\crypto51\pkcspad.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\oids.h">
+					RelativePath=".\crypto51\pkcspad.h">
 				</File>
 				<File
-					RelativePath="crypto51\osrng.cpp">
+					RelativePath=".\crypto51\pubkey.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\osrng.h">
+					RelativePath=".\crypto51\pubkey.h">
 				</File>
 				<File
-					RelativePath="crypto51\pch.h">
+					RelativePath=".\crypto51\queue.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\pkcspad.cpp">
+					RelativePath=".\crypto51\queue.h">
 				</File>
 				<File
-					RelativePath="crypto51\pkcspad.h">
+					RelativePath=".\crypto51\rsa.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\pubkey.cpp">
+					RelativePath=".\crypto51\rsa.h">
 				</File>
 				<File
-					RelativePath="crypto51\pubkey.h">
+					RelativePath=".\crypto51\secblock.h">
 				</File>
 				<File
-					RelativePath="crypto51\queue.cpp">
+					RelativePath=".\crypto51\seckey.h">
 				</File>
 				<File
-					RelativePath="crypto51\queue.h">
+					RelativePath=".\crypto51\sha.cpp">
 				</File>
 				<File
-					RelativePath="crypto51\randpool.cpp">
+					RelativePath=".\crypto51\sha.h">
 				</File>
 				<File
-					RelativePath="crypto51\randpool.h">
+					RelativePath=".\crypto51\simple.h">
 				</File>
 				<File
-					RelativePath="crypto51\rng.h">
+					RelativePath=".\crypto51\smartptr.h">
 				</File>
 				<File
-					RelativePath="crypto51\rsa.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\rsa.h">
-				</File>
-				<File
-					RelativePath="crypto51\secblock.h">
-				</File>
-				<File
-					RelativePath="crypto51\seckey.h">
-				</File>
-				<File
-					RelativePath="crypto51\sha.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\sha.h">
-				</File>
-				<File
-					RelativePath="crypto51\simple.h">
-				</File>
-				<File
-					RelativePath="crypto51\smartptr.h">
-				</File>
-				<File
-					RelativePath="crypto51\strciphr.cpp">
-				</File>
-				<File
-					RelativePath="crypto51\strciphr.h">
-				</File>
-				<File
-					RelativePath="crypto51\words.h">
+					RelativePath=".\crypto51\words.h">
 				</File>
 			</Filter>
 		</Filter>
