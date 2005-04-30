@@ -23,7 +23,6 @@ namespace LuaHelpers
 	bool FromStack( bool &Object, int iOffset, lua_State *L );
 	bool FromStack( float &Object, int iOffset, lua_State *L );
 	bool FromStack( int &Object, int iOffset, lua_State *L );
-	bool FromStack( void *&Object, int iOffset, lua_State *L );
 	bool FromStack( CString &Object, int iOffset, lua_State *L );
 
 	template<class T>
