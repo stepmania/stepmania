@@ -10,7 +10,10 @@ void StreamDisplay::Load(
 	int iNumChambers, 
 	const CString &sNormalPath, 
 	const CString &sHotPath, 
-	const CString &sPassingPath
+	const CString &sPassingPath,
+	const apActorCommands &acNormalOnCommand,
+	const apActorCommands &acHotOnCommand,
+	const apActorCommands &acPassingOnCommand
 	)
 {
 	m_fMeterWidth = fMeterWidth;
@@ -30,14 +33,17 @@ void StreamDisplay::Load(
 	ID.filename = sNormalPath;
 	m_sprStreamNormal.Load( ID );
 	m_sprStreamNormal.SetUseZBuffer( true );
+	m_sprStreamNormal.RunCommands( acNormalOnCommand );
 
 	ID.filename = sHotPath;
 	m_sprStreamHot.Load( ID );
 	m_sprStreamHot.SetUseZBuffer( true );
+	m_sprStreamHot.RunCommands( acHotOnCommand );
 	
 	ID.filename = sPassingPath;
 	m_sprStreamPassing.Load( ID );
 	m_sprStreamPassing.SetUseZBuffer( true );
+	m_sprStreamPassing.RunCommands( acPassingOnCommand );
 }
 
 void StreamDisplay::Update( float fDeltaSecs )
@@ -89,7 +95,7 @@ void StreamDisplay::DrawPrimitives()
 	float fPercentOffset = fmodf( GAMESTATE->m_fSongBeat/4+1000, fPercentBetweenStrips );
 	ASSERT( fPercentOffset >= 0  &&  fPercentOffset <= fPercentBetweenStrips );
 
-	for( float f=fPercentOffset+1; f>=0; f-=fPercentBetweenStrips )
+	for( float f=fPercentOffset+2; f>=0; f-=fPercentBetweenStrips )
 	{
 		DrawMask( f );
 		DrawStrip( f );
@@ -187,14 +193,20 @@ void StreamDisplay::DrawStrip( float fRightEdgePercent )
 	m_sprStreamPassing.SetCustomTextureRect( frectCustomTexRect );
 	m_sprStreamHot.SetCustomTextureRect( frectCustomTexRect );
 
-	m_sprStreamPassing.SetDiffuse( RageColor(1,1,1,m_fPassingAlpha) );
-	m_sprStreamHot.SetDiffuse( RageColor(1,1,1,m_fHotAlpha) );
+	float fOrigPassingAlpha = m_sprStreamPassing.GetDiffuse().a;
+	float fOrigHotAlpha = m_sprStreamHot.GetDiffuse().a;
+
+	m_sprStreamPassing.SetDiffuseAlpha( m_fPassingAlpha * fOrigPassingAlpha );
+	m_sprStreamHot.SetDiffuseAlpha( m_fHotAlpha * fOrigHotAlpha );
 
 	if( m_fPassingAlpha < 1 && m_fHotAlpha < 1)
 		m_sprStreamNormal.Draw();
 	if( m_fHotAlpha < 1)
 		m_sprStreamPassing.Draw();
 	m_sprStreamHot.Draw();
+
+	m_sprStreamPassing.SetDiffuseAlpha( fOrigPassingAlpha );
+	m_sprStreamHot.SetDiffuseAlpha( fOrigHotAlpha );
 }
 
 void StreamDisplay::DrawMask( float fPercent )

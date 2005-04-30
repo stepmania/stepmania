@@ -27,7 +27,10 @@ public:
 		int iNumChambers, 
 		const CString &sNormalPath, 
 		const CString &sHotPath, 
-		const CString &sPassingPath
+		const CString &sPassingPath,
+		const apActorCommands &acNormalOnCommand,
+		const apActorCommands &acHotOnCommand,
+		const apActorCommands &acPassingOnCommand
 		);
 
 	void DrawPrimitives();

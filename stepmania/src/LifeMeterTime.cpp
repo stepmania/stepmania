@@ -54,7 +54,10 @@ void LifeMeterTime::Load( PlayerNumber pn )
 		NUM_CHAMBERS,		
 		THEME->GetPathG(sType,sExtra+"normal"),
 		THEME->GetPathG(sType,sExtra+"hot"),
-		THEME->GetPathG(sType,sExtra+"passing")
+		THEME->GetPathG(sType,sExtra+"passing"),
+		THEME->GetMetricA(sType,"StreamNormalOnCommand"),
+		THEME->GetMetricA(sType,"StreamHotOnCommand"),
+		THEME->GetMetricA(sType,"StreamPassingOnCommand")
 		);
 	this->AddChild( m_pStream );
 
