@@ -52,6 +52,7 @@ struct UnlockEntry
 	float	m_fRequired[NUM_UNLOCK_TYPES];
 	int		m_iCode;
 
+	bool	IsValid() const;
 	bool	IsLocked() const;
 };
 
@@ -100,6 +101,10 @@ public:
 
 	// If global song or course points change, call to update
 	void UpdateCachedPointers();
+
+	void GetUnlocksByType( UnlockEntry::Type t, vector<UnlockEntry *> &apEntries );
+	void GetSongsUnlockedByCode( vector<Song *> &apSongsOut, int iCode );
+	void GetStepsUnlockedByCode( vector<Song *> &apSongsOut, vector<Difficulty> &apStepsOut, int iCode );
 
 	// Lua
 	void PushSelf( lua_State *L );
