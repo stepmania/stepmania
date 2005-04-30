@@ -49,6 +49,7 @@ void Actor::Reset()
 
 	m_baseRotation = RageVector3( 0, 0, 0 );
 	m_baseScale = RageVector3( 1, 1, 1 );
+	m_fBaseAlpha = 1;
 
 	m_start.Init();
 	m_current.Init();
@@ -177,6 +178,8 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 {
 	DISPLAY->PushMatrix();	// we're actually going to do some drawing in this function	
 
+	// Somthing below may set m_pTempState to m_tempState
+	m_pTempState = &m_current;
 
 
 	//
@@ -184,7 +187,6 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 	//
 	if( m_Effect == no_effect )
 	{
-		m_pTempState = &m_current;
 	}
 	else if( m_Effect == effect_lua )
 	{
@@ -318,6 +320,20 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		}
 	}
 
+
+	if( m_fBaseAlpha != 1 )
+	{
+		if( m_pTempState != &m_tempState )
+		{
+			m_pTempState = &m_tempState;
+			m_tempState = m_current;
+		}
+
+		for( int i=0; i<4; i++ )
+			m_tempState.diffuse[i].a *= m_fBaseAlpha;
+	}	
+
+	
 	{
 		RageMatrix m;
 		RageMatrixTranslateAndScale( &m, 

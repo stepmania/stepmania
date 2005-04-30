@@ -222,10 +222,17 @@ PropagateActorFrameCommand( HurryTweening,		float )
 void ActorFrame::SetDiffuseAlpha( float f )	
 {
 	Actor::SetDiffuseAlpha( f );
-								
-	/* set all sub-Actors */
+
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
 		m_SubActors[i]->SetDiffuseAlpha( f );
+}
+
+void ActorFrame::SetBaseAlpha( float f )	
+{
+	Actor::SetBaseAlpha( f );
+
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->SetBaseAlpha( f );
 }
 
 void ActorFrame::FinishTweening()

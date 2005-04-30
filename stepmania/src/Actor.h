@@ -136,6 +136,7 @@ public:
 	void  SetWidth( float width )	{ m_size.x = width; }
 	void  SetHeight( float height )	{ m_size.y = height; }
 
+	// Base
 	float GetBaseZoomX()				{ return m_baseScale.x;	}
 	void  SetBaseZoomX( float zoom )	{ m_baseScale.x = zoom;	}
 	void  SetBaseZoomY( float zoom )	{ m_baseScale.y = zoom; }
@@ -145,6 +146,8 @@ public:
 	void  SetBaseRotationY( float rot )	{ m_baseRotation.y = rot; }
 	void  SetBaseRotationZ( float rot )	{ m_baseRotation.z = rot; }
 	void  SetBaseRotation( const RageVector3 &rot )	{ m_baseRotation = rot; }
+	virtual void  SetBaseAlpha( float fAlpha )	{ m_fBaseAlpha = fAlpha; }
+
 
 	float GetZoom()					{ return DestTweenState().scale.x; }	// not accurate in some cases
 	float GetZoomX()				{ return DestTweenState().scale.x; }
@@ -384,6 +387,7 @@ protected:
 
 	RageVector3	m_baseRotation;
 	RageVector3	m_baseScale;
+	float m_fBaseAlpha;
 
 
 	RageVector2	m_size;
