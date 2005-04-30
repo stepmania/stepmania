@@ -2074,11 +2074,6 @@ LuaFunction_NoArgs( PlayerUsingBothSides,	GAMESTATE->PlayerUsingBothSides() )
 LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestStepsDifficulty() )
 LuaFunction_StrStr(	SetEnv,					GAMESTATE->m_mapEnv[str1] = str2 )
 
-/* Return an integer into SONGMAN->m_pSongs.  This lets us do input checking, which we
- * can't easily do if we return pointers. */
-LuaFunction_NoArgs( CurSong,				(void *) GAMESTATE->m_pCurSong )
-LuaFunction_PlayerNumber( CurSteps,			(Steps*)GAMESTATE->m_pCurSteps[pn].Get() )
-
 int LuaFunc_UsingModifier( lua_State *L )
 {
 	REQ_ARGS( "UsingModifier", 2 );
