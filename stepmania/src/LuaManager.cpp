@@ -70,19 +70,11 @@ void LuaManager::PushStackNil()
 void LuaHelpers::Push( const bool &Object, lua_State *L ) { lua_pushboolean( L, Object ); }
 void LuaHelpers::Push( const float &Object, lua_State *L ) { lua_pushnumber( L, Object ); }
 void LuaHelpers::Push( const int &Object, lua_State *L ) { lua_pushnumber( L, Object ); }
-void LuaHelpers::Push( void *Object, lua_State *L )
-{
-	if( Object != NULL )
-		lua_pushlightuserdata( L, Object );
-	else
-		lua_pushnil( L );
-}
 void LuaHelpers::Push( const CString &Object, lua_State *L ) { lua_pushstring( L, Object ); }
 
 bool LuaHelpers::FromStack( bool &Object, int iOffset, lua_State *L ) { Object = !!lua_toboolean( L, iOffset ); return true; }
 bool LuaHelpers::FromStack( float &Object, int iOffset, lua_State *L ) { Object = (float)lua_tonumber( L, iOffset ); return true; }
 bool LuaHelpers::FromStack( int &Object, int iOffset, lua_State *L ) { Object = (int) lua_tonumber( L, iOffset ); return true; }
-bool LuaHelpers::FromStack( void *&Object, int iOffset, lua_State *L ) { Object = lua_touserdata( L, iOffset ); return true; }
 bool LuaHelpers::FromStack( CString &Object, int iOffset, lua_State *L )
 {
 	const char *pStr = lua_tostring( L, iOffset );

@@ -17,7 +17,6 @@ namespace LuaHelpers
 	void Push( const bool &Object, lua_State *L );
 	void Push( const float &Object, lua_State *L );
 	void Push( const int &Object, lua_State *L );
-	void Push( void *Object, lua_State *L );
 	void Push( const CString &Object, lua_State *L );
 
 
