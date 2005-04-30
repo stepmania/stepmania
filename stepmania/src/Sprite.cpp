@@ -99,6 +99,82 @@ bool Sprite::Load( RageTextureID ID )
 	return result;
 };
 
+void Sprite::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+retry:
+
+	CString sTextureFile;
+	CString sPath;
+	if( pNode->GetAttrValue( "Texture", sTextureFile ) )
+	{
+		sPath = sDir + sTextureFile;
+		CollapsePath( sPath );
+	}
+
+	if( !sPath.empty() )
+	{
+		vector<CString> asElementPaths;
+		GetDirListing( sPath + "*", asElementPaths, false, true );
+		if( asElementPaths.size() == 0 )
+		{
+			CString sMessage = ssprintf( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.c_str(), sPath.c_str() );
+			switch( Dialog::AbortRetryIgnore(sMessage) )
+			{
+			case Dialog::abort:	
+				RageException::Throw( "Error reading value 'Texture' from %s.", m_sSpritePath.c_str() );
+			case Dialog::retry:	
+				goto retry;
+			case Dialog::ignore:
+				return;
+			default:
+				ASSERT(0);
+			}
+		}
+		if( asElementPaths.size() > 1 )
+		{
+			CString message = ssprintf( 
+				"There is more than one file that matches "
+				"'%s'.  Please remove all but one of these matches.",
+				sPath.c_str() );
+
+			RageException::Throw( message ); 
+		}
+		sPath = asElementPaths[0];
+
+		// Load the texture
+		LoadFromTexture( sPath );
+
+
+		// Read in frames and delays from the sprite file, 
+		// overwriting the states that LoadFromTexture created.
+		// If the .sprite file doesn't define any states, leave
+		// frames and delays created during LoadFromTexture().
+		for( int i=0; true; i++ )
+		{
+			CString sFrameKey = ssprintf( "Frame%04d", i );
+			CString sDelayKey = ssprintf( "Delay%04d", i );
+			State newState;
+
+			if( !pNode->GetAttrValue( sFrameKey, newState.iFrameIndex ) )
+				break;
+			if( newState.iFrameIndex >= m_pTexture->GetNumFrames() )
+				RageException::Throw( "In '%s', %s is %d, but the texture %s only has %d frames.",
+					m_sSpritePath.c_str(), sFrameKey.c_str(), newState.iFrameIndex, sPath.c_str(), m_pTexture->GetNumFrames() );
+
+			if( !pNode->GetAttrValue( sDelayKey, newState.fDelay ) )
+				break;
+
+			if( i == 0 )	// the ini file defines at least one frame
+				m_States.clear();	// clear before adding
+
+			m_States.push_back( newState );
+		}
+	}
+
+
+	Actor::LoadFromNode( sDir, pNode );
+}
+
 // Sprite file has the format:
 //
 // [Sprite]
@@ -117,10 +193,7 @@ bool Sprite::LoadFromSpriteFile( RageTextureID ID )
 {
 	LOG->Trace( ssprintf("Sprite::LoadFromSpriteFile(%s)", ID.filename.c_str()) );
 
-retry:
-
 	//Init();
-
 	m_sSpritePath = ID.filename;
 
 	// read sprite file
@@ -128,79 +201,7 @@ retry:
 	if( !ini.ReadFile( m_sSpritePath ) )
 		RageException::Throw( "Error opening Sprite file '%s'.", m_sSpritePath.c_str() );
 
-	CString sTextureFile;
-	ini.GetValue( "Sprite", "Texture", sTextureFile );
-	if( sTextureFile == ""  )
-		RageException::Throw( "Error reading value 'Texture' from %s.", m_sSpritePath.c_str() );
-
-	// save the path of the real texture
-	ID.filename = Dirname(m_sSpritePath) + sTextureFile;
-	{
-		vector<CString> asElementPaths;
-		GetDirListing( ID.filename + "*", asElementPaths, false, true );
-		if(asElementPaths.size() == 0)
-		{
-			CString sMessage = ssprintf( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.c_str(), ID.filename.c_str() );
-			switch( Dialog::AbortRetryIgnore(sMessage) )
-			{
-			case Dialog::abort:	
-				RageException::Throw( "Error reading value 'Texture' from %s.", m_sSpritePath.c_str() );
-			case Dialog::retry:	
-				goto retry;
-			case Dialog::ignore:
-				return false;
-			default:
-				ASSERT(0);
-			}
-		}
-		if(asElementPaths.size() > 1)
-		{
-			CString message = ssprintf( 
-				"There is more than one file that matches "
-				"'%s'.  Please remove all but one of these matches.",
-				ID.filename.c_str() );
-
-			RageException::Throw( message ); 
-		}
-		ID.filename = asElementPaths[0];
-	}
-
-	// Load the texture
-	LoadFromTexture( ID );
-
-	// Read in frames and delays from the sprite file, 
-	// overwriting the states that LoadFromTexture created.
-	// If the .sprite file doesn't define any states, leave
-	// frames and delays created during LoadFromTexture().
-	for( int i=0; true; i++ )
-	{
-		CString sFrameKey = ssprintf( "Frame%04d", i );
-		CString sDelayKey = ssprintf( "Delay%04d", i );
-		State newState;
-
-		if( !ini.GetValue( "Sprite", sFrameKey, newState.iFrameIndex ) )
-			break;
-		if( newState.iFrameIndex >= m_pTexture->GetNumFrames() )
-			RageException::Throw( "In '%s', %s is %d, but the texture %s only has %d frames.",
-				m_sSpritePath.c_str(), sFrameKey.c_str(), newState.iFrameIndex, ID.filename.c_str(), m_pTexture->GetNumFrames() );
-
-		if( !ini.GetValue( "Sprite", sDelayKey, newState.fDelay ) )
-			break;
-
-		if( i == 0 )	// the ini file defines at least one frame
-			m_States.clear();	// clear before adding
-
-		m_States.push_back( newState );
-	}
-
-	float f;
-	if( ini.GetValue( "Sprite", "BaseRotationXDegrees", f ) )	Actor::SetBaseRotationX( f );
-	if( ini.GetValue( "Sprite", "BaseRotationYDegrees", f ) )	Actor::SetBaseRotationY( f );
-	if( ini.GetValue( "Sprite", "BaseRotationZDegrees", f ) )	Actor::SetBaseRotationZ( f );
-	if( ini.GetValue( "Sprite", "BaseZoomX", f ) )				Actor::SetBaseZoomX( f );
-	if( ini.GetValue( "Sprite", "BaseZoomY", f ) )				Actor::SetBaseZoomY( f );
-	if( ini.GetValue( "Sprite", "BaseZoomZ", f ) )				Actor::SetBaseZoomZ( f );
-
+	LoadFromNode( Dirname(m_sSpritePath), ini.GetChild("Sprite") );
 
 	return true;
 }
@@ -401,6 +402,9 @@ void TexCoordArrayFromRect(float fImageCoords[8], const RectF &rect)
 
 void Sprite::DrawTexture( const TweenState *state )
 {
+	if( m_fBaseAlpha != 1 )
+		int dkjfksdf = 0;
+
 	Actor::SetGlobalRenderStates();	// set Actor-specified render states
 
 	// bail if cropped all the way 

@@ -13,6 +13,8 @@ public:
 	{
 		m_bDrawIfTextureNull = true; 
 	}	
+
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
 };
 
 #endif

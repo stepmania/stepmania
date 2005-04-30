@@ -14,6 +14,8 @@ public:
 	Sprite();
 	virtual ~Sprite();
 
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
+
 	virtual bool EarlyAbortDraw();
 	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
