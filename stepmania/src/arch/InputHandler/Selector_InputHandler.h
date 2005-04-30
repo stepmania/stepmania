@@ -4,7 +4,7 @@
 #include "arch/arch_platform.h"
 
 /* InputHandler drivers selector. */
-#ifdef HAVE_DIRECTX
+#if defined(HAVE_DIRECTX) && !defined(XBOX)
 #include "InputHandler_DirectInput.h"
 #endif
 
