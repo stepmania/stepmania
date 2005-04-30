@@ -2446,6 +2446,36 @@ SOURCE=.\TextBanner.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\WheelBase.cpp
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\WheelBase.h
+
+!IF  "$(CFG)" == "StepMania - Win32 Debug"
+
+!ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=.\WheelItemBase.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\WheelItemBase.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\WheelNotifyIcon.cpp
 # End Source File
 # Begin Source File
