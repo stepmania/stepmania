@@ -27,10 +27,12 @@ public:
 
 	WheelItemData *data;
 
+	Sprite				m_sprSongBar;
 	Sprite				m_sprSectionBar;
 	Sprite				m_sprExpandedBar;
 	WheelNotifyIcon		m_WheelNotifyIcon;
 	TextBanner			m_TextBanner;
+	BitmapText			m_textSection;
 	BitmapText			m_textRoulette;
 	BitmapText			m_textCourse;
 	BitmapText			m_textSort;

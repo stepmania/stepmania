@@ -49,9 +49,9 @@ MusicWheelItem::MusicWheelItem()
 
 	SetName( "MusicWheelItem" );
 
-	m_sprBar.Load( THEME->GetPathG("MusicWheelItem","song") );
-	m_sprBar.SetXY( 0, 0 );
-	this->AddChild( &m_sprBar );
+	m_sprSongBar.Load( THEME->GetPathG("MusicWheelItem","song") );
+	m_sprSongBar.SetXY( 0, 0 );
+	this->AddChild( &m_sprSongBar );
 
 	m_sprSectionBar.Load( THEME->GetPathG("MusicWheelItem","section") );
 	m_sprSectionBar.SetXY( 0, 0 );
@@ -71,11 +71,11 @@ MusicWheelItem::MusicWheelItem()
 	m_TextBanner.RunCommands( SONG_NAME_ON_COMMAND );
 	this->AddChild( &m_TextBanner );
 
-	m_text.LoadFromFont( THEME->GetPathF("MusicWheelItem","section") );
-	m_text.SetShadowLength( 0 );
-	m_text.SetXY( SECTION_X, SECTION_Y );
-	m_text.RunCommands( SECTION_ON_COMMAND );
-	this->AddChild( &m_text );
+	m_textSection.LoadFromFont( THEME->GetPathF("MusicWheelItem","section") );
+	m_textSection.SetShadowLength( 0 );
+	m_textSection.SetXY( SECTION_X, SECTION_Y );
+	m_textSection.RunCommands( SECTION_ON_COMMAND );
+	this->AddChild( &m_textSection );
 
 	m_textRoulette.LoadFromFont( THEME->GetPathF("MusicWheelItem","roulette") );
 	m_textRoulette.SetShadowLength( 0 );
@@ -113,10 +113,10 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 	// hide all
 	m_WheelNotifyIcon.SetHidden( true );
 	m_TextBanner.SetHidden( true );
-	m_sprBar.SetHidden( true );
+	m_sprSongBar.SetHidden( true );
 	m_sprSectionBar.SetHidden( true );
 	m_sprExpandedBar.SetHidden( true );
-	m_text.SetHidden( true );
+	m_textSection.SetHidden( true );
 	m_textRoulette.SetHidden( true );
 	FOREACH_PlayerNumber( p )
 		m_GradeDisplay[p].SetHidden( true );
@@ -137,7 +137,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 			{
 				case TYPE_SECTION:
 					sDisplayName = SONGMAN->ShortenGroupName(data->m_sText);
-					bt = &m_text;
+					bt = &m_textSection;
 					break;
 				case TYPE_COURSE:
 					sDisplayName = data->m_pCourse->GetFullDisplayTitle();
@@ -199,7 +199,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 		break;
 	case TYPE_SONG:		
 	case TYPE_COURSE:
-		m_sprBar.SetHidden( false );
+		m_sprSongBar.SetHidden( false );
 		break;
 	default: ASSERT(0);
 	}
