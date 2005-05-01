@@ -16,7 +16,7 @@ directory.
 INSTALL
 From the PBProject directory, run:
 $ scripts/mkrelease.pl .. <version>
-Build a pacakge using PackageMaker.
+Build a package using PackageMaker.
 
 Steve Checkoway
 steve@cs.washington.edu
