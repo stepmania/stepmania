@@ -167,7 +167,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 		Profile::LoadResult res = LoadProfile( pn, sDir, true );
 		if( res == Profile::success )
 			iLoadedFrom = i;
-		else if( res != Profile::failed_no_profile )
+		if( res != Profile::failed_no_profile )
 			break;
 	}
 
