@@ -18,8 +18,7 @@
 #include "ScreenDimensions.h"
 
 
-static CString CHOICE_NAME( CString s )			{ return ssprintf("Choice%s",s.c_str()); }
-		
+	
 const int MAX_WHEEL_SOUND_SPEED = 15;
 
 WheelBase::WheelBase()
@@ -689,7 +688,7 @@ void WheelBase::RemoveItem( int index )
 {
 	if (!m_isEmpty)
 	{
-		if (index < m_WheelBaseItemsData.size())
+		if (index < (int)m_WheelBaseItemsData.size())
 		{
 			vector<WheelItemBaseData *>::iterator i = m_WheelBaseItemsData.begin();
 			i += index;
