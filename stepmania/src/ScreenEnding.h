@@ -39,7 +39,6 @@ private:
 	} m_Lines[NUM_ENDING_STATS_LINES][NUM_PLAYERS];
 
 	Sprite	m_sprRemoveMemoryCard[NUM_PLAYERS];
-	bool m_bWaitingForRemoveCard[NUM_PLAYERS];
 };
 
 #endif

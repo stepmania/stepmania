@@ -414,8 +414,7 @@ void ScreenNameEntry::MenuStart( PlayerNumber pn )
 
 	// save last used ranking name
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
-	if( pProfile )
-		pProfile->m_sLastUsedHighScoreName = m_sSelectedName[pn];
+	pProfile->m_sLastUsedHighScoreName = m_sSelectedName[pn];
 
 	TrimRight( m_sSelectedName[pn], " " );
 	TrimLeft( m_sSelectedName[pn], " " );

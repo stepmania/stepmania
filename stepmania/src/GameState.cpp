@@ -619,8 +619,7 @@ void GameState::ResetStageStatistics()
 			FOREACH_PlayerNumber( p )
 			{
 				Profile* pProfile = PROFILEMAN->GetProfile(p);
-				if( pProfile )
-					STATSMAN->m_CurStageStats.m_player[p].iCurCombo = pProfile->m_iCurrentCombo;
+				STATSMAN->m_CurStageStats.m_player[p].iCurCombo = pProfile->m_iCurrentCombo;
 			}
 		}
 		else	// GetStageIndex() > 0

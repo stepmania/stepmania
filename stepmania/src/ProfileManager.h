@@ -49,10 +49,13 @@ public:
 
 	bool IsUsingProfile( PlayerNumber pn ) const { return !m_sProfileDir[pn].empty(); }
 	bool IsUsingProfile( ProfileSlot slot ) const;
-	const Profile* GetProfile( PlayerNumber pn ) const;	// return a profile even if !IsUsingProfile
+
+	// return a profile even if !IsUsingProfile
+	const Profile* GetProfile( PlayerNumber pn ) const;
 	Profile* GetProfile( PlayerNumber pn ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(pn); }
 	const Profile* GetProfile( ProfileSlot slot ) const;
 	Profile* GetProfile( ProfileSlot slot ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(slot); }
+	
 	CString GetProfileDir( ProfileSlot slot ) const;
 	CString GetProfileDirImportedFrom( ProfileSlot slot ) const;
 

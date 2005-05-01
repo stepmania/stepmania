@@ -200,26 +200,13 @@ void ScreenEnding::Init()
 	SONGMAN->GetSongs( arraySongs );
 	SongUtil::SortSongPointerArrayByTitle( arraySongs );
 
-	FOREACH_PlayerNumber( p )
+	FOREACH_HumanPlayer( p )
 	{
-		m_bWaitingForRemoveCard[p] = false;
+		// don't show stats if not using a profile
+		if( !PROFILEMAN->IsUsingProfile(p) )
+			continue;
 
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-
-		Profile* pProfile = PROFILEMAN->GetProfile( p );
-
-		m_bWaitingForRemoveCard[p] = true;
-		switch( MEMCARDMAN->GetCardState(p) )
-		{
-		case MEMORY_CARD_STATE_REMOVED:
-		case MEMORY_CARD_STATE_NO_CARD:
-			m_bWaitingForRemoveCard[p] = false;
-			break;
-		}
-
-		if( pProfile == NULL )
-			continue;	// don't show the stats lines
+		Profile* pProfile = PROFILEMAN->GetProfile(p);
 	
 		FOREACH_EndingStatsLine( i )
 		{
@@ -238,7 +225,15 @@ void ScreenEnding::Init()
 
 		m_sprRemoveMemoryCard[p].SetName( ssprintf("RemoveCardP%d",p+1) );
 		m_sprRemoveMemoryCard[p].Load( THEME->GetPathG("ScreenEnding",ssprintf("remove card P%d",p+1)) );
+		switch( MEMCARDMAN->GetCardState(p) )
+		{
+		case MEMORY_CARD_STATE_REMOVED:
+		case MEMORY_CARD_STATE_NO_CARD:
+			m_sprRemoveMemoryCard[p].SetHidden( true );
+			break;
+		}
 		SET_XY_AND_ON_COMMAND( m_sprRemoveMemoryCard[p] );
+		m_sprRemoveMemoryCard[p].AddCommand( ssprintf("CardRemovedP%dMessage",p+1), apActorCommands(new ActorCommands("hidden,1")) );
 		this->AddChild( &m_sprRemoveMemoryCard[p] );
 	}
 
@@ -262,23 +257,6 @@ void ScreenEnding::Update( float fDeltaTime )
 
 	if( m_In.IsTransitioning() && m_Out.IsTransitioning() )
 		return;
-
-	FOREACH_PlayerNumber( p )
-	{
-		if( m_bWaitingForRemoveCard[p] )
-		{
-			m_bWaitingForRemoveCard[p] = true;
-			switch( MEMCARDMAN->GetCardState(p) )
-			{
-			case MEMORY_CARD_STATE_REMOVED:
-			case MEMORY_CARD_STATE_NO_CARD:
-				m_bWaitingForRemoveCard[p] = false;
-				break;
-			}
-			if( !m_bWaitingForRemoveCard[p] )
-				m_sprRemoveMemoryCard[p].SetHidden( true );
-		}
-	}
 }	
 
 void ScreenEnding::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
