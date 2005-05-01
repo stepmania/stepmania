@@ -390,7 +390,7 @@ static Menu g_AreaMenu(
 	MenuRow( ScreenEdit::clear,					"Clear area",						true, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRow( ScreenEdit::quantize,				"Quantize",							true, EDIT_MODE_PRACTICE, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
 	MenuRow( ScreenEdit::turn,					"Turn",								true, EDIT_MODE_PRACTICE, 0, "Left","Right","Mirror","Shuffle","SuperShuffle" ),
-	MenuRow( ScreenEdit::transform,				"Transform",						true, EDIT_MODE_PRACTICE, 0, "NoHolds","NoMines","Little","Wide","Big","Quick","Skippy","Mines","Echo","Stomp","Planted","Floored","Twister","NoJumps","NoHands","NoQuads" ),
+	MenuRow( ScreenEdit::transform,				"Transform",						true, EDIT_MODE_PRACTICE, 0, "NoHolds","NoMines","Little","Wide","Big","Quick","Skippy","Mines","Echo","Stomp","Planted","Floored","Twister","NoJumps","NoHands","NoQuads","NoStretch" ),
 	MenuRow( ScreenEdit::alter,					"Alter",							true, EDIT_MODE_PRACTICE, 0, "Autogen To Fill Width","Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Collapse Left","Shift Left","Shift Right" ),
 	MenuRow( ScreenEdit::tempo,					"Tempo",							true, EDIT_MODE_FULL, 0, "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
 	MenuRow( ScreenEdit::play,					"Play selection",					true, EDIT_MODE_PRACTICE, 0, NULL ),
@@ -2246,6 +2246,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				case nojumps:	NoteDataUtil::RemoveJumps( m_NoteDataEdit, iBeginRow, iEndRow );	break;
 				case nohands:	NoteDataUtil::RemoveHands( m_NoteDataEdit, iBeginRow, iEndRow );	break;
 				case noquads:	NoteDataUtil::RemoveQuads( m_NoteDataEdit, iBeginRow, iEndRow );	break;
+				case nostretch:	NoteDataUtil::RemoveStretch( m_NoteDataEdit, st, iBeginRow, iBeginRow );	break;
 				default:		ASSERT(0);
 				}
 
@@ -2269,7 +2270,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 							break;
 						temp.SetNumTracks( iNumUsedTracks );
 						NoteDataUtil::LoadTransformedSlidingWindow( temp, m_Clipboard, m_Clipboard.GetNumTracks() );
-						NoteDataUtil::FixImpossibleRows( m_Clipboard, GAMESTATE->m_pCurSteps[0]->m_StepsType );
+						NoteDataUtil::RemoveStretch( m_Clipboard, GAMESTATE->m_pCurSteps[0]->m_StepsType );
 					}
 					break;
 				case backwards:				NoteDataUtil::Backwards( m_Clipboard );			break;

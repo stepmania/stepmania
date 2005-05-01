@@ -191,7 +191,7 @@ void Steps::Decompress() const
 		{
 			NoteDataUtil::LoadTransformedSlidingWindow( notedata, m_NoteData, iNewTracks );
 
-			NoteDataUtil::FixImpossibleRows( m_NoteData, m_StepsType );
+			NoteDataUtil::RemoveStretch( m_NoteData, m_StepsType );
 		}
 		return;
 	}

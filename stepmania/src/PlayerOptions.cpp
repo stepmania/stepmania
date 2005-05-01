@@ -170,6 +170,7 @@ void PlayerOptions::GetMods( vector<CString> &AddTo ) const
 	if( m_bTransforms[TRANSFORM_NOJUMPS] )	AddTo.push_back( "NoJumps" );
 	if( m_bTransforms[TRANSFORM_NOHANDS] )	AddTo.push_back( "NoHands" );
 	if( m_bTransforms[TRANSFORM_NOQUADS] )	AddTo.push_back( "NoQuads" );
+	if( m_bTransforms[TRANSFORM_NOSTRETCH] )AddTo.push_back( "NoStretch" );
 
 	if( m_fSkew==0 && m_fPerspectiveTilt==0 )		{ if( m_bSetTiltOrSkew ) AddTo.push_back( "Overhead" ); }
 	else if( m_fSkew==1 && m_fPerspectiveTilt==-1 )	AddTo.push_back( "Incoming" );
@@ -301,6 +302,7 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 		else if( sBit == "noholds" || sBit == "nofreeze" )	m_bTransforms[TRANSFORM_NOHOLDS] = on;
 		else if( sBit == "norolls" )	m_bTransforms[TRANSFORM_NOROLLS] = on;
 		else if( sBit == "nomines" )	m_bTransforms[TRANSFORM_NOMINES] = on;
+		else if( sBit == "nostretch" )	m_bTransforms[TRANSFORM_NOSTRETCH] = on;
 		else if( sBit == "dark" )		SET_FLOAT( fDark )
 		else if( sBit == "blind" )		SET_FLOAT( fBlind )
 		else if( sBit == "cover" )		SET_FLOAT( fCover )
@@ -566,6 +568,8 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps )
 		return true;
 	if( m_bTransforms[TRANSFORM_NOJUMPS] && pSteps->GetRadarValues()[RADAR_NUM_JUMPS]>0 )
 		return true;
+	if( m_bTransforms[TRANSFORM_NOSTRETCH] )
+		return true;
 
 	// Inserted holds can be really easy on some songs, and scores will be 
 	// highly hold-weighted, and very little tap score weighted.
@@ -656,6 +660,7 @@ CString PlayerOptions::GetSavedPrefsString() const
 	SAVE( m_bTransforms[TRANSFORM_NOJUMPS] );
 	SAVE( m_bTransforms[TRANSFORM_NOHANDS] );
 	SAVE( m_bTransforms[TRANSFORM_NOQUADS] );
+	SAVE( m_bTransforms[TRANSFORM_NOSTRETCH] );
 	SAVE( m_ScoreDisplay );
 	SAVE( m_sNoteSkin );
 #undef SAVE
@@ -677,6 +682,7 @@ void PlayerOptions::ResetSavedPrefs()
 	CPY( m_bTransforms[TRANSFORM_NOJUMPS] );
 	CPY( m_bTransforms[TRANSFORM_NOHANDS] );
 	CPY( m_bTransforms[TRANSFORM_NOQUADS] );
+	CPY( m_bTransforms[TRANSFORM_NOSTRETCH] );
 	CPY( m_sNoteSkin );
 #undef CPY
 }

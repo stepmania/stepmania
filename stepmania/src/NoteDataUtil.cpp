@@ -1631,7 +1631,7 @@ const ValidRow g_ValidRows[] =
 	{ STEPS_TYPE_DANCE_DOUBLE, { f,f,f,f,T,T,T,T } },
 };
 
-void NoteDataUtil::FixImpossibleRows( NoteData &inout, StepsType st )
+void NoteDataUtil::RemoveStretch( NoteData &inout, StepsType st, int iStartIndex, int iEndIndex )
 {
 	vector<const ValidRow*> vpValidRowsToCheck;
 	for( unsigned i=0; i<ARRAYSIZE(g_ValidRows); i++ )
@@ -1645,7 +1645,7 @@ void NoteDataUtil::FixImpossibleRows( NoteData &inout, StepsType st )
 		return;
 
 	// each row must pass at least one valid mask
-	FOREACH_NONEMPTY_ROW_ALL_TRACKS( inout, r )
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r, iStartIndex, iEndIndex )
 	{
 		// only check rows with jumps
 		if( inout.GetNumTapNonEmptyTracks(r) < 2 )
@@ -1718,6 +1718,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const PlayerOptions &po, Ste
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOJUMPS] )	NoteDataUtil::RemoveJumps( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHANDS] )	NoteDataUtil::RemoveHands( nd, iStartIndex, iEndIndex );
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOQUADS] )	NoteDataUtil::RemoveQuads( nd, iStartIndex, iEndIndex );
+	if( po.m_bTransforms[PlayerOptions::TRANSFORM_NOSTRETCH] )	NoteDataUtil::RemoveStretch( nd, st, iStartIndex, iEndIndex );
 
 	// Apply inserts.
 	if( po.m_bTransforms[PlayerOptions::TRANSFORM_BIG] )		NoteDataUtil::Big( nd, iStartIndex, iEndIndex );

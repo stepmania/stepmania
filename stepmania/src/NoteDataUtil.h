@@ -40,6 +40,7 @@ namespace NoteDataUtil
 	void RemoveHands( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveQuads( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveMines( NoteData &inout, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
+	void RemoveStretch( NoteData &inout, StepsType st, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	void RemoveAllButOneTap( NoteData &inout, int row );
 	enum TrackMapping { left, right, mirror, shuffle, super_shuffle, stomp, NUM_TRACK_MAPPINGS };
 	void Turn( NoteData &inout, StepsType st, TrackMapping tt, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
@@ -86,8 +87,6 @@ namespace NoteDataUtil
 	{
 		SnapToNearestNoteType( inout, nt, NOTE_TYPE_INVALID, iStartIndex, iEndIndex );
 	}
-
-	void FixImpossibleRows( NoteData &inout, StepsType st );
 
 	// True if no notes in row that aren't true in the mask
 	bool RowPassesValidMask( NoteData &inout, int row, const bool bValidMask[] );

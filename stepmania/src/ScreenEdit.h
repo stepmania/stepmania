@@ -298,6 +298,7 @@ public:
 		nojumps, 
 		nohands, 
 		noquads, 
+		nostretch,
 		NUM_TRANSFORM_TYPES 
 	};
 	enum AlterType 
