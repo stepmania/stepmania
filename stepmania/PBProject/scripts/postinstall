@@ -1,0 +1,16 @@
+#!/bin/sh
+# The first time the installer is run, this will be
+# executed but StepMania/Data/MachineProfile/Stats.xml
+# might already exist.
+if [ -f "$2/StepMania/Data/MachineProfile/Stats.xml" ]; then
+	exit 0
+fi
+mkdir "$2/StepMania/Data/MachineProfile"
+cat - <<EOF > "$2/StepMania/Data/MachineProfile/Stats.xml"
+<html>
+<body>
+This is a dummy file, installed by the StepMania installer;
+it will be overwitten the first time machine stats are saved.
+</body>
+</html>
+EOF
