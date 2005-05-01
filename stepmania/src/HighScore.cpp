@@ -165,6 +165,7 @@ XNode* HighScoreList::CreateNode() const
 	pNode->m_sName = "HighScoreList";
 
 	pNode->AppendChild( "NumTimesPlayed", iNumTimesPlayed );
+	pNode->AppendChild( "LastPlayed", dtLastPlayed );
 
 	for( unsigned i=0; i<vHighScores.size(); i++ )
 	{
