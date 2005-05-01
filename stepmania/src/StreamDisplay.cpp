@@ -95,7 +95,7 @@ void StreamDisplay::DrawPrimitives()
 	float fPercentOffset = fmodf( GAMESTATE->m_fSongBeat/4+1000, fPercentBetweenStrips );
 	ASSERT( fPercentOffset >= 0  &&  fPercentOffset <= fPercentBetweenStrips );
 
-	for( float f=fPercentOffset+2; f>=0; f-=fPercentBetweenStrips )
+	for( float f=fPercentOffset+1; f>=0; f-=fPercentBetweenStrips )
 	{
 		DrawMask( f );
 		DrawStrip( f );
