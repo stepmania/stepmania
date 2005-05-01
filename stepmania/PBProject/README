@@ -14,14 +14,9 @@ The build process has been revised yet again.
 directory.
 
 INSTALL
-Build the installer, from the PBProject directory, run:
-$ xcodebuild -target BuildInstaller -target Installer
-Now copy the StepMania.app application from build to stepmania via:
-$ cp -r build/StepMania.app ..
-Next cd to the build directory and run the command:
-$ ./BuildInstaller ../scripts/installer.config Installer.app/Contents/Resources
-And at the prompt enter: ../..
-Now Installer.app is ready to be distributed.
+From the PBProject directory, run:
+$ scripts/mkrelease.pl .. <version>
+Build a pacakge using PackageMaker.
 
 Steve Checkoway
 steve@cs.washington.edu

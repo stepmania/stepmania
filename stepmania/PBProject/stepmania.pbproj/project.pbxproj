@@ -89,8 +89,6 @@
 //194
 		19C28FACFE9D520D11CA2CBB = {
 			children = (
-				AA67BFAE0558751600EF34A6,
-				AA67BFCF0558751E00EF34A6,
 				AA67BFDF0558752500EF34A6,
 				AA29CE580558741A00961A51,
 				AA590A3D0541CD2A00D02EE9,
@@ -125,8 +123,6 @@
 			projectDirPath = "";
 			targets = (
 				AA29CC240558741A00961A51,
-				AA67BFA00558751600EF34A6,
-				AA67BFB20558751E00EF34A6,
 				AA67BFD30558752500EF34A6,
 				AA590A3C0541CD2A00D02EE9,
 			);
@@ -141,7 +137,6 @@
 				AA6EFDC804770AF1005F316C,
 				AA6EFE5704770C7E005F316C,
 				AA6E00FE047711FF005F316C,
-				AA507E4F050BA1A000F96139,
 				AAAE28D60522523F00D02EE9,
 				29B97315FDCFA39411CA2CEA,
 				AA6EFDBB04770A83005F316C,
@@ -1298,67 +1293,12 @@
 			tabWidth = 4;
 			usesTabs = 1;
 		};
-		AA157B31051677F000D02EE9 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = Util.h;
-			path = Installer/Util.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA157B32051677F000D02EE9 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = Util.cpp;
-			path = Installer/Util.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
 		AA170C39055481660068A894 = {
 			containerPortal = 29B97313FDCFA39411CA2CEA;
 			isa = PBXContainerItemProxy;
 			proxyType = 1;
 			remoteGlobalIDString = AAAE28D40522521300D02EE9;
 			remoteInfo = libresample.a;
-		};
-		AA1C653A050C00CF0073A143 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = Processor.h;
-			path = Installer/Processor.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA1C653B050C00CF0073A143 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = Processor.cpp;
-			path = Installer/Processor.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA1C654B050D212D0073A143 = {
-			explicitFileType = sourcecode.c.c;
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = main.c;
-			path = Installer/main.c;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
 		};
 		AA1C654F050D21AB0073A143 = {
 			children = (
@@ -1417,50 +1357,6 @@
 			isa = PBXFileReference;
 			name = ProfileManager.h;
 			path = ../src/ProfileManager.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA1C655F050D2ABC0073A143 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = InstallerWindowController.h;
-			path = Installer/InstallerWindowController.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA1C6560050D2ABC0073A143 = {
-			explicitFileType = sourcecode.c.objc;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = InstallerWindowController.m;
-			path = Installer/InstallerWindowController.m;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA1C6565050D2D0D0073A143 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = Helper.h;
-			path = Installer/Helper.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA1C6566050D2D0D0073A143 = {
-			explicitFileType = sourcecode.cpp.objcpp;
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = Helper.mm;
-			path = Installer/Helper.mm;
 			refType = 4;
 			sourceTree = "<group>";
 			tabWidth = 4;
@@ -6404,59 +6300,6 @@
 			settings = {
 			};
 		};
-		AA507E4F050BA1A000F96139 = {
-			children = (
-				AA507E68050BC69000F96139,
-				AA1C6565050D2D0D0073A143,
-				AA1C6566050D2D0D0073A143,
-				AA507E65050BA55B00F96139,
-				AA507E64050BA55B00F96139,
-				AA1C655F050D2ABC0073A143,
-				AA1C6560050D2ABC0073A143,
-				AA1C654B050D212D0073A143,
-				AA1C653B050C00CF0073A143,
-				AA1C653A050C00CF0073A143,
-				AA157B32051677F000D02EE9,
-				AA157B31051677F000D02EE9,
-			);
-			isa = PBXGroup;
-			name = Installer;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		AA507E64050BA55B00F96139 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = InstallerFile.h;
-			path = Installer/InstallerFile.h;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA507E65050BA55B00F96139 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = InstallerFile.cpp;
-			path = Installer/InstallerFile.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
-		AA507E68050BC69000F96139 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			name = BuildInstaller.cpp;
-			path = Installer/BuildInstaller.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			tabWidth = 4;
-			usesTabs = 1;
-		};
 		AA52E9BD04DBBCF400D02EE9 = {
 			explicitFileType = sourcecode.cpp;
 			fileEncoding = 30;
@@ -7152,356 +6995,12 @@
 			settings = {
 			};
 		};
-		AA67BFA00558751600EF34A6 = {
-			buildPhases = (
-				AA67BFA10558751600EF34A6,
-				AA67BFA60558751600EF34A6,
-				AA67BFAB0558751600EF34A6,
-				AA67BFAC0558751600EF34A6,
-			);
-			buildRules = (
-			);
-			buildSettings = {
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = "../src Installer";
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = BuildInstaller;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost";
-			};
-			dependencies = (
-			);
-			isa = PBXNativeTarget;
-			name = BuildInstaller;
-			productInstallPath = /usr/local/bin;
-			productName = BuildInstaller;
-			productReference = AA67BFAE0558751600EF34A6;
-			productType = "com.apple.product-type.tool";
-		};
-		AA67BFA10558751600EF34A6 = {
-			buildActionMask = 2147483647;
-			files = (
-				AA67BFA20558751600EF34A6,
-				AA67BFA30558751600EF34A6,
-				AA67BFA40558751600EF34A6,
-				AA67BFA50558751600EF34A6,
-			);
-			isa = PBXHeadersBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA67BFA20558751600EF34A6 = {
-			fileRef = AA6EFE6204770CF7005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFA30558751600EF34A6 = {
-			fileRef = AA507E64050BA55B00F96139;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFA40558751600EF34A6 = {
-			fileRef = AA1C653A050C00CF0073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFA50558751600EF34A6 = {
-			fileRef = AA157B31051677F000D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFA60558751600EF34A6 = {
-			buildActionMask = 2147483647;
-			files = (
-				AA67BFA70558751600EF34A6,
-				AA67BFA80558751600EF34A6,
-				AA67BFA90558751600EF34A6,
-				AA67BFAA0558751600EF34A6,
-			);
-			isa = PBXSourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA67BFA70558751600EF34A6 = {
-			fileRef = AA507E65050BA55B00F96139;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFA80558751600EF34A6 = {
-			fileRef = AA507E68050BC69000F96139;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFA90558751600EF34A6 = {
-			fileRef = AA1C653B050C00CF0073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFAA0558751600EF34A6 = {
-			fileRef = AA157B32051677F000D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFAB0558751600EF34A6 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXFrameworksBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA67BFAC0558751600EF34A6 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXRezBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA67BFAE0558751600EF34A6 = {
-			explicitFileType = "compiled.mach-o.executable";
-			includeInIndex = 0;
-			isa = PBXFileReference;
-			path = BuildInstaller;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		AA67BFB20558751E00EF34A6 = {
-			buildPhases = (
-				AA67BFB30558751E00EF34A6,
-				AA67BFBA0558751E00EF34A6,
-				AA67BFBE0558751E00EF34A6,
-				AA67BFC50558751E00EF34A6,
-				AA67BFCC0558751E00EF34A6,
-			);
-			buildRules = (
-			);
-			buildSettings = {
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = "../src Installer";
-				INFOPLIST_FILE = "Info-Installer.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_CFLAGS = "-Wwrite-strings -fconstant-cfstrings";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Installer;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost";
-				WRAPPER_EXTENSION = app;
-			};
-			dependencies = (
-			);
-			isa = PBXNativeTarget;
-			name = Installer;
-			productInstallPath = "$(USER_APPS_DIR)";
-			productName = Installer;
-			productReference = AA67BFCF0558751E00EF34A6;
-			productType = "com.apple.product-type.application";
-		};
-		AA67BFB30558751E00EF34A6 = {
-			buildActionMask = 2147483647;
-			files = (
-				AA67BFB40558751E00EF34A6,
-				AA67BFB50558751E00EF34A6,
-				AA67BFB60558751E00EF34A6,
-				AA67BFB70558751E00EF34A6,
-				AA67BFB80558751E00EF34A6,
-				AA67BFB90558751E00EF34A6,
-			);
-			isa = PBXHeadersBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA67BFB40558751E00EF34A6 = {
-			fileRef = AA6EFE6204770CF7005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFB50558751E00EF34A6 = {
-			fileRef = AA1C655F050D2ABC0073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFB60558751E00EF34A6 = {
-			fileRef = AA1C6565050D2D0D0073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFB70558751E00EF34A6 = {
-			fileRef = AA507E64050BA55B00F96139;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFB80558751E00EF34A6 = {
-			fileRef = AA1C653A050C00CF0073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFB90558751E00EF34A6 = {
-			fileRef = AA157B31051677F000D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFBA0558751E00EF34A6 = {
-			buildActionMask = 2147483647;
-			files = (
-				AA67BFBB0558751E00EF34A6,
-				AA67BFBC0558751E00EF34A6,
-				AA67BFBD0558751E00EF34A6,
-			);
-			isa = PBXResourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA67BFBB0558751E00EF34A6 = {
-			fileRef = AAB895E504A9057100D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFBC0558751E00EF34A6 = {
-			fileRef = 089C165CFE840E0CC02AAC07;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFBD0558751E00EF34A6 = {
-			fileRef = AA1C654F050D21AB0073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFBE0558751E00EF34A6 = {
-			buildActionMask = 2147483647;
-			files = (
-				AA67BFBF0558751E00EF34A6,
-				AA67BFC00558751E00EF34A6,
-				AA67BFC10558751E00EF34A6,
-				AA67BFC20558751E00EF34A6,
-				AA67BFC30558751E00EF34A6,
-				AA67BFC40558751E00EF34A6,
-			);
-			isa = PBXSourcesBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA67BFBF0558751E00EF34A6 = {
-			fileRef = AA1C654B050D212D0073A143;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-x c";
-			};
-		};
-		AA67BFC00558751E00EF34A6 = {
-			fileRef = AA1C6560050D2ABC0073A143;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-x objective-c";
-			};
-		};
-		AA67BFC10558751E00EF34A6 = {
-			fileRef = AA1C6566050D2D0D0073A143;
-			isa = PBXBuildFile;
-			settings = {
-				COMPILER_FLAGS = "-x objective-c++";
-			};
-		};
-		AA67BFC20558751E00EF34A6 = {
-			fileRef = AA507E65050BA55B00F96139;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFC30558751E00EF34A6 = {
-			fileRef = AA1C653B050C00CF0073A143;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFC40558751E00EF34A6 = {
-			fileRef = AA157B32051677F000D02EE9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFC50558751E00EF34A6 = {
-			buildActionMask = 2147483647;
-			files = (
-				AA67BFC60558751E00EF34A6,
-				AA67BFC70558751E00EF34A6,
-				AA67BFC90558751E00EF34A6,
-				AA67BFCA0558751E00EF34A6,
-				AA67BFCB0558751E00EF34A6,
-			);
-			isa = PBXFrameworksBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		AA67BFC60558751E00EF34A6 = {
-			fileRef = 1058C7A1FEA54F0111CA2CBB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFC70558751E00EF34A6 = {
-			fileRef = AAF33F2A04FF213100F93C24;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFC90558751E00EF34A6 = {
-			fileRef = 29B97324FDCFA39411CA2CEA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFCA0558751E00EF34A6 = {
-			fileRef = 29B97325FDCFA39411CA2CEA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFCB0558751E00EF34A6 = {
-			fileRef = AAA0F7CE047AC7BF005F316C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA67BFCC0558751E00EF34A6 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXRezBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		AA67BFCE0558751E00EF34A6 = {
 			isa = PBXFileReference;
 			lastKnownFileType = text.plist;
 			path = "Info-Installer.plist";
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		AA67BFCF0558751E00EF34A6 = {
-			explicitFileType = wrapper.application;
-			includeInIndex = 0;
-			isa = PBXFileReference;
-			path = Installer.app;
-			refType = 3;
-			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		AA67BFD30558752500EF34A6 = {
 			buildPhases = (
