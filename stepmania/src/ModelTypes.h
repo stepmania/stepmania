@@ -51,24 +51,35 @@ public:
 	float GetAnimationLengthSeconds() const;
 	void SetSecondsIntoAnimation( float fSeconds );
 	float GetSecondsIntoAnimation() const;
+	RageVector2 GetTextureTranslate();
 
 	bool		m_bSphereMapped;
-	float		m_fTexOffsetX;
-	float		m_fTexOffsetY;
-	float		m_fTexVelocityX;
-	float		m_fTexVelocityY;
 	BlendMode	m_BlendMode;
 
 	bool NeedsNormals() const { return m_bSphereMapped; }
 
 private:
+	RageVector2		m_vTexOffset;
+	RageVector2		m_vTexVelocity;
 
 	int m_iCurState;
 	float m_fSecsIntoFrame;
 	struct AnimatedTextureState
 	{
+		AnimatedTextureState(
+			RageTexture* pTexture_,
+			float		fDelaySecs_,
+			RageVector2	vTranslate_
+			)
+		{
+			pTexture = pTexture_;
+			fDelaySecs = fDelaySecs_;
+			vTranslate = vTranslate_;
+		}
+
 		RageTexture* pTexture;
 		float		fDelaySecs;
+		RageVector2	vTranslate;
 	};
 	vector<AnimatedTextureState> vFrames;
 };

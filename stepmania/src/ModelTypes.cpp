@@ -15,10 +15,8 @@ AnimatedTexture::AnimatedTexture()
 	m_iCurState = 0;
 	m_fSecsIntoFrame = 0;
 	m_bSphereMapped = false;
-	m_fTexVelocityX = 0;
-	m_fTexVelocityY = 0;
-	m_fTexOffsetX = 0;
-	m_fTexOffsetY = 0;
+	m_vTexOffset = RageVector2(0,0);
+	m_vTexVelocity = RageVector2(0,0);
 	m_BlendMode = BLEND_NORMAL;
 }
 
@@ -47,10 +45,10 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 		if( pAnimatedTexture == NULL )
 			RageException::Throw( "The animated texture file '%s' doesn't contain a section called 'AnimatedTexture'.", sTexOrIniPath.c_str() );
 		
-		pAnimatedTexture->GetAttrValue( "TexVelocityX", m_fTexVelocityX );
-		pAnimatedTexture->GetAttrValue( "TexVelocityY", m_fTexVelocityY );
-		pAnimatedTexture->GetAttrValue( "TexOffsetX", m_fTexOffsetX );
-		pAnimatedTexture->GetAttrValue( "TexOffsetY", m_fTexOffsetY );
+		pAnimatedTexture->GetAttrValue( "TexVelocityX", m_vTexVelocity.x );
+		pAnimatedTexture->GetAttrValue( "TexVelocityY", m_vTexVelocity.y );
+		pAnimatedTexture->GetAttrValue( "TexOffsetX", m_vTexOffset.x );
+		pAnimatedTexture->GetAttrValue( "TexOffsetY", m_vTexOffset.y );
 		
 		for( int i=0; i<1000; i++ )
 		{
@@ -62,19 +60,29 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 			if( pAnimatedTexture->GetAttrValue( sFileKey, sFileName ) &&
 				pAnimatedTexture->GetAttrValue( sDelayKey, fDelay ) ) 
 			{
+				CString sTranslateXKey = ssprintf( "TranslateX%04d", i );
+				CString sTranslateYKey = ssprintf( "TranslateY%04d", i );
+
+				RageVector2 vOffset(0,0);
+				pAnimatedTexture->GetAttrValue( sTranslateXKey, vOffset.x );
+				pAnimatedTexture->GetAttrValue( sTranslateYKey, vOffset.y );
+
 				RageTextureID ID;
 				ID.filename = Dirname(sTexOrIniPath) + sFileName;
 				ID.bStretch = true;
 				ID.bHotPinkColorKey = true;
 				ID.bMipMaps = true;	// use mipmaps in Models
-				AnimatedTextureState state = { 
+				AnimatedTextureState state( 
 					TEXTUREMAN->LoadTexture( ID ),
-					fDelay
-				};
+					fDelay,
+					vOffset
+					);
 				vFrames.push_back( state );
 			}
 			else
+			{
 				break;
+			}
 		}
 	}
 	else
@@ -84,10 +92,11 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 		ID.bHotPinkColorKey = true;
 		ID.bStretch = true;
 		ID.bMipMaps = true;	// use mipmaps in Models
-		AnimatedTextureState state = { 
+		AnimatedTextureState state(
 			TEXTUREMAN->LoadTexture( ID ),
-			1
-		};
+			1,
+			RageVector2(0,0)
+			);
 		vFrames.push_back( state );
 	}
 }
@@ -141,10 +150,14 @@ void AnimatedTexture::SetSecondsIntoAnimation( float fSeconds )
 	for( unsigned i=0; i<vFrames.size(); i++ )
 	{
 		AnimatedTextureState& ats = vFrames[i];
-		if( fSeconds > ats.fDelaySecs )
+		if( fSeconds >= ats.fDelaySecs )
 		{
 			fSeconds -= ats.fDelaySecs;
 			m_iCurState = i+1;
+		}
+		else
+		{
+			break;
 		}
 	}
 	m_fSecsIntoFrame = fSeconds;	// remainder
@@ -173,6 +186,20 @@ void AnimatedTexture::Unload()
 	vFrames.clear();
 	m_iCurState = 0;
 	m_fSecsIntoFrame = 0;
+}
+
+RageVector2 AnimatedTexture::GetTextureTranslate()
+{
+	float fPercentIntoAnimation = GetSecondsIntoAnimation() / GetAnimationLengthSeconds();
+	RageVector2 v = m_vTexVelocity * fPercentIntoAnimation + m_vTexOffset;
+
+	if( vFrames.empty() )
+		return v;
+
+	ASSERT( m_iCurState < (int)vFrames.size() );
+	v += vFrames[m_iCurState].vTranslate;
+
+	return v;
 }
 
 msMesh::msMesh()

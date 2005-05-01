@@ -379,14 +379,9 @@ void Model::DrawPrimitives()
 
 				DISPLAY->SetMaterial( Emissive, Ambient, Diffuse, mat.Specular, mat.fShininess );
 
-				if( mat.diffuse.m_fTexVelocityX != 0  ||  mat.diffuse.m_fTexVelocityY != 0 )
-				{
-					float fScrollX = mat.diffuse.m_fTexVelocityX * mat.diffuse.GetSecondsIntoAnimation() / mat.diffuse.GetAnimationLengthSeconds();
-					fScrollX += mat.diffuse.m_fTexOffsetX;
-					float fScrollY = mat.diffuse.m_fTexVelocityY * mat.diffuse.GetSecondsIntoAnimation() / mat.diffuse.GetAnimationLengthSeconds();
-					fScrollY += mat.diffuse.m_fTexOffsetY;
-					DISPLAY->TextureTranslate( fScrollX, fScrollY, 0 );
-				}
+				RageVector2 vTexTranslate = mat.diffuse.GetTextureTranslate();
+				if( vTexTranslate.x != 0  ||  vTexTranslate.y != 0 )
+					DISPLAY->TextureTranslate( vTexTranslate.x, vTexTranslate.y, 0 );
 
 				/* There's some common code that could be folded out here, but it seems
 				 * clearer to keep it separate. */
