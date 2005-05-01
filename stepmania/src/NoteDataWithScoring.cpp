@@ -41,6 +41,8 @@ int GetNumNWithScore( const NoteData &in, TapNoteScore tns, int MinTaps, int iSt
 
 int GetNumHoldNotesWithScore( const NoteData &in, TapNote::SubType subType, HoldNoteScore hns )
 {
+	ASSERT( subType != TapNote::SubType_invalid );
+
 	int iNumSuccessfulHolds = 0;
 	for( int t=0; t<in.GetNumTracks(); ++t )
 	{
@@ -52,7 +54,7 @@ int GetNumHoldNotesWithScore( const NoteData &in, TapNote::SubType subType, Hold
 			const TapNote &tn = begin->second;
 			if( tn.type != TapNote::hold_head )
 				continue;
-			if( subType == TapNote::SubType_invalid || tn.subType != subType )
+			if( tn.subType != subType )
 				continue;
 			if( tn.HoldResult.hns == hns )
 				++iNumSuccessfulHolds;
@@ -244,7 +246,9 @@ float GetActualFreezeRadarValue( const NoteData &in, float fSongSeconds, PlayerN
 	if( iTotalHolds == 0 )
 		return 1.0f;
 
-	const int ActualHolds = GetNumHoldNotesWithScore( in, TapNote::SubType_invalid, HNS_OK );
+	const int ActualHolds = 
+		GetNumHoldNotesWithScore( in, TapNote::hold_head_hold, HNS_OK ) +
+		GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_OK );
 	return clamp( float(ActualHolds) / iTotalHolds, 0.0f, 1.0f );
 }
 
@@ -267,7 +271,10 @@ void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, PlayerNumber
 		case RADAR_NUM_TAPS_AND_HOLDS:	out[rc] = (float) GetNumNWithScore( in, TNS_GOOD, 1 );			break;
 		case RADAR_NUM_JUMPS:			out[rc] = (float) GetNumNWithScore( in, TNS_GOOD, 2 );			break;
 		// XXX: This should be hold_head_hold, but that'll affect scoring.
-		case RADAR_NUM_HOLDS:			out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::SubType_invalid, HNS_OK ); break;
+		case RADAR_NUM_HOLDS:			out[rc] = (float) 
+			GetNumHoldNotesWithScore( in, TapNote::hold_head_hold, HNS_OK ) +
+			GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_OK );
+			break;
 		case RADAR_NUM_MINES:			out[rc] = (float) GetSuccessfulMines( in );						break;
 		case RADAR_NUM_HANDS:			out[rc] = (float) GetSuccessfulHands( in );						break;
 		case RADAR_NUM_ROLLS:			out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_OK ); break;
