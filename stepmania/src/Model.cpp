@@ -362,7 +362,6 @@ void Model::DrawPrimitives()
 		{
 			const msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 
-			DISPLAY->TexturePushMatrix();
 
 			if( pMesh->nMaterialIndex != -1 )	// has a material
 			{
@@ -381,7 +380,10 @@ void Model::DrawPrimitives()
 
 				RageVector2 vTexTranslate = mat.diffuse.GetTextureTranslate();
 				if( vTexTranslate.x != 0  ||  vTexTranslate.y != 0 )
+				{
+					DISPLAY->TexturePushMatrix();
 					DISPLAY->TextureTranslate( vTexTranslate.x, vTexTranslate.y, 0 );
+				}
 
 				/* There's some common code that could be folded out here, but it seems
 				 * clearer to keep it separate. */
@@ -438,6 +440,9 @@ void Model::DrawPrimitives()
 					DISPLAY->SetTexture( 0, NULL );
 					DISPLAY->SetSphereEnvironmentMapping( 0 );
 				}
+
+				if( vTexTranslate.x != 0  ||  vTexTranslate.y != 0 )
+					DISPLAY->TexturePopMatrix();
 			}
 			else
 			{
@@ -454,7 +459,6 @@ void Model::DrawPrimitives()
 
 			DISPLAY->SetSphereEnvironmentMapping( false );
 			DISPLAY->SetBlendMode( BLEND_NORMAL );
-			DISPLAY->TexturePopMatrix();
 		}
 	}
 
