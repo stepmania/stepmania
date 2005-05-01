@@ -402,9 +402,6 @@ void TexCoordArrayFromRect(float fImageCoords[8], const RectF &rect)
 
 void Sprite::DrawTexture( const TweenState *state )
 {
-	if( m_fBaseAlpha != 1 )
-		int dkjfksdf = 0;
-
 	Actor::SetGlobalRenderStates();	// set Actor-specified render states
 
 	// bail if cropped all the way 

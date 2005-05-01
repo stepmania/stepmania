@@ -296,7 +296,7 @@ public:
 		}
 		else if( GAMESTATE->IsCourseMode() )   // playing a course
 		{
-			defOut.bOneChoiceForAllPlayers = PREFSMAN->m_bLockCourseDifficulties;
+			defOut.bOneChoiceForAllPlayers = (bool)PREFSMAN->m_bLockCourseDifficulties;
 
 			vector<Trail*> vTrails;
 			GAMESTATE->m_pCurCourse->GetTrails( vTrails, GAMESTATE->GetCurrentStyle()->m_StepsType );
