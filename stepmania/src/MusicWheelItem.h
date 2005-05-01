@@ -30,6 +30,8 @@ public:
 	Sprite				m_sprSongBar;
 	Sprite				m_sprSectionBar;
 	Sprite				m_sprExpandedBar;
+	Sprite				m_sprModeBar;
+	Sprite				m_sprSortBar;
 	WheelNotifyIcon		m_WheelNotifyIcon;
 	TextBanner			m_TextBanner;
 	BitmapText			m_textSection;

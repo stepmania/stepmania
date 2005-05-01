@@ -61,6 +61,14 @@ MusicWheelItem::MusicWheelItem()
 	m_sprExpandedBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprExpandedBar );
 
+	m_sprModeBar.Load( THEME->GetPathG("MusicWheelItem","mode") );
+	m_sprModeBar.SetXY( 0, 0 );
+	this->AddChild( &m_sprModeBar );
+
+	m_sprSortBar.Load( THEME->GetPathG("MusicWheelItem","sort") );
+	m_sprSortBar.SetXY( 0, 0 );
+	this->AddChild( &m_sprSortBar );
+
 	m_fPercentGray = 0;
 	m_WheelNotifyIcon.SetXY( ICON_X, ICON_Y );
 	m_WheelNotifyIcon.RunCommands( ICON_ON_COMMAND );
@@ -116,6 +124,8 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 	m_sprSongBar.SetHidden( true );
 	m_sprSectionBar.SetHidden( true );
 	m_sprExpandedBar.SetHidden( true );
+	m_sprModeBar.SetHidden( true );
+	m_sprSortBar.SetHidden( true );
 	m_textSection.SetHidden( true );
 	m_textRoulette.SetHidden( true );
 	FOREACH_PlayerNumber( p )
@@ -194,8 +204,16 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 	case TYPE_ROULETTE:
 	case TYPE_RANDOM:
 	case TYPE_PORTAL:
+		if( bExpanded )
+			m_sprExpandedBar.SetHidden( false );
+		else
+			m_sprSectionBar.SetHidden( false );
+		break;
 	case TYPE_SORT:
-		(bExpanded ? m_sprExpandedBar : m_sprSectionBar).SetHidden( false );
+		if( pWID->m_Action.m_pm != PLAY_MODE_INVALID )
+			m_sprModeBar.SetHidden( false );
+		else
+			m_sprSortBar.SetHidden( false );
 		break;
 	case TYPE_SONG:		
 	case TYPE_COURSE:
