@@ -231,7 +231,8 @@ MusicWheelItem.cpp MusicWheelItem.h OptionIcon.cpp OptionIcon.h OptionIconRow.cp
 OptionRow.cpp OptionRow.h OptionsCursor.cpp OptionsCursor.h \
 PaneDisplay.cpp PaneDisplay.h ScrollBar.cpp ScrollBar.h \
 ScrollingList.cpp ScrollingList.h SnapDisplay.cpp SnapDisplay.h \
-TextBanner.cpp TextBanner.h WheelNotifyIcon.cpp WheelNotifyIcon.h
+TextBanner.cpp TextBanner.h WheelBase.cpp WheelBase.h WheelItemBase.cpp WheelItemBase.h \
+WheelNotifyIcon.cpp WheelNotifyIcon.h
 
 ActorsInGameplay = \
 ArrowEffects.cpp ArrowEffects.h AttackDisplay.cpp AttackDisplay.h \
