@@ -27,6 +27,7 @@ static const CString MessageNames[NUM_MESSAGES] = {
 	"NoteWillCrossIn1500Ms",
 	"CardRemovedP1",
 	"CardRemovedP2",
+	"BeatCrossed",
 };
 XToString( Message, NUM_MESSAGES );
 

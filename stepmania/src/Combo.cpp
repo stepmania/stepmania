@@ -5,17 +5,23 @@
 #include "GameState.h"
 #include "song.h"
 #include "Command.h"
+#include "PlayerState.h"
 
 Combo::Combo()
 {
 	m_iLastSeenCombo = -1;
+	m_pPlayerState = NULL;
+	m_pPlayerStageStats = NULL;
+
+	this->SubscribeToMessage( MESSAGE_BEAT_CROSSED );
 }
 
-void Combo::Load( PlayerNumber pn )
+void Combo::Load( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )
 {
 	ASSERT( m_SubActors.empty() );	// don't load twice
 
-	m_PlayerNumber = pn;
+	m_pPlayerState = pPlayerState;
+	m_pPlayerStageStats = pPlayerStageStats;
 
 	SHOW_COMBO_AT		.Load(m_sName,"ShowComboAt");
 	LABEL_X				.Load(m_sName,"LabelX");
@@ -90,8 +96,8 @@ void Combo::SetCombo( int iCombo, int iMisses )
 	m_textNumber.SetHidden( false );
 
 	CString txt = ssprintf("%d", iNum);
-	/* Don't do anything if it's not changing. */
-	if(m_textNumber.GetText() == txt) return;
+	
+	// Do pulse even if the number isn't changing.
 
 	m_textNumber.SetText( txt );
 	float fNumberZoom = SCALE(iNum,0.f,(float)NUMBER_MAX_ZOOM_AT,(float)NUMBER_MIN_ZOOM,(float)NUMBER_MAX_ZOOM);
@@ -114,17 +120,17 @@ void Combo::SetCombo( int iCombo, int iMisses )
 
 	if( bPastMidpoint )
 	{
-		if( STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].FullComboOfScore(TNS_MARVELOUS) )
+		if( m_pPlayerStageStats->FullComboOfScore(TNS_MARVELOUS) )
 		{
 			sprLabel->RunCommands( FULL_COMBO_MARVELOUSES_COMMAND );
 			m_textNumber.RunCommands( FULL_COMBO_MARVELOUSES_COMMAND );
 		}
-		else if( bPastMidpoint && STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].FullComboOfScore(TNS_PERFECT) )
+		else if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_PERFECT) )
 		{
 			sprLabel->RunCommands( FULL_COMBO_PERFECTS_COMMAND );
 			m_textNumber.RunCommands( FULL_COMBO_PERFECTS_COMMAND );
 		}
-		else if( bPastMidpoint && STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].FullComboOfScore(TNS_GREAT) )
+		else if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_GREAT) )
 		{
 			sprLabel->RunCommands( FULL_COMBO_GREATS_COMMAND );
 			m_textNumber.RunCommands( FULL_COMBO_GREATS_COMMAND );

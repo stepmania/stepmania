@@ -165,7 +165,7 @@ void Player::Init(
 	m_soundAttackEnding.SetParams( p );
 
 	m_Combo.SetName( "Combo" );
-	m_Combo.Load( pn );
+	m_Combo.Load( m_pPlayerState, m_pPlayerStageStats );
 	ActorUtil::OnCommand( m_Combo, sType );
 
 	m_Judgment.SetName( "Judgment" );

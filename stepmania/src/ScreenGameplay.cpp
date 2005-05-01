@@ -1706,46 +1706,65 @@ void ScreenGameplay::UpdateLights()
 
 void ScreenGameplay::SendCrossedMessages()
 {
-	const int NUM_MESSAGES_TO_SEND = 4;
-	const float MESSAGE_SPACING_SECONDS = 0.5f;
-
-	PlayerNumber pn = PLAYER_INVALID;
-	FOREACH_EnabledPlayer( p )
 	{
-		if( GAMESTATE->m_pCurSteps[p]->GetDifficulty() == DIFFICULTY_BEGINNER )
-		{
-			pn = p;
-			break;
-		}
-	}
-	if( pn == PLAYER_INVALID )
-		return;
+		static int iRowLastCrossed = 0;
 
-	NoteData &nd = m_Player[pn].m_NoteData;
-
-	static int iRowLastCrossedAll[NUM_MESSAGES_TO_SEND] = { 0, 0, 0, 0 };
-	for( int i=0; i<NUM_MESSAGES_TO_SEND; i++ )
-	{
-		float fOffsetFromCurrentSeconds = MESSAGE_SPACING_SECONDS * i;
-
-		float fPositionSeconds = GAMESTATE->m_fMusicSeconds + fOffsetFromCurrentSeconds;	// trigger the light a tiny bit early
+		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
 		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
 		iRowNow = max( 0, iRowNow );
-		int &iRowLastCrossed = iRowLastCrossedAll[i];
 
-		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, iRowLastCrossed+1, iRowNow+1 )
+		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )
 		{
-			if( nd.IsThereATapOrHoldHeadAtRow(r) )
-			{
-				LOG->Trace( "r = %d", r );
-				MESSAGEMAN->Broadcast( (Message)(MESSAGE_NOTE_CROSSED + i) );
-				break;
-			}
+			if( GetNoteType( r ) == NOTE_TYPE_4TH )
+				MESSAGEMAN->Broadcast( MESSAGE_BEAT_CROSSED );
 		}
 
 		iRowLastCrossed = iRowNow;
+	}
+
+	{
+		const int NUM_MESSAGES_TO_SEND = 4;
+		const float MESSAGE_SPACING_SECONDS = 0.5f;
+
+		PlayerNumber pn = PLAYER_INVALID;
+		FOREACH_EnabledPlayer( p )
+		{
+			if( GAMESTATE->m_pCurSteps[p]->GetDifficulty() == DIFFICULTY_BEGINNER )
+			{
+				pn = p;
+				break;
+			}
+		}
+		if( pn == PLAYER_INVALID )
+			return;
+
+		NoteData &nd = m_Player[pn].m_NoteData;
+
+		static int iRowLastCrossedAll[NUM_MESSAGES_TO_SEND] = { 0, 0, 0, 0 };
+		for( int i=0; i<NUM_MESSAGES_TO_SEND; i++ )
+		{
+			float fOffsetFromCurrentSeconds = MESSAGE_SPACING_SECONDS * i;
+
+			float fPositionSeconds = GAMESTATE->m_fMusicSeconds + fOffsetFromCurrentSeconds;
+			float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+
+			int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+			iRowNow = max( 0, iRowNow );
+			int &iRowLastCrossed = iRowLastCrossedAll[i];
+
+			FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, iRowLastCrossed+1, iRowNow+1 )
+			{
+				if( nd.IsThereATapOrHoldHeadAtRow(r) )
+				{
+					MESSAGEMAN->Broadcast( (Message)(MESSAGE_NOTE_CROSSED + i) );
+					break;
+				}
+			}
+
+			iRowLastCrossed = iRowNow;
+		}
 	}
 }
 

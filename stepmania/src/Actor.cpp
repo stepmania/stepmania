@@ -1053,6 +1053,12 @@ void Actor::SubscribeToMessage( const CString &sMessageName )
 	m_vsSubscribedTo.push_back( sMessageName );
 }
 
+void Actor::SubscribeToMessage( Message message )
+{
+	MESSAGEMAN->Subscribe( this, message );
+	m_vsSubscribedTo.push_back( MessageToString(message) );
+}
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

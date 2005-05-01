@@ -8,14 +8,15 @@
 #include "BitmapText.h"
 #include "PlayerNumber.h"
 #include "ThemeMetric.h"
-
+struct PlayerState;
+struct PlayerStageStats;
 
 class Combo : public ActorFrame
 {
 public:
 	Combo();
 
-	void Load( PlayerNumber pn );
+	void Load( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 
 	void SetCombo( int iCombo, int iMisses );
 
@@ -38,7 +39,8 @@ protected:
 	ThemeMetric<apActorCommands>	FULL_COMBO_BROKEN_COMMAND;
 	ThemeMetric<bool>				SHOW_MISS_COMBO;
 
-	PlayerNumber m_PlayerNumber;
+	PlayerState *m_pPlayerState;
+	PlayerStageStats *m_pPlayerStageStats;
 
 	AutoActor	m_sprMilestone;
 	AutoActor	m_sprComboLabel;
