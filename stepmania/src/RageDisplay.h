@@ -268,6 +268,7 @@ public:
 	void RotateX( float deg );
 	void RotateY( float deg );
 	void RotateZ( float deg );
+	void SkewX( float fAmount );
 	void MultMatrix( const RageMatrix &f ) { this->PostMultMatrix(f); } /* alias */
 	void PostMultMatrix( const RageMatrix &f );
 	void PreMultMatrix( const RageMatrix &f );

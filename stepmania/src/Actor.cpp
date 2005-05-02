@@ -371,6 +371,12 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 
 		DISPLAY->MultMatrix(mat);
 	}
+
+	if( m_pTempState->fSkewX != 0 )
+	{
+		DISPLAY->SkewX( m_pTempState->fSkewX );
+	}
+
 }
 
 void Actor::SetGlobalRenderStates()
@@ -925,6 +931,7 @@ void Actor::TweenState::Init()
 	rotation = RageVector3( 0, 0, 0 );
 	quat = RageVector4( 0, 0, 0, 1 );
 	scale = RageVector3( 1, 1, 1 );
+	fSkewX = 0;
 	crop = RectF( 0,0,0,0 );
 	fade = RectF( 0,0,0,0 );
 	for(int i=0; i<4; i++) 
@@ -938,6 +945,7 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 	average_out.scale		= ts1.scale	   + (ts2.scale		- ts1.scale   )*fPercentBetween;
 	average_out.rotation	= ts1.rotation + (ts2.rotation	- ts1.rotation)*fPercentBetween;
 	RageQuatSlerp(&average_out.quat, ts1.quat, ts2.quat, fPercentBetween);
+	average_out.fSkewX		= ts1.fSkewX + (ts2.fSkewX	- ts1.fSkewX)*fPercentBetween;
 	
 	average_out.crop.left	= ts1.crop.left  + (ts2.crop.left	- ts1.crop.left  )*fPercentBetween;
 	average_out.crop.top	= ts1.crop.top   + (ts2.crop.top	- ts1.crop.top   )*fPercentBetween;

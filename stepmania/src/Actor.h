@@ -57,6 +57,7 @@ public:
 		RageVector3 rotation;
 		RageVector4 quat;
 		RageVector3 scale;
+		float		fSkewX;
 		RectF		crop;	// 0 = no cropping, 1 = fully cropped
 		RectF		fade;	// 0 = no fade
 		RageColor   diffuse[4];
@@ -170,6 +171,9 @@ public:
 	void  AddRotationH( float rot );
 	void  AddRotationP( float rot );
 	void  AddRotationR( float rot );
+
+	void SetSkewX( float fAmount )	{ DestTweenState().fSkewX = fAmount; }
+	float GetSkewX( float fAmount )	{ return DestTweenState().fSkewX; }
 
 	float GetCropLeft()					{ return DestTweenState().crop.left; }
 	float GetCropTop()					{ return DestTweenState().crop.top;	}
@@ -523,6 +527,7 @@ public:
 	static int rotationx( T* p, lua_State *L )		{ p->SetRotationX(FArg(1)); return 0; }
 	static int rotationy( T* p, lua_State *L )		{ p->SetRotationY(FArg(1)); return 0; }
 	static int rotationz( T* p, lua_State *L )		{ p->SetRotationZ(FArg(1)); return 0; }
+	static int skewx( T* p, lua_State *L )			{ p->SetSkewX(FArg(1)); return 0; }
 	static int heading( T* p, lua_State *L )		{ p->AddRotationH(FArg(1)); return 0; }
 	static int pitch( T* p, lua_State *L )			{ p->AddRotationP(FArg(1)); return 0; }
 	static int roll( T* p, lua_State *L )			{ p->AddRotationR(FArg(1)); return 0; }
@@ -631,6 +636,7 @@ public:
 		ADD_METHOD( rotationx )
 		ADD_METHOD( rotationy )
 		ADD_METHOD( rotationz )
+		ADD_METHOD( skewx )
 		ADD_METHOD( heading )
 		ADD_METHOD( pitch )
 		ADD_METHOD( roll )

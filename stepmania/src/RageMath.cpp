@@ -158,6 +158,12 @@ void RageMatrixScaling( RageMatrix* pOut, float x, float y, float z )
 	pOut->m[2][2] = z;
 }
 
+void RageMatrixSkewX( RageMatrix* pOut, float fAmount )
+{
+	RageMatrixIdentity(pOut);
+	pOut->m[1][0] = fAmount;
+}
+
 /*
  * Return:
  *

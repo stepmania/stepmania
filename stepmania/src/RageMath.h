@@ -25,6 +25,7 @@ void RageMatrixIdentity( RageMatrix* pOut );
 void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatrix* pB );
 void RageMatrixTranslation( RageMatrix* pOut, float x, float y, float z );
 void RageMatrixScaling( RageMatrix* pOut, float x, float y, float z );
+void RageMatrixSkewX( RageMatrix* pOut, float fAmount );
 void RageMatrixTranslateAndScale( RageMatrix* pOut, float fTransX, float fTransY, float fTransZ, float fScaleX, float fScaleY, float fScaleZ );
 void RageMatrixRotationX( RageMatrix* pOut, float fTheta );
 void RageMatrixRotationY( RageMatrix* pOut, float fTheta );

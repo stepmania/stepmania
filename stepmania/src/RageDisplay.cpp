@@ -326,6 +326,13 @@ public:
 		MultMatrixLocal( m );
 	}
 
+	void SkewX( float fAmount )
+	{		
+		RageMatrix m;
+		RageMatrixSkewX( &m, fAmount );
+		MultMatrixLocal( m );
+	}
+
 	// Obtain the current matrix at the top of the stack
 	const RageMatrix* GetTop() { return &stack.back(); }
 };
@@ -394,6 +401,11 @@ void RageDisplay::RotateY( float deg )
 void RageDisplay::RotateZ( float deg )
 {
 	g_WorldStack.RotateZLocal( deg );
+}
+
+void RageDisplay::SkewX( float fAmount )
+{
+	g_WorldStack.SkewX( fAmount );
 }
 
 void RageDisplay::PostMultMatrix( const RageMatrix &m )
