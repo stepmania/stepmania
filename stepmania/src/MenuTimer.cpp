@@ -70,7 +70,8 @@ void MenuTimer::Update( float fDeltaTime )
 	const float fNewSecondsLeft = m_fSecondsLeft;
 
 	const int iOldDisplay = (int)(fOldSecondsLeft + 0.99f);
-	const int iNewDisplay = (int)(fNewSecondsLeft + 0.99f);
+	int iNewDisplay = (int)(fNewSecondsLeft + 0.99f);
+	iNewDisplay = max( iNewDisplay, 0 );
 
 	if( fOldSecondsLeft > 5.5  &&  fNewSecondsLeft < 5.5 )	// transition to below 5.5
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("hurry up") );
