@@ -365,11 +365,11 @@ void SongUtil::SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut )
 	FOREACH_CONST( Song*, vpSongsInOut, s )
 	{
 		int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed( *s );
-		CString val = iNumTimesPlayed ? pProfile->GetSongLastPlayedDateTime(*s).GetString() : "9999999999999";
+		CString val = iNumTimesPlayed ? pProfile->GetSongLastPlayedDateTime(*s).GetString() : "0";
 		song_sort_val[*s] = val;
 	}
 
-	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
+	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueDescending );
 	song_sort_val.clear();
 }
 
