@@ -111,6 +111,7 @@ void StreamDisplay::DrawPrimitives()
 
 void StreamDisplay::SetPercent( float fPercent )
 {
+	ASSERT( fPercent >= 0.0f && fPercent <= 1.0f );
 	float fDeltaPercent = fPercent - m_fPercent;
 	m_fVelocity += fDeltaPercent;
 	m_fPercent = fPercent;
