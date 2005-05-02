@@ -205,8 +205,6 @@ void ScreenEnding::Init()
 		// don't show stats if not using a profile
 		if( !PROFILEMAN->IsUsingProfile(p) )
 			continue;
-
-		Profile* pProfile = PROFILEMAN->GetProfile(p);
 	
 		FOREACH_EndingStatsLine( i )
 		{
