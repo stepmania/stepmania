@@ -324,7 +324,7 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 			if( bWarnOnInvalid )
 			{
 				CString sWarning = ssprintf( "The options string '%s' contains an invalid mod name '%s'", sOptions.c_str(), sBit.c_str() );
-				LOG->Warn( sWarning );
+				LOG->Warn( "%s", sWarning.c_str() );
 				Dialog::OK( sWarning, "INVALID_PLAYER_OPTION_WANRING" );
 			}
 		}
