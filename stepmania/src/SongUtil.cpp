@@ -61,7 +61,7 @@ bool CompareSongPointersByTitle(const Song *pSong1, const Song *pSong2)
 	s1 = SongUtil::MakeSortString(s1);
 	s2 = SongUtil::MakeSortString(s2);
 
-	int ret = s1.CompareNoCase( s2 );
+	int ret = strcmp( s1, s2 );
 	if(ret < 0) return true;
 	if(ret > 0) return false;
 
