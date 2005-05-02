@@ -175,13 +175,18 @@ void Course::LoadFromCRSFile( CString sPath )
 					end = strtof( sBits[1], NULL );
 				else if( !sBits[0].CompareNoCase("MODS") )
 				{
+					attack.sModifier = sBits[1];
 					if( end != -9999 )
 					{
 						ASSERT_M( end >= attack.fStartSecond, ssprintf("Attack ends before it starts.  end %f, start %f", end, attack.fStartSecond) );
 						attack.fSecsRemaining = end - attack.fStartSecond;
 						end = -9999;
 					}
-					attack.sModifier = sBits[1];
+					
+					// warn on invalid so we catch bogus mods on load
+					PlayerOptions po;
+					po.FromString( attack.sModifier, true );
+
 					attacks.push_back( attack );
 				}
 				else
