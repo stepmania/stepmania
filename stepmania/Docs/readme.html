@@ -1,0 +1,288 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>StepMania Readme</title>
+</head>
+
+<body>
+<h1>StepMania Documentation </h1>
+<ul>
+  <li><a href="#What is StepMania?">1. What is StepMania?</a></li>
+  <li><a href="#System Requirements">2. System Requirements</a></li>
+  <li><a href="#3. Installation">3. Installation</a></li>
+  <li><a href="#4. Using StepMania">4. Using StepMania</a></li>
+  <li><a href="#5. Using smpackage">5. Using smpackage</a></li>
+  <li><a href="#6. Supported Controllers or Controller Adapters">6. Supported Controllers or Controller Adapters</a></li>
+  <li><a href="#7. Getting Help/Contact">7. Getting Help/Contact</a></li>
+  <li><a href="#8. Changelog">8. Changelog</a></li>
+</ul>
+<dl>
+  <dd><a href="#What is StepMania?"> </a></dd>
+</dl>
+<p>&nbsp;</p>
+<a name="1. What is StepMania?"></a>
+<h1>1. What is StepMania?</h1>
+<p>StepMania is a music/rhythm game. The player presses different buttons in time to the music and to note patterns that scroll across the screen. Features 3D graphics, visualizations, support for gamepads/dance pads, a step recording mode, and more! <br>
+  StepMania is capable of playing many game types. Currently, it supports games similar to Dance Dance Revolution, Pump It Up, EZ 2 Dancer, and Para Para Paradise. In the future, it will support games similar to BeatMania, Guitar Freaks, DrumMania, and more.
+  
+The games played by StepMania are rhythm games. Notes scroll up from the bottom of the screen, and the player must hit the corresponding button on the controller in time to the. All games can be played using the keyboard, but the real fun comes when using specially designed controllers, like a dance pad or hand sensors.</p>
+<a name="2. System Requirements">
+<h1>2. System Requirements</h1>
+<ul>
+  <li>CPU: Intel compatable (500mhz or higher reccomended)</li>
+  <li>Graphics: DirectX 7 and OpenGL compatable graphics adapter with 16MB or more of graphics memory</li>
+  <li>Hard Disk: 10MB free for base program, additional space as needed for songs/themes/etc.</li>
+  <li>Sound: DirectX 7 compatable (ALSA/OSS compatable for linux) sound card.</li>
+  <li>For Linux:
+    <ul>
+      <li>madlibs/libmad 0.15.1b or greater (for MP3 support) </li>
+      <li> libvorbis (for ogg/vorbis support) </li>
+      <li>  A compatable XF86/Xorg display server</li>
+      <li>ALSA </li>
+    </ul>
+  </li>
+</ul>
+<h1>3. Installation</h1>
+<h2>3a. Installing StepMania </h2>
+<p>To install StepMania on Windows 98/ME/2000/XP: </p>
+<ol>
+  <li>Point your web browser to the StepMania Sourceforge.net project files page at <a href="http://sourceforge.net/project/showfiles.php?group_id=37892" title="http://sourceforge.net/project/showfiles.php?group_id=37892">http://sourceforge.net/project/showfiles.php?group_id=37892</a></li>
+  <li>Download the file stepmania-X.Y-Z.exe where X, Y, and Z are version numbers, and save it to your hard drive.</li>
+  <li>Double click Stepmania-X.Y-Z.exe, and follow the instructions on screen.</li>
+  <li>After installation, add songs, themes, noteskins, etc to their appropriate directories (see section 5)</li>
+  <li>To run StepMania, click the Start button, select Programs or All Programs, select StepMania (or Stepmania CVS) and click Play Stepmania. </li>
+</ol>
+<p>To install on Linux/Unix using the binaries:</p>
+<ol>
+  <li>Point your web browser to the StepMania Sourceforge.net project files page at <a href="http://sourceforge.net/project/showfiles.php?group_id=37892" title="http://sourceforge.net/project/showfiles.php?group_id=37892">http://sourceforge.net/project/showfiles.php?group_id=37892</a></li>
+  <li>Download stepmania-X.Y-Z-linux.tar.gz (where X.Y-Z are version numbers) to a folder on your hard drive.</li>
+  <li>Extract the archive using <em>tar -zxvf stepmania-X.Y-Z-linux.tar.gz</em> </li>
+  <li>Add songs/themes/noteskins/etc. to the appropriate folders (see Section 5)</li>
+  <li>To Start StepMania, run ./stepmania from the installation folder. </li>
+</ol>
+<p>To compile/install StepMania from a source tarball:</p>
+<ol>
+  <li> Point your web browser to the StepMania Sourceforge.net project files page at <a href="http://sourceforge.net/project/showfiles.php?group_id=37892" title="http://sourceforge.net/project/showfiles.php?group_id=37892">http://sourceforge.net/project/showfiles.php?group_id=37892</a></li>
+  <li>Download stepmania-X.Y-Z-linux-src.tar.gz to a location in your hard drive</li>
+  <li>Extract the archive using <em>tar -zxvf stepmania-X.Y-Z-linux-src.tar.gz</em> </li>
+  <li>In the extracted folder, type ./configure</li>
+  <li>Finally, type make (or gmake) to build StepMania </li>
+</ol>
+<p>To install StepMania on Mac OSX:</p>
+<p>TODO</p>
+<h2>3b. Adding songs, themes, characters, etc</h2>
+<p>To add songs to StepMania:</p>
+<ol>
+  <li>Open your StepMania installation directory, and the folder called &quot;Songs&quot;</li>
+  <li>Create subdirectories for each song group (game the songs came from, step artist, etc). These will appear as groups on the song wheel. </li>
+  <li>Create folders for each song you want in the group. </li>
+  <li>Place inside the folder:
+    <ol>
+      <li>the DWI or SM step file</li>
+      <li>the song's music file</li>
+      <li>a background (optional)</li>
+      <li>a banner (optional</li>
+    </ol>
+  .</li>
+</ol>
+<p>Themes, BG Animations, Characters, Note skins, and announcers should be placed in subdirectories of their respective folders.</p>
+<p>For Example, the files for the Foo announcer would reside in Announcers/Foo/</p>
+<p>Alternatively, some StepMania addons come in .SMZIP format. This special archive contains all the files for an addon. Simply double-click it to install the files in the right places. </p>
+<h1>4. Using StepMania</h1>
+<p>Once you start Stepmania, you will be presented with the Stepmania Title Screen</p>
+<p><img src="images/smtitlescreen.JPG" width="320" height="240"> </p>
+<p>Hit the Start or Back buttons (Enter or Esc by default) to go to the main menu. (Note that in Freeplay or Pay mode, the main menu is disabled)</p>
+<p><img src="images/smmainmenu.JPG" width="320" height="240"> </p>
+<h2>4a. Starting the Game</h2>
+<p>From the Main Menu, select Game Start. After the warning screen appears, you will be presented with the Select Style screen.</p>
+<p><img src="images/smselectstyle.JPG" width="320" height="240"> </p>
+<p>Select one of the five styles to continue:</p>
+<ul>
+  <li>Single: Standard 4 pannel mode for one player</li>
+  <li>Versus: Standard 4 pannel mode for two players</li>
+  <li>Couple: 4 pannel mode for two players with different steps for each player</li>
+  <li>Double: One player plays on both pads simultaneously</li>
+  <li>Solo: 6 pannel mode for one player</li>
+</ul>
+<p>Once you select a style, you are presented with the Select Difficulty screen.</p>
+<p><img src="images/smselectdifficulty.JPG" width="320" height="240"> </p>
+<p>Select a difficulty to continue, or scroll right past Heavy to show the Challenge/Oni screen.</p>
+<p><img src="images/smchallenge.JPG" width="320" height="240"> </p>
+<p>These modes are more difficult than the standard game modes.</p>
+<p>Once you select a difficulty, you are presented with the song wheel.</p>
+<p><img src="images/smsongwheel.JPG" width="640" height="480"> </p>
+<p>Select a song with the Menu Left and Menu right keys (see Section 4c to define them)</p>
+<p>Once you select a song, you are presented a variety of information about this song.</p>
+<ol>
+  <li>This is the currently selected song's banner.</li>
+  <li>This is the speed (in Beats Per Minute) of the currently selected song.</li>
+  <li>This is the Groove Radar. It shows how much Freeze, Chaos, Voltage, Air, and Stream a song has.</li>
+  <li>This is the feet rating. It shows how difficult overall a song is. </li>
+  <li>This is the song wheel. Rotate it to select a song with Menu Left and Menu Right, or Pad left and Pad right (see section 4c)</li>
+  <li>This shows how the songs on the song wheel are sorted. To change the sort press Up, down, up, and down on the pad or keyboard to display the list of choices for song sorting. Select one with Start.</li>
+  <li>This shows the current stage number. &quot;Event&quot; is displayed in Event mode.</li>
+</ol>
+<p>To Start a song, select it, and press start. Depending on your options, you may also press start within a second or two after that to enter the Song Options menu. </p>
+<h2>4b. Song options</h2>
+<p>The song options menu contains a variety of options to alter the way the game is played. These include</p>
+<p><img src="images/smsongoptions.jpg" width="320" height="240"> </p>
+<ul>
+  <li>Speed: This setting defines the speed that the notes move at, relative to the song's tempo.</li>
+  <li>Acceleration: These settings can make the speed of the notes change as they progress up the screen, making the game more difficult.</li>
+  <li>Effect: These settings enabled a variety of effects on the notes, such as a &quot;drunk&quot; effect, making the game harder.</li>
+  <li>Appearance: These options also affect the appearance of the notes, however these deal with their visibility.</li>
+  <li>Turn: These options enable a turn in the notes as the move up the screen.</li>
+  <li>Insert: These options insert random notes into the orignal step pattern.</li>
+  <li>Scroll: These settings affect the placement of the stationary arrows.</li>
+  <li>NoteSkins: Changes the noteskin.</li>
+  <li>Holds: Enables or disables hold notes in some songs </li>
+  <li>Mines: Enables mines in some songs, which when hit like regular notes, greatly decrease the player's lifebar. </li>
+  <li>Hide Chooses how to hide the notes.</li>
+  <li>Persp: Changes the perspeftive of the notes.</li>
+  <li>Steps: Chooses the step set or difficulty to use.</li>
+  <li>Character: Chooses from one of the installed dancing characters.</li>
+  <li>LifeType: Chooses from two different types of life bars: the standard lifebar, or a &quot;Battery&quot; which allows only a set number of misses until the player fails, controled by BatLives.</li>
+  <li>BarDrain: Affects how the bar drains when the player misses a note or hits a mine.</li>
+  <li>BatLives: Sets the number of lives in Battery mode.</li>
+  <li>Fail: Sets the type of fail. Immediate fails when the lifebar reaches zero, end of song waits until the end of the song to fail the player, and off disables fail.</li>
+  <li>Assist Tick: Enables a metronome-like tick.</li>
+  <li>Rate: Chages the rate the song is played.</li>
+  <li>Save Scores: Enables the saving of scores to the high score table.</li>
+</ul>
+<p>Once you press Exit on the second screen, the game will start. </p>
+<h2>4c. Game Options</h2>
+<p> Select Options from the main menu to get to the Options menu.</p>
+<p><img src="images/smoptions.jpg" width="320" height="240"> </p>
+<p>Below are descriptions of available SM options.</p>
+<ul>
+  <li>Apperance options
+    <ul>
+      <li>Language: Sets StepMania's Language (english by default)</li>
+      <li>Announcer: Sets the announcer from a list of currently installed announcer packs.</li>
+      <li>Theme: Sets the theme from a list of currently installed themes.</li>
+      <li>Note Skin: Chooses the Note Skin from a list of installed note skins.</li>
+      <li>Instructions: Chooses wheter or not to show the Instructions screen explaining Hold notes.</li>
+      <li>Caution: Chooses whether or not to show the Caution screen after Game Start is selected.</li>
+      <li>Oni Score Display: chooses whether to display Oni mode Score in Dance points or Percent.</li>
+      <li>Song Group: Chooses whether to present a list of song groups, or select the All Music group by default.</li>
+      <li>Wheel Sections: This chooses whether to use Wheel sections (folders) in all song sort modes, ABC sort only, or never.</li>
+      <li>Course Sort: This changes the way courses are sorted.</li>
+      <li>Random At End: This chooses whether to put random courses at the end of the sort.</li>
+      <li>Translations: This shows whether to romanize some song titles. </li>
+      <li> Lyrics: This chooses whether to show song lyrics.</li>
+    </ul>
+  </li>
+  <li>Background options
+    <ul>
+      <li>Mode: This chooses the background animation mode (See section 5)</li>
+      <li>Brightness: This changes the brightness of the background animation</li>
+      <li>Danger: This enables/disables the Danger screen</li>
+      <li>Dancing Characters: This setting enables Dancing Characters (See section 5)</li>
+      <li>Beginner helper: This setting enables the beginning helper when Beginner difficulty is selected.</li>
+      <li>Random Backgrounds: This chooses the number of random backgrounds</li>
+    </ul>
+  </li>
+  <li>Bookkeeping: This displays the Bookkeeping screen</li>
+  <li>Center Image: This option allows you to center the image on your monitor.</li>
+  <li>Coin Options
+    <ul>
+      <li>Coin Mode
+        <ul>
+          <li>Home: This option mimics the home versions of DDR, enabling the main menu, and not requiring coins.</li>
+          <li>Freeplay: This mimics DDR arcade machines on Freeplay mode, disabling the main menu and not requiring coins.</li>
+          <li>Pay: This requires the coin button to be pressed before the game can be played.</li>
+        </ul>
+      </li>
+      <li>Songs Per Play: Sets the number of songs the player gets per game.</li>
+      <li>Coins Per Credit: Sets the number of coins per credit</li>
+      <li>Joint Premium: Allows Versus and/or Doubles to cost the same as a one player game.</li>
+      <li>Event mode: Enables Event mode, allowing an unlimited number of stages.</li>
+    </ul>
+  </li>
+  <li>Config Key/Joy Mappings: Allows you to reconfigure the keyboard and joystick/gamepad/dancepad controls</li>
+  <li>Input Options
+    <ul>
+      <li>Auto map on Joy change: Attempts to guess the configuration of the joypad when it is connected/inserted</li>
+      <li>Menu Buttons: Enables/disables dedicated menu navagation buttons similar to those on the DDR arcade machines.</li>
+      <li>AutoPlay: Enables Auto Play. Note that you can not get high scores while this is enabled.</li>
+      <li>Back Delayed: Chooses whether the back button has a delay or is instant.</li>
+      <li>Options Navigation: Chooses the style of options navigation </li>
+      <li>Wheel Speed: Changes the speed of rotation of the song wheel</li>
+      <li>Solo singles: Enables/disables Solo-style for 4 pannel mode (centers the notes)</li>
+      <li>Hidden Songs: If enabled, hides songs that normally are only accessable through Oni mode or the roulette wheel.</li>
+      <li>Easter Eggs: Enables &quot;Toasty&quot; for a combo of 1337 (and more..?)</li>
+      <li>  Marvelous timing: Enables the Marvelous timing setting for all songs, or just courses</li>
+      <li>Allow Extra Stage: Enables an Extra Stage if the last song in the game is AA'd</li>
+      <li>Pick Extra Stage: Chooses whether the player picks the Extra Stage song</li>
+      <li>Unlock System (More info...TODO)</li>
+    </ul>
+  </li>
+  <li>Graphic Options
+    <ul>
+      <li>Display Mode: Chooses to display StepMania in a window or fullscreen</li>
+      <li>Display Resolution: Chooses form a list of possible resolutions</li>
+      <li>Color Depth: Changes the color depth between 16 and 32 bits </li>
+      <li>Texture resolution: Changes the maximum texture resolution</li>
+      <li>Texture color: changes the color depth for textures between 16 and 32 bit</li>
+      <li>Movie Color: Changes the color depth for movies between 16 and 32 bit</li>
+      <li>Smooth Lines: Enables drawing of the Groove Radar with antialiased lines</li>
+      <li> Cel-Shaded Models: Enables Cel-Shading on Dancing Characters </li>
+      <li>Texture memory: chooses whether or not to hold textures in memory</li>
+      <li>Refresh Rate: Overrides teh default refresh rate</li>
+      <li>Wait for VSync: Wait for the monitor's Vertical retrace before showing the next frame. Does not have an effect on framerate, but can reduce &quot;tearing&quot; </li>
+      <li>Show Stats: Shows Frams Per Second, Triangles per Frame, and Draws per Second in the upper right hand corner of the screen.</li>
+    </ul>
+  </li>
+  <li>Machine Options
+    <ul>
+      <li>Menu Timer: Enables/disables the timer on menus</li>
+      <li>Scoring Type: Chooses what scoring method to use</li>
+      <li>Judge Dificulty: Changes the timings for Perfect, Great, Good, etc</li>
+      <li>Life difficulty: defines the drain speed of the lifebar</li>
+      <li>Progressive Lifebar: Defines whether the lifebar is harsher on progressive boos/miisses</li>
+      <li>Progressive Stage Lifebar: Defines whether the lifebar is harsher in later stages</li>
+      <li>Progressive Nonstop lifebar: Defines whether the lifebar is harsher as a nonstop course progresses</li>
+      <li>Default Fail type: Sets the failt type; Immediate fails when all players have 0 life, Combo of 30 misses sets fail when both players have a combo of 30 misses, and End of Song stops the player at the end of the song.</li>
+      <li>Show Song Options: chooses whether to show the song options screen with song modifiers, note speed, etc</li>
+      <li>Name Entry: Shows the Name Entry screen</li>
+    </ul>
+  </li>
+  <li>Sound Options
+    <ul>
+      <li>Resampling Quality: Sets the resampling quality of sound</li>
+      <li>Attract sound frequency: Chooses how often to play the Attract sound, the sound that plays before a coin is inserted</li>
+      <li>Sound Volume</li>
+    </ul>
+  </li>
+  <li>Profile Options: Allows players to create profiles with controls and high scores</li>
+  <li>Other Options
+    <ul>
+      <li>Autogen songs: Automatically generates steps from other gametypes (eg. makes dance steps to a pump song)</li>
+      <li>Autogen Courses: Makes automatically generated courses out of song folders and artist names</li>
+      <li>Fast Load: Does not check songs for changes</li>
+    </ul>
+  </li>
+  <li>Reload Songs/Courses: Checks/Reloads all songs/courses</li>
+  <li>Test Input: Displays the Test Input screen</li>
+</ul>
+<h2>4d. The Stepmania Editor</h2>
+<p>TODO</p>
+<h1>5. Using smpackage</h1>
+<p>smpackage is a simple suiite of tools for managing your Stepmania installation. It contains smzip archives tools, theme tools</p>
+<h1>6. Supported Controllers or Controller Adapters</h1>
+For a list of controllers and conroller adapters supported by StepMania, see <a href="http://www.stepmania.com/stepmania-old/adapter.php">http://www.stepmania.com/stepmania-old/adapter.php</a>7. SMConvert
+<p>Comming soon! </p>
+<h1>7. Getting Help/Contact</h1>
+<p>There are a variety of ways to get help with StepMania. If you have thoroughly read this manual (emphasis on thoroughly), and still require help, you can either:</p>
+<ul>
+  <li>Use the IRC chat room, located on irc.faereal.net port 6667 channel #stepmania. This is NOT (I repeat, NOT) a file server channel and no file servers are allowed!</li>
+  <li>Use the mailing lists, available from the <a href="http://sourceforge.net/mail/?group_id=37892">Mailing Lists Page</a>.</li>
+  <li>If your problem is a bug in the program, report it to the <a href="http://sourceforge.net/tracker/?group_id=37892&atid=421366">Bug Tracker</a>.</li>
+  <li>You can also post on the new Stepmania message boards, which can be found <a href="http://www.ddruk.com/forums.php?fview=74">here</a></li>
+</ul>
+<h1>8. Changelog</h1>
+<p>May-1-2005: Initial Rewrite. </p>
+</body>
+</html>
