@@ -6,7 +6,7 @@
 #include "RageUtil.h"
 #include "StageStats.h"
 #include "Foreach.h"
-#include "Song.h"
+#include "song.h"
 
 //#define DIVIDE_LINE_WIDTH			THEME->GetMetricI(m_sName,"TexturedBottomHalf")
 
