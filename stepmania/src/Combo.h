@@ -42,7 +42,8 @@ protected:
 	PlayerState *m_pPlayerState;
 	PlayerStageStats *m_pPlayerStageStats;
 
-	AutoActor	m_sprMilestone;
+	AutoActor	m_spr100Milestone;
+	AutoActor	m_spr1000Milestone;
 	AutoActor	m_sprComboLabel;
 	AutoActor	m_sprMissesLabel;
 	BitmapText	m_textNumber;

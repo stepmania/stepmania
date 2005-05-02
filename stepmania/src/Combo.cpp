@@ -40,8 +40,11 @@ void Combo::Load( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats
 	FULL_COMBO_BROKEN_COMMAND		.Load(m_sName,"FullComboBrokenCommand");
 	SHOW_MISS_COMBO					.Load(m_sName,"ShowMissCombo");
 	
-	m_sprMilestone.Load( THEME->GetPathG(m_sName,"milestone") );
-	this->AddChild( m_sprMilestone );
+	m_spr100Milestone.Load( THEME->GetPathG(m_sName,"100milestone") );
+	this->AddChild( m_spr100Milestone );
+
+	m_spr1000Milestone.Load( THEME->GetPathG(m_sName,"1000milestone") );
+	this->AddChild( m_spr1000Milestone );
 
 	m_sprComboLabel.Load( THEME->GetPathG(m_sName,"label") );
 	m_sprComboLabel->StopAnimating();
@@ -81,13 +84,14 @@ void Combo::SetCombo( int iCombo, int iMisses )
 	if( m_iLastSeenCombo == -1 )	// first update, don't set bIsMilestone=true
 		m_iLastSeenCombo = iCombo;
 
-	bool bIsMilestone = false;
+	bool b100Milestone = false;
+	bool b1000Milestone = false;
 	for( int i=m_iLastSeenCombo+1; i<=iCombo; i++ )
 	{
 		if( i <= 1000 )
-			bIsMilestone |= ((i % 100) == 0);
+			b100Milestone |= ((i % 100) == 0);
 		else
-			bIsMilestone |= ((i % 500) == 0);
+			b1000Milestone |= ((i % 1000) == 0);
 	}
 	m_iLastSeenCombo = iCombo;
 
@@ -111,8 +115,10 @@ void Combo::SetCombo( int iCombo, int iMisses )
 	sprLabel->FinishTweening();
 	sprLabel->RunCommands( PULSE_COMMAND );
 
-	if( bIsMilestone )
-		m_sprMilestone->PlayCommand( "Milestone" );
+	if( b100Milestone )
+		m_spr100Milestone->PlayCommand( "Milestone" );
+	if( b1000Milestone )
+		m_spr1000Milestone->PlayCommand( "Milestone" );
 
 	// don't show a colored combo until 1/4 of the way through the song
 	bool bPastMidpoint = GAMESTATE->GetCourseSongIndex()>0 ||
