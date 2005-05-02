@@ -87,18 +87,25 @@ void StreamDisplay::DrawPrimitives()
 	DrawMask( m_fTrailingPercent );		// this is the "right endcap" to the life
 	
 	const float fChamberWidthInPercent = 1.0f/m_iNumChambers;
+	float fStripWidthInPercent = 1.0f/m_iNumStrips;
 	float fPercentBetweenStrips = 1.0f/m_iNumStrips;
-	// round this so that the chamber overflows align
+
+	// round down so that the chamber overflows align
 	if( m_iNumChambers > 10 )
-		fPercentBetweenStrips = Quantize( fPercentBetweenStrips, fChamberWidthInPercent );
+		fPercentBetweenStrips = Quantize( fPercentBetweenStrips-fChamberWidthInPercent/2, fChamberWidthInPercent );
+	
+	
+	if( m_iNumChambers > 3 )
+		fPercentBetweenStrips -= 2*fChamberWidthInPercent;
 
 	float fPercentOffset = fmodf( GAMESTATE->m_fSongBeat/4+1000, fPercentBetweenStrips );
 	ASSERT( fPercentOffset >= 0  &&  fPercentOffset <= fPercentBetweenStrips );
 
-	for( float f=fPercentOffset+1; f>=0; f-=fPercentBetweenStrips )
+	// "+fPercentBetweenStrips" so that the whole area is overdrawn 2x
+	for( float f=fPercentOffset+1+fPercentBetweenStrips; f>=0; f-=fPercentBetweenStrips )
 	{
 		DrawMask( f );
-		DrawStrip( f );
+		DrawStrip( f, fStripWidthInPercent );
 	}
 }
 
@@ -151,47 +158,44 @@ float StreamDisplay::GetHeightPercent( int iChamber, float fChamberOverflowPerce
 		return 0;
 }
 
-void StreamDisplay::DrawStrip( float fRightEdgePercent )
+void StreamDisplay::DrawStrip( float fRightEdgePercent, float fStripWidthInPercent )
 {
-	RectF rect;
+	m_sprStreamNormal.ZoomToWidth(		m_fMeterWidth*fStripWidthInPercent );
+	m_sprStreamPassing.ZoomToWidth(		m_fMeterWidth*fStripWidthInPercent );
+	m_sprStreamHot.ZoomToWidth(			m_fMeterWidth*fStripWidthInPercent );
 
-	const float fChamberWidthInPercent = 1.0f/m_iNumChambers;
-	const float fStripWidthInPercent = 1.0f/m_iNumStrips;
+	m_sprStreamNormal.ZoomToHeight(		m_fMeterHeight );
+	m_sprStreamPassing.ZoomToHeight(	m_fMeterHeight );
+	m_sprStreamHot.ZoomToHeight(		m_fMeterHeight );
+
+	m_sprStreamNormal.SetHorizAlign(	Actor::align_right );
+	m_sprStreamPassing.SetHorizAlign(	Actor::align_right );
+	m_sprStreamHot.SetHorizAlign(		Actor::align_right );
+
+	m_sprStreamNormal.SetX(		-m_fMeterWidth/2 + m_fMeterWidth*fRightEdgePercent );
+	m_sprStreamPassing.SetX(	-m_fMeterWidth/2 + m_fMeterWidth*fRightEdgePercent );
+	m_sprStreamHot.SetX(		-m_fMeterWidth/2 + m_fMeterWidth*fRightEdgePercent );
+
+	const float fMeterLeftEdgePixels =  SCALE( 0.0f, 0.0f, 1.0f, -m_fMeterWidth/2, +m_fMeterWidth/2 );
+	const float fMeterRightEdgePixels = SCALE( 1.0f, 0.0f, 1.0f, -m_fMeterWidth/2, +m_fMeterWidth/2 );
+
+	const float fStreamRightEdgePixels = SCALE( fRightEdgePercent, 0.0f, 1.0f, -m_fMeterWidth/2, +m_fMeterWidth/2 );
+	const float fStreamLeftEdgePixels = fStreamRightEdgePixels - m_sprStreamNormal.GetZoomedWidth();
+
+	const float fLeftOverhangPixels = max( 0, fMeterLeftEdgePixels - fStreamLeftEdgePixels );
+	const float fStreamCropLeftPercent = SCALE( fLeftOverhangPixels, 0.0f, m_sprStreamNormal.GetZoomedWidth(), 0.0f, 1.0f );
+
+	const float fRightOverhangPixels = max( 0, fStreamRightEdgePixels - fMeterRightEdgePixels );
+	const float fStreamCropRightPercent = SCALE( fRightOverhangPixels, 0.0f, m_sprStreamNormal.GetZoomedWidth(), 0.0f, 1.0f );
+
+	m_sprStreamNormal.SetCropLeft(	fStreamCropLeftPercent );
+	m_sprStreamPassing.SetCropLeft(	fStreamCropLeftPercent );
+	m_sprStreamHot.SetCropLeft(		fStreamCropLeftPercent );
 	
-	const float fCorrectedRightEdgePercent = fRightEdgePercent + fChamberWidthInPercent;
-	const float fCorrectedStripWidthInPercent = fStripWidthInPercent + 2*fChamberWidthInPercent;
-	const float fCorrectedLeftEdgePercent = fCorrectedRightEdgePercent - fCorrectedStripWidthInPercent;
+	m_sprStreamNormal.SetCropRight(	fStreamCropRightPercent );
+	m_sprStreamPassing.SetCropRight(fStreamCropRightPercent );
+	m_sprStreamHot.SetCropRight(	fStreamCropRightPercent );
 
-
-	// set size of streams
-	rect.left	= -m_fMeterWidth/2 + m_fMeterWidth*max(0,fCorrectedLeftEdgePercent);
-	rect.top	= -m_fMeterHeight/2;
-	rect.right	= -m_fMeterWidth/2 + m_fMeterWidth*min(1,fCorrectedRightEdgePercent);
-	rect.bottom	= +m_fMeterHeight/2;
-
-	ASSERT( rect.left <= m_fMeterWidth/2  &&  rect.right <= m_fMeterWidth/2 );  
-
-	float fPercentCroppedFromLeft = max( 0, -fCorrectedLeftEdgePercent );
-	float fPercentCroppedFromRight = max( 0, fCorrectedRightEdgePercent-1 );
-
-
-	m_sprStreamNormal.StretchTo( rect );
-	m_sprStreamPassing.StretchTo( rect );
-	m_sprStreamHot.StretchTo( rect );
-
-
-	// set custom texture coords
-//		float fPrecentOffset = fRightEdgePercent;
-
-	RectF frectCustomTexRect(
-		fPercentCroppedFromLeft,
-		0,
-		1-fPercentCroppedFromRight,
-		1);
-
-	m_sprStreamNormal.SetCustomTextureRect( frectCustomTexRect );
-	m_sprStreamPassing.SetCustomTextureRect( frectCustomTexRect );
-	m_sprStreamHot.SetCustomTextureRect( frectCustomTexRect );
 
 	float fOrigPassingAlpha = m_sprStreamPassing.GetDiffuse().a;
 	float fOrigHotAlpha = m_sprStreamHot.GetDiffuse().a;

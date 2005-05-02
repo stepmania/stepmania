@@ -61,7 +61,7 @@ private:
 	float GetChamberRightPercent( int iChamber );
 	float GetRightEdgePercent( int iChamber, float fChamberOverflowPercent );
 	float GetHeightPercent( int iChamber, float fChamberOverflowPercent );
-	void DrawStrip( float fRightEdgePercent );
+	void DrawStrip( float fRightEdgePercent, float fStripWidthInPercent );
 	void DrawMask( float fPercent );
 };
 
