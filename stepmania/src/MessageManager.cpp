@@ -28,6 +28,14 @@ static const CString MessageNames[NUM_MESSAGES] = {
 	"CardRemovedP1",
 	"CardRemovedP2",
 	"BeatCrossed",
+	"MenuUpP1",
+	"MenuUpP2",
+	"MenuDownP1",
+	"MenuDownP2",
+	"MenuLeftP1",
+	"MenuLeftP2",
+	"MenuRightP1",
+	"MenuRightP2",
 };
 XToString( Message, NUM_MESSAGES );
 

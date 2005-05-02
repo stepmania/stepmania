@@ -401,7 +401,10 @@ void ScreenSelectMaster::MenuLeft( PlayerNumber pn, const InputEventType type )
 	if( !ALLOW_REPEATING_INPUT && type != IET_FIRST_PRESS )
 		return;
 	if( Move(pn, MENU_DIR_LEFT) )
+	{
 		m_soundChange.Play();
+		MESSAGEMAN->Broadcast( (Message)(MENU_LEFT_P1+pn) );
+	}
 }
 
 void ScreenSelectMaster::MenuRight( PlayerNumber pn, const InputEventType type )
@@ -413,7 +416,10 @@ void ScreenSelectMaster::MenuRight( PlayerNumber pn, const InputEventType type )
 	if( !ALLOW_REPEATING_INPUT && type != IET_FIRST_PRESS )
 		return;
 	if( Move(pn, MENU_DIR_RIGHT) )
+	{
 		m_soundChange.Play();
+		MESSAGEMAN->Broadcast( (Message)(MENU_RIGHT_P1+pn) );
+	}
 }
 
 void ScreenSelectMaster::MenuUp( PlayerNumber pn, const InputEventType type )
@@ -425,7 +431,10 @@ void ScreenSelectMaster::MenuUp( PlayerNumber pn, const InputEventType type )
 	if( !ALLOW_REPEATING_INPUT && type != IET_FIRST_PRESS )
 		return;
 	if( Move(pn, MENU_DIR_UP) )
+	{
 		m_soundChange.Play();
+		MESSAGEMAN->Broadcast( (Message)(MENU_UP_P1+pn) );
+	}
 }
 
 void ScreenSelectMaster::MenuDown( PlayerNumber pn, const InputEventType type )
@@ -437,7 +446,10 @@ void ScreenSelectMaster::MenuDown( PlayerNumber pn, const InputEventType type )
 	if( !ALLOW_REPEATING_INPUT && type != IET_FIRST_PRESS )
 		return;
 	if( Move(pn, MENU_DIR_DOWN) )
+	{
 		m_soundChange.Play();
+		MESSAGEMAN->Broadcast( (Message)(MENU_DOWN_P1+pn) );
+	}
 }
 
 bool ScreenSelectMaster::ChangePage( int iNewChoice )
