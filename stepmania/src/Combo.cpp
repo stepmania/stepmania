@@ -88,7 +88,7 @@ void Combo::SetCombo( int iCombo, int iMisses )
 	bool b1000Milestone = false;
 	for( int i=m_iLastSeenCombo+1; i<=iCombo; i++ )
 	{
-		if( i <= 1000 )
+		if( i < 1000 )
 			b100Milestone |= ((i % 100) == 0);
 		else
 			b1000Milestone |= ((i % 1000) == 0);
