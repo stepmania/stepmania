@@ -6,6 +6,7 @@
 #include "ScreenWithMenuElements.h"
 #include "ScreenNetSelectBase.h"
 #include <vector>
+#include "RoomWheel.h"
 
 class RoomData {
 public:
@@ -45,7 +46,6 @@ private:
 	void MenuLeft( PlayerNumber pn, const InputEventType type );
 	void MenuRight( PlayerNumber pn, const InputEventType type );
 	void CreateNewRoom( const CString& rName,  const CString& rDesc );
-	void UpdateRoomPos();
 
 	enum NetSelectModes
 	{
@@ -61,11 +61,6 @@ private:
 	BitmapText m_textTitle;
 	Sprite m_sprTitleBG;
 
-	Sprite m_sprRoomsBG;
-	BitmapText m_textRooms;
-
-	Sprite m_sprSelection;
-
 	Sprite m_sprCreateRoom;
 
 	vector < BitmapText > m_RoomList;
@@ -73,6 +68,8 @@ private:
 	int m_iRoomPlace;
 
 	CString m_newRoomName, m_newRoomDesc;
+
+	RoomWheel m_RoomWheel;
 };
 #endif
 

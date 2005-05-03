@@ -9,6 +9,8 @@
 #include "ScreenTextEntry.h"
 #include "ScreenManager.h"
 #include "Command.h"
+#include "WheelItemBase.h"
+#include "RageLog.h"
 
 #define TITLEBG_WIDTH				THEME->GetMetricF(m_sName,"TitleBGWidth")
 #define TITLEBG_HEIGHT				THEME->GetMetricF(m_sName,"TitleBGHeight")
@@ -54,27 +56,14 @@ void ScreenNetRoom::Init()
 	SET_XY_AND_ON_COMMAND( m_textTitle );
 	this->AddChild( &m_textTitle);
 
-	m_sprRoomsBG.Load( THEME->GetPathG(m_sName,"List") );
-	m_sprRoomsBG.SetName( "RoomsBG" );
-	m_sprRoomsBG.SetWidth( ROOMSBG_WIDTH );
-	m_sprRoomsBG.SetHeight( ROOMSBG_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_sprRoomsBG );
-	this->AddChild( &m_sprRoomsBG);
-
-	m_textRooms.LoadFromFont( THEME->GetPathF(m_sName,"wheel") );
-	m_textRooms.SetShadowLength( 0 );
-	m_textRooms.SetName( "Rooms" );
-	m_textRooms.SetMaxWidth( ROOMSBG_WIDTH );
-	SET_XY_AND_ON_COMMAND( m_textRooms );
-	this->AddChild( &m_textRooms );
-
-	//SelectionSprite
-	m_sprSelection.Load( THEME->GetPathG( m_sName, "Selection" ) );
-	m_sprSelection.SetName( "Selection" );
-	m_sprSelection.SetWidth( SELECTION_WIDTH );
-	m_sprSelection.SetHeight( SELECTION_HEIGHT );
-	SET_XY_AND_ON_COMMAND( m_sprSelection );
-	this->AddChild( &m_sprSelection );
+	m_RoomWheel.Load("RoomWheel");
+	m_RoomWheel.SetName( "RoomWheel", "RoomWheel" );
+	SET_XY( m_RoomWheel );
+	m_RoomWheel.TweenOnScreen();
+	m_RoomWheel.SetDrawOrder(1);
+	this->AddChild( &m_RoomWheel );
+	this->MoveToHead( &m_RoomWheel );
+	ON_COMMAND( m_RoomWheel );
 
 	//CreateRoom Sprite
 	m_sprCreateRoom.Load( THEME->GetPathG( m_sName, "CreateRoom" ) );
@@ -89,6 +78,9 @@ void ScreenNetRoom::Input( const DeviceInput& DeviceI, const InputEventType type
 								  const GameInput& GameI, const MenuInput& MenuI,
 								  const StyleInput& StyleI )
 {
+	if (((MenuI.button == MENU_BUTTON_LEFT) || (MenuI.button == MENU_BUTTON_RIGHT)) && (type == IET_RELEASE))
+		m_RoomWheel.Move(0);
+		
 	ScreenNetSelectBase::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
@@ -168,9 +160,6 @@ void ScreenNetRoom::TweenOffScreen()
 {
 	OFF_COMMAND( m_textTitle );
 	OFF_COMMAND( m_sprTitleBG );
-	OFF_COMMAND( m_sprRoomsBG );
-	OFF_COMMAND( m_textRooms );
-	OFF_COMMAND( m_sprSelection );
 
 	NSMAN->ReportNSSOnOff(6);
 }
@@ -185,15 +174,13 @@ void ScreenNetRoom::MenuStart( PlayerNumber pn )
 	switch( m_SelectMode )
 	{
 	case SelectRooms:
-		if( m_iRoomPlace < (int) m_RoomList.size() && m_iRoomPlace >= 0 )
-		{
-			NSMAN->m_SMOnlinePacket.ClearPacket();
-			NSMAN->m_SMOnlinePacket.Write1( 1 );
-			NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
-			NSMAN->m_SMOnlinePacket.WriteNT( m_RoomList[m_iRoomPlace].GetText() );
-			NSMAN->SendSMOnline( );
-			ScreenNetSelectBase::MenuStart( pn );
-		}
+		NSMAN->m_SMOnlinePacket.ClearPacket();
+		NSMAN->m_SMOnlinePacket.Write1( 1 );
+		NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
+		m_RoomWheel.Select();
+		NSMAN->m_SMOnlinePacket.WriteNT( m_RoomWheel.LastSelected()->m_sText );
+		NSMAN->SendSMOnline( );
+		ScreenNetSelectBase::MenuStart( pn );
 		break;
 	case SelectMakeRoom:
 		SCREENMAN->TextEntry( SM_BackFromRoomName, "Enter Room Name:", "", 255 );
@@ -212,89 +199,88 @@ void ScreenNetRoom::MenuBack( PlayerNumber pn )
 
 void ScreenNetRoom::MenuUp( PlayerNumber pn, const InputEventType type )
 {
-	switch (m_SelectMode) {
-	case SelectRooms:
-		if (m_iRoomPlace > 0) {
-			m_iRoomPlace--;
-			UpdateRoomPos();
-		}
-		ScreenNetSelectBase::MenuUp( pn );
-		break;
-	};
+	ScreenNetSelectBase::MenuUp( pn );
 }
 
 void ScreenNetRoom::MenuDown( PlayerNumber pn, const InputEventType type )
 {
-	switch( m_SelectMode )
-	{
-	case SelectRooms:
-		if( m_iRoomPlace+1 < (int) m_RoomList.size() )
-		{
-			m_iRoomPlace++;
-			UpdateRoomPos();
-		}
-		ScreenNetSelectBase::MenuDown( pn );
-		break;
-	};
+	ScreenNetSelectBase::MenuDown( pn );
 }
 
 void ScreenNetRoom::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
-	m_soundChangeSel.Play();
-	m_SelectMode = (NetSelectModes) ( ( (int)m_SelectMode - 1) % (int)SelectModes);
-	if ( (int) m_SelectMode < 0) 
-		m_SelectMode = (NetSelectModes) (SelectModes - 1);
-	m_sprSelection.StopTweening( );
-	COMMAND( m_sprSelection,  ssprintf("To%d", m_SelectMode+1 ) );
+	switch (m_SelectMode)
+	{
+	case SelectRooms:
+		if (type == IET_FIRST_PRESS)
+			m_RoomWheel.Move(-1);
+		break;
+	};
+	ScreenNetSelectBase::MenuLeft( pn );
 }
 
 void ScreenNetRoom::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-	m_soundChangeSel.Play();
-	m_SelectMode = (NetSelectModes) ( ( (int)m_SelectMode + 1) % (int)SelectModes);
-	m_sprSelection.StopTweening( );
-	COMMAND( m_sprSelection,  ssprintf("To%d", m_SelectMode+1 ) );
+	switch( m_SelectMode )
+	{
+	case SelectRooms:
+		if (type == IET_FIRST_PRESS)
+			m_RoomWheel.Move(1);
+		break;
+	};
+	ScreenNetSelectBase::MenuRight( pn );
 }
 
 void ScreenNetRoom::UpdateRoomsList()
 {
-	float cx = THEME->GetMetricF(m_sName, "RoomsX") - ROOMSPACEX * ( m_iRoomPlace );
-	float cy = THEME->GetMetricF(m_sName, "RoomsY") - ROOMSPACEY * ( m_iRoomPlace );
+	int difference = 0;
+	RoomWheelData* itemData = NULL;
 
-	for (unsigned int i = 0; i < m_RoomList.size(); ++i)
-		this->RemoveChild(&m_RoomList[i]);
+	difference = m_RoomWheel.GetNumItems() - m_Rooms.size();
 
-	m_RoomList.clear();
-	m_RoomList.resize(m_Rooms.size());
+	if (!m_RoomWheel.IsEmpty())
+	{
+		if (difference > 0)
+			for (unsigned int x = 0; x < difference; x++)
+				m_RoomWheel.RemoveItem(m_RoomWheel.GetNumItems() - 1);
+		else
+		{
+			difference = abs(difference);
+			for (unsigned int x = 0; x < difference; x++)
+				m_RoomWheel.AddItem(new RoomWheelData(TYPE_GENERIC, "", "", RageColor(1,1,1,1)));
+		}
+	}
+	else
+	{
+		for (unsigned int x = 0; x < m_Rooms.size(); x++)
+				m_RoomWheel.AddItem(new RoomWheelData(TYPE_GENERIC, "", "", RageColor(1,1,1,1)));
+	}
 
-	for (unsigned int i = 0; i < m_Rooms.size(); ++i) {
-		m_RoomList[i].LoadFromFont( THEME->GetPathF(m_sName,"Rooms") );
-		m_RoomList[i].SetName( "RoomListEliment" );
-		m_RoomList[i].SetShadowLength( 1 );
-		m_RoomList[i].SetXY( cx, cy );
-		m_RoomList[i].SetText(m_Rooms[i].Name());
-		switch (m_Rooms[i].State()) {
+	for (unsigned int i = 0; i < m_Rooms.size(); ++i)
+	{
+		itemData = m_RoomWheel.GetItem(i);
+
+		itemData->m_sText = m_Rooms[i].Name();
+		itemData->m_sDesc = m_Rooms[i].Description();
+
+		switch (m_Rooms[i].State())
+		{
 		case 0:
-			m_RoomList[i].SetDiffuseColor (THEME->GetMetricC( m_sName, "OpenRoomColor"));
+			itemData->m_color = THEME->GetMetricC( m_sName, "OpenRoomColor");
 			break;
 		case 1:
-			m_RoomList[i].SetDiffuseColor (THEME->GetMetricC( m_sName, "PasswdRoomColor"));
+			itemData->m_color = THEME->GetMetricC( m_sName, "PasswdRoomColor");
 			break;
 		case 2:
-			m_RoomList[i].SetDiffuseColor (THEME->GetMetricC( m_sName, "InGameRoomColor"));
+			itemData->m_color = THEME->GetMetricC( m_sName, "InGameRoomColor");
 			break;
 		default:
-			m_RoomList[i].SetDiffuseColor (THEME->GetMetricC( m_sName, "OpenRoomColor"));
+			itemData->m_color = THEME->GetMetricC( m_sName, "OpenRoomColor");
 			break;
 		}
-		this->AddChild( &m_RoomList[i] );
-		if (cy > ROOMLOWERBOUND) {
-			m_RoomList[i].StopTweening();
-			COMMAND(m_RoomList[i], "RoomsOff");
-		}
-		cx+=ROOMSPACEX;
-		cy+=ROOMSPACEY;
 	}
+
+	m_RoomWheel.RebuildWheelItems();
 }
 
 void ScreenNetRoom::CreateNewRoom( const CString& rName,  const CString& rDesc ) {
@@ -306,30 +292,10 @@ void ScreenNetRoom::CreateNewRoom( const CString& rName,  const CString& rDesc )
 	NSMAN->SendSMOnline( );
 }
 
-void ScreenNetRoom::UpdateRoomPos() {
-	float cx = THEME->GetMetricF(m_sName, "RoomsX") - ROOMSPACEX * ( m_iRoomPlace );
-	float cy = THEME->GetMetricF(m_sName, "RoomsY") - ROOMSPACEY * ( m_iRoomPlace );
-	for (unsigned int x = 0; x < m_RoomList.size(); ++x) 
-	{
-		m_RoomList[x].StopTweening();
-		CString Command = ssprintf( "linear,0.2;y,%f;x,%f;", cy, cx );
-
-		if ( ( cy > ROOMLOWERBOUND ) || ( cy < ROOMUPPERBOUND ) )
-			Command += THEME->GetMetric( m_sName, "RoomsOffCommand" );
-		else
-			Command += THEME->GetMetric( m_sName, "RoomsOnCommand" );
-
-		ActorCommands cmds( Command );
-		m_RoomList[x].RunCommands( cmds );
-		cx += ROOMSPACEX;
-		cy += ROOMSPACEY;
-	}
-}
-
 #endif
 
 /*
- * (c) 2004 Charles Lohr
+ * (c) 2004 Charles Lohr, Josh Allen
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
  * 
