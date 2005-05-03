@@ -35,6 +35,39 @@ function scale( x, l1, h1, l2, h2 )
 	return (((x) - (l1)) * ((h2) - (l2)) / ((h1) - (l1)) + (l2))
 end
 
+-- Scales x so that l1 corresponds to l2 and h1 corresponds to h2.
+function scale( x, l1, h1, l2, h2 )
+	return (((x) - (l1)) * ((h2) - (l2)) / ((h1) - (l1)) + (l2))
+end
+
+function split( delimiter, text )
+	local list = {}
+	local pos = 1
+	while 1 do
+		local first,last = string.find( text, delimiter, pos )
+		if first then
+			table.insert( list, string.sub(text, pos, first-1) )
+			pos = last+1
+		else
+			table.insert( list, string.sub(text, pos) )
+			break
+		end
+	end
+	return list
+end
+
+function join( delimiter, list )
+	local ret = ""
+	for i = 1,table.getn(list) do 
+		ret = ret .. delimiter .. list[i] 
+	end
+	return ret
+end
+
+function clamp(val,low,high)
+	return math.max( low, math.min(val,high) )
+end
+
 
 -- (c) 2005 Glenn Maynard
 -- All rights reserved.
