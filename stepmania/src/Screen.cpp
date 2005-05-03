@@ -8,6 +8,7 @@
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
 #include "ProfileManager.h"
+#include "ActorUtil.h"
 
 #define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
 #define PREV_SCREEN					THEME->GetMetric (m_sName,"PrevScreen")
@@ -27,6 +28,11 @@ bool Screen::SortMessagesByDelayRemaining(const Screen::QueuedScreenMessage &m1,
 										 const Screen::QueuedScreenMessage &m2)
 {
 	return m1.fDelayRemaining < m2.fDelayRemaining;
+}
+
+void Screen::Init()
+{
+	this->RunCommands( THEME->GetMetricA(m_sName, "InitCommand") );
 }
 
 void Screen::Update( float fDeltaTime )
