@@ -167,7 +167,7 @@ CLIENT to SERVER protocol:
 	it comes to the coding of SMOnline, so we don't have to
 	use the lower level commands when dealing with SMOnline.
  Size:
-    2		SMOnline command
+    1		SMOnline command	//This used to say 2, but it looks like 1 in all cases
  <VARIABLE>	SMOnline data
 
 SERVER to CLIENT protocol: (begins at 128)
