@@ -9,7 +9,7 @@
 #include "PrefsManager.h"
 #include "StreamDisplay.h"
 
-const float FULL_LIFE_SECONDS = 3*60;
+const float FULL_LIFE_SECONDS = 1.5f*60;
 
 static ThemeMetric<float> METER_WIDTH		("LifeMeterTime","MeterWidth");
 static ThemeMetric<float> METER_HEIGHT		("LifeMeterTime","MeterHeight");
