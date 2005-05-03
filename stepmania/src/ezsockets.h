@@ -68,6 +68,7 @@ public:
 	long uAddr();
 
 	bool CanRead();
+	bool DataAvailable() { return ( ( inBuffer.length()>0 ) || CanRead() ); }
 	bool IsError();
 	bool CanWrite();
 	
