@@ -402,6 +402,15 @@ bool WheelBase::Select()	// return true if this selection ends the screen
 	return false;
 }
 
+WheelItemBaseData* WheelBase::GetItem(unsigned int index)	// return true if this selection ends the screen
+{
+	if (!m_isEmpty)
+		if (index < m_WheelBaseItemsData.size())
+			return m_WheelBaseItemsData[index];
+
+	return NULL;
+}
+
 int WheelBase::IsMoving() const
 {
 	return m_Moving && m_TimeBeforeMovingBegins == 0;
@@ -583,8 +592,7 @@ void WheelBase::AddItem(WheelItemBaseData* itemdata)
 	//If the item was shown in the wheel, rebuild the wheel
 	if ((0 <= (index - visible)) && ((index - visible) < NUM_WHEEL_ITEMS))
 	{
-			RebuildWheelItems();
-			SCREENMAN->SystemMessageNoAnimate("redraw");
+		RebuildWheelItems();
 	}
 }
 
@@ -629,19 +637,15 @@ void WheelBase::RebuildWheelItems( int dist )
 
 	if( dist == -999999 )
 	{
-		LOG->Info("data:%d", m_WheelBaseItemsData.size());
 		// Refresh all
 		for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 		{
-			LOG->Info("i:%d", i);
 			int iIndex = iFirstVisibleIndex + i;
 			wrap( iIndex, m_WheelBaseItemsData.size() );
-			LOG->Info("iIndex:%d", iIndex);
 
 
 			WheelItemBaseData	*data   = m_WheelBaseItemsData[iIndex];
 			WheelItemBase	*display = m_WheelBaseItems[i];
-			LOG->Info("DISP");
 			display->LoadFromWheelItemBaseData( data );
 		}
 	}

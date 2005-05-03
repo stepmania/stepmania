@@ -28,12 +28,14 @@ enum WheelItemType
 class WheelItemBase : public ActorFrame
 {
 public:
-	WheelItemBase();
+	WheelItemBase(CString sType = "WheelItemBase");
 	WheelItemBaseData* data;
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives(Sprite& bar);
 	virtual void DrawPrimitives() { DrawPrimitives( m_sprBar ); }
 	
+	void Load( CString sType );
+
 	virtual void LoadFromWheelItemBaseData( WheelItemBaseData* pWID );
 
 	float				m_fPercentGray;
@@ -42,6 +44,11 @@ public:
 	BitmapText m_text;
 	WheelItemType m_Type;
 	RageColor m_color;
+
+	ThemeMetric<float>				TEXT_X;
+	ThemeMetric<float>				TEXT_Y;
+	ThemeMetric<float>				TEXT_WIDTH;
+	ThemeMetric<apActorCommands>	TEXT_ON_COMMAND;
 
 };
 

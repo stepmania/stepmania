@@ -16,10 +16,6 @@
 #include "ActorUtil.h"
 #include "ThemeMetric.h"
 
-ThemeMetric<float>				TEXT_X			("WheelItemBase","TextX");
-ThemeMetric<float>				TEXT_Y			("WheelItemBase","TextY");
-ThemeMetric<apActorCommands>	TEXT_ON_COMMAND	("WheelItemBase","TextOnCommand");
-
 WheelItemBaseData::WheelItemBaseData( WheelItemType wit, CString sText, RageColor color )
 {
 	m_Type = wit;
@@ -29,17 +25,25 @@ WheelItemBaseData::WheelItemBaseData( WheelItemType wit, CString sText, RageColo
 }
 
 
-WheelItemBase::WheelItemBase()
+WheelItemBase::WheelItemBase(CString sType)
 {
-	SetName( "WheelItemBase" );
+	SetName( sType );
+	Load(sType);
+}
+
+void WheelItemBase::Load( CString sType )
+{
+	TEXT_X			.Load(sType,"TextX");
+	TEXT_Y			.Load(sType,"TextY");
+	TEXT_ON_COMMAND	.Load(sType,"TextOnCommand");
 
 	m_fPercentGray = 0;
 
-	m_sprBar.Load( THEME->GetPathG("WheelItemBase","bar") );
+	m_sprBar.Load( THEME->GetPathG(sType,"bar") );
 	m_sprBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprBar );
 
-	m_text.LoadFromFont( THEME->GetPathF("WheelItemBase","text") );
+	m_text.LoadFromFont( THEME->GetPathF(sType,"text") );
 	m_text.SetShadowLength( 0 );
 	m_text.SetXY( TEXT_X, TEXT_Y );
 	m_text.RunCommands( TEXT_ON_COMMAND );
