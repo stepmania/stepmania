@@ -109,6 +109,15 @@ Profile::LoadResult ProfileManager::LoadProfile( PlayerNumber pn, CString sProfi
 	{
 		lr = m_Profile[pn].LoadAllFromDir( sBackupDir, PREFSMAN->m_bSignProfileData );
 		m_bLastLoadWasFromLastGood[pn] = lr == Profile::success;
+
+		/* If the LastGood profile doesn't exist at all, and the actual profile was failed_tampered,
+		 * then the error should be failed_tampered and not failed_no_profile. */
+		if( lr == Profile::failed_no_profile )
+		{
+			LOG->Trace( "Profile was corrupt and LastGood for %s doesn't exist; error is Profile::failed_tampered",
+					sProfileDir.c_str() );
+			lr = Profile::failed_tampered;
+		}
 	}
 
 	LOG->Trace( "Done loading profile - result %d", lr );
@@ -156,7 +165,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 		const CString &sSubdir = asDirsToTry[i];
 		CString sDir = MEM_CARD_MOUNT_POINT[pn] + sSubdir + "/";
 
-		/* If the load fails with Profile::no_profile, keep searching.  However,
+		/* If the load fails with Profile::failed_no_profile, keep searching.  However,
 		 * if it fails with failed_tampered, data existed but couldn't be loaded;
 		 * we don't want to mess with it, since it's confusing and may wipe out
 		 * recoverable backup data.  The only time we really want to import data
@@ -166,8 +175,12 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 		 * exists with exists with no scores. */
 		Profile::LoadResult res = LoadProfile( pn, sDir, true );
 		if( res == Profile::success )
+		{
 			iLoadedFrom = i;
-		if( res != Profile::failed_no_profile )
+			break;
+		}
+		
+		if( res == Profile::failed_tampered )
 			break;
 	}
 
