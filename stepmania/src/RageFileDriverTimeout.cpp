@@ -156,6 +156,7 @@ ThreadedFileWorker::ThreadedFileWorker( CString sPath ):
 	m_pResultFile = NULL;
 	m_pRequestFile = NULL;
 	m_pResultBuffer = NULL;
+	m_pRequestBuffer = NULL;
 
 	g_apWorkersMutex.Lock();
 	g_apWorkers.push_back( this );
@@ -273,8 +274,8 @@ void ThreadedFileWorker::RequestTimedOut()
 	/* The event timed out.  Clean up any residue from the last action. */
 	SAFE_DELETE( m_pRequestFile );
 	SAFE_DELETE( m_pResultFile );
-	SAFE_DELETE( m_pRequestBuffer );
-	SAFE_DELETE( m_pResultBuffer );
+	SAFE_DELETE_ARRAY( m_pRequestBuffer );
+	SAFE_DELETE_ARRAY( m_pResultBuffer );
 }
 
 RageFileBasic *ThreadedFileWorker::Open( const CString &sPath, int iMode, int &iErr )
