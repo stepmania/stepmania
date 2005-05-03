@@ -56,8 +56,7 @@ protected:
 	ThemeMetric<bool>		SHOW_SCROLLER;
 	ThemeMetric<float>		SCROLLER_SECONDS_PER_ITEM;
 	ThemeMetric<float>		SCROLLER_NUM_ITEMS_TO_DRAW;
-	ThemeMetric<float>		SCROLLER_SPACING_X;
-	ThemeMetric<float>		SCROLLER_SPACING_Y;
+	ThemeMetric<CString>	SCROLLER_TRANSFORM;
 	ThemeMetric<CString>	DEFAULT_CHOICE;
 
 	int m_Next[NUM_MENU_DIRS][MAX_CHOICES];

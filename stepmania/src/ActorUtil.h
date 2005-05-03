@@ -57,6 +57,8 @@ namespace ActorUtil
 	Actor* MakeActor( const RageTextureID &ID );
 
 	void ResolvePath( CString &sPath, const CString &sName );
+
+	void SortByZPosition( vector<Actor*> &vActors );
 };
 
 #define SET_XY( actor )			ActorUtil::SetXY( actor, m_sName )

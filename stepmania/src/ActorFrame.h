@@ -11,10 +11,10 @@ class LunaActorFrame : public LunaActor<T>
 public:
 	LunaActorFrame() { LUA->Register( Register ); }
 
-	static int propagate( T* p, lua_State *L )		{ p->SetPropagateCommands( !!IArg(1) ); return 0; }
-	static int fov( T* p, lua_State *L )			{ p->SetFOV( FArg(1) ); return 0; }
-	static int SetUpdateRate( T* p, lua_State *L )	{ p->SetUpdateRate( FArg(1) ); return 0; }
-	static int SetFOV( T* p, lua_State *L )			{ p->SetFOV( FArg(1) ); return 0; }
+	static int propagate( T* p, lua_State *L )			{ p->SetPropagateCommands( !!IArg(1) ); return 0; }
+	static int fov( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
+	static int SetUpdateRate( T* p, lua_State *L )		{ p->SetUpdateRate( FArg(1) ); return 0; }
+	static int SetFOV( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
 	static int GetChild( T* p, lua_State *L )
 	{
 		Actor *pChild = p->GetChild( SArg(1) );
@@ -24,7 +24,8 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
-	static int GetNumChildren( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetNumChildren() ); return 1; }
+	static int GetNumChildren( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumChildren() ); return 1; }
+	static int SetDrawByZPosition( T* p, lua_State *L )	{ p->SetDrawByZPosition( BArg(1) ); return 1; }
 
 	static void Register(lua_State *L) 
 	{
@@ -34,6 +35,7 @@ public:
 		ADD_METHOD( SetFOV )
 		ADD_METHOD( GetChild )
 		ADD_METHOD( GetNumChildren )
+		ADD_METHOD( SetDrawByZPosition )
 		LunaActor<T>::Register( L );
 	}
 };
@@ -56,6 +58,7 @@ public:
 	void MoveToTail( Actor* pActor );
 	void MoveToHead( Actor* pActor );
 	void SortByDrawOrder();
+	void SetDrawByZPosition( bool b );
 
 	void DeleteChildrenWhenDone( bool bDelete=true ) { m_bDeleteChildren = bDelete; }
 	void DeleteAllChildren();
@@ -97,6 +100,7 @@ protected:
 	vector<Actor*>	m_SubActors;
 	bool m_bPropagateCommands;
 	bool m_bDeleteChildren;
+	bool m_bDrawByZPosition;
 
 	// state effects
 	float m_fUpdateRate;

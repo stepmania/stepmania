@@ -27,6 +27,7 @@ ActorFrame::ActorFrame()
 {
 	m_bPropagateCommands = false;
 	m_bDeleteChildren = false;
+	m_bDrawByZPosition = false;
 	m_fUpdateRate = 1;
 	m_fFOV = -1;
 	m_bOverrideLighting = false;
@@ -161,8 +162,18 @@ void ActorFrame::DrawPrimitives()
 	// Actor::DrawPrimitives();
 
 	// draw all sub-ActorFrames while we're in the ActorFrame's local coordinate space
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->Draw();
+	if( m_bDrawByZPosition )
+	{
+		vector<Actor*> subs = m_SubActors;
+		ActorUtil::SortByZPosition( subs );
+		for( unsigned i=0; i<subs.size(); i++ )
+			subs[i]->Draw();
+	}
+	else
+	{
+		for( unsigned i=0; i<m_SubActors.size(); i++ )
+			m_SubActors[i]->Draw();
+	}
 
 
 
@@ -258,7 +269,7 @@ float ActorFrame::GetTweenTimeLeft() const
 
 }
 
-bool CompareActorsByDrawOrder(const Actor *p1, const Actor *p2)
+static bool CompareActorsByDrawOrder(const Actor *p1, const Actor *p2)
 {
 	return p1->GetDrawOrder() < p2->GetDrawOrder();
 }
@@ -348,6 +359,11 @@ void ActorFrame::PlayCommand( const CString &sCommandName )
 		Actor* pActor = m_SubActors[i];
 		pActor->PlayCommand( sCommandName );
 	}
+}
+
+void ActorFrame::SetDrawByZPosition( bool b )
+{
+	m_bDrawByZPosition = b;
 }
 
 /*

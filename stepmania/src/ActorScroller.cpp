@@ -7,6 +7,7 @@
 #include "arch/Dialog/Dialog.h"
 #include "RageLog.h"
 #include "ActorUtil.h"
+#include <sstream>
 
 // lua start
 LUA_REGISTER_CLASS( ActorScroller )
@@ -40,11 +41,6 @@ ActorScroller::ActorScroller()
 	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );	// don't change color values
 	m_quadMask.SetUseZBuffer( true );	// we want to write to the Zbuffer
 	m_quadMask.SetHidden( true );
-
-	m_vRotationDegrees = RageVector3(0,0,0);
-	m_vTranslateTerm0 = RageVector3(0,0,0);
-	m_vTranslateTerm1 = RageVector3(0,0,0);
-	m_vTranslateTerm2 = RageVector3(0,0,0);
 }
 
 void ActorScroller::Load( 
@@ -59,10 +55,25 @@ void ActorScroller::Load(
 {
 	m_fSecondsPerItem = fSecondsPerItem;
 	m_fNumItemsToDraw = fNumItemsToDraw;
-	m_vRotationDegrees = vRotationDegrees;
-	m_vTranslateTerm0 = vTranslateTerm0;
-	m_vTranslateTerm1 = vTranslateTerm1;
-	m_vTranslateTerm2 = vTranslateTerm2;
+	
+	
+	// Note: Rotation is applied before translation.
+	// rot = m_vRotationDegrees*itemOffset^1
+	// trans = m_vTranslateTerm0*itemOffset^0 + 
+	//		   m_vTranslateTerm1*itemOffset^1 +
+	//		   m_vTranslateTerm2*itemOffset^2
+	ostringstream s;
+	s << 
+		"function(self,offset,itemIndex,numItems) " <<
+		"self:x(" << vTranslateTerm0.x << " + " << vTranslateTerm1.x << "*offset + " << vTranslateTerm2.x << "*offset*offset); " <<
+		"self:y(" << vTranslateTerm0.y << " + " << vTranslateTerm1.y << "*offset + " << vTranslateTerm2.y << "*offset*offset); " <<
+		"self:z(" << vTranslateTerm0.z << " + " << vTranslateTerm1.z << "*offset + " << vTranslateTerm2.z << "*offset*offset); " <<
+		"self:rotationx(" << vRotationDegrees.x << "*offset); " <<
+		"self:rotationy(" << vRotationDegrees.y << "*offset); " <<
+		"self:rotationz(" << vRotationDegrees.z << "*offset); " <<
+		"end";
+	m_exprTransform.SetFromExpression( s.str() );
+
 	m_fQuantizePixels = 0;
 	m_bUseMask = bUseMask;
 
@@ -86,7 +97,11 @@ void ActorScroller::Load2(
 	m_fNumItemsToDraw = fNumItemsToDraw;
 	m_fMaskWidth = fItemWidth;
 	m_fMaskHeight = fItemHeight;
-	m_vTranslateTerm1 = RageVector3( 0, fItemHeight, 0 );
+
+	m_exprTransform.SetFromExpression( 
+		ssprintf("function(self,offset,itemIndex,numItems) return %f*fOffsetFromCenter end",fItemHeight) 
+		);
+
 	m_bLoop = bLoop; 
 	m_fSecondsPerItem = fSecondsPerItem; 
 	m_fSecondsPauseBetweenItems = fSecondsPauseBetweenItems;
@@ -106,6 +121,19 @@ void ActorScroller::Load2(
 
 	m_quadMask.SetHidden( false );
 
+	m_bLoaded = true;
+}
+
+void ActorScroller::Load3(
+	float fSecondsPerItem, 
+	float fNumItemsToDraw, 
+	const CString &sExprTransform
+	)
+{
+	m_fSecondsPerItem = fSecondsPerItem;
+	m_fNumItemsToDraw = fNumItemsToDraw;
+	m_exprTransform.SetFromExpression( sExprTransform );
+	m_fQuantizePixels = 0;
 	m_bLoaded = true;
 }
 
@@ -212,25 +240,17 @@ void ActorScroller::Update( float fDeltaTime )
 		m_fCurrentItem = fmodf( m_fCurrentItem, m_fNumItemsToDraw+1 );
 }
 
-#define PUSH_AND_TRANSFORM_FOR_ITEM( fPosition ) { \
-	DISPLAY->PushMatrix(); \
-	if( m_vRotationDegrees.x )	DISPLAY->RotateX( m_vRotationDegrees.x*fPosition ); \
-	if( m_vRotationDegrees.y )	DISPLAY->RotateY( m_vRotationDegrees.y*fPosition ); \
-	if( m_vRotationDegrees.z )	DISPLAY->RotateZ( m_vRotationDegrees.z*fPosition ); \
-	RageVector3 vTranslation = \
-		m_vTranslateTerm0 + 							/* m_vTranslateTerm0*fPosition^0 */ \
-		m_vTranslateTerm1 * fPosition +				/* m_vTranslateTerm1*fPosition^1 */ \
-		m_vTranslateTerm2 * fPosition*fPosition; 	/* m_vTranslateTerm2*fPosition^2 */ \
-	if( m_fQuantizePixels > 0 ) { \
-		vTranslation.x = Quantize( vTranslation.x, m_fQuantizePixels ); \
-		vTranslation.y = Quantize( vTranslation.y, m_fQuantizePixels ); \
-		vTranslation.z = Quantize( vTranslation.z, m_fQuantizePixels ); \
-	} \
-	DISPLAY->Translate( \
-		vTranslation.x, \
-		vTranslation.y, \
-		vTranslation.z ); \
-	}
+
+void ActorScroller::PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems )
+{
+	m_exprTransform.PushSelf( LUA->L );
+	ASSERT( !lua_isnil(LUA->L, -1) );
+	pActor->PushSelf( LUA->L );
+	LuaHelpers::Push( fPositionOffsetFromCenter, LUA->L );
+	LuaHelpers::Push( iItemIndex, LUA->L );
+	LuaHelpers::Push( iNumItems, LUA->L );
+	lua_call( LUA->L, 4, 0 ); // 4 args, 0 results
+}
 
 void ActorScroller::DrawPrimitives()
 {
@@ -238,56 +258,66 @@ void ActorScroller::DrawPrimitives()
 	if( !m_bLoaded )
 	{
 		ActorFrame::DrawPrimitives();
+		return;
+	}
+
+	if( m_SubActors.empty() )
+		return;
+
+	// write to z buffer so that top and bottom are clipped
+	float fPositionFullyOnScreenTop = -(m_fNumItemsToDraw-1)/2.f;
+	float fPositionFullyOnScreenBottom = (m_fNumItemsToDraw-1)/2.f;
+	float fPositionFullyOffScreenTop = fPositionFullyOnScreenTop - 1;
+	float fPositionFullyOffScreenBottom = fPositionFullyOnScreenBottom + 1;
+	float fPositionOnEdgeOfScreenTop = -(m_fNumItemsToDraw)/2.f;
+	float fPositionOnEdgeOfScreenBottom = (m_fNumItemsToDraw)/2.f;
+	
+	float fFirstItemToDraw = 0;
+	float fLastItemToDraw = 0;
+
+	if( m_bUseMask )
+	{
+		PositionItem( &m_quadMask, fPositionFullyOffScreenTop, -1, m_SubActors.size() );
+		m_quadMask.Draw();
+
+		PositionItem( &m_quadMask, fPositionFullyOffScreenBottom, m_SubActors.size(), m_SubActors.size() );
+		m_quadMask.Draw();
+
+		fFirstItemToDraw = fPositionFullyOffScreenTop + m_fCurrentItem;
+		fLastItemToDraw = fPositionFullyOffScreenBottom + m_fCurrentItem;
 	}
 	else
 	{
-		if( m_SubActors.empty() )
-			return;
+		fFirstItemToDraw = fPositionOnEdgeOfScreenTop + m_fCurrentItem;
+		fLastItemToDraw = fPositionOnEdgeOfScreenBottom + m_fCurrentItem;
+	}
 
-		// write to z buffer so that top and bottom are clipped
-		float fPositionFullyOnScreenTop = -(m_fNumItemsToDraw-1)/2.f;
-		float fPositionFullyOnScreenBottom = (m_fNumItemsToDraw-1)/2.f;
-		float fPositionFullyOffScreenTop = fPositionFullyOnScreenTop - 1;
-		float fPositionFullyOffScreenBottom = fPositionFullyOnScreenBottom + 1;
-		float fPositionOnEdgeOfScreenTop = -(m_fNumItemsToDraw)/2.f;
-		float fPositionOnEdgeOfScreenBottom = (m_fNumItemsToDraw)/2.f;
-		
-		float fFirstItemToDraw = 0;
-		float fLastItemToDraw = 0;
+	bool bDelayedDraw = m_bDrawByZPosition && !m_bLoop;
+	vector<Actor*> subs;
+	if( bDelayedDraw )
+		subs = m_SubActors;
 
-		if( m_bUseMask )
-		{
-			PUSH_AND_TRANSFORM_FOR_ITEM( fPositionFullyOffScreenTop )
-			m_quadMask.Draw();
-			DISPLAY->PopMatrix();
+	for( int iItem=(int)truncf(ceilf(fFirstItemToDraw)); iItem<=fLastItemToDraw; iItem++ )
+	{
+		float fPosition = iItem - m_fCurrentItem;
+		int iIndex = iItem;
+		if( m_bLoop )
+			wrap( iIndex, m_SubActors.size()-1 );
+		else if( iIndex < 0 || iIndex >= (int)m_SubActors.size() )
+			continue;
 
-			PUSH_AND_TRANSFORM_FOR_ITEM( fPositionFullyOffScreenBottom )
-			m_quadMask.Draw();
-			DISPLAY->PopMatrix();
-
-			fFirstItemToDraw = fPositionFullyOffScreenTop + m_fCurrentItem;
-			fLastItemToDraw = fPositionFullyOffScreenBottom + m_fCurrentItem;
-		}
+		PositionItem( m_SubActors[iIndex], fPosition, iIndex, m_SubActors.size() );
+		if( bDelayedDraw )
+			subs.push_back( m_SubActors[iIndex] );
 		else
-		{
-			fFirstItemToDraw = fPositionOnEdgeOfScreenTop + m_fCurrentItem;
-			fLastItemToDraw = fPositionOnEdgeOfScreenBottom + m_fCurrentItem;
-		}
-
-
-		for( int iItem=(int)truncf(ceilf(fFirstItemToDraw)); iItem<=fLastItemToDraw; iItem++ )
-		{
-			float fPosition = iItem - m_fCurrentItem;
-			int iIndex = iItem;
-			if( m_bLoop )
-				wrap( iIndex, m_SubActors.size()-1 );
-			else if( iIndex < 0 || iIndex >= (int)m_SubActors.size() )
-				continue;
-
-			PUSH_AND_TRANSFORM_FOR_ITEM( fPosition )
 			m_SubActors[iIndex]->Draw();
-			DISPLAY->PopMatrix();
-		}
+	}
+
+	if( bDelayedDraw )
+	{
+		ActorUtil::SortByZPosition( subs );
+		FOREACH( Actor*, subs, a )
+			(*a)->Draw();
 	}
 }
 

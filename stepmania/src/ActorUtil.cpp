@@ -399,6 +399,18 @@ void ActorUtil::LoadAllCommands( Actor& actor, const CString &sType )
 	}
 }
 
+static bool CompareActorsByZPosition(const Actor *p1, const Actor *p2)
+{
+	return p1->GetZ() < p2->GetZ();
+}
+
+void ActorUtil::SortByZPosition( vector<Actor*> &vActors )
+{
+	// Preserve ordering of Actors with equal Z positions.
+	stable_sort( vActors.begin(), vActors.end(), CompareActorsByZPosition );
+}
+
+
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.

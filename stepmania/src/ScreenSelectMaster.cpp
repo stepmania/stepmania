@@ -42,8 +42,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	SHOW_SCROLLER(m_sName,"ShowScroller"),
 	SCROLLER_SECONDS_PER_ITEM(m_sName,"ScrollerSecondsPerItem"),
 	SCROLLER_NUM_ITEMS_TO_DRAW(m_sName,"ScrollerNumItemsToDraw"),
-	SCROLLER_SPACING_X(m_sName,"ScrollerSpacingX"),
-	SCROLLER_SPACING_Y(m_sName,"ScrollerSpacingY"),
+	SCROLLER_TRANSFORM(m_sName,"ScrollerTransform"),
 	DEFAULT_CHOICE(m_sName,"DefaultChoice")
 {
 }
@@ -99,13 +98,11 @@ void ScreenSelectMaster::Init()
 	{
 		if( SHARED_PREVIEW_AND_CURSOR )
 		{
-			m_Scroller[0].Load( 
+			m_Scroller[0].Load3( 
 				SCROLLER_SECONDS_PER_ITEM, 
 				SCROLLER_NUM_ITEMS_TO_DRAW,
-				RageVector3( 0, 0, 0 ),
-				RageVector3( 0, 0, 0 ),
-				RageVector3( SCROLLER_SPACING_X, SCROLLER_SPACING_Y, 0 ),
-				RageVector3( 0, 0, 0 ) );
+				SCROLLER_TRANSFORM 
+				);
 			m_Scroller[0].SetName( "Scroller" );
 			this->AddChild( &m_Scroller[0] );
 
@@ -122,13 +119,11 @@ void ScreenSelectMaster::Init()
 		{
 			FOREACH_HumanPlayer( p )
 			{
-				m_Scroller[p].Load(
+				m_Scroller[p].Load3(
 					SCROLLER_SECONDS_PER_ITEM, 
 					SCROLLER_NUM_ITEMS_TO_DRAW,
-					RageVector3( 0, 0, 0 ),
-					RageVector3( 0, 0, 0 ),
-					RageVector3( SCROLLER_SPACING_X, SCROLLER_SPACING_Y, 0 ),
-					RageVector3( 0, 0, 0 ) );
+					SCROLLER_TRANSFORM 
+					);
 				m_Scroller[p].SetName( ssprintf("ScrollerP%d",p+1) );
 				this->AddChild( &m_Scroller[p] );
 				

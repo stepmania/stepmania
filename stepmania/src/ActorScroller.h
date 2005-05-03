@@ -44,6 +44,11 @@ public:
 		float fSecondsPerItem, 
 		float fSecondsPauseBetweenItems );
 
+	void Load3(
+		float fSecondsPerItem, 
+		float fNumItemsToDraw, 
+		const CString &sExprTransform );
+
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();	// DOES draw
 
@@ -62,6 +67,8 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
+	void PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
+
 	bool	m_bLoaded;
 	float	m_fCurrentItem; // Item at top of list, usually between 0 and m_SubActors.size(), approaches destination
 	float	m_fDestinationItem;
@@ -77,17 +84,7 @@ protected:
 	float	m_fMaskHeight;
 	Quad	m_quadMask;
 
-	// Note: Rotation is applied before translation.
-
-	// rot = m_vRotationDegrees*itemOffset^1
-	RageVector3	m_vRotationDegrees;
-
-	// trans = m_vTranslateTerm0*itemOffset^0 + 
-	//		   m_vTranslateTerm1*itemOffset^1 +
-	//		   m_vTranslateTerm2*itemOffset^2
-	RageVector3	m_vTranslateTerm0;
-	RageVector3	m_vTranslateTerm1;
-	RageVector3	m_vTranslateTerm2;
+	LuaExpression m_exprTransform;	// params: self,offset,itemIndex,numItems
 };
 
 class ActorScrollerAutoDeleteChildren : public ActorScroller
