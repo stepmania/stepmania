@@ -55,6 +55,7 @@ void ScreenNetSelectBase::Init()
 	this->AddChild( &m_sprChatOutputBox );
 
 	m_textChatInput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+	m_textChatInput.SetDynamicColor( true );
 	m_textChatInput.SetHorizAlign( align_left );
 	m_textChatInput.SetVertAlign( align_top );
 	m_textChatInput.SetShadowLength( 0 );
@@ -67,6 +68,7 @@ void ScreenNetSelectBase::Init()
 	m_textOutHidden.SetWrapWidthPixels( (int)(CHATOUTPUT_WIDTH * 2) );
 
 	m_textChatOutput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+	m_textChatOutput.SetDynamicColor( true );
 	m_textChatOutput.SetHorizAlign( align_left );
 	m_textChatOutput.SetVertAlign( align_bottom );
 	m_textChatOutput.SetShadowLength( 0 );
@@ -75,6 +77,7 @@ void ScreenNetSelectBase::Init()
 	this->AddChild( &m_textChatOutput );
 
 	//Display updated chat (maybe this should be a function)?
+	m_textOutHidden.SetDynamicColor( false );
 	m_textOutHidden.SetText( NSMAN->m_sChatText );
 	vector <wstring> wLines;
 	m_textOutHidden.GetLines( wLines );

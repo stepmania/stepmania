@@ -77,6 +77,8 @@ BitmapText::BitmapText()
 	m_fMaxHeight = 0;
 
 	SetShadowLength( 4 );
+
+	m_vColors.clear();
 }
 
 BitmapText::~BitmapText()
@@ -143,6 +145,8 @@ bool BitmapText::LoadFromFont( const CString& sFontFilePath )
 
 	BuildChars();
 
+	m_bColored = false;
+
 	return true;
 }
 
@@ -207,6 +211,7 @@ void BitmapText::BuildChars()
 	for( unsigned i=0; i<m_wTextLines.size(); i++ )		// foreach line
 	{
 		iY += m_pFont->GetHeight();
+
 		const wstring &szLine = m_wTextLines[i];
 		const int iLineWidth = m_iLineWidths[i];
 		
@@ -356,9 +361,41 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 	m_sText = sNewText;
 	m_iWrapWidthPixels = iWrapWidthPixels;
 
+	//Split out color commands if text is colored.
+	if ( m_bColored )
+	{
+		CString sEndText;
+		m_vColors.clear();
+
+		int i =	m_sText.Find( "|c0", 0 );
+		int last = 0;
+		while ( ( i > -1 ) && ( i < ( int( m_sText.length() ) - 9 ) ) )
+		{
+			sEndText += m_sText.substr( last, i-last );
+			ColorChange change;
+			int k;
+			sscanf( m_sText.substr( i+3, 2 ).c_str(), "%x", &k ); change.c.r = float( k ) / 255.0f;
+			sscanf( m_sText.substr( i+5, 2 ).c_str(), "%x", &k ); change.c.g = float( k ) / 255.0f;
+			sscanf( m_sText.substr( i+7, 2 ).c_str(), "%x", &k ); change.c.b = float( k ) / 255.0f;
+			change.c.a = 1;
+			change.l = sEndText.length();
+			m_vColors.push_back( change );
+			last = i+9;
+			if ( last < m_sText.length() )
+				i = m_sText.Find( CString("|c0"), last );
+			else
+				i = -1;
+		}
+
+		if ( last < m_sText.length() )
+			sEndText += m_sText.substr( last, m_sText.length()-last );
+
+		m_sText = sEndText;
+	}
 
 	// Break the string into lines.
 	//
+
 	m_wTextLines.clear();
 
 	if( iWrapWidthPixels == -1 )
@@ -433,6 +470,13 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 			}
 		}
 	}
+
+	//XXX: YUCK! This is horrible... but basically, in order to make sure we are
+	//in sync with all of the color changes, we have to add bogus spaces at the end
+	//of all lines.
+	if ( m_bColored )
+		for ( unsigned int i = 0; i < m_wTextLines.size(); i++ )
+			m_wTextLines[i] = CStringToWstring( WStringToCString( m_wTextLines[i] ) + CString( " " ) );
 
 	BuildChars();
 	UpdateBaseZoom();
@@ -600,6 +644,25 @@ void BitmapText::DrawPrimitives()
 					verts[j].c = color;
 
 				color_index = (color_index+1)%NUM_RAINBOW_COLORS;
+			}
+		}
+		else if ( m_bColored )
+		{
+			int loc = 0, cur = 0;
+			RageColor c = m_pTempState->diffuse[0];
+
+			for( unsigned i=0; i<verts.size(); i+=4 )
+			{
+				loc++;
+				if ( cur < m_vColors.size() )
+					if ( loc > m_vColors[cur].l )
+					{
+						c = m_vColors[cur].c;
+						cur++;
+					}
+
+				for ( unsigned j=0; j<4; j++ )
+					verts[i+j].c = c;
 			}
 		}
 		else

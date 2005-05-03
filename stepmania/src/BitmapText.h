@@ -59,6 +59,8 @@ public:
 
 	void GetLines( vector<wstring> &wTextLines ) { wTextLines = m_wTextLines; }
 
+	void SetDynamicColor( bool coloration ) { m_bColored = coloration; }
+
 	CString GetText() const { return m_sText; }
 	/* Return true if the string 's' will use an alternate string, if available. */
 	bool StringWillUseAlternate(const CString& sText, const CString& sAlternateText) const;
@@ -83,6 +85,14 @@ protected:
 
 	bool m_bRainbow;
 
+	bool m_bColored;
+
+	struct ColorChange
+	{
+		RageColor c;	//Color to change to
+		int l;			//Change Location
+	};
+	vector<ColorChange> m_vColors;
 	vector<RageSpriteVertex> verts;
 	vector<RageTexture *> tex;
 	
