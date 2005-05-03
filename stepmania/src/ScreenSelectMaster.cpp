@@ -38,6 +38,8 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	SLEEP_AFTER_TWEEN_OFF_SECONDS(m_sName,"SleepAfterTweenOffSeconds"),
 	OPTION_ORDER(m_sName,OPTION_ORDER_NAME,NUM_MENU_DIRS),
 	WRAP_CURSOR(m_sName,"WrapCursor"),
+	WRAP_SCROLLER(m_sName,"WrapScroller"),
+	SCROLLER_FAST_CATCHUP(m_sName,"ScrollerFastCatchup"),
 	ALLOW_REPEATING_INPUT(m_sName,"AllowRepeatingInput"),
 	SHOW_SCROLLER(m_sName,"ShowScroller"),
 	SCROLLER_SECONDS_PER_ITEM(m_sName,"ScrollerSecondsPerItem"),
@@ -101,6 +103,7 @@ void ScreenSelectMaster::Init()
 			m_Scroller[0].Load3( 
 				SCROLLER_SECONDS_PER_ITEM, 
 				SCROLLER_NUM_ITEMS_TO_DRAW,
+				SCROLLER_FAST_CATCHUP,
 				SCROLLER_TRANSFORM 
 				);
 			m_Scroller[0].SetName( "Scroller" );
@@ -122,6 +125,7 @@ void ScreenSelectMaster::Init()
 				m_Scroller[p].Load3(
 					SCROLLER_SECONDS_PER_ITEM, 
 					SCROLLER_NUM_ITEMS_TO_DRAW,
+					SCROLLER_FAST_CATCHUP,
 					SCROLLER_TRANSFORM 
 					);
 				m_Scroller[p].SetName( ssprintf("ScrollerP%d",p+1) );
@@ -384,7 +388,7 @@ bool ScreenSelectMaster::Move( PlayerNumber pn, MenuDir dir )
 	}
 	while( !m_aGameCommands[iSwitchToIndex].IsPlayable() );
 
-	return ChangeSelection( pn, iSwitchToIndex );
+	return ChangeSelection( pn, dir, iSwitchToIndex );
 }
 
 void ScreenSelectMaster::MenuLeft( PlayerNumber pn, const InputEventType type )
@@ -518,7 +522,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	return true;
 }
 
-bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
+bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNewChoice )
 {
 	if( iNewChoice == m_iChoice[pn] )
 		return false; // already there
@@ -583,6 +587,23 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, int iNewChoice )
 
 		if( SHOW_SCROLLER )
 		{
+			if( WRAP_SCROLLER )
+			{
+				// HACK: We can't tell from the option orders whether or not we wrapped.
+				// For now, assume that the order is increasing left to right.
+				int iPressedDir = (dir == MENU_DIR_LEFT) ? -1 : +1;
+				int iActualDir = (iOldChoice < iNewChoice) ? +1 : -1;
+
+				if( iPressedDir != iActualDir )	// wrapped
+				{
+					ActorScroller &scroller = SHARED_PREVIEW_AND_CURSOR ? m_Scroller[0] : m_Scroller[p];
+					float fItem = scroller.GetCurrentItem();
+					int iNumChoices = m_aGameCommands.size();
+					fItem += iActualDir * iNumChoices;
+					scroller.SetCurrentAndDestinationItem( fItem );
+				}
+			}
+
 			if( SHARED_PREVIEW_AND_CURSOR )
 				m_Scroller[0].SetDestinationItem( (float)iNewChoice );
 			else

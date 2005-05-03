@@ -127,11 +127,13 @@ void ActorScroller::Load2(
 void ActorScroller::Load3(
 	float fSecondsPerItem, 
 	float fNumItemsToDraw, 
+	bool bFastCatchup,
 	const CString &sExprTransform
 	)
 {
 	m_fSecondsPerItem = fSecondsPerItem;
 	m_fNumItemsToDraw = fNumItemsToDraw;
+	m_bFastCatchup = bFastCatchup;
 	m_exprTransform.SetFromExpression( sExprTransform );
 	m_fQuantizePixels = 0;
 	m_bLoaded = true;
@@ -230,7 +232,17 @@ void ActorScroller::Update( float fDeltaTime )
 
 	float fOldItemAtTop = m_fCurrentItem;
 	if( m_fSecondsPerItem > 0 )
-		fapproach( m_fCurrentItem, m_fDestinationItem, fDeltaTime/m_fSecondsPerItem );
+	{
+		float fApproachSpeed = fDeltaTime/m_fSecondsPerItem;
+		if( m_bFastCatchup )
+		{
+			float fDistanceToMove = fabsf(m_fCurrentItem - m_fDestinationItem);
+			if( fDistanceToMove > 1 )
+				fApproachSpeed *= fDistanceToMove*fDistanceToMove;
+		}
+
+		fapproach( m_fCurrentItem, m_fDestinationItem, fApproachSpeed );
+	}
 
 	// if items changed, then pause
 	if( (int)fOldItemAtTop != (int)m_fCurrentItem )
@@ -294,8 +306,6 @@ void ActorScroller::DrawPrimitives()
 
 	bool bDelayedDraw = m_bDrawByZPosition && !m_bLoop;
 	vector<Actor*> subs;
-	if( bDelayedDraw )
-		subs = m_SubActors;
 
 	for( int iItem=(int)truncf(ceilf(fFirstItemToDraw)); iItem<=fLastItemToDraw; iItem++ )
 	{

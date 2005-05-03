@@ -47,6 +47,7 @@ public:
 	void Load3(
 		float fSecondsPerItem, 
 		float fNumItemsToDraw, 
+		bool bFastCatchup,
 		const CString &sExprTransform );
 
 	virtual void Update( float fDelta );
@@ -56,6 +57,7 @@ public:
 	
 	void SetDestinationItem( float fItemIndex )				{ m_fDestinationItem = fItemIndex; }
 	void SetCurrentAndDestinationItem( float fItemIndex )	{ m_fCurrentItem = m_fDestinationItem = fItemIndex; }
+	float GetCurrentItem()									{ return m_fCurrentItem; }
 	float GetDestinationItem()								{ return m_fDestinationItem; }
 	void SetPauseCountdownSeconds( float fSecs )			{ m_fPauseCountdownSeconds = fSecs; }
 
@@ -76,6 +78,7 @@ protected:
 	float	m_fSecondsPauseBetweenItems;
 	float	m_fNumItemsToDraw;
 	bool	m_bLoop; 
+	bool	m_bFastCatchup; 
 	float	m_fPauseCountdownSeconds;
 	float	m_fQuantizePixels;
 

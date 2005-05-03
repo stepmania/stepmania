@@ -52,6 +52,8 @@ protected:
 	ThemeMetric<float>		SLEEP_AFTER_TWEEN_OFF_SECONDS;
 	ThemeMetric1D<CString>	OPTION_ORDER;
 	ThemeMetric<bool>		WRAP_CURSOR;
+	ThemeMetric<bool>		WRAP_SCROLLER;
+	ThemeMetric<bool>		SCROLLER_FAST_CATCHUP;
 	ThemeMetric<bool>		ALLOW_REPEATING_INPUT;
 	ThemeMetric<bool>		SHOW_SCROLLER;
 	ThemeMetric<float>		SCROLLER_SECONDS_PER_ITEM;
@@ -67,7 +69,7 @@ protected:
 
 	bool Move( PlayerNumber pn, MenuDir dir );
 	bool ChangePage( int iNewChoice );
-	bool ChangeSelection( PlayerNumber pn, int iNewChoice );
+	bool ChangeSelection( PlayerNumber pn, MenuDir dir, int iNewChoice );
 	float DoMenuStart( PlayerNumber pn );
 
 	float GetCursorX( PlayerNumber pn, int iPartIndex );
