@@ -21,15 +21,17 @@ Octet 0123 4 5
      |ssss|C|Payload|
      +----+-+---//--+
 
-ssss    - size of packet, stripped and created by ezsockets
+ssss    - size of packet, handled by ezsockets (if you're using C++)
 C       - Command.
 Payload - variable size based on command
 
 The payload may contain more data than expected, i.e. new protocol version.
 
-If the size is 	"NT" then that means it's a null-terminating string.
-		"MSN" most significant 4 bits (byte/16)
-		"LSN" least significant 4 bits (byte%16)
+
+In the following protocol, the term size means the size of the chunk of data.
+If the "size" is	"NT" then that means it's a null-terminating string.
+			"MSN" most significant 4 bits (byte/16)
+			"LSN" least significant 4 bits (byte%16)
 
 
 Note: Primary player is 0x0, secondary player is 0x1
