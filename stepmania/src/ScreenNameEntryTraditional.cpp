@@ -354,7 +354,7 @@ void ScreenNameEntryTraditional::Init()
 				PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail) :
 				PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps);
 
-			for( unsigned h=0; h<hsl.vHighScores.size(); h++ )
+			for( unsigned h=0; h<hsl.vHighScores.size() && h<PREFSMAN->m_iMaxHighScoresPerListForMachine; h++ )
 			{
 				const HighScore &hs = hsl.vHighScores[h];
 				if( hs.sName == RANKING_TO_FILL_IN_MARKER[p]  &&
