@@ -43,29 +43,30 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionNa
 }
 
 
-MusicWheelItem::MusicWheelItem()
+MusicWheelItem::MusicWheelItem(CString sType)
+:WheelItemBase( sType )
 {
 	data = NULL;
 
-	SetName( "MusicWheelItem" );
+	SetName( sType );
 
-	m_sprSongBar.Load( THEME->GetPathG("MusicWheelItem","song") );
+	m_sprSongBar.Load( THEME->GetPathG(sType,"song") );
 	m_sprSongBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprSongBar );
 
-	m_sprSectionBar.Load( THEME->GetPathG("MusicWheelItem","section") );
+	m_sprSectionBar.Load( THEME->GetPathG(sType,"section") );
 	m_sprSectionBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprSectionBar );
 
-	m_sprExpandedBar.Load( THEME->GetPathG("MusicWheelItem","expanded") );
+	m_sprExpandedBar.Load( THEME->GetPathG(sType,"expanded") );
 	m_sprExpandedBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprExpandedBar );
 
-	m_sprModeBar.Load( THEME->GetPathG("MusicWheelItem","mode") );
+	m_sprModeBar.Load( THEME->GetPathG(sType,"mode") );
 	m_sprModeBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprModeBar );
 
-	m_sprSortBar.Load( THEME->GetPathG("MusicWheelItem","sort") );
+	m_sprSortBar.Load( THEME->GetPathG(sType,"sort") );
 	m_sprSortBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprSortBar );
 
@@ -79,13 +80,13 @@ MusicWheelItem::MusicWheelItem()
 	m_TextBanner.RunCommands( SONG_NAME_ON_COMMAND );
 	this->AddChild( &m_TextBanner );
 
-	m_textSection.LoadFromFont( THEME->GetPathF("MusicWheelItem","section") );
+	m_textSection.LoadFromFont( THEME->GetPathF(sType,"section") );
 	m_textSection.SetShadowLength( 0 );
 	m_textSection.SetXY( SECTION_X, SECTION_Y );
 	m_textSection.RunCommands( SECTION_ON_COMMAND );
 	this->AddChild( &m_textSection );
 
-	m_textRoulette.LoadFromFont( THEME->GetPathF("MusicWheelItem","roulette") );
+	m_textRoulette.LoadFromFont( THEME->GetPathF(sType,"roulette") );
 	m_textRoulette.SetShadowLength( 0 );
 	m_textRoulette.TurnRainbowOn();
 	m_textRoulette.SetXY( ROULETTE_X, ROULETTE_Y );
@@ -93,18 +94,18 @@ MusicWheelItem::MusicWheelItem()
 	this->AddChild( &m_textRoulette );
 
 	m_textCourse.SetName( "CourseName" );
-	m_textCourse.LoadFromFont( THEME->GetPathF("MusicWheelItem","course") );
+	m_textCourse.LoadFromFont( THEME->GetPathF(sType,"course") );
 	SET_XY_AND_ON_COMMAND( &m_textCourse );
 	this->AddChild( &m_textCourse );
 
 	m_textSort.SetName( "Sort" );
-	m_textSort.LoadFromFont( THEME->GetPathF("MusicWheelItem","sort") );
+	m_textSort.LoadFromFont( THEME->GetPathF(sType,"sort") );
 	SET_XY_AND_ON_COMMAND( &m_textSort );
 	this->AddChild( &m_textSort );
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_GradeDisplay[p].Load( THEME->GetPathG("MusicWheelItem","grades") );
+		m_GradeDisplay[p].Load( THEME->GetPathG(sType,"grades") );
 		m_GradeDisplay[p].SetZoom( 1.0f );
 		m_GradeDisplay[p].SetXY( GRADE_X.GetValue(p), 0 );
 		this->AddChild( &m_GradeDisplay[p] );

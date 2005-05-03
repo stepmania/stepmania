@@ -20,7 +20,7 @@ struct WheelItemData;
 class MusicWheelItem : public WheelItemBase
 {
 public:
-	MusicWheelItem();
+	MusicWheelItem(CString sType = "MusicWheelItem");
 
 	virtual void LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded );
 	void RefreshGrades();
