@@ -2414,6 +2414,14 @@ SOURCE=.\PaneDisplay.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\RoomWheel.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RoomWheel.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScrollBar.cpp
 # End Source File
 # Begin Source File
@@ -3502,14 +3510,6 @@ SOURCE=.\error2.bmp
 # Begin Source File
 
 SOURCE=.\loading.bmp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RoomWheel.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\RoomWheel.h
 # End Source File
 # Begin Source File
 
