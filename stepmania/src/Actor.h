@@ -62,6 +62,7 @@ public:
 		RectF		fade;	// 0 = no fade
 		RageColor   diffuse[4];
 		RageColor   glow;
+		float		aux;
 		CString sCommandName;	// command to execute when this TweenState goes into effect
 
 		void Init();
@@ -209,6 +210,8 @@ public:
 	void SetGlow( RageColor c )					{ DestTweenState().glow = c; };
 	RageColor GetGlow()							{ return DestTweenState().glow; };
 
+	void SetAux( float f )						{ DestTweenState().aux = f; }
+	float GetAux() const						{ return m_current.aux; }
 
 	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	void StopTweening();
@@ -269,6 +272,7 @@ public:
 	void SetEffectClockString( const CString &s );	// convenience
 
 	void SetEffectMagnitude( RageVector3 vec )	{ m_vEffectMagnitude = vec; }
+	RageVector3 GetEffectMagnitude() const		{ return m_vEffectMagnitude; }
 
 	void SetEffectLua( const CString &sCommand );
 	void SetEffectDiffuseBlink( 
@@ -524,9 +528,12 @@ public:
 	static int diffusealpha( T* p, lua_State *L )	{ p->SetDiffuseAlpha(FArg(1)); return 0; }
 	static int diffusecolor( T* p, lua_State *L )	{ p->SetDiffuseColor( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
 	static int glow( T* p, lua_State *L )			{ p->SetGlow( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int aux( T* p, lua_State *L )			{ p->SetAux( FArg(1) ); return 0; }
+	static int getaux( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetAux() ); return 1; }
 	static int rotationx( T* p, lua_State *L )		{ p->SetRotationX(FArg(1)); return 0; }
 	static int rotationy( T* p, lua_State *L )		{ p->SetRotationY(FArg(1)); return 0; }
 	static int rotationz( T* p, lua_State *L )		{ p->SetRotationZ(FArg(1)); return 0; }
+	static int getrotation( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetRotationX()); lua_pushnumber(L, p->GetRotationY()); lua_pushnumber(L, p->GetRotationZ()); return 3; }
 	static int skewx( T* p, lua_State *L )			{ p->SetSkewX(FArg(1)); return 0; }
 	static int heading( T* p, lua_State *L )		{ p->AddRotationH(FArg(1)); return 0; }
 	static int pitch( T* p, lua_State *L )			{ p->AddRotationP(FArg(1)); return 0; }
@@ -555,6 +562,7 @@ public:
 	static int effectdelay( T* p, lua_State *L )		{ p->SetEffectDelay(FArg(1)); return 0; }
 	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); return 0; }
 	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( RageVector3(FArg(1),FArg(2),FArg(3)) ); return 0; }
+	static int geteffectmagnitude( T* p, lua_State *L )	{ RageVector3 v = p->GetEffectMagnitude(); lua_pushnumber(L, v[0]); lua_pushnumber(L, v[1]); lua_pushnumber(L, v[2]); return 3; }
 	static int scaletocover( T* p, lua_State *L )		{ p->ScaleToCover( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); return 0; }
 	static int scaletofit( T* p, lua_State *L )			{ p->ScaleToFitInside( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); return 0; }
 	static int animate( T* p, lua_State *L )			{ p->EnableAnimation(!!IArg(1)); return 0; }
@@ -637,9 +645,12 @@ public:
 		ADD_METHOD( diffusealpha )
 		ADD_METHOD( diffusecolor )
 		ADD_METHOD( glow )
+		ADD_METHOD( aux )
+		ADD_METHOD( getaux )
 		ADD_METHOD( rotationx )
 		ADD_METHOD( rotationy )
 		ADD_METHOD( rotationz )
+		ADD_METHOD( getrotation )
 		ADD_METHOD( skewx )
 		ADD_METHOD( heading )
 		ADD_METHOD( pitch )
@@ -668,6 +679,7 @@ public:
 		ADD_METHOD( effectdelay )
 		ADD_METHOD( effectclock )
 		ADD_METHOD( effectmagnitude )
+		ADD_METHOD( geteffectmagnitude )
 		ADD_METHOD( scaletocover )
 		ADD_METHOD( scaletofit )
 		ADD_METHOD( animate )

@@ -937,6 +937,7 @@ void Actor::TweenState::Init()
 	for(int i=0; i<4; i++) 
 		diffuse[i] = RageColor( 1, 1, 1, 1 );
 	glow = RageColor( 1, 1, 1, 0 );
+	aux = 0;
 }
 
 void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween )
@@ -960,6 +961,7 @@ void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const Twee
 	for(int i=0; i<4; i++) 
 		average_out.diffuse[i]	= ts1.diffuse[i]+ (ts2.diffuse[i]	- ts1.diffuse[i])*fPercentBetween;
 	average_out.glow			= ts1.glow      + (ts2.glow			- ts1.glow		)*fPercentBetween;
+	average_out.aux				= ts1.aux       + (ts2.aux			- ts1.aux		)*fPercentBetween;
 }
 
 void Actor::SetBlendModeString( const CString &s )
