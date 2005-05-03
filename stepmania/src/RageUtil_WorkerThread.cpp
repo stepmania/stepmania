@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageUtil_WorkerThread.h"
+#include "RageUtil.h"
 #include "RageLog.h"
 
 WorkerThread::WorkerThread( const CString &sName ):
@@ -140,7 +141,11 @@ void WorkerThread::WorkerMain()
 		{
 			/* Handle the request. */
 			if( iRequest != REQ_SHUTDOWN )
+			{
+				CHECKPOINT_M( ssprintf("HandleRequest(%i)", iRequest) );
 				HandleRequest( iRequest );
+				CHECKPOINT_M( ssprintf("HandleRequest(%i) done", iRequest) );
+			}
 
 			/* Lock the mutex, to keep DoRequest where it is (if it's still running). */
 			/* The request is finished.  If it timed out, clear the timeout flag and
@@ -149,6 +154,8 @@ void WorkerThread::WorkerMain()
 
 			if( m_bTimedOut )
 			{
+				LOG->Trace( "Request %i timed out", iRequest );
+
 				/* The calling thread timed out.  It's already gone and moved on, so
 				 * it's our responsibility to clean up.  No new requests will come in
 				 * until we clear m_bTimedOut, so we can safely unlock and clean up. */
@@ -158,9 +165,13 @@ void WorkerThread::WorkerMain()
 
 				/* Clear the time-out flag, indicating that we can work again. */
 				m_bTimedOut = false;
+
+				CHECKPOINT;
 			}
 			else
 			{
+				CHECKPOINT_M( ssprintf("HandleRequest(%i) OK", iRequest) );
+
 				m_bRequestFinished = true;
 
 				/* We're finished.  Wake up the requester. */
