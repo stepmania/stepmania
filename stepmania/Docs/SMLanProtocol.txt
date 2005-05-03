@@ -175,17 +175,17 @@ SERVER to CLIENT protocol: (begins at 128)
 NOTE: Server responces always add 128, thus a server responce for no operation
 	is 128, not 000
 
-000:	No Operation 
+000(128):No Operation 
  Desc:		This command will cause server to respond with a no op responce.
  Payload:	None
  Responce:	Server 001
 
-001:	No Operation Responce
+001(129):No Operation Responce
  Desc:		This command is used to respond to a no operation.
  Payload:	None
  Responce:	None
 
-002:	Server Hello Responce
+002(130):Server Hello Responce
  Desc:		This introduces the server.
  Payload:
     Size	Description
@@ -193,12 +193,12 @@ NOTE: Server responces always add 128, thus a server responce for no operation
 			server is an SMOnline server
     NT		Server Name
 
-003:	Allow Start
+003(131):Allow Start
  Desc:		This will cause the client to start the game.
  Payload:	None
  Responce:	None
 
-004: Game over stats
+004(132):Game over stats
  Desc:		this packet is send in responce to the game over packet
 		it contains information regarding how well each player did.
  Payload:
@@ -228,7 +228,7 @@ NOTE: Server responces always add 128, thus a server responce for no operation
 	<Other player's options>
 
 
-005: 	Scoreboard update
+005:(133)Scoreboard update
  Desc:		This will update the client's scoreboard.
  Payload:	
     Size
@@ -255,19 +255,19 @@ NOTE: Server responces always add 128, thus a server responce for no operation
     1		Last player's projected grade
 
 
-006: 	System Message  (PLEASE NOTE THIS HAS NOTHING TO DO WITH CLIENT COMMAND 6)
+006:(134)System Message  (PLEASE NOTE THIS HAS NOTHING TO DO WITH CLIENT COMMAND 6)
  Desc: 		Send system message to user
  Payload:
     Size	Description
     NT		Message
 
-007:	Chat Message
+007:(135)Chat Message
  Desc:		Add a chat message to the chat window on some StepMania screens.
  Payload:	
     Size	Description
     NT		Message
 
-008:	Tell client to start song/ask if client has song
+008:(136)Tell client to start song/ask if client has song
  Desc:		The user selected a song on a Net-enabled selection
  Size:
     1		Usage of message
@@ -279,7 +279,7 @@ NOTE: Server responces always add 128, thus a server responce for no operation
     NT		Song Artist   (As Gotten by GetTranslitArtist)
     NT		Song Subtitle (As gotten by GetTranslitSubTitle)
 
-009:	Update user list
+009:(137)Update user list
  Desc:		This sends all the users currently connected
  Size:
     1		Max # of players
@@ -298,15 +298,15 @@ NOTE: Server responces always add 128, thus a server responce for no operation
 	3	In Options
 	4 	In Evaluation
 
-010:	Force change to Networking select music screen.
+010:(138)Force change to Networking select music screen.
  Size:
     NT		Set Specified gametype
     NT		Set Specified style
 
-011:	Reserved
+011:(139)Reserved
 
 
-012:	SMOnline Packet.	//SPECIAL CASE!!!
+012:(140)SMOnline Packet.	//SPECIAL CASE!!!
 	NOTE: The smonline packet is not defined here.
 	The SMLan packet 12 is a wrapper for the SMOnline packet.
 	This is so that we can have "protection" of sorts when 
@@ -361,8 +361,7 @@ Server SMOnline packets:
     1		Approval Status
 		0: Approved
 		1: Approval Failed
-    NT		MOTD (if passed)
-	    or	Reason for failure (if failed)
+    NT		Login responce (plain text)
 
 001:  Room Update (Changing rooms)
  Size:
