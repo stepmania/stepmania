@@ -585,11 +585,11 @@ bool BitmapText::StringWillUseAlternate( const CString& sText, const CString& sA
 
 void BitmapText::SetMaxLines( int iNumLines, int iDirection )
 {
-	iNumLines = MAX( 0, iNumLines );
-	iNumLines = MIN( (int)m_wTextLines.size(), iNumLines );
-	if ( iDirection == 0 ) 
+	iNumLines = max( 0, iNumLines );
+	iNumLines = min( (int)m_wTextLines.size(), iNumLines );
+	if( iDirection == 0 ) 
 	{
-		//Crop all bottom lines
+		// Crop all bottom lines
 		m_wTextLines.resize( iNumLines );
 		m_iLineWidths.resize( iNumLines );
 	}
