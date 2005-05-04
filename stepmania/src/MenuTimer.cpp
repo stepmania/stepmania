@@ -9,13 +9,15 @@
 #include "Font.h"
 #include "GameSoundManager.h"
 #include "ThemeMetric.h"
+#include "ActorUtil.h"
 
 CString WARNING_COMMAND_NAME( size_t i ) { return ssprintf("WarningCommand%d",int(i)); }
 
 static const ThemeMetric<int>				WARNING_START		("MenuTimer","WarningStart");
 static const ThemeMetric<int>				WARNING_BEEP_START	("MenuTimer","WarningBeepStart");
 static const ThemeMetric<float>				MAX_STALL_SECONDS	("MenuTimer","MaxStallSeconds");
-static const ThemeMetric<apActorCommands>	ON_COMMAND	("MenuTimer","OnCommand");
+static const ThemeMetric<CString>			TEXT1_FORMAT_FUNCTION ("MenuTimer","Text1FormatFunction");
+static const ThemeMetric<CString>			TEXT2_FORMAT_FUNCTION ("MenuTimer","Text2FormatFunction");
 
 static const float TIMER_PAUSE_SECONDS = 99;
 
@@ -26,15 +28,15 @@ MenuTimer::MenuTimer() :
 	m_fStallSecondsLeft = MAX_STALL_SECONDS;
 	m_bPaused = false;
 
-	m_textDigit1.LoadFromFont( THEME->GetPathF("MenuTimer","numbers") );
-	m_textDigit2.LoadFromFont( THEME->GetPathF("MenuTimer","numbers") );
+	for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
+	{
+		m_text[i].LoadFromFont( THEME->GetPathF("MenuTimer","numbers") );
+		m_text[i].SetName( ssprintf("Text%d",i+1) );
+		ActorUtil::OnCommand( m_text[i], "MenuTimer" );
+		this->AddChild( &m_text[i] );
 
-	const float fCharWidth = (float) m_textDigit1.m_pFont->GetLineWidthInSourcePixels(L"0");
-	m_textDigit1.SetX( -fCharWidth/2 );
-	m_textDigit2.SetX( +fCharWidth/2 );
-
-	this->AddChild( &m_textDigit1 );
-	this->AddChild( &m_textDigit2 );
+		m_exprFormatText[i].SetFromExpression( i==0 ? TEXT1_FORMAT_FUNCTION : TEXT2_FORMAT_FUNCTION );
+	}
 
 	SetSeconds( TIMER_PAUSE_SECONDS );
 
@@ -48,8 +50,10 @@ void MenuTimer::EnableStealth( bool bStealth )
 	else
 		m_soundBeep.Load( THEME->GetPathS("MenuTimer","tick") ); // reload the sound
 
-	m_textDigit1.SetHidden( bStealth );	
-	m_textDigit2.SetHidden( bStealth );
+	for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
+	{
+		m_text[i].SetHidden( bStealth );
+	}
 }
 
 void MenuTimer::Update( float fDeltaTime ) 
@@ -83,16 +87,16 @@ void MenuTimer::Update( float fDeltaTime )
 
 	if( iNewDisplay <= WARNING_START )
 	{
-		m_textDigit1.RunCommands( WARNING_COMMAND.GetValue(iNewDisplay) );
-		m_textDigit2.RunCommands( WARNING_COMMAND.GetValue(iNewDisplay) );
+		for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
+			m_text[i].RunCommands( WARNING_COMMAND.GetValue(iNewDisplay) );
 	}
 	
 	if( iNewDisplay == 0 )
 	{
 		Stop();
 		SCREENMAN->PostMessageToTopScreen( SM_MenuTimer, 0 );
-		m_textDigit1.SetEffectNone();
-		m_textDigit2.SetEffectNone();
+		for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
+			m_text[i].SetEffectNone();
 	}
 
 	if( iNewDisplay <= WARNING_BEEP_START )
@@ -138,8 +142,8 @@ void MenuTimer::SetSeconds( float fSeconds )
 {
 	m_fSecondsLeft = fSeconds;
 
-	m_textDigit1.RunCommands( ON_COMMAND );
-	m_textDigit2.RunCommands( ON_COMMAND );
+	for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
+		m_text[i].PlayCommand( "On" );
 
 	SetText( (int)fSeconds );
 }
@@ -149,13 +153,25 @@ void MenuTimer::Start()
 	m_bPaused = false;
 }
 
-void MenuTimer::SetText( int iSeconds )
+void MenuTimer::SetText( float fSeconds )
 {
-	const int iDigit1 = (int)(iSeconds)/10;
-	const int iDigit2 = (int)(iSeconds)%10;
+	for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
+	{
+		// function
+		m_exprFormatText[i].PushSelf( LUA->L );
+		ASSERT( !lua_isnil(LUA->L, -1) );
 
-	m_textDigit1.SetText( ssprintf("%d",iDigit1) ); 
-	m_textDigit2.SetText( ssprintf("%d",iDigit2) ); 
+		// 1st parameter
+		LuaHelpers::Push( fSeconds, LUA->L );
+		
+		// call function with 1 argument and 1 result
+		lua_call(LUA->L, 1, 1); 
+
+		CString sText;
+		LuaHelpers::FromStack( sText, -1, LUA->L );
+		
+		m_text[i].SetText( sText );
+	}
 }
 
 /*

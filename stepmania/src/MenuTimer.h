@@ -31,10 +31,13 @@ protected:
 	float m_fStallSeconds, m_fStallSecondsLeft;
 	bool m_bPaused;
 
-	void SetText( int iSeconds );
+	void SetText( float fSeconds );
 
-	BitmapText m_textDigit1;
-	BitmapText m_textDigit2;
+#define NUM_MENU_TIMER_TEXTS 2
+
+	BitmapText		m_text[NUM_MENU_TIMER_TEXTS];
+
+	LuaExpression	m_exprFormatText[NUM_MENU_TIMER_TEXTS];
 
 	RageSound	m_soundBeep;
 
