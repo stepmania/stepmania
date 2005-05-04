@@ -26,7 +26,6 @@ private:
 	//Chatting
 	BitmapText		m_textChatInput;
 	BitmapText		m_textChatOutput;
-	BitmapText		m_textOutHidden;
 	Sprite			m_sprChatInputBox;
 	Sprite			m_sprChatOutputBox;
 	CString			m_sTextInput;

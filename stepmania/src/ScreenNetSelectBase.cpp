@@ -64,10 +64,8 @@ void ScreenNetSelectBase::Init()
 	SET_XY_AND_ON_COMMAND( m_textChatInput );
 	this->AddChild( &m_textChatInput );
 
-	m_textOutHidden.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
-	m_textOutHidden.SetWrapWidthPixels( (int)(CHATOUTPUT_WIDTH * 2) );
-
 	m_textChatOutput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
+	m_textChatOutput.SetWrapWidthPixels( (int)(CHATOUTPUT_WIDTH * 2) );
 	m_textChatOutput.SetDynamicColor( true );
 	m_textChatOutput.SetHorizAlign( align_left );
 	m_textChatOutput.SetVertAlign( align_bottom );
@@ -76,15 +74,8 @@ void ScreenNetSelectBase::Init()
 	SET_XY_AND_ON_COMMAND( m_textChatOutput );
 	this->AddChild( &m_textChatOutput );
 
-	//Display updated chat (maybe this should be a function)?
-	m_textOutHidden.SetDynamicColor( false );
-	m_textOutHidden.SetText( NSMAN->m_sChatText );
-	vector <wstring> wLines;
-	m_textOutHidden.GetLines( wLines );
-	m_actualText = "";
-	for (unsigned i = max(int(wLines.size()) - SHOW_CHAT_LINES + 1, 0 ) ; i < wLines.size() ; ++i)
-		m_actualText += WStringToCString( wLines[i] )+'\n';
-	m_textChatOutput.SetText( m_actualText );
+	m_textChatOutput.SetText( NSMAN->m_sChatText );
+	m_textChatOutput.SetMaxLines( SHOW_CHAT_LINES, 1 );
 
 	//Users' Background
 	
@@ -200,13 +191,8 @@ void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_AddToChat )
 	{
-		m_textOutHidden.SetText( NSMAN->m_sChatText );
-		vector <wstring> wLines;
-		m_textOutHidden.GetLines( wLines );
-		m_actualText = "";
-		for (unsigned i = max(int(wLines.size()) - SHOW_CHAT_LINES + 1, 0 ) ; i < wLines.size() ; ++i)
-			m_actualText += WStringToCString( wLines[i] )+'\n';
-		m_textChatOutput.SetText( m_actualText );
+		m_textChatOutput.SetText( NSMAN->m_sChatText );
+		m_textChatOutput.SetMaxLines( SHOW_CHAT_LINES, 1 );
 	}
 	else if( SM == SM_UsersUpdate )
 	{
