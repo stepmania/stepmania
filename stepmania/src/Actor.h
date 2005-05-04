@@ -595,6 +595,7 @@ public:
 	static int GetZoom( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoom() ); return 1; }
 	static int GetZoomX( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomX() ); return 1; }
 	static int GetZoomY( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomY() ); return 1; }
+	static int GetZoomZ( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomZ() ); return 1; }
 	static int GetBaseZoomX( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetBaseZoomX() ); return 1; }
 	static int GetSecsIntoEffect( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecsIntoEffect() ); return 1; }
 	static int GetEffectDelta( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetEffectDelta() ); return 1; }
@@ -712,6 +713,7 @@ public:
 		ADD_METHOD( GetZoom )
 		ADD_METHOD( GetZoomX )
 		ADD_METHOD( GetZoomY )
+		ADD_METHOD( GetZoomZ )
 		ADD_METHOD( GetBaseZoomX )
 		ADD_METHOD( GetSecsIntoEffect )
 		ADD_METHOD( GetEffectDelta )
