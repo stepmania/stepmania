@@ -1097,21 +1097,20 @@ void ScreenGameplay::LoadLights()
 	m_CabinetLightsNoteData.Init();
 	ASSERT( GAMESTATE->m_pCurSong );
 
-	Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
+	const Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
 	if( pSteps != NULL )
 	{
 		pSteps->GetNoteData( m_CabinetLightsNoteData );
+		return;
 	}
-	else
-	{
-		pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
-		if( pSteps )
-		{
-			NoteData TapNoteData;
-			pSteps->GetNoteData( TapNoteData );
-			NoteDataUtil::LoadTransformedLights( TapNoteData, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
-		}
-	}
+
+	pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
+	if( pSteps )
+ 	{
+		NoteData TapNoteData;
+		pSteps->GetNoteData( TapNoteData );
+		NoteDataUtil::LoadTransformedLights( TapNoteData, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
+ 	}
 }
 
 float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic)
