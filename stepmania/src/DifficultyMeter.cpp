@@ -89,11 +89,12 @@ void DifficultyMeter::Load( const CString &sType )
 		ActorUtil::SetXYAndOnCommand( m_Difficulty, sType );
 		this->AddChild( m_Difficulty );
 
+		// These commands should have been loaded by SetXYAndOnCommand above.
 		FOREACH_Difficulty( d )
-			ActorUtil::LoadCommand( *m_Difficulty, sType, GetDifficultyCommandName(d) );
+			ASSERT( m_Difficulty->HasCommand(GetDifficultyCommandName(d)) );
 		FOREACH_CourseDifficulty( d )
-			ActorUtil::LoadCommand( *m_Difficulty, sType, GetCourseDifficultyCommandName(d) );
-		ActorUtil::LoadCommand( *m_Difficulty, sType, DIFFICULTY_COMMAND_NAME_NONE );
+			ASSERT( m_Difficulty->HasCommand(GetCourseDifficultyCommandName(d)) );
+		ASSERT( m_Difficulty->HasCommand(DIFFICULTY_COMMAND_NAME_NONE) );
 	}
 
 	if( m_bShowMeter )
@@ -103,11 +104,12 @@ void DifficultyMeter::Load( const CString &sType )
 		ActorUtil::SetXYAndOnCommand( m_textMeter, sType );
 		this->AddChild( &m_textMeter );
 
+		// These commands should have been loaded by SetXYAndOnCommand above.
 		FOREACH_Difficulty( d )
-			ActorUtil::LoadCommand( m_textMeter, sType, GetDifficultyCommandName(d) );
+			ASSERT( m_textMeter.HasCommand(GetDifficultyCommandName(d)) );
 		FOREACH_CourseDifficulty( d )
-			ActorUtil::LoadCommand( m_textMeter, sType, GetCourseDifficultyCommandName(d) );
-		ActorUtil::LoadCommand( m_textMeter, sType, DIFFICULTY_COMMAND_NAME_NONE );
+			ASSERT( m_textMeter.HasCommand(GetCourseDifficultyCommandName(d)) );
+		ASSERT( m_textMeter.HasCommand(DIFFICULTY_COMMAND_NAME_NONE) );
 	}
 	
 	if( m_bShowEditDescription )
