@@ -152,6 +152,7 @@ public:
 	float		m_fMusicSeconds;	// time into the current song
 	float		m_fSongBeat;
 	float		m_fCurBPS;
+	float		m_fLightSongBeat; // g_fLightsFalloffSeconds ahead
 	bool		m_bFreeze;	// in the middle of a freeze
 	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
 	bool		m_bPastHereWeGo;
