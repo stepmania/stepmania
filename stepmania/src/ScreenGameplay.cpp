@@ -1650,7 +1650,7 @@ void ScreenGameplay::UpdateLights()
 	ZERO( bBlinkGameButton );
 	bool bCrossedABeat = false;
 	{
-		float fPositionSeconds = GAMESTATE->m_fMusicSeconds + LIGHTS_FALLOFF_SECONDS/2;	// trigger the light a tiny bit early
+		float fPositionSeconds = GAMESTATE->m_fMusicSeconds + g_fLightsAheadSeconds;	// trigger the light a tiny bit early
 		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 		const int iSongRow = BeatToNoteRowNotRounded( fSongBeat );
 

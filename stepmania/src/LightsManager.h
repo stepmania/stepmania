@@ -6,8 +6,12 @@
 #include "PlayerNumber.h"
 #include "GameInput.h"
 #include "EnumHelper.h"
+#include "Preference.h"
 
+const float LIGHTS_AHEAD_SECONDS = 0.1f;
 const float LIGHTS_FALLOFF_SECONDS = 0.1f;
+extern Preference<float>	g_fLightsFalloffSeconds;
+extern Preference<float>	g_fLightsAheadSeconds;
 
 enum CabinetLight
 {

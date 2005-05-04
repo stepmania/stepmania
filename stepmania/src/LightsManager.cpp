@@ -9,8 +9,13 @@
 #include "Game.h"
 #include "PrefsManager.h"
 #include "Actor.h"
+#include "Preference.h"
 
 #include "arch/arch.h"
+
+Preference<float>	g_fLightsFalloffSeconds( Options, "LightsFalloffSeconds", 0.1f );
+Preference<float>	g_fLightsAheadSeconds( Options, "LightsAheadSeconds", 0.05f );
+
 
 static const CString CabinetLightNames[NUM_CABINET_LIGHTS] = {
 	"MarqueeUpLeft",
@@ -182,6 +187,7 @@ void LightsManager::Update( float fDeltaTime )
 			default:	ASSERT(0);
 			}
 
+			/* Flash the button lights for active players. */
 			bool bBlinkOn = (iBeat%2)==0;
 
 			FOREACH_PlayerNumber( pn )
@@ -341,12 +347,12 @@ void LightsManager::Update( float fDeltaTime )
 
 void LightsManager::BlinkCabinetLight( CabinetLight cl )
 {
-	m_fSecsLeftInCabinetLightBlink[cl] = LIGHTS_FALLOFF_SECONDS;
+	m_fSecsLeftInCabinetLightBlink[cl] = g_fLightsFalloffSeconds;
 }
 
 void LightsManager::BlinkGameButton( GameInput gi )
 {
-	m_fSecsLeftInGameButtonBlink[gi.controller][gi.button] = LIGHTS_FALLOFF_SECONDS;
+	m_fSecsLeftInGameButtonBlink[gi.controller][gi.button] = g_fLightsFalloffSeconds;
 }
 
 void LightsManager::SetLightsMode( LightsMode lm )
