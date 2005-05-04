@@ -1019,6 +1019,8 @@ void Actor::QueueMessage( const CString& sMessageName )
 
 void Actor::AddCommand( const CString &sCmdName, apActorCommands apac )
 {
+	ASSERT_M( !HasCommand(sCmdName), m_sName+"'s command '"+sCmdName+"' defined twice" );
+
 	CString sMessage;
 	if( GetMessageNameFromCommandName(sCmdName, sMessage) )
 	{
