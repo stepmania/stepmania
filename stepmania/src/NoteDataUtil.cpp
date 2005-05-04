@@ -483,12 +483,11 @@ int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
 	return iMaxTailRow;
 }
 
-void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int iNewNumTracks )
+/* For every row in "in" with a tap or hold on any track, enable the specified tracks in "out". */
+void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> &aiTracks )
 {
-	// reset all notes
-	out.Init();
-
-	out.SetNumTracks( iNewNumTracks );
+	for( unsigned i = 0; i < aiTracks.size(); ++i )
+		ASSERT_M( aiTracks[i] < out.GetNumTracks(), ssprintf("%i, %i", aiTracks[i], out.GetNumTracks) );
 
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, r )
 	{
@@ -508,18 +507,39 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 		if( iHoldEnd != -1 )
 		{
 			/* If we found a hold note, add it to all tracks. */
-			for( int t=0; t<in.GetNumTracks(); t++ )
+			for( unsigned i = 0; i < aiTracks.size(); ++i )
+			{
+				int t = aiTracks[i];
 				out.AddHoldNote( t, iHoldStart, iHoldEnd, TAP_ORIGINAL_HOLD_HEAD );
+			}
 			continue;
 		}
 
-		if( in.IsRowEmpty( r ) )
+		if( in.IsRowEmpty(r) )
 			continue;
 
 		/* Enable every track in the output. */
-		for( int t=0; t<out.GetNumTracks(); t++ )
+		for( unsigned i = 0; i < aiTracks.size(); ++i )
+		{
+			int t = aiTracks[i];
 			out.SetTapNote( t, r, TAP_ORIGINAL_TAP );
+		}
 	}
+}
+
+/* For every track enabled in "in", enable all tracks in "out". */
+void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int iNewNumTracks )
+{
+	// reset all notes
+	out.Init();
+
+	out.SetNumTracks( iNewNumTracks );
+
+	vector<int> aiTracks;
+	for( int i = 0; i < out.GetNumTracks(); ++i )
+		aiTracks.push_back( i );
+
+	LightTransformHelper( in, out, aiTracks );
 }
 
 void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out )
