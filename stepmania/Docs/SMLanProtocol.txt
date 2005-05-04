@@ -1,7 +1,7 @@
 
-PRELIMINARY - - - - - - - - 09/01/2004
-Protocol version not yet 1.  
-  But 0x01 will be its version for inter-prtocol purposes.
+PRELIMINARY - - - - - - - - 05/03/2004
+Protocol version not yet 2.  
+  But 0x02 will be its version for inter-prtocol purposes.
 
 This protocol is only intended to replace current protocol.  Because current protocol
 not expanable
