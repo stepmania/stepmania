@@ -241,12 +241,12 @@ void ScreenNetRoom::UpdateRoomsList()
 	if (!m_RoomWheel.IsEmpty())
 	{
 		if (difference > 0)
-			for (unsigned int x = 0; x < difference; x++)
+			for( int x = 0; x < difference; x++ )
 				m_RoomWheel.RemoveItem(m_RoomWheel.GetNumItems() - 1);
 		else
 		{
 			difference = abs(difference);
-			for (unsigned int x = 0; x < difference; x++)
+			for( int x = 0; x < difference; x++ )
 				m_RoomWheel.AddItem(new RoomWheelData(TYPE_GENERIC, "", "", RageColor(1,1,1,1)));
 		}
 	}
