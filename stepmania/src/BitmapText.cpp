@@ -71,6 +71,7 @@ BitmapText::BitmapText()
 	m_pFont = NULL;
 
 	m_bRainbow = false;
+	m_bColored = false;
 
 	m_iWrapWidthPixels = -1;
 	m_fMaxWidth = 0;
@@ -144,8 +145,6 @@ bool BitmapText::LoadFromFont( const CString& sFontFilePath )
 	m_pFont = FONT->LoadFont( sFontFilePath );
 
 	BuildChars();
-
-	m_bColored = false;
 
 	return true;
 }
