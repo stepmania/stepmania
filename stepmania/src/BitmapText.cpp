@@ -367,9 +367,24 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 		m_vColors.clear();
 
 		int i =	m_sText.Find( "|c0", 0 );
-		int last = 0;
+		int last = 0, iNewlineCount = -3;
+
 		while ( ( i > -1 ) && ( i < ( int( m_sText.length() ) - 9 ) ) )
 		{
+			int j = m_sText.Find( CString("\n"), last+1 );
+			//Count \n's from previous to now.
+
+					LOG->Info("M4");
+
+			while ( ( j < i ) && ( j >= 0 ) )
+			{
+				j = m_sText.Find( CString("\n"), j+1 );
+				iNewlineCount+=2;
+			}
+
+
+					LOG->Info("M5");
+
 			sEndText += m_sText.substr( last, i-last );
 			ColorChange change;
 			int k;
@@ -377,7 +392,7 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 			sscanf( m_sText.substr( i+5, 2 ).c_str(), "%x", &k ); change.c.g = float( k ) / 255.0f;
 			sscanf( m_sText.substr( i+7, 2 ).c_str(), "%x", &k ); change.c.b = float( k ) / 255.0f;
 			change.c.a = 1;
-			change.l = sEndText.length();
+			change.l = sEndText.length() - MAX( iNewlineCount, 0 );
 			m_vColors.push_back( change );
 			last = i+9;
 			if ( last < (int)m_sText.length() )
@@ -595,6 +610,24 @@ void BitmapText::SetMaxLines( int iNumLines, int iDirection )
 	}
 	else
 	{
+		//Because colors are relative to the beginning, we have to crop them back
+		unsigned shift = 0;
+
+		LOG->Info("M1");
+		for ( unsigned i = 0; i < m_wTextLines.size() - iNumLines; i++ )
+			shift  += m_wTextLines[i].length();
+
+		for ( unsigned i = 0; i < m_vColors.size(); i++ )
+		{
+			m_vColors[i].l -= shift;
+			if ( m_vColors[i].l < 0 )
+			{
+				m_vColors.erase( m_vColors.begin() + i );
+				i--;
+			}
+		}
+		LOG->Info("M2");
+
 		m_wTextLines.erase( m_wTextLines.begin(), m_wTextLines.end() - iNumLines );
 		m_iLineWidths.erase( m_iLineWidths.begin(), m_iLineWidths.end() - iNumLines );
 	}
