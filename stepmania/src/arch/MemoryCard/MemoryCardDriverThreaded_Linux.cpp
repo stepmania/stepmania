@@ -254,58 +254,6 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 	return true;
 }
 
-struct WhiteListEntry
-{
-  int idVendor;   // -1 = "always match"
-  int idProduct;  // -1 = "always match"
-  const char *szVendorRegex;    // empty string matches all
-  const char *szProductRegex;   // empty string matches all
-};
-static const WhiteListEntry g_AllowedEntries[] = 
-  {
-#if 0
-    { 0x0781, -1, "", "Cruzer" },   // SanDisk Cruzer* drives
-    // Disallow the Rio Carbon.  After several mounts, usb-storage gets into a state where mounting will fail.
-    // { 0x045a, -1, "", "" },  // Diamond Multimedia Systems (Rio)  
-    { 0x04e8, -1, "Kingston|KINGSTON", "" },  // Kingston pen drives manufactured by Samsung
-    { 0x041e, -1, "", "^NOMAD MuVo$|^NOMAD MuVo .X" },  // Creative Labs Nomad MuVo flash drives (hard drive players excluded)
-    // Some Iomega Micro Mini drives cause mount to hang
-    // { 0x4146, -1, "", "Flash" },  // Iomega Micro Mini drive
-    { 0x05dc, -1, "", "JUMP|Jump" },  // All Lexar Jump*  drives
-    { 0x1915, 0x2220, "", "" },  // Linksys USB 2.0 Disk 128MB
-    { 0x0d7d, -1, "", "USB DISK" },  // PNY Attache pen drives
-    { 0x0ea0, -1, "", "Flash Disk" },   // other PNY Attache pen drives
-    { 0x0ef5, -1, "", "Intelligent|Traveling" },  // PQI Intelligent Stick and Traveling Disk 
-    { 0x08ec, -1, "", "M-Disk" },  // M-Systems flash drive
-#endif
-    { -1, -1, "", "" },  // allow anything
-  };
-bool IsDeviceAllowed( int idVendor, int idProduct, CString sVendor, CString sProduct )
-{
-  bool bAllowed = false;
-
-  for( unsigned i=0; i<ARRAYSIZE(g_AllowedEntries); i++ )
-    {
-      const WhiteListEntry &entry = g_AllowedEntries[i];
-      if( entry.idVendor != -1 && entry.idVendor != idVendor )
-	continue;
-      if( entry.idProduct != -1 && entry.idProduct != idProduct )
-	continue;
-      Regex regexVendor( entry.szVendorRegex );
-      if( !regexVendor.Compare(sVendor) )
-	continue;
-      Regex regexProduct( entry.szProductRegex );
-      if( !regexProduct.Compare(sProduct) )
-	continue;
-      
-      bAllowed = true;
-      break;
-    }
-
-  LOG->Trace( "idVendor 0x%04X, idDevice 0x%04X, Vendor '%s', Product '%s' is %sallowed.", idVendor, idProduct, sVendor.c_str(), sProduct.c_str(), bAllowed?"":"not " );
-  return bAllowed;
-}
-
 void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
 	LOG->Trace( "GetNewStorageDevices" );
@@ -409,11 +357,10 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 				TrimRight( usbd.sVendor );
 			}
 
-			bool bAllowed = IsDeviceAllowed( usbd.idVendor, usbd.idProduct, usbd.sVendor, usbd.sProduct );
-			LOG->Trace( "iBus: %d, iLevel: %d, iPort: %d, sSerial  = %s (%s)",
-					usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sSerial.c_str(), bAllowed? "allowed":"disallowed" );
-			if( bAllowed )
-				vDevicesOut.push_back( usbd );
+			LOG->Trace( "iBus: %d, iLevel: %d, iPort: %d, idVendor: 0x%04X, idDevice: 0x%04X, Vendor: '%s', Product: '%s', sSerial: %s",
+					usbd.iBus, usbd.iLevel, usbd.iPort, usbd.idVendor, usbd.idProduct, usbd.sVendor.c_str(),
+					usbd.sProduct.c_str(), usbd.sSerial.c_str() );
+			vDevicesOut.push_back( usbd );
 		}
 	}
 
