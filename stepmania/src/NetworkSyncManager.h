@@ -9,7 +9,7 @@
 
 class LoadingWindow;
 
-const int NETPROTOCOLVERSION=1;
+const int NETPROTOCOLVERSION=2;
 const int NETMAXBUFFERSIZE=1020; //1024 - 4 bytes for EzSockets
 const int NETNUMTAPSCORES=8;
 
