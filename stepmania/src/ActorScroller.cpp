@@ -100,7 +100,7 @@ void ActorScroller::Load2(
 	m_fMaskHeight = fItemHeight;
 
 	m_exprTransform.SetFromExpression( 
-		ssprintf("function(self,offset,itemIndex,numItems) return %f*offset end",fItemHeight) 
+		ssprintf("function(self,offset,itemIndex,numItems) return self:y(%f*offset) end",fItemHeight) 
 		);
 
 	m_bLoop = bLoop; 
