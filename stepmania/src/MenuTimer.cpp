@@ -74,24 +74,26 @@ void MenuTimer::Update( float fDeltaTime )
 	m_fSecondsLeft = max( 0, m_fSecondsLeft );
 	const float fNewSecondsLeft = m_fSecondsLeft;
 
+	SetText( fNewSecondsLeft );
+
 	if( fOldSecondsLeft == fNewSecondsLeft )
 		return;
 
 	if( fOldSecondsLeft > 5.5  &&  fNewSecondsLeft < 5.5 )	// transition to below 5.5
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("hurry up") );
 
-	SetText( fNewSecondsLeft );
 
-	for( int s=0; s<WARNING_START; s++ )
+	int iCrossed = (int)floorf(fOldSecondsLeft);
+	if( fOldSecondsLeft > iCrossed && fNewSecondsLeft < iCrossed )	// crossed
 	{
-		if( fOldSecondsLeft > s && fNewSecondsLeft < s )	// crossed
+		if( iCrossed < WARNING_START )
 		{
 			for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
-				m_text[i].RunCommands( WARNING_COMMAND.GetValue(s) );
-			
-			if( i <= WARNING_BEEP_START && m_soundBeep.IsLoaded() )
-				m_soundBeep.Play();
+				m_text[i].RunCommands( WARNING_COMMAND.GetValue(iCrossed) );
 		}
+		
+		if( iCrossed <= WARNING_BEEP_START && m_soundBeep.IsLoaded() )
+			m_soundBeep.Play();
 	}
 	
 	if( fNewSecondsLeft == 0 )
@@ -119,7 +121,7 @@ void MenuTimer::Stop()
 
 void MenuTimer::Disable()
 {
-	SetSeconds( 99 );
+	SetSeconds( TIMER_PAUSE_SECONDS );
 	Pause();
 }
 
