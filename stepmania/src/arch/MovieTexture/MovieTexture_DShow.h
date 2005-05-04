@@ -71,6 +71,7 @@ private:
 	bool					m_bLoop;
 	bool					m_bPlaying;
 };
+#define USE_MOVIE_TEXTURE_DSHOW
 
 #endif
 
