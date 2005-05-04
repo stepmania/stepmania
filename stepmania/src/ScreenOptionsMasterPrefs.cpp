@@ -266,7 +266,14 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 MOVE( Instructions,			PREFSMAN->m_bShowInstructions );
 MOVE( OniScoreDisplay,		PREFSMAN->m_bDancePointsForOni );
 MOVE( SongGroup,			PREFSMAN->m_bShowSelectGroup );
-MOVE( WheelSections,		(int &) PREFSMAN->m_MusicWheelUsesSections );
+
+static void WheelSections( int &sel, bool ToSel, const ConfOption *pConfOption )
+{
+	// XXX: NEVER, ALWAYS, etc. seem kinda ambiguous...
+	const PrefsManager::MusicWheelUsesSections mapping[] = { PrefsManager::NEVER, PrefsManager::ALWAYS, PrefsManager::ABC_ONLY };
+	MoveMap( sel, PREFSMAN->m_MusicWheelUsesSections, ToSel, mapping, ARRAYSIZE(mapping) );
+}
+
 MOVE( CourseSort,			(int &) PREFSMAN->m_iCourseSortOrder );
 MOVE( RandomAtEnd,			PREFSMAN->m_bMoveRandomToEnd );
 MOVE( Translations,			PREFSMAN->m_bShowNativeLanguage );
