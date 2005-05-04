@@ -36,6 +36,7 @@ const int NUM_SCORE_DIGITS	=	9;
 #define NEXT_OPTIONS_SCREEN					THEME->GetMetric (m_sName,"NextOptionsScreen")
 #define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetricA(m_sName,ssprintf("ScoreP%iSortChangeCommand", i+1))
 #define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetricA(m_sName,ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
+#define METER_TYPE							THEME->GetMetric (m_sName,"MeterType")
 
 AutoScreenMessage( SM_AllowOptionsMenuRepeat )
 AutoScreenMessage( SM_SongChanged )
@@ -298,7 +299,7 @@ void ScreenSelectMusic::Init()
 		}
 
 		m_DifficultyMeter[p].SetName( ssprintf("MeterP%d",p+1) );
-		m_DifficultyMeter[p].Load( "DifficultyMeter" );
+		m_DifficultyMeter[p].Load( METER_TYPE );
 		SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
 		this->AddChild( &m_DifficultyMeter[p] );
 
