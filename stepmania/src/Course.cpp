@@ -283,11 +283,14 @@ void Course::LoadFromCRSFile( CString sPath )
 				split( sParams[3], ",", mods, true );
 				for( int j = (int) mods.size()-1; j >= 0 ; --j )
 				{
-					if( !mods[j].CompareNoCase("showcourse") )
+					CString &sMod = mods[j];
+					TrimLeft( sMod );
+					TrimRight( sMod );
+					if( !sMod.CompareNoCase("showcourse") )
 						new_entry.bSecret = false;
-					else if( !mods[j].CompareNoCase("noshowcourse") )
+					else if( !sMod.CompareNoCase("noshowcourse") )
 						new_entry.bSecret = true;
-					else if( !mods[j].CompareNoCase("nodifficult") )
+					else if( !sMod.CompareNoCase("nodifficult") )
 						new_entry.no_difficult = true;
 					else 
 						continue;
