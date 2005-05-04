@@ -8,21 +8,8 @@
 
 <body>
 <h1>StepMania Documentation </h1>
-<ul>
-  <li><a href="#What is StepMania?">1. What is StepMania?</a></li>
-  <li><a href="#System Requirements">2. System Requirements</a></li>
-  <li><a href="#3. Installation">3. Installation</a></li>
-  <li><a href="#4. Using StepMania">4. Using StepMania</a></li>
-  <li><a href="#5. Using smpackage">5. Using smpackage</a></li>
-  <li><a href="#6. Supported Controllers or Controller Adapters">6. Supported Controllers or Controller Adapters</a></li>
-  <li><a href="#7. Getting Help/Contact">7. Getting Help/Contact</a></li>
-  <li><a href="#8. Changelog">8. Changelog</a></li>
-</ul>
-<dl>
-  <dd><a href="#What is StepMania?"> </a></dd>
-</dl>
-<p>&nbsp;</p>
-<a name="1. What is StepMania?"></a>
+<p>Revision 1.1x10^-8 (May 3rd, 2005)</p>
+<p>(TOC is broken and outdated, scroll down)</p>
 <h1>1. What is StepMania?</h1>
 <p>StepMania is a music/rhythm game. The player presses different buttons in time to the music and to note patterns that scroll across the screen. Features 3D graphics, visualizations, support for gamepads/dance pads, a step recording mode, and more! <br>
   StepMania is capable of playing many game types. Currently, it supports games similar to Dance Dance Revolution, Pump It Up, EZ 2 Dancer, and Para Para Paradise. In the future, it will support games similar to BeatMania, Guitar Freaks, DrumMania, and more.
@@ -30,22 +17,28 @@
 The games played by StepMania are rhythm games. Notes scroll up from the bottom of the screen, and the player must hit the corresponding button on the controller in time to the. All games can be played using the keyboard, but the real fun comes when using specially designed controllers, like a dance pad or hand sensors.</p>
 <a name="2. System Requirements">
 <h1>2. System Requirements</h1>
+<p>For Windows:</p>
 <ul>
-  <li>CPU: Intel compatable (500mhz or higher reccomended)</li>
-  <li>Graphics: DirectX 7 and OpenGL compatable graphics adapter with 16MB or more of graphics memory</li>
-  <li>Hard Disk: 10MB free for base program, additional space as needed for songs/themes/etc.</li>
-  <li>Sound: DirectX 7 compatable (ALSA/OSS compatable for linux) sound card.</li>
-  <li>For Linux:
-    <ul>
-      <li>madlibs/libmad 0.15.1b or greater (for MP3 support) </li>
-      <li> libvorbis (for ogg/vorbis support) </li>
-      <li>  A compatable XF86/Xorg display server</li>
-      <li>ALSA </li>
-    </ul>
-  </li>
+  <li>CPU: 400mhz or faster </li>
+  <li>Graphics: OpenGL enabled DirectX 7 compatable graphics card (32MB of VRAM reccomended)</li>
+  <li>Sound: A DirectX 7 compatable sound card</li>
+  <li>Joystick: something that works (see http://www.stepmania.com/stepmania-old/adapter.php for details)</li>
+  <li>Hard Drive: 10mb available for base, additional as required for songs.</li>
+  <li>RAM: 128MB or higher</li>
 </ul>
+<p>For Linux:</p>
+<ul>
+  <li>CPU: 400mhz or faster</li>
+  <li>Graphics: OpenGL enabled X11 compatable graphics card (32MB of VRAM or higher reccomended) NOTE: You MUST have working OpenGL libraries to run StepMania!)</li>
+  <li>Sound: ALSA compatable sound card</li>
+  <li>Hard drive: 10MB for base, additional for songs.</li>
+  <li>RAM 128MB or higher</li>
+  <li>Additional Libraries: madlibs, libvorbis, SDL, Xlib, liblua</li>
+</ul>
+<p>For Mac:</p>
+<p>[Someone want to help a man out here? I have never owned a Mac.] </p>
 <h1>3. Installation</h1>
-<h2>3a. Installing StepMania </h2>
+<h2>3a. Installing StepMania from a binary </h2>
 <p>To install StepMania on Windows 98/ME/2000/XP: </p>
 <ol>
   <li>Point your web browser to the StepMania Sourceforge.net project files page at <a href="http://sourceforge.net/project/showfiles.php?group_id=37892" title="http://sourceforge.net/project/showfiles.php?group_id=37892">http://sourceforge.net/project/showfiles.php?group_id=37892</a></li>
@@ -54,7 +47,7 @@ The games played by StepMania are rhythm games. Notes scroll up from the bottom 
   <li>After installation, add songs, themes, noteskins, etc to their appropriate directories (see section 5)</li>
   <li>To run StepMania, click the Start button, select Programs or All Programs, select StepMania (or Stepmania CVS) and click Play Stepmania. </li>
 </ol>
-<p>To install on Linux/Unix using the binaries:</p>
+<p>To install on Linux/Unix:</p>
 <ol>
   <li>Point your web browser to the StepMania Sourceforge.net project files page at <a href="http://sourceforge.net/project/showfiles.php?group_id=37892" title="http://sourceforge.net/project/showfiles.php?group_id=37892">http://sourceforge.net/project/showfiles.php?group_id=37892</a></li>
   <li>Download stepmania-X.Y-Z-linux.tar.gz (where X.Y-Z are version numbers) to a folder on your hard drive.</li>
@@ -62,7 +55,16 @@ The games played by StepMania are rhythm games. Notes scroll up from the bottom 
   <li>Add songs/themes/noteskins/etc. to the appropriate folders (see Section 5)</li>
   <li>To Start StepMania, run ./stepmania from the installation folder. </li>
 </ol>
-<p>To compile/install StepMania from a source tarball:</p>
+<h2>3b. Compiling StepMania from source</h2>
+<p>There are two methods of compiling StepMania. You can use the source tarballs provided for each release, or you may obtain fresh source directly from our CVS server. NOTE: To compile SM on Windows, you will need M$ Visual C++ 6 or higher. </p>
+<h3>Source Tarballs</h3>
+<p>To compile/install StepMania from a source tarball on Windows:</p>
+<ol>
+  <li>Extract the source tarball using your preferred archiver into a locaton that you wish to build in.</li>
+  <li>Navigate to your source tree's src directory and double click on StepMania.vcproj. This will launch M$ VC++.</li>
+  <li>From the Build menu, select Build Solution (or Build StepMania, depending on version)</li>
+</ol>
+<p>To compile/install StepMania from a source tarball on Linux/Unix </p>
 <ol>
   <li> Point your web browser to the StepMania Sourceforge.net project files page at <a href="http://sourceforge.net/project/showfiles.php?group_id=37892" title="http://sourceforge.net/project/showfiles.php?group_id=37892">http://sourceforge.net/project/showfiles.php?group_id=37892</a></li>
   <li>Download stepmania-X.Y-Z-linux-src.tar.gz to a location in your hard drive</li>
@@ -70,26 +72,16 @@ The games played by StepMania are rhythm games. Notes scroll up from the bottom 
   <li>In the extracted folder, type ./configure</li>
   <li>Finally, type make (or gmake) to build StepMania </li>
 </ol>
-<p>To install StepMania on Mac OSX:</p>
-<p>TODO</p>
-<h2>3b. Adding songs, themes, characters, etc</h2>
-<p>To add songs to StepMania:</p>
+<h3>CVS</h3>
+<p>CVS (Concurrent Version System) is an easy way for developers to collaborate on source code. You can obtain a snapshot of the current CVS tree by &quot;checking out&quot; the Stepmania module from the CVS server as described below. First, however, you will need a CVS client. For Windows, you can either use WinCVS from http://www.wincvs.org/ or the command line CVSNT from http://www.cvsnt.org/. The insctructions below work for CVSNT and standard Linux CVS programs.</p>
 <ol>
-  <li>Open your StepMania installation directory, and the folder called &quot;Songs&quot;</li>
-  <li>Create subdirectories for each song group (game the songs came from, step artist, etc). These will appear as groups on the song wheel. </li>
-  <li>Create folders for each song you want in the group. </li>
-  <li>Place inside the folder:
-    <ol>
-      <li>the DWI or SM step file</li>
-      <li>the song's music file</li>
-      <li>a background (optional)</li>
-      <li>a banner (optional</li>
-    </ol>
-  .</li>
+  <li>After installing CVS, change to the directory where you would like to place the source tree. In Windows, you will need to do this in a command prompt.</li>
+  <li>Type the following to connect to the CVS server: <em>cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/stepmania login</em> When prompted for a password, just press enter.</li>
+  <li>Type the following to check out the StepMania source tree: <em>cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/stepmania co -P stepmania </em>(NOTE: Users of CVSNT on windows must substitute &quot;co&quot; for &quot;checkout&quot;.)</li>
+  <li>Windows users should follow steps 2 and 3 of Compiling from a Source Tarball above, and ignore the last two steps. Linux users should now type <em>sh autogen.sh</em></li>
+  <li> Next type <em>./configure</em> to set up the build process.</li>
+  <li>Finally type <em>make</em> (or <em>gmake</em>) to build StepMania. </li>
 </ol>
-<p>Themes, BG Animations, Characters, Note skins, and announcers should be placed in subdirectories of their respective folders.</p>
-<p>For Example, the files for the Foo announcer would reside in Announcers/Foo/</p>
-<p>Alternatively, some StepMania addons come in .SMZIP format. This special archive contains all the files for an addon. Simply double-click it to install the files in the right places. </p>
 <h1>4. Using StepMania</h1>
 <p>Once you start Stepmania, you will be presented with the Stepmania Title Screen</p>
 <p><img src="images/smtitlescreen.JPG" width="320" height="240"> </p>
@@ -269,11 +261,477 @@ The games played by StepMania are rhythm games. Notes scroll up from the bottom 
 </ul>
 <h2>4d. The Stepmania Editor</h2>
 <p>TODO</p>
-<h1>5. Using smpackage</h1>
-<p>smpackage is a simple suiite of tools for managing your Stepmania installation. It contains smzip archives tools, theme tools</p>
+<h1>5. Customizing StepMania</h1>
+<p>One of StepMania's most powerful features is the level to which the user can customize it. Everything from the user interface, to the sounds, and even the gameplay can all be edited and customized. Also, you can obtain add-on announcers, themes, dancing characters, and other goodies from around the net. See the Links section of www.stepmania.com for a start.</p>
+<h2>5a. Songs</h2>
+<p>Songs are obviously the most important part of StepMania. You can obtain songs from many places around the internet, some of which are described in the Links section of stepmania.com, or you can make your own.</p>
+<h3>Adding Songs to StepMania</h3>
+<p>Songs are added to the Songs folder of your StepMania installation. All the songs a user has are broken down by groups. These could be the game that they were taken from, or by step author. The files are then broken down by the song that they go with. Each folder needs a step file (DWI or SM) and a music file (MP3/OGG). Optionally, lyrics, a banner and a background image can be included.</p>
+<p>For example, Butterfly would be placed under songs\DDR 1st Mix\Butterfly\, and that folder would contain butterfly.dwi, buttefly.lrc, butterfly.mp3, butterfly-bg.jpg, and butterfly-banner.jpg. </p>
+<h3>The .SM format</h3>
+<p>(Courtesy of [Who wrote the old manual anyway?]) </p>
+<p>  The .SM song file format was created to be one file format that supports all game types that StepMania can play (dance, pump, beat, guitar, etc). The syntax of a .SM is similar to .DWI and .KSF except that some tags are different.<br>
+  <br>
+Note that StepMania can load images in PNG, GIF, PJG, and BMP formats, and can load sounds in OGG, MP3, and WAV formats.<br>
+<br>
+Any text field in an SM file can contain UTF-8 characters.<br>
+<br>
+#TITLE:...; - The "main title" of the song.<br>
+#SUBTITLE:...; - This text will appear underneath the main title of the song on the Select Music screen. e.g. "~Dirty Mix~" or "(remix)".<br>
+#ARTIST:...; - The artist of the song.<br>
+#TITLETRANSLIT:...; - Transliteration of song's main title.<br>
+#SUBTITLETRANSLIT:...; - Transliteration of song's subtitle.<br>
+#ARTISTTRANSLIT:...; - Transliteration of the artist's name.<br>
+#CREDIT:...; - Give yourself some credit here for creating a wonderful song.<br>
+#BANNER:...; - The file name of the banner image. e.g. "b4u-banner.png". This image must reside in the song folder.<br>
+#BACKGROUND:...; - The file name of the background image. e.g. "b4u-bg.png". This image must reside in the song folder.<br>
+#CDTITLE:...; - The file name of the spinning CD logo. e.g. "b4u-cdtitle.png". This image must reside in the song folder.<br>
+#MUSIC:...; - The file name of the music file. e.g. "b4u.mp3". This image must reside in the song folder.<br>
+#OFFSET:...; - The time in seconds at which beat 0 occurs in the music. This is specified as a floating point value. e.g. "2.34".<br>
+#SAMPLESTART:...; - The time in seconds to start the music sample that plays on the Select Music screen. This is specified as a floating point value. e.g. "32.34".<br>
+#SAMPLELENGTH:...; - The time in seconds let the sample music play after starting. This is specified as a floating point value. e.g. "16.00". Note that in the last 1 second of playing the music will fade out.<br>
+#SELECTABLE:...; - If "NO", the song can not be selected manually and can only be played as part of a course. If "ROULETTE", the song can can also be selected via roulette. The default value is "YES".<br>
+#BPMS:...; - A value of the format "beat=bpm". Indicates that at 'beat', the speed of the arrows will change to "bpm". Both of these values are specified as floating point values. You must specifiy a BPM value for beat 0. Multiple BPMs can be given by separating them with commas. e.g. "0=160,120=80".<br>
+#STOPS:...; - A value of the format "beat=sec". Indicates that at 'beat', the motion of the arrows should stop for "sec" seconds. Both of these values are specified as floating point values. Multiple stops can be given by separating them with commas. e.g. "60=2.23,80=1.12".<br>
+#BGCHANGE:...; - A value of the format "beat=bg name". Indicates that at 'beat', the background should begin playing a new background named 'bg name'. 'beat' is a fractional value value and 'bg name' is a string. Different bg changes are separated by commas. e.g. "60=falling,80=flower".&nbsp; When StepMania looks for a backgound, it searches in this order:<br>
+ </p>
+<ol>
+  <li>Looks for a movie with file name = "bg name" in the song folder. You must include the file extension in "bg name". e.g. "60=falling.avi,80=flower.mpg".</li>
+  <li>Looks for a BGAnimation folder with the name "bg name" in the song folder.</li>
+  <li>Looks for a movie with file name "bg name" in the RandomMovies folder. You must include the file extension in "bg name". e.g. "60=falling.avi,80=flower.mpg".</li>
+  <li>Looks for a BGAnimation with file name "bg name" in the BGAnimations folder.</li>
+  <li>Looks for a Visualization with the file name "bg name" in the Visualizations folder. For example, if you have a song B4U and special B4U-specific BGAnimations called "robot" and "electric". First, move the robot and electric BGAnimation folders into the B4U song folder (e.g. "Songs\4th Mix\B4U\robot" and "Songs\4th Mix\B4U\electric"). Then, using the editor, insert a new background change at each point in the song where you to switch to a new BGAnimation.</li>
+</ol>
+<p> <br>
+  Each pattern of notes has the same basic format:<br>
+  <br>
+  #NOTES:&lt;NotesType&gt;:&lt;Description&gt;:&lt;DifficultyClass&gt;:&lt;DifficultyMeter&gt;:&lt;RadarValues&gt;:&lt;NoteData&gt;;<br>
+  <br>
+  NotesType: Must be one of the currently supported types in StepMania: "dance-single", "dance-double", "dance-couple", "dance-solo", "pump-single", "pump-double", "pump-couple", "ez2-single", "ez2-double", "ez2-real", "para-single"<br>
+  <br>
+  Description: This will be displayed on the gameplay screen. This can be any text, but is most commonly:<br>
+"Beginner", "Basic", "Another", "Trick", "Standard", "SSR", "Maniac", "Heavy", "Challenge", "SManaic"<br>
+  <br>
+  DifficultyClass: This value must be "beginner", "easy", "medium", "hard", or "challenge". These values correspond the levels of difficulty on the Select Difficulty screen.<br>
+  <br>
+  DifficultyMeter: The difficulty of these notes as a bar rating. The value must be an integer between 1 and 10.<br>
+  <br>
+  NoteData: This value requires a longer explanation.<br>
+  <br>
+  Each note is represented by a character:<br>
+  <br>
+  0 = no note here<br>
+  1 = a regular "tap note"<br>
+  2 = beginning of a "hold note"<br>
+  3 = end of a "hold note"<br>
+  a-z,A-z = tap notes reserved for game types that have sounds associated with notes<br>
+  <br>
+  Notes that are hit at the same time are grouped into rows. For example, if the NotesType is "dance-single", the row "1001" would specify that both the Left and Right and Down panels should be hit at the same time.<br>
+  <br>
+  The number of notes per row (also called the number of 'columns') depends on the "NotesType.<br>
+  <br>
+  dance-single = 4 notes/row (Left,Down,Up,Right)<br>
+  dance-double = 8 notes/row<br>
+  dance-couple = 8 notes/row<br>
+  dance-solo = 6 notes/row<br>
+  pump-single = 5 notes/row<br>
+  pump-double = 10 notes/row<br>
+  pump-couple = 10 notes/row<br>
+  ez2-single = 5 notes/row<br>
+  ez2-double = 10 notes/row<br>
+  ez2-real = 7 notes/row<br>
+  para-single = 5 notes/row<br>
+  <br>
+  <br>
+  Note rows are grouped into measures. The number of note rows you specify in a measure will determine the time value of each note. For example, if there are 4 note rows in a measure, each note will be treated as a quarter note. If there are 8 notes rows in a measure, each note will be treated as a eighth note. If there are 12 notes rows in a measure, each note will be treated as a triplet (1/12th) note. Measures are separated by a comma.<br>
+  <br>
+  Example:<br>
+  <br>
+  // measure 1<br>
+  2010<br>
+  0000<br>
+  0100<br>
+  0000<br>
+  : // measure 2<br>
+  0001<br>
+  0100<br>
+  0001<br>
+  0000<br>
+  3010<br>
+  0000<br>
+  0000<br>
+0000</p>
+<h3>Backgrounds</h3>
+<p>  StepMania supports three different modes of backgrounds. The default background mode can be set in the Graphic Options menu.<br>
+  <br>
+  BGAnimations - Sprite animations similar to DDR 1st-5th Mix. There must be BGAnimation folders present in the BGAnimations directory, or else no background will be played. See the section called "BGAnimations Format" in this document for more information on the BGAnimations format. BGAnimations will perform better than the other background modes on slower computers.<br>
+  <br>
+  Random Movies - The background will cycle randomly over any avi or mpg files in the "RandomMovies" folder in the StepMania program directory.<br>
+  <br>
+  Visualizations - A random avi or mpg file will be chosen from the "Visualizations" folder in the StepMania program directory. This movie file will be played and blended over top of the song's background graphic.<br>
+  <br>
+Many video AVIs will require the DivX codec for playback. If you haven't yet downloaded DivX, you can get it from www.divx.com. Playing movies as the background is very processor intensive, and may cause choppiness on slower computers.<br>
+<br>
+Sample animations, visualizations, and random movies can be found at <a href="http://www.stepmania.com">www.stepmania.com</a>.<br>
+ </p>
+<h3>BGAnimation format</h3>
+<p>  The BGAnimations folder in the StepMania program directory may contain several BGAnimation folders.<br>
+  <br>
+  \BGAnimations\&lt;anim folder&gt;\&lt;layer files&gt;<br>
+  <br>
+&lt;anim folder&gt; is the name of the animation.<br>
+<br>
+&lt;layer files&gt; are one or more graphics files that will be used as layers in the animation. Each sprite represents exactly one layer. Multiple layers can be specified by having multiple &lt;layer files&gt;. Layer files can be PNG, AVI, or MPEG files.<br>
+<br>
+For example, a BGAnimation named "flower" may include the files:<br>
+<br>
+BGAnimations\flower\1 TileScrollUp.png<br>
+BGAnimations\flower\2 StartOnRandomFrame ParticlesFloatDown 1x2.png<br>
+BGAnimations\flower\3 TileScrollLeft CycleColor 2x2.png<br>
+<br>
+The layers of a BGAnimation are drawn from bottom in the order in which the layer graphics files appear alphanumerically. A layer file name will often begin with a number to control the order in which they are drawn.<br>
+<br>
+Different "effects" are specified for each layer by adding tokens to the file name. Here are an explanation of the currently supported tokens:<br>
+<br>
+UseSongBg - Use the song's background file instead of this graphics file. Since this graphics file is merely a placeholder, you might want to make this graphic a 1x1 graphic to save disk space.<br>
+<br>
+Add - use additive blending instead of normal blending.<br>
+<br>
+CycleColor - cycle the color of the layer over the colors of the rainbow<br>
+<br>
+CycleAlpha - cycle the alpha channel of the layer over type<br>
+<br>
+StartOnRandomFrame - Start the animation on a random frame. This is mainly useful for Tile or Particle effects. <br>
+<br>
+DontAnimate - Stay on the first frame of this animation. This is only useful for layers with multiple frames.<br>
+<br>
+(stretch effects) - These scretch the graphic across the extire screen.<br>
+ScretchScrollLeft,<br>
+StretchScrollRight,<br>
+StretchScrollUp,<br>
+StretchScrollDown,<br>
+- Scroll the layer in a direction<br>
+<br>
+StretchWater,<br>
+StretchBubble,<br>
+StretchTwist,<br>
+StretchSpin,<br>
+- Deform the background sprite with an effect. Only stretch spin is currently implemented.<br>
+<br>
+(particle effects) - Use the graphic to make individual particles on the screen.<br>
+ParticlesSpiralOut,<br>
+ParticlesSpiralIn,<br>
+- Spiral particles away from/toward the center of the screen.<br>
+<br>
+ParticlesFloatUp,<br>
+ParticlesFloatDown,<br>
+ParticlesFloatLeft,<br>
+ParticlesFloatRight,<br>
+- Scroll the particles across the screen.<br>
+ParticlesBounce,<br>
+- Particles start traveling in random directions and bounce when they hit the edge of the screen.<br>
+<br>
+(tile effects) - Tile the graphics across the screen, forming a grid of graphics.<br>
+TileStill,<br>
+TileScrollLeft,<br>
+TileScrollRight,<br>
+TileScrollUp,<br>
+TileScrollDown,<br>
+- Scroll the tiles<br>
+<br>
+TileFlipX,<br>
+TileFlipY,<br>
+- Flip the tiles along the X or Y axis.<br>
+<br>
+TilePulse,<br>
+- Tiles zoom in and out.</p>
+<h2>5b. Courses</h2>
+<p> CRS files define the courses used in the Nonstop, Oni, and Endless modes.&nbsp; All CRS files must reside in the "Courses" folder in the StepMania program folder.&nbsp; These rules determine which of the three modes a course will appear in:<br>
+<br>
+Nonstop: Will appear if there is no #LIVES tag and #REPEAT is OFF.<br>
+Oni (Challenge): Will appear if there is a #LIVES tag and #REPEAT is OFF.<br>
+Endless: Will appear if #REPEAT is ON.<br>
+<br>
+#COURSE:...; - name of the course<br>
+#LIVES:&lt;0..10&gt;; - An integer between 0 and 10. This line is optional.<br>
+#REPEAT:&lt;YES|NO&gt;; - start over after last stage?<br>
+#SONG: - can use any one of the following formats:<br>
+<br>
+A fixed song:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #SONG:&lt;group folder&gt;/&lt;song folder&gt;:&lt;difficulty&gt;:&lt;modifiers&gt;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:Nicolai Rimsky-Korsakov/Flight of the Bumblebee:BASIC;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:Oldies/Jump Jive and Wail:MANIAC:sudden,shuffle,reverse;<br>
+A random song:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #SONG:*:(&lt;difficulty&gt;|&lt;meter range&gt;):&lt;modifiers&gt;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:*:MANIAC;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:*:8..10:1.5x,reverse;<br>
+A random song within a group:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #SONG:&lt;group folder&gt;/*:(&lt;difficulty&gt;|&lt;meter range&gt;):&lt;modifiers&gt;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:Classical/*:3..6;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:Techno/*:MANIAC:1.5x,reverse;<br>
+A players best song:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #SONG:BEST&lt;number&gt;:(&lt;difficulty&gt;|&lt;meter range&gt;):&lt;modifiers&gt;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:BEST1:TRICK;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:BEST4:MANIAC:1.5x,reverse;<br>
+A players worst song:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; #SONG:WORST&lt;number&gt;:(&lt;difficulty&gt;|&lt;meter range&gt;):&lt;modifiers&gt;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:WORST4:MANIAC;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; example: #SONG:WORST1:TRICK:1.5x,reverse,drunk;<br>
+<br>
+Descriptions:<br>
+group folder - The name of the folder that contains the song folder. (e.g. "Techno")<br>
+song folder - the name of the folder that contains files for the song. (e.g. "Flight of the Bumblebee")<br>
+difficulty - Can be one of the following: BEGINNER, EASY, MEDIUM, HARD, CHALLENGE.<br>
+meter range - A value in the format "x..y" where x is the lowest meter allowed and y is the highest meter allowed.&nbsp; For example, the string "7..9" would choose only from songs with a meter of 7, 8, or 9.<br>
+modifiers - A comma separated series of modifier strings.&nbsp; This value may be left blank.&nbsp; Any string you see on the Player Options screen is a modifier string.&nbsp; Some examples are:<br>
+</p>
+<ul>
+  <font size="2">0.5x, 0.75x, 1.5x, 2.0x, 3.0x, 4.0x, 5.0x, 8.0x<br>
+  boost, wave, drunk, dizzy, space, mini<br>
+  hidden, sudden, stealth, blink<br>
+  mirror, left, right, shuffle, supershuffle<br>
+  little, reverse, note, flat, plain<br>
+  noholds, nofreeze, dark<br>
+  0.7xmusic, 0.8xmusic, 0.9xmusic, 1.0xmusic, 1.1xmusic, <br>
+  1.2xmusic, 1.3xmusic, 1.4xmusic, 1.5xmusic</font>
+</ul>
+<h2>5c. Announcers</h2>
+<p> <font size="2"> Announcers folders must reside in the "Announcers" folder inside the StepMania program directory (e.g. "Announcers\James Earl Jones\"). An announcer folder contains several more folders - one for each announcer "trigger". Add as many .WAV, .MP3, or .OGG sounds as you want to the trigger folder. When StepMania wants to play a sound for that trigger, it will play a random sound file from your trigger folder.<br>
+<br>
+Sound files in a trigger folder can have any name you want. It's recommended that you name the sound files according to what is being said (e.g. "everybodys waiting for you.mp3"). If there are 0 sound files in a trigger folder, or the trigger folder is missing, then no sound will be played for that trigger.<br>
+<br>
+For a complete list of announcer trigger names, see the example announcer packs that are available at <a href="http://www.stepmania.com">www.stepmania.com</a>.</font> </p>
+<h2>5d. Note Skins</h2>
+<p>  Note skins allow you to customize the way notes appear. Note skins must reside in the folder "NoteSkins\&lt;Game Name&gt;\&lt;Note Skin Name&gt;". Note skins are specific to a particular game (dance, pump, etc). In the note skin folder, you must implement the folling files for each note:<br>
+  <br>
+&lt;NoteName&gt; receptor (3x1).png<br>
+&lt;NoteName&gt; tap note (NxN).png<br>
+&lt;NoteName&gt; tap explosion bright.png<br>
+&lt;NoteName&gt; tap explosion bright.png<br>
+&lt;NoteName&gt; hold explosion.png<br>
+&lt;NoteName&gt; down hold topcap active.png.png<br>
+&lt;NoteName&gt; down hold topcap inactive.png.png<br>
+&lt;NoteName&gt; down hold head active.png.png<br>
+&lt;NoteName&gt; down hold head inactive.png.png<br>
+&lt;NoteName&gt; down hold body active.png.png<br>
+&lt;NoteName&gt; down hold body inactive.png.png<br>
+&lt;NoteName&gt; down hold tail active.png.png<br>
+&lt;NoteName&gt; down hold tail inactive.png.png<br>
+&lt;NoteName&gt; down hold bottomcap active.png.png<br>
+&lt;NoteName&gt; down hold bottomcap inactive.png.png<br>
+&lt;NoteName&gt; tap.colors<br>
+<br>
+"&lt;NoteName&gt;" must be the name of the note (e.g. "left", "upright", "snare").&nbsp; Look at the example note skins included with StepMania for a complete list for each game.<br>
+<br>
+Most of the note skin elements can use any number of frames. For example, the element "tap exposion bright" could have 4 frames (2x2), 2 frames (1x2), or just a single frame. The exception to this rule is "receptor", which must have 3 frames.</p>
+<h2>5d. Themes</h2>
+<p> <font size="2"> All themes must reside in the Themes folder below the StepMania program directory. Inside a theme folder, you will all or only a few of the items below:<br>
+<br>
+Themes\&lt;ThemeName&gt;\BGAnimations\<br>
+Themes\&lt;ThemeName&gt;\Fonts\<br>
+Themes\&lt;ThemeName&gt;\Graphics\<br>
+Themes\&lt;ThemeName&gt;\Numbers\<br>
+Themes\&lt;ThemeName&gt;\Sounds\<br>
+Themes\&lt;ThemeName&gt;\metrics.ini<br>
+<br>
+The 5 possible folders in a theme hold "theme elements". A theme element is simply a little piece of the theme that can be changed. Each of the 5 folders contains different types of information as explained below:<br>
+<br>
+BGAnimations: This folder contains BGAnimation elements for the different screens. Since all backgrounds for all the menus in the game are generated using BGAnimations, any screen in the game can have an animating background. Also, BGAnimations can contain movie layers. For more information about BGAnimations, see the section "BGAnimations Format" in this document.<br>
+<br>
+Fonts: This folder contains graphics and font width data used by the font system. Font graphics and width files are generated using the program "Bitmap Font Builder", which is <a href="http://www.lmnopc.com/bitmapfontbuilder/"> available at their site</a>. To export a font for use in StepMania:<br>
+- In Bitmap Font Builder, choose Character Set-&gt;Full ASCII. StepMania can only load 16x16 character sheets.<br>
+- In Bitmap Font Builder, click File-&gt;Save 32bit TGA. Save the file some place that is easy to access.<br>
+- Open Photoshop and load the TGA file. Click the chanel "Alpha 1", then load this channel as a selection.<br>
+- Click back to the Layers tab and create a new layer.<br>
+- Choose Edit-&gt;Fill, and fill the selection with white.<br>
+- Delete the layer named "Background". You should now see a mostly transparent background with faint hints of white text.<br>
+- Click File-&gt;Save For Web. Choose the Format "PNG-24" and Save.<br>
+- Rename the PNG file you just saved to "&lt;YourFontName&gt; 16x16.png". (the "16x16" means that the graphic contains 16 * 16 frames worth of characters.<br>
+- Back in Bitmap Font Builder, click File-&gt;Save Font Widths (INI Format). Save this in the same directory where you saved the PNG. Rename the exported INI file to "&lt;YourFontName&gt; 16x16.ini" where the first part of the file name matches the PNG you exported.<br>
+- Done! The PNG and the INI file are your new font. Move them into your theme's Fonts folder.<br>
+<br>
+StepMania will also look for the following optional lines in a font INI file:<br>
+CapitalsOnly=&lt;0|1&gt;: If 1, then StepMania will use the capital letter frames in place of the lower case letter frames. If not specified, StepMania will use 0 for this value.<br>
+DrawExtraPixelsLeft=&lt;0..32&gt;: If letters of your font are being chopped off on the left size, try increasing this value. If not specified, StepMania will use 0 for this value.<br>
+DrawExtraPixelsRight=&lt;0..32&gt;: If letters of your font are being chopped off on the right size, try increasing this value. If not specified, StepMania will use 0 for this value.<br>
+AddToAllWidths=&lt;0..32&gt;: If specified, this value will be added to the width of every character in the font. Increase this value if the width of all characters changes uniformly; for example, if you add a border to each character.<br>
+AdvanceExtraPixels=&lt;0..32&gt;: The value in this line determines the amount of space to advance between each character. This is usually small, as most fonts include spacing between characters in the body of the character. Increase this value to increase character spacing in your font. If not specified, StepMania will use 1 for this value.<br>
+ScaleAllWidthsBy=&lt;0.0...2.0&gt;: The width of every character in the font be multipled by this value. If not specified, StepMania will use 1 for this value.<br>
+LineSpacing=&lt;0..64&gt;: This controls the spacing in pixels between lines of text. This value is only used in text items that have multiple lines. If not specified, StepMania will use the height of the frames in your texture (which is 32 pixels for 512x512 graphics).<br>
+Top=&lt;0..63&gt;: This indicates the top of a typical capital letter, from the top of the frame. If not specified, this will be derived from LineSpacing.<br>
+Baseline=&lt;0..63&gt;: This indicates the baseline of the font, from the top of the frame. If not specified, the baseline is derived from LineSpacing.<br>
+<br>
+Graphics: This folder contains graphics used in all of the screens. These graphics are the meat and potatoes of a theme. These graphics can be of any dimension. For example, your theme could have a "title menu logo dance.png" graphic that is 640x480 - which would take up the whole screen!<br>
+<br>
+Numbers: This folder contains graphics used to render numbers. Every graphic in this folder must be 5 frames by 3 frames (5x3) and follow the standard layout (see the Numbers graphics in the theme named "default" for examples).<br>
+<br>
+Sounds: This folder contains sounds. Sounds may be in OGG, MP3, or WAV format.<br>
+<br>
+metrics.ini: A metric is simply values that can alter the appearance of the game. metrics.ini is a large list of values that will allow you to alter things like the position of elements in the menus, and the order of menu screens. There is no documentation or explaination of these values other than the value name. Because the theme "default" implements all possible theme elements and metrics, the metrics file "Themes\default\metrics.ini" contains a complete list of all possible metrics. DO NOT EDIT the file "Themes\default\metrics.ini". Instead, create a blank file "metrics.ini" in your theme folder, and override only those values you want to customize for your theme using default's metrics.ini to see what values are possible.<br>
+<br>
+<br>
+When StepMania looks to load a theme element from one of these folders, it will first look in the folder of the currently selected theme. If the element is not found in this folder, StepMania then look for the theme element in the theme folder called "default". The theme "default" is a base theme and guaranteed that a theme is usable even if it is missing elements. <br>
+<br>
+This "fallback" system has other advantages too. User-created themes can override as many or as few theme elements as the author pleases. For example, you could create a theme called "MySuperTheme" which does nothing more than override the title menu logo. Here's how you would create this theme:<br>
+<br>
+- Create a new folder in "Themes" called "MySuperTheme"<br>
+- Open the MyStepMania folder. Create a folder inside called "Graphics".<br>
+- Copy the file "Themes\default\Graphics\title menu logo dance.png" into your Graphics folder "Themes\MySuperTheme\Graphics". <br>
+- Edit your new title menu graphic to be whatever you want.<br>
+- Start StepMania, go to Appearance Options, and change your theme to "MySuperTheme".</font> </p>
+<h3>Actor commands</h3>
+<font size="2"> I</font>n the old paradigm, you would define the position of an Actor with two different metrics - one for the X position, and one for the Y. For example:<br>
+ObjectX=100<br>
+ObjectY=220<br>
+<br>
+This system is being replaced by more powerful "commands strings". A command string can set positions, colors, effects, and also script animations over time. Positioning an Actor with command string would look like this:<br>
+ObjectOnCommand=x,100;y,220<br>
+<br>
+A command string contains one or more commands separated by semicolons. This command string contains two commands: "x,100" and "y,220". A command is made up of a command name and a list of parameters. The command name and any parameters are separated by commas. In the example above, both the commands "x" and "y" both take exactly one parameter. Other commands like "diffuse" take 4 parameters (R, G, B, and A). For example, the command "diffuse,1,0,1,1" would turn an Actor's color to opaque purple.<br>
+<br>
+Typically, the metrics file will have two commands per Actor - the "OnCommand" (which is where you command an Actor to tween onto the screen), and the "OffCommand" (for tweening the Actor off the screen).<br>
+<br>
+Below is a list of actor commands and their C++ equivalents. I'll have an explanation of animations and more examples in the full documentation.<br>
+<br>
+<br>
+sleep BeginTweening( fParam(0), TWEEN_LINEAR );<br>
+linear BeginTweening( fParam(0), TWEEN_LINEAR );<br>
+accelerate BeginTweening( fParam(0), TWEEN_ACCELERATE );<br>
+decelerate BeginTweening( fParam(0), TWEEN_DECELERATE );<br>
+bouncebegin BeginTweening( fParam(0), TWEEN_BOUNCE_BEGIN );<br>
+bounceend BeginTweening( fParam(0), TWEEN_BOUNCE_END );<br>
+spring BeginTweening( fParam(0), TWEEN_SPRING );<br>
+stoptweening { StopTweening(); BeginTweening( 0.0001f, TWEEN_LINEAR ); }<br>
+x SetX( fParam(0) );<br>
+y SetY( fParam(0) );<br>
+xoffset SetX( GetX()+fParam(0) );<br>
+yoffset SetY( GetY()+fParam(0) );<br>
+zoom SetZoom( fParam(0) );<br>
+zoomx SetZoomY( fParam(0) );<br>
+zoomy SetZoomY( fParam(0) );<br>
+diffuse SetDiffuse( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );<br>
+glow SetGlow( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );<br>
+rotationx SetRotationX( fParam(0) );<br>
+rotationy SetRotationY( fParam(0) );<br>
+rotationz SetRotationZ( fParam(0) );<br>
+shadowlength SetShadowLength( fParam(0) );<br>
+horizalign SetHorizAlign( sParam(0) );<br>
+vertalign SetVertAlign( sParam(0) );<br>
+diffuseblink SetEffectDiffuseBlink();<br>
+diffuseshift SetEffectDiffuseShift();<br>
+glowblink SetEffectGlowBlink();<br>
+glowshift SetEffectGlowShift();<br>
+wag SetEffectWag();<br>
+bounce SetEffectBounce();<br>
+bob SetEffectBob();<br>
+spin SetEffectSpin();<br>
+vibrate SetEffectVibrate();<br>
+stopeffect SetEffectNone();<br>
+effectcolor1 SetEffectColor1( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );<br>
+effectcolor2 SetEffectColor2( RageColor(fParam(0),fParam(1),fParam(2),fParam(3)) );<br>
+effectperiod SetEffectPeriod( fParam(0) );<br>
+effectmagnitude SetEffectMagnitude( RageVector3(fParam(0),fParam(1),fParam(2)) );<br>
+additiveblend EnableAdditiveBlend( iParam(0)!=0 );<br>
+<font size="2"><br>
+Screen Select </font>
+<p><br>
+  ScreenSelect is a type of screen that presents the user with a list of choices. The choices shown on these screens can be Styles, Difficulties, PlayModes, or any combination thereof. Each ScreenSelect screen has two metrics that define what choices are shown (examples below). Currently, there are only two different screens that support the ScreenSelect framework.<br>
+  - ScreenSelectMaxType1<br>
+  - ScreenSelectMaxType2<br>
+  - (more will be converted over in the next couple days)<br>
+  <br>
+  <br>
+  // Example 1: Show all Styles for the current game type the DDR MAX Select Style template<br>
+  <br>
+  [ScreenSelectMaxType1]<br>
+  ChoicesType=0 // 0=styles, 1=difficulties, 2=modes, 3=games<br>
+  Choices=<br>
+  <br>
+  <br>
+  // Example 2: Show specific Difficulty and PlayMode choices using a DDR MAX Select Difficulty template<br>
+  <br>
+  [ScreenSelectMaxType2]<br>
+  ChoicesType=1 // 0=styles, 1=difficulties, 2=modes, 3=games<br>
+  Choices=Beginner,Easy,Medium,Hard,Nonstop,Oni,Endless<br>
+  <br>
+  <br>
+  // Example 3: Show specific Style-PlayMode-Difficulty combinations using a DDR MAX Select Style template<br>
+  <br>
+  ChoicesType=2 // 0=styles, 1=difficulties, 2=modes, 3=games<br>
+  Choices=versus-arcade-medium,couple-arcade-medium,double-arcade-medium,single-arcade-medium,single-battle-medium,double-battle-medium,couple-battle-medium,versus-battle-medium<br>
+  <br>
+  <br>
+  5e. A note on how SM loads textures</p>
+<p> <font size="2"> * What are textures?<br>
+    <br>
+"Texture" is simply another name for graphics file. The name "texture" is more common when taking about 3D graphics. This document uses "texture" and "graphic" interchangeably.<br>
+<br>
+<br>
+* How to you specify that a texture has multiple frames (for animation)?<br>
+<br>
+Simply add the string "(NxN)". Immediately before the "." that separates the main file name and the extension. For example, suppose there is a file called "title menu logo.png" that you would like to turn into an animation. Now, you create an graphic file with 9 frames of animation - 3 frames wide and 3 frames high. Name this file, "title menu logo 3x3.png", and StepMania will play the graphic as an animation with frames in the order left-to-right, top-to-bottom, with 0.20 seconds separating each frame.<br>
+<br>
+<br>
+* What are .sprite files?<br>
+<br>
+.sprite files are a way to have even more precise control over how your graphics animate. Each sprite has multiple "states". For each state, you may specify: 1) What frame of the graphic to show, and 2) how long to show this state before moving to the next state.<br>
+<br>
+Let's look at an example .sprite file:<br>
+<br>
+[Sprite]<br>
+Texture=dancer p1 1x3.png<br>
+Frame0000=0<br>
+Delay0000=0.05<br>
+Frame0001=1<br>
+Delay0001=0.05<br>
+Frame0002=2<br>
+Delay0002=0.05<br>
+<br>
+Texture is the name of the texture file to use. This must reside in the same directory as the .sprite file. If your texture has multiple frames, be sure to specify the dimensions in the file name using the convention described above.<br>
+<br>
+FrameNNNN is the index of the frame number to use for the first state of the animation. Frame may range between 0 and (total number of frames - 1).&nbsp; Frame indicies move left-to-right, top-to-bottom over the frames in an image.<br>
+<br>
+DelayNNNN is the time in seconds to show the state.<br>
+<br>
+<br>
+* My graphics show ugly banding or look washed out. What can I do?<br>
+<br>
+Change your PNG images to use "palette mode" instead of "RGB mode". Paletted images have three advantages:<br>
+- StepMania can load paletted images with higher color precision than RGB images.<br>
+- paletted images use much less texture memory than RGB images.<br>
+- paletted images often have a smaller file size than an equivalent RGB mode image.<br>
+<br>
+However, paletted PNGs have a couple limitations:<br>
+- they support you to only "on/off" alpha.<br>
+- they support a maximum of 256 colors. This can make smooth gradients look ugly. <br>
+<br>
+Alternatively, inserting "dither" into filenames will instruct StepMania to dither the image when loading. <br>
+<br>
+* Why do the graphics look so blurry?<br>
+<br>
+Some 3D graphics cards (the Voodoo3 in particular) do not support textures greater in size than 256x256. If a texture is larger than the card's maximum texture size, the image will scaled down internally resulting in output that looks blurry.<br>
+</font>  </p>
+<p>&nbsp; </p>
 <h1>6. Supported Controllers or Controller Adapters</h1>
 For a list of controllers and conroller adapters supported by StepMania, see <a href="http://www.stepmania.com/stepmania-old/adapter.php">http://www.stepmania.com/stepmania-old/adapter.php</a>7. SMConvert
 <p>Comming soon! </p>
+<h1>7. Getting Help/Contact</h1>
+<p>There are a variety of ways to get help with StepMania. If you have thoroughly read this manual (emphasis on thoroughly), and still require help, you can either:</p>
+<ul>
+  <li>Use the IRC chat room, located on irc.faereal.net port 6667 channel #stepmania. This is NOT (I repeat, NOT) a file server channel and no file servers are allowed!</li>
+  <li>Use the mailing lists, available from the <a href="http://sourceforge.net/mail/?group_id=37892">Mailing Lists Page</a>.</li>
+  <li>If your problem is a bug in the program, report it to the <a href="http://sourceforge.net/tracker/?group_id=37892&amp;atid=421366">Bug Tracker</a>.</li>
+  <li>You can also post on the new Stepmania message boards, which can be found <a href="http://www.ddruk.com/forums.php?fview=74">here</a></li>
+</ul>
+<h1>8. Changelog</h1>
+<p>May-1-2005: Initial Rewrite. </p>
+<p>&nbsp;   </p>
+</body>
+<body><p>&nbsp;   </p>
+</body>
+<body><p>&nbsp;   </p>
+<h1>6. Supported Controllers or Controller Adapters</h1>
+For a list of controllers and 
 <h1>7. Getting Help/Contact</h1>
 <p>There are a variety of ways to get help with StepMania. If you have thoroughly read this manual (emphasis on thoroughly), and still require help, you can either:</p>
 <ul>
