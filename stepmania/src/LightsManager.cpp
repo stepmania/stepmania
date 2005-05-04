@@ -137,7 +137,7 @@ void LightsManager::Update( float fDeltaTime )
 	{
 	case LIGHTSMODE_JOINING:
 		{
-//			int iBeat = (int)(GAMESTATE->m_fSongBeat);
+//			int iBeat = (int)(GAMESTATE->m_fLightSongBeat);
 //			bool bBlinkOn = (iBeat%2)==0;
 
 			FOREACH_PlayerNumber( pn )
@@ -175,7 +175,7 @@ void LightsManager::Update( float fDeltaTime )
 			FOREACH_CabinetLight( cl )
 				m_LightsState.m_bCabinetLights[cl] = false;
 
-			int iBeat = (int)(GAMESTATE->m_fSongBeat);
+			int iBeat = (int)(GAMESTATE->m_fLightSongBeat);
 			int iTopIndex = iBeat;
 			wrap( iTopIndex, 4 );
 			switch( iTopIndex )
@@ -238,7 +238,7 @@ void LightsManager::Update( float fDeltaTime )
 	// If not joined, has enough credits, and not too late to join, then 
 	// blink the menu buttons rapidly so they'll press Start
 	{
-		int iBeat = (int)(GAMESTATE->m_fSongBeat*4);
+		int iBeat = (int)(GAMESTATE->m_fLightSongBeat*4);
 		bool bBlinkOn = (iBeat%2)==0;
 		FOREACH_PlayerNumber( pn )
 		{
