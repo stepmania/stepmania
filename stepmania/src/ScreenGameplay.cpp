@@ -1097,20 +1097,50 @@ void ScreenGameplay::LoadLights()
 	m_CabinetLightsNoteData.Init();
 	ASSERT( GAMESTATE->m_pCurSong );
 
-	const Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
+	const Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, DIFFICULTY_MEDIUM );
 	if( pSteps != NULL )
 	{
 		pSteps->GetNoteData( m_CabinetLightsNoteData );
 		return;
 	}
 
-	pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
-	if( pSteps )
- 	{
-		NoteData TapNoteData;
-		pSteps->GetNoteData( TapNoteData );
-		NoteDataUtil::LoadTransformedLights( TapNoteData, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
- 	}
+	CString sDifficulty = PREFSMAN->m_sLightsStepsDifficulty;
+	vector<CString> asDifficulties;
+	split( sDifficulty, ",", asDifficulties );
+
+	LOG->Trace( "xxx %i", asDifficulties.size() );
+	Difficulty d1 = DIFFICULTY_INVALID;
+	if( asDifficulties.size() > 0 )
+	{
+		d1 = StringToDifficulty( asDifficulties[0] );
+		LOG->Trace( "d1 %i", d1 );
+	}
+	pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, d1 );
+
+	// If we can't find anything at all, stop.
+	if( pSteps == NULL )
+		return;
+
+	NoteData TapNoteData1;
+	pSteps->GetNoteData( TapNoteData1 );
+
+	if( asDifficulties.size() > 1 )
+	{
+		Difficulty d2 = StringToDifficulty( asDifficulties[1] );
+		LOG->Trace( "d2 %i", d2 );
+		const Steps *pSteps2 = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, d2 );
+		if( pSteps != NULL && pSteps2 != NULL && pSteps != pSteps2 )
+		{
+			NoteData TapNoteData2;
+			pSteps2->GetNoteData( TapNoteData2 );
+			NoteDataUtil::LoadTransformedLightsFromTwo( TapNoteData1, TapNoteData2, m_CabinetLightsNoteData );
+			return;
+		}
+
+		/* fall through */
+	}
+
+	NoteDataUtil::LoadTransformedLights( TapNoteData1, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
 }
 
 float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic)
