@@ -70,7 +70,7 @@ bool WorkerThread::DoRequest( int iRequest )
 	ASSERT( !m_bTimedOut );
 	ASSERT( m_iRequest == REQ_NONE );
 
-	if( m_Timeout.IsZero() )
+	if( m_Timeout.IsZero() && iRequest != REQ_SHUTDOWN )
 		LOG->Warn( "Request made with timeout disabled (%s, iRequest = %i)", m_sName.c_str(), iRequest );
 
 	/* Set the request, and wake up the worker thread. */
@@ -113,7 +113,7 @@ void WorkerThread::WorkerMain()
 	{
 		bool bTimeToRunHeartbeat = false;
 		m_WorkerEvent.Lock();
-		while( m_iRequest == REQ_NONE && !bTimeToRunHeartbeat ) //&& m_apDeletedFiles.empty() )
+		while( m_iRequest == REQ_NONE && !bTimeToRunHeartbeat )
 		{
 			if( !m_WorkerEvent.Wait( m_fHeartbeat != -1? &m_NextHeartbeat:NULL ) )
 				bTimeToRunHeartbeat = true;
