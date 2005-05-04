@@ -31,7 +31,8 @@ ActorScroller::ActorScroller()
 	m_fNumItemsToDraw = 7;
 	m_fSecondsPauseBetweenItems = 0;
 	m_fNumItemsToDraw = 7;
-	m_bLoop = false; 
+	m_bLoop = false;
+	m_bFastCatchup = false;
 	m_fPauseCountdownSeconds = 0;
 	m_fQuantizePixels = 0;
 
