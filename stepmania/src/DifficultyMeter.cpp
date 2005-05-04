@@ -228,6 +228,8 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const CString &sDi
 			const CString sMeter = ssprintf( "%i", iMeter );
 			m_textMeter.SetText( sMeter );
 		}
+
+		m_textMeter.PlayCommand( "TextChanged" );
 	}
 
 	if( m_bShowEditDescription )
