@@ -561,7 +561,6 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_MusicWheel );
 	ON_COMMAND( m_Artist );
 	ON_COMMAND( m_MachineRank );
-	ON_COMMAND( m_sprOverlay );
 
 	FOREACH_HumanPlayer( p )
 	{		
@@ -580,6 +579,8 @@ void ScreenSelectMusic::TweenOnScreen()
 
 void ScreenSelectMusic::TweenOffScreen()
 {
+	ScreenWithMenuElements::TweenOffScreen();
+
 	switch( GAMESTATE->m_SortOrder )
 	{
 	case SORT_ALL_COURSES:
@@ -616,7 +617,6 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_sprCourseHasMods );
 	OFF_COMMAND( m_Artist );
 	OFF_COMMAND( m_MachineRank );
-	OFF_COMMAND( m_sprOverlay );
 
 	FOREACH_HumanPlayer( p )
 	{		
