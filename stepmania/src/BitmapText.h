@@ -19,7 +19,7 @@ public:
 	static int maxwidth( T* p, lua_State *L )			{ p->SetMaxWidth( FArg(1) ); return 0; }
 	static int maxheight( T* p, lua_State *L )			{ p->SetMaxHeight( FArg(1) ); return 0; }
 	static int settext( T* p, lua_State *L )			{ p->SetText( SArg(1) ); return 0; }
-	static int gettext( T* p, lua_State *L )			{ lua_pushstring( L, p->GetText() ); return 1; }
+	static int GetText( T* p, lua_State *L )			{ lua_pushstring( L, p->GetText() ); return 1; }
 
 	static void Register(lua_State *L) 
 	{
@@ -27,7 +27,7 @@ public:
 		ADD_METHOD( maxwidth )
 		ADD_METHOD( maxheight )
 		ADD_METHOD( settext )
-		ADD_METHOD( gettext )
+		ADD_METHOD( GetText )
 		LunaActor<T>::Register( L );
 	}
 };
