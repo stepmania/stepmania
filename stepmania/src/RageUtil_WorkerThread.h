@@ -55,6 +55,7 @@ private:
 	enum { REQ_SHUTDOWN = -1, REQ_NONE = -2 };
 	RageThread m_WorkerThread;
 	RageEvent m_WorkerEvent;
+	CString m_sName;
 	int m_iRequest;
 	bool m_bRequestFinished;
 	bool m_bTimedOut;

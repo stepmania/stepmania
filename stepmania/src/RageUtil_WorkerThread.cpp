@@ -7,6 +7,7 @@ WorkerThread::WorkerThread( const CString &sName ):
 	m_WorkerEvent( "\"" + sName + "\" worker event" ),
 	m_HeartbeatEvent( "\"" + sName + "\" heartbeat event" )
 {
+	m_sName = sName;
 	m_Timeout.SetZero();
 	m_iRequest = REQ_NONE;
 	m_bTimedOut = false;
@@ -49,7 +50,7 @@ void WorkerThread::StopThread()
 	m_WorkerEvent.Lock();
 	if( m_bTimedOut )
 	{
-		LOG->Trace( "Waiting for timed-out fs \"%s\" to complete ...", m_WorkerThread.GetName().c_str() );
+		LOG->Trace( "Waiting for timed-out worker thread \"%s\" to complete ...", m_sName.c_str() );
 		while( m_bTimedOut )
 			m_WorkerEvent.Wait();
 	}
@@ -70,7 +71,7 @@ bool WorkerThread::DoRequest( int iRequest )
 	ASSERT( m_iRequest == REQ_NONE );
 
 	if( m_Timeout.IsZero() )
-		LOG->Warn( "Request made with timeout disabled" );
+		LOG->Warn( "Request made with timeout disabled (%s, iRequest = %i)", m_sName.c_str(), iRequest );
 
 	/* Set the request, and wake up the worker thread. */
 	m_WorkerEvent.Lock();
