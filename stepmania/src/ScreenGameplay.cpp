@@ -1081,32 +1081,37 @@ void ScreenGameplay::LoadNextSong()
 	//
 	// Load cabinet lights data
 	//
-	if( LIGHTSMAN->IsEnabled() )
-	{
-		m_CabinetLightsNoteData.Init();
-		ASSERT( GAMESTATE->m_pCurSong );
-
-		Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
-		if( pSteps != NULL )
-		{
-			pSteps->GetNoteData( m_CabinetLightsNoteData );
-		}
-		else
-		{
-			pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
-			if( pSteps )
-			{
-				NoteData TapNoteData;
-				pSteps->GetNoteData( TapNoteData );
-				NoteDataUtil::LoadTransformedLights( TapNoteData, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
-			}
-		}
-	}
+	LoadLights();
 
 	/* Load the music last, since it may start streaming and we don't want the music
 	 * to compete with other loading. */
 	m_AutoKeysounds.FinishLoading();
 	m_pSoundMusic = m_AutoKeysounds.GetSound();
+}
+
+void ScreenGameplay::LoadLights()
+{
+	if( !LIGHTSMAN->IsEnabled() )
+		return;
+
+	m_CabinetLightsNoteData.Init();
+	ASSERT( GAMESTATE->m_pCurSong );
+
+	Steps *pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( STEPS_TYPE_LIGHTS_CABINET, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
+	if( pSteps != NULL )
+	{
+		pSteps->GetNoteData( m_CabinetLightsNoteData );
+	}
+	else
+	{
+		pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, StringToDifficulty(PREFSMAN->m_sLightsStepsDifficulty) );
+		if( pSteps )
+		{
+			NoteData TapNoteData;
+			pSteps->GetNoteData( TapNoteData );
+			NoteDataUtil::LoadTransformedLights( TapNoteData, m_CabinetLightsNoteData, GameManager::StepsTypeToNumTracks(STEPS_TYPE_LIGHTS_CABINET) );
+		}
+	}
 }
 
 float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic)

@@ -64,6 +64,7 @@ protected:
 	void LoadNextSong();
 	void LoadCourseSongNumber( int SongNumber );
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
+	void LoadLights();
 	void PauseGame( bool bPause, GameController gc = GAME_CONTROLLER_INVALID );
 	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
 	void PlayAnnouncer( CString type, float fSeconds );
