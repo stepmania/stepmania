@@ -71,38 +71,35 @@ void MenuTimer::Update( float fDeltaTime )
 
 	const float fOldSecondsLeft = m_fSecondsLeft;
 	m_fSecondsLeft -= fDeltaTime;
+	m_fSecondsLeft = max( 0, m_fSecondsLeft );
 	const float fNewSecondsLeft = m_fSecondsLeft;
 
-	const int iOldDisplay = (int)(fOldSecondsLeft + 0.99f);
-	int iNewDisplay = (int)(fNewSecondsLeft + 0.99f);
-	iNewDisplay = max( iNewDisplay, 0 );
+	if( fOldSecondsLeft == fNewSecondsLeft )
+		return;
 
 	if( fOldSecondsLeft > 5.5  &&  fNewSecondsLeft < 5.5 )	// transition to below 5.5
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("hurry up") );
 
-	if( iOldDisplay == iNewDisplay )
-		return;
+	SetText( fNewSecondsLeft );
 
-	SetText( iNewDisplay );
-
-	if( iNewDisplay <= WARNING_START )
+	for( int s=0; s<WARNING_START; s++ )
 	{
-		for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
-			m_text[i].RunCommands( WARNING_COMMAND.GetValue(iNewDisplay) );
+		if( fOldSecondsLeft > s && fNewSecondsLeft < s )	// crossed
+		{
+			for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
+				m_text[i].RunCommands( WARNING_COMMAND.GetValue(s) );
+			
+			if( i <= WARNING_BEEP_START && m_soundBeep.IsLoaded() )
+				m_soundBeep.Play();
+		}
 	}
 	
-	if( iNewDisplay == 0 )
+	if( fNewSecondsLeft == 0 )
 	{
 		Stop();
 		SCREENMAN->PostMessageToTopScreen( SM_MenuTimer, 0 );
 		for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
 			m_text[i].SetEffectNone();
-	}
-
-	if( iNewDisplay <= WARNING_BEEP_START )
-	{
-		if( m_soundBeep.IsLoaded() )
-			m_soundBeep.Play();
 	}
 }
 
@@ -145,7 +142,7 @@ void MenuTimer::SetSeconds( float fSeconds )
 	for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
 		m_text[i].PlayCommand( "On" );
 
-	SetText( (int)fSeconds );
+	SetText( fSeconds );
 }
 
 void MenuTimer::Start()

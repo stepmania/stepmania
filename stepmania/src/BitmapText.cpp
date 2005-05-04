@@ -380,13 +380,13 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 			change.l = sEndText.length();
 			m_vColors.push_back( change );
 			last = i+9;
-			if ( last < m_sText.length() )
+			if ( last < (int)m_sText.length() )
 				i = m_sText.Find( CString("|c0"), last );
 			else
 				i = -1;
 		}
 
-		if ( last < m_sText.length() )
+		if ( last < (int)m_sText.length() )
 			sEndText += m_sText.substr( last, m_sText.length()-last );
 
 		m_sText = sEndText;
@@ -653,7 +653,7 @@ void BitmapText::DrawPrimitives()
 			for( unsigned i=0; i<verts.size(); i+=4 )
 			{
 				loc++;
-				if ( cur < m_vColors.size() )
+				if ( cur < (int)m_vColors.size() )
 					if ( loc > m_vColors[cur].l )
 					{
 						c = m_vColors[cur].c;
