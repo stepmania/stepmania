@@ -13,13 +13,13 @@
 
 CString WARNING_COMMAND_NAME( size_t i ) { return ssprintf("WarningCommand%d",int(i)); }
 
-static const ThemeMetric<int>				WARNING_START		("MenuTimer","WarningStart");
-static const ThemeMetric<int>				WARNING_BEEP_START	("MenuTimer","WarningBeepStart");
-static const ThemeMetric<float>				MAX_STALL_SECONDS	("MenuTimer","MaxStallSeconds");
-static const ThemeMetric<CString>			TEXT1_FORMAT_FUNCTION ("MenuTimer","Text1FormatFunction");
-static const ThemeMetric<CString>			TEXT2_FORMAT_FUNCTION ("MenuTimer","Text2FormatFunction");
+static const ThemeMetric<int>		WARNING_START		("MenuTimer","WarningStart");
+static const ThemeMetric<int>		WARNING_BEEP_START	("MenuTimer","WarningBeepStart");
+static const ThemeMetric<float>		MAX_STALL_SECONDS	("MenuTimer","MaxStallSeconds");
+static const ThemeMetric<CString>	TEXT1_FORMAT_FUNCTION ("MenuTimer","Text1FormatFunction");
+static const ThemeMetric<CString>	TEXT2_FORMAT_FUNCTION ("MenuTimer","Text2FormatFunction");
 
-static const float TIMER_PAUSE_SECONDS = 99;
+static const float TIMER_PAUSE_SECONDS = 99.99f;
 
 MenuTimer::MenuTimer() :
 	WARNING_COMMAND("MenuTimer", WARNING_COMMAND_NAME, WARNING_START+1)
