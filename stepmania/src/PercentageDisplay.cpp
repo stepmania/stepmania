@@ -37,7 +37,7 @@ void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, const 
 
 	m_textPercent.LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
 	ActorUtil::SetXYAndOnCommand( m_textPercent, sMetricsGroup );
-	m_textPercent.AddCommand( "Off", THEME->GetMetricA(sMetricsGroup, m_textPercent.GetName()+"OffCommand") );
+	ASSERT( m_textPercent.HasCommand("Off") );
 	this->AddChild( &m_textPercent );
 
 	if( !PREFSMAN->m_bDancePointsForOni && (bool)PERCENT_USE_REMAINDER )
@@ -45,7 +45,7 @@ void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, const 
 		m_textPercentRemainder.SetName( ssprintf("PercentRemainderP%d",pn+1) );
 		m_textPercentRemainder.LoadFromFont( THEME->GetPathF(sMetricsGroup,"remainder") );
 		ActorUtil::SetXYAndOnCommand( m_textPercentRemainder, sMetricsGroup );
-		m_textPercentRemainder.AddCommand( "Off", THEME->GetMetricA(sMetricsGroup, m_textPercentRemainder.GetName()+"OffCommand") );
+		ASSERT( m_textPercentRemainder.HasCommand("Off") );
 		m_textPercentRemainder.SetText( "456" );
 		this->AddChild( &m_textPercentRemainder );
 	}
