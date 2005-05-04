@@ -149,6 +149,7 @@ protected:
 	RageSound			m_soundDifficultyHarder;
 	RageSound			m_soundOptionsChange;
 	RageSound			m_soundLocked;
+	RageSound			m_soundSelectPressed;
 
 	BackgroundLoader	m_BackgroundLoader;
 };

@@ -362,6 +362,7 @@ void ScreenSelectMusic::Init()
 	m_soundDifficultyHarder.Load( THEME->GetPathS(m_sName,"difficulty harder") );
 	m_soundOptionsChange.Load( THEME->GetPathS(m_sName,"options") );
 	m_soundLocked.Load( THEME->GetPathS(m_sName,"locked") );
+	m_soundSelectPressed.Load( THEME->GetPathS(m_sName,"select down"), true );
 
 	SOUND->PlayOnceFromAnnouncer( "select music intro" );
 
@@ -991,6 +992,9 @@ void ScreenSelectMusic::LoadHelpText()
 
 	if( m_bSelectIsDown != bSelectIsDown )
 	{
+		if( bSelectIsDown )
+			m_soundSelectPressed.Play();
+
 		m_bSelectIsDown = bSelectIsDown;
 		if( bSelectIsDown )
 			MESSAGEMAN->Broadcast( "SelectMenuOn" );
