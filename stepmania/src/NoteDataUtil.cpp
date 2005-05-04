@@ -487,7 +487,7 @@ int FindLongestOverlappingHoldNoteForAnyTrack( const NoteData &in, int iRow )
 void LightTransformHelper( const NoteData &in, NoteData &out, const vector<int> &aiTracks )
 {
 	for( unsigned i = 0; i < aiTracks.size(); ++i )
-		ASSERT_M( aiTracks[i] < out.GetNumTracks(), ssprintf("%i, %i", aiTracks[i], out.GetNumTracks) );
+		ASSERT_M( aiTracks[i] < out.GetNumTracks(), ssprintf("%i, %i", aiTracks[i], out.GetNumTracks()) );
 
 	FOREACH_NONEMPTY_ROW_ALL_TRACKS( in, r )
 	{
@@ -540,6 +540,36 @@ void NoteDataUtil::LoadTransformedLights( const NoteData &in, NoteData &out, int
 		aiTracks.push_back( i );
 
 	LightTransformHelper( in, out, aiTracks );
+}
+
+/* This transform is specific to STEPS_TYPE_LIGHTS_CABINET. */
+#include "LightsManager.h" // for LIGHT_*
+void NoteDataUtil::LoadTransformedLightsFromTwo( const NoteData &marquee, const NoteData &bass, NoteData &out )
+{
+	ASSERT( marquee.GetNumTracks() >= 4 );
+	ASSERT( bass.GetNumTracks() >= 1 );
+
+	/* For each track in "marquee", enable a track in the marquee lights.  This will 
+	 * reinit out. */
+	{
+		NoteData transformed_marquee;
+		transformed_marquee.CopyAll( marquee );
+		Wide( transformed_marquee );
+
+		const int iOriginalTrackToTakeFrom[NUM_CABINET_LIGHTS] = { 0, 1, 2, 3, -1, -1, -1, -1 };
+		out.LoadTransformed( transformed_marquee, NUM_CABINET_LIGHTS, iOriginalTrackToTakeFrom );
+	}
+
+	/* For each track in "bass", enable the bass lights. */
+	{
+		vector<int> aiTracks;
+		aiTracks.push_back( LIGHT_BASS_LEFT );
+		aiTracks.push_back( LIGHT_BASS_RIGHT );
+		LightTransformHelper( bass, out, aiTracks );
+	}
+
+	/* Delete all mines. */
+	NoteDataUtil::RemoveMines( out );
 }
 
 void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds, RadarValues& out )

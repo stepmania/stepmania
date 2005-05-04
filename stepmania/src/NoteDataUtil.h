@@ -22,6 +22,7 @@ namespace NoteDataUtil
 	void LoadTransformedSlidingWindow( const NoteData &in, NoteData &out, int iNewNumTracks );
 	void LoadOverlapped( const NoteData &in, NoteData &out, int iNewNumTracks );
 	void LoadTransformedLights( const NoteData &in, NoteData &out, int iNewNumTracks );
+	void LoadTransformedLightsFromTwo( const NoteData &marquee, const NoteData &bass, NoteData &out );
 	void InsertHoldTails( NoteData &inout );
 
 	// radar values - return between 0.0 and 1.2
