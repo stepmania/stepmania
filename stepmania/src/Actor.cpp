@@ -526,7 +526,7 @@ void Actor::Update( float fDeltaTime )
 	switch( m_Effect )
 	{
 	case spin:
-		m_current.rotation += fDeltaTime*m_vEffectMagnitude;
+		m_current.rotation += m_fEffectDelta*m_vEffectMagnitude;
 		wrap( m_current.rotation.x, 360 );
 		wrap( m_current.rotation.y, 360 );
 		wrap( m_current.rotation.z, 360 );
