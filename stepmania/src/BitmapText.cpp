@@ -583,6 +583,24 @@ bool BitmapText::StringWillUseAlternate( const CString& sText, const CString& sA
 	return true;
 }
 
+void BitmapText::SetMaxLines( int iNumLines, int iDirection )
+{
+	iNumLines = MAX( 0, iNumLines );
+	iNumLines = MIN( m_wTextLines.size(), iNumLines );
+	if ( iDirection == 0 ) 
+	{
+		//Crop all bottom lines
+		m_wTextLines.resize( iNumLines );
+		m_iLineWidths.resize( iNumLines );
+	}
+	else
+	{
+		m_wTextLines.erase( m_wTextLines.begin(), m_wTextLines.end() - iNumLines );
+		m_iLineWidths.erase( m_iLineWidths.begin(), m_iLineWidths.end() - iNumLines );
+	}
+	BuildChars();
+}
+
 void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
 {
 	iMaxWidthInSourcePixels = max( 0, iMaxWidthInSourcePixels );
