@@ -72,16 +72,7 @@ The games played by StepMania are rhythm games. Notes scroll up from the bottom 
   <li>In the extracted folder, type ./configure</li>
   <li>Finally, type make (or gmake) to build StepMania </li>
 </ol>
-<h3>CVS</h3>
-<p>CVS (Concurrent Version System) is an easy way for developers to collaborate on source code. You can obtain a snapshot of the current CVS tree by &quot;checking out&quot; the Stepmania module from the CVS server as described below. First, however, you will need a CVS client. For Windows, you can either use WinCVS from http://www.wincvs.org/ or the command line CVSNT from http://www.cvsnt.org/. The insctructions below work for CVSNT and standard Linux CVS programs.</p>
-<ol>
-  <li>After installing CVS, change to the directory where you would like to place the source tree. In Windows, you will need to do this in a command prompt.</li>
-  <li>Type the following to connect to the CVS server: <em>cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/stepmania login</em> When prompted for a password, just press enter.</li>
-  <li>Type the following to check out the StepMania source tree: <em>cvs -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/stepmania co -P stepmania </em>(NOTE: Users of CVSNT on windows must substitute &quot;co&quot; for &quot;checkout&quot;.)</li>
-  <li>Windows users should follow steps 2 and 3 of Compiling from a Source Tarball above, and ignore the last two steps. Linux users should now type <em>sh autogen.sh</em></li>
-  <li> Next type <em>./configure</em> to set up the build process.</li>
-  <li>Finally type <em>make</em> (or <em>gmake</em>) to build StepMania. </li>
-</ol>
+<h3>&nbsp;</h3>
 <h1>4. Using StepMania</h1>
 <p>Once you start Stepmania, you will be presented with the Stepmania Title Screen</p>
 <p><img src="images/smtitlescreen.JPG" width="320" height="240"> </p>
@@ -294,7 +285,7 @@ Any text field in an SM file can contain UTF-8 characters.<br>
 #BPMS:...; - A value of the format "beat=bpm". Indicates that at 'beat', the speed of the arrows will change to "bpm". Both of these values are specified as floating point values. You must specifiy a BPM value for beat 0. Multiple BPMs can be given by separating them with commas. e.g. "0=160,120=80".<br>
 #STOPS:...; - A value of the format "beat=sec". Indicates that at 'beat', the motion of the arrows should stop for "sec" seconds. Both of these values are specified as floating point values. Multiple stops can be given by separating them with commas. e.g. "60=2.23,80=1.12".<br>
 #BGCHANGE:...; - A value of the format "beat=bg name". Indicates that at 'beat', the background should begin playing a new background named 'bg name'. 'beat' is a fractional value value and 'bg name' is a string. Different bg changes are separated by commas. e.g. "60=falling,80=flower".&nbsp; When StepMania looks for a backgound, it searches in this order:<br>
- </p>
+</p>
 <ol>
   <li>Looks for a movie with file name = "bg name" in the song folder. You must include the file extension in "bg name". e.g. "60=falling.avi,80=flower.mpg".</li>
   <li>Looks for a BGAnimation folder with the name "bg name" in the song folder.</li>
@@ -373,7 +364,7 @@ Any text field in an SM file can contain UTF-8 characters.<br>
 Many video AVIs will require the DivX codec for playback. If you haven't yet downloaded DivX, you can get it from www.divx.com. Playing movies as the background is very processor intensive, and may cause choppiness on slower computers.<br>
 <br>
 Sample animations, visualizations, and random movies can be found at <a href="http://www.stepmania.com">www.stepmania.com</a>.<br>
- </p>
+</p>
 <h3>BGAnimation format</h3>
 <p>  The BGAnimations folder in the StepMania program directory may contain several BGAnimation folders.<br>
   <br>
