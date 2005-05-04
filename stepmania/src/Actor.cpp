@@ -1019,7 +1019,11 @@ void Actor::QueueMessage( const CString& sMessageName )
 
 void Actor::AddCommand( const CString &sCmdName, apActorCommands apac )
 {
-	ASSERT_M( !HasCommand(sCmdName), m_sName+"'s command '"+sCmdName+"' defined twice" );
+	if( HasCommand(sCmdName) )
+	{
+		CString sWarning = m_sName+"'s command '"+sCmdName+"' defined twice";
+		Dialog::OK( sWarning, "COMMAND_DEFINED_TWICE" );
+	}
 
 	CString sMessage;
 	if( GetMessageNameFromCommandName(sCmdName, sMessage) )
