@@ -68,8 +68,31 @@ function clamp(val,low,high)
 	return math.max( low, math.min(val,high) )
 end
 
+function wrap(val,n)
+	local x = val
+	Trace( "wrap "..x.." "..n )
+	if x<0 then 
+		x = x + (math.ceil(-x/n)+1)*n;
+	end
+	Trace( "adjusted "..x )
+	local ret = math.mod(x,n)
+	Trace( "ret "..ret )
+	return ret
+end
 
--- (c) 2005 Glenn Maynard
+function fapproach( val, other_val, to_move )
+	if val == other_val then return val end
+	local fDelta = other_val - val
+	local fSign = fDelta / math.abs( fDelta )
+	local fToMove = fSign*to_move
+	if math.abs(fToMove) > math.abs(fDelta) then
+		fToMove = fDelta	-- snap
+	end
+	val = val + fToMove
+	return val
+end
+
+-- (c) 2005 Glenn Maynard, Chris Danford
 -- All rights reserved.
 -- 
 -- Permission is hereby granted, free of charge, to any person obtaining a
