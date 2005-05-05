@@ -252,6 +252,19 @@ void MusicWheelItem::RefreshGrades()
 	}
 }
 
+void MusicWheelItem::DrawPrimitives()
+{
+	Sprite *pBar = NULL;
+	if( m_sprBar.GetVisible() )
+		pBar = &m_sprBar;
+	else if( m_sprSectionBar.GetVisible() )
+		pBar = &m_sprSectionBar;
+	else
+		pBar = &m_sprExpandedBar;
+
+	WheelItemBase::DrawPrimitives( *pBar );
+}
+
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard
  * All rights reserved.

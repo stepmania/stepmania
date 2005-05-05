@@ -40,7 +40,7 @@ public:
 	BitmapText			m_textSort;
 	GradeDisplay		m_GradeDisplay[NUM_PLAYERS];
 
-void DrawPrimitives() { WheelItemBase::DrawPrimitives(m_sprBar.GetVisible() ? m_sprBar : (m_sprSectionBar.GetVisible() ? m_sprSectionBar : m_sprExpandedBar)); }
+	void DrawPrimitives();
 };
 
 struct WheelItemData : public WheelItemBaseData
