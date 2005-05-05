@@ -43,8 +43,8 @@ WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionNa
 }
 
 
-MusicWheelItem::MusicWheelItem(CString sType)
-:WheelItemBase( sType )
+MusicWheelItem::MusicWheelItem( CString sType ):
+	WheelItemBase( sType )
 {
 	data = NULL;
 
