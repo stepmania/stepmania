@@ -1,0 +1,4 @@
+- Rewrite row timings to allow for separate judgments of notes in a row, thereby
+	allowing for BM/PNM-like row judgment and combo-counting.
+
+- Implement BMA inflating and simfile format specifications.
