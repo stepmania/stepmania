@@ -135,11 +135,11 @@ void ScreenBookkeeping::ChangeView( View newView )
 				iTotalLast += coins[i];
 			}
 
+			sTitle += "Total\n";
+			sData += ssprintf("%i\n", iTotalLast);
+
 			sTitle += "\n";
 			sData += "\n";
-
-			sTitle += "Total This Week\n";
-			sData += ssprintf("%i\n", iTotalLast);
 
 			sTitle += "Daily Average\n";
 			float fAverage = iTotalLast/(float)NUM_LAST_DAYS;
