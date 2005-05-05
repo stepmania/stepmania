@@ -15,18 +15,19 @@
 #include "ScreenDimensions.h"
 #include "PercentageDisplay.h"
 
-static const CString PageTypeNames[NUM_PAGE_TYPES] = {
+static const CString PageTypeNames[] = {
 	"Category",
 	"Course",
 	"AllSteps",
-	"AllCourses",
+	"NonstopCourses",
+	"OniCourses",
+	"SurvivalCourses",
 };
 XToString( PageType, NUM_PAGE_TYPES );
 
 
 #define COURSES_TO_SHOW				PREFSMAN->m_sCoursesToShowRanking
 #define COURSES_TO_SHOW2			THEME->GetMetric(m_sName,"CoursesToShow")
-
 
 #define BULLET_X(row)				(BULLET_START_X+ROW_SPACING_X*row)
 #define BULLET_Y(row)				(BULLET_START_Y+ROW_SPACING_Y*row)
@@ -68,11 +69,11 @@ static void GetAllSongsToShow( vector<Song*> &vpOut, bool bShowOnlyMostRecentSco
 	}
 }
 
-static void GetAllCoursesToShow( vector<Course*> &vpOut, bool bShowOnlyMostRecentScores, int iNumMostRecentScoresToShow )
+static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, bool bShowOnlyMostRecentScores, int iNumMostRecentScoresToShow )
 {
 	vpOut.clear();
 	vector<Course*> vpCourses;
-	SONGMAN->GetAllCourses( vpCourses, false );
+	SONGMAN->GetCourses( ct, vpCourses, false );
 
 	FOREACH_CONST( Course*, vpCourses, c)
 	{
@@ -100,7 +101,9 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 
 	SHOW_CATEGORIES				(m_sName,"ShowCategories"),
 	SHOW_STEPS_SCORES			(m_sName,"ShowStepsScores"),
-	SHOW_COURSE_SCORES			(m_sName,"ShowCourseScores"),
+	SHOW_NONSTOP_COURSE_SCORES	(m_sName,"ShowNonstopCourseScores"),
+	SHOW_ONI_COURSE_SCORES		(m_sName,"ShowOniCourseScores"),
+	SHOW_SURVIVAL_COURSE_SCORES	(m_sName,"ShowSurvivalCourseScores"),
 	SHOW_ONLY_MOST_RECENT_SCORES	(m_sName,"ShowOnlyMostRecentScores"),
 	NUM_MOST_RECENT_SCORES_TO_SHOW	(m_sName,"NumMostRecentScoresToShow"),
 	SECONDS_PER_PAGE			(m_sName,"SecondsPerPage"),
@@ -277,7 +280,12 @@ void ScreenRanking::Init()
 	}
 
 
-	ASSERT( !SHOW_STEPS_SCORES || !SHOW_COURSE_SCORES );	// Can't do both on the same screen
+	// Can only do one at a time
+	ASSERT(
+		!SHOW_STEPS_SCORES ||
+		!SHOW_NONSTOP_COURSE_SCORES || 
+		!SHOW_ONI_COURSE_SCORES || 
+		!SHOW_SURVIVAL_COURSE_SCORES );
 
 
 	if( SHOW_STEPS_SCORES )
@@ -329,10 +337,11 @@ void ScreenRanking::Init()
 		}
 	}
 
-	if( SHOW_COURSE_SCORES )
+	if( (bool)SHOW_NONSTOP_COURSE_SCORES || (bool)SHOW_ONI_COURSE_SCORES || (bool)SHOW_SURVIVAL_COURSE_SCORES )
 	{
+		CourseType ct = SHOW_NONSTOP_COURSE_SCORES ? COURSE_TYPE_NONSTOP : (SHOW_ONI_COURSE_SCORES ? COURSE_TYPE_ONI : COURSE_TYPE_SURVIVAL);
 		vector<Course*> vpCourses;
-		GetAllCoursesToShow( vpCourses, SHOW_ONLY_MOST_RECENT_SCORES, NUM_MOST_RECENT_SCORES_TO_SHOW );
+		GetAllCoursesToShow( vpCourses, ct, SHOW_ONLY_MOST_RECENT_SCORES, NUM_MOST_RECENT_SCORES_TO_SHOW );
 		LOG->Trace("rankings: adding %u courses", unsigned(vpCourses.size()));
 		m_vScoreRowItem.resize( vpCourses.size() );
 		FOREACH_CONST( Course*, vpCourses, c )
@@ -372,7 +381,13 @@ void ScreenRanking::Init()
 			for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
 			{
 				PageToShow pts;
-				pts.type = PAGE_TYPE_ALL_COURSES;
+				switch( ct )
+				{
+				case COURSE_TYPE_NONSTOP:	pts.type = PAGE_TYPE_NONSTOP_COURSES;	break;
+				case COURSE_TYPE_ONI:		pts.type = PAGE_TYPE_ONI_COURSES;		break;
+				case COURSE_TYPE_SURVIVAL:	pts.type = PAGE_TYPE_SURVIVAL_COURSES;	break;
+				default:	ASSERT(0);
+				}
 				pts.colorIndex = i;
 				pts.st = STEPS_TYPES_TO_SHOW.GetValue()[i];
 				m_vPagesToShow.push_back( pts );
@@ -516,7 +531,9 @@ float ScreenRanking::SetPage( PageToShow pts )
 		bShowDifficulty = true;
 		bShowStepsScore = true;
 		break;
-	case PAGE_TYPE_ALL_COURSES:
+	case PAGE_TYPE_NONSTOP_COURSES:
+	case PAGE_TYPE_ONI_COURSES:
+	case PAGE_TYPE_SURVIVAL_COURSES:
 		bShowStepsType = true;
 		bShowCourseScore = true;
 		bShowCourseDifficulty = true;
@@ -865,7 +882,9 @@ float ScreenRanking::SetPage( PageToShow pts )
 			}
 		}
 		return m_ListScoreRowItems.GetSecondsForCompleteScrollThrough();
-	case PAGE_TYPE_ALL_COURSES:
+	case PAGE_TYPE_NONSTOP_COURSES:
+	case PAGE_TYPE_ONI_COURSES:
+	case PAGE_TYPE_SURVIVAL_COURSES:
 		{
 			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
 

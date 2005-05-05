@@ -40,10 +40,10 @@ static const CString EMPTY_STRING;
 #define XToString(X, CNT)	\
 	const CString& X##ToString( X x ) \
 	{	\
+		ASSERT( CNT == ARRAYSIZE(X##Names) );	\
 		if( x == CNT+1 ) 	\
 			return EMPTY_STRING;	\
 		ASSERT( x < CNT );	\
-		ASSERT( x < (int)ARRAYSIZE(X##Names) );	\
 		return X##Names[x];	\
 	}
 
