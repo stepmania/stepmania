@@ -109,15 +109,20 @@ void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
 	if( m_iIndexToFocus >= 0  &&  m_iIndexToFocus < int(hsl.vHighScores.size()) )
 		m_Items[m_iIndexToFocus].ShowFocus();
 
-	ActorScroller::Load( 
-		0.2f,	// fSecondsPerItem
-		9,		// fNumItemsToDraw
-		RageVector3(18,0,0),	// vRotationDegrees
-		RageVector3(0,0,90),	// vTranslateTerm0
-		RageVector3(0,0,0),		// vTranslateTerm1
-		RageVector3(0,0,0),		// vTranslateTerm2
-		true
-		);
+	CString sTransformFunction = 
+		"function(self,offset,itemIndex,numItems) "
+		"	local degrees=18*offset; "
+		"	local radians=degrees*math.pi/180; "
+		"	self:rotationx(degrees); "
+		"	self:y(math.sin(radians)*90); "
+		"	self:z(math.cos(radians)*90); "
+		"end";
+	ActorScroller::Load3( 
+		0.2f,
+		100,
+		false,
+		sTransformFunction,
+		false );
 	Scroll();
 }
 

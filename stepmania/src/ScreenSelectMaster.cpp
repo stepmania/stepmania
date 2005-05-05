@@ -104,8 +104,8 @@ void ScreenSelectMaster::Init()
 				SCROLLER_SECONDS_PER_ITEM, 
 				SCROLLER_NUM_ITEMS_TO_DRAW,
 				SCROLLER_FAST_CATCHUP,
-				SCROLLER_TRANSFORM 
-				);
+				SCROLLER_TRANSFORM,
+				false );
 			m_Scroller[0].SetName( "Scroller" );
 			this->AddChild( &m_Scroller[0] );
 
@@ -126,8 +126,8 @@ void ScreenSelectMaster::Init()
 					SCROLLER_SECONDS_PER_ITEM, 
 					SCROLLER_NUM_ITEMS_TO_DRAW,
 					SCROLLER_FAST_CATCHUP,
-					SCROLLER_TRANSFORM 
-					);
+					SCROLLER_TRANSFORM,
+					false );
 				m_Scroller[p].SetName( ssprintf("ScrollerP%d",p+1) );
 				this->AddChild( &m_Scroller[p] );
 				

@@ -164,25 +164,31 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 	SongUtil::SortSongPointerArrayByTitle( arraySongs );
 
 	// FIXME:  Redo this screen with a BGA
+	CString sBackgroundsTransformFunction = ssprintf(
+		"function(self,offset,itemIndex,numItems) "
+		"	self:x(%f*offset); "
+		"	self:y(%f*offset); "
+		"end",
+		(float)BACKGROUNDS_SPACING_X, 
+		(float)BACKGROUNDS_SPACING_Y );
+
 	m_ScrollerBackgrounds.SetName( "Backgrounds" );
-	m_ScrollerBackgrounds.Load(
+	m_ScrollerBackgrounds.Load3(
 		BACKGROUNDS_SCROLL_SECONDS_PER_ITEM,
 		4,
-		RageVector3(0, 0, 0),
-		RageVector3(0, 0, 0),
-		RageVector3(BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y, 0),
-		RageVector3(0, 0, 0) );
+		false,
+		sBackgroundsTransformFunction,
+		false );
 	SET_XY( m_ScrollerBackgrounds );
 	this->AddChild( &m_ScrollerBackgrounds );
 
 	m_ScrollerFrames.SetName( "Backgrounds" );
-	m_ScrollerFrames.Load(
+	m_ScrollerFrames.Load3(
 		BACKGROUNDS_SCROLL_SECONDS_PER_ITEM,
 		4,
-		RageVector3(0, 0, 0),
-		RageVector3(0, 0, 0),
-		RageVector3(BACKGROUNDS_SPACING_X, BACKGROUNDS_SPACING_Y, 0),
-		RageVector3(0, 0, 0) );
+		false,
+		sBackgroundsTransformFunction,
+		false );
 	SET_XY( m_ScrollerFrames );
 	this->AddChild( &m_ScrollerFrames );
 
@@ -218,14 +224,21 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 		fTime = max( fTime, BACKGROUNDS_SCROLL_SECONDS_PER_ITEM*(fLast-fFirst) );
 	}
 	
+	CString sTextsTransformFunction = ssprintf(
+		"function(self,offset,itemIndex,numItems) "
+		"	self:x(%f*offset); "
+		"	self:y(%f*offset); "
+		"end",
+		(float)TEXTS_SPACING_X, 
+		(float)TEXTS_SPACING_Y );
+
 	m_ScrollerTexts.SetName( "Texts" );
-	m_ScrollerTexts.Load(
+	m_ScrollerTexts.Load3(
 		TEXTS_SCROLL_SECONDS_PER_ITEM,
 		40,
-		RageVector3(0, 0, 0),
-		RageVector3(0, 0, 0),
-		RageVector3(TEXTS_SPACING_X, TEXTS_SPACING_Y, 0),
-		RageVector3(0, 0, 0) );
+		false,
+		sTextsTransformFunction,
+		false );
 	SET_XY( m_ScrollerTexts );
 	this->AddChild( &m_ScrollerTexts );
 	

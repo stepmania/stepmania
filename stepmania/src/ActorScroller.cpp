@@ -44,43 +44,6 @@ ActorScroller::ActorScroller()
 	m_quadMask.SetHidden( true );
 }
 
-void ActorScroller::Load( 
-	float fSecondsPerItem, 
-	float fNumItemsToDraw, 
-	const RageVector3	&vRotationDegrees,
-	const RageVector3	&vTranslateTerm0,
-	const RageVector3	&vTranslateTerm1,
-	const RageVector3	&vTranslateTerm2,
-	bool bUseMask
-	)
-{
-	m_fSecondsPerItem = fSecondsPerItem;
-	m_fNumItemsToDraw = fNumItemsToDraw;
-	
-	
-	// Note: Rotation is applied before translation.
-	// rot = m_vRotationDegrees*itemOffset^1
-	// trans = m_vTranslateTerm0*itemOffset^0 + 
-	//		   m_vTranslateTerm1*itemOffset^1 +
-	//		   m_vTranslateTerm2*itemOffset^2
-	ostringstream s;
-	s << 
-		"function(self,offset,itemIndex,numItems) " <<
-		"self:x(" << vTranslateTerm0.x << " + " << vTranslateTerm1.x << "*offset + " << vTranslateTerm2.x << "*offset*offset); " <<
-		"self:y(" << vTranslateTerm0.y << " + " << vTranslateTerm1.y << "*offset + " << vTranslateTerm2.y << "*offset*offset); " <<
-		"self:z(" << vTranslateTerm0.z << " + " << vTranslateTerm1.z << "*offset + " << vTranslateTerm2.z << "*offset*offset); " <<
-		"self:rotationx(" << vRotationDegrees.x << "*offset); " <<
-		"self:rotationy(" << vRotationDegrees.y << "*offset); " <<
-		"self:rotationz(" << vRotationDegrees.z << "*offset); " <<
-		"end";
-	m_exprTransform.SetFromExpression( s.str() );
-
-	m_fQuantizePixels = 0;
-	m_bUseMask = bUseMask;
-
-	m_bLoaded = true;
-}
-
 void ActorScroller::Load2(
 	float fNumItemsToDraw, 
 	float fItemWidth, 
@@ -99,7 +62,7 @@ void ActorScroller::Load2(
 	m_fMaskWidth = fItemWidth;
 	m_fMaskHeight = fItemHeight;
 
-	m_exprTransform.SetFromExpression( 
+	m_exprTransformFunction.SetFromExpression( 
 		ssprintf("function(self,offset,itemIndex,numItems) return self:y(%f*offset) end",fItemHeight) 
 		);
 
@@ -129,14 +92,16 @@ void ActorScroller::Load3(
 	float fSecondsPerItem, 
 	float fNumItemsToDraw, 
 	bool bFastCatchup,
-	const CString &sExprTransform
+	const CString &sTransformFunction,
+	bool bUseMask
 	)
 {
 	m_fSecondsPerItem = fSecondsPerItem;
 	m_fNumItemsToDraw = fNumItemsToDraw;
 	m_bFastCatchup = bFastCatchup;
-	m_exprTransform.SetFromExpression( sExprTransform );
+	m_exprTransformFunction.SetFromExpression( sTransformFunction );
 	m_fQuantizePixels = 0;
+	m_bUseMask = bUseMask;
 	m_bLoaded = true;
 }
 
@@ -164,41 +129,27 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 
 	float fSecondsPerItem = 1;
 	float fNumItemsToDraw = 0;
-	RageVector3	vRotationDegrees = RageVector3(0,0,0);
-	RageVector3	vTranslateTerm0 = RageVector3(0,0,0);
-	RageVector3	vTranslateTerm1 = RageVector3(0,0,0);
-	RageVector3	vTranslateTerm2 = RageVector3(0,0,0);
 	float fItemPaddingStart = 0;
 	float fItemPaddingEnd = 0;
+	CString sTransformFunction;
 
 	GET_VALUE( "SecondsPerItem", fSecondsPerItem );
 	GET_VALUE( "NumItemsToDraw", fNumItemsToDraw );
-	GET_VALUE( "RotationDegreesX", vRotationDegrees.x );
-	GET_VALUE( "RotationDegreesY", vRotationDegrees.y );
-	GET_VALUE( "RotationDegreesZ", vRotationDegrees.z );
-	GET_VALUE( "TranslateTerm0X", vTranslateTerm0.x );
-	GET_VALUE( "TranslateTerm0Y", vTranslateTerm0.y );
-	GET_VALUE( "TranslateTerm0Z", vTranslateTerm0.z );
-	GET_VALUE( "TranslateTerm1X", vTranslateTerm1.x );
-	GET_VALUE( "TranslateTerm1Y", vTranslateTerm1.y );
-	GET_VALUE( "TranslateTerm1Z", vTranslateTerm1.z );
-	GET_VALUE( "TranslateTerm2X", vTranslateTerm2.x );
-	GET_VALUE( "TranslateTerm2Y", vTranslateTerm2.y );
-	GET_VALUE( "TranslateTerm2Z", vTranslateTerm2.z );
 	GET_VALUE( "ItemPaddingStart", fItemPaddingStart );
 	GET_VALUE( "ItemPaddingEnd", fItemPaddingEnd );
+	GET_VALUE( "TransformFunction", sTransformFunction );
 #undef GET_VALUE
 
-	Load( 
+	Load3( 
 		fSecondsPerItem,
 		fNumItemsToDraw,
-		vRotationDegrees,
-		vTranslateTerm0,
-		vTranslateTerm1,
-		vTranslateTerm2 );
+		false,
+		sTransformFunction,
+		false );
 	SetCurrentAndDestinationItem( -fItemPaddingStart );
 	SetDestinationItem( m_SubActors.size()-1+fItemPaddingEnd );
 
+	pNode->GetAttrValue( "UseMask", m_bUseMask );
 	pNode->GetAttrValue( "QuantizePixels", m_fQuantizePixels );
 }
 
@@ -256,7 +207,7 @@ void ActorScroller::Update( float fDeltaTime )
 
 void ActorScroller::PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems )
 {
-	m_exprTransform.PushSelf( LUA->L );
+	m_exprTransformFunction.PushSelf( LUA->L );
 	ASSERT( !lua_isnil(LUA->L, -1) );
 	pActor->PushSelf( LUA->L );
 	LuaHelpers::Push( fPositionOffsetFromCenter, LUA->L );

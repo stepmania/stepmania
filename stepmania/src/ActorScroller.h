@@ -27,15 +27,6 @@ class ActorScroller : public ActorFrame
 public:
 	ActorScroller();
 
-	void Load( 
-		float fScrollSecondsPerItem, 
-		float fNumItemsToDraw, 
-		const RageVector3	&vRotationDegrees,
-		const RageVector3	&vTranslateTerm0,
-		const RageVector3	&vTranslateTerm1,
-		const RageVector3	&vTranslateTerm2,
-		bool bUseMask = false );
-
 	void Load2(
 		float fNumItemsToDraw, 
 		float fItemWidth, 
@@ -48,7 +39,8 @@ public:
 		float fSecondsPerItem, 
 		float fNumItemsToDraw, 
 		bool bFastCatchup,
-		const CString &sExprTransform );
+		const CString &sTransformFunction,
+		bool bUseMask );
 
 	virtual void Update( float fDelta );
 	virtual void DrawPrimitives();	// DOES draw
@@ -87,7 +79,7 @@ protected:
 	float	m_fMaskHeight;
 	Quad	m_quadMask;
 
-	LuaExpression m_exprTransform;	// params: self,offset,itemIndex,numItems
+	LuaExpression m_exprTransformFunction;	// params: self,offset,itemIndex,numItems
 };
 
 class ActorScrollerAutoDeleteChildren : public ActorScroller
