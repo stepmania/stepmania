@@ -71,15 +71,12 @@ BitmapText::BitmapText()
 	m_pFont = NULL;
 
 	m_bRainbow = false;
-	m_bColored = false;
 
 	m_iWrapWidthPixels = -1;
 	m_fMaxWidth = 0;
 	m_fMaxHeight = 0;
 
 	SetShadowLength( 4 );
-
-	m_vColors.clear();
 }
 
 BitmapText::~BitmapText()
@@ -360,38 +357,6 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 	m_sText = sNewText;
 	m_iWrapWidthPixels = iWrapWidthPixels;
 
-	//Split out color commands if text is colored.
-	if ( m_bColored )
-	{
-		CString sEndText;
-		m_vColors.clear();
-
-		int i =	m_sText.Find( "|c0", 0 );
-		int last = 0;
-		while ( ( i > -1 ) && ( i < ( int( m_sText.length() ) - 9 ) ) )
-		{
-			sEndText += m_sText.substr( last, i-last );
-			ColorChange change;
-			int k;
-			sscanf( m_sText.substr( i+3, 2 ).c_str(), "%x", &k ); change.c.r = float( k ) / 255.0f;
-			sscanf( m_sText.substr( i+5, 2 ).c_str(), "%x", &k ); change.c.g = float( k ) / 255.0f;
-			sscanf( m_sText.substr( i+7, 2 ).c_str(), "%x", &k ); change.c.b = float( k ) / 255.0f;
-			change.c.a = 1;
-			change.l = sEndText.length();
-			m_vColors.push_back( change );
-			last = i+9;
-			if ( last < (int)m_sText.length() )
-				i = m_sText.Find( CString("|c0"), last );
-			else
-				i = -1;
-		}
-
-		if ( last < (int)m_sText.length() )
-			sEndText += m_sText.substr( last, m_sText.length()-last );
-
-		m_sText = sEndText;
-	}
-
 	// Break the string into lines.
 	//
 
@@ -473,9 +438,6 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 	//XXX: YUCK! This is horrible... but basically, in order to make sure we are
 	//in sync with all of the color changes, we have to add bogus spaces at the end
 	//of all lines.
-	if ( m_bColored )
-		for ( unsigned int i = 0; i < m_wTextLines.size(); i++ )
-			m_wTextLines[i] = CStringToWstring( WStringToCString( m_wTextLines[i] ) + CString( " " ) );
 
 	BuildChars();
 	UpdateBaseZoom();
@@ -645,25 +607,6 @@ void BitmapText::DrawPrimitives()
 				color_index = (color_index+1)%NUM_RAINBOW_COLORS;
 			}
 		}
-		else if ( m_bColored )
-		{
-			int loc = 0, cur = 0;
-			RageColor c = m_pTempState->diffuse[0];
-
-			for( unsigned i=0; i<verts.size(); i+=4 )
-			{
-				loc++;
-				if ( cur < (int)m_vColors.size() )
-					if ( loc > m_vColors[cur].l )
-					{
-						c = m_vColors[cur].c;
-						cur++;
-					}
-
-				for ( unsigned j=0; j<4; j++ )
-					verts[i+j].c = c;
-			}
-		}
 		else
 		{
 			for( unsigned i=0; i<verts.size(); i+=4 )
@@ -735,8 +678,194 @@ void BitmapText::SetWrapWidthPixels( int iWrapWidthPixels )
 	SetText( m_sText, "", iWrapWidthPixels );
 }
 
+ColorBitmapText::ColorBitmapText( ) : BitmapText()
+{
+	m_vColors.clear();
+}
+
+void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternateText, int iWrapWidthPixels )
+{
+	ASSERT( m_pFont );
+
+	CString sNewText = StringWillUseAlternate(_sText,_sAlternateText) ? _sAlternateText : _sText;
+
+	if( iWrapWidthPixels == -1 )	// wrap not specified
+		iWrapWidthPixels = m_iWrapWidthPixels;
+
+	if( m_sText == sNewText && iWrapWidthPixels==m_iWrapWidthPixels )
+		return;
+	m_sText = sNewText;
+	m_iWrapWidthPixels = iWrapWidthPixels;
+
+	m_vColors.clear();
+	m_wTextLines.clear();
+
+	CString sCurrentLine = "";
+	int		iLineWidth = 0;
+
+	CString sCurrentWord = "";
+	int		iWordWidth = 0;
+	int		iGlyphsSoFar = 0;
+
+	for ( unsigned i = 0; i < m_sText.length(); i++ )
+	{
+		int iCharsLeft = m_sText.length() - i - 1;
+
+		//First: Check for the special (color) case.
+
+		CString FirstThree = m_sText.substr( i, 3 );
+		if ( ( FirstThree.CompareNoCase( "|c0" ) == 0 ) && ( iCharsLeft > 8 ) )
+		{
+			ColorChange change;
+			int k;
+			sscanf( m_sText.substr( i+3, 2 ).c_str(), "%x", &k ); change.c.r = float( k ) / 255.0f;
+			sscanf( m_sText.substr( i+5, 2 ).c_str(), "%x", &k ); change.c.g = float( k ) / 255.0f;
+			sscanf( m_sText.substr( i+7, 2 ).c_str(), "%x", &k ); change.c.b = float( k ) / 255.0f;
+			change.c.a = 1;
+			change.l = iGlyphsSoFar;
+			m_vColors.push_back( change );
+			i+=8;
+			continue;
+		}
+
+		CString curCStr = m_sText.substr( i, 1 );
+		char curChar = curCStr.c_str()[0];
+		int iCharLen = m_pFont->GetLineWidthInSourcePixels( CStringToWstring( curCStr ) );
+
+		switch ( curChar )
+		{
+		case ' ':
+			if ( /*( iLineWidth == 0 ) &&*/ ( iWordWidth == 0 ) )
+				break;
+			sCurrentLine += sCurrentWord + " ";
+			iLineWidth += iWordWidth + iCharLen;
+			sCurrentWord = "";
+			iWordWidth = 0;
+			iGlyphsSoFar++;
+			break;
+		case '\n':
+			if ( iLineWidth + iWordWidth > iWrapWidthPixels )
+			{
+				SimpleAddLine( sCurrentLine, iLineWidth );
+				if ( iWordWidth > 0 )
+				iLineWidth = iWordWidth +	//Add the width of a space
+					m_pFont->GetLineWidthInSourcePixels( CStringToWstring( " " ) );
+				sCurrentLine = sCurrentWord + " ";
+				iWordWidth = 0;
+				sCurrentWord = "";
+				iGlyphsSoFar++;
+			} 
+			else
+			{
+				SimpleAddLine( sCurrentLine + sCurrentWord, iLineWidth + iWordWidth );
+				sCurrentLine = "";	iLineWidth = 0;
+				sCurrentWord = "";	iWordWidth = 0;
+			}
+			break;
+		default:
+			if ( ( iWordWidth + iCharLen > iWrapWidthPixels ) && ( iLineWidth == 0 ) )
+			{
+				SimpleAddLine( sCurrentWord, iWordWidth );
+				sCurrentWord = curChar;	iWordWidth = iCharLen;
+			}
+			else if ( iWordWidth + iLineWidth + iCharLen > iWrapWidthPixels )
+			{
+				SimpleAddLine( sCurrentLine, iLineWidth );
+				sCurrentLine = ""; 
+				iLineWidth = 0;
+				sCurrentWord += curChar;
+				iWordWidth += iCharLen;
+			}
+			else
+			{
+				sCurrentWord += curChar;
+				iWordWidth += iCharLen;
+			}
+			iGlyphsSoFar++;
+			break;
+		}
+	}
+	
+	if ( iWordWidth > 0 )
+	{
+		sCurrentLine += sCurrentWord;
+		iLineWidth += iWordWidth;
+	}
+
+	if ( iLineWidth > 0 )
+		SimpleAddLine( sCurrentLine, iLineWidth );
+
+	BuildChars();
+	UpdateBaseZoom();
+}
+
+void ColorBitmapText::SimpleAddLine( const CString &sAddition, const int iWidthPixels) 
+{
+	m_wTextLines.push_back( CStringToWstring( sAddition ) );
+	m_iLineWidths.push_back( iWidthPixels );
+}
+
+void ColorBitmapText::DrawPrimitives( )
+{
+	Actor::SetGlobalRenderStates();	// set Actor-specified render states
+	DISPLAY->SetTextureModeModulate();
+
+	/* Draw if we're not fully transparent or the zbuffer is enabled */
+	if( m_pTempState->diffuse[0].a != 0 )
+	{
+		//////////////////////
+		// render the shadow
+		//////////////////////
+		if( m_fShadowLength != 0 )
+		{
+			DISPLAY->PushMatrix();
+			DISPLAY->TranslateWorld( m_fShadowLength, m_fShadowLength, 0 );	// shift by 5 units
+
+			RageColor dim(0,0,0,0.5f*m_pTempState->diffuse[0].a);	// semi-transparent black
+
+			for( unsigned i=0; i<verts.size(); i++ )
+				verts[i].c = dim;
+			DrawChars();
+
+			DISPLAY->PopMatrix();
+		}
+
+		//////////////////////
+		// render the diffuse pass
+		//////////////////////
+		int loc = 0, cur = 0;
+		RageColor c = m_pTempState->diffuse[0];
+
+		for( unsigned i=0; i<verts.size(); i+=4 )
+		{
+			loc++;
+			if ( cur < (int)m_vColors.size() )
+				if ( loc > m_vColors[cur].l )
+				{
+					c = m_vColors[cur].c;
+					cur++;
+				}
+			for ( unsigned j=0; j<4; j++ )
+				verts[i+j].c = c;
+		}
+
+		DrawChars();
+	}
+
+	/* render the glow pass */
+	if( m_pTempState->glow.a > 0.0001f )
+	{
+		DISPLAY->SetTextureModeGlow();
+
+		for( unsigned i=0; i<verts.size(); i++ )
+			verts[i].c = m_pTempState->glow;
+		DrawChars();
+	}
+	Actor::DrawPrimitives();
+}
+
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2003-2004 Chris Danford, Charles Lohr
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -60,8 +60,6 @@ public:
 
 	void GetLines( vector<wstring> &wTextLines ) { wTextLines = m_wTextLines; }
 
-	void SetDynamicColor( bool coloration ) { m_bColored = coloration; }
-
 	CString GetText() const { return m_sText; }
 	/* Return true if the string 's' will use an alternate string, if available. */
 	bool StringWillUseAlternate(const CString& sText, const CString& sAlternateText) const;
@@ -86,14 +84,6 @@ protected:
 
 	bool m_bRainbow;
 
-	bool m_bColored;
-
-	struct ColorChange
-	{
-		RageColor c;	//Color to change to
-		int l;			//Change Location
-	};
-	vector<ColorChange> m_vColors;
 	vector<RageSpriteVertex> verts;
 	vector<RageTexture *> tex;
 	
@@ -103,11 +93,29 @@ protected:
 	void UpdateBaseZoom();
 };
 
+class ColorBitmapText : public BitmapText
+{
+public:
+	ColorBitmapText();
+//	virtual ~ColorBitmapText();
+	void SetText( const CString &sText, const CString &sAlternateText = "", int iWrapWidthPixels = -1 );
+	void DrawPrimitives( );
+	void SetMaxLines( int iLines, bool bCutBottom = true );	//if bCutBottom = false then, it will crop the top
+	void SimpleAddLine ( const CString &sAddition, int iWidthPixels );
+protected:
+	struct ColorChange
+	{
+		RageColor c;	//Color to change to
+		int l;			//Change Location
+	};
+	vector<ColorChange> m_vColors;
+};
+
 
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2001-2004 Chris Danford, Charles Lohr
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

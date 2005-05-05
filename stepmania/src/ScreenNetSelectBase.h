@@ -24,8 +24,8 @@ public:
 	void UpdateTextInput();
 private:
 	//Chatting
-	BitmapText		m_textChatInput;
-	BitmapText		m_textChatOutput;
+	ColorBitmapText	m_textChatInput;
+	ColorBitmapText	m_textChatOutput;
 	Sprite			m_sprChatInputBox;
 	Sprite			m_sprChatOutputBox;
 	CString			m_sTextInput;
