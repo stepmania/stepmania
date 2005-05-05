@@ -698,12 +698,12 @@ void Sprite::SetState( int iNewState )
 		{
 			CString sError;
 			if( m_pTexture )
-				sError = ssprintf("The Sprite '%s' (\"%s\") tried to set state index %d, but it has only %u states", 
+				sError = ssprintf("A Sprite '%s' (\"%s\") tried to set state index %d, but it has only %u states.",
 					m_pTexture->GetID().filename.c_str(), this->m_sName.c_str(), iNewState, unsigned(m_States.size()));
 			else
-				sError = ssprintf("A Sprite (\"%s\") tried to set state index %d but no texture is loaded.", 
+				sError = ssprintf("A Sprite (\"%s\") tried to set state index %d, but no texture is loaded.", 
 					this->m_sName.c_str(), iNewState );
-			Dialog::OK( sError );
+			Dialog::OK( sError, "SPRITE_INVALID_FRAME" );
 		}
 	}
 
