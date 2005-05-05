@@ -15,6 +15,28 @@ RageFileObj::RageFileObj()
 	m_iCRC32 = 0;
 }
 
+RageFileObj::RageFileObj( const RageFileObj &cpy ):
+	RageFileBasic(cpy)
+{
+	/* If the original file has a buffer, copy it. */
+	if( cpy.m_pBuffer != NULL )
+	{
+		m_pBuffer = new char[BSIZE];
+		memcpy( m_pBuffer, cpy.m_pBuffer, BSIZE );
+
+		int iOffsetIntoBuffer = cpy.m_pBuf - cpy.m_pBuffer;
+		m_pBuf = m_pBuffer + iOffsetIntoBuffer;
+	}
+	else
+		m_pBuffer = NULL;
+
+	m_iBufAvail = cpy.m_iBufAvail;
+	m_bEOF = cpy.m_bEOF;
+	m_iFilePos = cpy.m_iFilePos;
+	m_bCRC32Enabled = cpy.m_bCRC32Enabled;
+	m_iCRC32 = cpy.m_iCRC32;
+}
+
 RageFileObj::~RageFileObj()
 {
 	delete [] m_pBuffer;

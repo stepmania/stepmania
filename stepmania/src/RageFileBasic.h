@@ -59,6 +59,7 @@ class RageFileObj: public RageFileBasic
 {
 public:
 	RageFileObj();
+	RageFileObj( const RageFileObj &cpy );
 	virtual ~RageFileObj();
 
 	virtual CString GetError() const { return m_sError; }
