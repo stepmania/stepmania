@@ -28,6 +28,7 @@ WheelItemBaseData::WheelItemBaseData( WheelItemType wit, CString sText, RageColo
 WheelItemBase::WheelItemBase(CString sType)
 {
 	SetName( sType );
+	m_pBar = NULL;
 	Load(sType);
 }
 
@@ -42,6 +43,7 @@ void WheelItemBase::Load( CString sType )
 	m_sprBar.Load( THEME->GetPathG(sType,"bar") );
 	m_sprBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprBar );
+	m_pBar = &m_sprBar;
 
 	m_text.LoadFromFont( THEME->GetPathF(sType,"text") );
 	m_text.SetShadowLength( 0 );
@@ -79,7 +81,7 @@ void WheelItemBase::Update( float fDeltaTime )
 	Actor::Update( fDeltaTime );
 }
 
-void WheelItemBase::DrawGrayBar( Sprite& bar )
+void WheelItemBase::DrawGrayBar( Actor& bar )
 {
 	if( m_fPercentGray == 0 )
 		return;
@@ -91,11 +93,12 @@ void WheelItemBase::DrawGrayBar( Sprite& bar )
 	bar.SetGlow( RageColor(0,0,0,0) );
 }
 
-void WheelItemBase::DrawPrimitives(Sprite& bar)
+void WheelItemBase::DrawPrimitives()
 {
 	ActorFrame::DrawPrimitives();
 
-	DrawGrayBar( bar );
+	if( m_pBar != NULL )
+		DrawGrayBar( *m_pBar );
 }
   
 /*

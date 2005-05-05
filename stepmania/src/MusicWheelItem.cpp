@@ -223,6 +223,15 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 	default: ASSERT(0);
 	}
 
+	Sprite *pBar = NULL;
+	if( m_sprBar.GetVisible() )
+		pBar = &m_sprBar;
+	else if( m_sprSectionBar.GetVisible() )
+		pBar = &m_sprSectionBar;
+	else
+		pBar = &m_sprExpandedBar;
+
+	SetGrayBar( pBar );
 }
 
 void MusicWheelItem::RefreshGrades()
@@ -254,15 +263,7 @@ void MusicWheelItem::RefreshGrades()
 
 void MusicWheelItem::DrawPrimitives()
 {
-	Sprite *pBar = NULL;
-	if( m_sprBar.GetVisible() )
-		pBar = &m_sprBar;
-	else if( m_sprSectionBar.GetVisible() )
-		pBar = &m_sprSectionBar;
-	else
-		pBar = &m_sprExpandedBar;
-
-	WheelItemBase::DrawPrimitives( *pBar );
+	WheelItemBase::DrawPrimitives();
 }
 
 /*

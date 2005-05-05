@@ -28,20 +28,23 @@ enum WheelItemType
 class WheelItemBase : public ActorFrame
 {
 public:
-	WheelItemBase(CString sType = "WheelItemBase");
-	WheelItemBaseData* data;
+	WheelItemBase( CString sType = "WheelItemBase" );
 	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives(Sprite& bar);
-	virtual void DrawPrimitives() { DrawPrimitives( m_sprBar ); }
+	virtual void DrawPrimitives();
 	
 	void Load( CString sType );
-	void DrawGrayBar( Sprite& bar );
+	void DrawGrayBar( Actor& bar );
 
 	virtual void LoadFromWheelItemBaseData( WheelItemBaseData* pWID );
 
 	float				m_fPercentGray;
 
 protected:
+	void SetGrayBar( Actor *pBar ) { m_pBar = pBar; }
+
+	WheelItemBaseData* data;
+
+	Actor	*m_pBar;
 	Sprite	m_sprBar;
 	BitmapText m_text;
 	WheelItemType m_Type;
