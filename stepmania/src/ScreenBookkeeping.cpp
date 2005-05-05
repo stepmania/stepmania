@@ -28,7 +28,6 @@ void ScreenBookkeeping::Init()
 	m_textTitle.LoadFromFont( THEME->GetPathF("Common","title") );
 	m_textTitle.SetText( "header" );
 	m_textTitle.SetXY( SCREEN_CENTER_X, 60 );
-	m_textTitle.SetDiffuse( RageColor(1,1,1,1) );
 	m_textTitle.SetZoom( 0.8f );
 	this->AddChild( &m_textTitle );
 
@@ -39,14 +38,11 @@ void ScreenBookkeeping::Init()
 		m_textCols[i].LoadFromFont( THEME->GetPathF("Common","normal") );
 		m_textCols[i].SetText( ssprintf("%d",i) );
 		m_textCols[i].SetXY( fX, fY );
-		m_textCols[i].SetDiffuse( RageColor(1,1,1,1) );
 		m_textCols[i].SetZoom( 0.6f );
 		this->AddChild( &m_textCols[i] );
 	}
 
 	ChangeView( (View)0 );
-
-	SOUND->PlayMusic( THEME->GetPathS("ScreenBookkeeping","music") );
 }
 
 ScreenBookkeeping::~ScreenBookkeeping()
