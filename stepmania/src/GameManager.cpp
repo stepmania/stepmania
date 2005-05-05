@@ -2783,7 +2783,7 @@ CString GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameButt
 		}
 	}
 
-	static const char *szSecondaryNames[NUM_MENU_BUTTONS] =
+	static const char *szSecondaryNames[] =
 	{
 		"MenuLeft",
 		"MenuRight",

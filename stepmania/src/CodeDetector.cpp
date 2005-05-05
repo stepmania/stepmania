@@ -12,7 +12,7 @@
 #include "PrefsManager.h"
 #include "PlayerState.h"
 
-const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
+const CString CodeNames[] = {
 	"Easier1",
 	"Easier2",
 	"Harder1",
@@ -55,8 +55,9 @@ const CString g_sCodeNames[CodeDetector::NUM_CODES] = {
 	"CancelAllPlayerOptions",
 	"BackInEventMode",
 };
+XToString( Code, NUM_CODES );
 
-CodeItem g_CodeItems[CodeDetector::NUM_CODES];
+static CodeItem g_CodeItems[NUM_CODES];
 
 
 bool CodeItem::EnteredCode( GameController controller ) const
@@ -172,10 +173,10 @@ void CodeDetector::RefreshCacheItems( CString sClass )
 {
 	if( sClass == "" )
 		sClass = "CodeDetector";
-	for( int i=0; i<NUM_CODES; i++ )
+	FOREACH_Code( c )
 	{
-		CodeItem& item = g_CodeItems[i];
-		const CString sCodeName = g_sCodeNames[i];
+		CodeItem& item = g_CodeItems[c];
+		const CString sCodeName = CodeToString(c);
 		const CString sButtonsNames = THEME->GetMetric(sClass,sCodeName);
 
 		item.Load( sButtonsNames );

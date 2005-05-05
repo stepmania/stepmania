@@ -12,7 +12,7 @@ TapNote TAP_ORIGINAL_AUTO_KEYSOUND	( TapNote::autoKeysound,TapNote::SubType_inva
 TapNote TAP_ADDITION_TAP			( TapNote::tap,			TapNote::SubType_invalid,	TapNote::addition, "", 0, false, 0 );
 TapNote TAP_ADDITION_MINE			( TapNote::mine,		TapNote::SubType_invalid,	TapNote::addition, "", 0, false, 0 );
 
-static const CString NoteTypeNames[NUM_NOTE_TYPES] = {
+static const CString NoteTypeNames[] = {
 	"4th",
 	"8th",
 	"12th",

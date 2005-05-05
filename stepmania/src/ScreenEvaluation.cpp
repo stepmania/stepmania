@@ -1309,8 +1309,8 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 		HighScore &hs = m_HighScore[pn];
 
 
-		if( CodeDetector::EnteredCode(GameI.controller, CodeDetector::CODE_SAVE_SCREENSHOT1) ||
-			CodeDetector::EnteredCode(GameI.controller, CodeDetector::CODE_SAVE_SCREENSHOT2) )
+		if( CodeDetector::EnteredCode(GameI.controller, CODE_SAVE_SCREENSHOT1) ||
+			CodeDetector::EnteredCode(GameI.controller, CODE_SAVE_SCREENSHOT2) )
 		{
 			if( !m_bSavedScreenshot[pn]  &&	// only allow one screenshot
 				PROFILEMAN->IsUsingProfile(pn) )

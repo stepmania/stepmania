@@ -18,7 +18,7 @@ UnlockManager*	UNLOCKMAN = NULL;	// global and accessable from anywhere in our p
 #define UNLOCK_NAMES					THEME->GetMetric ("Unlocks","UnlockNames")
 #define UNLOCK(sLineName)				THEME->GetMetric ("Unlocks",ssprintf("Unlock%s",sLineName.c_str()))
 
-static CString UnlockTypeNames[NUM_UNLOCK_TYPES] =
+static CString UnlockTypeNames[] =
 {
 	"ArcadePoints",
 	"DancePoints",

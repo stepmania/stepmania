@@ -10,7 +10,7 @@
 #include "EnumHelper.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
-static const CString SetTimeSelectionNames[NUM_SET_TIME_SELECTIONS] = {
+static const CString SetTimeSelectionNames[] = {
 	"Year", 
 	"Month", 
 	"Day",

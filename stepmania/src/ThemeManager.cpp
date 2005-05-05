@@ -24,7 +24,7 @@
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
-static const CString ElementCategoryNames[NUM_ELEMENT_CATEGORIES] = {
+static const CString ElementCategoryNames[] = {
 	"BGAnimations",
 	"Fonts",
 	"Graphics",

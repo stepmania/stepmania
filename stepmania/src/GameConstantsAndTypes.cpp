@@ -11,7 +11,7 @@
 #include <float.h>
 
 
-static const CString RadarCategoryNames[NUM_RADAR_CATEGORIES] = {
+static const CString RadarCategoryNames[] = {
 	"Stream",
 	"Voltage",
 	"Air",
@@ -41,7 +41,7 @@ static void LuaStepsType(lua_State* L)
 REGISTER_WITH_LUA_FUNCTION( LuaStepsType );
 
 
-static const CString PlayModeNames[NUM_PLAY_MODES] = {
+static const CString PlayModeNames[] = {
 	"Regular",
 	"Nonstop",
 	"Oni",
@@ -74,7 +74,7 @@ RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
 }
 
 
-static const CString RankingCategoryNames[NUM_RANKING_CATEGORIES] = {
+static const CString RankingCategoryNames[] = {
 	"a",
 	"b",
 	"c",
@@ -84,7 +84,7 @@ XToString( RankingCategory, NUM_RANKING_CATEGORIES );
 StringToX( RankingCategory );
 
 
-static const CString CoinModeNames[NUM_COIN_MODES] = {
+static const CString CoinModeNames[] = {
 	"home",
 	"pay",
 	"free",
@@ -92,7 +92,7 @@ static const CString CoinModeNames[NUM_COIN_MODES] = {
 XToString( CoinMode, NUM_COIN_MODES );
 
 
-static const CString PremiumNames[NUM_PREMIUMS] = {
+static const CString PremiumNames[] = {
 	"none",
 	"doubles",
 	"joint",
@@ -100,7 +100,7 @@ static const CString PremiumNames[NUM_PREMIUMS] = {
 XToString( Premium, NUM_PREMIUMS );
 
 
-static const CString SortOrderNames[NUM_SORT_ORDERS] = {
+static const CString SortOrderNames[] = {
 	"Preferred",
 	"Group",
 	"Title",
@@ -146,7 +146,7 @@ static void LuaSortOrder(lua_State* L)
 REGISTER_WITH_LUA_FUNCTION( LuaSortOrder );
 
 
-static const CString TapNoteScoreNames[NUM_TAP_NOTE_SCORES] = {
+static const CString TapNoteScoreNames[] = {
 	"None",
 	"HitMine",
 	"AvoidMine",
@@ -162,7 +162,7 @@ StringToX( TapNoteScore );
 XToThemedString( TapNoteScore, NUM_TAP_NOTE_SCORES );
 
 
-static const CString HoldNoteScoreNames[NUM_HOLD_NOTE_SCORES] = {
+static const CString HoldNoteScoreNames[] = {
 	"None",
 	"NG",
 	"OK",
@@ -172,7 +172,7 @@ StringToX( HoldNoteScore );
 XToThemedString( HoldNoteScore, NUM_HOLD_NOTE_SCORES );
 
 
-static const CString MemoryCardStateNames[NUM_MEMORY_CARD_STATES] = {
+static const CString MemoryCardStateNames[] = {
 	"ready",
 	"checking",
 	"late",
@@ -183,7 +183,7 @@ static const CString MemoryCardStateNames[NUM_MEMORY_CARD_STATES] = {
 XToString( MemoryCardState, NUM_MEMORY_CARD_STATES );
 
 
-static const CString PerDifficultyAwardNames[NUM_PER_DIFFICULTY_AWARDS] = {
+static const CString PerDifficultyAwardNames[] = {
 	"FullComboGreats",
 	"SingleDigitGreats",
 	"OneGreat",
@@ -204,7 +204,7 @@ StringToX( PerDifficultyAward );
 // strings can be used as XML entity names.
 // Numbers are intentially not at the back so that "1000" and "10000" don't 
 // conflict when searching for theme elements.
-static const CString PeakComboAwardNames[NUM_PEAK_COMBO_AWARDS] = {
+static const CString PeakComboAwardNames[] = {
 	"Peak1000Combo",
 	"Peak2000Combo",
 	"Peak3000Combo",
@@ -281,7 +281,7 @@ bool DisplayBpms::IsSecret() const
 	return false;
 }
 
-static const CString StyleTypeNames[NUM_STYLE_TYPES] = {
+static const CString StyleTypeNames[] = {
 	"OnePlayerOneSide",
 	"TwoPlayersTwoSides",
 	"OnePlayerTwoSides",
@@ -290,7 +290,7 @@ XToString( StyleType, NUM_STYLE_TYPES );
 StringToX( StyleType );
 
 
-static const CString MenuDirNames[NUM_MENU_DIRS] = {
+static const CString MenuDirNames[] = {
 	"Up",
 	"Down",
 	"Left",
@@ -300,7 +300,7 @@ static const CString MenuDirNames[NUM_MENU_DIRS] = {
 XToString( MenuDir, NUM_MENU_DIRS );
 
 
-static const CString GoalTypeNames[NUM_GOAL_TYPES] = {
+static const CString GoalTypeNames[] = {
 	"Calories",
 	"Time",
 	"None",

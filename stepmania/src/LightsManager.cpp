@@ -17,7 +17,7 @@ Preference<float>	g_fLightsFalloffSeconds( Options, "LightsFalloffSeconds", 0.1f
 Preference<float>	g_fLightsAheadSeconds( Options, "LightsAheadSeconds", 0.05f );
 
 
-static const CString CabinetLightNames[NUM_CABINET_LIGHTS] = {
+static const CString CabinetLightNames[] = {
 	"MarqueeUpLeft",
 	"MarqueeUpRight",
 	"MarqueeLrLeft",
@@ -30,7 +30,7 @@ static const CString CabinetLightNames[NUM_CABINET_LIGHTS] = {
 XToString( CabinetLight, NUM_CABINET_LIGHTS );
 StringToX( CabinetLight );
 
-static const CString LightsModeNames[NUM_LIGHTS_MODES] = {
+static const CString LightsModeNames[] = {
 	"Attract",
 	"Joining",
 	"Menu",

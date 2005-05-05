@@ -112,7 +112,7 @@ RageKeySym StringToRageKeySym( const CString& s )
 }
 
 	
-static const CString InputDeviceNames[NUM_INPUT_DEVICES] = {
+static const CString InputDeviceNames[] = {
 	"Key",
 	"Joy1",
 	"Joy2",
@@ -138,7 +138,7 @@ XToString( InputDevice, NUM_INPUT_DEVICES );
 StringToX( InputDevice );
 
 
-static const CString JoystickButtonNames[NUM_JOYSTICK_BUTTONS] = {
+static const CString JoystickButtonNames[] = {
 	"Left",
 	"Right",
 	"Up",
@@ -200,7 +200,7 @@ XToString( JoystickButton, NUM_JOYSTICK_BUTTONS );
 StringToX( JoystickButton );
 	
 	
-static const CString PumpPadButtonNames[NUM_PUMP_PAD_BUTTONS] = {
+static const CString PumpPadButtonNames[] = {
 	"UL",
 	"UR",
 	"MID",
@@ -217,7 +217,7 @@ XToString( PumpPadButton, NUM_PUMP_PAD_BUTTONS );
 StringToX( PumpPadButton );
 
 
-static const CString ParaPadButtonNames[NUM_PARA_PAD_BUTTONS] = {
+static const CString ParaPadButtonNames[] = {
 	"L",
 	"UL",
 	"U",

@@ -135,7 +135,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 	}
 
 	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
-	if( GAMESTATE->IsHumanPlayer(pn) && CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_CANCEL_ALL_PLAYER_OPTIONS) )
+	if( GAMESTATE->IsHumanPlayer(pn) && CodeDetector::EnteredCode(GameI.controller,CODE_CANCEL_ALL_PLAYER_OPTIONS) )
 	{
 		if( m_CancelAll.IsLoaded() )
 			m_CancelAll.Play();

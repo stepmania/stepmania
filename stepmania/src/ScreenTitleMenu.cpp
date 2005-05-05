@@ -128,8 +128,8 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		//
 		// detect codes
 		//
-		if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_THEME) ||
-			CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_THEME2) )
+		if( CodeDetector::EnteredCode(GameI.controller,CODE_NEXT_THEME) ||
+			CodeDetector::EnteredCode(GameI.controller,CODE_NEXT_THEME2) )
 		{
 			THEME->NextTheme();
 			ApplyGraphicOptions();	// update window title and icon
@@ -137,8 +137,8 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			SCREENMAN->SetNewScreen( m_sName );
 			TEXTUREMAN->DoDelayedDelete();
 		}
-		if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_ANNOUNCER) ||
-			CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_ANNOUNCER2) )
+		if( CodeDetector::EnteredCode(GameI.controller,CODE_NEXT_ANNOUNCER) ||
+			CodeDetector::EnteredCode(GameI.controller,CODE_NEXT_ANNOUNCER2) )
 		{
 			ANNOUNCER->NextAnnouncer();
 			CString sName = ANNOUNCER->GetCurAnnouncerName();
@@ -146,8 +146,8 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			SCREENMAN->SystemMessage( "Announcer: "+sName );
 			SCREENMAN->SetNewScreen( m_sName );
 		}
-		if( CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_GAME) ||
-			CodeDetector::EnteredCode(GameI.controller,CodeDetector::CODE_NEXT_GAME2) )
+		if( CodeDetector::EnteredCode(GameI.controller,CODE_NEXT_GAME) ||
+			CodeDetector::EnteredCode(GameI.controller,CODE_NEXT_GAME2) )
 		{
 			vector<const Game*> vGames;
 			GAMEMAN->GetEnabledGames( vGames );

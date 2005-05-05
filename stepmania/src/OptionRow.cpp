@@ -13,7 +13,7 @@
 #include "Course.h"
 #include "Style.h"
 
-static const CString SelectTypeNames[NUM_SELECT_TYPES] = {
+static const CString SelectTypeNames[] = {
 	"SelectOne",
 	"SelectMultiple",
 	"SelectNone",
@@ -21,7 +21,7 @@ static const CString SelectTypeNames[NUM_SELECT_TYPES] = {
 XToString( SelectType, NUM_SELECT_TYPES );
 StringToX( SelectType );
 
-static const CString LayoutTypeNames[NUM_LAYOUT_TYPES] = {
+static const CString LayoutTypeNames[] = {
 	"ShowAllInRow",
 	"ShowOneInRow",
 };

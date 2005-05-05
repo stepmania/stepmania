@@ -6,7 +6,7 @@
 #include "LuaFunctions.h"
 #include "LuaManager.h"
 
-static const CString PrefsGroupNames[NUM_PREFS_GROUPS] = {
+static const CString PrefsGroupNames[] = {
 	"Debug",
 	"Editor",
 	"Options",

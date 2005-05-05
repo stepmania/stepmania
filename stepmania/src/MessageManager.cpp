@@ -8,7 +8,7 @@
 MessageManager*	MESSAGEMAN = NULL;	// global and accessable from anywhere in our program
 
 
-static const CString MessageNames[NUM_MESSAGES] = {
+static const CString MessageNames[] = {
 	"CurrentSongChanged",
 	"CurrentStepsP1Changed",
 	"CurrentStepsP2Changed",

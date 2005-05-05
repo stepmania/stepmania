@@ -29,7 +29,7 @@ enum Part
 const CString& PartToString( Part p );
 #define FOREACH_Part( p ) FOREACH_ENUM( Part, NUM_PARTS, p )
 
-static const CString PartNames[NUM_PARTS] = {
+static const CString PartNames[] = {
 	"TapNote",
 	"TapAddition",
 	"TapMine",
@@ -273,13 +273,13 @@ Sprite* NoteColorSprite::Get( NoteType nt )
 }
 
 
-static const CString HoldTypeNames[NUM_HOLD_TYPES] = {
+static const CString HoldTypeNames[] = {
 	"hold",
 	"roll",
 };
 XToString( HoldType, NUM_HOLD_TYPES );
 
-static const CString ActiveTypeNames[NUM_ACTIVE_TYPES] = {
+static const CString ActiveTypeNames[] = {
 	"active",
 	"inactive",
 };
