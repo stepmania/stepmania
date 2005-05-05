@@ -697,7 +697,13 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 	m_sText = sNewText;
 	m_iWrapWidthPixels = iWrapWidthPixels;
 
+	//Set up the first color.
 	m_vColors.clear();
+	ColorChange change;
+	change.c = RageColor ( 1, 1, 1, 1 );
+	change.l = 0;
+	m_vColors.push_back( change );
+
 	m_wTextLines.clear();
 
 	CString sCurrentLine = "";
@@ -864,6 +870,55 @@ void ColorBitmapText::DrawPrimitives( )
 	Actor::DrawPrimitives();
 }
 
+void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
+{
+	iNumLines = max( 0, iNumLines );
+	iNumLines = min( (int)m_wTextLines.size(), iNumLines );
+	if( iDirection == 0 ) 
+	{
+		// Crop all bottom lines
+		m_wTextLines.resize( iNumLines );
+		m_iLineWidths.resize( iNumLines );
+	}
+	else
+	{
+		//Because colors are relative to the beginning, we have to crop them back
+		unsigned shift = 0;
+
+		for ( unsigned i = 0; i < m_wTextLines.size() - iNumLines; i++ )
+			shift  += m_wTextLines[i].length();
+
+
+		//When we're cutting out text, we need to maintain the last
+		//color, so our text at the top doesn't become colorless.
+		RageColor LastColor;
+
+		for ( unsigned i = 0; i < m_vColors.size(); i++ )
+		{
+			m_vColors[i].l -= shift;
+			if ( m_vColors[i].l < 0 )
+			{
+				LastColor = m_vColors[i].c;
+				m_vColors.erase( m_vColors.begin() + i );
+				i--;
+			}
+		}
+
+		//If we already have a color set for the first char
+		//do not override it.
+		if ( ( m_vColors.size() > 0 ) && ( m_vColors[0].l > 0 ) )
+		{
+			ColorChange tmp;
+			tmp.c = LastColor;
+			tmp.l = 0;
+			m_vColors.insert( m_vColors.begin(), tmp );
+		}
+
+		m_wTextLines.erase( m_wTextLines.begin(), m_wTextLines.end() - iNumLines );
+		m_iLineWidths.erase( m_iLineWidths.begin(), m_iLineWidths.end() - iNumLines );
+	}
+	BuildChars();
+}
 /*
  * (c) 2003-2004 Chris Danford, Charles Lohr
  * All rights reserved.

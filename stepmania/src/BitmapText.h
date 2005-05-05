@@ -97,11 +97,11 @@ class ColorBitmapText : public BitmapText
 {
 public:
 	ColorBitmapText();
-//	virtual ~ColorBitmapText();
 	void SetText( const CString &sText, const CString &sAlternateText = "", int iWrapWidthPixels = -1 );
 	void DrawPrimitives( );
 	void SetMaxLines( int iLines, bool bCutBottom = true );	//if bCutBottom = false then, it will crop the top
 	void SimpleAddLine ( const CString &sAddition, int iWidthPixels );
+	void SetMaxLines( int iNumLines, int iDirection );
 protected:
 	struct ColorChange
 	{
