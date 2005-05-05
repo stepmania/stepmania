@@ -35,11 +35,13 @@ public:
 	virtual void DrawPrimitives() { DrawPrimitives( m_sprBar ); }
 	
 	void Load( CString sType );
+	void DrawGrayBar( Sprite& bar );
 
 	virtual void LoadFromWheelItemBaseData( WheelItemBaseData* pWID );
 
 	float				m_fPercentGray;
 
+protected:
 	Sprite	m_sprBar;
 	BitmapText m_text;
 	WheelItemType m_Type;
@@ -49,7 +51,6 @@ public:
 	ThemeMetric<float>				TEXT_Y;
 	ThemeMetric<float>				TEXT_WIDTH;
 	ThemeMetric<apActorCommands>	TEXT_ON_COMMAND;
-
 };
 
 struct WheelItemBaseData

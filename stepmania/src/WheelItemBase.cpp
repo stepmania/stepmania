@@ -79,18 +79,23 @@ void WheelItemBase::Update( float fDeltaTime )
 	Actor::Update( fDeltaTime );
 }
 
+void WheelItemBase::DrawGrayBar( Sprite& bar )
+{
+	if( m_fPercentGray == 0 )
+		return;
+
+	bar.SetGlow( RageColor(0,0,0,m_fPercentGray) );
+	bar.SetDiffuse( RageColor(0,0,0,0) );
+	bar.Draw();
+	bar.SetDiffuse( RageColor(0,0,0,1) );
+	bar.SetGlow( RageColor(0,0,0,0) );
+}
+
 void WheelItemBase::DrawPrimitives(Sprite& bar)
 {
 	ActorFrame::DrawPrimitives();
 
-	if( m_fPercentGray > 0 )
-	{
-		bar.SetGlow( RageColor(0,0,0,m_fPercentGray) );
-		bar.SetDiffuse( RageColor(0,0,0,0) );
-		bar.Draw();
-		bar.SetDiffuse( RageColor(0,0,0,1) );
-		bar.SetGlow( RageColor(0,0,0,0) );
-	}
+	DrawGrayBar( bar );
 }
   
 /*
