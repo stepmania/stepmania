@@ -118,6 +118,9 @@ XNode* Bookkeeper::CreateNode() const
 
 void Bookkeeper::ReadFromDisk()
 {
+	if( !IsAFile(COINS_DAT) )
+		return;
+
 	XNode xml;
 	PARSEINFO pi;
 	if( !xml.LoadFromFile(COINS_DAT, &pi) )
