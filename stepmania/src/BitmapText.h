@@ -47,8 +47,6 @@ public:
 	void SetMaxWidth( float fMaxWidth );
 	void SetMaxHeight( float fMaxHeight );
 	void SetWrapWidthPixels( int iWrapWidthPixels );
-	void SetMaxLines( int iNumLines, int iDirection = 0 );	//Direction: 0 for crop bottom, 1 for crop top
-
 	void CropToWidth( int iWidthInSourcePixels );
 
 	virtual bool EarlyAbortDraw();

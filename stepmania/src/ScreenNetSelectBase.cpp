@@ -75,7 +75,6 @@ void ScreenNetSelectBase::Init()
 	this->AddChild( &m_textChatOutput );
 
 	m_textChatOutput.SetText( NSMAN->m_sChatText );
-	m_textChatOutput.SetMaxLines( SHOW_CHAT_LINES, 1 );
 
 	//Users' Background
 	
@@ -192,7 +191,6 @@ void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_AddToChat )
 	{
 		m_textChatOutput.SetText( NSMAN->m_sChatText );
-		m_textChatOutput.SetMaxLines( SHOW_CHAT_LINES, 1 );
 	}
 	else if( SM == SM_UsersUpdate )
 	{
