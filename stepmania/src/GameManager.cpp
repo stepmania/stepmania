@@ -110,6 +110,7 @@ Game g_Games[NUM_GAMES] =
 		"dance",					// m_szName
 		"Dance Dance Revolution",	// m_szDescription
 		2,							// m_iNumControllers
+		false,						// m_bCountNotesSeparately
 		NUM_DANCE_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
 			"Left",
@@ -196,6 +197,7 @@ Game g_Games[NUM_GAMES] =
 		"pump",				// m_szName
 		"Pump It Up",		// m_szDescription
 		2,					// m_iNumControllers
+		false,				// m_bCountNotesSeparately
 		NUM_PUMP_BUTTONS,	// m_iButtonsPerController
 		{	// m_szButtonNames
 			"UpLeft",
@@ -279,6 +281,7 @@ Game g_Games[NUM_GAMES] =
 		"ez2",						// m_szName
 		"Ez2Dancer",				// m_szDescription
 		2,							// m_iNumControllers
+		false,						// m_bCountNotesSeparately
 		NUM_EZ2_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
 			"FootUpLeft",
@@ -365,9 +368,10 @@ Game g_Games[NUM_GAMES] =
 		TNS_MISS,		// m_mapBooTo
 	},
 	{	// GAME_PARA
-		"para",					// m_szName
-		"Para Para Paradise",	// m_szDescription
+		"para",						// m_szName
+		"Para Para Paradise",		// m_szDescription
 		2,							// m_iNumControllers
+		false,						// m_bCountNotesSeparately
 		NUM_DANCE_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
 			"Left",
@@ -449,8 +453,9 @@ Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_DS3DDX
 		"ds3ddx",					// m_szName
-		"Dance Station 3DDX",	// m_szDescription
+		"Dance Station 3DDX",		// m_szDescription
 		2,							// m_iNumControllers
+		false,						// m_bCountNotesSeparately
 		NUM_DS3DDX_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
 			"HandLeft",
@@ -543,6 +548,7 @@ Game g_Games[NUM_GAMES] =
 		"bm",				// m_szName
 		"BeatMania IIDX",	// m_szDescription
 		2,					// m_iNumControllers
+		true,				// m_bCountNotesSeparately
 		NUM_BM_BUTTONS,	// m_iButtonsPerController
 		{	// m_szButtonNames
 			"Key1",
@@ -638,6 +644,7 @@ Game g_Games[NUM_GAMES] =
 		"maniax",					// m_szName
 		"Dance Maniax",				// m_szDescription
 		2,							// m_iNumControllers
+		false,						// m_bCountNotesSeparately
 		NUM_MANIAX_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
 			"HandUpLeft",
@@ -718,6 +725,7 @@ Game g_Games[NUM_GAMES] =
 		"techno",					// m_szName
 		"TechnoMotion",				// m_szDescription
 		2,							// m_iNumControllers
+		false,						// m_bCountNotesSeparately
 		NUM_TECHNO_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
 			"Left",
@@ -813,6 +821,7 @@ Game g_Games[NUM_GAMES] =
 		"pnm",				// m_szName
 		"Pop'n Music",		// m_szDescription
 		1,					// m_iNumControllers
+		true,				// m_bCountNotesSeparately
 		NUM_PNM_BUTTONS,	// m_iButtonsPerController
 		{	// m_szButtonNames
 			"Left White",
@@ -908,6 +917,7 @@ Game g_Games[NUM_GAMES] =
 		"lights",					// m_szName
 		"Lights",					// m_szDescription
 		1,							// m_iNumControllers
+		false,						// m_bCountNotesSeparately
 		NUM_LIGHTS_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
 			"MarqueeUpLeft",
@@ -1012,16 +1022,16 @@ Style g_Styles[] =
 		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_2,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_3,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_1,	-DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_3,	+DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_2,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_3,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_1,	-DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_3,	+DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1046,16 +1056,16 @@ Style g_Styles[] =
 		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_2,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_3,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_1,	-DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_3,	+DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_2,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_3,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_1,	-DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_3,	+DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
 			},
 		},
 		{
@@ -1080,24 +1090,24 @@ Style g_Styles[] =
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-DANCE_COL_SPACING*3.5f },
-				{ TRACK_2,	-DANCE_COL_SPACING*2.5f },
-				{ TRACK_3,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_4,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_5,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_6,	+DANCE_COL_SPACING*1.5f },
-				{ TRACK_7,	+DANCE_COL_SPACING*2.5f },
-				{ TRACK_8,	+DANCE_COL_SPACING*3.5f },
+				{ TRACK_1,	-DANCE_COL_SPACING*3.5f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*2.5f, NULL },
+				{ TRACK_3,	-DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_4,	-DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	+DANCE_COL_SPACING*2.5f, NULL },
+				{ TRACK_8,	+DANCE_COL_SPACING*3.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-DANCE_COL_SPACING*3.5f },
-				{ TRACK_2,	-DANCE_COL_SPACING*2.5f },
-				{ TRACK_3,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_4,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_5,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_6,	+DANCE_COL_SPACING*1.5f },
-				{ TRACK_7,	+DANCE_COL_SPACING*2.5f },
-				{ TRACK_8,	+DANCE_COL_SPACING*3.5f },
+				{ TRACK_1,	-DANCE_COL_SPACING*3.5f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*2.5f, NULL },
+				{ TRACK_3,	-DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_4,	-DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	+DANCE_COL_SPACING*2.5f, NULL },
+				{ TRACK_8,	+DANCE_COL_SPACING*3.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1122,16 +1132,16 @@ Style g_Styles[] =
 		4,									// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_2,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_3,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_1,	-DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_3,	+DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+DANCE_COL_SPACING*1.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_5,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_6,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_7,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_8,	+DANCE_COL_SPACING*1.5f },
+				{ TRACK_5,	-DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_6,	-DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_7,	+DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_8,	+DANCE_COL_SPACING*1.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1156,20 +1166,20 @@ Style g_Styles[] =
 		6,									// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-DANCE_COL_SPACING*2.5f },
-				{ TRACK_2,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_3,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_5,	+DANCE_COL_SPACING*1.5f },
-				{ TRACK_6,	+DANCE_COL_SPACING*2.5f },
+				{ TRACK_1,	-DANCE_COL_SPACING*2.5f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_3,	-DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_6,	+DANCE_COL_SPACING*2.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-DANCE_COL_SPACING*2.5f },
-				{ TRACK_2,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_3,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_4,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_5,	+DANCE_COL_SPACING*1.5f },
-				{ TRACK_6,	+DANCE_COL_SPACING*2.5f },
+				{ TRACK_1,	-DANCE_COL_SPACING*2.5f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_3,	-DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_6,	+DANCE_COL_SPACING*2.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1194,24 +1204,24 @@ Style g_Styles[] =
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-DANCE_COL_SPACING*4.0f },
-				{ TRACK_2,	-DANCE_COL_SPACING*3.0f },
-				{ TRACK_3,	-DANCE_COL_SPACING*2.0f },
-				{ TRACK_4,	-DANCE_COL_SPACING*1.0f },
-				{ TRACK_5,	+DANCE_COL_SPACING*1.0f },
-				{ TRACK_6,	+DANCE_COL_SPACING*2.0f },
-				{ TRACK_7,	+DANCE_COL_SPACING*3.0f },
-				{ TRACK_8,	+DANCE_COL_SPACING*4.0f },
+				{ TRACK_1,	-DANCE_COL_SPACING*4.0f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*3.0f, NULL },
+				{ TRACK_3,	-DANCE_COL_SPACING*2.0f, NULL },
+				{ TRACK_4,	-DANCE_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+DANCE_COL_SPACING*1.0f, NULL },
+				{ TRACK_6,	+DANCE_COL_SPACING*2.0f, NULL },
+				{ TRACK_7,	+DANCE_COL_SPACING*3.0f, NULL },
+				{ TRACK_8,	+DANCE_COL_SPACING*4.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-DANCE_COL_SPACING*4.0f },
-				{ TRACK_2,	-DANCE_COL_SPACING*3.0f },
-				{ TRACK_3,	-DANCE_COL_SPACING*2.0f },
-				{ TRACK_4,	-DANCE_COL_SPACING*1.0f },
-				{ TRACK_5,	+DANCE_COL_SPACING*1.0f },
-				{ TRACK_6,	+DANCE_COL_SPACING*2.0f },
-				{ TRACK_7,	+DANCE_COL_SPACING*3.0f },
-				{ TRACK_8,	+DANCE_COL_SPACING*4.0f },
+				{ TRACK_1,	-DANCE_COL_SPACING*4.0f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*3.0f, NULL },
+				{ TRACK_3,	-DANCE_COL_SPACING*2.0f, NULL },
+				{ TRACK_4,	-DANCE_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+DANCE_COL_SPACING*1.0f, NULL },
+				{ TRACK_6,	+DANCE_COL_SPACING*2.0f, NULL },
+				{ TRACK_7,	+DANCE_COL_SPACING*3.0f, NULL },
+				{ TRACK_8,	+DANCE_COL_SPACING*4.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1269,18 +1279,18 @@ Style g_Styles[] =
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-PUMP_COL_SPACING*2 },
-				{ TRACK_2,	-PUMP_COL_SPACING*1 },
-				{ TRACK_3,	+PUMP_COL_SPACING*0 },
-				{ TRACK_4,	+PUMP_COL_SPACING*1 },
-				{ TRACK_5,	+PUMP_COL_SPACING*2 },
+				{ TRACK_1,	-PUMP_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+PUMP_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PUMP_COL_SPACING*2.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-PUMP_COL_SPACING*2 },
-				{ TRACK_2,	-PUMP_COL_SPACING*1 },
-				{ TRACK_3,	+PUMP_COL_SPACING*0 },
-				{ TRACK_4,	+PUMP_COL_SPACING*1 },
-				{ TRACK_5,	+PUMP_COL_SPACING*2 },
+				{ TRACK_1,	-PUMP_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+PUMP_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PUMP_COL_SPACING*2.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1305,18 +1315,18 @@ Style g_Styles[] =
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-PUMP_COL_SPACING*2 },
-				{ TRACK_2,	-PUMP_COL_SPACING*1 },
-				{ TRACK_3,	+PUMP_COL_SPACING*0 },
-				{ TRACK_4,	+PUMP_COL_SPACING*1 },
-				{ TRACK_5,	+PUMP_COL_SPACING*2 },
+				{ TRACK_1,	-PUMP_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+PUMP_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PUMP_COL_SPACING*2.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-PUMP_COL_SPACING*2 },
-				{ TRACK_2,	-PUMP_COL_SPACING*1 },
-				{ TRACK_3,	+PUMP_COL_SPACING*0 },
-				{ TRACK_4,	+PUMP_COL_SPACING*1 },
-				{ TRACK_5,	+PUMP_COL_SPACING*2 },
+				{ TRACK_1,	-PUMP_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+PUMP_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PUMP_COL_SPACING*2.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1341,20 +1351,20 @@ Style g_Styles[] =
 		6,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-PUMP_COL_SPACING*2.5f },
-				{ TRACK_2,	-PUMP_COL_SPACING*1.5f },
-				{ TRACK_3,	-PUMP_COL_SPACING*0.5f },
-				{ TRACK_4,	+PUMP_COL_SPACING*0.5f },
-				{ TRACK_5,	+PUMP_COL_SPACING*1.5f },
-				{ TRACK_6,	+PUMP_COL_SPACING*2.5f },
+				{ TRACK_1,	-PUMP_COL_SPACING*2.5f, NULL },
+				{ TRACK_2,	-PUMP_COL_SPACING*1.5f, NULL },
+				{ TRACK_3,	-PUMP_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+PUMP_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+PUMP_COL_SPACING*1.5f, NULL },
+				{ TRACK_6,	+PUMP_COL_SPACING*2.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-PUMP_COL_SPACING*2.5f },
-				{ TRACK_2,	-PUMP_COL_SPACING*1.5f },
-				{ TRACK_3,	-PUMP_COL_SPACING*0.5f },
-				{ TRACK_4,	+PUMP_COL_SPACING*0.5f },
-				{ TRACK_5,	+PUMP_COL_SPACING*1.5f },
-				{ TRACK_6,	+PUMP_COL_SPACING*2.5f },
+				{ TRACK_1,	-PUMP_COL_SPACING*2.5f, NULL },
+				{ TRACK_2,	-PUMP_COL_SPACING*1.5f, NULL },
+				{ TRACK_3,	-PUMP_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+PUMP_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+PUMP_COL_SPACING*1.5f, NULL },
+				{ TRACK_6,	+PUMP_COL_SPACING*2.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1379,28 +1389,28 @@ Style g_Styles[] =
 		10,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-PUMP_COL_SPACING*4.5f },
-				{ TRACK_2,	-PUMP_COL_SPACING*3.5f },
-				{ TRACK_3,	-PUMP_COL_SPACING*2.5f },
-				{ TRACK_4,	-PUMP_COL_SPACING*1.5f },
-				{ TRACK_5,	-PUMP_COL_SPACING*0.5f },
-				{ TRACK_6,	+PUMP_COL_SPACING*0.5f },
-				{ TRACK_7,	+PUMP_COL_SPACING*1.5f },
-				{ TRACK_8,	+PUMP_COL_SPACING*2.5f },
-				{ TRACK_9,	+PUMP_COL_SPACING*3.5f },
-				{ TRACK_10,	+PUMP_COL_SPACING*4.5f },
+				{ TRACK_1,	-PUMP_COL_SPACING*4.5f, NULL },
+				{ TRACK_2,	-PUMP_COL_SPACING*3.5f, NULL },
+				{ TRACK_3,	-PUMP_COL_SPACING*2.5f, NULL },
+				{ TRACK_4,	-PUMP_COL_SPACING*1.5f, NULL },
+				{ TRACK_5,	-PUMP_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+PUMP_COL_SPACING*0.5f, NULL },
+				{ TRACK_7,	+PUMP_COL_SPACING*1.5f, NULL },
+				{ TRACK_8,	+PUMP_COL_SPACING*2.5f, NULL },
+				{ TRACK_9,	+PUMP_COL_SPACING*3.5f, NULL },
+				{ TRACK_10,	+PUMP_COL_SPACING*4.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-PUMP_COL_SPACING*4.5f },
-				{ TRACK_2,	-PUMP_COL_SPACING*3.5f },
-				{ TRACK_3,	-PUMP_COL_SPACING*2.5f },
-				{ TRACK_4,	-PUMP_COL_SPACING*1.5f },
-				{ TRACK_5,	-PUMP_COL_SPACING*0.5f },
-				{ TRACK_6,	+PUMP_COL_SPACING*0.5f },
-				{ TRACK_7,	+PUMP_COL_SPACING*1.5f },
-				{ TRACK_8,	+PUMP_COL_SPACING*2.5f },
-				{ TRACK_9,	+PUMP_COL_SPACING*3.5f },
-				{ TRACK_10,	+PUMP_COL_SPACING*4.5f },
+				{ TRACK_1,	-PUMP_COL_SPACING*4.5f, NULL },
+				{ TRACK_2,	-PUMP_COL_SPACING*3.5f, NULL },
+				{ TRACK_3,	-PUMP_COL_SPACING*2.5f, NULL },
+				{ TRACK_4,	-PUMP_COL_SPACING*1.5f, NULL },
+				{ TRACK_5,	-PUMP_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+PUMP_COL_SPACING*0.5f, NULL },
+				{ TRACK_7,	+PUMP_COL_SPACING*1.5f, NULL },
+				{ TRACK_8,	+PUMP_COL_SPACING*2.5f, NULL },
+				{ TRACK_9,	+PUMP_COL_SPACING*3.5f, NULL },
+				{ TRACK_10,	+PUMP_COL_SPACING*4.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1425,18 +1435,18 @@ Style g_Styles[] =
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-PUMP_COL_SPACING*2 },
-				{ TRACK_2,	-PUMP_COL_SPACING*1 },
-				{ TRACK_3,	+PUMP_COL_SPACING*0 },
-				{ TRACK_4,	+PUMP_COL_SPACING*1 },
-				{ TRACK_5,	+PUMP_COL_SPACING*2 },
+				{ TRACK_1,	-PUMP_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+PUMP_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PUMP_COL_SPACING*2.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_6,	-PUMP_COL_SPACING*2 },
-				{ TRACK_7,	-PUMP_COL_SPACING*1 },
-				{ TRACK_8,	+PUMP_COL_SPACING*0 },
-				{ TRACK_9,	+PUMP_COL_SPACING*1 },
-				{ TRACK_10,	+PUMP_COL_SPACING*2 },
+				{ TRACK_6,	-PUMP_COL_SPACING*2.0f, NULL },
+				{ TRACK_7,	-PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_8,	+PUMP_COL_SPACING*0.0f, NULL },
+				{ TRACK_9,	+PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_10,	+PUMP_COL_SPACING*2.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1461,23 +1471,23 @@ Style g_Styles[] =
 		10,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-PUMP_COL_SPACING*5.0 },
-				{ TRACK_2,	-PUMP_COL_SPACING*4.0 },
-				{ TRACK_3,	-PUMP_COL_SPACING*3.0 },
-				{ TRACK_4,	-PUMP_COL_SPACING*2.0 },
-				{ TRACK_5,	-PUMP_COL_SPACING*1.0 },
-				{ TRACK_6,	+PUMP_COL_SPACING*1.0 },
-				{ TRACK_7,	+PUMP_COL_SPACING*2.0 },
-				{ TRACK_8,	+PUMP_COL_SPACING*3.0 },
-				{ TRACK_9,	+PUMP_COL_SPACING*4.0 },
-				{ TRACK_10,	+PUMP_COL_SPACING*5.0 },
+				{ TRACK_1,	-PUMP_COL_SPACING*5.0f, NULL },
+				{ TRACK_2,	-PUMP_COL_SPACING*4.0f, NULL },
+				{ TRACK_3,	-PUMP_COL_SPACING*3.0f, NULL },
+				{ TRACK_4,	-PUMP_COL_SPACING*2.0f, NULL },
+				{ TRACK_5,	-PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_6,	+PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_7,	+PUMP_COL_SPACING*2.0f, NULL },
+				{ TRACK_8,	+PUMP_COL_SPACING*3.0f, NULL },
+				{ TRACK_9,	+PUMP_COL_SPACING*4.0f, NULL },
+				{ TRACK_10,	+PUMP_COL_SPACING*5.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-PUMP_COL_SPACING*2 },
-				{ TRACK_2,	-PUMP_COL_SPACING*1 },
-				{ TRACK_3,	+PUMP_COL_SPACING*0 },
-				{ TRACK_4,	+PUMP_COL_SPACING*1 },
-				{ TRACK_5,	+PUMP_COL_SPACING*2 },
+				{ TRACK_1,	-PUMP_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+PUMP_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+PUMP_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PUMP_COL_SPACING*2.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1502,18 +1512,18 @@ Style g_Styles[] =
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-EZ2_COL_SPACING*2 },
-				{ TRACK_2,	-EZ2_COL_SPACING*1 },
-				{ TRACK_3,	+EZ2_COL_SPACING*0 },
-				{ TRACK_4,	+EZ2_COL_SPACING*1 },
-				{ TRACK_5,	+EZ2_COL_SPACING*2 },
+				{ TRACK_1,	-EZ2_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-EZ2_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+EZ2_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+EZ2_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+EZ2_COL_SPACING*2.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-EZ2_COL_SPACING*2 },
-				{ TRACK_2,	-EZ2_COL_SPACING*1 },
-				{ TRACK_3,	+EZ2_COL_SPACING*0 },
-				{ TRACK_4,	+EZ2_COL_SPACING*1 },
-				{ TRACK_5,	+EZ2_COL_SPACING*2 },
+				{ TRACK_1,	-EZ2_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-EZ2_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+EZ2_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+EZ2_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+EZ2_COL_SPACING*2.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1538,22 +1548,22 @@ Style g_Styles[] =
 		7,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-EZ2_REAL_COL_SPACING*3 },
-				{ TRACK_2,	-EZ2_REAL_COL_SPACING*2 },
-				{ TRACK_3,	-EZ2_REAL_COL_SPACING*1 }, 
-				{ TRACK_4,	+EZ2_REAL_COL_SPACING*0 },
-				{ TRACK_5,	+EZ2_REAL_COL_SPACING*1 }, 
-				{ TRACK_6,	+EZ2_REAL_COL_SPACING*2 },
-				{ TRACK_7,	+EZ2_REAL_COL_SPACING*3 },
+				{ TRACK_1,	-EZ2_REAL_COL_SPACING*3.0f, NULL },
+				{ TRACK_2,	-EZ2_REAL_COL_SPACING*2.0f, NULL },
+				{ TRACK_3,	-EZ2_REAL_COL_SPACING*1.0f, NULL }, 
+				{ TRACK_4,	+EZ2_REAL_COL_SPACING*0.0f, NULL },
+				{ TRACK_5,	+EZ2_REAL_COL_SPACING*1.0f, NULL }, 
+				{ TRACK_6,	+EZ2_REAL_COL_SPACING*2.0f, NULL },
+				{ TRACK_7,	+EZ2_REAL_COL_SPACING*3.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-EZ2_REAL_COL_SPACING*3 },
-				{ TRACK_2,	-EZ2_REAL_COL_SPACING*2 },
-				{ TRACK_3,	-EZ2_REAL_COL_SPACING*1 }, 
-				{ TRACK_4,	+EZ2_REAL_COL_SPACING*0 },
-				{ TRACK_5,	+EZ2_REAL_COL_SPACING*1 }, 
-				{ TRACK_6,	+EZ2_REAL_COL_SPACING*2 },
-				{ TRACK_7,	+EZ2_REAL_COL_SPACING*3 },
+				{ TRACK_1,	-EZ2_REAL_COL_SPACING*3.0f, NULL },
+				{ TRACK_2,	-EZ2_REAL_COL_SPACING*2.0f, NULL },
+				{ TRACK_3,	-EZ2_REAL_COL_SPACING*1.0f, NULL }, 
+				{ TRACK_4,	+EZ2_REAL_COL_SPACING*0.0f, NULL },
+				{ TRACK_5,	+EZ2_REAL_COL_SPACING*1.0f, NULL }, 
+				{ TRACK_6,	+EZ2_REAL_COL_SPACING*2.0f, NULL },
+				{ TRACK_7,	+EZ2_REAL_COL_SPACING*3.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1578,18 +1588,18 @@ Style g_Styles[] =
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-EZ2_COL_SPACING*2 },
-				{ TRACK_2,	-EZ2_COL_SPACING*1 },
-				{ TRACK_3,	+EZ2_COL_SPACING*0 },
-				{ TRACK_4,	+EZ2_COL_SPACING*1 },
-				{ TRACK_5,	+EZ2_COL_SPACING*2 },
+				{ TRACK_1,	-EZ2_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-EZ2_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+EZ2_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+EZ2_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+EZ2_COL_SPACING*2.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-EZ2_COL_SPACING*2 },
-				{ TRACK_2,	-EZ2_COL_SPACING*1 },
-				{ TRACK_3,	+EZ2_COL_SPACING*0 },
-				{ TRACK_4,	+EZ2_COL_SPACING*1 },
-				{ TRACK_5,	+EZ2_COL_SPACING*2 },
+				{ TRACK_1,	-EZ2_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-EZ2_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+EZ2_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+EZ2_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+EZ2_COL_SPACING*2.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1614,22 +1624,22 @@ Style g_Styles[] =
 		7,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-EZ2_REAL_COL_SPACING*3 },
-				{ TRACK_2,	-EZ2_REAL_COL_SPACING*2 },
-				{ TRACK_3,	-EZ2_REAL_COL_SPACING*1 }, 
-				{ TRACK_4,	+EZ2_REAL_COL_SPACING*0 },
-				{ TRACK_5,	+EZ2_REAL_COL_SPACING*1 }, 
-				{ TRACK_6,	+EZ2_REAL_COL_SPACING*2 },
-				{ TRACK_7,	+EZ2_REAL_COL_SPACING*3 },
+				{ TRACK_1,	-EZ2_REAL_COL_SPACING*3.0f, NULL },
+				{ TRACK_2,	-EZ2_REAL_COL_SPACING*2.0f, NULL },
+				{ TRACK_3,	-EZ2_REAL_COL_SPACING*1.0f, NULL }, 
+				{ TRACK_4,	+EZ2_REAL_COL_SPACING*0.0f, NULL },
+				{ TRACK_5,	+EZ2_REAL_COL_SPACING*1.0f, NULL }, 
+				{ TRACK_6,	+EZ2_REAL_COL_SPACING*2.0f, NULL },
+				{ TRACK_7,	+EZ2_REAL_COL_SPACING*3.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-EZ2_REAL_COL_SPACING*3 },
-				{ TRACK_2,	-EZ2_REAL_COL_SPACING*2 },
-				{ TRACK_3,	-EZ2_REAL_COL_SPACING*1 }, 
-				{ TRACK_4,	+EZ2_REAL_COL_SPACING*0 },
-				{ TRACK_5,	+EZ2_REAL_COL_SPACING*1 }, 
-				{ TRACK_6,	+EZ2_REAL_COL_SPACING*2 },
-				{ TRACK_7,	+EZ2_REAL_COL_SPACING*3 },
+				{ TRACK_1,	-EZ2_REAL_COL_SPACING*3.0f, NULL },
+				{ TRACK_2,	-EZ2_REAL_COL_SPACING*2.0f, NULL },
+				{ TRACK_3,	-EZ2_REAL_COL_SPACING*1.0f, NULL }, 
+				{ TRACK_4,	+EZ2_REAL_COL_SPACING*0.0f, NULL },
+				{ TRACK_5,	+EZ2_REAL_COL_SPACING*1.0f, NULL }, 
+				{ TRACK_6,	+EZ2_REAL_COL_SPACING*2.0f, NULL },
+				{ TRACK_7,	+EZ2_REAL_COL_SPACING*3.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1654,28 +1664,28 @@ Style g_Styles[] =
 		10,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-EZ2_COL_SPACING*4.5f },
-				{ TRACK_2,	-EZ2_COL_SPACING*3.5f },
-				{ TRACK_3,	-EZ2_COL_SPACING*2.5f },
-				{ TRACK_4,	-EZ2_COL_SPACING*1.5f },
-				{ TRACK_5,	-EZ2_COL_SPACING*0.5f },
-				{ TRACK_6,	+EZ2_COL_SPACING*0.5f }, 
-				{ TRACK_7,	+EZ2_COL_SPACING*1.5f },  
-				{ TRACK_8,	+EZ2_COL_SPACING*2.5f },
-				{ TRACK_9,	+EZ2_COL_SPACING*3.5f },
-				{ TRACK_10,	+EZ2_COL_SPACING*4.5f },
+				{ TRACK_1,	-EZ2_COL_SPACING*4.5f, NULL },
+				{ TRACK_2,	-EZ2_COL_SPACING*3.5f, NULL },
+				{ TRACK_3,	-EZ2_COL_SPACING*2.5f, NULL },
+				{ TRACK_4,	-EZ2_COL_SPACING*1.5f, NULL },
+				{ TRACK_5,	-EZ2_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+EZ2_COL_SPACING*0.5f, NULL }, 
+				{ TRACK_7,	+EZ2_COL_SPACING*1.5f, NULL },  
+				{ TRACK_8,	+EZ2_COL_SPACING*2.5f, NULL },
+				{ TRACK_9,	+EZ2_COL_SPACING*3.5f, NULL },
+				{ TRACK_10,	+EZ2_COL_SPACING*4.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-EZ2_COL_SPACING*4.5f },
-				{ TRACK_2,	-EZ2_COL_SPACING*3.5f },
-				{ TRACK_3,	-EZ2_COL_SPACING*2.5f },
-				{ TRACK_4,	-EZ2_COL_SPACING*1.5f },
-				{ TRACK_5,	-EZ2_COL_SPACING*0.5f },
-				{ TRACK_6,	+EZ2_COL_SPACING*0.5f }, 
-				{ TRACK_7,	+EZ2_COL_SPACING*1.5f },  
-				{ TRACK_8,	+EZ2_COL_SPACING*2.5f },
-				{ TRACK_9,	+EZ2_COL_SPACING*3.5f },
-				{ TRACK_10,	+EZ2_COL_SPACING*4.5f },
+				{ TRACK_1,	-EZ2_COL_SPACING*4.5f, NULL },
+				{ TRACK_2,	-EZ2_COL_SPACING*3.5f, NULL },
+				{ TRACK_3,	-EZ2_COL_SPACING*2.5f, NULL },
+				{ TRACK_4,	-EZ2_COL_SPACING*1.5f, NULL },
+				{ TRACK_5,	-EZ2_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+EZ2_COL_SPACING*0.5f, NULL }, 
+				{ TRACK_7,	+EZ2_COL_SPACING*1.5f, NULL },  
+				{ TRACK_8,	+EZ2_COL_SPACING*2.5f, NULL },
+				{ TRACK_9,	+EZ2_COL_SPACING*3.5f, NULL },
+				{ TRACK_10,	+EZ2_COL_SPACING*4.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1700,18 +1710,18 @@ Style g_Styles[] =
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-PARA_COL_SPACING*2 },
-				{ TRACK_2,	-PARA_COL_SPACING*1 },
-				{ TRACK_3,	+PARA_COL_SPACING*0 },
-				{ TRACK_4,	+PARA_COL_SPACING*1 },
-				{ TRACK_5,	+PARA_COL_SPACING*2 },
+				{ TRACK_1,	-PARA_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-PARA_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+PARA_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+PARA_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PARA_COL_SPACING*2.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-PARA_COL_SPACING*2 },
-				{ TRACK_2,	-PARA_COL_SPACING*1 },
-				{ TRACK_3,	+PARA_COL_SPACING*0 },
-				{ TRACK_4,	+PARA_COL_SPACING*1 },
-				{ TRACK_5,	+PARA_COL_SPACING*2 },
+				{ TRACK_1,	-PARA_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-PARA_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+PARA_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+PARA_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PARA_COL_SPACING*2.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1736,18 +1746,18 @@ Style g_Styles[] =
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-PARA_COL_SPACING*2 },
-				{ TRACK_2,	-PARA_COL_SPACING*1 },
-				{ TRACK_3,	+PARA_COL_SPACING*0 },
-				{ TRACK_4,	+PARA_COL_SPACING*1 },
-				{ TRACK_5,	+PARA_COL_SPACING*2 },
+				{ TRACK_1,	-PARA_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-PARA_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+PARA_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+PARA_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PARA_COL_SPACING*2.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-PARA_COL_SPACING*2 },
-				{ TRACK_2,	-PARA_COL_SPACING*1 },
-				{ TRACK_3,	+PARA_COL_SPACING*0 },
-				{ TRACK_4,	+PARA_COL_SPACING*1 },
-				{ TRACK_5,	+PARA_COL_SPACING*2 },
+				{ TRACK_1,	-PARA_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-PARA_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+PARA_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+PARA_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PARA_COL_SPACING*2.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1772,24 +1782,24 @@ Style g_Styles[] =
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-DS3DDX_COL_SPACING*3 },
-				{ TRACK_2,	-DS3DDX_COL_SPACING*2 },
-				{ TRACK_3,	-DS3DDX_COL_SPACING*1 },
-				{ TRACK_4,	-DS3DDX_COL_SPACING*0 },
-				{ TRACK_5,	+DS3DDX_COL_SPACING*0 },
-				{ TRACK_6,	+DS3DDX_COL_SPACING*1 },
-				{ TRACK_7,	+DS3DDX_COL_SPACING*2 },
-				{ TRACK_8,	+DS3DDX_COL_SPACING*3 },
+				{ TRACK_1,	-DS3DDX_COL_SPACING*3.0f, NULL },
+				{ TRACK_2,	-DS3DDX_COL_SPACING*2.0f, NULL },
+				{ TRACK_3,	-DS3DDX_COL_SPACING*1.0f, NULL },
+				{ TRACK_4,	-DS3DDX_COL_SPACING*0.0f, NULL },
+				{ TRACK_5,	+DS3DDX_COL_SPACING*0.0f, NULL },
+				{ TRACK_6,	+DS3DDX_COL_SPACING*1.0f, NULL },
+				{ TRACK_7,	+DS3DDX_COL_SPACING*2.0f, NULL },
+				{ TRACK_8,	+DS3DDX_COL_SPACING*3.0f , NULL},
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-DS3DDX_COL_SPACING*3 },
-				{ TRACK_2,	-DS3DDX_COL_SPACING*2 },
-				{ TRACK_3,	-DS3DDX_COL_SPACING*1 },
-				{ TRACK_4,	-DS3DDX_COL_SPACING*0 },
-				{ TRACK_5,	+DS3DDX_COL_SPACING*0 },
-				{ TRACK_6,	+DS3DDX_COL_SPACING*1 },
-				{ TRACK_7,	+DS3DDX_COL_SPACING*2 },
-				{ TRACK_8,	+DS3DDX_COL_SPACING*3 },
+				{ TRACK_1,	-DS3DDX_COL_SPACING*3.0f, NULL },
+				{ TRACK_2,	-DS3DDX_COL_SPACING*2.0f, NULL },
+				{ TRACK_3,	-DS3DDX_COL_SPACING*1.0f, NULL },
+				{ TRACK_4,	-DS3DDX_COL_SPACING*0.0f, NULL },
+				{ TRACK_5,	+DS3DDX_COL_SPACING*0.0f, NULL },
+				{ TRACK_6,	+DS3DDX_COL_SPACING*1.0f, NULL },
+				{ TRACK_7,	+DS3DDX_COL_SPACING*2.0f, NULL },
+				{ TRACK_8,	+DS3DDX_COL_SPACING*3.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1814,19 +1824,19 @@ Style g_Styles[] =
 		6,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-BM_COL_SPACING*2.5f },
-				{ TRACK_2,	-BM_COL_SPACING*1.5f },
-				{ TRACK_3,	-BM_COL_SPACING*0.5f },
-				{ TRACK_4,	+BM_COL_SPACING*0.5f },
-				{ TRACK_5,	+BM_COL_SPACING*1.5f },
+				{ TRACK_1,	-BM_COL_SPACING*2.5f, NULL },
+				{ TRACK_2,	-BM_COL_SPACING*1.5f, NULL },
+				{ TRACK_3,	-BM_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+BM_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+BM_COL_SPACING*1.5f, NULL },
 				{ TRACK_6,	+BM_COL_SPACING*3.0f, "scratch" },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-BM_COL_SPACING*2.5f },
-				{ TRACK_2,	-BM_COL_SPACING*1.5f },
-				{ TRACK_3,	-BM_COL_SPACING*0.5f },
-				{ TRACK_4,	+BM_COL_SPACING*0.5f },
-				{ TRACK_5,	+BM_COL_SPACING*1.5f },
+				{ TRACK_1,	-BM_COL_SPACING*2.5f, NULL },
+				{ TRACK_2,	-BM_COL_SPACING*1.5f, NULL },
+				{ TRACK_3,	-BM_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+BM_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+BM_COL_SPACING*1.5f, NULL },
 				{ TRACK_6,	+BM_COL_SPACING*3.0f, "scratch" },
 			},
 		},
@@ -1852,31 +1862,31 @@ Style g_Styles[] =
 		12,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-BM_COL_SPACING*6.0f },
-				{ TRACK_2,	-BM_COL_SPACING*5.0f },
-				{ TRACK_3,	-BM_COL_SPACING*4.0f },
-				{ TRACK_4,	-BM_COL_SPACING*3.0f },
-				{ TRACK_5,	-BM_COL_SPACING*2.0f },
+				{ TRACK_1,	-BM_COL_SPACING*6.0f, NULL },
+				{ TRACK_2,	-BM_COL_SPACING*5.0f, NULL },
+				{ TRACK_3,	-BM_COL_SPACING*4.0f, NULL },
+				{ TRACK_4,	-BM_COL_SPACING*3.0f, NULL },
+				{ TRACK_5,	-BM_COL_SPACING*2.0f, NULL },
 				{ TRACK_6,	-BM_COL_SPACING*1.5f, "scratch" },
-				{ TRACK_7,	+BM_COL_SPACING*0.5f },
-				{ TRACK_8,	+BM_COL_SPACING*1.5f },
-				{ TRACK_9,	+BM_COL_SPACING*2.5f },
-				{ TRACK_10,	+BM_COL_SPACING*3.5f },
-				{ TRACK_11,	+BM_COL_SPACING*4.5f },
+				{ TRACK_7,	+BM_COL_SPACING*0.5f, NULL },
+				{ TRACK_8,	+BM_COL_SPACING*1.5f, NULL },
+				{ TRACK_9,	+BM_COL_SPACING*2.5f, NULL },
+				{ TRACK_10,	+BM_COL_SPACING*3.5f, NULL },
+				{ TRACK_11,	+BM_COL_SPACING*4.5f, NULL },
 				{ TRACK_12,	+BM_COL_SPACING*6.0f, "scratch" },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-BM_COL_SPACING*6.0f },
-				{ TRACK_2,	-BM_COL_SPACING*5.0f },
-				{ TRACK_3,	-BM_COL_SPACING*4.0f },
-				{ TRACK_4,	-BM_COL_SPACING*3.0f },
-				{ TRACK_5,	-BM_COL_SPACING*2.0f },
+				{ TRACK_1,	-BM_COL_SPACING*6.0f, NULL },
+				{ TRACK_2,	-BM_COL_SPACING*5.0f, NULL },
+				{ TRACK_3,	-BM_COL_SPACING*4.0f, NULL },
+				{ TRACK_4,	-BM_COL_SPACING*3.0f, NULL },
+				{ TRACK_5,	-BM_COL_SPACING*2.0f, NULL },
 				{ TRACK_6,	-BM_COL_SPACING*1.5f, "scratch" },
-				{ TRACK_7,	+BM_COL_SPACING*0.5f },
-				{ TRACK_8,	+BM_COL_SPACING*1.5f },
-				{ TRACK_9,	+BM_COL_SPACING*2.5f },
-				{ TRACK_10,	+BM_COL_SPACING*3.5f },
-				{ TRACK_11,	+BM_COL_SPACING*4.5f },
+				{ TRACK_7,	+BM_COL_SPACING*0.5f, NULL },
+				{ TRACK_8,	+BM_COL_SPACING*1.5f, NULL },
+				{ TRACK_9,	+BM_COL_SPACING*2.5f, NULL },
+				{ TRACK_10,	+BM_COL_SPACING*3.5f, NULL },
+				{ TRACK_11,	+BM_COL_SPACING*4.5f, NULL },
 				{ TRACK_12,	+BM_COL_SPACING*6.0f, "scratch" },
 			},
 		},
@@ -1903,22 +1913,22 @@ Style g_Styles[] =
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
 				{ TRACK_8,	-BM_COL_SPACING*3.5f, "scratch" },
-				{ TRACK_1,	-BM_COL_SPACING*2.0f },
-				{ TRACK_2,	-BM_COL_SPACING*1.0f },
-				{ TRACK_3,	-BM_COL_SPACING*0.0f },
-				{ TRACK_4,	+BM_COL_SPACING*1.0f },
-				{ TRACK_5,	+BM_COL_SPACING*2.0f },
-				{ TRACK_6,	+BM_COL_SPACING*3.0f },
-				{ TRACK_7,	+BM_COL_SPACING*4.0f },
+				{ TRACK_1,	-BM_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-BM_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	-BM_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+BM_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+BM_COL_SPACING*2.0f, NULL },
+				{ TRACK_6,	+BM_COL_SPACING*3.0f, NULL },
+				{ TRACK_7,	+BM_COL_SPACING*4.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-BM_COL_SPACING*3.5f },
-				{ TRACK_2,	-BM_COL_SPACING*2.5f },
-				{ TRACK_3,	-BM_COL_SPACING*1.5f },
-				{ TRACK_4,	-BM_COL_SPACING*0.5f },
-				{ TRACK_5,	+BM_COL_SPACING*0.5f },
-				{ TRACK_6,	+BM_COL_SPACING*1.5f },
-				{ TRACK_7,	+BM_COL_SPACING*2.5f },
+				{ TRACK_1,	-BM_COL_SPACING*3.5f, NULL },
+				{ TRACK_2,	-BM_COL_SPACING*2.5f, NULL },
+				{ TRACK_3,	-BM_COL_SPACING*1.5f, NULL },
+				{ TRACK_4,	-BM_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+BM_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+BM_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	+BM_COL_SPACING*2.5f, NULL },
 				{ TRACK_8,	+BM_COL_SPACING*4.0f, "scratch" },
 			},
 		},
@@ -1945,38 +1955,38 @@ Style g_Styles[] =
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
 				{ TRACK_8,	-BM_COL_SPACING*8.0f, "scratch" },
-				{ TRACK_1,	-BM_COL_SPACING*6.5f },
-				{ TRACK_2,	-BM_COL_SPACING*5.5f },
-				{ TRACK_3,	-BM_COL_SPACING*4.5f },
-				{ TRACK_4,	-BM_COL_SPACING*3.5f },
-				{ TRACK_5,	-BM_COL_SPACING*2.5f },
-				{ TRACK_6,	-BM_COL_SPACING*1.5f },
-				{ TRACK_7,	-BM_COL_SPACING*0.5f },
-				{ TRACK_9,	+BM_COL_SPACING*0.5f },
-				{ TRACK_10,	+BM_COL_SPACING*1.5f },
-				{ TRACK_11,	+BM_COL_SPACING*2.5f },
-				{ TRACK_12,	+BM_COL_SPACING*3.5f },
-				{ TRACK_13,	+BM_COL_SPACING*4.5f },
-				{ TRACK_14,	+BM_COL_SPACING*5.5f },
-				{ TRACK_15,	+BM_COL_SPACING*6.5f },
+				{ TRACK_1,	-BM_COL_SPACING*6.5f, NULL },
+				{ TRACK_2,	-BM_COL_SPACING*5.5f, NULL },
+				{ TRACK_3,	-BM_COL_SPACING*4.5f, NULL },
+				{ TRACK_4,	-BM_COL_SPACING*3.5f, NULL },
+				{ TRACK_5,	-BM_COL_SPACING*2.5f, NULL },
+				{ TRACK_6,	-BM_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	-BM_COL_SPACING*0.5f, NULL },
+				{ TRACK_9,	+BM_COL_SPACING*0.5f, NULL },
+				{ TRACK_10,	+BM_COL_SPACING*1.5f, NULL },
+				{ TRACK_11,	+BM_COL_SPACING*2.5f, NULL },
+				{ TRACK_12,	+BM_COL_SPACING*3.5f, NULL },
+				{ TRACK_13,	+BM_COL_SPACING*4.5f, NULL },
+				{ TRACK_14,	+BM_COL_SPACING*5.5f, NULL },
+				{ TRACK_15,	+BM_COL_SPACING*6.5f, NULL },
 				{ TRACK_16,	+BM_COL_SPACING*8.0f, "scratch" },
 			},
 			{	// PLAYER_2
 				{ TRACK_8,	-BM_COL_SPACING*8.0f, "scratch" },
-				{ TRACK_1,	-BM_COL_SPACING*6.5f },
-				{ TRACK_2,	-BM_COL_SPACING*5.5f },
-				{ TRACK_3,	-BM_COL_SPACING*4.5f },
-				{ TRACK_4,	-BM_COL_SPACING*3.5f },
-				{ TRACK_5,	-BM_COL_SPACING*2.5f },
-				{ TRACK_6,	-BM_COL_SPACING*1.5f },
-				{ TRACK_7,	-BM_COL_SPACING*0.5f },
-				{ TRACK_9,	+BM_COL_SPACING*0.5f },
-				{ TRACK_10,	+BM_COL_SPACING*1.5f },
-				{ TRACK_11,	+BM_COL_SPACING*2.5f },
-				{ TRACK_12,	+BM_COL_SPACING*3.5f },
-				{ TRACK_13,	+BM_COL_SPACING*4.5f },
-				{ TRACK_14,	+BM_COL_SPACING*5.5f },
-				{ TRACK_15,	+BM_COL_SPACING*6.5f },
+				{ TRACK_1,	-BM_COL_SPACING*6.5f, NULL },
+				{ TRACK_2,	-BM_COL_SPACING*5.5f, NULL },
+				{ TRACK_3,	-BM_COL_SPACING*4.5f, NULL },
+				{ TRACK_4,	-BM_COL_SPACING*3.5f, NULL },
+				{ TRACK_5,	-BM_COL_SPACING*2.5f, NULL },
+				{ TRACK_6,	-BM_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	-BM_COL_SPACING*0.5f, NULL },
+				{ TRACK_9,	+BM_COL_SPACING*0.5f, NULL },
+				{ TRACK_10,	+BM_COL_SPACING*1.5f, NULL },
+				{ TRACK_11,	+BM_COL_SPACING*2.5f, NULL },
+				{ TRACK_12,	+BM_COL_SPACING*3.5f, NULL },
+				{ TRACK_13,	+BM_COL_SPACING*4.5f, NULL },
+				{ TRACK_14,	+BM_COL_SPACING*5.5f, NULL },
+				{ TRACK_15,	+BM_COL_SPACING*6.5f, NULL },
 				{ TRACK_16,	+BM_COL_SPACING*8.0f, "scratch" },
 			},
 		},
@@ -2002,16 +2012,16 @@ Style g_Styles[] =
 		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-MANIAX_COL_SPACING*1.5f },
-				{ TRACK_2,	-MANIAX_COL_SPACING*0.5f },
-				{ TRACK_3,	+MANIAX_COL_SPACING*0.5f },
-				{ TRACK_4,	+MANIAX_COL_SPACING*1.5f },
+				{ TRACK_1,	-MANIAX_COL_SPACING*1.5f, NULL },
+				{ TRACK_2,	-MANIAX_COL_SPACING*0.5f, NULL },
+				{ TRACK_3,	+MANIAX_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+MANIAX_COL_SPACING*1.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-MANIAX_COL_SPACING*1.5f },
-				{ TRACK_2,	-MANIAX_COL_SPACING*0.5f },
-				{ TRACK_3,	+MANIAX_COL_SPACING*0.5f },
-				{ TRACK_4,	+MANIAX_COL_SPACING*1.5f },
+				{ TRACK_1,	-MANIAX_COL_SPACING*1.5f, NULL },
+				{ TRACK_2,	-MANIAX_COL_SPACING*0.5f, NULL },
+				{ TRACK_3,	+MANIAX_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+MANIAX_COL_SPACING*1.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2036,16 +2046,16 @@ Style g_Styles[] =
 		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-MANIAX_COL_SPACING*1.5f },
-				{ TRACK_2,	-MANIAX_COL_SPACING*0.5f },
-				{ TRACK_3,	+MANIAX_COL_SPACING*0.5f },
-				{ TRACK_4,	+MANIAX_COL_SPACING*1.5f },
+				{ TRACK_1,	-MANIAX_COL_SPACING*1.5f, NULL },
+				{ TRACK_2,	-MANIAX_COL_SPACING*0.5f, NULL },
+				{ TRACK_3,	+MANIAX_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+MANIAX_COL_SPACING*1.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-MANIAX_COL_SPACING*1.5f },
-				{ TRACK_2,	-MANIAX_COL_SPACING*0.5f },
-				{ TRACK_3,	+MANIAX_COL_SPACING*0.5f },
-				{ TRACK_4,	+MANIAX_COL_SPACING*1.5f },
+				{ TRACK_1,	-MANIAX_COL_SPACING*1.5f, NULL },
+				{ TRACK_2,	-MANIAX_COL_SPACING*0.5f, NULL },
+				{ TRACK_3,	+MANIAX_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+MANIAX_COL_SPACING*1.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2070,24 +2080,24 @@ Style g_Styles[] =
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-MANIAX_COL_SPACING*3.5f },
-				{ TRACK_2,	-MANIAX_COL_SPACING*2.5f },
-				{ TRACK_3,	-MANIAX_COL_SPACING*1.5f },
-				{ TRACK_4,	-MANIAX_COL_SPACING*0.5f },
-				{ TRACK_5,	+MANIAX_COL_SPACING*0.5f },
-				{ TRACK_6,	+MANIAX_COL_SPACING*1.5f },
-				{ TRACK_7,	+MANIAX_COL_SPACING*2.5f },
-				{ TRACK_8,	+MANIAX_COL_SPACING*3.5f },
+				{ TRACK_1,	-MANIAX_COL_SPACING*3.5f, NULL },
+				{ TRACK_2,	-MANIAX_COL_SPACING*2.5f, NULL },
+				{ TRACK_3,	-MANIAX_COL_SPACING*1.5f, NULL },
+				{ TRACK_4,	-MANIAX_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+MANIAX_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+MANIAX_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	+MANIAX_COL_SPACING*2.5f, NULL },
+				{ TRACK_8,	+MANIAX_COL_SPACING*3.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-MANIAX_COL_SPACING*3.5f },
-				{ TRACK_2,	-MANIAX_COL_SPACING*2.5f },
-				{ TRACK_3,	-MANIAX_COL_SPACING*1.5f },
-				{ TRACK_4,	-MANIAX_COL_SPACING*0.5f },
-				{ TRACK_5,	+MANIAX_COL_SPACING*0.5f },
-				{ TRACK_6,	+MANIAX_COL_SPACING*1.5f },
-				{ TRACK_7,	+MANIAX_COL_SPACING*2.5f },
-				{ TRACK_8,	+MANIAX_COL_SPACING*3.5f },
+				{ TRACK_1,	-MANIAX_COL_SPACING*3.5f, NULL },
+				{ TRACK_2,	-MANIAX_COL_SPACING*2.5f, NULL },
+				{ TRACK_3,	-MANIAX_COL_SPACING*1.5f, NULL },
+				{ TRACK_4,	-MANIAX_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+MANIAX_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+MANIAX_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	+MANIAX_COL_SPACING*2.5f, NULL },
+				{ TRACK_8,	+MANIAX_COL_SPACING*3.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2112,16 +2122,16 @@ Style g_Styles[] =
 		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-TECHNO_COL_SPACING*1.5f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*0.5f },
-				{ TRACK_3,	+TECHNO_COL_SPACING*0.5f },
-				{ TRACK_4,	+TECHNO_COL_SPACING*1.5f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_3,	+TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+TECHNO_COL_SPACING*1.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-TECHNO_COL_SPACING*1.5f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*0.5f },
-				{ TRACK_3,	+TECHNO_COL_SPACING*0.5f },
-				{ TRACK_4,	+TECHNO_COL_SPACING*1.5f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_3,	+TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+TECHNO_COL_SPACING*1.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2146,18 +2156,18 @@ Style g_Styles[] =
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-TECHNO_COL_SPACING*2.0f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*1.0f },
-				{ TRACK_3,	+TECHNO_COL_SPACING*0.0f },
-				{ TRACK_4,	+TECHNO_COL_SPACING*1.0f },
-				{ TRACK_5,	+TECHNO_COL_SPACING*2.0f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+TECHNO_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+TECHNO_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+TECHNO_COL_SPACING*2.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-TECHNO_COL_SPACING*2.0f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*1.0f },
-				{ TRACK_3,	+TECHNO_COL_SPACING*0.0f },
-				{ TRACK_4,	+TECHNO_COL_SPACING*1.0f },
-				{ TRACK_5,	+TECHNO_COL_SPACING*2.0f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+TECHNO_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+TECHNO_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+TECHNO_COL_SPACING*2.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2184,24 +2194,24 @@ Style g_Styles[] =
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-TECHNO_COL_SPACING*2.5f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*1.5f },
-				{ TRACK_3,	-TECHNO_COL_SPACING*0.5f },
-				{ TRACK_4,	+TECHNO_COL_SPACING*0.5f },
-				{ TRACK_5,	+TECHNO_COL_SPACING*1.5f },
-				{ TRACK_6,	+TECHNO_COL_SPACING*2.5f },
-				{ TRACK_7,	+TECHNO_COL_SPACING*3.5f },
-				{ TRACK_8,	+TECHNO_COL_SPACING*4.5f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*2.5f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_3,	-TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_6,	+TECHNO_COL_SPACING*2.5f, NULL },
+				{ TRACK_7,	+TECHNO_COL_SPACING*3.5f, NULL },
+				{ TRACK_8,	+TECHNO_COL_SPACING*4.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-TECHNO_COL_SPACING*4.5f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*3.5f },
-				{ TRACK_3,	-TECHNO_COL_SPACING*2.5f },
-				{ TRACK_4,	-TECHNO_COL_SPACING*1.5f },
-				{ TRACK_5,	-TECHNO_COL_SPACING*0.5f },
-				{ TRACK_6,	+TECHNO_COL_SPACING*0.5f },
-				{ TRACK_7,	+TECHNO_COL_SPACING*1.5f },
-				{ TRACK_8,	+TECHNO_COL_SPACING*2.5f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*4.5f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*3.5f, NULL },
+				{ TRACK_3,	-TECHNO_COL_SPACING*2.5f, NULL },
+				{ TRACK_4,	-TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_5,	-TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_7,	+TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_8,	+TECHNO_COL_SPACING*2.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2226,16 +2236,16 @@ Style g_Styles[] =
 		4,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-TECHNO_COL_SPACING*1.5f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*0.5f },
-				{ TRACK_3,	+TECHNO_COL_SPACING*0.5f },
-				{ TRACK_4,	TECHNO_COL_SPACING*1.5f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_3,	+TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+TECHNO_COL_SPACING*1.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-TECHNO_COL_SPACING*1.5f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*0.5f },
-				{ TRACK_3,	+TECHNO_COL_SPACING*0.5f },
-				{ TRACK_4,	+TECHNO_COL_SPACING*1.5f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_3,	+TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+TECHNO_COL_SPACING*1.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2260,18 +2270,18 @@ Style g_Styles[] =
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-TECHNO_COL_SPACING*2.0f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*1.0f },
-				{ TRACK_3,	+TECHNO_COL_SPACING*0.0f },
-				{ TRACK_4,	+TECHNO_COL_SPACING*1.0f },
-				{ TRACK_5,	+TECHNO_COL_SPACING*2.0f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+TECHNO_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+TECHNO_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+TECHNO_COL_SPACING*2.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-TECHNO_COL_SPACING*2.0f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*1.0f },
-				{ TRACK_3,	+TECHNO_COL_SPACING*0.0f },
-				{ TRACK_4,	+TECHNO_COL_SPACING*1.0f },
-				{ TRACK_5,	+TECHNO_COL_SPACING*2.0f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+TECHNO_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+TECHNO_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+TECHNO_COL_SPACING*2.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2298,24 +2308,24 @@ Style g_Styles[] =
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-TECHNO_VERSUS_COL_SPACING*3.5f },
-				{ TRACK_2,	-TECHNO_VERSUS_COL_SPACING*2.5f },
-				{ TRACK_3,	-TECHNO_VERSUS_COL_SPACING*1.5f },
-				{ TRACK_4,	-TECHNO_VERSUS_COL_SPACING*0.5f },
-				{ TRACK_5,	+TECHNO_VERSUS_COL_SPACING*0.5f },
-				{ TRACK_6,	+TECHNO_VERSUS_COL_SPACING*1.5f },
-				{ TRACK_7,	+TECHNO_VERSUS_COL_SPACING*2.5f },
-				{ TRACK_8,	+TECHNO_VERSUS_COL_SPACING*3.5f },
+				{ TRACK_1,	-TECHNO_VERSUS_COL_SPACING*3.5f, NULL },
+				{ TRACK_2,	-TECHNO_VERSUS_COL_SPACING*2.5f, NULL },
+				{ TRACK_3,	-TECHNO_VERSUS_COL_SPACING*1.5f, NULL },
+				{ TRACK_4,	-TECHNO_VERSUS_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+TECHNO_VERSUS_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+TECHNO_VERSUS_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	+TECHNO_VERSUS_COL_SPACING*2.5f, NULL },
+				{ TRACK_8,	+TECHNO_VERSUS_COL_SPACING*3.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-TECHNO_VERSUS_COL_SPACING*3.5f },
-				{ TRACK_2,	-TECHNO_VERSUS_COL_SPACING*2.5f },
-				{ TRACK_3,	-TECHNO_VERSUS_COL_SPACING*1.5f },
-				{ TRACK_4,	-TECHNO_VERSUS_COL_SPACING*0.5f },
-				{ TRACK_5,	+TECHNO_VERSUS_COL_SPACING*0.5f },
-				{ TRACK_6,	+TECHNO_VERSUS_COL_SPACING*1.5f },
-				{ TRACK_7,	+TECHNO_VERSUS_COL_SPACING*2.5f },
-				{ TRACK_8,	+TECHNO_VERSUS_COL_SPACING*3.5f },
+				{ TRACK_1,	-TECHNO_VERSUS_COL_SPACING*3.5f, NULL },
+				{ TRACK_2,	-TECHNO_VERSUS_COL_SPACING*2.5f, NULL },
+				{ TRACK_3,	-TECHNO_VERSUS_COL_SPACING*1.5f, NULL },
+				{ TRACK_4,	-TECHNO_VERSUS_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+TECHNO_VERSUS_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+TECHNO_VERSUS_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	+TECHNO_VERSUS_COL_SPACING*2.5f, NULL },
+				{ TRACK_8,	+TECHNO_VERSUS_COL_SPACING*3.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2342,24 +2352,24 @@ Style g_Styles[] =
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-TECHNO_COL_SPACING*3.5f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*2.5f },
-				{ TRACK_3,	-TECHNO_COL_SPACING*1.5f },
-				{ TRACK_4,	-TECHNO_COL_SPACING*0.5f },
-				{ TRACK_5,	+TECHNO_COL_SPACING*0.5f },
-				{ TRACK_6,	+TECHNO_COL_SPACING*1.5f },
-				{ TRACK_7,	+TECHNO_COL_SPACING*2.5f },
-				{ TRACK_8,	+TECHNO_COL_SPACING*3.5f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*3.5f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*2.5f, NULL },
+				{ TRACK_3,	-TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_4,	-TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	+TECHNO_COL_SPACING*2.5f, NULL },
+				{ TRACK_8,	+TECHNO_COL_SPACING*3.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-TECHNO_COL_SPACING*3.5f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*2.5f },
-				{ TRACK_3,	-TECHNO_COL_SPACING*1.5f },
-				{ TRACK_4,	-TECHNO_COL_SPACING*0.5f },
-				{ TRACK_5,	+TECHNO_COL_SPACING*0.5f },
-				{ TRACK_6,	+TECHNO_COL_SPACING*1.5f },
-				{ TRACK_7,	+TECHNO_COL_SPACING*2.5f },
-				{ TRACK_8,	+TECHNO_COL_SPACING*3.5f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*3.5f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*2.5f, NULL },
+				{ TRACK_3,	-TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_4,	-TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	+TECHNO_COL_SPACING*2.5f, NULL },
+				{ TRACK_8,	+TECHNO_COL_SPACING*3.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2384,28 +2394,28 @@ Style g_Styles[] =
 		10,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-TECHNO_COL_SPACING*4.5f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*3.5f },
-				{ TRACK_3,	-TECHNO_COL_SPACING*2.5f },
-				{ TRACK_4,	-TECHNO_COL_SPACING*1.5f },
-				{ TRACK_5,	-TECHNO_COL_SPACING*0.5f },
-				{ TRACK_6,	+TECHNO_COL_SPACING*0.5f },
-				{ TRACK_7,	+TECHNO_COL_SPACING*1.5f },
-				{ TRACK_8,	+TECHNO_COL_SPACING*2.5f },
-				{ TRACK_9,	+TECHNO_COL_SPACING*3.5f },
-				{ TRACK_10,	+TECHNO_COL_SPACING*4.5f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*4.5f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*3.5f, NULL },
+				{ TRACK_3,	-TECHNO_COL_SPACING*2.5f, NULL },
+				{ TRACK_4,	-TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_5,	-TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_7,	+TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_8,	+TECHNO_COL_SPACING*2.5f, NULL },
+				{ TRACK_9,	+TECHNO_COL_SPACING*3.5f, NULL },
+				{ TRACK_10,	+TECHNO_COL_SPACING*4.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-TECHNO_COL_SPACING*4.5f },
-				{ TRACK_2,	-TECHNO_COL_SPACING*3.5f },
-				{ TRACK_3,	-TECHNO_COL_SPACING*2.5f },
-				{ TRACK_4,	-TECHNO_COL_SPACING*1.5f },
-				{ TRACK_5,	-TECHNO_COL_SPACING*0.5f },
-				{ TRACK_6,	+TECHNO_COL_SPACING*0.5f },
-				{ TRACK_7,	+TECHNO_COL_SPACING*1.5f },
-				{ TRACK_8,	+TECHNO_COL_SPACING*2.5f },
-				{ TRACK_9,	+TECHNO_COL_SPACING*3.5f },
-				{ TRACK_10,	+TECHNO_COL_SPACING*4.5f },
+				{ TRACK_1,	-TECHNO_COL_SPACING*4.5f, NULL },
+				{ TRACK_2,	-TECHNO_COL_SPACING*3.5f, NULL },
+				{ TRACK_3,	-TECHNO_COL_SPACING*2.5f, NULL },
+				{ TRACK_4,	-TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_5,	-TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+TECHNO_COL_SPACING*0.5f, NULL },
+				{ TRACK_7,	+TECHNO_COL_SPACING*1.5f, NULL },
+				{ TRACK_8,	+TECHNO_COL_SPACING*2.5f, NULL },
+				{ TRACK_9,	+TECHNO_COL_SPACING*3.5f, NULL },
+				{ TRACK_10,	+TECHNO_COL_SPACING*4.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2432,18 +2442,18 @@ Style g_Styles[] =
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-PNM5_COL_SPACING*2.0f },
-				{ TRACK_2,	-PNM5_COL_SPACING*1.0f },
-				{ TRACK_3,	+PNM5_COL_SPACING*0.0f },
-				{ TRACK_4,	+PNM5_COL_SPACING*1.0f },
-				{ TRACK_5,	+PNM5_COL_SPACING*2.0f },
+				{ TRACK_1,	-PNM5_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-PNM5_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+PNM5_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+PNM5_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PNM5_COL_SPACING*2.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-PNM5_COL_SPACING*2.0f },
-				{ TRACK_2,	-PNM5_COL_SPACING*1.0f },
-				{ TRACK_3,	+PNM5_COL_SPACING*0.0f },
-				{ TRACK_4,	+PNM5_COL_SPACING*1.0f },
-				{ TRACK_5,	+PNM5_COL_SPACING*2.0f },
+				{ TRACK_1,	-PNM5_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-PNM5_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+PNM5_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+PNM5_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PNM5_COL_SPACING*2.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2468,26 +2478,26 @@ Style g_Styles[] =
 		9,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-PNM9_COL_SPACING*4.0f },
-				{ TRACK_2,	-PNM9_COL_SPACING*3.0f },
-				{ TRACK_3,	-PNM9_COL_SPACING*2.0f },
-				{ TRACK_4,	-PNM9_COL_SPACING*1.0f },
-				{ TRACK_5,	+PNM9_COL_SPACING*0.0f },
-				{ TRACK_6,	+PNM9_COL_SPACING*1.0f },
-				{ TRACK_7,	+PNM9_COL_SPACING*2.0f },
-				{ TRACK_8,	+PNM9_COL_SPACING*3.0f },
-				{ TRACK_9,	+PNM9_COL_SPACING*4.0f },
+				{ TRACK_1,	-PNM9_COL_SPACING*4.0f, NULL },
+				{ TRACK_2,	-PNM9_COL_SPACING*3.0f, NULL },
+				{ TRACK_3,	-PNM9_COL_SPACING*2.0f, NULL },
+				{ TRACK_4,	-PNM9_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PNM9_COL_SPACING*0.0f, NULL },
+				{ TRACK_6,	+PNM9_COL_SPACING*1.0f, NULL },
+				{ TRACK_7,	+PNM9_COL_SPACING*2.0f, NULL },
+				{ TRACK_8,	+PNM9_COL_SPACING*3.0f, NULL },
+				{ TRACK_9,	+PNM9_COL_SPACING*4.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-PNM9_COL_SPACING*4.0f },
-				{ TRACK_2,	-PNM9_COL_SPACING*3.0f },
-				{ TRACK_3,	-PNM9_COL_SPACING*2.0f },
-				{ TRACK_4,	-PNM9_COL_SPACING*1.0f },
-				{ TRACK_5,	+PNM9_COL_SPACING*0.0f },
-				{ TRACK_6,	+PNM9_COL_SPACING*1.0f },
-				{ TRACK_7,	+PNM9_COL_SPACING*2.0f },
-				{ TRACK_8,	+PNM9_COL_SPACING*3.0f },
-				{ TRACK_9,	+PNM9_COL_SPACING*4.0f },
+				{ TRACK_1,	-PNM9_COL_SPACING*4.0f, NULL },
+				{ TRACK_2,	-PNM9_COL_SPACING*3.0f, NULL },
+				{ TRACK_3,	-PNM9_COL_SPACING*2.0f, NULL },
+				{ TRACK_4,	-PNM9_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+PNM9_COL_SPACING*0.0f, NULL },
+				{ TRACK_6,	+PNM9_COL_SPACING*1.0f, NULL },
+				{ TRACK_7,	+PNM9_COL_SPACING*2.0f, NULL },
+				{ TRACK_8,	+PNM9_COL_SPACING*3.0f, NULL },
+				{ TRACK_9,	+PNM9_COL_SPACING*4.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2512,24 +2522,24 @@ Style g_Styles[] =
 		NUM_CABINET_LIGHTS,						// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-DANCE_COL_SPACING*3.5f },
-				{ TRACK_2,	-DANCE_COL_SPACING*2.5f },
-				{ TRACK_3,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_4,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_5,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_6,	+DANCE_COL_SPACING*1.5f },
-				{ TRACK_7,	+DANCE_COL_SPACING*2.5f },
-				{ TRACK_8,	+DANCE_COL_SPACING*3.5f },
+				{ TRACK_1,	-DANCE_COL_SPACING*3.5f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*2.5f, NULL },
+				{ TRACK_3,	-DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_4,	-DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	+DANCE_COL_SPACING*2.5f, NULL },
+				{ TRACK_8,	+DANCE_COL_SPACING*3.5f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-DANCE_COL_SPACING*3.5f },
-				{ TRACK_2,	-DANCE_COL_SPACING*2.5f },
-				{ TRACK_3,	-DANCE_COL_SPACING*1.5f },
-				{ TRACK_4,	-DANCE_COL_SPACING*0.5f },
-				{ TRACK_5,	+DANCE_COL_SPACING*0.5f },
-				{ TRACK_6,	+DANCE_COL_SPACING*1.5f },
-				{ TRACK_7,	+DANCE_COL_SPACING*2.5f },
-				{ TRACK_8,	+DANCE_COL_SPACING*3.5f },
+				{ TRACK_1,	-DANCE_COL_SPACING*3.5f, NULL },
+				{ TRACK_2,	-DANCE_COL_SPACING*2.5f, NULL },
+				{ TRACK_3,	-DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_4,	-DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+DANCE_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+DANCE_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	+DANCE_COL_SPACING*2.5f, NULL },
+				{ TRACK_8,	+DANCE_COL_SPACING*3.5f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]

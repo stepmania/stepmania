@@ -1169,6 +1169,32 @@ void Player::HandleAutosync(float fNoteOffset)
 	m_iOffsetSample = 0;
 }
 
+void Player::DisplayJudgedRow( int iIndexThatWasSteppedOn, TapNoteScore score, int iTrack )
+{
+	TapNote tn = m_NoteData.GetTapNote(iTrack, iIndexThatWasSteppedOn);
+
+	// If the score is great or better, remove the note from the screen to 
+	// indicate success.  (Or always if blind is on.)
+	if( score >= TNS_GREAT || m_pPlayerState->m_PlayerOptions.m_fBlind )
+	{
+		tn.result.bHidden = true;
+		m_NoteData.SetTapNote( iTrack, iIndexThatWasSteppedOn, tn );
+	}
+
+	// show the ghost arrow for this column
+	bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+	if (m_pPlayerState->m_PlayerOptions.m_fBlind)
+	{
+		if( m_pNoteField )
+			m_pNoteField->DidTapNote( iTrack, TNS_MARVELOUS, bBright );
+	}
+	else
+	{
+		bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+		if( m_pNoteField )
+			m_pNoteField->DidTapNote( iTrack, score, bBright );
+	}
+}
 
 void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 {
@@ -1186,49 +1212,50 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	 * the 2nd step of the jump, it sets another column's timer then AND's the jump 
 	 * columns with the "was pressed recently" columns to see whether or not you hit 
 	 * all the columns of the jump.  -Chris */
-	TapNoteResult tnr = NoteDataWithScoring::LastTapNoteResult( m_NoteData, iIndexThatWasSteppedOn );
-	TapNoteScore score = tnr.tns;
+	const Game *pCurGame = GAMESTATE->m_pCurGame;
 
-	ASSERT(score != TNS_NONE);
-	ASSERT(score != TNS_HIT_MINE);
-	ASSERT(score != TNS_AVOIDED_MINE);
-
-	/* If the whole row was hit with perfects or greats, remove the row
-	 * from the NoteField, so it disappears. */
-
-	for( int c=0; c<m_NoteData.GetNumTracks(); c++ )	// for each column
+	if( pCurGame->m_bCountNotesSeparately )
 	{
-		TapNote tn = m_NoteData.GetTapNote(c, iIndexThatWasSteppedOn);
+		TapNoteResult tnr = NoteDataWithScoring::LastTapNoteResult( m_NoteData, iIndexThatWasSteppedOn );
+		TapNoteScore score = tnr.tns;
 
-		if( tn.type == TapNote::empty )	continue; /* no note in this col */
-		if( tn.type == TapNote::mine )	continue; /* don't flash on mines b/c they're supposed to be missed */
+		ASSERT(score != TNS_NONE);
+		ASSERT(score != TNS_HIT_MINE);
+		ASSERT(score != TNS_AVOIDED_MINE);
 
-		// If the score is great or better, remove the note from the screen to 
-		// indicate success.  (Or always if blind is on.)
-		if( score >= TNS_GREAT || m_pPlayerState->m_PlayerOptions.m_fBlind )
+		/* If the whole row was hit with perfects or greats, remove the row
+		 * from the NoteField, so it disappears. */
+
+		for( int c=0; c<m_NoteData.GetNumTracks(); c++ )	// for each column
 		{
-			tn.result.bHidden = true;
-			m_NoteData.SetTapNote( c, iIndexThatWasSteppedOn, tn );
+			TapNote tn = m_NoteData.GetTapNote(c, iIndexThatWasSteppedOn);
+
+			if( tn.type == TapNote::empty )	continue; /* no note in this col */
+			if( tn.type == TapNote::mine )	continue; /* don't flash on mines b/c they're supposed to be missed */
+
+			DisplayJudgedRow( iIndexThatWasSteppedOn, score, c );
 		}
 
-		// show the ghost arrow for this column
-		bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-		if (m_pPlayerState->m_PlayerOptions.m_fBlind)
+		m_Judgment.SetJudgment( score, tnr.fTapNoteOffset < 0 );
+	}
+	else
+	{
+		for( int c=0; c<m_NoteData.GetNumTracks(); c++ )	// for each column
 		{
-			if( m_pNoteField )
-				m_pNoteField->DidTapNote( c, TNS_MARVELOUS, bBright );
-		}
-		else
-		{
-			bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-			if( m_pNoteField )
-				m_pNoteField->DidTapNote( c, score, bBright );
+			TapNote tn = m_NoteData.GetTapNote(c, iIndexThatWasSteppedOn);
+			TapNoteResult tnr = tn.result;
+			TapNoteScore score = tnr.tns;
+
+			if( tn.type == TapNote::empty ) continue; /* no note in this col */
+			if( tn.type == TapNote::mine ) continue; /* don't flash on mines b/c they're supposed to be missed */
+
+			DisplayJudgedRow( iIndexThatWasSteppedOn, score, c );
+
+			m_Judgment.SetJudgment( score, tnr.fTapNoteOffset < 0 );
 		}
 	}
-		
-	HandleTapRowScore( iIndexThatWasSteppedOn );	// update score
 
-	m_Judgment.SetJudgment( score, tnr.fTapNoteOffset < 0 );
+	HandleTapRowScore( iIndexThatWasSteppedOn );	// update score
 }
 
 

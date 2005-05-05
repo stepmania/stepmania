@@ -42,6 +42,7 @@ public:
 	const char *m_szDescription;
 
 	int		m_iNumControllers;
+	bool	m_bCountNotesSeparately;	// Count multiple notes in a row as separate notes or as one note
 	int		m_iButtonsPerController;
 	int		GetNumGameplayButtons() const;
 	char	m_szButtonNames[MAX_GAME_BUTTONS][60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
