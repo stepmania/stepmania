@@ -729,7 +729,10 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 			sscanf( m_sText.substr( i+7, 2 ).c_str(), "%x", &k ); change.c.b = float( k ) / 255.0f;
 			change.c.a = 1;
 			change.l = iGlyphsSoFar;
-			m_vColors.push_back( change );
+			if ( iGlyphsSoFar == 0 )
+				m_vColors[0] = change;
+			else
+				m_vColors.push_back( change );
 			i+=8;
 			continue;
 		}
