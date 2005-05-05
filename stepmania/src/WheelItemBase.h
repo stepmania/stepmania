@@ -29,7 +29,6 @@ class WheelItemBase : public ActorFrame
 {
 public:
 	WheelItemBase( CString sType = "WheelItemBase" );
-	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 	
 	void Load( CString sType );

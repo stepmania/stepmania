@@ -66,19 +66,12 @@ void WheelItemBase::LoadFromWheelItemBaseData( WheelItemBaseData* pWID )
 	switch( pWID->m_Type )
 	{
 	case TYPE_GENERIC:
-		{
-			m_text.SetText( data->m_sText );
-			m_text.SetDiffuse( data->m_color );
-		}
+		m_text.SetText( data->m_sText );
+		m_text.SetDiffuse( data->m_color );
 		break;
 	default:
 		ASSERT( 0 );	// invalid type
 	}
-}
-
-void WheelItemBase::Update( float fDeltaTime )
-{
-	Actor::Update( fDeltaTime );
 }
 
 void WheelItemBase::DrawGrayBar( Actor& bar )
