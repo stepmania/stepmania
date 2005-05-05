@@ -145,6 +145,9 @@ void ScreenBookkeeping::ChangeView( View newView )
 			float fAverage = iTotalLast/(float)NUM_LAST_DAYS;
 			sData += ssprintf("%.1f\n",fAverage);
 			
+			sTitle += "Grand Total\n";
+			sData += ssprintf( "%i\n", BOOKKEEPER->GetCoinsTotal() );
+
 			m_textCols[0].SetHorizAlign( Actor::align_left );
 			m_textCols[0].SetText( sTitle );
 			m_textCols[1].SetText( "" );

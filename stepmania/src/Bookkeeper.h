@@ -4,7 +4,8 @@
 #define Bookkeeper_H
 
 #include "DateTime.h"
-
+#include <map>
+struct XNode;
 
 class Bookkeeper
 {
@@ -15,22 +16,36 @@ public:
 	void ClearAll();
 
 	void CoinInserted();
-	void UpdateLastSeenTime();
 
-	void GetCoinsLastDays( int coins[NUM_LAST_DAYS] );
-	void GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] );
-	void GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] );
-	void GetCoinsByHour( int coins[HOURS_IN_DAY] );
+	int GetCoinsTotal() const;
+	void GetCoinsLastDays( int coins[NUM_LAST_DAYS] ) const;
+	void GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] ) const;
+	void GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] ) const;
+	void GetCoinsByHour( int coins[HOURS_IN_DAY] ) const;
+
+	void LoadFromNode( const XNode *pNode );
+	XNode* CreateNode() const;
 
 	void ReadFromDisk();
 	void WriteToDisk();
 
 private:
-
-	int GetCoinsForDay( int iDayOfYear );
+	struct Date
+	{
+		int m_iHour; // 0 = midnight
+		int m_iDayOfYear; // 0 = Jan 1
+		int m_iYear; // eg. 2005
+		Date() { m_iHour = m_iDayOfYear = m_iYear = 0; }
+		Date( tm time ) { Set(time); }
+		void Set( time_t t );
+		void Set( tm pTime );
+		bool operator<( const Date &rhs ) const;
+	};
+	int GetNumCoins( Date beginning, Date ending ) const;
+	int GetNumCoinsInRange( map<Date,int>::const_iterator begin, map<Date,int>::const_iterator end ) const;
 
 	int m_iLastSeenTime;
-	int m_iCoinsByHourForYear[DAYS_IN_YEAR][HOURS_IN_DAY];
+	map<Date,int> m_mapCoinsForHour;
 };
 
 

@@ -7,22 +7,19 @@
 #include "GameConstantsAndTypes.h"
 #include "SongManager.h"
 #include "RageFile.h"
+#include "XmlFile.h"
 #include <ctime>
 
 
 Bookkeeper*	BOOKKEEPER = NULL;	// global and accessable from anywhere in our program
 
-static const CString COINS_DAT = "Data/Coins.dat";
-
-const int COINS_DAT_VERSION = 1;
+static const CString COINS_DAT = "Data/Coins.xml";
 
 Bookkeeper::Bookkeeper()
 {
 	ClearAll();
 
 	ReadFromDisk();
-
-	UpdateLastSeenTime();
 }
 
 Bookkeeper::~Bookkeeper()
@@ -34,152 +31,173 @@ Bookkeeper::~Bookkeeper()
 
 void Bookkeeper::ClearAll()
 {
-	m_iLastSeenTime = time(NULL);
-	for( int i=0; i<DAYS_IN_YEAR; i++ )
-		for( int j=0; j<HOURS_IN_DAY; j++ )
-			m_iCoinsByHourForYear[i][j] = 0;
+	m_mapCoinsForHour.clear();
+}
+
+bool Bookkeeper::Date::operator<( const Date &rhs ) const
+{
+	if( m_iYear != rhs.m_iYear )
+		return m_iYear < rhs.m_iYear;
+	if( m_iDayOfYear != rhs.m_iDayOfYear )
+		return m_iDayOfYear < rhs.m_iDayOfYear;
+	return m_iHour < rhs.m_iHour;
+}
+
+void Bookkeeper::Date::Set( time_t t )
+{
+	tm ltime;
+	localtime_r( &t, &ltime );
+
+	Set( ltime );
+}
+
+void Bookkeeper::Date::Set( tm pTime )
+{
+	m_iHour = pTime.tm_hour;
+	m_iDayOfYear = pTime.tm_yday;
+	m_iYear = pTime.tm_year + 1900;
+}
+
+void Bookkeeper::LoadFromNode( const XNode *pNode )
+{
+	if( pNode->m_sName != "Bookkeeping" )
+	{
+		LOG->Warn( "Error loading bookkeeping: unexpected \"%s\"", pNode->m_sName.c_str() );
+		return;
+	}
+
+	const XNode *pData = pNode->GetChild( "Data" );
+	if( pData == NULL )
+	{
+		LOG->Warn( "Error loading bookkeeping: Data node missing", pNode->m_sName.c_str() );
+		return;
+	}
+
+	FOREACH_CONST_Child( pData, day )
+	{
+		Date d;
+		if( !day->GetAttrValue( "Hour", d.m_iHour ) ||
+			!day->GetAttrValue( "Day", d.m_iDayOfYear ) ||
+			!day->GetAttrValue( "Year", d.m_iYear ) )
+		{
+			LOG->Warn( "Incomplete date field" );
+			continue;
+		}
+
+		int iCoins;
+		day->GetValue( iCoins );
+
+		m_mapCoinsForHour[d] = iCoins;
+	}
+}
+
+XNode* Bookkeeper::CreateNode() const
+{
+	XNode *xml = new XNode;
+	xml->m_sName = "Bookkeeping";
+
+	{
+		XNode* pData = xml->AppendChild("Data");
+
+		for( map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
+		{
+			XNode *pDay = pData->AppendChild( "Coins" );
+
+			const Date &d = it->first;
+			pDay->AppendAttr( "Hour", d.m_iHour );
+			pDay->AppendAttr( "Day", d.m_iDayOfYear );
+			pDay->AppendAttr( "Year", d.m_iYear );
+			
+			int iCoins = it->second;
+			pDay->SetValue( iCoins );
+		}
+	}
+
+	return xml;
 }
 
 void Bookkeeper::ReadFromDisk()
 {
-    RageFile f;
-	if( !f.Open(COINS_DAT, RageFile::READ) )
+	XNode xml;
+	PARSEINFO pi;
+	if( !xml.LoadFromFile(COINS_DAT, &pi) )
 	{
-		LOG->Trace( "Couldn't open file \"%s\": %s", COINS_DAT.c_str(), f.GetError().c_str() );
+		LOG->Warn( "Error parsing file \"%s\": %s", COINS_DAT.c_str(), pi.error_string.c_str() );
 		return;
 	}
 
-	int iVer;
-	if( !FileRead(f, iVer) )
-		WARN_AND_RETURN;
-	if( iVer != COINS_DAT_VERSION )
-		WARN_AND_RETURN;
-
-	if( !FileRead(f, m_iLastSeenTime) )
-		WARN_AND_RETURN;
-
-    for (int i=0; i<DAYS_IN_YEAR; ++i)
-	{
-        for (int j=0; j<HOURS_IN_DAY; ++j)
-		{
-			int iCoins;
-			if( !FileRead(f, iCoins) )
-				WARN_AND_RETURN;
-
-            m_iCoinsByHourForYear[i][j] = iCoins;
-		}
-	}
+	LoadFromNode( &xml );
 }
 
 void Bookkeeper::WriteToDisk()
 {
-	// write dat
+	// Write data.  Use SLOW_FLUSH, to help ensure that we don't lose coin data.
     RageFile f;
-	if( !f.Open(COINS_DAT, RageFile::WRITE) )
+	if( !f.Open(COINS_DAT, RageFile::WRITE|RageFile::SLOW_FLUSH) )
 	{
 		LOG->Warn( "Couldn't open file \"%s\" for writing: %s", COINS_DAT.c_str(), f.GetError().c_str() );
 		return;
 	}
-    
-	FileWrite(f, COINS_DAT_VERSION );
-	
-	FileWrite(f, m_iLastSeenTime);
 
-	for (int i=0; i<DAYS_IN_YEAR; ++i)
-        for (int j=0; j<HOURS_IN_DAY; ++j)
-            FileWrite( f, m_iCoinsByHourForYear[i][j] );
-}
-
-void Bookkeeper::UpdateLastSeenTime()
-{
-	// clear all coin counts from (lOldTime,lNewTime]
-
-	time_t lOldTime = m_iLastSeenTime;
-	time_t lNewTime = time(NULL);
-
-	if( lNewTime < lOldTime )
-	{
-		LOG->Warn( "The new time is older than the last seen time.  Is someone fiddling with the system clock?" );
-		m_iLastSeenTime = lNewTime;
-		return;
-	}
-
-    tm tOld, tNew;
-	localtime_r( &lOldTime, &tOld );
-    localtime_r( &lNewTime, &tNew );
-
-	CLAMP( tOld.tm_year, tNew.tm_year-1, tNew.tm_year );
-
-	int cnt = 0;
-	while( 
-		tOld.tm_year != tNew.tm_year ||
-		tOld.tm_yday != tNew.tm_yday ||
-		tOld.tm_hour != tNew.tm_hour )
-	{
-		/* Paranoia: break out in case our loop doesn't end for some reason. */
-		++cnt;
-		if( cnt > 1000 )
-			break;
-
-		tOld.tm_hour++;
-		if( tOld.tm_hour == HOURS_IN_DAY )
-		{
-			tOld.tm_hour = 0;
-			tOld.tm_yday++;
-		}
-		if( tOld.tm_yday == DAYS_IN_YEAR )
-		{
-			tOld.tm_yday = 0;
-			tOld.tm_year++;
-		}
-
-		m_iCoinsByHourForYear[tOld.tm_yday][tOld.tm_hour] = 0;
-	}
-
-	m_iLastSeenTime = lNewTime;
+	DISP_OPT opt;
+	XNode *xml = CreateNode();
+	xml->SaveToFile( f, &opt );
+	delete xml;
 }
 
 void Bookkeeper::CoinInserted()
 {
-	UpdateLastSeenTime();
+ 	Date d;
+	d.Set( time(NULL) );
 
-	time_t lTime = m_iLastSeenTime;
-    tm pTime;
-	localtime_r( &lTime, &pTime );
-
-	m_iCoinsByHourForYear[pTime.tm_yday][pTime.tm_hour]++;
+	++m_mapCoinsForHour[d];
 }
 
-int Bookkeeper::GetCoinsForDay( int iDayOfYear )
+/* Return the number of coins between [beginning,ending). */
+int Bookkeeper::GetNumCoinsInRange( map<Date,int>::const_iterator begin, map<Date,int>::const_iterator end ) const
 {
 	int iCoins = 0;
-	for( int i=0; i<HOURS_IN_DAY; i++ )
-		iCoins += m_iCoinsByHourForYear[iDayOfYear][i];
+
+	while( begin != end )
+	{
+		iCoins += begin->second;
+		++begin;
+	}
+
 	return iCoins;
 }
 
-
-void Bookkeeper::GetCoinsLastDays( int coins[NUM_LAST_DAYS] )
+int Bookkeeper::GetNumCoins( Date beginning, Date ending ) const
 {
-	UpdateLastSeenTime();
+	return GetNumCoinsInRange( m_mapCoinsForHour.lower_bound( beginning ),
+		m_mapCoinsForHour.lower_bound( ending ) );
+}
 
-	time_t lOldTime = m_iLastSeenTime;
+int Bookkeeper::GetCoinsTotal() const
+{
+	return GetNumCoinsInRange( m_mapCoinsForHour.begin(), m_mapCoinsForHour.end() );
+}
+
+
+void Bookkeeper::GetCoinsLastDays( int coins[NUM_LAST_DAYS] ) const
+{
+	time_t lOldTime = time(NULL);
     tm time;
 	localtime_r( &lOldTime, &time );
 
+	time.tm_hour = 0;
+
 	for( int i=0; i<NUM_LAST_DAYS; i++ )
 	{
-		coins[i] = GetCoinsForDay( time.tm_yday );
+		tm EndTime = AddDays( time, +1 );
+		coins[i] = GetNumCoins( time, EndTime );
 		time = GetYesterday( time );
 	}
 }
 
-
-void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] )
+void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] ) const
 {
-	UpdateLastSeenTime();
-
-	time_t lOldTime = m_iLastSeenTime;
+	time_t lOldTime = time(NULL);
     tm time;
 	localtime_r( &lOldTime, &time );
 
@@ -188,49 +206,46 @@ void Bookkeeper::GetCoinsLastWeeks( int coins[NUM_LAST_WEEKS] )
 
 	for( int w=0; w<NUM_LAST_WEEKS; w++ )
 	{
-		coins[w] = 0;
-
-		for( int d=0; d<DAYS_IN_WEEK; d++ )
-		{
-			coins[w] += GetCoinsForDay( time.tm_yday );
-			time = GetYesterday( time );
-		}
+		tm StartTime = AddDays( time, -DAYS_IN_WEEK );
+		coins[w] = GetNumCoins( StartTime, time );
+		time = StartTime;
 	}
 }
 
-void Bookkeeper::GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] )
+/* iDay is days since Jan 1.  iYear is eg. 2005.  Return the day of the week, where
+ * 0 is Sunday. */
+void Bookkeeper::GetCoinsByDayOfWeek( int coins[DAYS_IN_WEEK] ) const
 {
-	UpdateLastSeenTime();
-
 	for( int i=0; i<DAYS_IN_WEEK; i++ )
 		coins[i] = 0;
 
-	time_t lOldTime = m_iLastSeenTime;
-    tm time;
-	localtime_r( &lOldTime, &time );
-
-	for( int d=0; d<DAYS_IN_YEAR; d++ )
+	for( map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
 	{
-		coins[GetDayOfWeek(time)] += GetCoinsForDay( time.tm_yday );
-		time = GetYesterday( time );
+		const Date &d = it->first;
+		int iDayOfWeek = GetDayInYearAndYear( d.m_iDayOfYear, d.m_iYear ).tm_wday;
+		coins[iDayOfWeek] += it->second;
 	}
 }
 
-void Bookkeeper::GetCoinsByHour( int coins[HOURS_IN_DAY] )
+void Bookkeeper::GetCoinsByHour( int coins[HOURS_IN_DAY] ) const
 {
-	UpdateLastSeenTime();
-
-	for( int h=0; h<HOURS_IN_DAY; h++ )
+	memset( coins, 0, sizeof(int) * HOURS_IN_DAY );
+	for( map<Date,int>::const_iterator it = m_mapCoinsForHour.begin(); it != m_mapCoinsForHour.end(); ++it )
 	{
-		coins[h] = 0;
+		const Date &d = it->first;
 
-		for( int d=0; d<DAYS_IN_YEAR; d++ )
-			coins[h] += m_iCoinsByHourForYear[d][h];
+		if( d.m_iHour >= HOURS_IN_DAY )
+		{
+			LOG->Warn( "Hour %i >= %i", d.m_iHour, HOURS_IN_DAY );
+			continue;
+		}
+
+		coins[d.m_iHour] += it->second;
 	}
 }
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2003-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
