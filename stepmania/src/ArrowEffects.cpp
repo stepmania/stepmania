@@ -200,14 +200,13 @@ float ArrowEffects::GetYOffsetFromYPos( const PlayerState* pPlayerState, int iCo
 
 float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float fYOffset ) 
 {
-	float fPixelOffsetFromCenter = 0;
+	float fPixelOffsetFromCenter = 0;	// fill this in below
 	
+	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
 
 	if( fEffects[PlayerOptions::EFFECT_TORNADO] != 0 )
 	{
-		const Style* pStyle = GAMESTATE->GetCurrentStyle();
-
 		// TRICKY: Tornado is very unplayable in doubles, so use a smaller
 		// tornado width if there are many columns
 		bool bWideField = pStyle->m_iColsPerPlayer > 4;
@@ -230,7 +229,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 			fMaxX = max( fMaxX, pStyle->m_ColumnInfo[pn][i].fXOffset );
 		}
 
-		const float fRealPixelOffset = GAMESTATE->GetCurrentStyle()->m_ColumnInfo[pn][iColNum].fXOffset;
+		const float fRealPixelOffset = pStyle->m_ColumnInfo[pn][iColNum].fXOffset;
 		const float fPositionBetween = SCALE( fRealPixelOffset, fMinX, fMaxX, -1, 1 );
 		float fRads = acosf( fPositionBetween );
 		fRads += fYOffset * 6 / SCREEN_HEIGHT;
@@ -247,10 +246,55 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		// TODO: Don't index by PlayerNumber.
 		PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
-//		fPixelOffsetFromCenter *= SCALE(fEffects[PlayerOptions::EFFECT_FLIP], 0.f, 1.f, 1.f, -1.f);
-		const float fRealPixelOffset = GAMESTATE->GetCurrentStyle()->m_ColumnInfo[pn][iColNum].fXOffset;
-		const float fDistance = -fRealPixelOffset * 2;
+		const int iNumCols = pStyle->m_iColsPerPlayer;
+		int iFirstCol = 0;
+		int iLastCol = iNumCols-1;
+		const int iNewCol = SCALE( iColNum, iFirstCol, iLastCol, iLastCol, iFirstCol );
+		const float fOldPixelOffset = pStyle->m_ColumnInfo[pn][iColNum].fXOffset;
+		const float fNewPixelOffset = pStyle->m_ColumnInfo[pn][iNewCol].fXOffset;
+		const float fDistance = fNewPixelOffset - fOldPixelOffset;
 		fPixelOffsetFromCenter += fDistance * fEffects[PlayerOptions::EFFECT_FLIP];
+	}
+	if( fEffects[PlayerOptions::EFFECT_INVERT] != 0 )
+	{
+		// TODO: Don't index by PlayerNumber.
+		PlayerNumber pn = pPlayerState->m_PlayerNumber;
+		
+		const int iNumCols = pStyle->m_iColsPerPlayer;
+		const int iNumSides = pStyle->m_StyleType==ONE_PLAYER_TWO_SIDES ? 2 : 1;
+		const int iNumColsPerSide = iNumCols / iNumSides;
+		const int iSideIndex = iColNum / iNumColsPerSide;
+		const int iColOnSide = iColNum % iNumColsPerSide;
+
+		const int iColLeftOfMiddle = (iNumColsPerSide-1)/2;
+		const int iColRightOfMidde = (iNumColsPerSide+1)/2;
+
+		int iFirstColOnSide = -1;
+		int iLastColOnSide = -1;
+		if( iColOnSide <= iColLeftOfMiddle )
+		{
+			iFirstColOnSide = 0;
+			iLastColOnSide = iColLeftOfMiddle;
+		}
+		else if( iColOnSide >= iColRightOfMidde )
+		{
+			iFirstColOnSide = iColRightOfMidde;
+			iLastColOnSide = iNumColsPerSide-1;
+		}
+		else
+		{
+			iFirstColOnSide = iColOnSide/2;
+			iLastColOnSide = iColOnSide/2;
+		}
+
+		// mirror
+		const int iNewColOnSide = SCALE( iColOnSide, iFirstColOnSide, iLastColOnSide, iLastColOnSide, iFirstColOnSide );
+		const int iNewCol = iSideIndex*iNumColsPerSide + iNewColOnSide;
+
+		const float fOldPixelOffset = pStyle->m_ColumnInfo[pn][iColNum].fXOffset;
+		const float fNewPixelOffset = pStyle->m_ColumnInfo[pn][iNewCol].fXOffset;
+		const float fDistance = fNewPixelOffset - fOldPixelOffset;
+		fPixelOffsetFromCenter += fDistance * fEffects[PlayerOptions::EFFECT_INVERT];
 	}
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT] != 0 )
