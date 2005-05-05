@@ -694,16 +694,14 @@ void Sprite::SetState( int iNewState )
 	if( iNewState < 0  ||  iNewState >= (int)m_States.size() )
 	{
 		// Don't warn about number of states in "_blank".
-		if( m_pTexture->GetID().filename.Find("_blank") == -1 )
+		if( !m_pTexture || m_pTexture->GetID().filename.Find("_blank") == -1 )
 		{
-			CString sError;
 			if( m_pTexture )
-				sError = ssprintf("The Sprite '%s' (\"%s\") tried to set state index %d, but it has only %u states", 
+				LOG->Warn("The Sprite '%s' (\"%s\") tried to set state index %d, but it has only %u states", 
 					m_pTexture->GetID().filename.c_str(), this->m_sName.c_str(), iNewState, unsigned(m_States.size()));
 			else
-				sError = ssprintf("A Sprite (\"%s\") tried to set state index %d but no texture is loaded.", 
+				LOG->Warn("A Sprite (\"%s\") tried to set state index %d but no texture is loaded.", 
 					this->m_sName.c_str(), iNewState );
-			Dialog::OK( sError );
 		}
 	}
 
