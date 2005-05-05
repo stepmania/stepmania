@@ -23,6 +23,7 @@ public:
 	MusicWheelItem(CString sType = "MusicWheelItem");
 
 	virtual void LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded );
+	void DrawPrimitives();
 	void RefreshGrades();
 
 	WheelItemData *data;
@@ -39,8 +40,6 @@ public:
 	BitmapText			m_textCourse;
 	BitmapText			m_textSort;
 	GradeDisplay		m_GradeDisplay[NUM_PLAYERS];
-
-	void DrawPrimitives();
 };
 
 struct WheelItemData : public WheelItemBaseData
