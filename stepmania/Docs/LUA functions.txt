@@ -39,6 +39,10 @@ LuaFunction_PlayerNumber( IsSMOnlineLoggedIn,	NSMAN->isSMOLoggedIn[pn] )
 LuaFunction_Str( Song, 				SONGMAN->FindSong( str ) );
 LuaFunction_Song( SongFullDisplayTitle, 	p->GetFullDisplayTitle() );
 LuaFunction_Steps( StepsMeter, 			p->GetMeter() );
+LuaFunction_NoArgs( GetCurrentSongDisplayTitle,	GetCurrentSongDisplayTitle() )
+LuaFunction_NoArgs( GetCurrentSongDisplayArtist,GetCurrentSongDisplayArtist() )
+LuaFunction_NoArgs( GetCurrentSongCredit,	GetCurrentSongCredit() )
+LuaFunction_NoArgs( GetCurrentStepsCredits,	GetCurrentStepsCredits() )
 LuaFunction_NoArgs( GetStagesPlayed,		(int) g_vPlayedStageStats.size() );
 LuaFunction_NoArgs( GetBestGrade,		GetBestGrade() );
 LuaFunction_NoArgs( GetWorstGrade,		GetWorstGrade() );
@@ -50,3 +54,4 @@ LuaFunction_Str( Grade,				StringToGrade(str) );
 LuaFunction_IntInt( OneGotGrade, 		OneGotGrade( a1, (Grade) a2 ) );
 LuaFunction_PlayerNumber( GetFinalGrade, 	GetFinalGrade(pn) );
 LuaFunction_NoArgs( GetBestFinalGrade, 		GetBestFinalGrade() );
+LuaFunction_Int( GradeToString,			GradeToString((Grade)a1) )
