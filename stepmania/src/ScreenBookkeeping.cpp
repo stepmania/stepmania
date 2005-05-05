@@ -109,7 +109,14 @@ void ScreenBookkeeping::MenuBack( PlayerNumber pn )
 		StartTransitioning( SM_GoToPrevScreen );		
 	}
 }
-	
+
+void ScreenBookkeeping::MenuCoin( PlayerNumber pn )
+{
+	ChangeView( m_View );
+
+	Screen::MenuCoin( pn );
+}
+
 void ScreenBookkeeping::ChangeView( View newView )
 {
 	m_View = newView;
