@@ -1,0 +1,19 @@
+These are things I want to see get done, and may or may not get around to.
+
+BUGS:
+ * During-gameplay judgement display (perfect, great, etc.) isn't updating
+   correctly. The animations are correct, but it's not using the right
+   graphics, instead cycling seemingly randomly between Marvellous and
+   Perfect.
+
+Other:
+ * Redesign ScreenSelectMusic to make the layout much much more freeform. We
+   could have all our music selection needs in one program just by setting up
+   banner and/or custom graphic as a WheelItem element and allowing more
+   customization of the wheel "path". That should be sufficient for everything
+   I can think of except for style changes in 2nd generation PiU song wheel.
+
+ * Allow themes to specify left/right vs. up/down item selection controls on a
+   per-screen basis. The best way to do this would be to separate
+   MenuLeft / MenuRight from PrevItem / NextItem and mapping the latter two
+   appropriately inside ScreenSelect.
