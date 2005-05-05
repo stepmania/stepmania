@@ -121,7 +121,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 	{
 	case VIEW_LAST_DAYS:
 		{
-			m_textTitle.SetText( ssprintf("Coin Data of Last %d days", NUM_LAST_DAYS) );
+			m_textTitle.SetText( ssprintf("Coin Data of Last %d Days", NUM_LAST_DAYS) );
 
 			int coins[NUM_LAST_DAYS];
 			BOOKKEEPER->GetCoinsLastDays( coins );
@@ -155,7 +155,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 		break;
 	case VIEW_LAST_WEEKS:
 		{
-			m_textTitle.SetText( ssprintf("Coin Data of Last %d weeks", NUM_LAST_WEEKS) );
+			m_textTitle.SetText( ssprintf("Coin Data of Last %d Weeks", NUM_LAST_WEEKS) );
 
 			int coins[NUM_LAST_WEEKS];
 			BOOKKEEPER->GetCoinsLastWeeks( coins );
@@ -177,7 +177,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 		break;
 	case VIEW_DAY_OF_WEEK:
 		{
-			m_textTitle.SetText( "Coin Data by Day of week" );
+			m_textTitle.SetText( "Coin Data by Day of Week" );
 
 			int coins[DAYS_IN_WEEK];
 			BOOKKEEPER->GetCoinsByDayOfWeek( coins );
@@ -199,7 +199,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 		break;
 	case VIEW_HOUR_OF_DAY:
 		{
-			m_textTitle.SetText( "Coin Data by Hour of day" );
+			m_textTitle.SetText( "Coin Data by Hour of Day" );
 
 			int coins[HOURS_IN_DAY];
 			BOOKKEEPER->GetCoinsByHour( coins );
