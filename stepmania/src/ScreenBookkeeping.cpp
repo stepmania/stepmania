@@ -135,7 +135,10 @@ void ScreenBookkeeping::ChangeView( View newView )
 			sTitle += "\n";
 			sData += "\n";
 
-			sTitle += "Average\n";
+			sTitle += "Total This Week\n";
+			sData += ssprintf("%i\n", iTotalLast);
+
+			sTitle += "Daily Average\n";
 			float fAverage = iTotalLast/(float)NUM_LAST_DAYS;
 			sData += ssprintf("%.1f\n",fAverage);
 			
