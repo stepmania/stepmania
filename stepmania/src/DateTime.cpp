@@ -236,13 +236,17 @@ tm GetNextSunday( tm start )
 
 tm GetDayInYearAndYear( int iDayInYearIndex, int iYear )
 {
-	tm when = GetLocalTime();
-
-	when.tm_mday = iDayInYearIndex;
+	/* If iDayInYearIndex is 200, set the date to Jan 200th, and let mktime
+	 * round it.  This shouldn't suffer from the OSX mktime() issue described
+	 * above, since we're not giving it negative values. */
+	tm when;
+	ZERO( when );
+	when.tm_mon = 0;
+	when.tm_mday = iDayInYearIndex+1;
 	when.tm_year = iYear - 1900;
 	time_t then = mktime( &when );
 
-	when = *localtime( &then );
+	localtime_r( &then, &when );
 	return when;
 }
 
