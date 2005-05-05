@@ -58,8 +58,8 @@ void WheelBase::Load( CString sType )
 	RebuildWheelItems();
 }
 
-void WheelBase::LoadFromMetrics( CString sType ) {
-
+void WheelBase::LoadFromMetrics( CString sType )
+{
 	SWITCH_SECONDS				.Load(sType,"SwitchSeconds");
 	LOCKED_INITIAL_VELOCITY		.Load(sType,"LockedInitialVelocity");
 	SCROLL_BAR_X				.Load(sType,"ScrollBarX");
@@ -89,7 +89,8 @@ void WheelBase::LoadFromMetrics( CString sType ) {
 	this->AddChild( &m_ScrollBar );
 }
 
-void WheelBase::LoadVariables() {
+void WheelBase::LoadVariables()
+{
 	m_isEmpty = true;
 	m_LastSelection = NULL;
 	m_iSelection = 0;
