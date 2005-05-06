@@ -1953,6 +1953,14 @@ public:
 		else { Course *pC = Luna<Course>::check(L,1); p->m_pCurCourse = pC; }
 		return 0;
 	}
+	static int GetCurrentTrail( T* p, lua_State *L )
+	{
+		PlayerNumber pn = (PlayerNumber)IArg(1);
+		Trail *pTrail = p->m_pCurTrail[pn];  
+		if( pTrail ) { pTrail->PushSelf(L); }
+		else		 { lua_pushnil(L); }
+		return 1;
+	}
 	static int GetPreferredSong( T* p, lua_State *L )		{ if(p->m_pPreferredSong) p->m_pPreferredSong->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetPreferredSong( T* p, lua_State *L )
 	{
@@ -2008,6 +2016,7 @@ public:
 		ADD_METHOD( SetCurrentSteps )
 		ADD_METHOD( GetCurrentCourse )
 		ADD_METHOD( SetCurrentCourse )
+		ADD_METHOD( GetCurrentTrail )
 		ADD_METHOD( SetPreferredSong )
 		ADD_METHOD( GetPreferredSong )
 		ADD_METHOD( SetTemporaryEventMode )
