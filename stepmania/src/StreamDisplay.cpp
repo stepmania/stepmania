@@ -125,12 +125,12 @@ void StreamDisplay::DrawPrimitives()
 void StreamDisplay::SetPercent( float fPercent )
 {
 	DEBUG_ASSERT( fPercent >= 0.0f && fPercent <= 1.0f );
-	if( _isnan(fPercent) )
+	if( isnan(fPercent) )
 	{
 		DEBUG_ASSERT_M( 0, "fPercent is NaN" );
 		fPercent = 1;
 	}
-	if( !_finite(fPercent) )
+	if( !finite(fPercent) )
 	{
 		DEBUG_ASSERT_M( 0, "fPercent is infinite" );
 		fPercent = 1;
