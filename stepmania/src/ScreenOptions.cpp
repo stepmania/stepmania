@@ -1100,6 +1100,24 @@ void ScreenOptions::MenuUpDown( PlayerNumber pn, const InputEventType type, int 
 {
 	ASSERT( iDir == -1 || iDir == +1 );
 
+	if( type == IET_SLOW_REPEAT || type == IET_FAST_REPEAT )
+	{
+		/* If down is pressed, don't allow up to repeat, and vice versa.  This prevents
+		 * holding both up and down from toggling repeatedly in-place. */
+		if( iDir == +1 )
+		{
+			if( INPUTMAPPER->IsButtonDown(MenuInput(pn, MENU_BUTTON_UP)) ||
+				INPUTMAPPER->IsButtonDown(MenuInput(pn, MENU_BUTTON_SELECT)) )
+				return;
+		}
+		else
+		{
+			if( INPUTMAPPER->IsButtonDown(MenuInput(pn, MENU_BUTTON_DOWN)) ||
+				INPUTMAPPER->IsButtonDown(MenuInput(pn, MENU_BUTTON_START)) )
+				return;
+		}
+	}
+
 	bool bRepeat = type != IET_FIRST_PRESS;
 
 	int iDest = -1;
