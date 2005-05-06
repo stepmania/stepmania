@@ -6,6 +6,8 @@ BUGS:
    graphics, instead cycling seemingly randomly between Marvellous and
    Perfect.
 
+ * In the music select, the groove radar is stuck at max everything.
+
  * In jukebox mode, scores aren't reset between songs. This means the score
    meter goes insanely high and eventually (if allowed to go on for long
    enough) an assert fails due to an integer overflow.
