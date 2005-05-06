@@ -110,9 +110,11 @@ void ShowWarning( const char *file, int line, const char *message ); // don't pu
 #define WARN(MESSAGE) (ShowWarning(__FILE__, __LINE__, MESSAGE))
 
 #ifdef DEBUG
-#define DEBUG_ASSERT(x)	ASSERT(x)
+#define DEBUG_ASSERT(x)		ASSERT(x)
+#define DEBUG_ASSERT_M(x,y)	ASSERT_M(x,y)
 #else
 #define DEBUG_ASSERT(x)
+#define DEBUG_ASSERT_M(x,y)
 #endif
 
 /* Define a macro to tell the compiler that a function has printf() semantics, to

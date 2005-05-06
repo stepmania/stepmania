@@ -1,7 +1,20 @@
 #include "global.h"
 #include "StreamDisplay.h"
 #include "GameState.h"
+#include <float.h>
 
+StreamDisplay::StreamDisplay()
+{
+	m_fMeterHeight = 1;
+	m_fMeterWidth = 1;
+	m_iNumStrips = 1;
+	m_iNumChambers = 1;
+	m_fPercent = 0;
+	m_fTrailingPercent = 0;
+	m_fVelocity = 0;
+	m_fPassingAlpha = 0;
+	m_fHotAlpha = 0;
+}
 
 void StreamDisplay::Load( 
 	float fMeterWidth, 
@@ -111,7 +124,18 @@ void StreamDisplay::DrawPrimitives()
 
 void StreamDisplay::SetPercent( float fPercent )
 {
-	ASSERT( fPercent >= 0.0f && fPercent <= 1.0f );
+	DEBUG_ASSERT( fPercent >= 0.0f && fPercent <= 1.0f );
+	if( _isnan(fPercent) )
+	{
+		DEBUG_ASSERT_M( 0, "fPercent is NaN" );
+		fPercent = 1;
+	}
+	if( !_finite(fPercent) )
+	{
+		DEBUG_ASSERT_M( 0, "fPercent is infinite" );
+		fPercent = 1;
+	}
+
 	float fDeltaPercent = fPercent - m_fPercent;
 	m_fVelocity += fDeltaPercent;
 	m_fPercent = fPercent;

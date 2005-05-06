@@ -7,16 +7,7 @@
 class StreamDisplay : public Actor
 {
 public:
-	StreamDisplay()
-	{
-		m_fMeterWidth = 0;
-		m_fMeterHeight = 0;
-		m_iNumStrips = 1;
-		m_iNumChambers = 1;
-		m_fPercent = 0;
-		m_fPassingAlpha = 0;
-		m_fHotAlpha = 0;
-	}
+	StreamDisplay();
 
 	virtual void Update( float fDeltaSecs );
 
