@@ -56,10 +56,10 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 	{
 		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_SPACE )
 		{
-			PREFSMAN->m_iCenterImageTranslateX = 0;
-			PREFSMAN->m_iCenterImageTranslateY = 0;
-			PREFSMAN->m_fCenterImageAddWidth = 0;
-			PREFSMAN->m_fCenterImageAddHeight = 0;
+			PREFSMAN->m_iCenterImageTranslateX.Set( 0 );
+			PREFSMAN->m_iCenterImageTranslateY.Set( 0 );
+			PREFSMAN->m_fCenterImageAddWidth.Set( 0 );
+			PREFSMAN->m_fCenterImageAddHeight.Set( 0 );
 			return;
 		}
 
@@ -162,7 +162,7 @@ void ScreenCenterImage::Move( Axis axis, float fDelta )
 		&PREFSMAN->m_fCenterImageAddHeight
 	};
 
-	*piValues[axis] = *piValues[axis] + lrintf( fDelta );
+	piValues[axis]->Set( *piValues[axis] + lrintf( fDelta ) );
 
 	DISPLAY->ChangeCentering(
 		PREFSMAN->m_iCenterImageTranslateX, 
@@ -172,10 +172,10 @@ void ScreenCenterImage::Move( Axis axis, float fDelta )
 
 	CString sMessage = 
 		ssprintf( "Centering: x=%d, y=%d, width=%d, height=%d",
-		PREFSMAN->m_iCenterImageTranslateX.Value(), 
-		PREFSMAN->m_iCenterImageTranslateY.Value(),
-		PREFSMAN->m_fCenterImageAddWidth.Value(),
-		PREFSMAN->m_fCenterImageAddHeight.Value() );
+		PREFSMAN->m_iCenterImageTranslateX.Get(), 
+		PREFSMAN->m_iCenterImageTranslateY.Get(),
+		PREFSMAN->m_fCenterImageAddWidth.Get(),
+		PREFSMAN->m_fCenterImageAddHeight.Get() );
 	SCREENMAN->SystemMessageNoAnimate( sMessage );
 }
 

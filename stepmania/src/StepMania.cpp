@@ -106,12 +106,12 @@ static RageDisplay::VideoModeParams GetCurVideoModeParams()
 static void StoreActualGraphicOptions( bool initial )
 {
 	// find out what we actually have
-	PREFSMAN->m_bWindowed = DISPLAY->GetVideoModeParams().windowed;
-	PREFSMAN->m_iDisplayWidth = DISPLAY->GetVideoModeParams().width;
-	PREFSMAN->m_iDisplayHeight = DISPLAY->GetVideoModeParams().height;
-	PREFSMAN->m_iDisplayColorDepth = DISPLAY->GetVideoModeParams().bpp;
-	PREFSMAN->m_iRefreshRate = DISPLAY->GetVideoModeParams().rate;
-	PREFSMAN->m_bVsync = DISPLAY->GetVideoModeParams().vsync;
+	PREFSMAN->m_bWindowed.Set( DISPLAY->GetVideoModeParams().windowed );
+	PREFSMAN->m_iDisplayWidth.Set( DISPLAY->GetVideoModeParams().width );
+	PREFSMAN->m_iDisplayHeight.Set( DISPLAY->GetVideoModeParams().height );
+	PREFSMAN->m_iDisplayColorDepth.Set( DISPLAY->GetVideoModeParams().bpp );
+	PREFSMAN->m_iRefreshRate.Set( DISPLAY->GetVideoModeParams().rate );
+	PREFSMAN->m_bVsync.Set( DISPLAY->GetVideoModeParams().vsync );
 
 	CString log = ssprintf("%s %dx%d %d color %d texture %dHz %s %s",
 		PREFSMAN->m_bWindowed ? "Windowed" : "Fullscreen",
@@ -322,7 +322,7 @@ void ResetGame( bool ReturnToFirstScreen )
 		else
 			SCREENMAN->SetNewScreen( INITIAL_SCREEN );
 
-		PREFSMAN->m_bFirstRun = false;
+		PREFSMAN->m_bFirstRun.Set( false );
 		PREFSMAN->SaveGlobalPrefsToDisk();	// persist FirstRun setting in case we don't exit normally
 	}
 
@@ -387,12 +387,12 @@ static void CheckSettings()
 	/* Two memory-consuming features that we can disable are texture caching and
 	 * preloaded banners.  Texture caching can use a lot of memory; disable it for
 	 * low-memory systems. */
-	PREFSMAN->m_bDelayedTextureDelete = HighMemory;
+	PREFSMAN->m_bDelayedTextureDelete.Set( HighMemory );
 
 	/* Preloaded banners takes about 9k per song. Although it's smaller than the
 	 * actual song data, it still adds up with a lot of songs. Disable it for 64-meg
 	 * systems. */
-	PREFSMAN->m_BannerCache = LowMemory ? PrefsManager::BNCACHE_OFF:PrefsManager::BNCACHE_LOW_RES_PRELOAD;
+	PREFSMAN->m_BannerCache.Set( LowMemory ? PrefsManager::BNCACHE_OFF:PrefsManager::BNCACHE_LOW_RES_PRELOAD );
 
 	PREFSMAN->SaveGlobalPrefsToDisk();
 #endif
@@ -653,12 +653,12 @@ static void CheckVideoDefaultSettings()
 	if( SetDefaultVideoParams )
 	{
 		PREFSMAN->m_sVideoRenderers = pDefaults->szVideoRenderers;
-		PREFSMAN->m_iDisplayWidth = pDefaults->iWidth;
-		PREFSMAN->m_iDisplayHeight = pDefaults->iHeight;
-		PREFSMAN->m_iDisplayColorDepth = pDefaults->iDisplayColor;
-		PREFSMAN->m_iTextureColorDepth = pDefaults->iTextureColor;
-		PREFSMAN->m_iMovieColorDepth = pDefaults->iMovieColor;
-		PREFSMAN->m_iMaxTextureResolution = pDefaults->iTextureSize;
+		PREFSMAN->m_iDisplayWidth.Set( pDefaults->iWidth );
+		PREFSMAN->m_iDisplayHeight.Set( pDefaults->iHeight );
+		PREFSMAN->m_iDisplayColorDepth.Set( pDefaults->iDisplayColor );
+		PREFSMAN->m_iTextureColorDepth.Set( pDefaults->iTextureColor );
+		PREFSMAN->m_iMovieColorDepth.Set( pDefaults->iMovieColor );
+		PREFSMAN->m_iMaxTextureResolution.Set( pDefaults->iTextureSize );
 		PREFSMAN->m_bSmoothLines = pDefaults->bSmoothLines;
 
 		// Update last seen video card
@@ -1265,7 +1265,7 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature,
 void InsertCoin( int iNum )
 {
 	GAMESTATE->m_iCoins += iNum;
-	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Value() );
+	LOG->Trace("%i coins inserted, %i needed to play", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
 	BOOKKEEPER->CoinInserted();
 	SCREENMAN->RefreshCreditsMessages();
 	SCREENMAN->PlayCoinSound();
@@ -1394,7 +1394,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
 		{
 			/* alt-enter */
-			PREFSMAN->m_bWindowed = !PREFSMAN->m_bWindowed;
+			PREFSMAN->m_bWindowed.Set( !PREFSMAN->m_bWindowed );
 			ApplyGraphicOptions();
 			return true;
 		}

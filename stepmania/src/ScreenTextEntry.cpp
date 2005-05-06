@@ -190,7 +190,7 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 		return;
 
 	//The user wants to input text traditionally
-	if ( g_bAllowOldKeyboardInput.Value() && ( type == IET_FIRST_PRESS ) )
+	if ( g_bAllowOldKeyboardInput.Get() && ( type == IET_FIRST_PRESS ) )
 	{
 		if ( DeviceI.button == KEY_BACK )
 		{

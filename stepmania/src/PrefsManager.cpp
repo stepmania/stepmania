@@ -351,7 +351,7 @@ void PrefsManager::ResetToFactoryDefaults()
 {
 	// clobber the users prefs by initing then applying defaults
 	Init();
-	m_bFirstRun = false;
+	m_bFirstRun.Set( false );
 	ReadPrefsFromFile( DEFAULTS_INI_PATH );
 	ReadPrefsFromFile( STATIC_INI_PATH );
 	
@@ -380,7 +380,7 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	ini.GetValue( "Options", "LightsDriver",					m_sLightsDriver );
 	ini.GetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
 	
-	m_iCoinsPerCredit = max( (int)m_iCoinsPerCredit, 1);
+	m_iCoinsPerCredit.Set( max(m_iCoinsPerCredit.Get(),1) );
 
 	ini.GetValue( "Options", "BoostAppPriority",				m_iBoostAppPriority );
 	ini.GetValue( "Options", "LightsStepsDifficulty",			m_sLightsStepsDifficulty );
@@ -451,7 +451,7 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
 		(*p)->ReadFrom( ini );
 
-	CLAMP( m_iSongsPerPlay.Value(), 0, MAX_SONGS_PER_PLAY );
+	m_iSongsPerPlay.Set( clamp(m_iSongsPerPlay.Get(),0,MAX_SONGS_PER_PLAY) );
 }
 
 void PrefsManager::SaveGlobalPrefsToDisk() const

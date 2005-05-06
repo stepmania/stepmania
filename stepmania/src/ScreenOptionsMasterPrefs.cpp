@@ -59,12 +59,11 @@ int FindClosestEntry( T value, const T *mapping, unsigned cnt )
 		return 0;
 }
 
-template<class T>
+template <class T>
 static void MoveMap( int &sel, T &opt, bool ToSel, const T *mapping, unsigned cnt )
 {
 	if( ToSel )
 	{
-		/* opt -> sel.  Find the closest entry in mapping. */
 		sel = FindClosestEntry( opt, mapping, cnt );
 	} else {
 		/* sel -> opt */
@@ -72,19 +71,15 @@ static void MoveMap( int &sel, T &opt, bool ToSel, const T *mapping, unsigned cn
 	}
 }
 
-/*
- * MoveMap for a generic preference.  
- * TODO: make this templated.
- */
 template <class T>
-static void MoveMap( int &sel, Preference<T> &pOption, bool ToSel, const T *mapping, unsigned cnt )
+static void MoveMap( int &sel, Preference<T> &opt, bool ToSel, const T *mapping, unsigned cnt )
 {
 	if( ToSel )
 	{
-		sel = FindClosestEntry( (T)pOption, mapping, cnt );
+		sel = FindClosestEntry( opt.Get(), mapping, cnt );
 	} else {
 		/* sel -> opt */
-		pOption = mapping[sel];
+		opt.Set( mapping[sel] );
 	}
 }
 
@@ -121,7 +116,8 @@ static void MoveData( int &sel, bool &opt, bool ToSel )
 template<class T>
 static void MoveData( int &sel, Preference<T> &opt, bool ToSel )
 {
-	MoveData( sel, opt.Value(), ToSel );
+	if( ToSel )	sel = opt;
+	else		opt.Set( !!sel );
 }
 
 #define MOVE( name, opt ) \
@@ -290,13 +286,13 @@ MOVE( BeginnerHelper,		PREFSMAN->m_bShowBeginnerHelper );
 static void BGBrightness( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 0.0f,0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
-	MoveMap( sel, PREFSMAN->m_fBGBrightness.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_fBGBrightness, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void NumBackgrounds( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 5,10,15,20 };
-	MoveMap( sel, PREFSMAN->m_iNumBackgrounds.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iNumBackgrounds, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Input options */
@@ -308,7 +304,7 @@ MOVE( OptionsNavigation,	PREFSMAN->m_bArcadeOptionsNavigation );
 static void WheelSpeed( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 5, 10, 15, 25 };
-	MoveMap( sel, (int&)PREFSMAN->m_iMusicWheelSwitchSpeed, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iMusicWheelSwitchSpeed, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Gameplay options */
@@ -362,7 +358,7 @@ static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pCo
 	if( ToSel && PREFSMAN->m_bEventMode )
 		sel = 7;
 	if( !ToSel )
-		PREFSMAN->m_bEventMode = (sel == 7);
+		PREFSMAN->m_bEventMode.Set( sel == 7 );
 }
 
 /* Machine options */
@@ -371,13 +367,13 @@ MOVE( ScoringType,			(int &) PREFSMAN->m_iScoringType );
 static void JudgeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 1.50f,1.33f,1.16f,1.00f,0.84f,0.66f,0.50f,0.33f,0.20f };
-	MoveMap( sel, PREFSMAN->m_fJudgeWindowScale.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_fJudgeWindowScale, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
-	MoveMap( sel, PREFSMAN->m_fLifeDifficultyScale.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_fLifeDifficultyScale, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void ShowSongOptions( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -462,45 +458,45 @@ static void DisplayResolution( int &sel, bool ToSel, const ConfOption *pConfOpti
 	MoveMap( sel, sel_res, ToSel, mapping, ARRAYSIZE(mapping) );
 	if( !ToSel )
 	{
-		PREFSMAN->m_iDisplayWidth = sel_res.w;
-		PREFSMAN->m_iDisplayHeight = sel_res.h;
+		PREFSMAN->m_iDisplayWidth.Set( sel_res.w );
+		PREFSMAN->m_iDisplayHeight.Set( sel_res.h );
 	}
 }
 
 static void DisplayColor( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
-	MoveMap( sel, PREFSMAN->m_iDisplayColorDepth.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iDisplayColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void TextureResolution( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 256,512,1024,2048 };
-	MoveMap( sel, PREFSMAN->m_iMaxTextureResolution.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iMaxTextureResolution, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void TextureColor( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
-	MoveMap( sel, PREFSMAN->m_iTextureColorDepth.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iTextureColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void MovieColor( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
-	MoveMap( sel, PREFSMAN->m_iMovieColorDepth.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iMovieColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void RefreshRate( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { (int) REFRESH_DEFAULT,60,70,72,75,80,85,90,100,120,150 };
-	MoveMap( sel, PREFSMAN->m_iRefreshRate.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_iRefreshRate, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void AspectRatio( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 3/4.f,1,4/3.0f,16/10.0f,16/9.f, 8/3.f };
-	MoveMap( sel, PREFSMAN->m_fDisplayAspectRatio.Value(), ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_fDisplayAspectRatio, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Sound options */

@@ -100,14 +100,14 @@ void SongManager::Reload( LoadingWindow *ld )
 
 	/* Always check songs for changes. */
 	const bool OldVal = PREFSMAN->m_bFastLoad;
-	PREFSMAN->m_bFastLoad = false;
+	PREFSMAN->m_bFastLoad.Set( false );
 
 	InitAll( ld );
 
 	// reload scores afterward
 	PROFILEMAN->LoadMachineProfile();
 
-	PREFSMAN->m_bFastLoad = OldVal;
+	PREFSMAN->m_bFastLoad.Set( OldVal );
 }
 
 void SongManager::InitSongsFromDisk( LoadingWindow *ld )
@@ -786,10 +786,10 @@ void SongManager::RevertFromDisk( Song *pSong, bool bAllowNotesLoss )
 	/* Erase existing data and reload. */
 	pSong->Reset();
 	const bool OldVal = PREFSMAN->m_bFastLoad;
-	PREFSMAN->m_bFastLoad = false;
+	PREFSMAN->m_bFastLoad.Set( false );
 	pSong->LoadFromSongDir( dir );	
 	/* XXX: reload edits? */
-	PREFSMAN->m_bFastLoad = OldVal;
+	PREFSMAN->m_bFastLoad.Set( OldVal );
 
 
 	/* Courses cache Steps pointers.  On the off chance that this isn't the last

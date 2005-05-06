@@ -40,6 +40,8 @@ protected:
 	CString		m_sName;
 };
 
+void BroadcastPreferenceChanged( const CString& sPreferenceName );
+
 template <class T>
 class Preference : public IPreference
 {
@@ -68,19 +70,20 @@ public:
 		m_currentValue = m_defaultValue;
 	}
 
-	T &Value()
-	{
-		return m_currentValue;
-	}
-
-	operator const T () const
+	T Get() const
 	{
 		return m_currentValue;
 	}
 	
-	void operator=( const T& other )
+	operator const T () const
+	{
+		return Get();
+	}
+	
+	void Set( const T& other )
 	{
 		m_currentValue = other;
+		BroadcastPreferenceChanged( m_sName );
 	}
 };
 

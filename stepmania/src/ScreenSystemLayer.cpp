@@ -193,7 +193,7 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 			if( Credits > 0 || PREFSMAN->m_iCoinsPerCredit == 1 )
 				sCredits += ssprintf("  %d", Credits);
 			if( PREFSMAN->m_iCoinsPerCredit > 1 )
-				sCredits += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit.Value() );
+				sCredits += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit.Get() );
 			return sCredits;
 		}
 		case COIN_FREE:

@@ -5,6 +5,7 @@
 #include "RageLog.h"
 #include "LuaFunctions.h"
 #include "LuaManager.h"
+#include "MessageManager.h"
 
 static const CString PrefsGroupNames[] = {
 	"Debug",
@@ -82,6 +83,12 @@ void IPreference::ReadFrom( const IniFile &ini )
 void IPreference::WriteTo( IniFile &ini ) const
 {
 	ini.SetValue( PrefsGroupToString(m_PrefsGroup), m_sName, ToString() );
+}
+
+void BroadcastPreferenceChanged( const CString& sPreferenceName )
+{
+	if( MESSAGEMAN )
+		MESSAGEMAN->Broadcast( sPreferenceName+"Changed" );
 }
 
 /*

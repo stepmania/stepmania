@@ -775,7 +775,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_F9 )
 	{
 		if( type != IET_FIRST_PRESS ) return;
-		PREFSMAN->m_bShowNativeLanguage = !PREFSMAN->m_bShowNativeLanguage;
+		PREFSMAN->m_bShowNativeLanguage.Set( !PREFSMAN->m_bShowNativeLanguage );
 		m_MusicWheel.RebuildAllMusicWheelItems();
 		if( SHOW_COURSE_CONTENTS )
 			m_CourseContents.SetFromGameState();

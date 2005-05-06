@@ -1947,7 +1947,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			break;
 		case KEY_F8:
 			{
-				PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
+				PREFSMAN->m_bAutoPlay.Set( !PREFSMAN->m_bAutoPlay );
 				UpdateAutoPlayText();
 				bool bIsHoldingShift = 
 					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||

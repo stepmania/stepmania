@@ -73,7 +73,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 			switch( GAMESTATE->GetCoinMode() )
 			{
 			case COIN_PAY:
-				LOG->Trace("ScreenAttract::AttractInput: COIN_PAY (%i/%i)", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Value() );
+				LOG->Trace("ScreenAttract::AttractInput: COIN_PAY (%i/%i)", GAMESTATE->m_iCoins, PREFSMAN->m_iCoinsPerCredit.Get() );
 				if( GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
 					break;	// don't fall through
 				// fall through

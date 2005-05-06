@@ -89,7 +89,7 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 			NSMAN->PostStartUp(sNewName);
 			NSMAN->DisplayStartupStatus();
 			UpdateConnectStatus( );
-			g_sLastServer = ScreenTextEntry::s_sLastAnswer;
+			g_sLastServer.Set( ScreenTextEntry::s_sLastAnswer );
 		}
 	}
 	else if( SM == SM_ServerNameEnter )

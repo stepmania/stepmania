@@ -1430,7 +1430,7 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 		break;
 	case EDIT_BUTTON_TOGGLE_AUTOPLAY:
 		{
-			PREFSMAN->m_bAutoPlay = !PREFSMAN->m_bAutoPlay;
+			PREFSMAN->m_bAutoPlay.Set( !PREFSMAN->m_bAutoPlay );
 			FOREACH_HumanPlayer( p )
 				GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
 		}

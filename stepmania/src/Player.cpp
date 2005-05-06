@@ -1153,7 +1153,7 @@ void Player::HandleAutosync(float fNoteOffset)
 			GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += mean;
 			break;
 		case SongOptions::AUTOSYNC_MACHINE:
-			PREFSMAN->m_fGlobalOffsetSeconds = PREFSMAN->m_fGlobalOffsetSeconds + mean;
+			PREFSMAN->m_fGlobalOffsetSeconds.Set( PREFSMAN->m_fGlobalOffsetSeconds + mean );
 			break;
 		default:
 			ASSERT(0);
