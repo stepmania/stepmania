@@ -38,6 +38,7 @@ static const CString MessageNames[] = {
 	"MenuRightP2",
 	"MadeChoiceP1",
 	"MadeChoiceP2",
+	"CoinInserted",
 };
 XToString( Message, NUM_MESSAGES );
 

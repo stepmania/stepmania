@@ -267,7 +267,7 @@ const int ITEM_NONE = -1;
 //
 
 enum CoinMode { COIN_HOME, COIN_PAY, COIN_FREE, NUM_COIN_MODES };
-
+#define FOREACH_CoinMode( i ) FOREACH_ENUM( CoinMode, NUM_COIN_MODES, i )
 const CString& CoinModeToString( CoinMode cm );
 
 

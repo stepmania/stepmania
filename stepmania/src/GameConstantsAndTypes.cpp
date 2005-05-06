@@ -90,6 +90,16 @@ static const CString CoinModeNames[] = {
 	"free",
 };
 XToString( CoinMode, NUM_COIN_MODES );
+static void LuaCoinMode(lua_State* L)
+{
+	FOREACH_CoinMode( i )
+	{
+		CString s = CoinModeNames[i];
+		s.MakeUpper();
+		LUA->SetGlobal( "COIN_"+s, i );
+	}
+}
+REGISTER_WITH_LUA_FUNCTION( LuaCoinMode );
 
 
 static const CString PremiumNames[] = {

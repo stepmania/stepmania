@@ -2002,6 +2002,7 @@ public:
 	static int GetNumPlayersEnabled( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumPlayersEnabled() ); return 1; }
 	static int GetSongBeat( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_fSongBeat ); return 1; }
 	static int PlayerUsingBothSides( T* p, lua_State *L )	{ lua_pushboolean(L, p->PlayerUsingBothSides() ); return 1; }
+	static int GetCoins( T* p, lua_State *L )				{ lua_pushnumber(L, p->m_iCoins ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -2039,6 +2040,7 @@ public:
 		ADD_METHOD( GetNumPlayersEnabled )
 		ADD_METHOD( GetSongBeat )
 		ADD_METHOD( PlayerUsingBothSides )
+		ADD_METHOD( GetCoins )
 
 		Luna<T>::Register( L );
 

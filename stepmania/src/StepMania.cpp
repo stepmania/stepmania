@@ -1269,6 +1269,7 @@ void InsertCoin( int iNum )
 	BOOKKEEPER->CoinInserted();
 	SCREENMAN->RefreshCreditsMessages();
 	SCREENMAN->PlayCoinSound();
+	MESSAGEMAN->Broadcast( MESSAGE_COIN_INSERTED );
 }
 
 void InsertCredit()
