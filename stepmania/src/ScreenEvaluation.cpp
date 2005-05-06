@@ -120,6 +120,9 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElement
 
 			GAMESTATE->m_bSideIsJoined[p] = true;
 			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
+			vector<Trail*> apTrails;
+			GAMESTATE->m_pCurCourse->GetAllTrails( apTrails );
+			GAMESTATE->m_pCurTrail[p] = apTrails[0];
 			STATSMAN->m_CurStageStats.m_player[p].vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			STATSMAN->m_CurStageStats.m_player[p].vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fScrollSpeed = 2;
