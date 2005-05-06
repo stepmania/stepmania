@@ -1999,6 +1999,7 @@ public:
 	static int IsEventMode( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsEventMode() ); return 1; }
 	static int GetNumPlayersEnabled( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumPlayersEnabled() ); return 1; }
 	static int GetSongBeat( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_fSongBeat ); return 1; }
+	static int PlayerUsingBothSides( T* p, lua_State *L )	{ lua_pushboolean(L, p->PlayerUsingBothSides() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -2033,6 +2034,7 @@ public:
 		ADD_METHOD( IsEventMode )
 		ADD_METHOD( GetNumPlayersEnabled )
 		ADD_METHOD( GetSongBeat )
+		ADD_METHOD( PlayerUsingBothSides )
 
 		Luna<T>::Register( L );
 
@@ -2072,7 +2074,6 @@ LuaFunction_NoArgs( CourseSongIndex,		GAMESTATE->GetCourseSongIndex() )
 LuaFunction_NoArgs( PlayModeName,			PlayModeToString(GAMESTATE->m_PlayMode) )
 LuaFunction_NoArgs( CurStyleName,			CString( GAMESTATE->m_pCurStyle == NULL ? "none": GAMESTATE->GetCurrentStyle()->m_szName ) )
 LuaFunction_NoArgs( GetNumPlayersEnabled,	GAMESTATE->GetNumPlayersEnabled() )
-LuaFunction_NoArgs( PlayerUsingBothSides,	GAMESTATE->PlayerUsingBothSides() )
 LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestStepsDifficulty() )
 LuaFunction_StrStr(	SetEnv,					GAMESTATE->m_mapEnv[str1] = str2 )
 
