@@ -9,6 +9,7 @@
 
 class Song;
 class Steps;
+struct lua_State;
 
 struct TrailEntry
 {
@@ -70,6 +71,9 @@ public:
 	void GetDisplayBpms( DisplayBpms &AddTo );
 	bool IsSecret() const;
 	bool ContainsSong( Song* pSong ) const;
+
+	// Lua
+	void PushSelf( lua_State *L );
 };
 
 #endif

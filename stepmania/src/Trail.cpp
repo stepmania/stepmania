@@ -183,6 +183,27 @@ bool Trail::ContainsSong( Song* pSong ) const
 	return false;
 }
 
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaTrail : public Luna<T>
+{
+public:
+	LunaTrail() { LUA->Register( Register ); }
+
+	static int GetDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_CourseDifficulty ); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetDifficulty )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( Trail )
+// lua end
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
