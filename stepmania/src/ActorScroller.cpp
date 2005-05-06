@@ -69,8 +69,8 @@ void ActorScroller::Load2(
 	m_bLoop = bLoop; 
 	m_fSecondsPerItem = fSecondsPerItem; 
 	m_fSecondsPauseBetweenItems = fSecondsPauseBetweenItems;
-	m_fCurrentItem = m_bLoop ? 0 : (float)-m_fNumItemsToDraw;
-	m_fDestinationItem = (float)(m_SubActors.size()+1);
+	m_fCurrentItem = m_bLoop ? +m_fNumItemsToDraw/2 : -(m_fNumItemsToDraw/2)-1;
+	m_fDestinationItem = (float)(m_SubActors.size()+m_fNumItemsToDraw/2+1);
 	m_fPauseCountdownSeconds = 0;
 	m_fQuantizePixels = 0;
 
