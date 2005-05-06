@@ -31,6 +31,9 @@
 
 #define lstat stat
 #define fsync _commit
+#define isnan _isnan
+#define finite _finite
+
 /* mkdir is missing the mode arg */
 #define mkdir(p,m) mkdir(p)
 
