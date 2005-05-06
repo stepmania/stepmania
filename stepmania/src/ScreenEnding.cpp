@@ -236,8 +236,7 @@ void ScreenEnding::Init()
 	}
 
 	
-	this->MoveToTail( &m_In );		// put it in the back so it covers up the stuff we just added
-	this->MoveToTail( &m_Out );		// put it in the back so it covers up the stuff we just added
+	this->SortByDrawOrder();
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("music scroll") );
 
