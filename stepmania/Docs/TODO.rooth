@@ -6,7 +6,18 @@ BUGS:
    graphics, instead cycling seemingly randomly between Marvellous and
    Perfect.
 
+ * In jukebox mode, scores aren't reset between songs. This means the score
+   meter goes insanely high and eventually (if allowed to go on for long
+   enough) an assert fails due to an integer overflow.
+
+ * Texture/etc loading can't handle redirects that start with the file name of
+   the file they refer to (e.g. "Foo Bar.redir" referring to "Foo"); it instead
+   just goes into an infinite loop repeatedly resolving to the redirect.
+
 Other:
+ * We need redirects for the note color NoteSkin elements, e.g. Tap Note 12th,
+   etc. I've added some to the common fallbacks, but dance could use some too.
+
  * Redesign ScreenSelectMusic to make the layout much much more freeform. We
    could have all our music selection needs in one program just by setting up
    banner and/or custom graphic as a WheelItem element and allowing more
