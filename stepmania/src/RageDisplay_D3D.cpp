@@ -1035,7 +1035,6 @@ void RageDisplay_D3D::SetTextureFiltering( bool b )
 void RageDisplay_D3D::SetBlendMode( BlendMode mode )
 {
 	g_pd3dDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
-	g_pd3dDevice->SetRenderState( D3DRS_ZBIAS, 0 );
 	switch( mode )
 	{
 	case BLEND_NORMAL:
@@ -1049,11 +1048,6 @@ void RageDisplay_D3D::SetBlendMode( BlendMode mode )
 	case BLEND_NO_EFFECT:
 		g_pd3dDevice->SetRenderState( D3DRS_SRCBLEND,  D3DBLEND_ZERO );
 		g_pd3dDevice->SetRenderState( D3DRS_DESTBLEND, D3DBLEND_ONE );
-
-		/* This is almost exclusively used to draw masks to the Z-buffer.  Make sure
-		 * masks always win the depth test when drawn at the same position. */
-		g_pd3dDevice->SetRenderState( D3DRS_ZBIAS, 30 );	// this bias is bigger than it needs to be to handle the coplanar case
-
 		break;
 	default:
 		ASSERT(0);
@@ -1066,6 +1060,15 @@ bool RageDisplay_D3D::IsZWriteEnabled() const
 	g_pd3dDevice->GetRenderState( D3DRS_ZWRITEENABLE, &b );
 	return b!=0;
 }
+
+void RageDisplay_D3D::SetZBias( bool b )
+{
+	if( b )
+		g_pd3dDevice->SetRenderState( D3DRS_ZBIAS, 30 );
+	else
+		g_pd3dDevice->SetRenderState( D3DRS_ZBIAS, 0 );
+}
+
 
 bool RageDisplay_D3D::IsZTestEnabled() const
 {

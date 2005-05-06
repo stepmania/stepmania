@@ -172,6 +172,7 @@ public:
 	virtual bool IsZWriteEnabled() const = 0;
 	virtual void SetZWrite( bool b ) = 0;
 	virtual void SetZTestMode( ZTestMode mode ) = 0;
+	virtual void SetZBias( bool b ) = 0;
 	virtual void ClearZBuffer() = 0;
 
 	virtual void SetCullMode( CullMode mode ) = 0;

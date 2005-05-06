@@ -349,6 +349,7 @@ RageDisplay_OGL::RageDisplay_OGL()
 	InitStringMap();
 
 	wind = NULL;
+	g_bTextureMatrixShader = NULL;
 }
 
 CString GetInfoLog( GLhandleARB h )
@@ -1472,7 +1473,6 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 {
 	glEnable(GL_BLEND);
 
-	glDepthRange( 0.05, 1.0 );
 	switch( mode )
 	{
 	case BLEND_NORMAL:
@@ -1484,10 +1484,6 @@ void RageDisplay_OGL::SetBlendMode( BlendMode mode )
 	case BLEND_NO_EFFECT:
 		/* XXX: Would it be faster and have the same effect to say glDisable(GL_COLOR_WRITEMASK)? */
 		glBlendFunc( GL_ZERO, GL_ONE );
-
-		/* This is almost exclusively used to draw masks to the Z-buffer.  Make sure
-		 * masks always win the depth test when drawn at the same position. */
-		glDepthRange( 0.0, 0.95 );	// this bias is bigger than it needs to be to handle the coplanar case
 		break;
 	default:
 		ASSERT(0);
@@ -1519,6 +1515,14 @@ void RageDisplay_OGL::ClearZBuffer()
 void RageDisplay_OGL::SetZWrite( bool b )
 {
 	glDepthMask( b );
+}
+
+void RageDisplay_OGL::SetZBias( bool b )
+{
+	if( b )
+		glDepthRange( 0.0, 0.95 );
+	else 
+		glDepthRange( 0.05, 1.0 );
 }
 
 void RageDisplay_OGL::SetZTestMode( ZTestMode mode )
