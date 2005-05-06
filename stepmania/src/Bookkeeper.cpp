@@ -69,7 +69,7 @@ void Bookkeeper::LoadFromNode( const XNode *pNode )
 	const XNode *pData = pNode->GetChild( "Data" );
 	if( pData == NULL )
 	{
-		LOG->Warn( "Error loading bookkeeping: Data node missing", pNode->m_sName.c_str() );
+		LOG->Warn( "Error loading bookkeeping: Data node missing" );
 		return;
 	}
 

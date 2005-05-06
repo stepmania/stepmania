@@ -349,7 +349,7 @@ RageDisplay_OGL::RageDisplay_OGL()
 	InitStringMap();
 
 	wind = NULL;
-	g_bTextureMatrixShader = NULL;
+	g_bTextureMatrixShader = 0;
 }
 
 CString GetInfoLog( GLhandleARB h )
