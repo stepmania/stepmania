@@ -319,6 +319,25 @@ static void LuaGoalType(lua_State* L)
 REGISTER_WITH_LUA_FUNCTION( LuaGoalType );
 
 
+static const CString StageNames[] = {
+	"1",
+	"2",
+	"3",
+	"4",
+	"5",
+	"6",
+	"Final",
+	"Extra1",
+	"Extra2",
+	"Nonstop",
+	"Oni",
+	"Endless",
+	"Event",
+	"Demo",
+};
+XToString( Stage, NUM_STAGES );
+
+
 #include "LuaFunctions.h"
 LuaFunction_NoArgs( CoinMode,   CoinModeToString(PREFSMAN->m_CoinMode) )
 LuaFunction_NoArgs( Premium,    PremiumToString(PREFSMAN->m_Premium) )

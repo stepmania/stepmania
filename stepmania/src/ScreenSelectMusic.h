@@ -104,7 +104,7 @@ protected:
 	AutoActor			m_sprBannerFrame;
 	AutoActor			m_sprExplanation;
 	BPMDisplay			m_BPMDisplay;
-	Sprite				m_sprStage;
+	AutoActor			m_sprStage[NUM_STAGES];
 	Sprite				m_sprCDTitleFront, m_sprCDTitleBack;
 	Sprite				m_sprDifficultyFrame[NUM_PLAYERS];
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];

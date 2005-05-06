@@ -183,20 +183,16 @@ void ScreenSelectMusic::Init()
 	this->AddChild( &m_DifficultyDisplay );
 
 	{
-		CStringArray StageTexts;
-		GAMESTATE->GetAllStageTexts( StageTexts );
-		for( unsigned i = 0; i < StageTexts.size(); ++i )
+		vector<Stage> vStages;
+		GAMESTATE->GetPossibleStages( vStages );
+		FOREACH_CONST( Stage, vStages, s )
 		{
-			CString path = THEME->GetPathG( m_sName, "stage "+StageTexts[i], true );
-			if( path != "" )
-				TEXTUREMAN->CacheTexture( path );
+			m_sprStage[*s].Load( THEME->GetPathG(m_sName,"stage "+StageToString(*s)) );
+			m_sprStage[*s]->SetName( "Stage" );
+			SET_XY( m_sprStage[*s] );
+			this->AddChild( m_sprStage[*s] );
 		}
 	}
-
-	// loaded in AfterMusicChange
-	m_sprStage.SetName( "Stage" );
-	SET_XY( m_sprStage );
-	this->AddChild( &m_sprStage );
 
 	m_sprCDTitleFront.SetName( "CDTitle" );
 	m_sprCDTitleFront.Load( THEME->GetPathG(m_sName,"fallback cdtitle") );
@@ -544,7 +540,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_sprExplanation );
 	ON_COMMAND( m_BPMDisplay );
 	ON_COMMAND( m_DifficultyDisplay );
-	ON_COMMAND( m_sprStage );
+	ON_COMMAND( m_sprStage[GAMESTATE->GetCurrentStage()] );
 	ON_COMMAND( m_sprCDTitleFront );
 	ON_COMMAND( m_sprCDTitleBack );
 	ON_COMMAND( m_GrooveRadar );
@@ -600,7 +596,7 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_sprExplanation );
 	OFF_COMMAND( m_BPMDisplay );
 	OFF_COMMAND( m_DifficultyDisplay );
-	OFF_COMMAND( m_sprStage );
+	OFF_COMMAND( m_sprStage[GAMESTATE->GetCurrentStage()] );
 	OFF_COMMAND( m_sprCDTitleFront );
 	OFF_COMMAND( m_sprCDTitleBack );
 	OFF_COMMAND( m_GrooveRadar );
@@ -1842,7 +1838,10 @@ void ScreenSelectMusic::AfterMusicChange()
 	g_StartedLoadingAt.Touch();
 
 	// update stage counter display (long versions/marathons)
-	m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+GAMESTATE->GetStageText()) );
+	FOREACH_Stage( s )
+	{
+		m_sprStage[s]->SetHidden( s != GAMESTATE->GetCurrentStage() );
+	}
 
 	if( (int) m_Artists.size() > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
 	{

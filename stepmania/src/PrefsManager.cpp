@@ -450,6 +450,8 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 
 	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
 		(*p)->ReadFrom( ini );
+
+	CLAMP( m_iSongsPerPlay.Value(), 0, MAX_SONGS_PER_PLAY );
 }
 
 void PrefsManager::SaveGlobalPrefsToDisk() const

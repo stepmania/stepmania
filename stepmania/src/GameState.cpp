@@ -724,33 +724,26 @@ bool GameState::IsExtraStage2() const
 	return m_iCurrentStageIndex == PREFSMAN->m_iSongsPerPlay+1;
 }
 
-CString GameState::GetStageText() const
+Stage GameState::GetCurrentStage() const
 {
-	if( m_bDemonstrationOrJukebox )				return "demo";
+	if( m_bDemonstrationOrJukebox )				return STAGE_DEMO;
 	// "event" has precedence
-	else if( GAMESTATE->IsEventMode() )		return "event";
-	else if( m_PlayMode == PLAY_MODE_ONI )		return "oni";
-	else if( m_PlayMode == PLAY_MODE_NONSTOP )	return "nonstop";
-	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return "endless";
-	else if( IsFinalStage() )					return "final";
-	else if( IsExtraStage() )					return "extra1";
-	else if( IsExtraStage2() )					return "extra2";
-	else										return ssprintf("%d",m_iCurrentStageIndex+1);
+	else if( GAMESTATE->IsEventMode() )			return STAGE_EVENT;
+	else if( m_PlayMode == PLAY_MODE_ONI )		return STAGE_ONI;
+	else if( m_PlayMode == PLAY_MODE_NONSTOP )	return STAGE_NONSTOP;
+	else if( m_PlayMode == PLAY_MODE_ENDLESS )	return STAGE_ENDLESS;
+	else if( IsFinalStage() )					return STAGE_FINAL;
+	else if( IsExtraStage() )					return STAGE_EXTRA1;
+	else if( IsExtraStage2() )					return STAGE_EXTRA2;
+	else										return (Stage)(STAGE_1+m_iCurrentStageIndex);
 }
 
-void GameState::GetAllStageTexts( CStringArray &out ) const
+void GameState::GetPossibleStages( vector<Stage> &out ) const
 {
+	// Optimze me so that we don't load graphics that can't possibly be shown
 	out.clear();
-	out.push_back( "demo" );
-	out.push_back( "oni" );
-	out.push_back( "nonstop" );
-	out.push_back( "endless" );
-	out.push_back( "event" );
-	out.push_back( "final" );
-	out.push_back( "extra1" );
-	out.push_back( "extra2" );
-	for( int stage = 0; stage < PREFSMAN->m_iSongsPerPlay; ++stage )
-		out.push_back( ssprintf("%d",stage+1) );
+	FOREACH_Stage( s )
+		out.push_back( s );
 }
 
 int GameState::GetCourseSongIndex() const
@@ -2071,7 +2064,6 @@ LuaFunction_NoArgs( NumStagesLeft,			GAMESTATE->GetNumStagesLeft() )
 LuaFunction_NoArgs( IsFinalStage,			GAMESTATE->IsFinalStage() )
 LuaFunction_NoArgs( IsExtraStage,			GAMESTATE->IsExtraStage() )
 LuaFunction_NoArgs( IsExtraStage2,			GAMESTATE->IsExtraStage2() )
-LuaFunction_NoArgs( GetStageText,			GAMESTATE->GetStageText() )
 LuaFunction_NoArgs( CourseSongIndex,		GAMESTATE->GetCourseSongIndex() )
 LuaFunction_NoArgs( PlayModeName,			PlayModeToString(GAMESTATE->m_PlayMode) )
 LuaFunction_NoArgs( CurStyleName,			CString( GAMESTATE->m_pCurStyle == NULL ? "none": GAMESTATE->GetCurrentStyle()->m_szName ) )
@@ -2090,6 +2082,15 @@ int LuaFunc_UsingModifier( lua_State *L )
 	LUA_RETURN( GAMESTATE->PlayerIsUsingModifier( pn, modifier ), L );
 }
 LuaFunction( UsingModifier );
+
+CString GetStageText()
+{
+	// all lowercase or compatibility with scripts
+	CString s = StageToString( GAMESTATE->GetCurrentStage() );
+	s.MakeLower();
+	return s;
+}
+LuaFunction_NoArgs( GetStageText, GetStageText() )
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard, Chris Gomez

@@ -29,6 +29,8 @@ class Inventory;
 
 AutoScreenMessage( SM_NotesEnded )
 
+const int MAX_COURSE_SONG_NUMBER_GRAPHICS = 5;
+
 class LyricsLoader;
 class ScreenGameplay : public ScreenWithMenuElements
 {
@@ -104,11 +106,11 @@ protected:
 	Transition	m_SongFinished;	// shows after each song, course or not
 
 	Sprite				m_sprStaticBackground;
-	Sprite				m_sprLifeFrame;
+	AutoActor			m_sprLifeFrame;
 	LifeMeter*			m_pLifeMeter[NUM_PLAYERS];
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
-	Sprite				m_sprStage;
-	Sprite				m_sprCourseSongNumber;
+	AutoActor			m_sprStage;
+	AutoActor			m_sprCourseSongNumber[MAX_COURSE_SONG_NUMBER_GRAPHICS];
 	AutoActor			m_sprStageFrame;
 	BitmapText			m_textCourseSongNumber[NUM_PLAYERS];
 	BitmapText			m_textStepsDescription[NUM_PLAYERS];

@@ -327,7 +327,7 @@ void ScreenEvaluation::Init()
 				SET_XY_AND_ON_COMMAND( m_sprLargeBannerFrame );
 				this->AddChild( m_sprLargeBannerFrame );
 
-				m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+GAMESTATE->GetStageText()) );
+				m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+StageToString(GAMESTATE->GetCurrentStage())) );
 				m_sprStage->SetName( "Stage" );
 				SET_XY_AND_ON_COMMAND( m_sprStage );
 				this->AddChild( m_sprStage );
@@ -365,7 +365,7 @@ void ScreenEvaluation::Init()
 				SET_XY_AND_ON_COMMAND( m_sprLargeBannerFrame );
 				this->AddChild( m_sprLargeBannerFrame );
 
-				m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+GAMESTATE->GetStageText()) );
+				m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+StageToString(GAMESTATE->GetCurrentStage())) );
 				m_sprStage->SetName( "Stage" );
 				SET_XY_AND_ON_COMMAND( m_sprStage );
 				this->AddChild( m_sprStage );

@@ -121,8 +121,8 @@ public:
 	bool			IsFinalStage() const;
 	bool			IsExtraStage() const;
 	bool			IsExtraStage2() const;
-	CString			GetStageText() const;
-	void			GetAllStageTexts( CStringArray &out ) const;
+	Stage			GetCurrentStage() const;
+	void			GetPossibleStages( vector<Stage> &out ) const;
 	int				GetCourseSongIndex() const;
 	CString			GetPlayerDisplayName( PlayerNumber pn ) const;
 

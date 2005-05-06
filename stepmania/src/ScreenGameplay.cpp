@@ -295,9 +295,9 @@ void ScreenGameplay::Init()
 	// Add LifeFrame
 	//
 	m_sprLifeFrame.Load( THEME->GetPathG(m_sName,bBattery?"oni life frame":"life frame") );
-	m_sprLifeFrame.SetName( "LifeFrame" );
+	m_sprLifeFrame->SetName( "LifeFrame" );
 	SET_XY( m_sprLifeFrame );
-	this->AddChild( &m_sprLifeFrame );
+	this->AddChild( m_sprLifeFrame );
 
 	//
 	// Add score frame
@@ -456,11 +456,7 @@ void ScreenGameplay::Init()
 	//
 	// Add stage / SongNumber
 	//
-	m_sprStage.SetName( "Stage" );
-	SET_XY( m_sprStage );
 
-	m_sprCourseSongNumber.SetName( "CourseSongNumber" );
-	SET_XY( m_sprCourseSongNumber );
 	
 	FOREACH_EnabledPlayer(p)
 	{
@@ -485,13 +481,21 @@ void ScreenGameplay::Init()
 	case PLAY_MODE_REGULAR:
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
-		m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+GAMESTATE->GetStageText()) );
-		this->AddChild( &m_sprStage );
+		m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+StageToString(GAMESTATE->GetCurrentStage())) );
+		m_sprStage->SetName( "Stage" );
+		SET_XY( m_sprStage );
+		this->AddChild( m_sprStage );
 		break;
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
 	case PLAY_MODE_ENDLESS:
-		this->AddChild( &m_sprCourseSongNumber );
+		for( int i=0; i<MAX_COURSE_SONG_NUMBER_GRAPHICS; i++ )
+		{
+			m_sprCourseSongNumber[i].Load( THEME->GetPathG( m_sName, ssprintf("course song %i",i+1)) );
+			m_sprCourseSongNumber[i]->SetName( "CourseSongNumber" );
+			SET_XY( m_sprCourseSongNumber[i] );
+			this->AddChild( m_sprCourseSongNumber[i] );
+		}
 
         FOREACH_EnabledPlayer( p )
 			this->AddChild( &m_textCourseSongNumber[p] );
@@ -859,16 +863,12 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 	}
 }
 
-void ScreenGameplay::LoadCourseSongNumber( int SongNumber )
+void ScreenGameplay::LoadCourseSongNumber( int iSongNumber )
 {
 	if( !GAMESTATE->IsCourseMode() )
 		return;
-
-	const CString path = THEME->GetPathG( m_sName, ssprintf("course song %i",SongNumber+1), true );
-	if( path != "" )
-		m_sprCourseSongNumber.Load( path );
-	else
-		m_sprCourseSongNumber.UnloadTexture();
+	for( int i=0; i<MAX_COURSE_SONG_NUMBER_GRAPHICS; i++ )
+		m_sprCourseSongNumber[i]->SetHidden( i != iSongNumber );
 }
 
 void ScreenGameplay::LoadNextSong()
@@ -2398,13 +2398,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		m_NextSong.Reset();
 		m_NextSong.StartTransitioning( SM_LoadNextSong );
 		LoadCourseSongNumber( GAMESTATE->GetCourseSongIndex()+1 );
-		COMMAND( m_sprCourseSongNumber, "ChangeIn" );
+		COMMAND( m_sprCourseSongNumber[GAMESTATE->GetCourseSongIndex()], "ChangeIn" );
 	}
 	else if( SM == SM_LoadNextSong )
 	{
 		SongFinished();
 
-		COMMAND( m_sprCourseSongNumber, "ChangeOut" );
+		COMMAND( m_sprCourseSongNumber[GAMESTATE->GetCourseSongIndex()], "ChangeOut" );
 
 		LoadNextSong();
 		GAMESTATE->m_bPastHereWeGo = true;
@@ -2541,7 +2541,7 @@ void ScreenGameplay::TweenOnScreen()
 {
 	ON_COMMAND( m_sprLifeFrame );
 	ON_COMMAND( m_sprStage );
-	ON_COMMAND( m_sprCourseSongNumber );
+	ON_COMMAND( m_sprCourseSongNumber[GAMESTATE->GetCourseSongIndex()] );
 	ON_COMMAND( m_sprStageFrame );
 	ON_COMMAND( m_textSongOptions );
 	ON_COMMAND( m_sprScoreFrame );
@@ -2579,7 +2579,7 @@ void ScreenGameplay::TweenOffScreen()
 
 	OFF_COMMAND( m_sprLifeFrame );
 	OFF_COMMAND( m_sprStage );
-	OFF_COMMAND( m_sprCourseSongNumber );
+	OFF_COMMAND( m_sprCourseSongNumber[GAMESTATE->GetCourseSongIndex()] );
 	OFF_COMMAND( m_sprStageFrame );
 	OFF_COMMAND( m_textSongOptions );
 	OFF_COMMAND( m_sprScoreFrame );

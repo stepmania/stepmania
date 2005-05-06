@@ -95,7 +95,7 @@ void ScreenStage::Init()
 	SET_XY_AND_ON_COMMAND( m_Artist );
 	SET_XY_AND_ON_COMMAND( m_SongTitle );
 
-	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage "+GAMESTATE->GetStageText()) );
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage "+StageToString(GAMESTATE->GetCurrentStage())) );
 
 	this->SortByDrawOrder();
 }

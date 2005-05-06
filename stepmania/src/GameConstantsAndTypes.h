@@ -382,6 +382,29 @@ enum EditMode
 };
 
 
+enum Stage
+{
+	STAGE_1,
+	STAGE_2,
+	STAGE_3,
+	STAGE_4,
+	STAGE_5,
+	STAGE_6,
+	STAGE_FINAL,
+	STAGE_EXTRA1,
+	STAGE_EXTRA2,
+	STAGE_NONSTOP,
+	STAGE_ONI,
+	STAGE_ENDLESS,
+	STAGE_EVENT,
+	STAGE_DEMO,
+	NUM_STAGES,
+	STAGE_INVALID,
+};
+#define FOREACH_Stage( s ) FOREACH_ENUM( Stage, NUM_STAGES, s )
+const CString& StageToString( Stage s );
+
+
 #endif
 
 /*

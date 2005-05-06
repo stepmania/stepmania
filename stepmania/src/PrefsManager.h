@@ -9,6 +9,8 @@
 #include "Preference.h"
 class IniFile;
 
+const int MAX_SONGS_PER_PLAY = 7;
+
 class PrefsManager
 {
 public:
