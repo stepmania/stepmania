@@ -1988,6 +1988,7 @@ public:
 	}
 	static int GetPreferredDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_PreferredDifficulty[IArg(1)] ); return 1; }
 	static int AnyPlayerHasRankingFeats( T* p, lua_State *L )	{ lua_pushboolean(L, p->AnyPlayerHasRankingFeats() ); return 1; }
+	static int IsCourseMode( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCourseMode() ); return 1; }
 	static int GetPlayMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_PlayMode ); return 1; }
 	static int GetSortOrder( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_SortOrder ); return 1; }
 	static int IsGoalComplete( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsGoalComplete((PlayerNumber)IArg(1)) ); return 1; }
@@ -2023,6 +2024,7 @@ public:
 		ADD_METHOD( GetEditSourceSteps )
 		ADD_METHOD( GetPreferredDifficulty )
 		ADD_METHOD( AnyPlayerHasRankingFeats )
+		ADD_METHOD( IsCourseMode )
 		ADD_METHOD( GetPlayMode )
 		ADD_METHOD( GetSortOrder )
 		ADD_METHOD( IsGoalComplete )
