@@ -76,7 +76,7 @@ void Actor::Reset()
 
 	m_bTextureWrapping = false;
 	m_BlendMode = BLEND_NORMAL;
-	m_bZBias = false;
+	m_fZBias = 0;
 	m_bClearZBuffer = false;
 	m_ZTestMode = ZTEST_OFF;
 	m_bZWrite = false;
@@ -389,7 +389,10 @@ void Actor::SetGlobalRenderStates()
 	
 	// BLEND_NO_EFFECT is used to draw masks to the Z-buffer, which always wants
 	// Z-bias enabled.
-	DISPLAY->SetZBias( m_bZBias || m_BlendMode == BLEND_NO_EFFECT );
+	if( m_fZBias == 0 && m_BlendMode == BLEND_NO_EFFECT )
+		DISPLAY->SetZBias( 1.0f );
+	else
+		DISPLAY->SetZBias( m_fZBias );
 
 	if( m_bClearZBuffer )
 		DISPLAY->ClearZBuffer();

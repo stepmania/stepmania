@@ -342,7 +342,7 @@ public:
 	virtual void SetZTestMode( ZTestMode mode ) { m_ZTestMode = mode; } 
 	void SetZTestModeString( const CString &s );	// convenience
 	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
-	void SetZBias( bool b )						{ m_bZBias = b; }
+	void SetZBias( float f )					{ m_fZBias = f; }
 	virtual void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
 	void SetCullModeString( const CString &s );	// convenience
 
@@ -464,7 +464,7 @@ protected:
 	bool		m_bClearZBuffer;
 	ZTestMode	m_ZTestMode;
 	bool		m_bZWrite;
-	bool		m_bZBias; // if true, always wins z-test against a coplanar actor
+	float		m_fZBias; // 0 = no bias; 1 = full bias
 	CullMode	m_CullMode;
 
 	//
@@ -578,7 +578,7 @@ public:
 	static int ztest( T* p, lua_State *L )				{ p->SetZTestMode((!!IArg(1))?ZTEST_WRITE_ON_PASS:ZTEST_OFF); return 0; }
 	static int ztestmode( T* p, lua_State *L )			{ p->SetZTestModeString(SArg(1)); return 0; }
 	static int zwrite( T* p, lua_State *L )				{ p->SetZWrite(!!IArg(1)); return 0; }
-	static int zbias( T* p, lua_State *L )				{ p->SetZBias(!!IArg(1)); return 0; }
+	static int zbias( T* p, lua_State *L )				{ p->SetZBias(FArg(1)); return 0; }
 	static int clearzbuffer( T* p, lua_State *L )		{ p->SetClearZBuffer(!!IArg(1)); return 0; }
 	static int backfacecull( T* p, lua_State *L )		{ p->SetCullMode((!!IArg(1)) ? CULL_BACK : CULL_NONE); return 0; }
 	static int cullmode( T* p, lua_State *L )			{ p->SetCullModeString(SArg(1)); return 0; }

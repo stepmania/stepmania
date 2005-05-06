@@ -1517,12 +1517,12 @@ void RageDisplay_OGL::SetZWrite( bool b )
 	glDepthMask( b );
 }
 
-void RageDisplay_OGL::SetZBias( bool b )
+void RageDisplay_OGL::SetZBias( float f )
 {
-	if( b )
-		glDepthRange( 0.0, 0.95 );
-	else 
-		glDepthRange( 0.05, 1.0 );
+	float fNear = SCALE( f, 0.0f, 1.0f, 0.05f, 0.0f );
+	float fFar = SCALE( f, 0.0f, 1.0f, 1.0f, 0.95f );
+
+	glDepthRange( fNear, fFar );
 }
 
 void RageDisplay_OGL::SetZTestMode( ZTestMode mode )

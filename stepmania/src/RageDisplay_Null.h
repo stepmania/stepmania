@@ -39,7 +39,7 @@ public:
 	bool IsZWriteEnabled() const { return false; }
 	bool IsZTestEnabled() const { return false; }
 	void SetZWrite( bool b ) { }
-	void SetZBias( bool b ) { }
+	void SetZBias( float f ) { }
 	void SetZTestMode( ZTestMode mode ) { }
 	void ClearZBuffer() { }
 	void SetCullMode( CullMode mode ) { }

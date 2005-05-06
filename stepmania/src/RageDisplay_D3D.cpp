@@ -1061,12 +1061,9 @@ bool RageDisplay_D3D::IsZWriteEnabled() const
 	return b!=0;
 }
 
-void RageDisplay_D3D::SetZBias( bool b )
+void RageDisplay_D3D::SetZBias( float f )
 {
-	if( b )
-		g_pd3dDevice->SetRenderState( D3DRS_ZBIAS, 30 );
-	else
-		g_pd3dDevice->SetRenderState( D3DRS_ZBIAS, 0 );
+	g_pd3dDevice->SetRenderState( D3DRS_ZBIAS, (int) SCALE( f, 0.0f, 1.0f, 0, 30 ) );
 }
 
 
