@@ -14,6 +14,7 @@
 #define TIMER_SECONDS			THEME->GetMetricF(m_sName,"TimerSeconds")
 #define TIMER_STEALTH			THEME->GetMetricB(m_sName,"TimerStealth")
 #define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
+#define SHOW_STAGE				THEME->GetMetricB(m_sName,"ShowStage")
 #define MEMORY_CARD_ICONS		THEME->GetMetricB(m_sName,"MemoryCardIcons")
 #define FORCE_TIMER				THEME->GetMetricB(m_sName,"ForceTimer")
 #define STOP_MUSIC_ON_BACK		THEME->GetMetricB(m_sName,"StopMusicOnBack")
@@ -52,6 +53,20 @@ void ScreenWithMenuElements::Init()
 		m_sprStyleIcon.SetState( GAMESTATE->m_MasterPlayerNumber );
 		SET_XY_AND_ON_COMMAND( m_sprStyleIcon );
 		this->AddChild( &m_sprStyleIcon );
+	}
+	
+	if( SHOW_STAGE && GAMESTATE->m_pCurStyle )
+	{
+		vector<Stage> vStages;
+		GAMESTATE->GetPossibleStages( vStages );
+		FOREACH_CONST( Stage, vStages, s )
+		{
+			m_sprStage[*s].Load( THEME->GetPathG(m_sName,"stage "+StageToString(*s)) );
+			m_sprStage[*s]->SetName( "Stage" );
+			SET_XY_AND_ON_COMMAND( m_sprStage[*s] );
+			this->AddChild( m_sprStage[*s] );
+		}
+		UpdateStage();
 	}
 	
 	if( MEMORY_CARD_ICONS )
@@ -199,6 +214,7 @@ void ScreenWithMenuElements::TweenOffScreen()
 
 	ActorUtil::OffCommand( m_autoHeader, m_sName );
 	ActorUtil::OffCommand( m_sprStyleIcon, m_sName );
+	OFF_COMMAND( m_sprStage[GAMESTATE->GetCurrentStage()] );
 	FOREACH_PlayerNumber( p )
 		ActorUtil::OffCommand( m_MemoryCardDisplay[p], m_sName );
 	ActorUtil::OffCommand( m_autoFooter, m_sName );
@@ -230,6 +246,19 @@ bool ScreenWithMenuElements::IsTransitioning()
 void ScreenWithMenuElements::StopTimer()
 {
 	m_MenuTimer->Stop();
+}
+
+void ScreenWithMenuElements::HandleMessage( const CString& sMessage )
+{
+	if( sMessage == MessageToString(MESSAGE_CURRENT_SONG_CHANGED) )
+		UpdateStage();
+}
+	
+void ScreenWithMenuElements::UpdateStage()
+{
+	// update stage counter display (long versions/marathons)
+	FOREACH_Stage( s )
+		m_sprStage[s]->SetHidden( s != GAMESTATE->GetCurrentStage() );
 }
 
 /*

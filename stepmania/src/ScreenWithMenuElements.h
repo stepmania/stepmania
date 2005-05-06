@@ -31,12 +31,17 @@ public:
 	void TweenOffScreen();
 
 protected:
+	virtual void HandleMessage( const CString& sMessage );
+
 	virtual void StartPlayingMusic();
 	virtual void LoadHelpText();
+
+	void UpdateStage();
 
 	AutoActor			m_sprUnderlay;
 	AutoActor			m_autoHeader;
 	Sprite				m_sprStyleIcon;
+	AutoActor			m_sprStage[NUM_STAGES];
 	MemoryCardDisplay	m_MemoryCardDisplay[NUM_PLAYERS];
 	MenuTimer			*m_MenuTimer;
 	AutoActor			m_autoFooter;

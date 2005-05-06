@@ -481,10 +481,6 @@ void ScreenGameplay::Init()
 	case PLAY_MODE_REGULAR:
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
-		m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+StageToString(GAMESTATE->GetCurrentStage())) );
-		m_sprStage->SetName( "Stage" );
-		SET_XY( m_sprStage );
-		this->AddChild( m_sprStage );
 		break;
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
@@ -2540,7 +2536,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 void ScreenGameplay::TweenOnScreen()
 {
 	ON_COMMAND( m_sprLifeFrame );
-	ON_COMMAND( m_sprStage );
 	ON_COMMAND( m_sprCourseSongNumber[GAMESTATE->GetCourseSongIndex()] );
 	ON_COMMAND( m_sprStageFrame );
 	ON_COMMAND( m_textSongOptions );
@@ -2578,7 +2573,6 @@ void ScreenGameplay::TweenOffScreen()
 	ScreenWithMenuElements::TweenOffScreen();
 
 	OFF_COMMAND( m_sprLifeFrame );
-	OFF_COMMAND( m_sprStage );
 	OFF_COMMAND( m_sprCourseSongNumber[GAMESTATE->GetCourseSongIndex()] );
 	OFF_COMMAND( m_sprStageFrame );
 	OFF_COMMAND( m_textSongOptions );
