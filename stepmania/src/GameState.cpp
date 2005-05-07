@@ -2007,6 +2007,7 @@ public:
 	static int GetCoins( T* p, lua_State *L )				{ lua_pushnumber(L, p->m_iCoins ); return 1; }
 	static int IsSideJoined( T* p, lua_State *L )			{ lua_pushboolean(L, p->m_bSideIsJoined[(PlayerNumber)IArg(1)] ); return 1; }
 	static int GetCoinsNeededToJoin( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCoinsNeededToJoin() ); return 1; }
+	static int PlayersCanJoin( T* p, lua_State *L )			{ lua_pushnumber(L, p->PlayersCanJoin() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -2047,6 +2048,7 @@ public:
 		ADD_METHOD( GetCoins )
 		ADD_METHOD( IsSideJoined )
 		ADD_METHOD( GetCoinsNeededToJoin )
+		ADD_METHOD( PlayersCanJoin )
 
 		Luna<T>::Register( L );
 
