@@ -86,7 +86,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_pm != PLAY_MODE_INVALID && GAMESTATE->m_PlayMode != m_pm )
 		return false;
-	if( m_pStyle && GAMESTATE->m_pCurStyle != m_pStyle )
+	if( m_pStyle && GAMESTATE->m_pCurStyle.Get() != m_pStyle )
 		return false;
 	// HACK: don't compare m_dc if m_pSteps is set.  This causes problems 
 	// in ScreenSelectOptionsMaster::ImportOptions if m_PreferredDifficulty 
@@ -679,7 +679,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 	if( m_pStyle != NULL )
 	{
-		GAMESTATE->m_pCurStyle = m_pStyle;
+		GAMESTATE->m_pCurStyle.Set( m_pStyle );
 
 		// It's possible to choose a style that didn't have enough 
 		// players joined.  If enough players aren't joined, then 

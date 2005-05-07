@@ -102,7 +102,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElement
 		PROFILEMAN->LoadFirstAvailableProfile(PLAYER_2);
 
 		GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
-		GAMESTATE->m_pCurStyle = GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(), "versus" );
+		GAMESTATE->m_pCurStyle.Set( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
 		STATSMAN->m_CurStageStats.playMode = GAMESTATE->m_PlayMode;
 		STATSMAN->m_CurStageStats.pStyle = GAMESTATE->m_pCurStyle;
 		STATSMAN->m_CurStageStats.StageType = StageStats::STAGE_NORMAL;

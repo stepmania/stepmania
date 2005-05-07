@@ -50,7 +50,7 @@ public:
 	// Main state info
 	//
 	const Game*		m_pCurGame;
-	const Style*		m_pCurStyle;
+	BroadcastOnChangePtr<const Style>	m_pCurStyle;
 	bool				m_bSideIsJoined[NUM_PLAYERS];	// left side, right side
 	PlayMode			m_PlayMode;			// many screens display different info depending on this value
 	int					m_iCoins;			// not "credits"

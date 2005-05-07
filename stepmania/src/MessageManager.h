@@ -16,6 +16,7 @@ struct lua_State;
 
 enum Message
 {
+	MESSAGE_CURRENT_STYLE_CHANGED,
 	MESSAGE_CURRENT_SONG_CHANGED,
 	MESSAGE_CURRENT_STEPS_P1_CHANGED,
 	MESSAGE_CURRENT_STEPS_P2_CHANGED,
@@ -116,7 +117,7 @@ private:
 public:
 	BroadcastOnChangePtr( Message m ) { mSendWhenChanged = m; }
 	const T* Get() const { return val; }
-	void Set( T* t ) { val = t; MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
+	void Set( T* t ) { val = t; if(MESSAGEMAN) MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
 	operator T* () const { return val; }
 	T* operator->() const { return val; }
 };

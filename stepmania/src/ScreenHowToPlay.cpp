@@ -127,7 +127,7 @@ void ScreenHowToPlay::Init()
 		m_pLifeMeterBar->FillForHowToPlay( NUM_PERFECTS, NUM_MISSES );
 	}
 
-	GAMESTATE->m_pCurStyle = GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame);
+	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
 
 	if( USEPLAYER )
 	{

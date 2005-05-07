@@ -23,7 +23,7 @@ ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName
 
 void ScreenDemonstration::Init()
 {
-	GAMESTATE->m_pCurStyle = GAMEMAN->GetDemonstrationStyleForGame(GAMESTATE->m_pCurGame);
+	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetDemonstrationStyleForGame(GAMESTATE->m_pCurGame) );
 
 	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 

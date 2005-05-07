@@ -208,7 +208,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	EditMenuAction action	= m_Selector.GetSelectedAction();
 
 	GAMESTATE->m_pCurSong.Set( pSong );
-	GAMESTATE->m_pCurStyle = GAMEMAN->GetEditorStyleForStepsType( st );
+	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetEditorStyleForStepsType(st) );
 	GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 
 	//

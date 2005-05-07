@@ -191,7 +191,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		{
 			const int sel = GetSelectionIndex( p );
 			if( m_aGameCommands[sel].m_pStyle )
-				GAMESTATE->m_pCurStyle = m_aGameCommands[sel].m_pStyle;
+				GAMESTATE->m_pCurStyle.Set( m_aGameCommands[sel].m_pStyle );
 		}
 		SCREENMAN->RefreshCreditsMessages();
 	}

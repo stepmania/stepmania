@@ -49,13 +49,14 @@ ThemeMetric<bool> USE_NAME_BLACKLIST("GameState","UseNameBlacklist");
 GameState::GameState() :
     m_PreferredCourseDifficulty( MESSAGE_EDIT_PREFERRED_COURSE_DIFFICULTY_P1_CHANGED ),
     m_PreferredDifficulty(	MESSAGE_EDIT_PREFERRED_DIFFICULTY_P1_CHANGED ),
+    m_pCurStyle(			MESSAGE_CURRENT_STYLE_CHANGED ),
     m_pCurSong(				MESSAGE_CURRENT_SONG_CHANGED ),
 	m_pCurSteps(			MESSAGE_CURRENT_STEPS_P1_CHANGED ),
 	m_stEdit(				MESSAGE_EDIT_STEPS_TYPE_CHANGED ),
     m_pEditSourceSteps(		MESSAGE_EDIT_SOURCE_STEPS_CHANGED ),
 	m_stEditSource(			MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED )
 {
-	m_pCurStyle = NULL;
+	m_pCurStyle.Set( NULL );
 
 	m_pCurGame = NULL;
 	m_iCoins = 0;
@@ -137,7 +138,7 @@ void GameState::Reset()
 	ASSERT( THEME );
 
 	m_timeGameStarted.SetZero();
-	m_pCurStyle = NULL;
+	m_pCurStyle.Set( NULL );
 	FOREACH_PlayerNumber( p )
 		m_bSideIsJoined[p] = false;
 	MEMCARDMAN->UnlockCards();
@@ -296,6 +297,8 @@ void GameState::PlayersFinalized()
 {
 	if( MEMCARDMAN->GetCardsLocked() )
 		return;
+
+	MESSAGEMAN->Broadcast( PLAYERS_FINALIZED );
 
 	MEMCARDMAN->LockCards();
 
@@ -2007,7 +2010,7 @@ public:
 	static int GetCoins( T* p, lua_State *L )				{ lua_pushnumber(L, p->m_iCoins ); return 1; }
 	static int IsSideJoined( T* p, lua_State *L )			{ lua_pushboolean(L, p->m_bSideIsJoined[(PlayerNumber)IArg(1)] ); return 1; }
 	static int GetCoinsNeededToJoin( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCoinsNeededToJoin() ); return 1; }
-	static int PlayersCanJoin( T* p, lua_State *L )			{ lua_pushnumber(L, p->PlayersCanJoin() ); return 1; }
+	static int PlayersCanJoin( T* p, lua_State *L )			{ lua_pushboolean(L, p->PlayersCanJoin() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
