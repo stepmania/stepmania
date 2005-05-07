@@ -282,7 +282,7 @@ public:
 		// call function with 0 arguments and 1 result
 		lua_call(LUA->L, 0, 1); 
 
-		LuaHelpers::FromStack( m_currentValue, -1, LUA->L );
+		LuaHelpers::PopStack( m_currentValue, LUA->L );
 		return m_currentValue;
 	}
 	
