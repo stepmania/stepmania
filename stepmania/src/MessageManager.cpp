@@ -39,6 +39,9 @@ static const CString MessageNames[] = {
 	"MadeChoiceP1",
 	"MadeChoiceP2",
 	"CoinInserted",
+	"SideJoinedP1",
+	"SideJoinedP2",
+	"PlayersFinalized",
 };
 XToString( Message, NUM_MESSAGES );
 

@@ -233,12 +233,29 @@ void GameState::Reset()
 void GameState::JoinPlayer( PlayerNumber pn )
 {
 	this->m_bSideIsJoined[pn] = true;
+	MESSAGEMAN->Broadcast( (Message)(MESSAGE_SIDE_JOINED_P1+pn) );
+
 	if( this->m_MasterPlayerNumber == PLAYER_INVALID )
 		this->m_MasterPlayerNumber = pn;
 
 	// if first player to join, set start time
 	if( this->GetNumSidesJoined() == 1 )
 		this->BeginGame();
+}
+
+int GameState::GetCoinsNeededToJoin() const
+{
+	int iCoinsToCharge = 0;
+
+	if( GAMESTATE->GetCoinMode() == COIN_PAY )
+		iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
+
+	// If joint premium don't take away a credit for the 2nd join.
+	if( GAMESTATE->GetPremium() == PREMIUM_JOINT  &&  
+		GAMESTATE->GetNumSidesJoined() == 1 )
+		iCoinsToCharge = 0;
+
+	return iCoinsToCharge;
 }
 
 /*
@@ -775,21 +792,6 @@ CString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 bool GameState::PlayersCanJoin() const
 {
 	return GetNumSidesJoined() == 0 || this->m_pCurStyle == NULL;	// selecting a style finalizes the players
-}
-
-bool GameState::EnoughCreditsToJoin() const
-{
-	switch( GAMESTATE->GetCoinMode() )
-	{
-	case COIN_PAY:
-		return GAMESTATE->m_iCoins >= PREFSMAN->m_iCoinsPerCredit;
-	case COIN_HOME:
-	case COIN_FREE:
-		return true;
-	default:
-		ASSERT(0);
-		return false;
-	}
 }
 
 int GameState::GetNumSidesJoined() const
@@ -2003,6 +2005,8 @@ public:
 	static int GetSongBeat( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_fSongBeat ); return 1; }
 	static int PlayerUsingBothSides( T* p, lua_State *L )	{ lua_pushboolean(L, p->PlayerUsingBothSides() ); return 1; }
 	static int GetCoins( T* p, lua_State *L )				{ lua_pushnumber(L, p->m_iCoins ); return 1; }
+	static int IsSideJoined( T* p, lua_State *L )			{ lua_pushboolean(L, p->m_bSideIsJoined[(PlayerNumber)IArg(1)] ); return 1; }
+	static int GetCoinsNeededToJoin( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCoinsNeededToJoin() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -2041,6 +2045,8 @@ public:
 		ADD_METHOD( GetSongBeat )
 		ADD_METHOD( PlayerUsingBothSides )
 		ADD_METHOD( GetCoins )
+		ADD_METHOD( IsSideJoined )
+		ADD_METHOD( GetCoinsNeededToJoin )
 
 		Luna<T>::Register( L );
 

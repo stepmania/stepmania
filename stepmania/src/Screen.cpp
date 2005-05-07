@@ -215,19 +215,12 @@ bool Screen::JoinInput( const MenuInput &MenuI )
 			return false;
 
 		/* subtract coins */
-		int iCoinsToCharge = 0;
-		if( GAMESTATE->GetCoinMode() == COIN_PAY )
-			iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
+		int iCoinsNeededToJoin = GAMESTATE->GetCoinsNeededToJoin();
 
-		// If joint premium don't take away a credit for the 2nd join.
-		if( GAMESTATE->GetPremium() == PREMIUM_JOINT  &&  
-			GAMESTATE->GetNumSidesJoined() == 1 )
-			iCoinsToCharge = 0;
-
-		if( GAMESTATE->m_iCoins < iCoinsToCharge )
+		if( GAMESTATE->m_iCoins < iCoinsNeededToJoin )
 			return false;	// not enough coins
 		else
-			GAMESTATE->m_iCoins -= iCoinsToCharge;
+			GAMESTATE->m_iCoins -= iCoinsNeededToJoin;
 
 		// HACK: Only play start sound for the 2nd player who joins.  The 
 		// start sound for the 1st player will be played by ScreenTitleMenu 

@@ -72,7 +72,8 @@ public:
 	int				m_iGameSeed, m_iStageSeed;
 
 	bool			PlayersCanJoin() const;	// true if it's not too late for a player to join
-	bool			EnoughCreditsToJoin() const;	// true if an unjoined player can join by pressint start
+	int 			GetCoinsNeededToJoin() const;
+	bool			EnoughCreditsToJoin() const { return GetCoinsNeededToJoin() <= 0; }
 	int				GetNumSidesJoined() const;
 
 	const Game*	GetCurrentGame();
