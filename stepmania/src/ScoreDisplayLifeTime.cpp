@@ -69,7 +69,7 @@ void ScoreDisplayLifeTime::Update( float fDelta )
 
 	CString s = SecondsToMMSSMsMs(fSecs);
 	s.erase( s.begin() );	// erase first digit
-	m_textTimeRemaining.SetText( SecondsToMMSSMsMs(fSecs) );
+	m_textTimeRemaining.SetText( s );
 }
 
 void ScoreDisplayLifeTime::OnLoadSong()
