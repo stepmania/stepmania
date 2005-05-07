@@ -325,7 +325,6 @@ void ScreenNameEntryTraditional::Init()
 	SET_XY_AND_ON_COMMAND( actor ); \
 	if( m_FeatDisplay[p].size()>1 ) \
 	{ \
-		COMMAND( actor, "On" ); \
 		(actor).FinishTweening(); \
 		COMMAND( actor, "Hide" ); \
 		(actor).FinishTweening(); \
