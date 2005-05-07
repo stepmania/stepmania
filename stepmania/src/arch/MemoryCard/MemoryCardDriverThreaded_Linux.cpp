@@ -201,12 +201,15 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), d );
 		if( iter == vOld.end() )    // didn't find
 		{
+			LOG->Trace("New device (port %i) entering CHECKING.", d.iPort );
 			d.m_State = UsbStorageDevice::STATE_CHECKING;
 			continue;
 		}
 
-		/* Preserve the state of the device. */
+		/* Preserve the state of the device, and any data loaded from previous checks. */
 		d.m_State = iter->m_State;
+		d.bIsNameAvailable = iter->bIsNameAvailable;
+		d.sName = iter->sName;
 
 		/* The device was here last time.  If CHECKING, check the device now if
 		 * we're allowed to. */
