@@ -34,8 +34,8 @@ private:
 
 	RageTexture	*m_pTexture;
 
-	AutoActor m_sprJustBarely;
 	vector<AutoActor*> m_vpSongBoundaries;
+	AutoActor m_sprJustBarely;
 };
 
 #endif

@@ -42,10 +42,11 @@ void GraphDisplay::Unload()
 
 	m_pTexture = NULL;
 
-	m_sprJustBarely.Unload();
 	FOREACH( AutoActor*, m_vpSongBoundaries, p )
 		SAFE_DELETE( *p );
 	m_vpSongBoundaries.clear();
+
+	m_sprJustBarely.Unload();
 
 	ActorFrame::RemoveAllChildren();
 }
@@ -61,6 +62,24 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 		CLAMP( m_DestValues[i], 0.f, 1.f );
 	UpdateVerts();
 
+
+	//
+	// Show song boundaries
+	//
+	float fSec = 0;
+	FOREACH_CONST( Song*, ss.vpPossibleSongs, song )
+	{
+		if( song == ss.vpPossibleSongs.end()-1 )
+			continue;
+		fSec += (*song)->GetStepsSeconds();
+
+		AutoActor *p = new AutoActor;
+		m_vpSongBoundaries.push_back( p );
+		p->Load( sSongBoundaryPath );
+		float fX = SCALE( fSec, 0, fTotalStepSeconds, m_quadVertices.left, m_quadVertices.right );
+		(*p)->SetX( fX );
+		this->AddChild( *p );
+	}
 
 	//
 	// Search for the min life record
@@ -91,24 +110,6 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 			m_sprJustBarely->SetHidden( true );
 		}
 		this->AddChild( m_sprJustBarely );
-	}
-
-	//
-	// Show song boundaries
-	//
-	float fSec = 0;
-	FOREACH_CONST( Song*, ss.vpPossibleSongs, song )
-	{
-		if( song == ss.vpPossibleSongs.end()-1 )
-			continue;
-		fSec += (*song)->GetStepsSeconds();
-
-		AutoActor *p = new AutoActor;
-		m_vpSongBoundaries.push_back( p );
-		p->Load( sSongBoundaryPath );
-		float fX = SCALE( fSec, 0, fTotalStepSeconds, m_quadVertices.left, m_quadVertices.right );
-		(*p)->SetX( fX );
-		this->AddChild( *p );
 	}
 }
 
