@@ -25,7 +25,7 @@ void NetworkSyncManager::Update( float fDeltaTime ) { }
 bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
 void NetworkSyncManager::SendChat(const CString& message) { }
 void NetworkSyncManager::SelectUserSong() { }
-CString NetworkSyncManager::MD5Hex( CString &sInput ) { return ""; }
+CString NetworkSyncManager::MD5Hex( const CString &sInput ) { return ""; }
 int NetworkSyncManager::GetSMOnlineSalt() { return 0; }
 #else
 #include "ezsockets.h"
@@ -832,7 +832,7 @@ void PacketFunctions::ClearPacket()
 	Position = 0;
 }
 
-CString NetworkSyncManager::MD5Hex( CString &sInput ) 
+CString NetworkSyncManager::MD5Hex( const CString &sInput ) 
 {	
 	CString HashedName;
 	CString PreHashedName;

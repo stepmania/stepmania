@@ -146,7 +146,7 @@ public:
 
 	int GetSMOnlineSalt();
 
-	CString MD5Hex( CString & sInput );
+	CString MD5Hex( const CString &sInput );
 private:
 #if !defined(WITHOUT_NETWORKING)
 
