@@ -184,6 +184,7 @@ CString OptionRow::GetRowTitle() const
 		if( GAMESTATE->m_pCurCourse )
 		{
 			Trail* pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
+			ASSERT( pTrail != NULL );
 			const int iNumCourseEntries = pTrail->m_vEntries.size();
 			if( iNumCourseEntries > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
 				bShowBpmInSpeedTitle = false;
