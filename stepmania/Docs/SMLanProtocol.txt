@@ -192,6 +192,7 @@ NOTE: Server responces always add 128, thus a server responce for no operation
     1		Server protocol version //NOTE: if protocol version is 128+, then this
 			server is an SMOnline server
     NT		Server Name
+    4		Random key ( at the moment only used for an alternate login method )
 
 003(131):Allow Start
  Desc:		This will cause the client to start the game.
@@ -336,8 +337,14 @@ Client SMOnline packets:
     1		Player Number
     1		Encryption text
 		0: MD5 hash
+		1: MD5 ( MD5 hash + salt ) (salt is plain text, base 10 string )
     NT		Username
     NT		Password
+
+  Note: The client is not permitted to use method (1) for authentication
+	if the salt it received from the server is 0
+
+
 
 001: User asks to enter room
  Size:

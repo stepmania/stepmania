@@ -144,6 +144,9 @@ public:
 	bool isLanServer;	//Must be public for ScreenNetworkOptions
 	StepManiaLanServer *LANserver;
 
+	int GetSMOnlineSalt() { return m_iSalt; }
+
+	CString MD5Hex( CString & sInput );
 private:
 #if !defined(WITHOUT_NETWORKING)
 
@@ -160,6 +163,7 @@ private:
 	int m_combo;
     
 	int m_startupStatus;	//Used to see if attempt was successful or not.
+	int	m_iSalt;
 
 	bool m_scoreboardchange[NUM_NSSB_CATEGORIES];
 

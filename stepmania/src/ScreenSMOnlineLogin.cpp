@@ -12,7 +12,6 @@
 #include "GameState.h"
 #include "NetworkSyncManager.h"
 #include "ScreenTextEntry.h"
-#include "crypto/CryptMD5.h"
 
 REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 
@@ -185,41 +184,20 @@ CString ScreenSMOnlineLogin::GetSelectedProfileID()
 void ScreenSMOnlineLogin::SendLogin(CString sPassword)
 {
 	CString PlayerName = GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer);
-	CString HashedName;
-	CString PreHashedName;
 
-	unsigned char Output[16];
-	const unsigned char *Input = (unsigned char *)sPassword.c_str();
+	CString HashedName = NSMAN->MD5Hex( sPassword );
 
-	MD5Context BASE;
-
-	memset(&BASE,0,sizeof(MD5Context));
-	memset(&Output,0,16);
-
-	MD5Init( &BASE );
-
-
-	MD5Update( &BASE, Input, sPassword.length());
-
-	MD5Final( Output, &BASE );
-
-	for (int i = 0; i < 16; i++)
-		PreHashedName += ssprintf( "%2X", Output[i] );
-
-	//XXX: Yuck. Convert spaces to 0's better. (will fix soon)
-	for (int i = 0; i < 32; i++)
-		if ( PreHashedName.c_str()[i] == ' ' )
-			HashedName += '0';
-		else
-			if ( PreHashedName.c_str()[i]=='\0' )
-				HashedName += ' ';
-			else
-				HashedName += PreHashedName.c_str()[i];
+	int authMethod = 0;
+	if ( NSMAN->GetSMOnlineSalt() != 0 )
+	{
+		authMethod = 1;
+		HashedName = NSMAN->MD5Hex( HashedName + ssprintf( "%d", NSMAN->GetSMOnlineSalt() ) );
+	}
 
 	NSMAN->m_SMOnlinePacket.ClearPacket();
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)0);			//Login command
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)m_iPlayer);	//Player
-	NSMAN->m_SMOnlinePacket.Write1((uint8_t)0);			//MD5 hash style
+	NSMAN->m_SMOnlinePacket.Write1((uint8_t)authMethod);			//MD5 hash style
 	NSMAN->m_SMOnlinePacket.WriteNT(PlayerName);
 	NSMAN->m_SMOnlinePacket.WriteNT(HashedName);
 	NSMAN->SendSMOnline( );

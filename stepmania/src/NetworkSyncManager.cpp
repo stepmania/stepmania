@@ -3,6 +3,7 @@
 #include "NetworkSyncServer.h"
 #include "LuaManager.h"
 #include "LuaFunctions.h"
+#include "crypto/CryptMD5.h"
 
 NetworkSyncManager *NSMAN;
 
@@ -24,6 +25,7 @@ void NetworkSyncManager::Update( float fDeltaTime ) { }
 bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
 void NetworkSyncManager::SendChat(const CString& message) { }
 void NetworkSyncManager::SelectUserSong() { }
+CString NetworkSyncManager::MD5Hex( CString &sInput ) { }
 #else
 #include "ezsockets.h"
 #include "ProfileManager.h"
@@ -205,7 +207,7 @@ void NetworkSyncManager::PostStartUp(const CString& ServerIP)
 		isSMOnline = true;
 
 	m_ServerName = m_packet.ReadNT();
-
+	m_iSalt = m_packet.Read4();
 	LOG->Info("Server Version: %d %s", m_ServerVersion, m_ServerName.c_str());
 }
 
@@ -823,6 +825,41 @@ void PacketFunctions::ClearPacket()
 {
 	memset((void*)(&Data),0, NETMAXBUFFERSIZE);
 	Position = 0;
+}
+
+CString NetworkSyncManager::MD5Hex( CString &sInput ) 
+{	
+	CString HashedName;
+	CString PreHashedName;
+
+	unsigned char Output[16];
+	const unsigned char *Input = (unsigned char *)sInput.c_str();
+
+	MD5Context BASE;
+
+	memset(&BASE,0,sizeof(MD5Context));
+	memset(&Output,0,16);
+
+	MD5Init( &BASE );
+
+	MD5Update( &BASE, Input, sInput.length());
+
+	MD5Final( Output, &BASE );
+
+	for (int i = 0; i < 16; i++)
+		PreHashedName += ssprintf( "%2X", Output[i] );
+
+	//XXX: Yuck. Convert spaces to 0's better. (will fix soon)
+	for (int i = 0; i < 32; i++)
+		if ( PreHashedName.c_str()[i] == ' ' )
+			HashedName += '0';
+		else
+			if ( PreHashedName.c_str()[i]=='\0' )
+				HashedName += ' ';
+			else
+				HashedName += PreHashedName.c_str()[i];
+
+	return HashedName;
 }
 #endif
 
