@@ -347,8 +347,22 @@ int ScreenSelectMaster::GetSelectionIndex( PlayerNumber pn )
 void ScreenSelectMaster::UpdateSelectableChoices()
 {
 	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
+	{
 		for( int i=0; i<NUM_ICON_PARTS; i++ )
 			COMMAND( m_sprIcon[i][c], m_aGameCommands[c].IsPlayable()? "Enabled":"Disabled" );
+		
+		if( SHARED_PREVIEW_AND_CURSOR )
+		{
+			if( m_sprScroll[c][0].IsLoaded() )
+				m_sprScroll[c][0]->PlayCommand( m_aGameCommands[c].IsPlayable()? "Enabled":"Disabled" );
+		}
+		else
+		{
+			FOREACH_HumanPlayer( p )
+				if( m_sprScroll[c][p].IsLoaded() )
+					m_sprScroll[c][p]->PlayCommand( m_aGameCommands[c].IsPlayable()? "Enabled":"Disabled" );
+		}
+	}
 
 	/*
 	 * If no options are playable at all, just wait.  Some external
@@ -377,16 +391,16 @@ bool ScreenSelectMaster::Move( PlayerNumber pn, MenuDir dir )
 
 	int iSwitchToIndex = m_iChoice[pn];
 	set<int> seen;
-	do
-	{
-		iSwitchToIndex = m_Next[dir][iSwitchToIndex];
-		if( iSwitchToIndex == -1 )
-			return false; // can't go that way
-		if( seen.find(iSwitchToIndex) != seen.end() )
-			return false; // went full circle and none found
-		seen.insert( iSwitchToIndex );
-	}
-	while( !m_aGameCommands[iSwitchToIndex].IsPlayable() );
+try_again:
+	iSwitchToIndex = m_Next[dir][iSwitchToIndex];
+	if( iSwitchToIndex == -1 )
+		return false; // can't go that way
+	if( seen.find(iSwitchToIndex) != seen.end() )
+		return false; // went full circle and none found
+	seen.insert( iSwitchToIndex );
+
+	if( !m_aGameCommands[iSwitchToIndex].IsPlayable() )
+		goto try_again;
 
 	return ChangeSelection( pn, dir, iSwitchToIndex );
 }
