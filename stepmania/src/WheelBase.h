@@ -48,8 +48,8 @@ public:
 	virtual void RebuildWheelItems( int dist = -999999 );	// -999999 = refresh all
 
 	void AddItem( WheelItemBaseData* itemdata );
-	void RemoveItem( int index );
-	inline unsigned int GetNumItems() { return m_WheelBaseItemsData.size(); }
+	virtual void RemoveItem( int index );
+	virtual inline unsigned int GetNumItems() { return m_WheelBaseItemsData.size(); }
 	inline bool IsEmpty() { return m_isEmpty; }
 	WheelItemBaseData* GetItem(unsigned int index);
 	WheelItemBaseData* LastSelected();
