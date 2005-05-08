@@ -248,6 +248,8 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 			level = strtof( matches[0], &p );
 			ASSERT( p != matches[0] );
 			SET_FLOAT( fScrollSpeed )
+			SET_FLOAT( fTimeSpacing )
+			m_fTimeSpacing = 0;
 		}
 		else if( sscanf( sBit, "c%f", &level ) == 1 )
 		{
