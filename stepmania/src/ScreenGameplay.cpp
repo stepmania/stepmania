@@ -49,6 +49,8 @@
 #include "LuaManager.h"
 #include "MemoryCardManager.h"
 #include "CommonMetrics.h"
+#include "InputMapper.h"
+#include "Game.h"
 
 //
 // Defines
@@ -1784,9 +1786,20 @@ void ScreenGameplay::SendCrossedMessages()
 
 			FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, iRowLastCrossed+1, iRowNow+1 )
 			{
-				if( nd.IsThereATapOrHoldHeadAtRow(r) )
+				int iFirstTrackWithTapOrHold = nd.GetFirstTrackWithTapOrHoldHead(r);
+				if( iFirstTrackWithTapOrHold != -1 )
 				{
 					MESSAGEMAN->Broadcast( (Message)(MESSAGE_NOTE_CROSSED + i) );
+
+					// Send col-specific crossed
+					if( i == 0 )
+					{
+						StyleInput si( pn, iFirstTrackWithTapOrHold );
+						const Game* pGame = GAMESTATE->GetCurrentGame();
+						CString sButton = pGame->ColToButtonName( iFirstTrackWithTapOrHold );
+						CString sMessageName = "NoteCrossed" + sButton;
+						MESSAGEMAN->Broadcast( sMessageName );
+					}
 					break;
 				}
 			}
