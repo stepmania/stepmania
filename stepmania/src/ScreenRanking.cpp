@@ -119,6 +119,7 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName )
 	SONG_SCORE_ROWS_TO_SHOW		(m_sName,"SongScoreRowsToShow"),
 	SONG_SCORE_SECONDS_PER_ROW	(m_sName,"SongScoreSecondsPerRow"),
 	MANUAL_SCROLLING			(m_sName,"ManualScroling"),
+	SHOW_SURVIVAL_TIME			(m_sName,"ShowSurvivalTime"),
 	
 	BULLET_START_X				(m_sName,"BulletStartX"),
 	BULLET_START_Y				(m_sName,"BulletStartY"),
@@ -871,6 +872,8 @@ float ScreenRanking::SetPage( PageToShow pts )
 						}
 
 						CString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.fPercentDP );
+						if( SHOW_SURVIVAL_TIME )
+							s += "   " + SecondsToMSSMsMs(hs.GetSurvivalSeconds());
 						pTextStepsScore->SetText( s );
 					}
 				}
@@ -914,6 +917,8 @@ float ScreenRanking::SetPage( PageToShow pts )
 					}
 
 					CString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.fPercentDP );
+					if( SHOW_SURVIVAL_TIME )
+						s += "   " + SecondsToMSSMsMs(hs.GetSurvivalSeconds());
 					pTextStepsScore->SetText( s );
 				}
 			}

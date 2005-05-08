@@ -136,48 +136,32 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElement
 			STATSMAN->m_CurStageStats.m_player[PLAYER_2].SetLifeRecordAt( 1-fP1, f );
 		}
 	
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iActualDancePoints = rand()%3;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iPossibleDancePoints = 2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iActualDancePoints = rand()%2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iPossibleDancePoints = 1;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iCurCombo = 0;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 0, false );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iCurCombo = 1;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 1, false );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iCurCombo = 50;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 25, false );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iCurCombo = 250;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 100, false );
-		if( rand()%2 )
+		FOREACH_PlayerNumber( p )
 		{
-			STATSMAN->m_CurStageStats.m_player[PLAYER_1].iCurCombo = rand()%11000;
-			STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 110, false );
+			STATSMAN->m_CurStageStats.m_player[p].iActualDancePoints = rand()%3;
+			STATSMAN->m_CurStageStats.m_player[p].iPossibleDancePoints = 2;
+			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 0;
+			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0, false );
+			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 1;
+			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 1, false );
+			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 50;
+			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 25, false );
+			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 250;
+			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 100, false );
+			if( rand()%2 )
+			{
+				STATSMAN->m_CurStageStats.m_player[p].iCurCombo = rand()%11000;
+				STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 110, false );
+			}
+			if( rand()%5 == 0 )
+			{
+				STATSMAN->m_CurStageStats.m_player[p].bFailedEarlier = true;
+			}
+			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_MARVELOUS] = rand()%3;
+			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_PERFECT] = rand()%3;
+			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_GREAT] = rand()%3;
+			STATSMAN->m_CurStageStats.m_player[p].fLifeRemainingSeconds = randomf( 90, 580 );
 		}
-		if( rand()%5 == 0 )
-		{
-			STATSMAN->m_CurStageStats.m_player[PLAYER_1].bFailedEarlier = true;
-			STATSMAN->m_CurStageStats.m_player[PLAYER_2].bFailedEarlier = true;
-		}
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iCurCombo = 0;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].UpdateComboList( 0, false );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iCurCombo = 1;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].UpdateComboList( 1, false );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iCurCombo = 50;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].UpdateComboList( 25, false );
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iCurCombo = 250;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].UpdateComboList( 100, false );
-		if( rand()%2 )
-		{
-			STATSMAN->m_CurStageStats.m_player[PLAYER_2].iCurCombo = rand()%11000;
-			STATSMAN->m_CurStageStats.m_player[PLAYER_2].UpdateComboList( 110, false );
-		}
-
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_MARVELOUS] = rand()%3;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_PERFECT] = rand()%3;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_GREAT] = rand()%3;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_MARVELOUS] = rand()%3;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_PERFECT] = rand()%3;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_GREAT] = rand()%3;
 
 		STATSMAN->m_vPlayedStageStats.clear();
 	}
@@ -938,6 +922,8 @@ void ScreenEvaluation::CommitScores(
 		memcpy( hs.iTapNoteScores, stageStats.m_player[p].iTapNoteScores, sizeof(hs.iTapNoteScores) );
 		memcpy( hs.iHoldNoteScores, stageStats.m_player[p].iHoldNoteScores, sizeof(hs.iHoldNoteScores) );
 		hs.radarValues = stageStats.m_player[p].radarActual;
+		hs.fLifeRemainingSeconds = stageStats.m_player[p].fLifeRemainingSeconds;
+
 
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 

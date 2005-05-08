@@ -138,6 +138,19 @@ CString SecondsToMMSSMsMs( float fSecs )
 	return sReturn;
 }
 
+CString SecondsToMSSMsMs( float fSecs )
+{
+	const int iMinsDisplay = (int)fSecs/60;
+	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
+	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100 );
+	CString sReturn = ssprintf( "%01d:%02d.%02d", iMinsDisplay, iSecsDisplay, min(99,iLeftoverDisplay) );
+	return sReturn;
+}
+
+#include "LuaFunctions.h"
+#include "LuaManager.h"
+LuaFunction_Float( SecondsToMSSMsMs, SecondsToMSSMsMs(a1) )
+
 CString SecondsToMMSSMsMsMs( float fSecs )
 {
 	const int iMinsDisplay = (int)fSecs/60;

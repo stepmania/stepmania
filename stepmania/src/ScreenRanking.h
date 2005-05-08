@@ -126,6 +126,7 @@ protected:
 	ThemeMetric<int>			SONG_SCORE_ROWS_TO_SHOW;
 	ThemeMetric<float>			SONG_SCORE_SECONDS_PER_ROW;
 	ThemeMetric<bool>			MANUAL_SCROLLING;
+	ThemeMetric<bool>			SHOW_SURVIVAL_TIME;
 
 	ThemeMetric<float>			BULLET_START_X;
 	ThemeMetric<float>			BULLET_START_Y;

@@ -466,11 +466,15 @@ class LunaPlayerStageStats : public Luna<T>
 public:
 	LunaPlayerStageStats() { LUA->Register( Register ); }
 
-	static int GetCaloriesBurned( T* p, lua_State *L )		{ lua_pushnumber(L, p->fCaloriesBurned ); return 1; }
+	static int GetCaloriesBurned( T* p, lua_State *L )			{ lua_pushnumber(L, p->fCaloriesBurned ); return 1; }
+	static int GetLifeRemainingSeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->fLifeRemainingSeconds); return 1; }
+	static int GetSurvivalSeconds( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetSurvivalSeconds()); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetCaloriesBurned )
+		ADD_METHOD( GetLifeRemainingSeconds )
+		ADD_METHOD( GetSurvivalSeconds )
 		Luna<T>::Register( L );
 	}
 };

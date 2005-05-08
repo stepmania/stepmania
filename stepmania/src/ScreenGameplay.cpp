@@ -2375,7 +2375,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 	}
 	else if( SM == SM_StartLoadingNextSong )
-	{
+	{	
 		m_pSoundMusic->Stop();
 
 		/* Next song. */

@@ -25,6 +25,7 @@ struct HighScore
 	int		iTapNoteScores[NUM_TAP_NOTE_SCORES];
 	int		iHoldNoteScores[NUM_HOLD_NOTE_SCORES];
 	RadarValues radarValues;
+	float fLifeRemainingSeconds;
 
 	HighScore() { Unset(); }
 	void Unset()
@@ -42,6 +43,7 @@ struct HighScore
 		ZERO( iTapNoteScores );
 		ZERO( iHoldNoteScores );
 		radarValues.MakeUnknown();
+		fLifeRemainingSeconds = 0;
 	}
 
 	bool operator>=( const HighScore& other ) const;
@@ -63,9 +65,12 @@ struct HighScore
 		FOREACH_HoldNoteScore( hns )
 			COMPARE( iHoldNoteScores[hns] );
 		COMPARE( radarValues );
+		COMPARE( fLifeRemainingSeconds );
 #undef COMPARE
 		return true;
 	}
+
+	float GetSurvivalSeconds() { return fSurviveSeconds + fLifeRemainingSeconds; }
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );

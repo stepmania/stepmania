@@ -67,8 +67,7 @@ void ScoreDisplayLifeTime::Update( float fDelta )
 
 	float fSecs = STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].fLifeRemainingSeconds;
 
-	CString s = SecondsToMMSSMsMs(fSecs);
-	s.erase( s.begin() );	// erase first digit
+	CString s = SecondsToMSSMsMs(fSecs);
 	m_textTimeRemaining.SetText( s );
 }
 

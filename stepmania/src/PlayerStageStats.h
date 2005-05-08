@@ -96,6 +96,8 @@ struct PlayerStageStats
 	void	UpdateComboList( float fSecond, bool rollover );
 	Combo_t GetMaxCombo() const;
 
+	float GetSurvivalSeconds() { return fAliveSeconds + fLifeRemainingSeconds; }
+
 	// Lua
 	void PushSelf( lua_State *L );
 };

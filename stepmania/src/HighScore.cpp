@@ -58,7 +58,7 @@ XNode* HighScore::CreateNode() const
 		if( hns != HNS_NONE )	// HACK: don't save meaningless "none" count
 			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 	pNode->AppendChild( radarValues.CreateNode() );
-
+	pNode->AppendChild( "LifeRemainingSeconds",		fLifeRemainingSeconds );
 	return pNode;
 }
 
@@ -94,6 +94,7 @@ void HighScore::LoadFromNode( const XNode* pNode )
 	const XNode* pRadarValues = pNode->GetChild( "RadarValues" );
 	if( pRadarValues )
 		radarValues.LoadFromNode( pRadarValues );
+	pNode->GetChildValue( "LifeRemainingSeconds",		fLifeRemainingSeconds );
 
 	/* Validate input. */
 	grade = clamp( grade, GRADE_TIER01, GRADE_FAILED );
