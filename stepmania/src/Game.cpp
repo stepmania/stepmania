@@ -91,7 +91,7 @@ void Game::MenuInputToGameInput( MenuInput MenuI, GameInput GameIout[4] ) const
 
 CString Game::ColToButtonName( int col ) const
 {
-	const Style* pStyle = GAMESTATE->GetCurrentStyle();
+	const Style *pStyle = GAMESTATE->GetCurrentStyle();
 	const char *pzColumnName = pStyle->m_ColumnInfo[PLAYER_1][col].pzName;
 	if( pzColumnName != NULL )
 		return pzColumnName;
