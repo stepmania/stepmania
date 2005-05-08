@@ -13,7 +13,6 @@ struct RoomWheelData : public WheelItemBaseData
 	RoomWheelData( WheelItemType wit, CString title, CString SubTitle, RageColor color );
 
 	CString			m_sDesc;
-	RageColor		m_color;	// either text color or section background color
 	WheelNotifyIcon::Flags  m_Flags;
 };
 
@@ -27,6 +26,7 @@ public:
 
 	BitmapText m_Desc;
 
+private:
 	ThemeMetric<float>				DESC_X;
 	ThemeMetric<float>				DESC_Y;
 	ThemeMetric<float>				DESC_WIDTH;
@@ -36,9 +36,14 @@ public:
 class RoomWheel : public WheelBase {
 public:
 	virtual void Load( CString sType );
-	inline virtual RoomWheelData* GetItem(unsigned int i) { return (RoomWheelData*)WheelBase::GetItem(i); }
+	inline RoomWheelData* GetItem(unsigned int i) { return (RoomWheelData*)WheelBase::GetItem(i + m_offset); }
 	virtual void BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas );
-protected:
+	virtual inline unsigned int GetNumItems() { return m_WheelBaseItemsData.size() - m_offset; }
+	virtual void RemoveItem( int index ) { WheelBase::RemoveItem(index + m_offset); }
+	void AddPerminateItem(RoomWheelData* itemdata);
+	virtual bool Select();
+private:
+	int m_offset;
 };
 
 #endif

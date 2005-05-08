@@ -1,9 +1,14 @@
 #include "global.h"
 #include "RoomWheel.h"
 #include "RageLog.h"
+#include "ScreenManager.h"
+
+AutoScreenMessage( SM_BackFromRoomName )
 
 void RoomWheel::Load( CString sType ) 
 {
+	SetName( sType );
+	m_offset = 0;
 	LOG->Trace( "RoomWheel::Load('%s')", sType.c_str() );
 
 	LoadFromMetrics( sType );
@@ -19,6 +24,8 @@ void RoomWheel::Load( CString sType )
 	}
 
 	m_WheelState = STATE_SELECTING_GENERIC;
+
+	AddPerminateItem( new RoomWheelData(TYPE_GENERIC, "Create Room", "Create a new game room", THEME->GetMetricC( m_sName, "CreateRoomColor")) );
 
 	BuildWheelItemsData(m_WheelBaseItemsData);
 	RebuildWheelItems();
@@ -67,13 +74,32 @@ void RoomWheel::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemD
 	}
 }
 
+void RoomWheel::AddPerminateItem(RoomWheelData* itemdata)
+{
+	m_offset++;
+	AddItem( itemdata );
+}
+
+bool RoomWheel::Select()
+{
+	if (m_iSelection > 0)
+		return WheelBase::Select();
+	else if (m_iSelection == 0)
+	{
+		//Since this is not actually an option outside of this wheel NULL is a good idea.
+		m_LastSelection = NULL;
+		SCREENMAN->TextEntry( SM_BackFromRoomName, "Enter Room Name:", "", 255 );
+	}
+	return false;
+}
+
 void RoomWheelItem::LoadFromWheelItemBaseData(WheelItemBaseData* pWID)
 {
 	RoomWheelData* tmpdata = (RoomWheelData*)pWID;
 	WheelItemBase::LoadFromWheelItemBaseData(pWID);
 	m_Desc.SetText(tmpdata->m_sDesc);
-	m_Desc.SetDiffuseColor(tmpdata->m_color);
-	m_text.SetDiffuseColor(tmpdata->m_color);
+	m_Desc.SetDiffuseColor(pWID->m_color);
+	m_text.SetDiffuseColor(pWID->m_color);
 }
 
 /*
