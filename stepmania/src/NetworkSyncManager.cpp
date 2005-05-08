@@ -25,7 +25,8 @@ void NetworkSyncManager::Update( float fDeltaTime ) { }
 bool NetworkSyncManager::ChangedScoreboard(int Column) { return false; }
 void NetworkSyncManager::SendChat(const CString& message) { }
 void NetworkSyncManager::SelectUserSong() { }
-CString NetworkSyncManager::MD5Hex( CString &sInput ) { }
+CString NetworkSyncManager::MD5Hex( CString &sInput ) { return ""; }
+int NetworkSyncManager::GetSMOnlineSalt() { return 0; }
 #else
 #include "ezsockets.h"
 #include "ProfileManager.h"
@@ -50,6 +51,10 @@ AutoScreenMessage( SM_GotEval );
 AutoScreenMessage( SM_UsersUpdate );
 AutoScreenMessage( SM_SMOnlinePack );
 
+int NetworkSyncManager::GetSMOnlineSalt()
+{
+	return m_iSalt;
+}
 
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {

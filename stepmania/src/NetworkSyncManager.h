@@ -144,7 +144,7 @@ public:
 	bool isLanServer;	//Must be public for ScreenNetworkOptions
 	StepManiaLanServer *LANserver;
 
-	int GetSMOnlineSalt() { return m_iSalt; }
+	int GetSMOnlineSalt();
 
 	CString MD5Hex( CString & sInput );
 private:
