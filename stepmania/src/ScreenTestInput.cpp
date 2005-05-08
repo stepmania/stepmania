@@ -55,31 +55,31 @@ void ScreenTestInput::Update( float fDeltaTime )
 			di.device = d;
 			di.button = b;
 
-			if( INPUTFILTER->IsBeingPressed(di) )
+			if( !INPUTFILTER->IsBeingPressed(di) )
+				continue;
+
+			CString sTemp;
+			sTemp += di.toString();
+			
+			GameInput gi;
+			if( INPUTMAPPER->DeviceToGame(di,gi) )
 			{
-				CString sTemp;
-				sTemp += di.toString();
-				
-				GameInput gi;
-				if( INPUTMAPPER->DeviceToGame(di,gi) )
-				{
-					CString sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[gi.button];
-					sTemp += ssprintf(" - Controller %d %s", gi.controller+1, sName.c_str() );
+				CString sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[gi.button];
+				sTemp += ssprintf(" - Controller %d %s", gi.controller+1, sName.c_str() );
 
-					if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
-					{
-						CString sSecondary = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), gi.button );
-						if( !sSecondary.empty() )
-							sTemp += ssprintf(" - (%s secondary)", sSecondary.c_str() );
-					}
-				}
-				else
+				if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
 				{
-					sTemp += " - not mapped";
+					CString sSecondary = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), gi.button );
+					if( !sSecondary.empty() )
+						sTemp += ssprintf(" - (%s secondary)", sSecondary.c_str() );
 				}
-
-				asInputs.push_back( sTemp );
 			}
+			else
+			{
+				sTemp += " - not mapped";
+			}
+
+			asInputs.push_back( sTemp );
 		}
 	}
 
