@@ -105,6 +105,7 @@ protected:
 	// ranking screens that want to show different types and difficulties.
 	ThemeMetricStepsTypesToShow			STEPS_TYPES_TO_SHOW;
 	ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
+	ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
 
 	ThemeMetric<bool>			SHOW_CATEGORIES;
 	ThemeMetric<bool>			SHOW_STEPS_SCORES;

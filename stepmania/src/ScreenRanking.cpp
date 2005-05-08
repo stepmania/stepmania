@@ -98,6 +98,7 @@ REGISTER_SCREEN_CLASS( ScreenRanking );
 ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName ),
 	STEPS_TYPES_TO_SHOW			(m_sName,"StepsTypesToHide"),
 	DIFFICULTIES_TO_SHOW		(m_sName,"DifficultiesToShow"),
+	COURSE_DIFFICULTIES_TO_SHOW	(m_sName,"CourseDifficultiesToShow"),
 
 	SHOW_CATEGORIES				(m_sName,"ShowCategories"),
 	SHOW_STEPS_SCORES			(m_sName,"ShowStepsScores"),
@@ -256,27 +257,21 @@ void ScreenRanking::Init()
 	}
 
 
-	const vector<Difficulty> &v = DIFFICULTIES_TO_SHOW.GetValue();
-	FOREACH_Difficulty( d )
+	FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
 	{
-		bool bShowThis = find( v.begin(), v.end(), d ) != v.end();
-		if( !bShowThis )
-			continue;	// skip
-
-		m_sprDifficulty[d].Load( THEME->GetPathG(m_sName,"difficulty "+DifficultyToString(d)) );
-		m_sprDifficulty[d]->SetName( ssprintf("Difficulty%d",d) );
-		m_sprDifficulty[d]->SetHidden( true );
-		this->AddChild( m_sprDifficulty[d] );
+		m_sprDifficulty[*d].Load( THEME->GetPathG(m_sName,"difficulty "+DifficultyToString(*d)) );
+		m_sprDifficulty[*d]->SetName( ssprintf("Difficulty%d",(*d)+1) );
+		m_sprDifficulty[*d]->SetHidden( true );
+		this->AddChild( m_sprDifficulty[*d] );
 	}
 
 
-	FOREACH_ShownCourseDifficulty(d)
+	FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
 	{
-		CString cd = CourseDifficultyToString(d);
-		m_sprCourseDifficulty[d].Load( THEME->GetPathG(m_sName,"CourseDifficulty "+cd) );
-		m_sprCourseDifficulty[d]->SetName( ssprintf("CourseDifficulty%s",cd.c_str()) );
-		m_sprCourseDifficulty[d]->SetHidden( true );
-		this->AddChild( m_sprCourseDifficulty[d] );
+		m_sprCourseDifficulty[*cd].Load( THEME->GetPathG(m_sName,"CourseDifficulty "+CourseDifficultyToString(*cd)) );
+		m_sprCourseDifficulty[*cd]->SetName( "CourseDifficulty"+CourseDifficultyToString(*cd) );
+		m_sprCourseDifficulty[*cd]->SetHidden( true );
+		this->AddChild( m_sprCourseDifficulty[*cd] );
 	}
 
 
@@ -362,12 +357,12 @@ void ScreenRanking::Init()
 			item.m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"course list title") );
 			item.AddChild( &item.m_textTitle );
 
-			FOREACH_ShownCourseDifficulty(d)
+			FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
 			{
-				item.m_textScore[d].SetName( "CourseListScore" );
-				item.m_textScore[d].LoadFromFont( THEME->GetPathF(m_sName,"course list score") );
-				item.m_textScore[d].SetHidden( true );
-				item.AddChild( &item.m_textScore[d] );
+				item.m_textScore[*cd].SetName( "CourseListScore" );
+				item.m_textScore[*cd].LoadFromFont( THEME->GetPathF(m_sName,"course list score") );
+				item.m_textScore[*cd].SetHidden( true );
+				item.AddChild( &item.m_textScore[*cd] );
 			}
 		}
 
@@ -691,14 +686,14 @@ float ScreenRanking::SetPage( PageToShow pts )
 		}
 	}
 
-	FOREACH_ShownCourseDifficulty(d)
+	FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
 	{
-		m_sprCourseDifficulty[d]->SetHidden( !bShowCourseDifficulty );
+		m_sprCourseDifficulty[*cd]->SetHidden( !bShowCourseDifficulty );
 		if( bShowCourseDifficulty )
 		{
-			m_sprCourseDifficulty[d]->Reset();
-			m_sprCourseDifficulty[d]->SetXY( COURSE_DIFFICULTY_X(d), COURSE_DIFFICULTY_Y );
-			ON_COMMAND( m_sprCourseDifficulty[d] );
+			m_sprCourseDifficulty[*cd]->Reset();
+			m_sprCourseDifficulty[*cd]->SetXY( COURSE_DIFFICULTY_X(*cd), COURSE_DIFFICULTY_Y );
+			ON_COMMAND( m_sprCourseDifficulty[*cd] );
 		}
 	}
 
@@ -730,13 +725,13 @@ float ScreenRanking::SetPage( PageToShow pts )
 			item.m_textTitle.SetUseZBuffer( true );
 			ON_COMMAND( item.m_textTitle );
 
-			FOREACH_ShownCourseDifficulty(d)
+			FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
 			{
-				item.m_textScore[d].Reset();
-				item.m_textScore[d].SetXY( COURSE_SCORE_OFFSET_X(d), COURSE_SCORE_OFFSET_Y );
-				item.m_textScore[d].SetUseZBuffer( true );
-				item.m_textScore[d].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-				ON_COMMAND( item.m_textScore[d] );
+				item.m_textScore[*cd].Reset();
+				item.m_textScore[*cd].SetXY( COURSE_SCORE_OFFSET_X(*cd), COURSE_SCORE_OFFSET_Y );
+				item.m_textScore[*cd].SetUseZBuffer( true );
+				item.m_textScore[*cd].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+				ON_COMMAND( item.m_textScore[*cd] );
 			}
 		}
 	}
@@ -894,11 +889,11 @@ float ScreenRanking::SetPage( PageToShow pts )
 				const Course* pCourse = item.m_pCourse;
 
 				item.m_textTitle.SetText( pCourse->GetFullDisplayTitle() );
-				FOREACH_ShownCourseDifficulty( cd )
+				FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
 				{
-					BitmapText* pTextStepsScore = &item.m_textScore[cd];
+					BitmapText* pTextStepsScore = &item.m_textScore[*cd];
 
-					Trail *pTrail = pCourse->GetTrail( pts.st, cd );
+					Trail *pTrail = pCourse->GetTrail( pts.st, *cd );
 					pTextStepsScore->SetHidden( pTrail==NULL );
 					if( pTrail == NULL )
 						continue;
@@ -952,10 +947,10 @@ void ScreenRanking::TweenPageOffScreen()
 		if( !m_sprDifficulty[*iter]->GetHidden() )
 			OFF_COMMAND( m_sprDifficulty[*iter] );
 	}
-	FOREACH_ShownCourseDifficulty(d)
+	FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
 	{
-		if( !m_sprCourseDifficulty[d]->GetHidden() )
-			OFF_COMMAND( m_sprCourseDifficulty[d] );
+		if( !m_sprCourseDifficulty[*cd]->GetHidden() )
+			OFF_COMMAND( m_sprCourseDifficulty[*cd] );
 	}
 
 	if( !m_ListScoreRowItems.GetHidden() )
