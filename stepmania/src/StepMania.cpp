@@ -1337,7 +1337,10 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 
 			/* If we're in screen test mode, reload the screen. */
 			if( PREFSMAN->m_bScreenTestMode || bCtrl )
+			{
+				SOUND->StopMusic();
 				ResetGame( true );
+			}
 			else
 				SCREENMAN->SystemMessage( "Reloaded metrics and textures" );
 		}
