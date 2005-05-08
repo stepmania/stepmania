@@ -252,6 +252,8 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 		else if( sscanf( sBit, "c%f", &level ) == 1 )
 		{
 			SET_FLOAT( fScrollBPM )
+			SET_FLOAT( fTimeSpacing )
+			m_fTimeSpacing = 1;
 		}
 		else if( sBit == "clearall" )	Init();
 		else if( sBit == "boost" )		SET_FLOAT( fAccels[ACCEL_BOOST] )
