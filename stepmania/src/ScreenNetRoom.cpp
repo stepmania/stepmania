@@ -40,7 +40,6 @@ void ScreenNetRoom::Init()
 	m_soundChangeSel.Load( THEME->GetPathS("ScreenNetRoom","change sel"));
 
 	m_iRoomPlace = 0;
-	m_SelectMode = SelectRooms;
 
 	m_sprTitleBG.Load( THEME->GetPathG( m_sName, "TitleBG" ) );
 	m_sprTitleBG.SetName( "TitleBG" );
@@ -64,12 +63,6 @@ void ScreenNetRoom::Init()
 	this->AddChild( &m_RoomWheel );
 	this->MoveToHead( &m_RoomWheel );
 	ON_COMMAND( m_RoomWheel );
-
-	//CreateRoom Sprite
-	m_sprCreateRoom.Load( THEME->GetPathG( m_sName, "CreateRoom" ) );
-	m_sprCreateRoom.SetName( "CreateRoom" );
-	SET_XY_AND_ON_COMMAND( m_sprCreateRoom );
-	this->AddChild( &m_sprCreateRoom );
 
 	NSMAN->ReportNSSOnOff(7);
 }
@@ -171,21 +164,14 @@ void ScreenNetRoom::Update( float fDeltaTime )
 
 void ScreenNetRoom::MenuStart( PlayerNumber pn )
 {
-	switch( m_SelectMode )
-	{
-	case SelectRooms:
-		NSMAN->m_SMOnlinePacket.ClearPacket();
-		NSMAN->m_SMOnlinePacket.Write1( 1 );
-		NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
-		m_RoomWheel.Select();
+	NSMAN->m_SMOnlinePacket.ClearPacket();
+	NSMAN->m_SMOnlinePacket.Write1( 1 );
+	NSMAN->m_SMOnlinePacket.Write1( 1 ); //Type (enter a room)
+	m_RoomWheel.Select();
+	if (m_RoomWheel.LastSelected() != NULL)
 		NSMAN->m_SMOnlinePacket.WriteNT( m_RoomWheel.LastSelected()->m_sText );
-		NSMAN->SendSMOnline( );
-		ScreenNetSelectBase::MenuStart( pn );
-		break;
-	case SelectMakeRoom:
-		SCREENMAN->TextEntry( SM_BackFromRoomName, "Enter Room Name:", "", 255 );
-		break;
-	};
+	NSMAN->SendSMOnline( );
+	ScreenNetSelectBase::MenuStart( pn );
 }
 
 void ScreenNetRoom::MenuBack( PlayerNumber pn )
@@ -209,25 +195,16 @@ void ScreenNetRoom::MenuDown( PlayerNumber pn, const InputEventType type )
 
 void ScreenNetRoom::MenuLeft( PlayerNumber pn, const InputEventType type )
 {
-	switch (m_SelectMode)
-	{
-	case SelectRooms:
-		if (type == IET_FIRST_PRESS)
-			m_RoomWheel.Move(-1);
-		break;
-	};
+	if (type == IET_FIRST_PRESS)
+		m_RoomWheel.Move(-1);
 	ScreenNetSelectBase::MenuLeft( pn );
 }
 
 void ScreenNetRoom::MenuRight( PlayerNumber pn, const InputEventType type )
 {
-	switch( m_SelectMode )
-	{
-	case SelectRooms:
-		if (type == IET_FIRST_PRESS)
-			m_RoomWheel.Move(1);
-		break;
-	};
+	if (type == IET_FIRST_PRESS)
+		m_RoomWheel.Move(1);
+
 	ScreenNetSelectBase::MenuRight( pn );
 }
 

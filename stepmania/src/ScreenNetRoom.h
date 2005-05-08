@@ -46,22 +46,11 @@ private:
 	void MenuLeft( PlayerNumber pn, const InputEventType type );
 	void MenuRight( PlayerNumber pn, const InputEventType type );
 	void CreateNewRoom( const CString& rName,  const CString& rDesc );
-
-	enum NetSelectModes
-	{
-		SelectRooms = 0,
-		SelectMakeRoom,
-		SelectModes,
-	};
-
-	NetSelectModes m_SelectMode;
 		
 	RageSound m_soundChangeSel;
 	
 	BitmapText m_textTitle;
 	Sprite m_sprTitleBG;
-
-	Sprite m_sprCreateRoom;
 
 	vector < BitmapText > m_RoomList;
 	vector < RoomData > m_Rooms;
