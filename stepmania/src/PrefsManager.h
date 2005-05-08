@@ -167,7 +167,7 @@ public:
 	Preference<int>		m_iSongsPerPlay;
 
 	// These options have weird interactions depending on m_bEventMode, 
-	// so wrap them.
+	// so wrap them in GameState.
 	Preference<CoinMode>	m_CoinMode;
 	Preference<Premium>		m_Premium;
 
