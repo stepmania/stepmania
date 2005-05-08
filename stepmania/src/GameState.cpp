@@ -2011,6 +2011,9 @@ public:
 	static int IsSideJoined( T* p, lua_State *L )			{ lua_pushboolean(L, p->m_bSideIsJoined[(PlayerNumber)IArg(1)] ); return 1; }
 	static int GetCoinsNeededToJoin( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCoinsNeededToJoin() ); return 1; }
 	static int PlayersCanJoin( T* p, lua_State *L )			{ lua_pushboolean(L, p->PlayersCanJoin() ); return 1; }
+	static int GetNumSidesJoined( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetNumSidesJoined() ); return 1; }
+	static int GetCoinMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetCoinMode() ); return 1; }
+	static int GetPremium( T* p, lua_State *L )				{ lua_pushnumber(L, p->GetPremium() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -2044,7 +2047,6 @@ public:
 		ADD_METHOD( IsExtraStage )
 		ADD_METHOD( IsExtraStage2 )
 		ADD_METHOD( GetEasiestStepsDifficulty )
-		ADD_METHOD( IsEventMode )
 		ADD_METHOD( GetNumPlayersEnabled )
 		ADD_METHOD( GetSongBeat )
 		ADD_METHOD( PlayerUsingBothSides )
@@ -2052,6 +2054,10 @@ public:
 		ADD_METHOD( IsSideJoined )
 		ADD_METHOD( GetCoinsNeededToJoin )
 		ADD_METHOD( PlayersCanJoin )
+		ADD_METHOD( GetNumSidesJoined )
+		ADD_METHOD( IsEventMode )
+		ADD_METHOD( GetCoinMode )
+		ADD_METHOD( GetPremium )
 
 		Luna<T>::Register( L );
 
