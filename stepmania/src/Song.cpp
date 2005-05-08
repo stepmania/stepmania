@@ -23,6 +23,7 @@
 #include "NoteDataUtil.h"
 #include "ProfileManager.h"
 #include "Foreach.h"
+#include "UnlockManager.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -931,7 +932,7 @@ Steps* Song::GetStepsByDescription( StepsType st, CString sDescription ) const
 }
 
 
-Steps* Song::GetClosestNotes( StepsType st, Difficulty dc ) const
+Steps* Song::GetClosestNotes( StepsType st, Difficulty dc, bool bIgnoreLocked ) const
 {
 	ASSERT( dc != DIFFICULTY_INVALID );
 
@@ -944,6 +945,9 @@ Steps* Song::GetClosestNotes( StepsType st, Difficulty dc ) const
 
 		if( pSteps->GetDifficulty() == DIFFICULTY_EDIT && dc != DIFFICULTY_EDIT )
 			continue;
+		if( bIgnoreLocked && UNLOCKMAN->StepsIsLocked(this, pSteps) )
+			continue;
+
 		int iDistance = abs(dc - pSteps->GetDifficulty());
 		if( iDistance < iClosestDistance )
 		{

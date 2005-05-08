@@ -10,6 +10,7 @@
 #include "XmlFile.h"
 #include "PrefsManager.h"
 #include "Foreach.h"
+#include "UnlockManager.h"
 
 
 /////////////////////////////////////
@@ -273,28 +274,28 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 	case SORT_EASY_METER:
 		{
 			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_EASY);
-			if( pSteps )	
+			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return "N/A";
 		}
 	case SORT_MEDIUM_METER:
 		{
 			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_MEDIUM);
-			if( pSteps )	
+			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return "N/A";
 		}
 	case SORT_HARD_METER:
 		{
 			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_HARD);
-			if( pSteps )	
+			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return "N/A";
 		}
 	case SORT_CHALLENGE_METER:
 		{
 			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_CHALLENGE);
-			if( pSteps )	
+			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
 			return "N/A";
 		}
@@ -333,7 +334,8 @@ void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &vpSongsInOut, Difficu
 	song_sort_val.clear();
 	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 	{
-		const Steps* pSteps = vpSongsInOut[i]->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, dc );
+		/* Ignore locked steps. */
+		const Steps* pSteps = vpSongsInOut[i]->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, dc, true );
 		CString &s = song_sort_val[vpSongsInOut[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
 

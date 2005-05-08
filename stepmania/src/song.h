@@ -203,7 +203,7 @@ public:
 	Steps* GetStepsByDifficulty( StepsType st, Difficulty dc, bool bIncludeAutoGen = true ) const;
 	Steps* GetStepsByMeter( StepsType st, int iMeterLow, int iMeterHigh ) const;
 	Steps* GetStepsByDescription( StepsType st, CString sDescription ) const;
-	Steps* GetClosestNotes( StepsType st, Difficulty dc ) const;
+	Steps* GetClosestNotes( StepsType st, Difficulty dc, bool bIgnoreLocked=false ) const;
 	bool IsEasy( StepsType st ) const;
 	bool IsTutorial() const;
 	bool HasEdits( StepsType st ) const;
