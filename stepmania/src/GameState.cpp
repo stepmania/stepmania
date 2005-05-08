@@ -2047,6 +2047,7 @@ public:
 		ADD_METHOD( IsExtraStage )
 		ADD_METHOD( IsExtraStage2 )
 		ADD_METHOD( GetEasiestStepsDifficulty )
+		ADD_METHOD( IsEventMode )
 		ADD_METHOD( GetNumPlayersEnabled )
 		ADD_METHOD( GetSongBeat )
 		ADD_METHOD( PlayerUsingBothSides )
@@ -2055,7 +2056,6 @@ public:
 		ADD_METHOD( GetCoinsNeededToJoin )
 		ADD_METHOD( PlayersCanJoin )
 		ADD_METHOD( GetNumSidesJoined )
-		ADD_METHOD( IsEventMode )
 		ADD_METHOD( GetCoinMode )
 		ADD_METHOD( GetPremium )
 
