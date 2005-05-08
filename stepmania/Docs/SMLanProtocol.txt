@@ -395,9 +395,11 @@ Server SMOnline packets:
 
     Room Status appended for reverse compatibility
     1		Room1 Status
-		0: Normal
-		1: Passworded
-		2: Ingame
+		0: Normal Room
+		1: Passworded Room
+		2: Room in game
+		3: First stage of song selection has been done
+		4: Second stage of song selection has been done
     1		Room2 Status
 	...
     1		RoomN Status	
