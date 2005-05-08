@@ -66,6 +66,13 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 	queue.push_back( InputEvent(di,Down? IET_FIRST_PRESS:IET_RELEASE) );
 }
 
+void InputFilter::SetButtonComment( DeviceInput di, const CString &sComment )
+{
+	LockMut(*queuemutex);
+	ButtonState &bs = m_ButtonState[di.device][di.button];
+	bs.m_sComment = sComment;
+}
+
 /* Release all buttons on the given device. */
 void InputFilter::ResetDevice( InputDevice device )
 {
@@ -154,6 +161,12 @@ bool InputFilter::IsBeingPressed( DeviceInput di )
 float InputFilter::GetSecsHeld( DeviceInput di )
 {
 	return m_ButtonState[di.device][di.button].m_fSecsHeld;
+}
+
+CString InputFilter::GetButtonComment( DeviceInput di ) const
+{
+	LockMut(*queuemutex);
+	return m_ButtonState[di.device][di.button].m_sComment;
 }
 
 void InputFilter::ResetKeyRepeat( DeviceInput di )

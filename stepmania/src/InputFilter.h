@@ -43,6 +43,7 @@ class InputFilter
 	struct ButtonState
 	{
 		bool m_BeingHeld;
+		CString m_sComment;
 		float m_fSecsHeld;
 		float m_Level, m_LastLevel;
 	};
@@ -53,6 +54,7 @@ class InputFilter
 
 public:
 	void ButtonPressed( DeviceInput di, bool Down );
+	void SetButtonComment( DeviceInput di, const CString &sComment = "" );
 	void ResetDevice( InputDevice dev );
 
 	InputFilter();
@@ -66,6 +68,7 @@ public:
 
 	bool IsBeingPressed( DeviceInput di );
 	float GetSecsHeld( DeviceInput di );
+	CString GetButtonComment( DeviceInput di ) const;
 	
 	void GetInputEvents( InputEventArray &array );
 };

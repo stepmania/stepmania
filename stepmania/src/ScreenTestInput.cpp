@@ -79,6 +79,10 @@ void ScreenTestInput::Update( float fDeltaTime )
 				sTemp += " - not mapped";
 			}
 
+			CString sComment = INPUTFILTER->GetButtonComment( di );
+			if( sComment != "" )
+				sTemp += " - " + sComment;
+
 			asInputs.push_back( sTemp );
 		}
 	}
