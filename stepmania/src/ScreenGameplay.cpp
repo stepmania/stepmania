@@ -1596,6 +1596,11 @@ void ScreenGameplay::Update( float fDeltaTime )
 	bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
 	if( bGiveUpTimerFired || GAMESTATE->AllHaveComboOf30OrMoreMisses() )
 	{
+		// Give up
+
+		FOREACH_PlayerNumber( p )
+			STATSMAN->m_CurStageStats.m_player[p].bGaveUp = true;
+
 		m_GiveUpTimer.SetZero();
 
 		if( GIVING_UP_GOES_TO_PREV_SCREEN )

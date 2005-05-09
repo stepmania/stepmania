@@ -81,11 +81,11 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 		this->AddChild( *p );
 	}
 
-	//
-	// Search for the min life record
-	//
-	if( !pss.bFailed )
+	if( !pss.bFailed && !pss.bGaveUp )
 	{
+		//
+		// Search for the min life record to show "Just Barely!"
+		//
 		float fMinLifeSoFar = 1.0f;
 		float fMinLifeSoFarAtSecond = 0;
 		FOREACHM_CONST( float, float, pss.fLifeRecord, i )

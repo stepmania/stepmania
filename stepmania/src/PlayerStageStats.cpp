@@ -19,7 +19,9 @@ void PlayerStageStats::Init()
 	vpPlayedSteps.clear();
 	vpPossibleSteps.clear();
 	fAliveSeconds = 0;
-	bFailed = bFailedEarlier = false;
+	bFailed = false;
+	bFailedEarlier = false;
+	bGaveUp = false;
 	iPossibleDancePoints = iCurPossibleDancePoints = iActualDancePoints = 0;
 	iCurCombo = iMaxCombo = iCurMissCombo = iScore = iBonus = iMaxScore = iCurMaxScore = 0;
 	iSongsPassed = iSongsPlayed = 0;
@@ -46,6 +48,7 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	fAliveSeconds += other.fAliveSeconds;
 	bFailed |= other.bFailed;
 	bFailedEarlier |= other.bFailedEarlier;
+	bGaveUp |= other.bGaveUp;
 	iPossibleDancePoints += other.iPossibleDancePoints;
 	iActualDancePoints += other.iActualDancePoints;
 	iCurPossibleDancePoints += other.iCurPossibleDancePoints;
