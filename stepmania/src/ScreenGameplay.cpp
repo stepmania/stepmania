@@ -1797,28 +1797,31 @@ void ScreenGameplay::SendCrossedMessages()
 
 			FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, iRowLastCrossed+1, iRowNow+1 )
 			{
-				int iFirstTrackWithTapOrHold = nd.GetFirstTrackWithTapOrHoldHead(r);
-				int iNumTracksWithTapOrHoldHead = nd.GetNumTracksWithTapOrHoldHead(r);
-				if( iFirstTrackWithTapOrHold != -1 )
+				int iNumTracksWithTapOrHoldHead = 0;
+				for( int t=0; t<nd.GetNumTracks(); t++ )
 				{
-					MESSAGEMAN->Broadcast( (Message)(MESSAGE_NOTE_CROSSED + i) );
+					if( nd.GetTapNote(t,r).type == TapNote::empty )
+						continue;
+
+					iNumTracksWithTapOrHoldHead++;
 
 					// Send col-specific crossed
 					if( i == 0 )
 					{
-						StyleInput si( pn, iFirstTrackWithTapOrHold );
+						StyleInput si( pn, t );
 						const Game* pGame = GAMESTATE->GetCurrentGame();
-						CString sButton = pGame->ColToButtonName( iFirstTrackWithTapOrHold );
+						CString sButton = pGame->ColToButtonName( t );
 						CString sMessageName = "NoteCrossed" + sButton;
 						MESSAGEMAN->Broadcast( sMessageName );
-
-						if( iNumTracksWithTapOrHoldHead >= 2 )
-						{
-							CString sMessageName = "NoteCrossedJump";
-							MESSAGEMAN->Broadcast( sMessageName );
-						}
 					}
-					break;
+				}
+
+				if( iNumTracksWithTapOrHoldHead > 0 )
+					MESSAGEMAN->Broadcast( (Message)(MESSAGE_NOTE_CROSSED + i) );
+				if( i == 0  &&  iNumTracksWithTapOrHoldHead >= 2 )
+				{
+					CString sMessageName = "NoteCrossedJump";
+					MESSAGEMAN->Broadcast( sMessageName );
 				}
 			}
 
