@@ -199,6 +199,10 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 		ASSERT( 0 );	// invalid type
 	}
 
+	Actor *pBars[] = { &m_sprBar, &m_sprExpandedBar, &m_sprSectionBar, &m_sprModeBar, &m_sprSortBar, &m_sprSongBar, NULL };
+	for( unsigned i = 0; pBars[i] != NULL; ++i )
+		pBars[i]->SetVisible( false );
+
 	switch( data->m_Type )
 	{
 	case TYPE_SECTION: 
@@ -223,15 +227,13 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 	default: ASSERT(0);
 	}
 
-	Sprite *pBar = NULL;
-	if( m_sprBar.GetVisible() )
-		pBar = &m_sprBar;
-	else if( m_sprSectionBar.GetVisible() )
-		pBar = &m_sprSectionBar;
-	else
-		pBar = &m_sprExpandedBar;
-
-	SetGrayBar( pBar );
+	for( unsigned i = 0; pBars[i] != NULL; ++i )
+	{
+		if( !pBars[i]->GetVisible() )
+			continue;
+		SetGrayBar( pBars[i] );
+		break;
+	}
 }
 
 void MusicWheelItem::RefreshGrades()
