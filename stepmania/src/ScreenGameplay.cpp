@@ -1440,7 +1440,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 			switch( lt )
 			{
 			case SongOptions::LIFE_BATTERY:
-			case SongOptions::LIFE_TIME:
 				bAllowOniDie = true;
 				break;
 			}
