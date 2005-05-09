@@ -37,6 +37,8 @@ void ScreenAttract::Init()
 	LOG->Trace( "ScreenAttract::ScreenAttract(%s)", m_sName.c_str() );
 
 	ScreenWithMenuElements::Init();
+
+	this->SortByDrawOrder();
 }
 
 
