@@ -744,7 +744,7 @@ void ScreenEvaluation::Init()
 	//
 	// init extra area
 	//
-	FOREACH_PlayerNumber( p )
+	FOREACH_EnabledPlayer( p )
 	{
 		if( iMachineHighScoreIndex[p] != -1 )
 		{
