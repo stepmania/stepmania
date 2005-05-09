@@ -556,7 +556,6 @@ int NoteData::GetNumRowsWithSimultaneousTaps( int iMinTaps, int iStartIndex, int
 	return iNum;
 }
 
-// XXX: This shouldn't include rolls, but need to check how that would impact scoring ...
 int NoteData::GetNumHoldNotes( int iStartIndex, int iEndIndex ) const
 {
 	int iNumHolds = 0;
@@ -566,7 +565,8 @@ int NoteData::GetNumHoldNotes( int iStartIndex, int iEndIndex ) const
 		GetTapNoteRangeExclusive( t, iStartIndex, iEndIndex, begin, end );
 		for( ; begin != end; ++begin )
 		{
-			if( begin->second.type != TapNote::hold_head )
+			if( begin->second.type != TapNote::hold_head ||
+				begin->second.subType != TapNote::hold_head_hold )
 				continue;
 			iNumHolds++;
 		}

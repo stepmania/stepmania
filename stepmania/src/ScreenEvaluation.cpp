@@ -44,7 +44,7 @@ const char* JUDGE_STRING[NUM_JUDGE_LINES] =
 };
 const char* STATS_STRING[NUM_STATS_LINES] =
 {
-	"Jumps", "Holds", "Mines", "Hands"
+	"Jumps", "Holds", "Mines", "Hands", "Rolls",
 };
 
 #define SPIN_GRADES							THEME->GetMetricB(m_sName,"SpinGrades")
@@ -660,7 +660,7 @@ void ScreenEvaluation::Init()
 
 			const int indeces[NUM_STATS_LINES] =
 			{
-				RADAR_NUM_JUMPS, RADAR_NUM_HOLDS, RADAR_NUM_MINES, RADAR_NUM_HANDS
+				RADAR_NUM_JUMPS, RADAR_NUM_HOLDS, RADAR_NUM_MINES, RADAR_NUM_HANDS, RADAR_NUM_ROLLS
 			};
 			const int ind = indeces[l];
 			const int iActual = (int) roundf(stageStats.m_player[p].radarActual[ind]);

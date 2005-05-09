@@ -270,11 +270,7 @@ void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, PlayerNumber
 		case RADAR_CHAOS:				out[rc] = GetActualChaosRadarValue( in, fSongSeconds, pn );		break;
 		case RADAR_NUM_TAPS_AND_HOLDS:	out[rc] = (float) GetNumNWithScore( in, TNS_GOOD, 1 );			break;
 		case RADAR_NUM_JUMPS:			out[rc] = (float) GetNumNWithScore( in, TNS_GOOD, 2 );			break;
-		// XXX: This should be hold_head_hold, but that'll affect scoring.
-		case RADAR_NUM_HOLDS:			out[rc] = (float) 
-			GetNumHoldNotesWithScore( in, TapNote::hold_head_hold, HNS_OK ) +
-			GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_OK );
-			break;
+		case RADAR_NUM_HOLDS:			out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_hold, HNS_OK );	break;
 		case RADAR_NUM_MINES:			out[rc] = (float) GetSuccessfulMines( in );						break;
 		case RADAR_NUM_HANDS:			out[rc] = (float) GetSuccessfulHands( in );						break;
 		case RADAR_NUM_ROLLS:			out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_roll, HNS_OK ); break;

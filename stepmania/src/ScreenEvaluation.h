@@ -21,7 +21,7 @@
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
 enum JudgeLine { marvelous, perfect, great, good, boo, miss, ok, max_combo, error, NUM_JUDGE_LINES };
-enum StatsLine { jumps, holds, mines, hands, NUM_STATS_LINES };
+enum StatsLine { jumps, holds, mines, hands, rolls, NUM_STATS_LINES };
 
 // sound sequences for the evaluation screen
 struct EvalSoundSequence
