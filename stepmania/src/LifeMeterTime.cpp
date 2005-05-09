@@ -66,9 +66,6 @@ void LifeMeterTime::Load( PlayerNumber pn )
 	this->AddChild( m_sprFrame );
 
 	m_soundGainLife.Load( THEME->GetPathS(sType,"GainLife") );
-
-	if( pn == PLAYER_2 )
-		m_pStream->SetZoomX( -1 );
 }
 
 void LifeMeterTime::OnLoadSong()
