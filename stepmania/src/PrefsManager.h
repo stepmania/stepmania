@@ -273,7 +273,7 @@ public:
 	bool			m_bSmoothLines;
 	CString			m_sSoundDrivers;
 	int				m_iSoundWriteAhead;
-	CString				m_iSoundDevice;
+	CString			m_iSoundDevice;
 	float			m_fSoundVolume;
 	int				m_iSoundResampleQuality;
 	CString			m_sInputDrivers;

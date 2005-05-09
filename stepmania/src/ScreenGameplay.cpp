@@ -1411,7 +1411,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	{
 	case STATE_DANCING:
 		/* Set STATSMAN->m_CurStageStats.bFailed for failed players.  In, FAIL_IMMEDIATE, send
-		* SM_BeginFailed if all players failed, and kill dead Oni players. */
+		 * SM_BeginFailed if all players failed, and kill dead Oni players. */
 		FOREACH_EnabledPlayer( pn )
 		{
 			SongOptions::FailType ft = GAMESTATE->GetPlayerFailType(pn);
@@ -1436,8 +1436,18 @@ void ScreenGameplay::Update( float fDeltaTime )
 			LOG->Trace("Player %d failed", (int)pn);
 			STATSMAN->m_CurStageStats.m_player[pn].bFailed = true;	// fail
 
-			if( lt == SongOptions::LIFE_BATTERY &&
-				ft == SongOptions::FAIL_IMMEDIATE )
+			//
+			// Check for and do Oni die.
+			//
+			bool bAllowOniDie = false;
+			switch( lt )
+			{
+			case SongOptions::LIFE_BATTERY:
+			case SongOptions::LIFE_TIME:
+				bAllowOniDie = true;
+				break;
+			}
+			if( bAllowOniDie && ft == SongOptions::FAIL_IMMEDIATE )
 			{
 				if( !STATSMAN->m_CurStageStats.AllFailedEarlier() )	// if not the last one to fail
 				{

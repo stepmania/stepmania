@@ -14,6 +14,9 @@
 ReceptorArrowRow::ReceptorArrowRow()
 {
 	m_iNumCols = 0;
+	m_pPlayerState = NULL;
+	m_fYReverseOffsetPixels = 0;
+	m_fFadeToFailPercent = 0;
 }
 
 void ReceptorArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset )
@@ -37,7 +40,10 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 	for( int c=0; c<m_iNumCols; c++ )
 	{
 		m_ReceptorArrow[c].Update( fDeltaTime );
-		m_ReceptorArrow[c].SetBaseAlpha( 1 - m_pPlayerState->m_CurrentPlayerOptions.m_fDark );
+		
+		// m_fDark==1 or m_fFadeToFailPercent==1 should make fBaseAlpha==0
+		float fBaseAlpha = (1 - m_pPlayerState->m_CurrentPlayerOptions.m_fDark) * (1 - m_fFadeToFailPercent);
+		m_ReceptorArrow[c].SetBaseAlpha( fBaseAlpha );
 
 		// set arrow XYZ
 		const float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
