@@ -1695,9 +1695,9 @@ bool GameState::AllAreDead() const
 	return true;
 }
 
-bool GameState::AllHaveComboOf30OrMoreMisses() const
+bool GameState::AllHumanHaveComboOf30OrMoreMisses() const
 {
-	FOREACH_EnabledPlayer( p )
+	FOREACH_HumanPlayer( p )
 		if( STATSMAN->m_CurStageStats.m_player[p].iCurMissCombo < 30 )
 			return false;
 	return true;

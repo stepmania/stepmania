@@ -1594,7 +1594,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 	// update give up
 	//
 	bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
-	if( bGiveUpTimerFired || GAMESTATE->AllHaveComboOf30OrMoreMisses() )
+	if( bGiveUpTimerFired || GAMESTATE->AllHumanHaveComboOf30OrMoreMisses() )
 	{
 		// Give up
 

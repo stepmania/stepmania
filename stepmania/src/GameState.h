@@ -174,7 +174,7 @@ public:
 	bool IsPlayerDead( PlayerNumber pn ) const;
 	bool AllAreInDangerOrWorse() const;
 	bool AllAreDead() const;
-	bool AllHaveComboOf30OrMoreMisses() const;
+	bool AllHumanHaveComboOf30OrMoreMisses() const;
 	bool OneIsHot() const;
 
 	// used in PLAY_MODE_BATTLE and PLAY_MODE_RAVE
