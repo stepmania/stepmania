@@ -29,7 +29,7 @@ void ScreenTestInput::Init()
 	m_textInputs.SetHorizAlign( Actor::align_left );
 	this->AddChild( &m_textInputs );
 
-	SOUND->PlayMusic( THEME->GetPathS("ScreenTestInput","music") );
+	this->SortByDrawOrder();
 }
 
 

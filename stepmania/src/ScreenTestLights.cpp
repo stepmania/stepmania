@@ -29,7 +29,7 @@ void ScreenTestLights::Init()
 	SET_XY_AND_ON_COMMAND( m_textInputs );
 	this->AddChild( &m_textInputs );
 
-	SOUND->PlayMusic( THEME->GetPathS("ScreenTestLights","music") );
+	this->SortByDrawOrder();
 }
 
 
