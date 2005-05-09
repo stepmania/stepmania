@@ -99,7 +99,7 @@ public:
 	Preference<int>		m_iMaxRegenComboAfterMiss;
 	Preference<bool>	m_bTwoPlayerRecovery;
 	Preference<bool>	m_bMercifulDrain;	// negative life deltas are scaled by the players life percentage
-	Preference<bool>	m_bMinimum1FullSongInCourses;	// FEoS for 1st song, FailImmediate thereafter
+	Preference<bool>	m_bMinimum1FullSongInNonstop;	// FEoS for 1st song, FailImmediate thereafter
 	Preference<bool>	m_bFailOffInBeginner;
 	Preference<bool>	m_bFailOffForFirstStageEasy;
 	Preference<bool>	m_bMercifulBeginner;	// don't subtract from percent score or grade DP, larger boo window

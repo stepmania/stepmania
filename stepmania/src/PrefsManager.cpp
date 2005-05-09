@@ -130,7 +130,7 @@ PrefsManager::PrefsManager() :
 	m_iMaxRegenComboAfterMiss		( Options, "MaxRegenComboAfterMiss",		10 ),
 	m_bTwoPlayerRecovery			( Options, "TwoPlayerRecovery",				true ),
 	m_bMercifulDrain				( Options, "MercifulDrain",					true ),	// negative life deltas are scaled by the players life percentage
-	m_bMinimum1FullSongInCourses	( Options, "Minimum1FullSongInCourses",		false ),	// FEoS for 1st song, FailImmediate thereafter
+	m_bMinimum1FullSongInNonstop	( Options, "Minimum1FullSongInNonstop",		false ),	// FEoS for 1st song, FailImmediate thereafter
 	m_bFailOffInBeginner			( Options, "FailOffInBeginner",				false ),
 	m_bFailOffForFirstStageEasy		( Options, "FailOffForFirstStageEasy",		false ),
 	m_bMercifulBeginner				( Options, "MercifulBeginner",				false ),
