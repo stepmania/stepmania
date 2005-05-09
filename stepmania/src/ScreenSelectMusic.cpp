@@ -973,7 +973,8 @@ void ScreenSelectMusic::LoadHelpText()
 	if( !SELECT_MENU_AVAILABLE )
 		bSelectIsDown = false;
 
-	if( m_bSelectIsDown != bSelectIsDown )
+	/* If m_soundSelectPressed isn't loaded yet, wait until it is before we do this. */
+	if( m_bSelectIsDown != bSelectIsDown && m_soundSelectPressed.IsLoaded() )
 	{
 		if( bSelectIsDown )
 			m_soundSelectPressed.Play();
