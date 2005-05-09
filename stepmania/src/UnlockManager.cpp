@@ -443,7 +443,7 @@ void UnlockManager::UpdateCachedPointers()
 void UnlockManager::UnlockCode( int num )
 {
 	FOREACH_PlayerNumber( pn )
-		if( PROFILEMAN->IsUsingProfile(pn) )
+		if( PROFILEMAN->IsPersistentProfile(pn) )
 			PROFILEMAN->GetProfile(pn)->m_UnlockedSongs.insert( num );
 
 	PROFILEMAN->GetMachineProfile()->m_UnlockedSongs.insert( num );

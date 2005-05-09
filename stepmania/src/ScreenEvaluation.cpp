@@ -593,8 +593,7 @@ void ScreenEvaluation::Init()
 	//
 	// init judgment area
 	//
-	int l;
-	for( l=0; l<NUM_JUDGE_LINES; l++ ) 
+	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
 		if( l == 0  && !GAMESTATE->ShowMarvelous() )
 			continue;	// skip
@@ -621,14 +620,14 @@ void ScreenEvaluation::Init()
 				switch( l )
 				{
 				case marvelous:	iValue = stageStats.m_player[p].iTapNoteScores[TNS_MARVELOUS];	break;
-				case perfect:	iValue = stageStats.m_player[p].iTapNoteScores[TNS_PERFECT];		break;
+				case perfect:	iValue = stageStats.m_player[p].iTapNoteScores[TNS_PERFECT];	break;
 				case great:		iValue = stageStats.m_player[p].iTapNoteScores[TNS_GREAT];		break;
 				case good:		iValue = stageStats.m_player[p].iTapNoteScores[TNS_GOOD];		break;
-				case boo:		iValue = stageStats.m_player[p].iTapNoteScores[TNS_BOO];			break;
+				case boo:		iValue = stageStats.m_player[p].iTapNoteScores[TNS_BOO];		break;
 				case miss:		iValue = stageStats.m_player[p].iTapNoteScores[TNS_MISS];		break;
-				case ok:		iValue = stageStats.m_player[p].iHoldNoteScores[HNS_OK];			break;
-				case max_combo:	iValue = stageStats.m_player[p].GetMaxCombo().cnt;					break;
-				case error:		iValue = stageStats.m_player[p].iTotalError;						break;
+				case ok:		iValue = stageStats.m_player[p].iHoldNoteScores[HNS_OK];		break;
+				case max_combo:	iValue = stageStats.m_player[p].GetMaxCombo().cnt;				break;
+				case error:		iValue = stageStats.m_player[p].iTotalError;					break;
 				default:	iValue = 0;	ASSERT(0);
 				}
 
@@ -639,7 +638,7 @@ void ScreenEvaluation::Init()
 		}
 	}
 
-	for( l=0; l<NUM_STATS_LINES; l++ ) 
+	for( int l=0; l<NUM_STATS_LINES; l++ ) 
 	{
 		if( !SHOW_STAT(l) )
 			continue;
@@ -916,7 +915,7 @@ void ScreenEvaluation::CommitScores(
 		hs.fSurviveSeconds = stageStats.m_player[p].fAliveSeconds;
 		hs.sModifiers = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString();
 		hs.dateTime = DateTime::GetNowDateTime();
-		hs.sPlayerGuid = PROFILEMAN->IsUsingProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : CString("");
+		hs.sPlayerGuid = PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : CString("");
 		hs.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
 		hs.iProductID = PREFSMAN->m_iProductID;
 		memcpy( hs.iTapNoteScores, stageStats.m_player[p].iTapNoteScores, sizeof(hs.iTapNoteScores) );
@@ -1302,7 +1301,7 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 			CodeDetector::EnteredCode(GameI.controller, CODE_SAVE_SCREENSHOT2) )
 		{
 			if( !m_bSavedScreenshot[pn]  &&	// only allow one screenshot
-				PROFILEMAN->IsUsingProfile(pn) )
+				PROFILEMAN->IsPersistentProfile(pn) )
 			{
 				if( PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn) )
 					MEMCARDMAN->MountCard( pn );

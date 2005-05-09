@@ -25,7 +25,7 @@ bool CompareStepsPointersBySortValueDescending(const Steps *pSteps1, const Steps
 
 void StepsUtil::SortStepsPointerArrayByNumPlays( vector<Steps*> &vStepsPointers, ProfileSlot slot, bool bDescending )
 {
-	if( !PROFILEMAN->IsUsingProfile(slot) )
+	if( !PROFILEMAN->IsPersistentProfile(slot) )
 		return;	// nothing to do since we don't have data
 	Profile* pProfile = PROFILEMAN->GetProfile(slot);
 	SortStepsPointerArrayByNumPlays( vStepsPointers, pProfile, bDescending );

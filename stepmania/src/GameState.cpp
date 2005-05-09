@@ -311,7 +311,7 @@ void GameState::PlayersFinalized()
 
 		MEMCARDMAN->UnmountCard( pn );
 
-		if( !PROFILEMAN->IsUsingProfile(pn) )
+		if( !PROFILEMAN->IsPersistentProfile(pn) )
 			continue;	// skip
 
 		Profile* pProfile = PROFILEMAN->GetProfile(pn);
@@ -380,7 +380,7 @@ void GameState::EndGame()
 
 	FOREACH_HumanPlayer( pn )
 	{
-		if( !PROFILEMAN->IsUsingProfile(pn) )
+		if( !PROFILEMAN->IsPersistentProfile(pn) )
 			continue;
 
 		bool bWasMemoryCard = PROFILEMAN->ProfileWasLoadedFromMemoryCard(pn);
@@ -502,7 +502,7 @@ void GameState::FinishStage()
 
 void GameState::SaveCurrentSettingsToProfile( PlayerNumber pn )
 {
-	if( !PROFILEMAN->IsUsingProfile(pn) )
+	if( !PROFILEMAN->IsPersistentProfile(pn) )
 		return;
 	if( m_bDemonstrationOrJukebox )
 		return;
@@ -1563,7 +1563,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 			}
 
 			// Find Personal Records
-			if( PROFILEMAN->IsUsingProfile( pn ) )
+			if( PROFILEMAN->IsPersistentProfile( pn ) )
 			{
 				HighScoreList &hsl = pProf->GetCourseHighScoreList( pCourse, pTrail );
 				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
@@ -1865,8 +1865,6 @@ bool GameState::IsPlayerDead( PlayerNumber pn ) const
 
 float GameState::GetGoalPercentComplete( PlayerNumber pn )
 {
-	if( !PROFILEMAN->IsUsingProfile(pn) )
-		return 0;
 	const Profile *pProfile = PROFILEMAN->GetProfile(pn);
 	const StageStats &ssAccum = STATSMAN->GetAccumStageStats();
 	const StageStats &ssCurrent = STATSMAN->m_CurStageStats;
@@ -2083,7 +2081,7 @@ LUA_REGISTER_CLASS( GameState )
 #include "LuaFunctions.h"
 LuaFunction_PlayerNumber( IsPlayerEnabled,	GAMESTATE->IsPlayerEnabled(pn) )
 LuaFunction_PlayerNumber( IsHumanPlayer,	GAMESTATE->IsHumanPlayer(pn) )
-LuaFunction_PlayerNumber( IsPlayerUsingProfile,	PROFILEMAN->IsUsingProfile(pn) )
+LuaFunction_PlayerNumber( IsPlayerUsingProfile,	PROFILEMAN->IsPersistentProfile(pn) )
 LuaFunction_PlayerNumber( IsWinner,			GAMESTATE->GetStageResult(pn)==RESULT_WIN )
 LuaFunction_NoArgs( IsCourseMode,			GAMESTATE->IsCourseMode() )
 LuaFunction_NoArgs( IsDemonstration,		GAMESTATE->m_bDemonstrationOrJukebox )

@@ -172,7 +172,7 @@ void PaneDisplay::SetContent( PaneContents c )
 	const Steps *pSteps = GAMESTATE->m_pCurSteps[m_PlayerNumber];
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[m_PlayerNumber];
-	const Profile *pProfile = PROFILEMAN->IsUsingProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : NULL;
+	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : NULL;
 	bool bIsEdit = pSteps && pSteps->GetDifficulty() == DIFFICULTY_EDIT;
 
 	if( (g_Contents[c].req&NEED_NOTES) && !pSteps )

@@ -47,8 +47,8 @@ public:
 	void LoadMachineProfile();
 	void SaveMachineProfile() const;
 
-	bool IsUsingProfile( PlayerNumber pn ) const { return !m_sProfileDir[pn].empty(); }
-	bool IsUsingProfile( ProfileSlot slot ) const;
+	bool IsPersistentProfile( PlayerNumber pn ) const { return !m_sProfileDir[pn].empty(); }
+	bool IsPersistentProfile( ProfileSlot slot ) const;
 
 	// return a profile even if !IsUsingProfile
 	const Profile* GetProfile( PlayerNumber pn ) const;

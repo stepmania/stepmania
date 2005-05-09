@@ -167,7 +167,7 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCours
 
 void CourseUtil::SortCoursePointerArrayByNumPlays( vector<Course*> &vpCoursesInOut, ProfileSlot slot, bool bDescending )
 {
-	if( !PROFILEMAN->IsUsingProfile(slot) )
+	if( !PROFILEMAN->IsPersistentProfile(slot) )
 		return;	// nothing to do since we don't have data
 	Profile* pProfile = PROFILEMAN->GetProfile(slot);
 	SortCoursePointerArrayByNumPlays( vpCoursesInOut, pProfile, bDescending );

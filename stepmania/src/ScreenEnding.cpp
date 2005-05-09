@@ -202,8 +202,8 @@ void ScreenEnding::Init()
 
 	FOREACH_HumanPlayer( p )
 	{
-		// don't show stats if not using a profile
-		if( !PROFILEMAN->IsUsingProfile(p) )
+		// don't show stats if not using a persistent profile
+		if( !PROFILEMAN->IsPersistentProfile(p) )
 			continue;
 	
 		FOREACH_EndingStatsLine( i )

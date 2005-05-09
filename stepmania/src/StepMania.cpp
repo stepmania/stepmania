@@ -1323,7 +1323,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 			BOOKKEEPER->WriteToDisk();
 			PROFILEMAN->SaveMachineProfile();
 			FOREACH_PlayerNumber( p )
-				if( PROFILEMAN->IsUsingProfile(p) )
+				if( PROFILEMAN->IsPersistentProfile(p) )
 					PROFILEMAN->SaveProfile( p );
 			SCREENMAN->SystemMessage( "Stats saved" );
 		}

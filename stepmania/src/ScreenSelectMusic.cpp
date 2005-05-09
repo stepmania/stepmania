@@ -1331,7 +1331,7 @@ void ScreenSelectMusic::AfterStepsChange( const vector<PlayerNumber> &vpns )
 		int iScore = 0;
 		if( pSteps )
 		{
-			Profile* pProfile = PROFILEMAN->IsUsingProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
+			Profile* pProfile = PROFILEMAN->IsPersistentProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
 			iScore = pProfile->GetStepsHighScoreList(pSong,pSteps).GetTopScore().iScore;
 		}
 
@@ -1376,7 +1376,7 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 		int iScore = 0;
 		if( pTrail )
 		{
-			Profile* pProfile = PROFILEMAN->IsUsingProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
+			Profile* pProfile = PROFILEMAN->IsPersistentProfile(pn) ? PROFILEMAN->GetProfile(pn) : PROFILEMAN->GetMachineProfile();
 			iScore = pProfile->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().iScore;
 		}
 

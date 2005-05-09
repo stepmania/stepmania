@@ -1135,6 +1135,7 @@ void ScreenOptions::MenuUpDown( PlayerNumber pn, const InputEventType type, int 
 			return;
 
 		OptionRow &row = *m_Rows[iDest];
+
 		if( row.GetRowDef().IsEnabledForPlayer(pn) )
 		{
 			MoveRow( pn, iDelta, bRepeat );

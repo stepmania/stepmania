@@ -130,11 +130,11 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_SortOrder != SORT_INVALID && GAMESTATE->m_PreferredSortOrder != m_SortOrder )
 		return false;
-	if( m_iWeightPounds != -1 && PROFILEMAN->IsUsingProfile(pn) && PROFILEMAN->GetProfile(pn)->m_iWeightPounds != m_iWeightPounds )
+	if( m_iWeightPounds != -1 && PROFILEMAN->GetProfile(pn)->m_iWeightPounds != m_iWeightPounds )
 		return false;
-	if( m_iGoalCalories != -1 && PROFILEMAN->IsUsingProfile(pn) && PROFILEMAN->GetProfile(pn)->m_iGoalCalories != m_iGoalCalories )
+	if( m_iGoalCalories != -1 && PROFILEMAN->GetProfile(pn)->m_iGoalCalories != m_iGoalCalories )
 		return false;
-	if( m_GoalType != GOAL_INVALID && PROFILEMAN->IsUsingProfile(pn) && PROFILEMAN->GetProfile(pn)->m_GoalType != m_GoalType )
+	if( m_GoalType != GOAL_INVALID && PROFILEMAN->GetProfile(pn)->m_GoalType != m_GoalType )
 		return false;
 
 	return true;
@@ -768,16 +768,13 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		SOUND->PlayOnce( THEME->GetPathToS( m_sSoundPath ) );
 	if( m_iWeightPounds != -1 )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
-			if( PROFILEMAN->IsUsingProfile(*pn) )
-				PROFILEMAN->GetProfile(*pn)->m_iWeightPounds = m_iWeightPounds;
+			PROFILEMAN->GetProfile(*pn)->m_iWeightPounds = m_iWeightPounds;
 	if( m_iGoalCalories != -1 )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
-			if( PROFILEMAN->IsUsingProfile(*pn) )
-				PROFILEMAN->GetProfile(*pn)->m_iGoalCalories = m_iGoalCalories;
+			PROFILEMAN->GetProfile(*pn)->m_iGoalCalories = m_iGoalCalories;
 	if( m_GoalType != GOAL_INVALID )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
-			if( PROFILEMAN->IsUsingProfile(*pn) )
-				PROFILEMAN->GetProfile(*pn)->m_GoalType = m_GoalType;
+			PROFILEMAN->GetProfile(*pn)->m_GoalType = m_GoalType;
 
 	/* If we're going to stop music, do so before preparing new screens, so we don't
 	 * stop music between preparing screens and loading screens. */

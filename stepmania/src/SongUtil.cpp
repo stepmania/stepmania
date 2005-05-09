@@ -195,7 +195,7 @@ void SongUtil::SortSongPointerArrayByGroupAndTitle( vector<Song*> &vpSongsInOut 
 
 void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, ProfileSlot slot, bool bDescending )
 {
-	if( !PROFILEMAN->IsUsingProfile(slot) )
+	if( !PROFILEMAN->IsPersistentProfile(slot) )
 		return;	// nothing to do since we don't have data
 	Profile* pProfile = PROFILEMAN->GetProfile(slot);
 	SortSongPointerArrayByNumPlays( vpSongsInOut, pProfile, bDescending );
