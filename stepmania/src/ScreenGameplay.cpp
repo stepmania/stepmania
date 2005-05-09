@@ -1707,9 +1707,8 @@ void ScreenGameplay::UpdateLights()
 		iRowLastCrossed = iSongRow;
 	}
 
-	// Before the first beat of the song, blink all cabinet lights (except for 
-	// menu buttons) on the beat.
-	bool bOverrideCabinetBlink = (GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat) && bCrossedABeat;
+	// Before the first beat of the song, all cabinet lights solid on (except for menu buttons).
+	bool bOverrideCabinetBlink = (GAMESTATE->m_fSongBeat < GAMESTATE->m_pCurSong->m_fFirstBeat);
 	FOREACH_CabinetLight( cl )
 	{
 		switch( cl )
