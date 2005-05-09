@@ -25,24 +25,25 @@ void ScreenBookkeeping::Init()
 {
 	ScreenWithMenuElements::Init();
 
-	m_textTitle.LoadFromFont( THEME->GetPathF("Common","title") );
-	m_textTitle.SetText( "header" );
-	m_textTitle.SetXY( SCREEN_CENTER_X, 60 );
-	m_textTitle.SetZoom( 0.8f );
+	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"title") );
+	m_textTitle.SetName( "Title" );
+	SET_XY_AND_ON_COMMAND( m_textTitle );
 	this->AddChild( &m_textTitle );
 
 	for( int i=0; i<NUM_BOOKKEEPING_COLS; i++ )
 	{
 		float fX = SCALE( i, 0.f, NUM_BOOKKEEPING_COLS-1, SCREEN_LEFT+50, SCREEN_RIGHT-160 );
 		float fY = SCREEN_CENTER_Y+16;
-		m_textCols[i].LoadFromFont( THEME->GetPathF("Common","normal") );
-		m_textCols[i].SetText( ssprintf("%d",i) );
+		m_textCols[i].LoadFromFont( THEME->GetPathF(m_sName,"data") );
+		m_textCols[i].SetName( ssprintf("Data%d",i+1) );
 		m_textCols[i].SetXY( fX, fY );
 		m_textCols[i].SetZoom( 0.6f );
 		this->AddChild( &m_textCols[i] );
 	}
 
 	ChangeView( (View)0 );
+
+	this->SortByDrawOrder();
 }
 
 ScreenBookkeeping::~ScreenBookkeeping()
@@ -126,8 +127,19 @@ void ScreenBookkeeping::ChangeView( View newView )
 			int coins[NUM_LAST_DAYS];
 			BOOKKEEPER->GetCoinsLastDays( coins );
 			int iTotalLast = 0;
-
+			
 			CString sTitle, sData;
+
+			sTitle += "All-time Total\n";
+			sData += ssprintf( "%i\n", BOOKKEEPER->GetCoinsTotal() );
+
+			sTitle += "Daily Average\n";
+			float fAverage = iTotalLast/(float)NUM_LAST_DAYS;
+			sData += ssprintf("%.1f\n",fAverage);
+
+			sTitle += "\n";
+			sData += "\n";
+
 			for( int i=0; i<NUM_LAST_DAYS; i++ )
 			{
 				sTitle += LastDayToString(i) + "\n";
@@ -137,20 +149,10 @@ void ScreenBookkeeping::ChangeView( View newView )
 
 			sTitle += "Total\n";
 			sData += ssprintf("%i\n", iTotalLast);
-
-			sTitle += "\n";
-			sData += "\n";
-
-			sTitle += "Daily Average\n";
-			float fAverage = iTotalLast/(float)NUM_LAST_DAYS;
-			sData += ssprintf("%.1f\n",fAverage);
 			
-			sTitle += "Grand Total\n";
-			sData += ssprintf( "%i\n", BOOKKEEPER->GetCoinsTotal() );
-
-			m_textCols[0].SetHorizAlign( Actor::align_left );
-			m_textCols[0].SetText( sTitle );
-			m_textCols[1].SetText( "" );
+			m_textCols[0].SetText( "" );
+			m_textCols[1].SetHorizAlign( Actor::align_left );
+			m_textCols[1].SetText( sTitle );
 			m_textCols[2].SetText( "" );
 			m_textCols[3].SetHorizAlign( Actor::align_right );
 			m_textCols[3].SetText( sData );
@@ -192,9 +194,9 @@ void ScreenBookkeeping::ChangeView( View newView )
 				sData += ssprintf("%d",coins[i]) + "\n";
 			}
 			
-			m_textCols[0].SetHorizAlign( Actor::align_left );
-			m_textCols[0].SetText( sTitle );
-			m_textCols[1].SetText( "" );
+			m_textCols[0].SetText( "" );
+			m_textCols[1].SetHorizAlign( Actor::align_left );
+			m_textCols[1].SetText( sTitle );
 			m_textCols[2].SetText( "" );
 			m_textCols[3].SetHorizAlign( Actor::align_right );
 			m_textCols[3].SetText( sData );
