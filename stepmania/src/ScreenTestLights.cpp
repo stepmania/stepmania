@@ -23,11 +23,10 @@ void ScreenTestLights::Init()
 {
 	ScreenWithMenuElements::Init();
 
+	m_textInputs.SetName( "Text" );
 	m_textInputs.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textInputs.SetText( "" );
-	m_textInputs.SetXY( SCREEN_CENTER_X - 200, SCREEN_CENTER_Y );
-	m_textInputs.SetHorizAlign( Actor::align_left );
-	m_textInputs.SetZoom( 0.8f );
+	SET_XY_AND_ON_COMMAND( m_textInputs );
 	this->AddChild( &m_textInputs );
 
 	SOUND->PlayMusic( THEME->GetPathS("ScreenTestLights","music") );
@@ -144,6 +143,7 @@ void ScreenTestLights::MenuBack( PlayerNumber pn )
 	if(!IsTransitioning())
 	{
 		SCREENMAN->PlayStartSound();
+		OFF_COMMAND( m_textInputs );
 		StartTransitioning( SM_GoToPrevScreen );		
 	}
 }
