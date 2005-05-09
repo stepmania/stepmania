@@ -10,6 +10,8 @@
 #include "HelpDisplay.h"
 #include "ScreenDimensions.h"
 
+static ThemeMetric<bool>	ALLOW_RESIZE("ScreenCenterImage","AllowResize");
+
 REGISTER_SCREEN_CLASS( ScreenCenterImage );
 ScreenCenterImage::ScreenCenterImage( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
@@ -75,6 +77,9 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 			return;
 		}
 	}
+
+	if( !ALLOW_RESIZE )
+		return;
 
 	bool bIncrease = false;
 
