@@ -49,9 +49,7 @@ static const float StepSearchDistance = 1.0f;
 	(PREFSMAN->m_fJudgeWindowSeconds##judge * PREFSMAN->m_fJudgeWindowScale) + \
 	PREFSMAN->m_fJudgeWindowAdd )
 
-#define ADJUSTED_WINDOW_TAP( judge, tns ) ( \
-	ADJUSTED_WINDOW_HOLD( judge ) + \
-	((PREFSMAN->m_bMercifulBeginner && (tns==TNS_MISS||tns==TNS_BOO) && IsPlayingBeginner()) ? 0.25f : 0) )
+#define ADJUSTED_WINDOW_TAP( judge, tns ) (ADJUSTED_WINDOW_HOLD(judge))
 
 Player::Player()
 {
