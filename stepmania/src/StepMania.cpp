@@ -1295,7 +1295,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		if( !GAMESTATE->m_bIsOnSystemMenu )
 		{
 			SCREENMAN->DeletePreparedScreens();
-			SCREENMAN->SystemMessage( "OPERATOR" );
+			SCREENMAN->SystemMessage( "Service switch pressed" );
 			GAMESTATE->Reset();
 			SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
 		}

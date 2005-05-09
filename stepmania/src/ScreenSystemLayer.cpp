@@ -92,7 +92,8 @@ void ScreenSystemLayer::ReloadCreditsText()
 {
 	m_textMessage.LoadFromFont( THEME->GetPathF("ScreenSystemLayer","message") );
 	m_textMessage.SetName( "Message" );
-	SET_XY_AND_ON_COMMAND( m_textMessage ); 
+	SET_XY_AND_ON_COMMAND( m_textMessage );
+	m_textMessage.SetHidden( true );
 
  	m_textStats.LoadFromFont( THEME->GetPathF("ScreenSystemLayer","stats") );
 	m_textStats.SetName( "Stats" );
@@ -218,19 +219,16 @@ void ScreenSystemLayer::HandleMessage( const CString &sMessage )
 	}
 	else if( sMessage == "SystemMessage" )
 	{
+		m_textMessage.SetHidden( false );
 		m_textMessage.SetText( SCREENMAN->GetCurrentSystemMessage() );
-		ActorCommands c = ActorCommands( "finishtweening;diffusealpha,1;addx,-640;linear,0.5;addx,+640;sleep,5;linear,0.5;diffusealpha,0" );
-		m_textMessage.RunCommands( c );
+		m_textMessage.PlayCommand( "On" );
 	}
 	else if( sMessage == "SystemMessageNoAnimate" )
 	{
-		m_textMessage.FinishTweening();
+		m_textMessage.SetHidden( false );
 		m_textMessage.SetText( SCREENMAN->GetCurrentSystemMessage() );
-		m_textMessage.SetX( 4 );
-		m_textMessage.SetDiffuseAlpha( 1 );
-		m_textMessage.BeginTweening( 5 );
-		m_textMessage.BeginTweening( 0.5f );
-		m_textMessage.SetDiffuse( RageColor(1,1,1,0) );
+		m_textMessage.PlayCommand( "On" );
+		m_textMessage.FinishTweening();
 	}
 	Screen::HandleMessage( sMessage );
 }
