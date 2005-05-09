@@ -51,7 +51,7 @@ static const float StepSearchDistance = 1.0f;
 
 #define ADJUSTED_WINDOW_TAP( judge, tns ) ( \
 	ADJUSTED_WINDOW_HOLD( judge ) + \
-	((PREFSMAN->m_bMercifulBeginner && (tns==TNS_MISS||tns==TNS_BOO) && IsPlayingBeginner()) ? 0.5f : 0) )
+	((PREFSMAN->m_bMercifulBeginner && (tns==TNS_MISS||tns==TNS_BOO) && IsPlayingBeginner()) ? 0.25f : 0) )
 
 Player::Player()
 {
@@ -1610,6 +1610,9 @@ void Player::FadeToFail()
 {
 	if( m_pNoteField )
 		m_pNoteField->FadeToFail();
+
+	// clear miss combo
+	m_Combo.SetCombo( 0, 0 );
 }
 
 bool Player::IsPlayingBeginner() const
