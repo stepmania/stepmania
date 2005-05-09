@@ -230,6 +230,7 @@ void MusicWheel::LoadFromMetrics( CString sType )
 	SHOW_ROULETTE				.Load(sType,"ShowRoulette");
 	SHOW_RANDOM					.Load(sType,"ShowRandom");
 	SHOW_PORTAL					.Load(sType,"ShowPortal");
+	RANDOM_PICKS_LOCKED_SONGS	.Load(sType,"RandomPicksLockedSongs");
 	MOST_PLAYED_SONGS_TO_SHOW	.Load(sType,"MostPlayedSongsToShow");
 	MODE_MENU_CHOICE_NAMES		.Load(sType,"ModeMenuChoiceNames");
 	vector<CString> vsModeChoiceNames;
@@ -407,8 +408,9 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sP
 				continue;
 		}
 
-		// If we're using unlocks, check it here to prevent from being shown
-		if( so!=SORT_ROULETTE && UNLOCKMAN->SongIsLocked(pSong) )
+		/* Hide locked songs.  If RANDOM_PICKS_LOCKED_SONGS, hide in Roulette and Random,
+		 * too. */
+		if( (so!=SORT_ROULETTE || !RANDOM_PICKS_LOCKED_SONGS) && UNLOCKMAN->SongIsLocked(pSong) )
 			continue;
 
 		// If the song has at least one steps, add it.
@@ -1152,11 +1154,17 @@ void MusicWheel::StartRoulette()
 
 void MusicWheel::StartRandom()
 {
-	/* Shuffle the roulette wheel. */
-	RandomGen rnd;
-	random_shuffle( m_WheelItemDatas[SORT_ROULETTE].begin(), m_WheelItemDatas[SORT_ROULETTE].end(), rnd );
+	/* If RANDOM_PICKS_LOCKED_SONGS is disabled, pick a song from the active sort and
+	 * section.  If enabled, picking from the section makes it too easy to trick the
+	 * game into picking a locked song, so pick from SORT_ROULETTE. */
+	if( RANDOM_PICKS_LOCKED_SONGS )
+	{
+		/* Shuffle and use the roulette wheel. */
+		RandomGen rnd;
+		random_shuffle( m_WheelItemDatas[SORT_ROULETTE].begin(), m_WheelItemDatas[SORT_ROULETTE].end(), rnd );
 
-	SetOpenGroup("", SortOrder(SORT_ROULETTE));
+		SetOpenGroup( "", SortOrder(SORT_ROULETTE) );
+	}
 
 	m_Moving = -1;
 	m_TimeBeforeMovingBegins = 0;
