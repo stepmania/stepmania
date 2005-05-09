@@ -99,7 +99,7 @@ ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
 	BACK_GIVES_UP.Load( sName, "BackGivesUp" );
 	GIVING_UP_GOES_TO_PREV_SCREEN.Load( sName, "GivingUpGoesToPrevScreen" );
 	GIVING_UP_GOES_TO_NEXT_SCREEN.Load( sName, "GivingUpGoesToNextScreen" );
-	GIVE_UP_AFTER_30_MISSES.Load( sName, "GiveUpAfter30Misses" );
+	FAIL_AFTER_30_MISSES.Load( sName, "FailAfter30Misses" );
 	USE_FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "UseForcedModifiersInBeginner" );
 	FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "ForcedModifiersInBeginner" );
 }
@@ -1594,12 +1594,15 @@ void ScreenGameplay::Update( float fDeltaTime )
 	// update give up
 	//
 	bool bGiveUpTimerFired = !m_GiveUpTimer.IsZero() && m_GiveUpTimer.Ago() > 2.5f;
-	if( bGiveUpTimerFired || GAMESTATE->AllHumanHaveComboOf30OrMoreMisses() )
+	if( bGiveUpTimerFired || (FAIL_AFTER_30_MISSES && GAMESTATE->AllHumanHaveComboOf30OrMoreMisses()) )
 	{
 		// Give up
 
 		FOREACH_PlayerNumber( p )
+		{
 			STATSMAN->m_CurStageStats.m_player[p].bGaveUp = true;
+			STATSMAN->m_CurStageStats.m_player[p].bFailed = GAMESTATE->AllHumanHaveComboOf30OrMoreMisses();
+		}
 
 		m_GiveUpTimer.SetZero();
 
