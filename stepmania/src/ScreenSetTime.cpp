@@ -168,7 +168,8 @@ void ScreenSetTime::ChangeSelection( int iDirection )
 	m_textValue[OldSelection].SetEffectNone();
 	m_textValue[m_Selection].SetEffectDiffuseShift();
 
-	SOUND->PlayOnce( THEME->GetPathS("ScreenSetTime","ChangeSelection") );
+	if( iDirection != 0 )
+		SOUND->PlayOnce( THEME->GetPathS("ScreenSetTime","ChangeSelection") );
 }
 
 void ScreenSetTime::MenuUp( PlayerNumber pn )
@@ -219,6 +220,11 @@ void ScreenSetTime::MenuStart( PlayerNumber pn )
 	}
 	else
 		ChangeSelection( +1 );
+}
+
+void ScreenSetTime::MenuSelect( PlayerNumber pn )
+{
+	ChangeSelection( -1 );
 }
 
 void ScreenSetTime::MenuBack( PlayerNumber pn )

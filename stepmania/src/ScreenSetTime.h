@@ -31,6 +31,7 @@ public:
 	virtual void MenuLeft( PlayerNumber pn );
 	virtual void MenuRight( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn );
+	virtual void MenuSelect( PlayerNumber pn );
 	virtual void MenuBack( PlayerNumber pn );
 
 private:
