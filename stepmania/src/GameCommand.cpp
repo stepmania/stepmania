@@ -978,7 +978,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			
 			MEMCARDMAN->UnmountCard(pn);
 
-			SCREENMAN->SystemMessage( ssprintf("Copied to P%d card:\n  attempted %d copies (%d overwritten)\n  %d files copied, %d errors.",pn+1,iNumAttempted,iNumOverwritten,iNumSuccessful,iNumAttempted-iNumSuccessful) );
+			SCREENMAN->SystemMessage( ssprintf("Copied to P%d card: %d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten) );
 			break;
 		}
 
@@ -1024,7 +1024,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			PROFILEMAN->SaveMachineProfile();
 			PROFILEMAN->LoadMachineProfile();
 
-			SCREENMAN->SystemMessage( ssprintf("Copied from P%d card:\n  attempted %d copies (%d overwritten)\n  %d files copied, %d errors.",pn+1,iNumAttempted,iNumOverwritten,iNumSuccessful,iNumAttempted-iNumSuccessful) );
+			SCREENMAN->SystemMessage( ssprintf("Copied from P%d card: %d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten) );
 			break;
 		}
 
