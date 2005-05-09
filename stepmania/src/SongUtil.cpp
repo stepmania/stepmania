@@ -163,15 +163,9 @@ void SongUtil::SortSongPointerArrayByGenre( vector<Song*> &vpSongsInOut )
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersByGenre );
 }
 
-static int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
+int SongUtil::CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
 {
 	return pSong1->m_sGroupName < pSong2->m_sGroupName;
-}
-
-void SongUtil::SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &vpSongsInOut )
-{
-	SortSongPointerArrayByMeter( vpSongsInOut, DIFFICULTY_EASY );
-	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersByGroup );
 }
 
 int CompareSongPointersByGroupAndTitle(const Song *pSong1, const Song *pSong2)

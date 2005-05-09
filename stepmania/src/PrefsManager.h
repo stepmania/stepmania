@@ -225,6 +225,7 @@ public:
 	Preference<int>		m_iMaxRecentScoresForPlayer;
 	Preference<bool>	m_bAllowMultipleHighScoreWithSameName;
 	Preference<bool>	m_bCelShadeModels;
+	Preference<bool>	m_bPreferredSortUsesGroups;
 
 	/* experimental: force a specific update rate.  This prevents big 
 	 * animation jumps on frame skips. */

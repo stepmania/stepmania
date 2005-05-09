@@ -498,7 +498,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		{
 		case SORT_PREFERRED:
 		case SORT_ROULETTE:
-			SongUtil::SortSongPointerArrayByGroupAndDifficulty( arraySongs );
+			SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_EASY );
+			if( (bool)PREFSMAN->m_bPreferredSortUsesGroups )
+				stable_sort( arraySongs.begin(), arraySongs.end(), SongUtil::CompareSongPointersByGroup );
 			bUseSections = false;
 			break;
 		case SORT_GROUP:

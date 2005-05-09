@@ -242,7 +242,8 @@ PrefsManager::PrefsManager() :
 	m_iMaxRecentScoresForMachine			( Options, "MaxRecentScoresForMachine",				100 ),
 	m_iMaxRecentScoresForPlayer				( Options, "MaxRecentScoresForPlayer",				20 ),
 	m_bAllowMultipleHighScoreWithSameName	( Options, "AllowMultipleHighScoreWithSameName",	true ),
-	m_bCelShadeModels						( Options, "CelShadeModels",						false )	// Work-In-Progress.. disable by default.
+	m_bCelShadeModels						( Options, "CelShadeModels",						false ),	// Work-In-Progress.. disable by default.
+	m_bPreferredSortUsesGroups				( Options, "PreferredSortUsesGroups",				true )	
 {
 	Init();
 	ReadGlobalPrefsFromDisk();

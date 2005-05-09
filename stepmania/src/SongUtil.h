@@ -19,7 +19,6 @@ namespace SongUtil
 	void SortSongPointerArrayByArtist( vector<Song*> &vpSongsInOut );
 	void SortSongPointerArrayByDisplayArtist( vector<Song*> &vpSongsInOut );
 	void SortSongPointerArrayByGenre( vector<Song*> &vpSongsInOut );
-	void SortSongPointerArrayByGroupAndDifficulty( vector<Song*> &vpSongsInOut );
 	void SortSongPointerArrayByGroupAndTitle( vector<Song*> &vpSongsInOut );
 	void SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, ProfileSlot slot, bool bDescending );
 	void SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, const Profile* pProfile, bool bDescending );
@@ -27,6 +26,8 @@ namespace SongUtil
 	CString GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so );
 	void SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, SortOrder so );
 	void SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut );
+
+	int CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2);
 }
 
 class SongID
