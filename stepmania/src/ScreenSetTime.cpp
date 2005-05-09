@@ -62,10 +62,18 @@ void ScreenSetTime::Init()
 		title.SetXY( GetTitleX(s), GetTitleY(s) );
 		this->AddChild( &title );
 
+		title.SetDiffuse( RageColor(1,1,1,0) );
+		title.BeginTweening( 0.3f, TWEEN_LINEAR );
+		title.SetDiffuse( RageColor(1,1,1,1) );
+
 		value.LoadFromFont( THEME->GetPathF("Common","normal") );
 		value.SetDiffuse( RageColor(1,1,1,1) );
 		value.SetXY( GetValueX(s), GetValueY(s) );
 		this->AddChild( &value );
+
+		value.SetDiffuse( RageColor(1,1,1,0) );
+		value.BeginTweening( 0.3f, TWEEN_LINEAR );
+		value.SetDiffuse( RageColor(1,1,1,1) );
 	}
 
 	m_TimeOffset = 0;
@@ -166,7 +174,9 @@ void ScreenSetTime::ChangeSelection( int iDirection )
 		return; // can't move any more
 
 	m_textValue[OldSelection].SetEffectNone();
-	m_textValue[m_Selection].SetEffectDiffuseShift();
+	m_textValue[m_Selection].SetEffectDiffuseShift( 1.f,
+		RageColor(0.3f,0.3f,0.3f,1), 
+		RageColor(1,1,1,1) );
 
 	if( iDirection != 0 )
 		SOUND->PlayOnce( THEME->GetPathS("ScreenSetTime","ChangeSelection") );
@@ -214,6 +224,17 @@ void ScreenSetTime::MenuStart( PlayerNumber pn )
 		/* We're going to draw a little more while we transition out.  We've already
 		 * set the new time; don't over-adjust visually. */
 		m_TimeOffset = 0;
+
+		FOREACH_SetTimeSelection( s )
+		{
+			BitmapText &title = m_textTitle[s];
+			title.BeginTweening( 0.3f, TWEEN_LINEAR );
+			title.SetDiffuse( RageColor(1,1,1,0) );
+
+			BitmapText &value = m_textValue[s];
+			value.BeginTweening( 0.3f, TWEEN_LINEAR );
+			value.SetDiffuse( RageColor(1,1,1,0) );
+		}
 
 		SOUND->PlayOnce( THEME->GetPathS("Common","start") );
 		StartTransitioning( SM_GoToNextScreen );
