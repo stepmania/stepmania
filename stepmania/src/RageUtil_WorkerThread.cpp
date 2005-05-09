@@ -26,7 +26,7 @@ WorkerThread::~WorkerThread()
 void WorkerThread::SetTimeout( float fSeconds )
 {
 	m_WorkerEvent.Lock();
-	if( fSeconds == -1 )
+	if( fSeconds < 0 )
 		m_Timeout.SetZero();
 	else
 	{
