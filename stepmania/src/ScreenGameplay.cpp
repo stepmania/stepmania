@@ -1794,6 +1794,7 @@ void ScreenGameplay::SendCrossedMessages()
 			FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( nd, r, iRowLastCrossed+1, iRowNow+1 )
 			{
 				int iFirstTrackWithTapOrHold = nd.GetFirstTrackWithTapOrHoldHead(r);
+				int iNumTracksWithTapOrHoldHead = nd.GetNumTracksWithTapOrHoldHead(r);
 				if( iFirstTrackWithTapOrHold != -1 )
 				{
 					MESSAGEMAN->Broadcast( (Message)(MESSAGE_NOTE_CROSSED + i) );
@@ -1806,6 +1807,12 @@ void ScreenGameplay::SendCrossedMessages()
 						CString sButton = pGame->ColToButtonName( iFirstTrackWithTapOrHold );
 						CString sMessageName = "NoteCrossed" + sButton;
 						MESSAGEMAN->Broadcast( sMessageName );
+
+						if( iNumTracksWithTapOrHoldHead >= 2 )
+						{
+							CString sMessageName = "NoteCrossedJump";
+							MESSAGEMAN->Broadcast( sMessageName );
+						}
 					}
 					break;
 				}
