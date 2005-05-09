@@ -36,7 +36,7 @@ void ScreenCenterImage::Init()
 	m_textInstructions.SetZoom( 0.8f );
 	this->AddChild( &m_textInstructions );
 
-	SOUND->PlayMusic( THEME->GetPathS("ScreenCenterImage","music") );
+	this->SortByDrawOrder();
 }
 
 
