@@ -274,11 +274,9 @@ void ScreenGameplay::Init()
 		m_Player[p].SetY( SCREEN_CENTER_Y );
 		this->AddChild( &m_Player[p] );
 	
-		m_sprOniGameOver[p].SetName( ssprintf("OniGameOver%i", p+1) );
+		m_sprOniGameOver[p].SetName( ssprintf("OniGameOverP%i",p+1) );
 		m_sprOniGameOver[p].Load( THEME->GetPathG(m_sName,"oni gameover") );
-		m_sprOniGameOver[p].SetX( fPlayerX );
-		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
-		m_sprOniGameOver[p].SetDiffuse( RageColor(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
+		SET_XY_AND_ON_COMMAND( m_sprOniGameOver[p] );
 		this->AddChild( &m_sprOniGameOver[p] );
 	}
 
@@ -917,8 +915,7 @@ void ScreenGameplay::LoadNextSong()
 		m_ActiveAttackList[p].Refresh();
 
 		// reset oni game over graphic
-		m_sprOniGameOver[p].SetY( SCREEN_TOP - m_sprOniGameOver[p].GetZoomedHeight()/2 );
-		m_sprOniGameOver[p].SetDiffuse( RageColor(1,1,1,0) );	// 0 alpha so we don't waste time drawing while not visible
+		SET_XY_AND_ON_COMMAND( m_sprOniGameOver[p] );
 
 		if( GAMESTATE->m_SongOptions.m_LifeType==SongOptions::LIFE_BATTERY && STATSMAN->m_CurStageStats.m_player[p].bFailed )	// already failed
 			ShowOniGameOver(p);
@@ -2633,10 +2630,7 @@ void ScreenGameplay::TweenOffScreen()
 
 void ScreenGameplay::ShowOniGameOver( PlayerNumber pn )
 {
-	m_sprOniGameOver[pn].SetDiffuse( RageColor(1,1,1,1) );
-	m_sprOniGameOver[pn].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
-	m_sprOniGameOver[pn].SetY( SCREEN_CENTER_Y );
-	m_sprOniGameOver[pn].SetEffectBob( 4, RageVector3(0,6,0) );
+	m_sprOniGameOver[pn].PlayCommand( "Die" );
 }
 
 /*
