@@ -346,19 +346,19 @@ static void PremiumM( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const int mapping[] = { 1,2,3,4,5,6,7 };
+	const int mapping[] = { 1,2,3,4,5 };
 	MoveMap( sel, PREFSMAN->m_iSongsPerPlay, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const int mapping[] = { 1,2,3,4,5,6,7,8 };
+	const int mapping[] = { 1,2,3,4,5,6 };
 	MoveMap( sel, PREFSMAN->m_iSongsPerPlay, ToSel, mapping, ARRAYSIZE(mapping) );
 
 	if( ToSel && PREFSMAN->m_bEventMode )
-		sel = 7;
+		sel = 5;
 	if( !ToSel )
-		PREFSMAN->m_bEventMode.Set( sel == 7 );
+		PREFSMAN->m_bEventMode.Set( sel == 5 );
 }
 
 /* Machine options */
@@ -575,8 +575,8 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "MenuTimer",					MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "CoinMode",					CoinModeM,			"HOME","PAY","FREE PLAY" ) );
 	ADD( ConfOption( "CoinModeNoHome",				CoinModeNoHome,		"PAY","FREE PLAY" ) );
-	ADD( ConfOption( "SongsPerPlay",				SongsPerPlay,		"1","2","3","4","5","6","7" ) );
-	ADD( ConfOption( "SongsPerPlayOrEvent",			SongsPerPlayOrEventMode, "1","2","3","4","5","6","7","EVENT" ) );
+	ADD( ConfOption( "SongsPerPlay",				SongsPerPlay,		"1","2","3","4","5" ) );
+	ADD( ConfOption( "SongsPerPlayOrEvent",			SongsPerPlayOrEventMode, "1","2","3","4","5","EVENT" ) );
 	ADD( ConfOption( "EventMode",					MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "ScoringType",					ScoringType,		"MAX2","5TH" ) );
 	ADD( ConfOption( "JudgeDifficulty",				JudgeDifficulty,	"1","2","3","4","5","6","7","8","JUSTICE" ) );
