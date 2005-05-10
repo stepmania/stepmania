@@ -117,6 +117,13 @@ template<class T>
 static void MoveData( int &sel, Preference<T> &opt, bool ToSel )
 {
 	if( ToSel )	sel = opt;
+	else		opt.Set( sel );
+}
+
+template<>
+static void MoveData( int &sel, Preference<bool> &opt, bool ToSel )
+{
+	if( ToSel )	sel = opt;
 	else		opt.Set( !!sel );
 }
 
