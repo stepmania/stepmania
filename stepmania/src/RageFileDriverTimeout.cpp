@@ -314,6 +314,9 @@ void ThreadedFileWorker::Close( RageFileBasic *pFile )
 {
 	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
 
+	if( pFile == NULL )
+		return;
+
 	if( !IsTimedOut() )
 	{
 		/* If we're not in a timed-out state, try to wait for the deletion to complete
