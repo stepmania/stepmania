@@ -19,7 +19,6 @@ static float g_fTimeBeforeSlow, g_fTimeBeforeFast, g_fTimeBetweenSlow, g_fTimeBe
 InputFilter::InputFilter()
 {
 	queuemutex = new RageMutex("InputFilter");
-	memset( m_ButtonState, 0, sizeof(m_ButtonState) );
 
 	Reset();
 	ResetRepeatRate();

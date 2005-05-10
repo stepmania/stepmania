@@ -42,6 +42,7 @@ class InputFilter
 {
 	struct ButtonState
 	{
+		ButtonState() { m_BeingHeld = false; m_fSecsHeld = m_Level = m_LastLevel = 0; }
 		bool m_BeingHeld;
 		CString m_sComment;
 		float m_fSecsHeld;
