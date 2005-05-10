@@ -688,7 +688,7 @@ void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &ti
 	ASSERT_M( m_fSongBeat > -2000, ssprintf("%f %f", m_fSongBeat, fPositionSeconds) );
 
 	m_fMusicSeconds = fPositionSeconds;
-	m_fLightSongBeat = timing.GetBeatFromElapsedTime( fPositionSeconds + g_fLightsFalloffSeconds );
+	m_fLightSongBeat = timing.GetBeatFromElapsedTime( fPositionSeconds + g_fLightsAheadSeconds );
 
 	Actor::SetBGMTime( fPositionSeconds, m_fSongBeat );
 	
