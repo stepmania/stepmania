@@ -1212,7 +1212,7 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	 * all the columns of the jump.  -Chris */
 	const Game *pCurGame = GAMESTATE->m_pCurGame;
 
-	if( pCurGame->m_bCountNotesSeparately )
+	if( !pCurGame->m_bCountNotesSeparately )
 	{
 		TapNoteResult tnr = NoteDataWithScoring::LastTapNoteResult( m_NoteData, iIndexThatWasSteppedOn );
 		TapNoteScore score = tnr.tns;
