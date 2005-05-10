@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7.10"
 	Name="StepMania"
-	ProjectGUID="{14B13B1E-8570-4B5F-85E7-E7684A6E5643}"
 	SccProjectName=""
 	SccLocalPath=""
 	Keyword="MFCProj">
@@ -79,7 +78,13 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -157,501 +162,588 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
 				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="FastDebug|Win32"
+			OutputDirectory="FastDebug"
+			IntermediateDirectory="FastDebug"
+			ConfigurationType="1"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2"
+			WholeProgramOptimization="FALSE">
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/EHa"
+				Optimization="0"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0\include&quot;"
+				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
+				ExceptionHandling="FALSE"
+				BasicRuntimeChecks="0"
+				RuntimeLibrary="2"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderFile="$(IntDir)/StepMania.pch"
+				AssemblerListingLocation=".\../FastDebug/"
+				ObjectFile=".\../FastDebug/"
+				ProgramDataBaseFileName=".\../FastDebug/"
+				BrowseInformation="0"
+				WarningLevel="4"
+				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="4"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
+				OutputFile="../Program/StepMania-debug.exe"
+				LinkIncremental="2"
+				SuppressStartupBanner="TRUE"
+				AdditionalLibraryDirectories=""
+				IgnoreDefaultLibraryNames="wininet.lib;msimg32.lib;libci.lib"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile="../Debug/StepMania-debug.pdb"
+				GenerateMapFile="TRUE"
+				MapFileName="$(IntDir)\$(TargetName).map"
+				MapExports="TRUE"
+				SubSystem="2"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName=".\../StepMania.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine="archutils\Win32\mapconv &quot;$(IntDir)\$(TargetName).map&quot; &quot;$(TargetDir)\StepMania.vdi&quot;"/>
+			<Tool
+				Name="VCPreBuildEventTool"
+				CommandLine="archutils\Win32\verinc
+cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
+"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+			<Tool
+				Name="VCManagedWrapperGeneratorTool"/>
+			<Tool
+				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
-			Name="Rage"
+			Name="Screens"
 			Filter="">
 			<File
-				RelativePath=".\RageBitmapTexture.cpp">
+				RelativePath="Screen.cpp">
 			</File>
 			<File
-				RelativePath=".\RageBitmapTexture.h">
+				RelativePath="Screen.h">
 			</File>
 			<File
-				RelativePath=".\RageDisplay.cpp">
+				RelativePath="ScreenAttract.cpp">
 			</File>
 			<File
-				RelativePath=".\RageDisplay.h">
+				RelativePath="ScreenAttract.h">
 			</File>
 			<File
-				RelativePath=".\RageDisplay_D3D.cpp">
+				RelativePath="ScreenBookkeeping.cpp">
 			</File>
 			<File
-				RelativePath=".\RageDisplay_D3D.h">
+				RelativePath="ScreenBookkeeping.h">
 			</File>
 			<File
-				RelativePath=".\RageDisplay_Null.cpp">
+				RelativePath="ScreenBranch.cpp">
 			</File>
 			<File
-				RelativePath=".\RageDisplay_Null.h">
+				RelativePath="ScreenBranch.h">
 			</File>
 			<File
-				RelativePath=".\RageDisplay_OGL.cpp">
+				RelativePath="ScreenCenterImage.cpp">
 			</File>
 			<File
-				RelativePath=".\RageDisplay_OGL.h">
+				RelativePath="ScreenCenterImage.h">
 			</File>
 			<File
-				RelativePath=".\RageDisplay_OGL_Extensions.cpp">
+				RelativePath="ScreenCredits.cpp">
 			</File>
 			<File
-				RelativePath=".\RageDisplay_OGL_Extensions.h">
+				RelativePath="ScreenCredits.h">
 			</File>
 			<File
-				RelativePath=".\RageException.cpp">
+				RelativePath="ScreenDemonstration.cpp">
 			</File>
 			<File
-				RelativePath=".\RageException.h">
+				RelativePath="ScreenDemonstration.h">
 			</File>
 			<File
-				RelativePath=".\RageFile.cpp">
+				RelativePath="ScreenDimensions.h">
 			</File>
 			<File
-				RelativePath=".\RageFile.h">
+				RelativePath="ScreenEdit.cpp">
 			</File>
 			<File
-				RelativePath=".\RageFileBasic.cpp">
+				RelativePath="ScreenEdit.h">
 			</File>
 			<File
-				RelativePath=".\RageFileBasic.h">
+				RelativePath="ScreenEditCoursesMenu.cpp">
 			</File>
 			<File
-				RelativePath=".\RageFileDriver.cpp">
+				RelativePath="ScreenEditCoursesMenu.h">
 			</File>
 			<File
-				RelativePath=".\RageFileDriver.h">
+				RelativePath="ScreenEditMenu.cpp">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverDeflate.cpp">
+				RelativePath="ScreenEditMenu.h">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverDeflate.h">
+				RelativePath="ScreenEnding.cpp">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverDirect.cpp">
+				RelativePath="ScreenEnding.h">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverDirect.h">
+				RelativePath="ScreenEndlessBreak.cpp">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverDirectHelpers.cpp">
+				RelativePath="ScreenEndlessBreak.h">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverDirectHelpers.h">
+				RelativePath="ScreenEvaluation.cpp">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverMemory.cpp">
+				RelativePath="ScreenEvaluation.h">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverMemory.h">
+				RelativePath="ScreenExit.cpp">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverSlice.cpp">
+				RelativePath="ScreenExit.h">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverSlice.h">
+				RelativePath="ScreenEz2SelectMusic.cpp">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverTimeout.cpp">
+				RelativePath="ScreenEz2SelectMusic.h">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverTimeout.h">
+				RelativePath="ScreenEz2SelectPlayer.cpp">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverZip.cpp">
+				RelativePath="ScreenEz2SelectPlayer.h">
 			</File>
 			<File
-				RelativePath=".\RageFileDriverZip.h">
+				RelativePath="ScreenGameplay.cpp">
 			</File>
 			<File
-				RelativePath=".\RageFileManager.cpp">
+				RelativePath="ScreenGameplay.h">
 			</File>
 			<File
-				RelativePath=".\RageFileManager.h">
+				RelativePath="ScreenGameplayMultiplayer.cpp">
 			</File>
 			<File
-				RelativePath=".\RageInput.cpp">
+				RelativePath="ScreenGameplayMultiplayer.h">
 			</File>
 			<File
-				RelativePath=".\RageInput.h">
+				RelativePath="ScreenHowToPlay.cpp">
 			</File>
 			<File
-				RelativePath=".\RageInputDevice.cpp">
+				RelativePath="ScreenHowToPlay.h">
 			</File>
 			<File
-				RelativePath=".\RageInputDevice.h">
+				RelativePath="ScreenInstructions.cpp">
 			</File>
 			<File
-				RelativePath=".\RageLog.cpp">
+				RelativePath="ScreenInstructions.h">
 			</File>
 			<File
-				RelativePath=".\RageLog.h">
+				RelativePath="ScreenJukebox.cpp">
 			</File>
 			<File
-				RelativePath=".\RageMath.cpp">
+				RelativePath="ScreenJukebox.h">
 			</File>
 			<File
-				RelativePath=".\RageMath.h">
+				RelativePath="ScreenLogo.cpp">
 			</File>
 			<File
-				RelativePath=".\RageModelGeometry.cpp">
+				RelativePath="ScreenLogo.h">
 			</File>
 			<File
-				RelativePath=".\RageModelGeometry.h">
+				RelativePath="ScreenMapControllers.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSound.cpp">
+				RelativePath="ScreenMapControllers.h">
 			</File>
 			<File
-				RelativePath=".\RageSound.h">
+				RelativePath="ScreenMessage.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundManager.cpp">
+				RelativePath="ScreenMessage.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundManager.h">
+				RelativePath="ScreenMiniMenu.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundMixBuffer.cpp">
+				RelativePath="ScreenMiniMenu.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundMixBuffer.h">
+				RelativePath="ScreenMusicScroll.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundPosMap.cpp">
+				RelativePath="ScreenMusicScroll.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundPosMap.h">
+				RelativePath="ScreenNameEntry.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader.h">
+				RelativePath="ScreenNameEntry.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Chain.cpp">
+				RelativePath="ScreenNameEntryTraditional.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Chain.h">
+				RelativePath="ScreenNameEntryTraditional.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_FileReader.cpp">
+				RelativePath="ScreenNetEvaluation.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_FileReader.h">
+				RelativePath="ScreenNetEvaluation.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_MP3.cpp">
+				RelativePath="ScreenNetRoom.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_MP3.h">
+				RelativePath="ScreenNetRoom.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Preload.cpp">
+				RelativePath="ScreenNetSelectBase.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Preload.h">
+				RelativePath="ScreenNetSelectBase.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Resample.cpp">
+				RelativePath="ScreenNetSelectMusic.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Resample.h">
+				RelativePath="ScreenNetSelectMusic.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Resample_Fast.cpp">
+				RelativePath="ScreenNetworkOptions.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Resample_Fast.h">
+				RelativePath="ScreenNetworkOptions.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Resample_Good.cpp">
+				RelativePath="ScreenOptions.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Resample_Good.h">
+				RelativePath="ScreenOptions.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Vorbisfile.cpp">
+				RelativePath="ScreenOptionsMaster.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_Vorbisfile.h">
+				RelativePath="ScreenOptionsMaster.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_WAV.cpp">
+				RelativePath="ScreenOptionsMasterPrefs.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundReader_WAV.h">
+				RelativePath="ScreenOptionsMasterPrefs.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundResampler.cpp">
+				RelativePath="ScreenPackages.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundResampler.h">
+				RelativePath="ScreenPackages.h">
 			</File>
 			<File
-				RelativePath=".\RageSoundUtil.cpp">
+				RelativePath="ScreenPlayerOptions.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSoundUtil.h">
+				RelativePath="ScreenPlayerOptions.h">
 			</File>
 			<File
-				RelativePath=".\RageSurface.cpp">
+				RelativePath="ScreenProfileOptions.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSurface.h">
+				RelativePath="ScreenProfileOptions.h">
 			</File>
 			<File
-				RelativePath=".\RageSurfaceUtils.cpp">
+				RelativePath="ScreenPrompt.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSurfaceUtils.h">
+				RelativePath="ScreenPrompt.h">
 			</File>
 			<File
-				RelativePath=".\RageSurfaceUtils_Dither.cpp">
+				RelativePath="ScreenRanking.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSurfaceUtils_Dither.h">
+				RelativePath="ScreenRanking.h">
 			</File>
 			<File
-				RelativePath=".\RageSurfaceUtils_Palettize.cpp">
+				RelativePath="ScreenReloadSongs.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSurfaceUtils_Palettize.h">
+				RelativePath="ScreenReloadSongs.h">
 			</File>
 			<File
-				RelativePath=".\RageSurfaceUtils_Zoom.cpp">
+				RelativePath="ScreenSandbox.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSurfaceUtils_Zoom.h">
+				RelativePath="ScreenSandbox.h">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Load.cpp">
+				RelativePath="ScreenSelect.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Load.h">
+				RelativePath="ScreenSelect.h">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Load_BMP.cpp">
+				RelativePath="ScreenSelectCharacter.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Load_BMP.h">
+				RelativePath="ScreenSelectCharacter.h">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Load_GIF.cpp">
+				RelativePath="ScreenSelectDifficulty.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Load_GIF.h">
+				RelativePath="ScreenSelectDifficulty.h">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Load_JPEG.cpp">
+				RelativePath="ScreenSelectGroup.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Load_JPEG.h">
+				RelativePath="ScreenSelectGroup.h">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Load_PNG.cpp">
+				RelativePath="ScreenSelectMaster.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Load_PNG.h">
+				RelativePath="ScreenSelectMaster.h">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Load_XPM.cpp">
+				RelativePath="ScreenSelectMode.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Load_XPM.h">
+				RelativePath="ScreenSelectMode.h">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Save_BMP.cpp">
+				RelativePath="ScreenSelectMusic.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Save_BMP.h">
+				RelativePath="ScreenSelectMusic.h">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Save_JPEG.cpp">
+				RelativePath="ScreenSelectStyle.cpp">
 			</File>
 			<File
-				RelativePath=".\RageSurface_Save_JPEG.h">
+				RelativePath="ScreenSelectStyle.h">
 			</File>
 			<File
-				RelativePath=".\RageTexture.cpp">
+				RelativePath="ScreenSetTime.cpp">
 			</File>
 			<File
-				RelativePath=".\RageTexture.h">
+				RelativePath="ScreenSetTime.h">
 			</File>
 			<File
-				RelativePath=".\RageTextureID.cpp">
+				RelativePath="ScreenSMOnlineLogin.cpp">
 			</File>
 			<File
-				RelativePath=".\RageTextureID.h">
+				RelativePath="ScreenSMOnlineLogin.h">
 			</File>
 			<File
-				RelativePath=".\RageTextureManager.cpp">
+				RelativePath="ScreenSongOptions.cpp">
 			</File>
 			<File
-				RelativePath=".\RageTextureManager.h">
+				RelativePath="ScreenSongOptions.h">
 			</File>
 			<File
-				RelativePath=".\RageThreads.cpp">
+				RelativePath="ScreenSplash.cpp">
 			</File>
 			<File
-				RelativePath=".\RageThreads.h">
+				RelativePath="ScreenSplash.h">
 			</File>
 			<File
-				RelativePath=".\RageTimer.cpp">
+				RelativePath="ScreenStage.cpp">
 			</File>
 			<File
-				RelativePath=".\RageTimer.h">
+				RelativePath="ScreenStage.h">
 			</File>
 			<File
-				RelativePath=".\RageTypes.h">
+				RelativePath="ScreenStyleSplash.cpp">
 			</File>
 			<File
-				RelativePath=".\RageUtil.cpp">
+				RelativePath="ScreenStyleSplash.h">
 			</File>
 			<File
-				RelativePath=".\RageUtil.h">
+				RelativePath="ScreenSystemLayer.cpp">
 			</File>
 			<File
-				RelativePath=".\RageUtil_AutoPtr.h">
+				RelativePath="ScreenSystemLayer.h">
 			</File>
 			<File
-				RelativePath=".\RageUtil_BackgroundLoader.cpp">
+				RelativePath="ScreenTest.cpp">
 			</File>
 			<File
-				RelativePath=".\RageUtil_BackgroundLoader.h">
+				RelativePath="ScreenTest.h">
 			</File>
 			<File
-				RelativePath=".\RageUtil_CharConversions.cpp">
+				RelativePath="ScreenTestFonts.cpp">
 			</File>
 			<File
-				RelativePath=".\RageUtil_CharConversions.h">
+				RelativePath="ScreenTestFonts.h">
 			</File>
 			<File
-				RelativePath=".\RageUtil_FileDB.cpp">
+				RelativePath="ScreenTestInput.cpp">
 			</File>
 			<File
-				RelativePath=".\RageUtil_FileDB.h">
+				RelativePath="ScreenTestInput.h">
 			</File>
 			<File
-				RelativePath=".\RageUtil_WorkerThread.cpp">
+				RelativePath="ScreenTestLights.cpp">
 			</File>
 			<File
-				RelativePath=".\RageUtil_WorkerThread.h">
+				RelativePath="ScreenTestLights.h">
 			</File>
-			<Filter
-				Name="Helpers"
-				Filter="">
-				<Filter
-					Name="pcre"
-					Filter="">
-					<File
-						RelativePath=".\pcre\get.c">
-					</File>
-					<File
-						RelativePath=".\pcre\internal.h">
-					</File>
-					<File
-						RelativePath=".\pcre\maketables.c">
-					</File>
-					<File
-						RelativePath=".\pcre\pcre.c">
-					</File>
-					<File
-						RelativePath=".\pcre\pcre.h">
-					</File>
-					<File
-						RelativePath=".\pcre\study.c">
-					</File>
-				</Filter>
-			</Filter>
+			<File
+				RelativePath="ScreenTestSound.cpp">
+			</File>
+			<File
+				RelativePath="ScreenTestSound.h">
+			</File>
+			<File
+				RelativePath="ScreenTextEntry.cpp">
+			</File>
+			<File
+				RelativePath="ScreenTextEntry.h">
+			</File>
+			<File
+				RelativePath="ScreenTitleMenu.cpp">
+			</File>
+			<File
+				RelativePath="ScreenTitleMenu.h">
+			</File>
+			<File
+				RelativePath="ScreenUnlock.cpp">
+			</File>
+			<File
+				RelativePath="ScreenUnlock.h">
+			</File>
+			<File
+				RelativePath="ScreenWithMenuElements.cpp">
+			</File>
+			<File
+				RelativePath="ScreenWithMenuElements.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Data Structures"
 			Filter="">
 			<File
-				RelativePath=".\ActorCommands.cpp">
+				RelativePath="ActorCommands.cpp">
 			</File>
 			<File
-				RelativePath=".\ActorCommands.h">
+				RelativePath="ActorCommands.h">
 			</File>
 			<File
-				RelativePath=".\Attack.cpp">
+				RelativePath="Attack.cpp">
 			</File>
 			<File
-				RelativePath=".\Attack.h">
+				RelativePath="Attack.h">
 			</File>
 			<File
-				RelativePath=".\AutoKeysounds.cpp">
+				RelativePath="AutoKeysounds.cpp">
 			</File>
 			<File
-				RelativePath=".\AutoKeysounds.h">
+				RelativePath="AutoKeysounds.h">
 			</File>
 			<File
-				RelativePath=".\BannerCache.cpp">
+				RelativePath="BannerCache.cpp">
 			</File>
 			<File
-				RelativePath=".\BannerCache.h">
+				RelativePath="BannerCache.h">
 			</File>
 			<File
-				RelativePath=".\CatalogXml.cpp">
+				RelativePath="CatalogXml.cpp">
 			</File>
 			<File
-				RelativePath=".\CatalogXml.h">
+				RelativePath="CatalogXml.h">
 			</File>
 			<File
-				RelativePath=".\Character.cpp">
+				RelativePath="Character.cpp">
 			</File>
 			<File
-				RelativePath=".\Character.h">
+				RelativePath="Character.h">
 			</File>
 			<File
-				RelativePath=".\CodeDetector.cpp">
+				RelativePath="CodeDetector.cpp">
 			</File>
 			<File
-				RelativePath=".\CodeDetector.h">
+				RelativePath="CodeDetector.h">
 			</File>
 			<File
-				RelativePath=".\Command.cpp">
+				RelativePath="Command.cpp">
 			</File>
 			<File
-				RelativePath=".\Command.h">
+				RelativePath="Command.h">
 			</File>
 			<File
-				RelativePath=".\CommonMetrics.cpp">
+				RelativePath="CommonMetrics.cpp">
 			</File>
 			<File
-				RelativePath=".\CommonMetrics.h">
+				RelativePath="CommonMetrics.h">
 			</File>
 			<File
-				RelativePath=".\Course.cpp">
+				RelativePath="Course.cpp">
 			</File>
 			<File
-				RelativePath=".\Course.h">
+				RelativePath="Course.h">
 			</File>
 			<File
-				RelativePath=".\CourseUtil.cpp">
+				RelativePath="CourseUtil.cpp">
 			</File>
 			<File
-				RelativePath=".\CourseUtil.h">
+				RelativePath="CourseUtil.h">
 			</File>
 			<File
-				RelativePath=".\DateTime.cpp">
+				RelativePath="DateTime.cpp">
 			</File>
 			<File
-				RelativePath=".\DateTime.h">
+				RelativePath="DateTime.h">
 			</File>
 			<File
-				RelativePath=".\Difficulty.cpp">
+				RelativePath="Difficulty.cpp">
 			</File>
 			<File
-				RelativePath=".\Difficulty.h">
+				RelativePath="Difficulty.h">
 			</File>
 			<File
-				RelativePath=".\EnumHelper.cpp">
+				RelativePath="EnumHelper.cpp">
 			</File>
 			<File
-				RelativePath=".\EnumHelper.h">
+				RelativePath="EnumHelper.h">
 			</File>
 			<File
 				RelativePath=".\Font.cpp">
@@ -660,46 +752,43 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\Font.h">
 			</File>
 			<File
-				RelativePath=".\FontCharAliases.cpp">
+				RelativePath="FontCharAliases.cpp">
 			</File>
 			<File
-				RelativePath=".\FontCharAliases.h">
+				RelativePath="FontCharAliases.h">
 			</File>
 			<File
-				RelativePath=".\FontCharmaps.cpp">
+				RelativePath="FontCharmaps.cpp">
 			</File>
 			<File
-				RelativePath=".\FontCharmaps.h">
+				RelativePath="FontCharmaps.h">
 			</File>
 			<File
-				RelativePath=".\Foreach.h">
+				RelativePath="Foreach.h">
 			</File>
 			<File
-				RelativePath=".\Game.cpp">
+				RelativePath="Game.cpp">
 			</File>
 			<File
-				RelativePath=".\Game.h">
+				RelativePath="Game.h">
 			</File>
 			<File
-				RelativePath=".\GameCommand.cpp">
+				RelativePath="GameCommand.cpp">
 			</File>
 			<File
-				RelativePath=".\GameCommand.h">
+				RelativePath="GameCommand.h">
 			</File>
 			<File
-				RelativePath=".\GameConstantsAndTypes.cpp">
+				RelativePath="GameConstantsAndTypes.cpp">
 			</File>
 			<File
-				RelativePath=".\GameConstantsAndTypes.h">
+				RelativePath="GameConstantsAndTypes.h">
 			</File>
 			<File
-				RelativePath=".\GameInput.cpp">
+				RelativePath="GameInput.cpp">
 			</File>
 			<File
-				RelativePath=".\GameInput.h">
-			</File>
-			<File
-				RelativePath=".\GameTypes.h">
+				RelativePath="GameInput.h">
 			</File>
 			<File
 				RelativePath=".\Grade.cpp">
@@ -708,160 +797,163 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\Grade.h">
 			</File>
 			<File
-				RelativePath=".\HighScore.cpp">
+				RelativePath="HighScore.cpp">
 			</File>
 			<File
-				RelativePath=".\HighScore.h">
+				RelativePath="HighScore.h">
 			</File>
 			<File
-				RelativePath=".\Inventory.cpp">
+				RelativePath="Inventory.cpp">
 			</File>
 			<File
-				RelativePath=".\Inventory.h">
+				RelativePath="Inventory.h">
 			</File>
 			<File
-				RelativePath=".\LuaBinding.h">
+				RelativePath="LuaBinding.h">
 			</File>
 			<File
-				RelativePath=".\LuaFunctions.h">
+				RelativePath="LuaFunctions.h">
 			</File>
 			<File
-				RelativePath=".\LuaReference.cpp">
+				RelativePath="LuaReference.cpp">
 			</File>
 			<File
-				RelativePath=".\LuaReference.h">
+				RelativePath="LuaReference.h">
 			</File>
 			<File
-				RelativePath=".\LyricsLoader.cpp">
+				RelativePath="LyricsLoader.cpp">
 			</File>
 			<File
-				RelativePath=".\LyricsLoader.h">
+				RelativePath="LyricsLoader.h">
 			</File>
 			<File
-				RelativePath=".\NoteData.cpp">
+				RelativePath="MenuInput.h">
 			</File>
 			<File
-				RelativePath=".\NoteData.h">
+				RelativePath="NoteData.cpp">
 			</File>
 			<File
-				RelativePath=".\NoteDataUtil.cpp">
+				RelativePath="NoteData.h">
 			</File>
 			<File
-				RelativePath=".\NoteDataUtil.h">
+				RelativePath="NoteDataUtil.cpp">
 			</File>
 			<File
-				RelativePath=".\NoteDataWithScoring.cpp">
+				RelativePath="NoteDataUtil.h">
 			</File>
 			<File
-				RelativePath=".\NoteDataWithScoring.h">
+				RelativePath="NoteDataWithScoring.cpp">
 			</File>
 			<File
-				RelativePath=".\NoteFieldPositioning.cpp">
+				RelativePath="NoteDataWithScoring.h">
 			</File>
 			<File
-				RelativePath=".\NoteFieldPositioning.h">
+				RelativePath="NoteFieldPositioning.cpp">
 			</File>
 			<File
-				RelativePath=".\NoteTypes.cpp">
+				RelativePath="NoteFieldPositioning.h">
 			</File>
 			<File
-				RelativePath=".\NoteTypes.h">
+				RelativePath="NotesLoader.cpp">
 			</File>
 			<File
-				RelativePath=".\NotesLoader.cpp">
+				RelativePath="NotesLoader.h">
 			</File>
 			<File
-				RelativePath=".\NotesLoader.h">
+				RelativePath="NotesLoaderBMS.cpp">
 			</File>
 			<File
-				RelativePath=".\NotesLoaderBMS.cpp">
+				RelativePath="NotesLoaderBMS.h">
 			</File>
 			<File
-				RelativePath=".\NotesLoaderBMS.h">
+				RelativePath="NotesLoaderDWI.cpp">
 			</File>
 			<File
-				RelativePath=".\NotesLoaderDWI.cpp">
+				RelativePath="NotesLoaderDWI.h">
 			</File>
 			<File
-				RelativePath=".\NotesLoaderDWI.h">
+				RelativePath="NotesLoaderKSF.cpp">
 			</File>
 			<File
-				RelativePath=".\NotesLoaderKSF.cpp">
+				RelativePath="NotesLoaderKSF.h">
 			</File>
 			<File
-				RelativePath=".\NotesLoaderKSF.h">
+				RelativePath="NotesLoaderSM.cpp">
 			</File>
 			<File
-				RelativePath=".\NotesLoaderSM.cpp">
+				RelativePath="NotesLoaderSM.h">
 			</File>
 			<File
-				RelativePath=".\NotesLoaderSM.h">
+				RelativePath="NotesWriterDWI.cpp">
 			</File>
 			<File
-				RelativePath=".\NotesWriterDWI.cpp">
+				RelativePath="NotesWriterDWI.h">
 			</File>
 			<File
-				RelativePath=".\NotesWriterDWI.h">
+				RelativePath="NotesWriterSM.cpp">
 			</File>
 			<File
-				RelativePath=".\NotesWriterSM.cpp">
+				RelativePath="NotesWriterSM.h">
 			</File>
 			<File
-				RelativePath=".\NotesWriterSM.h">
+				RelativePath="NoteTypes.cpp">
 			</File>
 			<File
-				RelativePath=".\OptionRowHandler.cpp">
+				RelativePath="NoteTypes.h">
 			</File>
 			<File
-				RelativePath=".\OptionRowHandler.h">
+				RelativePath="OptionRowHandler.cpp">
 			</File>
 			<File
-				RelativePath=".\PlayerAI.cpp">
+				RelativePath="OptionRowHandler.h">
 			</File>
 			<File
-				RelativePath=".\PlayerAI.h">
+				RelativePath="PlayerAI.cpp">
 			</File>
 			<File
-				RelativePath=".\PlayerNumber.cpp">
+				RelativePath="PlayerAI.h">
 			</File>
 			<File
-				RelativePath=".\PlayerNumber.h">
+				RelativePath="PlayerNumber.cpp">
 			</File>
 			<File
-				RelativePath=".\PlayerOptions.cpp">
+				RelativePath="PlayerNumber.h">
 			</File>
 			<File
-				RelativePath=".\PlayerOptions.h">
+				RelativePath="PlayerOptions.cpp">
 			</File>
 			<File
-				RelativePath=".\PlayerStageStats.cpp">
+				RelativePath="PlayerOptions.h">
 			</File>
 			<File
-				RelativePath=".\PlayerStageStats.h">
+				RelativePath="PlayerStageStats.cpp">
 			</File>
 			<File
-				RelativePath=".\PlayerState.cpp">
+				RelativePath="PlayerStageStats.h">
 			</File>
 			<File
-				RelativePath=".\PlayerState.h">
+				RelativePath="PlayerState.cpp">
 			</File>
 			<File
-				RelativePath=".\Preference.cpp">
+				RelativePath="PlayerState.h">
 			</File>
 			<File
-				RelativePath=".\Preference.h">
+				RelativePath="Preference.cpp">
 			</File>
 			<File
-				RelativePath=".\Profile.cpp">
+				RelativePath="Preference.h">
 			</File>
 			<File
-				RelativePath=".\Profile.h">
+				RelativePath="Profile.cpp">
 			</File>
 			<File
-				RelativePath=".\RadarValues.cpp">
+				RelativePath="Profile.h">
 			</File>
 			<File
-				RelativePath=".\RadarValues.h">
+				RelativePath="RadarValues.cpp">
+			</File>
+			<File
+				RelativePath="RadarValues.h">
 			</File>
 			<File
 				RelativePath=".\RandomSample.cpp">
@@ -870,103 +962,109 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\RandomSample.h">
 			</File>
 			<File
-				RelativePath=".\ScoreKeeper.h">
+				RelativePath="ScoreKeeper.h">
 			</File>
 			<File
-				RelativePath=".\ScoreKeeperMAX2.cpp">
+				RelativePath="ScoreKeeperMAX2.cpp">
 			</File>
 			<File
-				RelativePath=".\ScoreKeeperMAX2.h">
+				RelativePath="ScoreKeeperMAX2.h">
 			</File>
 			<File
-				RelativePath=".\ScoreKeeperRave.cpp">
+				RelativePath="ScoreKeeperRave.cpp">
 			</File>
 			<File
-				RelativePath=".\ScoreKeeperRave.h">
+				RelativePath="ScoreKeeperRave.h">
 			</File>
 			<File
-				RelativePath=".\ScreenDimensions.cpp">
+				RelativePath="ScreenDimensions.cpp">
 			</File>
 			<File
 				RelativePath=".\Song.cpp">
 			</File>
 			<File
-				RelativePath=".\SongCacheIndex.cpp">
+				RelativePath="Song.h">
 			</File>
 			<File
-				RelativePath=".\SongCacheIndex.h">
+				RelativePath="SongCacheIndex.cpp">
 			</File>
 			<File
-				RelativePath=".\SongOptions.cpp">
+				RelativePath="SongCacheIndex.h">
 			</File>
 			<File
-				RelativePath=".\SongOptions.h">
+				RelativePath="SongOptions.cpp">
 			</File>
 			<File
-				RelativePath=".\SongUtil.cpp">
+				RelativePath="SongOptions.h">
 			</File>
 			<File
-				RelativePath=".\SongUtil.h">
+				RelativePath="SongUtil.cpp">
 			</File>
 			<File
-				RelativePath=".\StageStats.cpp">
+				RelativePath="SongUtil.h">
 			</File>
 			<File
-				RelativePath=".\StageStats.h">
+				RelativePath="StageStats.cpp">
 			</File>
 			<File
-				RelativePath=".\Steps.cpp">
+				RelativePath="StageStats.h">
 			</File>
 			<File
-				RelativePath=".\Steps.h">
+				RelativePath="Steps.cpp">
 			</File>
 			<File
-				RelativePath=".\StepsUtil.cpp">
+				RelativePath="Steps.h">
 			</File>
 			<File
-				RelativePath=".\StepsUtil.h">
+				RelativePath="StepsUtil.cpp">
 			</File>
 			<File
-				RelativePath=".\Style.cpp">
+				RelativePath="StepsUtil.h">
 			</File>
 			<File
-				RelativePath=".\Style.h">
+				RelativePath="Style.cpp">
 			</File>
 			<File
-				RelativePath=".\StyleInput.h">
+				RelativePath="Style.h">
 			</File>
 			<File
-				RelativePath=".\StyleUtil.cpp">
+				RelativePath="StyleInput.h">
 			</File>
 			<File
-				RelativePath=".\StyleUtil.h">
+				RelativePath="StyleUtil.cpp">
 			</File>
 			<File
-				RelativePath=".\TimingData.cpp">
+				RelativePath="StyleUtil.h">
 			</File>
 			<File
-				RelativePath=".\TimingData.h">
+				RelativePath="SubscriptionManager.h">
 			</File>
 			<File
-				RelativePath=".\TitleSubstitution.cpp">
+				RelativePath="ThemeMetric.h">
 			</File>
 			<File
-				RelativePath=".\TitleSubstitution.h">
+				RelativePath="TimingData.cpp">
 			</File>
 			<File
-				RelativePath=".\Trail.cpp">
+				RelativePath="TimingData.h">
 			</File>
 			<File
-				RelativePath=".\Trail.h">
+				RelativePath="TitleSubstitution.cpp">
 			</File>
 			<File
-				RelativePath=".\TrailUtil.cpp">
+				RelativePath="TitleSubstitution.h">
 			</File>
 			<File
-				RelativePath=".\TrailUtil.h">
+				RelativePath="Trail.cpp">
 			</File>
 			<File
-				RelativePath=".\song.h">
+				RelativePath="Trail.h">
+			</File>
+			<File
+				RelativePath="TrailUtil.cpp">
+			</File>
+			<File
+				RelativePath="TrailUtil.h">
 			</File>
 		</Filter>
 		<Filter
@@ -979,26 +1077,32 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\IniFile.h">
 			</File>
 			<File
-				RelativePath=".\MsdFile.cpp">
+				RelativePath="MsdFile.cpp">
 			</File>
 			<File
-				RelativePath=".\MsdFile.h">
+				RelativePath="MsdFile.h">
 			</File>
 			<File
-				RelativePath=".\XmlFile.cpp">
+				RelativePath="XmlFile.cpp">
 			</File>
 			<File
-				RelativePath=".\XmlFile.h">
+				RelativePath="XmlFile.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="StepMania"
 			Filter="">
 			<File
-				RelativePath=".\ScreenDimensions.h">
+				RelativePath=".\global.cpp">
 			</File>
 			<File
-				RelativePath=".\StdString.h">
+				RelativePath=".\global.h">
+			</File>
+			<File
+				RelativePath="ProductInfo.h">
+			</File>
+			<File
+				RelativePath="StdString.h">
 			</File>
 			<File
 				RelativePath=".\StepMania.cpp">
@@ -1006,275 +1110,254 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath=".\StepMania.h">
 			</File>
-			<File
-				RelativePath=".\global.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\global.h">
-			</File>
 			<Filter
 				Name="arch"
 				Filter="">
 				<File
-					RelativePath=".\arch\arch.cpp">
+					RelativePath="arch\arch.cpp">
 				</File>
 				<File
-					RelativePath=".\arch\arch.h">
+					RelativePath="arch\arch.h">
 				</File>
 				<File
-					RelativePath=".\arch\arch_Win32.h">
+					RelativePath="arch\arch_default.h">
 				</File>
 				<File
-					RelativePath=".\arch\arch_default.h">
+					RelativePath="arch\arch_platform.h">
 				</File>
 				<File
-					RelativePath=".\arch\arch_xbox.h">
+					RelativePath="arch\arch_Win32.h">
 				</File>
 				<Filter
 					Name="LoadingWindow"
 					Filter="">
 					<File
-						RelativePath=".\arch\LoadingWindow\LoadingWindow.h">
+						RelativePath="arch\LoadingWindow\LoadingWindow.h">
 					</File>
 					<File
-						RelativePath=".\arch\LoadingWindow\LoadingWindow_Null.h">
+						RelativePath="arch\LoadingWindow\LoadingWindow_Win32.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\LoadingWindow\LoadingWindow_Win32.cpp">
-					</File>
-					<File
-						RelativePath=".\arch\LoadingWindow\LoadingWindow_Win32.h">
+						RelativePath="arch\LoadingWindow\LoadingWindow_Win32.h">
 					</File>
 				</Filter>
 				<Filter
 					Name="Sound"
 					Filter="">
 					<File
-						RelativePath=".\arch\Sound\DSoundHelpers.cpp">
+						RelativePath="arch\Sound\DSoundHelpers.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\Sound\DSoundHelpers.h">
+						RelativePath="arch\Sound\DSoundHelpers.h">
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver.h">
+						RelativePath="arch\Sound\RageSoundDriver.h">
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_DSound.cpp">
+						RelativePath="arch\Sound\RageSoundDriver_DSound.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_DSound.h">
+						RelativePath="arch\Sound\RageSoundDriver_DSound.h">
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_DSound_Software.cpp">
+						RelativePath="arch\Sound\RageSoundDriver_DSound_Software.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_DSound_Software.h">
+						RelativePath="arch\Sound\RageSoundDriver_DSound_Software.h">
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_Generic_Software.cpp">
+						RelativePath="arch\Sound\RageSoundDriver_Generic_Software.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_Generic_Software.h">
+						RelativePath="arch\Sound\RageSoundDriver_Generic_Software.h">
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_Null.cpp">
+						RelativePath="arch\Sound\RageSoundDriver_Null.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_Null.h">
+						RelativePath="arch\Sound\RageSoundDriver_Null.h">
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_WaveOut.cpp">
+						RelativePath="arch\Sound\RageSoundDriver_WaveOut.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\Sound\RageSoundDriver_WaveOut.h">
+						RelativePath="arch\Sound\RageSoundDriver_WaveOut.h">
 					</File>
 				</Filter>
 				<Filter
 					Name="ArchHooks"
 					Filter="">
 					<File
-						RelativePath=".\arch\ArchHooks\ArchHooks.cpp">
+						RelativePath="arch\ArchHooks\ArchHooks.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\ArchHooks\ArchHooks.h">
+						RelativePath="arch\ArchHooks\ArchHooks.h">
 					</File>
 					<File
-						RelativePath=".\arch\ArchHooks\ArchHooks_Win32.cpp">
+						RelativePath="arch\ArchHooks\ArchHooks_Win32.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\ArchHooks\ArchHooks_Win32.h">
-					</File>
-					<File
-						RelativePath=".\arch\ArchHooks\ArchHooks_none.h">
+						RelativePath="arch\ArchHooks\ArchHooks_Win32.h">
 					</File>
 				</Filter>
 				<Filter
 					Name="InputHandler"
 					Filter="">
 					<File
-						RelativePath=".\arch\InputHandler\InputHandler.cpp">
+						RelativePath="arch\InputHandler\InputHandler.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\InputHandler\InputHandler.h">
+						RelativePath="arch\InputHandler\InputHandler.h">
 					</File>
 					<File
-						RelativePath=".\arch\InputHandler\InputHandler_DirectInput.cpp">
+						RelativePath="arch\InputHandler\InputHandler_DirectInput.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\InputHandler\InputHandler_DirectInput.h">
+						RelativePath="arch\InputHandler\InputHandler_DirectInput.h">
 					</File>
 					<File
-						RelativePath=".\arch\InputHandler\InputHandler_DirectInputHelper.cpp">
+						RelativePath="arch\InputHandler\InputHandler_DirectInputHelper.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\InputHandler\InputHandler_DirectInputHelper.h">
+						RelativePath="arch\InputHandler\InputHandler_DirectInputHelper.h">
 					</File>
 					<File
-						RelativePath=".\arch\InputHandler\InputHandler_MonkeyKeyboard.cpp">
+						RelativePath="arch\InputHandler\InputHandler_MonkeyKeyboard.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\InputHandler\InputHandler_MonkeyKeyboard.h">
+						RelativePath="arch\InputHandler\InputHandler_MonkeyKeyboard.h">
 					</File>
 					<File
-						RelativePath=".\arch\InputHandler\InputHandler_Win32_Para.cpp">
+						RelativePath="arch\InputHandler\InputHandler_Win32_Para.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\InputHandler\InputHandler_Win32_Para.h">
+						RelativePath="arch\InputHandler\InputHandler_Win32_Para.h">
 					</File>
 					<File
-						RelativePath=".\arch\InputHandler\InputHandler_Win32_Pump.cpp">
+						RelativePath="arch\InputHandler\InputHandler_Win32_Pump.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\InputHandler\InputHandler_Win32_Pump.h">
+						RelativePath="arch\InputHandler\InputHandler_Win32_Pump.h">
 					</File>
 				</Filter>
 				<Filter
 					Name="MovieTexture"
 					Filter="">
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture.cpp">
+						RelativePath="arch\MovieTexture\MovieTexture.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture.h">
+						RelativePath="arch\MovieTexture\MovieTexture.h">
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_DShow.cpp">
+						RelativePath="arch\MovieTexture\MovieTexture_DShow.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_DShow.h">
+						RelativePath="arch\MovieTexture\MovieTexture_DShow.h">
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_DShowHelper.cpp">
+						RelativePath="arch\MovieTexture\MovieTexture_DShowHelper.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_DShowHelper.h">
+						RelativePath="arch\MovieTexture\MovieTexture_DShowHelper.h">
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_FFMpeg.cpp">
+						RelativePath="arch\MovieTexture\MovieTexture_FFMpeg.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_FFMpeg.h">
+						RelativePath="arch\MovieTexture\MovieTexture_FFMpeg.h">
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_Null.cpp">
+						RelativePath="arch\MovieTexture\MovieTexture_Null.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_Null.h">
+						RelativePath="arch\MovieTexture\MovieTexture_Null.h">
 					</File>
 				</Filter>
 				<Filter
 					Name="LowLevelWindow"
 					Filter="">
 					<File
-						RelativePath=".\arch\LowLevelWindow\LowLevelWindow.h">
+						RelativePath="arch\LowLevelWindow\LowLevelWindow.h">
 					</File>
 					<File
-						RelativePath=".\arch\LowLevelWindow\LowLevelWindow_Null.h">
+						RelativePath="arch\LowLevelWindow\LowLevelWindow_Win32.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\LowLevelWindow\LowLevelWindow_Win32.cpp">
-					</File>
-					<File
-						RelativePath=".\arch\LowLevelWindow\LowLevelWindow_Win32.h">
+						RelativePath="arch\LowLevelWindow\LowLevelWindow_Win32.h">
 					</File>
 				</Filter>
 				<Filter
 					Name="Lights"
 					Filter="">
 					<File
-						RelativePath=".\arch\Lights\LightsDriver.h">
+						RelativePath="arch\Lights\LightsDriver.h">
 					</File>
 					<File
-						RelativePath=".\arch\Lights\LightsDriver_Null.h">
+						RelativePath="arch\Lights\LightsDriver_Null.h">
 					</File>
 					<File
-						RelativePath=".\arch\Lights\LightsDriver_SystemMessage.cpp">
+						RelativePath="arch\Lights\LightsDriver_SystemMessage.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\Lights\LightsDriver_SystemMessage.h">
+						RelativePath="arch\Lights\LightsDriver_SystemMessage.h">
 					</File>
 					<File
-						RelativePath=".\arch\Lights\LightsDriver_Win32Parallel.cpp">
+						RelativePath="arch\Lights\LightsDriver_Win32Parallel.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\Lights\LightsDriver_Win32Parallel.h">
+						RelativePath="arch\Lights\LightsDriver_Win32Parallel.h">
 					</File>
 				</Filter>
 				<Filter
 					Name="MemoryCard"
 					Filter="">
 					<File
-						RelativePath=".\arch\MemoryCard\MemoryCardDriver.cpp">
+						RelativePath="arch\MemoryCard\MemoryCardDriver.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\MemoryCard\MemoryCardDriver.h">
+						RelativePath="arch\MemoryCard\MemoryCardDriver.h">
 					</File>
 					<File
-						RelativePath=".\arch\MemoryCard\MemoryCardDriverThreaded_Windows.cpp">
+						RelativePath="arch\MemoryCard\MemoryCardDriver_Null.h">
 					</File>
 					<File
-						RelativePath=".\arch\MemoryCard\MemoryCardDriverThreaded_Windows.h">
+						RelativePath="arch\MemoryCard\MemoryCardDriverThreaded_Windows.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\MemoryCard\MemoryCardDriver_Null.h">
+						RelativePath="arch\MemoryCard\MemoryCardDriverThreaded_Windows.h">
 					</File>
 				</Filter>
 				<Filter
 					Name="Dialog"
 					Filter="">
 					<File
-						RelativePath=".\arch\Dialog\Dialog.cpp">
+						RelativePath="arch\Dialog\Dialog.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\Dialog\Dialog.h">
+						RelativePath="arch\Dialog\Dialog.h">
 					</File>
 					<File
-						RelativePath=".\arch\Dialog\DialogDriver.h">
+						RelativePath="arch\Dialog\DialogDriver.h">
 					</File>
 					<File
-						RelativePath=".\arch\Dialog\DialogDriver_Win32.cpp">
+						RelativePath="arch\Dialog\DialogDriver_Win32.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\Dialog\DialogDriver_Win32.h">
+						RelativePath="arch\Dialog\DialogDriver_Win32.h">
 					</File>
 				</Filter>
 				<Filter
 					Name="Threads"
 					Filter="">
 					<File
-						RelativePath=".\arch\Threads\Threads.h">
+						RelativePath="arch\Threads\Threads.h">
 					</File>
 					<File
-						RelativePath=".\arch\Threads\Threads_Win32.cpp">
+						RelativePath="arch\Threads\Threads_Win32.cpp">
 					</File>
 					<File
-						RelativePath=".\arch\Threads\Threads_Win32.h">
+						RelativePath="arch\Threads\Threads_Win32.h">
 					</File>
 				</Filter>
 			</Filter>
@@ -1282,194 +1365,91 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="system"
 				Filter="">
 				<File
-					RelativePath=".\archutils\Win32\AppInstance.cpp">
+					RelativePath="archutils\Win32\AppInstance.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\AppInstance.h">
+					RelativePath="archutils\Win32\AppInstance.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\Crash.cpp">
+					RelativePath="archutils\Win32\arch_setup.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\Crash.h">
+					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\DebugInfoHunt.cpp">
+					RelativePath="archutils\Win32\Crash.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\DebugInfoHunt.h">
+					RelativePath="archutils\Win32\Crash.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\GetFileInformation.cpp">
+					RelativePath="archutils\Win32\DebugInfoHunt.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\GetFileInformation.h">
+					RelativePath="archutils\Win32\DebugInfoHunt.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\GotoURL.cpp">
+					RelativePath="archutils\Win32\GetFileInformation.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\GotoURL.h">
+					RelativePath="archutils\Win32\GetFileInformation.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\GraphicsWindow.cpp">
+					RelativePath="archutils\Win32\GotoURL.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\GraphicsWindow.h">
+					RelativePath="archutils\Win32\GotoURL.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\RegistryAccess.cpp">
+					RelativePath="archutils\Win32\GraphicsWindow.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\RegistryAccess.h">
+					RelativePath="archutils\Win32\GraphicsWindow.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\RestartProgram.cpp">
+					RelativePath="archutils\Win32\RegistryAccess.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\RestartProgram.h">
+					RelativePath="archutils\Win32\RegistryAccess.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\StepMania.ICO">
+					RelativePath="archutils\Win32\RestartProgram.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\USB.cpp">
+					RelativePath="archutils\Win32\RestartProgram.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\USB.h">
+					RelativePath="archutils\Win32\StepMania.ico">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\VideoDriverInfo.cpp">
+					RelativePath="archutils\Win32\USB.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\VideoDriverInfo.h">
+					RelativePath="archutils\Win32\USB.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\WindowIcon.cpp">
+					RelativePath="archutils\Win32\VideoDriverInfo.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\WindowIcon.h">
+					RelativePath="archutils\Win32\VideoDriverInfo.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\WindowsResources.h">
+					RelativePath="archutils\Win32\WindowIcon.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\WindowsResources.rc">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCResourceCompilerTool"
-							AdditionalIncludeDirectories="archutils\Win32;$(NoInherit)"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCResourceCompilerTool"
-							AdditionalIncludeDirectories="archutils\Win32;$(NoInherit)"/>
-					</FileConfiguration>
+					RelativePath="archutils\Win32\WindowIcon.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\arch_setup.cpp">
+					RelativePath="archutils\Win32\WindowsResources.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\arch_setup.h">
+					RelativePath="archutils\Win32\WindowsResources.rc">
 				</File>
 			</Filter>
 		</Filter>
 		<Filter
-			Name="Actors"
+			Name="Actors used in Gameplay and Menus"
 			Filter="">
-			<File
-				RelativePath=".\Actor.cpp">
-			</File>
-			<File
-				RelativePath=".\Actor.h">
-			</File>
-			<File
-				RelativePath=".\ActorCollision.h">
-			</File>
-			<File
-				RelativePath=".\ActorFrame.cpp">
-			</File>
-			<File
-				RelativePath=".\ActorFrame.h">
-			</File>
-			<File
-				RelativePath=".\ActorScroller.cpp">
-			</File>
-			<File
-				RelativePath=".\ActorScroller.h">
-			</File>
-			<File
-				RelativePath=".\ActorUtil.cpp">
-			</File>
-			<File
-				RelativePath=".\ActorUtil.h">
-			</File>
-			<File
-				RelativePath=".\AutoActor.cpp">
-			</File>
-			<File
-				RelativePath=".\AutoActor.h">
-			</File>
-			<File
-				RelativePath=".\BitmapText.cpp">
-			</File>
-			<File
-				RelativePath=".\BitmapText.h">
-			</File>
-			<File
-				RelativePath=".\Model.cpp">
-			</File>
-			<File
-				RelativePath=".\Model.h">
-			</File>
-			<File
-				RelativePath=".\ModelManager.cpp">
-			</File>
-			<File
-				RelativePath=".\ModelManager.h">
-			</File>
-			<File
-				RelativePath=".\ModelTypes.cpp">
-			</File>
-			<File
-				RelativePath=".\ModelTypes.h">
-			</File>
-			<File
-				RelativePath=".\Quad.cpp">
-			</File>
-			<File
-				RelativePath=".\Quad.h">
-			</File>
-			<File
-				RelativePath=".\RollingNumbers.cpp">
-			</File>
-			<File
-				RelativePath=".\RollingNumbers.h">
-			</File>
-			<File
-				RelativePath=".\Sprite.cpp">
-			</File>
-			<File
-				RelativePath=".\Sprite.h">
-			</File>
-		</Filter>
-		<Filter
-			Name="Actors used in Gameplay &amp; Menu"
-			Filter="">
-			<File
-				RelativePath=".\BGAnimation.cpp">
-			</File>
-			<File
-				RelativePath=".\BGAnimation.h">
-			</File>
-			<File
-				RelativePath=".\BGAnimationLayer.cpp">
-			</File>
-			<File
-				RelativePath=".\BGAnimationLayer.h">
-			</File>
 			<File
 				RelativePath=".\Banner.cpp">
 			</File>
@@ -1477,251 +1457,46 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\Banner.h">
 			</File>
 			<File
-				RelativePath=".\ConditionalBGA.cpp">
+				RelativePath="BGAnimation.cpp">
 			</File>
 			<File
-				RelativePath=".\ConditionalBGA.h">
+				RelativePath="BGAnimation.h">
 			</File>
 			<File
-				RelativePath=".\DifficultyIcon.cpp">
+				RelativePath="BGAnimationLayer.cpp">
 			</File>
 			<File
-				RelativePath=".\DifficultyIcon.h">
+				RelativePath="BGAnimationLayer.h">
 			</File>
 			<File
-				RelativePath=".\FadingBanner.cpp">
+				RelativePath="ConditionalBGA.cpp">
 			</File>
 			<File
-				RelativePath=".\FadingBanner.h">
+				RelativePath="ConditionalBGA.h">
 			</File>
 			<File
-				RelativePath=".\MeterDisplay.cpp">
+				RelativePath="DifficultyIcon.cpp">
 			</File>
 			<File
-				RelativePath=".\MeterDisplay.h">
+				RelativePath="DifficultyIcon.h">
 			</File>
 			<File
-				RelativePath=".\StreamDisplay.cpp">
+				RelativePath="MeterDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\StreamDisplay.h">
+				RelativePath="MeterDisplay.h">
 			</File>
 			<File
-				RelativePath=".\Transition.cpp">
+				RelativePath="StreamDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\Transition.h">
+				RelativePath="StreamDisplay.h">
 			</File>
-		</Filter>
-		<Filter
-			Name="Actors used in Gameplay"
-			Filter="">
 			<File
-				RelativePath=".\ActiveAttackList.cpp">
+				RelativePath="Transition.cpp">
 			</File>
 			<File
-				RelativePath=".\ActiveAttackList.h">
-			</File>
-			<File
-				RelativePath=".\ArrowEffects.cpp">
-			</File>
-			<File
-				RelativePath=".\ArrowEffects.h">
-			</File>
-			<File
-				RelativePath=".\AttackDisplay.cpp">
-			</File>
-			<File
-				RelativePath=".\AttackDisplay.h">
-			</File>
-			<File
-				RelativePath=".\Background.cpp">
-			</File>
-			<File
-				RelativePath=".\Background.h">
-			</File>
-			<File
-				RelativePath=".\BeginnerHelper.cpp">
-			</File>
-			<File
-				RelativePath=".\BeginnerHelper.h">
-			</File>
-			<File
-				RelativePath=".\CharacterHead.cpp">
-			</File>
-			<File
-				RelativePath=".\CharacterHead.h">
-			</File>
-			<File
-				RelativePath=".\CombinedLifeMeterTug.cpp">
-			</File>
-			<File
-				RelativePath=".\CombinedLifeMeterTug.h">
-			</File>
-			<File
-				RelativePath=".\Combo.cpp">
-			</File>
-			<File
-				RelativePath=".\Combo.h">
-			</File>
-			<File
-				RelativePath=".\DancingCharacters.cpp">
-			</File>
-			<File
-				RelativePath=".\DancingCharacters.h">
-			</File>
-			<File
-				RelativePath=".\Foreground.cpp">
-			</File>
-			<File
-				RelativePath=".\Foreground.h">
-			</File>
-			<File
-				RelativePath=".\GhostArrow.cpp">
-			</File>
-			<File
-				RelativePath=".\GhostArrow.h">
-			</File>
-			<File
-				RelativePath=".\GhostArrowRow.cpp">
-			</File>
-			<File
-				RelativePath=".\GhostArrowRow.h">
-			</File>
-			<File
-				RelativePath=".\HoldGhostArrow.cpp">
-			</File>
-			<File
-				RelativePath=".\HoldGhostArrow.h">
-			</File>
-			<File
-				RelativePath=".\HoldJudgment.cpp">
-			</File>
-			<File
-				RelativePath=".\HoldJudgment.h">
-			</File>
-			<File
-				RelativePath=".\Judgment.cpp">
-			</File>
-			<File
-				RelativePath=".\Judgment.h">
-			</File>
-			<File
-				RelativePath=".\LifeMeter.h">
-			</File>
-			<File
-				RelativePath=".\LifeMeterBar.cpp">
-			</File>
-			<File
-				RelativePath=".\LifeMeterBar.h">
-			</File>
-			<File
-				RelativePath=".\LifeMeterBattery.cpp">
-			</File>
-			<File
-				RelativePath=".\LifeMeterBattery.h">
-			</File>
-			<File
-				RelativePath=".\LifeMeterTime.cpp">
-			</File>
-			<File
-				RelativePath=".\LifeMeterTime.h">
-			</File>
-			<File
-				RelativePath=".\LyricDisplay.cpp">
-			</File>
-			<File
-				RelativePath=".\LyricDisplay.h">
-			</File>
-			<File
-				RelativePath=".\NoteDisplay.cpp">
-			</File>
-			<File
-				RelativePath=".\NoteDisplay.h">
-			</File>
-			<File
-				RelativePath=".\NoteField.cpp">
-			</File>
-			<File
-				RelativePath=".\NoteField.h">
-			</File>
-			<File
-				RelativePath=".\PercentageDisplay.cpp">
-			</File>
-			<File
-				RelativePath=".\PercentageDisplay.h">
-			</File>
-			<File
-				RelativePath=".\Player.cpp">
-			</File>
-			<File
-				RelativePath=".\Player.h">
-			</File>
-			<File
-				RelativePath=".\ReceptorArrow.cpp">
-			</File>
-			<File
-				RelativePath=".\ReceptorArrow.h">
-			</File>
-			<File
-				RelativePath=".\ReceptorArrowRow.cpp">
-			</File>
-			<File
-				RelativePath=".\ReceptorArrowRow.h">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplay.cpp">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplay.h">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayAliveTime.cpp">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayAliveTime.h">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayBattle.cpp">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayBattle.h">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayCalories.cpp">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayCalories.h">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayLifeTime.cpp">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayLifeTime.h">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayNormal.cpp">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayNormal.h">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayOni.cpp">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayOni.h">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayPercentage.cpp">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayPercentage.h">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayRave.cpp">
-			</File>
-			<File
-				RelativePath=".\ScoreDisplayRave.h">
+				RelativePath="Transition.h">
 			</File>
 		</Filter>
 		<Filter
@@ -1734,70 +1509,76 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\BPMDisplay.h">
 			</File>
 			<File
-				RelativePath=".\ComboGraph.cpp">
+				RelativePath="ComboGraph.cpp">
 			</File>
 			<File
-				RelativePath=".\ComboGraph.h">
+				RelativePath="ComboGraph.h">
 			</File>
 			<File
-				RelativePath=".\CourseContentsList.cpp">
+				RelativePath="CourseContentsList.cpp">
 			</File>
 			<File
-				RelativePath=".\CourseContentsList.h">
+				RelativePath="CourseContentsList.h">
 			</File>
 			<File
-				RelativePath=".\CourseEntryDisplay.cpp">
+				RelativePath="CourseEntryDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\CourseEntryDisplay.h">
+				RelativePath="CourseEntryDisplay.h">
 			</File>
 			<File
-				RelativePath=".\DifficultyDisplay.cpp">
+				RelativePath="DifficultyDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\DifficultyDisplay.h">
+				RelativePath="DifficultyDisplay.h">
 			</File>
 			<File
-				RelativePath=".\DifficultyList.cpp">
+				RelativePath="DifficultyList.cpp">
 			</File>
 			<File
-				RelativePath=".\DifficultyList.h">
+				RelativePath="DifficultyList.h">
 			</File>
 			<File
-				RelativePath=".\DifficultyMeter.cpp">
+				RelativePath="DifficultyMeter.cpp">
 			</File>
 			<File
-				RelativePath=".\DifficultyMeter.h">
+				RelativePath="DifficultyMeter.h">
 			</File>
 			<File
-				RelativePath=".\DifficultyRating.cpp">
+				RelativePath="DifficultyRating.cpp">
 			</File>
 			<File
-				RelativePath=".\DifficultyRating.h">
+				RelativePath="DifficultyRating.h">
 			</File>
 			<File
-				RelativePath=".\DualScrollBar.cpp">
+				RelativePath="DualScrollBar.cpp">
 			</File>
 			<File
-				RelativePath=".\DualScrollBar.h">
+				RelativePath="DualScrollBar.h">
 			</File>
 			<File
-				RelativePath=".\EditCoursesMenu.cpp">
+				RelativePath="EditCoursesMenu.cpp">
 			</File>
 			<File
-				RelativePath=".\EditCoursesMenu.h">
+				RelativePath="EditCoursesMenu.h">
 			</File>
 			<File
-				RelativePath=".\EditCoursesSongMenu.cpp">
+				RelativePath="EditCoursesSongMenu.cpp">
 			</File>
 			<File
-				RelativePath=".\EditCoursesSongMenu.h">
+				RelativePath="EditCoursesSongMenu.h">
 			</File>
 			<File
-				RelativePath=".\EditMenu.cpp">
+				RelativePath="EditMenu.cpp">
 			</File>
 			<File
-				RelativePath=".\EditMenu.h">
+				RelativePath="EditMenu.h">
+			</File>
+			<File
+				RelativePath="FadingBanner.cpp">
+			</File>
+			<File
+				RelativePath="FadingBanner.h">
 			</File>
 			<File
 				RelativePath=".\GradeDisplay.cpp">
@@ -1806,64 +1587,64 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\GradeDisplay.h">
 			</File>
 			<File
-				RelativePath=".\GraphDisplay.cpp">
+				RelativePath="GraphDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\GraphDisplay.h">
+				RelativePath="GraphDisplay.h">
 			</File>
 			<File
-				RelativePath=".\GrooveGraph.cpp">
+				RelativePath="GrooveGraph.cpp">
 			</File>
 			<File
-				RelativePath=".\GrooveGraph.h">
+				RelativePath="GrooveGraph.h">
 			</File>
 			<File
-				RelativePath=".\GrooveRadar.cpp">
+				RelativePath="GrooveRadar.cpp">
 			</File>
 			<File
-				RelativePath=".\GrooveRadar.h">
+				RelativePath="GrooveRadar.h">
 			</File>
 			<File
-				RelativePath=".\GroupList.cpp">
+				RelativePath="GroupList.cpp">
 			</File>
 			<File
-				RelativePath=".\GroupList.h">
+				RelativePath="GroupList.h">
 			</File>
 			<File
-				RelativePath=".\HelpDisplay.cpp">
+				RelativePath="HelpDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\HelpDisplay.h">
+				RelativePath="HelpDisplay.h">
 			</File>
 			<File
-				RelativePath=".\MemoryCardDisplay.cpp">
+				RelativePath="MemoryCardDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\MemoryCardDisplay.h">
+				RelativePath="MemoryCardDisplay.h">
 			</File>
 			<File
-				RelativePath=".\MenuTimer.cpp">
+				RelativePath="MenuTimer.cpp">
 			</File>
 			<File
-				RelativePath=".\MenuTimer.h">
+				RelativePath="MenuTimer.h">
 			</File>
 			<File
-				RelativePath=".\ModeSwitcher.cpp">
+				RelativePath="ModeSwitcher.cpp">
 			</File>
 			<File
-				RelativePath=".\ModeSwitcher.h">
+				RelativePath="ModeSwitcher.h">
 			</File>
 			<File
-				RelativePath=".\MusicBannerWheel.cpp">
+				RelativePath="MusicBannerWheel.cpp">
 			</File>
 			<File
-				RelativePath=".\MusicBannerWheel.h">
+				RelativePath="MusicBannerWheel.h">
 			</File>
 			<File
-				RelativePath=".\MusicList.cpp">
+				RelativePath="MusicList.cpp">
 			</File>
 			<File
-				RelativePath=".\MusicList.h">
+				RelativePath="MusicList.h">
 			</File>
 			<File
 				RelativePath=".\MusicSortDisplay.cpp">
@@ -1878,64 +1659,64 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\MusicWheel.h">
 			</File>
 			<File
-				RelativePath=".\MusicWheelItem.cpp">
+				RelativePath="MusicWheelItem.cpp">
 			</File>
 			<File
-				RelativePath=".\MusicWheelItem.h">
+				RelativePath="MusicWheelItem.h">
 			</File>
 			<File
-				RelativePath=".\OptionIcon.cpp">
+				RelativePath="OptionIcon.cpp">
 			</File>
 			<File
-				RelativePath=".\OptionIcon.h">
+				RelativePath="OptionIcon.h">
 			</File>
 			<File
-				RelativePath=".\OptionIconRow.cpp">
+				RelativePath="OptionIconRow.cpp">
 			</File>
 			<File
-				RelativePath=".\OptionIconRow.h">
+				RelativePath="OptionIconRow.h">
 			</File>
 			<File
-				RelativePath=".\OptionRow.cpp">
+				RelativePath="OptionRow.cpp">
 			</File>
 			<File
-				RelativePath=".\OptionRow.h">
+				RelativePath="OptionRow.h">
 			</File>
 			<File
-				RelativePath=".\OptionsCursor.cpp">
+				RelativePath="OptionsCursor.cpp">
 			</File>
 			<File
-				RelativePath=".\OptionsCursor.h">
+				RelativePath="OptionsCursor.h">
 			</File>
 			<File
-				RelativePath=".\PaneDisplay.cpp">
+				RelativePath="PaneDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\PaneDisplay.h">
+				RelativePath="PaneDisplay.h">
 			</File>
 			<File
-				RelativePath=".\RoomWheel.cpp">
+				RelativePath="RoomWheel.cpp">
 			</File>
 			<File
-				RelativePath=".\RoomWheel.h">
+				RelativePath="RoomWheel.h">
 			</File>
 			<File
-				RelativePath=".\ScrollBar.cpp">
+				RelativePath="ScrollBar.cpp">
 			</File>
 			<File
-				RelativePath=".\ScrollBar.h">
+				RelativePath="ScrollBar.h">
 			</File>
 			<File
-				RelativePath=".\ScrollingList.cpp">
+				RelativePath="ScrollingList.cpp">
 			</File>
 			<File
-				RelativePath=".\ScrollingList.h">
+				RelativePath="ScrollingList.h">
 			</File>
 			<File
-				RelativePath=".\SnapDisplay.cpp">
+				RelativePath="SnapDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\SnapDisplay.h">
+				RelativePath="SnapDisplay.h">
 			</File>
 			<File
 				RelativePath=".\TextBanner.cpp">
@@ -1944,450 +1725,760 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\TextBanner.h">
 			</File>
 			<File
-				RelativePath=".\WheelBase.cpp">
+				RelativePath="WheelBase.cpp">
 			</File>
 			<File
-				RelativePath=".\WheelBase.h">
+				RelativePath="WheelBase.h">
 			</File>
 			<File
-				RelativePath=".\WheelItemBase.cpp">
+				RelativePath="WheelItemBase.cpp">
 			</File>
 			<File
-				RelativePath=".\WheelItemBase.h">
+				RelativePath="WheelItemBase.h">
 			</File>
 			<File
-				RelativePath=".\WheelNotifyIcon.cpp">
+				RelativePath="WheelNotifyIcon.cpp">
 			</File>
 			<File
-				RelativePath=".\WheelNotifyIcon.h">
+				RelativePath="WheelNotifyIcon.h">
 			</File>
 		</Filter>
 		<Filter
-			Name="Screens"
+			Name="Actors used in Gameplay"
 			Filter="">
 			<File
-				RelativePath=".\Screen.cpp">
+				RelativePath="ActiveAttackList.cpp">
 			</File>
 			<File
-				RelativePath=".\Screen.h">
+				RelativePath="ActiveAttackList.h">
 			</File>
 			<File
-				RelativePath=".\ScreenAttract.cpp">
+				RelativePath=".\ArrowEffects.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenAttract.h">
+				RelativePath=".\ArrowEffects.h">
 			</File>
 			<File
-				RelativePath=".\ScreenBookkeeping.cpp">
+				RelativePath="AttackDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenBookkeeping.h">
+				RelativePath="AttackDisplay.h">
 			</File>
 			<File
-				RelativePath=".\ScreenBranch.cpp">
+				RelativePath=".\Background.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenBranch.h">
+				RelativePath=".\Background.h">
 			</File>
 			<File
-				RelativePath=".\ScreenCenterImage.cpp">
+				RelativePath="BeginnerHelper.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenCenterImage.h">
+				RelativePath="BeginnerHelper.h">
 			</File>
 			<File
-				RelativePath=".\ScreenCredits.cpp">
+				RelativePath="CharacterHead.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenCredits.h">
+				RelativePath="CharacterHead.h">
 			</File>
 			<File
-				RelativePath=".\ScreenDemonstration.cpp">
+				RelativePath="CombinedLifeMeter.h">
 			</File>
 			<File
-				RelativePath=".\ScreenDemonstration.h">
+				RelativePath="CombinedLifeMeterTug.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenEdit.cpp">
+				RelativePath="CombinedLifeMeterTug.h">
 			</File>
 			<File
-				RelativePath=".\ScreenEdit.h">
+				RelativePath=".\Combo.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenEditCoursesMenu.cpp">
+				RelativePath=".\Combo.h">
 			</File>
 			<File
-				RelativePath=".\ScreenEditCoursesMenu.h">
+				RelativePath="DancingCharacters.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenEditMenu.cpp">
+				RelativePath="DancingCharacters.h">
 			</File>
 			<File
-				RelativePath=".\ScreenEditMenu.h">
+				RelativePath="Foreground.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenEnding.cpp">
+				RelativePath="Foreground.h">
 			</File>
 			<File
-				RelativePath=".\ScreenEnding.h">
+				RelativePath=".\GhostArrow.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenEndlessBreak.cpp">
+				RelativePath=".\GhostArrow.h">
 			</File>
 			<File
-				RelativePath=".\ScreenEndlessBreak.h">
+				RelativePath="GhostArrowRow.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenEvaluation.cpp">
+				RelativePath="GhostArrowRow.h">
 			</File>
 			<File
-				RelativePath=".\ScreenEvaluation.h">
+				RelativePath=".\HoldGhostArrow.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenExit.cpp">
+				RelativePath=".\HoldGhostArrow.h">
 			</File>
 			<File
-				RelativePath=".\ScreenExit.h">
+				RelativePath="HoldJudgment.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenEz2SelectMusic.cpp">
+				RelativePath="HoldJudgment.h">
 			</File>
 			<File
-				RelativePath=".\ScreenEz2SelectMusic.h">
+				RelativePath="Judgment.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenEz2SelectPlayer.cpp">
+				RelativePath="Judgment.h">
 			</File>
 			<File
-				RelativePath=".\ScreenEz2SelectPlayer.h">
+				RelativePath="LifeMeter.h">
 			</File>
 			<File
-				RelativePath=".\ScreenGameplay.cpp">
+				RelativePath="LifeMeterBar.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenGameplay.h">
+				RelativePath="LifeMeterBar.h">
 			</File>
 			<File
-				RelativePath=".\ScreenGameplayMultiplayer.cpp">
+				RelativePath="LifeMeterBattery.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenGameplayMultiplayer.h">
+				RelativePath="LifeMeterBattery.h">
 			</File>
 			<File
-				RelativePath=".\ScreenHowToPlay.cpp">
+				RelativePath="LifeMeterTime.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenHowToPlay.h">
+				RelativePath="LifeMeterTime.h">
 			</File>
 			<File
-				RelativePath=".\ScreenInstructions.cpp">
+				RelativePath="LyricDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenInstructions.h">
+				RelativePath="LyricDisplay.h">
 			</File>
 			<File
-				RelativePath=".\ScreenJukebox.cpp">
+				RelativePath="NoteDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenJukebox.h">
+				RelativePath="NoteDisplay.h">
 			</File>
 			<File
-				RelativePath=".\ScreenLogo.cpp">
+				RelativePath="NoteField.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenLogo.h">
+				RelativePath="NoteField.h">
 			</File>
 			<File
-				RelativePath=".\ScreenMapControllers.cpp">
+				RelativePath="PercentageDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenMapControllers.h">
+				RelativePath="PercentageDisplay.h">
 			</File>
 			<File
-				RelativePath=".\ScreenMessage.cpp">
+				RelativePath=".\Player.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenMessage.h">
+				RelativePath=".\Player.h">
 			</File>
 			<File
-				RelativePath=".\ScreenMiniMenu.cpp">
+				RelativePath=".\ReceptorArrow.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenMiniMenu.h">
+				RelativePath=".\ReceptorArrow.h">
 			</File>
 			<File
-				RelativePath=".\ScreenMusicScroll.cpp">
+				RelativePath="ReceptorArrowRow.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenMusicScroll.h">
+				RelativePath="ReceptorArrowRow.h">
 			</File>
 			<File
-				RelativePath=".\ScreenNameEntry.cpp">
+				RelativePath="ScoreDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenNameEntry.h">
+				RelativePath="ScoreDisplay.h">
 			</File>
 			<File
-				RelativePath=".\ScreenNameEntryTraditional.cpp">
+				RelativePath="ScoreDisplayAliveTime.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenNameEntryTraditional.h">
+				RelativePath="ScoreDisplayAliveTime.h">
 			</File>
 			<File
-				RelativePath=".\ScreenNetEvaluation.cpp">
+				RelativePath="ScoreDisplayBattle.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenNetEvaluation.h">
+				RelativePath="ScoreDisplayBattle.h">
 			</File>
 			<File
-				RelativePath=".\ScreenNetRoom.cpp">
+				RelativePath="ScoreDisplayCalories.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenNetRoom.h">
+				RelativePath="ScoreDisplayCalories.h">
 			</File>
 			<File
-				RelativePath=".\ScreenNetSelectBase.cpp">
+				RelativePath="ScoreDisplayLifeTime.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenNetSelectBase.h">
+				RelativePath="ScoreDisplayLifeTime.h">
 			</File>
 			<File
-				RelativePath=".\ScreenNetSelectMusic.cpp">
+				RelativePath="ScoreDisplayNormal.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenNetSelectMusic.h">
+				RelativePath="ScoreDisplayNormal.h">
 			</File>
 			<File
-				RelativePath=".\ScreenNetworkOptions.cpp">
+				RelativePath="ScoreDisplayOni.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenNetworkOptions.h">
+				RelativePath="ScoreDisplayOni.h">
 			</File>
 			<File
-				RelativePath=".\ScreenOptions.cpp">
+				RelativePath="ScoreDisplayPercentage.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenOptions.h">
+				RelativePath="ScoreDisplayPercentage.h">
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsMaster.cpp">
+				RelativePath="ScoreDisplayRave.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsMaster.h">
+				RelativePath="ScoreDisplayRave.h">
 			</File>
+		</Filter>
+		<Filter
+			Name="Rage"
+			Filter="">
 			<File
-				RelativePath=".\ScreenOptionsMasterPrefs.cpp">
+				RelativePath=".\RageBitmapTexture.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenOptionsMasterPrefs.h">
+				RelativePath=".\RageBitmapTexture.h">
 			</File>
 			<File
-				RelativePath=".\ScreenPackages.cpp">
+				RelativePath="RageDisplay.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenPackages.h">
+				RelativePath="RageDisplay.h">
 			</File>
 			<File
-				RelativePath=".\ScreenPlayerOptions.cpp">
+				RelativePath="RageDisplay_D3D.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenPlayerOptions.h">
+				RelativePath="RageDisplay_D3D.h">
 			</File>
 			<File
-				RelativePath=".\ScreenProfileOptions.cpp">
+				RelativePath="RageDisplay_Null.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenProfileOptions.h">
+				RelativePath="RageDisplay_Null.h">
 			</File>
 			<File
-				RelativePath=".\ScreenPrompt.cpp">
+				RelativePath="RageDisplay_OGL.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenPrompt.h">
+				RelativePath="RageDisplay_OGL.h">
 			</File>
 			<File
-				RelativePath=".\ScreenRanking.cpp">
+				RelativePath="RageDisplay_OGL_Extensions.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenRanking.h">
+				RelativePath="RageDisplay_OGL_Extensions.h">
 			</File>
 			<File
-				RelativePath=".\ScreenReloadSongs.cpp">
+				RelativePath="RageException.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenReloadSongs.h">
+				RelativePath="RageException.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSMOnlineLogin.cpp">
+				RelativePath="RageFile.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSMOnlineLogin.h">
+				RelativePath="RageFile.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSandbox.cpp">
+				RelativePath="RageFileBasic.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSandbox.h">
+				RelativePath="RageFileBasic.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSelect.cpp">
+				RelativePath="RageFileDriver.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSelect.h">
+				RelativePath="RageFileDriver.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectCharacter.cpp">
+				RelativePath="RageFileDriverDeflate.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectCharacter.h">
+				RelativePath="RageFileDriverDeflate.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectDifficulty.cpp">
+				RelativePath="RageFileDriverDirect.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectDifficulty.h">
+				RelativePath="RageFileDriverDirect.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectGroup.cpp">
+				RelativePath="RageFileDriverDirectHelpers.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectGroup.h">
+				RelativePath="RageFileDriverDirectHelpers.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectMaster.cpp">
+				RelativePath="RageFileDriverMemory.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectMaster.h">
+				RelativePath="RageFileDriverMemory.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectMode.cpp">
+				RelativePath="RageFileDriverSlice.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectMode.h">
+				RelativePath="RageFileDriverSlice.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectMusic.cpp">
+				RelativePath="RageFileDriverTimeout.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectMusic.h">
+				RelativePath="RageFileDriverTimeout.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectStyle.cpp">
+				RelativePath="RageFileDriverZip.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSelectStyle.h">
+				RelativePath="RageFileDriverZip.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSetTime.cpp">
+				RelativePath="RageFileManager.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSetTime.h">
+				RelativePath="RageFileManager.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSongOptions.cpp">
+				RelativePath=".\RageInput.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSongOptions.h">
+				RelativePath=".\RageInput.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSplash.cpp">
+				RelativePath="RageInputDevice.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSplash.h">
+				RelativePath="RageInputDevice.h">
 			</File>
 			<File
-				RelativePath=".\ScreenStage.cpp">
+				RelativePath="RageLog.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenStage.h">
+				RelativePath="RageLog.h">
 			</File>
 			<File
-				RelativePath=".\ScreenStyleSplash.cpp">
+				RelativePath="RageMath.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenStyleSplash.h">
+				RelativePath="RageMath.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSystemLayer.cpp">
+				RelativePath="RageModelGeometry.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSystemLayer.h">
+				RelativePath="RageModelGeometry.h">
 			</File>
 			<File
-				RelativePath=".\ScreenTest.cpp">
+				RelativePath="RageSound.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenTest.h">
+				RelativePath="RageSound.h">
 			</File>
 			<File
-				RelativePath=".\ScreenTestFonts.cpp">
+				RelativePath="RageSoundManager.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenTestFonts.h">
+				RelativePath="RageSoundManager.h">
 			</File>
 			<File
-				RelativePath=".\ScreenTestInput.cpp">
+				RelativePath="RageSoundMixBuffer.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenTestInput.h">
+				RelativePath="RageSoundMixBuffer.h">
 			</File>
 			<File
-				RelativePath=".\ScreenTestLights.cpp">
+				RelativePath="RageSoundPosMap.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenTestLights.h">
+				RelativePath="RageSoundPosMap.h">
 			</File>
 			<File
-				RelativePath=".\ScreenTestSound.cpp">
+				RelativePath="RageSoundReader.h">
 			</File>
 			<File
-				RelativePath=".\ScreenTestSound.h">
+				RelativePath="RageSoundReader_Chain.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenTextEntry.cpp">
+				RelativePath="RageSoundReader_Chain.h">
 			</File>
 			<File
-				RelativePath=".\ScreenTextEntry.h">
+				RelativePath="RageSoundReader_FileReader.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenTitleMenu.cpp">
+				RelativePath="RageSoundReader_FileReader.h">
 			</File>
 			<File
-				RelativePath=".\ScreenTitleMenu.h">
+				RelativePath="RageSoundReader_MP3.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenUnlock.cpp">
+				RelativePath="RageSoundReader_MP3.h">
 			</File>
 			<File
-				RelativePath=".\ScreenUnlock.h">
+				RelativePath="RageSoundReader_Preload.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenWithMenuElements.cpp">
+				RelativePath="RageSoundReader_Preload.h">
 			</File>
 			<File
-				RelativePath=".\ScreenWithMenuElements.h">
+				RelativePath="RageSoundReader_Resample.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundReader_Resample.h">
+			</File>
+			<File
+				RelativePath="RageSoundReader_Resample_Fast.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundReader_Resample_Fast.h">
+			</File>
+			<File
+				RelativePath="RageSoundReader_Resample_Good.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundReader_Resample_Good.h">
+			</File>
+			<File
+				RelativePath="RageSoundReader_Vorbisfile.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundReader_Vorbisfile.h">
+			</File>
+			<File
+				RelativePath="RageSoundReader_WAV.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundReader_WAV.h">
+			</File>
+			<File
+				RelativePath="RageSoundResampler.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundResampler.h">
+			</File>
+			<File
+				RelativePath="RageSoundUtil.cpp">
+			</File>
+			<File
+				RelativePath="RageSoundUtil.h">
+			</File>
+			<File
+				RelativePath="RageSurface.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Load.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_BMP.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_BMP.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_GIF.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_GIF.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_JPEG.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_JPEG.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_PNG.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_PNG.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_XPM.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Load_XPM.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Save_BMP.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Save_BMP.h">
+			</File>
+			<File
+				RelativePath="RageSurface_Save_JPEG.cpp">
+			</File>
+			<File
+				RelativePath="RageSurface_Save_JPEG.h">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils.cpp">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils.h">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Dither.cpp">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Dither.h">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Palettize.cpp">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Palettize.h">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Zoom.cpp">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Zoom.h">
+			</File>
+			<File
+				RelativePath=".\RageTexture.cpp">
+			</File>
+			<File
+				RelativePath=".\RageTexture.h">
+			</File>
+			<File
+				RelativePath="RageTextureID.cpp">
+			</File>
+			<File
+				RelativePath="RageTextureID.h">
+			</File>
+			<File
+				RelativePath=".\RageTextureManager.cpp">
+			</File>
+			<File
+				RelativePath=".\RageTextureManager.h">
+			</File>
+			<File
+				RelativePath="RageThreads.cpp">
+			</File>
+			<File
+				RelativePath="RageThreads.h">
+			</File>
+			<File
+				RelativePath="RageTimer.cpp">
+			</File>
+			<File
+				RelativePath="RageTimer.h">
+			</File>
+			<File
+				RelativePath="RageTypes.h">
+			</File>
+			<File
+				RelativePath=".\RageUtil.cpp">
+			</File>
+			<File
+				RelativePath=".\RageUtil.h">
+			</File>
+			<File
+				RelativePath="RageUtil_AutoPtr.h">
+			</File>
+			<File
+				RelativePath="RageUtil_BackgroundLoader.cpp">
+			</File>
+			<File
+				RelativePath="RageUtil_BackgroundLoader.h">
+			</File>
+			<File
+				RelativePath="RageUtil_CharConversions.cpp">
+			</File>
+			<File
+				RelativePath="RageUtil_CharConversions.h">
+			</File>
+			<File
+				RelativePath="RageUtil_CircularBuffer.h">
+			</File>
+			<File
+				RelativePath="RageUtil_FileDB.cpp">
+			</File>
+			<File
+				RelativePath="RageUtil_FileDB.h">
+			</File>
+			<File
+				RelativePath="RageUtil_WorkerThread.cpp">
+			</File>
+			<File
+				RelativePath="RageUtil_WorkerThread.h">
+			</File>
+			<Filter
+				Name="Helpers"
+				Filter="">
+				<File
+					RelativePath="ezsockets.cpp">
+				</File>
+				<File
+					RelativePath="ezsockets.h">
+				</File>
+				<File
+					RelativePath="glext.h">
+				</File>
+				<Filter
+					Name="pcre"
+					Filter="">
+					<File
+						RelativePath="pcre\get.c">
+					</File>
+					<File
+						RelativePath="pcre\internal.h">
+					</File>
+					<File
+						RelativePath="pcre\maketables.c">
+					</File>
+					<File
+						RelativePath="pcre\pcre.c">
+					</File>
+					<File
+						RelativePath="pcre\pcre.h">
+					</File>
+					<File
+						RelativePath="pcre\study.c">
+					</File>
+				</Filter>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Actors"
+			Filter="">
+			<File
+				RelativePath=".\Actor.cpp">
+			</File>
+			<File
+				RelativePath=".\Actor.h">
+			</File>
+			<File
+				RelativePath="ActorCollision.h">
+			</File>
+			<File
+				RelativePath=".\ActorFrame.cpp">
+			</File>
+			<File
+				RelativePath=".\ActorFrame.h">
+			</File>
+			<File
+				RelativePath="ActorScroller.cpp">
+			</File>
+			<File
+				RelativePath="ActorScroller.h">
+			</File>
+			<File
+				RelativePath="ActorUtil.cpp">
+			</File>
+			<File
+				RelativePath="ActorUtil.h">
+			</File>
+			<File
+				RelativePath="AutoActor.cpp">
+			</File>
+			<File
+				RelativePath="AutoActor.h">
+			</File>
+			<File
+				RelativePath=".\BitmapText.cpp">
+			</File>
+			<File
+				RelativePath=".\BitmapText.h">
+			</File>
+			<File
+				RelativePath="Model.cpp">
+			</File>
+			<File
+				RelativePath="Model.h">
+			</File>
+			<File
+				RelativePath="ModelManager.cpp">
+			</File>
+			<File
+				RelativePath="ModelManager.h">
+			</File>
+			<File
+				RelativePath="ModelTypes.cpp">
+			</File>
+			<File
+				RelativePath="ModelTypes.h">
+			</File>
+			<File
+				RelativePath="Quad.cpp">
+			</File>
+			<File
+				RelativePath="Quad.h">
+			</File>
+			<File
+				RelativePath="RollingNumbers.cpp">
+			</File>
+			<File
+				RelativePath="RollingNumbers.h">
+			</File>
+			<File
+				RelativePath=".\Sprite.cpp">
+			</File>
+			<File
+				RelativePath=".\Sprite.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="Global Singletons"
 			Filter="">
 			<File
-				RelativePath=".\AnnouncerManager.cpp">
+				RelativePath="AnnouncerManager.cpp">
 			</File>
 			<File
-				RelativePath=".\AnnouncerManager.h">
+				RelativePath="AnnouncerManager.h">
 			</File>
 			<File
-				RelativePath=".\Bookkeeper.cpp">
+				RelativePath="Bookkeeper.cpp">
 			</File>
 			<File
-				RelativePath=".\Bookkeeper.h">
+				RelativePath="Bookkeeper.h">
 			</File>
 			<File
-				RelativePath=".\CryptManager.cpp">
+				RelativePath="CryptManager.cpp">
 			</File>
 			<File
-				RelativePath=".\CryptManager.h">
+				RelativePath="CryptManager.h">
+			</File>
+			<File
+				RelativePath="ezsockets.cpp">
+			</File>
+			<File
+				RelativePath="ezsockets.h">
 			</File>
 			<File
 				RelativePath=".\FontManager.cpp">
@@ -2402,76 +2493,76 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\GameManager.h">
 			</File>
 			<File
-				RelativePath=".\GameSoundManager.cpp">
+				RelativePath="GameSoundManager.cpp">
 			</File>
 			<File
-				RelativePath=".\GameSoundManager.h">
+				RelativePath="GameSoundManager.h">
 			</File>
 			<File
-				RelativePath=".\GameState.cpp">
+				RelativePath="GameState.cpp">
 			</File>
 			<File
-				RelativePath=".\GameState.h">
+				RelativePath="GameState.h">
 			</File>
 			<File
-				RelativePath=".\InputFilter.cpp">
+				RelativePath="InputFilter.cpp">
 			</File>
 			<File
-				RelativePath=".\InputFilter.h">
+				RelativePath="InputFilter.h">
 			</File>
 			<File
-				RelativePath=".\InputMapper.cpp">
+				RelativePath="InputMapper.cpp">
 			</File>
 			<File
-				RelativePath=".\InputMapper.h">
+				RelativePath="InputMapper.h">
 			</File>
 			<File
-				RelativePath=".\InputQueue.cpp">
+				RelativePath="InputQueue.cpp">
 			</File>
 			<File
-				RelativePath=".\InputQueue.h">
+				RelativePath="InputQueue.h">
 			</File>
 			<File
-				RelativePath=".\LightsManager.cpp">
+				RelativePath="LightsManager.cpp">
 			</File>
 			<File
-				RelativePath=".\LightsManager.h">
+				RelativePath="LightsManager.h">
 			</File>
 			<File
-				RelativePath=".\LuaManager.cpp">
+				RelativePath="LuaManager.cpp">
 			</File>
 			<File
-				RelativePath=".\LuaManager.h">
+				RelativePath="LuaManager.h">
 			</File>
 			<File
-				RelativePath=".\MemoryCardManager.cpp">
+				RelativePath="MemoryCardManager.cpp">
 			</File>
 			<File
-				RelativePath=".\MemoryCardManager.h">
+				RelativePath="MemoryCardManager.h">
 			</File>
 			<File
-				RelativePath=".\MessageManager.cpp">
+				RelativePath="MessageManager.cpp">
 			</File>
 			<File
-				RelativePath=".\MessageManager.h">
+				RelativePath="MessageManager.h">
 			</File>
 			<File
-				RelativePath=".\NetworkSyncManager.cpp">
+				RelativePath="NetworkSyncManager.cpp">
 			</File>
 			<File
-				RelativePath=".\NetworkSyncManager.h">
+				RelativePath="NetworkSyncManager.h">
 			</File>
 			<File
-				RelativePath=".\NetworkSyncServer.cpp">
+				RelativePath="NetworkSyncServer.cpp">
 			</File>
 			<File
-				RelativePath=".\NetworkSyncServer.h">
+				RelativePath="NetworkSyncServer.h">
 			</File>
 			<File
-				RelativePath=".\NoteSkinManager.cpp">
+				RelativePath="NoteSkinManager.cpp">
 			</File>
 			<File
-				RelativePath=".\NoteSkinManager.h">
+				RelativePath="NoteSkinManager.h">
 			</File>
 			<File
 				RelativePath=".\PrefsManager.cpp">
@@ -2480,16 +2571,16 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\PrefsManager.h">
 			</File>
 			<File
-				RelativePath=".\ProfileManager.cpp">
+				RelativePath="ProfileManager.cpp">
 			</File>
 			<File
-				RelativePath=".\ProfileManager.h">
+				RelativePath="ProfileManager.h">
 			</File>
 			<File
-				RelativePath=".\ScreenManager.cpp">
+				RelativePath="ScreenManager.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenManager.h">
+				RelativePath="ScreenManager.h">
 			</File>
 			<File
 				RelativePath=".\SongManager.cpp">
@@ -2498,10 +2589,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\SongManager.h">
 			</File>
 			<File
-				RelativePath=".\StatsManager.cpp">
+				RelativePath="StatsManager.cpp">
 			</File>
 			<File
-				RelativePath=".\StatsManager.h">
+				RelativePath="StatsManager.h">
 			</File>
 			<File
 				RelativePath=".\ThemeManager.cpp">
@@ -2510,232 +2601,217 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\ThemeManager.h">
 			</File>
 			<File
-				RelativePath=".\UnlockManager.cpp">
+				RelativePath="UnlockManager.cpp">
 			</File>
 			<File
-				RelativePath=".\UnlockManager.h">
-			</File>
-			<File
-				RelativePath=".\ezsockets.cpp">
-			</File>
-			<File
-				RelativePath=".\ezsockets.h">
+				RelativePath="UnlockManager.h">
 			</File>
 		</Filter>
 		<Filter
 			Name="Crypto"
 			Filter="">
 			<File
-				RelativePath=".\crypto\CryptBn.cpp">
+				RelativePath="crypto\CryptBn.cpp">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptBn.h">
+				RelativePath="crypto\CryptBn.h">
 			</File>
 			<File
-				RelativePath=".\CryptHelpers.cpp">
+				RelativePath="CryptHelpers.cpp">
 			</File>
 			<File
-				RelativePath=".\CryptHelpers.h">
+				RelativePath="CryptHelpers.h">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptMD5.cpp">
+				RelativePath="crypto\CryptMD5.cpp">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptMD5.h">
+				RelativePath="crypto\CryptMD5.h">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptNoise.cpp">
+				RelativePath="crypto\CryptNoise.cpp">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptPrime.cpp">
+				RelativePath="crypto\CryptPrime.cpp">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptPrime.h">
+				RelativePath="crypto\CryptPrime.h">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptRSA.cpp">
+				RelativePath="crypto\CryptRand.cpp">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptRSA.h">
+				RelativePath="crypto\CryptRand.h">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptRand.cpp">
+				RelativePath="crypto\CryptRSA.cpp">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptRand.h">
+				RelativePath="crypto\CryptRSA.h">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptSH512.cpp">
+				RelativePath="crypto\CryptSH512.cpp">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptSH512.h">
+				RelativePath="crypto\CryptSH512.h">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptSHA.cpp">
+				RelativePath="crypto\CryptSHA.cpp">
 			</File>
 			<File
-				RelativePath=".\crypto\CryptSHA.h">
+				RelativePath="crypto\CryptSHA.h">
 			</File>
 			<Filter
 				Name="crypto++"
 				Filter="">
 				<File
-					RelativePath=".\crypto51\algebra.cpp">
+					RelativePath="crypto51\algebra.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\algebra.h">
+					RelativePath="crypto51\algebra.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\algparam.cpp">
+					RelativePath="crypto51\algparam.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\algparam.h">
+					RelativePath="crypto51\algparam.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\argnames.h">
+					RelativePath="crypto51\argnames.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\asn.cpp">
+					RelativePath="crypto51\asn.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\asn.h">
+					RelativePath="crypto51\asn.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\config.h">
+					RelativePath="crypto51\config.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\cryptlib.cpp">
+					RelativePath="crypto51\cryptlib.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\cryptlib.h">
+					RelativePath="crypto51\cryptlib.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\files.cpp">
+					RelativePath="crypto51\files.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\files.h">
+					RelativePath="crypto51\files.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\filters.cpp">
+					RelativePath="crypto51\filters.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\filters.h">
+					RelativePath="crypto51\filters.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\fltrimpl.h">
+					RelativePath="crypto51\fltrimpl.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\integer.cpp">
+					RelativePath="crypto51\integer.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\integer.h">
+					RelativePath="crypto51\integer.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\iterhash.cpp">
+					RelativePath="crypto51\iterhash.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\iterhash.h">
+					RelativePath="crypto51\iterhash.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\mdc.h">
+					RelativePath="crypto51\misc.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\misc.cpp">
+					RelativePath="crypto51\misc.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\misc.h">
+					RelativePath="crypto51\modarith.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\modarith.h">
+					RelativePath="crypto51\mqueue.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\mqueue.cpp">
+					RelativePath="crypto51\mqueue.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\mqueue.h">
+					RelativePath="crypto51\nbtheory.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\nbtheory.cpp">
+					RelativePath="crypto51\nbtheory.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\nbtheory.h">
+					RelativePath="crypto51\oids.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\oids.h">
+					RelativePath="crypto51\osrng.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\osrng.cpp">
+					RelativePath="crypto51\osrng.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\osrng.h">
+					RelativePath="crypto51\pch.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\pch.h">
+					RelativePath="crypto51\pkcspad.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\pkcspad.cpp">
+					RelativePath="crypto51\pkcspad.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\pkcspad.h">
+					RelativePath="crypto51\pubkey.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\pubkey.cpp">
+					RelativePath="crypto51\pubkey.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\pubkey.h">
+					RelativePath="crypto51\queue.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\queue.cpp">
+					RelativePath="crypto51\queue.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\queue.h">
+					RelativePath="crypto51\rng.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\rng.h">
+					RelativePath="crypto51\rsa.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\rsa.cpp">
+					RelativePath="crypto51\rsa.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\rsa.h">
+					RelativePath="crypto51\secblock.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\secblock.h">
+					RelativePath="crypto51\seckey.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\seckey.h">
+					RelativePath="crypto51\sha.cpp">
 				</File>
 				<File
-					RelativePath=".\crypto51\sha.cpp">
+					RelativePath="crypto51\sha.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\sha.h">
+					RelativePath="crypto51\simple.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\simple.h">
+					RelativePath="crypto51\smartptr.h">
 				</File>
 				<File
-					RelativePath=".\crypto51\smartptr.h">
-				</File>
-				<File
-					RelativePath=".\crypto51\words.h">
+					RelativePath="crypto51\words.h">
 				</File>
 			</Filter>
 		</Filter>
 		<File
-			RelativePath=".\StepMania.xpm">
+			RelativePath="archutils\Win32\DialogCrashHeader.bmp">
 		</File>
 		<File
-			RelativePath=".\cursor1.cur">
+			RelativePath="archutils\Win32\DialogErrorHeader.bmp">
 		</File>
 		<File
-			RelativePath=".\error.bmp">
-		</File>
-		<File
-			RelativePath=".\error2.bmp">
-		</File>
-		<File
-			RelativePath=".\loading.bmp">
+			RelativePath="StepMania.xpm">
 		</File>
 	</Files>
 	<Globals>
