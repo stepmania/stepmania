@@ -73,6 +73,10 @@ enum
 	TRACK_15,
 	TRACK_16,
 	// MD 10/26/03 end
+	TRACK_17,
+	TRACK_18,
+	TRACK_19,
+	TRACK_20,
 	MAX_NOTE_TRACKS		// leave this at the end
 };
 

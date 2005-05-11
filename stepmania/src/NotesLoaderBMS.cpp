@@ -158,10 +158,8 @@ void BMSLoader::mapBMSTrackToDanceNote( int iBMSTrack, int &iDanceColOut, TapNot
 	case 26:	iDanceColOut = BMS_P2_TURN;				break;
 	case 28:	iDanceColOut = BMS_P2_KEY6;				break;
 	case 29:	iDanceColOut = BMS_P2_KEY7;				break;
-	default:	iDanceColOut = 0;						break;
+	default:	iDanceColOut = -1;						break;
 	}
-	iDanceColOut--; // BMS_* start at 1 (0 is BMS_NULL_COLUMN), but TRACK_*
-								// start at 0
 }
 
 bool BMSLoader::LoadFromBMSFile( const CString &sPath, Steps &out )
