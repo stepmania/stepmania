@@ -19,10 +19,12 @@
 #include "libjpeg/jpeglib.h"
 #include "libjpeg/jerror.h"
 
+#if defined(_MSC_VER)
 #if !defined(XBOX)
 #pragma comment(lib, "libjpeg/jpeg.lib")
 #else
 #pragma comment(lib, "libjpeg/xboxjpeg.lib")
+#endif
 #endif
 
 #pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */

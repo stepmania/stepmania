@@ -5,7 +5,7 @@
 #include "global.h"
 #include "CryptBn.h"
 
-#if defined(WIN32)
+#if defined(_MSC_VER)
 #pragma warning (disable : 4244) // conversion from 'int' to 'BignumInt', possible loss of data
 #endif
 

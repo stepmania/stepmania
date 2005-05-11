@@ -222,12 +222,15 @@ CString vssprintf( const char *fmt, va_list argList)
 }
 
 #ifdef WIN32
+
 #ifdef _XBOX
-#include <D3DX8Core.h>
+#  include <D3DX8Core.h>
 #else
-#include <windows.h>
-#include <dxerr8.h>
-#pragma comment(lib, "dxerr8.lib")
+#  include <windows.h>
+#  include <dxerr8.h>
+#  if defined(_MSC_VER)
+#    pragma comment(lib, "dxerr8.lib")
+#  endif
 #endif
 
 CString hr_ssprintf( int hr, const char *fmt, ...)

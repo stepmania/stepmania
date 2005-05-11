@@ -15,7 +15,9 @@
 #include "archutils/win32/WindowsResources.h"
 
 #include <mmsystem.h>
+#if defined(_MSC_VER)
 #pragma comment(lib, "winmm.lib") // for timeGetTime
+#endif
 
 ArchHooks_Win32::ArchHooks_Win32()
 {

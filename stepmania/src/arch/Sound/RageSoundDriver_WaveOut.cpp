@@ -1,7 +1,9 @@
 #include "global.h"
 #include "RageSoundDriver_WaveOut.h"
 
+#if defined(_MSC_VER)
 #pragma comment(lib, "winmm.lib")
+#endif
 
 #include "RageTimer.h"
 #include "RageLog.h"

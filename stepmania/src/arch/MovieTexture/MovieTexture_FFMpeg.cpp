@@ -24,7 +24,7 @@ namespace avcodec
 #endif
 };
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 	#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
 	#pragma comment(lib, "ffmpeg/lib/avformat.lib")
 #endif

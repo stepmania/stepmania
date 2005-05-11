@@ -9,7 +9,7 @@
 #include "ezsockets.h"
 
 #if defined(_XBOX)
-#elif defined(_WINDOWS) // We need the WinSock32 Library on Windows
+#elif defined(_MSC_VER) // We need the WinSock32 Library on Windows
 #pragma comment(lib,"wsock32.lib")
 #else
 #include <sys/types.h>

@@ -5,12 +5,13 @@
 #include "RageFile.h"
 #include "RageSurface.h"
 
-#if defined(WIN32)
+
+#if defined(_MSC_VER)
 #  include "libpng/include/png.h"
-#  if defined(_WINDOWS)
+#  if defined(XBOX) 
+#    pragma comment(lib, "libpng/lib/xboxlibpng.lib")
+#  else
 #    pragma comment(lib, "libpng/lib/libpng.lib")
-#  elif defined(XBOX)
-#	 pragma comment(lib, "libpng/lib/xboxlibpng.lib")
 #  endif
 #  pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
 #else

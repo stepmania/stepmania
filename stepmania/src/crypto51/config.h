@@ -4,7 +4,7 @@
 // ***************** Important Settings ********************
 
 #include "global.h"
-#if defined(WIN32)
+#if defined(_MSC_VER)
 #pragma warning (disable : 4244) // conversion ... possible loss of data
 #pragma warning (disable : 4516) // access-declarations are deprecated
 #pragma warning (disable : 4511) // copy constructor could not be generated

@@ -1,5 +1,6 @@
 #include "global.h"
 
+#if defined(_MSC_VER)
 /* XXX register thread */
 #pragma comment(lib, "winmm.lib") 
  
@@ -8,6 +9,7 @@
 	#pragma comment(lib, "baseclasses/debug/strmbasd.lib") 
 #else
 	#pragma comment(lib, "baseclasses/release/strmbase.lib") 
+#endif
 #endif
 
 #include "MovieTexture_DShowHelper.h"
@@ -22,7 +24,9 @@
 #include "arch/Dialog/Dialog.h"
 
 #include <vfw.h> /* for GetVideoCodecDebugInfo */
+#if defined(_MSC_VER)
 #pragma comment(lib, "vfw32.lib")
+#endif
 
 static CString FourCCToString(int fcc)
 {

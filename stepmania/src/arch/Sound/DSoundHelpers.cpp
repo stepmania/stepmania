@@ -10,7 +10,9 @@
 #define DIRECTSOUND_VERSION 0x0700
 #include <dsound.h>
 
+#if defined(_MSC_VER)
 #pragma comment(lib, "dsound.lib")
+#endif
 
 BOOL CALLBACK DSound::EnumCallback( LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR lpcstrModule, LPVOID lpContext )
 {

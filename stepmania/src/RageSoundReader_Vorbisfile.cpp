@@ -20,7 +20,7 @@
 #pragma comment(lib, "vorbis/xbox/vorbis_static.lib")
 #pragma comment(lib, "vorbis/xbox/vorbisfile_static.lib")
 #endif
-#elif defined(_WINDOWS)
+#elif defined(_MSC_VER)
 #pragma comment(lib, "vorbis/win32/ogg_static.lib")
 #pragma comment(lib, "vorbis/win32/vorbis_static.lib")
 #pragma comment(lib, "vorbis/win32/vorbisfile_static.lib")

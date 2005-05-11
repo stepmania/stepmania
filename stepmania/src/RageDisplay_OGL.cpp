@@ -58,7 +58,7 @@
 
 #include "arch/arch.h"
 
-#ifdef WIN32
+#if defined(_MSC_VER)
 #pragma comment(lib, "opengl32.lib")
 #pragma comment(lib, "glu32.lib")
 #endif

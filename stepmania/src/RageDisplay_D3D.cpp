@@ -31,7 +31,7 @@
 
 // Static libraries
 // load Windows D3D8 dynamically
-#if defined(_WINDOWS)
+#if defined(_MSC_VER)
 	#pragma comment(lib, "D3dx8.lib")
 	#pragma comment(lib, "Dxerr8.lib")
 #endif

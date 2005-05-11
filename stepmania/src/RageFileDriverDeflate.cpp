@@ -5,7 +5,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
-#if defined(_WINDOWS) || defined(_XBOX)
+#if defined(_MSC_VER) || defined(_XBOX)
         #include "zlib/zlib.h"
         #pragma comment(lib, "zlib/zdll.lib")
 #elif defined(DARWIN)

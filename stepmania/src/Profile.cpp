@@ -41,7 +41,7 @@ const CString COMMON_XSL	= "Common.xsl";
 
 #define MAX_DISPLAY_NAME_LENGTH 12
 
-#if defined(WIN32)
+#if defined(_MSC_VER)
 #pragma warning (disable : 4706) // assignment within conditional expression
 #endif
 

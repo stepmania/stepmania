@@ -8,7 +8,7 @@
 #include <cstdio>
 #include <cerrno>
 
-#ifdef _WIN32
+#ifdef _MSC_VER
 #include "mad-0.15.1b/mad.h"
 #ifdef _XBOX
 #ifdef _DEBUG

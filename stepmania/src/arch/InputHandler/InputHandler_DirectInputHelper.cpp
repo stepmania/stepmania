@@ -5,9 +5,11 @@
 #include "StepMania.h"
 #include "archutils/Win32/GraphicsWindow.h"
 
+#if defined(_MSC_VER)
 #pragma comment(lib, "dinput.lib")
 #if defined(_WINDOWS)
 #pragma comment(lib, "dxguid.lib")
+#endif
 #endif
 LPDIRECTINPUT dinput = NULL;
 

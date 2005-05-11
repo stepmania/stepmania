@@ -47,7 +47,7 @@ modules, but which are not relevant to the outside. */
 #define POSIX_MALLOC_THRESHOLD 10
 #define EXPORT
 
-#if defined(_WINDOWS)
+#if defined(_MSC_VER)
 #pragma warning( disable : 4244 )
 #endif
 
