@@ -1,0 +1,55 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ZipArchive", "ZipArchive\ZipArchive-net2003.vcproj", "{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "smpackage", "smpackage-net2003.vcproj", "{83EC62CC-31A9-4F51-BB31-895BF2F4903C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8} = {BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+		Static Debug = Static Debug
+		Static Release = Static Release
+		Unicode Debug = Unicode Debug
+		Unicode Release = Unicode Release
+		Unicode Static Release = Unicode Static Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Debug.ActiveCfg = Debug|Win32
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Debug.Build.0 = Debug|Win32
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Release.ActiveCfg = Release|Win32
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Release.Build.0 = Release|Win32
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Static Debug.ActiveCfg = Static Debug|Win32
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Static Debug.Build.0 = Static Debug|Win32
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Static Release.ActiveCfg = Static Release|Win32
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Static Release.Build.0 = Static Release|Win32
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Unicode Debug.ActiveCfg = Unicode Debug|Win32
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Unicode Debug.Build.0 = Unicode Debug|Win32
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Unicode Release.ActiveCfg = Unicode Release|Win32
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Unicode Release.Build.0 = Unicode Release|Win32
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Unicode Static Release.ActiveCfg = Unicode Static Release|Win32
+		{BDF8F587-8DA6-48AE-B8D4-AF262D814FD8}.Unicode Static Release.Build.0 = Unicode Static Release|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Debug.ActiveCfg = Debug|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Debug.Build.0 = Debug|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Release.ActiveCfg = Release|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Release.Build.0 = Release|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Static Debug.ActiveCfg = Debug|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Static Debug.Build.0 = Debug|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Static Release.ActiveCfg = Release|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Static Release.Build.0 = Release|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Unicode Debug.ActiveCfg = Debug|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Unicode Debug.Build.0 = Debug|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Unicode Release.ActiveCfg = Release|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Unicode Release.Build.0 = Release|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Unicode Static Release.ActiveCfg = Release|Win32
+		{83EC62CC-31A9-4F51-BB31-895BF2F4903C}.Unicode Static Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
