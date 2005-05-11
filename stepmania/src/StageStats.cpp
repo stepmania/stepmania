@@ -56,7 +56,6 @@ void StageStats::AssertValid( PlayerNumber pn ) const
 int StageStats::GetAverageMeter( PlayerNumber pn ) const
 {
 	int iTotalMeter = 0;
-	int iTotalCount = 0;
 	ASSERT( vpSongs.size() == vpSteps[pn].size() );
 
 	for( unsigned i=0; i<vpSongs.size(); i++ )
