@@ -433,7 +433,6 @@ Delete "$INSTDIR\Program\avformat.dll"
 Delete "$INSTDIR\Program\resample.dll"
 Delete "$INSTDIR\Program\dbghelp.dll"
 Delete "$INSTDIR\Program\zlib1.dll"
-Delete "$INSTDIR\Program\lua.dll"
 RMDir "$INSTDIR\Program"
 
 ; It's harmless to delete this, as long as we leave Stats.xml alone; it'll be rewritten
