@@ -1,34 +1,22 @@
 * 3.9 rc3
-Fixed change song speed menu codes starting with change difficulty menu codes
-Fixed memory leak in BeginnerHelper
-Fixed problem with Battle mode in Techno gametype with only one player present
-Fixed crashes due to big song meter values
-Fixed reading UTF-8 lyrics
-Fixed incorrect credit deduction when in free play + DelayedCreditReconcile
-Fixed typo in README-FIRST.html
-Fixed spelling error in PBProject/README
-Fixed calling methods on non-existant elements in NetworkSyncServer (caused
-  crashes)
-Fixed typoes in src/NetworkSyncServer.{h,cpp}
-Fixed crash related to attack notes
-Fixed crashes related to BMS loading
-Fixed Pump halfdouble KSF reading
-Fixed memory leak in NotesLoaderSM
-Fixed "Assertion 'iNumTapsInRow > 0' failed"
-Fixed GradePercent preference saving
-Fixed major memory leak in RageFileDriverZip
-Fixed handling corrupt banner cache
-Fixed shift-0 hold notes
-Fixed long/marathon StageStats::GetAverageMeter results
-Ensure first BPM segment starts at 0
-Don't show Random in song select if there are no songs (works around crash)
-Windows: Disabled parallel port lights driver due to legal problems
-Windows: Worked around Realtek AC97 Audio driver bug
-Windows: Fixed thread handle leak
-Added some fallbacks for note color NoteSkin elements
-Linux: Fixed some GCC 3.4 compilation problems
-Linux: Added extra autoconf checks for Lua and TLS
-OS X: Switch back to OS X installer
+Fixed change song speed menu codes starting with change difficulty menu codes.
+Fixed memory leak in BeginnerHelper.
+Fixed crashes due to high song meter values.
+Fixed reading UTF-8 lyrics.
+Fixed crashes related to BMS loading.
+Fixed memory leak reading ZIPs.
+Fixed handling corrupt banner cache.
+Fixed long/marathon StageStats::GetAverageMeter results.
+Fixed crash selecting Random with no songs.
+Fixed songs with a non-zero initial #BPMS.
+Editor: Fixed laying hold notes with shift-0.
+Windows: Disabled parallel port lights driver due to GPL-incompatibility.
+Windows: Worked around Realtek AC97 audio driver bug.
+Windows: Fixed thread handle leak.
+Added some fallbacks for note color NoteSkin elements.
+Linux: Fixed some GCC 3.4 compilation problems.
+Linux: Added extra autoconf checks for Lua and TLS.
+OSX: Switch back to OS X installer.
 
 * 3.9 rc2
 Fixed stage count problems.
@@ -38,6 +26,9 @@ Fixed crash when looping movies.
 Fixed grades being too high.
 Fixed saving "GradePercentTier" to StepMania.ini.
 Fixed more half-doubles loading problems.
+Fixed incorrect credit deduction when in free play + DelayedCreditReconcile.
+Fixed Pump half-doubles KSF reading.
+Fixed "Assertion 'iNumTapsInRow > 0' failed".
 Windows: Worked around GTXP audio driver bug.
 Windows: Fixed minor DirectSound underrun recovery problems.
 Linux x86-64: Fixed Fedora build problems.
