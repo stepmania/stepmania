@@ -222,6 +222,7 @@ void ScreenSystemLayer::HandleMessage( const CString &sMessage )
 		m_textMessage.SetHidden( false );
 		m_textMessage.SetText( SCREENMAN->GetCurrentSystemMessage() );
 		m_textMessage.PlayCommand( "On" );
+		m_textMessage.PlayCommand( "Off" );
 	}
 	else if( sMessage == "SystemMessageNoAnimate" )
 	{
@@ -229,6 +230,7 @@ void ScreenSystemLayer::HandleMessage( const CString &sMessage )
 		m_textMessage.SetText( SCREENMAN->GetCurrentSystemMessage() );
 		m_textMessage.PlayCommand( "On" );
 		m_textMessage.FinishTweening();
+		m_textMessage.PlayCommand( "Off" );
 	}
 	Screen::HandleMessage( sMessage );
 }
