@@ -911,6 +911,10 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			if( score == TNS_MISS )
 				return;
 
+			// Put some small, random amount in fNoteOffset so that demonstration 
+			// show a mix of late and early instead of always late.
+			fNoteOffset = randomf( -0.1f, 0.1f );
+
 			break;
 
 		default:
