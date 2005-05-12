@@ -3,7 +3,7 @@
 
 !define PRODUCT_NAME "StepMania"
 !define PRODUCT_VER "3.9 random build"
-; !define PRODUCT_VER "3.9 rc2a"
+; !define PRODUCT_VER "3.9 rc3"
 !define PRODUCT_NAME_VER "${PRODUCT_NAME} ${PRODUCT_VER}"
 
 ; String used for the install directory and registry locations
