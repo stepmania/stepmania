@@ -60,8 +60,8 @@ void Judgment::SetJudgment( TapNoteScore score, bool bEarly )
 
 	m_sprJudgment.SetHidden( false );
 
-	int iStateMult = (m_sprJudgment.GetNumStates()==12) ? 2 : 0;
-	int iStateAdd = bEarly ? 0 : 1;
+	int iStateMult = (m_sprJudgment.GetNumStates()==12) ? 2 : 1;
+	int iStateAdd = ( bEarly || ( iStateMult == 1 ) ) ? 0 : 1;
 
 	switch( score )
 	{
