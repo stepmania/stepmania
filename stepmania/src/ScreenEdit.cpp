@@ -159,6 +159,7 @@ void ScreenEdit::InitEditMappings()
 	g_EditMappings.hold[EDIT_BUTTON_RECORD][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
 
 	g_EditMappings.button[EDIT_BUTTON_INSERT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_INSERT);
+	g_EditMappings.button[EDIT_BUTTON_INSERT][1] = DeviceInput(DEVICE_KEYBOARD, KEY_BACKSLASH);
 	g_EditMappings.button[EDIT_BUTTON_DELETE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_DEL);
 
 	g_EditMappings.button[EDIT_BUTTON_INSERT_SHIFT_PAUSES][0] = DeviceInput(DEVICE_KEYBOARD, KEY_INSERT);
