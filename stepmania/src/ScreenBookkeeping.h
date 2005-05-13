@@ -34,8 +34,9 @@ private:
 	void ChangeView( View newView );
 
 	View m_View;
+	BitmapText	m_textAllTime;
 	BitmapText	m_textTitle;
-	BitmapText	m_textCols[NUM_BOOKKEEPING_COLS];
+	BitmapText	m_textData[NUM_BOOKKEEPING_COLS];
 };
 
 #endif

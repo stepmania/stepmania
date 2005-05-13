@@ -25,6 +25,11 @@ void ScreenBookkeeping::Init()
 {
 	ScreenWithMenuElements::Init();
 
+	m_textAllTime.LoadFromFont( THEME->GetPathF(m_sName,"AllTime") );
+	m_textAllTime.SetName( "AllTime" );
+	SET_XY_AND_ON_COMMAND( m_textAllTime );
+	this->AddChild( &m_textAllTime );
+
 	m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"title") );
 	m_textTitle.SetName( "Title" );
 	SET_XY_AND_ON_COMMAND( m_textTitle );
@@ -32,13 +37,12 @@ void ScreenBookkeeping::Init()
 
 	for( int i=0; i<NUM_BOOKKEEPING_COLS; i++ )
 	{
+		m_textData[i].LoadFromFont( THEME->GetPathF(m_sName,"data") );
+		m_textData[i].SetName( "Data" );
+		SET_XY_AND_ON_COMMAND( m_textData[i] );
 		float fX = SCALE( i, 0.f, NUM_BOOKKEEPING_COLS-1, SCREEN_LEFT+50, SCREEN_RIGHT-160 );
-		float fY = SCREEN_CENTER_Y+16;
-		m_textCols[i].LoadFromFont( THEME->GetPathF(m_sName,"data") );
-		m_textCols[i].SetName( ssprintf("Data%d",i+1) );
-		m_textCols[i].SetXY( fX, fY );
-		m_textCols[i].SetZoom( 0.6f );
-		this->AddChild( &m_textCols[i] );
+		m_textData[i].SetX( fX );
+		this->AddChild( &m_textData[i] );
 	}
 
 	ChangeView( (View)0 );
@@ -118,6 +122,14 @@ void ScreenBookkeeping::ChangeView( View newView )
 {
 	m_View = newView;
 
+
+	{
+		CString s;
+		s += "All-time Total: ";
+		s += ssprintf( "%i\n", BOOKKEEPER->GetCoinsTotal() );
+		m_textAllTime.SetText( s );
+	}
+
 	switch( m_View )
 	{
 	case VIEW_LAST_DAYS:
@@ -129,17 +141,6 @@ void ScreenBookkeeping::ChangeView( View newView )
 			int iTotalLast = 0;
 			
 			CString sTitle, sData;
-
-			sTitle += "All-time Total\n";
-			sData += ssprintf( "%i\n", BOOKKEEPER->GetCoinsTotal() );
-
-			sTitle += "Daily Average\n";
-			float fAverage = iTotalLast/(float)NUM_LAST_DAYS;
-			sData += ssprintf("%.1f\n",fAverage);
-
-			sTitle += "\n";
-			sData += "\n";
-
 			for( int i=0; i<NUM_LAST_DAYS; i++ )
 			{
 				sTitle += LastDayToString(i) + "\n";
@@ -150,12 +151,12 @@ void ScreenBookkeeping::ChangeView( View newView )
 			sTitle += "Total\n";
 			sData += ssprintf("%i\n", iTotalLast);
 			
-			m_textCols[0].SetText( "" );
-			m_textCols[1].SetHorizAlign( Actor::align_left );
-			m_textCols[1].SetText( sTitle );
-			m_textCols[2].SetText( "" );
-			m_textCols[3].SetHorizAlign( Actor::align_right );
-			m_textCols[3].SetText( sData );
+			m_textData[0].SetText( "" );
+			m_textData[1].SetHorizAlign( Actor::align_left );
+			m_textData[1].SetText( sTitle );
+			m_textData[2].SetText( "" );
+			m_textData[3].SetHorizAlign( Actor::align_right );
+			m_textData[3].SetText( sData );
 		}
 		break;
 	case VIEW_LAST_WEEKS:
@@ -175,8 +176,8 @@ void ScreenBookkeeping::ChangeView( View newView )
 					sTemp += LastWeekToString(week) + ssprintf(": %d",coins[week]) + "\n";
 				}
 
-				m_textCols[col].SetHorizAlign( Actor::align_left );
-				m_textCols[col].SetText( sTemp );
+				m_textData[col].SetHorizAlign( Actor::align_left );
+				m_textData[col].SetText( sTemp );
 			}
 		}
 		break;
@@ -194,12 +195,12 @@ void ScreenBookkeeping::ChangeView( View newView )
 				sData += ssprintf("%d",coins[i]) + "\n";
 			}
 			
-			m_textCols[0].SetText( "" );
-			m_textCols[1].SetHorizAlign( Actor::align_left );
-			m_textCols[1].SetText( sTitle );
-			m_textCols[2].SetText( "" );
-			m_textCols[3].SetHorizAlign( Actor::align_right );
-			m_textCols[3].SetText( sData );
+			m_textData[0].SetText( "" );
+			m_textData[1].SetHorizAlign( Actor::align_left );
+			m_textData[1].SetText( sTitle );
+			m_textData[2].SetText( "" );
+			m_textData[3].SetHorizAlign( Actor::align_right );
+			m_textData[3].SetText( sData );
 		}
 		break;
 	case VIEW_HOUR_OF_DAY:
@@ -223,14 +224,14 @@ void ScreenBookkeeping::ChangeView( View newView )
 				sData2 += ssprintf("%d",coins[i]) + "\n";
 			}
 			
-			m_textCols[0].SetHorizAlign( Actor::align_left );
-			m_textCols[0].SetText( sTitle1 );
-			m_textCols[1].SetHorizAlign( Actor::align_right );
-			m_textCols[1].SetText( sData1 );
-			m_textCols[2].SetHorizAlign( Actor::align_left );
-			m_textCols[2].SetText( sTitle2 );
-			m_textCols[3].SetHorizAlign( Actor::align_right );
-			m_textCols[3].SetText( sData2 );
+			m_textData[0].SetHorizAlign( Actor::align_left );
+			m_textData[0].SetText( sTitle1 );
+			m_textData[1].SetHorizAlign( Actor::align_right );
+			m_textData[1].SetText( sData1 );
+			m_textData[2].SetHorizAlign( Actor::align_left );
+			m_textData[2].SetText( sTitle2 );
+			m_textData[3].SetHorizAlign( Actor::align_right );
+			m_textData[3].SetText( sData2 );
 		}
 		break;
 	default:
