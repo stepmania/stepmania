@@ -47,9 +47,9 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 ThemeMetric<bool> USE_NAME_BLACKLIST("GameState","UseNameBlacklist");
 
 GameState::GameState() :
+    m_pCurStyle(			MESSAGE_CURRENT_STYLE_CHANGED ),
     m_PreferredCourseDifficulty( MESSAGE_EDIT_PREFERRED_COURSE_DIFFICULTY_P1_CHANGED ),
     m_PreferredDifficulty(	MESSAGE_EDIT_PREFERRED_DIFFICULTY_P1_CHANGED ),
-    m_pCurStyle(			MESSAGE_CURRENT_STYLE_CHANGED ),
     m_pCurSong(				MESSAGE_CURRENT_SONG_CHANGED ),
 	m_pCurSteps(			MESSAGE_CURRENT_STEPS_P1_CHANGED ),
 	m_stEdit(				MESSAGE_EDIT_STEPS_TYPE_CHANGED ),
