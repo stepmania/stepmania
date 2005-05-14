@@ -8,48 +8,48 @@
 
 RageInput*		INPUTMAN	= NULL;		// globally accessable input device
 
-RageInput::RageInput( CString drivers )
+RageInput::RageInput( CString sDriverList )
 {
 	LOG->Trace( "RageInput::RageInput()" );
 
 	/* Init optional devices. */
-	MakeInputHandlers(drivers,Devices);
+	MakeInputHandlers( sDriverList, m_pDevices );
 
 	/* If no input devices are loaded, the user won't be able to input anything. */
-	if( Devices.size() == 0 )
+	if( m_pDevices.size() == 0 )
 		LOG->Warn( "No input devices were loaded." );
 }
 
 RageInput::~RageInput()
 {
 	/* Delete optional devices. */
-	for(unsigned i = 0; i < Devices.size(); ++i)
-		delete Devices[i];
+	for( unsigned i = 0; i < m_pDevices.size(); ++i )
+		delete m_pDevices[i];
 }
 
 void RageInput::Update( float fDeltaTime )
 {
 	/* Update optional devices. */
-	for(unsigned i = 0; i < Devices.size(); ++i)
-		Devices[i]->Update(fDeltaTime);
+	for( unsigned i = 0; i < m_pDevices.size(); ++i )
+		m_pDevices[i]->Update( fDeltaTime );
 }
 
-void RageInput::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
+void RageInput::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut )
 {
-	for(unsigned i = 0; i < Devices.size(); ++i)
-		Devices[i]->GetDevicesAndDescriptions( vDevicesOut, vDescriptionsOut );	
+	for( unsigned i = 0; i < m_pDevices.size(); ++i )
+		m_pDevices[i]->GetDevicesAndDescriptions( vDevicesOut, vDescriptionsOut );	
 }
 
 void RageInput::WindowReset()
 {
-	for(unsigned i = 0; i < Devices.size(); ++i)
-		Devices[i]->WindowReset();
+	for( unsigned i = 0; i < m_pDevices.size(); ++i )
+		m_pDevices[i]->WindowReset();
 }
 
 void RageInput::AddHandler( InputHandler *pHandler )
 {
 	ASSERT( pHandler != NULL );
-	Devices.push_back( pHandler );
+	m_pDevices.push_back( pHandler );
 }
 
 /*

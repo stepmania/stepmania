@@ -9,16 +9,16 @@ class InputHandler;
 class RageInput
 {
 public:
-	RageInput( CString drivers );
+	RageInput( CString sDriverList );
 	~RageInput();
 
 	void Update( float fDeltaTime );
-	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
+	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );
 	void WindowReset();
 	void AddHandler( InputHandler *pHandler );
 
 private:
-	vector<InputHandler *> Devices;
+	vector<InputHandler *> m_pDevices;
 };
 
 extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program
