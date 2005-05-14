@@ -175,7 +175,7 @@ bool child_read( int fd, void *p, int size )
 
 		if( ret == 0 )
 		{
-			fprintf( stderr, "Crash handler: EOF communicating with parent\n", strerror(errno) );
+			fprintf( stderr, "Crash handler: EOF communicating with parent.\n");
 			return false;
 		}
 
