@@ -33,22 +33,6 @@ static float g_fLastMixTimes[NUM_MIX_TIMES];
 static int g_iLastMixTimePos = 0;
 static int g_iNumIOProcCalls = 0;
 
-static CString FormatToString( int fmt )
-{
-	char c[4];
-	c[0] = (fmt >> 24) & 0xFF;
-	c[1] = (fmt >> 16) & 0xFF;
-	c[2] = (fmt >>  8) & 0xFF;
-	c[3] = (fmt)       & 0xFF;
-    
-	/* Sanitize: */
-	for( int i = 0; i < 4; ++i )
-		if( !isalpha(c[i]) )
-			return ssprintf( "%#X", fmt );
-    
-	return ssprintf( "%c%c%c%c", c[0], c[1], c[2], c[3] );
-}
-
 RageSound_CA::RageSound_CA()
 {
 	mOutputDevice = NULL;
