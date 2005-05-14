@@ -26,10 +26,10 @@ void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
 		if(!DriversToTry[i].CompareNoCase("DirectInput") )	Add.push_back(new InputHandler_DInput);
 #endif
 #ifdef USE_INPUT_HANDLER_LINUX_JOYSTICK
-		if(!DriversToTry[i].CompareNoCase("Linux_Joystick") )	Add.push_back(new InputHandler_Linux_Joystick);
+		if(!DriversToTry[i].CompareNoCase("Joystick") )		Add.push_back(new InputHandler_Linux_Joystick);
 #endif
 #ifdef USE_INPUT_HANDLER_LINUX_TTY
-		if(!DriversToTry[i].CompareNoCase("Linux_tty") )	Add.push_back(new InputHandler_Linux_tty);
+		if(!DriversToTry[i].CompareNoCase("tty") )		Add.push_back(new InputHandler_Linux_tty);
 #endif
 #ifdef USE_INPUT_HANDLER_MONKEY_KEYBOARD
 		if(!DriversToTry[i].CompareNoCase("MonkeyKeyboard") )	Add.push_back(new InputHandler_MonkeyKeyboard);

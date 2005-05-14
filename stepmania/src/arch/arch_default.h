@@ -14,11 +14,11 @@
 #elif defined(HAVE_DIRECTX)
  #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
 #elif defined(HAVE_X11) // Prefer X11 over SDL
- #define DEFAULT_INPUT_DRIVER_LIST "X11,Linux_joystick"
+ #define DEFAULT_INPUT_DRIVER_LIST "X11,Joystick"
 #elif defined(HAVE_SDL)
  #define DEFAULT_INPUT_DRIVER_LIST "SDL"
 #elif defined(LINUX)
- #define DEFAULT_INPUT_DRIVER_LIST "Linux_joystick,Linux_tty"
+ #define DEFAULT_INPUT_DRIVER_LIST "Joystick"
 #else
  #define DEFAULT_INPUT_DRIVER_LIST "Null"
 #endif
