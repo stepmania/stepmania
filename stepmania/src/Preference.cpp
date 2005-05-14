@@ -43,19 +43,19 @@ void IPreference::SetFromStack( lua_State *L )
 }
 
 #define READFROM_AND_WRITETO( type, cast ) \
-	void Preference<type>::FromString( const CString &s ) \
+	template<> void Preference<type>::FromString( const CString &s ) \
 	{ \
 		::FromString( s, (cast)m_currentValue ); \
 	} \
-	CString Preference<type>::ToString() const \
+	template<> CString Preference<type>::ToString() const \
 	{ \
 		return ::ToString( (cast)m_currentValue ); \
 	} \
-	void Preference<type>::PushValue( lua_State *L ) const \
+	template<> void Preference<type>::PushValue( lua_State *L ) const \
 	{ \
 		LuaHelpers::PushStack( (cast)m_currentValue, L ); \
 	} \
-	void Preference<type>::SetFromStack( lua_State *L ) \
+	template<> void Preference<type>::SetFromStack( lua_State *L ) \
 	{ \
 		LuaHelpers::PopStack( (cast)m_currentValue, L ); \
 	}
