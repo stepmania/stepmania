@@ -15,6 +15,7 @@ public:
 	void Update( float fDeltaTime );
 	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
 	void WindowReset();
+	void AddHandler( InputHandler *pHandler );
 
 private:
 	vector<InputHandler *> Devices;

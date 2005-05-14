@@ -46,6 +46,12 @@ void RageInput::WindowReset()
 		Devices[i]->WindowReset();
 }
 
+void RageInput::AddHandler( InputHandler *pHandler )
+{
+	ASSERT( pHandler != NULL );
+	Devices.push_back( pHandler );
+}
+
 /*
  * Copyright (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
