@@ -639,12 +639,14 @@ public:
 	static int IsPersistentProfile( T* p, lua_State *L )	{ lua_pushboolean(L, p->IsPersistentProfile((PlayerNumber)IArg(1)) ); return 1; }
 	static int GetProfile( T* p, lua_State *L )				{ PlayerNumber pn = (PlayerNumber)IArg(1); Profile* pP = p->GetProfile(pn); ASSERT(pP); pP->PushSelf(L); return 1; }
 	static int GetMachineProfile( T* p, lua_State *L )		{ p->GetMachineProfile()->PushSelf(L); return 1; }
+	static int SaveMachineProfile( T* p, lua_State *L )		{ p->SaveMachineProfile(); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( IsPersistentProfile )
 		ADD_METHOD( GetProfile )
 		ADD_METHOD( GetMachineProfile )
+		ADD_METHOD( SaveMachineProfile )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
