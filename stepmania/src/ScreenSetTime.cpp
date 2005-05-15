@@ -124,17 +124,6 @@ void ScreenSetTime::Input( const DeviceInput& DeviceI, const InputEventType type
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default handler
 }
 
-void ScreenSetTime::HandleScreenMessage( const ScreenMessage SM )
-{
-	switch( SM )
-	{
-	case SM_GoToNextScreen:
-	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
-		break;
-	}
-}
-
 void ScreenSetTime::ChangeValue( int iDirection )
 {
 	time_t iNow = time(NULL);
