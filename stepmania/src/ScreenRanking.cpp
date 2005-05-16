@@ -209,8 +209,8 @@ void ScreenRanking::Init()
 			this->AddChild( &m_textTime[l] );
 
 			// TODO: Think of a better way to handle this
-			if( PREFSMAN->m_sCoursesToShowRanking == "" )
-				PREFSMAN->m_sCoursesToShowRanking = COURSES_TO_SHOW2;
+			if( PREFSMAN->m_sCoursesToShowRanking.Get() == "" )
+				PREFSMAN->m_sCoursesToShowRanking.Set( COURSES_TO_SHOW2 );
 		}
 	}
 

@@ -30,7 +30,7 @@ static void SetDefaultModifiers( const PlayerOptions &po, const SongOptions &so 
 	if( so.GetString() != "" )
 		as.push_back( so.GetString() );
 
-	PREFSMAN->m_sDefaultModifiers = join(", ",as);
+	PREFSMAN->m_sDefaultModifiers.Set( join(", ",as) );
 }
 
 template<class T>
@@ -277,7 +277,7 @@ static void WheelSections( int &sel, bool ToSel, const ConfOption *pConfOption )
 	MoveMap( sel, PREFSMAN->m_MusicWheelUsesSections, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-MOVE( CourseSort,			(int &) PREFSMAN->m_iCourseSortOrder );
+MOVE( CourseSort,			(int &) PREFSMAN->m_CourseSortOrder );
 MOVE( RandomAtEnd,			PREFSMAN->m_bMoveRandomToEnd );
 MOVE( Translations,			PREFSMAN->m_bShowNativeLanguage );
 MOVE( Lyrics,				PREFSMAN->m_bShowLyrics );
@@ -369,7 +369,7 @@ static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pCo
 }
 
 /* Machine options */
-MOVE( ScoringType,			(int &) PREFSMAN->m_iScoringType );
+MOVE( ScoringType,			(int &) PREFSMAN->m_ScoringType );
 
 static void JudgeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
@@ -392,7 +392,7 @@ static void ShowSongOptions( int &sel, bool ToSel, const ConfOption *pConfOption
 static void ShowNameEntry( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const PrefsManager::GetRankingName mapping[] = { PrefsManager::RANKING_OFF, PrefsManager::RANKING_ON, PrefsManager::RANKING_LIST };
-	MoveMap( sel, PREFSMAN->m_iGetRankingName, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_GetRankingName, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -507,7 +507,7 @@ static void AspectRatio( int &sel, bool ToSel, const ConfOption *pConfOption )
 }
 
 /* Sound options */
-MOVE( ResamplingQuality,	PREFSMAN->m_iSoundResampleQuality );
+MOVE( ResamplingQuality,	(int&)PREFSMAN->m_SoundResampleQuality );
 MOVE( AttractSoundFrequency,PREFSMAN->m_iAttractSoundFrequency );
 
 static void SoundVolume( int &sel, bool ToSel, const ConfOption *pConfOption )

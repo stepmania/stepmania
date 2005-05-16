@@ -7,6 +7,7 @@
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"	// for NUM_GRADE_TIERS
 #include "Preference.h"
+#include "RageSoundReader_Resample.h"	// for ResampleQuality
 class IniFile;
 
 const int MAX_SONGS_PER_PLAY = 7;
@@ -206,12 +207,22 @@ public:
 	Preference<CString>	m_sLanguage;
 	Preference<CString>	m_sMemoryCardProfileSubdir;	// the directory on a memory card to look in for a profile
 	Preference<int>		m_iProductID;		// Saved in HighScore to track what software version a score came from.
-	CString				m_sDefaultLocalProfileID[NUM_PLAYERS];
+	Preference<CString>	m_sDefaultLocalProfileIDP1, m_sDefaultLocalProfileIDP2;
+	Preference<CString>& GetDefaultLocalProfileID( PlayerNumber pn )
+	{ switch(pn) { case PLAYER_1: return m_sDefaultLocalProfileIDP1; case PLAYER_2: return m_sDefaultLocalProfileIDP2;	default: ASSERT(0); } }
 	Preference<bool>	m_bMemoryCards;
-	CString				m_sMemoryCardOsMountPoint[NUM_PLAYERS];	// if set, always use the device that mounts to this point
-	int					m_iMemoryCardUsbBus[NUM_PLAYERS];	// look for this bus when assigning cards.  -1 = match any
-	int					m_iMemoryCardUsbPort[NUM_PLAYERS];	// look for this port when assigning cards.  -1 = match any
-	int					m_iMemoryCardUsbLevel[NUM_PLAYERS];	// look for this level when assigning cards.  -1 = match any
+	Preference<CString>	m_sMemoryCardOsMountPointP1, m_sMemoryCardOsMountPointP2;	// if set, always use the device that mounts to this point
+	Preference<CString>& GetMemoryCardOsMountPoint( PlayerNumber pn )
+	{ switch(pn) { case PLAYER_1: return m_sMemoryCardOsMountPointP1; case PLAYER_2: return m_sMemoryCardOsMountPointP2;	default: ASSERT(0); } }
+	Preference<int>		m_iMemoryCardUsbBusP1, m_iMemoryCardUsbBusP2;	// look for this bus when assigning cards.  -1 = match any
+	Preference<int>& GetMemoryCardUsbBus( PlayerNumber pn )
+	{ switch(pn) { case PLAYER_1: return m_iMemoryCardUsbBusP1; case PLAYER_2: return m_iMemoryCardUsbBusP2;	default: ASSERT(0); } }
+	Preference<int>		m_iMemoryCardUsbPortP1, m_iMemoryCardUsbPortP2;	// look for this port when assigning cards.  -1 = match any
+	Preference<int>& GetMemoryCardUsbPort( PlayerNumber pn )
+	{ switch(pn) { case PLAYER_1: return m_iMemoryCardUsbPortP1; case PLAYER_2: return m_iMemoryCardUsbPortP2;	default: ASSERT(0); } }
+	Preference<int>		m_iMemoryCardUsbLevelP1, m_iMemoryCardUsbLevelP2;	// look for this level when assigning cards.  -1 = match any
+	Preference<int>& GetMemoryCardUsbLevel( PlayerNumber pn )
+	{ switch(pn) { case PLAYER_1: return m_iMemoryCardUsbLevelP1; case PLAYER_2: return m_iMemoryCardUsbLevelP2;	default: ASSERT(0); } }
 	Preference<int>		m_iCenterImageTranslateX;
 	Preference<int>		m_iCenterImageTranslateY;
 	Preference<int>		m_fCenterImageAddWidth;
@@ -229,89 +240,106 @@ public:
 
 	/* experimental: force a specific update rate.  This prevents big 
 	 * animation jumps on frame skips. */
-	float			m_fConstantUpdateDeltaSeconds;	// 0 to disable
+	Preference<float>	m_fConstantUpdateDeltaSeconds;	// 0 to disable
 
 	// Number of seconds it takes for a button on the controller to release
 	// after pressed.
-	float			m_fPadStickSeconds;
+	Preference<float>	m_fPadStickSeconds;
 
 	// Useful for non 4:3 displays and resolutions < 640x480 where texels don't
 	// map directly to pixels.
-	bool			m_bForceMipMaps;
-	bool			m_bTrilinearFiltering;		// has no effect without mipmaps on
-	bool			m_bAnisotropicFiltering;	// has no effect without mipmaps on.  Not mutually exclusive with trilinear.
+	Preference<bool>	m_bForceMipMaps;
+	Preference<bool>	m_bTrilinearFiltering;		// has no effect without mipmaps on
+	Preference<bool>	m_bAnisotropicFiltering;	// has no effect without mipmaps on.  Not mutually exclusive with trilinear.
 
 	// If true, then signatures created when writing profile data 
 	// and verified when reading profile data.  Leave this false if 
 	// you want to use a profile on different machines that don't 
 	// have the same key, or else the profile's data will be discarded.
-	bool			m_bSignProfileData;
+	Preference<bool>	m_bSignProfileData;
 	
 	/* Editor prefs: */
-	bool			m_bEditorShowBGChangesPlay;
+	Preference<bool>	m_bEditorShowBGChangesPlay;
 
 	// course ranking
-	enum CourseSortOrders { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK } m_iCourseSortOrder;
-	bool			m_bMoveRandomToEnd;
-	bool			m_bSubSortByNumSteps;	
-	enum GetRankingName { RANKING_OFF, RANKING_ON, RANKING_LIST } m_iGetRankingName;
+	enum CourseSortOrders { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK };
+	Preference<CourseSortOrders>	m_CourseSortOrder;
+	Preference<bool>	m_bMoveRandomToEnd;
+	Preference<bool>	m_bSubSortByNumSteps;	
+	enum GetRankingName { RANKING_OFF, RANKING_ON, RANKING_LIST };
+	Preference<GetRankingName>	m_GetRankingName;
 
 	// scoring type; SCORING_MAX2 should always be first
-	enum ScoringTypes { SCORING_MAX2, SCORING_5TH } m_iScoringType;
+	enum ScoringTypes { SCORING_MAX2, SCORING_5TH };
+	Preference<ScoringTypes>	m_ScoringType;
 
-	/* 0 = no; 1 = yes; -1 = auto (do whatever is appropriate for the arch). */
-	int				m_iBoostAppPriority;
+	enum BoostAppPriority { BOOST_NO, BOOST_YES, BOOST_AUTO };	/* auto = do whatever is appropriate for the arch. */
+	Preference<BoostAppPriority>	m_BoostAppPriority;
 
-	CString			m_sAdditionalSongFolders;
-	CString			m_sAdditionalFolders;
+	Preference<CString>	m_sAdditionalSongFolders;
+	Preference<CString>	m_sAdditionalFolders;
 
-	CString			m_sLastSeenVideoDriver;
-	CString			m_sLastSeenInputDevices;
+	Preference<CString>	m_sLastSeenVideoDriver;
+	Preference<CString>	m_sLastSeenInputDevices;
 #if defined(WIN32)
-	int				m_iLastSeenMemory;
+	Preference<int>		m_iLastSeenMemory;
 #endif
-	CString			m_sVideoRenderers;
-	bool			m_bSmoothLines;
-	CString			m_sSoundDrivers;
-	int				m_iSoundWriteAhead;
-	CString			m_iSoundDevice;
-	float			m_fSoundVolume;
-	int				m_iSoundResampleQuality;
-	CString			m_sInputDrivers;
-	CString			m_sMovieDrivers;
-	CString			m_sLightsDriver;
-	CString			m_sLightsStepsDifficulty;
-	bool			m_bBlinkGameplayButtonLightsOnNote;
-	bool			m_bAllowUnacceleratedRenderer;
-	bool			m_bThreadedInput;
-	bool			m_bThreadedMovieDecode;
-	bool			m_bScreenTestMode;
-	CString			m_sMachineName;
+	Preference<CString>	m_sVideoRenderers;		// StepMania.cpp sets these on first run based on the card
+	Preference<bool>	m_bSmoothLines;
+private:
+	Preference<CString>	m_sSoundDrivers;	// "" == default
+public:
+	Preference<float>	m_fSoundVolume;	// -1 == default
+	Preference<int>		m_iSoundWriteAhead;
+	Preference<CString>	m_iSoundDevice;	
+	Preference<RageSoundReader_Resample::ResampleQuality>	m_SoundResampleQuality;
+private:
+	Preference<CString>	m_sInputDrivers;	// "" == default
+	Preference<CString>	m_sMovieDrivers;	// "" == default
+	Preference<CString>	m_sLightsDriver;	// "" == default
+public:
+	Preference<CString>	m_sLightsStepsDifficulty;
+	Preference<bool>	m_bBlinkGameplayButtonLightsOnNote;
+	Preference<bool>	m_bAllowUnacceleratedRenderer;
+	Preference<bool>	m_bThreadedInput;
+	Preference<bool>	m_bThreadedMovieDecode;
+	Preference<bool>	m_bScreenTestMode;
+	Preference<CString>	m_sMachineName;
 
-	CString			m_sIgnoredMessageWindows;
+	Preference<CString>	m_sIgnoredMessageWindows;
 
-	CString			m_sCoursesToShowRanking;
+	Preference<CString>	m_sCoursesToShowRanking;
 
 	/* Debug: */
-	bool			m_bLogToDisk;
-	bool			m_bForceLogFlush;
-	bool			m_bShowLogOutput;
-	bool			m_bTimestamping;
-	bool			m_bLogSkips;
-	bool			m_bLogCheckpoints;
-	bool			m_bShowLoadingWindow;
+	Preference<bool>	m_bLogToDisk;
+	Preference<bool>	m_bForceLogFlush;
+	Preference<bool>	m_bShowLogOutput;
+	Preference<bool>	m_bTimestamping;
+	Preference<bool>	m_bLogSkips;
+	Preference<bool>	m_bLogCheckpoints;
+	Preference<bool>	m_bShowLoadingWindow;
 
 	/* Game-specific prefs: */
-	CString			m_sDefaultModifiers;
+	Preference<CString>	m_sDefaultModifiers;
 
 #if defined(XBOX)
 	// Virtual memory preferences
-	bool			m_bEnableVirtualMemory;
-	int				m_iPageFileSize; // page file size in megabytes
-	int				m_iPageSize; // page size in kilobytes
-	int				m_iPageThreshold; // threshold in kilobytes where virtual memory will be used
-	bool			m_bLogVirtualMemory; // (under debug) log the virtual memory allocation, etc.
+	Preference<bool>	m_bEnableVirtualMemory;
+	Preference<int>		m_iPageFileSize; // page file size in megabytes
+	Preference<int>		m_iPageSize; // page size in kilobytes
+	Preference<int>		m_iPageThreshold; // threshold in kilobytes where virtual memory will be used
+	Preference<bool>	m_bLogVirtualMemory; // (under debug) log the virtual memory allocation, etc.
 #endif
+
+
+	// wrappers
+	CString GetVideoRenderers();
+	CString GetSoundDrivers();
+	float GetSoundVolume();
+	CString GetInputDrivers();
+	CString GetMovieDrivers();
+	CString GetLightsDriver();
+
 
 	void ReadGlobalPrefsFromIni( const IniFile &ini );
 	void SaveGlobalPrefsToIni( IniFile &ini ) const;

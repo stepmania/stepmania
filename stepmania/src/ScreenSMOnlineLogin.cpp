@@ -70,7 +70,7 @@ void ScreenSMOnlineLogin::ImportOptions( int row, const vector<PlayerNumber> &vp
 
 			FOREACH_PlayerNumber( pn )
 			{
-				iter = find(vsProfiles.begin(), vsProfiles.end(), PREFSMAN->m_sDefaultLocalProfileID[pn] );
+				iter = find(vsProfiles.begin(), vsProfiles.end(), PREFSMAN->GetDefaultLocalProfileID(pn).Get() );
 				if( iter != vsProfiles.end() )
 					m_Rows[0]->SetOneSelection((PlayerNumber) pn, iter - vsProfiles.begin());
 			}
@@ -89,9 +89,7 @@ void ScreenSMOnlineLogin::ExportOptions( int row, const vector<PlayerNumber> &vp
 			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
 			FOREACH_EnabledPlayer( pn )
-			{
-				PREFSMAN->m_sDefaultLocalProfileID[pn] = vsProfiles[m_Rows[0]->GetOneSelection((PlayerNumber) pn)];
-			}
+				PREFSMAN->GetDefaultLocalProfileID(pn).Set( vsProfiles[m_Rows[0]->GetOneSelection(pn)] );
 		}
 		break;
 	}

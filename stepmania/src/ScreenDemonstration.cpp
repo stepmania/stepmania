@@ -66,14 +66,14 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_LoseFocus )
 	{
-		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
+		SOUNDMAN->SetPrefs( PREFSMAN->GetSoundVolume() );	// turn volume back on
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
 		if( m_pSoundMusic )
 			m_pSoundMusic->Stop();
 		GAMESTATE->Reset();
-		SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );	// turn volume back on
+		SOUNDMAN->SetPrefs( PREFSMAN->GetSoundVolume() );	// turn volume back on
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		return;
 	}

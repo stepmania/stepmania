@@ -206,7 +206,7 @@ void RageSound::LoadSoundReader( SoundReader *pSound )
 	const int NeededRate = SOUNDMAN->GetDriverSampleRate( pSound->GetSampleRate() );
 	if( NeededRate != pSound->GetSampleRate() )
 	{
-		RageSoundReader_Resample *Resample = RageSoundReader_Resample::MakeResampler( (RageSoundReader_Resample::ResampleQuality) PREFSMAN->m_iSoundResampleQuality );
+		RageSoundReader_Resample *Resample = RageSoundReader_Resample::MakeResampler( PREFSMAN->m_SoundResampleQuality );
 		Resample->Open( pSound );
 		Resample->SetSampleRate( NeededRate );
 		pSound = Resample;

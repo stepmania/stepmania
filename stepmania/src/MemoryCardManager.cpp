@@ -376,21 +376,21 @@ void MemoryCardManager::Update( float fDelta )
 		FOREACH( UsbStorageDevice, vUnassignedDevices, d )
 		{
 			// search for card dir match
-			if( !PREFSMAN->m_sMemoryCardOsMountPoint[p].empty() &&
-				d->sOsMountDir.CompareNoCase(PREFSMAN->m_sMemoryCardOsMountPoint[p]) )
+			if( !PREFSMAN->GetMemoryCardOsMountPoint(p).Get().empty() &&
+				d->sOsMountDir.CompareNoCase(PREFSMAN->GetMemoryCardOsMountPoint(p).Get()) )
 				continue;      // not a match
 			
 			// search for USB bus match
-			if( PREFSMAN->m_iMemoryCardUsbBus[p] != -1 &&
-				PREFSMAN->m_iMemoryCardUsbBus[p] != d->iBus )
+			if( PREFSMAN->GetMemoryCardUsbBus(p) != -1 &&
+				PREFSMAN->GetMemoryCardUsbBus(p) != d->iBus )
 				continue;       // not a match
 			
-			if( PREFSMAN->m_iMemoryCardUsbPort[p] != -1 &&
-				PREFSMAN->m_iMemoryCardUsbPort[p] != d->iPort )
+			if( PREFSMAN->GetMemoryCardUsbPort(p) != -1 &&
+				PREFSMAN->GetMemoryCardUsbPort(p) != d->iPort )
 				continue;       // not a match
 			
-			if( PREFSMAN->m_iMemoryCardUsbLevel[p] != -1 &&
-				PREFSMAN->m_iMemoryCardUsbLevel[p] != d->iLevel )
+			if( PREFSMAN->GetMemoryCardUsbLevel(p) != -1 &&
+				PREFSMAN->GetMemoryCardUsbLevel(p) != d->iLevel )
 				continue;       // not a match
 			
 			LOG->Trace( "Player %i: device match:  sDevice: %s, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",

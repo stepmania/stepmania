@@ -351,6 +351,10 @@ public:
 		 * compare level or ts. */
 		return device == other.device  &&  button == other.button;
 	};
+	bool operator!=( const DeviceInput &other ) const
+	{
+		return ! operator==( other );
+	}
 	
 	CString toString();
 	bool fromString( const CString &s );

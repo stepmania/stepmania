@@ -243,7 +243,7 @@ void ScreenEvaluation::Init()
 		else
 			grade[p] = GRADE_FAILED;
 
-		if( PREFSMAN->m_iScoringType == PrefsManager::SCORING_5TH )
+		if( PREFSMAN->m_ScoringType == PrefsManager::SCORING_5TH )
 		{
 			const int ScoreBonuses[] = { 10000000, 10000000, 1000000, 100000, 10000, 1000, 100 };
 			if( grade[p] < (int) ARRAYSIZE(ScoreBonuses) )

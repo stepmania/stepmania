@@ -1594,7 +1594,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromPrefs )
 	{
-		PREFSMAN->m_bEditorShowBGChangesPlay = !!ScreenMiniMenu::s_viLastAnswers[pref_show_bgs_play];
+		PREFSMAN->m_bEditorShowBGChangesPlay.Set( !!ScreenMiniMenu::s_viLastAnswers[pref_show_bgs_play] );
 		PREFSMAN->SaveGlobalPrefsToDisk();
 	}
 	else if( SM == SM_BackFromCourseModeMenu )

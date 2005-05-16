@@ -86,7 +86,7 @@ void ScoreKeeperMAX2::Load(
 	m_bIsLastSongInCourse = false;
 
 	memset( m_ComboBonusFactor, 0, sizeof(m_ComboBonusFactor) );
-	switch( PREFSMAN->m_iScoringType )
+	switch( PREFSMAN->m_ScoringType )
 	{
 	case PrefsManager::SCORING_MAX2:
 		m_iRoundTo = 1;
@@ -160,7 +160,7 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, c
 
 		// long ver and marathon ver songs have higher max possible scores
 		int iLengthMultiplier = SongManager::GetNumStagesForSong( GAMESTATE->m_pCurSong );
-		switch( PREFSMAN->m_iScoringType )
+		switch( PREFSMAN->m_ScoringType )
 		{
 		case PrefsManager::SCORING_MAX2:
 			m_iMaxPossiblePoints = iMeter * 10000000 * iLengthMultiplier;
@@ -356,7 +356,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 */
 	/* True if a jump is one to combo, false if combo is purely based on tap count. */
 	bool ComboIsPerRow = true;
-	switch( PREFSMAN->m_iScoringType )
+	switch( PREFSMAN->m_ScoringType )
 	{
 	case PrefsManager::SCORING_MAX2:
 		ComboIsPerRow = (GAMESTATE->m_PlayMode == PLAY_MODE_ONI);

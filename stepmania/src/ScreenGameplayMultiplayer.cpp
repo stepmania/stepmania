@@ -145,7 +145,7 @@ void ScreenGameplayMultiplayer::Init()
 
 	FOREACH_MultiPlayer( p )
 	{
-        switch( PREFSMAN->m_iScoringType )
+        switch( PREFSMAN->m_ScoringType )
 		{
 		case PrefsManager::SCORING_MAX2:
 		case PrefsManager::SCORING_5TH:

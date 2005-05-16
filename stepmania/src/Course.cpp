@@ -1143,7 +1143,7 @@ RageColor Course::GetColor() const
 	// FIXME: Calculate the meter.
 	int iMeter = 5;
 	
-	switch (PREFSMAN->m_iCourseSortOrder)
+	switch (PREFSMAN->m_CourseSortOrder)
 	{
 	case PrefsManager::COURSE_SORT_SONGS:	
 		if( m_entries.size() >= 7 )				return SORT_LEVEL2_COLOR;

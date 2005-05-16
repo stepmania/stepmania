@@ -72,6 +72,11 @@ READFROM_AND_WRITETO( CoinMode, int& )
 READFROM_AND_WRITETO( Premium, int& )
 READFROM_AND_WRITETO( PrefsManager::Maybe, int& )
 READFROM_AND_WRITETO( PrefsManager::CharacterOption, int& )
+READFROM_AND_WRITETO( PrefsManager::CourseSortOrders, int& )
+READFROM_AND_WRITETO( PrefsManager::GetRankingName, int& )
+READFROM_AND_WRITETO( PrefsManager::ScoringTypes, int& )
+READFROM_AND_WRITETO( PrefsManager::BoostAppPriority, int& )
+READFROM_AND_WRITETO( RageSoundReader_Resample::ResampleQuality, int& )
 
 void IPreference::ReadFrom( const IniFile &ini )
 {

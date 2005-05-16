@@ -62,15 +62,15 @@ void ScreenProfileOptions::Init()
 	g_ProfileOptionsLines[PO_RENAME_].choices.push_back( "-NONE-" );
 	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_RENAME_].choices );
 
-	if( PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_1].empty() )
+	if( PREFSMAN->GetMemoryCardOsMountPoint(PLAYER_1).Get().empty() )
 		g_ProfileOptionsLines[PO_OS_MOUNT_1].choices[0] = "-NOT SET IN INI-";
 	else
-		g_ProfileOptionsLines[PO_OS_MOUNT_1].choices[0] = PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_1];
+		g_ProfileOptionsLines[PO_OS_MOUNT_1].choices[0] = PREFSMAN->GetMemoryCardOsMountPoint(PLAYER_1).Get();
 
-	if( PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_2].empty() )
+	if( PREFSMAN->GetMemoryCardOsMountPoint(PLAYER_2).Get().empty() )
 		g_ProfileOptionsLines[PO_OS_MOUNT_2].choices[0] = "-NOT SET IN INI-";
 	else
-		g_ProfileOptionsLines[PO_OS_MOUNT_2].choices[0] = PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_2];
+		g_ProfileOptionsLines[PO_OS_MOUNT_2].choices[0] = PREFSMAN->GetMemoryCardOsMountPoint(PLAYER_2).Get();
 
 	//Enable all lines for all players
 	for ( unsigned int i = 0; i < NUM_PROFILE_OPTIONS_LINES; i++ )
@@ -98,7 +98,7 @@ void ScreenProfileOptions::ImportOptions( int row, const vector<PlayerNumber> &v
 			CStringArray::iterator iter = find( 
 				vsProfiles.begin(),
 				vsProfiles.end(),
-				PREFSMAN->m_sDefaultLocalProfileID[pn] );
+				PREFSMAN->GetDefaultLocalProfileID(pn).Get() );
 			if( iter != vsProfiles.end() )
 				m_Rows[row]->SetOneSharedSelection( iter - vsProfiles.begin() + 1 );
 		}
@@ -118,9 +118,9 @@ void ScreenProfileOptions::ExportOptions( int row, const vector<PlayerNumber> &v
 			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
 			if( m_Rows[row]->GetOneSharedSelection() > 0 )
-				PREFSMAN->m_sDefaultLocalProfileID[pn] = vsProfiles[m_Rows[row]->GetOneSharedSelection()-1];
+				PREFSMAN->GetDefaultLocalProfileID(pn).Set( vsProfiles[m_Rows[row]->GetOneSharedSelection()-1] );
 			else
-				PREFSMAN->m_sDefaultLocalProfileID[pn] = "";
+				PREFSMAN->GetDefaultLocalProfileID(pn).Set( "" );
 		}
 		break;
 	}

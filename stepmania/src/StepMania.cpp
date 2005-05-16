@@ -300,9 +300,9 @@ void ResetGame( bool ReturnToFirstScreen )
 	INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
 	CString sInputDevices = join( ",", vDescriptions );
 
-	if( PREFSMAN->m_sLastSeenInputDevices != sInputDevices )
+	if( PREFSMAN->m_sLastSeenInputDevices.Get() != sInputDevices )
 	{
-		LOG->Info( "Input devices changed from '%s' to '%s'.", PREFSMAN->m_sLastSeenInputDevices.c_str(), sInputDevices.c_str() );
+		LOG->Info( "Input devices changed from '%s' to '%s'.", PREFSMAN->m_sLastSeenInputDevices.Get().c_str(), sInputDevices.c_str() );
 
 		if( PREFSMAN->m_bAutoMapOnJoyChange )
 		{
@@ -311,7 +311,7 @@ void ResetGame( bool ReturnToFirstScreen )
 			INPUTMAPPER->SaveMappingsToDisk();
 		}
 
-		PREFSMAN->m_sLastSeenInputDevices = sInputDevices;
+		PREFSMAN->m_sLastSeenInputDevices.Set( sInputDevices );
 	}
 
 
@@ -332,12 +332,12 @@ static void GameLoop();
 
 static bool ChangeAppPri()
 {
-	if( PREFSMAN->m_iBoostAppPriority == 0 )
+	if( PREFSMAN->m_BoostAppPriority.Get() == PrefsManager::BOOST_NO )
 		return false;
 
 	// if using NTPAD don't boost or else input is laggy
 #if defined(_WINDOWS)
-	if( PREFSMAN->m_iBoostAppPriority == -1 )
+	if( PREFSMAN->m_BoostAppPriority == PrefsManager::BOOST_AUTO )
 	{
 		vector<InputDevice> vDevices;
 		vector<CString> vDescriptions;
@@ -353,7 +353,7 @@ static bool ChangeAppPri()
 
 	/* If -1 and this is a debug build, don't.  It makes the debugger sluggish. */
 #ifdef DEBUG
-	if( PREFSMAN->m_iBoostAppPriority == -1 )
+	if( PREFSMAN->m_BoostAppPriority == PrefsManager::BOOST_AUTO )
 		return false;
 #endif
 
@@ -373,7 +373,7 @@ static void CheckSettings()
 		return;
 	
 	LOG->Trace( "Memory changed from %i to %i; settings changed", PREFSMAN->m_iLastSeenMemory, Memory );
-	PREFSMAN->m_iLastSeenMemory = Memory;
+	PREFSMAN->m_iLastSeenMemory.Set( Memory );
 
 	/* Let's consider 128-meg systems low-memory, and 256-meg systems high-memory.
 	 * Cut off at 192.  This is somewhat conservative; many 128-meg systems can
@@ -617,7 +617,7 @@ static void CheckVideoDefaultSettings()
 	// Video card changed since last run
 	CString sVideoDriver = GetVideoDriverName();
 	
-	LOG->Trace( "Last seen video driver: " + PREFSMAN->m_sLastSeenVideoDriver );
+	LOG->Trace( "Last seen video driver: " + PREFSMAN->m_sLastSeenVideoDriver.Get() );
 
 	const VideoCardDefaults* pDefaults = NULL;
 	
@@ -639,39 +639,39 @@ static void CheckVideoDefaultSettings()
 	CString sVideoRenderers = pDefaults->szVideoRenderers;
 
 	bool SetDefaultVideoParams=false;
-	if( PREFSMAN->m_sVideoRenderers == "" )
+	if( PREFSMAN->m_sVideoRenderers.Get() == "" )
 	{
 		SetDefaultVideoParams = true;
 		LOG->Trace( "Applying defaults for %s.", sVideoDriver.c_str() );
 	}
-	else if( PREFSMAN->m_sLastSeenVideoDriver != sVideoDriver ) 
+	else if( PREFSMAN->m_sLastSeenVideoDriver.Get() != sVideoDriver ) 
 	{
 		SetDefaultVideoParams = true;
-		LOG->Trace( "Video card has changed from %s to %s.  Applying new defaults.", PREFSMAN->m_sLastSeenVideoDriver.c_str(), sVideoDriver.c_str() );
+		LOG->Trace( "Video card has changed from %s to %s.  Applying new defaults.", PREFSMAN->m_sLastSeenVideoDriver.Get().c_str(), sVideoDriver.c_str() );
 	}
 		
 	if( SetDefaultVideoParams )
 	{
-		PREFSMAN->m_sVideoRenderers = pDefaults->szVideoRenderers;
+		PREFSMAN->m_sVideoRenderers.Set( pDefaults->szVideoRenderers );
 		PREFSMAN->m_iDisplayWidth.Set( pDefaults->iWidth );
 		PREFSMAN->m_iDisplayHeight.Set( pDefaults->iHeight );
 		PREFSMAN->m_iDisplayColorDepth.Set( pDefaults->iDisplayColor );
 		PREFSMAN->m_iTextureColorDepth.Set( pDefaults->iTextureColor );
 		PREFSMAN->m_iMovieColorDepth.Set( pDefaults->iMovieColor );
 		PREFSMAN->m_iMaxTextureResolution.Set( pDefaults->iTextureSize );
-		PREFSMAN->m_bSmoothLines = pDefaults->bSmoothLines;
+		PREFSMAN->m_bSmoothLines.Set( pDefaults->bSmoothLines );
 
 		// Update last seen video card
-		PREFSMAN->m_sLastSeenVideoDriver = GetVideoDriverName();
+		PREFSMAN->m_sLastSeenVideoDriver.Set( GetVideoDriverName() );
 	}
-	else if( PREFSMAN->m_sVideoRenderers.CompareNoCase(sVideoRenderers) )
+	else if( PREFSMAN->m_sVideoRenderers.Get().CompareNoCase(sVideoRenderers) )
 	{
 		LOG->Warn("Video renderer list has been changed from '%s' to '%s'",
-				sVideoRenderers.c_str(), PREFSMAN->m_sVideoRenderers.c_str() );
+				sVideoRenderers.c_str(), PREFSMAN->m_sVideoRenderers.Get().c_str() );
 		return;
 	}
 
-	LOG->Info( "Video renderers: '%s'", PREFSMAN->m_sVideoRenderers.c_str() );
+	LOG->Info( "Video renderers: '%s'", PREFSMAN->m_sVideoRenderers.Get().c_str() );
 }
 
 RageDisplay *CreateDisplay()
@@ -801,12 +801,16 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 		RageException::Throw( "Default note skin for \"%s\" missing", GAMESTATE->m_pCurGame->m_szName );
 
 	CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
-	CString sAnnouncer = sGameName, sTheme = sGameName, sNoteSkin = sGameName;
+	CString sAnnouncer = sGameName;
+	CString sTheme = sGameName;
+	CString sNoteSkin = sGameName;
+	CString sDefaultModifiers;
 
 	// if these calls fail, the three strings will keep the initial values set above.
 	ini.GetValue( sGameName, "Announcer",			sAnnouncer );
 	ini.GetValue( sGameName, "Theme",				sTheme );
-	ini.GetValue( sGameName, "DefaultModifiers",	PREFSMAN->m_sDefaultModifiers );
+	ini.GetValue( sGameName, "DefaultModifiers",	sDefaultModifiers );
+	PREFSMAN->m_sDefaultModifiers.Set( sDefaultModifiers );
 
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
@@ -1028,14 +1032,14 @@ int main(int argc, char* argv[])
 	WriteLogHeader();
 
 	/* Set up alternative filesystem trees. */
-	if( PREFSMAN->m_sAdditionalFolders != "" )
+	if( PREFSMAN->m_sAdditionalFolders.Get() != "" )
 	{
 		CStringArray dirs;
 		split( PREFSMAN->m_sAdditionalFolders, ",", dirs, true );
 		for( unsigned i=0; i < dirs.size(); i++)
 			FILEMAN->Mount( "dir", dirs[i], "" );
 	}
-	if( PREFSMAN->m_sAdditionalSongFolders != "" )
+	if( PREFSMAN->m_sAdditionalSongFolders.Get() != "" )
 	{
 		CStringArray dirs;
 		split( PREFSMAN->m_sAdditionalSongFolders, ",", dirs, true );
@@ -1106,11 +1110,11 @@ int main(int argc, char* argv[])
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead );
 	SOUNDMAN	= new RageSoundManager;
-	SOUNDMAN->Init( PREFSMAN->m_sSoundDrivers );
-	SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );
+	SOUNDMAN->Init( PREFSMAN->GetSoundDrivers() );
+	SOUNDMAN->SetPrefs( PREFSMAN->GetSoundVolume() );
 	SOUND		= new GameSoundManager;
 	BOOKKEEPER	= new Bookkeeper;
-	LIGHTSMAN	= new LightsManager(PREFSMAN->m_sLightsDriver);
+	LIGHTSMAN	= new LightsManager( PREFSMAN->GetLightsDriver() );
 	INPUTFILTER	= new InputFilter;
 	INPUTMAPPER	= new InputMapper;
 	INPUTQUEUE	= new InputQueue;
@@ -1144,7 +1148,7 @@ int main(int argc, char* argv[])
 
 	/* This initializes objects that change the SDL event mask, and has other
 	 * dependencies on the SDL video subsystem, so it must be initialized after DISPLAY. */
-	INPUTMAN	= new RageInput( PREFSMAN->m_sInputDrivers );
+	INPUTMAN	= new RageInput( PREFSMAN->GetInputDrivers() );
 
 	// These things depend on the TextureManager, so do them after!
 	FONT		= new FontManager;
@@ -1407,7 +1411,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	{
 		static bool bMute = false;
 		bMute = !bMute;
-		SOUNDMAN->SetPrefs( bMute ? 0 : PREFSMAN->m_fSoundVolume );
+		SOUNDMAN->SetPrefs( bMute ? 0 : PREFSMAN->GetSoundVolume() );
 		SCREENMAN->SystemMessage( bMute ? "Mute on" : "Mute off" );
 		return true;
 	}

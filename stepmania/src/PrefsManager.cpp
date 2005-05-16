@@ -21,7 +21,6 @@ PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our pro
 const float DEFAULT_SOUND_VOLUME = 1.00f;
 const CString DEFAULT_LIGHTS_DRIVER = "Null";
 
-
 //
 // For self-registering prefs
 //
@@ -226,10 +225,18 @@ PrefsManager::PrefsManager() :
 	m_bDisableScreenSaver			( Options, "DisableScreenSaver",		true ),
 	m_sLanguage						( Options, "Language",					"" ),	// ThemeManager will deal with this invalid language
 	m_sMemoryCardProfileSubdir		( Options, "MemoryCardProfileSubdir",	PRODUCT_NAME ),
-	m_iProductID					( Options, "ProductID",					1 ),
-	
-	m_bMemoryCards					( Options, "MemoryCards",		false ),
-	
+	m_iProductID					( Options, "ProductID",					1 ),	
+	m_sDefaultLocalProfileIDP1		( Options, "DefaultLocalProfileIDP1",	"" ),
+	m_sDefaultLocalProfileIDP2		( Options, "DefaultLocalProfileIDP2",	"" ),
+	m_bMemoryCards					( Options, "MemoryCards",				false ),
+	m_sMemoryCardOsMountPointP1		( Options, "MemoryCardOsMountPointP1",	"" ),
+	m_sMemoryCardOsMountPointP2		( Options, "MemoryCardOsMountPointP2",	"" ),
+	m_iMemoryCardUsbBusP1			( Options, "MemoryCardUsbBusP1",	-1 ),
+	m_iMemoryCardUsbBusP2			( Options, "MemoryCardUsbBusP2",	-1 ),
+	m_iMemoryCardUsbPortP1			( Options, "MemoryCardUsbPortP1",	-1 ),
+	m_iMemoryCardUsbPortP2			( Options, "MemoryCardUsbPortP2",	-1 ),
+	m_iMemoryCardUsbLevelP1			( Options, "MemoryCardUsbLevelP1",	-1 ),
+	m_iMemoryCardUsbLevelP2			( Options, "MemoryCardUsbLevelP2",	-1 ),
 	m_iCenterImageTranslateX		( Options, "CenterImageTranslateX",	0 ),
 	m_iCenterImageTranslateY		( Options, "CenterImageTranslateY",	0 ),
 	m_fCenterImageAddWidth			( Options, "CenterImageAddWidth",	0 ),
@@ -243,7 +250,69 @@ PrefsManager::PrefsManager() :
 	m_iMaxRecentScoresForPlayer				( Options, "MaxRecentScoresForPlayer",				20 ),
 	m_bAllowMultipleHighScoreWithSameName	( Options, "AllowMultipleHighScoreWithSameName",	true ),
 	m_bCelShadeModels						( Options, "CelShadeModels",						false ),	// Work-In-Progress.. disable by default.
-	m_bPreferredSortUsesGroups				( Options, "PreferredSortUsesGroups",				true )	
+	m_bPreferredSortUsesGroups				( Options, "PreferredSortUsesGroups",				true ),
+
+	m_fConstantUpdateDeltaSeconds	( Options, "ConstantUpdateDeltaSeconds",0 ),
+	m_fPadStickSeconds				( Options, "PadStickSeconds",			0 ),
+	m_bForceMipMaps					( Options, "ForceMipMaps",				0 ),
+	m_bTrilinearFiltering			( Options, "TrilinearFiltering",		0 ),
+	m_bAnisotropicFiltering			( Options, "AnisotropicFiltering",		0 ),
+
+	m_bSignProfileData				( Options, "SignProfileData",			false ),
+	m_bEditorShowBGChangesPlay		( Options, "EditorShowBGChangesPlay",	false ),
+	m_CourseSortOrder				( Options, "CourseSortOrder",			COURSE_SORT_SONGS ),
+	m_bMoveRandomToEnd				( Options, "MoveRandomToEnd",			false ),
+	m_bSubSortByNumSteps			( Options, "SubSortByNumSteps",			false ),
+	m_GetRankingName				( Options, "GetRankingName",			RANKING_ON ),
+	m_ScoringType					( Options, "ScoringType",				SCORING_MAX2 ),
+	m_BoostAppPriority				( Options, "BoostAppPriority",			BOOST_AUTO ),
+	m_sAdditionalSongFolders		( Options, "AdditionalSongFolders",		"" ),
+	m_sAdditionalFolders			( Options, "AdditionalFolders",			"" ),
+	m_sLastSeenVideoDriver			( Options, "LastSeenVideoDriver",		"" ),
+	m_sLastSeenInputDevices			( Options, "LastSeenInputDevices",		"" ),
+#if defined(WIN32)
+	m_iLastSeenMemory				( Options, "LastSeenMemory",			0 ),
+#endif
+	m_sVideoRenderers				( Options, "VideoRenderers",			"" ),	// StepMania.cpp sets these on first run:
+	m_bSmoothLines					( Options, "SmoothLines",				false ),
+	m_sSoundDrivers					( Options, "SoundDrivers",				"" ),
+	m_iSoundWriteAhead				( Options, "SoundWriteAhead",			0 ),
+	m_iSoundDevice					( Options, "SoundDevice",				"" ),
+	m_fSoundVolume					( Options, "SoundVolume",				-1 ),	// default
+	m_SoundResampleQuality			( Options, "SoundResampleQuality",		RageSoundReader_Resample::RESAMP_NORMAL ),
+	m_sInputDrivers					( Options, "InputDrivers",				"" ),
+	m_sMovieDrivers					( Options, "MovieDrivers",				"" ),
+	m_sLightsDriver					( Options, "LightsDriver",				"" ),
+	m_sLightsStepsDifficulty		( Options, "LightsStepsDifficulty",		"medium" ),
+	m_bBlinkGameplayButtonLightsOnNote	( Options, "BlinkGameplayButtonLightsOnNote",false ),
+	m_bAllowUnacceleratedRenderer	( Options, "AllowUnacceleratedRenderer",false ),
+	m_bThreadedInput				( Options, "ThreadedInput",				true ),
+	m_bThreadedMovieDecode			( Options, "ThreadedMovieDecode",		true ),
+	m_bScreenTestMode				( Options, "ScreenTestMode",			false ),
+	m_sMachineName					( Options, "MachineName",				"" ),
+	m_sIgnoredMessageWindows		( Options, "IgnoredMessageWindows",		"" ),
+	m_sCoursesToShowRanking			( Options, "CoursesToShowRanking",		"" ),
+
+	/* Debug: */
+	m_bLogToDisk					( Options, "LogToDisk",					true ),
+	m_bForceLogFlush				( Options, "ForceLogFlush",				false ),
+	m_bShowLogOutput				( Options, "ShowLogOutput",				false ),
+	m_bTimestamping					( Options, "Timestamping",				false ),
+	m_bLogSkips						( Options, "LogSkips",					false ),
+	m_bLogCheckpoints				( Options, "LogCheckpoints",			false ),
+	m_bShowLoadingWindow			( Options, "ShowLoadingWindow",			true ),
+
+	/* Game-specific prefs: */
+	m_sDefaultModifiers				( Options, "DefaultModifiers",			"" )
+
+#if defined(XBOX)
+	,
+	m_bEnableVirtualMemory		( Options, "EnableVirtualMemory",			true ),
+	m_iPageFileSize				( Options, "PageFileSize",					384 ),
+	m_iPageSize					( Options, "PageSize",						16 ),
+	m_iPageThreshold			( Options, "PageThreshold",					8 ),
+	m_bLogVirtualMemory 		( Options, "LogVirtualMemory",				false )
+#endif
 {
 	Init();
 	ReadGlobalPrefsFromDisk();
@@ -251,88 +320,6 @@ PrefsManager::PrefsManager() :
 
 void PrefsManager::Init()
 {
-	m_fConstantUpdateDeltaSeconds = 0;	
-	
-	m_iBoostAppPriority = -1;
-	m_bSmoothLines = false;
-
-	// default to old sort order
-	m_iCourseSortOrder = COURSE_SORT_SONGS;
-	m_bMoveRandomToEnd = false;
-	m_bSubSortByNumSteps = false;
-	m_iScoringType = SCORING_MAX2;
-
-	m_iGetRankingName = RANKING_ON;
-
-
-	m_fPadStickSeconds = 0;
-	m_bForceMipMaps = false;
-	m_bTrilinearFiltering = false;
-	m_bAnisotropicFiltering = false;
-	g_bAutoRestart = false;
-	m_bSignProfileData = false;
-
-	m_bEditorShowBGChangesPlay = false;
-
-	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
-	/* Number of frames to write ahead; usually 44100 frames per second.
-	 * (Number of millisec would be more flexible, but it's more useful to
-	 * specify numbers directly.) This is purely a troubleshooting option
-	 * and is not honored by all sound drivers. */
-	m_iSoundWriteAhead = 0;
-	m_iSoundDevice = "";
-	m_fSoundVolume = DEFAULT_SOUND_VOLUME;
-	m_iSoundResampleQuality = RageSoundReader_Resample::RESAMP_NORMAL;
-
-	m_sInputDrivers = DEFAULT_INPUT_DRIVER_LIST;
-
-	m_sMovieDrivers = DEFAULT_MOVIE_DRIVER_LIST;
-
-	// StepMania.cpp sets these on first run:
-	m_sVideoRenderers = "";
-#if defined(WIN32)
-	m_iLastSeenMemory = 0;
-#endif
-
-	m_sLightsDriver = DEFAULT_LIGHTS_DRIVER;
-	m_sLightsStepsDifficulty = "medium";
-	m_bBlinkGameplayButtonLightsOnNote = false;
-	m_bAllowUnacceleratedRenderer = false;
-	m_bThreadedInput = true;
-	m_bThreadedMovieDecode = true;
-	m_bScreenTestMode = false;
-	m_sMachineName = "NoName";
-	m_sIgnoredMessageWindows = "";
-
-	m_sCoursesToShowRanking = "";
-
-	m_bLogToDisk = true;
-	m_bForceLogFlush = false;
-#ifdef DEBUG
-	m_bShowLogOutput = true;
-#else
-	m_bShowLogOutput = false;
-#endif
-	m_bTimestamping = false;
-	m_bLogSkips = false;
-	m_bLogCheckpoints = false;
-	m_bShowLoadingWindow = true;
-
-	FOREACH_PlayerNumber( p )
-	{
-		m_iMemoryCardUsbBus[p] = -1;
-		m_iMemoryCardUsbPort[p] = -1;
-		m_iMemoryCardUsbLevel[p] = -1;
-	}
-	
-#if defined(XBOX)
-	m_bEnableVirtualMemory = true;
-	m_iPageFileSize = 384;
-	m_iPageSize = 16;
-	m_iPageThreshold = 8;
-	m_bLogVirtualMemory = false;
-#endif
-
 	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
 		(*p)->LoadDefault();
 }
@@ -370,89 +357,13 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 
 void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 {
-	ini.GetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
-	
-	ini.GetValue( "Options", "SoundDrivers",					m_sSoundDrivers );
-	ini.GetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );
-	ini.GetValue( "Options", "SoundDevice",						m_iSoundDevice );
-	ini.GetValue( "Options", "InputDrivers",					m_sInputDrivers );
-	ini.GetValue( "Options", "MovieDrivers",					m_sMovieDrivers );
-	ini.GetValue( "Options", "SoundVolume",						m_fSoundVolume );
-	ini.GetValue( "Options", "LightsDriver",					m_sLightsDriver );
-	ini.GetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
-	
-	m_iCoinsPerCredit.Set( max(m_iCoinsPerCredit.Get(),1) );
-
-	ini.GetValue( "Options", "BoostAppPriority",				m_iBoostAppPriority );
-	ini.GetValue( "Options", "LightsStepsDifficulty",			m_sLightsStepsDifficulty );
-	ini.GetValue( "Options", "BlinkGameplayButtonLightsOnNote",	m_bBlinkGameplayButtonLightsOnNote );
-	ini.GetValue( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
-	ini.GetValue( "Options", "ThreadedInput",					m_bThreadedInput );
-	ini.GetValue( "Options", "ThreadedMovieDecode",				m_bThreadedMovieDecode );
-	ini.GetValue( "Options", "ScreenTestMode",					m_bScreenTestMode );
-	ini.GetValue( "Options", "MachineName",						m_sMachineName );
-	ini.GetValue( "Options", "IgnoredMessageWindows",			m_sIgnoredMessageWindows );
-
-	ini.GetValue( "Options", "CourseSortOrder",					(int&)m_iCourseSortOrder );
-	ini.GetValue( "Options", "MoveRandomToEnd",					m_bMoveRandomToEnd );
-	ini.GetValue( "Options", "SubSortByNumSteps",				m_bSubSortByNumSteps );
-
-	ini.GetValue( "Options", "ScoringType",						(int&)m_iScoringType );
-
-	ini.GetValue( "Options", "VideoRenderers",					m_sVideoRenderers );
-	ini.GetValue( "Options", "LastSeenVideoDriver",				m_sLastSeenVideoDriver );
-	ini.GetValue( "Options", "LastSeenInputDevices",			m_sLastSeenInputDevices );
-#if defined(WIN32)
-	ini.GetValue( "Options", "LastSeenMemory",					m_iLastSeenMemory );
-#endif
-	ini.GetValue( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
-	ini.GetValue( "Options", "GetRankingName",					(int&)m_iGetRankingName);
-	ini.GetValue( "Options", "SmoothLines",						m_bSmoothLines );
-
-	FOREACH_PlayerNumber( p )
-	{
-		ini.GetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );
-		ini.GetValue( "Options", ssprintf("MemoryCardOsMountPointP%d",p+1),	m_sMemoryCardOsMountPoint[p] );
-		FixSlashesInPlace( m_sMemoryCardOsMountPoint[p] );
-		ini.GetValue( "Options", ssprintf("MemoryCardUsbBusP%d",p+1),		m_iMemoryCardUsbBus[p] );
-		ini.GetValue( "Options", ssprintf("MemoryCardUsbPortP%d",p+1),		m_iMemoryCardUsbPort[p] );
-		ini.GetValue( "Options", ssprintf("MemoryCardUsbLevelP%d",p+1),		m_iMemoryCardUsbLevel[p] );
-	}
-
-	ini.GetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
-	ini.GetValue( "Options", "ForceMipMaps",					m_bForceMipMaps );
-	ini.GetValue( "Options", "TrilinearFiltering",				m_bTrilinearFiltering );
-	ini.GetValue( "Options", "AnisotropicFiltering",			m_bAnisotropicFiltering );
-	ini.GetValue( "Options", "AutoRestart",						g_bAutoRestart );
-	ini.GetValue( "Options", "SignProfileData",					m_bSignProfileData );
-
-	ini.GetValue( "Editor", "ShowBGChangesPlay",				m_bEditorShowBGChangesPlay );
-
-	ini.GetValue( "Options", "AdditionalSongFolders",			m_sAdditionalSongFolders );
-	ini.GetValue( "Options", "AdditionalFolders",				m_sAdditionalFolders );
-	FixSlashesInPlace(m_sAdditionalSongFolders);
-	FixSlashesInPlace(m_sAdditionalFolders);
-
-#if defined(XBOX)
-	ini.GetValue( "Options", "EnableVirtualMemory",				m_bEnableVirtualMemory );
-	ini.GetValue( "Options", "PageFileSize",					m_iPageFileSize );
-	ini.GetValue( "Options", "PageSize",						m_iPageSize );
-	ini.GetValue( "Options", "PageThreshold",					m_iPageThreshold );
-	ini.GetValue( "Debug", "LogVirtualMemory",					m_bLogVirtualMemory );
-#endif
-
-	ini.GetValue( "Debug", "LogToDisk",							m_bLogToDisk );
-	ini.GetValue( "Debug", "ForceLogFlush",						m_bForceLogFlush );
-	ini.GetValue( "Debug", "ShowLogOutput",						m_bShowLogOutput );
-	ini.GetValue( "Debug", "Timestamping",						m_bTimestamping );
-	ini.GetValue( "Debug", "LogSkips",							m_bLogSkips );
-	ini.GetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
-	ini.GetValue( "Debug", "ShowLoadingWindow",					m_bShowLoadingWindow );
-
 	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
 		(*p)->ReadFrom( ini );
 
+	// validate
 	m_iSongsPerPlay.Set( clamp(m_iSongsPerPlay.Get(),0,MAX_SONGS_PER_PLAY) );
+	FOREACH_PlayerNumber( pn )
+		GetMemoryCardOsMountPoint(pn).Set( FixSlashes(GetMemoryCardOsMountPoint(pn)) );
 }
 
 void PrefsManager::SaveGlobalPrefsToDisk() const
@@ -464,119 +375,16 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 
 void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 {
-	ini.SetValue( "Options", "ConstantUpdateDeltaSeconds",		m_fConstantUpdateDeltaSeconds );
-	ini.SetValue( "Options", "BackgroundMode",					m_BackgroundMode);
-	ini.SetValue( "Options", "NumBackgrounds",					m_iNumBackgrounds);
-	ini.SetValue( "Options", "BGBrightness",					m_fBGBrightness );
-
-	ini.SetValue( "Options", "JudgeWindowScale",				m_fJudgeWindowScale );
-	ini.SetValue( "Options", "JudgeWindowAdd",					m_fJudgeWindowAdd );
-	ini.SetValue( "Options", "JudgeWindowSecondsMarvelous",		m_fJudgeWindowSecondsMarvelous );
-	ini.SetValue( "Options", "JudgeWindowSecondsPerfect",		m_fJudgeWindowSecondsPerfect );
-	ini.SetValue( "Options", "JudgeWindowSecondsGreat",			m_fJudgeWindowSecondsGreat );
-	ini.SetValue( "Options", "JudgeWindowSecondsGood",			m_fJudgeWindowSecondsGood );
-	ini.SetValue( "Options", "JudgeWindowSecondsBoo",			m_fJudgeWindowSecondsBoo );
-	ini.SetValue( "Options", "JudgeWindowSecondsOK",			m_fJudgeWindowSecondsOK );
-	ini.SetValue( "Options", "JudgeWindowSecondsRoll",			m_fJudgeWindowSecondsRoll );
-	ini.SetValue( "Options", "JudgeWindowSecondsMine",			m_fJudgeWindowSecondsMine );
-	ini.SetValue( "Options", "JudgeWindowSecondsAttack",		m_fJudgeWindowSecondsAttack );
-	ini.SetValue( "Options", "LifeDifficultyScale",				m_fLifeDifficultyScale );
-
-	ini.SetValue( "Options", "HiddenSongs",						m_bHiddenSongs );
-	ini.SetValue( "Options", "Vsync",							m_bVsync );
-	ini.SetValue( "Options", "Interlaced",						m_bInterlaced );
-	ini.SetValue( "Options", "PAL",								m_bPAL );
-
-	ini.SetValue( "Options", "DelayedTextureDelete",			m_bDelayedTextureDelete );
-	ini.SetValue( "Options", "TexturePreload",					m_bTexturePreload );
-	ini.SetValue( "Options", "DelayedScreenLoad",				m_bDelayedScreenLoad );
-	ini.SetValue( "Options", "DelayedModelDelete",				m_bDelayedModelDelete );
-	ini.SetValue( "Options", "FastLoad",						m_bFastLoad );
-	ini.SetValue( "Options", "SoundResampleQuality",			m_iSoundResampleQuality );
-	ini.SetValue( "Options", "BoostAppPriority",				m_iBoostAppPriority );
-	ini.SetValue( "Options", "LightsStepsDifficulty",			m_sLightsStepsDifficulty );
-	ini.SetValue( "Options", "BlinkGameplayButtonLightsOnNote",	m_bBlinkGameplayButtonLightsOnNote );
-	ini.SetValue( "Options", "AllowUnacceleratedRenderer",		m_bAllowUnacceleratedRenderer );
-	ini.SetValue( "Options", "ThreadedInput",					m_bThreadedInput );
-	ini.SetValue( "Options", "ThreadedMovieDecode",				m_bThreadedMovieDecode );
-	ini.SetValue( "Options", "ScreenTestMode",					m_bScreenTestMode );
-	ini.SetValue( "Options", "MachineName",						m_sMachineName );
-	ini.SetValue( "Options", "IgnoredMessageWindows",			m_sIgnoredMessageWindows );
-	ini.SetValue( "Options", "VideoRenderers",					m_sVideoRenderers );
-	ini.SetValue( "Options", "LastSeenVideoDriver",				m_sLastSeenVideoDriver );
-	ini.SetValue( "Options", "LastSeenInputDevices",			m_sLastSeenInputDevices );
-#if defined(WIN32)
-	ini.SetValue( "Options", "LastSeenMemory",					m_iLastSeenMemory );
-#endif
-	ini.SetValue( "Options", "CoursesToShowRanking",			m_sCoursesToShowRanking );
-	ini.SetValue( "Options", "GetRankingName",					m_iGetRankingName);
-	ini.SetValue( "Options", "SmoothLines",						m_bSmoothLines );
-
-	ini.SetValue( "Options", "CourseSortOrder",					m_iCourseSortOrder );
-	ini.SetValue( "Options", "MoveRandomToEnd",					m_bMoveRandomToEnd );
-	ini.SetValue( "Options", "SubSortByNumSteps",				m_bSubSortByNumSteps );
-
-	ini.SetValue( "Options", "ScoringType",						m_iScoringType );
-
-	FOREACH_PlayerNumber( p )
-	{
-		ini.SetValue( "Options", ssprintf("DefaultLocalProfileIDP%d",p+1),	m_sDefaultLocalProfileID[p] );
-		ini.SetValue( "Options", ssprintf("MemoryCardOsMountPointP%d",p+1),				m_sMemoryCardOsMountPoint[p] );
-		ini.SetValue( "Options", ssprintf("MemoryCardUsbBusP%d",p+1),		m_iMemoryCardUsbBus[p] );
-		ini.SetValue( "Options", ssprintf("MemoryCardUsbPortP%d",p+1),		m_iMemoryCardUsbPort[p] );
-		ini.SetValue( "Options", ssprintf("MemoryCardUsbLevelP%d",p+1),		m_iMemoryCardUsbLevel[p] );
-	}
-
-	ini.SetValue( "Options", "PadStickSeconds",					m_fPadStickSeconds );
-	ini.SetValue( "Options", "ForceMipMaps",					m_bForceMipMaps );
-	ini.SetValue( "Options", "TrilinearFiltering",				m_bTrilinearFiltering );
-	ini.SetValue( "Options", "AnisotropicFiltering",			m_bAnisotropicFiltering );
-	ini.SetValue( "Options", "AutoRestart",						g_bAutoRestart );
-	ini.SetValue( "Options", "SignProfileData",					m_bSignProfileData );
-	
-	ini.SetValue( "Options", "SoundWriteAhead",					m_iSoundWriteAhead );
-	ini.SetValue( "Options", "SoundDevice",						m_iSoundDevice );
-
-	ini.SetValue( "Editor", "ShowBGChangesPlay",				m_bEditorShowBGChangesPlay );
-
-	/* Only write these if they aren't the default.  This ensures that we can change
-	 * the default and have it take effect for everyone (except people who
-	 * tweaked this value). */
-	if(m_sSoundDrivers != DEFAULT_SOUND_DRIVER_LIST)
-		ini.SetValue ( "Options", "SoundDrivers",				m_sSoundDrivers );
-	if(m_fSoundVolume != DEFAULT_SOUND_VOLUME)
-		ini.SetValue( "Options", "SoundVolume",					m_fSoundVolume );
-	if(m_sInputDrivers != DEFAULT_INPUT_DRIVER_LIST)
-		ini.SetValue ( "Options", "InputDrivers",				m_sInputDrivers );
-	if(m_sMovieDrivers != DEFAULT_MOVIE_DRIVER_LIST)
-		ini.SetValue ( "Options", "MovieDrivers",				m_sMovieDrivers );
-	if(m_sLightsDriver != DEFAULT_LIGHTS_DRIVER)
-		ini.SetValue( "Options", "LightsDriver",				m_sLightsDriver );
-
-	ini.SetValue( "Options", "AdditionalSongFolders", 			m_sAdditionalSongFolders);
-	ini.SetValue( "Options", "AdditionalFolders", 				m_sAdditionalFolders);
-
-#if defined(XBOX)
-	ini.SetValue( "Options", "EnableVirtualMemory",				m_bEnableVirtualMemory );
-	ini.SetValue( "Options", "PageFileSize",					m_iPageFileSize );
-	ini.SetValue( "Options", "PageSize",						m_iPageSize );
-	ini.SetValue( "Options", "PageThreshold",					m_iPageThreshold );
-#endif
-
-	ini.SetValue( "Debug", "LogToDisk",							m_bLogToDisk );
-	ini.SetValue( "Debug", "ForceLogFlush",						m_bForceLogFlush );
-	ini.SetValue( "Debug", "ShowLogOutput",						m_bShowLogOutput );
-	ini.SetValue( "Debug", "Timestamping",						m_bTimestamping );
-	ini.SetValue( "Debug", "LogSkips",							m_bLogSkips );
-	ini.SetValue( "Debug", "LogCheckpoints",					m_bLogCheckpoints );
-	ini.SetValue( "Debug", "ShowLoadingWindow",					m_bShowLoadingWindow );
-#if defined(XBOX)
-	ini.SetValue( "Debug", "LogVirtualMemory",					m_bLogVirtualMemory );
-#endif
-
 	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
 		(*p)->WriteTo( ini );
 }
+
+// wrappers
+CString PrefsManager::GetSoundDrivers()	{ return m_sSoundDrivers.Get().empty() ? (CString)DEFAULT_SOUND_DRIVER_LIST : m_sSoundDrivers; }
+float PrefsManager::GetSoundVolume()	{ return m_fSoundVolume==-1 ? DEFAULT_SOUND_VOLUME : m_fSoundVolume; }
+CString PrefsManager::GetInputDrivers()	{ return m_sInputDrivers.Get().empty() ? (CString)DEFAULT_INPUT_DRIVER_LIST : m_sInputDrivers; }
+CString PrefsManager::GetMovieDrivers()	{ return m_sMovieDrivers.Get().empty() ? (CString)DEFAULT_MOVIE_DRIVER_LIST : m_sMovieDrivers; }
+CString PrefsManager::GetLightsDriver()	{ return m_sLightsDriver.Get().empty() ? (CString)DEFAULT_LIGHTS_DRIVER : m_sLightsDriver; }
 
 
 // lua start

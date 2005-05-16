@@ -663,21 +663,28 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 		default: ASSERT(0); break;
 		}
 
-		if (PREFSMAN->m_iCourseSortOrder == PrefsManager::COURSE_SORT_SONGS)
+		if( PREFSMAN->m_CourseSortOrder == PrefsManager::COURSE_SORT_SONGS )
+		{
 			CourseUtil::SortCoursePointerArrayByDifficulty( apCourses );
+		}
 		else
 		{
-			if (PREFSMAN->m_iCourseSortOrder == PrefsManager::COURSE_SORT_METER)
+			switch( PREFSMAN->m_CourseSortOrder )
+			{
+			case PrefsManager::COURSE_SORT_METER:
 				CourseUtil::SortCoursePointerArrayByAvgDifficulty( apCourses );
-
-			if (PREFSMAN->m_iCourseSortOrder == PrefsManager::COURSE_SORT_METER_SUM)
+				break;
+			case PrefsManager::COURSE_SORT_METER_SUM:
 				CourseUtil::SortCoursePointerArrayByTotalDifficulty( apCourses );
-
-			if (PREFSMAN->m_iCourseSortOrder == PrefsManager::COURSE_SORT_RANK)
+				break;
+			case PrefsManager::COURSE_SORT_RANK:
 				CourseUtil::SortCoursePointerArrayByRanking( apCourses );
+				break;
+			default:	ASSERT(0);
+			}
 
 			// since we can't agree, make it an option
-			if (PREFSMAN->m_bMoveRandomToEnd)
+			if( PREFSMAN->m_bMoveRandomToEnd )
 				CourseUtil::MoveRandomToEnd( apCourses );
 		}
 
