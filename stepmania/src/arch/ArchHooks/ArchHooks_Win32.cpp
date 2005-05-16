@@ -105,7 +105,7 @@ static void IgnoreMessage( CString ID )
 	vector<CString> list;
 	split( PREFSMAN->m_sIgnoredMessageWindows, ",", list );
 	list.push_back( ID );
-	PREFSMAN->m_sIgnoredMessageWindows = join( ",", list );
+	PREFSMAN->m_sIgnoredMessageWindows.Set( join(",",list) );
 	PREFSMAN->SaveGlobalPrefsToDisk();
 }
 

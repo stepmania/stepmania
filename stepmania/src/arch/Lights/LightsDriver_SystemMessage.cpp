@@ -3,6 +3,7 @@
 #include "ScreenManager.h"
 #include "GameState.h"
 #include "Game.h"
+#include "PrefsManager.h"
 
 
 LightsDriver_SystemMessage::LightsDriver_SystemMessage()
@@ -15,6 +16,9 @@ LightsDriver_SystemMessage::~LightsDriver_SystemMessage()
 
 void LightsDriver_SystemMessage::Set( const LightsState *ls )
 {
+	if( !PREFSMAN->m_bDebugLights )
+		return;
+
 	CString s;
 	
 	s += LightsModeToString(LIGHTSMAN->GetLightsMode()) + "\n";

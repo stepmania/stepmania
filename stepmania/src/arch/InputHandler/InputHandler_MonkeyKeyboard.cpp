@@ -1,6 +1,7 @@
 #include "global.h"
 #include "InputHandler_MonkeyKeyboard.h"
 #include "RageUtil.h"
+#include "PrefsManager.h"
 
 
 InputHandler_MonkeyKeyboard::InputHandler_MonkeyKeyboard() :
@@ -58,6 +59,9 @@ int GetRandomKeyboadKey()
 
 void InputHandler_MonkeyKeyboard::Update(float fDeltaTime)
 {
+	if( !PREFSMAN->m_bMonkeyInput )
+		return;
+
 	float fSecsAgo = m_timerPressButton.Ago();
 
 	if( fSecsAgo > 0.5 )

@@ -5,10 +5,10 @@
 #include "global.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-
 #include "PrefsManager.h"
 #include "arch.h"
 #include "arch_platform.h"
+#include "Foreach.h"
 
 #include "InputHandler/Selector_InputHandler.h"
 void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
@@ -20,40 +20,48 @@ void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
 
 	CString Driver;
 
-	for(unsigned i = 0; i < DriversToTry.size(); ++i)
+	FOREACH_CONST( CString, DriversToTry, s )
 	{
+		InputHandler *ret = NULL;
+
 #ifdef USE_INPUT_HANDLER_DIRECTINPUT
-		if(!DriversToTry[i].CompareNoCase("DirectInput") )	Add.push_back(new InputHandler_DInput);
+		if(!s->CompareNoCase("DirectInput") )	ret = new InputHandler_DInput;
 #endif
 #ifdef USE_INPUT_HANDLER_LINUX_JOYSTICK
-		if(!DriversToTry[i].CompareNoCase("Joystick") )		Add.push_back(new InputHandler_Linux_Joystick);
+		if(!s->CompareNoCase("Joystick") )		ret = new InputHandler_Linux_Joystick;
 #endif
 #ifdef USE_INPUT_HANDLER_LINUX_TTY
-		if(!DriversToTry[i].CompareNoCase("tty") )		Add.push_back(new InputHandler_Linux_tty);
-#endif
-#ifdef USE_INPUT_HANDLER_MONKEY_KEYBOARD
-		if(!DriversToTry[i].CompareNoCase("MonkeyKeyboard") )	Add.push_back(new InputHandler_MonkeyKeyboard);
+		if(!s->CompareNoCase("tty") )		ret = new InputHandler_Linux_tty;
 #endif
 #ifdef USE_INPUT_HANDLER_SDL
-		if(!DriversToTry[i].CompareNoCase("SDL") )		Add.push_back(new InputHandler_SDL);
+		if(!s->CompareNoCase("SDL") )		ret = new InputHandler_SDL;
 #endif
 #ifdef USE_INPUT_HANDLER_WIN32_PARA
-		if(!DriversToTry[i].CompareNoCase("Para") )		Add.push_back(new InputHandler_Win32_Para);
+		if(!s->CompareNoCase("Para") )		ret = new InputHandler_Win32_Para;
 #endif
 #ifdef USE_INPUT_HANDLER_WIN32_PUMP
-		if(!DriversToTry[i].CompareNoCase("Pump") )		Add.push_back(new InputHandler_Win32_Pump);
+		if(!s->CompareNoCase("Pump") )		ret = new InputHandler_Win32_Pump;
 #endif
 #ifdef USE_INPUT_HANDLER_X11
-		if(!DriversToTry[i].CompareNoCase("X11") )		Add.push_back(new InputHandler_X11);
+		if(!s->CompareNoCase("X11") )		ret = new InputHandler_X11;
 #endif
 #ifdef USE_INPUT_HANDLER_XBOX
-		if(!DriversToTry[i].CompareNoCase("Xbox") )		Add.push_back(new InputHandler_Xbox);
+		if(!s->CompareNoCase("Xbox") )		ret = new InputHandler_Xbox;
 #endif
+
+		if( ret == NULL )
+			LOG->Warn( "Unknown lights driver name: %s", s->c_str() );
+		else
+			Add.push_back( ret );
 	}
+
+	// Always add
+	Add.push_back(new InputHandler_MonkeyKeyboard);
+
 }
 
 #include "Lights/Selector_LightsDriver.h"
-LightsDriver *MakeLightsDriver(CString driver)
+void MakeLightsDrivers(CString driver, vector<LightsDriver *> &Add)
 {
 	LOG->Trace( "Initializing lights driver: %s", driver.c_str() );
 
@@ -65,20 +73,16 @@ LightsDriver *MakeLightsDriver(CString driver)
 #ifdef USE_LIGHTS_DRIVER_LINUX_WEEDTECH
 	if( !driver.CompareNoCase("WeedTech") )		ret = new LightsDriver_LinuxWeedTech;
 #endif
-#ifdef USE_LIGHTS_DRIVER_NULL
-	if( !driver.CompareNoCase("Null") )		ret = new LightsDriver_Null;
-#endif
-#ifdef USE_LIGHTS_DRIVER_SYSTEM_MESSAGE
-	if( !driver.CompareNoCase("SystemMessage") )	ret = new LightsDriver_SystemMessage;
-#endif
 #ifdef USE_LIGHTS_DRIVER_WIN32_PARALLEL
 	if( !driver.CompareNoCase("Parallel") )		ret = new LightsDriver_Win32Parallel;
 #endif
 
 	if( ret == NULL )
 		LOG->Warn( "Unknown lights driver name: %s", driver.c_str() );
-	
-	return ret;
+	else
+		Add.push_back( ret );
+
+	Add.push_back( new LightsDriver_SystemMessage );
 }
 
 #include "LoadingWindow/Selector_LoadingWindow.h"
@@ -174,7 +178,7 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 	DumpAVIDebugInfo( ID.filename );
 
 	CStringArray DriversToTry;
-	split(PREFSMAN->m_sMovieDrivers, ",", DriversToTry, true);
+	split(PREFSMAN->GetMovieDrivers(), ",", DriversToTry, true);
 	ASSERT(DriversToTry.size() != 0);
 
 	CString Driver;

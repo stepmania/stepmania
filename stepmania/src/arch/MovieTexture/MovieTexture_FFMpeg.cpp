@@ -414,7 +414,7 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 	m_bWantRewind = false;
 	m_Clock = 0;
 	m_FrameSkipMode = false;
-	m_bThreaded = PREFSMAN->m_bThreadedMovieDecode;
+	m_bThreaded = PREFSMAN->m_bThreadedMovieDecode.Get();
 }
 
 CString MovieTexture_FFMpeg::Init()
