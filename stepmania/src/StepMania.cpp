@@ -1407,15 +1407,6 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		}
 	}
 
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_PAUSE))
-	{
-		static bool bMute = false;
-		bMute = !bMute;
-		SOUNDMAN->SetPrefs( bMute ? 0 : PREFSMAN->GetSoundVolume() );
-		SCREENMAN->SystemMessage( bMute ? "Mute on" : "Mute off" );
-		return true;
-	}
-
 	return false;
 }
 

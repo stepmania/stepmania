@@ -8,11 +8,13 @@
 #include "StepMania.h"
 #include "GameCommand.h"
 #include "ScreenGameplay.h"
+#include "RageSoundManager.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
 static bool g_bIsHalt = false;
 static RageTimer g_HaltTimer(RageZeroTimer);
+static bool g_bMute = false;
 
 REGISTER_SCREEN_CLASS( ScreenDebugOverlay );
 ScreenDebugOverlay::ScreenDebugOverlay( const CString &sName ) : Screen(sName)
@@ -64,6 +66,7 @@ void ScreenDebugOverlay::Init()
 		g_Mappings.button[9] = DeviceInput(DEVICE_KEYBOARD, KEY_C0);
 		g_Mappings.button[10] = DeviceInput(DEVICE_KEYBOARD, KEY_UNDERSCORE);
 		g_Mappings.button[11] = DeviceInput(DEVICE_KEYBOARD, KEY_EQUAL);
+		g_Mappings.button[12] = DeviceInput(DEVICE_KEYBOARD, KEY_PAUSE);
 	}
 
 
@@ -130,29 +133,26 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 		txt.SetY( SCALE(i, 0, NUM_DEBUG_LINES-1, SCREEN_TOP+60, SCREEN_BOTTOM-40) );
 		txt.SetZoom( 0.8f );
 
-		CString s;
+		CString s1;
 		switch( i )
 		{
-		case DebugLine_Autoplay:			s="AutoPlay";			break;
-		case DebugLine_CoinMode:		{ s="CoinMode: "+CoinModeToString(PREFSMAN->m_CoinMode); }	break;
-		case DebugLine_Slow:				s="Slow";				break;
-		case DebugLine_Halt:				s="Halt";				break;
-		case DebugLine_LightsDebug:			s="Lights Debug";		break;
-		case DebugLine_MonkeyInput:			s="MonkeyInput";		break;
-		case DebugLine_Stats:				s="Stats";				break;
-		case DebugLine_Vsync:				s="Vsync";				break;
-		case DebugLine_ScreenTestMode:		s="Screen Test Mode";	break;
-		case DebugLine_ClearMachineStats:	s="Clear Machine Stats";break;
-		case DebugLine_FillMachineStats:	s="Fill Machine Stats";	break;
-		case DebugLine_SendNotesEnded:		s="Send Notes Ended";	break;
-		case DebugLine_CurrentScreen:	{ s="Screen: "; s+=SCREENMAN ? SCREENMAN->GetTopScreen()->m_sName : ""; }	break;
-		case DebugLine_Uptime:			s="uptime: " + SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart());	break;
+		case DebugLine_Autoplay:			s1="AutoPlay";				break;
+		case DebugLine_CoinMode:			s1="CoinMode";				break;
+		case DebugLine_Slow:				s1="Slow";					break;
+		case DebugLine_Halt:				s1="Halt";					break;
+		case DebugLine_LightsDebug:			s1="Lights Debug";			break;
+		case DebugLine_MonkeyInput:			s1="MonkeyInput";			break;
+		case DebugLine_Stats:				s1="Stats";					break;
+		case DebugLine_Vsync:				s1="Vsync";					break;
+		case DebugLine_ScreenTestMode:		s1="Screen Test Mode";		break;
+		case DebugLine_ClearMachineStats:	s1="Clear Machine Stats";	break;
+		case DebugLine_FillMachineStats:	s1="Fill Machine Stats";	break;
+		case DebugLine_SendNotesEnded:		s1="Send Notes Ended";		break;
+		case DebugLine_Volume:				s1="Mute";					break;
+		case DebugLine_CurrentScreen:		s1="Screen";				break;
+		case DebugLine_Uptime:				s1="Uptime";				break;
 		default:	ASSERT(0);
 		}
-		CString sButton = GetDebugButtonName(i);
-		if( !sButton.empty() )
-			sButton += ": ";
-		txt.SetText( sButton + s );
 
 		bool bOn = false;
 		switch( i )
@@ -169,12 +169,41 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 		case DebugLine_ClearMachineStats:	bOn=true;								break;
 		case DebugLine_FillMachineStats:	bOn=true;								break;
 		case DebugLine_SendNotesEnded:		bOn=true;								break;
+		case DebugLine_Volume:				bOn=g_bMute;							break;
 		case DebugLine_CurrentScreen:		bOn=false;								break;
 		case DebugLine_Uptime:				bOn=false;								break;
 		default:	ASSERT(0);
 		}
 
+		CString s2;
+		switch( i )
+		{
+		case DebugLine_Autoplay:			s2=bOn ? "on":"off";	break;
+		case DebugLine_CoinMode:			s2=CoinModeToString(PREFSMAN->m_CoinMode);	break;
+		case DebugLine_Slow:				s2=bOn ? "on":"off";	break;
+		case DebugLine_Halt:				s2=bOn ? "on":"off";	break;
+		case DebugLine_LightsDebug:			s2=bOn ? "on":"off";	break;
+		case DebugLine_MonkeyInput:			s2=bOn ? "on":"off";	break;
+		case DebugLine_Stats:				s2=bOn ? "on":"off";	break;
+		case DebugLine_Vsync:				s2=bOn ? "on":"off";	break;
+		case DebugLine_ScreenTestMode:		s2=bOn ? "on":"off";	break;
+		case DebugLine_ClearMachineStats:	s2="";					break;
+		case DebugLine_FillMachineStats:	s2="";					break;
+		case DebugLine_SendNotesEnded:		s2="";					break;
+		case DebugLine_Volume:				s2=bOn ? "on":"off";	break;
+		case DebugLine_CurrentScreen:		s2=SCREENMAN ? SCREENMAN->GetTopScreen()->m_sName:"";	break;
+		case DebugLine_Uptime:				s2=SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart());	break;
+		default:	ASSERT(0);
+		}
+
 		txt.SetDiffuse( bOn ? on:off );
+
+		CString sButton = GetDebugButtonName(i);
+		if( !sButton.empty() )
+			sButton += ": ";
+		if( !s2.empty() )
+			s1 += " - ";
+		txt.SetText( sButton + s1 + s2 );
 	}
 	
     if( g_bIsHalt )
@@ -226,10 +255,10 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 				break;
 			case DebugLine_CoinMode:
 				{
-					int i = PREFSMAN->m_CoinMode.Get();
-					i++;
-					wrap( i, NUM_COIN_MODES );
-					PREFSMAN->m_CoinMode.Set( (CoinMode)i );
+					CoinMode cm = (CoinMode)(PREFSMAN->m_CoinMode+1);
+					wrap( (int&)cm, NUM_COIN_MODES );
+					PREFSMAN->m_CoinMode.Set( cm );
+					SCREENMAN->RefreshCreditsMessages();
 				}
 				break;
 			case DebugLine_Slow:
@@ -274,18 +303,24 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 			case DebugLine_SendNotesEnded:
 				SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
 				break;
+			case DebugLine_Volume:
+				g_bMute = !g_bMute;
+				SOUNDMAN->SetPrefs( g_bMute ? 0 : PREFSMAN->GetSoundVolume() );
+				break;
 			case DebugLine_CurrentScreen:
 				break;
 			case DebugLine_Uptime:
 				break;
 			default:	ASSERT(0);
 			}
-			break;
+			
+			SCREENMAN->SystemMessage( txt.GetText() );
 		}
 	}
 
 	return true;
 }
+
 
 /*
  * (c) 2001-2005 Chris Danford, Glenn Maynard

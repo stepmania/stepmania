@@ -21,6 +21,7 @@ enum DebugLine
 	DebugLine_ClearMachineStats,
 	DebugLine_FillMachineStats,
 	DebugLine_SendNotesEnded,
+	DebugLine_Volume,
 	DebugLine_CurrentScreen,
 	DebugLine_Uptime,
 	NUM_DEBUG_LINES

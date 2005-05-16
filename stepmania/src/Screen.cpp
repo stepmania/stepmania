@@ -181,28 +181,6 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 	}
 }
 
-bool Screen::ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
-{
-	if( type != IET_FIRST_PRESS )
-		return false;
-	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_F3 )
-	{
-		CoinMode cm = (CoinMode)(PREFSMAN->m_CoinMode+1);
-		wrap( (int&)cm, NUM_COIN_MODES );
-		PREFSMAN->m_CoinMode.Set( cm );
-
-		/* Show the real coin mode, not GetCoinMode(), or F3 will go "home, free, free"
-		 * in event mode.  XXX: move GetCoinMode to GameState to keep PrefsManager dumb? */
-		CString sMessage = CoinModeToString( PREFSMAN->m_CoinMode );
-		sMessage.MakeUpper();
-		sMessage = "Coin Mode: " + sMessage;
-		SCREENMAN->RefreshCreditsMessages();
-		SCREENMAN->SystemMessage( sMessage );
-		return true;
-	}
-	return false;
-}
-
 bool Screen::JoinInput( const MenuInput &MenuI )
 {
 	if( !GAMESTATE->PlayersCanJoin() )

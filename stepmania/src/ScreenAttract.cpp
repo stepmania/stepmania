@@ -60,8 +60,6 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 	if(type != IET_FIRST_PRESS) 
 		return; // don't care
 
-	ChangeCoinModeInput( DeviceI, type, GameI, MenuI, StyleI );
-
 	if( MenuI.IsValid() )
 	{
 		switch( MenuI.button )

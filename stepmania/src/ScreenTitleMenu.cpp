@@ -52,6 +52,8 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 
 	// TRICKY: Do this after GameState::Reset.
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_JOINING );
+
+	this->SubscribeToMessage( "CoinModeChanged" );
 }
 
 void ScreenTitleMenu::Init()
@@ -114,14 +116,6 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 	if( type == IET_FIRST_PRESS )
 	{
-		/* If the CoinMode was changed, we need to reload this screen
-		 * so that the right m_aGameCommands will show */
-		if( ScreenAttract::ChangeCoinModeInput( DeviceI, type, GameI, MenuI, StyleI ) )
-		{
-			SCREENMAN->SetNewScreen( COIN_MODE_CHANGE_SCREEN );
-			return;
-		}
-
 		if( m_In.IsTransitioning() || m_Cancel.IsTransitioning() ) /* not m_Out */
 			return;
 		
@@ -172,6 +166,16 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 	}
 
 	ScreenSelectMaster::Input( DeviceI, type, GameI, MenuI, StyleI );
+}
+
+void ScreenTitleMenu::HandleMessage( const CString& sMessage )
+{
+	if( sMessage == "CoinModeChanged" )
+	{
+		/* If the CoinMode was changed, we need to reload this screen
+		 * so that the right m_aGameCommands will show */
+		SCREENMAN->SetNewScreen( COIN_MODE_CHANGE_SCREEN );
+	}
 }
 
 /*

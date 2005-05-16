@@ -41,7 +41,6 @@ public:
 	bool IsTransparent() const { return m_bIsTransparent; }
 	virtual bool UsesBackground() const { return true; }	// override and set false if this screen shouldn't load a background
 
-	static bool ChangeCoinModeInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );	// return true if CoinMode changed
 	static bool JoinInput( const MenuInput &MenuI );	// return true if a player joined
 
 protected:
