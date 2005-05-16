@@ -157,20 +157,20 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 		bool bOn = false;
 		switch( i )
 		{
-		case DebugLine_Autoplay:			bOn=PREFSMAN->m_bAutoPlay;		break;
-		case DebugLine_CoinMode:			bOn=true;						break;
-		case DebugLine_Slow:				bOn=g_bIsSlow;					break;
-		case DebugLine_Halt:				bOn=g_bIsHalt;					break;
-		case DebugLine_LightsDebug:			bOn=PREFSMAN->m_bDebugLights;	break;
-		case DebugLine_MonkeyInput:			bOn=PREFSMAN->m_bMonkeyInput;	break;
-		case DebugLine_Stats:				bOn=PREFSMAN->m_bShowStats;		break;
-		case DebugLine_Vsync:				bOn=PREFSMAN->m_bVsync;			break;
-		case DebugLine_ScreenTestMode:		bOn=PREFSMAN->m_bScreenTestMode;break;
-		case DebugLine_ClearMachineStats:	bOn=true;						break;
-		case DebugLine_FillMachineStats:	bOn=true;						break;
-		case DebugLine_SendNotesEnded:		bOn=true;						break;
-		case DebugLine_CurrentScreen:		bOn=false;						break;
-		case DebugLine_Uptime:				bOn=false;						break;
+		case DebugLine_Autoplay:			bOn=PREFSMAN->m_bAutoPlay.Get();		break;
+		case DebugLine_CoinMode:			bOn=true;								break;
+		case DebugLine_Slow:				bOn=g_bIsSlow;							break;
+		case DebugLine_Halt:				bOn=g_bIsHalt;							break;
+		case DebugLine_LightsDebug:			bOn=PREFSMAN->m_bDebugLights.Get();		break;
+		case DebugLine_MonkeyInput:			bOn=PREFSMAN->m_bMonkeyInput.Get();		break;
+		case DebugLine_Stats:				bOn=PREFSMAN->m_bShowStats.Get();		break;
+		case DebugLine_Vsync:				bOn=PREFSMAN->m_bVsync.Get();			break;
+		case DebugLine_ScreenTestMode:		bOn=PREFSMAN->m_bScreenTestMode.Get();	break;
+		case DebugLine_ClearMachineStats:	bOn=true;								break;
+		case DebugLine_FillMachineStats:	bOn=true;								break;
+		case DebugLine_SendNotesEnded:		bOn=true;								break;
+		case DebugLine_CurrentScreen:		bOn=false;								break;
+		case DebugLine_Uptime:				bOn=false;								break;
 		default:	ASSERT(0);
 		}
 

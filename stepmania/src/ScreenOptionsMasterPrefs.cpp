@@ -107,12 +107,6 @@ static void MoveData( int &sel, int &opt, bool ToSel )
 	else		opt = !!sel;
 }
 
-static void MoveData( int &sel, bool &opt, bool ToSel )
-{
-	if( ToSel )	sel = opt;
-	else		opt = !!sel;
-}
-
 template<class T>
 static void MoveData( int &sel, Preference<T> &opt, bool ToSel )
 {
