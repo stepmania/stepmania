@@ -380,11 +380,43 @@ void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
 }
 
 // wrappers
-CString PrefsManager::GetSoundDrivers()	{ return m_sSoundDrivers.Get().empty() ? (CString)DEFAULT_SOUND_DRIVER_LIST : m_sSoundDrivers; }
-float PrefsManager::GetSoundVolume()	{ return m_fSoundVolume==-1 ? DEFAULT_SOUND_VOLUME : m_fSoundVolume; }
-CString PrefsManager::GetInputDrivers()	{ return m_sInputDrivers.Get().empty() ? (CString)DEFAULT_INPUT_DRIVER_LIST : m_sInputDrivers; }
-CString PrefsManager::GetMovieDrivers()	{ return m_sMovieDrivers.Get().empty() ? (CString)DEFAULT_MOVIE_DRIVER_LIST : m_sMovieDrivers; }
-CString PrefsManager::GetLightsDriver()	{ return m_sLightsDriver.Get().empty() ? (CString)DEFAULT_LIGHTS_DRIVER : m_sLightsDriver; }
+CString PrefsManager::GetSoundDrivers()	
+{
+	if ( m_sSoundDrivers.Get().empty() )
+		return (CString)DEFAULT_SOUND_DRIVER_LIST;
+	else
+		return m_sSoundDrivers;
+}
+
+float PrefsManager::GetSoundVolume()
+{
+	if ( m_fSoundVolume==-1 )
+		return DEFAULT_SOUND_VOLUME;
+	else
+		return m_fSoundVolume; 
+}
+
+CString PrefsManager::GetInputDrivers()	{
+	if( m_sInputDrivers.Get().empty() )
+		return (CString)DEFAULT_INPUT_DRIVER_LIST;
+	else
+		return m_sInputDrivers;
+}
+
+CString PrefsManager::GetMovieDrivers()
+{ 
+	if ( m_sMovieDrivers.Get().empty() )
+		return (CString)DEFAULT_MOVIE_DRIVER_LIST;
+	else
+		return m_sMovieDrivers; 
+}
+
+CString PrefsManager::GetLightsDriver()	{ 
+	if ( m_sLightsDriver.Get().empty() )
+		return (CString)DEFAULT_LIGHTS_DRIVER;
+	else
+		return m_sLightsDriver;
+}
 
 
 // lua start

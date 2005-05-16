@@ -295,9 +295,9 @@ public:
 	Preference<RageSoundReader_Resample::ResampleQuality>	m_SoundResampleQuality;
 private:
 	Preference<CString>	m_sInputDrivers;	// "" == default
-	Preference<CString>	m_sMovieDrivers;	// "" == default
 	Preference<CString>	m_sLightsDriver;	// "" == default
 public:
+	Preference<CString>	m_sMovieDrivers;	// "" == default
 	Preference<CString>	m_sLightsStepsDifficulty;
 	Preference<bool>	m_bBlinkGameplayButtonLightsOnNote;
 	Preference<bool>	m_bAllowUnacceleratedRenderer;
