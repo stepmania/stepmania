@@ -161,8 +161,8 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 		case DebugLine_CoinMode:			bOn=true;						break;
 		case DebugLine_Slow:				bOn=g_bIsSlow;					break;
 		case DebugLine_Halt:				bOn=g_bIsHalt;					break;
-		case DebugLine_LightsDebug:			bOn=false;						break;
-		case DebugLine_MonkeyInput:			bOn=false;						break;
+		case DebugLine_LightsDebug:			bOn=PREFSMAN->m_bDebugLights;	break;
+		case DebugLine_MonkeyInput:			bOn=PREFSMAN->m_bMonkeyInput;	break;
 		case DebugLine_Stats:				bOn=PREFSMAN->m_bShowStats;		break;
 		case DebugLine_Vsync:				bOn=PREFSMAN->m_bVsync;			break;
 		case DebugLine_ScreenTestMode:		bOn=PREFSMAN->m_bScreenTestMode;break;
@@ -242,10 +242,10 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 				SetSpeed();
 				break;
 			case DebugLine_LightsDebug:
-				ASSERT(0);	// TODO
+				PREFSMAN->m_bDebugLights.Set( !PREFSMAN->m_bDebugLights );
 				break;
 			case DebugLine_MonkeyInput:
-				ASSERT(0);	// TODO
+				PREFSMAN->m_bMonkeyInput.Set( !PREFSMAN->m_bMonkeyInput );
 				break;
 			case DebugLine_Stats:
 				PREFSMAN->m_bShowStats.Set( !PREFSMAN->m_bShowStats );

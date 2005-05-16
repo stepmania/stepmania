@@ -58,7 +58,7 @@ public:
 	~LightsManager();
 	
 	void Update( float fDeltaTime );
-	bool IsEnabled() const { return m_pDriver != NULL; }
+	bool IsEnabled() const;
 
 	void BlinkCabinetLight( CabinetLight cl );
 	void BlinkGameButton( GameInput gi );
@@ -85,7 +85,7 @@ private:
 	float m_fActorLights[NUM_CABINET_LIGHTS];	// current "power" of each actor light
 	float m_fSecsLeftInActorLightBlink[NUM_CABINET_LIGHTS];	// duration to "power" an actor light
 
-	LightsDriver* m_pDriver;
+	vector<LightsDriver*> m_vpDrivers;
 	LightsMode m_LightsMode;
 	LightsState m_LightsState;
 

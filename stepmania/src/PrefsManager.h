@@ -304,10 +304,10 @@ public:
 	Preference<bool>	m_bThreadedInput;
 	Preference<bool>	m_bThreadedMovieDecode;
 	Preference<bool>	m_bScreenTestMode;
+	Preference<bool>	m_bDebugLights;
+	Preference<bool>	m_bMonkeyInput;
 	Preference<CString>	m_sMachineName;
-
 	Preference<CString>	m_sIgnoredMessageWindows;
-
 	Preference<CString>	m_sCoursesToShowRanking;
 
 	/* Debug: */

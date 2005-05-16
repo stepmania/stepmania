@@ -289,6 +289,8 @@ PrefsManager::PrefsManager() :
 	m_bThreadedInput				( Options, "ThreadedInput",				true ),
 	m_bThreadedMovieDecode			( Options, "ThreadedMovieDecode",		true ),
 	m_bScreenTestMode				( Options, "ScreenTestMode",			false ),
+	m_bDebugLights					( Options, "DebugLights",				false ),
+	m_bMonkeyInput					( Options, "MonkeyInput",				false ),
 	m_sMachineName					( Options, "MachineName",				"" ),
 	m_sIgnoredMessageWindows		( Options, "IgnoredMessageWindows",		"" ),
 	m_sCoursesToShowRanking			( Options, "CoursesToShowRanking",		"" ),

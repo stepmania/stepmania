@@ -10,6 +10,7 @@
 #include "PrefsManager.h"
 #include "Actor.h"
 #include "Preference.h"
+#include "Foreach.h"
 
 #include "arch/arch.h"
 
@@ -54,7 +55,7 @@ LightsManager::LightsManager(CString sDriver)
 	ZERO( m_fSecsLeftInActorLightBlink );
 
 	m_LightsMode = LIGHTSMODE_JOINING;
-	m_pDriver = MakeLightsDriver(sDriver);
+	MakeLightsDrivers( sDriver, m_vpDrivers );
 	m_fTestAutoCycleCurrentIndex = 0;
 	m_clTestManualCycleCurrent = LIGHT_INVALID;
 	m_gcTestManualCycleCurrent = GAME_CONTROLLER_INVALID;
@@ -63,7 +64,9 @@ LightsManager::LightsManager(CString sDriver)
 
 LightsManager::~LightsManager()
 {
-	SAFE_DELETE( m_pDriver );
+	FOREACH( LightsDriver*, m_vpDrivers, iter )
+		SAFE_DELETE( *iter );
+	m_vpDrivers.clear();
 }
 
 // XXX: make themable
@@ -342,7 +345,8 @@ void LightsManager::Update( float fDeltaTime )
 	}
 
 	// apply new light values we set above
-	m_pDriver->Set( &m_LightsState );
+	FOREACH( LightsDriver*, m_vpDrivers, iter )
+		(*iter)->Set( &m_LightsState );
 }
 
 void LightsManager::BlinkCabinetLight( CabinetLight cl )
@@ -414,6 +418,11 @@ void LightsManager::GetFirstLitGameButtonLight( GameController &gcOut, GameButto
 	}
 	gcOut = GAME_CONTROLLER_INVALID;
 	gbOut = GAME_BUTTON_INVALID;
+}
+
+bool LightsManager::IsEnabled() const
+{
+	return m_vpDrivers.size() > 1 || PREFSMAN->m_bDebugLights;
 }
 
 
