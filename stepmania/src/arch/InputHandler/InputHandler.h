@@ -24,9 +24,8 @@
 
 class InputHandler
 {
-	RageTimer m_LastUpdate;
-
 public:
+	InputHandler() { m_iInputsSinceUpdate = 0; }
 	virtual ~InputHandler() { }
 	virtual void Update(float fDeltaTime) { }
 	virtual void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut) = 0;
@@ -53,6 +52,10 @@ protected:
 
 	/* Call this at the end of polling input. */
 	void UpdateTimer();
+
+private:
+	RageTimer m_LastUpdate;
+	int m_iInputsSinceUpdate;
 };
 
 #endif

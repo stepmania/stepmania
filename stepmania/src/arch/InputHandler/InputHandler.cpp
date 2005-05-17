@@ -2,18 +2,40 @@
 #include "InputFilter.h"
 #include "RageUtil.h"
 #include "InputHandler.h"
+#include "RageLog.h"
 
 void InputHandler::UpdateTimer()
 {
 	m_LastUpdate.Touch();
+	m_iInputsSinceUpdate = 0;
 }
 
 void InputHandler::ButtonPressed( DeviceInput di, bool Down )
 {
 	if( di.ts.IsZero() )
+	{
 		di.ts = m_LastUpdate.Half();
+		++m_iInputsSinceUpdate;
+	}
 
 	INPUTFILTER->ButtonPressed( di, Down );
+
+	if( m_iInputsSinceUpdate >= 50 )
+	{
+		/*
+		 * We havn't received an update in a long time, so warn about it.  We expect to receive
+		 * input events before the first UpdateTimer call only on the first update.  Leave
+		 * m_iInputsSinceUpdate where it is, so we only warn once.  Only updates that didn't provide
+		 * a timestamp are counted; if the driver provides its own timestamps, UpdateTimer is
+		 * optional.
+		 *
+		 * This can also happen if a device sends a lot of inputs at once; for example, a keyboard
+		 * driver that sends every key in one frame.  If that's really needed (wasteful), increase
+		 * the threshold.
+		 */
+		LOG->Warn( "InputHandler::ButtonPressed: Driver sent 50 updates without calling UpdateTimer" );
+		FAIL_M("x");
+	}
 }
 
 /*
