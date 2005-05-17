@@ -1102,13 +1102,9 @@ void ScreenGameplay::LoadLights()
 	vector<CString> asDifficulties;
 	split( sDifficulty, ",", asDifficulties );
 
-	LOG->Trace( "xxx %i", asDifficulties.size() );
 	Difficulty d1 = DIFFICULTY_INVALID;
 	if( asDifficulties.size() > 0 )
-	{
 		d1 = StringToDifficulty( asDifficulties[0] );
-		LOG->Trace( "d1 %i", d1 );
-	}
 	pSteps = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, d1 );
 
 	// If we can't find anything at all, stop.
@@ -1121,7 +1117,6 @@ void ScreenGameplay::LoadLights()
 	if( asDifficulties.size() > 1 )
 	{
 		Difficulty d2 = StringToDifficulty( asDifficulties[1] );
-		LOG->Trace( "d2 %i", d2 );
 		const Steps *pSteps2 = GAMESTATE->m_pCurSong->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, d2 );
 		if( pSteps != NULL && pSteps2 != NULL && pSteps != pSteps2 )
 		{
