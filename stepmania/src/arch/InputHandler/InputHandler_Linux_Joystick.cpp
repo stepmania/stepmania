@@ -57,7 +57,16 @@ InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()
 		fds[i] = open( Paths[i], O_RDONLY );
 
 		if(fds[i] != -1)
+		{
+			char szName[1024];
+			ZERO( szName );
+			if( ioctl(fds[i], JSIOCGNAME(sizeof(szName)), szName) < 0 )
+				m_sDescription[i] = ssprintf( "Unknown joystick at %s", Paths[i] );
+			else
+				m_sDescription[i] = szName;
+
 			LOG->Info("Opened %s", Paths[i]);
+		}
 	}
 }
 	
@@ -148,7 +157,7 @@ void InputHandler_Linux_Joystick::GetDevicesAndDescriptions(vector<InputDevice>&
 			continue;
 
 		vDevicesOut.push_back( InputDevice(DEVICE_JOY1+i) );
-		vDescriptionsOut.push_back( ssprintf("Joystick %i", i) );
+		vDescriptionsOut.push_back( m_sDescription[i] );
 	}
 }
 
