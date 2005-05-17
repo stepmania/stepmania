@@ -193,6 +193,8 @@ void ScreenEdit::InitEditMappings()
 	g_EditMappings.button[EDIT_BUTTON_ADJUST_FINE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	g_EditMappings.button[EDIT_BUTTON_ADJUST_FINE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
 	
+	g_EditMappings.button[EDIT_BUTTON_UNDO][1] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
+	
 	g_PlayMappings.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	g_PlayMappings.button[EDIT_BUTTON_TOGGLE_ASSIST_TICK][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F4);
 	g_PlayMappings.button[EDIT_BUTTON_TOGGLE_AUTOPLAY][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F8);
@@ -1369,6 +1371,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case EDIT_BUTTON_DELETE_SHIFT_PAUSES:
 		HandleAreaMenuChoice( shift_pauses_backward );
 		SCREENMAN->PlayInvalidSound();
+		break;
+
+	case EDIT_BUTTON_UNDO:
+		Undo();
 		break;
 	}
 }
@@ -2687,9 +2693,18 @@ void ScreenEdit::SaveUndo()
 
 void ScreenEdit::Undo()
 {
-	m_NoteDataEdit.CopyAll( m_Undo );
-	m_bHasUndo = false;
-	m_Undo.ClearAll();
+	if( m_bHasUndo )
+	{
+		m_NoteDataEdit.CopyAll( m_Undo );
+		m_bHasUndo = false;
+		m_Undo.ClearAll();
+		SCREENMAN->SystemMessage( "Undo" );
+	}
+	else
+	{
+		SCREENMAN->SystemMessage( "Can't undo - no undo data." );
+		SCREENMAN->PlayInvalidSound();
+	}
 }
 
 void ScreenEdit::CheckNumberOfNotesAndUndo()

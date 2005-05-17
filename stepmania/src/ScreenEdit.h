@@ -95,6 +95,8 @@ enum EditButton
 	/* This modifies offset, BPM, and stop segment changes. */
 	EDIT_BUTTON_ADJUST_FINE,
 
+	EDIT_BUTTON_UNDO,
+
 	NUM_EDIT_BUTTONS,		// leave this at the end
 	EDIT_BUTTON_INVALID
 };
