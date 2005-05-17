@@ -308,8 +308,8 @@ void TrimLeft(CString &str, const char *s = "\r\n\t ");
 void TrimRight(CString &str, const char *s = "\r\n\t ");
 void StripCrnl(CString &s);
 
-CString DerefRedir(const CString &path);
-CString GetRedirContents(const CString &path);
+CString DerefRedir( const CString &sPath );
+bool GetFileContents( const CString &sPath, CString &sOut );
 
 class Regex {
 	void *reg;

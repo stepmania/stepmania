@@ -663,7 +663,8 @@ CString DerefRedir(const CString &_path)
 			return path;
 		}
 
-		CString sNewFileName = GetRedirContents( path );
+		CString sNewFileName;
+		GetFileContents( path, sNewFileName );
 
 		/* Empty is invalid. */
 		if( sNewFileName == "" )
@@ -691,25 +692,29 @@ CString DerefRedir(const CString &_path)
 	RageException::Throw( "Circular redirect '%s'", path.c_str() );
 }
 
-/* XXX: This can be used to read one line from any file; rename it. */
-CString GetRedirContents(const CString &path)
+bool GetFileContents( const CString &sPath, CString &sOut )
 {
+	/* Don't warn if the file doesn't exist, but do warn if it exists and fails to open. */
+	if( !IsAFile(sPath) )
+		return false;
+	
 	RageFile file;
-	if( !file.Open(path) )
+	if( !file.Open(sPath) )
 	{
-		LOG->Warn( "GetRedirContents(%s): %s", path.c_str(), file.GetError().c_str() );
-		return "";
+		LOG->Warn( "GetFileContents(%s): %s", sPath.c_str(), file.GetError().c_str() );
+		return false;
 	}
 	
-	CString sNewFileName;
-	if( file.GetLine( sNewFileName ) == -1 )
+	CString sData;
+	if( file.GetLine(sData) == -1 )
 	{
-		LOG->Warn( "GetRedirContents(%s): %s", path.c_str(), file.GetError().c_str() );
-		return "";
+		LOG->Warn( "GetFileContents(%s): %s", sPath.c_str(), file.GetError().c_str() );
+		return false;
 	}
 	
-	StripCrnl(sNewFileName);
-	return sNewFileName;
+	StripCrnl( sData );
+	sOut = sData;
+	return true;
 }
 
 #if 1

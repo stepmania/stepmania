@@ -238,7 +238,8 @@ try_again:
 
 	while( GetExtension(sPath) == "redir" )
 	{
-		CString sNewFileName = GetRedirContents(sPath);
+		CString sNewFileName;
+		GetFileContents( sPath, sNewFileName );
 		CString sRealPath;
 
 		FOREACHD_CONST( CString, data.vsDirSearchOrder, iter )

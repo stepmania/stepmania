@@ -169,8 +169,9 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 
 	if( DoesFileExist("/proc/asound/version") )
 	{
-		const CString ver = GetRedirContents("/proc/asound/version");
-		LOG->Info( "ALSA: %s", ver.c_str() );
+		CString sVersion;
+		GetFileContents( "/proc/asound/version", sVersion );
+		LOG->Info( "ALSA: %s", sVersion.c_str() );
 	}
 
 	InitializeErrorHandler();
