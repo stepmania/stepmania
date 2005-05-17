@@ -52,6 +52,9 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 {
 	LockMut(*queuemutex);
 
+	if( di.ts.IsZero() )
+		LOG->Warn( "InputFilter::ButtonPressed: zero timestamp is invalid" );
+
 	ButtonState &bs = m_ButtonState[di.device][di.button];
 
 	bs.m_Level = di.level;
@@ -75,8 +78,9 @@ void InputFilter::SetButtonComment( DeviceInput di, const CString &sComment )
 /* Release all buttons on the given device. */
 void InputFilter::ResetDevice( InputDevice device )
 {
+	RageTimer now;
 	for( int button = 0; button < GetNumDeviceButtons(device); ++button )
-		ButtonPressed( DeviceInput(device, button), false );
+		ButtonPressed( DeviceInput(device, button, -1, now), false );
 }
 
 void InputFilter::Update(float fDeltaTime)
