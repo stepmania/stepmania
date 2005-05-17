@@ -63,6 +63,7 @@ void InputHandler_MonkeyKeyboard::Update(float fDeltaTime)
 	{
 		// End the previous key
 		ButtonPressed(m_diLast, false);
+		InputHandler::UpdateTimer();
 		return;
 	}
 
@@ -79,6 +80,8 @@ void InputHandler_MonkeyKeyboard::Update(float fDeltaTime)
 
 		m_timerPressButton.Touch();
 	}
+
+	InputHandler::UpdateTimer();
 }
 
 /*
