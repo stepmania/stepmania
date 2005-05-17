@@ -60,7 +60,11 @@ int GetRandomKeyboadKey()
 void InputHandler_MonkeyKeyboard::Update(float fDeltaTime)
 {
 	if( !PREFSMAN->m_bMonkeyInput )
+	{
+		// End the previous key
+		ButtonPressed(m_diLast, false);
 		return;
+	}
 
 	float fSecsAgo = m_timerPressButton.Ago();
 
