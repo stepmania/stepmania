@@ -89,6 +89,8 @@ void InputHandler_Linux_Joystick::Update(float fDeltaTime)
 		if ( select(max_fd+1, &fdset, NULL, NULL, &zero) <= 0 )
 			return;
 
+		RageTimer now;
+
 		for(int i = 0; i < NUM_JOYSTICKS; ++i)
 		{
 			if( fds[i] == -1 )
@@ -112,15 +114,15 @@ void InputHandler_Linux_Joystick::Update(float fDeltaTime)
 			event.type &= ~JS_EVENT_INIT;
 			switch (event.type) {
 			case JS_EVENT_BUTTON: {
-				ButtonPressed(DeviceInput(id, JOY_1 + event.number), event.value);
+				ButtonPressed(DeviceInput(id, JOY_1 + event.number, -1, now), event.value);
 				break;
 			}
 				
 			case JS_EVENT_AXIS: {
 				JoystickButton neg = (JoystickButton)(JOY_LEFT+2*event.number);
 				JoystickButton pos = (JoystickButton)(JOY_RIGHT+2*event.number);
-				ButtonPressed(DeviceInput(id, neg), event.value < -16000);
-				ButtonPressed(DeviceInput(id, pos), event.value > +16000);
+				ButtonPressed(DeviceInput(id, neg, -1, now), event.value < -16000);
+				ButtonPressed(DeviceInput(id, pos, -1, now), event.value > +16000);
 				break;
 			}
 				
