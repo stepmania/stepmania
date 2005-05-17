@@ -23,6 +23,8 @@ static const char *Paths[InputHandler_Linux_Joystick::NUM_JOYSTICKS] =
 
 InputHandler_Linux_Joystick::InputHandler_Linux_Joystick()
 {
+	LOG->Trace( "InputHandler_Linux_Joystick::InputHandler_Linux_Joystick" );
+	
 	for(int i = 0; i < NUM_JOYSTICKS; ++i)
 		fds[i] = -1;
 
@@ -83,13 +85,11 @@ void InputHandler_Linux_Joystick::Update(float fDeltaTime)
 		}
 
 		if(max_fd == -1)
-			return;
+			break;
 
 		struct timeval zero = {0,0};
 		if ( select(max_fd+1, &fdset, NULL, NULL, &zero) <= 0 )
-			return;
-
-		RageTimer now;
+			break;
 
 		for(int i = 0; i < NUM_JOYSTICKS; ++i)
 		{
@@ -114,15 +114,15 @@ void InputHandler_Linux_Joystick::Update(float fDeltaTime)
 			event.type &= ~JS_EVENT_INIT;
 			switch (event.type) {
 			case JS_EVENT_BUTTON: {
-				ButtonPressed(DeviceInput(id, JOY_1 + event.number, -1, now), event.value);
+				ButtonPressed(DeviceInput(id, JOY_1 + event.number), event.value);
 				break;
 			}
 				
 			case JS_EVENT_AXIS: {
 				JoystickButton neg = (JoystickButton)(JOY_LEFT+2*event.number);
 				JoystickButton pos = (JoystickButton)(JOY_RIGHT+2*event.number);
-				ButtonPressed(DeviceInput(id, neg, -1, now), event.value < -16000);
-				ButtonPressed(DeviceInput(id, pos, -1, now), event.value > +16000);
+				ButtonPressed(DeviceInput(id, neg), event.value < -16000);
+				ButtonPressed(DeviceInput(id, pos), event.value > +16000);
 				break;
 			}
 				
