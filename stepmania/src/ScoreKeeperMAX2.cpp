@@ -383,7 +383,7 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	// handle combo logic
 	//
 #ifndef DEBUG
-	if( PREFSMAN->m_bAutoPlay && !GAMESTATE->m_bDemonstrationOrJukebox )	// cheaters never prosper
+	if( PREFSMAN->m_AutoPlay != PC_HUMAN && !GAMESTATE->m_bDemonstrationOrJukebox )	// cheaters never prosper
 	{
 		m_iCurToastyCombo = 0;
 		return;
