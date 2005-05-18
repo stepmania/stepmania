@@ -1,8 +1,5 @@
 /*
- * Derived from Info-ZIP 5.50.  Heavily stripped and rewritten.  Only retains
- * STORE and DEFLATE decompression types; that's all that's in use these days.
- * Could probably readd SHRINK easily.
- *  - Glenn
+ * Ref: http://www.info-zip.org/pub/infozip/doc/appnote-981119-iz.zip
  */
 
 #include "global.h"
@@ -14,55 +11,40 @@
 #include "RageUtil_FileDB.h"
 #include <cerrno>
 
-#define INBUFSIZE 1024*4
-
 static struct FileDriverEntry_ZIP: public FileDriverEntry
 {
 	FileDriverEntry_ZIP(): FileDriverEntry( "ZIP" ) { }
 	RageFileDriver *Create( CString Root ) const { return new RageFileDriverZip( Root ); }
 } const g_RegisterDriver;
 
+enum ZipCompressionMethod { STORED = 0, DEFLATED = 8 };
+
 struct FileInfo
 {
-	CString fn;
-	long offset;
-	long data_offset;
+	CString m_sName;
+	int m_iOffset;
+	int m_iDataOffset;
 
-	long extra_field_length;
-	long filename_length;
-	unsigned short compression_method;
-	unsigned long crc;                 /* crc (needed if extended header) */
-	unsigned long compr_size;          /* compressed size (needed if extended header) */
-	unsigned long uncompr_size;        /* uncompressed size (needed if extended header) */
-	unsigned short diskstart;           /* no of volume where this entry starts */
+	ZipCompressionMethod m_iCompressionMethod;
+	int m_iCRC32;
+	int m_iCompressedSize, m_iUncompressedSize;
 };
 
-struct end_central_dir_record
-{
-	unsigned short number_this_disk;
-	unsigned short num_disk_start_cdir;
-	unsigned short num_entries_centrl_dir_ths_disk;
-	unsigned short total_entries_central_dir;
-	unsigned long size_central_directory;
-	unsigned long offset_start_central_directory;
-	unsigned short zipfile_comment_length;
-};
-
-#define STORED		0
-#define DEFLATED	8
-
-RageFileDriverZip::RageFileDriverZip( CString path ):
+RageFileDriverZip::RageFileDriverZip( CString sPath ):
 	RageFileDriver( new NullFilenameDB ),
-	m_Mutex( ssprintf("RageFileDriverZip(%s)", path.c_str()) )
+	m_Mutex( ssprintf("RageFileDriverZip(%s)", sPath.c_str()) )
 {
 	m_bFileOwned = true;
-	m_sPath = path;
+	m_sPath = sPath;
 
 	RageFile *pFile = new RageFile;
 	m_pZip = pFile;
 
-	if( !pFile->Open(path) )
-		RageException::Throw( "Couldn't open %s: %s", path.c_str(), pFile->GetError().c_str() );
+	if( !pFile->Open(sPath) )
+	{
+		LOG->Warn( "Couldn't open %s: %s", sPath.c_str(), pFile->GetError().c_str() );
+		return;
+	}
 
 	ParseZipfile();
 }
@@ -79,250 +61,159 @@ RageFileDriverZip::RageFileDriverZip( RageFileBasic *pFile ):
 	ParseZipfile();
 }
 
-#define ECREC_SIZE  18
 
-static CString central_hdr_sig = "\x50\x4B\x01\x02";
-static CString local_hdr_sig   = "\x50\x4B\x03\x04";
-static CString end_central_sig = "\x50\x4B\x05\x06";
-
-
-/* XXX */
-static unsigned short makeword(const unsigned char *b)
+bool RageFileDriverZip::ReadEndCentralRecord( int &iTotalEntries, int &iCentralDirectoryOffset )
 {
-	return (unsigned short)((b[1] << 8) | b[0]);
+	CString sError;
+	CString sSig = FileReading::ReadString( *m_pZip, 4, sError );
+	FileReading::read_16_le( *m_pZip, sError ); /* skip number of this disk */
+	FileReading::read_16_le( *m_pZip, sError ); /* skip disk with central directory */
+	FileReading::read_16_le( *m_pZip, sError ); /* skip number of entries on this disk */
+	iTotalEntries = FileReading::read_16_le( *m_pZip, sError );
+	FileReading::read_32_le( *m_pZip, sError ); /* skip size of the central directory */
+	iCentralDirectoryOffset = FileReading::read_32_le( *m_pZip, sError );
+	FileReading::read_16_le( *m_pZip, sError ); /* skip zipfile comment length */
+
+	if( sError != "" )
+	{
+		LOG->Warn( "%s: %s", m_sPath.c_str(), sError.c_str() );
+		return false;
+	}
+
+	return true;
 }
 
-
-static unsigned long makelong(const unsigned char *sig)
+/* Find the end of central directory record, and seek to it. */
+bool RageFileDriverZip::SeekToEndCentralRecord()
 {
-	return (((unsigned long)sig[3]) << 24)
-		+ (((unsigned long)sig[2]) << 16)
-		+ (((unsigned long)sig[1]) << 8)
-		+  ((unsigned long)sig[0]);
-}
+	const int iSearchTo = max( m_pZip->GetFileSize() - 1024*32, 0 );
+	int iRealPos = m_pZip->GetFileSize();
 
-void RageFileDriverZip::ReadEndCentralRecord( end_central_dir_record &ec )
-{
-	const int OrigPos = m_pZip->Tell();
-	typedef unsigned char ec_byte_rec[ ECREC_SIZE+4 ];
-#define NUMBER_THIS_DISK                  4
-#define NUM_DISK_WITH_START_CENTRAL_DIR   6
-#define NUM_ENTRIES_CENTRL_DIR_THS_DISK   8
-#define TOTAL_ENTRIES_CENTRAL_DIR         10
-#define SIZE_CENTRAL_DIRECTORY            12
-#define OFFSET_START_CENTRAL_DIRECTORY    16
-#define ZIPFILE_COMMENT_LENGTH            20
+	while( iRealPos > 0 && iRealPos >= iSearchTo )
+	{
+		/* Move back in the file; leave some overlap between checks, to handle
+		 * the case where the signature crosses the block boundary. */
+		char buf[1024*4];
+		iRealPos -= sizeof(buf) - 4;
+		iRealPos = max( 0, iRealPos );
+		m_pZip->Seek( iRealPos );
 
-	ec_byte_rec byterec;
-	const int got = m_pZip->Read( byterec, ECREC_SIZE+4 );
-	if( got == -1 )
-		RageException::Throw( "Couldn't open %s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
-	if ( got != ECREC_SIZE+4 )
-		RageException::Throw( "%s: unexpected EOF", m_sPath.c_str() );
+		int iGot = m_pZip->Read( buf, sizeof(buf) );
+		if( iGot == -1 )
+		{
+			LOG->Warn( "%s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
+			return false;
+		}
 
-	ec.number_this_disk = makeword(&byterec[NUMBER_THIS_DISK]);
-	ec.num_disk_start_cdir = makeword(&byterec[NUM_DISK_WITH_START_CENTRAL_DIR]);
-	ec.num_entries_centrl_dir_ths_disk = makeword(&byterec[NUM_ENTRIES_CENTRL_DIR_THS_DISK]);
-	ec.total_entries_central_dir = makeword(&byterec[TOTAL_ENTRIES_CENTRAL_DIR]);
-	ec.size_central_directory = makelong(&byterec[SIZE_CENTRAL_DIRECTORY]);
-	ec.offset_start_central_directory = makelong(&byterec[OFFSET_START_CENTRAL_DIRECTORY]);
-	ec.zipfile_comment_length = makeword(&byterec[ZIPFILE_COMMENT_LENGTH]);
+		for( int iPos = iGot; iPos >= 0; --iPos )
+		{
+			if( memcmp(buf + iPos, "\x50\x4B\x05\x06", 4) )
+				continue;
 
-	const int expect_ecrec_offset = ec.offset_start_central_directory + ec.size_central_directory;
-	if( expect_ecrec_offset > OrigPos  )
-		RageException::Throw( "Couldn't open %s: missing %ld bytes in zipfile", m_sPath.c_str(),
-				expect_ecrec_offset - OrigPos  );
+			m_pZip->Seek( iRealPos + iPos );
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void RageFileDriverZip::ParseZipfile()
 {
-	/* Look for the end-central record. */
-	const int searchlen = min( m_pZip->GetFileSize(), 66000 );
-	const int Size = m_pZip->GetFileSize();
-	int realpos = Size;
-
-	/* Loop through blocks of data, starting at the end.  In general, need not
-	 * check whole zim_pZip for signature, but may want to do so if testing. */
-
-	int real_ecrec_offset = -1;
-
-	char tmp[INBUFSIZE];
-	int tmp_used = 0;
-	while( real_ecrec_offset == -1 && realpos > 0 && realpos >= Size-searchlen )
+	if( !SeekToEndCentralRecord() )
 	{
-		realpos -= INBUFSIZE;
-		realpos = max( 0, realpos );
-		m_pZip->Seek( realpos );
-		int got = m_pZip->Read( tmp+tmp_used, sizeof(tmp)-tmp_used );
-		if( got == -1 )
-			RageException::Throw( "Couldn't open %s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
-		if( got == 0 )
-			break;          /* fall through and fail */
-		got += tmp_used;
-
-		/* 'P' must be at least (ECREC_SIZE+4) bytes from end of zim_pZip */
-		for( int pos = got-(ECREC_SIZE+4); real_ecrec_offset == -1 && pos >= 0; --pos )
-		{
-			const char *p = tmp+pos;
-			if ( *p != (unsigned char)0x50 ) /* ASCII 'P' */
-				continue;
-
-			if( strncmp((char *)p, end_central_sig, 4))
-				continue;
-			real_ecrec_offset = realpos + pos;
-		}
-
-		/* sig may span block boundary: */
-		memcpy((char *)tmp+INBUFSIZE-3, (char *)tmp, 3);
-		tmp_used = 3;
+		LOG->Warn( "Couldn't open %s: couldn't find end of central directory record", m_sPath.c_str() );
+		return;
 	}
 
-	if( real_ecrec_offset == -1 )
-		RageException::Throw( "Couldn't open %s: End-of-central-directory signature not found", m_sPath.c_str() );
+	/* Read the end of central directory record. */
+	int iTotalEntries, iCentralDirectoryOffset;
+	if( !ReadEndCentralRecord(iTotalEntries, iCentralDirectoryOffset) )
+		return; /* warned already */
 
-	m_pZip->Seek( real_ecrec_offset );
-
-	/* Get the end-central data. */
-	end_central_dir_record ec;
-	ReadEndCentralRecord( ec );
-
-	bool something = ec.number_this_disk == 1 && ec.num_disk_start_cdir == 1;
-	if (!something && ec.number_this_disk != 0)
-		RageException::Throw( "Couldn't open %s: zipfile is part of multi-disk archive", m_sPath.c_str() );
-
-	/* Seek to where the start of central directory should be, and make
-	 * sure it's there. */
-	m_pZip->Seek( ec.offset_start_central_directory );
-
-	CString sig;
-	int got = m_pZip->Read( sig, 4 );
-	if( got != 4 || sig != central_hdr_sig )
-		RageException::Throw( "Couldn't open %s: start of central directory not found; zipfile corrupt", m_sPath.c_str() );
-
-	m_pZip->Seek( ec.offset_start_central_directory );
+	/* Seek to the start of the central file directory. */
+	m_pZip->Seek( iCentralDirectoryOffset );
 
 	/* Loop through files in central directory. */
-	while(1)
+	for( int i = 0; i < iTotalEntries; ++i )
 	{
-		CString sig;
-		if ( m_pZip->Read( sig, 4 ) != 4 )
-			break;
-
-		/* Is it a new entry? */
-		if( sig != central_hdr_sig )
-		{
-			/* Not a new central directory entry.  Is the number of processed entries
-			 * compatible with the number of entries as stored in the end_central record? */
-			if( Files.size() == (unsigned)ec.total_entries_central_dir )
-			{
-				/* Are we at the end_central record? */
-				if( sig != end_central_sig )
-					LOG->Warn( "%s: expected end central file header signature not found", m_sPath.c_str() );
-			} else {
-				LOG->Warn( "%s: expected central file header signature not found", m_sPath.c_str() );
-			}
-			break;
-		}
-
 		FileInfo info;
-		info.data_offset = -1;
+		info.m_iDataOffset = -1;
 		int got = ProcessCdirFileHdr( info );
 		if( got == -1 ) /* error */
 			break;
 		if( got == 0 ) /* skip */
 			continue;
 
-		m_pZip->Seek( m_pZip->Tell() + info.extra_field_length );
-
-		FileInfo *pInfo = new FileInfo(info);
-		Files.push_back( pInfo );
-		FDB->AddFile( pInfo->fn, pInfo->uncompr_size, pInfo->crc, pInfo );
+		FileInfo *pInfo = new FileInfo( info );
+		m_pFiles.push_back( pInfo );
+		FDB->AddFile( pInfo->m_sName, pInfo->m_iUncompressedSize, pInfo->m_iCRC32, pInfo );
 	}
+
+	if( m_pFiles.size() == 0 )
+		LOG->Warn( "%s: no files found in central file header", m_sPath.c_str() );
 }
 
-#define CREC_SIZE   42
-typedef unsigned char cdir_byte_hdr[ CREC_SIZE ];
-#define C_VERSION_MADE_BY_0               0
-#define C_VERSION_MADE_BY_1               1
-#define C_VERSION_NEEDED_TO_EXTRACT_0     2
-#define C_VERSION_NEEDED_TO_EXTRACT_1     3
-#define C_GENERAL_PURPOSE_BIT_FLAG        4
-#define C_COMPRESSION_METHOD              6
-#define C_LAST_MOD_DOS_DATETIME           8
-#define C_CRC32                           12
-#define C_COMPRESSED_SIZE                 16
-#define C_UNCOMPRESSED_SIZE               20
-#define C_FILENAME_LENGTH                 24
-#define C_EXTRA_FIELD_LENGTH              26
-#define C_FILE_COMMENT_LENGTH             28
-#define C_DISK_NUMBER_START               30
-#define C_INTERNAL_FILE_ATTRIBUTES        32
-#define C_EXTERNAL_FILE_ATTRIBUTES        34
-#define C_RELATIVE_OFFSET_LOCAL_HEADER    38
 int RageFileDriverZip::ProcessCdirFileHdr( FileInfo &info )
 {
-	/* Read the next central directory entry and do any necessary machine-type
-	 * conversions (byte ordering, structure padding compensation--do so by
-	 * copying the data from the array into which it was read (byterec) to the
-	 * usable struct. */
-	cdir_byte_hdr byterec;
-	int got = m_pZip->Read( (char *)byterec, CREC_SIZE );
-	if ( got == -1 )
-		RageException::Throw( "Couldn't open %s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
-	if ( got != CREC_SIZE )
+	CString sError;
+	CString sSig = FileReading::ReadString( *m_pZip, 4, sError );
+	if( sSig != "\x50\x4B\x01\x02" )
 	{
-		LOG->Warn( "%s: unexpected EOF", m_sPath.c_str() );
+		LOG->Warn( "%s: central directory record signature not found", m_sPath.c_str() );
 		return -1;
 	}
 
-//	crec.version_made_by[0] = byterec[C_VERSION_MADE_BY_0];
-//	crec.version_made_by[1] = byterec[C_VERSION_MADE_BY_1];
-	const int version_needed_to_extract = byterec[C_VERSION_NEEDED_TO_EXTRACT_0];
-	if( version_needed_to_extract > 20 ) /* compatible with PKUNZIP 2.0 */
+	FileReading::read_16_le( *m_pZip, sError ); /* skip version made by */
+	FileReading::read_16_le( *m_pZip, sError ); /* skip version needed to extract */
+	int iGeneralPurpose = FileReading::read_16_le( *m_pZip, sError );
+	info.m_iCompressionMethod = (ZipCompressionMethod) FileReading::read_16_le( *m_pZip, sError );
+	FileReading::read_16_le( *m_pZip, sError ); /* skip last mod file time */
+	FileReading::read_16_le( *m_pZip, sError ); /* skip last mod file date */
+	info.m_iCRC32 = FileReading::read_32_le( *m_pZip, sError );
+	info.m_iCompressedSize = FileReading::read_32_le( *m_pZip, sError );
+	info.m_iUncompressedSize = FileReading::read_32_le( *m_pZip, sError );
+	int iFilenameLength = FileReading::read_16_le( *m_pZip, sError );
+	int iExtraFieldLength = FileReading::read_16_le( *m_pZip, sError );
+	int iFileCommentLength = FileReading::read_16_le( *m_pZip, sError );
+	FileReading::read_16_le( *m_pZip, sError ); /* relative offset of local header */
+	FileReading::read_16_le( *m_pZip, sError ); /* skip internal file attributes */
+	int iExternalFileAttributes = FileReading::read_32_le( *m_pZip, sError );
+	info.m_iOffset = FileReading::read_32_le( *m_pZip, sError );
+
+	/* Check for errors before reading variable-length fields. */
+	if( sError != "" )
 	{
-		LOG->Warn( "File \"%s\" in \"%s\" uses unsupported ZIP version %i.%i",
-			info.fn.c_str(), m_sPath.c_str(), 
-			version_needed_to_extract / 10, version_needed_to_extract % 10 );
-		return 0;
+		LOG->Warn( "%s: %s", m_sPath.c_str(), sError.c_str() );
+		return -1;
 	}
 
-	const int general_purpose_bit_flag = makeword(&byterec[C_GENERAL_PURPOSE_BIT_FLAG]);
-	if( general_purpose_bit_flag & 1 )
+	info.m_sName = FileReading::ReadString( *m_pZip, iFilenameLength, sError );
+	FileReading::SkipBytes( *m_pZip, iExtraFieldLength, sError ); /* skip extra field */
+	FileReading::SkipBytes( *m_pZip, iFileCommentLength, sError ); /* skip file comment */
+
+	if( sError != "" )
 	{
-		LOG->Warn( "Skipped encrypted \"%s\" in \"%s\"", info.fn.c_str(), m_sPath.c_str() );
-		return 0;
+		LOG->Warn( "%s: %s", m_sPath.c_str(), sError.c_str() );
+		return -1;
 	}
 
-	info.compression_method = makeword(&byterec[C_COMPRESSION_METHOD]);
-//	int last_mod_dos_datetime = makelong(&byterec[C_LAST_MOD_DOS_DATETIME]);
-	info.crc = makelong(&byterec[C_CRC32]);
-	info.compr_size = makelong(&byterec[C_COMPRESSED_SIZE]);
-	info.uncompr_size = makelong(&byterec[C_UNCOMPRESSED_SIZE]);
-	info.filename_length = makeword(&byterec[C_FILENAME_LENGTH]);
-	info.extra_field_length = makeword(&byterec[C_EXTRA_FIELD_LENGTH]);
-//	int file_comment_length = makeword(&byterec[C_FILE_COMMENT_LENGTH]);
-	info.diskstart = makeword(&byterec[C_DISK_NUMBER_START]);
-//	int internal_file_attributes = makeword(&byterec[C_INTERNAL_FILE_ATTRIBUTES]);
-	int external_file_attributes = makelong(&byterec[C_EXTERNAL_FILE_ATTRIBUTES]);  /* LONG, not word! */
-	info.offset = makelong(&byterec[C_RELATIVE_OFFSET_LOCAL_HEADER]);
+	/* Check usability last, so we always read past the whole entry and don't leave the
+	 * file pointer in the middle of a record. */
+	if( iGeneralPurpose & 1 )
+	{
+		LOG->Warn( "Skipped encrypted \"%s\" in \"%s\"", info.m_sName.c_str(), m_sPath.c_str() );
+		return 0;
+	}
 
 	/* Skip directories. */
-	if( external_file_attributes & 0x08 )
+	if( iExternalFileAttributes & (1<<4) )
 		return 0;
 
-	got = m_pZip->Read( info.fn, info.filename_length );
-	if( got == -1 )
-		RageException::Throw( "Couldn't open %s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
-	if( got != info.filename_length )
-	{
-		LOG->Warn( "%s: bad filename length %li", m_sPath.c_str(), info.filename_length );
-		return 0;
-	}
-
-	if( info.compression_method != STORED && info.compression_method != DEFLATED )
+	if( info.m_iCompressionMethod != STORED && info.m_iCompressionMethod != DEFLATED )
 	{
 		LOG->Warn( "File \"%s\" in \"%s\" uses unsupported compression method %i",
-			info.fn.c_str(), m_sPath.c_str(), info.compression_method );
+			info.m_sName.c_str(), m_sPath.c_str(), info.m_iCompressionMethod );
 
 		return 0;
 	}
@@ -330,84 +221,98 @@ int RageFileDriverZip::ProcessCdirFileHdr( FileInfo &info )
 	return 1;
 }
 
+bool RageFileDriverZip::ReadLocalFileHeader( FileInfo &info )
+{
+	/* Seek to and read the local file header. */
+	m_pZip->Seek( info.m_iOffset );
+
+	CString sError;
+	CString sSig = FileReading::ReadString( *m_pZip, 4, sError );
+
+	if( sError != "" )
+	{
+		LOG->Warn( "%s: error opening \"%s\": %s", m_sPath.c_str(), info.m_sName.c_str(), sError.c_str() );
+		return false;
+	}
+
+	if( sSig != "\x50\x4B\x03\x04" )
+	{
+		LOG->Warn( "%s: local file header not found for \"%s\"", m_sPath.c_str(), info.m_sName.c_str() );
+		return false;
+	}
+
+	FileReading::SkipBytes( *m_pZip, 22, sError ); /* skip most of the local file header */
+
+	const int iFilenameLength = FileReading::read_16_le( *m_pZip, sError );
+	const int iExtraFieldLength = FileReading::read_16_le( *m_pZip, sError );
+	info.m_iDataOffset = m_pZip->Tell() + iFilenameLength + iExtraFieldLength;
+
+	if( sError != "" )
+	{
+		LOG->Warn( "%s: %s", m_sPath.c_str(), sError.c_str() );
+		return false;
+	}
+	
+	return true;
+}
+
 RageFileDriverZip::~RageFileDriverZip()
 {
-	for( unsigned i = 0; i < Files.size(); ++i )
-		delete Files[i];
+	for( unsigned i = 0; i < m_pFiles.size(); ++i )
+		delete m_pFiles[i];
 
 	if( m_bFileOwned )
 		delete m_pZip;
 }
 
-RageFileBasic *RageFileDriverZip::Open( const CString &path, int mode, int &err )
+RageFileBasic *RageFileDriverZip::Open( const CString &sPath, int iMode, int &iErr )
 {
-	if( mode == RageFile::WRITE )
+	if( iMode & RageFile::WRITE )
 	{
-		err = ERROR_WRITING_NOT_SUPPORTED;
+		iErr = ERROR_WRITING_NOT_SUPPORTED;
 		return NULL;
 	}
 
-	FileInfo *info = (FileInfo *) FDB->GetFilePriv( path );
+	FileInfo *info = (FileInfo *) FDB->GetFilePriv( sPath );
 	if( info == NULL )
 	{
-		err = ENOENT;
+		iErr = ENOENT;
 		return NULL;
 	}
 
 	m_Mutex.Lock();
 
 	/* If we havn't figured out the offset to the real data yet, do so now. */
-	if( info->data_offset == -1 )
+	if( info->m_iDataOffset == -1 )
 	{
-		m_pZip->Seek( info->offset );
-
-		/* Should be in proper position now, so check for sig. */
-		CString sig;
-		int got = m_pZip->Read( sig, 4 );
-		if( got == -1 )
-			RageException::Throw( "Read error in %s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
-		if( got != 4 )
-			RageException::Throw( "%s: unexpected EOF", m_sPath.c_str() );
-
-		if( sig != local_hdr_sig )
-			RageException::Throw( "%s: bad zipfile offset", m_sPath.c_str() );
-
-#define LREC_SIZE   26   /* lengths of local file headers, central */
-#define L_FILENAME_LENGTH                 22
-#define L_EXTRA_FIELD_LENGTH              24
-		unsigned char byterec[LREC_SIZE];
-		got = m_pZip->Read( (char *)byterec, LREC_SIZE );
-		if( got == -1 )
-			RageException::Throw( "Read error in %s: %s", m_sPath.c_str(), m_pZip->GetError().c_str() );
-		if( got != LREC_SIZE )
-			RageException::Throw( "%s: unexpected EOF", m_sPath.c_str() );
-
-		const int filename_length = makeword(&byterec[L_FILENAME_LENGTH]);
-		const int extra_field_length = makeword(&byterec[L_EXTRA_FIELD_LENGTH]);
-		info->data_offset = m_pZip->Tell() + filename_length + extra_field_length;
+		if( !ReadLocalFileHeader(*info) )
+		{
+			m_Mutex.Unlock();
+			return NULL;
+		}
 	}
 
 	/* We won't do any further access to zip, except to copy it (which is
 	 * threadsafe), so we can unlock now. */
 	m_Mutex.Unlock();
 
-	RageFileDriverSlice *pSlice = new RageFileDriverSlice( m_pZip->Copy(), info->data_offset, info->compr_size );
+	RageFileDriverSlice *pSlice = new RageFileDriverSlice( m_pZip->Copy(), info->m_iDataOffset, info->m_iCompressedSize );
 	pSlice->DeleteFileWhenFinished();
 	
-	switch( info->compression_method )
+	switch( info->m_iCompressionMethod )
 	{
 	case STORED:
 		return pSlice;
 	case DEFLATED:
 	{
-		RageFileObjInflate *pInflate = new RageFileObjInflate( pSlice, info->uncompr_size );
+		RageFileObjInflate *pInflate = new RageFileObjInflate( pSlice, info->m_iUncompressedSize );
 		pInflate->DeleteFileWhenFinished();
 		return pInflate;
 	}
 	default:
 		/* unknown compression method */
 		ASSERT( 0 );
-		err = EINVAL;
+		iErr = EINVAL;
 		return NULL;
 	}
 }
@@ -419,54 +324,26 @@ void RageFileDriverZip::FlushDirCache( const CString &sPath )
 }
 
 /*
- * Copyright (c) 1990-2002 Info-ZIP.  All rights reserved.
- * Copyright (c) 2003-2004 Glenn Maynard.  All rights reserved.
- * 
- * For the purposes of this copyright and license, "Info-ZIP" is defined as
- * the following set of individuals:
- * 
- *    Mark Adler, John Bush, Karl Davis, Harald Denker, Jean-Michel Dubois,
- *    Jean-loup Gailly, Hunter Goatley, Ian Gorman, Chris Herborth, Dirk Haase,
- *    Greg Hartwig, Robert Heath, Jonathan Hudson, Paul Kienitz, David Kirschbaum,
- *    Johnny Lee, Onno van der Linden, Igor Mandrichenko, Steve P. Miller,
- *    Sergio Monesi, Keith Owens, George Petrov, Greg Roelofs, Kai Uwe Rommel,
- *    Steve Salisbury, Dave Smith, Christian Spieler, Antoine Verheijen,
- *    Paul von Behren, Rich Wales, Mike White
- * 
- * This software is provided "as is," without warranty of any kind, express
- * or implied.  In no event shall Info-ZIP or its contributors be held liable
- * for any direct, indirect, incidental, special or consequential damages
- * arising out of the use of or inability to use this software.
- * 
- * Permission is granted to anyone to use this software for any purpose,
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- * 
- *     1. Redistributions of source code must retain the above copyright notice,
- *        definition, disclaimer, and this list of conditions.
- * 
- *     2. Redistributions in binary form (compiled executables) must reproduce
- *        the above copyright notice, definition, disclaimer, and this list of
- *        conditions in documentation and/or other materials provided with the
- *        distribution.  The sole exception to this condition is redistribution
- *        of a standard UnZipSFX binary as part of a self-extracting archive;
- *        that is permitted without inclusion of this license, as long as the
- *        normal UnZipSFX banner has not been removed from the binary or disabled.
- * 
- *     3. Altered versions--including, but not limited to, ports to new operating
- *        systems, existing ports with new graphical interfaces, and dynamic,
- *        shared, or static library versions--must be plainly marked as such
- *        and must not be misrepresented as being the original source.  Such
- *        altered versions also must not be misrepresented as being Info-ZIP
- *        releases--including, but not limited to, labeling of the altered
- *        versions with the names "Info-ZIP" (or any variation thereof, including,
- *        but not limited to, different capitalizations), "Pocket UnZip," "WiZ"
- *        or "MacZip" without the explicit permission of Info-ZIP.  Such altered
- *        versions are further prohibited from misrepresentative use of the
- *        Zip-Bugs or Info-ZIP e-mail addresses or of the Info-ZIP URL(s).
- * 
- *     4. Info-ZIP retains the right to use the names "Info-ZIP," "Zip," "UnZip,"
- *        "UnZipSFX," "WiZ," "Pocket UnZip," "Pocket Zip," and "MacZip" for its
- *        own source and binary releases.
+ * Copyright (c) 2003-2005 Glenn Maynard.  All rights reserved.
+ * All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, and/or sell copies of the Software, and to permit persons to
+ * whom the Software is furnished to do so, provided that the above
+ * copyright notice(s) and this permission notice appear in all copies of
+ * the Software and that both the above copyright notice(s) and this
+ * permission notice appear in supporting documentation.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
+ * THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS
+ * INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL INDIRECT
+ * OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS
+ * OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+ * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+ * PERFORMANCE OF THIS SOFTWARE.
  */
-
