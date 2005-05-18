@@ -654,11 +654,14 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
+	static int SystemMessage( T* p, lua_State *L )		{ p->SystemMessage( SArg(1) ); return 0; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( SetNewScreen )
 		ADD_METHOD( GetTopScreen )
+		ADD_METHOD( SystemMessage )
+
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
