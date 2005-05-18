@@ -52,6 +52,8 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 
 	// TRICKY: Do this after GameState::Reset.
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_JOINING );
+
+	this->SubscribeToMessage( PREFSMAN->m_CoinMode.GetName()+"Changed" );
 }
 
 void ScreenTitleMenu::Init()
