@@ -1439,9 +1439,9 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 		break;
 	case EDIT_BUTTON_TOGGLE_AUTOPLAY:
 		{
-			PREFSMAN->m_bAutoPlay.Set( !PREFSMAN->m_bAutoPlay );
+			PREFSMAN->m_AutoPlay.Set( PREFSMAN->m_AutoPlay!=PC_HUMAN ? PC_HUMAN:PC_AUTOPLAY );
 			FOREACH_HumanPlayer( p )
-				GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
+				GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_AutoPlay;
 		}
 		break;
 	case EDIT_BUTTON_OFFSET_UP:
@@ -1471,7 +1471,7 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 	switch( StyleI.player )
 	{
 	case PLAYER_1:	
-		if( !PREFSMAN->m_bAutoPlay )
+		if( PREFSMAN->m_AutoPlay == PC_HUMAN )
 			m_Player.Step( StyleI.col, DeviceI.ts ); 
 		break;
 	}
@@ -2402,7 +2402,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				SetupCourseAttacks();
 
 				m_Player.Load( m_NoteDataEdit );
-				GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PREFSMAN->m_bAutoPlay?PC_AUTOPLAY:PC_HUMAN;
+				GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PREFSMAN->m_AutoPlay;
 
 				const float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
 				LOG->Trace( "Starting playback at %f", fStartSeconds );

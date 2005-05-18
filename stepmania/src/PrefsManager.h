@@ -150,7 +150,7 @@ public:
 	Preference<float>	m_fTimeMeterSecondsChangeOK;
 	Preference<float>	m_fTimeMeterSecondsChangeNG;
 
-	Preference<bool>	m_bAutoPlay;
+	Preference<PlayerController> m_AutoPlay;
 	Preference<bool>	m_bDelayedBack;
 	Preference<bool>	m_bShowInstructions;
 	Preference<bool>	m_bShowSelectGroup;

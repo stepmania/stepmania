@@ -298,7 +298,7 @@ static void NumBackgrounds( int &sel, bool ToSel, const ConfOption *pConfOption 
 
 /* Input options */
 MOVE( AutoMapOnJoyChange,	PREFSMAN->m_bAutoMapOnJoyChange );
-MOVE( AutoPlay,				PREFSMAN->m_bAutoPlay );
+MOVE( AutoPlay,				(int&)PREFSMAN->m_AutoPlay );
 MOVE( BackDelayed,			PREFSMAN->m_bDelayedBack );
 MOVE( OptionsNavigation,	PREFSMAN->m_bArcadeOptionsNavigation );
 
@@ -558,7 +558,7 @@ static void InitializeConfOptions()
 	/* Input options */
 	ADD( ConfOption( "AutoMapOnJoyChange",			AutoMapOnJoyChange,	"OFF","ON (recommended)" ) );
 	ADD( ConfOption( "OnlyDedicatedMenuButtons",	MovePref,			"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS" ) );
-	ADD( ConfOption( "AutoPlay",					AutoPlay,			"OFF","ON" ) );
+	ADD( ConfOption( "AutoPlay",					AutoPlay,			"OFF","ON","CPU-Controlled" ) );
 	ADD( ConfOption( "BackDelayed",					BackDelayed,		"INSTANT","HOLD" ) );
 	ADD( ConfOption( "OptionsNavigation",			OptionsNavigation,	"SM STYLE","ARCADE STYLE" ) );
 	ADD( ConfOption( "WheelSpeed",					WheelSpeed,			"SLOW","NORMAL","FAST","REALLY FAST" ) );

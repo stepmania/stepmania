@@ -102,6 +102,8 @@ ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
 	FAIL_AFTER_30_MISSES.Load( sName, "FailAfter30Misses" );
 	USE_FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "UseForcedModifiersInBeginner" );
 	FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "ForcedModifiersInBeginner" );
+
+	this->SubscribeToMessage( PREFSMAN->m_AutoPlay.GetName()+"Changed" );
 }
 
 void ScreenGameplay::Init()
@@ -963,13 +965,9 @@ void ScreenGameplay::LoadNextSong()
 			iNewSkill = clamp( iNewSkill, 0, NUM_SKILL_LEVELS-1 );
 			GAMESTATE->m_pPlayerState[p]->m_iCpuSkill = iNewSkill;
 		}
-		else if( PREFSMAN->m_bAutoPlay )
-		{
-			GAMESTATE->m_pPlayerState[p]->m_PlayerController = PC_AUTOPLAY;
-		}
 		else
 		{
-			GAMESTATE->m_pPlayerState[p]->m_PlayerController = PC_HUMAN;
+			GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_AutoPlay;
 		}
 	}
 	
@@ -1943,9 +1941,6 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	{
 		switch( DeviceI.button )
 		{
-		case KEY_F5:
-			this->HandleScreenMessage( SM_NotesEnded );
-			break;
 		case KEY_F6:
 			{
 				bool bHoldingShift = 
@@ -1974,22 +1969,6 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 			m_textDebug.BeginTweening( 3 );		// sleep
 			m_textDebug.BeginTweening( 0.5f );	// fade out
 			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
-			break;
-		case KEY_F8:
-			{
-				PREFSMAN->m_bAutoPlay.Set( !PREFSMAN->m_bAutoPlay );
-				UpdateAutoPlayText();
-				bool bIsHoldingShift = 
-					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
-					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT));
-                FOREACH_HumanPlayer(p)
-				{
-                    if( bIsHoldingShift )
-                        GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_bAutoPlay ? PC_CPU : PC_HUMAN;
-                    else
-                        GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_bAutoPlay ? PC_AUTOPLAY : PC_HUMAN;
-				}
-			}
 			break;
 		case KEY_F9:
 		case KEY_F10:
@@ -2063,7 +2042,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	{
 		AbortGiveUp( true );
 		
-		if( !PREFSMAN->m_bAutoPlay )
+		if( PREFSMAN->m_AutoPlay == PC_HUMAN )
 			m_Player[StyleI.player].Step( StyleI.col, DeviceI.ts ); 
 	}
 //	else if( type==IET_FIRST_PRESS && 
@@ -2088,21 +2067,24 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 void ScreenGameplay::UpdateAutoPlayText()
 {
-	CString sText;
+	vector<CString> vsText;
 
-	if( PREFSMAN->m_bAutoPlay )
-		sText += "AutoPlay     ";
+	switch( PREFSMAN->m_AutoPlay )
+	{
+	case PC_HUMAN:											break;
+	case PC_AUTOPLAY:	vsText.push_back("AutoPlay");		break;
+	case PC_CPU:		vsText.push_back("AutoPlay CPU");	break;
+	default:	ASSERT(0);
+	}
 	switch( GAMESTATE->m_SongOptions.m_AutosyncType )
 	{
-	case SongOptions::AUTOSYNC_OFF:											break;
-	case SongOptions::AUTOSYNC_SONG:	sText += "AutosyncSong     ";		break;
-	case SongOptions::AUTOSYNC_MACHINE:	sText += "AutosyncMachine     ";	break;
+	case SongOptions::AUTOSYNC_OFF:												break;
+	case SongOptions::AUTOSYNC_SONG:	vsText.push_back("AutosyncSong");		break;
+	case SongOptions::AUTOSYNC_MACHINE:	vsText.push_back("AutosyncMachine");	break;
 	default:	ASSERT(0);
 	}
 
-	if( sText.length() > 0 )
-		sText.resize( sText.length()-5 );
-
+	CString sText = join( "     ", vsText );
 	m_textAutoPlay.SetText( sText );
 }
 
@@ -2642,6 +2624,12 @@ void ScreenGameplay::TweenOffScreen()
 void ScreenGameplay::ShowOniGameOver( PlayerNumber pn )
 {
 	m_sprOniGameOver[pn].PlayCommand( "Die" );
+}
+
+void ScreenGameplay::HandleMessage( const CString& sMessage )
+{
+	if( sMessage == PREFSMAN->m_AutoPlay.GetName()+"Changed" )
+		UpdateAutoPlayText();
 }
 
 /*

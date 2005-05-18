@@ -40,6 +40,8 @@ public:
 	void Update( float fDeltaTime );
 
 private:
+	void UpdateText();
+
 	Quad m_Quad;
 	BitmapText m_Header;
 	BitmapText m_Text[NUM_DEBUG_LINES];

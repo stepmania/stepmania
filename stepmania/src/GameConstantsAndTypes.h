@@ -224,10 +224,11 @@ const int NUM_RANKING_LINES	= 5;
 enum PlayerController
 {
 	PC_HUMAN,
-	PC_CPU,
 	PC_AUTOPLAY,
+	PC_CPU,
 	NUM_PLAYER_CONTROLLERS
 };
+const CString& PlayerControllerToString( PlayerController pc );
 
 const int MIN_SKILL = 0;
 const int MAX_SKILL = 10;

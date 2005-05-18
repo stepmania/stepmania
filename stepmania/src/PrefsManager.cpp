@@ -175,7 +175,7 @@ PrefsManager::PrefsManager() :
 	m_fTimeMeterSecondsChangeOK			( Options, "TimeMeterSecondsChangeOK",			-0.0f ),
 	m_fTimeMeterSecondsChangeNG			( Options, "TimeMeterSecondsChangeNG",			-4.0f ),
 
-	m_bAutoPlay					( Options, "AutoPlay",					false ),
+	m_AutoPlay					( Options, "AutoPlay",					PC_HUMAN ),
 	m_bDelayedBack				( Options, "DelayedBack",				true ),
 	m_bShowInstructions			( Options, "ShowInstructions",			true ),
 	m_bShowSelectGroup			( Options, "ShowSelectGroup",			true ),

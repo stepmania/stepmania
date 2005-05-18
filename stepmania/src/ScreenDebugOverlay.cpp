@@ -122,6 +122,11 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 	if( !g_bIsDisplayed )
 		return;
 
+	UpdateText();
+}
+
+void ScreenDebugOverlay::UpdateText()
+{
 	/* Highlight options that aren't the default. */
 	const RageColor off(0.6f, 0.6f, 0.6f, 1.0f);
 	const RageColor on(1, 1, 1, 1);
@@ -157,7 +162,7 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 		bool bOn = false;
 		switch( i )
 		{
-		case DebugLine_Autoplay:			bOn=PREFSMAN->m_bAutoPlay.Get();		break;
+		case DebugLine_Autoplay:			bOn=PREFSMAN->m_AutoPlay.Get() != PC_HUMAN;		break;
 		case DebugLine_CoinMode:			bOn=true;								break;
 		case DebugLine_Slow:				bOn=g_bIsSlow;							break;
 		case DebugLine_Halt:				bOn=g_bIsHalt;							break;
@@ -178,7 +183,15 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 		CString s2;
 		switch( i )
 		{
-		case DebugLine_Autoplay:			s2=bOn ? "on":"off";	break;
+		case DebugLine_Autoplay:
+			switch( PREFSMAN->m_AutoPlay )
+			{
+			case PC_HUMAN:		s2="off";	break;
+			case PC_AUTOPLAY:	s2="on";	break;
+			case PC_CPU:		s2="CPU";	break;
+			default:	ASSERT(0);
+			}
+			break;
 		case DebugLine_CoinMode:			s2=CoinModeToString(PREFSMAN->m_CoinMode);	break;
 		case DebugLine_Slow:				s2=bOn ? "on":"off";	break;
 		case DebugLine_Halt:				s2=bOn ? "on":"off";	break;
@@ -249,9 +262,13 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 			switch( i )
 			{
 			case DebugLine_Autoplay:
-				PREFSMAN->m_bAutoPlay.Set( !PREFSMAN->m_bAutoPlay );
-				FOREACH_HumanPlayer(pn)
-					GAMESTATE->m_pPlayerState[pn]->m_PlayerController = PREFSMAN->m_bAutoPlay ? PC_AUTOPLAY : PC_HUMAN;
+				{
+					PlayerController pc = (PlayerController)(PREFSMAN->m_AutoPlay+1);
+					wrap( (int&)pc, NUM_PLAYER_CONTROLLERS );
+					PREFSMAN->m_AutoPlay.Set( pc );
+					FOREACH_HumanPlayer(pn)
+						GAMESTATE->m_pPlayerState[pn]->m_PlayerController = PREFSMAN->m_AutoPlay;
+				}
 				break;
 			case DebugLine_CoinMode:
 				{
@@ -314,6 +331,8 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 			default:	ASSERT(0);
 			}
 			
+			UpdateText();
+
 			SCREENMAN->SystemMessage( txt.GetText() );
 		}
 	}

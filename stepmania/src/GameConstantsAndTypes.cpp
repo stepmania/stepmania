@@ -84,6 +84,14 @@ XToString( RankingCategory, NUM_RANKING_CATEGORIES );
 StringToX( RankingCategory );
 
 
+static const CString PlayerControllerNames[] = {
+	"Human",
+	"Autoplay",
+	"Cpu",
+};
+XToString( PlayerController, NUM_PLAYER_CONTROLLERS );
+
+
 static const CString CoinModeNames[] = {
 	"home",
 	"pay",

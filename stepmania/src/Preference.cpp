@@ -76,6 +76,7 @@ READFROM_AND_WRITETO( PrefsManager::CourseSortOrders, int& )
 READFROM_AND_WRITETO( PrefsManager::GetRankingName, int& )
 READFROM_AND_WRITETO( PrefsManager::ScoringTypes, int& )
 READFROM_AND_WRITETO( PrefsManager::BoostAppPriority, int& )
+READFROM_AND_WRITETO( PlayerController, int& )
 READFROM_AND_WRITETO( RageSoundReader_Resample::ResampleQuality, int& )
 
 void IPreference::ReadFrom( const IniFile &ini )
