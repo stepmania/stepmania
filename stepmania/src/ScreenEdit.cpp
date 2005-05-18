@@ -64,6 +64,7 @@ AutoScreenMessage( SM_BackFromInsertAttackPlayerOptions )
 AutoScreenMessage( SM_BackFromPrefs ) 
 AutoScreenMessage( SM_BackFromCourseModeMenu )
 AutoScreenMessage( SM_DoRevertToLastSave )
+AutoScreenMessage( SM_DoRevertFromDisk )
 AutoScreenMessage( SM_BackFromBPMChange )
 AutoScreenMessage( SM_BackFromStopChange )
 AutoScreenMessage( SM_DoSaveAndExit )
@@ -373,6 +374,7 @@ static Menu g_MainMenu(
 	MenuRow( ScreenEdit::play_current_beat_to_end,	"Play Current Beat to End",		true, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRow( ScreenEdit::save,						"Save",							true, EDIT_MODE_HOME, 0, NULL ),
 	MenuRow( ScreenEdit::revert_to_last_save,		"Revert to Last Save",			true, EDIT_MODE_HOME, 0, NULL ),
+	MenuRow( ScreenEdit::revert_from_disk,			"Revert from Disk",				true, EDIT_MODE_FULL, 0, NULL ),
 	MenuRow( ScreenEdit::player_options,			"Player Options",				true, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRow( ScreenEdit::song_options,				"Song Options",					true, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRow( ScreenEdit::edit_song_info,			"Edit Song Info",				true, EDIT_MODE_FULL, 0, NULL ),
@@ -1660,6 +1662,16 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			m_Undo.ClearAll();
 		}
 	}
+	else if( SM == SM_DoRevertFromDisk )
+	{
+		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
+		{
+			RevertFromDisk();
+			m_pSteps->GetNoteData( m_NoteDataEdit );
+			m_bHasUndo = false;
+			m_Undo.ClearAll();
+		}
+	}
 	else if( SM == SM_DoSaveAndExit ) // just asked "save before exiting? yes, no, cancel"
 	{
 		switch( ScreenPrompt::s_LastAnswer )
@@ -1939,6 +1951,11 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 		case revert_to_last_save:
 			SCREENMAN->Prompt( SM_DoRevertToLastSave,
 				"Do you want to revert to your last save?\n\nThis will destroy all unsaved changes.",
+				PROMPT_YES_NO, ANSWER_NO );
+			break;
+		case revert_from_disk:
+			SCREENMAN->Prompt( SM_DoRevertFromDisk,
+				"Do you want to revert from disk?\n\nThis will destroy all unsaved changes.",
 				PROMPT_YES_NO, ANSWER_NO );
 			break;
 		case player_options:
@@ -2683,6 +2700,23 @@ void ScreenEdit::CopyFromLastSave()
 	*GAMESTATE->m_pCurSong = m_songLastSave;
 	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
 		*GAMESTATE->m_pCurSteps[PLAYER_1] = m_stepsLastSave;
+}
+
+void ScreenEdit::RevertFromDisk()
+{
+	StepsID id;
+	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
+		id.FromSteps( GAMESTATE->m_pCurSteps[PLAYER_1] );
+
+	CString sSongDir = GAMESTATE->m_pCurSong->GetSongDir();
+	GAMESTATE->m_pCurSong->LoadFromSongDir( sSongDir );
+
+	if( id.IsValid() )
+		GAMESTATE->m_pCurSteps[PLAYER_1].Set( id.ToSteps( GAMESTATE->m_pCurSong, false ) );
+
+	m_songLastSave = *GAMESTATE->m_pCurSong;
+	if( GAMESTATE->m_pCurSteps[PLAYER_1] )
+		m_stepsLastSave = *GAMESTATE->m_pCurSteps[PLAYER_1];
 }
 
 void ScreenEdit::SaveUndo()
