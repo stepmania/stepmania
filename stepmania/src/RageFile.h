@@ -87,6 +87,7 @@ namespace FileReading
 	void ReadBytes( RageFileBasic &f, void *buf, int size, CString &sError );
 	void SkipBytes( RageFileBasic &f, int size, CString &sError );
 	void Seek( RageFileBasic &f, int iOffset, CString &sError );
+	CString ReadString( RageFileBasic &f, int size, CString &sError );
 	uint8_t read_8( RageFileBasic &f, CString &sError );
 	int16_t read_16_le( RageFileBasic &f, CString &sError );
 	uint16_t read_u16_le( RageFileBasic &f, CString &sError );

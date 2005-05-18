@@ -216,6 +216,20 @@ void FileReading::ReadBytes( RageFileBasic &f, void *buf, int size, CString &sEr
 		sError = "Unexpected end of file";
 }
 
+CString FileReading::ReadString( RageFileBasic &f, int size, CString &sError )
+{
+	if( sError.size() != 0 )
+		return "";
+
+	CString sBuf;
+	int ret = f.Read( sBuf, size );
+	if( ret == -1 )
+		sError = f.GetError();
+	else if( ret < size )
+		sError = "Unexpected end of file";
+	return sBuf;
+}
+
 void FileReading::SkipBytes( RageFileBasic &f, int iBytes, CString &sError )
 {
 	if( sError.size() != 0 )
