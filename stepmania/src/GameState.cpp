@@ -52,6 +52,8 @@ GameState::GameState() :
     m_PreferredDifficulty(	MESSAGE_EDIT_PREFERRED_DIFFICULTY_P1_CHANGED ),
     m_pCurSong(				MESSAGE_CURRENT_SONG_CHANGED ),
 	m_pCurSteps(			MESSAGE_CURRENT_STEPS_P1_CHANGED ),
+    m_pCurCourse(			MESSAGE_CURRENT_COURSE_CHANGED ),
+	m_pCurTrail(			MESSAGE_CURRENT_TRAIL_P1_CHANGED ),
 	m_stEdit(				MESSAGE_EDIT_STEPS_TYPE_CHANGED ),
     m_pEditSourceSteps(		MESSAGE_EDIT_SOURCE_STEPS_CHANGED ),
 	m_stEditSource(			MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED )
@@ -172,10 +174,10 @@ void GameState::Reset()
 	m_pPreferredSong = NULL;
 	FOREACH_PlayerNumber( p )
 		m_pCurSteps[p].Set( NULL );
-	m_pCurCourse = NULL;
+	m_pCurCourse.Set( NULL );
 	m_pPreferredCourse = NULL;
 	FOREACH_PlayerNumber( p )
-		m_pCurTrail[p] = NULL;
+		m_pCurTrail[p].Set( NULL );
 
 	FOREACH_PlayerNumber( p )
 		m_pPlayerState[p]->Reset();
@@ -1946,14 +1948,14 @@ public:
 		PlayerNumber pn = (PlayerNumber)IArg(1);
 		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn].Set( NULL ); }
 		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn].Set( pS ); }
-		MESSAGEMAN->Broadcast( ssprintf("CurrentStepsP%dChanged",pn+1) );
+		MESSAGEMAN->Broadcast( (Message)(MESSAGE_CURRENT_STEPS_P1_CHANGED+pn) );
 		return 0;
 	}
 	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetCurrentCourse( T* p, lua_State *L )
 	{ 
-		if( lua_isnil(L,1) ) { p->m_pCurCourse = NULL; }
-		else { Course *pC = Luna<Course>::check(L,1); p->m_pCurCourse = pC; }
+		if( lua_isnil(L,1) ) { p->m_pCurCourse.Set( NULL ); }
+		else { Course *pC = Luna<Course>::check(L,1); p->m_pCurCourse.Set( pC ); }
 		return 0;
 	}
 	static int GetCurrentTrail( T* p, lua_State *L )

@@ -139,10 +139,10 @@ public:
 	BroadcastOnChangePtr1D<Steps,NUM_PLAYERS> m_pCurSteps;
 	
 	// NULL on ScreenSelectMusic if the currently selected wheel item isn't a Course.
-	Course*		m_pCurCourse;
+	BroadcastOnChangePtr<Course>	m_pCurCourse;
 	// The last Course that the user manually changed to.
 	Course*		m_pPreferredCourse;
-	Trail*		m_pCurTrail[NUM_PLAYERS];
+	BroadcastOnChangePtr1D<Trail,NUM_PLAYERS>	m_pCurTrail;
 
 
 	//

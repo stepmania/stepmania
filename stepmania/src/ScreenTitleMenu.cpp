@@ -52,8 +52,6 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 
 	// TRICKY: Do this after GameState::Reset.
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_JOINING );
-
-	this->SubscribeToMessage( "CoinModeChanged" );
 }
 
 void ScreenTitleMenu::Init()
@@ -170,7 +168,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 
 void ScreenTitleMenu::HandleMessage( const CString& sMessage )
 {
-	if( sMessage == "CoinModeChanged" )
+	if( sMessage == PREFSMAN->m_CoinMode.GetName()+"Changed" )
 	{
 		/* If the CoinMode was changed, we need to reload this screen
 		 * so that the right m_aGameCommands will show */

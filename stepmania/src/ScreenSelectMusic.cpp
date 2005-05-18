@@ -1371,7 +1371,7 @@ void ScreenSelectMusic::AfterTrailChange( const vector<PlayerNumber> &vpns )
 		Course* pCourse = GAMESTATE->m_pCurCourse;
 		Trail* pTrail = m_vpTrails.empty()? NULL: m_vpTrails[m_iSelection[pn]];
 
-		GAMESTATE->m_pCurTrail[pn] = pTrail;
+		GAMESTATE->m_pCurTrail[pn].Set( pTrail );
 
 		int iScore = 0;
 		if( pTrail )
@@ -1503,14 +1503,14 @@ void ScreenSelectMusic::AfterMusicChange()
 	m_GrooveGraph.SetFromSong( pSong );
 
 	Course* pCourse = m_MusicWheel.GetSelectedCourse();
-	GAMESTATE->m_pCurCourse = pCourse;
+	GAMESTATE->m_pCurCourse.Set( pCourse );
 	if( pCourse )
 		GAMESTATE->m_pPreferredCourse = pCourse;
 
 	FOREACH_PlayerNumber( p )
 	{
 		GAMESTATE->m_pCurSteps[p].Set( NULL );
-		GAMESTATE->m_pCurTrail[p] = NULL;
+		GAMESTATE->m_pCurTrail[p].Set( NULL );
 		m_vpSteps.clear();
 		m_vpTrails.clear();
 	}
@@ -1660,8 +1660,6 @@ void ScreenSelectMusic::AfterMusicChange()
 
 			m_Artists.push_back( pSong->GetDisplayArtist() );
 			m_AltArtists.push_back( pSong->GetTranslitArtist() );
-
-			MESSAGEMAN->Broadcast( "OnSongChanged" );
 		}
 		break;
 	case TYPE_ROULETTE:
@@ -1774,8 +1772,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_sprCourseHasMods->StopTweening();
 			COMMAND( m_sprCourseHasMods, "Hide" );
 		}
-
-		MESSAGEMAN->Broadcast( "OnCourseChanged" );
 
 		break;
 	}

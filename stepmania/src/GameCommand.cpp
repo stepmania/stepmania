@@ -122,9 +122,9 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_pCharacter && GAMESTATE->m_pCurCharacters[pn] != m_pCharacter )
 		return false;
-	if( m_pCourse && GAMESTATE->m_pCurCourse != m_pCourse )
+	if( m_pCourse && GAMESTATE->m_pCurCourse.Get() != m_pCourse )
 		return false;
-	if( m_pTrail && GAMESTATE->m_pCurTrail[pn] != m_pTrail )
+	if( m_pTrail && GAMESTATE->m_pCurTrail[pn].Get() != m_pTrail )
 		return false;
 	if( !m_sSongGroup.empty() && GAMESTATE->m_sPreferredSongGroup != m_sSongGroup )
 		return false;
@@ -744,12 +744,12 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			GAMESTATE->m_pCurSteps[*pn].Set( m_pSteps );
 	if( m_pCourse )
 	{
-		GAMESTATE->m_pCurCourse = m_pCourse;
+		GAMESTATE->m_pCurCourse.Set( m_pCourse );
 		GAMESTATE->m_pPreferredCourse = m_pCourse;
 	}
 	if( m_pTrail )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
-			GAMESTATE->m_pCurTrail[*pn] = m_pTrail;
+			GAMESTATE->m_pCurTrail[*pn].Set( m_pTrail );
 	if( m_CourseDifficulty != DIFFICULTY_INVALID )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			GAMESTATE->ChangePreferredCourseDifficulty( *pn, m_CourseDifficulty );

@@ -110,7 +110,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElement
 		GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
 		STATSMAN->m_CurStageStats.vpPlayedSongs.push_back( GAMESTATE->m_pCurSong );
 		STATSMAN->m_CurStageStats.vpPossibleSongs.push_back( GAMESTATE->m_pCurSong );
-		GAMESTATE->m_pCurCourse = SONGMAN->GetRandomCourse();
+		GAMESTATE->m_pCurCourse.Set( SONGMAN->GetRandomCourse() );
 		GAMESTATE->m_iCurrentStageIndex = 0;
 		
 		FOREACH_PlayerNumber( p )
@@ -122,7 +122,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElement
 			GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSong->GetAllSteps()[0] );
 			vector<Trail*> apTrails;
 			GAMESTATE->m_pCurCourse->GetAllTrails( apTrails );
-			GAMESTATE->m_pCurTrail[p] = apTrails[0];
+			GAMESTATE->m_pCurTrail[p].Set( apTrails[0] );
 			STATSMAN->m_CurStageStats.m_player[p].vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			STATSMAN->m_CurStageStats.m_player[p].vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fScrollSpeed = 2;

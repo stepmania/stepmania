@@ -323,7 +323,7 @@ bool MusicWheel::SelectCourse( Course *p )
 	if(p == NULL)
 		return false;
 
-	GAMESTATE->m_pCurCourse = p;
+	GAMESTATE->m_pCurCourse.Set( p );
 
 	unsigned i;
 	vector<WheelItemData> &from = m_WheelItemDatas[GAMESTATE->m_SortOrder];

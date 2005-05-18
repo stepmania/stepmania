@@ -709,7 +709,10 @@ void SongManager::Invalidate( Song *pStaleSong )
 		}
 	}
 
-	CONVERT_COURSE_POINTER( GAMESTATE->m_pCurCourse );
+	{
+		CourseID id = mapOldCourseToCourseID[GAMESTATE->m_pCurCourse]; /* this will always succeed */
+		GAMESTATE->m_pCurCourse.Set( id.ToCourse() );
+	}
 	CONVERT_COURSE_POINTER( GAMESTATE->m_pPreferredCourse );
 
 #define CONVERT_TRAIL_POINTER( pTrail ) do { \
@@ -720,7 +723,7 @@ void SongManager::Invalidate( Song *pStaleSong )
 		const TrailIDAndCourse &tidc = it->second; \
 		const TrailID &id = tidc.first; \
 		const Course *pCourse = tidc.second; \
-		pTrail = id.ToTrail( pCourse, true ); \
+		pTrail.Set( id.ToTrail( pCourse, true ) ); \
 	} \
 } while(false)
 
