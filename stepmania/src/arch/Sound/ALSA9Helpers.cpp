@@ -155,7 +155,7 @@ void Alsa9Buf::InitializeErrorHandler()
 
 static CString DeviceName()
 {
-	if( !PREFSMAN->m_iSoundDevice.empty() )
+	if( !PREFSMAN->m_iSoundDevice.Get().empty() )
 		return PREFSMAN->m_iSoundDevice;
 	return "hw:0";
 }
@@ -228,8 +228,8 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 	if( card == 0 )
 		LOG->Info( "No ALSA sound cards were found.");
 	
-	if( !PREFSMAN->m_iSoundDevice.empty() )
-		LOG->Info( "ALSA device overridden to \"%s\"", PREFSMAN->m_iSoundDevice.c_str() );
+	if( !PREFSMAN->m_iSoundDevice.Get().empty() )
+		LOG->Info( "ALSA device overridden to \"%s\"", PREFSMAN->m_iSoundDevice.Get().c_str() );
 }
 
 Alsa9Buf::Alsa9Buf()
