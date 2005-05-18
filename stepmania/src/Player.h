@@ -21,7 +21,7 @@ class RageTimer;
 class NoteField;
 struct PlayerStageStats;
 
-#define	SAMPLE_COUNT	16
+#define	SAMPLE_COUNT	32
 
 class Player: public ActorFrame
 {

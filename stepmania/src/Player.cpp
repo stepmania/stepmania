@@ -1147,6 +1147,19 @@ void Player::HandleAutosync(float fNoteOffset)
 	const float mean = calc_mean( m_fOffset, m_fOffset+SAMPLE_COUNT );
 	const float stddev = calc_stddev( m_fOffset, m_fOffset+SAMPLE_COUNT );
 
+	CString sAutosyncType;
+	switch( GAMESTATE->m_SongOptions.m_AutosyncType )
+	{
+	case SongOptions::AUTOSYNC_SONG:
+		sAutosyncType = "Autosync Song";
+		break;
+	case SongOptions::AUTOSYNC_MACHINE:
+		sAutosyncType = "Autosync Machine";
+		break;
+	default:
+		ASSERT(0);
+	}
+
 	if( stddev < .03 && stddev < fabsf(mean) )  // If they stepped with less than .03 error
 	{
 		switch( GAMESTATE->m_SongOptions.m_AutosyncType )
@@ -1161,11 +1174,11 @@ void Player::HandleAutosync(float fNoteOffset)
 			ASSERT(0);
 		}
 
-		LOG->Trace("Offset corrected by %f. Error in steps: %f seconds.", mean, stddev);
+		SCREENMAN->SystemMessage( ssprintf(sAutosyncType+": Offset corrected by %f. Error in steps: %f seconds.", mean, stddev) );
 	}
 	else
 	{
-		LOG->Trace("Offset NOT corrected. Average offset: %f seconds. Error: %f seconds.", mean, stddev);
+		SCREENMAN->SystemMessage( ssprintf(sAutosyncType+": Offset NOT corrected. Average offset: %f seconds. Error: %f seconds.", mean, stddev) );
 	}
 
 	m_iOffsetSample = 0;
