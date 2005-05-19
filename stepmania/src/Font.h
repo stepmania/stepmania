@@ -12,89 +12,91 @@ class FontPage;
 class RageTexture;
 class IniFile;
 
-struct glyph {
-	FontPage *fp;
-	RageTexture *Texture;
-	RageTexture *GetTexture() const { return const_cast<RageTexture *>(Texture); }
+struct glyph
+{
+	FontPage *m_pPage;
+	RageTexture *m_pTexture;
+	RageTexture *GetTexture() const { return const_cast<RageTexture *>(m_pTexture); }
 
 	/* Number of pixels to advance horizontally after drawing this character. */
-	int hadvance;
+	int m_iHadvance;
 
 	/* Size of the actual rendered character. */
-	float width, height;
+	float m_fWidth, m_fHeight;
 
 	/* Number of pixels to offset this character when rendering. */
-	float hshift; // , vshift;
+	float m_fHshift; // , vshift;
 
 	/* Texture coordinate rect. */
-	RectF rect;
+	RectF m_TexRect;
 };
 
 struct FontPageSettings
 {
-	CString TexturePath;
+	CString m_sTexturePath;
 
-	int DrawExtraPixelsLeft,
-		DrawExtraPixelsRight,
-		AddToAllWidths,
-		LineSpacing,
-		Top,
-		Baseline,
-		DefaultWidth,
-		AdvanceExtraPixels;
-	float ScaleAllWidthsBy;
-	CString TextureHints;
+	int m_iDrawExtraPixelsLeft,
+		m_iDrawExtraPixelsRight,
+		m_iAddToAllWidths,
+		m_iLineSpacing,
+		m_iTop,
+		m_iBaseline,
+		m_iDefaultWidth,
+		m_iAdvanceExtraPixels;
+	float m_fScaleAllWidthsBy;
+	CString m_sTextureHints;
 
 	map<longchar,int> CharToGlyphNo;
 	/* If a value is missing, the width of the texture frame is used. */
-	map<int,int> GlyphWidths;
+	map<int,int> m_mapGlyphWidths;
 
 	FontPageSettings():
-		DrawExtraPixelsLeft(0), DrawExtraPixelsRight(0),
-		AddToAllWidths(0), 
-		LineSpacing(-1),
-		Top(-1),
-		Baseline(-1),
-		DefaultWidth(-1),
-		AdvanceExtraPixels(1),
-		ScaleAllWidthsBy(1),
-		TextureHints("default")
+		m_iDrawExtraPixelsLeft(0), m_iDrawExtraPixelsRight(0),
+		m_iAddToAllWidths(0), 
+		m_iLineSpacing(-1),
+		m_iTop(-1),
+		m_iBaseline(-1),
+		m_iDefaultWidth(-1),
+		m_iAdvanceExtraPixels(1),
+		m_fScaleAllWidthsBy(1),
+		m_sTextureHints("default")
 	{ }
 
 	/* Map a range from a character map to glyphs.  If cnt is -1, map the
 	 * whole map. Returns "" or an error message. */
-	CString MapRange(CString Mapping, int map_offset, int glyph_offset, int cnt);
+	CString MapRange( CString sMapping, int iMapOffset, int iGlyphOffset, int iCount );
 };
 
 class FontPage
 {
 public:
-	RageTexture* m_pTexture;
-
-	CString m_sTexturePath;
-
-	/* All glyphs in this list will point to m_pTexture. */
-	vector<glyph> glyphs;
-
-	map<longchar,int> m_iCharToGlyphNo;
-
 	FontPage();
 	~FontPage();
 
 	void Load( FontPageSettings cfg );
 
 	/* Page-global properties. */
-	int height;
-	int LineSpacing;
-	float vshift;
-	int GetCenter() const { return height/2; }
+	int m_iHeight;
+	int m_iLineSpacing;
+	float m_fVshift;
+	int GetCenter() const { return m_iHeight/2; }
 
 	/* Remember these only for GetLineWidthInSourcePixels. */
-	int DrawExtraPixelsLeft, DrawExtraPixelsRight;
+	int m_iDrawExtraPixelsLeft, m_iDrawExtraPixelsRight;
+
+	RageTexture* m_pTexture;
+
+	// XXX remove?
+	CString m_sTexturePath;
+
+	/* All glyphs in this list will point to m_pTexture. */
+	vector<glyph> m_aGlyphs;
+
+	map<longchar,int> m_iCharToGlyphNo;
 
 private:
-	void SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight);
-	void SetTextureCoords(const vector<int> &widths, int AdvanceExtraPixels);
+	void SetExtraPixels( int iDrawExtraPixelsLeft, int DrawExtraPixelsRight );
+	void SetTextureCoords( const vector<int> &aiWidths, int iAdvanceExtraPixels );
 };
 
 class Font
@@ -126,11 +128,11 @@ public:
 	/* Load font-wide settings. */
 	void CapsOnly();
 
-	int GetHeight() const { return def->height; }
-	int GetCenter() const { return def->GetCenter(); }
-	int GetLineSpacing() const { return def->LineSpacing; }
+	int GetHeight() const { return m_pDefault->m_iHeight; }
+	int GetCenter() const { return m_pDefault->GetCenter(); }
+	int GetLineSpacing() const { return m_pDefault->m_iLineSpacing; }
 
-	void SetDefaultGlyph(FontPage *fp);
+	void SetDefaultGlyph( FontPage *pPage );
 
 	static const wchar_t DEFAULT_GLYPH;
 
@@ -140,23 +142,22 @@ public:
 
 private:
 	/* List of pages and fonts that we use (and are responsible for freeing). */
-	vector<FontPage *> pages;
+	vector<FontPage *> m_apPages;
 
 	/* This is the primary fontpage of this font; font-wide height, center,
 	 * etc. is pulled from it.  (This is one of pages[].) */
-	FontPage *def;
+	FontPage *m_pDefault;
 
 	/* Map from characters to glyphs.  (Each glyph* is part of one of pages[].) */
 	map<longchar,glyph*> m_iCharToGlyph;
 	glyph *m_iCharToGlyphCache[128];
 
 	/* We keep this around only for reloading. */
-	CString Chars;
+	CString m_sChars;
 
-	void LoadFontPageSettings(FontPageSettings &cfg, IniFile &ini, const CString &TexturePath, const CString &PageName, CString sChars);
-	static void GetFontPaths(const CString &sFontOrTextureFilePath, 
-							   CStringArray &TexturePaths, CString &IniPath);
-	CString GetPageNameFromFileName(const CString &fn);
+	void LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const CString &sTexturePath, const CString &PageName, CString sChars );
+	static void GetFontPaths( const CString &sFontOrTextureFilePath, CStringArray &TexturePaths, CString &IniPath );
+	CString GetPageNameFromFileName( const CString &sFilename );
 };
 
 #endif

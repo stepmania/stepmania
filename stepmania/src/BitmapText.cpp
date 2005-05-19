@@ -45,9 +45,9 @@ REGISTER_ACTOR_CLASS( BitmapText )
  * all, send the text to the fallback renderer.  If it can't render a character
  * (because it's a special-use character), render up to that character, render the
  * special character ourself, then start again on the next character.  The data
- * rendered can be put into textures and put into the verts/tex lists as if it came
- * from a regular font (nothing says we can't put more than one character per quad)
- * and DrawChars won't have to be changed at all.
+ * rendered can be put into textures and put into the m_aVertices/m_pTextures lists as
+ * if it came from a regular font (nothing says we can't put more than one character
+ * per quad) and DrawChars won't have to be changed at all.
  *
  * Some mechanism to hint which fallback font size/style a given font wants, to make
  * a best effort to line up font types.  This could be a setting in the font INI.
@@ -63,7 +63,7 @@ BitmapText::BitmapText()
 	static int iReloadCounter = 0;
 	if( iReloadCounter%20==0 )
 	{
-		for(int i = 0; i < NUM_RAINBOW_COLORS; ++i)
+		for( int i = 0; i < NUM_RAINBOW_COLORS; ++i )
 			RAINBOW_COLORS[i] = RAINBOW_COLOR(i);
 	}
 	iReloadCounter++;
@@ -114,7 +114,7 @@ void BitmapText::LoadFromNode( const CString& sDir, const XNode* pNode )
 	/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
 	 * loading the BGAnimationLayer that we're in. */
 	CString sFont;
-	pNode->GetAttrValue("Font", sFont );
+	pNode->GetAttrValue( "Font", sFont );
 	if( sFont.empty() )
 		pNode->GetAttrValue("File", sFont );	// accept "File" for backward compatibility
 
@@ -180,8 +180,8 @@ void BitmapText::BuildChars()
 		m_size.x = max( m_size.x, m_iLineWidths.back() );
 	}
 
-	verts.clear();
-	tex.clear();
+	m_aVertices.clear();
+	m_pTextures.clear();
 	
 	if( m_wTextLines.empty() )
 		return;
@@ -226,22 +226,22 @@ void BitmapText::BuildChars()
 			const glyph &g = m_pFont->GetGlyph(szLine[j]);
 
 			/* set vertex positions */
-			v[0].p = RageVector3( iX+g.hshift,			iY+g.fp->vshift,		  0 );	// top left
-			v[1].p = RageVector3( iX+g.hshift,			iY+g.fp->vshift+g.height, 0 );	// bottom left
-			v[2].p = RageVector3( iX+g.hshift+g.width,	iY+g.fp->vshift+g.height, 0 );	// bottom right
-			v[3].p = RageVector3( iX+g.hshift+g.width,	iY+g.fp->vshift,		  0 );	// top right
+			v[0].p = RageVector3( iX+g.m_fHshift,				iY+g.m_pPage->m_fVshift,		  0 );	// top left
+			v[1].p = RageVector3( iX+g.m_fHshift,				iY+g.m_pPage->m_fVshift+g.m_fHeight, 0 );	// bottom left
+			v[2].p = RageVector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift+g.m_fHeight, 0 );	// bottom right
+			v[3].p = RageVector3( iX+g.m_fHshift+g.m_fWidth,	iY+g.m_pPage->m_fVshift,		  0 );	// top right
 
 			/* Advance the cursor. */
-			iX += g.hadvance;
+			iX += g.m_iHadvance;
 
 			/* set texture coordinates */
-			v[0].t = RageVector2( g.rect.left,	g.rect.top );
-			v[1].t = RageVector2( g.rect.left,	g.rect.bottom );
-			v[2].t = RageVector2( g.rect.right,	g.rect.bottom );
-			v[3].t = RageVector2( g.rect.right,	g.rect.top );
+			v[0].t = RageVector2( g.m_TexRect.left,	g.m_TexRect.top );
+			v[1].t = RageVector2( g.m_TexRect.left,	g.m_TexRect.bottom );
+			v[2].t = RageVector2( g.m_TexRect.right,	g.m_TexRect.bottom );
+			v[3].t = RageVector2( g.m_TexRect.right,	g.m_TexRect.top );
 
-			verts.insert(verts.end(), &v[0], &v[4]);
-			tex.push_back(g.GetTexture());
+			m_aVertices.insert( m_aVertices.end(), &v[0], &v[4] );
+			m_pTextures.push_back( g.GetTexture() );
 		}
 
 		/* The amount of padding a line needs: */
@@ -256,7 +256,7 @@ void BitmapText::DrawChars()
 		m_pTempState->crop.top + m_pTempState->crop.bottom >= 1 ) 
 		return; 
 
-	const int iNumGlyphs = tex.size();
+	const int iNumGlyphs = m_pTextures.size();
 	int iStartGlyph = (int) roundf( SCALE( m_pTempState->crop.left, 0.f, 1.f, 0, (float) iNumGlyphs ) );
 	int iEndGlyph = (int) roundf( SCALE( m_pTempState->crop.right, 0.f, 1.f, (float) iNumGlyphs, 0 ) );
 	iStartGlyph = clamp( iStartGlyph, 0, iNumGlyphs );
@@ -319,20 +319,20 @@ void BitmapText::DrawChars()
 			}
 
 			for( int j = 0; j < 4; ++j )
-				verts[i+j].c.a = (unsigned char)( verts[i+j].c.a * fAlpha );
+				m_aVertices[i+j].c.a = (unsigned char)( m_aVertices[i+j].c.a * fAlpha );
 		}
 	}
 
 	for( int start = iStartGlyph; start < iEndGlyph; )
 	{
 		int end = start;
-		while( end < iEndGlyph && tex[end] == tex[start] )
+		while( end < iEndGlyph && m_pTextures[end] == m_pTextures[start] )
 			end++;
 		DISPLAY->ClearAllTextures();
-		DISPLAY->SetTexture( 0, tex[start] );
+		DISPLAY->SetTexture( 0, m_pTextures[start] );
 		// don't bother setting texture render states for text.  We never go outside of 0..1.
 		//Actor::SetTextureRenderStates();
-		RageSpriteVertex &start_vertex = verts[start*4];
+		RageSpriteVertex &start_vertex = m_aVertices[start*4];
 		int iNumVertsToDraw = (end-start)*4;
 		DISPLAY->DrawQuads( &start_vertex, iNumVertsToDraw );
 		
@@ -493,7 +493,7 @@ void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
 	{
 		while( m_iLineWidths[l] > iMaxWidthInSourcePixels )
 		{
-			m_wTextLines[l].erase(m_wTextLines[l].end()-1, m_wTextLines[l].end());
+			m_wTextLines[l].erase( m_wTextLines[l].end()-1, m_wTextLines[l].end() );
 			m_iLineWidths[l] = m_pFont->GetLineWidthInSourcePixels( m_wTextLines[l] );
 		}
 	}
@@ -525,8 +525,8 @@ void BitmapText::DrawPrimitives()
 
 			RageColor dim(0,0,0,0.5f*m_pTempState->diffuse[0].a);	// semi-transparent black
 
-			for( unsigned i=0; i<verts.size(); i++ )
-				verts[i].c = dim;
+			for( unsigned i=0; i<m_aVertices.size(); i++ )
+				m_aVertices[i].c = dim;
 			DrawChars();
 
 			DISPLAY->PopMatrix();
@@ -538,23 +538,23 @@ void BitmapText::DrawPrimitives()
 		if( m_bRainbow )
 		{
 			int color_index = int(RageTimer::GetTimeSinceStartFast() / 0.200) % NUM_RAINBOW_COLORS;
-			for( unsigned i=0; i<verts.size(); i+=4 )
+			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
 			{
 				const RageColor color = RAINBOW_COLORS[color_index];
 				for( unsigned j=i; j<i+4; j++ )
-					verts[j].c = color;
+					m_aVertices[j].c = color;
 
 				color_index = (color_index+1)%NUM_RAINBOW_COLORS;
 			}
 		}
 		else
 		{
-			for( unsigned i=0; i<verts.size(); i+=4 )
+			for( unsigned i=0; i<m_aVertices.size(); i+=4 )
 			{
-				verts[i+0].c = m_pTempState->diffuse[0];	// top left
-				verts[i+1].c = m_pTempState->diffuse[2];	// bottom left
-				verts[i+2].c = m_pTempState->diffuse[3];	// bottom right
-				verts[i+3].c = m_pTempState->diffuse[1];	// top right
+				m_aVertices[i+0].c = m_pTempState->diffuse[0];	// top left
+				m_aVertices[i+1].c = m_pTempState->diffuse[2];	// bottom left
+				m_aVertices[i+2].c = m_pTempState->diffuse[3];	// bottom right
+				m_aVertices[i+3].c = m_pTempState->diffuse[1];	// top right
 			}
 		}
 
@@ -566,8 +566,8 @@ void BitmapText::DrawPrimitives()
 	{
 		DISPLAY->SetTextureModeGlow();
 
-		for( unsigned i=0; i<verts.size(); i++ )
-			verts[i].c = m_pTempState->glow;
+		for( unsigned i=0; i<m_aVertices.size(); i++ )
+			m_aVertices[i].c = m_pTempState->glow;
 		DrawChars();
 	}
 }
@@ -588,27 +588,6 @@ void BitmapText::SetVertAlign( VertAlign va )
 	Actor::SetVertAlign(va);
 	BuildChars();
 }
-
-/*
-void BitmapText::HandleCommand( const Command &command )
-{
-	BeginHandleArgs;
-
-	const CString& sName = command.GetName();
-
-	// Commands that go in the tweening queue:
-	// Commands that take effect immediately (ignoring the tweening queue):
-	if( sName=="wrapwidthpixels" )		SetWrapWidthPixels( iArg(1) );
-	else if( sName=="maxwidth" )		SetMaxWidth( fArg(1) );
-	else
-	{
-		Actor::HandleCommand( command );
-		return;
-	}
-
-	EndHandleArgs;
-}
-*/
 
 void BitmapText::SetWrapWidthPixels( int iWrapWidthPixels )
 {
@@ -772,8 +751,8 @@ void ColorBitmapText::DrawPrimitives( )
 
 			RageColor dim(0,0,0,0.5f*m_pTempState->diffuse[0].a);	// semi-transparent black
 
-			for( unsigned i=0; i<verts.size(); i++ )
-				verts[i].c = dim;
+			for( unsigned i=0; i<m_aVertices.size(); i++ )
+				m_aVertices[i].c = dim;
 			DrawChars();
 
 			DISPLAY->PopMatrix();
@@ -785,7 +764,7 @@ void ColorBitmapText::DrawPrimitives( )
 		int loc = 0, cur = 0;
 		RageColor c = m_pTempState->diffuse[0];
 
-		for( unsigned i=0; i<verts.size(); i+=4 )
+		for( unsigned i=0; i<m_aVertices.size(); i+=4 )
 		{
 			loc++;
 			if ( cur < (int)m_vColors.size() )
@@ -795,7 +774,7 @@ void ColorBitmapText::DrawPrimitives( )
 					cur++;
 				}
 			for ( unsigned j=0; j<4; j++ )
-				verts[i+j].c = c;
+				m_aVertices[i+j].c = c;
 		}
 
 		DrawChars();
@@ -806,8 +785,8 @@ void ColorBitmapText::DrawPrimitives( )
 	{
 		DISPLAY->SetTextureModeGlow();
 
-		for( unsigned i=0; i<verts.size(); i++ )
-			verts[i].c = m_pTempState->glow;
+		for( unsigned i=0; i<m_aVertices.size(); i++ )
+			m_aVertices[i].c = m_pTempState->glow;
 		DrawChars();
 	}
 	Actor::DrawPrimitives();

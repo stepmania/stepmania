@@ -74,7 +74,7 @@ public:
 
 protected:
 	
-	// recalculate the items below on SetText()
+	// recalculate the items in SetText()
 	CString			m_sText;
 	vector<wstring>	m_wTextLines;
 	vector<int>		m_iLineWidths;			// in source pixels
@@ -84,8 +84,8 @@ protected:
 
 	bool m_bRainbow;
 
-	vector<RageSpriteVertex> verts;
-	vector<RageTexture *> tex;
+	vector<RageSpriteVertex> m_aVertices;
+	vector<RageTexture *> m_pTextures;
 	
 	void BuildChars();
 	void DrawChars();
@@ -97,9 +97,9 @@ class ColorBitmapText : public BitmapText
 public:
 	ColorBitmapText();
 	void SetText( const CString &sText, const CString &sAlternateText = "", int iWrapWidthPixels = -1 );
-	void DrawPrimitives( );
+	void DrawPrimitives();
 	void SetMaxLines( int iLines, bool bCutBottom = true );	//if bCutBottom = false then, it will crop the top
-	void SimpleAddLine ( const CString &sAddition, int iWidthPixels );
+	void SimpleAddLine( const CString &sAddition, int iWidthPixels );
 	void SetMaxLines( int iNumLines, int iDirection );
 protected:
 	struct ColorChange
