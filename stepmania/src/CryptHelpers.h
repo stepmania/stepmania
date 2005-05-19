@@ -22,7 +22,9 @@ public:
 	class OpenErr : public Err {public: OpenErr(const std::string &filename) : Err("FileStore: error opening file for reading: " + filename) {}};
 	struct ReadErr : public Err { ReadErr(const RageFile &f) : Err("RageFileStore(" + f.GetPath() + "): read error: " + f.GetError() ) {}};
 
-	RageFileStore() {}
+	RageFileStore();
+	~RageFileStore();
+	RageFileStore( const RageFileStore &cpy );
 	RageFileStore(const char *filename)
 		{StoreInitialize(MakeParameters("InputFileName", filename));}
 
@@ -33,7 +35,7 @@ public:
 private:
 	void StoreInitialize(const NameValuePairs &parameters);
 	
-	mutable RageFile m_file;	// mutable because reading from a file is not a const operation
+	mutable RageFile *m_pFile;	// mutable because reading from a file is not a const operation
 	byte *m_space;
 	int m_len;
 	bool m_waiting;
@@ -47,10 +49,6 @@ public:
 	typedef FileStore::OpenErr OpenErr;
 	typedef FileStore::ReadErr ReadErr;
 
-	RageFileSource(BufferedTransformation *attachment = NULL)
-		: SourceTemplate<RageFileStore>(attachment) {}
-	RageFileSource(std::istream &in, bool pumpAll, BufferedTransformation *attachment = NULL)
-		: SourceTemplate<RageFileStore>(attachment) {SourceInitialize(pumpAll, MakeParameters("InputStreamPointer", &in));}
 	RageFileSource(const char *filename, bool pumpAll, BufferedTransformation *attachment = NULL, bool binary=true)
 		: SourceTemplate<RageFileStore>(attachment) {SourceInitialize(pumpAll, MakeParameters("InputFileName", filename)("InputBinaryMode", binary));}
 };

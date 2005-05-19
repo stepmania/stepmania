@@ -5,12 +5,37 @@
 #include "crypto51/files.h"
 
 
+RageFileStore::RageFileStore()
+{
+	m_pFile = NULL;
+}
+
+RageFileStore::~RageFileStore()
+{
+	delete m_pFile;
+}
+
+RageFileStore::RageFileStore( const RageFileStore &cpy ):
+	Store(cpy),
+	FilterPutSpaceHelper(cpy)
+{
+	if( cpy.m_pFile != NULL )
+		m_pFile = new RageFile( *cpy.m_pFile );
+	else
+		m_pFile = NULL;
+
+	ASSERT( !cpy.m_waiting );
+	m_waiting = false;
+}
+
+
 void RageFileStore::StoreInitialize(const NameValuePairs &parameters)
 {
 	const char *fileName;
 	if( parameters.GetValue("InputFileName", fileName) )
 	{
-		if( !m_file.Open(fileName, RageFile::READ) )
+		m_pFile = new RageFile;
+		if( !m_pFile->Open(fileName, RageFile::READ) )
 			throw OpenErr( fileName );
 	}
 	else
@@ -22,15 +47,15 @@ void RageFileStore::StoreInitialize(const NameValuePairs &parameters)
 
 unsigned long RageFileStore::MaxRetrievable() const
 {
-	if( !m_file.IsGood() )
+	if( m_pFile == NULL || !m_pFile->IsGood() )
 		return 0;
 	
-	return m_file.GetFileSize() - m_file.Tell();
+	return m_pFile->GetFileSize() - m_pFile->Tell();
 }
 
 unsigned int RageFileStore::TransferTo2(BufferedTransformation &target, unsigned long &transferBytes, const std::string &channel, bool blocking)
 {
-	if( !m_file.IsGood() )
+	if( m_pFile == NULL || !m_pFile->IsGood() )
 	{
 		transferBytes = 0;
 		return 0;
@@ -42,15 +67,15 @@ unsigned int RageFileStore::TransferTo2(BufferedTransformation &target, unsigned
 	if( m_waiting )
 		goto output;
 	
-	while( size && !m_file.AtEOF() )
+	while( size && !m_pFile->AtEOF() )
 	{
 		{
 			unsigned int spaceSize = 1024;
 			m_space = HelpCreatePutSpace(target, channel, 1, (unsigned int)STDMIN(size, (unsigned long)UINT_MAX), spaceSize);
 			
-			m_len = m_file.Read( (char *)m_space, STDMIN(size, (unsigned long)spaceSize));
+			m_len = m_pFile->Read( (char *)m_space, STDMIN(size, (unsigned long)spaceSize));
 			if( m_len == -1 )
-				throw ReadErr( m_file );
+				throw ReadErr( *m_pFile );
 		}
 		unsigned int blockedBytes;
 output:
@@ -68,16 +93,16 @@ output:
 
 unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigned long &begin, unsigned long end, const std::string &channel, bool blocking) const
 {
-	if( !m_file.IsGood() )
+	if( m_pFile == NULL || !m_pFile->IsGood() )
 		return 0;
 	
 	if( begin == 0 && end == 1 )
 	{
-		int current = m_file.Tell();
+		int current = m_pFile->Tell();
 		byte result;
-		m_file.Read( &result, 1 );
-		m_file.Seek( current );
-		if( m_file.AtEOF() )
+		m_pFile->Read( &result, 1 );
+		m_pFile->Seek( current );
+		if( m_pFile->AtEOF() )
 			return 0;
 
 		unsigned int blockedBytes = target.ChannelPut( channel, byte(result), blocking );
@@ -87,13 +112,13 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 	
 	// TODO: figure out what happens on cin
 	// (What does that mean?)
-	int current = m_file.Tell();
+	int current = m_pFile->Tell();
 	int newPosition = current + (streamoff)begin;
 	
-	if( newPosition >= m_file.GetFileSize() )
+	if( newPosition >= m_pFile->GetFileSize() )
 		return 0;	// don't try to seek beyond the end of file
 
-	m_file.Seek( newPosition );
+	m_pFile->Seek( newPosition );
 	try
 	{
 		ASSERT( !m_waiting );
@@ -108,12 +133,12 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 	}
 	catch(...)
 	{
-		m_file.ClearError();
-		m_file.Seek( current );
+		m_pFile->ClearError();
+		m_pFile->Seek( current );
 		throw;
 	}
-	m_file.ClearError();
-	m_file.Seek( current );
+	m_pFile->ClearError();
+	m_pFile->Seek( current );
 	
 	return 0;
 }
