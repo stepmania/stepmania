@@ -1659,7 +1659,8 @@ LINK32_OBJS= \
 
 "..\Program\StepMania-debug.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
    archutils\Win32\verinc
-	cl /Zl /nologo /c verstub.cpp /Fo.\../Debug6\
+   cl /Zl /nologo /c verstub.cpp /Fo.\../Debug6\
+
 	 $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
@@ -3307,8 +3308,8 @@ LINK32_OBJS= \
 
 "..\Program\StepMania.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
    archutils\Win32\verinc
-   
    cl /Zl /nologo /c verstub.cpp /Fo.\../Release6\
+
 	 $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
