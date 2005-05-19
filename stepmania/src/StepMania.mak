@@ -693,6 +693,8 @@ CLEAN :
 	-@erase "$(INTDIR)\ScreenReloadSongs.sbr"
 	-@erase "$(INTDIR)\ScreenSandbox.obj"
 	-@erase "$(INTDIR)\ScreenSandbox.sbr"
+	-@erase "$(INTDIR)\ScreenSaveSync.obj"
+	-@erase "$(INTDIR)\ScreenSaveSync.sbr"
 	-@erase "$(INTDIR)\ScreenSelect.obj"
 	-@erase "$(INTDIR)\ScreenSelect.sbr"
 	-@erase "$(INTDIR)\ScreenSelectCharacter.obj"
@@ -721,6 +723,8 @@ CLEAN :
 	-@erase "$(INTDIR)\ScreenStage.sbr"
 	-@erase "$(INTDIR)\ScreenStyleSplash.obj"
 	-@erase "$(INTDIR)\ScreenStyleSplash.sbr"
+	-@erase "$(INTDIR)\ScreenSyncOverlay.obj"
+	-@erase "$(INTDIR)\ScreenSyncOverlay.sbr"
 	-@erase "$(INTDIR)\ScreenSystemLayer.obj"
 	-@erase "$(INTDIR)\ScreenSystemLayer.sbr"
 	-@erase "$(INTDIR)\ScreenTest.obj"
@@ -1176,6 +1180,7 @@ BSC32_SBRS= \
 	"$(INTDIR)\ScreenRanking.sbr" \
 	"$(INTDIR)\ScreenReloadSongs.sbr" \
 	"$(INTDIR)\ScreenSandbox.sbr" \
+	"$(INTDIR)\ScreenSaveSync.sbr" \
 	"$(INTDIR)\ScreenSelect.sbr" \
 	"$(INTDIR)\ScreenSelectCharacter.sbr" \
 	"$(INTDIR)\ScreenSelectDifficulty.sbr" \
@@ -1190,6 +1195,7 @@ BSC32_SBRS= \
 	"$(INTDIR)\ScreenSplash.sbr" \
 	"$(INTDIR)\ScreenStage.sbr" \
 	"$(INTDIR)\ScreenStyleSplash.sbr" \
+	"$(INTDIR)\ScreenSyncOverlay.sbr" \
 	"$(INTDIR)\ScreenSystemLayer.sbr" \
 	"$(INTDIR)\ScreenTest.sbr" \
 	"$(INTDIR)\ScreenTestFonts.sbr" \
@@ -1572,6 +1578,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\ScreenRanking.obj" \
 	"$(INTDIR)\ScreenReloadSongs.obj" \
 	"$(INTDIR)\ScreenSandbox.obj" \
+	"$(INTDIR)\ScreenSaveSync.obj" \
 	"$(INTDIR)\ScreenSelect.obj" \
 	"$(INTDIR)\ScreenSelectCharacter.obj" \
 	"$(INTDIR)\ScreenSelectDifficulty.obj" \
@@ -1586,6 +1593,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\ScreenSplash.obj" \
 	"$(INTDIR)\ScreenStage.obj" \
 	"$(INTDIR)\ScreenStyleSplash.obj" \
+	"$(INTDIR)\ScreenSyncOverlay.obj" \
 	"$(INTDIR)\ScreenSystemLayer.obj" \
 	"$(INTDIR)\ScreenTest.obj" \
 	"$(INTDIR)\ScreenTestFonts.obj" \
@@ -1651,9 +1659,7 @@ LINK32_OBJS= \
 
 "..\Program\StepMania-debug.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
    archutils\Win32\verinc
-	cl /Zl /nologo /c verstub.cpp  /Fo.\..\Debug6\
-
-
+	cl                                              /Zl                                              /nologo                                              /c                                              verstub.cpp                                              /Fo.\../Debug6\
 	 $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
@@ -1676,8 +1682,8 @@ $(DS_POSTBUILD_DEP) : "..\Program\StepMania-debug.exe" "$(OUTDIR)\StepMania.pch"
 
 !ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
-OUTDIR=.\..\Release6
-INTDIR=.\..\Release6
+OUTDIR=.\../Release6
+INTDIR=.\../Release6
 
 ALL : "..\Program\StepMania.exe" "..\StepMania-StackTrace.bsc"
 
@@ -2339,6 +2345,8 @@ CLEAN :
 	-@erase "$(INTDIR)\ScreenReloadSongs.sbr"
 	-@erase "$(INTDIR)\ScreenSandbox.obj"
 	-@erase "$(INTDIR)\ScreenSandbox.sbr"
+	-@erase "$(INTDIR)\ScreenSaveSync.obj"
+	-@erase "$(INTDIR)\ScreenSaveSync.sbr"
 	-@erase "$(INTDIR)\ScreenSelect.obj"
 	-@erase "$(INTDIR)\ScreenSelect.sbr"
 	-@erase "$(INTDIR)\ScreenSelectCharacter.obj"
@@ -2367,6 +2375,8 @@ CLEAN :
 	-@erase "$(INTDIR)\ScreenStage.sbr"
 	-@erase "$(INTDIR)\ScreenStyleSplash.obj"
 	-@erase "$(INTDIR)\ScreenStyleSplash.sbr"
+	-@erase "$(INTDIR)\ScreenSyncOverlay.obj"
+	-@erase "$(INTDIR)\ScreenSyncOverlay.sbr"
 	-@erase "$(INTDIR)\ScreenSystemLayer.obj"
 	-@erase "$(INTDIR)\ScreenSystemLayer.sbr"
 	-@erase "$(INTDIR)\ScreenTest.obj"
@@ -2818,6 +2828,7 @@ BSC32_SBRS= \
 	"$(INTDIR)\ScreenRanking.sbr" \
 	"$(INTDIR)\ScreenReloadSongs.sbr" \
 	"$(INTDIR)\ScreenSandbox.sbr" \
+	"$(INTDIR)\ScreenSaveSync.sbr" \
 	"$(INTDIR)\ScreenSelect.sbr" \
 	"$(INTDIR)\ScreenSelectCharacter.sbr" \
 	"$(INTDIR)\ScreenSelectDifficulty.sbr" \
@@ -2832,6 +2843,7 @@ BSC32_SBRS= \
 	"$(INTDIR)\ScreenSplash.sbr" \
 	"$(INTDIR)\ScreenStage.sbr" \
 	"$(INTDIR)\ScreenStyleSplash.sbr" \
+	"$(INTDIR)\ScreenSyncOverlay.sbr" \
 	"$(INTDIR)\ScreenSystemLayer.sbr" \
 	"$(INTDIR)\ScreenTest.sbr" \
 	"$(INTDIR)\ScreenTestFonts.sbr" \
@@ -2900,7 +2912,7 @@ BSC32_SBRS= \
 <<
 
 LINK32=link.exe
-LINK32_FLAGS=$(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\StepMania.pdb" /map:"$(INTDIR)\StepMania.map" /machine:I386 /out:"../Program/StepMania.exe" 
+LINK32_FLAGS=$(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /incremental:no /pdb:"$(OUTDIR)\StepMania.pdb" /map:"$(INTDIR)\StepMania.map" /machine:I386 /out:"..\Program\StepMania.exe" 
 LINK32_OBJS= \
 	"$(INTDIR)\get.obj" \
 	"$(INTDIR)\maketables.obj" \
@@ -3214,6 +3226,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\ScreenRanking.obj" \
 	"$(INTDIR)\ScreenReloadSongs.obj" \
 	"$(INTDIR)\ScreenSandbox.obj" \
+	"$(INTDIR)\ScreenSaveSync.obj" \
 	"$(INTDIR)\ScreenSelect.obj" \
 	"$(INTDIR)\ScreenSelectCharacter.obj" \
 	"$(INTDIR)\ScreenSelectDifficulty.obj" \
@@ -3228,6 +3241,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\ScreenSplash.obj" \
 	"$(INTDIR)\ScreenStage.obj" \
 	"$(INTDIR)\ScreenStyleSplash.obj" \
+	"$(INTDIR)\ScreenSyncOverlay.obj" \
 	"$(INTDIR)\ScreenSystemLayer.obj" \
 	"$(INTDIR)\ScreenTest.obj" \
 	"$(INTDIR)\ScreenTestFonts.obj" \
@@ -3293,13 +3307,12 @@ LINK32_OBJS= \
 
 "..\Program\StepMania.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
    archutils\Win32\verinc
-	cl /Zl /nologo /c verstub.cpp  /Fo.\..\Release6\
-
+	cl /Zl /nologo /c verstub.cpp /Fo.\../Release6\
 	 $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
 
-IntDir=.\..\Release6
+IntDir=.\../Release6
 TargetDir=\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
@@ -3308,7 +3321,7 @@ DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
 ALL : $(DS_POSTBUILD_DEP)
 
 $(DS_POSTBUILD_DEP) : "..\Program\StepMania.exe" "..\StepMania-StackTrace.bsc"
-   archutils\Win32\mapconv .\..\Release6\StepMania.map \stepmania\Program\StepMania.vdi
+   archutils\Win32\mapconv .\../Release6\StepMania.map \stepmania\Program\StepMania.vdi
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 
@@ -5004,6 +5017,11 @@ SOURCE=.\ScreenSandbox.cpp
 "$(INTDIR)\ScreenSandbox.obj"	"$(INTDIR)\ScreenSandbox.sbr" : $(SOURCE) "$(INTDIR)"
 
 
+SOURCE=.\ScreenSaveSync.cpp
+
+"$(INTDIR)\ScreenSaveSync.obj"	"$(INTDIR)\ScreenSaveSync.sbr" : $(SOURCE) "$(INTDIR)"
+
+
 SOURCE=.\ScreenSelect.cpp
 
 "$(INTDIR)\ScreenSelect.obj"	"$(INTDIR)\ScreenSelect.sbr" : $(SOURCE) "$(INTDIR)"
@@ -5072,6 +5090,11 @@ SOURCE=.\ScreenStage.cpp
 SOURCE=.\ScreenStyleSplash.cpp
 
 "$(INTDIR)\ScreenStyleSplash.obj"	"$(INTDIR)\ScreenStyleSplash.sbr" : $(SOURCE) "$(INTDIR)"
+
+
+SOURCE=.\ScreenSyncOverlay.cpp
+
+"$(INTDIR)\ScreenSyncOverlay.obj"	"$(INTDIR)\ScreenSyncOverlay.sbr" : $(SOURCE) "$(INTDIR)"
 
 
 SOURCE=.\ScreenSystemLayer.cpp
