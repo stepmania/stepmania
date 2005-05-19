@@ -1143,7 +1143,7 @@ RageColor Course::GetColor() const
 	// FIXME: Calculate the meter.
 	int iMeter = 5;
 	
-	switch (PREFSMAN->m_CourseSortOrder)
+	switch( PREFSMAN->m_CourseSortOrder )
 	{
 	case PrefsManager::COURSE_SORT_SONGS:	
 		if( m_entries.size() >= 7 )				return SORT_LEVEL2_COLOR;
@@ -1151,23 +1151,23 @@ RageColor Course::GetColor() const
 		else									return SORT_LEVEL5_COLOR;
 
 	case PrefsManager::COURSE_SORT_METER:
-		if ( !IsFixed() )						return SORT_LEVEL1_COLOR;
-		else if (iMeter > 9)					return SORT_LEVEL2_COLOR;
-		else if (iMeter >= 7)					return SORT_LEVEL3_COLOR;
-		else if (iMeter >= 5)					return SORT_LEVEL4_COLOR;
+		if( !IsFixed() )						return SORT_LEVEL1_COLOR;
+		else if( iMeter > 9 )					return SORT_LEVEL2_COLOR;
+		else if( iMeter >= 7 )					return SORT_LEVEL3_COLOR;
+		else if( iMeter >= 5 )					return SORT_LEVEL4_COLOR;
 		else 									return SORT_LEVEL5_COLOR;
 
 	case PrefsManager::COURSE_SORT_METER_SUM:
-		if ( !IsFixed() )						return SORT_LEVEL1_COLOR;
-		if (m_SortOrder_TotalDifficulty >= 40)	return SORT_LEVEL2_COLOR;
-		if (m_SortOrder_TotalDifficulty >= 30)	return SORT_LEVEL3_COLOR;
-		if (m_SortOrder_TotalDifficulty >= 20)	return SORT_LEVEL4_COLOR;
+		if( !IsFixed() )						return SORT_LEVEL1_COLOR;
+		if( m_SortOrder_TotalDifficulty >= 40 )	return SORT_LEVEL2_COLOR;
+		if( m_SortOrder_TotalDifficulty >= 30 )	return SORT_LEVEL3_COLOR;
+		if( m_SortOrder_TotalDifficulty >= 20 )	return SORT_LEVEL4_COLOR;
 		else									return SORT_LEVEL5_COLOR;
 
 	case PrefsManager::COURSE_SORT_RANK:
-		if (m_SortOrder_Ranking == 3)			return SORT_LEVEL1_COLOR;
-		else if (m_SortOrder_Ranking == 2)		return SORT_LEVEL3_COLOR;
-		else if (m_SortOrder_Ranking == 1)		return SORT_LEVEL5_COLOR;
+		if( m_SortOrder_Ranking == 3 )			return SORT_LEVEL1_COLOR;
+		else if( m_SortOrder_Ranking == 2 )		return SORT_LEVEL3_COLOR;
+		else if( m_SortOrder_Ranking == 1 )		return SORT_LEVEL5_COLOR;
 		else									return SORT_LEVEL4_COLOR;
 	default:
 		ASSERT(0);

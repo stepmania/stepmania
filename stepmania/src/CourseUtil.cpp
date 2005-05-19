@@ -13,7 +13,7 @@
 //
 // Sorting stuff
 //
-static bool CompareCoursePointersByName(const Course* pCourse1, const Course* pCourse2)
+static bool CompareCoursePointersByName( const Course* pCourse1, const Course* pCourse2 )
 {
 	// HACK:  strcmp and other string comparators appear to eat whitespace.
 	// For example, the string "Players Best 13-16" is sorted between 
@@ -30,7 +30,7 @@ static bool CompareCoursePointersByName(const Course* pCourse1, const Course* pC
 	return sName1.CompareNoCase( sName2 ) == -1;
 }
 
-static bool CompareCoursePointersByAutogen(const Course* pCourse1, const Course* pCourse2)
+static bool CompareCoursePointersByAutogen( const Course* pCourse1, const Course* pCourse2 )
 {
 	int b1 = pCourse1->m_bIsAutogen;
 	int b2 = pCourse2->m_bIsAutogen;
@@ -42,7 +42,7 @@ static bool CompareCoursePointersByAutogen(const Course* pCourse1, const Course*
 		return CompareCoursePointersByName(pCourse1,pCourse2);
 }
 
-static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Course* pCourse2)
+static bool CompareCoursePointersByDifficulty( const Course* pCourse1, const Course* pCourse2 )
 {
 	int iNum1 = pCourse1->GetEstimatedNumStages();
 	int iNum2 = pCourse2->GetEstimatedNumStages();
@@ -54,7 +54,7 @@ static bool CompareCoursePointersByDifficulty(const Course* pCourse1, const Cour
 		return CompareCoursePointersByAutogen( pCourse1, pCourse2 );
 }
 
-static bool CompareCoursePointersByTotalDifficulty(const Course* pCourse1, const Course* pCourse2)
+static bool CompareCoursePointersByTotalDifficulty( const Course* pCourse1, const Course* pCourse2 )
 {
 	int iNum1 = pCourse1->m_SortOrder_TotalDifficulty;
 	int iNum2 = pCourse2->m_SortOrder_TotalDifficulty;
@@ -83,7 +83,7 @@ static bool CompareRandom( const Course* pCourse1, const Course* pCourse2 )
 	return ( pCourse1->IsFixed() && !pCourse2->IsFixed() );
 }
 
-static bool CompareCoursePointersByRanking(const Course* pCourse1, const Course* pCourse2)
+static bool CompareCoursePointersByRanking( const Course* pCourse1, const Course* pCourse2 )
 {
 	int iNum1 = pCourse1->m_SortOrder_Ranking;
 	int iNum2 = pCourse2->m_SortOrder_Ranking;
@@ -100,19 +100,19 @@ void CourseUtil::SortCoursePointerArrayByDifficulty( vector<Course*> &vpCoursesI
 
 void CourseUtil::SortCoursePointerArrayByRanking( vector<Course*> &vpCoursesInOut )
 {
-	for(unsigned i=0; i<vpCoursesInOut.size(); i++)
+	for( unsigned i=0; i<vpCoursesInOut.size(); i++ )
 		vpCoursesInOut[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyle()->m_StepsType );
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByRanking );
 }
 
 void CourseUtil::SortCoursePointerArrayByTotalDifficulty( vector<Course*> &vpCoursesInOut )
 {
-	for(unsigned i=0; i<vpCoursesInOut.size(); i++)
+	for( unsigned i=0; i<vpCoursesInOut.size(); i++ )
 		vpCoursesInOut[i]->UpdateCourseStats( GAMESTATE->GetCurrentStyle()->m_StepsType );
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByTotalDifficulty );
 }
 
-static bool CompareCoursePointersByType(const Course* pCourse1, const Course* pCourse2)
+static bool CompareCoursePointersByType( const Course* pCourse1, const Course* pCourse2 )
 {
 	return pCourse1->GetPlayMode() < pCourse2->GetPlayMode();
 }
@@ -129,12 +129,12 @@ void CourseUtil::MoveRandomToEnd( vector<Course*> &vpCoursesInOut )
 
 static map<const Course*, CString> course_sort_val;
 
-bool CompareCoursePointersBySortValueAscending(const Course *pSong1, const Course *pSong2)
+bool CompareCoursePointersBySortValueAscending( const Course *pSong1, const Course *pSong2 )
 {
 	return course_sort_val[pSong1] < course_sort_val[pSong2];
 }
 
-bool CompareCoursePointersBySortValueDescending(const Course *pSong1, const Course *pSong2)
+bool CompareCoursePointersBySortValueDescending( const Course *pSong1, const Course *pSong2 )
 {
 	return course_sort_val[pSong1] > course_sort_val[pSong2];
 }
@@ -153,7 +153,7 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCours
 {
 	RageTimer foo;
 	course_sort_val.clear();
-	for(unsigned i = 0; i < vpCoursesInOut.size(); ++i)
+	for( unsigned i = 0; i < vpCoursesInOut.size(); ++i )
 	{
 		const Trail* pTrail = vpCoursesInOut[i]->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType );
 		course_sort_val[vpCoursesInOut[i]] = ssprintf("%09.3f", pTrail != NULL? (float) pTrail->GetMeter(): 0.0f);
