@@ -83,6 +83,8 @@ char **g_argv = NULL;
 static bool g_bHasFocus = true;
 static bool g_bQuitting = false;
 
+void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame );
+
 static RageDisplay::VideoModeParams GetCurVideoModeParams()
 {
 	return RageDisplay::VideoModeParams(
@@ -275,8 +277,6 @@ void ExitGame()
 
 void ResetGame( bool ReturnToFirstScreen )
 {
-	ReadGamePrefsFromDisk();
-
 	GAMESTATE->Reset();
 	
 	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
@@ -759,10 +759,15 @@ void ChangeCurrentGame( const Game* g )
 
 	GAMESTATE->m_pCurGame = g;
 
+	/* Load this game's preferences.  If we just set an unavailable game type, this
+	 * will change it back to the default. */
 	ReadGamePrefsFromDisk( false );
 
 	/* Save the newly-selected game. */
 	SaveGamePrefsToDisk();
+
+	/* Load keymaps for the new game. */
+	INPUTMAPPER->ReadMappingsFromDisk();
 }
 
 void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
@@ -792,10 +797,11 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 			LOG->Warn( "Default note skin for \"%s\" missing, reverting to \"%s\"",
 				GAMESTATE->m_pCurGame->m_szName, GAMEMAN->GetDefaultGame()->m_szName );
 		GAMESTATE->m_pCurGame = GAMEMAN->GetDefaultGame();
-
-		/* Load key maps for the new game. */
-		INPUTMAPPER->ReadMappingsFromDisk();
 	}
+
+	/* Load keymaps for the new game. */
+	if( INPUTMAPPER )
+		INPUTMAPPER->ReadMappingsFromDisk();
 
 	/* If the default isn't available, our default note skin is messed up. */
 	if( !GAMEMAN->IsGameEnabled( GAMESTATE->m_pCurGame ) )
@@ -1095,8 +1101,8 @@ int main(int argc, char* argv[])
 	ANNOUNCER	= new AnnouncerManager;
 	NOTESKIN	= new NoteSkinManager;
 
-	/* Set up the theme and announcer. */
-	ReadGamePrefsFromDisk();
+	/* Set up the theme and announcer, and switch to the last game type. */
+	ReadGamePrefsFromDisk( true );
 
 	{
 		/* Now that THEME is loaded, load the icon for the current theme into the
