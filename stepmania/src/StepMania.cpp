@@ -844,11 +844,6 @@ void SaveGamePrefsToDisk()
 	ini.WriteFile( GAMEPREFS_INI_PATH );
 }
 
-static void OnFirstRun()
-{
-	// TODO: generate a machine keypair here
-}
-
 static void MountTreeOfZips( const CString &dir )
 {
 	vector<CString> dirs;
@@ -1080,9 +1075,6 @@ int main(int argc, char* argv[])
 #if defined(HAVE_TLS)
 	LOG->Info( "TLS is %savailable", RageThread::GetSupportsTLS()? "":"not " );
 #endif
-
-	if( PREFSMAN->m_bFirstRun )
-		OnFirstRun();
 
 	CheckSettings();
 
