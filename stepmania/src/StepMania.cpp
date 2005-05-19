@@ -968,16 +968,6 @@ bool GetCommandlineArgument( const CString &option, CString *argument, int iInde
 	return false;
 }
 
-static void ProcessArgsSecond()
-{
-	CString Argument;
-	if( GetCommandlineArgument( "test2" ) )
-		LOG->Info ("Test2");
-
-	if( GetCommandlineArgument( "netip" ) )
-		NSMAN->DisplayStartupStatus();	//If we're using networking show what happend
-}
-
 #ifdef _XBOX
 void __cdecl main()
 #else
@@ -1186,8 +1176,8 @@ int main(int argc, char* argv[])
 	/* Initialize which courses are ranking courses here. */
 	SONGMAN->UpdateRankingCourses();
 
-	/* Run the second argcheck, you can do your other options here */
-	ProcessArgsSecond();
+	if( GetCommandlineArgument("netip") )
+		NSMAN->DisplayStartupStatus();	// If we're using networking show what happened
 
 	/* Run the main loop. */
 	GameLoop();
