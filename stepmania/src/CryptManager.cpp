@@ -61,25 +61,56 @@ CryptManager::~CryptManager()
 
 }
 
+static bool WriteFile( CString sFile, CString sBuf )
+{
+	RageFile output;
+	if( !output.Open(sFile, RageFile::WRITE) )
+	{
+		LOG->Warn( "WriteFile: opening %s failed: %s", sFile.c_str(), output.GetError().c_str() );
+		return false;
+	}
+	
+	if( output.Write(sBuf) == -1 || output.Flush() == -1 )
+	{
+		LOG->Warn( "WriteFile: writing %s failed: %s", sFile.c_str(), output.GetError().c_str() );
+		output.Close();
+		FILEMAN->Remove( sFile );
+		return false;
+	}
+
+	return true;
+}
+
 void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename, CString pubFilename, CString seed )
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
+	CString sPubKey, sPrivKey;
 	try
 	{
 		NonblockingRng rng;
 
 		RSASSA_PKCS1v15_SHA_Signer priv(rng, keyLength);
-		RageFileSink privFile(privFilename);
+		StringSink privFile( sPrivKey );
 		priv.DEREncode(privFile);
 		privFile.MessageEnd();
 
 		RSASSA_PKCS1v15_SHA_Verifier pub(priv);
-		RageFileSink pubFile(pubFilename);
+		StringSink pubFile( sPubKey );
 		pub.DEREncode(pubFile);
 		pubFile.MessageEnd();
 	} catch( const CryptoPP::Exception &s ) {
 		LOG->Warn( "GenerateRSAKey failed: %s", s.what() );
+		return;
+	}
+
+	if( !WriteFile(pubFilename, sPubKey) )
+		return;
+
+	if( !WriteFile(privFilename, sPrivKey) )
+	{
+		FILEMAN->Remove( privFilename );
+		return;
 	}
 }
 
@@ -104,15 +135,19 @@ void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile )
 		return;
 	}
 
+	CString sSignature;
 	try {
 		RageFileSource privFile(sPrivFilename, true);
 		RSASSA_PKCS1v15_SHA_Signer priv(privFile);
 		NonblockingRng rng;
 
-		RageFileSource f(sMessageFilename, true, new SignerFilter(rng, priv, new RageFileSink(sSignatureFile)));
+		RageFileSource f(sMessageFilename, true, new SignerFilter(rng, priv, new StringSink(sSignature)));
 	} catch( const CryptoPP::Exception &s ) {
 		LOG->Warn( "SignFileToFile failed: %s", s.what() );
+		return;
 	}
+
+	WriteFile( sSignatureFile, sSignature );
 }
 
 bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )

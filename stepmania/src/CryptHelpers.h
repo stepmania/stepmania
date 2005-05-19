@@ -55,31 +55,6 @@ public:
 		: SourceTemplate<RageFileStore>(attachment) {SourceInitialize(pumpAll, MakeParameters("InputFileName", filename)("InputBinaryMode", binary));}
 };
 
-
-//! .
-class RageFileSink : public Sink
-{
-public:
-	class Err : public Exception
-	{
-	public:
-		Err(const std::string &s) : Exception(IO_ERROR, s) {}
-	};
-	class OpenErr : public Err {public: OpenErr(const std::string &filename) : Err("FileSink: error opening file for writing: " + filename) {}};
-	struct WriteErr : public Err { WriteErr(const RageFile &f) : Err("RageFileSink(" + f.GetPath() + "): write error: " + f.GetError()) {}};
-
-	RageFileSink() {}
-	RageFileSink(const char *filename, bool binary=true)
-		{IsolatedInitialize(MakeParameters("OutputFileName", filename)("OutputBinaryMode", binary));}
-
-	void IsolatedInitialize(const NameValuePairs &parameters);
-	unsigned int Put2(const byte *inString, unsigned int length, int messageEnd, bool blocking);
-	bool IsolatedFlush(bool hardFlush, bool blocking);
-
-private:
-	RageFile m_file;
-};
-
 #endif
 
 /*

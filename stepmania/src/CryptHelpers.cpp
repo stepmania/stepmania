@@ -119,43 +119,6 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 	return 0;
 }
 
-void RageFileSink::IsolatedInitialize(const NameValuePairs &parameters)
-{
-	const char *fileName;
-	if( !parameters.GetValue("OutputFileName", fileName) )
-		ASSERT(0);
-
-	if( !m_file.Open( fileName, RageFile::WRITE ) )	// trucates existing data
-		throw OpenErr(fileName);
-}
-
-bool RageFileSink::IsolatedFlush(bool hardFlush, bool blocking)
-{
-	if (!m_file.IsOpen())
-		throw Err("FileSink: output stream not opened");
-	
-	
-	if( m_file.Flush() == -1 )
-		throw WriteErr( m_file );
-	
-	return false;
-}
-
-unsigned int RageFileSink::Put2(const byte *inString, unsigned int length, int messageEnd, bool blocking)
-{
-	if (!m_file.IsOpen())
-		throw Err("FileSink: output stream not opened");
-	
-	if( m_file.Write((const char *)inString, length) == -1 )
-		throw WriteErr( m_file );
-	
-	if (messageEnd)
-		if( m_file.Flush() == -1 )
-			throw WriteErr( m_file );
-	
-	return 0;
-}
-
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
