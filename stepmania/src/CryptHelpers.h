@@ -1,14 +1,13 @@
 #ifndef CryptHelpers_H
 #define CryptHelpers_H
 
-#include "RageFile.h"
-
 // crypt headers
 #include "crypto51/files.h"
 #include "crypto51/filters.h"
 #include "crypto51/cryptlib.h"
 
 using namespace CryptoPP;
+class RageFileBasic;
 
 //! .
 class RageFileStore : public Store, private FilterPutSpaceHelper
@@ -20,7 +19,7 @@ public:
 		Err(const std::string &s) : Exception(IO_ERROR, s) {}
 	};
 	class OpenErr : public Err {public: OpenErr(const std::string &filename) : Err("FileStore: error opening file for reading: " + filename) {}};
-	struct ReadErr : public Err { ReadErr(const RageFile &f) : Err("RageFileStore(" + f.GetPath() + "): read error: " + f.GetError() ) {}};
+	struct ReadErr : public Err { ReadErr( const RageFileBasic &f ); };
 
 	RageFileStore();
 	~RageFileStore();
@@ -35,7 +34,7 @@ public:
 private:
 	void StoreInitialize(const NameValuePairs &parameters);
 	
-	mutable RageFile *m_pFile;	// mutable because reading from a file is not a const operation
+	mutable RageFileBasic *m_pFile;	// mutable because reading from a file is not a const operation
 	byte *m_space;
 	int m_len;
 	bool m_waiting;

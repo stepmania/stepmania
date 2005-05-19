@@ -1,9 +1,14 @@
 #include "global.h"
 #include "CryptHelpers.h"
+#include "RageFile.h"
 
 // crypt headers
 #include "crypto51/files.h"
 
+RageFileStore::ReadErr::ReadErr( const RageFileBasic &f ):
+	Err( "RageFileStore read error: " + f.GetError() )
+{
+}
 
 RageFileStore::RageFileStore()
 {
@@ -20,7 +25,7 @@ RageFileStore::RageFileStore( const RageFileStore &cpy ):
 	FilterPutSpaceHelper(cpy)
 {
 	if( cpy.m_pFile != NULL )
-		m_pFile = new RageFile( *cpy.m_pFile );
+		m_pFile = cpy.m_pFile->Copy();
 	else
 		m_pFile = NULL;
 
@@ -34,8 +39,9 @@ void RageFileStore::StoreInitialize(const NameValuePairs &parameters)
 	const char *fileName;
 	if( parameters.GetValue("InputFileName", fileName) )
 	{
-		m_pFile = new RageFile;
-		if( !m_pFile->Open(fileName, RageFile::READ) )
+		RageFile *pFile = new RageFile;
+		m_pFile = pFile;
+		if( !pFile->Open(fileName, RageFile::READ) )
 			throw OpenErr( fileName );
 	}
 	else
@@ -47,7 +53,7 @@ void RageFileStore::StoreInitialize(const NameValuePairs &parameters)
 
 unsigned long RageFileStore::MaxRetrievable() const
 {
-	if( m_pFile == NULL || !m_pFile->IsGood() )
+	if( m_pFile == NULL || m_pFile->AtEOF() || !m_pFile->GetError().empty() )
 		return 0;
 	
 	return m_pFile->GetFileSize() - m_pFile->Tell();
@@ -55,7 +61,7 @@ unsigned long RageFileStore::MaxRetrievable() const
 
 unsigned int RageFileStore::TransferTo2(BufferedTransformation &target, unsigned long &transferBytes, const std::string &channel, bool blocking)
 {
-	if( m_pFile == NULL || !m_pFile->IsGood() )
+	if( m_pFile == NULL || m_pFile->AtEOF() || !m_pFile->GetError().empty() )
 	{
 		transferBytes = 0;
 		return 0;
@@ -93,7 +99,7 @@ output:
 
 unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigned long &begin, unsigned long end, const std::string &channel, bool blocking) const
 {
-	if( m_pFile == NULL || !m_pFile->IsGood() )
+	if( m_pFile == NULL || m_pFile->AtEOF() || !m_pFile->GetError().empty() )
 		return 0;
 	
 	if( begin == 0 && end == 1 )
