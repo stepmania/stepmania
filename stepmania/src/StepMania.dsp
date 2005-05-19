@@ -1834,14 +1834,6 @@ SOURCE=.\BGAnimationLayer.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ConditionalBGA.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ConditionalBGA.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\DifficultyIcon.cpp
 # End Source File
 # Begin Source File

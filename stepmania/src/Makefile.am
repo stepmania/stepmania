@@ -213,7 +213,7 @@ endif
 
 ActorsInGameplayAndMenus = \
 BGAnimation.cpp BGAnimation.h BGAnimationLayer.cpp BGAnimationLayer.h Banner.cpp Banner.h \
-ConditionalBGA.cpp ConditionalBGA.h DifficultyIcon.cpp DifficultyIcon.h \
+DifficultyIcon.cpp DifficultyIcon.h \
 MeterDisplay.cpp MeterDisplay.h StreamDisplay.cpp StreamDisplay.h \
 Transition.cpp Transition.h
 

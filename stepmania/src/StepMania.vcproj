@@ -1455,12 +1455,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\Banner.h">
 			</File>
 			<File
-				RelativePath="ConditionalBGA.cpp">
-			</File>
-			<File
-				RelativePath="ConditionalBGA.h">
-			</File>
-			<File
 				RelativePath="DifficultyIcon.cpp">
 			</File>
 			<File
