@@ -1235,10 +1235,9 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature,
 	}
 
 	//
-	// Save the screenshot
+	// Save the screenshot.  If writing lossy to a memcard, use SAVE_LOSSY_LOW_QUAL, so we
+	// don't eat up lots of space.
 	//
-	/* If writing lossy to a memcard, use SAVE_LOSSY_LOW_QUAL, so we don't eat up
-	 * lots of space with screenshots. */
 	RageDisplay::GraphicsFileFormat fmt;
 	if( bSaveCompressed && MEMCARDMAN->PathIsMemCard(sDir) )
 		fmt = RageDisplay::SAVE_LOSSY_LOW_QUAL;
