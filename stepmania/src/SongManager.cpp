@@ -1151,22 +1151,20 @@ void SongManager::SortSongs()
 
 void SongManager::UpdateRankingCourses()
 {
-	/*  Updating the ranking courses data is fairly expensive
-	 *  since it involves comparing strings.  Do so sparingly.
-	 */
+	/* Updating the ranking courses data is fairly expensive
+	 * since it involves comparing strings.  Do so sparingly. */
 	CStringArray RankingCourses;
-
 	split( THEME->GetMetric("ScreenRanking","CoursesToShow"),",", RankingCourses);
 
-	for(unsigned i=0; i < m_pCourses.size(); i++)
+	for( unsigned i=0; i < m_pCourses.size(); i++ )
 	{
-		if (m_pCourses[i]->GetEstimatedNumStages() > 7)
+		if( m_pCourses[i]->GetEstimatedNumStages() > 7 )
 			m_pCourses[i]->m_SortOrder_Ranking = 3;
 		else
 			m_pCourses[i]->m_SortOrder_Ranking = 2;
 		
-		for(unsigned j = 0; j < RankingCourses.size(); j++)
-			if (!RankingCourses[j].CompareNoCase(m_pCourses[i]->m_sPath))
+		for( unsigned j = 0; j < RankingCourses.size(); j++ )
+			if( !RankingCourses[j].CompareNoCase(m_pCourses[i]->m_sPath) )
 				m_pCourses[i]->m_SortOrder_Ranking = 1;
 	}
 }
