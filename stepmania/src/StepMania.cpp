@@ -276,7 +276,6 @@ void ExitGame()
 void ResetGame( bool ReturnToFirstScreen )
 {
 	ReadGamePrefsFromDisk();
-	INPUTMAPPER->ReadMappingsFromDisk();
 
 	GAMESTATE->Reset();
 	
@@ -761,7 +760,6 @@ void ChangeCurrentGame( const Game* g )
 	GAMESTATE->m_pCurGame = g;
 
 	ReadGamePrefsFromDisk( false );
-	INPUTMAPPER->ReadMappingsFromDisk();
 
 	/* Save the newly-selected game. */
 	SaveGamePrefsToDisk();
@@ -794,6 +792,9 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 			LOG->Warn( "Default note skin for \"%s\" missing, reverting to \"%s\"",
 				GAMESTATE->m_pCurGame->m_szName, GAMEMAN->GetDefaultGame()->m_szName );
 		GAMESTATE->m_pCurGame = GAMEMAN->GetDefaultGame();
+
+		/* Load key maps for the new game. */
+		INPUTMAPPER->ReadMappingsFromDisk();
 	}
 
 	/* If the default isn't available, our default note skin is messed up. */
