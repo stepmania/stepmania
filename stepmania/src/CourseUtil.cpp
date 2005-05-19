@@ -15,19 +15,9 @@
 //
 static bool CompareCoursePointersByName( const Course* pCourse1, const Course* pCourse2 )
 {
-	// HACK:  strcmp and other string comparators appear to eat whitespace.
-	// For example, the string "Players Best 13-16" is sorted between 
-	// "Players Best  1-4" and "Players Best  5-8".  Replace the string "  "
-	// with " 0" for comparison only.
-
-	// XXX: That doesn't happen to me, and it shouldn't (strcmp is strictly
-	// a byte sort, though CompareNoCase doesn't use strcmp).  Are you sure
-	// you didn't have only one space before? -glenn
 	CString sName1 = pCourse1->GetFullDisplayTitle();
 	CString sName2 = pCourse2->GetFullDisplayTitle();
-	sName1.Replace( "  " , " 0" );
-	sName2.Replace( "  " , " 0" );
-	return sName1.CompareNoCase( sName2 ) == -1;
+	return sName1.CompareNoCase( sName2 ) < 0;
 }
 
 static bool CompareCoursePointersByAutogen( const Course* pCourse1, const Course* pCourse2 )
