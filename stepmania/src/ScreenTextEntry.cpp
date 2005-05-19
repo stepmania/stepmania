@@ -23,7 +23,7 @@ static const char* g_szKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW] =
 	{"","","Space","","","Backsp","","","Cancel","","","Done",""},
 };
 
-static Preference<bool> g_bAllowOldKeyboardInput( Options, "AllowOldKeyboardInput",	true );
+static Preference<bool> g_bAllowOldKeyboardInput( "AllowOldKeyboardInput",	true );
 
 float GetButtonX( int x )
 {

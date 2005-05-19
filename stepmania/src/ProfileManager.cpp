@@ -31,8 +31,7 @@ const CString LAST_GOOD_DIR	=	"LastGood/";
 
 // Directories to search for a profile if m_sMemoryCardProfileSubdir doesn't
 // exist, separated by ";":
-static Preference<CString> g_sMemoryCardProfileImportSubdirs(
-	Options, "MemoryCardProfileImportSubdirs", "" );
+static Preference<CString> g_sMemoryCardProfileImportSubdirs( "MemoryCardProfileImportSubdirs", "" );
 
 
 ProfileManager::ProfileManager()

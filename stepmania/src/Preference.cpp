@@ -7,15 +7,7 @@
 #include "LuaManager.h"
 #include "MessageManager.h"
 
-static const CString PrefsGroupNames[] = {
-	"Debug",
-	"Editor",
-	"Options",
-};
-XToString( PrefsGroup, NUM_PREFS_GROUPS );
-
-IPreference::IPreference( PrefsGroup PrefsGroup, const CString& sName ):
-	m_PrefsGroup( PrefsGroup ),
+IPreference::IPreference( const CString& sName ):
 	m_sName( sName )
 {
 	PrefsManager::Subscribe( this );
@@ -82,13 +74,13 @@ READFROM_AND_WRITETO( RageSoundReader_Resample::ResampleQuality, int& )
 void IPreference::ReadFrom( const IniFile &ini )
 {
 	CString sVal;
-	if( ini.GetValue( PrefsGroupToString(m_PrefsGroup), m_sName, sVal ) )
+	if( ini.GetValue( "Options", m_sName, sVal ) )
 		FromString( sVal );
 }
 
 void IPreference::WriteTo( IniFile &ini ) const
 {
-	ini.SetValue( PrefsGroupToString(m_PrefsGroup), m_sName, ToString() );
+	ini.SetValue( "Options", m_sName, ToString() );
 }
 
 void BroadcastPreferenceChanged( const CString& sPreferenceName )

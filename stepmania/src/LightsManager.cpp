@@ -14,8 +14,8 @@
 
 #include "arch/arch.h"
 
-Preference<float>	g_fLightsFalloffSeconds( Options, "LightsFalloffSeconds", 0.1f );
-Preference<float>	g_fLightsAheadSeconds( Options, "LightsAheadSeconds", 0.05f );
+Preference<float>	g_fLightsFalloffSeconds( "LightsFalloffSeconds", 0.1f );
+Preference<float>	g_fLightsAheadSeconds( "LightsAheadSeconds", 0.05f );
 
 
 static const CString CabinetLightNames[] = {

@@ -6,20 +6,11 @@
 #include "EnumHelper.h"
 class IniFile;
 
-enum PrefsGroup
-{
-	Debug,
-	Editor,
-	Options,
-	NUM_PREFS_GROUPS
-};
-const CString& PrefsGroupToString( PrefsGroup pg );
-
 struct lua_State;
 class IPreference
 {
 public:
-	IPreference( PrefsGroup PrefsGroup, const CString& sName );
+	IPreference( const CString& sName );
 	virtual ~IPreference();
 
 	virtual void LoadDefault() = 0;
@@ -32,11 +23,9 @@ public:
 	virtual void SetFromStack( lua_State *L );
 	virtual void PushValue( lua_State *L ) const;
 
-	PrefsGroup GetPrefsGroup() const { return m_PrefsGroup; }
 	const CString &GetName() const { return m_sName; }
 
 protected:
-	PrefsGroup	m_PrefsGroup;
 	CString		m_sName;
 };
 
@@ -52,8 +41,8 @@ private:
 	T			m_defaultValue;
 	
 public:
-	Preference( PrefsGroup PrefsGroup, const CString& sName, const T& defaultValue ):
-		IPreference( PrefsGroup, sName ),
+	Preference( const CString& sName, const T& defaultValue ):
+		IPreference( sName ),
 		m_currentValue( defaultValue ),
 		m_defaultValue( defaultValue )
 	{

@@ -12,7 +12,7 @@ StepManiaLanServer::StepManiaLanServer() { }
 StepManiaLanServer::~StepManiaLanServer() { }
 #else
 
-static Preference<float> g_fStartWait( Options, "ServerWaitSeconds",	2 );
+static Preference<float> g_fStartWait( "ServerWaitSeconds",	2 );
 
 LanPlayer::LanPlayer()
 {
