@@ -1651,7 +1651,9 @@ LINK32_OBJS= \
 
 "..\Program\StepMania-debug.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
    archutils\Win32\verinc
-	cl                                             /Zl                                             /nologo                                             /c                                             verstub.cpp                                             /Fo.\../Debug6\
+	cl /Zl /nologo /c verstub.cpp  /Fo.\..\Debug6\
+
+
 	 $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
@@ -1674,8 +1676,8 @@ $(DS_POSTBUILD_DEP) : "..\Program\StepMania-debug.exe" "$(OUTDIR)\StepMania.pch"
 
 !ELSEIF  "$(CFG)" == "StepMania - Win32 Release"
 
-OUTDIR=.\../Release6
-INTDIR=.\../Release6
+OUTDIR=.\..\Release6
+INTDIR=.\..\Release6
 
 ALL : "..\Program\StepMania.exe" "..\StepMania-StackTrace.bsc"
 
@@ -3291,12 +3293,13 @@ LINK32_OBJS= \
 
 "..\Program\StepMania.exe" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
    archutils\Win32\verinc
-	cl                                                                                                                                               /Zl                                                                                                                                               /nologo                                                                                                                                               /c                                                                                                                                               verstub.cpp                                                                                                                                               /Fo.\../Release6\
+	cl /Zl /nologo /c verstub.cpp  /Fo.\..\Release6\
+
 	 $(LINK32) @<<
   $(LINK32_FLAGS) $(LINK32_OBJS)
 <<
 
-IntDir=.\../Release6
+IntDir=.\..\Release6
 TargetDir=\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
@@ -3305,7 +3308,7 @@ DS_POSTBUILD_DEP=$(INTDIR)\postbld.dep
 ALL : $(DS_POSTBUILD_DEP)
 
 $(DS_POSTBUILD_DEP) : "..\Program\StepMania.exe" "..\StepMania-StackTrace.bsc"
-   archutils\Win32\mapconv .\../Release6\StepMania.map \stepmania\Program\StepMania.vdi
+   archutils\Win32\mapconv .\..\Release6\StepMania.map \stepmania\Program\StepMania.vdi
 	echo Helper for Post-build step > "$(DS_POSTBUILD_DEP)"
 
 !ENDIF 
