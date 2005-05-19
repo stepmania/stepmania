@@ -87,7 +87,6 @@ protected:
 	vector<RageSpriteVertex> verts;
 	vector<RageTexture *> tex;
 	
-	void AddLine( CString & sAddition, int & iWidthPixels );
 	void BuildChars();
 	void DrawChars();
 	void UpdateBaseZoom();

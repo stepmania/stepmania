@@ -19,6 +19,7 @@ const wchar_t Font::DEFAULT_GLYPH = 0xF8FF;
 FontPage::FontPage()
 {
 	m_pTexture = NULL;
+	DrawExtraPixelsLeft = DrawExtraPixelsRight = 0;
 }
 
 void FontPage::Load( FontPageSettings cfg )
@@ -87,6 +88,8 @@ void FontPage::Load( FontPageSettings cfg )
 	}
 	baseline = cfg.Baseline;
 	height = baseline-cfg.Top;
+	DrawExtraPixelsLeft = cfg.DrawExtraPixelsLeft;
+	DrawExtraPixelsRight = cfg.DrawExtraPixelsRight;
 
 	/* Shift the character up so the top will be rendered at the baseline. */
 	vshift = (float) -baseline;
@@ -187,6 +190,13 @@ int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
 	
 	for( unsigned i=0; i<szLine.size(); i++ )
 		LineWidth += GetGlyph(szLine[i]).hadvance;
+
+	if( szLine.size() > 0 )
+	{
+		/* Add overdraw. */
+		LineWidth += GetGlyph(szLine[0]).fp->DrawExtraPixelsLeft;
+		LineWidth += GetGlyph(szLine[szLine.size()-1]).fp->DrawExtraPixelsRight;
+	}
 
 	return LineWidth;
 }

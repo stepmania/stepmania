@@ -89,6 +89,9 @@ public:
 	float vshift;
 	int GetCenter() const { return height/2; }
 
+	/* Remember these only for GetLineWidthInSourcePixels. */
+	int DrawExtraPixelsLeft, DrawExtraPixelsRight;
+
 private:
 	void SetExtraPixels(int DrawExtraPixelsLeft, int DrawExtraPixelsRight);
 	void SetTextureCoords(const vector<int> &widths, int AdvanceExtraPixels);
