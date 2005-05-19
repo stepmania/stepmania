@@ -1105,6 +1105,12 @@ int main(int argc, char* argv[])
 	ReadGamePrefsFromDisk( true );
 
 	{
+		CString sSection = "Preferences";
+		GetCommandlineArgument( "Type", &sSection );
+		THEME->LoadPreferencesFromSection( sSection );
+	}
+
+	{
 		/* Now that THEME is loaded, load the icon for the current theme into the
 		 * loading window. */
 		CString sError;

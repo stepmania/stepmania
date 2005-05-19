@@ -868,6 +868,39 @@ void ThemeManager::GetMetricsThatBeginWith( const CString &_sClassName, const CS
 	}
 }
 
+void ThemeManager::LoadPreferencesFromSection( const CString &sClassName )
+{
+	set<CString> asNames;
+
+	GetMetricsThatBeginWith( sClassName, "", asNames );
+
+	/* If "Theme" isn't set, we're not changing the theme.  Break out and
+		* load other preferences. */
+	if( asNames.find("Theme") != asNames.end() )
+	{
+		/* Change the theme.  Only do this once. */
+		CString sTheme;
+		GetMetric( sClassName, "Theme", sTheme );
+		THEME->SwitchThemeAndLanguage( sTheme, PREFSMAN->m_sLanguage );
+
+		asNames.erase( "Theme" );
+	}
+
+	FOREACHS( CString, asNames, sName )
+	{
+		IPreference *pPref = PREFSMAN->GetPreferenceByName( *sName );
+		if( pPref == NULL )
+		{
+			LOG->Warn( "Unknown preference in [%s]: %s", sClassName.c_str(), sName->c_str() );
+			continue;
+		}
+
+		CString sVal;
+		GetMetric( sClassName, *sName, sVal );
+
+		pPref->FromString( sVal );
+	}
+}
 
 // lua start
 #include "LuaBinding.h"
