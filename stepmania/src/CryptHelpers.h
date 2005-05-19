@@ -9,7 +9,6 @@
 using namespace CryptoPP;
 class RageFileBasic;
 
-//! .
 class RageFileStore : public Store, private FilterPutSpaceHelper
 {
 public:
@@ -22,6 +21,7 @@ public:
 	struct ReadErr : public Err { ReadErr( const RageFileBasic &f ); };
 
 	RageFileStore();
+	RageFileStore( RageFileBasic *pFile ); /* pFile will be deleted */
 	~RageFileStore();
 	RageFileStore( const RageFileStore &cpy );
 	RageFileStore(const char *filename)
@@ -40,7 +40,6 @@ private:
 	bool m_waiting;
 };
 
-//! .
 class RageFileSource : public SourceTemplate<RageFileStore>
 {
 public:
@@ -48,6 +47,8 @@ public:
 	typedef FileStore::OpenErr OpenErr;
 	typedef FileStore::ReadErr ReadErr;
 
+	RageFileSource( RageFileBasic *pFile, bool pumpAll, BufferedTransformation *attachment = NULL, bool binary=true )
+		: SourceTemplate<RageFileStore>(attachment,RageFileStore(pFile)) {SourceInitialize(pumpAll, MakeParameters("InputBinaryMode", binary));}
 	RageFileSource(const char *filename, bool pumpAll, BufferedTransformation *attachment = NULL, bool binary=true)
 		: SourceTemplate<RageFileStore>(attachment) {SourceInitialize(pumpAll, MakeParameters("InputFileName", filename)("InputBinaryMode", binary));}
 };

@@ -1,6 +1,7 @@
 #include "global.h"
 #include "CryptHelpers.h"
 #include "RageFile.h"
+#include "RageLog.h"
 
 // crypt headers
 #include "crypto51/files.h"
@@ -13,6 +14,13 @@ RageFileStore::ReadErr::ReadErr( const RageFileBasic &f ):
 RageFileStore::RageFileStore()
 {
 	m_pFile = NULL;
+	m_waiting = false;
+}
+
+RageFileStore::RageFileStore( RageFileBasic *pFile )
+{
+	m_pFile = pFile;
+	m_waiting = false;
 }
 
 RageFileStore::~RageFileStore()
@@ -41,12 +49,14 @@ void RageFileStore::StoreInitialize(const NameValuePairs &parameters)
 	{
 		RageFile *pFile = new RageFile;
 		m_pFile = pFile;
+		LOG->Trace( "XXX: not using pFile" );
 		if( !pFile->Open(fileName, RageFile::READ) )
 			throw OpenErr( fileName );
 	}
 	else
 	{
-		ASSERT(0);
+		ASSERT( m_pFile != NULL );
+		LOG->Trace( "XXX: using pFile" );
 	}
 	m_waiting = false;
 }
