@@ -1,0 +1,1 @@
+NMAKE /f "StepMania.mak" CFG="StepMania - Win32 Release"
