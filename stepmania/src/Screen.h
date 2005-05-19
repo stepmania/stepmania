@@ -10,6 +10,7 @@
 #include "MenuInput.h"
 #include "StyleInput.h"
 #include "ScreenManager.h"
+#include "ThemeMetric.h"
 
 // Each Screen class should have a REGISTER_SCREEN_CLASS in its CPP file.
 #define REGISTER_SCREEN_CLASS( className ) \
@@ -19,6 +20,14 @@
 		Register##className() { SCREENMAN->Register(#className,Create##className); } \
 	}; \
 	static Register##className register_##className;
+
+enum ScreenType
+{
+	attract,
+	game_menu,
+	gameplay,
+	system_menu
+};
 
 class Screen : public ActorFrame
 {
@@ -40,6 +49,7 @@ public:
 
 	bool IsTransparent() const { return m_bIsTransparent; }
 	virtual bool UsesBackground() const { return true; }	// override and set false if this screen shouldn't load a background
+	virtual ScreenType GetScreenType() const { return ALLOW_OPERATOR_MENU_BUTTON ? system_menu : game_menu; }
 
 	static bool JoinInput( const MenuInput &MenuI );	// return true if a player joined
 
@@ -53,6 +63,8 @@ protected:
 	static bool SortMessagesByDelayRemaining(const QueuedScreenMessage &m1, const QueuedScreenMessage &m2);
 
 	bool m_bIsTransparent;	// screens below us need to be drawn first
+
+	ThemeMetric<bool>	ALLOW_OPERATOR_MENU_BUTTON;
 
 public:
 

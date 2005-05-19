@@ -31,7 +31,8 @@ struct SongOptions
 	enum AutosyncType { 
 		AUTOSYNC_OFF,
 		AUTOSYNC_SONG,
-		AUTOSYNC_MACHINE
+		AUTOSYNC_MACHINE,
+		NUM_AUTOSYNC_TYPES
 	};
 	AutosyncType m_AutosyncType;
 	bool m_bSaveScore;

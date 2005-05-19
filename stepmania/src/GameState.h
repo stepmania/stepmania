@@ -55,7 +55,6 @@ public:
 	PlayMode			m_PlayMode;			// many screens display different info depending on this value
 	int					m_iCoins;			// not "credits"
 	PlayerNumber		m_MasterPlayerNumber;	// used in Styles where one player controls both sides
-	bool				m_bIsOnSystemMenu; // system screens will not be effected by the operator key -- Miryokuteki
 	BroadcastOnChange1D<CourseDifficulty,NUM_PLAYERS>	m_PreferredCourseDifficulty;// used in nonstop
 	bool DifficultiesLocked();
 	bool ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc );
@@ -301,6 +300,14 @@ public:
 	// Workout stuff
 	float GetGoalPercentComplete( PlayerNumber pn );
 	bool IsGoalComplete( PlayerNumber pn )	{ return GetGoalPercentComplete( pn ) >= 1; }
+
+	// Sync changes stuff
+	TimingData *m_pTimingDataOriginal;
+	float m_fGlobalOffsetSecondsOriginal;
+	void ResetOriginalSyncData();
+	bool IsSyncDataChanged();
+	void SaveSyncChanges();
+	void RevertSyncChanges();
 
 	// Lua
 	void PushSelf( lua_State *L );

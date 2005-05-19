@@ -477,13 +477,13 @@ static Menu g_CourseMode(
 int g_iLastInsertAttackTrack = -1;
 float g_fLastInsertAttackDurationSeconds = -1;
 
+#define PREV_SCREEN THEME->GetMetric(m_sName,"PrevScreen")
+
 REGISTER_SCREEN_CLASS( ScreenEdit );
 ScreenEdit::ScreenEdit( CString sName ) : ScreenWithMenuElements( sName )
 {
 	LOG->Trace( "ScreenEdit::ScreenEdit()" );
 
-	PREV_SCREEN.Load( sName, "PrevScreen" );
-	
 	ASSERT( GAMESTATE->m_pCurSong );
 	ASSERT( GAMESTATE->m_pCurSteps[0] );
 }
@@ -1482,6 +1482,11 @@ void ScreenEdit::TransitionEditState( EditState em )
 {
 	EditState old = m_EditState;
 	
+	if( old == STATE_PLAYING )
+	{
+		SCREENMAN->AddNewScreenToTop( "ScreenSaveSync" );
+	}
+
 	switch( em )
 	{
 	case STATE_EDITING:
@@ -1522,6 +1527,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	case STATE_RECORDING:
 		break;
 	case STATE_PLAYING:
+		GAMESTATE->ResetOriginalSyncData();
 		break;
 	default:
 		ASSERT(0);

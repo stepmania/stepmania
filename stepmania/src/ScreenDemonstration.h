@@ -13,6 +13,8 @@ public:
 	virtual void Init();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+
+	virtual ScreenType GetScreenType() const { return attract; }
 };
 
 #endif

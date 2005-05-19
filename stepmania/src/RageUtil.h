@@ -219,7 +219,7 @@ CString SecondsToMMSSMsMsMs( float fSecs );
 CString PrettyPercent( float fNumerator, float fDenominator );
 inline CString PrettyPercent( int fNumerator, int fDenominator ) { return PrettyPercent( float(fNumerator), float(fDenominator) ); }
 CString Commify( int iNum );
-CString AddNumberSuffix( int i );
+CString FormatNumberAndSuffix( int i );
 
 
 struct tm GetLocalTime();

@@ -139,8 +139,8 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	ThemeMetric<CString> PREV_SCREEN;
-	
+	virtual ScreenType GetScreenType() const { return m_EditState==STATE_PLAYING ? gameplay : system_menu; }
+
 	enum EditState { STATE_EDITING, STATE_RECORDING, STATE_PLAYING, NUM_EDIT_STATES, STATE_INVALID };
 	void TransitionEditState( EditState em );
 	void PlayTicks();

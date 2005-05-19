@@ -77,6 +77,8 @@ Player::Player()
 	PlayerAI::InitFromDisk();
 
 	m_pNoteField = new NoteField;
+
+	this->SubscribeToMessage( MESSAGE_AUTOSYNC_CHANGED );
 }
 
 Player::~Player()
@@ -1140,7 +1142,9 @@ void Player::HandleAutosync(float fNoteOffset)
 	if( GAMESTATE->m_SongOptions.m_AutosyncType == SongOptions::AUTOSYNC_OFF )
 		return;
 
-	m_fOffset[m_iOffsetSample++] = fNoteOffset;
+	m_fOffset[m_iOffsetSample] = fNoteOffset;
+	m_iOffsetSample++;
+
 	if( m_iOffsetSample < SAMPLE_COUNT ) 
 		return; /* need more */
 
@@ -1174,11 +1178,11 @@ void Player::HandleAutosync(float fNoteOffset)
 			ASSERT(0);
 		}
 
-		SCREENMAN->SystemMessage( ssprintf(sAutosyncType+": Offset corrected by %f. Error in steps: %f seconds.", mean, stddev) );
+		SCREENMAN->SystemMessage( "Autosync: Correction applied." );
 	}
 	else
 	{
-		SCREENMAN->SystemMessage( ssprintf(sAutosyncType+": Offset NOT corrected. Average offset: %f seconds. Error: %f seconds.", mean, stddev) );
+		SCREENMAN->SystemMessage( "Autosync: Correction NOT applied.\n     Timing deviation too high." );
 	}
 
 	m_iOffsetSample = 0;
@@ -1645,6 +1649,14 @@ bool Player::IsPlayingBeginner() const
 		return pSteps && pSteps->GetDifficulty() == DIFFICULTY_BEGINNER;
 	}	
 }
+
+void Player::HandleMessage( const CString& sMessage )
+{
+	// Reset autosync samples when toggling
+	if( sMessage == MessageToString(MESSAGE_AUTOSYNC_CHANGED) )
+		m_iOffsetSample = 0;
+}
+
 
 /*
  * (c) 2001-2004 Chris Danford

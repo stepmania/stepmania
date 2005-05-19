@@ -63,7 +63,6 @@ GameState::GameState() :
 	m_pCurGame = NULL;
 	m_iCoins = 0;
 	m_timeGameStarted.SetZero();
-	m_bIsOnSystemMenu = false;
 
 	ReloadCharacters();
 
@@ -82,6 +81,8 @@ GameState::GameState() :
 
 	m_Environment = new LuaTable;
 
+	m_pTimingDataOriginal = new TimingData;
+
 	/* Don't reset yet; let the first screen do it, so we can
 	 * use PREFSMAN and THEME. */
 //	Reset();
@@ -95,7 +96,9 @@ GameState::~GameState()
 	FOREACH_PlayerNumber( p )
 		SAFE_DELETE( m_pPlayerState[p] );
 
-	delete m_Environment;
+	SAFE_DELETE( m_Environment );
+
+	SAFE_DELETE( m_pTimingDataOriginal );
 }
 
 void GameState::ApplyGameCommand( const CString &sCommand, PlayerNumber pn )
@@ -300,7 +303,7 @@ void GameState::PlayersFinalized()
 	if( MEMCARDMAN->GetCardsLocked() )
 		return;
 
-	MESSAGEMAN->Broadcast( PLAYERS_FINALIZED );
+	MESSAGEMAN->Broadcast( MESSAGE_PLAYERS_FINALIZED );
 
 	MEMCARDMAN->LockCards();
 
@@ -678,6 +681,8 @@ void GameState::ResetStageStatistics()
 	// Reset the round seed.  Do this here and not in FinishStage so that players
 	// get new shuffle patterns if they Back out of gameplay and play again.
 	GAMESTATE->m_iStageSeed = rand();
+
+	ResetOriginalSyncData();
 }
 
 void GameState::UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp )
@@ -1906,6 +1911,37 @@ bool GameState::PlayerIsUsingModifier( PlayerNumber pn, const CString &sModifier
 	return po == GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions && so == GAMESTATE->m_SongOptions;
 }
 
+void GameState::ResetOriginalSyncData()
+{
+	if( m_pCurSong )
+		*m_pTimingDataOriginal = m_pCurSong->m_Timing;
+	else
+		*m_pTimingDataOriginal = TimingData();
+	m_fGlobalOffsetSecondsOriginal = PREFSMAN->m_fGlobalOffsetSeconds;
+}
+
+bool GameState::IsSyncDataChanged()
+{
+	if( m_pCurSong  &&  *m_pTimingDataOriginal != m_pCurSong->m_Timing )
+		return true;
+	if( m_fGlobalOffsetSecondsOriginal != PREFSMAN->m_fGlobalOffsetSeconds )
+		return true;
+
+	return false;
+}
+
+void GameState::SaveSyncChanges()
+{
+	GAMESTATE->m_pCurSong->Save();
+	PREFSMAN->SaveGlobalPrefsToDisk();
+}
+
+void GameState::RevertSyncChanges()
+{
+	PREFSMAN->m_fGlobalOffsetSeconds.Set( GAMESTATE->m_fGlobalOffsetSecondsOriginal );
+	GAMESTATE->m_pCurSong->m_Timing = *GAMESTATE->m_pTimingDataOriginal;
+}
+
 
 // lua start
 #include "LuaBinding.h"
@@ -2014,6 +2050,7 @@ public:
 	static int GetNumSidesJoined( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetNumSidesJoined() ); return 1; }
 	static int GetCoinMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetCoinMode() ); return 1; }
 	static int GetPremium( T* p, lua_State *L )				{ lua_pushnumber(L, p->GetPremium() ); return 1; }
+	static int IsSyncDataChanged( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsSyncDataChanged() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -2058,6 +2095,7 @@ public:
 		ADD_METHOD( GetNumSidesJoined )
 		ADD_METHOD( GetCoinMode )
 		ADD_METHOD( GetPremium )
+		ADD_METHOD( IsSyncDataChanged )
 
 		Luna<T>::Register( L );
 

@@ -506,6 +506,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenSandbox.h">
 			</File>
 			<File
+				RelativePath="ScreenSaveSync.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSaveSync.h">
+			</File>
+			<File
 				RelativePath="ScreenSelect.cpp">
 			</File>
 			<File
@@ -582,6 +588,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenStyleSplash.h">
+			</File>
+			<File
+				RelativePath="ScreenSyncOverlay.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSyncOverlay.h">
 			</File>
 			<File
 				RelativePath="ScreenSystemLayer.cpp">

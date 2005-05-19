@@ -165,16 +165,28 @@ float TimingData::GetBPMAtBeat( float fBeat ) const
 	return m_BPMSegments[i].GetBPM();
 }
 
-BPMSegment& TimingData::GetBPMSegmentAtBeat( float fBeat )
+int TimingData::GetBPMSegmentIndexAtBeat( float fBeat )
 {
 	int iIndex = BeatToNoteRow( fBeat );
-	unsigned i;
-	for( i=0; i<m_BPMSegments.size()-1; i++ )
+	int i;
+	for( i=0; i<(int)(m_BPMSegments.size())-1; i++ )
 		if( m_BPMSegments[i+1].m_iStartIndex > iIndex )
 			break;
-	return m_BPMSegments[i];
+	return i;
 }
 
+BPMSegment& TimingData::GetBPMSegmentAtBeat( float fBeat )
+{
+	static BPMSegment empty;
+	if( m_BPMSegments.empty() )
+	{
+		empty = BPMSegment();
+		return empty;
+	}
+	
+	int i = GetBPMSegmentIndexAtBeat( fBeat );
+	return m_BPMSegments[i];
+}
 
 void TimingData::GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const
 {

@@ -9,12 +9,23 @@
 #include "GameCommand.h"
 #include "ScreenGameplay.h"
 #include "RageSoundManager.h"
+#include "GameSoundManager.h"
+#include "RageTextureManager.h"
+#include "NoteSkinManager.h"
+#include "Bookkeeper.h"
+#include "ProfileManager.h"
+#include "CodeDetector.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
 static bool g_bIsHalt = false;
 static RageTimer g_HaltTimer(RageZeroTimer);
 static bool g_bMute = false;
+
+static bool IsGameplay()
+{
+	return SCREENMAN && SCREENMAN->GetTopScreen() && SCREENMAN->GetTopScreen()->GetScreenType() == gameplay;
+}
 
 REGISTER_SCREEN_CLASS( ScreenDebugOverlay );
 ScreenDebugOverlay::ScreenDebugOverlay( const CString &sName ) : Screen(sName)
@@ -27,13 +38,17 @@ ScreenDebugOverlay::~ScreenDebugOverlay()
 
 struct MapDebugToDI
 {
-	DeviceInput holdForMenu;
-	DeviceInput button[NUM_DEBUG_LINES];
+	DeviceInput holdForDebug;
+	DeviceInput debugButton[NUM_DEBUG_LINES];
+	DeviceInput gameplayButton[NUM_DEBUG_LINES];
 	void Clear()
 	{
-		holdForMenu.MakeInvalid();
+		holdForDebug.MakeInvalid();
 		FOREACH_DebugLine(i)
-			button[i].MakeInvalid();
+		{
+			debugButton[i].MakeInvalid();
+			gameplayButton[i].MakeInvalid();
+		}
 	}
 };
 static MapDebugToDI g_Mappings;
@@ -41,7 +56,12 @@ static MapDebugToDI g_Mappings;
 static CString GetDebugButtonName( DebugLine i )
 {
 	// TODO: Make arch appropriate.
-	return g_Mappings.button[i].toString();
+	vector<CString> v;
+	if( g_Mappings.debugButton[i].IsValid() )
+		v.push_back( g_Mappings.debugButton[i].toString() );
+	if( g_Mappings.gameplayButton[i].IsValid() )
+		v.push_back( g_Mappings.gameplayButton[i].toString()+" in gameplay" );
+	return join( " or ", v );
 }
 
 void ScreenDebugOverlay::Init()
@@ -53,20 +73,26 @@ void ScreenDebugOverlay::Init()
 	{
 		g_Mappings.Clear();
 
-		g_Mappings.holdForMenu = DeviceInput(DEVICE_KEYBOARD, KEY_F3);
-		g_Mappings.button[0] = DeviceInput(DEVICE_KEYBOARD, KEY_C1);
-		g_Mappings.button[1] = DeviceInput(DEVICE_KEYBOARD, KEY_C2);
-		g_Mappings.button[2] = DeviceInput(DEVICE_KEYBOARD, KEY_C3);
-		g_Mappings.button[3] = DeviceInput(DEVICE_KEYBOARD, KEY_C4);
-		g_Mappings.button[4] = DeviceInput(DEVICE_KEYBOARD, KEY_C5);
-		g_Mappings.button[5] = DeviceInput(DEVICE_KEYBOARD, KEY_C6);
-		g_Mappings.button[6] = DeviceInput(DEVICE_KEYBOARD, KEY_C7);
-		g_Mappings.button[7] = DeviceInput(DEVICE_KEYBOARD, KEY_C8);
-		g_Mappings.button[8] = DeviceInput(DEVICE_KEYBOARD, KEY_C9);
-		g_Mappings.button[9] = DeviceInput(DEVICE_KEYBOARD, KEY_C0);
-		g_Mappings.button[10] = DeviceInput(DEVICE_KEYBOARD, KEY_UNDERSCORE);
-		g_Mappings.button[11] = DeviceInput(DEVICE_KEYBOARD, KEY_EQUAL);
-		g_Mappings.button[12] = DeviceInput(DEVICE_KEYBOARD, KEY_PAUSE);
+		g_Mappings.holdForDebug = DeviceInput(DEVICE_KEYBOARD, KEY_F3);
+
+		g_Mappings.gameplayButton[0]	= DeviceInput(DEVICE_KEYBOARD, KEY_F8);
+		g_Mappings.gameplayButton[1]	= DeviceInput(DEVICE_KEYBOARD, KEY_F7);
+		g_Mappings.gameplayButton[2]	= DeviceInput(DEVICE_KEYBOARD, KEY_F6);
+		g_Mappings.debugButton[3]  = DeviceInput(DEVICE_KEYBOARD, KEY_C1);
+		g_Mappings.debugButton[4]  = DeviceInput(DEVICE_KEYBOARD, KEY_C2);
+		g_Mappings.debugButton[5]  = DeviceInput(DEVICE_KEYBOARD, KEY_C3);
+		g_Mappings.debugButton[6]  = DeviceInput(DEVICE_KEYBOARD, KEY_C4);
+		g_Mappings.debugButton[7]  = DeviceInput(DEVICE_KEYBOARD, KEY_C5);
+		g_Mappings.debugButton[8]  = DeviceInput(DEVICE_KEYBOARD, KEY_C6);
+		g_Mappings.debugButton[9]  = DeviceInput(DEVICE_KEYBOARD, KEY_C7);
+		g_Mappings.debugButton[10] = DeviceInput(DEVICE_KEYBOARD, KEY_C8);
+		g_Mappings.debugButton[11] = DeviceInput(DEVICE_KEYBOARD, KEY_C9);
+		g_Mappings.debugButton[12] = DeviceInput(DEVICE_KEYBOARD, KEY_C0);
+		g_Mappings.debugButton[13] = DeviceInput(DEVICE_KEYBOARD, KEY_HYPHEN);
+		g_Mappings.debugButton[14] = DeviceInput(DEVICE_KEYBOARD, KEY_EQUAL);
+		g_Mappings.debugButton[15] = DeviceInput(DEVICE_KEYBOARD, KEY_LBRACKET);
+		g_Mappings.debugButton[16] = DeviceInput(DEVICE_KEYBOARD, KEY_RBRACKET);
+		g_Mappings.debugButton[17] = DeviceInput(DEVICE_KEYBOARD, KEY_BACKSLASH);
 	}
 
 
@@ -74,20 +100,27 @@ void ScreenDebugOverlay::Init()
 	m_Quad.SetDiffuse( RageColor(0, 0, 0, 0.5f) );
 	this->AddChild( &m_Quad );
 	
-	m_Header.LoadFromFont( THEME->GetPathToF("Common normal") );
-	m_Header.SetHorizAlign( Actor::align_left );
-	m_Header.SetX( 20 );
-	m_Header.SetY( SCREEN_TOP+20 );
-	m_Header.SetZoom( 1.0f );
-	m_Header.SetText( "Debug Menu" );
-	this->AddChild( &m_Header );
+	m_textHeader.LoadFromFont( THEME->GetPathToF("Common normal") );
+	m_textHeader.SetHorizAlign( Actor::align_left );
+	m_textHeader.SetX( SCREEN_LEFT+20 );
+	m_textHeader.SetY( SCREEN_TOP+20 );
+	m_textHeader.SetZoom( 1.0f );
+	m_textHeader.SetText( "Debug Menu" );
+	this->AddChild( &m_textHeader );
 
 	FOREACH_DebugLine( i )
 	{
-		BitmapText &txt = m_Text[i];
-		txt.LoadFromFont( THEME->GetPathToF("Common normal") );
-		txt.SetHorizAlign( Actor::align_left );
-		this->AddChild( &txt );
+		BitmapText &txt1 = m_textButton[i];
+		txt1.LoadFromFont( THEME->GetPathToF("Common normal") );
+		txt1.SetHorizAlign( Actor::align_right );
+		txt1.SetShadowLength( 2 );
+		this->AddChild( &txt1 );
+
+		BitmapText &txt2 = m_textFunction[i];
+		txt2.LoadFromFont( THEME->GetPathToF("Common normal") );
+		txt2.SetHorizAlign( Actor::align_left );
+		txt2.SetShadowLength( 2 );
+		this->AddChild( &txt2 );
 	}
 	
 	Update( 0 );
@@ -133,28 +166,37 @@ void ScreenDebugOverlay::UpdateText()
 	
 	FOREACH_DebugLine( i )
 	{
-		BitmapText &txt = m_Text[i];
-		txt.SetX( 100 );
-		txt.SetY( SCALE(i, 0, NUM_DEBUG_LINES-1, SCREEN_TOP+60, SCREEN_BOTTOM-40) );
-		txt.SetZoom( 0.8f );
+		BitmapText &txt1 = m_textButton[i];
+		txt1.SetX( SCREEN_CENTER_X-50 );
+		txt1.SetY( SCALE(i, 0, NUM_DEBUG_LINES-1, SCREEN_TOP+60, SCREEN_BOTTOM-40) );
+		txt1.SetZoom( 0.7f );
+
+		BitmapText &txt2 = m_textFunction[i];
+		txt2.SetX( SCREEN_CENTER_X-30 );
+		txt2.SetY( SCALE(i, 0, NUM_DEBUG_LINES-1, SCREEN_TOP+60, SCREEN_BOTTOM-40) );
+		txt2.SetZoom( 0.7f );
 
 		CString s1;
 		switch( i )
 		{
 		case DebugLine_Autoplay:			s1="AutoPlay";				break;
+		case DebugLine_AssistTick:			s1="AssistTick";			break;
+		case DebugLine_Autosync:			s1="AutoSync";				break;
 		case DebugLine_CoinMode:			s1="CoinMode";				break;
 		case DebugLine_Slow:				s1="Slow";					break;
 		case DebugLine_Halt:				s1="Halt";					break;
 		case DebugLine_LightsDebug:			s1="Lights Debug";			break;
 		case DebugLine_MonkeyInput:			s1="MonkeyInput";			break;
-		case DebugLine_Stats:				s1="Stats";					break;
+		case DebugLine_Stats:				s1="Rendering Stats";		break;
 		case DebugLine_Vsync:				s1="Vsync";					break;
 		case DebugLine_ScreenTestMode:		s1="Screen Test Mode";		break;
 		case DebugLine_ClearMachineStats:	s1="Clear Machine Stats";	break;
 		case DebugLine_FillMachineStats:	s1="Fill Machine Stats";	break;
 		case DebugLine_SendNotesEnded:		s1="Send Notes Ended";		break;
 		case DebugLine_Volume:				s1="Mute";					break;
-		case DebugLine_CurrentScreen:		s1="Screen";				break;
+		case DebugLine_ReloadCurrentScreen:	s1="Reload";				break;
+		case DebugLine_ReloadTheme:			s1="Reload Theme";			break;
+		case DebugLine_WriteProfiles:		s1="Write Profiles";		break;
 		case DebugLine_Uptime:				s1="Uptime";				break;
 		default:	ASSERT(0);
 		}
@@ -163,6 +205,8 @@ void ScreenDebugOverlay::UpdateText()
 		switch( i )
 		{
 		case DebugLine_Autoplay:			bOn=PREFSMAN->m_AutoPlay.Get() != PC_HUMAN;		break;
+		case DebugLine_AssistTick:			bOn=GAMESTATE->m_SongOptions.m_bAssistTick;		break;
+		case DebugLine_Autosync:			bOn=GAMESTATE->m_SongOptions.m_AutosyncType!=SongOptions::AUTOSYNC_OFF;		break;
 		case DebugLine_CoinMode:			bOn=true;								break;
 		case DebugLine_Slow:				bOn=g_bIsSlow;							break;
 		case DebugLine_Halt:				bOn=g_bIsHalt;							break;
@@ -175,7 +219,9 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_FillMachineStats:	bOn=true;								break;
 		case DebugLine_SendNotesEnded:		bOn=true;								break;
 		case DebugLine_Volume:				bOn=g_bMute;							break;
-		case DebugLine_CurrentScreen:		bOn=false;								break;
+		case DebugLine_ReloadCurrentScreen:	bOn=true;								break;
+		case DebugLine_ReloadTheme:			bOn=true;								break;
+		case DebugLine_WriteProfiles:		bOn=true;								break;
 		case DebugLine_Uptime:				bOn=false;								break;
 		default:	ASSERT(0);
 		}
@@ -192,6 +238,16 @@ void ScreenDebugOverlay::UpdateText()
 			default:	ASSERT(0);
 			}
 			break;
+		case DebugLine_AssistTick:		s2=bOn ? "on":"off";	break;
+		case DebugLine_Autosync:
+			switch( GAMESTATE->m_SongOptions.m_AutosyncType )
+			{
+			case SongOptions::AUTOSYNC_OFF:		s2="off";		break;
+			case SongOptions::AUTOSYNC_SONG:	s2="Song";		break;
+			case SongOptions::AUTOSYNC_MACHINE:	s2="Machine";	break;
+			default:	ASSERT(0);
+			}
+			break;
 		case DebugLine_CoinMode:			s2=CoinModeToString(PREFSMAN->m_CoinMode);	break;
 		case DebugLine_Slow:				s2=bOn ? "on":"off";	break;
 		case DebugLine_Halt:				s2=bOn ? "on":"off";	break;
@@ -204,19 +260,23 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_FillMachineStats:	s2="";					break;
 		case DebugLine_SendNotesEnded:		s2="";					break;
 		case DebugLine_Volume:				s2=bOn ? "on":"off";	break;
-		case DebugLine_CurrentScreen:		s2=SCREENMAN ? SCREENMAN->GetTopScreen()->m_sName:"";	break;
+		case DebugLine_ReloadCurrentScreen:	s2=SCREENMAN ? SCREENMAN->GetTopScreen()->m_sName:"";	break;
+		case DebugLine_ReloadTheme:			s2="";					break;
+		case DebugLine_WriteProfiles:		s2="";					break;
 		case DebugLine_Uptime:				s2=SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart());	break;
 		default:	ASSERT(0);
 		}
 
-		txt.SetDiffuse( bOn ? on:off );
+		txt1.SetDiffuse( bOn ? on:off );
+		txt2.SetDiffuse( bOn ? on:off );
 
 		CString sButton = GetDebugButtonName(i);
 		if( !sButton.empty() )
 			sButton += ": ";
+		txt1.SetText( sButton );
 		if( !s2.empty() )
 			s1 += " - ";
-		txt.SetText( sButton + s1 + s2 );
+		txt2.SetText( s1 + s2 );
 	}
 	
     if( g_bIsHalt )
@@ -233,7 +293,7 @@ void ScreenDebugOverlay::UpdateText()
 
 bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( DeviceI == g_Mappings.holdForMenu )
+	if( DeviceI == g_Mappings.holdForDebug )
 	{
 		if( type == IET_FIRST_PRESS )
 			g_bIsDisplayed = true;
@@ -241,23 +301,22 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 			g_bIsDisplayed = false;
 	}
 
-	if( !g_bIsDisplayed )
-		return false;
-
 	if( type != IET_FIRST_PRESS )
-		return false; /* eat the input but do nothing */
+		return true; /* eat the input but do nothing */
 
 	FOREACH_DebugLine( i )
 	{
-		if( DeviceI == g_Mappings.button[i] )
+		if( (g_bIsDisplayed && DeviceI == g_Mappings.debugButton[i]) ||
+			(IsGameplay() && DeviceI == g_Mappings.gameplayButton[i]) )
 		{
-			BitmapText &txt = m_Text[i];
+			BitmapText &txt1 = m_textButton[i];
+			txt1.FinishTweening();
+			float fZoom = txt1.GetZoom();
+			txt1.SetZoom( fZoom * 1.2f );
+			txt1.BeginTweening( 0.2f, Actor::TWEEN_LINEAR );
+			txt1.SetZoom( fZoom );
 
-			txt.FinishTweening();
-			float fZoom = txt.GetZoom();
-			txt.SetZoom( fZoom * 1.2f );
-			txt.BeginTweening( 0.2f, Actor::TWEEN_LINEAR );
-			txt.SetZoom( fZoom );
+			BitmapText &txt2 = m_textFunction[i];
 
 			switch( i )
 			{
@@ -268,6 +327,26 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 					PREFSMAN->m_AutoPlay.Set( pc );
 					FOREACH_HumanPlayer(pn)
 						GAMESTATE->m_pPlayerState[pn]->m_PlayerController = PREFSMAN->m_AutoPlay;
+				}
+				break;
+			case DebugLine_AssistTick:
+				{
+					if( type != IET_FIRST_PRESS )
+						return true; /* eat the input but do nothing */
+					GAMESTATE->m_SongOptions.m_bAssistTick = !GAMESTATE->m_SongOptions.m_bAssistTick;
+					/* Store this change, so it sticks if we change songs: */
+					GAMESTATE->m_StoredSongOptions.m_bAssistTick = GAMESTATE->m_SongOptions.m_bAssistTick;
+					MESSAGEMAN->Broadcast( MESSAGE_ASSIST_TICK_CHANGED );
+				}
+				break;
+			case DebugLine_Autosync:
+				{
+					if( type != IET_FIRST_PRESS )
+						return true; /* eat the input but do nothing */
+					SongOptions::AutosyncType as = (SongOptions::AutosyncType)(GAMESTATE->m_SongOptions.m_AutosyncType+1);
+					wrap( (int&)as, SongOptions::NUM_AUTOSYNC_TYPES );
+					GAMESTATE->m_SongOptions.m_AutosyncType = as;
+					MESSAGEMAN->Broadcast( MESSAGE_AUTOSYNC_CHANGED );
 				}
 				break;
 			case DebugLine_CoinMode:
@@ -324,7 +403,24 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 				g_bMute = !g_bMute;
 				SOUNDMAN->SetPrefs( g_bMute ? 0 : PREFSMAN->GetSoundVolume() );
 				break;
-			case DebugLine_CurrentScreen:
+			case DebugLine_ReloadCurrentScreen:
+				SOUND->StopMusic();
+				ResetGame( true );
+				break;
+			case DebugLine_ReloadTheme:
+				THEME->ReloadMetrics();
+				TEXTUREMAN->ReloadAll();
+				NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
+				CodeDetector::RefreshCacheItems();
+				break;
+			case DebugLine_WriteProfiles:
+				// HACK: Also save bookkeeping and profile info for debugging
+				// so we don't have to play through a whole song to get new output.
+				BOOKKEEPER->WriteToDisk();
+				PROFILEMAN->SaveMachineProfile();
+				FOREACH_PlayerNumber( p )
+					if( PROFILEMAN->IsPersistentProfile(p) )
+						PROFILEMAN->SaveProfile( p );
 				break;
 			case DebugLine_Uptime:
 				break;
@@ -333,11 +429,13 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 			
 			UpdateText();
 
-			SCREENMAN->SystemMessage( txt.GetText() );
+			SCREENMAN->SystemMessage( txt2.GetText() );
+
+			return true;
 		}
 	}
 
-	return true;
+	return false;
 }
 
 

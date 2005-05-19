@@ -46,6 +46,8 @@ static const CString MessageNames[] = {
 	"SideJoinedP1",
 	"SideJoinedP2",
 	"PlayersFinalized",
+	"AssistTickChanged",
+	"AutosyncChanged",
 };
 XToString( Message, NUM_MESSAGES );
 

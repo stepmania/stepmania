@@ -15,9 +15,10 @@
 class ScreenPrompt : public Screen
 {
 public:
-	ScreenPrompt( CString sName );
+	ScreenPrompt( const CString &sScreenName );
 	virtual void Init();
 	ScreenPrompt( 
+		const CString &sScreenName,
 		ScreenMessage smSendOnPop,
 		CString sText, 
 		PromptType type = PROMPT_OK, 

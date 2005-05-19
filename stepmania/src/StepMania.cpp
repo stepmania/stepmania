@@ -1281,7 +1281,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		/* Global operator key, to get quick access to the options menu. Don't
 		 * do this if we're on a "system menu", which includes the editor
 		 * (to prevent quitting without storing changes). */
-		if( !GAMESTATE->m_bIsOnSystemMenu )
+		if( SCREENMAN->GetTopScreen()->GetScreenType() != system_menu )
 		{
 			SCREENMAN->DeletePreparedScreens();
 			SCREENMAN->SystemMessage( "Service switch pressed" );
@@ -1301,41 +1301,6 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F2))
-	{
-		bool bShift = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
-		bool bCtrl = INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL) );
-		if( bShift )
-		{
-			// HACK: Also save bookkeeping and profile info for debugging
-			// so we don't have to play through a whole song to get new output.
-			BOOKKEEPER->WriteToDisk();
-			PROFILEMAN->SaveMachineProfile();
-			FOREACH_PlayerNumber( p )
-				if( PROFILEMAN->IsPersistentProfile(p) )
-					PROFILEMAN->SaveProfile( p );
-			SCREENMAN->SystemMessage( "Stats saved" );
-		}
-		else
-		{
-			THEME->ReloadMetrics();
-			TEXTUREMAN->ReloadAll();
-			NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
-			CodeDetector::RefreshCacheItems();
-		
-
-			/* If we're in screen test mode, reload the screen. */
-			if( PREFSMAN->m_bScreenTestMode || bCtrl )
-			{
-				SOUND->StopMusic();
-				ResetGame( true );
-			}
-			else
-				SCREENMAN->SystemMessage( "Reloaded metrics and textures" );
-		}
-
-		return true;
-	}
 #ifndef DARWIN
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F4))
 	{

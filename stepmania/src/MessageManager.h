@@ -52,7 +52,9 @@ enum Message
 	MESSAGE_COIN_INSERTED,
 	MESSAGE_SIDE_JOINED_P1,
 	MESSAGE_SIDE_JOINED_P2,
-	PLAYERS_FINALIZED,
+	MESSAGE_PLAYERS_FINALIZED,
+	MESSAGE_ASSIST_TICK_CHANGED,
+	MESSAGE_AUTOSYNC_CHANGED,
 	NUM_MESSAGES,
 	MESSAGE_INVALID
 };
@@ -118,7 +120,7 @@ private:
 	Message mSendWhenChanged;
 	T *val;
 public:
-	BroadcastOnChangePtr( Message m ) { mSendWhenChanged = m; }
+	BroadcastOnChangePtr( Message m ) { mSendWhenChanged = m; val = NULL; }
 	const T* Get() const { return val; }
 	void Set( T* t ) { val = t; if(MESSAGEMAN) MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
 	operator T* () const { return val; }

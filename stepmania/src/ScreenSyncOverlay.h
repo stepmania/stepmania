@@ -1,37 +1,37 @@
-/* ScreenAttract - Base class for all attraction screens.  This class handles input and coin logic. */
+/* ScreenSyncOverlay - credits and statistics drawn on top of everything else. */
 
-#ifndef ScreenAttract_H
-#define ScreenAttract_H
+#ifndef ScreenSyncOverlay_H
+#define ScreenSyncOverlay_H
 
-#include "ScreenWithMenuElements.h"
+#include "Screen.h"
+#include "BitmapText.h"
+#include "Quad.h"
 
-AutoScreenMessage( SM_GoToStartScreen )
-
-class ScreenAttract : public ScreenWithMenuElements
+class ScreenSyncOverlay : public Screen
 {
 public:
-	ScreenAttract( CString sName, bool bResetGameState=true );
+	ScreenSyncOverlay( const CString &sName );
+	virtual ~ScreenSyncOverlay();
 	virtual void Init();
-	virtual ~ScreenAttract();
-
-	static void AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, ScreenWithMenuElements *pScreen );
-	static void GoToStartScreen( CString sScreenName );
 	
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	virtual void Update( float fDelta );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	bool OverlayInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
-	virtual ScreenType GetScreenType() const { return attract; }
+	void Update( float fDeltaTime );
 
-protected:
-	virtual void StartPlayingMusic();
+private:
+	void UpdateText();
+	void ShowHelp();
+
+	Quad		m_quad;
+	BitmapText	m_textHelp;
+	BitmapText	m_textStatus;
 };
 
 
 #endif
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2001-2005 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

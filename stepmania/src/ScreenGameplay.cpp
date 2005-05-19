@@ -65,9 +65,6 @@
 static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
 
-/* Global, so it's accessible from ShowSavePrompt: */
-static float g_fOldOffset;  // used on offset screen to calculate difference
-
 AutoScreenMessage( SM_PlayGo )
 
 // received while STATE_DANCING
@@ -76,7 +73,6 @@ AutoScreenMessage( SM_StartLoadingNextSong )
 
 
 // received while STATE_OUTRO
-AutoScreenMessage( SM_SaveChangedBeforeGoingBack )
 AutoScreenMessage( SM_GoToScreenAfterBack )
 
 AutoScreenMessage( SM_BeginFailed )
@@ -102,8 +98,6 @@ ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
 	FAIL_AFTER_30_MISSES.Load( sName, "FailAfter30Misses" );
 	USE_FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "UseForcedModifiersInBeginner" );
 	FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "ForcedModifiersInBeginner" );
-
-	this->SubscribeToMessage( PREFSMAN->m_AutoPlay.GetName()+"Changed" );
 }
 
 void ScreenGameplay::Init()
@@ -212,20 +206,12 @@ void ScreenGameplay::Init()
 		}
 	}
 
-	m_bChangedOffsetOrBPM = GAMESTATE->m_SongOptions.m_AutosyncType == SongOptions::AUTOSYNC_SONG;
-
 	m_DancingState = STATE_INTRO;
 
 	// Set this in LoadNextSong()
 	//m_fTimeLeftBeforeDancingComment = SECONDS_BETWEEN_COMMENTS;
 		
 	m_bZeroDeltaOnNextUpdate = false;
-
-	// init old offset in case offset changes in song
-	if( GAMESTATE->IsCourseMode() )
-		g_fOldOffset = -1000;
-	else
-		g_fOldOffset = GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds;
 
 
 	m_SongBackground.SetName( "SongBackground" );
@@ -546,14 +532,6 @@ void ScreenGameplay::Init()
 
 	if( PREFSMAN->m_bShowLyrics )
 		this->AddChild( &m_LyricDisplay );
-	
-
-	m_textAutoPlay.LoadFromFont( THEME->GetPathF(m_sName,"autoplay") );
-	m_textAutoPlay.SetName( "AutoPlay" );
-	SET_XY( m_textAutoPlay );
-	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're not in demonstration or jukebox
-		this->AddChild( &m_textAutoPlay );
-	UpdateAutoPlayText();
 	
 
 	m_BPMDisplay.SetName( "BPMDisplay" );
@@ -1834,7 +1812,7 @@ void ScreenGameplay::BackOutFromGameplay()
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 
 	this->ClearMessageQueue();
-	m_Cancel.StartTransitioning( SM_SaveChangedBeforeGoingBack );
+	m_Cancel.StartTransitioning( SM_GoToScreenAfterBack );
 }
 
 void ScreenGameplay::AbortGiveUp( bool bShowText )
@@ -1936,102 +1914,6 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	/* Nothing below cares about releases. */
 	if(type == IET_RELEASE) return;
 
-	// Handle special keys to adjust the offset
-	if( DeviceI.device == DEVICE_KEYBOARD )
-	{
-		switch( DeviceI.button )
-		{
-		case KEY_F6:
-			{
-				bool bHoldingShift = 
-					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
-					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT));
-				
-				// toggle
-				if( GAMESTATE->m_SongOptions.m_AutosyncType != SongOptions::AUTOSYNC_OFF )
-					GAMESTATE->m_SongOptions.m_AutosyncType = SongOptions::AUTOSYNC_OFF;
-				else
-					GAMESTATE->m_SongOptions.m_AutosyncType = bHoldingShift ? SongOptions::AUTOSYNC_MACHINE : SongOptions::AUTOSYNC_SONG;
-				
-				m_bChangedOffsetOrBPM |= !bHoldingShift;
-				UpdateAutoPlayText();
-			}
-			break;
-		case KEY_F7:
-			GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
-
-			/* Store this change, so it sticks if we change songs: */
-			GAMESTATE->m_StoredSongOptions.m_bAssistTick = GAMESTATE->m_SongOptions.m_bAssistTick;
-			
-			m_textDebug.SetText( ssprintf("Assist Tick is %s", GAMESTATE->m_SongOptions.m_bAssistTick?"ON":"OFF") );
-			m_textDebug.StopTweening();
-			m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
-			m_textDebug.BeginTweening( 3 );		// sleep
-			m_textDebug.BeginTweening( 0.5f );	// fade out
-			m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
-			break;
-		case KEY_F9:
-		case KEY_F10:
-			{
-				m_bChangedOffsetOrBPM = true;
-
-				float fOffsetDelta;
-				switch( DeviceI.button )
-				{
-				case KEY_F9:	fOffsetDelta = -0.020f;		break;
-				case KEY_F10:	fOffsetDelta = +0.020f;		break;
-				default:	ASSERT(0);						return;
-				}
-				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
-					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
-					fOffsetDelta /= 2; /* .010 */
-				else if( type == IET_FAST_REPEAT )
-					fOffsetDelta *= 10;
-				BPMSegment& seg = GAMESTATE->m_pCurSong->GetBPMSegmentAtBeat( GAMESTATE->m_fSongBeat );
-
-				seg.m_fBPS += fOffsetDelta;
-
-				m_textDebug.SetText( ssprintf("Cur BPM = %.2f", seg.GetBPM()) );
-				m_textDebug.StopTweening();
-				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
-				m_textDebug.BeginTweening( 3 );		// sleep
-				m_textDebug.BeginTweening( 0.5f );	// fade out
-				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
-			}
-			break;
-		case KEY_F11:
-		case KEY_F12:
-			{
-				m_bChangedOffsetOrBPM = true;
-
-				float fOffsetDelta;
-				switch( DeviceI.button )
-				{
-				case KEY_F11:	fOffsetDelta = -0.02f;		break;
-				case KEY_F12:	fOffsetDelta = +0.02f;		break;
-				default:	ASSERT(0);						return;
-				}
-				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
-					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
-					fOffsetDelta /= 20; /* 1ms */
-				else switch( type )
-				{
-				case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
-				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
-				}
-
-				GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
-
-				m_textDebug.SetText( ssprintf("Offset = %.3f", GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds) );
-				m_textDebug.StopTweening();
-				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
-				m_textDebug.BeginTweening( 3 );		// sleep
-				m_textDebug.BeginTweening( 0.5f );	// fade out
-				m_textDebug.SetDiffuse( RageColor(1,1,1,0) );
-			}
-			break;
-		}
-	}
 
 	//
 	// handle a step or battle item activate
@@ -2045,111 +1927,9 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		if( PREFSMAN->m_AutoPlay == PC_HUMAN )
 			m_Player[StyleI.player].Step( StyleI.col, DeviceI.ts ); 
 	}
-//	else if( type==IET_FIRST_PRESS && 
-//		!PREFSMAN->m_bAutoPlay && 
-//		MenuI.IsValifd() &&
-//		GAMESTATE->IsPlayerEnabled( MenuI.player ) &&
-//		GAMESTATE->IsBattleMode() )
-//	{
-//		int iItemSlot;
-//		switch( MenuI.button )
-//		{
-//		case MENU_BUTTON_LEFT:	iItemSlot = 0;	break;
-//		case MENU_BUTTON_START:	iItemSlot = 1;	break;
-//		case MENU_BUTTON_RIGHT:	iItemSlot = 2;	break;
-//		default:				iItemSlot = -1;	break;
-//		}
-//		
-//		if( iItemSlot != -1 )
-//			m_pInventory[MenuI.player]->UseItem( iItemSlot );
-//	}
 }
 
-void ScreenGameplay::UpdateAutoPlayText()
-{
-	vector<CString> vsText;
 
-	switch( PREFSMAN->m_AutoPlay )
-	{
-	case PC_HUMAN:											break;
-	case PC_AUTOPLAY:	vsText.push_back("AutoPlay");		break;
-	case PC_CPU:		vsText.push_back("AutoPlay CPU");	break;
-	default:	ASSERT(0);
-	}
-	switch( GAMESTATE->m_SongOptions.m_AutosyncType )
-	{
-	case SongOptions::AUTOSYNC_OFF:												break;
-	case SongOptions::AUTOSYNC_SONG:	vsText.push_back("AutosyncSong");		break;
-	case SongOptions::AUTOSYNC_MACHINE:	vsText.push_back("AutosyncMachine");	break;
-	default:	ASSERT(0);
-	}
-
-	CString sText = join( "     ", vsText );
-	m_textAutoPlay.SetText( sText );
-}
-
-void SaveChanges( void* papSongsQueue )
-{
-	vector<Song*>& apSongsQueue = *(vector<Song*>*)papSongsQueue;
-	for( unsigned i=0; i<apSongsQueue.size(); i++ )
-		apSongsQueue[i]->Save();
-}
-
-void RevertChanges( void* papSongsQueue )
-{
-	vector<Song*>& apSongsQueue = *(vector<Song*>*)papSongsQueue;
-	FOREACH( Song*, apSongsQueue, pSong )
-	{
-		SONGMAN->RevertFromDisk( *pSong );
-	}
-}
-
-void ScreenGameplay::ShowSavePrompt( ScreenMessage SM_SendWhenDone )
-{
-	CString sMessage;
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_REGULAR:
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-		sMessage = ssprintf( 
-			"You have changed the offset or BPM of\n"
-			"%s\n", 
-			GAMESTATE->m_pCurSong->GetFullDisplayTitle().c_str() );
-
-		if( fabs(GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds - g_fOldOffset) > 0.001 )
-		{
-			sMessage += ssprintf( 
-				"\n"
-				"Offset was changed from %.3f to %.3f (%.3f).\n",
-				g_fOldOffset, 
-				GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds,
-				GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds - g_fOldOffset );
-		}
-
-		sMessage +=
-			"\n"
-			"Would you like to save these changes back\n"
-			"to the song file?\n"
-			"Choosing NO will discard your changes.";
-			
-		break;
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		sMessage = ssprintf( 
-			"You have changed the offset or BPM of\n"
-			"one or more songs in this course.\n"
-			"Would you like to save these changes back\n"
-			"to the song file(s)?\n"
-			"Choosing NO will discard your changes." );
-		break;
-	default:
-		ASSERT(0);
-	}
-
-	SCREENMAN->Prompt( SM_SendWhenDone, sMessage, PROMPT_YES_NO, ANSWER_NO, SaveChanges, RevertChanges, &m_apSongsQueue );
-}
 
 /*
  * Saving StageStats that are affected by the note pattern is a little tricky:
@@ -2461,18 +2241,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		int iDamageLevel = SM-SM_BattleDamageLevel1+1;
 		PlayAnnouncer( ssprintf("gameplay battle damage level%d",iDamageLevel), 3 );
 	}
-	else if( SM == SM_SaveChangedBeforeGoingBack )
-	{
-		if( m_bChangedOffsetOrBPM )
-		{
-			m_bChangedOffsetOrBPM = false;
-			ShowSavePrompt( SM_GoToScreenAfterBack );
-		}
-		else
-		{
-			HandleScreenMessage( SM_GoToScreenAfterBack );
-		}
-	}
 	else if( SM == SM_GoToScreenAfterBack )
 	{
 		SongFinished();
@@ -2484,13 +2252,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
-		if( m_bChangedOffsetOrBPM )
-		{
-			m_bChangedOffsetOrBPM = false;
-			ShowSavePrompt( SM_GoToNextScreen );
-			return;
-		}
-
 		SongFinished();
 		StageFinished( false );
 	}
@@ -2626,11 +2387,6 @@ void ScreenGameplay::ShowOniGameOver( PlayerNumber pn )
 	m_sprOniGameOver[pn].PlayCommand( "Die" );
 }
 
-void ScreenGameplay::HandleMessage( const CString& sMessage )
-{
-	if( sMessage == PREFSMAN->m_AutoPlay.GetName()+"Changed" )
-		UpdateAutoPlayText();
-}
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

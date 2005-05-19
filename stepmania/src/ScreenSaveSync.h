@@ -1,37 +1,21 @@
-/* ScreenAttract - Base class for all attraction screens.  This class handles input and coin logic. */
+/* ScreenSaveSync -  */
 
-#ifndef ScreenAttract_H
-#define ScreenAttract_H
+#ifndef ScreenSaveSync_H
+#define ScreenSaveSync_H
 
-#include "ScreenWithMenuElements.h"
+#include "ScreenPrompt.h"
 
-AutoScreenMessage( SM_GoToStartScreen )
-
-class ScreenAttract : public ScreenWithMenuElements
+class ScreenSaveSync : public ScreenPrompt
 {
 public:
-	ScreenAttract( CString sName, bool bResetGameState=true );
-	virtual void Init();
-	virtual ~ScreenAttract();
-
-	static void AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, ScreenWithMenuElements *pScreen );
-	static void GoToStartScreen( CString sScreenName );
-	
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	virtual void Update( float fDelta );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
-
-	virtual ScreenType GetScreenType() const { return attract; }
-
-protected:
-	virtual void StartPlayingMusic();
+	ScreenSaveSync( const CString &sScreenName );
 };
 
 
 #endif
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2001-2005 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -31,6 +31,7 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+	virtual void HandleMessage( const CString& sMessage );
 
 	void Init( 
 		const CString &sType,

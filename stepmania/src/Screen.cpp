@@ -17,6 +17,8 @@ Screen::Screen( CString sName )
 {
 	SetName( sName );
 	m_bIsTransparent = false;
+
+	ALLOW_OPERATOR_MENU_BUTTON.Load( sName, "AllowOperatorMenuButton" );
 }
 
 Screen::~Screen()

@@ -5,6 +5,8 @@
 
 #include "NoteTypes.h"
 
+#define COMPARE(x) if(x!=other.x) return false;
+
 struct BPMSegment 
 {
 	BPMSegment() { m_iStartIndex = -1; m_fBPS = -1; }
@@ -14,6 +16,14 @@ struct BPMSegment
 
 	void SetBPM( float f );
 	float GetBPM() const;
+
+	bool operator==( const BPMSegment &other )
+	{
+		COMPARE( m_iStartIndex );
+		COMPARE( m_fBPS );
+		return true;
+	}
+	bool operator!=( const BPMSegment &other ) { return !operator==(other); }
 };
 
 struct StopSegment 
@@ -22,6 +32,14 @@ struct StopSegment
 	StopSegment( int s, float f ) { m_iStartRow = s; m_fStopSeconds = f; }
 	int m_iStartRow;
 	float m_fStopSeconds;
+
+	bool operator==( const StopSegment &other )
+	{
+		COMPARE( m_iStartRow );
+		COMPARE( m_fStopSeconds );
+		return true;
+	}
+	bool operator!=( const StopSegment &other ) { return !operator==(other); }
 };
 
 class TimingData
@@ -36,6 +54,7 @@ public:
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	void AddBPMSegment( const BPMSegment &seg );
 	void AddStopSegment( const StopSegment &seg );
+	int GetBPMSegmentIndexAtBeat( float fBeat );
 	BPMSegment& GetBPMSegmentAtBeat( float fBeat );
 
 	void GetBeatAndBPSFromElapsedTime( float fElapsedTime, float &fBeatOut, float &fBPSOut, bool &bFreezeOut ) const;
@@ -48,6 +67,19 @@ public:
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const;
 	bool HasBpmChangesOrStops() const;
+
+	bool operator==( const TimingData &other )
+	{
+		COMPARE( m_BPMSegments.size() );
+		for( int i=0; i<m_BPMSegments.size(); i++ )
+			COMPARE( m_BPMSegments[i] );
+		COMPARE( m_StopSegments.size() );
+		for( int i=0; i<m_StopSegments.size(); i++ )
+			COMPARE( m_StopSegments[i] );
+		COMPARE( m_fBeat0OffsetInSeconds );
+		return true;
+	}
+	bool operator!=( const TimingData &other ) { return !operator==(other); }
 
 	// used for editor fix - expand/contract needs to move BPMSegments
 	// and StopSegments that land during/after the edited range.
@@ -67,6 +99,8 @@ public:
 	vector<StopSegment>			m_StopSegments;	// this must be sorted before gameplay
 	float	m_fBeat0OffsetInSeconds;
 };
+
+#undef COMPARE
 
 #endif
 

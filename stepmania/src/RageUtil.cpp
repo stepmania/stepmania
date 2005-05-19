@@ -1,6 +1,6 @@
 #include "global.h"
-#include "RageMath.h"
 #include "RageUtil.h"
+#include "RageMath.h"
 #include "RageLog.h"
 #include "RageFile.h"
 
@@ -179,7 +179,7 @@ CString Commify( int iNum )
 	return sReturn;
 }
 
-CString AddNumberSuffix( int i )
+CString FormatNumberAndSuffix( int i )
 {
 	CString sSuffix;
 	switch( i%10 )

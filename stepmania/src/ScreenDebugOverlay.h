@@ -10,6 +10,8 @@
 enum DebugLine
 {
 	DebugLine_Autoplay,
+	DebugLine_AssistTick,
+	DebugLine_Autosync,
 	DebugLine_CoinMode,
 	DebugLine_Slow,
 	DebugLine_Halt,
@@ -22,7 +24,9 @@ enum DebugLine
 	DebugLine_FillMachineStats,
 	DebugLine_SendNotesEnded,
 	DebugLine_Volume,
-	DebugLine_CurrentScreen,
+	DebugLine_ReloadCurrentScreen,
+	DebugLine_ReloadTheme,
+	DebugLine_WriteProfiles,
 	DebugLine_Uptime,
 	NUM_DEBUG_LINES
 };
@@ -43,8 +47,9 @@ private:
 	void UpdateText();
 
 	Quad m_Quad;
-	BitmapText m_Header;
-	BitmapText m_Text[NUM_DEBUG_LINES];
+	BitmapText m_textHeader;
+	BitmapText m_textButton[NUM_DEBUG_LINES];
+	BitmapText m_textFunction[NUM_DEBUG_LINES];
 };
 
 

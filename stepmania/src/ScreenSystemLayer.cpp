@@ -118,7 +118,7 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 		return "";
 
 	bool bShowCreditsMessage;
-	if( GAMESTATE->m_bIsOnSystemMenu )
+	if( SCREENMAN && SCREENMAN->GetTopScreen() && SCREENMAN->GetTopScreen()->GetScreenType() == system_menu )
 		bShowCreditsMessage = true;
 	else if( MEMCARDMAN->GetCardsLocked() )
 		bShowCreditsMessage = !GAMESTATE->IsPlayerEnabled( pn );

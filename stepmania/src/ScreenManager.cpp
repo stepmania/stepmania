@@ -446,15 +446,11 @@ retry:
 		m_sLastLoadedBackgroundPath = sNewBGA;
 	}
 
-	bool bWasOnSystemMenu = GAMESTATE->m_bIsOnSystemMenu;
-
-	if( THEME->HasMetric(sScreenName,"AllowOperatorMenuButton") )
-		GAMESTATE->m_bIsOnSystemMenu = !THEME->GetMetricB( sScreenName,"AllowOperatorMenuButton" );
-	else
-		GAMESTATE->m_bIsOnSystemMenu = false;
+	bool bWasOnSystemMenu = pOldTopScreen  &&  pOldTopScreen->GetScreenType() == system_menu;
+	bool bIsOnSystemMenu = pNewScreen->GetScreenType() == system_menu;
 	
 	// If we're exiting a system menu, persist settings in case we don't exit normally
-	if( bWasOnSystemMenu && !GAMESTATE->m_bIsOnSystemMenu )
+	if( bWasOnSystemMenu && !bIsOnSystemMenu )
 		PREFSMAN->SaveGlobalPrefsToDisk();
 
 	LOG->Trace("... SetFromNewScreen");
@@ -484,7 +480,7 @@ void ScreenManager::Prompt( ScreenMessage smSendOnPop, const CString &sText, Pro
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	// add the new state onto the back of the array
-	Screen *pNewScreen = new ScreenPrompt( smSendOnPop, sText, type, defaultAnswer, OnYes, OnNo, pCallbackData);
+	Screen *pNewScreen = new ScreenPrompt( "ScreenPrompt", smSendOnPop, sText, type, defaultAnswer, OnYes, OnNo, pCallbackData);
 	pNewScreen->Init();
 	this->ZeroNextUpdate();
 	SetFromNewScreen( pNewScreen, true );

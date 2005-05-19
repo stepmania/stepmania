@@ -17,6 +17,7 @@ bool ScreenPrompt::s_bCancelledLast = false;
 
 //REGISTER_SCREEN_CLASS( ScreenPrompt );
 ScreenPrompt::ScreenPrompt( 
+	const CString &sScreenName,
 	ScreenMessage smSendOnPop,
 	CString sText, 
 	PromptType type, 
@@ -25,7 +26,7 @@ ScreenPrompt::ScreenPrompt(
 	void(*OnNo)(void*), 
 	void* pCallbackData 
 	) :
-	Screen("ScreenPrompt")
+	Screen( sScreenName )
 {
 	m_bIsTransparent = true;	// draw screens below us
 
@@ -130,9 +131,14 @@ void ScreenPrompt::HandleScreenMessage( const ScreenMessage SM )
 	case SM_DoneOpeningWipingLeft:
 		break;
 	case SM_DoneOpeningWipingRight:
-		SCREENMAN->PopTopScreen( m_smSendOnPop );
+		if( SCREENMAN->IsStackedScreen(this) )
+			SCREENMAN->PopTopScreen( m_smSendOnPop );
+		else
+			this->HandleScreenMessage( SM_GoToNextScreen );
 		break;
 	}
+
+	Screen::HandleScreenMessage( SM );
 }
 
 void ScreenPrompt::Change( int dir )
@@ -160,11 +166,17 @@ void ScreenPrompt::MenuRight( PlayerNumber pn )
 
 void ScreenPrompt::MenuStart( PlayerNumber pn )
 {
+	if( m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
+		return;
+
 	End( false );
 }
 
 void ScreenPrompt::MenuBack( PlayerNumber pn )
 {
+	if( m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
+		return;
+
 	switch( m_PromptType )
 	{
 	case PROMPT_OK:

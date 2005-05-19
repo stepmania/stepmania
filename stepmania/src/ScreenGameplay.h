@@ -40,9 +40,9 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
-	virtual void HandleMessage( const CString& sMessage );
 
 	virtual bool UsesBackground() const { return false; }
+	virtual ScreenType GetScreenType() const { return gameplay; }
 
 protected:
 	ThemeMetric<CString> PLAYER_TYPE;
@@ -67,7 +67,6 @@ protected:
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
 	void LoadLights();
 	void PauseGame( bool bPause, GameController gc = GAME_CONTROLLER_INVALID );
-	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
 	void PlayAnnouncer( CString type, float fSeconds );
 	void UpdateLights();
 	void SendCrossedMessages();
@@ -93,7 +92,6 @@ protected:
 	vector<Steps*>		m_vpStepsQueue[NUM_PLAYERS];	// size may be >1 if playing a course
 	vector<AttackArray>	m_asModifiersQueue[NUM_PLAYERS];// size may be >1 if playing a course
 
-	bool				m_bChangedOffsetOrBPM;
 	float				m_fTimeSinceLastDancingComment;	// this counter is only running while STATE_DANCING
 
 	LyricDisplay		m_LyricDisplay;
@@ -133,9 +131,6 @@ protected:
 	RageTimer			m_GiveUpTimer;
 	void AbortGiveUp( bool bShowText );
 
-	BitmapText			m_textAutoPlay;	// for AutoPlay, AutoAdjust
-	void	UpdateAutoPlayText();
-	
 	BitmapText			m_MaxCombo;
 
 	Transition	m_Ready;
