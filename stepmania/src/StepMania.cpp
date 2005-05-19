@@ -315,16 +315,7 @@ void ResetGame( bool ReturnToFirstScreen )
 
 
 	if( ReturnToFirstScreen )
-	{
-		if( PREFSMAN->m_bFirstRun )
-			SCREENMAN->SetNewScreen( FIRST_RUN_INITIAL_SCREEN );
-		else
-			SCREENMAN->SetNewScreen( INITIAL_SCREEN );
-
-		PREFSMAN->m_bFirstRun.Set( false );
-		PREFSMAN->SaveGlobalPrefsToDisk();	// persist FirstRun setting in case we don't exit normally
-	}
-
+		SCREENMAN->SetNewScreen( INITIAL_SCREEN );
 }
 
 static void GameLoop();
