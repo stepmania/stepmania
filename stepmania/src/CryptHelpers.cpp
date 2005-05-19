@@ -5,14 +5,13 @@
 #include "crypto51/files.h"
 
 
-
 void RageFileStore::StoreInitialize(const NameValuePairs &parameters)
 {
 	const char *fileName;
-	if (parameters.GetValue("InputFileName", fileName))
+	if( parameters.GetValue("InputFileName", fileName) )
 	{
 		if( !m_file.Open(fileName, RageFile::READ) )
-			throw OpenErr(fileName);
+			throw OpenErr( fileName );
 	}
 	else
 	{
@@ -40,7 +39,7 @@ unsigned int RageFileStore::TransferTo2(BufferedTransformation &target, unsigned
 	unsigned long size=transferBytes;
 	transferBytes = 0;
 	
-	if (m_waiting)
+	if( m_waiting )
 		goto output;
 	
 	while( size && !m_file.AtEOF() )
@@ -57,7 +56,7 @@ unsigned int RageFileStore::TransferTo2(BufferedTransformation &target, unsigned
 output:
 		blockedBytes = target.ChannelPutModifiable2(channel, m_space, m_len, 0, blocking);
 		m_waiting = blockedBytes > 0;
-		if (m_waiting)
+		if( m_waiting )
 			return blockedBytes;
 		size -= m_len;
 		transferBytes += m_len;
@@ -72,7 +71,7 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 	if( !m_file.IsGood() )
 		return 0;
 	
-	if (begin == 0 && end == 1)
+	if( begin == 0 && end == 1 )
 	{
 		int current = m_file.Tell();
 		byte result;
@@ -81,7 +80,7 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 		if( m_file.AtEOF() )
 			return 0;
 
-		unsigned int blockedBytes = target.ChannelPut(channel, byte(result), blocking);
+		unsigned int blockedBytes = target.ChannelPut( channel, byte(result), blocking );
 		begin += 1-blockedBytes;
 		return blockedBytes;
 	}
@@ -94,14 +93,14 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 	if( newPosition >= m_file.GetFileSize() )
 		return 0;	// don't try to seek beyond the end of file
 
-	m_file.Seek(newPosition);
+	m_file.Seek( newPosition );
 	try
 	{
-		assert(!m_waiting);
+		ASSERT( !m_waiting );
 		unsigned long copyMax = end-begin;
-		unsigned int blockedBytes = const_cast<RageFileStore *>(this)->TransferTo2(target, copyMax, channel, blocking);
+		unsigned int blockedBytes = const_cast<RageFileStore *>(this)->TransferTo2( target, copyMax, channel, blocking );
 		begin += copyMax;
-		if (blockedBytes)
+		if( blockedBytes )
 		{
 			const_cast<RageFileStore *>(this)->m_waiting = false;
 			return blockedBytes;
@@ -110,11 +109,11 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 	catch(...)
 	{
 		m_file.ClearError();
-		m_file.Seek(current);
+		m_file.Seek( current );
 		throw;
 	}
 	m_file.ClearError();
-	m_file.Seek(current);
+	m_file.Seek( current );
 	
 	return 0;
 }
