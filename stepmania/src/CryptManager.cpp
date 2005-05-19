@@ -6,10 +6,13 @@
 #include "RageFileManager.h"
 #include "crypto/CryptMD5.h"
 
+#include "arch/arch_platform.h" // hack: HAVE_ stuff should not be defined by arch
+
 CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
 
 static const CString PRIVATE_KEY_PATH = "Data/private.rsa";
 static const CString PUBLIC_KEY_PATH = "Data/public.rsa";
+static const CString ALTERNATE_PUBLIC_KEY_DIR = "Data/keys/";
 
 #if !defined(HAVE_CRYPTOPP)
 CryptManager::CryptManager() { }
@@ -154,12 +157,32 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	CString sPubFilename = PUBLIC_KEY_PATH;
+	if( VerifyFileWithFile(sPath, sSignatureFile, PUBLIC_KEY_PATH) )
+		return true;
+
+	vector<CString> asKeys;
+	GetDirListing( ALTERNATE_PUBLIC_KEY_DIR, asKeys, false, true );
+	for( unsigned i = 0; i < asKeys.size(); ++i )
+	{
+		const CString &sKey = asKeys[i];
+		LOG->Trace( "Trying alternate key \"%s\" ...", sKey.c_str() );
+
+		if( VerifyFileWithFile(sPath, sSignatureFile, sKey) )
+			return true;
+	}
+
+	return false;
+}
+
+bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CString sPublicKeyFile )
+{
+	ASSERT( PREFSMAN->m_bSignProfileData );
+
 	CString sMessageFilename = sPath;
 	if( sSignatureFile.empty() )
 		sSignatureFile = sPath + SIGNATURE_APPEND;
 
-	if( !IsAFile(sPubFilename) )
+	if( !IsAFile(sPublicKeyFile) )
 		return false;
 
 	if( !IsAFile(sSignatureFile) )
@@ -170,7 +193,7 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
 		return false;
 
 	try {
-		RageFileSource pubFile(sPubFilename, true);
+		RageFileSource pubFile(sPublicKeyFile, true);
 		RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
 
 		RageFileSource signatureFile(sSignatureFile, true);

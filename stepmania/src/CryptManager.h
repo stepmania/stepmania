@@ -13,6 +13,7 @@ public:
 
 	static void SignFileToFile( CString sPath, CString sSignatureFile = "" );
 	static bool VerifyFileWithFile( CString sPath, CString sSignatureFile = "" );
+	static bool VerifyFileWithFile( CString sPath, CString sSignatureFile, CString sPublicKeyFile );
 
 	static CString Sign( CString sPath );
 	static bool Verify( CString sPath, CString sSignature );
