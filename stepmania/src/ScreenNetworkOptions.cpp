@@ -31,7 +31,7 @@ OptionRowDefinition g_NetworkOptionsLines[NUM_NETWORK_OPTIONS_LINES] = {
 AutoScreenMessage( SM_DoneConnecting )
 AutoScreenMessage( SM_ServerNameEnter )
 
-static Preference<CString> g_sLastServer( Options, "LastConnectedServer",	"" );
+static Preference<CString> g_sLastServer( "LastConnectedServer",	"" );
 
 REGISTER_SCREEN_CLASS( ScreenNetworkOptions );
 ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions( sClassName )

@@ -86,7 +86,7 @@ AutoScreenMessage( SM_LeaveGameplay )
 AutoScreenMessage( SM_StartHereWeGo )
 AutoScreenMessage( SM_StopHereWeGo )
 
-static Preference<float> g_fNetStartOffset( Options, "NetworkStartOffset",	-3.0 );
+static Preference<float> g_fNetStartOffset( "NetworkStartOffset",	-3.0 );
 
 REGISTER_SCREEN_CLASS( ScreenGameplay );
 ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
