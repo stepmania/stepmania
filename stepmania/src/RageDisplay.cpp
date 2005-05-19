@@ -30,7 +30,7 @@ static int			g_iFramesRenderedSinceLastCheck,
 
 RageDisplay*		DISPLAY	= NULL;
 
-Preference<bool>  LOG_FPS( Debug, "LogFPS", true );
+Preference<bool>  LOG_FPS( Options, "LogFPS", true );
 
 CString RageDisplay::PixelFormatToString( PixelFormat pixfmt )
 {
