@@ -955,13 +955,13 @@ public:
 	int Find(CT ch) const
 	{
 		MYSIZE nIdx	= this->find_first_of(ch);
-		return static_cast<int>(MYBASE::npos == nIdx  ? -1 : nIdx);
+		return MYBASE::npos == nIdx  ? -1 : static_cast<int>(nIdx);
 	}
 
 	int Find(PCMYSTR szSub) const
 	{
 		MYSIZE nIdx	= this->find(szSub);
-		return static_cast<int>(MYBASE::npos == nIdx ? -1 : nIdx);
+		return MYBASE::npos == nIdx ? -1 : static_cast<int>(nIdx);
 	}
 
 	int Find(CT ch, int nStart) const
@@ -971,7 +971,7 @@ public:
 		// with what the code does
 
 		MYSIZE nIdx	= this->find_first_of(ch, static_cast<MYSIZE>(nStart));
-		return static_cast<int>(MYBASE::npos == nIdx ? -1 : nIdx);
+		return MYBASE::npos == nIdx ? -1 : static_cast<int>(nIdx);
 	}
 
 	int Find(PCMYSTR szSub, int nStart) const
@@ -981,7 +981,7 @@ public:
 		// with what the code does
 
 		MYSIZE nIdx	= this->find(szSub, static_cast<MYSIZE>(nStart));
-		return static_cast<int>(MYBASE::npos == nIdx ? -1 : nIdx);
+		return MYBASE::npos == nIdx ? -1 : static_cast<int>(nIdx);
 	}
 
 	// -------------------------------------------------------------------------
