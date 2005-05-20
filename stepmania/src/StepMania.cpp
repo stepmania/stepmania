@@ -1094,7 +1094,7 @@ int main(int argc, char* argv[])
 	}
 
 	if( PREFSMAN->m_iSoundWriteAhead )
-		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead );
+		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead.Get() );
 	SOUNDMAN	= new RageSoundManager;
 	SOUNDMAN->Init( PREFSMAN->GetSoundDrivers() );
 	SOUNDMAN->SetPrefs( PREFSMAN->GetSoundVolume() );
