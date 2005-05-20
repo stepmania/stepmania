@@ -288,18 +288,38 @@ void ScreenJukebox::InitSongQueues()
 {
 	ScreenGameplay::InitSongQueues();
 
+	// Pare down to just the song in the course that we want.
+
+	int iIndexToKeep = -1;
+	for( int i=0; i<m_apSongsQueue.size(); i++ )
+	{
+		if( m_apSongsQueue[i] == GAMESTATE->m_pCurSong )
+		{
+			iIndexToKeep = i;
+			break;
+		}
+	}
+
+	ASSERT( iIndexToKeep != -1 );
+
+	for( int i=(m_apSongsQueue.size())-1; i>=0; i-- )
+	{
+		if( i != iIndexToKeep )
+		{
+			m_apSongsQueue.erase( m_apSongsQueue.begin()+i );
+			FOREACH_EnabledPlayer(p)
+			{
+				m_vpStepsQueue[p].erase( m_vpStepsQueue[p].begin()+i );
+				m_asModifiersQueue[p].erase( m_asModifiersQueue[p].begin()+i );
+			}
+		}
+	}
+
 	ASSERT_M( m_apSongsQueue.size() == 1, ssprintf("%i", (int) m_apSongsQueue.size()) );
 	FOREACH_PlayerNumber(p)
-		ASSERT_M( m_asModifiersQueue[p].size() == 1, ssprintf("%i", (int) m_asModifiersQueue[p].size()) );
-
-	if( m_pCourseEntry )
 	{
-		AttackArray aAttacks = m_pCourseEntry->attacks;
-		if( !m_pCourseEntry->modifiers.empty() )
-			aAttacks.push_back( Attack::FromGlobalCourseModifier( m_pCourseEntry->modifiers ) );
-
-		FOREACH_PlayerNumber(pn)
-			m_asModifiersQueue[pn][0] = aAttacks;
+		ASSERT_M( m_vpStepsQueue[p].size() == 1, ssprintf("%i", (int) m_vpStepsQueue[p].size()) );
+		ASSERT_M( m_asModifiersQueue[p].size() == 1, ssprintf("%i", (int) m_asModifiersQueue[p].size()) );
 	}
 }
 
