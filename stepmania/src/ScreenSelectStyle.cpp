@@ -107,7 +107,7 @@ void ScreenSelectStyle::Init()
 
 	switch( GAMESTATE->GetPremium() )
 	{
-	case PREMIUM_DOUBLES:
+	case PREMIUM_DOUBLE:
 		m_sprPremium.Load( THEME->GetPathG(m_sName,"doubles premium") );
 		this->AddChild( &m_sprPremium );
 		break;

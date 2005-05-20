@@ -340,7 +340,7 @@ static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption 
 
 static void PremiumM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const Premium mapping[] = { PREMIUM_NONE, PREMIUM_DOUBLES, PREMIUM_JOINT };
+	const Premium mapping[] = { PREMIUM_NONE, PREMIUM_DOUBLE, PREMIUM_JOINT };
 	MoveMap( sel, PREFSMAN->m_Premium, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 

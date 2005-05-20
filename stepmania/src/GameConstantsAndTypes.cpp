@@ -112,10 +112,20 @@ REGISTER_WITH_LUA_FUNCTION( LuaCoinMode );
 
 static const CString PremiumNames[] = {
 	"none",
-	"doubles",
+	"double",
 	"joint",
 };
 XToString( Premium, NUM_PREMIUMS );
+static void LuaPremium(lua_State* L)
+{
+	FOREACH_Premium( i )
+	{
+		CString s = PremiumNames[i];
+		s.MakeUpper();
+		LUA->SetGlobal( "PREMIUM_"+s, i );
+	}
+}
+REGISTER_WITH_LUA_FUNCTION( LuaPremium );
 
 
 static const CString SortOrderNames[] = {

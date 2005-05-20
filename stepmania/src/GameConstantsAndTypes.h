@@ -275,8 +275,8 @@ const CString& CoinModeToString( CoinMode cm );
 //
 // Premium
 //
-enum Premium { PREMIUM_NONE, PREMIUM_DOUBLES, PREMIUM_JOINT, NUM_PREMIUMS };
-
+enum Premium { PREMIUM_NONE, PREMIUM_DOUBLE, PREMIUM_JOINT, NUM_PREMIUMS };
+#define FOREACH_Premium( i ) FOREACH_ENUM( Premium, NUM_PREMIUMS, i )
 const CString& PremiumToString( Premium p );
 
 

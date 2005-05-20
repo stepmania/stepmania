@@ -434,7 +434,7 @@ int GetCreditsRequiredToPlayStyle( const Style *style )
 	case TWO_PLAYERS_TWO_SIDES:
 		return 2;
 	case ONE_PLAYER_TWO_SIDES:
-		return (GAMESTATE->GetPremium() == PREMIUM_DOUBLES) ? 1 : 2;
+		return (GAMESTATE->GetPremium() == PREMIUM_DOUBLE) ? 1 : 2;
 	default:
 		ASSERT(0);
 		return 1;
