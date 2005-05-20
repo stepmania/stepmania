@@ -14,7 +14,7 @@ static const CString PRIVATE_KEY_PATH = "Data/private.rsa";
 static const CString PUBLIC_KEY_PATH = "Data/public.rsa";
 static const CString ALTERNATE_PUBLIC_KEY_DIR = "Data/keys/";
 
-#if !defined(XHAVE_CRYPTOPP)
+#if !defined(HAVE_CRYPTOPP)
 CryptManager::CryptManager() { }
 CryptManager::~CryptManager() { }
 void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename, CString pubFilename, CString seed ) { }
@@ -137,19 +137,39 @@ void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile )
 		return;
 	}
 
+	RageFile file;
+	if( !file.Open(sMessageFilename) )
+	{
+		LOG->Warn( "VerifyFileWithFile: open(%s) failed: %s", sPath.c_str(), file.GetError().c_str() );
+		return;
+	}
+
 	CString sSignature;
+	CString sError;
+	if( !SignFile(file, sPrivKey, sSignature, sError) )
+	{
+		LOG->Warn( "SignFileToFile failed: %s", sError.c_str() );
+		return;
+	}
+
+	WriteFile( sSignatureFile, sSignature );
+}
+
+bool CryptManager::SignFile( RageFileBasic &file, CString sPrivKey, CString &sSignatureOut, CString &sError )
+{
 	try {
 		StringSource privFile( sPrivKey, true );
 		RSASSA_PKCS1v15_SHA_Signer priv(privFile);
 		NonblockingRng rng;
 
-		RageFileSource f(sMessageFilename, true, new SignerFilter(rng, priv, new StringSink(sSignature)));
+		/* RageFileSource will delete the file we give to it, so make a copy. */
+		RageFileSource f( file.Copy(), true, new SignerFilter(rng, priv, new StringSink(sSignatureOut)) );
 	} catch( const CryptoPP::Exception &s ) {
 		LOG->Warn( "SignFileToFile failed: %s", s.what() );
-		return;
+		return false;
 	}
 
-	WriteFile( sSignatureFile, sSignature );
+	return true;
 }
 
 bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
