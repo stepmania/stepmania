@@ -130,13 +130,13 @@ void ScreenSyncOverlay::UpdateText()
 
 	ASSERT( GAMESTATE->m_pTimingDataOriginal->m_BPMSegments.size() == GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size() );
 
-	for( int i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size(); i++ )
+	for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size(); i++ )
 	{
 		float fOld = GAMESTATE->m_pTimingDataOriginal->m_BPMSegments[i].m_fBPS;
 		float fNew = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS;
 		float fDelta = fNew - fOld;
 
-		if( fabs(fDelta) > 0.00001 )
+		if( fabsf(fDelta) > 0.00001f )
 		{
 			s += ssprintf( 
 				"%s tempo segment: %.3f BPS (%+.3f)\n",
