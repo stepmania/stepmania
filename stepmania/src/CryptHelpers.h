@@ -20,7 +20,6 @@ public:
 	class OpenErr : public Err {public: OpenErr(const std::string &filename) : Err("FileStore: error opening file for reading: " + filename) {}};
 	struct ReadErr : public Err { ReadErr( const RageFileBasic &f ); };
 
-	RageFileStore();
 	RageFileStore( RageFileBasic *pFile ); /* pFile will be deleted */
 	~RageFileStore();
 	RageFileStore( const RageFileStore &cpy );
@@ -49,8 +48,6 @@ public:
 
 	RageFileSource( RageFileBasic *pFile, bool pumpAll, BufferedTransformation *attachment = NULL, bool binary=true )
 		: SourceTemplate<RageFileStore>(attachment,RageFileStore(pFile)) {SourceInitialize(pumpAll, MakeParameters("InputBinaryMode", binary));}
-	RageFileSource(const char *filename, bool pumpAll, BufferedTransformation *attachment = NULL, bool binary=true)
-		: SourceTemplate<RageFileStore>(attachment) {SourceInitialize(pumpAll, MakeParameters("InputFileName", filename)("InputBinaryMode", binary));}
 };
 
 #endif

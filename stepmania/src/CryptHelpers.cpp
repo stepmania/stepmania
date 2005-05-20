@@ -11,12 +11,6 @@ RageFileStore::ReadErr::ReadErr( const RageFileBasic &f ):
 {
 }
 
-RageFileStore::RageFileStore()
-{
-	m_pFile = NULL;
-	m_waiting = false;
-}
-
 RageFileStore::RageFileStore( RageFileBasic *pFile )
 {
 	m_pFile = pFile;
@@ -44,20 +38,7 @@ RageFileStore::RageFileStore( const RageFileStore &cpy ):
 
 void RageFileStore::StoreInitialize(const NameValuePairs &parameters)
 {
-	const char *fileName;
-	if( parameters.GetValue("InputFileName", fileName) )
-	{
-		RageFile *pFile = new RageFile;
-		m_pFile = pFile;
-		LOG->Trace( "XXX: not using pFile" );
-		if( !pFile->Open(fileName, RageFile::READ) )
-			throw OpenErr( fileName );
-	}
-	else
-	{
-		ASSERT( m_pFile != NULL );
-		LOG->Trace( "XXX: using pFile" );
-	}
+	ASSERT( m_pFile != NULL );
 	m_waiting = false;
 }
 
