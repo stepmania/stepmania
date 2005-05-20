@@ -30,6 +30,8 @@ ActorFrame::ActorFrame()
 	m_bDrawByZPosition = false;
 	m_fUpdateRate = 1;
 	m_fFOV = -1;
+	m_fVanishX = SCREEN_CENTER_X;
+	m_fVanishY = SCREEN_CENTER_Y;
 	m_bOverrideLighting = false;
 	m_bLighting = false;
 }
@@ -46,6 +48,18 @@ void ActorFrame::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 	pNode->GetAttrValue( "UpdateRate", m_fUpdateRate );
 	pNode->GetAttrValue( "FOV", m_fFOV );
+	
+	CString s;
+	if( pNode->GetAttrValue( "VanishX", s ) )
+	{
+		LUA->PrepareExpression( s );
+		m_fVanishX = LUA->RunExpressionF( s );
+	}
+	if( pNode->GetAttrValue( "VanishY", s ) )
+	{
+		LUA->PrepareExpression( s );
+		m_fVanishY = LUA->RunExpressionF( s );
+	}
 	m_bOverrideLighting = pNode->GetAttrValue( "Lighting", m_bLighting );
 }
 
@@ -140,7 +154,7 @@ void ActorFrame::DrawPrimitives()
 	if( m_fFOV != -1 )
 	{
 		DISPLAY->CameraPushMatrix();
-		DISPLAY->LoadMenuPerspective( m_fFOV, SCREEN_CENTER_X, SCREEN_CENTER_Y );
+		DISPLAY->LoadMenuPerspective( m_fFOV, m_fVanishX, m_fVanishY );
 	}
 
 	if( m_bOverrideLighting )

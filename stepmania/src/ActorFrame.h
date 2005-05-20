@@ -84,6 +84,7 @@ public:
 
 	void SetUpdateRate( float fUpdateRate ) { m_fUpdateRate = fUpdateRate; }
 	void SetFOV( float fFOV ) { m_fFOV = fFOV; }
+	void SetVanishPoint( float fX, float fY) { m_fVanishX = fX; m_fVanishY = fY; }
 
 	void SetPropagateCommands( bool b );
 
@@ -105,6 +106,8 @@ protected:
 	// state effects
 	float m_fUpdateRate;
 	float m_fFOV;	// -1 = no change
+	float m_fVanishX;
+	float m_fVanishY;
 	bool m_bOverrideLighting;	// if true, set ligthing to m_bLighting
 	bool m_bLighting;
 };
