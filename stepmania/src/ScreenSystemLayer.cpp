@@ -180,13 +180,13 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 	{
 		switch( GAMESTATE->GetCoinMode() )
 		{
-		case COIN_HOME:
+		case COIN_MODE_HOME:
 			if( GAMESTATE->PlayersCanJoin() )
 				return CREDITS_PRESS_START.GetValue();
 			else
 				return CREDITS_NOT_PRESENT.GetValue();
 
-		case COIN_PAY:
+		case COIN_MODE_PAY:
 		{
 			int Credits = GAMESTATE->m_iCoins / PREFSMAN->m_iCoinsPerCredit;
 			int Coins = GAMESTATE->m_iCoins % PREFSMAN->m_iCoinsPerCredit;
@@ -197,7 +197,7 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 				sCredits += ssprintf("  %d/%d", Coins, PREFSMAN->m_iCoinsPerCredit.Get() );
 			return sCredits;
 		}
-		case COIN_FREE:
+		case COIN_MODE_FREE:
 			if( GAMESTATE->PlayersCanJoin() )
 				return CREDITS_FREE_PLAY.GetValue();
 			else

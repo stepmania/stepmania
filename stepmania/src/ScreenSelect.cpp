@@ -116,7 +116,7 @@ void ScreenSelect::Update( float fDelta )
 		}
 		// don't time out on this screen is coin mode is pay.  
 		// If we're here, then there's a credit in the machine.
-		if( GAMESTATE->GetCoinMode() != COIN_PAY )
+		if( GAMESTATE->GetCoinMode() != COIN_MODE_PAY )
 		{
 			if( IDLE_TIMEOUT_SECONDS > 0 && m_timerIdleTimeout.PeekDeltaTime() >= IDLE_TIMEOUT_SECONDS )
 			{

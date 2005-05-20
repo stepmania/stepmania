@@ -104,7 +104,7 @@ static void LuaCoinMode(lua_State* L)
 	{
 		CString s = CoinModeNames[i];
 		s.MakeUpper();
-		LUA->SetGlobal( "COIN_"+s, i );
+		LUA->SetGlobal( "COIN_MODE_"+s, i );
 	}
 }
 REGISTER_WITH_LUA_FUNCTION( LuaCoinMode );

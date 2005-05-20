@@ -322,13 +322,13 @@ static void MarvelousTiming( int &sel, bool ToSel, const ConfOption *pConfOption
 
 static void CoinModeM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const CoinMode mapping[] = { COIN_HOME, COIN_PAY, COIN_FREE };
+	const CoinMode mapping[] = { COIN_MODE_HOME, COIN_MODE_PAY, COIN_MODE_FREE };
 	MoveMap( sel, PREFSMAN->m_CoinMode, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const CoinMode mapping[] = { COIN_PAY, COIN_FREE };
+	const CoinMode mapping[] = { COIN_MODE_PAY, COIN_MODE_FREE };
 	MoveMap( sel, PREFSMAN->m_CoinMode, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 

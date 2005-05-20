@@ -482,8 +482,8 @@ bool GameCommand::IsPlayable( CString *why ) const
 		
 		switch( GAMESTATE->GetCoinMode() )
 		{
-		case COIN_HOME:
-		case COIN_FREE:
+		case COIN_MODE_HOME:
+		case COIN_MODE_FREE:
 			iCredits = NUM_PLAYERS; /* not iNumCreditsPaid */
 		}
 		
@@ -685,7 +685,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		// players joined.  If enough players aren't joined, then 
 		// we need to subtract credits for the sides that will be
 		// joined as a result of applying this option.
-		if( PREFSMAN->m_CoinMode == COIN_PAY )
+		if( PREFSMAN->m_CoinMode == COIN_MODE_PAY )
 		{
 			int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
 			int iNumCreditsPaid = GetNumCreditsPaid();

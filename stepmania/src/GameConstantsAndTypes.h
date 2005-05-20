@@ -267,7 +267,13 @@ const int ITEM_NONE = -1;
 // Coin stuff
 //
 
-enum CoinMode { COIN_HOME, COIN_PAY, COIN_FREE, NUM_COIN_MODES };
+enum CoinMode
+{
+	COIN_MODE_HOME, 
+	COIN_MODE_PAY, 
+	COIN_MODE_FREE, 
+	NUM_COIN_MODES 
+};
 #define FOREACH_CoinMode( i ) FOREACH_ENUM( CoinMode, NUM_COIN_MODES, i )
 const CString& CoinModeToString( CoinMode cm );
 
@@ -275,7 +281,13 @@ const CString& CoinModeToString( CoinMode cm );
 //
 // Premium
 //
-enum Premium { PREMIUM_NONE, PREMIUM_DOUBLE, PREMIUM_JOINT, NUM_PREMIUMS };
+enum Premium
+{
+	PREMIUM_NONE,
+	PREMIUM_DOUBLE,
+	PREMIUM_JOINT,
+	NUM_PREMIUMS
+};
 #define FOREACH_Premium( i ) FOREACH_ENUM( Premium, NUM_PREMIUMS, i )
 const CString& PremiumToString( Premium p );
 

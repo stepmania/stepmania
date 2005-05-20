@@ -37,7 +37,7 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 
 	// Don't show screen title menu (says "Press Start") 
 	// if there are 0 credits and inserted and CoinMode is pay.
-	if( GAMESTATE->GetCoinMode() == COIN_PAY  &&
+	if( GAMESTATE->GetCoinMode() == COIN_MODE_PAY  &&
 		GAMESTATE->m_iCoins < PREFSMAN->m_iCoinsPerCredit )
 	{
 		SCREENMAN->SetNewScreen( INITIAL_SCREEN );

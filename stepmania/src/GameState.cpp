@@ -253,7 +253,7 @@ int GameState::GetCoinsNeededToJoin() const
 {
 	int iCoinsToCharge = 0;
 
-	if( GAMESTATE->GetCoinMode() == COIN_PAY )
+	if( GAMESTATE->GetCoinMode() == COIN_MODE_PAY )
 		iCoinsToCharge = PREFSMAN->m_iCoinsPerCredit;
 
 	// If joint premium don't take away a credit for the 2nd join.
@@ -1835,8 +1835,8 @@ bool GameState::IsEventMode() const
 
 CoinMode GameState::GetCoinMode()
 {
-	if( IsEventMode() && PREFSMAN->m_CoinMode == COIN_PAY )
-		return COIN_FREE; 
+	if( IsEventMode() && PREFSMAN->m_CoinMode == COIN_MODE_PAY )
+		return COIN_MODE_FREE; 
 	else 
 		return PREFSMAN->m_CoinMode; 
 }
