@@ -20,15 +20,15 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 const CString MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =
 {
 	/* @ is importast; see RageFileManager LoadedDriver::GetPath */
-	"@mc1/",
-	"@mc2/",
+	"/@mc1/",
+	"/@mc2/",
 };
 
 static const CString MEM_CARD_MOUNT_POINT_INTERNAL[NUM_PLAYERS] =
 {
 	/* @ is importast; see RageFileManager LoadedDriver::GetPath */
-	"@mc1int/",
-	"@mc2int/",
+	"/@mc1int/",
+	"/@mc2int/",
 };
 
 /* Only access the memory card driver in a timeout-safe thread. */
