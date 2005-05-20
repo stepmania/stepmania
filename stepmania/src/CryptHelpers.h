@@ -1,55 +1,15 @@
 #ifndef CryptHelpers_H
 #define CryptHelpers_H
 
-// crypt headers
-#include "crypto51/files.h"
-#include "crypto51/filters.h"
-#include "crypto51/cryptlib.h"
-
-using namespace CryptoPP;
 class RageFileBasic;
 
-class RageFileStore : public Store, private FilterPutSpaceHelper
+namespace CryptHelpers
 {
-public:
-	class Err : public Exception
-	{
-	public:
-		Err(const std::string &s) : Exception(IO_ERROR, s) {}
-	};
-	class OpenErr : public Err {public: OpenErr(const std::string &filename) : Err("FileStore: error opening file for reading: " + filename) {}};
-	struct ReadErr : public Err { ReadErr( const RageFileBasic &f ); };
-
-	RageFileStore( RageFileBasic *pFile ); /* pFile will be deleted */
-	~RageFileStore();
-	RageFileStore( const RageFileStore &cpy );
-	RageFileStore(const char *filename)
-		{StoreInitialize(MakeParameters("InputFileName", filename));}
-
-	unsigned long MaxRetrievable() const;
-	unsigned int TransferTo2(BufferedTransformation &target, unsigned long &transferBytes, const std::string &channel=NULL_CHANNEL, bool blocking=true);
-	unsigned int CopyRangeTo2(BufferedTransformation &target, unsigned long &begin, unsigned long end=ULONG_MAX, const std::string &channel=NULL_CHANNEL, bool blocking=true) const;
-
-private:
-	void StoreInitialize(const NameValuePairs &parameters);
+	bool GenerateRSAKey( unsigned int keyLength, CString sSeed, CString &sPublicKey, CString &sPrivateKey );
+	bool SignFile( RageFileBasic &file, CString sPrivKey, CString &sSignatureOut, CString &sError );
+	bool VerifyFile( RageFileBasic &file, CString sSignature, CString sPublicKey, CString &sError );
+};
 	
-	mutable RageFileBasic *m_pFile;	// mutable because reading from a file is not a const operation
-	byte *m_space;
-	int m_len;
-	bool m_waiting;
-};
-
-class RageFileSource : public SourceTemplate<RageFileStore>
-{
-public:
-	typedef FileStore::Err Err;
-	typedef FileStore::OpenErr OpenErr;
-	typedef FileStore::ReadErr ReadErr;
-
-	RageFileSource( RageFileBasic *pFile, bool pumpAll, BufferedTransformation *attachment = NULL, bool binary=true )
-		: SourceTemplate<RageFileStore>(attachment,RageFileStore(pFile)) {SourceInitialize(pumpAll, MakeParameters("InputBinaryMode", binary));}
-};
-
 #endif
 
 /*

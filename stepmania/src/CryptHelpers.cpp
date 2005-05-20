@@ -5,6 +5,55 @@
 
 // crypt headers
 #include "crypto51/files.h"
+#include "crypto51/filters.h"
+#include "crypto51/cryptlib.h"
+#include "crypto51/files.h"
+#include "crypto51/sha.h"
+#include "crypto51/rsa.h"
+#include "crypto51/osrng.h"
+
+using namespace CryptoPP;
+
+class RageFileStore : public Store, private FilterPutSpaceHelper
+{
+public:
+	class Err : public Exception
+	{
+	public:
+		Err(const std::string &s) : Exception(IO_ERROR, s) {}
+	};
+	class OpenErr : public Err {public: OpenErr(const std::string &filename) : Err("FileStore: error opening file for reading: " + filename) {}};
+	struct ReadErr : public Err { ReadErr( const RageFileBasic &f ); };
+
+	RageFileStore( RageFileBasic *pFile ); /* pFile will be deleted */
+	~RageFileStore();
+	RageFileStore( const RageFileStore &cpy );
+	RageFileStore(const char *filename)
+		{StoreInitialize(MakeParameters("InputFileName", filename));}
+
+	unsigned long MaxRetrievable() const;
+	unsigned int TransferTo2(BufferedTransformation &target, unsigned long &transferBytes, const std::string &channel=NULL_CHANNEL, bool blocking=true);
+	unsigned int CopyRangeTo2(BufferedTransformation &target, unsigned long &begin, unsigned long end=ULONG_MAX, const std::string &channel=NULL_CHANNEL, bool blocking=true) const;
+
+private:
+	void StoreInitialize(const NameValuePairs &parameters);
+	
+	mutable RageFileBasic *m_pFile;	// mutable because reading from a file is not a const operation
+	byte *m_space;
+	int m_len;
+	bool m_waiting;
+};
+
+class RageFileSource : public SourceTemplate<RageFileStore>
+{
+public:
+	typedef FileStore::Err Err;
+	typedef FileStore::OpenErr OpenErr;
+	typedef FileStore::ReadErr ReadErr;
+
+	RageFileSource( RageFileBasic *pFile, bool pumpAll, BufferedTransformation *attachment = NULL, bool binary=true )
+		: SourceTemplate<RageFileStore>(attachment,RageFileStore(pFile)) {SourceInitialize(pumpAll, MakeParameters("InputBinaryMode", binary));}
+};
 
 RageFileStore::ReadErr::ReadErr( const RageFileBasic &f ):
 	Err( "RageFileStore read error: " + f.GetError() )
@@ -138,6 +187,68 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 	m_pFile->Seek( current );
 	
 	return 0;
+}
+
+bool CryptHelpers::GenerateRSAKey( unsigned int keyLength, CString sSeed, CString &sPublicKey, CString &sPrivateKey )
+{
+	try
+	{
+		NonblockingRng rng;
+
+		RSASSA_PKCS1v15_SHA_Signer priv(rng, keyLength);
+		StringSink privFile( sPrivateKey );
+		priv.DEREncode(privFile);
+		privFile.MessageEnd();
+
+		RSASSA_PKCS1v15_SHA_Verifier pub(priv);
+		StringSink pubFile( sPublicKey );
+		pub.DEREncode(pubFile);
+		pubFile.MessageEnd();
+	} catch( const CryptoPP::Exception &s ) {
+		LOG->Warn( "GenerateRSAKey failed: %s", s.what() );
+		return false;
+	}
+
+	return true;
+}
+
+bool CryptHelpers::SignFile( RageFileBasic &file, CString sPrivKey, CString &sSignatureOut, CString &sError )
+{
+	try {
+		StringSource privFile( sPrivKey, true );
+		RSASSA_PKCS1v15_SHA_Signer priv(privFile);
+		NonblockingRng rng;
+
+		/* RageFileSource will delete the file we give to it, so make a copy. */
+		RageFileSource f( file.Copy(), true, new SignerFilter(rng, priv, new StringSink(sSignatureOut)) );
+	} catch( const CryptoPP::Exception &s ) {
+		LOG->Warn( "SignFileToFile failed: %s", s.what() );
+		return false;
+	}
+
+	return true;
+}
+
+bool CryptHelpers::VerifyFile( RageFileBasic &file, CString sSignature, CString sPublicKey, CString &sError )
+{
+	try {
+		StringSource pubFile( sPublicKey, true );
+		RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
+
+		if( sSignature.size() != pub.SignatureLength() )
+			return false;
+
+		VerifierFilter *verifierFilter = new VerifierFilter(pub);
+		verifierFilter->Put( (byte *) sSignature.data(), sSignature.size() );
+
+		/* RageFileSource will delete the file we give to it, so make a copy. */
+		RageFileSource f( file.Copy(), true, verifierFilter );
+
+		return verifierFilter->GetLastResult();
+	} catch( const CryptoPP::Exception &s ) {
+		sError = s.what();
+		return false;
+	}
 }
 
 /*

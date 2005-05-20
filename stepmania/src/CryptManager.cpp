@@ -34,12 +34,6 @@ bool CryptManager::Verify( CString sPath, CString sSignature )
 
 // crypt headers
 #include "CryptHelpers.h"
-#include "crypto51/sha.h"
-#include "crypto51/rsa.h"
-#include "crypto51/osrng.h"
-#include <memory>
-
-using namespace CryptoPP;
 
 static const int KEY_LENGTH = 1024;
 #define MAX_SIGNATURE_SIZE_BYTES 1024	// 1 KB
@@ -90,23 +84,9 @@ void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename,
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
 	CString sPubKey, sPrivKey;
-	try
-	{
-		NonblockingRng rng;
 
-		RSASSA_PKCS1v15_SHA_Signer priv(rng, keyLength);
-		StringSink privFile( sPrivKey );
-		priv.DEREncode(privFile);
-		privFile.MessageEnd();
-
-		RSASSA_PKCS1v15_SHA_Verifier pub(priv);
-		StringSink pubFile( sPubKey );
-		pub.DEREncode(pubFile);
-		pubFile.MessageEnd();
-	} catch( const CryptoPP::Exception &s ) {
-		LOG->Warn( "GenerateRSAKey failed: %s", s.what() );
+	if( !CryptHelpers::GenerateRSAKey(keyLength, seed, sPubKey, sPrivKey) )
 		return;
-	}
 
 	if( !WriteFile(pubFilename, sPubKey) )
 		return;
@@ -146,30 +126,13 @@ void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile )
 
 	CString sSignature;
 	CString sError;
-	if( !SignFile(file, sPrivKey, sSignature, sError) )
+	if( !CryptHelpers::SignFile(file, sPrivKey, sSignature, sError) )
 	{
 		LOG->Warn( "SignFileToFile failed: %s", sError.c_str() );
 		return;
 	}
 
 	WriteFile( sSignatureFile, sSignature );
-}
-
-bool CryptManager::SignFile( RageFileBasic &file, CString sPrivKey, CString &sSignatureOut, CString &sError )
-{
-	try {
-		StringSource privFile( sPrivKey, true );
-		RSASSA_PKCS1v15_SHA_Signer priv(privFile);
-		NonblockingRng rng;
-
-		/* RageFileSource will delete the file we give to it, so make a copy. */
-		RageFileSource f( file.Copy(), true, new SignerFilter(rng, priv, new StringSink(sSignatureOut)) );
-	} catch( const CryptoPP::Exception &s ) {
-		LOG->Warn( "SignFileToFile failed: %s", s.what() );
-		return false;
-	}
-
-	return true;
 }
 
 bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
@@ -221,35 +184,13 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CS
 	}
 
 	CString sError;
-	if( !VerifyFile(file, sSignature, sPublicKey, sError) )
+	if( !CryptHelpers::VerifyFile(file, sSignature, sPublicKey, sError) )
 	{
 		LOG->Warn( "VerifyFile(%s) failed: %s", sPath.c_str(), sError.c_str() );
 		return false;
 	}
 
 	return true;
-}
-
-bool CryptManager::VerifyFile( RageFileBasic &file, CString sSignature, CString sPublicKey, CString &sError )
-{
-	try {
-		StringSource pubFile( sPublicKey, true );
-		RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
-
-		if( sSignature.size() != pub.SignatureLength() )
-			return false;
-
-		VerifierFilter *verifierFilter = new VerifierFilter(pub);
-		verifierFilter->Put( (byte *) sSignature.data(), sSignature.size() );
-
-		/* RageFileSource will delete the file we give to it, so make a copy. */
-		RageFileSource f( file.Copy(), true, verifierFilter );
-
-		return verifierFilter->GetLastResult();
-	} catch( const CryptoPP::Exception &s ) {
-		sError = s.what();
-		return false;
-	}
 }
 
 bool CryptManager::Verify( CString sPath, CString sSignature )
@@ -271,7 +212,7 @@ bool CryptManager::Verify( CString sPath, CString sSignature )
 	}
 
 	CString sError;
-	if( !VerifyFile(file, sSignature, sPublicKey, sError) )
+	if( !CryptHelpers::VerifyFile(file, sSignature, sPublicKey, sError) )
 	{
 		LOG->Warn( "Verify(%s) failed: %s", sPath.c_str(), sError.c_str() );
 		return false;

@@ -12,10 +12,7 @@ public:
 	~CryptManager();
 
 	static void GenerateRSAKey( unsigned int keyLength, CString privFilename, CString pubFilename, CString seed );
-
 	static void SignFileToFile( CString sPath, CString sSignatureFile = "" );
-	static bool SignFile( RageFileBasic &file, CString sPrivKey, CString &sSignatureOut, CString &sError );
-	static bool VerifyFile( RageFileBasic &file, CString sSignature, CString sPublicKey, CString &sError );
 	static bool VerifyFileWithFile( CString sPath, CString sSignatureFile = "" );
 	static bool VerifyFileWithFile( CString sPath, CString sSignatureFile, CString sPublicKeyFile );
 
