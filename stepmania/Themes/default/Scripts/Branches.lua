@@ -1,5 +1,5 @@
 function ScreenTitleBranch()
-	if CoinMode() == "home" then return "ScreenTitleMenu" end
+	if GAMESTATE:GetCoinMode() == COIN_MODE_HOME then return "ScreenTitleMenu" end
 	return "ScreenTitleJoin"
 end
 
