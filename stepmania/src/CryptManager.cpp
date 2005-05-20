@@ -182,10 +182,12 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CS
 	if( sSignatureFile.empty() )
 		sSignatureFile = sPath + SIGNATURE_APPEND;
 
-	if( !IsAFile(sPublicKeyFile) )
+	CString sPublicKey;
+	if( !GetFileContents(sPublicKeyFile, sPublicKey) )
 		return false;
 
-	if( !IsAFile(sSignatureFile) )
+	CString sSignature;
+	if( !GetFileContents(sSignatureFile, sSignature) )
 		return false;
 
 	int iBytes = FILEMAN->GetFileSizeInBytes( sSignatureFile );
@@ -193,17 +195,14 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CS
 		return false;
 
 	try {
-		RageFileSource pubFile(sPublicKeyFile, true);
+		StringSource pubFile( sPublicKey, true );
 		RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
 
-		RageFileSource signatureFile(sSignatureFile, true);
-		if (signatureFile.MaxRetrievable() != pub.SignatureLength())
+		if( sSignature.size() != pub.SignatureLength() )
 			return false;
-		SecByteBlock signature(pub.SignatureLength());
-		signatureFile.Get(signature, signature.size());
 
 		VerifierFilter *verifierFilter = new VerifierFilter(pub);
-		verifierFilter->Put(signature, pub.SignatureLength());
+		verifierFilter->Put( (byte *) sSignature.data(), sSignature.size() );
 		RageFileSource f(sMessageFilename, true, verifierFilter);
 
 		return verifierFilter->GetLastResult();
