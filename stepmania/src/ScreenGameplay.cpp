@@ -1571,7 +1571,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 		FOREACH_PlayerNumber( p )
 		{
 			STATSMAN->m_CurStageStats.m_player[p].bGaveUp = true;
-			STATSMAN->m_CurStageStats.m_player[p].bFailed = GAMESTATE->AllHumanHaveComboOf30OrMoreMisses();
+			STATSMAN->m_CurStageStats.m_player[p].bFailed |= GAMESTATE->AllHumanHaveComboOf30OrMoreMisses();
 		}
 
 		m_GiveUpTimer.SetZero();
