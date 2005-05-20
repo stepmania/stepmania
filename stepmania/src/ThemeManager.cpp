@@ -468,7 +468,7 @@ try_element_again:
 	else	// bIsARedirect
 	{
 		CString sNewFileName;
-		GetFileContents( sPath, sNewFileName );
+		GetFileContents( sPath, sNewFileName, true );
 
 		CString sNewClassName, sNewFile;
 		FileNameToClassAndElement(sNewFileName, sNewClassName, sNewFile);

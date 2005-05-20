@@ -664,7 +664,7 @@ CString DerefRedir(const CString &_path)
 		}
 
 		CString sNewFileName;
-		GetFileContents( path, sNewFileName );
+		GetFileContents( path, sNewFileName, true );
 
 		/* Empty is invalid. */
 		if( sNewFileName == "" )
@@ -692,7 +692,7 @@ CString DerefRedir(const CString &_path)
 	RageException::Throw( "Circular redirect '%s'", path.c_str() );
 }
 
-bool GetFileContents( const CString &sPath, CString &sOut )
+bool GetFileContents( const CString &sPath, CString &sOut, bool bOneLine )
 {
 	/* Don't warn if the file doesn't exist, but do warn if it exists and fails to open. */
 	if( !IsAFile(sPath) )
@@ -706,13 +706,21 @@ bool GetFileContents( const CString &sPath, CString &sOut )
 	}
 	
 	CString sData;
-	if( file.GetLine(sData) == -1 )
+	int iGot;
+	if( bOneLine )
+		iGot = file.GetLine( sData );
+	else
+		iGot = file.Read( sData, file.GetFileSize() );
+
+	if( iGot == -1 )
 	{
 		LOG->Warn( "GetFileContents(%s): %s", sPath.c_str(), file.GetError().c_str() );
 		return false;
 	}
+
+	if( bOneLine )
+		StripCrnl( sData );
 	
-	StripCrnl( sData );
 	sOut = sData;
 	return true;
 }

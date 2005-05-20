@@ -309,7 +309,7 @@ void TrimRight(CString &str, const char *s = "\r\n\t ");
 void StripCrnl(CString &s);
 
 CString DerefRedir( const CString &sPath );
-bool GetFileContents( const CString &sPath, CString &sOut );
+bool GetFileContents( const CString &sPath, CString &sOut, bool bOneLine = false );
 
 class Regex {
 	void *reg;
