@@ -301,14 +301,14 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 			g_bIsDisplayed = false;
 	}
 
-	if( type != IET_FIRST_PRESS )
-		return true; /* eat the input but do nothing */
-
 	FOREACH_DebugLine( i )
 	{
 		if( (g_bIsDisplayed && DeviceI == g_Mappings.debugButton[i]) ||
 			(IsGameplay() && DeviceI == g_Mappings.gameplayButton[i]) )
 		{
+			if( type != IET_FIRST_PRESS )
+				return true; /* eat the input but do nothing */
+
 			BitmapText &txt1 = m_textButton[i];
 			txt1.FinishTweening();
 			float fZoom = txt1.GetZoom();
