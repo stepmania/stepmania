@@ -1,6 +1,7 @@
 #include "global.h"
 #include "CryptHelpers.h"
 #include "RageFile.h"
+#include "RageUtil.h"
 #include "RageLog.h"
 
 // crypt headers
@@ -236,7 +237,10 @@ bool CryptHelpers::VerifyFile( RageFileBasic &file, CString sSignature, CString 
 		RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
 
 		if( sSignature.size() != pub.SignatureLength() )
+		{
+			sError = ssprintf( "Invalid signature length: got %i, expected %i", sSignature.size(), pub.SignatureLength() );
 			return false;
+		}
 
 		VerifierFilter *verifierFilter = new VerifierFilter(pub);
 		verifierFilter->Put( (byte *) sSignature.data(), sSignature.size() );
@@ -244,7 +248,13 @@ bool CryptHelpers::VerifyFile( RageFileBasic &file, CString sSignature, CString 
 		/* RageFileSource will delete the file we give to it, so make a copy. */
 		RageFileSource f( file.Copy(), true, verifierFilter );
 
-		return verifierFilter->GetLastResult();
+		if( !verifierFilter->GetLastResult() )
+		{
+			sError = ssprintf( "Signature mismatch" );
+			return false;
+		}
+		
+		return true;
 	} catch( const CryptoPP::Exception &s ) {
 		sError = s.what();
 		return false;
