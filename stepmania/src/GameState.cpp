@@ -1934,6 +1934,7 @@ void GameState::SaveSyncChanges()
 {
 	GAMESTATE->m_pCurSong->Save();
 	PREFSMAN->SaveGlobalPrefsToDisk();
+	ResetOriginalSyncData();
 }
 
 void GameState::RevertSyncChanges()
