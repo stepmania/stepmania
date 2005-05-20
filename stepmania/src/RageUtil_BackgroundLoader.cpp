@@ -83,7 +83,7 @@ CString BackgroundLoader::GetRequest()
 
 CString BackgroundLoader::GetCachePath( CString sPath ) const
 {
-	return m_sCachePathPrefix + "/" + sPath;
+	return m_sCachePathPrefix + sPath;
 }
 
 void BackgroundLoader::LoadThread()

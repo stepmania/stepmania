@@ -103,6 +103,7 @@ RageFileObj *MakeFileObjDirect( CString sPath, int mode, int &err )
 
 RageFileBasic *RageFileDriverDirect::Open( const CString &path, int mode, int &err )
 {
+	ASSERT( path.size() && path[0] == '/' );
 	CString sPath = path;
 
 	/* This partially resolves.  For example, if "abc/def" exists, and we're opening
@@ -174,8 +175,6 @@ bool RageFileDriverDirect::Ready()
 bool RageFileDriverDirect::Remount( const CString &sPath )
 {
 	root = sPath;
-	if( root.Right(1) != "/" )
-		root += '/';
 	((DirectFilenameDB *) FDB)->SetRoot( sPath );
 
 	/* If the root path doesn't exist, create it. */

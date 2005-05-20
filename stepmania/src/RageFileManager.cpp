@@ -313,25 +313,27 @@ RageFileManager::~RageFileManager()
 /* path must be normalized (FixSlashesInPlace, CollapsePath). */
 CString LoadedDriver::GetPath( const CString &path )
 {
-	/* Default mountpoints: */
-	if( MountPoint.size() == 0 )
+	/* If the path begins with /@, only match mountpoints that begin with /@. */
+	if( path.size() >= 2 && path[1] == '@' )
 	{
-		/* If the path begins with @, default mount points don't count. */
-		if( path.size() && path[0] == '@' )
+		if( MountPoint.size() < 2 || MountPoint[1] != '@' )
 			return "";
-		return path;
 	}
 	
 	if( path.Left( MountPoint.size() ).CompareNoCase( MountPoint ) )
 		return ""; /* no match */
 
-	return path.Right( path.size() - MountPoint.size() );
+	/* Add one, so we don't cut off the leading slash. */
+	CString sRet = path.Right( path.size() - MountPoint.size() + 1 );
+	return sRet;
 }
 
 static void NormalizePath( CString &sPath )
 {
 	FixSlashesInPlace( sPath );
 	CollapsePath( sPath, true );
+	if( sPath.size() == 0 || sPath[0] != '/' )
+		sPath.insert( sPath.begin(), '/' );
 }
 
 bool ilt( const CString &a, const CString &b ) { return a.CompareNoCase(b) < 0; }
@@ -356,8 +358,14 @@ void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bO
 
 		/* If returning the path, prepend the mountpoint name to the files this driver returned. */
 		if( bReturnPathToo )
+		{
 			for( unsigned j = OldStart; j < AddTo.size(); ++j )
-				AddTo[j] = ld.MountPoint + AddTo[j];
+			{
+				/* Skip the trailing slash on the mountpoint; there's already a slash there. */
+				CString &sPath = AddTo[j];
+				sPath.insert( 0, ld.MountPoint, ld.MountPoint.size()-1 );
+			}
+		}
 	}
 
 	UnreferenceAllDrivers( aDriverList );
@@ -415,6 +423,9 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 
 	if( MountPoint.size() && MountPoint.Right(1) != "/" )
 		MountPoint += '/';
+	/* XXX: Backwards compatibility; */
+	if( MountPoint.Left(1) != "/" )
+		MountPoint = "/" + MountPoint;
 	ASSERT( Root != "" );
 
 	CHECKPOINT_M( ssprintf("\"%s\", \"%s\", \"%s\"",

@@ -113,7 +113,7 @@ RageFileManager::FileType FilenameDB::GetFileType( const CString &sPath )
 	CString Dir, Name;
 	SplitPath( sPath, Dir, Name );
 
-	if( Name == "." )
+	if( Name == "/" )
 		return RageFileManager::TYPE_DIR;
 
 	const FileSet *fs = GetFileSet( Dir );
@@ -152,7 +152,7 @@ int FilenameDB::GetFileHash( const CString &sPath )
 /* path should be fully collapsed, so we can operate in-place: no . or .. */
 bool FilenameDB::ResolvePath(CString &path)
 {
-	if( path == "." || path == "" )
+	if( path == "/" || path == "" )
 		return true;
 
 	/* Split path into components. */
@@ -186,9 +186,7 @@ bool FilenameDB::ResolvePath(CString &path)
 			return false;
 		}
 
-		if( ret.size() != 0 )
-			ret += "/";
-		ret += it->name;
+		ret += "/" + it->name;
 
 		fs = it->dirp;
 
@@ -264,7 +262,7 @@ FileSet *FilenameDB::GetFileSet( CString dir, bool create )
 	dir.Replace("//", "/"); /* foo//bar -> foo/bar */
 
 	if( dir == "" )
-		dir = ".";
+		dir = "/";
 
 	CString lower = dir;
 	lower.MakeLower();
@@ -328,7 +326,7 @@ FileSet *FilenameDB::GetFileSet( CString dir, bool create )
 	 * order of operations, here: since we just unlocked, any this->dirs searches we did
 	 * previously are no longer valid. */
 	FileSet **parent_dirp = NULL;
-	if( dir != "." && dir != "/" )
+	if( dir != "/" )
 	{
 		CString sParent = Dirname( dir );
 		if( sParent == "./" )
@@ -530,7 +528,6 @@ void FilenameDB::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDi
 {
 //	LOG->Trace( "GetDirListing( %s )", sPath.c_str() );
 
-	/* If you want the CWD, use ".". */
 	ASSERT(!sPath.empty());
 
 	/* Strip off the last path element and use it as a mask. */
