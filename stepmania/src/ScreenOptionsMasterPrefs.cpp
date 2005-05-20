@@ -111,10 +111,9 @@ template<class T>
 static void MoveData( int &sel, Preference<T> &opt, bool ToSel )
 {
 	if( ToSel )	sel = opt;
-	else		opt.Set( sel );
+	else		opt.Set( (T)sel );
 }
 
-template<>
 static void MoveData( int &sel, Preference<bool> &opt, bool ToSel )
 {
 	if( ToSel )	sel = opt;
@@ -271,7 +270,7 @@ static void WheelSections( int &sel, bool ToSel, const ConfOption *pConfOption )
 	MoveMap( sel, PREFSMAN->m_MusicWheelUsesSections, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-MOVE( CourseSort,			(int &) PREFSMAN->m_CourseSortOrder );
+MOVE( CourseSort,			PREFSMAN->m_CourseSortOrder );
 MOVE( RandomAtEnd,			PREFSMAN->m_bMoveRandomToEnd );
 MOVE( Translations,			PREFSMAN->m_bShowNativeLanguage );
 MOVE( Lyrics,				PREFSMAN->m_bShowLyrics );
@@ -281,7 +280,7 @@ MOVE( AutogenSteps,			PREFSMAN->m_bAutogenSteps );
 MOVE( AutogenGroupCourses,	PREFSMAN->m_bAutogenGroupCourses );
 
 /* Background options */
-MOVE( DancingCharacters,	(int &) PREFSMAN->m_ShowDancingCharacters );
+MOVE( DancingCharacters,	PREFSMAN->m_ShowDancingCharacters );
 MOVE( BeginnerHelper,		PREFSMAN->m_bShowBeginnerHelper );
 
 static void BGBrightness( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -298,7 +297,7 @@ static void NumBackgrounds( int &sel, bool ToSel, const ConfOption *pConfOption 
 
 /* Input options */
 MOVE( AutoMapOnJoyChange,	PREFSMAN->m_bAutoMapOnJoyChange );
-MOVE( AutoPlay,				(int&)PREFSMAN->m_AutoPlay );
+MOVE( AutoPlay,				PREFSMAN->m_AutoPlay );
 MOVE( BackDelayed,			PREFSMAN->m_bDelayedBack );
 MOVE( OptionsNavigation,	PREFSMAN->m_bArcadeOptionsNavigation );
 
@@ -363,7 +362,7 @@ static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pCo
 }
 
 /* Machine options */
-MOVE( ScoringType,			(int &) PREFSMAN->m_ScoringType );
+MOVE( ScoringType,			PREFSMAN->m_ScoringType );
 
 static void JudgeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
@@ -501,7 +500,7 @@ static void AspectRatio( int &sel, bool ToSel, const ConfOption *pConfOption )
 }
 
 /* Sound options */
-MOVE( ResamplingQuality,	(int&)PREFSMAN->m_SoundResampleQuality );
+MOVE( ResamplingQuality,	PREFSMAN->m_SoundResampleQuality );
 MOVE( AttractSoundFrequency,PREFSMAN->m_iAttractSoundFrequency );
 
 static void SoundVolume( int &sel, bool ToSel, const ConfOption *pConfOption )
