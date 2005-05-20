@@ -223,7 +223,7 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CS
 	CString sError;
 	if( !VerifyFile(file, sSignature, sPublicKey, sError) )
 	{
-		LOG->Warn( "VerifyFile failed: %s", sPath.c_str(), sError.c_str() );
+		LOG->Warn( "VerifyFile(%s) failed: %s", sPath.c_str(), sError.c_str() );
 		return false;
 	}
 
@@ -273,7 +273,7 @@ bool CryptManager::Verify( CString sPath, CString sSignature )
 	CString sError;
 	if( !VerifyFile(file, sSignature, sPublicKey, sError) )
 	{
-		LOG->Warn( "Verify failed: %s", sPath.c_str(), sError.c_str() );
+		LOG->Warn( "Verify(%s) failed: %s", sPath.c_str(), sError.c_str() );
 		return false;
 	}
 
