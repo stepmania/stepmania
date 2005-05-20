@@ -233,8 +233,6 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 		}
 
 		{
-			vector<StepsType> vStepsTypesToShow;
-			GAMEMAN->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vStepsTypesToShow );
 			FOREACH_CONST( StepsType, vStepsTypesToShow, iter )
 			{
 				XNode* pNode2 = pNode->AppendChild( "StepsType", GAMEMAN->StepsTypeToString(*iter) );
