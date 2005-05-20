@@ -36,12 +36,26 @@ public:
 		}
 		return 0;
 	}
+	static int SetFromTrail( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) )
+		{
+			p->SetFromTrail( NULL );
+		}
+		else
+		{
+			Trail *pT = Luna<Trail>::check(L,1);
+			p->SetFromTrail( pT );
+		}
+		return 0;
+	}
 
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( Load )
 		ADD_METHOD( SetFromMeterAndDifficulty )
 		ADD_METHOD( SetFromSteps )
+		ADD_METHOD( SetFromTrail )
 		LunaActor<T>::Register( L );
 	}
 };
