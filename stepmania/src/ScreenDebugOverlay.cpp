@@ -412,7 +412,11 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 				TEXTUREMAN->ReloadAll();
 				NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 				CodeDetector::RefreshCacheItems();
-				break;
+
+				SCREENMAN->SystemMessage( "Theme reloaded." );
+				// Don't update text below.  Return immediately because this screen.
+				// was just destroyed as part of the them reload.
+				return true;
 			case DebugLine_WriteProfiles:
 				// HACK: Also save bookkeeping and profile info for debugging
 				// so we don't have to play through a whole song to get new output.
