@@ -291,7 +291,7 @@ void ScreenJukebox::InitSongQueues()
 	// Pare down to just the song in the course that we want.
 
 	int iIndexToKeep = -1;
-	for( int i=0; i<m_apSongsQueue.size(); i++ )
+	for( unsigned i=0; i<m_apSongsQueue.size(); i++ )
 	{
 		if( m_apSongsQueue[i] == GAMESTATE->m_pCurSong )
 		{
