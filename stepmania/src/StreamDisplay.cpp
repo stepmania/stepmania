@@ -2,6 +2,7 @@
 #include "StreamDisplay.h"
 #include "GameState.h"
 #include <float.h>
+#include "RageDisplay.h"
 
 StreamDisplay::StreamDisplay()
 {
@@ -120,6 +121,9 @@ void StreamDisplay::DrawPrimitives()
 		DrawMask( f );
 		DrawStrip( f, fStripWidthInPercent );
 	}
+
+	// Don't leave the Zbuffer in a messy state for arrows and dancing characters
+	DISPLAY->ClearZBuffer();
 }
 
 void StreamDisplay::SetPercent( float fPercent )
