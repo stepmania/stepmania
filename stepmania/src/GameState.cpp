@@ -1922,6 +1922,10 @@ void GameState::ResetOriginalSyncData()
 
 bool GameState::IsSyncDataChanged()
 {
+	// Can't sync in course modes
+	if( IsCourseMode() )
+		return false;
+
 	if( m_pCurSong  &&  *m_pTimingDataOriginal != m_pCurSong->m_Timing )
 		return true;
 	if( m_fGlobalOffsetSecondsOriginal != PREFSMAN->m_fGlobalOffsetSeconds )

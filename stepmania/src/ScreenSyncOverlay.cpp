@@ -94,9 +94,9 @@ void ScreenSyncOverlay::UpdateText()
 	default:	ASSERT(0);
 	}
 
-	if( GAMESTATE->m_pCurSong == NULL )
+	if( GAMESTATE->m_pCurSong == NULL  ||  GAMESTATE->IsCourseMode() )	// sync controls not available
 	{
-		m_textStatus.SetText( "" );
+		m_textStatus.SetText( s );
 		return;
 	}
 	
@@ -161,8 +161,6 @@ bool ScreenSyncOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEve
 	switch( DeviceI.button )
 	{
 	case KEY_F4:
-		SCREENMAN->SystemMessage( "Sync changes reverted." );
-		break;
 	case KEY_F9:
 	case KEY_F10:
 	case KEY_F11:
@@ -180,6 +178,7 @@ bool ScreenSyncOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEve
 	switch( DeviceI.button )
 	{
 	case KEY_F4:
+		SCREENMAN->SystemMessage( "Sync changes reverted." );
 		GAMESTATE->RevertSyncChanges();
 		break;
 	case KEY_F9:
