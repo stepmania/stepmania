@@ -44,7 +44,6 @@ public:
 	bool AtEOF() const;
 	CString GetError() const;
 	void ClearError();
-	bool IsGood() const { return IsOpen() && !AtEOF() && GetError().empty(); }
 
 	int Tell() const;
 	int Seek( int offset );
