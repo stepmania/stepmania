@@ -126,11 +126,9 @@ void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile )
 	if( sSignatureFile.empty() )
 		sSignatureFile = sPath + SIGNATURE_APPEND;
 
-	if( !IsAFile(sPrivFilename) )
-	{
-		LOG->Trace( "SignFileToFile: \"%s\" doesn't exist", sSignatureFile.c_str() );
+	CString sPrivKey;
+	if( !GetFileContents(sPrivFilename, sPrivKey) )
 		return;
-	}
 
 	if( !IsAFile(sMessageFilename) )
 	{
@@ -140,7 +138,7 @@ void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile )
 
 	CString sSignature;
 	try {
-		RageFileSource privFile(sPrivFilename, true);
+		StringSource privFile( sPrivKey, true );
 		RSASSA_PKCS1v15_SHA_Signer priv(privFile);
 		NonblockingRng rng;
 
@@ -216,24 +214,22 @@ bool CryptManager::Verify( CString sPath, CString sSignature )
 {
 	ASSERT( PREFSMAN->m_bSignProfileData );
 
-	CString sPubFilename = PUBLIC_KEY_PATH;
+	CString sPublicKeyFile = PUBLIC_KEY_PATH;
 	CString sMessageFilename = sPath;
 
-	if( !IsAFile(sPubFilename) )
+	CString sPublicKey;
+	if( !GetFileContents(sPublicKeyFile, sPublicKey) )
 		return false;
 
 	try {
-		RageFileSource pubFile(sPubFilename, true);
+		StringSource pubFile( sPublicKey, true );
 		RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
 
-		StringSource signatureFile(sSignature, true);
-		if (signatureFile.MaxRetrievable() != pub.SignatureLength())
+		if( sSignature.size() != pub.SignatureLength() )
 			return false;
-		SecByteBlock signature(pub.SignatureLength());
-		signatureFile.Get(signature, signature.size());
 
 		VerifierFilter *verifierFilter = new VerifierFilter(pub);
-		verifierFilter->Put(signature, pub.SignatureLength());
+		verifierFilter->Put( (byte *) sSignature.data(), sSignature.size() );
 		RageFileSource f(sMessageFilename, true, verifierFilter);
 
 		return verifierFilter->GetLastResult();
