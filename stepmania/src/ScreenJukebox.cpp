@@ -20,7 +20,6 @@
 #include "StatsManager.h"
 #include "CommonMetrics.h"
 
-#define SHOW_COURSE_MODIFIERS		THEME->GetMetricB("ScreenJukebox","ShowCourseModifiers")
 static ThemeMetricDifficultiesToShow DIFFICULTIES_TO_SHOW_HERE("ScreenDemonstration","DifficultiesToShow");
 
 REGISTER_SCREEN_CLASS( ScreenJukebox );
@@ -105,6 +104,9 @@ ScreenJukebox::ScreenJukebox( CString sName ) : ScreenGameplay( sName )
 {
 	LOG->Trace( "ScreenJukebox::ScreenJukebox()" );
 	m_bDemonstration = false;
+
+	SHOW_COURSE_MODIFIERS_PROBABILITY.Load(m_sName,"ShowCourseModifiersProbability");
+	ALLOW_ADVANCED_MODIFIERS.Load(m_sName,"AllowAdvancedModifiers");
 }
 
 void ScreenJukebox::Init()
@@ -227,7 +229,8 @@ void ScreenJukebox::InitSongQueues()
 	FOREACH_PlayerNumber(p)
 		ASSERT_M( m_asModifiersQueue[p].size() == 1, ssprintf("%i", (int) m_asModifiersQueue[p].size()) );
 
-	if( !SHOW_COURSE_MODIFIERS )
+	bool bShowModifiers = randomf(0,1) <= SHOW_COURSE_MODIFIERS_PROBABILITY;
+	if( !bShowModifiers )
 		return;
 
 	/* If we have a modifier course containing this song, apply its modifiers.  Only check
@@ -242,6 +245,30 @@ void ScreenJukebox::InitSongQueues()
 		const CourseEntry *pEntry = pCourse->FindFixedSong( pSong );
 		if( pEntry == NULL || pEntry->attacks.size() == 0 )
 			continue;
+		
+
+		if( !ALLOW_ADVANCED_MODIFIERS )
+		{
+			// There are some confusing mods that we don't want to show in demonstration.
+			bool bModsAreOkToShow = true;
+			AttackArray aAttacks = pEntry->attacks;
+			if( !pEntry->modifiers.empty() )
+				aAttacks.push_back( Attack::FromGlobalCourseModifier( pEntry->modifiers ) );
+			FOREACH_CONST( Attack, aAttacks, a )
+			{
+				CString s = a->sModifiers;
+				s.MakeLower();
+				if( s.Find("dark") != -1 )
+				{
+					bModsAreOkToShow = false;
+					break;
+				}
+			}
+			if( !bModsAreOkToShow )
+				continue;	// skip
+		}
+
+
 		apOptions.push_back( pEntry );
 	}
 

@@ -22,6 +22,9 @@ public:
 protected:
 	bool m_bDemonstration;
 
+	ThemeMetric<float>	SHOW_COURSE_MODIFIERS_PROBABILITY;
+	ThemeMetric<bool>	ALLOW_ADVANCED_MODIFIERS;
+
 	virtual void InitSongQueues();
 };
 
