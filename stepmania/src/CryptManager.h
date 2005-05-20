@@ -1,6 +1,8 @@
 #ifndef CryptManager_H
 #define CryptManager_H
 
+class RageFileBasic;
+
 const CString SIGNATURE_APPEND = ".sig";
 
 class CryptManager
@@ -12,6 +14,7 @@ public:
 	static void GenerateRSAKey( unsigned int keyLength, CString privFilename, CString pubFilename, CString seed );
 
 	static void SignFileToFile( CString sPath, CString sSignatureFile = "" );
+	static bool VerifyFile( RageFileBasic &file, CString sSignature, CString sPublicKey, CString &sError );
 	static bool VerifyFileWithFile( CString sPath, CString sSignatureFile = "" );
 	static bool VerifyFileWithFile( CString sPath, CString sSignatureFile, CString sPublicKeyFile );
 

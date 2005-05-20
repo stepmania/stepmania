@@ -14,11 +14,12 @@ static const CString PRIVATE_KEY_PATH = "Data/private.rsa";
 static const CString PUBLIC_KEY_PATH = "Data/public.rsa";
 static const CString ALTERNATE_PUBLIC_KEY_DIR = "Data/keys/";
 
-#if !defined(HAVE_CRYPTOPP)
+#if !defined(XHAVE_CRYPTOPP)
 CryptManager::CryptManager() { }
 CryptManager::~CryptManager() { }
 void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename, CString pubFilename, CString seed ) { }
 void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile ) { }
+bool CryptManager::VerifyFile( RageFileBasic &file, CString sSignature, CString sPublicKey, CString &sError ) { return true; }
 bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
 {
 	return true;
@@ -192,6 +193,25 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CS
 	if( !GetFileContents(sSignatureFile, sSignature) )
 		return false;
 
+	RageFile file;
+	if( !file.Open(sPath) )
+	{
+		LOG->Warn( "VerifyFileWithFile: open(%s) failed: %s", sPath.c_str(), file.GetError().c_str() );
+		return false;
+	}
+
+	CString sError;
+	if( !VerifyFile(file, sSignature, sPublicKey, sError) )
+	{
+		LOG->Warn( "VerifyFile failed: %s", sPath.c_str(), sError.c_str() );
+		return false;
+	}
+
+	return true;
+}
+
+bool CryptManager::VerifyFile( RageFileBasic &file, CString sSignature, CString sPublicKey, CString &sError )
+{
 	try {
 		StringSource pubFile( sPublicKey, true );
 		RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
@@ -201,11 +221,13 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CS
 
 		VerifierFilter *verifierFilter = new VerifierFilter(pub);
 		verifierFilter->Put( (byte *) sSignature.data(), sSignature.size() );
-		RageFileSource f(sMessageFilename, true, verifierFilter);
+
+		/* RageFileSource will delete the file we give to it, so make a copy. */
+		RageFileSource f( file.Copy(), true, verifierFilter );
 
 		return verifierFilter->GetLastResult();
 	} catch( const CryptoPP::Exception &s ) {
-		LOG->Warn( "VerifyFileWithFile(%s,%s) failed: %s", sPath.c_str(), sSignatureFile.c_str(), s.what() );
+		sError = s.what();
 		return false;
 	}
 }
@@ -221,22 +243,21 @@ bool CryptManager::Verify( CString sPath, CString sSignature )
 	if( !GetFileContents(sPublicKeyFile, sPublicKey) )
 		return false;
 
-	try {
-		StringSource pubFile( sPublicKey, true );
-		RSASSA_PKCS1v15_SHA_Verifier pub(pubFile);
-
-		if( sSignature.size() != pub.SignatureLength() )
-			return false;
-
-		VerifierFilter *verifierFilter = new VerifierFilter(pub);
-		verifierFilter->Put( (byte *) sSignature.data(), sSignature.size() );
-		RageFileSource f(sMessageFilename, true, verifierFilter);
-
-		return verifierFilter->GetLastResult();
-	} catch( const CryptoPP::Exception &s ) {
-		LOG->Warn( "Verify(%s,sig) failed: %s", sPath.c_str(), s.what() );
+	RageFile file;
+	if( !file.Open(sPath) )
+	{
+		LOG->Warn( "Verify: open(%s) failed: %s", sPath.c_str(), file.GetError().c_str() );
 		return false;
 	}
+
+	CString sError;
+	if( !VerifyFile(file, sSignature, sPublicKey, sError) )
+	{
+		LOG->Warn( "Verify failed: %s", sPath.c_str(), sError.c_str() );
+		return false;
+	}
+
+	return true;
 }
 #endif
 
