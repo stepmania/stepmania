@@ -17,13 +17,13 @@ struct BPMSegment
 	void SetBPM( float f );
 	float GetBPM() const;
 
-	bool operator==( const BPMSegment &other )
+	bool operator==( const BPMSegment &other ) const
 	{
 		COMPARE( m_iStartIndex );
 		COMPARE( m_fBPS );
 		return true;
 	}
-	bool operator!=( const BPMSegment &other ) { return !operator==(other); }
+	bool operator!=( const BPMSegment &other ) const { return !operator==(other); }
 };
 
 struct StopSegment 
@@ -33,13 +33,13 @@ struct StopSegment
 	int m_iStartRow;
 	float m_fStopSeconds;
 
-	bool operator==( const StopSegment &other )
+	bool operator==( const StopSegment &other ) const
 	{
 		COMPARE( m_iStartRow );
 		COMPARE( m_fStopSeconds );
 		return true;
 	}
-	bool operator!=( const StopSegment &other ) { return !operator==(other); }
+	bool operator!=( const StopSegment &other ) const { return !operator==(other); }
 };
 
 class TimingData
@@ -71,10 +71,10 @@ public:
 	bool operator==( const TimingData &other )
 	{
 		COMPARE( m_BPMSegments.size() );
-		for( int i=0; i<m_BPMSegments.size(); i++ )
+		for( unsigned i=0; i<m_BPMSegments.size(); i++ )
 			COMPARE( m_BPMSegments[i] );
 		COMPARE( m_StopSegments.size() );
-		for( int i=0; i<m_StopSegments.size(); i++ )
+		for( unsigned i=0; i<m_StopSegments.size(); i++ )
 			COMPARE( m_StopSegments[i] );
 		COMPARE( m_fBeat0OffsetInSeconds );
 		return true;
