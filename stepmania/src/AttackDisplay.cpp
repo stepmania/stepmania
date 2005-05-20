@@ -92,7 +92,7 @@ void AttackDisplay::Update( float fDelta )
 		if( attack.IsBlank() )
 			continue;
 
-		SetAttack( attack.sModifier );
+		SetAttack( attack.sModifiers );
 		break;
 	}
 }

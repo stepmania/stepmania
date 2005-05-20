@@ -817,7 +817,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 				a.fStartSecond = -1;	// now
 			
 			GAMESTATE->LaunchAttack( p, a );
-			GAMESTATE->m_SongOptions.FromString( a.sModifier );
+			GAMESTATE->m_SongOptions.FromString( a.sModifiers );
 		}
 
 		// UGLY: Force updating the BeatToNoteSkin mapping and cache NoteSkins now, or else 

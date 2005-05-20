@@ -43,7 +43,7 @@ bool Attack::operator== ( const Attack &rhs ) const
 		EQUAL(level) &&
 		EQUAL(fStartSecond) &&
 		EQUAL(fSecsRemaining) &&
-		EQUAL(sModifier) &&
+		EQUAL(sModifiers) &&
 		EQUAL(bOn) &&
 		EQUAL(bGlobal);
 }
@@ -51,7 +51,7 @@ bool Attack::operator== ( const Attack &rhs ) const
 bool Attack::ContainsTransformOrTurn() const
 {
 	PlayerOptions po;
-	po.FromString( sModifier );
+	po.FromString( sModifiers );
 	return po.ContainsTransformOrTurn();
 }
 
@@ -61,7 +61,7 @@ Attack Attack::FromGlobalCourseModifier( const CString &sModifiers )
 	a.fStartSecond = 0;
 	a.fSecsRemaining = 10000; /* whole song */
 	a.level = ATTACK_LEVEL_1;
-	a.sModifier = sModifiers;
+	a.sModifiers = sModifiers;
 	a.bGlobal = true;
 	return a;
 }

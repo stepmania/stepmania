@@ -566,13 +566,13 @@ void Player::ApplyWaitingTransforms()
 		/* Should this default to "" always? need it blank so we know if mod.sModifier
 		 * changes the note skin. */
 		po.m_sNoteSkin = "";
-		po.FromString( mod.sModifier );
+		po.FromString( mod.sModifiers );
 
 		float fStartBeat, fEndBeat;
 		mod.GetAttackBeats( GAMESTATE->m_pCurSong, m_pPlayerState, fStartBeat, fEndBeat );
 		fEndBeat = min( fEndBeat, m_NoteData.GetLastBeat() );
 
-		LOG->Trace( "Applying transform '%s' from %f to %f to '%s'", mod.sModifier.c_str(), fStartBeat, fEndBeat,
+		LOG->Trace( "Applying transform '%s' from %f to %f to '%s'", mod.sModifiers.c_str(), fStartBeat, fEndBeat,
 			GAMESTATE->m_pCurSong->GetTranslitMainTitle().c_str() );
 		if( po.m_sNoteSkin != "" )
 			GAMESTATE->SetNoteSkinForBeatRange( m_pPlayerState, po.m_sNoteSkin, fStartBeat, fEndBeat );

@@ -175,7 +175,7 @@ void Course::LoadFromCRSFile( CString sPath )
 					end = strtof( sBits[1], NULL );
 				else if( !sBits[0].CompareNoCase("MODS") )
 				{
-					attack.sModifier = sBits[1];
+					attack.sModifiers = sBits[1];
 					if( end != -9999 )
 					{
 						ASSERT_M( end >= attack.fStartSecond, ssprintf("Attack ends before it starts.  end %f, start %f", end, attack.fStartSecond) );
@@ -185,7 +185,7 @@ void Course::LoadFromCRSFile( CString sPath )
 					
 					// warn on invalid so we catch bogus mods on load
 					PlayerOptions po;
-					po.FromString( attack.sModifier, true );
+					po.FromString( attack.sModifiers, true );
 
 					attacks.push_back( attack );
 				}
@@ -449,7 +449,7 @@ void Course::Save( CString sPath, bool bSavingCache )
 			CString line;
 			const Attack &a = entry.attacks[j];
 			line += ssprintf( "  TIME=%.2f:LEN=%.2f:MODS=%s",
-				a.fStartSecond, a.fSecsRemaining, a.sModifier.c_str() );
+				a.fStartSecond, a.fSecsRemaining, a.sModifiers.c_str() );
 
 			if( j+1 < entry.attacks.size() )
 				line += ":";

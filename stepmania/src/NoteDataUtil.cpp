@@ -1745,7 +1745,7 @@ void NoteDataUtil::TransformNoteData( NoteData &nd, const AttackArray &aa, Steps
 	FOREACH_CONST( Attack, aa, a )
 	{
 		PlayerOptions po;
-		po.FromString( a->sModifier );
+		po.FromString( a->sModifiers );
 		if( po.ContainsTransformOrTurn() )
 		{
 			float fStartBeat, fEndBeat;

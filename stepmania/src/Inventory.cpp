@@ -168,7 +168,7 @@ void Inventory::AwardItem( int iItemIndex )
 	if( iOpenSlot != -1 )
 	{
 		Attack a;
-		a.sModifier = g_Items[iItemIndex].sModifier;
+		a.sModifiers = g_Items[iItemIndex].sModifier;
 		a.fSecsRemaining = ITEM_DURATION_SECONDS;
 		a.level = g_Items[iItemIndex].level;
 		pInventory[iOpenSlot] = a;

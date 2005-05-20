@@ -11,7 +11,7 @@ struct Attack
 	AttackLevel	level;
 	float fStartSecond; // -1 = now
 	float fSecsRemaining;
-	CString sModifier;
+	CString sModifiers;
 	bool bOn; // set and used by GAMESTATE
 	bool bGlobal; // true for song-wide course mods
 	bool bShowInAttackList;
@@ -21,7 +21,7 @@ struct Attack
 		level = ATTACK_LEVEL_1;
 		fStartSecond = -1;
 		fSecsRemaining = 0;
-		sModifier = CString();
+		sModifiers = CString();
 		bOn = false;
 		bGlobal = false;
 		bShowInAttackList = true;
@@ -31,7 +31,7 @@ struct Attack
 		AttackLevel	level_,
 		float fStartSecond_,
 		float fSecsRemaining_,
-		CString sModifier_,
+		CString sModifiers_,
 		bool bOn_,
 		bool bGlobal_,
 		bool bShowInAttackList_ = true )
@@ -39,14 +39,14 @@ struct Attack
 		level = level_;
 		fStartSecond = fStartSecond_;
 		fSecsRemaining = fSecsRemaining_;
-		sModifier = sModifier_;
+		sModifiers = sModifiers_;
 		bOn = bOn_;
 		bGlobal = bGlobal_;
 		bShowInAttackList = bShowInAttackList_;
 	}
 
 	void GetAttackBeats( const Song *song, const PlayerState* pPlayerState, float &fStartBeat, float &fEndBeat ) const;
-	bool IsBlank() const { return sModifier.empty(); }
+	bool IsBlank() const { return sModifiers.empty(); }
 	bool operator== ( const Attack &rhs ) const;
 	bool ContainsTransformOrTurn() const;
 	static Attack FromGlobalCourseModifier( const CString &sModifiers );

@@ -144,7 +144,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 	Attack a;
 	a.level = al;
 	a.fSecsRemaining = ATTACK_DURATION_SECONDS;
-	a.sModifier = sAttackToGive;
+	a.sModifiers = sAttackToGive;
 
 	// remove current attack (if any)
 	GAMESTATE->RemoveActiveAttacksForPlayer( pnToAttack );

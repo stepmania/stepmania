@@ -1122,7 +1122,7 @@ void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
 					{
 						const Attack &mod = a[j];
 						PlayerOptions po;
-						po.FromString( mod.sModifier );
+						po.FromString( mod.sModifiers );
 						out.push_back( po.m_sNoteSkin );
 					}
 				}
@@ -1183,7 +1183,7 @@ void GameState::SetNoteSkinForBeatRange( PlayerState* pPlayerState, const CStrin
  * is set.  This is also called by GameState::Update when activating a queued attack. */
 void GameState::LaunchAttack( PlayerNumber target, const Attack& a )
 {
-	LOG->Trace( "Launch attack '%s' against P%d at %f", a.sModifier.c_str(), target+1, a.fStartSecond );
+	LOG->Trace( "Launch attack '%s' against P%d at %f", a.sModifiers.c_str(), target+1, a.fStartSecond );
 
 	Attack attack = a;
 
@@ -1224,7 +1224,7 @@ void GameState::RemoveAllInventory()
 		for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
 		{
 			m_pPlayerState[p]->m_Inventory[s].fSecsRemaining = 0;
-			m_pPlayerState[p]->m_Inventory[s].sModifier = "";
+			m_pPlayerState[p]->m_Inventory[s].sModifiers = "";
 		}
 	}
 }
@@ -1237,7 +1237,7 @@ void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 	{
 		if( !m_pPlayerState[pn]->m_ActiveAttacks[s].bOn )
 			continue; /* hasn't started yet */
-		po.FromString( m_pPlayerState[pn]->m_ActiveAttacks[s].sModifier );
+		po.FromString( m_pPlayerState[pn]->m_ActiveAttacks[s].sModifiers );
 	}
 	m_pPlayerState[pn]->m_PlayerOptions = po;
 
