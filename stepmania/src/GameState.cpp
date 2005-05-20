@@ -2158,7 +2158,6 @@ CString GetStageText()
 	return s;
 }
 LuaFunction_NoArgs( GetStageText, GetStageText() )
-LuaFunction_NoArgs( CoinMode,   CoinModeToString(GAMESTATE->GetCoinMode()) )
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard, Chris Gomez
