@@ -105,7 +105,7 @@ void ScreenSyncOverlay::UpdateText()
 		float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
 		float fDelta = fNew - fOld;
 
-		if( fabs(fDelta) > 0.00001 )
+		if( fabsf(fDelta) > 0.00001f )
 		{
 			s += ssprintf( 
 				"Machine global offset: %.3fs (%+.3f)\n",
@@ -119,7 +119,7 @@ void ScreenSyncOverlay::UpdateText()
 		float fNew = GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds;
 		float fDelta = fNew - fOld;
 
-		if( fabs(fDelta) > 0.00001 )
+		if( fabsf(fDelta) > 0.00001f )
 		{
 			s += ssprintf( 
 				"Song offset: %.3fs (%+.3f)\n",
