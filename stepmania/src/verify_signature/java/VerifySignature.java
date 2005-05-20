@@ -51,16 +51,15 @@ public class VerifySignature
 		try
 		{
 			// Read key files back and decode them from BASE64
-			byte[] publicKeyBytes	= readKeyBytesFromFile(publickey_fn);
+			byte[] publicKeyBytes = readKeyBytesFromFile(publickey_fn);
 
 			// Convert back to public and private key objects
-			KeyFactory keyFactory	= KeyFactory.getInstance("RSA");
+			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 			EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
 			publicKey = keyFactory.generatePublic(publicKeySpec);
 		}
 		catch (IOException io) {
-			System.out.println(
-				"Public/Private key file not found."+ io.getCause());
+			System.out.println( "Public/Private key file not found."+ io.getCause() );
 		}
 		catch (InvalidKeySpecException e) {
 			System.out.println( "Invalid Key Specs. Not valid key files."+ e.getCause() );
