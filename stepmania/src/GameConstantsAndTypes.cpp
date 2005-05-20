@@ -366,10 +366,6 @@ static const CString StageNames[] = {
 XToString( Stage, NUM_STAGES );
 
 
-#include "LuaFunctions.h"
-LuaFunction_NoArgs( CoinMode,   CoinModeToString(PREFSMAN->m_CoinMode) )
-LuaFunction_NoArgs( Premium,    PremiumToString(PREFSMAN->m_Premium) )
-
 
 /*
  * (c) 2001-2004 Chris Danford
