@@ -719,7 +719,7 @@ void SongManager::Invalidate( Song *pStaleSong )
 	if( pTrail != NULL ) { \
 		map<Trail*,TrailIDAndCourse>::iterator it; \
 		it = mapOldTrailToTrailIDAndCourse.find(pTrail); \
-		ASSERT_M( it != mapOldTrailToTrailIDAndCourse.end(), ssprintf("%p", pTrail) ); \
+		ASSERT_M( it != mapOldTrailToTrailIDAndCourse.end(), ssprintf("%p", pTrail.Get()) ); \
 		const TrailIDAndCourse &tidc = it->second; \
 		const TrailID &id = tidc.first; \
 		const Course *pCourse = tidc.second; \
