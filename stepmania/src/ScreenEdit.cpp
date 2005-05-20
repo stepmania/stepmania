@@ -1484,7 +1484,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 	
 	if( old == STATE_PLAYING )
 	{
-		SCREENMAN->AddNewScreenToTop( "ScreenSaveSync" );
+		if( GAMESTATE->IsSyncDataChanged() )
+			SCREENMAN->AddNewScreenToTop( "ScreenSaveSync" );
 	}
 
 	switch( em )
