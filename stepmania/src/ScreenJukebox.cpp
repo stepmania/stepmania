@@ -20,11 +20,14 @@
 #include "StatsManager.h"
 #include "CommonMetrics.h"
 
+#define SHOW_COURSE_MODIFIERS_PROBABILITY	THEME->GetMetricF(m_sName,"ShowCourseModifiersProbability")
 static ThemeMetricDifficultiesToShow DIFFICULTIES_TO_SHOW_HERE("ScreenDemonstration","DifficultiesToShow");
 
 REGISTER_SCREEN_CLASS( ScreenJukebox );
-bool ScreenJukebox::SetSong( bool bDemonstration )
+void ScreenJukebox::SetSong()
 {
+	ThemeMetric<float>	ALLOW_ADVANCED_MODIFIERS(m_sName,"AllowAdvancedModifiers");
+
 	vector<Song*> vSongs;
 
 	//Check to see if there is a theme-course
@@ -43,7 +46,7 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 	// Calculate what difficulties to show
 	//
 	vector<Difficulty> vDifficultiesToShow;
-	if( bDemonstration )
+	if( m_bDemonstration )
 	{
 		// HACK: This belongs in ScreenDemonstration
 		vDifficultiesToShow = DIFFICULTIES_TO_SHOW_HERE.GetValue();
@@ -69,7 +72,7 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 	for( int i=0; i<1000; i++ )
 	{
 		if( vSongs.size() == 0 )
-			return true;
+			return;
 
 		Song* pSong = vSongs[rand()%vSongs.size()];
 
@@ -94,10 +97,71 @@ bool ScreenJukebox::SetSong( bool bDemonstration )
 		FOREACH_PlayerNumber( p )
 			GAMESTATE->m_pCurSteps[p].Set( pSteps );
 		
-		return true;	// done looking
+
+		bool bShowModifiers = randomf(0,1) <= SHOW_COURSE_MODIFIERS_PROBABILITY;
+		if( bShowModifiers )
+		{
+			/* If we have a modifier course containing this song, apply its modifiers.  Only check
+			 * fixed course entries. */
+			vector<Course*> apCourses;
+			SONGMAN->GetAllCourses( apCourses, false );
+			vector<const CourseEntry *> apOptions;
+			vector<Course*> apPossibleCourses;
+			for( unsigned i = 0; i < apCourses.size(); ++i )
+			{
+				Course *pCourse = apCourses[i];
+				const CourseEntry *pEntry = pCourse->FindFixedSong( pSong );
+				if( pEntry == NULL || pEntry->attacks.size() == 0 )
+					continue;
+				
+
+				if( !ALLOW_ADVANCED_MODIFIERS )
+				{
+					// There are some confusing mods that we don't want to show in demonstration.
+					bool bModsAreOkToShow = true;
+					AttackArray aAttacks = pEntry->attacks;
+					if( !pEntry->modifiers.empty() )
+						aAttacks.push_back( Attack::FromGlobalCourseModifier( pEntry->modifiers ) );
+					FOREACH_CONST( Attack, aAttacks, a )
+					{
+						CString s = a->sModifiers;
+						s.MakeLower();
+						if( s.Find("dark") != -1 ||
+							s.Find("stealth") != -1 )
+						{
+							bModsAreOkToShow = false;
+							break;
+						}
+					}
+					if( !bModsAreOkToShow )
+						continue;	// skip
+				}
+
+
+				apOptions.push_back( pEntry );
+				apPossibleCourses.push_back( pCourse );
+			}
+
+			if( !apOptions.empty() )
+			{
+				int iIndex = rand()%apOptions.size();
+				m_pCourseEntry = apOptions[iIndex];
+				Course *pCourse = apPossibleCourses[iIndex]; 
+			
+				GAMESTATE->m_PlayMode = CourseTypeToPlayMode( pCourse->GetCourseType() );
+				GAMESTATE->m_pCurCourse.Set( pCourse );
+				FOREACH_PlayerNumber( p )
+				{
+					GAMESTATE->m_pCurTrail[p].Set( pCourse->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType ) );
+					ASSERT( GAMESTATE->m_pCurTrail[p] );
+				}
+			}
+		}		
+		
+		return;	// done looking
 	}
 
-	return false;
+	return;	// didn't find a song
 }
 
 ScreenJukebox::ScreenJukebox( CString sName ) : ScreenGameplay( sName )
@@ -105,8 +169,7 @@ ScreenJukebox::ScreenJukebox( CString sName ) : ScreenGameplay( sName )
 	LOG->Trace( "ScreenJukebox::ScreenJukebox()" );
 	m_bDemonstration = false;
 
-	SHOW_COURSE_MODIFIERS_PROBABILITY.Load(m_sName,"ShowCourseModifiersProbability");
-	ALLOW_ADVANCED_MODIFIERS.Load(m_sName,"AllowAdvancedModifiers");
+	m_pCourseEntry = NULL;
 }
 
 void ScreenJukebox::Init()
@@ -115,7 +178,7 @@ void ScreenJukebox::Init()
 	ASSERT( GAMESTATE->m_pCurStyle );
 	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 
-	SetSong( m_bDemonstration );
+	SetSong();
 
 //	ASSERT( GAMESTATE->m_pCurSong );
 
@@ -229,59 +292,15 @@ void ScreenJukebox::InitSongQueues()
 	FOREACH_PlayerNumber(p)
 		ASSERT_M( m_asModifiersQueue[p].size() == 1, ssprintf("%i", (int) m_asModifiersQueue[p].size()) );
 
-	bool bShowModifiers = randomf(0,1) <= SHOW_COURSE_MODIFIERS_PROBABILITY;
-	if( !bShowModifiers )
-		return;
-
-	/* If we have a modifier course containing this song, apply its modifiers.  Only check
-	 * fixed course entries. */
-	vector<Course*> apCourses;
-	SONGMAN->GetAllCourses( apCourses, false );
-	const Song *pSong = m_apSongsQueue[0];
-	vector<const CourseEntry *> apOptions;
-	for( unsigned i = 0; i < apCourses.size(); ++i )
+	if( m_pCourseEntry )
 	{
-		const Course *pCourse = apCourses[i];
-		const CourseEntry *pEntry = pCourse->FindFixedSong( pSong );
-		if( pEntry == NULL || pEntry->attacks.size() == 0 )
-			continue;
-		
+		AttackArray aAttacks = m_pCourseEntry->attacks;
+		if( !m_pCourseEntry->modifiers.empty() )
+			aAttacks.push_back( Attack::FromGlobalCourseModifier( m_pCourseEntry->modifiers ) );
 
-		if( !ALLOW_ADVANCED_MODIFIERS )
-		{
-			// There are some confusing mods that we don't want to show in demonstration.
-			bool bModsAreOkToShow = true;
-			AttackArray aAttacks = pEntry->attacks;
-			if( !pEntry->modifiers.empty() )
-				aAttacks.push_back( Attack::FromGlobalCourseModifier( pEntry->modifiers ) );
-			FOREACH_CONST( Attack, aAttacks, a )
-			{
-				CString s = a->sModifiers;
-				s.MakeLower();
-				if( s.Find("dark") != -1 )
-				{
-					bModsAreOkToShow = false;
-					break;
-				}
-			}
-			if( !bModsAreOkToShow )
-				continue;	// skip
-		}
-
-
-		apOptions.push_back( pEntry );
+		FOREACH_PlayerNumber(pn)
+			m_asModifiersQueue[pn][0] = aAttacks;
 	}
-
-	if( apOptions.size() == 0 )
-		return;
-
-	const CourseEntry *pEntry = apOptions[ rand()%apOptions.size() ];
-	AttackArray aAttacks = pEntry->attacks;
-	if( !pEntry->modifiers.empty() )
-		aAttacks.push_back( Attack::FromGlobalCourseModifier( pEntry->modifiers ) );
-
-	FOREACH_PlayerNumber(pn)
-		m_asModifiersQueue[pn][0] = aAttacks;
 }
 
 /*

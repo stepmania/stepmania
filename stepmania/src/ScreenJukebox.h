@@ -5,7 +5,7 @@
 
 #include "ScreenGameplay.h"
 #include "Sprite.h"
-
+class CourseEntry;
 
 class ScreenJukebox : public ScreenGameplay
 {
@@ -16,14 +16,12 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	/* Hack: public for JukeboxMenu */
-	static bool SetSong( bool bDemonstration );
+	void SetSong();
 
 protected:
 	bool m_bDemonstration;
 
-	ThemeMetric<float>	SHOW_COURSE_MODIFIERS_PROBABILITY;
-	ThemeMetric<bool>	ALLOW_ADVANCED_MODIFIERS;
+	const CourseEntry *m_pCourseEntry;
 
 	virtual void InitSongQueues();
 };
