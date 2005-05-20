@@ -184,12 +184,12 @@ bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CS
 	if( !GetFileContents(sPublicKeyFile, sPublicKey) )
 		return false;
 
-	CString sSignature;
-	if( !GetFileContents(sSignatureFile, sSignature) )
-		return false;
-
 	int iBytes = FILEMAN->GetFileSizeInBytes( sSignatureFile );
 	if( iBytes > MAX_SIGNATURE_SIZE_BYTES )
+		return false;
+
+	CString sSignature;
+	if( !GetFileContents(sSignatureFile, sSignature) )
 		return false;
 
 	try {
