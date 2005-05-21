@@ -257,7 +257,7 @@ void ScreenGameplay::Init()
 			GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_ONE_SIDE )
 			fPlayerX = SCREEN_CENTER_X;
 
-		m_Player[p].SetName( ssprintf("Player%i", p+1) );
+		m_Player[p].SetName( ssprintf("PlayerP%i", p+1) );
 		m_Player[p].SetXY( fPlayerX, SCREEN_CENTER_Y );
 		this->AddChild( &m_Player[p] );
 	
