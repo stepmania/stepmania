@@ -210,6 +210,8 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 	case REQ_CLOSE:
 		ASSERT( m_pRequestFile != NULL );
 		delete m_pRequestFile;
+
+		/* Clear m_pRequestFile, so RequestTimedOut doesn't double-delete. */
 		m_pRequestFile = NULL;
 		break;
 
@@ -322,7 +324,8 @@ void ThreadedFileWorker::Close( RageFileBasic *pFile )
 		/* If we're not in a timed-out state, try to wait for the deletion to complete
 		 * before continuing. */
 		m_pRequestFile = pFile;
-		DoRequest( REQ_CLOSE );
+		if( !DoRequest(REQ_CLOSE) )
+			return;
 		m_pRequestFile = NULL;
 	}
 	else
