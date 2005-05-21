@@ -15,33 +15,42 @@ void FileSet::GetFilesMatching(const CString &beginning, const CString &containi
 	set<File>::const_iterator i = files.lower_bound( File(beginning) );
 	for( ; i != files.end(); ++i)
 	{
-		if(bOnlyDirs && !i->dir) continue;
+		const File &f = *i;
+
+		if( bOnlyDirs && !f.dir )
+			continue;
 
 		/* Check beginning. Once we hit a filename that no longer matches beginning,
 		 * we're past all possible matches in the sort, so stop. */
-		if(beginning.size() > i->name.size()) break; /* can't start with it */
-		if(strnicmp(i->name, beginning, beginning.size())) break; /* doesn't start with it */
+		if( beginning.size() > f.name.size() )
+			break; /* can't start with it */
+		if( strnicmp(i->name, beginning, beginning.size()) )
+			break; /* doesn't start with it */
 
 		/* Position the end starts on: */
-		int end_pos = int(i->name.size())-int(ending.size());
+		int end_pos = int(f.name.size())-int(ending.size());
 
 		/* Check end. */
-		if(end_pos < 0) continue; /* can't end with it */
-		if( stricmp(i->name.c_str()+end_pos, ending) ) continue; /* doesn't end with it */
+		if( end_pos < 0 )
+			continue; /* can't end with it */
+		if( stricmp(f.name.c_str()+end_pos, ending) )
+			continue; /* doesn't end with it */
 
 		/* Check containing.  Do this last, since it's the slowest (substring
 		 * search instead of string match). */
-		if(containing.size())
+		if( containing.size() )
 		{
-			CString name = i->name;
+			CString name = f.name;
 			name.ToLower();
 
 			size_t pos = name.find( containing_lower, beginning.size() );
-			if(pos == name.npos) continue; /* doesn't contain it */
-			if(pos + containing.size() > unsigned(end_pos)) continue; /* found it but it overlaps with the end */
+			if( pos == name.npos )
+				continue; /* doesn't contain it */
+			if( pos + containing.size() > unsigned(end_pos) )
+				continue; /* found it but it overlaps with the end */
 		}
 
-		out.push_back( i->name );
+		out.push_back( f.name );
 	}
 }
 
@@ -360,10 +369,15 @@ FileSet *FilenameDB::GetFileSet( CString dir, bool create )
 
 /* Add the file or directory "sPath".  sPath is a directory if it ends with
  * a slash. */
-void FilenameDB::AddFile( const CString &sPath, int size, int hash, void *priv )
+void FilenameDB::AddFile( const CString &sPath_, int size, int hash, void *priv )
 {
-	if( sPath == "" )
+	CString sPath(sPath_);
+
+	if( sPath == "" || sPath == "/" )
 		return;
+
+	if( sPath[0] != '/' )
+		sPath = "/" + sPath;
 
 	vector<CString> parts;
 	split( sPath, "/", parts, false );
@@ -377,11 +391,14 @@ void FilenameDB::AddFile( const CString &sPath, int size, int hash, void *priv )
 	else
 		--end;
 
+	/* Skip the leading slash. */
+	++begin;
+
 	do
 	{
 		/* Combine all but the last part. */
-		CString dir = join( "/", begin, end-1 );
-		if( dir != "" )
+		CString dir = "/" + join( "/", begin, end-1 );
+		if( dir != "/" )
 			dir += "/";
 		const CString &fn = *(end-1);
 		FileSet *fs = GetFileSet( dir );

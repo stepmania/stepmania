@@ -156,9 +156,13 @@ public:
 
 	void LoadFromDrivers( const vector<LoadedDriver> &drivers )
 	{
+		/* XXX: Even though these two operations lock on their own, lock around
+		 * them, too.  That way, nothing can sneak in and get incorrect
+		 * results between the flush and the re-population. */
 		FDB->FlushDirCache();
 		for( unsigned i = 0; i < drivers.size(); ++i )
-			FDB->AddFile( drivers[i].MountPoint, 0, 0 );
+			if( drivers[i].MountPoint != "/" )
+				FDB->AddFile( drivers[i].MountPoint, 0, 0 );
 	}
 };
 static RageFileDriverMountpoints *g_Mountpoints = NULL;
@@ -230,7 +234,7 @@ RageFileManager::RageFileManager( CString argv0 )
 	g_Mountpoints = new RageFileDriverMountpoints;
 	LoadedDriver ld;
 	ld.driver = g_Mountpoints;
-	ld.MountPoint = "";
+	ld.MountPoint = "/";
 	g_Drivers.push_back( ld );
 
 	/* The mount path is unused, but must be nonempty. */
@@ -357,7 +361,7 @@ void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bO
 		ld.driver->GetDirListing( p, AddTo, bOnlyDirs, bReturnPathToo );
 
 		/* If returning the path, prepend the mountpoint name to the files this driver returned. */
-		if( bReturnPathToo )
+		if( bReturnPathToo && ld.MountPoint.size() > 0 )
 		{
 			for( unsigned j = OldStart; j < AddTo.size(); ++j )
 			{
