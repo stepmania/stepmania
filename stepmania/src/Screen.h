@@ -49,7 +49,7 @@ public:
 
 	bool IsTransparent() const { return m_bIsTransparent; }
 	virtual bool UsesBackground() const { return true; }	// override and set false if this screen shouldn't load a background
-	virtual ScreenType GetScreenType() const { return ALLOW_OPERATOR_MENU_BUTTON ? system_menu : game_menu; }
+	virtual ScreenType GetScreenType() const { return ALLOW_OPERATOR_MENU_BUTTON ? game_menu : system_menu; }
 
 	static bool JoinInput( const MenuInput &MenuI );	// return true if a player joined
 
