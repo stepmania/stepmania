@@ -11,8 +11,12 @@ struct end_central_dir_record;
 class RageFileDriverZip: public RageFileDriver
 {
 public:
+	RageFileDriverZip();
 	RageFileDriverZip( CString sPath );
 	RageFileDriverZip( RageFileBasic *pFile );
+	bool Load( const CString &sPath );
+	bool Load( RageFileBasic *pFile );
+
 	virtual ~RageFileDriverZip();
 
 	RageFileBasic *Open( const CString &sPath, int iMode, int &iErr );
@@ -32,7 +36,7 @@ private:
 	 * around in it when reading files. */
 	RageMutex m_Mutex;
 
-	void ParseZipfile();
+	bool ParseZipfile();
 	bool ReadEndCentralRecord( int &total_entries_central_dir, int &offset_start_central_directory );
 	int ProcessCdirFileHdr( FileInfo &info );
 	bool SeekToEndCentralRecord();

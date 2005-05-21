@@ -30,35 +30,64 @@ struct FileInfo
 	int m_iCompressedSize, m_iUncompressedSize;
 };
 
+RageFileDriverZip::RageFileDriverZip():
+	RageFileDriver( new NullFilenameDB ),
+	m_Mutex( "RageFileDriverZip" )
+{
+	m_bFileOwned = false;
+	m_pZip = NULL;
+}
+
 RageFileDriverZip::RageFileDriverZip( CString sPath ):
 	RageFileDriver( new NullFilenameDB ),
-	m_Mutex( ssprintf("RageFileDriverZip(%s)", sPath.c_str()) )
+	m_Mutex( "RageFileDriverZip" )
 {
+	m_bFileOwned = false;
+	m_pZip = NULL;
+	Load( sPath );
+}
+
+/* deprecated */
+RageFileDriverZip::RageFileDriverZip( RageFileBasic *pFile ):
+	RageFileDriver( new NullFilenameDB ),
+	m_Mutex( "RageFileDriverZip" )
+{
+	m_bFileOwned = false;
+	m_pZip = NULL;
+	Load( pFile );
+}
+
+bool RageFileDriverZip::Load( const CString &sPath )
+{
+	ASSERT( m_pZip == NULL ); /* don't load twice */
+
 	m_bFileOwned = true;
 	m_sPath = sPath;
+	m_Mutex.SetName( ssprintf("RageFileDriverZip(%s)", sPath.c_str()) );
 
 	RageFile *pFile = new RageFile;
-	m_pZip = pFile;
 
 	if( !pFile->Open(sPath) )
 	{
 		LOG->Warn( "Couldn't open %s: %s", sPath.c_str(), pFile->GetError().c_str() );
-		return;
+		delete pFile;
+		return false;
 	}
 
-	ParseZipfile();
+	m_pZip = pFile;
+
+	return ParseZipfile();
 }
 
-RageFileDriverZip::RageFileDriverZip( RageFileBasic *pFile ):
-	RageFileDriver( new NullFilenameDB ),
-	m_Mutex( ssprintf("RageFileDriverZip(%p)", pFile) )
+bool RageFileDriverZip::Load( RageFileBasic *pFile )
 {
+	ASSERT( m_pZip == NULL ); /* don't load twice */
 	m_sPath = ssprintf("%p", pFile);
+	m_Mutex.SetName( ssprintf("RageFileDriverZip(%p)", pFile) );
 
-	m_bFileOwned = false;
 	m_pZip = pFile;
-	
-	ParseZipfile();
+
+	return ParseZipfile();
 }
 
 
@@ -118,18 +147,18 @@ bool RageFileDriverZip::SeekToEndCentralRecord()
 	return false;
 }
 
-void RageFileDriverZip::ParseZipfile()
+bool RageFileDriverZip::ParseZipfile()
 {
 	if( !SeekToEndCentralRecord() )
 	{
 		LOG->Warn( "Couldn't open %s: couldn't find end of central directory record", m_sPath.c_str() );
-		return;
+		return false;
 	}
 
 	/* Read the end of central directory record. */
 	int iTotalEntries, iCentralDirectoryOffset;
 	if( !ReadEndCentralRecord(iTotalEntries, iCentralDirectoryOffset) )
-		return; /* warned already */
+		return false; /* warned already */
 
 	/* Seek to the start of the central file directory. */
 	m_pZip->Seek( iCentralDirectoryOffset );
@@ -152,6 +181,8 @@ void RageFileDriverZip::ParseZipfile()
 
 	if( m_pFiles.size() == 0 )
 		LOG->Warn( "%s: no files found in central file header", m_sPath.c_str() );
+
+	return true;
 }
 
 int RageFileDriverZip::ProcessCdirFileHdr( FileInfo &info )
@@ -311,8 +342,7 @@ RageFileBasic *RageFileDriverZip::Open( const CString &sPath, int iMode, int &iE
 	}
 	default:
 		/* unknown compression method */
-		ASSERT( 0 );
-		iErr = EINVAL;
+		iErr = ENOSYS;
 		return NULL;
 	}
 }
