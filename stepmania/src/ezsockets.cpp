@@ -128,7 +128,7 @@ bool EzSockets::listen()
 	return true;
 }
 
-#if defined(WIN32) || defined(DARWIN)// glibc already has socklen_t defined
+#if defined(WIN32)
 typedef int socklen_t;
 #endif
 

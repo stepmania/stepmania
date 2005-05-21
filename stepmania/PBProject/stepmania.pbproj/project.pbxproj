@@ -110,8 +110,6 @@
 //294
 		29B97313FDCFA39411CA2CEA = {
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				SDKROOT = /Developer/SDKs/MacOSX10.2.8.sdk;
 			};
 			buildStyles = (
 				4A9504CCFFE6A4B311CA0CBA,
@@ -1844,7 +1842,7 @@
 				LIBRARY_SEARCH_PATHS = /usr/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OTHER_CFLAGS = "";
-				OTHER_CPLUSPLUSFLAGS = "-finline-limit=300 -Wno-switch -Wno-missing-braces -fcoalesce-templates -fconstant-cfstrings -falign-loops=32";
+				OTHER_CPLUSPLUSFLAGS = "-finline-limit=300 -Wno-switch -Wno-missing-braces -fconstant-cfstrings -falign-loops=32";
 				OTHER_LDFLAGS = "-lz  -lstdc++";
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
@@ -2146,7 +2144,6 @@
 				AA50202005D6D7B200ACEFD0,
 				AAC6889C05D7F3C800964E6D,
 				AABBD80905D8E9FC00B44FC2,
-				AA96881D05DE34B600478B95,
 				AABD0B3B05DF3F22004F7929,
 				AAEA090905E23DF900D38622,
 				AAED6F2D0601C528002D2DEE,
@@ -2293,6 +2290,9 @@
 				AA3D5E6108214C77002AA665,
 				AA3D5E92082152B6002AA665,
 				AA3D5E96082152E6002AA665,
+				AAAFE8210835E7FF00FC43E0,
+				AAAFE8230835E7FF00FC43E0,
+				AAAFE8310835E8B100FC43E0,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4029,7 +4029,6 @@
 				AA50201F05D6D7B200ACEFD0,
 				AAC6889B05D7F3C800964E6D,
 				AABBD80805D8E9FC00B44FC2,
-				AA96881C05DE34B600478B95,
 				AABD0B3A05DF3F22004F7929,
 				AAA71EA105EE154E00D2E8FF,
 				AAED6F2C0601C528002D2DEE,
@@ -4148,6 +4147,9 @@
 				AA3D5E6008214C77002AA665,
 				AA3D5E91082152B6002AA665,
 				AA3D5E95082152E5002AA665,
+				AAAFE8200835E7FF00FC43E0,
+				AAAFE8220835E7FF00FC43E0,
+				AAAFE8300835E8B100FC43E0,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9124,6 +9126,8 @@
 				AA6E01E7047720A3005F316C,
 				AA8BD2BB07C939F800EA04E1,
 				AA8BD2BC07C939F800EA04E1,
+				AAAFE82E0835E8B100FC43E0,
+				AAAFE82F0835E8B100FC43E0,
 				AA7144AF0809EEEC00545684,
 				AA7144B00809EEEC00545684,
 				AA8BD2BD07C939F800EA04E1,
@@ -10109,6 +10113,10 @@
 				AA6EFEB304770E7C005F316C,
 				AA6EFEB404770E7C005F316C,
 				AA6EFEB504770E7C005F316C,
+				AAAFE81C0835E7FF00FC43E0,
+				AAAFE81D0835E7FF00FC43E0,
+				AAAFE81E0835E7FF00FC43E0,
+				AAAFE81F0835E7FF00FC43E0,
 				AA6EFEB604770E7C005F316C,
 				AA6EFEB704770E7C005F316C,
 			);
@@ -10833,8 +10841,6 @@
 				AAE443EC04B0F9F600D02EE9,
 				AA6EFF0504770F63005F316C,
 				AA6EFF0604770F63005F316C,
-				AA96881A05DE34B600478B95,
-				AA96881B05DE34B600478B95,
 				AA6EFF0704770F63005F316C,
 				AA6EFF0804770F63005F316C,
 				AABE321E05ACD931001A0E84,
@@ -12933,38 +12939,6 @@
 			settings = {
 			};
 		};
-		AA96881A05DE34B600478B95 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = ConditionalBGA.cpp;
-			path = ../src/ConditionalBGA.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-			usesTabs = 1;
-		};
-		AA96881B05DE34B600478B95 = {
-			explicitFileType = sourcecode.cpp;
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			name = ConditionalBGA.h;
-			path = ../src/ConditionalBGA.h;
-			refType = 4;
-			sourceTree = "<group>";
-			usesTabs = 1;
-		};
-		AA96881C05DE34B600478B95 = {
-			fileRef = AA96881A05DE34B600478B95;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		AA96881D05DE34B600478B95 = {
-			fileRef = AA96881B05DE34B600478B95;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		AA9A78A906B5C72200B03E97 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -13399,6 +13373,96 @@
 			name = src;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		AAAFE81C0835E7FF00FC43E0 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = WheelBase.cpp;
+			path = ../src/WheelBase.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAAFE81D0835E7FF00FC43E0 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = WheelBase.h;
+			path = ../src/WheelBase.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAAFE81E0835E7FF00FC43E0 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = WheelItemBase.cpp;
+			path = ../src/WheelItemBase.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAAFE81F0835E7FF00FC43E0 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = WheelItemBase.h;
+			path = ../src/WheelItemBase.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAAFE8200835E7FF00FC43E0 = {
+			fileRef = AAAFE81C0835E7FF00FC43E0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAAFE8210835E7FF00FC43E0 = {
+			fileRef = AAAFE81D0835E7FF00FC43E0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAAFE8220835E7FF00FC43E0 = {
+			fileRef = AAAFE81E0835E7FF00FC43E0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAAFE8230835E7FF00FC43E0 = {
+			fileRef = AAAFE81F0835E7FF00FC43E0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAAFE82E0835E8B100FC43E0 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = RoomWheel.cpp;
+			path = ../src/RoomWheel.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAAFE82F0835E8B100FC43E0 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = RoomWheel.h;
+			path = ../src/RoomWheel.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		AAAFE8300835E8B100FC43E0 = {
+			fileRef = AAAFE82E0835E8B100FC43E0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		AAAFE8310835E8B100FC43E0 = {
+			fileRef = AAAFE82F0835E8B100FC43E0;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		AAB005F00579B8CB000BBA58 = {
 			explicitFileType = sourcecode.cpp;

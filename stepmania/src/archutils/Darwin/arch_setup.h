@@ -33,8 +33,7 @@ typedef unsigned long long UInt64;
 #define ArchSwap24(n) (OSSwapInt32((n)) >> 8)
 #define ArchSwap16(n) OSSwapInt16((n))
 #define HAVE_BYTE_SWAPS
-extern "C" long long llabs(long long i);
-
+#define NEED_CSTDLIB_WORKAROUND
 #endif
 
 /*
