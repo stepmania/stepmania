@@ -413,17 +413,18 @@ inline CString ToString( const CString &value ) { return value; }
 //
 // Helper function for reading/writing scores
 //
-class RageFile;
-bool FileRead(RageFile& f, CString& sOut);
-bool FileRead(RageFile& f, int& iOut);
-bool FileRead(RageFile& f, unsigned& uOut);
-bool FileRead(RageFile& f, float& fOut);
-void FileWrite(RageFile& f, const CString& sWrite);
-void FileWrite(RageFile& f, int iWrite);
-void FileWrite(RageFile& f, size_t uWrite);
-void FileWrite(RageFile& f, float fWrite);
+class RageFileBasic;
+bool FileRead(RageFileBasic& f, CString& sOut);
+bool FileRead(RageFileBasic& f, int& iOut);
+bool FileRead(RageFileBasic& f, unsigned& uOut);
+bool FileRead(RageFileBasic& f, float& fOut);
+void FileWrite(RageFileBasic& f, const CString& sWrite);
+void FileWrite(RageFileBasic& f, int iWrite);
+void FileWrite(RageFileBasic& f, size_t uWrite);
+void FileWrite(RageFileBasic& f, float fWrite);
 
 bool FileCopy( CString sSrcFile, CString sDstFile );
+bool FileCopy( RageFileBasic &in, RageFileBasic &out, CString &sError, bool *bReadError = NULL );
 
 #endif
 

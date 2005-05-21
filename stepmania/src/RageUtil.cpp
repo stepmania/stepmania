@@ -1421,7 +1421,7 @@ CString ToString( bool value )
 //
 // Helper function for reading/writing scores
 //
-bool FileRead(RageFile& f, CString& sOut)
+bool FileRead(RageFileBasic& f, CString& sOut)
 {
 	if (f.AtEOF())
 		return false;
@@ -1430,7 +1430,7 @@ bool FileRead(RageFile& f, CString& sOut)
 	return true;
 }
 
-bool FileRead(RageFile& f, int& iOut)
+bool FileRead(RageFileBasic& f, int& iOut)
 {
 	CString s;
 	if (!FileRead(f, s))
@@ -1439,7 +1439,7 @@ bool FileRead(RageFile& f, int& iOut)
 	return true;
 }
 
-bool FileRead(RageFile& f, unsigned& uOut)
+bool FileRead(RageFileBasic& f, unsigned& uOut)
 {
 	CString s;
 	if (!FileRead(f, s))
@@ -1448,7 +1448,7 @@ bool FileRead(RageFile& f, unsigned& uOut)
 	return true;
 }
 
-bool FileRead(RageFile& f, float& fOut)
+bool FileRead(RageFileBasic& f, float& fOut)
 {
 	CString s;
 	if (!FileRead(f, s))
@@ -1457,22 +1457,22 @@ bool FileRead(RageFile& f, float& fOut)
 	return true;
 }
 
-void FileWrite(RageFile& f, const CString& sWrite)
+void FileWrite(RageFileBasic& f, const CString& sWrite)
 {
 	f.PutLine( sWrite );
 }
 
-void FileWrite(RageFile& f, int iWrite)
+void FileWrite(RageFileBasic& f, int iWrite)
 {
 	f.PutLine( ssprintf("%d", iWrite) );
 }
 
-void FileWrite(RageFile& f, size_t uWrite)
+void FileWrite(RageFileBasic& f, size_t uWrite)
 {
 	f.PutLine( ssprintf("%i", (int)uWrite) );
 }
 
-void FileWrite(RageFile& f, float fWrite)
+void FileWrite(RageFileBasic& f, float fWrite)
 {
 	f.PutLine( ssprintf("%f", fWrite) );
 }
@@ -1493,13 +1493,27 @@ bool FileCopy( CString sSrcFile, CString sDstFile )
 	if( !out.Open(sDstFile, RageFile::WRITE) )
 		return false;
 
+	CString sError;
+	if( !FileCopy(in, out, sError) )
+	{
+		LOG->Warn( "FileCopy(%s,%s): %s",
+				sSrcFile.c_str(), sDstFile.c_str(), sError.c_str() );
+		return false;
+	}
+
+	return true;
+}
+
+bool FileCopy( RageFileBasic &in, RageFileBasic &out, CString &sError, bool *bReadError )
+{
 	while(1)
 	{
 		CString data;
 		if( in.Read(data, 1024*32) == -1 )
 		{
-			LOG->Warn( "FileCopy(%s,%s): read error: %s",
-					sSrcFile.c_str(), sDstFile.c_str(), in.GetError().c_str() );
+			sError = ssprintf( "read error: %s", in.GetError().c_str() );
+			if( bReadError != NULL )
+				*bReadError = true;
 			return false;
 		}
 		if( data.empty() )
@@ -1507,13 +1521,21 @@ bool FileCopy( CString sSrcFile, CString sDstFile )
 		int i = out.Write(data);
 		if( i == -1 )
 		{
-			LOG->Warn( "FileCopy(%s,%s): write error: %s",
-					sSrcFile.c_str(), sDstFile.c_str(), out.GetError().c_str() );
+			sError = ssprintf( "write error: %s", out.GetError().c_str() );
+			if( bReadError != NULL )
+				*bReadError = false;
 			return false;
 		}
 	}
+
 	if( out.Flush() == -1 )
+	{
+		sError = ssprintf( "write error: %s", out.GetError().c_str() );
+		if( bReadError != NULL )
+			*bReadError = false;
 		return false;
+	}
+
 	return true;
 }
 
