@@ -241,7 +241,6 @@ RageFileManager::RageFileManager( CString argv0 )
 	RageFileManager::Mount( "mem", "(cache)", "@mem" );
 }
 
-#ifndef HAVE_EXTRA // set for custom initial mount rules
 void RageFileManager::MountInitialFilesystems()
 {
 	/* Add file search paths, higher priority first. */
@@ -297,7 +296,6 @@ void RageFileManager::MountInitialFilesystems()
 	RageFileManager::Mount( "dir", ".", "" );
 #endif
 }
-#endif
 
 RageFileManager::~RageFileManager()
 {
