@@ -8,7 +8,7 @@
 static SInt16 ShowAlert( int type, CFStringRef message, CFStringRef OK, CFStringRef cancel = NULL )
 {
 	struct AlertStdCFStringAlertParamRec params = {kStdCFStringAlertVersionOne, true, false, OK, cancel, NULL,
-		kAlertStdAlertOKButton, kAlertStdAlertCancelButton, kWindowAlertPositionParentWindowScreen, NULL};
+		kAlertStdAlertOKButton, kAlertStdAlertCancelButton, kWindowAlertPositionParentWindowScreen, 0};
 	DialogRef dialog;
 	SInt16 result;
 	OSErr err;
