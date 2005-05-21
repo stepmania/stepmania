@@ -101,12 +101,6 @@ static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 }
 
 /* "sel" is the selection in the menu. */
-static void MoveData( int &sel, int &opt, bool ToSel )
-{
-	if( ToSel )	sel = opt;
-	else		opt = !!sel;
-}
-
 template<class T>
 static void MoveData( int &sel, Preference<T> &opt, bool ToSel )
 {
