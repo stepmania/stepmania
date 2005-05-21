@@ -258,8 +258,7 @@ void ScreenGameplay::Init()
 			fPlayerX = SCREEN_CENTER_X;
 
 		m_Player[p].SetName( ssprintf("Player%i", p+1) );
-		m_Player[p].SetX( fPlayerX );
-		m_Player[p].SetY( SCREEN_CENTER_Y );
+		m_Player[p].SetXY( fPlayerX, SCREEN_CENTER_Y );
 		this->AddChild( &m_Player[p] );
 	
 		m_sprOniGameOver[p].SetName( ssprintf("OniGameOverP%i",p+1) );
@@ -2334,6 +2333,7 @@ void ScreenGameplay::TweenOnScreen()
 		ON_COMMAND( m_ActiveAttackList[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
 		ON_COMMAND( m_DifficultyMeter[p] );
+		ON_COMMAND( m_Player[p] );
 	}
 
 	if (m_ShowScoreboard)
@@ -2371,6 +2371,7 @@ void ScreenGameplay::TweenOffScreen()
 		OFF_COMMAND( m_ActiveAttackList[p] );
 		OFF_COMMAND( m_DifficultyIcon[p] );
 		OFF_COMMAND( m_DifficultyMeter[p] );
+		OFF_COMMAND( m_Player[p] );
 	}
 
 	if (m_ShowScoreboard)
