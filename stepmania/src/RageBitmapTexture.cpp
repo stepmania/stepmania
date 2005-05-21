@@ -100,8 +100,8 @@ void RageBitmapTexture::Create()
 	else if( HintString.Find("16bpp") != -1 )		actualID.iColorDepth = 16;
 	if( HintString.Find("dither") != -1 )			actualID.bDither = true;
 	if( HintString.Find("stretch") != -1 )			actualID.bStretch = true;
-	if( HintString.Find("nomipmaps") != -1 )		actualID.bMipMaps = false;
 	if( HintString.Find("mipmaps") != -1 )			actualID.bMipMaps = true;
+	if( HintString.Find("nomipmaps") != -1 )		actualID.bMipMaps = false;	// check for "nomipmaps" after "mipmaps"
 
 	/* If the image is marked grayscale, then use all bits not used for alpha
 	 * for the intensity.  This way, if an image has no alpha, you get an 8-bit
