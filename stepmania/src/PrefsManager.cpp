@@ -218,7 +218,6 @@ PrefsManager::PrefsManager() :
 	m_bLockCourseDifficulties		( "LockCourseDifficulties",	true ),
 	m_ShowDancingCharacters			( "ShowDancingCharacters",		CO_OFF ),
 	m_bUseUnlockSystem				( "UseUnlockSystem",			false ),
-	m_bFirstRun						( "FirstRun",					true ),
 	m_bAutoMapOnJoyChange			( "AutoMapOnJoyChange",		true ),
 	m_fGlobalOffsetSeconds			( "GlobalOffsetSeconds",		0 ),
 	m_iProgressiveLifebar			( "ProgressiveLifebar",		0 ),
@@ -347,7 +346,6 @@ void PrefsManager::ResetToFactoryDefaults()
 {
 	// clobber the users prefs by initing then applying defaults
 	Init();
-	m_bFirstRun.Set( false );
 	ReadPrefsFromFile( DEFAULTS_INI_PATH );
 	ReadPrefsFromFile( STATIC_INI_PATH );
 	

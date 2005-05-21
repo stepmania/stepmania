@@ -193,7 +193,6 @@ public:
 	enum CharacterOption { CO_OFF = 0, CO_RANDOM = 1, CO_SELECT = 2};
 	Preference<CharacterOption>		m_ShowDancingCharacters;
 	Preference<bool>	m_bUseUnlockSystem;
-	Preference<bool>	m_bFirstRun;
 	Preference<bool>	m_bAutoMapOnJoyChange;
 	Preference<float>	m_fGlobalOffsetSeconds;
 	Preference<int>		m_iProgressiveLifebar;
