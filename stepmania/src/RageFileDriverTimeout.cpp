@@ -631,7 +631,7 @@ public:
 	RageFileBasic *Copy() const
 	{
 		CString sError;
-		RageFileBasic *pRet = m_pWorker->Copy( m_pFile, sError );
+		RageFileBasic *pCopy = m_pWorker->Copy( m_pFile, sError );
 
 		if( m_pFile == NULL )
 		{
@@ -639,13 +639,13 @@ public:
 			return NULL;
 		}
 
-		if( pRet == NULL )
+		if( pCopy == NULL )
 		{
 //			SetError( sError );
 			return NULL;
 		}
 
-		return pRet;
+		return new RageFileObjTimeout( m_pWorker, pCopy, m_iFileSize );
 	}
 
 protected:
