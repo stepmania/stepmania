@@ -280,7 +280,7 @@ public:
 	}
 
 	//! to be implemented by derived classes, users should use one of the above functions instead
-	virtual bool GetVoidValue(const char *name, const std::type_info &valueType, void *pValue) const {sm_crash();};
+	virtual bool GetVoidValue(const char *name, const std::type_info &valueType, void *pValue) const { sm_crash(); }
 };
 
 //! namespace containing value name definitions

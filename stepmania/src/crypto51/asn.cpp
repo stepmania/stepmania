@@ -88,7 +88,7 @@ void BERDecodeNull(BufferedTransformation &in)
 	byte b;
 	if (!in.Get(b) || b != TAG_NULL)
 		BERDecodeError();
-	unsigned int length;
+	unsigned int length = 0;
 	if (!BERLengthDecode(in, length) || length != 0)
 		BERDecodeError();
 }
@@ -113,7 +113,7 @@ unsigned int BERDecodeOctetString(BufferedTransformation &bt, SecByteBlock &str)
 	if (!bt.Get(b) || b != OCTET_STRING)
 		BERDecodeError();
 
-	unsigned int bc;
+	unsigned int bc = 0;
 	if (!BERLengthDecode(bt, bc))
 		BERDecodeError();
 
@@ -129,7 +129,7 @@ unsigned int BERDecodeOctetString(BufferedTransformation &bt, BufferedTransforma
 	if (!bt.Get(b) || b != OCTET_STRING)
 		BERDecodeError();
 
-	unsigned int bc;
+	unsigned int bc = 0;
 	if (!BERLengthDecode(bt, bc))
 		BERDecodeError();
 
@@ -151,7 +151,7 @@ unsigned int BERDecodeTextString(BufferedTransformation &bt, std::string &str, b
 	if (!bt.Get(b) || b != asnTag)
 		BERDecodeError();
 
-	unsigned int bc;
+	unsigned int bc = 0;
 	if (!BERLengthDecode(bt, bc))
 		BERDecodeError();
 
@@ -178,7 +178,7 @@ unsigned int BERDecodeBitString(BufferedTransformation &bt, SecByteBlock &str, u
 	if (!bt.Get(b) || b != BIT_STRING)
 		BERDecodeError();
 
-	unsigned int bc;
+	unsigned int bc = 0;
 	if (!BERLengthDecode(bt, bc))
 		BERDecodeError();
 
@@ -234,7 +234,7 @@ void OID::BERDecode(BufferedTransformation &bt)
 	if (!bt.Get(b) || b != OBJECT_IDENTIFIER)
 		BERDecodeError();
 
-	unsigned int length;
+	unsigned int length = 0;
 	if (!BERLengthDecode(bt, length) || length < 1)
 		BERDecodeError();
 

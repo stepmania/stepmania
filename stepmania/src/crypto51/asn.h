@@ -307,7 +307,7 @@ void BERDecodeUnsigned(BufferedTransformation &in, T &w, byte asnTag = INTEGER,
 	if (!in.Get(b) || b != asnTag)
 		BERDecodeError();
 
-	unsigned int bc;
+	unsigned int bc = 0;
 	BERLengthDecode(in, bc);
 
 	SecByteBlock buf(bc);
