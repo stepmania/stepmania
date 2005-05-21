@@ -11,8 +11,8 @@
 #include "GameManager.h"
 
 
-#define SECONDS_TO_SHOW			THEME->GetMetricF("ScreenDemonstration","SecondsToShow")
-#define NEXT_SCREEN				THEME->GetMetric("ScreenDemonstration","NextScreen")
+#define SECONDS_TO_SHOW			THEME->GetMetricF(m_sName,"SecondsToShow")
+#define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
 
 REGISTER_SCREEN_CLASS( ScreenDemonstration );
 ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName )
