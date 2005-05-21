@@ -1014,7 +1014,7 @@ Style g_Styles[] =
 		&g_Games[GAME_DANCE],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		false,									// m_bUsedForDemonstration
+		true,									// m_bUsedForDemonstration
 		true,									// m_bUsedForHowToPlay
 		"single",								// m_szName
 		STEPS_TYPE_DANCE_SINGLE,				// m_StepsType
@@ -1082,7 +1082,7 @@ Style g_Styles[] =
 		&g_Games[GAME_DANCE],				// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
-		false,									// m_bUsedForDemonstration
+		true,									// m_bUsedForDemonstration
 		false,									// m_bUsedForHowToPlay
 		"double",								// m_szName
 		STEPS_TYPE_DANCE_DOUBLE,				// m_StepsType
@@ -2613,17 +2613,18 @@ void GameManager::GetStepsTypesForGame( const Game *pGame, vector<StepsType>& aS
 	}
 }
 
-const Style* GameManager::GetDemonstrationStyleForGame( const Game *pGame ) const
+void GameManager::GetDemonstrationStylesForGame( const Game *pGame, vector<const Style*> &vpStylesOut ) const
 {
+	vpStylesOut.clear();
+
 	for( unsigned s=0; s<NUM_STYLES; s++ ) 
 	{
 		const Style* style = &g_Styles[s];
 		if( style->m_pGame == pGame && style->m_bUsedForDemonstration )
-			return style;
+			vpStylesOut.push_back( style );
 	}
-
-	ASSERT(0);	// this Game is missing a Style that can be used with the demonstration
-	return NULL;
+	
+	ASSERT( vpStylesOut.size()>0 );	// this Game is missing a Style that can be used with the demonstration
 }
 
 const Style* GameManager::GetHowToPlayStyleForGame( const Game *pGame ) const

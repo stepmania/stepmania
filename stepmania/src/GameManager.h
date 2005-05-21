@@ -19,7 +19,7 @@ public:
 	void	GetAllStyles( vector<const Style*>& aStylesAddTo, bool editor=false ) const;
 	void	GetStepsTypesForGame( const Game* pGame, vector<StepsType>& aStepsTypeAddTo ) const;
 	const Style*	GetEditorStyleForStepsType( StepsType st ) const;
-	const Style*	GetDemonstrationStyleForGame( const Game* pGame ) const;
+	void GetDemonstrationStylesForGame( const Game *pGame, vector<const Style*> &vpStylesOut ) const;
 	const Style*	GetHowToPlayStyleForGame( const Game* pGame ) const;
 
 	void GetEnabledGames( vector<const Game*>& aGamesOut ) const;

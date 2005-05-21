@@ -353,7 +353,8 @@ enum StyleType
 	ONE_PLAYER_ONE_SIDE,	// e.g. single
 	TWO_PLAYERS_TWO_SIDES,	// e.g. versus
 	ONE_PLAYER_TWO_SIDES,	// e.g. double
-	NUM_STYLE_TYPES
+	NUM_STYLE_TYPES,
+	STYLE_TYPE_INVALID
 };
 const CString& StyleTypeToString( StyleType s );
 StyleType StringToStyleType( const CString& s );

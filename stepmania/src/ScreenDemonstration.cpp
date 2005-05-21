@@ -9,10 +9,12 @@
 #include "RageSoundManager.h"
 #include "GameSoundManager.h"
 #include "GameManager.h"
+#include "Style.h"
 
 
 #define SECONDS_TO_SHOW			THEME->GetMetricF(m_sName,"SecondsToShow")
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
+#define ALLOW_STYLE_TYPES		THEME->GetMetric (m_sName,"AllowStyleTypes")
 
 REGISTER_SCREEN_CLASS( ScreenDemonstration );
 ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName )
@@ -23,7 +25,31 @@ ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName
 
 void ScreenDemonstration::Init()
 {
-	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetDemonstrationStyleForGame(GAMESTATE->m_pCurGame) );
+	// Choose a Style
+	{
+		vector<CString> v;
+		split( ALLOW_STYLE_TYPES, ",", v );
+		vector<StyleType> vStyleTypeAllow;
+		FOREACH_CONST( CString, v, s )
+		{
+			StyleType st = StringToStyleType( *s );
+			ASSERT( st != STYLE_TYPE_INVALID );
+			vStyleTypeAllow.push_back( st );
+		}
+
+		vector<const Style*> vStylePossible;
+		GAMEMAN->GetDemonstrationStylesForGame( GAMESTATE->m_pCurGame, vStylePossible );
+		for( int i=(int)(vStylePossible.size())-1; i>=0; i-- )
+		{
+			bool bAllowThis = find( vStyleTypeAllow.begin(), vStyleTypeAllow.end(), vStylePossible[i]->m_StyleType ) != vStyleTypeAllow.end();
+			if( !bAllowThis )
+				vStylePossible.erase( vStylePossible.begin()+i );
+		}
+
+		ASSERT( vStylePossible.size() > 0 );
+		const Style* pStyle = vStylePossible[ rand() % vStylePossible.size() ];
+		GAMESTATE->m_pCurStyle.Set( pStyle );
+	}
 
 	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 
