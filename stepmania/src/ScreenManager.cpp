@@ -356,13 +356,13 @@ void ScreenManager::ClearScreenStack()
  * current screens are removed.  This is the only function that adds to m_ScreenStack. */
 void ScreenManager::SetFromNewScreen( Screen *pNewScreen, bool Stack )
 {
-	RefreshCreditsMessages();
-
 	if( !Stack )
 		ClearScreenStack();
 
 	m_ScreenStack.push_back( pNewScreen );
 	
+	RefreshCreditsMessages();
+
 	PostMessageToTopScreen( SM_GainFocus, 0 );
 }
 
