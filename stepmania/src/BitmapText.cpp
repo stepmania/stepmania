@@ -377,7 +377,7 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 		 * and soft hyphens and pretty easily, too. -glenn */
 		// TODO: Move this wrapping logic into Font
 		CStringArray asLines;
-		split( m_sText, "\n", asLines );
+		split( m_sText, "\n", asLines, false );
 
 		for( unsigned line = 0; line < asLines.size(); ++line )
 		{
