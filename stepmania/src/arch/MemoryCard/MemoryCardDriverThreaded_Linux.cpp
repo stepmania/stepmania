@@ -18,7 +18,7 @@
 #include <sys/wait.h>
 #include <sys/poll.h>
 
-const CString TEMP_MOUNT_POINT = "@mctemp/";
+const CString TEMP_MOUNT_POINT = "/@mctemp/";
 
 void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut );
 
