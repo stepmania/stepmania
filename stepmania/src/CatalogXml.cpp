@@ -305,9 +305,9 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 		}
 
 		{
-			set<CString> modifiers;
+			vector<CString> modifiers;
 			THEME->GetModifierNames( modifiers );
-			for( set<CString>::const_iterator iter = modifiers.begin(); iter != modifiers.end(); iter++ )
+			FOREACH_CONST( CString, modifiers, iter )
 			{
 				XNode* pNode2 = pNode->AppendChild( "Modifier", *iter );
 				PlayerOptions po;

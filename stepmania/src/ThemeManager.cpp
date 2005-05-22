@@ -808,7 +808,7 @@ CString ThemeManager::GetPathToG( const CString &sFileName, bool bOptional ) { C
 CString ThemeManager::GetPathToS( const CString &sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathS(sClassName,sElement,bOptional); }
 CString ThemeManager::GetPathToO( const CString &sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathO(sClassName,sElement,bOptional); }
 
-void ThemeManager::GetModifierNames( set<CString>& AddTo )
+void ThemeManager::GetModifierNames( vector<CString>& AddTo )
 {
 	for( deque<Theme>::const_iterator iter = g_vThemes.begin();
 		iter != g_vThemes.end();
@@ -818,7 +818,7 @@ void ThemeManager::GetModifierNames( set<CString>& AddTo )
 		if( cur )
 		{
 			FOREACH_CONST_Attr( cur, p )
-				AddTo.insert( p->m_sName );
+				AddTo.push_back( p->m_sName );
 		}
 	}
 }
@@ -911,13 +911,16 @@ class LunaThemeManager : public Luna<T>
 public:
 	LunaThemeManager() { LUA->Register( Register ); }
 
-	static int GetMetric( T* p, lua_State *L )		{ lua_pushstring(L, p->GetMetric(SArg(1),SArg(2)) ); return 1; }
-	static int GetPath( T* p, lua_State *L )		{ lua_pushstring(L, p->GetPath((ElementCategory)IArg(1),SArg(2),SArg(3)) ); return 1; }
+	static int GetMetric( T* p, lua_State *L )			{ lua_pushstring(L, p->GetMetric(SArg(1),SArg(2)) ); return 1; }
+	static int GetPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPath((ElementCategory)IArg(1),SArg(2),SArg(3)) ); return 1; }
+	static int GetModifierNames( T* p, lua_State *L )	{ vector<CString> v; p->GetModifierNames(v); LuaHelpers::CreateTableFromArray(v,LUA->L); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetMetric )
 		ADD_METHOD( GetPath )
+		ADD_METHOD( GetModifierNames )
+
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,

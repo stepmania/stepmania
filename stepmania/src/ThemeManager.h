@@ -48,7 +48,7 @@ public:
 	CString GetCurThemeDir() const { return GetThemeDirFromName(m_sCurThemeName); };
 	void NextTheme();
 	void ReloadMetrics();
-	void GetModifierNames( set<CString>& AddTo );
+	void GetModifierNames( vector<CString>& AddTo );
 
 	static void EvaluateString( CString &sText );
 
