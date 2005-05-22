@@ -30,7 +30,7 @@ public:
 	int GetFileSizeInBytes( CString sPath );
 	int GetFileHash( CString sPath );
 
-	void Mount( CString Type, CString RealPath, CString MountPoint );
+	void Mount( CString Type, CString RealPath, CString MountPoint, bool bAddToEnd = true );
 	void Unmount( CString Type, CString Root, CString MountPoint );
 
 	/* Change the root of a filesystem.  Only a couple drivers support this; it's

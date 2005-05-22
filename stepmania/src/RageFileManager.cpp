@@ -423,7 +423,7 @@ void RageFileManager::CreateDir( CString sDir )
 	FILEMAN->Remove( sTempFile );
 }
 
-void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
+void RageFileManager::Mount( CString Type, CString Root, CString MountPoint, bool bAddToEnd )
 {
 	FixSlashesInPlace( Root );
 	FixSlashesInPlace( MountPoint );
@@ -465,7 +465,7 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 	ld.MountPoint = MountPoint;
 
 	g_Mutex->Lock();
-	g_Drivers.push_back( ld );
+	g_Drivers.insert( bAddToEnd? g_Drivers.end():g_Drivers.begin(), ld );
 	CHECKPOINT;
 	g_Mountpoints->LoadFromDrivers( g_Drivers );
 	CHECKPOINT;
