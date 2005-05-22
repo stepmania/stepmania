@@ -120,6 +120,19 @@ bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width,
 
 	pHaveWin = true;
 
+	/* Hide the mouse cursor. */
+	{
+		const char pBlank[] = { 0,0,0,0,0,0,0,0 };
+		Pixmap BlankBitmap = XCreateBitmapFromData( Dpy, Win, pBlank, 8, 8 );
+
+		XColor black = { 0, 0, 0, 0, 0, 0 };
+		Cursor pBlankPointer = XCreatePixmapCursor( Dpy, BlankBitmap, BlankBitmap, &black, &black, 0, 0 );
+		XFreePixmap( Dpy, BlankBitmap );
+
+		XDefineCursor( Dpy, Win, pBlankPointer );
+		XFreeCursor( Dpy, pBlankPointer );
+	}
+
 	return true;
 }
 
