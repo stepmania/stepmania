@@ -247,7 +247,12 @@ void RageFileManager::MountInitialFilesystems()
 #if defined(XBOX)
 	RageFileManager::Mount( "dir", "D:\\", "" );
 #elif defined(LINUX)
-	/* Mount /proc, so Alsa9Buf::GetSoundCardDebugInfo() and others can access it. */
+	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
+	 * This is /rootfs, not /root, to avoid confusion with root's home directory. */
+	RageFileManager::Mount( "dir", "/", "/rootfs" );
+
+        /* Mount /proc, so Alsa9Buf::GetSoundCardDebugInfo() and others can access it.
+	 * (Deprecated; use rootfs.) */
 	RageFileManager::Mount( "dir", "/proc", "/proc" );
 	
 	/* We can almost do this, to have machine profiles be system-global to eg. share
