@@ -29,7 +29,6 @@
 #include "Foreach.h"
 #include "StatsManager.h"
 #include "Style.h"
-#include "ThemeMetric.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -39,8 +38,6 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 #define MAX_EDITS_PER_PROFILE	200
 #define MAX_EDIT_SIZE_BYTES		30*1024		// 30KB
 
-static const ThemeMetric<int>		NUM_GROUP_COLORS	("SongManager","NumGroupColors");
-#define GROUP_COLOR( i )	THEME->GetMetricC("SongManager",ssprintf("GroupColor%d",i+1))
 static const ThemeMetric<RageColor> BEGINNER_COLOR		("SongManager","BeginnerColor");
 static const ThemeMetric<RageColor> EASY_COLOR			("SongManager","EasyColor");
 static const ThemeMetric<RageColor> MEDIUM_COLOR		("SongManager","MediumColor");
@@ -50,24 +47,13 @@ static const ThemeMetric<RageColor> EDIT_COLOR			("SongManager","EditColor");
 static const ThemeMetric<RageColor> EXTRA_COLOR			("SongManager","ExtraColor");
 static const ThemeMetric<int>		EXTRA_COLOR_METER	("SongManager","ExtraColorMeter");
 
-vector<RageColor> g_vGroupColors;
-RageTimer g_LastMetricUpdate; /* can't use RageTimer globally */
+CString GROUP_COLOR_NAME( size_t i ) { return ssprintf("GroupColor%d",i+1); }
 
-static void UpdateMetrics()
-{
-	if( !g_LastMetricUpdate.IsZero() && g_LastMetricUpdate.PeekDeltaTime() < 1 )
-		return;
-
-	g_LastMetricUpdate.Touch();
-	g_vGroupColors.clear();
-	for( int i=0; i<NUM_GROUP_COLORS; i++ )
-		g_vGroupColors.push_back( GROUP_COLOR(i) );
-}
 
 SongManager::SongManager()
 {
-	g_LastMetricUpdate.SetZero();
-	UpdateMetrics();
+	NUM_GROUP_COLORS.Load("SongManager","NumGroupColors");
+	GROUP_COLOR		.Load("SongManager",GROUP_COLOR_NAME,NUM_GROUP_COLORS);
 }
 
 SongManager::~SongManager()
@@ -345,8 +331,6 @@ bool SongManager::DoesGroupExist( CString sGroupName )
 
 RageColor SongManager::GetGroupColor( const CString &sGroupName )
 {
-	UpdateMetrics();
-
 	// search for the group index
 	unsigned i;
 	for( i=0; i<m_sGroupNames.size(); i++ )
@@ -356,7 +340,7 @@ RageColor SongManager::GetGroupColor( const CString &sGroupName )
 	}
 	ASSERT_M( i != m_sGroupNames.size(), sGroupName );	// this is not a valid group
 
-	return g_vGroupColors[i%g_vGroupColors.size()];
+	return GROUP_COLOR.GetValue( i%NUM_GROUP_COLORS );
 }
 
 RageColor SongManager::GetSongColor( const Song* pSong )
@@ -983,10 +967,20 @@ Song* SongManager::GetRandomSong()
 		return NULL;
 
 	static int i = 0;
-	i++;
-	wrap( i, m_pShuffledSongs.size() );
 
-	return m_pShuffledSongs[ i ];
+	for( int iThrowAway=0; iThrowAway<100; iThrowAway++ )
+	{
+		i++;
+		wrap( i, m_pShuffledSongs.size() );
+		Song *pSong = m_pShuffledSongs[ i ];
+		if( pSong->IsTutorial() )
+			continue;
+		if( UNLOCKMAN->SongIsLocked(pSong) )
+			continue;
+		return pSong;
+	}
+
+	return NULL;
 }
 
 Course* SongManager::GetRandomCourse()
@@ -995,10 +989,22 @@ Course* SongManager::GetRandomCourse()
 		return NULL;
 
 	static int i = 0;
-	i++;
-	wrap( i, m_pShuffledCourses.size() );
 
-	return m_pShuffledCourses[ i ];
+	for( int iThrowAway=0; iThrowAway<100; iThrowAway++ )
+	{
+		i++;
+		wrap( i, m_pShuffledCourses.size() );
+		Course *pCourse = m_pShuffledCourses[ i ];
+		if( pCourse->m_bIsAutogen && !PREFSMAN->m_bAutogenGroupCourses )
+			continue;
+		if( pCourse->GetCourseType() == COURSE_TYPE_ENDLESS )
+			continue;
+		if( UNLOCKMAN->CourseIsLocked(pCourse) )
+			continue;
+		return pCourse;
+	}
+
+	return NULL;
 }
 
 Song* SongManager::GetSongFromDir( CString sDir )
@@ -1268,8 +1274,10 @@ public:
 		LuaHelpers::CreateTableFromArray<Course*>( v, L );
 		return 1;
 	}
-	static int FindSong( T* p, lua_State *L )	{ Song *pS = p->FindSong(SArg(1)); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
-	static int FindCourse( T* p, lua_State *L ) { Course *pC = p->FindCourse(SArg(1)); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
+	static int FindSong( T* p, lua_State *L )		{ Song *pS = p->FindSong(SArg(1)); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
+	static int FindCourse( T* p, lua_State *L )		{ Course *pC = p->FindCourse(SArg(1)); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
+	static int GetRandomSong( T* p, lua_State *L )	{ Song *pS = p->GetRandomSong(); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
+	static int GetRandomCourse( T* p, lua_State *L ){ Course *pC = p->GetRandomCourse(); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1277,6 +1285,8 @@ public:
 		ADD_METHOD( GetAllCourses )
 		ADD_METHOD( FindSong )
 		ADD_METHOD( FindCourse )
+		ADD_METHOD( GetRandomSong )
+		ADD_METHOD( GetRandomCourse )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,

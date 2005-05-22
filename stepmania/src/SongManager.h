@@ -17,6 +17,7 @@ struct lua_State;
 #include "PlayerNumber.h"
 #include "Difficulty.h"
 #include "Course.h"
+#include "ThemeMetric.h"
 
 class SongManager
 {
@@ -117,6 +118,10 @@ protected:
 	vector<Course*>		m_pCourses;
 	vector<Course*>		m_pBestCourses[NUM_PROFILE_SLOTS][NUM_COURSE_TYPES];
 	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
+
+
+	ThemeMetric<int>			NUM_GROUP_COLORS;
+	ThemeMetric1D<RageColor>	GROUP_COLOR;
 };
 
 static const CString EDIT_SUBDIR = "Edits/";
