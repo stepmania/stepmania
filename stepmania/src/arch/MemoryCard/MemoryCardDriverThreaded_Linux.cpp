@@ -374,7 +374,7 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 		// /dev/sdb1               /mnt/flash2             auto    noauto,owner 0 0
 		// /dev/sdc1               /mnt/flash3             auto    noauto,owner 0 0
 		
-		CString fn = "/etc/fstab";
+		CString fn = "/rootfs/etc/fstab";
 		LOG->Trace( "Reading %s", fn.c_str() );
 		RageFile f;
 		if( !f.Open(fn) )
