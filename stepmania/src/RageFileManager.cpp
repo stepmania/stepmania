@@ -576,23 +576,23 @@ void RageFileManager::GetLoadedDrivers( vector<DriverLocation> &Mounts )
 
 void RageFileManager::FlushDirCache( CString sPath )
 {
-	NormalizePath( sPath );
-
 	LockMut( *g_Mutex );
 
+	if( sPath == "" )
+	{
+		for( unsigned i = 0; i < g_Drivers.size(); ++i )
+			g_Drivers[i].driver->FlushDirCache( "" );
+		return;
+	}
+
+	/* Flush a specific path. */
+	NormalizePath( sPath );
 	for( unsigned i = 0; i < g_Drivers.size(); ++i )
 	{
-		if( sPath.size() == 0 )
-		{
-			g_Drivers[i].driver->FlushDirCache( "" );
-		}
-		else
-		{
-			const CString path = g_Drivers[i].GetPath( sPath );
-			if( path.size() == 0 )
-				continue;
-			g_Drivers[i].driver->FlushDirCache( path );
-		}
+		const CString path = g_Drivers[i].GetPath( sPath );
+		if( path.size() == 0 )
+			continue;
+		g_Drivers[i].driver->FlushDirCache( path );
 	}
 }
 
