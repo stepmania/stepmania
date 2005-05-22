@@ -183,7 +183,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), *newd );
 		if( iter == vOld.end() )    // didn't find
 		{
-			LOG->Trace( "Connected bus %d port %d level %d path %s", newd->iBus, newd->iPort, newd->iLevel, newd->sOsMountDir.c_str() );
+			LOG->Trace( "New device connected: %s", newd->sDevice.c_str() );
 			vConnects.push_back( *newd );
 		}
 	}
@@ -201,7 +201,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), d );
 		if( iter == vOld.end() )    // didn't find
 		{
-			LOG->Trace("New device (port %i) entering CHECKING.", d.iPort );
+			LOG->Trace("New device entering CHECKING: %s", d.sDevice.c_str() );
 			d.m_State = UsbStorageDevice::STATE_CHECKING;
 			continue;
 		}
@@ -360,9 +360,6 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 				TrimRight( usbd.sVendor );
 			}
 
-			LOG->Trace( "iBus: %d, iLevel: %d, iPort: %d, idVendor: 0x%04X, idDevice: 0x%04X, Vendor: '%s', Product: '%s', sSerial: %s",
-					usbd.iBus, usbd.iLevel, usbd.iPort, usbd.idVendor, usbd.idProduct, usbd.sVendor.c_str(),
-					usbd.sProduct.c_str(), usbd.sSerial.c_str() );
 			vDevicesOut.push_back( usbd );
 		}
 	}
@@ -375,7 +372,6 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 		// /dev/sdc1               /mnt/flash3             auto    noauto,owner 0 0
 		
 		CString fn = "/rootfs/etc/fstab";
-		LOG->Trace( "Reading %s", fn.c_str() );
 		RageFile f;
 		if( !f.Open(fn) )
 		{
@@ -412,14 +408,18 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 				if( usbd.sDevice == szScsiDevice )	// found our match
 				{
 					usbd.sOsMountDir = sMountPoint;
-					
-					LOG->Trace( "sDevice: %s, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",
-						usbd.sDevice.c_str(), usbd.iBus, usbd.iLevel, usbd.iPort, usbd.sOsMountDir.c_str() );
-					
 					break;	// stop looking for a match
 				}
 			}
 		}
+	}
+
+	for( unsigned i=0; i<vDevicesOut.size(); i++ )
+	{
+		UsbStorageDevice& usbd = vDevicesOut[i];
+		LOG->Trace( "    sDevice: %s, iBus: %d, iLevel: %d, iPort: %d, id: %04X:%04X, Vendor: '%s', Product: '%s', sSerial: \"%s\", sOsMountDir: %s",
+				usbd.sDevice.c_str(), usbd.iBus, usbd.iLevel, usbd.iPort, usbd.idVendor, usbd.idProduct, usbd.sVendor.c_str(),
+				usbd.sProduct.c_str(), usbd.sSerial.c_str(), usbd.sOsMountDir.c_str() );
 	}
 	
 	/* Remove any devices that we couldn't find a mountpoint for. */
@@ -428,7 +428,7 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 		UsbStorageDevice& usbd = vDevicesOut[i];
 		if( usbd.sOsMountDir.empty() )
 		{
-			LOG->Trace( "Ignoring %s (couldn't find in /etc/fstab)", usbd.sSerial.c_str() );
+			LOG->Trace( "Ignoring %s (couldn't find in /etc/fstab)", usbd.sDevice.c_str() );
 			
 			vDevicesOut.erase( vDevicesOut.begin()+i );
 			--i;
