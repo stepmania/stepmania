@@ -578,8 +578,8 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ProgressiveLifebar",			ProgressiveLifebar,	"OFF","1","2","3","4","5","6","7","8") );
 	ADD( ConfOption( "ProgressiveStageLifebar",		ProgressiveStageLifebar,	"OFF","1","2","3","4","5","6","7","8","INSANITY") );
 	ADD( ConfOption( "ProgressiveNonstopLifebar",	ProgressiveNonstopLifebar,"OFF","1","2","3","4","5","6","7","8","INSANITY") );
-	ADD( ConfOption( "DefaultFailType",				DefaultFailType,	"IMMEDIATE","COMBO OF 30 MISSES","END OF SONG","OFF" ) );	
-	ADD( ConfOption( "DefaultFailTypeNoOff",		DefaultFailType,	"IMMEDIATE","COMBO OF 30 MISSES","END OF SONG" ) );	
+	ADD( ConfOption( "DefaultFailType",				DefaultFailType,	"IMMEDIATE","END OF SONG","OFF" ) );	
+	ADD( ConfOption( "DefaultFailTypeNoOff",		DefaultFailType,	"IMMEDIATE","END OF SONG" ) );	
 	ADD( ConfOption( "CoinsPerCredit",				CoinsPerCredit,		"1","2","3","4","5","6","7","8" ) );
 	ADD( ConfOption( "Premium",						PremiumM,			"OFF","DOUBLE FOR 1 CREDIT","JOINT PREMIUM" ) );
 	ADD( ConfOption( "ShowSongOptions",				ShowSongOptions,	"HIDE","SHOW","ASK" ) );
