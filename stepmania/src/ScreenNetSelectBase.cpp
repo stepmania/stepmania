@@ -21,6 +21,9 @@
 #define CHATOUTPUT_COLOR			THEME->GetMetricC(m_sName,"ChatOutputBoxColor")
 #define SHOW_CHAT_LINES				THEME->GetMetricI(m_sName,"ChatOutputLines")
 
+#define CHAT_TEXT_OUTPUT_WIDTH		THEME->GetMetricF(m_sName,"ChatTextOutputWidth")
+#define CHAT_TEXT_INPUT_WIDTH		THEME->GetMetricF(m_sName,"ChatTextInputWidth")
+
 #define USERSALT_Y					THEME->GetMetricF(m_sName,"UsersAY")
 #define USERSDELT_X					THEME->GetMetricF(m_sName,"UsersDX")
 #define USERS_Y						THEME->GetMetricF(m_sName,"UsersY")
@@ -59,12 +62,12 @@ void ScreenNetSelectBase::Init()
 	m_textChatInput.SetVertAlign( align_top );
 	m_textChatInput.SetShadowLength( 0 );
 	m_textChatInput.SetName( "ChatInput" );
-	m_textChatInput.SetWrapWidthPixels( (int)(CHATINPUT_WIDTH * 2) );
+	m_textChatInput.SetWrapWidthPixels( (int)(CHAT_TEXT_INPUT_WIDTH) );
 	SET_XY_AND_ON_COMMAND( m_textChatInput );
 	this->AddChild( &m_textChatInput );
 
 	m_textChatOutput.LoadFromFont( THEME->GetPathF(m_sName,"chat") );
-	m_textChatOutput.SetWrapWidthPixels( (int)(CHATOUTPUT_WIDTH * 2) );
+	m_textChatOutput.SetWrapWidthPixels( (int)(CHAT_TEXT_OUTPUT_WIDTH) );
 	m_textChatOutput.SetHorizAlign( align_left );
 	m_textChatOutput.SetVertAlign( align_bottom );
 	m_textChatOutput.SetShadowLength( 0 );
