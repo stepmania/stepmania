@@ -28,7 +28,7 @@ CString LoadALSA()
 	 * on use, and this would prevent that from happening.  I don't know if anyone actually
 	 * does that, though: they're often configured to load snd (the core module) if ALSA
 	 * devices are accessed, but hardware drivers are typically loaded on boot. */
-	if( !IsADirectory("/proc/asound/") )
+	if( !IsADirectory("/rootfs/proc/asound/") )
 		return "/proc/asound/ does not exist";
 
 	ASSERT( Handle == NULL );

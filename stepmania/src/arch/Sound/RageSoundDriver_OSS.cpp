@@ -124,7 +124,7 @@ CString RageSound_OSS::CheckOSSVersion( int fd )
 	 */
 #ifndef FORCE_OSS
 #define ALSA_SNDRV_OSS_VERSION         ((3<<16)|(8<<8)|(1<<4)|(0))
-	if( version == ALSA_SNDRV_OSS_VERSION && IsADirectory("/proc/asound") )
+	if( version == ALSA_SNDRV_OSS_VERSION && IsADirectory("/rootfs/proc/asound") )
 		return "RageSound_OSS: ALSA detected.  ALSA OSS emulation is buggy; use ALSA natively.";
 #endif
 	if( version )

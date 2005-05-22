@@ -167,10 +167,10 @@ void Alsa9Buf::GetSoundCardDebugInfo()
 		return;
 	done = true;
 
-	if( DoesFileExist("/proc/asound/version") )
+	if( DoesFileExist("/rootfs/proc/asound/version") )
 	{
 		CString sVersion;
-		GetFileContents( "/proc/asound/version", sVersion, true );
+		GetFileContents( "/rootfs/proc/asound/version", sVersion, true );
 		LOG->Info( "ALSA: %s", sVersion.c_str() );
 	}
 
