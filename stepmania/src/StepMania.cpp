@@ -861,7 +861,7 @@ static void MountTreeOfZips( const CString &dir )
 				continue;
 
 			LOG->Trace( "VFS: found %s", zips[i].c_str() );
-			FILEMAN->Mount( "zip", zips[i], "" );
+			FILEMAN->Mount( "zip", zips[i], "/" );
 		}
 
 		GetDirListing( path + "/*", dirs, true, true );
