@@ -428,9 +428,11 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint )
 	FixSlashesInPlace( Root );
 	FixSlashesInPlace( MountPoint );
 
+	ASSERT_M( MountPoint.Left(1) == "/", "Mountpoints must be absolute: " + MountPoint );
+
 	if( MountPoint.size() && MountPoint.Right(1) != "/" )
 		MountPoint += '/';
-	/* XXX: Backwards compatibility; */
+
 	if( MountPoint.Left(1) != "/" )
 		MountPoint = "/" + MountPoint;
 	ASSERT( Root != "" );
