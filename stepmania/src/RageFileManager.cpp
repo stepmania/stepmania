@@ -238,14 +238,14 @@ RageFileManager::RageFileManager( CString argv0 )
 	g_Drivers.push_back( ld );
 
 	/* The mount path is unused, but must be nonempty. */
-	RageFileManager::Mount( "mem", "(cache)", "@mem" );
+	RageFileManager::Mount( "mem", "(cache)", "/@mem" );
 }
 
 void RageFileManager::MountInitialFilesystems()
 {
 	/* Add file search paths, higher priority first. */
 #if defined(XBOX)
-	RageFileManager::Mount( "dir", "D:\\", "" );
+	RageFileManager::Mount( "dir", "D:\\", "/" );
 #elif defined(LINUX)
 	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
 	 * This is /rootfs, not /root, to avoid confusion with root's home directory. */
@@ -257,7 +257,7 @@ void RageFileManager::MountInitialFilesystems()
 	
 	/* We can almost do this, to have machine profiles be system-global to eg. share
 	 * scores.  It would need to handle permissions properly. */
-/*	RageFileManager::Mount( "dir", "/var/lib/games/stepmania", "Data/Profiles" ); */
+/*	RageFileManager::Mount( "dir", "/var/lib/games/stepmania", "/Data/Profiles" ); */
 	
 	// CString Home = getenv( "HOME" ) + "/" + PRODUCT_NAME;
 
@@ -269,10 +269,10 @@ void RageFileManager::MountInitialFilesystems()
 	 * seems wrong to put lots of data (eg. music) in one.  Hmm. 
 	 */
 	/* XXX: create */
-/*	RageFileManager::Mount( "dir", Home + "." PRODUCT_NAME, "Data" ); */
+/*	RageFileManager::Mount( "dir", Home + "." PRODUCT_NAME, "/Data" ); */
 
 	/* Next, search ~/StepMania.  This is where users can put music, themes, etc. */
-	/* RageFileManager::Mount( "dir", Home + PRODUCT_NAME, "" ); */
+	/* RageFileManager::Mount( "dir", Home + PRODUCT_NAME, "/" ); */
 
 	/* Search for a directory with "Songs" in it.  Be careful: the CWD is likely to
 	 * be ~, and it's possible that some users will have a ~/Songs/ directory that
@@ -286,7 +286,7 @@ void RageFileManager::MountInitialFilesystems()
 	if( Root == "" )
 		RageException::Throw( "Couldn't find \"Songs\"" );
 			
-	RageFileManager::Mount( "dir", Root, "" );
+	RageFileManager::Mount( "dir", Root, "/" );
 #elif defined(_WINDOWS)
 	/* All Windows data goes in the directory one level above the executable. */
 	CHECKPOINT_M( ssprintf( "DOE \"%s\"", DirOfExecutable.c_str()) );
@@ -295,10 +295,10 @@ void RageFileManager::MountInitialFilesystems()
 	CHECKPOINT_M( ssprintf( "... %i parts", parts.size()) );
 	ASSERT_M( parts.size() > 1, ssprintf("Strange DirOfExecutable: %s", DirOfExecutable.c_str()) );
 	CString Dir = join( "/", parts.begin(), parts.end()-1 );
-	RageFileManager::Mount( "dir", Dir, "" );
+	RageFileManager::Mount( "dir", Dir, "/" );
 #else
 	/* Paths relative to the CWD: */
-	RageFileManager::Mount( "dir", ".", "" );
+	RageFileManager::Mount( "dir", ".", "/" );
 #endif
 }
 
