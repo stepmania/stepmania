@@ -269,6 +269,15 @@ MemoryCardManager::MemoryCardManager()
 	m_soundError.Load( THEME->GetPathS("MemoryCardManager","error"), true );
 	m_soundTooLate.Load( THEME->GetPathS("MemoryCardManager","too late"), true );
 	m_soundDisconnect.Load( THEME->GetPathS("MemoryCardManager","disconnect"), true );
+
+	/* Mount the filesystems that we'll use with Mount().  Use a bogus root for the internal
+	 * mount for now, since we don't know where we'll mount to yet; nothing reads from it
+	 * until it's mounted, anyway. */
+	FOREACH_PlayerNumber( pn )
+	{
+		FILEMAN->Mount( "dir", "/", MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
+		FILEMAN->Mount( "timeout", MEM_CARD_MOUNT_POINT_INTERNAL[pn], MEM_CARD_MOUNT_POINT[pn] );
+	}
 }
 
 MemoryCardManager::~MemoryCardManager()
@@ -393,8 +402,7 @@ void MemoryCardManager::Update( float fDelta )
 				PREFSMAN->GetMemoryCardUsbLevel(p) != d->iLevel )
 				continue;       // not a match
 			
-			LOG->Trace( "Player %i: device match:  sDevice: %s, iBus: %d, iLevel: %d, iPort: %d, sOsMountDir: %s",
-				p+1, d->sDevice.c_str(), d->iBus, d->iLevel, d->iPort, d->sOsMountDir.c_str() );
+			LOG->Trace( "Player %i: matched %s", p+1, d->sDevice.c_str() );
 
 			assigned_device = *d;    // save a copy
 			vUnassignedDevices.erase( d );       // remove the device so we don't match it for another player
@@ -588,6 +596,7 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 
 	if( !g_pWorker->Mount( &m_Device[pn] ) )
 	{
+		LOG->Trace( "MemoryCardManager::MountCard: mount failed" );
 		if( bStartingMemoryCardAccess )
 			this->UnPauseMountingThread();
 
@@ -596,33 +605,21 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 
 	m_bMounted[pn] = true;
 
-	/* If this is the first time we're mounting the device, mount the VFS drivers.
-	 * Simply mounting our VFS on a directory doesn't actually touch the directory,
-	 * so this isn't a timeout risk.  (This is important for other reasons; for example,
-	 * if we mount a CDROM, we should not spin up the disc simply by mounting it.) */
 	RageFileDriver *pDriver = FILEMAN->GetFileDriver( MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
 	if( pDriver == NULL )
 	{
-		FILEMAN->Mount( "dir", m_Device[pn].sOsMountDir, MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
-		FILEMAN->Mount( "timeout", MEM_CARD_MOUNT_POINT_INTERNAL[pn], MEM_CARD_MOUNT_POINT[pn] );
-		
-		/* We just created a worker thread.  Reset the timeout, or those threads
-		 * won't time out.  This is a hack; we should really be creating the timeout
-		 * driver on startup. */
-		this->PauseMountingThread( iTimeout );
+		LOG->Warn( "FILEMAN->GetFileDriver(%s) failed", MEM_CARD_MOUNT_POINT_INTERNAL[pn].c_str() );
+		return true;
 	}
-	else
-	{
-		/* It's already mounted.  We don't want to unmount the timeout FS.  Instead, just
-		 * move the target. */
-		pDriver->Remount( m_Device[pn].sOsMountDir );
 
-		/* Flush mountpoints pointing to what we've mounted. */
-		FILEMAN->FlushDirCache( MEM_CARD_MOUNT_POINT[pn] );
-		FILEMAN->FlushDirCache( MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
+	/* We don't want to unmount the timeout FS.  Instead, just move the target. */
+	pDriver->Remount( m_Device[pn].sOsMountDir );
 
-		FILEMAN->ReleaseFileDriver( pDriver );
-	}
+	/* Flush mountpoints pointing to what we've mounted. */
+	FILEMAN->FlushDirCache( MEM_CARD_MOUNT_POINT[pn] );
+	FILEMAN->FlushDirCache( MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
+
+	FILEMAN->ReleaseFileDriver( pDriver );
 
 	return true;
 }
@@ -697,6 +694,8 @@ CString MemoryCardManager::GetName( PlayerNumber pn ) const
 
 void MemoryCardManager::PauseMountingThread( int iTimeout )
 {
+	LOG->Trace( "MemoryCardManager::PauseMountingThread" );
+
 	g_pWorker->SetMountThreadState( ThreadedMemoryCardWorker::paused );
 
 	/* Start the timeout period. */
@@ -706,6 +705,8 @@ void MemoryCardManager::PauseMountingThread( int iTimeout )
 
 void MemoryCardManager::UnPauseMountingThread()
 {
+	LOG->Trace( "MemoryCardManager::UnPauseMountingThread" );
+
 	g_pWorker->SetMountThreadState( ThreadedMemoryCardWorker::detect_and_mount );
 
 	/* End the timeout period. */
