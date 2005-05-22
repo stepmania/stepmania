@@ -1020,14 +1020,14 @@ int main(int argc, char* argv[])
 		CStringArray dirs;
 		split( PREFSMAN->m_sAdditionalFolders, ",", dirs, true );
 		for( unsigned i=0; i < dirs.size(); i++)
-			FILEMAN->Mount( "dir", dirs[i], "" );
+			FILEMAN->Mount( "dir", dirs[i], "/" );
 	}
 	if( PREFSMAN->m_sAdditionalSongFolders.Get() != "" )
 	{
 		CStringArray dirs;
 		split( PREFSMAN->m_sAdditionalSongFolders, ",", dirs, true );
 		for( unsigned i=0; i < dirs.size(); i++)
-	        FILEMAN->Mount( "dir", dirs[i], "Songs" );
+			FILEMAN->Mount( "dir", dirs[i], "/Songs" );
 	}
 	MountTreeOfZips( ZIPS_DIR );
 
