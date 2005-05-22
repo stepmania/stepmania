@@ -568,7 +568,7 @@ void MemoryCardManager::UnlockCards()
 }
 
 /* Called just before reading or writing to the memory card.  Should block. */
-void MemoryCardManager::MountCard( PlayerNumber pn )
+void MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 {
 	LOG->Trace( "MemoryCardManager::MountCard(%i)", pn );
 	if( GetCardState(pn) != MEMORY_CARD_STATE_READY )
@@ -583,7 +583,7 @@ void MemoryCardManager::MountCard( PlayerNumber pn )
 	if( bStartingMemoryCardAccess )
 	{
 		/* We're starting to do stuff to the memory cards. */
-		this->PauseMountingThread();
+		this->PauseMountingThread( iTimeout );
 	}
 
 	if( !g_pWorker->Mount( &m_Device[pn] ) )
@@ -609,13 +609,18 @@ void MemoryCardManager::MountCard( PlayerNumber pn )
 		/* We just created a worker thread.  Reset the timeout, or those threads
 		 * won't time out.  This is a hack; we should really be creating the timeout
 		 * driver on startup. */
-		this->PauseMountingThread();
+		this->PauseMountingThread( iTimeout );
 	}
 	else
 	{
 		/* It's already mounted.  We don't want to unmount the timeout FS.  Instead, just
 		 * move the target. */
 		pDriver->Remount( m_Device[pn].sOsMountDir );
+
+		/* Flush mountpoints pointing to what we've mounted. */
+		FILEMAN->FlushDirCache( MEM_CARD_MOUNT_POINT[pn] );
+		FILEMAN->FlushDirCache( MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
+
 		FILEMAN->ReleaseFileDriver( pDriver );
 	}
 }
@@ -633,6 +638,10 @@ void MemoryCardManager::UnmountCard( PlayerNumber pn )
 
 	/* Leave our own filesystem drivers mounted.  Unmount the kernel mount. */
 	g_pWorker->Unmount( &m_Device[pn] );
+
+	/* Flush mountpoints pointing to what we've unmounted. */
+	FILEMAN->FlushDirCache( MEM_CARD_MOUNT_POINT[pn] );
+	FILEMAN->FlushDirCache( MEM_CARD_MOUNT_POINT_INTERNAL[pn] );
 
 	m_bMounted[pn] = false;
 
@@ -684,13 +693,13 @@ CString MemoryCardManager::GetName( PlayerNumber pn ) const
 	return m_Device[pn].sName;
 }
 
-void MemoryCardManager::PauseMountingThread()
+void MemoryCardManager::PauseMountingThread( int iTimeout )
 {
 	g_pWorker->SetMountThreadState( ThreadedMemoryCardWorker::paused );
 
 	/* Start the timeout period. */
-	g_pWorker->SetTimeout( 10 );
-	RageFileDriverTimeout::SetTimeout( 10 );
+	g_pWorker->SetTimeout( iTimeout );
+	RageFileDriverTimeout::SetTimeout( iTimeout );
 }
 
 void MemoryCardManager::UnPauseMountingThread()

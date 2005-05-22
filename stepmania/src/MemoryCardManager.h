@@ -22,11 +22,11 @@ public:
 	
 	void LockCards();	// prevent removing or changing of memory cards
 	void UnlockCards();
-	void MountCard( PlayerNumber pn );
+	void MountCard( PlayerNumber pn, int iTimeout = 10 );
 	void UnmountCard( PlayerNumber pn );
 
 	/* When paused, no changes in memory card state will be noticed until unpaused. */
-	void PauseMountingThread();
+	void PauseMountingThread( int iTimeout = 10 );
 	void UnPauseMountingThread();
 	
 	void FlushAndReset();	// force all files to be flushed to mounted memory cards
