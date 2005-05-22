@@ -6,7 +6,6 @@
 #include "RageFileDriver.h"
 #include "RageThreads.h"
 
-struct FileInfo;
 struct end_central_dir_record;
 class RageFileDriverZip: public RageFileDriver
 {
@@ -23,6 +22,23 @@ public:
 	void FlushDirCache( const CString &sPath );
 
 	void DeleteFileWhenFinished() { m_bFileOwned = true; }
+
+	/* Lower-level access: */
+	enum ZipCompressionMethod { STORED = 0, DEFLATED = 8 };
+	struct FileInfo
+	{
+		CString m_sName;
+		int m_iOffset;
+		int m_iDataOffset;
+
+		ZipCompressionMethod m_iCompressionMethod;
+		int m_iCRC32;
+		int m_iCompressedSize, m_iUncompressedSize;
+
+		/* If 0, unknown. */
+		int m_iFilePermissions;
+	};
+	const FileInfo *GetFileInfo( const CString &sPath ) const;
 
 private:
 	bool m_bFileOwned;

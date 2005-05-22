@@ -17,18 +17,6 @@ static struct FileDriverEntry_ZIP: public FileDriverEntry
 	RageFileDriver *Create( CString Root ) const { return new RageFileDriverZip( Root ); }
 } const g_RegisterDriver;
 
-enum ZipCompressionMethod { STORED = 0, DEFLATED = 8 };
-
-struct FileInfo
-{
-	CString m_sName;
-	int m_iOffset;
-	int m_iDataOffset;
-
-	ZipCompressionMethod m_iCompressionMethod;
-	int m_iCRC32;
-	int m_iCompressedSize, m_iUncompressedSize;
-};
 
 RageFileDriverZip::RageFileDriverZip():
 	RageFileDriver( new NullFilenameDB ),
@@ -195,7 +183,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( FileInfo &info )
 		return -1;
 	}
 
-	FileReading::read_16_le( *m_pZip, sError ); /* skip version made by */
+	int iMadeBy = FileReading::read_16_le( *m_pZip, sError ); /* skip version made by */
 	FileReading::read_16_le( *m_pZip, sError ); /* skip version needed to extract */
 	int iGeneralPurpose = FileReading::read_16_le( *m_pZip, sError );
 	info.m_iCompressionMethod = (ZipCompressionMethod) FileReading::read_16_le( *m_pZip, sError );
@@ -209,7 +197,7 @@ int RageFileDriverZip::ProcessCdirFileHdr( FileInfo &info )
 	int iFileCommentLength = FileReading::read_16_le( *m_pZip, sError );
 	FileReading::read_16_le( *m_pZip, sError ); /* relative offset of local header */
 	FileReading::read_16_le( *m_pZip, sError ); /* skip internal file attributes */
-	int iExternalFileAttributes = FileReading::read_32_le( *m_pZip, sError );
+	unsigned iExternalFileAttributes = FileReading::read_32_le( *m_pZip, sError );
 	info.m_iOffset = FileReading::read_32_le( *m_pZip, sError );
 
 	/* Check for errors before reading variable-length fields. */
@@ -240,6 +228,15 @@ int RageFileDriverZip::ProcessCdirFileHdr( FileInfo &info )
 	/* Skip directories. */
 	if( iExternalFileAttributes & (1<<4) )
 		return 0;
+
+	info.m_iFilePermissions = 0;
+	enum { MADE_BY_UNIX = 3 };
+	switch( iMadeBy )
+	{
+	case MADE_BY_UNIX:
+		info.m_iFilePermissions = iExternalFileAttributes >> 16;
+		break;
+	}
 
 	if( info.m_iCompressionMethod != STORED && info.m_iCompressionMethod != DEFLATED )
 	{
@@ -294,6 +291,11 @@ RageFileDriverZip::~RageFileDriverZip()
 
 	if( m_bFileOwned )
 		delete m_pZip;
+}
+
+const RageFileDriverZip::FileInfo *RageFileDriverZip::GetFileInfo( const CString &sPath ) const
+{
+	return (const FileInfo *) FDB->GetFilePriv( sPath );
 }
 
 RageFileBasic *RageFileDriverZip::Open( const CString &sPath, int iMode, int &iErr )
