@@ -568,11 +568,11 @@ void MemoryCardManager::UnlockCards()
 }
 
 /* Called just before reading or writing to the memory card.  Should block. */
-void MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
+bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 {
 	LOG->Trace( "MemoryCardManager::MountCard(%i)", pn );
 	if( GetCardState(pn) != MEMORY_CARD_STATE_READY )
-		return;
+		return false;
 	ASSERT( !m_Device[pn].IsBlank() );
 
 	/* Pause the mounting thread when we mount the first drive. */
@@ -591,7 +591,7 @@ void MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 		if( bStartingMemoryCardAccess )
 			this->UnPauseMountingThread();
 
-		return;
+		return false;
 	}
 
 	m_bMounted[pn] = true;
@@ -623,6 +623,8 @@ void MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 
 		FILEMAN->ReleaseFileDriver( pDriver );
 	}
+
+	return true;
 }
 
 /* Called in EndGame just after writing the profile.  Called by PlayersFinalized just after

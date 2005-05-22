@@ -22,7 +22,7 @@ public:
 	
 	void LockCards();	// prevent removing or changing of memory cards
 	void UnlockCards();
-	void MountCard( PlayerNumber pn, int iTimeout = 10 );
+	bool MountCard( PlayerNumber pn, int iTimeout = 10 );
 	void UnmountCard( PlayerNumber pn );
 
 	/* When paused, no changes in memory card state will be noticed until unpaused. */
