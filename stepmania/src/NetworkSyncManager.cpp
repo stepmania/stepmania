@@ -302,7 +302,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	m_packet.ClearPacket();
 
 	m_packet.Write1( NSCGSU );
-	uint8_t ctr = (uint8_t) (playerID * 16 + step - 1);
+	uint8_t ctr = (uint8_t) (playerID * 16 + step - ( TNS_MISS - 1 ) );
 	m_packet.Write1(ctr);
 
 	ctr = uint8_t( STATSMAN->m_CurStageStats.m_player[playerID].GetGrade()*16 );

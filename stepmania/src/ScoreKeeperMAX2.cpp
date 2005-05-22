@@ -443,7 +443,7 @@ void ScoreKeeperMAX2::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	NSMAN->ReportScore(
 		pn, 
-		holdScore+7, 
+		holdScore+TNS_MARVELOUS, 
         m_pPlayerStageStats->iScore,
         m_pPlayerStageStats->iCurCombo );
 }
