@@ -10,6 +10,7 @@
 #include "GameState.h"
 #include "Course.h"
 #include "Steps.h"
+#include "ScoreKeeperMAX2.h"
 
 #define GRADE_PERCENT_TIER(i)			THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 #define GRADE_TIER02_IS_ALL_PERFECTS	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllPerfects")
@@ -23,6 +24,7 @@ void PlayerStageStats::Init()
 	bFailedEarlier = false;
 	bGaveUp = false;
 	iPossibleDancePoints = iCurPossibleDancePoints = iActualDancePoints = 0;
+	iPossibleGradePoints = 0;
 	iCurCombo = iMaxCombo = iCurMissCombo = iScore = iBonus = iMaxScore = iCurMaxScore = 0;
 	iSongsPassed = iSongsPlayed = 0;
 	iTotalError = 0;
@@ -52,6 +54,7 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	iPossibleDancePoints += other.iPossibleDancePoints;
 	iActualDancePoints += other.iActualDancePoints;
 	iCurPossibleDancePoints += other.iCurPossibleDancePoints;
+	iPossibleGradePoints += other.iPossibleGradePoints;
 	
 	for( int t=0; t<NUM_TAP_NOTE_SCORES; t++ )
 		iTapNoteScores[t] += other.iTapNoteScores[t];
@@ -136,42 +139,20 @@ Grade PlayerStageStats::GetGrade() const
 	float fActual = 0;
 	FOREACH_TapNoteScore( tns )
 	{
-		int iTapScoreValue;
-		switch( tns )
-		{
-		case TNS_NONE:			iTapScoreValue = 0;									break;
-		case TNS_AVOIDED_MINE:	iTapScoreValue = 0;									break;
-		case TNS_HIT_MINE:		iTapScoreValue = PREFSMAN->m_iGradeWeightHitMine;	break;
-		case TNS_MISS:			iTapScoreValue = PREFSMAN->m_iGradeWeightMiss;		break;
-		case TNS_BOO:			iTapScoreValue = PREFSMAN->m_iGradeWeightBoo;		break;
-		case TNS_GOOD:			iTapScoreValue = PREFSMAN->m_iGradeWeightGood;		break;
-		case TNS_GREAT:			iTapScoreValue = PREFSMAN->m_iGradeWeightGreat;		break;
-		case TNS_PERFECT:		iTapScoreValue = PREFSMAN->m_iGradeWeightPerfect;	break;
-		case TNS_MARVELOUS:		iTapScoreValue = PREFSMAN->m_iGradeWeightMarvelous;	break;
-		default: FAIL_M( ssprintf("%i", tns) );										break;
-		}
-		if( PREFSMAN->m_bMercifulBeginner )
-			iTapScoreValue = max( 0, iTapScoreValue );
+		int iTapScoreValue = ScoreKeeperMAX2::TapNoteScoreToGradePoints( tns );
 		fActual += iTapNoteScores[tns] * iTapScoreValue;
 	}
 
 	FOREACH_HoldNoteScore( hns )
 	{
-		int iHoldScoreValue;
-		switch( hns )
-		{
-		case HNS_NONE:	iHoldScoreValue = 0;							break;
-		case HNS_NG:	iHoldScoreValue = PREFSMAN->m_iGradeWeightNG;	break;
-		case HNS_OK:	iHoldScoreValue = PREFSMAN->m_iGradeWeightOK;	break;
-		default: FAIL_M( ssprintf("%i", hns) );							break;
-		}
+		int iHoldScoreValue = ScoreKeeperMAX2::HoldNoteScoreToGradePoints( hns );
 		fActual += iHoldNoteScores[hns] * iHoldScoreValue;
 	}
 
-	LOG->Trace( "GetGrade: fActual: %f, fPossible: %d", fActual, iPossibleDancePoints );
+	LOG->Trace( "GetGrade: fActual: %f, fPossible: %d", fActual, iPossibleGradePoints );
 
 
-	float fPercent = (iPossibleDancePoints == 0) ? 0 : fActual / iPossibleDancePoints;
+	float fPercent = (iPossibleGradePoints == 0) ? 0 : fActual / iPossibleGradePoints;
 
 	Grade grade = GetGradeFromPercent( fPercent );
 

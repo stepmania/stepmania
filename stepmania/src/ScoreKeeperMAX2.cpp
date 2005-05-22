@@ -37,6 +37,7 @@ void ScoreKeeperMAX2::Load(
 	// Fill in STATSMAN->m_CurStageStats, calculate multiplier
 	//
 	int iTotalPossibleDancePoints = 0;
+	int iTotalPossibleGradePoints = 0;
 	for( unsigned i=0; i<apSteps.size(); i++ )
 	{
 		Song* pSong = apSongs[i];
@@ -74,9 +75,11 @@ void ScoreKeeperMAX2::Load(
 		NoteDataUtil::CalculateRadarValues( nd, pSong->m_fMusicLengthSeconds, rvPost );
 		 
 		iTotalPossibleDancePoints += this->GetPossibleDancePoints( rvPre, rvPost );
+		iTotalPossibleGradePoints += this->GetPossibleGradePoints( rvPre, rvPost );
 	}
 
 	m_pPlayerStageStats->iPossibleDancePoints = iTotalPossibleDancePoints;
+	m_pPlayerStageStats->iPossibleGradePoints = iTotalPossibleGradePoints;
 
 	m_iScoreRemainder = 0;
 	m_iCurToastyCombo = 0; 
@@ -474,6 +477,31 @@ int ScoreKeeperMAX2::GetPossibleDancePoints( const RadarValues& fOriginalRadars,
 		GetPossibleDancePoints(fPostRadars) );
 }
 
+int ScoreKeeperMAX2::GetPossibleGradePoints( const RadarValues& radars )
+{
+	/* Note that, if Marvelous timing is disabled or not active (not course mode),
+	 * PERFECT will be used instead. */
+
+	int NumTaps = int(radars[RADAR_NUM_TAPS_AND_HOLDS]);
+	int NumHolds = int(radars[RADAR_NUM_HOLDS]); 
+	int NumRolls = int(radars[RADAR_NUM_ROLLS]); 
+	return 
+		NumTaps*TapNoteScoreToGradePoints(TNS_MARVELOUS)+
+		NumHolds*HoldNoteScoreToGradePoints(HNS_OK) +
+		NumRolls*HoldNoteScoreToGradePoints(HNS_OK);
+}
+
+int ScoreKeeperMAX2::GetPossibleGradePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars )
+{
+	/*
+	 * The logic here is that if you use a modifier that adds notes, you should have to
+	 * hit the new notes to get a high grade.  However, if you use one that removes notes,
+	 * they should simply be counted as misses. */
+	return max( 
+		GetPossibleGradePoints(fOriginalRadars),
+		GetPossibleGradePoints(fPostRadars) );
+}
+
 
 int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 {
@@ -502,13 +530,58 @@ int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 
 int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
 {
+	int iWeight = 0;
 	switch( hns )
 	{
-	case HNS_NONE: return 0;
-	case HNS_NG: return PREFSMAN->m_iPercentScoreWeightNG;
-	case HNS_OK: return PREFSMAN->m_iPercentScoreWeightOK;
+	case HNS_NONE:	iWeight = 0;									break;
+	case HNS_NG:	iWeight = PREFSMAN->m_iPercentScoreWeightNG;	break;
+	case HNS_OK:	iWeight = PREFSMAN->m_iPercentScoreWeightOK;	break;
 	default: FAIL_M( ssprintf("%i", hns) );
 	}
+	if( PREFSMAN->m_bMercifulBeginner )
+		iWeight = max( 0, iWeight );
+	return iWeight;
+}
+
+int ScoreKeeperMAX2::TapNoteScoreToGradePoints( TapNoteScore tns )
+{
+	if( !GAMESTATE->ShowMarvelous() && tns == TNS_MARVELOUS )
+		tns = TNS_PERFECT;
+
+	/* This is used for Oni percentage displays.  Grading values are currently in
+	 * StageStats::GetGrade. */
+	int iWeight = 0;
+	switch( tns )
+	{
+	case TNS_NONE:			iWeight = 0;
+	case TNS_AVOIDED_MINE:	iWeight = 0;
+	case TNS_HIT_MINE:		iWeight = PREFSMAN->m_iGradeWeightHitMine;	break;
+	case TNS_MISS:			iWeight = PREFSMAN->m_iGradeWeightMiss;		break;
+	case TNS_BOO:			iWeight = PREFSMAN->m_iGradeWeightBoo;		break;
+	case TNS_GOOD:			iWeight = PREFSMAN->m_iGradeWeightGood;		break;
+	case TNS_GREAT:			iWeight = PREFSMAN->m_iGradeWeightGreat;	break;
+	case TNS_PERFECT:		iWeight = PREFSMAN->m_iGradeWeightPerfect;	break;
+	case TNS_MARVELOUS:		iWeight = PREFSMAN->m_iGradeWeightMarvelous;break;
+	default: FAIL_M( ssprintf("%i", tns) );
+	}
+	if( PREFSMAN->m_bMercifulBeginner )
+		iWeight = max( 0, iWeight );
+	return iWeight;
+}
+
+int ScoreKeeperMAX2::HoldNoteScoreToGradePoints( HoldNoteScore hns )
+{
+	int iWeight = 0;
+	switch( hns )
+	{
+	case HNS_NONE:	iWeight = 0;							break;
+	case HNS_NG:	iWeight = PREFSMAN->m_iGradeWeightNG;	break;
+	case HNS_OK:	iWeight = PREFSMAN->m_iGradeWeightOK;	break;
+	default: FAIL_M( ssprintf("%i", hns) );
+	}
+	if( PREFSMAN->m_bMercifulBeginner )
+		iWeight = max( 0, iWeight );
+	return iWeight;
 }
 
 /*

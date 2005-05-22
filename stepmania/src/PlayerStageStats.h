@@ -38,6 +38,7 @@ struct PlayerStageStats
 	int		iPossibleDancePoints;
 	int		iCurPossibleDancePoints;
 	int		iActualDancePoints;
+	int		iPossibleGradePoints;
 	int		iTapNoteScores[NUM_TAP_NOTE_SCORES];
 	int		iHoldNoteScores[NUM_HOLD_NOTE_SCORES];
 	int		iCurCombo;

@@ -52,11 +52,13 @@ public:
 	// do it quickly.
 	static int	GetPossibleDancePoints( const RadarValues& fRadars );
 	static int	GetPossibleDancePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars );
+	static int	GetPossibleGradePoints( const RadarValues& fRadars );
+	static int	GetPossibleGradePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars );
 
-private:
 	static int TapNoteScoreToDancePoints( TapNoteScore tns );
 	static int HoldNoteScoreToDancePoints( HoldNoteScore hns );
-
+	static int TapNoteScoreToGradePoints( TapNoteScore tns );
+	static int HoldNoteScoreToGradePoints( HoldNoteScore hns );
 };
 
 #endif
