@@ -92,6 +92,14 @@ function fapproach( val, other_val, to_move )
 	return val
 end
 
+function tableshuffle( t )
+	local ret = { }
+	for i=1,table.getn(t) do
+		table.insert( ret, math.random(i), t[i] );
+	end
+	return ret
+end
+
 -- (c) 2005 Glenn Maynard, Chris Danford
 -- All rights reserved.
 -- 
