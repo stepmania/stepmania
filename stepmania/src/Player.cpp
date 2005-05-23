@@ -48,21 +48,8 @@ static const float StepSearchDistance = 1.0f;
 enum HoldWindow { HW_OK, HW_Roll };
 enum TapWindow { TW_Marvelous, TW_Perfect, TW_Great, TW_Good, TW_Boo, TW_Mine, TW_Attack };
 
-float ADJUSTED_WINDOW_HOLD( HoldWindow hw )
-{
-	float fSecs = 0;
-	switch( hw )
-	{
-	case HW_OK:		fSecs = PREFSMAN->m_fJudgeWindowSecondsOK;		break;
-	case HW_Roll:	fSecs = PREFSMAN->m_fJudgeWindowSecondsRoll;	break;
-	default:	ASSERT(0);
-	}
-	fSecs *= PREFSMAN->m_fJudgeWindowScale;
-	fSecs += PREFSMAN->m_fJudgeWindowAdd;
-	return fSecs;
-}
 
-float ADJUSTED_WINDOW_TAP( TapWindow tw )
+float AdjustedWindowTap( TapWindow tw, bool bIsPlayingBeginner )
 {
 	float fSecs = 0;
 	switch( tw )
@@ -78,10 +65,27 @@ float ADJUSTED_WINDOW_TAP( TapWindow tw )
 	}
 	fSecs *= PREFSMAN->m_fJudgeWindowScale;
 	fSecs += PREFSMAN->m_fJudgeWindowAdd;
-	if( PREFSMAN->m_bMercifulBeginner && tw==TW_Boo )
+	if( bIsPlayingBeginner && PREFSMAN->m_bMercifulBeginner && tw==TW_Boo )
 		fSecs += 0.5f;
 	return fSecs;
 }
+
+float AdjustedWindowHold( HoldWindow hw, bool bIsPlayingBeginner )
+{
+	float fSecs = 0;
+	switch( hw )
+	{
+	case HW_OK:		fSecs = PREFSMAN->m_fJudgeWindowSecondsOK;		break;
+	case HW_Roll:	fSecs = PREFSMAN->m_fJudgeWindowSecondsRoll;	break;
+	default:	ASSERT(0);
+	}
+	fSecs *= PREFSMAN->m_fJudgeWindowScale;
+	fSecs += PREFSMAN->m_fJudgeWindowAdd;
+	return fSecs;
+}
+
+#define ADJUSTED_WINDOW_TAP( tw )	AdjustedWindowTap( tw, IsPlayingBeginner() )
+#define ADJUSTED_WINDOW_HOLD( hw )	AdjustedWindowHold( hw, IsPlayingBeginner() )
 
 
 Player::Player()
@@ -1025,7 +1029,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 
 		bool bSteppedEarly = -fNoteOffset < 0;
 		bool bScoreThis = true;
-		if( PREFSMAN->m_bMercifulBeginner && score==TNS_BOO && bSteppedEarly )
+		if( IsPlayingBeginner() && PREFSMAN->m_bMercifulBeginner && score==TNS_BOO && bSteppedEarly )
 		{
 			m_Judgment.SetJudgment( score, bSteppedEarly );
 		}
