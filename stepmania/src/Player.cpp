@@ -45,11 +45,44 @@ CString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides ){ return "AttackDisp
 /* Distance to search for a note in Step(), in seconds. */
 static const float StepSearchDistance = 1.0f;
 
-#define ADJUSTED_WINDOW_HOLD( judge ) ( \
-	(PREFSMAN->m_fJudgeWindowSeconds##judge * PREFSMAN->m_fJudgeWindowScale) + \
-	PREFSMAN->m_fJudgeWindowAdd )
+enum HoldWindow { HW_OK, HW_Roll };
+enum TapWindow { TW_Marvelous, TW_Perfect, TW_Great, TW_Good, TW_Boo, TW_Mine, TW_Attack };
 
-#define ADJUSTED_WINDOW_TAP( judge, tns ) (ADJUSTED_WINDOW_HOLD(judge))
+float ADJUSTED_WINDOW_HOLD( HoldWindow hw )
+{
+	float fSecs = 0;
+	switch( hw )
+	{
+	case HW_OK:		fSecs = PREFSMAN->m_fJudgeWindowSecondsOK;		break;
+	case HW_Roll:	fSecs = PREFSMAN->m_fJudgeWindowSecondsRoll;	break;
+	default:	ASSERT(0);
+	}
+	fSecs *= PREFSMAN->m_fJudgeWindowScale;
+	fSecs += PREFSMAN->m_fJudgeWindowAdd;
+	return fSecs;
+}
+
+float ADJUSTED_WINDOW_TAP( TapWindow tw )
+{
+	float fSecs = 0;
+	switch( tw )
+	{
+	case TW_Marvelous:	fSecs = PREFSMAN->m_fJudgeWindowSecondsMarvelous;	break;
+	case TW_Perfect:	fSecs = PREFSMAN->m_fJudgeWindowSecondsPerfect;		break;
+	case TW_Great:		fSecs = PREFSMAN->m_fJudgeWindowSecondsGreat;		break;
+	case TW_Good:		fSecs = PREFSMAN->m_fJudgeWindowSecondsGood;		break;
+	case TW_Boo:		fSecs = PREFSMAN->m_fJudgeWindowSecondsBoo;			break;
+	case TW_Mine:		fSecs = PREFSMAN->m_fJudgeWindowSecondsMine;		break;
+	case TW_Attack:		fSecs = PREFSMAN->m_fJudgeWindowSecondsAttack;		break;
+	default:	ASSERT(0);
+	}
+	fSecs *= PREFSMAN->m_fJudgeWindowScale;
+	fSecs += PREFSMAN->m_fJudgeWindowAdd;
+	if( PREFSMAN->m_bMercifulBeginner && tw==TW_Boo )
+		fSecs += 0.5f;
+	return fSecs;
+}
+
 
 Player::Player()
 {
@@ -468,7 +501,7 @@ void Player::Update( float fDeltaTime )
 					else
 					{
 						// Decrease life
-						fLife -= fDeltaTime/ADJUSTED_WINDOW_HOLD(OK);
+						fLife -= fDeltaTime/ADJUSTED_WINDOW_HOLD(HW_OK);
 						fLife = max( fLife, 0 );	// clamp
 					}
 					break;
@@ -479,7 +512,7 @@ void Player::Update( float fDeltaTime )
 					// give positive life in Step(), not here.
 
 					// Decrease life
-					fLife -= fDeltaTime/ADJUSTED_WINDOW_HOLD(Roll);
+					fLife -= fDeltaTime/ADJUSTED_WINDOW_HOLD(HW_Roll);
 					fLife = max( fLife, 0 );	// clamp
 					break;
 				default:
@@ -856,20 +889,20 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			{
 			case TapNote::mine:
 				// stepped too close to mine?
-				if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Mine,TNS_HIT_MINE) )
+				if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Mine) )
 					score = TNS_HIT_MINE;
 				break;
 
 			case TapNote::attack:
-				if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Attack,TNS_NONE) && !tn.result.bHidden )
+				if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Attack) && !tn.result.bHidden )
 					score = TNS_PERFECT; /* sentinel */
 				break;
 			default:
-				if(		 fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Marvelous,	TNS_MARVELOUS) )	score = TNS_MARVELOUS;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Perfect,	TNS_PERFECT) )		score = TNS_PERFECT;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Great,		TNS_GREAT) )		score = TNS_GREAT;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Good,		TNS_GOOD) )			score = TNS_GOOD;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(Boo,		TNS_BOO) )			score = TNS_BOO;
+				if(		 fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Marvelous) )	score = TNS_MARVELOUS;
+				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Perfect) )	score = TNS_PERFECT;
+				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Great) )		score = TNS_GREAT;
+				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Good) )		score = TNS_GOOD;
+				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Boo) )		score = TNS_BOO;
 				else	score = TNS_NONE;
 				break;
 			}
@@ -990,48 +1023,57 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		if( score == TNS_MARVELOUS && !GAMESTATE->ShowMarvelous() )
 			score = TNS_PERFECT;
 
-		if( score != TNS_NONE && score != TNS_MISS )
+		bool bSteppedEarly = -fNoteOffset < 0;
+		bool bScoreThis = true;
+		if( PREFSMAN->m_bMercifulBeginner && score==TNS_BOO && bSteppedEarly )
 		{
-			int ms_error = (int) roundf( fSecondsFromPerfect * 1000 );
-			ms_error = min( ms_error, MAX_PRO_TIMING_ERROR.GetValue() );
-
-			if( m_pPlayerStageStats )
-				m_pPlayerStageStats->iTotalError += ms_error;
+			m_Judgment.SetJudgment( score, bSteppedEarly );
 		}
-
-		//LOG->Trace("XXX: %i col %i, at %f, music at %f, step was at %f, off by %f",
-		//	score, col, fStepSeconds, fCurrentMusicSeconds, fMusicSeconds, fNoteOffset );
-//		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);
-		
-		tn.result.tns = score;
-
-		if( score != TNS_NONE )
-			tn.result.fTapNoteOffset = -fNoteOffset;
-
-		m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
-
-
-		// TODO: Remove use of PlayerNumber.
-		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-		// Keep this here so we get the same data as Autosync
-		NSMAN->ReportTiming( fNoteOffset,pn );
-		
-		if( m_pPrimaryScoreKeeper )
-			m_pPrimaryScoreKeeper->HandleTapScore( score );
-		if( m_pSecondaryScoreKeeper )
-			m_pSecondaryScoreKeeper->HandleTapScore( score );
-
-		switch( tn.type )
+		else
 		{
-		case TapNote::tap:
-		case TapNote::hold_head:
-			// don't judge the row if this note is a mine or tap attack
-			if( NoteDataWithScoring::IsRowCompletelyJudged( m_NoteData, iIndexOverlappingNote ) )
-				OnRowCompletelyJudged( iIndexOverlappingNote );
-		}
+			tn.result.tns = score;
 
-		m_LastTapNoteScore = score;
+			if( score != TNS_NONE )
+				tn.result.fTapNoteOffset = -fNoteOffset;
+
+			if( score != TNS_NONE && score != TNS_MISS )
+			{
+				int ms_error = (int) roundf( fSecondsFromPerfect * 1000 );
+				ms_error = min( ms_error, MAX_PRO_TIMING_ERROR.GetValue() );
+
+				if( m_pPlayerStageStats )
+					m_pPlayerStageStats->iTotalError += ms_error;
+			}
+
+			//LOG->Trace("XXX: %i col %i, at %f, music at %f, step was at %f, off by %f",
+			//	score, col, fStepSeconds, fCurrentMusicSeconds, fMusicSeconds, fNoteOffset );
+	//		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);
+			
+			m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
+
+
+			// TODO: Remove use of PlayerNumber.
+			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+
+			// Keep this here so we get the same data as Autosync
+			NSMAN->ReportTiming( fNoteOffset,pn );
+			
+			if( m_pPrimaryScoreKeeper )
+				m_pPrimaryScoreKeeper->HandleTapScore( score );
+			if( m_pSecondaryScoreKeeper )
+				m_pSecondaryScoreKeeper->HandleTapScore( score );
+
+			switch( tn.type )
+			{
+			case TapNote::tap:
+			case TapNote::hold_head:
+				// don't judge the row if this note is a mine or tap attack
+				if( NoteDataWithScoring::IsRowCompletelyJudged( m_NoteData, iIndexOverlappingNote ) )
+					OnRowCompletelyJudged( iIndexOverlappingNote );
+			}
+
+			m_LastTapNoteScore = score;
+		}
 	}
 
 	if( m_pNoteField )
@@ -1622,7 +1664,7 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 
 float Player::GetMaxStepDistanceSeconds()
 {
-	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW_TAP(Boo,TNS_BOO);
+	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW_TAP(TW_Boo);
 }
 
 void Player::FadeToFail()
