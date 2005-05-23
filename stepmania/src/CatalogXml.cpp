@@ -50,30 +50,56 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 	
 	{
 		XNode* pNode = xml.AppendChild( "Totals" );
+		XNode* pNumSongsByGroup = pNode->AppendChild( "NumSongsByGroup" );
+		XNode* pNumStepsByGroup = pNode->AppendChild( "NumStepsByGroup" );
 
 		int iTotalSongs = 0;
 		int iTotalSteps = 0;
-		FOREACH_CONST( Song*, SONGMAN->GetAllSongs(), i )
+		vector<CString> vsGroups;
+		SONGMAN->GetGroupNames( vsGroups );
+		FOREACH_CONST( CString, vsGroups, sGroup )
 		{
-			Song *pSong = *i;
-			if( pSong->IsTutorial() )
-				continue;	// skip
-			if( UNLOCKMAN->SongIsLocked(pSong) )
-				continue;	// skip
-			iTotalSongs++;
+			XNode* p1 = pNumSongsByGroup->AppendChild( "Group" );
+			p1->AppendAttr( "Name", *sGroup );
+			XNode* p2 = pNumStepsByGroup->AppendChild( "Group" );
+			p2->AppendAttr( "Name", *sGroup );
 
+			int iNumSongsInGroup = 0;
+			vector<Song*> vpSongsInGroup;
+			SONGMAN->GetSongs( vpSongsInGroup, *sGroup );
 			FOREACH_CONST( StepsType, vStepsTypesToShow, st )
 			{
-				FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), dc )
+				XNode* p3 = p2->AppendChild( "StepsType" );
+				p3->AppendAttr( "StepsType", GAMEMAN->StepsTypeToString(*st) );
+
+				int iNumStepsInGroupAndStepsType[NUM_DIFFICULTIES];
+				ZERO( iNumStepsInGroupAndStepsType );
+				FOREACH_CONST( Song*, vpSongsInGroup, i )
 				{
-					Steps* pSteps = pSong->GetStepsByDifficulty( *st, *dc, false );	// no autogen
-					if( pSteps == NULL )
+					Song *pSong = *i;
+					if( pSong->IsTutorial() )
 						continue;	// skip
-					if( UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
+					if( UNLOCKMAN->SongIsLocked(pSong) )
 						continue;	// skip
-					iTotalSteps++;
+					iTotalSongs++;
+					iNumSongsInGroup++;
+
+					FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), dc )
+					{
+						Steps* pSteps = pSong->GetStepsByDifficulty( *st, *dc, false );	// no autogen
+						if( pSteps == NULL )
+							continue;	// skip
+						if( UNLOCKMAN->StepsIsLocked(pSong,pSteps) )
+							continue;	// skip
+						iTotalSteps++;
+						iNumStepsInGroupAndStepsType[pSteps->GetDifficulty()]++;
+					}
 				}
+				FOREACH_Difficulty( dc )
+					p3->AppendChild( DifficultyToString(dc), iNumStepsInGroupAndStepsType[dc] );
 			}
+
+			p1->AppendAttr( "Num", iNumSongsInGroup );
 		}
 
 		int iTotalCourses = 0;
