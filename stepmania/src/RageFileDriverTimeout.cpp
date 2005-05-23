@@ -596,6 +596,12 @@ int ThreadedFileWorker::Remove( const CString &sPath )
 
 bool ThreadedFileWorker::FlushDirCache( const CString &sPath )
 {
+	/* FlushDirCache() is often called globally, on all drivers, which means it's called with
+	 * no timeout.  Temporarily enable a timeout if needed. */
+	bool bTimeoutEnabled = TimeoutEnabled();
+	if( !bTimeoutEnabled )
+		SetTimeout(1);
+
 	if( m_pChildDriver == NULL )
 		return false;
 
@@ -608,9 +614,15 @@ bool ThreadedFileWorker::FlushDirCache( const CString &sPath )
 	/* Kick off the worker thread, and wait for it to finish. */
 	if( !DoRequest(REQ_FLUSH_DIR_CACHE) )
 	{
+		if( !bTimeoutEnabled )
+			SetTimeout(-1);
+
 		LOG->Trace( "FlushDirCache(%s) timed out", sPath.c_str() );
 		return false;
 	}
+
+	if( !bTimeoutEnabled )
+		SetTimeout(-1);
 
 	return true;
 }
