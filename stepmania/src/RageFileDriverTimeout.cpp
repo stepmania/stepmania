@@ -393,6 +393,8 @@ int ThreadedFileWorker::Seek( RageFileBasic *&pFile, int iPos, CString &sError )
 		return -1;
 	}
 
+	if( m_iResultRequest == -1 )
+		sError = m_sResultError;
 	m_pRequestFile = NULL;
 
 	return m_iResultRequest;
@@ -428,7 +430,10 @@ int ThreadedFileWorker::Read( RageFileBasic *&pFile, void *pBuf, int iSize, CStr
 	}
 
 	int iGot = m_iResultRequest;
-	memcpy( pBuf, m_pResultBuffer, iGot );
+	if( iGot == -1 )
+		sError = m_sResultError;
+	else
+		memcpy( pBuf, m_pResultBuffer, iGot );
 
 	m_pRequestFile = NULL;
 	delete [] m_pResultBuffer;
@@ -468,6 +473,8 @@ int ThreadedFileWorker::Write( RageFileBasic *&pFile, const void *pBuf, int iSiz
 	}
 
 	int iGot = m_iResultRequest;
+	if( m_iResultRequest == -1 )
+		sError = m_sResultError;
 
 	m_pRequestFile = NULL;
 	delete [] m_pRequestBuffer;
@@ -502,6 +509,9 @@ int ThreadedFileWorker::Flush( RageFileBasic *&pFile, CString &sError )
 		pFile = NULL;
 		return -1;
 	}
+
+	if( m_iResultRequest == -1 )
+		sError = m_sResultError;
 
 	m_pRequestFile = NULL;
 
