@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	
@@ -397,7 +397,7 @@ HR	{
 	<xsl:template name="Translate">
 		<xsl:param name="Type" />
 		<xsl:param name="Value" />
-		<xsl:variable name="node" select="$Catalog/Types/*[name()=$Type and text()=$Value]" />
+		<xsl:variable name="node" select="$Catalog/Types/*[name()=$Type]/*[name()=$Type and text()=$Value]" />
 		<xsl:if test="count($node) &gt; 0">
 			<xsl:value-of select="$node/@DisplayAs" />
 		</xsl:if>
