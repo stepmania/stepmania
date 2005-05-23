@@ -41,7 +41,7 @@ void ScreenMusicScroll::Init()
 		
 		Song* pSong = arraySongs[i];
 		bt->LoadFromFont( THEME->GetPathF("ScreenMusicScroll","titles") );
-		bt->SetText( pSong->GetFullDisplayTitle(), pSong->GetFullTranslitTitle() );
+		bt->SetText( pSong->GetDisplayFullTitle(), pSong->GetTranslitFullTitle() );
 		bt->SetDiffuse( SONGMAN->GetSongColor(pSong) );
 		bt->SetZoom( TEXT_ZOOM );
 

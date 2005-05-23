@@ -348,7 +348,7 @@ bool NotesWriterDWI::Write( CString sPath, const Song &out )
 		RageException::Throw( "Error opening song file \"%s\" for writing: \"%s\"", sPath.c_str(), f.GetError().c_str() );
 
 	/* Write transliterations, if we have them, since DWI doesn't support UTF-8. */
-	f.PutLine( ssprintf("#TITLE:%s;", out.GetFullTranslitTitle().c_str()) );
+	f.PutLine( ssprintf("#TITLE:%s;", out.GetTranslitFullTitle().c_str()) );
 	f.PutLine( ssprintf("#ARTIST:%s;", out.GetTranslitArtist().c_str()) );
 	ASSERT( out.m_Timing.m_BPMSegments[0].m_iStartIndex == 0 );
 	f.PutLine( ssprintf("#FILE:%s;", out.m_sMusicFile.c_str()) );

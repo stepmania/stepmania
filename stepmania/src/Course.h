@@ -121,8 +121,8 @@ public:
 	CString GetTranslitSubTitle() const { return m_sSubTitleTranslit.size()? m_sSubTitleTranslit: m_sSubTitle; }
 
 	/* "title subtitle" */
-	CString GetFullDisplayTitle() const;
-	CString GetFullTranslitTitle() const;
+	CString GetDisplayFullTitle() const;
+	CString GetTranslitFullTitle() const;
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
 	Trail* GetTrail( StepsType st, CourseDifficulty cd=DIFFICULTY_MEDIUM ) const;

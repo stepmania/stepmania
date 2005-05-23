@@ -27,7 +27,7 @@ static CString GetPromptText()
 	s += ssprintf( 
 		"You have changed the timing of\n\n"
 		"%s:\n\n", 
-		GAMESTATE->m_pCurSong->GetFullDisplayTitle().c_str() );
+		GAMESTATE->m_pCurSong->GetDisplayFullTitle().c_str() );
 
 	{
 		float fOld = GAMESTATE->m_pTimingDataOriginal->m_fBeat0OffsetInSeconds;

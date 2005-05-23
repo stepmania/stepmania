@@ -1328,7 +1328,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			if( bUsesThisSong )
 			{
-				g_CourseMode.rows[0].choices.push_back( crs->GetFullDisplayTitle() );
+				g_CourseMode.rows[0].choices.push_back( crs->GetDisplayFullTitle() );
 				if( crs == m_pAttacksFromCourse )
 					g_CourseMode.rows[0].iDefaultChoice = g_CourseMode.rows[0].choices.size()-1;
 			}

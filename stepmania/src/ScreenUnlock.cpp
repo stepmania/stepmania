@@ -125,7 +125,7 @@ void ScreenUnlock::Init()
 					ASSERT( pCourse );
 
 					text->SetMaxWidth( MaxWidth );
-					text->SetText( pCourse->GetFullDisplayTitle() );
+					text->SetText( pCourse->GetDisplayFullTitle() );
 					text->SetDiffuse( RageColor(0,1,0,1) );
 				}
 				break;

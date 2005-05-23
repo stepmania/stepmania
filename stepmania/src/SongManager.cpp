@@ -1039,7 +1039,7 @@ Course* SongManager::GetCourseFromName( CString sName )
 		return NULL;
 
 	for( unsigned int i=0; i<m_pCourses.size(); i++ )
-		if( sName.CompareNoCase(m_pCourses[i]->GetFullDisplayTitle()) == 0 )
+		if( sName.CompareNoCase(m_pCourses[i]->GetDisplayFullTitle()) == 0 )
 			return m_pCourses[i];
 
 	return NULL;
@@ -1093,7 +1093,7 @@ Course *SongManager::FindCourse( CString sName )
 {
 	for( unsigned i = 0; i < m_pCourses.size(); i++ )
 	{
-		if( !sName.CompareNoCase(m_pCourses[i]->GetFullDisplayTitle()) )
+		if( !sName.CompareNoCase(m_pCourses[i]->GetDisplayFullTitle()) )
 			return m_pCourses[i];
 	}
 
@@ -1329,7 +1329,7 @@ int LuaFunc_##func( lua_State *L ) { \
 } \
 LuaFunction( func ); /* register it */
 
-LuaFunction_Song( SongFullDisplayTitle, p->GetFullDisplayTitle() );
+LuaFunction_Song( SongFullDisplayTitle, p->GetDisplayFullTitle() );
 
 static bool CheckPointer( const Steps *p )
 {
@@ -1360,7 +1360,7 @@ CString GetCurrentSongDisplayTitle()
 	const Song* pSong = GAMESTATE->m_pCurSong;
 	if( pSong == NULL )
 		return "";
-	return pSong->GetFullDisplayTitle();
+	return pSong->GetDisplayFullTitle();
 }
 
 CString GetCurrentSongDisplayArtist()

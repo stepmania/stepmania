@@ -430,7 +430,7 @@ void NetworkSyncManager::StartRequest(short position)
 	}
 
 	if (GAMESTATE->m_pCurCourse != NULL)
-		m_packet.WriteNT(GAMESTATE->m_pCurCourse->GetFullDisplayTitle());
+		m_packet.WriteNT(GAMESTATE->m_pCurCourse->GetDisplayFullTitle());
 	else
 		m_packet.WriteNT(CString(""));
 

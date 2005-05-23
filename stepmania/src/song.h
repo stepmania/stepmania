@@ -110,8 +110,8 @@ public:
 	CString GetTranslitArtist() const { return m_sArtistTranslit.size()? m_sArtistTranslit:m_sArtist; }
 
 	/* "title subtitle" */
-	CString GetFullDisplayTitle() const;
-	CString GetFullTranslitTitle() const;
+	CString GetDisplayFullTitle() const;
+	CString GetTranslitFullTitle() const;
 
 	CString m_sGenre;
 

@@ -484,7 +484,7 @@ public:
 
 		FOREACH_CONST( Song*, vpSongs, p )
 		{
-			defOut.choices.push_back( (*p)->GetFullTranslitTitle() ); 
+			defOut.choices.push_back( (*p)->GetTranslitFullTitle() ); 
 			GameCommand mc;
 			mc.m_pSong = *p;
 			ListEntries.push_back( mc );

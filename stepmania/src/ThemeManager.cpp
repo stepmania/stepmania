@@ -913,13 +913,11 @@ public:
 
 	static int GetMetric( T* p, lua_State *L )			{ lua_pushstring(L, p->GetMetric(SArg(1),SArg(2)) ); return 1; }
 	static int GetPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPath((ElementCategory)IArg(1),SArg(2),SArg(3)) ); return 1; }
-	static int GetModifierNames( T* p, lua_State *L )	{ vector<CString> v; p->GetModifierNames(v); LuaHelpers::CreateTableFromArray(v,LUA->L); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetMetric )
 		ADD_METHOD( GetPath )
-		ADD_METHOD( GetModifierNames )
 
 		Luna<T>::Register( L );
 

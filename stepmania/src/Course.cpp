@@ -685,7 +685,7 @@ CString Course::GetDisplaySubTitle() const
 	return m_sSubTitle;
 }
 
-CString Course::GetFullDisplayTitle() const
+CString Course::GetDisplayFullTitle() const
 {
 	CString Title = GetDisplayMainTitle();
 	CString SubTitle = GetDisplaySubTitle();
@@ -694,7 +694,7 @@ CString Course::GetFullDisplayTitle() const
 	return Title;
 }
 
-CString Course::GetFullTranslitTitle() const
+CString Course::GetTranslitFullTitle() const
 {
 	CString Title = GetTranslitMainTitle();
 	CString SubTitle = GetTranslitSubTitle();
@@ -1327,14 +1327,14 @@ public:
 	LunaCourse() { LUA->Register( Register ); }
 
 	static int GetPlayMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetPlayMode() ); return 1; }
-	static int GetFullDisplayTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetFullDisplayTitle() ); return 1; }
-	static int GetFullTranslitTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetFullTranslitTitle() ); return 1; }
+	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
+	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetPlayMode )
-		ADD_METHOD( GetFullDisplayTitle )
-		ADD_METHOD( GetFullTranslitTitle )
+		ADD_METHOD( GetDisplayFullTitle )
+		ADD_METHOD( GetTranslitFullTitle )
 		Luna<T>::Register( L );
 	}
 };

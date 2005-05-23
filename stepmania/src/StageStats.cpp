@@ -26,7 +26,7 @@ void StageStats::AssertValid( PlayerNumber pn ) const
 	ASSERT( vpPlayedSongs.size() != 0 );
 	ASSERT( vpPossibleSongs.size() != 0 );
 	if( vpPlayedSongs[0] )
-		CHECKPOINT_M( vpPlayedSongs[0]->GetFullTranslitTitle() );
+		CHECKPOINT_M( vpPlayedSongs[0]->GetTranslitFullTitle() );
 	ASSERT( m_player[pn].vpPlayedSteps.size() != 0 );
 	ASSERT( m_player[pn].vpPlayedSteps[0] );
 	ASSERT_M( playMode < NUM_PLAY_MODES, ssprintf("playmode %i", playMode) );

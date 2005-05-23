@@ -15,8 +15,8 @@
 //
 static bool CompareCoursePointersByName( const Course* pCourse1, const Course* pCourse2 )
 {
-	CString sName1 = pCourse1->GetFullDisplayTitle();
-	CString sName2 = pCourse2->GetFullDisplayTitle();
+	CString sName1 = pCourse1->GetDisplayFullTitle();
+	CString sName2 = pCourse2->GetDisplayFullTitle();
 	return sName1.CompareNoCase( sName2 ) < 0;
 }
 
@@ -200,7 +200,7 @@ void CourseID::FromCourse( const Course *p )
 		if( p->m_bIsAutogen )
 		{
 			sPath = "";
-			sFullTitle = p->GetFullTranslitTitle();
+			sFullTitle = p->GetTranslitFullTitle();
 		}
 		else
 		{

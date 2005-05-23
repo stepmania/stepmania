@@ -1285,7 +1285,7 @@ CString Song::GetDisplayArtist() const
 }
 
 
-CString Song::GetFullDisplayTitle() const
+CString Song::GetDisplayFullTitle() const
 {
 	CString Title = GetDisplayMainTitle();
 	CString SubTitle = GetDisplaySubTitle();
@@ -1294,7 +1294,7 @@ CString Song::GetFullDisplayTitle() const
 	return Title;
 }
 
-CString Song::GetFullTranslitTitle() const
+CString Song::GetTranslitFullTitle() const
 {
 	CString Title = GetTranslitMainTitle();
 	CString SubTitle = GetTranslitSubTitle();
@@ -1357,7 +1357,7 @@ bool Song::Matches(CString sGroup, CString sSong) const
 	// match on song dir or title (ala DWI)
 	if( !sSong.CompareNoCase(sLastBit) )
 		return true;
-	if( !sSong.CompareNoCase(this->GetFullTranslitTitle()) )
+	if( !sSong.CompareNoCase(this->GetTranslitFullTitle()) )
 		return true;
 
 	return false;
@@ -1477,8 +1477,10 @@ class LunaSong : public Luna<T>
 public:
 	LunaSong() { LUA->Register( Register ); }
 
-	static int GetFullDisplayTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetFullDisplayTitle() ); return 1; }
-	static int GetFullTranslitTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetFullTranslitTitle() ); return 1; }
+	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
+	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
+	static int GetDisplayMainTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayMainTitle() ); return 1; }
+	static int GetTranslitMainTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitMainTitle() ); return 1; }
 	static int GetDisplayArtist( T* p, lua_State *L )		{ lua_pushstring(L, p->GetDisplayArtist() ); return 1; }
 	static int GetTranslitArtist( T* p, lua_State *L )		{ lua_pushstring(L, p->GetTranslitArtist() ); return 1; }
 	static int GetGenre( T* p, lua_State *L )				{ lua_pushstring(L, p->m_sGenre ); return 1; }
@@ -1500,8 +1502,10 @@ public:
 	static int GetBackgroundPath( T* p, lua_State *L )	{ if( !p->HasBackground() ) lua_pushnil(L); else lua_pushstring(L, p->GetBackgroundPath()); return 1; }
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetFullDisplayTitle )
-		ADD_METHOD( GetFullTranslitTitle )
+		ADD_METHOD( GetDisplayFullTitle )
+		ADD_METHOD( GetTranslitFullTitle )
+		ADD_METHOD( GetDisplayMainTitle )
+		ADD_METHOD( GetTranslitMainTitle )
 		ADD_METHOD( GetDisplayArtist )
 		ADD_METHOD( GetTranslitArtist )
 		ADD_METHOD( GetGenre )

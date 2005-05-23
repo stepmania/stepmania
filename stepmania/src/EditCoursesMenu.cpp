@@ -396,7 +396,7 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 	{
 	case ROW_COURSE:
 		CHECKPOINT;
-		m_textValue[ROW_COURSE].SetText( pCourse->GetFullDisplayTitle() );
+		m_textValue[ROW_COURSE].SetText( pCourse->GetDisplayFullTitle() );
 		m_CourseBanner.LoadFromCourse( pCourse );
 		m_CourseBanner.ScaleToClipped( COURSE_BANNER_WIDTH, COURSE_BANNER_HEIGHT );
 		m_iSelection[ROW_ENTRY] = 0;
@@ -442,7 +442,7 @@ void EditCoursesMenu::OnRowValueChanged( Row row )
 			const bool *bShow = g_bRowEnabledForType[GetSelectedEntry()->type];
 
 			if( bShow[song] )
-				as.push_back( pEntry->pSong ? pEntry->pSong->GetFullTranslitTitle() : CString("(missing song)") );
+				as.push_back( pEntry->pSong ? pEntry->pSong->GetTranslitFullTitle() : CString("(missing song)") );
 			if( bShow[group] )
 				as.push_back( pEntry->group_name.empty() ? CString("(no group)") : pEntry->group_name );
 			if( bShow[difficulty] )
