@@ -63,23 +63,19 @@ void ReceptorArrow::Update( float fDeltaTime )
 	m_pReceptorGo->SetHidden( !GAMESTATE->m_bPastHereWeGo );
 	m_pReceptorWaiting->SetHidden( GAMESTATE->m_bPastHereWeGo );
 
-
 	m_pPressBlock->SetHidden( !m_bIsPressed );
+}
 
-
+void ReceptorArrow::DrawPrimitives()
+{
 	if( m_bWasPressed  &&  !m_bIsPressed )
 	{
 		m_pReceptorGo->PlayCommand( LIFT_COMMAND_NAME );
 		m_pReceptorWaiting->PlayCommand( LIFT_COMMAND_NAME );	
 	}
 
-	
 	m_bWasPressed = m_bIsPressed;
 	m_bIsPressed = false;	// it may get turned back on next update
-}
-
-void ReceptorArrow::DrawPrimitives()
-{
 
 	ActorFrame::DrawPrimitives();
 }
