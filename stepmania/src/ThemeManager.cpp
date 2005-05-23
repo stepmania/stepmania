@@ -888,6 +888,9 @@ void ThemeManager::LoadPreferencesFromSection( const CString &sClassName )
 
 	FOREACHS( CString, asNames, sName )
 	{
+		if( !sName->CompareNoCase("Fallback") )
+			continue;
+
 		IPreference *pPref = PREFSMAN->GetPreferenceByName( *sName );
 		if( pPref == NULL )
 		{
