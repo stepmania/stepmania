@@ -6,8 +6,8 @@
 #include "ProfileManager.h"
 #include "PrefsManager.h"
 
-const CString TEMP_MOUNT_POINT_INTERNAL = "@mctemp/";
-const CString TEMP_MOUNT_POINT = "@mctemptimeout/";
+const CString TEMP_MOUNT_POINT_INTERNAL = "/@mctemp/";
+const CString TEMP_MOUNT_POINT = "/@mctemptimeout/";
 
 
 MemoryCardDriverThreaded_Windows::MemoryCardDriverThreaded_Windows()
