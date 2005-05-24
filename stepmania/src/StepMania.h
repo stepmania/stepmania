@@ -11,7 +11,7 @@ int main( int argc, char* argv[] );
 void ApplyGraphicOptions();
 void NORETURN HandleException( CString error );
 void ExitGame();
-void ResetGame( bool ReturnToFirstScreen=true );
+void ResetGame();
 void SaveGamePrefsToDisk();
 void ChangeCurrentGame( const Game* g );
 void FocusChanged( bool bHasFocus );

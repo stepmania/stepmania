@@ -275,7 +275,7 @@ void ExitGame()
 	g_bQuitting = true;
 }
 
-void ResetGame( bool ReturnToFirstScreen )
+void ResetGame()
 {
 	GAMESTATE->Reset();
 	
@@ -312,10 +312,6 @@ void ResetGame( bool ReturnToFirstScreen )
 
 		PREFSMAN->m_sLastSeenInputDevices.Set( sInputDevices );
 	}
-
-
-	if( ReturnToFirstScreen )
-		SCREENMAN->SetNewScreen( INITIAL_SCREEN );
 }
 
 static void GameLoop();
@@ -1153,6 +1149,7 @@ int main(int argc, char* argv[])
 		HOOKS->BoostPriority();
 
 	ResetGame();
+	SCREENMAN->SetNewScreen( INITIAL_SCREEN );
 
 	CodeDetector::RefreshCacheItems();
 

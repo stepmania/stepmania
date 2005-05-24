@@ -158,7 +158,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			GAMESTATE->m_pCurGame = *iter;
 
 			/* Reload the theme if it's changed, but don't back to the initial screen. */
-			ResetGame( false );
+			ResetGame();
 
 			SCREENMAN->SystemMessage( CString("Game: ") + GAMESTATE->GetCurrentGame()->m_szName );
 			SCREENMAN->SetNewScreen( m_sName );

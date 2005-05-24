@@ -405,7 +405,8 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 				break;
 			case DebugLine_ReloadCurrentScreen:
 				SOUND->StopMusic();
-				ResetGame( true );
+				ResetGame();
+				SCREENMAN->SetNewScreen( SCREENMAN->GetTopScreen()->m_sName );
 				break;
 			case DebugLine_ReloadTheme:
 				THEME->ReloadMetrics();

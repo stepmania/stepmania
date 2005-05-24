@@ -15,6 +15,7 @@
 #include "Foreach.h"
 #include "OptionRowHandler.h"
 #include "ScreenOptionsMasterPrefs.h"
+#include "CommonMetrics.h"
 
 #define LINE_NAMES					THEME->GetMetric (m_sName,"LineNames")
 #define OPTION_MENU_FLAGS			THEME->GetMetric (m_sName,"OptionMenuFlags")
@@ -260,6 +261,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			if( m_iChangeMask & OPT_RESET_GAME )
 			{
 				ResetGame();
+				SCREENMAN->SetNewScreen( INITIAL_SCREEN );
 				m_bExportWillSetANewScreen = false;
 			}
 
