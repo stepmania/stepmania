@@ -1028,7 +1028,6 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			score = TNS_PERFECT;
 
 		bool bSteppedEarly = -fNoteOffset < 0;
-		bool bScoreThis = true;
 		if( IsPlayingBeginner() && PREFSMAN->m_bMercifulBeginner && score==TNS_BOO && bSteppedEarly )
 		{
 			m_Judgment.SetJudgment( score, bSteppedEarly );
