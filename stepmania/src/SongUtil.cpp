@@ -379,11 +379,22 @@ void SongID::FromSong( const Song *p )
 		sDir = p->GetSongDir();
 	else
 		sDir = "";
+	
+	// HACK for backwards compatibility:
+	// Strip off leading "/".  2005/05/21 file layer changes added a leading slash.
+	if( sDir.Left(1) == "/" )
+		sDir.erase( sDir.begin() );
 }
 
 Song *SongID::ToSong() const
 {
-	return SONGMAN->GetSongFromDir( sDir );
+	// HACK for backwards compatibility:
+	// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
+	CString sDir2 = sDir;
+	if( sDir2.Left(1) != "/" )
+		sDir2.erase( sDir2.begin() );
+
+	return SONGMAN->GetSongFromDir( sDir2 );
 }
 
 XNode* SongID::CreateNode() const

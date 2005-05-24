@@ -213,13 +213,24 @@ void CourseID::FromCourse( const Course *p )
 		sPath = "";
 		sFullTitle = "";
 	}
+
+	// HACK for backwards compatibility:
+	// Strip off leading "/".  2005/05/21 file layer changes added a leading slash.
+	if( sPath.Left(1) == "/" )
+		sPath.erase( sPath.begin() );
 }
 
 Course *CourseID::ToCourse() const
 {
-	if( !sPath.empty() )
+	// HACK for backwards compatibility:
+	// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
+	CString sPath2 = sPath;
+	if( sPath2.Left(1) != "/" )
+		sPath2.erase( sPath2.begin() );
+
+	if( !sPath2.empty() )
 	{
-		Course *pCourse = SONGMAN->GetCourseFromPath( sPath );
+		Course *pCourse = SONGMAN->GetCourseFromPath( sPath2 );
 		if( pCourse ) 
 			return pCourse;
 	}
