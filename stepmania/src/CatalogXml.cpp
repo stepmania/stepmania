@@ -214,7 +214,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 			pCourseNode->AppendChild( "SubTitle", pCourse->GetDisplaySubTitle() );
 			pCourseNode->AppendChild( "HasMods", pCourse->HasMods() );
 
-			const vector<CourseDifficulty> &vDiffs = DIFFICULTIES_TO_SHOW.GetValue();
+			const vector<CourseDifficulty> &vDiffs = COURSE_DIFFICULTIES_TO_SHOW.GetValue();
 
 			FOREACH_CONST( StepsType, vStepsTypesToShow, st )
 			{
