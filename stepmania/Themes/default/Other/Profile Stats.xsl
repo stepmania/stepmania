@@ -505,7 +505,7 @@
 	</xsl:template>		
 
 	<xsl:template match="HighScore">
-		<xsl:call-template name="CollapsibleSubSection">
+		<xsl:call-template name="SubSectionCompact">
 			<xsl:with-param name="title">
 				<xsl:apply-templates select="PercentDP"/><xsl:text> </xsl:text><xsl:apply-templates select="Grade"/><xsl:text> </xsl:text><xsl:value-of select="Name"/>
 			</xsl:with-param>
@@ -516,33 +516,6 @@
 						<xsl:with-param name="nodeset" select="*[text()]" />
 					</xsl:call-template>
 				</xsl:element>
-
-				<xsl:call-template name="CollapsibleSubSection">
-					<xsl:with-param name="title">
-						Details
-					</xsl:with-param>
-					<xsl:with-param name="text">
-
-						<h2>Judgments</h2>
-						<xsl:element name="table" use-attribute-sets="EntityTableAttr">
-							<xsl:call-template name="DataTableGenerator">
-								<xsl:with-param name="cols" select="2" />
-								<xsl:with-param name="nodeset" select="TapNoteScores/* | HoldNoteScores/*" />
-							</xsl:call-template>
-						</xsl:element>
-
-						<hr />
-
-						<h2>Stats</h2>
-						<xsl:element name="table" use-attribute-sets="EntityTableAttr">
-							<xsl:call-template name="DataTableGenerator">
-								<xsl:with-param name="cols" select="2" />
-								<xsl:with-param name="nodeset" select="RadarValues/*" />
-							</xsl:call-template>
-						</xsl:element>
-
-					</xsl:with-param>
-				</xsl:call-template>		
 			</xsl:with-param>
 		</xsl:call-template>		
 	</xsl:template>		
