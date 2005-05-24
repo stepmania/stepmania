@@ -65,6 +65,10 @@ public:
 		lua_pushcfunction(L, tostring_T);
 		lua_settable(L, metatable);
 		
+		lua_pushliteral(L, "__eq");
+		lua_pushcfunction(L, equal);
+		lua_settable(L, metatable);
+
 		// fill method table with methods from class T
 		for (unsigned i=0; s_pvMethods && i<s_pvMethods->size(); i++ )
 		{
@@ -100,6 +104,15 @@ private:
 		return (*(l->mfunc))(obj,L);  // call member function
 	}
 	
+	/* Two objects are equal if the underlying object is the same. */
+	static int equal( lua_State *L )
+	{
+		userdataType *obj1 = static_cast<userdataType*>(lua_touserdata(L, 1));
+		userdataType *obj2 = static_cast<userdataType*>(lua_touserdata(L, 2));
+		lua_pushboolean( L, obj1->pT == obj2->pT );
+		return 1;
+	}
+
 public:
 	// create a new T object and
 	// push onto the Lua stack a userdata containing a pointer to T object
