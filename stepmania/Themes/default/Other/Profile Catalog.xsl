@@ -78,7 +78,7 @@
 	</xsl:template>		
 	
 	<xsl:template match="Steps | Trail">
-		<xsl:call-template name="CollapsibleSubSection">
+		<xsl:call-template name="SubSectionCompact">
 			<xsl:with-param name="title">
 				<xsl:apply-templates select="." mode="AttributeTitleGenerator" />
 			</xsl:with-param>
@@ -87,19 +87,10 @@
 				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
 					<xsl:call-template name="DataTableGenerator">
 						<xsl:with-param name="cols" select="1" />
-						<xsl:with-param name="nodeset" select="*[text()]" />
+						<xsl:with-param name="nodeset" select="*[text()] | ./*/*[text()]" />
 					</xsl:call-template>
 				</xsl:element>
 
-				<hr />
-				<xsl:for-each select="./*[count(*) &gt; 0]">
-					<xsl:element name="table" use-attribute-sets="EntityTableAttr">
-						<xsl:call-template name="DataTableGenerator">
-							<xsl:with-param name="cols" select="2" />
-							<xsl:with-param name="nodeset" select="*[text()]" />
-						</xsl:call-template>
-					</xsl:element>
-				</xsl:for-each>
 			</xsl:with-param>
 		</xsl:call-template>
 	</xsl:template>		

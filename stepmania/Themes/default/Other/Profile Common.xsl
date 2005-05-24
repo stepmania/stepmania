@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	
@@ -16,6 +16,7 @@
 	</xsl:attribute-set>
 
 	<xsl:attribute-set name="DataTableAttr">
+		<xsl:attribute name="align">left</xsl:attribute>
 		<xsl:attribute name="cellpadding">2</xsl:attribute>
 		<xsl:attribute name="cellspacing">0</xsl:attribute>
 		<xsl:attribute name="border">0</xsl:attribute>
@@ -27,9 +28,18 @@
 		<xsl:attribute name="border">0</xsl:attribute>
 	</xsl:attribute-set>
 
+	<xsl:attribute-set name="CollapsableTableAttr">
+		<xsl:attribute name="cellpadding">3</xsl:attribute>
+		<xsl:attribute name="cellspacing">1</xsl:attribute>
+		<xsl:attribute name="border">0</xsl:attribute>
+		<xsl:attribute name="width">100%</xsl:attribute>
+	</xsl:attribute-set>
+
 	<xsl:attribute-set name="CompactTableAttr">
-		<xsl:attribute name="cellpadding">0</xsl:attribute>
-		<xsl:attribute name="cellspacing">0</xsl:attribute>
+		<xsl:attribute name="align">left</xsl:attribute>
+		<xsl:attribute name="class">CompactTableAttr</xsl:attribute>
+		<xsl:attribute name="cellpadding">3</xsl:attribute>
+		<xsl:attribute name="cellspacing">1</xsl:attribute>
 		<xsl:attribute name="border">0</xsl:attribute>
 	</xsl:attribute-set>
 	
@@ -264,6 +274,10 @@ HR	{
 .titlevalue {
 	font-size: 10px;
 	font-weight: bold;
+}
+
+.CompactTableAttr {
+	margin: 2px 2px 2px 2px;
 }
 			</style>  
 
@@ -748,7 +762,7 @@ HR	{
 		<xsl:call-template name="CollapsibleSubSection">
 			<xsl:with-param name="title" select="$title" />
 			<xsl:with-param name="text">
-				<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+				<xsl:element name="table" use-attribute-sets="CollapsableTableAttr">
 					<tr>
 						<td>
 							<xsl:copy-of select="$text" />
@@ -763,12 +777,30 @@ HR	{
 	<xsl:template name="CollapsibleSubSection">
 		<xsl:param name="title" />
 		<xsl:param name="text" />
-		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
+		<xsl:element name="table" use-attribute-sets="CollapsableTableAttr">
 			<tr>
 				<xsl:element name="th" use-attribute-sets="ToggleLinkAttr">
 					<xsl:attribute name="class">main</xsl:attribute>
 					<xsl:call-template name="ToggleDisplayImage" />
 					<xsl:text> </xsl:text><xsl:value-of select="$title" />
+				</xsl:element>
+			</tr>
+			<tr name="hide">
+				<td style="background: #F4F6F7;">
+					<xsl:copy-of select="$text" />
+				</td>
+			</tr>
+		</xsl:element>
+	</xsl:template>
+	
+	<xsl:template name="SubSectionCompact">
+		<xsl:param name="title" />
+		<xsl:param name="text" />
+		<xsl:element name="table" use-attribute-sets="CompactTableAttr">
+			<tr>
+				<xsl:element name="th">
+					<xsl:attribute name="class">main</xsl:attribute>
+					<xsl:value-of select="$title" />
 				</xsl:element>
 			</tr>
 			<tr name="hide">
