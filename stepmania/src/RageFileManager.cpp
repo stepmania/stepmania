@@ -296,6 +296,13 @@ void RageFileManager::MountInitialFilesystems()
 	ASSERT_M( parts.size() > 1, ssprintf("Strange DirOfExecutable: %s", DirOfExecutable.c_str()) );
 	CString Dir = join( "/", parts.begin(), parts.end()-1 );
 	RageFileManager::Mount( "dir", Dir, "/" );
+#elif defined(DARWIN)
+	CHECKPOINT_M( ssprintf("DOE \"%s\"", DirOfExecutable.c_str()) );
+	CStringArray parts;
+	split( DirOfExecutable, "/", parts );
+	ASSERT( parts.size() > 3 );
+	CString Dir = '/' + join( "/", parts.begin(), parts.end()-3 );
+	RageFileManager::Mount( "dir", Dir, "/" );
 #else
 	/* Paths relative to the CWD: */
 	RageFileManager::Mount( "dir", ".", "/" );
