@@ -699,8 +699,8 @@ void MemoryCardManager::PauseMountingThread( int iTimeout )
 	g_pWorker->SetMountThreadState( ThreadedMemoryCardWorker::paused );
 
 	/* Start the timeout period. */
-	g_pWorker->SetTimeout( iTimeout );
-	RageFileDriverTimeout::SetTimeout( iTimeout );
+	g_pWorker->SetTimeout( (float) iTimeout );
+	RageFileDriverTimeout::SetTimeout( (float) iTimeout );
 }
 
 void MemoryCardManager::UnPauseMountingThread()
