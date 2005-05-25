@@ -261,6 +261,8 @@ CLEAN :
 	-@erase "$(INTDIR)\InputHandler_Win32_Para.sbr"
 	-@erase "$(INTDIR)\InputHandler_Win32_Pump.obj"
 	-@erase "$(INTDIR)\InputHandler_Win32_Pump.sbr"
+	-@erase "$(INTDIR)\InputHandler_Win32_MIDI.obj"
+	-@erase "$(INTDIR)\InputHandler_Win32_MIDI.sbr"
 	-@erase "$(INTDIR)\InputMapper.obj"
 	-@erase "$(INTDIR)\InputMapper.sbr"
 	-@erase "$(INTDIR)\InputQueue.obj"
@@ -1015,6 +1017,7 @@ BSC32_SBRS= \
 	"$(INTDIR)\InputHandler_MonkeyKeyboard.sbr" \
 	"$(INTDIR)\InputHandler_Win32_Para.sbr" \
 	"$(INTDIR)\InputHandler_Win32_Pump.sbr" \
+	"$(INTDIR)\InputHandler_Win32_MIDI.sbr" \
 	"$(INTDIR)\MovieTexture.sbr" \
 	"$(INTDIR)\MovieTexture_DShow.sbr" \
 	"$(INTDIR)\MovieTexture_DShowHelper.sbr" \
@@ -1413,6 +1416,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\InputHandler_MonkeyKeyboard.obj" \
 	"$(INTDIR)\InputHandler_Win32_Para.obj" \
 	"$(INTDIR)\InputHandler_Win32_Pump.obj" \
+	"$(INTDIR)\InputHandler_Win32_MIDI.obj" \
 	"$(INTDIR)\MovieTexture.obj" \
 	"$(INTDIR)\MovieTexture_DShow.obj" \
 	"$(INTDIR)\MovieTexture_DShowHelper.obj" \
@@ -1914,6 +1918,8 @@ CLEAN :
 	-@erase "$(INTDIR)\InputHandler_Win32_Para.sbr"
 	-@erase "$(INTDIR)\InputHandler_Win32_Pump.obj"
 	-@erase "$(INTDIR)\InputHandler_Win32_Pump.sbr"
+	-@erase "$(INTDIR)\InputHandler_Win32_MIDI.obj"
+	-@erase "$(INTDIR)\InputHandler_Win32_MIDI.sbr"
 	-@erase "$(INTDIR)\InputMapper.obj"
 	-@erase "$(INTDIR)\InputMapper.sbr"
 	-@erase "$(INTDIR)\InputQueue.obj"
@@ -2664,6 +2670,7 @@ BSC32_SBRS= \
 	"$(INTDIR)\InputHandler_MonkeyKeyboard.sbr" \
 	"$(INTDIR)\InputHandler_Win32_Para.sbr" \
 	"$(INTDIR)\InputHandler_Win32_Pump.sbr" \
+	"$(INTDIR)\InputHandler_Win32_MIDI.sbr" \
 	"$(INTDIR)\MovieTexture.sbr" \
 	"$(INTDIR)\MovieTexture_DShow.sbr" \
 	"$(INTDIR)\MovieTexture_DShowHelper.sbr" \
@@ -3062,6 +3069,7 @@ LINK32_OBJS= \
 	"$(INTDIR)\InputHandler_MonkeyKeyboard.obj" \
 	"$(INTDIR)\InputHandler_Win32_Para.obj" \
 	"$(INTDIR)\InputHandler_Win32_Pump.obj" \
+	"$(INTDIR)\InputHandler_Win32_MIDI.obj" \
 	"$(INTDIR)\MovieTexture.obj" \
 	"$(INTDIR)\MovieTexture_DShow.obj" \
 	"$(INTDIR)\MovieTexture_DShowHelper.obj" \
@@ -4111,6 +4119,10 @@ SOURCE=.\arch\InputHandler\InputHandler_Win32_Pump.cpp
 "$(INTDIR)\InputHandler_Win32_Pump.obj"	"$(INTDIR)\InputHandler_Win32_Pump.sbr" : $(SOURCE) "$(INTDIR)"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
+SOURCE=.\arch\InputHandler\InputHandler_Win32_MIDI.cpp
+
+"$(INTDIR)\InputHandler_Win32_MIDI.obj"	"$(INTDIR)\InputHandler_Win32_MIDI.sbr" : $(SOURCE) "$(INTDIR)"
+	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 SOURCE=.\arch\MovieTexture\MovieTexture.cpp
 
