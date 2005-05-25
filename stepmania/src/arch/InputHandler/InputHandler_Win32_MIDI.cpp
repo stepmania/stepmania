@@ -11,6 +11,12 @@
 static HMIDIIN g_device;
 static void CALLBACK midiCallback(HMIDIIN g_device, UINT status, DWORD instancePtr, DWORD data, DWORD timestamp);
 
+static CString GetMidiError( MMRESULT result )
+{
+	char szError[256];
+	midiOutGetErrorText( result, szError, 256 );
+	return szError;
+}
 
 InputHandler_Win32_MIDI::InputHandler_Win32_MIDI()
 {
@@ -25,21 +31,17 @@ InputHandler_Win32_MIDI::InputHandler_Win32_MIDI()
     }
 	m_bFoundDevice = true;
 
-	MMRESULT result = midiInOpen(&g_device, device_id, (DWORD)&(midiCallback), (DWORD)this, CALLBACK_FUNCTION);
+	MMRESULT result = midiInOpen( &g_device, device_id, (DWORD) &midiCallback, (DWORD) this, CALLBACK_FUNCTION );
     if( result != MMSYSERR_NOERROR )
 	{
-		char strError[256];
-		midiOutGetErrorText( result, strError, 256 );
-		LOG->Warn( "Error with MIDI Opening: %s", strError );
+		LOG->Warn( "Error with MIDI Opening: %s", GetMidiError(result).c_str() );
         return;
     }
 
     result = midiInStart(g_device);
 	if( result != MMSYSERR_NOERROR )
 	{
-		char strError[256];
-		midiOutGetErrorText( result, strError, 256 );
-		LOG->Warn( "Error with MIDI Starting: %s", strError );
+		LOG->Warn( "Error with MIDI Starting: %s", GetMidiError(result).c_str() );
         return;
     }
 }
@@ -51,18 +53,14 @@ InputHandler_Win32_MIDI::~InputHandler_Win32_MIDI()
 	result = midiInReset( g_device );
 	if( result != MMSYSERR_NOERROR )
 	{
-		char strError[256];
-		midiOutGetErrorText( result, strError, 256 );
-		LOG->Warn( "Error with MIDI Reset: %s", strError );
+		LOG->Warn( "Error with MIDI Reset: %s", GetMidiError(result).c_str() );
         return;
     }
 
 	result = midiInClose( g_device );
 	if( result != MMSYSERR_NOERROR )
 	{
-		char strError[256];
-		midiOutGetErrorText( result, strError, 256 );
-		LOG->Warn( "Error with MIDI Close: %s", strError );
+		LOG->Warn( "Error with MIDI Close: %s", GetMidiError(result).c_str() );
         return;
     }
 
@@ -85,7 +83,7 @@ static void CALLBACK midiCallback( HMIDIIN device, UINT status, DWORD instancePt
 		int iChannel = (data & 0xff00) >> 8;
 		int iValue = (data & 0xff0000) >> 16;
 
-		// Channel 0 in midi is a special channel that generally will get triggerd when too many channels are pressed
+		// Channel 0 in midi is a special channel that generally will get triggered when too many channels are pressed.
 		if( iChannel == 0 )
 			return;
 
