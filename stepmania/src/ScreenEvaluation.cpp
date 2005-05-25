@@ -31,6 +31,7 @@
 #include "PlayerState.h"
 #include "Command.h"
 #include "CommonMetrics.h"
+#include "ScoreKeeperMAX2.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -160,6 +161,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElement
 			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_MARVELOUS] = rand()%3;
 			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_PERFECT] = rand()%3;
 			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_GREAT] = rand()%3;
+			STATSMAN->m_CurStageStats.m_player[p].iPossibleGradePoints = 4*ScoreKeeperMAX2::TapNoteScoreToGradePoints(TNS_MARVELOUS);
 			STATSMAN->m_CurStageStats.m_player[p].fLifeRemainingSeconds = randomf( 90, 580 );
 		}
 
