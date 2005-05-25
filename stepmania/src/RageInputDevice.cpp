@@ -254,7 +254,7 @@ CString DeviceButtonToString( InputDevice device, DeviceButton i )
 	case DEVICE_JOY14:
 	case DEVICE_JOY15:
 	case DEVICE_JOY16:		return JoystickButtonToString( (JoystickButton)i );
-	case DEVICE_PUMP1:		return PumpPadButtonToString( (PumpPadButton)i );
+	case DEVICE_PUMP1:
 	case DEVICE_PUMP2:		return PumpPadButtonToString( (PumpPadButton)i );
 	case DEVICE_MIDI:		return ssprintf("Midi %d", (int)i);
 	case DEVICE_PARA1:		return ParaPadButtonToString( (ParaPadButton)i );
