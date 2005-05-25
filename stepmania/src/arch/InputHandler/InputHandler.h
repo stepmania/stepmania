@@ -1,5 +1,5 @@
 #ifndef INPUT_HANDLER_H
-#define INPUT_HANDLER_H 1
+#define INPUT_HANDLER_H
 
 /*
  * This is a simple class to handle special input devices.  Update()
@@ -27,8 +27,8 @@ class InputHandler
 public:
 	InputHandler() { m_iInputsSinceUpdate = 0; }
 	virtual ~InputHandler() { }
-	virtual void Update(float fDeltaTime) { }
-	virtual void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut) = 0;
+	virtual void Update( float fDeltaTime ) { }
+	virtual void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut ) = 0;
 
 	/* In Windows, some devices need to be recreated if we recreate our main window.
 	 * Override this if you need to do that. */
