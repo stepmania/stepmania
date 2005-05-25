@@ -8,10 +8,10 @@
 class InputHandler_MonkeyKeyboard: public InputHandler
 {
 public:
-	void Update(float fDeltaTime);
+	void Update( float fDeltaTime );
 	InputHandler_MonkeyKeyboard();
 	~InputHandler_MonkeyKeyboard();
-	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
+	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );
 
 private:
 	RageTimer m_timerPressButton;

@@ -8,10 +8,10 @@ class USBDevice;
 class InputHandler_Win32_Para: public InputHandler
 {
 public:
-	void Update(float fDeltaTime);
+	void Update( float fDeltaTime );
 	InputHandler_Win32_Para();
 	~InputHandler_Win32_Para();
-	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
+	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );
 
 private:
 	USBDevice *dev;

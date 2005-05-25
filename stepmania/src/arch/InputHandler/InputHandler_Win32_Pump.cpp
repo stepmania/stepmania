@@ -9,25 +9,25 @@
 
 InputHandler_Win32_Pump::InputHandler_Win32_Pump()
 {
-	shutdown = false;
+	m_bShutdown = false;
 	const int pump_usb_vid = 0x0d2f, pump_usb_pid = 0x0001;
 
-	dev = new USBDevice[NUM_PUMPS];
+	m_pDevice = new USBDevice[NUM_PUMPS];
 
-	bool FoundOnePad = false;
-	for(int i = 0; i < NUM_PUMPS; ++i)
+	bool bFoundOnePad = false;
+	for( int i = 0; i < NUM_PUMPS; ++i )
 	{
-		if(dev[i].Open(pump_usb_vid, pump_usb_pid, sizeof(long), i))
+		if( m_pDevice[i].Open(pump_usb_vid, pump_usb_pid, sizeof(long), i) )
 		{
-			FoundOnePad = true;
-			LOG->Info("Found Pump pad %i", i);
+			bFoundOnePad = true;
+			LOG->Info( "Found Pump pad %i", i );
 		}
 	}
 
 	/* Don't start a thread if we have no pads. */
-	if( FoundOnePad && PREFSMAN->m_bThreadedInput )
+	if( bFoundOnePad && PREFSMAN->m_bThreadedInput )
 	{
-		InputThread.SetName("Pump thread");
+		InputThread.SetName( "Pump thread" );
 		InputThread.Create( InputThread_Start, this );
 	}
 }
@@ -36,16 +36,16 @@ InputHandler_Win32_Pump::~InputHandler_Win32_Pump()
 {
 	if( InputThread.IsCreated() )
 	{
-		shutdown = true;
-		LOG->Trace("Shutting down Pump thread ...");
+		m_bShutdown = true;
+		LOG->Trace( "Shutting down Pump thread ..." );
 		InputThread.Wait();
-		LOG->Trace("Pump thread shut down.");
+		LOG->Trace( "Pump thread shut down." );
 	}
 
-	delete[] dev;
+	delete[] m_pDevice;
 }
 
-void InputHandler_Win32_Pump::HandleInput( int devno, int event )
+void InputHandler_Win32_Pump::HandleInput( int iDevice, int iEvent )
 {
 	static const int bits[NUM_PUMP_PAD_BUTTONS] = {
 	/* P1 */	(1<<9), (1<<12), (1<<13), (1<<11), (1<<10),
@@ -53,17 +53,17 @@ void InputHandler_Win32_Pump::HandleInput( int devno, int event )
 	/* P1 */	(1<<17), (1<<20), (1<<21), (1<<19), (1<<18),
 	};
 
-	InputDevice id = InputDevice(DEVICE_PUMP1 + devno);
+	InputDevice id = InputDevice( DEVICE_PUMP1 + iDevice );
 
-	for (int butno = 0 ; butno < NUM_PUMP_PAD_BUTTONS ; butno++)
+	for( int iButton = 0; iButton < NUM_PUMP_PAD_BUTTONS; ++iButton )
 	{
-		DeviceInput di(id, butno);
+		DeviceInput di( id, iButton );
 		
 		/* If we're in a thread, our timestamp is accurate. */
 		if( InputThread.IsCreated() )
 			di.ts.Touch();
 
-		ButtonPressed(di, !(event & bits[butno]));
+		ButtonPressed( di, !(iEvent & bits[iButton]) );
 	}
 }
 
@@ -71,7 +71,7 @@ void InputHandler_Win32_Pump::GetDevicesAndDescriptions(vector<InputDevice>& vDe
 {
 	for(int i = 0; i < NUM_PUMPS; ++i)
 	{
-		if( dev[i].IsOpen() )
+		if( m_pDevice[i].IsOpen() )
 		{
 			vDevicesOut.push_back( InputDevice(DEVICE_PUMP1+i) );
 			vDescriptionsOut.push_back( "Pump USB" );
@@ -87,47 +87,47 @@ int InputHandler_Win32_Pump::InputThread_Start( void *p )
 
 void InputHandler_Win32_Pump::InputThreadMain()
 {
-	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST))
-		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set Pump thread priority"));
+	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST) )
+		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set Pump thread priority") );
 
 	/* Enable priority boosting. */
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
 
-	vector<WindowsFileIO *> sources;
+	vector<WindowsFileIO *> apSources;
 	for( int i = 0; i < NUM_PUMPS; ++i )
 	{
-		if( dev[i].io.IsOpen() )
-			sources.push_back( &dev[i].io );
+		if( m_pDevice[i].io.IsOpen() )
+			apSources.push_back( &m_pDevice[i].io );
 	}
 
-	while(!shutdown)
+	while( !m_bShutdown )
 	{
 		CHECKPOINT;
-		int actual = 0, val = 0;
-		int ret = WindowsFileIO::read_several(sources, &val, actual, 0.100f);
+		int iActual = 0, iVal = 0;
+		int iRet = WindowsFileIO::read_several( apSources, &iVal, iActual, 0.100f );
 
 		CHECKPOINT;
-		if(ret <= 0) 
+		if( iRet <= 0 )
 			continue; /* no event */
 
-		HandleInput( actual, val );
+		HandleInput( iActual, iVal );
 		InputHandler::UpdateTimer();
 	}
 	CHECKPOINT;
 }
 
-void InputHandler_Win32_Pump::Update(float fDeltaTime)
+void InputHandler_Win32_Pump::Update( float fDeltaTime )
 {
 	if( !InputThread.IsCreated() )
 	{
-		for(int i = 0; i < NUM_PUMPS; ++i)
+		for( int i = 0; i < NUM_PUMPS; ++i )
 		{
-			int ret = dev[i].GetPadEvent();
+			int iRet = m_pDevice[i].GetPadEvent();
 
-			if(ret == -1) 
+			if( iRet == -1 )
 				continue; /* no event */
 
-			HandleInput( i, ret );
+			HandleInput( i, iRet );
 		}
 		InputHandler::UpdateTimer();
 	}

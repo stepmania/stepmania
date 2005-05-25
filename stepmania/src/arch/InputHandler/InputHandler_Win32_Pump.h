@@ -8,15 +8,15 @@ class USBDevice;
 class InputHandler_Win32_Pump: public InputHandler
 {
 public:
-	void Update(float fDeltaTime);
+	void Update( float fDeltaTime );
 	InputHandler_Win32_Pump();
 	~InputHandler_Win32_Pump();
-	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
+	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );
 
 private:
-	USBDevice *dev;
+	USBDevice *m_pDevice;
 	RageThread InputThread;
-	bool shutdown;
+	bool m_bShutdown;
 
 	static int InputThread_Start( void *p );
 	void InputThreadMain();
