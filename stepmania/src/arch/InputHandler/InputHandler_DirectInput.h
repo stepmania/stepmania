@@ -7,6 +7,14 @@
 struct DIDevice;
 class InputHandler_DInput: public InputHandler
 {
+public:
+	InputHandler_DInput();
+	~InputHandler_DInput();
+	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
+	void Update(float fDeltaTime);
+	void WindowReset();
+
+private:
 	RageThread InputThread;
 	bool shutdown;
 
@@ -19,13 +27,6 @@ class InputHandler_DInput: public InputHandler
 
 	void StartThread();
 	void ShutdownThread();
-
-public:
-	InputHandler_DInput();
-	~InputHandler_DInput();
-	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
-	void Update(float fDeltaTime);
-	void WindowReset();
 };
 #define USE_INPUT_HANDLER_DIRECTINPUT
 

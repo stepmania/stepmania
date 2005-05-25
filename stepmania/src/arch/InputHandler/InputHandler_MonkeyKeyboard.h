@@ -1,5 +1,5 @@
 #ifndef INPUT_HANDLER_MONKEY_SCRIPT
-#define INPUT_HANDLER_MONKEY_SCRIPT 1
+#define INPUT_HANDLER_MONKEY_SCRIPT
 
 #include "InputHandler.h"
 #include "RageTimer.h"
@@ -7,14 +7,15 @@
 
 class InputHandler_MonkeyKeyboard: public InputHandler
 {
-	RageTimer m_timerPressButton;
-	DeviceInput m_diLast;	// Last input that we sent
-
 public:
 	void Update(float fDeltaTime);
 	InputHandler_MonkeyKeyboard();
 	~InputHandler_MonkeyKeyboard();
 	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
+
+private:
+	RageTimer m_timerPressButton;
+	DeviceInput m_diLast;	// Last input that we sent
 };
 #define USE_INPUT_HANDLER_MONKEY_KEYBOARD
 

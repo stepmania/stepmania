@@ -1,5 +1,5 @@
 #ifndef INPUT_HANDLER_WIN32_PARA_H
-#define INPUT_HANDLER_WIN32_PARA_H 1
+#define INPUT_HANDLER_WIN32_PARA_H
 
 #include "InputHandler.h"
 #include "RageThreads.h"
@@ -7,6 +7,13 @@
 class USBDevice;
 class InputHandler_Win32_Para: public InputHandler
 {
+public:
+	void Update(float fDeltaTime);
+	InputHandler_Win32_Para();
+	~InputHandler_Win32_Para();
+	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
+
+private:
 	USBDevice *dev;
 	RageThread InputThread;
 	bool shutdown;
@@ -14,13 +21,6 @@ class InputHandler_Win32_Para: public InputHandler
 	static int InputThread_Start( void *p );
 	void InputThreadMain();
 	void HandleInput( int devno, int event );
-
-
-public:
-	void Update(float fDeltaTime);
-	InputHandler_Win32_Para();
-	~InputHandler_Win32_Para();
-	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
 };
 #define USE_INPUT_HANDLER_WIN32_PARA
 
