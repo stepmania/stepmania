@@ -134,7 +134,7 @@ void GraphDisplay::UpdateVerts()
 	int NumSlices = VALUE_RESOLUTION-1;
 
 	for( int i = 0; i < 4*NumSlices; ++i )
-		Slices[i].c = RageColor(1,1,1,1);
+		m_Slices[i].c = RageColor(1,1,1,1);
 
 	for( int i = 0; i < NumSlices; ++i )
 	{
@@ -143,23 +143,23 @@ void GraphDisplay::UpdateVerts()
 		const float LeftTop = SCALE( float(m_CurValues[i]), 0.0f, 1.0f, m_quadVertices.bottom, m_quadVertices.top );
 		const float RightTop = SCALE( float(m_CurValues[i+1]), 0.0f, 1.0f, m_quadVertices.bottom, m_quadVertices.top );
 
-		Slices[i*4+0].p = RageVector3( Left,		LeftTop,	0 );	// top left
-		Slices[i*4+1].p = RageVector3( Left,		m_quadVertices.bottom,	0 );	// bottom left
-		Slices[i*4+2].p = RageVector3( Right,		m_quadVertices.bottom,	0 );	// bottom right
-		Slices[i*4+3].p = RageVector3( Right,		RightTop,	0 );	// top right
+		m_Slices[i*4+0].p = RageVector3( Left,		LeftTop,	0 );	// top left
+		m_Slices[i*4+1].p = RageVector3( Left,		m_quadVertices.bottom,	0 );	// bottom left
+		m_Slices[i*4+2].p = RageVector3( Right,		m_quadVertices.bottom,	0 );	// bottom right
+		m_Slices[i*4+3].p = RageVector3( Right,		RightTop,	0 );	// top right
 
-	//	Slices[i*4+0].c = RageColor(.2,.2,.2,1);
-	//	Slices[i*4+1].c = RageColor(1,1,1,1);
-	//	Slices[i*4+2].c = RageColor(1,1,1,1);
-	//	Slices[i*4+3].c = RageColor(.2,.2,.2,1);
+	//	m_Slices[i*4+0].c = RageColor(.2,.2,.2,1);
+	//	m_Slices[i*4+1].c = RageColor(1,1,1,1);
+	//	m_Slices[i*4+2].c = RageColor(1,1,1,1);
+	//	m_Slices[i*4+3].c = RageColor(.2,.2,.2,1);
 	}
 
 	const RectF *tex = m_pTexture->GetTextureCoordRect( 0 );
-	for( unsigned i = 0; i < ARRAYSIZE(Slices); ++i )
+	for( unsigned i = 0; i < ARRAYSIZE(m_Slices); ++i )
 	{
-		Slices[i].t = RageVector2( 
-			SCALE( Slices[i].p.x, m_quadVertices.left, m_quadVertices.right, tex->left, tex->right ),
-			SCALE( Slices[i].p.y, m_quadVertices.top, m_quadVertices.bottom, tex->top, tex->bottom )
+		m_Slices[i].t = RageVector2( 
+			SCALE( m_Slices[i].p.x, m_quadVertices.left, m_quadVertices.right, tex->left, tex->right ),
+			SCALE( m_Slices[i].p.y, m_quadVertices.top, m_quadVertices.bottom, tex->top, tex->bottom )
 			);
 	}
 }
@@ -187,7 +187,7 @@ void GraphDisplay::DrawPrimitives()
 	// don't bother setting texture render states for a null texture
 	//Actor::SetTextureRenderStates();
 
-	DISPLAY->DrawQuads( Slices, ARRAYSIZE(Slices) );
+	DISPLAY->DrawQuads( m_Slices, ARRAYSIZE(m_Slices) );
 	DISPLAY->SetTexture( 0, NULL );
 
 	ActorFrame::DrawPrimitives();

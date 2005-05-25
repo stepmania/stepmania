@@ -30,7 +30,7 @@ private:
 	float m_Position;
 
 	RectF m_quadVertices;
-	RageSpriteVertex Slices[4*(VALUE_RESOLUTION-1)];
+	RageSpriteVertex m_Slices[4*(VALUE_RESOLUTION-1)];
 
 	RageTexture	*m_pTexture;
 
