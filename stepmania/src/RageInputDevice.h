@@ -29,6 +29,7 @@ enum InputDevice {
 	DEVICE_JOY16,
 	DEVICE_PUMP1,
 	DEVICE_PUMP2,
+	DEVICE_MIDI,
 	DEVICE_PARA1,
 	NUM_INPUT_DEVICES,	// leave this at the end
 	DEVICE_NONE			// means this is NULL
@@ -275,6 +276,7 @@ enum PumpPadButton {
 const CString& PumpPadButtonToString( PumpPadButton i );
 PumpPadButton StringToPumpPadButton( const CString& s );
 
+#define NUM_MIDI_CHANNELS		100
 
 enum ParaPadButton {
 	PARA_L,
@@ -321,6 +323,7 @@ inline int GetNumDeviceButtons( InputDevice device )
 	case DEVICE_JOY16:	return NUM_JOYSTICK_BUTTONS;
 	case DEVICE_PUMP1:
 	case DEVICE_PUMP2:	return NUM_PUMP_PAD_BUTTONS;
+	case DEVICE_MIDI:	return NUM_MIDI_CHANNELS;
 	case DEVICE_PARA1:	return NUM_PARA_PAD_BUTTONS;
 	default:	ASSERT(0);	return 0;
 	}

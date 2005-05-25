@@ -1,42 +1,29 @@
-#ifndef SELECTOR_INPUT_HANDLER_H
-#define SELECTOR_INPUT_HANDLER_H
+#ifndef INPUT_HANDLER_WIN32_MIDI
+#define INPUT_HANDLER_WIN32_MIDI
 
-#include "arch/arch_platform.h"
+#include "InputHandler.h"
+#include "RageInputDevice.h"
 
-/* InputHandler drivers selector. */
-#if defined(HAVE_DIRECTX) && !defined(XBOX)
-#include "InputHandler_DirectInput.h"
-#endif
+class InputHandler_Win32_MIDI: public InputHandler
+{
+public:
+	InputHandler_Win32_MIDI();
+	~InputHandler_Win32_MIDI();
 
-#ifdef HAVE_LINUXKERNEL
-#include "InputHandler_Linux_Joystick.h"
-// XXX: Useless! Depends on SDL, which we'd use for input if it was available!
-// #include "InputHandler_Linux_tty.h"
-#endif
+	void Update(float fDeltaTime);
+	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
 
-#include "InputHandler_MonkeyKeyboard.h"
+	void SetDev( DeviceInput key, bool pressed ) { ButtonPressed( key, pressed ); }
+private:
+	bool m_bFoundDevice;
+};
 
-// NOTE: If X11 is available, we don't use LLW_SDL, which IH_SDL depends on.
-#if defined(HAVE_X11)
-#include "InputHandler_X11.h"
-#elif defined(HAVE_SDL)
-#include "InputHandler_SDL.h"
-#endif
-
-#ifdef HAVE_WIN32
-#include "InputHandler_Win32_Pump.h"
-#include "InputHandler_Win32_Para.h"
-#include "InputHandler_Win32_MIDI.h"
-#endif
-
-#ifdef HAVE_XBOX
-#include "InputHandler_Xbox.h"
-#endif
 
 #endif
+
 
 /*
- * (c) 2005 Ben Anderson.
+ * (c) 2002-2005 Charles Lohr, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
@@ -59,3 +46,4 @@
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
+

@@ -42,6 +42,9 @@ void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
 #ifdef USE_INPUT_HANDLER_WIN32_PUMP
 		if(!s->CompareNoCase("Pump") )		ret = new InputHandler_Win32_Pump;
 #endif
+#ifdef USE_INPUT_HANDLER_WIN32_PARA
+		if(!s->CompareNoCase("MIDI") )	ret = new InputHandler_Win32_MIDI;
+#endif
 #ifdef USE_INPUT_HANDLER_X11
 		if(!s->CompareNoCase("X11") )		ret = new InputHandler_X11;
 #endif
