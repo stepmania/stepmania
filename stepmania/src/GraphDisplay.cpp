@@ -87,22 +87,22 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 		// Search for the min life record to show "Just Barely!"
 		//
 		float fMinLifeSoFar = 1.0f;
-		float fMinLifeSoFarAtSecond = 0;
-		FOREACHM_CONST( float, float, pss.fLifeRecord, i )
+		int iMinLifeSoFarAt = 0;
+
+		int NumSlices = VALUE_RESOLUTION-1;
+		for( int i = 0; i < NumSlices; ++i )
 		{
-			float fSec = i->first;
-			float fLife = i->second;
+			float fLife = m_DestValues[i];
 			if( fLife < fMinLifeSoFar )
 			{
 				fMinLifeSoFar = fLife;
-				fMinLifeSoFarAtSecond = fSec;
+				iMinLifeSoFarAt = i;
 			}
 		}
-		
+
 		if( fMinLifeSoFar > 0.0f  &&  fMinLifeSoFar < 0.1f )
 		{
-			float fX = SCALE( fMinLifeSoFarAtSecond, 0, fTotalStepSeconds, m_quadVertices.left, m_quadVertices.right );
-			fX = Quantize( fX, 1.0f );
+			float fX = SCALE( float(iMinLifeSoFarAt), 0.0f, float(NumSlices), m_quadVertices.left, m_quadVertices.right );
 			m_sprJustBarely->SetXY( fX, 0 );
 		}
 		else
