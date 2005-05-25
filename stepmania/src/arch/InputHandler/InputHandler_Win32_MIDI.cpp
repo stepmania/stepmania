@@ -6,8 +6,6 @@
 #include <windows.h>
 #include <mmsystem.h>
 
-#include "ScreenManager.h"
-
 #pragma comment (lib,"winmm.lib")
 
 HMIDIIN g_device;
