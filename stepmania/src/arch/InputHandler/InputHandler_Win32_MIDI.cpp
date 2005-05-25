@@ -8,8 +8,8 @@
 
 #pragma comment (lib,"winmm.lib")
 
-HMIDIIN g_device;
-void CALLBACK midiCallback(HMIDIIN g_device, UINT status, DWORD instancePtr, DWORD data, DWORD timestamp);
+static HMIDIIN g_device;
+static void CALLBACK midiCallback(HMIDIIN g_device, UINT status, DWORD instancePtr, DWORD data, DWORD timestamp);
 
 
 InputHandler_Win32_MIDI::InputHandler_Win32_MIDI()
@@ -73,7 +73,7 @@ void InputHandler_Win32_MIDI::GetDevicesAndDescriptions(vector<InputDevice>& vDe
 	}
 }
 
-void CALLBACK midiCallback(HMIDIIN g_device, UINT status, DWORD instancePtr, DWORD data, DWORD timestamp)
+static void CALLBACK midiCallback(HMIDIIN g_device, UINT status, DWORD instancePtr, DWORD data, DWORD timestamp)
 {
     if (status == MIM_DATA) {
 		int type = data & 0x00ff;
