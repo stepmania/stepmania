@@ -70,7 +70,6 @@ void ComboGraph::Load( const CString& sScreen, const CString& sElement, const St
 		BitmapText *text = new BitmapText;
 		text->SetName( "ComboMaxNumber" );
 		text->LoadFromFont( THEME->GetPathF(sScreen,sElement) );
-		text->SetHorizAlign( Actor::align_center );
 
 		const float start = SCALE( combo.fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
 		const float size = SCALE( combo.fSizeSeconds, 0, fLastSecond-fFirstSecond, 0.0f, 1.0f );
