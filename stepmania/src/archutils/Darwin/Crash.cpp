@@ -31,7 +31,7 @@ void InformUserOfCrash( const CString &sPath )
         case kAlertStdAlertOKButton:
             // This is lazy, and easy, and it seems to work.
             if (system(NULL))
-                system("open '" + sPath + "'");
+                system("/usr/bin/open '" + sPath + "'");
             else
                 SysBeep(30);
             break;
@@ -42,7 +42,7 @@ void InformUserOfCrash( const CString &sPath )
 }
 
 /*
- * (c) 2003-2004 Steve Checkoway
+ * (c) 2003-2005 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
