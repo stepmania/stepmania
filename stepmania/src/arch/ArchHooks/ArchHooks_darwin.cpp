@@ -16,13 +16,6 @@
 #include <sys/sysctl.h>
 #include <sys/time.h>
 
-/* You would think that these would be defined somewhere. */
-enum
-{
-    kMacOSX_10_2 = 0x1020,
-    kMacOSX_10_3 = 0x1030
-};
-
 #if 0 // Time critical stuff
 static thread_time_constraint_policy g_oldttcpolicy;
 static float g_fStartedTimeCritAt;
@@ -96,18 +89,14 @@ void ArchHooks_darwin::DumpDebugInfo()
     err = Gestalt(gestaltSystemVersion, &code);
     if (err == noErr)
     {
-        systemVersion = "Mac OS X ";
-        if (code >= kMacOSX_10_2 && code < kMacOSX_10_3)
-            systemVersion += ssprintf("10.2.%ld", code - kMacOSX_10_2);
-        else
-        {
-            int ssv = code - kMacOSX_10_3;
-			
-            if (ssv > 9)
-                systemVersion += "10.3+";
-            else
-				systemVersion += ssprintf("10.3.%d", ssv);
-        }
+		int major = code >> 8;
+		int minor = code >> 4 & 0xF;
+		int ssv = code & 0xF;
+		
+		if (ssv)
+			systemVersion = ssprintf("Mac OS X %x.%x.%x", major, minor, ssv);
+		else
+			systemVersion = ssprintf("Mac OS X %x.%x", major, minor);
     }
     else
         systemVersion = "Unknown system version";
@@ -295,7 +284,7 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 }
 
 /*
- * (c) 2003-2004 Steve Checkoway
+ * (c) 2003-2005 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
