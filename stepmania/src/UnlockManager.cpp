@@ -148,6 +148,7 @@ const UnlockEntry *UnlockManager::FindSong( const Song *pSong ) const
 
 const UnlockEntry *UnlockManager::FindSteps( const Song *pSong, const Steps *pSteps ) const
 {
+	ASSERT( pSong && pSteps );
 	FOREACH_CONST( UnlockEntry, m_UnlockEntries, e )
 		if( e->m_pSong == pSong  &&  e->m_dc == pSteps->GetDifficulty() )
 			return &(*e);
