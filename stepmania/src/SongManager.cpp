@@ -229,6 +229,8 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 	}
 }
 
+// Why Symlink instead of allowing membership in multiple groups via song tags?
+// -Chris
 void SongManager::LoadGroupSymLinks(CString sDir, CString sGroupFolder)
 {
 	// Find all symlink files in this folder
@@ -243,14 +245,17 @@ void SongManager::LoadGroupSymLinks(CString sDir, CString sGroupFolder)
 		
 		Song* pNewSong = new Song;
 		if( !pNewSong->LoadFromSongDir( sSymDestination ) )
+		{
 			delete pNewSong; // The song failed to load.
+		}
 		else
 		{
 			const vector<Steps*>& vpSteps = pNewSong->GetAllSteps();
 			while( vpSteps.size() )
 				pNewSong->RemoveSteps( vpSteps[0] );
 
-			pNewSong->m_BackgroundChanges.clear();
+			for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
+				pNewSong->m_BackgroundChanges[i].clear();
 
 			pNewSong->m_bIsSymLink = true;	// Very important so we don't double-parse later
 			pNewSong->m_sGroupName = sGroupFolder;

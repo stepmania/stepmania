@@ -441,6 +441,7 @@ static Menu g_SongInformation(
 
 static Menu g_BackgroundChange(
 	"ScreenMiniMenuBackgroundChange",
+	MenuRow( ScreenEdit::layer,						"Layer (applies to new adds)",			true, EDIT_MODE_PRACTICE, 0, "0","1" ),
 	MenuRow( ScreenEdit::rate,						"Rate (applies to new adds)",			true, EDIT_MODE_PRACTICE, 10, "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" ),
 	MenuRow( ScreenEdit::fade_last,					"Fade Last (applies to new adds)",		true, EDIT_MODE_PRACTICE, 0, "NO","YES" ),
 	MenuRow( ScreenEdit::rewind_movie,				"Rewind Movie (applies to new adds)",	true, EDIT_MODE_PRACTICE, 0, "NO","YES" ),
@@ -2073,16 +2074,21 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 
 
 				//
-				// Fill in line enabled/disabled
+				// Fill in line's enabled/disabled
 				//
 				bool bAlreadyBGChangeHere = false;
+				int iLayer = 0;
 				BackgroundChange bgChange; 
-				FOREACH( BackgroundChange, m_pSong->m_BackgroundChanges, bgc )
+				for( int l=0; l<NUM_BACKGROUND_LAYERS; l++ )
 				{
-					if( bgc->m_fStartBeat == GAMESTATE->m_fSongBeat )
+					FOREACH( BackgroundChange, m_pSong->m_BackgroundChanges[l], bgc )
 					{
-						bAlreadyBGChangeHere = true;
-						bgChange = *bgc;
+						if( bgc->m_fStartBeat == GAMESTATE->m_fSongBeat )
+						{
+							bAlreadyBGChangeHere = true;
+							iLayer = l;
+							bgChange = *bgc;
+						}
 					}
 				}
 
@@ -2097,6 +2103,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 					
 
 				// set default choices
+				g_BackgroundChange.rows[layer].						SetDefaultChoiceIfPresent( ssprintf("%d",iLayer) );
 				g_BackgroundChange.rows[rate].						SetDefaultChoiceIfPresent( ssprintf("%2.0f%%",bgChange.m_fRate*100) );
 				g_BackgroundChange.rows[fade_last].iDefaultChoice	= bgChange.m_bFadeLast ? 1 : 0;
 				g_BackgroundChange.rows[rewind_movie].iDefaultChoice = bgChange.m_bRewindMovie ? 1 : 0;
@@ -2618,15 +2625,16 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 
 void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAnswers )
 {
+	int iLayer = atoi( g_BackgroundChange.rows[layer].choices[iAnswers[layer]] );
 	BackgroundChange newChange;
 
-	FOREACH( BackgroundChange, m_pSong->m_BackgroundChanges, iter )
+	FOREACH( BackgroundChange, m_pSong->m_BackgroundChanges[iLayer], iter )
 	{
 		if( iter->m_fStartBeat == GAMESTATE->m_fSongBeat )
 		{
 			newChange = *iter;
 			// delete the old change.  We'll add a new one below.
-			m_pSong->m_BackgroundChanges.erase( iter );
+			m_pSong->m_BackgroundChanges[iLayer].erase( iter );
 			break;
 		}
 	}
@@ -2659,7 +2667,7 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 	newChange.m_bLoop = !!iAnswers[loop];
 
 	if( newChange.m_sBGName != "" )
-		m_pSong->AddBackgroundChange( newChange );
+		m_pSong->AddBackgroundChange( iLayer, newChange );
 }
 
 void ScreenEdit::SetupCourseAttacks()

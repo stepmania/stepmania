@@ -87,11 +87,14 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		const CString sValueName = sParams[0];
+		CString sValueName = sParams[0];
+		sValueName.MakeUpper();
 
-		if( 0==stricmp(sValueName,"OFFSET") )
+		if( sValueName=="OFFSET" )
+		{
 			out.m_fBeat0OffsetInSeconds = strtof( sParams[1], NULL );
-		else if( 0==stricmp(sValueName,"STOPS") || 0==stricmp(sValueName,"FREEZES") )
+		}
+		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
 		{
 			CStringArray arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
@@ -122,7 +125,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"BPMS") )
+		else if( sValueName=="BPMS" )
 		{
 			CStringArray arrayBPMChangeExpressions;
 			split( sParams[1], ",", arrayBPMChangeExpressions );
@@ -194,99 +197,100 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		const CString sValueName = sParams[0];
+		CString sValueName = sParams[0];
+		sValueName.MakeUpper();
 
 		// handle the data
 		/* Don't use GetMainAndSubTitlesFromFullTitle; that's only for heuristically
 		 * splitting other formats that *don't* natively support #SUBTITLE. */
-		if( 0==stricmp(sValueName,"TITLE") )
+		if( sValueName=="TITLE" )
 			out.m_sMainTitle = sParams[1];
 
-		else if( 0==stricmp(sValueName,"SUBTITLE") )
+		else if( sValueName=="SUBTITLE" )
 			out.m_sSubTitle = sParams[1];
 
-		else if( 0==stricmp(sValueName,"ARTIST") )
+		else if( sValueName=="ARTIST" )
 			out.m_sArtist = sParams[1];
 
-		else if( 0==stricmp(sValueName,"TITLETRANSLIT") )
+		else if( sValueName=="TITLETRANSLIT" )
 			out.m_sMainTitleTranslit = sParams[1];
 
-		else if( 0==stricmp(sValueName,"SUBTITLETRANSLIT") )
+		else if( sValueName=="SUBTITLETRANSLIT" )
 			out.m_sSubTitleTranslit = sParams[1];
 
-		else if( 0==stricmp(sValueName,"ARTISTTRANSLIT") )
+		else if( sValueName=="ARTISTTRANSLIT" )
 			out.m_sArtistTranslit = sParams[1];
 
-		else if( 0==stricmp(sValueName,"GENRE") )
+		else if( sValueName=="GENRE" )
 			out.m_sGenre = sParams[1];
 
-		else if( 0==stricmp(sValueName,"CREDIT") )
+		else if( sValueName=="CREDIT" )
 			out.m_sCredit = sParams[1];
 
-		else if( 0==stricmp(sValueName,"BANNER") )
+		else if( sValueName=="BANNER" )
 			out.m_sBannerFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"BACKGROUND") )
+		else if( sValueName=="BACKGROUND" )
 			out.m_sBackgroundFile = sParams[1];
 
 		/* Save "#LYRICS" for later, so we can add an internal lyrics tag. */
-		else if( 0==stricmp(sValueName,"LYRICSPATH") )
+		else if( sValueName=="LYRICSPATH" )
 			out.m_sLyricsFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"CDTITLE") )
+		else if( sValueName=="CDTITLE" )
 			out.m_sCDTitleFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"MUSIC") )
+		else if( sValueName=="MUSIC" )
 			out.m_sMusicFile = sParams[1];
 
-		else if( 0==stricmp(sValueName,"MUSICLENGTH") )
+		else if( sValueName=="MUSICLENGTH" )
 		{
 			if(!FromCache)
 				continue;
 			out.m_fMusicLengthSeconds = strtof( sParams[1], NULL );
 		}
 
-		else if( 0==stricmp(sValueName,"MUSICBYTES") )
+		else if( sValueName=="MUSICBYTES" )
 			; /* ignore */
 
 		/* We calculate these.  Some SMs in circulation have bogus values for
 		 * these, so make sure we always calculate it ourself. */
-		else if( 0==stricmp(sValueName,"FIRSTBEAT") )
+		else if( sValueName=="FIRSTBEAT" )
 		{
 			if(!FromCache)
 				continue;
 			out.m_fFirstBeat = strtof( sParams[1], NULL );
 		}
 
-		else if( 0==stricmp(sValueName,"LASTBEAT") )
+		else if( sValueName=="LASTBEAT" )
 		{
 			if(!FromCache)
 				LOG->Trace("Ignored #LASTBEAT (cache only)");
 			out.m_fLastBeat = strtof( sParams[1], NULL );
 		}
-		else if( 0==stricmp(sValueName,"SONGFILENAME") )
+		else if( sValueName=="SONGFILENAME" )
 		{
 			if( FromCache )
 				out.m_sSongFileName = sParams[1];
 		}
-		else if( 0==stricmp(sValueName,"HASMUSIC") )
+		else if( sValueName=="HASMUSIC" )
 		{
 			if( FromCache )
 				out.m_bHasMusic = atoi( sParams[1] ) != 0;
 		}
-		else if( 0==stricmp(sValueName,"HASBANNER") )
+		else if( sValueName=="HASBANNER" )
 		{
 			if( FromCache )
 				out.m_bHasBanner = atoi( sParams[1] ) != 0;
 		}
 
-		else if( 0==stricmp(sValueName,"SAMPLESTART") )
+		else if( sValueName=="SAMPLESTART" )
 			out.m_fMusicSampleStartSeconds = HHMMSSToSeconds( sParams[1] );
 
-		else if( 0==stricmp(sValueName,"SAMPLELENGTH") )
+		else if( sValueName=="SAMPLELENGTH" )
 			out.m_fMusicSampleLengthSeconds = HHMMSSToSeconds( sParams[1] );
 
-		else if( 0==stricmp(sValueName,"DISPLAYBPM") )
+		else if( sValueName=="DISPLAYBPM" )
 		{
 			// #DISPLAYBPM:[xxx][xxx:xxx]|[*]; 
 			if( sParams[1] == "*" )
@@ -302,7 +306,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"SELECTABLE") )
+		else if( sValueName=="SELECTABLE" )
 		{
 			if(!stricmp(sParams[1],"YES"))
 				out.m_SelectionDisplay = out.SHOW_ALWAYS;
@@ -314,20 +318,30 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 				LOG->Warn( "The song file '%s' has an unknown #SELECTABLE value, '%s'; ignored.", sPath.c_str(), sParams[1].c_str());
 		}
 
-		else if( 0==stricmp(sValueName,"BGCHANGES") || 0==stricmp(sValueName,"ANIMATIONS") )
+		else if( sValueName=="BGCHANGES" || sValueName=="ANIMATIONS" )
 		{
-			CStringArray aBGChangeExpressions;
-			split( sParams[1], ",", aBGChangeExpressions );
+			int iLayer = 0;
+			sscanf( sValueName, "BGCHANGES%d", &iLayer );
 
-			for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
+			if( iLayer < 0 && iLayer >= NUM_BACKGROUND_LAYERS )
 			{
-				BackgroundChange change;
-				if( LoadFromBGChangesString( change, aBGChangeExpressions[b] ) )
-					out.AddBackgroundChange( change );
+				LOG->Warn( "The song file '%s' has a BGCHANGES tag '%s' that is out of range.", sPath.c_str(), sValueName.c_str() );
+			}
+			else
+			{
+				CStringArray aBGChangeExpressions;
+				split( sParams[1], ",", aBGChangeExpressions );
+
+				for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
+				{
+					BackgroundChange change;
+					if( LoadFromBGChangesString( change, aBGChangeExpressions[b] ) )
+						out.AddBackgroundChange( iLayer, change );
+				}
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"FGCHANGES") )
+		else if( sValueName=="FGCHANGES" )
 		{
 			CStringArray aFGChangeExpressions;
 			split( sParams[1], ",", aFGChangeExpressions );
@@ -340,7 +354,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"KEYSOUNDS") )
+		else if( sValueName=="KEYSOUNDS" )
 		{
 			CStringArray aKeysoundFiles;
 			split( sParams[1], ",", aKeysoundFiles );
@@ -351,7 +365,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"NOTES") || 0==stricmp(sValueName,"NOTES2") )
+		else if( sValueName=="NOTES" || sValueName=="NOTES2" )
 		{
 			if( iNumParams < 7 )
 			{
@@ -371,8 +385,8 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 			out.AddSteps( pNewNotes );
 		}
-		else if( 0==stricmp(sValueName,"OFFSET") || 0==stricmp(sValueName,"BPMS") ||
-				 0==stricmp(sValueName,"STOPS") || 0==stricmp(sValueName,"FREEZES") )
+		else if( sValueName=="OFFSET" || sValueName=="BPMS" ||
+				 sValueName=="STOPS" || sValueName=="FREEZES" )
 				 ;
 		else
 			LOG->Trace( "Unexpected value named '%s'", sValueName.c_str() );
@@ -436,10 +450,11 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, CString sEditFilePath, Profi
 	{
 		int iNumParams = msd.GetNumParams(i);
 		const MsdFile::value_t &sParams = msd.GetValue(i);
-		const CString sValueName = sParams[0];
+		CString sValueName = sParams[0];
+		sValueName.MakeUpper();
 
 		// handle the data
-		if( 0==stricmp(sValueName,"SONG") )
+		if( sValueName=="SONG" )
 		{
 			if( pSong )
 			{
@@ -464,7 +479,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, CString sEditFilePath, Profi
 			}
 		}
 
-		else if( 0==stricmp(sValueName,"NOTES") )
+		else if( sValueName=="NOTES" )
 		{
 			if( pSong == NULL )
 			{
@@ -519,7 +534,7 @@ void SMLoader::TidyUpData( Song &song, bool cache )
 	 * have to add an explicit song BG tag if they want it.  This is really a
 	 * formatting hack only; nothing outside of SMLoader ever sees "-nosongbg-".
 	 */
-	vector<BackgroundChange> &bg = song.m_BackgroundChanges;
+	vector<BackgroundChange> &bg = song.m_BackgroundChanges[0];
 	if( !bg.empty() )
 	{
 		/* BGChanges have been sorted.  On the odd chance that a BGChange exists

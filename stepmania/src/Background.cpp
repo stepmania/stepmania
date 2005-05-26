@@ -54,12 +54,16 @@ static RageColor GetBrightnessColor( float fBrightnessPercent )
 
 Background::Background()
 {
+	m_pDancingCharacters = NULL;
+	m_bInitted = false;
+}
+
+Background::Layer::Layer()
+{
 	m_iCurBGChangeIndex = -1;
 	m_pCurrentBGA = NULL;
 	m_pFadingBGA = NULL;
 	m_fSecsLeftInFade = 0;
-	m_pDancingCharacters = NULL;
-	m_bInitted = false;
 }
 
 void Background::Init()
@@ -115,6 +119,14 @@ Background::~Background()
 
 void Background::Unload()
 {
+	for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
+		m_Layer[i].Unload();
+	m_pSong = NULL;
+	m_fLastMusicSeconds	= -9999;
+}
+
+void Background::Layer::Unload()
+{
     for( map<CString,Actor*>::iterator iter = m_BGAnimations.begin();
 		 iter != m_BGAnimations.end();
 		 iter++ )
@@ -125,10 +137,8 @@ void Background::Unload()
 
 	m_pCurrentBGA = NULL;
 	m_pFadingBGA = NULL;
-	m_pSong = NULL;
 	m_fSecsLeftInFade = 0;
 	m_iCurBGChangeIndex = -1;
-	m_fLastMusicSeconds	= -9999;
 }
 
 Actor *MakeVisualization( const CString &sVisPath )
@@ -163,7 +173,7 @@ Actor *MakeMovie( const CString &sMoviePath )
 	return pSprite;
 }
 
-Actor *Background::CreateSongBGA( CString sBGName ) const
+Actor *Background::Layer::CreateSongBGA( const Song *pSong, CString sBGName ) const
 {
 	BGAnimation *pTempBGA;
 
@@ -173,7 +183,7 @@ Actor *Background::CreateSongBGA( CString sBGName ) const
 	CStringArray asFiles;
 
 	// Look for BGAnims in the song dir
-	GetDirListing( m_pSong->GetSongDir()+sBGName, asFiles, true, true );
+	GetDirListing( pSong->GetSongDir()+sBGName, asFiles, true, true );
 	if( !asFiles.empty() )
 	{
 		/* If default.xml exists, use the regular generic actor load.  However,
@@ -187,7 +197,7 @@ Actor *Background::CreateSongBGA( CString sBGName ) const
 		return pTempBGA;
 	}
 	// Look for BG movies or static graphics in the song dir
-	GetDirListing( m_pSong->GetSongDir()+sBGName, asFiles, false, true );
+	GetDirListing( pSong->GetSongDir()+sBGName, asFiles, false, true );
 	if( !asFiles.empty() )
 	{
 		const CString sExt = GetExtension( asFiles[0]) ;
@@ -214,9 +224,9 @@ Actor *Background::CreateSongBGA( CString sBGName ) const
 	GetDirListing( BG_ANIMS_DIR+sBGName, asFiles, true, true );
 	if( !asFiles.empty() )
 	{
-		pTempBGA = new BGAnimation;
-		pTempBGA->LoadFromAniDir( asFiles[0] );
-		return pTempBGA;
+		Actor *pActor = ActorUtil::MakeActor( asFiles[0] );
+		ASSERT( pActor );
+		return pActor;
 	}
 
 	// Look for BGAnims in the BGAnims dir
@@ -228,7 +238,7 @@ Actor *Background::CreateSongBGA( CString sBGName ) const
 	return NULL;
 }
 
-CString Background::CreateRandomBGA( CString sPreferredSubDir )
+CString Background::Layer::CreateRandomBGA( const Song *pSong, CString sPreferredSubDir )
 {
 	if( sPreferredSubDir.Right(1) != "/" )
 		sPreferredSubDir += '/';
@@ -338,9 +348,9 @@ void Background::LoadFromRandom( float fFirstBeat, float fLastBeat, const Timing
 		//bool bFade = PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_RANDOMMOVIES || 
 		//	PREFSMAN->m_BackgroundMode==PrefsManager::BGMODE_MOVIEVIS;
 		
-		CString sBGName = CreateRandomBGA( sPreferredSubDir );
+		CString sBGName = m_Layer[0].CreateRandomBGA( m_pSong, sPreferredSubDir );
 		if( sBGName != "" )
-			m_aBGChanges.push_back( BackgroundChange(f,sBGName,1.f,bFade) );
+			m_Layer[0].m_aBGChanges.push_back( BackgroundChange(f,sBGName,1.f,bFade) );
 	}
 
 	// change BG every BPM change that is at the beginning of a measure
@@ -356,9 +366,9 @@ void Background::LoadFromRandom( float fFirstBeat, float fLastBeat, const Timing
 		if( bpmseg.m_iStartIndex < iStartIndex  || bpmseg.m_iStartIndex > iEndIndex )
 			continue;	// skip
 
-		CString sBGName = CreateRandomBGA( sPreferredSubDir );
+		CString sBGName = m_Layer[0].CreateRandomBGA( m_pSong, sPreferredSubDir );
 		if( sBGName != "" )
-			m_aBGChanges.push_back( BackgroundChange(NoteRowToBeat(bpmseg.m_iStartIndex),sBGName) );
+			m_Layer[0].m_aBGChanges.push_back( BackgroundChange(NoteRowToBeat(bpmseg.m_iStartIndex),sBGName) );
 	}
 }
 
@@ -387,53 +397,68 @@ void Background::LoadFromSong( const Song* pSong )
 
 	if( pSong->HasBGChanges() )
 	{
-		// Load all song-specified backgrounds
-		for( unsigned i=0; i<pSong->m_BackgroundChanges.size(); i++ )
+		for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
 		{
-			BackgroundChange change = pSong->m_BackgroundChanges[i];
-			CString &sBGName = change.m_sBGName;
-			
-			bool bIsAlreadyLoaded = m_BGAnimations.find(sBGName) != m_BGAnimations.end();
+			Layer &layer = m_Layer[i];
 
-			if( sBGName.CompareNoCase("-random-")!=0 && !bIsAlreadyLoaded )
+			// Load all song-specified backgrounds
+			FOREACH_CONST( BackgroundChange, pSong->m_BackgroundChanges[i], bgc )
 			{
-				Actor *pTempBGA = CreateSongBGA( sBGName );
-				if( pTempBGA )
+				BackgroundChange change = *bgc;
+				CString &sBGName = change.m_sBGName;
+				
+				bool bIsAlreadyLoaded = layer.m_BGAnimations.find(sBGName) != layer.m_BGAnimations.end();
+
+				if( sBGName.CompareNoCase("-random-")!=0 && !bIsAlreadyLoaded )
 				{
-					m_BGAnimations[sBGName] = pTempBGA;
+					Actor *pTempBGA = layer.CreateSongBGA( m_pSong, sBGName );
+					if( pTempBGA )
+					{
+						layer.m_BGAnimations[sBGName] = pTempBGA;
+					}
+					else // the background was not found.  Use a random one instead
+					{
+						sBGName = layer.CreateRandomBGA( pSong, pSong->m_sGroupName );
+						if( sBGName == "" )
+							sBGName = STATIC_BACKGROUND;
+					}
 				}
-				else // the background was not found.  Use a random one instead
-				{
-					sBGName = CreateRandomBGA( pSong->m_sGroupName );
-					if( sBGName == "" )
-						sBGName = STATIC_BACKGROUND;
-				}
+				
+				layer.m_aBGChanges.push_back( change );
 			}
-			
-			m_aBGChanges.push_back( change );
 		}
 	}
 	else	// pSong doesn't have an animation plan
 	{
+		Layer &layer = m_Layer[0];
+
 		LoadFromRandom( pSong->m_fFirstBeat, pSong->m_fLastBeat, pSong->m_Timing, pSong->m_sGroupName );
 
 		// end showing the static song background
-		m_aBGChanges.push_back( BackgroundChange(pSong->m_fLastBeat,STATIC_BACKGROUND) );
+		layer.m_aBGChanges.push_back( BackgroundChange(pSong->m_fLastBeat,STATIC_BACKGROUND) );
 	}
 
 		
 	// sort segments
-	SortBackgroundChangesArray( m_aBGChanges );
+	for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
+	{
+		Layer &layer = m_Layer[i];
+		SortBackgroundChangesArray( layer.m_aBGChanges );
+	}
+
+
+	Layer &mainlayer = m_Layer[0];
+
 
 	/* If the first BGAnimation isn't negative, add a lead-in image showing the song
 	 * background. */
-	if( m_aBGChanges.empty() || m_aBGChanges.front().m_fStartBeat >= 0 )
-		m_aBGChanges.insert( m_aBGChanges.begin(), BackgroundChange(-10000,STATIC_BACKGROUND) );
+	if( mainlayer.m_aBGChanges.empty() || mainlayer.m_aBGChanges.front().m_fStartBeat >= 0 )
+		mainlayer.m_aBGChanges.insert( mainlayer.m_aBGChanges.begin(), BackgroundChange(-10000,STATIC_BACKGROUND) );
 
 	// If any BGChanges use the background image, load it.
 	bool bStaticBackgroundUsed = false;
-	for( unsigned i=0; i<m_aBGChanges.size(); i++ )
-		if( m_aBGChanges[i].m_sBGName == STATIC_BACKGROUND )
+	for( unsigned i=0; i<mainlayer.m_aBGChanges.size(); i++ )
+		if( mainlayer.m_aBGChanges[i].m_sBGName == STATIC_BACKGROUND )
 			bStaticBackgroundUsed = true;
 	if( bStaticBackgroundUsed )
 	{
@@ -442,33 +467,33 @@ void Background::LoadFromSong( const Song* pSong )
 		Sprite* pSprite = new Sprite;
 		pSprite->LoadBG( sSongBGPath );
 		pSprite->StretchTo( FullScreenRectF );
-		m_BGAnimations[STATIC_BACKGROUND] = pSprite;
+		mainlayer.m_BGAnimations[STATIC_BACKGROUND] = pSprite;
 	}
 
 
 	// Look for the filename "Random", and replace the segment with LoadFromRandom.
-	for( unsigned i=0; i<m_aBGChanges.size(); i++ )
+	for( unsigned i=0; i<mainlayer.m_aBGChanges.size(); i++ )
 	{
-		BackgroundChange &change = m_aBGChanges[i];
+		BackgroundChange &change = mainlayer.m_aBGChanges[i];
 		if( change.m_sBGName.CompareNoCase("-random-") )
 			continue;
 
 		const float fStartBeat = change.m_fStartBeat;
-		const float fLastBeat = (i+1 < m_aBGChanges.size())? m_aBGChanges[i+1].m_fStartBeat: FLT_MAX;
+		const float fLastBeat = (i+1 < mainlayer.m_aBGChanges.size())? mainlayer.m_aBGChanges[i+1].m_fStartBeat: FLT_MAX;
 
-		m_aBGChanges.erase( m_aBGChanges.begin()+i );
+		mainlayer.m_aBGChanges.erase( mainlayer.m_aBGChanges.begin()+i );
 		--i;
 
 		LoadFromRandom( fStartBeat, fLastBeat, pSong->m_Timing, pSong->m_sGroupName );
 	}
 
 	// At this point, we shouldn't have any BGChanges to "".  "" is an invalid name.
-	for( unsigned i=0; i<m_aBGChanges.size(); i++ )
-		ASSERT( !m_aBGChanges[i].m_sBGName.empty() );
+	for( unsigned i=0; i<mainlayer.m_aBGChanges.size(); i++ )
+		ASSERT( !mainlayer.m_aBGChanges[i].m_sBGName.empty() );
 
 
 	// Re-sort.
-	SortBackgroundChangesArray( m_aBGChanges );
+	SortBackgroundChangesArray( mainlayer.m_aBGChanges );
 
 	m_DangerAll.SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
 	m_DangerAll.SetZoomX( fXZoom );
@@ -501,7 +526,7 @@ void Background::LoadFromSong( const Song* pSong )
 	 * the clock back with "effectclock,timer" in your OnCommand.  Note that at this
 	 * point, we havn't run the OnCommand yet, so it'll override correctly. */
 	map<CString,Actor*>::iterator it;
-	for( it = m_BGAnimations.begin(); it != m_BGAnimations.end(); ++it )
+	for( it = mainlayer.m_BGAnimations.begin(); it != mainlayer.m_BGAnimations.end(); ++it )
 	{
 		Actor *pBGA = it->second;
 
@@ -514,7 +539,7 @@ void Background::LoadFromSong( const Song* pSong )
 	}
 }
 
-int Background::FindBGSegmentForBeat( float fBeat ) const
+int Background::Layer::FindBGSegmentForBeat( float fBeat ) const
 {
 	if( m_aBGChanges.empty() )
 		return -1;
@@ -533,7 +558,7 @@ int Background::FindBGSegmentForBeat( float fBeat ) const
 }
 
 /* If the BG segment has changed, move focus to it.  Send Update() calls. */
-void Background::UpdateCurBGChange( float fCurrentTime )
+void Background::Layer::UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime )
 {
 	ASSERT( fCurrentTime != GameState::MUSIC_SECONDS_INVALID );
 
@@ -542,7 +567,7 @@ void Background::UpdateCurBGChange( float fCurrentTime )
 
 	float fBeat, fBPS;
 	bool bFreeze;
-	m_pSong->m_Timing.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze );
+	pSong->m_Timing.GetBeatAndBPSFromElapsedTime( fCurrentTime, fBeat, fBPS, bFreeze );
 
 	/* Calls to Update() should *not* be scaled by music rate; fCurrentTime is. Undo it. */
 	const float fRate = GAMESTATE->m_SongOptions.m_fMusicRate;
@@ -582,7 +607,7 @@ void Background::UpdateCurBGChange( float fCurrentTime )
 		m_fSecsLeftInFade = m_pFadingBGA!=NULL ? FADE_SECONDS : 0;
 
 		/* How much time of this BGA have we skipped?  (This happens with SetSeconds.) */
-		const float fStartSecond = m_pSong->m_Timing.GetElapsedTimeFromBeat( change.m_fStartBeat );
+		const float fStartSecond = pSong->m_Timing.GetElapsedTimeFromBeat( change.m_fStartBeat );
 
 		/* This is affected by the music rate. */
 		float fDeltaTime = fCurrentTime - fStartSecond;
@@ -593,17 +618,16 @@ void Background::UpdateCurBGChange( float fCurrentTime )
 	else	// we're not changing backgrounds
 	{
 		/* This is affected by the music rate. */
-		float fDeltaTime = fCurrentTime - m_fLastMusicSeconds;
+		float fDeltaTime = fCurrentTime - fLastMusicSeconds;
 		fDeltaTime /= fRate;
 		if( m_pCurrentBGA )
 			m_pCurrentBGA->Update( max( fDeltaTime, 0 ) );
 	}
 
-	float fDeltaTime = fCurrentTime - m_fLastMusicSeconds;
+	float fDeltaTime = fCurrentTime - fLastMusicSeconds;
 	fDeltaTime /= fRate;
 	if( m_pFadingBGA )
-		m_pFadingBGA->Update( max( fCurrentTime - m_fLastMusicSeconds, 0 ) );
-	m_fLastMusicSeconds = fCurrentTime;
+		m_pFadingBGA->Update( max( fCurrentTime - fLastMusicSeconds, 0 ) );
 }
 
 void Background::Update( float fDeltaTime )
@@ -624,28 +648,33 @@ void Background::Update( float fDeltaTime )
 			m_DeadPlayer[p].Update( fDeltaTime );
 	}
 
+	if( m_pDancingCharacters )
+		m_pDancingCharacters->Update( fDeltaTime );
+
 	/* Always update the current background, even when m_DangerAll is being displayed.
 	 * Otherwise, we'll stop updating movies during danger (which may stop them from
 	 * playing), and we won't start clips at the right time, which will throw backgrounds
 	 * off sync. */
-	UpdateCurBGChange( GAMESTATE->m_fMusicSeconds );
-	
-	if( m_pFadingBGA )
+	for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
 	{
-		m_pFadingBGA->Update( fDeltaTime );
-		m_fSecsLeftInFade -= fDeltaTime;
-		float fPercentOpaque = m_fSecsLeftInFade / FADE_SECONDS;
-		m_pFadingBGA->SetDiffuse( RageColor(1,1,1,fPercentOpaque) );
-		if( fPercentOpaque <= 0 )
+		Layer &layer = m_Layer[i];
+		layer.UpdateCurBGChange( m_pSong, m_fLastMusicSeconds, GAMESTATE->m_fMusicSeconds );
+	
+		if( layer.m_pFadingBGA )
 		{
-			/* Reset its diffuse color, in case we reuse it. */
-			m_pFadingBGA->SetDiffuse( RageColor(1,1,1,1) );
-			m_pFadingBGA = NULL;
+			layer.m_pFadingBGA->Update( fDeltaTime );
+			layer.m_fSecsLeftInFade -= fDeltaTime;
+			float fPercentOpaque = layer.m_fSecsLeftInFade / FADE_SECONDS;
+			layer.m_pFadingBGA->SetDiffuse( RageColor(1,1,1,fPercentOpaque) );
+			if( fPercentOpaque <= 0 )
+			{
+				/* Reset its diffuse color, in case we reuse it. */
+				layer.m_pFadingBGA->SetDiffuse( RageColor(1,1,1,1) );
+				layer.m_pFadingBGA = NULL;
+			}
 		}
 	}
-
-	if( m_pDancingCharacters )
-		m_pDancingCharacters->Update( fDeltaTime );
+	m_fLastMusicSeconds = GAMESTATE->m_fMusicSeconds;
 }
 
 void Background::DrawPrimitives()
@@ -665,10 +694,15 @@ void Background::DrawPrimitives()
 	{	
 		if( m_pDancingCharacters )
 			m_pDancingCharacters->m_bDrawDangerLight = false;
-		if( m_pCurrentBGA )
-			m_pCurrentBGA->Draw();
-		if( m_pFadingBGA )
-			m_pFadingBGA->Draw();
+		
+		for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
+		{
+			Layer &layer = m_Layer[i];
+			if( layer.m_pCurrentBGA )
+				layer.m_pCurrentBGA->Draw();
+			if( layer.m_pFadingBGA )
+				layer.m_pFadingBGA->Draw();
+		}
 
 		FOREACH_PlayerNumber( p )
 		{

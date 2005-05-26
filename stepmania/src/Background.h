@@ -49,30 +49,39 @@ public:
 protected:
 	const Song *m_pSong;
 	void LoadFromRandom( float fFirstBeat, float fLastBeat, const TimingData &timing, CString sPreferredSubDir );
-	int FindBGSegmentForBeat( float fBeat ) const;
 
 	bool IsDangerAllVisible();
-	void UpdateCurBGChange( float fCurrentTime );
 	
 	bool m_bInitted;
 	DancingCharacters*	m_pDancingCharacters;
+
+	class Layer
+	{
+	public:
+		Layer();
+		void Unload();
+
+		Actor *CreateSongBGA( const Song *pSong, CString sBGName ) const;
+		CString CreateRandomBGA( const Song *pSong, CString sPreferredSubDir );
+		int FindBGSegmentForBeat( float fBeat ) const;
+		void UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime );
+
+		map<CString,Actor*> m_BGAnimations;
+		deque<CString> m_RandomBGAnimations;
+		vector<BackgroundChange> m_aBGChanges;
+		int				m_iCurBGChangeIndex;
+		Actor *m_pCurrentBGA;
+		Actor *m_pFadingBGA;
+		float m_fSecsLeftInFade;
+	};
+	Layer m_Layer[NUM_BACKGROUND_LAYERS];
+
+	float m_fLastMusicSeconds;
 
 	BGAnimation		m_DangerPlayer[NUM_PLAYERS];
 	BGAnimation		m_DangerAll;
 
 	BGAnimation		m_DeadPlayer[NUM_PLAYERS];
-
-	Actor *CreateSongBGA( CString sBGName ) const;
-	CString CreateRandomBGA( CString sPreferredSubDir );
-
-	map<CString,Actor*> m_BGAnimations;
-	deque<CString> m_RandomBGAnimations;
-	vector<BackgroundChange> m_aBGChanges;
-	int				m_iCurBGChangeIndex;
-	Actor *m_pCurrentBGA;
-	Actor *m_pFadingBGA;
-	float m_fSecsLeftInFade;
-	float m_fLastMusicSeconds;
 	
 	// cover up the edge of animations that might hang outside of the background rectangle
 	Quad m_quadBorderLeft, m_quadBorderTop, m_quadBorderRight, m_quadBorderBottom;

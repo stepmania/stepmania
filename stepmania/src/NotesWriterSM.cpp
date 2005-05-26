@@ -10,6 +10,7 @@
 #include "NoteTypes.h"
 #include <cstring>
 #include <cerrno>
+#include "Foreach.h"
 
 void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 {
@@ -80,21 +81,27 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 			f.Write( "," );
 	}
 	f.PutLine( ";" );
-	
-	f.Write( "#BGCHANGES:" );
-	for( unsigned i=0; i<out.m_BackgroundChanges.size(); i++ )
-	{
-		const BackgroundChange &seg = out.m_BackgroundChanges[i];
 
-		f.PutLine( ssprintf( "%.3f=%s=%.3f=%d=%d=%d,", seg.m_fStartBeat, seg.m_sBGName.c_str(), seg.m_fRate, seg.m_bFadeLast, seg.m_bRewindMovie, seg.m_bLoop ) );
+	for( unsigned b=0; b<NUM_BACKGROUND_LAYERS; b++ )
+	{
+		if( b==0 )
+			f.Write( "#BGCHANGES:" );
+		else if( out.m_BackgroundChanges[b].empty() )
+			continue;	// skip
+		else
+			f.Write( ssprintf("#BGCHANGES%d:", b) );
+
+		FOREACH_CONST( BackgroundChange, out.m_BackgroundChanges[b], bgc )
+			f.PutLine( ssprintf( "%.3f=%s=%.3f=%d=%d=%d,", bgc->m_fStartBeat, bgc->m_sBGName.c_str(), bgc->m_fRate, bgc->m_bFadeLast, bgc->m_bRewindMovie, bgc->m_bLoop ) );
+
+		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to indicate that
+		 * this file doesn't want a song BG entry added at the end.  See SMLoader::TidyUpData.
+		 * This tag will be removed on load.  Add it at a very high beat, so it won't cause
+		 * problems if loaded in older versions. */
+		if( b==0 && !out.m_BackgroundChanges[b].empty() )
+			f.PutLine( "99999=-nosongbg-=1.000=0=0=0 // don't automatically add -songbackground-" );
+		f.PutLine( ";" );
 	}
-	/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to indicate that
-	 * this file doesn't want a song BG entry added at the end.  See SMLoader::TidyUpData.
-	 * This tag will be removed on load.  Add it at a very high beat, so it won't cause
-	 * problems if loaded in older versions. */
-	if( !out.m_BackgroundChanges.empty() )
-		f.PutLine( "99999=-nosongbg-=1.000=0=0=0 // don't automatically add -songbackground-" );
-	f.PutLine( ";" );
 
 	if( out.m_ForegroundChanges.size() )
 	{

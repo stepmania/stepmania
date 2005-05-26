@@ -364,6 +364,7 @@ public:
 	void HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers );
 
 	enum BGChangeChoice {
+		layer,
 		rate,
 		fade_last,
 		rewind_movie,

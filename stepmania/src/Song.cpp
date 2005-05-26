@@ -110,10 +110,11 @@ void Song::Reset()
 }
 
 
-void Song::AddBackgroundChange( BackgroundChange seg )
+void Song::AddBackgroundChange( int iLayer, BackgroundChange seg )
 {
-	m_BackgroundChanges.push_back( seg );
-	SortBackgroundChangesArray( m_BackgroundChanges );
+	ASSERT( iLayer >= 0 && iLayer < NUM_BACKGROUND_LAYERS );
+	m_BackgroundChanges[iLayer].push_back( seg );
+	SortBackgroundChangesArray( m_BackgroundChanges[iLayer] );
 }
 
 void Song::AddForegroundChange( BackgroundChange seg )
@@ -143,13 +144,13 @@ void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
 	}
 }
 
-CString Song::GetBackgroundAtBeat( float fBeat ) const
+CString Song::GetBackgroundAtBeat( int iLayer, float fBeat ) const
 {
 	unsigned i;
-	for( i=0; i<m_BackgroundChanges.size()-1; i++ )
-		if( m_BackgroundChanges[i+1].m_fStartBeat > fBeat )
+	for( i=0; i<m_BackgroundChanges[iLayer].size()-1; i++ )
+		if( m_BackgroundChanges[iLayer][i+1].m_fStartBeat > fBeat )
 			break;
-	return m_BackgroundChanges[i].m_sBGName;
+	return m_BackgroundChanges[iLayer][i].m_sBGName;
 }
 
 
@@ -720,7 +721,7 @@ void Song::TidyUpData()
 		/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
 		 * music starts. */
 		if( arrayPossibleMovies.size() == 1 )
-			this->AddBackgroundChange( BackgroundChange(0,arrayPossibleMovies[0],1.f,true,true,false) );
+			this->AddBackgroundChange( 0, BackgroundChange(0,arrayPossibleMovies[0],1.f,true,true,false) );
 	}
 
 
@@ -1209,7 +1210,15 @@ bool Song::HasBanner() const 		{return m_sBannerFile != ""			&&  IsAFile(GetBann
 bool Song::HasLyrics() const		{return m_sLyricsFile != ""			&&	IsAFile(GetLyricsPath()); }
 bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(GetBackgroundPath()); }
 bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); }
-bool Song::HasBGChanges() const 	{return !m_BackgroundChanges.empty(); }
+bool Song::HasBGChanges() const
+{
+	for( unsigned i=0; i<NUM_BACKGROUND_LAYERS; i++ )
+	{
+		if( !m_BackgroundChanges[i].empty() )
+			return true;
+	}
+	return false;
+}
 
 CString GetSongAssetPath( CString sPath, const CString &sSongPath )
 {

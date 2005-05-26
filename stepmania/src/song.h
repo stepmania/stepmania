@@ -17,11 +17,12 @@ class Profile;
 class StepsID;
 struct lua_State;
 
-#define MAX_EDITS_PER_SONG_PER_PROFILE	5
-#define MAX_EDITS_PER_SONG				5*NUM_PROFILE_SLOTS
+const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
+const int MAX_EDITS_PER_SONG				= 5*NUM_PROFILE_SLOTS;
 
 extern const int FILE_CACHE_VERSION;
 
+const int NUM_BACKGROUND_LAYERS = 2;
 
 struct BackgroundChange 
 {
@@ -153,18 +154,18 @@ public:
 	bool Matches(CString sGroup, CString sSong) const;
 
 	TimingData					m_Timing;
-	vector<BackgroundChange>	m_BackgroundChanges;	// this must be sorted before gameplay
+	vector<BackgroundChange>	m_BackgroundChanges[NUM_BACKGROUND_LAYERS];	// these must be sorted before gameplay
 	vector<BackgroundChange>	m_ForegroundChanges;	// this must be sorted before gameplay
 	vector<LyricSegment>		m_LyricSegments;		// this must be sorted before gameplay
 
 	void AddBPMSegment( const BPMSegment &seg ) { m_Timing.AddBPMSegment( seg ); }
 	void AddStopSegment( const StopSegment &seg ) { m_Timing.AddStopSegment( seg ); }
-	void AddBackgroundChange( BackgroundChange seg );
+	void AddBackgroundChange( int iLayer, BackgroundChange seg );
 	void AddForegroundChange( BackgroundChange seg );
 	void AddLyricSegment( LyricSegment seg );
 
 	void GetDisplayBpms( DisplayBpms &AddTo ) const;
-	CString GetBackgroundAtBeat( float fBeat ) const;
+	CString GetBackgroundAtBeat( int iLayer, float fBeat ) const;
 
 	float GetBPMAtBeat( float fBeat ) const { return m_Timing.GetBPMAtBeat( fBeat ); }
 	void SetBPMAtBeat( float fBeat, float fBPM ) { m_Timing.SetBPMAtBeat( fBeat, fBPM ); }

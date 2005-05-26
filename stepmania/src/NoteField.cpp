@@ -531,22 +531,26 @@ void NoteField::DrawPrimitives()
 			break;
 		case EDIT_MODE_FULL:
 			{
-				vector<BackgroundChange> &aBackgroundChanges = GAMESTATE->m_pCurSong->m_BackgroundChanges;
-				for( unsigned i=0; i<aBackgroundChanges.size(); i++ )
+				for( int b=0; b<NUM_BACKGROUND_LAYERS; b++ )
 				{
-					if(aBackgroundChanges[i].m_fStartBeat >= fFirstBeatToDraw &&
-					aBackgroundChanges[i].m_fStartBeat <= fLastBeatToDraw)
+					vector<BackgroundChange> &aBackgroundChanges = GAMESTATE->m_pCurSong->m_BackgroundChanges[b];
+					for( unsigned i=0; i<aBackgroundChanges.size(); i++ )
 					{
-						const BackgroundChange& change = aBackgroundChanges[i];
-						CString sChangeText = ssprintf("%s\n%.0f%%%s%s%s",
-							change.m_sBGName.c_str(),
-							change.m_fRate*100,
-							change.m_bFadeLast ? " Fade" : "",
-							change.m_bRewindMovie ? " Rewind" : "",
-							change.m_bLoop ? " Loop" : "" );
+						if( aBackgroundChanges[i].m_fStartBeat >= fFirstBeatToDraw &&
+							aBackgroundChanges[i].m_fStartBeat <= fLastBeatToDraw )
+						{
+							const BackgroundChange& change = aBackgroundChanges[i];
+							CString sChangeText = ssprintf("%s%s\n%.0f%%%s%s%s",
+								((b!=0) ? ssprintf("%d:",b) : CString()).c_str(),
+								change.m_sBGName.c_str(),
+								change.m_fRate*100,
+								change.m_bFadeLast ? " Fade" : "",
+								change.m_bRewindMovie ? " Rewind" : "",
+								change.m_bLoop ? " Loop" : "" );
 
-						if( IS_ON_SCREEN(change.m_fStartBeat) )
-							DrawBGChangeText( change.m_fStartBeat, sChangeText );
+							if( IS_ON_SCREEN(change.m_fStartBeat) )
+								DrawBGChangeText( change.m_fStartBeat, sChangeText );
+						}
 					}
 				}
 			}
