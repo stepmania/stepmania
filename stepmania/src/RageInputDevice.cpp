@@ -233,6 +233,18 @@ XToString( ParaPadButton, NUM_PARA_PAD_BUTTONS );
 StringToX( ParaPadButton );
 
 
+CString MidiButtonToString( DeviceButton i )
+{
+	return ssprintf( "Midi %d", i );
+}
+
+DeviceButton StringToMidiButton( const CString &s )
+{
+	DeviceButton ret;
+	sscanf( s, "Midi %d", &ret );
+	return ret;
+}
+
 CString DeviceButtonToString( InputDevice device, DeviceButton i )
 {
 	switch( device )
@@ -256,7 +268,7 @@ CString DeviceButtonToString( InputDevice device, DeviceButton i )
 	case DEVICE_JOY16:		return JoystickButtonToString( (JoystickButton)i );
 	case DEVICE_PUMP1:
 	case DEVICE_PUMP2:		return PumpPadButtonToString( (PumpPadButton)i );
-	case DEVICE_MIDI:		return ssprintf("Midi %d", (int)i);
+	case DEVICE_MIDI:		return MidiButtonToString( i );
 	case DEVICE_PARA1:		return ParaPadButtonToString( (ParaPadButton)i );
 	case DEVICE_NONE:		return "";
 	default:	ASSERT(0);	return "";
@@ -286,7 +298,7 @@ DeviceButton StringToDeviceButton( InputDevice device, const CString& s )
 	case DEVICE_JOY16:		return (DeviceButton)StringToJoystickButton( s );
 	case DEVICE_PUMP1:
 	case DEVICE_PUMP2:		return (DeviceButton)StringToPumpPadButton( s );
-	case DEVICE_MIDI:		{ int i=0; sscanf( "Midi %d", s, i ); return (DeviceButton)i; }
+	case DEVICE_MIDI:		return (DeviceButton)StringToMidiButton( s );
 	case DEVICE_PARA1:		return (DeviceButton)StringToParaPadButton( s );
 	case DEVICE_NONE:		return DEVICE_BUTTON_INVALID;
 	default:	ASSERT(0);	return DEVICE_BUTTON_INVALID;
