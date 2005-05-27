@@ -16,15 +16,15 @@ struct lua_State;
 
 enum ElementCategory
 {
-	ELEMENT_CATEGORY_BGANIMATIONS,
-	ELEMENT_CATEGORY_FONTS,
-	ELEMENT_CATEGORY_GRAPHICS,
-	ELEMENT_CATEGORY_NUMBERS,
-	ELEMENT_CATEGORY_SOUNDS,
-	ELEMENT_CATEGORY_OTHER,
-	NUM_ELEMENT_CATEGORIES
+	EC_BGANIMATIONS,
+	EC_FONTS,
+	EC_GRAPHICS,
+	EC_NUMBERS,
+	EC_SOUNDS,
+	EC_OTHER,
+	NUM_ElementCategory
 };
-#define FOREACH_ElementCategory( ec ) FOREACH_ENUM( ElementCategory, NUM_ELEMENT_CATEGORIES, ec )
+#define FOREACH_ElementCategory( ec ) FOREACH_ENUM( ElementCategory, NUM_ElementCategory, ec )
 const CString& ElementCategoryToString( ElementCategory ec );
 ElementCategory StringToElementCategory( const CString& s );
 
@@ -56,11 +56,11 @@ public:
 	 * GetPathToB( str, str ) was matching the ones below instead of these.  It's also
 	 * easier to search for uses of obsolete functions if they have a different name. */
 	CString GetPath( ElementCategory category, const CString &sClassName, const CString &sElement, bool bOptional=false );
-	CString GetPathB( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(ELEMENT_CATEGORY_BGANIMATIONS,sClassName,sElement,bOptional); };
-	CString GetPathF( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(ELEMENT_CATEGORY_FONTS,sClassName,sElement,bOptional); };
-	CString GetPathG( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(ELEMENT_CATEGORY_GRAPHICS,sClassName,sElement,bOptional); };
-	CString GetPathS( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(ELEMENT_CATEGORY_SOUNDS,sClassName,sElement,bOptional); };
-	CString GetPathO( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(ELEMENT_CATEGORY_OTHER,sClassName,sElement,bOptional); };
+	CString GetPathB( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(EC_BGANIMATIONS,sClassName,sElement,bOptional); };
+	CString GetPathF( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(EC_FONTS,sClassName,sElement,bOptional); };
+	CString GetPathG( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(EC_GRAPHICS,sClassName,sElement,bOptional); };
+	CString GetPathS( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(EC_SOUNDS,sClassName,sElement,bOptional); };
+	CString GetPathO( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(EC_OTHER,sClassName,sElement,bOptional); };
 	void ClearThemePathCache();
 
 	// TODO: remove these and update the places that use them
@@ -92,6 +92,8 @@ public:
 
 	void GetMetricsThatBeginWith( const CString &sClassName, const CString &sValueName, set<CString> &vsValueNamesOut );
 	void LoadPreferencesFromSection( const CString &sClassName );
+
+	static CString GetBlankGraphicPath();
 
 	//
 	// For self-registering metrics

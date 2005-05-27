@@ -32,7 +32,7 @@ static const CString ElementCategoryNames[] = {
 	"Sounds",
 	"Other"
 };
-XToString( ElementCategory, NUM_ELEMENT_CATEGORIES );
+XToString( ElementCategory, NUM_ElementCategory );
 StringToX( ElementCategory );
 static void LuaElementCategory(lua_State* L)
 {
@@ -40,7 +40,7 @@ static void LuaElementCategory(lua_State* L)
 	{
 		CString s = ElementCategoryNames[ec];
 		s.MakeUpper();
-		LUA->SetGlobal( "ELEMENT_CATEGORY_"+s, ec );
+		LUA->SetGlobal( "EC_"+s, ec );
 	}
 }
 REGISTER_WITH_LUA_FUNCTION( LuaElementCategory );
@@ -89,10 +89,10 @@ void ThemeManager::Unsubscribe( IThemeMetric *p )
 
 
 /* We spend a lot of time doing redundant theme path lookups.  Cache results. */
-static map<CString, CString> g_ThemePathCache[NUM_ELEMENT_CATEGORIES];
+static map<CString, CString> g_ThemePathCache[NUM_ElementCategory];
 void ThemeManager::ClearThemePathCache()
 {
-	for( int i = 0; i < NUM_ELEMENT_CATEGORIES; ++i )
+	for( int i = 0; i < NUM_ElementCategory; ++i )
 		g_ThemePathCache[i].clear();
 }
 
@@ -245,7 +245,7 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName, const CStr
 	m_sCurLanguage = sLang;
 
 	// clear theme path cache
-	for( int i = 0; i < NUM_ELEMENT_CATEGORIES; ++i )
+	for( int i = 0; i < NUM_ElementCategory; ++i )
 		g_ThemePathCache[i].clear();
 
 	g_vThemes.clear();
@@ -391,7 +391,7 @@ try_element_again:
 
 		for( unsigned p = 0; p < asPaths.size(); ++p )
 		{
-			static const char *masks[NUM_ELEMENT_CATEGORIES][13] = {
+			static const char *masks[NUM_ElementCategory][13] = {
 				{ "", "actor", "xml", NULL },
 				{ "ini", NULL },
 				{ "xml", "actor", "sprite", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
@@ -420,7 +420,7 @@ try_element_again:
 			}
 		}
 		
-		if( category == ELEMENT_CATEGORY_FONTS )
+		if( category == EC_FONTS )
 			Font::WeedFontNames(asElementPaths, ClassAndElementToFileName(sClassName,sElement));
 	}
 	
@@ -428,8 +428,8 @@ try_element_again:
 	if( asElementPaths.size() == 0 )
 	{
 		// HACK: have Fonts fall back to Numbers.  Eventually Numbers will be removed.
-		if( category == ELEMENT_CATEGORY_FONTS )
-			return GetPathToRaw( sThemeName, ELEMENT_CATEGORY_NUMBERS, sClassName, sElement ) ;
+		if( category == EC_FONTS )
+			return GetPathToRaw( sThemeName, EC_NUMBERS, sClassName, sElement ) ;
 		return "";	// This isn't fatal.
 	}
 
@@ -474,7 +474,7 @@ try_element_again:
 		FileNameToClassAndElement(sNewFileName, sNewClassName, sNewFile);
 		
 		/* backwards-compatibility hack */
-		if( category == ELEMENT_CATEGORY_FONTS )
+		if( category == EC_FONTS )
 			sNewFileName.Replace(" 16x16.png", "");
 
 		/* Search again.  For example, themes/default/Fonts/foo might redir
@@ -554,7 +554,7 @@ try_element_again:
 	/* We can't fall back on _missing in Other: the file types are unknown. */
 	CString sMessage = "The theme element \"" + sCategory + "/" + sFileName +"\" is missing.";
 	Dialog::Result res;
-	if( category != ELEMENT_CATEGORY_OTHER )
+	if( category != EC_OTHER )
 		res = Dialog::AbortRetryIgnore(sMessage, "MissingThemeElement");
 	else
 		res = Dialog::AbortRetry(sMessage, "MissingThemeElement");
@@ -617,7 +617,7 @@ void ThemeManager::ReloadMetrics()
 	//
 	// clear theme path cache
 	//
-	for( int i = 0; i < NUM_ELEMENT_CATEGORIES; ++i )
+	for( int i = 0; i < NUM_ElementCategory; ++i )
 		g_ThemePathCache[i].clear();
 }
 
@@ -903,6 +903,11 @@ void ThemeManager::LoadPreferencesFromSection( const CString &sClassName )
 
 		pPref->FromString( sVal );
 	}
+}
+
+CString ThemeManager::GetBlankGraphicPath()
+{
+	return THEMES_DIR + BASE_THEME_NAME + "/" + ElementCategoryToString(EC_GRAPHICS) + "/_blank";
 }
 
 // lua start
