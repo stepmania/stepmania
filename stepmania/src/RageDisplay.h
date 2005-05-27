@@ -242,8 +242,6 @@ protected:
 	// need to be reloaded.
 	virtual CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut ) = 0;
 
-	virtual void SetViewport(int shift_left, int shift_down) = 0;
-
 	void DrawPolyLine(const RageSpriteVertex &p1, const RageSpriteVertex &p2, float LineWidth );
 
 
