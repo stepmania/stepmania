@@ -238,7 +238,7 @@ struct GLPixFmtInfo_t {
 };
 
 
-static void FixLilEndian()
+static void FixLittleEndian()
 {
 #if defined(ENDIAN_LITTLE)
 	static bool Initialized = false;
@@ -343,7 +343,7 @@ RageDisplay_OGL::RageDisplay_OGL()
 	LOG->Trace( "RageDisplay_OGL::RageDisplay_OGL()" );
 	LOG->MapLog("renderer", "Current renderer: OpenGL");
 
-	FixLilEndian();
+	FixLittleEndian();
 	InitStringMap();
 
 	wind = NULL;
