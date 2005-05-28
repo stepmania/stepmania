@@ -4,7 +4,7 @@ function ScreenTitleBranch()
 end
 
 function ScreenCautionBranch()
-	if ShowCaution() then return "ScreenCaution" end
+	if PREFSMAN:GetPreference("ShowCaution") then return "ScreenCaution" end
 	return "ScreenSelectStyle"
 end
 
