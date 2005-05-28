@@ -81,9 +81,6 @@ int g_gluVersion;
 
 static int g_iMaxTextureUnits = 0;
 
-/* Available extensions: */
-set<string> g_glExts;
-
 /* We don't actually use normals (we don't turn on lighting), there's just
  * no GL_T2F_C4F_V3F. */
 const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
@@ -267,17 +264,6 @@ static void FixLittleEndian()
 #endif
 }
 
-
-void GetGLExtensions(set<string> &ext)
-{
-    const char *buf = (const char *)glGetString(GL_EXTENSIONS);
-
-	vector<CString> lst;
-	split(buf, " ", lst);
-
-	for(unsigned i = 0; i < lst.size(); ++i)
-		ext.insert(lst[i]);
-}
 
 static void FlushGLErrors()
 {
@@ -557,17 +543,12 @@ RageDisplay_OGL::~RageDisplay_OGL()
 	delete wind;
 }
 
-bool HasExtension(CString ext)
-{
-	return g_glExts.find(ext) != g_glExts.end();
-}
-
 static void CheckPalettedTextures()
 {
 	CString error;
 	do
 	{
-		if( !HasExtension("GL_EXT_paletted_texture") )
+		if( !GLExt.HasExtension("GL_EXT_paletted_texture") )
 		{
 			error = "GL_EXT_paletted_texture missing";
 			break;
@@ -687,7 +668,6 @@ void SetupExtensions()
 {
 	const float fGLVersion = strtof( (const char *) glGetString(GL_VERSION), NULL );
 	g_glVersion = int(roundf(fGLVersion * 10));
-	GetGLExtensions(g_glExts);
 
 	const float fGLUVersion = strtof( (const char *) gluGetString(GLU_VERSION), NULL );
 	g_gluVersion = int(roundf(fGLUVersion * 10));
@@ -1766,7 +1746,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
 
 	if( wind->GetVideoModeParams().bAnisotropicFiltering &&
-		HasExtension("GL_EXT_texture_filter_anisotropic") )
+		GLExt.HasExtension("GL_EXT_texture_filter_anisotropic") )
 	{
 		GLfloat largest_supported_anisotropy;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &largest_supported_anisotropy);

@@ -51,6 +51,8 @@ struct GLExt_t
 	int m_iShadingLanguageVersion; /* * 100 */
 
 	void Load( LowLevelWindow *pWind );
+
+	bool HasExtension( const CString &sExt ) const;
 };
 
 extern GLExt_t GLExt;

@@ -6,6 +6,8 @@
 #include <windows.h>
 #endif
 
+#include <set>
+
 #if !defined(DARWIN)
 # include <GL/gl.h>
 # include <GL/glu.h>
@@ -19,11 +21,18 @@
 
 #include "RageDisplay_OGL_Extensions.h"
 #include "RageLog.h"
+#include "RageUtil.h"
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
 GLExt_t GLExt;
 
-bool HasExtension( CString ext );
+/* Available extensions: */
+static set<string> g_glExts;
+
+bool GLExt_t::HasExtension( const CString &sExt ) const
+{
+	return g_glExts.find(sExt) != g_glExts.end();
+}
 
 #define F(n)  { (void **) &GLExt.n , #n }
 
@@ -56,9 +65,22 @@ static bool LoadAllOrNothing( struct func_t *funcs, LowLevelWindow *pWind )
 	return false;
 }
 
+static void GetGLExtensions( set<string> &ext )
+{
+    const char *szBuf = (const char *) glGetString( GL_EXTENSIONS );
+
+	vector<CString> asList;
+	split( szBuf, " ", asList );
+
+	for( unsigned i = 0; i < asList.size(); ++i )
+		ext.insert( asList[i] );
+}
+
 void GLExt_t::Load( LowLevelWindow *pWind )
 {
 	memset( this, 0, sizeof(*this) );
+
+	GetGLExtensions( g_glExts );
 
 	m_bEXT_texture_env_combine = HasExtension("GL_EXT_texture_env_combine");
 	m_bGL_EXT_bgra = HasExtension("GL_EXT_bgra");
