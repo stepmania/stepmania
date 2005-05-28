@@ -280,6 +280,12 @@ void BacktraceNames::FromAddr( const void *p )
 	 */
 	if( Symbol.Left(1) == "_" )
 		Symbol = Symbol.substr(1);
+	/* After stripping off the leading _
+	 * _GLOBAL__I__ZN5ModelC2Ev -> _ZN5ModelC2Ev
+	 * _GLOBAL__D__Z12ForceToAsciiR7CStdStrIcE -> _Z12ForceToAsciiR7CStdStrIcE
+	 */
+	if( Symbol.Left(9) == "_GLOBAL__" )
+		Symbol = Symbol.substr(11);
 }
 
 #elif defined(BACKTRACE_LOOKUP_METHOD_BACKTRACE_SYMBOLS)
