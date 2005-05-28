@@ -74,7 +74,7 @@ function GetGameplayNextScreen()
 	local Passed = not AllFailed()
 	Trace( " Passed = "..tostring(Passed) )
 	Trace( " IsSyncDataChanged = "..tostring(GAMESTATE:IsSyncDataChanged()) )
-	Trace( " IsCourseMode = "..tostring(IsCourseMode()) )
+	Trace( " IsCourseMode = "..tostring(GAMESTATE:IsCourseMode()) )
 	Trace( " IsExtraStage = "..tostring(IsExtraStage()) )
 	Trace( " IsExtraStage2 = "..tostring(IsExtraStage2()) )
 	Trace( " Event mode = "..tostring(IsEventMode()) )
@@ -83,7 +83,7 @@ function GetGameplayNextScreen()
 		return "ScreenSaveSync"
 	end
 
-	if Passed or IsCourseMode() or
+	if Passed or GAMESTATE:IsCourseMode() or
 		IsExtraStage() or IsExtraStage2()
 	then
 		Trace( "Go to evaluation screen" )
