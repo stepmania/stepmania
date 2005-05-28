@@ -157,7 +157,7 @@ CString LowLevelWindow_Win32::TryVideoMode( RageDisplay::VideoModeParams p, bool
 		 *
 		 * For some reason, if we destroy the old window before creating the new one,
 		 * the "fullscreen apps go under the taskbar" glitch will happen when we quit.
-		 * We have to create the new window first, for some reason.
+		 * We have to create the new window first.
 		 */
 		LOG->Trace( "Mode requires new pixel format, and we've already set one; resetting OpenGL context" );
 		if( g_HGLRC != NULL )
