@@ -60,16 +60,6 @@ int ChooseWindowPixelFormat( RageDisplay::VideoModeParams p, PIXELFORMATDESCRIPT
 
 	return ChoosePixelFormat( GraphicsWindow::GetHDC(), PixelFormat );
 }
-void pump(const char *p)
-{
-	MSG msg;
-	while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
-	{
-		GetMessage( &msg, NULL, 0, 0 );
-		LOG->Trace("%s msg: %i -> %i", p, msg.message, msg.hwnd );
-		DispatchMessage( &msg );
-	}
-}
 
 void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 {
