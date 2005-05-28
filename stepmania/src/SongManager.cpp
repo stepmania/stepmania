@@ -47,7 +47,7 @@ static const ThemeMetric<RageColor> EDIT_COLOR			("SongManager","EditColor");
 static const ThemeMetric<RageColor> EXTRA_COLOR			("SongManager","ExtraColor");
 static const ThemeMetric<int>		EXTRA_COLOR_METER	("SongManager","ExtraColorMeter");
 
-CString GROUP_COLOR_NAME( size_t i ) { return ssprintf("GroupColor%lu",i+1); }
+CString GROUP_COLOR_NAME( size_t i ) { return ssprintf("GroupColor%i",(int) i+1); }
 
 
 SongManager::SongManager()
