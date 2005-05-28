@@ -5,8 +5,6 @@
 
 class LowLevelWindow_SDL: public LowLevelWindow
 {
-	RageDisplay::VideoModeParams CurrentParams;
-
 public:
 	LowLevelWindow_SDL();
 	~LowLevelWindow_SDL();
@@ -16,7 +14,11 @@ public:
 	void Update(float fDeltaTime);
 
 	RageDisplay::VideoModeParams GetVideoModeParams() const { return CurrentParams; }
+
+private:
+	RageDisplay::VideoModeParams CurrentParams;
 };
+
 #ifdef ARCH_LOW_LEVEL_WINDOW
 #error "More than one LowLevelWindow selected!"
 #endif

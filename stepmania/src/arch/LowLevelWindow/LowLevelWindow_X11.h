@@ -7,10 +7,6 @@
 
 class LowLevelWindow_X11 : public LowLevelWindow
 {
-private:
-	bool m_bWindowIsOpen;
-	RageDisplay::VideoModeParams CurrentParams;
-
 public:
 	LowLevelWindow_X11();
 	~LowLevelWindow_X11();
@@ -20,7 +16,12 @@ public:
 	void SwapBuffers();
 
 	RageDisplay::VideoModeParams GetVideoModeParams() const { return CurrentParams; }
+
+private:
+	bool m_bWindowIsOpen;
+	RageDisplay::VideoModeParams CurrentParams;
 };
+
 #ifdef ARCH_LOW_LEVEL_WINDOW
 #error "More than one LowLevelWindow selected!"
 #endif
