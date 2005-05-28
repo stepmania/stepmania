@@ -856,7 +856,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			FOREACH( Trail*, vpAllTrails, pTrail )
 			{
 				pProfile->IncrementCoursePlayCount( *pCourse, *pTrail );
-				for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerListForMachine; i++ )
+				for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerListForMachine.Get(); i++ )
 				{
 					int iIndex = 0;
 					pProfile->AddCourseHighScore( *pCourse, *pTrail, MakeRandomHighScore(fPercentDP), iIndex );
