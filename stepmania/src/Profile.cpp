@@ -1240,7 +1240,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 		XNode* pSongNode = pNode->AppendChild( songID.CreateNode() );
 
 		for( map<StepsID,HighScoresForASteps>::const_iterator j = hsSong.m_StepsHighScores.begin();
-			j < hsSong.m_StepsHighScores.end();
+			j != hsSong.m_StepsHighScores.end();
 			j++ )
 		{	
 			const StepsID &stepsID = j->first;
