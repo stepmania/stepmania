@@ -19,13 +19,6 @@ extern "C"
 	LUA_ASSERT( args == need, ssprintf( func " requires exactly %i argument%s, got %i", need, need == 1? "":"s", args) ); \
 }
 
-/* Require between minargs and maxargs arguments. */
-#define REQ_ARGS_BETWEEN(func, minargs, maxargs) { \
-	const int args = lua_gettop(L); \
-	LUA_ASSERT( args < minargs, ssprintf( func " requires between %i and %i argument%s, got %i", \
-		minargs, maxargs, maxargs == 1? "":"s", args) ); \
-}
-
 /* argument n must be of type "type" */
 #define REQ_ARG(func, n, type) { \
 	LUA_ASSERT( lua_is##type(L, n), ssprintf("Argument %i to " func " must be %s", n, #type) ); }
@@ -107,16 +100,6 @@ int LuaFunc_##func( lua_State *L ) { \
 	LUA_RETURN( call, L ); \
 } \
 LuaFunction( func ); /* register it */
-
-/* Functions that take a single PlayerNumber argument and an optional integer: */
-#define LuaFunction_PlayerNumber_OptInt( func, def, call ) \
-int LuaFunc_##func( lua_State *L ) { \
-	REQ_ARGS_BETWEEN( #func, 1, 2 ); \
-	REQ_ARG_NUMBER_RANGE( #func, 1, 1, NUM_PLAYERS ); \
-	const PlayerNumber pn = (PlayerNumber) (int(lua_tonumber( L, 1 ))-1); \
-	int a1 = def; \
-	LUA->GetStack( L, 2, a1 ); \
-}
 
 /* Linked list of functions we make available to Lua. */
 struct LuaFunctionList
