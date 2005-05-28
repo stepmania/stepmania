@@ -1246,7 +1246,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 			j++ )
 		{	
 			jCheck1++;
-			ASSERT(jCheck1 < jCheck2);
+			ASSERT( jCheck1 <= jCheck2 );
 			const StepsID &stepsID = j->first;
 			const HighScoresForASteps &hsSteps = j->second;
 
