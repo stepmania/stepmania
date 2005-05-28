@@ -2,6 +2,7 @@
 #include "LowLevelWindow_X11.h"
 #include "RageLog.h"
 #include "RageException.h"
+#include "ProductInfo.h"
 #include "archutils/Unix/X11Helper.h"
 
 #include <stack>
@@ -17,6 +18,7 @@ extern Display *g_X11Display;
 
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
+	m_bWindowIsOpen = false;
 	g_X11Display = NULL;
 	if( !X11Helper::Go() )
 	{
@@ -61,10 +63,8 @@ CString LowLevelWindow_X11::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 	hints.min_width = hints.max_width = hints.base_width = p.width;
 	hints.min_height = hints.max_height = hints.base_height = p.height;
 
-	if( !windowIsOpen || p.bpp != CurrentParams.bpp )
+	if( !m_bWindowIsOpen || p.bpp != CurrentParams.bpp )
 	{
-		X11Helper::OpenMask( StructureNotifyMask );
-
 		// Different depth, or we didn't make a window before. New context.
 		bNewDeviceOut = true;
 
@@ -101,15 +101,18 @@ CString LowLevelWindow_X11::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 		{
 			return "Failed to create the window.";
 		}
-		windowIsOpen = true;
+		m_bWindowIsOpen = true;
 
-		char WindowTitle[] = "StepMania";
+		char WindowTitle[] = PRODUCT_NAME;
 		XChangeProperty( g_X11Display, X11Helper::Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
 				reinterpret_cast<unsigned char*>(WindowTitle), strlen(WindowTitle) );
 
 		GLXContext ctxt = glXCreateContext(X11Helper::Dpy, xvi, NULL, True);
 
 		glXMakeCurrent( X11Helper::Dpy, X11Helper::Win, ctxt );
+
+		/* Enable StructureNotifyMask, so we receive a MapNotify for the following XMapWindow. */
+		X11Helper::OpenMask( StructureNotifyMask );
 
 		XMapWindow( X11Helper::Dpy, X11Helper::Win );
 

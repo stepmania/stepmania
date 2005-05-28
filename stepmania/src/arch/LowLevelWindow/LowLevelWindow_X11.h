@@ -1,13 +1,14 @@
+/* LowLevelWindow_X11 - OpenGL GLX window driver. */
+
 #ifndef LOW_LEVEL_WINDOW_X11_H
 #define LOW_LEVEL_WINDOW_X11_H
 
-/* A nice, simple OpenGL window direct to X11 through Xlib. */
 #include "LowLevelWindow.h"
 
 class LowLevelWindow_X11 : public LowLevelWindow
 {
 private:
-	bool windowIsOpen;
+	bool m_bWindowIsOpen;
 	RageDisplay::VideoModeParams CurrentParams;
 
 public:
