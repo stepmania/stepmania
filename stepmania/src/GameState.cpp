@@ -2142,18 +2142,6 @@ LuaFunction_NoArgs( GetNumPlayersEnabled,	GAMESTATE->GetNumPlayersEnabled() )
 LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestStepsDifficulty() )
 LuaFunction_StrStr(	SetEnv,					GAMESTATE->m_mapEnv[str1] = str2 )
 
-int LuaFunc_UsingModifier( lua_State *L )
-{
-	REQ_ARGS( "UsingModifier", 2 );
-	REQ_ARG_NUMBER_RANGE( "UsingModifier", 1, 1, NUM_PLAYERS );
-	REQ_ARG( "UsingModifier", 2, string );
-
-	const PlayerNumber pn = (PlayerNumber) (int(lua_tonumber( L, 1 ))-1);
-	const CString modifier = lua_tostring( L, 2 );
-	LUA_RETURN( GAMESTATE->PlayerIsUsingModifier( pn, modifier ), L );
-}
-LuaFunction( UsingModifier );
-
 CString GetStageText()
 {
 	// all lowercase or compatibility with scripts
