@@ -379,6 +379,17 @@ void LuaManager::Fail( const CString &err )
 	lua_error( L );
 }
 
+/* Like luaL_typerror, but without the special case for argument 1 being "self"
+ * in method calls, so we give a correct error message after we remove self. */
+int LuaHelpers::TypeError( int iArgNo, const char *szName )
+{
+	lua_Debug debug;
+	lua_getstack( LUA->L, 0, &debug );
+	lua_getinfo( LUA->L, "n", &debug );
+	return luaL_error( LUA->L, "bad argument #%d to \"%s\" (%s expected, got %s)",
+		iArgNo, debug.name? debug.name:"(unknown)", szName, lua_typename(LUA->L, lua_type(LUA->L, iArgNo)) );
+}
+
 
 LuaFunctionList::LuaFunctionList( CString name_, lua_CFunction func_ )
 {

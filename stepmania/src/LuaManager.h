@@ -144,6 +144,8 @@ namespace LuaHelpers
 			lua_rawseti( L, -2, i+1 );
 		}
 	}
+
+	int TypeError( int narg, const char *tname );
 }
 
 

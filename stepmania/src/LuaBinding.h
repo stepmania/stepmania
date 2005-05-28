@@ -81,14 +81,20 @@ public:
 		
 		lua_pop(L, 2);  // drop metatable and method table
 	}
-	
+
 	// get userdata from Lua stack and return pointer to T object
-	static T *check(lua_State *L, int narg)
+	static T *check( lua_State *L, int narg, bool bIsSelf = false )
 	{
-		userdataType *ud =
-			static_cast<userdataType*>(luaL_checkudata(L, narg, s_className));
-		if(!ud) luaL_typerror(L, narg, s_className);
-		return ud->pT;  // pointer to T object
+		userdataType *pUserdata = static_cast<userdataType*>( luaL_checkudata(L, narg, s_className) );
+		if( pUserdata == NULL )
+		{
+			if( bIsSelf )
+				luaL_typerror( L, narg, s_className );
+			else
+				LuaHelpers::TypeError( narg, s_className );
+		}
+
+		return pUserdata->pT;  // pointer to T object
 	}
 	
 private:
@@ -97,7 +103,7 @@ private:
 	static int thunk(lua_State *L) 
 	{
 		// stack has userdata, followed by method args
-		T *obj = check(L, 1);  // get 'self', or if you prefer, 'this'
+		T *obj = check( L, 1, true );  // get self
 		lua_remove(L, 1);  // remove self so member function args start at index 1
 		// get member function from upvalue
 		MyRegType *l = static_cast<MyRegType*>(lua_touserdata(L, lua_upvalueindex(1)));
