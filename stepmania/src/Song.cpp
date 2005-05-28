@@ -1212,7 +1212,7 @@ bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(G
 bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); }
 bool Song::HasBGChanges() const
 {
-	for( unsigned i=0; i<NUM_BACKGROUND_LAYERS; i++ )
+	for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
 	{
 		if( !m_BackgroundChanges[i].empty() )
 			return true;

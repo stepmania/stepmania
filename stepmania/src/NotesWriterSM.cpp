@@ -82,7 +82,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	}
 	f.PutLine( ";" );
 
-	for( unsigned b=0; b<NUM_BACKGROUND_LAYERS; b++ )
+	for( int b=0; b<NUM_BACKGROUND_LAYERS; b++ )
 	{
 		if( b==0 )
 			f.Write( "#BGCHANGES:" );

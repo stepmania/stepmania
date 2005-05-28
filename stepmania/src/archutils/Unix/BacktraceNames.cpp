@@ -83,7 +83,7 @@ CString BacktraceNames::Format() const
 		ShortenedPath = CString("(") + ShortenedPath + ")";
 	}
 
-	CString ret = ssprintf( "%0*lx: ", int(sizeof(void*)*2), Address );
+	CString ret = ssprintf( "%0*lx: ", int(sizeof(void*)*2), (long) Address );
 	if( Symbol != "" )
 		ret += Symbol + " ";
 	ret += ShortenedPath;
