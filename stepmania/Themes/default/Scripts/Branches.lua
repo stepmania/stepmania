@@ -63,7 +63,7 @@ function SelectEndingScreen()
 end	
 
 function IsEventMode()
-	return GetPreference( "EventMode" )
+	return PREFSMAN:GetPreference( "EventMode" )
 end
 
 -- For "EvalOnFail", do:
