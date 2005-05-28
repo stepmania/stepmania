@@ -22,7 +22,6 @@
 #undef __glext_h_
 #include "glext.h"
 
-#include "RageFile.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "PrefsManager.h" // XXX
@@ -50,8 +49,6 @@
 #include "RageTextureManager.h"
 #include "RageMath.h"
 #include "RageTypes.h"
-#include "GameConstantsAndTypes.h"
-#include "StepMania.h"
 #include "RageUtil.h"
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
