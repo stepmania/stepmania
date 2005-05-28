@@ -1,6 +1,7 @@
 #ifndef LUA_FUNCTIONS_H
 #define LUA_FUNCTIONS_H
 
+#include "LuaBinding.h"
 #include "RageUtil.h" /* for ssprintf */
 
 extern "C"
@@ -12,12 +13,6 @@ extern "C"
 
 /* Argument helpers: */
 #define LUA_ASSERT( expr, err ) if( !(expr) ) { LUA->Fail( err ); }
-
-/* Require exactly "need" arguments. */
-#define REQ_ARGS(func, need) { \
-	const int args = lua_gettop(L); \
-	LUA_ASSERT( args == need, ssprintf( func " requires exactly %i argument%s, got %i", need, need == 1? "":"s", args) ); \
-}
 
 /* argument n must be of type "type" */
 #define REQ_ARG(func, n, type) { \
@@ -34,59 +29,43 @@ extern "C"
 /* Functions that take no arguments: */
 #define LuaFunction_NoArgs( func, call ) \
 int LuaFunc_##func( lua_State *L ) { \
-	REQ_ARGS( #func, 0 ); \
 	LUA_RETURN( call, L ); \
 } \
 LuaFunction( func ); /* register it */
 
 #define LuaFunction_Int( func, call ) \
 int LuaFunc_##func( lua_State *L ) { \
-	REQ_ARGS( #func, 1 ); \
-	REQ_ARG( #func, 1, number ); \
-	const int a1 = int(lua_tonumber( L, 1 )); \
+	const int a1 = IArg(1); \
 	LUA_RETURN( call, L ); \
 } \
 LuaFunction( func ); /* register it */
 
 #define LuaFunction_IntInt( func, call ) \
 int LuaFunc_##func( lua_State *L ) { \
-	REQ_ARGS( #func, 2 ); \
-	REQ_ARG( #func, 1, number ); \
-	REQ_ARG( #func, 2, number ); \
-	const int a1 = int(lua_tonumber( L, 1 )); \
-	const int a2 = int(lua_tonumber( L, 2 )); \
+	const int a1 = IArg(1); \
+	const int a2 = IArg(2); \
 	LUA_RETURN( call, L ); \
 } \
 LuaFunction( func ); /* register it */
 
 #define LuaFunction_Float( func, call ) \
 int LuaFunc_##func( lua_State *L ) { \
-	REQ_ARGS( #func, 1 ); \
-	REQ_ARG( #func, 1, number ); \
-	const float a1 = float(lua_tonumber( L, 1 )); \
+	const float a1 = FArg(1); \
 	LUA_RETURN( call, L ); \
 } \
 LuaFunction( func ); /* register it */
 
 #define LuaFunction_Str( func, call ) \
 int LuaFunc_##func( lua_State *L ) { \
-	REQ_ARGS( #func, 1 ); \
-	REQ_ARG( #func, 1, string ); \
-	CString str; \
-	LuaHelpers::PopStack( str, NULL ); \
+	CString str = SArg(1); \
 	LUA_RETURN( call, L ); \
 } \
 LuaFunction( func ); /* register it */
 
 #define LuaFunction_StrStr( func, call ) \
 int LuaFunc_##func( lua_State *L ) { \
-	REQ_ARGS( #func, 2 ); \
-	REQ_ARG( #func, 1, string ); \
-	REQ_ARG( #func, 2, string ); \
-	CString str1; \
-	CString str2; \
-	LuaHelpers::PopStack( str2, NULL ); \
-	LuaHelpers::PopStack( str1, NULL ); \
+	CString str1 = SArg(1); \
+	CString str2 = SArg(2); \
 	LUA_RETURN( call, L ); \
 } \
 LuaFunction( func ); /* register it */
@@ -94,7 +73,6 @@ LuaFunction( func ); /* register it */
 /* Functions that take a single PlayerNumber argument: */
 #define LuaFunction_PlayerNumber( func, call ) \
 int LuaFunc_##func( lua_State *L ) { \
-	REQ_ARGS( #func, 1 ); \
 	REQ_ARG_NUMBER_RANGE( #func, 1, 1, NUM_PLAYERS ); \
 	const PlayerNumber pn = (PlayerNumber) (int(lua_tonumber( L, -1 ))-1); \
 	LUA_RETURN( call, L ); \
