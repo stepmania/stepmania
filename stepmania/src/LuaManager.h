@@ -1,10 +1,15 @@
 #ifndef LUA_MANAGER_H
 #define LUA_MANAGER_H
 
-#include "LuaFunctions.h"
-
 struct lua_State;
 typedef void (*RegisterWithLuaFn)(lua_State*);
+
+extern "C"
+{
+#include <lua.h>
+#include <lualib.h>
+#include <lauxlib.h>
+}
 
 class LuaManager;
 extern LuaManager *LUA;

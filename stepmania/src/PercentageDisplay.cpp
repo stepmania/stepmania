@@ -8,6 +8,7 @@
 #include "RageLog.h"
 #include "StageStats.h"
 #include "PlayerState.h"
+#include "LuaFunctions.h"
 
 ThemeMetric<int> PERCENT_DECIMAL_PLACES	( "PercentageDisplay", "PercentDecimalPlaces" );
 ThemeMetric<int> PERCENT_TOTAL_SIZE		( "PercentageDisplay", "PercentTotalSize" );
