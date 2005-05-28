@@ -1239,10 +1239,14 @@ XNode* Profile::SaveSongScoresCreateNode() const
 
 		XNode* pSongNode = pNode->AppendChild( songID.CreateNode() );
 
+		int jCheck2 = hsSong.m_StepsHighScores.size();
+		int jCheck1 = 0;
 		for( map<StepsID,HighScoresForASteps>::const_iterator j = hsSong.m_StepsHighScores.begin();
 			j != hsSong.m_StepsHighScores.end();
 			j++ )
 		{	
+			jCheck1++;
+			ASSERT(jCheck1 < jCheck2);
 			const StepsID &stepsID = j->first;
 			const HighScoresForASteps &hsSteps = j->second;
 
