@@ -74,9 +74,7 @@ static bool g_bColorIndexTableWorks = true;
 
 /* Range and granularity of points and lines: */
 float g_line_range[2];
-float g_line_granularity;
 float g_point_range[2];
-float g_point_granularity;
 
 /* OpenGL version * 10: */
 int g_glVersion;
@@ -89,7 +87,7 @@ static int g_iMaxTextureUnits = 0;
 /* Available extensions: */
 set<string> g_glExts;
 
-/* We don't actually use normals (we don't tunr on lighting), there's just
+/* We don't actually use normals (we don't turn on lighting), there's just
  * no GL_T2F_C4F_V3F. */
 const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
 
@@ -496,9 +494,7 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 	/* Log this, so if people complain that the radar looks bad on their
 	 * system we can compare them: */
 	glGetFloatv(GL_LINE_WIDTH_RANGE, g_line_range);
-	glGetFloatv(GL_LINE_WIDTH_GRANULARITY, &g_line_granularity);
 	glGetFloatv(GL_POINT_SIZE_RANGE, g_point_range);
-	glGetFloatv(GL_POINT_SIZE_GRANULARITY, &g_point_granularity);
 
 	InitScalingScript();
 
