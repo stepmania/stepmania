@@ -1313,52 +1313,7 @@ LUA_REGISTER_CLASS( SongManager )
 
 
 
-static bool CheckPointer( const Song *p )
-{
-	const vector<Song*> &songs = SONGMAN->GetAllSongs();
-	for( unsigned i = 0; i < songs.size(); ++i )
-		if( songs[i] == p )
-			return true;
-	return false;
-}
-
-
 #include "LuaFunctions.h"
-#define LuaFunction_Song( func, call ) \
-int LuaFunc_##func( lua_State *L ) { \
-	REQ_ARGS( #func, 1 ); \
-	REQ_ARG( #func, 1, lightuserdata ); \
-	const Song *p = (const Song *) (lua_touserdata( L, -1 )); \
-	LUA_ASSERT( CheckPointer(p), ssprintf("%p is not a valid song", p) ); \
-	LUA_RETURN( call, L ); \
-} \
-LuaFunction( func ); /* register it */
-
-LuaFunction_Song( SongFullDisplayTitle, p->GetDisplayFullTitle() );
-
-static bool CheckPointer( const Steps *p )
-{
-	const vector<Song*> &songs = SONGMAN->GetAllSongs();
-	for( unsigned i = 0; i < songs.size(); ++i )
-	{
-		const vector<Steps*>& vpSteps = songs[i]->GetAllSteps();
-		for( unsigned j = 0; j < vpSteps.size(); ++j )
-			if( vpSteps[j] == p )
-				return true;
-	}
-	return false;
-}
-
-#define LuaFunction_Steps( func, call ) \
-int LuaFunc_##func( lua_State *L ) { \
-	REQ_ARGS( #func, 1 ); \
-	REQ_ARG( #func, 1, lightuserdata ); \
-	const Steps *p = (const Steps *) (lua_touserdata( L, -1 )); \
-	LUA_ASSERT( CheckPointer(p), ssprintf("%p is not a valid steps", p) ); \
-	LUA_RETURN( call, L ); \
-} \
-LuaFunction( func ); /* register it */
-LuaFunction_Steps( StepsMeter, p->GetMeter() );
 
 CString GetCurrentSongDisplayTitle()
 {
