@@ -10,14 +10,7 @@
 
 #include <csetjmp>
 #include <cassert>
-/*
-#include "Actor.h"
-void foo()
-{
-	Actor *p = NULL;
-	LuaHelpers::Push( p, NULL );
-}
-*/
+
 LuaManager *LUA = NULL;
 static LuaFunctionList *g_LuaFunctions = NULL;
 
@@ -171,6 +164,9 @@ LuaManager::~LuaManager()
 
 void LuaManager::RegisterTypes()
 {
+	for( const LuaFunctionList *p = g_LuaFunctions; p; p=p->next )
+		lua_register( L, p->name, p->func );
+	
 	if( g_vRegisterActorTypes )
 	{
 		for( unsigned i=0; i<g_vRegisterActorTypes->size(); i++ )
@@ -201,9 +197,6 @@ void LuaManager::ResetState()
 	luaopen_table( L );
 	lua_settop(L, 0); // luaopen_* pushes stuff onto the stack that we don't need
 
-	for( const LuaFunctionList *p = g_LuaFunctions; p; p=p->next )
-		lua_register( L, p->name, p->func );
-	
 	RegisterTypes();
 
 	LuaReference::AfterResetAll();
