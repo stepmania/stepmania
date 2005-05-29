@@ -19,8 +19,8 @@ function SongSelectionScreen()
 end
 
 function SMOnlineScreen()
-	if ( not IsSMOnlineLoggedIn(1) ) and IsPlayerEnabled(1) then return "ScreenSMOnlineLogin" end
-	if ( not IsSMOnlineLoggedIn(2) ) and IsPlayerEnabled(2) then return "ScreenSMOnlineLogin" end
+	if not IsSMOnlineLoggedIn(1) and GAMESTATE:IsPlayerEnabled(PLAYER_1) then return "ScreenSMOnlineLogin" end
+	if not IsSMOnlineLoggedIn(2) and GAMESTATE:IsPlayerEnabled(PLAYER_2) then return "ScreenSMOnlineLogin" end
 	return "ScreenNetRoom"
 end	
 
