@@ -241,9 +241,6 @@ LuaFunction_NoArgs( GetBestGrade,			GetBestGrade() );
 LuaFunction_NoArgs( GetWorstGrade,			GetWorstGrade() );
 LuaFunction_NoArgs( OnePassed,				STATSMAN->m_CurStageStats.OnePassed() );
 LuaFunction_NoArgs( AllFailed,				STATSMAN->m_CurStageStats.AllFailed() );
-LuaFunction_PlayerNumber( FullCombo,		STATSMAN->m_CurStageStats.m_player[pn].FullCombo() )
-LuaFunction_PlayerNumber( MaxCombo,			STATSMAN->m_CurStageStats.m_player[pn].GetMaxCombo().cnt )
-LuaFunction_PlayerNumber( GetGrade,			STATSMAN->m_CurStageStats.m_player[pn].GetGrade() )
 LuaFunction_Str( Grade,						StringToGrade(str) );
 
 const StageStats *GetStageStatsN( int n )

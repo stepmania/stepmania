@@ -453,12 +453,18 @@ public:
 	static int GetCaloriesBurned( T* p, lua_State *L )			{ lua_pushnumber(L, p->fCaloriesBurned ); return 1; }
 	static int GetLifeRemainingSeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->fLifeRemainingSeconds); return 1; }
 	static int GetSurvivalSeconds( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetSurvivalSeconds()); return 1; }
+	static int FullCombo( T* p, lua_State *L )					{ lua_pushnumber(L, p->FullCombo()); return 1; }
+	static int MaxCombo( T* p, lua_State *L )					{ lua_pushnumber(L, p->GetMaxCombo().cnt); return 1; }
+	static int GetGrade( T* p, lua_State *L )					{ lua_pushnumber(L, p->GetGrade()); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetCaloriesBurned )
 		ADD_METHOD( GetLifeRemainingSeconds )
 		ADD_METHOD( GetSurvivalSeconds )
+		ADD_METHOD( FullCombo )
+		ADD_METHOD( MaxCombo )
+		ADD_METHOD( GetGrade )
 		Luna<T>::Register( L );
 	}
 };
