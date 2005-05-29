@@ -12,6 +12,11 @@
 #include <cerrno>
 #include "Foreach.h"
 
+static CString BackgroundChangeToString( const BackgroundChange &bgc )
+{
+	return ssprintf( "%.3f=%s=%.3f=%d=%d=%d=%s,", bgc.m_fStartBeat, bgc.m_sFile1.c_str(), bgc.m_fRate, bgc.m_sTransition=="CrossFade", bgc.m_bRewindMovie, bgc.m_bLoop, bgc.m_sFile2.c_str(), bgc.m_sTransition );
+}
+
 void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 {
 	f.PutLine( ssprintf( "#TITLE:%s;", out.m_sMainTitle.c_str() ) );
@@ -92,7 +97,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 			f.Write( ssprintf("#BGCHANGES%d:", b) );
 
 		FOREACH_CONST( BackgroundChange, out.m_BackgroundChanges[b], bgc )
-			f.PutLine( ssprintf( "%.3f=%s=%.3f=%d=%d=%d,", bgc->m_fStartBeat, bgc->m_sBGName.c_str(), bgc->m_fRate, bgc->m_bFadeLast, bgc->m_bRewindMovie, bgc->m_bLoop ) );
+			f.PutLine( BackgroundChangeToString(*bgc) );
 
 		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to indicate that
 		 * this file doesn't want a song BG entry added at the end.  See SMLoader::TidyUpData.
@@ -106,13 +111,9 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	if( out.m_ForegroundChanges.size() )
 	{
 		f.Write( "#FGCHANGES:" );
-		for( unsigned i=0; i<out.m_ForegroundChanges.size(); i++ )
+		FOREACH_CONST( BackgroundChange, out.m_ForegroundChanges, bgc )
 		{
-			const BackgroundChange &seg = out.m_ForegroundChanges[i];
-
-			f.PutLine( ssprintf( "%.3f=%s=%.3f=%d=%d=%d", seg.m_fStartBeat, seg.m_sBGName.c_str(), seg.m_fRate, seg.m_bFadeLast, seg.m_bRewindMovie, seg.m_bLoop ) );
-			if( i != out.m_ForegroundChanges.size()-1 )
-				f.Write( "," );
+			f.PutLine( BackgroundChangeToString(*bgc) );
 		}
 		f.PutLine( ";" );
 	}

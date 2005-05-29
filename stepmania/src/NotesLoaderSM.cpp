@@ -161,19 +161,26 @@ bool LoadFromBGChangesString( BackgroundChange &change, const CString &sBGChange
 	CStringArray aBGChangeValues;
 	split( sBGChangeExpression, "=", aBGChangeValues );
 
-	switch( aBGChangeValues.size() )
+	if( aBGChangeValues.size() >= 6 )
 	{
-	case 6:
 		change.m_fRate = strtof( aBGChangeValues[2], NULL );
-		change.m_bFadeLast = atoi( aBGChangeValues[3] ) != 0;
+		change.m_sTransition = (atoi( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
 		change.m_bRewindMovie = atoi( aBGChangeValues[4] ) != 0;
 		change.m_bLoop = atoi( aBGChangeValues[5] ) != 0;
-		// fall through
-	case 2:
+	}
+	if( aBGChangeValues.size() >= 8 )
+	{
+		change.m_sFile1 = aBGChangeValues[6];
+		change.m_sTransition = aBGChangeValues[7];
+	}
+	if( aBGChangeValues.size() >= 2 )
+	{
 		change.m_fStartBeat = strtof( aBGChangeValues[0], NULL );
-		change.m_sBGName = aBGChangeValues[1];
+		change.m_sFile1 = aBGChangeValues[1];
 		return true;
-	default:
+	}
+	else
+	{
 		LOG->Warn("Invalid #BGCHANGES value \"%s\" was ignored", sBGChangeExpression.c_str());
 		return false;
 	}
@@ -543,7 +550,7 @@ void SMLoader::TidyUpData( Song &song, bool cache )
 
 		for( unsigned i = 0; !bHasNoSongBgTag && i < bg.size(); ++i )
 		{
-			if( !bg[i].m_sBGName.CompareNoCase("-nosongbg-") )
+			if( !bg[i].m_sFile1.CompareNoCase("-nosongbg-") )
 			{
 				bg.erase( bg.begin()+i );
 				bHasNoSongBgTag = true;
@@ -564,7 +571,7 @@ void SMLoader::TidyUpData( Song &song, bool cache )
 				break;
 
 			/* If the last BGA is already the song BGA, don't add a duplicate. */
-			if( !bg.empty() && !bg.back().m_sBGName.CompareNoCase(song.m_sBackgroundFile) )
+			if( !bg.empty() && !bg.back().m_sFile1.CompareNoCase(song.m_sBackgroundFile) )
 				break;
 
 			if( !IsAFile( song.GetBackgroundPath() ) )

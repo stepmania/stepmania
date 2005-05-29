@@ -32,7 +32,7 @@ void Foreground::LoadFromSong( const Song *pSong )
 	for( unsigned i=0; i<pSong->m_ForegroundChanges.size(); i++ )
 	{
 		const BackgroundChange &change = pSong->m_ForegroundChanges[i];
-		CString sBGName = change.m_sBGName;
+		CString sBGName = change.m_sFile1;
 		
 		LoadedBGA bga;
 		bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName );

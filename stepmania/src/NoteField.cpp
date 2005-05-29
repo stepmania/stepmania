@@ -26,6 +26,7 @@ NoteField::NoteField()
 	m_textMeasureNumber.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textMeasureNumber.SetZoom( 1.0f );
 	m_textMeasureNumber.SetShadowLength( 2 );
+	m_textMeasureNumber.SetWrapWidthPixels( 300 );
 
 	m_rectMarkerBar.SetEffectDiffuseShift( 2, RageColor(1,1,1,0.5f), RageColor(0.5f,0.5f,0.5f,0.5f) );
 
@@ -540,14 +541,15 @@ void NoteField::DrawPrimitives()
 							aBackgroundChanges[i].m_fStartBeat <= fLastBeatToDraw )
 						{
 							const BackgroundChange& change = aBackgroundChanges[i];
-							CString sChangeText = ssprintf("%s%s\n%.0f%%%s%s%s",
-								((b!=0) ? ssprintf("%d:",b) : CString()).c_str(),
-								change.m_sBGName.c_str(),
-								change.m_fRate*100,
-								change.m_bFadeLast ? " Fade" : "",
+							CString sChangeText = ssprintf("%s%s%s%s%s%s%s",
+								((b!=0) ? ssprintf("%d: ",b) : CString()).c_str(),
+								(!change.m_sFile1.empty() ? " "+change.m_sFile1 : CString()).c_str(),
+								(!change.m_sFile2.empty() ? " "+change.m_sFile2 : CString()).c_str(),
+								((change.m_fRate!=1.0f) ? ssprintf("%.2f%%",change.m_fRate*100) : CString()).c_str(),
 								change.m_bRewindMovie ? " Rewind" : "",
-								change.m_bLoop ? " Loop" : "" );
-
+								change.m_bLoop ? " Loop" : "" ,
+								(!change.m_sTransition.empty() ? " "+change.m_sTransition : CString()).c_str()
+								);
 							if( IS_ON_SCREEN(change.m_fStartBeat) )
 								DrawBGChangeText( change.m_fStartBeat, sChangeText );
 						}

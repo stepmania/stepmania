@@ -144,13 +144,13 @@ void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
 	}
 }
 
-CString Song::GetBackgroundAtBeat( int iLayer, float fBeat ) const
+const BackgroundChange &Song::GetBackgroundAtBeat( int iLayer, float fBeat ) const
 {
 	unsigned i;
 	for( i=0; i<m_BackgroundChanges[iLayer].size()-1; i++ )
 		if( m_BackgroundChanges[iLayer][i+1].m_fStartBeat > fBeat )
 			break;
-	return m_BackgroundChanges[iLayer][i].m_sBGName;
+	return m_BackgroundChanges[iLayer][i];
 }
 
 
@@ -721,7 +721,7 @@ void Song::TidyUpData()
 		/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
 		 * music starts. */
 		if( arrayPossibleMovies.size() == 1 )
-			this->AddBackgroundChange( 0, BackgroundChange(0,arrayPossibleMovies[0],1.f,true,true,false) );
+			this->AddBackgroundChange( 0, BackgroundChange(0,arrayPossibleMovies[0],"",1.f,true,true,false) );
 	}
 
 

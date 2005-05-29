@@ -28,6 +28,12 @@ private:
 	Quad m_quadBGBrightnessFade;
 };
 
+struct BackgroundTransition
+{
+	apActorCommands cmdLeaves;
+	apActorCommands cmdRoot;
+};
+
 class Background : public ActorFrame
 {
 public:
@@ -47,27 +53,30 @@ public:
 	DancingCharacters* GetDancingCharacters() { return m_pDancingCharacters; };
 
 protected:
-	const Song *m_pSong;
-	void LoadFromRandom( float fFirstBeat, float fLastBeat, const TimingData &timing, CString sPreferredSubDir );
-
-	bool IsDangerAllVisible();
-	
 	bool m_bInitted;
 	DancingCharacters*	m_pDancingCharacters;
-
+	const Song *m_pSong;
+	map<CString,BackgroundTransition> m_mapNameToTransition;
+	
+	void LoadFromRandom( float fFirstBeat, float fLastBeat );
+	bool IsDangerAllVisible();
+	
 	class Layer
 	{
 	public:
 		Layer();
 		void Unload();
 
-		Actor *CreateSongBGA( const Song *pSong, CString sBGName ) const;
-		CString CreateRandomBGA( const Song *pSong, CString sPreferredSubDir );
-		int FindBGSegmentForBeat( float fBeat ) const;
-		void UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime );
+		// return true if created and added to m_BGAnimations
+		bool CreateBackground( const Song *pSong, const BackgroundDef &bd );
+		// return def of the background that was created and added to m_BGAnimations. calls CreateBackground
+		BackgroundDef CreateRandomBGA( const Song *pSong, CString sPreferredSubDir );
 
-		map<CString,Actor*> m_BGAnimations;
-		deque<CString> m_RandomBGAnimations;
+		int FindBGSegmentForBeat( float fBeat ) const;
+		void UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const map<CString,BackgroundTransition> &mapNameToTransition );
+
+		map<BackgroundDef,Actor*> m_BGAnimations;
+		deque<BackgroundDef> m_RandomBGAnimations;
 		vector<BackgroundChange> m_aBGChanges;
 		int				m_iCurBGChangeIndex;
 		Actor *m_pCurrentBGA;
@@ -87,6 +96,8 @@ protected:
 	Quad m_quadBorderLeft, m_quadBorderTop, m_quadBorderRight, m_quadBorderBottom;
 
 	BrightnessOverlay m_Brightness;
+
+	BackgroundDef STATIC_BACKGROUND_DEF;
 };
 
 

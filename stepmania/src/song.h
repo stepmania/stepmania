@@ -24,27 +24,12 @@ extern const int FILE_CACHE_VERSION;
 
 const int NUM_BACKGROUND_LAYERS = 2;
 
-struct BackgroundChange 
-{
-	BackgroundChange() { m_fStartBeat=-1; m_fRate=1; m_bFadeLast=false; m_bRewindMovie=false; m_bLoop=true; };
-	BackgroundChange( float s, CString n, float r=1.f, bool f=false, bool m=false, bool l=true ) { m_fStartBeat=s; m_sBGName=n; m_fRate=r; m_bFadeLast=f; m_bRewindMovie=m; m_bLoop=l; };
-	float m_fStartBeat;
-	CString m_sBGName;
-	float m_fRate;
-	bool m_bFadeLast;
-	bool m_bRewindMovie;
-	bool m_bLoop;
-};
-
-void SortBackgroundChangesArray( vector<BackgroundChange> &arrayBackgroundChanges );
-
 struct LyricSegment
 {
 	float	m_fStartTime;
 	CString m_sLyric;
 	RageColor m_Color;
 };
-
 
 class Song
 {
@@ -165,7 +150,7 @@ public:
 	void AddLyricSegment( LyricSegment seg );
 
 	void GetDisplayBpms( DisplayBpms &AddTo ) const;
-	CString GetBackgroundAtBeat( int iLayer, float fBeat ) const;
+	const BackgroundChange &GetBackgroundAtBeat( int iLayer, float fBeat ) const;
 
 	float GetBPMAtBeat( float fBeat ) const { return m_Timing.GetBPMAtBeat( fBeat ); }
 	void SetBPMAtBeat( float fBeat, float fBPM ) { m_Timing.SetBPMAtBeat( fBeat, fBPM ); }

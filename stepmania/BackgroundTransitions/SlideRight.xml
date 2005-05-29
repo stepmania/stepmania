@@ -1,0 +1,4 @@
+<BackgroundTransition
+	LeavesCommand=""
+	RootCommand="stoptweening;linear,1.0;addx,SCREEN_WIDTH"
+/>
