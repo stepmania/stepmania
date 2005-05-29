@@ -34,7 +34,7 @@ public:
 	Preference<bool>	m_bShowStats;
 	Preference<bool>	m_bShowBanners;
 
-	enum BackgroundMode { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_MOVIEVIS, BGMODE_RANDOMMOVIES };
+	enum BackgroundMode { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_RANDOMMOVIES };
 	Preference<BackgroundMode>		m_BackgroundMode;
 	Preference<int>		m_iNumBackgrounds;
 	Preference<float>	m_fBGBrightness;
