@@ -203,10 +203,6 @@ SetOutPath "$INSTDIR\Themes"
 File "Themes\instructions.txt"
 File /r "Themes\default"
 
-CreateDirectory "$INSTDIR\Visualizations"
-SetOutPath "$INSTDIR\Visualizations"
-File "Visualizations\instructions.txt"
-
 CreateDirectory "$INSTDIR\Docs"
 SetOutPath "$INSTDIR\Docs"
 File "Docs\ChangeLog.txt"
