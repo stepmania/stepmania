@@ -258,7 +258,7 @@ LuaFunction_Int( X##ToString, Lua##X##ToString(a1) ); /* register it */
 #define LuaStringToX(X)	\
 X LuaStringTo##X( CString s ) \
 { return (X) StringTo##X( s ); } \
-LuaFunction_Str( StringTo##X, LuaStringTo##X(str) ); /* register it */
+LuaFunction( StringTo##X, LuaStringTo##X( SArg(1) ) );
 
 LuaXToString( Difficulty );
 LuaStringToX( Difficulty );
