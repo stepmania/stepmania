@@ -79,8 +79,9 @@ public:
 
 	void Fail( const CString &err );
 
-	void SetGlobal( const CString &sName, int val ) { LuaHelpers::PushStack(val); SetGlobal( sName ); }
-	void SetGlobal( const CString &sName, bool val ) { LuaHelpers::PushStack(val); SetGlobal( sName ); }
+	void SetGlobal( const CString &sName, int val )				{ LuaHelpers::PushStack(val); SetGlobal( sName ); }
+	void SetGlobal( const CString &sName, bool val )			{ LuaHelpers::PushStack(val); SetGlobal( sName ); }
+	void SetGlobal( const CString &sName, const CString &val )	{ LuaHelpers::PushStack(val); SetGlobal( sName ); }
 	void UnsetGlobal( const CString &sName ) { PushStackNil(); SetGlobal( sName ); }
 
 	void PushStackNil();
