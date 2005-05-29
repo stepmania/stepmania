@@ -1,14 +1,7 @@
 #ifndef LUA_FUNCTIONS_H
 #define LUA_FUNCTIONS_H
 
-#include "LuaBinding.h"
-
-extern "C"
-{
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-}
+#include "LuaManager.h"
 
 /* Linked list of functions we make available to Lua. */
 struct LuaFunctionList

@@ -159,6 +159,11 @@ namespace LuaHelpers
 	class Register##Fn { public: Register##Fn() { LuaManager::Register( Fn ); } }; \
 	static Register##Fn register##Fn;
 
+#define SArg(n) (luaL_checkstring(L,n))
+#define IArg(n) (luaL_checkint(L,n))
+#define BArg(n) (MyLua_checkboolean(L,n))
+#define FArg(n) ((float) luaL_checknumber(L,n))
+
 #endif
 
 /*
