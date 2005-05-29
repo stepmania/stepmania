@@ -210,6 +210,12 @@ void ActorFrame::RunCommandsOnChildren( const LuaReference& cmds )
 		m_SubActors[i]->RunCommands( cmds );
 }
 
+void ActorFrame::RunCommandsOnLeaves( const LuaReference& cmds )
+{
+	for( unsigned i=0; i<m_SubActors.size(); i++ )
+		m_SubActors[i]->RunCommandsOnLeaves( cmds );
+}
+
 void ActorFrame::Update( float fDeltaTime )
 {
 //	LOG->Trace( "ActorFrame::Update( %f )", fDeltaTime );
@@ -229,7 +235,17 @@ void ActorFrame::Update( float fDeltaTime )
 	}
 }
 
-#define PropagateActorFrameCommand( cmd, type ) \
+#define PropagateActorFrameCommand( cmd ) \
+	void ActorFrame::cmd()				\
+	{									\
+		Actor::cmd();					\
+										\
+		/* set all sub-Actors */		\
+		for( unsigned i=0; i<m_SubActors.size(); i++ ) \
+			m_SubActors[i]->cmd();		\
+	}
+
+#define PropagateActorFrameCommand1Param( cmd, type ) \
 	void ActorFrame::cmd( type f )		\
 	{									\
 		Actor::cmd( f );				\
@@ -239,35 +255,15 @@ void ActorFrame::Update( float fDeltaTime )
 			m_SubActors[i]->cmd( f );	\
 	}
 
-PropagateActorFrameCommand( SetDiffuse,			RageColor )
-PropagateActorFrameCommand( SetZTestMode,		ZTestMode )
-PropagateActorFrameCommand( SetZWrite,			bool )
-PropagateActorFrameCommand( HurryTweening,		float )
+PropagateActorFrameCommand( Reset )
+PropagateActorFrameCommand( FinishTweening )
+PropagateActorFrameCommand1Param( SetDiffuse,		RageColor )
+PropagateActorFrameCommand1Param( SetZTestMode,		ZTestMode )
+PropagateActorFrameCommand1Param( SetZWrite,		bool )
+PropagateActorFrameCommand1Param( HurryTweening,	float )
+PropagateActorFrameCommand1Param( SetDiffuseAlpha,	float )
+PropagateActorFrameCommand1Param( SetBaseAlpha,		float )
 
-void ActorFrame::SetDiffuseAlpha( float f )	
-{
-	Actor::SetDiffuseAlpha( f );
-
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->SetDiffuseAlpha( f );
-}
-
-void ActorFrame::SetBaseAlpha( float f )	
-{
-	Actor::SetBaseAlpha( f );
-
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->SetBaseAlpha( f );
-}
-
-void ActorFrame::FinishTweening()
-{
-	Actor::FinishTweening();
-
-	// set all sub-Actors
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->FinishTweening();
-}
 
 float ActorFrame::GetTweenTimeLeft() const
 {

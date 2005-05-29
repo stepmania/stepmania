@@ -67,16 +67,18 @@ public:
 	// Commands
 	//
 	void PushSelf( lua_State *L );
-	void RunCommandsOnChildren( const LuaReference& cmds ); /* but not on self */
-	void RunCommandsOnChildren( const apActorCommands& cmds ) { RunCommandsOnChildren( *cmds ); }	// convenience
+	virtual void RunCommandsOnChildren( const LuaReference& cmds ); /* but not on self */
+	virtual void RunCommandsOnChildren( const apActorCommands& cmds ) { RunCommandsOnChildren( *cmds ); }	// convenience
+	virtual void RunCommandsOnLeaves( const LuaReference& cmds ); /* but not on self */
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
 
+	// propagated commands
+	virtual void Reset();
 	virtual void SetDiffuse( RageColor c );
 	virtual void SetDiffuseAlpha( float f );
 	virtual void SetBaseAlpha( float f );
-	
 	virtual void SetZTestMode( ZTestMode mode );
 	virtual void SetZWrite( bool b );
 	virtual void FinishTweening();
@@ -86,7 +88,7 @@ public:
 	void SetFOV( float fFOV ) { m_fFOV = fFOV; }
 	void SetVanishPoint( float fX, float fY) { m_fVanishX = fX; m_fVanishY = fY; }
 
-	void SetPropagateCommands( bool b );
+	virtual void SetPropagateCommands( bool b );
 
 	/* Amount of time until all tweens (and all children's tweens) have stopped: */
 	virtual float GetTweenTimeLeft() const;
