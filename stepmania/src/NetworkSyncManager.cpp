@@ -872,7 +872,7 @@ LuaFunction_NoArgs( IsNetConnected,			NSMAN->useSMserver )
 LuaFunction_NoArgs( IsNetSMOnline,			NSMAN->isSMOnline )
 static bool ReportStyle() { NSMAN->ReportStyle(); return true; }
 LuaFunction_NoArgs( ReportStyle,			ReportStyle() )
-LuaFunction_PlayerNumber( IsSMOnlineLoggedIn,	NSMAN->isSMOLoggedIn[pn] )
+LuaFunction_Int( IsSMOnlineLoggedIn,		NSMAN->isSMOLoggedIn[a1] )
 
 /*
  * (c) 2003-2004 Charles Lohr, Joshua Allen
