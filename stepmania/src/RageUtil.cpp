@@ -149,7 +149,7 @@ CString SecondsToMSSMsMs( float fSecs )
 
 #include "LuaFunctions.h"
 #include "LuaManager.h"
-LuaFunction_Float( SecondsToMSSMsMs, SecondsToMSSMsMs(a1) )
+LuaFunction( SecondsToMSSMsMs, SecondsToMSSMsMs( FArg(1) ) )
 
 CString SecondsToMMSSMsMsMs( float fSecs )
 {

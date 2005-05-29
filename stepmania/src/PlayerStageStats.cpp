@@ -438,7 +438,7 @@ float PlayerStageStats::GetPercentageOfTaps( TapNoteScore tns ) const
 }
 
 
-LuaFunction_Float( GetGradeFromPercent,	PlayerStageStats::GetGradeFromPercent(a1) )
+LuaFunction( GetGradeFromPercent,	PlayerStageStats::GetGradeFromPercent( FArg(1) ) )
 
 
 // lua start

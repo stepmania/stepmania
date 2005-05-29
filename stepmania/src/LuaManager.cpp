@@ -415,7 +415,7 @@ static bool Trace( const CString &sString )
 	return true;
 }
 
-LuaFunction_Str( Trace, Trace(str) );
+LuaFunction( Trace, Trace(SArg(1)) );
 
 /*
  * (c) 2004 Glenn Maynard

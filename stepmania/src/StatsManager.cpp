@@ -271,7 +271,7 @@ LuaFunction_NoArgs( GetBestGrade,			GetBestGrade() );
 LuaFunction_NoArgs( GetWorstGrade,			GetWorstGrade() );
 LuaFunction_NoArgs( OnePassed,				STATSMAN->m_CurStageStats.OnePassed() );
 LuaFunction_NoArgs( AllFailed,				STATSMAN->m_CurStageStats.AllFailed() );
-LuaFunction_Str( Grade,						StringToGrade(str) );
+LuaFunction( Grade,							StringToGrade( SArg(1) ) );
 
 const StageStats *GetStageStatsN( int n )
 {

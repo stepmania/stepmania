@@ -253,7 +253,7 @@ StringToX( PeakComboAward );
 #define LuaXToString(X)	\
 CString Lua##X##ToString( int n ) \
 { return X##ToString( (X) n ); } \
-LuaFunction_Int( X##ToString, Lua##X##ToString(a1) ); /* register it */
+LuaFunction( X##ToString, Lua##X##ToString( IArg(1) ) );
 
 #define LuaStringToX(X)	\
 X LuaStringTo##X( CString s ) \

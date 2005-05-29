@@ -148,7 +148,7 @@ CString PercentageDisplay::FormatPercentScore( float fPercentDancePoints )
 	return s;
 }
 
-LuaFunction_Float( FormatPercentScore,	PercentageDisplay::FormatPercentScore(a1) )
+LuaFunction( FormatPercentScore,	PercentageDisplay::FormatPercentScore( FArg(1) ) )
 
 
 /*

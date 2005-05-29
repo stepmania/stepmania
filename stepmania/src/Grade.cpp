@@ -7,7 +7,7 @@
 #include "LuaManager.h"
 #include "LuaFunctions.h"
 
-LuaFunction_Int( GradeToString,			GradeToString((Grade)a1) )
+LuaFunction( GradeToString,			GradeToString((Grade)IArg(1)) )
 
 CString GradeToThemedString( Grade g )
 {
