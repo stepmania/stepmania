@@ -2056,6 +2056,11 @@ public:
 	static int GetCoinMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetCoinMode() ); return 1; }
 	static int GetPremium( T* p, lua_State *L )				{ lua_pushnumber(L, p->GetPremium() ); return 1; }
 	static int IsSyncDataChanged( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsSyncDataChanged() ); return 1; }
+	static int IsWinner( T* p, lua_State *L )
+	{
+		PlayerNumber pn = (PlayerNumber)IArg(1);
+		lua_pushboolean(L, p->GetStageResult(pn)==RESULT_WIN); return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -2101,6 +2106,7 @@ public:
 		ADD_METHOD( GetCoinMode )
 		ADD_METHOD( GetPremium )
 		ADD_METHOD( IsSyncDataChanged )
+		ADD_METHOD( IsWinner )
 
 		Luna<T>::Register( L );
 
@@ -2124,10 +2130,6 @@ LUA_REGISTER_CLASS( GameState )
 
 
 #include "LuaFunctions.h"
-LuaFunction_PlayerNumber( IsPlayerEnabled,	GAMESTATE->IsPlayerEnabled(pn) )
-LuaFunction_PlayerNumber( IsHumanPlayer,	GAMESTATE->IsHumanPlayer(pn) )
-LuaFunction_PlayerNumber( IsPlayerUsingProfile,	PROFILEMAN->IsPersistentProfile(pn) )
-LuaFunction_PlayerNumber( IsWinner,			GAMESTATE->GetStageResult(pn)==RESULT_WIN )
 LuaFunction_NoArgs( IsCourseMode,			GAMESTATE->IsCourseMode() )
 LuaFunction_NoArgs( IsDemonstration,		GAMESTATE->m_bDemonstrationOrJukebox )
 LuaFunction_NoArgs( StageIndex,				GAMESTATE->GetStageIndex() )
