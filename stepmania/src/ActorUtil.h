@@ -24,6 +24,20 @@ typedef Actor* (*CreateActorFn)(const CString& sDir, const XNode* pNode);
 
 #define REGISTER_ACTOR_CLASS( className ) REGISTER_ACTOR_CLASS_WITH_NAME( className, className )
 
+enum FileType
+{
+	FT_Actor, 
+	FT_Bitmap, 
+	FT_Sprite, 
+	FT_Movie, 
+	FT_Directory, 
+	FT_Xml, 
+	FT_Model, 
+	NUM_FileType, 
+	FT_Invalid 
+};
+const CString& FileTypeToString( FileType ft );
+
 namespace ActorUtil
 {
 	// Every screen should register its class at program initialization.
@@ -59,6 +73,8 @@ namespace ActorUtil
 	void ResolvePath( CString &sPath, const CString &sName );
 
 	void SortByZPosition( vector<Actor*> &vActors );
+
+	FileType GetFileType( const CString &sPath );
 };
 
 #define SET_XY( actor )			ActorUtil::SetXY( actor, m_sName )

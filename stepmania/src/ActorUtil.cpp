@@ -263,81 +263,71 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 
 Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 {
-	CString sExt = GetExtension( ID.filename );
-	sExt.MakeLower();
-	
-	if( sExt=="xml" )
+	FileType ft = GetFileType(ID.filename);
+	switch( ft )
 	{
-		XNode xml;
-		PARSEINFO pi;
-		if( !xml.LoadFromFile( ID.filename, &pi ) )
-			RageException::Throw( ssprintf("Error loading %s: %s", ID.filename.c_str(), pi.error_string.c_str()) );
-		CString sDir = Dirname( ID.filename );
-		return LoadFromActorFile( sDir, &xml );
-	}
-	else if( sExt=="actor" )
-	{
-		// TODO: Check for recursive loading
-		IniFile ini;
-		if( !ini.ReadFile( ID.filename ) )
-			RageException::Throw( "%s", ini.GetError().c_str() );
-	
-		CString sDir = Dirname( ID.filename );
-
-		const XNode* pNode = ini.GetChild( "Actor" );
-		if( pNode == NULL )
-			RageException::Throw( "The file '%s' doesn't have layer 'Actor'.", ID.filename.c_str() );
-
-		return LoadFromActorFile( sDir, pNode );
-	}
-	else if( sExt=="png" ||
-		sExt=="jpg" || 
-		sExt=="gif" || 
-		sExt=="bmp" || 
-		sExt=="avi" || 
-		sExt=="mpeg" || 
-		sExt=="mpg" ||
-		sExt=="sprite" )
-	{
-		Sprite* pSprite = new Sprite;
-		pSprite->Load( ID );
-		return pSprite;
-	}
-	else if( sExt=="txt" ||
-		sExt=="model" )
-	{
-		Model* pModel = new Model;
-		pModel->Load( ID.filename );
-		return pModel;
-	}
-	/* Do this last, to avoid the IsADirectory in most cases. */
-	else if( IsADirectory(ID.filename)  )
-	{
-		CString sDir = ID.filename;
-		if( sDir.Right(1) != "/" )
-			sDir += '/';
-		CString sIni = sDir + "BGAnimation.ini";
-		CString sXml = sDir + "default.xml";
-
-		if( DoesFileExist(sXml) )
+	case FT_Xml:
 		{
 			XNode xml;
-			PARSEINFO pi;
-			if( !xml.LoadFromFile( sXml, &pi ) )
-				RageException::Throw( ssprintf("Error loading %s: %s", sXml.c_str(), pi.error_string.c_str()) );
+			if( !xml.LoadFromFile(ID.filename) )
+				RageException::Throw( ssprintf("Error loading %s", ID.filename.c_str()) );
+			CString sDir = Dirname( ID.filename );
 			return LoadFromActorFile( sDir, &xml );
 		}
-		else
+	case FT_Actor:
 		{
-			BGAnimation *pBGA = new BGAnimation;
-			pBGA->LoadFromAniDir( sDir );
-			return pBGA;
+			// TODO: Check for recursive loading
+			IniFile ini;
+			if( !ini.ReadFile( ID.filename ) )
+				RageException::Throw( "%s", ini.GetError().c_str() );
+		
+			CString sDir = Dirname( ID.filename );
+
+			const XNode* pNode = ini.GetChild( "Actor" );
+			if( pNode == NULL )
+				RageException::Throw( "The file '%s' doesn't have layer 'Actor'.", ID.filename.c_str() );
+
+			return LoadFromActorFile( sDir, pNode );
 		}
-	}
-	else 
-	{
+	case FT_Directory:
+		{
+			CString sDir = ID.filename;
+			if( sDir.Right(1) != "/" )
+				sDir += '/';
+			CString sIni = sDir + "BGAnimation.ini";
+			CString sXml = sDir + "default.xml";
+
+			if( DoesFileExist(sXml) )
+			{
+				XNode xml;
+				if( !xml.LoadFromFile(sXml) )
+					RageException::Throw( ssprintf("Error loading %s", sXml.c_str()) );
+				return LoadFromActorFile( sDir, &xml );
+			}
+			else
+			{
+				BGAnimation *pBGA = new BGAnimation;
+				pBGA->LoadFromAniDir( sDir );
+				return pBGA;
+			}
+		}
+	case FT_Bitmap:
+	case FT_Movie:
+	case FT_Sprite:
+		{
+			Sprite* pSprite = new Sprite;
+			pSprite->Load( ID );
+			return pSprite;
+		}
+	case FT_Model:
+		{
+			Model* pModel = new Model;
+			pModel->Load( ID.filename );
+			return pModel;
+		}
+	default:
 		RageException::Throw("File \"%s\" has unknown type, \"%s\"",
-			ID.filename.c_str(), sExt.c_str() );
+			ID.filename.c_str(), FileTypeToString(ft).c_str() );
 	}
 }
 
@@ -410,6 +400,45 @@ void ActorUtil::SortByZPosition( vector<Actor*> &vActors )
 	stable_sort( vActors.begin(), vActors.end(), CompareActorsByZPosition );
 }
 
+static const CString FileTypeNames[] = {
+	"Actor", 
+	"Bitmap", 
+	"Sprite", 
+	"Movie", 
+	"Directory", 
+	"Xml", 
+	"Model", 
+};
+XToString( FileType, NUM_FileType );
+
+FileType ActorUtil::GetFileType( const CString &sPath )
+{
+	CString sExt = GetExtension( sPath );
+	sExt.MakeLower();
+	
+	if( sExt=="xml" )			return FT_Xml;
+	else if( sExt=="actor" )	return FT_Actor;
+	/* Do this last, to avoid the IsADirectory in most cases. */
+	/* Yuck.  Some directories end in ".mpg", so do the directory 
+	/* check before the extensions check. */
+	else if( IsADirectory(sPath)  )	return FT_Directory;
+	else if( 
+		sExt=="png" ||
+		sExt=="jpg" || 
+		sExt=="gif" || 
+		sExt=="bmp" )		return FT_Bitmap;
+	else if( 
+		sExt=="avi" || 
+		sExt=="mpeg" || 
+		sExt=="mpg" )		return FT_Movie;
+	else if( 
+		sExt=="sprite" )	return FT_Sprite;
+	else if( 
+		sExt=="txt" ||
+		sExt=="model" )		return FT_Model;
+	else					return FT_Invalid;
+	
+}
 
 /*
  * (c) 2003-2004 Chris Danford
