@@ -10,37 +10,6 @@ extern "C"
 #include <lauxlib.h>
 }
 
-#define LUA_RETURN( expr, L ) { LuaHelpers::Push( expr, L ); return 1; }
-
-/* Helpers to create common functions: */
-#define LuaFunction( func, call ) \
-int LuaFunc_##func( lua_State *L ) { \
-	LUA_RETURN( call, L ); \
-} \
-RegisterLuaFunction( func );
-#define LuaFunction_NoArgs LuaFunction /* compat */
-
-#define LuaFunction_Int( func, call ) \
-int LuaFunc_##func( lua_State *L ) { \
-	const int a1 = IArg(1); \
-	LUA_RETURN( call, L ); \
-} \
-RegisterLuaFunction( func );
-
-#define LuaFunction_Float( func, call ) \
-int LuaFunc_##func( lua_State *L ) { \
-	const float a1 = FArg(1); \
-	LUA_RETURN( call, L ); \
-} \
-RegisterLuaFunction( func );
-
-#define LuaFunction_Str( func, call ) \
-int LuaFunc_##func( lua_State *L ) { \
-	CString str = SArg(1); \
-	LUA_RETURN( call, L ); \
-} \
-RegisterLuaFunction( func );
-
 /* Linked list of functions we make available to Lua. */
 struct LuaFunctionList
 {
@@ -50,7 +19,14 @@ struct LuaFunctionList
 	LuaFunctionList *next;
 };
 extern LuaFunctionList *g_LuaFunctionList;
-#define RegisterLuaFunction( func ) static LuaFunctionList g_##func( #func, LuaFunc_##func )
+
+#define LuaFunction( func, expr ) \
+int LuaFunc_##func( lua_State *L ) { \
+	LuaHelpers::Push( expr, L ); return 1; \
+} \
+static LuaFunctionList g_##func( #func, LuaFunc_##func ); /* register it */
+
+#define LuaFunction_NoArgs LuaFunction /* compat */
 
 #endif
 
