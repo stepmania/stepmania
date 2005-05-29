@@ -190,12 +190,42 @@ public:
 	static int GetCurStageStats( T* p, lua_State *L )	{ p->m_CurStageStats.PushSelf(L); return 1; }
 	static int GetAccumStageStats( T* p, lua_State *L )	{ p->GetAccumStageStats().PushSelf(L); return 1; }
 	static int Reset( T* p, lua_State *L )				{ p->Reset(); return 1; }
+	static int GetFinalGrade( T* p, lua_State *L )
+	{
+		PlayerNumber pn = (PlayerNumber)IArg(1);
+
+		if( !GAMESTATE->IsHumanPlayer(pn) )
+			lua_pushnumber( L, GRADE_NO_DATA );
+		else
+		{
+			StageStats stats;
+			p->GetFinalEvalStageStats( stats );
+			lua_pushnumber( L, stats.m_player[pn].GetGrade() );
+		}
+		return 1;
+	}
+
+	static int OneGotGrade( T* p, lua_State *L )
+	{
+		int n = IArg(1);
+		Grade g = (Grade) IArg(2);
+
+		bool bRet = false;
+		FOREACH_HumanPlayer( pn )
+			if( GetGrade( n, pn ) == g )
+				bRet = true;
+
+		lua_pushboolean( L, bRet );
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetCurStageStats )
 		ADD_METHOD( GetAccumStageStats )
 		ADD_METHOD( Reset )
+		ADD_METHOD( GetFinalGrade )
+		ADD_METHOD( OneGotGrade )
 
 		Luna<T>::Register( L );
 
@@ -262,28 +292,6 @@ Grade GetGrade( int n, PlayerNumber pn )
 		return GRADE_NO_DATA;
 	return pStats->m_player[pn].GetGrade();
 }
-
-bool OneGotGrade( int n, Grade g )
-{
-	FOREACH_HumanPlayer( pn )
-		if( GetGrade( n, pn ) == g )
-			return true;
-
-	return false;
-}
-
-
-LuaFunction_IntInt( OneGotGrade, OneGotGrade( a1, (Grade) a2 ) );
-
-Grade GetFinalGrade( PlayerNumber pn )
-{
-	if( !GAMESTATE->IsHumanPlayer(pn) )
-		return GRADE_NO_DATA;
-	StageStats stats;
-	STATSMAN->GetFinalEvalStageStats( stats );
-	return stats.m_player[pn].GetGrade();
-}
-LuaFunction_PlayerNumber( GetFinalGrade, GetFinalGrade(pn) );
 
 Grade GetBestFinalGrade()
 {
