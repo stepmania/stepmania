@@ -11,18 +11,6 @@ extern "C"
 #include <lauxlib.h>
 }
 
-/* Argument helpers: */
-#define LUA_ASSERT( expr, err ) if( !(expr) ) { LUA->Fail( err ); }
-
-/* argument n must be of type "type" */
-#define REQ_ARG(func, n, type) { \
-	LUA_ASSERT( lua_is##type(L, n), ssprintf("Argument %i to " func " must be %s", n, #type) ); }
-/* argument n must be a number between minimum...maximum */
-#define REQ_ARG_NUMBER_RANGE(func, n, minimum, maximum) { \
-	REQ_ARG(func, n, number); \
-	const int val = (int) lua_tonumber( L, n ); \
-	LUA_ASSERT( val >= minimum && val <= maximum, ssprintf("Argument %i to " func " must be an integer between %i and %i (got %i)", n,  minimum, maximum, val) ); \
-}
 #define LUA_RETURN( expr, L ) { LuaHelpers::Push( expr, L ); return 1; }
 
 /* Helpers to create common functions: */
@@ -40,14 +28,6 @@ int LuaFunc_##func( lua_State *L ) { \
 } \
 LuaFunction( func ); /* register it */
 
-#define LuaFunction_IntInt( func, call ) \
-int LuaFunc_##func( lua_State *L ) { \
-	const int a1 = IArg(1); \
-	const int a2 = IArg(2); \
-	LUA_RETURN( call, L ); \
-} \
-LuaFunction( func ); /* register it */
-
 #define LuaFunction_Float( func, call ) \
 int LuaFunc_##func( lua_State *L ) { \
 	const float a1 = FArg(1); \
@@ -58,23 +38,6 @@ LuaFunction( func ); /* register it */
 #define LuaFunction_Str( func, call ) \
 int LuaFunc_##func( lua_State *L ) { \
 	CString str = SArg(1); \
-	LUA_RETURN( call, L ); \
-} \
-LuaFunction( func ); /* register it */
-
-#define LuaFunction_StrStr( func, call ) \
-int LuaFunc_##func( lua_State *L ) { \
-	CString str1 = SArg(1); \
-	CString str2 = SArg(2); \
-	LUA_RETURN( call, L ); \
-} \
-LuaFunction( func ); /* register it */
-
-/* Functions that take a single PlayerNumber argument: */
-#define LuaFunction_PlayerNumber( func, call ) \
-int LuaFunc_##func( lua_State *L ) { \
-	REQ_ARG_NUMBER_RANGE( #func, 1, 1, NUM_PLAYERS ); \
-	const PlayerNumber pn = (PlayerNumber) (int(lua_tonumber( L, -1 ))-1); \
 	LUA_RETURN( call, L ); \
 } \
 LuaFunction( func ); /* register it */
