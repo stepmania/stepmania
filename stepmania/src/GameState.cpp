@@ -2142,7 +2142,6 @@ LuaFunction_NoArgs( PlayModeName,			PlayModeToString(GAMESTATE->m_PlayMode) )
 LuaFunction_NoArgs( CurStyleName,			CString( GAMESTATE->m_pCurStyle == NULL ? "none": GAMESTATE->GetCurrentStyle()->m_szName ) )
 LuaFunction_NoArgs( GetNumPlayersEnabled,	GAMESTATE->GetNumPlayersEnabled() )
 LuaFunction_NoArgs( GetEasiestNotesDifficulty, GAMESTATE->GetEasiestStepsDifficulty() )
-LuaFunction_StrStr(	SetEnv,					GAMESTATE->m_mapEnv[str1] = str2 )
 
 CString GetStageText()
 {
