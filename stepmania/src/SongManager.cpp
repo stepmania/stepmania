@@ -1377,11 +1377,6 @@ CString GetCurrentStepsCredits()
 	return s;
 }
 
-LuaFunction_NoArgs( GetCurrentSongDisplayTitle,		GetCurrentSongDisplayTitle() )
-LuaFunction_NoArgs( GetCurrentSongDisplayArtist,	GetCurrentSongDisplayArtist() )
-LuaFunction_NoArgs( GetCurrentSongCredit,			GetCurrentSongCredit() )
-LuaFunction_NoArgs( GetCurrentStepsCredits,			GetCurrentStepsCredits() )
-
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
