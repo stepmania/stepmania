@@ -58,12 +58,9 @@ void Transition::Load( CString sBGAniDir )
 	{
 		CString sSoundFile;
 		XNode xml;
-		PARSEINFO pi;
-		xml.LoadFromFile( sBGAniDir, &pi );
+		xml.LoadFromFile( sBGAniDir );
 		if( xml.GetAttrValue( "Sound", sSoundFile ) )
-		{
 			m_sound.Load( Dirname(sBGAniDir) + sSoundFile );
-		}
 	}
 }
 

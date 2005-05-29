@@ -783,12 +783,8 @@ Profile::LoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignatur
 
 	LOG->Trace( "Loading %s", fn.c_str() );
 	XNode xml;
-	PARSEINFO pi;
-	if( !xml.LoadFromFile( fn, &pi ) )
-	{
-		LOG->Warn( "Error parsing file '%s': %s", fn.c_str(), pi.error_string.c_str() );
+	if( !xml.LoadFromFile(fn) )
 		return failed_tampered;
-	}
 	LOG->Trace( "Done." );
 
 	return LoadStatsXmlFromNode( &xml );

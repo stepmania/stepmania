@@ -122,12 +122,8 @@ void Bookkeeper::ReadFromDisk()
 		return;
 
 	XNode xml;
-	PARSEINFO pi;
-	if( !xml.LoadFromFile(COINS_DAT, &pi) )
-	{
-		LOG->Warn( "Error parsing file \"%s\": %s", COINS_DAT.c_str(), pi.error_string.c_str() );
+	if( !xml.LoadFromFile(COINS_DAT) )
 		return;
-	}
 
 	LoadFromNode( &xml );
 }

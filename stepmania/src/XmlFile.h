@@ -171,8 +171,8 @@ struct XNode
 	char*	LoadAttributes( const char* pszAttrs, PARSEINFO *pi );
 	bool GetXML( RageFileBasic &f, DISP_OPT *opt ) const;
 
-	bool LoadFromFile( const CString &sFile, PARSEINFO *pi );
-	bool LoadFromFile( RageFileBasic &f, PARSEINFO *pi );
+	bool LoadFromFile( const CString &sFile );
+	bool LoadFromFile( RageFileBasic &f );
 	bool SaveToFile( const CString &sFile, DISP_OPT *opt ) const;
 	bool SaveToFile( RageFileBasic &f, DISP_OPT *opt ) const;
 
