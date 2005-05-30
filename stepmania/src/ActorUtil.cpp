@@ -46,7 +46,7 @@ Actor* ActorUtil::Create( const CString& sClassName, const CString& sDir, const 
 	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Actor '%s' is not registered.",sClassName.c_str()) )
 
 	CreateActorFn pfn = iter->second;
-	return pfn( sDir, pNode );
+	return (*pfn)( sDir, pNode );
 }
 
 /* Return false to retry. */
@@ -420,7 +420,7 @@ FileType ActorUtil::GetFileType( const CString &sPath )
 	else if( sExt=="actor" )	return FT_Actor;
 	/* Do this last, to avoid the IsADirectory in most cases. */
 	/* Yuck.  Some directories end in ".mpg", so do the directory 
-	/* check before the extensions check. */
+	 * check before the extensions check. */
 	else if( IsADirectory(sPath)  )	return FT_Directory;
 	else if( 
 		sExt=="png" ||
