@@ -228,7 +228,7 @@ CString vssprintf( const char *fmt, va_list argList)
 #else
 #  include <windows.h>
 #  include <dxerr8.h>
-#  if defined(_MSC_VER)
+#  if defined(_MSC_VER) && !defined(_XBOX)
 #    pragma comment(lib, "dxerr8.lib")
 #  endif
 #endif

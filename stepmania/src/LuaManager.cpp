@@ -14,11 +14,10 @@
 LuaManager *LUA = NULL;
 static LuaFunctionList *g_LuaFunctions = NULL;
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(_XBOX)
 	#pragma comment(lib, "lua-5.0/lib/LibLua.lib")
 	#pragma comment(lib, "lua-5.0/lib/LibLuaLib.lib")
-#endif
-#if defined(_XBOX)
+#elif defined(_XBOX)
 	#pragma comment(lib, "lua-5.0/lib/LibLuaXbox.lib")
 	#pragma comment(lib, "lua-5.0/lib/LibLuaLibXbox.lib")
 #endif

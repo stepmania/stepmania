@@ -4,7 +4,7 @@
 #include "RageSoundReader_Resample_Good.h"
 
 #include "libresample/include/libresample.h"
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(_XBOX)
 #pragma comment(lib, "libresample/resample.lib")
 #endif
 
