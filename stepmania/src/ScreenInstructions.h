@@ -2,8 +2,6 @@
 #define ScreenInstructions_H
 
 #include "ScreenWithMenuElements.h"
-#include "Sprite.h"
-#include "RandomSample.h"
 
 class ScreenInstructions : public ScreenWithMenuElements
 {
@@ -15,9 +13,6 @@ public:
 
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn );
-
-protected:
-	Sprite			m_sprHowToPlay;
 };
 
 

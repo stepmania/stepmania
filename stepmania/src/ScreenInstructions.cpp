@@ -1,14 +1,10 @@
 #include "global.h"
 #include "ScreenInstructions.h"
 #include "RageUtil.h"
-#include "GameSoundManager.h"
-#include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "GameState.h"
-#include "ThemeManager.h"
 #include "PrefsManager.h"
-#include "ScreenDimensions.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenInstructions );
@@ -45,18 +41,7 @@ void ScreenInstructions::Init()
 
 	ScreenWithMenuElements::Init();
 
-	m_sprHowToPlay.Load( THEME->GetPathG(m_sName,PlayModeToString(GAMESTATE->m_PlayMode)) );
-	m_sprHowToPlay.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
-	this->AddChild( &m_sprHowToPlay );
-
-	m_sprHowToPlay.SetX( SCREEN_LEFT-SCREEN_WIDTH );
-	m_sprHowToPlay.BeginTweening( 0.4f );		// sleep
-	m_sprHowToPlay.BeginTweening( 0.6f, Actor::TWEEN_DECELERATE );
-	m_sprHowToPlay.SetX( SCREEN_CENTER_X );
-
 	this->SortByDrawOrder();
-
-	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 }
 
 void ScreenInstructions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -76,10 +61,6 @@ void ScreenInstructions::MenuBack( PlayerNumber pn )
 void ScreenInstructions::MenuStart( PlayerNumber pn )
 {
 	StartTransitioning( SM_GoToNextScreen );
-
-	m_sprHowToPlay.StopTweening();
-	m_sprHowToPlay.BeginTweening( 0.3f, Actor::TWEEN_ACCELERATE );
-	m_sprHowToPlay.SetX( SCREEN_RIGHT+m_sprHowToPlay.GetUnzoomedWidth()/2 );
 }
 
 /*
