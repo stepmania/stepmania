@@ -1,44 +1,14 @@
 #include "global.h"
 #include "ScreenInstructions.h"
-#include "RageUtil.h"
-#include "GameConstantsAndTypes.h"
-#include "RageLog.h"
-#include "GameState.h"
-#include "PrefsManager.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenInstructions );
 ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements( sName )
 {
-	LOG->Trace( "ScreenInstructions::ScreenInstructions()" );
 }
 
 void ScreenInstructions::Init()
 {
-	//
-	// Skip this screen unless someone chose easy or beginner
-	//
-	if( !PREFSMAN->m_bShowInstructions )
-	{
-		HandleScreenMessage( SM_GoToNextScreen );
-		return;
-	}
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR )
-	{
-		Difficulty easiestDifficulty = (Difficulty)(NUM_DIFFICULTIES-1);
-		FOREACH_HumanPlayer(p)
-			easiestDifficulty = min( easiestDifficulty, GAMESTATE->m_PreferredDifficulty[p].Get() );
-
-		if( easiestDifficulty > DIFFICULTY_EASY )
-		{
-			HandleScreenMessage( SM_GoToNextScreen );
-			return;
-		}
-	}
-
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_INVALID )
-		RageException::Throw( "The PlayMode has not been set.  A theme must set the PlayMode before showing ScreenInstructions." );
-
 	ScreenWithMenuElements::Init();
 
 	this->SortByDrawOrder();

@@ -100,6 +100,37 @@ function GetGameplayNextScreen()
 	return "ScreenGameOver"
 end
 
+local function ShowScreenInstructions()
+	if not PREFSMAN:GetPreference("ShowInstructions") then
+		return false
+	end
+
+	if GAMESTATE:GetPlayMode() == PLAY_MODE_INVALID then
+		Trace( "ShowScreenInstructions: called without PlayMode set" )
+		return true
+	end
+
+	if GAMESTATE:GetPlayMode() ~= PLAY_MODE_REGULAR then
+		return true
+	end
+
+	for pn = PLAYER_1,NUM_PLAYERS-1 do
+		if GAMESTATE:GetPreferredDifficulty(pn) <= DIFFICULTY_EASY then
+			return true
+		end
+	end
+
+	return false
+end
+
+function GetScreenInstructions()
+	if not ShowScreenInstructions() then
+		return THEME:GetMetric("ScreenInstructions","NextScreen")
+	else
+		return "ScreenInstructions"
+	end
+end
+
 function OptionsMenuAvailable()
 	if GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() then return false end
 	return true
