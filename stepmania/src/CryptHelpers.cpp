@@ -192,6 +192,9 @@ unsigned int RageFileStore::CopyRangeTo2(BufferedTransformation &target, unsigne
 
 bool CryptHelpers::GenerateRSAKey( unsigned int keyLength, CString sSeed, CString &sPublicKey, CString &sPrivateKey )
 {
+#ifdef _XBOX
+	return false;
+#else
 	try
 	{
 		NonblockingRng rng;
@@ -211,10 +214,14 @@ bool CryptHelpers::GenerateRSAKey( unsigned int keyLength, CString sSeed, CStrin
 	}
 
 	return true;
+#endif
 }
 
 bool CryptHelpers::SignFile( RageFileBasic &file, CString sPrivKey, CString &sSignatureOut, CString &sError )
 {
+#ifdef _XBOX
+	return false;
+#else
 	try {
 		StringSource privFile( sPrivKey, true );
 		RSASSA_PKCS1v15_SHA_Signer priv(privFile);
@@ -228,6 +235,7 @@ bool CryptHelpers::SignFile( RageFileBasic &file, CString sPrivKey, CString &sSi
 	}
 
 	return true;
+#endif
 }
 
 bool CryptHelpers::VerifyFile( RageFileBasic &file, CString sSignature, CString sPublicKey, CString &sError )
