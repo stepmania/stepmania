@@ -189,7 +189,7 @@ public:
 
 	static int GetCurStageStats( T* p, lua_State *L )	{ p->m_CurStageStats.PushSelf(L); return 1; }
 	static int GetAccumStageStats( T* p, lua_State *L )	{ p->GetAccumStageStats().PushSelf(L); return 1; }
-	static int Reset( T* p, lua_State *L )				{ p->Reset(); return 1; }
+	static int Reset( T* p, lua_State *L )				{ p->Reset(); return 0; }
 	static int GetFinalGrade( T* p, lua_State *L )
 	{
 		PlayerNumber pn = (PlayerNumber)IArg(1);
@@ -204,20 +204,26 @@ public:
 		}
 		return 1;
 	}
+	static int GetStagesPlayed( T* p, lua_State *L )				{ lua_pushnumber( L, p->m_vPlayedStageStats.size() ); return 1; }
 
-	static int OneGotGrade( T* p, lua_State *L )
+	static int GetBestGrade( T* p, lua_State *L )
 	{
-		int n = IArg(1);
-		Grade g = (Grade) IArg(2);
-
-		bool bRet = false;
-		FOREACH_HumanPlayer( pn )
-			if( GetGrade( n, pn ) == g )
-				bRet = true;
-
-		lua_pushboolean( L, bRet );
+		Grade g = NUM_GRADES;
+		FOREACH_EnabledPlayer( pn )
+			g = min( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
+		lua_pushnumber( L, g );
 		return 1;
 	}
+
+	static int GetWorstGrade( T* p, lua_State *L )
+	{
+		Grade g = GRADE_TIER01;
+		FOREACH_EnabledPlayer( pn )
+			g = max( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
+		lua_pushnumber( L, g );
+		return 1;
+	}
+
 
 	static void Register(lua_State *L)
 	{
@@ -225,7 +231,9 @@ public:
 		ADD_METHOD( GetAccumStageStats )
 		ADD_METHOD( Reset )
 		ADD_METHOD( GetFinalGrade )
-		ADD_METHOD( OneGotGrade )
+		ADD_METHOD( GetStagesPlayed )
+		ADD_METHOD( GetBestGrade )
+		ADD_METHOD( GetWorstGrade )
 
 		Luna<T>::Register( L );
 
@@ -249,26 +257,7 @@ LUA_REGISTER_CLASS( StatsManager )
 // Old Lua
 //
 
-static Grade GetBestGrade()
-{
-	Grade g = NUM_GRADES;
-	FOREACH_EnabledPlayer( pn )
-		g = min( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
-	return g;
-}
-
-static Grade GetWorstGrade()
-{
-	Grade g = GRADE_TIER01;
-	FOREACH_EnabledPlayer( pn )
-		g = max( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
-	return g;
-}
-
 #include "LuaFunctions.h"
-LuaFunction_NoArgs( GetStagesPlayed,		(int) STATSMAN->m_vPlayedStageStats.size() );
-LuaFunction_NoArgs( GetBestGrade,			GetBestGrade() );
-LuaFunction_NoArgs( GetWorstGrade,			GetWorstGrade() );
 LuaFunction_NoArgs( OnePassed,				STATSMAN->m_CurStageStats.OnePassed() );
 LuaFunction_NoArgs( AllFailed,				STATSMAN->m_CurStageStats.AllFailed() );
 LuaFunction( Grade,							StringToGrade( SArg(1) ) );
@@ -280,17 +269,6 @@ const StageStats *GetStageStatsN( int n )
 	if( n > (int) STATSMAN->m_vPlayedStageStats.size() )
 		return NULL;
 	return &STATSMAN->m_vPlayedStageStats[n];
-}
-
-/* GetGrade(0) returns the first grade; GetGrade(1) returns the second grade, and
- * and so on.  GetGrade(GetStagesPlayed()) returns the current grade (from STATSMAN->m_CurStageStats).
- * If beyond the current song played, return GRADE_NO_DATA. */
-Grade GetGrade( int n, PlayerNumber pn )
-{
-	const StageStats *pStats = GetStageStatsN( n );
-	if( pStats == NULL )
-		return GRADE_NO_DATA;
-	return pStats->m_player[pn].GetGrade();
 }
 
 Grade GetBestFinalGrade()
