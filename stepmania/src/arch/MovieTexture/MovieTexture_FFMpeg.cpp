@@ -660,7 +660,8 @@ void MovieTexture_FFMpeg::CreateTexture()
 	m_iTextureWidth = power_of_two(m_iImageWidth);
 	m_iTextureHeight = power_of_two(m_iImageHeight);
 
-    RageDisplay::PixelFormat pixfmt;
+	/* Bogus assignment to shut gcc up. */
+    RageDisplay::PixelFormat pixfmt = RageDisplay::FMT_RGBA8;
 	bool PreferHighColor = (TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32);
 	m_AVTexfmt = FindCompatibleAVFormat( pixfmt, PreferHighColor );
 
