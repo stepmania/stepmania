@@ -1,0 +1,22 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StepMania", "StepManiaXbox-2003.vcproj", "{670745A6-106B-420D-A2A9-D4F89A23986E}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug Xbox = Debug Xbox
+		Release Xbox = Release Xbox
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{670745A6-106B-420D-A2A9-D4F89A23986E}.Debug Xbox.ActiveCfg = Debug|Xbox
+		{670745A6-106B-420D-A2A9-D4F89A23986E}.Debug Xbox.Build.0 = Debug|Xbox
+		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release Xbox.ActiveCfg = Release|Xbox
+		{670745A6-106B-420D-A2A9-D4F89A23986E}.Release Xbox.Build.0 = Release|Xbox
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		DPBuild = 5
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
