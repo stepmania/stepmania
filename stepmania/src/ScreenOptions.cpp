@@ -1041,6 +1041,8 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 		wrap( r, m_Rows.size() );
 
 		const unsigned iOldSelection = row.GetChoiceInRowWithFocus(p);
+		if( m_iCurrentRow[p] == r )
+			continue;
 
 		m_iCurrentRow[p] = r;
 		ASSERT( r >= 0 && r < (int)m_Rows.size() );
