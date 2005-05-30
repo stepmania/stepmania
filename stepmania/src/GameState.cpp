@@ -2039,6 +2039,7 @@ public:
 	static int IsDemonstration( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bDemonstrationOrJukebox ); return 1; }
 	static int GetPlayMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_PlayMode ); return 1; }
 	static int GetSortOrder( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_SortOrder ); return 1; }
+	static int StageIndex( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetStageIndex() ); return 1; }
 	static int IsGoalComplete( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsGoalComplete((PlayerNumber)IArg(1)) ); return 1; }
 	static int PlayerIsUsingModifier( T* p, lua_State *L )	{ lua_pushboolean(L, p->PlayerIsUsingModifier((PlayerNumber)IArg(1),SArg(2)) ); return 1; }
 	static int GetCourseSongIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCourseSongIndex() ); return 1; }
@@ -2090,6 +2091,7 @@ public:
 		ADD_METHOD( IsDemonstration )
 		ADD_METHOD( GetPlayMode )
 		ADD_METHOD( GetSortOrder )
+		ADD_METHOD( StageIndex )
 		ADD_METHOD( IsGoalComplete )
 		ADD_METHOD( PlayerIsUsingModifier )
 		ADD_METHOD( GetCourseSongIndex )
@@ -2132,7 +2134,6 @@ LUA_REGISTER_CLASS( GameState )
 
 
 #include "LuaFunctions.h"
-LuaFunction_NoArgs( StageIndex,				GAMESTATE->GetStageIndex() )
 LuaFunction_NoArgs( NumStagesLeft,			GAMESTATE->GetNumStagesLeft() )
 LuaFunction_NoArgs( IsFinalStage,			GAMESTATE->IsFinalStage() )
 LuaFunction_NoArgs( IsExtraStage,			GAMESTATE->IsExtraStage() )
