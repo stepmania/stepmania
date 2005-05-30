@@ -276,13 +276,13 @@ PrefsManager::PrefsManager() :
 	m_sVideoRenderers				( "VideoRenderers",				"" ),	// StepMania.cpp sets these on first run:
 	m_bSmoothLines					( "SmoothLines",				false ),
 	m_sSoundDrivers					( "SoundDrivers",				"" ),
+	m_fSoundVolume					( "SoundVolume",				-1 ),	// default
 	m_iSoundWriteAhead				( "SoundWriteAhead",			0 ),
 	m_iSoundDevice					( "SoundDevice",				"" ),
-	m_fSoundVolume					( "SoundVolume",				-1 ),	// default
 	m_SoundResampleQuality			( "SoundResampleQuality",		RageSoundReader_Resample::RESAMP_NORMAL ),
 	m_sInputDrivers					( "InputDrivers",				"" ),
-	m_sMovieDrivers					( "MovieDrivers",				"" ),
 	m_sLightsDriver					( "LightsDriver",				"" ),
+	m_sMovieDrivers					( "MovieDrivers",				"" ),
 	m_sLightsStepsDifficulty		( "LightsStepsDifficulty",		"medium" ),
 	m_bBlinkGameplayButtonLightsOnNote	( "BlinkGameplayButtonLightsOnNote",false ),
 	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",	false ),
