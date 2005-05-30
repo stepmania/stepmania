@@ -50,15 +50,14 @@ IPreference *PrefsManager::GetPreferenceByName( const CString &sName )
 }
 
 bool g_bAutoRestart = false;
+#ifdef DEBUG
+# define TRUE_IF_DEBUG true
+#else
+# define TRUE_IF_DEBUG false
+#endif
 
 PrefsManager::PrefsManager() :
-	m_bWindowed				( "Windowed",				
-#ifdef DEBUG
-	true
-#else
-	false
-#endif
-		),
+	m_bWindowed				( "Windowed",				TRUE_IF_DEBUG),
 	m_iDisplayWidth			( "DisplayWidth",			640 ),
 	m_iDisplayHeight		( "DisplayHeight",			480 ),
 	m_iDisplayColorDepth	( "DisplayColorDepth",		16 ),
@@ -66,28 +65,24 @@ PrefsManager::PrefsManager() :
 	m_iMovieColorDepth		( "MovieColorDepth",		16 ),
 	m_iMaxTextureResolution	( "MaxTextureResolution",	2048 ),
 	m_iRefreshRate			( "RefreshRate",			REFRESH_DEFAULT ),
-	m_fDisplayAspectRatio	( "DisplayAspectRatio",	4/3.0f ),
-	m_bShowStats			( "ShowStats",				
-#ifdef DEBUG
-	true
-#else
-	false
-#endif
-	),
+	m_fDisplayAspectRatio	( "DisplayAspectRatio",		4/3.0f ),
+	m_bShowStats			( "ShowStats",				TRUE_IF_DEBUG),
 	m_bShowBanners			( "ShowBanners",			true ),
 
-	m_BackgroundMode		( "BackgroundMode",		BGMODE_ANIMATIONS ),
-	m_iNumBackgrounds		( "NumBackgrounds",		8 ),
+	m_BackgroundMode		( "BackgroundMode",			BGMODE_ANIMATIONS ),
+	m_iNumBackgrounds		( "NumBackgrounds",			8 ),
 	m_fBGBrightness			( "BGBrightness",			0.8f ),
-	m_bHiddenSongs			( "HiddenSongs",			false ),	/* I'd rather get occasional people asking for support for this even though it's already here than lots of people asking why songs aren't being displayed. */
+	/* I'd rather get occasional people asking for support for this even though
+     * it's already here than lots of people asking why songs aren't being displayed. */
+	m_bHiddenSongs			( "HiddenSongs",			false ),
 	m_bVsync				( "Vsync",					true ),
-	m_bInterlaced			( "Interlaced",			false ),
+	m_bInterlaced			( "Interlaced",				false ),
 	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
 	m_bPAL					( "PAL",					false ),
 	m_bDelayedTextureDelete	( "DelayedTextureDelete",	true ),
-	m_bTexturePreload		( "TexturePreload",		false ),
+	m_bTexturePreload		( "TexturePreload",			false ),
 	m_bDelayedScreenLoad	( "DelayedScreenLoad",		false ),
-	m_bDelayedModelDelete	( "DelayedModelDelete",	false ),
+	m_bDelayedModelDelete	( "DelayedModelDelete",		false ),
 	m_BannerCache			( "BannerCache",			BNCACHE_LOW_RES_PRELOAD ),
 	m_bPalettedBannerCache	( "PalettedBannerCache",	false ),
 	m_bFastLoad				( "FastLoad",				true ),
@@ -97,31 +92,31 @@ PrefsManager::PrefsManager() :
 	m_bShowDanger				( "ShowDanger",					true ),
 
 	m_fJudgeWindowScale				( "JudgeWindowScale",				1.0f ),
-	m_fJudgeWindowAdd				( "JudgeWindowAdd",				0 ),
+	m_fJudgeWindowAdd				( "JudgeWindowAdd",					0 ),
 	m_fJudgeWindowSecondsMarvelous	( "JudgeWindowSecondsMarvelous",	0.0225f ),
 	m_fJudgeWindowSecondsPerfect	( "JudgeWindowSecondsPerfect",		0.045f ),
 	m_fJudgeWindowSecondsGreat		( "JudgeWindowSecondsGreat",		0.090f ),
-	m_fJudgeWindowSecondsGood		( "JudgeWindowSecondsGood",		0.135f ),
+	m_fJudgeWindowSecondsGood		( "JudgeWindowSecondsGood",			0.135f ),
 	m_fJudgeWindowSecondsBoo		( "JudgeWindowSecondsBoo",			0.180f ),
 	m_fJudgeWindowSecondsOK			( "JudgeWindowSecondsOK",			0.250f ),	// allow enough time to take foot off and put back on
-	m_fJudgeWindowSecondsRoll		( "JudgeWindowSecondsRoll",		0.350f ),
-	m_fJudgeWindowSecondsMine		( "JudgeWindowSecondsMine",		0.090f ),	// same as great
+	m_fJudgeWindowSecondsRoll		( "JudgeWindowSecondsRoll",			0.350f ),
+	m_fJudgeWindowSecondsMine		( "JudgeWindowSecondsMine",			0.090f ),	// same as great
 	m_fJudgeWindowSecondsAttack		( "JudgeWindowSecondsAttack",		0.135f ),
 
 	m_fLifeDifficultyScale				( "LifeDifficultyScale",				1.0f ),
 	m_fLifeDeltaPercentChangeMarvelous	( "LifeDeltaPercentChangeMarvelous",	+0.008f ),
 	m_fLifeDeltaPercentChangePerfect	( "LifeDeltaPercentChangePerfect",		+0.008f ),
 	m_fLifeDeltaPercentChangeGreat		( "LifeDeltaPercentChangeGreat",		+0.004f ),
-	m_fLifeDeltaPercentChangeGood		( "LifeDeltaPercentChangeGood",		+0.000f ),
+	m_fLifeDeltaPercentChangeGood		( "LifeDeltaPercentChangeGood",			+0.000f ),
 	m_fLifeDeltaPercentChangeBoo		( "LifeDeltaPercentChangeBoo",			-0.040f ),
-	m_fLifeDeltaPercentChangeMiss		( "LifeDeltaPercentChangeMiss",		-0.080f ),
+	m_fLifeDeltaPercentChangeMiss		( "LifeDeltaPercentChangeMiss",			-0.080f ),
 	m_fLifeDeltaPercentChangeHitMine	( "LifeDeltaPercentChangeHitMine",		-0.160f ),
 	m_fLifeDeltaPercentChangeOK			( "LifeDeltaPercentChangeOK",			+0.008f ),
 	m_fLifeDeltaPercentChangeNG			( "LifeDeltaPercentChangeNG",			-0.080f ),
 
-	m_fTugMeterPercentChangeMarvelous	( "TugMeterPercentChangeMarvelous",	+0.010f ),
+	m_fTugMeterPercentChangeMarvelous	( "TugMeterPercentChangeMarvelous",		+0.010f ),
 	m_fTugMeterPercentChangePerfect		( "TugMeterPercentChangePerfect",		+0.008f ),
-	m_fTugMeterPercentChangeGreat		( "TugMeterPercentChangeGreat",		+0.004f ),
+	m_fTugMeterPercentChangeGreat		( "TugMeterPercentChangeGreat",			+0.004f ),
 	m_fTugMeterPercentChangeGood		( "TugMeterPercentChangeGood",			+0.000f ),
 	m_fTugMeterPercentChangeBoo			( "TugMeterPercentChangeBoo",			-0.010f ),
 	m_fTugMeterPercentChangeMiss		( "TugMeterPercentChangeMiss",			-0.020f ),
@@ -131,8 +126,8 @@ PrefsManager::PrefsManager() :
 
 	m_iRegenComboAfterFail			( "RegenComboAfterFail",			10 ),
 	m_iRegenComboAfterMiss			( "RegenComboAfterMiss",			5 ),
-	m_iMaxRegenComboAfterFail		( "MaxRegenComboAfterFail",		10 ),
-	m_iMaxRegenComboAfterMiss		( "MaxRegenComboAfterMiss",		10 ),
+	m_iMaxRegenComboAfterFail		( "MaxRegenComboAfterFail",			10 ),
+	m_iMaxRegenComboAfterMiss		( "MaxRegenComboAfterMiss",			10 ),
 	m_bTwoPlayerRecovery			( "TwoPlayerRecovery",				true ),
 	m_bMercifulDrain				( "MercifulDrain",					true ),	// negative life deltas are scaled by the players life percentage
 	m_bMinimum1FullSongInNonstop	( "Minimum1FullSongInNonstop",		false ),	// FEoS for 1st song, FailImmediate thereafter
@@ -143,40 +138,40 @@ PrefsManager::PrefsManager() :
 	m_iPercentScoreWeightMarvelous	( "PercentScoreWeightMarvelous",	3 ),
 	m_iPercentScoreWeightPerfect	( "PercentScoreWeightPerfect",		2 ),
 	m_iPercentScoreWeightGreat		( "PercentScoreWeightGreat",		1 ),
-	m_iPercentScoreWeightGood		( "PercentScoreWeightGood",		0 ),
+	m_iPercentScoreWeightGood		( "PercentScoreWeightGood",			0 ),
 	m_iPercentScoreWeightBoo		( "PercentScoreWeightBoo",			0 ),
-	m_iPercentScoreWeightMiss		( "PercentScoreWeightMiss",		0 ),
+	m_iPercentScoreWeightMiss		( "PercentScoreWeightMiss",			0 ),
 	m_iPercentScoreWeightHitMine	( "PercentScoreWeightHitMine",		-2 ),
 	m_iPercentScoreWeightOK			( "PercentScoreWeightOK",			3 ),
 	m_iPercentScoreWeightNG			( "PercentScoreWeightNG",			0 ),
 	
 	m_iGradeWeightMarvelous		( "GradeWeightMarvelous",	2 ),
-	m_iGradeWeightPerfect		( "GradeWeightPerfect",	2 ),
+	m_iGradeWeightPerfect		( "GradeWeightPerfect",		2 ),
 	m_iGradeWeightGreat			( "GradeWeightGreat",		1 ),
 	m_iGradeWeightGood			( "GradeWeightGood",		0 ),
-	m_iGradeWeightBoo			( "GradeWeightBoo",		-4 ),
+	m_iGradeWeightBoo			( "GradeWeightBoo",			-4 ),
 	m_iGradeWeightMiss			( "GradeWeightMiss",		-8 ),
-	m_iGradeWeightHitMine		( "GradeWeightHitMine",	-8 ),
+	m_iGradeWeightHitMine		( "GradeWeightHitMine",		-8 ),
 	m_iGradeWeightOK			( "GradeWeightOK",			6 ),
 	m_iGradeWeightNG			( "GradeWeightNG",			0 ),
 
 	m_fSuperMeterPercentChangeMarvelous	( "SuperMeterPercentChangeMarvelous",	+0.05f ),
-	m_fSuperMeterPercentChangePerfect	( "SuperMeterPercentChangePerfect",	+0.04f ),
+	m_fSuperMeterPercentChangePerfect	( "SuperMeterPercentChangePerfect",		+0.04f ),
 	m_fSuperMeterPercentChangeGreat		( "SuperMeterPercentChangeGreat",		+0.02f ),
 	m_fSuperMeterPercentChangeGood		( "SuperMeterPercentChangeGood",		+0.00f ),
-	m_fSuperMeterPercentChangeBoo		( "SuperMeterPercentChangeBoo",		-0.00f ),
+	m_fSuperMeterPercentChangeBoo		( "SuperMeterPercentChangeBoo",			-0.00f ),
 	m_fSuperMeterPercentChangeMiss		( "SuperMeterPercentChangeMiss",		-0.20f ),
-	m_fSuperMeterPercentChangeHitMine	( "SuperMeterPercentChangeHitMine",	-0.40f ),
+	m_fSuperMeterPercentChangeHitMine	( "SuperMeterPercentChangeHitMine",		-0.40f ),
 	m_fSuperMeterPercentChangeOK		( "SuperMeterPercentChangeOK",			+0.04f ),
 	m_fSuperMeterPercentChangeNG		( "SuperMeterPercentChangeNG",			-0.20f ),
-	m_bMercifulSuperMeter				( "MercifulSuperMeter",				true ),
+	m_bMercifulSuperMeter				( "MercifulSuperMeter",					true ),
 	
 	m_fTimeMeterSecondsChangeMarvelous	( "TimeMeterSecondsChangeMarvelous",	+0.1f ),
 	m_fTimeMeterSecondsChangePerfect	( "TimeMeterSecondsChangePerfect",		 0.0f ),
 	m_fTimeMeterSecondsChangeGreat		( "TimeMeterSecondsChangeGreat",		-0.5f ),
-	m_fTimeMeterSecondsChangeGood		( "TimeMeterSecondsChangeGood",		-1.0f ),
+	m_fTimeMeterSecondsChangeGood		( "TimeMeterSecondsChangeGood",			-1.0f ),
 	m_fTimeMeterSecondsChangeBoo		( "TimeMeterSecondsChangeBoo",			-2.0f ),
-	m_fTimeMeterSecondsChangeMiss		( "TimeMeterSecondsChangeMiss",		-4.0f ),
+	m_fTimeMeterSecondsChangeMiss		( "TimeMeterSecondsChangeMiss",			-4.0f ),
 	m_fTimeMeterSecondsChangeHitMine	( "TimeMeterSecondsChangeHitMine",		-2.0f ),
 	m_fTimeMeterSecondsChangeOK			( "TimeMeterSecondsChangeOK",			-0.0f ),
 	m_fTimeMeterSecondsChangeNG			( "TimeMeterSecondsChangeNG",			-4.0f ),
@@ -186,48 +181,48 @@ PrefsManager::PrefsManager() :
 	m_bShowInstructions			( "ShowInstructions",			true ),
 	m_bShowSelectGroup			( "ShowSelectGroup",			true ),
 	m_bShowCaution				( "ShowCaution",				true ),
-	m_bShowNativeLanguage		( "ShowNativeLanguage",		true ),
+	m_bShowNativeLanguage		( "ShowNativeLanguage",			true ),
 	m_bArcadeOptionsNavigation	( "ArcadeOptionsNavigation",	false ),
-	m_MusicWheelUsesSections	( "MusicWheelUsesSections",	ALWAYS ),
+	m_MusicWheelUsesSections	( "MusicWheelUsesSections",		ALWAYS ),
 	m_iMusicWheelSwitchSpeed	( "MusicWheelSwitchSpeed",		10 ),
-	m_bEasterEggs				( "EasterEggs",				true ),
+	m_bEasterEggs				( "EasterEggs",					true ),
 	m_MarvelousTiming			( "MarvelousTiming",			MARVELOUS_EVERYWHERE ),
 	m_bEventMode				( "EventMode",					false ),
-	m_iCoinsPerCredit			( "CoinsPerCredit",			1 ),
+	m_iCoinsPerCredit			( "CoinsPerCredit",				1 ),
 	m_iSongsPerPlay				( "SongsPerPlay",				3 ),
 
 	m_CoinMode						( "CoinMode",					COIN_MODE_HOME ),
 	m_Premium						( "Premium",					PREMIUM_NONE ),
 	m_bDelayedCreditsReconcile		( "DelayedCreditsReconcile",	false ),
-	m_bPickExtraStage				( "PickExtraStage",			false ),
+	m_bPickExtraStage				( "PickExtraStage",				false ),
 
-	m_bComboContinuesBetweenSongs	( "ComboContinuesBetweenSongs",false ),
-	m_fLongVerSongSeconds			( "LongVerSongSeconds",		60*2.5f ),	// Dynamite Rave is 2:55
-	m_fMarathonVerSongSeconds		( "MarathonVerSongSeconds",	60*5.f ),
+	m_bComboContinuesBetweenSongs	( "ComboContinuesBetweenSongs",	false ),
+	m_fLongVerSongSeconds			( "LongVerSongSeconds",			60*2.5f ),	// Dynamite Rave is 2:55
+	m_fMarathonVerSongSeconds		( "MarathonVerSongSeconds",		60*5.f ),
 	m_ShowSongOptions				( "ShowSongOptions",			YES ),
-	m_bSoloSingle					( "SoloSingle",				false ),
+	m_bSoloSingle					( "SoloSingle",					false ),
 	m_bDancePointsForOni			( "DancePointsForOni",			false ),
-	m_bPercentageScoring			( "PercentageScoring",		false ),
-	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",		0.5f ),
+	m_bPercentageScoring			( "PercentageScoring",			false ),
+	m_fMinPercentageForMachineSongHighScore		( "MinPercentageForMachineSongHighScore",	0.5f ),
 	m_fMinPercentageForMachineCourseHighScore	( "MinPercentageForMachineCourseHighScore",	0.0001f ),	// don't save course scores with 0 percentage
 	m_bDisqualification				( "Disqualification",			false ),
-	m_bShowLyrics					( "ShowLyrics",				true ),
+	m_bShowLyrics					( "ShowLyrics",					true ),
 	m_bAutogenSteps					( "AutogenSteps",				true ),
 	m_bAutogenGroupCourses			( "AutogenGroupCourses",		true ),
 	m_bBreakComboToGetItem			( "BreakComboToGetItem",		false ),
-	m_bLockCourseDifficulties		( "LockCourseDifficulties",	true ),
+	m_bLockCourseDifficulties		( "LockCourseDifficulties",		true ),
 	m_ShowDancingCharacters			( "ShowDancingCharacters",		CO_OFF ),
 	m_bUseUnlockSystem				( "UseUnlockSystem",			false ),
-	m_bAutoMapOnJoyChange			( "AutoMapOnJoyChange",		true ),
+	m_bAutoMapOnJoyChange			( "AutoMapOnJoyChange",			true ),
 	m_fGlobalOffsetSeconds			( "GlobalOffsetSeconds",		0 ),
-	m_iProgressiveLifebar			( "ProgressiveLifebar",		0 ),
+	m_iProgressiveLifebar			( "ProgressiveLifebar",			0 ),
 	m_iProgressiveStageLifebar		( "ProgressiveStageLifebar",	0 ),
 	m_iProgressiveNonstopLifebar	( "ProgressiveNonstopLifebar",	0 ),
-	m_bShowBeginnerHelper			( "ShowBeginnerHelper",		false ),
+	m_bShowBeginnerHelper			( "ShowBeginnerHelper",			false ),
 	m_bEndlessBreakEnabled			( "EndlessBreakEnabled",		true ),
-	m_iEndlessNumStagesUntilBreak	( "EndlessNumStagesUntilBreak",5 ),
-	m_iEndlessBreakLength			( "EndlessBreakLength",		5 ),
-	m_bDisableScreenSaver			( "DisableScreenSaver",		true ),
+	m_iEndlessNumStagesUntilBreak	( "EndlessNumStagesUntilBreak",	5 ),
+	m_iEndlessBreakLength			( "EndlessBreakLength",			5 ),
+	m_bDisableScreenSaver			( "DisableScreenSaver",			true ),
 	m_sLanguage						( "Language",					"" ),	// ThemeManager will deal with this invalid language
 	m_sMemoryCardProfileSubdir		( "MemoryCardProfileSubdir",	PRODUCT_NAME ),
 	m_iProductID					( "ProductID",					1 ),	
@@ -236,31 +231,31 @@ PrefsManager::PrefsManager() :
 	m_bMemoryCards					( "MemoryCards",				false ),
 	m_sMemoryCardOsMountPointP1		( "MemoryCardOsMountPointP1",	"" ),
 	m_sMemoryCardOsMountPointP2		( "MemoryCardOsMountPointP2",	"" ),
-	m_iMemoryCardUsbBusP1			( "MemoryCardUsbBusP1",	-1 ),
-	m_iMemoryCardUsbBusP2			( "MemoryCardUsbBusP2",	-1 ),
-	m_iMemoryCardUsbPortP1			( "MemoryCardUsbPortP1",	-1 ),
-	m_iMemoryCardUsbPortP2			( "MemoryCardUsbPortP2",	-1 ),
-	m_iMemoryCardUsbLevelP1			( "MemoryCardUsbLevelP1",	-1 ),
-	m_iMemoryCardUsbLevelP2			( "MemoryCardUsbLevelP2",	-1 ),
-	m_iCenterImageTranslateX		( "CenterImageTranslateX",	0 ),
-	m_iCenterImageTranslateY		( "CenterImageTranslateY",	0 ),
-	m_fCenterImageAddWidth			( "CenterImageAddWidth",	0 ),
-	m_fCenterImageAddHeight			( "CenterImageAddHeight",	0 ),
-	m_iAttractSoundFrequency		( "AttractSoundFrequency",	1 ),
-	m_bAllowExtraStage				( "AllowExtraStage",		true ),
-	m_bHideDefaultNoteSkin			( "HideDefaultNoteSkin",	false ),
+	m_iMemoryCardUsbBusP1			( "MemoryCardUsbBusP1",			-1 ),
+	m_iMemoryCardUsbBusP2			( "MemoryCardUsbBusP2",			-1 ),
+	m_iMemoryCardUsbPortP1			( "MemoryCardUsbPortP1",		-1 ),
+	m_iMemoryCardUsbPortP2			( "MemoryCardUsbPortP2",		-1 ),
+	m_iMemoryCardUsbLevelP1			( "MemoryCardUsbLevelP1",		-1 ),
+	m_iMemoryCardUsbLevelP2			( "MemoryCardUsbLevelP2",		-1 ),
+	m_iCenterImageTranslateX		( "CenterImageTranslateX",		0 ),
+	m_iCenterImageTranslateY		( "CenterImageTranslateY",		0 ),
+	m_fCenterImageAddWidth			( "CenterImageAddWidth",		0 ),
+	m_fCenterImageAddHeight			( "CenterImageAddHeight",		0 ),
+	m_iAttractSoundFrequency		( "AttractSoundFrequency",		1 ),
+	m_bAllowExtraStage				( "AllowExtraStage",			true ),
+	m_bHideDefaultNoteSkin			( "HideDefaultNoteSkin",		false ),
 	m_iMaxHighScoresPerListForMachine		( "MaxHighScoresPerListForMachine",		10 ),
-	m_iMaxHighScoresPerListForPlayer		( "MaxHighScoresPerListForPlayer",			3 ),
-	m_iMaxRecentScoresForMachine			( "MaxRecentScoresForMachine",				100 ),
-	m_iMaxRecentScoresForPlayer				( "MaxRecentScoresForPlayer",				20 ),
+	m_iMaxHighScoresPerListForPlayer		( "MaxHighScoresPerListForPlayer",		3 ),
+	m_iMaxRecentScoresForMachine			( "MaxRecentScoresForMachine",			100 ),
+	m_iMaxRecentScoresForPlayer				( "MaxRecentScoresForPlayer",			20 ),
 	m_bAllowMultipleHighScoreWithSameName	( "AllowMultipleHighScoreWithSameName",	true ),
 	m_bCelShadeModels						( "CelShadeModels",						false ),	// Work-In-Progress.. disable by default.
-	m_bPreferredSortUsesGroups				( "PreferredSortUsesGroups",				true ),
+	m_bPreferredSortUsesGroups				( "PreferredSortUsesGroups",			true ),
 
-	m_fConstantUpdateDeltaSeconds	( "ConstantUpdateDeltaSeconds",0 ),
+	m_fConstantUpdateDeltaSeconds	( "ConstantUpdateDeltaSeconds",	0 ),
 	m_fPadStickSeconds				( "PadStickSeconds",			0 ),
 	m_bForceMipMaps					( "ForceMipMaps",				0 ),
-	m_bTrilinearFiltering			( "TrilinearFiltering",		0 ),
+	m_bTrilinearFiltering			( "TrilinearFiltering",			0 ),
 	m_bAnisotropicFiltering			( "AnisotropicFiltering",		0 ),
 
 	m_bSignProfileData				( "SignProfileData",			false ),
@@ -268,7 +263,7 @@ PrefsManager::PrefsManager() :
 	m_CourseSortOrder				( "CourseSortOrder",			COURSE_SORT_SONGS ),
 	m_bMoveRandomToEnd				( "MoveRandomToEnd",			false ),
 	m_bSubSortByNumSteps			( "SubSortByNumSteps",			false ),
-	m_GetRankingName				( "GetRankingName",			RANKING_ON ),
+	m_GetRankingName				( "GetRankingName",				RANKING_ON ),
 	m_ScoringType					( "ScoringType",				SCORING_MAX2 ),
 	m_BoostAppPriority				( "BoostAppPriority",			BOOST_AUTO ),
 	m_sAdditionalSongFolders		( "AdditionalSongFolders",		"" ),
@@ -276,9 +271,9 @@ PrefsManager::PrefsManager() :
 	m_sLastSeenVideoDriver			( "LastSeenVideoDriver",		"" ),
 	m_sLastSeenInputDevices			( "LastSeenInputDevices",		"" ),
 #if defined(WIN32)
-	m_iLastSeenMemory				( "LastSeenMemory",			0 ),
+	m_iLastSeenMemory				( "LastSeenMemory",				0 ),
 #endif
-	m_sVideoRenderers				( "VideoRenderers",			"" ),	// StepMania.cpp sets these on first run:
+	m_sVideoRenderers				( "VideoRenderers",				"" ),	// StepMania.cpp sets these on first run:
 	m_bSmoothLines					( "SmoothLines",				false ),
 	m_sSoundDrivers					( "SoundDrivers",				"" ),
 	m_iSoundWriteAhead				( "SoundWriteAhead",			0 ),
@@ -290,10 +285,10 @@ PrefsManager::PrefsManager() :
 	m_sLightsDriver					( "LightsDriver",				"" ),
 	m_sLightsStepsDifficulty		( "LightsStepsDifficulty",		"medium" ),
 	m_bBlinkGameplayButtonLightsOnNote	( "BlinkGameplayButtonLightsOnNote",false ),
-	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",false ),
+	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",	false ),
 	m_bThreadedInput				( "ThreadedInput",				true ),
 	m_bThreadedMovieDecode			( "ThreadedMovieDecode",		true ),
-	m_bScreenTestMode				( "ScreenTestMode",			false ),
+	m_bScreenTestMode				( "ScreenTestMode",				false ),
 	m_bDebugLights					( "DebugLights",				false ),
 	m_bMonkeyInput					( "MonkeyInput",				false ),
 	m_sMachineName					( "MachineName",				"" ),
@@ -306,7 +301,7 @@ PrefsManager::PrefsManager() :
 	m_bShowLogOutput				( "ShowLogOutput",				false ),
 	m_bTimestamping					( "Timestamping",				false ),
 	m_bLogSkips						( "LogSkips",					false ),
-	m_bLogCheckpoints				( "LogCheckpoints",			false ),
+	m_bLogCheckpoints				( "LogCheckpoints",				false ),
 	m_bShowLoadingWindow			( "ShowLoadingWindow",			true ),
 
 	/* Game-specific prefs: */
@@ -324,6 +319,7 @@ PrefsManager::PrefsManager() :
 	Init();
 	ReadGlobalPrefsFromDisk();
 }
+#undef TRUE_IF_DEBUG
 
 void PrefsManager::Init()
 {
