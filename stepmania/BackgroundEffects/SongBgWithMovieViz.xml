@@ -1,0 +1,12 @@
+<ActorFrame><children>
+	<AutoActor
+		File="songbackground"
+		Command="x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;ZoomToWidth,SCREEN_WIDTH;ZoomToHeight,SCREEN_HEIGHT"
+	/>
+	<AutoActor
+		File="@File1"
+		OnCommand="Pause;blend,add;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;ZoomToWidth,SCREEN_WIDTH;ZoomToHeight,SCREEN_HEIGHT"
+		GainFocusCommand="Play"
+		LoseFocusCommand="Pause"
+	/>
+</children></ActorFrame>
