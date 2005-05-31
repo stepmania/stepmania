@@ -98,19 +98,6 @@ public:
 	const CString &GetName() const		{ return m_sName; }
 	virtual void SetName( const CString &sName ) { m_sName = sName; }
 
-
-
-	/* Do subclasses really need to override tweening?  Tween data should
-	 * probably be private ... - glenn */
-	/* Things like a "FocusingSprite" might, but probably not.  -Chris */
-
-	/* Return the current coordinates, not the destination coordinates;
-	 * that's what the old behavior was, at least, and it's what ScreenMusicScroll
-	 * expects.  I could see uses for knowing the destination coords, though,
-	 * especially now that setting parameters when tweening and when not tweening
-	 * is somewhat abstracted.  Hmmm. -glenn */
-	/* Things like the cursor on ScreenSelectDifficutly need to know the dest coordinates.
-	 * -Chris */
 	float GetX() const				{ return m_current.pos.x; };
 	float GetY() const				{ return m_current.pos.y; };
 	float GetZ() const				{ return m_current.pos.z; };
