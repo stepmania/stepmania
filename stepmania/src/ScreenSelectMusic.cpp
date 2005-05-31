@@ -144,7 +144,7 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_MusicWheelUnder );
 	this->AddChild( m_MusicWheelUnder );
 
-	m_MusicWheel.SetName( "MusicWheel", "Wheel" );
+	m_MusicWheel.SetName( "MusicWheel" );
 	SET_XY( m_MusicWheel );
 	this->AddChild( &m_MusicWheel );
 
