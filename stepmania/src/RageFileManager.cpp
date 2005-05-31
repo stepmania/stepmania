@@ -555,25 +555,6 @@ bool RageFileManager::IsMounted( CString MountPoint )
 	return false;
 }
 
-/* Return true if the driver with the given root path is ready (eg. CD or memory card
- * inserted). */
-bool RageFileManager::MountpointIsReady( CString MountPoint )
-{
-	vector<LoadedDriver> aDriverList;
-	ReferenceAllDrivers( aDriverList );
-
-	for( unsigned i = 0; i < aDriverList.size(); ++i )
-	{
-		if( aDriverList[i].MountPoint.CompareNoCase( MountPoint ) )
-			continue;
-
-		return aDriverList[i].driver->Ready();
-	}
-
-	UnreferenceAllDrivers( aDriverList );
-	return false;
-}
-
 void RageFileManager::GetLoadedDrivers( vector<DriverLocation> &Mounts )
 {
 	LockMut( *g_Mutex );

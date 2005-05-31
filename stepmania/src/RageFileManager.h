@@ -38,7 +38,6 @@ public:
 	 * the driver. */
 	static void Remount( CString sMountpoint, CString sPath );
 	bool IsMounted( CString MountPoint );
-	bool MountpointIsReady( CString MountPoint );
 	struct DriverLocation
 	{
 		CString Type, Root, MountPoint;
