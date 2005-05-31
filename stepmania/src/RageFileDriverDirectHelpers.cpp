@@ -144,7 +144,7 @@ bool CreateDirectories( CString Path )
 		}
 #endif
 
-		if( DoMkdir(curpath, 0755) == 0 )
+		if( DoMkdir(curpath, 0777) == 0 )
 			continue;
 
 		/* When creating a directory that already exists over Samba, Windows is

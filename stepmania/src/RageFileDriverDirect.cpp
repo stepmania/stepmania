@@ -74,7 +74,7 @@ RageFileObj *MakeFileObjDirect( CString sPath, int mode, int &err )
 	int fd;
 	if( mode & RageFile::READ )
 	{
-		fd = DoOpen( sPath, O_BINARY|O_RDONLY, 0644 );
+		fd = DoOpen( sPath, O_BINARY|O_RDONLY, 0666 );
 
 		/* XXX: Windows returns EACCES if we try to open a file on a CDROM that isn't
 		 * ready, instead of something like ENODEV.  We want to return that case as
@@ -89,7 +89,7 @@ RageFileObj *MakeFileObjDirect( CString sPath, int mode, int &err )
 			out = MakeTempFilename(sPath);
 
 		/* Open a temporary file for writing. */
-		fd = DoOpen( out, O_BINARY|O_WRONLY|O_CREAT|O_TRUNC, 0644 );
+		fd = DoOpen( out, O_BINARY|O_WRONLY|O_CREAT|O_TRUNC, 0666 );
 	}
 
 	if( fd == -1 )
