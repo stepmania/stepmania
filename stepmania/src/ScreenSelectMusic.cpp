@@ -276,8 +276,8 @@ void ScreenSelectMusic::Init()
 
 		if( SHOW_PANES )
 		{
-			m_PaneDisplay[p].SetName( "PaneDisplay", ssprintf("PaneDisplayP%d",p+1) );
-			m_PaneDisplay[p].Load( p );
+			m_PaneDisplay[p].SetName( ssprintf("PaneDisplayP%d",p+1) );
+			m_PaneDisplay[p].Load( "PaneDisplay", p );
 			SET_XY( m_PaneDisplay[p] );
 			this->AddChild( &m_PaneDisplay[p] );
 		}

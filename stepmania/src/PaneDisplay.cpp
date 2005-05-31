@@ -14,10 +14,10 @@
 #include "Foreach.h"
 #include "PercentageDisplay.h"
 
-#define SHIFT_X(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iX", p+1))
-#define SHIFT_Y(p)			THEME->GetMetricF(m_sName, ssprintf("ShiftP%iY", p+1))
-#define NUM_ITEM_COLORS(s)	THEME->GetMetricI(m_sName, ssprintf("%sNumLevels",s))
-#define ITEM_COLOR(s,n)		THEME->GetMetric (m_sName, ssprintf("%sLevel%i",s,n+1))
+#define SHIFT_X(p)			THEME->GetMetricF(sType, ssprintf("ShiftP%iX", p+1))
+#define SHIFT_Y(p)			THEME->GetMetricF(sType, ssprintf("ShiftP%iY", p+1))
+#define NUM_ITEM_COLORS(s)	THEME->GetMetricI(sType, ssprintf("%sNumLevels",s))
+#define ITEM_COLOR(s,n)		THEME->GetMetric (sType, ssprintf("%sLevel%i",s,n+1))
 
 enum { NEED_NOTES=1, NEED_COURSE=2, NEED_PROFILE=4 };
 struct Content_t
@@ -77,13 +77,13 @@ PaneDisplay::PaneDisplay()
 	m_CurPane = PANE_INVALID;
 }
 
-void PaneDisplay::Load( PlayerNumber pn )
+void PaneDisplay::Load( const CString &sType, PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
 	m_sprPaneUnder.Load( THEME->GetPathG("PaneDisplay",ssprintf("under p%i",pn+1)) );
 	m_sprPaneUnder->SetName( "Under" );
-	ON_COMMAND( m_sprPaneUnder );
+	ActorUtil::OnCommand( m_sprPaneUnder, sType );
 	this->AddChild( m_sprPaneUnder );
 
 	FOREACH_PaneContents(p)
@@ -127,12 +127,12 @@ void PaneDisplay::Load( PlayerNumber pn )
 
 		m_textContents[p].LoadFromFont( THEME->GetPathF("PaneDisplay","text") );
 		m_textContents[p].SetName( ssprintf("%sText", g_Contents[p].name) );
-		SET_XY_AND_ON_COMMAND( m_textContents[p] );
+		ActorUtil::SetXYAndOnCommand( m_textContents[p], sType );
 		m_ContentsFrame.AddChild( &m_textContents[p] );
 
 		m_Labels[p].Load( THEME->GetPathG("PaneDisplay",CString(g_Contents[p].name)+" label") );
 		m_Labels[p]->SetName( ssprintf("%sLabel", g_Contents[p].name) );
-		SET_XY_AND_ON_COMMAND( m_Labels[p] );
+		ActorUtil::SetXYAndOnCommand( m_Labels[p], sType );
 		m_ContentsFrame.AddChild( m_Labels[p] );
 	}
 
@@ -141,7 +141,7 @@ void PaneDisplay::Load( PlayerNumber pn )
 
 	m_sprPaneOver.Load( THEME->GetPathG("PaneDisplay",ssprintf("over p%i", pn+1)) );
 	m_sprPaneOver->SetName( "Over" );
-	ON_COMMAND( m_sprPaneOver );
+	ActorUtil::OnCommand( m_sprPaneOver, sType );
 	this->AddChild( m_sprPaneOver );
 
 	for( unsigned i = 0; i < NUM_PANE_CONTENTS; ++i )

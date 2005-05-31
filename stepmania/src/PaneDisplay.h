@@ -63,7 +63,7 @@ class PaneDisplay: public ActorFrame
 public:
 	PaneDisplay();
 
-	void Load( PlayerNumber pn );
+	void Load( const CString &sClass, PlayerNumber pn );
 	void SetFromGameState( SortOrder so );
 
 	void Update( float fDeltaTime );
