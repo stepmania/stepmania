@@ -227,7 +227,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 		return;
 
 	do {
-		if(!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, ".."))
+		if( !strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, "..") )
 			continue;
 
 		File f;
@@ -236,9 +236,9 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 		f.size = fd.nFileSizeLow;
 		f.hash = fd.ftLastWriteTime.dwLowDateTime;
 
-		fs.files.insert(f);
+		fs.files.insert( f );
 	} while( FindNextFile( hFind, &fd ) );
-	FindClose(hFind);
+	FindClose( hFind );
 #else
 	/* Ugly: POSIX threads are not guaranteed to have per-thread cwds, and only
 	 * a few systems have openat() or equivalent; one or the other is needed
@@ -247,32 +247,34 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 	 * for each file.  This isn't a major issue, since most large directory
 	 * scans are I/O-bound. */
 	 
-	DIR *d = opendir(root+sPath);
-	if( d == NULL )
+	DIR *pDir = opendir(root+sPath);
+	if( pDir == NULL )
 	{
 		LOG->MapLog("opendir " + root+sPath, "Couldn't opendir(%s%s): %s", root.c_str(), sPath.c_str(), strerror(errno) );
 		return;
 	}
 
-	while(struct dirent *ent = readdir(d))
+	while( struct dirent *pEnt = readdir(pDir) )
 	{
-		if(!strcmp(ent->d_name, ".")) continue;
-		if(!strcmp(ent->d_name, "..")) continue;
+		if( !strcmp(pEnt->d_name, ".") )
+			continue;
+		if( !strcmp(pEnt->d_name, "..") )
+			continue;
 		
 		File f;
-		f.SetName( ent->d_name );
+		f.SetName( pEnt->d_name );
 		
 		struct stat st;
-		if( DoStat(root+sPath + "/" + ent->d_name, &st) == -1 )
+		if( DoStat(root+sPath + "/" + pEnt->d_name, &st) == -1 )
 		{
 			/* If it's a broken symlink, ignore it.  Otherwise, warn. */
-			if( lstat(ent->d_name, &st) == 0 )
+			if( lstat(pEnt->d_name, &st) == 0 )
 				continue;
 			
 			/* Huh? */
-			if(LOG)
-				LOG->Warn("Got file '%s' in '%s' from list, but can't stat? (%s)",
-					ent->d_name, sPath.c_str(), strerror(errno));
+			if( LOG )
+				LOG->Warn( "Got file '%s' in '%s' from list, but can't stat? (%s)",
+					pEnt->d_name, sPath.c_str(), strerror(errno) );
 			continue;
 		} else {
 			f.dir = (st.st_mode & S_IFDIR);
@@ -283,7 +285,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 		fs.files.insert(f);
 	}
 	       
-	closedir(d);
+	closedir( pDir );
 #endif
 }
 
