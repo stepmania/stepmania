@@ -64,7 +64,7 @@ HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd )
 #endif
 
 #if defined(WIN32)
-int WinMoveFileInternal( const CString &sOldPath, const CString &sNewPath )
+static bool WinMoveFileInternal( const CString &sOldPath, const CString &sNewPath )
 {
 	static bool Win9x = false;
 
@@ -76,29 +76,29 @@ int WinMoveFileInternal( const CString &sOldPath, const CString &sNewPath )
 	if( !Win9x )
 	{
 		if( MoveFileEx( sOldPath, sNewPath, MOVEFILE_REPLACE_EXISTING ) )
-			return 1;
+			return true;
 
 		// On Win9x, MoveFileEx is expected to fail (returns ERROR_CALL_NOT_IMPLEMENTED).
 		DWORD err = GetLastError();
 		if( err == ERROR_CALL_NOT_IMPLEMENTED )
 			Win9x = true;
 		else
-			return 0;
+			return false;
 	}
 
 	if( MoveFile( sOldPath, sNewPath ) )
-		return 1;
+		return true;
 	
 	if( GetLastError() != ERROR_ALREADY_EXISTS )
-		return 0;
+		return false;
 
 	if( !DeleteFile( sNewPath ) )
-		return 0;
+		return false;
 
-	return MoveFile( sOldPath, sNewPath );
+	return !!MoveFile( sOldPath, sNewPath );
 }
 
-int WinMoveFile( CString sOldPath, CString sNewPath )
+bool WinMoveFile( CString sOldPath, CString sNewPath )
 {
 #if defined(_XBOX)
 	sOldPath.Replace( "/", "\\" );
@@ -106,9 +106,9 @@ int WinMoveFile( CString sOldPath, CString sNewPath )
 #endif
 
 	if( WinMoveFileInternal(sOldPath, sNewPath) )
-		return 1;
+		return true;
 	if( GetLastError() != ERROR_ACCESS_DENIED )
-		return 0;
+		return false;
 	/* Try turning off the read-only bit on the file we're overwriting. */
 	SetFileAttributes( sNewPath, FILE_ATTRIBUTE_NORMAL );
 

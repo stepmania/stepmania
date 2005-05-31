@@ -22,15 +22,15 @@ HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd );
 #endif
 
 #if defined(WIN32)
-int WinMoveFile( CString sOldPath, CString sNewPath );
+bool WinMoveFile( CString sOldPath, CString sNewPath );
 #endif
 
 #if !defined(O_BINARY)
 #define O_BINARY 0
 #endif
 
-bool CreateDirectories( CString Path );
-bool PathReady( CString path );
+bool CreateDirectories( CString sPath );
+bool PathReady( CString sPath );
 
 #include "RageUtil_FileDB.h"
 class DirectFilenameDB: public FilenameDB
