@@ -8,9 +8,6 @@
 
 ThemeMetric<float> METER_WIDTH		("CombinedLifeMeterTug","MeterWidth");
 
-const float FACE_X[NUM_PLAYERS] = { -300, +300 };
-const float FACE_Y[NUM_PLAYERS] = { 0, 0 };
-
 
 CombinedLifeMeterTug::CombinedLifeMeterTug() 
 {
@@ -28,18 +25,6 @@ CombinedLifeMeterTug::CombinedLifeMeterTug()
 
 	m_sprFrame.Load( THEME->GetPathG("CombinedLifeMeterTug","frame") );
 	this->AddChild( m_sprFrame );
-	
-	
-	FOREACH_PlayerNumber( p )
-	{
-		Character* pCharacter = GAMESTATE->m_pCurCharacters[p];
-		ASSERT( pCharacter );
-
-		m_Head[p].SetName( "CharacterHead" );
-		m_Head[p].LoadFromCharacter( pCharacter );
-		m_Head[p].SetXY( FACE_X[p], FACE_Y[p] );
-		this->AddChild( &m_Head[p] );
-	}
 }
 
 void CombinedLifeMeterTug::Update( float fDelta )

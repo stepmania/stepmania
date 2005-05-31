@@ -6,7 +6,6 @@
 #include "CombinedLifeMeter.h"
 #include "Sprite.h"
 #include "MeterDisplay.h"
-#include "CharacterHead.h"
 
 
 class CombinedLifeMeterTug : public CombinedLifeMeter
@@ -28,8 +27,6 @@ protected:
 	MeterDisplay	m_Stream[NUM_PLAYERS];
 	AutoActor	m_sprSeparator;
 	AutoActor	m_sprFrame;
-
-	CharacterHead	m_Head[NUM_PLAYERS];
 };
 
 #endif
