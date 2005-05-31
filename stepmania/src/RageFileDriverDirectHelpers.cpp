@@ -250,8 +250,8 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 #if defined(XBOX)
 	/* Xbox doesn't handle path names which end with ".", which are used when using an
 	 * alternative song directory */
-	if(sPath.size() > 0 && sPath.Right(1) == ".")
-		sPath.erase(sPath.size() - 1);
+	if( sPath.size() > 0 && sPath.Right(1) == "." )
+		sPath.erase( sPath.size() - 1 );
 #endif
 
 	/* Resolve path cases (path/Path -> PATH/path). */
