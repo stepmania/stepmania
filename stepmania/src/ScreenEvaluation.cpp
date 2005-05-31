@@ -1153,7 +1153,7 @@ void ScreenEvaluation::TweenOffScreen()
 		FOREACH_EnabledPlayer( p ) 
 		{
 			OFF_COMMAND( m_sprPercentFrame[p] );
-			m_Percent[p].RunCommands( THEME->GetMetricA(m_sName,ssprintf("PercentP%dOffCommand",p+1)) );
+			OFF_COMMAND( m_Percent[p] );
 			m_Percent[p].TweenOffScreen();
 		}
 	}
