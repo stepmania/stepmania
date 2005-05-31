@@ -183,7 +183,7 @@ bool CreateDirectories( CString Path )
 		curpath += parts[i];
 
 #if defined(WIN32)
-		if( (curpath.size() == 2 && curpath[1] == ':') )  /* C: */
+		if( curpath.size() == 2 && curpath[1] == ':' )  /* C: */
 		{
 			/* Don't try to create the drive letter alone. */
 			continue;
@@ -291,7 +291,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 	 * to do efficient, thread-safe directory traversal.  Instead, we have to
 	 * use absolute paths, which forces the system to re-parse the directory
 	 * for each file.  This isn't a major issue, since most large directory
-	 * scans are be I/O (disk-seek)-bound. */
+	 * scans are I/O-bound. */
 	 
 	DIR *d = opendir(root+sPath);
 	if( d == NULL )
