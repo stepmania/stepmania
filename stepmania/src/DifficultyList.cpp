@@ -25,9 +25,9 @@ DifficultyList::~DifficultyList()
 {
 }
 
-void DifficultyList::SetName( const CString &sName, const CString &sID )
+void DifficultyList::SetName( const CString &sName )
 {
-	ActorFrame::SetName( sName, sID );
+	ActorFrame::SetName( sName );
 
 	ITEMS_SPACING_Y.Load( m_sName, "ItemsSpacingY" );
 	NUM_SHOWN_ITEMS.Load( m_sName, "NumShownItems" );

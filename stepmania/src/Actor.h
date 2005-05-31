@@ -93,15 +93,11 @@ public:
 	void CopyTweening( const Actor &from );
 
 
-	CString m_sName, m_sID;
+	CString m_sName;
 
-	/* m_sName is the name actors use to look up internal metrics for themselves, and for
-	 * filenames.  m_sID is the name parents use to look up their own metrics for an actor
-	 * (usually via ActorUtil).  (This is experimental; see DifficultyMeter.cpp for more
-	 * information.) */
 	const CString &GetName() const		{ return m_sName; }
-	const CString &GetID() const		{ return m_sID.empty() ? m_sName : m_sID; }
-	virtual void SetName( const CString &sName, const CString &sID = "" ) { m_sName = sName; m_sID = sID; }
+	const CString &GetID() const		{ return m_sName; }
+	virtual void SetName( const CString &sName ) { m_sName = sName; }
 
 
 

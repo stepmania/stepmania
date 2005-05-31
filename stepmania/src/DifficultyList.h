@@ -16,7 +16,7 @@ class DifficultyList: public ActorFrame
 public:
 	DifficultyList();
 	virtual ~DifficultyList();
-	virtual void SetName( const CString &sName, const CString &sID = "" );
+	virtual void SetName( const CString &sName );
 
 	void Load();
 	void SetFromGameState();

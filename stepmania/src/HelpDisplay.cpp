@@ -30,9 +30,9 @@ void HelpDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
 	BitmapText::LoadFromNode( sDir, pNode );
 }
 
-void HelpDisplay::SetName( const CString &sName, const CString &sID )
+void HelpDisplay::SetName( const CString &sName )
 {
-	BitmapText::SetName( sName, sID );
+	BitmapText::SetName( sName );
 }
 
 void HelpDisplay::SetTips( const CStringArray &arrayTips, const CStringArray &arrayTipsAlt )

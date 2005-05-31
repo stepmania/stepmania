@@ -22,7 +22,7 @@ public:
 	void GetTips( CStringArray &arrayTipsOut, CStringArray &arrayTipsAltOut ) const { arrayTipsOut = m_arrayTips; arrayTipsAltOut = m_arrayTipsAlt; }
 
 	virtual void Update( float fDeltaTime );
-	virtual void SetName( const CString &sName, const CString &sID = "" );
+	virtual void SetName( const CString &sName );
 
 	// Lua
 	virtual void PushSelf( lua_State *L );
