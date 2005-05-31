@@ -233,10 +233,13 @@ DirectFilenameDB::DirectFilenameDB( CString root_ )
 void DirectFilenameDB::SetRoot( CString root_ )
 {
 	root = root_;
-	if( root.Right(1) != "/" )
-		root += '/';
-	if( root == "./" )
-		root = "";
+
+	/* "\abcd\" -> "/abcd/": */
+	root.Replace( "\\", "/" );
+
+	/* "/abcd/" -> "/abcd": */
+	if( root.Right(1) == "/" )
+		root.erase( root.size()-1, 1 );
 }
 
 
