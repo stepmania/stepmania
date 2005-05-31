@@ -366,6 +366,7 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	m_iSongsPerPlay.Set( clamp(m_iSongsPerPlay.Get(),0,MAX_SONGS_PER_PLAY) );
 	FOREACH_PlayerNumber( pn )
 		GetMemoryCardOsMountPoint(pn).Set( FixSlashes(GetMemoryCardOsMountPoint(pn)) );
+	m_BackgroundMode.Set( (BackgroundMode)clamp((int)m_BackgroundMode.Get(),0,(int)NUM_BackgroundMode-1) );
 }
 
 void PrefsManager::SaveGlobalPrefsToDisk() const
