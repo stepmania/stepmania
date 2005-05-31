@@ -96,7 +96,6 @@ public:
 	CString m_sName;
 
 	const CString &GetName() const		{ return m_sName; }
-	const CString &GetID() const		{ return m_sName; }
 	virtual void SetName( const CString &sName ) { m_sName = sName; }
 
 

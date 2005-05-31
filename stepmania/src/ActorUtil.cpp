@@ -132,10 +132,9 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 
 	CString sFile;
 	pNode->GetAttrValue( "File", sFile );
-	// FIXME: If specifying a path in Lua, assume it is absolute.  We need a way to specify 
-	// absolute paths.  We can't use a slash at the beginning to mean absolute because FILEMAN
-	// maps that to the root of the filesystem.
-	bool bIsAbsolutePath = LUA->RunAtExpressionS( sFile ) && sFile.Left(2) != "..";
+
+	LUA->RunAtExpressionS( sFile );
+	bool bIsAbsolutePath = sFile.Left(1) == "/";
 	FixSlashesInPlace( sFile );
 
 	CString sText;
@@ -333,13 +332,13 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 
 void ActorUtil::SetXY( Actor& actor, const CString &sType )
 {
-	ASSERT( !actor.GetID().empty() );
-	actor.SetXY( THEME->GetMetricF(sType,actor.GetID()+"X"), THEME->GetMetricF(sType,actor.GetID()+"Y") );
+	ASSERT( !actor.GetName().empty() );
+	actor.SetXY( THEME->GetMetricF(sType,actor.GetName()+"X"), THEME->GetMetricF(sType,actor.GetName()+"Y") );
 }
 
 void ActorUtil::LoadCommand( Actor& actor, const CString &sType, const CString &sCommandName )
 {
-	actor.AddCommand( sCommandName, THEME->GetMetricA(sType,actor.GetID()+sCommandName+"Command") );
+	actor.AddCommand( sCommandName, THEME->GetMetricA(sType,actor.GetName()+sCommandName+"Command") );
 }
 
 void ActorUtil::LoadAndPlayCommand( Actor& actor, const CString &sType, const CString &sCommandName )
@@ -348,12 +347,12 @@ void ActorUtil::LoadAndPlayCommand( Actor& actor, const CString &sType, const CS
 	// that we aren't drawing.  We know that an Actor is not being
 	// used if its name is blank.  So, do nothing on Actors with a blank name.
 	// (Do "playcommand" anyway; BGAs often have no name.)
-	if( sCommandName=="Off" && actor.GetID().empty() )
+	if( sCommandName=="Off" && actor.GetName().empty() )
 		return;
 
 	ASSERT_M( 
-		!actor.GetID().empty(), 
-		ssprintf("!actor.GetID().empty() ('%s', '%s')", sType.c_str(), sCommandName.c_str()) 
+		!actor.GetName().empty(), 
+		ssprintf("!actor.GetName().empty() ('%s', '%s')", sType.c_str(), sCommandName.c_str()) 
 		);
 
 	if( !actor.HasCommand(sCommandName ) )	// this actor hasn't loaded commands yet
@@ -365,7 +364,7 @@ void ActorUtil::LoadAndPlayCommand( Actor& actor, const CString &sType, const CS
 	{
 		// If this metric exists and we didn't load it in LoadAllCommands, then 
 		// LoadAllCommands has a bug.
-		DEBUG_ASSERT( !THEME->HasMetric(sType,actor.GetID()+sCommandName+"Command") );
+		DEBUG_ASSERT( !THEME->HasMetric(sType,actor.GetName()+sCommandName+"Command") );
 		
 		LoadCommand( actor, sType, sCommandName );
 	}
@@ -376,14 +375,14 @@ void ActorUtil::LoadAndPlayCommand( Actor& actor, const CString &sType, const CS
 void ActorUtil::LoadAllCommands( Actor& actor, const CString &sType )
 {
 	set<CString> vsValueNames;
-	THEME->GetMetricsThatBeginWith( sType, actor.GetID(), vsValueNames );
+	THEME->GetMetricsThatBeginWith( sType, actor.GetName(), vsValueNames );
 
 	FOREACHS_CONST( CString, vsValueNames, v )
 	{
 		const CString &sv = *v;
 		if( sv.Right(7) == "Command" )
 		{
-			CString sCommandName( sv.begin()+actor.GetID().size(), sv.end()-7 );
+			CString sCommandName( sv.begin()+actor.GetName().size(), sv.end()-7 );
 			LoadCommand( actor, sType, sCommandName );
 		}
 	}
