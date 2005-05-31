@@ -152,7 +152,7 @@ bool PathReady( CString path )
 	
 	// Try to write a file.
 	const CString sFile = path + "temp";
-	int fd = DoOpen( sFile, O_WRONLY|O_CREAT|O_TRUNC, 0644 ); //last arg is a bogus one
+	int fd = DoOpen( sFile, O_WRONLY|O_CREAT|O_TRUNC, 0644 );
 	if( fd == -1 )
 		return false;
 
