@@ -10,6 +10,13 @@
 #include "GameManager.h"
 #include <float.h>
 
+#include "LuaFunctions.h"
+#define LuaXToString(X)	\
+LuaFunction( X##ToString, X##ToString( (X) IArg(1) ) );
+
+#define LuaStringToX(X)	\
+LuaFunction( StringTo##X, (X) StringTo##X( SArg(1) ) );
+
 
 static const CString RadarCategoryNames[] = {
 	"Stream",
@@ -52,6 +59,7 @@ static const CString PlayModeNames[] = {
 XToString( PlayMode, NUM_PLAY_MODES );
 XToThemedString( PlayMode, NUM_PLAY_MODES );
 StringToX( PlayMode );
+LuaXToString( PlayMode );
 static void LuaPlayMode(lua_State* L)
 {
 	FOREACH_PlayMode( pm )
@@ -248,17 +256,6 @@ XToString( PeakComboAward, NUM_PEAK_COMBO_AWARDS );
 XToThemedString( PeakComboAward, NUM_PEAK_COMBO_AWARDS );
 StringToX( PeakComboAward );
 
-
-#include "LuaFunctions.h"
-#define LuaXToString(X)	\
-CString Lua##X##ToString( int n ) \
-{ return X##ToString( (X) n ); } \
-LuaFunction( X##ToString, Lua##X##ToString( IArg(1) ) );
-
-#define LuaStringToX(X)	\
-X LuaStringTo##X( CString s ) \
-{ return (X) StringTo##X( s ); } \
-LuaFunction( StringTo##X, LuaStringTo##X( SArg(1) ) );
 
 LuaXToString( Difficulty );
 LuaStringToX( Difficulty );
