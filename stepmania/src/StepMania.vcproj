@@ -1775,12 +1775,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="BeginnerHelper.h">
 			</File>
 			<File
-				RelativePath="CharacterHead.cpp">
-			</File>
-			<File
-				RelativePath="CharacterHead.h">
-			</File>
-			<File
 				RelativePath="CombinedLifeMeter.h">
 			</File>
 			<File

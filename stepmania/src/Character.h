@@ -35,8 +35,6 @@ public:
 	bool	m_bUsableInRave;	
 
 	CString	m_sAttacks[NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
-
-	CString GetHeadPath() const;
 };
 
 #endif

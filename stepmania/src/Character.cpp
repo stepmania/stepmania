@@ -142,19 +142,6 @@ CString Character::GetIconPath() const
 		return as[0];
 }
 
-CString Character::GetHeadPath() const
-{
-	CStringArray as;
-	GetDirListing( m_sCharDir+"head*.png", as, false, true );
-	GetDirListing( m_sCharDir+"head*.jpg", as, false, true );
-	GetDirListing( m_sCharDir+"head*.gif", as, false, true );
-	GetDirListing( m_sCharDir+"head*.bmp", as, false, true );
-	if( as.empty() )
-		return "";
-	else
-		return as[0];
-}
-
 bool Character::Has2DElems()
 {
 	if( DoesFileExist(m_sCharDir + "2DFail/BGAnimation.ini") ) // check 2D Idle BGAnim exists
