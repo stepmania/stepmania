@@ -12,7 +12,6 @@ public:
 
 	RageFileBasic *Open( const CString &path, int mode, int &err );
 	bool Remove( const CString &sPath );
-	bool Ready();
 	bool Remount( const CString &sPath );
 
 private:

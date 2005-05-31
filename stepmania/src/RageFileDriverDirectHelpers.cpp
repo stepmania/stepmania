@@ -116,52 +116,6 @@ bool WinMoveFile( CString sOldPath, CString sNewPath )
 }
 #endif
 
-bool PathReady( CString path )
-{
-#ifdef _WINDOWS
-	// Windows will throw up a message box if we try to write to a
-	// removable drive with no disk inserted.  Find out whether there's a 
-	// disk in the drive w/o writing a file.
-
-	// find drive letter
-	vector<CString> matches;
-	static Regex parse("^([A-Za-z]+):");
-	parse.Compare( path, matches );
-	if( matches.size() != 1 )
-		return false;
-
-	CString sDrive = matches[0];
-	TCHAR szVolumeNameBuffer[MAX_PATH];
-	DWORD dwVolumeSerialNumber;
-	DWORD dwMaximumComponentLength;
-	DWORD lpFileSystemFlags;
-	TCHAR szFileSystemNameBuffer[MAX_PATH];
-	BOOL bResult = GetVolumeInformation( 
-		sDrive + ":\\",
-		szVolumeNameBuffer,
-		sizeof(szVolumeNameBuffer),
-		&dwVolumeSerialNumber,
-		&dwMaximumComponentLength,
-		&lpFileSystemFlags,
-		szFileSystemNameBuffer,
-		sizeof(szFileSystemNameBuffer) );
-	return !!bResult;
-#else
-	// Try to create directory before writing a temp file.
-	CreateDirectories( path );
-	
-	// Try to write a file.
-	const CString sFile = path + "temp";
-	int fd = DoOpen( sFile, O_WRONLY|O_CREAT|O_TRUNC, 0644 );
-	if( fd == -1 )
-		return false;
-
-	close( fd );
-	remove( sFile );
-	return true;
-#endif
-}
-
 /* mkdir -p.  Doesn't fail if Path already exists and is a directory. */
 bool CreateDirectories( CString Path )
 {

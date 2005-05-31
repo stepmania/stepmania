@@ -167,11 +167,6 @@ RageFileBasic *RageFileObjDirect::Copy() const
 	return ret;
 }
 
-bool RageFileDriverDirect::Ready()
-{
-	return PathReady( root );
-}
-
 bool RageFileDriverDirect::Remount( const CString &sPath )
 {
 	root = sPath;
