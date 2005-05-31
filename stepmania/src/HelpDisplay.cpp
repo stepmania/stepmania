@@ -14,11 +14,13 @@ HelpDisplay::HelpDisplay()
 	m_fSecsUntilSwitch = 0;
 }
 
-void HelpDisplay::Load()
+void HelpDisplay::Load( const CString &sType )
 {
-	RunCommands( THEME->GetMetricA(m_sName,"TipOnCommand") );
+	TIP_SHOW_TIME.Load( sType, "TipShowTime" );
 
-	LoadFromFont( THEME->GetPathF(m_sName,"text") );
+	RunCommands( THEME->GetMetricA(sType,"TipOnCommand") );
+
+	LoadFromFont( THEME->GetPathF(sType,"text") );
 	
 	m_fSecsUntilSwitch = TIP_SHOW_TIME;
 }
@@ -31,8 +33,6 @@ void HelpDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
 void HelpDisplay::SetName( const CString &sName, const CString &sID )
 {
 	BitmapText::SetName( sName, sID );
-
-	TIP_SHOW_TIME.Load( m_sName, "TipShowTime" );
 }
 
 void HelpDisplay::SetTips( const CStringArray &arrayTips, const CStringArray &arrayTipsAlt )

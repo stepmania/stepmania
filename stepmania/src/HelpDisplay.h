@@ -13,7 +13,7 @@ class HelpDisplay : public BitmapText
 {
 public:
 	HelpDisplay();
-	void Load();
+	void Load( const CString &sType );
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 

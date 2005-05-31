@@ -220,7 +220,7 @@ void ScreenSelectMusic::Init()
 	this->AddChild( &m_textTotalTime );
 
 	m_Artist.SetName( "ArtistDisplay" );
-	m_Artist.Load();
+	m_Artist.Load( "ArtistDisplay" );
 	SET_XY( m_Artist );
 	this->AddChild( &m_Artist );
 		

@@ -96,8 +96,8 @@ void ScreenWithMenuElements::Init()
 	SET_XY_AND_ON_COMMAND( m_autoFooter );
 	this->AddChild( m_autoFooter );
 
-	m_textHelp->SetName( "HelpDisplay", "Help" );
-	m_textHelp->Load();
+	m_textHelp->SetName( "Help" );
+	m_textHelp->Load( "HelpDisplay" );
 	SET_XY_AND_ON_COMMAND( m_textHelp );
 	LoadHelpText();
 	this->AddChild( m_textHelp );
