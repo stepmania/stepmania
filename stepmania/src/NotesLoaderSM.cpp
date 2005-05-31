@@ -165,13 +165,20 @@ bool LoadFromBGChangesString( BackgroundChange &change, const CString &sBGChange
 	{
 		change.m_fRate = strtof( aBGChangeValues[2], NULL );
 		change.m_sTransition = (atoi( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
-		change.m_bRewindMovie = atoi( aBGChangeValues[4] ) != 0;
-		change.m_bLoop = atoi( aBGChangeValues[5] ) != 0;
+		bool bRewindMovie = atoi( aBGChangeValues[4] ) != 0;
+		bool bLoop = atoi( aBGChangeValues[5] ) != 0;
+
+		// m_sEffect may be overwritten by param 7 below.
+		if( bRewindMovie )
+			change.m_sEffect = SBE_StretchRewind;
+		if( !bLoop )
+			change.m_sEffect = SBE_StretchNoLoop;
 	}
-	if( aBGChangeValues.size() >= 8 )
+	if( aBGChangeValues.size() >= 9 )
 	{
-		change.m_sFile1 = aBGChangeValues[6];
-		change.m_sTransition = aBGChangeValues[7];
+		change.m_sEffect = aBGChangeValues[6];
+		change.m_sFile2 = aBGChangeValues[7];
+		change.m_sTransition = aBGChangeValues[8];
 	}
 	if( aBGChangeValues.size() >= 2 )
 	{

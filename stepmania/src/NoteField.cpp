@@ -541,14 +541,13 @@ void NoteField::DrawPrimitives()
 							aBackgroundChanges[i].m_fStartBeat <= fLastBeatToDraw )
 						{
 							const BackgroundChange& change = aBackgroundChanges[i];
-							CString sChangeText = ssprintf("%s%s%s%s%s%s%s",
+							CString sChangeText = ssprintf("%s%s%s%s%s%s",
 								((b!=0) ? ssprintf("%d: ",b) : CString()).c_str(),
 								(!change.m_sFile1.empty() ? " "+change.m_sFile1 : CString()).c_str(),
 								(!change.m_sFile2.empty() ? " "+change.m_sFile2 : CString()).c_str(),
 								((change.m_fRate!=1.0f) ? ssprintf("%.2f%%",change.m_fRate*100) : CString()).c_str(),
-								change.m_bRewindMovie ? " Rewind" : "",
-								change.m_bLoop ? " Loop" : "" ,
-								(!change.m_sTransition.empty() ? " "+change.m_sTransition : CString()).c_str()
+								(!change.m_sTransition.empty() ? " "+change.m_sTransition : CString()).c_str(),
+								(!change.m_sEffect.empty() ? " "+change.m_sEffect : CString()).c_str()
 								);
 							if( IS_ON_SCREEN(change.m_fStartBeat) )
 								DrawBGChangeText( change.m_fStartBeat, sChangeText );

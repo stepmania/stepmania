@@ -52,6 +52,7 @@ public:
 	
 	DancingCharacters* GetDancingCharacters() { return m_pDancingCharacters; };
 
+
 protected:
 	bool m_bInitted;
 	DancingCharacters*	m_pDancingCharacters;

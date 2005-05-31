@@ -678,6 +678,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="AutoKeysounds.h">
 			</File>
 			<File
+				RelativePath="BackgroundUtil.cpp">
+			</File>
+			<File
+				RelativePath="BackgroundUtil.h">
+			</File>
+			<File
 				RelativePath="BannerCache.cpp">
 			</File>
 			<File
@@ -1226,6 +1232,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 						RelativePath="arch\InputHandler\InputHandler_MonkeyKeyboard.h">
 					</File>
 					<File
+						RelativePath="arch\InputHandler\InputHandler_Win32_MIDI.cpp">
+					</File>
+					<File
+						RelativePath="arch\InputHandler\InputHandler_Win32_MIDI.h">
+					</File>
+					<File
 						RelativePath="arch\InputHandler\InputHandler_Win32_Para.cpp">
 					</File>
 					<File
@@ -1236,12 +1248,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					</File>
 					<File
 						RelativePath="arch\InputHandler\InputHandler_Win32_Pump.h">
-					</File>
-					<File
-						RelativePath="arch\InputHandler\InputHandler_Win32_MIDI.cpp">
-					</File>
-					<File
-						RelativePath="arch\InputHandler\InputHandler_Win32_MIDI.h">
 					</File>
 				</Filter>
 				<Filter

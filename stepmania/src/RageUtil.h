@@ -241,6 +241,7 @@ void splitpath( const CString &Path, CString &Dir, CString &Filename, CString &E
 
 CString SetExtension( const CString &path, const CString &ext );
 CString GetExtension( const CString &sPath );
+CString GetFileNameWithoutExtension( const CString &sPath );
 
 typedef int longchar;
 extern const wchar_t INVALID_CHAR;

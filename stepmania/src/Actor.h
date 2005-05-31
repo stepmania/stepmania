@@ -378,12 +378,7 @@ public:
 	virtual void SetState( int iNewState ) {}
 	virtual float GetAnimationLengthSeconds() const { return 0; }
 	virtual void SetSecondsIntoAnimation( float fSeconds ) {}
-
-	//
-	// BGAnimation stuff
-	//
-	virtual void GainFocus( float fRate, bool bRewindMovie, bool bLoop ) {}
-	virtual void LoseFocus() {}
+	virtual void SetUpdateRate( float fRate ) {}
 
 protected:
 

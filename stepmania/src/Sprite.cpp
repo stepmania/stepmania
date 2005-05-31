@@ -925,64 +925,6 @@ void Sprite::SetPosition( float f )			{ GetTexture()->SetPosition(f); }
 void Sprite::SetLooping( bool b )			{ GetTexture()->SetLooping(b); }
 void Sprite::SetPlaybackRate( float f )		{ GetTexture()->SetPlaybackRate(f); }
 
-/*
-void Sprite::HandleCommand( const Command &command )
-{
-	BeginHandleArgs;
-
-	const CString& sName = command.GetName();
-
-	// Commands that go in the tweening queue:
-	// Commands that take effect immediately (ignoring the tweening queue):
-	if( sName=="customtexturerect" )	SetCustomTextureRect( RectF(fArg(1),fArg(2),fArg(3),fArg(4)) );
-	else if( sName=="texcoordvelocity" )	SetTexCoordVelocity( fArg(1),fArg(2) );
-	else if( sName=="scaletoclipped" )	ScaleToClipped( fArg(1),fArg(2) );
-	else if( sName=="stretchtexcoords" )	StretchTexCoords( fArg(1),fArg(2) );
-
-	// Texture commands; these could be moved to RageTexture* (even though that's
-	// not an Actor) if these are needed for other things that use textures.
-	// We'd need to break the command helpers into a separate function; RageTexture
-	// shouldn't depend on Actor.
-	else if( sName=="position" )		GetTexture()->SetPosition( fArg(1) );
-	else if( sName=="loop" )			GetTexture()->SetLooping( bArg(1) );
-	else if( sName=="rate" )			GetTexture()->SetPlaybackRate( fArg(1) );
-	else
-	{
-		Actor::HandleCommand( command );
-		return;
-	}
-
-	EndHandleArgs;
-}
-*/
-
-void Sprite::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
-{
-	//
-	// The order of these actions is important.
-	// At this point, the movie is probably paused (by LoseFocus()).
-	// Play the movie, then set the playback rate (which can 
-	// potentially pause the movie again).
-	//
-	RageTexture *pTexture = GetTexture();
-	if( pTexture != NULL )
-	{
-		if( bRewindMovie )
-			pTexture->SetPosition( 0 );
-		pTexture->SetLooping( bLoop );
-		pTexture->SetPlaybackRate( fRate );
-	}
-	EnableAnimation( true );
-
-	Actor::GainFocus( fRate, bRewindMovie, bLoop );
-}
-
-void Sprite::LoseFocus()
-{
-	EnableAnimation( false );
-
-	Actor::LoseFocus();
-}
 
 /*
  * (c) 2001-2004 Chris Danford

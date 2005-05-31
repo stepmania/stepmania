@@ -20,9 +20,6 @@ public:
 	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
 
-	virtual void GainFocus( float fRate, bool bRewindMovie, bool bLoop );
-	virtual void LoseFocus();
-
 	void UpdateAnimationState();	// take m_fSecondsIntoState, and move to a new state
 
 	/* Adjust texture properties for song backgrounds. */

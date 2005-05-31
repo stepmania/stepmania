@@ -366,20 +366,6 @@ static const CString StageNames[] = {
 XToString( Stage, NUM_STAGES );
 
 
-static const CString StandardBackgroundEffectNames[] = {
-	"Centered",
-	"Stretch",
-};
-XToString( StandardBackgroundEffect, NUM_StandardBackgroundEffect );
-
-static const CString StandardBackgroundTransitionNames[] = {
-	"None",
-	"CrossFade",
-};
-XToString( StandardBackgroundTransition, NUM_StandardBackgroundTransition );
-
-
-
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

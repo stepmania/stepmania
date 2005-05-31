@@ -257,9 +257,6 @@ const int NUM_ATTACKS_PER_LEVEL	= 3;
 const int ITEM_NONE = -1;
 
 
-#define BG_ANIMS_DIR		CString("BGAnimations/")
-#define VISUALIZATIONS_DIR	CString("Visualizations/")
-#define RANDOMMOVIES_DIR	CString("RandomMovies/")
 #define DATA_DIR			CString("Data/")
 
 
@@ -417,89 +414,6 @@ enum Stage
 };
 #define FOREACH_Stage( s ) FOREACH_ENUM( Stage, NUM_STAGES, s )
 const CString& StageToString( Stage s );
-
-
-enum StandardBackgroundEffect
-{
-	SBE_Centered,
-	SBE_Stretch,
-	NUM_StandardBackgroundEffect
-};
-const CString& StandardBackgroundEffectToString( StandardBackgroundEffect sbe );
-
-const CString RANDOM_BACKGROUND_FILE = "-random-";
-struct BackgroundDef
-{
-	BackgroundDef()
-	{
-	}
-	bool operator<( const BackgroundDef &other ) const
-	{
-#define COMPARE(x) if( x < other.x ) return true; else if( x > other.x ) return false;
-		COMPARE( m_sEffect );
-		COMPARE( m_sFile1 );
-		COMPARE( m_sFile2 );
-#undef COMPARE
-		return false;
-	}
-	bool operator==( const BackgroundDef &other ) const
-	{
-		return 
-			m_sEffect == other.m_sEffect &&
-			m_sFile1 == other.m_sFile1 &&
-			m_sFile2  == other.m_sFile2;
-	}
-	bool IsEmpty() { return m_sFile1.empty() && m_sFile2.empty(); }
-	CString	m_sEffect;	// "" == automatically choose
-	CString m_sFile1;	// must not be ""
-	CString m_sFile2;	// may be ""
-};
-
-enum StandardBackgroundTransition
-{
-	SBT_None,
-	SBT_CrossFade,
-	NUM_StandardBackgroundTransition
-};
-const CString& StandardBackgroundTransitionToString( StandardBackgroundTransition sbt );
-
-struct BackgroundChange : public BackgroundDef
-{
-	BackgroundChange()
-	{
-		m_fStartBeat=-1;
-		m_fRate=1;
-		m_bRewindMovie=false;
-		m_bLoop=true;
-	}
-	BackgroundChange( 
-		float s, 
-		CString f1,
-		CString f2=CString(),
-		float r=1.f, 
-		bool m=false, 
-		bool l=true,
-		CString e=StandardBackgroundEffectToString(SBE_Centered),
-		CString t=CString()
-		)
-	{
-		m_fStartBeat=s;
-		m_sFile1=f1;
-		m_sFile2=f2;
-		m_fRate=r;
-		m_bRewindMovie=m;
-		m_bLoop=l;
-		m_sEffect=e;
-		m_sTransition=t;
-	}
-	float m_fStartBeat;
-	float m_fRate;
-	bool m_bRewindMovie;
-	bool m_bLoop;
-	CString m_sTransition;
-};
-
-void SortBackgroundChangesArray( vector<BackgroundChange> &arrayBackgroundChanges );
 
 
 #endif

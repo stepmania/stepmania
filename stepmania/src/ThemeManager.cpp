@@ -907,7 +907,7 @@ void ThemeManager::LoadPreferencesFromSection( const CString &sClassName )
 
 CString ThemeManager::GetBlankGraphicPath()
 {
-	return THEMES_DIR + BASE_THEME_NAME + "/" + ElementCategoryToString(EC_GRAPHICS) + "/_blank";
+	return THEMES_DIR + BASE_THEME_NAME + "/" + ElementCategoryToString(EC_GRAPHICS) + "/_blank.png";
 }
 
 // lua start

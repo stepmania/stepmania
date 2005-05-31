@@ -21,9 +21,7 @@
 #include <set>
 #include <float.h>
 #include "XmlFile.h"
-
-const CString BACKGROUND_EFFECTS_DIR =		"BackgroundEffects/";
-const CString BACKGROUND_TRANSITIONS_DIR =	"BackgroundTransitions/";
+#include "BackgroundUtil.h"
 
 ThemeMetric<float> LEFT_EDGE					("Background","LeftEdge");
 ThemeMetric<float> TOP_EDGE						("Background","TopEdge");
@@ -78,26 +76,27 @@ void Background::Init()
 	// load transitions
 	{
 		ASSERT( m_mapNameToTransition.empty() );
-		vector<CString> v;
-		GetDirListing( BACKGROUND_TRANSITIONS_DIR+"*.xml", v, false, true );
-		FOREACH( CString, v, sPath )
+		vector<CString> vsPaths, vsNames;
+		BackgroundUtil::GetBackgroundTransitions( "", vsPaths, vsNames );
+		for( unsigned i=0; i<vsPaths.size(); i++ )
 		{
-			CString sThrowAway, sFilename;
-			splitpath( *sPath, sThrowAway, sFilename, sThrowAway );
+			const CString &sPath = vsPaths[i];
+			const CString &sName = vsNames[i];
+
 			XNode xml;
-			xml.LoadFromFile( *sPath );
+			xml.LoadFromFile( sPath );
 			ASSERT( xml.m_sName == "BackgroundTransition" );
-			BackgroundTransition &bgt = m_mapNameToTransition[sFilename];
+			BackgroundTransition &bgt = m_mapNameToTransition[sName];
 
 			CString sCmdLeaves;
 			bool bSuccess = xml.GetAttrValue( "LeavesCommand", sCmdLeaves );
 			ASSERT( bSuccess );
-			bgt.cmdLeaves = apActorCommands(new ActorCommands(sCmdLeaves) );
+			bgt.cmdLeaves = apActorCommands( new ActorCommands(sCmdLeaves) );
 
 			CString sCmdRoot;
 			bSuccess = xml.GetAttrValue( "RootCommand", sCmdRoot );
 			ASSERT( bSuccess );
-			bgt.cmdRoot = apActorCommands(new ActorCommands(sCmdRoot) );
+			bgt.cmdRoot = apActorCommands( new ActorCommands(sCmdRoot) );
 		}
 	}
 
@@ -205,16 +204,19 @@ Actor *MakeMovie( const CString &sMoviePath )
 bool Background::Layer::CreateBackground( const Song *pSong, const BackgroundDef &bd )
 {
 	// Resolve the background names
-	vector<CString> vsResolvedFile;
-	vsResolvedFile.push_back( bd.m_sFile1 );
-	vsResolvedFile.push_back( bd.m_sFile2 );
+	vector<CString> vsToResolve;
+	vsToResolve.push_back( bd.m_sFile1 );
+	vsToResolve.push_back( bd.m_sFile2 );
 
-	for( unsigned i=0; i<vsResolvedFile.size(); i++ )
+	vector<CString> vsResolved;
+	vsResolved.resize( vsToResolve.size() );
+	for( unsigned i=0; i<vsToResolve.size(); i++ )
 	{
+		const CString &sToResolve = vsToResolve[i];
+	
 		LUA->SetGlobal( ssprintf("File%d",i+1), CString() );
 
-		CString &sResolvedFile = vsResolvedFile[0];
-		if( sResolvedFile.empty() )
+		if( sToResolve.empty() )
 		{
 			if( i == 0 )
 				return false;
@@ -226,17 +228,22 @@ bool Background::Layer::CreateBackground( const Song *pSong, const BackgroundDef
 		//  - song's dir
 		//  - RandomMovies dir
 		//  - BGAnimations dir.
-		CStringArray asMatches;
+		CStringArray vsPaths, vsThrowAway;
 
 		// Look for BGAnims in the song dir
-								GetDirListing( sResolvedFile+"*", asMatches, false, true );
-		if( asMatches.empty() )	GetDirListing( pSong->GetSongDir()+sResolvedFile+"*", asMatches, false, true );
-		if( asMatches.empty() )	GetDirListing( RANDOMMOVIES_DIR+sResolvedFile+"*", asMatches, false, true );
-		if( asMatches.empty() )	GetDirListing( BG_ANIMS_DIR+sResolvedFile+"*", asMatches, false, true );
+		if( sToResolve == SONG_BACKGROUND_FILE )
+			vsPaths.push_back( pSong->HasBackground() ? pSong->GetBackgroundPath() : THEME->GetPathG("Common","fallback background") );
+		if( vsPaths.empty() )	BackgroundUtil::GetSongBGAnimations(	pSong, sToResolve, vsPaths, vsThrowAway );
+		if( vsPaths.empty() )	BackgroundUtil::GetSongMovies(			pSong, sToResolve, vsPaths, vsThrowAway );
+		if( vsPaths.empty() )	BackgroundUtil::GetSongBitmaps(			pSong, sToResolve, vsPaths, vsThrowAway );
+		if( vsPaths.empty() )	BackgroundUtil::GetGlobalBGAnimations(	sToResolve, vsPaths, vsThrowAway );
+		if( vsPaths.empty() )	BackgroundUtil::GetGlobalRandomMovies(	sToResolve, vsPaths, vsThrowAway );
 
-		if( !asMatches.empty() )
+		CString &sResolved = vsResolved[i];
+
+		if( !vsPaths.empty() )
 		{
-			sResolvedFile = asMatches[0];
+			sResolved = vsPaths[0];
 		}
 		else
 		{
@@ -244,45 +251,48 @@ bool Background::Layer::CreateBackground( const Song *pSong, const BackgroundDef
 			if( i == 0 )
 				return false;
 			else
-				sResolvedFile = ThemeManager::GetBlankGraphicPath();
+				sResolved = ThemeManager::GetBlankGraphicPath();
 		}
 		
-		LUA->SetGlobal( ssprintf("File%d",i+1), sResolvedFile );
+		ASSERT( !sResolved.empty() );
+
+		LUA->SetGlobal( ssprintf("File%d",i+1), sResolved );
 	}
 
 	CString sEffect = bd.m_sEffect;
 	if( sEffect.empty() )
 	{
-		FileType ft = ActorUtil::GetFileType(vsResolvedFile[0]);
+		FileType ft = ActorUtil::GetFileType(vsResolved[0]);
 		switch( ft )
 		{
+		default:
+			ASSERT(0);	// fall through
 		case FT_Bitmap:
 		case FT_Sprite:
 		case FT_Movie:
-			sEffect = StandardBackgroundEffectToString( SBE_Stretch );
+			sEffect = SBE_StretchNormal;
 			break;
 		case FT_Actor:
 		case FT_Directory:
 		case FT_Xml:
 		case FT_Model:
-			sEffect = StandardBackgroundEffectToString( SBE_Centered );
+			sEffect = SBE_Centered;
 			break;
-		default:
-			ASSERT(0);
 		}
 	}
 	ASSERT( !sEffect.empty() );
 
-	vector<CString> v;
-	GetDirListing( BACKGROUND_EFFECTS_DIR + sEffect+"*", v, false, true );
-	ASSERT( v.size()==1 );
-	CString sEffectFile = v[0];
+	vector<CString> vsPaths, vsThrowAway;
+	BackgroundUtil::GetBackgroundEffects( sEffect, vsPaths, vsThrowAway );
+	ASSERT_M( !vsPaths.empty(), ssprintf("BackgroundEffect '%s' is missing.",sEffect.c_str()) );
+	ASSERT_M( vsPaths.size()==1, ssprintf("BackgroundEffect '%s' has more than one match.",sEffect.c_str()) );
+	const CString &sEffectFile = vsPaths[0];
 
 	Actor *pActor = ActorUtil::MakeActor( sEffectFile );
 	ASSERT( pActor );
 	m_BGAnimations[bd] = pActor;
 
-	for( unsigned i=0; i<vsResolvedFile.size(); i++ )
+	for( unsigned i=0; i<vsResolved.size(); i++ )
 		LUA->SetGlobal( ssprintf("File%d",i+1), CString() );
 
 	return true;
@@ -309,7 +319,7 @@ BackgroundDef Background::Layer::CreateRandomBGA( const Song *pSong, CString sPr
 		return first;
 	}
 
-	CStringArray arrayPaths;
+	CStringArray vsPaths, vsThrowAway;
 	for( int i=0; i<2; i++ )
 	{
 		switch( PREFSMAN->m_BackgroundMode )
@@ -318,33 +328,34 @@ BackgroundDef Background::Layer::CreateRandomBGA( const Song *pSong, CString sPr
 			FAIL_M( ssprintf("Invalid BackgroundMode: %i", (PrefsManager::BackgroundMode)PREFSMAN->m_BackgroundMode) );
 			break;
 
+		case PrefsManager::BGMODE_OFF:
+			break;
+
 		case PrefsManager::BGMODE_ANIMATIONS:
-			GetDirListing( BG_ANIMS_DIR + sPreferredSubDir + "*", arrayPaths, true, true );
+			BackgroundUtil::GetGlobalBGAnimations( sPreferredSubDir, vsPaths, vsThrowAway );
 			break;
 
 		case PrefsManager::BGMODE_RANDOMMOVIES:
-			GetDirListing( RANDOMMOVIES_DIR + sPreferredSubDir + "*.avi", arrayPaths, false, true );
-			GetDirListing( RANDOMMOVIES_DIR + sPreferredSubDir + "*.mpg", arrayPaths, false, true );
-			GetDirListing( RANDOMMOVIES_DIR + sPreferredSubDir + "*.mpeg", arrayPaths, false, true );
+			BackgroundUtil::GetGlobalRandomMovies( sPreferredSubDir, vsPaths, vsThrowAway );
 			break;
 		}
 
 		// strip out "cvs"
-		for( int j=arrayPaths.size()-1; j>=0; j-- )
-			if( Basename(arrayPaths[j]).CompareNoCase("cvs")==0 )
-				arrayPaths.erase( arrayPaths.begin()+j, arrayPaths.begin()+j+1 );
+		for( int j=vsPaths.size()-1; j>=0; j-- )
+			if( Basename(vsPaths[j]).CompareNoCase("cvs")==0 )
+				vsPaths.erase( vsPaths.begin()+j, vsPaths.begin()+j+1 );
 
-		if( !arrayPaths.empty() )	// found one
+		if( !vsPaths.empty() )	// found one
 			break;
 
 		// now search without a subdir
 		sPreferredSubDir = "";
 	}
 
-	if( arrayPaths.empty() )
+	if( vsPaths.empty() )
 		return BackgroundDef();
 
-	random_shuffle( arrayPaths.begin(), arrayPaths.end() );
+	random_shuffle( vsPaths.begin(), vsPaths.end() );
 
 	/* Find the first BackgroundDef in arrayPaths we havn't already loaded. */
 	BackgroundDef bd;
@@ -355,7 +366,7 @@ BackgroundDef Background::Layer::CreateRandomBGA( const Song *pSong, CString sPr
 			loaded.insert( m_RandomBGAnimations[i] );
 
 		bool bFound = false;
-		FOREACH_CONST( CString, arrayPaths, p )
+		FOREACH_CONST( CString, vsPaths, p )
 		{
 			FOREACHD_CONST( BackgroundDef, m_RandomBGAnimations, b )
 			{
@@ -431,7 +442,7 @@ void Background::LoadFromSong( const Song* pSong )
 
 	m_pSong = pSong;
 
-	STATIC_BACKGROUND_DEF.m_sFile1 = m_pSong->HasBackground() ? m_pSong->GetBackgroundPath() : THEME->GetPathG("Common","fallback background");
+	STATIC_BACKGROUND_DEF.m_sFile1 = SONG_BACKGROUND_FILE;
 
 	if( PREFSMAN->m_fBGBrightness == 0.0f )
 		return;
@@ -499,7 +510,7 @@ void Background::LoadFromSong( const Song* pSong )
 	for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
 	{
 		Layer &layer = m_Layer[i];
-		SortBackgroundChangesArray( layer.m_aBGChanges );
+		BackgroundUtil::SortBackgroundChangesArray( layer.m_aBGChanges );
 	}
 
 
@@ -553,7 +564,7 @@ void Background::LoadFromSong( const Song* pSong )
 
 
 	// Re-sort.
-	SortBackgroundChangesArray( mainlayer.m_aBGChanges );
+	BackgroundUtil::SortBackgroundChangesArray( mainlayer.m_aBGChanges );
 
 	m_DangerAll.SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
 	m_DangerAll.SetZoomX( fXZoom );
@@ -657,7 +668,6 @@ void Background::Layer::UpdateCurBGChange( const Song *pSong, float fLastMusicSe
 		{
 			if( m_pFadingBGA )
 			{
-				m_pFadingBGA->LoseFocus();
 				m_pFadingBGA->PlayCommand( "LoseFocus" );
 				
 				if( !change.m_sTransition.empty() )
@@ -671,7 +681,7 @@ void Background::Layer::UpdateCurBGChange( const Song *pSong, float fLastMusicSe
 			}
 
 			m_pCurrentBGA->Reset();
-			m_pCurrentBGA->GainFocus( change.m_fRate, change.m_bRewindMovie, change.m_bLoop );
+			m_pCurrentBGA->SetUpdateRate( change.m_fRate );
 			m_pCurrentBGA->PlayCommand( "On" );
 			m_pCurrentBGA->PlayCommand( "GainFocus" );
 

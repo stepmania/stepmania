@@ -53,30 +53,30 @@ void ScreenMiniMenu::Init( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMe
 	for( unsigned r=0; r<m_vMenuRows.size(); r++ )
 	{
 		const MenuRow &mr = m_vMenuRows[r];
-		OptionRowDefinition &ord = vDefs[r];
+		OptionRowDefinition &def = vDefs[r];
 
-		ord.name = mr.sName;
-		FontCharAliases::ReplaceMarkers( ord.name );	// Allow special characters
+		def.name = mr.sName;
+		FontCharAliases::ReplaceMarkers( def.name );	// Allow special characters
 		
 		if( mr.bEnabled )
 		{
-			ord.m_vEnabledForPlayers.clear();
+			def.m_vEnabledForPlayers.clear();
 			FOREACH_EnabledPlayer( pn )
-				ord.m_vEnabledForPlayers.insert( pn );
+				def.m_vEnabledForPlayers.insert( pn );
 		}
 		else
 		{
-			ord.m_vEnabledForPlayers.clear();
+			def.m_vEnabledForPlayers.clear();
 		}
 
-		ord.bOneChoiceForAllPlayers = true;
-		ord.selectType = SELECT_ONE;
-		ord.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-		ord.m_bExportOnChange = false;
+		def.bOneChoiceForAllPlayers = true;
+		def.selectType = SELECT_ONE;
+		def.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		def.m_bExportOnChange = false;
 			
-		ord.choices = mr.choices;
+		def.choices = mr.choices;
 
-		FOREACH( CString, ord.choices, c )
+		FOREACH( CString, def.choices, c )
 			FontCharAliases::ReplaceMarkers( *c );	// Allow special characters
 	}
 
@@ -84,6 +84,29 @@ void ScreenMiniMenu::Init( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMe
 	vHands.resize( vDefs.size(), NULL );
 
 	ScreenOptions::InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
+}
+
+void ScreenMiniMenu::OnChange( PlayerNumber pn )
+{
+	ScreenOptions::OnChange( pn );
+
+	vector<PlayerNumber> vpns;
+	vpns.push_back( GAMESTATE->m_MasterPlayerNumber );
+	for( unsigned i=0; i<m_Rows.size(); i++ )
+		ExportOptions( i, vpns );
+
+	for( unsigned i=0; i<m_Rows.size(); i++ )
+	{
+		MenuRow &mr = m_vMenuRows[i];
+		OptionRow &optrow = *m_Rows[i];
+		if( mr.pfnEnabled )
+		{
+			optrow.GetRowDef().m_vEnabledForPlayers.clear();
+			if( mr.pfnEnabled() )
+				optrow.GetRowDef().m_vEnabledForPlayers.insert( GAMESTATE->m_MasterPlayerNumber );
+		}
+	}
+	UpdateEnabledDisabled();
 }
 
 void ScreenMiniMenu::ImportOptions( int r, const vector<PlayerNumber> &vpns )

@@ -64,6 +64,7 @@ endif
 
 DataStructures = \
 ActorCommands.cpp ActorCommands.h Attack.cpp Attack.h AutoKeysounds.cpp AutoKeysounds.h \
+BackgroundUtil.cpp BackgroundUtil.h \
 BannerCache.cpp BannerCache.h CatalogXml.cpp CatalogXml.h \
 Character.cpp Character.h CharacterHead.cpp CharacterHead.h \
 CodeDetector.cpp CodeDetector.h \

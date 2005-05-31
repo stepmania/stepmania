@@ -44,18 +44,6 @@ const int FILE_CACHE_VERSION = 144;	// increment this to invalidate cache
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
 
-
-int CompareBackgroundChanges(const BackgroundChange &seg1, const BackgroundChange &seg2)
-{
-	return seg1.m_fStartBeat < seg2.m_fStartBeat;
-}
-
-void SortBackgroundChangesArray( vector<BackgroundChange> &arrayBackgroundChanges )
-{
-	sort( arrayBackgroundChanges.begin(), arrayBackgroundChanges.end(), CompareBackgroundChanges );
-}
-
-
 //////////////////////////////
 // Song
 //////////////////////////////
@@ -114,13 +102,13 @@ void Song::AddBackgroundChange( int iLayer, BackgroundChange seg )
 {
 	ASSERT( iLayer >= 0 && iLayer < NUM_BACKGROUND_LAYERS );
 	m_BackgroundChanges[iLayer].push_back( seg );
-	SortBackgroundChangesArray( m_BackgroundChanges[iLayer] );
+	BackgroundUtil::SortBackgroundChangesArray( m_BackgroundChanges[iLayer] );
 }
 
 void Song::AddForegroundChange( BackgroundChange seg )
 {
 	m_ForegroundChanges.push_back( seg );
-	SortBackgroundChangesArray( m_ForegroundChanges );
+	BackgroundUtil::SortBackgroundChangesArray( m_ForegroundChanges );
 }
 
 void Song::AddLyricSegment( LyricSegment seg )
@@ -721,7 +709,7 @@ void Song::TidyUpData()
 		/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
 		 * music starts. */
 		if( arrayPossibleMovies.size() == 1 )
-			this->AddBackgroundChange( 0, BackgroundChange(0,arrayPossibleMovies[0],"",1.f,true,true,false) );
+			this->AddBackgroundChange( 0, BackgroundChange(0,arrayPossibleMovies[0],"",1.f,SBE_StretchNoLoop) );
 	}
 
 

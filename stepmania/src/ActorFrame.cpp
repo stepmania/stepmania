@@ -339,22 +339,6 @@ void ActorFrame::HandleCommand( const Command &command )
 }
 */
 
-void ActorFrame::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
-{
-	Actor::GainFocus( fRate, bRewindMovie, bLoop );
-
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->GainFocus( fRate, bRewindMovie, bLoop );
-}
-
-void ActorFrame::LoseFocus()
-{
-	Actor::LoseFocus();
-
-	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->LoseFocus();
-}
-
 void ActorFrame::PlayCommand( const CString &sCommandName )
 {
 	// HACK: Don't propogate Init.  It gets called once for every Actor when the 

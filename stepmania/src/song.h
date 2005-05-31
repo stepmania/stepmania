@@ -4,7 +4,7 @@
 #define SONG_H
 
 #include "PlayerNumber.h"
-#include "GameConstantsAndTypes.h"
+#include "BackgroundUtil.h"
 #include "Grade.h"
 #include "TimingData.h"
 #include "Difficulty.h"
@@ -37,10 +37,12 @@ class Song
 
 public:
 	/* Set when this song should be displayed in the music wheel: */
-	enum SelectionDisplay { SHOW_ALWAYS,		/* all the time */
-		   SHOW_ROULETTE,	/* only when rouletting */
-		   SHOW_NEVER }		/* never (unless song hiding is turned off) */
-		m_SelectionDisplay;
+	enum SelectionDisplay
+	{ 
+		SHOW_ALWAYS,	/* all the time */
+		SHOW_ROULETTE,	/* only when rouletting */
+		SHOW_NEVER		/* never (unless song hiding is turned off) */
+	} m_SelectionDisplay;
 
 	Song();
 	~Song();

@@ -519,6 +519,13 @@ CString GetExtension( const CString &sPath )
 	return sPath.substr( pos+1, sPath.size()-pos+1 );
 }
 
+CString GetFileNameWithoutExtension( const CString &sPath )
+{
+	CString sThrowAway, sFName;
+	splitpath( sPath, sThrowAway, sFName, sThrowAway );
+	return sFName;
+}
+
 CString GetCwd()
 {
 #ifdef _XBOX

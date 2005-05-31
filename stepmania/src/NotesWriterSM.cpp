@@ -14,7 +14,18 @@
 
 static CString BackgroundChangeToString( const BackgroundChange &bgc )
 {
-	return ssprintf( "%.3f=%s=%.3f=%d=%d=%d=%s,", bgc.m_fStartBeat, bgc.m_sFile1.c_str(), bgc.m_fRate, bgc.m_sTransition=="CrossFade", bgc.m_bRewindMovie, bgc.m_bLoop, bgc.m_sFile2.c_str(), bgc.m_sTransition );
+	return ssprintf( 
+		"%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s,", 
+		bgc.m_fStartBeat, 
+		bgc.m_sFile1.c_str(), 
+		bgc.m_fRate, 
+		bgc.m_sTransition == SBT_CrossFade,		// backward compat
+		bgc.m_sEffect == SBE_StretchRewind, 	// backward compat
+		bgc.m_sEffect != SBE_StretchNoLoop, 	// backward compat
+		bgc.m_sEffect.c_str(), 
+		bgc.m_sFile2.c_str(), 
+		bgc.m_sTransition.c_str()
+		);
 }
 
 void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
@@ -39,12 +50,9 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	f.Write( "#SELECTABLE:" );
 	switch(out.m_SelectionDisplay) {
 	default: ASSERT(0);  /* fallthrough */
-	case Song::SHOW_ALWAYS:
-		f.Write( "YES" ); break;
-	case Song::SHOW_NEVER:
-		f.Write( "NO" ); break;
-	case Song::SHOW_ROULETTE:
-		f.Write( "ROULETTE" ); break;
+	case Song::SHOW_ALWAYS:		f.Write( "YES" );		break;
+	case Song::SHOW_NEVER:		f.Write( "NO" );		break;
+	case Song::SHOW_ROULETTE:	f.Write( "ROULETTE" );	break;
 	}
 	f.PutLine( ";" );
 

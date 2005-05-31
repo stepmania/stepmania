@@ -25,7 +25,6 @@ public:
 	bool EarlyAbortDraw();
 
 	float GetMaxTweenTimeLeft() const;
-	void GainFocus( float fRate, bool bRewindMovie, bool bLoop );
 
 protected:
 	vector<RageVector3> m_vParticleVelocity;

@@ -682,13 +682,6 @@ void BGAnimationLayer::DrawPrimitives()
 	ActorFrame::DrawPrimitives();
 }
 
-void BGAnimationLayer::GainFocus( float fRate, bool bRewindMovie, bool bLoop )
-{
-	m_fUpdateRate = fRate;
-
-	ActorFrame::GainFocus( fRate, bRewindMovie, bLoop );
-}
-
 
 /*
  * (c) 2001-2004 Ben Nordstrom, Chris Danford, Glenn Maynard
