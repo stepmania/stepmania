@@ -24,7 +24,7 @@ InputHandler_Win32_MIDI::InputHandler_Win32_MIDI()
 
 	g_device = NULL;
 
-	if( device_id >= midiInGetNumDevs() )
+	if( device_id >= (int) midiInGetNumDevs() )
 	{
 		m_bFoundDevice = false;
 		return;
