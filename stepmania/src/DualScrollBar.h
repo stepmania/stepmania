@@ -12,7 +12,7 @@ class DualScrollBar: public ActorFrame
 public:
 	DualScrollBar();
 
-	void Load();
+	void Load( const CString &sType );
 	void SetBarHeight( float fHeight ) { m_fBarHeight = fHeight; }
 	void SetBarTime( float fTime ) { m_fBarTime = fTime; }
 	void SetPercentage( PlayerNumber pn, float fPercent );

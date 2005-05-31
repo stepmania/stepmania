@@ -9,19 +9,19 @@ DualScrollBar::DualScrollBar()
 	m_fBarTime = 1;
 }
 
-void DualScrollBar::Load()
+void DualScrollBar::Load( const CString &sType )
 {
 	FOREACH_PlayerNumber( pn )
 	{
 		m_sprScrollThumbUnderHalf[pn].SetName( ssprintf("ThumbP%i", pn+1) );
-		m_sprScrollThumbUnderHalf[pn].Load( THEME->GetPathG(m_sName,ssprintf("thumb p%i",pn+1)) );
+		m_sprScrollThumbUnderHalf[pn].Load( THEME->GetPathG(sType,ssprintf("thumb p%i",pn+1)) );
 		this->AddChild( &m_sprScrollThumbUnderHalf[pn] );
 	}
 
 	FOREACH_PlayerNumber( pn )
 	{
 		m_sprScrollThumbOverHalf[pn].SetName( ssprintf("ThumbP%i", pn+1) );
-		m_sprScrollThumbOverHalf[pn].Load( THEME->GetPathG(m_sName, ssprintf("thumb p%i",pn+1)) );
+		m_sprScrollThumbOverHalf[pn].Load( THEME->GetPathG(sType, ssprintf("thumb p%i",pn+1)) );
 		this->AddChild( &m_sprScrollThumbOverHalf[pn] );
 	}
 

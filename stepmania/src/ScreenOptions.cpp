@@ -213,18 +213,18 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 
 	if( SHOW_SCROLL_BAR )
 	{
-		m_ScrollBar.SetName( "DualScrollBar", "ScrollBar" );
+		m_ScrollBar.SetName( "ScrollBar" );
 		m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT );
 		m_ScrollBar.SetBarTime( SCROLL_BAR_TIME );
 		FOREACH_PlayerNumber( p )
 			m_ScrollBar.EnablePlayer( p, GAMESTATE->IsHumanPlayer(p) );
-		m_ScrollBar.Load();
+		m_ScrollBar.Load( "DualScrollBar" );
 		SET_XY( m_ScrollBar );
 		m_framePage.AddChild( &m_ScrollBar );
 	}
 
 	m_sprMore.Load( THEME->GetPathG( m_sName,"more") );
-	m_sprMore->SetName( m_sName, "More" );
+	m_sprMore->SetName( "More" );
 	SET_XY_AND_ON_COMMAND( m_sprMore );
 	COMMAND( m_sprMore, m_bMoreShown? "ShowMore":"HideMore" );
 	m_framePage.AddChild( m_sprMore );
@@ -247,7 +247,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	FOREACH_PlayerNumber( p )
 	{
 		m_sprDisqualify[p].Load( THEME->GetPathG(m_sName,"disqualify") );
-		m_sprDisqualify[p]->SetName( m_sName, ssprintf("DisqualifyP%i",p+1) );
+		m_sprDisqualify[p]->SetName( ssprintf("DisqualifyP%i",p+1) );
 		SET_XY_AND_ON_COMMAND( m_sprDisqualify[p] );
 		m_sprDisqualify[p]->SetHidden( true );	// unhide later if handicapping options are discovered
 		m_framePage.AddChild( m_sprDisqualify[p] );
