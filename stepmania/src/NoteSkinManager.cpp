@@ -277,7 +277,7 @@ CString NoteSkinManager::GetPathFromDirAndFile( const CString &sDir, const CStri
 {
 	CStringArray matches;		// fill this with the possible files
 
-	GetDirListing( sDir+sFileName+"*.redir",	matches, false, true );
+	GetDirListing( sDir+sFileName+".redir",		matches, false, true );
 	GetDirListing( sDir+sFileName+"*.xml",		matches, false, true );
 	GetDirListing( sDir+sFileName+"*.actor",	matches, false, true );
 	GetDirListing( sDir+sFileName+"*.model",	matches, false, true );
