@@ -441,7 +441,7 @@ static Menu g_SongInformation(
 	MenuRow( ScreenEdit::artist_transliteration,		"Artist transliteration",		true, EDIT_MODE_PRACTICE, 0, NULL )
 );
 
-enum { none, random, song_bganimation, song_movie, song_bitmap, global_bganimation, global_movie };
+enum { none, pick_random, song_bganimation, song_movie, song_bitmap, global_bganimation, global_movie };
 static bool EnabledIfSet1SB();
 static bool EnabledIfSet1SM();
 static bool EnabledIfSet1SI();
@@ -2119,7 +2119,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_BackgroundChange.rows[transition].				SetDefaultChoiceIfPresent( bgChange.m_sTransition );
 				g_BackgroundChange.rows[effect].					SetDefaultChoiceIfPresent( bgChange.m_sEffect );
 				g_BackgroundChange.rows[file1_type].iDefaultChoice	= none;
-				if( bgChange.m_sFile1 == RANDOM_BACKGROUND_FILE )															g_BackgroundChange.rows[file1_type].iDefaultChoice	= random;
+				if( bgChange.m_sFile1 == RANDOM_BACKGROUND_FILE )															g_BackgroundChange.rows[file1_type].iDefaultChoice	= pick_random;
 				if( g_BackgroundChange.rows[file1_song_bganimation].	SetDefaultChoiceIfPresent( bgChange.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= song_bganimation;
 				if( g_BackgroundChange.rows[file1_song_movie].			SetDefaultChoiceIfPresent( bgChange.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= song_movie;
 				if( g_BackgroundChange.rows[file1_song_still].			SetDefaultChoiceIfPresent( bgChange.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= song_bitmap;
