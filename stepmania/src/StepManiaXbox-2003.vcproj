@@ -712,6 +712,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="AutoKeysounds.h">
 			</File>
 			<File
+				RelativePath=".\BackgroundUtil.cpp">
+			</File>
+			<File
+				RelativePath=".\BackgroundUtil.h">
+			</File>
+			<File
 				RelativePath="BannerCache.cpp">
 			</File>
 			<File
