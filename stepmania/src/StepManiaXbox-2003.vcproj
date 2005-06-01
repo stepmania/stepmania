@@ -630,12 +630,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenStage.h">
 			</File>
 			<File
-				RelativePath="ScreenStyleSplash.cpp">
-			</File>
-			<File
-				RelativePath="ScreenStyleSplash.h">
-			</File>
-			<File
 				RelativePath=".\ScreenSystemLayer.cpp">
 			</File>
 			<File
@@ -1330,10 +1324,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath="archutils\Win32\arch_setup.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Xbox\arch_setup.h">
+					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 				<File
-					RelativePath="archutils\Win32\arch_setup.h">
+					RelativePath=".\archutils\Xbox\arch_setup.h">
 				</File>
 				<File
 					RelativePath="archutils\Xbox\custom_launch_params.cpp">
@@ -1677,12 +1671,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="BeginnerHelper.h">
-			</File>
-			<File
-				RelativePath="CharacterHead.cpp">
-			</File>
-			<File
-				RelativePath="CharacterHead.h">
 			</File>
 			<File
 				RelativePath="CombinedLifeMeter.h">
