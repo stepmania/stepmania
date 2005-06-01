@@ -2126,7 +2126,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				if( g_BackgroundChange.rows[file1_global_bganimation].	SetDefaultChoiceIfPresent( bgChange.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= global_bganimation;
 				if( g_BackgroundChange.rows[file1_global_random_movie].	SetDefaultChoiceIfPresent( bgChange.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= global_movie;
 				g_BackgroundChange.rows[file2_type].iDefaultChoice	= none;
-				if( bgChange.m_sFile2 == RANDOM_BACKGROUND_FILE )															g_BackgroundChange.rows[file2_type].iDefaultChoice	= random;
+				if( bgChange.m_sFile2 == RANDOM_BACKGROUND_FILE )															g_BackgroundChange.rows[file2_type].iDefaultChoice	= pick_random;
 				if( g_BackgroundChange.rows[file2_song_bganimation].	SetDefaultChoiceIfPresent( bgChange.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= song_bganimation;
 				if( g_BackgroundChange.rows[file2_song_movie].			SetDefaultChoiceIfPresent( bgChange.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= song_movie;
 				if( g_BackgroundChange.rows[file2_song_still].			SetDefaultChoiceIfPresent( bgChange.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= song_bitmap;
@@ -2668,7 +2668,7 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 	{
 	default:	ASSERT(0);
 	case none:		newChange.m_sFile1 = "";						break;
-	case random:	newChange.m_sFile1 = RANDOM_BACKGROUND_FILE;	break;
+	case pick_random:	newChange.m_sFile1 = RANDOM_BACKGROUND_FILE;	break;
 	case song_bganimation:
 	case song_movie:
 	case song_bitmap:
@@ -2684,7 +2684,7 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 	{
 	default:	ASSERT(0);
 	case none:		newChange.m_sFile2 = "";						break;
-	case random:	newChange.m_sFile2 = RANDOM_BACKGROUND_FILE;	break;
+	case pick_random:	newChange.m_sFile2 = RANDOM_BACKGROUND_FILE;	break;
 	case song_bganimation:
 	case song_movie:
 	case song_bitmap:
