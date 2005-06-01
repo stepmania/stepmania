@@ -30,16 +30,6 @@ static struct FileDriverEntry_DIR: public FileDriverEntry
 
 class RageFileObjDirect: public RageFileObj
 {
-private:
-	int fd;
-	CString path; /* for Copy */
-
-	CString write_buf;
-	
-	bool FinalFlush();
-
-	int m_iMode;
-
 public:
 	RageFileObjDirect( const CString &path, int fd_, int mode_ );
 	virtual ~RageFileObjDirect();
@@ -50,6 +40,16 @@ public:
 	virtual RageFileBasic *Copy() const;
 	virtual CString GetDisplayPath() const { return path; }
 	virtual int GetFileSize() const;
+
+private:
+	int fd;
+	CString path; /* for Copy */
+
+	CString write_buf;
+	
+	bool FinalFlush();
+
+	int m_iMode;
 };
 
 
