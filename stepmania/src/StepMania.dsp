@@ -1934,14 +1934,6 @@ SOURCE=.\BeginnerHelper.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\CharacterHead.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\CharacterHead.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\CombinedLifeMeterTug.cpp
 # End Source File
 # Begin Source File
