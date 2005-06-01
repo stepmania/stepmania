@@ -287,7 +287,7 @@ CString NoteSkinManager::GetPathFromDirAndFile( const CString &sDir, const CStri
 	GetDirListing( sDir+sFileName+"*.jpg",		matches, false, true );
 	GetDirListing( sDir+sFileName+"*.bmp",		matches, false, true );
 	GetDirListing( sDir+sFileName+"*.gif",		matches, false, true );
-	GetDirListing( sDir+sFileName+"*",			matches, false, true );
+	GetDirListing( sDir+sFileName+"",			matches, false, true );
 
 	if( matches.empty() )
 		return "";
