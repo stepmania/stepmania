@@ -1222,9 +1222,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 	XNode* pNode = new XNode;
 	pNode->m_sName = "SongScores";
 
-	for( map<SongID,HighScoresForASong>::const_iterator i = m_SongHighScores.begin();
-		i != m_SongHighScores.end();
-		i++ )
+	FOREACHM_CONST( SongID, HighScoresForASong, m_SongHighScores, i )
 	{	
 		const SongID &songID = i->first;
 		const HighScoresForASong &hsSong = i->second;
@@ -1237,9 +1235,7 @@ XNode* Profile::SaveSongScoresCreateNode() const
 
 		int jCheck2 = hsSong.m_StepsHighScores.size();
 		int jCheck1 = 0;
-		for( map<StepsID,HighScoresForASteps>::const_iterator j = hsSong.m_StepsHighScores.begin();
-			j != hsSong.m_StepsHighScores.end();
-			j++ )
+		FOREACHM_CONST( StepsID, HighScoresForASteps, hsSong.m_StepsHighScores, j )
 		{	
 			jCheck1++;
 			ASSERT( jCheck1 <= jCheck2 );
@@ -1309,9 +1305,7 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 	pNode->m_sName = "CourseScores";
 
 	
-	for( map<CourseID,HighScoresForACourse>::const_iterator i = m_CourseHighScores.begin();
-		i != m_CourseHighScores.end();
-		i++ )
+	FOREACHM_CONST( CourseID, HighScoresForACourse, m_CourseHighScores, i )
 	{
 		const CourseID &courseID = i->first;
 		const HighScoresForACourse &hsCourse = i->second;
@@ -1322,9 +1316,7 @@ XNode* Profile::SaveCourseScoresCreateNode() const
 
 		XNode* pCourseNode = pNode->AppendChild( courseID.CreateNode() );
 
-		for( map<TrailID,HighScoresForATrail>::const_iterator j = hsCourse.m_TrailHighScores.begin();
-			j != hsCourse.m_TrailHighScores.end();
-			j++ )
+		FOREACHM_CONST( TrailID, HighScoresForATrail, hsCourse.m_TrailHighScores, j )
 		{
 			const TrailID &trailID = j->first;
 			const HighScoresForATrail &hsTrail = j->second;
@@ -1547,9 +1539,7 @@ XNode* Profile::SaveCalorieDataCreateNode() const
 	XNode* pNode = new XNode;
 	pNode->m_sName = "CalorieData";
 
-	for( map<DateTime,float>::const_iterator i = m_mapDayToCaloriesBurned.begin();
-		i != m_mapDayToCaloriesBurned.end();
-		i++ )
+	FOREACHM_CONST( DateTime, float, m_mapDayToCaloriesBurned, i )
 	{
 		XNode* pCaloriesBurned = pNode->AppendChild( "CaloriesBurned", i->second );
 
