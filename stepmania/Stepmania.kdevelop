@@ -9,8 +9,8 @@
     <ignoreparts/>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description></description>
-    <versioncontrol></versioncontrol>
+    <description>Hello and welcome to Stepmania, the most advanced, albeit resource-hungry, Dance Dance Revolution SIMulator.</description>
+    <versioncontrol>kdevcvsservice</versioncontrol>
   </general>
   <kdevautoproject>
     <general>
@@ -21,7 +21,7 @@
       <mainprogram>src/Stepmania</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs></programargs>
+      <programargs/>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
@@ -52,7 +52,7 @@
       <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin></makebin>
+      <makebin/>
       <prio>0</prio>
     </make>
   </kdevautoproject>
@@ -155,19 +155,27 @@
       <inlineGet>true</inlineGet>
       <inlineSet>true</inlineSet>
     </creategettersetter>
+    <references/>
   </kdevcppsupport>
   <kdevdocumentation>
     <projectdoc>
-      <docsystem></docsystem>
-      <docurl></docurl>
-      <usermanualurl></usermanualurl>
+      <docsystem/>
+      <docurl/>
+      <usermanualurl/>
     </projectdoc>
   </kdevdocumentation>
   <kdevfileview>
-    <groups/>
+    <groups>
+      <hidenonprojectfiles>false</hidenonprojectfiles>
+      <hidenonlocation>false</hidenonlocation>
+    </groups>
+    <tree>
+      <hidepatterns>*.o,*.lo,CVS</hidepatterns>
+      <hidenonprojectfiles>false</hidenonprojectfiles>
+    </tree>
   </kdevfileview>
   <ctagspart>
-    <customArguments></customArguments>
-    <customTagfilePath></customTagfilePath>
+    <customArguments/>
+    <customTagfilePath/>
   </ctagspart>
 </kdevelop>
