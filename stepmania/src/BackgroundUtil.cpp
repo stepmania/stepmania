@@ -33,10 +33,14 @@ void BackgroundUtil::SortBackgroundChangesArray( vector<BackgroundChange> &vBack
 	sort( vBackgroundChanges.begin(), vBackgroundChanges.end(), CompareBackgroundChanges );
 }
 
-void BackgroundUtil::GetBackgroundEffects( const CString &sName, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
+void BackgroundUtil::GetBackgroundEffects( const CString &_sName, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
 {
+	CString sName = _sName;
+	if( sName == "" )
+		sName = "*";
+
 	vsPathsOut.clear();
-	GetDirListing( BACKGROUND_EFFECTS_DIR+sName+"*.xml", vsPathsOut, false, true );
+	GetDirListing( BACKGROUND_EFFECTS_DIR+sName+".xml", vsPathsOut, false, true );
 	
 	vsNamesOut.clear();
 	FOREACH_CONST( CString, vsPathsOut, s )
@@ -45,10 +49,14 @@ void BackgroundUtil::GetBackgroundEffects( const CString &sName, vector<CString>
 	StripCvs( vsPathsOut, vsNamesOut );
 }
 
-void BackgroundUtil::GetBackgroundTransitions( const CString &sName, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
+void BackgroundUtil::GetBackgroundTransitions( const CString &_sName, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
 {
+	CString sName = _sName;
+	if( sName == "" )
+		sName = "*";
+
 	vsPathsOut.clear();
-	GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+"*.xml", vsPathsOut, false, true );
+	GetDirListing( BACKGROUND_TRANSITIONS_DIR+sName+".xml", vsPathsOut, false, true );
 	
 	vsNamesOut.clear();
 	FOREACH_CONST( CString, vsPathsOut, s )
