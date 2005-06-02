@@ -203,7 +203,7 @@ void BackgroundUtil::GetGlobalRandomMovies( const Song *pSong, const CString &sM
 
 		if( !ssFilterToFileNames.empty() )
 		{
-			for( int i=0; i<vsPathsOut.size(); i++ )
+			for( unsigned i=0; i<vsPathsOut.size(); i++ )
 			{
 				CString sBasename = Basename( vsPathsOut[i] );
 				bool bFound = ssFilterToFileNames.find(sBasename) != ssFilterToFileNames.end();
