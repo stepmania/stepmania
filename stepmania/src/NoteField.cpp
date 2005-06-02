@@ -18,6 +18,7 @@
 #include "PlayerState.h"
 #include "Style.h"
 #include "CommonMetrics.h"
+#include <float.h>
 
 NoteField::NoteField()
 {	
@@ -532,27 +533,57 @@ void NoteField::DrawPrimitives()
 			break;
 		case EDIT_MODE_FULL:
 			{
-				for( int b=0; b<NUM_BACKGROUND_LAYERS; b++ )
+				vector<BackgroundChange>::iterator iter[NUM_BACKGROUND_LAYERS];
+				for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
+					iter[i] = GAMESTATE->m_pCurSong->m_BackgroundChanges[i].begin();
+
+				while( 1 )
 				{
-					vector<BackgroundChange> &aBackgroundChanges = GAMESTATE->m_pCurSong->m_BackgroundChanges[b];
-					for( unsigned i=0; i<aBackgroundChanges.size(); i++ )
+					float fLowestBeat = FLT_MAX;
+					vector<int> viLowestIndex;
+
+					for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
 					{
-						if( aBackgroundChanges[i].m_fStartBeat >= fFirstBeatToDraw &&
-							aBackgroundChanges[i].m_fStartBeat <= fLastBeatToDraw )
+						if( iter[i] == GAMESTATE->m_pCurSong->m_BackgroundChanges[i].end() )
+							continue;
+
+						float fBeat = iter[i]->m_fStartBeat;
+						if( fBeat < fLowestBeat )
 						{
-							const BackgroundChange& change = aBackgroundChanges[i];
-							CString sChangeText = ssprintf("%s%s%s%s%s%s",
-								((b!=0) ? ssprintf("%d: ",b) : CString()).c_str(),
+							fLowestBeat = fBeat;
+							viLowestIndex.clear();
+							viLowestIndex.push_back( i );
+						}
+						else if( fBeat == fLowestBeat )
+						{
+							viLowestIndex.push_back( i );
+						}
+					}
+
+					if( viLowestIndex.empty() )
+						break;
+
+					if( IS_ON_SCREEN(fLowestBeat) )
+					{
+						vector<CString> vs;
+						FOREACH_CONST( int, viLowestIndex, i )
+						{
+							ASSERT( iter[*i] != GAMESTATE->m_pCurSong->m_BackgroundChanges[*i].end() );
+
+							const BackgroundChange& change = *iter[*i];
+							vs.push_back( ssprintf("%s%s%s%s%s%s",
+								((*i!=0) ? ssprintf("%d: ",*i) : CString()).c_str(),
 								(!change.m_sFile1.empty() ? " "+change.m_sFile1 : CString()).c_str(),
 								(!change.m_sFile2.empty() ? " "+change.m_sFile2 : CString()).c_str(),
 								((change.m_fRate!=1.0f) ? ssprintf("%.2f%%",change.m_fRate*100) : CString()).c_str(),
 								(!change.m_sTransition.empty() ? " "+change.m_sTransition : CString()).c_str(),
 								(!change.m_sEffect.empty() ? " "+change.m_sEffect : CString()).c_str()
-								);
-							if( IS_ON_SCREEN(change.m_fStartBeat) )
-								DrawBGChangeText( change.m_fStartBeat, sChangeText );
+								) );
 						}
+						DrawBGChangeText( fLowestBeat, join("\n",vs) );
 					}
+					FOREACH_CONST( int, viLowestIndex, i )
+						iter[*i]++;
 				}
 			}
 			break;
