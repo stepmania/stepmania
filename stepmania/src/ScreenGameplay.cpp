@@ -1623,6 +1623,8 @@ void ScreenGameplay::UpdateLights()
 {
 	if( !LIGHTSMAN->IsEnabled() )
 		return;
+	if( m_CabinetLightsNoteData.GetNumTracks() == 0 )	// light data wasn't loaded
+		return;
 
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	bool bBlinkCabinetLight[NUM_CABINET_LIGHTS];
