@@ -878,6 +878,23 @@ void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, b
 	FILEMAN->GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
 }
 
+void GetDirListingRecursive( const CString &sDir, const CString &sMatch, CStringArray &AddTo )
+{
+	ASSERT( sDir.Right(1) == "/" );
+	GetDirListing( sDir+sMatch, AddTo, false, true );
+	GetDirListing( sDir+"*",	AddTo, true,  true );
+	for( unsigned i=0; i<AddTo.size(); i++ )
+	{
+		if( IsADirectory( AddTo[i] ) )
+		{
+			GetDirListing( AddTo[i]+"/"+sMatch, AddTo, false, true );
+			GetDirListing( AddTo[i]+"/*",		AddTo, true,  true );
+			AddTo.erase( AddTo.begin()+i );
+			i--;
+		}
+	}
+}
+
 void FlushDirCache()
 {
 	FILEMAN->FlushDirCache( "" );

@@ -238,8 +238,8 @@ bool Background::Layer::CreateBackground( const Song *pSong, const BackgroundDef
 		if( vsPaths.empty() )	BackgroundUtil::GetSongBGAnimations(	pSong, sToResolve, vsPaths, vsThrowAway );
 		if( vsPaths.empty() )	BackgroundUtil::GetSongMovies(			pSong, sToResolve, vsPaths, vsThrowAway );
 		if( vsPaths.empty() )	BackgroundUtil::GetSongBitmaps(			pSong, sToResolve, vsPaths, vsThrowAway );
-		if( vsPaths.empty() )	BackgroundUtil::GetGlobalBGAnimations(	sToResolve, vsPaths, vsThrowAway );
-		if( vsPaths.empty() )	BackgroundUtil::GetGlobalRandomMovies(	sToResolve, vsPaths, vsThrowAway );
+		if( vsPaths.empty() )	BackgroundUtil::GetGlobalBGAnimations(	pSong, sToResolve, vsPaths, vsThrowAway );
+		if( vsPaths.empty() )	BackgroundUtil::GetGlobalRandomMovies(	pSong, sToResolve, vsPaths, vsThrowAway );
 
 		CString &sResolved = vsResolved[i];
 
@@ -381,35 +381,20 @@ void Background::LoadFromSong( const Song* pSong )
 	// Choose a bunch of background that we'll use for the random file marker
 	//
 	{
-		CString sPreferredSubDir = m_pSong->m_sGroupName;
-		sPreferredSubDir += '/';
-
 		CStringArray vsThrowAway, vsNames;
-		for( int i=0; i<2; i++ )
+		switch( PREFSMAN->m_BackgroundMode )
 		{
-			switch( PREFSMAN->m_BackgroundMode )
-			{
-			default:
-				FAIL_M( ssprintf("Invalid BackgroundMode: %i", (PrefsManager::BackgroundMode)PREFSMAN->m_BackgroundMode) );
-				break;
-
-			case PrefsManager::BGMODE_OFF:
-				break;
-
-			case PrefsManager::BGMODE_ANIMATIONS:
-				BackgroundUtil::GetGlobalBGAnimations( sPreferredSubDir, vsThrowAway, vsNames );
-				break;
-
-			case PrefsManager::BGMODE_RANDOMMOVIES:
-				BackgroundUtil::GetGlobalRandomMovies( sPreferredSubDir, vsThrowAway, vsNames );
-				break;
-			}
-
-			if( !vsNames.empty() )	// found some
-				break;
-
-			// now search without a subdir
-			sPreferredSubDir = "";
+		default:
+			ASSERT_M( 0, ssprintf("Invalid BackgroundMode: %i", (PrefsManager::BackgroundMode)PREFSMAN->m_BackgroundMode) );
+			break;
+		case PrefsManager::BGMODE_OFF:
+			break;
+		case PrefsManager::BGMODE_ANIMATIONS:
+			BackgroundUtil::GetGlobalBGAnimations( pSong, "", vsThrowAway, vsNames );
+			break;
+		case PrefsManager::BGMODE_RANDOMMOVIES:
+			BackgroundUtil::GetGlobalRandomMovies( pSong, "", vsThrowAway, vsNames );
+			break;
 		}
 
 		random_shuffle( vsNames.begin(), vsNames.end() );

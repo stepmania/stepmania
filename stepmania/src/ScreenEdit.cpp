@@ -2066,8 +2066,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				BackgroundUtil::GetSongBGAnimations(	m_pSong, "", vThrowAway, g_BackgroundChange.rows[file1_song_bganimation].choices );
 				BackgroundUtil::GetSongMovies(			m_pSong, "", vThrowAway, g_BackgroundChange.rows[file1_song_movie].choices );
 				BackgroundUtil::GetSongBitmaps(			m_pSong, "", vThrowAway, g_BackgroundChange.rows[file1_song_still].choices );
-				BackgroundUtil::GetGlobalBGAnimations(	"", vThrowAway, g_BackgroundChange.rows[file1_global_bganimation].choices );
-				BackgroundUtil::GetGlobalRandomMovies(	"", vThrowAway, g_BackgroundChange.rows[file1_global_random_movie].choices );
+				BackgroundUtil::GetGlobalBGAnimations(	NULL, "", vThrowAway, g_BackgroundChange.rows[file1_global_bganimation].choices );	// NULL to get all background files
+				BackgroundUtil::GetGlobalRandomMovies(	NULL, "", vThrowAway, g_BackgroundChange.rows[file1_global_random_movie].choices );	// NULL to get all background files
 
 				g_BackgroundChange.rows[file2_type].choices					= g_BackgroundChange.rows[file1_type].choices;
 				g_BackgroundChange.rows[file2_song_bganimation].choices		= g_BackgroundChange.rows[file1_song_bganimation].choices;

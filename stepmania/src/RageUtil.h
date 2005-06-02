@@ -387,6 +387,7 @@ typedef basic_string<char,char_traits_char_nocase> istring;
 /* Compatibility/convenience shortcuts.  These are actually defined in RageFileManager.h, but
  * declared here since they're used in many places. */
 void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
+void GetDirListingRecursive( const CString &sDir, const CString &sMatch, CStringArray &AddTo );	/* returns path too */
 bool DoesFileExist( const CString &sPath );
 bool IsAFile( const CString &sPath );
 bool IsADirectory( const CString &sPath );

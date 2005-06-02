@@ -80,8 +80,8 @@ namespace BackgroundUtil
 	void GetSongBGAnimations(		const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
 	void GetSongMovies(				const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
 	void GetSongBitmaps(			const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
-	void GetGlobalBGAnimations(		const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
-	void GetGlobalRandomMovies(		const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
+	void GetGlobalBGAnimations(		const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
+	void GetGlobalRandomMovies(		const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
 };
 
 

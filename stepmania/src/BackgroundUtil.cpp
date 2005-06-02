@@ -3,6 +3,9 @@
 #include "RageUtil.h"
 #include "song.h"
 #include "Foreach.h"
+#include "IniFile.h"
+#include "RageLog.h"
+#include <set>
 
 const CString BACKGROUND_EFFECTS_DIR =		"BackgroundEffects/";
 const CString BACKGROUND_TRANSITIONS_DIR =	"BackgroundTransitions/";
@@ -68,7 +71,14 @@ void BackgroundUtil::GetBackgroundTransitions( const CString &_sName, vector<CSt
 void BackgroundUtil::GetSongBGAnimations( const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
 {
 	vsPathsOut.clear();
-	GetDirListing( pSong->GetSongDir()+sMatch+"*", vsPathsOut, true, true );
+	if( sMatch.empty() )
+	{
+		GetDirListing( pSong->GetSongDir()+sMatch+"*",	vsPathsOut, true, true );
+	}
+	else
+	{
+		GetDirListing( pSong->GetSongDir()+sMatch,		vsPathsOut, true, true );
+	}
 	
 	vsNamesOut.clear();
 	FOREACH_CONST( CString, vsPathsOut, s )
@@ -80,9 +90,16 @@ void BackgroundUtil::GetSongBGAnimations( const Song *pSong, const CString &sMat
 void BackgroundUtil::GetSongMovies( const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
 {
 	vsPathsOut.clear();
-	GetDirListing( pSong->GetSongDir()+sMatch+"*.avi", vsPathsOut, false, true );
-	GetDirListing( pSong->GetSongDir()+sMatch+"*.mpg", vsPathsOut, false, true );
-	GetDirListing( pSong->GetSongDir()+sMatch+"*.mpeg", vsPathsOut, false, true );
+	if( sMatch.empty() )
+	{
+		GetDirListing( pSong->GetSongDir()+sMatch+"*.avi",	vsPathsOut, false, true );
+		GetDirListing( pSong->GetSongDir()+sMatch+"*.mpg",	vsPathsOut, false, true );
+		GetDirListing( pSong->GetSongDir()+sMatch+"*.mpeg", vsPathsOut, false, true );
+	}
+	else
+	{
+		GetDirListing( pSong->GetSongDir()+sMatch,			vsPathsOut, false, true );
+	}
 
 	vsNamesOut.clear();
 	FOREACH_CONST( CString, vsPathsOut, s )
@@ -94,10 +111,17 @@ void BackgroundUtil::GetSongMovies( const Song *pSong, const CString &sMatch, ve
 void BackgroundUtil::GetSongBitmaps( const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
 {
 	vsPathsOut.clear();
-	GetDirListing( pSong->GetSongDir()+sMatch+"*.png", vsPathsOut, false, true );
-	GetDirListing( pSong->GetSongDir()+sMatch+"*.jpg", vsPathsOut, false, true );
-	GetDirListing( pSong->GetSongDir()+sMatch+"*.gif", vsPathsOut, false, true );
-	GetDirListing( pSong->GetSongDir()+sMatch+"*.bmp", vsPathsOut, false, true );
+	if( sMatch.empty() )
+	{
+		GetDirListing( pSong->GetSongDir()+sMatch+"*.png",	vsPathsOut, false, true );
+		GetDirListing( pSong->GetSongDir()+sMatch+"*.jpg",	vsPathsOut, false, true );
+		GetDirListing( pSong->GetSongDir()+sMatch+"*.gif",	vsPathsOut, false, true );
+		GetDirListing( pSong->GetSongDir()+sMatch+"*.bmp",	vsPathsOut, false, true );
+	}
+	else
+	{
+		GetDirListing( pSong->GetSongDir()+sMatch,			vsPathsOut, false, true );
+	}
 
 	vsNamesOut.clear();
 	FOREACH_CONST( CString, vsPathsOut, s )
@@ -106,7 +130,38 @@ void BackgroundUtil::GetSongBitmaps( const Song *pSong, const CString &sMatch, v
 	StripCvs( vsPathsOut, vsNamesOut );
 }
 
-void BackgroundUtil::GetGlobalBGAnimations( const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
+static void GetFilterToFileNames( const CString sBaseDir, const Song *pSong, set<CString> &vsPossibleFileNamesOut )
+{
+	vsPossibleFileNamesOut.clear();
+
+	if( pSong->m_sGenre.empty() )
+		return;
+
+	ASSERT( !pSong->m_sGroupName.empty() )
+	IniFile ini;
+	CString sPath = sBaseDir+pSong->m_sGroupName+"/"+"BackgroundMapping.ini";
+	ini.ReadFile( sPath );
+	
+	CString sSection;
+	bool bSuccess = ini.GetValue( "GenreToSection", pSong->m_sGenre, sSection );
+	if( !bSuccess )
+	{
+		LOG->Warn( "Genre '%s' isn't mapped", pSong->m_sGenre.c_str() );
+		return;
+	}
+
+	XNode *pSection = ini.GetChild( sSection );
+	if( pSection == NULL )
+	{
+		ASSERT_M( 0, ssprintf("File '%s' refers to a section '%s' that is missing.", sPath.c_str(), sSection.c_str()) );
+		return;
+	}
+
+	FOREACH_CONST_Attr( pSection, p )
+		vsPossibleFileNamesOut.insert( p->m_sName );
+}
+
+void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
 {
 	vsPathsOut.clear();
 	GetDirListing( BG_ANIMS_DIR+sMatch+"*", vsPathsOut, true, true );
@@ -118,34 +173,56 @@ void BackgroundUtil::GetGlobalBGAnimations( const CString &sMatch, vector<CStrin
 	StripCvs( vsPathsOut, vsNamesOut );
 }
 
-void BackgroundUtil::GetGlobalRandomMovies( const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
+void BackgroundUtil::GetGlobalRandomMovies( const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
 {
 	vsPathsOut.clear();
 	vsNamesOut.clear();
 
+	CString sSongGroup;
+	set<CString> ssFilterToFileNames;
+	if( pSong  &&  !pSong->m_sGenre.empty() )
+		GetFilterToFileNames( RANDOMMOVIES_DIR, pSong, ssFilterToFileNames );
+
+	vector<CString> vsDirsToTry;
+	if( !sSongGroup.empty() )
+		vsDirsToTry.push_back( RANDOMMOVIES_DIR+sSongGroup+"/" );
+	vsDirsToTry.push_back( RANDOMMOVIES_DIR );
+
+	FOREACH_CONST( CString, vsDirsToTry, sDir )
 	{
-		GetDirListing( RANDOMMOVIES_DIR+sMatch+"*.avi", vsPathsOut, false, true );
-		GetDirListing( RANDOMMOVIES_DIR+sMatch+"*.mpg", vsPathsOut, false, true );
-		GetDirListing( RANDOMMOVIES_DIR+sMatch+"*.mpeg", vsPathsOut, false, true );
+		if( sMatch.empty() )
+		{
+			GetDirListingRecursive( *sDir, "*.avi", vsPathsOut );
+			GetDirListingRecursive( *sDir, "*.mpg", vsPathsOut );
+			GetDirListingRecursive( *sDir, "*.mpeg", vsPathsOut );
+		}
+		else
+		{
+			GetDirListing( RANDOMMOVIES_DIR+sMatch, vsPathsOut, false, true );
+		}
+
+		if( !ssFilterToFileNames.empty() )
+		{
+			for( int i=0; i<vsPathsOut.size(); i++ )
+			{
+				CString sBasename = Basename( vsPathsOut[i] );
+				bool bFound = ssFilterToFileNames.find(sBasename) != ssFilterToFileNames.end();
+				if( !bFound )
+				{
+					vsPathsOut.erase( vsPathsOut.begin()+i );
+					i--;
+				}
+			}
+		}
 
 		FOREACH_CONST( CString, vsPathsOut, s )
-			vsNamesOut.push_back( Basename(*s) );
-	}
-
-	vector<CString> vSubDirs;
-	GetDirListing( RANDOMMOVIES_DIR+"*", vSubDirs, true );
-	FOREACH_CONST( CString, vSubDirs, sSubDir )
-	{
-		vector<CString> v;
-		GetDirListing( RANDOMMOVIES_DIR+*sSubDir+"/"+sMatch+"*.avi", v, false, true );
-		GetDirListing( RANDOMMOVIES_DIR+*sSubDir+"/"+sMatch+"*.mpg", v, false, true );
-		GetDirListing( RANDOMMOVIES_DIR+*sSubDir+"/"+sMatch+"*.mpeg", v, false, true );
-
-		FOREACH_CONST( CString, v, s )
 		{
-			vsPathsOut.push_back( *s );
-			vsNamesOut.push_back( *sSubDir+"/"+Basename(*s) );
+			CString sName = s->Right( s->size() - RANDOMMOVIES_DIR.size() - 1 );
+			vsNamesOut.push_back( sName );
 		}
+
+		if( !vsPathsOut.empty() )
+			break;
 	}
 
 	StripCvs( vsPathsOut, vsNamesOut );
