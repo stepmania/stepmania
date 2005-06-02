@@ -85,7 +85,7 @@ PrefsManager::PrefsManager() :
 	m_bDelayedModelDelete	( "DelayedModelDelete",		false ),
 	m_BannerCache			( "BannerCache",			BNCACHE_LOW_RES_PRELOAD ),
 	m_bPalettedBannerCache	( "PalettedBannerCache",	false ),
-	m_bFastLoad				( "FastLoad",				true ),
+	m_bFastLoad				( "FastLoad",				false ),
 
 	m_bOnlyDedicatedMenuButtons	( "OnlyDedicatedMenuButtons",	false ),
 	m_bMenuTimer				( "MenuTimer",					true ),
