@@ -13,6 +13,15 @@ StatsManager::StatsManager()
 {
 }
 
+void StatsManager::Reset()
+{
+	m_CurStageStats.Init();
+	m_vPlayedStageStats.clear();
+	m_AccumStageStats.Init();
+	
+	CalcAccumStageStats();
+}
+
 StageStats AccumStageStats( const vector<StageStats>& vss )
 {
 	StageStats ssreturn;

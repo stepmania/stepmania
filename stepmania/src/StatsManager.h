@@ -10,14 +10,7 @@ class StatsManager
 public:
 	StatsManager();
 
-	void Reset()
-	{
-		m_CurStageStats.Init();
-		m_vPlayedStageStats.clear();
-		m_AccumStageStats.Init();
-		
-		CalcAccumStageStats();
-	}
+	void Reset();
 
 	StageStats			m_CurStageStats;	// current stage (not necessarily passed if Extra Stage)
 	vector<StageStats>	m_vPlayedStageStats;
