@@ -109,7 +109,7 @@ void ScreenSyncOverlay::UpdateText()
 		if( fabsf(fDelta) > 0.00001f )
 		{
 			s += ssprintf( 
-				"Global Offset from %+.3f to %+.3f (notes %s).\n",
+				"Global Offset from %+.3f to %+.3f (notes %s)\n",
 				fOld, 
 				fNew,
 				fDelta > 0 ? "earlier":"later" );
@@ -124,7 +124,7 @@ void ScreenSyncOverlay::UpdateText()
 		if( fabsf(fDelta) > 0.00001f )
 		{
 			s += ssprintf( 
-				"Song offset from %+.3f to %+.3f (notes %s).\n",
+				"Song offset from %+.3f to %+.3f (notes %s)\n",
 				fOld, 
 				fNew,
 				fDelta > 0 ? "earlier":"later" );
@@ -142,7 +142,7 @@ void ScreenSyncOverlay::UpdateText()
 		if( fabsf(fDelta) > 0.00001f )
 		{
 			s += ssprintf( 
-				"%s tempo segment from %+.3f BPS to %+.3f BPS.\n",
+				"%s tempo segment from %+.3f BPS to %+.3f BPS\n",
 				FormatNumberAndSuffix(i+1).c_str(),
 				fOld, 
 				fNew );
