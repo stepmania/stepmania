@@ -19,7 +19,7 @@ CryptManager::CryptManager() { }
 CryptManager::~CryptManager() { }
 void CryptManager::GenerateRSAKey( unsigned int keyLength, CString privFilename, CString pubFilename, CString seed ) { }
 void CryptManager::SignFileToFile( CString sPath, CString sSignatureFile ) { }
-bool CryptManager::VerifyFile( RageFileBasic &file, CString sSignature, CString sPublicKey, CString &sError ) { return true; }
+bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile, CString sPublicKeyFile ) { return true; }
 bool CryptManager::VerifyFileWithFile( CString sPath, CString sSignatureFile )
 {
 	return true;
