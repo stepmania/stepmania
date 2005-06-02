@@ -97,7 +97,10 @@ fi
 
 SM_X_WITH_OPENGL
 
-AM_PATH_SDL(1.2.6,have_sdl=yes,have_sdl=no)
+AC_ARG_ENABLE(sdl, AC_HELP_STRING([--enable-sdl], [Enable SDL support]), enable_sdl=$enableval, enable_sdl=no)
+if test "$enable_sdl" = "yes"; then
+	AM_PATH_SDL(1.2.6,have_sdl=yes,have_sdl=no)
+fi
 AM_CONDITIONAL(HAVE_SDL, test "$have_sdl" = "yes")
 if test "$have_sdl" = "yes"; then
 	AC_DEFINE(HAVE_SDL, 1, [SDL is available])
