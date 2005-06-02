@@ -1063,6 +1063,9 @@ void ScreenGameplay::LoadLights()
 	if( !LIGHTSMAN->IsEnabled() )
 		return;
 
+	//
+	// First, check if the song has explicit lights
+	//
 	m_CabinetLightsNoteData.Init();
 	ASSERT( GAMESTATE->m_pCurSong );
 
@@ -1073,6 +1076,9 @@ void ScreenGameplay::LoadLights()
 		return;
 	}
 
+	//
+	// No explicit lights.  Create autogen lights.
+	//
 	CString sDifficulty = PREFSMAN->m_sLightsStepsDifficulty;
 	vector<CString> asDifficulties;
 	split( sDifficulty, ",", asDifficulties );
