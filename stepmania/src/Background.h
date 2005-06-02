@@ -58,8 +58,9 @@ protected:
 	DancingCharacters*	m_pDancingCharacters;
 	const Song *m_pSong;
 	map<CString,BackgroundTransition> m_mapNameToTransition;
+	deque<BackgroundDef> m_RandomBGAnimations;	// random background to choose from.  These may or may not be loaded into m_BGAnimations.
 	
-	void LoadFromRandom( float fFirstBeat, float fLastBeat );
+	void LoadFromRandom( float fFirstBeat, float fLastBeat, const BackgroundChange &change );
 	bool IsDangerAllVisible();
 	
 	class Layer
@@ -71,13 +72,12 @@ protected:
 		// return true if created and added to m_BGAnimations
 		bool CreateBackground( const Song *pSong, const BackgroundDef &bd );
 		// return def of the background that was created and added to m_BGAnimations. calls CreateBackground
-		BackgroundDef CreateRandomBGA( const Song *pSong, CString sPreferredSubDir );
+		BackgroundDef CreateRandomBGA( const Song *pSong, deque<BackgroundDef> &RandomBGAnimations );
 
 		int FindBGSegmentForBeat( float fBeat ) const;
 		void UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const map<CString,BackgroundTransition> &mapNameToTransition );
 
 		map<BackgroundDef,Actor*> m_BGAnimations;
-		deque<BackgroundDef> m_RandomBGAnimations;
 		vector<BackgroundChange> m_aBGChanges;
 		int				m_iCurBGChangeIndex;
 		Actor *m_pCurrentBGA;

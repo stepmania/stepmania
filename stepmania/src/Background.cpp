@@ -151,6 +151,7 @@ void Background::Unload()
 		m_Layer[i].Unload();
 	m_pSong = NULL;
 	m_fLastMusicSeconds	= -9999;
+	m_RandomBGAnimations.clear();
 }
 
 void Background::Layer::Unload()
@@ -160,7 +161,6 @@ void Background::Layer::Unload()
 		 iter++ )
 		delete iter->second;
 	m_BGAnimations.clear();
-	m_RandomBGAnimations.clear();
 	m_aBGChanges.clear();
 
 	m_pCurrentBGA = NULL;
@@ -203,6 +203,8 @@ Actor *MakeMovie( const CString &sMoviePath )
 
 bool Background::Layer::CreateBackground( const Song *pSong, const BackgroundDef &bd )
 {
+	ASSERT( m_BGAnimations.find(bd) == m_BGAnimations.end() );
+
 	// Resolve the background names
 	vector<CString> vsToResolve;
 	vsToResolve.push_back( bd.m_sFile1 );
@@ -298,115 +300,46 @@ bool Background::Layer::CreateBackground( const Song *pSong, const BackgroundDef
 	return true;
 }
 
-BackgroundDef Background::Layer::CreateRandomBGA( const Song *pSong, CString sPreferredSubDir )
+BackgroundDef Background::Layer::CreateRandomBGA( const Song *pSong, deque<BackgroundDef> &RandomBGAnimations )
 {
-	if( sPreferredSubDir.Right(1) != "/" )
-		sPreferredSubDir += '/';
-
 	if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_OFF )
-	{
-		return BackgroundDef();
-	}
-
-	/* If we already have enough random BGAs loaded, use them round-robin. */
-	if( (int)m_RandomBGAnimations.size() >= PREFSMAN->m_iNumBackgrounds )
-	{
-		/* XXX: every time we fully loop, shuffle, so we don't play the same sequence
-		 * over and over; and nudge the shuffle so the next one won't be a repeat */
-		BackgroundDef first = m_RandomBGAnimations.front();
-		m_RandomBGAnimations.push_back( m_RandomBGAnimations.front() );
-		m_RandomBGAnimations.pop_front();
-		return first;
-	}
-
-	CStringArray vsPaths, vsThrowAway;
-	for( int i=0; i<2; i++ )
-	{
-		switch( PREFSMAN->m_BackgroundMode )
-		{
-		default:
-			FAIL_M( ssprintf("Invalid BackgroundMode: %i", (PrefsManager::BackgroundMode)PREFSMAN->m_BackgroundMode) );
-			break;
-
-		case PrefsManager::BGMODE_OFF:
-			break;
-
-		case PrefsManager::BGMODE_ANIMATIONS:
-			BackgroundUtil::GetGlobalBGAnimations( sPreferredSubDir, vsPaths, vsThrowAway );
-			break;
-
-		case PrefsManager::BGMODE_RANDOMMOVIES:
-			BackgroundUtil::GetGlobalRandomMovies( sPreferredSubDir, vsPaths, vsThrowAway );
-			break;
-		}
-
-		// strip out "cvs"
-		for( int j=vsPaths.size()-1; j>=0; j-- )
-			if( Basename(vsPaths[j]).CompareNoCase("cvs")==0 )
-				vsPaths.erase( vsPaths.begin()+j, vsPaths.begin()+j+1 );
-
-		if( !vsPaths.empty() )	// found one
-			break;
-
-		// now search without a subdir
-		sPreferredSubDir = "";
-	}
-
-	if( vsPaths.empty() )
 		return BackgroundDef();
 
-	random_shuffle( vsPaths.begin(), vsPaths.end() );
+	if( RandomBGAnimations.empty() )
+		return BackgroundDef();
 
-	/* Find the first BackgroundDef in arrayPaths we havn't already loaded. */
-	BackgroundDef bd;
+	/* XXX: every time we fully loop, shuffle, so we don't play the same sequence
+	 * over and over; and nudge the shuffle so the next one won't be a repeat */
+	BackgroundDef bd = RandomBGAnimations.front();
+	RandomBGAnimations.push_back( RandomBGAnimations.front() );
+	RandomBGAnimations.pop_front();
+
+	map<BackgroundDef,Actor*>::const_iterator iter = m_BGAnimations.find( bd );
+	
+	// create the background if it's not already created
+	if( iter == m_BGAnimations.end() )
 	{
-		// copy into set for easy lookup
-		set<BackgroundDef> loaded;
-		for( unsigned i = 0; i < m_RandomBGAnimations.size(); ++i )
-			loaded.insert( m_RandomBGAnimations[i] );
-
-		bool bFound = false;
-		FOREACH_CONST( CString, vsPaths, p )
-		{
-			FOREACHD_CONST( BackgroundDef, m_RandomBGAnimations, b )
-			{
-				if( b->m_sFile1 == *p )
-				{
-					bd.m_sFile1 = *p;
-					bFound = true;
-					break;
-				}
-			}
-			if( bFound )
-				break;
-		}
-
-		if( !bFound )
-			return BackgroundDef();
+		bool bSuccess = CreateBackground( pSong, bd );
+		ASSERT( bSuccess );	// we fed it valid files, so this shouldn't fail
 	}
-
-	bool bSuccess = CreateBackground( pSong, bd );
-	ASSERT( bSuccess );	// we fed it valid files, so this shouldn't fail
-	m_RandomBGAnimations.push_back( bd );
 	return bd;
 }
 
-void Background::LoadFromRandom( float fFirstBeat, float fLastBeat )
+void Background::LoadFromRandom( float fFirstBeat, float fLastBeat, const BackgroundChange &change )
 {
 	const TimingData &timing = m_pSong->m_Timing;
-	const CString &sPreferredSubDir = m_pSong->m_sGroupName;
 
 	// change BG every 4 bars
 	for( float f=fFirstBeat; f<fLastBeat; f+=BEATS_PER_MEASURE*4 )
 	{
 		// Don't fade.  It causes frame rate dip, especially on slower machines.
-		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, sPreferredSubDir );
+		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, m_RandomBGAnimations );
 		if( !bd.IsEmpty() )
 		{
-			BackgroundChange change;
-			(BackgroundDef&)change = bd;
-			change.m_fStartBeat = f;
-			m_Layer[0].m_aBGChanges.push_back( change );
+			BackgroundChange c = change;
+			(BackgroundDef&)c = bd;
+			c.m_fStartBeat = f;
+			m_Layer[0].m_aBGChanges.push_back( c );
 		}
 	}
 
@@ -423,13 +356,13 @@ void Background::LoadFromRandom( float fFirstBeat, float fLastBeat )
 		if( bpmseg.m_iStartIndex < iStartIndex  || bpmseg.m_iStartIndex > iEndIndex )
 			continue;	// skip
 
-		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, sPreferredSubDir );
+		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, m_RandomBGAnimations );
 		if( !bd.IsEmpty() )
 		{
-			BackgroundChange change;
-			(BackgroundDef&)change = bd;
-			change.m_fStartBeat = NoteRowToBeat(bpmseg.m_iStartIndex);
-			m_Layer[0].m_aBGChanges.push_back( change );
+			BackgroundChange c = change;
+			(BackgroundDef&)c = bd;
+			c.m_fStartBeat = NoteRowToBeat(bpmseg.m_iStartIndex);
+			m_Layer[0].m_aBGChanges.push_back( c );
 		}
 	}
 }
@@ -437,16 +370,62 @@ void Background::LoadFromRandom( float fFirstBeat, float fLastBeat )
 void Background::LoadFromSong( const Song* pSong )
 {
 	Init();
-
 	Unload();
-
 	m_pSong = pSong;
-
 	STATIC_BACKGROUND_DEF.m_sFile1 = SONG_BACKGROUND_FILE;
 
 	if( PREFSMAN->m_fBGBrightness == 0.0f )
 		return;
 
+	//
+	// Choose a bunch of background that we'll use for the random file marker
+	//
+	{
+		CString sPreferredSubDir = m_pSong->m_sGroupName;
+		sPreferredSubDir += '/';
+
+		CStringArray vsThrowAway, vsNames;
+		for( int i=0; i<2; i++ )
+		{
+			switch( PREFSMAN->m_BackgroundMode )
+			{
+			default:
+				FAIL_M( ssprintf("Invalid BackgroundMode: %i", (PrefsManager::BackgroundMode)PREFSMAN->m_BackgroundMode) );
+				break;
+
+			case PrefsManager::BGMODE_OFF:
+				break;
+
+			case PrefsManager::BGMODE_ANIMATIONS:
+				BackgroundUtil::GetGlobalBGAnimations( sPreferredSubDir, vsThrowAway, vsNames );
+				break;
+
+			case PrefsManager::BGMODE_RANDOMMOVIES:
+				BackgroundUtil::GetGlobalRandomMovies( sPreferredSubDir, vsThrowAway, vsNames );
+				break;
+			}
+
+			if( !vsNames.empty() )	// found some
+				break;
+
+			// now search without a subdir
+			sPreferredSubDir = "";
+		}
+
+		random_shuffle( vsNames.begin(), vsNames.end() );
+		int iSize = min( (int)PREFSMAN->m_iNumBackgrounds, (int)vsNames.size() );
+		vsNames.resize( iSize );
+
+		FOREACH_CONST( CString, vsNames, s )
+		{
+			BackgroundDef bd;
+			bd.m_sFile1 = *s;
+			m_RandomBGAnimations.push_back( bd );
+		}
+	}
+
+
+		
 	/* Song backgrounds (even just background stills) can get very big; never keep them
 	 * in memory. */
 	RageTextureID::TexPolicy OldPolicy = TEXTUREMAN->GetDefaultTexturePolicy();
@@ -473,7 +452,7 @@ void Background::LoadFromSong( const Song* pSong )
 				
 				bool bIsAlreadyLoaded = layer.m_BGAnimations.find(bd) != layer.m_BGAnimations.end();
 
-				if( bd.m_sFile1.CompareNoCase(RANDOM_BACKGROUND_FILE)!=0 && !bIsAlreadyLoaded )
+				if( bd.m_sFile1 != RANDOM_BACKGROUND_FILE && !bIsAlreadyLoaded )
 				{
 					if( layer.CreateBackground( m_pSong, bd ) )
 					{
@@ -481,14 +460,18 @@ void Background::LoadFromSong( const Song* pSong )
 					}
 					else
 					{
-						// The background was not found.  Try to use a random one instead.
-						bd = layer.CreateRandomBGA( pSong, pSong->m_sGroupName );
-						if( bd.IsEmpty() )
-							bd = STATIC_BACKGROUND_DEF;
+						if( i == 0 )
+						{
+							// The background was not found.  Try to use a random one instead.
+							bd = layer.CreateRandomBGA( pSong, m_RandomBGAnimations );
+							if( bd.IsEmpty() )
+								bd = STATIC_BACKGROUND_DEF;
+						}
 					}
 				}
-				
-				layer.m_aBGChanges.push_back( change );
+			
+				if( !bd.IsEmpty() )
+					layer.m_aBGChanges.push_back( change );
 			}
 		}
 	}
@@ -496,7 +479,7 @@ void Background::LoadFromSong( const Song* pSong )
 	{
 		Layer &layer = m_Layer[0];
 
-		LoadFromRandom( pSong->m_fFirstBeat, pSong->m_fLastBeat );
+		LoadFromRandom( pSong->m_fFirstBeat, pSong->m_fLastBeat, BackgroundChange() );
 
 		// end showing the static song background
 		BackgroundChange change;
@@ -529,12 +512,22 @@ void Background::LoadFromSong( const Song* pSong )
 
 	// If any BGChanges use the background image, load it.
 	bool bStaticBackgroundUsed = false;
-	FOREACH_CONST( BackgroundChange, mainlayer.m_aBGChanges, bgc )
+	for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
 	{
-		const BackgroundDef &bd = *bgc;
-		if( bd == STATIC_BACKGROUND_DEF )
-			bStaticBackgroundUsed = true;
+		Layer &layer = m_Layer[i];
+		FOREACH_CONST( BackgroundChange, layer.m_aBGChanges, bgc )
+		{
+			const BackgroundDef &bd = *bgc;
+			if( bd == STATIC_BACKGROUND_DEF )
+			{
+				bStaticBackgroundUsed = true;
+				break;
+			}
+		}
+		if( bStaticBackgroundUsed )
+			break;
 	}
+
 	if( bStaticBackgroundUsed )
 	{
 		bool bSuccess = mainlayer.CreateBackground( m_pSong, STATIC_BACKGROUND_DEF );
@@ -542,11 +535,11 @@ void Background::LoadFromSong( const Song* pSong )
 	}
 
 
-	// Look for the filename "Random", and replace the segment with LoadFromRandom.
+	// Look for the random file marker, and replace the segment with LoadFromRandom.
 	for( unsigned i=0; i<mainlayer.m_aBGChanges.size(); i++ )
 	{
-		BackgroundChange &change = mainlayer.m_aBGChanges[i];
-		if( change.m_sFile1.CompareNoCase(RANDOM_BACKGROUND_FILE) )
+		const BackgroundChange change = mainlayer.m_aBGChanges[i];
+		if( change.m_sFile1 != RANDOM_BACKGROUND_FILE )
 			continue;
 
 		const float fStartBeat = change.m_fStartBeat;
@@ -555,7 +548,7 @@ void Background::LoadFromSong( const Song* pSong )
 		mainlayer.m_aBGChanges.erase( mainlayer.m_aBGChanges.begin()+i );
 		--i;
 
-		LoadFromRandom( fStartBeat, fLastBeat );
+		LoadFromRandom( fStartBeat, fLastBeat, change );
 	}
 
 	// At this point, we shouldn't have any BGChanges to "".  "" is an invalid name.
@@ -656,7 +649,9 @@ void Background::Layer::UpdateCurBGChange( const Song *pSong, float fLastMusicSe
 
 		m_pFadingBGA = m_pCurrentBGA;
 
-		m_pCurrentBGA = m_BGAnimations[ (BackgroundDef)change ];
+		map<BackgroundDef,Actor*>::const_iterator iter = m_BGAnimations.find( (BackgroundDef)change );
+		ASSERT( iter != m_BGAnimations.end() );
+		m_pCurrentBGA = iter->second;
 
 		if( m_pFadingBGA == m_pCurrentBGA )
 		{
