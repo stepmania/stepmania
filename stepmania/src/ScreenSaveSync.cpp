@@ -17,10 +17,11 @@ static CString GetPromptText()
 		if( fabs(fDelta) > 0.00001 )
 		{
 			s += ssprintf( 
-				"You have changed the Machine Global Offset\nfrom %.3f to %.3f (%+.3f).\n\n",
+				"You have changed the Global Offset\nfrom %+.3f to %+.3f (change of %+.3f, notes %s).\n\n",
 				fOld, 
 				fNew,
-				fDelta );
+				fDelta,
+				fDelta > 0 ? "earlier":"later"  );
 		}
 	}
 
@@ -37,10 +38,11 @@ static CString GetPromptText()
 		if( fabs(fDelta) > 0.00001 )
 		{
 			s += ssprintf( 
-				"The song offset changed from %.3f to %.3f (%+.3f).\n\n",
+				"The song offset changed from %+.3f to %+.3f (change of %+.3f, notes %s).\n\n",
 				fOld, 
 				fNew,
-				fDelta );
+				fDelta,
+				fDelta > 0 ? "earlier":"later" );
 		}
 	}
 
@@ -53,7 +55,7 @@ static CString GetPromptText()
 		if( fabs(fDelta) > 0.00001 )
 		{
 			s += ssprintf( 
-				"The %s BPM segment changed from %.3f BPS to %.3f BPS (%+.3f).\n\n",
+				"The %s BPM segment changed from %+.3f BPS to %+.3f BPS (change of %+.3f).\n\n",
 				FormatNumberAndSuffix(i+1).c_str(),
 				fOld, 
 				fNew,
@@ -70,7 +72,7 @@ static CString GetPromptText()
 		if( fabs(fDelta) > 0.00001 )
 		{
 			s += ssprintf( 
-				"The %s Stop segment changed from %.3f seconds to %.3f seconds (%+.3f).\n\n",
+				"The %s Stop segment changed from %+.3f seconds to %+.3f seconds (change of %+.3f).\n\n",
 				FormatNumberAndSuffix(i+1).c_str(),
 				fOld, 
 				fNew,

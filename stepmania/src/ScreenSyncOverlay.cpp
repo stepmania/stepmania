@@ -37,12 +37,13 @@ void ScreenSyncOverlay::Init()
 	m_textHelp.SetText( 
 		"Revert sync changes:\n"
 		"    F4\n"
-		"Adjust current BPM:\n"
-		"    F9/F10 (hold Alt for smaller)\n"
-		"Adjust song offset:\n"
-		"    F11/F12 (hold Alt for smaller)\n"
-		"Adjust machine offset:\n"
-		"    Shift + F11/F12 (hold Alt for smaller)" );
+		"Current BPM - smaller/larger:\n"
+		"    F9/F10\n"
+		"Song offset - notes earlier/later:\n"
+		"    F11/F12\n"
+		"Machine offset - notes earlier/later:\n"
+		"    Shift + F11/F12\n"
+		"(hold Alt for smaller increment)" );
 	this->AddChild( &m_textHelp );
 	
 	m_quad.ZoomToWidth( m_textHelp.GetZoomedWidth()+20 ); 
@@ -108,9 +109,10 @@ void ScreenSyncOverlay::UpdateText()
 		if( fabsf(fDelta) > 0.00001f )
 		{
 			s += ssprintf( 
-				"Machine global offset: %.3fs (%+.3f)\n",
+				"Global Offset from %+.3f to %+.3f (notes %s).\n",
+				fOld, 
 				fNew,
-				fDelta );
+				fDelta > 0 ? "earlier":"later" );
 		}
 	}
 
@@ -122,9 +124,10 @@ void ScreenSyncOverlay::UpdateText()
 		if( fabsf(fDelta) > 0.00001f )
 		{
 			s += ssprintf( 
-				"Song offset: %.3fs (%+.3f)\n",
+				"Song offset from %+.3f to %+.3f (notes %s).\n",
+				fOld, 
 				fNew,
-				fDelta );
+				fDelta > 0 ? "earlier":"later" );
 		}
 	}
 
@@ -139,10 +142,10 @@ void ScreenSyncOverlay::UpdateText()
 		if( fabsf(fDelta) > 0.00001f )
 		{
 			s += ssprintf( 
-				"%s tempo segment: %.3f BPS (%+.3f)\n",
+				"%s tempo segment from %+.3f BPS to %+.3f BPS.\n",
 				FormatNumberAndSuffix(i+1).c_str(),
-				fNew,
-				fDelta );
+				fOld, 
+				fNew );
 		}
 	}	
 	
@@ -213,8 +216,8 @@ bool ScreenSyncOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEve
 			float fDelta;
 			switch( DeviceI.button )
 			{
-			case KEY_F11:	fDelta = -0.02f;	break;
-			case KEY_F12:	fDelta = +0.02f;	break;
+			case KEY_F11:	fDelta = +0.02f;	break;	// notes earlier
+			case KEY_F12:	fDelta = -0.02f;	break;	// notes earlier
 			default:	ASSERT(0);
 			}
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
