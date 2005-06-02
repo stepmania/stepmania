@@ -638,7 +638,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		m_sprDifficulty[*iter]->SetHidden( !bShowDifficulty );
 		if( bShowDifficulty )
 		{
-			m_sprDifficulty[*iter]->Reset();
 			m_sprDifficulty[*iter]->SetXY( DIFFICULTY_X(*iter), DIFFICULTY_Y );
 			ON_COMMAND( m_sprDifficulty[*iter] );
 		}
