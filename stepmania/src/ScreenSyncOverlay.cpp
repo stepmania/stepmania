@@ -258,16 +258,13 @@ void ScreenSyncOverlay::ShowHelp()
 	m_textHelp.BeginTweening( 0.3f, Actor::TWEEN_LINEAR );
 	m_textHelp.SetDiffuseAlpha( 1 );
 
-	if( !GAMESTATE->IsSyncDataChanged() )
-	{
-		m_quad.Sleep( 4 );
-		m_quad.BeginTweening( 0.3f, Actor::TWEEN_LINEAR );
-		m_quad.SetDiffuseAlpha( 0 );
+	m_quad.Sleep( 4 );
+	m_quad.BeginTweening( 0.3f, Actor::TWEEN_LINEAR );
+	m_quad.SetDiffuseAlpha( 0 );
 
-		m_textHelp.Sleep( 4 );
-		m_textHelp.BeginTweening( 0.3f, Actor::TWEEN_LINEAR );
-		m_textHelp.SetDiffuseAlpha( 0 );
-	}
+	m_textHelp.Sleep( 4 );
+	m_textHelp.BeginTweening( 0.3f, Actor::TWEEN_LINEAR );
+	m_textHelp.SetDiffuseAlpha( 0 );
 }
 
 /*
