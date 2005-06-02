@@ -211,7 +211,20 @@ void LightsManager::Update( float fDeltaTime )
 	case LIGHTSMODE_ALL_CLEARED:
 		{
 			FOREACH_CabinetLight( cl )
-				m_LightsState.m_bCabinetLights[cl] = true;
+			{
+				bool b = true;
+				switch( cl )
+				{
+				case LIGHT_BUTTONS_LEFT:
+				case LIGHT_BUTTONS_RIGHT:
+					b = false;
+					break;
+				default:
+					b = true;
+					break;
+				}
+				m_LightsState.m_bCabinetLights[cl] = b;
+			}
 		}
 		break;
 	case LIGHTSMODE_TEST_AUTO_CYCLE:
