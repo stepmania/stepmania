@@ -27,6 +27,7 @@ enum DebugLine
 	DebugLine_ReloadCurrentScreen,
 	DebugLine_ReloadTheme,
 	DebugLine_WriteProfiles,
+	DebugLine_WritePreferences,
 	DebugLine_Uptime,
 	NUM_DEBUG_LINES
 };

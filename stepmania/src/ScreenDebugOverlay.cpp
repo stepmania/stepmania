@@ -88,11 +88,12 @@ void ScreenDebugOverlay::Init()
 		g_Mappings.debugButton[10] = DeviceInput(DEVICE_KEYBOARD, KEY_C8);
 		g_Mappings.debugButton[11] = DeviceInput(DEVICE_KEYBOARD, KEY_C9);
 		g_Mappings.debugButton[12] = DeviceInput(DEVICE_KEYBOARD, KEY_C0);
-		g_Mappings.debugButton[13] = DeviceInput(DEVICE_KEYBOARD, KEY_HYPHEN);
-		g_Mappings.debugButton[14] = DeviceInput(DEVICE_KEYBOARD, KEY_EQUAL);
-		g_Mappings.debugButton[15] = DeviceInput(DEVICE_KEYBOARD, KEY_LBRACKET);
-		g_Mappings.debugButton[16] = DeviceInput(DEVICE_KEYBOARD, KEY_RBRACKET);
-		g_Mappings.debugButton[17] = DeviceInput(DEVICE_KEYBOARD, KEY_BACKSLASH);
+		g_Mappings.debugButton[13] = DeviceInput(DEVICE_KEYBOARD, KEY_Cq);
+		g_Mappings.debugButton[14] = DeviceInput(DEVICE_KEYBOARD, KEY_Cw);
+		g_Mappings.debugButton[15] = DeviceInput(DEVICE_KEYBOARD, KEY_Ce);
+		g_Mappings.debugButton[16] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
+		g_Mappings.debugButton[17] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
+		g_Mappings.debugButton[18] = DeviceInput(DEVICE_KEYBOARD, KEY_Cy);
 	}
 
 
@@ -197,6 +198,7 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_ReloadCurrentScreen:	s1="Reload";				break;
 		case DebugLine_ReloadTheme:			s1="Reload Theme";			break;
 		case DebugLine_WriteProfiles:		s1="Write Profiles";		break;
+		case DebugLine_WritePreferences:	s1="Write Preferences";		break;
 		case DebugLine_Uptime:				s1="Uptime";				break;
 		default:	ASSERT(0);
 		}
@@ -222,6 +224,7 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_ReloadCurrentScreen:	bOn=true;								break;
 		case DebugLine_ReloadTheme:			bOn=true;								break;
 		case DebugLine_WriteProfiles:		bOn=true;								break;
+		case DebugLine_WritePreferences:	bOn=true;								break;
 		case DebugLine_Uptime:				bOn=false;								break;
 		default:	ASSERT(0);
 		}
@@ -263,6 +266,7 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_ReloadCurrentScreen:	s2=SCREENMAN ? SCREENMAN->GetTopScreen()->m_sName:"";	break;
 		case DebugLine_ReloadTheme:			s2="";					break;
 		case DebugLine_WriteProfiles:		s2="";					break;
+		case DebugLine_WritePreferences:	s2="";					break;
 		case DebugLine_Uptime:				s2=SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart());	break;
 		default:	ASSERT(0);
 		}
@@ -413,19 +417,21 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 				TEXTUREMAN->ReloadAll();
 				NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 				CodeDetector::RefreshCacheItems();
-
 				SCREENMAN->SystemMessage( "Theme reloaded." );
-				// Don't update text below.  Return immediately because this screen.
+				// HACK: Don't update text below.  Return immediately because this screen.
 				// was just destroyed as part of the them reload.
 				return true;
 			case DebugLine_WriteProfiles:
-				// HACK: Also save bookkeeping and profile info for debugging
+				// Also save bookkeeping and profile info for debugging
 				// so we don't have to play through a whole song to get new output.
 				BOOKKEEPER->WriteToDisk();
 				PROFILEMAN->SaveMachineProfile();
 				FOREACH_PlayerNumber( p )
 					if( PROFILEMAN->IsPersistentProfile(p) )
 						PROFILEMAN->SaveProfile( p );
+				break;
+			case DebugLine_WritePreferences:
+				PREFSMAN->SaveGlobalPrefsToDisk();
 				break;
 			case DebugLine_Uptime:
 				break;
