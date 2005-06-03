@@ -120,7 +120,7 @@ bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width,
 		height, 0, depth, InputOutput, visual,
 		CWBorderPixel | CWColormap | CWEventMask, &winAttribs );
 
-	pHaveWin = true;
+	g_bHaveWin = true;
 
 	/* Hide the mouse cursor. */
 	{
