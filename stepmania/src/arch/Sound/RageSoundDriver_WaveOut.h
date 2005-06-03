@@ -1,15 +1,22 @@
-#ifndef RAGE_SOUND_WAVEOUT
-#define RAGE_SOUND_WAVEOUT
+#ifndef RAGE_SOUND_WAVEOUT_H
+#define RAGE_SOUND_WAVEOUT_H
 
 #include "RageSoundDriver_Generic_Software.h"
-#include "RageSoundDriver.h"
 #include "RageThreads.h"
-#include "windows.h"
-#include "Mmsystem.h"
-#include "RageTimer.h"
+#include <windows.h>
+#include <mmsystem.h>
 
 class RageSound_WaveOut: public RageSound_Generic_Software
 {
+public:
+	int64_t GetPosition( const RageSoundBase *snd ) const;
+	float GetPlayLatency() const;
+
+	RageSound_WaveOut();
+	~RageSound_WaveOut();
+	CString Init();
+
+private:
 	HWAVEOUT wo;
 	HANDLE sound_event;
 	WAVEHDR buffers[8];
@@ -21,16 +28,7 @@ class RageSound_WaveOut: public RageSound_Generic_Software
 	RageThread MixingThread;
 	bool GetData();
 
-protected:
 	void SetupDecodingThread();
-
-public:
-	int64_t GetPosition( const RageSoundBase *snd ) const;
-	float GetPlayLatency() const;
-
-	RageSound_WaveOut();
-	~RageSound_WaveOut();
-	CString Init();
 };
 #define USE_RAGE_SOUND_WAVE_OUT
 
