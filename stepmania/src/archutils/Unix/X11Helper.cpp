@@ -13,6 +13,9 @@ static vector<long> g_aiMasks;
 // Number of subsystems using the X connection:
 static int g_iRefCount = 0;
 
+// Do we have a window?
+static bool g_bHaveWin = false;
+
 Display *X11Helper::Dpy = NULL;
 Window X11Helper::Win;
 
@@ -68,7 +71,7 @@ bool X11Helper::CloseMask( long mask )
 
 static bool pApplyMasks()
 {
-	if( X11Helper::Dpy == NULL )
+	if( X11Helper::Dpy == NULL | !g_bHaveWin )
 		return true;
 
 	LOG->Trace("X11Helper: Reapplying event masks.");
@@ -85,16 +88,15 @@ static bool pApplyMasks()
 
 bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width, int height )
 {
-	static bool pHaveWin = false;
 	vector<long>::iterator i;
 	
 	if( g_iRefCount == 0 )
 		return false;
 
-	if( pHaveWin )
+	if( g_bHaveWin )
 	{
 		XDestroyWindow( Dpy, Win );
-		pHaveWin = false;
+		g_bHaveWin = false;
 	}
 		// pHaveWin will stay false if an error occurs once I do error
 		// checking here...
