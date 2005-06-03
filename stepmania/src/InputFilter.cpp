@@ -55,6 +55,8 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 	if( di.ts.IsZero() )
 		LOG->Warn( "InputFilter::ButtonPressed: zero timestamp is invalid" );
 
+	ASSERT( di.device < NUM_INPUT_DEVICES );
+	ASSERT( di.button < GetNumDeviceButtons(di.device) );
 	ButtonState &bs = m_ButtonState[di.device][di.button];
 
 	bs.m_Level = di.level;
