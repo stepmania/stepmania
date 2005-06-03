@@ -13,24 +13,24 @@ static SInt16 ShowAlert( int type, CFStringRef message, CFStringRef OK, CFString
 		kAlertStdAlertOKButton, kAlertStdAlertCancelButton, kWindowAlertPositionParentWindowScreen, 0
 	};
 	DialogRef dialog;
-	SInt16 result;
-	OSErr err;
-
 	CreateStandardAlert( type, message, NULL, &params, &dialog );
-	err = AutoSizeDialog( dialog );
-	ASSERT( err == noErr );
-	RunStandardAlert( dialog, NULL, &result );
 
-	return result;
+	OSErr err = AutoSizeDialog( dialog );
+	ASSERT( err == noErr );
+
+	SInt16 iResult;
+	RunStandardAlert( dialog, NULL, &iResult );
+
+	return iResult;
 }
 
 void DialogDriver_Cocoa::OK( CString sMessage, CString sID )
 {
 	CFStringRef message = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingASCII );
-	SInt16 result = ShowAlert( kAlertNoteAlert, message, CFSTR("OK"), CFSTR("Don't show again") );
+	SInt16 iResult = ShowAlert( kAlertNoteAlert, message, CFSTR("OK"), CFSTR("Don't show again") );
 
 	CFRelease( message );
-	if( result == kAlertStdAlertCancelButton )
+	if( iResult == kAlertStdAlertCancelButton )
 		Dialog::IgnoreMessage( sID );
 }
 
@@ -46,11 +46,11 @@ void DialogDriver_Cocoa::Error( CString sError, CString sID )
 Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( CString sMessage, CString sID )
 {
 	CFStringRef error = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingASCII );
-	SInt16 result = ShowAlert( kAlertNoteAlert, error, CFSTR("Retry"), CFSTR("Ignore") );
+	SInt16 iResult = ShowAlert( kAlertNoteAlert, error, CFSTR("Retry"), CFSTR("Ignore") );
 	Dialog::Result ret;
 
-	CFRelease(error);
-	switch (result)
+	CFRelease( error );
+	switch( iResult )
 	{
 	case kAlertStdAlertOKButton:
 		ret = Dialog::retry;
