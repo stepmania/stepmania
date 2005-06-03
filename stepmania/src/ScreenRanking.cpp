@@ -691,7 +691,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		m_sprCourseDifficulty[*cd]->SetHidden( !bShowCourseDifficulty );
 		if( bShowCourseDifficulty )
 		{
-			m_sprCourseDifficulty[*cd]->Reset();
 			m_sprCourseDifficulty[*cd]->SetXY( COURSE_DIFFICULTY_X(*cd), COURSE_DIFFICULTY_Y );
 			ON_COMMAND( m_sprCourseDifficulty[*cd] );
 		}
@@ -844,6 +843,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 				const Song* pSong = item.m_pSong;
 
 				item.m_textTitle.SetText( pSong->GetDisplayFullTitle() );
+				item.m_textTitle.SetDiffuse( SONGMAN->GetSongColor(pSong) );
 
 				FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), iter )
 				{							
@@ -891,6 +891,8 @@ float ScreenRanking::SetPage( PageToShow pts )
 				const Course* pCourse = item.m_pCourse;
 
 				item.m_textTitle.SetText( pCourse->GetDisplayFullTitle() );
+				item.m_textTitle.SetDiffuse( SONGMAN->GetCourseColor(pCourse) );
+
 				FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
 				{
 					BitmapText* pTextStepsScore = &item.m_textScore[*cd];
