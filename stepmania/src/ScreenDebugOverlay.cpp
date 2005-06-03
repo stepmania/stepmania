@@ -196,7 +196,7 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_SendNotesEnded:		s1="Send Notes Ended";		break;
 		case DebugLine_Volume:				s1="Mute";					break;
 		case DebugLine_ReloadCurrentScreen:	s1="Reload";				break;
-		case DebugLine_ReloadTheme:			s1="Reload Theme";			break;
+		case DebugLine_ReloadTheme:			s1="Reload Theme and Textures";	break;
 		case DebugLine_WriteProfiles:		s1="Write Profiles";		break;
 		case DebugLine_WritePreferences:	s1="Write Preferences";		break;
 		case DebugLine_Uptime:				s1="Uptime";				break;
