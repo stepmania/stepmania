@@ -10,6 +10,7 @@
 #include "ScreenDimensions.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
+#include "RageInput.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenTestInput );
@@ -21,6 +22,27 @@ ScreenTestInput::ScreenTestInput( CString sClassName ) : ScreenWithMenuElements(
 void ScreenTestInput::Init()
 {
 	ScreenWithMenuElements::Init();
+
+	m_textDevices.LoadFromFont( THEME->GetPathF("Common","normal") );
+	m_textDevices.SetXY( SCREEN_LEFT+20, SCREEN_TOP+80 );
+	m_textDevices.SetDiffuse( RageColor(1,1,1,1) );
+	m_textDevices.SetZoom( 0.7f );
+	m_textDevices.SetHorizAlign( Actor::align_left );
+	{
+		vector<InputDevice> vDevices;
+		vector<CString> vDescriptions;
+		INPUTMAN->GetDevicesAndDescriptions( vDevices, vDescriptions );
+		FOREACH( CString, vDescriptions, s )
+		{
+			if( *s == "MonkeyKeyboard" )
+			{
+				vDescriptions.erase( s );
+				break;
+			}
+		}
+		m_textDevices.SetText( join("\n",vDescriptions) );
+	}
+	this->AddChild( &m_textDevices );
 
 	m_textInputs.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textInputs.SetXY( SCREEN_CENTER_X-250, SCREEN_CENTER_Y );

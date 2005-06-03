@@ -23,6 +23,7 @@ public:
 	virtual void MenuBack( PlayerNumber pn );
 
 private:
+	BitmapText	m_textDevices;
 	BitmapText	m_textInputs;
 };
 
