@@ -2,7 +2,7 @@
 #include "LowLevelWindow_X11.h"
 #include "RageLog.h"
 #include "RageException.h"
-#include "ProductInfo.h"
+#include "CommonMetrics.h"
 #include "archutils/Unix/X11Helper.h"
 
 #include <stack>
@@ -106,7 +106,7 @@ CString LowLevelWindow_X11::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 		}
 		m_bWindowIsOpen = true;
 
-		char WindowTitle[] = PRODUCT_NAME;
+		char *WindowTitle = const_cast<char *>(WINDOW_TITLE.GetValue().c_str() );
 		XChangeProperty( g_X11Display, X11Helper::Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
 				reinterpret_cast<unsigned char*>(WindowTitle), strlen(WindowTitle) );
 
