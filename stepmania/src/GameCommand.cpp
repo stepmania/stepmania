@@ -685,7 +685,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		// players joined.  If enough players aren't joined, then 
 		// we need to subtract credits for the sides that will be
 		// joined as a result of applying this option.
-		if( PREFSMAN->m_CoinMode == COIN_MODE_PAY )
+		if( GAMESTATE->GetCoinMode() == COIN_MODE_PAY )
 		{
 			int iNumCreditsRequired = GetCreditsRequiredToPlayStyle(m_pStyle);
 			int iNumCreditsPaid = GetNumCreditsPaid();
@@ -713,7 +713,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			ASSERT(0);
 		}
 	}
-	if( m_dc != DIFFICULTY_INVALID  )
+	if( m_dc != DIFFICULTY_INVALID )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			GAMESTATE->ChangePreferredDifficulty( *pn, m_dc );
 	if( m_sAnnouncer != "" )
