@@ -155,6 +155,13 @@ CString LowLevelWindow_X11::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 	// catching WM normal hints changes in mapped windows.
 	XResizeWindow( X11Helper::Dpy, X11Helper::Win, p.width, p.height );
 
+	// Center the window in the display.
+	int w = DisplayWidth( X11Helper::Dpy, DefaultScreen(X11Helper::Dpy) );
+	int h = DisplayHeight( X11Helper::Dpy, DefaultScreen(X11Helper::Dpy) );
+	int x = (w - p.width)/2;
+	int y = (h - p.height)/2;
+	XMoveWindow( X11Helper::Dpy, X11Helper::Win, x, y );
+
 	CurrentParams = p;
 
 	return ""; // Success
