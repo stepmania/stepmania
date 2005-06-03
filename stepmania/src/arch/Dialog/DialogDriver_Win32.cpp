@@ -20,7 +20,7 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 	{
 	case WM_INITDIALOG:
 		{
-			// Disable parent, like a modal MessageBox does.
+			// Disable the parent window, like a modal MessageBox does.
 			EnableWindow( GetParent(hWnd), FALSE );
 
 			// Hide or display "Don't show this message."
@@ -65,14 +65,14 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 }
 
 
-void DialogDriver_Win32::OK( CString sMessage, CString ID )
+void DialogDriver_Win32::OK( CString sMessage, CString sID )
 {
-	g_bAllowHush = ID != "";
+	g_bAllowHush = sID != "";
 	g_sMessage = sMessage;
 	AppInstance handle;
 	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_OK), GraphicsWindow::GetHwnd(), OKWndProc );
 	if( g_bAllowHush && g_bHush )
-		Dialog::IgnoreMessage( ID );
+		Dialog::IgnoreMessage( sID );
 }
 
 static CString g_sErrorString;
@@ -90,7 +90,7 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 		}
 		break;
 	case WM_COMMAND:
-		switch (LOWORD(wParam))
+		switch( LOWORD(wParam) )
 		{
 		case IDC_BUTTON_VIEW_LOG:
 			{
@@ -131,10 +131,11 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 	return FALSE;
 }
 
-void DialogDriver_Win32::Error( CString error, CString ID )
+void DialogDriver_Win32::Error( CString sError, CString sID )
 {
-	g_sErrorString = error;
- 	// throw up a pretty error dialog
+	g_sErrorString = sError;
+
+	// throw up a pretty error dialog
 	AppInstance handle;
 	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_ERROR_DIALOG), NULL, ErrorWndProc );
 }
@@ -152,7 +153,7 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString I
 	}
 } 
 
-Dialog::Result DialogDriver_Win32::AbortRetry( CString sMessage, CString ID )
+Dialog::Result DialogDriver_Win32::AbortRetry( CString sMessage, CString sID )
 {
 	CString sWindowTitle = WINDOW_TITLE.IsLoaded() ? WINDOW_TITLE.GetValue() : "";
 

@@ -10,44 +10,44 @@
 #include "Selector_Dialog.h"
 DialogDriver *MakeDialogDriver()
 {
-	CString drivers = "win32,cocoa,null";
-	CStringArray DriversToTry;
-	split(drivers, ",", DriversToTry, true);
+	CString sDrivers = "win32,cocoa,null";
+	CStringArray asDriversToTry;
+	split( sDrivers, ",", asDriversToTry, true );
 
-	ASSERT( DriversToTry.size() != 0 );
+	ASSERT( asDriversToTry.size() != 0 );
 
-	CString Driver;
-	DialogDriver *ret = NULL;
+	CString sDriver;
+	DialogDriver *pRet = NULL;
 
-	for( unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i )
+	for( unsigned i = 0; pRet == NULL && i < asDriversToTry.size(); ++i )
 	{
-		Driver = DriversToTry[i];
+		sDriver = asDriversToTry[i];
 
 #ifdef USE_DIALOG_DRIVER_COCOA
-		if( !DriversToTry[i].CompareNoCase("Cocoa") )	ret = new DialogDriver_Cocoa;
+		if( !asDriversToTry[i].CompareNoCase("Cocoa") )	pRet = new DialogDriver_Cocoa;
 #endif
 #ifdef USE_DIALOG_DRIVER_NULL
-		if( !DriversToTry[i].CompareNoCase("Null") )	ret = new DialogDriver_Null;
+		if( !asDriversToTry[i].CompareNoCase("Null") )	pRet = new DialogDriver_Null;
 #endif
 #ifdef USE_DIALOG_DRIVER_WIN32
-		if( !DriversToTry[i].CompareNoCase("Win32") )	ret = new DialogDriver_Win32;
+		if( !asDriversToTry[i].CompareNoCase("Win32") )	pRet = new DialogDriver_Win32;
 #endif
 
-		if( ret == NULL )
+		if( pRet == NULL )
 		{
 			continue;
 		}
 
-		CString sError = ret->Init();
+		CString sError = pRet->Init();
 		if( sError != "" )
 		{
 			if( LOG )
-				LOG->Info( "Couldn't load driver %s: %s", DriversToTry[i].c_str(), sError.c_str() );
-			SAFE_DELETE( ret );
+				LOG->Info( "Couldn't load driver %s: %s", asDriversToTry[i].c_str(), sError.c_str() );
+			SAFE_DELETE( pRet );
 		}
 	}
 
-	return ret;
+	return pRet;
 }
 
 static DialogDriver *g_pImpl = NULL;
@@ -77,53 +77,53 @@ bool Dialog::IsShowingDialog()
 	return g_bIsShowingDialog;
 }
 
-static bool MessageIsIgnored( CString ID )
+static bool MessageIsIgnored( CString sID )
 {
-	vector<CString> list;
-	split( PREFSMAN->m_sIgnoredMessageWindows, ",", list );
-	for( unsigned i = 0; i < list.size(); ++i )
-		if( !ID.CompareNoCase(list[i]) )
+	vector<CString> asList;
+	split( PREFSMAN->m_sIgnoredMessageWindows, ",", asList );
+	for( unsigned i = 0; i < asList.size(); ++i )
+		if( !sID.CompareNoCase(asList[i]) )
 			return true;
 	return false;
 }
 
-void Dialog::IgnoreMessage( CString ID )
+void Dialog::IgnoreMessage( CString sID )
 {
 	/* We can't ignore messages before PREFSMAN is around. */
 	if( PREFSMAN == NULL )
 	{
-		if( ID != "" && LOG )
-			LOG->Warn( "Dialog: message \"%s\" set ID too early for ignorable messages", ID.c_str() );
+		if( sID != "" && LOG )
+			LOG->Warn( "Dialog: message \"%s\" set ID too early for ignorable messages", sID.c_str() );
 			
 		return;
 	}
 
-	if( ID == "" )
+	if( sID == "" )
 		return;
 
-	if( MessageIsIgnored(ID) )
+	if( MessageIsIgnored(sID) )
 		return;
 
-	vector<CString> list;
-	split( PREFSMAN->m_sIgnoredMessageWindows, ",", list );
-	list.push_back( ID );
-	PREFSMAN->m_sIgnoredMessageWindows.Set( join(",",list) );
+	vector<CString> asList;
+	split( PREFSMAN->m_sIgnoredMessageWindows, ",", asList );
+	asList.push_back( sID );
+	PREFSMAN->m_sIgnoredMessageWindows.Set( join(",",asList) );
 	PREFSMAN->SaveGlobalPrefsToDisk();
 }
 
-void Dialog::Error( CString sMessage, CString ID )
+void Dialog::Error( CString sMessage, CString sID )
 {
 	Dialog::Init();
 
 	if( LOG )
-		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), ID.c_str() );
+		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), sID.c_str() );
 
-	if( ID != "" && MessageIsIgnored( ID ) )
+	if( sID != "" && MessageIsIgnored(sID) )
 		return;
 
 	g_bIsShowingDialog = true;
 	
-	g_pImpl->Error( sMessage, ID );
+	g_pImpl->Error( sMessage, sID );
 	
 	g_bIsShowingDialog = false;
 }
@@ -133,69 +133,69 @@ void Dialog::SetWindowed( bool bWindowed )
 	g_bWindowed = bWindowed;
 }
 
-void Dialog::OK( CString sMessage, CString ID )
+void Dialog::OK( CString sMessage, CString sID )
 {
 	Dialog::Init();
 
 	if( LOG )
-		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), ID.c_str() );
+		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), sID.c_str() );
 
-	if( ID != "" && MessageIsIgnored( ID ) )
+	if( sID != "" && MessageIsIgnored(sID) )
 		return;
 
 	g_bIsShowingDialog = true;
 	
 	// only show Dialog if windowed
 	if( !g_bWindowed )
-		g_NullDriver.OK( sMessage, ID );
+		g_NullDriver.OK( sMessage, sID );
 	else
-		g_pImpl->OK( sMessage, ID );	// call derived version
+		g_pImpl->OK( sMessage, sID );	// call derived version
 	
 	g_bIsShowingDialog = false;
 }
 
-Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString ID )
+Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString sID )
 {
 	Dialog::Init();
 
 	if( LOG )
-		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), ID.c_str() );
+		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), sID.c_str() );
 
-	if( ID != "" && MessageIsIgnored( ID ) )
-		return g_NullDriver.AbortRetryIgnore( sMessage, ID );
+	if( sID != "" && MessageIsIgnored(sID) )
+		return g_NullDriver.AbortRetryIgnore( sMessage, sID );
 
 	g_bIsShowingDialog = true;
 	
 	// only show Dialog if windowed
 	Dialog::Result ret;
 	if( !g_bWindowed )
-		ret = g_NullDriver.AbortRetryIgnore( sMessage, ID );
+		ret = g_NullDriver.AbortRetryIgnore( sMessage, sID );
 	else
-		ret = g_pImpl->AbortRetryIgnore( sMessage, ID );	// call derived version
+		ret = g_pImpl->AbortRetryIgnore( sMessage, sID );	// call derived version
 	
 	g_bIsShowingDialog = false;
 
 	return ret;
 }
 
-Dialog::Result Dialog::AbortRetry( CString sMessage, CString ID )
+Dialog::Result Dialog::AbortRetry( CString sMessage, CString sID )
 {
 	Dialog::Init();
 
 	if( LOG )
-		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), ID.c_str() );
+		LOG->Trace( "Dialog: \"%s\" [%s]", sMessage.c_str(), sID.c_str() );
 
-	if( ID != "" && MessageIsIgnored( ID ) )
-		return g_NullDriver.AbortRetry( sMessage, ID );
+	if( sID != "" && MessageIsIgnored(sID) )
+		return g_NullDriver.AbortRetry( sMessage, sID );
 
 	g_bIsShowingDialog = true;
 
 	// only show Dialog if windowed
 	Dialog::Result ret;
 	if( !g_bWindowed )
-		ret = g_NullDriver.AbortRetry( sMessage, ID );
+		ret = g_NullDriver.AbortRetry( sMessage, sID );
 	else
-		ret = g_pImpl->AbortRetry( sMessage, ID );	// call derived version
+		ret = g_pImpl->AbortRetry( sMessage, sID );	// call derived version
 	
 	g_bIsShowingDialog = false;
 

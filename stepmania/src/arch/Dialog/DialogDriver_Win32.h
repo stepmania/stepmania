@@ -6,10 +6,10 @@
 class DialogDriver_Win32: public DialogDriver
 {
 public:
-	void Error( CString sMessage, CString ID );
-	void OK( CString sMessage, CString ID );
-	Dialog::Result AbortRetryIgnore( CString sMessage, CString ID );
-	Dialog::Result AbortRetry( CString sMessage, CString ID );
+	void Error( CString sMessage, CString sID );
+	void OK( CString sMessage, CString sID );
+	Dialog::Result AbortRetryIgnore( CString sMessage, CString sID );
+	Dialog::Result AbortRetry( CString sMessage, CString sID );
 };
 #define USE_DIALOG_DRIVER_WIN32
 

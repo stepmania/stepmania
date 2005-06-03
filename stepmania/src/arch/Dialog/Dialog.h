@@ -12,13 +12,13 @@ namespace Dialog
 	bool IsShowingDialog();
 
 	enum Result { abort, retry, ignore };
-	void Error( CString error, CString ID = "" );
-	void OK( CString sMessage, CString ID = "" );
-	Result AbortRetryIgnore( CString sMessage, CString ID = "" );
-	Result AbortRetry( CString sMessage, CString ID = "" );
+	void Error( CString sError, CString sID = "" );
+	void OK( CString sMessage, CString sID = "" );
+	Result AbortRetryIgnore( CString sMessage, CString sID = "" );
+	Result AbortRetry( CString sMessage, CString sID = "" );
 
 	/* for DialogDrivers */
-	void IgnoreMessage( CString ID );
+	void IgnoreMessage( CString sID );
 };
 
 #endif
