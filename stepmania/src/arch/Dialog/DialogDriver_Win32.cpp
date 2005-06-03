@@ -1,8 +1,6 @@
 #include "global.h"
 #include "DialogDriver_Win32.h"
 #include "RageUtil.h"
-#include "ProductInfo.h"
-#include "DialogDriver.h"
 #include "CommonMetrics.h"	// for WINDOW_TITLE
 #include "ThemeManager.h"
 
@@ -15,11 +13,6 @@
 static bool g_Hush;
 static CString g_sMessage;
 static bool g_AllowHush;
-
-#if defined(HAVE_SDL)
-/* For some reason, dialogs aren't always showing up unless we SDL_PumpEvents first. */
-#include "SDL_utils.h"
-#endif
 
 static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
@@ -73,10 +66,6 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 
 void DialogDriver_Win32::OK( CString sMessage, CString ID )
 {
-#if defined(HAVE_SDL)
-	SDL_PumpEvents();
-#endif
-
 	g_AllowHush = ID != "";
 	g_sMessage = sMessage;
 	AppInstance handle;
@@ -152,10 +141,6 @@ void DialogDriver_Win32::Error( CString error, CString ID )
 
 Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString ID )
 {
-#if defined(HAVE_SDL)
-	SDL_PumpEvents();
-#endif
-
 	CString sWindowTitle = WINDOW_TITLE.IsLoaded() ? WINDOW_TITLE.GetValue() : "";
 
 	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, sWindowTitle, MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
@@ -169,10 +154,6 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString I
 
 Dialog::Result DialogDriver_Win32::AbortRetry( CString sMessage, CString ID )
 {
-#if defined(HAVE_SDL)
-	SDL_PumpEvents();
-#endif
-
 	CString sWindowTitle = WINDOW_TITLE.IsLoaded() ? WINDOW_TITLE.GetValue() : "";
 
 	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, sWindowTitle, MB_RETRYCANCEL ) )
