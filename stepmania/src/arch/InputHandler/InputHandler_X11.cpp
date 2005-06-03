@@ -76,6 +76,7 @@ static RageKeySym XSymToKeySym( int key )
 		case XK_Left:			return KEY_LEFT;
 		case XK_Insert:			return KEY_INSERT;
 		case XK_Home:			return KEY_HOME;
+		case XK_Delete:			return KEY_DEL;
 		case XK_End:			return KEY_END;
 		case XK_Page_Up:		return KEY_PGUP;
 		case XK_Page_Down:		return KEY_PGDN;
