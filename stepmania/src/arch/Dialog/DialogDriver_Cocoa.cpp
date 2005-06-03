@@ -7,26 +7,29 @@
 
 static SInt16 ShowAlert( int type, CFStringRef message, CFStringRef OK, CFStringRef cancel = NULL )
 {
-	struct AlertStdCFStringAlertParamRec params = {kStdCFStringAlertVersionOne, true, false, OK, cancel, NULL,
-		kAlertStdAlertOKButton, kAlertStdAlertCancelButton, kWindowAlertPositionParentWindowScreen, 0};
+	struct AlertStdCFStringAlertParamRec params =
+	{
+		kStdCFStringAlertVersionOne, true, false, OK, cancel, NULL,
+		kAlertStdAlertOKButton, kAlertStdAlertCancelButton, kWindowAlertPositionParentWindowScreen, 0
+	};
 	DialogRef dialog;
 	SInt16 result;
 	OSErr err;
 
-	CreateStandardAlert(type, message, NULL, &params, &dialog);
-	err = AutoSizeDialog(dialog);
-	ASSERT(err == noErr);
-	RunStandardAlert(dialog, NULL, &result);
+	CreateStandardAlert( type, message, NULL, &params, &dialog );
+	err = AutoSizeDialog( dialog );
+	ASSERT( err == noErr );
+	RunStandardAlert( dialog, NULL, &result );
 
 	return result;
 }
 
 void DialogDriver_Cocoa::OK( CString sMessage, CString sID )
 {
-	CFStringRef message = CFStringCreateWithCString(NULL, sMessage, kCFStringEncodingASCII);
-	SInt16 result = ShowAlert(kAlertNoteAlert, message, CFSTR("OK"), CFSTR("Don't show again"));
+	CFStringRef message = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingASCII );
+	SInt16 result = ShowAlert( kAlertNoteAlert, message, CFSTR("OK"), CFSTR("Don't show again") );
 
-	CFRelease(message);
+	CFRelease( message );
 	if( result == kAlertStdAlertCancelButton )
 		Dialog::IgnoreMessage( sID );
 }
@@ -34,9 +37,9 @@ void DialogDriver_Cocoa::OK( CString sMessage, CString sID )
 void DialogDriver_Cocoa::Error( CString sError, CString sID )
 {
 	CFStringRef error = CFStringCreateWithCString( NULL, sError, kCFStringEncodingASCII );
-	ShowAlert(kAlertStopAlert, error, CFSTR("OK"));
+	ShowAlert( kAlertStopAlert, error, CFSTR("OK") );
 
-	CFRelease(error);
+	CFRelease( error );
 }
 
 // XXX: should show three options, not two
