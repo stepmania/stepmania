@@ -211,9 +211,8 @@ public:
 		else if( m_Tweens.empty() )	// not tweening
 			return m_current;
 		else
-			return LatestTween();
+			return m_Tweens.back().state;
 	}
-	void SetLatestTween( TweenState ts )	{ LatestTween() = ts; }
 
 	
 	enum StretchType { fit_inside, cover };
@@ -387,8 +386,6 @@ protected:
 		TweenInfo info;
 	};
 	deque<TweenStateAndInfo>	m_Tweens;	// use deque for contant time delete of the head
-
-	TweenState& LatestTween() { ASSERT(m_Tweens.size()>0);	return m_Tweens.back().state; };
 
 	//
 	// Temporary variables that are filled just before drawing
