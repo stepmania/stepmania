@@ -6,9 +6,9 @@
 class DialogDriver_Cocoa: public DialogDriver
 {
 public:
-    void Error(CString sError, CString ID);
-	void OK(CString sMessage, CString ID);
-    Dialog::Result AbortRetryIgnore(CString sMessage, CString ID);
+	void Error( CString sError, CString sID );
+	void OK( CString sMessage, CString sID );
+	Dialog::Result AbortRetryIgnore( CString sMessage, CString sID );
 };
 #define USE_DIALOG_DRIVER_COCOA
     

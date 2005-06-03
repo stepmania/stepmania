@@ -21,17 +21,17 @@ static SInt16 ShowAlert( int type, CFStringRef message, CFStringRef OK, CFString
 	return result;
 }
 
-void DialogDriver_Cocoa::OK( CString sMessage, CString ID )
+void DialogDriver_Cocoa::OK( CString sMessage, CString sID )
 {
 	CFStringRef message = CFStringCreateWithCString(NULL, sMessage, kCFStringEncodingASCII);
 	SInt16 result = ShowAlert(kAlertNoteAlert, message, CFSTR("OK"), CFSTR("Don't show again"));
 
 	CFRelease(message);
 	if( result == kAlertStdAlertCancelButton )
-		Dialog::IgnoreMessage( ID );
+		Dialog::IgnoreMessage( sID );
 }
 
-void DialogDriver_Cocoa::Error( CString sError, CString ID )
+void DialogDriver_Cocoa::Error( CString sError, CString sID )
 {
 	CFStringRef error = CFStringCreateWithCString( NULL, sError, kCFStringEncodingASCII );
 	ShowAlert(kAlertStopAlert, error, CFSTR("OK"));
@@ -40,7 +40,7 @@ void DialogDriver_Cocoa::Error( CString sError, CString ID )
 }
 
 // XXX: should show three options, not two
-Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( CString sMessage, CString ID )
+Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( CString sMessage, CString sID )
 {
 	CFStringRef error = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingASCII );
 	SInt16 result = ShowAlert( kAlertNoteAlert, error, CFSTR("Retry"), CFSTR("Ignore") );
