@@ -79,7 +79,7 @@ void GroupList::Load( const CStringArray& asGroupNames )
 		else 
 		{
 			label->TurnRainbowOff();
-			label->SetDiffuse( SONGMAN->GetGroupColor(asGroupNames[i]) );
+			label->SetDiffuse( SONGMAN->GetSongGroupColor(asGroupNames[i]) );
 		}
 
 		m_bHidden.push_back( ItemIsOnScreen(i) );

@@ -441,35 +441,35 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	switch( so )
 	{
 	case SORT_MODE_MENU:
-	{
-		arrayWheelItemDatas.clear();	// clear out the previous wheel items 
-		vector<CString> vsNames;
-		split( MODE_MENU_CHOICE_NAMES, ",", vsNames );
-		for( unsigned i=0; i<vsNames.size(); ++i )
 		{
-			WheelItemData wid( TYPE_SORT, NULL, "", NULL, SORT_MENU_COLOR );
-			wid.m_sLabel = vsNames[i];
-			wid.m_Action.Load( i, ParseCommands(CHOICE.GetValue(vsNames[i])) );
-			wid.m_sLabel = wid.m_Action.m_sName;
-
-			switch( so )
+			arrayWheelItemDatas.clear();	// clear out the previous wheel items 
+			vector<CString> vsNames;
+			split( MODE_MENU_CHOICE_NAMES, ",", vsNames );
+			for( unsigned i=0; i<vsNames.size(); ++i )
 			{
-			case SORT_ALL_COURSES:
-			case SORT_NONSTOP_COURSES:
-			case SORT_ONI_COURSES:
-			case SORT_ENDLESS_COURSES:
-				/* Don't display course modes after the first stage. */
-				if( !GAMESTATE->IsEventMode() && GAMESTATE->m_iCurrentStageIndex )
+				WheelItemData wid( TYPE_SORT, NULL, "", NULL, SORT_MENU_COLOR );
+				wid.m_sLabel = vsNames[i];
+				wid.m_Action.Load( i, ParseCommands(CHOICE.GetValue(vsNames[i])) );
+				wid.m_sLabel = wid.m_Action.m_sName;
+
+				switch( so )
+				{
+				case SORT_ALL_COURSES:
+				case SORT_NONSTOP_COURSES:
+				case SORT_ONI_COURSES:
+				case SORT_ENDLESS_COURSES:
+					/* Don't display course modes after the first stage. */
+					if( !GAMESTATE->IsEventMode() && GAMESTATE->m_iCurrentStageIndex )
+						continue;
+				}
+
+				if( !wid.m_Action.IsPlayable() )
 					continue;
-			}
 
-			if( !wid.m_Action.IsPlayable() )
-				continue;
-
-			arrayWheelItemDatas.push_back( wid );
-		}		
-		break;
-	}
+				arrayWheelItemDatas.push_back( wid );
+			}		
+			break;
+		}
 	case SORT_PREFERRED:
 	case SORT_ROULETTE:
 	case SORT_GROUP:
@@ -483,253 +483,254 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 	case SORT_MEDIUM_METER:
 	case SORT_HARD_METER:
 	case SORT_CHALLENGE_METER:
-	{
-		///////////////////////////////////
-		// Make an array of Song*, then sort them
-		///////////////////////////////////
-		vector<Song*> arraySongs;
-		
-		GetSongList(arraySongs, so, GAMESTATE->m_sPreferredSongGroup );
-
-		bool bUseSections = true;
-
-		// sort the songs
-		switch( so )
 		{
-		case SORT_PREFERRED:
-		case SORT_ROULETTE:
-			SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_EASY );
-			if( (bool)PREFSMAN->m_bPreferredSortUsesGroups )
-				stable_sort( arraySongs.begin(), arraySongs.end(), SongUtil::CompareSongPointersByGroup );
-			bUseSections = false;
-			break;
-		case SORT_GROUP:
-			SongUtil::SortSongPointerArrayByGroupAndTitle( arraySongs );
-			bUseSections = GAMESTATE->m_sPreferredSongGroup == GROUP_ALL_MUSIC;
-			break;
-		case SORT_TITLE:
-			SongUtil::SortSongPointerArrayByTitle( arraySongs );
-			break;
-		case SORT_BPM:
-			SongUtil::SortSongPointerArrayByBPM( arraySongs );
-			break;
-		case SORT_POPULARITY:
-			if( (int) arraySongs.size() > MOST_PLAYED_SONGS_TO_SHOW )
-				arraySongs.erase( arraySongs.begin()+MOST_PLAYED_SONGS_TO_SHOW, arraySongs.end() );
-			bUseSections = false;
-			break;
-		case SORT_TOP_GRADES:
-			SongUtil::SortSongPointerArrayByGrade( arraySongs );
-			break;
-		case SORT_ARTIST:
-			SongUtil::SortSongPointerArrayByArtist( arraySongs );
-			break;
-		case SORT_GENRE:
-			SongUtil::SortSongPointerArrayByGenre( arraySongs );
-			break;
-		case SORT_EASY_METER:
-			SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_EASY );
-			break;
-		case SORT_MEDIUM_METER:
-			SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_MEDIUM );
-			break;
-		case SORT_HARD_METER:
-			SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_HARD );
-			break;
-		case SORT_CHALLENGE_METER:
-			SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_CHALLENGE );
-			break;
-		default:
-			ASSERT(0);	// unhandled SortOrder
-		}
-
-
-		///////////////////////////////////
-		// Build an array of WheelItemDatas from the sorted list of Song*'s
-		///////////////////////////////////
-		arrayWheelItemDatas.clear();	// clear out the previous wheel items 
-		arrayWheelItemDatas.reserve( arraySongs.size() );
-
-		switch( PREFSMAN->m_MusicWheelUsesSections )
-		{
-		case PrefsManager::NEVER:
-			bUseSections = false;
-			break;
-		case PrefsManager::ABC_ONLY:
-			if( so != SORT_TITLE && so != SORT_GROUP )
-				bUseSections = false;
-			break;
-		}
-
-		if( bUseSections )
-		{
-			// Sorting twice isn't necessary.  Instead, modify the compatator functions 
-			// in Song.cpp to have the desired effect. -Chris
-			/* Keeping groups together with the sorts is tricky and brittle; we
-				* keep getting OTHER split up without this.  However, it puts the 
-				* Grade and BPM sorts in the wrong order, and they're already correct,
-				* so don't re-sort for them. */
-//				/* We're using sections, so use the section name as the top-level
-//				 * sort. */
-			if( so != SORT_TOP_GRADES && so != SORT_BPM )
-				SongUtil::SortSongPointerArrayBySectionName(arraySongs, so);
-
-			// make WheelItemDatas with sections
-			CString sLastSection = "";
-			int iSectionColorIndex = 0;
-			for( unsigned i=0; i< arraySongs.size(); i++ )
-			{
-				Song* pSong = arraySongs[i];
-				CString sThisSection = SongUtil::GetSectionNameFromSongAndSort( pSong, so );
-
-				if( sThisSection != sLastSection)	// new section, make a section item
-				{
-					RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
-					iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
-					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection) );
-					sLastSection = sThisSection;
-				}
-
-				arrayWheelItemDatas.push_back( WheelItemData( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetSongColor(pSong)) );
-			}
-		}
-		else
-		{
-			for( unsigned i=0; i<arraySongs.size(); i++ )
-			{
-				Song* pSong = arraySongs[i];
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetSongColor(pSong)) );
-			}
-		}
-
-		if( so != SORT_ROULETTE )
-		{
-			if( SHOW_ROULETTE )
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1)) );
-			/* Only add TYPE_PORTAL if there's at least one song on the list. */
-			bool bFoundAnySong = false;
-			for( unsigned i=0; !bFoundAnySong && i < arrayWheelItemDatas.size(); i++ )
-				if( arrayWheelItemDatas[i].m_Type == TYPE_SONG )
-					bFoundAnySong = true;
-
-			if( SHOW_RANDOM && bFoundAnySong )
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1)) );
-
-			if( SHOW_PORTAL && bFoundAnySong )
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_PORTAL, NULL, "", NULL, RageColor(1,0,0,1)) );
-		}
-
-		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-		{
-			Song* pSong;
-			Steps* pSteps;
-			PlayerOptions po;
-			SongOptions so;
-			SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, po, so );
+			///////////////////////////////////
+			// Make an array of Song*, then sort them
+			///////////////////////////////////
+			vector<Song*> arraySongs;
 			
-			for( unsigned i=0; i<arrayWheelItemDatas.size(); i++ )
+			GetSongList(arraySongs, so, GAMESTATE->m_sPreferredSongGroup );
+
+			bool bUseSections = true;
+
+			// sort the songs
+			switch( so )
 			{
-				if( arrayWheelItemDatas[i].m_pSong == pSong )
+			case SORT_PREFERRED:
+			case SORT_ROULETTE:
+				SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_EASY );
+				if( (bool)PREFSMAN->m_bPreferredSortUsesGroups )
+					stable_sort( arraySongs.begin(), arraySongs.end(), SongUtil::CompareSongPointersByGroup );
+				bUseSections = false;
+				break;
+			case SORT_GROUP:
+				SongUtil::SortSongPointerArrayByGroupAndTitle( arraySongs );
+				bUseSections = GAMESTATE->m_sPreferredSongGroup == GROUP_ALL_MUSIC;
+				break;
+			case SORT_TITLE:
+				SongUtil::SortSongPointerArrayByTitle( arraySongs );
+				break;
+			case SORT_BPM:
+				SongUtil::SortSongPointerArrayByBPM( arraySongs );
+				break;
+			case SORT_POPULARITY:
+				if( (int) arraySongs.size() > MOST_PLAYED_SONGS_TO_SHOW )
+					arraySongs.erase( arraySongs.begin()+MOST_PLAYED_SONGS_TO_SHOW, arraySongs.end() );
+				bUseSections = false;
+				break;
+			case SORT_TOP_GRADES:
+				SongUtil::SortSongPointerArrayByGrade( arraySongs );
+				break;
+			case SORT_ARTIST:
+				SongUtil::SortSongPointerArrayByArtist( arraySongs );
+				break;
+			case SORT_GENRE:
+				SongUtil::SortSongPointerArrayByGenre( arraySongs );
+				break;
+			case SORT_EASY_METER:
+				SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_EASY );
+				break;
+			case SORT_MEDIUM_METER:
+				SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_MEDIUM );
+				break;
+			case SORT_HARD_METER:
+				SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_HARD );
+				break;
+			case SORT_CHALLENGE_METER:
+				SongUtil::SortSongPointerArrayByMeter( arraySongs, DIFFICULTY_CHALLENGE );
+				break;
+			default:
+				ASSERT(0);	// unhandled SortOrder
+			}
+
+
+			///////////////////////////////////
+			// Build an array of WheelItemDatas from the sorted list of Song*'s
+			///////////////////////////////////
+			arrayWheelItemDatas.clear();	// clear out the previous wheel items 
+			arrayWheelItemDatas.reserve( arraySongs.size() );
+
+			switch( PREFSMAN->m_MusicWheelUsesSections )
+			{
+			case PrefsManager::NEVER:
+				bUseSections = false;
+				break;
+			case PrefsManager::ABC_ONLY:
+				if( so != SORT_TITLE && so != SORT_GROUP )
+					bUseSections = false;
+				break;
+			}
+
+			if( bUseSections )
+			{
+				// Sorting twice isn't necessary.  Instead, modify the compatator functions 
+				// in Song.cpp to have the desired effect. -Chris
+				/* Keeping groups together with the sorts is tricky and brittle; we
+					* keep getting OTHER split up without this.  However, it puts the 
+					* Grade and BPM sorts in the wrong order, and they're already correct,
+					* so don't re-sort for them. */
+	//				/* We're using sections, so use the section name as the top-level
+	//				 * sort. */
+				if( so != SORT_TOP_GRADES && so != SORT_BPM )
+					SongUtil::SortSongPointerArrayBySectionName(arraySongs, so);
+
+				// make WheelItemDatas with sections
+				CString sLastSection = "";
+				int iSectionColorIndex = 0;
+				for( unsigned i=0; i< arraySongs.size(); i++ )
 				{
-					/* Change the song color. */
-					arrayWheelItemDatas[i].m_color = SONG_REAL_EXTRA_COLOR;
-					break;
+					Song* pSong = arraySongs[i];
+					CString sThisSection = SongUtil::GetSectionNameFromSongAndSort( pSong, so );
+
+					if( sThisSection != sLastSection)	// new section, make a section item
+					{
+						RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetSongGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
+						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
+						arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection) );
+						sLastSection = sThisSection;
+					}
+
+					arrayWheelItemDatas.push_back( WheelItemData( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetSongColor(pSong)) );
 				}
 			}
+			else
+			{
+				for( unsigned i=0; i<arraySongs.size(); i++ )
+				{
+					Song* pSong = arraySongs[i];
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetSongColor(pSong)) );
+				}
+			}
+
+			if( so != SORT_ROULETTE )
+			{
+				if( SHOW_ROULETTE )
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_ROULETTE, NULL, "", NULL, RageColor(1,0,0,1)) );
+				/* Only add TYPE_PORTAL if there's at least one song on the list. */
+				bool bFoundAnySong = false;
+				for( unsigned i=0; !bFoundAnySong && i < arrayWheelItemDatas.size(); i++ )
+					if( arrayWheelItemDatas[i].m_Type == TYPE_SONG )
+						bFoundAnySong = true;
+
+				if( SHOW_RANDOM && bFoundAnySong )
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_RANDOM, NULL, "", NULL, RageColor(1,0,0,1)) );
+
+				if( SHOW_PORTAL && bFoundAnySong )
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_PORTAL, NULL, "", NULL, RageColor(1,0,0,1)) );
+			}
+
+			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+			{
+				Song* pSong;
+				Steps* pSteps;
+				PlayerOptions po;
+				SongOptions so;
+				SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, po, so );
+				
+				for( unsigned i=0; i<arrayWheelItemDatas.size(); i++ )
+				{
+					if( arrayWheelItemDatas[i].m_pSong == pSong )
+					{
+						/* Change the song color. */
+						arrayWheelItemDatas[i].m_color = SONG_REAL_EXTRA_COLOR;
+						break;
+					}
+				}
+			}
+			break;
 		}
-		break;
-	}
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
-	{
-		vector<Course*> apCourses;
-		switch( so )
 		{
-		case SORT_NONSTOP_COURSES:
-			SONGMAN->GetCourses( COURSE_TYPE_NONSTOP,	apCourses, PREFSMAN->m_bAutogenGroupCourses );	
-			break;
-		case SORT_ONI_COURSES:
-			SONGMAN->GetCourses( COURSE_TYPE_ONI,		apCourses, PREFSMAN->m_bAutogenGroupCourses );
-			SONGMAN->GetCourses( COURSE_TYPE_SURVIVAL,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
-			break;
-		case SORT_ENDLESS_COURSES:
-			SONGMAN->GetCourses( COURSE_TYPE_ENDLESS,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
-			break;
-		case SORT_ALL_COURSES:
-			SONGMAN->GetAllCourses( apCourses, PREFSMAN->m_bAutogenGroupCourses );
-			break;
-		default: ASSERT(0); break;
-		}
-
-		if( PREFSMAN->m_CourseSortOrder == PrefsManager::COURSE_SORT_SONGS )
-		{
-			CourseUtil::SortCoursePointerArrayByDifficulty( apCourses );
-		}
-		else
-		{
-			switch( PREFSMAN->m_CourseSortOrder )
+			vector<Course*> apCourses;
+			switch( so )
 			{
-			case PrefsManager::COURSE_SORT_METER:
-				CourseUtil::SortCoursePointerArrayByAvgDifficulty( apCourses );
+			case SORT_NONSTOP_COURSES:
+				SONGMAN->GetCourses( COURSE_TYPE_NONSTOP,	apCourses, PREFSMAN->m_bAutogenGroupCourses );	
 				break;
-			case PrefsManager::COURSE_SORT_METER_SUM:
-				CourseUtil::SortCoursePointerArrayByTotalDifficulty( apCourses );
+			case SORT_ONI_COURSES:
+				SONGMAN->GetCourses( COURSE_TYPE_ONI,		apCourses, PREFSMAN->m_bAutogenGroupCourses );
+				SONGMAN->GetCourses( COURSE_TYPE_SURVIVAL,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
 				break;
-			case PrefsManager::COURSE_SORT_RANK:
-				CourseUtil::SortCoursePointerArrayByRanking( apCourses );
+			case SORT_ENDLESS_COURSES:
+				SONGMAN->GetCourses( COURSE_TYPE_ENDLESS,	apCourses, PREFSMAN->m_bAutogenGroupCourses );
 				break;
-			default:	ASSERT(0);
+			case SORT_ALL_COURSES:
+				SONGMAN->GetAllCourses( apCourses, PREFSMAN->m_bAutogenGroupCourses );
+				break;
+			default: ASSERT(0); break;
 			}
 
-			// since we can't agree, make it an option
-			if( PREFSMAN->m_bMoveRandomToEnd )
-				CourseUtil::MoveRandomToEnd( apCourses );
-		}
-
-		if( so == SORT_ALL_COURSES )
-			CourseUtil::SortCoursePointerArrayByType( apCourses );
-
-		arrayWheelItemDatas.clear();	// clear out the previous wheel items 
-
-		CString sLastSection = "";
-		int iSectionColorIndex = 0;
-		for( unsigned c=0; c<apCourses.size(); c++ )	// foreach course
-		{
-			Course* pCourse = apCourses[c];
-
-			// if unlocks are on, make sure it is unlocked
-			if ( UNLOCKMAN->CourseIsLocked(pCourse) )
-				continue;
-
-			CString sThisSection = "";
-			if( so == SORT_ALL_COURSES )
+			if( PREFSMAN->m_CourseSortOrder == PrefsManager::COURSE_SORT_SONGS )
 			{
-				switch( pCourse->GetPlayMode() )
+				CourseUtil::SortCoursePointerArrayByDifficulty( apCourses );
+			}
+			else
+			{
+				switch( PREFSMAN->m_CourseSortOrder )
 				{
-				case PLAY_MODE_ONI:		sThisSection = "Oni";		break;
-				case PLAY_MODE_NONSTOP:	sThisSection = "Nonstop";	break;
-				case PLAY_MODE_ENDLESS:	sThisSection = "Endless";	break;
+				case PrefsManager::COURSE_SORT_METER:
+					CourseUtil::SortCoursePointerArrayByAvgDifficulty( apCourses );
+					break;
+				case PrefsManager::COURSE_SORT_METER_SUM:
+					CourseUtil::SortCoursePointerArrayByTotalDifficulty( apCourses );
+					break;
+				case PrefsManager::COURSE_SORT_RANK:
+					CourseUtil::SortCoursePointerArrayByRanking( apCourses );
+					break;
+				default:	ASSERT(0);
 				}
+
+				// since we can't agree, make it an option
+				if( PREFSMAN->m_bMoveRandomToEnd )
+					CourseUtil::MoveRandomToEnd( apCourses );
 			}
 
-			// check that this course has at least one song playable in the current style
-			if( !pCourse->IsPlayableIn(GAMESTATE->GetCurrentStyle()->m_StepsType) )
-				continue;
+			if( so == SORT_ALL_COURSES )
+				CourseUtil::SortCoursePointerArrayByType( apCourses );
 
-			if( sThisSection != sLastSection )	// new section, make a section item
+			arrayWheelItemDatas.clear();	// clear out the previous wheel items 
+
+			CString sLastSection = "";
+			int iSectionColorIndex = 0;
+			for( unsigned c=0; c<apCourses.size(); c++ )	// foreach course
 			{
-				RageColor c = SECTION_COLORS.GetValue(iSectionColorIndex);
-				iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
-				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, c) );
-				sLastSection = sThisSection;
-			}
+				Course* pCourse = apCourses[c];
 
-            arrayWheelItemDatas.push_back( WheelItemData(TYPE_COURSE, NULL, sThisSection, pCourse, pCourse->GetColor()) );
+				// if unlocks are on, make sure it is unlocked
+				if ( UNLOCKMAN->CourseIsLocked(pCourse) )
+					continue;
+
+				CString sThisSection = "";
+				if( so == SORT_ALL_COURSES )
+				{
+					switch( pCourse->GetPlayMode() )
+					{
+					case PLAY_MODE_ONI:		sThisSection = "Oni";		break;
+					case PLAY_MODE_NONSTOP:	sThisSection = "Nonstop";	break;
+					case PLAY_MODE_ENDLESS:	sThisSection = "Endless";	break;
+					}
+				}
+
+				// check that this course has at least one song playable in the current style
+				if( !pCourse->IsPlayableIn(GAMESTATE->GetCurrentStyle()->m_StepsType) )
+					continue;
+
+				if( sThisSection != sLastSection )	// new section, make a section item
+				{
+					RageColor c = SECTION_COLORS.GetValue(iSectionColorIndex);
+					iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
+					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, c) );
+					sLastSection = sThisSection;
+				}
+
+				RageColor c = pCourse->GetColor() * SONGMAN->GetCourseColor(pCourse);
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_COURSE, NULL, sThisSection, pCourse, c) );
+			}
+			break;
 		}
-		break;
-	}
 	}
 
 	// init music status icons

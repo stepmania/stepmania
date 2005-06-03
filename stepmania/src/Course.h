@@ -102,6 +102,7 @@ public:
 
 	CString		m_sBannerPath;
 	CString		m_sCDTitlePath;
+	CString		m_sGroupName;
 
 	bool		m_bRepeat;	// repeat after last song?  "Endless"
 	bool		m_bRandomize;	// play the songs in a random order

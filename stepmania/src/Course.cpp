@@ -72,6 +72,15 @@ void Course::LoadFromCRSFile( CString sPath )
 
 	m_sPath = sPath;	// save path
 
+	// save group name
+	{
+		CStringArray parts;
+		split( sPath, "/", parts, false );
+		if( parts.size() >= 4 )		// e.g. "/Courses/blah/fun.cvs"
+			m_sGroupName = parts[parts.size()-2];
+	}
+
+
 	bool bUseCache = true;
 	{
 		/* First look in the cache for this course.  Don't bother
@@ -375,6 +384,7 @@ void Course::Init()
 		m_iCustomMeter[dc] = -1;
 	m_entries.clear();
 	m_sPath = "";
+	m_sGroupName = "";
 	m_sMainTitle = "";
 	m_sMainTitleTranslit = "";
 	m_sSubTitle = "";

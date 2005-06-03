@@ -146,7 +146,7 @@ void ScreenUnlock::Init()
 				const Song *pSong = entry.m_pSong;
 				RageColor color = RageColor(1,1,1,1);
 				if( pSong )
-					color = SONGMAN->GetGroupColor(pSong->m_sGroupName);
+					color = SONGMAN->GetSongGroupColor(pSong->m_sGroupName);
 				text->SetGlobalDiffuseColor(color);
 			}
 
@@ -250,7 +250,7 @@ void ScreenUnlock::Init()
 			NewText->SetMaxWidth( MaxWidth );
 			NewText->SetText( title );
 
-			RageColor color = SONGMAN->GetGroupColor(pSong->m_sGroupName);
+			RageColor color = SONGMAN->GetSongGroupColor(pSong->m_sGroupName);
 			NewText->SetGlobalDiffuseColor(color);
 
 			NewText->SetXY(ScrollingTextX, ScrollingTextStartY);

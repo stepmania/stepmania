@@ -54,9 +54,11 @@ public:
 	void GetGroupNames( CStringArray &AddTo );
 	bool DoesGroupExist( CString sGroupName );
 
-	RageColor GetGroupColor( const CString &sGroupName );
+	RageColor GetSongGroupColor( const CString &sSongGroupName );
 	RageColor GetSongColor( const Song* pSong );
 	RageColor GetDifficultyColor( Difficulty dc ) const;
+	RageColor GetCourseGroupColor( const CString &sCourseGroupName );
+	RageColor GetCourseColor( const Course* pCourse );
 	
 	static CString ShortenGroupName( CString sLongGroupName );
 	static int     GetNumStagesForSong( const Song* pSong );	// LongVer songs take 2 stages, MarathonVer take 3
@@ -113,15 +115,19 @@ protected:
 	vector<Song*>		m_pSongs;	// all songs that can be played
 	vector<Song*>		m_pBestSongs[NUM_PROFILE_SLOTS];
 	vector<Song*>		m_pShuffledSongs;	// used by GetRandomSong
-	CStringArray		m_sGroupNames;
-	CStringArray		m_sGroupBannerPaths; // each song group may have a banner associated with it
+	CStringArray		m_sSongGroupNames;
+	CStringArray		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
+
 	vector<Course*>		m_pCourses;
 	vector<Course*>		m_pBestCourses[NUM_PROFILE_SLOTS][NUM_COURSE_TYPES];
 	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
+	CStringArray		m_sCourseGroupNames;
 
 
-	ThemeMetric<int>			NUM_GROUP_COLORS;
-	ThemeMetric1D<RageColor>	GROUP_COLOR;
+	ThemeMetric<int>			NUM_SONG_GROUP_COLORS;
+	ThemeMetric1D<RageColor>	SONG_GROUP_COLOR;
+	ThemeMetric<int>			NUM_COURSE_GROUP_COLORS;
+	ThemeMetric1D<RageColor>	COURSE_GROUP_COLOR;
 };
 
 static const CString EDIT_SUBDIR = "Edits/";

@@ -606,7 +606,7 @@ void ScreenEz2SelectMusic::MusicChanged()
 	GAMESTATE->m_pCurSong.Set( pSong );
 
 	m_CurrentGroup.SetText( SONGMAN->ShortenGroupName( pSong->m_sGroupName ) , "");
-	m_CurrentGroup.SetDiffuse( SONGMAN->GetGroupColor(pSong->m_sGroupName) );
+	m_CurrentGroup.SetDiffuse( SONGMAN->GetSongGroupColor(pSong->m_sGroupName) );
 
 	m_CurrentTitle.SetText( pSong->m_sMainTitle, "");
 	m_CurrentSubTitle.SetText( pSong->m_sSubTitle, "");
