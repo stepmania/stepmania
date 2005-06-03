@@ -10,9 +10,9 @@
 #include "archutils/win32/WindowsResources.h"
 #include "archutils/win32/GraphicsWindow.h"
 
-static bool g_Hush;
+static bool g_bHush;
 static CString g_sMessage;
-static bool g_AllowHush;
+static bool g_bAllowHush;
 
 static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
@@ -23,15 +23,16 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 			// Disable parent, like a modal MessageBox does.
 			EnableWindow( GetParent(hWnd), FALSE );
 
-			g_Hush = false;
-			HWND hush = GetDlgItem( hWnd, IDC_HUSH );
-	        int style = GetWindowLong(hush, GWL_STYLE);
+			// Hide or display "Don't show this message."
+			g_bHush = false;
+			HWND hHushButton = GetDlgItem( hWnd, IDC_HUSH );
+	        int iStyle = GetWindowLong( hHushButton, GWL_STYLE );
 
-			if( g_AllowHush )
-				style |= WS_VISIBLE;
+			if( g_bAllowHush )
+				iStyle |= WS_VISIBLE;
 			else
-				style &= ~WS_VISIBLE;
-	        SetWindowLong( hush, GWL_STYLE, style );
+				iStyle &= ~WS_VISIBLE;
+	        SetWindowLong( hHushButton, GWL_STYLE, iStyle );
 
 			// Set static text.
 			CString sMessage = g_sMessage;
@@ -43,17 +44,17 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 			SetFocus( GetDlgItem(hWnd, IDOK) );
 		}
 		break;
+
 	case WM_DESTROY:
-		{
-			// Re-enable parent
-			EnableWindow( GetParent(hWnd), TRUE );
-		}
+		// Re-enable the parent window.
+		EnableWindow( GetParent(hWnd), TRUE );
 		break;
+
 	case WM_COMMAND:
-		switch (LOWORD(wParam))
+		switch( LOWORD(wParam) )
 		{
 		case IDOK:
-			g_Hush = !!IsDlgButtonChecked(hWnd, IDC_HUSH);
+			g_bHush = !!IsDlgButtonChecked( hWnd, IDC_HUSH );
 			/* fall through */
 		case IDCANCEL:
 			EndDialog( hWnd, 0 );
@@ -66,11 +67,11 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 
 void DialogDriver_Win32::OK( CString sMessage, CString ID )
 {
-	g_AllowHush = ID != "";
+	g_bAllowHush = ID != "";
 	g_sMessage = sMessage;
 	AppInstance handle;
-	DialogBox(handle.Get(), MAKEINTRESOURCE(IDD_OK), GraphicsWindow::GetHwnd(), OKWndProc);
-	if( g_AllowHush && g_Hush )
+	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_OK), GraphicsWindow::GetHwnd(), OKWndProc );
+	if( g_bAllowHush && g_bHush )
 		Dialog::IgnoreMessage( ID );
 }
 
@@ -135,8 +136,7 @@ void DialogDriver_Win32::Error( CString error, CString ID )
 	g_sErrorString = error;
  	// throw up a pretty error dialog
 	AppInstance handle;
-	DialogBox(handle.Get(), MAKEINTRESOURCE(IDD_ERROR_DIALOG),
-		NULL, ErrorWndProc);
+	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_ERROR_DIALOG), NULL, ErrorWndProc );
 }
 
 Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString ID )
@@ -156,7 +156,7 @@ Dialog::Result DialogDriver_Win32::AbortRetry( CString sMessage, CString ID )
 {
 	CString sWindowTitle = WINDOW_TITLE.IsLoaded() ? WINDOW_TITLE.GetValue() : "";
 
-	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, sWindowTitle, MB_RETRYCANCEL ) )
+	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, sWindowTitle, MB_RETRYCANCEL) )
 	{
 	case IDRETRY:	return Dialog::retry;
 	default:	ASSERT(0);
