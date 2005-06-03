@@ -3,10 +3,9 @@
 #ifndef RAGE_FILE_DRIVER_H
 #define RAGE_FILE_DRIVER_H
 
-#include "RageFile.h"
 #include "RageFileManager.h"
 
-class RageFileObj;
+class RageFileBasic;
 class FilenameDB;
 class RageFileDriver
 {
