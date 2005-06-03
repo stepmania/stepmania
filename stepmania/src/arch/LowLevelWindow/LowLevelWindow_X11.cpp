@@ -97,6 +97,9 @@ CString LowLevelWindow_X11::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 			return "No visual available for that depth.";
 		}
 
+		/* Enable StructureNotifyMask, so we receive a MapNotify for the following XMapWindow. */
+		X11Helper::OpenMask( StructureNotifyMask );
+
 		if( !X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual, p.width, p.height) )
 		{
 			return "Failed to create the window.";
@@ -110,9 +113,6 @@ CString LowLevelWindow_X11::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 		GLXContext ctxt = glXCreateContext(X11Helper::Dpy, xvi, NULL, True);
 
 		glXMakeCurrent( X11Helper::Dpy, X11Helper::Win, ctxt );
-
-		/* Enable StructureNotifyMask, so we receive a MapNotify for the following XMapWindow. */
-		X11Helper::OpenMask( StructureNotifyMask );
 
 		XMapWindow( X11Helper::Dpy, X11Helper::Win );
 
