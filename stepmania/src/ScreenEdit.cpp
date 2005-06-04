@@ -463,13 +463,13 @@ static Menu g_BackgroundChange(
 	MenuRow( ScreenEdit::file1_song_movie,			"File1 Song Movie",				EnabledIfSet1SM,EDIT_MODE_FULL, 0, NULL ),
 	MenuRow( ScreenEdit::file1_song_still,			"File1 Song Still",				EnabledIfSet1SI,EDIT_MODE_FULL, 0, NULL ),
 	MenuRow( ScreenEdit::file1_global_bganimation,	"File1 Global BGAnimation",		EnabledIfSet1GB,EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file1_global_random_movie,	"File1 Global Random Movie",	EnabledIfSet1GM,EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file1_global_random_movie,	"File1 Global Movie",			EnabledIfSet1GM,EDIT_MODE_FULL, 0, NULL ),
 	MenuRow( ScreenEdit::file2_type,				"File2 Type",					true,			EDIT_MODE_FULL, 0, "None", "Random", "Song BGAnimation", "Song Movie", "Song Bitmap", "Global BGAnimation", "Global Movie" ),
 	MenuRow( ScreenEdit::file2_song_bganimation,	"File2 Song BGAnimation",		EnabledIfSet2SB,EDIT_MODE_FULL, 0, NULL ),
 	MenuRow( ScreenEdit::file2_song_movie,			"File2 Song Movie",				EnabledIfSet2SM,EDIT_MODE_FULL, 0, NULL ),
 	MenuRow( ScreenEdit::file2_song_still,			"File2 Song Still",				EnabledIfSet2SI,EDIT_MODE_FULL, 0, NULL ),
 	MenuRow( ScreenEdit::file2_global_bganimation,	"File2 Global BGAnimation",		EnabledIfSet2GB,EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file2_global_random_movie,	"File2 Global Random Movie",	EnabledIfSet2GM,EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file2_global_random_movie,	"File2 Global Movie",			EnabledIfSet2GM,EDIT_MODE_FULL, 0, NULL ),
 	MenuRow( ScreenEdit::delete_change,				"Remove Change",				true,			EDIT_MODE_FULL, 0, NULL )
 );
 static bool EnabledIfSet1SB() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == song_bganimation		&& !g_BackgroundChange.rows[ScreenEdit::file1_song_bganimation].choices.empty(); }
@@ -576,7 +576,7 @@ void ScreenEdit::Init()
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
 	m_NoteFieldEdit.Init( &m_PlayerStateEdit, PLAYER_HEIGHT*2 );
-	m_NoteFieldEdit.Load( &m_NoteDataEdit, -240, 800 );
+	m_NoteFieldEdit.Load( &m_NoteDataEdit, -240, 850 );
 	this->AddChild( &m_NoteFieldEdit );
 
 	m_NoteDataRecord.CopyAll( noteData );
