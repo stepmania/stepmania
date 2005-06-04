@@ -6,6 +6,8 @@
 #include "RageTextureManager.h"
 #include "ActorUtil.h"
 #include "song.h"
+#include "BackgroundUtil.h"
+#include "Foreach.h"
 
 Foreground::~Foreground()
 {
@@ -29,10 +31,10 @@ void Foreground::LoadFromSong( const Song *pSong )
 	TEXTUREMAN->SetDefaultTexturePolicy( RageTextureID::TEX_VOLATILE );
 
 	m_pSong = pSong;
-	for( unsigned i=0; i<pSong->m_ForegroundChanges.size(); i++ )
+	FOREACH_CONST( BackgroundChange, pSong->GetForegroundChanges(), bgc )
 	{
-		const BackgroundChange &change = pSong->m_ForegroundChanges[i];
-		CString sBGName = change.m_sFile1;
+		const BackgroundChange &change = *bgc;
+		CString sBGName = change.m_def.m_sFile1;
 		
 		LoadedBGA bga;
 		bga.m_bga = ActorUtil::MakeActor( pSong->GetSongDir() + sBGName );

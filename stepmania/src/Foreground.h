@@ -4,6 +4,7 @@
 #include "ActorFrame.h"
 
 class Song;
+
 class Foreground: public ActorFrame
 {
 public:

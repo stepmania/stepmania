@@ -12,7 +12,8 @@ const CString SBE_StretchRewind		= "StretchRewind";
 const CString SBT_CrossFade			= "CrossFade";
 
 const CString RANDOM_BACKGROUND_FILE = "-random-";
-const CString SONG_BACKGROUND_FILE = "songbackground";
+const CString NO_SONG_BG_FILE		= "-nosongbg-";
+const CString SONG_BACKGROUND_FILE	= "songbackground";
 
 struct BackgroundDef
 {
@@ -41,7 +42,7 @@ struct BackgroundDef
 	CString m_sFile2;	// may be ""
 };
 
-struct BackgroundChange : public BackgroundDef
+struct BackgroundChange
 {
 	BackgroundChange()
 	{
@@ -58,12 +59,13 @@ struct BackgroundChange : public BackgroundDef
 		)
 	{
 		m_fStartBeat=s;
-		m_sFile1=f1;
-		m_sFile2=f2;
+		m_def.m_sFile1=f1;
+		m_def.m_sFile2=f2;
 		m_fRate=r;
-		m_sEffect=e;
+		m_def.m_sEffect=e;
 		m_sTransition=t;
 	}
+	BackgroundDef m_def;
 	float m_fStartBeat;
 	float m_fRate;
 	CString m_sTransition;

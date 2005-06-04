@@ -2,6 +2,7 @@
 #include "MusicList.h"
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
+#include "RageUtil.h"
 
 /* If this actor is used anywhere other than SelectGroup, we
  * can add a setting that changes which metric group we pull

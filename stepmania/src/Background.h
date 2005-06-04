@@ -3,36 +3,17 @@
 #ifndef BACKGROUND_H
 #define BACKGROUND_H
 
-#include "Sprite.h"
-#include "Quad.h"
 #include "ActorFrame.h"
+#include "Quad.h"
 #include "BGAnimation.h"
-#include "song.h"
+#include "PlayerNumber.h"
+#include "BackgroundUtil.h"
 #include <deque>
 #include <map>
 
 class DancingCharacters;
-
-class BrightnessOverlay: public ActorFrame
-{
-public:
-	BrightnessOverlay();
-	void Update( float fDeltaTime );
-
-	void FadeToActualBrightness();
-	void SetActualBrightness();
-	void Set( float fBrightness );
-
-private:
-	Quad m_quadBGBrightness[NUM_PLAYERS];
-	Quad m_quadBGBrightnessFade;
-};
-
-struct BackgroundTransition
-{
-	apActorCommands cmdLeaves;
-	apActorCommands cmdRoot;
-};
+class Song;
+class BackgroundImpl;
 
 class Background : public ActorFrame
 {
@@ -44,61 +25,13 @@ public:
 	virtual void LoadFromSong( const Song *pSong );
 	virtual void Unload();
 
-	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
-
-	void FadeToActualBrightness() { m_Brightness.FadeToActualBrightness(); }
-	void SetBrightness( float fBrightness ) { m_Brightness.Set(fBrightness); } /* overrides pref and Cover */
+	void FadeToActualBrightness();
+	void SetBrightness( float fBrightness ); /* overrides pref and Cover */
 	
-	DancingCharacters* GetDancingCharacters() { return m_pDancingCharacters; };
-
+	DancingCharacters* GetDancingCharacters();
 
 protected:
-	bool m_bInitted;
-	DancingCharacters*	m_pDancingCharacters;
-	const Song *m_pSong;
-	map<CString,BackgroundTransition> m_mapNameToTransition;
-	deque<BackgroundDef> m_RandomBGAnimations;	// random background to choose from.  These may or may not be loaded into m_BGAnimations.
-	
-	void LoadFromRandom( float fFirstBeat, float fLastBeat, const BackgroundChange &change );
-	bool IsDangerAllVisible();
-	
-	class Layer
-	{
-	public:
-		Layer();
-		void Unload();
-
-		// return true if created and added to m_BGAnimations
-		bool CreateBackground( const Song *pSong, const BackgroundDef &bd );
-		// return def of the background that was created and added to m_BGAnimations. calls CreateBackground
-		BackgroundDef CreateRandomBGA( const Song *pSong, deque<BackgroundDef> &RandomBGAnimations );
-
-		int FindBGSegmentForBeat( float fBeat ) const;
-		void UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const map<CString,BackgroundTransition> &mapNameToTransition );
-
-		map<BackgroundDef,Actor*> m_BGAnimations;
-		vector<BackgroundChange> m_aBGChanges;
-		int				m_iCurBGChangeIndex;
-		Actor *m_pCurrentBGA;
-		Actor *m_pFadingBGA;
-		float m_fSecsLeftInFade;
-	};
-	Layer m_Layer[NUM_BACKGROUND_LAYERS];
-
-	float m_fLastMusicSeconds;
-
-	BGAnimation		m_DangerPlayer[NUM_PLAYERS];
-	BGAnimation		m_DangerAll;
-
-	BGAnimation		m_DeadPlayer[NUM_PLAYERS];
-	
-	// cover up the edge of animations that might hang outside of the background rectangle
-	Quad m_quadBorderLeft, m_quadBorderTop, m_quadBorderRight, m_quadBorderBottom;
-
-	BrightnessOverlay m_Brightness;
-
-	BackgroundDef STATIC_BACKGROUND_DEF;
+	BackgroundImpl *m_pImpl;
 };
 
 

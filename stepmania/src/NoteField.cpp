@@ -19,6 +19,7 @@
 #include "Style.h"
 #include "CommonMetrics.h"
 #include <float.h>
+#include "BackgroundUtil.h"
 
 NoteField::NoteField()
 {	
@@ -533,18 +534,18 @@ void NoteField::DrawPrimitives()
 			break;
 		case EDIT_MODE_FULL:
 			{
-				vector<BackgroundChange>::iterator iter[NUM_BACKGROUND_LAYERS];
-				for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
-					iter[i] = GAMESTATE->m_pCurSong->m_BackgroundChanges[i].begin();
+				vector<BackgroundChange>::iterator iter[NUM_BackgroundLayer];
+				FOREACH_BackgroundLayer( i )
+					iter[i] = GAMESTATE->m_pCurSong->GetBackgroundChanges(i).begin();
 
 				while( 1 )
 				{
 					float fLowestBeat = FLT_MAX;
-					vector<int> viLowestIndex;
+					vector<BackgroundLayer> viLowestIndex;
 
-					for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
+					FOREACH_BackgroundLayer( i )
 					{
-						if( iter[i] == GAMESTATE->m_pCurSong->m_BackgroundChanges[i].end() )
+						if( iter[i] == GAMESTATE->m_pCurSong->GetBackgroundChanges(i).end() )
 							continue;
 
 						float fBeat = iter[i]->m_fStartBeat;
@@ -566,23 +567,23 @@ void NoteField::DrawPrimitives()
 					if( IS_ON_SCREEN(fLowestBeat) )
 					{
 						vector<CString> vs;
-						FOREACH_CONST( int, viLowestIndex, i )
+						FOREACH_CONST( BackgroundLayer, viLowestIndex, i )
 						{
-							ASSERT( iter[*i] != GAMESTATE->m_pCurSong->m_BackgroundChanges[*i].end() );
+							ASSERT( iter[*i] != GAMESTATE->m_pCurSong->GetBackgroundChanges(*i).end() );
 
 							const BackgroundChange& change = *iter[*i];
 							vs.push_back( ssprintf("%s%s%s%s%s%s",
 								((*i!=0) ? ssprintf("%d: ",*i) : CString()).c_str(),
-								(!change.m_sFile1.empty() ? " "+change.m_sFile1 : CString()).c_str(),
-								(!change.m_sFile2.empty() ? " "+change.m_sFile2 : CString()).c_str(),
+								(!change.m_def.m_sFile1.empty() ? " "+change.m_def.m_sFile1 : CString()).c_str(),
+								(!change.m_def.m_sFile2.empty() ? " "+change.m_def.m_sFile2 : CString()).c_str(),
 								((change.m_fRate!=1.0f) ? ssprintf("%.2f%%",change.m_fRate*100) : CString()).c_str(),
 								(!change.m_sTransition.empty() ? " "+change.m_sTransition : CString()).c_str(),
-								(!change.m_sEffect.empty() ? " "+change.m_sEffect : CString()).c_str()
+								(!change.m_def.m_sEffect.empty() ? " "+change.m_def.m_sEffect : CString()).c_str()
 								) );
 						}
 						DrawBGChangeText( fLowestBeat, join("\n",vs) );
 					}
-					FOREACH_CONST( int, viLowestIndex, i )
+					FOREACH_CONST( BackgroundLayer, viLowestIndex, i )
 						iter[*i]++;
 				}
 			}

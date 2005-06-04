@@ -3,11 +3,9 @@
 #ifndef SONG_H
 #define SONG_H
 
-#include "PlayerNumber.h"
-#include "BackgroundUtil.h"
-#include "Grade.h"
 #include "TimingData.h"
 #include "Difficulty.h"
+#include "EnumHelper.h"
 
 class Steps;
 class Style;
@@ -16,13 +14,20 @@ class LyricsLoader;
 class Profile;
 class StepsID;
 struct lua_State;
+struct BackgroundChange;
 
 const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
 const int MAX_EDITS_PER_SONG				= 5*NUM_PROFILE_SLOTS;
 
 extern const int FILE_CACHE_VERSION;
 
-const int NUM_BACKGROUND_LAYERS = 2;
+enum BackgroundLayer
+{
+	BACKGROUND_LAYER_1,
+	BACKGROUND_LAYER_2,
+	NUM_BackgroundLayer 
+};
+#define FOREACH_BackgroundLayer( bl ) FOREACH_ENUM( BackgroundLayer, NUM_BackgroundLayer, bl )
 
 struct LyricSegment
 {
@@ -141,18 +146,26 @@ public:
 	bool Matches(CString sGroup, CString sSong) const;
 
 	TimingData					m_Timing;
-	vector<BackgroundChange>	m_BackgroundChanges[NUM_BACKGROUND_LAYERS];	// these must be sorted before gameplay
-	vector<BackgroundChange>	m_ForegroundChanges;	// this must be sorted before gameplay
+
+private:
+	vector<BackgroundChange>	*m_BackgroundChanges[NUM_BackgroundLayer];	// these must be sorted before gameplay
+	vector<BackgroundChange>	*m_ForegroundChanges;	// this must be sorted before gameplay
+public:
+	const vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl ) const;
+	vector<BackgroundChange>		&GetBackgroundChanges( BackgroundLayer bl );
+	const vector<BackgroundChange>	&GetForegroundChanges() const;
+	vector<BackgroundChange>		&GetForegroundChanges();
+
 	vector<LyricSegment>		m_LyricSegments;		// this must be sorted before gameplay
 
 	void AddBPMSegment( const BPMSegment &seg ) { m_Timing.AddBPMSegment( seg ); }
 	void AddStopSegment( const StopSegment &seg ) { m_Timing.AddStopSegment( seg ); }
-	void AddBackgroundChange( int iLayer, BackgroundChange seg );
+	void AddBackgroundChange( BackgroundLayer blLayer, BackgroundChange seg );
 	void AddForegroundChange( BackgroundChange seg );
 	void AddLyricSegment( LyricSegment seg );
 
 	void GetDisplayBpms( DisplayBpms &AddTo ) const;
-	const BackgroundChange &GetBackgroundAtBeat( int iLayer, float fBeat ) const;
+	const BackgroundChange &GetBackgroundAtBeat( BackgroundLayer iLayer, float fBeat ) const;
 
 	float GetBPMAtBeat( float fBeat ) const { return m_Timing.GetBPMAtBeat( fBeat ); }
 	void SetBPMAtBeat( float fBeat, float fBPM ) { m_Timing.SetBPMAtBeat( fBeat, fBPM ); }

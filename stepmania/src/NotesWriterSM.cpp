@@ -11,19 +11,20 @@
 #include <cstring>
 #include <cerrno>
 #include "Foreach.h"
+#include "BackgroundUtil.h"
 
 static CString BackgroundChangeToString( const BackgroundChange &bgc )
 {
 	return ssprintf( 
 		"%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s,", 
 		bgc.m_fStartBeat, 
-		bgc.m_sFile1.c_str(), 
+		bgc.m_def.m_sFile1.c_str(), 
 		bgc.m_fRate, 
 		bgc.m_sTransition == SBT_CrossFade,		// backward compat
-		bgc.m_sEffect == SBE_StretchRewind, 	// backward compat
-		bgc.m_sEffect != SBE_StretchNoLoop, 	// backward compat
-		bgc.m_sEffect.c_str(), 
-		bgc.m_sFile2.c_str(), 
+		bgc.m_def.m_sEffect == SBE_StretchRewind, 	// backward compat
+		bgc.m_def.m_sEffect != SBE_StretchNoLoop, 	// backward compat
+		bgc.m_def.m_sEffect.c_str(), 
+		bgc.m_def.m_sFile2.c_str(), 
 		bgc.m_sTransition.c_str()
 		);
 }
@@ -95,31 +96,31 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 	}
 	f.PutLine( ";" );
 
-	for( int b=0; b<NUM_BACKGROUND_LAYERS; b++ )
+	FOREACH_BackgroundLayer( b )
 	{
 		if( b==0 )
 			f.Write( "#BGCHANGES:" );
-		else if( out.m_BackgroundChanges[b].empty() )
+		else if( out.GetBackgroundChanges(b).empty() )
 			continue;	// skip
 		else
 			f.Write( ssprintf("#BGCHANGES%d:", b) );
 
-		FOREACH_CONST( BackgroundChange, out.m_BackgroundChanges[b], bgc )
+		FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
 			f.PutLine( BackgroundChangeToString(*bgc) );
 
 		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to indicate that
 		 * this file doesn't want a song BG entry added at the end.  See SMLoader::TidyUpData.
 		 * This tag will be removed on load.  Add it at a very high beat, so it won't cause
 		 * problems if loaded in older versions. */
-		if( b==0 && !out.m_BackgroundChanges[b].empty() )
+		if( b==0 && !out.GetBackgroundChanges(b).empty() )
 			f.PutLine( "99999=-nosongbg-=1.000=0=0=0 // don't automatically add -songbackground-" );
 		f.PutLine( ";" );
 	}
 
-	if( out.m_ForegroundChanges.size() )
+	if( out.GetForegroundChanges().size() )
 	{
 		f.Write( "#FGCHANGES:" );
-		FOREACH_CONST( BackgroundChange, out.m_ForegroundChanges, bgc )
+		FOREACH_CONST( BackgroundChange, out.GetForegroundChanges(), bgc )
 		{
 			f.PutLine( BackgroundChangeToString(*bgc) );
 		}

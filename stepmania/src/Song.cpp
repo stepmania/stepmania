@@ -24,6 +24,7 @@
 #include "ProfileManager.h"
 #include "Foreach.h"
 #include "UnlockManager.h"
+#include "BackgroundUtil.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -49,6 +50,11 @@ const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 //////////////////////////////
 Song::Song()
 {
+	FOREACH_BackgroundLayer( i )
+		m_BackgroundChanges[i] = new vector<BackgroundChange>;
+	m_ForegroundChanges = new vector<BackgroundChange>;
+	
+
 	m_LoadedFromProfile = PROFILE_SLOT_INVALID;
 	m_fMusicSampleStartSeconds = -1;
 	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
@@ -66,6 +72,10 @@ Song::Song()
 
 Song::~Song()
 {
+	FOREACH_BackgroundLayer( i )
+		SAFE_DELETE( m_BackgroundChanges[i] );
+	SAFE_DELETE( m_ForegroundChanges );
+
 	FOREACH( Steps*, m_vpSteps, s )
 		SAFE_DELETE( *s );
 	m_vpSteps.clear();
@@ -98,17 +108,17 @@ void Song::Reset()
 }
 
 
-void Song::AddBackgroundChange( int iLayer, BackgroundChange seg )
+void Song::AddBackgroundChange( BackgroundLayer iLayer, BackgroundChange seg )
 {
-	ASSERT( iLayer >= 0 && iLayer < NUM_BACKGROUND_LAYERS );
-	m_BackgroundChanges[iLayer].push_back( seg );
-	BackgroundUtil::SortBackgroundChangesArray( m_BackgroundChanges[iLayer] );
+	ASSERT( iLayer >= 0 && iLayer < NUM_BackgroundLayer );
+	GetBackgroundChanges(iLayer).push_back( seg );
+	BackgroundUtil::SortBackgroundChangesArray( GetBackgroundChanges(iLayer) );
 }
 
 void Song::AddForegroundChange( BackgroundChange seg )
 {
-	m_ForegroundChanges.push_back( seg );
-	BackgroundUtil::SortBackgroundChangesArray( m_ForegroundChanges );
+	GetForegroundChanges().push_back( seg );
+	BackgroundUtil::SortBackgroundChangesArray( GetForegroundChanges() );
 }
 
 void Song::AddLyricSegment( LyricSegment seg )
@@ -132,13 +142,12 @@ void Song::GetDisplayBpms( DisplayBpms &AddTo ) const
 	}
 }
 
-const BackgroundChange &Song::GetBackgroundAtBeat( int iLayer, float fBeat ) const
+const BackgroundChange &Song::GetBackgroundAtBeat( BackgroundLayer iLayer, float fBeat ) const
 {
-	unsigned i;
-	for( i=0; i<m_BackgroundChanges[iLayer].size()-1; i++ )
-		if( m_BackgroundChanges[iLayer][i+1].m_fStartBeat > fBeat )
-			break;
-	return m_BackgroundChanges[iLayer][i];
+	for( unsigned i=0; i<GetBackgroundChanges(iLayer).size()-1; i++ )
+		if( GetBackgroundChanges(iLayer)[i+1].m_fStartBeat > fBeat )
+			return GetBackgroundChanges(iLayer)[i];
+	return GetBackgroundChanges(iLayer)[0];
 }
 
 
@@ -709,7 +718,7 @@ void Song::TidyUpData()
 		/* Use this->GetBeatFromElapsedTime(0) instead of 0 to start when the
 		 * music starts. */
 		if( arrayPossibleMovies.size() == 1 )
-			this->AddBackgroundChange( 0, BackgroundChange(0,arrayPossibleMovies[0],"",1.f,SBE_StretchNoLoop) );
+			this->AddBackgroundChange( BACKGROUND_LAYER_1, BackgroundChange(0,arrayPossibleMovies[0],"",1.f,SBE_StretchNoLoop) );
 	}
 
 
@@ -1200,13 +1209,32 @@ bool Song::HasBackground() const 	{return m_sBackgroundFile != ""		&&  IsAFile(G
 bool Song::HasCDTitle() const 		{return m_sCDTitleFile != ""		&&  IsAFile(GetCDTitlePath()); }
 bool Song::HasBGChanges() const
 {
-	for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
+	FOREACH_BackgroundLayer( i )
 	{
-		if( !m_BackgroundChanges[i].empty() )
+		if( !GetBackgroundChanges(i).empty() )
 			return true;
 	}
 	return false;
 }
+
+const vector<BackgroundChange> &Song::GetBackgroundChanges( BackgroundLayer bl ) const
+{
+	return *(m_BackgroundChanges[bl]);
+}
+vector<BackgroundChange> &Song::GetBackgroundChanges( BackgroundLayer bl )
+{
+	return *(m_BackgroundChanges[bl]);
+}
+
+const vector<BackgroundChange> &Song::GetForegroundChanges() const
+{
+	return *m_ForegroundChanges;
+}
+vector<BackgroundChange> &Song::GetForegroundChanges()
+{
+	return *m_ForegroundChanges;
+}
+
 
 CString GetSongAssetPath( CString sPath, const CString &sSongPath )
 {

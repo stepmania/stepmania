@@ -8,6 +8,7 @@
 #include "SongManager.h"
 #include "RageFileManager.h"
 #include "NoteTypes.h"
+#include "BackgroundUtil.h"
 
 #define MAX_EDIT_SIZE_BYTES  20*1024	// 20 KB
 
@@ -170,20 +171,20 @@ bool LoadFromBGChangesString( BackgroundChange &change, const CString &sBGChange
 
 		// m_sEffect may be overwritten by param 7 below.
 		if( bRewindMovie )
-			change.m_sEffect = SBE_StretchRewind;
+			change.m_def.m_sEffect = SBE_StretchRewind;
 		if( !bLoop )
-			change.m_sEffect = SBE_StretchNoLoop;
+			change.m_def.m_sEffect = SBE_StretchNoLoop;
 	}
 	if( aBGChangeValues.size() >= 9 )
 	{
-		change.m_sEffect = aBGChangeValues[6];
-		change.m_sFile2 = aBGChangeValues[7];
+		change.m_def.m_sEffect = aBGChangeValues[6];
+		change.m_def.m_sFile2 = aBGChangeValues[7];
 		change.m_sTransition = aBGChangeValues[8];
 	}
 	if( aBGChangeValues.size() >= 2 )
 	{
 		change.m_fStartBeat = strtof( aBGChangeValues[0], NULL );
-		change.m_sFile1 = aBGChangeValues[1];
+		change.m_def.m_sFile1 = aBGChangeValues[1];
 		return true;
 	}
 	else
@@ -334,10 +335,10 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 		else if( sValueName=="BGCHANGES" || sValueName=="ANIMATIONS" )
 		{
-			int iLayer = 0;
+			BackgroundLayer iLayer = BACKGROUND_LAYER_1;
 			sscanf( sValueName, "BGCHANGES%d", &iLayer );
 
-			if( iLayer < 0 && iLayer >= NUM_BACKGROUND_LAYERS )
+			if( iLayer < 0 && iLayer >= NUM_BackgroundLayer )
 			{
 				LOG->Warn( "The song file '%s' has a BGCHANGES tag '%s' that is out of range.", sPath.c_str(), sValueName.c_str() );
 			}
@@ -548,7 +549,7 @@ void SMLoader::TidyUpData( Song &song, bool cache )
 	 * have to add an explicit song BG tag if they want it.  This is really a
 	 * formatting hack only; nothing outside of SMLoader ever sees "-nosongbg-".
 	 */
-	vector<BackgroundChange> &bg = song.m_BackgroundChanges[0];
+	vector<BackgroundChange> &bg = song.GetBackgroundChanges(BACKGROUND_LAYER_1);
 	if( !bg.empty() )
 	{
 		/* BGChanges have been sorted.  On the odd chance that a BGChange exists
@@ -557,7 +558,7 @@ void SMLoader::TidyUpData( Song &song, bool cache )
 
 		for( unsigned i = 0; !bHasNoSongBgTag && i < bg.size(); ++i )
 		{
-			if( !bg[i].m_sFile1.CompareNoCase("-nosongbg-") )
+			if( !bg[i].m_def.m_sFile1.CompareNoCase(NO_SONG_BG_FILE) )
 			{
 				bg.erase( bg.begin()+i );
 				bHasNoSongBgTag = true;
@@ -578,7 +579,7 @@ void SMLoader::TidyUpData( Song &song, bool cache )
 				break;
 
 			/* If the last BGA is already the song BGA, don't add a duplicate. */
-			if( !bg.empty() && !bg.back().m_sFile1.CompareNoCase(song.m_sBackgroundFile) )
+			if( !bg.empty() && !bg.back().m_def.m_sFile1.CompareNoCase(song.m_sBackgroundFile) )
 				break;
 
 			if( !IsAFile( song.GetBackgroundPath() ) )

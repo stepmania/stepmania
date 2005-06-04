@@ -29,6 +29,7 @@
 #include "Foreach.h"
 #include "StatsManager.h"
 #include "Style.h"
+#include "BackgroundUtil.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -232,7 +233,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 	}
 }
 
-// Why Symlink instead of allowing membership in multiple groups via song tags?
+// Instead of "symlinks", songs should have membership in multiple groups.
 // -Chris
 void SongManager::LoadGroupSymLinks(CString sDir, CString sGroupFolder)
 {
@@ -257,8 +258,8 @@ void SongManager::LoadGroupSymLinks(CString sDir, CString sGroupFolder)
 			while( vpSteps.size() )
 				pNewSong->RemoveSteps( vpSteps[0] );
 
-			for( int i=0; i<NUM_BACKGROUND_LAYERS; i++ )
-				pNewSong->m_BackgroundChanges[i].clear();
+			FOREACH_BackgroundLayer( i )
+				pNewSong->GetBackgroundChanges(i).clear();
 
 			pNewSong->m_bIsSymLink = true;	// Very important so we don't double-parse later
 			pNewSong->m_sGroupName = sGroupFolder;

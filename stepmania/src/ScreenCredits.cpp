@@ -10,6 +10,7 @@
 #include "BitmapText.h"
 #include "ActorUtil.h"
 #include "SongUtil.h"
+#include "RageUtil.h"
 
 
 #define BACKGROUNDS_SPACING_X				THEME->GetMetricF("ScreenCredits","BackgroundsSpacingX")
