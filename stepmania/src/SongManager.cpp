@@ -399,9 +399,8 @@ RageColor SongManager::GetCourseGroupColor( const CString &sCourseGroupName )
 		if( m_sCourseGroupNames[i] == sCourseGroupName )
 			break;
 	}
-	ASSERT_M( i != m_sCourseGroupNames.size(), sCourseGroupName );	// this is not a valid group
-
-	return COURSE_GROUP_COLOR.GetValue( i%NUM_COURSE_GROUP_COLORS );
+	ASSERT_M( i != m_sCourseGroupNames.size(), "Course: '" + sCourseGroupName + "' is not a valid group." );	// this is not a valid group
+	return COURSE_GROUP_COLOR.GetValue( i%NUM_COURSE_GROUP_COLORS.GetValue() );
 }
 
 RageColor SongManager::GetCourseColor( const Course* pCourse )
