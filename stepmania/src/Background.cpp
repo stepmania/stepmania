@@ -98,7 +98,7 @@ protected:
 		// return true if created and added to m_BGAnimations
 		bool CreateBackground( const Song *pSong, const BackgroundDef &bd );
 		// return def of the background that was created and added to m_BGAnimations. calls CreateBackground
-		BackgroundDef CreateRandomBGA( const Song *pSong, deque<BackgroundDef> &RandomBGAnimations );
+		BackgroundDef CreateRandomBGA( const Song *pSong, const CString &sEffect, deque<BackgroundDef> &RandomBGAnimations );
 
 		int FindBGSegmentForBeat( float fBeat ) const;
 		void UpdateCurBGChange( const Song *pSong, float fLastMusicSeconds, float fCurrentTime, const map<CString,BackgroundTransition> &mapNameToTransition );
@@ -394,7 +394,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 	return true;
 }
 
-BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, deque<BackgroundDef> &RandomBGAnimations )
+BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const CString &sEffect, deque<BackgroundDef> &RandomBGAnimations )
 {
 	if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_OFF )
 		return BackgroundDef();
@@ -407,6 +407,9 @@ BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, deque<B
 	BackgroundDef bd = RandomBGAnimations.front();
 	RandomBGAnimations.push_back( RandomBGAnimations.front() );
 	RandomBGAnimations.pop_front();
+
+	if( !sEffect.empty() )
+		bd.m_sEffect = sEffect;
 
 	map<BackgroundDef,Actor*>::const_iterator iter = m_BGAnimations.find( bd );
 	
@@ -427,11 +430,12 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fLastBeat, const Ba
 	for( float f=fFirstBeat; f<fLastBeat; f+=BEATS_PER_MEASURE*4 )
 	{
 		// Don't fade.  It causes frame rate dip, especially on slower machines.
-		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, m_RandomBGAnimations );
+		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations );
 		if( !bd.IsEmpty() )
 		{
 			BackgroundChange c = change;
-			c.m_def = bd;
+			c.m_def.m_sFile1 = bd.m_sFile1;
+			c.m_def.m_sFile2 = bd.m_sFile2;
 			c.m_fStartBeat = f;
 			m_Layer[0].m_aBGChanges.push_back( c );
 		}
@@ -450,11 +454,12 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fLastBeat, const Ba
 		if( bpmseg.m_iStartIndex < iStartIndex  || bpmseg.m_iStartIndex > iEndIndex )
 			continue;	// skip
 
-		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, m_RandomBGAnimations );
+		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations );
 		if( !bd.IsEmpty() )
 		{
 			BackgroundChange c = change;
-			c.m_def = bd;
+			c.m_def.m_sFile1 = bd.m_sFile1;
+			c.m_def.m_sFile2 = bd.m_sFile2;
 			c.m_fStartBeat = NoteRowToBeat(bpmseg.m_iStartIndex);
 			m_Layer[0].m_aBGChanges.push_back( c );
 		}
@@ -542,7 +547,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 						if( i == 0 )
 						{
 							// The background was not found.  Try to use a random one instead.
-							bd = layer.CreateRandomBGA( pSong, m_RandomBGAnimations );
+							bd = layer.CreateRandomBGA( pSong, "", m_RandomBGAnimations );
 							if( bd.IsEmpty() )
 								bd = STATIC_BACKGROUND_DEF;
 						}
