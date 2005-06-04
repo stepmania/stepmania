@@ -21,20 +21,20 @@ const int num_chunks = 8;
 const int chunksize_frames = buffersize_frames / num_chunks;
 const int chunksize = buffersize / num_chunks; /* in bytes */
 
-static CString wo_ssprintf( MMRESULT err, const char *fmt, ...)
+static CString wo_ssprintf( MMRESULT err, const char *szFmt, ...)
 {
-	char buf[MAXERRORLENGTH];
-	waveOutGetErrorText(err, buf, MAXERRORLENGTH);
+	char szBuf[MAXERRORLENGTH];
+	waveOutGetErrorText( err, szBuf, MAXERRORLENGTH );
 
     va_list	va;
-    va_start(va, fmt);
-    CString s = vssprintf( fmt, va );
-    va_end(va);
+    va_start( va, szFmt );
+    CString s = vssprintf( szFmt, va );
+    va_end( va );
 
-	return s += ssprintf( "(%s)", buf );
+	return s += ssprintf( "(%s)", szBuf );
 }
 
-int RageSound_WaveOut::MixerThread_start(void *p)
+int RageSound_WaveOut::MixerThread_start( void *p )
 {
 	((RageSound_WaveOut *) p)->MixerThread();
 	return 0;
@@ -45,15 +45,15 @@ void RageSound_WaveOut::MixerThread()
 	if( !SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL) )
 		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
 
-	while( !shutdown )
+	while( !m_bShutdown )
 	{
 		while( GetData() )
 			;
 
-		WaitForSingleObject(sound_event, 10);
+		WaitForSingleObject( m_hSoundEvent, 10 );
 	}
 
-	waveOutReset(wo);
+	waveOutReset( m_hWaveOut );
 }
 
 bool RageSound_WaveOut::GetData()
@@ -61,19 +61,20 @@ bool RageSound_WaveOut::GetData()
 	/* Look for a free buffer. */
 	int b;
 	for( b = 0; b < num_chunks; ++b )
-		if(buffers[b].dwFlags & WHDR_DONE) break;
+		if( m_aBuffers[b].dwFlags & WHDR_DONE )
+			break;
 	if( b == num_chunks )
 		return false;
 
 	/* Call the callback. */
-	this->Mix( (int16_t *) buffers[b].lpData, chunksize_frames, last_cursor_pos, GetPosition( NULL ) );
+	this->Mix( (int16_t *) m_aBuffers[b].lpData, chunksize_frames, m_iLastCursorPos, GetPosition( NULL ) );
 
-	MMRESULT ret = waveOutWrite(wo, &buffers[b], sizeof(buffers[b]));
+	MMRESULT ret = waveOutWrite( m_hWaveOut, &m_aBuffers[b], sizeof(m_aBuffers[b]) );
   	if(ret != MMSYSERR_NOERROR)
 		RageException::Throw(wo_ssprintf(ret, "waveOutWrite failed"));
 
-	/* Increment last_cursor_pos. */
-	last_cursor_pos += chunksize_frames;
+	/* Increment m_iLastCursorPos. */
+	m_iLastCursorPos += chunksize_frames;
 
 	return true;
 }
@@ -84,25 +85,25 @@ void RageSound_WaveOut::SetupDecodingThread()
 		LOG->Warn( werr_ssprintf(GetLastError(), "Failed to set sound thread priority") );
 }
 
-int64_t RageSound_WaveOut::GetPosition( const RageSoundBase *snd ) const
+int64_t RageSound_WaveOut::GetPosition( const RageSoundBase *pSound ) const
 {
 	MMTIME tm;
 	tm.wType = TIME_SAMPLES;
-	MMRESULT ret = waveOutGetPosition(wo, &tm, sizeof(tm));
-  	if(ret != MMSYSERR_NOERROR)
-		RageException::Throw(wo_ssprintf(ret, "waveOutGetPosition failed"));
+	MMRESULT ret = waveOutGetPosition( m_hWaveOut, &tm, sizeof(tm) );
+  	if( ret != MMSYSERR_NOERROR )
+		RageException::Throw( wo_ssprintf(ret, "waveOutGetPosition failed") );
 
 	return tm.u.sample;
 }
 
 RageSound_WaveOut::RageSound_WaveOut()
 {
-	shutdown = false;
-	last_cursor_pos = 0;
+	m_bShutdown = false;
+	m_iLastCursorPos = 0;
 
-	sound_event = CreateEvent(NULL, false, true, NULL);
+	m_hSoundEvent = CreateEvent( NULL, false, true, NULL );
 
-	wo = NULL;
+	m_hWaveOut = NULL;
 }
 
 CString RageSound_WaveOut::Init()
@@ -116,19 +117,19 @@ CString RageSound_WaveOut::Init()
 	fmt.nBlockAlign = fmt.nChannels * fmt.wBitsPerSample / 8;
 	fmt.nAvgBytesPerSec = fmt.nSamplesPerSec * fmt.nBlockAlign;
 
-	MMRESULT ret = waveOutOpen( &wo, WAVE_MAPPER, &fmt, (DWORD_PTR) sound_event, NULL, CALLBACK_EVENT );
+	MMRESULT ret = waveOutOpen( &m_hWaveOut, WAVE_MAPPER, &fmt, (DWORD_PTR) m_hSoundEvent, NULL, CALLBACK_EVENT );
 	if( ret != MMSYSERR_NOERROR )
 		return wo_ssprintf( ret, "waveOutOpen failed" );
 
-	ZERO( buffers );
+	ZERO( m_aBuffers );
 	for(int b = 0; b < num_chunks; ++b)
 	{
-		buffers[b].dwBufferLength = chunksize;
-		buffers[b].lpData = new char[chunksize];
-		ret = waveOutPrepareHeader(wo, &buffers[b], sizeof(buffers[b]));
+		m_aBuffers[b].dwBufferLength = chunksize;
+		m_aBuffers[b].lpData = new char[chunksize];
+		ret = waveOutPrepareHeader( m_hWaveOut, &m_aBuffers[b], sizeof(m_aBuffers[b]) );
 		if( ret != MMSYSERR_NOERROR )
 			return wo_ssprintf( ret, "waveOutPrepareHeader failed" );
-		buffers[b].dwFlags |= WHDR_DONE;
+		m_aBuffers[b].dwFlags |= WHDR_DONE;
 	}
 
 	/* We have a very large writeahead; make sure we have a large enough decode
@@ -136,7 +137,7 @@ CString RageSound_WaveOut::Init()
 	SetDecodeBufferSize( buffersize_frames * 3/2 );
 	StartDecodeThread();
 
-	MixingThread.SetName("Mixer thread");
+	MixingThread.SetName( "Mixer thread" );
 	MixingThread.Create( MixerThread_start, this );
 
 	return "";
@@ -147,25 +148,25 @@ RageSound_WaveOut::~RageSound_WaveOut()
 	/* Signal the mixing thread to quit. */
 	if( MixingThread.IsCreated() )
 	{
-		shutdown = true;
-		SetEvent( sound_event );
-		LOG->Trace("Shutting down mixer thread ...");
+		m_bShutdown = true;
+		SetEvent( m_hSoundEvent );
+		LOG->Trace( "Shutting down mixer thread ..." );
 		MixingThread.Wait();
-		LOG->Trace("Mixer thread shut down.");
+		LOG->Trace( "Mixer thread shut down." );
 	}
 
-	if( wo != NULL )
+	if( m_hWaveOut != NULL )
 	{
-		for( int b = 0; b < num_chunks && buffers[b].lpData != NULL; ++b )
+		for( int b = 0; b < num_chunks && m_aBuffers[b].lpData != NULL; ++b )
 		{
-			waveOutUnprepareHeader( wo, &buffers[b], sizeof(buffers[b]) );
-			delete [] buffers[b].lpData;
+			waveOutUnprepareHeader( m_hWaveOut, &m_aBuffers[b], sizeof(m_aBuffers[b]) );
+			delete [] m_aBuffers[b].lpData;
 		}
 
-		waveOutClose( wo );
+		waveOutClose( m_hWaveOut );
 	}
 
-	CloseHandle(sound_event);
+	CloseHandle( m_hSoundEvent );
 }
 
 float RageSound_WaveOut::GetPlayLatency() const

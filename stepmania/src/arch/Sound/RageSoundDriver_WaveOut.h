@@ -9,26 +9,25 @@
 class RageSound_WaveOut: public RageSound_Generic_Software
 {
 public:
-	int64_t GetPosition( const RageSoundBase *snd ) const;
-	float GetPlayLatency() const;
-
 	RageSound_WaveOut();
 	~RageSound_WaveOut();
 	CString Init();
 
-private:
-	HWAVEOUT wo;
-	HANDLE sound_event;
-	WAVEHDR buffers[8];
-	bool shutdown;
-	int last_cursor_pos;
+	int64_t GetPosition( const RageSoundBase *pSound ) const;
+	float GetPlayLatency() const;
 
-	static int MixerThread_start(void *p);
+private:
+	static int MixerThread_start( void *p );
 	void MixerThread();
 	RageThread MixingThread;
 	bool GetData();
-
 	void SetupDecodingThread();
+
+	HWAVEOUT m_hWaveOut;
+	HANDLE m_hSoundEvent;
+	WAVEHDR m_aBuffers[8];
+	bool m_bShutdown;
+	int m_iLastCursorPos;
 };
 #define USE_RAGE_SOUND_WAVE_OUT
 
