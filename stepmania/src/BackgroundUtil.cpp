@@ -178,14 +178,16 @@ void BackgroundUtil::GetGlobalRandomMovies( const Song *pSong, const CString &sM
 	vsPathsOut.clear();
 	vsNamesOut.clear();
 
-	CString sSongGroup;
 	set<CString> ssFilterToFileNames;
 	if( pSong  &&  !pSong->m_sGenre.empty() )
 		GetFilterToFileNames( RANDOMMOVIES_DIR, pSong, ssFilterToFileNames );
 
 	vector<CString> vsDirsToTry;
-	if( !sSongGroup.empty() )
-		vsDirsToTry.push_back( RANDOMMOVIES_DIR+sSongGroup+"/" );
+	if( pSong )
+	{
+		ASSERT( !pSong->m_sGroupName.empty() );
+		vsDirsToTry.push_back( RANDOMMOVIES_DIR+pSong->m_sGroupName+"/" );
+	}
 	vsDirsToTry.push_back( RANDOMMOVIES_DIR );
 
 	FOREACH_CONST( CString, vsDirsToTry, sDir )
