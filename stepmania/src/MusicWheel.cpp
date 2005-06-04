@@ -726,7 +726,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 					sLastSection = sThisSection;
 				}
 
-				RageColor c = pCourse->GetColor() * SONGMAN->GetCourseColor(pCourse);
+				RageColor c = ( pCourse->m_sGroupName.size() == 0 ) ? pCourse->GetColor() : pCourse->GetColor() * SONGMAN->GetCourseColor(pCourse);
 				arrayWheelItemDatas.push_back( WheelItemData(TYPE_COURSE, NULL, sThisSection, pCourse, c) );
 			}
 			break;
