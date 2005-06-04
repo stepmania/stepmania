@@ -184,7 +184,8 @@ void BackgroundUtil::GetGlobalRandomMovies( const Song *pSong, const CString &sM
 		GetDirListing( RANDOMMOVIES_DIR+sMatch, vsPathsOut, false, true );
 		if( !vsPathsOut.empty() )
 			goto found_files;
-		else
+		
+		if( sMatch != "-nosongbg-" )
 			LOG->Warn( "Background missing: %s", sMatch.c_str() );
 	}
 
