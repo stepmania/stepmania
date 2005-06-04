@@ -169,7 +169,7 @@ if HAVE_X11
 # InputHandler_X11 depends on LowLevelWindow_X11
 InputHandler += arch/InputHandler/InputHandler_X11.cpp arch/InputHandler/InputHandler_X11.h
 LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_X11.cpp arch/LowLevelWindow/LowLevelWindow_X11.h
-ArchUtils += archutils/Unix/X11Helper.cpp archutils/Unix/X11Helper.h
+LowLevelWindow += archutils/Unix/X11Helper.cpp archutils/Unix/X11Helper.h
 endif
 
 # Platform-specific drivers:
