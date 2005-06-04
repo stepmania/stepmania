@@ -52,6 +52,46 @@ void RageInput::AddHandler( InputHandler *pHandler )
 	m_pDevices.push_back( pHandler );
 }
 
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaRageInput : public Luna<T>
+{
+public:
+	LunaRageInput() { LUA->Register( Register ); }
+
+	static int GetDescriptions( T* p, lua_State *L )
+	{
+		vector<InputDevice> vDevices;
+		vector<CString> vsDescriptions;
+		p->GetDevicesAndDescriptions( vDevices, vsDescriptions );
+		LuaHelpers::CreateTableFromArray( vsDescriptions, L );
+		return 1;
+	}
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetDescriptions )
+		Luna<T>::Register( L );
+
+		// Add global singleton if constructed already.  If it's not constructed yet,
+		// then we'll register it later when we reinit Lua just before 
+		// initializing the display.
+		if( INPUTMAN )
+		{
+			lua_pushstring(L, "INPUTMAN");
+			INPUTMAN->PushSelf( LUA->L );
+			lua_settable(L, LUA_GLOBALSINDEX);
+		}
+	}
+};
+
+LUA_REGISTER_CLASS( RageInput )
+// lua end
+
+
 /*
  * Copyright (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.

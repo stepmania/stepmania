@@ -5,7 +5,9 @@
 
 #include "RageInputDevice.h"
 
+struct lua_State;
 class InputHandler;
+
 class RageInput
 {
 public:
@@ -13,9 +15,12 @@ public:
 	~RageInput();
 
 	void Update( float fDeltaTime );
-	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );
+	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vsDescriptionsOut );
 	void WindowReset();
 	void AddHandler( InputHandler *pHandler );
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	vector<InputHandler *> m_pDevices;
