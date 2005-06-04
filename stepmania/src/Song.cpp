@@ -51,8 +51,8 @@ const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 Song::Song()
 {
 	FOREACH_BackgroundLayer( i )
-		m_BackgroundChanges[i] = new vector<BackgroundChange>;
-	m_ForegroundChanges = new vector<BackgroundChange>;
+		m_BackgroundChanges[i] = AutoPtrCopyOnWrite<VBackgroundChange>(new VBackgroundChange);
+	m_ForegroundChanges = AutoPtrCopyOnWrite<VBackgroundChange>(new VBackgroundChange);
 	
 
 	m_LoadedFromProfile = PROFILE_SLOT_INVALID;
@@ -72,10 +72,6 @@ Song::Song()
 
 Song::~Song()
 {
-	FOREACH_BackgroundLayer( i )
-		SAFE_DELETE( m_BackgroundChanges[i] );
-	SAFE_DELETE( m_ForegroundChanges );
-
 	FOREACH( Steps*, m_vpSteps, s )
 		SAFE_DELETE( *s );
 	m_vpSteps.clear();
@@ -1223,7 +1219,7 @@ const vector<BackgroundChange> &Song::GetBackgroundChanges( BackgroundLayer bl )
 }
 vector<BackgroundChange> &Song::GetBackgroundChanges( BackgroundLayer bl )
 {
-	return *(m_BackgroundChanges[bl]);
+	return *(m_BackgroundChanges[bl].Get());
 }
 
 const vector<BackgroundChange> &Song::GetForegroundChanges() const
@@ -1232,7 +1228,7 @@ const vector<BackgroundChange> &Song::GetForegroundChanges() const
 }
 vector<BackgroundChange> &Song::GetForegroundChanges()
 {
-	return *m_ForegroundChanges;
+	return *m_ForegroundChanges.Get();
 }
 
 

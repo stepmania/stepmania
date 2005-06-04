@@ -6,6 +6,7 @@
 #include "TimingData.h"
 #include "Difficulty.h"
 #include "EnumHelper.h"
+#include "RageUtil_AutoPtr.h"
 
 class Steps;
 class Style;
@@ -147,9 +148,11 @@ public:
 
 	TimingData					m_Timing;
 
+	typedef vector<BackgroundChange> VBackgroundChange;
 private:
-	vector<BackgroundChange>	*m_BackgroundChanges[NUM_BackgroundLayer];	// these must be sorted before gameplay
-	vector<BackgroundChange>	*m_ForegroundChanges;	// this must be sorted before gameplay
+	// AutoPtr instead of raw pointer so that the auto gen'd copy constructor works correctly.
+	AutoPtrCopyOnWrite<VBackgroundChange>	m_BackgroundChanges[NUM_BackgroundLayer];	// these must be sorted before gameplay
+	AutoPtrCopyOnWrite<VBackgroundChange>	m_ForegroundChanges;	// this must be sorted before gameplay
 public:
 	const vector<BackgroundChange>	&GetBackgroundChanges( BackgroundLayer bl ) const;
 	vector<BackgroundChange>		&GetBackgroundChanges( BackgroundLayer bl );
