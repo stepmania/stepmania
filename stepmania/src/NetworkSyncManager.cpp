@@ -876,7 +876,7 @@ static bool ConnectToServer( const CString &t )
 
 static Preference<CString> g_sLastServer( "LastConnectedServer",	"" );
 
-LuaFunction( ConnectToServer, 				ConnectToServer( ( CString(SArg(1)).length()==0 ) ? CString(g_sLastServer) : SArg(1) ) )
+LuaFunction( ConnectToServer, 				ConnectToServer( ( CString(SArg(1)).length()==0 ) ? CString(g_sLastServer) : CString(SArg(1) ) ) )
 
 #endif
 
