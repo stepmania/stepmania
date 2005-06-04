@@ -452,7 +452,9 @@ public:
 
 		IPreference *pPref = PREFSMAN->GetPreferenceByName( sName );
 		if( pPref == NULL )
+		{
 			LOG->Warn( "GetPreference: unknown preference \"%s\"", sName.c_str() );
+		}
 		else
 		{
 			lua_pushvalue( L, 2 );
