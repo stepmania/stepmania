@@ -281,9 +281,9 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 	float fYEndOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fEndBeat );
 	float fYEndPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYEndOffset, m_fYReverseOffsetPixels );
 
-	// Something in OpenGL crashes if this is values are too large.  Strange.  -Chris
-	fYStartPos = max( fYStartPos, -1000 );	
-	fYEndPos = min( fYEndPos, +5000 );	
+	// The caller should have clamped these to reasonable values
+	ASSERT( fYStartPos > -1000 );
+	ASSERT( fYEndPos < +5000 );
 
 	m_rectAreaHighlight.StretchTo( RectF(-GetWidth()/2, fYStartPos, GetWidth()/2, fYEndPos) );
 	m_rectAreaHighlight.SetDiffuse( RageColor(1,0,0,0.3f) );
@@ -596,8 +596,10 @@ void NoteField::DrawPrimitives()
 		//
 		if( m_iBeginMarker != -1  &&  m_iEndMarker != -1 )
 		{
-			int iBegin = max( m_iBeginMarker, iFirstIndexToDraw );
-			int iEnd = min( m_iEndMarker, iLastIndexToDraw );
+			int iBegin = m_iBeginMarker;
+			int iEnd = m_iEndMarker;
+			CLAMP( iBegin, iFirstIndexToDraw, iLastIndexToDraw );
+			CLAMP( iEnd, iFirstIndexToDraw, iLastIndexToDraw );
 			DrawAreaHighlight( iBegin, iEnd );
 		}
 		else if( m_iBeginMarker != -1 )
