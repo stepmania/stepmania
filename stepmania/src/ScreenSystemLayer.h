@@ -7,6 +7,7 @@
 #include "BitmapText.h"
 #include "Quad.h"
 #include "ThemeMetric.h"
+#include "AutoActor.h"
 
 const int NUM_SKIPS_TO_SHOW = 5;
 
@@ -23,6 +24,7 @@ public:
 
 private:
 	BitmapText m_textStats;
+	AutoActor  m_sprMessageFrame;
 	BitmapText m_textMessage;
 	BitmapText m_textCredits[NUM_PLAYERS];
 	BitmapText m_textTime;

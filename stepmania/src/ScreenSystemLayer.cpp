@@ -19,19 +19,19 @@ ScreenSystemLayer::ScreenSystemLayer( const CString &sName ) : Screen(sName)
 	MESSAGEMAN->Subscribe( this, "SystemMessage" );
 	MESSAGEMAN->Subscribe( this, "SystemMessageNoAnimate" );
 
-	CREDITS_PRESS_START.Load("ScreenSystemLayer","CreditsPressStart");
-	CREDITS_INSERT_CARD.Load("ScreenSystemLayer","CreditsInsertCard");
-	CREDITS_CARD_TOO_LATE.Load("ScreenSystemLayer","CreditsCardTooLate");
-	CREDITS_CARD_NO_NAME.Load("ScreenSystemLayer","CreditsCardNoName");
-	CREDITS_CARD_READY.Load("ScreenSystemLayer","CreditsCardReady");
-	CREDITS_CARD_CHECKING.Load("ScreenSystemLayer","CreditsCardChecking");
-	CREDITS_CARD_REMOVED.Load("ScreenSystemLayer","CreditsCardRemoved");
-	CREDITS_FREE_PLAY.Load("ScreenSystemLayer","CreditsFreePlay");
-	CREDITS_CREDITS.Load("ScreenSystemLayer","CreditsCredits");
-	CREDITS_NOT_PRESENT.Load("ScreenSystemLayer","CreditsNotPresent");
-	CREDITS_LOAD_FAILED.Load("ScreenSystemLayer","CreditsLoadFailed");
-	CREDITS_LOADED_FROM_LAST_GOOD_APPEND.Load("ScreenSystemLayer","CreditsLoadedFromLastGoodAppend");
-	CREDITS_JOIN_ONLY.Load( m_sName, "CreditsJoinOnly" );
+	CREDITS_PRESS_START		.Load(m_sName,"CreditsPressStart");
+	CREDITS_INSERT_CARD		.Load(m_sName,"CreditsInsertCard");
+	CREDITS_CARD_TOO_LATE	.Load(m_sName,"CreditsCardTooLate");
+	CREDITS_CARD_NO_NAME	.Load(m_sName,"CreditsCardNoName");
+	CREDITS_CARD_READY		.Load(m_sName,"CreditsCardReady");
+	CREDITS_CARD_CHECKING	.Load(m_sName,"CreditsCardChecking");
+	CREDITS_CARD_REMOVED	.Load(m_sName,"CreditsCardRemoved");
+	CREDITS_FREE_PLAY		.Load(m_sName,"CreditsFreePlay");
+	CREDITS_CREDITS			.Load(m_sName,"CreditsCredits");
+	CREDITS_NOT_PRESENT		.Load(m_sName,"CreditsNotPresent");
+	CREDITS_LOAD_FAILED		.Load(m_sName,"CreditsLoadFailed");
+	CREDITS_LOADED_FROM_LAST_GOOD_APPEND.Load(m_sName,"CreditsLoadedFromLastGoodAppend");
+	CREDITS_JOIN_ONLY		.Load( m_sName, "CreditsJoinOnly" );
 }
 
 ScreenSystemLayer::~ScreenSystemLayer()
@@ -90,16 +90,24 @@ void ScreenSystemLayer::Init()
 
 void ScreenSystemLayer::ReloadCreditsText()
 {
-	m_textMessage.LoadFromFont( THEME->GetPathF("ScreenSystemLayer","message") );
+	if( m_sprMessageFrame.IsLoaded() )
+		this->RemoveChild( m_sprMessageFrame );
+	m_sprMessageFrame.Load( THEME->GetPathG(m_sName,"MessageFrame") );
+	this->AddChild( m_sprMessageFrame );
+	m_sprMessageFrame->SetName( "MessageFrame" );
+	SET_XY_AND_ON_COMMAND( m_sprMessageFrame );
+	m_sprMessageFrame->SetHidden( true );
+
+	m_textMessage.LoadFromFont( THEME->GetPathF(m_sName,"message") );
 	m_textMessage.SetName( "Message" );
 	SET_XY_AND_ON_COMMAND( m_textMessage );
 	m_textMessage.SetHidden( true );
 
- 	m_textStats.LoadFromFont( THEME->GetPathF("ScreenSystemLayer","stats") );
+ 	m_textStats.LoadFromFont( THEME->GetPathF(m_sName,"stats") );
 	m_textStats.SetName( "Stats" );
 	SET_XY_AND_ON_COMMAND( m_textStats ); 
 
-	m_textTime.LoadFromFont( THEME->GetPathF("ScreenSystemLayer","time") );
+	m_textTime.LoadFromFont( THEME->GetPathF(m_sName,"time") );
 	m_textTime.SetName( "Time" );
 	m_textTime.SetHidden( !PREFSMAN->m_bTimestamping );
 	SET_XY_AND_ON_COMMAND( m_textTime ); 
@@ -110,6 +118,8 @@ void ScreenSystemLayer::ReloadCreditsText()
 		m_textCredits[p].SetName( ssprintf("CreditsP%d",p+1) );
 		SET_XY_AND_ON_COMMAND( &m_textCredits[p] );
 	}
+
+	this->SortByDrawOrder();
 }
 
 CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
@@ -219,6 +229,10 @@ void ScreenSystemLayer::HandleMessage( const CString &sMessage )
 	}
 	else if( sMessage == "SystemMessage" )
 	{
+		m_sprMessageFrame->SetHidden( false );
+		m_sprMessageFrame->PlayCommand( "On" );
+		m_sprMessageFrame->PlayCommand( "Off" );
+
 		m_textMessage.SetHidden( false );
 		m_textMessage.SetText( SCREENMAN->GetCurrentSystemMessage() );
 		m_textMessage.PlayCommand( "On" );
@@ -226,6 +240,11 @@ void ScreenSystemLayer::HandleMessage( const CString &sMessage )
 	}
 	else if( sMessage == "SystemMessageNoAnimate" )
 	{
+		m_sprMessageFrame->SetHidden( false );
+		m_sprMessageFrame->PlayCommand( "On" );
+		m_sprMessageFrame->FinishTweening();
+		m_sprMessageFrame->PlayCommand( "Off" );
+
 		m_textMessage.SetHidden( false );
 		m_textMessage.SetText( SCREENMAN->GetCurrentSystemMessage() );
 		m_textMessage.PlayCommand( "On" );
