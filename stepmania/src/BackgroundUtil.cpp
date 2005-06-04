@@ -178,55 +178,64 @@ void BackgroundUtil::GetGlobalRandomMovies( const Song *pSong, const CString &sM
 	vsPathsOut.clear();
 	vsNamesOut.clear();
 
-	set<CString> ssFilterToFileNames;
-	if( pSong  &&  !pSong->m_sGenre.empty() )
-		GetFilterToFileNames( RANDOMMOVIES_DIR, pSong, ssFilterToFileNames );
-
-	vector<CString> vsDirsToTry;
-	if( pSong )
+	// Check for an exact match
+	if( !sMatch.empty() )
 	{
-		ASSERT( !pSong->m_sGroupName.empty() );
-		vsDirsToTry.push_back( RANDOMMOVIES_DIR+pSong->m_sGroupName+"/" );
-	}
-	vsDirsToTry.push_back( RANDOMMOVIES_DIR );
-
-	FOREACH_CONST( CString, vsDirsToTry, sDir )
-	{
-		if( sMatch.empty() )
-		{
-			GetDirListingRecursive( *sDir, "*.avi", vsPathsOut );
-			GetDirListingRecursive( *sDir, "*.mpg", vsPathsOut );
-			GetDirListingRecursive( *sDir, "*.mpeg", vsPathsOut );
-		}
+		GetDirListing( RANDOMMOVIES_DIR+sMatch, vsPathsOut, false, true );
+		if( !vsPathsOut.empty() )
+			goto found_files;
 		else
-		{
-			GetDirListing( RANDOMMOVIES_DIR+sMatch, vsPathsOut, false, true );
-		}
+			LOG->Warn( "Background missing: %s", sMatch.c_str() );
+	}
 
-		if( !ssFilterToFileNames.empty() )
+	//
+	// Search for the most appropriate background
+	//
+	{
+		set<CString> ssFilterToFileNames;
+		if( pSong  &&  !pSong->m_sGenre.empty() )
+			GetFilterToFileNames( RANDOMMOVIES_DIR, pSong, ssFilterToFileNames );
+
+		vector<CString> vsDirsToTry;
+		if( pSong )
 		{
-			for( unsigned i=0; i<vsPathsOut.size(); i++ )
+			ASSERT( !pSong->m_sGroupName.empty() );
+			vsDirsToTry.push_back( RANDOMMOVIES_DIR+pSong->m_sGroupName+"/" );
+		}
+		vsDirsToTry.push_back( RANDOMMOVIES_DIR );
+
+		FOREACH_CONST( CString, vsDirsToTry, sDir )
+		{
+			GetDirListing( *sDir+"*.avi", vsPathsOut, false, true );
+			GetDirListing( *sDir+"*.mpg", vsPathsOut, false, true );
+			GetDirListing( *sDir+"*.mpeg", vsPathsOut, false, true );
+
+			if( !ssFilterToFileNames.empty() )
 			{
-				CString sBasename = Basename( vsPathsOut[i] );
-				bool bFound = ssFilterToFileNames.find(sBasename) != ssFilterToFileNames.end();
-				if( !bFound )
+				for( unsigned i=0; i<vsPathsOut.size(); i++ )
 				{
-					vsPathsOut.erase( vsPathsOut.begin()+i );
-					i--;
+					CString sBasename = Basename( vsPathsOut[i] );
+					bool bFound = ssFilterToFileNames.find(sBasename) != ssFilterToFileNames.end();
+					if( !bFound )
+					{
+						vsPathsOut.erase( vsPathsOut.begin()+i );
+						i--;
+					}
 				}
 			}
-		}
 
-		FOREACH_CONST( CString, vsPathsOut, s )
-		{
-			CString sName = s->Right( s->size() - RANDOMMOVIES_DIR.size() - 1 );
-			vsNamesOut.push_back( sName );
+			if( !vsPathsOut.empty() )
+				goto found_files;
 		}
-
-		if( !vsPathsOut.empty() )
-			break;
 	}
 
+found_files:
+
+	FOREACH_CONST( CString, vsPathsOut, s )
+	{
+		CString sName = s->Right( s->size() - RANDOMMOVIES_DIR.size() - 1 );
+		vsNamesOut.push_back( sName );
+	}
 	StripCvs( vsPathsOut, vsNamesOut );
 }
 
