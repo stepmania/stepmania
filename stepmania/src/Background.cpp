@@ -760,20 +760,21 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 					m_pFadingBGA->RunCommands( *bt.cmdRoot );
 				}
 			}
-
-			m_pCurrentBGA->Reset();
-			m_pCurrentBGA->SetUpdateRate( change.m_fRate );
-			m_pCurrentBGA->PlayCommand( "On" );
-			m_pCurrentBGA->PlayCommand( "GainFocus" );
-
-			m_fSecsLeftInFade = m_pFadingBGA ? m_pFadingBGA->GetTweenTimeLeft() : 0;
-
-			/* How much time of this BGA have we skipped?  (This happens with SetSeconds.) */
-			const float fStartSecond = pSong->m_Timing.GetElapsedTimeFromBeat( change.m_fStartBeat );
-
-			/* This is affected by the music rate. */
-			fDeltaTime = fCurrentTime - fStartSecond;
 		}
+
+		m_pCurrentBGA->Reset();
+		m_pCurrentBGA->SetUpdateRate( change.m_fRate );
+		m_pCurrentBGA->PlayCommand( "Init" );
+		m_pCurrentBGA->PlayCommand( "On" );
+		m_pCurrentBGA->PlayCommand( "GainFocus" );
+
+		m_fSecsLeftInFade = m_pFadingBGA ? m_pFadingBGA->GetTweenTimeLeft() : 0;
+
+		/* How much time of this BGA have we skipped?  (This happens with SetSeconds.) */
+		const float fStartSecond = pSong->m_Timing.GetElapsedTimeFromBeat( change.m_fStartBeat );
+
+		/* This is affected by the music rate. */
+		fDeltaTime = fCurrentTime - fStartSecond;
 	}
 
 	if( m_pFadingBGA )
