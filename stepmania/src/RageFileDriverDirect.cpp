@@ -31,21 +31,21 @@ static struct FileDriverEntry_DIR: public FileDriverEntry
 class RageFileObjDirect: public RageFileObj
 {
 public:
-	RageFileObjDirect( const CString &path, int fd_, int mode_ );
+	RageFileObjDirect( const CString &sPath, int iFD, int iMode );
 	virtual ~RageFileObjDirect();
 	virtual int ReadInternal( void *pBuffer, size_t iBytes );
 	virtual int WriteInternal( const void *pBuffer, size_t iBytes );
 	virtual int FlushInternal();
 	virtual int SeekInternal( int offset );
 	virtual RageFileBasic *Copy() const;
-	virtual CString GetDisplayPath() const { return path; }
+	virtual CString GetDisplayPath() const { return m_sPath; }
 	virtual int GetFileSize() const;
 
 private:
-	int fd;
-	CString path; /* for Copy */
+	int m_iFD;
+	CString m_sPath; /* for Copy */
 
-	CString write_buf;
+	CString m_sWriteBuf;
 	
 	bool FinalFlush();
 
@@ -131,8 +131,7 @@ bool RageFileDriverDirect::Remove( const CString &path )
 		LOG->Trace("remove '%s'", (root + sPath).c_str());
 		if( DoRemove( root + sPath ) == -1 )
 		{
-			LOG->Warn("remove(%s) failed: %s",
-				(root + sPath).c_str(), strerror(errno) );
+			LOG->Warn( "remove(%s) failed: %s", (root + sPath).c_str(), strerror(errno) );
 			return false;
 		}
 		FDB->DelFile( sPath );
@@ -142,8 +141,7 @@ bool RageFileDriverDirect::Remove( const CString &path )
 		LOG->Trace("rmdir '%s'", (root + sPath).c_str());
 		if( DoRmdir( root + sPath ) == -1 )
 		{
-			LOG->Warn("rmdir(%s) failed: %s",
-				(root + sPath).c_str(), strerror(errno) );
+			LOG->Warn( "rmdir(%s) failed: %s", (root + sPath).c_str(), strerror(errno) );
 			return false;
 		}
 		FDB->DelFile( sPath );
@@ -156,13 +154,13 @@ bool RageFileDriverDirect::Remove( const CString &path )
 
 RageFileBasic *RageFileObjDirect::Copy() const
 {
-	int err;
-	RageFileObj *ret = MakeFileObjDirect( path, m_iMode, err );
+	int iErr;
+	RageFileObj *ret = MakeFileObjDirect( m_sPath, m_iMode, iErr );
 
 	if( ret == NULL )
-		RageException::Throw("Couldn't reopen \"%s\": %s", path.c_str(), strerror(err) );
+		RageException::Throw( "Couldn't reopen \"%s\": %s", m_sPath.c_str(), strerror(iErr) );
 
-	ret->Seek( lseek( fd, 0, SEEK_CUR ) );
+	ret->Seek( lseek( m_iFD, 0, SEEK_CUR ) );
 
 	return ret;
 }
@@ -179,15 +177,15 @@ bool RageFileDriverDirect::Remount( const CString &sPath )
 }
 
 static const unsigned int BUFSIZE = 1024*64;
-RageFileObjDirect::RageFileObjDirect( const CString &path_, int fd_, int mode_ )
+RageFileObjDirect::RageFileObjDirect( const CString &sPath, int iFD, int iMode )
 {
-	path = path_;
-	fd = fd_;
-	m_iMode = mode_;
-	ASSERT( fd != -1 );
+	m_sPath = sPath;
+	m_iFD = iFD;
+	m_iMode = iMode;
+	ASSERT( m_iFD != -1 );
 
 	if( m_iMode & RageFile::WRITE )
-		write_buf.reserve( BUFSIZE );
+		m_sWriteBuf.reserve( BUFSIZE );
 }
 
 bool RageFileObjDirect::FinalFlush()
@@ -204,26 +202,26 @@ bool RageFileObjDirect::FinalFlush()
 		return true;
 	
 	/* Force a kernel buffer flush. */
-	if( fsync( fd ) == -1 )
+	if( fsync( m_iFD ) == -1 )
 	{
-		LOG->Warn( "Error synchronizing %s: %s", this->path.c_str(), strerror(errno) );
+		LOG->Warn( "Error synchronizing %s: %s", this->m_sPath.c_str(), strerror(errno) );
 		SetError( strerror(errno) );
 		return false;
 	}
 
 #if !defined(WIN32)
 	/* Wait for the directory to be flushed. */
-	int dirfd = open( Dirname(path), O_RDONLY );
+	int dirfd = open( Dirname(m_sPath), O_RDONLY );
 	if( dirfd == -1 )
 	{
-		LOG->Warn( "Error synchronizing open(%s dir): %s", this->path.c_str(), strerror(errno) );
+		LOG->Warn( "Error synchronizing open(%s dir): %s", this->m_sPath.c_str(), strerror(errno) );
 		SetError( strerror(errno) );
 		return false;
 	}
 
 	if( fsync( dirfd ) == -1 )
 	{
-		LOG->Warn( "Error synchronizing fsync(%s dir): %s", this->path.c_str(), strerror(errno) );
+		LOG->Warn( "Error synchronizing fsync(%s dir): %s", this->m_sPath.c_str(), strerror(errno) );
 		SetError( strerror(errno) );
 		close( dirfd );
 		return false;
@@ -239,11 +237,11 @@ RageFileObjDirect::~RageFileObjDirect()
 {
 	bool failed = !FinalFlush();
 	
-	if( fd != -1 )
+	if( m_iFD != -1 )
 	{
-		if( close( fd ) == -1 )
+		if( close( m_iFD ) == -1 )
 		{
-			LOG->Warn("Error closing %s: %s", this->path.c_str(), strerror(errno) );
+			LOG->Warn( "Error closing %s: %s", this->m_sPath.c_str(), strerror(errno) );
 			SetError( strerror(errno) );
 			failed = true;
 		}
@@ -255,7 +253,7 @@ RageFileObjDirect::~RageFileObjDirect()
 		!(m_iMode & RageFile::STREAMED) )
 	{
 		/*
-		 * We now have path written to MakeTempFilename(path).  Rename the temporary
+		 * We now have path written to MakeTempFilename(m_sPath).  Rename the temporary
 		 * file over the real path.  This should be an atomic operation with a journalling
 		 * filesystem.  That is, there should be no intermediate state a JFS might restore
 		 * the file we're writing (in the case of a crash/powerdown) to an empty or partial
@@ -269,8 +267,8 @@ RageFileObjDirect::~RageFileObjDirect()
 		 * A safer (but much slower) way to do this is to simply CopyFile a backup first.
 		 */
 
-		CString sOldPath = MakeTempFilename(path);
-		CString sNewPath = path;
+		CString sOldPath = MakeTempFilename(m_sPath);
+		CString sNewPath = m_sPath;
 
 #if defined(WIN32)
 		if( WinMoveFile(sOldPath, sNewPath) )
@@ -292,25 +290,25 @@ RageFileObjDirect::~RageFileObjDirect()
 	}
 }
 
-int RageFileObjDirect::ReadInternal( void *buf, size_t bytes )
+int RageFileObjDirect::ReadInternal( void *pBuf, size_t iBytes )
 {
-	int ret = read( fd, buf, bytes );
-	if( ret == -1 )
+	int iRet = read( m_iFD, pBuf, iBytes );
+	if( iRet == -1 )
 	{
 		SetError( strerror(errno) );
 		return -1;
 	}
 
-	return ret;
+	return iRet;
 }
 
 /* write(), but retry a couple times on EINTR. */
-static int retried_write( int fd, const void *buf, size_t count )
+static int retried_write( int iFD, const void *pBuf, size_t iCount )
 {
         int tries = 3, ret;
         do
         {
-                ret = write( fd, buf, count );
+                ret = write( iFD, pBuf, iCount );
         }
         while( ret == -1 && errno == EINTR && tries-- );
 
@@ -320,61 +318,61 @@ static int retried_write( int fd, const void *buf, size_t count )
 
 int RageFileObjDirect::FlushInternal()
 {
-	if( !write_buf.size() )
+	if( !m_sWriteBuf.size() )
 		return 0;
 
-	int ret = retried_write( fd, write_buf.data(), write_buf.size() );
-	if( ret == -1 )
+	int iRet = retried_write( m_iFD, m_sWriteBuf.data(), m_sWriteBuf.size() );
+	if( iRet == -1 )
 	{
-		LOG->Warn("Error writing %s: %s", this->path.c_str(), strerror(errno) );
+		LOG->Warn("Error writing %s: %s", this->m_sPath.c_str(), strerror(errno) );
 		SetError( strerror(errno) );
 	}
 
-	write_buf.erase();
-	write_buf.reserve( BUFSIZE );
-	return ret;
+	m_sWriteBuf.erase();
+	m_sWriteBuf.reserve( BUFSIZE );
+	return iRet;
 }
 
-int RageFileObjDirect::WriteInternal( const void *buf, size_t bytes )
+int RageFileObjDirect::WriteInternal( const void *pBuf, size_t iBytes )
 {
-	if( write_buf.size()+bytes > BUFSIZE )
+	if( m_sWriteBuf.size()+iBytes > BUFSIZE )
 	{
 		if( Flush() == -1 )
 			return -1;
-		ASSERT(	!write_buf.size() );
+		ASSERT( !m_sWriteBuf.size() );
 
 		/* The buffer is cleared.  If we still don't have space, it's bigger than
 		 * the buffer size, so just write it directly. */
-		if( bytes >= BUFSIZE )
+		if( iBytes >= BUFSIZE )
 		{
-			int ret = retried_write( fd, buf, bytes );
-			if( ret == -1 )
+			int iRet = retried_write( m_iFD, pBuf, iBytes );
+			if( iRet == -1 )
 			{
-				LOG->Warn("Error writing %s: %s", this->path.c_str(), strerror(errno) );
+				LOG->Warn("Error writing %s: %s", this->m_sPath.c_str(), strerror(errno) );
 				SetError( strerror(errno) );
 				return -1;
 			}
-			return bytes;
+			return iBytes;
 		}
 	}
 
-	write_buf.append( (const char *)buf, (const char *)buf+bytes );
-	return bytes;
+	m_sWriteBuf.append( (const char *) pBuf, (const char *) pBuf+iBytes );
+	return iBytes;
 }
 
-int RageFileObjDirect::SeekInternal( int offset )
+int RageFileObjDirect::SeekInternal( int iOffset )
 {
-	return lseek( fd, offset, SEEK_SET );
+	return lseek( m_iFD, iOffset, SEEK_SET );
 }
 
 int RageFileObjDirect::GetFileSize() const
 {
-	const int OldPos = lseek( fd, 0, SEEK_CUR );
-	ASSERT_M( OldPos != -1, strerror(errno) );
-	const int ret = lseek( fd, 0, SEEK_END );
-	ASSERT_M( ret != -1, strerror(errno) );
-	lseek( fd, OldPos, SEEK_SET );
-	return ret;
+	const int iOldPos = lseek( m_iFD, 0, SEEK_CUR );
+	ASSERT_M( iOldPos != -1, strerror(errno) );
+	const int iRet = lseek( m_iFD, 0, SEEK_END );
+	ASSERT_M( iRet != -1, strerror(errno) );
+	lseek( m_iFD, iOldPos, SEEK_SET );
+	return iRet;
 }
 
 /*
