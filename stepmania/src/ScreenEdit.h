@@ -371,6 +371,8 @@ public:
 		rate,
 		transition,
 		effect,
+		color1,
+		color2,
 		file1_type,
 		file1_song_bganimation,
 		file1_song_movie,

@@ -131,7 +131,16 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		bHasClass = pNode->GetAttrValue( "Type", sClass );	// for backward compatibility
 
 	CString sFile;
-	pNode->GetAttrValue( "File", sFile );
+	if( pNode->GetAttrValue( "File", sFile ) )
+	{
+		if( sFile == "" )
+		{
+			CString sError = ssprintf( "The actor file in '%s' is as a blank, invalid File attribute \"%s\"",
+				sAniDir.c_str(), sClass.c_str() );
+			RageException::Throw( sError );
+		}
+	}
+
 
 	LUA->RunAtExpressionS( sFile );
 	bool bIsAbsolutePath = sFile.Left(1) == "/";

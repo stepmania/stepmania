@@ -378,11 +378,36 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 	}
 	ASSERT( !sEffect.empty() );
 
-	vector<CString> vsPaths, vsThrowAway;
-	BackgroundUtil::GetBackgroundEffects( sEffect, vsPaths, vsThrowAway );
-	ASSERT_M( !vsPaths.empty(), ssprintf("BackgroundEffect '%s' is missing.",sEffect.c_str()) );
-	ASSERT_M( vsPaths.size()==1, ssprintf("BackgroundEffect '%s' has more than one match.",sEffect.c_str()) );
-	const CString &sEffectFile = vsPaths[0];
+
+	// Set Lua color globals
+	LUA->SetGlobal( ssprintf("Color%d",1), bd.m_sColor1.empty() ? "1,1,1,1" : bd.m_sColor1 );
+	LUA->SetGlobal( ssprintf("Color%d",2), bd.m_sColor2.empty() ? "1,1,1,1" : bd.m_sColor2 );
+
+
+	// Resolve the effect file.
+	CString sEffectFile;
+	for( int i=0; i<2; i++ )
+	{
+		vector<CString> vsPaths, vsThrowAway;
+		BackgroundUtil::GetBackgroundEffects( sEffect, vsPaths, vsThrowAway );
+		if( vsPaths.empty() )
+		{
+			LOG->Warn( "BackgroundEffect '%s' is missing.",sEffect.c_str() );
+			sEffect = SBE_Centered;
+		}
+		else if( vsPaths.size() > 1 )
+		{
+			LOG->Warn( "BackgroundEffect '%s' has more than one match.",sEffect.c_str() );
+			sEffect = SBE_Centered;
+		}
+		else
+		{
+			sEffectFile = vsPaths[0];
+			break;
+		}
+	}
+	ASSERT( !sEffectFile.empty() );
+
 
 	Actor *pActor = ActorUtil::MakeActor( sEffectFile );
 	ASSERT( pActor );
@@ -390,6 +415,8 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 	for( unsigned i=0; i<vsResolved.size(); i++ )
 		LUA->SetGlobal( ssprintf("File%d",i+1), CString() );
+	LUA->SetGlobal( ssprintf("Color%d",1), CString() );
+	LUA->SetGlobal( ssprintf("Color%d",2), CString() );
 
 	return true;
 }
@@ -729,6 +756,10 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 	{
 		LOG->Trace( "old bga %d -> new bga %d, %f, %f", m_iCurBGChangeIndex, i, m_aBGChanges[i].m_fStartBeat, fBeat );
 
+		BackgroundChange oldChange;
+		if( m_iCurBGChangeIndex != -1 )
+			oldChange = m_aBGChanges[m_iCurBGChangeIndex];
+
 		m_iCurBGChangeIndex = i;
 
 		const BackgroundChange& change = m_aBGChanges[i];
@@ -764,11 +795,19 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 
 		m_pCurrentBGA->Reset();
 		m_pCurrentBGA->SetUpdateRate( change.m_fRate );
+
+		// Set Lua color globals before calling Init and On
+		LUA->SetGlobal( ssprintf("Color%d",1), change.m_def.m_sColor1.empty() ? "1,1,1,1" : change.m_def.m_sColor1 );
+		LUA->SetGlobal( ssprintf("Color%d",2), change.m_def.m_sColor2.empty() ? "1,1,1,1" : change.m_def.m_sColor2 );
+		
 		m_pCurrentBGA->PlayCommand( "Init" );
 		m_pCurrentBGA->PlayCommand( "On" );
 		m_pCurrentBGA->PlayCommand( "GainFocus" );
 
-		m_fSecsLeftInFade = m_pFadingBGA ? m_pFadingBGA->GetTweenTimeLeft() : 0;
+		LUA->SetGlobal( ssprintf("Color%d",1), CString() );
+		LUA->SetGlobal( ssprintf("Color%d",2), CString() );
+
+		m_fSecsLeftInFade = m_pFadingBGA ? m_pFadingBGA->GetTweenTimeLeft() / oldChange.m_fRate : 0;
 
 		/* How much time of this BGA have we skipped?  (This happens with SetSeconds.) */
 		const float fStartSecond = pSong->m_Timing.GetElapsedTimeFromBeat( change.m_fStartBeat );

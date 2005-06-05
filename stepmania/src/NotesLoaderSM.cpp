@@ -157,41 +157,71 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 	}
 }
 
-bool LoadFromBGChangesString( BackgroundChange &change, const CString &sBGChangeExpression )
+bool LoadFromBGChangesString( BackgroundChange &change, const CString &_sBGChangeExpression )
 {
+	CString sBGChangeExpression = _sBGChangeExpression;
+	sBGChangeExpression.Replace( '^', ',' );	// UGLY: unescape "," in colors
+
 	CStringArray aBGChangeValues;
 	split( sBGChangeExpression, "=", aBGChangeValues, false );
 
-	if( aBGChangeValues.size() >= 6 )
-	{
-		change.m_fRate = strtof( aBGChangeValues[2], NULL );
-		change.m_sTransition = (atoi( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
-		bool bRewindMovie = atoi( aBGChangeValues[4] ) != 0;
-		bool bLoop = atoi( aBGChangeValues[5] ) != 0;
+	aBGChangeValues.resize( min((int)aBGChangeValues.size(),11) );
 
-		// m_sEffect may be overwritten by param 7 below.
-		if( bRewindMovie )
-			change.m_def.m_sEffect = SBE_StretchRewind;
-		if( !bLoop )
-			change.m_def.m_sEffect = SBE_StretchNoLoop;
-	}
-	if( aBGChangeValues.size() >= 9 )
+	switch( aBGChangeValues.size() )
 	{
-		change.m_def.m_sEffect = aBGChangeValues[6];
-		change.m_def.m_sFile2 = aBGChangeValues[7];
+	case 11:
+		change.m_def.m_sColor2 = aBGChangeValues[10];
+		// fall through
+	case 10:
+		change.m_def.m_sColor1 = aBGChangeValues[9];
+		// fall through
+	case 9:
 		change.m_sTransition = aBGChangeValues[8];
-	}
-	if( aBGChangeValues.size() >= 2 )
-	{
-		change.m_fStartBeat = strtof( aBGChangeValues[0], NULL );
+		// fall through
+	case 8:
+		change.m_def.m_sFile2 = aBGChangeValues[7];
+		// fall through
+	case 7:
+		change.m_def.m_sEffect = aBGChangeValues[6];
+		// fall through
+	case 6:
+		// param 7 overrides this.
+		// Backward compatibility:
+		if( change.m_def.m_sEffect.empty() )
+		{
+			bool bLoop = atoi( aBGChangeValues[5] ) != 0;
+			if( !bLoop )
+				change.m_def.m_sEffect = SBE_StretchNoLoop;
+		}
+		// fall through
+	case 5:
+		// param 7 overrides this.
+		// Backward compatibility:
+		if( change.m_def.m_sEffect.empty() )
+		{
+			bool bRewindMovie = atoi( aBGChangeValues[4] ) != 0;
+			if( bRewindMovie )
+				change.m_def.m_sEffect = SBE_StretchRewind;
+		}
+		// fall through
+	case 4:
+		// param 9 overrides this.
+		// Backward compatibility:
+		if( change.m_sTransition.empty() )
+			change.m_sTransition = (atoi( aBGChangeValues[3] ) != 0) ? "CrossFade" : "";
+		// fall through
+	case 3:
+		change.m_fRate = strtof( aBGChangeValues[2], NULL );
+		// fall through
+	case 2:
 		change.m_def.m_sFile1 = aBGChangeValues[1];
-		return true;
+		// fall through
+	case 1:
+		change.m_fStartBeat = strtof( aBGChangeValues[0], NULL );
+		// fall through
 	}
-	else
-	{
-		LOG->Warn("Invalid #BGCHANGES value \"%s\" was ignored", sBGChangeExpression.c_str());
-		return false;
-	}
+	
+	return aBGChangeValues.size() >= 2;
 }
 
 bool SMLoader::LoadFromSMFile( CString sPath, Song &out )

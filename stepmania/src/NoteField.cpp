@@ -583,6 +583,8 @@ void NoteField::DrawPrimitives()
 							if( change.m_fRate!=1.0f )				vsParts.push_back( ssprintf("%.2f%%",change.m_fRate*100) );
 							if( !change.m_sTransition.empty() )		vsParts.push_back( change.m_sTransition );
 							if( !change.m_def.m_sEffect.empty() )	vsParts.push_back( change.m_def.m_sEffect );
+							if( !change.m_def.m_sColor1.empty() )	vsParts.push_back( change.m_def.m_sColor1 );
+							if( !change.m_def.m_sColor2.empty() )	vsParts.push_back( change.m_def.m_sColor2 );
 
 							vsBGChanges.push_back( join("\n",vsParts) );
 						}

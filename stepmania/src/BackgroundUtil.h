@@ -27,6 +27,8 @@ struct BackgroundDef
 		COMPARE( m_sEffect );
 		COMPARE( m_sFile1 );
 		COMPARE( m_sFile2 );
+		COMPARE( m_sColor1 );
+		COMPARE( m_sColor2 );
 #undef COMPARE
 		return false;
 	}
@@ -35,12 +37,16 @@ struct BackgroundDef
 		return 
 			m_sEffect == other.m_sEffect &&
 			m_sFile1 == other.m_sFile1 &&
-			m_sFile2 == other.m_sFile2;
+			m_sFile2 == other.m_sFile2 &&
+			m_sColor1 == other.m_sColor1 &&
+			m_sColor2 == other.m_sColor2;
 	}
 	bool IsEmpty() { return m_sFile1.empty() && m_sFile2.empty(); }
 	CString	m_sEffect;	// "" == automatically choose
 	CString m_sFile1;	// must not be ""
 	CString m_sFile2;	// may be ""
+	CString m_sColor1;	// "" == use default
+	CString m_sColor2;	// "" == use default
 };
 
 struct BackgroundChange

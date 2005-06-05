@@ -15,8 +15,8 @@
 
 static CString BackgroundChangeToString( const BackgroundChange &bgc )
 {
-	return ssprintf( 
-		"%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s,", 
+	CString s = ssprintf( 
+		"%.3f=%s=%.3f=%d=%d=%d=%s=%s=%s=%s=%s", 
 		bgc.m_fStartBeat, 
 		bgc.m_def.m_sFile1.c_str(), 
 		bgc.m_fRate, 
@@ -25,8 +25,12 @@ static CString BackgroundChangeToString( const BackgroundChange &bgc )
 		bgc.m_def.m_sEffect != SBE_StretchNoLoop, 	// backward compat
 		bgc.m_def.m_sEffect.c_str(), 
 		bgc.m_def.m_sFile2.c_str(), 
-		bgc.m_sTransition.c_str()
+		bgc.m_sTransition.c_str(),
+		bgc.m_def.m_sColor1.c_str(),
+		bgc.m_def.m_sColor2.c_str()
 		);
+	s.Replace( ',', '^' );	// UGLY: escape "," in colors.
+	return s;
 }
 
 void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
@@ -106,7 +110,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
 
 		FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
-			f.PutLine( BackgroundChangeToString(*bgc) );
+			f.PutLine( BackgroundChangeToString(*bgc)+"," );
 
 		/* If there's an animation plan at all, add a dummy "-nosongbg-" tag to indicate that
 		 * this file doesn't want a song BG entry added at the end.  See SMLoader::TidyUpData.
@@ -122,7 +126,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 		f.Write( "#FGCHANGES:" );
 		FOREACH_CONST( BackgroundChange, out.GetForegroundChanges(), bgc )
 		{
-			f.PutLine( BackgroundChangeToString(*bgc) );
+			f.PutLine( BackgroundChangeToString(*bgc)+"," );
 		}
 		f.PutLine( ";" );
 	}
