@@ -25,7 +25,8 @@
 REGISTER_SCREEN_CLASS( ScreenJukebox );
 void ScreenJukebox::SetSong()
 {
-	ThemeMetric<float>	ALLOW_ADVANCED_MODIFIERS(m_sName,"AllowAdvancedModifiers");
+	ThemeMetric<float>				ALLOW_ADVANCED_MODIFIERS(m_sName,"AllowAdvancedModifiers");
+	ThemeMetricDifficultiesToShow	DIFFICULTIES_TO_SHOW_HERE(m_sName,"DifficultiesToShow");
 
 	vector<Song*> vSongs;
 
@@ -48,7 +49,7 @@ void ScreenJukebox::SetSong()
 	if( m_bDemonstration )
 	{
 		// HACK: This belongs in ScreenDemonstration
-		vDifficultiesToShow = DIFFICULTIES_TO_SHOW.GetValue();
+		vDifficultiesToShow = DIFFICULTIES_TO_SHOW_HERE.GetValue();
 	}
 	else
 	{
