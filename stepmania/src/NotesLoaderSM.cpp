@@ -336,10 +336,11 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		else if( sValueName=="BGCHANGES" || sValueName=="ANIMATIONS" )
 		{
 			BackgroundLayer iLayer = BACKGROUND_LAYER_1;
-			sscanf( sValueName, "BGCHANGES%d", &iLayer );
-			iLayer = (BackgroundLayer)(iLayer-1);
+			if( 1 == sscanf( sValueName, "BGCHANGES%d", &iLayer ) )
+				iLayer = (BackgroundLayer)(iLayer-1);	// #BGCHANGES2 = BACKGROUND_LAYER_2
 
-			if( iLayer < 0 && iLayer >= NUM_BackgroundLayer )
+			bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
+			if( !bValid )
 			{
 				LOG->Warn( "The song file '%s' has a BGCHANGES tag '%s' that is out of range.", sPath.c_str(), sValueName.c_str() );
 			}
