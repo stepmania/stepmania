@@ -2498,9 +2498,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				/* Reset the note skin, in case preferences have changed. */
 				GAMESTATE->ResetNoteSkins();
 
-				/* Give a 1 measure lead-in.  Set this before loading Player, so it knows
+				/* Give a 1 secord lead-in.  Set this before loading Player, so it knows
 				 * where we're starting. */
-				float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) - 4 );
+				float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) ) - 1;
 				GAMESTATE->UpdateSongPosition( fSeconds, m_pSong->m_Timing );
 
 				/* If we're in course display mode, set that up. */
