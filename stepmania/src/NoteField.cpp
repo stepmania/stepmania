@@ -562,7 +562,11 @@ void NoteField::DrawPrimitives()
 					}
 
 					if( viLowestIndex.empty() )
+					{
+						FOREACH_BackgroundLayer( i )
+							ASSERT( iter[i] == GAMESTATE->m_pCurSong->GetBackgroundChanges(i).end() );
 						break;
+					}
 
 					if( IS_ON_SCREEN(fLowestBeat) )
 					{
