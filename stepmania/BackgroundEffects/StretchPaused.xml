@@ -1,0 +1,6 @@
+<ActorFrame><children>
+	<AutoActor 
+		File="@File1" 
+		OnCommand="x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;zoomtowidth,SCREEN_WIDTH;zoomtoheight,SCREEN_HEIGHT;Pause" 
+	/>
+</children></ActorFrame>

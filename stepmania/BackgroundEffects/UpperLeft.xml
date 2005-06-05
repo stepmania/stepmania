@@ -1,0 +1,4 @@
+<ActorFrame><children>
+	<!-- upper left corner -->
+	<AutoActor File="@File1" />
+</children></ActorFrame>
