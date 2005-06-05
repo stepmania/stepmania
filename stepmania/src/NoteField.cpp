@@ -566,22 +566,23 @@ void NoteField::DrawPrimitives()
 
 					if( IS_ON_SCREEN(fLowestBeat) )
 					{
-						vector<CString> vs;
+						vector<CString> vsBGChanges;
 						FOREACH_CONST( BackgroundLayer, viLowestIndex, i )
 						{
 							ASSERT( iter[*i] != GAMESTATE->m_pCurSong->GetBackgroundChanges(*i).end() );
 
 							const BackgroundChange& change = *iter[*i];
-							vs.push_back( ssprintf("%s%s%s%s%s%s",
-								((*i!=0) ? ssprintf("%d: ",*i) : CString()).c_str(),
-								(!change.m_def.m_sFile1.empty() ? " "+change.m_def.m_sFile1 : CString()).c_str(),
-								(!change.m_def.m_sFile2.empty() ? " "+change.m_def.m_sFile2 : CString()).c_str(),
-								((change.m_fRate!=1.0f) ? ssprintf("%.2f%%",change.m_fRate*100) : CString()).c_str(),
-								(!change.m_sTransition.empty() ? " "+change.m_sTransition : CString()).c_str(),
-								(!change.m_def.m_sEffect.empty() ? " "+change.m_def.m_sEffect : CString()).c_str()
-								) );
+							vector<CString> vsParts;
+							if( *i!=0 )								vsParts.push_back( ssprintf("%d: ",*i) );
+							if( !change.m_def.m_sFile1.empty() )	vsParts.push_back( change.m_def.m_sFile1 );
+							if( !change.m_def.m_sFile2.empty() )	vsParts.push_back( change.m_def.m_sFile2 );
+							if( change.m_fRate!=1.0f )				vsParts.push_back( ssprintf("%.2f%%",change.m_fRate*100) );
+							if( !change.m_sTransition.empty() )		vsParts.push_back( change.m_sTransition );
+							if( !change.m_def.m_sEffect.empty() )	vsParts.push_back( change.m_def.m_sEffect );
+
+							vsBGChanges.push_back( join("\n",vsParts) );
 						}
-						DrawBGChangeText( fLowestBeat, join("\n",vs) );
+						DrawBGChangeText( fLowestBeat, join("\n",vsBGChanges) );
 					}
 					FOREACH_CONST( BackgroundLayer, viLowestIndex, i )
 						iter[*i]++;

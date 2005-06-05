@@ -173,7 +173,13 @@ void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const CString &sM
 	StripCvs( vsPathsOut, vsNamesOut );
 }
 
-void BackgroundUtil::GetGlobalRandomMovies( const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )
+void BackgroundUtil::GetGlobalRandomMovies( 
+	const Song *pSong, 
+	const CString &sMatch, 
+	vector<CString> &vsPathsOut, 
+	vector<CString> &vsNamesOut,
+	bool bTryInsideOfSongGroupAndGenreFirst,
+	bool bTryInsideOfSongGroupFirst )
 {
 	vsPathsOut.clear();
 	vsNamesOut.clear();
@@ -193,12 +199,12 @@ void BackgroundUtil::GetGlobalRandomMovies( const Song *pSong, const CString &sM
 	// Search for the most appropriate background
 	//
 	{
-		set<CString> ssFilterToFileNames;
-		if( pSong  &&  !pSong->m_sGenre.empty() )
-			GetFilterToFileNames( RANDOMMOVIES_DIR, pSong, ssFilterToFileNames );
+		set<CString> ssFileNameWhitelist;
+		if( bTryInsideOfSongGroupAndGenreFirst  &&  pSong  &&  !pSong->m_sGenre.empty() )
+			GetFilterToFileNames( RANDOMMOVIES_DIR, pSong, ssFileNameWhitelist );
 
 		vector<CString> vsDirsToTry;
-		if( pSong )
+		if( bTryInsideOfSongGroupFirst && pSong )
 		{
 			ASSERT( !pSong->m_sGroupName.empty() );
 			vsDirsToTry.push_back( RANDOMMOVIES_DIR+pSong->m_sGroupName+"/" );
@@ -211,12 +217,12 @@ void BackgroundUtil::GetGlobalRandomMovies( const Song *pSong, const CString &sM
 			GetDirListing( *sDir+"*.mpg", vsPathsOut, false, true );
 			GetDirListing( *sDir+"*.mpeg", vsPathsOut, false, true );
 
-			if( !ssFilterToFileNames.empty() )
+			if( !ssFileNameWhitelist.empty() )
 			{
 				for( unsigned i=0; i<vsPathsOut.size(); i++ )
 				{
 					CString sBasename = Basename( vsPathsOut[i] );
-					bool bFound = ssFilterToFileNames.find(sBasename) != ssFilterToFileNames.end();
+					bool bFound = ssFileNameWhitelist.find(sBasename) != ssFileNameWhitelist.end();
 					if( !bFound )
 					{
 						vsPathsOut.erase( vsPathsOut.begin()+i );

@@ -63,6 +63,8 @@ enum EditButton
 	EDIT_BUTTON_OPEN_COURSE_MENU,
 	EDIT_BUTTON_OPEN_INPUT_HELP,
 
+	EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE,
+
 	EDIT_BUTTON_PLAY_FROM_START,
 	EDIT_BUTTON_PLAY_FROM_CURSOR,
 	EDIT_BUTTON_PLAY_SELECTION,
@@ -373,13 +375,17 @@ public:
 		file1_song_movie,
 		file1_song_still,
 		file1_global_bganimation,
-		file1_global_random_movie,
+		file1_global_movie,
+		file1_global_movie_song_group,
+		file1_global_movie_song_group_and_genre,
 		file2_type,
 		file2_song_bganimation,
 		file2_song_movie,
 		file2_song_still,
 		file2_global_bganimation,
-		file2_global_random_movie,
+		file2_global_movie,
+		file2_global_movie_song_group,
+		file2_global_movie_song_group_and_genre,
 		delete_change,
 		NUM_BGCHANGE_CHOICES
 	};

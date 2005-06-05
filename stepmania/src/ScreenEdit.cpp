@@ -144,10 +144,13 @@ void ScreenEdit::InitEditMappings()
 
 	g_EditMappings.button[EDIT_BUTTON_OPEN_EDIT_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	g_EditMappings.button[EDIT_BUTTON_OPEN_AREA_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
-	g_EditMappings.button[EDIT_BUTTON_OPEN_AREA_MENU][1] = DeviceInput(DEVICE_KEYBOARD, KEY_KP_ENTER);
 	g_EditMappings.button[EDIT_BUTTON_OPEN_BGA_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
 	g_EditMappings.button[EDIT_BUTTON_OPEN_COURSE_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cc);
 	g_EditMappings.button[EDIT_BUTTON_OPEN_INPUT_HELP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
+	
+	g_EditMappings.button[EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
+	g_EditMappings.hold[EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	g_EditMappings.hold[EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 
 	g_EditMappings.button[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
 	g_EditMappings.hold[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
@@ -441,48 +444,74 @@ static Menu g_SongInformation(
 	MenuRow( ScreenEdit::artist_transliteration,		"Artist transliteration",		true, EDIT_MODE_PRACTICE, 0, NULL )
 );
 
-enum { none, pick_random, song_bganimation, song_movie, song_bitmap, global_bganimation, global_movie };
-static bool EnabledIfSet1SB();
-static bool EnabledIfSet1SM();
-static bool EnabledIfSet1SI();
-static bool EnabledIfSet1GB();
-static bool EnabledIfSet1GM();
-static bool EnabledIfSet2SB();
-static bool EnabledIfSet2SM();
-static bool EnabledIfSet2SI();
-static bool EnabledIfSet2GB();
-static bool EnabledIfSet2GM();
+enum { song_bganimation, song_movie, song_bitmap, global_bganimation, global_movie, global_movie_song_group, global_movie_song_group_and_genre, dynamic_random, baked_random, none };
+static bool EnabledIfSet1SongBGAnimation();
+static bool EnabledIfSet1SongMovie();
+static bool EnabledIfSet1SongBitmap();
+static bool EnabledIfSet1GlobalBGAnimation();
+static bool EnabledIfSet1GlobalMovie();
+static bool EnabledIfSet1GlobalMovieSongGroup();
+static bool EnabledIfSet1GlobalMovieSongGroupAndGenre();
+static bool EnabledIfSet2SongBGAnimation();
+static bool EnabledIfSet2SongMovie();
+static bool EnabledIfSet2SongBitmap();
+static bool EnabledIfSet2GlobalBGAnimation();
+static bool EnabledIfSet2GlobalMovie();
+static bool EnabledIfSet2GlobalMovieSongGroup();
+static bool EnabledIfSet2GlobalMovieSongGroupAndGenre();
 static Menu g_BackgroundChange(
 	"ScreenMiniMenuBackgroundChange",
-	MenuRow( ScreenEdit::layer,						"Layer",						true,			EDIT_MODE_FULL, 0, "0","1" ),
-	MenuRow( ScreenEdit::rate,						"Rate",							true,			EDIT_MODE_FULL, 10, "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" ),
-	MenuRow( ScreenEdit::transition,				"Transition",					true,			EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::effect,					"Force Effect",					true,			EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file1_type,				"File1 Type",					true,			EDIT_MODE_FULL, 0, "None", "Random", "Song BGAnimation", "Song Movie", "Song Bitmap", "Global BGAnimation", "Global Movie" ),
-	MenuRow( ScreenEdit::file1_song_bganimation,	"File1 Song BGAnimation",		EnabledIfSet1SB,EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file1_song_movie,			"File1 Song Movie",				EnabledIfSet1SM,EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file1_song_still,			"File1 Song Still",				EnabledIfSet1SI,EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file1_global_bganimation,	"File1 Global BGAnimation",		EnabledIfSet1GB,EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file1_global_random_movie,	"File1 Global Movie",			EnabledIfSet1GM,EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file2_type,				"File2 Type",					true,			EDIT_MODE_FULL, 0, "None", "Random", "Song BGAnimation", "Song Movie", "Song Bitmap", "Global BGAnimation", "Global Movie" ),
-	MenuRow( ScreenEdit::file2_song_bganimation,	"File2 Song BGAnimation",		EnabledIfSet2SB,EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file2_song_movie,			"File2 Song Movie",				EnabledIfSet2SM,EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file2_song_still,			"File2 Song Still",				EnabledIfSet2SI,EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file2_global_bganimation,	"File2 Global BGAnimation",		EnabledIfSet2GB,EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file2_global_random_movie,	"File2 Global Movie",			EnabledIfSet2GM,EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::delete_change,				"Remove Change",				true,			EDIT_MODE_FULL, 0, NULL )
+	MenuRow( ScreenEdit::layer,										"Layer",								true,										EDIT_MODE_FULL, 0, "0","1" ),
+	MenuRow( ScreenEdit::rate,										"Rate",									true,										EDIT_MODE_FULL, 10, "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" ),
+	MenuRow( ScreenEdit::transition,								"Transition",							true,										EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::effect,									"Force Effect",							true,										EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file1_type,								"File1 Type",							true,										EDIT_MODE_FULL, 0, "Song BGAnimation", "Song Movie", "Song Bitmap", "Global BGAnimation", "Global Movie", "Global Movie from Song Group", "Global Movie from Song Group and Genre", "Dynamic Random", "Baked Random", "None" ),
+	MenuRow( ScreenEdit::file1_song_bganimation,					"File1 Song BGAnimation",				EnabledIfSet1SongBGAnimation,				EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file1_song_movie,							"File1 Song Movie",						EnabledIfSet1SongMovie,						EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file1_song_still,							"File1 Song Still",						EnabledIfSet1SongBitmap,					EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file1_global_bganimation,					"File1 Global BGAnimation",				EnabledIfSet1GlobalBGAnimation,				EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file1_global_movie,						"File1 Global Movie",					EnabledIfSet1GlobalMovie,					EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file1_global_movie_song_group,				"File1 Global Movie (Group)",			EnabledIfSet1GlobalMovieSongGroup,			EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file1_global_movie_song_group_and_genre,	"File1 Global Movie (Group + Genre)",	EnabledIfSet1GlobalMovieSongGroupAndGenre,	EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file2_type,								"File2 Type",							true,										EDIT_MODE_FULL, 0, "Song BGAnimation", "Song Movie", "Song Bitmap", "Global BGAnimation", "Global Movie", "Global Movie from Song Group", "Global Movie from Song Group and Genre", "Dynamic Random", "Baked Random", "None" ),
+	MenuRow( ScreenEdit::file2_song_bganimation,					"File2 Song BGAnimation",				EnabledIfSet2SongBGAnimation,				EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file2_song_movie,							"File2 Song Movie",						EnabledIfSet2SongMovie,						EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file2_song_still,							"File2 Song Still",						EnabledIfSet2SongBitmap,					EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file2_global_bganimation,					"File2 Global BGAnimation",				EnabledIfSet2GlobalBGAnimation,				EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file2_global_movie,						"File2 Global Movie",					EnabledIfSet2GlobalMovie,					EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file2_global_movie_song_group,				"File2 Global Movie (Group)",			EnabledIfSet2GlobalMovieSongGroup,			EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::file2_global_movie_song_group_and_genre,	"File2 Global Movie (Group + Genre)",	EnabledIfSet2GlobalMovieSongGroupAndGenre,	EDIT_MODE_FULL, 0, NULL ),
+	MenuRow( ScreenEdit::delete_change,								"Remove Change",						true,										EDIT_MODE_FULL, 0, NULL )
 );
-static bool EnabledIfSet1SB() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == song_bganimation		&& !g_BackgroundChange.rows[ScreenEdit::file1_song_bganimation].choices.empty(); }
-static bool EnabledIfSet1SM() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == song_movie			&& !g_BackgroundChange.rows[ScreenEdit::file1_song_movie].choices.empty(); }
-static bool EnabledIfSet1SI() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == song_bitmap			&& !g_BackgroundChange.rows[ScreenEdit::file1_song_still].choices.empty(); }
-static bool EnabledIfSet1GB() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == global_bganimation	&& !g_BackgroundChange.rows[ScreenEdit::file1_global_random_movie].choices.empty(); }
-static bool EnabledIfSet1GM() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == global_movie			&& !g_BackgroundChange.rows[ScreenEdit::file1_global_bganimation].choices.empty(); }
-static bool EnabledIfSet2SB() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == song_bganimation		&& !g_BackgroundChange.rows[ScreenEdit::file2_song_bganimation].choices.empty(); }
-static bool EnabledIfSet2SM() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == song_movie			&& !g_BackgroundChange.rows[ScreenEdit::file2_song_movie].choices.empty(); }
-static bool EnabledIfSet2SI() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == song_bitmap			&& !g_BackgroundChange.rows[ScreenEdit::file2_song_still].choices.empty(); }
-static bool EnabledIfSet2GB() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == global_bganimation	&& !g_BackgroundChange.rows[ScreenEdit::file2_global_bganimation].choices.empty(); }
-static bool EnabledIfSet2GM() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == global_movie			&& !g_BackgroundChange.rows[ScreenEdit::file2_global_bganimation].choices.empty(); }
+static bool EnabledIfSet1SongBGAnimation()				{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == song_bganimation					&& !g_BackgroundChange.rows[ScreenEdit::file1_song_bganimation].choices.empty(); }
+static bool EnabledIfSet1SongMovie()					{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == song_movie							&& !g_BackgroundChange.rows[ScreenEdit::file1_song_movie].choices.empty(); }
+static bool EnabledIfSet1SongBitmap()					{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == song_bitmap							&& !g_BackgroundChange.rows[ScreenEdit::file1_song_still].choices.empty(); }
+static bool EnabledIfSet1GlobalBGAnimation()			{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == global_bganimation					&& !g_BackgroundChange.rows[ScreenEdit::file1_global_bganimation].choices.empty(); }
+static bool EnabledIfSet1GlobalMovie()					{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == global_movie						&& !g_BackgroundChange.rows[ScreenEdit::file1_global_movie].choices.empty(); }
+static bool EnabledIfSet1GlobalMovieSongGroup()			{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == global_movie_song_group				&& !g_BackgroundChange.rows[ScreenEdit::file1_global_movie_song_group].choices.empty(); }
+static bool EnabledIfSet1GlobalMovieSongGroupAndGenre() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == global_movie_song_group_and_genre	&& !g_BackgroundChange.rows[ScreenEdit::file1_global_movie_song_group_and_genre].choices.empty(); }
+static bool EnabledIfSet2SongBGAnimation()				{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == song_bganimation					&& !g_BackgroundChange.rows[ScreenEdit::file2_song_bganimation].choices.empty(); }
+static bool EnabledIfSet2SongMovie()					{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == song_movie							&& !g_BackgroundChange.rows[ScreenEdit::file2_song_movie].choices.empty(); }
+static bool EnabledIfSet2SongBitmap()					{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == song_bitmap							&& !g_BackgroundChange.rows[ScreenEdit::file2_song_still].choices.empty(); }
+static bool EnabledIfSet2GlobalBGAnimation()			{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == global_bganimation					&& !g_BackgroundChange.rows[ScreenEdit::file2_global_bganimation].choices.empty(); }
+static bool EnabledIfSet2GlobalMovie()					{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == global_movie						&& !g_BackgroundChange.rows[ScreenEdit::file2_global_movie].choices.empty(); }
+static bool EnabledIfSet2GlobalMovieSongGroup()			{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == global_movie_song_group				&& !g_BackgroundChange.rows[ScreenEdit::file2_global_movie_song_group].choices.empty(); }
+static bool EnabledIfSet2GlobalMovieSongGroupAndGenre() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == global_movie_song_group_and_genre	&& !g_BackgroundChange.rows[ScreenEdit::file2_global_movie_song_group_and_genre].choices.empty(); }
 
+static CString GetOneBakedRandomFile( Song *pSong )
+{
+	vector<CString> vsPathsOut; 
+	vector<CString> vsNamesOut;
+	BackgroundUtil::GetGlobalRandomMovies(
+		pSong,
+		"",
+		vsPathsOut, 
+		vsNamesOut );
+	if( !vsNamesOut.empty() )
+		return vsNamesOut[rand()%vsNamesOut.size()];
+	else
+		return "";
+}
 
 static Menu g_Prefs(
 	"ScreenMiniMenuPreferences",
@@ -1366,6 +1395,39 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		SCREENMAN->MiniMenu( &g_CourseMode, SM_BackFromCourseModeMenu );
 		break;
 	}
+	case EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE:
+		{
+			if( GetOneBakedRandomFile(m_pSong).empty() )
+			{
+				SCREENMAN->PlayInvalidSound();
+				SCREENMAN->SystemMessage( "No backgrounds available" );
+			}
+			else
+			{
+				bool bAlreadyBGChangeHere = false;
+				BackgroundLayer iLayer = BACKGROUND_LAYER_1;
+				BackgroundChange bgChange;
+				bgChange.m_fStartBeat = GAMESTATE->m_fSongBeat;
+				FOREACH_BackgroundLayer( l )
+				{
+					FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(l), bgc )
+					{
+						if( bgc->m_fStartBeat == GAMESTATE->m_fSongBeat )
+						{
+							bAlreadyBGChangeHere = true;
+							iLayer = l;
+							bgChange = *bgc;
+							m_pSong->GetBackgroundChanges(iLayer).erase( bgc );
+						}
+					}
+				}
+				bgChange.m_def.m_sFile1 = GetOneBakedRandomFile( m_pSong );
+				m_pSong->AddBackgroundChange( iLayer, bgChange );
+				m_soundMarker.Play();
+			}
+		}
+		break;
+
 	case EDIT_BUTTON_PLAY_FROM_START:
 		HandleMainMenuChoice( play_whole_song );
 		break;
@@ -2066,15 +2128,19 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				BackgroundUtil::GetSongBGAnimations(	m_pSong, "", vThrowAway, g_BackgroundChange.rows[file1_song_bganimation].choices );
 				BackgroundUtil::GetSongMovies(			m_pSong, "", vThrowAway, g_BackgroundChange.rows[file1_song_movie].choices );
 				BackgroundUtil::GetSongBitmaps(			m_pSong, "", vThrowAway, g_BackgroundChange.rows[file1_song_still].choices );
-				BackgroundUtil::GetGlobalBGAnimations(	NULL, "", vThrowAway, g_BackgroundChange.rows[file1_global_bganimation].choices );	// NULL to get all background files
-				BackgroundUtil::GetGlobalRandomMovies(	NULL, "", vThrowAway, g_BackgroundChange.rows[file1_global_random_movie].choices );	// NULL to get all background files
+				BackgroundUtil::GetGlobalBGAnimations(	m_pSong, "", vThrowAway, g_BackgroundChange.rows[file1_global_bganimation].choices );	// NULL to get all background files
+				BackgroundUtil::GetGlobalRandomMovies(	m_pSong, "", vThrowAway, g_BackgroundChange.rows[file1_global_movie].choices, false, false );	// all backgrounds
+				BackgroundUtil::GetGlobalRandomMovies(	m_pSong, "", vThrowAway, g_BackgroundChange.rows[file1_global_movie_song_group].choices, false, true );	// song group's backgrounds
+				BackgroundUtil::GetGlobalRandomMovies(	m_pSong, "", vThrowAway, g_BackgroundChange.rows[file1_global_movie_song_group_and_genre].choices, true, true );	// song group and genre's backgrounds
 
-				g_BackgroundChange.rows[file2_type].choices					= g_BackgroundChange.rows[file1_type].choices;
-				g_BackgroundChange.rows[file2_song_bganimation].choices		= g_BackgroundChange.rows[file1_song_bganimation].choices;
-				g_BackgroundChange.rows[file2_song_movie].choices			= g_BackgroundChange.rows[file1_song_movie].choices;
-				g_BackgroundChange.rows[file2_song_still].choices			= g_BackgroundChange.rows[file1_song_still].choices;
-				g_BackgroundChange.rows[file2_global_random_movie].choices	= g_BackgroundChange.rows[file1_global_random_movie].choices;
-				g_BackgroundChange.rows[file2_global_bganimation].choices	= g_BackgroundChange.rows[file1_global_bganimation].choices;
+				g_BackgroundChange.rows[file2_type].choices								= g_BackgroundChange.rows[file1_type].choices;
+				g_BackgroundChange.rows[file2_song_bganimation].choices					= g_BackgroundChange.rows[file1_song_bganimation].choices;
+				g_BackgroundChange.rows[file2_song_movie].choices						= g_BackgroundChange.rows[file1_song_movie].choices;
+				g_BackgroundChange.rows[file2_song_still].choices						= g_BackgroundChange.rows[file1_song_still].choices;
+				g_BackgroundChange.rows[file2_global_bganimation].choices				= g_BackgroundChange.rows[file1_global_bganimation].choices;
+				g_BackgroundChange.rows[file2_global_movie].choices						= g_BackgroundChange.rows[file1_global_movie].choices;
+				g_BackgroundChange.rows[file2_global_movie_song_group].choices			= g_BackgroundChange.rows[file1_global_movie_song_group].choices;
+				g_BackgroundChange.rows[file2_global_movie_song_group_and_genre].choices= g_BackgroundChange.rows[file1_global_movie_song_group_and_genre].choices;
 		
 
 				//
@@ -2102,37 +2168,44 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				FILL_ENABLED( file1_song_bganimation );
 				FILL_ENABLED( file1_song_movie );
 				FILL_ENABLED( file1_song_still );
-				FILL_ENABLED( file1_global_random_movie );
 				FILL_ENABLED( file1_global_bganimation );
+				FILL_ENABLED( file1_global_movie );
+				FILL_ENABLED( file1_global_movie_song_group );
+				FILL_ENABLED( file1_global_movie_song_group_and_genre );
 				FILL_ENABLED( file2_song_bganimation );
 				FILL_ENABLED( file2_song_movie );
 				FILL_ENABLED( file2_song_still );
-				FILL_ENABLED( file2_global_random_movie );
 				FILL_ENABLED( file2_global_bganimation );
+				FILL_ENABLED( file2_global_movie );
+				FILL_ENABLED( file2_global_movie_song_group );
+				FILL_ENABLED( file2_global_movie_song_group_and_genre );
 #undef FILL_ENABLED
 				g_BackgroundChange.rows[delete_change].bEnabled				= bAlreadyBGChangeHere;
 
 
 				// set default choices
-				g_BackgroundChange.rows[layer].							SetDefaultChoiceIfPresent( ssprintf("%d",iLayer) );
-				g_BackgroundChange.rows[rate].							SetDefaultChoiceIfPresent( ssprintf("%2.0f%%",bgChange.m_fRate*100) );
-				g_BackgroundChange.rows[transition].					SetDefaultChoiceIfPresent( bgChange.m_sTransition );
-				g_BackgroundChange.rows[effect].						SetDefaultChoiceIfPresent( bgChange.m_def.m_sEffect );
-				g_BackgroundChange.rows[file1_type].iDefaultChoice	= none;
-				if( bgChange.m_def.m_sFile1 == RANDOM_BACKGROUND_FILE )																g_BackgroundChange.rows[file1_type].iDefaultChoice	= pick_random;
-				if( g_BackgroundChange.rows[file1_song_bganimation].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= song_bganimation;
-				if( g_BackgroundChange.rows[file1_song_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= song_movie;
-				if( g_BackgroundChange.rows[file1_song_still].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= song_bitmap;
-				if( g_BackgroundChange.rows[file1_global_bganimation].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= global_bganimation;
-				if( g_BackgroundChange.rows[file1_global_random_movie].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= global_movie;
-				g_BackgroundChange.rows[file2_type].iDefaultChoice	= none;
-				if( bgChange.m_def.m_sFile2 == RANDOM_BACKGROUND_FILE )																g_BackgroundChange.rows[file2_type].iDefaultChoice	= pick_random;
-				if( g_BackgroundChange.rows[file2_song_bganimation].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= song_bganimation;
-				if( g_BackgroundChange.rows[file2_song_movie].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= song_movie;
-				if( g_BackgroundChange.rows[file2_song_still].			SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= song_bitmap;
-				if( g_BackgroundChange.rows[file2_global_bganimation].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= global_bganimation;
-				if( g_BackgroundChange.rows[file2_global_random_movie].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= global_movie;
-
+				g_BackgroundChange.rows[layer].											SetDefaultChoiceIfPresent( ssprintf("%d",iLayer) );
+				g_BackgroundChange.rows[rate].											SetDefaultChoiceIfPresent( ssprintf("%2.0f%%",bgChange.m_fRate*100) );
+				g_BackgroundChange.rows[transition].									SetDefaultChoiceIfPresent( bgChange.m_sTransition );
+				g_BackgroundChange.rows[effect].										SetDefaultChoiceIfPresent( bgChange.m_def.m_sEffect );
+				g_BackgroundChange.rows[file1_type].iDefaultChoice		= none;
+				if( bgChange.m_def.m_sFile1 == RANDOM_BACKGROUND_FILE )																			g_BackgroundChange.rows[file1_type].iDefaultChoice	= dynamic_random;
+				if( g_BackgroundChange.rows[file1_song_bganimation].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= song_bganimation;
+				if( g_BackgroundChange.rows[file1_song_movie].							SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= song_movie;
+				if( g_BackgroundChange.rows[file1_song_still].							SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= song_bitmap;
+				if( g_BackgroundChange.rows[file1_global_bganimation].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= global_bganimation;
+				if( g_BackgroundChange.rows[file1_global_movie].						SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= global_movie;
+				if( g_BackgroundChange.rows[file1_global_movie_song_group].				SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= global_movie_song_group;
+				if( g_BackgroundChange.rows[file1_global_movie_song_group_and_genre].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile1 ) )	g_BackgroundChange.rows[file1_type].iDefaultChoice	= global_movie_song_group_and_genre;
+				g_BackgroundChange.rows[file2_type].iDefaultChoice		= none;
+				if( bgChange.m_def.m_sFile2 == RANDOM_BACKGROUND_FILE )																			g_BackgroundChange.rows[file2_type].iDefaultChoice	= dynamic_random;
+				if( g_BackgroundChange.rows[file2_song_bganimation].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= song_bganimation;
+				if( g_BackgroundChange.rows[file2_song_movie].							SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= song_movie;
+				if( g_BackgroundChange.rows[file2_song_still].							SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= song_bitmap;
+				if( g_BackgroundChange.rows[file2_global_bganimation].					SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= global_bganimation;
+				if( g_BackgroundChange.rows[file2_global_movie].						SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= global_movie;
+				if( g_BackgroundChange.rows[file2_global_movie_song_group].				SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= global_movie_song_group;
+				if( g_BackgroundChange.rows[file2_global_movie_song_group_and_genre].	SetDefaultChoiceIfPresent( bgChange.m_def.m_sFile2 ) )	g_BackgroundChange.rows[file2_type].iDefaultChoice	= global_movie_song_group_and_genre;
 
 				SCREENMAN->MiniMenu( &g_BackgroundChange, SM_BackFromBGChange );
 			}
@@ -2667,15 +2740,18 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 	switch( iAnswers[file1_type] )
 	{
 	default:	ASSERT(0);
-	case none:			newChange.m_def.m_sFile1 = "";						break;
-	case pick_random:	newChange.m_def.m_sFile1 = RANDOM_BACKGROUND_FILE;	break;
+	case none:				newChange.m_def.m_sFile1 = "";								break;
+	case dynamic_random:	newChange.m_def.m_sFile1 = RANDOM_BACKGROUND_FILE;			break;
+	case baked_random:		newChange.m_def.m_sFile1 = GetOneBakedRandomFile( m_pSong );	break;
 	case song_bganimation:
 	case song_movie:
 	case song_bitmap:
 	case global_bganimation:
 	case global_movie:
+	case global_movie_song_group:
+	case global_movie_song_group_and_genre:
 		{
-			BGChangeChoice row1 = (BGChangeChoice)(file1_song_bganimation + iAnswers[file1_type]-2);
+			BGChangeChoice row1 = (BGChangeChoice)(file1_song_bganimation + iAnswers[file1_type]);
 			newChange.m_def.m_sFile1 = g_BackgroundChange.rows[row1].choices[iAnswers[row1]];
 		}
 		break;
@@ -2683,15 +2759,18 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 	switch( iAnswers[file2_type] )
 	{
 	default:	ASSERT(0);
-	case none:			newChange.m_def.m_sFile2 = "";						break;
-	case pick_random:	newChange.m_def.m_sFile2 = RANDOM_BACKGROUND_FILE;	break;
+	case none:				newChange.m_def.m_sFile2 = "";								break;
+	case dynamic_random:	newChange.m_def.m_sFile2 = RANDOM_BACKGROUND_FILE;			break;
+	case baked_random:		newChange.m_def.m_sFile2 = GetOneBakedRandomFile( m_pSong );	break;
 	case song_bganimation:
 	case song_movie:
 	case song_bitmap:
 	case global_bganimation:
 	case global_movie:
+	case global_movie_song_group:
+	case global_movie_song_group_and_genre:
 		{
-			BGChangeChoice row2 = (BGChangeChoice)(file2_song_bganimation + iAnswers[file2_type]-2);
+			BGChangeChoice row2 = (BGChangeChoice)(file2_song_bganimation + iAnswers[file2_type]);
 			newChange.m_def.m_sFile2 = g_BackgroundChange.rows[row2].choices[iAnswers[row2]];
 		}
 		break;
