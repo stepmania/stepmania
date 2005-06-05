@@ -106,6 +106,16 @@ void Song::Reset()
 
 void Song::AddBackgroundChange( BackgroundLayer iLayer, BackgroundChange seg )
 {
+	// Delete old background change at this start beat, if any.
+	FOREACH( BackgroundChange, GetBackgroundChanges(iLayer), bgc )
+	{
+		if( bgc->m_fStartBeat == seg.m_fStartBeat )
+		{
+			GetBackgroundChanges(iLayer).erase( bgc );
+			break;
+		}
+	}
+
 	ASSERT( iLayer >= 0 && iLayer < NUM_BackgroundLayer );
 	GetBackgroundChanges(iLayer).push_back( seg );
 	BackgroundUtil::SortBackgroundChangesArray( GetBackgroundChanges(iLayer) );
