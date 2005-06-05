@@ -5,6 +5,7 @@
 
 class Song;
 
+const CString SBE_UpperLeft			= "UpperLeft";
 const CString SBE_Centered			= "Centered";
 const CString SBE_StretchNormal		= "StretchNormal";
 const CString SBE_StretchNoLoop		= "StretchNoLoop";

@@ -86,7 +86,7 @@ protected:
 	map<CString,BackgroundTransition> m_mapNameToTransition;
 	deque<BackgroundDef> m_RandomBGAnimations;	// random background to choose from.  These may or may not be loaded into m_BGAnimations.
 	
-	void LoadFromRandom( float fFirstBeat, float fLastBeat, const BackgroundChange &change );
+	void LoadFromRandom( float fFirstBeat, float fEndBeat, const BackgroundChange &change );
 	bool IsDangerAllVisible();
 	
 	class Layer
@@ -372,7 +372,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		case FT_Directory:
 		case FT_Xml:
 		case FT_Model:
-			sEffect = SBE_Centered;
+			sEffect = SBE_UpperLeft;
 			break;
 		}
 	}
@@ -422,12 +422,12 @@ BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const C
 	return bd;
 }
 
-void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fLastBeat, const BackgroundChange &change )
+void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const BackgroundChange &change )
 {
 	const TimingData &timing = m_pSong->m_Timing;
 
 	// change BG every 4 bars
-	for( float f=fFirstBeat; f<fLastBeat; f+=BEATS_PER_MEASURE*4 )
+	for( float f=fFirstBeat; f<fEndBeat; f+=BEATS_PER_MEASURE*4 )
 	{
 		// Don't fade.  It causes frame rate dip, especially on slower machines.
 		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations );
@@ -443,15 +443,17 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fLastBeat, const Ba
 
 	// change BG every BPM change that is at the beginning of a measure
 	int iStartIndex = BeatToNoteRow(fFirstBeat);
-	int iEndIndex = BeatToNoteRow(fLastBeat);
+	int iEndIndex = BeatToNoteRow(fEndBeat);
 	for( unsigned i=0; i<timing.m_BPMSegments.size(); i++ )
 	{
 		const BPMSegment& bpmseg = timing.m_BPMSegments[i];
 
 		if( bpmseg.m_iStartIndex % BeatToNoteRow((float) BEATS_PER_MEASURE) != 0 )
 			continue;	// skip
-
-		if( bpmseg.m_iStartIndex < iStartIndex  || bpmseg.m_iStartIndex > iEndIndex )
+		
+		// start so that we don't create a BGChange right on top of fEndBeat
+		bool bInRange = bpmseg.m_iStartIndex >= iStartIndex && bpmseg.m_iStartIndex < iEndIndex;
+		if( !bInRange )
 			continue;	// skip
 
 		BackgroundDef bd = m_Layer[0].CreateRandomBGA( m_pSong, change.m_def.m_sEffect, m_RandomBGAnimations );
@@ -536,7 +538,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 				
 				bool bIsAlreadyLoaded = layer.m_BGAnimations.find(bd) != layer.m_BGAnimations.end();
 
-				if( bd.m_sFile1 != RANDOM_BACKGROUND_FILE && !bIsAlreadyLoaded )
+				if( bd.m_sFile1 != RANDOM_BACKGROUND_FILE  &&  !bIsAlreadyLoaded )
 				{
 					if( layer.CreateBackground( m_pSong, bd ) )
 					{
@@ -544,7 +546,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 					}
 					else
 					{
-						if( i == 0 )
+						if( i == BACKGROUND_LAYER_1 )
 						{
 							// The background was not found.  Try to use a random one instead.
 							bd = layer.CreateRandomBGA( pSong, "", m_RandomBGAnimations );
@@ -627,12 +629,12 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 			continue;
 
 		const float fStartBeat = change.m_fStartBeat;
-		const float fLastBeat = (i+1 < mainlayer.m_aBGChanges.size())? mainlayer.m_aBGChanges[i+1].m_fStartBeat: FLT_MAX;
+		const float fEndBeat = (i+1 < mainlayer.m_aBGChanges.size())? mainlayer.m_aBGChanges[i+1].m_fStartBeat: FLT_MAX;
 
 		mainlayer.m_aBGChanges.erase( mainlayer.m_aBGChanges.begin()+i );
 		--i;
 
-		LoadFromRandom( fStartBeat, fLastBeat, change );
+		LoadFromRandom( fStartBeat, fEndBeat, change );
 	}
 
 	// At this point, we shouldn't have any BGChanges to "".  "" is an invalid name.
