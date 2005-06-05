@@ -26,7 +26,8 @@ enum BackgroundLayer
 {
 	BACKGROUND_LAYER_1,
 	BACKGROUND_LAYER_2,
-	NUM_BackgroundLayer 
+	NUM_BackgroundLayer,
+	BACKGROUND_LAYER_INVALID
 };
 #define FOREACH_BackgroundLayer( bl ) FOREACH_ENUM( BackgroundLayer, NUM_BackgroundLayer, bl )
 

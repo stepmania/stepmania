@@ -144,13 +144,16 @@ void ScreenEdit::InitEditMappings()
 
 	g_EditMappings.button[EDIT_BUTTON_OPEN_EDIT_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 	g_EditMappings.button[EDIT_BUTTON_OPEN_AREA_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
-	g_EditMappings.button[EDIT_BUTTON_OPEN_BGA_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
+	g_EditMappings.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
+	g_EditMappings.button[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
+	g_EditMappings.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	g_EditMappings.hold[EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 	g_EditMappings.button[EDIT_BUTTON_OPEN_COURSE_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cc);
 	g_EditMappings.button[EDIT_BUTTON_OPEN_INPUT_HELP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
 	
 	g_EditMappings.button[EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
-	g_EditMappings.hold[EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
-	g_EditMappings.hold[EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+	g_EditMappings.hold[EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	g_EditMappings.hold[EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
 
 	g_EditMappings.button[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
 	g_EditMappings.hold[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
@@ -461,7 +464,7 @@ static bool EnabledIfSet2GlobalMovieSongGroup();
 static bool EnabledIfSet2GlobalMovieSongGroupAndGenre();
 static Menu g_BackgroundChange(
 	"ScreenMiniMenuBackgroundChange",
-	MenuRow( ScreenEdit::layer,										"Layer",								true,										EDIT_MODE_FULL, 0, "0","1" ),
+	MenuRow( ScreenEdit::layer,										"Layer",								false,										EDIT_MODE_FULL, 0, "" ),
 	MenuRow( ScreenEdit::rate,										"Rate",									true,										EDIT_MODE_FULL, 10, "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" ),
 	MenuRow( ScreenEdit::transition,								"Transition",							true,										EDIT_MODE_FULL, 0, NULL ),
 	MenuRow( ScreenEdit::effect,									"Force Effect",							true,										EDIT_MODE_FULL, 0, NULL ),
@@ -534,6 +537,7 @@ static Menu g_CourseMode(
 // menus.
 int g_iLastInsertAttackTrack = -1;
 float g_fLastInsertAttackDurationSeconds = -1;
+BackgroundLayer g_CurrentBGChangeLayer = BACKGROUND_LAYER_INVALID;
 
 #define PREV_SCREEN THEME->GetMetric(m_sName,"PrevScreen")
 
@@ -1359,7 +1363,12 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case EDIT_BUTTON_PLAY_SAMPLE_MUSIC:
 		PlayPreviewMusic();
 		break;
-	case EDIT_BUTTON_OPEN_BGA_MENU:
+	case EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU:
+		g_CurrentBGChangeLayer = BACKGROUND_LAYER_1;
+		HandleMainMenuChoice( edit_bg_change );
+		break;
+	case EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU:
+		g_CurrentBGChangeLayer = BACKGROUND_LAYER_2;
 		HandleMainMenuChoice( edit_bg_change );
 		break;
 	case EDIT_BUTTON_OPEN_COURSE_MENU:
@@ -1408,17 +1417,13 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				BackgroundLayer iLayer = BACKGROUND_LAYER_1;
 				BackgroundChange bgChange;
 				bgChange.m_fStartBeat = GAMESTATE->m_fSongBeat;
-				FOREACH_BackgroundLayer( l )
+				FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(iLayer), bgc )
 				{
-					FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(l), bgc )
+					if( bgc->m_fStartBeat == GAMESTATE->m_fSongBeat )
 					{
-						if( bgc->m_fStartBeat == GAMESTATE->m_fSongBeat )
-						{
-							bAlreadyBGChangeHere = true;
-							iLayer = l;
-							bgChange = *bgc;
-							m_pSong->GetBackgroundChanges(iLayer).erase( bgc );
-						}
+						bAlreadyBGChangeHere = true;
+						bgChange = *bgc;
+						m_pSong->GetBackgroundChanges(iLayer).erase( bgc );
 					}
 				}
 				bgChange.m_def.m_sFile1 = GetOneBakedRandomFile( m_pSong );
@@ -2120,6 +2125,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				//
 				vector<CString> vThrowAway;
 
+				g_BackgroundChange.rows[layer].choices[0] = ssprintf("%d",g_CurrentBGChangeLayer);
 				BackgroundUtil::GetBackgroundTransitions(	"", vThrowAway, g_BackgroundChange.rows[transition].choices );
 				g_BackgroundChange.rows[transition].choices.insert( g_BackgroundChange.rows[transition].choices.begin(), "" );	// add "no transition"
 				BackgroundUtil::GetBackgroundEffects(		"", vThrowAway, g_BackgroundChange.rows[effect].choices );
@@ -2147,18 +2153,13 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				// Fill in line's enabled/disabled
 				//
 				bool bAlreadyBGChangeHere = false;
-				int iLayer = 0;
 				BackgroundChange bgChange; 
-				FOREACH_BackgroundLayer( l )
+				FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer), bgc )
 				{
-					FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(l), bgc )
+					if( bgc->m_fStartBeat == GAMESTATE->m_fSongBeat )
 					{
-						if( bgc->m_fStartBeat == GAMESTATE->m_fSongBeat )
-						{
-							bAlreadyBGChangeHere = true;
-							iLayer = l;
-							bgChange = *bgc;
-						}
+						bAlreadyBGChangeHere = true;
+						bgChange = *bgc;
 					}
 				}
 
@@ -2184,7 +2185,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 
 
 				// set default choices
-				g_BackgroundChange.rows[layer].											SetDefaultChoiceIfPresent( ssprintf("%d",iLayer) );
 				g_BackgroundChange.rows[rate].											SetDefaultChoiceIfPresent( ssprintf("%2.0f%%",bgChange.m_fRate*100) );
 				g_BackgroundChange.rows[transition].									SetDefaultChoiceIfPresent( bgChange.m_sTransition );
 				g_BackgroundChange.rows[effect].										SetDefaultChoiceIfPresent( bgChange.m_def.m_sEffect );
@@ -2716,16 +2716,15 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 
 void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAnswers )
 {
-	BackgroundLayer iLayer = (BackgroundLayer)atoi( g_BackgroundChange.rows[layer].choices[iAnswers[layer]] );
 	BackgroundChange newChange;
 
-	FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(iLayer), iter )
+	FOREACH( BackgroundChange, m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer), iter )
 	{
 		if( iter->m_fStartBeat == GAMESTATE->m_fSongBeat )
 		{
 			newChange = *iter;
 			// delete the old change.  We'll add a new one below.
-			m_pSong->GetBackgroundChanges(iLayer).erase( iter );
+			m_pSong->GetBackgroundChanges(g_CurrentBGChangeLayer).erase( iter );
 			break;
 		}
 	}
@@ -2776,7 +2775,8 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 		break;
 	}
 
-	m_pSong->AddBackgroundChange( iLayer, newChange );
+	m_pSong->AddBackgroundChange( g_CurrentBGChangeLayer, newChange );
+	g_CurrentBGChangeLayer = BACKGROUND_LAYER_INVALID;
 }
 
 void ScreenEdit::SetupCourseAttacks()
