@@ -337,6 +337,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		{
 			BackgroundLayer iLayer = BACKGROUND_LAYER_1;
 			sscanf( sValueName, "BGCHANGES%d", &iLayer );
+			iLayer = (BackgroundLayer)(iLayer-1);
 
 			if( iLayer < 0 && iLayer >= NUM_BackgroundLayer )
 			{

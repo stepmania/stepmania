@@ -103,7 +103,7 @@ void NotesWriterSM::WriteGlobalTags( RageFile &f, const Song &out )
 		else if( out.GetBackgroundChanges(b).empty() )
 			continue;	// skip
 		else
-			f.Write( ssprintf("#BGCHANGES%d:", b) );
+			f.Write( ssprintf("#BGCHANGES%d:", b+1) );
 
 		FOREACH_CONST( BackgroundChange, out.GetBackgroundChanges(b), bgc )
 			f.PutLine( BackgroundChangeToString(*bgc) );
