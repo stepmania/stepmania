@@ -160,7 +160,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 bool LoadFromBGChangesString( BackgroundChange &change, const CString &sBGChangeExpression )
 {
 	CStringArray aBGChangeValues;
-	split( sBGChangeExpression, "=", aBGChangeValues );
+	split( sBGChangeExpression, "=", aBGChangeValues, false );
 
 	if( aBGChangeValues.size() >= 6 )
 	{
