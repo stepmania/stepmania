@@ -333,7 +333,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 				LOG->Warn( "The song file '%s' has an unknown #SELECTABLE value, '%s'; ignored.", sPath.c_str(), sParams[1].c_str());
 		}
 
-		else if( sValueName=="BGCHANGES" || sValueName=="ANIMATIONS" )
+		else if( sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES" || sValueName=="ANIMATIONS" )
 		{
 			BackgroundLayer iLayer = BACKGROUND_LAYER_1;
 			if( 1 == sscanf( sValueName, "BGCHANGES%d", &iLayer ) )
