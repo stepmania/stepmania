@@ -2,6 +2,7 @@
 #include "InputFilter.h"
 #include "RageLog.h"
 #include "RageInput.h"
+#include "RageUtil.h"
 #include "RageThreads.h"
 
 
@@ -55,8 +56,8 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 	if( di.ts.IsZero() )
 		LOG->Warn( "InputFilter::ButtonPressed: zero timestamp is invalid" );
 
-	ASSERT( di.device < NUM_INPUT_DEVICES );
-	ASSERT( di.button < GetNumDeviceButtons(di.device) );
+	ASSERT_M( di.device < NUM_INPUT_DEVICES, ssprintf("dev %i,%i", di.device, NUM_INPUT_DEVICES) );
+	ASSERT_M( di.button < GetNumDeviceButtons(di.device), ssprintf("button %i,%i", di.button, GetNumDeviceButtons(di.device)) );
 	ButtonState &bs = m_ButtonState[di.device][di.button];
 
 	bs.m_Level = di.level;
