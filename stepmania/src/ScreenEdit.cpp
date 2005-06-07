@@ -151,9 +151,12 @@ void ScreenEdit::InitEditMappings()
 	g_EditMappings.button[EDIT_BUTTON_OPEN_COURSE_MENU][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cc);
 	g_EditMappings.button[EDIT_BUTTON_OPEN_INPUT_HELP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F1);
 	
-	g_EditMappings.button[EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
-	g_EditMappings.hold[EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
-	g_EditMappings.hold[EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	g_EditMappings.button[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
+	g_EditMappings.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
+	g_EditMappings.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
+	g_EditMappings.button[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cb);
+	g_EditMappings.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	g_EditMappings.hold[EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
 
 	g_EditMappings.button[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
 	g_EditMappings.hold[EDIT_BUTTON_PLAY_FROM_START][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
@@ -503,7 +506,7 @@ static bool EnabledIfSet2GlobalMovie()					{ return ScreenMiniMenu::s_viLastAnsw
 static bool EnabledIfSet2GlobalMovieSongGroup()			{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == global_movie_song_group				&& !g_BackgroundChange.rows[ScreenEdit::file2_global_movie_song_group].choices.empty(); }
 static bool EnabledIfSet2GlobalMovieSongGroupAndGenre() { return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file2_type] == global_movie_song_group_and_genre	&& !g_BackgroundChange.rows[ScreenEdit::file2_global_movie_song_group_and_genre].choices.empty(); }
 
-static CString GetOneBakedRandomFile( Song *pSong )
+static CString GetOneBakedRandomFile( Song *pSong, bool bTryGenre = true )
 {
 	vector<CString> vsPathsOut; 
 	vector<CString> vsNamesOut;
@@ -511,7 +514,8 @@ static CString GetOneBakedRandomFile( Song *pSong )
 		pSong,
 		"",
 		vsPathsOut, 
-		vsNamesOut );
+		vsNamesOut,
+		bTryGenre );
 	if( !vsNamesOut.empty() )
 		return vsNamesOut[rand()%vsNamesOut.size()];
 	else
@@ -1374,41 +1378,44 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		HandleMainMenuChoice( edit_bg_change );
 		break;
 	case EDIT_BUTTON_OPEN_COURSE_MENU:
-	{
-		g_CourseMode.rows[0].choices.clear();
-		g_CourseMode.rows[0].choices.push_back( "OFF" );
-		g_CourseMode.rows[0].iDefaultChoice = 0;
-
-		vector<Course*> courses;
-		SONGMAN->GetAllCourses( courses, false );
-		for( unsigned i = 0; i < courses.size(); ++i )
 		{
-			const Course *crs = courses[i];
+			g_CourseMode.rows[0].choices.clear();
+			g_CourseMode.rows[0].choices.push_back( "OFF" );
+			g_CourseMode.rows[0].iDefaultChoice = 0;
 
-			bool bUsesThisSong = false;
-			for( unsigned e = 0; e < crs->m_entries.size(); ++e )
+			vector<Course*> courses;
+			SONGMAN->GetAllCourses( courses, false );
+			for( unsigned i = 0; i < courses.size(); ++i )
 			{
-				if( crs->m_entries[e].type != COURSE_ENTRY_FIXED )
-					continue;
-				if( crs->m_entries[e].pSong != m_pSong )
-					continue;
-				bUsesThisSong = true;
+				const Course *crs = courses[i];
+
+				bool bUsesThisSong = false;
+				for( unsigned e = 0; e < crs->m_entries.size(); ++e )
+				{
+					if( crs->m_entries[e].type != COURSE_ENTRY_FIXED )
+						continue;
+					if( crs->m_entries[e].pSong != m_pSong )
+						continue;
+					bUsesThisSong = true;
+				}
+
+				if( bUsesThisSong )
+				{
+					g_CourseMode.rows[0].choices.push_back( crs->GetDisplayFullTitle() );
+					if( crs == m_pAttacksFromCourse )
+						g_CourseMode.rows[0].iDefaultChoice = g_CourseMode.rows[0].choices.size()-1;
+				}
 			}
 
-			if( bUsesThisSong )
-			{
-				g_CourseMode.rows[0].choices.push_back( crs->GetDisplayFullTitle() );
-				if( crs == m_pAttacksFromCourse )
-					g_CourseMode.rows[0].iDefaultChoice = g_CourseMode.rows[0].choices.size()-1;
-			}
+			SCREENMAN->MiniMenu( &g_CourseMode, SM_BackFromCourseModeMenu );
+			break;
 		}
-
-		SCREENMAN->MiniMenu( &g_CourseMode, SM_BackFromCourseModeMenu );
-		break;
-	}
-	case EDIT_BUTTON_NEW_BAKED_RANDOM_FILE_FOR_BGCHANGE:
+	case EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP:
+	case EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE:
 		{
-			if( GetOneBakedRandomFile(m_pSong).empty() )
+			bool bTryGenre = EditB == EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP_AND_GENRE;
+			CString sName = GetOneBakedRandomFile(m_pSong, bTryGenre);
+			if( sName.empty() )
 			{
 				SCREENMAN->PlayInvalidSound();
 				SCREENMAN->SystemMessage( "No backgrounds available" );
@@ -1426,9 +1433,10 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 						bAlreadyBGChangeHere = true;
 						bgChange = *bgc;
 						m_pSong->GetBackgroundChanges(iLayer).erase( bgc );
+						break;
 					}
 				}
-				bgChange.m_def.m_sFile1 = GetOneBakedRandomFile( m_pSong );
+				bgChange.m_def.m_sFile1 = sName;
 				m_pSong->AddBackgroundChange( iLayer, bgChange );
 				m_soundMarker.Play();
 			}
@@ -2733,9 +2741,6 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 		}
 	}
 
-	if( c == delete_change )
-		return;	// don't add
-
 	newChange.m_fStartBeat = GAMESTATE->m_fSongBeat;
 	newChange.m_fRate = strtof( g_BackgroundChange.rows[rate].choices[iAnswers[rate]], NULL )/100.f;
 	newChange.m_sTransition = g_BackgroundChange.rows[transition].choices[iAnswers[transition]];
@@ -2764,8 +2769,8 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 	switch( iAnswers[file2_type] )
 	{
 	default:	ASSERT(0);
-	case none:				newChange.m_def.m_sFile2 = "";								break;
-	case dynamic_random:	newChange.m_def.m_sFile2 = RANDOM_BACKGROUND_FILE;			break;
+	case none:				newChange.m_def.m_sFile2 = "";									break;
+	case dynamic_random:	newChange.m_def.m_sFile2 = RANDOM_BACKGROUND_FILE;				break;
 	case baked_random:		newChange.m_def.m_sFile2 = GetOneBakedRandomFile( m_pSong );	break;
 	case song_bganimation:
 	case song_movie:
@@ -2781,7 +2786,15 @@ void ScreenEdit::HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAns
 		break;
 	}
 
-	m_pSong->AddBackgroundChange( g_CurrentBGChangeLayer, newChange );
+
+	if( c == delete_change || newChange.m_def.m_sFile1.empty() )
+	{
+		// don't add
+	}
+	else
+	{
+		m_pSong->AddBackgroundChange( g_CurrentBGChangeLayer, newChange );
+	}
 	g_CurrentBGChangeLayer = BACKGROUND_LAYER_INVALID;
 }
 
