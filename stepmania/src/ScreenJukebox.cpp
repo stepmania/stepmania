@@ -94,6 +94,8 @@ void ScreenJukebox::SetSong()
 
 		// Found something we can use!
 		GAMESTATE->m_pCurSong.Set( pSong );
+		// We just changed the song. Reset the original sync data.
+		GAMESTATE->ResetOriginalSyncData();
 		FOREACH_PlayerNumber( p )
 			GAMESTATE->m_pCurSteps[p].Set( pSteps );
 		
