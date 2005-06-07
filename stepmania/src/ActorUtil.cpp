@@ -254,7 +254,8 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		{
 			CString sError = ssprintf( "The actor file in '%s' is missing the File attribute or has an invalid Class \"%s\"",
 				sAniDir.c_str(), sClass.c_str() );
-			RageException::Throw( sError );
+			Dialog::OK( sError );
+			return NULL;
 		}
 
 		CString sNewPath = bIsAbsolutePath ? sFile : sAniDir+sFile;
