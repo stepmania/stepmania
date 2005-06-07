@@ -585,6 +585,9 @@ void NoteField::DrawPrimitives()
 							if( !change.m_def.m_sEffect.empty() )	vsParts.push_back( change.m_def.m_sEffect );
 							if( !change.m_def.m_sColor1.empty() )	vsParts.push_back( change.m_def.m_sColor1 );
 							if( !change.m_def.m_sColor2.empty() )	vsParts.push_back( change.m_def.m_sColor2 );
+							
+							if( vsParts.empty() )
+								vsParts.push_back( "(empty)" );
 
 							vsBGChanges.push_back( join("\n",vsParts) );
 						}
