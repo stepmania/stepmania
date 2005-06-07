@@ -461,8 +461,7 @@ void BackgroundImpl::LoadFromRandom( float fFirstBeat, float fEndBeat, const Bac
 		if( !bd.IsEmpty() )
 		{
 			BackgroundChange c = change;
-			c.m_def.m_sFile1 = bd.m_sFile1;
-			c.m_def.m_sFile2 = bd.m_sFile2;
+			c.m_def = bd;
 			c.m_fStartBeat = f;
 			m_Layer[0].m_aBGChanges.push_back( c );
 		}
