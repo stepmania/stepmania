@@ -1,3 +1,5 @@
+/* RageSound - High-level sound object. */
+
 #ifndef RAGE_SOUND_H
 #define RAGE_SOUND_H
 
@@ -56,14 +58,16 @@ struct RageSoundParams
 	 * supported, it'll start immediately. */
 	RageTimer StartTime;
 
-	/* M_STOP (default) stops the sound at the end.
+	/*
+	 * M_STOP (default) stops the sound at the end.
 	 * M_LOOP restarts.
-	 * M_CONTINUE feeds silence, which is useful to continue timing longer than the actual sound. */
+	 * M_CONTINUE feeds silence, which is useful to continue timing longer than the actual sound.
+	 */
 	enum StopMode_t {
-		M_STOP, /* stop when finished */
-		M_LOOP, /* loop */
+		M_STOP,     /* stop when finished */
+		M_LOOP,     /* loop */
 		M_CONTINUE, /* keep playing silence */
-		M_AUTO /* obey filename hints */
+		M_AUTO     /* obey filename hints */
 	} StopMode;
 };
 
@@ -75,19 +79,21 @@ public:
 	RageSound( const RageSound &cpy );
 	RageSound &operator=( const RageSound &cpy );
 
-	/* If cache == true, we'll preload the entire file into memory if
-	 * it's small enough.  If this is done, a large number of copies of the
-	 * sound can be played without much performance penalty.  This is useful
-	 * for BM (keyed sounds), and for rapidly-repeating sound effects, such
-	 * as the music wheel.
+	/*
+	 * If bPrecache == true, we'll preload the entire file into memory if
+	 * small enough.  If this is done, a large number of copies of the sound
+	 * can be played without much performance penalty.  This is useful for
+	 * efficiently playing keyed sounds, and for rapidly-repeating sound
+	 * effects, such as the music wheel.
 	 *
-	 * If cache == false, we'll never preload the file (always stream
-	 * it).  This makes loads much faster.
+	 * If cache == false, we'll always stream the sound on demand, which
+	 * makes loads much faster.
 	 * 
 	 * If the file failed to load, false is returned, Error() is set
-	 * and a null sample will be loaded.  (This makes failed loads nonfatal;
+	 * and a null sample will be loaded.  This makes failed loads nonfatal;
 	 * they can be ignored most of the time, so we continue to work if a file
-	 * is broken or missing.) */
+	 * is broken or missing.
+	 */
 	bool Load( CString sFile, bool bPrecache );
 
 	/* 
@@ -181,12 +187,13 @@ private:
 	static void RateChange( char *pBuf, int &iCount, int iInputSpeed, int iOutputSpeed, int iChannels );
 
 public:
-	/* Called only by the sound drivers: */
-	/* This function should return the number of bytes actually put into buffer.
-	 * If less than size is returned, it signals the stream to stop; once it's
-	 * flushed, SoundStopped will be called.  Until then, SOUNDMAN->GetPosition
-	 * can still be called (the sound is still playing). */
-	int GetPCM( char *buffer, int size, int64_t frameno );
+	/* These functions are called only by sound drivers. */
+
+	/* Returns the number of bytes actually put into pBuffer. If less than iSize is
+	 * returned, it signals the stream to stop; once it's flushed, SoundStopped will
+	 * be called.  Until then, SOUNDMAN->GetPosition can still be called; the sound
+	 * is still playing. */
+	int GetPCM( char *pBuffer, int iSize, int64_t iFrameno );
 	bool GetDataToPlay( int16_t *pBuffer, int iSize, int &iPosition, int &iBytesRead );
 	void CommitPlayingPosition( int64_t iFrameno, int iPosition, int iBytesRead );
 };
