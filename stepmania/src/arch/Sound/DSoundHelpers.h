@@ -11,18 +11,19 @@ struct IDirectSoundBuffer;
 
 class DSound
 {
-	IDirectSound *ds;
-	static BOOL CALLBACK EnumCallback( LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR  lpcstrModule, LPVOID lpContext);
-
-	void SetPrimaryBufferMode();
-    
 public:
-	IDirectSound *GetDS() const { return ds; }
+	IDirectSound *GetDS() const { return m_pDS; }
 	bool IsEmulated() const;
 
 	DSound();
 	~DSound();
 	CString Init();
+
+private:
+	IDirectSound *m_pDS;
+	static BOOL CALLBACK EnumCallback( LPGUID lpGuid, LPCSTR lpcstrDescription, LPCSTR  lpcstrModule, LPVOID lpContext);
+
+	void SetPrimaryBufferMode();
 };
 
 class DSoundBuf
@@ -36,47 +37,47 @@ public:
 
 	DSoundBuf();
 	CString Init( DSound &ds, hw hardware, 
-		int channels, int samplerate, int samplebits, int writeahead );
+		int iChannels, int iSampleRate, int iSampleBits, int iWriteAhead );
 
-	bool get_output_buf(char **buffer, unsigned *bufsiz, int chunksize);
-	void release_output_buf(char *buffer, unsigned bufsiz);
+	bool get_output_buf( char **pBuffer, unsigned *iBuffersize, int iChunksize );
+	void release_output_buf( char *pBuffer, unsigned iBuffersize );
 
 	void Play();
 	void Stop();
-	void SetVolume(float vol);
-	void SetSampleRate(int hz);
-	int GetSampleRate() { return samplerate; }
+	void SetVolume( float fVolume );
+	void SetSampleRate( int iRate );
+	int GetSampleRate() const { return m_iSampleRate; }
 
 	~DSoundBuf();
 	int64_t GetPosition() const;
-	int64_t GetOutputPosition() const { return write_cursor_pos; }
+	int64_t GetOutputPosition() const { return m_iWriteCursorPos; }
 
 private:
-	int buffersize_frames() const { return buffersize / bytes_per_frame(); }
-	int bytes_per_frame() const { return channels*samplebits/8; }
+	int buffersize_frames() const { return m_iBufferSize / bytes_per_frame(); }
+	int bytes_per_frame() const { return m_iChannels*m_iSampleBits/8; }
 
-	void CheckWriteahead( int cursorstart, int cursorend );
-	void CheckUnderrun( int cursorstart, int cursorend );
+	void CheckWriteahead( int iCursorStart, int iCursorEnd );
+	void CheckUnderrun( int iCursorStart, int iCursorEnd );
 
-	IDirectSoundBuffer *buf;
+	IDirectSoundBuffer *m_pBuffer;
 
-	int channels, samplerate, samplebits, writeahead;
-	int volume;
+	int m_iChannels, m_iSampleRate, m_iSampleBits, m_iWriteAhead;
+	int m_iVolume;
 
-	int buffersize;
+	int m_iBufferSize;
 	
-	int write_cursor, buffer_bytes_filled; /* bytes */
-	int extra_writeahead;
-	int64_t write_cursor_pos; /* frames */
-	mutable int64_t LastPosition;
-	bool playing;
+	int m_iWriteCursor, m_iBufferBytesFilled; /* bytes */
+	int m_iExtraWriteahead;
+	int64_t m_iWriteCursorPos; /* frames */
+	mutable int64_t m_iLastPosition;
+	bool m_bPlaying;
 
-	bool buffer_locked;
-	char *locked_buf1, *locked_buf2;
-	int locked_size1, locked_size2;
-	char *temp_buffer;
+	bool m_bBufferLocked;
+	char *m_pLockedBuf1, *m_pLockedBuf2;
+	int m_iLockedSize1, m_iLockedSize2;
+	char *m_pTempBuffer;
 
-	int last_cursors[4][2];
+	int m_iLastCursors[4][2];
 };
 
 #endif
