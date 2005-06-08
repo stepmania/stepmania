@@ -9,6 +9,7 @@
 class IMessageSubscriber
 {
 public:
+	virtual ~IMessageSubscriber() { }
 	virtual void HandleMessage( const CString& sMessage ) = 0;
 };
 
