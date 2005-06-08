@@ -246,7 +246,20 @@ struct GameInput
 	GameController	controller;
 	GameButton		button;
 
-	bool operator==( const GameInput &other ) { return controller == other.controller && button == other.button; };
+	bool operator==( const GameInput &other ) const { return controller == other.controller && button == other.button; };
+	bool operator<( const GameInput &other ) const
+	{
+		if( controller < other.controller )
+			return true;
+		else if( controller > other.controller )
+			return false;
+		if( button < other.button )
+			return true;
+		else if( button > other.button )
+			return false;
+
+		return false;
+	};
 
 	inline bool IsValid() const { return controller != GAME_CONTROLLER_INVALID; };
 	inline void MakeInvalid() { controller = GAME_CONTROLLER_INVALID; button = GAME_BUTTON_INVALID; };

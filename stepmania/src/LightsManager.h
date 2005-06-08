@@ -93,8 +93,7 @@ private:
 
 	float			m_fTestAutoCycleCurrentIndex;
 	CabinetLight	m_clTestManualCycleCurrent;
-	GameController	m_gcTestManualCycleCurrent;
-	GameButton		m_gbTestManualCycleCurrent;
+	int				m_iControllerTestManualCycleCurrent;
 };
 
 

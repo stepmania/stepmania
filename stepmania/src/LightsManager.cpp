@@ -11,6 +11,9 @@
 #include "Actor.h"
 #include "Preference.h"
 #include "Foreach.h"
+#include "GameManager.h"
+#include "CommonMetrics.h"
+#include "Style.h"
 
 #include "arch/arch.h"
 
@@ -44,6 +47,34 @@ static const CString LightsModeNames[] = {
 };
 XToString( LightsMode, NUM_LIGHTS_MODES );
 
+static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
+{
+	vGameInputsOut.clear();
+
+	set<GameInput> vGIs;
+	vector<const Style*> vStyles;
+	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
+	FOREACH( const Style*, vStyles, style )
+	{
+		bool bFound = find( STEPS_TYPES_TO_SHOW.GetValue().begin(), STEPS_TYPES_TO_SHOW.GetValue().end(), (*style)->m_StepsType ) != STEPS_TYPES_TO_SHOW.GetValue().end();
+		if( !bFound )
+			continue;
+		FOREACH_PlayerNumber( pn )
+		{
+			for( int i=0; i<(*style)->m_iColsPerPlayer; i++ )
+			{
+				StyleInput si( pn, i );
+				GameInput gi = (*style)->StyleInputToGameInput( si );
+				if( gi.IsValid() )
+				{
+					vGIs.insert( gi );
+				}
+			}
+		}
+	}
+	FOREACHS_CONST( GameInput, vGIs, gi )
+		vGameInputsOut.push_back( *gi );
+}
 
 LightsManager*	LIGHTSMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -58,8 +89,7 @@ LightsManager::LightsManager(CString sDriver)
 	MakeLightsDrivers( sDriver, m_vpDrivers );
 	m_fTestAutoCycleCurrentIndex = 0;
 	m_clTestManualCycleCurrent = LIGHT_INVALID;
-	m_gcTestManualCycleCurrent = GAME_CONTROLLER_INVALID;
-	m_gbTestManualCycleCurrent = GAME_BUTTON_INVALID;
+	m_iControllerTestManualCycleCurrent = -1;
 }
 
 LightsManager::~LightsManager()
@@ -331,25 +361,30 @@ void LightsManager::Update( float fDeltaTime )
 	case LIGHTSMODE_TEST_AUTO_CYCLE:
 		{
 			int index = GetTestAutoCycleCurrentIndex();
-			int iNumGameButtonsToShow = GAMESTATE->GetCurrentGame()->GetNumGameplayButtons();
-			wrap( index, MAX_GAME_CONTROLLERS*iNumGameButtonsToShow );
+
+			vector<GameInput> vGI;
+			GetUsedGameInputs( vGI );
+
+			wrap( index, vGI.size() );
 
 			ZERO( m_LightsState.m_bGameButtonLights );
 
-			GameController gc = (GameController)(index / iNumGameButtonsToShow);
-			GameButton gb = (GameButton)(index % iNumGameButtonsToShow);
+			GameController gc = vGI[index].controller;
+			GameButton gb = vGI[index].button;
 			m_LightsState.m_bGameButtonLights[gc][gb] = true;
 		}
 		break;
 	case LIGHTSMODE_TEST_MANUAL_CYCLE:
 		{
-			FOREACH_GameController( gc )
+			ZERO( m_LightsState.m_bGameButtonLights );
+
+			vector<GameInput> vGI;
+			GetUsedGameInputs( vGI );
+			if( m_iControllerTestManualCycleCurrent != -1 )
 			{
-				FOREACH_GameButton( gb )
-				{
-					bool bOn = gc==m_gcTestManualCycleCurrent && gb==m_gbTestManualCycleCurrent;
-					m_LightsState.m_bGameButtonLights[gc][gb] = bOn;
-				}
+				GameController gc = vGI[m_iControllerTestManualCycleCurrent].controller;
+				GameButton gb = vGI[m_iControllerTestManualCycleCurrent].button;
+				m_LightsState.m_bGameButtonLights[gc][gb] = true;
 			}
 		}
 		break;
@@ -384,8 +419,7 @@ LightsMode LightsManager::GetLightsMode()
 
 void LightsManager::ChangeTestCabinetLight( int iDir )
 {
-	m_gcTestManualCycleCurrent = GAME_CONTROLLER_INVALID;
-	m_gbTestManualCycleCurrent = GAME_BUTTON_INVALID;
+	m_iControllerTestManualCycleCurrent = -1;
 
 	m_clTestManualCycleCurrent = (CabinetLight)(m_clTestManualCycleCurrent+iDir);
 	wrap( (int&)m_clTestManualCycleCurrent, NUM_CABINET_LIGHTS );
@@ -395,14 +429,11 @@ void LightsManager::ChangeTestGameButtonLight( int iDir )
 {
 	m_clTestManualCycleCurrent = LIGHT_INVALID;
 	
-	int iNumGameButtonsToShow = GAMESTATE->GetCurrentGame()->GetNumGameplayButtons();
-	int index = m_gcTestManualCycleCurrent * iNumGameButtonsToShow + m_gbTestManualCycleCurrent;
+	vector<GameInput> vGI;
+	GetUsedGameInputs( vGI );
 
-	index += iDir;
-	wrap( index, MAX_GAME_CONTROLLERS * iNumGameButtonsToShow );
-
-	m_gcTestManualCycleCurrent = (GameController)(index / iNumGameButtonsToShow);
-	m_gbTestManualCycleCurrent = (GameButton)(index % iNumGameButtonsToShow);
+	m_iControllerTestManualCycleCurrent += iDir;
+	wrap( m_iControllerTestManualCycleCurrent, vGI.size() );
 }
 
 CabinetLight LightsManager::GetFirstLitCabinetLight()
