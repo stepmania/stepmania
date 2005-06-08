@@ -102,7 +102,6 @@ protected:
 	Sprite				m_sprBannerMask;
 	FadingBanner		m_Banner;
 	AutoActor			m_sprBannerFrame;
-	AutoActor			m_sprExplanation;
 	BPMDisplay			m_BPMDisplay;
 	Sprite				m_sprCDTitleFront, m_sprCDTitleBack;
 	Sprite				m_sprDifficultyFrame[NUM_PLAYERS];

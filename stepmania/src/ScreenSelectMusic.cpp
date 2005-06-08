@@ -155,11 +155,6 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_sprBannerMask );
 	this->AddChild( &m_sprBannerMask );
 
-	m_sprExplanation.Load( THEME->GetPathG(m_sName,"explanation") );
-	m_sprExplanation->SetName( "Explanation" );
-	SET_XY( m_sprExplanation );
-	this->AddChild( m_sprExplanation );
-
 	// this is loaded SetSong and TweenToSong
 	m_Banner.SetName( "Banner" );
 	m_Banner.SetZTestMode( ZTEST_WRITE_ON_PASS );	// do have to pass the z test
@@ -503,7 +498,6 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_sprBannerMask );
 	ON_COMMAND( m_Banner );
 	ON_COMMAND( m_sprBannerFrame );
-	ON_COMMAND( m_sprExplanation );
 	ON_COMMAND( m_BPMDisplay );
 	ON_COMMAND( m_DifficultyDisplay );
 	ON_COMMAND( m_sprCDTitleFront );
@@ -558,7 +552,6 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_sprBannerMask );
 	OFF_COMMAND( m_Banner );
 	OFF_COMMAND( m_sprBannerFrame );
-	OFF_COMMAND( m_sprExplanation );
 	OFF_COMMAND( m_BPMDisplay );
 	OFF_COMMAND( m_DifficultyDisplay );
 	OFF_COMMAND( m_sprCDTitleFront );
