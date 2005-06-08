@@ -72,7 +72,7 @@ class RageSound: public RageSoundBase
 public:
 	RageSound();
 	~RageSound();
-	RageSound(const RageSound &cpy);
+	RageSound( const RageSound &cpy );
 	RageSound &operator=( const RageSound &cpy );
 
 	/* If cache == true, we'll preload the entire file into memory if
@@ -88,12 +88,13 @@ public:
 	 * and a null sample will be loaded.  (This makes failed loads nonfatal;
 	 * they can be ignored most of the time, so we continue to work if a file
 	 * is broken or missing.) */
-	bool Load( CString fn, bool bPrecache );
+	bool Load( CString sFile, bool bPrecache );
+
 	/* 
 	 * Using this version means the "don't care" about caching.  Currently, 
 	 * this always will not cache the sound; this may become a preference.
 	 */
-	bool Load( CString fn );
+	bool Load( CString sFile );
 
 	/* Load a SoundReader that you've set up yourself.  Sample rate conversion will
 	 * be set up only if needed.  Doesn't fail. */
@@ -104,8 +105,8 @@ public:
 	void StartPlaying();
 	void StopPlaying();
 
-	CString GetError() const { return error; }
-	bool Error() const { return !error.empty(); }
+	CString GetError() const { return m_sError; }
+	bool Error() const { return !m_sError.empty(); }
 
 	RageSound *Play( const RageSoundParams *params=NULL );
 	void Stop();
@@ -120,7 +121,7 @@ public:
 	bool IsStreamingFromDisk() const;
 	bool SetPositionSeconds( float fSeconds );
 	CString GetLoadedFilePath() const { return m_sFilePath; }
-	bool IsPlaying() const { return playing; }
+	bool IsPlaying() const { return m_bPlaying; }
 
 	/* Lock and unlock this sound. */
 	void LockSound();
@@ -129,19 +130,19 @@ public:
 	float GetPlaybackRate() const;
 	RageTimer GetStartTime() const;
 	float GetVolume() const;
-	int GetID() const { return ID; }
+	int GetID() const { return m_iID; }
 	void SetParams( const RageSoundParams &p );
 	const RageSoundParams &GetParams() const { return m_Param; }
 
 private:
 	mutable RageMutex m_Mutex;
 
-	SoundReader *Sample;
-	CircBuf<char> databuf;
-	int FillBuf(int bytes);
+	SoundReader *m_pSource;
+	CircBuf<char> m_DataBuffer;
+	int FillBuf( int iBytes );
 
 	/* We keep track of sound blocks we've sent out recently through GetDataToPlay. */
-	pos_map_queue pos_map;
+	pos_map_queue m_PositionMapping;
 	
 	CString m_sFilePath;
 
@@ -149,7 +150,7 @@ private:
 	
 	/* Current position of the output sound, in frames.  If < 0, nothing will play
 	 * until it becomes positive. */
-	int		decode_position;
+	int m_iDecodePosition;
 
 	/* Hack: When we stop a playing sound, we can't ask the driver the position
 	 * (we're not playing); and we can't seek back to the current playing position
@@ -157,27 +158,27 @@ private:
 	 * were at when we stopped without jumping to the last position we buffered. 
 	 * Keep track of the position after a seek or stop, so we can return a sane
 	 * position when stopped, and when playing but pos_map hasn't yet been filled. */
-	int stopped_position;
-	bool    playing;
+	int m_iStoppedPosition;
+	bool m_bPlaying;
 
 	/* Keep track of the max SOUNDMAN->GetPosition result (see GetPositionSecondsInternal). */
-	mutable int64_t max_driver_frame;
+	mutable int64_t m_iMaxDriverFrame;
 
 	/* Unique ID number for this instance of RageSound. */
-	int ID;
+	int m_iID;
 
-	CString error;
+	CString m_sError;
 
-	int64_t GetPositionSecondsInternal( bool *approximate=NULL ) const;
+	int64_t GetPositionSecondsInternal( bool *bApproximate=NULL ) const;
 	bool SetPositionFrames( int frames = -1 );
-	int GetData(char *buffer, int size);
-	void Fail(CString reason);
+	int GetData( char *pBuffer, int iSize );
+	void Fail( CString sReason );
 	int Bytes_Available() const;
 	RageSoundParams::StopMode_t GetStopMode() const; /* resolves M_AUTO */
 
 	void SoundIsFinishedPlaying(); // called by sound drivers
 
-	static void RateChange(char *buf, int &cnt, int speed_input_samples, int speed_output_samples, int channels);
+	static void RateChange( char *pBuf, int &iCount, int iInputSpeed, int iOutputSpeed, int iChannels );
 
 public:
 	/* Called only by the sound drivers: */
@@ -186,8 +187,8 @@ public:
 	 * flushed, SoundStopped will be called.  Until then, SOUNDMAN->GetPosition
 	 * can still be called (the sound is still playing). */
 	int GetPCM( char *buffer, int size, int64_t frameno );
-	bool GetDataToPlay( int16_t *buffer, int size, int &pos, int &got_bytes );
-	void CommitPlayingPosition( int64_t frameno, int pos, int got_bytes );
+	bool GetDataToPlay( int16_t *pBuffer, int iSize, int &iPosition, int &iBytesRead );
+	void CommitPlayingPosition( int64_t iFrameno, int iPosition, int iBytesRead );
 };
 
 #endif
