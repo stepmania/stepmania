@@ -392,7 +392,7 @@ Song *SongID::ToSong() const
 	// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
 	CString sDir2 = sDir;
 	if( sDir2.Left(1) != "/" )
-		sDir2.erase( sDir2.begin() );
+		sDir2 = "/" + sDir2;
 
 	return SONGMAN->GetSongFromDir( sDir2 );
 }

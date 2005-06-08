@@ -226,7 +226,7 @@ Course *CourseID::ToCourse() const
 	// Re-add the leading "/".  2005/05/21 file layer changes added a leading slash.
 	CString sPath2 = sPath;
 	if( sPath2.Left(1) != "/" )
-		sPath2.erase( sPath2.begin() );
+		sPath2 = "/" + sPath2;
 
 	if( !sPath2.empty() )
 	{
