@@ -8,11 +8,11 @@ AutoScreenMessage( SM_PrepScreen )
 
 REGISTER_SCREEN_CLASS( ScreenSplash );
 ScreenSplash::ScreenSplash( CString sClassName ) : ScreenWithMenuElements( sClassName ),
-	PREPARE_SCREEN				(m_sName,"PrepareScreen"),
 	ALLOW_START_TO_SKIP			(m_sName,"AllowStartToSkip"),
 	NEXT_SCREEN					(m_sName,"NextScreen"),
 	PREV_SCREEN					(m_sName,"PrevScreen"),
-	MINIMUM_LOAD_DELAY_SECONDS	(m_sName,"MinimumLoadDelaySeconds")
+	MINIMUM_LOAD_DELAY_SECONDS	(m_sName,"MinimumLoadDelaySeconds"),
+	PREPARE_SCREEN				(m_sName,"PrepareScreen")
 {
 }
 
