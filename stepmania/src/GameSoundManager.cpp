@@ -559,7 +559,7 @@ void GameSoundManager::PlayMusic( const CString &file, const CString &timing_fil
 	g_Mutex->Unlock();
 }
 
-void GameSoundManager::PlayMusic( const CString &file, TimingData *pTiming, bool force_loop, float start_sec, float length_sec, float fade_len, bool align_beat )
+void GameSoundManager::PlayMusic( const CString &file, const TimingData *pTiming, bool force_loop, float start_sec, float length_sec, float fade_len, bool align_beat )
 {
 	MusicToPlay ToPlay;
 	
