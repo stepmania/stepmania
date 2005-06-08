@@ -638,7 +638,12 @@ void RageSound::SoundIsFinishedPlaying()
 
 RageSound *RageSound::Play( const RageSoundParams *params )
 {
-	ASSERT( Sample );
+	if( Sample == NULL )
+	{
+		LOG->Warn( "RageSound::Play: sound not loaded" );
+		return NULL;
+	}
+
 	return SOUNDMAN->PlaySound( *this, params );
 }
 
@@ -649,14 +654,24 @@ void RageSound::Stop()
 
 bool RageSound::Pause( bool bPause )
 {
-	ASSERT( Sample );
+	if( Sample == NULL )
+	{
+		LOG->Warn( "RageSound::Pause: sound not loaded" );
+		return false;
+	}
+
 	return SOUNDMAN->Pause( this, bPause );
 }
 	
 
 float RageSound::GetLengthSeconds()
 {
-	ASSERT(Sample);
+	if( Sample == NULL )
+	{
+		LOG->Warn( "RageSound::GetLengthSeconds: sound not loaded" );
+		return -1;
+	}
+
 	int len = Sample->GetLength();
 
 	if(len < 0)
@@ -745,26 +760,47 @@ float RageSound::GetPositionSeconds( bool *approximate, RageTimer *Timestamp ) c
 
 bool RageSound::SetPositionSeconds( float fSeconds )
 {
-	ASSERT( Sample );
+	if( Sample == NULL )
+	{
+		LOG->Warn( "RageSound::SetPositionSeconds(%f): sound not loaded", fSeconds );
+		return false;
+	}
+
 	return SetPositionFrames( int(fSeconds * samplerate()) );
 }
 
 /* This is always the desired sample rate of the current driver. */
 int RageSound::GetSampleRate() const
 {
-	ASSERT( Sample );
+	if( Sample == NULL )
+	{
+		LOG->Warn( "RageSound::GetSampleRate(): sound not loaded" );
+		return 44100;
+	}
+
 	return Sample->GetSampleRate();
 }
 
 bool RageSound::IsStreamingFromDisk() const
 {
-	ASSERT( Sample );
+	if( Sample == NULL )
+	{
+		LOG->Warn( "RageSound::IsStreamingFromDisk: sound not loaded" );
+		return false;
+	}
+
 	return Sample->IsStreamingFromDisk();
 }
 
 bool RageSound::SetPositionFrames( int frames )
 {
 	LockMut(m_Mutex);
+
+	if( Sample == NULL )
+	{
+		LOG->Warn( "RageSound::SetPositionFrames(%f): sound not loaded", frames );
+		return false;
+	}
 
 	{
 		/* "decode_position" records the number of frames we've output to the
@@ -788,8 +824,6 @@ bool RageSound::SetPositionFrames( int frames )
 	ms = max(ms, 0);
 
 	databuf.clear();
-
-	ASSERT(Sample);
 
 	int ret;
 	if( m_Param.AccurateSync )
