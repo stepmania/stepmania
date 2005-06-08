@@ -695,9 +695,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 
 			CString sLastSection = "";
 			int iSectionColorIndex = 0;
-			for( unsigned c=0; c<apCourses.size(); c++ )	// foreach course
+			for( unsigned i=0; i<apCourses.size(); i++ )	// foreach course
 			{
-				Course* pCourse = apCourses[c];
+				Course* pCourse = apCourses[i];
 
 				// if unlocks are on, make sure it is unlocked
 				if ( UNLOCKMAN->CourseIsLocked(pCourse) )
