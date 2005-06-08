@@ -330,14 +330,6 @@ void ScreenSelectMusic::Init()
 	ActorUtil::LoadAllCommands( m_sprOptionsMessage, m_sName );
 	//this->AddChild( &m_sprOptionsMessage );	// we have to draw this manually over the top of transitions
 
-	FOREACH_PlayerNumber( p )
-	{
-		m_sprNonPresence[p].SetName( ssprintf("NonPresenceP%d",p+1) );
-		m_sprNonPresence[p].Load( THEME->GetPathG(m_sName,ssprintf("nonpresence p%d",p+1)) );
-		SET_XY( m_sprNonPresence[p] );
-		this->AddChild( &m_sprNonPresence[p] );
-	}
-
 	m_bgOptionsOut.Load( THEME->GetPathB(m_sName,"options out") );
 //	this->AddChild( &m_bgOptionsOut ); // drawn on top
 	m_bgNoOptionsOut.Load( THEME->GetPathB(m_sName,"no options out") );
@@ -410,13 +402,6 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 			ON_COMMAND( m_AutoGenIcon[p] );
 		}
 	}
-
-	{
-		FOREACH_PlayerNumber( p )
-		{
-			ON_COMMAND( m_sprNonPresence[p] );
-		}
-	}
 }
 
 void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
@@ -441,13 +426,6 @@ void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
 			OFF_COMMAND( m_sprMeterFrame[p] );
 			OFF_COMMAND( m_DifficultyIcon[p] );
 			OFF_COMMAND( m_AutoGenIcon[p] );
-		}
-	}
-
-	{
-		FOREACH_PlayerNumber( p )
-		{
-			OFF_COMMAND( m_sprNonPresence[p] );
 		}
 	}
 }

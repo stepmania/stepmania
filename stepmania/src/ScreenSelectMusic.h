@@ -115,7 +115,6 @@ protected:
 	BitmapText			m_textTotalTime;
 	OptionIconRow		m_OptionIconRow[NUM_PLAYERS];
 	Sprite				m_sprMeterFrame[NUM_PLAYERS];
-	Sprite				m_sprNonPresence[NUM_PLAYERS];
 	DifficultyMeter			m_DifficultyMeter[NUM_PLAYERS];
 	MusicSortDisplay	m_MusicSortDisplay;
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
