@@ -27,8 +27,15 @@
 //
 // Old file versions for backward compatibility
 //
-const CString STATS_XSL		= "Stats.xsl";
-const CString COMMON_XSL	= "Common.xsl";
+const CString STATS_XSL            = "Stats.xsl";
+const CString COMMON_XSL           = "Common.xsl";
+const CString STATS_XML            = "Stats.xml";
+const CString EDITABLE_INI         = "Editable.ini";
+const CString DONT_SHARE_SIG       = "DontShare.sig";
+const CString PUBLIC_KEY_FILE      = "public.key";
+const CString SCREENSHOTS_SUBDIR   = "Screenshots/";
+const CString EDITS_SUBDIR         = "Edits/";
+const CString LASTGOOD_SUBDIR      = "LastGood/";
 
 #define GUID_SIZE_BYTES 8
 

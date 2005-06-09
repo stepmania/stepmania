@@ -13,6 +13,17 @@ const CString BG_ANIMS_DIR			= "BGAnimations/";
 const CString VISUALIZATIONS_DIR	= "Visualizations/";
 const CString RANDOMMOVIES_DIR		= "RandomMovies/";
 
+const CString RANDOM_BACKGROUND_FILE    = "-random-";
+const CString NO_SONG_BG_FILE           = "-nosongbg-";
+const CString SONG_BACKGROUND_FILE      = "songbackground";
+
+const CString SBE_UpperLeft             = "UpperLeft";
+const CString SBE_Centered              = "Centered";
+const CString SBE_StretchNormal         = "StretchNormal";
+const CString SBE_StretchNoLoop         = "StretchNoLoop";
+const CString SBE_StretchRewind         = "StretchRewind";
+const CString SBT_CrossFade             = "CrossFade";
+
 static void StripCvs( vector<CString> &vsPathsToStrip, vector<CString> &vsNamesToStrip )
 {
 	ASSERT( vsPathsToStrip.size() == vsNamesToStrip.size() );

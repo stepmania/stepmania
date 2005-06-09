@@ -23,15 +23,16 @@ struct lua_State;
 //
 // Current file versions
 //
-const CString STATS_XML				= "Stats.xml";
+extern const CString STATS_XML;
 
-const CString EDITABLE_INI			= "Editable.ini";
+extern const CString EDITABLE_INI;
+
 // Editable data is an INI because the default INI file association on Windows 
 // systems will open the ini file in an editor.  The default association for 
 // XML will open in IE.  Users have a much better chance of discovering how to 
 // edit this data if they don't have to fight against the file associations.
+extern const CString DONT_SHARE_SIG;
 
-const CString DONT_SHARE_SIG		= "DontShare.sig";
 // The "don't share" file is something that the user should always keep private.
 // They can safely share STATS_XML with STATS_XML's signature so that others
 // can authenticate the STATS_XML data.  However, others can't copy that data
@@ -39,11 +40,10 @@ const CString DONT_SHARE_SIG		= "DontShare.sig";
 // share" file.  DontShare contains a piece of information that we can 
 // construct using STATS_XML but the user can't construct using STATS_XML.
 // The file contains a signature of the STATS_XML's signature.
-
-const CString PUBLIC_KEY_FILE		= "public.key";
-const CString SCREENSHOTS_SUBDIR	= "Screenshots/";
-const CString EDITS_SUBDIR			= "Edits/";
-const CString LASTGOOD_SUBDIR		= "LastGood/";
+extern const CString PUBLIC_KEY_FILE;
+extern const CString SCREENSHOTS_SUBDIR;
+extern const CString EDITS_SUBDIR;
+extern const CString LASTGOOD_SUBDIR;
 
 class Style;
 

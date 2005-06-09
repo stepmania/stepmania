@@ -5,16 +5,16 @@
 
 class Song;
 
-const CString SBE_UpperLeft			= "UpperLeft";
-const CString SBE_Centered			= "Centered";
-const CString SBE_StretchNormal		= "StretchNormal";
-const CString SBE_StretchNoLoop		= "StretchNoLoop";
-const CString SBE_StretchRewind		= "StretchRewind";
-const CString SBT_CrossFade			= "CrossFade";
+extern const CString RANDOM_BACKGROUND_FILE;
+extern const CString NO_SONG_BG_FILE;
+extern const CString SONG_BACKGROUND_FILE;
 
-const CString RANDOM_BACKGROUND_FILE = "-random-";
-const CString NO_SONG_BG_FILE		= "-nosongbg-";
-const CString SONG_BACKGROUND_FILE	= "songbackground";
+extern const CString SBE_UpperLeft;
+extern const CString SBE_Centered;
+extern const CString SBE_StretchNormal;
+extern const CString SBE_StretchNoLoop;
+extern const CString SBE_StretchRewind;
+extern const CString SBT_CrossFade;
 
 struct BackgroundDef
 {

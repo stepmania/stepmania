@@ -17,6 +17,7 @@ LuaFunction( X##ToString, X##ToString( (X) IArg(1) ) );
 #define LuaStringToX(X)	\
 LuaFunction( StringTo##X, (X) StringTo##X( SArg(1) ) );
 
+const CString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS] = {"#P1#","#P2#"};
 
 static const CString RadarCategoryNames[] = {
 	"Stream",
