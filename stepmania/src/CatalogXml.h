@@ -3,12 +3,11 @@
 #ifndef CATALOG_XML_H
 #define CATALOG_XML_H
 
-#include "GameConstantsAndTypes.h"
 class LoadingWindow;
 
-const CString CATALOG_XML	= "Catalog.xml";
-const CString CATALOG_XSL	= "Catalog.xsl";
-const CString CATALOG_XML_FILE	= DATA_DIR + "Catalog.xml";
+extern const CString CATALOG_XML;
+extern const CString CATALOG_XSL;
+extern const CString CATALOG_XML_FILE;
 
 void SaveCatalogXml( LoadingWindow *ld );
 

@@ -31,6 +31,10 @@
 #define FOOTER_TEXT						THEME->GetMetric ("CatalogXml","FooterText")
 #define FOOTER_LINK						THEME->GetMetric ("CatalogXml","FooterLink")
 
+const CString CATALOG_XML       = "Catalog.xml";
+const CString CATALOG_XSL       = "Catalog.xsl";
+const CString CATALOG_XML_FILE  = DATA_DIR + "Catalog.xml";
+
 void SaveCatalogXml( LoadingWindow *loading_window )
 {
 	ASSERT( SONGMAN );
