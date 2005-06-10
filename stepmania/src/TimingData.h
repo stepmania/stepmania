@@ -66,7 +66,8 @@ public:
 		return fBeat;
 	}
 	float GetElapsedTimeFromBeat( float fBeat ) const;
-	bool HasBpmChangesOrStops() const;
+	bool HasBpmChanges() const;
+	bool HasStops() const;
 
 	bool operator==( const TimingData &other )
 	{

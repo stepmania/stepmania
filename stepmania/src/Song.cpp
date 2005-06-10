@@ -1444,12 +1444,22 @@ bool Song::IsEditAlreadyLoaded( Steps* pSteps ) const
 
 bool Song::HasSignificantBpmChangesOrStops() const
 {
+	if( m_Timing.HasStops() )
+		return true;
+
 	// Don't consider BPM changes that only are only for maintaining sync as 
 	// a real BpmChange.
 	if( m_DisplayBPMType == DISPLAY_SPECIFIED )
-		return false;
+	{
+		if( m_fSpecifiedBPMMin != m_fSpecifiedBPMMax )
+			return true;
+	}
+	else if( m_Timing.HasBpmChanges() )
+	{
+		return true;
+	}
 
-	return m_Timing.HasBpmChangesOrStops();
+	return false;
 }
 
 float Song::GetStepsSeconds() const

@@ -347,9 +347,14 @@ void TimingData::ShiftRows( int iStartRow, int iRowsToShift )
 	}
 }
 
-bool TimingData::HasBpmChangesOrStops() const
+bool TimingData::HasBpmChanges() const
 {
-	return m_BPMSegments.size()>1 || m_StopSegments.size()>0;
+	return m_BPMSegments.size()>1;
+}
+
+bool TimingData::HasStops() const
+{
+	return m_StopSegments.size()>0;
 }
 
 /*
