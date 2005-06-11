@@ -37,11 +37,14 @@ const int NUM_SCORE_DIGITS	=	9;
 #define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetricA(m_sName,ssprintf("ScoreP%iSortChangeCommand", i+1))
 #define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetricA(m_sName,ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
 #define METER_TYPE							THEME->GetMetric (m_sName,"MeterType")
+#define SHOW_OPTIONS_MESSAGE_SECONDS		THEME->GetMetricF(m_sName,"ShowOptionsMessageSeconds")
+#define TWEEN_OFF_OPTIONS_MESSAGE_IMMEDIATELY	THEME->GetMetricB(m_sName,"TweenOptionsMessageOffImmediately")
 
 AutoScreenMessage( SM_AllowOptionsMenuRepeat )
 AutoScreenMessage( SM_SongChanged )
 AutoScreenMessage( SM_SortOrderChanging )
 AutoScreenMessage( SM_SortOrderChanged )
+AutoScreenMessage( SM_TweenOffOptionsMessage )
 
 static CString g_sCDTitlePath;
 static bool g_bWantFallbackCdTitle;
@@ -769,7 +772,6 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		MenuI.button == MENU_BUTTON_START  &&
 		type != IET_RELEASE  &&
 		type != IET_LEVEL_CHANGED &&
-		IsTransitioning() &&
 		OPTIONS_MENU_AVAILABLE.GetValue() )
 	{
 		if(m_bGoToOptions) return; /* got it already */
@@ -782,6 +784,16 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		m_bGoToOptions = true;
 		m_sprOptionsMessage.SetState( 1 );
 		SCREENMAN->PlayStartSound();
+
+		if( TWEEN_OFF_OPTIONS_MESSAGE_IMMEDIATELY )
+		{
+			// Send SM_TweenOffOptionsMessage faster.  Don't tween off the 
+			// options message until the wheel has finished tweening off though.
+			this->ClearMessageQueue( SM_TweenOffOptionsMessage );
+			float fOffCommandLengthSeconds = Actor::GetCommandsLengthSeconds( m_sprOptionsMessage.GetCommand("Off") );
+			float fSecondsToDelay = max( this->GetTweenTimeLeft() - fOffCommandLengthSeconds, 0 );
+			this->PostScreenMessage( SM_TweenOffOptionsMessage, fSecondsToDelay );
+		}
 		return;
 	}
 
@@ -1061,6 +1073,11 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	{
 		m_bAllowOptionsMenuRepeat = true;
 	}
+	else if( SM == SM_TweenOffOptionsMessage )
+	{
+		OFF_COMMAND( m_sprOptionsMessage );
+		this->HandleScreenMessage( SM_BeginFadingOut );
+	}
 	else if( SM == SM_MenuTimer )
 	{
 		if( m_MusicWheel.IsRouletting() )
@@ -1256,7 +1273,15 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		m_BackgroundLoader.Abort();
 		CheckBackgroundRequests();
 
-		StartTransitioning( SM_BeginFadingOut );
+		if( OPTIONS_MENU_AVAILABLE )
+		{
+			StartTransitioning( SM_None );
+			this->PostScreenMessage( SM_TweenOffOptionsMessage, SHOW_OPTIONS_MESSAGE_SECONDS );
+		}
+		else
+		{
+			StartTransitioning( SM_BeginFadingOut );
+		}
 	}
 
 	if( GAMESTATE->IsExtraStage() && PREFSMAN->m_bPickExtraStage )
