@@ -188,6 +188,7 @@ void BGAnimation::LoadFromNode( const CString& sDir, const XNode* pNode )
 	if( pNode->GetAttrValue( "LengthSeconds", fLengthSeconds ) )
 	{
 		Actor *pActor = new Actor;
+		pActor->SetName( "BGAnimation dummy" );
 		pActor->SetHidden( true );
 		apActorCommands ap( new ActorCommands(ssprintf("sleep,%f",fLengthSeconds)) );
 		pActor->AddCommand( "On", ap );
