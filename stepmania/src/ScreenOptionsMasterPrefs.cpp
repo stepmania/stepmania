@@ -495,7 +495,7 @@ static void AspectRatio( int &sel, bool ToSel, const ConfOption *pConfOption )
 
 /* Sound options */
 MOVE( ResamplingQuality,	PREFSMAN->m_SoundResampleQuality );
-MOVE( AttractSoundFrequency,PREFSMAN->m_iAttractSoundFrequency );
+MOVE( AttractSoundFrequency,PREFSMAN->m_AttractSoundFrequency );
 
 static void SoundVolume( int &sel, bool ToSel, const ConfOption *pConfOption )
 {

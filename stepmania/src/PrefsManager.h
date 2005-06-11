@@ -226,7 +226,8 @@ public:
 	Preference<int>		m_iCenterImageTranslateY;
 	Preference<int>		m_fCenterImageAddWidth;
 	Preference<int>		m_fCenterImageAddHeight;
-	Preference<int>		m_iAttractSoundFrequency;	// 0 = never, 1 = every time
+	enum AttractSoundFrequency { ASF_NEVER, ASF_EVERY_TIME, ASF_EVERY_2_TIMES, ASF_EVERY_3_TIMES, ASF_EVERY_4_TIMES, ASF_EVERY_5_TIMES };
+	Preference<AttractSoundFrequency>	m_AttractSoundFrequency;
 	Preference<bool>	m_bAllowExtraStage;
 	Preference<bool>	m_bHideDefaultNoteSkin;
 	Preference<int>		m_iMaxHighScoresPerListForMachine;

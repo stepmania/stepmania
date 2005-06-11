@@ -1720,17 +1720,11 @@ bool GameState::OneIsHot() const
 
 bool GameState::IsTimeToPlayAttractSounds()
 {
-	// if m_iNumTimesThroughAttract is negative, play attract sounds regardless
-	// of m_iAttractSoundFrequency.
-	if( m_iNumTimesThroughAttract<0 )
-		return true;
-
-	// 0 means "never play sound".  Avoid a divide by 0 below.
-	if( PREFSMAN->m_iAttractSoundFrequency == 0 )
+	if( PREFSMAN->m_AttractSoundFrequency == PrefsManager::ASF_NEVER )
 		return false;
 
 	// play attract sounds once every m_iAttractSoundFrequency times through
-	if( (m_iNumTimesThroughAttract % PREFSMAN->m_iAttractSoundFrequency)==0 )
+	if( (m_iNumTimesThroughAttract % PREFSMAN->m_AttractSoundFrequency)==0 )
 		return true;
 
 	return false;

@@ -241,7 +241,7 @@ PrefsManager::PrefsManager() :
 	m_iCenterImageTranslateY		( "CenterImageTranslateY",		0 ),
 	m_fCenterImageAddWidth			( "CenterImageAddWidth",		0 ),
 	m_fCenterImageAddHeight			( "CenterImageAddHeight",		0 ),
-	m_iAttractSoundFrequency		( "AttractSoundFrequency",		1 ),
+	m_AttractSoundFrequency			( "AttractSoundFrequency",		ASF_EVERY_TIME ),
 	m_bAllowExtraStage				( "AllowExtraStage",			true ),
 	m_bHideDefaultNoteSkin			( "HideDefaultNoteSkin",		false ),
 	m_iMaxHighScoresPerListForMachine		( "MaxHighScoresPerListForMachine",		10 ),
