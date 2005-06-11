@@ -473,17 +473,18 @@ void WheelBase::TweenOffScreen(bool changing_sort)
 	SetItemPosition( *m_sprHighlight, 0 );
 
 	COMMAND( m_sprHighlight, "StartOff");
-	if(changing_sort)
+	if( changing_sort )
 	{
 		/* When changing sort, tween the overlay with the item in the center;
 		 * having it separate looks messy when we're moving fast. */
 		const float delay = fabsf(NUM_WHEEL_ITEMS/2-WHEEL_ITEM_ON_DELAY_CENTER) * WHEEL_ITEM_ON_DELAY_OFFSET;
 		m_sprHighlight->BeginTweening( delay ); // sleep
 		COMMAND( m_sprHighlight, "FinishOffSort");
-	} else {
+	} 
+	else
+	{
 		COMMAND( m_sprHighlight, "FinishOff");
 	}
-	COMMAND( m_sprHighlight, "FinishOff");
 
 	m_ScrollBar.BeginTweening( 0 );
 	m_ScrollBar.BeginTweening( 0.2f, Actor::TWEEN_ACCELERATE );
