@@ -486,9 +486,6 @@ void Actor::Update( float fDeltaTime )
 //	LOG->Trace( "Actor::Update( %f )", fDeltaTime );
 	ASSERT_M( fDeltaTime >= 0, ssprintf("%f",fDeltaTime) );
 
-	if( m_bFirstUpdate )
-		m_bFirstUpdate = false;
-
 	if( m_fHibernateSecondsLeft > 0 )
 	{
 		m_fHibernateSecondsLeft -= fDeltaTime;
@@ -499,6 +496,14 @@ void Actor::Update( float fDeltaTime )
 		fDeltaTime = -m_fHibernateSecondsLeft;
 		m_fHibernateSecondsLeft = 0;
 	}
+
+	this->UpdateInternal( fDeltaTime );
+}
+
+void Actor::UpdateInternal( float fDeltaTime )
+{
+	if( m_bFirstUpdate )
+		m_bFirstUpdate = false;
 
 	switch( m_EffectClock )
 	{
@@ -1050,6 +1055,13 @@ bool Actor::HasCommand( const CString &sCmdName )
 {
 	map<CString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCmdName );
 	return it != m_mapNameToCommands.end();
+}
+
+const apActorCommands& Actor::GetCommand( const CString &sCommandName ) const
+{
+	map<CString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCommandName );
+	ASSERT( it != m_mapNameToCommands.end() );
+	return it->second;
 }
 
 void Actor::PlayCommand( const CString &sCommandName )

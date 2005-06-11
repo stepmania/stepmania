@@ -216,16 +216,13 @@ void ActorFrame::RunCommandsOnLeaves( const LuaReference& cmds )
 		m_SubActors[i]->RunCommandsOnLeaves( cmds );
 }
 
-void ActorFrame::Update( float fDeltaTime )
+void ActorFrame::UpdateInternal( float fDeltaTime )
 {
 //	LOG->Trace( "ActorFrame::Update( %f )", fDeltaTime );
 
 	fDeltaTime *= m_fUpdateRate;
 
-	Actor::Update( fDeltaTime );
-
-	if( m_fHibernateSecondsLeft > 0 )
-		return;
+	Actor::UpdateInternal( fDeltaTime );
 
 	// update all sub-Actors
 	for( vector<Actor*>::iterator it=m_SubActors.begin(); it!=m_SubActors.end(); it++ )

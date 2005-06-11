@@ -556,12 +556,9 @@ void BGAnimationLayer::LoadFromNode( const CString& sDir, const XNode* pNode )
 	}
 }
 
-void BGAnimationLayer::Update( float fDeltaTime )
+void BGAnimationLayer::UpdateInternal( float fDeltaTime )
 {
-	if( m_fHibernateSecondsLeft > 0 )
-		return;
-
-	ActorFrame::Update( fDeltaTime );
+	ActorFrame::UpdateInternal( fDeltaTime );
 
 	fDeltaTime *= m_fUpdateRate;
 

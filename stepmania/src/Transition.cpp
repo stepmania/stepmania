@@ -65,7 +65,7 @@ void Transition::Load( CString sBGAniDir )
 }
 
 
-void Transition::Update( float fDeltaTime )
+void Transition::UpdateInternal( float fDeltaTime )
 {
 	if( m_State != transitioning )
 		return;
@@ -83,7 +83,7 @@ void Transition::Update( float fDeltaTime )
 		SCREENMAN->SendMessageToTopScreen( m_MessageToSendWhenDone );
 	}
 
-	ActorFrame::Update( fDeltaTime );
+	ActorFrame::UpdateInternal( fDeltaTime );
 }
 
 void Transition::Reset()

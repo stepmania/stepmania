@@ -42,7 +42,7 @@ public:
 		const CString &sTransformFunction,
 		bool bUseMask );
 
-	virtual void Update( float fDelta );
+	virtual void UpdateInternal( float fDelta );
 	virtual void DrawPrimitives();	// DOES draw
 
 	void LoadFromNode( const CString &sDir, const XNode *pNode );

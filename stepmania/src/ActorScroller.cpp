@@ -153,12 +153,9 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 	pNode->GetAttrValue( "QuantizePixels", m_fQuantizePixels );
 }
 
-void ActorScroller::Update( float fDeltaTime )
+void ActorScroller::UpdateInternal( float fDeltaTime )
 {
-	ActorFrame::Update( fDeltaTime );
-
-	if( m_fHibernateSecondsLeft > 0 )
-		return;	// early abort
+	ActorFrame::UpdateInternal( fDeltaTime );
 
 	/* If we have no children, the code below will busy loop. */
 	if( !m_SubActors.size() )

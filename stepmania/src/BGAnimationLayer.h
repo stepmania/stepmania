@@ -20,7 +20,7 @@ public:
 	void LoadFromAniLayerFile( const CString& sPath );
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
-	void Update( float fDeltaTime );
+	void UpdateInternal( float fDeltaTime );
 	void DrawPrimitives();
 	bool EarlyAbortDraw();
 

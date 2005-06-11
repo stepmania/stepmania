@@ -629,9 +629,7 @@ bool ThemeManager::GetMetricRaw( const CString &sClassName, const CString &sValu
 
 	CString sFallback;
 
-	for( deque<Theme>::const_iterator iter = g_vThemes.begin();
-		iter != g_vThemes.end();
-		iter++ )
+	FOREACHD_CONST( Theme, g_vThemes, iter )
 	{
 		if( iter->iniMetrics->GetValue(sClassName,sValueName,ret) )
 			return true;

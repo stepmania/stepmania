@@ -71,7 +71,7 @@ public:
 	virtual void RunCommandsOnChildren( const apActorCommands& cmds ) { RunCommandsOnChildren( *cmds ); }	// convenience
 	virtual void RunCommandsOnLeaves( const LuaReference& cmds ); /* but not on self */
 
-	virtual void Update( float fDeltaTime );
+	virtual void UpdateInternal( float fDeltaTime );
 	virtual void DrawPrimitives();
 
 	// propagated commands

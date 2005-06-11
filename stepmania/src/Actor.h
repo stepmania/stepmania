@@ -87,8 +87,11 @@ public:
 	virtual void DrawPrimitives() {};	// Derivitives should override
 	virtual void EndDraw();				// pops transform from world matrix stack
 	
+	// TODO: make Update non virtual and change all classes to override UpdateInternal 
+	// instead.
 	bool IsFirstUpdate() const;
-	virtual void Update( float fDeltaTime );
+	virtual void Update( float fDeltaTime );		// this can short circuit UpdateInternal
+	virtual void UpdateInternal( float fDeltaTime );	// override this
 	void UpdateTweening( float fDeltaTime );
 	void CopyTweening( const Actor &from );
 
@@ -333,6 +336,7 @@ public:
 	virtual void PushSelf( lua_State *L );
 	void AddCommand( const CString &sCmdName, apActorCommands apac );
 	bool HasCommand( const CString &sCmdName );
+	const apActorCommands& GetCommand( const CString &sCommandName ) const;
 	virtual void PlayCommand( const CString &sCommandName );
 	virtual void PlayCommand2( const CString &sCommandName, Actor *pParent );
 	virtual void RunCommands( const LuaReference& cmds );
