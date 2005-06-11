@@ -34,6 +34,8 @@
 #include "Foreach.h"
 #include "LuaReference.h"
 #include "CommonMetrics.h"
+#include "ScreenManager.h"
+#include "Screen.h"
 
 #include <ctime>
 #include <set>
@@ -1718,7 +1720,7 @@ bool GameState::OneIsHot() const
 	return false;
 }
 
-bool GameState::IsTimeToPlayAttractSounds()
+bool GameState::IsTimeToPlayAttractSounds() const
 {
 	if( PREFSMAN->m_AttractSoundFrequency == PrefsManager::ASF_NEVER )
 		return false;
@@ -1728,6 +1730,18 @@ bool GameState::IsTimeToPlayAttractSounds()
 		return true;
 
 	return false;
+}
+
+void GameState::VisitAttractScreen( const CString sScreenName )
+{
+	bool bSeenThisScreenInThisLoop = m_vScreensSeenSoFarInThisAttractLoop.find( sScreenName ) != m_vScreensSeenSoFarInThisAttractLoop.end();
+	if( bSeenThisScreenInThisLoop )
+	{
+		m_vScreensSeenSoFarInThisAttractLoop.clear();
+		GAMESTATE->m_iNumTimesThroughAttract++;
+	}
+	
+	m_vScreensSeenSoFarInThisAttractLoop.insert( sScreenName );
 }
 
 bool GameState::DifficultiesLocked()

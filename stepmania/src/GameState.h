@@ -272,8 +272,10 @@ public:
 	//
 	// Attract stuff
 	//
+	set<CString> m_vScreensSeenSoFarInThisAttractLoop;
 	int m_iNumTimesThroughAttract;	// negative means play regardless of m_iAttractSoundFrequency setting
-	bool IsTimeToPlayAttractSounds();
+	bool IsTimeToPlayAttractSounds() const;
+	void VisitAttractScreen( const CString sScreenName );
 
 	//
 	// PlayerState
