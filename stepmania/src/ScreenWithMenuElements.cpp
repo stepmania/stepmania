@@ -18,6 +18,7 @@
 #define MEMORY_CARD_ICONS		THEME->GetMetricB(m_sName,"MemoryCardIcons")
 #define FORCE_TIMER				THEME->GetMetricB(m_sName,"ForceTimer")
 #define STOP_MUSIC_ON_BACK		THEME->GetMetricB(m_sName,"StopMusicOnBack")
+#define WAIT_FOR_CHILDREN_BEFORE_TWEENING_OUT		THEME->GetMetricB(m_sName,"WaitForChildrenBeforeTweeningOut")
 
 //REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
 ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( sClassName )
@@ -188,19 +189,15 @@ void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 {
 	TweenOffScreen();
 
-	m_Out.StartTransitioning(smSendWhenDone);
-
-	/* Ack.  If the transition finishes transparent (eg. _options to options),
-	 * then we don't want to send the message until all of the *actors* are
-	 * done tweening.  However, if it finishes with something onscreen (most
-	 * of the rest), we have to send the message immediately after it finishes,
-	 * or we'll draw a frame without the transition.
-	 *
-	 * For now, I'll make the SMMAX2 option tweening faster. */
-	/* This includes all of the actors: */
-//	float TimeUntilFinished = GetTweenTimeLeft();
-//	TimeUntilFinished = max(TimeUntilFinished, m_Out.GetLengthSeconds());
-//	SCREENMAN->PostMessageToTopScreen( smSendWhenDone, TimeUntilFinished );
+	if( WAIT_FOR_CHILDREN_BEFORE_TWEENING_OUT )
+	{
+		// Time the transition so that it finishes exactly when all actors have 
+		// finished tweening.
+		float fSecondsUntilFinished = GetTweenTimeLeft();
+		float fSecondsUntilBeginOff = max( fSecondsUntilFinished - m_Out.GetLengthSeconds(), 0 );
+		m_Out.SetHibernate( fSecondsUntilBeginOff );
+	}
+	m_Out.StartTransitioning( smSendWhenDone );
 }
 
 void ScreenWithMenuElements::TweenOffScreen()
