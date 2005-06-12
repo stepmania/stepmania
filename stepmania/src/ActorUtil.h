@@ -46,25 +46,23 @@ namespace ActorUtil
 
 
 	void SetXY( Actor& actor, const CString &sType );
-	inline void SetXY( Actor* pActor, const CString &sType ) { SetXY( *pActor, sType ); }
-
 	void LoadCommand( Actor& actor, const CString &sType, const CString &sCommandName );
-	void LoadAndPlayCommand( Actor& actor, const CString &sType, const CString &sCommandName );
+	void LoadAndPlayCommand( Actor& actor, const CString &sType, const CString &sCommandName, Actor* pParent = NULL );
 	void LoadAllCommands( Actor& actor, const CString &sType );
-
-	inline void OnCommand( Actor& actor, const CString &sType ) { LoadAndPlayCommand( actor, sType, "On" ); }
+	inline void OnCommand( Actor& actor, const CString &sType, Actor* pParent = NULL ) { LoadAndPlayCommand( actor, sType, "On", pParent ); }
 	inline void OffCommand( Actor& actor, const CString &sType ) { LoadAndPlayCommand( actor, sType, "Off" ); }
-	inline void SetXYAndOnCommand( Actor& actor, const CString &sType )
+	inline void SetXYAndOnCommand( Actor& actor, const CString &sType, Actor* pParent = NULL )
 	{
 		SetXY( actor, sType );
-		OnCommand( actor, sType );
+		OnCommand( actor, sType, pParent );
 	}
 
 	/* convenience */
-	inline void LoadAndPlayCommand( Actor* pActor, const CString &sType, const CString &sCommandName ) { if(pActor) LoadAndPlayCommand( *pActor, sType, sCommandName ); }
-	inline void OnCommand( Actor* pActor, const CString &sType ) { if(pActor) OnCommand( *pActor, sType ); }
+	inline void SetXY( Actor* pActor, const CString &sType ) { SetXY( *pActor, sType ); }
+	inline void LoadAndPlayCommand( Actor* pActor, const CString &sType, const CString &sCommandName, Actor* pParent = NULL ) { if(pActor) LoadAndPlayCommand( *pActor, sType, sCommandName, pParent ); }
+	inline void OnCommand( Actor* pActor, const CString &sType, Actor* pParent = NULL ) { if(pActor) OnCommand( *pActor, sType, pParent ); }
 	inline void OffCommand( Actor* pActor, const CString &sType ) { if(pActor) OffCommand( *pActor, sType ); }
-	inline void SetXYAndOnCommand( Actor* pActor, const CString &sType ) { if(pActor) SetXYAndOnCommand( *pActor, sType ); }
+	inline void SetXYAndOnCommand( Actor* pActor, const CString &sType, Actor* pParent = NULL ) { if(pActor) SetXYAndOnCommand( *pActor, sType, pParent ); }
 
 	// Return a Sprite, BitmapText, or Model depending on the file type
 	Actor* LoadFromActorFile( const CString& sAniDir, const XNode* pNode );

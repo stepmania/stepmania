@@ -848,12 +848,7 @@ void Actor::AddRotationR( float rot )
 	RageQuatMultiply( &DestTweenState().quat, DestTweenState().quat, RageQuatFromR(rot) );
 }
 
-void Actor::RunCommands( const LuaReference& cmds )
-{
-	RunCommands2( cmds, NULL );
-}
-
-void Actor::RunCommands2( const LuaReference& cmds, Actor *pParent )
+void Actor::RunCommands( const LuaReference& cmds, Actor *pParent )
 {
 	// function
 	cmds.PushSelf( LUA->L );
@@ -1064,12 +1059,7 @@ const apActorCommands& Actor::GetCommand( const CString &sCommandName ) const
 	return it->second;
 }
 
-void Actor::PlayCommand( const CString &sCommandName )
-{
-	PlayCommand2( sCommandName, NULL );
-}
-
-void Actor::PlayCommand2( const CString &sCommandName, Actor *pParent )
+void Actor::PlayCommand( const CString &sCommandName, Actor *pParent )
 {
 	map<CString, apActorCommands>::const_iterator it = m_mapNameToCommands.find( sCommandName );
 

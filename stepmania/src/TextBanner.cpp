@@ -61,15 +61,15 @@ void TextBanner::LoadFromString(
 
 	if( bTwoLines )
 	{
-		m_textTitle.RunCommands2( TWO_LINES_TITLE_COMMAND, this );
-		m_textSubTitle.RunCommands2( TWO_LINES_SUBTITLE_COMMAND, this );
-		m_textArtist.RunCommands2( TWO_LINES_ARTIST_COMMAND, this );
+		m_textTitle.RunCommands( TWO_LINES_TITLE_COMMAND, this );
+		m_textSubTitle.RunCommands( TWO_LINES_SUBTITLE_COMMAND, this );
+		m_textArtist.RunCommands( TWO_LINES_ARTIST_COMMAND, this );
 	}
 	else
 	{
-		m_textTitle.RunCommands2( THREE_LINES_TITLE_COMMAND, this );
-		m_textSubTitle.RunCommands2( THREE_LINES_SUBTITLE_COMMAND, this );
-		m_textArtist.RunCommands2( THREE_LINES_ARTIST_COMMAND, this );
+		m_textTitle.RunCommands( THREE_LINES_TITLE_COMMAND, this );
+		m_textSubTitle.RunCommands( THREE_LINES_SUBTITLE_COMMAND, this );
+		m_textArtist.RunCommands( THREE_LINES_ARTIST_COMMAND, this );
 	}
 }
 

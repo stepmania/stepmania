@@ -68,8 +68,8 @@ public:
 	//
 	void PushSelf( lua_State *L );
 	virtual void RunCommandsOnChildren( const LuaReference& cmds ); /* but not on self */
-	virtual void RunCommandsOnChildren( const apActorCommands& cmds ) { RunCommandsOnChildren( *cmds ); }	// convenience
-	virtual void RunCommandsOnLeaves( const LuaReference& cmds ); /* but not on self */
+	void RunCommandsOnChildren( const apActorCommands& cmds ) { this->RunCommandsOnChildren( *cmds ); }	// convenience
+	virtual void RunCommandsOnLeaves( const LuaReference& cmds, Actor* pParent ); /* but not on self */
 
 	virtual void UpdateInternal( float fDeltaTime );
 	virtual void DrawPrimitives();
@@ -93,9 +93,9 @@ public:
 	/* Amount of time until all tweens (and all children's tweens) have stopped: */
 	virtual float GetTweenTimeLeft() const;
 
-	virtual void PlayCommand( const CString &sCommandName );
-	virtual void RunCommands( const LuaReference& cmds );
-	void RunCommands( const apActorCommands& cmds ) { ActorFrame::RunCommands( *cmds ); }	// convenience
+	virtual void PlayCommand( const CString &sCommandName, Actor* pParent = NULL );
+	virtual void RunCommands( const LuaReference& cmds, Actor* pParent = NULL );
+	void RunCommands( const apActorCommands& cmds, Actor *pParent = NULL ) { this->RunCommands( *cmds, pParent ); }	// convenience
 
 protected:
 	vector<Actor*>	m_SubActors;

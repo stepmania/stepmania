@@ -337,13 +337,11 @@ public:
 	void AddCommand( const CString &sCmdName, apActorCommands apac );
 	bool HasCommand( const CString &sCmdName );
 	const apActorCommands& GetCommand( const CString &sCommandName ) const;
-	virtual void PlayCommand( const CString &sCommandName );
-	virtual void PlayCommand2( const CString &sCommandName, Actor *pParent );
-	virtual void RunCommands( const LuaReference& cmds );
-	virtual void RunCommands2( const LuaReference& cmds, Actor *pParent );
-	void RunCommands( const apActorCommands& cmds ) { this->RunCommands( *cmds ); }	// convenience
-	void RunCommands2( const apActorCommands& cmds, Actor *pParent ) { this->RunCommands2( *cmds, pParent ); }	// convenience
-	virtual void RunCommandsOnLeaves( const LuaReference& cmds ) { RunCommands(cmds); }
+	virtual void PlayCommand( const CString &sCommandName, Actor *pParent = NULL );
+	virtual void RunCommands( const LuaReference& cmds, Actor *pParent = NULL );
+	void RunCommands( const apActorCommands& cmds, Actor *pParent = NULL ) { this->RunCommands( *cmds, pParent ); }	// convenience
+	// If we're a leaf, then execute this command.
+	virtual void RunCommandsOnLeaves( const LuaReference& cmds, Actor *pParent = NULL ) { RunCommands(cmds,pParent); }
 
 	static float GetCommandsLengthSeconds( const LuaReference& cmds );
 	static float GetCommandsLengthSeconds( const apActorCommands& cmds ) { return GetCommandsLengthSeconds( *cmds ); }	// convenience
@@ -567,7 +565,7 @@ public:
 	static int hidden( T* p, lua_State *L )				{ p->SetHidden(!!IArg(1)); return 0; }
 	static int hibernate( T* p, lua_State *L )			{ p->SetHibernate(FArg(1)); return 0; }
 	static int draworder( T* p, lua_State *L )			{ p->SetDrawOrder(IArg(1)); return 0; }
-	static int playcommand( T* p, lua_State *L )		{ p->PlayCommand(SArg(1)); return 0; }
+	static int playcommand( T* p, lua_State *L )		{ p->PlayCommand(SArg(1),NULL); return 0; }
 	static int queuecommand( T* p, lua_State *L )		{ p->QueueCommand(SArg(1)); return 0; }
 	static int queuemessage( T* p, lua_State *L )		{ p->QueueMessage(SArg(1)); return 0; }
 

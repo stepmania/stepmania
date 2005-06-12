@@ -208,8 +208,8 @@ void DifficultyList::PositionItems()
 		if( m_Lines[m].m_Meter.GetDestY() != row.m_fY ||
 			m_Lines[m].m_Meter.DestTweenState().diffuse[0][3] != fDiffuseAlpha )
 		{
-			m_Lines[m].m_Meter.RunCommands( MOVE_COMMAND );
-			m_Lines[m].m_Meter.RunCommandsOnChildren( MOVE_COMMAND );
+			m_Lines[m].m_Meter.RunCommands( MOVE_COMMAND.GetValue() );
+			m_Lines[m].m_Meter.RunCommandsOnChildren( MOVE_COMMAND.GetValue() );
 		}
 
 		m_Lines[m].m_Meter.SetY( row.m_fY );

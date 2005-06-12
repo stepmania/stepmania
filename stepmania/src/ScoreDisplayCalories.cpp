@@ -50,14 +50,14 @@ void ScoreDisplayCalories::Update( float fDelta )
 	RollingNumbers::Update( fDelta );
 }
 
-void ScoreDisplayCalories::PlayCommand( const CString &sCommandName )
+void ScoreDisplayCalories::PlayCommand( const CString &sCommandName, Actor* pParent )
 {
 	if( sCommandName == m_sMessageOnStep )
 	{
 		UpdateNumber();
 	}
 	
-	RollingNumbers::PlayCommand( sCommandName );
+	RollingNumbers::PlayCommand( sCommandName, pParent );
 }
 
 void ScoreDisplayCalories::UpdateNumber()

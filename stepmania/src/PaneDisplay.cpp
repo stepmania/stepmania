@@ -127,12 +127,12 @@ void PaneDisplay::Load( const CString &sType, PlayerNumber pn )
 
 		m_textContents[p].LoadFromFont( THEME->GetPathF("PaneDisplay","text") );
 		m_textContents[p].SetName( ssprintf("%sText", g_Contents[p].name) );
-		ActorUtil::SetXYAndOnCommand( m_textContents[p], sType );
+		ActorUtil::SetXYAndOnCommand( m_textContents[p], sType, this );
 		m_ContentsFrame.AddChild( &m_textContents[p] );
 
 		m_Labels[p].Load( THEME->GetPathG("PaneDisplay",CString(g_Contents[p].name)+" label") );
 		m_Labels[p]->SetName( ssprintf("%sLabel", g_Contents[p].name) );
-		ActorUtil::SetXYAndOnCommand( m_Labels[p], sType );
+		ActorUtil::SetXYAndOnCommand( m_Labels[p], sType, this );
 		m_ContentsFrame.AddChild( m_Labels[p] );
 	}
 

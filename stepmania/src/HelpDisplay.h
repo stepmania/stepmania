@@ -41,7 +41,7 @@ class GenreDisplay : public HelpDisplay
 public:
 	GenreDisplay();
 	~GenreDisplay();
-	void PlayCommand( const CString &sCommandName );
+	void PlayCommand( const CString &sCommandName, Actor* pParent );
 };
 
 #endif

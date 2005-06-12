@@ -31,7 +31,7 @@ public:
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
-	void PlayCommand( const CString &sCommandName );
+	void PlayCommand( const CString &sCommandName, Actor* pParent );
 
 	void UpdateNumber();
 

@@ -207,13 +207,13 @@ void ActorFrame::DrawPrimitives()
 void ActorFrame::RunCommandsOnChildren( const LuaReference& cmds )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->RunCommands( cmds );
+		m_SubActors[i]->RunCommands( cmds, this );
 }
 
-void ActorFrame::RunCommandsOnLeaves( const LuaReference& cmds )
+void ActorFrame::RunCommandsOnLeaves( const LuaReference& cmds, Actor* pParent )
 {
 	for( unsigned i=0; i<m_SubActors.size(); i++ )
-		m_SubActors[i]->RunCommandsOnLeaves( cmds );
+		m_SubActors[i]->RunCommandsOnLeaves( cmds, this );
 }
 
 void ActorFrame::UpdateInternal( float fDeltaTime )
@@ -294,12 +294,12 @@ void ActorFrame::DeleteAllChildren()
 	m_SubActors.clear();
 }
 
-void ActorFrame::RunCommands( const LuaReference& cmds )
+void ActorFrame::RunCommands( const LuaReference& cmds, Actor* pParent )
 {
 	if( m_bPropagateCommands )
 		RunCommandsOnChildren( cmds );
 	else
-		Actor::RunCommands( cmds );
+		Actor::RunCommands( cmds, pParent );
 }
 
 void ActorFrame::SetPropagateCommands( bool b )
@@ -307,40 +307,11 @@ void ActorFrame::SetPropagateCommands( bool b )
 	m_bPropagateCommands = b;
 }
 
-/*
-void ActorFrame::HandleCommand( const Command &command )
-{
-	BeginHandleArgs;
-
-	const CString& sName = command.GetName();
-	do
-	{
-		if( sName=="propagate" )
-		{
-			m_bPropagateCommands = bArg(1);
-			RunCommandOnChildren( command );
-		}
-		else
-		{
-			Actor::HandleCommand( command );
-			break;
-		}
-		EndHandleArgs;
-	} while(0);
-
-	// By default, don't propograte most commands to children; it makes no sense
-	// to run "x,50" recursively.  If m_bPropagateCommands is set, propagate all
-	// commands.
-	if( m_bPropagateCommands && sName!="propagate" )
-		RunCommandOnChildren( command );
-}
-*/
-
-void ActorFrame::PlayCommand( const CString &sCommandName )
+void ActorFrame::PlayCommand( const CString &sCommandName, Actor* pParent )
 {
 	// HACK: Don't propogate Init.  It gets called once for every Actor when the 
 	// Actor is loaded, and we don't want to call it again.
-	Actor::PlayCommand( sCommandName );
+	Actor::PlayCommand( sCommandName, pParent );
 
 	if( sCommandName == "Init" )
 		return;
@@ -348,7 +319,7 @@ void ActorFrame::PlayCommand( const CString &sCommandName )
 	for( unsigned i=0; i<m_SubActors.size(); i++ ) 
 	{
 		Actor* pActor = m_SubActors[i];
-		pActor->PlayCommand( sCommandName );
+		pActor->PlayCommand( sCommandName, this );
 	}
 }
 

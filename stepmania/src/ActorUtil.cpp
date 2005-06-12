@@ -351,7 +351,7 @@ void ActorUtil::LoadCommand( Actor& actor, const CString &sType, const CString &
 	actor.AddCommand( sCommandName, THEME->GetMetricA(sType,actor.GetName()+sCommandName+"Command") );
 }
 
-void ActorUtil::LoadAndPlayCommand( Actor& actor, const CString &sType, const CString &sCommandName )
+void ActorUtil::LoadAndPlayCommand( Actor& actor, const CString &sType, const CString &sCommandName, Actor* pParent )
 {
 	// HACK:  It's very often that we command things to TweenOffScreen 
 	// that we aren't drawing.  We know that an Actor is not being
@@ -379,7 +379,7 @@ void ActorUtil::LoadAndPlayCommand( Actor& actor, const CString &sType, const CS
 		LoadCommand( actor, sType, sCommandName );
 	}
 
-	actor.PlayCommand( sCommandName );
+	actor.PlayCommand( sCommandName, pParent );
 }
 
 void ActorUtil::LoadAllCommands( Actor& actor, const CString &sType )
