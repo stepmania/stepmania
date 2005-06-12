@@ -828,47 +828,75 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		}
 	}
 
-	if( MenuI.button == MENU_BUTTON_RIGHT || MenuI.button == MENU_BUTTON_LEFT )
+	switch( MenuI.button )
 	{
-		/* If we're rouletting, hands off. */
-		if( m_MusicWheel.IsRouletting() )
-			return;
-
-		bool bLeftIsDown = false;
-		bool bRightIsDown = false;
-		FOREACH_EnabledPlayer( p )
+	case MENU_BUTTON_RIGHT:
+	case MENU_BUTTON_LEFT:
 		{
-			if( !bSelectIsPressed )
-			{
-				bLeftIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) );
-				bRightIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) );
-			}
-		}
-		
-		bool bBothDown = bLeftIsDown && bRightIsDown;
-		bool bNeitherDown = !bLeftIsDown && !bRightIsDown;
-
-		if( bBothDown || bNeitherDown )
-			m_MusicWheel.Move( 0 );
-		else if( bLeftIsDown )
-			m_MusicWheel.Move( -1 );
-		else if( bRightIsDown )
-			m_MusicWheel.Move( +1 );
-		else
-			ASSERT(0);
-
-
-		// Reset the repeat timer when a key is released.
-		// This fixes jumping when you release Left and Right at the same 
-		// time (e.g. after tapping Left+Right to change sort).
-		if( type == IET_RELEASE )
-		{
+			/* If we're rouletting, hands off. */
+			if( m_MusicWheel.IsRouletting() )
+				return;
+			
+			bool bLeftIsDown = false;
+			bool bRightIsDown = false;
 			FOREACH_EnabledPlayer( p )
 			{
-				INPUTMAPPER->ResetKeyRepeat( MenuInput(p, MENU_BUTTON_LEFT) );
-				INPUTMAPPER->ResetKeyRepeat( MenuInput(p, MENU_BUTTON_RIGHT) );
+				if( !bSelectIsPressed )
+				{
+					bLeftIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) );
+					bRightIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) );
+				}
+			}
+			
+			bool bBothDown = bLeftIsDown && bRightIsDown;
+			bool bNeitherDown = !bLeftIsDown && !bRightIsDown;
+			
+
+			if( bBothDown || bNeitherDown )
+			{
+				m_MusicWheel.Move( 0 );
+				if( type == IET_FIRST_PRESS )
+				{
+					switch( MenuI.button )
+					{
+					case MENU_BUTTON_LEFT:
+						m_MusicWheel.ChangeMusic( -1 );
+						break;
+					case MENU_BUTTON_RIGHT:
+						m_MusicWheel.ChangeMusic( +1 );
+						break;
+					}
+				}
+			}
+			else if( bLeftIsDown )
+			{
+				if( type != IET_RELEASE )
+					m_MusicWheel.Move( -1 );
+			}
+			else if( bRightIsDown )
+			{
+				if( type != IET_RELEASE )
+					m_MusicWheel.Move( +1 );
+			}
+			else
+			{
+				ASSERT(0);
+			}
+			
+			
+			// Reset the repeat timer when the button is released.
+			// This fixes jumping when you release Left and Right after entering the sort 
+			// code at the same if L & R aren't released at the exact same time.
+			if( type == IET_RELEASE )
+			{
+				FOREACH_HumanPlayer( p )
+				{
+					INPUTMAPPER->ResetKeyRepeat( MenuInput(p, MENU_BUTTON_LEFT) );
+					INPUTMAPPER->ResetKeyRepeat( MenuInput(p, MENU_BUTTON_RIGHT) );
+				}
 			}
 		}
+		break;
 	}
 
 
@@ -1101,8 +1129,20 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			if( m_MusicWheel.GetSelectedType() != TYPE_SONG && m_MusicWheel.GetSelectedType() != TYPE_COURSE )
+			// Finish sort changing so that the wheel can respond immediately to our
+			// request to choose random.
+			m_MusicWheel.FinishChangingSorts();
+			switch( m_MusicWheel.GetSelectedType() )
+			{
+			case TYPE_SONG:
+			case TYPE_COURSE:
+			case TYPE_RANDOM:
+			case TYPE_PORTAL:
+				break;
+			default:
 				m_MusicWheel.StartRandom();
+				break;
+			}
 			MenuStart(PLAYER_INVALID);
 		}
 		return;

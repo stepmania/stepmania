@@ -59,6 +59,7 @@ public:
 	void SetOpenGroup(CString group, SortOrder so = SORT_INVALID);
 	SortOrder GetSortOrder() const { return m_SortOrder; }
 	virtual void ChangeMusic(int dist); /* +1 or -1 */ //CHECK THIS
+	void FinishChangingSorts();
 
 protected:
 	virtual void LoadFromMetrics( CString sType );

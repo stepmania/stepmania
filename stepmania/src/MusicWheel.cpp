@@ -167,9 +167,9 @@ void MusicWheel::Load( CString sType )
 	CString times;
 	/* Build all of the wheel item data.  Do this after selecting
 	 * the extra stage, so it knows to always display it. */
-	for( int so=0; so<NUM_SORT_ORDERS; so++ )
+	FOREACH_SortOrder( so )
 	{
-		BuildWheelItemDatas( m_WheelItemDatas[so], SortOrder(so) );
+		BuildWheelItemDatas( m_WheelItemDatas[so], so );
 		times += ssprintf( "%i:%.3f ", so, timer.GetDeltaTime() );
 	}
 	LOG->Trace( "took: %s", times.c_str() );
@@ -876,121 +876,122 @@ void MusicWheel::UpdateItems(float fDeltaTime )
 	}
 }
 
-void MusicWheel::UpdateSwitch() {
-		switch( m_WheelState )
+void MusicWheel::UpdateSwitch()
+{
+	switch( m_WheelState )
+	{
+	case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 		{
-		case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
+			Song* pPrevSelectedSong = m_CurWheelItemData[m_iSelection]->m_pSong;
+
+			SCREENMAN->PostMessageToTopScreen( SM_SortOrderChanged, 0 );
+			
+			SetOpenGroup(SongUtil::GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SortOrder ));
+
+			m_iSelection = 0;
+
+			//
+			// Select the previously selected item
+			//
+			switch( GAMESTATE->m_SortOrder )
 			{
-				Song* pPrevSelectedSong = m_CurWheelItemData[m_iSelection]->m_pSong;
-
-				SCREENMAN->PostMessageToTopScreen( SM_SortOrderChanged, 0 );
-				
-				SetOpenGroup(SongUtil::GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SortOrder ));
-
-				m_iSelection = 0;
-
-				//
-				// Select the previously selected item
-				//
-				switch( GAMESTATE->m_SortOrder )
-				{
-				default:
-					// Look for the last selected song or course
-					SelectSongOrCourse();
-					break;
-				case SORT_MODE_MENU:
-					SelectModeMenuItem();
-					break;
-				}
-
-				//
-				// Change difficulty for sorts by meter - XXX: do this with GameCommand?
-				//
-				Difficulty dc = DIFFICULTY_INVALID;
-				switch( GAMESTATE->m_SortOrder )
-				{
-				case SORT_EASY_METER:		dc = DIFFICULTY_EASY;		break;
-				case SORT_MEDIUM_METER:		dc = DIFFICULTY_MEDIUM;		break;
-				case SORT_HARD_METER:		dc = DIFFICULTY_HARD;		break;
-				case SORT_CHALLENGE_METER:	dc = DIFFICULTY_CHALLENGE;	break;
-				}
-				if( dc != DIFFICULTY_INVALID )
-				{
-					FOREACH_PlayerNumber( p )
-						if( GAMESTATE->IsPlayerEnabled(p) )
-							GAMESTATE->m_PreferredDifficulty[p].Set( dc );
-				}
-
-				SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
-				RebuildAllMusicWheelItems();
-				TweenOnScreen(true);
-				m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
-
-				SCREENMAN->ZeroNextUpdate();
+			default:
+				// Look for the last selected song or course
+				SelectSongOrCourse();
+				break;
+			case SORT_MODE_MENU:
+				SelectModeMenuItem();
+				break;
 			}
-			break;
 
-		case STATE_FLYING_ON_AFTER_NEXT_SORT:
-			m_WheelState = STATE_SELECTING_MUSIC;	// now, wait for input
-			break;
-
-		case STATE_TWEENING_ON_SCREEN:
-			m_fTimeLeftInState = 0;
-			if( (GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage) || GAMESTATE->IsExtraStage2() )
+			//
+			// Change difficulty for sorts by meter - XXX: do this with GameCommand?
+			//
+			Difficulty dc = DIFFICULTY_INVALID;
+			switch( GAMESTATE->m_SortOrder )
 			{
-				m_WheelState = STATE_LOCKED;
-				SCREENMAN->PlayStartSound();
-				m_fLockedWheelVelocity = 0;
+			case SORT_EASY_METER:		dc = DIFFICULTY_EASY;		break;
+			case SORT_MEDIUM_METER:		dc = DIFFICULTY_MEDIUM;		break;
+			case SORT_HARD_METER:		dc = DIFFICULTY_HARD;		break;
+			case SORT_CHALLENGE_METER:	dc = DIFFICULTY_CHALLENGE;	break;
 			}
-			else
+			if( dc != DIFFICULTY_INVALID )
 			{
-				m_WheelState = STATE_SELECTING_MUSIC;
+				FOREACH_PlayerNumber( p )
+					if( GAMESTATE->IsPlayerEnabled(p) )
+						GAMESTATE->m_PreferredDifficulty[p].Set( dc );
 			}
-			break;
-		case STATE_TWEENING_OFF_SCREEN:
-			m_WheelState = STATE_WAITING_OFF_SCREEN;
-			m_fTimeLeftInState = 0;
-			break;
-		case STATE_SELECTING_MUSIC:
-			m_fTimeLeftInState = 0;
-			break;
-		case STATE_ROULETTE_SPINNING:
-		case STATE_RANDOM_SPINNING:
-			break;
-		case STATE_WAITING_OFF_SCREEN:
-			break;
-		case STATE_LOCKED:
-			break;
-		case STATE_ROULETTE_SLOWING_DOWN:
-			if( m_iSwitchesLeftInSpinDown == 0 )
-			{
-				m_WheelState = STATE_LOCKED;
-				m_fTimeLeftInState = 0;
-				SCREENMAN->PlayStartSound();
-				m_fLockedWheelVelocity = 0;
 
-				/* Send this again so the screen starts sample music. */
-				SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
-			}
-			else
-			{
-				m_iSwitchesLeftInSpinDown--;
-				const float SwitchTimes[] = { 0.5f, 1.3f, 0.8f, 0.4f, 0.2f };
-				ASSERT(m_iSwitchesLeftInSpinDown >= 0 && m_iSwitchesLeftInSpinDown <= 4);
-				m_fTimeLeftInState = SwitchTimes[m_iSwitchesLeftInSpinDown];
+			SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
+			RebuildAllMusicWheelItems();
+			TweenOnScreen(true);
+			m_WheelState = STATE_FLYING_ON_AFTER_NEXT_SORT;
 
-				LOG->Trace( "m_iSwitchesLeftInSpinDown id %d, m_fTimeLeftInState is %f", m_iSwitchesLeftInSpinDown, m_fTimeLeftInState );
-
-				if( m_iSwitchesLeftInSpinDown < 2 )
-					ChangeMusic(randomf(0,1) >= 0.5f? 1:-1);
-				else
-					ChangeMusic(1);
-			}
-			break;
-		default:
-			ASSERT(0);	// all state changes should be handled explicitly
-			break;
+			SCREENMAN->ZeroNextUpdate();
 		}
+		break;
+
+	case STATE_FLYING_ON_AFTER_NEXT_SORT:
+		m_WheelState = STATE_SELECTING_MUSIC;	// now, wait for input
+		break;
+
+	case STATE_TWEENING_ON_SCREEN:
+		m_fTimeLeftInState = 0;
+		if( (GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage) || GAMESTATE->IsExtraStage2() )
+		{
+			m_WheelState = STATE_LOCKED;
+			SCREENMAN->PlayStartSound();
+			m_fLockedWheelVelocity = 0;
+		}
+		else
+		{
+			m_WheelState = STATE_SELECTING_MUSIC;
+		}
+		break;
+	case STATE_TWEENING_OFF_SCREEN:
+		m_WheelState = STATE_WAITING_OFF_SCREEN;
+		m_fTimeLeftInState = 0;
+		break;
+	case STATE_SELECTING_MUSIC:
+		m_fTimeLeftInState = 0;
+		break;
+	case STATE_ROULETTE_SPINNING:
+	case STATE_RANDOM_SPINNING:
+		break;
+	case STATE_WAITING_OFF_SCREEN:
+		break;
+	case STATE_LOCKED:
+		break;
+	case STATE_ROULETTE_SLOWING_DOWN:
+		if( m_iSwitchesLeftInSpinDown == 0 )
+		{
+			m_WheelState = STATE_LOCKED;
+			m_fTimeLeftInState = 0;
+			SCREENMAN->PlayStartSound();
+			m_fLockedWheelVelocity = 0;
+
+			/* Send this again so the screen starts sample music. */
+			SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
+		}
+		else
+		{
+			m_iSwitchesLeftInSpinDown--;
+			const float SwitchTimes[] = { 0.5f, 1.3f, 0.8f, 0.4f, 0.2f };
+			ASSERT(m_iSwitchesLeftInSpinDown >= 0 && m_iSwitchesLeftInSpinDown <= 4);
+			m_fTimeLeftInState = SwitchTimes[m_iSwitchesLeftInSpinDown];
+
+			LOG->Trace( "m_iSwitchesLeftInSpinDown id %d, m_fTimeLeftInState is %f", m_iSwitchesLeftInSpinDown, m_fTimeLeftInState );
+
+			if( m_iSwitchesLeftInSpinDown < 2 )
+				ChangeMusic(randomf(0,1) >= 0.5f? 1:-1);
+			else
+				ChangeMusic(1);
+		}
+		break;
+	default:
+		ASSERT(0);	// all state changes should be handled explicitly
+		break;
+	}
 }
 
 void MusicWheel::ChangeMusic(int dist)
@@ -1148,7 +1149,7 @@ void MusicWheel::StartRoulette()
 	m_Moving = 1;
 	m_TimeBeforeMovingBegins = 0;
 	m_SpinSpeed = 1.0f/ROULETTE_SWITCH_SECONDS;
-	SetOpenGroup("", SortOrder(SORT_ROULETTE));
+	SetOpenGroup("", SORT_ROULETTE);
 }
 
 void MusicWheel::StartRandom()
@@ -1161,8 +1162,11 @@ void MusicWheel::StartRandom()
 		/* Shuffle and use the roulette wheel. */
 		RandomGen rnd;
 		random_shuffle( m_WheelItemDatas[SORT_ROULETTE].begin(), m_WheelItemDatas[SORT_ROULETTE].end(), rnd );
-
-		SetOpenGroup( "", SortOrder(SORT_ROULETTE) );
+		SetOpenGroup( "", SORT_ROULETTE );
+	}
+	else
+	{
+		SetOpenGroup( "", GAMESTATE->m_PreferredSortOrder );
 	}
 
 	m_Moving = -1;
@@ -1263,7 +1267,8 @@ void MusicWheel::TweenOffScreenUpdateItems(bool changing_sort) {
 	}
 }
 
-bool MusicWheel::MoveSpecific(int n) {
+bool MusicWheel::MoveSpecific(int n)
+{
 	/* If we're not selecting, discard this.  We won't ignore it; we'll
 	 * get called again every time the key is repeated. */
 	/* Still process Move(0) so we sometimes continue moving immediate 
@@ -1371,6 +1376,13 @@ try_next:
 	}
 	LOG->Warn( "Couldn't find any songs" );
 	return wid[0].m_pSong;
+}
+
+void MusicWheel::FinishChangingSorts()
+{
+	FinishTweening();
+	m_WheelState = STATE_SELECTING_MUSIC;
+	m_fTimeLeftInState = 0;
 }
 
 /*
