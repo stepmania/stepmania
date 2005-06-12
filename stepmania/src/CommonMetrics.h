@@ -53,6 +53,7 @@ public:
 // Metrics
 //
 extern ThemeMetric<CString>		INITIAL_SCREEN;
+extern ThemeMetric<CString>		FIRST_ATTRACT_SCREEN;
 extern ThemeMetric<CString>		DEFAULT_MODIFIERS;
 extern ThemeMetric<CString>		DEFAULT_CPU_MODIFIERS;
 extern ThemeMetric1D<RageColor> PLAYER_COLOR;

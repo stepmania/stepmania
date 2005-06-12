@@ -10,6 +10,7 @@
 CString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%d",int(p+1)); }
 
 ThemeMetric<CString>	INITIAL_SCREEN						("Common","InitialScreen");
+ThemeMetric<CString>	FIRST_ATTRACT_SCREEN				("Common","FirstAttractScreen");
 ThemeMetric<CString>	DEFAULT_MODIFIERS					("Common","DefaultModifiers" );
 ThemeMetric<CString>	DEFAULT_CPU_MODIFIERS				("Common","DefaultCpuModifiers" );
 ThemeMetric1D<RageColor> PLAYER_COLOR						("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);

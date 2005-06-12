@@ -1736,6 +1736,14 @@ bool GameState::OneIsHot() const
 
 bool GameState::IsTimeToPlayAttractSounds() const
 {
+	// m_iNumTimesThroughAttract will be -1 from the first attract screen after 
+	// the end of a game until the next time FIRST_ATTRACT_SCREEN is reached.
+	// Play attract sounds for this sort span of time regardless of 
+	// m_AttractSoundFrequency because it's awkward to have the machine go 
+	// silent immediately after the end of a game.
+	if( m_iNumTimesThroughAttract == -1 )
+		return true;
+
 	if( PREFSMAN->m_AttractSoundFrequency == PrefsManager::ASF_NEVER )
 		return false;
 
@@ -1748,14 +1756,8 @@ bool GameState::IsTimeToPlayAttractSounds() const
 
 void GameState::VisitAttractScreen( const CString sScreenName )
 {
-	bool bSeenThisScreenInThisLoop = m_vScreensSeenSoFarInThisAttractLoop.find( sScreenName ) != m_vScreensSeenSoFarInThisAttractLoop.end();
-	if( bSeenThisScreenInThisLoop )
-	{
-		m_vScreensSeenSoFarInThisAttractLoop.clear();
-		GAMESTATE->m_iNumTimesThroughAttract++;
-	}
-	
-	m_vScreensSeenSoFarInThisAttractLoop.insert( sScreenName );
+	if( sScreenName == FIRST_ATTRACT_SCREEN.GetValue() )
+		m_iNumTimesThroughAttract++;
 }
 
 bool GameState::DifficultiesLocked()
