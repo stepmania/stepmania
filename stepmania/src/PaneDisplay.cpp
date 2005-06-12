@@ -81,7 +81,7 @@ void PaneDisplay::Load( const CString &sType, PlayerNumber pn )
 {
 	m_PlayerNumber = pn;
 
-	m_sprPaneUnder.Load( THEME->GetPathG("PaneDisplay",ssprintf("under p%i",pn+1)) );
+	m_sprPaneUnder.Load( THEME->GetPathG(sType,ssprintf("under p%i",pn+1)) );
 	m_sprPaneUnder->SetName( "Under" );
 	ActorUtil::OnCommand( m_sprPaneUnder, sType );
 	this->AddChild( m_sprPaneUnder );
@@ -119,18 +119,20 @@ void PaneDisplay::Load( const CString &sType, PlayerNumber pn )
 		}
 	}
 
+	EMPTY_MACHINE_HIGH_SCORE_NAME.Load( sType, "EmptyMachineHighScoreName" );
+
 
 	for( int p = 0; p < NUM_PANE_CONTENTS; ++p )
 	{
 		if( g_Contents[p].type == NUM_PANES )
 			continue; /* skip, disabled */
 
-		m_textContents[p].LoadFromFont( THEME->GetPathF("PaneDisplay","text") );
+		m_textContents[p].LoadFromFont( THEME->GetPathF(sType,"text") );
 		m_textContents[p].SetName( ssprintf("%sText", g_Contents[p].name) );
 		ActorUtil::SetXYAndOnCommand( m_textContents[p], sType, this );
 		m_ContentsFrame.AddChild( &m_textContents[p] );
 
-		m_Labels[p].Load( THEME->GetPathG("PaneDisplay",CString(g_Contents[p].name)+" label") );
+		m_Labels[p].Load( THEME->GetPathG(sType,CString(g_Contents[p].name)+" label") );
 		m_Labels[p]->SetName( ssprintf("%sLabel", g_Contents[p].name) );
 		ActorUtil::SetXYAndOnCommand( m_Labels[p], sType, this );
 		m_ContentsFrame.AddChild( m_Labels[p] );
@@ -139,7 +141,7 @@ void PaneDisplay::Load( const CString &sType, PlayerNumber pn )
 	m_ContentsFrame.SetXY( SHIFT_X(m_PlayerNumber), SHIFT_Y(m_PlayerNumber) );
 	this->AddChild( &m_ContentsFrame );
 
-	m_sprPaneOver.Load( THEME->GetPathG("PaneDisplay",ssprintf("over p%i", pn+1)) );
+	m_sprPaneOver.Load( THEME->GetPathG(sType,ssprintf("over p%i", pn+1)) );
 	m_sprPaneOver->SetName( "Over" );
 	ActorUtil::OnCommand( m_sprPaneOver, sType );
 	this->AddChild( m_sprPaneOver );
@@ -300,7 +302,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		case SONG_MACHINE_HIGH_NAME:
 			if( PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).vHighScores.empty() )
 			{
-				str = "";
+				str = EMPTY_MACHINE_HIGH_SCORE_NAME;
 			}
 			else
 			{
@@ -312,7 +314,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		case COURSE_MACHINE_HIGH_NAME:
 			if( PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).vHighScores.empty() )
 			{
-				str = "";
+				str = EMPTY_MACHINE_HIGH_SCORE_NAME;
 			}
 			else
 			{

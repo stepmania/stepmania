@@ -10,6 +10,7 @@
 #include "BitmapText.h"
 #include "AutoActor.h"
 #include "GameConstantsAndTypes.h"
+#include "ThemeMetric.h"
 
 enum PaneTypes
 {
@@ -91,6 +92,8 @@ private:
 	};
 	typedef vector<Level> ArrayLevels;
 	ArrayLevels m_Levels[NUM_PANE_CONTENTS];
+
+	ThemeMetric<CString> EMPTY_MACHINE_HIGH_SCORE_NAME;
 };
 
 #endif
