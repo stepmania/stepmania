@@ -28,9 +28,6 @@
 
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
 
-// leaving this one under ScreenSelectMusic because that is the only place it takes effect anyway.
-ThemeMetric<CString> DEFAULT_SORT				("ScreenSelectMusic","DefaultSort");
-
 static CString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",int(i+1)); }
 static CString CHOICE_NAME( CString s )			{ return ssprintf("Choice%s",s.c_str()); }
 
@@ -73,14 +70,6 @@ SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
 	case SORT_ENDLESS_COURSES:
 		so = SORT_INVALID;
 		break;
-	}
-
-	// if no preferred sort, fall back to theme default
-	if( so == SORT_INVALID )
-	{
-		so = StringToSortOrder( DEFAULT_SORT );
-		ASSERT( so != SORT_INVALID );
-		return so;
 	}
 
 	return so;

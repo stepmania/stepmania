@@ -46,6 +46,7 @@ public:
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
+	void LoadFromDir( CString _sDir ) { sDir = _sDir; }
 	CString ToString() const;
 	bool IsValid() const;
 };

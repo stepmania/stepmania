@@ -48,6 +48,20 @@ GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our progr
 
 ThemeMetric<bool> USE_NAME_BLACKLIST("GameState","UseNameBlacklist");
 
+ThemeMetric<CString> DEFAULT_SORT	("GameState","DefaultSort");
+SortOrder GetDefaultSort()
+{
+	return StringToSortOrder( DEFAULT_SORT );
+}
+ThemeMetric<CString> DEFAULT_SONG	("GameState","DefaultSong");
+Song* GetDefaultSong()
+{
+	SongID sid;
+	sid.LoadFromDir( DEFAULT_SONG );
+	return sid.ToSong();
+}
+
+
 GameState::GameState() :
     m_pCurStyle(			MESSAGE_CURRENT_STYLE_CHANGED ),
     m_PreferredCourseDifficulty( MESSAGE_EDIT_PREFERRED_COURSE_DIFFICULTY_P1_CHANGED ),
@@ -160,7 +174,7 @@ void GameState::Reset()
 		m_PreferredCourseDifficulty[p].Set( DIFFICULTY_MEDIUM );
 	}
 	m_SortOrder = SORT_INVALID;
-	m_PreferredSortOrder = SORT_INVALID;
+	m_PreferredSortOrder = GetDefaultSort();
 	m_PlayMode = PLAY_MODE_INVALID;
 	m_bEditing = false;
 	m_bDemonstrationOrJukebox = false;
@@ -175,7 +189,7 @@ void GameState::Reset()
 	m_iGameSeed = rand();
 	m_iStageSeed = rand();
 
-	m_pCurSong.Set( NULL );
+	m_pCurSong.Set( GetDefaultSong() );
 	m_pPreferredSong = NULL;
 	FOREACH_PlayerNumber( p )
 		m_pCurSteps[p].Set( NULL );
