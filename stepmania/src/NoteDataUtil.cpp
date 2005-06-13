@@ -710,7 +710,7 @@ void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, 
 		in.GetTracksHeldAtRow( r, viTracksHeld );
 
 		// remove the first tap note or the first hold note that starts on this row
-		int iTotalTracksPressed = in.GetNumTracksWithTap(r) + viTracksHeld.size();
+		int iTotalTracksPressed = in.GetNumTracksWithTapOrHoldHead(r) + viTracksHeld.size();
 		int iTracksToRemove = max( 0, iTotalTracksPressed - iMaxSimultaneous );
 		for( int t=0; iTracksToRemove>0 && t<in.GetNumTracks(); t++ )
 		{
