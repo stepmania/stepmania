@@ -175,6 +175,7 @@ void PaneDisplay::SetContent( PaneContents c )
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[m_PlayerNumber];
 	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : NULL;
+	bool bIsPlayerEdit = pSteps && pSteps->IsAnEdit() && pSteps->GetLoadedFromProfileSlot() != PROFILE_SLOT_MACHINE;
 
 	if( (g_Contents[c].req&NEED_NOTES) && !pSteps )
 		goto done;
@@ -322,12 +323,15 @@ void PaneDisplay::SetContent( PaneContents c )
 			break;
 
 		case SONG_MACHINE_HIGH_SCORE:
+			// Don't show or save machine high scores for edits loaded from a player profile.
+			if( bIsPlayerEdit )
+				str = "N/A";
+			else
+				str = PercentageDisplay::FormatPercentScore( val );
+			break;
 		case COURSE_MACHINE_HIGH_SCORE:
 		case SONG_PROFILE_HIGH_SCORE:
 		case COURSE_PROFILE_HIGH_SCORE:
-			/* "100.00%" is bigger than anything else, and since we'll never
-			 * be any higher, we don't need to display the decimal places.
-			 * Display 1.0 as "100%" instead. */
 			str = PercentageDisplay::FormatPercentScore( val );
 			break;
 		case SONG_NUM_STEPS:
