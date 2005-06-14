@@ -4,6 +4,7 @@
 #define BackgroundUtil_H
 
 class Song;
+struct XNode;
 
 extern const CString RANDOM_BACKGROUND_FILE;
 extern const CString NO_SONG_BG_FILE;
@@ -18,35 +19,16 @@ extern const CString SBT_CrossFade;
 
 struct BackgroundDef
 {
-	BackgroundDef()
-	{
-	}
-	bool operator<( const BackgroundDef &other ) const
-	{
-#define COMPARE(x) if( x < other.x ) return true; else if( x > other.x ) return false;
-		COMPARE( m_sEffect );
-		COMPARE( m_sFile1 );
-		COMPARE( m_sFile2 );
-		COMPARE( m_sColor1 );
-		COMPARE( m_sColor2 );
-#undef COMPARE
-		return false;
-	}
-	bool operator==( const BackgroundDef &other ) const
-	{
-		return 
-			m_sEffect == other.m_sEffect &&
-			m_sFile1 == other.m_sFile1 &&
-			m_sFile2 == other.m_sFile2 &&
-			m_sColor1 == other.m_sColor1 &&
-			m_sColor2 == other.m_sColor2;
-	}
-	bool IsEmpty() { return m_sFile1.empty() && m_sFile2.empty(); }
+	bool operator<( const BackgroundDef &other ) const;
+	bool operator==( const BackgroundDef &other ) const;
+	bool IsEmpty() const { return m_sFile1.empty() && m_sFile2.empty(); }
 	CString	m_sEffect;	// "" == automatically choose
 	CString m_sFile1;	// must not be ""
 	CString m_sFile2;	// may be ""
 	CString m_sColor1;	// "" == use default
 	CString m_sColor2;	// "" == use default
+
+	XNode *CreateNode() const;
 };
 
 struct BackgroundChange

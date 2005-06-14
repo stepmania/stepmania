@@ -515,7 +515,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 //========================================================
 bool XAttr::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 {
-	return f.Write(m_sName + "='" + (opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(m_sValue):m_sValue) + "' ") != -1;
+	return f.Write(m_sName + "='" + (opt && opt->reference_value && opt->entitys ? opt->entitys->Entity2Ref(m_sValue) : m_sValue) + "' ") != -1;
 }
 
 //========================================================

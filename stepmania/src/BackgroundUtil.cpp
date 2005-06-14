@@ -7,6 +7,48 @@
 #include "RageLog.h"
 #include <set>
 
+
+bool BackgroundDef::operator<( const BackgroundDef &other ) const
+{
+#define COMPARE(x) if( x < other.x ) return true; else if( x > other.x ) return false;
+	COMPARE( m_sEffect );
+	COMPARE( m_sFile1 );
+	COMPARE( m_sFile2 );
+	COMPARE( m_sColor1 );
+	COMPARE( m_sColor2 );
+#undef COMPARE
+	return false;
+}
+
+bool BackgroundDef::operator==( const BackgroundDef &other ) const
+{
+	return 
+		m_sEffect == other.m_sEffect &&
+		m_sFile1 == other.m_sFile1 &&
+		m_sFile2 == other.m_sFile2 &&
+		m_sColor1 == other.m_sColor1 &&
+		m_sColor2 == other.m_sColor2;
+}
+
+XNode *BackgroundDef::CreateNode() const
+{
+	XNode* pNode = new XNode;
+	pNode->m_sName = "BackgroundDef";
+
+	if( !m_sEffect.empty() )
+		pNode->AppendAttr( "Effect", m_sEffect );
+	if( !m_sFile1.empty() )
+		pNode->AppendAttr( "File1", m_sFile1 );
+	if( !m_sFile2.empty() )
+		pNode->AppendAttr( "File2", m_sFile2 );
+	if( !m_sColor1.empty() )
+		pNode->AppendAttr( "Color1", m_sColor1 );
+	if( !m_sColor2.empty() )
+		pNode->AppendAttr( "Color2", m_sColor2 );
+
+	return pNode;
+}
+
 const CString BACKGROUND_EFFECTS_DIR =		"BackgroundEffects/";
 const CString BACKGROUND_TRANSITIONS_DIR =	"BackgroundTransitions/";
 const CString BG_ANIMS_DIR			= "BGAnimations/";

@@ -23,6 +23,7 @@
 #include "XmlFile.h"
 #include "BackgroundUtil.h"
 #include "song.h"
+#include "RageFileDriverMemory.h"
 
 ThemeMetric<float> LEFT_EDGE					("Background","LeftEdge");
 ThemeMetric<float> TOP_EDGE						("Background","TopEdge");
@@ -250,9 +251,7 @@ void BackgroundImpl::Unload()
 
 void BackgroundImpl::Layer::Unload()
 {
-    for( map<BackgroundDef,Actor*>::iterator iter = m_BGAnimations.begin();
-		 iter != m_BGAnimations.end();
-		 iter++ )
+    FOREACHM( BackgroundDef, Actor*, m_BGAnimations, iter )
 		delete iter->second;
 	m_BGAnimations.clear();
 	m_aBGChanges.clear();
@@ -766,7 +765,16 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		m_pFadingBGA = m_pCurrentBGA;
 
 		map<BackgroundDef,Actor*>::const_iterator iter = m_BGAnimations.find( change.m_def );
-		ASSERT( iter != m_BGAnimations.end() );
+		if( iter == m_BGAnimations.end() )
+		{
+			XNode *pNode = change.m_def.CreateNode();
+			RageFileObjMem f;
+			pNode->GetXML( f, NULL );
+			LOG->Warn( "Tried to switch to a background that was never loaded\n" + f.GetString() );
+			SAFE_DELETE( pNode );
+			return;
+		}
+
 		m_pCurrentBGA = iter->second;
 
 		if( m_pFadingBGA == m_pCurrentBGA )
