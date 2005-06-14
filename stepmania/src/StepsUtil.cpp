@@ -151,7 +151,9 @@ void StepsID::FromSteps( const Steps *p )
 		{
 			sDescription = p->GetDescription();
 			uHash = p->GetHash();
-		} else {
+		}
+		else
+		{
 			sDescription = "";
 			uHash = 0;
 		}
@@ -242,7 +244,9 @@ void StepsID::LoadFromNode( const XNode* pNode )
 	{
 		pNode->GetAttrValue("Description", sDescription);
 		pNode->GetAttrValue("Hash", uHash);
-	} else {
+	}
+	else
+	{
 		sDescription = "";
 		uHash = 0;
 	}
