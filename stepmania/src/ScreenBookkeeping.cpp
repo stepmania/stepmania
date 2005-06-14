@@ -55,9 +55,11 @@ ScreenBookkeeping::~ScreenBookkeeping()
 	LOG->Trace( "ScreenBookkeeping::~ScreenBookkeeping()" );
 }
 
-void ScreenBookkeeping::DrawPrimitives()
+void ScreenBookkeeping::Update( float fDelta )
 {
-	Screen::DrawPrimitives();
+	ChangeView( m_View );	// refresh so that counts change in real-time
+
+	ScreenWithMenuElements::Update( fDelta );
 }
 
 void ScreenBookkeeping::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
@@ -143,7 +145,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 			CString sTitle, sData;
 			for( int i=0; i<NUM_LAST_DAYS; i++ )
 			{
-				sTitle += LastDayToString(i) + "\n";
+				sTitle += LastDayToDisplayString(i) + "\n";
 				sData += ssprintf("%d",coins[i]) + "\n";
 				iTotalLast += coins[i];
 			}
@@ -173,7 +175,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 				for( int row=0; row<52/4; row++ )
 				{
 					int week = row*4+col;
-					sTemp += LastWeekToString(week) + ssprintf(": %d",coins[week]) + "\n";
+					sTemp += LastWeekToDisplayString(week) + ssprintf(": %d",coins[week]) + "\n";
 				}
 
 				m_textData[col].SetHorizAlign( Actor::align_left );
@@ -213,14 +215,14 @@ void ScreenBookkeeping::ChangeView( View newView )
 			CString sTitle1, sData1;
 			for( int i=0; i<HOURS_IN_DAY/2; i++ )
 			{
-				sTitle1 += HourInDayToString(i) + "\n";
+				sTitle1 += HourInDayToDisplayString(i) + "\n";
 				sData1 += ssprintf("%d",coins[i]) + "\n";
 			}
 			
 			CString sTitle2, sData2;
 			for( int i=(HOURS_IN_DAY/2); i<HOURS_IN_DAY; i++ )
 			{
-				sTitle2 += HourInDayToString(i) + "\n";
+				sTitle2 += HourInDayToDisplayString(i) + "\n";
 				sData2 += ssprintf("%d",coins[i]) + "\n";
 			}
 			

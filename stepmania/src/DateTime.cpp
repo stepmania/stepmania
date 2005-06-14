@@ -181,6 +181,33 @@ CString LastWeekToString( int iLastWeekIndex )
 	}
 }
 
+CString LastDayToDisplayString( int iLastDayIndex )
+{
+	CString s = LastDayToString( iLastDayIndex );
+	s.Replace( "Day", "" );
+	s.Replace( "Ago", " Ago" );
+	return s;
+}
+
+CString LastWeekToDisplayString( int iLastWeekIndex )
+{
+	CString s = LastWeekToString( iLastWeekIndex );
+	s.Replace( "Week", "" );
+	s.Replace( "Ago", " Ago" );
+	return s;
+}
+
+CString HourInDayToDisplayString( int iHourIndex )
+{
+	int iBeginHour = iHourIndex;
+	iBeginHour--;
+	wrap( iBeginHour, 24 );
+	iBeginHour++;
+
+	return ssprintf("%02d:00+", iBeginHour );
+}
+
+
 tm AddDays( tm start, int iDaysToMove )
 {
 	/*

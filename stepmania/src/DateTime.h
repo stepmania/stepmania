@@ -17,6 +17,10 @@ CString HourInDayToString( int iHourIndex );
 CString MonthToString( int iMonthIndex );
 CString LastWeekToString( int iLastWeekIndex );
 
+CString LastDayToDisplayString( int iLastDayIndex );
+CString LastWeekToDisplayString( int iLastWeekIndex );
+CString HourInDayToDisplayString( int iHourIndex );
+
 tm AddDays( tm start, int iDaysToMove );
 tm GetYesterday( tm start );
 int GetDayOfWeek( tm time );
