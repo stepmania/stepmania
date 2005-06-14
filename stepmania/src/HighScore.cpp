@@ -140,9 +140,9 @@ void HighScoreList::AddHighScore( HighScore hs, int &iIndexOut, bool bIsMachine 
 	}
 }
 
-void HighScoreList::IncrementPlayCount( DateTime dtLastPlayed )
+void HighScoreList::IncrementPlayCount( DateTime _dtLastPlayed )
 {
-	dtLastPlayed = dtLastPlayed;
+	dtLastPlayed = _dtLastPlayed;
 	iNumTimesPlayed++;
 }
 
