@@ -320,6 +320,10 @@
 	
 	<xsl:template mode="Popularity" match="/Stats/SongScores | /Stats/CourseScores">
 		<xsl:variable name="Type" select="substring-before(name(),'Scores')" />
+		<xsl:variable name="TypePlural">
+			<xsl:if test="$Type='Song'">Songs</xsl:if>
+			<xsl:if test="$Type='Course'">Courses</xsl:if>
+		</xsl:variable>
 		<xsl:variable name="SubType">
 			<xsl:if test="$Type='Song'">Steps</xsl:if>
 			<xsl:if test="$Type='Course'">Trail</xsl:if>
@@ -367,14 +371,14 @@
 					<xsl:with-param name="text">
 						<xsl:call-template name="PrintVerticalDataTable">
 							<xsl:with-param name="text">
-								<xsl:for-each select="$Catalog/*/*[name(.)=$Type]/*[name(.)=$Type]">
+								<xsl:for-each select="$Catalog/*[name(.)=$TypePlural]/*[name(.)=$Type]">
 									<xsl:variable name="Dir" select="@Dir" />
 									<xsl:variable name="Path" select="@Path" />
 									<xsl:variable name="NumPlays" select="sum($Stats/*/*[@Dir=$Dir or @Path=$Path]/*/HighScoreList/NumTimesPlayed)" />
 									<xsl:if test="$NumPlays = 0">
 										<xsl:call-template name="PrintVerticalDataRow">
 											<xsl:with-param name="name">
-												<xsl:apply-templates select="@Dir | @Path"/>
+												<xsl:apply-templates select="." mode="AttributeTitleGenerator" />
 											</xsl:with-param>
 										</xsl:call-template>
 									</xsl:if>
@@ -411,10 +415,10 @@
 													<xsl:value-of select="position()" />
 												</td>
 												<td>
-													<xsl:apply-templates select="../@Dir | ../@Path" />
+													<xsl:apply-templates select=".." />
 												</td>
 												<td>
-													<xsl:apply-templates select="@Difficulty | @CourseDifficulty" />
+													<xsl:apply-templates select="." mode="AttributeTitleGenerator" />
 												</td>
 												<td>
 													<span class="dyndata">
@@ -547,7 +551,7 @@
 
 					<xsl:call-template name="CollapsibleSubSection">
 						<xsl:with-param name="title">
-							<xsl:value-of select="$StepsType" />
+							<xsl:apply-templates select="$StepsType" />
 						</xsl:with-param>
 						<xsl:with-param name="text">
 
@@ -719,9 +723,6 @@
 				<xsl:for-each select="HighScoreForASongAndSteps | HighScoreForACourseAndTrail">
 					<xsl:sort select="./*/HighScore/DateTime" order="descending" />
 					<xsl:apply-templates select="." />
-					<xsl:if test="position() != last()">
-						<hr />
-					</xsl:if>
 				</xsl:for-each>
 			</xsl:with-param>
 		</xsl:call-template>
@@ -730,23 +731,16 @@
 	
 	
 	<xsl:template match="HighScoreForASongAndSteps | HighScoreForACourseAndTrail">
-		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
-			<tr>
-				<td>
-					<xsl:apply-templates select="*/@Dir | */@Path" />
-				</td>
-				<td>
-					<xsl:apply-templates select="*/@StepsType" />
-				</td>
-				<td>
-					<xsl:apply-templates select="*/@Difficulty | */@CourseDifficulty" />
-				</td>
-			</tr>
-		</xsl:element>
-		<xsl:apply-templates select="HighScore" />
+		<xsl:call-template name="SubSectionCompact">
+			<xsl:with-param name="title">
+				<xsl:apply-templates select="*" mode="AttributeTitleGenerator" />
+			</xsl:with-param>
+			<xsl:with-param name="text">
+				<xsl:apply-templates select="HighScore" />
+			</xsl:with-param>
+		</xsl:call-template>
 	</xsl:template>		
 	
-
 
 
 
