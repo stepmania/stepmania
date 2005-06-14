@@ -183,6 +183,10 @@ void ScoreKeeperMAX2::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, c
 	m_iPointBonus = m_iMaxPossiblePoints;
 	m_pPlayerStageStats->iMaxScore = m_iMaxScoreSoFar;
 
+	/* MercifulBeginner shouldn't clamp weights in course mode, even if a beginner song
+	 * is in a course, since that makes PlayerStageStats::GetGrade hard. */
+	m_bIsBeginner = pSteps->GetDifficulty() == DIFFICULTY_BEGINNER && !GAMESTATE->IsCourseMode();
+
 	ASSERT( m_iPointBonus >= 0 );
 
 	m_iTapNotesHit = 0;
@@ -461,9 +465,9 @@ int ScoreKeeperMAX2::GetPossibleDancePoints( const RadarValues& radars )
 	int NumHolds = int(radars[RADAR_NUM_HOLDS]); 
 	int NumRolls = int(radars[RADAR_NUM_ROLLS]); 
 	return 
-		NumTaps*TapNoteScoreToDancePoints(TNS_MARVELOUS)+
-		NumHolds*HoldNoteScoreToDancePoints(HNS_OK) +
-		NumRolls*HoldNoteScoreToDancePoints(HNS_OK);
+		NumTaps*TapNoteScoreToDancePoints(TNS_MARVELOUS, false)+
+		NumHolds*HoldNoteScoreToDancePoints(HNS_OK, false) +
+		NumRolls*HoldNoteScoreToDancePoints(HNS_OK, false);
 }
 
 int ScoreKeeperMAX2::GetPossibleDancePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars )
@@ -486,9 +490,9 @@ int ScoreKeeperMAX2::GetPossibleGradePoints( const RadarValues& radars )
 	int NumHolds = int(radars[RADAR_NUM_HOLDS]); 
 	int NumRolls = int(radars[RADAR_NUM_ROLLS]); 
 	return 
-		NumTaps*TapNoteScoreToGradePoints(TNS_MARVELOUS)+
-		NumHolds*HoldNoteScoreToGradePoints(HNS_OK) +
-		NumRolls*HoldNoteScoreToGradePoints(HNS_OK);
+		NumTaps*TapNoteScoreToGradePoints(TNS_MARVELOUS, false)+
+		NumHolds*HoldNoteScoreToGradePoints(HNS_OK, false) +
+		NumRolls*HoldNoteScoreToGradePoints(HNS_OK, false);
 }
 
 int ScoreKeeperMAX2::GetPossibleGradePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars )
@@ -502,8 +506,26 @@ int ScoreKeeperMAX2::GetPossibleGradePoints( const RadarValues& fOriginalRadars,
 		GetPossibleGradePoints(fPostRadars) );
 }
 
+int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns ) const
+{
+	return TapNoteScoreToDancePoints( tns, m_bIsBeginner );
+}
 
-int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
+int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns ) const
+{
+	return HoldNoteScoreToDancePoints( hns, m_bIsBeginner );
+}
+
+int ScoreKeeperMAX2::TapNoteScoreToGradePoints( TapNoteScore tns ) const
+{
+	return TapNoteScoreToGradePoints( tns, m_bIsBeginner );
+}
+int ScoreKeeperMAX2::HoldNoteScoreToGradePoints( HoldNoteScore hns ) const
+{
+	return HoldNoteScoreToGradePoints( hns, m_bIsBeginner );
+}
+
+int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns, bool bBeginner )
 {
 	if( !GAMESTATE->ShowMarvelous() && tns == TNS_MARVELOUS )
 		tns = TNS_PERFECT;
@@ -523,12 +545,12 @@ int ScoreKeeperMAX2::TapNoteScoreToDancePoints( TapNoteScore tns )
 	case TNS_MARVELOUS:	iWeight = PREFSMAN->m_iPercentScoreWeightMarvelous;	break;
 	default: FAIL_M( ssprintf("%i", tns) );
 	}
-	if( PREFSMAN->m_bMercifulBeginner )
+	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
 	return iWeight;
 }
 
-int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
+int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns, bool bBeginner )
 {
 	int iWeight = 0;
 	switch( hns )
@@ -538,12 +560,12 @@ int ScoreKeeperMAX2::HoldNoteScoreToDancePoints( HoldNoteScore hns )
 	case HNS_OK:	iWeight = PREFSMAN->m_iPercentScoreWeightOK;	break;
 	default: FAIL_M( ssprintf("%i", hns) );
 	}
-	if( PREFSMAN->m_bMercifulBeginner )
+	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
 	return iWeight;
 }
 
-int ScoreKeeperMAX2::TapNoteScoreToGradePoints( TapNoteScore tns )
+int ScoreKeeperMAX2::TapNoteScoreToGradePoints( TapNoteScore tns, bool bBeginner )
 {
 	if( !GAMESTATE->ShowMarvelous() && tns == TNS_MARVELOUS )
 		tns = TNS_PERFECT;
@@ -564,12 +586,12 @@ int ScoreKeeperMAX2::TapNoteScoreToGradePoints( TapNoteScore tns )
 	case TNS_MARVELOUS:		iWeight = PREFSMAN->m_iGradeWeightMarvelous;break;
 	default: FAIL_M( ssprintf("%i", tns) );
 	}
-	if( PREFSMAN->m_bMercifulBeginner )
+	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
 	return iWeight;
 }
 
-int ScoreKeeperMAX2::HoldNoteScoreToGradePoints( HoldNoteScore hns )
+int ScoreKeeperMAX2::HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBeginner )
 {
 	int iWeight = 0;
 	switch( hns )
@@ -579,7 +601,7 @@ int ScoreKeeperMAX2::HoldNoteScoreToGradePoints( HoldNoteScore hns )
 	case HNS_OK:	iWeight = PREFSMAN->m_iGradeWeightOK;	break;
 	default: FAIL_M( ssprintf("%i", hns) );
 	}
-	if( PREFSMAN->m_bMercifulBeginner )
+	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
 	return iWeight;
 }

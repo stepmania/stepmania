@@ -137,15 +137,20 @@ Grade PlayerStageStats::GetGrade() const
 	/* XXX: This entire calculation should be in ScoreKeeper, but final evaluation
 	 * is tricky since at that point the ScoreKeepers no longer exist. */
 	float fActual = 0;
+
+	bool bIsBeginner = false;
+	if( vpPlayedSteps.size() && !GAMESTATE->IsCourseMode() )
+		bIsBeginner = vpPlayedSteps[0]->GetDifficulty() == DIFFICULTY_BEGINNER;
+
 	FOREACH_TapNoteScore( tns )
 	{
-		int iTapScoreValue = ScoreKeeperMAX2::TapNoteScoreToGradePoints( tns );
+		int iTapScoreValue = ScoreKeeperMAX2::TapNoteScoreToGradePoints( tns, bIsBeginner );
 		fActual += iTapNoteScores[tns] * iTapScoreValue;
 	}
 
 	FOREACH_HoldNoteScore( hns )
 	{
-		int iHoldScoreValue = ScoreKeeperMAX2::HoldNoteScoreToGradePoints( hns );
+		int iHoldScoreValue = ScoreKeeperMAX2::HoldNoteScoreToGradePoints( hns, bIsBeginner );
 		fActual += iHoldNoteScores[hns] * iHoldScoreValue;
 	}
 

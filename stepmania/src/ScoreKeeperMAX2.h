@@ -20,6 +20,7 @@ class ScoreKeeperMAX2: public ScoreKeeper
 	int		m_iPointBonus; // the difference to award at the end
  	int		m_iCurToastyCombo;
 	bool	m_bIsLastSongInCourse;
+	bool	m_bIsBeginner;
 
 	vector<Steps*> m_apSteps;
 
@@ -55,10 +56,14 @@ public:
 	static int	GetPossibleGradePoints( const RadarValues& fRadars );
 	static int	GetPossibleGradePoints( const RadarValues& fOriginalRadars, const RadarValues& fPostRadars );
 
-	static int TapNoteScoreToDancePoints( TapNoteScore tns );
-	static int HoldNoteScoreToDancePoints( HoldNoteScore hns );
-	static int TapNoteScoreToGradePoints( TapNoteScore tns );
-	static int HoldNoteScoreToGradePoints( HoldNoteScore hns );
+	int TapNoteScoreToDancePoints( TapNoteScore tns ) const;
+	int HoldNoteScoreToDancePoints( HoldNoteScore hns ) const;
+	int TapNoteScoreToGradePoints( TapNoteScore tns ) const;
+	int HoldNoteScoreToGradePoints( HoldNoteScore hns ) const;
+	static int TapNoteScoreToDancePoints( TapNoteScore tns, bool bBeginner );
+	static int HoldNoteScoreToDancePoints( HoldNoteScore hns, bool bBeginner );
+	static int TapNoteScoreToGradePoints( TapNoteScore tns, bool bBeginner );
+	static int HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBeginner );
 };
 
 #endif
