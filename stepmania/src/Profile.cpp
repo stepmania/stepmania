@@ -1208,7 +1208,6 @@ void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotal
 	m_iTotalRolls += iTotalRolls;
 	m_iTotalMines += iTotalMines;
 	m_iTotalHands += iTotalHands;
-	m_fTotalCaloriesBurned += fCaloriesBurned;
 
 	if( m_iWeightPounds != 0 )
 	{
