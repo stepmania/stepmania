@@ -25,10 +25,7 @@ static CString GetPromptText()
 		}
 	}
 
-	s += ssprintf( 
-		"You have changed the timing of\n\n"
-		"%s:\n\n", 
-		GAMESTATE->m_pCurSong->GetDisplayFullTitle().c_str() );
+	vector<CString> vsSongChanges;
 
 	{
 		float fOld = GAMESTATE->m_pTimingDataOriginal->m_fBeat0OffsetInSeconds;
@@ -37,12 +34,12 @@ static CString GetPromptText()
 
 		if( fabs(fDelta) > 0.00001 )
 		{
-			s += ssprintf( 
+			vsSongChanges.push_back( ssprintf( 
 				"The song offset changed from %+.3f to %+.3f (change of %+.3f, notes %s).\n\n",
 				fOld, 
 				fNew,
 				fDelta,
-				fDelta > 0 ? "earlier":"later" );
+				fDelta > 0 ? "earlier":"later" ) );
 		}
 	}
 
@@ -54,12 +51,12 @@ static CString GetPromptText()
 
 		if( fabs(fDelta) > 0.00001 )
 		{
-			s += ssprintf( 
+			vsSongChanges.push_back( ssprintf( 
 				"The %s BPM segment changed from %+.3f BPS to %+.3f BPS (change of %+.3f).\n\n",
 				FormatNumberAndSuffix(i+1).c_str(),
 				fOld, 
 				fNew,
-				fDelta );
+				fDelta ) );
 		}
 	}
 
@@ -71,16 +68,29 @@ static CString GetPromptText()
 
 		if( fabs(fDelta) > 0.00001 )
 		{
-			s += ssprintf( 
+			vsSongChanges.push_back( ssprintf( 
 				"The %s Stop segment changed from %+.3f seconds to %+.3f seconds (change of %+.3f).\n\n",
 				FormatNumberAndSuffix(i+1).c_str(),
 				fOld, 
 				fNew,
-				fDelta );
+				fDelta ) );
 		}
 	}
 
-	s +="\n\nWould you like to save these changes to the song file?\n"
+
+	if( !vsSongChanges.empty() )
+	{
+		s += ssprintf( 
+			"You have changed the timing of\n"
+			"%s:\n"
+			"\n", 
+			GAMESTATE->m_pCurSong->GetDisplayFullTitle().c_str() );
+
+		s += join( "\n", vsSongChanges );
+	}
+
+	s +="\n\n"
+		"Would you like to save these changes to the song file?\n"
 		"Choosing NO will discard your changes.";
 
 	return s;
