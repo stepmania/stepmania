@@ -33,13 +33,13 @@ namespace LuaHelpers
 	bool FromStack( CString &Object, int iOffset, lua_State *L );
 
 	template<class T>
-	void ReadArrayFromTable( vector<T> &aOut, lua_State *L = NULL );
+	void ReadArrayFromTable( vector<T> &aOut, lua_State *L );
 	template<class T>
-	void PushStack( const T &val, lua_State *L = NULL );
+	void PushStack( const T &val, lua_State *L );
 	template<class T>
-	bool PopStack( T &val, lua_State *L = NULL );
+	bool PopStack( T &val, lua_State *L );
 	template<class T>
-	void CreateTableFromArray( const vector<T> &aIn, lua_State *L = NULL );
+	void CreateTableFromArray( const vector<T> &aIn, lua_State *L );
 };
 
 class LuaManager
@@ -113,9 +113,6 @@ namespace LuaHelpers
 	template<class T>
 	void ReadArrayFromTable( vector<T> &aOut, lua_State *L )
 	{
-		if( L == NULL )
-			L = LUA->L;
-
 		luaL_checktype( L, -1, LUA_TTABLE );
 
 		unsigned iCount = luaL_getn( L, -1 );
@@ -132,15 +129,11 @@ namespace LuaHelpers
 	template<class T>
 	void PushStack( const T &val, lua_State *L )
 	{
-		if( L == NULL )
-			L = LUA->L;
 		LuaHelpers::Push( val, L );
 	}
 	template<class T>
 	bool PopStack( T &val, lua_State *L )
 	{
-		if( L == NULL )
-			L = LUA->L;
 		bool bRet = LuaHelpers::FromStack( val, -1, L );
 		lua_pop( L, 1 );
 		return bRet;
@@ -148,9 +141,6 @@ namespace LuaHelpers
 	template<class T>
 	void CreateTableFromArray( const vector<T> &aIn, lua_State *L )
 	{
-		if( L == NULL )
-			L = LUA->L;
-
 		lua_newtable( L );
 		for( unsigned i = 0; i < aIn.size(); ++i )
 		{
