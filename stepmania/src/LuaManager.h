@@ -86,8 +86,6 @@ public:
 	void SetGlobal( const CString &sName, const CString &val );
 	void UnsetGlobal( const CString &sName );
 
-	void PushNopFunction();
-
 	bool GetStack( int pos, int &out );
 	void SetGlobal( const CString &sName );
 
