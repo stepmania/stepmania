@@ -500,8 +500,8 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 		if( PROFILEMAN->IsPersistentProfile(pn) )
 			PROFILEMAN->GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
 
-		// don't leave machine high scores for edits
-		if( pSteps->GetDifficulty() != DIFFICULTY_EDIT )
+		// don't leave machine high scores for edits loaded from the player's card
+		if( !pSteps->IsAPlayerEdit() )
 			PROFILEMAN->GetMachineProfile()->AddStepsHighScore( pSong, pSteps, hs, iMachineIndexOut );
 	}
 

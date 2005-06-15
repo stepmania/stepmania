@@ -31,6 +31,7 @@ public:
 
 	// Use a special value of difficulty
 	bool IsAnEdit() const { return m_Difficulty == DIFFICULTY_EDIT; }
+	bool IsAPlayerEdit() const { return m_Difficulty == DIFFICULTY_EDIT && GetLoadedFromProfileSlot() < PROFILE_SLOT_MACHINE; }
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
 	ProfileSlot GetLoadedFromProfileSlot() const { return m_LoadedFromProfile; }
 	unsigned GetHash() const { return Real()->m_uHash; }

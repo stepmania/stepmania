@@ -175,7 +175,7 @@ void PaneDisplay::SetContent( PaneContents c )
 	const Course *pCourse = GAMESTATE->m_pCurCourse;
 	const Trail *pTrail = GAMESTATE->m_pCurTrail[m_PlayerNumber];
 	const Profile *pProfile = PROFILEMAN->IsPersistentProfile(m_PlayerNumber) ? PROFILEMAN->GetProfile(m_PlayerNumber) : NULL;
-	bool bIsPlayerEdit = pSteps && pSteps->IsAnEdit() && pSteps->GetLoadedFromProfileSlot() != PROFILE_SLOT_MACHINE;
+	bool bIsPlayerEdit = pSteps && pSteps->IsAPlayerEdit();
 
 	if( (g_Contents[c].req&NEED_NOTES) && !pSteps )
 		goto done;
