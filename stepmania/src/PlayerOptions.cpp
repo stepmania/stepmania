@@ -174,10 +174,21 @@ void PlayerOptions::GetMods( vector<CString> &AddTo ) const
 	if( m_bTransforms[TRANSFORM_NOSTRETCH] )AddTo.push_back( "NoStretch" );
 
 	if( m_fSkew==0 && m_fPerspectiveTilt==0 )		{ if( m_bSetTiltOrSkew ) AddTo.push_back( "Overhead" ); }
-	else if( m_fSkew==1 && m_fPerspectiveTilt==-1 )	AddTo.push_back( "Incoming" );
-	else if( m_fSkew==1 && m_fPerspectiveTilt==+1 )	AddTo.push_back( "Space" );
-	else if( m_fSkew==0 && m_fPerspectiveTilt==-1 )	AddTo.push_back( "Hallway" );
-	else if( m_fSkew==0 && m_fPerspectiveTilt==+1 )	AddTo.push_back( "Distant" );
+	else if( m_fSkew == 0 )
+	{
+		if( m_fPerspectiveTilt > 0 )
+			AddPart( AddTo, m_fPerspectiveTilt, "Distant" );
+		else
+			AddPart( AddTo, -m_fPerspectiveTilt, "Hallway" );
+	}
+	else if( fabsf(m_fSkew-m_fPerspectiveTilt) < 0.0001f )
+	{
+		AddPart( AddTo, m_fSkew, "Space" );
+	}
+	else if( fabsf(m_fSkew+m_fPerspectiveTilt) < 0.0001f )
+	{
+		AddPart( AddTo, m_fSkew, "Incoming" );
+	}
 
 	if( !m_sNoteSkin.empty()  &&  m_sNoteSkin.CompareNoCase("default")!=0 )
 	{
