@@ -2,7 +2,9 @@
 #define LUA_MANAGER_H
 
 struct lua_State;
+typedef lua_State Lua;
 typedef void (*RegisterWithLuaFn)(lua_State*);
+class RageMutex;
 
 extern "C"
 {
@@ -48,6 +50,9 @@ public:
 
 	LuaManager();
 	~LuaManager();
+
+	Lua *Get();
+	void Release( Lua *&p );
 
 	void PrepareExpression( CString &sInOut );	// strip "//" comments and "+"
 
@@ -96,6 +101,8 @@ public:
 	lua_State *L;
 
 private:
+	RageMutex *m_pLock;
+
 	/* Register all subscribing types.  There's no harm in registering when already registered. */
 	void RegisterTypes();
 };

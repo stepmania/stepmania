@@ -5,6 +5,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageFile.h"
+#include "RageThreads.h"
 #include "arch/Dialog/Dialog.h"
 #include "Foreach.h"
 
@@ -152,6 +153,7 @@ LuaManager::LuaManager()
 	LUA = this;	// so that LUA is available when we call the Register functions
 
 	L = NULL;
+	m_pLock = new RageMutex( "Lua" );
 
 	ResetState();
 }
@@ -159,7 +161,22 @@ LuaManager::LuaManager()
 LuaManager::~LuaManager()
 {
 	lua_close( L );
+	delete m_pLock;
 }
+
+Lua *LuaManager::Get()
+{
+	m_pLock->Lock();
+	return L;
+}
+
+void LuaManager::Release( Lua *&p )
+{
+	ASSERT( p == L );
+	m_pLock->Unlock();
+	p = NULL;
+}
+
 
 void LuaManager::RegisterTypes()
 {
