@@ -251,6 +251,12 @@ void ScreenSystemLayer::HandleMessage( const CString &sMessage )
 		m_textMessage.FinishTweening();
 		m_textMessage.PlayCommand( "Off" );
 	}
+	else if( sMessage == "HideSystemMessage" )
+	{
+		m_sprMessageFrame->SetHidden( true );
+
+		m_textMessage.SetHidden( true );
+	}
 	Screen::HandleMessage( sMessage );
 }
 

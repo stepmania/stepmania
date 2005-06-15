@@ -577,6 +577,11 @@ void ScreenManager::SystemMessageNoAnimate( const CString &sMessage )
 	MESSAGEMAN->Broadcast( "SystemMessageNoAnimate" );
 }
 
+void ScreenManager::HideSystemMessage()
+{
+	MESSAGEMAN->Broadcast( "HideSystemMessage" );
+}
+
 
 void ScreenManager::RefreshCreditsMessages()
 {

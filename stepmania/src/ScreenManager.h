@@ -75,6 +75,7 @@ public:
 	void PopTopScreen( ScreenMessage SM );
 	void SystemMessage( const CString &sMessage );
 	void SystemMessageNoAnimate( const CString &sMessage );
+	void HideSystemMessage();
 
 	void PostMessageToTopScreen( ScreenMessage SM, float fDelay );
 	void SendMessageToTopScreen( ScreenMessage SM );
