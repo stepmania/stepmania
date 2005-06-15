@@ -53,10 +53,6 @@ void ScreenDemonstration::Init()
 
 	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
 
-	/* If needed, turn sound off. */
-	if( !GAMESTATE->IsTimeToPlayAttractSounds() )
-		SOUNDMAN->SetPrefs( 0 );	// silent
-
 	ScreenJukebox::Init();
 
 	if( GAMESTATE->m_pCurSong == NULL )	// we didn't find a song.
@@ -87,8 +83,6 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GainFocus )
 	{
-		if( !GAMESTATE->IsTimeToPlayAttractSounds() )
-			SOUNDMAN->SetPrefs( 0 );	// silent
 	}
 	else if( SM == SM_LoseFocus )
 	{

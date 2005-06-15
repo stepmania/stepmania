@@ -1131,6 +1131,9 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	p.StopMode = RageSoundParams::M_CONTINUE;
 	p.m_StartSecond = fStartSecond;
 
+	// Silence music if not playing attract sounds in demonstration.
+	p.m_Volume = (!GAMESTATE->m_bDemonstrationOrJukebox || GAMESTATE->IsTimeToPlayAttractSounds()) ? 1 : 0;
+	
 	ASSERT( !m_pSoundMusic->IsPlaying() );
 	m_pSoundMusic->Play( &p );
 	if( m_bPaused )
@@ -2080,7 +2083,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			float fFadeLengthSeconds = MUSIC_FADE_OUT_SECONDS;
 			RageSoundParams p = m_pSoundMusic->GetParams();
 			p.m_FadeLength = fFadeLengthSeconds;
-			p.m_LengthSeconds = GAMESTATE->m_fMusicSeconds + fFadeLengthSeconds;
+			p.m_LengthSeconds = GAMESTATE->m_fMusicSeconds + fFadeLengthSeconds;			
 			m_pSoundMusic->SetParams(p);
 			SCREENMAN->PostMessageToTopScreen( SM_StartLoadingNextSong, fFadeLengthSeconds );
 			return;
