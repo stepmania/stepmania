@@ -56,19 +56,19 @@ const char *ChunkReaderString( lua_State *L, void *ptr, size_t *size )
 
 void LuaManager::SetGlobal( const CString &sName, int val )
 {
-	LuaHelpers::PushStack(val);
+	LuaHelpers::PushStack( val, LUA->L );
 	SetGlobal( sName );
 }
 
 void LuaManager::SetGlobal( const CString &sName, bool val )
 {
-	LuaHelpers::PushStack(val);
+	LuaHelpers::PushStack( val, LUA->L );
 	SetGlobal( sName );
 }
 
 void LuaManager::SetGlobal( const CString &sName, const CString &val )
 {
-	LuaHelpers::PushStack(val);
+	LuaHelpers::PushStack( val, LUA->L );
 	SetGlobal( sName );
 }
 

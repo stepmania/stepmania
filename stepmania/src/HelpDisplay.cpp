@@ -85,7 +85,7 @@ public:
 		luaL_checktype( L, 1, LUA_TTABLE );
 		lua_pushvalue( L, 1 );
 		vector<CString> arrayTips;
-		LuaHelpers::ReadArrayFromTable( arrayTips, LUA->L );
+		LuaHelpers::ReadArrayFromTable( arrayTips, L );
 		lua_pop( L, 1 );
 
 		if( lua_gettop(L) > 1 && !lua_isnil( L, 2 ) )
@@ -109,8 +109,8 @@ public:
 		CStringArray arrayTips, arrayTipsAlt;
 		p->GetTips( arrayTips, arrayTipsAlt );
 
-		LuaHelpers::CreateTableFromArray( arrayTips, LUA->L );
-		LuaHelpers::CreateTableFromArray( arrayTipsAlt, LUA->L );
+		LuaHelpers::CreateTableFromArray( arrayTips, L );
+		LuaHelpers::CreateTableFromArray( arrayTipsAlt, L );
 
 		return 2;
 	}
