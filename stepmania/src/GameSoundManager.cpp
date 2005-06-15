@@ -677,7 +677,7 @@ public:
 		if( SOUND )
 		{
 			lua_pushstring(L, "SOUND");
-			SOUND->PushSelf( LUA->L );
+			SOUND->PushSelf( L );
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}
