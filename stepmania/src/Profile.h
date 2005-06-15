@@ -66,6 +66,7 @@ public:
 	CString GetDisplayName() const;
 	CString GetDisplayTotalCaloriesBurned() const;		// remove me and use Lua instead
 	CString GetDisplayTotalCaloriesBurnedToday() const;	// remove me and use Lua instead
+	int GetCalculatedWeightPounds() const;	// returns a default value if m_iWeightPounds isn't set
 	float GetCaloriesBurnedToday() const;
 	int GetTotalNumSongsPassed() const;
 	int GetTotalStepsWithTopGrade( StepsType st, Difficulty d, Grade g ) const;

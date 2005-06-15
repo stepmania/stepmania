@@ -806,37 +806,33 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		Profile* pProfile = PROFILEMAN->GetProfile(pn);
 		if( pProfile )
 		{
-			int iLbs = pProfile->m_iWeightPounds;
-			if( iLbs != 0 )
+			int iNumTracksHeld = 0;
+			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 			{
-				int iNumTracksHeld = 0;
-				for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
-				{
-					const StyleInput StyleI( pn, t );
-					const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
-					float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
-					if( fSecsHeld > 0 )
-						iNumTracksHeld++;
-				}
-
-				float fCals = 0;
-				switch( iNumTracksHeld )
-				{
-				case 0:
-					// autoplay is on, or this is a computer player
-					iNumTracksHeld = 1;
-					// fall through
-				default:
-					{
-						float fCalsFor100Lbs = SCALE( iNumTracksHeld, 1, 2, 0.029f, 0.193f );
-						float fCalsFor200Lbs = SCALE( iNumTracksHeld, 1, 2, 0.052f, 0.334f );
-						fCals = SCALE( iLbs, 100.f, 200.f, fCalsFor100Lbs, fCalsFor200Lbs );
-					}
-					break;
-				}
-
-				m_pPlayerStageStats->fCaloriesBurned += fCals;
+				const StyleInput StyleI( pn, t );
+				const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
+				float fSecsHeld = INPUTMAPPER->GetSecsHeld( GameI );
+				if( fSecsHeld > 0 )
+					iNumTracksHeld++;
 			}
+
+			float fCals = 0;
+			switch( iNumTracksHeld )
+			{
+			case 0:
+				// autoplay is on, or this is a computer player
+				iNumTracksHeld = 1;
+				// fall through
+			default:
+				{
+					float fCalsFor100Lbs = SCALE( iNumTracksHeld, 1, 2, 0.029f, 0.193f );
+					float fCalsFor200Lbs = SCALE( iNumTracksHeld, 1, 2, 0.052f, 0.334f );
+					fCals = SCALE( pProfile->GetCalculatedWeightPounds(), 100.f, 200.f, fCalsFor100Lbs, fCalsFor200Lbs );
+				}
+				break;
+			}
+
+			m_pPlayerStageStats->fCaloriesBurned += fCals;
 		}
 	}
 
