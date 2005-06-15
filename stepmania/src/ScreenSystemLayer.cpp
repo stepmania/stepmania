@@ -15,9 +15,10 @@
 REGISTER_SCREEN_CLASS( ScreenSystemLayer );
 ScreenSystemLayer::ScreenSystemLayer( const CString &sName ) : Screen(sName)
 {
-	MESSAGEMAN->Subscribe( this, "RefreshCreditText" );
-	MESSAGEMAN->Subscribe( this, "SystemMessage" );
-	MESSAGEMAN->Subscribe( this, "SystemMessageNoAnimate" );
+	SubscribeToMessage( "RefreshCreditText" );
+	SubscribeToMessage( "SystemMessage" );
+	SubscribeToMessage( "SystemMessageNoAnimate" );
+	SubscribeToMessage( "HideSystemMessage" );
 
 	CREDITS_PRESS_START		.Load(m_sName,"CreditsPressStart");
 	CREDITS_INSERT_CARD		.Load(m_sName,"CreditsInsertCard");
@@ -36,9 +37,6 @@ ScreenSystemLayer::ScreenSystemLayer( const CString &sName ) : Screen(sName)
 
 ScreenSystemLayer::~ScreenSystemLayer()
 {
-	MESSAGEMAN->Unsubscribe( this, "RefreshCreditText" );
-	MESSAGEMAN->Unsubscribe( this, "SystemMessage" );
-	MESSAGEMAN->Unsubscribe( this, "SystemMessageNoAnimate" );
 }
 
 void ScreenSystemLayer::Init()
