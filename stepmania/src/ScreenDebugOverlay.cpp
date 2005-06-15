@@ -11,6 +11,7 @@
 #include "RageSoundManager.h"
 #include "GameSoundManager.h"
 #include "RageTextureManager.h"
+#include "MemoryCardManager.h"
 #include "NoteSkinManager.h"
 #include "Bookkeeper.h"
 #include "ProfileManager.h"
@@ -427,8 +428,17 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 				BOOKKEEPER->WriteToDisk();
 				PROFILEMAN->SaveMachineProfile();
 				FOREACH_PlayerNumber( p )
-					if( PROFILEMAN->IsPersistentProfile(p) )
-						PROFILEMAN->SaveProfile( p );
+				{
+					if( !PROFILEMAN->IsPersistentProfile(p) )
+						continue;
+
+					bool bWasMemoryCard = PROFILEMAN->ProfileWasLoadedFromMemoryCard(p);
+					if( bWasMemoryCard )
+						MEMCARDMAN->MountCard( p );
+					PROFILEMAN->SaveProfile( p );
+					if( bWasMemoryCard )
+						MEMCARDMAN->UnmountCard( p );
+				}
 				break;
 			case DebugLine_WritePreferences:
 				PREFSMAN->SaveGlobalPrefsToDisk();
