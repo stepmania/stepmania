@@ -20,9 +20,12 @@
 			<xsl:with-param name="Content">
 				<xsl:call-template name="Instructions" />
 				<xsl:apply-templates select="/Stats/GeneralData" />
-				<xsl:apply-templates mode="Popularity" select="/Stats/SongScores | /Stats/CourseScores" />
-				<xsl:apply-templates mode="TopScores" select="/Stats/SongScores | /Stats/CourseScores"/>
-				<xsl:apply-templates mode="Completeness" select="/Stats/SongScores | /Stats/CourseScores"/>
+				<xsl:apply-templates mode="Popularity" select="/Stats/SongScores" />
+				<xsl:apply-templates mode="Popularity" select="/Stats/CourseScores" />
+				<xsl:apply-templates mode="TopScores" select="/Stats/SongScores" />
+				<xsl:apply-templates mode="TopScores" select="/Stats/CourseScores"/>
+				<xsl:apply-templates mode="Completeness" select="/Stats/SongScores"/>
+				<xsl:apply-templates mode="Completeness" select="/Stats/CourseScores"/>
 				<xsl:apply-templates select="/Stats/ScreenshotData" />
 				<xsl:apply-templates select="/Stats/CalorieData" />
 				<xsl:apply-templates select="/Stats/RecentSongScores" />
@@ -355,7 +358,7 @@
 										</xsl:with-param>
 										<xsl:with-param name="value">
 											<xsl:call-template name="PrintPercentage" >
-												<xsl:with-param name="cals" select="sum(*/HighScoreList/NumTimesPlayed) div $TotalPlays" />
+												<xsl:with-param name="num" select="sum(*/HighScoreList/NumTimesPlayed) div $TotalPlays" />
 											</xsl:call-template>
 										</xsl:with-param>
 									</xsl:call-template>
@@ -423,7 +426,7 @@
 												<td>
 													<span class="dyndata">
 														<xsl:call-template name="PrintPercentage" >
-															<xsl:with-param name="cals" select="sum(HighScoreList/NumTimesPlayed) div $TotalPlays" />
+															<xsl:with-param name="num" select="sum(HighScoreList/NumTimesPlayed) div $TotalPlays" />
 														</xsl:call-template>
 													</span>	
 												</td>
@@ -532,6 +535,10 @@
 	<xsl:template mode="Completeness" match="/Stats/SongScores | /Stats/CourseScores">
 		<xsl:variable name="ScoresName" select="translate(name(), ' ', ' ')" />
 		<xsl:variable name="Type" select="substring-before(name(),'Scores')" />
+		<xsl:variable name="TypePlural">
+			<xsl:if test="$Type='Song'">Songs</xsl:if>
+			<xsl:if test="$Type='Course'">Courses</xsl:if>
+		</xsl:variable>
 		<xsl:variable name="SubType">
 			<xsl:if test="$Type='Song'">Steps</xsl:if>
 			<xsl:if test="$Type='Course'">Trail</xsl:if>
@@ -566,12 +573,12 @@
 										<font size="+2">
 											<xsl:if test="$PossibleO = 0">
 												<xsl:call-template name="PrintPercentage">
-													<xsl:with-param name="cals" select="0" />
+													<xsl:with-param name="num" select="0" />
 												</xsl:call-template>
 											</xsl:if>
 											<xsl:if test="$PossibleO != 0">
 												<xsl:call-template name="PrintPercentage">
-													<xsl:with-param name="cals" select="$ActualO div $PossibleO" />
+													<xsl:with-param name="num" select="$ActualO div $PossibleO" />
 												</xsl:call-template>
 											</xsl:if>
 										</font>
@@ -582,9 +589,6 @@
 							
 							<hr />
 
-
-
-							<h2>Breakdown</h2>
 
 							<table>
 
@@ -608,7 +612,7 @@
 										<td>
 											<span class="dyndata">
 												<xsl:call-template name="PrintCalories">
-													<xsl:with-param name="cals" select="$Actual" />
+													<xsl:with-param name="num" select="$Actual" />
 												</xsl:call-template>
 											</span>
 										</td>
@@ -626,7 +630,7 @@
 										<td>
 											<span class="dyndata">
 												<xsl:call-template name="PrintCalories">
-													<xsl:with-param name="cals" select="$Possible" />
+													<xsl:with-param name="num" select="$Possible" />
 												</xsl:call-template>
 											</span>
 										</td>
@@ -645,12 +649,12 @@
 											<span class="dyndata">
 												<xsl:if test="$Possible = 0">
 													<xsl:call-template name="PrintPercentage">
-														<xsl:with-param name="cals" select="0" />
+														<xsl:with-param name="num" select="0" />
 													</xsl:call-template>
 												</xsl:if>
 												<xsl:if test="$Possible != 0">
 													<xsl:call-template name="PrintPercentage">
-														<xsl:with-param name="cals" select="$Actual div $Possible" />
+														<xsl:with-param name="num" select="$Actual div $Possible" />
 													</xsl:call-template>
 												</xsl:if>
 											</span>
@@ -676,21 +680,23 @@
 									</xsl:for-each>
 								</tr>
 																
-								<xsl:for-each select="$Catalog/*/*[name()=$Type]">
+								<xsl:for-each select="$Catalog/*[name()=$TypePlural]/*[name()=$Type]">
 									<xsl:variable name="Dir" select="@Dir" />
 									<xsl:variable name="Path" select="@Path" />
+									<xsl:variable name="StatsSongOrCourse" select="$Stats/*[name()=concat($Type,'Scores')]/*[@Dir=$Dir or @Path=$Path]" />
+									<xsl:variable name="CatalogSongOrCourse" select="." />
 									<tr>
-										<td><xsl:apply-templates select="@Dir | @Path"/></td>
+										<td><xsl:apply-templates select="." mode="AttributeTitleGenerator" /></td>
 										<xsl:for-each select="$Catalog/Types/*[name()=$DifficultyName]/*[name()=$DifficultyName]">
 											<xsl:variable name="Difficulty" select="." />
-											<xsl:variable name="StatsSongOrCourse" select="$Stats/*/*[@Dir=$Dir or @Path=$Path]/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]" />
-											<xsl:variable name="CatalogSongOrCourse" select="$Catalog/*/*[@Dir=$Dir or @Path=$Path]/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]" />
+											<xsl:variable name="StatsStepsOrTrail" select="$StatsSongOrCourse/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]" />
+											<xsl:variable name="CatalogStepsOrTrail" select="$CatalogSongOrCourse/*[(@Difficulty=$Difficulty or @CourseDifficulty=$Difficulty) and @StepsType=$StepsType]" />
 											<td>
-												<xsl:if test="count($CatalogSongOrCourse) &gt; 0">
-													<xsl:apply-templates select="$CatalogSongOrCourse/Meter"/>
+												<xsl:if test="count($CatalogStepsOrTrail) &gt; 0">
+													<xsl:apply-templates select="$CatalogStepsOrTrail/Meter"/>
 													<xsl:text> </xsl:text>
 													<span class="dyndata">
-														<xsl:apply-templates select="$StatsSongOrCourse/HighScoreList/HighScore[1]/PercentDP" />
+														<xsl:apply-templates select="$StatsStepsOrTrail/HighScoreList/HighScore[1]/PercentDP" />
 													</span>
 												</xsl:if>
 											</td>
@@ -868,6 +874,11 @@
 			</xsl:with-param>
 			<xsl:with-param name="text">
 
+				<xsl:if test="../GeneralData/IsWeightSet = 0">
+					WARNING: Weight is not set. Calorie counts may be inaccurate.
+					<hr/>
+				</xsl:if>
+			
 				<xsl:variable name="Cals" select="../GeneralData/TotalCaloriesBurned" />
 				<xsl:variable name="NumSongs" select="sum(../GeneralData/NumSongsPlayedByPlayMode/*)" />
 				<xsl:variable name="GameplaySeconds" select="../GeneralData/TotalGameplaySeconds" />
@@ -878,66 +889,78 @@
 							<xsl:with-param name="name">All time</xsl:with-param>
 							<xsl:with-param name="value">
 								<xsl:call-template name="PrintCalories">
-									<xsl:with-param name="cals" select="$Cals" />
+									<xsl:with-param name="num" select="$Cals" />
 								</xsl:call-template>
 							</xsl:with-param>
 						</xsl:call-template>
 						<xsl:call-template name="PrintHorizontalDataCell">
 							<xsl:with-param name="name">Per Song</xsl:with-param>
 							<xsl:with-param name="value">
-								<xsl:call-template name="PrintCalories">
-									<xsl:with-param name="cals" select="$Cals div $NumSongs" />
-								</xsl:call-template>
+								<xsl:if test="$NumSongs = 0">
+									0
+								</xsl:if>
+								<xsl:if test="$NumSongs &gt; 0">
+									<xsl:call-template name="PrintCalories">
+										<xsl:with-param name="num" select="$Cals div $NumSongs" />
+									</xsl:call-template>
+								</xsl:if>
 							</xsl:with-param>
 						</xsl:call-template>
 						<xsl:call-template name="PrintHorizontalDataCell">
 							<xsl:with-param name="name">Per Minute of Gameplay</xsl:with-param>
 							<xsl:with-param name="value">
-								<xsl:call-template name="PrintCalories">
-									<xsl:with-param name="cals" select="$Cals div ($GameplaySeconds div 60)" />
-								</xsl:call-template>
+								<xsl:if test="$GameplaySeconds = 0">
+									0
+								</xsl:if>
+								<xsl:if test="$GameplaySeconds &gt; 0">
+									<xsl:call-template name="PrintCalories">
+										<xsl:with-param name="num" select="$Cals div ($GameplaySeconds div 60)" />
+									</xsl:call-template>
+								</xsl:if>
 							</xsl:with-param>
 						</xsl:call-template>
 					</xsl:with-param>
 				</xsl:call-template>
-				
-				<xsl:if test="count(/Stats/CalorieData/CaloriesBurned) > 0">
-					<hr/>
+			
+				<hr/>
 
-					<h2>By Week</h2>
-					<xsl:variable name="firstDateJulian">
-						<xsl:call-template name="calculate-julian-day2">
-							<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[1]/@Date" />
-						</xsl:call-template>
-					</xsl:variable>
-					<xsl:variable name="lastDateJulian">
-						<xsl:call-template name="calculate-julian-day2">
-							<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[last()]/@Date" />
-						</xsl:call-template>
-					</xsl:variable>
-					<xsl:variable name="lastDateDayOfWeek">
-						<xsl:call-template name="calculate-day-of-the-week2">
-							<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[last()]/@Date" />
-						</xsl:call-template>
-					</xsl:variable>
-					<xsl:variable name="lastDateJulianRoundedToWeek" select="$lastDateJulian - $lastDateDayOfWeek" />
-					<table>
-						<tr>
-							<td></td>
-							<td>Sun</td>
-							<td>Mon</td>
-							<td>Tue</td>
-							<td>Wed</td>
-							<td>Thu</td>
-							<td>Fri</td>
-							<td>Sat</td>
-						</tr>	
+				<h2>By Week</h2>
+				<table>
+					<tr>
+						<td></td>
+						<td>Sun</td>
+						<td>Mon</td>
+						<td>Tue</td>
+						<td>Wed</td>
+						<td>Thu</td>
+						<td>Fri</td>
+						<td>Sat</td>
+					</tr>	
+
+					<xsl:if test="count(Stats/CalorieData/*) &gt; 0" >
+						<xsl:variable name="firstDateJulian">
+							<xsl:call-template name="calculate-julian-day2">
+								<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[1]/@Date" />
+							</xsl:call-template>
+						</xsl:variable>
+						<xsl:variable name="lastDateJulian">
+							<xsl:call-template name="calculate-julian-day2">
+								<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[last()]/@Date" />
+							</xsl:call-template>
+						</xsl:variable>
+						<xsl:variable name="lastDateDayOfWeek">
+							<xsl:call-template name="calculate-day-of-the-week2">
+								<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[last()]/@Date" />
+							</xsl:call-template>
+						</xsl:variable>
+						<xsl:variable name="lastDateJulianRoundedToWeek" select="$lastDateJulian - $lastDateDayOfWeek" />
+						
 						<xsl:call-template name="PrintWeeksRecursive">
 							<xsl:with-param name="beginDayJulian" select="$lastDateJulianRoundedToWeek" />
 							<xsl:with-param name="stopDayJulian" select="$firstDateJulian" />
 						</xsl:call-template>
-					</table>
-				</xsl:if>
+					</xsl:if>
+				</table>
 
 			</xsl:with-param>
 		</xsl:call-template>
@@ -1008,7 +1031,7 @@
 	    <xsl:variable name="cals" select="/Stats/CalorieData/CaloriesBurned[@Date=$date]" />
 	    <xsl:if test="$cals">
 			<xsl:call-template name="PrintCalories">
-				<xsl:with-param name="cals" select="$cals" />
+				<xsl:with-param name="num" select="$cals" />
 			</xsl:call-template>
 	    </xsl:if>
 	</xsl:template>

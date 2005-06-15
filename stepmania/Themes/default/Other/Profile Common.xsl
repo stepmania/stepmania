@@ -474,43 +474,63 @@ HR	{
 	
 	<xsl:template mode="percentage" match="//*">
 		<xsl:call-template name="PrintPercentage">
-			<xsl:with-param name="cals" select="." />
+			<xsl:with-param name="num" select="." />
 		</xsl:call-template>
 	</xsl:template>
 
 	<xsl:template name="PrintPercentage">
-		<xsl:param name="cals" />
-		<xsl:value-of select="format-number($cals*100,'00.00')" />%
+		<xsl:param name="num" />
+		<xsl:value-of select="format-number($num*100,'00.00')" />%
 	</xsl:template>
 
-	<xsl:template match="//*[(contains(name(),'Total') or contains(name(),'Num') or name()='Score' or contains(name(),'Combo') or contains(name(..),'TapNoteScores') or name(..)='HoldNoteScores' or (name(..)='RadarValues' and not(contains(text(),'.')))) and text()]">
+	<xsl:template match="//*[text() and not(contains(name(),'Calories')) and not(contains(name(),'Seconds')) and (contains(name(),'Total') or contains(name(),'Num') or name()='Score' or contains(name(),'Combo') or contains(name(..),'TapNoteScores') or name(..)='HoldNoteScores' or (name(..)='RadarValues' and not(contains(text(),'.'))))]">
 		<xsl:call-template name="PrintDecimal">
-			<xsl:with-param name="cals" select="." />
+			<xsl:with-param name="num" select="." />
 		</xsl:call-template>
 	</xsl:template>
 	
 	<xsl:template name="PrintDecimal">
-		<xsl:param name="cals" />
-		<xsl:value-of select="format-number($cals,'#,##0')" />
+		<xsl:param name="num" />
+		<xsl:value-of select="format-number($num,'#,##0')" />
 	</xsl:template>
 
-	<xsl:template match="//*[contains(name(),'Calories') or contains(name(),'Seconds')]">
+	<xsl:template match="//*[contains(name(),'Calories')]">
 		<xsl:call-template name="PrintCalories">
-			<xsl:with-param name="cals" select="." />
-		</xsl:call-template>
-	</xsl:template>
-	
-	<xsl:template match="//*[name(..)='RadarValues' and contains(text(),'.')]">
-		<xsl:call-template name="PrintPercentage">
-			<xsl:with-param name="cals" select="." />
+			<xsl:with-param name="num" select="." />
 		</xsl:call-template>
 	</xsl:template>
 	
 	<xsl:template name="PrintCalories">
-		<xsl:param name="cals" />
-		<xsl:value-of select="format-number($cals,'#,##0.0')" />
+		<xsl:param name="num" />
+		<xsl:value-of select="format-number($num,'#,##0.0')" />
 	</xsl:template>
 
+	<xsl:template match="//*[contains(name(),'Seconds')]">
+		<xsl:call-template name="PrintSeconds">
+			<xsl:with-param name="num" select="." />
+		</xsl:call-template>
+	</xsl:template>
+	
+	<xsl:template name="PrintSeconds">
+		<xsl:param name="num" />
+		
+		<xsl:variable name="seconds" select="floor($num mod 60)" />
+		<xsl:variable name="minutes" select="floor(($num div 60) mod 60)" />
+		<xsl:variable name="hours"  select="floor(($num div 3600))" />
+		
+		<xsl:value-of select="format-number($hours,'#,##0')" />
+		<xsl:text>:</xsl:text>
+		<xsl:value-of select="format-number($minutes,'00')" />
+		<xsl:text>:</xsl:text>
+		<xsl:value-of select="format-number($seconds,'00')" />
+	</xsl:template>
+
+	<xsl:template match="//*[name(..)='RadarValues' and contains(text(),'.')]">
+		<xsl:call-template name="PrintPercentage">
+			<xsl:with-param name="num" select="." />
+		</xsl:call-template>
+	</xsl:template>
+	
 	<xsl:template match="//*[contains(name(),'Is') or contains(name(),'Using')]">
 		<xsl:if test=".!='0'">
 			true
@@ -536,27 +556,6 @@ HR	{
 			<xsl:value-of select="." />
 		</xsl:if>
 	</xsl:template>
-
-	<xsl:template match="//*[contains(name(),'Seconds')]">
-		<xsl:call-template name="PrintSeconds">
-			<xsl:with-param name="cals" select="." />
-		</xsl:call-template>
-	</xsl:template>
-	
-	<xsl:template name="PrintSeconds">
-		<xsl:param name="cals" />
-		
-		<xsl:variable name="seconds" select="floor($cals mod 60)" />
-		<xsl:variable name="minutes" select="floor(($cals div 60) mod 60)" />
-		<xsl:variable name="hours"  select="floor(($cals div 3600))" />
-		
-		<xsl:value-of select="format-number($hours,'#,##0')" />
-		<xsl:text>:</xsl:text>
-		<xsl:value-of select="format-number($minutes,'00')" />
-		<xsl:text>:</xsl:text>
-		<xsl:value-of select="format-number($seconds,'00')" />
-	</xsl:template>
-
 	
 	
 	
