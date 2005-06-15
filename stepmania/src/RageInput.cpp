@@ -82,7 +82,7 @@ public:
 		if( INPUTMAN )
 		{
 			lua_pushstring(L, "INPUTMAN");
-			INPUTMAN->PushSelf( LUA->L );
+			INPUTMAN->PushSelf( L );
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}

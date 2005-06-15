@@ -134,7 +134,7 @@ public:
 		if( MESSAGEMAN )
 		{
 			lua_pushstring(L, "MESSAGEMAN");
-			MESSAGEMAN->PushSelf( LUA->L );
+			MESSAGEMAN->PushSelf( L );
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}

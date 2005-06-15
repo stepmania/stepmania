@@ -323,7 +323,7 @@ public:
 		if( NOTESKIN )
 		{
 			lua_pushstring(L, "NOTESKIN");
-			NOTESKIN->PushSelf( LUA->L );
+			NOTESKIN->PushSelf( L );
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}

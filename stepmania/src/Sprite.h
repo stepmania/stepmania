@@ -110,19 +110,19 @@ public:
 	static int Load( T* p, lua_State *L )
 	{
 		RageTextureID ID( SArg(1) );
-		lua_pushboolean( LUA->L, p->Load(ID) );
+		lua_pushboolean( L, p->Load(ID) );
 		return 1;
 	}
 	static int LoadBackground( T* p, lua_State *L )
 	{
 		RageTextureID ID( SArg(1) );
-		lua_pushboolean( LUA->L, p->Load(Sprite::SongBGTexture(ID)) );
+		lua_pushboolean( L, p->Load(Sprite::SongBGTexture(ID)) );
 		return 1;
 	}
 	static int LoadBanner( T* p, lua_State *L )
 	{
 		RageTextureID ID( SArg(1) );
-		lua_pushboolean( LUA->L, p->Load(Sprite::SongBannerTexture(ID)) );
+		lua_pushboolean( L, p->Load(Sprite::SongBannerTexture(ID)) );
 		return 1;
 	}
 
