@@ -63,6 +63,7 @@ static void GetAllSongsToShow( vector<Song*> &vpOut, bool bShowOnlyMostRecentSco
 
 	if( bShowOnlyMostRecentScores )
 	{
+		SongUtil::SortSongPointerArrayByTitle( vpOut );
 		SongUtil::SortByMostRecentlyPlayedForMachine( vpOut );
 		if( (int) vpOut.size() > iNumMostRecentScoresToShow )
 			vpOut.erase( vpOut.begin()+iNumMostRecentScoresToShow, vpOut.end() );
@@ -85,6 +86,7 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, bool bSh
 	}
 	if( bShowOnlyMostRecentScores )
 	{
+		CourseUtil::SortCoursePointerArrayByTitle( vpOut );
 		CourseUtil::SortByMostRecentlyPlayedForMachine( vpOut );
 		if( (int) vpOut.size() > iNumMostRecentScoresToShow )
 			vpOut.erase( vpOut.begin()+iNumMostRecentScoresToShow, vpOut.end() );
