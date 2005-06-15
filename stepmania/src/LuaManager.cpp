@@ -74,13 +74,8 @@ void LuaManager::SetGlobal( const CString &sName, const CString &val )
 
 void LuaManager::UnsetGlobal( const CString &sName )
 {
-	PushStackNil();
-	SetGlobal( sName );
-}
-
-void LuaManager::PushStackNil()
-{
 	lua_pushnil( L );
+	SetGlobal( sName );
 }
 
 
