@@ -476,7 +476,7 @@ public:
 		if( PREFSMAN )
 		{
 			lua_pushstring(L, "PREFSMAN");
-			PREFSMAN->PushSelf( LUA->L );
+			PREFSMAN->PushSelf( L );
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}

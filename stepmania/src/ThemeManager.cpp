@@ -933,7 +933,7 @@ public:
 		if( THEME )
 		{
 			lua_pushstring(L, "THEME");
-			THEME->PushSelf( LUA->L );
+			THEME->PushSelf( L );
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}

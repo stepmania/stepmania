@@ -666,7 +666,7 @@ public:
 		if( SCREENMAN )
 		{
 			lua_pushstring(L, "SCREENMAN");
-			SCREENMAN->PushSelf( LUA->L );
+			SCREENMAN->PushSelf( L );
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}

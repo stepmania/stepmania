@@ -1334,7 +1334,7 @@ public:
 		if( SONGMAN )
 		{
 			lua_pushstring(L, "SONGMAN");
-			SONGMAN->PushSelf( LUA->L );
+			SONGMAN->PushSelf( L );
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}

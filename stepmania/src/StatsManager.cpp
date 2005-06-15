@@ -252,7 +252,7 @@ public:
 		if( STATSMAN )
 		{
 			lua_pushstring(L, "STATSMAN");
-			STATSMAN->PushSelf( LUA->L );
+			STATSMAN->PushSelf( L );
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}

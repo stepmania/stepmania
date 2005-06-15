@@ -547,7 +547,7 @@ public:
 		if( UNLOCKMAN )
 		{
 			lua_pushstring(L, "UNLOCKMAN");
-			UNLOCKMAN->PushSelf( LUA->L );
+			UNLOCKMAN->PushSelf( L );
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}

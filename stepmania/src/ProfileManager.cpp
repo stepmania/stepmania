@@ -654,7 +654,7 @@ public:
 		if( PROFILEMAN )
 		{
 			lua_pushstring(L, "PROFILEMAN");
-			PROFILEMAN->PushSelf( LUA->L );
+			PROFILEMAN->PushSelf( L );
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}
