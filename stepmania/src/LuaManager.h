@@ -149,7 +149,7 @@ namespace LuaHelpers
 		}
 	}
 
-	int TypeError( int narg, const char *tname );
+	int TypeError( Lua *L, int narg, const char *tname );
 }
 
 

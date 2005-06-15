@@ -85,7 +85,7 @@ public:
 			if( bIsSelf )
 				luaL_typerror( L, narg, s_className );
 			else
-				LuaHelpers::TypeError( narg, s_className );
+				LuaHelpers::TypeError( L, narg, s_className );
 		}
 
 		return pUserdata->pT;  // pointer to T object
