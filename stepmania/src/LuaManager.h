@@ -86,7 +86,6 @@ public:
 	void SetGlobal( const CString &sName, const CString &val );
 	void UnsetGlobal( const CString &sName );
 
-	bool GetStack( int pos, int &out );
 	void SetGlobal( const CString &sName );
 
 	/* Create a Lua array (a table with indices starting at 1) of the given vector,

@@ -125,17 +125,6 @@ void LuaManager::ReadArrayFromTableB( vector<bool> &aOut, lua_State *L )
 	}
 }
 
-bool LuaManager::GetStack( int pos, int &out )
-{
-	if( pos < 0 )
-		pos = lua_gettop(L) - pos - 1;
-	if( pos < 1 )
-		return false;
-	
-	out = (int) lua_tonumber( L, pos );
-	return true;
-}
-
 void LuaManager::SetGlobal( const CString &sName )
 {
 	lua_setglobal( L, sName );
