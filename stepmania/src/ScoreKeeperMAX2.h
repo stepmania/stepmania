@@ -22,6 +22,10 @@ class ScoreKeeperMAX2: public ScoreKeeper
 	bool	m_bIsLastSongInCourse;
 	bool	m_bIsBeginner;
 
+	bool m_bComboIsPerRow;
+	TapNoteScore m_MinScoreToContinueCombo;
+	TapNoteScore m_MinScoreToMaintainCombo;
+
 	vector<Steps*> m_apSteps;
 
 	void AddScore( TapNoteScore score );

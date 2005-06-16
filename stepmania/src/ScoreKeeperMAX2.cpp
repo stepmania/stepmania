@@ -33,6 +33,11 @@ void ScoreKeeperMAX2::Load(
 	ASSERT( apSongs.size() == apSteps.size() );
 	ASSERT( apSongs.size() == asModifiers.size() );
 
+	/* True if a jump is one to combo, false if combo is purely based on tap count. */
+	m_bComboIsPerRow = THEME->GetMetricB( "Gameplay", "ComboIsPerRow" );
+	m_MinScoreToContinueCombo = (TapNoteScore) THEME->GetMetricI( "Gameplay", "MinScoreToContinueCombo" );
+	m_MinScoreToMaintainCombo = (TapNoteScore) THEME->GetMetricI( "Gameplay", "MinScoreToMaintainCombo" );
+
 	//
 	// Fill in STATSMAN->m_CurStageStats, calculate multiplier
 	//
@@ -357,32 +362,11 @@ void ScoreKeeperMAX2::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	//
 	// Regular combo
 	//
-	
-/*
-  Your combo counter only increased with a "Marvelous/Perfect", and double Marvelous/Perfect steps (left and right, etc.)
-  only add 1 to your combo instead of 2. The combo counter thus becomes a "Marvelous/Perfect" counter. 
-*/
-	/* True if a jump is one to combo, false if combo is purely based on tap count. */
-	bool ComboIsPerRow = true;
-	switch( PREFSMAN->m_ScoringType )
-	{
-	case PrefsManager::SCORING_MAX2:
-		ComboIsPerRow = (GAMESTATE->m_PlayMode == PLAY_MODE_ONI);
-		break;
-	case PrefsManager::SCORING_5TH:
-		ComboIsPerRow = true;
-		break;
-	default:
-		ASSERT(0);
-	}
-	const int ComboCountIfHit = ComboIsPerRow? 1: iNumTapsInRow;
-	TapNoteScore MinScoreToContinueCombo = GAMESTATE->m_PlayMode == PLAY_MODE_ONI? TNS_PERFECT:TNS_GREAT;
-	TapNoteScore MinScoreToMaintainCombo = TNS_GREAT;
-
-	if( scoreOfLastTap >= MinScoreToContinueCombo )
-		m_pPlayerStageStats->iCurCombo += ComboCountIfHit;
+	const int iComboCountIfHit = m_bComboIsPerRow? 1: iNumTapsInRow;
+	if( scoreOfLastTap >= m_MinScoreToContinueCombo )
+		m_pPlayerStageStats->iCurCombo += iComboCountIfHit;
 	else
-		if( scoreOfLastTap < MinScoreToMaintainCombo )
+		if( scoreOfLastTap < m_MinScoreToMaintainCombo )
 			m_pPlayerStageStats->iCurCombo = 0;
 
 	AddScore( scoreOfLastTap );		// only score once per row
