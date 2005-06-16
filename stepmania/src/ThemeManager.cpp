@@ -299,7 +299,7 @@ void ThemeManager::RunLuaScripts( const CString &sMask )
 		{
 			const CString &sPath = asElementPaths[i];
 			LOG->Trace( "Loading \"%s\" ...", sPath.c_str() );
-			LUA->RunScriptFile( sPath );
+			LuaHelpers::RunScriptFile( sPath );
 		}
 	}
 	while( iter != g_vThemes.begin() );

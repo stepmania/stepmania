@@ -229,7 +229,7 @@ void LuaManager::PrepareExpression( CString &sInOut )
 		sInOut.erase( 0, 1 );
 }
 
-bool LuaManager::RunScriptFile( const CString &sFile )
+bool LuaHelpers::RunScriptFile( const CString &sFile )
 {
 	RageFile f;
 	if( !f.Open( sFile ) )
@@ -248,7 +248,7 @@ bool LuaManager::RunScriptFile( const CString &sFile )
 	}
 
 	CString sError;
-	if( !LuaHelpers::RunScript( L, sScript, sFile, sError, 0 ) )
+	if( !LuaHelpers::RunScript( LUA->L, sScript, sFile, sError, 0 ) )
 	{
 		sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
