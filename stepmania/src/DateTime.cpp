@@ -169,8 +169,11 @@ static const CString MONTH_TO_NAME[MONTHS_IN_YEAR] =
 
 CString MonthToString( int iMonthIndex )
 {
+	if( iMonthIndex < 0 || iMonthIndex >= (int) sizeof(MONTH_TO_NAME) )
+		return "";
 	return MONTH_TO_NAME[iMonthIndex];
 }
+LuaFunction( MonthToString, MonthToString( IArg(1) ) );
 
 CString LastWeekToString( int iLastWeekIndex )
 {
