@@ -28,6 +28,7 @@ enum DebugLine
 	DebugLine_ReloadTheme,
 	DebugLine_WriteProfiles,
 	DebugLine_WritePreferences,
+	DebugLine_MenuTimer,
 	DebugLine_Uptime,
 	NUM_DEBUG_LINES
 };

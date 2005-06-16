@@ -95,6 +95,7 @@ void ScreenDebugOverlay::Init()
 		g_Mappings.debugButton[16] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
 		g_Mappings.debugButton[17] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
 		g_Mappings.debugButton[18] = DeviceInput(DEVICE_KEYBOARD, KEY_Cy);
+		g_Mappings.debugButton[19] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
 	}
 
 
@@ -200,6 +201,7 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_ReloadTheme:			s1="Reload Theme and Textures";	break;
 		case DebugLine_WriteProfiles:		s1="Write Profiles";		break;
 		case DebugLine_WritePreferences:	s1="Write Preferences";		break;
+		case DebugLine_MenuTimer:			s1="Menu Timer";			break;
 		case DebugLine_Uptime:				s1="Uptime";				break;
 		default:	ASSERT(0);
 		}
@@ -226,6 +228,7 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_ReloadTheme:			bOn=true;								break;
 		case DebugLine_WriteProfiles:		bOn=true;								break;
 		case DebugLine_WritePreferences:	bOn=true;								break;
+		case DebugLine_MenuTimer:			bOn=PREFSMAN->m_bMenuTimer.Get();		break;
 		case DebugLine_Uptime:				bOn=false;								break;
 		default:	ASSERT(0);
 		}
@@ -268,6 +271,7 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_ReloadTheme:			s2="";					break;
 		case DebugLine_WriteProfiles:		s2="";					break;
 		case DebugLine_WritePreferences:	s2="";					break;
+		case DebugLine_MenuTimer:			s2=bOn ? "on":"off";	break;
 		case DebugLine_Uptime:				s2=SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart());	break;
 		default:	ASSERT(0);
 		}
@@ -442,6 +446,9 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 				break;
 			case DebugLine_WritePreferences:
 				PREFSMAN->SaveGlobalPrefsToDisk();
+				break;
+			case DebugLine_MenuTimer:
+				PREFSMAN->m_bMenuTimer.Set( !PREFSMAN->m_bMenuTimer );
 				break;
 			case DebugLine_Uptime:
 				break;
