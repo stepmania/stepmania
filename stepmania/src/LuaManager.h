@@ -62,8 +62,6 @@ public:
 	/* If sStr begins with @, evaluate the rest as an expression and store the result over sStr. */
 	bool RunAtExpressionS( CString &sStr );
 
-	void Fail( const CString &err );
-
 	void SetGlobal( const CString &sName, int val );
 	void SetGlobal( const CString &sName, bool val );
 	void SetGlobal( const CString &sName, const CString &val );

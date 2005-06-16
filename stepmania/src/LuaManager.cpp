@@ -380,12 +380,6 @@ bool LuaManager::RunAtExpressionS( CString &sStr )
 	return true;
 }
 
-void LuaManager::Fail( const CString &err )
-{
-	lua_pushstring( L, err );
-	lua_error( L );
-}
-
 /* Like luaL_typerror, but without the special case for argument 1 being "self"
  * in method calls, so we give a correct error message after we remove self. */
 int LuaHelpers::TypeError( Lua *L, int iArgNo, const char *szName )
