@@ -495,11 +495,11 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 	//
 	// save high score	
 	//
+	if( PROFILEMAN->IsPersistentProfile(pn) )
+		PROFILEMAN->GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
+
 	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForMachineSongHighScore )
 	{
-		if( PROFILEMAN->IsPersistentProfile(pn) )
-			PROFILEMAN->GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
-
 		// don't leave machine high scores for edits loaded from the player's card
 		if( !pSteps->IsAPlayerEdit() )
 			PROFILEMAN->GetMachineProfile()->AddStepsHighScore( pSong, pSteps, hs, iMachineIndexOut );
@@ -565,12 +565,10 @@ void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail,
 	//
 	// save high score	
 	//
+	if( PROFILEMAN->IsPersistentProfile(pn) )
+		PROFILEMAN->GetProfile(pn)->AddCourseHighScore( pCourse, pTrail, hs, iPersonalIndexOut );
 	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForMachineCourseHighScore )
-	{
-		if( PROFILEMAN->IsPersistentProfile(pn) )
-			PROFILEMAN->GetProfile(pn)->AddCourseHighScore( pCourse, pTrail, hs, iPersonalIndexOut );
 		PROFILEMAN->GetMachineProfile()->AddCourseHighScore( pCourse, pTrail, hs, iMachineIndexOut );
-	}
 
 	//
 	// save recent score	
@@ -593,15 +591,11 @@ void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, const Trai
 //
 void ProfileManager::AddCategoryScore( StepsType st, RankingCategory rc, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
+	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+	if( PROFILEMAN->IsPersistentProfile(pn) )
+		PROFILEMAN->GetProfile(pn)->AddCategoryHighScore( st, rc, hs, iPersonalIndexOut );
 	if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForMachineSongHighScore )
-	{
-		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
-		if( PROFILEMAN->IsPersistentProfile(pn) )
-			PROFILEMAN->GetProfile(pn)->AddCategoryHighScore( st, rc, hs, iPersonalIndexOut );
-		else
-			iPersonalIndexOut = -1;
 		PROFILEMAN->GetMachineProfile()->AddCategoryHighScore( st, rc, hs, iMachineIndexOut );
-	}
 }
 
 void ProfileManager::IncrementCategoryPlayCount( StepsType st, RankingCategory rc, PlayerNumber pn )
