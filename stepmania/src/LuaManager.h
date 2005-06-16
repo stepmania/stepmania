@@ -77,7 +77,6 @@ public:
 
 	/* If sStr begins with @, evaluate the rest as an expression and store the result over sStr. */
 	bool RunAtExpressionS( CString &sStr );
-	float RunAtExpressionF( const CString &sStr );
 
 	void Fail( const CString &err );
 

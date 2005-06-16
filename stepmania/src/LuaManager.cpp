@@ -369,21 +369,6 @@ bool LuaManager::RunAtExpressionS( CString &sStr )
 	return true;
 }
 
-float LuaManager::RunAtExpressionF( const CString &_sStr )
-{
-	if( _sStr.size() == 0 || _sStr[0] != '@' )
-		return 0;
-
-	CString sStr = _sStr;
-
-	/* Erase "@". */
-	sStr.erase( 0, 1 );
-
-	CString sOut;
-	RunExpressionS( sStr, sOut );
-	return strtof( sOut, NULL );
-}
-
 void LuaManager::Fail( const CString &err )
 {
 	lua_pushstring( L, err );
