@@ -197,6 +197,16 @@ static const CString TapNoteScoreNames[] = {
 XToString( TapNoteScore, NUM_TAP_NOTE_SCORES );
 StringToX( TapNoteScore );
 XToThemedString( TapNoteScore, NUM_TAP_NOTE_SCORES );
+static void LuaTapNoteScores( lua_State* L )
+{
+	FOREACH_TapNoteScore( i )
+	{
+		CString s = TapNoteScoreNames[i];
+		s.MakeUpper();
+		LUA->SetGlobal( "TNS_"+s, i );
+	}
+}
+REGISTER_WITH_LUA_FUNCTION( LuaTapNoteScores );
 
 
 static const CString HoldNoteScoreNames[] = {
@@ -207,6 +217,16 @@ static const CString HoldNoteScoreNames[] = {
 XToString( HoldNoteScore, NUM_HOLD_NOTE_SCORES );
 StringToX( HoldNoteScore );
 XToThemedString( HoldNoteScore, NUM_HOLD_NOTE_SCORES );
+static void LuaHoldNoteScores( lua_State* L )
+{
+	FOREACH_HoldNoteScore( i )
+	{
+		CString s = HoldNoteScoreNames[i];
+		s.MakeUpper();
+		LUA->SetGlobal( "HNS_"+s, i );
+	}
+}
+REGISTER_WITH_LUA_FUNCTION( LuaHoldNoteScores );
 
 
 static const CString MemoryCardStateNames[] = {
