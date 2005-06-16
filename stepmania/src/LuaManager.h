@@ -90,9 +90,9 @@ public:
 
 	/* Create a Lua array (a table with indices starting at 1) of the given vector,
 	 * and push it on the stack. */
-	static void CreateTableFromArrayB( const vector<bool> &aIn, lua_State *L = NULL );
+	static void CreateTableFromArrayB( const vector<bool> &aIn, Lua *L );
 	/* Read the table at the top of the stack back into a vector. */
-	static void ReadArrayFromTableB( vector<bool> &aOut, lua_State *L = NULL );
+	static void ReadArrayFromTableB( vector<bool> &aOut, Lua *L );
 
 	lua_State *L;
 
