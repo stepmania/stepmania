@@ -417,15 +417,6 @@ LuaFunctionList::LuaFunctionList( CString name_, lua_CFunction func_ )
 }
 
 
-LuaFunction_NoArgs( MonthOfYear, GetLocalTime().tm_mon+1 );
-LuaFunction_NoArgs( DayOfMonth, GetLocalTime().tm_mday );
-LuaFunction_NoArgs( Hour, GetLocalTime().tm_hour );
-LuaFunction_NoArgs( Minute, GetLocalTime().tm_min );
-LuaFunction_NoArgs( Second, GetLocalTime().tm_sec );
-LuaFunction_NoArgs( Year, GetLocalTime().tm_year+1900 );
-LuaFunction_NoArgs( Weekday, GetLocalTime().tm_wday );
-LuaFunction_NoArgs( DayOfYear, GetLocalTime().tm_yday );
-
 static bool Trace( const CString &sString )
 {
 	LOG->Trace( "%s", sString.c_str() );
