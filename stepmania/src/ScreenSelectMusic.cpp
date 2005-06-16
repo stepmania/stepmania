@@ -1617,7 +1617,6 @@ void ScreenSelectMusic::AfterMusicChange()
 			m_sprMarathonBalloon->StopTweening();
 			COMMAND( m_sprMarathonBalloon, "Hide" );
 			
-			m_sprCourseHasMods->StopTweening();
 			COMMAND( m_sprCourseHasMods, "Hide" );
 		}
 		break;
@@ -1691,7 +1690,6 @@ void ScreenSelectMusic::AfterMusicChange()
 				COMMAND( m_sprMarathonBalloon, "Hide" );
 			}
 
-			m_sprCourseHasMods->StopTweening();
 			COMMAND( m_sprCourseHasMods, "Hide" );
 
 			m_Artists.push_back( pSong->GetDisplayArtist() );
@@ -1734,7 +1732,6 @@ void ScreenSelectMusic::AfterMusicChange()
 		m_sprMarathonBalloon->StopTweening();
 		COMMAND( m_sprMarathonBalloon, "Hide" );
 		
-		m_sprCourseHasMods->StopTweening();
 		COMMAND( m_sprCourseHasMods, "Hide" );
 		
 		break;
@@ -1800,12 +1797,10 @@ void ScreenSelectMusic::AfterMusicChange()
 
 		if( pCourse->HasMods() )
 		{
-			m_sprCourseHasMods->StopTweening();
 			COMMAND( m_sprCourseHasMods, "Show" );
 		}
 		else
 		{
-			m_sprCourseHasMods->StopTweening();
 			COMMAND( m_sprCourseHasMods, "Hide" );
 		}
 
