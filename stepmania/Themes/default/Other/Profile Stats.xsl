@@ -833,34 +833,6 @@
 		</xsl:call-template>
 	</xsl:template>		
 	
-	<xsl:template match="Screenshot">
-		<xsl:element name="table" use-attribute-sets="EntityTableAttr">
-			<tr>
-				<td style="background: #F4F6F7;">
-					<a>
-						<xsl:attribute name="href"><xsl:value-of select="concat('Screenshots/',FileName)" /></xsl:attribute>
-						<xsl:attribute name="target">_new</xsl:attribute>
-						<img>
-							<xsl:attribute name="src"><xsl:value-of select="concat('Screenshots/',FileName)" /></xsl:attribute>
-							<xsl:attribute name="width">160</xsl:attribute>
-							<xsl:attribute name="height">120</xsl:attribute>
-							<xsl:attribute name="style">border-width: 0</xsl:attribute>
-						</img>
-					</a>
-				</td>
-				<td style="background: #F4F6F7;">
-					<xsl:element name="table" use-attribute-sets="EntityTableAttr">
-						<xsl:call-template name="DataTableGenerator">
-							<xsl:with-param name="cols" select="2" />
-							<xsl:with-param name="nodeset" select="*[text()]" />
-						</xsl:call-template>
-					</xsl:element>
-					<xsl:apply-templates select="HighScore" />
-				</td>
-			</tr>
-		</xsl:element>
-	</xsl:template>		
-	
 
 	
 	<!-- CalorieData -->
