@@ -642,14 +642,14 @@ void XNode::GetValue(CString &out) const	{ out = m_sValue; }
 void XNode::GetValue(int &out) const		{ out = atoi(m_sValue); }
 void XNode::GetValue(float &out) const		{ out = strtof(m_sValue, NULL); }
 void XNode::GetValue(bool &out) const		{ out = atoi(m_sValue) != 0; }
-void XNode::GetValue(unsigned &out) const	{ out = (unsigned)atoi(m_sValue); }
+void XNode::GetValue(unsigned &out) const	{ out = 0; sscanf(m_sValue,"%u",&out); }
 void XNode::GetValue(DateTime &out) const	{ out.FromString( m_sValue ); }
 
 void XAttr::GetValue(CString &out) const	{ out = m_sValue; }
 void XAttr::GetValue(int &out) const		{ out = atoi(m_sValue); }
 void XAttr::GetValue(float &out) const		{ out = strtof(m_sValue, NULL); }
 void XAttr::GetValue(bool &out) const		{ out = atoi(m_sValue) != 0; }
-void XAttr::GetValue(unsigned &out) const	{ out = (unsigned)atoi(m_sValue); }
+void XAttr::GetValue(unsigned &out) const	{ out = 0; sscanf(m_sValue,"%u",&out); }
 void XAttr::GetValue(DateTime &out) const	{ out.FromString( m_sValue ); }
 
 //========================================================
