@@ -247,14 +247,18 @@ bool LuaHelpers::RunScriptFile( const CString &sFile )
 		return false;
 	}
 
+	Lua *L = LUA->Get();
+
 	CString sError;
-	if( !LuaHelpers::RunScript( LUA->L, sScript, sFile, sError, 0 ) )
+	if( !LuaHelpers::RunScript( L, sScript, sFile, sError, 0 ) )
 	{
+		LUA->Release(L);
 		sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
 		return false;
 	}
-	
+	LUA->Release(L);
+
 	return true;
 }
 

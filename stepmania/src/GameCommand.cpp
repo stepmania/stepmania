@@ -723,14 +723,16 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			GAMESTATE->ApplyModifiers( *pn, m_sModifiers );
 	if( m_LuaFunction.IsSet() )
 	{
+		Lua *L = LUA->Get();
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
-			m_LuaFunction.PushSelf( LUA->L );
-			ASSERT( !lua_isnil(LUA->L, -1) );
+			m_LuaFunction.PushSelf( L );
+			ASSERT( !lua_isnil(L, -1) );
 
-			lua_pushnumber( LUA->L, *pn ); // 1st parameter
-			lua_call( LUA->L, 1, 0 ); // call function with 1 argument and 0 results
+			lua_pushnumber( L, *pn ); // 1st parameter
+			lua_call( L, 1, 0 ); // call function with 1 argument and 0 results
 		}
+		LUA->Release(L);
 	}
 	if( m_sScreen != "" )
 		SCREENMAN->SetNewScreen( m_sScreen );

@@ -850,21 +850,25 @@ void Actor::AddRotationR( float rot )
 
 void Actor::RunCommands( const LuaReference& cmds, Actor *pParent )
 {
+	Lua *L = LUA->Get();
+
 	// function
-	cmds.PushSelf( LUA->L );
-	ASSERT( !lua_isnil(LUA->L, -1) );
+	cmds.PushSelf( L );
+	ASSERT( !lua_isnil(L, -1) );
 
 	// 1st parameter
-	this->PushSelf( LUA->L );
+	this->PushSelf( L );
 	
 	// 2nd parameter
 	if( pParent )
-		pParent->PushSelf( LUA->L );
+		pParent->PushSelf( L );
 	else
-		lua_pushnil( LUA->L );
+		lua_pushnil( L );
 
 	// call function with 1 argument and 0 results
-	lua_call(LUA->L, 2, 0); 
+	lua_call( L, 2, 0 ); 
+
+	LUA->Release(L);
 }
 
 float Actor::GetCommandsLengthSeconds( const LuaReference& cmds )

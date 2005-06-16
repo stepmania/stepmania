@@ -204,13 +204,15 @@ void ActorScroller::UpdateInternal( float fDeltaTime )
 
 void ActorScroller::PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems )
 {
-	m_exprTransformFunction.PushSelf( LUA->L );
-	ASSERT( !lua_isnil(LUA->L, -1) );
-	pActor->PushSelf( LUA->L );
-	LuaHelpers::Push( fPositionOffsetFromCenter, LUA->L );
-	LuaHelpers::Push( iItemIndex, LUA->L );
-	LuaHelpers::Push( iNumItems, LUA->L );
-	lua_call( LUA->L, 4, 0 ); // 4 args, 0 results
+	Lua *L = LUA->Get();
+	m_exprTransformFunction.PushSelf( L );
+	ASSERT( !lua_isnil(L, -1) );
+	pActor->PushSelf( L );
+	LuaHelpers::Push( fPositionOffsetFromCenter, L );
+	LuaHelpers::Push( iItemIndex, L );
+	LuaHelpers::Push( iNumItems, L );
+	lua_call( L, 4, 0 ); // 4 args, 0 results
+	LUA->Release(L);
 }
 
 void ActorScroller::DrawPrimitives()
