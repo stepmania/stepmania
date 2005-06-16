@@ -587,7 +587,7 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 						if( f.Write("\t") == -1 )
 							return false;
 			}
-			if( f.Write((opt->reference_value&&opt->entitys?opt->entitys->Entity2Ref(m_sValue):m_sValue)) == -1 )
+			if( f.Write((opt && opt->reference_value && opt->entitys ? opt->entitys->Entity2Ref(m_sValue) : m_sValue)) == -1 )
 				return false;
 		}
 
