@@ -1132,7 +1132,8 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	p.m_StartSecond = fStartSecond;
 
 	// Silence music if not playing attract sounds in demonstration.
-	p.m_Volume = (!GAMESTATE->m_bDemonstrationOrJukebox || GAMESTATE->IsTimeToPlayAttractSounds()) ? 1.0f : 0.0f;
+	if( GAMESTATE->m_bDemonstrationOrJukebox && !GAMESTATE->IsTimeToPlayAttractSounds() )
+		p.m_Volume = 0;
 	
 	ASSERT( !m_pSoundMusic->IsPlaying() );
 	m_pSoundMusic->Play( &p );
