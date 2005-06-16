@@ -142,7 +142,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 	}
 
 
-	LUA->RunAtExpressionS( sFile );
+	LuaHelpers::RunAtExpressionS( sFile );
 	bool bIsAbsolutePath = sFile.Left(1) == "/";
 	FixSlashesInPlace( sFile );
 

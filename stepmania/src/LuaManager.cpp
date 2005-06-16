@@ -192,6 +192,8 @@ void LuaManager::RegisterTypes()
 
 void LuaManager::ResetState()
 {
+	m_pLock->Lock();
+
 	if( L != NULL )
 	{
 		LuaReference::BeforeResetAll();
@@ -213,6 +215,8 @@ void LuaManager::ResetState()
 	RegisterTypes();
 
 	LuaReference::AfterResetAll();
+
+	m_pLock->Unlock();
 }
 
 void LuaManager::PrepareExpression( CString &sInOut )
@@ -370,7 +374,7 @@ bool LuaHelpers::RunExpressionS( const CString &str, CString &sOut )
 	return true;
 }
 
-bool LuaManager::RunAtExpressionS( CString &sStr )
+bool LuaHelpers::RunAtExpressionS( CString &sStr )
 {
 	if( sStr.size() == 0 || sStr[0] != '@' )
 		return false;

@@ -59,9 +59,6 @@ public:
 	/* Reset the environment, freeing any globals left over by previously executed scripts. */
 	void ResetState();
 
-	/* If sStr begins with @, evaluate the rest as an expression and store the result over sStr. */
-	bool RunAtExpressionS( CString &sStr );
-
 	void SetGlobal( const CString &sName, int val );
 	void SetGlobal( const CString &sName, bool val );
 	void SetGlobal( const CString &sName, const CString &val );
@@ -101,6 +98,9 @@ namespace LuaHelpers
 	float RunExpressionF( const CString &str );
 	int RunExpressionI( const CString &str );
 	bool RunExpressionS( const CString &str, CString &sOut );
+
+	/* If sStr begins with @, evaluate the rest as an expression and store the result over sStr. */
+	bool RunAtExpressionS( CString &sStr );
 
 	template<class T>
 	void ReadArrayFromTable( vector<T> &aOut, lua_State *L )

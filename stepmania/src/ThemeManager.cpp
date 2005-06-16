@@ -698,7 +698,7 @@ void ThemeManager::EvaluateString( CString &sText )
 {
 	/* If the string begins with an @, treat it as a Lua expression.
 	 * Still do font aliases on the resulting string. */
-	LUA->RunAtExpressionS( sText );
+	LuaHelpers::RunAtExpressionS( sText );
 
 	// "::" means newline since you can't use line breaks in an ini file.
 	// XXX: this makes it impossible to put a colon at the end of a line, eg: "Color:\nRed"
