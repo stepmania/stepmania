@@ -297,9 +297,9 @@ public:
 		// call function with 0 arguments and 1 result
 		lua_call(L, 0, 1); 
 
-		LUA->Release(L);
+		LuaHelpers::PopStack( m_currentValue, L );
 
-		LuaHelpers::PopStack( m_currentValue, LUA->L );
+		LUA->Release(L);
 		return m_currentValue;
 	}
 	
