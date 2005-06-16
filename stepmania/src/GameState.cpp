@@ -2144,7 +2144,7 @@ public:
 		if( GAMESTATE )
 		{
 			lua_pushstring(L, "GAMESTATE");
-			GAMESTATE->PushSelf( LUA->L );
+			GAMESTATE->PushSelf( L );
 			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}
