@@ -703,7 +703,7 @@ public:
 				vbSelOut[i] = false;
 
 			/* Create the vbSelectedOut table. */
-			LUA->CreateTableFromArrayB( vbSelOut );
+			LUA->CreateTableFromArrayB( vbSelOut, LUA->L );
 			ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
 
 			/* Get the function to call from m_LuaTable. */
@@ -731,7 +731,7 @@ public:
 
 			lua_pop( LUA->L, 1 ); /* pop option table */
 
-			LUA->ReadArrayFromTableB( vbSelOut );
+			LUA->ReadArrayFromTableB( vbSelOut, LUA->L );
 			
 			lua_pop( LUA->L, 1 ); /* pop vbSelectedOut table */
 
@@ -753,7 +753,7 @@ public:
 			vector<bool> vbSelectedCopy = vbSel;
 
 			/* Create the vbSelectedOut table. */
-			LUA->CreateTableFromArrayB( vbSelectedCopy );
+			LUA->CreateTableFromArrayB( vbSelectedCopy, LUA->L );
 			ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
 
 			/* Get the function to call. */
