@@ -24,7 +24,7 @@ ScreenBranch::ScreenBranch( CString sClassName ) : Screen( sClassName )
 		CString sChoice = Capitalize( as[i] );
 		CString sCondition = CONDITION(sChoice);
 
-		if( LUA->RunExpressionB(sCondition) )
+		if( LuaHelpers::RunExpressionB(sCondition) )
 		{
 			m_sChoice = sChoice;
 			HandleScreenMessage( SM_GoToNextScreen );
