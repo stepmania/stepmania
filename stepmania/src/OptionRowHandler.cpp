@@ -514,181 +514,191 @@ public:
 		m_sName = sLuaFunction;
 		defOut.m_bAllowThemeItems = false;	// Lua options are always dynamic and can theme themselves.
 
+		Lua *L = LUA->Get();
+
 		/* Run the Lua expression.  It should return a table. */
 		m_pLuaTable->SetFromExpression( sLuaFunction );
 
 		if( m_pLuaTable->GetLuaType() != LUA_TTABLE )
 			RageException::Throw( "Result of \"%s\" is not a table", sLuaFunction.c_str() );
 
-		m_pLuaTable->PushSelf( LUA->L );
+		m_pLuaTable->PushSelf( L );
 
-		lua_pushstring( LUA->L, "Name" );
-		lua_gettable( LUA->L, -2 );
-		const char *pStr = lua_tostring( LUA->L, -1 );
+		lua_pushstring( L, "Name" );
+		lua_gettable( L, -2 );
+		const char *pStr = lua_tostring( L, -1 );
 		if( pStr == NULL )
 			RageException::Throw( "\"%s\" \"Name\" entry is not a string", sLuaFunction.c_str() );
 		defOut.name = pStr;
-		lua_pop( LUA->L, 1 );
+		lua_pop( L, 1 );
 
 
-		lua_pushstring( LUA->L, "OneChoiceForAllPlayers" );
-		lua_gettable( LUA->L, -2 );
-		defOut.bOneChoiceForAllPlayers = !!lua_toboolean( LUA->L, -1 );
-		lua_pop( LUA->L, 1 );
+		lua_pushstring( L, "OneChoiceForAllPlayers" );
+		lua_gettable( L, -2 );
+		defOut.bOneChoiceForAllPlayers = !!lua_toboolean( L, -1 );
+		lua_pop( L, 1 );
 
 
-		lua_pushstring( LUA->L, "ExportOnChange" );
-		lua_gettable( LUA->L, -2 );
-		defOut.m_bExportOnChange = !!lua_toboolean( LUA->L, -1 );
-		lua_pop( LUA->L, 1 );
+		lua_pushstring( L, "ExportOnChange" );
+		lua_gettable( L, -2 );
+		defOut.m_bExportOnChange = !!lua_toboolean( L, -1 );
+		lua_pop( L, 1 );
 
 
-		lua_pushstring( LUA->L, "LayoutType" );
-		lua_gettable( LUA->L, -2 );
-		pStr = lua_tostring( LUA->L, -1 );
+		lua_pushstring( L, "LayoutType" );
+		lua_gettable( L, -2 );
+		pStr = lua_tostring( L, -1 );
 		if( pStr == NULL )
 			RageException::Throw( "\"%s\" \"LayoutType\" entry is not a string", sLuaFunction.c_str() );
 		defOut.layoutType = StringToLayoutType( pStr );
 		ASSERT( defOut.layoutType != LAYOUT_INVALID );
-		lua_pop( LUA->L, 1 );
+		lua_pop( L, 1 );
 
 
-		lua_pushstring( LUA->L, "SelectType" );
-		lua_gettable( LUA->L, -2 );
-		pStr = lua_tostring( LUA->L, -1 );
+		lua_pushstring( L, "SelectType" );
+		lua_gettable( L, -2 );
+		pStr = lua_tostring( L, -1 );
 		if( pStr == NULL )
 			RageException::Throw( "\"%s\" \"SelectType\" entry is not a string", sLuaFunction.c_str() );
 		defOut.selectType = StringToSelectType( pStr );
 		ASSERT( defOut.selectType != SELECT_INVALID );
-		lua_pop( LUA->L, 1 );
+		lua_pop( L, 1 );
 
 
 		/* Iterate over the "Choices" table. */
-		lua_pushstring( LUA->L, "Choices" );
-		lua_gettable( LUA->L, -2 );
-		if( !lua_istable( LUA->L, -1 ) )
+		lua_pushstring( L, "Choices" );
+		lua_gettable( L, -2 );
+		if( !lua_istable( L, -1 ) )
 			RageException::Throw( "\"%s\" \"Choices\" is not a table", sLuaFunction.c_str() );
 
-		lua_pushnil( LUA->L );
-		while( lua_next(LUA->L, -2) != 0 )
+		lua_pushnil( L );
+		while( lua_next(L, -2) != 0 )
 		{
 			/* `key' is at index -2 and `value' at index -1 */
-			const char *pValue = lua_tostring( LUA->L, -1 );
+			const char *pValue = lua_tostring( L, -1 );
 			if( pValue == NULL )
 				RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
 //				LOG->Trace( "'%s'", pValue);
 
 			defOut.choices.push_back( pValue );
 
-			lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
+			lua_pop( L, 1 );  /* removes `value'; keeps `key' for next iteration */
 		}
 
-		lua_pop( LUA->L, 1 ); /* pop choices table */
+		lua_pop( L, 1 ); /* pop choices table */
 
 
 		/* Iterate over the "EnabledForPlayers" table. */
-		lua_pushstring( LUA->L, "EnabledForPlayers" );
-		lua_gettable( LUA->L, -2 );
-		if( !lua_isnil( LUA->L, -1 ) )
+		lua_pushstring( L, "EnabledForPlayers" );
+		lua_gettable( L, -2 );
+		if( !lua_isnil( L, -1 ) )
 		{
-			if( !lua_istable( LUA->L, -1 ) )
+			if( !lua_istable( L, -1 ) )
 				RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table", sLuaFunction.c_str() );
 
 			defOut.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
 
-			lua_pushnil( LUA->L );
-			while( lua_next(LUA->L, -2) != 0 )
+			lua_pushnil( L );
+			while( lua_next(L, -2) != 0 )
 			{
 				/* `key' is at index -2 and `value' at index -1 */
-				PlayerNumber pn = (PlayerNumber)luaL_checkint( LUA->L, -1 );
+				PlayerNumber pn = (PlayerNumber)luaL_checkint( L, -1 );
 
 				defOut.m_vEnabledForPlayers.insert( pn );
 
-				lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
+				lua_pop( L, 1 );  /* removes `value'; keeps `key' for next iteration */
 			}
 		}
-		lua_pop( LUA->L, 1 ); /* pop EnabledForPlayers table */
+		lua_pop( L, 1 ); /* pop EnabledForPlayers table */
 
 		
 		/* Iterate over the "ReloadRowMessages" table. */
-		lua_pushstring( LUA->L, "ReloadRowMessages" );
-		lua_gettable( LUA->L, -2 );
-		if( !lua_isnil( LUA->L, -1 ) )
+		lua_pushstring( L, "ReloadRowMessages" );
+		lua_gettable( L, -2 );
+		if( !lua_isnil( L, -1 ) )
 		{
-			if( !lua_istable( LUA->L, -1 ) )
+			if( !lua_istable( L, -1 ) )
 				RageException::Throw( "\"%s\" \"ReloadRowMessages\" is not a table", sLuaFunction.c_str() );
 
-			lua_pushnil( LUA->L );
-			while( lua_next(LUA->L, -2) != 0 )
+			lua_pushnil( L );
+			while( lua_next(L, -2) != 0 )
 			{
 				/* `key' is at index -2 and `value' at index -1 */
-				const char *pValue = lua_tostring( LUA->L, -1 );
+				const char *pValue = lua_tostring( L, -1 );
 				if( pValue == NULL )
 					RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
 				LOG->Trace( "Found ReloadRowMessage '%s'", pValue);
 
 				m_vsReloadRowMessages.push_back( pValue );
 
-				lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
+				lua_pop( L, 1 );  /* removes `value'; keeps `key' for next iteration */
 			}
 		}
-		lua_pop( LUA->L, 1 ); /* pop ReloadRowMessages table */
+		lua_pop( L, 1 ); /* pop ReloadRowMessages table */
 
 		
 		/* Look for "ExportOnChange" value. */
-		lua_pushstring( LUA->L, "ExportOnChange" );
-		lua_gettable( LUA->L, -2 );
-		if( !lua_isnil( LUA->L, -1 ) )
+		lua_pushstring( L, "ExportOnChange" );
+		lua_gettable( L, -2 );
+		if( !lua_isnil( L, -1 ) )
 		{
-			defOut.m_bExportOnChange = !!MyLua_checkboolean( LUA->L, -1 );
+			defOut.m_bExportOnChange = !!MyLua_checkboolean( L, -1 );
 		}
-		lua_pop( LUA->L, 1 ); /* pop ExportOnChange value */
+		lua_pop( L, 1 ); /* pop ExportOnChange value */
 
 
-		lua_pop( LUA->L, 1 ); /* pop main table */
-		ASSERT( lua_gettop(LUA->L) == 0 );
+		lua_pop( L, 1 ); /* pop main table */
+		ASSERT( lua_gettop(L) == 0 );
+
+		LUA->Release(L);
 	}
 	virtual void Reload( OptionRowDefinition &defOut )
 	{
+		Lua *L = LUA->Get();
+
 		/* Run the Lua expression.  It should return a table. */
 		m_pLuaTable->SetFromExpression( m_sName );
 
 		if( m_pLuaTable->GetLuaType() != LUA_TTABLE )
 			RageException::Throw( "Result of \"%s\" is not a table", m_sName.c_str() );
 
-		m_pLuaTable->PushSelf( LUA->L );
+		m_pLuaTable->PushSelf( L );
 
 
 		/* Iterate over the "EnabledForPlayers" table. */
-		lua_pushstring( LUA->L, "EnabledForPlayers" );
-		lua_gettable( LUA->L, -2 );
-		if( !lua_isnil( LUA->L, -1 ) )
+		lua_pushstring( L, "EnabledForPlayers" );
+		lua_gettable( L, -2 );
+		if( !lua_isnil( L, -1 ) )
 		{
-			if( !lua_istable( LUA->L, -1 ) )
+			if( !lua_istable( L, -1 ) )
 				RageException::Throw( "\"%s\" \"EnabledForPlayers\" is not a table", m_sName.c_str() );
 
 			defOut.m_vEnabledForPlayers.clear();	// and fill in with supplied PlayerNumbers below
 
-			lua_pushnil( LUA->L );
-			while( lua_next(LUA->L, -2) != 0 )
+			lua_pushnil( L );
+			while( lua_next(L, -2) != 0 )
 			{
 				/* `key' is at index -2 and `value' at index -1 */
-				PlayerNumber pn = (PlayerNumber)luaL_checkint( LUA->L, -1 );
+				PlayerNumber pn = (PlayerNumber)luaL_checkint( L, -1 );
 
 				defOut.m_vEnabledForPlayers.insert( pn );
 
-				lua_pop( LUA->L, 1 );  /* removes `value'; keeps `key' for next iteration */
+				lua_pop( L, 1 );  /* removes `value'; keeps `key' for next iteration */
 			}
 		}
-		lua_pop( LUA->L, 1 ); /* pop EnabledForPlayers table */
+		lua_pop( L, 1 ); /* pop EnabledForPlayers table */
 
 
-		lua_pop( LUA->L, 1 ); /* pop main table */
-		ASSERT( lua_gettop(LUA->L) == 0 );
+		lua_pop( L, 1 ); /* pop main table */
+		ASSERT( lua_gettop(L) == 0 );
+
+		LUA->Release(L);
 	}
 	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
-		ASSERT( lua_gettop(LUA->L) == 0 );
+		Lua *L = LUA->Get();
+
+		ASSERT( lua_gettop(L) == 0 );
 
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
@@ -703,44 +713,48 @@ public:
 				vbSelOut[i] = false;
 
 			/* Create the vbSelectedOut table. */
-			LuaHelpers::CreateTableFromArrayB( LUA->L, vbSelOut );
-			ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
+			LuaHelpers::CreateTableFromArrayB( L, vbSelOut );
+			ASSERT( lua_gettop(L) == 1 ); /* vbSelectedOut table */
 
 			/* Get the function to call from m_LuaTable. */
-			m_pLuaTable->PushSelf( LUA->L );
-			ASSERT( lua_istable( LUA->L, -1 ) );
+			m_pLuaTable->PushSelf( L );
+			ASSERT( lua_istable( L, -1 ) );
 
-			lua_pushstring( LUA->L, "LoadSelections" );
-			lua_gettable( LUA->L, -2 );
-			if( !lua_isfunction( LUA->L, -1 ) )
+			lua_pushstring( L, "LoadSelections" );
+			lua_gettable( L, -2 );
+			if( !lua_isfunction( L, -1 ) )
 				RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function", def.name.c_str() );
 
 			/* Argument 1 (self): */
-			m_pLuaTable->PushSelf( LUA->L );
+			m_pLuaTable->PushSelf( L );
 
 			/* Argument 2 (vbSelectedOut): */
-			lua_pushvalue( LUA->L, 1 );
+			lua_pushvalue( L, 1 );
 
 			/* Argument 3 (pn): */
-			LuaHelpers::PushStack( (int) p, LUA->L );
+			LuaHelpers::PushStack( (int) p, L );
 
-			ASSERT( lua_gettop(LUA->L) == 6 ); /* vbSelectedOut, m_iLuaTable, function, self, arg, arg */
+			ASSERT( lua_gettop(L) == 6 ); /* vbSelectedOut, m_iLuaTable, function, self, arg, arg */
 
-			lua_call( LUA->L, 3, 0 ); // call function with 3 arguments and 0 results
-			ASSERT( lua_gettop(LUA->L) == 2 );
+			lua_call( L, 3, 0 ); // call function with 3 arguments and 0 results
+			ASSERT( lua_gettop(L) == 2 );
 
-			lua_pop( LUA->L, 1 ); /* pop option table */
+			lua_pop( L, 1 ); /* pop option table */
 
-			LuaHelpers::ReadArrayFromTableB( LUA->L, vbSelOut );
+			LuaHelpers::ReadArrayFromTableB( L, vbSelOut );
 			
-			lua_pop( LUA->L, 1 ); /* pop vbSelectedOut table */
+			lua_pop( L, 1 ); /* pop vbSelectedOut table */
 
-			ASSERT( lua_gettop(LUA->L) == 0 );
+			ASSERT( lua_gettop(L) == 0 );
 		}
+
+		LUA->Release(L);
 	}
     virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
-		ASSERT( lua_gettop(LUA->L) == 0 );
+		Lua *L = LUA->Get();
+
+		ASSERT( lua_gettop(L) == 0 );
 
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
@@ -753,37 +767,39 @@ public:
 			vector<bool> vbSelectedCopy = vbSel;
 
 			/* Create the vbSelectedOut table. */
-			LuaHelpers::CreateTableFromArrayB( LUA->L, vbSelectedCopy );
-			ASSERT( lua_gettop(LUA->L) == 1 ); /* vbSelectedOut table */
+			LuaHelpers::CreateTableFromArrayB( L, vbSelectedCopy );
+			ASSERT( lua_gettop(L) == 1 ); /* vbSelectedOut table */
 
 			/* Get the function to call. */
-			m_pLuaTable->PushSelf( LUA->L );
-			ASSERT( lua_istable( LUA->L, -1 ) );
+			m_pLuaTable->PushSelf( L );
+			ASSERT( lua_istable( L, -1 ) );
 
-			lua_pushstring( LUA->L, "SaveSelections" );
-			lua_gettable( LUA->L, -2 );
-			if( !lua_isfunction( LUA->L, -1 ) )
+			lua_pushstring( L, "SaveSelections" );
+			lua_gettable( L, -2 );
+			if( !lua_isfunction( L, -1 ) )
 				RageException::Throw( "\"%s\" \"SaveSelections\" entry is not a function", def.name.c_str() );
 
 			/* Argument 1 (self): */
-			m_pLuaTable->PushSelf( LUA->L );
+			m_pLuaTable->PushSelf( L );
 
 			/* Argument 2 (vbSelectedOut): */
-			lua_pushvalue( LUA->L, 1 );
+			lua_pushvalue( L, 1 );
 
 			/* Argument 3 (pn): */
-			LuaHelpers::PushStack( (int) p, LUA->L );
+			LuaHelpers::PushStack( (int) p, L );
 
-			ASSERT( lua_gettop(LUA->L) == 6 ); /* vbSelectedOut, m_iLuaTable, function, self, arg, arg */
+			ASSERT( lua_gettop(L) == 6 ); /* vbSelectedOut, m_iLuaTable, function, self, arg, arg */
 
-			lua_call( LUA->L, 3, 0 ); // call function with 3 arguments and 0 results
-			ASSERT( lua_gettop(LUA->L) == 2 );
+			lua_call( L, 3, 0 ); // call function with 3 arguments and 0 results
+			ASSERT( lua_gettop(L) == 2 );
 
-			lua_pop( LUA->L, 1 ); /* pop option table */
-			lua_pop( LUA->L, 1 ); /* pop vbSelected table */
+			lua_pop( L, 1 ); /* pop option table */
+			lua_pop( L, 1 ); /* pop vbSelected table */
 
-			ASSERT( lua_gettop(LUA->L) == 0 );
+			ASSERT( lua_gettop(L) == 0 );
 		}
+
+		LUA->Release(L);
 
 		// XXX: allow specifying the mask
 		return 0;

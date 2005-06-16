@@ -288,12 +288,16 @@ public:
 		ASSERT( m_sName != "" );
 		ASSERT( m_bIsLoaded );
 
+		Lua *L = LUA->Get();
+
 		// function
-		m_Expr.PushSelf( LUA->L );
-		ASSERT( !lua_isnil(LUA->L, -1) );
+		m_Expr.PushSelf( L );
+		ASSERT( !lua_isnil(L, -1) );
 
 		// call function with 0 arguments and 1 result
-		lua_call(LUA->L, 0, 1); 
+		lua_call(L, 0, 1); 
+
+		LUA->Release(L);
 
 		LuaHelpers::PopStack( m_currentValue, LUA->L );
 		return m_currentValue;

@@ -154,23 +154,27 @@ void MenuTimer::Start()
 
 void MenuTimer::SetText( float fSeconds )
 {
+	Lua *L = LUA->Get();
+
 	for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
 	{
 		// function
-		m_exprFormatText[i].PushSelf( LUA->L );
-		ASSERT( !lua_isnil(LUA->L, -1) );
+		m_exprFormatText[i].PushSelf( L );
+		ASSERT( !lua_isnil(L, -1) );
 
 		// 1st parameter
-		LuaHelpers::Push( fSeconds, LUA->L );
+		LuaHelpers::Push( fSeconds, L );
 		
 		// call function with 1 argument and 1 result
-		lua_call(LUA->L, 1, 1); 
+		lua_call(L, 1, 1); 
 
 		CString sText;
-		LuaHelpers::PopStack( sText, LUA->L );
+		LuaHelpers::PopStack( sText, L );
 		
 		m_text[i].SetText( sText );
 	}
+
+	LUA->Release(L);
 }
 
 /*
