@@ -91,7 +91,7 @@ void ActorCommands::Register()
 	Lua *L = LUA->Get();
 
 	CString sError;
-	if( !LUA->RunScript( m_sLuaFunction, "in", sError, 1 ) )
+	if( !LuaHelpers::RunScript( L, m_sLuaFunction, "in", sError, 1 ) )
 	{
 		FAIL_M( ssprintf("Compiling \"%s\": %s", m_sLuaFunction.c_str(), sError.c_str()) );
 	}

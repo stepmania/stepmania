@@ -248,7 +248,7 @@ bool LuaManager::RunScriptFile( const CString &sFile )
 	}
 
 	CString sError;
-	if( !RunScript( sScript, sFile, sError, 0 ) )
+	if( !LuaHelpers::RunScript( L, sScript, sFile, sError, 0 ) )
 	{
 		sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );
@@ -258,7 +258,7 @@ bool LuaManager::RunScriptFile( const CString &sFile )
 	return true;
 }
 
-bool LuaManager::RunScript( const CString &sScript, const CString &sName, CString &sError, int iReturnValues )
+bool LuaHelpers::RunScript( Lua *L, const CString &sScript, const CString &sName, CString &sError, int iReturnValues )
 {
 	// load string
 	{
@@ -290,7 +290,7 @@ bool LuaManager::RunScript( const CString &sScript, const CString &sName, CStrin
 bool LuaManager::RunScript( const CString &sExpression, const CString &sName, int iReturnValues )
 {
 	CString sError;
-	if( !RunScript( sExpression, sName.size()? sName:CString("in"), sError, iReturnValues ) )
+	if( !LuaHelpers::RunScript( L, sExpression, sName.size()? sName:CString("in"), sError, iReturnValues ) )
 	{
 		sError = ssprintf( "Lua runtime error parsing \"%s\": %s", sName.size()? sName.c_str():sExpression.c_str(), sError.c_str() );
 		Dialog::OK( sError, "LUA_ERROR" );

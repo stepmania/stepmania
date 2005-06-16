@@ -61,10 +61,6 @@ public:
 	/* Reset the environment, freeing any globals left over by previously executed scripts. */
 	void ResetState();
 
-	/* Run a script with the given name.  Return values are left on the Lua stack.
-	 * Returns false on error, with sError set*/
-	bool RunScript( const CString &sScript, const CString &sName, CString &sError, int iReturnValues = 0 );
-
 	/* Convenience: run a script with one return value, displaying an error on failure.
 	 * The return value is left on the Lua stack. */
 	bool RunScript( const CString &sExpression, const CString &sName = "", int iReturnValues = 0 );
@@ -97,6 +93,10 @@ private:
 
 namespace LuaHelpers
 {
+	/* Run a script with the given name.  Return values are left on the Lua stack.
+	 * Returns false on error, with sError set. */
+	bool RunScript( Lua *L, const CString &sScript, const CString &sName, CString &sError, int iReturnValues = 0 );
+
 	/* Create a Lua array (a table with indices starting at 1) of the given vector,
 	 * and push it on the stack. */
 	void CreateTableFromArrayB( Lua *L, const vector<bool> &aIn );

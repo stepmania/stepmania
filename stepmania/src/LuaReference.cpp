@@ -190,7 +190,7 @@ void LuaData::LoadFromString( const CString &s )
 
 	/* Restore the serialized data by evaluating it. */
 	CString sError;
-	if( !LUA->RunScript( s, "serialization", sError, 1 ) )
+	if( !LuaHelpers::RunScript( L, s, "serialization", sError, 1 ) )
 	{
 		/* Serialize() should never return an invalid script.  Drop the failed
 		 * script into the log (it may be too big to pass to FAIL_M) and fail. */
