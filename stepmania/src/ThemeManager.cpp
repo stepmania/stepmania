@@ -717,7 +717,7 @@ float ThemeManager::GetMetricF( const CString &sClassName, const CString &sValue
 {
 	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
 
-	LUA->PrepareExpression( sValue );
+	LuaHelpers::PrepareExpression( sValue );
 
 	return LuaHelpers::RunExpressionF( sValue );
 }
@@ -737,7 +737,7 @@ bool ThemeManager::GetMetricB( const CString &sClassName, const CString &sValueN
 	if( sValue.Left(1) == "1" )
 		return true; /* optimization */
 
-	LUA->PrepareExpression( sValue );
+	LuaHelpers::PrepareExpression( sValue );
 	
 	return LuaHelpers::RunExpressionB( sValue );
 }

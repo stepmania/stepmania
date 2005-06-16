@@ -52,12 +52,12 @@ void ActorFrame::LoadFromNode( const CString& sDir, const XNode* pNode )
 	CString s;
 	if( pNode->GetAttrValue( "VanishX", s ) )
 	{
-		LUA->PrepareExpression( s );
+		LuaHelpers::PrepareExpression( s );
 		m_fVanishX = LuaHelpers::RunExpressionF( s );
 	}
 	if( pNode->GetAttrValue( "VanishY", s ) )
 	{
-		LUA->PrepareExpression( s );
+		LuaHelpers::PrepareExpression( s );
 		m_fVanishY = LuaHelpers::RunExpressionF( s );
 	}
 	m_bOverrideLighting = pNode->GetAttrValue( "Lighting", m_bLighting );

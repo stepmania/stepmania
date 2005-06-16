@@ -227,7 +227,7 @@ void LuaManager::ResetState()
 	m_pLock->Unlock();
 }
 
-void LuaManager::PrepareExpression( CString &sInOut )
+void LuaHelpers::PrepareExpression( CString &sInOut )
 {
 	// HACK: Many metrics have "//" comments that Lua fails to parse.
 	// Replace them with Lua-style comments.

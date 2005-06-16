@@ -54,8 +54,6 @@ public:
 	Lua *Get();
 	void Release( Lua *&p );
 
-	void PrepareExpression( CString &sInOut );	// strip "//" comments and "+"
-
 	/* Reset the environment, freeing any globals left over by previously executed scripts. */
 	void ResetState();
 
@@ -85,6 +83,9 @@ namespace LuaHelpers
 	bool RunScript( Lua *L, const CString &sExpression, const CString &sName = "", int iReturnValues = 0 );
 
 	bool RunScriptFile( const CString &sFile );
+
+	/* Strip "//" comments and "+". */
+	void PrepareExpression( CString &sInOut );
 
 	/* Create a Lua array (a table with indices starting at 1) of the given vector,
 	 * and push it on the stack. */
