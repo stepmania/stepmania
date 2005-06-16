@@ -32,7 +32,7 @@ void ScoreDisplayCalories::LoadFromNode( const CString& sDir, const XNode* pNode
 		CString sPlayerNumber;
 		bool b = pNode->GetAttrValue( "PlayerNumber", sPlayerNumber );
 		ASSERT( b );
-		m_PlayerNumber = (PlayerNumber)LUA->RunExpressionI(sPlayerNumber);
+		m_PlayerNumber = (PlayerNumber) LuaHelpers::RunExpressionI(sPlayerNumber);
 	}
 	
 	m_sMessageOnStep = ssprintf("StepP%d",m_PlayerNumber+1);

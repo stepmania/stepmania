@@ -341,15 +341,19 @@ float LuaHelpers::RunExpressionF( const CString &str )
 	return result;
 }
 
-int LuaManager::RunExpressionI( const CString &str )
+int LuaHelpers::RunExpressionI( const CString &str )
 {
 	return (int) LuaHelpers::RunExpressionF(str);
 }
 
-bool LuaManager::RunExpressionS( const CString &str, CString &sOut )
+bool LuaHelpers::RunExpressionS( const CString &str, CString &sOut )
 {
+	Lua *L = LUA->Get();
 	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
+	{
+		LUA->Release(L);
 		return false;
+	}
 
 	/* Don't accept a function as a return value. */
 	if( lua_isfunction( L, -1 ) )
@@ -358,6 +362,7 @@ bool LuaManager::RunExpressionS( const CString &str, CString &sOut )
 	sOut = lua_tostring( L, -1 );
 	lua_pop( L, 1 );
 
+	LUA->Release(L);
 	return true;
 }
 
@@ -370,7 +375,7 @@ bool LuaManager::RunAtExpressionS( CString &sStr )
 	sStr.erase( 0, 1 );
 
 	CString sOut;
-	RunExpressionS( sStr, sOut );
+	LuaHelpers::RunExpressionS( sStr, sOut );
 	sStr = sOut;
 	return true;
 }
