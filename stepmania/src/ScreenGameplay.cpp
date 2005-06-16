@@ -2188,10 +2188,12 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		int iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
 		iPlaySongIndex %= m_apSongsQueue.size();
-		m_apSongsQueue[iPlaySongIndex]->PushSelf( LUA->L );
-		GAMESTATE->m_Environment->Set( "NextSong" );
+		Lua *L = LUA->Get();
+		m_apSongsQueue[iPlaySongIndex]->PushSelf( L );
+		GAMESTATE->m_Environment->Set( L, "NextSong" );
 		MESSAGEMAN->Broadcast( "NextCourseSong" );
-		GAMESTATE->m_Environment->Unset( "NextSong" );
+		GAMESTATE->m_Environment->Unset( L, "NextSong" );
+		LUA->Release( L );
 		m_NextSong.PlayCommand( "Start" );
 		m_NextSong.Reset();
 		m_NextSong.StartTransitioning( SM_LoadNextSong );
