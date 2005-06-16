@@ -922,7 +922,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 				SCREENMAN->SystemMessage( ssprintf("Machine stats loaded from P%d card.",pn+1) );
 				break;
 			case Profile::failed_no_profile:
-				SCREENMAN->SystemMessage( ssprintf("There is no profile on P%d card.",pn+1) );
+				SCREENMAN->SystemMessage( ssprintf("There is no machine profile on P%d card.",pn+1) );
 				*PROFILEMAN->GetMachineProfile() = backup;
 				break;
 			case Profile::failed_tampered:
