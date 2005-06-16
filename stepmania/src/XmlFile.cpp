@@ -9,6 +9,7 @@
 #include "DateTime.h"
 #include "Foreach.h"
 #include "arch/Dialog/Dialog.h"
+#include "RageFileDriverMemory.h"
 
 
 static const char chXMLTagOpen		= '<';
@@ -611,6 +612,22 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 		}
 	}
 	return true;
+}
+
+//========================================================
+// Name   : GetXML
+// Desc   : convert plain xml text from parsed xml node
+// Param  :
+// Return : converted plain string
+//--------------------------------------------------------
+// Coder    Date                      Desc
+// bro      2002-10-29
+//========================================================
+CString XNode::GetXML() const
+{
+	RageFileObjMem f;
+	GetXML( f, NULL );
+	return f.GetString();
 }
 
 //========================================================

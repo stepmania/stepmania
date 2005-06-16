@@ -23,7 +23,6 @@
 #include "XmlFile.h"
 #include "BackgroundUtil.h"
 #include "song.h"
-#include "RageFileDriverMemory.h"
 
 ThemeMetric<float> LEFT_EDGE					("Background","LeftEdge");
 ThemeMetric<float> TOP_EDGE						("Background","TopEdge");
@@ -768,9 +767,7 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		if( iter == m_BGAnimations.end() )
 		{
 			XNode *pNode = change.m_def.CreateNode();
-			RageFileObjMem f;
-			pNode->GetXML( f, NULL );
-			LOG->Warn( "Tried to switch to a background that was never loaded\n" + f.GetString() );
+			LOG->Warn( "Tried to switch to a background that was never loaded\n" + pNode->GetXML() );
 			SAFE_DELETE( pNode );
 			return;
 		}
