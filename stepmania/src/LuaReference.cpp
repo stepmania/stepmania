@@ -30,8 +30,10 @@ LuaReference::LuaReference( const LuaReference &cpy )
 	else
 	{
 		/* Make a new reference. */
-		lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, cpy.m_iReference );
-		m_iReference = luaL_ref( LUA->L, LUA_REGISTRYINDEX );
+		Lua *L = LUA->Get();
+		lua_rawgeti( L, LUA_REGISTRYINDEX, cpy.m_iReference );
+		m_iReference = luaL_ref( L, LUA_REGISTRYINDEX );
+		LUA->Release( L );
 	}
 }
 
@@ -47,18 +49,20 @@ LuaReference &LuaReference::operator=( const LuaReference &cpy )
 	else
 	{
 		/* Make a new reference. */
-		lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, cpy.m_iReference );
-		m_iReference = luaL_ref( LUA->L, LUA_REGISTRYINDEX );
+		Lua *L = LUA->Get();
+		lua_rawgeti( L, LUA_REGISTRYINDEX, cpy.m_iReference );
+		m_iReference = luaL_ref( L, LUA_REGISTRYINDEX );
+		LUA->Release( L );
 	}
 
 	return *this;
 }
 
-void LuaReference::SetFromStack()
+void LuaReference::SetFromStack( Lua *L )
 {
 	Unregister();
 
-	m_iReference = luaL_ref( LUA->L, LUA_REGISTRYINDEX );
+	m_iReference = luaL_ref( L, LUA_REGISTRYINDEX );
 }
 
 void LuaReference::SetFromNil()
@@ -69,7 +73,7 @@ void LuaReference::SetFromNil()
 
 void LuaReference::PushSelf( lua_State *L ) const
 {
-	lua_rawgeti( LUA->L, LUA_REGISTRYINDEX, m_iReference );
+	lua_rawgeti( L, LUA_REGISTRYINDEX, m_iReference );
 }
 
 bool LuaReference::IsSet() const
@@ -84,9 +88,12 @@ bool LuaReference::IsNil() const
 
 int LuaReference::GetLuaType() const
 {
-	this->PushSelf( LUA->L );
-	int iRet = lua_type( LUA->L, -1 );
-	lua_pop( LUA->L, 1 );
+	Lua *L = LUA->Get();
+	this->PushSelf( L );
+	int iRet = lua_type( L, -1 );
+	lua_pop( L, 1 );
+	LUA->Release( L );
+
 	return iRet;
 }
 
@@ -95,7 +102,9 @@ void LuaReference::Unregister()
 	if( LUA == NULL )
 		return; // nothing to do
 
-	luaL_unref( LUA->L, LUA_REGISTRYINDEX, m_iReference );
+	Lua *L = LUA->Get();
+	luaL_unref( L, LUA_REGISTRYINDEX, m_iReference );
+	LUA->Release( L );
 	m_iReference = LUA_NOREF;
 }
 
@@ -134,42 +143,51 @@ void LuaExpression::SetFromExpression( const CString &sExpression )
 
 void LuaExpression::Register()
 {
+	Lua *L = LUA->Get();
+
 	if( !LUA->RunScript( m_sExpression, "expression", 1 ) )
 	{
 		this->SetFromNil();
+		LUA->Release( L );
 		return;
 	}
 
 	/* Store the result. */
-	this->SetFromStack();
+	this->SetFromStack( L );
+	LUA->Release( L );
 }
 
 CString LuaData::Serialize() const
 {
 	/* Call Serialize(t), where t is our referenced object. */
-	lua_pushstring( LUA->L, "Serialize" );
-	lua_gettable( LUA->L, LUA_GLOBALSINDEX );
+	Lua *L = LUA->Get();
+	lua_pushstring( L, "Serialize" );
+	lua_gettable( L, LUA_GLOBALSINDEX );
 
-	ASSERT_M( !lua_isnil(LUA->L, -1), "Serialize() missing" );
-	ASSERT_M( lua_isfunction(LUA->L, -1), "Serialize() not a function" );
+	ASSERT_M( !lua_isnil(L, -1), "Serialize() missing" );
+	ASSERT_M( lua_isfunction(L, -1), "Serialize() not a function" );
 
 	/* Arg 1 (t): */
-	this->PushSelf( LUA->L );
+	this->PushSelf( L );
 
-	lua_call( LUA->L, 1, 1 );
+	lua_call( L, 1, 1 );
 
 	/* The return value is a string, which we store in m_sSerializedData. */
-	const char *pString = lua_tostring( LUA->L, -1 );
+	const char *pString = lua_tostring( L, -1 );
 	ASSERT_M( pString != NULL, "Serialize() didn't return a string" );
 
 	CString sRet = pString;
-	lua_pop( LUA->L, 1 );
+	lua_pop( L, 1 );
+
+	LUA->Release( L );
 
 	return sRet;
 }
 
 void LuaData::LoadFromString( const CString &s )
 {
+	Lua *L = LUA->Get();
+
 	/* Restore the serialized data by evaluating it. */
 	CString sError;
 	if( !LUA->RunScript( s, "serialization", sError, 1 ) )
@@ -180,7 +198,8 @@ void LuaData::LoadFromString( const CString &s )
 		FAIL_M( "Unserialization failed" );
 	}
 
-	this->SetFromStack();
+	this->SetFromStack( L );
+	LUA->Release( L );
 }
 
 void LuaData::BeforeReset()
@@ -203,34 +222,37 @@ void LuaData::Register()
 
 LuaTable::LuaTable()
 {
-	lua_newtable( LUA->L );
-	this->SetFromStack();
+	Lua *L = LUA->Get();
+	lua_newtable( L );
+	this->SetFromStack(L);
+	LUA->Release( L );
 }
 
-void LuaTable::Set( const CString &sKey )
+void LuaTable::Set( Lua *L, const CString &sKey )
 {
-	int iTop = lua_gettop( LUA->L );
-	this->PushSelf( LUA->L );
-	lua_pushstring( LUA->L, sKey ); // push the key
-	lua_pushvalue( LUA->L, iTop ); // push the value
-	lua_settable( LUA->L, iTop+1 );
-	lua_settop( LUA->L, iTop-1 ); // remove all of the above
+	int iTop = lua_gettop( L );
+	this->PushSelf( L );
+	lua_pushstring( L, sKey ); // push the key
+	lua_pushvalue( L, iTop ); // push the value
+	lua_settable( L, iTop+1 );
+	lua_settop( L, iTop-1 ); // remove all of the above
+	LUA->Release( L );
 }
 
-void LuaTable::Unset( const CString &sKey )
+void LuaTable::Unset( Lua *L, const CString &sKey )
 {
-	lua_pushnil( LUA->L );
-	Set( sKey );
+	lua_pushnil( L );
+	Set( L, sKey );
 }
 
-void LuaTable::SetKeyAndValue()
+void LuaTable::SetKeyAndValue( Lua *L )
 {
-	int iTop = lua_gettop( LUA->L );
-	this->PushSelf( LUA->L );
-	lua_pushvalue( LUA->L, iTop-1 ); // push the value after the table
-	lua_pushvalue( LUA->L, iTop ); // push the key after the value
-	lua_settable( LUA->L, iTop+1 );
-	lua_settop( LUA->L, iTop-1 ); // remove all of the above
+	int iTop = lua_gettop( L );
+	this->PushSelf( L );
+	lua_pushvalue( L, iTop-1 ); // push the value after the table
+	lua_pushvalue( L, iTop ); // push the key after the value
+	lua_settable( L, iTop+1 );
+	lua_settop( L, iTop-1 ); // remove all of the above
 }
 
 /*

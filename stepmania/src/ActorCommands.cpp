@@ -88,6 +88,8 @@ ActorCommands::ActorCommands( const CString &sCommands )
 
 void ActorCommands::Register()
 {
+	Lua *L = LUA->Get();
+
 	CString sError;
 	if( !LUA->RunScript( m_sLuaFunction, "in", sError, 1 ) )
 	{
@@ -95,7 +97,8 @@ void ActorCommands::Register()
 	}
 
 	/* The function is now on the stack. */
-	this->SetFromStack();
+	this->SetFromStack( L );
+	LUA->Release( L );
 }
 
 

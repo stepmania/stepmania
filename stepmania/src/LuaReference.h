@@ -4,6 +4,7 @@
 #define LUA_REFERENCE_H
 
 struct lua_State;
+typedef lua_State Lua;
 
 class LuaReference
 {
@@ -17,11 +18,11 @@ public:
 
 	/* Create a reference pointing to the item at the top of the stack, and pop
 	 * the stack. */
-	void SetFromStack();
+	void SetFromStack( Lua *L );
 	void SetFromNil();
 
 	/* Push the referenced object onto the stack.  If not set (or set to nil), push nil. */
-	virtual void PushSelf( lua_State *L ) const;
+	virtual void PushSelf( Lua *L ) const;
 
 	/* Return true if set.  (SetFromNil() counts as being set.) */
 	bool IsSet() const;
@@ -87,14 +88,14 @@ public:
 
 	/* Set a key by the given name to a value on the stack, and pop the value
 	 * off the stack. */
-	void Set( const CString &sKey );
+	void Set( Lua *L, const CString &sKey );
 
 	/* Unset the given key (set it to nil). */
-	void Unset( const CString &sKey );
+	void Unset( Lua *L, const CString &sKey );
 
 	/* Set a key on the stack to a value on the stack; push the key first.  Pop
 	 * both the key and the value off the stack. */
-	void SetKeyAndValue();
+	void SetKeyAndValue( Lua *L );
 };
 
 #endif

@@ -115,8 +115,10 @@ void Profile::InitGeneralData()
 	ZERO( m_iNumStagesPassedByPlayMode );
 	ZERO( m_iNumStagesPassedByGrade );
 
-	lua_newtable( LUA->L );
-	m_SavedLuaData.SetFromStack();
+	Lua *L = LUA->Get();
+	lua_newtable( L );
+	m_SavedLuaData.SetFromStack( L );
+	LUA->Release( L );
 }
 
 void Profile::InitSongScores()
@@ -1099,8 +1101,10 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 			if( m_SavedLuaData.GetLuaType() != LUA_TTABLE )
 			{
 				LOG->Warn( "Profile data did not evaluate to a table" );
-				lua_newtable( LUA->L );
-				m_SavedLuaData.SetFromStack();
+				Lua *L = LUA->Get();
+				lua_newtable( L );
+				m_SavedLuaData.SetFromStack( L );
+				LUA->Release( L );
 			}
 		}
 	}
