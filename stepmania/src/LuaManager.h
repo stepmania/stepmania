@@ -62,9 +62,9 @@ public:
 	void SetGlobal( const CString &sName, const CString &val );
 	void UnsetGlobal( const CString &sName );
 
+private:
 	lua_State *L;
 
-private:
 	RageMutex *m_pLock;
 
 	/* Register all subscribing types.  There's no harm in registering when already registered. */
