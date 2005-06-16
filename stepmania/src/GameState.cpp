@@ -1308,9 +1308,9 @@ SongOptions::FailType GameState::GetPlayerFailType( PlayerNumber pn ) const
 	if( this->m_bChangedFailTypeOnScreenSongOptions )
 		return ft;
 
-	if( GAMESTATE->m_PlayMode == PLAY_MODE_NONSTOP )
+	if( GAMESTATE->IsCourseMode() )
 	{
-		if( PREFSMAN->m_bMinimum1FullSongInNonstop && GAMESTATE->GetCourseSongIndex()==0 )
+		if( PREFSMAN->m_bMinimum1FullSongInCourses && GAMESTATE->GetCourseSongIndex()==0 )
 			ft = max( ft, SongOptions::FAIL_END_OF_SONG );	// take the least harsh of the two FailTypes
 	}
 	else
