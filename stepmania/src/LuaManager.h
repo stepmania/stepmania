@@ -85,8 +85,6 @@ public:
 	void SetGlobal( const CString &sName, const CString &val );
 	void UnsetGlobal( const CString &sName );
 
-	void SetGlobal( const CString &sName );
-
 	lua_State *L;
 
 private:
