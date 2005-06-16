@@ -321,10 +321,14 @@ bool LuaHelpers::RunExpressionB( const CString &str )
 	return result;
 }
 
-float LuaManager::RunExpressionF( const CString &str )
+float LuaHelpers::RunExpressionF( const CString &str )
 {
+	Lua *L = LUA->Get();
 	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
+	{
+		LUA->Release(L);
 		return 0;
+	}
 
 	/* Don't accept a function as a return value. */
 	if( lua_isfunction( L, -1 ) )
@@ -333,12 +337,13 @@ float LuaManager::RunExpressionF( const CString &str )
 	float result = (float) lua_tonumber( L, -1 );
 	lua_pop( L, 1 );
 
+	LUA->Release(L);
 	return result;
 }
 
 int LuaManager::RunExpressionI( const CString &str )
 {
-	return (int)RunExpressionF(str);
+	return (int) LuaHelpers::RunExpressionF(str);
 }
 
 bool LuaManager::RunExpressionS( const CString &str, CString &sOut )

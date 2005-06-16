@@ -41,19 +41,19 @@ Command::Arg::operator CString ()
 Command::Arg::operator float ()
 {
 	LUA->PrepareExpression( s );	// strip invalid chars
-	return LUA->RunExpressionF( s );
+	return LuaHelpers::RunExpressionF( s );
 }
 
 Command::Arg::operator int ()
 {
 	LUA->PrepareExpression( s );	// strip invalid chars
-	return (int)LUA->RunExpressionF( s );
+	return (int) LuaHelpers::RunExpressionF( s );
 }
 
 Command::Arg::operator bool ()
 {
 	LUA->PrepareExpression( s );	// strip invalid chars
-	return LUA->RunExpressionF( s ) != 0.0f;
+	return LuaHelpers::RunExpressionF( s ) != 0.0f;
 }
 
 void Command::Load( const CString &sCommand )

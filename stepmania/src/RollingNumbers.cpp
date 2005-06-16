@@ -29,7 +29,7 @@ void RollingNumbers::LoadFromNode( const CString& sDir, const XNode* pNode )
 	CString sTargetNumber;
 	if( pNode->GetAttrValue( "TargetNumber", sTargetNumber ) )
 	{
-		float fTargetNumber = LUA->RunExpressionF(sTargetNumber);
+		float fTargetNumber = LuaHelpers::RunExpressionF(sTargetNumber);
 		SetTargetNumber( fTargetNumber );
 	}
 

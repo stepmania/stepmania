@@ -719,7 +719,7 @@ float ThemeManager::GetMetricF( const CString &sClassName, const CString &sValue
 
 	LUA->PrepareExpression( sValue );
 
-	return LUA->RunExpressionF( sValue );
+	return LuaHelpers::RunExpressionF( sValue );
 }
 
 // #include "LuaManager.h"

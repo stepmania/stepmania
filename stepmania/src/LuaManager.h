@@ -60,7 +60,6 @@ public:
 	void ResetState();
 
 	/* Run an expression in the global environment, returning the given type. */
-	float RunExpressionF( const CString &str );
 	int RunExpressionI( const CString &str );
 	bool RunExpressionS( const CString &str, CString &sOut );
 
@@ -105,6 +104,7 @@ namespace LuaHelpers
 
 	/* Run an expression in the global environment, returning the given type. */
 	bool RunExpressionB( const CString &str );
+	float RunExpressionF( const CString &str );
 
 	template<class T>
 	void ReadArrayFromTable( vector<T> &aOut, lua_State *L )
