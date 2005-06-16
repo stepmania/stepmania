@@ -45,7 +45,7 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& i
 		CString expr;
 		if( ini.GetValue( "BGAnimation", "Condition", expr ) || ini.GetValue( "BGAnimation", "Cond", expr ) )
 		{
-			if( !LUA->RunExpressionB( expr ) )
+			if( !LuaHelpers::RunExpressionB( expr ) )
 				return;
 		}
 	}
@@ -73,7 +73,7 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& i
 				CString expr;
 				if( pKey->GetAttrValue("Condition",expr) )
 				{
-					if( !LUA->RunExpressionB( expr ) )
+					if( !LuaHelpers::RunExpressionB( expr ) )
 						continue;
 				}
 

@@ -376,7 +376,7 @@ void BGAnimationLayer::LoadFromNode( const CString& sDir, const XNode* pNode )
 		CString expr;
 		if( pNode->GetAttrValue("Cond",expr) || pNode->GetAttrValue("Condition",expr) )
 		{
-			if( !LUA->RunExpressionB(expr) )
+			if( !LuaHelpers::RunExpressionB(expr) )
 				return;
 		}
 	}
@@ -668,7 +668,7 @@ bool BGAnimationLayer::EarlyAbortDraw()
 		return false;
 
 	// TODO: Is it ok to evaluate this every frame? 
-	if( !LUA->RunExpressionB(m_sDrawCond) )
+	if( !LuaHelpers::RunExpressionB(m_sDrawCond) )
 		return true;
 
 	return false;

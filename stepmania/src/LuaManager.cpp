@@ -300,10 +300,15 @@ bool LuaHelpers::RunScript( Lua *L, const CString &sExpression, const CString &s
 	return true;
 }
 
-bool LuaManager::RunExpressionB( const CString &str )
+bool LuaHelpers::RunExpressionB( const CString &str )
 {
+	Lua *L = LUA->Get();
+
 	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
+	{
+		LUA->Release(L);
 		return false;
+	}
 
 	/* Don't accept a function as a return value. */
 	if( lua_isfunction( L, -1 ) )
@@ -311,6 +316,7 @@ bool LuaManager::RunExpressionB( const CString &str )
 
 	bool result = !!lua_toboolean( L, -1 );
 	lua_pop( L, 1 );
+	LUA->Release(L);
 
 	return result;
 }

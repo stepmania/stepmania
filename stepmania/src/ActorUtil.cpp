@@ -118,7 +118,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		CString expr;
 		if( pNode->GetAttrValue("Condition",expr) )
 		{
-			if( !LUA->RunExpressionB(expr) )
+			if( !LuaHelpers::RunExpressionB(expr) )
 				return NULL;
 		}
 	}

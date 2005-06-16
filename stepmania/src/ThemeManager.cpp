@@ -739,7 +739,7 @@ bool ThemeManager::GetMetricB( const CString &sClassName, const CString &sValueN
 
 	LUA->PrepareExpression( sValue );
 	
-	return LUA->RunExpressionB( sValue );
+	return LuaHelpers::RunExpressionB( sValue );
 }
 
 RageColor ThemeManager::GetMetricC( const CString &sClassName, const CString &sValueName )
