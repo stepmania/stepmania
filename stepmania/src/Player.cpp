@@ -421,34 +421,25 @@ void Player::Update( float fDeltaTime )
 	//
 	// handle Autoplay for rolls
 	//
+	if( m_pPlayerState->m_PlayerController != PC_HUMAN )
 	{
-		const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
 		for( int iTrack=0; iTrack<m_NoteData.GetNumTracks(); ++iTrack )
 		{
-			// Since this is being called every frame, let's not check the whole array every time.
-			// Instead, only check 1 beat back.  Even 1 is overkill.
-			NoteData::iterator begin, end;
-			m_NoteData.GetTapNoteRangeInclusive( iTrack, iStartCheckingAt, iSongRow+1, begin, end );
-			for( ; begin != end; ++begin )
-			{
-				TapNote &tn = begin->second;
-				if( tn.type != TapNote::hold_head )
-					continue;
-				
-				HoldNoteScore hns = tn.HoldResult.hns;
-				if( hns != HNS_NONE )	// if this HoldNote already has a result
-					continue;	// we don't need to update the logic for this one
+			// TODO: Make the CPU miss sometimes.
+			int iHeadRow;
+			if( !m_NoteData.IsHoldNoteAtBeat(iTrack, iSongRow, &iHeadRow) )
+				continue;
 
-				if( m_pPlayerState->m_PlayerController != PC_HUMAN )
-				{
-					// TODO: Make the CPU miss sometimes.
-					if( tn.subType == TapNote::hold_head_roll  &&  tn.HoldResult.fLife < 0.5f )
-					{
-						RageTimer now;
-						Step( iTrack, now, false );
-					}
-				}
-			}
+			const TapNote &tn = m_NoteData.GetTapNote( iTrack, iHeadRow );
+			if( tn.type != TapNote::hold_head || tn.subType != TapNote::hold_head_roll )
+				continue;
+			if( tn.HoldResult.hns != HNS_NONE )
+				continue;
+			if( tn.HoldResult.fLife >= 0.5f )
+				continue;
+
+			RageTimer now;
+			Step( iTrack, now, false );
 		}
 	}
 
@@ -934,6 +925,12 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		case PC_CPU:
 		case PC_AUTOPLAY:
 			score = PlayerAI::GetTapNoteScore( m_pPlayerState );
+
+			// GetTapNoteScore always returns TNS_MARVELOUS in autoplay.
+			// If the step is far away, don't judge it.
+			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY &&
+				fSecondsFromPerfect > ADJUSTED_WINDOW_TAP(TW_Boo) )
+				score = TNS_NONE;
 
 			// TRICKY:  We're asking the AI to judge mines.  consider TNS_GOOD and below
 			// as "mine was hit" and everything else as "mine was avoided"
