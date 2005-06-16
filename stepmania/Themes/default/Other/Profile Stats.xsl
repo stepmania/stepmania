@@ -937,7 +937,7 @@
 						<td>Sat</td>
 					</tr>	
 
-					<xsl:if test="count(Stats/CalorieData/*) &gt; 0" >
+					<xsl:if test="count(/Stats/CalorieData/*) &gt; 0" >
 						<xsl:variable name="firstDateJulian">
 							<xsl:call-template name="calculate-julian-day2">
 								<xsl:with-param name="date" select="/Stats/CalorieData/CaloriesBurned[1]/@Date" />
@@ -971,47 +971,49 @@
 	    <xsl:param name="beginDayJulian" />
 	    <xsl:param name="stopDayJulian" />
 	    <xsl:variable name="endDayJulian" select="$beginDayJulian+6" />
-	    <td>
-			Week of 
-			<xsl:call-template name="format-julian-day">
-				<xsl:with-param name="julian-day" select="$beginDayJulian" />
-			</xsl:call-template>
-		</td>
-	    <td>
-	        <xsl:call-template name="CaloriesForJulianDay">
-				<xsl:with-param name="dayJulian" select="$beginDayJulian+0" />
-			</xsl:call-template>
-		</td>
-	    <td>
-	        <xsl:call-template name="CaloriesForJulianDay">
-				<xsl:with-param name="dayJulian" select="$beginDayJulian+1" />
-			</xsl:call-template>
-		</td>
-	    <td>
-	        <xsl:call-template name="CaloriesForJulianDay">
-				<xsl:with-param name="dayJulian" select="$beginDayJulian+2" />
-			</xsl:call-template>
-		</td>
-	    <td>
-	        <xsl:call-template name="CaloriesForJulianDay">
-				<xsl:with-param name="dayJulian" select="$beginDayJulian+3" />
-			</xsl:call-template>
-		</td>
-	    <td>
-	        <xsl:call-template name="CaloriesForJulianDay">
-				<xsl:with-param name="dayJulian" select="$beginDayJulian+4" />
-			</xsl:call-template>
-		</td>
-	    <td>
-	        <xsl:call-template name="CaloriesForJulianDay">
-				<xsl:with-param name="dayJulian" select="$beginDayJulian+5" />
-			</xsl:call-template>
-		</td>
-	    <td>
-	        <xsl:call-template name="CaloriesForJulianDay">
-				<xsl:with-param name="dayJulian" select="$beginDayJulian+6" />
-			</xsl:call-template>
-		</td>
+	    <tr>
+			<td>
+				Week of 
+				<xsl:call-template name="format-julian-day">
+					<xsl:with-param name="julian-day" select="$beginDayJulian" />
+				</xsl:call-template>
+			</td>
+			<td>
+				<xsl:call-template name="CaloriesForJulianDay">
+					<xsl:with-param name="dayJulian" select="$beginDayJulian+0" />
+				</xsl:call-template>
+			</td>
+			<td>
+				<xsl:call-template name="CaloriesForJulianDay">
+					<xsl:with-param name="dayJulian" select="$beginDayJulian+1" />
+				</xsl:call-template>
+			</td>
+			<td>
+				<xsl:call-template name="CaloriesForJulianDay">
+					<xsl:with-param name="dayJulian" select="$beginDayJulian+2" />
+				</xsl:call-template>
+			</td>
+			<td>
+				<xsl:call-template name="CaloriesForJulianDay">
+					<xsl:with-param name="dayJulian" select="$beginDayJulian+3" />
+				</xsl:call-template>
+			</td>
+			<td>
+				<xsl:call-template name="CaloriesForJulianDay">
+					<xsl:with-param name="dayJulian" select="$beginDayJulian+4" />
+				</xsl:call-template>
+			</td>
+			<td>
+				<xsl:call-template name="CaloriesForJulianDay">
+					<xsl:with-param name="dayJulian" select="$beginDayJulian+5" />
+				</xsl:call-template>
+			</td>
+			<td>
+				<xsl:call-template name="CaloriesForJulianDay">
+					<xsl:with-param name="dayJulian" select="$beginDayJulian+6" />
+				</xsl:call-template>
+			</td>
+		</tr>
 		<xsl:if test="$beginDayJulian &gt; $stopDayJulian">
 			<xsl:variable name="nextBeginDayJulian" select="$beginDayJulian - 7" />
 	        <xsl:call-template name="PrintWeeksRecursive">
