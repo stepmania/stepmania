@@ -96,7 +96,7 @@ bool LuaHelpers::FromStack( CString &Object, int iOffset, lua_State *L )
 	return pStr != NULL;
 }
 
-void LuaManager::CreateTableFromArrayB( const vector<bool> &aIn, Lua *L )
+void LuaHelpers::CreateTableFromArrayB( Lua *L, const vector<bool> &aIn )
 {
 	lua_newtable( L );
 	for( unsigned i = 0; i < aIn.size(); ++i )
@@ -106,7 +106,7 @@ void LuaManager::CreateTableFromArrayB( const vector<bool> &aIn, Lua *L )
 	}
 }
 
-void LuaManager::ReadArrayFromTableB( vector<bool> &aOut, Lua *L )
+void LuaHelpers::ReadArrayFromTableB( Lua *L, vector<bool> &aOut )
 {
 	luaL_checktype( L, -1, LUA_TTABLE );
 

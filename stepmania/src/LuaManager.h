@@ -88,12 +88,6 @@ public:
 
 	void SetGlobal( const CString &sName );
 
-	/* Create a Lua array (a table with indices starting at 1) of the given vector,
-	 * and push it on the stack. */
-	static void CreateTableFromArrayB( const vector<bool> &aIn, Lua *L );
-	/* Read the table at the top of the stack back into a vector. */
-	static void ReadArrayFromTableB( vector<bool> &aOut, Lua *L );
-
 	lua_State *L;
 
 private:
@@ -106,6 +100,13 @@ private:
 
 namespace LuaHelpers
 {
+	/* Create a Lua array (a table with indices starting at 1) of the given vector,
+	 * and push it on the stack. */
+	void CreateTableFromArrayB( Lua *L, const vector<bool> &aIn );
+
+	/* Read the table at the top of the stack back into a vector. */
+	void ReadArrayFromTableB( Lua *L, vector<bool> &aOut );
+
 	template<class T>
 	void ReadArrayFromTable( vector<T> &aOut, lua_State *L )
 	{
