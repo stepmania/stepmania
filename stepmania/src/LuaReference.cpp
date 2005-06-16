@@ -145,7 +145,7 @@ void LuaExpression::Register()
 {
 	Lua *L = LUA->Get();
 
-	if( !LUA->RunScript( m_sExpression, "expression", 1 ) )
+	if( !LuaHelpers::RunScript(L, m_sExpression, "expression", 1) )
 	{
 		this->SetFromNil();
 		LUA->Release( L );

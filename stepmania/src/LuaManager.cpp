@@ -287,7 +287,7 @@ bool LuaHelpers::RunScript( Lua *L, const CString &sScript, const CString &sName
 }
 
 
-bool LuaManager::RunScript( const CString &sExpression, const CString &sName, int iReturnValues )
+bool LuaHelpers::RunScript( Lua *L, const CString &sExpression, const CString &sName, int iReturnValues )
 {
 	CString sError;
 	if( !LuaHelpers::RunScript( L, sExpression, sName.size()? sName:CString("in"), sError, iReturnValues ) )
@@ -302,7 +302,7 @@ bool LuaManager::RunScript( const CString &sExpression, const CString &sName, in
 
 bool LuaManager::RunExpressionB( const CString &str )
 {
-	if( !RunScript( "return " + str, "", 1 ) )
+	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
 		return false;
 
 	/* Don't accept a function as a return value. */
@@ -317,7 +317,7 @@ bool LuaManager::RunExpressionB( const CString &str )
 
 float LuaManager::RunExpressionF( const CString &str )
 {
-	if( !RunScript( "return " + str, "", 1 ) )
+	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
 		return 0;
 
 	/* Don't accept a function as a return value. */
@@ -337,7 +337,7 @@ int LuaManager::RunExpressionI( const CString &str )
 
 bool LuaManager::RunExpressionS( const CString &str, CString &sOut )
 {
-	if( !RunScript( "return " + str, "", 1 ) )
+	if( !LuaHelpers::RunScript(L, "return " + str, "", 1) )
 		return false;
 
 	/* Don't accept a function as a return value. */
