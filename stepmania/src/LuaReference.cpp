@@ -236,7 +236,6 @@ void LuaTable::Set( Lua *L, const CString &sKey )
 	lua_pushvalue( L, iTop ); // push the value
 	lua_settable( L, iTop+1 );
 	lua_settop( L, iTop-1 ); // remove all of the above
-	LUA->Release( L );
 }
 
 void LuaTable::Unset( Lua *L, const CString &sKey )
