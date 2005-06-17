@@ -171,8 +171,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 			sRowString.erase( 0, 2 );
 
 		// the length of a note in a row depends on TICKCOUNT
-		float fBeatThisRow = r/(float)iTickCount;
-		int row = BeatToNoteRow(fBeatThisRow);
+		int row = (r * ROWS_PER_BEAT) / iTickCount;
 		for( int t=0; t < notedata.GetNumTracks(); t++ )
 		{
 			if( sRowString[t] == '4' )
@@ -186,7 +185,9 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 
 			if( iHoldStartRow[t] != -1 )	// this ends the hold
 			{
-				notedata.AddHoldNote( t, BeatToNoteRow(iHoldStartRow[t]/(float)iTickCount), BeatToNoteRow((r-1)/(float)iTickCount), TAP_ORIGINAL_HOLD_HEAD );
+				int iEndKSFRow = r-1;
+				int iEndRow = (iEndKSFRow * ROWS_PER_BEAT) / iTickCount;
+				notedata.AddHoldNote( t, iHoldStartRow[t], iEndRow , TAP_ORIGINAL_HOLD_HEAD );
 				iHoldStartRow[t] = -1;
 			}
 
