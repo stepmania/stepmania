@@ -1,3 +1,20 @@
+/*
+ * This class handles two things: auto-play preload, and runtime auto-play sounds.
+ *
+ * On song start, all autoplay sounds and the main BGM track (if any) are combined
+ * into a single chain, which is used as the song background.  Sounds added this way
+ * are removed from the NoteData.
+ *
+ * Any sounds not added to the sound chain and any autoplay sounds added to the NoteData
+ * during play (usually due to battle mode mods) are played dynamically, via Update().
+ *
+ * Note that autoplay sounds which are played before the BGM starts will never be
+ * placed in the sound chain, since the sound chain becomes the BGM; the BGM can't
+ * play sound before it starts.  These sounds will be left in the NoteData, and played
+ * as dynamic sounds; this means that they don't get robust sync.  This isn't a problem
+ * for imported BMS files, which don't have an offset value, but it's annoying.
+ */
+
 #include "global.h"
 #include "AutoKeysounds.h"
 #include "GameState.h"
