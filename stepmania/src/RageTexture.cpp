@@ -9,33 +9,15 @@
 RageTexture::RageTexture( RageTextureID name ):
 	m_ID(name)
 {
-//	LOG->Trace( "RageTexture::RageTexture()" );
-
 	m_iRefCount = 1;
 	m_bWasUsed = false;
 
-//	SetActualID();
 	m_iSourceWidth = m_iSourceHeight = 0;
 	m_iTextureWidth = m_iTextureHeight = 0;
 	m_iImageWidth = m_iImageHeight = 0;
 	m_iFramesWide = m_iFramesHigh = 0;
 }
 
-
-/* Set the initial ActualID; this is what the actual texture will start
- * from. */
-//void RageTexture::SetActualID()
-//{
-//	m_ActualID = m_ID;
-//
-//	/* Texture color depth preference can be overridden. */
-//	if(m_ID.iColorDepth == -1)
-//		m_ActualID.iColorDepth = TEXTUREMAN->GetTextureColorDepth();
-//
-//	/* The max texture size can never be higher than the preference,
-//	 * since it might be set to something to fix driver problems. */
-//	m_ActualID.iMaxSize = min(m_ActualID.iMaxSize, TEXTUREMAN->GetMaxTextureResolution());
-//}
 
 RageTexture::~RageTexture()
 {
@@ -47,9 +29,9 @@ void RageTexture::CreateFrameRects()
 {
 	GetFrameDimensionsFromFileName( GetID().filename, &m_iFramesWide, &m_iFramesHigh );
 
-	///////////////////////////////////
+	//
 	// Fill in the m_FrameRects with the bounds of each frame in the animation.
-	///////////////////////////////////
+	//
 	m_TextureCoordRects.clear();
 
 	for( int j=0; j<m_iFramesHigh; j++ )		// traverse along Y
@@ -78,7 +60,6 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWi
 	CStringArray arrayBits;
 	split( sFName, " ", arrayBits, false );
 
-	/* XXX: allow dims to be in parens */
 	for( unsigned i=0; i<arrayBits.size(); i++ )
 	{
 		CString &sBit = arrayBits[ i ];	
@@ -102,14 +83,14 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWi
 
 int RageTexture::GetFrameCountFromFileName( CString sPath )
 {
-	int wide, high;
-	GetFrameDimensionsFromFileName(sPath, &wide, &high );
-	return wide*high;
+	int iWide, iHigh;
+	GetFrameDimensionsFromFileName( sPath, &iWide, &iHigh );
+	return iWide * iHigh;
 }
 
-const RectF *RageTexture::GetTextureCoordRect( int frameNo ) const
+const RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const
 {
-	return &m_TextureCoordRects[frameNo];
+	return &m_TextureCoordRects[iFrameNo];
 }
 
 /*

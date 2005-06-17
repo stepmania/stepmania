@@ -52,8 +52,8 @@ class RageTextureManager
 {
 public:
 	RageTextureManager();
-	void Update( float fDeltaTime );
 	~RageTextureManager();
+	void Update( float fDeltaTime );
 
 	RageTexture* LoadTexture( RageTextureID ID );
 	bool IsTextureRegistered( RageTextureID ID ) const;
@@ -71,29 +71,27 @@ public:
 	void SetDefaultTexturePolicy( RageTextureID::TexPolicy p ) { m_TexturePolicy = p; }
 
 	// call this between Screens
-	void DeleteCachedTextures()	{ GarbageCollect(screen_changed); }
+	void DeleteCachedTextures()	{ GarbageCollect( screen_changed ); }
 	
 	// call this on switch theme
-	void DoDelayedDelete()	{ GarbageCollect(delayed_delete); }
+	void DoDelayedDelete()	{ GarbageCollect( delayed_delete ); }
 	
 	void InvalidateTextures();
 	
-	void AdjustTextureID(RageTextureID &ID) const;
+	void AdjustTextureID( RageTextureID &ID ) const;
 	void DiagnosticOutput() const;
 
 	void DisableOddDimensionWarning() { m_iNoWarnAboutOddDimensions++; }
 	void EnableOddDimensionWarning() { m_iNoWarnAboutOddDimensions--; }
 	bool GetOddDimensionWarning() const { return m_iNoWarnAboutOddDimensions == 0; }
 
-protected:
+private:
 	void DeleteTexture( RageTexture *t );
 	enum GCType { screen_changed, delayed_delete };
 	void GarbageCollect( GCType type );
-
-	RageTextureManagerPrefs m_Prefs;
-
 	RageTexture* LoadTextureInternal( RageTextureID ID );
 
+	RageTextureManagerPrefs m_Prefs;
 	std::map<RageTextureID, RageTexture*> m_mapPathToTexture;
 	int m_iNoWarnAboutOddDimensions;
 	RageTextureID::TexPolicy m_TexturePolicy;

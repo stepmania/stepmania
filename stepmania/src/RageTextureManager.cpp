@@ -71,7 +71,7 @@ void RageTextureManager::Update( float fDeltaTime )
 	}
 }
 
-void RageTextureManager::AdjustTextureID(RageTextureID &ID) const
+void RageTextureManager::AdjustTextureID( RageTextureID &ID ) const
 {
 	if( ID.iColorDepth == -1 )
 		ID.iColorDepth = m_Prefs.m_iTextureColorDepth;
@@ -183,12 +183,7 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 		return; /* Never unload TEX_PERMANENT textures. */
 	bool bDeleteThis = false;
 
-	/* Always unload movies, so we don't waste time decoding.
-	 *
-	 * Actually, multiple refs to a movie won't work; they should play independently,
-	 * but they'll actually share settings.  Not worth fixing, since we don't currently
-	 * using movies for anything except BGAs (though we could).
-	 */
+	/* Always unload movies, so we don't waste time decoding. */
 	if( t->IsAMovie() )
 		bDeleteThis = true;
 
@@ -206,7 +201,7 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 
 void RageTextureManager::DeleteTexture( RageTexture *t )
 {
-	ASSERT( t->m_iRefCount==0 );
+	ASSERT( t->m_iRefCount == 0 );
 	LOG->Trace( "RageTextureManager: deleting '%s'.", t->GetID().filename.c_str() );
 
 	FOREACHM( RageTextureID, RageTexture*, m_mapPathToTexture, i )
