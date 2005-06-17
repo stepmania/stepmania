@@ -122,25 +122,24 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 			if(!out.GetMeter()) out.SetMeter(5);
 		}
 
-		notedata.SetNumTracks( 5 );
 		out.m_StepsType = STEPS_TYPE_PUMP_SINGLE;
 		
 		/* Check for "halfdouble" before "double". */
 		if( sFName.Find("halfdouble") != -1 || sFName.Find("h_double") != -1 )
-		{
-			notedata.SetNumTracks( 6 );
 			out.m_StepsType = STEPS_TYPE_PUMP_HALFDOUBLE;
-		}
 		else if( sFName.Find("double") != -1 )
-		{
-			notedata.SetNumTracks( 10 );
 			out.m_StepsType = STEPS_TYPE_PUMP_DOUBLE;
-		}
 		else if( sFName.Find("_2") != -1 )
-		{
-			notedata.SetNumTracks( 10 );
 			out.m_StepsType = STEPS_TYPE_PUMP_COUPLE;
-		}
+	}
+
+	switch( out.m_StepsType )
+	{
+	case STEPS_TYPE_PUMP_SINGLE: notedata.SetNumTracks( 5 ); break;
+	case STEPS_TYPE_PUMP_COUPLE: notedata.SetNumTracks( 10 ); break;
+	case STEPS_TYPE_PUMP_DOUBLE: notedata.SetNumTracks( 10 ); break;
+	case STEPS_TYPE_PUMP_HALFDOUBLE: notedata.SetNumTracks( 6 ); break;
+	default: FAIL_M( ssprintf("%i", out.m_StepsType) );
 	}
 
 	int iHoldStartRow[13];
