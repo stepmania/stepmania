@@ -2,7 +2,6 @@
 #include "ScreenTitleMenu.h"
 #include "ScreenAttract.h"
 #include "ScreenManager.h"
-#include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 #include "StepMania.h"
 #include "PrefsManager.h"
@@ -11,7 +10,6 @@
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "GameManager.h"
-#include "InputMapper.h"
 #include "ThemeManager.h"
 #include "GameSoundManager.h"
 #include "CodeDetector.h"
@@ -19,11 +17,9 @@
 #include "UnlockManager.h"
 #include "ProductInfo.h"
 #include "LightsManager.h"
-#include "CodeDetector.h"
 #include "CommonMetrics.h"
 #include "Game.h"
 #include "ScreenOptionsMasterPrefs.h"
-#include "PlayerState.h"
 
 #define MAX_STAGES_TEXT				THEME->GetMetric (m_sName,"MaxStagesText")
 #define COIN_MODE_CHANGE_SCREEN		THEME->GetMetric (m_sName,"CoinModeChangeScreen")
