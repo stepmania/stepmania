@@ -179,7 +179,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 			{
 				/* Remember when each hold starts; ignore the middle. */
 				if( iHoldStartRow[t] == -1 )
-					iHoldStartRow[t] = r;
+					iHoldStartRow[t] = row;
 
 				continue;
 			}
