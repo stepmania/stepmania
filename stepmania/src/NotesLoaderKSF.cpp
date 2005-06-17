@@ -122,15 +122,39 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 			if(!out.GetMeter()) out.SetMeter(5);
 		}
 
-		out.m_StepsType = STEPS_TYPE_PUMP_SINGLE;
-		
 		/* Check for "halfdouble" before "double". */
 		if( sFName.Find("halfdouble") != -1 || sFName.Find("h_double") != -1 )
 			out.m_StepsType = STEPS_TYPE_PUMP_HALFDOUBLE;
 		else if( sFName.Find("double") != -1 )
 			out.m_StepsType = STEPS_TYPE_PUMP_DOUBLE;
+		else if( sFName.Find("_1") != -1 )
+			out.m_StepsType = STEPS_TYPE_PUMP_SINGLE;
 		else if( sFName.Find("_2") != -1 )
 			out.m_StepsType = STEPS_TYPE_PUMP_COUPLE;
+	}
+
+	if( out.m_StepsType == STEPS_TYPE_INVALID )
+	{
+		/* The filename didn't contain the StepsType.  Choose singles or doubles based
+		 * upon whether the doubles-only tracks contain taps or holds. */
+		bool bIsSingles = true;
+		for( unsigned r=0; bIsSingles && r < asRows.size(); r++ )
+		{
+			CString& sRowString = asRows[r];
+			StripCrnl( sRowString );
+			if( sRowString.size() != 13 )
+				continue;
+			if( sRowString == "2222222222222" )
+				break;
+
+			for( int t=4; t < notedata.GetNumTracks(); t++ )
+				if( sRowString[t] == '1' || sRowString[t] == '4' )
+					bIsSingles = false;
+		}
+		if( bIsSingles )
+			out.m_StepsType = STEPS_TYPE_PUMP_SINGLE;
+		else
+			out.m_StepsType = STEPS_TYPE_PUMP_DOUBLE;
 	}
 
 	switch( out.m_StepsType )
