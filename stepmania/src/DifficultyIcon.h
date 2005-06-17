@@ -18,6 +18,7 @@ public:
 	virtual bool EarlyAbortDraw() { return m_bBlank || Sprite::EarlyAbortDraw(); }
 
 	bool Load( CString sFilePath );
+	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 	void SetFromSteps( PlayerNumber pn, const Steps* pSteps );
 	void SetFromTrail( PlayerNumber pn, const Trail* pTrail );

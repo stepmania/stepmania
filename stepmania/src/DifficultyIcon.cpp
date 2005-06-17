@@ -9,6 +9,10 @@
 #include "RageDisplay.h"
 #include "arch/Dialog/Dialog.h"
 #include "Trail.h"
+#include "ActorUtil.h"
+#include "XmlFile.h"
+
+REGISTER_ACTOR_CLASS(DifficultyIcon)
 
 DifficultyIcon::DifficultyIcon()
 {
@@ -34,6 +38,21 @@ bool DifficultyIcon::Load( CString sPath )
 	}
 	StopAnimating();
 	return true;
+}
+
+void DifficultyIcon::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	CString sFile;
+	if( !pNode->GetAttrValue( "File", sFile ) )
+		RageException::Throw( "MeterDisplay in " + sDir + " missing File attribute" );
+
+	sFile = sDir + sFile;
+	ActorUtil::ResolvePath( sFile, sDir );
+
+	Load( sFile );
+
+	// skip Sprite::LoadFromNode
+	Actor::LoadFromNode( sDir, pNode );
 }
 
 void DifficultyIcon::SetFromSteps( PlayerNumber pn, const Steps* pSteps )
