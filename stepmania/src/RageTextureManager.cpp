@@ -1,27 +1,26 @@
 /*
- * Texture policies:
+ * Texture garbage collection policies:
  *
  * Default: When DelayedDelete is off, delete unused textures immediately.
  *          When on, only delete textures when we change themes, on DoDelayedDelete().
- *			This is what you get if you call LoadTexture() on a texture that isn't
- *			loaded.
+ *          This is what you get if you call LoadTexture() on a texture that isn't
+ *          loaded.
  *
  * Cached:  When DelayedDelete is off, delete unused textures when we change screens.
- *			When on, treat as Default.  This is used to precache textures that aren't
- *			loaded immediately; use CacheTexture.
- *	
+ *          When on, treat as Default.  This is used to precache textures that aren't
+ *          loaded immediately; use CacheTexture.
+ *
  * Volatile: Delete unused textures once they've been used at least once.  Ignore
- *			 DelayedDelete.
+ *           DelayedDelete.
  *
- *			 This is for banners.  We don't want to load all low-quality banners in
- *			 memory at once, since it might be ten megs of textures, and we don't
- *			 *have* to, since we can reload them very quickly.  We don't want to keep
- *			 high quality textures in memory, either, although it's unlikely that a
- *			 player could actually view all banners long enough to transition to them
- *			 all in the course of one song select screen.
+ *           This is for banners.  We don't want to load all low-quality banners in
+ *           memory at once, since it might be ten megs of textures, and we don't
+ *           need to, since we can reload them very quickly.  We don't want to keep
+ *           high quality textures in memory, either, although it's unlikely that a
+ *           player could actually view all banners long enough to transition to them
+ *           all in the course of one song select screen.
  *
- * Permanent: Never delete the texture.
- * 			This is only used for BannerCache=2 mode.
+ * Permanent: Never delete the texture.  This is only used for BannerCache=2 mode.
  *
  * Policy priority is in the order PERMANENT, CACHED, VOLATILE, DEFAULT.  Textures that
  * are loaded DEFAULT can be changed to VOLATILE and CACHED; VOLATILE textures can only
@@ -115,7 +114,7 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 	/* We could have two copies of the same bitmap if there are equivalent but
 	 * different paths, e.g. "Bitmaps\me.bmp" and "..\Rage PC Edition\Bitmaps\me.bmp". */
 	std::map<RageTextureID, RageTexture*>::iterator p = m_mapPathToTexture.find(ID);
-	if(p != m_mapPathToTexture.end())
+	if( p != m_mapPathToTexture.end() )
 	{
 		/* Found the texture.  Just increase the refcount and return it. */
 		RageTexture* pTexture = p->second;
@@ -124,7 +123,7 @@ RageTexture* RageTextureManager::LoadTextureInternal( RageTextureID ID )
 	}
 
 	// The texture is not already loaded.  Load it.
-	CString sExt = GetExtension(ID.filename);
+	CString sExt = GetExtension( ID.filename );
 	sExt.MakeLower();
 
 	RageTexture* pTexture;
@@ -302,15 +301,15 @@ void RageTextureManager::InvalidateTextures()
 
 bool RageTextureManager::SetPrefs( RageTextureManagerPrefs prefs )
 {
-	bool need_reload = false;
+	bool bNeedReload = false;
 	if( m_Prefs != prefs )
-		need_reload = true;
+		bNeedReload = true;
 
 	m_Prefs = prefs;
 	
 	ASSERT( m_Prefs.m_iTextureColorDepth==16 || m_Prefs.m_iTextureColorDepth==32 );
 	ASSERT( m_Prefs.m_iMovieColorDepth==16 || m_Prefs.m_iMovieColorDepth==32 );
-	return need_reload;
+	return bNeedReload;
 }
 
 void RageTextureManager::DiagnosticOutput() const
