@@ -1065,9 +1065,11 @@ Course* SongManager::GetCourseFromPath( CString sPath )
 	if( sPath == "" )
 		return NULL;
 
-	for( unsigned int i=0; i<m_pCourses.size(); i++ )
-		if( sPath.CompareNoCase(m_pCourses[i]->m_sPath) == 0 )
-			return m_pCourses[i];
+	FOREACH_CONST( Course*, m_pCourses, c )
+	{
+		if( sPath.CompareNoCase((*c)->m_sPath) == 0 )
+			return *c;
+	}
 
 	return NULL;
 }

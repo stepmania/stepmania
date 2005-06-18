@@ -1338,6 +1338,9 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 
 	ASSERT( pCourseScores->m_sName == "CourseScores" );
 
+	vector<Course*> vpAllCourses;
+	SONGMAN->GetAllCourses( vpAllCourses, true );
+
 	FOREACH_CONST_Child( pCourseScores, pCourse )
 	{
 		if( pCourse->m_sName != "Course" )
@@ -1347,6 +1350,35 @@ void Profile::LoadCourseScoresFromNode( const XNode* pCourseScores )
 		courseID.LoadFromNode( pCourse );
 		if( !courseID.IsValid() )
 			WARN_AND_CONTINUE;
+		
+
+		// Backward compatability hack to fix importing scores of old style 
+		// courses that weren't in group folder but have now been moved into
+		// a group folder: 
+		// If the courseID doesn't resolve, then take the file name part of sPath
+		// and search for matches of just the file name.
+		{
+			Course *pC = courseID.ToCourse();
+			if( pC == NULL )
+			{
+				CString sDir, sFName, sExt;
+				splitpath( courseID.sPath, sDir, sFName, sExt );
+				CString sFullFileName = sFName + sExt;
+
+				FOREACH_CONST( Course*, vpAllCourses, c )
+				{
+					CString sOther = (*c)->m_sPath.Right(sFullFileName.size());
+
+					if( sFullFileName.CompareNoCase(sOther) == 0 )
+					{
+						pC = *c;
+						courseID.FromCourse( pC );
+						break;
+					}
+				}
+			}
+		}
+
 
 		FOREACH_CONST_Child( pCourse, pTrail )
 		{

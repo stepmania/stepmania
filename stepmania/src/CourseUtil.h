@@ -26,6 +26,7 @@ namespace CourseUtil
 
 class CourseID
 {
+public:
 	CString sPath;
 	CString sFullTitle;
 
