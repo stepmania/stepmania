@@ -1205,7 +1205,7 @@ void Profile::AddStepTotals( int iTotalTapsAndHolds, int iTotalJumps, int iTotal
 	m_fTotalCaloriesBurned += fCaloriesBurned;
 
 	DateTime date = DateTime::GetNowDate();
-	m_mapDayToCaloriesBurned[date] += fCaloriesBurned;
+	m_mapDayToCaloriesBurned[date].fCals += fCaloriesBurned;
 }
 
 XNode* Profile::SaveSongScoresCreateNode() const
@@ -1521,7 +1521,7 @@ void Profile::LoadCalorieDataFromNode( const XNode* pCalorieData )
 
 		pCaloriesBurned->GetValue(fCaloriesBurned);
 
-		m_mapDayToCaloriesBurned[date] = fCaloriesBurned;
+		m_mapDayToCaloriesBurned[date].fCals = fCaloriesBurned;
 	}	
 }
 
@@ -1535,9 +1535,9 @@ XNode* Profile::SaveCalorieDataCreateNode() const
 	XNode* pNode = new XNode;
 	pNode->m_sName = "CalorieData";
 
-	FOREACHM_CONST( DateTime, float, m_mapDayToCaloriesBurned, i )
+	FOREACHM_CONST( DateTime, Calories, m_mapDayToCaloriesBurned, i )
 	{
-		XNode* pCaloriesBurned = pNode->AppendChild( "CaloriesBurned", i->second );
+		XNode* pCaloriesBurned = pNode->AppendChild( "CaloriesBurned", i->second.fCals );
 
 		pCaloriesBurned->AppendAttr( "Date", i->first.GetString() );
 	}
@@ -1548,11 +1548,11 @@ XNode* Profile::SaveCalorieDataCreateNode() const
 float Profile::GetCaloriesBurnedForDay( DateTime day ) const
 {
 	day.StripTime();
-	map<DateTime,float>::const_iterator i = m_mapDayToCaloriesBurned.find( day );
+	map<DateTime,Calories>::const_iterator i = m_mapDayToCaloriesBurned.find( day );
 	if( i == m_mapDayToCaloriesBurned.end() )
 		return 0;
 	else
-		return i->second;
+		return i->second.fCals;
 }
 
 XNode* Profile::HighScoreForASongAndSteps::CreateNode() const

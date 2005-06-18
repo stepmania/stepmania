@@ -214,7 +214,12 @@ public:
 	// a mis-set clock could wipe out all your past data.  With this scheme, 
 	// the worst that could happen is that playing on a mis-set machine will 
 	// insert some garbage entries into the map.
-	map<DateTime,float> m_mapDayToCaloriesBurned;
+	struct Calories
+	{
+		Calories() { fCals = 0; }
+		float fCals;
+	};
+	map<DateTime,Calories> m_mapDayToCaloriesBurned;
 	float GetCaloriesBurnedForDay( DateTime day ) const;
 	
 
