@@ -1,64 +1,48 @@
 <?xml version = '1.0'?>
 <kdevelop>
   <general>
-    <author>Stepmania Developers</author>
-    <email>stepmania-devs@lists.sourceforge.net</email>
+    <author>Renaud Lepage</author>
+    <email>rlepage@gmail.com</email>
     <version>$VERSION$</version>
-    <projectmanagement>KDevAutoProject</projectmanagement>
+    <projectmanagement>KDevCustomProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
     <ignoreparts/>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description>Hello and welcome to Stepmania, the most advanced, albeit resource-hungry, Dance Dance Revolution SIMulator.</description>
+    <description></description>
     <versioncontrol>kdevcvsservice</versioncontrol>
   </general>
-  <kdevautoproject>
-    <general>
-      <activetarget>src/Stepmania</activetarget>
-      <useconfiguration>debug</useconfiguration>
-    </general>
+  <kdevcustomproject>
     <run>
-      <mainprogram>src/Stepmania</mainprogram>
+      <mainprogram>Stepmania</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs/>
+      <programargs></programargs>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
     </run>
-    <configurations>
-      <optimized>
-        <builddir>optimized</builddir>
-        <ccompiler>GccOptions</ccompiler>
-        <cxxcompiler>GppOptions</cxxcompiler>
-        <f77compiler>G77Options</f77compiler>
-        <cxxflags>-O2 -g0</cxxflags>
-      </optimized>
-      <debug>
-        <configargs>--enable-debug=full</configargs>
-        <builddir>debug</builddir>
-        <ccompiler>GccOptions</ccompiler>
-        <cxxcompiler>GppOptions</cxxcompiler>
-        <f77compiler>G77Options</f77compiler>
-        <cxxflags>-O0 -g3</cxxflags>
-        <envvars/>
-      </debug>
-    </configurations>
+    <build>
+      <buildtool>make</buildtool>
+      <builddir></builddir>
+    </build>
     <make>
-      <envvars>
-        <envvar value="1" name="WANT_AUTOCONF_2_5" />
-        <envvar value="1" name="WANT_AUTOMAKE_1_6" />
-      </envvars>
-      <abortonerror>true</abortonerror>
+      <abortonerror>false</abortonerror>
       <numberofjobs>1</numberofjobs>
-      <dontact>false</dontact>
-      <makebin/>
       <prio>0</prio>
+      <dontact>false</dontact>
+      <makebin></makebin>
+      <defaulttarget></defaulttarget>
+      <makeoptions></makeoptions>
+      <selectedenvironment>default</selectedenvironment>
+      <environments>
+        <default/>
+      </environments>
     </make>
-  </kdevautoproject>
+  </kdevcustomproject>
   <kdevdebugger>
     <general>
-      <dbgshell>libtool</dbgshell>
+      <dbgshell></dbgshell>
       <programargs></programargs>
       <gdbpath></gdbpath>
       <configGdbScript></configGdbScript>
@@ -159,9 +143,9 @@
   </kdevcppsupport>
   <kdevdocumentation>
     <projectdoc>
-      <docsystem/>
-      <docurl/>
-      <usermanualurl/>
+      <docsystem></docsystem>
+      <docurl></docurl>
+      <usermanualurl></usermanualurl>
     </projectdoc>
   </kdevdocumentation>
   <kdevfileview>
@@ -172,10 +156,11 @@
     <tree>
       <hidepatterns>*.o,*.lo,CVS</hidepatterns>
       <hidenonprojectfiles>false</hidenonprojectfiles>
+      <showvcsfields>false</showvcsfields>
     </tree>
   </kdevfileview>
   <ctagspart>
-    <customArguments/>
-    <customTagfilePath/>
+    <customArguments></customArguments>
+    <customTagfilePath></customTagfilePath>
   </ctagspart>
 </kdevelop>
