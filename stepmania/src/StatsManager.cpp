@@ -286,7 +286,23 @@ Grade GetBestFinalGrade()
 	StageStats stats;
 	STATSMAN->GetFinalEvalStageStats( stats );
 	FOREACH_HumanPlayer( p )
+	{
+		// If this player failed any stage, then their final grade is an F.
+		bool bPlayerFailedOneStage = false;
+		FOREACH_CONST( StageStats, STATSMAN->m_vPlayedStageStats, ss )
+		{
+			if( ss->m_player[p].bFailed )
+			{
+				bPlayerFailedOneStage = true;
+				break;
+			}
+		}
+
+		if( bPlayerFailedOneStage )
+			continue;
+
 		top_grade = min( top_grade, stats.m_player[p].GetGrade() );
+	}
 	return top_grade;
 }
 LuaFunction_NoArgs( GetBestFinalGrade, GetBestFinalGrade() );
