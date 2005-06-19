@@ -4157,46 +4157,19 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		AAC845080856A19700A9FEAB /* Development */ = {
+		AAC845090856A19700A9FEAB /* . */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
+				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = "HAVE_INTTYPES_H=1";
-				GCC_USE_GCC3_PFE_SUPPORT = NO;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				LIBRARY_STYLE = Static;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOL_FLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = resample;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost";
-				ZERO_LINK = NO;
-			};
-			name = Development;
-		};
-		AAC845090856A19700A9FEAB /* Deployment */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G4;
 				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "HAVE_INTTYPES_H=1";
 				GCC_USE_GCC3_PFE_SUPPORT = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
@@ -4223,50 +4196,9 @@
 				WARNING_CFLAGS = "-Wmost";
 				ZERO_LINK = NO;
 			};
-			name = Deployment;
+			name = .;
 		};
-		AAC8450A0856A19700A9FEAB /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = 2;
-				GCC_PREPROCESSOR_DEFINITIONS = "HAVE_INTTYPES_H=1";
-				GCC_USE_GCC3_PFE_SUPPORT = NO;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				LIBRARY_STYLE = STATIC;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOL_FLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = resample;
-				REZ_EXECUTABLE = YES;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost";
-			};
-			name = Default;
-		};
-		AAC8450C0856A19700A9FEAB /* Development */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				LIBRARY_STYLE = Static;
-				OPTIMIZATION_CFLAGS = "-O0";
-				PRODUCT_NAME = version;
-				ZERO_LINK = NO;
-			};
-			name = Development;
-		};
-		AAC8450D0856A19700A9FEAB /* Deployment */ = {
+		AAC8450D0856A19700A9FEAB /* . */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -4290,96 +4222,19 @@
 				PRODUCT_NAME = version;
 				ZERO_LINK = NO;
 			};
-			name = Deployment;
+			name = .;
 		};
-		AAC8450E0856A19700A9FEAB /* Default */ = {
+		AAC845110856A19700A9FEAB /* . */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				PRODUCT_NAME = version;
-			};
-			name = Default;
-		};
-		AAC845100856A19700A9FEAB /* Development */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
-					Frameworks,
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
-				);
-				GCC_ALTIVEC_EXTENSIONS = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_INPUT_FILETYPE = automatic;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ../src/archutils/Darwin/StepMania.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					PBBUILD,
-					"SM_PCH=TRUE",
-				);
-				GCC_USE_GCC3_PFE_SUPPORT = NO;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/include,
-					../src,
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/png.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers",
-					../src/archutils/Darwin/PublicUtility,
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
-				);
-				INFOPLIST_FILE = "Info-StepMania.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = /usr/lib;
-				LIBRARY_STYLE = Static;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_CFLAGS = "";
-				OTHER_CPLUSPLUSFLAGS = (
-					"-finline-limit=300",
-					"-Wno-switch",
-					"-Wno-missing-braces",
-					"-fconstant-cfstrings",
-					"-falign-loops=32",
-				);
-				OTHER_LDFLAGS = (
-					"-lz",
-					"-lstdc++",
-				);
-				PRODUCT_NAME = StepMania;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost";
-				WRAPPER_EXTENSION = app;
-				ZERO_LINK = NO;
-			};
-			name = Development;
-		};
-		AAC845110856A19700A9FEAB /* Deployment */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
+				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks",
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
 					Frameworks,
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
 				);
-				GCC_ALTIVEC_EXTENSIONS = NO;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
@@ -4392,12 +4247,15 @@
 					PBBUILD,
 					"SM_PCH=TRUE",
 				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_USE_GCC3_PFE_SUPPORT = NO;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_MISSING_PARENTHESES = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 				GCC_WARN_SHADOW = NO;
 				GCC_WARN_SIGN_COMPARE = YES;
@@ -4412,13 +4270,13 @@
 				HEADER_SEARCH_PATHS = (
 					/usr/include,
 					../src,
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/png.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers",
-					../src/archutils/Darwin/PublicUtility,
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers",
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers",
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers",
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers",
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/png.framework/Headers",
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers",
+					"$(SRCROOT)/../src/archutils/Darwin/PublicUtility",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
 				);
 				INFOPLIST_FILE = "Info-StepMania.plist";
@@ -4426,6 +4284,7 @@
 				LIBRARY_SEARCH_PATHS = /usr/lib;
 				LIBRARY_STYLE = Bundle;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CFLAGS = "";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
@@ -4440,92 +4299,29 @@
 				);
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
+				SYMROOT = "$(SRCROOT)/..";
 				WARNING_CFLAGS = "-Wmost";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
-			name = Deployment;
+			name = .;
 		};
-		AAC845120856A19700A9FEAB /* Default */ = {
+		AAC845150856A19700A9FEAB /* . */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
-					Frameworks,
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
-				);
-				GCC_ALTIVEC_EXTENSIONS = NO;
-				GCC_ENABLE_CPP_RTTI = YES;
+				BUILD_VARIANTS = normal;
+				GCC_FAST_MATH = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INPUT_FILETYPE = automatic;
-				GCC_MODEL_TUNING = G5;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ../src/archutils/Darwin/StepMania.pch;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					PBBUILD,
-					"SM_PCH=TRUE",
-				);
-				GCC_USE_GCC3_PFE_SUPPORT = NO;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_STRICT_ALIASING = YES;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNKNOWN_PRAGMAS = NO;
-				HEADER_SEARCH_PATHS = (
-					/usr/include,
-					../src,
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/png.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers",
-					../src/archutils/Darwin/PublicUtility,
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
-				);
-				INFOPLIST_FILE = "Info-StepMania.plist";
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = /usr/lib;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OTHER_CFLAGS = "";
-				OTHER_CPLUSPLUSFLAGS = (
-					"-finline-limit=300",
-					"-Wno-switch",
-					"-Wno-missing-braces",
-					"-fconstant-cfstrings",
-					"-falign-loops=32",
-				);
-				OTHER_LDFLAGS = (
-					"-lz",
-					"-lstdc++",
-				);
-				PRODUCT_NAME = StepMania;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Wmost";
-				WRAPPER_EXTENSION = app;
+				GCC_WARN_SIGN_COMPARE = YES;
 			};
-			name = Default;
-		};
-		AAC845140856A19700A9FEAB /* Development */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-			};
-			name = Development;
-		};
-		AAC845150856A19700A9FEAB /* Deployment */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-			};
-			name = Deployment;
-		};
-		AAC845160856A19700A9FEAB /* Default */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-			};
-			name = Default;
+			name = .;
 		};
 /* End XCBuildConfiguration section */
 
@@ -4533,42 +4329,34 @@
 		AAC845070856A19700A9FEAB /* Build configuration list for PBXNativeTarget "libresample.a" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AAC845080856A19700A9FEAB /* Development */,
-				AAC845090856A19700A9FEAB /* Deployment */,
-				AAC8450A0856A19700A9FEAB /* Default */,
+				AAC845090856A19700A9FEAB /* . */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = .;
 		};
 		AAC8450B0856A19700A9FEAB /* Build configuration list for PBXLegacyTarget "version" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AAC8450C0856A19700A9FEAB /* Development */,
-				AAC8450D0856A19700A9FEAB /* Deployment */,
-				AAC8450E0856A19700A9FEAB /* Default */,
+				AAC8450D0856A19700A9FEAB /* . */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = .;
 		};
 		AAC8450F0856A19700A9FEAB /* Build configuration list for PBXNativeTarget "stepmania" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AAC845100856A19700A9FEAB /* Development */,
-				AAC845110856A19700A9FEAB /* Deployment */,
-				AAC845120856A19700A9FEAB /* Default */,
+				AAC845110856A19700A9FEAB /* . */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = .;
 		};
 		AAC845130856A19700A9FEAB /* Build configuration list for PBXProject "stepmania" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AAC845140856A19700A9FEAB /* Development */,
-				AAC845150856A19700A9FEAB /* Deployment */,
-				AAC845160856A19700A9FEAB /* Default */,
+				AAC845150856A19700A9FEAB /* . */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Default;
+			defaultConfigurationName = .;
 		};
 /* End XCConfigurationList section */
 	};
