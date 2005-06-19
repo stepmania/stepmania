@@ -71,7 +71,7 @@ bool BERLengthDecode(BufferedTransformation &bt, unsigned int &length, bool &def
 
 bool BERLengthDecode(BufferedTransformation &bt, unsigned int &length)
 {
-	bool definiteLength;
+	bool definiteLength = false;
 	if (!BERLengthDecode(bt, length, definiteLength))
 		BERDecodeError();
 	return definiteLength;
