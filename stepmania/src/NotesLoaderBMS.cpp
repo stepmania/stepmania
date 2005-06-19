@@ -181,7 +181,6 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
 		case 9:		return STEPS_TYPE_PNM_NINE;
 		default:	return STEPS_TYPE_INVALID;
 		}
-		break;
 	case 2:		// couple/battle
 		return STEPS_TYPE_DANCE_COUPLE;
 	case 3:		// double
@@ -196,7 +195,6 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
 		case 16:	return STEPS_TYPE_BM_DOUBLE7;
 		default:	return STEPS_TYPE_INVALID;
 		}
-		break;
 	default:
 		LOG->Warn( "Invalid #PLAYER value %d", iPlayer );
 		return STEPS_TYPE_INVALID;
