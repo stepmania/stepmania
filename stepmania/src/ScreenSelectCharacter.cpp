@@ -206,10 +206,8 @@ PlayerNumber ScreenSelectCharacter::GetAffectedPlayerNumber( PlayerNumber pn )
 	{
 	case CHOOSING_HUMAN_CHARACTER:
 		return pn;
-		break;
 	case CHOOSING_CPU_CHARACTER:
 		return CPU_PLAYER[pn];
-		break;
 	default:
 		ASSERT(0);
 	case FINISHED_CHOOSING:
