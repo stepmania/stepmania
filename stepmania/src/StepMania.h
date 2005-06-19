@@ -2,6 +2,7 @@
 #define STEPMANIA_H
 
 class Game;
+class RageTimer;
 
 #ifdef _XBOX
 void __cdecl main();
@@ -19,7 +20,7 @@ void FocusChanged( bool bHasFocus );
 // If successful, return filename of screenshot in sDir, else return ""
 CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex = -1 );
 
-void InsertCoin( int iNum = 1 );
+void InsertCoin( int iNum = 1, const RageTimer *pTime = NULL );
 void InsertCredit();
 
 extern int g_argc;
