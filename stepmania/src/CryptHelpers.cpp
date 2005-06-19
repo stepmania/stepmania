@@ -246,7 +246,7 @@ bool CryptHelpers::VerifyFile( RageFileBasic &file, CString sSignature, CString 
 
 		if( sSignature.size() != pub.SignatureLength() )
 		{
-			sError = ssprintf( "Invalid signature length: got %i, expected %i", sSignature.size(), pub.SignatureLength() );
+			sError = ssprintf( "Invalid signature length: got %i, expected %i", int(sSignature.size()), pub.SignatureLength() );
 			return false;
 		}
 
