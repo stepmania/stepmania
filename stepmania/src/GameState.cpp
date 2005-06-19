@@ -2059,6 +2059,16 @@ public:
 	}
 	static int GetPreferredDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_PreferredDifficulty[IArg(1)] ); return 1; }
 	static int AnyPlayerHasRankingFeats( T* p, lua_State *L )	{ lua_pushboolean(L, p->AnyPlayerHasRankingFeats() ); return 1; }
+	static int GetCharacter( T* p, lua_State *L )
+	{
+		Character *pCharacter = p->m_pCurCharacters[IArg(1)];
+		if( pCharacter != NULL )
+			pCharacter->PushSelf( L );
+		else
+			lua_pushnil( L );
+
+		return 1;
+	}
 	static int IsCourseMode( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCourseMode() ); return 1; }
 	static int IsDemonstration( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bDemonstrationOrJukebox ); return 1; }
 	static int GetPlayMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_PlayMode ); return 1; }
@@ -2111,6 +2121,7 @@ public:
 		ADD_METHOD( GetEditSourceSteps )
 		ADD_METHOD( GetPreferredDifficulty )
 		ADD_METHOD( AnyPlayerHasRankingFeats )
+		ADD_METHOD( GetCharacter )
 		ADD_METHOD( IsCourseMode )
 		ADD_METHOD( IsDemonstration )
 		ADD_METHOD( GetPlayMode )

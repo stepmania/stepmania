@@ -4,6 +4,8 @@
 #define Character_H
 
 #include "GameConstantsAndTypes.h"
+struct lua_State;
+typedef lua_State Lua;
 
 
 class Character
@@ -25,6 +27,10 @@ public:
 	CString GetStageIconPath() const;
 	bool Has2DElems();
 
+	//
+	// Lua
+	//
+	virtual void PushSelf( Lua *L );
 
 	CString m_sCharDir;
 	CString m_sName;

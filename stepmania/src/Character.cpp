@@ -163,6 +163,26 @@ bool Character::Has2DElems()
 	return false;
 }
 
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaCharacter : public Luna<T>
+{
+public:
+	LunaCharacter() { LUA->Register( Register ); }
+
+	static int GetStageIconPath( T* p, lua_State *L )	{ lua_pushstring(L, p->GetStageIconPath() ); return 1; }
+	static void Register( Lua *L )
+	{
+		ADD_METHOD( GetStageIconPath )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( Character )
+// lua end
+
 /*
  * (c) 2003 Chris Danford
  * All rights reserved.
