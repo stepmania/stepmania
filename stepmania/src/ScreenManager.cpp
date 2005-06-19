@@ -193,17 +193,6 @@ void ScreenManager::Update( float fDeltaTime )
 
 	if( m_sDelayedScreen.size() != 0 )
 	{
-		/* We have a screen to display.  Delete the current screens and load it.
-		 * If DelayedScreenLoad is true, clear the old screen first; this lowers
-		 * memory requirements, but results in redundant loads as we unload common
-		 * data.  (If we don't unload the old screen here, it'll be deleted when
-		 * we load the new screen.) */
-		if( PREFSMAN->m_bDelayedScreenLoad )
-		{
-			ClearScreenStack();
-			EmptyDeleteQueue();
-		}
-
 		LoadDelayedScreen();
 	}
 }
@@ -372,7 +361,17 @@ void ScreenManager::SetNewScreen( const CString &sScreenName )
 
 void ScreenManager::LoadDelayedScreen()
 {
-	m_bZeroNextUpdate = true;
+	/*
+	 * We have a screen to display.  Delete the current screens and load it.
+	 * If DelayedScreenLoad is true, clear the old screen first; this lowers
+	 * memory requirements, but results in redundant loads as we unload common
+	 * data.  If we don't unload the old screen here, it'll be deleted below.
+	 */
+	if( PREFSMAN->m_bDelayedScreenLoad )
+	{
+		ClearScreenStack();
+		EmptyDeleteQueue();
+	}
 
 retry:
 	CString sScreenName = m_sDelayedScreen;
@@ -436,10 +435,15 @@ retry:
 	if( bWasOnSystemMenu && !bIsOnSystemMenu )
 		PREFSMAN->SaveGlobalPrefsToDisk();
 
-	ClearScreenStack();
+	if( !PREFSMAN->m_bDelayedScreenLoad )
+	{
+		ClearScreenStack();
+		EmptyDeleteQueue();
+	}
 
 	LOG->Trace("... SetFromNewScreen");
 	SetFromNewScreen( pNewScreen );
+	m_bZeroNextUpdate = true;
 }
 
 void ScreenManager::AddNewScreenToTop( const CString &sScreenName )
