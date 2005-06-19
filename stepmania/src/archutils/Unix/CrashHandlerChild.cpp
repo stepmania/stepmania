@@ -341,10 +341,9 @@ static void child_process()
     fclose(CrashDump);
 
 #if defined(DARWIN)
-    InformUserOfCrash( sCrashInfoPath );
-    
     /* Forcibly kill our parent. */
     kill( getppid(), SIGKILL );
+    InformUserOfCrash( sCrashInfoPath );
 #else
     /* stdout may have been inadvertently closed by the crash in the parent;
      * write to /dev/tty instead. */
