@@ -26,8 +26,6 @@ private:
 
 	Transition		m_In, m_Out, m_Cancel;
 	AutoActor		m_Overlay; // overlays all elements except bitmaptexts
-	BitmapText		m_SongTitle;
-	BitmapText		m_Artist;
 
 	// elements that cannot be created with BGAnimation
 	Sprite m_sprCharacterIcon[NUM_PLAYERS];

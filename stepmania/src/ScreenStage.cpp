@@ -73,28 +73,6 @@ void ScreenStage::Init()
 		this->AddChild( &m_sprCharacterIcon[p] );
 	}
 
-	m_SongTitle.SetName( "SongTitle");
-	m_Artist.SetName( "Artist" );
-	m_SongTitle.LoadFromFont( THEME->GetPathF(m_sName,"Title") );
-	m_Artist.LoadFromFont( THEME->GetPathF(m_sName,"Artist") );
-
-	this->AddChild( &m_SongTitle );
-	this->AddChild( &m_Artist );
-
-	if(GAMESTATE->m_pCurSong != NULL)
-	{
-		m_SongTitle.SetText( GAMESTATE->m_pCurSong->m_sMainTitle );
-		m_Artist.SetText( GAMESTATE->m_pCurSong->m_sArtist );
-	}
-	else
-	{
-		m_SongTitle.SetText( "" );
-		m_Artist.SetText( "" );
-	}
-
-	SET_XY_AND_ON_COMMAND( m_Artist );
-	SET_XY_AND_ON_COMMAND( m_SongTitle );
-
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage "+StageToString(GAMESTATE->GetCurrentStage())) );
 
 	this->SortByDrawOrder();
@@ -117,8 +95,6 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		m_Out.StartTransitioning();
 		FOREACH_PlayerNumber( p )
 			OFF_COMMAND( m_sprCharacterIcon[p] );
-		OFF_COMMAND( m_SongTitle );
-		OFF_COMMAND( m_Artist );
 		this->PostScreenMessage( SM_GoToNextScreen, this->GetTweenTimeLeft() );
 	}
 	else if( SM == SM_GoToNextScreen )
