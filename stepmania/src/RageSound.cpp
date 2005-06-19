@@ -796,7 +796,7 @@ bool RageSound::SetPositionFrames( int iFrames )
 
 	if( m_pSource == NULL )
 	{
-		LOG->Warn( "RageSound::SetPositionFrames(%f): sound not loaded", iFrames );
+		LOG->Warn( "RageSound::SetPositionFrames(%d): sound not loaded", iFrames );
 		return false;
 	}
 
