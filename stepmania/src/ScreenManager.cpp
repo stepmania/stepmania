@@ -407,20 +407,11 @@ retry:
 	if( pNewScreen == NULL )
 		pNewScreen = MakeNewScreen(sScreenName);
 
-
-	if( pOldTopScreen!=NULL  &&  m_ScreenStack.back()!=pOldTopScreen )
+	if( m_sDelayedScreen != "" )
 	{
 		// While constructing this Screen, it's constructor called
 		// SetNewScreen again!  That SetNewScreen Command should
 		// override this older one.
-		SAFE_DELETE( pNewScreen );
-		return;
-	}
-
-	if( PREFSMAN->m_bDelayedScreenLoad && m_sDelayedScreen != "" )
-	{
-		/* Same deal: the ctor called SetNewScreen again.  Delete the screen
-		 * we just made, but don't delay again. */
 		SAFE_DELETE( pNewScreen );
 		goto retry;
 	}
