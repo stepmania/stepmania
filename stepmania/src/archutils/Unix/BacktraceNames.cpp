@@ -121,8 +121,8 @@ void BacktraceNames::FromAddr( const void *p )
     Dl_info di;
     if( !dladdr(p, &di) || di.dli_sname == NULL )
     {
-	if( !dladdr( ((char *) p) - 8, &di) )
-	    return;
+		if( !dladdr( ((char *) p) - 8, &di) )
+			return;
     }
 
     Symbol = di.dli_sname;
@@ -160,7 +160,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <mach-o/dyld.h>
 #include <mach-o/nlist.h>
 
-const load_command *next_load_command( const load_command *cmd )
+static const load_command *next_load_command( const load_command *cmd )
 {
 	const char *p = (const char *) cmd;
 	p += cmd->cmdsize;
@@ -168,7 +168,7 @@ const load_command *next_load_command( const load_command *cmd )
 }
 
 /* Return the image index of the given pointer, or -1 if not found. */
-int osx_find_image( const void *p )
+static int osx_find_image( const void *p )
 {
 	unsigned long image_count = _dyld_image_count();
 
@@ -204,7 +204,7 @@ int osx_find_image( const void *p )
 	return -1;
 }
 
-const char *osx_find_link_edit( const struct mach_header *header )
+static const char *osx_find_link_edit( const struct mach_header *header )
 {
 	const struct load_command *cmd = (struct load_command *) &header[1];
 	for( unsigned i = 0; i < header->ncmds; i++, cmd = next_load_command(cmd) )
@@ -242,8 +242,8 @@ void BacktraceNames::FromAddr( const void *p )
 	const struct load_command *cmd = (struct load_command *) &header[1];
 	unsigned long diff = 0xffffffff;
 
-        const char *dli_sname = NULL;
-        void *dli_saddr = NULL;
+	const char *dli_sname = NULL;
+	void *dli_saddr = NULL;
 
 	for( unsigned long i = 0; i < header->ncmds; i++, cmd = next_load_command(cmd) )
 	{
