@@ -72,21 +72,16 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 		/* The screen load took fScreenLoadSeconds.  Move on to the next screen after
 		 * no less than MINIMUM_DELAY seconds. */
 		this->PostScreenMessage( SM_BeginFadingOut, max( 0, MINIMUM_DELAY-fScreenLoadSeconds) );
+		return;
 	}
 	else if( SM == SM_BeginFadingOut )
 	{
 		m_Out.StartTransitioning();
 		this->PostScreenMessage( SM_GoToNextScreen, this->GetTweenTimeLeft() );
+		return;
 	}
-	else if( SM == SM_GoToNextScreen )
-	{
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-	}
-	else if( SM == SM_GoToPrevScreen )
-	{
-		SCREENMAN->DeletePreparedScreens();
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
-	}
+	
+	Screen::HandleScreenMessage( SM );
 }
 
 void ScreenStage::Update( float fDeltaTime )

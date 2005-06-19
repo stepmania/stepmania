@@ -36,23 +36,15 @@ void ScreenSplash::HandleScreenMessage( const ScreenMessage SM )
 		/* The screen load took fScreenLoadSeconds.  Move on to the next screen after
 			* no less than MINIMUM_DELAY seconds. */
 		this->PostScreenMessage( SM_GoToNextScreen, max( 0, MINIMUM_LOAD_DELAY_SECONDS-fScreenLoadSeconds) );
+		return;
 	}
 	else if( SM == SM_BeginFadingOut )
 	{
 		StartTransitioning( SM_GoToNextScreen );
+		return;
 	}
-	else if( SM == SM_GoToNextScreen )
-	{
-		if( SCREENMAN->IsStackedScreen(SCREENMAN->GetTopScreen()) )
-			SCREENMAN->PopTopScreen( SM_None );
-		else
-			SCREENMAN->SetNewScreen( NEXT_SCREEN );
-	}
-	else if( SM == SM_GoToPrevScreen )
-	{
-		SCREENMAN->DeletePreparedScreens();
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
-	}
+
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 void ScreenSplash::MenuBack( PlayerNumber pn )
