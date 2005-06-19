@@ -118,7 +118,7 @@ private:
 
 	Screen* MakeNewScreen( const CString &sName );
 	Screen* MakeNewScreenInternal( const CString &sName );
-	void SetFromNewScreen( Screen *pNewScreen, bool Stack );
+	void SetFromNewScreen( Screen *pNewScreen );
 	void ClearScreenStack();
 	void EmptyDeleteQueue();
 	void LoadDelayedScreen();

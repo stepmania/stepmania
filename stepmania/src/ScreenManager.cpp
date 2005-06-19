@@ -359,13 +359,9 @@ void ScreenManager::ClearScreenStack()
 	m_ScreenStack.clear();
 }
 
-/* Add a screen to m_ScreenStack.  If Stack is true, it's added to the stack; otherwise any
- * current screens are removed.  This is the only function that adds to m_ScreenStack. */
-void ScreenManager::SetFromNewScreen( Screen *pNewScreen, bool Stack )
+/* Add a screen to m_ScreenStack.  This is the only function that adds to m_ScreenStack. */
+void ScreenManager::SetFromNewScreen( Screen *pNewScreen )
 {
-	if( !Stack )
-		ClearScreenStack();
-
 	m_ScreenStack.push_back( pNewScreen );
 	
 	RefreshCreditsMessages();
@@ -445,8 +441,10 @@ retry:
 	if( bWasOnSystemMenu && !bIsOnSystemMenu )
 		PREFSMAN->SaveGlobalPrefsToDisk();
 
+	ClearScreenStack();
+
 	LOG->Trace("... SetFromNewScreen");
-	SetFromNewScreen( pNewScreen, false );
+	SetFromNewScreen( pNewScreen );
 }
 
 void ScreenManager::AddNewScreenToTop( const CString &sScreenName )
@@ -459,7 +457,7 @@ void ScreenManager::AddNewScreenToTop( const CString &sScreenName )
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	Screen* pNewScreen = MakeNewScreen(sScreenName);
-	SetFromNewScreen( pNewScreen, true );
+	SetFromNewScreen( pNewScreen );
 }
 
 #include "ScreenPrompt.h"
@@ -475,7 +473,7 @@ void ScreenManager::Prompt( ScreenMessage smSendOnPop, const CString &sText, Pro
 	Screen *pNewScreen = new ScreenPrompt( "ScreenPrompt", smSendOnPop, sText, type, defaultAnswer, OnYes, OnNo, pCallbackData);
 	pNewScreen->Init();
 	this->ZeroNextUpdate();
-	SetFromNewScreen( pNewScreen, true );
+	SetFromNewScreen( pNewScreen );
 }
 
 void ScreenManager::TextEntry( 
@@ -505,7 +503,7 @@ void ScreenManager::TextEntry(
 		bPassword );
 	pNewScreen->Init();
 	this->ZeroNextUpdate();
-	SetFromNewScreen( pNewScreen, true );
+	SetFromNewScreen( pNewScreen );
 }
 
 void ScreenManager::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
@@ -517,7 +515,7 @@ void ScreenManager::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessa
 	ScreenMiniMenu *pNewScreen = new ScreenMiniMenu( pDef->sClassName );
 	pNewScreen->Init( pDef, SM_SendOnOK, SM_SendOnCancel );
 	this->ZeroNextUpdate();
-	SetFromNewScreen( pNewScreen, true );
+	SetFromNewScreen( pNewScreen );
 }
 
 void ScreenManager::PopTopScreen( ScreenMessage SM )
