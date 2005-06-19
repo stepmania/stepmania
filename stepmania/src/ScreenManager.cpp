@@ -191,16 +191,23 @@ void ScreenManager::Update( float fDeltaTime )
 
 	EmptyDeleteQueue();
 
-	if(m_sDelayedScreen.size() != 0)
+	if( m_sDelayedScreen.size() != 0 )
 	{
-		/* We have a screen to display.  Delete the current screens and load it. */
-		ClearScreenStack();
-		EmptyDeleteQueue();
+		/* We have a screen to display.  Delete the current screens and load it.
+		 * If DelayedScreenLoad is true, clear the old screen first; this lowers
+		 * memory requirements, but results in redundant loads as we unload common
+		 * data.  (If we don't unload the old screen here, it'll be deleted when
+		 * we load the new screen.) */
+		if( PREFSMAN->m_bDelayedScreenLoad )
+		{
+			ClearScreenStack();
+			EmptyDeleteQueue();
 
-		/* This is the purpose of delayed screen loads: clear out the texture cache
-		 * now, while there's (mostly) nothing loaded. */
-		TEXTUREMAN->DeleteCachedTextures();
-		TEXTUREMAN->DiagnosticOutput();
+			/* This is the purpose of delayed screen loads: clear out the texture cache
+			* now, while there's (mostly) nothing loaded. */
+			TEXTUREMAN->DeleteCachedTextures();
+			TEXTUREMAN->DiagnosticOutput();
+		}
 
 		LoadDelayedScreen();
 	}
@@ -370,12 +377,6 @@ void ScreenManager::SetNewScreen( const CString &sScreenName )
 {
 	ASSERT( sScreenName != "" );
 	m_sDelayedScreen = sScreenName;
-
-	/* If we're not delaying screen loads, load it now.  Otherwise, we'll load
-	 * it on the next iteration.  Only delay if we already have a screen
-	 * loaded; otherwise, there's no reason to delay. */
-	if(!PREFSMAN->m_bDelayedScreenLoad) // || m_ScreenStack.empty() )
-		LoadDelayedScreen();
 }
 
 void ScreenManager::LoadDelayedScreen()
