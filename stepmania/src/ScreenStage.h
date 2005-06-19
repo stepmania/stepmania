@@ -5,9 +5,6 @@
 
 #include "Screen.h"
 #include "Transition.h"
-#include "Sprite.h"
-#include "Character.h"
-#include "BitmapText.h"
 #include "ActorUtil.h"
 #include "ThemeMetric.h"
 
@@ -25,10 +22,7 @@ private:
 	ThemeMetric<bool>	ALLOW_BACK;
 
 	Transition		m_In, m_Out, m_Cancel;
-	AutoActor		m_Overlay; // overlays all elements except bitmaptexts
-
-	// elements that cannot be created with BGAnimation
-	Sprite m_sprCharacterIcon[NUM_PLAYERS];
+	AutoActor		m_sprOverlay;
 
 	bool			m_bZeroDeltaOnNextUpdate;
 };

@@ -2,18 +2,14 @@
 #include "ActorUtil.h"
 #include "ScreenStage.h"
 #include "ScreenManager.h"
-#include "PrefsManager.h"
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
-#include "BitmapText.h"
 #include "SongManager.h"
-#include "Sprite.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "LightsManager.h"
-#include "song.h"
 
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
 #define PREV_SCREEN				THEME->GetMetric (m_sName,"PrevScreen")
@@ -38,10 +34,11 @@ void ScreenStage::Init()
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_STAGE );
 
-	m_Overlay.Load( THEME->GetPathB(m_sName,"overlay") );
-	m_Overlay->SetName( "Overlay" );
-	ON_COMMAND( m_Overlay );
-	this->AddChild( m_Overlay );
+	m_sprOverlay.Load( THEME->GetPathB(m_sName,"overlay") );
+	m_sprOverlay->SetName( "Overlay" );
+	m_sprOverlay->SetDrawOrder( DRAW_ORDER_OVERLAY );
+	ON_COMMAND( m_sprOverlay );
+	this->AddChild( m_sprOverlay );
 
 	m_In.Load( THEME->GetPathB(m_sName,"in") );
 	m_In.StartTransitioning();
@@ -57,21 +54,7 @@ void ScreenStage::Init()
 	this->AddChild( &m_Cancel );
 
 	/* Prep the new screen once m_In is complete. */ 	 
-	this->PostScreenMessage( SM_PrepScreen, m_Overlay->GetTweenTimeLeft() );
-
-	FOREACH_PlayerNumber(p)
-	{
-		m_sprCharacterIcon[p].SetName( ssprintf("CharacterIconP%d",p+1) );
-
-		const Character *pChar = GAMESTATE->m_pCurCharacters[p];
-		CString sPath = pChar->GetStageIconPath();
-		if( sPath == "" )
-			continue;
-
-		m_sprCharacterIcon[p].Load( pChar->GetStageIconPath() );
-		SET_XY_AND_ON_COMMAND( m_sprCharacterIcon[p] );
-		this->AddChild( &m_sprCharacterIcon[p] );
-	}
+	this->PostScreenMessage( SM_PrepScreen, m_sprOverlay->GetTweenTimeLeft() );
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage "+StageToString(GAMESTATE->GetCurrentStage())) );
 
@@ -93,8 +76,6 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_BeginFadingOut )
 	{
 		m_Out.StartTransitioning();
-		FOREACH_PlayerNumber( p )
-			OFF_COMMAND( m_sprCharacterIcon[p] );
 		this->PostScreenMessage( SM_GoToNextScreen, this->GetTweenTimeLeft() );
 	}
 	else if( SM == SM_GoToNextScreen )
