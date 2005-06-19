@@ -46,8 +46,8 @@ const CString LASTGOOD_SUBDIR      = "LastGood/";
 	* 10 /* HighScores per Steps */		\
 	* 1024 /* size in bytes of a HighScores XNode */
 
-const int MAX_DISPLAY_NAME_LENGTH	= 12;
-const int DEFAULT_WEIGHT_POUNDS		= 120;
+const unsigned int MAX_DISPLAY_NAME_LENGTH	= 12;
+const unsigned int DEFAULT_WEIGHT_POUNDS	= 120;
 
 #if defined(_MSC_VER)
 #pragma warning (disable : 4706) // assignment within conditional expression

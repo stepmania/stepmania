@@ -366,7 +366,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 		else if( sValueName.Left(strlen("BGCHANGES"))=="BGCHANGES" || sValueName=="ANIMATIONS" )
 		{
 			BackgroundLayer iLayer = BACKGROUND_LAYER_1;
-			if( 1 == sscanf( sValueName, "BGCHANGES%d", &iLayer ) )
+			if( 1 == sscanf( sValueName, "BGCHANGES%d", (int*)&iLayer ) )
 				iLayer = (BackgroundLayer)(iLayer-1);	// #BGCHANGES2 = BACKGROUND_LAYER_2
 
 			bool bValid = iLayer>=0 && iLayer<NUM_BackgroundLayer;
