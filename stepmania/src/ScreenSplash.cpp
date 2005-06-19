@@ -34,7 +34,7 @@ void ScreenSplash::HandleScreenMessage( const ScreenMessage SM )
 		float fScreenLoadSeconds = length.GetDeltaTime();
 
 		/* The screen load took fScreenLoadSeconds.  Move on to the next screen after
-			* no less than MINIMUM_DELAY seconds. */
+		 * no less than MINIMUM_DELAY seconds. */
 		this->PostScreenMessage( SM_GoToNextScreen, max( 0, MINIMUM_LOAD_DELAY_SECONDS-fScreenLoadSeconds) );
 		return;
 	}
