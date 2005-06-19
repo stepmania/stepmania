@@ -44,6 +44,7 @@ bool VerifyPrime(RandomNumberGenerator &rng, const Integer &p, unsigned int leve
 class PrimeSelector
 {
 public:
+	virtual ~PrimeSelector() {}
 	const PrimeSelector *GetSelectorPointer() const {return this;}
 	virtual bool IsAcceptable(const Integer &candidate) const =0;
 };

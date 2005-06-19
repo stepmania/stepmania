@@ -109,6 +109,8 @@ public:
 template <class TFI, class MEI>
 class TF_Base
 {
+public:
+	virtual ~TF_Base() {}
 protected:
 	virtual const TrapdoorFunctionBounds & GetTrapdoorFunctionBounds() const =0;
 
@@ -314,6 +316,7 @@ template <class KEYS>
 class PublicKeyCopier
 {
 public:
+	virtual ~PublicKeyCopier() {}
 	virtual void CopyKeyInto(typename KEYS::PublicKey &key) const =0;
 };
 
@@ -322,6 +325,7 @@ template <class KEYS>
 class PrivateKeyCopier
 {
 public:
+	virtual ~PrivateKeyCopier() {}
 	virtual void CopyKeyInto(typename KEYS::PublicKey &key) const =0;
 	virtual void CopyKeyInto(typename KEYS::PrivateKey &key) const =0;
 };

@@ -331,6 +331,7 @@ public:
 class SimpleKeyingInterface
 {
 public:
+	virtual ~SimpleKeyingInterface() { }
 	//! returns smallest valid key length in bytes */
 	virtual unsigned int MinKeyLength() const =0;
 	//! returns largest valid key length in bytes */
@@ -632,6 +633,7 @@ class WaitObjectContainer;
 class Waitable
 {
 public:
+	virtual ~Waitable() { }
 	//! maximum number of wait objects that this object can return
 	virtual unsigned int GetMaxWaitObjectCount() const =0;
 	//! put wait objects into container
