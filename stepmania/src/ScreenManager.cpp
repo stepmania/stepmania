@@ -110,7 +110,7 @@ void ScreenManager::ThemeChanged()
 
 void ScreenManager::EmptyDeleteQueue()
 {
-	if(!m_vScreensToDelete.size())
+	if( !m_vScreensToDelete.size() )
 		return;
 
 	m_bZeroNextUpdate = true;
@@ -144,9 +144,8 @@ bool ScreenManager::IsStackedScreen( const Screen *pScreen ) const
 
 void ScreenManager::Update( float fDeltaTime )
 {
-	// Only update the topmost screen on the stack.
-
-	/* Screens take some time to load.  If we don't do this, then screens
+	/*
+	 * Screens take some time to load.  If we don't do this, then screens
 	 * receive an initial update that includes all of the time they spent
 	 * loading, which will chop off their tweens.  
 	 *
@@ -175,6 +174,7 @@ void ScreenManager::Update( float fDeltaTime )
 		m_bZeroNextUpdate = false;
 	}
 
+	// Only update the topmost screen on the stack.
 	if( pScreen )
 		pScreen->Update( fDeltaTime );
 
@@ -187,7 +187,7 @@ void ScreenManager::Update( float fDeltaTime )
 	 * it might not start immediately.  Make sure we start playing the sound before
 	 * continuing, since it's strange to start rendering before the music starts. */
 	if( bFirstUpdate )
-			SOUND->Flush();
+		SOUND->Flush();
 
 	EmptyDeleteQueue();
 
@@ -204,7 +204,7 @@ void ScreenManager::Update( float fDeltaTime )
 			EmptyDeleteQueue();
 
 			/* This is the purpose of delayed screen loads: clear out the texture cache
-			* now, while there's (mostly) nothing loaded. */
+			 * now, while there's (mostly) nothing loaded. */
 			TEXTUREMAN->DeleteCachedTextures();
 			TEXTUREMAN->DiagnosticOutput();
 		}
@@ -355,7 +355,7 @@ void ScreenManager::ClearScreenStack()
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	// move current screen(s) to ScreenToDelete
-	m_vScreensToDelete.insert(m_vScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end());
+	m_vScreensToDelete.insert( m_vScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end() );
 	m_ScreenStack.clear();
 }
 
@@ -524,7 +524,7 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
 
 	Screen* pScreenToPop = m_ScreenStack.back();	// top menu
 	pScreenToPop->HandleScreenMessage( SM_LoseFocus );
-	m_ScreenStack.erase(m_ScreenStack.end()-1, m_ScreenStack.end());
+	m_ScreenStack.erase( m_ScreenStack.end()-1, m_ScreenStack.end() );
 	m_vScreensToDelete.push_back( pScreenToPop );
 
 	/* Post to the new top.  This must be done now; otherwise, we'll have a single
