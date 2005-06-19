@@ -361,6 +361,8 @@ void ScreenManager::SetNewScreen( const CString &sScreenName )
 
 void ScreenManager::LoadDelayedScreen()
 {
+	const bool bWasOnSystemMenu = !m_ScreenStack.empty() && m_ScreenStack.back()->GetScreenType() == system_menu;
+
 	/*
 	 * We have a screen to display.  Delete the current screens and load it.
 	 * If DelayedScreenLoad is true, clear the old screen first; this lowers
@@ -376,8 +378,6 @@ void ScreenManager::LoadDelayedScreen()
 retry:
 	CString sScreenName = m_sDelayedScreen;
 	m_sDelayedScreen = "";
-
-	Screen* pOldTopScreen = m_ScreenStack.empty() ? NULL : m_ScreenStack.back();
 
 
 	//
@@ -428,7 +428,6 @@ retry:
 		m_sLastLoadedBackgroundPath = sNewBGA;
 	}
 
-	bool bWasOnSystemMenu = pOldTopScreen  &&  pOldTopScreen->GetScreenType() == system_menu;
 	bool bIsOnSystemMenu = pNewScreen->GetScreenType() == system_menu;
 	
 	// If we're exiting a system menu, persist settings in case we don't exit normally
