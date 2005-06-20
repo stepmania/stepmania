@@ -10,7 +10,6 @@
 struct XNode;
 struct lua_State;
 class LuaReference;
-#include "LuaBinding.h"
 #include "MessageManager.h"
 
 
