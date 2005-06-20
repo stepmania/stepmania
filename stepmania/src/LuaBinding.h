@@ -175,7 +175,7 @@ void T::PushSelf( lua_State *L ) { Luna##T::Push( L, this ); } \
 /* Call PushSelf, so we always call the derived Luna<T>::Push. */ \
 namespace LuaHelpers { template<> void Push( T *pObject, lua_State *L ) { pObject->PushSelf( L ); } }
 
-#define ADD_METHOD( method_name ) Luna<T>::AddMethod( #method_name, method_name );
+#define ADD_METHOD( method_name ) AddMethod( #method_name, method_name );
 
 
 #endif
