@@ -281,7 +281,7 @@ tm GetDayInYearAndYear( int iDayInYearIndex, int iYear )
 	return when;
 }
 
-LuaFunction( MonthOfYear, GetLocalTime().tm_mon+1 );
+LuaFunction( MonthOfYear, GetLocalTime().tm_mon );
 LuaFunction( DayOfMonth, GetLocalTime().tm_mday );
 LuaFunction( Hour, GetLocalTime().tm_hour );
 LuaFunction( Minute, GetLocalTime().tm_min );
