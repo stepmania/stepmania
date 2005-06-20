@@ -13,6 +13,7 @@
 #include "Quad.h"
 #include "ActorUtil.h"
 #include "StreamDisplay.h"
+#include "Steps.h"
 
 
 static ThemeMetric<float> METER_WIDTH		("LifeMeterBar","MeterWidth");
@@ -102,6 +103,18 @@ LifeMeterBar::~LifeMeterBar()
 void LifeMeterBar::Load( PlayerNumber pn )
 {
 	LifeMeter::Load( pn );
+
+	// Change life difficulty to really easy if merciful beginner on
+	bool bMercifulBeginnerInEffect = 
+		GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR  &&  
+		GAMESTATE->IsPlayerEnabled( pn )  &&
+		GAMESTATE->m_pCurSteps[m_PlayerNumber]->GetDifficulty() == DIFFICULTY_BEGINNER  &&
+		PREFSMAN->m_bMercifulBeginner;
+	if( bMercifulBeginnerInEffect )
+	{
+		m_fBaseLifeDifficulty = 2.5f;
+		m_fLifeDifficulty = m_fBaseLifeDifficulty;
+	}
 }
 
 void LifeMeterBar::ChangeLife( TapNoteScore score )
