@@ -129,8 +129,7 @@ private:
 	}
 
 public:
-	// create a new T object and
-	// push onto the Lua stack a userdata containing a pointer to T object
+	// push a userdata containing a pointer to T object
 	static int Push(lua_State *L, T* p )
 	{
 		userdataType *ud = static_cast<userdataType*>(lua_newuserdata(L, sizeof(userdataType)));
