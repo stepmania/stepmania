@@ -911,8 +911,7 @@ CString ThemeManager::GetBlankGraphicPath()
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaThemeManager : public Luna<T>
+class LunaThemeManager: public Luna<ThemeManager>
 {
 public:
 	LunaThemeManager() { LUA->Register( Register ); }

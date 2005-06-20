@@ -190,8 +190,7 @@ void StatsManager::CommitStatsToProfiles()
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaStatsManager : public Luna<T>
+class LunaStatsManager: public Luna<StatsManager>
 {
 public:
 	LunaStatsManager() { LUA->Register( Register ); }

@@ -1087,8 +1087,7 @@ void Actor::SubscribeToMessage( Message message )
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaActor : public Luna<T>
+class LunaActor : public Luna<Actor>
 {
 public:
 	LunaActor() { LUA->Register( Register ); }

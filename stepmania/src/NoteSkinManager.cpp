@@ -304,8 +304,7 @@ CString NoteSkinManager::GetPathFromDirAndFile( const CString &sDir, const CStri
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaNoteSkinManager : public Luna<T>
+class LunaNoteSkinManager: public Luna<NoteSkinManager>
 {
 public:
 	LunaNoteSkinManager() { LUA->Register( Register ); }

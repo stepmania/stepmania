@@ -925,8 +925,7 @@ void Sprite::SetPlaybackRate( float f )		{ GetTexture()->SetPlaybackRate(f); }
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaSprite : public Luna<T>
+class LunaSprite: public Luna<Sprite>
 {
 public:
 	LunaSprite() { LUA->Register( Register ); }

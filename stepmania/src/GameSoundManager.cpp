@@ -650,8 +650,7 @@ void GameSoundManager::SetPlayerBalance( PlayerNumber pn, RageSoundParams &param
 
 #include "LuaBinding.h"
 
-template<class T>
-class LunaGameSoundManager: public Luna<T>
+class LunaGameSoundManager: public Luna<GameSoundManager>
 {
 public:
 	LunaGameSoundManager() { LUA->Register( Register ); }

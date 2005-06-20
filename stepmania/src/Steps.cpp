@@ -369,8 +369,7 @@ void Steps::SetCachedRadarValues( const RadarValues& v )
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaSteps : public Luna<T>
+class LunaSteps: public Luna<Steps>
 {
 public:
 	LunaSteps() { LUA->Register( Register ); }

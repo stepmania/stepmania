@@ -60,8 +60,7 @@ void RollingNumbers::UpdateText()
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaRollingNumbers : public Luna<T>
+class LunaRollingNumbers: public Luna<RollingNumbers>
 {
 public:
 	LunaRollingNumbers() { LUA->Register( Register ); }

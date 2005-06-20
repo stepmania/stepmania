@@ -451,8 +451,7 @@ LuaFunction( GetGradeFromPercent,	PlayerStageStats::GetGradeFromPercent( FArg(1)
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaPlayerStageStats : public Luna<T>
+class LunaPlayerStageStats: public Luna<PlayerStageStats>
 {
 public:
 	LunaPlayerStageStats() { LUA->Register( Register ); }

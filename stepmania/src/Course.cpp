@@ -1330,8 +1330,7 @@ void Course::CalculateRadarValues()
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaCourse : public Luna<T>
+class LunaCourse: public Luna<Course>
 {
 public:
 	LunaCourse() { LUA->Register( Register ); }

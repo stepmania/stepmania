@@ -1975,8 +1975,7 @@ void GameState::RevertSyncChanges()
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaGameState : public Luna<T>
+class LunaGameState: public Luna<GameState>
 {
 public:
 	LunaGameState() { LUA->Register( Register ); }

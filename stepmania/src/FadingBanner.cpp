@@ -211,8 +211,7 @@ void FadingBanner::LoadFallback()
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaFadingBanner : public Luna<T>
+class LunaFadingBanner: public Luna<FadingBanner>
 {
 public:
 	LunaFadingBanner() { LUA->Register( Register ); }

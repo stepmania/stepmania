@@ -166,8 +166,7 @@ bool Character::Has2DElems()
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaCharacter : public Luna<T>
+class LunaCharacter: public Luna<Character>
 {
 public:
 	LunaCharacter() { LUA->Register( Register ); }

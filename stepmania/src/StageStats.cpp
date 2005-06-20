@@ -105,8 +105,7 @@ float StageStats::GetTotalPossibleStepsSeconds() const
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaStageStats : public Luna<T>
+class LunaStageStats: public Luna<StageStats>
 {
 public:
 	LunaStageStats() { LUA->Register( Register ); }

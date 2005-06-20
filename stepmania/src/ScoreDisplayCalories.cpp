@@ -70,8 +70,7 @@ void ScoreDisplayCalories::UpdateNumber()
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaScoreDisplayCalories : public Luna<T>
+class LunaScoreDisplayCalories: public Luna<ScoreDisplayCalories>
 {
 public:
 	LunaScoreDisplayCalories() { LUA->Register( Register ); }

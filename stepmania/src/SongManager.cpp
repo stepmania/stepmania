@@ -1296,8 +1296,7 @@ int SongManager::GetNumStepsLoadedFromProfile()
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaSongManager : public Luna<T>
+class LunaSongManager: public Luna<SongManager>
 {
 public:
 	LunaSongManager() { LUA->Register( Register ); }

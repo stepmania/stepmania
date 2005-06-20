@@ -1830,8 +1830,7 @@ bool Profile::CreateNewProfile( CString sProfileDir, CString sName )
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaProfile : public Luna<T>
+class LunaProfile: public Luna<Profile>
 {
 public:
 	LunaProfile() { LUA->Register( Register ); }

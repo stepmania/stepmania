@@ -1512,8 +1512,7 @@ void Song::MakeUniqueEditDescription( StepsType st, CString &sPreferredDescripti
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaSong : public Luna<T>
+class LunaSong: public Luna<Song>
 {
 public:
 	LunaSong() { LUA->Register( Register ); }

@@ -17,9 +17,13 @@ struct RegType
 void CreateGlobalTable( lua_State *L, const CString &szName );
 bool CheckType( lua_State *L, int narg, const char *szType );
 
-template <typename T>
+template <typename Type>
 class Luna 
 {
+protected:
+	typedef Type T;
+
+private:
 	typedef struct { T *pT; } userdataType;
 
 public:
@@ -169,9 +173,9 @@ private:
 #define LUA_REGISTER_DERIVED_CLASS( T, B ) \
 	template<> const char *Luna<T>::m_sClassName = #T; \
 	template<> const char *Luna<T>::m_sBaseClassName = #B; \
-	template<> Luna<T>::RegTypeVector* Luna<T>::s_pvMethods = NULL; \
-	static Luna##T<T> registera; \
-void T::PushSelf( lua_State *L ) { Luna##T<T>::Push( L, this ); } \
+	Luna<T>::RegTypeVector* Luna<T>::s_pvMethods = NULL; \
+	static Luna##T registera; \
+void T::PushSelf( lua_State *L ) { Luna##T::Push( L, this ); } \
 /* Call PushSelf, so we always call the derived Luna<T>::Push. */ \
 namespace LuaHelpers { template<> void Push( T *pObject, lua_State *L ) { pObject->PushSelf( L ); } }
 

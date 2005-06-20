@@ -111,8 +111,7 @@ void MessageManager::Broadcast( Message m ) const
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaMessageManager: public Luna<T>
+class LunaMessageManager: public Luna<MessageManager>
 {
 public:
 	LunaMessageManager() { LUA->Register( Register ); }

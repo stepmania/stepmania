@@ -425,8 +425,7 @@ CString PrefsManager::GetLightsDriver()	{
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaPrefsManager : public Luna<T>
+class LunaPrefsManager: public Luna<PrefsManager>
 {
 public:
 	LunaPrefsManager() { LUA->Register( Register ); }

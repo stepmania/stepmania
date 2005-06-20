@@ -186,8 +186,7 @@ bool Trail::ContainsSong( Song* pSong ) const
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaTrail : public Luna<T>
+class LunaTrail: public Luna<Trail>
 {
 public:
 	LunaTrail() { LUA->Register( Register ); }

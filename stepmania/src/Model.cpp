@@ -834,8 +834,7 @@ bool Model::MaterialsNeedNormals() const
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaModel : public Luna<T>
+class LunaModel: public Luna<Model>
 {
 public:
 	LunaModel() { LUA->Register( Register ); }

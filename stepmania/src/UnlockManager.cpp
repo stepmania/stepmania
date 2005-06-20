@@ -504,8 +504,7 @@ void UnlockManager::GetStepsUnlockedByCode( vector<Song *> &apSongsOut, vector<D
 
 #include "LuaBinding.h"
 
-template<class T>
-class LunaUnlockManager: public Luna<T>
+class LunaUnlockManager: public Luna<UnlockManager>
 {
 public:
 	LunaUnlockManager() { LUA->Register( Register ); }

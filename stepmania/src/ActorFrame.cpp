@@ -328,8 +328,7 @@ void ActorFrame::SetDrawByZPosition( bool b )
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaActorFrame : public Luna<T>
+class LunaActorFrame : public Luna<ActorFrame>
 {
 public:
 	LunaActorFrame() { LUA->Register( Register ); }

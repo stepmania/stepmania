@@ -841,8 +841,7 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 
 // lua start
 
-template<class T>
-class LunaBitmapText : public Luna<T>
+class LunaBitmapText: public Luna<BitmapText>
 {
 public:
 	LunaBitmapText() { LUA->Register( Register ); }

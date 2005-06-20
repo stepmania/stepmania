@@ -623,8 +623,7 @@ bool ProfileManager::IsPersistentProfile( ProfileSlot slot ) const
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaProfileManager : public Luna<T>
+class LunaProfileManager: public Luna<ProfileManager>
 {
 public:
 	LunaProfileManager() { LUA->Register( Register ); }

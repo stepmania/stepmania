@@ -255,8 +255,7 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const CString &sDi
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaDifficultyMeter : public Luna<T>
+class LunaDifficultyMeter: public Luna<DifficultyMeter>
 {
 public:
 	LunaDifficultyMeter() { LUA->Register( Register ); }

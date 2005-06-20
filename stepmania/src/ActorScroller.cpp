@@ -281,8 +281,7 @@ void ActorScroller::DrawPrimitives()
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaActorScroller : public Luna<T>
+class LunaActorScroller: public Luna<ActorScroller>
 {
 public:
 	LunaActorScroller() { LUA->Register( Register ); }

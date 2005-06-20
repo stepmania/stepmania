@@ -61,8 +61,7 @@ void ScoreDisplayAliveTime::UpdateNumber()
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaScoreDisplayAliveTime : public Luna<T>
+class LunaScoreDisplayAliveTime: public Luna<ScoreDisplayAliveTime>
 {
 public:
 	LunaScoreDisplayAliveTime() { LUA->Register( Register ); }

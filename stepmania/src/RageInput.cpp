@@ -56,8 +56,7 @@ void RageInput::AddHandler( InputHandler *pHandler )
 // lua start
 #include "LuaBinding.h"
 
-template<class T>
-class LunaRageInput : public Luna<T>
+class LunaRageInput: public Luna<RageInput>
 {
 public:
 	LunaRageInput() { LUA->Register( Register ); }
