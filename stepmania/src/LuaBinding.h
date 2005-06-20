@@ -38,12 +38,12 @@ public:
 		lua_newtable(L);
 		int methods = lua_gettop(L);
 		
-		luaL_newmetatable(L, s_className);
+		luaL_newmetatable(L, m_sClassName);
 		int metatable = lua_gettop(L);
 		
 		// store method table in globals so that
 		// scripts can add functions written in Lua.
-		lua_pushstring(L, s_className);
+		lua_pushstring(L, m_sClassName);
 		lua_pushvalue(L, methods);
 		lua_settable(L, LUA_GLOBALSINDEX);
 		
@@ -79,13 +79,13 @@ public:
 	// get userdata from Lua stack and return pointer to T object
 	static T *check( lua_State *L, int narg, bool bIsSelf = false )
 	{
-		userdataType *pUserdata = static_cast<userdataType*>( luaL_checkudata(L, narg, s_className) );
+		userdataType *pUserdata = static_cast<userdataType*>( luaL_checkudata(L, narg, m_sClassName) );
 		if( pUserdata == NULL )
 		{
 			if( bIsSelf )
-				luaL_typerror( L, narg, s_className );
+				luaL_typerror( L, narg, m_sClassName );
 			else
-				LuaHelpers::TypeError( L, narg, s_className );
+				LuaHelpers::TypeError( L, narg, m_sClassName );
 		}
 
 		return pUserdata->pT;  // pointer to T object
@@ -120,7 +120,7 @@ public:
 	{
 		userdataType *ud = static_cast<userdataType*>(lua_newuserdata(L, sizeof(userdataType)));
 		ud->pT = p;  // store pointer to object in userdata
-		luaL_getmetatable(L, s_className);  // lookup metatable in Lua registry
+		luaL_getmetatable(L, m_sClassName);  // lookup metatable in Lua registry
 		lua_setmetatable(L, -2);
 		return 1;  // userdata containing pointer to T object
 	}
@@ -135,7 +135,7 @@ public:
 			s_pvMethods = new RegTypeVector;
 	}
 private:
-	static const char s_className[];
+	static const char m_sClassName[];
 	
 	static int tostring_T (lua_State *L)
 	{
@@ -143,14 +143,14 @@ private:
 		userdataType *ud = static_cast<userdataType*>(lua_touserdata(L, 1));
 		T *obj = ud->pT;
 		sprintf(buff, "%p", obj);
-		lua_pushfstring(L, "%s (%s)", s_className, buff);
+		lua_pushfstring(L, "%s (%s)", m_sClassName, buff);
 		return 1;
 	}
 };
 
 
 #define LUA_REGISTER_CLASS( T ) \
-	template<> const char Luna<T>::s_className[] = #T; \
+	template<> const char Luna<T>::m_sClassName[] = #T; \
 	template<> Luna<T>::RegTypeVector* Luna<T>::s_pvMethods = NULL; \
 	static Luna##T<T> registera; \
 void T::PushSelf( lua_State *L ) { Luna##T<T>::Push( L, this ); } \
