@@ -14,10 +14,6 @@
 #include "Foreach.h"
 #include "LuaBinding.h"
 
-// lua start
-LUA_REGISTER_CLASS( Model )
-// lua end
-
 REGISTER_ACTOR_CLASS( Model )
 
 const float FRAMES_PER_SECOND = 30;
@@ -834,6 +830,27 @@ bool Model::MaterialsNeedNormals() const
 	}
 	return false;
 }
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaModel : public Luna<T>
+{
+public:
+	LunaModel() { LUA->Register( Register ); }
+
+	static int playanimation( T* p, lua_State *L )	{ p->PlayAnimation(SArg(1),FArg(2)); return 0; }
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( playanimation )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( Model )
+// lua end
 
 /*
  * (c) 2003-2004 Chris Danford

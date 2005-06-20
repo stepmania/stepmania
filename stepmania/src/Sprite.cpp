@@ -15,11 +15,7 @@
 #include "LuaBinding.h"
 #include "LuaManager.h"
 
-
-// lua start
-LUA_REGISTER_CLASS( Sprite )
 REGISTER_ACTOR_CLASS( Sprite )
-// lua end
 
 
 Sprite::Sprite()
@@ -925,6 +921,68 @@ void Sprite::SetPosition( float f )			{ GetTexture()->SetPosition(f); }
 void Sprite::SetLooping( bool b )			{ GetTexture()->SetLooping(b); }
 void Sprite::SetPlaybackRate( float f )		{ GetTexture()->SetPlaybackRate(f); }
 
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaSprite : public Luna<T>
+{
+public:
+	LunaSprite() { LUA->Register( Register ); }
+
+	static int Load( T* p, lua_State *L )
+	{
+		RageTextureID ID( SArg(1) );
+		lua_pushboolean( L, p->Load(ID) );
+		return 1;
+	}
+	static int LoadBackground( T* p, lua_State *L )
+	{
+		RageTextureID ID( SArg(1) );
+		lua_pushboolean( L, p->Load(Sprite::SongBGTexture(ID)) );
+		return 1;
+	}
+	static int LoadBanner( T* p, lua_State *L )
+	{
+		RageTextureID ID( SArg(1) );
+		lua_pushboolean( L, p->Load(Sprite::SongBannerTexture(ID)) );
+		return 1;
+	}
+
+	/* Commands that go in the tweening queue: 
+	 * Commands that take effect immediately (ignoring the tweening queue): */
+	static int customtexturerect( T* p, lua_State *L )	{ p->SetCustomTextureRect( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int texcoordvelocity( T* p, lua_State *L )	{ p->SetTexCoordVelocity( FArg(1),FArg(2) ); return 0; }
+	static int scaletoclipped( T* p, lua_State *L )		{ p->ScaleToClipped( FArg(1),FArg(2) ); return 0; }
+	static int stretchtexcoords( T* p, lua_State *L )	{ p->StretchTexCoords( FArg(1),FArg(2) ); return 0; }
+	static int setstate( T* p, lua_State *L )			{ p->SetState( IArg(1) ); return 0; }
+	/* Texture commands; these could be moved to RageTexture* (even though that's
+	 * not an Actor) if these are needed for other things that use textures.
+	 * We'd need to break the command helpers into a separate function; RageTexture
+	 * shouldn't depend on Actor. */
+	static int position( T* p, lua_State *L )			{ p->SetPosition(FArg(1)); return 0; }
+	static int loop( T* p, lua_State *L )				{ p->SetLooping(!!IArg(1)); return 0; }
+	static int rate( T* p, lua_State *L )				{ p->SetPlaybackRate(FArg(1)); return 0; }
+
+	static void Register(lua_State *L) {
+		ADD_METHOD( Load )
+		ADD_METHOD( LoadBanner )
+		ADD_METHOD( LoadBackground )
+		ADD_METHOD( customtexturerect )
+		ADD_METHOD( texcoordvelocity )
+		ADD_METHOD( scaletoclipped )
+		ADD_METHOD( stretchtexcoords )
+		ADD_METHOD( setstate )
+		ADD_METHOD( position )
+		ADD_METHOD( loop )
+		ADD_METHOD( rate )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( Sprite, Actor )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford

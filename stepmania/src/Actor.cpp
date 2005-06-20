@@ -17,12 +17,6 @@
 #include "MessageManager.h"
 #include "LightsManager.h" // for NUM_CABINET_LIGHTS
 
-
-// lua start
-LUA_REGISTER_CLASS( Actor )
-// lua end
-
-
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 
 static float g_fCabinetLights[NUM_CABINET_LIGHTS];
@@ -1089,6 +1083,263 @@ void Actor::SubscribeToMessage( Message message )
 	MESSAGEMAN->Subscribe( this, message );
 	m_vsSubscribedTo.push_back( MessageToString(message) );
 }
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaActor : public Luna<T>
+{
+public:
+	LunaActor() { LUA->Register( Register ); }
+
+	static int sleep( T* p, lua_State *L )			{ p->Sleep(FArg(1)); return 0; }
+	static int linear( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),Actor::TWEEN_LINEAR); return 0; }
+	static int accelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),Actor::TWEEN_ACCELERATE); return 0; }
+	static int decelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),Actor::TWEEN_DECELERATE); return 0; }
+	static int bouncebegin( T* p, lua_State *L )	{ p->BeginTweening(FArg(1),Actor::TWEEN_BOUNCE_BEGIN); return 0; }
+	static int bounceend( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),Actor::TWEEN_BOUNCE_END); return 0; }
+	static int spring( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),Actor::TWEEN_SPRING); return 0; }
+	static int stoptweening( T* p, lua_State *L )	{ p->StopTweening(); p->BeginTweening( 0.0001f, Actor::TWEEN_LINEAR ); return 0; }
+	static int finishtweening( T* p, lua_State *L )	{ p->FinishTweening(); return 0; }
+	static int hurrytweening( T* p, lua_State *L )	{ p->HurryTweening(FArg(1)); return 0; }
+	static int x( T* p, lua_State *L )				{ p->SetX(FArg(1)); return 0; }
+	static int y( T* p, lua_State *L )				{ p->SetY(FArg(1)); return 0; }
+	static int z( T* p, lua_State *L )				{ p->SetZ(FArg(1)); return 0; }
+	static int addx( T* p, lua_State *L )			{ p->AddX(FArg(1)); return 0; }
+	static int addy( T* p, lua_State *L )			{ p->AddY(FArg(1)); return 0; }
+	static int addz( T* p, lua_State *L )			{ p->AddZ(FArg(1)); return 0; }
+	static int zoom( T* p, lua_State *L )			{ p->SetZoom(FArg(1)); return 0; }
+	static int zoomx( T* p, lua_State *L )			{ p->SetZoomX(FArg(1)); return 0; }
+	static int zoomy( T* p, lua_State *L )			{ p->SetZoomY(FArg(1)); return 0; }
+	static int zoomz( T* p, lua_State *L )			{ p->SetZoomZ(FArg(1)); return 0; }
+	static int zoomto( T* p, lua_State *L )			{ p->ZoomTo(FArg(1), FArg(2)); return 0; }
+	static int zoomtowidth( T* p, lua_State *L )	{ p->ZoomToWidth(FArg(1)); return 0; }
+	static int zoomtoheight( T* p, lua_State *L )	{ p->ZoomToHeight(FArg(1)); return 0; }
+	static int basezoomx( T* p, lua_State *L )		{ p->SetBaseZoomX(FArg(1)); return 0; }
+	static int basezoomy( T* p, lua_State *L )		{ p->SetBaseZoomY(FArg(1)); return 0; }
+	static int stretchto( T* p, lua_State *L )		{ p->StretchTo( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int cropleft( T* p, lua_State *L )		{ p->SetCropLeft(FArg(1)); return 0; }
+	static int croptop( T* p, lua_State *L )		{ p->SetCropTop(FArg(1)); return 0; }
+	static int cropright( T* p, lua_State *L )		{ p->SetCropRight(FArg(1)); return 0; }
+	static int cropbottom( T* p, lua_State *L )		{ p->SetCropBottom(FArg(1)); return 0; }
+	static int fadeleft( T* p, lua_State *L )		{ p->SetFadeLeft(FArg(1)); return 0; }
+	static int fadetop( T* p, lua_State *L )		{ p->SetFadeTop(FArg(1)); return 0; }
+	static int faderight( T* p, lua_State *L )		{ p->SetFadeRight(FArg(1)); return 0; }
+	static int fadebottom( T* p, lua_State *L )		{ p->SetFadeBottom(FArg(1)); return 0; }
+	static int diffuse( T* p, lua_State *L )			{ p->SetDiffuse( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffuseupperleft( T* p, lua_State *L )	{ p->SetDiffuseUpperLeft( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffuseupperright( T* p, lua_State *L )	{ p->SetDiffuseUpperRight( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffuselowerleft( T* p, lua_State *L )	{ p->SetDiffuseLowerLeft( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffuselowerright( T* p, lua_State *L )	{ p->SetDiffuseLowerRight( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffuseleftedge( T* p, lua_State *L )	{ p->SetDiffuseLeftEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffuserightedge( T* p, lua_State *L )	{ p->SetDiffuseRightEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffusetopedge( T* p, lua_State *L )		{ p->SetDiffuseTopEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffusebottomedge( T* p, lua_State *L )	{ p->SetDiffuseBottomEdge( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int diffusealpha( T* p, lua_State *L )	{ p->SetDiffuseAlpha(FArg(1)); return 0; }
+	static int diffusecolor( T* p, lua_State *L )	{ p->SetDiffuseColor( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int glow( T* p, lua_State *L )			{ p->SetGlow( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int aux( T* p, lua_State *L )			{ p->SetAux( FArg(1) ); return 0; }
+	static int getaux( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetAux() ); return 1; }
+	static int rotationx( T* p, lua_State *L )		{ p->SetRotationX(FArg(1)); return 0; }
+	static int rotationy( T* p, lua_State *L )		{ p->SetRotationY(FArg(1)); return 0; }
+	static int rotationz( T* p, lua_State *L )		{ p->SetRotationZ(FArg(1)); return 0; }
+	static int getrotation( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetRotationX()); lua_pushnumber(L, p->GetRotationY()); lua_pushnumber(L, p->GetRotationZ()); return 3; }
+	static int skewx( T* p, lua_State *L )			{ p->SetSkewX(FArg(1)); return 0; }
+	static int heading( T* p, lua_State *L )		{ p->AddRotationH(FArg(1)); return 0; }
+	static int pitch( T* p, lua_State *L )			{ p->AddRotationP(FArg(1)); return 0; }
+	static int roll( T* p, lua_State *L )			{ p->AddRotationR(FArg(1)); return 0; }
+	static int shadowlength( T* p, lua_State *L )	{ p->SetShadowLength(FArg(1)); return 0; }
+	static int horizalign( T* p, lua_State *L )		{ p->SetHorizAlignString(SArg(1)); return 0; }
+	static int vertalign( T* p, lua_State *L )		{ p->SetVertAlignString(SArg(1)); return 0; }
+	static int luaeffect( T* p, lua_State *L )		{ p->SetEffectLua(SArg(1)); return 0; }
+	static int diffuseblink( T* p, lua_State *L )	{ p->SetEffectDiffuseBlink(); return 0; }
+	static int diffuseshift( T* p, lua_State *L )	{ p->SetEffectDiffuseShift(); return 0; }
+	static int diffuseramp( T* p, lua_State *L )	{ p->SetEffectDiffuseRamp(); return 0; }
+	static int glowblink( T* p, lua_State *L )		{ p->SetEffectGlowBlink(); return 0; }
+	static int glowshift( T* p, lua_State *L )		{ p->SetEffectGlowShift(); return 0; }
+	static int rainbow( T* p, lua_State *L )		{ p->SetEffectRainbow(); return 0; }
+	static int wag( T* p, lua_State *L )			{ p->SetEffectWag(); return 0; }
+	static int bounce( T* p, lua_State *L )			{ p->SetEffectBounce(); return 0; }
+	static int bob( T* p, lua_State *L )			{ p->SetEffectBob(); return 0; }
+	static int pulse( T* p, lua_State *L )			{ p->SetEffectPulse(); return 0; }
+	static int spin( T* p, lua_State *L )			{ p->SetEffectSpin(); return 0; }
+	static int vibrate( T* p, lua_State *L )		{ p->SetEffectVibrate(); return 0; }
+	static int stopeffect( T* p, lua_State *L )		{ p->SetEffectNone(); return 0; }
+	static int effectcolor1( T* p, lua_State *L )		{ p->SetEffectColor1( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int effectcolor2( T* p, lua_State *L )		{ p->SetEffectColor2( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
+	static int effectperiod( T* p, lua_State *L )		{ p->SetEffectPeriod(FArg(1)); return 0; }
+	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); return 0; }
+	static int effectdelay( T* p, lua_State *L )		{ p->SetEffectDelay(FArg(1)); return 0; }
+	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); return 0; }
+	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( RageVector3(FArg(1),FArg(2),FArg(3)) ); return 0; }
+	static int geteffectmagnitude( T* p, lua_State *L )	{ RageVector3 v = p->GetEffectMagnitude(); lua_pushnumber(L, v[0]); lua_pushnumber(L, v[1]); lua_pushnumber(L, v[2]); return 3; }
+	static int scaletocover( T* p, lua_State *L )		{ p->ScaleToCover( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); return 0; }
+	static int scaletofit( T* p, lua_State *L )			{ p->ScaleToFitInside( RectF(FArg(1), FArg(2), FArg(3), FArg(4)) ); return 0; }
+	static int animate( T* p, lua_State *L )			{ p->EnableAnimation(!!IArg(1)); return 0; }
+	static int play( T* p, lua_State *L )				{ p->EnableAnimation(true); return 0; }
+	static int pause( T* p, lua_State *L )				{ p->EnableAnimation(false); return 0; }
+	static int setstate( T* p, lua_State *L )			{ p->SetState(IArg(1)); return 0; }
+	static int texturewrapping( T* p, lua_State *L )	{ p->SetTextureWrapping(!!IArg(1)); return 0; }
+	static int additiveblend( T* p, lua_State *L )		{ p->SetBlendMode(!!IArg(1) ? BLEND_ADD : BLEND_NORMAL); return 0; }
+	static int blend( T* p, lua_State *L )				{ p->SetBlendModeString(SArg(1)); return 0; }
+	static int zbuffer( T* p, lua_State *L )			{ p->SetUseZBuffer(!!IArg(1)); return 0; }
+	static int ztest( T* p, lua_State *L )				{ p->SetZTestMode((!!IArg(1))?ZTEST_WRITE_ON_PASS:ZTEST_OFF); return 0; }
+	static int ztestmode( T* p, lua_State *L )			{ p->SetZTestModeString(SArg(1)); return 0; }
+	static int zwrite( T* p, lua_State *L )				{ p->SetZWrite(!!IArg(1)); return 0; }
+	static int zbias( T* p, lua_State *L )				{ p->SetZBias(FArg(1)); return 0; }
+	static int clearzbuffer( T* p, lua_State *L )		{ p->SetClearZBuffer(!!IArg(1)); return 0; }
+	static int backfacecull( T* p, lua_State *L )		{ p->SetCullMode((!!IArg(1)) ? CULL_BACK : CULL_NONE); return 0; }
+	static int cullmode( T* p, lua_State *L )			{ p->SetCullModeString(SArg(1)); return 0; }
+	static int visible( T* p, lua_State *L )			{ p->SetVisible(!!IArg(1)); return 0; }
+	static int hidden( T* p, lua_State *L )				{ p->SetHidden(!!IArg(1)); return 0; }
+	static int hibernate( T* p, lua_State *L )			{ p->SetHibernate(FArg(1)); return 0; }
+	static int draworder( T* p, lua_State *L )			{ p->SetDrawOrder(IArg(1)); return 0; }
+	static int playcommand( T* p, lua_State *L )		{ p->PlayCommand(SArg(1),NULL); return 0; }
+	static int queuecommand( T* p, lua_State *L )		{ p->QueueCommand(SArg(1)); return 0; }
+	static int queuemessage( T* p, lua_State *L )		{ p->QueueMessage(SArg(1)); return 0; }
+
+	static int GetX( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetX() ); return 1; }
+	static int GetY( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetY() ); return 1; }
+	static int GetZ( T* p, lua_State *L )			{ lua_pushnumber( L, p->GetZ() ); return 1; }
+	static int GetWidth( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetUnzoomedWidth() ); return 1; }
+	static int GetHeight( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetUnzoomedHeight() ); return 1; }
+	static int GetZoom( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoom() ); return 1; }
+	static int GetZoomX( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomX() ); return 1; }
+	static int GetZoomY( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomY() ); return 1; }
+	static int GetZoomZ( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetZoomZ() ); return 1; }
+	static int GetBaseZoomX( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetBaseZoomX() ); return 1; }
+	static int GetSecsIntoEffect( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecsIntoEffect() ); return 1; }
+	static int GetEffectDelta( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetEffectDelta() ); return 1; }
+
+
+	static void Register(lua_State *L) {
+  		ADD_METHOD( sleep )
+		ADD_METHOD( linear )
+		ADD_METHOD( accelerate )
+		ADD_METHOD( decelerate )
+		ADD_METHOD( bouncebegin )
+		ADD_METHOD( bounceend )
+		ADD_METHOD( spring )
+		ADD_METHOD( stoptweening )
+		ADD_METHOD( finishtweening )
+		ADD_METHOD( hurrytweening )
+		ADD_METHOD( x )
+		ADD_METHOD( y )
+		ADD_METHOD( z )
+		ADD_METHOD( addx )
+		ADD_METHOD( addy )
+		ADD_METHOD( addz )
+		ADD_METHOD( zoom )
+		ADD_METHOD( zoomx )
+		ADD_METHOD( zoomy )
+		ADD_METHOD( zoomz )
+		ADD_METHOD( zoomto )
+		ADD_METHOD( zoomtowidth )
+		ADD_METHOD( zoomtoheight )
+		ADD_METHOD( basezoomx )
+		ADD_METHOD( basezoomy )
+		ADD_METHOD( stretchto )
+		ADD_METHOD( cropleft )
+		ADD_METHOD( croptop )
+		ADD_METHOD( cropright )
+		ADD_METHOD( cropbottom )
+		ADD_METHOD( fadeleft )
+		ADD_METHOD( fadetop )
+		ADD_METHOD( faderight )
+		ADD_METHOD( fadebottom )
+		ADD_METHOD( diffuse )
+		ADD_METHOD( diffuseupperleft )
+		ADD_METHOD( diffuseupperright )
+		ADD_METHOD( diffuselowerleft )
+		ADD_METHOD( diffuselowerright )
+		ADD_METHOD( diffuseleftedge )
+		ADD_METHOD( diffuserightedge )
+		ADD_METHOD( diffusetopedge )
+		ADD_METHOD( diffusebottomedge )
+		ADD_METHOD( diffusealpha )
+		ADD_METHOD( diffusecolor )
+		ADD_METHOD( glow )
+		ADD_METHOD( aux )
+		ADD_METHOD( getaux )
+		ADD_METHOD( rotationx )
+		ADD_METHOD( rotationy )
+		ADD_METHOD( rotationz )
+		ADD_METHOD( getrotation )
+		ADD_METHOD( skewx )
+		ADD_METHOD( heading )
+		ADD_METHOD( pitch )
+		ADD_METHOD( roll )
+		ADD_METHOD( shadowlength )
+		ADD_METHOD( horizalign )
+		ADD_METHOD( vertalign )
+		ADD_METHOD( luaeffect )
+		ADD_METHOD( diffuseblink )
+		ADD_METHOD( diffuseshift )
+		ADD_METHOD( diffuseramp )
+		ADD_METHOD( glowblink )
+		ADD_METHOD( glowshift )
+		ADD_METHOD( rainbow )
+		ADD_METHOD( wag )
+		ADD_METHOD( bounce )
+		ADD_METHOD( bob )
+		ADD_METHOD( pulse )
+		ADD_METHOD( spin )
+		ADD_METHOD( vibrate )
+		ADD_METHOD( stopeffect )
+		ADD_METHOD( effectcolor1 )
+		ADD_METHOD( effectcolor2 )
+		ADD_METHOD( effectperiod )
+		ADD_METHOD( effectoffset )
+		ADD_METHOD( effectdelay )
+		ADD_METHOD( effectclock )
+		ADD_METHOD( effectmagnitude )
+		ADD_METHOD( geteffectmagnitude )
+		ADD_METHOD( scaletocover )
+		ADD_METHOD( scaletofit )
+		ADD_METHOD( animate )
+		ADD_METHOD( play )
+		ADD_METHOD( pause )
+		ADD_METHOD( setstate )
+		ADD_METHOD( texturewrapping )
+		ADD_METHOD( additiveblend )
+		ADD_METHOD( blend )
+		ADD_METHOD( zbuffer )
+		ADD_METHOD( ztest )
+		ADD_METHOD( ztestmode )
+		ADD_METHOD( zwrite )
+		ADD_METHOD( zbias )
+		ADD_METHOD( clearzbuffer )
+		ADD_METHOD( backfacecull )
+		ADD_METHOD( cullmode )
+		ADD_METHOD( visible )
+		ADD_METHOD( hidden )
+		ADD_METHOD( hibernate )
+		ADD_METHOD( draworder )
+		ADD_METHOD( playcommand )
+		ADD_METHOD( queuecommand )
+		ADD_METHOD( queuemessage )
+
+		ADD_METHOD( GetX )
+		ADD_METHOD( GetY )
+		ADD_METHOD( GetZ )
+		ADD_METHOD( GetWidth )
+		ADD_METHOD( GetHeight )
+		ADD_METHOD( GetZoom )
+		ADD_METHOD( GetZoomX )
+		ADD_METHOD( GetZoomY )
+		ADD_METHOD( GetZoomZ )
+		ADD_METHOD( GetBaseZoomX )
+		ADD_METHOD( GetSecsIntoEffect )
+		ADD_METHOD( GetEffectDelta )
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( Actor )
+// lua end
+
 
 /*
  * (c) 2001-2004 Chris Danford
