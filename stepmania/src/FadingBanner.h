@@ -7,28 +7,6 @@
 #include "ActorFrame.h"
 #include "RageTimer.h"
 
-template<class T>
-class LunaFadingBanner : public LunaActorFrame<T>
-{
-public:
-	LunaFadingBanner() { LUA->Register( Register ); }
-
-	static int ScaleToClipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); return 0; }
-	static int LoadFromSong( T* p, lua_State *L )
-	{ 
-		if( lua_isnil(L,1) ) { p->LoadFromSong( NULL ); }
-		else { Song *pS = Luna<Song>::check(L,1); p->LoadFromSong( pS ); }
-		return 0;
-	}
-
-	static void Register(lua_State *L) 
-	{
-		ADD_METHOD( ScaleToClipped )
-		ADD_METHOD( LoadFromSong )
-		LunaActor<T>::Register( L );
-	}
-};
-
 class FadingBanner : public ActorFrame
 {
 public:

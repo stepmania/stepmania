@@ -5,41 +5,6 @@
 
 #include "Actor.h"
 
-template<class T>
-class LunaActorFrame : public LunaActor<T>
-{
-public:
-	LunaActorFrame() { LUA->Register( Register ); }
-
-	static int propagate( T* p, lua_State *L )			{ p->SetPropagateCommands( !!IArg(1) ); return 0; }
-	static int fov( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
-	static int SetUpdateRate( T* p, lua_State *L )		{ p->SetUpdateRate( FArg(1) ); return 0; }
-	static int SetFOV( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
-	static int GetChild( T* p, lua_State *L )
-	{
-		Actor *pChild = p->GetChild( SArg(1) );
-		if( pChild )
-			pChild->PushSelf( L );
-		else
-			lua_pushnil( L );
-		return 1;
-	}
-	static int GetNumChildren( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumChildren() ); return 1; }
-	static int SetDrawByZPosition( T* p, lua_State *L )	{ p->SetDrawByZPosition( BArg(1) ); return 1; }
-
-	static void Register(lua_State *L) 
-	{
-		ADD_METHOD( propagate )
-		ADD_METHOD( fov )
-		ADD_METHOD( SetUpdateRate )
-		ADD_METHOD( SetFOV )
-		ADD_METHOD( GetChild )
-		ADD_METHOD( GetNumChildren )
-		ADD_METHOD( SetDrawByZPosition )
-		LunaActor<T>::Register( L );
-	}
-};
-
 class ActorFrame : public Actor
 {
 public:

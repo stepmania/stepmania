@@ -9,10 +9,6 @@
 #include "ActorUtil.h"
 #include <sstream>
 
-// lua start
-LUA_REGISTER_CLASS( ActorScroller )
-// lua end
-
 /* Tricky: We need ActorFrames created in XML to auto delete their children.
  * We don't want classes that derive from ActorFrame to auto delete their 
  * children.  The name "ActorFrame" is widely used in XML, so we'll have
@@ -281,6 +277,27 @@ void ActorScroller::DrawPrimitives()
 			(*a)->Draw();
 	}
 }
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaActorScroller : public Luna<T>
+{
+public:
+	LunaActorScroller() { LUA->Register( Register ); }
+
+	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( SetCurrentAndDestinationItem )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ActorScroller, ActorFrame )
+// lua end
 
 /*
  * (c) 2003-2004 Chris Danford

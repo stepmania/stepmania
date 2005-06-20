@@ -10,10 +10,6 @@
 #include "ScreenDimensions.h"
 #include "Foreach.h"
 
-// lua start
-LUA_REGISTER_CLASS( ActorFrame )
-// lua end
-
 /* Tricky: We need ActorFrames created in XML to auto delete their children.
  * We don't want classes that derive from ActorFrame to auto delete their 
  * children.  The name "ActorFrame" is widely used in XML, so we'll have
@@ -327,6 +323,48 @@ void ActorFrame::SetDrawByZPosition( bool b )
 {
 	m_bDrawByZPosition = b;
 }
+
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaActorFrame : public Luna<T>
+{
+public:
+	LunaActorFrame() { LUA->Register( Register ); }
+
+	static int propagate( T* p, lua_State *L )			{ p->SetPropagateCommands( !!IArg(1) ); return 0; }
+	static int fov( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
+	static int SetUpdateRate( T* p, lua_State *L )		{ p->SetUpdateRate( FArg(1) ); return 0; }
+	static int SetFOV( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
+	static int GetChild( T* p, lua_State *L )
+	{
+		Actor *pChild = p->GetChild( SArg(1) );
+		if( pChild )
+			pChild->PushSelf( L );
+		else
+			lua_pushnil( L );
+		return 1;
+	}
+	static int GetNumChildren( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumChildren() ); return 1; }
+	static int SetDrawByZPosition( T* p, lua_State *L )	{ p->SetDrawByZPosition( BArg(1) ); return 1; }
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( propagate )
+		ADD_METHOD( fov )
+		ADD_METHOD( SetUpdateRate )
+		ADD_METHOD( SetFOV )
+		ADD_METHOD( GetChild )
+		ADD_METHOD( GetNumChildren )
+		ADD_METHOD( SetDrawByZPosition )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ActorFrame, Actor )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford

@@ -12,9 +12,6 @@
 #include "Style.h"
 #include "XmlFile.h"
 
-// lua start
-LUA_REGISTER_CLASS( DifficultyMeter )
-// lua end
 REGISTER_ACTOR_CLASS( DifficultyMeter );
 
 
@@ -254,6 +251,57 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const CString &sDi
 	if( m_bShowMeter )
 		m_textMeter.PlayCommand( sDifficultyCommand );
 }
+
+// lua start
+#include "LuaBinding.h"
+
+template<class T>
+class LunaDifficultyMeter : public Luna<T>
+{
+public:
+	LunaDifficultyMeter() { LUA->Register( Register ); }
+
+	static int Load( T* p, lua_State *L )		{ p->Load( SArg(1) ); return 0; }
+	static int SetFromMeterAndDifficulty( T* p, lua_State *L )		{ p->SetFromMeterAndDifficulty( IArg(1), (Difficulty)IArg(2) ); return 0; }
+	static int SetFromSteps( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) )
+		{
+			p->SetFromSteps( NULL );
+		}
+		else
+		{
+			Steps *pS = Luna<Steps>::check(L,1);
+			p->SetFromSteps( pS );
+		}
+		return 0;
+	}
+	static int SetFromTrail( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) )
+		{
+			p->SetFromTrail( NULL );
+		}
+		else
+		{
+			Trail *pT = Luna<Trail>::check(L,1);
+			p->SetFromTrail( pT );
+		}
+		return 0;
+	}
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( Load )
+		ADD_METHOD( SetFromMeterAndDifficulty )
+		ADD_METHOD( SetFromSteps )
+		ADD_METHOD( SetFromTrail )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( DifficultyMeter, ActorFrame )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

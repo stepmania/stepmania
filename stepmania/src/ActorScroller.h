@@ -7,21 +7,6 @@
 #include "Quad.h"
 struct XNode;
 
-template<class T>
-class LunaActorScroller : public LunaActorFrame<T>
-{
-public:
-	LunaActorScroller() { LUA->Register( Register ); }
-
-	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
-
-	static void Register(lua_State *L) 
-	{
-		ADD_METHOD( SetCurrentAndDestinationItem )
-		LunaActor<T>::Register( L );
-	}
-};
-
 class ActorScroller : public ActorFrame
 {
 public:
