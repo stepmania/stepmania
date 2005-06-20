@@ -5,13 +5,6 @@
 
 #include "LuaManager.h"
 
-template <typename T>
-struct RegType
-{
-	const char *name; 
-	int (*mfunc)(T *p, lua_State *L);
-};
-
 void CreateGlobalTable( lua_State *L, const CString &szName );
 bool CheckType( lua_State *L, int narg, const char *szType );
 
@@ -21,11 +14,16 @@ class Luna
 protected:
 	typedef Type T;
 
+	struct RegType
+	{
+		const char *name; 
+		int (*mfunc)(T *p, lua_State *L);
+	};
+
 private:
 	typedef struct { T *pT; } userdataType;
 
 public:
-
 	static void Register(lua_State *L)
 	{
 		/* Create the methods table, if it doesn't already exist. */
@@ -56,7 +54,7 @@ public:
 		// fill method table with methods from class T
 		for (unsigned i=0; s_pvMethods && i<s_pvMethods->size(); i++ )
 		{
-			const MyRegType *l = &(*s_pvMethods)[i];
+			const RegType *l = &(*s_pvMethods)[i];
 			lua_pushstring(L, l->name);
 			lua_pushlightuserdata(L, (void*)l);
 			lua_pushcclosure(L, thunk, 1);
@@ -117,7 +115,7 @@ private:
 		T *obj = check( L, 1, true );  // get self
 		lua_remove(L, 1);  // remove self so member function args start at index 1
 		// get member function from upvalue
-		MyRegType *l = static_cast<MyRegType*>(lua_touserdata(L, lua_upvalueindex(1)));
+		RegType *l = static_cast<RegType*>(lua_touserdata(L, lua_upvalueindex(1)));
 		return (*(l->mfunc))(obj,L);  // call member function
 	}
 	
@@ -141,8 +139,7 @@ public:
 		return 1;  // userdata containing pointer to T object
 	}
 	
-	typedef RegType<T> MyRegType;
-	typedef vector<MyRegType> RegTypeVector;
+	typedef vector<RegType> RegTypeVector;
 	static RegTypeVector *s_pvMethods;
 	
 	static void CreateMethodsVector()
@@ -178,7 +175,7 @@ void T::PushSelf( lua_State *L ) { Luna##T::Push( L, this ); } \
 namespace LuaHelpers { template<> void Push( T *pObject, lua_State *L ) { pObject->PushSelf( L ); } }
 
 #define ADD_METHOD( method_name ) \
-	{ Luna<T>::CreateMethodsVector(); RegType<T> r = {#method_name,method_name}; Luna<T>::s_pvMethods->push_back(r); }
+	{ Luna<T>::CreateMethodsVector(); RegType r = {#method_name,method_name}; Luna<T>::s_pvMethods->push_back(r); }
 
 
 #endif
