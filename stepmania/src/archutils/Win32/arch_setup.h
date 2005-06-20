@@ -47,7 +47,11 @@ void my_usleep( unsigned long usec );
 #define usleep my_usleep
 
 /* Missing stdint types: */
+#if !defined(__MINGW32__) // MinGW headers define these for us
 typedef signed char int8_t;
+typedef signed short int16_t;
+typedef int int32_t;
+typedef __int64 int64_t;
 typedef unsigned char uint8_t;
 typedef signed short int16_t;
 typedef unsigned short uint16_t;
@@ -56,6 +60,7 @@ typedef unsigned int uint32_t;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
+#endif
 
 #if defined(_MSC_VER)
 #pragma warning (disable : 4201) // nonstandard extension used : nameless struct/union (Windows headers do this)
@@ -88,8 +93,17 @@ inline int lrintf( float f )
 {
 	int retval;
 
+#if defined(__GNUC__) // MinGW or similar
+	asm (
+	"fld %0\n"
+	"fistp %1"
+	:
+	: "r" (f), "r" (retval)
+	);
+#else
 	_asm fld f;
 	_asm fistp retval;
+#endif
 
 	return retval;
 }
