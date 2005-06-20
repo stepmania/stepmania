@@ -1,6 +1,4 @@
-/* Based on Lua Wiki example: http://lua-users.org/wiki/SimplerCppBinding
- * Modified by Chris.
- */
+/* LuaBinding - helpers to expose Lua bindings for C++ classes. */
 
 #ifndef LuaBinding_H
 #define LuaBinding_H
@@ -186,7 +184,7 @@ namespace LuaHelpers { template<> void Push( T *pObject, lua_State *L ) { pObjec
 #endif
 
 /*
- * (c) 2001-2005 lua-users.org, Chris Danford
+ * (c) 2001-2005 Leonardo Palozzi, Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
