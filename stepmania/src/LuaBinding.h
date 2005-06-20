@@ -27,25 +27,26 @@ struct RegType
 	int (*mfunc)(T *p, lua_State *L);
 };
 
+void CreateGlobalTable( lua_State *L, const CString &szName );
+bool CheckType( lua_State *L, int narg, const char *szType );
+
 template <typename T>
 class Luna 
 {
 	typedef struct { T *pT; } userdataType;
+
 public:
-	
+
 	static void Register(lua_State *L)
 	{
-		lua_newtable(L);
+		/* Create the methods table, if it doesn't already exist. */
+		CreateGlobalTable( L, m_sClassName );
+
 		int methods = lua_gettop(L);
 		
+		/* Create a metatable for the userdata objects. */
 		luaL_newmetatable(L, m_sClassName);
 		int metatable = lua_gettop(L);
-		
-		// store method table in globals so that
-		// scripts can add functions written in Lua.
-		lua_pushstring(L, m_sClassName);
-		lua_pushvalue(L, methods);
-		lua_settable(L, LUA_GLOBALSINDEX);
 		
 		lua_pushliteral(L, "__metatable");
 		lua_pushvalue(L, methods);
@@ -72,15 +73,41 @@ public:
 			lua_pushcclosure(L, thunk, 1);
 			lua_settable(L, methods);
 		}
-		
+
+		/* Create a metatable for the methods table. */
+		lua_newtable( L );
+		int methods_metatable = lua_gettop(L);
+
+		// Hide the metatable.
+		lua_pushliteral( L, "__metatable" );
+		lua_pushstring( L, "(hidden)" );
+		lua_settable( L, methods_metatable );
+
+		if( strcmp(m_sBaseClassName, "none") )
+		{
+			// If this type has a base class, set the __index of this type
+			// to the base class.  If the base class doesn't exist, we probably
+			// were called before the Register() of the base class; we'll fill
+			// it in when we get to it.
+			lua_pushliteral( L, "__index" );
+			CreateGlobalTable( L, m_sBaseClassName );
+			lua_settable( L, methods_metatable );
+		}
+
+		lua_pushliteral( L, "__type" );
+		lua_pushstring( L, m_sClassName );
+		lua_settable( L, methods_metatable );
+
+		/* Set and pop the methods metatable. */
+		lua_setmetatable( L, methods );
+
 		lua_pop(L, 2);  // drop metatable and method table
 	}
 
 	// get userdata from Lua stack and return pointer to T object
 	static T *check( lua_State *L, int narg, bool bIsSelf = false )
 	{
-		userdataType *pUserdata = static_cast<userdataType*>( luaL_checkudata(L, narg, m_sClassName) );
-		if( pUserdata == NULL )
+		if( !CheckType(L, narg, m_sClassName) )
 		{
 			if( bIsSelf )
 				luaL_typerror( L, narg, m_sClassName );
@@ -88,6 +115,7 @@ public:
 				LuaHelpers::TypeError( L, narg, m_sClassName );
 		}
 
+		userdataType *pUserdata = static_cast<userdataType*>( lua_touserdata(L, narg) );
 		return pUserdata->pT;  // pointer to T object
 	}
 	
@@ -135,7 +163,8 @@ public:
 			s_pvMethods = new RegTypeVector;
 	}
 private:
-	static const char m_sClassName[];
+	static const char *m_sClassName;
+	static const char *m_sBaseClassName;
 	
 	static int tostring_T (lua_State *L)
 	{
@@ -148,9 +177,12 @@ private:
 	}
 };
 
-
 #define LUA_REGISTER_CLASS( T ) \
-	template<> const char Luna<T>::m_sClassName[] = #T; \
+	LUA_REGISTER_DERIVED_CLASS( T, none )
+
+#define LUA_REGISTER_DERIVED_CLASS( T, B ) \
+	template<> const char *Luna<T>::m_sClassName = #T; \
+	template<> const char *Luna<T>::m_sBaseClassName = #B; \
 	template<> Luna<T>::RegTypeVector* Luna<T>::s_pvMethods = NULL; \
 	static Luna##T<T> registera; \
 void T::PushSelf( lua_State *L ) { Luna##T<T>::Push( L, this ); } \
