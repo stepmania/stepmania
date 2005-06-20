@@ -184,7 +184,7 @@ namespace LuaHelpers { template<> void Push( T *pObject, lua_State *L ) { pObjec
 #endif
 
 /*
- * (c) 2001-2005 Leonardo Palozzi, Chris Danford, Glenn Maynard
+ * (c) 2001-2005 Peter Shook, Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
