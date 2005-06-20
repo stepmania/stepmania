@@ -3,6 +3,8 @@
 use strict;
 
 my @filelist = qw(Announcers/instructions.txt
+				  BackgroundTransitions
+				  BackgroundEffects
 				  BGAnimations/instructions.txt
 				  CDTitles/instructions.txt
 				  Characters/default
@@ -21,10 +23,8 @@ my @filelist = qw(Announcers/instructions.txt
 				  Songs/instructions.txt
 				  Themes/instructions.txt
 				  Themes/default
-				  Visualizations/instructions.txt
 				  Data/Translation.dat
 				  Data/AI.ini
-				  Data/Unlocks.dat
 				  Data/splash.png
 				  README-FIRST.html
 				  NEWS
