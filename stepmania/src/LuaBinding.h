@@ -5,20 +5,7 @@
 #ifndef LuaBinding_H
 #define LuaBinding_H
 
-extern "C"
-{
-#include <lua.h>
-#include <lauxlib.h>
-}
-
 #include "LuaManager.h"
-#include <vector>
-
-inline bool MyLua_checkboolean (lua_State *L, int numArg)
-{
-	luaL_checktype(L,numArg,LUA_TBOOLEAN);
-	return !!lua_toboolean(L,numArg);
-}
 
 template <typename T>
 struct RegType

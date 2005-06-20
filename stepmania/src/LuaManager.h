@@ -16,32 +16,6 @@ extern "C"
 class LuaManager;
 extern LuaManager *LUA;
 
-namespace LuaHelpers
-{
-	template<class T>
-	void Push( T *pObject, lua_State *L );
-
-	void Push( const bool &Object, lua_State *L );
-	void Push( const float &Object, lua_State *L );
-	void Push( const int &Object, lua_State *L );
-	void Push( const CString &Object, lua_State *L );
-
-
-	bool FromStack( bool &Object, int iOffset, lua_State *L );
-	bool FromStack( float &Object, int iOffset, lua_State *L );
-	bool FromStack( int &Object, int iOffset, lua_State *L );
-	bool FromStack( CString &Object, int iOffset, lua_State *L );
-
-	template<class T>
-	void ReadArrayFromTable( vector<T> &aOut, lua_State *L );
-	template<class T>
-	void PushStack( const T &val, lua_State *L );
-	template<class T>
-	bool PopStack( T &val, lua_State *L );
-	template<class T>
-	void CreateTableFromArray( const vector<T> &aIn, lua_State *L );
-};
-
 class LuaManager
 {
 public:
@@ -104,6 +78,24 @@ namespace LuaHelpers
 	bool RunAtExpressionS( CString &sStr );
 
 	template<class T>
+	void Push( T *pObject, Lua *L );
+
+	void Push( const bool &Object, Lua *L );
+	void Push( const float &Object, Lua *L );
+	void Push( const int &Object, Lua *L );
+	void Push( const CString &Object, Lua *L );
+
+	bool FromStack( bool &Object, int iOffset, Lua *L );
+	bool FromStack( float &Object, int iOffset, Lua *L );
+	bool FromStack( int &Object, int iOffset, Lua *L );
+	bool FromStack( CString &Object, int iOffset, Lua *L );
+
+	template<class T>
+	void PushStack( const T &val, Lua *L );
+	template<class T>
+	bool PopStack( T &val, Lua *L );
+
+	template<class T>
 	void ReadArrayFromTable( vector<T> &aOut, lua_State *L )
 	{
 		luaL_checktype( L, -1, LUA_TTABLE );
@@ -149,6 +141,12 @@ namespace LuaHelpers
 #define REGISTER_WITH_LUA_FUNCTION( Fn ) \
 	class Register##Fn { public: Register##Fn() { LuaManager::Register( Fn ); } }; \
 	static Register##Fn register##Fn;
+
+inline bool MyLua_checkboolean (lua_State *L, int numArg)
+{
+	luaL_checktype(L,numArg,LUA_TBOOLEAN);
+	return !!lua_toboolean(L,numArg);
+}
 
 #define SArg(n) (luaL_checkstring(L,n))
 #define IArg(n) (luaL_checkint(L,n))
