@@ -20,7 +20,6 @@ protected:
 		int (*mfunc)(T *p, lua_State *L);
 	};
 
-private:
 	typedef struct { T *pT; } userdataType;
 
 public:
@@ -107,7 +106,6 @@ public:
 	}
 	
 private:
-	
 	// member function dispatcher
 	static int thunk(lua_State *L) 
 	{
@@ -139,15 +137,18 @@ public:
 		return 1;  // userdata containing pointer to T object
 	}
 	
+	static void AddMethod( const char *szName, int (*pFunc)(T *p, lua_State *L) )
+	{
+		if( s_pvMethods == NULL )
+			s_pvMethods = new RegTypeVector;
+		RegType r = { szName, pFunc };
+		Luna<T>::s_pvMethods->push_back(r);
+	}
+
+private:
 	typedef vector<RegType> RegTypeVector;
 	static RegTypeVector *s_pvMethods;
-	
-	static void CreateMethodsVector()
-	{
-		if(s_pvMethods==NULL) 
-			s_pvMethods = new RegTypeVector;
-	}
-private:
+
 	static const char *m_sClassName;
 	static const char *m_sBaseClassName;
 	
@@ -174,8 +175,7 @@ void T::PushSelf( lua_State *L ) { Luna##T::Push( L, this ); } \
 /* Call PushSelf, so we always call the derived Luna<T>::Push. */ \
 namespace LuaHelpers { template<> void Push( T *pObject, lua_State *L ) { pObject->PushSelf( L ); } }
 
-#define ADD_METHOD( method_name ) \
-	{ Luna<T>::CreateMethodsVector(); RegType r = {#method_name,method_name}; Luna<T>::s_pvMethods->push_back(r); }
+#define ADD_METHOD( method_name ) Luna<T>::AddMethod( #method_name, method_name );
 
 
 #endif
