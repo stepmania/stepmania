@@ -12,6 +12,7 @@ class Character
 {
 public:
 //	Character();
+	virtual ~Character() { }
 
 	bool Load( CString sCharDir );	// return true if success
 
