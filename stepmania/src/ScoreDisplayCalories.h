@@ -7,19 +7,6 @@
 #include "PlayerNumber.h"
 
 
-template<class T>
-class LunaScoreDisplayCalories : public LunaRollingNumbers<T>
-{
-public:
-	LunaScoreDisplayCalories() { LUA->Register( Register ); }
-
-	static void Register(lua_State *L) 
-	{
-		LunaRollingNumbers<T>::Register( L );
-	}
-};
-
-
 class ScoreDisplayCalories : public RollingNumbers
 {
 public:

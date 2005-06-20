@@ -4,9 +4,6 @@
 #include "XmlFile.h"
 #include "ActorUtil.h"
 
-// lua start
-LUA_REGISTER_CLASS( RollingNumbers )
-// lua end
 REGISTER_ACTOR_CLASS( RollingNumbers )
 
 RollingNumbers::RollingNumbers()
@@ -60,6 +57,22 @@ void RollingNumbers::UpdateText()
 	SetText( ssprintf(m_sFormat, m_fCurrentNumber) );
 }
 
+// lua start
+template<class T>
+class LunaRollingNumbers : public Luna<T>
+{
+public:
+	LunaRollingNumbers() { LUA->Register( Register ); }
+
+	static void Register(lua_State *L) 
+	{
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( RollingNumbers, BitmapText )
+
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford

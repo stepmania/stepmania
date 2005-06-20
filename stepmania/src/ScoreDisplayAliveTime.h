@@ -8,19 +8,6 @@
 #include "PlayerNumber.h"
 
 
-template<class T>
-class LunaScoreDisplayAliveTime : public LunaBitmapText<T>
-{
-public:
-	LunaScoreDisplayAliveTime() { LUA->Register( Register ); }
-
-	static void Register(lua_State *L) 
-	{
-		LunaBitmapText<T>::Register( L );
-	}
-};
-
-
 class ScoreDisplayAliveTime : public BitmapText
 {
 public:

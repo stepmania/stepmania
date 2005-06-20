@@ -12,9 +12,6 @@
 #include "ActorUtil.h"	// for BeginHandleArgs
 #include "LuaBinding.h"
 
-// lua start
-LUA_REGISTER_CLASS( BitmapText )
-// lua end
 REGISTER_ACTOR_CLASS( BitmapText )
 
 /*
@@ -841,6 +838,36 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 	}
 	BuildChars();
 }
+
+// lua start
+
+template<class T>
+class LunaBitmapText : public Luna<T>
+{
+public:
+	LunaBitmapText() { LUA->Register( Register ); }
+
+	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
+	static int maxwidth( T* p, lua_State *L )			{ p->SetMaxWidth( FArg(1) ); return 0; }
+	static int maxheight( T* p, lua_State *L )			{ p->SetMaxHeight( FArg(1) ); return 0; }
+	static int settext( T* p, lua_State *L )			{ p->SetText( SArg(1) ); return 0; }
+	static int GetText( T* p, lua_State *L )			{ lua_pushstring( L, p->GetText() ); return 1; }
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( wrapwidthpixels )
+		ADD_METHOD( maxwidth )
+		ADD_METHOD( maxheight )
+		ADD_METHOD( settext )
+		ADD_METHOD( GetText )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( BitmapText, Actor )
+
+// lua end
+
 /*
  * (c) 2003-2004 Chris Danford, Charles Lohr
  * All rights reserved.

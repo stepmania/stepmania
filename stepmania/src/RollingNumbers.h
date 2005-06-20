@@ -5,20 +5,6 @@
 
 #include "BitmapText.h"
 
-
-template<class T>
-class LunaRollingNumbers : public LunaBitmapText<T>
-{
-public:
-	LunaRollingNumbers() { LUA->Register( Register ); }
-
-	static void Register(lua_State *L) 
-	{
-		LunaBitmapText<T>::Register( L );
-	}
-};
-
-
 class RollingNumbers : public BitmapText
 {
 public:

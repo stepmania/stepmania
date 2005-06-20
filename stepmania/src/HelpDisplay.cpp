@@ -75,7 +75,7 @@ void HelpDisplay::Update( float fDeltaTime )
 
 
 template<class T>
-class LunaHelpDisplay : public LunaBitmapText<T>
+class LunaHelpDisplay : public Luna<T>
 {
 public:
 	LunaHelpDisplay() { LUA->Register( Register ); }
@@ -119,11 +119,11 @@ public:
 	{
 		ADD_METHOD( settips )
 		ADD_METHOD( gettips )
-		LunaActor<T>::Register( L );
+		Luna<T>::Register( L );
 	}
 };
 
-LUA_REGISTER_CLASS( HelpDisplay )
+LUA_REGISTER_DERIVED_CLASS( HelpDisplay, BitmapText )
 
 
 #include "song.h"

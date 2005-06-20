@@ -9,9 +9,6 @@
 #include "ActorUtil.h"
 #include "StatsManager.h"
 
-// lua start
-LUA_REGISTER_CLASS( ScoreDisplayCalories )
-// lua end
 REGISTER_ACTOR_CLASS( ScoreDisplayCalories )
 
 ScoreDisplayCalories::ScoreDisplayCalories()
@@ -68,6 +65,23 @@ void ScoreDisplayCalories::UpdateNumber()
 	
 	SetTargetNumber( fCals );
 }
+
+// lua start
+template<class T>
+class LunaScoreDisplayCalories : public Luna<T>
+{
+public:
+	LunaScoreDisplayCalories() { LUA->Register( Register ); }
+
+	static void Register(lua_State *L) 
+	{
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScoreDisplayCalories, BitmapText )
+
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford

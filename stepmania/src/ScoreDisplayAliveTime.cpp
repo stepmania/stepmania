@@ -7,9 +7,6 @@
 #include "StatsManager.h"
 #include "ActorUtil.h"
 
-// lua start
-LUA_REGISTER_CLASS( ScoreDisplayAliveTime )
-// lua end
 REGISTER_ACTOR_CLASS( ScoreDisplayAliveTime )
 
 
@@ -59,6 +56,23 @@ void ScoreDisplayAliveTime::UpdateNumber()
 
 	SetText( SecondsToMMSSMsMs(fSecsIntoPlay) );
 }
+
+// lua start
+template<class T>
+class LunaScoreDisplayAliveTime : public Luna<T>
+{
+public:
+	LunaScoreDisplayAliveTime() { LUA->Register( Register ); }
+
+	static void Register(lua_State *L) 
+	{
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScoreDisplayAliveTime, BitmapText )
+
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford
