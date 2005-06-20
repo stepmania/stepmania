@@ -807,6 +807,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Inventory.h">
 			</File>
 			<File
+				RelativePath="LuaBinding.cpp">
+			</File>
+			<File
 				RelativePath="LuaBinding.h">
 			</File>
 			<File
