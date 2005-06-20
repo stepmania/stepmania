@@ -189,6 +189,12 @@ File /r "NoteSkins\pump\default"
 ;SetOutPath "$INSTDIR\NoteSkins\para"
 ;File /r "NoteSkins\para\original"
 
+SetOutPath "$INSTDIR\BackgroundEffects"
+File /r "BackgroundEffects"
+
+SetOutPath "$INSTDIR\BackgroundTransitions"
+File /r "BackgroundTransitions"
+
 CreateDirectory "$INSTDIR\RandomMovies"
 SetOutPath "$INSTDIR\RandomMovies"
 File "RandomMovies\instructions.txt"
