@@ -1,16 +1,41 @@
-#ifndef ARCH_SETUP_UNIX_H
-#define ARCH_SETUP_UNIX_H
+#ifndef GCC_BYTE_SWAPS_H
+#define GCC_BYTE_SWAPS_H
 
-#if !defined(MISSING_STDINT_H) /* need to define int64_t if so */
-#include <stdint.h>
+#if defined(CPU_X86)
+
+inline uint32_t ArchSwap32( uint32_t n )
+{
+	asm(
+		"xchg %b0, %h0\n"
+		"rorl $16, %0\n"
+		"xchg %b0, %h0":
+		"=q" (n): "0" (n) );
+	return n;
+}
+
+inline uint32_t ArchSwap24( uint32_t n )
+{
+	asm(
+		"xchg %b0, %h0\n"
+		"rorl $16, %0\n"
+		"xchg %b0, %h0\n"
+		"shrl $8, %0\n":
+		"=q" (n): "0" (n) );
+	return n;
+}
+
+inline uint16_t ArchSwap16( uint16_t n )
+{
+	asm(
+		"xchg %b0, %h0\n":
+		"=q" (n): "0" (n) );
+	return n;
+}
+
+#define HAVE_BYTE_SWAPS
 #endif
 
-// XXX: Maybe we should make sure we're using GCC first?
-// But if not, then what DO we use?
-#include "archutils/Common/gcc_byte_swaps.h"
-
 #endif
-
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.

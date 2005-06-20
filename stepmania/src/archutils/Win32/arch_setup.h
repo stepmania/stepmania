@@ -111,6 +111,10 @@ inline int lrintf( float f )
 #include "ArchUtils/Xbox/arch_setup.h"
 #endif
 
+
+#if defined(__GNUC__) // It might be MinGW or Cygwin(?)
+#include "archutils/Common/gcc_byte_swaps.h"
+#else // XXX: Should we test for MSVC?
 #define HAVE_BYTE_SWAPS
 
 inline uint32_t ArchSwap32( uint32_t n )
@@ -150,6 +154,7 @@ inline uint16_t ArchSwap16( uint16_t n )
 	};
 	return n;
 }
+#endif
 
 #endif
 
