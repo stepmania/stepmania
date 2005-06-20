@@ -74,6 +74,8 @@ void HelpDisplay::Update( float fDeltaTime )
 }
 
 
+#include "LuaBinding.h"
+
 template<class T>
 class LunaHelpDisplay : public Luna<T>
 {

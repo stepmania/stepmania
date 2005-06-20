@@ -6,6 +6,7 @@
 #include "GameState.h"
 #include "StatsManager.h"
 #include "ActorUtil.h"
+#include "LuaManager.h"
 
 REGISTER_ACTOR_CLASS( ScoreDisplayAliveTime )
 
@@ -58,6 +59,8 @@ void ScoreDisplayAliveTime::UpdateNumber()
 }
 
 // lua start
+#include "LuaBinding.h"
+
 template<class T>
 class LunaScoreDisplayAliveTime : public Luna<T>
 {

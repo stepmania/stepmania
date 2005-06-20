@@ -3,7 +3,7 @@
 #include "RageUtil.h"
 #include "XmlFile.h"
 #include "ActorUtil.h"
-
+#include "LuaManager.h"
 REGISTER_ACTOR_CLASS( RollingNumbers )
 
 RollingNumbers::RollingNumbers()
@@ -58,6 +58,8 @@ void RollingNumbers::UpdateText()
 }
 
 // lua start
+#include "LuaBinding.h"
+
 template<class T>
 class LunaRollingNumbers : public Luna<T>
 {
