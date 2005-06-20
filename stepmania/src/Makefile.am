@@ -311,6 +311,7 @@ AnnouncerManager.cpp AnnouncerManager.h Bookkeeper.cpp Bookkeeper.h CryptManager
 FontManager.cpp FontManager.h GameSoundManager.cpp GameSoundManager.h GameManager.cpp GameManager.h \
 GameState.cpp GameState.h InputFilter.cpp InputFilter.h \
 InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h \
+LuaBinding.cpp LuaBinding.h \
 LuaManager.cpp LuaManager.h LightsManager.cpp LightsManager.h \
 MemoryCardManager.cpp MemoryCardManager.h \
 MessageManager.cpp MessageManager.h NetworkSyncManager.cpp NetworkSyncManager.h \
