@@ -157,11 +157,8 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 	}
 }
 
-bool LoadFromBGChangesString( BackgroundChange &change, const CString &_sBGChangeExpression )
+bool LoadFromBGChangesString( BackgroundChange &change, const CString &sBGChangeExpression )
 {
-	CString sBGChangeExpression = _sBGChangeExpression;
-	sBGChangeExpression.Replace( '^', ',' );	// UGLY: unescape "," in colors
-
 	CStringArray aBGChangeValues;
 	split( sBGChangeExpression, "=", aBGChangeValues, false );
 
@@ -171,9 +168,11 @@ bool LoadFromBGChangesString( BackgroundChange &change, const CString &_sBGChang
 	{
 	case 11:
 		change.m_def.m_sColor2 = aBGChangeValues[10];
+		change.m_def.m_sColor2.Replace( '^', ',' );	// UGLY: unescape "," in colors
 		// fall through
 	case 10:
 		change.m_def.m_sColor1 = aBGChangeValues[9];
+		change.m_def.m_sColor1.Replace( '^', ',' );	// UGLY: unescape "," in colors
 		// fall through
 	case 9:
 		change.m_sTransition = aBGChangeValues[8];
