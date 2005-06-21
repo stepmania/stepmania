@@ -204,7 +204,7 @@ void LuaManager::ResetState()
 
 	if( L != NULL )
 	{
-		LuaReference::BeforeResetAll();
+		LuaReference::BeforeResetAll( L );
 
 		lua_close( L );
 	}
@@ -222,7 +222,7 @@ void LuaManager::ResetState()
 
 	RegisterTypes();
 
-	LuaReference::AfterResetAll();
+	LuaReference::AfterResetAll( L );
 
 	m_pLock->Unlock();
 }

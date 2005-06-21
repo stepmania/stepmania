@@ -108,7 +108,7 @@ void LuaReference::Unregister()
 	m_iReference = LUA_NOREF;
 }
 
-void LuaReference::BeforeResetAll()
+void LuaReference::BeforeResetAll( Lua *L )
 {
 	if( SubscriptionManager<LuaReference>::s_pSubscribers == NULL )
 		return;
@@ -116,7 +116,7 @@ void LuaReference::BeforeResetAll()
 		(*p)->BeforeReset();
 }
 
-void LuaReference::AfterResetAll()
+void LuaReference::AfterResetAll( Lua *L )
 {
 	if( SubscriptionManager<LuaReference>::s_pSubscribers == NULL )
 		return;
