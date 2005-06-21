@@ -328,7 +328,7 @@ static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption 
 
 static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const int mapping[] = { 1,2,3,4,5,6,7,8 };
+	const int mapping[] = { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 };
 	MoveMap( sel, PREFSMAN->m_iCoinsPerCredit, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
@@ -580,7 +580,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ProgressiveNonstopLifebar",	ProgressiveNonstopLifebar,"OFF","1","2","3","4","5","6","7","8","INSANITY") );
 	ADD( ConfOption( "DefaultFailType",				DefaultFailType,	"IMMEDIATE","END OF SONG","OFF" ) );	
 	ADD( ConfOption( "DefaultFailTypeNoOff",		DefaultFailType,	"IMMEDIATE","END OF SONG" ) );	
-	ADD( ConfOption( "CoinsPerCredit",				CoinsPerCredit,		"1","2","3","4","5","6","7","8" ) );
+	ADD( ConfOption( "CoinsPerCredit",				CoinsPerCredit,		"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16" ) );
 	ADD( ConfOption( "Premium",						PremiumM,			"OFF","DOUBLE FOR 1 CREDIT","JOINT PREMIUM" ) );
 	ADD( ConfOption( "ShowSongOptions",				ShowSongOptions,	"HIDE","SHOW","ASK" ) );
 	ADD( ConfOption( "ShowNameEntry",				ShowNameEntry,		"OFF", "ON", "RANKING SONGS" ) );
