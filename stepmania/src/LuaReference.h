@@ -32,8 +32,8 @@ public:
 	/* Return the referenced type, or LUA_TNONE if not set. */
 	int GetLuaType() const;
 
-	static void BeforeResetAll( Lua *L );	// call this before resetting Lua
-	static void AfterResetAll( Lua *L );	// call this after resetting Lua
+	static void BeforeResetAll();	// call this before resetting Lua
+	static void AfterResetAll();	// call this after resetting Lua
 
 protected:
 	/* If this object needs to store state to recreate itself, overload this. */
