@@ -701,6 +701,8 @@
 		AA8BD2C407C939F800EA04E1 /* ScoreDisplayCalories.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8BD2BD07C939F800EA04E1 /* ScoreDisplayCalories.cpp */; };
 		AA8BD2C507C939F800EA04E1 /* ScoreDisplayCalories.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8BD2BE07C939F800EA04E1 /* ScoreDisplayCalories.h */; };
 		AA8BD2C707C93A1E00EA04E1 /* CommonMetrics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8BD2C607C93A1E00EA04E1 /* CommonMetrics.cpp */; };
+		AA8EE0740866E226002C51A7 /* vecLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA245ACE07437CE500A27459 /* vecLib.framework */; };
+		AA8EE0760866E266002C51A7 /* LuaBinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8EE0750866E266002C51A7 /* LuaBinding.cpp */; };
 		AA8F13710624BAB200C6A467 /* EnumHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8F136F0624BAB200C6A467 /* EnumHelper.h */; };
 		AA9091A1067ED43000C1FCFF /* RageSurface_Load_BMP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA90919F067ED43000C1FCFF /* RageSurface_Load_BMP.cpp */; };
 		AA9091A2067ED43000C1FCFF /* RageSurface_Load_BMP.h in Headers */ = {isa = PBXBuildFile; fileRef = AA9091A0067ED43000C1FCFF /* RageSurface_Load_BMP.h */; };
@@ -1548,6 +1550,7 @@
 		AA8BD2BE07C939F800EA04E1 /* ScoreDisplayCalories.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScoreDisplayCalories.h; path = ../src/ScoreDisplayCalories.h; sourceTree = "<group>"; };
 		AA8BD2C607C93A1E00EA04E1 /* CommonMetrics.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CommonMetrics.cpp; sourceTree = "<group>"; };
 		AA8DD84904A2E51400D02EE9 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
+		AA8EE0750866E266002C51A7 /* LuaBinding.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LuaBinding.cpp; path = ../src/LuaBinding.cpp; sourceTree = "<group>"; };
 		AA8F118204A04F9B00D02EE9 /* DifficultyDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = DifficultyDisplay.cpp; path = ../src/DifficultyDisplay.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA8F118304A04F9B00D02EE9 /* DifficultyDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = DifficultyDisplay.h; path = ../src/DifficultyDisplay.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA8F136E0624BAB200C6A467 /* EnumHelper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = EnumHelper.cpp; path = ../src/EnumHelper.cpp; sourceTree = "<group>"; usesTabs = 1; };
@@ -1857,6 +1860,7 @@
 				AA230EB006043704002672F3 /* AudioToolbox.framework in Frameworks */,
 				AA230EB106043704002672F3 /* AudioUnit.framework in Frameworks */,
 				AAA8E0030696984300FCE1F9 /* CoreAudio.framework in Frameworks */,
+				AA8EE0740866E226002C51A7 /* vecLib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2194,15 +2198,6 @@
 		AA6E00FE047711FF005F316C /* GlobalSingletons */ = {
 			isa = PBXGroup;
 			children = (
-				AA80C75207F20D0D00C99272 /* UnlockManager.cpp */,
-				AA80C75307F20D0D00C99272 /* UnlockManager.h */,
-				AA8BD2A107C9391B00EA04E1 /* LuaReference.cpp */,
-				AA8BD2A207C9391B00EA04E1 /* LuaReference.h */,
-				AA8BD2A307C9391B00EA04E1 /* MessageManager.cpp */,
-				AA8BD2A407C9391B00EA04E1 /* MessageManager.h */,
-				AA8BD2A507C9391B00EA04E1 /* StatsManager.cpp */,
-				AA8BD2A607C9391B00EA04E1 /* StatsManager.h */,
-				AA8BD2A707C9391B00EA04E1 /* SubscriptionManager.h */,
 				AA6E00FF0477128A005F316C /* AnnouncerManager.cpp */,
 				AA6E01000477128A005F316C /* AnnouncerManager.h */,
 				AADBE368053DA38C00D02EE9 /* Bookkeeper.cpp */,
@@ -2225,12 +2220,17 @@
 				AA6E010A0477128A005F316C /* InputQueue.h */,
 				AAC6DCE30567660A00B5D56F /* LightsManager.cpp */,
 				AAC6DCE40567660A00B5D56F /* LightsManager.h */,
+				AA8EE0750866E266002C51A7 /* LuaBinding.cpp */,
 				AAEBC78C07A4FF5600793F0E /* LuaBinding.h */,
 				AAEBC78D07A4FF5600793F0E /* LuaManager.cpp */,
 				AAEBC78E07A4FF5600793F0E /* LuaManager.h */,
+				AA8BD2A107C9391B00EA04E1 /* LuaReference.cpp */,
+				AA8BD2A207C9391B00EA04E1 /* LuaReference.h */,
 				AA28B47A058F2F5D0097C109 /* MemoryCardManager.cpp */,
 				AA28B47B058F2F5D0097C109 /* MemoryCardManager.h */,
 				AA1DCB6304A4872700D02EE9 /* MenuInput.h */,
+				AA8BD2A307C9391B00EA04E1 /* MessageManager.cpp */,
+				AA8BD2A407C9391B00EA04E1 /* MessageManager.h */,
 				AAF4206505D63FA700056441 /* ModelManager.cpp */,
 				AAF4206605D63FA700056441 /* ModelManager.h */,
 				AAE78049060814AC0034E65F /* NetworkSyncManager.cpp */,
@@ -2256,8 +2256,13 @@
 				AA6E0040047711F3005F316C /* ScreenManager.h */,
 				AA6E010F0477128A005F316C /* SongManager.cpp */,
 				AA6E01100477128A005F316C /* SongManager.h */,
+				AA8BD2A507C9391B00EA04E1 /* StatsManager.cpp */,
+				AA8BD2A607C9391B00EA04E1 /* StatsManager.h */,
+				AA8BD2A707C9391B00EA04E1 /* SubscriptionManager.h */,
 				AA6E01120477128A005F316C /* ThemeManager.cpp */,
 				AA6E01130477128A005F316C /* ThemeManager.h */,
+				AA80C75207F20D0D00C99272 /* UnlockManager.cpp */,
+				AA80C75307F20D0D00C99272 /* UnlockManager.h */,
 			);
 			name = GlobalSingletons;
 			sourceTree = "<group>";
@@ -4109,6 +4114,7 @@
 				AA07A5670843E72B00E33D21 /* ScreenSyncOverlay.cpp in Sources */,
 				AA7DA2F1085760E90057F1EA /* BackgroundUtil.cpp in Sources */,
 				AAB6B477085761B700CEE7BA /* ScreenSplash.cpp in Sources */,
+				AA8EE0760866E266002C51A7 /* LuaBinding.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4242,7 +4248,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = ../src/archutils/Darwin/StepMania.pch;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					PBBUILD,
 					"SM_PCH=TRUE",
@@ -4252,6 +4258,7 @@
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
 				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
@@ -4263,7 +4270,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_LABEL = NO;
+				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -4288,19 +4295,18 @@
 				OTHER_CFLAGS = "";
 				OTHER_CPLUSPLUSFLAGS = (
 					"-finline-limit=300",
-					"-Wno-switch",
-					"-Wno-missing-braces",
 					"-fconstant-cfstrings",
 					"-falign-loops=32",
 				);
 				OTHER_LDFLAGS = (
 					"-lz",
 					"-lstdc++",
+					"-bind_at_load",
 				);
 				PRODUCT_NAME = StepMania;
 				SECTORDER_FLAGS = "";
 				SYMROOT = "$(SRCROOT)/..";
-				WARNING_CFLAGS = "-Wmost";
+				WARNING_CFLAGS = "";
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
