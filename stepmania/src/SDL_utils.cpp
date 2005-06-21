@@ -92,7 +92,7 @@ CString mySDL_GetError()
 
 void mySDL_WM_SetIcon( CString sIconFile )
 {
-#if !defined(DARWIN)
+#if !defined(__MACOSX__)
 	if( sIconFile.empty() )
 	{
 		SDL_WM_SetIcon(NULL, NULL);

@@ -1318,7 +1318,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 
-#ifndef DARWIN
+#ifndef __MACOSX__
 	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F4))
 	{
 		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||

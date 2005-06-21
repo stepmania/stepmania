@@ -14,7 +14,7 @@ struct BacktraceContext
 	pid_t pid;
 #endif
 
-#if defined(DARWIN)
+#if defined(__MACOSX__)
 	void *FramePtr, *PC;
 #endif
 };

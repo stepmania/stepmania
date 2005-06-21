@@ -16,7 +16,7 @@
 #include "RageLog.h" /* for RageLog::GetAdditionalLog, etc. only */
 #include "ProductInfo.h"
 
-#if defined(DARWIN)
+#if defined(__MACOSX__)
 #include "archutils/Darwin/Crash.h"
 #endif
 
@@ -58,7 +58,7 @@ static void output_stack_trace( FILE *out, const void **BacktracePointers )
     }
 }
 
-#if !defined(DARWIN)
+#if !defined(__MACOSX__)
 const char *SignalCodeName( int signo, int code )
 {
 	switch( code )
@@ -289,7 +289,7 @@ static void child_process()
     {
 	CString Signal = SignalName( crash.signal );
 
-#if !defined(DARWIN)
+#if !defined(__MACOSX__)
 	reason = ssprintf( "%s - %s", Signal.c_str(), SignalCodeName(crash.signal, crash.si.si_code) );
 #else
 	reason = Signal;
@@ -340,7 +340,7 @@ static void child_process()
     fprintf(CrashDump, "-- End of report\n");
     fclose(CrashDump);
 
-#if defined(DARWIN)
+#if defined(__MACOSX__)
     /* Forcibly kill our parent. */
     kill( getppid(), SIGKILL );
     InformUserOfCrash( sCrashInfoPath );

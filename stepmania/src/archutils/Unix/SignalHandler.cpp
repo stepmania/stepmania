@@ -14,7 +14,7 @@
 #include <sys/mman.h>
 #include <cerrno>
 
-#if defined(DARWIN)
+#if defined(__MACOSX__)
 extern "C" int sigaltstack( const struct sigaltstack *ss, struct sigaltstack *oss );
 #define MAP_ANONYMOUS MAP_ANON
 #endif

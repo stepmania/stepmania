@@ -8,6 +8,7 @@ typedef unsigned long long UInt64;
 #define __TYPES__
 #include <libkern/OSByteOrder.h>
 #undef __TYPES__
+#if 0
 #define DARWIN 1
 #define NEED_POWF
 #define NEED_SQRTF
@@ -16,6 +17,7 @@ typedef unsigned long long UInt64;
 #define NEED_TANF
 #define NEED_ACOSF
 #define NEED_STRTOF
+#endif
 #define BACKTRACE_LOOKUP_METHOD_DARWIN_DYLD
 #define BACKTRACE_METHOD_POWERPC_DARWIN
 #define HAVE_VERSION_INFO

@@ -3,11 +3,11 @@
 
 // In here, you define which APIs are guaranteed to be available on which OSes.
 // Don't ever actually #include anything here -- that's for */Selector_*.h.
-#if defined(UNIX) && !defined(DARWIN)
+#if defined(UNIX) && !defined(__MACOSX__)
 #define HAVE_UNIX
 #endif
-#if defined(DARWIN)
-#define HAVE_DARWIN
+#if defined(__MACOSX__)
+#define HAVE_MACOSX
 #define HAVE_COCOA
 #define HAVE_COREAUDIO
 #define HAVE_SDL

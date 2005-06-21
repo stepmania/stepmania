@@ -11,7 +11,7 @@
 #include "archutils/Unix/RunningUnderValgrind.h"
 #endif
 
-#if defined(DARWIN)
+#if defined(__MACOSX__)
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 #endif
 
@@ -106,7 +106,7 @@ MutexImpl_Pthreads::~MutexImpl_Pthreads()
 }
 
 
-#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) || defined(DARWIN)
+#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) || defined(__MACOSX__)
 static bool UseTimedlock()
 {
 #if defined(LINUX)
@@ -337,7 +337,7 @@ void SemaImpl_Pthreads::Post()
 
 bool SemaImpl_Pthreads::Wait()
 {
-#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) || defined(DARWIN)
+#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) || defined(__MACOSX__)
 	if( UseTimedlock() )
 	{
 		timeval tv;

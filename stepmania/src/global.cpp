@@ -9,7 +9,7 @@
 #  include <unistd.h>
 #endif
 
-#if defined(CRASH_HANDLER) && (defined(LINUX) || defined(DARWIN))
+#if defined(CRASH_HANDLER) && (defined(LINUX) || defined(__MACOSX__))
 #include "archutils/Unix/CrashHandler.h"
 #endif
 
