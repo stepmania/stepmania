@@ -12,7 +12,7 @@ public:
 };
 #define USE_DIALOG_DRIVER_COCOA
     
-#endif /* ARCH_HOOKS_DARWIN_H */
+#endif
 
 /*
  * (c) 2003-2004 Steve Checkoway
