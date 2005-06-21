@@ -13,6 +13,10 @@
 #include "arch/Dialog/Dialog.h"
 #include <float.h>
 
+#if defined(DARWIN)
+# include <vecLib/vBLAS.h>
+#endif
+
 void RageVec3ClearBounds( RageVector3 &mins, RageVector3 &maxs )
 {
 	mins = RageVector3( FLT_MAX, FLT_MAX, FLT_MAX );
@@ -77,6 +81,11 @@ void RageVec3TransformNormal( RageVector3* pOut, const RageVector3* pV, const Ra
 
 void RageVec4TransformCoord( RageVector4* pOut, const RageVector4* pV, const RageMatrix* pM )
 {
+#if defined(DARWIN)
+	// (M^t * v)^t = v^t * M 
+	cblas_sgemv(CblasRowMajor, CblasTrans, 4, 4, 1, &pM->m00, 4, &pV->x, 1,
+				0, &pOut->x, 1);
+#else
     const RageMatrix &a = *pM;
     const RageVector4 &v = *pV;
 	*pOut = RageVector4(
@@ -84,6 +93,7 @@ void RageVec4TransformCoord( RageVector4* pOut, const RageVector4* pV, const Rag
 		a.m01*v.x+a.m11*v.y+a.m21*v.z+a.m31*v.w,
 		a.m02*v.x+a.m12*v.y+a.m22*v.z+a.m32*v.w,
 		a.m03*v.x+a.m13*v.y+a.m23*v.z+a.m33*v.w );
+#endif
 }
 
 RageMatrix::RageMatrix( float v00, float v01, float v02, float v03,
@@ -99,11 +109,14 @@ RageMatrix::RageMatrix( float v00, float v01, float v02, float v03,
 
 void RageMatrixIdentity( RageMatrix* pOut )
 {
-	*pOut = RageMatrix(
+	static float identity[16] = {1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1};
+	memcpy(&pOut->m00, identity, sizeof(identity));
+/*	*pOut = RageMatrix(
 		1,0,0,0,
 		0,1,0,0,
 		0,0,1,0,
 		0,0,0,1 );
+*/
 }
 
 RageMatrix RageMatrix::GetTranspose() const
@@ -113,6 +126,10 @@ RageMatrix RageMatrix::GetTranspose() const
 
 void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatrix* pB )
 {
+#if defined(DARWIN)
+	cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 4, 4, 4, 1,
+				&pB->m00, 4, &pA->m00, 4, 0, &pOut->m00, 4);
+#else
 //#if defined(_WINDOWS) || defined(_XBOX)
 //	// <30 cycles for theirs versus >100 for ours.
 //	D3DXMatrixMultiply( (D3DMATRIX*)pOut, (D3DMATRIX*)pA, (D3DMATRIX*)pB );
@@ -140,6 +157,7 @@ void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatri
 	);
 	// phew!
 //#endif
+#endif
 }
 
 void RageMatrixTranslation( RageMatrix* pOut, float x, float y, float z )
@@ -433,7 +451,9 @@ void RageQuatSlerp(RageVector4 *pOut, const RageVector4 &from, const RageVector4
 		to1[1] = - to.y;
 		to1[2] = - to.z;
 		to1[3] = - to.w;
-	} else  {
+	}
+	else
+	{
 		to1[0] = to.x;
 		to1[1] = to.y;
 		to1[2] = to.z;
@@ -449,7 +469,9 @@ void RageQuatSlerp(RageVector4 *pOut, const RageVector4 &from, const RageVector4
 		float sinom = RageFastSin(omega);
 		scale0 = RageFastSin((1.0f - t) * omega) / sinom;
 		scale1 = RageFastSin(t * omega) / sinom;
-	} else {        
+	}
+	else
+	{        
 		// "from" and "to" quaternions are very close 
 		//  ... so we can do a linear interpolation
 		scale0 = 1.0f - t;
