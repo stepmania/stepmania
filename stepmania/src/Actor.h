@@ -330,9 +330,13 @@ public:
 	void SetCullModeString( const CString &s );	// convenience
 
 	//
-	// Commands
+	// Lua
 	//
 	virtual void PushSelf( lua_State *L );
+
+	//
+	// Commands
+	//
 	void AddCommand( const CString &sCmdName, apActorCommands apac );
 	bool HasCommand( const CString &sCmdName );
 	const apActorCommands& GetCommand( const CString &sCommandName ) const;

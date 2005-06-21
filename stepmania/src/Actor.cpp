@@ -79,13 +79,6 @@ void Actor::Reset()
 	UnsubcribeAndClearCommands();
 }
 
-Actor::Actor()
-{
-	m_size = RageVector2( 1, 1 );
-	Reset();
-	m_bFirstUpdate = true;
-}
-
 static bool GetMessageNameFromCommandName( const CString &sCommandName, CString &sMessageNameOut )
 {
 	if( sCommandName.Right(7) == "Message" )
@@ -104,6 +97,13 @@ void Actor::UnsubcribeAndClearCommands()
 	FOREACH_CONST( CString, m_vsSubscribedTo, s )
 		MESSAGEMAN->Unsubscribe( this, *s );
 	m_vsSubscribedTo.clear();
+}
+
+Actor::Actor()
+{
+	m_size = RageVector2( 1, 1 );
+	Reset();
+	m_bFirstUpdate = true;
 }
 
 Actor::~Actor()
