@@ -848,7 +848,7 @@ public:
 	}
 };
 
-LUA_REGISTER_CLASS( Model )
+LUA_REGISTER_DERIVED_CLASS( Model, Actor )
 // lua end
 
 /*
