@@ -41,12 +41,14 @@ uint64_t ThreadImpl_Pthreads::GetThreadId() const
 
 int ThreadImpl_Pthreads::Wait()
 {
-	void *val;
-	int ret = pthread_join( thread, &val );
+	int *val;
+	int ret = pthread_join( thread, (void **) &val );
 	if( ret )
 		RageException::Throw( "pthread_join: %s", strerror(errno) );
 
-	return (int) val;
+	int iRet = *val;
+	delete val;
+	return iRet;
 }
 
 ThreadImpl *MakeThisThread()
@@ -69,7 +71,9 @@ static void *StartThread( void *pData )
 	/* Tell MakeThread that we've set m_piThreadID, so it's safe to return. */
 	pThis->m_StartFinishedSem->Post();
 
-	return (void *) pThis->m_pFunc( pThis->m_pData );
+	int iRet = pThis->m_pFunc( pThis->m_pData );
+	
+	return new int(iRet);
 }
 
 ThreadImpl *MakeThread( int (*pFunc)(void *pData), void *pData, uint64_t *piThreadID )
