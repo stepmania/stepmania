@@ -82,7 +82,7 @@ public:
 			lua_settable( L, methods_metatable );
 		}
 
-		lua_pushliteral( L, "__type" );
+		lua_pushliteral( L, "type" );
 		lua_pushstring( L, m_sClassName );
 		lua_settable( L, methods_metatable );
 

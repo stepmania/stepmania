@@ -36,7 +36,7 @@ bool CheckLuaObjectType( lua_State *L, int narg, const char *szType )
 		int iMetatable = lua_gettop(L);
 
 		/* Look up the type name. */
-		lua_pushstring( L, "__type" );
+		lua_pushstring( L, "type" );
 		lua_rawget( L, iMetatable );
 		const char *szActualType = lua_tostring( L, -1 );
 
