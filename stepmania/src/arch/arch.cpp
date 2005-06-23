@@ -79,11 +79,10 @@ void MakeLightsDrivers(CString driver, vector<LightsDriver *> &Add)
 #ifdef USE_LIGHTS_DRIVER_WIN32_PARALLEL
 	if( !driver.CompareNoCase("Parallel") )			ret = new LightsDriver_Win32Parallel;
 #endif
-	if (!driver.CompareNoCase("Null") )				ret = new LightsDriver_Null;
 
-	if( ret == NULL )
+	if( ret == NULL && driver.CompareNoCase("Null") )
 		LOG->Warn( "Unknown lights driver name: %s", driver.c_str() );
-	else
+	else if( ret != NULL )
 		Add.push_back( ret );
 
 	Add.push_back( new LightsDriver_SystemMessage );
