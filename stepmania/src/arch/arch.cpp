@@ -74,11 +74,12 @@ void MakeLightsDrivers(CString driver, vector<LightsDriver *> &Add)
 	if( !driver.CompareNoCase("LinuxParallel") )	ret = new LightsDriver_LinuxParallel;
 #endif
 #ifdef USE_LIGHTS_DRIVER_LINUX_WEEDTECH
-	if( !driver.CompareNoCase("WeedTech") )		ret = new LightsDriver_LinuxWeedTech;
+	if( !driver.CompareNoCase("WeedTech") )			ret = new LightsDriver_LinuxWeedTech;
 #endif
 #ifdef USE_LIGHTS_DRIVER_WIN32_PARALLEL
-	if( !driver.CompareNoCase("Parallel") )		ret = new LightsDriver_Win32Parallel;
+	if( !driver.CompareNoCase("Parallel") )			ret = new LightsDriver_Win32Parallel;
 #endif
+	if (!driver.CompareNoCase("Null") )				ret = new LightsDriver_Null;
 
 	if( ret == NULL )
 		LOG->Warn( "Unknown lights driver name: %s", driver.c_str() );
