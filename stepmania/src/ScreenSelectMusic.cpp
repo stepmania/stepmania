@@ -344,6 +344,7 @@ void ScreenSelectMusic::Init()
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
 	m_bAllowOptionsMenu = m_bAllowOptionsMenuRepeat = false;
+	ZERO( m_iSelection );
 
 	UpdateOptionsDisplays();
 
