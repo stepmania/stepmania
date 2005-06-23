@@ -34,6 +34,7 @@ public:
 
 protected:
 	enum Page { PAGE_1, PAGE_2, NUM_PAGES };	// on PAGE_2, cursors are locked together
+	static PlayerNumber GetSharedPlayer();
 	Page GetPage( int iChoiceIndex ) const;
 	Page GetCurrentPage() const;
 

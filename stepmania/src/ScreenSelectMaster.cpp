@@ -495,7 +495,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 
 	if( SHARED_PREVIEW_AND_CURSOR )
 	{
-		int iChoice = m_iChoice[GAMESTATE->m_MasterPlayerNumber];
+		int iChoice = m_iChoice[GetSharedPlayer()];
 		for( int i=0; i<NUM_PREVIEW_PARTS; i++ )
 			COMMAND( m_sprPreview[i][iChoice][0], "PreSwitchPage" );
 	}
@@ -636,6 +636,14 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 	return true;
 }
 
+PlayerNumber ScreenSelectMaster::GetSharedPlayer()
+{
+	if( GAMESTATE->m_MasterPlayerNumber != PLAYER_INVALID )
+		return GAMESTATE->m_MasterPlayerNumber;
+
+	return PLAYER_1;
+}
+
 ScreenSelectMaster::Page ScreenSelectMaster::GetPage( int iChoiceIndex ) const
 {
 	return iChoiceIndex < NUM_CHOICES_ON_PAGE_1? PAGE_1:PAGE_2;
@@ -644,7 +652,7 @@ ScreenSelectMaster::Page ScreenSelectMaster::GetPage( int iChoiceIndex ) const
 ScreenSelectMaster::Page ScreenSelectMaster::GetCurrentPage() const
 {
 	// Both players are guaranteed to be on the same page.
-	return GetPage( m_iChoice[GAMESTATE->m_MasterPlayerNumber] );
+	return GetPage( m_iChoice[GetSharedPlayer()] );
 }
 
 
