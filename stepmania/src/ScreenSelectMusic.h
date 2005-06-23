@@ -12,7 +12,6 @@
 #include "FadingBanner.h"
 #include "BPMDisplay.h"
 #include "GrooveRadar.h"
-#include "GrooveGraph.h"
 #include "DifficultyIcon.h"
 #include "DifficultyMeter.h"
 #include "OptionIconRow.h"
@@ -79,7 +78,6 @@ protected:
 	ThemeMetric<apActorCommands> SONG_OPTIONS_EXTRA_COMMAND;
 	ThemeMetric<float> SAMPLE_MUSIC_DELAY;
 	ThemeMetric<bool> SHOW_RADAR;
-	ThemeMetric<bool> SHOW_GRAPH;
 	ThemeMetric<bool> SHOW_PANES;
 	ThemeMetric<bool> SHOW_DIFFICULTY_LIST;
 	ThemeMetric<bool> SHOW_COURSE_CONTENTS;
@@ -108,7 +106,6 @@ protected:
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 	Sprite				m_AutoGenIcon[NUM_PLAYERS];
     GrooveRadar			m_GrooveRadar;
-    GrooveGraph			m_GrooveGraph;
 	BitmapText			m_textSongOptions;
 	BitmapText			m_textNumSongs;
 	BitmapText			m_textTotalTime;

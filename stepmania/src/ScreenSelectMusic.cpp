@@ -64,7 +64,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	SONG_OPTIONS_EXTRA_COMMAND( m_sName, "SongOptionsExtraCommand" ),
 	SAMPLE_MUSIC_DELAY( m_sName, "SampleMusicDelay" ),
 	SHOW_RADAR( m_sName, "ShowRadar" ),
-	SHOW_GRAPH( m_sName, "ShowGraph" ),
 	SHOW_PANES( m_sName, "ShowPanes" ),
 	SHOW_DIFFICULTY_LIST( m_sName, "ShowDifficultyList" ),
 	SHOW_COURSE_CONTENTS( m_sName, "ShowCourseContents" ),
@@ -196,11 +195,6 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_GrooveRadar );
 	if( SHOW_RADAR )
 		this->AddChild( &m_GrooveRadar );
-
-	m_GrooveGraph.SetName( "Graph" );
-	SET_XY( m_GrooveGraph );
-	if( SHOW_GRAPH )
-		this->AddChild( &m_GrooveGraph );
 
 	m_textSongOptions.SetName( "SongOptions" );
 	m_textSongOptions.LoadFromFont( THEME->GetPathF("Common","normal") );
@@ -378,9 +372,7 @@ void ScreenSelectMusic::DrawPrimitives()
 void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 {
 	m_GrooveRadar.StopTweening();
-	m_GrooveGraph.StopTweening();
 	m_GrooveRadar.TweenOnScreen();
-	m_GrooveGraph.TweenOnScreen();
 	if( SHOW_DIFFICULTY_LIST )
 	{
 		if( Initial )
@@ -406,7 +398,6 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 void ScreenSelectMusic::TweenSongPartsOffScreen( bool Final )
 {
 	m_GrooveRadar.TweenOffScreen();
-	m_GrooveGraph.TweenOffScreen();
 	if( SHOW_DIFFICULTY_LIST )
 	{
 		if( Final )
@@ -460,7 +451,6 @@ void ScreenSelectMusic::TweenCoursePartsOffScreen( bool Final )
 void ScreenSelectMusic::SkipSongPartTweens()
 {
 	m_GrooveRadar.FinishTweening();
-	m_GrooveGraph.FinishTweening();
 	if( SHOW_DIFFICULTY_LIST )
 		m_DifficultyList.FinishTweening();
 
@@ -507,7 +497,6 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_sprCDTitleFront );
 	ON_COMMAND( m_sprCDTitleBack );
 	ON_COMMAND( m_GrooveRadar );
-	ON_COMMAND( m_GrooveGraph );
 	ON_COMMAND( m_textSongOptions );
 	ON_COMMAND( m_textNumSongs );
 	ON_COMMAND( m_textTotalTime );
@@ -561,7 +550,6 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_sprCDTitleFront );
 	OFF_COMMAND( m_sprCDTitleBack );
 	OFF_COMMAND( m_GrooveRadar );
-	OFF_COMMAND( m_GrooveGraph );
 	OFF_COMMAND( m_textSongOptions );
 	OFF_COMMAND( m_textNumSongs );
 	OFF_COMMAND( m_textTotalTime );
@@ -1536,8 +1524,6 @@ void ScreenSelectMusic::AfterMusicChange()
 	GAMESTATE->m_pCurSong.Set( pSong );
 	if( pSong )
 		GAMESTATE->m_pPreferredSong = pSong;
-
-	m_GrooveGraph.SetFromSong( pSong );
 
 	Course* pCourse = m_MusicWheel.GetSelectedCourse();
 	GAMESTATE->m_pCurCourse.Set( pCourse );
