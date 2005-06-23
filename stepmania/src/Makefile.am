@@ -228,7 +228,7 @@ DifficultyDisplay.cpp DifficultyDisplay.h DifficultyList.cpp DifficultyList.h \
 DifficultyMeter.cpp DifficultyMeter.h DifficultyRating.cpp DifficultyRating.h \
 DualScrollBar.cpp DualScrollBar.h \
 EditCoursesMenu.cpp EditCoursesMenu.h EditMenu.cpp EditMenu.h FadingBanner.cpp FadingBanner.h \
-GradeDisplay.cpp GradeDisplay.h GraphDisplay.cpp GraphDisplay.h GrooveGraph.cpp GrooveGraph.h \
+GradeDisplay.cpp GradeDisplay.h GraphDisplay.cpp GraphDisplay.h \
 GrooveRadar.cpp GrooveRadar.h GroupList.cpp GroupList.h HelpDisplay.cpp HelpDisplay.h \
 MemoryCardDisplay.cpp MemoryCardDisplay.h \
 MenuTimer.cpp MenuTimer.h ModeSwitcher.cpp ModeSwitcher.h MusicBannerWheel.cpp MusicBannerWheel.h \

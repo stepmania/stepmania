@@ -1594,12 +1594,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="GraphDisplay.h">
 			</File>
 			<File
-				RelativePath="GrooveGraph.cpp">
-			</File>
-			<File
-				RelativePath="GrooveGraph.h">
-			</File>
-			<File
 				RelativePath="GrooveRadar.cpp">
 			</File>
 			<File
