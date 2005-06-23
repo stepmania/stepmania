@@ -289,6 +289,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenCredits.h">
 			</File>
 			<File
+				RelativePath=".\ScreenDebugOverlay.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenDebugOverlay.h">
+			</File>
+			<File
 				RelativePath="ScreenDemonstration.cpp">
 			</File>
 			<File
@@ -592,10 +598,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenStage.h">
 			</File>
 			<File
-				RelativePath="ScreenStyleSplash.cpp">
+				RelativePath=".\ScreenSyncOverlay.cpp">
 			</File>
 			<File
-				RelativePath="ScreenStyleSplash.h">
+				RelativePath=".\ScreenSyncOverlay.h">
 			</File>
 			<File
 				RelativePath="ScreenSystemLayer.cpp">
@@ -807,6 +813,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="Inventory.h">
+			</File>
+			<File
+				RelativePath=".\LuaBinding.cpp">
 			</File>
 			<File
 				RelativePath="LuaBinding.h">
@@ -1228,6 +1237,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 						RelativePath="arch\InputHandler\InputHandler_MonkeyKeyboard.h">
 					</File>
 					<File
+						RelativePath="arch\InputHandler\InputHandler_Win32_MIDI.cpp">
+					</File>
+					<File
+						RelativePath="arch\InputHandler\InputHandler_Win32_MIDI.h">
+					</File>
+					<File
 						RelativePath="arch\InputHandler\InputHandler_Win32_Para.cpp">
 					</File>
 					<File
@@ -1238,12 +1253,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					</File>
 					<File
 						RelativePath="arch\InputHandler\InputHandler_Win32_Pump.h">
-					</File>
-					<File
-						RelativePath="arch\InputHandler\InputHandler_Win32_MIDI.cpp">
-					</File>
-					<File
-						RelativePath="arch\InputHandler\InputHandler_Win32_MIDI.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1475,12 +1484,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="BGAnimationLayer.h">
 			</File>
 			<File
-				RelativePath="ConditionalBGA.cpp">
-			</File>
-			<File
-				RelativePath="ConditionalBGA.h">
-			</File>
-			<File
 				RelativePath="DifficultyIcon.cpp">
 			</File>
 			<File
@@ -1597,12 +1600,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="GraphDisplay.h">
-			</File>
-			<File
-				RelativePath="GrooveGraph.cpp">
-			</File>
-			<File
-				RelativePath="GrooveGraph.h">
 			</File>
 			<File
 				RelativePath="GrooveRadar.cpp">
@@ -1777,16 +1774,16 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\Background.h">
 			</File>
 			<File
+				RelativePath=".\BackgroundUtil.cpp">
+			</File>
+			<File
+				RelativePath=".\BackgroundUtil.h">
+			</File>
+			<File
 				RelativePath="BeginnerHelper.cpp">
 			</File>
 			<File
 				RelativePath="BeginnerHelper.h">
-			</File>
-			<File
-				RelativePath="CharacterHead.cpp">
-			</File>
-			<File
-				RelativePath="CharacterHead.h">
 			</File>
 			<File
 				RelativePath="CombinedLifeMeter.h">
