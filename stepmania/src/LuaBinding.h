@@ -92,7 +92,7 @@ public:
 		lua_pop( L, 2 );  // drop metatable and method table
 	}
 
-	// get userdata from Lua stack and return pointer to T object
+	// Get userdata from the Lua stack and return a pointer to T object.
 	static T *check( lua_State *L, int narg, bool bIsSelf = false )
 	{
 		if( !CheckLuaObjectType(L, narg, m_sClassName) )
@@ -103,7 +103,7 @@ public:
 				LuaHelpers::TypeError( L, narg, m_sClassName );
 		}
 
-		userdataType *pUserdata = static_cast<userdataType*>( lua_touserdata(L, narg) );
+		userdataType *pUserdata = (userdataType *) lua_touserdata( L, narg );
 		return pUserdata->pT;  // pointer to T object
 	}
 	
