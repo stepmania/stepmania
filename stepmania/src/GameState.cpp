@@ -79,6 +79,7 @@ GameState::GameState() :
 	m_pCurGame = NULL;
 	m_iCoins = 0;
 	m_timeGameStarted.SetZero();
+	m_bDemonstrationOrJukebox = false;
 
 	ReloadCharacters();
 
