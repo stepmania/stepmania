@@ -11,10 +11,6 @@
 # include <GL/gl.h>
 # include <GL/glu.h>
 #else
-/* XXX: Instead, try creating a directory "archutils/Darwin/include/GL", containing "gl.h" and
- * "glu.h", which each contain a single line "#include <OpenGL/gl.h>".  Then, add
- * "archutils/Darwin/include" to your -I paths, so the above <GL/gl.h> includes will work
- * without changes. */
 # include <OpenGL/gl.h>
 # include <OpenGL/glu.h>
 #endif
