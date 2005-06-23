@@ -283,6 +283,9 @@ template<> inline word32 rotrMod<word32>(word32 x, unsigned int y)
 #endif // #ifdef INTEL_INTRINSICS
 
 #ifdef PPC_INTRINSICS
+#if !defined(__MWERKS__)
+# include <ppc_intrinsics.h>
+#endif
 
 template<> inline word32 rotlFixed<word32>(word32 x, unsigned int y)
 {

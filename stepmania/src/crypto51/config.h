@@ -170,7 +170,7 @@ union dword_union
 #if defined(_MSC_VER) || defined(__BCPLUSPLUS__)
 #	define INTEL_INTRINSICS
 #	define FAST_ROTATE
-#elif defined(__MWERKS__) && TARGET_CPU_PPC
+#elif defined(__ppc__) || defined(__ppc64__) || defined(__MWERKS__) && TARGET_CPU_PPC
 #	define PPC_INTRINSICS
 #	define FAST_ROTATE
 #elif defined(__GNUC__) && defined(__i386__)
