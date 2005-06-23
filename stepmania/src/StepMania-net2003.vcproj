@@ -283,6 +283,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenCenterImage.h">
 			</File>
 			<File
+				RelativePath=".\ScreenCourseManager.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenCourseManager.h">
+			</File>
+			<File
 				RelativePath="ScreenCredits.cpp">
 			</File>
 			<File

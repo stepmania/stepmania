@@ -86,6 +86,7 @@ public:
 
 	void GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen );
 	void GetCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen );
+	void GetCoursesInGroup( vector<Course*> &AddTo, const CString &sCourseGroup, bool bIncludeAutogen );
 
 	void GetExtraStageInfo( bool bExtra2, const Style *s, 
 		Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out );
@@ -125,7 +126,7 @@ protected:
 	vector<Course*>		m_pBestCourses[NUM_PROFILE_SLOTS][NUM_COURSE_TYPES];
 	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
 	CStringArray		m_sCourseGroupNames;
-	CStringArray		m_sCourseGroupBannerPaths; // each song group may have a banner associated with it
+	CStringArray		m_sCourseGroupBannerPaths; // each course group may have a banner associated with it
 
 
 	ThemeMetric<int>			NUM_SONG_GROUP_COLORS;

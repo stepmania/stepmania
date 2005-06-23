@@ -886,6 +886,14 @@ void SongManager::GetCourses( CourseType ct, vector<Course*> &AddTo, bool bInclu
 				AddTo.push_back( m_pCourses[i] );
 }
 
+void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const CString &sCourseGroup, bool bIncludeAutogen )
+{
+	for( unsigned i=0; i<m_pCourses.size(); i++ )
+		if( m_pCourses[i]->m_sGroupName == sCourseGroup )
+			if( bIncludeAutogen || !m_pCourses[i]->m_bIsAutogen )
+				AddTo.push_back( m_pCourses[i] );
+}
+
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
 								   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out )
 {
