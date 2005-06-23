@@ -27,10 +27,15 @@ ScreenEditCoursesMenu::ScreenEditCoursesMenu( CString sName ) : ScreenWithMenuEl
 	FOREACH_PlayerNumber( pn )
 		GAMESTATE->m_bSideIsJoined[pn] = true;
 
+}
+
+void ScreenEditCoursesMenu::Init()
+{
+	ScreenWithMenuElements::Init();
+
 	m_Selector.SetXY( 0, 0 );
 //	m_Selector.AllowNewNotes();
 	this->AddChild( &m_Selector );
-
 	
 	m_textExplanation.SetName( "Explanation" );
 	m_textExplanation.LoadFromFont( THEME->GetPathF("Common","normal") );
@@ -39,8 +44,6 @@ ScreenEditCoursesMenu::ScreenEditCoursesMenu( CString sName ) : ScreenWithMenuEl
 	this->AddChild( &m_textExplanation );
 
 	this->SortByDrawOrder();
-
-	SOUND->PlayMusic( THEME->GetPathS("ScreenEditCoursesMenu","music") );
 }
 
 void ScreenEditCoursesMenu::HandleScreenMessage( const ScreenMessage SM )
