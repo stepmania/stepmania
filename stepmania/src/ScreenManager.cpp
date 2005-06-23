@@ -56,13 +56,6 @@ ScreenManager::ScreenManager()
 	m_pSharedBGA = new Actor;
 
 	m_bZeroNextUpdate = false;
-
-	/* By the time this is constructed, THEME has already been set up and set to
-	 * the current theme.  Call ThemeChanged(), to handle the starting theme
-	 * and set up m_SystemLayer. */
-	ASSERT( THEME );
-	ASSERT( !THEME->GetCurThemeName().empty() );
-	this->ThemeChanged();
 }
 
 

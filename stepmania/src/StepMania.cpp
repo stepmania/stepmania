@@ -1149,6 +1149,10 @@ int main(int argc, char* argv[])
 		HOOKS->BoostPriority();
 
 	ResetGame();
+
+	/* Now that GAMESTATE is reset, tell SCREENMAN to update the theme (load
+	 * overlay screens and global sounds), and load the initial screen. */
+	SCREENMAN->ThemeChanged();
 	SCREENMAN->SetNewScreen( INITIAL_SCREEN );
 
 	CodeDetector::RefreshCacheItems();
