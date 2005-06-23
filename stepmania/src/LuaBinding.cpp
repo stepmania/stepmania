@@ -19,7 +19,7 @@ void CreateMethodsTable( lua_State *L, const CString &szName )
  * Get a userdata, and check that it's either szType or a type
  * derived from szType, by walking the __index chain.
  */
-bool CheckType( lua_State *L, int narg, const char *szType )
+bool CheckLuaObjectType( lua_State *L, int narg, const char *szType )
 {
 	int iTop = lua_gettop(L);
 	lua_pushvalue( L, narg );

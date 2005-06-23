@@ -6,7 +6,7 @@
 #include "LuaManager.h"
 
 void CreateMethodsTable( lua_State *L, const CString &szName );
-bool CheckType( lua_State *L, int narg, const char *szType );
+bool CheckLuaObjectType( lua_State *L, int narg, const char *szType );
 
 template <typename Type>
 class Luna 
@@ -95,7 +95,7 @@ public:
 	// get userdata from Lua stack and return pointer to T object
 	static T *check( lua_State *L, int narg, bool bIsSelf = false )
 	{
-		if( !CheckType(L, narg, m_sClassName) )
+		if( !CheckLuaObjectType(L, narg, m_sClassName) )
 		{
 			if( bIsSelf )
 				luaL_typerror( L, narg, m_sClassName );
