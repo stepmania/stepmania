@@ -378,8 +378,8 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 
 	// Set Lua color globals
-	LUA->SetGlobal( ssprintf("Color%d",1), bd.m_sColor1.empty() ? "1,1,1,1" : bd.m_sColor1 );
-	LUA->SetGlobal( ssprintf("Color%d",2), bd.m_sColor2.empty() ? "1,1,1,1" : bd.m_sColor2 );
+	LUA->SetGlobal( ssprintf("Color%d",1), bd.m_sColor1.empty() ? CString("1,1,1,1") : bd.m_sColor1 );
+	LUA->SetGlobal( ssprintf("Color%d",2), bd.m_sColor2.empty() ? CString("1,1,1,1") : bd.m_sColor2 );
 
 
 	// Resolve the effect file.
@@ -801,8 +801,8 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		m_pCurrentBGA->SetUpdateRate( change.m_fRate );
 
 		// Set Lua color globals before calling Init and On
-		LUA->SetGlobal( ssprintf("Color%d",1), change.m_def.m_sColor1.empty() ? "1,1,1,1" : change.m_def.m_sColor1 );
-		LUA->SetGlobal( ssprintf("Color%d",2), change.m_def.m_sColor2.empty() ? "1,1,1,1" : change.m_def.m_sColor2 );
+		LUA->SetGlobal( ssprintf("Color%d",1), change.m_def.m_sColor1.empty() ? CString("1,1,1,1") : change.m_def.m_sColor1 );
+		LUA->SetGlobal( ssprintf("Color%d",2), change.m_def.m_sColor2.empty() ? CString("1,1,1,1") : change.m_def.m_sColor2 );
 		
 		m_pCurrentBGA->PlayCommand( "Init" );
 		m_pCurrentBGA->PlayCommand( "On" );
