@@ -135,15 +135,15 @@ private:
 		T *obj = check( L, 1, true );  // get self
 		lua_remove(L, 1);  // remove self so member function args start at index 1
 		// get member function from upvalue
-		RegType *l = static_cast<RegType*>(lua_touserdata(L, lua_upvalueindex(1)));
+		RegType *l = (RegType *) lua_touserdata( L, lua_upvalueindex(1) );
 		return (*(l->mfunc))(obj,L);  // call member function
 	}
 	
 	/* Two objects are equal if the underlying object is the same. */
 	static int equal( lua_State *L )
 	{
-		userdataType *obj1 = static_cast<userdataType*>( lua_touserdata(L, 1) );
-		userdataType *obj2 = static_cast<userdataType*>( lua_touserdata(L, 2) );
+		userdataType *obj1 = (userdataType *) lua_touserdata( L, 1 );
+		userdataType *obj2 = (userdataType *) lua_touserdata( L, 2 );
 		lua_pushboolean( L, obj1->pT == obj2->pT );
 		return 1;
 	}
