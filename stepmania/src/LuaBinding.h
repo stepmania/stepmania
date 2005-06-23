@@ -20,8 +20,6 @@ protected:
 		int (*mfunc)(T *p, lua_State *L);
 	};
 
-	typedef struct { T *pT; } userdataType;
-
 public:
 	static void Register( Lua *L )
 	{
@@ -103,15 +101,15 @@ public:
 				LuaHelpers::TypeError( L, narg, m_sClassName );
 		}
 
-		userdataType *pUserdata = (userdataType *) lua_touserdata( L, narg );
-		return pUserdata->pT;  // pointer to T object
+		void **pData = (void **) lua_touserdata( L, narg );
+		return (T *) *pData;
 	}
 	
 	// push a userdata containing a pointer to T object
 	static int Push( Lua *L, T* p )
 	{
-		userdataType *ud = static_cast<userdataType*>( lua_newuserdata(L, sizeof(userdataType)) );
-		ud->pT = p;  // store pointer to object in userdata
+		void **pData = (void **) lua_newuserdata( L, sizeof(void *) );
+		*pData = p;  // store pointer to object in userdata
 		luaL_getmetatable( L, m_sClassName );  // lookup metatable in Lua registry
 		lua_setmetatable( L, -2 );
 		return 1;  // userdata containing pointer to T object
@@ -142,9 +140,9 @@ private:
 	/* Two objects are equal if the underlying object is the same. */
 	static int equal( lua_State *L )
 	{
-		userdataType *obj1 = (userdataType *) lua_touserdata( L, 1 );
-		userdataType *obj2 = (userdataType *) lua_touserdata( L, 2 );
-		lua_pushboolean( L, obj1->pT == obj2->pT );
+		void **obj1 = (void **) lua_touserdata( L, 1 );
+		void **obj2 = (void **) lua_touserdata( L, 2 );
+		lua_pushboolean( L, *obj1 == *obj2 );
 		return 1;
 	}
 
@@ -157,8 +155,8 @@ private:
 	static int tostring_T( lua_State *L )
 	{
 		char buff[32];
-		userdataType *ud = static_cast<userdataType*>( lua_touserdata(L, 1) );
-		T *obj = ud->pT;
+		void **pData = (void **) lua_touserdata( L, 1 );
+		T *obj = (T *) *pData;
 		sprintf( buff, "%p", obj) ;
 		lua_pushfstring( L, "%s (%s)", m_sClassName, buff );
 		return 1;
