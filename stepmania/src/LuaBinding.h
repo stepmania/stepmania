@@ -107,6 +107,26 @@ public:
 		return pUserdata->pT;  // pointer to T object
 	}
 	
+	// push a userdata containing a pointer to T object
+	static int Push( Lua *L, T* p )
+	{
+		userdataType *ud = static_cast<userdataType*>( lua_newuserdata(L, sizeof(userdataType)) );
+		ud->pT = p;  // store pointer to object in userdata
+		luaL_getmetatable( L, m_sClassName );  // lookup metatable in Lua registry
+		lua_setmetatable( L, -2 );
+		return 1;  // userdata containing pointer to T object
+	}
+	
+	static void AddMethod( const char *szName, int (*pFunc)(T *p, lua_State *L) )
+	{
+		if( s_pvMethods == NULL )
+			s_pvMethods = new RegTypeVector;
+
+		RegType r = { szName, pFunc };
+		s_pvMethods->push_back(r);
+	}
+
+
 private:
 	// member function dispatcher
 	static int thunk( Lua *L )
@@ -128,27 +148,6 @@ private:
 		return 1;
 	}
 
-public:
-	// push a userdata containing a pointer to T object
-	static int Push( Lua *L, T* p )
-	{
-		userdataType *ud = static_cast<userdataType*>( lua_newuserdata(L, sizeof(userdataType)) );
-		ud->pT = p;  // store pointer to object in userdata
-		luaL_getmetatable( L, m_sClassName );  // lookup metatable in Lua registry
-		lua_setmetatable( L, -2 );
-		return 1;  // userdata containing pointer to T object
-	}
-	
-	static void AddMethod( const char *szName, int (*pFunc)(T *p, lua_State *L) )
-	{
-		if( s_pvMethods == NULL )
-			s_pvMethods = new RegTypeVector;
-
-		RegType r = { szName, pFunc };
-		s_pvMethods->push_back(r);
-	}
-
-private:
 	typedef vector<RegType> RegTypeVector;
 	static RegTypeVector *s_pvMethods;
 
