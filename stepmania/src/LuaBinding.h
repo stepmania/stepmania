@@ -34,9 +34,11 @@ public:
 		luaL_newmetatable( L, m_sClassName );
 		int metatable = lua_gettop( L );
 		
+		// We use the metatable to determine the type of the table, so don't
+		// allow it to be changed.
 		lua_pushliteral( L, "__metatable" );
-		lua_pushvalue( L, methods );
-		lua_settable( L, metatable );  // hide metatable from Lua getmetatable()
+		lua_pushstring( L, "(hidden)" );
+		lua_settable( L, metatable );
 		
 		lua_pushliteral( L, "__index" );
 		lua_pushvalue( L, methods );
