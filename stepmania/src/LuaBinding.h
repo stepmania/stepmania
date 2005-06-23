@@ -5,7 +5,7 @@
 
 #include "LuaManager.h"
 
-void CreateGlobalTable( lua_State *L, const CString &szName );
+void CreateMethodsTable( lua_State *L, const CString &szName );
 bool CheckType( lua_State *L, int narg, const char *szType );
 
 template <typename Type>
@@ -26,7 +26,7 @@ public:
 	static void Register( Lua *L )
 	{
 		/* Create the methods table, if it doesn't already exist. */
-		CreateGlobalTable( L, m_sClassName );
+		CreateMethodsTable( L, m_sClassName );
 
 		int methods = lua_gettop( L );
 		
@@ -78,7 +78,7 @@ public:
 			// were called before the Register() of the base class; we'll fill
 			// it in when we get to it.
 			lua_pushliteral( L, "__index" );
-			CreateGlobalTable( L, m_sBaseClassName );
+			CreateMethodsTable( L, m_sBaseClassName );
 			lua_settable( L, methods_metatable );
 		}
 

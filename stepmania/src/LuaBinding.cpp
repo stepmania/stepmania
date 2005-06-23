@@ -1,7 +1,7 @@
 #include "global.h"
 #include "LuaBinding.h"
 
-void CreateGlobalTable( lua_State *L, const CString &szName )
+void CreateMethodsTable( lua_State *L, const CString &szName )
 {
 	lua_pushstring( L, szName );
 	lua_rawget( L, LUA_GLOBALSINDEX );
