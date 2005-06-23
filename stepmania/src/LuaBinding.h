@@ -155,9 +155,8 @@ private:
 	static int tostring_T( lua_State *L )
 	{
 		char buff[32];
-		void **pData = (void **) lua_touserdata( L, 1 );
-		T *obj = (T *) *pData;
-		sprintf( buff, "%p", obj) ;
+		void *pData = check( L, -1 );
+		sprintf( buff, "%p", pData );
 		lua_pushfstring( L, "%s (%s)", m_sClassName, buff );
 		return 1;
 	}
