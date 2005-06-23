@@ -4,7 +4,7 @@
     <author>Renaud Lepage</author>
     <email>rlepage@gmail.com</email>
     <version>$VERSION$</version>
-    <projectmanagement>KDevCustomProject</projectmanagement>
+    <projectmanagement>KDevAutoProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
     <ignoreparts/>
     <projectdirectory>.</projectdirectory>
@@ -12,37 +12,53 @@
     <description></description>
     <versioncontrol>kdevcvsservice</versioncontrol>
   </general>
-  <kdevcustomproject>
+  <kdevautoproject>
+    <general>
+      <activetarget>src/Stepmania</activetarget>
+      <useconfiguration>debug</useconfiguration>
+    </general>
     <run>
-      <mainprogram>Stepmania</mainprogram>
+      <mainprogram>src/stepmania</mainprogram>
       <directoryradio>executable</directoryradio>
       <customdirectory>/</customdirectory>
-      <programargs></programargs>
+      <programargs>--workdir=/opt/Stepmania</programargs>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
     </run>
-    <build>
-      <buildtool>make</buildtool>
-      <builddir></builddir>
-    </build>
+    <configurations>
+      <optimized>
+        <builddir>optimized</builddir>
+        <ccompiler>GccOptions</ccompiler>
+        <cxxcompiler>GppOptions</cxxcompiler>
+        <f77compiler>G77Options</f77compiler>
+        <cxxflags>-O2 -g0</cxxflags>
+      </optimized>
+      <debug>
+        <configargs>--enable-debug=full</configargs>
+        <builddir>debug</builddir>
+        <ccompiler>GccOptions</ccompiler>
+        <cxxcompiler>GppOptions</cxxcompiler>
+        <f77compiler>G77Options</f77compiler>
+        <cxxflags>-O0 -g3</cxxflags>
+        <envvars/>
+      </debug>
+    </configurations>
     <make>
-      <abortonerror>false</abortonerror>
+      <envvars>
+        <envvar value="1" name="WANT_AUTOCONF_2_5" />
+        <envvar value="1" name="WANT_AUTOMAKE_1_6" />
+      </envvars>
+      <abortonerror>true</abortonerror>
       <numberofjobs>1</numberofjobs>
-      <prio>0</prio>
       <dontact>false</dontact>
       <makebin></makebin>
-      <defaulttarget></defaulttarget>
-      <makeoptions></makeoptions>
-      <selectedenvironment>default</selectedenvironment>
-      <environments>
-        <default/>
-      </environments>
+      <prio>0</prio>
     </make>
-  </kdevcustomproject>
+  </kdevautoproject>
   <kdevdebugger>
     <general>
-      <dbgshell></dbgshell>
+      <dbgshell>libtool</dbgshell>
       <programargs></programargs>
       <gdbpath></gdbpath>
       <configGdbScript></configGdbScript>
