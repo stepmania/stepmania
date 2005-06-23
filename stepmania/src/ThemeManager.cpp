@@ -141,15 +141,7 @@ ThemeManager::~ThemeManager()
 void ThemeManager::GetThemeNames( CStringArray& AddTo )
 {
 	GetDirListing( THEMES_DIR + "*", AddTo, true );
-	
-	// strip out the folder called "CVS"
-	for( CStringArray::iterator i=AddTo.begin(); i != AddTo.end(); ++i )
-	{
-		if( *i == "CVS" ) {
-			AddTo.erase(i, i+1);
-			break;
-		}
-	}
+	StripCvs( AddTo );
 }
 
 bool ThemeManager::DoesThemeExist( const CString &sThemeName )

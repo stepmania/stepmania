@@ -1582,7 +1582,7 @@ void ScreenSelectMusic::AfterMusicChange()
 			switch( m_MusicWheel.GetSelectedType() )
 			{
 			case TYPE_SECTION:
-				g_sBannerPath = SONGMAN->GetGroupBannerPath( sGroup );
+				g_sBannerPath = SONGMAN->GetSongGroupBannerPath( sGroup );
 				m_sSampleMusicToPlay = m_sSectionMusicPath;
 				break;
 			case TYPE_SORT:

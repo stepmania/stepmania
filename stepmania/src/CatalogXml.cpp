@@ -60,7 +60,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 		int iTotalSongs = 0;
 		int iTotalSteps = 0;
 		vector<CString> vsGroups;
-		SONGMAN->GetGroupNames( vsGroups );
+		SONGMAN->GetSongGroupNames( vsGroups );
 		FOREACH_CONST( CString, vsGroups, sGroup )
 		{
 			XNode* p1 = pNumSongsByGroup->AppendChild( "Group" );

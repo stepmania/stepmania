@@ -242,7 +242,7 @@ void Course::LoadFromCRSFile( CString sPath )
 					LOG->Warn( "Course file '%s' contains a random_within_group entry '%s' that is invalid. "
 								"Song should be in the format '<group>/*'.",
 								sPath.c_str(), sSong.c_str());
-				if( !SONGMAN->DoesGroupExist(new_entry.group_name) )
+				if( !SONGMAN->DoesSongGroupExist(new_entry.group_name) )
 				{
 					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
 				     * it obscures important warnings--and regular users never look there, anyway. */
@@ -545,9 +545,11 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, Difficulty diff )
 	{
 		m_sMainTitle = "All Songs";
 		// m_sBannerPath = ""; // XXX
-	} else {
+	}
+	else
+	{
 		m_sMainTitle = SONGMAN->ShortenGroupName( sGroupName );
-		m_sBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
+		m_sBannerPath = SONGMAN->GetSongGroupBannerPath( sGroupName );
 	}
 
 	// We want multiple songs, so we can try to prevent repeats during

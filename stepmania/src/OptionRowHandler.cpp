@@ -412,9 +412,9 @@ public:
 		defOut.name = "Group";
 		Default.m_sSongGroup = GROUP_ALL_MUSIC;
 
-		vector<CString> vGroups;
-		SONGMAN->GetGroupNames( vGroups );
-		ASSERT( vGroups.size() );
+		vector<CString> vSongGroups;
+		SONGMAN->GetSongGroupNames( vSongGroups );
+		ASSERT( vSongGroups.size() );
 
 		{
 			defOut.choices.push_back( "AllGroups" );
@@ -423,7 +423,7 @@ public:
 			ListEntries.push_back( mc );
 		}
 
-		FOREACH_CONST( CString, vGroups, g )
+		FOREACH_CONST( CString, vSongGroups, g )
 		{
 			defOut.choices.push_back( *g ); 
 			GameCommand mc;

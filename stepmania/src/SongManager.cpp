@@ -171,19 +171,18 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 	CStringArray arrayGroupDirs;
 	GetDirListing( sDir+"*", arrayGroupDirs, true );
 	SortCStringArray( arrayGroupDirs );
+	StripCvs( arrayGroupDirs );
 
-	for( unsigned i=0; i< arrayGroupDirs.size(); i++ )	// for each dir in /Songs/
+	FOREACH_CONST( CString, arrayGroupDirs, s )	// foreach dir in /Songs/
 	{
-		CString sGroupDirName = arrayGroupDirs[i];
-
-		if( 0 == stricmp( sGroupDirName, "cvs" ) )	// the directory called "CVS"
-			continue;		// ignore it
+		CString sGroupDirName = *s;
 
 		SanityCheckGroupDir(sDir+sGroupDirName);
 
 		// Find all Song folders in this group directory
 		CStringArray arraySongDirs;
 		GetDirListing( sDir+sGroupDirName + "/*", arraySongDirs, true, true );
+		StripCvs( arraySongDirs );
 		SortCStringArray( arraySongDirs );
 
 		LOG->Trace("Attempting to load %i songs from \"%s\"", int(arraySongDirs.size()),
@@ -193,9 +192,6 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 		for( unsigned j=0; j< arraySongDirs.size(); ++j )	// for each song dir
 		{
 			CString sSongDirName = arraySongDirs[j];
-
-			if( 0 == stricmp( Basename(sSongDirName), "cvs" ) )	// the directory called "CVS"
-				continue;		// ignore it
 
 			// this is a song directory.  Load a new song!
 			if( ld )
@@ -226,7 +222,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 		AddGroup(sDir, sGroupDirName);
 
 		/* Cache and load the group banner. */
-		BANNERCACHE->CacheBanner( GetGroupBannerPath(sGroupDirName) );
+		BANNERCACHE->CacheBanner( GetSongGroupBannerPath(sGroupDirName) );
 		
 		/* Load the group sym links (if any)*/
 		LoadGroupSymLinks(sDir, sGroupDirName);
@@ -312,44 +308,38 @@ void SongManager::FreeSongs()
 	m_pShuffledSongs.clear();
 }
 
-CString SongManager::GetGroupBannerPath( CString sGroupName )
+CString SongManager::GetSongGroupBannerPath( CString sSongGroup )
 {
-	unsigned i;
-	for(i = 0; i < m_sSongGroupNames.size(); ++i)
-		if( sGroupName == m_sSongGroupNames[i] ) break;
+	for( unsigned i = 0; i < m_sSongGroupNames.size(); ++i )
+	{
+		if( sSongGroup == m_sSongGroupNames[i] ) 
+			return m_sSongGroupBannerPaths[i];
+	}
 
-	if( i == m_sSongGroupNames.size() )
-		return "";
-
-	return m_sSongGroupBannerPaths[i];
+	ASSERT_M( 0, ssprintf("requested banner for song group '%s' that doesn't exist",sSongGroup.c_str()) );
+	return "";
 }
 
-void SongManager::GetGroupNames( CStringArray &AddTo )
+void SongManager::GetSongGroupNames( CStringArray &AddTo )
 {
 	AddTo.insert(AddTo.end(), m_sSongGroupNames.begin(), m_sSongGroupNames.end() );
 }
 
-bool SongManager::DoesGroupExist( CString sGroupName )
+bool SongManager::DoesSongGroupExist( CString sSongGroup )
 {
-	for( unsigned i = 0; i < m_sSongGroupNames.size(); ++i )
-		if( !m_sSongGroupNames[i].CompareNoCase(sGroupName) )
-			return true;
-
-	return false;
+	return find( m_sSongGroupNames.begin(), m_sSongGroupNames.end(), sSongGroup ) != m_sSongGroupNames.end();
 }
 
-RageColor SongManager::GetSongGroupColor( const CString &sSongGroupName )
+RageColor SongManager::GetSongGroupColor( const CString &sSongGroup )
 {
-	// search for the group index
-	unsigned i;
-	for( i=0; i<m_sSongGroupNames.size(); i++ )
+	for( unsigned i=0; i<m_sSongGroupNames.size(); i++ )
 	{
-		if( m_sSongGroupNames[i] == sSongGroupName )
-			break;
+		if( m_sSongGroupNames[i] == sSongGroup )
+			return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );	// TODO: Add course group colors?
 	}
-	ASSERT_M( i != m_sSongGroupNames.size(), sSongGroupName );	// this is not a valid group
-
-	return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );
+	
+	ASSERT_M( 0, ssprintf("requested color for song group '%s' that doesn't exist",sSongGroup.c_str()) );
+	return RageColor(1,1,1,1);
 }
 
 RageColor SongManager::GetSongColor( const Song* pSong )
@@ -390,17 +380,38 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	return GetSongGroupColor( pSong->m_sGroupName );
 }
 
-RageColor SongManager::GetCourseGroupColor( const CString &sCourseGroupName )
+CString SongManager::GetCourseGroupBannerPath( CString sCourseGroup )
 {
-	// search for the group index
-	unsigned i;
-	for( i=0; i<m_sCourseGroupNames.size(); i++ )
+	for( unsigned i = 0; i < m_sCourseGroupNames.size(); ++i )
 	{
-		if( m_sCourseGroupNames[i] == sCourseGroupName )
-			break;
+		if( sCourseGroup == m_sCourseGroupNames[i] ) 
+			return m_sCourseGroupBannerPaths[i];
 	}
-	ASSERT_M( i != m_sCourseGroupNames.size(), "Course: '" + sCourseGroupName + "' is not a valid group." );	// this is not a valid group
-	return COURSE_GROUP_COLOR.GetValue( i%NUM_COURSE_GROUP_COLORS.GetValue() );
+
+	ASSERT_M( 0, ssprintf("requested banner for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
+	return "";
+}
+
+void SongManager::GetCourseGroupNames( CStringArray &AddTo )
+{
+	AddTo.insert(AddTo.end(), m_sCourseGroupNames.begin(), m_sCourseGroupNames.end() );
+}
+
+bool SongManager::DoesCourseGroupExist( CString sCourseGroup )
+{
+	return find( m_sCourseGroupNames.begin(), m_sCourseGroupNames.end(), sCourseGroup ) != m_sCourseGroupNames.end();
+}
+
+RageColor SongManager::GetCourseGroupColor( const CString &sCourseGroup )
+{
+	for( unsigned i=0; i<m_sCourseGroupNames.size(); i++ )
+	{
+		if( m_sCourseGroupNames[i] == sCourseGroup )
+			return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );
+	}
+	
+	ASSERT_M( 0, ssprintf("requested color for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
+	return RageColor(1,1,1,1);
 }
 
 RageColor SongManager::GetCourseColor( const Course* pCourse )
@@ -447,7 +458,7 @@ int SongManager::GetNumSongs() const
 	return m_pSongs.size();
 }
 
-int SongManager::GetNumGroups() const
+int SongManager::GetNumSongGroups() const
 {
 	return m_sSongGroupNames.size();
 }
@@ -455,6 +466,11 @@ int SongManager::GetNumGroups() const
 int SongManager::GetNumCourses() const
 {
 	return m_pCourses.size();
+}
+
+int SongManager::GetNumCourseGroups() const
+{
+	return m_sCourseGroupNames.size();
 }
 
 CString SongManager::ShortenGroupName( CString sLongGroupName )
@@ -529,22 +545,19 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 			m_sCourseGroupNames.push_back( "" );
 	}
 
+	// TODO: Search for course group banners if any
+	FOREACH( CString, m_sCourseGroupNames, s )
+		m_sCourseGroupBannerPaths.push_back( "" );
+
 
 	// Find all group directories in Courses dir
 	{
 		GetDirListing( COURSES_DIR+"*", m_sCourseGroupNames, true );
+		StripCvs( m_sCourseGroupNames );
 		SortCStringArray( m_sCourseGroupNames );
 		
 		FOREACH( CString, m_sCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
 		{
-			if( 0 == stricmp( *sCourseGroup, "cvs" ) )	// the directory called "CVS"
-			{
-				vector<CString>::iterator eraseme = sCourseGroup;
-				sCourseGroup--;
-				m_sCourseGroupNames.erase( eraseme );
-				continue;		// ignore it
-			}
-
 			// Find all CRS files in this group directory
 			CStringArray vsCoursePaths;
 			GetDirListing( COURSES_DIR + *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
@@ -574,7 +587,7 @@ void SongManager::InitAutogenCourses()
 	// Create group courses for Endless and Nonstop
 	//
 	CStringArray saGroupNames;
-	this->GetGroupNames( saGroupNames );
+	this->GetSongGroupNames( saGroupNames );
 	Course* pCourse;
 	for( unsigned g=0; g<saGroupNames.size(); g++ )	// foreach Group
 	{

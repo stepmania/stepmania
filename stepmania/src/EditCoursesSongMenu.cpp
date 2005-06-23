@@ -57,7 +57,7 @@ EditCoursesSongMenu::EditCoursesSongMenu()
 	m_soundChangeValue.Load( THEME->GetPathS("EditCoursesSongMenu","value") );
 
 	// fill in data structures
-	SONGMAN->GetGroupNames( m_aGroups );
+	SONGMAN->GetSongGroupNames( m_aGroups );
 
 	m_SelectedRow = (Row)0;
 }

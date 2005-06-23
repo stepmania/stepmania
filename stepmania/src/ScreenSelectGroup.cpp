@@ -32,7 +32,7 @@ void ScreenSelectGroup::Init()
 {
 	if( !PREFSMAN->m_bShowSelectGroup )
 	{
-		GAMESTATE->m_sPreferredSongGroup = GROUP_ALL_MUSIC;
+		GAMESTATE->m_sPreferredSongGroup.Set( GROUP_ALL_MUSIC );
 		HandleScreenMessage( SM_GoToNextScreen );
 		return;
 	}
@@ -172,7 +172,7 @@ void ScreenSelectGroup::AfterChange()
 	if( sSelectedGroupName == "ALL MUSIC" )
 		m_Banner.LoadAllMusic();
 	else 
-		m_Banner.LoadFromGroup( sSelectedGroupName );
+		m_Banner.LoadFromSongGroup( sSelectedGroupName );
 
 	const int iNumSongs = m_MusicList.GetNumSongs();
 	m_textNumber.SetText( ssprintf("%d", iNumSongs) );
@@ -224,7 +224,7 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 	m_bChosen = true;
 
 	GAMESTATE->m_pCurSong.Set( NULL );
-	GAMESTATE->m_sPreferredSongGroup = (m_GroupList.GetSelectionName()=="ALL MUSIC" ? GROUP_ALL_MUSIC : m_GroupList.GetSelectionName() );
+	GAMESTATE->m_sPreferredSongGroup.Set( m_GroupList.GetSelectionName()=="ALL MUSIC" ? GROUP_ALL_MUSIC : m_GroupList.GetSelectionName() );
 
 	if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL_MUSIC )
        	SOUND->PlayOnceFromAnnouncer( "select group comment all music" );

@@ -83,7 +83,7 @@ protected:	// derived classes need access to these
 
 protected:
 	/* Map menu lines to m_OptionRow entries. */
-	vector<OptionRow*>	m_Rows;
+	vector<OptionRow*>	m_pRows;
 
 	Navigation		m_OptionsNavigation;
 

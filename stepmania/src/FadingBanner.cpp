@@ -178,9 +178,9 @@ void FadingBanner::LoadMode()
 	m_Banner[m_iIndexLatest].LoadMode();
 }
 
-void FadingBanner::LoadFromGroup( CString sGroupName )
+void FadingBanner::LoadFromSongGroup( CString sSongGroup )
 {
-	const CString sGroupBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
+	const CString sGroupBannerPath = SONGMAN->GetSongGroupBannerPath( sSongGroup );
 	LoadFromCachedBanner( sGroupBannerPath );
 }
 

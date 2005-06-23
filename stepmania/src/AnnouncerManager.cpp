@@ -19,11 +19,9 @@ void AnnouncerManager::GetAnnouncerNames( CStringArray& AddTo )
 {
 	GetDirListing( ANNOUNCERS_DIR+"*", AddTo, true );
 	
-	// strip out the folder called "CVS" and EMPTY_ANNOUNCER_NAME
-	for( int i=AddTo.size()-1; i>=0; i-- )
-		if( !stricmp( AddTo[i], "cvs" ) )
-			AddTo.erase(AddTo.begin()+i, AddTo.begin()+i+1 );
+	StripCvs( AddTo );
 
+	// strip out the empty announcer folder
 	for( int i=AddTo.size()-1; i>=0; i-- )
 		if( !stricmp( AddTo[i], EMPTY_ANNOUNCER_NAME ) )
 			AddTo.erase(AddTo.begin()+i, AddTo.begin()+i+1 );

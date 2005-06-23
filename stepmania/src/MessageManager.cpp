@@ -48,6 +48,8 @@ static const CString MessageNames[] = {
 	"PlayersFinalized",
 	"AssistTickChanged",
 	"AutosyncChanged",
+	"PreferredSongGroupChanged",
+	"PreferredCourseGroupChanged",
 };
 XToString( Message, NUM_MESSAGES );
 

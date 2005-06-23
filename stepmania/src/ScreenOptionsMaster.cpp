@@ -99,7 +99,7 @@ void ScreenOptionsMaster::Init()
 
 ScreenOptionsMaster::~ScreenOptionsMaster()
 {
-	FOREACH( OptionRow*, m_Rows, r )
+	FOREACH( OptionRow*, m_pRows, r )
 		(*r)->DetachHandler();
 	FOREACH( OptionRowHandler*, OptionRowHandlers, h )
 		SAFE_DELETE( *h );
@@ -110,13 +110,13 @@ void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns
 {
 	FOREACH_CONST( PlayerNumber, vpns, pn )
 		ASSERT( GAMESTATE->IsHumanPlayer(*pn) );
-	OptionRow &row = *m_Rows[r];
+	OptionRow &row = *m_pRows[r];
 	row.ImportOptions( vpns );
 }
 
 void ScreenOptionsMaster::ExportOptions( int r, const vector<PlayerNumber> &vpns )
 {
-	OptionRow &row = *m_Rows[r];
+	OptionRow &row = *m_pRows[r];
 	bool bRowHasFocus[NUM_PLAYERS];
 	ZERO( bRowHasFocus );
 	FOREACH_CONST( PlayerNumber, vpns, p )
@@ -134,8 +134,8 @@ void ScreenOptionsMaster::BeginFadingOut()
 	m_bExportWillSetANewScreen = false;
 
 	int iCurRow = this->GetCurrentRow();
-	ASSERT( iCurRow >= 0 && iCurRow < (int)m_Rows.size() );
-	OptionRow &row = *m_Rows[iCurRow];
+	ASSERT( iCurRow >= 0 && iCurRow < (int)m_pRows.size() );
+	OptionRow &row = *m_pRows[iCurRow];
 
 	if( row.GetRowType() != OptionRow::ROW_EXIT )
 	{
@@ -181,7 +181,7 @@ void ScreenOptionsMaster::GoToPrevScreen()
 
 void ScreenOptionsMaster::RefreshIcons( int r, PlayerNumber pn )
 {
-	OptionRow &row = *m_Rows[r];
+	OptionRow &row = *m_pRows[r];
 	
 	if( row.GetRowType() == OptionRow::ROW_EXIT )
 		return;	// skip

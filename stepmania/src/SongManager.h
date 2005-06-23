@@ -49,14 +49,16 @@ public:
 	void Reload( LoadingWindow *ld=NULL );	// songs, courses, groups - everything.
 	void PreloadSongImages();
 
-
-	CString GetGroupBannerPath( CString sGroupName );
-	void GetGroupNames( CStringArray &AddTo );
-	bool DoesGroupExist( CString sGroupName );
-
+	CString GetSongGroupBannerPath( CString sSongGroup );
+	void GetSongGroupNames( CStringArray &AddTo );
+	bool DoesSongGroupExist( CString sSongGroup );
 	RageColor GetSongGroupColor( const CString &sSongGroupName );
 	RageColor GetSongColor( const Song* pSong );
 	RageColor GetDifficultyColor( Difficulty dc ) const;
+
+	CString GetCourseGroupBannerPath( CString sCourseGroup );
+	void GetCourseGroupNames( CStringArray &AddTo );
+	bool DoesCourseGroupExist( CString sCourseGroup );
 	RageColor GetCourseGroupColor( const CString &sCourseGroupName );
 	RageColor GetCourseColor( const Course* pCourse );
 	
@@ -75,8 +77,9 @@ public:
 	Song *FindSong( CString sPath );
 	Course *FindCourse( CString sName );
 	int GetNumSongs() const;
-	int GetNumGroups() const;
+	int GetNumSongGroups() const;
 	int GetNumCourses() const;
+	int GetNumCourseGroups() const;
 	Song* GetRandomSong();
 	Course* GetRandomCourse();
 
@@ -122,6 +125,7 @@ protected:
 	vector<Course*>		m_pBestCourses[NUM_PROFILE_SLOTS][NUM_COURSE_TYPES];
 	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
 	CStringArray		m_sCourseGroupNames;
+	CStringArray		m_sCourseGroupBannerPaths; // each song group may have a banner associated with it
 
 
 	ThemeMetric<int>			NUM_SONG_GROUP_COLORS;

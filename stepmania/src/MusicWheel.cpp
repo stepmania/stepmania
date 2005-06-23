@@ -114,10 +114,10 @@ void MusicWheel::Load( CString sType )
 	if( GAMESTATE->IsExtraStage() ||  GAMESTATE->IsExtraStage2() )
 	{
 		// make the preferred group the group of the last song played.
-		if( GAMESTATE->m_sPreferredSongGroup==GROUP_ALL_MUSIC && !PREFSMAN->m_bPickExtraStage )
+		if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL_MUSIC  &&  !PREFSMAN->m_bPickExtraStage )
 		{
 			ASSERT(GAMESTATE->m_pCurSong);
-			GAMESTATE->m_sPreferredSongGroup = GAMESTATE->m_pCurSong->m_sGroupName;
+			GAMESTATE->m_sPreferredSongGroup.Set( GAMESTATE->m_pCurSong->m_sGroupName );
 		}
 
 		Song* pSong;

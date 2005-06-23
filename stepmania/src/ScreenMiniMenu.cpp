@@ -92,13 +92,13 @@ void ScreenMiniMenu::OnChange( PlayerNumber pn )
 
 	vector<PlayerNumber> vpns;
 	vpns.push_back( GAMESTATE->m_MasterPlayerNumber );
-	for( unsigned i=0; i<m_Rows.size(); i++ )
+	for( unsigned i=0; i<m_pRows.size(); i++ )
 		ExportOptions( i, vpns );
 
-	for( unsigned i=0; i<m_Rows.size(); i++ )
+	for( unsigned i=0; i<m_pRows.size(); i++ )
 	{
 		MenuRow &mr = m_vMenuRows[i];
-		OptionRow &optrow = *m_Rows[i];
+		OptionRow &optrow = *m_pRows[i];
 		if( mr.pfnEnabled )
 		{
 			optrow.GetRowDef().m_vEnabledForPlayers.clear();
@@ -111,7 +111,7 @@ void ScreenMiniMenu::OnChange( PlayerNumber pn )
 
 void ScreenMiniMenu::ImportOptions( int r, const vector<PlayerNumber> &vpns )
 {
-	OptionRow &optrow = *m_Rows[r];
+	OptionRow &optrow = *m_pRows[r];
 	MenuRow &mr = m_vMenuRows[r];
 	if( !mr.choices.empty() )
 		optrow.SetOneSharedSelection( mr.iDefaultChoice );
@@ -122,7 +122,7 @@ void ScreenMiniMenu::ExportOptions( int r, const vector<PlayerNumber> &vpns )
 	if( r == GetCurrentRow() )
 		s_iLastRowCode = m_vMenuRows[r].iRowCode;
 	s_viLastAnswers.resize( m_vMenuRows.size() );
-	s_viLastAnswers[r] = m_Rows[r]->GetOneSharedSelection( true );
+	s_viLastAnswers[r] = m_pRows[r]->GetOneSharedSelection( true );
 }
 
 void ScreenMiniMenu::GoToNextScreen()

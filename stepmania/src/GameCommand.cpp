@@ -761,7 +761,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	for( map<CString,CString>::const_iterator i = m_SetEnv.begin(); i != m_SetEnv.end(); i++ )
 		GAMESTATE->m_mapEnv[ i->first ] = i->second;
 	if( !m_sSongGroup.empty() )
-		GAMESTATE->m_sPreferredSongGroup = m_sSongGroup;
+		GAMESTATE->m_sPreferredSongGroup.Set( m_sSongGroup );
 	if( m_SortOrder != SORT_INVALID )
 		GAMESTATE->m_PreferredSortOrder = m_SortOrder;
 	if( m_iUnlockIndex != -1 )

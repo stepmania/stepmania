@@ -100,7 +100,7 @@ void ScreenProfileOptions::ImportOptions( int row, const vector<PlayerNumber> &v
 				vsProfiles.end(),
 				PREFSMAN->GetDefaultLocalProfileID(pn).Get() );
 			if( iter != vsProfiles.end() )
-				m_Rows[row]->SetOneSharedSelection( iter - vsProfiles.begin() + 1 );
+				m_pRows[row]->SetOneSharedSelection( iter - vsProfiles.begin() + 1 );
 		}
 		break;
 	}
@@ -117,8 +117,8 @@ void ScreenProfileOptions::ExportOptions( int row, const vector<PlayerNumber> &v
 			vector<CString> vsProfiles;
 			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-			if( m_Rows[row]->GetOneSharedSelection() > 0 )
-				PREFSMAN->GetDefaultLocalProfileID(pn).Set( vsProfiles[m_Rows[row]->GetOneSharedSelection()-1] );
+			if( m_pRows[row]->GetOneSharedSelection() > 0 )
+				PREFSMAN->GetDefaultLocalProfileID(pn).Set( vsProfiles[m_pRows[row]->GetOneSharedSelection()-1] );
 			else
 				PREFSMAN->GetDefaultLocalProfileID(pn).Set( "" );
 		}
@@ -222,7 +222,7 @@ CString ScreenProfileOptions::GetSelectedProfileID()
 	vector<CString> vsProfiles;
 	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-	const OptionRow &row = *m_Rows[GetCurrentRow()];
+	const OptionRow &row = *m_pRows[GetCurrentRow()];
 	const int Selection = row.GetOneSharedSelection();
 	if( !Selection )
 		return "";
@@ -231,7 +231,7 @@ CString ScreenProfileOptions::GetSelectedProfileID()
 
 CString ScreenProfileOptions::GetSelectedProfileName()
 {
-	const OptionRow &row = *m_Rows[GetCurrentRow()];
+	const OptionRow &row = *m_pRows[GetCurrentRow()];
 	const int Selection = row.GetOneSharedSelection();
 	if( !Selection )
 		return "";

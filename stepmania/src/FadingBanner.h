@@ -20,7 +20,7 @@ public:
 	void LoadFromSong( const Song* pSong );		// NULL means no song
 	void LoadAllMusic();
 	void LoadMode();
-	void LoadFromGroup( CString sGroupName );
+	void LoadFromSongGroup( CString sSongGroup );
 	void LoadFromCourse( const Course* pCourse );
 	void LoadRoulette();
 	void LoadRandom();

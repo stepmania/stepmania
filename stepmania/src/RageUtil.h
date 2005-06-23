@@ -309,6 +309,8 @@ void TrimLeft(CString &str, const char *s = "\r\n\t ");
 void TrimRight(CString &str, const char *s = "\r\n\t ");
 void StripCrnl(CString &s);
 
+void StripCvs( vector<CString> &vs );	// remove all items that end in "cvs"
+
 CString DerefRedir( const CString &sPath );
 bool GetFileContents( const CString &sPath, CString &sOut, bool bOneLine = false );
 

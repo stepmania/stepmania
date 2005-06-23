@@ -100,9 +100,9 @@ void Banner::LoadMode()
 	m_bScrolling = false;
 }
 
-void Banner::LoadFromGroup( CString sGroupName )
+void Banner::LoadFromSongGroup( CString sSongGroup )
 {
-	CString sGroupBannerPath = SONGMAN->GetGroupBannerPath( sGroupName );
+	CString sGroupBannerPath = SONGMAN->GetSongGroupBannerPath( sSongGroup );
 	if( sGroupBannerPath != "" )	Load( sGroupBannerPath );
 	else							LoadFallback();
 	m_bScrolling = false;

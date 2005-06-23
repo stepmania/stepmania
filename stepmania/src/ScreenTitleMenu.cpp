@@ -70,7 +70,7 @@ void ScreenTitleMenu::Init()
 
 	m_textSongs.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textSongs.SetName( "Songs" );
-	CString text = ssprintf("%d songs in %d groups, %d courses", SONGMAN->GetNumSongs(), SONGMAN->GetNumGroups(), SONGMAN->GetNumCourses() );
+	CString text = ssprintf("%d songs in %d groups, %d courses in %d groups", SONGMAN->GetNumSongs(), SONGMAN->GetNumSongGroups(), SONGMAN->GetNumCourses(), SONGMAN->GetNumCourseGroups() );
 	if( PREFSMAN->m_bUseUnlockSystem )
 		text += ssprintf(", %d unlocks", UNLOCKMAN->GetNumUnlocks() );
 	m_textSongs.SetText( text );

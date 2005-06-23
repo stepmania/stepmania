@@ -56,7 +56,9 @@ enum Message
 	MESSAGE_PLAYERS_FINALIZED,
 	MESSAGE_ASSIST_TICK_CHANGED,
 	MESSAGE_AUTOSYNC_CHANGED,
-	NUM_MESSAGES,
+	MESSAGE_PREFERRED_SONG_GROUP_CHANGED,
+	MESSAGE_PREFERRED_COURSE_GROUP_CHANGED,
+	NUM_MESSAGES,	// leave this at the end
 	MESSAGE_INVALID
 };
 const CString& MessageToString( Message m );
@@ -96,6 +98,8 @@ public:
 	const T Get() const { return val; }
 	void Set( T t ) { val = t; MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
 	operator T () const { return val; }
+	bool operator == ( const T &other ) const { return val == other; }
+	bool operator != ( const T &other ) const { return val != other; }
 };
 
 template<class T, int N>

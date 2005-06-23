@@ -52,7 +52,7 @@ void ScreenSMOnlineLogin::Init()
 
 		InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
   		SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions", "music"));
-		OptionRow &row = *m_Rows.back();
+		OptionRow &row = *m_pRows.back();
 		row.SetExitText("Login");
 	}
 }
@@ -72,7 +72,7 @@ void ScreenSMOnlineLogin::ImportOptions( int row, const vector<PlayerNumber> &vp
 			{
 				iter = find(vsProfiles.begin(), vsProfiles.end(), PREFSMAN->GetDefaultLocalProfileID(pn).Get() );
 				if( iter != vsProfiles.end() )
-					m_Rows[0]->SetOneSelection((PlayerNumber) pn, iter - vsProfiles.begin());
+					m_pRows[0]->SetOneSelection((PlayerNumber) pn, iter - vsProfiles.begin());
 			}
 		}
 		break;
@@ -89,7 +89,7 @@ void ScreenSMOnlineLogin::ExportOptions( int row, const vector<PlayerNumber> &vp
 			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
 			FOREACH_EnabledPlayer( pn )
-				PREFSMAN->GetDefaultLocalProfileID(pn).Set( vsProfiles[m_Rows[0]->GetOneSelection(pn)] );
+				PREFSMAN->GetDefaultLocalProfileID(pn).Set( vsProfiles[m_pRows[0]->GetOneSelection(pn)] );
 		}
 		break;
 	}
@@ -104,7 +104,7 @@ void ScreenSMOnlineLogin::GoToNextScreen()
 {
 	vector<PlayerNumber> v;
 	v.push_back( GAMESTATE->m_MasterPlayerNumber );
-	for( unsigned r=0; r<m_Rows.size(); r++ )
+	for( unsigned r=0; r<m_pRows.size(); r++ )
 		ExportOptions( r, v );
 
 	PREFSMAN->SaveGlobalPrefsToDisk();
@@ -172,7 +172,7 @@ CString ScreenSMOnlineLogin::GetSelectedProfileID()
 	vector<CString> vsProfiles;
 	PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-	const OptionRow &row = *m_Rows[GetCurrentRow()];
+	const OptionRow &row = *m_pRows[GetCurrentRow()];
 	const int Selection = row.GetOneSharedSelection();
 	if( !Selection )
 		return "";

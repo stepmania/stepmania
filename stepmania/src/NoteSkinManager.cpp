@@ -43,10 +43,7 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 	CStringArray asNoteSkinNames;
 	GetDirListing( sBaseSkinFolder + "*", asNoteSkinNames, true );
 
-	// strip out "CVS"
-	for( int i=asNoteSkinNames.size()-1; i>=0; i-- )
-		if( 0 == stricmp("cvs", asNoteSkinNames[i]) )
-			asNoteSkinNames.erase( asNoteSkinNames.begin()+i, asNoteSkinNames.begin()+i+1 );
+	StripCvs( asNoteSkinNames );
 
 	m_mapNameToData.clear();
 	for( unsigned j=0; j<asNoteSkinNames.size(); j++ )
@@ -119,11 +116,7 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, CStringArray &AddTo, 
 	{
 		CString sBaseSkinFolder = NOTESKINS_DIR + pGame->m_szName + "/";
 		GetDirListing( sBaseSkinFolder + "*", AddTo, true );
-
-		// strip out "CVS"
-		for( int i=AddTo.size()-1; i>=0; i-- )
-			if( 0 == stricmp("cvs", AddTo[i]) )
-				AddTo.erase( AddTo.begin()+i, AddTo.begin()+i+1 );
+		StripCvs( AddTo );
 	}
 
 	/* Move "default" to the front if it exists. */

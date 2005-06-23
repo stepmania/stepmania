@@ -658,6 +658,15 @@ void StripCrnl(CString &s)
 		s.erase(s.size()-1);
 }
 
+void StripCvs( vector<CString> &vs )
+{
+	for( unsigned i=0; i<vs.size(); i++ )
+	{
+		if( vs[i].Right(3).CompareNoCase("CVS") == 0 )
+			vs.erase( vs.begin()+i );
+	}
+}
+
 /* path is a .redir pathname.  Read it and return the real one. */
 CString DerefRedir(const CString &_path)
 {

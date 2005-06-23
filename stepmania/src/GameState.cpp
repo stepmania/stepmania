@@ -64,8 +64,10 @@ Song* GetDefaultSong()
 
 GameState::GameState() :
     m_pCurStyle(			MESSAGE_CURRENT_STYLE_CHANGED ),
-    m_PreferredCourseDifficulty( MESSAGE_EDIT_PREFERRED_COURSE_DIFFICULTY_P1_CHANGED ),
-    m_PreferredDifficulty(	MESSAGE_EDIT_PREFERRED_DIFFICULTY_P1_CHANGED ),
+	m_sPreferredSongGroup(	MESSAGE_PREFERRED_SONG_GROUP_CHANGED ),
+	m_sPreferredCourseGroup(MESSAGE_PREFERRED_COURSE_GROUP_CHANGED ),
+	m_PreferredCourseDifficulty( MESSAGE_EDIT_PREFERRED_COURSE_DIFFICULTY_P1_CHANGED ),
+	m_PreferredDifficulty(	MESSAGE_EDIT_PREFERRED_DIFFICULTY_P1_CHANGED ),
     m_pCurSong(				MESSAGE_CURRENT_SONG_CHANGED ),
 	m_pCurSteps(			MESSAGE_CURRENT_STEPS_P1_CHANGED ),
     m_pCurCourse(			MESSAGE_CURRENT_COURSE_CHANGED ),
@@ -167,7 +169,8 @@ void GameState::Reset()
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_mapEnv.clear();
-	m_sPreferredSongGroup	= GROUP_ALL_MUSIC;
+	m_sPreferredSongGroup.Set( GROUP_ALL_MUSIC );
+	m_sPreferredCourseGroup.Set( "" );
 	m_bChangedFailTypeOnScreenSongOptions = false;
 	FOREACH_PlayerNumber( p )
 	{
@@ -610,15 +613,14 @@ void GameState::ReloadCharacters()
 
 	CStringArray as;
 	GetDirListing( CHARACTERS_DIR "*", as, true, true );
+	StripCvs( as );
+
 	bool FoundDefault = false;
 	for( unsigned i=0; i<as.size(); i++ )
 	{
 		CString sCharName, sDummy;
 		splitpath(as[i], sDummy, sCharName, sDummy);
 		sCharName.MakeLower();
-
-		if( sCharName == "cvs" )	// the directory called "CVS"
-			continue;		// ignore it
 
 		if( sCharName.CompareNoCase("default")==0 )
 			FoundDefault = true;

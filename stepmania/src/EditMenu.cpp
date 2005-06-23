@@ -79,7 +79,7 @@ static void GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSong
 static void GetGroupsToShow( vector<CString> &vsGroupsOut )
 {
 	vsGroupsOut.clear();
-	SONGMAN->GetGroupNames( vsGroupsOut );
+	SONGMAN->GetSongGroupNames( vsGroupsOut );
 	for( int i = vsGroupsOut.size()-1; i>=0; i-- )
 	{
 		const CString &sGroup = vsGroupsOut[i];
@@ -320,7 +320,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 	{
 	case ROW_GROUP:
 		m_textValue[ROW_GROUP].SetText( SONGMAN->ShortenGroupName(GetSelectedGroup()) );
-		m_GroupBanner.LoadFromGroup( GetSelectedGroup() );
+		m_GroupBanner.LoadFromSongGroup( GetSelectedGroup() );
 		m_GroupBanner.ScaleToClipped( GROUP_BANNER_WIDTH, GROUP_BANNER_HEIGHT );
 		m_pSongs.clear();
 		GetSongsToShowForGroup( GetSelectedGroup(), m_pSongs );

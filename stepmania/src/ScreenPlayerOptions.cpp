@@ -67,8 +67,8 @@ void ScreenPlayerOptions::Init()
 
 	FOREACH_HumanPlayer( p )
 	{
-		m_bRowCausesDisqualified[p].resize( m_Rows.size(), false );
-		for( unsigned r=0; r<m_Rows.size(); r++ )
+		m_bRowCausesDisqualified[p].resize( m_pRows.size(), false );
+		for( unsigned r=0; r<m_pRows.size(); r++ )
 			UpdateDisqualified( r, p );
 	}
 }
@@ -146,7 +146,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		
 		COMMAND( m_sprCancelAll[pn], "Show" );
 
-		for( unsigned r=0; r<m_Rows.size(); r++ )
+		for( unsigned r=0; r<m_pRows.size(); r++ )
 		{
 			vector<PlayerNumber> v;
 			v.push_back( pn );

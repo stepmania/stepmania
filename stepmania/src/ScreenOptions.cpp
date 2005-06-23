@@ -130,7 +130,7 @@ void ScreenOptions::Init()
 
 void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
 {
-	m_Rows[iRow]->LoadOptionIcon( pn, sText );
+	m_pRows[iRow]->LoadOptionIcon( pn, sText );
 }
 
 void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands )
@@ -143,8 +143,8 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 
 	for( unsigned r=0; r<vDefs.size(); r++ )		// foreach row
 	{
-		m_Rows.push_back( new OptionRow() );
-		OptionRow &row = *m_Rows.back();
+		m_pRows.push_back( new OptionRow() );
+		OptionRow &row = *m_pRows.back();
 		const OptionRowDefinition &def = vDefs[r];
 		OptionRowHandler* hand = vHands[r];
 		
@@ -186,17 +186,17 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		m_framePage.AddChild( &m_Cursor[p] );
 	}
 	
-	for( unsigned r=0; r<m_Rows.size(); r++ )		// foreach row
+	for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
 	{
-		OptionRow &row = *m_Rows[r];
+		OptionRow &row = *m_pRows[r];
 		m_framePage.AddChild( &row );
 	}
 
 	if( SHOW_EXIT_ROW )
 	{
 		// TRICKY:  Add "EXIT" item
-		m_Rows.push_back( new OptionRow() );
-		OptionRow &row = *m_Rows.back();
+		m_pRows.push_back( new OptionRow() );
+		OptionRow &row = *m_pRows.back();
 		row.LoadMetrics( m_sName );
 		row.LoadExit();
 		m_framePage.AddChild( &row );
@@ -254,7 +254,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	}
 
 	// poke once at all the explanation metrics so that we catch missing ones early
-	for( int r=0; r<(int)m_Rows.size(); r++ )		// foreach row
+	for( int r=0; r<(int)m_pRows.size(); r++ )		// foreach row
 	{
 		GetExplanationText( r );
 	}
@@ -262,9 +262,9 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	// put focus on the first enabled row
 	FOREACH_PlayerNumber( p )
 	{
-		for( unsigned r=0; r<m_Rows.size(); r++ )
+		for( unsigned r=0; r<m_pRows.size(); r++ )
 		{
-			const OptionRow &row = *m_Rows[r];
+			const OptionRow &row = *m_pRows[r];
 			if( row.GetRowDef().IsEnabledForPlayer(p) )
 			{
 				m_iCurrentRow[p] = r;
@@ -296,9 +296,9 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	/* It's tweening into position, but on the initial tween-in we only want to
 	 * tween in the whole page at once.  Since the tweens are nontrivial, it's
 	 * easiest to queue the tweens and then force them to finish. */
-	for( int r=0; r<(int) m_Rows.size(); r++ )	// foreach options line
+	for( int r=0; r<(int) m_pRows.size(); r++ )	// foreach options line
 	{
-		OptionRow &row = *m_Rows[r];
+		OptionRow &row = *m_pRows[r];
 		row.FinishTweening();
 	}
 
@@ -310,13 +310,13 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 ScreenOptions::~ScreenOptions()
 {
 	LOG->Trace( "ScreenOptions::~ScreenOptions()" );
-	for( unsigned i=0; i<m_Rows.size(); i++ )
-		SAFE_DELETE( m_Rows[i] );
+	for( unsigned i=0; i<m_pRows.size(); i++ )
+		SAFE_DELETE( m_pRows[i] );
 }
 
 CString ScreenOptions::GetExplanationText( int iRow ) const
 {
-	OptionRow &row = *m_Rows[iRow];
+	OptionRow &row = *m_pRows[iRow];
 
 	CString sLineName = row.GetRowDef().name;
 	ASSERT( !sLineName.empty() );
@@ -325,36 +325,36 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 
 BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow )
 {
-	ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
-	OptionRow &row = *m_Rows[iRow];
+	ASSERT_M( iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
+	OptionRow &row = *m_pRows[iRow];
 	return row.GetTextItemForRow( pn, iChoiceOnRow );
 }
 
 void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut )
 {
-	ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
-	OptionRow &row = *m_Rows[iRow];
+	ASSERT_M( iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
+	OptionRow &row = *m_pRows[iRow];
 	row.GetWidthXY( pn, iChoiceOnRow, iWidthOut, iXOut, iYOut );
 }
 
 void ScreenOptions::PositionUnderlines( int r, PlayerNumber pn )
 {
-	OptionRow &row = *m_Rows[r];
+	OptionRow &row = *m_pRows[r];
 	row.PositionUnderlines( pn );
 }
 
 void ScreenOptions::PositionAllUnderlines()
 {
-	for( unsigned r=0; r<m_Rows.size(); r++ )
+	for( unsigned r=0; r<m_pRows.size(); r++ )
 		FOREACH_HumanPlayer( p )
 			PositionUnderlines( r, p );
 }
 
 void ScreenOptions::PositionIcons()
 {
-	for( unsigned i=0; i<m_Rows.size(); i++ )	// foreach options line
+	for( unsigned i=0; i<m_pRows.size(); i++ )	// foreach options line
 	{
-		OptionRow &row = *m_Rows[i];
+		OptionRow &row = *m_pRows[i];
 		row.PositionIcons();
 			continue;
 	}
@@ -368,7 +368,7 @@ void ScreenOptions::RefreshIcons( int row, PlayerNumber pn )
 void ScreenOptions::RefreshAllIcons()
 {
 	FOREACH_HumanPlayer( p )
-        for( unsigned r=0; r<m_Rows.size(); ++r )
+        for( unsigned r=0; r<m_pRows.size(); ++r )
 			this->RefreshIcons( r, p );
 }
 
@@ -382,8 +382,8 @@ void ScreenOptions::PositionCursors()
 		if( iRow == -1 )
 			continue;
 
-		ASSERT_M( iRow >= 0 && iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
-		OptionRow &OptionRow = *m_Rows[iRow];
+		ASSERT_M( iRow >= 0 && iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
+		OptionRow &OptionRow = *m_pRows[iRow];
 		OptionsCursor &cursor = m_Cursor[pn];
 
 		const int iChoiceWithFocus = OptionRow.GetChoiceInRowWithFocus(pn);
@@ -401,9 +401,9 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 {
 	// Set the position of the cursor showing the current option the user is changing.
 	const int iRow = m_iCurrentRow[pn];
-	ASSERT_M( iRow < (int)m_Rows.size(), ssprintf("%i < %i", iRow, (int)m_Rows.size() ) );
+	ASSERT_M( iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
 
-	const OptionRow &row = *m_Rows[iRow];
+	const OptionRow &row = *m_pRows[iRow];
 	const int iChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
 
 	int iWidth, iX, iY;
@@ -436,13 +436,13 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
  * Update the whole row. */
 void ScreenOptions::UpdateText( int iRow )
 {
-	OptionRow &row = *m_Rows[iRow];
+	OptionRow &row = *m_pRows[iRow];
 	row.UpdateText();
 }
 
 void ScreenOptions::UpdateEnabledDisabled( int r )
 {
-	OptionRow &row = *m_Rows[r];
+	OptionRow &row = *m_pRows[r];
 
 	bool bRowHasFocus[NUM_PLAYERS];
 	FOREACH_PlayerNumber( pn )
@@ -454,7 +454,7 @@ void ScreenOptions::UpdateEnabledDisabled( int r )
 
 void ScreenOptions::UpdateEnabledDisabled()
 {
-	for( unsigned r=0; r<m_Rows.size(); r++ )
+	for( unsigned r=0; r<m_pRows.size(); r++ )
 		UpdateEnabledDisabled( r );
 }
 
@@ -512,7 +512,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		this->GoToPrevScreen();
 		break;
 	case SM_GoToNextScreen:
-		for( unsigned r=0; r<m_Rows.size(); r++ )		// foreach row
+		for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
 		{
 			vector<PlayerNumber> vpns;
 			FOREACH_HumanPlayer( p )
@@ -551,7 +551,7 @@ void ScreenOptions::PositionItems()
 	int P1Choice = GAMESTATE->IsHumanPlayer(PLAYER_1)? m_iCurrentRow[PLAYER_1]: m_iCurrentRow[PLAYER_2];
 	int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? m_iCurrentRow[PLAYER_2]: m_iCurrentRow[PLAYER_1];
 
-	vector<OptionRow*> Rows( m_Rows );
+	vector<OptionRow*> Rows( m_pRows );
 	OptionRow *ExitRow = NULL;
 
 	if( (bool)SEPARATE_EXIT_ROW && Rows.back()->GetRowType() == OptionRow::ROW_EXIT )
@@ -670,14 +670,14 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 	if( SHOW_SCROLL_BAR )
 	{
 		float fPercent = 0;
-		if( m_Rows.size() > 1 )
-			fPercent = m_iCurrentRow[pn] / float(m_Rows.size()-1);
+		if( m_pRows.size() > 1 )
+			fPercent = m_iCurrentRow[pn] / float(m_pRows.size()-1);
 		m_ScrollBar.SetPercentage( pn, fPercent );
 	}
 
 
 	/* If the last row is EXIT, and is hidden, then show MORE. */
-	const bool ShowMore = m_Rows.back()->GetRowType() == OptionRow::ROW_EXIT && m_Rows.back()->GetRowHidden();
+	const bool ShowMore = m_pRows.back()->GetRowType() == OptionRow::ROW_EXIT && m_pRows.back()->GetRowHidden();
 	if( m_bMoreShown != ShowMore )
 	{
 		m_bMoreShown = ShowMore;
@@ -691,7 +691,7 @@ void ScreenOptions::OnChange( PlayerNumber pn )
 			TweenCursor( p );
 
 		int iCurrentRow = m_iCurrentRow[pn];
-		OptionRow &row = *m_Rows[iCurrentRow];
+		OptionRow &row = *m_pRows[iCurrentRow];
 		const bool ExitSelected = row.GetRowType() == OptionRow::ROW_EXIT;
 		if( p == pn || GAMESTATE->GetNumHumanPlayers() == 1 )
 		{
@@ -740,7 +740,7 @@ void ScreenOptions::MenuBack( PlayerNumber pn )
 bool ScreenOptions::IsOnLastRow( PlayerNumber pn ) const
 {
 	int iCurRow = m_iCurrentRow[pn];
-	return iCurRow == (int)(m_Rows.size()-1);
+	return iCurRow == (int)(m_pRows.size()-1);
 }
 
 bool ScreenOptions::AllAreOnLastRow() const
@@ -769,7 +769,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 	}
 	
 	int iCurRow = m_iCurrentRow[pn];
-	OptionRow &row = *m_Rows[iCurRow];
+	OptionRow &row = *m_pRows[iCurRow];
 	
 
 	/* If we are in a three-button mode, check to see if MENU_BUTTON_LEFT and
@@ -851,7 +851,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		{
 		case NAV_THREE_KEY:
 			// don't wrap
-			if( iCurRow == (int)m_Rows.size()-1 )
+			if( iCurRow == (int)m_pRows.size()-1 )
 				return;
 			MenuDown( pn, type );
 			break;
@@ -878,7 +878,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		case NAV_FIVE_KEY:
 			/* Jump to the exit row.  (If everyone's already on the exit row, then
 			 * we'll have already gone to the next screen above.) */
-			MoveRow( pn, m_Rows.size()-m_iCurrentRow[pn]-1, type != IET_FIRST_PRESS );
+			MoveRow( pn, m_pRows.size()-m_iCurrentRow[pn]-1, type != IET_FIRST_PRESS );
 			break;
 		}
 	}
@@ -888,7 +888,7 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 {
 	/* Long rows always put us in the center, so don't update the focus. */
 	int iCurrentRow = m_iCurrentRow[pn];
-	const OptionRow &row = *m_Rows[iCurrentRow];
+	const OptionRow &row = *m_pRows[iCurrentRow];
 	if( row.GetRowDef().layoutType == LAYOUT_SHOW_ONE_IN_ROW )
 		return;
 
@@ -905,7 +905,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	if( iCurRow == -1	)	// no row selected
 		return;		// don't allow a move
 
-	OptionRow &row = *m_Rows[iCurRow];
+	OptionRow &row = *m_pRows[iCurRow];
 	
 	const int iNumChoices = row.GetRowDef().choices.size();
 
@@ -1018,7 +1018,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat ) 
 {
 	const int iCurrentRow = m_iCurrentRow[pn];
-	OptionRow &row = *m_Rows[iCurrentRow];
+	OptionRow &row = *m_pRows[iCurrentRow];
 
 	if( row.GetFirstItemGoesDown() )
 	{
@@ -1035,19 +1035,19 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 			continue;	// skip
 
 		int r = m_iCurrentRow[p] + dir;
-		if( Repeat && ( r == -1 || r == (int) m_Rows.size() ) )
+		if( Repeat && ( r == -1 || r == (int) m_pRows.size() ) )
 			continue; // don't wrap while repeating
 
-		wrap( r, m_Rows.size() );
+		wrap( r, m_pRows.size() );
 
 		const unsigned iOldSelection = row.GetChoiceInRowWithFocus(p);
 		if( m_iCurrentRow[p] == r )
 			continue;
 
 		m_iCurrentRow[p] = r;
-		ASSERT( r >= 0 && r < (int)m_Rows.size() );
+		ASSERT( r >= 0 && r < (int)m_pRows.size() );
 
-		OptionRow &row = *m_Rows[r];
+		OptionRow &row = *m_pRows[r];
 
 		switch( m_OptionsNavigation )
 		{
@@ -1123,20 +1123,20 @@ void ScreenOptions::MenuUpDown( PlayerNumber pn, const InputEventType type, int 
 	bool bRepeat = type != IET_FIRST_PRESS;
 
 	int iDest = -1;
-	for( int r=1; r<(int)m_Rows.size(); r++ )
+	for( int r=1; r<(int)m_pRows.size(); r++ )
 	{
 		int iDelta = r*iDir;
 		iDest = m_iCurrentRow[pn] + iDelta;
 		int iOldDest = iDest;
-		ASSERT( m_Rows.size() );
-		wrap( iDest, m_Rows.size() );
+		ASSERT( m_pRows.size() );
+		wrap( iDest, m_pRows.size() );
 
 		// Don't wrap on repeating inputs.
 		bool bWrapped = iOldDest != iDest;
 		if( bRepeat && bWrapped )
 			return;
 
-		OptionRow &row = *m_Rows[iDest];
+		OptionRow &row = *m_pRows[iDest];
 
 		if( row.GetRowDef().IsEnabledForPlayer(pn) )
 		{

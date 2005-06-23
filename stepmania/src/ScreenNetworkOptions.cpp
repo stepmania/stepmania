@@ -132,7 +132,7 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		}
 		break;
 	case PO_SERVER:
-		switch (m_Rows[GetCurrentRow()]->GetOneSharedSelection())
+		switch( m_pRows[GetCurrentRow()]->GetOneSharedSelection() )
 		{
 		case NO_START_SERVER:
 			if (!NSMAN->isLanServer)
