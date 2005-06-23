@@ -164,7 +164,6 @@
 		AA29CC6C0558741A00961A51 /* EditMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE8504770E7C005F316C /* EditMenu.h */; };
 		AA29CC6D0558741A00961A51 /* FadingBanner.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE8B04770E7C005F316C /* FadingBanner.h */; };
 		AA29CC6E0558741A00961A51 /* GradeDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE8D04770E7C005F316C /* GradeDisplay.h */; };
-		AA29CC6F0558741A00961A51 /* GrooveGraph.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE8F04770E7C005F316C /* GrooveGraph.h */; };
 		AA29CC700558741A00961A51 /* GrooveRadar.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9104770E7C005F316C /* GrooveRadar.h */; };
 		AA29CC710558741A00961A51 /* GroupList.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9304770E7C005F316C /* GroupList.h */; };
 		AA29CC720558741A00961A51 /* HelpDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFE9504770E7C005F316C /* HelpDisplay.h */; };
@@ -401,7 +400,6 @@
 		AA29CD800558741A00961A51 /* EditMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8404770E7C005F316C /* EditMenu.cpp */; };
 		AA29CD810558741A00961A51 /* FadingBanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8A04770E7C005F316C /* FadingBanner.cpp */; };
 		AA29CD820558741A00961A51 /* GradeDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8C04770E7C005F316C /* GradeDisplay.cpp */; };
-		AA29CD830558741A00961A51 /* GrooveGraph.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE8E04770E7C005F316C /* GrooveGraph.cpp */; };
 		AA29CD840558741A00961A51 /* GrooveRadar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9004770E7C005F316C /* GrooveRadar.cpp */; };
 		AA29CD850558741A00961A51 /* GroupList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9204770E7C005F316C /* GroupList.cpp */; };
 		AA29CD860558741A00961A51 /* HelpDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFE9404770E7C005F316C /* HelpDisplay.cpp */; };
@@ -1371,8 +1369,6 @@
 		AA6EFE8B04770E7C005F316C /* FadingBanner.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = FadingBanner.h; path = ../src/FadingBanner.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFE8C04770E7C005F316C /* GradeDisplay.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = GradeDisplay.cpp; path = ../src/GradeDisplay.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFE8D04770E7C005F316C /* GradeDisplay.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = GradeDisplay.h; path = ../src/GradeDisplay.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
-		AA6EFE8E04770E7C005F316C /* GrooveGraph.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = GrooveGraph.cpp; path = ../src/GrooveGraph.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
-		AA6EFE8F04770E7C005F316C /* GrooveGraph.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = GrooveGraph.h; path = ../src/GrooveGraph.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFE9004770E7C005F316C /* GrooveRadar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = GrooveRadar.cpp; path = ../src/GrooveRadar.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFE9104770E7C005F316C /* GrooveRadar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = GrooveRadar.h; path = ../src/GrooveRadar.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFE9204770E7C005F316C /* GroupList.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = GroupList.cpp; path = ../src/GroupList.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
@@ -2704,8 +2700,6 @@
 				AA6EFE8D04770E7C005F316C /* GradeDisplay.h */,
 				AAFF551D0549F39700D02EE9 /* GraphDisplay.cpp */,
 				AAFF551E0549F39700D02EE9 /* GraphDisplay.h */,
-				AA6EFE8E04770E7C005F316C /* GrooveGraph.cpp */,
-				AA6EFE8F04770E7C005F316C /* GrooveGraph.h */,
 				AA6EFE9004770E7C005F316C /* GrooveRadar.cpp */,
 				AA6EFE9104770E7C005F316C /* GrooveRadar.h */,
 				AA6EFE9204770E7C005F316C /* GroupList.cpp */,
@@ -3169,7 +3163,6 @@
 				AA29CC6C0558741A00961A51 /* EditMenu.h in Headers */,
 				AA29CC6D0558741A00961A51 /* FadingBanner.h in Headers */,
 				AA29CC6E0558741A00961A51 /* GradeDisplay.h in Headers */,
-				AA29CC6F0558741A00961A51 /* GrooveGraph.h in Headers */,
 				AA29CC700558741A00961A51 /* GrooveRadar.h in Headers */,
 				AA29CC710558741A00961A51 /* GroupList.h in Headers */,
 				AA29CC720558741A00961A51 /* HelpDisplay.h in Headers */,
@@ -3799,7 +3792,6 @@
 				AA29CD800558741A00961A51 /* EditMenu.cpp in Sources */,
 				AA29CD810558741A00961A51 /* FadingBanner.cpp in Sources */,
 				AA29CD820558741A00961A51 /* GradeDisplay.cpp in Sources */,
-				AA29CD830558741A00961A51 /* GrooveGraph.cpp in Sources */,
 				AA29CD840558741A00961A51 /* GrooveRadar.cpp in Sources */,
 				AA29CD850558741A00961A51 /* GroupList.cpp in Sources */,
 				AA29CD860558741A00961A51 /* HelpDisplay.cpp in Sources */,
@@ -4276,7 +4268,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					/usr/include,
-					../src,
+					"$(SRCROOT)/../src",
 					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers",
 					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers",
 					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers",
