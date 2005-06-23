@@ -134,6 +134,8 @@ ThemeManager::ThemeManager()
 
 ThemeManager::~ThemeManager()
 {
+	for( unsigned i = 0; i < g_vThemes.size(); ++i )
+		delete g_vThemes[i].iniMetrics;
 }
 
 void ThemeManager::GetThemeNames( CStringArray& AddTo )
@@ -248,6 +250,8 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName, const CStr
 	for( int i = 0; i < NUM_ElementCategory; ++i )
 		g_ThemePathCache[i].clear();
 
+	for( unsigned i = 0; i < g_vThemes.size(); ++i )
+		delete g_vThemes[i].iniMetrics;
 	g_vThemes.clear();
 
 	// load current theme
