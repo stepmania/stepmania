@@ -114,7 +114,7 @@ void MusicWheel::Load( CString sType )
 	if( GAMESTATE->IsExtraStage() ||  GAMESTATE->IsExtraStage2() )
 	{
 		// make the preferred group the group of the last song played.
-		if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL_MUSIC  &&  !PREFSMAN->m_bPickExtraStage )
+		if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL  &&  !PREFSMAN->m_bPickExtraStage )
 		{
 			ASSERT(GAMESTATE->m_pCurSong);
 			GAMESTATE->m_sPreferredSongGroup.Set( GAMESTATE->m_pCurSong->m_sGroupName );
@@ -369,7 +369,7 @@ bool MusicWheel::SelectModeMenuItem()
 void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sPreferredGroup )
 {
 	vector<Song*> apAllSongs;
-//	if( so==SORT_PREFERRED && GAMESTATE->m_sPreferredGroup!=GROUP_ALL_MUSIC)
+//	if( so==SORT_PREFERRED && GAMESTATE->m_sPreferredGroup!=GROUP_ALL)
 //		SONGMAN->GetSongs( apAllSongs, GAMESTATE->m_sPreferredGroup, GAMESTATE->GetNumStagesLeft() );	
 //	else
 //		SONGMAN->GetSongs( apAllSongs, GAMESTATE->GetNumStagesLeft() );
@@ -494,7 +494,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				break;
 			case SORT_GROUP:
 				SongUtil::SortSongPointerArrayByGroupAndTitle( arraySongs );
-				bUseSections = GAMESTATE->m_sPreferredSongGroup == GROUP_ALL_MUSIC;
+				bUseSections = GAMESTATE->m_sPreferredSongGroup == GROUP_ALL;
 				break;
 			case SORT_TITLE:
 				SongUtil::SortSongPointerArrayByTitle( arraySongs );

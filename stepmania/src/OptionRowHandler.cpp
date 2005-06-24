@@ -410,7 +410,7 @@ public:
 		defOut.bOneChoiceForAllPlayers = true;
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 		defOut.name = "Group";
-		Default.m_sSongGroup = GROUP_ALL_MUSIC;
+		Default.m_sSongGroup = GROUP_ALL;
 
 		vector<CString> vSongGroups;
 		SONGMAN->GetSongGroupNames( vSongGroups );
@@ -419,7 +419,7 @@ public:
 		{
 			defOut.choices.push_back( "AllGroups" );
 			GameCommand mc;
-			mc.m_sSongGroup = GROUP_ALL_MUSIC;
+			mc.m_sSongGroup = GROUP_ALL;
 			ListEntries.push_back( mc );
 		}
 

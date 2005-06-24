@@ -169,8 +169,8 @@ void GameState::Reset()
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_mapEnv.clear();
-	m_sPreferredSongGroup.Set( GROUP_ALL_MUSIC );
-	m_sPreferredCourseGroup.Set( "" );
+	m_sPreferredSongGroup.Set( GROUP_ALL );
+	m_sPreferredCourseGroup.Set( GROUP_ALL );
 	m_bChangedFailTypeOnScreenSongOptions = false;
 	FOREACH_PlayerNumber( p )
 	{

@@ -55,7 +55,7 @@ MusicBannerWheel::MusicBannerWheel()
 	m_ScrollingList.SetSpacing( BANNERSPACING );
 	this->AddChild( &m_ScrollingList );
 
-	if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL_MUSIC )
+	if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL )
 		SONGMAN->GetSongs( arraySongs, GAMESTATE->GetNumStagesLeft() );
 	else // Get the Group They Want
 		SONGMAN->GetSongs( arraySongs, GAMESTATE->m_sPreferredSongGroup, GAMESTATE->GetNumStagesLeft() );

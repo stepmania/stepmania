@@ -438,7 +438,7 @@ static void GetSongsFromVector( const vector<Song*> &Songs, vector<Song*> &AddTo
 	AddTo.clear();
 
 	for( unsigned i=0; i<Songs.size(); i++ )
-		if( sGroupName==GROUP_ALL_MUSIC || sGroupName==Songs[i]->m_sGroupName )
+		if( sGroupName==GROUP_ALL || sGroupName==Songs[i]->m_sGroupName )
 			if( SongManager::GetNumStagesForSong(Songs[i]) <= iMaxStages )
 				AddTo.push_back( Songs[i] );
 }
@@ -944,12 +944,12 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd,
 								   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out )
 {
 	CString sGroup = GAMESTATE->m_sPreferredSongGroup;
-	if( sGroup == GROUP_ALL_MUSIC )
+	if( sGroup == GROUP_ALL )
 	{
 		if( GAMESTATE->m_pCurSong == NULL )
 		{
 			/* This normally shouldn't happen, but it's helpful to permit it for testing. */
-			LOG->Warn( "GetExtraStageInfo() called in GROUP_ALL_MUSIC, but GAMESTATE->m_pCurSong == NULL" );
+			LOG->Warn( "GetExtraStageInfo() called in GROUP_ALL, but GAMESTATE->m_pCurSong == NULL" );
 			GAMESTATE->m_pCurSong.Set( SONGMAN->GetRandomSong() );
 		}
 		sGroup = GAMESTATE->m_pCurSong->m_sGroupName;
