@@ -697,15 +697,12 @@ void OptionRow::SetExitText( CString sExitText )
 	bt->SetText( sExitText );
 }
 
-void OptionRow::Reload()
+void OptionRow::Reload( const OptionRowDefinition &def )
 {
 	switch( GetRowType() )
 	{
 	case OptionRow::ROW_NORMAL:
 		{
-			if( m_pHand == NULL )
-				return;
-
 			vector<PlayerNumber> vpns;
 			FOREACH_HumanPlayer( p )
 				vpns.push_back( p );
@@ -718,7 +715,10 @@ void OptionRow::Reload()
 			//	ExportOptions( vpns, bRowHasFocus );
 			//}
 
-			m_pHand->Reload( m_RowDef );
+			if( m_pHand == NULL )
+				m_RowDef = def;
+			else
+				m_pHand->Reload( m_RowDef );
 			ASSERT( !m_RowDef.choices.empty() );
 
 			FOREACH_PlayerNumber( p )
@@ -765,7 +765,7 @@ void OptionRow::Reload()
 
 void OptionRow::HandleMessage( const CString& sMessage )
 {
-	Reload();
+	Reload( m_RowDef );
 }
 
 

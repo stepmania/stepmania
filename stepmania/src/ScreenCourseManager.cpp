@@ -15,8 +15,8 @@ enum CourseManagerAction
 {
 	ACTION_EDIT,
 	ACTION_DELETE,
-	ACTION_CREATE_NEW,
 	ACTION_COPY_TO_NEW,
+	ACTION_CREATE_NEW,
 	NUM_CourseManagerAction
 };
 static const CString CourseManagerActionNames[] = {
@@ -26,6 +26,20 @@ static const CString CourseManagerActionNames[] = {
 	"Copy to New",
 };
 XToString( CourseManagerAction, NUM_CourseManagerAction );
+
+static void GetPossibleActions( Course *pCourse, vector<CourseManagerAction> &vActionsOut )
+{	
+	if( pCourse )
+	{
+		vActionsOut.push_back( ACTION_EDIT );
+		vActionsOut.push_back( ACTION_DELETE );
+		vActionsOut.push_back( ACTION_COPY_TO_NEW );
+	}
+	else
+	{
+		vActionsOut.push_back( ACTION_CREATE_NEW );
+	}
+}
 
 
 REGISTER_SCREEN_CLASS( ScreenCourseManager );
@@ -96,6 +110,7 @@ void ScreenCourseManager::OnChange( PlayerNumber pn )
 			FOREACH_CONST( Course*, vpCourses, c )
 				def.choices.push_back( (*c)->GetTranslitFullTitle() );
 			def.choices.push_back( NULL );	// new course
+			row.Reload( def );
 		}
 		// fall through
 	case ROW_COURSE:
@@ -111,13 +126,13 @@ void ScreenCourseManager::OnChange( PlayerNumber pn )
 		// refresh actions
 		{
 			OptionRow &row = *m_pRows[ROW_ACTION];
-			vector<Course*> vpCourses;
-			SONGMAN->GetCoursesInGroup( vpCourses, GAMESTATE->m_sPreferredCourseGroup.Get(), false );
 			OptionRowDefinition def = row.GetRowDef();
 			def.choices.clear();
-			FOREACH_CONST( Course*, vpCourses, c )
-				def.choices.push_back( (*c)->GetTranslitFullTitle() );
-			def.choices.push_back( NULL );	// new course
+			vector<CourseManagerAction> vActions;
+			GetPossibleActions( GAMESTATE->m_pCurCourse, vActions );
+			FOREACH_CONST( CourseManagerAction, vActions, a )
+				def.choices.push_back( CourseManagerActionToString(*a) );
+			row.Reload( def );
 		}
 		// fall through
 	case ROW_ACTION:

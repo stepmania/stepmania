@@ -160,7 +160,7 @@ public:
 
 	void SetExitText( CString sExitText );
 
-	void Reload();
+	void Reload( const OptionRowDefinition &def );
 
 	//
 	// Messages
