@@ -35,6 +35,14 @@ function SelectFirstOptionsScreen()
 	return "ScreenPlayerOptions"
 end
 
+function ScreenPlayerOptionsNext()
+	if SCREENMAN:GetTopScreen():GetGoToOptions() then
+		return "ScreenSongOptions"
+	else
+		return "ScreenStage"
+	end
+end
+
 function GetGameplayScreen()
 	if IsExtraStage() or IsExtraStage2() then return "ScreenGameplay" end
 	return "ScreenGameplay"
