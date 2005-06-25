@@ -9,13 +9,6 @@
 #define PREV_SCREEN		THEME->GetMetric ("ScreenSongOptions","PrevScreen")
 #define NEXT_SCREEN		THEME->GetMetric ("ScreenSongOptions","NextScreen")
 
-/* Get the next screen we'll go to when finished. */
-CString ScreenSongOptions::GetNextScreen()
-{
-	return NEXT_SCREEN;
-}
-
-
 REGISTER_SCREEN_CLASS( ScreenSongOptions );
 ScreenSongOptions::ScreenSongOptions( CString sClassName ) :
 	ScreenOptionsMaster( sClassName )
