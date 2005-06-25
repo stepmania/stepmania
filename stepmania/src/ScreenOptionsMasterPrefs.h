@@ -61,11 +61,6 @@ struct ConfOption
 	void (*MakeOptionsListCB)( CStringArray &out );
 };
 
-
-// HACK: This is used by ScreenTitleMenu
-void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption );
-
-
 #endif
 
 /*

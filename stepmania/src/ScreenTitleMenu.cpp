@@ -19,7 +19,6 @@
 #include "LightsManager.h"
 #include "CommonMetrics.h"
 #include "Game.h"
-#include "ScreenOptionsMasterPrefs.h"
 
 #define MAX_STAGES_TEXT				THEME->GetMetric (m_sName,"MaxStagesText")
 #define COIN_MODE_CHANGE_SCREEN		THEME->GetMetric (m_sName,"CoinModeChangeScreen")
@@ -67,25 +66,6 @@ void ScreenTitleMenu::Init()
 	m_textSongs.SetText( text );
 	this->AddChild( &m_textSongs );
 	SET_XY_AND_ON_COMMAND( m_textSongs );
-
-	m_textMaxStages.LoadFromFont( THEME->GetPathF(m_sName,"MaxStages") );
-	m_textMaxStages.SetName( "MaxStages" );
-	CString sText = 
-		GAMESTATE->IsEventMode() ?
-		CString("event mode") :
-		ssprintf( "%d %s%s max", PREFSMAN->m_iSongsPerPlay.Get(), MAX_STAGES_TEXT.c_str(), (PREFSMAN->m_iSongsPerPlay>1)?"s":"" );
-	m_textMaxStages.SetText( sText );
-	this->AddChild( &m_textMaxStages );
-	SET_XY_AND_ON_COMMAND( m_textMaxStages );
-
-	m_textLifeDifficulty.LoadFromFont( THEME->GetPathF(m_sName,"LifeDifficulty") );
-	m_textLifeDifficulty.SetName( "LifeDifficulty" );
-	int iLifeDifficulty;
-	LifeDifficulty( iLifeDifficulty, true, NULL );	
-	iLifeDifficulty++;	// LifeDifficulty returns an index
-	m_textLifeDifficulty.SetText( ssprintf( "life difficulty %d", iLifeDifficulty ) );
-	this->AddChild( &m_textLifeDifficulty );
-	SET_XY_AND_ON_COMMAND( m_textLifeDifficulty );
 
 	this->SortByDrawOrder();
 

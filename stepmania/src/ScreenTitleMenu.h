@@ -26,8 +26,6 @@ private:
 	AutoActor		m_sprLogo;
 	BitmapText		m_textVersion;
 	BitmapText		m_textSongs;
-	BitmapText		m_textMaxStages;
-	BitmapText		m_textLifeDifficulty;
 };
 
 #endif

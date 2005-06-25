@@ -364,11 +364,21 @@ static void JudgeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption
 	MoveMap( sel, PREFSMAN->m_fJudgeWindowScale, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 1.60f,1.40f,1.20f,1.00f,0.80f,0.60f,0.40f };
 	MoveMap( sel, PREFSMAN->m_fLifeDifficultyScale, ToSel, mapping, ARRAYSIZE(mapping) );
 }
+
+static int GetLifeDifficulty()
+{
+	int iLifeDifficulty;
+	LifeDifficulty( iLifeDifficulty, true, NULL );	
+	iLifeDifficulty++;	// LifeDifficulty returns an index
+	return iLifeDifficulty;
+}
+#include "LuaFunctions.h"
+LuaFunction( GetLifeDifficulty, GetLifeDifficulty() );
 
 static void ShowSongOptions( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
