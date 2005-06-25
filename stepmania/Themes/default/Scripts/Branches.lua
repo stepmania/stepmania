@@ -1,4 +1,10 @@
 function ScreenTitleBranch()
+	-- Don't show the title menu (says "Press Start") if there are 0 credits
+	-- and inserted and CoinMode is pay.
+	if GAMESTATE:GetCoinsNeededToJoin() > GAMESTATE:GetCoins() then
+		return THEME:GetMetric( "Common", "InitialScreen" )
+	end
+
 	if GAMESTATE:GetCoinMode() == COIN_MODE_HOME then return "ScreenTitleMenu" end
 	return "ScreenTitleJoin"
 end
