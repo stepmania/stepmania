@@ -1977,6 +1977,7 @@ void GameState::RevertSyncChanges()
 
 // lua start
 #include "LuaBinding.h"
+#include "Game.h"
 
 class LunaGameState: public Luna<GameState>
 {
@@ -2099,7 +2100,7 @@ public:
 		PlayerNumber pn = (PlayerNumber)IArg(1);
 		lua_pushboolean(L, p->GetStageResult(pn)==RESULT_WIN); return 1;
 	}
-
+	static int GetCurrentGame( T* p, lua_State *L )			{ const_cast<Game*>(p->GetCurrentGame())->PushSelf( L ); return 1; }
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( IsPlayerEnabled )
@@ -2148,6 +2149,7 @@ public:
 		ADD_METHOD( GetPremium )
 		ADD_METHOD( IsSyncDataChanged )
 		ADD_METHOD( IsWinner )
+		ADD_METHOD( GetCurrentGame )
 
 		Luna<T>::Register( L );
 

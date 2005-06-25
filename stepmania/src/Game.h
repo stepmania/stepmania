@@ -7,6 +7,7 @@
 #include "MenuInput.h"
 #include "GameConstantsAndTypes.h"
 
+struct lua_State;
 
 const int MAX_STYLES_PER_GAME = 10;
 
@@ -61,6 +62,11 @@ public:
 	TapNoteScore m_mapGreatTo;
 	TapNoteScore m_mapGoodTo;
 	TapNoteScore m_mapBooTo;
+
+	//
+	// Lua
+	//
+	void PushSelf( lua_State *L );
 };
 
 #endif
