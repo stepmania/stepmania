@@ -430,22 +430,36 @@ void RageFileManager::CreateDir( CString sDir )
 	FILEMAN->Remove( sTempFile );
 }
 
+static void AdjustMountpoint( CString &sMountPoint )
+{
+	FixSlashesInPlace( sMountPoint );
+	
+	ASSERT_M( sMountPoint.Left(1) == "/", "Mountpoints must be absolute: " + sMountPoint );
+
+	if( sMountPoint.size() && sMountPoint.Right(1) != "/" )
+		sMountPoint += '/';
+
+	if( sMountPoint.Left(1) != "/" )
+		sMountPoint = "/" + sMountPoint;
+
+}
+
+static void AddFilesystemDriver( const LoadedDriver *pLoadedDriver, bool bAddToEnd )
+{
+	g_Mutex->Lock();
+	g_Drivers.insert( bAddToEnd? g_Drivers.end():g_Drivers.begin(), *pLoadedDriver );
+	g_Mountpoints->LoadFromDrivers( g_Drivers );
+	g_Mutex->Unlock();
+}
+
 void RageFileManager::Mount( CString Type, CString Root, CString MountPoint, bool bAddToEnd )
 {
 	FixSlashesInPlace( Root );
-	FixSlashesInPlace( MountPoint );
+	AdjustMountpoint( MountPoint );
 
-	ASSERT_M( MountPoint.Left(1) == "/", "Mountpoints must be absolute: " + MountPoint );
-
-	if( MountPoint.size() && MountPoint.Right(1) != "/" )
-		MountPoint += '/';
-
-	if( MountPoint.Left(1) != "/" )
-		MountPoint = "/" + MountPoint;
 	ASSERT( Root != "" );
 
-	CHECKPOINT_M( ssprintf("\"%s\", \"%s\", \"%s\"",
-		Type.c_str(), Root.c_str(), MountPoint.c_str() ) );
+	CHECKPOINT_M( ssprintf("\"%s\", \"%s\", \"%s\"", Type.c_str(), Root.c_str(), MountPoint.c_str() ) );
 
 	// Unmount anything that was previously mounted here.
 	Unmount( Type, Root, MountPoint );
@@ -471,12 +485,21 @@ void RageFileManager::Mount( CString Type, CString Root, CString MountPoint, boo
 	ld.Root = Root;
 	ld.MountPoint = MountPoint;
 
-	g_Mutex->Lock();
-	g_Drivers.insert( bAddToEnd? g_Drivers.end():g_Drivers.begin(), ld );
-	CHECKPOINT;
-	g_Mountpoints->LoadFromDrivers( g_Drivers );
-	CHECKPOINT;
-	g_Mutex->Unlock();
+	AddFilesystemDriver( &ld, bAddToEnd );
+}
+
+/* Mount a custom filesystem. */
+void RageFileManager::Mount( RageFileDriver *pDriver, CString sMountPoint, bool bAddToEnd )
+{
+	AdjustMountpoint( sMountPoint );
+
+	LoadedDriver ld;
+	ld.driver = pDriver;
+	ld.Type = "";
+	ld.Root = "";
+	ld.MountPoint = sMountPoint;
+
+	AddFilesystemDriver( &ld, bAddToEnd );
 }
 
 void RageFileManager::Unmount( CString Type, CString Root, CString MountPoint )

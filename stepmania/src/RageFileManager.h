@@ -31,6 +31,7 @@ public:
 	int GetFileHash( CString sPath );
 
 	void Mount( CString Type, CString RealPath, CString MountPoint, bool bAddToEnd = true );
+	void Mount( RageFileDriver *pDriver, CString sMountPoint, bool bAddToEnd = true );
 	void Unmount( CString Type, CString Root, CString MountPoint );
 
 	/* Change the root of a filesystem.  Only a couple drivers support this; it's
