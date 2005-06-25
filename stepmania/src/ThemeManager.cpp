@@ -706,7 +706,10 @@ void ThemeManager::EvaluateString( CString &sText )
 int ThemeManager::GetMetricI( const CString &sClassName, const CString &sValueName )
 {
 	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
-	return atoi( sValue );
+
+	LuaHelpers::PrepareExpression( sValue );
+
+	return LuaHelpers::RunExpressionI( sValue );
 }
 
 float ThemeManager::GetMetricF( const CString &sClassName, const CString &sValueName )
