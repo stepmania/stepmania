@@ -420,6 +420,9 @@ static bool Trace( const CString &sString )
 
 LuaFunction( Trace, Trace(SArg(1)) );
 
+#include "ProductInfo.h"
+LuaFunction( ProductVersion, (CString) PRODUCT_VER );
+
 /*
  * (c) 2004 Glenn Maynard
  * All rights reserved.
