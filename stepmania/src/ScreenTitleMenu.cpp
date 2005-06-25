@@ -1,6 +1,5 @@
 #include "global.h"
 #include "ScreenTitleMenu.h"
-#include "ScreenAttract.h"
 #include "ScreenManager.h"
 #include "RageUtil.h"
 #include "StepMania.h"
