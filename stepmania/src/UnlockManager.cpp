@@ -512,6 +512,7 @@ public:
 	static int FindCode( T* p, lua_State *L )			{ CString sName = SArg(1); int i = p->FindCode(sName); if( i == -1 ) lua_pushnil(L); else lua_pushnumber(L, i); return 1; }
 	static int UnlockCode( T* p, lua_State *L )			{ int iCode = IArg(1); p->UnlockCode(iCode); return 0; }
 	static int PreferUnlockCode( T* p, lua_State *L )	{ int iCode = IArg(1); p->PreferUnlockCode(iCode); return 0; }
+	static int GetNumUnlocks( T* p, lua_State *L )		{ lua_pushnumber( L, p->GetNumUnlocks() ); return 1; }
 	static int GetSongsUnlockedByCode( T* p, lua_State *L )
 	{
 		vector<Song *> apSongs;
@@ -536,6 +537,7 @@ public:
 		ADD_METHOD( FindCode )
 		ADD_METHOD( UnlockCode )
 		ADD_METHOD( PreferUnlockCode )
+		ADD_METHOD( GetNumUnlocks )
 		ADD_METHOD( GetSongsUnlockedByCode )
 		ADD_METHOD( GetStepsUnlockedByCode )
 		Luna<T>::Register( L );

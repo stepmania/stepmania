@@ -1339,6 +1339,10 @@ public:
 	static int FindCourse( T* p, lua_State *L )		{ Course *pC = p->FindCourse(SArg(1)); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetRandomSong( T* p, lua_State *L )	{ Song *pS = p->GetRandomSong(); if(pS) pS->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int GetRandomCourse( T* p, lua_State *L ){ Course *pC = p->GetRandomCourse(); if(pC) pC->PushSelf(L); else lua_pushnil(L); return 1; }
+	static int GetNumSongs( T* p, lua_State *L )    { lua_pushnumber( L, p->GetNumSongs() ); return 1; }
+	static int GetNumSongGroups( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumSongGroups() ); return 1; }
+	static int GetNumCourses( T* p, lua_State *L )  { lua_pushnumber( L, p->GetNumCourses() ); return 1; }
+	static int GetNumCourseGroups( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumCourseGroups() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1348,6 +1352,10 @@ public:
 		ADD_METHOD( FindCourse )
 		ADD_METHOD( GetRandomSong )
 		ADD_METHOD( GetRandomCourse )
+		ADD_METHOD( GetNumSongs )
+		ADD_METHOD( GetNumSongGroups )
+		ADD_METHOD( GetNumCourses )
+		ADD_METHOD( GetNumCourseGroups )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
