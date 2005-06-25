@@ -2,8 +2,6 @@
 #define ScreenSelectMaster_H
 
 #include "ScreenSelect.h"
-#include "Sprite.h"
-#include "BitmapText.h"
 #include "RageSound.h"
 #include "RandomSample.h"
 #include "ActorUtil.h"
