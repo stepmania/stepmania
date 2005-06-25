@@ -15,7 +15,6 @@
 #include "CodeDetector.h"
 #include "RageTextureManager.h"
 #include "UnlockManager.h"
-#include "ProductInfo.h"
 #include "LightsManager.h"
 #include "CommonMetrics.h"
 #include "Game.h"
@@ -50,12 +49,6 @@ void ScreenTitleMenu::Init()
 	m_sprLogo->SetDrawOrder( -1 );
 	this->AddChild( m_sprLogo );
 	SET_XY_AND_ON_COMMAND( m_sprLogo );
-
-	m_textVersion.LoadFromFont( THEME->GetPathF("Common","normal") );
-	m_textVersion.SetName( "Version" );
-	m_textVersion.SetText( PRODUCT_VER );
-	this->AddChild( &m_textVersion );
-	SET_XY_AND_ON_COMMAND( m_textVersion );
 
 	m_textSongs.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textSongs.SetName( "Songs" );

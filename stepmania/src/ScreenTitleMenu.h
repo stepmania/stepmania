@@ -24,7 +24,6 @@ public:
 
 private:
 	AutoActor		m_sprLogo;
-	BitmapText		m_textVersion;
 	BitmapText		m_textSongs;
 };
 
