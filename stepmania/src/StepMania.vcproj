@@ -368,12 +368,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenJukebox.h">
 			</File>
 			<File
-				RelativePath="ScreenLogo.cpp">
-			</File>
-			<File
-				RelativePath="ScreenLogo.h">
-			</File>
-			<File
 				RelativePath="ScreenMapControllers.cpp">
 			</File>
 			<File
