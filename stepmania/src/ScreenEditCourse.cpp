@@ -1,54 +1,31 @@
 #include "global.h"
-#include "ScreenCourseManager.h"
+#include "ScreenEditCourse.h"
 #include "RageLog.h"
 #include "GameState.h"
 #include "SongManager.h"
+#include "CommonMetrics.h"
+#include "GameManager.h"
+#include "song.h"
 
-enum CourseManagerRow
+enum EditCourseRow
 {
-	ROW_GROUP,
-	ROW_COURSE,
-	ROW_ACTION
+	ROW_TITLE,
+	ROW_STEPS_TYPE,
+	ROW_DIFFICULTY,
+	ROW_METER,
+	ROW_SONG_NUMBER,
+	ROW_SONG,
+	ROW_STEPS,
+	ROW_SET_MODS,
 };
 
-enum CourseManagerAction
+REGISTER_SCREEN_CLASS( ScreenEditCourse );
+ScreenEditCourse::ScreenEditCourse( CString sName ) : ScreenOptions( sName )
 {
-	ACTION_EDIT,
-	ACTION_DELETE,
-	ACTION_COPY_TO_NEW,
-	ACTION_CREATE_NEW,
-	NUM_CourseManagerAction
-};
-static const CString CourseManagerActionNames[] = {
-	"Edit",
-	"Delete",
-	"Create New",
-	"Copy to New",
-};
-XToString( CourseManagerAction, NUM_CourseManagerAction );
-
-static void GetPossibleActions( vector<CourseManagerAction> &vActionsOut )
-{	
-	if( GAMESTATE->m_pCurCourse != NULL )
-	{
-		vActionsOut.push_back( ACTION_EDIT );
-		vActionsOut.push_back( ACTION_DELETE );
-		vActionsOut.push_back( ACTION_COPY_TO_NEW );
-	}
-	else
-	{
-		vActionsOut.push_back( ACTION_CREATE_NEW );
-	}
+	LOG->Trace( "ScreenEditCourse::ScreenEditCourse()" );
 }
 
-
-REGISTER_SCREEN_CLASS( ScreenCourseManager );
-ScreenCourseManager::ScreenCourseManager( CString sName ) : ScreenOptions( sName )
-{
-	LOG->Trace( "ScreenCourseManager::ScreenCourseManager()" );
-}
-
-void ScreenCourseManager::Init()
+void ScreenEditCourse::Init()
 {
 	ScreenOptions::Init();
 
@@ -58,132 +35,209 @@ void ScreenCourseManager::Init()
 	OptionRowDefinition def;
 	def.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	
-	def.name = "Group";
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+
+	def.name = "Title";
 	def.choices.clear();
-	SONGMAN->GetCourseGroupNames( def.choices );
+	def.choices.push_back( pCourse->GetTranslitFullTitle() );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Course";
+	def.name = "Steps Type";
+	def.choices.clear();
+	FOREACH_CONST( StepsType, STEPS_TYPES_TO_SHOW.GetValue(), st )
+		def.choices.push_back( GAMEMAN->StepsTypeToString(*st) );
+	vDefs.push_back( def );
+	vHands.push_back( NULL );
+
+	def.name = "Difficulty";
 	def.choices.clear();
 	def.choices.push_back( "" );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Action";
+	def.name = "Meter";
+	def.choices.clear();
+	for( int i=MIN_METER; i<=MAX_METER; i++ )
+		def.choices.push_back( ssprintf("%d",i) );
+	vDefs.push_back( def );
+	vHands.push_back( NULL );
+
+	def.name = "Song Number";
 	def.choices.clear();
 	def.choices.push_back( "" );
+	vDefs.push_back( def );
+	vHands.push_back( NULL );
+
+	def.name = "Song";
+	def.choices.clear();
+	def.choices.push_back( "" );
+	vDefs.push_back( def );
+	vHands.push_back( NULL );
+
+	def.name = "Steps";
+	def.choices.clear();
+	def.choices.push_back( "" );
+	vDefs.push_back( def );
+	vHands.push_back( NULL );
+
+	def.name = "Set Mods";
+	def.choices.clear();
+	def.choices.push_back( "Set Mods" );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
 	ScreenOptions::InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
 
-
 	OnChange( GAMESTATE->m_MasterPlayerNumber );
 }
 
-void ScreenCourseManager::HandleScreenMessage( const ScreenMessage SM )
+void ScreenEditCourse::HandleScreenMessage( const ScreenMessage SM )
 {
 	ScreenOptions::HandleScreenMessage( SM );
 }
 	
-void ScreenCourseManager::OnChange( PlayerNumber pn )
+void ScreenEditCourse::OnChange( PlayerNumber pn )
 {
 	ScreenOptions::OnChange( pn );
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+	StepsType st = STEPS_TYPE_INVALID;
+	CourseDifficulty cd = DIFFICULTY_INVALID;
+	Trail *pTrail = NULL;
+	int iMeter = -1;
+	int iSongNumber = -1;
+	Song *pSong = NULL;
+	Steps *pSteps = NULL;
 
 	switch( m_iCurrentRow[pn] )
 	{
-	case ROW_GROUP:
-		// export current course group
+	case ROW_STEPS_TYPE:
+		// export StepsType
 		{
-			OptionRow &row = *m_pRows[ROW_GROUP];
-			int iChoice = row.GetChoiceInRowWithFocus(pn);
-			CString sCourseGroup = row.GetRowDef().choices[iChoice];
-			GAMESTATE->m_sPreferredCourseGroup.Set( sCourseGroup );
+			OptionRow &row = *m_pRows[ROW_STEPS_TYPE];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			st = STEPS_TYPES_TO_SHOW.GetValue()[iChoice];
 		}
-		// Refresh courses
+		// Refresh difficulties
 		{
-			OptionRow &row = *m_pRows[ROW_COURSE];
-			vector<Course*> vpCourses;
-			SONGMAN->GetCoursesInGroup( vpCourses, GAMESTATE->m_sPreferredCourseGroup.Get(), false );
+			OptionRow &row = *m_pRows[ROW_DIFFICULTY];
 			OptionRowDefinition def = row.GetRowDef();
 			def.choices.clear();
-			FOREACH_CONST( Course*, vpCourses, c )
-				def.choices.push_back( (*c)->GetTranslitFullTitle() );
-			def.choices.push_back( NULL );	// new course
+			FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
+				def.choices.push_back( CourseDifficultyToThemedString(*cd) );
 			row.Reload( def );
 		}
 		// fall through
-	case ROW_COURSE:
-		// export current course
+	case ROW_DIFFICULTY:
+		// export CouresDifficulty
 		{
-			OptionRow &row = *m_pRows[ROW_COURSE];
-			int iChoice = row.GetChoiceInRowWithFocus(pn);
-			vector<Course*> vpCourses;
-			SONGMAN->GetCoursesInGroup( vpCourses, GAMESTATE->m_sPreferredCourseGroup.Get(), false );
-			Course *pCourse = vpCourses[iChoice];
-			GAMESTATE->m_pCurCourse.Set( pCourse );
+			OptionRow &row = *m_pRows[ROW_DIFFICULTY];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			cd = COURSE_DIFFICULTIES_TO_SHOW.GetValue()[iChoice];
+			pTrail = pCourse->GetTrail( st, cd );
 		}
-		// refresh actions
+		// refresh meter
 		{
-			OptionRow &row = *m_pRows[ROW_ACTION];
+			OptionRow &row = *m_pRows[ROW_METER];
 			OptionRowDefinition def = row.GetRowDef();
-			def.choices.clear();
-			vector<CourseManagerAction> vActions;
-			GetPossibleActions( vActions );
-			FOREACH_CONST( CourseManagerAction, vActions, a )
-				def.choices.push_back( CourseManagerActionToString(*a) );
+			row.SetOneSharedSelection( pTrail->GetMeter()-1 );
 			row.Reload( def );
 		}
 		// fall through
-	case ROW_ACTION:
+	case ROW_METER:
+		// export meter
+		{
+			OptionRow &row = *m_pRows[ROW_METER];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			iMeter = 1+iChoice;
+		}
+		// refresh song number
+		{
+			OptionRow &row = *m_pRows[ROW_SONG_NUMBER];
+			OptionRowDefinition def = row.GetRowDef();
+			row.SetOneSharedSelection( 0 );
+			row.Reload( def );
+		}
+		// fall through
+	case ROW_SONG_NUMBER:
+		// export song number
+		{
+			OptionRow &row = *m_pRows[ROW_SONG_NUMBER];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			iSongNumber = 1+iChoice;
+		}		
+		// refresh song
+		{
+			OptionRow &row = *m_pRows[ROW_SONG];
+			OptionRowDefinition def = row.GetRowDef();
+			row.SetOneSharedSelection( pTrail->GetMeter()-1 );
+			row.Reload( def );
+		}
+		// fall through
+	case ROW_SONG:
+		// export song
+		{
+			OptionRow &row = *m_pRows[ROW_SONG];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			pSong = SONGMAN->GetAllSongs()[iChoice];
+		}
+		// fall through
+	case ROW_STEPS:
+		// export steps
+		{
+			OptionRow &row = *m_pRows[ROW_SONG];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			pSteps = pSong->GetStepsByStepsType(st)[iChoice];
+		}
+		// fall through
+	case ROW_SET_MODS:
 		// fall through
 	default:
 		; // nothing left to do
 	}
 }
 
-void ScreenCourseManager::ImportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenEditCourse::ImportOptions( int row, const vector<PlayerNumber> &vpns )
 {
 
 }
 
-void ScreenCourseManager::ExportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenEditCourse::ExportOptions( int row, const vector<PlayerNumber> &vpns )
 {
 
 }
 
-void ScreenCourseManager::GoToNextScreen()
+void ScreenEditCourse::GoToNextScreen()
 {
-	OptionRow &row = *m_pRows[ROW_ACTION];
-	int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+	SCREENMAN->SetNewScreen( "ScreenEditCourseMenu" );
+}
 
-	vector<CourseManagerAction> vActions;
-	GetPossibleActions( vActions );
-	CourseManagerAction action = vActions[iChoice];
+void ScreenEditCourse::GoToPrevScreen()
+{
 
-	switch( action )
+}
+
+void ScreenEditCourse::BeginFadingOut()
+{
+	switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
 	{
-	default:
-		ASSERT(0);
-	case ACTION_EDIT:
-		SCREENMAN->SetNewScreen( "ScreenEditCourse" );
+	case ROW_TITLE:
 		break;
-	case ACTION_DELETE:
-		SCREENMAN->PlayInvalidSound();
+	case ROW_STEPS_TYPE:
 		break;
-	case ACTION_COPY_TO_NEW:
-		SCREENMAN->PlayInvalidSound();
+	case ROW_DIFFICULTY:
 		break;
-	case ACTION_CREATE_NEW:
-		SCREENMAN->PlayInvalidSound();
+	case ROW_METER:
+		break;
+	case ROW_SONG_NUMBER:
+		break;
+	case ROW_SONG:
+		break;
+	case ROW_STEPS:
+		break;
+	case ROW_SET_MODS:
 		break;
 	}
-}
-
-void ScreenCourseManager::GoToPrevScreen()
-{
-
 }
 
 /*

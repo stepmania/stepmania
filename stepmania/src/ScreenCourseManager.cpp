@@ -1,8 +1,31 @@
 #include "global.h"
-#include "ScreenEditCourse.h"
+#include "ScreenCourseManager.h"
 #include "RageLog.h"
 #include "GameState.h"
 #include "SongManager.h"
+
+enum CourseManagerRow
+{
+	ROW_GROUP,
+	ROW_COURSE,
+	ROW_ACTION
+};
+
+enum CourseManagerAction
+{
+	ACTION_EDIT,
+	ACTION_DELETE,
+	ACTION_COPY_TO_NEW,
+	ACTION_CREATE_NEW,
+	NUM_CourseManagerAction
+};
+static const CString CourseManagerActionNames[] = {
+	"Edit",
+	"Delete",
+	"Create New",
+	"Copy to New",
+};
+XToString( CourseManagerAction, NUM_CourseManagerAction );
 
 static void GetPossibleActions( vector<CourseManagerAction> &vActionsOut )
 {	
@@ -19,13 +42,13 @@ static void GetPossibleActions( vector<CourseManagerAction> &vActionsOut )
 }
 
 
-REGISTER_SCREEN_CLASS( ScreenEditCourse );
-ScreenEditCourse::ScreenEditCourse( CString sName ) : ScreenOptions( sName )
+REGISTER_SCREEN_CLASS( ScreenCourseManager );
+ScreenCourseManager::ScreenCourseManager( CString sName ) : ScreenOptions( sName )
 {
-	LOG->Trace( "ScreenEditCourse::ScreenEditCourse()" );
+	LOG->Trace( "ScreenCourseManager::ScreenCourseManager()" );
 }
 
-void ScreenEditCourse::Init()
+void ScreenCourseManager::Init()
 {
 	ScreenOptions::Init();
 
@@ -59,12 +82,12 @@ void ScreenEditCourse::Init()
 	OnChange( GAMESTATE->m_MasterPlayerNumber );
 }
 
-void ScreenEditCourse::HandleScreenMessage( const ScreenMessage SM )
+void ScreenCourseManager::HandleScreenMessage( const ScreenMessage SM )
 {
 	ScreenOptions::HandleScreenMessage( SM );
 }
 	
-void ScreenEditCourse::OnChange( PlayerNumber pn )
+void ScreenCourseManager::OnChange( PlayerNumber pn )
 {
 	ScreenOptions::OnChange( pn );
 
@@ -120,17 +143,17 @@ void ScreenEditCourse::OnChange( PlayerNumber pn )
 	}
 }
 
-void ScreenEditCourse::ImportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenCourseManager::ImportOptions( int row, const vector<PlayerNumber> &vpns )
 {
 
 }
 
-void ScreenEditCourse::ExportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenCourseManager::ExportOptions( int row, const vector<PlayerNumber> &vpns )
 {
 
 }
 
-void ScreenEditCourse::GoToNextScreen()
+void ScreenCourseManager::GoToNextScreen()
 {
 	OptionRow &row = *m_pRows[ROW_ACTION];
 	int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
@@ -158,7 +181,7 @@ void ScreenEditCourse::GoToNextScreen()
 	}
 }
 
-void ScreenEditCourse::GoToPrevScreen()
+void ScreenCourseManager::GoToPrevScreen()
 {
 
 }

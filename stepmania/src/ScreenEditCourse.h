@@ -1,12 +1,12 @@
-#ifndef ScreenCourseManager_H
-#define ScreenCourseManager_H
+#ifndef ScreenEditCourse_H
+#define ScreenEditCourse_H
 
 #include "ScreenOptions.h"
 
-class ScreenCourseManager : public ScreenOptions
+class ScreenEditCourse : public ScreenOptions
 {
 public:
-	ScreenCourseManager( CString sName );
+	ScreenEditCourse( CString sName );
 
 	void Init();
 
@@ -19,7 +19,9 @@ private:
 	virtual void GoToNextScreen();
 	virtual void GoToPrevScreen();
 
-	void OnChange( PlayerNumber pn );
+	virtual void OnChange( PlayerNumber pn );
+
+	virtual void BeginFadingOut();
 };
 
 #endif
