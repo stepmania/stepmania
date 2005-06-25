@@ -13,7 +13,6 @@
 #include "CodeDetector.h"
 #include "RageTextureManager.h"
 #include "LightsManager.h"
-#include "CommonMetrics.h"
 #include "Game.h"
 
 #define COIN_MODE_CHANGE_SCREEN		THEME->GetMetric (m_sName,"CoinModeChangeScreen")
