@@ -6,7 +6,6 @@
 #include "StepMania.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
-#include "SongManager.h"
 #include "AnnouncerManager.h"
 #include "GameState.h"
 #include "GameManager.h"
@@ -14,7 +13,6 @@
 #include "GameSoundManager.h"
 #include "CodeDetector.h"
 #include "RageTextureManager.h"
-#include "UnlockManager.h"
 #include "LightsManager.h"
 #include "CommonMetrics.h"
 #include "Game.h"
@@ -49,15 +47,6 @@ void ScreenTitleMenu::Init()
 	m_sprLogo->SetDrawOrder( -1 );
 	this->AddChild( m_sprLogo );
 	SET_XY_AND_ON_COMMAND( m_sprLogo );
-
-	m_textSongs.LoadFromFont( THEME->GetPathF("Common","normal") );
-	m_textSongs.SetName( "Songs" );
-	CString text = ssprintf("%d songs in %d groups, %d courses in %d groups", SONGMAN->GetNumSongs(), SONGMAN->GetNumSongGroups(), SONGMAN->GetNumCourses(), SONGMAN->GetNumCourseGroups() );
-	if( PREFSMAN->m_bUseUnlockSystem )
-		text += ssprintf(", %d unlocks", UNLOCKMAN->GetNumUnlocks() );
-	m_textSongs.SetText( text );
-	this->AddChild( &m_textSongs );
-	SET_XY_AND_ON_COMMAND( m_textSongs );
 
 	this->SortByDrawOrder();
 

@@ -4,11 +4,6 @@
 #define SCREEN_TITLE_MENU_H
 
 #include "Screen.h"
-#include "Transition.h"
-#include "Sprite.h"
-#include "BitmapText.h"
-#include "RageSound.h"
-#include "RageTimer.h"
 #include "ScreenSelectMaster.h"
 
 class ScreenTitleMenu : public ScreenSelectMaster
@@ -24,7 +19,6 @@ public:
 
 private:
 	AutoActor		m_sprLogo;
-	BitmapText		m_textSongs;
 };
 
 #endif
