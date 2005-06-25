@@ -20,7 +20,6 @@
 #include "CommonMetrics.h"
 #include "Game.h"
 
-#define MAX_STAGES_TEXT				THEME->GetMetric (m_sName,"MaxStagesText")
 #define COIN_MODE_CHANGE_SCREEN		THEME->GetMetric (m_sName,"CoinModeChangeScreen")
 
 
