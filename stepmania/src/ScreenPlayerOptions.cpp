@@ -14,6 +14,9 @@
 #include "PlayerState.h"
 #include "Foreach.h"
 
+#define PREV_SCREEN				THEME->GetMetric ("ScreenPlayerOptions","PrevScreen")
+#define NEXT_SCREEN				THEME->GetMetric ("ScreenPlayerOptions","NextScreen")
+
 REGISTER_SCREEN_CLASS( ScreenPlayerOptions );
 ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 	ScreenOptionsMaster( sClassName )
@@ -153,6 +156,31 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 	}
 
 	ScreenOptionsMaster::HandleScreenMessage( SM );
+}
+
+void ScreenPlayerOptions::GoToPrevScreen()
+{
+	if( SCREENMAN->IsStackedScreen(this) )
+	{
+		SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
+	}
+	else
+	{
+		SCREENMAN->DeletePreparedScreens();
+		SCREENMAN->SetNewScreen( PREV_SCREEN );
+	}
+}
+
+void ScreenPlayerOptions::GoToNextScreen()
+{
+	if( SCREENMAN->IsStackedScreen(this) )
+	{
+		SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
+	}
+	else
+	{
+		SCREENMAN->SetNewScreen( NEXT_SCREEN );
+	}
 }
 
 void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
