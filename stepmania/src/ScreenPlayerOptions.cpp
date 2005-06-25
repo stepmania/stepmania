@@ -57,13 +57,6 @@ void ScreenPlayerOptions::Init()
 
 	FOREACH_HumanPlayer( p )
 	{
-		m_sprCancelAll[p].LoadAndSetName( "ScreenPlayerOptions", ssprintf("CancelAllP%d",p+1) );
-		SET_XY_AND_ON_COMMAND( m_sprCancelAll[p] );
-		this->AddChild( m_sprCancelAll[p] );
-	}
-
-	FOREACH_HumanPlayer( p )
-	{
 		m_bRowCausesDisqualified[p].resize( m_pRows.size(), false );
 		for( unsigned r=0; r<m_pRows.size(); r++ )
 			UpdateDisqualified( r, p );
@@ -111,7 +104,7 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Init();
 		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.FromString( PREFSMAN->m_sDefaultModifiers );
 		
-		COMMAND( m_sprCancelAll[pn], "Show" );
+		MESSAGEMAN->Broadcast( ssprintf("CancelAllP%i", pn+1) );
 
 		for( unsigned r=0; r<m_pRows.size(); r++ )
 		{

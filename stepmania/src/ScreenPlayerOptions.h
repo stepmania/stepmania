@@ -33,8 +33,6 @@ private:
 	Sprite      m_sprOptionsMessage;
 
 	RageSound	m_CancelAll;
-	
-	AutoActor	m_sprCancelAll[NUM_PLAYERS];
 };
 
 #endif
