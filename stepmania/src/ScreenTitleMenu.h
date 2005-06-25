@@ -3,7 +3,6 @@
 #ifndef SCREEN_TITLE_MENU_H
 #define SCREEN_TITLE_MENU_H
 
-#include "Screen.h"
 #include "ScreenSelectMaster.h"
 
 class ScreenTitleMenu : public ScreenSelectMaster
@@ -16,9 +15,6 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
 	virtual void HandleMessage( const CString& sMessage );
-
-private:
-	AutoActor		m_sprLogo;
 };
 
 #endif

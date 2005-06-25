@@ -42,12 +42,6 @@ void ScreenTitleMenu::Init()
 {
 	ScreenSelectMaster::Init();
 
-	m_sprLogo.Load( THEME->GetPathG(m_sName,GAMESTATE->GetCurrentGame()->m_szName) );
-	m_sprLogo->SetName( "Logo" );
-	m_sprLogo->SetDrawOrder( -1 );
-	this->AddChild( m_sprLogo );
-	SET_XY_AND_ON_COMMAND( m_sprLogo );
-
 	this->SortByDrawOrder();
 
 	SOUND->PlayOnceFromAnnouncer( "title menu game name" );
