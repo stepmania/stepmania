@@ -12,19 +12,10 @@
 #include "RageLog.h"
 #include "Style.h"
 #include "GameManager.h"
-#include "SongUtil.h"
-#include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "StatsManager.h"
 #include "PlayerState.h"
-#include "BGAnimation.h"
 #include "CommonMetrics.h"
-#include "Foreach.h"
-
-
-#define SCROLL_DELAY		THEME->GetMetricF("ScreenEnding","ScrollDelay")
-#define SCROLL_SPEED		THEME->GetMetricF("ScreenEnding","ScrollSpeed")
-#define TEXT_ZOOM			THEME->GetMetricF("ScreenEnding","TextZoom")
 
 
 CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
@@ -244,10 +235,6 @@ void ScreenEnding::Init()
 	GAMESTATE->Reset();
 }
 
-ScreenEnding::~ScreenEnding()
-{
-}
-
 void ScreenEnding::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	bool bIsTransitioning = m_In.IsTransitioning() || m_Out.IsTransitioning();
@@ -262,11 +249,6 @@ void ScreenEnding::Input( const DeviceInput& DeviceI, const InputEventType type,
 	}
 
 	ScreenAttract::Input( DeviceI, type, GameI, MenuI, StyleI );
-}
-
-void ScreenEnding::HandleScreenMessage( const ScreenMessage SM )
-{
-	ScreenAttract::HandleScreenMessage( SM );
 }
 
 /*
