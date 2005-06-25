@@ -43,7 +43,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 &quot;$(intdir)\verstub.obj&quot;"
-				OutputFile="../../itg/Program/StepMania-debug.exe"
+				OutputFile="../Program/StepMania-debug.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				AdditionalLibraryDirectories=""
@@ -283,22 +283,16 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenCenterImage.h">
 			</File>
 			<File
-				RelativePath=".\ScreenCourseManager.cpp">
-			</File>
-			<File
-				RelativePath=".\ScreenCourseManager.h">
-			</File>
-			<File
 				RelativePath="ScreenCredits.cpp">
 			</File>
 			<File
 				RelativePath="ScreenCredits.h">
 			</File>
 			<File
-				RelativePath=".\ScreenDebugOverlay.cpp">
+				RelativePath="ScreenDebugOverlay.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenDebugOverlay.h">
+				RelativePath="ScreenDebugOverlay.h">
 			</File>
 			<File
 				RelativePath="ScreenDemonstration.cpp">
@@ -314,12 +308,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenEdit.h">
-			</File>
-			<File
-				RelativePath=".\ScreenEditCourse.cpp">
-			</File>
-			<File
-				RelativePath=".\ScreenEditCourse.h">
 			</File>
 			<File
 				RelativePath="ScreenEditCoursesMenu.cpp">
@@ -532,6 +520,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenSandbox.h">
 			</File>
 			<File
+				RelativePath="ScreenSaveSync.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSaveSync.h">
+			</File>
+			<File
 				RelativePath="ScreenSelect.cpp">
 			</File>
 			<File
@@ -610,10 +604,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenStage.h">
 			</File>
 			<File
-				RelativePath=".\ScreenSyncOverlay.cpp">
+				RelativePath="ScreenSyncOverlay.cpp">
 			</File>
 			<File
-				RelativePath=".\ScreenSyncOverlay.h">
+				RelativePath="ScreenSyncOverlay.h">
 			</File>
 			<File
 				RelativePath="ScreenSystemLayer.cpp">
@@ -696,6 +690,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="AutoKeysounds.h">
+			</File>
+			<File
+				RelativePath="BackgroundUtil.cpp">
+			</File>
+			<File
+				RelativePath="BackgroundUtil.h">
 			</File>
 			<File
 				RelativePath="BannerCache.cpp">
@@ -827,7 +827,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Inventory.h">
 			</File>
 			<File
-				RelativePath=".\LuaBinding.cpp">
+				RelativePath="LuaBinding.cpp">
 			</File>
 			<File
 				RelativePath="LuaBinding.h">
@@ -1784,12 +1784,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath=".\Background.h">
-			</File>
-			<File
-				RelativePath=".\BackgroundUtil.cpp">
-			</File>
-			<File
-				RelativePath=".\BackgroundUtil.h">
 			</File>
 			<File
 				RelativePath="BeginnerHelper.cpp">
