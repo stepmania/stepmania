@@ -248,14 +248,6 @@ ScreenEnding::~ScreenEnding()
 {
 }
 
-void ScreenEnding::Update( float fDeltaTime )
-{
-	ScreenAttract::Update( fDeltaTime );
-
-	if( m_In.IsTransitioning() && m_Out.IsTransitioning() )
-		return;
-}	
-
 void ScreenEnding::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	bool bIsTransitioning = m_In.IsTransitioning() || m_Out.IsTransitioning();
