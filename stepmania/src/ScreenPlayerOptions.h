@@ -2,6 +2,7 @@
 #define SCREENPLAYEROPTIONS_H
 
 #include "ScreenOptionsMaster.h"
+struct lua_State;
 
 AutoScreenMessage( SM_BackFromPlayerOptions )
 
@@ -15,11 +16,14 @@ public:
 	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	bool GetGoToOptions() const { return m_bGoToOptions; }
+
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
 
 private:
-	void GoToNextScreen();
-	void GoToPrevScreen();
-
 	vector<bool>	m_bRowCausesDisqualified[NUM_PLAYERS];
 	void UpdateDisqualified( int row, PlayerNumber pn );
 

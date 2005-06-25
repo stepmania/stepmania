@@ -14,9 +14,6 @@
 #include "PlayerState.h"
 #include "Foreach.h"
 
-#define PREV_SCREEN		THEME->GetMetric ("ScreenPlayerOptions","PrevScreen")
-#define NEXT_SCREEN		THEME->GetMetric ("ScreenPlayerOptions","NextScreen")
-
 REGISTER_SCREEN_CLASS( ScreenPlayerOptions );
 ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 	ScreenOptionsMaster( sClassName )
@@ -72,36 +69,6 @@ void ScreenPlayerOptions::Init()
 			UpdateDisqualified( r, p );
 	}
 }
-
-
-void ScreenPlayerOptions::GoToPrevScreen()
-{
-	if( SCREENMAN->IsStackedScreen(this) )
-	{
-		SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
-	}
-	else
-	{
-		SCREENMAN->DeletePreparedScreens();
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
-	}
-}
-
-void ScreenPlayerOptions::GoToNextScreen()
-{
-	if( SCREENMAN->IsStackedScreen(this) )
-	{
-		SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
-	}
-	else
-	{
-		if( m_bGoToOptions )
-			SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		else
-			SCREENMAN->SetNewScreen( ScreenSongOptions::GetNextScreen() );
-	}
-}
-
 
 void ScreenPlayerOptions::Update( float fDelta )
 {
@@ -226,6 +193,25 @@ void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
 	// restore previous player options in case the user escapes back after this
 	GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions = poOrig;
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaScreenPlayerOptions: public Luna<ScreenPlayerOptions>
+{
+public:
+	LunaScreenPlayerOptions() { LUA->Register( Register ); }
+
+	static int GetGoToOptions( T* p, lua_State *L ) { lua_pushboolean( L, p->GetGoToOptions() ); return 1; }
+	static void Register( Lua *L )
+	{
+  		ADD_METHOD( GetGoToOptions )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScreenPlayerOptions, ActorFrame )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford
