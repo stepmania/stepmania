@@ -31,7 +31,7 @@ public:
 	//
 	// Commands
 	//
-	void PushSelf( lua_State *L );
+	virtual void PushSelf( lua_State *L );
 	virtual void RunCommandsOnChildren( const LuaReference& cmds ); /* but not on self */
 	void RunCommandsOnChildren( const apActorCommands& cmds ) { this->RunCommandsOnChildren( *cmds ); }	// convenience
 	virtual void RunCommandsOnLeaves( const LuaReference& cmds, Actor* pParent ); /* but not on self */
