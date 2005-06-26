@@ -133,7 +133,7 @@ void CombinedLifeMeterEnemy::Update( float fDelta )
 			Attack a;
 			a.fSecsRemaining = 10;
 			a.level = ATTACK_LEVEL_1;
-			a.sModifier = sPossibleModifiers[a.level][rand()%3];
+			a.sModifiers = sPossibleModifiers[a.level][rand()%3];
 			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsHumanPlayer(p) )
 					GAMESTATE->LaunchAttack( p, a );
@@ -145,7 +145,7 @@ void CombinedLifeMeterEnemy::Update( float fDelta )
 			Attack a;
 			a.fSecsRemaining = 10;
 			a.level = ATTACK_LEVEL_2;
-			a.sModifier = sPossibleModifiers[a.level][rand()%3];
+			a.sModifiers = sPossibleModifiers[a.level][rand()%3];
 			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsHumanPlayer(p) )
 					GAMESTATE->LaunchAttack( p, a );
@@ -157,7 +157,7 @@ void CombinedLifeMeterEnemy::Update( float fDelta )
 			Attack a;
 			a.fSecsRemaining = 10;
 			a.level = ATTACK_LEVEL_3;
-			a.sModifier = sPossibleModifiers[a.level][rand()%3];
+			a.sModifiers = sPossibleModifiers[a.level][rand()%3];
 			FOREACH_PlayerNumber( p )
 				if( GAMESTATE->IsHumanPlayer(p) )
 					GAMESTATE->LaunchAttack( p, a );
