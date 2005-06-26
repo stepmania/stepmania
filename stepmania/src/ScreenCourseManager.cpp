@@ -3,12 +3,14 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "SongManager.h"
+#include "CommonMetrics.h"
 
 enum CourseManagerRow
 {
-	ROW_GROUP,
+	ROW_COURSE_GROUP,
 	ROW_COURSE,
-	ROW_ACTION
+	ROW_ACTION,
+	ROW_DONE,
 };
 
 enum CourseManagerAction
@@ -64,7 +66,7 @@ void ScreenCourseManager::Init()
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Course";
+	def.name = "Course Group";
 	def.choices.clear();
 	def.choices.push_back( "" );
 	vDefs.push_back( def );
@@ -79,7 +81,7 @@ void ScreenCourseManager::Init()
 	ScreenOptions::InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
 
 
-	OnChange( GAMESTATE->m_MasterPlayerNumber );
+	AfterChangeValueInRow( GAMESTATE->m_MasterPlayerNumber );
 }
 
 void ScreenCourseManager::HandleScreenMessage( const ScreenMessage SM )
@@ -87,16 +89,18 @@ void ScreenCourseManager::HandleScreenMessage( const ScreenMessage SM )
 	ScreenOptions::HandleScreenMessage( SM );
 }
 	
-void ScreenCourseManager::OnChange( PlayerNumber pn )
+void ScreenCourseManager::AfterChangeValueInRow( PlayerNumber pn )
 {
-	ScreenOptions::OnChange( pn );
+	ScreenOptions::AfterChangeValueInRow( pn );
 
 	switch( m_iCurrentRow[pn] )
 	{
-	case ROW_GROUP:
+	default:
+		ASSERT(0);
+	case ROW_COURSE_GROUP:
 		// export current course group
 		{
-			OptionRow &row = *m_pRows[ROW_GROUP];
+			OptionRow &row = *m_pRows[ROW_COURSE_GROUP];
 			int iChoice = row.GetChoiceInRowWithFocus(pn);
 			CString sCourseGroup = row.GetRowDef().choices[iChoice];
 			GAMESTATE->m_sPreferredCourseGroup.Set( sCourseGroup );
@@ -138,8 +142,29 @@ void ScreenCourseManager::OnChange( PlayerNumber pn )
 		// fall through
 	case ROW_ACTION:
 		// fall through
+	case ROW_DONE:
+		break;
+	}
+}
+
+void ScreenCourseManager::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
+{
+	switch( m_iCurrentRow[pn] )
+	{
 	default:
-		; // nothing left to do
+		ASSERT(0);
+	case ROW_COURSE_GROUP:
+		SCREENMAN->PlayInvalidSound();
+		break;
+	case ROW_COURSE:
+		SCREENMAN->PlayInvalidSound();
+		break;
+	case ROW_ACTION:
+		ScreenOptions::BeginFadingOut();
+		break;
+	case ROW_DONE:
+		ScreenOptions::BeginFadingOut();
+		break;
 	}
 }
 
@@ -155,35 +180,53 @@ void ScreenCourseManager::ExportOptions( int row, const vector<PlayerNumber> &vp
 
 void ScreenCourseManager::GoToNextScreen()
 {
-	OptionRow &row = *m_pRows[ROW_ACTION];
-	int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-
-	vector<CourseManagerAction> vActions;
-	GetPossibleActions( vActions );
-	CourseManagerAction action = vActions[iChoice];
-
-	switch( action )
+	switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
 	{
 	default:
 		ASSERT(0);
-	case ACTION_EDIT:
-		SCREENMAN->SetNewScreen( "ScreenEditCourse" );
-		break;
-	case ACTION_DELETE:
+	case ROW_COURSE_GROUP:
 		SCREENMAN->PlayInvalidSound();
 		break;
-	case ACTION_COPY_TO_NEW:
+	case ROW_COURSE:
 		SCREENMAN->PlayInvalidSound();
 		break;
-	case ACTION_CREATE_NEW:
-		SCREENMAN->PlayInvalidSound();
+	case ROW_ACTION:
+		{
+			OptionRow &row = *m_pRows[ROW_ACTION];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+
+			vector<CourseManagerAction> vActions;
+			GetPossibleActions( vActions );
+			CourseManagerAction action = vActions[iChoice];
+
+			switch( action )
+			{
+			default:
+				ASSERT(0);
+			case ACTION_EDIT:
+				SCREENMAN->SetNewScreen( "ScreenEditCourse" );
+				break;
+			case ACTION_DELETE:
+				SCREENMAN->PlayInvalidSound();
+				break;
+			case ACTION_COPY_TO_NEW:
+				SCREENMAN->PlayInvalidSound();
+				break;
+			case ACTION_CREATE_NEW:
+				SCREENMAN->PlayInvalidSound();
+				break;
+			}
+		}
+		break;
+	case ROW_DONE:
+		SCREENMAN->SetNewScreen( FIRST_ATTRACT_SCREEN );
 		break;
 	}
 }
 
 void ScreenCourseManager::GoToPrevScreen()
 {
-
+	SCREENMAN->SetNewScreen( FIRST_ATTRACT_SCREEN );
 }
 
 /*

@@ -10,14 +10,41 @@
 enum EditCourseRow
 {
 	ROW_TITLE,
-	ROW_STEPS_TYPE,
-	ROW_DIFFICULTY,
-	ROW_METER,
-	ROW_SONG_NUMBER,
-	ROW_SONG,
-	ROW_STEPS,
-	ROW_SET_MODS,
+	ROW_REPEAT,
+	ROW_RANDOMIZE,
+	ROW_LIVES,
+	ROW_TYPE,
+	ROW_TYPE_METER,
+	ROW_EDIT_ENTRY,
+	ROW_INSERT_ENTRY,
+	ROW_DONE,
 };
+
+struct StepsTypeAndDifficulty
+{
+	StepsType st;
+	CourseDifficulty cd;
+};
+
+static void GetStepsTypeAndDifficulty( vector<StepsTypeAndDifficulty> &vOut, vector<CString> &vsOut )
+{
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+
+	FOREACH_CONST( StepsType, STEPS_TYPES_TO_SHOW.GetValue(), st )
+	{
+		CString s1 = GAMEMAN->StepsTypeToString(*st);
+		FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
+		{
+			if( pCourse->GetTrail( *st, *cd ) == NULL )
+				continue;
+
+			CString s2 = CourseDifficultyToThemedString(*cd);
+			StepsTypeAndDifficulty stad = { *st, *cd };
+			vOut.push_back( stad );
+			vsOut.push_back( s1+" "+s2 );
+		}
+	}
+}
 
 REGISTER_SCREEN_CLASS( ScreenEditCourse );
 ScreenEditCourse::ScreenEditCourse( CString sName ) : ScreenOptions( sName )
@@ -43,53 +70,57 @@ void ScreenEditCourse::Init()
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Steps Type";
+	def.name = "Repeat";
 	def.choices.clear();
+	def.choices.push_back( "NO" );
+	def.choices.push_back( "YES" );
+	vDefs.push_back( def );
+	vHands.push_back( NULL );
+
+	def.name = "Randomize";
+	def.choices.clear();
+	def.choices.push_back( "NO" );
+	def.choices.push_back( "YES" );
+	vDefs.push_back( def );
+	vHands.push_back( NULL );
+
+	def.name = "Lives";
+	def.choices.clear();
+	def.choices.push_back( "Use Bar Life" );
+	for( int i=1; i<=10; i++ )
+		def.choices.push_back( ssprintf("%d",i) );
+	vDefs.push_back( def );
+	vHands.push_back( NULL );
+
+	def.name = "Type";
+	def.choices.clear();
+
 	FOREACH_CONST( StepsType, STEPS_TYPES_TO_SHOW.GetValue(), st )
 		def.choices.push_back( GAMEMAN->StepsTypeToString(*st) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Difficulty";
+	def.name = "Type Meter";
 	def.choices.clear();
 	def.choices.push_back( "" );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Meter";
-	def.choices.clear();
-	for( int i=MIN_METER; i<=MAX_METER; i++ )
-		def.choices.push_back( ssprintf("%d",i) );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
-
-	def.name = "Song Number";
+	def.name = "Edit Entry";
 	def.choices.clear();
 	def.choices.push_back( "" );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Song";
+	def.name = "Insert Entry";
 	def.choices.clear();
 	def.choices.push_back( "" );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
-
-	def.name = "Steps";
-	def.choices.clear();
-	def.choices.push_back( "" );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
-
-	def.name = "Set Mods";
-	def.choices.clear();
-	def.choices.push_back( "Set Mods" );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
 	ScreenOptions::InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
 
-	OnChange( GAMESTATE->m_MasterPlayerNumber );
+	AfterChangeValueInRow( GAMESTATE->m_MasterPlayerNumber );
 }
 
 void ScreenEditCourse::HandleScreenMessage( const ScreenMessage SM )
@@ -97,103 +128,118 @@ void ScreenEditCourse::HandleScreenMessage( const ScreenMessage SM )
 	ScreenOptions::HandleScreenMessage( SM );
 }
 	
-void ScreenEditCourse::OnChange( PlayerNumber pn )
+void ScreenEditCourse::AfterChangeValueInRow( PlayerNumber pn )
 {
-	ScreenOptions::OnChange( pn );
+	ScreenOptions::AfterChangeValueInRow( pn );
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	StepsType st = STEPS_TYPE_INVALID;
 	CourseDifficulty cd = DIFFICULTY_INVALID;
-	Trail *pTrail = NULL;
 	int iMeter = -1;
-	int iSongNumber = -1;
-	Song *pSong = NULL;
-	Steps *pSteps = NULL;
 
 	switch( m_iCurrentRow[pn] )
 	{
-	case ROW_STEPS_TYPE:
-		// export StepsType
+	default:
+		ASSERT(0);
+	case ROW_TITLE:
+		// fall through
+	case ROW_REPEAT:
+		// fall through
+	case ROW_RANDOMIZE:
+		// fall through
+	case ROW_LIVES:
+		// Refresh type
 		{
-			OptionRow &row = *m_pRows[ROW_STEPS_TYPE];
-			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			st = STEPS_TYPES_TO_SHOW.GetValue()[iChoice];
-		}
-		// Refresh difficulties
-		{
-			OptionRow &row = *m_pRows[ROW_DIFFICULTY];
+			OptionRow &row = *m_pRows[ROW_TYPE];
 			OptionRowDefinition def = row.GetRowDef();
 			def.choices.clear();
-			FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
-				def.choices.push_back( CourseDifficultyToThemedString(*cd) );
+			vector<StepsTypeAndDifficulty> vThrowAway;
+			GetStepsTypeAndDifficulty( vThrowAway, def.choices );
 			row.Reload( def );
 		}
 		// fall through
-	case ROW_DIFFICULTY:
-		// export CouresDifficulty
+	case ROW_TYPE:
+		// export StepsType and CouresDifficulty
 		{
-			OptionRow &row = *m_pRows[ROW_DIFFICULTY];
+			OptionRow &row = *m_pRows[ROW_TYPE];
 			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			cd = COURSE_DIFFICULTIES_TO_SHOW.GetValue()[iChoice];
-			pTrail = pCourse->GetTrail( st, cd );
+			vector<StepsTypeAndDifficulty> v;
+			vector<CString> vsThrowAway;
+			GetStepsTypeAndDifficulty( v, vsThrowAway );
+			st = v[iChoice].st;
+			cd = v[iChoice].cd;
+			GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber].Set( pCourse->GetTrail( st, cd ) );
 		}
 		// refresh meter
 		{
-			OptionRow &row = *m_pRows[ROW_METER];
+			OptionRow &row = *m_pRows[ROW_TYPE_METER];
 			OptionRowDefinition def = row.GetRowDef();
-			row.SetOneSharedSelection( pTrail->GetMeter()-1 );
+			Trail *pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
+			def.choices.clear();
+			if( pTrail != NULL )
+			{
+				for( int i=MIN_METER; i<=MAX_METER; i++ )
+					def.choices.push_back( ssprintf("%d",i) );
+				row.SetOneSharedSelection( pTrail->GetMeter()-MIN_METER );
+			}
+			else
+			{
+				def.choices.push_back( "N/A" );
+			}
 			row.Reload( def );
 		}
-		// fall through
-	case ROW_METER:
-		// export meter
+		// refresh edit entry
 		{
-			OptionRow &row = *m_pRows[ROW_METER];
-			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			iMeter = 1+iChoice;
-		}
-		// refresh song number
-		{
-			OptionRow &row = *m_pRows[ROW_SONG_NUMBER];
+			OptionRow &row = *m_pRows[ROW_EDIT_ENTRY];
 			OptionRowDefinition def = row.GetRowDef();
+			def.choices.clear();
+			Trail *pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
+			ASSERT( pTrail );
+			for( unsigned i=0; i<pTrail->m_vEntries.size(); i++ )
+				def.choices.push_back( ssprintf("%u of %u",i+1,pTrail->m_vEntries.size()) );
+			row.SetOneSharedSelection( 0 );
+			row.Reload( def );
+		}
+		// refresh insert entry
+		{
+			OptionRow &row = *m_pRows[ROW_INSERT_ENTRY];
+			OptionRowDefinition def = row.GetRowDef();
+			def.choices.clear();
+			Trail *pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
+			ASSERT( pTrail );
+			for( unsigned i=0; i<=pTrail->m_vEntries.size(); i++ )
+			{
+				CString s;
+				if( i == pTrail->m_vEntries.size() )
+					s = ssprintf("After %u",i);
+				else
+					s = ssprintf("Before %u",i+1);
+				def.choices.push_back( s );
+			}
 			row.SetOneSharedSelection( 0 );
 			row.Reload( def );
 		}
 		// fall through
-	case ROW_SONG_NUMBER:
-		// export song number
+	case ROW_TYPE_METER:
+		// export meter
 		{
-			OptionRow &row = *m_pRows[ROW_SONG_NUMBER];
+			OptionRow &row = *m_pRows[ROW_TYPE_METER];
 			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			iSongNumber = 1+iChoice;
+			iMeter = 1+iChoice;
+		}
+		// fall through
+	case ROW_EDIT_ENTRY:
+		// fall through
+	case ROW_INSERT_ENTRY:
+		// export entry number
+		{
+			EditCourseRow ecr = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] == ROW_EDIT_ENTRY ? ROW_EDIT_ENTRY : ROW_INSERT_ENTRY;
+			OptionRow &row = *m_pRows[ecr];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			GAMESTATE->m_iEditCourseEntryIndex.Set( iChoice );
 		}		
-		// refresh song
-		{
-			OptionRow &row = *m_pRows[ROW_SONG];
-			OptionRowDefinition def = row.GetRowDef();
-			row.SetOneSharedSelection( pTrail->GetMeter()-1 );
-			row.Reload( def );
-		}
 		// fall through
-	case ROW_SONG:
-		// export song
-		{
-			OptionRow &row = *m_pRows[ROW_SONG];
-			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			pSong = SONGMAN->GetAllSongs()[iChoice];
-		}
-		// fall through
-	case ROW_STEPS:
-		// export steps
-		{
-			OptionRow &row = *m_pRows[ROW_SONG];
-			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			pSteps = pSong->GetStepsByStepsType(st)[iChoice];
-		}
-		// fall through
-	case ROW_SET_MODS:
-		// fall through
-	default:
-		; // nothing left to do
+	case ROW_DONE:
+		break;
 	}
 }
 
@@ -209,33 +255,56 @@ void ScreenEditCourse::ExportOptions( int row, const vector<PlayerNumber> &vpns 
 
 void ScreenEditCourse::GoToNextScreen()
 {
-	SCREENMAN->SetNewScreen( "ScreenEditCourseMenu" );
+	switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
+	{
+	default:
+	case ROW_TITLE:
+	case ROW_REPEAT:
+	case ROW_RANDOMIZE:
+	case ROW_LIVES:
+	case ROW_TYPE:
+	case ROW_TYPE_METER:
+		ASSERT(0);
+	case ROW_EDIT_ENTRY:
+		SCREENMAN->SetNewScreen( "ScreenEditCourseEntry" );
+		break;
+	case ROW_DONE:
+		SCREENMAN->SetNewScreen( "ScreenCourseManager" );
+		break;
+	}
 }
 
 void ScreenEditCourse::GoToPrevScreen()
 {
-
+	SCREENMAN->SetNewScreen( "ScreenCourseManager" );
 }
 
-void ScreenEditCourse::BeginFadingOut()
+void ScreenEditCourse::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
 {
 	switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
 	{
+	default:
+		ASSERT(0);
 	case ROW_TITLE:
+	case ROW_REPEAT:
+	case ROW_RANDOMIZE:
+	case ROW_LIVES:
+	case ROW_TYPE:
+	case ROW_TYPE_METER:
+		SCREENMAN->PlayInvalidSound();
 		break;
-	case ROW_STEPS_TYPE:
-		break;
-	case ROW_DIFFICULTY:
-		break;
-	case ROW_METER:
-		break;
-	case ROW_SONG_NUMBER:
-		break;
-	case ROW_SONG:
-		break;
-	case ROW_STEPS:
-		break;
-	case ROW_SET_MODS:
+	case ROW_EDIT_ENTRY:
+	case ROW_INSERT_ENTRY:
+		{
+			Trail *pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
+			if( pTrail == NULL )
+			{
+				SCREENMAN->PlayInvalidSound();
+				return;
+			}
+		}
+	case ROW_DONE:
+		ScreenOptions::BeginFadingOut();
 		break;
 	}
 }

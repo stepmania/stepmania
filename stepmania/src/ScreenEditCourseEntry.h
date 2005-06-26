@@ -1,12 +1,12 @@
-#ifndef ScreenEditCourse_H
-#define ScreenEditCourse_H
+#ifndef ScreenEditCourseEntry_H
+#define ScreenEditCourseEntry_H
 
 #include "ScreenOptions.h"
 
-class ScreenEditCourse : public ScreenOptions
+class ScreenEditCourseEntry : public ScreenOptions
 {
 public:
-	ScreenEditCourse( CString sName );
+	ScreenEditCourseEntry( CString sName );
 
 	void Init();
 

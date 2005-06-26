@@ -16,7 +16,7 @@
 #define ROW_Y( i )				THEME->GetMetricF("EditCoursesSongMenu",ssprintf("Row%dY",i+1))
 
 
-const bool g_bRowEnabledForType[NUM_COURSE_ENTRY_TYPES][EditCoursesSongMenu::NUM_ROWS] = 
+const bool g_bRowEnabledForType[NUM_CourseEntryType][EditCoursesSongMenu::NUM_ROWS] = 
 {				     // group,  song,   type,	difficulty, low_meter, high_meter, best_worst
 	/* fixed */	      { true,   true,   true,   true,       true,      true,       false },
 	/* random */      { false,  false,  true,   true,       true,      true,       false },
@@ -79,7 +79,7 @@ bool EditCoursesSongMenu::CanGoRight()
 	{
 		m_aGroups.size(),
 		m_aSongs.size(),
-		NUM_COURSE_ENTRY_TYPES,
+		NUM_CourseEntryType,
 		NUM_DIFFICULTIES+1,
 		11,
 		11,

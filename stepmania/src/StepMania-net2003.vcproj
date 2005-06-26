@@ -283,6 +283,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenCenterImage.h">
 			</File>
 			<File
+				RelativePath=".\ScreenCourseManager.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenCourseManager.h">
+			</File>
+			<File
 				RelativePath="ScreenCredits.cpp">
 			</File>
 			<File
@@ -308,6 +314,18 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenEdit.h">
+			</File>
+			<File
+				RelativePath=".\ScreenEditCourse.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenEditCourse.h">
+			</File>
+			<File
+				RelativePath=".\ScreenEditCourseEntry.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenEditCourseEntry.h">
 			</File>
 			<File
 				RelativePath="ScreenEditCoursesMenu.cpp">
@@ -386,12 +404,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenJukebox.h">
-			</File>
-			<File
-				RelativePath="ScreenLogo.cpp">
-			</File>
-			<File
-				RelativePath="ScreenLogo.h">
 			</File>
 			<File
 				RelativePath="ScreenMapControllers.cpp">

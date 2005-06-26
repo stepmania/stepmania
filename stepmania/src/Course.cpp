@@ -22,6 +22,18 @@
 #include "UnlockManager.h"
 #include <limits.h>
 
+
+static const CString CourseEntryTypeNames[] = {
+	"Fixed",
+	"Random",
+	"RandomWithinGroup",
+	"Best",
+	"Worst",
+};
+XToString( CourseEntryType, NUM_CourseEntryType );
+XToThemedString( CourseEntryType, NUM_CourseEntryType );
+
+
 /* Amount to increase meter ranges to make them difficult: */
 const int COURSE_DIFFICULTY_CLASS_CHANGE[NUM_DIFFICULTIES] = { -1, -1, 0, 1, 1 };
 

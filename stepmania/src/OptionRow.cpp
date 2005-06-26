@@ -731,7 +731,11 @@ void OptionRow::Reload( const OptionRowDefinition &def )
 			{
 			case SELECT_ONE:
 				FOREACH_HumanPlayer( p )
-					m_iChoiceInRowWithFocus[p] = GetOneSelection(p);
+				{
+					m_iChoiceInRowWithFocus[p] = GetOneSelection(p, true);
+					if( m_iChoiceInRowWithFocus[p] == -1 )
+						m_iChoiceInRowWithFocus[p] = 0;
+				}
 				break;
 			case SELECT_MULTIPLE:
 				FOREACH_HumanPlayer( p )

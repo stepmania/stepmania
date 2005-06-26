@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                             	cl                                                     /Zl                                                     /nologo                                                     /c                                                     verstub.cpp                                                     /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                              	cl                                                      /Zl                                                      /nologo                                                      /c                                                      verstub.cpp                                                      /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc       	cl        /Zl        /nologo        /c        verstub.cpp        /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc        	cl         /Zl         /nologo         /c         verstub.cpp         /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -2282,14 +2282,6 @@ SOURCE=.\GraphDisplay.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\GrooveGraph.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\GrooveGraph.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\GrooveRadar.cpp
 # End Source File
 # Begin Source File
@@ -2526,6 +2518,14 @@ SOURCE=.\ScreenCenterImage.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenCourseManager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenCourseManager.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenCredits.cpp
 # End Source File
 # Begin Source File
@@ -2555,6 +2555,22 @@ SOURCE=.\ScreenEdit.cpp
 # Begin Source File
 
 SOURCE=.\ScreenEdit.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEditCourse.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEditCourse.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEditCourseEntry.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenEditCourseEntry.h
 # End Source File
 # Begin Source File
 
@@ -2669,14 +2685,6 @@ SOURCE=.\ScreenJukebox.cpp
 # Begin Source File
 
 SOURCE=.\ScreenJukebox.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenLogo.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenLogo.h
 # End Source File
 # Begin Source File
 

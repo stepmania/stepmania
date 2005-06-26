@@ -31,6 +31,7 @@ enum CourseType
 inline PlayMode CourseTypeToPlayMode( CourseType ct ) { return (PlayMode)(PLAY_MODE_NONSTOP+ct); }
 inline CourseType PlayModeToCourseType( PlayMode pm ) { return (CourseType)(pm-PLAY_MODE_NONSTOP); }
 
+
 enum CourseEntryType
 {
 	COURSE_ENTRY_FIXED, 
@@ -38,21 +39,12 @@ enum CourseEntryType
 	COURSE_ENTRY_RANDOM_WITHIN_GROUP, 
 	COURSE_ENTRY_BEST, 
 	COURSE_ENTRY_WORST,
-	NUM_COURSE_ENTRY_TYPES	// leave this at the end
+	NUM_CourseEntryType	// leave this at the end
 };
+#define FOREACH_CourseEntryType( i ) FOREACH_ENUM( CourseEntryType, NUM_CourseEntryType, i )
+const CString &CourseEntryTypeToString( CourseEntryType cet );
+const CString &CourseEntryTypeToThemedString( CourseEntryType cet );
 
-inline CString CourseEntryTypeToString( CourseEntryType cet )
-{
-	switch( cet )
-	{
-	case COURSE_ENTRY_FIXED:				return "fixed";
-	case COURSE_ENTRY_RANDOM:				return "random";
-	case COURSE_ENTRY_RANDOM_WITHIN_GROUP:	return "random_within_group";
-	case COURSE_ENTRY_BEST:					return "best";
-	case COURSE_ENTRY_WORST:				return "worst";
-	default:					ASSERT(0);	return "";
-	}
-}
 
 class CourseEntry
 {

@@ -768,10 +768,6 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 		break;
 	}
 	
-	int iCurRow = m_iCurrentRow[pn];
-	OptionRow &row = *m_pRows[iCurRow];
-	
-
 	/* If we are in a three-button mode, check to see if MENU_BUTTON_LEFT and
 	 * MENU_BUTTON_RIGHT are being held. */
 	switch( m_OptionsNavigation )
@@ -789,6 +785,14 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 			}
 		}
 	}
+	
+	this->ProcessMenuStart( pn, type );
+}
+
+void ScreenOptions::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
+{
+	int iCurRow = m_iCurrentRow[pn];
+	OptionRow &row = *m_pRows[iCurRow];
 
 	//
 	// Check whether Start ends this screen.
@@ -1000,6 +1004,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	UpdateText( iCurRow );
 
 	OnChange( pn );
+	this->AfterChangeValueInRow( pn );
 
 	if( m_OptionsNavigation != NAV_THREE_KEY_MENU )
 		m_SoundChangeCol.Play();

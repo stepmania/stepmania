@@ -63,7 +63,7 @@ enum CourseOptionsMenuRow
 
 
 
-const bool g_bRowEnabledForType[NUM_COURSE_ENTRY_TYPES][NUM_ENTRY_OPTIONS_MENU_ROWS] = 
+const bool g_bRowEnabledForType[NUM_CourseEntryType][NUM_ENTRY_OPTIONS_MENU_ROWS] = 
 {				     // song,   group,  difficulty, low_meter, high_meter, best_worst
 	/* fixed */	      { true,   false,  true,       true,      true,       false },
 	/* random */      { false,  false,  true,       true,      true,       false },
@@ -174,7 +174,7 @@ bool EditCoursesMenu::CanGoRight()
 		1,
 		NUM_ACTIONS,
 		(int)GetSelectedCourse()->m_entries.size(),
-		NUM_COURSE_ENTRY_TYPES,
+		NUM_CourseEntryType,
 		1,
 		1,
 		1

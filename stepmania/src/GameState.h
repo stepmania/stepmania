@@ -298,6 +298,9 @@ public:
 	BroadcastOnChange<StepsType> m_stEdit;
 	BroadcastOnChangePtr<Steps> m_pEditSourceSteps;
 	BroadcastOnChange<StepsType> m_stEditSource;
+	BroadcastOnChange<int> m_iEditCourseEntryIndex;
+	enum EditCourseEntryAction { ACTION_EDIT, ACTION_INSERT };
+	BroadcastOnChange<EditCourseEntryAction> m_EditCourseEntryAction;
 
 	// Workout stuff
 	float GetGoalPercentComplete( PlayerNumber pn );
