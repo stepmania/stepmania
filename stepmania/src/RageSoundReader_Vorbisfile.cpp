@@ -10,6 +10,7 @@
 #include <vorbis/vorbisfile.h>
 #endif
 
+#if defined(_MSC_VER)
 #if defined(_XBOX)
 #ifdef _DEBUG
 #pragma comment(lib, "vorbis/xbox/ogg_static_d.lib")
@@ -19,12 +20,13 @@
 #pragma comment(lib, "vorbis/xbox/ogg_static.lib")
 #pragma comment(lib, "vorbis/xbox/vorbis_static.lib")
 #pragma comment(lib, "vorbis/xbox/vorbisfile_static.lib")
-#endif
-#elif defined(_MSC_VER) && !defined(_XBOX)
+#endif // _DEBUG
+#else
 #pragma comment(lib, "vorbis/win32/ogg_static.lib")
 #pragma comment(lib, "vorbis/win32/vorbis_static.lib")
 #pragma comment(lib, "vorbis/win32/vorbisfile_static.lib")
-#endif
+#endif // _XBOX
+#endif // _MSC_VER
 
 #include <cstring>
 #include <cerrno>
