@@ -7,17 +7,32 @@
 #include "GameManager.h"
 #include "song.h"
 
-enum EditCourseRow
+enum EditCourseEntryRow
 {
 	ROW_ENTRY_TYPE, 
 	ROW_SONG_GROUP, 
 	ROW_SONG, 
-	ROW_DIFFICULTY, 
+	ROW_BASE_DIFFICULTY, 
 	ROW_LOW_METER,
 	ROW_HIGH_METER, 
 	ROW_BEST_WORST_VALUE, 
 	ROW_SET_MODS, 
 	ROW_DONE,
+	NUM_EditCourseEntryRow
+};
+#define FOREACH_EditCourseEntryRow( i ) FOREACH_ENUM( EditCourseEntryRow, NUM_EditCourseEntryRow, i )
+
+const bool g_bRowEnabledForEntryType[NUM_EditCourseEntryRow][NUM_CourseEntryType] = 
+{	                     // fixed, random, random_group, best,  worst
+	/* entry type */      { true,  true,   true,         true,  true },
+	/* song group */      { true,  false,  true,         false, false },
+	/* song */            { true,  false,  false,        false, false },
+	/* base difficulty */ { true,  true,   true,         false, false },
+	/* low meter */       { true,  true,   true,         false, false },
+	/* high meter */      { true,  true,   true,         false, false },
+	/* best worst */      { false, false,  false,        true,  true },
+	/* set mods */        { true,  true,   true,         true,  true },
+	/* done */            { true,  true,   true,         true,  true },
 };
 
 REGISTER_SCREEN_CLASS( ScreenEditCourseEntry );
@@ -114,6 +129,17 @@ void ScreenEditCourseEntry::AfterChangeValueInRow( PlayerNumber pn )
 	case ROW_ENTRY_TYPE:
 		// export entry type
 		{
+			OptionRow &row = *m_pRows[ROW_ENTRY_TYPE];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			sSongGroup = row.GetRowDef().choices[ iChoice ];
+			CourseEntryType cet = (CourseEntryType)iChoice;
+
+			FOREACH_EditCourseEntryRow( i )
+			{
+				OptionRow &row = *m_pRows[i];
+				bool bEnabled = g_bRowEnabledForEntryType[i][cet];
+				row.SetEnabledRowForAllPlayers( bEnabled );
+			}
 		}
 		// fall through
 	case ROW_SONG_GROUP:
@@ -153,10 +179,10 @@ void ScreenEditCourseEntry::AfterChangeValueInRow( PlayerNumber pn )
 			ce.pSong = SONGMAN->GetAllSongs()[iChoice];
 		}
 		// fall through
-	case ROW_DIFFICULTY:
+	case ROW_BASE_DIFFICULTY:
 		// export difficulty
 		{
-			OptionRow &row = *m_pRows[ROW_DIFFICULTY];
+			OptionRow &row = *m_pRows[ROW_BASE_DIFFICULTY];
 			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
 			ce.difficulty = DIFFICULTIES_TO_SHOW.GetValue()[iChoice];
 		}
@@ -224,7 +250,7 @@ void ScreenEditCourseEntry::GoToNextScreen()
 	case ROW_ENTRY_TYPE: 
 	case ROW_SONG_GROUP: 
 	case ROW_SONG: 
-	case ROW_DIFFICULTY: 
+	case ROW_BASE_DIFFICULTY: 
 	case ROW_LOW_METER:
 	case ROW_HIGH_METER: 
 	case ROW_BEST_WORST_VALUE: 
@@ -250,7 +276,7 @@ void ScreenEditCourseEntry::ProcessMenuStart( PlayerNumber pn, const InputEventT
 	case ROW_ENTRY_TYPE: 
 	case ROW_SONG_GROUP: 
 	case ROW_SONG: 
-	case ROW_DIFFICULTY: 
+	case ROW_BASE_DIFFICULTY: 
 	case ROW_LOW_METER:
 	case ROW_HIGH_METER: 
 	case ROW_BEST_WORST_VALUE: 
