@@ -5,6 +5,7 @@
 
 #if defined(__MINGW32__)
 #define _WINDOWS // This isn't defined under MinGW
+#define NEED_CSTDLIB_WORKAROUND // Needed for llabs() in MinGW
 #endif
 
 #if defined(_MSC_VER)
