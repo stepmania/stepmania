@@ -78,8 +78,7 @@ int64_t pos_map_queue::Search( int64_t frame, bool *approximate ) const
 		}
 
 		/* See if the current position is close to the beginning of this block. */
-		// HACK: MinGW compile breaks without :: in front
-		int64_t dist = ::llabs( m_Queue[i].frameno - frame );
+		int64_t dist = llabs( m_Queue[i].frameno - frame );
 		if( dist < closest_position_dist )
 		{
 			closest_position_dist = dist;
@@ -88,8 +87,7 @@ int64_t pos_map_queue::Search( int64_t frame, bool *approximate ) const
 		}
 
 		/* See if the current position is close to the end of this block. */
-		// HACK: MinGW compile breaks without :: in front
-		dist = ::llabs( m_Queue[i].frameno + m_Queue[i].frames - frame );
+		dist = llabs( m_Queue[i].frameno + m_Queue[i].frames - frame );
 		if( dist < closest_position_dist )
 		{
 			closest_position_dist = dist;
