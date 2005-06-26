@@ -6,14 +6,16 @@
 #include "RageSurface.h"
 
 
-#if defined(_MSC_VER)
+#if defined(_WINDOWS)
 #  include "libpng/include/png.h"
-#  if defined(XBOX) 
+#  if defined(_MSC_VER)
+#  if defined(_XBOX)
 #    pragma comment(lib, "libpng/lib/xboxlibpng.lib")
 #  else
 #    pragma comment(lib, "libpng/lib/libpng.lib")
 #  endif
 #  pragma warning(disable: 4611) /* interaction between '_setjmp' and C++ object destruction is non-portable */
+#  endif // _MSC_VER
 #else
 #  include <png.h>
 #endif
