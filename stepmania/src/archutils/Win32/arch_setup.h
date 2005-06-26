@@ -3,6 +3,10 @@
 
 #define HAVE_FFMPEG
 
+#if defined(__MINGW32__)
+#define _WINDOWS // This isn't defined under MinGW
+#endif
+
 #if defined(_MSC_VER)
 
 /* Fix VC breakage. */
@@ -49,6 +53,8 @@ struct tm *my_gmtime_r( const time_t *timep, struct tm *result );
 #define gmtime_r my_gmtime_r
 void my_usleep( unsigned long usec );
 #define usleep my_usleep
+
+
 
 /* Missing stdint types: */
 #if !defined(__MINGW32__) // MinGW headers define these for us
