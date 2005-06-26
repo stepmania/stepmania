@@ -8,20 +8,22 @@
 #include <cstdio>
 #include <cerrno>
 
-#ifdef _MSC_VER
+#ifdef _WINDOWS
 #include "mad-0.15.1b/mad.h"
+#ifdef _MSC_VER
 #ifdef _XBOX
 #ifdef _DEBUG
 #pragma comment(lib, "mad-0.15.1b/xboxmad/debug/xboxmad.lib")
 #else
 #pragma comment(lib, "mad-0.15.1b/xboxmad/Release/xboxmad.lib")
-#endif
+#endif // _DEBUG
 #else
 #pragma comment(lib, "mad-0.15.1b/msvc++/Release/libmad.lib")
-#endif
+#endif // _XBOX
+#endif //_MSC_VER
 #else
 #include <mad.h>
-#endif
+#endif // _WINDOWS
 
 /* ID3 code from libid3: */
 enum tagtype {
