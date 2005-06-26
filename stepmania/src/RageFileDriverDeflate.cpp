@@ -5,9 +5,11 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
-#if defined(_MSC_VER) || defined(_XBOX)
+#if defined(_WINDOWS) || defined(_XBOX)
         #include "zlib/zlib.h"
+#if defined(_MSC_VER)
         #pragma comment(lib, "zlib/zdll.lib")
+#endif
 #elif defined(__MACOSX__)
     /* Since crypto++ was added to the repository, <zlib.h> includes the zlib.h
      * in there rather than the correct system one. I don't know why it would do
