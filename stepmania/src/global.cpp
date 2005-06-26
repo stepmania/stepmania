@@ -37,7 +37,11 @@ void NORETURN sm_crash( const char *reason )
 #if defined(_WINDOWS)
 	/* Do something after the above, so the call/return isn't optimized to a jmp; that
 	 * way, this function will appear in backtrace stack traces. */
+#if defined(_MSC_VER)
 	_asm nop;
+#elif defined(__GNUC__) // MinGW or similar
+      asm("nop");
+#endif
 #else
 	_exit( 1 );
 #endif
