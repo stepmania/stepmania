@@ -1,11 +1,11 @@
 [Project]
 FileName=Stepmania.dev
 Name=StepMania
-UnitCount=747
+UnitCount=742
 Type=1
 Ver=1
 ObjFiles=
-Includes=C:\Devel\stepmania\src\lua-5.0\include
+Includes=C:\Devel\stepmania\src\lua-5.0\include;C:\DXSDK\include;C:\Devel\oggvorbis-win32sdk-1.0.1\include;C:\Devel\stepmania\src\libjpeg
 Libs=
 PrivateResource=Stepmania_private.rc
 ResourceIncludes=
@@ -5939,37 +5939,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit592]
-FileName=SDL_utils.cpp
-CompileCpp=1
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
 [Unit593]
-FileName=SDL_utils.h
-CompileCpp=1
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit594]
-FileName=SnapDisplay.cpp
-CompileCpp=1
-Folder=
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit595]
 FileName=SnapDisplay.h
 CompileCpp=1
 Folder=
@@ -5979,7 +5949,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit596]
+[Unit594]
 FileName=Song.cpp
 CompileCpp=1
 Folder=
@@ -5989,7 +5959,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit597]
+[Unit595]
 FileName=song.h
 CompileCpp=1
 Folder=
@@ -5999,7 +5969,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit598]
+[Unit596]
 FileName=SongCacheIndex.cpp
 CompileCpp=1
 Folder=
@@ -6009,7 +5979,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit599]
+[Unit597]
 FileName=SongCacheIndex.h
 CompileCpp=1
 Folder=
@@ -6019,7 +5989,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit600]
+[Unit598]
 FileName=SongManager.cpp
 CompileCpp=1
 Folder=
@@ -6029,7 +5999,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit601]
+[Unit599]
 FileName=SongManager.h
 CompileCpp=1
 Folder=
@@ -6039,7 +6009,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit602]
+[Unit600]
 FileName=SongOptions.cpp
 CompileCpp=1
 Folder=
@@ -6049,7 +6019,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit603]
+[Unit601]
 FileName=SongOptions.h
 CompileCpp=1
 Folder=
@@ -6059,7 +6029,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit604]
+[Unit602]
 FileName=SongUtil.cpp
 CompileCpp=1
 Folder=
@@ -6069,7 +6039,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit605]
+[Unit603]
 FileName=SongUtil.h
 CompileCpp=1
 Folder=
@@ -6079,7 +6049,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit606]
+[Unit604]
 FileName=Sprite.cpp
 CompileCpp=1
 Folder=
@@ -6089,7 +6059,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit607]
+[Unit605]
 FileName=Sprite.h
 CompileCpp=1
 Folder=
@@ -6099,7 +6069,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit608]
+[Unit606]
 FileName=StageStats.cpp
 CompileCpp=1
 Folder=
@@ -6109,7 +6079,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit609]
+[Unit607]
 FileName=StageStats.h
 CompileCpp=1
 Folder=
@@ -6119,7 +6089,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit610]
+[Unit608]
 FileName=StatsManager.cpp
 CompileCpp=1
 Folder=
@@ -6129,7 +6099,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit611]
+[Unit609]
 FileName=StatsManager.h
 CompileCpp=1
 Folder=
@@ -6139,7 +6109,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit612]
+[Unit610]
 FileName=StdString.h
 CompileCpp=1
 Folder=
@@ -6149,7 +6119,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit613]
+[Unit611]
 FileName=StepMania.cpp
 CompileCpp=1
 Folder=
@@ -6159,7 +6129,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit614]
+[Unit612]
 FileName=StepMania.h
 CompileCpp=1
 Folder=
@@ -6169,7 +6139,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit615]
+[Unit613]
 FileName=Steps.cpp
 CompileCpp=1
 Folder=
@@ -6179,7 +6149,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit616]
+[Unit614]
 FileName=Steps.h
 CompileCpp=1
 Folder=
@@ -6189,7 +6159,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit617]
+[Unit615]
 FileName=StepsUtil.cpp
 CompileCpp=1
 Folder=
@@ -6199,7 +6169,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit618]
+[Unit616]
 FileName=StepsUtil.h
 CompileCpp=1
 Folder=
@@ -6209,7 +6179,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit619]
+[Unit617]
 FileName=StreamDisplay.cpp
 CompileCpp=1
 Folder=
@@ -6219,7 +6189,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit620]
+[Unit618]
 FileName=StreamDisplay.h
 CompileCpp=1
 Folder=
@@ -6229,7 +6199,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit621]
+[Unit619]
 FileName=Style.cpp
 CompileCpp=1
 Folder=
@@ -6239,7 +6209,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit622]
+[Unit620]
 FileName=Style.h
 CompileCpp=1
 Folder=
@@ -6249,7 +6219,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit623]
+[Unit621]
 FileName=StyleInput.h
 CompileCpp=1
 Folder=
@@ -6259,7 +6229,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit624]
+[Unit622]
 FileName=StyleUtil.cpp
 CompileCpp=1
 Folder=
@@ -6269,7 +6239,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit625]
+[Unit623]
 FileName=StyleUtil.h
 CompileCpp=1
 Folder=
@@ -6279,7 +6249,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit626]
+[Unit624]
 FileName=SubscriptionManager.h
 CompileCpp=1
 Folder=
@@ -6289,7 +6259,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit627]
+[Unit625]
 FileName=TextBanner.cpp
 CompileCpp=1
 Folder=
@@ -6299,7 +6269,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit628]
+[Unit626]
 FileName=TextBanner.h
 CompileCpp=1
 Folder=
@@ -6309,7 +6279,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit629]
+[Unit627]
 FileName=ThemeManager.cpp
 CompileCpp=1
 Folder=
@@ -6319,7 +6289,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit630]
+[Unit628]
 FileName=ThemeManager.h
 CompileCpp=1
 Folder=
@@ -6329,7 +6299,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit631]
+[Unit629]
 FileName=ThemeMetric.h
 CompileCpp=1
 Folder=
@@ -6339,7 +6309,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit632]
+[Unit630]
 FileName=TimingData.cpp
 CompileCpp=1
 Folder=
@@ -6349,7 +6319,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit633]
+[Unit631]
 FileName=TimingData.h
 CompileCpp=1
 Folder=
@@ -6359,7 +6329,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit634]
+[Unit632]
 FileName=TitleSubstitution.cpp
 CompileCpp=1
 Folder=
@@ -6369,7 +6339,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit635]
+[Unit633]
 FileName=TitleSubstitution.h
 CompileCpp=1
 Folder=
@@ -6379,7 +6349,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit636]
+[Unit634]
 FileName=Trail.cpp
 CompileCpp=1
 Folder=
@@ -6389,7 +6359,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit637]
+[Unit635]
 FileName=Trail.h
 CompileCpp=1
 Folder=
@@ -6399,7 +6369,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit638]
+[Unit636]
 FileName=TrailUtil.cpp
 CompileCpp=1
 Folder=
@@ -6409,7 +6379,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit639]
+[Unit637]
 FileName=TrailUtil.h
 CompileCpp=1
 Folder=
@@ -6419,7 +6389,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit640]
+[Unit638]
 FileName=Transition.cpp
 CompileCpp=1
 Folder=
@@ -6429,7 +6399,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit641]
+[Unit639]
 FileName=Transition.h
 CompileCpp=1
 Folder=
@@ -6439,7 +6409,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit642]
+[Unit640]
 FileName=UnlockManager.cpp
 CompileCpp=1
 Folder=
@@ -6449,7 +6419,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit643]
+[Unit641]
 FileName=UnlockManager.h
 CompileCpp=1
 Folder=
@@ -6459,7 +6429,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit644]
+[Unit642]
 FileName=verstub.cpp
 CompileCpp=1
 Folder=
@@ -6469,7 +6439,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit645]
+[Unit643]
 FileName=WheelBase.cpp
 CompileCpp=1
 Folder=
@@ -6479,7 +6449,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit646]
+[Unit644]
 FileName=WheelBase.h
 CompileCpp=1
 Folder=
@@ -6489,7 +6459,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit647]
+[Unit645]
 FileName=WheelItemBase.cpp
 CompileCpp=1
 Folder=
@@ -6499,7 +6469,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit648]
+[Unit646]
 FileName=WheelItemBase.h
 CompileCpp=1
 Folder=
@@ -6509,7 +6479,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit649]
+[Unit647]
 FileName=WheelNotifyIcon.cpp
 CompileCpp=1
 Folder=
@@ -6519,7 +6489,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit650]
+[Unit648]
 FileName=WheelNotifyIcon.h
 CompileCpp=1
 Folder=
@@ -6529,7 +6499,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit651]
+[Unit649]
 FileName=XmlFile.cpp
 CompileCpp=1
 Folder=
@@ -6539,7 +6509,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit652]
+[Unit650]
 FileName=arch\arch.h
 CompileCpp=1
 Folder=arch
@@ -6549,7 +6519,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit653]
+[Unit651]
 FileName=arch\arch_default.h
 CompileCpp=1
 Folder=arch
@@ -6559,7 +6529,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit654]
+[Unit652]
 FileName=arch\arch_platform.h
 CompileCpp=1
 Folder=arch
@@ -6569,7 +6539,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit655]
+[Unit653]
 FileName=arch\arch.cpp
 CompileCpp=1
 Folder=arch
@@ -6579,7 +6549,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit656]
+[Unit654]
 FileName=archutils\Win32\WindowsResources.rc
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6589,7 +6559,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit657]
+[Unit655]
 FileName=archutils\Win32\AppInstance.cpp
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6599,7 +6569,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit658]
+[Unit656]
 FileName=archutils\Win32\AppInstance.h
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6609,7 +6579,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit659]
+[Unit657]
 FileName=archutils\Win32\arch_setup.cpp
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6619,7 +6589,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit660]
+[Unit658]
 FileName=archutils\Win32\arch_setup.h
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6629,7 +6599,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit661]
+[Unit659]
 FileName=archutils\Win32\Crash.cpp
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6639,7 +6609,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit662]
+[Unit660]
 FileName=archutils\Win32\Crash.h
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6649,7 +6619,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit663]
+[Unit661]
 FileName=archutils\Win32\DebugInfoHunt.cpp
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6659,17 +6629,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit664]
+[Unit662]
 FileName=archutils\Win32\DebugInfoHunt.h
+CompileCpp=1
 Folder=Win 32 ArchUtils
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
-CompileCpp=1
 
-[Unit665]
+[Unit663]
 FileName=archutils\Win32\GetFileInformation.cpp
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6679,17 +6649,17 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit666]
+[Unit664]
 FileName=archutils\Win32\GetFileInformation.h
-CompileCpp=1
 Folder=Win 32 ArchUtils
 Compile=1
 Link=1
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
+CompileCpp=1
 
-[Unit667]
+[Unit665]
 FileName=archutils\Win32\GotoURL.cpp
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6699,7 +6669,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit668]
+[Unit666]
 FileName=archutils\Win32\GotoURL.h
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6709,7 +6679,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit669]
+[Unit667]
 FileName=archutils\Win32\GraphicsWindow.cpp
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6719,7 +6689,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit670]
+[Unit668]
 FileName=archutils\Win32\GraphicsWindow.h
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6729,7 +6699,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit671]
+[Unit669]
 FileName=archutils\Win32\mapconv.cpp
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6739,7 +6709,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit672]
+[Unit670]
 FileName=archutils\Win32\RegistryAccess.cpp
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6749,7 +6719,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit673]
+[Unit671]
 FileName=archutils\Win32\RegistryAccess.h
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6759,7 +6729,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit674]
+[Unit672]
 FileName=archutils\Win32\RestartProgram.cpp
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6769,7 +6739,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit675]
+[Unit673]
 FileName=archutils\Win32\RestartProgram.h
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6779,7 +6749,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit676]
+[Unit674]
 FileName=archutils\Win32\USB.cpp
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6789,7 +6759,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit677]
+[Unit675]
 FileName=archutils\Win32\USB.h
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6799,7 +6769,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit678]
+[Unit676]
 FileName=archutils\Win32\verinc.c
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6809,7 +6779,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit679]
+[Unit677]
 FileName=archutils\Win32\VideoDriverInfo.cpp
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6819,7 +6789,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit680]
+[Unit678]
 FileName=archutils\Win32\VideoDriverInfo.h
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6829,7 +6799,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit681]
+[Unit679]
 FileName=archutils\Win32\WindowIcon.cpp
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6839,7 +6809,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit682]
+[Unit680]
 FileName=archutils\Win32\WindowIcon.h
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6849,7 +6819,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit683]
+[Unit681]
 FileName=archutils\Win32\WindowsResources.h
 CompileCpp=1
 Folder=Win 32 ArchUtils
@@ -6859,7 +6829,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit684]
+[Unit682]
 FileName=arch\LoadingWindow\LoadingWindow_Win32.h
 CompileCpp=1
 Folder=arch/Loading Window
@@ -6869,7 +6839,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit685]
+[Unit683]
 FileName=arch\LoadingWindow\LoadingWindow.h
 CompileCpp=1
 Folder=arch/Loading Window
@@ -6879,7 +6849,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit686]
+[Unit684]
 FileName=arch\LoadingWindow\LoadingWindow_Win32.cpp
 CompileCpp=1
 Folder=arch/Loading Window
@@ -6889,7 +6859,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit687]
+[Unit685]
 FileName=arch\Sound\RageSoundDriver_WaveOut.h
 CompileCpp=1
 Folder=arch/Sound
@@ -6899,7 +6869,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit688]
+[Unit686]
 FileName=arch\Sound\DSoundHelpers.cpp
 CompileCpp=1
 Folder=arch/Sound
@@ -6909,7 +6879,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit689]
+[Unit687]
 FileName=arch\Sound\DSoundHelpers.h
 CompileCpp=1
 Folder=arch/Sound
@@ -6919,7 +6889,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit690]
+[Unit688]
 FileName=arch\Sound\RageSoundDriver.h
 CompileCpp=1
 Folder=arch/Sound
@@ -6929,8 +6899,28 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit691]
+[Unit689]
 FileName=arch\Sound\RageSoundDriver_DSound.cpp
+CompileCpp=1
+Folder=arch/Sound
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit690]
+FileName=arch\Sound\RageSoundDriver_DSound.h
+CompileCpp=1
+Folder=arch/Sound
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit691]
+FileName=arch\Sound\RageSoundDriver_DSound_Software.cpp
 CompileCpp=1
 Folder=arch/Sound
 Compile=1
@@ -6958,26 +6948,6 @@ ProductVersion=
 AutoIncBuildNr=0
 
 [Unit692]
-FileName=arch\Sound\RageSoundDriver_DSound.h
-CompileCpp=1
-Folder=arch/Sound
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit693]
-FileName=arch\Sound\RageSoundDriver_DSound_Software.cpp
-CompileCpp=1
-Folder=arch/Sound
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit694]
 FileName=arch\Sound\RageSoundDriver_DSound_Software.h
 CompileCpp=1
 Folder=arch/Sound
@@ -6987,7 +6957,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit695]
+[Unit693]
 FileName=arch\Sound\RageSoundDriver_Generic_Software.cpp
 CompileCpp=1
 Folder=arch/Sound
@@ -6997,7 +6967,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit696]
+[Unit694]
 FileName=arch\Sound\RageSoundDriver_Generic_Software.h
 CompileCpp=1
 Folder=arch/Sound
@@ -7007,7 +6977,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit697]
+[Unit695]
 FileName=arch\Sound\RageSoundDriver_Null.cpp
 CompileCpp=1
 Folder=arch/Sound
@@ -7017,7 +6987,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit698]
+[Unit696]
 FileName=arch\Sound\RageSoundDriver_Null.h
 CompileCpp=1
 Folder=arch/Sound
@@ -7027,7 +6997,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit699]
+[Unit697]
 FileName=arch\Sound\RageSoundDriver_WaveOut.cpp
 CompileCpp=1
 Folder=arch/Sound
@@ -7037,7 +7007,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit700]
+[Unit698]
 FileName=arch\ArchHooks\ArchHooks_Win32.h
 CompileCpp=1
 Folder=arch/Arch Hooks
@@ -7047,7 +7017,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit701]
+[Unit699]
 FileName=arch\ArchHooks\ArchHooks.cpp
 CompileCpp=1
 Folder=arch/Arch Hooks
@@ -7057,7 +7027,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit702]
+[Unit700]
 FileName=arch\ArchHooks\ArchHooks.h
 CompileCpp=1
 Folder=arch/Arch Hooks
@@ -7067,7 +7037,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit703]
+[Unit701]
 FileName=arch\ArchHooks\ArchHooks_Win32.cpp
 CompileCpp=1
 Folder=arch/Arch Hooks
@@ -7077,7 +7047,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit704]
+[Unit702]
 FileName=arch\InputHandler\InputHandler_MonkeyKeyboard.h
 CompileCpp=1
 Folder=arch/Input Handler
@@ -7087,7 +7057,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit705]
+[Unit703]
 FileName=arch\InputHandler\InputHandler_Win32_Para.cpp
 CompileCpp=1
 Folder=arch/Input Handler
@@ -7097,7 +7067,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit706]
+[Unit704]
 FileName=arch\InputHandler\InputHandler_Win32_Para.h
 CompileCpp=1
 Folder=arch/Input Handler
@@ -7107,7 +7077,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit707]
+[Unit705]
 FileName=arch\InputHandler\InputHandler_Win32_Pump.cpp
 CompileCpp=1
 Folder=arch/Input Handler
@@ -7117,7 +7087,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit708]
+[Unit706]
 FileName=arch\InputHandler\InputHandler_Win32_Pump.h
 CompileCpp=1
 Folder=arch/Input Handler
@@ -7127,7 +7097,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit709]
+[Unit707]
 FileName=arch\InputHandler\InputHandler.cpp
 CompileCpp=1
 Folder=arch/Input Handler
@@ -7137,7 +7107,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit710]
+[Unit708]
 FileName=arch\InputHandler\InputHandler.h
 CompileCpp=1
 Folder=arch/Input Handler
@@ -7147,7 +7117,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit711]
+[Unit709]
 FileName=arch\InputHandler\InputHandler_DirectInput.cpp
 CompileCpp=1
 Folder=arch/Input Handler
@@ -7157,7 +7127,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit712]
+[Unit710]
 FileName=arch\InputHandler\InputHandler_DirectInput.h
 CompileCpp=1
 Folder=arch/Input Handler
@@ -7167,7 +7137,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit713]
+[Unit711]
 FileName=arch\InputHandler\InputHandler_DirectInputHelper.cpp
 CompileCpp=1
 Folder=arch/Input Handler
@@ -7177,7 +7147,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit714]
+[Unit712]
 FileName=arch\InputHandler\InputHandler_DirectInputHelper.h
 CompileCpp=1
 Folder=arch/Input Handler
@@ -7187,7 +7157,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit715]
+[Unit713]
 FileName=arch\InputHandler\InputHandler_MonkeyKeyboard.cpp
 CompileCpp=1
 Folder=arch/Input Handler
@@ -7197,7 +7167,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit716]
+[Unit714]
 FileName=arch\MovieTexture\MovieTexture_Null.h
 CompileCpp=1
 Folder=arch/Movie Texture
@@ -7207,7 +7177,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit717]
+[Unit715]
 FileName=arch\MovieTexture\MovieTexture.cpp
 CompileCpp=1
 Folder=arch/Movie Texture
@@ -7217,7 +7187,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit718]
+[Unit716]
 FileName=arch\MovieTexture\MovieTexture.h
 CompileCpp=1
 Folder=arch/Movie Texture
@@ -7227,57 +7197,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit719]
-FileName=arch\MovieTexture\MovieTexture_DShow.cpp
-CompileCpp=1
-Folder=arch/Movie Texture
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit720]
-FileName=arch\MovieTexture\MovieTexture_DShow.h
-CompileCpp=1
-Folder=arch/Movie Texture
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit721]
-FileName=arch\MovieTexture\MovieTexture_DShowHelper.cpp
-CompileCpp=1
-Folder=arch/Movie Texture
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit722]
-FileName=arch\MovieTexture\MovieTexture_DShowHelper.h
-CompileCpp=1
-Folder=arch/Movie Texture
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit723]
-FileName=arch\MovieTexture\MovieTexture_FFMpeg.cpp
-CompileCpp=1
-Folder=arch/Movie Texture
-Compile=1
-Link=1
-Priority=1000
-OverrideBuildCmd=0
-BuildCmd=
-
-[Unit724]
+[Unit718]
 FileName=arch\MovieTexture\MovieTexture_FFMpeg.h
 CompileCpp=1
 Folder=arch/Movie Texture
@@ -7287,7 +7207,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit725]
+[Unit719]
 FileName=arch\MovieTexture\MovieTexture_Null.cpp
 CompileCpp=1
 Folder=arch/Movie Texture
@@ -7297,7 +7217,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit726]
+[Unit720]
 FileName=arch\LowLevelWindow\LowLevelWindow_Win32.h
 CompileCpp=1
 Folder=arch/Low Level Window
@@ -7307,7 +7227,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit727]
+[Unit721]
 FileName=arch\LowLevelWindow\LowLevelWindow.h
 CompileCpp=1
 Folder=arch/Low Level Window
@@ -7317,7 +7237,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit728]
+[Unit722]
 FileName=arch\LowLevelWindow\LowLevelWindow_Win32.cpp
 CompileCpp=1
 Folder=arch/Low Level Window
@@ -7327,7 +7247,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit729]
+[Unit723]
 FileName=arch\Lights\LightsDriver_Win32Parallel.cpp
 CompileCpp=1
 Folder=arch/Lights
@@ -7337,7 +7257,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit730]
+[Unit724]
 FileName=arch\Lights\LightsDriver_Win32Parallel.h
 CompileCpp=1
 Folder=arch/Lights
@@ -7347,7 +7267,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit731]
+[Unit725]
 FileName=arch\Lights\LightsDriver.h
 CompileCpp=1
 Folder=arch/Lights
@@ -7357,7 +7277,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit732]
+[Unit726]
 FileName=arch\Lights\LightsDriver_Null.h
 CompileCpp=1
 Folder=arch/Lights
@@ -7367,7 +7287,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit733]
+[Unit727]
 FileName=arch\Lights\LightsDriver_SystemMessage.cpp
 CompileCpp=1
 Folder=arch/Lights
@@ -7377,7 +7297,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit734]
+[Unit728]
 FileName=arch\Lights\LightsDriver_SystemMessage.h
 CompileCpp=1
 Folder=arch/Lights
@@ -7387,7 +7307,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit735]
+[Unit729]
 FileName=arch\MemoryCard\MemoryCardDriverThreaded_Windows.h
 CompileCpp=1
 Folder=arch/Memory Card
@@ -7397,7 +7317,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit736]
+[Unit730]
 FileName=arch\MemoryCard\MemoryCardDriver.cpp
 CompileCpp=1
 Folder=arch/Memory Card
@@ -7407,7 +7327,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit737]
+[Unit731]
 FileName=arch\MemoryCard\MemoryCardDriver.h
 CompileCpp=1
 Folder=arch/Memory Card
@@ -7417,7 +7337,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit738]
+[Unit732]
 FileName=arch\MemoryCard\MemoryCardDriver_Null.h
 CompileCpp=1
 Folder=arch/Memory Card
@@ -7427,7 +7347,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit739]
+[Unit733]
 FileName=arch\MemoryCard\MemoryCardDriverThreaded_Windows.cpp
 CompileCpp=1
 Folder=arch/Memory Card
@@ -7437,7 +7357,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit740]
+[Unit734]
 FileName=arch\Dialog\DialogDriver_Win32.h
 CompileCpp=1
 Folder=arch/Dialog
@@ -7447,7 +7367,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit741]
+[Unit735]
 FileName=arch\Dialog\Dialog.cpp
 CompileCpp=1
 Folder=arch/Dialog
@@ -7457,7 +7377,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit742]
+[Unit736]
 FileName=arch\Dialog\Dialog.h
 CompileCpp=1
 Folder=arch/Dialog
@@ -7467,7 +7387,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit743]
+[Unit737]
 FileName=arch\Dialog\DialogDriver.h
 CompileCpp=1
 Folder=arch/Dialog
@@ -7477,7 +7397,7 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit744]
+[Unit738]
 FileName=arch\Dialog\DialogDriver_Win32.cpp
 CompileCpp=1
 Folder=arch/Dialog
@@ -7487,8 +7407,68 @@ Priority=1000
 OverrideBuildCmd=0
 BuildCmd=
 
-[Unit745]
+[Unit739]
 FileName=arch\Threads\Threads_Win32.h
+CompileCpp=1
+Folder=arch/Threads
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit740]
+FileName=arch\Threads\Threads.h
+CompileCpp=1
+Folder=arch/Threads
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit741]
+FileName=arch\Threads\Threads_Win32.cpp
+CompileCpp=1
+Folder=arch/Threads
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit742]
+FileName=arch\MovieTexture\Selector_MovieTexture.h
+CompileCpp=1
+Folder=arch/Movie Texture
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit743]
+FileName=arch\Threads\Threads_Win32.h
+CompileCpp=1
+Folder=arch/Threads
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit744]
+FileName=arch\Threads\Threads.h
+CompileCpp=1
+Folder=arch/Threads
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit745]
+FileName=arch\Threads\Threads_Win32.cpp
 CompileCpp=1
 Folder=arch/Threads
 Compile=1
@@ -7611,6 +7591,26 @@ BuildCmd=
 FileName=arch\Threads\Threads_Win32.cpp
 CompileCpp=1
 Folder=arch/Threads
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit592]
+FileName=SnapDisplay.cpp
+CompileCpp=1
+Folder=
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit717]
+FileName=arch\MovieTexture\MovieTexture_FFMpeg.cpp
+CompileCpp=1
+Folder=arch/Movie Texture
 Compile=1
 Link=1
 Priority=1000
