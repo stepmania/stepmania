@@ -3,6 +3,8 @@
 
 #define HAVE_FFMPEG
 
+#if defined(_MSC_VER)
+
 /* Fix VC breakage. */
 #define PATH_MAX _MAX_PATH
 
@@ -25,6 +27,8 @@
 
 /* If this isn't defined to 0, VC fails to define things like stat and alloca. */
 #define __STDC__ 0
+
+#endif
 
 #include <direct.h> /* has stuff that should be in unistd.h */
 #include <wchar.h> /* needs to be included before our fixes below */
@@ -84,29 +88,26 @@ static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
 #define NOMINMAX /* make sure Windows doesn't try to define this */
 
 /* Windows is missing some basic math functions: */
+// But MinGW isn't.
+#if !defined(__MINGW32__)
 #define NEED_TRUNCF
 #define NEED_ROUNDF
 #define NEED_STRTOF
 #define MISSING_STDINT_H
+#endif
 
+// MinGW provides us with this function already
+#if !defined(__MINGW32__)
 inline int lrintf( float f )
 {
 	int retval;
-
-#if defined(__GNUC__) // MinGW or similar
-	asm (
-	"fld %0\n"
-	"fistp %1"
-	:
-	: "r" (f), "r" (retval)
-	);
-#else
+	
 	_asm fld f;
 	_asm fistp retval;
-#endif
 
 	return retval;
 }
+#endif
 
 /* For RageLog. */
 #define HAVE_VERSION_INFO
