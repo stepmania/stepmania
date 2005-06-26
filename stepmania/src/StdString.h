@@ -859,7 +859,7 @@ public:
 
 	void FormatV(const CT* szFormat, va_list argList)
 	{
-	#if defined(WIN32)
+	#if defined(WIN32) && !defined(__MINGW32__)
 		CT* pBuf			= NULL;
 		int nChars			= 1;
 		int nUsed			= 0;
