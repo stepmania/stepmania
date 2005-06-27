@@ -850,6 +850,8 @@ float ScreenRanking::SetPage( PageToShow pts )
 				FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), iter )
 				{							
 					const Steps* pSteps = pSong->GetStepsByDifficulty( pts.st, *iter, false );
+					if( UNLOCKMAN->StepsIsLocked( pSong, pSteps ) )
+						pSteps = NULL;
 					BitmapText* pTextStepsScore = &item.m_textScore[*iter];
 
 					if( pSteps == NULL )
