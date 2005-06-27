@@ -1403,10 +1403,14 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 	Profile *pProf = PROFILEMAN->GetProfile(pn);
 
+	// Check for feats even if the PlayMode is rave or battle because the player may have
+	// made high scores then switched modes.
 	CHECKPOINT_M(ssprintf("PlayMode %i",this->m_PlayMode));
 	switch( this->m_PlayMode )
 	{
 	case PLAY_MODE_REGULAR:
+	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
 		{
 			CHECKPOINT;
 
@@ -1551,9 +1555,6 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				}
 			}
 		}
-		break;
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
 		break;
 	case PLAY_MODE_NONSTOP:
 	case PLAY_MODE_ONI:
