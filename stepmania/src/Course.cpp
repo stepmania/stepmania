@@ -1279,8 +1279,9 @@ const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
 {
 	FOREACH_CONST( CourseEntry, m_entries, e )
 	{
-		if( e->pSong == pSong )
-			return e;
+		const CourseEntry &entry = *e;
+		if( entry.pSong == pSong )
+			return &entry;
 	}
 
 	return NULL;
