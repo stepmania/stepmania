@@ -32,49 +32,48 @@ inline PlayMode CourseTypeToPlayMode( CourseType ct ) { return (PlayMode)(PLAY_M
 inline CourseType PlayModeToCourseType( PlayMode pm ) { return (CourseType)(pm-PLAY_MODE_NONSTOP); }
 
 
-enum CourseEntryType
-{
-	COURSE_ENTRY_FIXED, 
-	COURSE_ENTRY_RANDOM, 
-	COURSE_ENTRY_RANDOM_WITHIN_GROUP, 
-	COURSE_ENTRY_BEST, 
-	COURSE_ENTRY_WORST,
-	NUM_CourseEntryType	// leave this at the end
-};
-#define FOREACH_CourseEntryType( i ) FOREACH_ENUM( CourseEntryType, NUM_CourseEntryType, i )
-const CString &CourseEntryTypeToString( CourseEntryType cet );
-const CString &CourseEntryTypeToThemedString( CourseEntryType cet );
-
-
 class CourseEntry
 {
 public:
-	CourseEntryType type;
-	bool bSecret;			// show "??????"
-	Song* pSong;			// used in type=fixed
-	CString group_name;		// used in type=random_within_group
-	Difficulty difficulty;	// = DIFFICULTY_INVALID if no difficulty specified
-	bool no_difficult;		// if true, difficult course setting doesn't affect this entry
-	int low_meter;			// = -1 if no meter range specified
-	int high_meter;			// = -1 if no meter range specified
-	int players_index;		// ignored if type isn't 'best' or 'worst'
-	CString modifiers;		// set player and song options using these
-	AttackArray attacks;	// timed modifiers
+	bool bSecret;			// show "??????" instead of an exact song
+
+	// filter criteria, applied from top to bottom
+	Song* pSong;			// don't filter if NULL
+	CString sSongGroup;		// don't filter if empty
+	Difficulty baseDifficulty;	// don't filter if DIFFICULTY_INVALID
+	bool bNoDifficult;			// if true, CourseDifficulty doesn't affect this entry
+	int iLowMeter;			// don't filter if -1
+	int iHighMeter;			// don't filter if -1
+	int iMostPopularIndex;	// don't filter if -1
+	int iLeastPopularIndex;	// don't filter if -1
+
+	CString sModifiers;		// set player and song options using these
+	AttackArray attacks;	// timed sModifiers
 	float fGainSeconds;		// time gained back at the beginning of the song.  LifeMeterTime only.
 
 	CourseEntry()
 	{
-		type = (CourseEntryType)0;
 		bSecret = false;
+
 		pSong = NULL;
-		group_name = "";
-		difficulty = DIFFICULTY_INVALID;
-		no_difficult = false;
-		low_meter = -1;
-		high_meter = -1;
-		players_index = 0;
-		modifiers = "";
+		sSongGroup = "";
+		baseDifficulty = DIFFICULTY_INVALID;
+		bNoDifficult = false;
+		iLowMeter = -1;
+		iHighMeter = -1;
+		iMostPopularIndex = -1;
+		iLeastPopularIndex = -1;
+
+		sModifiers = "";
 		fGainSeconds = 0;
+	}
+
+	bool IsRandomSong() const
+	{
+		return
+			iMostPopularIndex == -1  &&
+			iLeastPopularIndex == -1  &&
+			pSong == NULL;
 	}
 };
 

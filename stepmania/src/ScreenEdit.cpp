@@ -1392,8 +1392,6 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				bool bUsesThisSong = false;
 				for( unsigned e = 0; e < crs->m_entries.size(); ++e )
 				{
-					if( crs->m_entries[e].type != COURSE_ENTRY_FIXED )
-						continue;
 					if( crs->m_entries[e].pSong != m_pSong )
 						continue;
 					bUsesThisSong = true;
@@ -2816,8 +2814,6 @@ void ScreenEdit::SetupCourseAttacks()
 		AttackArray Attacks;
 		for( unsigned e = 0; e < m_pAttacksFromCourse->m_entries.size(); ++e )
 		{
-			if( m_pAttacksFromCourse->m_entries[e].type != COURSE_ENTRY_FIXED )
-				continue;
 			if( m_pAttacksFromCourse->m_entries[e].pSong != m_pSong )
 				continue;
 

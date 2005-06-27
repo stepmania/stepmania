@@ -9,7 +9,6 @@
 
 enum EditCourseEntryRow
 {
-	ROW_ENTRY_TYPE, 
 	ROW_SONG_GROUP, 
 	ROW_SONG, 
 	ROW_BASE_DIFFICULTY, 
@@ -21,19 +20,6 @@ enum EditCourseEntryRow
 	NUM_EditCourseEntryRow
 };
 #define FOREACH_EditCourseEntryRow( i ) FOREACH_ENUM( EditCourseEntryRow, NUM_EditCourseEntryRow, i )
-
-const bool g_bRowEnabledForEntryType[NUM_EditCourseEntryRow][NUM_CourseEntryType] = 
-{	                     // fixed, random, random_group, best,  worst
-	/* entry type */      { true,  true,   true,         true,  true },
-	/* song group */      { true,  false,  true,         false, false },
-	/* song */            { true,  false,  false,        false, false },
-	/* base difficulty */ { true,  true,   true,         false, false },
-	/* low meter */       { true,  true,   true,         false, false },
-	/* high meter */      { true,  true,   true,         false, false },
-	/* best worst */      { false, false,  false,        true,  true },
-	/* set mods */        { true,  true,   true,         true,  true },
-	/* done */            { true,  true,   true,         true,  true },
-};
 
 REGISTER_SCREEN_CLASS( ScreenEditCourseEntry );
 ScreenEditCourseEntry::ScreenEditCourseEntry( CString sName ) : ScreenOptions( sName )
@@ -51,13 +37,6 @@ void ScreenEditCourseEntry::Init()
 	OptionRowDefinition def;
 	def.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	
-	def.name = "Entry Type";
-	def.choices.clear();
-	FOREACH_CourseEntryType( i )
-		def.choices.push_back( CourseEntryTypeToThemedString(i) );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
-
 	def.name = "Song Group";
 	def.choices.clear();
 	vector<CString> vsSongGroups;
@@ -73,7 +52,7 @@ void ScreenEditCourseEntry::Init()
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Difficulty";
+	def.name = "Base Difficulty";
 	def.choices.clear();
 	FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), dc )
 		def.choices.push_back( DifficultyToThemedString(*dc) );
@@ -126,22 +105,6 @@ void ScreenEditCourseEntry::AfterChangeValueInRow( PlayerNumber pn )
 
 	switch( m_iCurrentRow[pn] )
 	{
-	case ROW_ENTRY_TYPE:
-		// export entry type
-		{
-			OptionRow &row = *m_pRows[ROW_ENTRY_TYPE];
-			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			sSongGroup = row.GetRowDef().choices[ iChoice ];
-			CourseEntryType cet = (CourseEntryType)iChoice;
-
-			FOREACH_EditCourseEntryRow( i )
-			{
-				OptionRow &row = *m_pRows[i];
-				bool bEnabled = g_bRowEnabledForEntryType[i][cet];
-				row.SetEnabledRowForAllPlayers( bEnabled );
-			}
-		}
-		// fall through
 	case ROW_SONG_GROUP:
 		// export song group
 		{
@@ -184,7 +147,7 @@ void ScreenEditCourseEntry::AfterChangeValueInRow( PlayerNumber pn )
 		{
 			OptionRow &row = *m_pRows[ROW_BASE_DIFFICULTY];
 			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			ce.difficulty = DIFFICULTIES_TO_SHOW.GetValue()[iChoice];
+			ce.baseDifficulty = DIFFICULTIES_TO_SHOW.GetValue()[iChoice];
 		}
 		// fall through
 	case ROW_LOW_METER:
@@ -247,7 +210,6 @@ void ScreenEditCourseEntry::GoToNextScreen()
 {
 	switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
 	{
-	case ROW_ENTRY_TYPE: 
 	case ROW_SONG_GROUP: 
 	case ROW_SONG: 
 	case ROW_BASE_DIFFICULTY: 
@@ -273,7 +235,6 @@ void ScreenEditCourseEntry::ProcessMenuStart( PlayerNumber pn, const InputEventT
 {
 	switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
 	{
-	case ROW_ENTRY_TYPE: 
 	case ROW_SONG_GROUP: 
 	case ROW_SONG: 
 	case ROW_BASE_DIFFICULTY: 

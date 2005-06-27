@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                              	cl                                                      /Zl                                                      /nologo                                                      /c                                                      verstub.cpp                                                      /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                               	cl                                                       /Zl                                                       /nologo                                                       /c                                                       verstub.cpp                                                       /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc        	cl         /Zl         /nologo         /c         verstub.cpp         /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc         	cl          /Zl          /nologo          /c          verstub.cpp          /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -2242,22 +2242,6 @@ SOURCE=.\DualScrollBar.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\EditCoursesMenu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\EditCoursesMenu.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\EditCoursesSongMenu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\EditCoursesSongMenu.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\EditMenu.cpp
 # End Source File
 # Begin Source File
@@ -2571,14 +2555,6 @@ SOURCE=.\ScreenEditCourseEntry.cpp
 # Begin Source File
 
 SOURCE=.\ScreenEditCourseEntry.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenEditCoursesMenu.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenEditCoursesMenu.h
 # End Source File
 # Begin Source File
 

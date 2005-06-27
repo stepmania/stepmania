@@ -25,10 +25,12 @@ Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
 ScreenBookkeeping.cpp ScreenBookkeeping.h ScreenBranch.cpp ScreenBranch.h \
 ScreenCenterImage.cpp ScreenCenterImage.h ScreenCredits.cpp ScreenCredits.h \
+ScreenCourseManager.cpp ScreenCourseManager.h \
 ScreenDebugOverlay.cpp ScreenDebugOverlay.h \
 ScreenDemonstration.cpp ScreenDemonstration.h ScreenDimensions.h \
 ScreenEdit.cpp ScreenEdit.h \
-ScreenEditCoursesMenu.cpp ScreenEditCoursesMenu.h EditCoursesSongMenu.cpp EditCoursesSongMenu.h \
+ScreenEditCourse.cpp ScreenEditCourse.h \
+ScreenEditCourseEntry.cpp ScreenEditCourseEntry.h \
 ScreenEditMenu.cpp ScreenEditMenu.h ScreenEnding.cpp ScreenEnding.h \
 ScreenEndlessBreak.cpp ScreenEndlessBreak.h ScreenEvaluation.cpp ScreenEvaluation.h ScreenExit.cpp ScreenExit.h ScreenNetEvaluation.cpp ScreenNetEvaluation.h \
 ScreenNetSelectMusic.cpp ScreenNetSelectMusic.h ScreenNetSelectBase.cpp ScreenNetSelectBase.h ScreenNetRoom.cpp ScreenNetRoom.h \

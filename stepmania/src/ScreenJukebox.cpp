@@ -122,8 +122,8 @@ void ScreenJukebox::SetSong()
 					// There are some confusing mods that we don't want to show in demonstration.
 					bool bModsAreOkToShow = true;
 					AttackArray aAttacks = pEntry->attacks;
-					if( !pEntry->modifiers.empty() )
-						aAttacks.push_back( Attack::FromGlobalCourseModifier( pEntry->modifiers ) );
+					if( !pEntry->sModifiers.empty() )
+						aAttacks.push_back( Attack::FromGlobalCourseModifier( pEntry->sModifiers ) );
 					FOREACH_CONST( Attack, aAttacks, a )
 					{
 						CString s = a->sModifiers;

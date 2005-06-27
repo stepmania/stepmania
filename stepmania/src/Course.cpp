@@ -23,20 +23,6 @@
 #include <limits.h>
 
 
-static const CString CourseEntryTypeNames[] = {
-	"Fixed",
-	"Random",
-	"RandomWithinGroup",
-	"Best",
-	"Worst",
-};
-XToString( CourseEntryType, NUM_CourseEntryType );
-XToThemedString( CourseEntryType, NUM_CourseEntryType );
-
-
-/* Amount to increase meter ranges to make them difficult: */
-const int COURSE_DIFFICULTY_CLASS_CHANGE[NUM_DIFFICULTIES] = { -1, -1, 0, 1, 1 };
-
 /* Maximum lower value of ranges when difficult: */
 const int MAX_BOTTOM_RANGE = 10;
 
@@ -225,36 +211,32 @@ void Course::LoadFromCRSFile( CString sPath )
 			// infer entry::Type from the first param
 			if( sParams[1].Left(strlen("BEST")) == "BEST" )
 			{
-				new_entry.type = COURSE_ENTRY_BEST;
-				new_entry.players_index = atoi( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
-				CLAMP( new_entry.players_index, 0, 500 );
+				new_entry.iMostPopularIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
+				CLAMP( new_entry.iMostPopularIndex, 0, 500 );
 			}
 			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
 			{
-				new_entry.type = COURSE_ENTRY_WORST;
-				new_entry.players_index = atoi( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
-				CLAMP( new_entry.players_index, 0, 500 );
+				new_entry.iLeastPopularIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
+				CLAMP( new_entry.iLeastPopularIndex, 0, 500 );
 			}
 			else if( sParams[1] == "*" )
 			{
 				new_entry.bSecret = true;
-				new_entry.type = COURSE_ENTRY_RANDOM;
 			}
 			else if( sParams[1].Right(1) == "*" )
 			{
 				new_entry.bSecret = true;
-				new_entry.type = COURSE_ENTRY_RANDOM_WITHIN_GROUP;
 				CString sSong = sParams[1];
 				sSong.Replace( "\\", "/" );
 				CStringArray bits;
 				split( sSong, "/", bits );
 				if( bits.size() == 2 )
-					new_entry.group_name = bits[0];
+					new_entry.sSongGroup = bits[0];
 				else
 					LOG->Warn( "Course file '%s' contains a random_within_group entry '%s' that is invalid. "
 								"Song should be in the format '<group>/*'.",
 								sPath.c_str(), sSong.c_str());
-				if( !SONGMAN->DoesSongGroupExist(new_entry.group_name) )
+				if( !SONGMAN->DoesSongGroupExist(new_entry.sSongGroup) )
 				{
 					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
 				     * it obscures important warnings--and regular users never look there, anyway. */
@@ -266,8 +248,6 @@ void Course::LoadFromCRSFile( CString sPath )
 			}
 			else
 			{
-				new_entry.type = COURSE_ENTRY_FIXED;
-
 				CString sSong = sParams[1];
 				new_entry.pSong = SONGMAN->FindSong( sSong );
 
@@ -282,18 +262,18 @@ void Course::LoadFromCRSFile( CString sPath )
 				}
 			}
 
-			new_entry.difficulty = StringToDifficulty( sParams[2] );
-			if( new_entry.difficulty == DIFFICULTY_INVALID )
+			new_entry.baseDifficulty = StringToDifficulty( sParams[2] );
+			if( new_entry.baseDifficulty == DIFFICULTY_INVALID )
 			{
-				int retval = sscanf( sParams[2], "%d..%d", &new_entry.low_meter, &new_entry.high_meter );
+				int retval = sscanf( sParams[2], "%d..%d", &new_entry.iLowMeter, &new_entry.iHighMeter );
 				if( retval == 1 )
-					new_entry.high_meter = new_entry.low_meter;
+					new_entry.iHighMeter = new_entry.iLowMeter;
 				else if( retval != 2 )
 				{
 					LOG->Warn("Course file '%s' contains an invalid difficulty setting: \"%s\", 3..6 used instead",
 						sPath.c_str(), sParams[2].c_str());
-					new_entry.low_meter = 3;
-					new_entry.high_meter = 6;
+					new_entry.iLowMeter = 3;
+					new_entry.iHighMeter = 6;
 				}
 			}
 
@@ -312,12 +292,12 @@ void Course::LoadFromCRSFile( CString sPath )
 					else if( !sMod.CompareNoCase("noshowcourse") )
 						new_entry.bSecret = true;
 					else if( !sMod.CompareNoCase("nodifficult") )
-						new_entry.no_difficult = true;
+						new_entry.bNoDifficult = true;
 					else 
 						continue;
 					mods.erase(mods.begin() + j);
 				}
-				new_entry.modifiers = join( ",", mods );
+				new_entry.sModifiers = join( ",", mods );
 			}
 
 			new_entry.attacks = attacks;
@@ -468,78 +448,73 @@ void Course::Save( CString sPath, bool bSavingCache )
 			if( j == 0 )
 				f.PutLine( "#MODS:" );
 
-			CString line;
 			const Attack &a = entry.attacks[j];
-			line += ssprintf( "  TIME=%.2f:LEN=%.2f:MODS=%s",
-				a.fStartSecond, a.fSecsRemaining, a.sModifiers.c_str() );
+			f.Write( ssprintf( "  TIME=%.2f:LEN=%.2f:MODS=%s",
+				a.fStartSecond, a.fSecsRemaining, a.sModifiers.c_str() ) );
 
 			if( j+1 < entry.attacks.size() )
-				line += ":";
+				f.Write( ":" );
 			else
-				line += ";";
-			f.PutLine( line );
+				f.Write( ";" );
+			f.PutLine( "" );
 		}
 
 		if( entry.fGainSeconds > 0 )
 			f.PutLine( ssprintf("#GAINSECONDS:%f;", entry.fGainSeconds) );
 
-		CString line;
-		switch( entry.type )
+		if( entry.iMostPopularIndex != -1 )
 		{
-		case COURSE_ENTRY_FIXED:
-			{
-				// strip off everything but the group name and song dir
-				CStringArray as;
-				ASSERT( entry.pSong != NULL );
-				split( entry.pSong->GetSongDir(), "/", as );
-				ASSERT( as.size() >= 2 );
-				CString sGroup = as[ as.size()-2 ];
-				CString sSong = as[ as.size()-1 ];
-				line += "#SONG:" + sGroup + '/' + sSong;
-			}
-			break;
-		case COURSE_ENTRY_RANDOM:
-			line += "#SONG:*";
-			break;
-		case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
-			line += ssprintf( "#SONG:%s/*", entry.group_name.c_str() );
-			break;
-		case COURSE_ENTRY_BEST:
-			line += ssprintf( "#SONG:BEST%d", entry.players_index+1 );
-			break;
-		case COURSE_ENTRY_WORST:
-			line += ssprintf( "#SONG:WORST%d", entry.players_index+1 );
-			break;
-		default:
-			ASSERT(0);
+			f.Write( ssprintf( "#SONG:BEST%d", entry.iMostPopularIndex+1 ) );
+		}
+		else if( entry.iLeastPopularIndex != -1 )
+		{
+			f.Write( ssprintf( "#SONG:WORST%d", entry.iLeastPopularIndex+1 ) );
+		}
+		else if( entry.pSong )
+		{
+			// strip off everything but the group name and song dir
+			CStringArray as;
+			ASSERT( entry.pSong != NULL );
+			split( entry.pSong->GetSongDir(), "/", as );
+			ASSERT( as.size() >= 2 );
+			CString sGroup = as[ as.size()-2 ];
+			CString sSong = as[ as.size()-1 ];
+			f.Write( "#SONG:" + sGroup + '/' + sSong );
+		}
+		else if( !entry.sSongGroup.empty() )
+		{
+			f.Write( ssprintf( "#SONG:%s/*", entry.sSongGroup.c_str() ) );
+		}
+		else 
+		{
+			f.Write( "#SONG:*" );
 		}
 
-		line += ":";
-		if( entry.difficulty != DIFFICULTY_INVALID )
-			line += DifficultyToString(entry.difficulty);
-		else if( entry.low_meter != -1  &&  entry.high_meter != -1 )
-			line += ssprintf( "%d..%d", entry.low_meter, entry.high_meter );
-		line += ":";
+		f.Write( ":" );
+		if( entry.baseDifficulty != DIFFICULTY_INVALID )
+			f.Write( DifficultyToString(entry.baseDifficulty) );
+		else if( entry.iLowMeter != -1  &&  entry.iHighMeter != -1 )
+			f.Write( ssprintf( "%d..%d", entry.iLowMeter, entry.iHighMeter ) );
+		f.Write( ":" );
 
-		CString modifiers = entry.modifiers;
-		bool default_secret = (entry.type == COURSE_ENTRY_RANDOM || entry.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP);
-		if( default_secret != entry.bSecret )
+		CString sModifiers = entry.sModifiers;
+		bool bDefaultSecret = entry.IsRandomSong();
+		if( bDefaultSecret != entry.bSecret )
 		{
-			if( modifiers != "" )
-				modifiers += ",";
-			modifiers += entry.bSecret? "noshowcourse":"showcourse";
+			if( sModifiers != "" )
+				sModifiers += ",";
+			sModifiers += entry.bSecret? "noshowcourse":"showcourse";
 		}
 
-		if( entry.no_difficult )
+		if( entry.bNoDifficult )
 		{
-			if( modifiers != "" )
-				modifiers += ",";
-			modifiers += "nodifficult";
+			if( sModifiers != "" )
+				sModifiers += ",";
+			sModifiers += "nodifficult";
 		}
-		line += modifiers;
+		f.Write( sModifiers );
 
-		line += ";";
-		f.PutLine( line );
+		f.PutLine( ";" );
 	}
 }
 
@@ -568,17 +543,12 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, Difficulty diff )
 	// gameplay. (We might still get a repeat at the repeat boundary,
 	// but that'd be rare.) -glenn
 	CourseEntry e;
-	if( sGroupName != "" )
-		e.type = COURSE_ENTRY_RANDOM_WITHIN_GROUP;
-	else
-		e.type = COURSE_ENTRY_RANDOM;
-
-	e.group_name = sGroupName;
-	e.difficulty = diff;
+	e.sSongGroup = sGroupName;
+	e.baseDifficulty = diff;
 	e.bSecret = true;
 
 	vector<Song*> vSongs;
-	SONGMAN->GetSongs( vSongs, e.group_name );
+	SONGMAN->GetSongs( vSongs, e.sSongGroup );
 	for( unsigned i = 0; i < vSongs.size(); ++i)
 		m_entries.push_back( e );
 }
@@ -633,8 +603,7 @@ void Course::AutogenOniFromArtist( CString sArtistName, CString sArtistNameTrans
 		aSongs.erase( aSongs.begin()+4, aSongs.end() );
 
 	CourseEntry e;
-	e.type = COURSE_ENTRY_FIXED;
-	e.difficulty = dc;
+	e.baseDifficulty = dc;
 
 	for( unsigned i = 0; i < aSongs.size(); ++i )
 	{
@@ -648,45 +617,6 @@ bool Course::IsPlayableIn( StepsType st ) const
 	return GetTrail( st ) != NULL;
 }
 
-static vector<Song*> GetFilteredBestSongs( StepsType st )
-{
-	const vector<Song*> &vSongsByMostPlayed = SONGMAN->GetBestSongs();
-	vector<Song*> ret;
-	ret.reserve( vSongsByMostPlayed.size() );
-
-	for( unsigned i=0; i < vSongsByMostPlayed.size(); ++i )
-	{
-		// filter out long songs and songs that don't have both medium and hard steps
-		Song* pSong = vSongsByMostPlayed[i];
-		if( SONGMAN->GetNumStagesForSong(pSong) > 1 )
-			continue;
-
-		const vector<Steps*>& vpSteps = pSong->GetAllSteps();
-
-		bool FoundMedium = false, FoundHard = false;
-		FOREACH_CONST( Steps*, vpSteps, pSteps )
-		{
-			if( (*pSteps)->m_StepsType != st )
-				continue;
-			if( !PREFSMAN->m_bAutogenSteps && (*pSteps)->IsAutogen() )
-				continue;
-
-			if( (*pSteps)->GetDifficulty() == DIFFICULTY_MEDIUM )
-				FoundMedium = true;
-			else if( (*pSteps)->GetDifficulty() == DIFFICULTY_HARD )
-				FoundHard = true;
-
-			if( FoundMedium && FoundHard )
-				break;
-		}
-		if( !FoundMedium || !FoundHard )
-			continue;
-
-		ret.push_back( pSong );
-	}
-
-	return ret;
-}
 
 struct SortTrailEntry
 {
@@ -742,10 +672,14 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 	{
 		/* If we have any random entries (so that the seed matters), invalidate the cache. */
 		bool bHaveRandom = false;
-		for( unsigned i=0; !bHaveRandom && i<m_entries.size(); i++ )
-			if( m_entries[i].type == COURSE_ENTRY_RANDOM ||
-				m_entries[i].type == COURSE_ENTRY_RANDOM_WITHIN_GROUP )
+		FOREACH_CONST( CourseEntry, m_entries, e )
+		{
+			if( e->IsRandomSong() )
+			{
 				bHaveRandom = true;
+				break;
+			}
+		}
 		
 		if( bHaveRandom )
 			m_TrailCache.clear();
@@ -878,135 +812,189 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 	/* Set to true if CourseDifficulty is able to change something. */
 	bool bCourseDifficultyIsSignificant = (cd == DIFFICULTY_MEDIUM);
-	for( unsigned i=0; i<entries.size(); i++ )
+
+	// Resolve each entry to a Song and Steps.
+	FOREACH_CONST( CourseEntry, entries, e )
 	{
-		const CourseEntry &e = entries[i];
-		CourseDifficulty entry_difficulty = cd;
-		if( e.no_difficult && entry_difficulty == DIFFICULTY_HARD )
-			entry_difficulty = DIFFICULTY_MEDIUM;
+		Song* pResolvedSong = NULL;	// fill this in
+		Steps* pResolvedSteps = NULL;	// fill this in
 
-		Song* pSong = NULL;	// fill this in
-		Steps* pSteps = NULL;	// fill this in
+		//
+		// Create a list of matching songs.
+		//
 
-		/* This applies difficult mode for meter ranges.  (If it's a difficulty
-		 * class, we'll do it below.) */
-		int low_meter = e.low_meter;
-		int high_meter = e.high_meter;
-
-		switch( e.type )
+		// Start with all songs
+		vector<Song*> vpPossibleSongs;
+		
+		if( e->pSong )
 		{
-		case COURSE_ENTRY_FIXED:
-			pSong = e.pSong;
-			if( pSong )
+			// Choose an exact song
+			vpPossibleSongs.push_back( e->pSong );
+		}
+		else
+		{
+			vpPossibleSongs = SONGMAN->GetAllSongs();
+
+			FOREACH( Song*, vpPossibleSongs, song )
 			{
-				if( e.difficulty != DIFFICULTY_INVALID )
-					pSteps = pSong->GetStepsByDifficulty( st, e.difficulty );
-				else if( e.low_meter != -1  &&  e.high_meter != -1 )
-					pSteps = pSong->GetStepsByMeter( st, low_meter, high_meter );
-				else
-					pSteps = pSong->GetStepsByDifficulty( st, DIFFICULTY_MEDIUM );
-			}
-			break;
-		case COURSE_ENTRY_RANDOM:
-		case COURSE_ENTRY_RANDOM_WITHIN_GROUP:
-			{
-				if( !bShuffledSet )
+				// Ignore locked songs when choosing randomly
+				// TODO: Move Course initialization after UNLOCKMAN is created
+				if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(*song) )
 				{
-					AllSongsShuffled = SONGMAN->GetAllSongs();
-					random_shuffle( AllSongsShuffled.begin(), AllSongsShuffled.end(), rnd );
-					bShuffledSet = true;
+					vector<Song*>::iterator eraseme = song;
+					song--;
+					vpPossibleSongs.erase( eraseme );
+					continue;
 				}
 
-				// find a song with the notes we want
-				for( unsigned j=0; j<AllSongsShuffled.size(); j++ )
+				// Ignore boring tutorial songs
+				if( (*song)->IsTutorial() )
 				{
-					/* See if the first song matches what we want. */
-					ASSERT( unsigned(CurSong) < AllSongsShuffled.size() );
-					pSong = AllSongsShuffled[CurSong];
-					ASSERT( pSong );
-					CurSong = (CurSong+1) % AllSongsShuffled.size();
+					vector<Song*>::iterator eraseme = song;
+					song--;
+					vpPossibleSongs.erase( eraseme );
+					continue;
+				}
 
-					// Ignore locked songs when choosing randomly
-					if( UNLOCKMAN->SongIsLocked(pSong) )
-						continue;
-
-					// Ignore boring tutorial songs
-					if( pSong->IsTutorial() )
-						continue;
-
-					if( e.type == COURSE_ENTRY_RANDOM_WITHIN_GROUP &&
-						pSong->m_sGroupName.CompareNoCase(e.group_name))
-						continue; /* wrong group */
-
-					if( e.difficulty == DIFFICULTY_INVALID )
-						pSteps = pSong->GetStepsByMeter( st, low_meter, high_meter );
-					else
-						pSteps = pSong->GetStepsByDifficulty( st, e.difficulty );
-
-					if( pSteps )	// found a match
-						break;		// stop searching
-
-					pSong = NULL;
-					pSteps = NULL;
+				// Don't allow long songs
+				if( SONGMAN->GetNumStagesForSong(*song) > 1 )
+				{
+					vector<Song*>::iterator eraseme = song;
+					song--;
+					vpPossibleSongs.erase( eraseme );
+					continue;
 				}
 			}
-			break;
-		case COURSE_ENTRY_BEST:
-		case COURSE_ENTRY_WORST:
-			{
-				if( !bMostPlayedSet )
-				{
-					bMostPlayedSet = true;
-					vSongsByMostPlayed = GetFilteredBestSongs( st );
-				}
-
-				if( e.players_index >= (int)vSongsByMostPlayed.size() )
-					break;
-
-				switch( e.type )
-				{
-				case COURSE_ENTRY_BEST:
-					pSong = vSongsByMostPlayed[e.players_index];
-					break;
-				case COURSE_ENTRY_WORST:
-					pSong = vSongsByMostPlayed[vSongsByMostPlayed.size()-1-e.players_index];
-					break;
-				default:
-					ASSERT(0);
-				}
-
-				if( e.difficulty == DIFFICULTY_INVALID )
-					pSteps = pSong->GetStepsByMeter( st, low_meter, high_meter );
-				else
-					pSteps = pSong->GetStepsByDifficulty( st, e.difficulty );
-
-				if( pSteps == NULL )
-					pSteps = pSong->GetClosestNotes( st, DIFFICULTY_MEDIUM );
-			}
-			break;
-		default:
-			ASSERT(0);
 		}
 
-		if( !pSong || !pSteps )
+
+		// Filter out all songs that don't have matching steps
+		// At the same time, create a list of matching song/steps.
+		typedef vector<Steps*> StepsVector;
+		map<Song*,StepsVector> mapSongToSteps;
+		FOREACH( Song*, vpPossibleSongs, song )
+		{
+			// Apply song group filter
+			if( !e->sSongGroup.empty()  &&  (*song)->m_sGroupName != e->sSongGroup )
+			{
+				vector<Song*>::iterator eraseme = song;
+				song--;
+				vpPossibleSongs.erase( eraseme );
+				continue;
+			}
+
+			vector<Steps*> vpMatchingSteps;
+			(*song)->GetSteps( vpMatchingSteps, st );
+	
+			FOREACH( Steps*, vpMatchingSteps, steps )
+			{
+				if( e->baseDifficulty != DIFFICULTY_INVALID )
+				{
+					Difficulty dc = e->baseDifficulty;
+					if( (*steps)->GetDifficulty() != dc )
+					{
+						vector<Steps*>::iterator eraseme = steps;
+						steps--;
+						vpMatchingSteps.erase( eraseme );
+						continue;
+					}
+				}
+
+				if( e->iLowMeter != -1 )
+				{
+					if( (*steps)->GetMeter() < e->iLowMeter )
+					{
+						vector<Steps*>::iterator eraseme = steps;
+						steps--;
+						vpMatchingSteps.erase( eraseme );
+						continue;
+					}
+				}
+
+				if( e->iHighMeter != -1 )
+				{
+					if( (*steps)->GetMeter() > e->iHighMeter )
+					{
+						vector<Steps*>::iterator eraseme = steps;
+						steps--;
+						vpMatchingSteps.erase( eraseme );
+						continue;
+					}
+				}
+			}
+
+			if( vpMatchingSteps.empty() )
+			{
+				vector<Song*>::iterator eraseme = song;
+				song--;
+				vpPossibleSongs.erase( eraseme );
+				continue;
+			}
+
+			mapSongToSteps[*song] = vpMatchingSteps;
+		}
+
+
+		// TODO: Move Course initialization after PROFILEMAN is created
+		if( PROFILEMAN  &&  e->iMostPopularIndex != -1 )
+		{
+			SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), true );	// descending
+			if( e->iMostPopularIndex < vpPossibleSongs.size() )
+			{
+				pResolvedSong = vpPossibleSongs[e->iMostPopularIndex];
+				vector<Steps*> &vpPossibleSteps = mapSongToSteps[pResolvedSong];
+				pResolvedSteps = vpPossibleSteps[0];
+			}
+		}
+		else if( PROFILEMAN  &&  e->iLeastPopularIndex != -1 )
+		{
+			SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), false ); // ascending
+			if( e->iLeastPopularIndex < vpPossibleSongs.size() )
+			{
+				pResolvedSong = vpPossibleSongs[e->iLeastPopularIndex];
+				vector<Steps*> &vpPossibleSteps = mapSongToSteps[pResolvedSong];
+				pResolvedSteps = vpPossibleSteps[0];
+			}
+		}
+		else
+		{
+			if( !vpPossibleSongs.empty() )
+			{
+				random_shuffle( vpPossibleSongs.begin(), vpPossibleSongs.end(), rnd );
+				pResolvedSong = vpPossibleSongs[0];
+				vector<Steps*> &vpPossibleSteps = mapSongToSteps[pResolvedSong];
+				if( !vpPossibleSteps.empty() )
+				{
+					random_shuffle( vpPossibleSteps.begin(), vpPossibleSteps.end(), rnd );
+					pResolvedSteps = vpPossibleSteps[0];
+				}
+			}
+		}
+
+
+		if( pResolvedSong == NULL || pResolvedSteps == NULL )
 			continue;	// this song entry isn't playable.  Skip.
 
-		Difficulty dc = pSteps->GetDifficulty();
-		if( entry_difficulty != DIFFICULTY_MEDIUM )
+
+		/* If we're not COURSE_DIFFICULTY_REGULAR, then we should be choosing steps that are 
+		 * either easier or harder than the base difficulty.  If no such steps exist, then 
+		 * just use the one we already have. */
+		Difficulty dc = pResolvedSteps->GetDifficulty();
+		int iLowMeter = e->iLowMeter;
+		int iHighMeter = e->iHighMeter;
+		if( cd != DIFFICULTY_MEDIUM  &&  !e->bNoDifficult )
 		{
-			/* See if we can find a NoteData after adjusting the difficulty by COURSE_DIFFICULTY_CLASS_CHANGE.
-			 * If we can't, just use the one we already have. */
-			Difficulty new_dc = Difficulty( dc + COURSE_DIFFICULTY_CLASS_CHANGE[entry_difficulty] );
-			new_dc = clamp( new_dc, DIFFICULTY_BEGINNER, DIFFICULTY_CHALLENGE );
+			Difficulty new_dc = (Difficulty)(dc + cd - DIFFICULTY_MEDIUM);
+			new_dc = clamp( new_dc, (Difficulty)0, (Difficulty)(DIFFICULTY_EDIT-1) );
 
 			bool bChangedDifficulty = false;
 			if( new_dc != dc )
 			{
-				Steps* pNewSteps = pSong->GetStepsByDifficulty( st, new_dc );
+				Steps* pNewSteps = pResolvedSong->GetStepsByDifficulty( st, new_dc );
 				if( pNewSteps )
 				{
 					dc = new_dc;
-					pSteps = pNewSteps;
+					pResolvedSteps = pNewSteps;
 					bChangedDifficulty = true;
 					bCourseDifficultyIsSignificant = true;
 				}
@@ -1019,40 +1007,43 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			 * on the original range, bump the steps based on course difficulty, and
 			 * then retroactively tweak the low_meter/high_meter so course displays
 			 * line up. */
-			if( e.difficulty == DIFFICULTY_INVALID && bChangedDifficulty )
+			if( e->baseDifficulty == DIFFICULTY_INVALID && bChangedDifficulty )
 			{
 				/* Minimum and maximum to add to make the meter range contain the actual
 				 * meter: */
-				int iMinDist = pSteps->GetMeter() - high_meter;
-				int iMaxDist = pSteps->GetMeter() - low_meter;
+				int iMinDist = pResolvedSteps->GetMeter() - iHighMeter;
+				int iMaxDist = pResolvedSteps->GetMeter() - iLowMeter;
 
 				/* Clamp the possible adjustments to try to avoid going under 1 or over
 				 * MAX_BOTTOM_RANGE. */
-				iMinDist = min( max( iMinDist, -low_meter+1 ), iMaxDist );
-				iMaxDist = max( min( iMaxDist, MAX_BOTTOM_RANGE-high_meter ), iMinDist );
+				iMinDist = min( max( iMinDist, -iLowMeter+1 ), iMaxDist );
+				iMaxDist = max( min( iMaxDist, MAX_BOTTOM_RANGE-iHighMeter ), iMinDist );
 
 				int iAdd;
 				if( iMaxDist == iMinDist )
 					iAdd = iMaxDist;
 				else
 					iAdd = rnd(iMaxDist-iMinDist) + iMinDist;
-				low_meter += iAdd;
-				high_meter += iAdd;
+				iLowMeter += iAdd;
+				iHighMeter += iAdd;
 			}
 		}
 
 		TrailEntry te;
-		te.pSong = pSong;
-		te.pSteps = pSteps;
-		te.Modifiers = e.modifiers;
-		te.Attacks = e.attacks;
-		te.bSecret = e.bSecret;
-		te.iLowMeter = low_meter;
-		te.iHighMeter = high_meter;
+		te.pSong = pResolvedSong;
+		te.pSteps = pResolvedSteps;
+		te.Modifiers = e->sModifiers;
+		te.Attacks = e->attacks;
+		te.bSecret = e->bSecret;
+		te.iLowMeter = iLowMeter;
+		te.iHighMeter = iHighMeter;
+
 		/* If we chose based on meter (not difficulty), then store DIFFICULTY_INVALID, so
 		 * other classes can tell that we used meter. */
-		if( e.difficulty == DIFFICULTY_INVALID )
+		if( e->baseDifficulty == DIFFICULTY_INVALID )
+		{
 			te.dc = DIFFICULTY_INVALID;
+		}
 		else
 		{
 			/* Otherwise, store the actual difficulty we got (post-course-difficulty).
@@ -1107,7 +1098,7 @@ bool Course::HasMods() const
 {
 	FOREACH_CONST( CourseEntry, m_entries, e )
 	{
-		if( !e->modifiers.empty() || !e->attacks.empty() )
+		if( !e->sModifiers.empty() || !e->attacks.empty() )
 			return true;
 	}
 
@@ -1118,7 +1109,7 @@ bool Course::AllSongsAreFixed() const
 {
 	FOREACH_CONST( CourseEntry, m_entries, e )
 	{
-		if( e->type != COURSE_ENTRY_FIXED )
+		if( e->pSong == NULL )
 			return false;
 	}
 	return true;
@@ -1203,7 +1194,7 @@ bool Course::IsFixed() const
 {
 	for(unsigned i = 0; i < m_entries.size(); i++)
 	{
-		if ( m_entries[i].type == COURSE_ENTRY_FIXED )
+		if ( m_entries[i].pSong == NULL )
 			continue;
 
 		return false;
@@ -1226,14 +1217,12 @@ bool Course::GetTotalSeconds( StepsType st, float& fSecondsOut ) const
 
 bool Course::CourseHasBestOrWorst() const
 {
-	for(unsigned i = 0; i < m_entries.size(); i++)
+	FOREACH_CONST( CourseEntry, m_entries, e )
 	{
-		switch( m_entries[i].type )
-		{
-		case COURSE_ENTRY_BEST:
-		case COURSE_ENTRY_WORST:
+		if( e->iMostPopularIndex != -1 )
 			return true;
-		}
+		if( e->iLeastPopularIndex != -1 )
+			return true;
 	}
 
 	return false;
@@ -1251,7 +1240,7 @@ void Course::UpdateCourseStats( StepsType st )
 	// courses with random/players best-worst songs should go at the end
 	for(unsigned i = 0; i < m_entries.size(); i++)
 	{
-		if ( m_entries[i].type == COURSE_ENTRY_FIXED )
+		if ( m_entries[i].pSong != NULL )
 			continue;
 
 		if ( m_SortOrder_Ranking == 2 )
@@ -1288,11 +1277,10 @@ bool Course::IsRanking() const
 
 const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
 {
-	for( unsigned i = 0; i < m_entries.size(); ++i )
+	FOREACH_CONST( CourseEntry, m_entries, e )
 	{
-		const CourseEntry *pEntry = &m_entries[i];
-		if( pEntry->type == COURSE_ENTRY_FIXED && pEntry->pSong == pSong )
-			return pEntry;
+		if( e->pSong == pSong )
+			return e;
 	}
 
 	return NULL;

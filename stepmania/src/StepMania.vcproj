@@ -308,12 +308,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenEditCourseEntry.h">
 			</File>
 			<File
-				RelativePath="ScreenEditCoursesMenu.cpp">
-			</File>
-			<File
-				RelativePath="ScreenEditCoursesMenu.h">
-			</File>
-			<File
 				RelativePath="ScreenEditMenu.cpp">
 			</File>
 			<File
@@ -1568,18 +1562,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="DualScrollBar.h">
-			</File>
-			<File
-				RelativePath="EditCoursesMenu.cpp">
-			</File>
-			<File
-				RelativePath="EditCoursesMenu.h">
-			</File>
-			<File
-				RelativePath="EditCoursesSongMenu.cpp">
-			</File>
-			<File
-				RelativePath="EditCoursesSongMenu.h">
 			</File>
 			<File
 				RelativePath="EditMenu.cpp">
