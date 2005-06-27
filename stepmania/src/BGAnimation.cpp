@@ -140,7 +140,7 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
 		if( pScrollerNode )
 		{
 			FOREACH_Attr( pScrollerNode, pAttr )
-				pBGAnimation->m_attrs.insert( pair<CString,XAttr*>(pAttr->m_sName, pAttr) );
+				pBGAnimation->m_attrs.insert( make_pair(pAttr->m_sName, pAttr) );
 			// Clear the copies in the Scroller node so that we don't double-delete.
 			pScrollerNode->m_attrs.clear();	
 		}

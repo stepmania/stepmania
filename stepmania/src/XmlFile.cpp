@@ -215,7 +215,7 @@ char* XNode::LoadAttributes( const char* pszAttrs, PARSEINFO *pi /*= &piDefault*
 		
 		// add new attribute
 		DEBUG_ASSERT( attr->m_sName.size() );
-		m_attrs.insert( pair<CString,XAttr*>(attr->m_sName, attr) );
+		m_attrs.insert( make_pair(attr->m_sName, attr) );
 		xml = pEnd;
 		
 		// XML Attr Value
@@ -410,7 +410,7 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 			if( !node->m_sName.empty() )
 			{
 				DEBUG_ASSERT( node->m_sName.size() );
-				m_childs.insert( pair<CString,XNode*>(node->m_sName, node) );
+				m_childs.insert( make_pair(node->m_sName, node) );
 			}
 			else
 			{
@@ -853,7 +853,7 @@ bool XNode::RemoveChild( XNode *node )
 XAttr *XNode::AppendAttr( XAttr *attr )
 {
 	DEBUG_ASSERT( attr->m_sName.size() );
-	m_attrs.insert( pair<CString,XAttr*>(attr->m_sName,attr) );
+	m_attrs.insert( make_pair(attr->m_sName,attr) );
 	return attr;
 }
 

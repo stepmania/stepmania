@@ -543,7 +543,7 @@ bool BMSLoader::ReadBMSFile( const CString &sPath, NameToData_t &mapNameToData )
 			value_data = line.substr( iIndexOfSeparator+1 );
 
 		value_name.MakeLower();
-		mapNameToData.insert( pair<CString,CString>(value_name, value_data) );
+		mapNameToData.insert( make_pair(value_name, value_data) );
 	}
 
 	return true;

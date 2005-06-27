@@ -181,7 +181,7 @@ bool IniFile::RenameKey(const CString &from, const CString &to)
 	m_childs.erase( it );
 
 	pNode->m_sName = to;
-	m_childs.insert( pair<CString,XNode*>(pNode->m_sName,pNode) );
+	m_childs.insert( make_pair(pNode->m_sName, pNode) );
 
 	return true;
 }

@@ -791,7 +791,7 @@ RageFileBasic *RageFileManager::OpenForWriting( CString sPath, int mode, int &er
 		if( value == -1 )
 			continue;
 
-		Values.push_back( pair<int,int>( i, value ) );
+		Values.push_back( make_pair( i, value ) );
 	}
 
 	stable_sort( Values.begin(), Values.end(), SortBySecond );
