@@ -23,9 +23,6 @@ static RageEvent *g_Mutex;
 CString InitialWorkingDirectory;
 CString DirOfExecutable;
 
-typedef map< const RageFileBasic *, RageFileDriver * > FileReferences;
-static FileReferences g_Refs;
-
 struct LoadedDriver
 {
 	/* A loaded driver may have a base path, which modifies the path we
@@ -684,29 +681,6 @@ static bool SortBySecond( const pair<int,int> &a, const pair<int,int> &b )
 	return a.second < b.second;
 }
 
-void AddReference( const RageFileBasic *obj, RageFileDriver *driver )
-{
-	LockMut( *g_Mutex );
-
-	pair< const RageFileBasic *, RageFileDriver * > ref;
-	ref.first = obj;
-	ref.second = driver;
-
-	/* map::insert returns an iterator (which we discard) and a bool, indicating whether
-	 * this is a new entry.  This should always be new. */
-	const pair< FileReferences::iterator, bool > ret = g_Refs.insert( ref );
-	ASSERT_M( ret.second, ssprintf( "RemoveReference: Duplicate reference (%s)", obj->GetDisplayPath().c_str() ) );
-}
-
-void RemoveReference( const RageFileBasic *obj )
-{
-	LockMut( *g_Mutex );
-
-	FileReferences::iterator it = g_Refs.find( obj );
-	ASSERT_M( it != g_Refs.end(), ssprintf( "RemoveReference: Missing reference (%s)", obj->GetDisplayPath().c_str() ) );
-	g_Refs.erase( it );
-}
-
 /*
  * Return true if the given path should use slow, reliable writes.
  *
@@ -749,17 +723,7 @@ RageFileBasic *RageFileManager::Open( CString sPath, int mode, int &err )
 /* Copy a RageFileBasic for a new RageFile. */
 RageFileBasic *RageFileManager::CopyFileObj( const RageFileBasic *cpy )
 {
-	LockMut( *g_Mutex );
-
-	FileReferences::const_iterator it = g_Refs.find( cpy );
-	ASSERT_M( it != g_Refs.end(), ssprintf( "CopyFileObj: Missing reference (%s)", cpy->GetDisplayPath().c_str() ) );
-
-	RageFileBasic *ret = cpy->Copy();
-
-	/* It's from the same driver as the original. */
-	AddReference( ret, it->second );
-
-	return ret;	
+	return cpy->Copy();
 }
 
 RageFileBasic *RageFileManager::OpenForReading( CString sPath, int mode, int &err )
@@ -777,7 +741,6 @@ RageFileBasic *RageFileManager::OpenForReading( CString sPath, int mode, int &er
 		RageFileBasic *ret = ld.driver->Open( path, mode, error );
 		if( ret )
 		{
-			AddReference( ret, ld.driver );
 			UnreferenceAllDrivers( aDriverList );
 			return ret;
 		}
@@ -844,10 +807,7 @@ RageFileBasic *RageFileManager::OpenForWriting( CString sPath, int mode, int &er
 		int error;
 		RageFileBasic *ret = ld.driver->Open( path, mode, error );
 		if( ret )
-		{
-			AddReference( ret, ld.driver );
 			return ret;
-		}
 
 		/* The drivers are in order of priority; if they all return error, return the
 		 * first.  Never return ERROR_WRITING_NOT_SUPPORTED. */
@@ -865,10 +825,6 @@ RageFileBasic *RageFileManager::OpenForWriting( CString sPath, int mode, int &er
 
 void RageFileManager::Close( RageFileBasic *obj )
 {
-	if( obj == NULL )
-		return;
-
-	RemoveReference( obj );
 	delete obj;
 }
 
