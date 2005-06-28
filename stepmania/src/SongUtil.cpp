@@ -107,8 +107,10 @@ void AppendOctal( int n, int digits, CString &out )
 
 bool CompDescending( const pair<Song *, CString> &a, const pair<Song *, CString> &b )
 { return a.second > b.second; }
+bool CompAscending( const pair<Song *, CString> &a, const pair<Song *, CString> &b )
+{ return a.second < b.second; }
 
-void SongUtil::SortSongPointerArrayByGrade( vector<Song*> &vpSongsInOut )
+void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool bDescending )
 {
 	/* Optimize by pre-writing a string to compare, since doing GetNumNotesWithGrade
 	 * inside the sort is too slow. */
@@ -130,7 +132,7 @@ void SongUtil::SortSongPointerArrayByGrade( vector<Song*> &vpSongsInOut )
 		vals.push_back( val(pSong, foo) );
 	}
 
-	sort( vals.begin(), vals.end(), CompDescending );
+	sort( vals.begin(), vals.end(), bDescending ? CompDescending : CompAscending );
 
 	for( unsigned i = 0; i < vpSongsInOut.size(); ++i )
 		vpSongsInOut[i] = vals[i].first;

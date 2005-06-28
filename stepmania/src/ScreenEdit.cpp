@@ -1390,9 +1390,9 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				const Course *crs = courses[i];
 
 				bool bUsesThisSong = false;
-				for( unsigned e = 0; e < crs->m_entries.size(); ++e )
+				for( unsigned e = 0; e < crs->m_vEntries.size(); ++e )
 				{
-					if( crs->m_entries[e].pSong != m_pSong )
+					if( crs->m_vEntries[e].pSong != m_pSong )
 						continue;
 					bUsesThisSong = true;
 				}
@@ -2812,12 +2812,12 @@ void ScreenEdit::SetupCourseAttacks()
 		m_pAttacksFromCourse->LoadFromCRSFile( m_pAttacksFromCourse->m_sPath );
 
 		AttackArray Attacks;
-		for( unsigned e = 0; e < m_pAttacksFromCourse->m_entries.size(); ++e )
+		for( unsigned e = 0; e < m_pAttacksFromCourse->m_vEntries.size(); ++e )
 		{
-			if( m_pAttacksFromCourse->m_entries[e].pSong != m_pSong )
+			if( m_pAttacksFromCourse->m_vEntries[e].pSong != m_pSong )
 				continue;
 
-			Attacks = m_pAttacksFromCourse->m_entries[e].attacks;
+			Attacks = m_pAttacksFromCourse->m_vEntries[e].attacks;
 			break;
 		}
 

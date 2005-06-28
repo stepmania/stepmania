@@ -17,6 +17,7 @@ enum EditCourseRow
 	ROW_TYPE_METER,
 	ROW_EDIT_ENTRY,
 	ROW_INSERT_ENTRY,
+	ROW_DELETE_ENTRY,
 	ROW_DONE,
 };
 
@@ -56,14 +57,18 @@ void ScreenEditCourse::Init()
 {
 	ScreenOptions::Init();
 
+
+	// save a backup that we'll use if we revert.
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+	m_Original = *pCourse;
+
+
 	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
 
 	OptionRowDefinition def;
 	def.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	
-	Course *pCourse = GAMESTATE->m_pCurCourse;
-
 	def.name = "Title";
 	def.choices.clear();
 	def.choices.push_back( pCourse->GetTranslitFullTitle() );
@@ -94,7 +99,6 @@ void ScreenEditCourse::Init()
 
 	def.name = "Type";
 	def.choices.clear();
-
 	FOREACH_CONST( StepsType, STEPS_TYPES_TO_SHOW.GetValue(), st )
 		def.choices.push_back( GAMEMAN->StepsTypeToString(*st) );
 	vDefs.push_back( def );
@@ -102,19 +106,36 @@ void ScreenEditCourse::Init()
 
 	def.name = "Type Meter";
 	def.choices.clear();
-	def.choices.push_back( "" );
+	for( int i=MIN_METER; i<=MAX_METER; i++ )
+		def.choices.push_back( ssprintf("%d",i) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
 	def.name = "Edit Entry";
 	def.choices.clear();
-	def.choices.push_back( "" );
+	for( unsigned i=0; i<pCourse->m_vEntries.size(); i++ )
+		def.choices.push_back( ssprintf("%u of %u",i+1,pCourse->m_vEntries.size()) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
 	def.name = "Insert Entry";
 	def.choices.clear();
-	def.choices.push_back( "" );
+	for( unsigned i=0; i<=pCourse->m_vEntries.size(); i++ )
+	{
+		CString s;
+		if( i == pCourse->m_vEntries.size() )
+			s = ssprintf("After %u",i);
+		else
+			s = ssprintf("Before %u",i+1);
+		def.choices.push_back( s );
+	}
+	vDefs.push_back( def );
+	vHands.push_back( NULL );
+
+	def.name = "Delete Entry";
+	def.choices.clear();
+	for( unsigned i=0; i<pCourse->m_vEntries.size(); i++ )
+		def.choices.push_back( ssprintf("%u of %u",i+1,pCourse->m_vEntries.size()) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
@@ -131,6 +152,7 @@ void ScreenEditCourse::HandleScreenMessage( const ScreenMessage SM )
 void ScreenEditCourse::AfterChangeValueInRow( PlayerNumber pn )
 {
 	ScreenOptions::AfterChangeValueInRow( pn );
+
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	StepsType st = STEPS_TYPE_INVALID;
 	CourseDifficulty cd = DIFFICULTY_INVALID;
@@ -174,48 +196,8 @@ void ScreenEditCourse::AfterChangeValueInRow( PlayerNumber pn )
 			OptionRow &row = *m_pRows[ROW_TYPE_METER];
 			OptionRowDefinition def = row.GetRowDef();
 			Trail *pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
-			def.choices.clear();
-			if( pTrail != NULL )
-			{
-				for( int i=MIN_METER; i<=MAX_METER; i++ )
-					def.choices.push_back( ssprintf("%d",i) );
-				row.SetOneSharedSelection( pTrail->GetMeter()-MIN_METER );
-			}
-			else
-			{
-				def.choices.push_back( "N/A" );
-			}
-			row.Reload( def );
-		}
-		// refresh edit entry
-		{
-			OptionRow &row = *m_pRows[ROW_EDIT_ENTRY];
-			OptionRowDefinition def = row.GetRowDef();
-			def.choices.clear();
-			Trail *pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
 			ASSERT( pTrail );
-			for( unsigned i=0; i<pTrail->m_vEntries.size(); i++ )
-				def.choices.push_back( ssprintf("%u of %u",i+1,pTrail->m_vEntries.size()) );
-			row.SetOneSharedSelection( 0 );
-			row.Reload( def );
-		}
-		// refresh insert entry
-		{
-			OptionRow &row = *m_pRows[ROW_INSERT_ENTRY];
-			OptionRowDefinition def = row.GetRowDef();
-			def.choices.clear();
-			Trail *pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
-			ASSERT( pTrail );
-			for( unsigned i=0; i<=pTrail->m_vEntries.size(); i++ )
-			{
-				CString s;
-				if( i == pTrail->m_vEntries.size() )
-					s = ssprintf("After %u",i);
-				else
-					s = ssprintf("Before %u",i+1);
-				def.choices.push_back( s );
-			}
-			row.SetOneSharedSelection( 0 );
+			row.SetOneSharedSelection( pTrail->GetMeter()-MIN_METER );
 			row.Reload( def );
 		}
 		// fall through
@@ -228,8 +210,6 @@ void ScreenEditCourse::AfterChangeValueInRow( PlayerNumber pn )
 		}
 		// fall through
 	case ROW_EDIT_ENTRY:
-		// fall through
-	case ROW_INSERT_ENTRY:
 		// export entry number
 		{
 			EditCourseRow ecr = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] == ROW_EDIT_ENTRY ? ROW_EDIT_ENTRY : ROW_INSERT_ENTRY;
@@ -238,14 +218,28 @@ void ScreenEditCourse::AfterChangeValueInRow( PlayerNumber pn )
 			GAMESTATE->m_iEditCourseEntryIndex.Set( iChoice );
 		}		
 		// fall through
+	case ROW_INSERT_ENTRY:
+		// fall through
+	case ROW_DELETE_ENTRY:
+		// fall through
 	case ROW_DONE:
 		break;
 	}
 }
 
-void ScreenEditCourse::ImportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenEditCourse::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
+	Course *pCourse = GAMESTATE->m_pCurCourse;
 
+	switch( iRow )
+	{
+	case ROW_EDIT_ENTRY:
+	case ROW_INSERT_ENTRY:
+	case ROW_DELETE_ENTRY:
+		OptionRow &row = *m_pRows[iRow];
+		row.SetChoiceInRowWithFocusShared( GAMESTATE->m_iEditCourseEntryIndex );
+		break;
+	}
 }
 
 void ScreenEditCourse::ExportOptions( int row, const vector<PlayerNumber> &vpns )
@@ -265,6 +259,10 @@ void ScreenEditCourse::GoToNextScreen()
 	case ROW_TYPE:
 	case ROW_TYPE_METER:
 		ASSERT(0);
+	case ROW_INSERT_ENTRY:
+	case ROW_DELETE_ENTRY:
+		SCREENMAN->SetNewScreen( "ScreenEditCourse" );
+		break;
 	case ROW_EDIT_ENTRY:
 		SCREENMAN->SetNewScreen( "ScreenEditCourseEntry" );
 		break;
@@ -276,11 +274,17 @@ void ScreenEditCourse::GoToNextScreen()
 
 void ScreenEditCourse::GoToPrevScreen()
 {
+	// revert
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+	*pCourse = m_Original;
+
 	SCREENMAN->SetNewScreen( "ScreenCourseManager" );
 }
 
 void ScreenEditCourse::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
 {
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+
 	switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
 	{
 	default:
@@ -293,16 +297,23 @@ void ScreenEditCourse::ProcessMenuStart( PlayerNumber pn, const InputEventType t
 	case ROW_TYPE_METER:
 		SCREENMAN->PlayInvalidSound();
 		break;
-	case ROW_EDIT_ENTRY:
 	case ROW_INSERT_ENTRY:
 		{
-			Trail *pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
-			if( pTrail == NULL )
-			{
-				SCREENMAN->PlayInvalidSound();
-				return;
-			}
+			OptionRow &row = *m_pRows[ROW_INSERT_ENTRY];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			pCourse->m_vEntries.insert( pCourse->m_vEntries.begin()+iChoice, CourseEntry() );
+			ScreenOptions::BeginFadingOut();
 		}
+		break;
+	case ROW_DELETE_ENTRY:
+		{
+			OptionRow &row = *m_pRows[ROW_DELETE_ENTRY];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			pCourse->m_vEntries.erase( pCourse->m_vEntries.begin()+iChoice );
+			ScreenOptions::BeginFadingOut();
+		}
+		break;
+	case ROW_EDIT_ENTRY:
 	case ROW_DONE:
 		ScreenOptions::BeginFadingOut();
 		break;

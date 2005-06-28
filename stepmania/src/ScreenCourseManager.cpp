@@ -204,6 +204,7 @@ void ScreenCourseManager::GoToNextScreen()
 			default:
 				ASSERT(0);
 			case ACTION_EDIT:
+				GAMESTATE->m_iEditCourseEntryIndex.Set( 0 );
 				SCREENMAN->SetNewScreen( "ScreenEditCourse" );
 				break;
 			case ACTION_DELETE:

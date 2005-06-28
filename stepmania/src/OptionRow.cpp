@@ -691,6 +691,36 @@ void OptionRow::SetOneSharedSelection( int iChoice )
 		SetOneSelection( pn, iChoice );
 }
 
+int OptionRow::GetChoiceInRowWithFocus( PlayerNumber pn ) const
+{
+	if( m_RowDef.bOneChoiceForAllPlayers )
+		pn = PLAYER_1;
+	if( m_RowDef.choices.empty() )
+		return -1;
+	int iChoice = m_iChoiceInRowWithFocus[pn];
+	return iChoice; 
+}
+
+int OptionRow::GetChoiceInRowWithFocusShared() const
+{
+	return GetChoiceInRowWithFocus( (PlayerNumber)0 );
+}
+
+void OptionRow::SetChoiceInRowWithFocus( PlayerNumber pn, int iChoice )
+{
+	if( m_RowDef.bOneChoiceForAllPlayers )
+		pn = PLAYER_1;
+	ASSERT(iChoice >= 0 && iChoice < (int)m_RowDef.choices.size());
+	m_iChoiceInRowWithFocus[pn] = iChoice;
+}
+
+void OptionRow::SetChoiceInRowWithFocusShared( int iChoice )
+{
+	FOREACH_PlayerNumber( pn )
+		SetChoiceInRowWithFocus( pn, iChoice );
+}
+
+
 void OptionRow::SetExitText( CString sExitText )
 {
 	BitmapText *bt = m_textItems.back();

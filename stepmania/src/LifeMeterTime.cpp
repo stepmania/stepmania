@@ -75,7 +75,7 @@ void LifeMeterTime::OnLoadSong()
 
 	Course* pCourse = GAMESTATE->m_pCurCourse;
 	ASSERT( pCourse );
-	const CourseEntry *pEntry = &pCourse->m_entries[GAMESTATE->GetCourseSongIndex()];
+	const CourseEntry *pEntry = &pCourse->m_vEntries[GAMESTATE->GetCourseSongIndex()];
 	m_fLifeTotalGainedSeconds += pEntry->fGainSeconds;
 
 	if( GAMESTATE->GetCourseSongIndex() > 0 )

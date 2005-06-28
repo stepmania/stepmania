@@ -32,6 +32,19 @@ inline PlayMode CourseTypeToPlayMode( CourseType ct ) { return (PlayMode)(PLAY_M
 inline CourseType PlayModeToCourseType( PlayMode pm ) { return (CourseType)(pm-PLAY_MODE_NONSTOP); }
 
 
+enum SongSort
+{
+	SongSort_Randomize,
+	SongSort_MostPlays,
+	SongSort_FewestPlays,
+	SongSort_TopGrades,
+	SongSort_LowestGrades,
+	NUM_SongSort
+};
+#define FOREACH_SongSort( i ) FOREACH_ENUM( SongSort, NUM_SongSort, i )
+const CString& SongSortToString( SongSort ss );
+const CString& SongSortToThemedString( SongSort ss );
+
 class CourseEntry
 {
 public:
@@ -44,8 +57,9 @@ public:
 	bool bNoDifficult;			// if true, CourseDifficulty doesn't affect this entry
 	int iLowMeter;			// don't filter if -1
 	int iHighMeter;			// don't filter if -1
-	int iMostPopularIndex;	// don't filter if -1
-	int iLeastPopularIndex;	// don't filter if -1
+	
+	SongSort songSort;	// sort by this after filtering
+	int iChooseIndex;	// 
 
 	CString sModifiers;		// set player and song options using these
 	AttackArray attacks;	// timed sModifiers
@@ -61,8 +75,9 @@ public:
 		bNoDifficult = false;
 		iLowMeter = -1;
 		iHighMeter = -1;
-		iMostPopularIndex = -1;
-		iLeastPopularIndex = -1;
+
+		songSort = SongSort_Randomize;
+		iChooseIndex = 0;
 
 		sModifiers = "";
 		fGainSeconds = 0;
@@ -71,8 +86,7 @@ public:
 	bool IsRandomSong() const
 	{
 		return
-			iMostPopularIndex == -1  &&
-			iLeastPopularIndex == -1  &&
+			iChooseIndex == -1  &&
 			pSong == NULL;
 	}
 };
@@ -101,7 +115,7 @@ public:
 	int			m_iCustomMeter[NUM_DIFFICULTIES];	// -1 = no meter specified
 	bool		m_bSortByMeter;
 
-	vector<CourseEntry> m_entries;
+	vector<CourseEntry> m_vEntries;
 
 	/* If PREFSMAN->m_bShowNative is off, these are the same as GetTranslit* below.
 	 * Otherwise, they return the main titles. */
@@ -124,7 +138,7 @@ public:
 	bool HasMods() const;
 	bool AllSongsAreFixed() const;
 
-	int GetEstimatedNumStages() const { return m_entries.size(); }
+	int GetEstimatedNumStages() const { return m_vEntries.size(); }
 	bool IsPlayableIn( StepsType st ) const;
 	bool CourseHasBestOrWorst() const;
 	RageColor GetColor() const;

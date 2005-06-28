@@ -508,7 +508,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				bUseSections = false;
 				break;
 			case SORT_TOP_GRADES:
-				SongUtil::SortSongPointerArrayByGrade( arraySongs );
+				SongUtil::SortSongPointerArrayByGrades( arraySongs, true );
 				break;
 			case SORT_ARTIST:
 				SongUtil::SortSongPointerArrayByArtist( arraySongs );

@@ -23,6 +23,17 @@
 #include <limits.h>
 
 
+static const CString SongSortNames[] = {
+	"Randomize",
+	"MostPlays",
+	"FewestPlays",
+	"TopGrades",
+	"LowestGrades",
+};
+XToString( SongSort, NUM_SongSort );
+XToThemedString( SongSort, NUM_SongSort );
+
+
 /* Maximum lower value of ranges when difficult: */
 const int MAX_BOTTOM_RANGE = 10;
 
@@ -44,7 +55,7 @@ CourseType Course::GetCourseType() const
 		return COURSE_TYPE_ENDLESS;
 	if( m_iLives > 0 ) 
 		return COURSE_TYPE_ONI;
-	FOREACH_CONST( CourseEntry, m_entries, e )
+	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
 		if( e->fGainSeconds > 0 )
 			return COURSE_TYPE_SURVIVAL;
@@ -211,13 +222,15 @@ void Course::LoadFromCRSFile( CString sPath )
 			// infer entry::Type from the first param
 			if( sParams[1].Left(strlen("BEST")) == "BEST" )
 			{
-				new_entry.iMostPopularIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
-				CLAMP( new_entry.iMostPopularIndex, 0, 500 );
+				new_entry.iChooseIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("BEST")) ) - 1;
+				CLAMP( new_entry.iChooseIndex, 0, 500 );
+				new_entry.songSort = SongSort_MostPlays;
 			}
 			else if( sParams[1].Left(strlen("WORST")) == "WORST" )
 			{
-				new_entry.iLeastPopularIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
-				CLAMP( new_entry.iLeastPopularIndex, 0, 500 );
+				new_entry.iChooseIndex = atoi( sParams[1].Right(sParams[1].size()-strlen("WORST")) ) - 1;
+				CLAMP( new_entry.iChooseIndex, 0, 500 );
+				new_entry.songSort = SongSort_FewestPlays;
 			}
 			else if( sParams[1] == "*" )
 			{
@@ -231,11 +244,16 @@ void Course::LoadFromCRSFile( CString sPath )
 				CStringArray bits;
 				split( sSong, "/", bits );
 				if( bits.size() == 2 )
+				{
 					new_entry.sSongGroup = bits[0];
+				}
 				else
+				{
 					LOG->Warn( "Course file '%s' contains a random_within_group entry '%s' that is invalid. "
 								"Song should be in the format '<group>/*'.",
 								sPath.c_str(), sSong.c_str());
+				}
+
 				if( !SONGMAN->DoesSongGroupExist(new_entry.sSongGroup) )
 				{
 					/* XXX: We need a place to put "user warnings".  This is too loud for info.txt--
@@ -304,7 +322,7 @@ void Course::LoadFromCRSFile( CString sPath )
 			new_entry.fGainSeconds = fGainSeconds;
 			attacks.clear();
 			
-			m_entries.push_back( new_entry );
+			m_vEntries.push_back( new_entry );
 		}
 		else if( bUseCache && !stricmp(sValueName, "RADAR") )
 		{
@@ -331,7 +349,7 @@ void Course::LoadFromCRSFile( CString sPath )
 
 	/* Cache and load the course banner.  Only bother doing this if at least one
 	 * song was found in the course. */
-	if( m_sBannerPath != "" && !m_entries.empty() )
+	if( m_sBannerPath != "" && !m_vEntries.empty() )
 		BANNERCACHE->CacheBanner( m_sBannerPath );
 
 	/* Cache each trail RadarValues that's slow to load, so we
@@ -371,10 +389,10 @@ void Course::Init()
 	m_bRandomize = false;
 	m_iLives = -1;
 	m_bSortByMeter = false;
-	m_entries.clear();
+	m_vEntries.clear();
 	FOREACH_Difficulty(dc)
 		m_iCustomMeter[dc] = -1;
-	m_entries.clear();
+	m_vEntries.clear();
 	m_sPath = "";
 	m_sGroupName = "";
 	m_sMainTitle = "";
@@ -439,9 +457,9 @@ void Course::Save( CString sPath, bool bSavingCache )
 		f.PutLine( "// end cache tags" );
 	}
 
-	for( unsigned i=0; i<m_entries.size(); i++ )
+	for( unsigned i=0; i<m_vEntries.size(); i++ )
 	{
-		const CourseEntry& entry = m_entries[i];
+		const CourseEntry& entry = m_vEntries[i];
 
 		for( unsigned j = 0; j < entry.attacks.size(); ++j )
 		{
@@ -462,13 +480,13 @@ void Course::Save( CString sPath, bool bSavingCache )
 		if( entry.fGainSeconds > 0 )
 			f.PutLine( ssprintf("#GAINSECONDS:%f;", entry.fGainSeconds) );
 
-		if( entry.iMostPopularIndex != -1 )
+		if( entry.songSort == SongSort_MostPlays  &&  entry.iChooseIndex != -1 )
 		{
-			f.Write( ssprintf( "#SONG:BEST%d", entry.iMostPopularIndex+1 ) );
+			f.Write( ssprintf( "#SONG:BEST%d", entry.iChooseIndex+1 ) );
 		}
-		else if( entry.iLeastPopularIndex != -1 )
+		else if( entry.songSort == SongSort_FewestPlays  &&  entry.iChooseIndex != -1 )
 		{
-			f.Write( ssprintf( "#SONG:WORST%d", entry.iLeastPopularIndex+1 ) );
+			f.Write( ssprintf( "#SONG:WORST%d", entry.iChooseIndex+1 ) );
 		}
 		else if( entry.pSong )
 		{
@@ -550,7 +568,7 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, Difficulty diff )
 	vector<Song*> vSongs;
 	SONGMAN->GetSongs( vSongs, e.sSongGroup );
 	for( unsigned i = 0; i < vSongs.size(); ++i)
-		m_entries.push_back( e );
+		m_vEntries.push_back( e );
 }
 
 void Course::AutogenNonstopFromGroup( CString sGroupName, Difficulty diff )
@@ -562,10 +580,10 @@ void Course::AutogenNonstopFromGroup( CString sGroupName, Difficulty diff )
 	m_sMainTitle += " Random";	
 
 	// resize to 4
-	while( m_entries.size() < 4 )
-		m_entries.push_back( m_entries[0] );
-	while( m_entries.size() > 4 )
-		m_entries.pop_back();
+	while( m_vEntries.size() < 4 )
+		m_vEntries.push_back( m_vEntries[0] );
+	while( m_vEntries.size() > 4 )
+		m_vEntries.pop_back();
 }
 
 void Course::AutogenOniFromArtist( CString sArtistName, CString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc )
@@ -608,7 +626,7 @@ void Course::AutogenOniFromArtist( CString sArtistName, CString sArtistNameTrans
 	for( unsigned i = 0; i < aSongs.size(); ++i )
 	{
 		e.pSong = aSongs[i];
-		m_entries.push_back( e );
+		m_vEntries.push_back( e );
 	}
 }
 
@@ -672,7 +690,7 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 	{
 		/* If we have any random entries (so that the seed matters), invalidate the cache. */
 		bool bHaveRandom = false;
-		FOREACH_CONST( CourseEntry, m_entries, e )
+		FOREACH_CONST( CourseEntry, m_vEntries, e )
 		{
 			if( e->IsRandomSong() )
 			{
@@ -792,11 +810,11 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		/* Always randomize the same way per round.  Otherwise, the displayed course
 		 * will change every time it's viewed, and the displayed order will have no
 		 * bearing on what you'll actually play. */
-		tmp_entries = m_entries;
+		tmp_entries = m_vEntries;
 		random_shuffle( tmp_entries.begin(), tmp_entries.end(), rnd );
 	}
 
-	const vector<CourseEntry> &entries = m_bRandomize? tmp_entries:m_entries;
+	const vector<CourseEntry> &entries = m_bRandomize? tmp_entries:m_vEntries;
 
 	/* This can take some time, so don't fill it out unless we need it. */
 	bool bMostPlayedSet = false;
@@ -936,39 +954,36 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 
 		// TODO: Move Course initialization after PROFILEMAN is created
-		if( PROFILEMAN  &&  e->iMostPopularIndex != -1 )
+		switch( e->songSort )
 		{
-			SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), true );	// descending
-			if( e->iMostPopularIndex < vpPossibleSongs.size() )
-			{
-				pResolvedSong = vpPossibleSongs[e->iMostPopularIndex];
-				vector<Steps*> &vpPossibleSteps = mapSongToSteps[pResolvedSong];
-				pResolvedSteps = vpPossibleSteps[0];
-			}
+		default:
+			ASSERT(0);
+		case SongSort_Randomize:
+			random_shuffle( vpPossibleSongs.begin(), vpPossibleSongs.end(), rnd );
+			break;
+		case SongSort_MostPlays:
+			if( PROFILEMAN )
+				SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), true );	// descending
+			break;
+		case SongSort_FewestPlays:
+			if( PROFILEMAN )
+				SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), false );	// ascending
+			break;
+		case SongSort_TopGrades:
+			SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, true );	// descending
+			break;
+		case SongSort_LowestGrades:
+			SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, false );	// ascending
+			break;
 		}
-		else if( PROFILEMAN  &&  e->iLeastPopularIndex != -1 )
+
+		if( e->iChooseIndex < vpPossibleSongs.size() )
 		{
-			SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), false ); // ascending
-			if( e->iLeastPopularIndex < vpPossibleSongs.size() )
-			{
-				pResolvedSong = vpPossibleSongs[e->iLeastPopularIndex];
-				vector<Steps*> &vpPossibleSteps = mapSongToSteps[pResolvedSong];
-				pResolvedSteps = vpPossibleSteps[0];
-			}
-		}
-		else
-		{
-			if( !vpPossibleSongs.empty() )
-			{
-				random_shuffle( vpPossibleSongs.begin(), vpPossibleSongs.end(), rnd );
-				pResolvedSong = vpPossibleSongs[0];
-				vector<Steps*> &vpPossibleSteps = mapSongToSteps[pResolvedSong];
-				if( !vpPossibleSteps.empty() )
-				{
-					random_shuffle( vpPossibleSteps.begin(), vpPossibleSteps.end(), rnd );
-					pResolvedSteps = vpPossibleSteps[0];
-				}
-			}
+			pResolvedSong = vpPossibleSongs[e->iChooseIndex];
+			vector<Steps*> &vpPossibleSteps = mapSongToSteps[pResolvedSong];
+			ASSERT( !vpPossibleSteps.empty() );	// if no steps are playable, this shouldn't be a possible song
+			random_shuffle( vpPossibleSteps.begin(), vpPossibleSteps.end(), rnd );
+			pResolvedSteps = vpPossibleSteps[0];
 		}
 
 
@@ -1096,7 +1111,7 @@ void Course::GetAllTrails( vector<Trail*> &AddTo ) const
 
 bool Course::HasMods() const
 {
-	FOREACH_CONST( CourseEntry, m_entries, e )
+	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
 		if( !e->sModifiers.empty() || !e->attacks.empty() )
 			return true;
@@ -1107,7 +1122,7 @@ bool Course::HasMods() const
 
 bool Course::AllSongsAreFixed() const
 {
-	FOREACH_CONST( CourseEntry, m_entries, e )
+	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
 		if( e->pSong == NULL )
 			return false;
@@ -1117,7 +1132,7 @@ bool Course::AllSongsAreFixed() const
 
 void Course::Invalidate( Song *pStaleSong )
 {
-	FOREACH_CONST( CourseEntry, m_entries, e )
+	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
 		if( e->pSong == pStaleSong )	// a fixed entry that references the stale Song
 		{
@@ -1161,8 +1176,8 @@ RageColor Course::GetColor() const
 	switch( PREFSMAN->m_CourseSortOrder )
 	{
 	case PrefsManager::COURSE_SORT_SONGS:	
-		if( m_entries.size() >= 7 )				return SORT_LEVEL2_COLOR;
-		else if( m_entries.size() >= 4 )		return SORT_LEVEL4_COLOR;
+		if( m_vEntries.size() >= 7 )				return SORT_LEVEL2_COLOR;
+		else if( m_vEntries.size() >= 4 )		return SORT_LEVEL4_COLOR;
 		else									return SORT_LEVEL5_COLOR;
 
 	case PrefsManager::COURSE_SORT_METER:
@@ -1192,9 +1207,9 @@ RageColor Course::GetColor() const
 
 bool Course::IsFixed() const
 {
-	for(unsigned i = 0; i < m_entries.size(); i++)
+	for(unsigned i = 0; i < m_vEntries.size(); i++)
 	{
-		if ( m_entries[i].pSong == NULL )
+		if ( m_vEntries[i].pSong == NULL )
 			continue;
 
 		return false;
@@ -1217,11 +1232,11 @@ bool Course::GetTotalSeconds( StepsType st, float& fSecondsOut ) const
 
 bool Course::CourseHasBestOrWorst() const
 {
-	FOREACH_CONST( CourseEntry, m_entries, e )
+	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
-		if( e->iMostPopularIndex != -1 )
+		if( e->iChooseIndex == SongSort_MostPlays  &&  e->iChooseIndex != -1 )
 			return true;
-		if( e->iLeastPopularIndex != -1 )
+		if( e->iChooseIndex == SongSort_FewestPlays  &&  e->iChooseIndex != -1 )
 			return true;
 	}
 
@@ -1238,9 +1253,9 @@ void Course::UpdateCourseStats( StepsType st )
 	m_SortOrder_TotalDifficulty = 0;
 
 	// courses with random/players best-worst songs should go at the end
-	for(unsigned i = 0; i < m_entries.size(); i++)
+	for(unsigned i = 0; i < m_vEntries.size(); i++)
 	{
-		if ( m_entries[i].pSong != NULL )
+		if ( m_vEntries[i].pSong != NULL )
 			continue;
 
 		if ( m_SortOrder_Ranking == 2 )
@@ -1277,7 +1292,7 @@ bool Course::IsRanking() const
 
 const CourseEntry *Course::FindFixedSong( const Song *pSong ) const
 {
-	FOREACH_CONST( CourseEntry, m_entries, e )
+	FOREACH_CONST( CourseEntry, m_vEntries, e )
 	{
 		const CourseEntry &entry = *e;
 		if( entry.pSong == pSong )

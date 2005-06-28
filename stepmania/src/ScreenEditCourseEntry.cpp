@@ -14,12 +14,14 @@ enum EditCourseEntryRow
 	ROW_BASE_DIFFICULTY, 
 	ROW_LOW_METER,
 	ROW_HIGH_METER, 
-	ROW_BEST_WORST_VALUE, 
+	ROW_SORT, 
+	ROW_CHOOSE_INDEX, 
 	ROW_SET_MODS, 
 	ROW_DONE,
 	NUM_EditCourseEntryRow
 };
 #define FOREACH_EditCourseEntryRow( i ) FOREACH_ENUM( EditCourseEntryRow, NUM_EditCourseEntryRow, i )
+
 
 REGISTER_SCREEN_CLASS( ScreenEditCourseEntry );
 ScreenEditCourseEntry::ScreenEditCourseEntry( CString sName ) : ScreenOptions( sName )
@@ -31,6 +33,12 @@ void ScreenEditCourseEntry::Init()
 {
 	ScreenOptions::Init();
 
+
+	// save a backup that we'll use if we revert.
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+	m_Original = pCourse->m_vEntries[ GAMESTATE->m_iEditCourseEntryIndex ];
+
+
 	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
 
@@ -41,6 +49,7 @@ void ScreenEditCourseEntry::Init()
 	def.choices.clear();
 	vector<CString> vsSongGroups;
 	SONGMAN->GetSongGroupNames( vsSongGroups );
+	def.choices.push_back( "(any)" );
 	FOREACH_CONST( CString, vsSongGroups, s )
 		def.choices.push_back( *s );
 	vDefs.push_back( def );
@@ -54,6 +63,7 @@ void ScreenEditCourseEntry::Init()
 
 	def.name = "Base Difficulty";
 	def.choices.clear();
+	def.choices.push_back( "(any)" );
 	FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), dc )
 		def.choices.push_back( DifficultyToThemedString(*dc) );
 	vDefs.push_back( def );
@@ -61,6 +71,7 @@ void ScreenEditCourseEntry::Init()
 
 	def.name = "Low Meter";
 	def.choices.clear();
+	def.choices.push_back( "(any)" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
 		def.choices.push_back( ssprintf("%i",i) );
 	vDefs.push_back( def );
@@ -68,15 +79,23 @@ void ScreenEditCourseEntry::Init()
 
 	def.name = "High Meter";
 	def.choices.clear();
+	def.choices.push_back( "(any)" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
 		def.choices.push_back( ssprintf("%i",i) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Best/Worst Value";
+	def.name = "Sort";
 	def.choices.clear();
-	for( int i=1; i<=20; i++ )
-		def.choices.push_back( ssprintf("%i",i) );
+	FOREACH_SongSort( i )
+		def.choices.push_back( SongSortToThemedString(i) );
+	vDefs.push_back( def );
+	vHands.push_back( NULL );
+
+	def.name = "Choose";
+	def.choices.clear();
+	for( int i=0; i<20; i++ )
+		def.choices.push_back( FormatNumberAndSuffix(i+1) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
@@ -88,7 +107,7 @@ void ScreenEditCourseEntry::Init()
 
 	ScreenOptions::InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
 
-	AfterChangeValueInRow( GAMESTATE->m_MasterPlayerNumber );
+	ImportAllOptions();
 }
 
 void ScreenEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
@@ -100,8 +119,7 @@ void ScreenEditCourseEntry::AfterChangeValueInRow( PlayerNumber pn )
 {
 	ScreenOptions::AfterChangeValueInRow( pn );
 	Course *pCourse = GAMESTATE->m_pCurCourse;
-	CourseEntry &ce = pCourse->m_entries[ GAMESTATE->m_iEditCourseEntryIndex ];
-	CString sSongGroup;
+	CourseEntry &ce = pCourse->m_vEntries[ GAMESTATE->m_iEditCourseEntryIndex ];
 
 	switch( m_iCurrentRow[pn] )
 	{
@@ -110,22 +128,29 @@ void ScreenEditCourseEntry::AfterChangeValueInRow( PlayerNumber pn )
 		{
 			OptionRow &row = *m_pRows[ROW_SONG_GROUP];
 			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			sSongGroup = row.GetRowDef().choices[ iChoice ];
+			if( iChoice == 0 )
+				ce.sSongGroup = "";
+			else
+				ce.sSongGroup = row.GetRowDef().choices[ iChoice ];
 		}
 		// refresh songs
 		{
 			OptionRow &row = *m_pRows[ROW_SONG];
 			OptionRowDefinition def = row.GetRowDef();
 			def.choices.clear();
+			def.choices.push_back( "(any)" );
 			vector<Song*> vpSongs;
-			SONGMAN->GetSongs( vpSongs, sSongGroup );
+			if( ce.sSongGroup.empty() )
+				SONGMAN->GetSongs( vpSongs );
+			else
+				SONGMAN->GetSongs( vpSongs, ce.sSongGroup );
 			FOREACH_CONST( Song*, vpSongs, s )
 				def.choices.push_back( (*s)->GetTranslitFullTitle() );
 			vector<Song*>::const_iterator iter = find( vpSongs.begin(), vpSongs.end(), ce.pSong );
 			if( iter != vpSongs.end() )
 			{
 				int iSongIndex = iter - vpSongs.begin();
-				row.SetOneSharedSelection( iSongIndex );
+				row.SetOneSharedSelection( iSongIndex+1 );
 			}
 			else
 			{
@@ -139,7 +164,10 @@ void ScreenEditCourseEntry::AfterChangeValueInRow( PlayerNumber pn )
 		{
 			OptionRow &row = *m_pRows[ROW_SONG];
 			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			ce.pSong = SONGMAN->GetAllSongs()[iChoice];
+			if( iChoice == 0 )
+				ce.pSong = NULL;
+			else
+				ce.pSong = SONGMAN->GetAllSongs()[iChoice-1];
 		}
 		// fall through
 	case ROW_BASE_DIFFICULTY:
@@ -153,16 +181,39 @@ void ScreenEditCourseEntry::AfterChangeValueInRow( PlayerNumber pn )
 	case ROW_LOW_METER:
 		// export low meter
 		{
+			OptionRow &row = *m_pRows[ROW_LOW_METER];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			if( iChoice == 0 )
+				ce.iLowMeter = -1;
+			else
+				ce.iLowMeter = iChoice;
 		}
 		// fall through
 	case ROW_HIGH_METER:
 		// export high meter
 		{
+			OptionRow &row = *m_pRows[ROW_HIGH_METER];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			if( iChoice == 0 )
+				ce.iHighMeter = -1;
+			else
+				ce.iHighMeter = iChoice;
 		}
 		// fall through
-	case ROW_BEST_WORST_VALUE:
-		// export best/worst value
+	case ROW_SORT:
+		// export sort
 		{
+			OptionRow &row = *m_pRows[ROW_SORT];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			ce.songSort = (SongSort)iChoice;
+		}
+		// fall through
+	case ROW_CHOOSE_INDEX:
+		// export choose index
+		{
+			OptionRow &row = *m_pRows[ROW_CHOOSE_INDEX];
+			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+			ce.iChooseIndex = iChoice;
 		}
 		// fall through
 	case ROW_SET_MODS:
@@ -172,33 +223,77 @@ void ScreenEditCourseEntry::AfterChangeValueInRow( PlayerNumber pn )
 	}
 }
 
-void ScreenEditCourseEntry::ImportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenEditCourseEntry::ImportAllOptions()
 {
-	Course *pCourse = GAMESTATE->m_pCurCourse;
-	CourseEntry &ce = pCourse->m_entries[ GAMESTATE->m_iEditCourseEntryIndex ];
+	// fill choices before importing
+	AfterChangeValueInRow( GAMESTATE->m_MasterPlayerNumber );
 
-	// import entry song
+
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+	CourseEntry &ce = pCourse->m_vEntries[ GAMESTATE->m_iEditCourseEntryIndex ];
+
+	// import song group
 	{
-		int iSongIndex = -1;
-		vector<Song*>::const_iterator iter = find( SONGMAN->GetAllSongs().begin(), SONGMAN->GetAllSongs().end(), ce.pSong );
-		if( iter != SONGMAN->GetAllSongs().end() )
-			iSongIndex = iter - SONGMAN->GetAllSongs().begin();
+		OptionRow &row = *m_pRows[ROW_SONG_GROUP];
+		FOREACH_CONST( CString, row.GetRowDef().choices, s )
+		{
+			if( *s == ce.sSongGroup )
+			{
+				int iChoice = s - row.GetRowDef().choices.begin();
+				row.SetOneSharedSelection( iChoice );
+				AfterChangeValueInRow( GAMESTATE->m_MasterPlayerNumber );
+				break;
+			}
+		}
+	}
+	// import song
+	{
+		vector<Song*> vpSongs;
+		SONGMAN->GetSongs( vpSongs, ce.sSongGroup );
+		vector<Song*>::const_iterator iter = find( vpSongs.begin(), vpSongs.end(), ce.pSong );
+		int iChoice = 0;
+		if( iter != vpSongs.end() )
+			iChoice = iter - vpSongs.begin() + 1;
 		OptionRow &row = *m_pRows[ROW_SONG];
-		if( iSongIndex != -1 )
-			row.SetOneSharedSelection( iSongIndex );
+		row.SetOneSharedSelection( iChoice );
 	}
-	/*
-	// import entry difficulty
+	// import base difficulty
 	{
-		int iDifficultyIndex = -1;
-		vector<Difficulty>::const_iterator iter = find( DIFFICULTIES_TO_SHOW.GetValue().begin(), DIFFICULTIES_TO_SHOW.GetValue().end(), ce.difficulty );
+		vector<Difficulty>::const_iterator iter = find( DIFFICULTIES_TO_SHOW.GetValue().begin(), DIFFICULTIES_TO_SHOW.GetValue().end(), ce.baseDifficulty );
+		int iChoice = 0;
 		if( iter != DIFFICULTIES_TO_SHOW.GetValue().end() )
-			iDifficultyIndex = iter - DIFFICULTIES_TO_SHOW.GetValue().begin();
-		OptionRow &row = *m_pRows[ROW_DIFFICULTY];
-		if( iDifficultyIndex != -1 )
-			row.SetOneSharedSelection( iDifficultyIndex );
+			iChoice = iter - DIFFICULTIES_TO_SHOW.GetValue().begin() + 1;
+		OptionRow &row = *m_pRows[ROW_BASE_DIFFICULTY];
+		row.SetOneSharedSelection( iChoice );
 	}
-	*/
+	// import low meter
+	{
+		int iChoice = 0;
+		if( ce.iLowMeter != -1 )
+			iChoice = ce.iLowMeter;
+		OptionRow &row = *m_pRows[ROW_LOW_METER];
+		row.SetOneSharedSelection( iChoice );
+	}
+	// import high meter
+	{
+		int iChoice = 0;
+		if( ce.iHighMeter != -1 )
+			iChoice = ce.iHighMeter;
+		OptionRow &row = *m_pRows[ROW_HIGH_METER];
+		row.SetOneSharedSelection( iChoice );
+	}
+	// import sort
+	{
+		int iChoice = ce.songSort;
+		OptionRow &row = *m_pRows[ROW_SORT];
+		row.SetOneSharedSelection( iChoice );
+	}
+	// import choose index
+	{
+		int iChoice = ce.iChooseIndex;
+		OptionRow &row = *m_pRows[ROW_CHOOSE_INDEX];
+		row.SetOneSharedSelection( iChoice );
+	}
 }
 
 void ScreenEditCourseEntry::ExportOptions( int row, const vector<PlayerNumber> &vpns )
@@ -215,7 +310,7 @@ void ScreenEditCourseEntry::GoToNextScreen()
 	case ROW_BASE_DIFFICULTY: 
 	case ROW_LOW_METER:
 	case ROW_HIGH_METER: 
-	case ROW_BEST_WORST_VALUE: 
+	case ROW_CHOOSE_INDEX: 
 		break;
 	case ROW_SET_MODS:
 		SCREENMAN->SetNewScreen( "ScreenEditCourseMods" );
@@ -228,6 +323,10 @@ void ScreenEditCourseEntry::GoToNextScreen()
 
 void ScreenEditCourseEntry::GoToPrevScreen()
 {
+	// revert
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+	pCourse->m_vEntries[ GAMESTATE->m_iEditCourseEntryIndex ] = m_Original;
+
 	SCREENMAN->SetNewScreen( "ScreenEditCourse" );
 }
 
@@ -240,7 +339,8 @@ void ScreenEditCourseEntry::ProcessMenuStart( PlayerNumber pn, const InputEventT
 	case ROW_BASE_DIFFICULTY: 
 	case ROW_LOW_METER:
 	case ROW_HIGH_METER: 
-	case ROW_BEST_WORST_VALUE: 
+	case ROW_SORT: 
+	case ROW_CHOOSE_INDEX: 
 		break;
 	case ROW_SET_MODS:
 	case ROW_DONE:

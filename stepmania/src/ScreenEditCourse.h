@@ -2,6 +2,7 @@
 #define ScreenEditCourse_H
 
 #include "ScreenOptions.h"
+#include "Course.h"
 
 class ScreenEditCourse : public ScreenOptions
 {
@@ -21,6 +22,8 @@ protected:
 
 	virtual void AfterChangeValueInRow( PlayerNumber pn );
 	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
+
+	Course m_Original;
 };
 
 #endif

@@ -34,8 +34,8 @@ void ScreenJukebox::SetSong()
 	//then we pick a song from this course.
 	Course *pCourse = SONGMAN->GetCourseFromName( THEME->GetCurThemeName() );
 	if( pCourse != NULL )
-		for ( unsigned i = 0; i < pCourse->m_entries.size(); i++ )
-			vSongs.push_back( pCourse->m_entries[i].pSong );
+		for ( unsigned i = 0; i < pCourse->m_vEntries.size(); i++ )
+			vSongs.push_back( pCourse->m_vEntries[i].pSong );
 
 	if ( vSongs.size() == 0 )
 		SONGMAN->GetSongs( vSongs, GAMESTATE->m_sPreferredSongGroup );

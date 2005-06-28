@@ -75,8 +75,7 @@ GameState::GameState() :
 	m_stEdit(				MESSAGE_EDIT_STEPS_TYPE_CHANGED ),
     m_pEditSourceSteps(		MESSAGE_EDIT_SOURCE_STEPS_CHANGED ),
 	m_stEditSource(			MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED ),
-	m_iEditCourseEntryIndex(MESSAGE_EDIT_COURSE_ENTRY_INDEX_CHANGED ),
-	m_EditCourseEntryAction(MESSAGE_EDIT_COURSE_ENTRY_ACTION_CHANGED )
+	m_iEditCourseEntryIndex(MESSAGE_EDIT_COURSE_ENTRY_INDEX_CHANGED )
 {
 	m_pCurStyle.Set( NULL );
 
@@ -255,7 +254,6 @@ void GameState::Reset()
 	m_pEditSourceSteps.Set( NULL );
 	m_stEditSource.Set( STEPS_TYPE_INVALID );
 	m_iEditCourseEntryIndex.Set( -1 );
-	m_EditCourseEntryAction.Set( ACTION_EDIT );
 
 	ApplyCmdline();
 }

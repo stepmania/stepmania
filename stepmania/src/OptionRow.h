@@ -107,22 +107,11 @@ public:
 	void SetOneSelection( PlayerNumber pn, int iChoice );
 	void SetOneSharedSelection( int iChoice );
 
-	int GetChoiceInRowWithFocus( PlayerNumber pn ) const
-	{
-		if( m_RowDef.bOneChoiceForAllPlayers )
-			pn = PLAYER_1;
-		if( m_RowDef.choices.empty() )
-			return -1;
-		int iChoice = m_iChoiceInRowWithFocus[pn];
-		return iChoice; 
-	}
-	void SetChoiceInRowWithFocus( PlayerNumber pn, int iChoice )
-	{
-		if( m_RowDef.bOneChoiceForAllPlayers )
-			pn = PLAYER_1;
-		ASSERT(iChoice >= 0 && iChoice < (int)m_RowDef.choices.size());
-		m_iChoiceInRowWithFocus[pn] = iChoice;
-	}
+	int GetChoiceInRowWithFocus( PlayerNumber pn ) const;
+	int GetChoiceInRowWithFocusShared() const;
+	void SetChoiceInRowWithFocus( PlayerNumber pn, int iChoice );
+	void SetChoiceInRowWithFocusShared( int iChoice );
+
 	bool GetSelected( PlayerNumber pn, int iChoice ) const
 	{
 		if( m_RowDef.bOneChoiceForAllPlayers )

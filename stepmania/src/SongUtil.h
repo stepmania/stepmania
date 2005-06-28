@@ -15,7 +15,7 @@ namespace SongUtil
 	CString MakeSortString( CString s );
 	void SortSongPointerArrayByTitle( vector<Song*> &vpSongsInOut );
 	void SortSongPointerArrayByBPM( vector<Song*> &vpSongsInOut );
-	void SortSongPointerArrayByGrade( vector<Song*> &vpSongsInOut );
+	void SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool bDescending );
 	void SortSongPointerArrayByArtist( vector<Song*> &vpSongsInOut );
 	void SortSongPointerArrayByDisplayArtist( vector<Song*> &vpSongsInOut );
 	void SortSongPointerArrayByGenre( vector<Song*> &vpSongsInOut );

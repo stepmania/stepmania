@@ -2,6 +2,7 @@
 #define ScreenEditCourseEntry_H
 
 #include "ScreenOptions.h"
+#include "Course.h"
 
 class ScreenEditCourseEntry : public ScreenOptions
 {
@@ -13,7 +14,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns );
+	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns ) {}
 	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
 	
 	virtual void GoToNextScreen();
@@ -21,6 +22,10 @@ protected:
 
 	virtual void AfterChangeValueInRow( PlayerNumber pn );
 	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
+
+	void ImportAllOptions();
+
+	CourseEntry m_Original;
 };
 
 #endif
