@@ -344,7 +344,7 @@ void ScreenEditCourseEntry::ProcessMenuStart( PlayerNumber pn, const InputEventT
 		break;
 	case ROW_SET_MODS:
 	case ROW_DONE:
-		ScreenOptions::ProcessMenuStart( pn, type );
+		ScreenOptions::BeginFadingOut();
 		break;
 	}
 }
