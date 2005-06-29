@@ -305,10 +305,10 @@ void ActorFrame::SetPropagateCommands( bool b )
 
 void ActorFrame::PlayCommand( const CString &sCommandName, Actor* pParent )
 {
-	// HACK: Don't propogate Init.  It gets called once for every Actor when the 
-	// Actor is loaded, and we don't want to call it again.
 	Actor::PlayCommand( sCommandName, pParent );
 
+	// HACK: Don't propogate Init.  It gets called once for every Actor when the 
+	// Actor is loaded, and we don't want to call it again.
 	if( sCommandName == "Init" )
 		return;
 
