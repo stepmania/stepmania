@@ -130,6 +130,8 @@ void ScreenWithMenuElements::Init()
 	m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Cancel );
 
+	this->SortByDrawOrder();
+
 	m_In.StartTransitioning( SM_DoneFadingIn );
 }
 
