@@ -1823,7 +1823,15 @@ void ScreenGameplay::BackOutFromGameplay()
 	m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 
 	this->ClearMessageQueue();
-	m_Cancel.StartTransitioning( SM_GoToScreenAfterBack );
+	
+	// If this is the final stage, don't allow extra stage
+	if( GAMESTATE->IsFinalStage() )
+		GAMESTATE->m_bBackedOutOfFinalStage = true;
+	// Disallow backing out of extra stage
+	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
+		SCREENMAN->PostMessageToTopScreen( SM_BeginFailed, 0 );
+	else
+		m_Cancel.StartTransitioning( SM_GoToScreenAfterBack );
 }
 
 void ScreenGameplay::AbortGiveUp( bool bShowText )
@@ -2288,7 +2296,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			float fMaxSurviveSeconds = 0;
             FOREACH_EnabledPlayer(p)
                 fMaxSurviveSeconds = max( fMaxSurviveSeconds, STATSMAN->m_CurStageStats.m_player[p].fAliveSeconds );
-			ASSERT( fMaxSurviveSeconds > 0 );
 			m_textSurviveTime.SetText( "TIME: " + SecondsToMMSSMsMs(fMaxSurviveSeconds) );
 			SET_XY_AND_ON_COMMAND( m_textSurviveTime );
 		}

@@ -144,7 +144,8 @@ public:
 	Course*		m_pPreferredCourse;
 	BroadcastOnChangePtr1D<Trail,NUM_PLAYERS>	m_pCurTrail;
 
-
+	bool        m_bBackedOutOfFinalStage;
+	
 	//
 	// Music statistics:  Arcade: the current stage (one song).  Oni/Endles: a single song in a course
 	//

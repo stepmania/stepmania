@@ -254,6 +254,8 @@ void GameState::Reset()
 	m_pEditSourceSteps.Set( NULL );
 	m_stEditSource.Set( STEPS_TYPE_INVALID );
 	m_iEditCourseEntryIndex.Set( -1 );
+	
+	m_bBackedOutOfFinalStage = false;
 
 	ApplyCmdline();
 }
@@ -966,6 +968,9 @@ bool GameState::HasEarnedExtraStage() const
 		return false;
 
 	if( this->m_PlayMode != PLAY_MODE_REGULAR )
+		return false;
+	
+	if( m_bBackedOutOfFinalStage )
 		return false;
 
 	if( (this->IsFinalStage() || this->IsExtraStage()) )
