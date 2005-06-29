@@ -92,7 +92,6 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( m_pSoundMusic )
 			m_pSoundMusic->Stop();
-		GAMESTATE->Reset();
 		SOUNDMAN->SetPrefs( PREFSMAN->GetSoundVolume() );	// turn volume back on
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		return;
