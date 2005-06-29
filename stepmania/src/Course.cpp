@@ -977,7 +977,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			break;
 		}
 
-		if( e->iChooseIndex < vpPossibleSongs.size() )
+		if( e->iChooseIndex < int(vpPossibleSongs.size()) )
 		{
 			pResolvedSong = vpPossibleSongs[e->iChooseIndex];
 			vector<Steps*> &vpPossibleSteps = mapSongToSteps[pResolvedSong];

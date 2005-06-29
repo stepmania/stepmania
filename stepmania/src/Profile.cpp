@@ -1049,7 +1049,7 @@ Profile::LoadResult Profile::LoadEditableDataFromDir( CString sDir )
 
 	// This is data that the user can change, so we have to validate it.
 	wstring wstr = CStringToWstring(m_sDisplayName);
-	if( (int) wstr.size() > MAX_DISPLAY_NAME_LENGTH )
+	if( wstr.size() > MAX_DISPLAY_NAME_LENGTH )
 		wstr = wstr.substr(0, MAX_DISPLAY_NAME_LENGTH);
 	m_sDisplayName = WStringToCString(wstr);
 	// TODO: strip invalid chars?

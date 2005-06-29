@@ -372,7 +372,7 @@ static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption 
 
 static int GetLifeDifficulty()
 {
-	int iLifeDifficulty;
+	int iLifeDifficulty = 0;
 	LifeDifficulty( iLifeDifficulty, true, NULL );	
 	iLifeDifficulty++;	// LifeDifficulty returns an index
 	return iLifeDifficulty;
