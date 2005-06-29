@@ -64,10 +64,18 @@ void ScreenWithMenuElements::Init()
 		{
 			m_sprStage[*s].Load( THEME->GetPathG(m_sName,"stage "+StageToString(*s)) );
 			m_sprStage[*s]->SetName( "Stage" );
+		}
+
+		// UpdateStage to hide/show the appropriate stage graphic.  Do this before
+		// running the OnCommand so that it won't override the OnCommand if On chooses
+		// to hide the graphic.
+		UpdateStage();
+		
+		FOREACH_CONST( Stage, vStages, s )
+		{
 			SET_XY_AND_ON_COMMAND( m_sprStage[*s] );
 			this->AddChild( m_sprStage[*s] );
 		}
-		UpdateStage();
 	}
 	
 	if( MEMORY_CARD_ICONS )
@@ -255,7 +263,8 @@ void ScreenWithMenuElements::HandleMessage( const CString& sMessage )
 	
 void ScreenWithMenuElements::UpdateStage()
 {
-	// update stage counter display (long versions/marathons)
+	// Refresh the stage counter display.  This is useful when changing 
+	// between long versions/marathons songs on the wheel.
 	FOREACH_Stage( s )
 		m_sprStage[s]->SetHidden( s != GAMESTATE->GetCurrentStage() );
 }
