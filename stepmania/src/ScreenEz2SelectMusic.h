@@ -9,6 +9,7 @@
 #include "MusicBannerWheel.h"
 #include "DifficultyRating.h"
 #include "ModeSwitcher.h"
+#include "RageTexturePreloader.h"
 
 class ScreenEz2SelectMusic : public ScreenWithMenuElements
 {
@@ -83,6 +84,8 @@ protected:
 	int i_ErrorDetected;
 
 	int iConfirmSelection;
+
+	RageTexturePreloader m_TexturePreload;
 };
 
 #endif

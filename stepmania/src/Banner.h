@@ -5,6 +5,7 @@
 
 #include "Sprite.h"
 #include "RageTextureID.h"
+#include "RageTexturePreloader.h"
 class Song;
 class Course;
 class Character;
@@ -31,16 +32,14 @@ public:
 	void LoadRandom();
 	void LoadFallback();
 
-	static void CacheGlobalBanners();
-
 	void SetScrolling( bool bScroll, float Percent = 0);
 	bool IsScrolling() const { return m_bScrolling; }
 	float ScrollingPercent() const { return m_fPercentScrolling; }
 
 protected:
-
 	bool m_bScrolling;
 	float m_fPercentScrolling;
+	RageTexturePreloader m_TexturePreload;
 };
 
 #endif

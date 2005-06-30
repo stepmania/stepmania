@@ -24,6 +24,7 @@
 #include "RageUtil_BackgroundLoader.h"
 #include "ThemeMetric.h"
 #include "ActorCommands.h"
+#include "RageTexturePreloader.h"
 
 class ScreenSelectMusic : public ScreenWithMenuElements
 {
@@ -146,6 +147,7 @@ protected:
 	RageSound			m_soundSelectPressed;
 
 	BackgroundLoader	m_BackgroundLoader;
+	RageTexturePreloader m_TexturePreload;
 };
 
 #endif

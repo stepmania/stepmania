@@ -5,7 +5,6 @@
 #include "ActorUtil.h"
 #include "Character.h"
 #include "RageLog.h"
-#include "RageTextureManager.h"
 #include <set>
 #include "PlayerState.h"
 
@@ -62,7 +61,7 @@ void AttackDisplay::Init( const PlayerState* pPlayerState )
 			continue;
 		}
 
-		TEXTUREMAN->CacheTexture( path );
+		m_TexturePreload.Load( path );
 	}
 }
 

@@ -6,7 +6,6 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "ThemeManager.h"
-#include "RageTextureManager.h"
 #include "PlayerState.h"
 #include "Command.h"
 
@@ -30,7 +29,7 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 	CStringArray asIconPaths;
 	GetDirListing( THEME->GetCurThemeDir()+"Graphic/ScoreDisplayBattle icon*.*", asIconPaths );
 	for( unsigned j=0; j<asIconPaths.size(); j++ )
-		TEXTUREMAN->CacheTexture( asIconPaths[j] );
+		m_TexturePreload.Load( asIconPaths[j] );
 }
 
 void ScoreDisplayBattle::Init( const PlayerState* pPlayerState )

@@ -4,6 +4,7 @@
 #include "ActorFrame.h"
 #include "Sprite.h"
 #include "GameConstantsAndTypes.h"	// for TapNoteScore
+#include "RageTexturePreloader.h"
 
 struct PlayerState;
 
@@ -21,6 +22,8 @@ protected:
 	const PlayerState* m_pPlayerState;
 
 	Sprite		m_sprAttack;
+
+	RageTexturePreloader m_TexturePreload;
 };
 
 #endif

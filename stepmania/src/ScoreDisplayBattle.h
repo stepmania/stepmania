@@ -6,6 +6,7 @@
 #include "ScoreDisplay.h"
 #include "GameConstantsAndTypes.h"
 #include "Sprite.h"
+#include "RageTexturePreloader.h"
 
 
 class ScoreDisplayBattle : public ScoreDisplay
@@ -21,6 +22,7 @@ protected:
 	Sprite	m_ItemIcon[NUM_INVENTORY_SLOTS];
 
 	CString m_iLastSeenInventory[NUM_INVENTORY_SLOTS];
+	RageTexturePreloader m_TexturePreload;
 };
 
 #endif

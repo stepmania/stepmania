@@ -32,8 +32,6 @@ FadingBanner::FadingBanner()
 		ActorUtil::OnCommand( m_Banner[i], "FadingBanner" );
 		this->AddChild( &m_Banner[i] );
 	}
-
-	Banner::CacheGlobalBanners();
 }
 
 void FadingBanner::ScaleToClipped( float fWidth, float fHeight )

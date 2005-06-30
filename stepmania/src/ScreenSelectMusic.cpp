@@ -110,7 +110,7 @@ void ScreenSelectMusic::Init()
 	m_sFallbackCDTitlePath = THEME->GetPathG(m_sName,"fallback cdtitle");
 
 
-	TEXTUREMAN->CacheTexture( m_sFallbackCDTitlePath );
+	m_TexturePreload.Load( m_sFallbackCDTitlePath );
 
 	if( GAMESTATE->m_pCurStyle == NULL )
 		RageException::Throw( "The Style has not been set.  A theme must set the Style before loading ScreenSelectMusic." );

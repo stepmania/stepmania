@@ -12,7 +12,6 @@
 #include "Steps.h"
 #include "RageTimer.h"
 #include "ActorUtil.h"
-#include "RageTextureManager.h"
 #include "AnnouncerManager.h"
 #include "MenuTimer.h"
 #include "StepsUtil.h"
@@ -216,8 +215,8 @@ void ScreenEz2SelectMusic::Init()
 		}
 
 		m_sprBalloon.SetName( "Balloon" );
-		TEXTUREMAN->CacheTexture( THEME->GetPathG("ScreenSelectMusic","balloon long") );
-		TEXTUREMAN->CacheTexture( THEME->GetPathG("ScreenSelectMusic","balloon marathon") );
+		m_TexturePreload.Load( THEME->GetPathG("ScreenSelectMusic","balloon long") );
+		m_TexturePreload.Load( THEME->GetPathG("ScreenSelectMusic","balloon marathon") );
 		this->AddChild( &m_sprBalloon );
 
 		m_soundOptionsChange.Load( THEME->GetPathS("ScreenEz2SelectMusic","options") );
