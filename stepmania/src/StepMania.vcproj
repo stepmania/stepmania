@@ -2271,6 +2271,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\RageTextureManager.h">
 			</File>
 			<File
+				RelativePath="RageTexturePreloader.cpp">
+			</File>
+			<File
+				RelativePath="RageTexturePreloader.h">
+			</File>
+			<File
 				RelativePath="RageThreads.cpp">
 			</File>
 			<File
