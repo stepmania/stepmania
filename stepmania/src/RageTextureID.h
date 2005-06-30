@@ -55,7 +55,7 @@ struct RageTextureID
 	 * Note that this property is not considered for ordering/equality.  Loading
 	 * a texture with a different loading policy will reuse the same texture with
 	 * a different policy. */
-	enum TexPolicy { TEX_CACHED, TEX_VOLATILE, TEX_DEFAULT } Policy;
+	enum TexPolicy { TEX_VOLATILE, TEX_DEFAULT } Policy;
 
 	void Init();
 

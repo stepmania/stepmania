@@ -58,7 +58,6 @@ public:
 	RageTexture* LoadTexture( RageTextureID ID );
 	bool IsTextureRegistered( RageTextureID ID ) const;
 	void RegisterTexture( RageTextureID ID, RageTexture *p );
-	void CacheTexture( RageTextureID ID );
 	void VolatileTexture( RageTextureID ID );
 	void UnloadTexture( RageTexture *t );
 	void ReloadAll();

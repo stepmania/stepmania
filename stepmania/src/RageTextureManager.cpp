@@ -6,10 +6,6 @@
  *          This is what you get if you call LoadTexture() on a texture that isn't
  *          loaded.
  *
- * Cached:  When DelayedDelete is off, delete unused textures when we change screens.
- *          When on, treat as Default.  This is used to precache textures that aren't
- *          loaded immediately; use CacheTexture.
- *
  * Volatile: Delete unused textures once they've been used at least once.  Ignore
  *           DelayedDelete.
  *
@@ -20,12 +16,11 @@
  *           player could actually view all banners long enough to transition to them
  *           all in the course of one song select screen.
  *
- * Policy priority is in the order CACHED, VOLATILE, DEFAULT.  Textures that are loaded
- * DEFAULT can be changed to VOLATILE and CACHED; VOLATILE textures can only be changed
- * to CACHED.  CACHED flags are normally set explicitly on a per-texture basis.  VOLATILE
- * flags are set for all banners, but banners which are explicitly set to CACHED should
- * stay CACHED.  Finally, all textures, when they're finally used, are loaded as NORMAL,
- * and that should never override.
+ * Policy priority is in the order VOLATILE, DEFAULT.  Textures that are loaded
+ * DEFAULT can be changed to VOLATILE.  CACHED flags are normally set explicitly
+ * on a per-texture basis.  VOLATILE flags are set for all banners, but banners
+ * which are explicitly set to CACHED should stay CACHED.  Finally, all textures,
+ * when they're finally used, are loaded as NORMAL, and that should never override.
  */
 	
 #include "global.h"
@@ -144,13 +139,6 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	return pTexture;
 }
 
-void RageTextureManager::CacheTexture( RageTextureID ID )
-{
-	RageTexture* pTexture = LoadTextureInternal( ID );
-	pTexture->GetPolicy() = min( pTexture->GetPolicy(), RageTextureID::TEX_CACHED );
-	UnloadTexture( pTexture );
-}
-
 void RageTextureManager::VolatileTexture( RageTextureID ID )
 {
 	RageTexture* pTexture = LoadTextureInternal( ID );
@@ -231,10 +219,6 @@ void RageTextureManager::GarbageCollect( GCType type )
 				/* If m_bDelayedDelete, wait until delayed_delete.  If !m_bDelayedDelete,
 				 * it should have been deleted when it reached no references, but we
 				 * might have just changed the preference. */
-				if( !m_Prefs.m_bDelayedDelete )
-					bDeleteThis = true;
-				break;
-			case RageTextureID::TEX_CACHED:
 				if( !m_Prefs.m_bDelayedDelete )
 					bDeleteThis = true;
 				break;
