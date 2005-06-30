@@ -229,7 +229,7 @@ CourseContentsList.cpp CourseContentsList.h CourseEntryDisplay.cpp CourseEntryDi
 DifficultyDisplay.cpp DifficultyDisplay.h DifficultyList.cpp DifficultyList.h \
 DifficultyMeter.cpp DifficultyMeter.h DifficultyRating.cpp DifficultyRating.h \
 DualScrollBar.cpp DualScrollBar.h \
-EditCoursesMenu.cpp EditCoursesMenu.h EditMenu.cpp EditMenu.h FadingBanner.cpp FadingBanner.h \
+EditMenu.cpp EditMenu.h FadingBanner.cpp FadingBanner.h \
 GradeDisplay.cpp GradeDisplay.h GraphDisplay.cpp GraphDisplay.h \
 GrooveRadar.cpp GrooveRadar.h GroupList.cpp GroupList.h HelpDisplay.cpp HelpDisplay.h \
 MemoryCardDisplay.cpp MemoryCardDisplay.h \
@@ -292,6 +292,7 @@ RageSurface_Load.cpp RageSurface_Load.h RageSurface_Load_PNG.cpp RageSurface_Loa
 RageSurface_Load_JPEG.cpp RageSurface_Load_JPEG.h RageSurface_Load_GIF.cpp RageSurface_Load_GIF.h \
 RageSurface_Load_BMP.cpp RageSurface_Load_BMP.h \
 RageSurface_Load_XPM.cpp RageSurface_Load_XPM.h RageTexture.cpp RageTexture.h \
+RageTexturePreloader.cpp RageTexturePreloader.h \
 RageSurface_Save_BMP.cpp RageSurface_Save_BMP.h \
 RageTextureID.cpp RageTextureID.h RageTextureManager.cpp RageTextureManager.h RageThreads.cpp RageThreads.h \
 RageTimer.cpp RageTimer.h RageTypes.h RageUtil.cpp RageUtil.h RageUtil_CharConversions.cpp RageUtil_CharConversions.h \
