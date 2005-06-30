@@ -18,6 +18,7 @@ struct lua_State;
 #include "Difficulty.h"
 #include "Course.h"
 #include "ThemeMetric.h"
+#include "RageTexturePreloader.h"
 
 class SongManager
 {
@@ -128,6 +129,7 @@ protected:
 	CStringArray		m_sCourseGroupNames;
 	CStringArray		m_sCourseGroupBannerPaths; // each course group may have a banner associated with it
 
+	RageTexturePreloader m_TexturePreload;
 
 	ThemeMetric<int>			NUM_SONG_GROUP_COLORS;
 	ThemeMetric1D<RageColor>	SONG_GROUP_COLOR;

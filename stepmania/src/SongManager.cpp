@@ -16,7 +16,6 @@
 #include "ThemeManager.h"
 #include "GameManager.h"
 #include "RageFile.h"
-#include "RageTextureManager.h"
 #include "Sprite.h"
 #include "ProfileManager.h"
 #include "MemoryCardManager.h"
@@ -266,9 +265,12 @@ void SongManager::LoadGroupSymLinks(CString sDir, CString sGroupFolder)
 
 void SongManager::PreloadSongImages()
 {
-	ASSERT( TEXTUREMAN );
 	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_FULL )
 		return;
+
+	/* Load textures before unloading old ones, so we don't reload textures
+	 * that we don't need to. */
+	RageTexturePreloader preload;
 
 	const vector<Song*> &songs = SONGMAN->GetAllSongs();
 	for( unsigned i = 0; i < songs.size(); ++i )
@@ -277,7 +279,7 @@ void SongManager::PreloadSongImages()
 			continue;
 
 		const RageTextureID ID = Sprite::SongBannerTexture( songs[i]->GetBannerPath() );
-		TEXTUREMAN->PermanentTexture( ID );
+		preload.Load( ID );
 	}
 
 	vector<Course*> courses;
@@ -288,8 +290,10 @@ void SongManager::PreloadSongImages()
 			continue;
 
 		const RageTextureID ID = Sprite::SongBannerTexture( courses[i]->m_sBannerPath );
-		TEXTUREMAN->PermanentTexture( ID );
+		preload.Load( ID );
 	}
+
+	preload.Swap( m_TexturePreload );
 }
 
 void SongManager::FreeSongs()
