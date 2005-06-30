@@ -20,14 +20,12 @@
  *           player could actually view all banners long enough to transition to them
  *           all in the course of one song select screen.
  *
- * Permanent: Never delete the texture.  This is only used for BannerCache=2 mode.
- *
- * Policy priority is in the order PERMANENT, CACHED, VOLATILE, DEFAULT.  Textures that
- * are loaded DEFAULT can be changed to VOLATILE and CACHED; VOLATILE textures can only
- * be changed to CACHED.  CACHED flags are normally set explicitly on a per-texture
- * basis.  VOLATILE flags are set for all banners, but banners which are explicitly
- * set to CACHED should stay CACHED.  Finally, all textures, when they're finally used,
- * are loaded as NORMAL, and that should never override.
+ * Policy priority is in the order CACHED, VOLATILE, DEFAULT.  Textures that are loaded
+ * DEFAULT can be changed to VOLATILE and CACHED; VOLATILE textures can only be changed
+ * to CACHED.  CACHED flags are normally set explicitly on a per-texture basis.  VOLATILE
+ * flags are set for all banners, but banners which are explicitly set to CACHED should
+ * stay CACHED.  Finally, all textures, when they're finally used, are loaded as NORMAL,
+ * and that should never override.
  */
 	
 #include "global.h"
@@ -160,13 +158,6 @@ void RageTextureManager::VolatileTexture( RageTextureID ID )
 	UnloadTexture( pTexture );
 }
 
-void RageTextureManager::PermanentTexture( RageTextureID ID )
-{
-	RageTexture* pTexture = LoadTextureInternal( ID );
-	pTexture->GetPolicy() = min( pTexture->GetPolicy(), RageTextureID::TEX_PERMANENT );
-	UnloadTexture( pTexture );
-}
-
 void RageTextureManager::UnloadTexture( RageTexture *t )
 {
 	if( t == NULL )
@@ -178,8 +169,6 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 	if( t->m_iRefCount )
 		return; /* Can't unload textures that are still referenced. */
 
-	if( t->GetPolicy() == RageTextureID::TEX_PERMANENT )
-		return; /* Never unload TEX_PERMANENT textures. */
 	bool bDeleteThis = false;
 
 	/* Always unload movies, so we don't waste time decoding. */
@@ -232,8 +221,6 @@ void RageTextureManager::GarbageCollect( GCType type )
 
 		if( t->m_iRefCount )
 			continue; /* Can't unload textures that are still referenced. */
-		if( t->GetPolicy() == RageTextureID::TEX_PERMANENT )
-			return; /* Never unload TEX_PERMANENT textures. */
 
 		bool bDeleteThis = false;
 		if( type==screen_changed )
