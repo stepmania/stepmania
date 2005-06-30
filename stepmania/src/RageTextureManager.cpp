@@ -16,11 +16,8 @@
  *           player could actually view all banners long enough to transition to them
  *           all in the course of one song select screen.
  *
- * Policy priority is in the order VOLATILE, DEFAULT.  Textures that are loaded
- * DEFAULT can be changed to VOLATILE.  CACHED flags are normally set explicitly
- * on a per-texture basis.  VOLATILE flags are set for all banners, but banners
- * which are explicitly set to CACHED should stay CACHED.  Finally, all textures,
- * when they're finally used, are loaded as NORMAL, and that should never override.
+ * If a texture is loaded as DEFAULT that was already loaded as VOLATILE, DEFAULT
+ * overrides.
  */
 	
 #include "global.h"
