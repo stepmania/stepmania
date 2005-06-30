@@ -3,8 +3,6 @@
  *
  * Default: When DelayedDelete is off, delete unused textures immediately.
  *          When on, only delete textures when we change themes, on DoDelayedDelete().
- *          This is what you get if you call LoadTexture() on a texture that isn't
- *          loaded.
  *
  * Volatile: Delete unused textures once they've been used at least once.  Ignore
  *           DelayedDelete.
