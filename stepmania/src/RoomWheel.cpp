@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RoomWheel.h"
 #include "RageLog.h"
+#include "RageUtil.h"
 #include "ScreenManager.h"
 
 AutoScreenMessage( SM_BackFromRoomName )
