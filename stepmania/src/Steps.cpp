@@ -33,7 +33,7 @@ Steps::Steps()
 	m_Difficulty = DIFFICULTY_INVALID;
 	m_iMeter = 0;
 
-	m_NoteData.Init();
+	m_pNoteData = new NoteData;
 	m_bNoteDataIsFilled = false;
 	m_sNoteDataCompressed = "";
 	parent = NULL;
@@ -41,6 +41,7 @@ Steps::Steps()
 
 Steps::~Steps()
 {
+	delete m_pNoteData;
 }
 
 void Steps::SetNoteData( const NoteData& noteDataNew )
@@ -49,10 +50,10 @@ void Steps::SetNoteData( const NoteData& noteDataNew )
 
 	DeAutogen();
 
-	m_NoteData = noteDataNew;
+	*m_pNoteData = noteDataNew;
 	m_bNoteDataIsFilled = true;
 	
-	NoteDataUtil::GetSMNoteDataString( m_NoteData, m_sNoteDataCompressed );
+	NoteDataUtil::GetSMNoteDataString( *m_pNoteData, m_sNoteDataCompressed );
 	m_uHash = GetHashForString( m_sNoteDataCompressed );
 }
 
@@ -64,7 +65,7 @@ void Steps::GetNoteData( NoteData& noteDataOut ) const
 
 	if( m_bNoteDataIsFilled )
 	{
-		noteDataOut = m_NoteData;
+		noteDataOut = *m_pNoteData;
 	}
 	else
 	{
@@ -75,7 +76,7 @@ void Steps::GetNoteData( NoteData& noteDataOut ) const
 
 void Steps::SetSMNoteData( const CString &notes_comp_ )
 {
-	m_NoteData.Init();
+	m_pNoteData->Init();
 	m_bNoteDataIsFilled = false;
 
 	m_sNoteDataCompressed = notes_comp_;
@@ -94,7 +95,7 @@ void Steps::GetSMNoteData( CString &notes_comp_out ) const
 			return;
 		}
 
-		NoteDataUtil::GetSMNoteDataString( m_NoteData, m_sNoteDataCompressed );
+		NoteDataUtil::GetSMNoteDataString( *m_pNoteData, m_sNoteDataCompressed );
 	}
 
 	notes_comp_out = m_sNoteDataCompressed;
@@ -168,7 +169,7 @@ void Steps::Decompress() const
 
 	if(parent)
 	{
-		// get autogen m_NoteData
+		// get autogen m_pNoteData
 		NoteData notedata;
 		parent->GetNoteData( notedata );
 
@@ -178,13 +179,13 @@ void Steps::Decompress() const
 
 		if( this->m_StepsType == STEPS_TYPE_LIGHTS_CABINET )
 		{
-			NoteDataUtil::LoadTransformedLights( notedata, m_NoteData, iNewTracks );
+			NoteDataUtil::LoadTransformedLights( notedata, *m_pNoteData, iNewTracks );
 		}
 		else
 		{
-			NoteDataUtil::LoadTransformedSlidingWindow( notedata, m_NoteData, iNewTracks );
+			NoteDataUtil::LoadTransformedSlidingWindow( notedata, *m_pNoteData, iNewTracks );
 
-			NoteDataUtil::RemoveStretch( m_NoteData, m_StepsType );
+			NoteDataUtil::RemoveStretch( *m_pNoteData, m_StepsType );
 		}
 		return;
 	}
@@ -222,9 +223,9 @@ void Steps::Decompress() const
 	{
 		// load from compressed
 		m_bNoteDataIsFilled = true;
-		m_NoteData.SetNumTracks( GameManager::StepsTypeToNumTracks(m_StepsType) );
+		m_pNoteData->SetNumTracks( GameManager::StepsTypeToNumTracks(m_StepsType) );
 
-		NoteDataUtil::LoadFromSMNoteDataString( m_NoteData, m_sNoteDataCompressed );
+		NoteDataUtil::LoadFromSMNoteDataString( *m_pNoteData, m_sNoteDataCompressed );
 	}
 }
 
@@ -240,7 +241,7 @@ void Steps::Compress() const
 	if( !m_sFilename.empty() )
 	{
 		/* We have a file on disk; clear all data in memory. */
-		m_NoteData.Init();
+		m_pNoteData->Init();
 		m_bNoteDataIsFilled = false;
 
 		/* Be careful; 'x = ""', m_sNoteDataCompressed.clear() and m_sNoteDataCompressed.reserve(0)
@@ -256,10 +257,10 @@ void Steps::Compress() const
 	{
 		if( !m_bNoteDataIsFilled )
 			return; /* no data is no data */
-		NoteDataUtil::GetSMNoteDataString( m_NoteData, m_sNoteDataCompressed );
+		NoteDataUtil::GetSMNoteDataString( *m_pNoteData, m_sNoteDataCompressed );
 	}
 
-	m_NoteData.Init();
+	m_pNoteData->Init();
 	m_bNoteDataIsFilled = false;
 }
 
@@ -270,7 +271,7 @@ void Steps::DeAutogen()
 	if(!parent)
 		return; /* OK */
 
-	Decompress();	// fills in m_NoteData with sliding window transform
+	Decompress();	// fills in m_pNoteData with sliding window transform
 
 	m_sDescription	= Real()->m_sDescription;
 	m_Difficulty	= Real()->m_Difficulty;

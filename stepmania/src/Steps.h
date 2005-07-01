@@ -8,7 +8,6 @@
 #include "Grade.h"
 #include "RadarValues.h"
 #include "Difficulty.h"
-#include "NoteData.h"
 class Profile;
 struct lua_State;
 
@@ -76,7 +75,7 @@ protected:
 	/* We can have one or both of these; if we have both, they're always identical.
 	 * Call Compress() to force us to only have m_sNoteDataCompressed; otherwise, creation of 
 	 * these is transparent. */
-	mutable NoteData m_NoteData;
+	mutable NoteData *m_pNoteData;
 	mutable bool m_bNoteDataIsFilled;
 	mutable CString m_sNoteDataCompressed;
 
