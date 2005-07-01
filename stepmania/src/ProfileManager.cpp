@@ -21,6 +21,7 @@
 #include "XmlFile.h"
 #include "StepsUtil.h"
 #include "Style.h"
+#include "HighScore.h"
 
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
@@ -82,7 +83,7 @@ void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut ) const
 }
 
 
-Profile::LoadResult ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard )
+int ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard )
 {
 	LOG->Trace( "LoadingProfile P%d, %s, %d", pn+1, sProfileDir.c_str(), bIsMemCard );
 
@@ -180,7 +181,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 		 * but we also want to import scores in the case where the player created
 		 * a directory for edits before playing, so keep searching if the directory
 		 * exists with exists with no scores. */
-		Profile::LoadResult res = LoadProfile( pn, sDir, true );
+		Profile::LoadResult res = (Profile::LoadResult) LoadProfile( pn, sDir, true );
 		if( res == Profile::success )
 		{
 			iLoadedFrom = i;
@@ -478,8 +479,9 @@ int ProfileManager::GetSongNumTimesPlayed( const Song* pSong, ProfileSlot slot )
 	return GetProfile(slot)->GetSongNumTimesPlayed( pSong );
 }
 
-void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
+void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, const HighScore &hs_, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
+	HighScore hs = hs_;
 	hs.fPercentDP = max( 0, hs.fPercentDP );	// bump up negative scores
 
 	iPersonalIndexOut = -1;
@@ -528,7 +530,7 @@ void ProfileManager::IncrementStepsPlayCount( const Song* pSong, const Steps* pS
 	PROFILEMAN->GetMachineProfile()->IncrementStepsPlayCount( pSong, pSteps );
 }
 
-HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc ) const
+void ProfileManager::GetHighScoreForDifficulty( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc, HighScore &hsOut ) const
 {
 	// return max grade of notes in difficulty class
 	vector<Steps*> aNotes;
@@ -538,17 +540,18 @@ HighScore ProfileManager::GetHighScoreForDifficulty( const Song *s, const Style 
 	const Steps* pSteps = s->GetStepsByDifficulty( st->m_StepsType, dc );
 
 	if( pSteps && PROFILEMAN->IsPersistentProfile(slot) )
-		return PROFILEMAN->GetProfile(slot)->GetStepsHighScoreList(s,pSteps).GetTopScore();
+		hsOut = PROFILEMAN->GetProfile(slot)->GetStepsHighScoreList(s,pSteps).GetTopScore();
 	else
-		return HighScore();
+		hsOut = HighScore();
 }
 
 
 //
 // Course stats
 //
-void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
+void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, const HighScore &hs_, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
+	HighScore hs = hs_;
 	hs.fPercentDP = max( 0, hs.fPercentDP );	// bump up negative scores
 
 	iPersonalIndexOut = -1;
@@ -597,8 +600,9 @@ void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, const Trai
 //
 // Category stats
 //
-void ProfileManager::AddCategoryScore( StepsType st, RankingCategory rc, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut )
+void ProfileManager::AddCategoryScore( StepsType st, RankingCategory rc, PlayerNumber pn, const HighScore &hs_, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
+	HighScore hs = hs_;
 	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
 	if( PROFILEMAN->IsPersistentProfile(pn) )
 		PROFILEMAN->GetProfile(pn)->AddCategoryHighScore( st, rc, hs, iPersonalIndexOut );

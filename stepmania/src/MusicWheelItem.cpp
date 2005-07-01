@@ -15,6 +15,7 @@
 #include "ProfileManager.h"
 #include "ActorUtil.h"
 #include "ThemeMetric.h"
+#include "HighScore.h"
 
 CString GRADE_X_NAME( size_t p ) { return ssprintf("GradeP%dX",int(p+1)); }
 CString GRADE_Y_NAME( size_t p ) { return ssprintf("GradeP%dY",int(p+1)); }
@@ -253,13 +254,14 @@ void MusicWheelItem::RefreshGrades()
 			dc = GAMESTATE->m_pCurSteps[p]->GetDifficulty();
 		else
 			dc = GAMESTATE->m_PreferredDifficulty[p];
-		Grade grade;
-		if( PROFILEMAN->IsPersistentProfile(p) )
-			grade = PROFILEMAN->GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle(), (ProfileSlot)p, dc ).grade;
-		else
-			grade = PROFILEMAN->GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle(), PROFILE_SLOT_MACHINE, dc ).grade;
 
-		m_GradeDisplay[p].SetGrade( p, grade );
+		HighScore hs;
+		if( PROFILEMAN->IsPersistentProfile(p) )
+			PROFILEMAN->GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle(), (ProfileSlot)p, dc, hs );
+		else
+			PROFILEMAN->GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle(), PROFILE_SLOT_MACHINE, dc, hs );
+
+		m_GradeDisplay[p].SetGrade( p, hs.grade );
 	}
 }
 

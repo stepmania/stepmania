@@ -5,9 +5,7 @@
 
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
-#include "HighScore.h"
 #include "Difficulty.h"
-#include "Profile.h"
 
 class Profile;
 class Song;
@@ -15,6 +13,7 @@ class Steps;
 class Style;
 class Course;
 class Trail;
+struct HighScore;
 struct lua_State;
 
 class ProfileManager
@@ -78,20 +77,20 @@ public:
 	//
 	int GetSongNumTimesPlayed( const Song* pSong, ProfileSlot card ) const;
 	bool IsSongNew( const Song* pSong ) const { return GetSongNumTimesPlayed(pSong,PROFILE_SLOT_MACHINE)==0; }
-	void AddStepsScore( const Song* pSong, const Steps* pSteps , PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
+	void AddStepsScore( const Song* pSong, const Steps* pSteps , PlayerNumber pn, const HighScore &hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn );
-	HighScore GetHighScoreForDifficulty( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc ) const;
+	void GetHighScoreForDifficulty( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc, HighScore &hsOut ) const;
 
 	//
 	// Course stats
 	//
-	void AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
+	void AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, const HighScore &hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementCoursePlayCount( const Course* pCourse, const Trail* pTrail, PlayerNumber pn );
 
 	//
 	// Category stats
 	//
-	void AddCategoryScore( StepsType st, RankingCategory rc, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
+	void AddCategoryScore( StepsType st, RankingCategory rc, PlayerNumber pn, const HighScore &hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementCategoryPlayCount( StepsType st, RankingCategory rc, PlayerNumber pn );
 
 
@@ -99,7 +98,8 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	Profile::LoadResult LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );
+	// returns Profile::LoadResult, but we don't want to depend on Profile
+	int LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );
 	void GetMemoryCardProfileDirectoriesToTry( vector<CString> &asDirsToTry ) const;
 
 	// Directory that contains the profile.  Either on local machine or
