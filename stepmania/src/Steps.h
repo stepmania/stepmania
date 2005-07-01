@@ -9,6 +9,7 @@
 #include "RadarValues.h"
 #include "Difficulty.h"
 class Profile;
+class NoteData;
 struct lua_State;
 
 const int MAX_EDIT_DESCRIPTION_LENGTH = 12;
