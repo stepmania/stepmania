@@ -28,22 +28,22 @@ void RoomWheel::Load( CString sType )
 
 	AddPerminateItem( new RoomWheelData(TYPE_GENERIC, "Create Room", "Create a new game room", THEME->GetMetricC( m_sName, "CreateRoomColor")) );
 
-	BuildWheelItemsData(m_WheelBaseItemsData);
+	BuildWheelItemsData( m_WheelBaseItemsData );
 	RebuildWheelItems();
 }
 
 
-RoomWheelData::RoomWheelData(WheelItemType wit, CString sTitle, CString sDesc, RageColor color )
-	:WheelItemBaseData(wit, sTitle, color)
+RoomWheelData::RoomWheelData( WheelItemType wit, CString sTitle, CString sDesc, RageColor color ):
+	WheelItemBaseData( wit, sTitle, color )
 {
 	m_sDesc = sDesc;
 }
 
-RoomWheelItem::RoomWheelItem(CString sType)
-:WheelItemBase(sType)
+RoomWheelItem::RoomWheelItem( CString sType ):
+	WheelItemBase(sType)
 {
-	SetName(sType);
-	Load(sType);
+	SetName( sType );
+	Load( sType );
 }
 
 void RoomWheelItem::Load(CString sType)
@@ -61,7 +61,7 @@ void RoomWheelItem::Load(CString sType)
 	m_Desc.LoadFromFont( THEME->GetPathF("RoomWheel","text") );
 	m_Desc.SetHorizAlignString("left");
 	m_Desc.SetShadowLength( 0 );
-	m_Desc.SetMaxWidth(DESC_WIDTH);
+	m_Desc.SetMaxWidth( DESC_WIDTH );
 	m_Desc.SetXY( DESC_X, DESC_Y);
 	m_Desc.RunCommands( DESC_ON_COMMAND );
 	this->AddChild( &m_Desc );
@@ -83,24 +83,24 @@ void RoomWheel::AddPerminateItem(RoomWheelData* itemdata)
 
 bool RoomWheel::Select()
 {
-	if (m_iSelection > 0)
+	if( m_iSelection > 0 )
 		return WheelBase::Select();
-	else if (m_iSelection == 0)
+	else if( m_iSelection == 0 )
 	{
-		//Since this is not actually an option outside of this wheel NULL is a good idea.
+		// Since this is not actually an option outside of this wheel NULL is a good idea.
 		m_LastSelection = NULL;
 		SCREENMAN->TextEntry( SM_BackFromRoomName, "Enter Room Name:", "", 255 );
 	}
 	return false;
 }
 
-void RoomWheelItem::LoadFromWheelItemBaseData(WheelItemBaseData* pWID)
+void RoomWheelItem::LoadFromWheelItemBaseData( WheelItemBaseData* pWID )
 {
-	RoomWheelData* tmpdata = (RoomWheelData*)pWID;
-	WheelItemBase::LoadFromWheelItemBaseData(pWID);
-	m_Desc.SetText(tmpdata->m_sDesc);
-	m_Desc.SetDiffuseColor(pWID->m_color);
-	m_text.SetDiffuseColor(pWID->m_color);
+	RoomWheelData* tmpdata = (RoomWheelData*) pWID;
+	WheelItemBase::LoadFromWheelItemBaseData( pWID );
+	m_Desc.SetText( tmpdata->m_sDesc );
+	m_Desc.SetDiffuseColor( pWID->m_color );
+	m_text.SetDiffuseColor( pWID->m_color );
 }
 
 /*
