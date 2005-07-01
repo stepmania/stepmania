@@ -6,6 +6,7 @@
 #include "Steps.h"
 #include "RageLog.h"
 #include "ProfileManager.h"
+#include "Profile.h"
 #include "SongManager.h"
 #include "Course.h"
 #include "Style.h"

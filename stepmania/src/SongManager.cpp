@@ -23,6 +23,7 @@
 #include "SongUtil.h"
 #include "StepsUtil.h"
 #include "CourseUtil.h"
+#include "TrailUtil.h"
 #include "RageFileManager.h"
 #include "UnlockManager.h"
 #include "Foreach.h"

@@ -3,8 +3,10 @@
 #include "GameState.h"
 #include "Foreach.h"
 #include "ProfileManager.h"
+#include "Profile.h"
 #include "PrefsManager.h"
 #include "Steps.h"
+#include "StyleUtil.h"
 
 StatsManager*	STATSMAN = NULL;	// global object accessable from anywhere in the program
 

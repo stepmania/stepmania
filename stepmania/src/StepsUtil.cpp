@@ -2,6 +2,7 @@
 #include "StepsUtil.h"
 #include "Steps.h"
 #include "ProfileManager.h"
+#include "Profile.h"
 #include "song.h"
 #include "SongManager.h"
 #include "GameManager.h"

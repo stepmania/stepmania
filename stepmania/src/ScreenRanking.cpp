@@ -10,6 +10,7 @@
 #include "PrefsManager.h"
 #include "ActorUtil.h"
 #include "ProfileManager.h"
+#include "Profile.h"
 #include "RageLog.h"
 #include "UnlockManager.h"
 #include "ScreenDimensions.h"

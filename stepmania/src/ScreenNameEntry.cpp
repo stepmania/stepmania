@@ -14,6 +14,7 @@
 #include "Course.h"
 #include "AnnouncerManager.h"
 #include "ProfileManager.h"
+#include "Profile.h"
 #include "NoteFieldPositioning.h"
 #include "StageStats.h"
 #include "Game.h"

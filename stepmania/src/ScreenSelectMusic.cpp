@@ -18,6 +18,7 @@
 #include "RageTextureManager.h"
 #include "Course.h"
 #include "ProfileManager.h"
+#include "Profile.h"
 #include "MenuTimer.h"
 #include "LightsManager.h"
 #include "StatsManager.h"

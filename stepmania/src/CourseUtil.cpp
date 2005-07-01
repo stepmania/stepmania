@@ -3,6 +3,7 @@
 #include "Course.h"
 #include "RageTimer.h"
 #include "ProfileManager.h"
+#include "Profile.h"
 #include "SongManager.h"
 #include "XmlFile.h"
 #include "GameState.h"

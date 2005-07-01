@@ -6,6 +6,7 @@
 #include "AnnouncerManager.h"
 #include "song.h"
 #include "ProfileManager.h"
+#include "Profile.h"
 #include "ActorUtil.h"
 #include "GameState.h"
 #include "MemoryCardManager.h"

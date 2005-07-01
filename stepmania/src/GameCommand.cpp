@@ -7,6 +7,7 @@
 #include "RageDisplay.h"
 #include "AnnouncerManager.h"
 #include "ProfileManager.h"
+#include "Profile.h"
 #include "StepMania.h"
 #include "ScreenManager.h"
 #include "SongManager.h"

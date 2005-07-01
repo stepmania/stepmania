@@ -5,10 +5,10 @@
 #include "GameState.h"
 #include "Style.h"
 #include "ProfileManager.h"
+#include "Profile.h"
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "XmlFile.h"
-#include "PrefsManager.h"
 #include "Foreach.h"
 #include "UnlockManager.h"
 

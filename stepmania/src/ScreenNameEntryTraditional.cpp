@@ -18,6 +18,7 @@
 #include "song.h"
 #include "Steps.h"
 #include "ProfileManager.h"
+#include "Profile.h"
 #include "StatsManager.h"
 #include "RageDisplay.h"
 #include "Foreach.h"

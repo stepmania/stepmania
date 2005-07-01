@@ -4,6 +4,7 @@
 #include "song.h"
 #include "GameManager.h"
 #include "SongManager.h"
+#include "SongUtil.h"
 #include "GameState.h"
 #include "RageException.h"
 #include "RageLog.h"

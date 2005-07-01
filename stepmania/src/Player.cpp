@@ -36,6 +36,7 @@
 #include "Style.h"
 #include "MessageManager.h"
 #include "ProfileManager.h"
+#include "Profile.h"
 #include "StatsManager.h"
 
 CString JUDGMENT_X_NAME( size_t p, size_t both_sides )		{ return "JudgmentXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
