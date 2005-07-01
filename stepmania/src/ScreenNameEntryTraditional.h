@@ -5,13 +5,12 @@
 
 #include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
-#include "RandomSample.h"
 #include "GradeDisplay.h"
 #include "Banner.h"
 #include "HighScore.h"
 #include "DifficultyIcon.h"
 #include "PercentageDisplay.h"
-#include "BGAnimation.h"
+#include "ActorScroller.h"
 #include "ThemeMetric.h"
 #include "DifficultyMeter.h"
 
