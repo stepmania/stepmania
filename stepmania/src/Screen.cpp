@@ -7,7 +7,6 @@
 #include "ThemeManager.h"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
-#include "ProfileManager.h"
 #include "ActorUtil.h"
 
 #define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
