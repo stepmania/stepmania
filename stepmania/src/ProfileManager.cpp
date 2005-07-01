@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ProfileManager.h"
+#include "Profile.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
@@ -36,10 +37,16 @@ static Preference<CString> g_sMemoryCardProfileImportSubdirs( "MemoryCardProfile
 
 ProfileManager::ProfileManager()
 {
+	m_pMachineProfile = new Profile;
+	FOREACH_PlayerNumber(pn)
+		m_pProfile[pn] = new Profile;
 }
 
 ProfileManager::~ProfileManager()
 {
+	delete m_pMachineProfile;
+	FOREACH_PlayerNumber(pn)
+		delete m_pProfile[pn];
 }
 
 void ProfileManager::Init()
@@ -77,7 +84,7 @@ void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut ) const
 
 Profile::LoadResult ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard )
 {
-  LOG->Trace( "LoadingProfile P%d, %s, %d", pn+1, sProfileDir.c_str(), bIsMemCard );
+	LOG->Trace( "LoadingProfile P%d, %s, %d", pn+1, sProfileDir.c_str(), bIsMemCard );
 
 	ASSERT( !sProfileDir.empty() );
 	ASSERT( sProfileDir.Right(1) == "/" );
@@ -88,7 +95,7 @@ Profile::LoadResult ProfileManager::LoadProfile( PlayerNumber pn, CString sProfi
 	m_bLastLoadWasFromLastGood[pn] = false;
 
 	// Try to load the original, non-backup data.
-	Profile::LoadResult lr = m_Profile[pn].LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
+	Profile::LoadResult lr = m_pProfile[pn]->LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
 	
 	CString sBackupDir = m_sProfileDir[pn] + LAST_GOOD_DIR;
 
@@ -102,11 +109,12 @@ Profile::LoadResult ProfileManager::LoadProfile( PlayerNumber pn, CString sProfi
 
 	m_bLastLoadWasTamperedOrCorrupt[pn] = lr == Profile::failed_tampered;
 
+	//
 	// Try to load from the backup if the original data fails to load
 	//
 	if( lr == Profile::failed_tampered )
 	{
-		lr = m_Profile[pn].LoadAllFromDir( sBackupDir, PREFSMAN->m_bSignProfileData );
+		lr = m_pProfile[pn]->LoadAllFromDir( sBackupDir, PREFSMAN->m_bSignProfileData );
 		m_bLastLoadWasFromLastGood[pn] = lr == Profile::success;
 
 		/* If the LastGood profile doesn't exist at all, and the actual profile was failed_tampered,
@@ -260,7 +268,7 @@ bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 	if( m_sProfileDir[pn].empty() )
 		return false;
 
-	bool b = m_Profile[pn].SaveAllToDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
+	bool b = m_pProfile[pn]->SaveAllToDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
 
 	return b;
 }
@@ -272,7 +280,7 @@ void ProfileManager::UnloadProfile( PlayerNumber pn )
 	m_bWasLoadedFromMemoryCard[pn] = false;
 	m_bLastLoadWasTamperedOrCorrupt[pn] = false;
 	m_bLastLoadWasFromLastGood[pn] = false;
-	m_Profile[pn].InitAll();
+	m_pProfile[pn]->InitAll();
 	SONGMAN->FreeAllLoadedFromProfile( (ProfileSlot) pn );
 }
 
@@ -280,7 +288,7 @@ const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
 {
 	ASSERT( pn >= 0 && pn<NUM_PLAYERS );
 
-	return &m_Profile[pn];
+	return m_pProfile[pn];
 }
 
 CString ProfileManager::GetPlayerName( PlayerNumber pn ) const
@@ -364,22 +372,22 @@ void ProfileManager::SaveMachineProfile() const
 	// If the machine name has changed, make sure we use the new name.
 	// It's important that this name be applied before the Player profiles 
 	// are saved, so that the Player's profiles show the right machine name.
-	const_cast<ProfileManager *> (this)->m_MachineProfile.m_sDisplayName = PREFSMAN->m_sMachineName;
+	const_cast<ProfileManager *> (this)->m_pMachineProfile->m_sDisplayName = PREFSMAN->m_sMachineName;
 
-	m_MachineProfile.SaveAllToDir( MACHINE_PROFILE_DIR, false ); /* don't sign machine profiles */
+	m_pMachineProfile->SaveAllToDir( MACHINE_PROFILE_DIR, false ); /* don't sign machine profiles */
 }
 
 void ProfileManager::LoadMachineProfile()
 {
-	Profile::LoadResult lr = m_MachineProfile.LoadAllFromDir(MACHINE_PROFILE_DIR, false);
+	Profile::LoadResult lr = m_pMachineProfile->LoadAllFromDir(MACHINE_PROFILE_DIR, false);
 	if( lr == Profile::failed_no_profile )
 	{
 		Profile::CreateNewProfile(MACHINE_PROFILE_DIR, "Machine");
-		m_MachineProfile.LoadAllFromDir( MACHINE_PROFILE_DIR, false );
+		m_pMachineProfile->LoadAllFromDir( MACHINE_PROFILE_DIR, false );
 	}
 
 	// If the machine name has changed, make sure we use the new name
-	m_MachineProfile.m_sDisplayName = PREFSMAN->m_sMachineName;
+	m_pMachineProfile->m_sDisplayName = PREFSMAN->m_sMachineName;
 
 	SONGMAN->FreeAllLoadedFromProfile( PROFILE_SLOT_MACHINE );
 	SONGMAN->LoadAllFromProfileDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
@@ -437,9 +445,9 @@ const Profile* ProfileManager::GetProfile( ProfileSlot slot ) const
 		if( m_sProfileDir[slot].empty() )
 			return NULL;
 		else
-			return &m_Profile[slot];
+			return m_pProfile[slot];
 	case PROFILE_SLOT_MACHINE:
-		return &m_MachineProfile;
+		return m_pMachineProfile;
 	default:
 		ASSERT(0);
 	}

@@ -5,10 +5,16 @@
 
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
+#include "HighScore.h"
+#include "Difficulty.h"
 #include "Profile.h"
 
+class Profile;
 class Song;
+class Steps;
 class Style;
+class Course;
+class Trail;
 struct lua_State;
 
 class ProfileManager
@@ -59,7 +65,7 @@ public:
 	CString GetProfileDir( ProfileSlot slot ) const;
 	CString GetProfileDirImportedFrom( ProfileSlot slot ) const;
 
-	Profile* GetMachineProfile() { return &m_MachineProfile; }
+	Profile* GetMachineProfile() { return m_pMachineProfile; }
 
 	CString GetPlayerName( PlayerNumber pn ) const;
 	bool ProfileWasLoadedFromMemoryCard( PlayerNumber pn ) const;
@@ -72,7 +78,7 @@ public:
 	//
 	int GetSongNumTimesPlayed( const Song* pSong, ProfileSlot card ) const;
 	bool IsSongNew( const Song* pSong ) const { return GetSongNumTimesPlayed(pSong,PROFILE_SLOT_MACHINE)==0; }
-	void AddStepsScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
+	void AddStepsScore( const Song* pSong, const Steps* pSteps , PlayerNumber pn, HighScore hs, int &iPersonalIndexOut, int &iMachineIndexOut );
 	void IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps, PlayerNumber pn );
 	HighScore GetHighScoreForDifficulty( const Song *s, const Style *st, ProfileSlot slot, Difficulty dc ) const;
 
@@ -108,10 +114,9 @@ private:
 	bool m_bLastLoadWasFromLastGood[NUM_PLAYERS];		// if true, then m_bLastLoadWasTamperedOrCorrupt is also true
 	
 	// actual loaded profile data
-	Profile	m_Profile[NUM_PLAYERS];	
+	Profile	*m_pProfile[NUM_PLAYERS];	
 
-	Profile m_MachineProfile;
-
+	Profile *m_pMachineProfile;
 };
 
 
