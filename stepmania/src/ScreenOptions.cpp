@@ -9,7 +9,6 @@
 #include "ThemeManager.h"
 #include "InputMapper.h"
 #include "ActorUtil.h"
-#include "ProfileManager.h"
 #include "ScreenDimensions.h"
 #include "Command.h"
 

@@ -1,20 +1,5 @@
 #include "global.h"
 #include "WheelItemBase.h"
-#include "RageUtil.h"
-#include "SongManager.h"
-#include "GameManager.h"
-#include "PrefsManager.h"
-#include "ScreenManager.h"	// for sending SM_PlayMusicSample
-#include "RageLog.h"
-#include "GameConstantsAndTypes.h"
-#include "GameState.h"
-#include "ThemeManager.h"
-#include "Steps.h"
-#include "song.h"
-#include "Course.h"
-#include "ProfileManager.h"
-#include "ActorUtil.h"
-#include "ThemeMetric.h"
 
 WheelItemBaseData::WheelItemBaseData( WheelItemType wit, CString sText, RageColor color )
 {

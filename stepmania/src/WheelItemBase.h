@@ -4,12 +4,10 @@
 #define WHEELITEMBASE_H
 
 #include "ActorFrame.h"
-#include "GradeDisplay.h"
 #include "BitmapText.h"
 #include "WheelNotifyIcon.h"
-#include "TextBanner.h"
+#include "ThemeMetric.h"
 #include "GameConstantsAndTypes.h"
-#include "GameCommand.h"
 
 struct WheelItemBaseData;
 

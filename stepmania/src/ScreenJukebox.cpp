@@ -5,7 +5,6 @@
 #include "ThemeManager.h"
 #include "GameState.h"
 #include "SongManager.h"
-#include "StepMania.h"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
 #include "Steps.h"
@@ -16,7 +15,6 @@
 #include "ThemeManager.h"
 #include "Style.h"
 #include "PlayerState.h"
-#include "ProfileManager.h"
 #include "StatsManager.h"
 #include "CommonMetrics.h"
 

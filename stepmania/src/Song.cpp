@@ -21,7 +21,7 @@
 #include "RageFileManager.h"
 #include "RageSurface.h"
 #include "NoteDataUtil.h"
-#include "ProfileManager.h"
+#include "StepsUtil.h"
 #include "Foreach.h"
 #include "UnlockManager.h"
 #include "BackgroundUtil.h"
