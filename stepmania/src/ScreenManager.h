@@ -107,7 +107,6 @@ private:
 
 	Actor				*m_pSharedBGA;	// BGA object that's persistent between screens
 
-	CString				m_sLastLoadedBackgroundPath;
 	CString				m_sDelayedScreen;
 	CString				m_sSystemMessage;
 	vector<Screen*>		m_vPreparedScreens;

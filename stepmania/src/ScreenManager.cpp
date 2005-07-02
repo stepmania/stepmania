@@ -403,22 +403,20 @@ retry:
 	CString sNewBGA;
 	if( pNewScreen->UsesBackground() )
 		sNewBGA = THEME->GetPathB(sScreenName,"background");
-	if( sNewBGA.empty() )
-	{
-		SAFE_DELETE( m_pSharedBGA );
-		m_pSharedBGA = new Actor;
-		m_sLastLoadedBackgroundPath = "";
-	}
-	else if( m_sLastLoadedBackgroundPath != sNewBGA )
+	if( sNewBGA != m_pSharedBGA->GetName() )
 	{
 		// Create the new background before deleting the previous so that we keep
 		// any common textures loaded.
-		Actor *pNewBGA = ActorUtil::MakeActor( sNewBGA );
+		Actor *pNewBGA;
+		if( sNewBGA.empty() )
+			pNewBGA = new Actor;
+		else
+			pNewBGA = ActorUtil::MakeActor( sNewBGA );
+		pNewBGA->SetName( sNewBGA );
+
 		SAFE_DELETE( m_pSharedBGA );
 		m_pSharedBGA = pNewBGA;
 		m_pSharedBGA->PlayCommand( "On" );
-
-		m_sLastLoadedBackgroundPath = sNewBGA;
 	}
 
 	bool bIsOnSystemMenu = pNewScreen->GetScreenType() == system_menu;
