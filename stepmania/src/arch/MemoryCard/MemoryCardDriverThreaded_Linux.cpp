@@ -245,7 +245,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 				FILEMAN->Unmount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
 			}
 
-			ExecuteCommand( "umount -l \"" + d.sOsMountDir + "\"" );
+			ExecuteCommand( "sync; umount -l \"" + d.sOsMountDir + "\"" );
 
 			LOG->Trace( "WriteTest: %s, Name: %s", d.m_State == UsbStorageDevice::STATE_ERROR? "failed":"succeeded", d.sName.c_str() );
 		}
@@ -459,7 +459,7 @@ void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice )
 	 * by new devices until those are closed.  Without this, if something
 	 * causes the device to not unmount here, we'll never unmount it; that
 	 * causes a device name leak, eventually running us out of mountpoints. */
-	CString sCommand = "umount -l \"" + pDevice->sDevice + "\"";
+	CString sCommand = "sync; umount -l \"" + pDevice->sDevice + "\"";
 	ExecuteCommand( sCommand );
 }
 
@@ -469,11 +469,8 @@ void MemoryCardDriverThreaded_Linux::Flush( UsbStorageDevice* pDevice )
 		return;
 	
 	// "sync" will only flush all file systems at the same time.  -Chris
-	// I don't think so.  Also, sync() merely queues a flush; it doesn't guarantee
-	// that the flush is completed on return.  However, we can mount the filesystem
-	// with the flag "-o sync", which forces synchronous access (but that's probably
-	// very slow.) -glenn
-	ExecuteCommand( "mount -o remount " + pDevice->sDevice );
+	// That's OK.
+	ExecuteCommand( "sync" );
 }
 
 /*
