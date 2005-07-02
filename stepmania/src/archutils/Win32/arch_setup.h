@@ -71,6 +71,11 @@ typedef unsigned int uint32_t;
 typedef __int64 int64_t;
 typedef unsigned __int64 uint64_t;
 static inline int64_t llabs( int64_t i ) { return i >= 0? i: -i; }
+
+#if _MSC_VER < 1300 /* VC6 */
+typedef unsigned int uintptr_t;
+#endif
+
 #endif
 
 #if defined(_MSC_VER)
