@@ -9,6 +9,7 @@
 #include "RageFileDriver.h"
 #include "RageFileDriverTimeout.h"
 #include "ScreenManager.h"
+#include "MessageManager.h"
 #include "ProfileManager.h"
 #include "Foreach.h"
 #include "RageUtil_WorkerThread.h"
