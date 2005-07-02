@@ -9,9 +9,9 @@
 #include "GameInput.h"
 #include "MenuInput.h"
 #include "StyleInput.h"
-#include "BitmapText.h"
 #include "RageSound.h"
 
+class Actor;
 class Screen;
 struct Menu;
 class BGAnimation;
