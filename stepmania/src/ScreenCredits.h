@@ -6,7 +6,6 @@
 #include "ScreenAttract.h"
 #include "Transition.h"
 #include "ActorScroller.h"
-#include "BGAnimation.h"
 
 
 class ScreenCredits : public ScreenAttract
