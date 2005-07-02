@@ -295,7 +295,6 @@ int RageFileObjDeflate::FlushInternal()
 				SetError( m_pFile->GetError() );
 				return -1;
 			}
-			LOG->Trace("FlushInternal: wrote %i/%i", iRet, iBytes);
 			if( iRet < iBytes )
 			{
 				SetError( "Partial write" );
