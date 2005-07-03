@@ -339,6 +339,9 @@ void ScreenManager::ClearScreenStack()
 /* Add a screen to m_ScreenStack.  This is the only function that adds to m_ScreenStack. */
 void ScreenManager::SetFromNewScreen( Screen *pNewScreen )
 {
+	if( m_ScreenStack.size() )
+		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
+
 	m_ScreenStack.push_back( pNewScreen );
 	
 	RefreshCreditsMessages();
@@ -440,11 +443,6 @@ void ScreenManager::AddNewScreenToTop( const CString &sScreenName )
 {
 	m_bZeroNextUpdate = true;
 
-	/* Send this before making the new screen, since it might set things that will be re-set
-	 * in the new screen's ctor. */
-	if( m_ScreenStack.size() )
-		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
-
 	Screen* pNewScreen = MakeNewScreen(sScreenName);
 	SetFromNewScreen( pNewScreen );
 }
@@ -455,9 +453,6 @@ void ScreenManager::AddNewScreenToTop( const CString &sScreenName )
 
 void ScreenManager::Prompt( ScreenMessage smSendOnPop, const CString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
 {
-	if( m_ScreenStack.size() )
-		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
-
 	// add the new state onto the back of the array
 	ScreenPrompt *pNewScreen = new ScreenPrompt( "ScreenPrompt" );
 	pNewScreen->Init();
@@ -477,9 +472,6 @@ void ScreenManager::TextEntry(
 	bool bPassword
 	)
 {	
-	if( m_ScreenStack.size() )
-		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
-
 	// add the new state onto the back of the array
 	Screen *pNewScreen = new ScreenTextEntry( 
 		"ScreenTextEntry", 
@@ -498,9 +490,6 @@ void ScreenManager::TextEntry(
 
 void ScreenManager::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
 {
-	if( m_ScreenStack.size() )
-		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
-
 	// add the new state onto the back of the array
 	ScreenMiniMenu *pNewScreen = new ScreenMiniMenu( pDef->sClassName );
 	pNewScreen->Init( pDef, SM_SendOnOK, SM_SendOnCancel );
