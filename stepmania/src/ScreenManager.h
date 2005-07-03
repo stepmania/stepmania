@@ -35,26 +35,28 @@ public:
 	void Draw();
 	void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
-	void PrepareScreen( const CString &sScreenName );	// creates and caches screen so that the next call to SetNewScreen for the prep'd screen will be very quick.
-	void DeletePreparedScreens();
-	
+	// Main screen stack management
 	void SetNewScreen( const CString &sName );
 	void AddNewScreenToTop( const CString &sName );
+	void PrepareScreen( const CString &sScreenName );	// creates and caches screen so that the next call to SetNewScreen for the prep'd screen will be very quick.
+	void DeletePreparedScreens();
 	void SetFromNewScreen( Screen *pNewScreen );
 	void PopTopScreen( ScreenMessage SM );
+	Screen *GetTopScreen();
+
+	// System messages
 	void SystemMessage( const CString &sMessage );
 	void SystemMessageNoAnimate( const CString &sMessage );
 	void HideSystemMessage();
+	CString GetCurrentSystemMessage() const { return m_sSystemMessage; }
 
+	// Screen messages
 	void PostMessageToTopScreen( ScreenMessage SM, float fDelay );
 	void SendMessageToTopScreen( ScreenMessage SM );
 
 	void RefreshCreditsMessages();
 	void ThemeChanged();
 
-	CString GetCurrentSystemMessage() const { return m_sSystemMessage; }
-
-	Screen *GetTopScreen();
 
 	/* Return true if the given screen is in the main screen stack, but not the bottommost
 	 * screen.  If true, the screen should usually exit by popping itself, not by loading
