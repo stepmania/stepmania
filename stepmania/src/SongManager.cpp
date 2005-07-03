@@ -20,7 +20,7 @@
 #include "ProfileManager.h"
 #include "MemoryCardManager.h"
 #include "NotesLoaderSM.h"
-#include "Song.h"
+#include "song.h"
 #include "SongUtil.h"
 #include "Steps.h"
 #include "StepsUtil.h"
