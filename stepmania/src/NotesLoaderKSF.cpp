@@ -7,6 +7,8 @@
 #include "RageUtil.h"
 #include "NoteData.h"
 #include "NoteTypes.h"
+#include "song.h"
+#include "Steps.h"
 
 #if 0
 void KSFLoader::RemoveHoles( NoteData &out, const Song &song )

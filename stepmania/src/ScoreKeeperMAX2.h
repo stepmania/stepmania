@@ -5,9 +5,9 @@
 
 #include "ScoreKeeper.h"
 #include "Attack.h"
-#include "song.h"
-#include "Steps.h"
 class Steps;
+class Song;
+struct RadarValues;
 
 class ScoreKeeperMAX2: public ScoreKeeper
 {

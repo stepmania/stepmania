@@ -3,11 +3,11 @@
 #ifndef NOTES_WRITER_DWI_H
 #define NOTES_WRITER_DWI_H
 
-#include "song.h"
-#include "Steps.h"
 #include "NoteTypes.h"
 
 class RageFile;
+class Song;
+class Steps;
 class NotesWriterDWI
 {
 	CString NotesToDWIString( TapNote cNoteCol1, TapNote cNoteCol2, TapNote cNoteCol3, TapNote cNoteCol4, TapNote cNoteCol5, TapNote cNoteCol6 );

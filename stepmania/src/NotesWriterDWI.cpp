@@ -7,6 +7,8 @@
 #include "RageFile.h"
 #include "NoteDataUtil.h"
 #include "RageFile.h"
+#include "song.h"
+#include "Steps.h"
 
 /* Output is an angle bracket expression without angle brackets, eg. "468". */
 CString NotesWriterDWI::NotesToDWIString( const TapNote tnCols[6] )

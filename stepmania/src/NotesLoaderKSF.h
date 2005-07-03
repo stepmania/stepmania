@@ -3,9 +3,11 @@
 #ifndef NOTES_LOADER_KSF_H
 #define NOTES_LOADER_KSF_H
 
-#include "song.h"
-#include "Steps.h"
 #include "NotesLoader.h"
+
+class Song;
+class Steps;
+class NoteData;
 
 class KSFLoader: public NotesLoader
 {

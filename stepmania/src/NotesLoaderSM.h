@@ -3,11 +3,13 @@
 #ifndef NOTES_LOADER_SM_H
 #define NOTES_LOADER_SM_H
 
-#include "song.h"
-#include "Steps.h"
 #include "NotesLoader.h"
+#include "GameConstantsAndTypes.h"
 
 class MsdFile;
+class Song;
+class Steps;
+class TimingData;
 
 class SMLoader: public NotesLoader
 {

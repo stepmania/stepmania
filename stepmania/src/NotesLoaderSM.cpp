@@ -9,6 +9,8 @@
 #include "RageFileManager.h"
 #include "NoteTypes.h"
 #include "BackgroundUtil.h"
+#include "song.h"
+#include "Steps.h"
 
 #define MAX_EDIT_SIZE_BYTES  20*1024	// 20 KB
 
