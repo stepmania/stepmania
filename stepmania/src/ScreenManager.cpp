@@ -29,7 +29,6 @@
 #include "RageTextureManager.h"
 #include "ThemeManager.h"
 #include "Screen.h"
-#include "BGAnimation.h"
 #include "Foreach.h"
 #include "ActorUtil.h"
 
@@ -402,7 +401,7 @@ retry:
 		goto retry;
 	}
 	
-	// Load shared BGAnimation
+	// Load shared background
 	CString sNewBGA;
 	if( pNewScreen->UsesBackground() )
 		sNewBGA = THEME->GetPathB(sScreenName,"background");
