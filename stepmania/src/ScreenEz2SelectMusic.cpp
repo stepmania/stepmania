@@ -16,6 +16,7 @@
 #include "MenuTimer.h"
 #include "StepsUtil.h"
 #include "ScreenDimensions.h"
+#include "ScreenPrompt.h"
 #include "PlayerState.h"
 #include "Command.h"
 #include "RageLog.h"
@@ -451,7 +452,7 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 {
 	if( !m_MusicBannerWheel.GetSelectedSong()->HasMusic() )
 	{
-		SCREENMAN->Prompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played." );
+		ScreenPrompt::Prompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played." );
 		return;
 	}
 
@@ -497,7 +498,7 @@ void ScreenEz2SelectMusic::Update( float fDeltaTime )
 	
 	if(m_MusicBannerWheel.CheckSongsExist() == 0 && ! i_ErrorDetected)
 	{
-		SCREENMAN->Prompt( SM_NoSongs, "ERROR:\n \nThere are no songs available for play!" );
+		ScreenPrompt::Prompt( SM_NoSongs, "ERROR:\n \nThere are no songs available for play!" );
 		i_ErrorDetected=1;
 		this->PostScreenMessage( SM_NoSongs, 5.5f ); // timeout incase the user decides to do nothing :D
 	}

@@ -148,7 +148,7 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 			if( bResult )
 				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
 			else
-				SCREENMAN->Prompt( SM_None, ssprintf("Error creating profile '%s'.", sNewName.c_str()) );
+				ScreenPrompt::Prompt( SM_None, ssprintf("Error creating profile '%s'.", sNewName.c_str()) );
 		}
 	}
 	else if( SM == SM_DoneRenaming )
@@ -162,7 +162,7 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 			if( bResult )
 				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
 			else
-				SCREENMAN->Prompt( SM_None, ssprintf("Error renaming profile %s '%s'\nto '%s'.", sProfileID.c_str(), sName.c_str(), sNewName.c_str()) );
+				ScreenPrompt::Prompt( SM_None, ssprintf("Error renaming profile %s '%s'\nto '%s'.", sProfileID.c_str(), sName.c_str(), sNewName.c_str()) );
 		}
 	}
 	else if ( SM == SM_DoneDeleting )
@@ -175,7 +175,7 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 			if( bResult )
 				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
 			else
-				SCREENMAN->Prompt( SM_None, ssprintf("Error deleting profile %s '%s'.", sName.c_str(), sProfileID.c_str()) );
+				ScreenPrompt::Prompt( SM_None, ssprintf("Error deleting profile %s '%s'.", sName.c_str(), sProfileID.c_str()) );
 		}
 	}
 
@@ -198,7 +198,7 @@ void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		if( sProfileID=="" )
 			SCREENMAN->PlayInvalidSound();
 		else
-			SCREENMAN->Prompt( SM_DoneDeleting, ssprintf("Delete profile %s '%s'?",sProfileID.c_str(),sName.c_str()), PROMPT_YES_NO, ANSWER_NO );
+			ScreenPrompt::Prompt( SM_DoneDeleting, ssprintf("Delete profile %s '%s'?",sProfileID.c_str(),sName.c_str()), PROMPT_YES_NO, ANSWER_NO );
 		break;
 	}
 	case PO_RENAME_:

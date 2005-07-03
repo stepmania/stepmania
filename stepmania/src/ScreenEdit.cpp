@@ -2060,12 +2060,12 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			}
 			break;
 		case revert_to_last_save:
-			SCREENMAN->Prompt( SM_DoRevertToLastSave,
+			ScreenPrompt::Prompt( SM_DoRevertToLastSave,
 				"Do you want to revert to your last save?\n\nThis will destroy all unsaved changes.",
 				PROMPT_YES_NO, ANSWER_NO );
 			break;
 		case revert_from_disk:
-			SCREENMAN->Prompt( SM_DoRevertFromDisk,
+			ScreenPrompt::Prompt( SM_DoRevertFromDisk,
 				"Do you want to revert from disk?\n\nThis will destroy all unsaved changes.",
 				PROMPT_YES_NO, ANSWER_NO );
 			break;
@@ -2234,7 +2234,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			{
 			case EDIT_MODE_FULL:
 			case EDIT_MODE_HOME:
-				SCREENMAN->Prompt(
+				ScreenPrompt::Prompt(
 					SM_DoSaveAndExit,
 					"Do you want to save changes before exiting?",
 					PROMPT_YES_NO_CANCEL, ANSWER_CANCEL );
@@ -2893,7 +2893,7 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 			CString sError = ssprintf(
 				"This change creates more than %d notes in a measure.\n\nMore than %d notes per measure is not allowed.  This change has been reverted.", 
 				MAX_NOTES_PER_MEASURE, MAX_NOTES_PER_MEASURE );
-			SCREENMAN->Prompt( SM_None, sError );
+			ScreenPrompt::Prompt( SM_None, sError );
 			return;
 		}
 	}
@@ -2911,7 +2911,7 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 			Undo();
 			CString sError = ssprintf(
 				"This change creates notes past the end of the music and is not allowed.\n\nThe change has been reverted." );
-			SCREENMAN->Prompt( SM_None, sError );
+			ScreenPrompt::Prompt( SM_None, sError );
 			return;
 		}
 	}

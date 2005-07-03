@@ -14,6 +14,7 @@
 #include "song.h"
 #include "CommonMetrics.h"
 #include "ScreenTextEntry.h"
+#include "ScreenPrompt.h"
 
 #define PREV_SCREEN				THEME->GetMetric(m_sName,"PrevScreen")
 #define EXPLANATION_TEXT( row )	THEME->GetMetric(m_sName,"Explanation"+EditMenuRowToString(row))
@@ -217,7 +218,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 	if( !pSong->HasMusic() )
 	{
-		SCREENMAN->Prompt( SM_None, "This song is missing a music file and cannot be edited" );
+		ScreenPrompt::Prompt( SM_None, "This song is missing a music file and cannot be edited" );
 		return;
 	}
 
@@ -236,7 +237,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			SCREENMAN->AddNewScreenToTop( "ScreenEditMenuDeleteSteps" );
 			break;
 		case EDIT_MODE_FULL:
-			SCREENMAN->Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO, DeleteCurSteps );
+			ScreenPrompt::Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO, DeleteCurSteps );
 			break;
 		default:
 			ASSERT(0);

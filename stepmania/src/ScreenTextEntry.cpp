@@ -8,6 +8,7 @@
 #include "ThemeManager.h"
 #include "FontCharAliases.h"
 #include "ScreenDimensions.h"
+#include "ScreenPrompt.h"
 #include "ActorUtil.h"
 
 
@@ -386,7 +387,7 @@ void ScreenTextEntry::End( bool bCancelled )
 			bool bValidAnswer = m_pValidate( sAnswer, sError );
 			if( !bValidAnswer )
 			{
-				SCREENMAN->Prompt( SM_None, sError );
+				ScreenPrompt::Prompt( SM_None, sError );
 				return;	// don't end this screen.
 			}
 		}
