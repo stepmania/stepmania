@@ -16,7 +16,6 @@ public:
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void Update( float fDeltaTime );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 private:
 	BitmapText	m_textInstructions;

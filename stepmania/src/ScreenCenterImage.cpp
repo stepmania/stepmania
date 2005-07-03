@@ -192,17 +192,6 @@ void ScreenCenterImage::Update( float fDeltaTime )
 	Screen::Update( fDeltaTime );
 }
 
-void ScreenCenterImage::HandleScreenMessage( const ScreenMessage SM )
-{
-	switch( SM )
-	{
-	case SM_GoToPrevScreen:
-	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
-		break;
-	}
-}
-
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.
