@@ -14,7 +14,6 @@
 class Actor;
 class Screen;
 struct Menu;
-class BGAnimation;
 struct lua_State;
 
 
