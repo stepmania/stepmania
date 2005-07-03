@@ -80,8 +80,11 @@ struct Menu
 class ScreenMiniMenu : public ScreenOptions
 {
 public:
+	static void MiniMenu( Menu* pDef, ScreenMessage smSendOnOK, ScreenMessage smSendOnCancel = SM_None );
+
 	ScreenMiniMenu( CString sScreenClass );
 	void Init( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel );
+
 protected:
 	virtual void OnChange( PlayerNumber pn );
 	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns );
@@ -102,7 +105,6 @@ protected:
 public:
 	static int	s_iLastRowCode;
 	static vector<int>	s_viLastAnswers;
-
 };
 
 #endif

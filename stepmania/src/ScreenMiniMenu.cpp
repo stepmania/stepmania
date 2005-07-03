@@ -18,6 +18,14 @@ AutoScreenMessage( SM_GoToCancel )
 int	ScreenMiniMenu::s_iLastRowCode = -1;
 vector<int>	ScreenMiniMenu::s_viLastAnswers;
 
+void ScreenMiniMenu::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
+{
+	ScreenMiniMenu *pNewScreen = new ScreenMiniMenu( pDef->sClassName );
+	pNewScreen->Init( pDef, SM_SendOnOK, SM_SendOnCancel );
+	SCREENMAN->ZeroNextUpdate();
+	SCREENMAN->SetFromNewScreen( pNewScreen );
+}
+
 //REGISTER_SCREEN_CLASS( ScreenMiniMenu );
 ScreenMiniMenu::ScreenMiniMenu( CString sClassName ) :ScreenOptions( sClassName )
 {
