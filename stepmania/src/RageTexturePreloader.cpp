@@ -9,6 +9,22 @@
 #include "RageTexturePreloader.h"
 #include "RageTextureManager.h"
 
+RageTexturePreloader &RageTexturePreloader::operator=( const RageTexturePreloader &rhs )
+{
+	if( &rhs == this )
+		return *this;
+
+	UnloadAll();
+
+	for( unsigned i = 0; i < rhs.m_apTextures.size(); ++i )
+	{
+		RageTexture *pTexture = TEXTUREMAN->CopyTexture( rhs.m_apTextures[i] );
+		m_apTextures.push_back( pTexture );
+	}
+
+	return *this;
+}
+
 void RageTexturePreloader::Load( const RageTextureID &ID )
 {
 	ASSERT( TEXTUREMAN );

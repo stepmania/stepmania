@@ -9,6 +9,9 @@ struct RageTextureID;
 class RageTexturePreloader
 {
 public:
+	RageTexturePreloader() { }
+	RageTexturePreloader( const RageTexturePreloader &cpy ) { *this = cpy; }
+	RageTexturePreloader &operator=( const RageTexturePreloader &rhs );
 	~RageTexturePreloader();
 	void Load( const RageTextureID &ID );
 	void UnloadAll();
