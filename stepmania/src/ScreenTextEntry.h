@@ -27,6 +27,21 @@ enum KeyboardRowSpecialKey
 class ScreenTextEntry : public Screen
 {
 public:
+	static void TextEntry( 
+		ScreenMessage smSendOnPop, 
+		CString sQuestion, 
+		CString sInitialAnswer, 
+		int iMaxInputLength, 
+		bool(*Validate)(CString sAnswer,CString &sErrorOut) = NULL, 
+		void(*OnOK)(CString sAnswer) = NULL, 
+		void(*OnCanel)() = NULL,
+		bool bPassword = false
+		);
+	static void Password( ScreenMessage smSendOnPop, const CString &sQuestion, void(*OnOK)(CString sPassword) = NULL, void(*OnCanel)() = NULL )
+	{
+		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCanel, true );
+	}
+
 	ScreenTextEntry( 
 		CString sName, 
 		ScreenMessage smSendOnPop,

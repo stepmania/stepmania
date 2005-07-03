@@ -37,6 +37,34 @@ float GetButtonY( KeyboardRow r )
 }
 
 CString ScreenTextEntry::s_sLastAnswer = "";
+
+void ScreenTextEntry::TextEntry( 
+	ScreenMessage smSendOnPop, 
+	CString sQuestion, 
+	CString sInitialAnswer, 
+	int iMaxInputLength,
+	bool(*Validate)(CString sAnswer,CString &sErrorOut), 
+	void(*OnOK)(CString sAnswer), 
+	void(*OnCancel)(),
+	bool bPassword
+	)
+{	
+	// add the new state onto the back of the array
+	ScreenTextEntry *pNewScreen = new ScreenTextEntry( 
+		"ScreenTextEntry", 
+		smSendOnPop,
+		sQuestion, 
+		sInitialAnswer, 
+		iMaxInputLength, 
+		Validate, 
+		OnOK, 
+		OnCancel, 
+		bPassword );
+	pNewScreen->Init();
+	SCREENMAN->ZeroNextUpdate();
+	SCREENMAN->SetFromNewScreen( pNewScreen );
+}
+
 bool ScreenTextEntry::s_bCancelledLast = false;
 
 /* XXX: Don't let the user use internal-use codepoints (those
