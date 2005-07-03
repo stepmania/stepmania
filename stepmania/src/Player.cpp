@@ -38,6 +38,7 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "StatsManager.h"
+#include "Steps.h"
 
 CString JUDGMENT_X_NAME( size_t p, size_t both_sides )		{ return "JudgmentXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 CString COMBO_X_NAME( size_t p, size_t both_sides )			{ return "ComboXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }

@@ -6,6 +6,7 @@
 #include "PrefsManager.h"
 #include "GameManager.h"
 #include "SongManager.h"
+#include "Steps.h"
 #include "RageLog.h"
 #include "LifeMeterBar.h"
 #include "LifeMeterBattery.h"
