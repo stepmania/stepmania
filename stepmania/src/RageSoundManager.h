@@ -24,12 +24,12 @@ public:
 	 * start sounds will do nothing, and threads may be shut down. */
 	void Shutdown();
 
-	void Init( CString drivers );
+	void Init( CString sDrivers );
 
-	float GetMixVolume() const { return MixVolume; }
-	void SetPrefs(float MixVol);
+	float GetMixVolume() const { return m_fMixVolume; }
+	void SetPrefs( float fMixVol );
 
-	void Update(float delta);
+	void Update( float fDeltaTime );
 	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
 	void StopMixing( RageSoundBase *snd );	/* used by RageSound */
 	bool Pause( RageSoundBase *snd, bool bPause );	/* used by RageSound */
@@ -39,11 +39,11 @@ public:
 	int GetUniqueID();						/* used by RageSound */
 	void CommitPlayingPosition( int ID, int64_t frameno, int pos, int got_bytes );	/* used by drivers */
 	float GetPlayLatency() const;
-	int GetDriverSampleRate( int rate ) const;
+	int GetDriverSampleRate( int iRate ) const;
 
 	/* When deleting a sound from any thread except the one calling Update(), this
 	 * must be used to prevent race conditions. */
-	void DeleteSound( RageSound *p );
+	void DeleteSound( RageSound *pSound );
 	void DeleteSoundWhenFinished( RageSound *pSound );
 
 	void PlayOnce( CString sPath );
@@ -51,7 +51,7 @@ public:
 	RageSound *PlaySound( RageSound &snd, const RageSoundParams *params = NULL );
 	RageSound *PlayCopyOfSound( RageSound &snd, const RageSoundParams *params = NULL );
 
-	static void AttenuateBuf( int16_t *buf, int samples, float vol );
+	static void AttenuateBuf( int16_t *pBuf, int iSamples, float fVolume );
 
 private:
 	/* Set of sounds that we've taken over (and are responsible for deleting
@@ -61,10 +61,10 @@ private:
 	/* A list of all sounds that currently exist, by ID. */
 	map<int,RageSound *> all_sounds;
 	
-	RageSoundDriver *driver;
+	RageSoundDriver *m_pDriver;
 
 	/* Prefs: */
-	float MixVolume;
+	float m_fMixVolume;
 	struct queued_pos_map_t
 	{
 		int ID, pos, got_frames;

@@ -29,13 +29,13 @@ RageSoundManager *SOUNDMAN = NULL;
 RageSoundManager::RageSoundManager()
 {
 	pos_map_queue.reserve( 1024 );
-	MixVolume = 1.0f;
+	m_fMixVolume = 1.0f;
 }
 
-void RageSoundManager::Init( CString drivers )
+void RageSoundManager::Init( CString sDrivers )
 {
-	driver = MakeRageSoundDriver(drivers);
-	if( driver == NULL )
+	m_pDriver = MakeRageSoundDriver( sDrivers );
+	if( m_pDriver == NULL )
 		RageException::Throw( "Couldn't find a sound driver that works" );
 }
 
@@ -51,7 +51,7 @@ RageSoundManager::~RageSoundManager()
 		delete *(j++);
 
 	/* Don't lock while deleting the driver (the decoder thread might deadlock). */
-	delete driver;
+	delete m_pDriver;
 }
 
 /*
@@ -63,41 +63,37 @@ RageSoundManager::~RageSoundManager()
  */
 void RageSoundManager::Shutdown()
 {
-	if( driver != NULL )
-	{
-		delete driver;
-		driver = NULL;
-	}
+	SAFE_DELETE( m_pDriver );
 }
 
-void RageSoundManager::StartMixing( RageSoundBase *snd )
+void RageSoundManager::StartMixing( RageSoundBase *pSound )
 {
-	if( driver != NULL )
-		driver->StartMixing(snd);
+	if( m_pDriver != NULL )
+		m_pDriver->StartMixing( pSound );
 }
 
-void RageSoundManager::StopMixing( RageSoundBase *snd )
+void RageSoundManager::StopMixing( RageSoundBase *pSound )
 {
-	if( driver != NULL )
-		driver->StopMixing(snd);
+	if( m_pDriver != NULL )
+		m_pDriver->StopMixing( pSound );
 }
 
-bool RageSoundManager::Pause( RageSoundBase *snd, bool bPause )
+bool RageSoundManager::Pause( RageSoundBase *pSound, bool bPause )
 {
-	if( driver == NULL )
+	if( m_pDriver == NULL )
 		return false;
 	else
-		return driver->PauseMixing( snd, bPause );
+		return m_pDriver->PauseMixing( pSound, bPause );
 }
 
-int64_t RageSoundManager::GetPosition( const RageSoundBase *snd ) const
+int64_t RageSoundManager::GetPosition( const RageSoundBase *pSound ) const
 {
-	if( driver == NULL )
+	if( m_pDriver == NULL )
 		return 0;
-	return driver->GetPosition(snd);
+	return m_pDriver->GetPosition( pSound );
 }
 
-void RageSoundManager::Update(float delta)
+void RageSoundManager::Update( float fDeltaTime )
 {
 	FlushPosMapQueue();
 
@@ -123,8 +119,8 @@ void RageSoundManager::Update(float delta)
 	for( set<RageSound *>::iterator it = ToDelete.begin(); it != ToDelete.end(); ++it )
 		delete *it;
 
-	if( driver != NULL )
-		driver->Update(delta);
+	if( m_pDriver != NULL )
+		m_pDriver->Update( fDeltaTime );
 }
 
 /* Register the given sound, and return a unique ID. */
@@ -197,18 +193,18 @@ void RageSoundManager::FlushPosMapQueue()
 
 float RageSoundManager::GetPlayLatency() const
 {
-	if( driver == NULL )
+	if( m_pDriver == NULL )
 		return 0;
 
-	return driver->GetPlayLatency();
+	return m_pDriver->GetPlayLatency();
 }
 
-int RageSoundManager::GetDriverSampleRate( int rate ) const
+int RageSoundManager::GetDriverSampleRate( int iRate ) const
 {
-	if( driver == NULL )
+	if( m_pDriver == NULL )
 		return 44100;
 
-	return driver->GetSampleRate( rate );
+	return m_pDriver->GetSampleRate( iRate );
 }
 
 /* The return value of PlaySound and PlayCopyOfSound is only valid in the main
@@ -228,13 +224,13 @@ RageSound *RageSoundManager::PlaySound( RageSound &snd, const RageSoundParams *p
 	return &snd;
 }
 
-RageSound *RageSoundManager::PlayCopyOfSound( RageSound &snd, const RageSoundParams *params )
+RageSound *RageSoundManager::PlayCopyOfSound( RageSound &snd, const RageSoundParams *pParams )
 {
-	RageSound *pSound = new RageSound(snd);
+	RageSound *pSound = new RageSound( snd );
 	DeleteSoundWhenFinished( pSound );
 
-	if( params )
-		pSound->SetParams( *params );
+	if( pParams )
+		pSound->SetParams( *pParams );
 
 	// Move to the start position.
 	pSound->SetPositionSeconds( pSound->GetParams().m_StartSecond );
@@ -244,13 +240,13 @@ RageSound *RageSoundManager::PlayCopyOfSound( RageSound &snd, const RageSoundPar
 	return pSound;
 }
 
-void RageSoundManager::DeleteSound( RageSound *p )
+void RageSoundManager::DeleteSound( RageSound *pSound )
 {
 	/* Stop playing the sound. */
-	p->StopPlaying();
+	pSound->StopPlaying();
 
 	/* We might be in a thread, so don't delete it here. */
-	DeleteSoundWhenFinished( p );
+	DeleteSoundWhenFinished( pSound );
 }
 
 void RageSoundManager::DeleteSoundWhenFinished( RageSound *pSound )
@@ -265,31 +261,31 @@ void RageSoundManager::DeleteSoundWhenFinished( RageSound *pSound )
 void RageSoundManager::PlayOnce( CString sPath )
 {
 	/* We want this to start quickly, so don't try to prebuffer it. */
-	RageSound *snd = new RageSound;
-	snd->Load(sPath, false);
+	RageSound *pSound = new RageSound;
+	pSound->Load( sPath, false );
 
-	snd->Play();
+	pSound->Play();
 
 	/* We're responsible for freeing it.  Add it to owned_sounds *after* we start
 	 * playing, so RageSoundManager::Update doesn't free it before we actually start
 	 * it. */
-	DeleteSoundWhenFinished( snd );
+	DeleteSoundWhenFinished( pSound );
 }
 
-void RageSoundManager::SetPrefs(float MixVol)
+void RageSoundManager::SetPrefs( float fMixVol )
 {
-	g_SoundManMutex.Lock(); /* lock for access to MixVolume */
-	MixVolume = MixVol;
-	g_SoundManMutex.Unlock(); /* finished with MixVolume */
+	g_SoundManMutex.Lock(); /* lock for access to m_fMixVolume */
+	m_fMixVolume = fMixVol;
+	g_SoundManMutex.Unlock(); /* finished with m_fMixVolume */
 }
 
 /* Standalone helpers: */
-void RageSoundManager::AttenuateBuf( int16_t *buf, int samples, float vol )
+void RageSoundManager::AttenuateBuf( int16_t *pBuf, int iSamples, float fVolume )
 {
-	while( samples-- )
+	while( iSamples-- )
 	{
-		*buf = int16_t( (*buf) * vol );
-		++buf;
+		*pBuf = int16_t( (*pBuf) * fVolume );
+		++pBuf;
 	}
 }
 
