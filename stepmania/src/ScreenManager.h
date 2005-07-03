@@ -81,6 +81,7 @@ private:
 	CString				m_sDelayedScreen;
 	CString				m_sSystemMessage;
 	vector<Screen*>		m_vPreparedScreens;
+	vector<Actor*>		m_vPreparedBackgrounds;
 	vector<Screen*>		m_vScreensToDelete;
 	
 	// Set this to true anywhere we create of delete objects.  These 
