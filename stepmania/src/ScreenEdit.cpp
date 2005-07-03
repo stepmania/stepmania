@@ -562,10 +562,6 @@ void ScreenEdit::Init()
 
 	InitEditMappings();
 
-	/* We do this ourself. */
-	SOUND->HandleSongTimer( false );
-
-
 	// save the originals for reverting later
 	CopyToLastSave();
 
