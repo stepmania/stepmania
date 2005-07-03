@@ -17,8 +17,7 @@ class ScreenPrompt : public Screen
 public:
 	ScreenPrompt( const CString &sScreenName );
 	virtual void Init();
-	ScreenPrompt( 
-		const CString &sScreenName,
+	void Load( 
 		ScreenMessage smSendOnPop,
 		CString sText, 
 		PromptType type = PROMPT_OK, 
@@ -27,9 +26,6 @@ public:
 		void(*OnNo)(void*) = NULL, 
 		void* pCallbackData = NULL 
 		);
-
-	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 

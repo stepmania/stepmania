@@ -9,6 +9,7 @@ class ScreenSaveSync : public ScreenPrompt
 {
 public:
 	ScreenSaveSync( const CString &sScreenName );
+	virtual void Init();
 };
 
 

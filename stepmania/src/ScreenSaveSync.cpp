@@ -108,16 +108,22 @@ static void RevertSyncChanges( void* pThrowAway )
 
 REGISTER_SCREEN_CLASS( ScreenSaveSync );
 ScreenSaveSync::ScreenSaveSync( const CString &sScreenName ) :
-	ScreenPrompt(
-		sScreenName,
+	ScreenPrompt( sScreenName )
+{
+}
+
+void ScreenSaveSync::Init()
+{
+	ScreenPrompt::Init();
+
+	Load(
 		SM_None,
 		GetPromptText(), 
 		PROMPT_YES_NO, 
 		ANSWER_YES, 
 		SaveSyncChanges, 
 		RevertSyncChanges, 
-		NULL )
-{
+		NULL );
 }
 
 

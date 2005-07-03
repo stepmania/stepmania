@@ -1,6 +1,5 @@
 #include "global.h"
 #include "ScreenPrompt.h"
-#include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
 #include "GameConstantsAndTypes.h"
@@ -16,28 +15,10 @@ bool ScreenPrompt::s_bCancelledLast = false;
 #define ANSWER_TEXT( elem )		THEME->GetMetric(m_sName,elem+"Text")
 
 //REGISTER_SCREEN_CLASS( ScreenPrompt );
-ScreenPrompt::ScreenPrompt( 
-	const CString &sScreenName,
-	ScreenMessage smSendOnPop,
-	CString sText, 
-	PromptType type, 
-	PromptAnswer defaultAnswer, 
-	void(*OnYes)(void*), 
-	void(*OnNo)(void*), 
-	void* pCallbackData 
-	) :
+ScreenPrompt::ScreenPrompt( const CString &sScreenName ):
 	Screen( sScreenName )
 {
 	m_bIsTransparent = true;	// draw screens below us
-
-	m_smSendOnPop = smSendOnPop;
-	m_sText = sText;
-	m_PromptType = type;
-	m_Answer = defaultAnswer;
-	CLAMP( (int&)m_Answer, 0, m_PromptType );
-	m_pOnYes = OnYes;
-	m_pOnNo = OnNo;
-	m_pCallbackData = pCallbackData;
 }
 
 void ScreenPrompt::Init()
@@ -50,29 +31,19 @@ void ScreenPrompt::Init()
 
 	m_textQuestion.LoadFromFont( THEME->GetPathF(m_sName,"question") );
 	m_textQuestion.SetName( "Question" );
-	m_textQuestion.SetText( m_sText );
-	SET_XY_AND_ON_COMMAND( m_textQuestion );
 	this->AddChild( &m_textQuestion );
 
 	m_sprCursor.Load( THEME->GetPathG(m_sName,"cursor") );
 	m_sprCursor->SetName( "Cursor" );
-	ON_COMMAND( m_sprCursor );
 	this->AddChild( m_sprCursor );
 
-	for( int i=0; i<=m_PromptType; i++ )
+	for( int i=0; i<NUM_PROMPT_ANSWERS; i++ )
 	{
 		m_textAnswer[i].LoadFromFont( THEME->GetPathF(m_sName,"answer") );
-		CString sElem = ssprintf("Answer%dOf%d", i+1, m_PromptType+1);
-		m_textAnswer[i].SetName( sElem );
-		m_textAnswer[i].SetText( ANSWER_TEXT(sElem) );
 		this->AddChild( &m_textAnswer[i] );
-		SET_XY_AND_ON_COMMAND( m_textAnswer[i] );
 	}
 
-	PositionCursor();
-
 	m_In.Load( THEME->GetPathB(m_sName,"in") );
-	m_In.StartTransitioning();
 	this->AddChild( &m_In );
 	
 	m_Out.Load( THEME->GetPathB(m_sName,"out") );
@@ -84,14 +55,41 @@ void ScreenPrompt::Init()
 	m_sndChange.Load( THEME->GetPathS(m_sName,"change"), true );
 }
 
-void ScreenPrompt::Update( float fDeltaTime )
+void ScreenPrompt::Load( 
+	ScreenMessage smSendOnPop,
+	CString sText, 
+	PromptType type, 
+	PromptAnswer defaultAnswer, 
+	void (*OnYes)(void*), 
+	void (*OnNo)(void*), 
+	void* pCallbackData )
 {
-	Screen::Update( fDeltaTime );
-}
+	m_smSendOnPop = smSendOnPop;
+	m_sText = sText;
+	m_PromptType = type;
+	m_Answer = defaultAnswer;
+	CLAMP( (int&)m_Answer, 0, m_PromptType );
+	m_pOnYes = OnYes;
+	m_pOnNo = OnNo;
+	m_pCallbackData = pCallbackData;
 
-void ScreenPrompt::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
+
+	m_textQuestion.SetText( m_sText );
+	SET_XY_AND_ON_COMMAND( m_textQuestion );
+
+	ON_COMMAND( m_sprCursor );
+
+	for( int i=0; i<=m_PromptType; i++ )
+	{
+		CString sElem = ssprintf("Answer%dOf%d", i+1, m_PromptType+1);
+		m_textAnswer[i].SetName( sElem );
+		m_textAnswer[i].SetText( ANSWER_TEXT(sElem) );
+		SET_XY_AND_ON_COMMAND( m_textAnswer[i] );
+	}
+
+	PositionCursor();
+
+	m_In.StartTransitioning();
 }
 
 void ScreenPrompt::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )

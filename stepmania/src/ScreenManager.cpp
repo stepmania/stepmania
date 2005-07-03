@@ -459,8 +459,9 @@ void ScreenManager::Prompt( ScreenMessage smSendOnPop, const CString &sText, Pro
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
 	// add the new state onto the back of the array
-	Screen *pNewScreen = new ScreenPrompt( "ScreenPrompt", smSendOnPop, sText, type, defaultAnswer, OnYes, OnNo, pCallbackData);
+	ScreenPrompt *pNewScreen = new ScreenPrompt( "ScreenPrompt" );
 	pNewScreen->Init();
+	pNewScreen->Load( smSendOnPop, sText, type, defaultAnswer, OnYes, OnNo, pCallbackData );
 	this->ZeroNextUpdate();
 	SetFromNewScreen( pNewScreen );
 }
