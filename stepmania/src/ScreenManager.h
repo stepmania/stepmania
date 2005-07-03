@@ -40,7 +40,6 @@ public:
 	
 	void SetNewScreen( const CString &sName );
 	void AddNewScreenToTop( const CString &sName );
-	void MiniMenu( Menu* pDef, ScreenMessage smSendOnOK, ScreenMessage smSendOnCancel = SM_None );
 	void SetFromNewScreen( Screen *pNewScreen );
 	void PopTopScreen( ScreenMessage SM );
 	void SystemMessage( const CString &sMessage );

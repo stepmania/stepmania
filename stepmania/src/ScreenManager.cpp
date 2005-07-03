@@ -447,17 +447,6 @@ void ScreenManager::AddNewScreenToTop( const CString &sScreenName )
 	SetFromNewScreen( pNewScreen );
 }
 
-#include "ScreenMiniMenu.h"
-
-void ScreenManager::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
-{
-	// add the new state onto the back of the array
-	ScreenMiniMenu *pNewScreen = new ScreenMiniMenu( pDef->sClassName );
-	pNewScreen->Init( pDef, SM_SendOnOK, SM_SendOnCancel );
-	this->ZeroNextUpdate();
-	SetFromNewScreen( pNewScreen );
-}
-
 void ScreenManager::PopTopScreen( ScreenMessage SM )
 {
 	ASSERT( m_ScreenStack.size() > 0 );
