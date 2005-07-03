@@ -9,6 +9,8 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
+#include "RageUtil_AutoPtr.h"
+REGISTER_CLASS_TRAITS( NoteData, new NoteData(*pCopy) )
 
 NoteData::NoteData()
 {

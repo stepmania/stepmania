@@ -16,6 +16,7 @@
 #include "global.h"
 #include "Steps.h"
 #include "StepsUtil.h"
+#include "song.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "NoteData.h"
@@ -41,7 +42,6 @@ Steps::Steps()
 
 Steps::~Steps()
 {
-	delete m_pNoteData;
 }
 
 void Steps::SetNoteData( const NoteData& noteDataNew )

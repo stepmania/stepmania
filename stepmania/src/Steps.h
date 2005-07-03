@@ -8,6 +8,7 @@
 #include "Grade.h"
 #include "RadarValues.h"
 #include "Difficulty.h"
+#include "RageUtil_AutoPtr.h"
 class Profile;
 class NoteData;
 struct lua_State;
@@ -76,7 +77,7 @@ protected:
 	/* We can have one or both of these; if we have both, they're always identical.
 	 * Call Compress() to force us to only have m_sNoteDataCompressed; otherwise, creation of 
 	 * these is transparent. */
-	mutable NoteData *m_pNoteData;
+	mutable HiddenPtr<NoteData> m_pNoteData;
 	mutable bool m_bNoteDataIsFilled;
 	mutable CString m_sNoteDataCompressed;
 
