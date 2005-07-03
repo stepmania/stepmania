@@ -57,11 +57,13 @@ ScreenSelectCharacter::ScreenSelectCharacter( CString sClassName ) : ScreenWithM
 
 void ScreenSelectCharacter::Init()
 {
+	ScreenWithMenuElements::Init();
+	
 	vector<Character*> apCharacters;
 	GAMESTATE->GetCharacters( apCharacters );
 	if(	apCharacters.empty() )
 	{
-		HandleScreenMessage( SM_GoToNextScreen );
+		this->PostScreenMessage( SM_GoToNextScreen, 0 );
 		return;
 	}
 
@@ -77,13 +79,11 @@ void ScreenSelectCharacter::Init()
 		/* Non Rave/Battle mode, just skip this screen if disabled. */
 		if(	PREFSMAN->m_ShowDancingCharacters != PrefsManager::CO_SELECT )
 		{
-			HandleScreenMessage( SM_GoToNextScreen );
+			this->PostScreenMessage( SM_GoToNextScreen, 0 );
 			return;
 		}
 	}
 
-	ScreenWithMenuElements::Init();
-	
 	FOREACH_PlayerNumber( p )
 	{
 		m_iSelectedCharacter[p] = 0;
