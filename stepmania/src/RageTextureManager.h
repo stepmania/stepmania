@@ -56,6 +56,7 @@ public:
 	void Update( float fDeltaTime );
 
 	RageTexture* LoadTexture( RageTextureID ID );
+	RageTexture* CopyTexture( RageTexture *pCopy ); // returns a ref to the same texture, not a deep copy
 	bool IsTextureRegistered( RageTextureID ID ) const;
 	void RegisterTexture( RageTextureID ID, RageTexture *p );
 	void VolatileTexture( RageTextureID ID );

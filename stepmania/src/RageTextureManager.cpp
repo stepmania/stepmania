@@ -134,6 +134,12 @@ RageTexture* RageTextureManager::LoadTexture( RageTextureID ID )
 	return pTexture;
 }
 
+RageTexture* RageTextureManager::CopyTexture( RageTexture *pCopy )
+{
+	++pCopy->m_iRefCount;
+	return pCopy;
+}
+
 void RageTextureManager::VolatileTexture( RageTextureID ID )
 {
 	RageTexture* pTexture = LoadTextureInternal( ID );
@@ -147,7 +153,7 @@ void RageTextureManager::UnloadTexture( RageTexture *t )
 		return;
 
 	t->m_iRefCount--;
-	ASSERT( t->m_iRefCount >= 0 );
+	ASSERT_M( t->m_iRefCount >= 0, ssprintf("%i, %s", t->m_iRefCount, t->GetID().filename.c_str()) );
 
 	if( t->m_iRefCount )
 		return; /* Can't unload textures that are still referenced. */
