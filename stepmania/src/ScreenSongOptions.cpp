@@ -41,7 +41,7 @@ void ScreenSongOptions::ExportOptions( int row, const vector<PlayerNumber> &vpns
 
 void ScreenSongOptions::GoToPrevScreen()
 {
-	if( GAMESTATE->m_bEditing )
+	if( SCREENMAN->IsStackedScreen(this) )
 	{
 		SCREENMAN->PopTopScreen( SM_BackFromSongOptions );
 	}
