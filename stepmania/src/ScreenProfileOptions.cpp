@@ -188,7 +188,7 @@ void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type
 	switch( GetCurrentRow() )
 	{
 	case PO_CREATE_NEW:
-		SCREENMAN->TextEntry( SM_DoneCreating, "Enter a profile name", "", 12 );
+		ScreenTextEntry::TextEntry( SM_DoneCreating, "Enter a profile name", "", 12 );
 		break;
 	case PO_DELETE_:
 	{
@@ -209,7 +209,7 @@ void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		if( sProfileID=="" )
 			SCREENMAN->PlayInvalidSound();
 		else
-			SCREENMAN->TextEntry( SM_DoneRenaming, ssprintf("Rename profile %s '%s'",sProfileID.c_str(),sName.c_str()), sName, 12 );
+			ScreenTextEntry::TextEntry( SM_DoneRenaming, ssprintf("Rename profile %s '%s'",sProfileID.c_str(),sName.c_str()), sName, 12 );
 		break;
 	}
 	default:

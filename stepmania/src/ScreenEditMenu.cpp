@@ -291,7 +291,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			bool bPromptToNameSteps = (action != EDIT_MENU_ACTION_EDIT && dc == DIFFICULTY_EDIT);
 			if( bPromptToNameSteps )
 			{
-				SCREENMAN->TextEntry( 
+				ScreenTextEntry::TextEntry( 
 					SM_BackFromEditDescription, 
 					"Name the new edit.", 
 					GAMESTATE->m_pCurSteps[0]->GetDescription(), 

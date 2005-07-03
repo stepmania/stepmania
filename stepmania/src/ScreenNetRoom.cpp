@@ -7,7 +7,6 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "ScreenTextEntry.h"
-#include "ScreenManager.h"
 #include "Command.h"
 #include "WheelItemBase.h"
 #include "RageLog.h"
@@ -135,7 +134,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 		if ( !ScreenTextEntry::s_bCancelledLast )
 		{
 			m_newRoomName = ScreenTextEntry::s_sLastAnswer;
-			SCREENMAN->TextEntry( SM_BackFromRoomDesc, "Enter Room Description:", "", 255 );
+			ScreenTextEntry::TextEntry( SM_BackFromRoomDesc, "Enter Room Description:", "", 255 );
 		}
 	}
 	else if( SM == SM_BackFromRoomDesc )

@@ -2,7 +2,7 @@
 #include "ScreenTestFonts.h"
 #include "FontManager.h"
 #include "RageTextureManager.h"
-#include "ScreenManager.h"
+#include "ScreenTextEntry.h"
 #include "GameConstantsAndTypes.h"
 #include "ScreenDimensions.h"
 
@@ -98,7 +98,7 @@ void ScreenTestFonts::Input( const DeviceInput& DeviceI, const InputEventType ty
 	case '`': if(curtext != CustomText)
 				  SetText(CustomText);
 			  else
-				  SCREENMAN->TextEntry( SM_ChangeText, "Edit text.", CustomText, 100, NULL, ChangeText, NULL);
+				  ScreenTextEntry::TextEntry( SM_ChangeText, "Edit text.", CustomText, 100, NULL, ChangeText, NULL);
 			  break;
 	case '1': SetText("Waaai"); break;
 	case '2': SetText("WAAI &#9769;"); break;

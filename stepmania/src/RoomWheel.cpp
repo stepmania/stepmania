@@ -2,7 +2,7 @@
 #include "RoomWheel.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "ScreenManager.h"
+#include "ScreenTextEntry.h"
 
 AutoScreenMessage( SM_BackFromRoomName )
 
@@ -89,7 +89,7 @@ bool RoomWheel::Select()
 	{
 		// Since this is not actually an option outside of this wheel NULL is a good idea.
 		m_LastSelection = NULL;
-		SCREENMAN->TextEntry( SM_BackFromRoomName, "Enter Room Name:", "", 255 );
+		ScreenTextEntry::TextEntry( SM_BackFromRoomName, "Enter Room Name:", "", 255 );
 	}
 	return false;
 }
