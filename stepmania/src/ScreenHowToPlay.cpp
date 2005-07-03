@@ -7,6 +7,7 @@
 #include "RageLog.h"
 #include "RageDisplay.h"
 #include "SongManager.h"
+#include "Steps.h"
 #include "NoteFieldPositioning.h"
 #include "GameManager.h"
 #include "NotesLoaderSM.h"
