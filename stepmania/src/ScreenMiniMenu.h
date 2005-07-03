@@ -8,7 +8,6 @@
 #include "Transition.h"
 #include "Quad.h"
 #include "RageSound.h"
-#include "BGAnimation.h"
 
 typedef bool (*MenuRowUpdateEnabled)();
 
