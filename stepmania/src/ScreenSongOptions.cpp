@@ -54,7 +54,7 @@ void ScreenSongOptions::GoToPrevScreen()
 
 void ScreenSongOptions::GoToNextScreen()
 {
-	if( GAMESTATE->m_bEditing )
+	if( SCREENMAN->IsStackedScreen(this) )
 		SCREENMAN->PopTopScreen( SM_BackFromSongOptions );
 	else
 		SCREENMAN->SetNewScreen( NEXT_SCREEN );
