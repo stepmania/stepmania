@@ -11,10 +11,26 @@
 #include "BGAnimation.h"
 #include "ScreenManager.h"
 
+enum PromptType
+{
+	PROMPT_OK,
+	PROMPT_YES_NO,
+	PROMPT_YES_NO_CANCEL
+};
+
+enum PromptAnswer
+{
+	ANSWER_YES,
+	ANSWER_NO,
+	ANSWER_CANCEL,
+	NUM_PROMPT_ANSWERS
+};
 
 class ScreenPrompt : public Screen
 {
 public:
+	static void Prompt( ScreenMessage smSendOnPop, const CString &sText, PromptType type = PROMPT_OK, PromptAnswer defaultAnswer = ANSWER_NO, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
+
 	ScreenPrompt( const CString &sScreenName );
 	virtual void Init();
 	void Load( 

@@ -14,6 +14,17 @@ bool ScreenPrompt::s_bCancelledLast = false;
 
 #define ANSWER_TEXT( elem )		THEME->GetMetric(m_sName,elem+"Text")
 
+void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const CString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
+{
+	// add the new state onto the back of the array
+	ScreenPrompt *pNewScreen = new ScreenPrompt( "ScreenPrompt" );
+	pNewScreen->Init();
+	pNewScreen->Load( smSendOnPop, sText, type, defaultAnswer, OnYes, OnNo, pCallbackData );
+	SCREENMAN->ZeroNextUpdate();
+	SCREENMAN->SetFromNewScreen( pNewScreen );
+}
+
+
 //REGISTER_SCREEN_CLASS( ScreenPrompt );
 ScreenPrompt::ScreenPrompt( const CString &sScreenName ):
 	Screen( sScreenName )

@@ -17,21 +17,6 @@ struct Menu;
 struct lua_State;
 
 
-enum PromptType
-{
-	PROMPT_OK,
-	PROMPT_YES_NO,
-	PROMPT_YES_NO_CANCEL
-};
-
-enum PromptAnswer
-{
-	ANSWER_YES,
-	ANSWER_NO,
-	ANSWER_CANCEL,
-	NUM_PROMPT_ANSWERS
-};
-
 
 typedef Screen* (*CreateScreenFn)(const CString& sClassName);
 
@@ -55,7 +40,6 @@ public:
 	
 	void SetNewScreen( const CString &sName );
 	void AddNewScreenToTop( const CString &sName );
-	void Prompt( ScreenMessage smSendOnPop, const CString &sText, PromptType type = PROMPT_OK, PromptAnswer defaultAnswer = ANSWER_NO, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
 	void TextEntry( 
 		ScreenMessage smSendOnPop, 
 		CString sQuestion, 
@@ -71,6 +55,7 @@ public:
 		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCanel, true );
 	}
 	void MiniMenu( Menu* pDef, ScreenMessage smSendOnOK, ScreenMessage smSendOnCancel = SM_None );
+	void SetFromNewScreen( Screen *pNewScreen );
 	void PopTopScreen( ScreenMessage SM );
 	void SystemMessage( const CString &sMessage );
 	void SystemMessageNoAnimate( const CString &sMessage );
@@ -117,7 +102,6 @@ private:
 
 	Screen* MakeNewScreen( const CString &sName );
 	Screen* MakeNewScreenInternal( const CString &sName );
-	void SetFromNewScreen( Screen *pNewScreen );
 	void ClearScreenStack();
 	void EmptyDeleteQueue();
 	void LoadDelayedScreen();
