@@ -27,7 +27,7 @@ ScreenBranch::ScreenBranch( CString sClassName ) : Screen( sClassName )
 		if( LuaHelpers::RunExpressionB(sCondition) )
 		{
 			m_sChoice = sChoice;
-			HandleScreenMessage( SM_GoToNextScreen );
+			PostScreenMessage( SM_GoToNextScreen, 0 );
 			return;
 		}
 	}
