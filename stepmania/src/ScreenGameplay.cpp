@@ -100,6 +100,16 @@ ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
 	FAIL_AFTER_30_MISSES.Load( sName, "FailAfter30Misses" );
 	USE_FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "UseForcedModifiersInBeginner" );
 	FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "ForcedModifiersInBeginner" );
+
+	FOREACH_PlayerNumber(pn)
+	{
+		m_pLifeMeter[pn] = NULL;
+		m_pPrimaryScoreDisplay[pn] = NULL;
+		m_pSecondaryScoreDisplay[pn] = NULL;
+		m_pPrimaryScoreKeeper[pn] = NULL;
+		m_pSecondaryScoreKeeper[pn] = NULL;
+		m_pInventory[pn] = NULL;
+	}
 }
 
 void ScreenGameplay::Init()
@@ -123,18 +133,6 @@ void ScreenGameplay::Init()
 	m_pSoundMusic = NULL;
 	m_bPaused = false;
 
-	//need to initialize these before checking for demonstration mode
-	//otherwise destructor will try to delete possibly invalid pointers
-
-    FOREACH_PlayerNumber(p)
-	{
-		m_pLifeMeter[p] = NULL;
-		m_pPrimaryScoreDisplay[p] = NULL;
-		m_pSecondaryScoreDisplay[p] = NULL;
-		m_pPrimaryScoreKeeper[p] = NULL;
-		m_pSecondaryScoreKeeper[p] = NULL;
-		m_pInventory[p] = NULL ;
-	}
 	m_pCombinedLifeMeter = NULL;
 
 	if( GAMESTATE->m_pCurSong == NULL && GAMESTATE->m_pCurCourse == NULL )
