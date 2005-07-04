@@ -2282,6 +2282,11 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		SongFinished();
 		StageFinished( false );
 	}
+	else if( SM == SM_GainFocus )
+	{
+		/* We do this ourself. */
+		SOUND->HandleSongTimer( false );
+	}
 	else if( SM == SM_LoseFocus )
 	{
 		/* We might have turned the song timer off.  Be sure to turn it back on. */
