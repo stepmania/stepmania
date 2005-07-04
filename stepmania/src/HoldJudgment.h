@@ -3,18 +3,13 @@
 
 #include "Sprite.h"
 #include "ActorFrame.h"
-#include "song.h"
-#include "BitmapText.h"
-#include "PrefsManager.h"
+#include "GameConstantsAndTypes.h"
 
 
 class HoldJudgment : public ActorFrame
 {
 public:
 	HoldJudgment();
-
-	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
 
 	void Reset();
 	void SetHoldJudgment( HoldNoteScore hns );

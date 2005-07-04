@@ -2,7 +2,6 @@
 #include "HoldJudgment.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
 
@@ -22,16 +21,6 @@ HoldJudgment::HoldJudgment()
 	m_sprJudgment.StopAnimating();
 	Reset();
 	this->AddChild( &m_sprJudgment );
-}
-
-void HoldJudgment::Update( float fDeltaTime )
-{
-	ActorFrame::Update( fDeltaTime );
-}
-
-void HoldJudgment::DrawPrimitives()
-{
-	ActorFrame::DrawPrimitives();
 }
 
 void HoldJudgment::Reset()

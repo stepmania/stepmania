@@ -6,7 +6,6 @@
 #include "Sprite.h"
 #include "ActorFrame.h"
 #include "GameConstantsAndTypes.h"
-#include "BitmapText.h"
 
 
 class Judgment : public ActorFrame
