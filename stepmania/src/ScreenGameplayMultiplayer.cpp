@@ -13,6 +13,7 @@
 #include "ScoreDisplayPercentage.h"
 #include "ScoreDisplayNormal.h"
 #include "ScoreDisplayOni.h"
+#include "song.h"
 #include "Steps.h"
 #include "NoteDataUtil.h"
 #include "RageLog.h"
@@ -20,6 +21,7 @@
 #include "PlayerState.h"
 #include "InputMapper.h"
 #include "ActorUtil.h"
+#include "PrefsManager.h"
 
 //
 // Defines

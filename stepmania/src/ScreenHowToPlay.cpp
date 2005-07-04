@@ -17,6 +17,7 @@
 #include "PlayerState.h"
 #include "Style.h"
 #include "ActorUtil.h"
+#include "PrefsManager.h"
 
 static const ThemeMetric<CString>		STEPFILE			("ScreenHowToPlay","Stepfile");
 static const ThemeMetric<int>			NUM_PERFECTS		("ScreenHowToPlay","NumPerfects");

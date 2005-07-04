@@ -17,6 +17,7 @@
 #include "PlayerState.h"
 #include "StatsManager.h"
 #include "CommonMetrics.h"
+#include "PrefsManager.h"
 
 #define SHOW_COURSE_MODIFIERS_PROBABILITY	THEME->GetMetricF(m_sName,"ShowCourseModifiersProbability")
 
