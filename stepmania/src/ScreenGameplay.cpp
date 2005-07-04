@@ -123,9 +123,6 @@ void ScreenGameplay::Init()
 	m_pSoundMusic = NULL;
 	m_bPaused = false;
 
-	/* We do this ourself. */
-	SOUND->HandleSongTimer( false );
-
 	//need to initialize these before checking for demonstration mode
 	//otherwise destructor will try to delete possibly invalid pointers
 
