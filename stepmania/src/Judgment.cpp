@@ -13,24 +13,8 @@ static ThemeMetric<apActorCommands>	GOOD_COMMAND			("Judgment","GoodCommand");
 static ThemeMetric<apActorCommands>	BOO_COMMAND				("Judgment","BooCommand");
 static ThemeMetric<apActorCommands>	MISS_COMMAND			("Judgment","MissCommand");
 
-static ThemeMetric<apActorCommands>	MARVELOUS_ODD_COMMAND	("Judgment","MarvelousOddCommand");
-static ThemeMetric<apActorCommands>	PERFECT_ODD_COMMAND		("Judgment","PerfectOddCommand");
-static ThemeMetric<apActorCommands>	GREAT_ODD_COMMAND		("Judgment","GreatOddCommand");
-static ThemeMetric<apActorCommands>	GOOD_ODD_COMMAND		("Judgment","GoodOddCommand");
-static ThemeMetric<apActorCommands>	BOO_ODD_COMMAND			("Judgment","BooOddCommand");
-static ThemeMetric<apActorCommands>	MISS_ODD_COMMAND		("Judgment","MissOddCommand");
-
-static ThemeMetric<apActorCommands>	MARVELOUS_EVEN_COMMAND	("Judgment","MarvelousEvenCommand");
-static ThemeMetric<apActorCommands>	PERFECT_EVEN_COMMAND	("Judgment","PerfectEvenCommand");
-static ThemeMetric<apActorCommands>	GREAT_EVEN_COMMAND		("Judgment","GreatEvenCommand");
-static ThemeMetric<apActorCommands>	GOOD_EVEN_COMMAND		("Judgment","GoodEvenCommand");
-static ThemeMetric<apActorCommands>	BOO_EVEN_COMMAND		("Judgment","BooEvenCommand");
-static ThemeMetric<apActorCommands>	MISS_EVEN_COMMAND		("Judgment","MissEvenCommand");
-
-
 Judgment::Judgment()
 {
-	m_iCount = 0;
 }
 
 void Judgment::Load( bool bBeginner )
@@ -66,39 +50,31 @@ void Judgment::SetJudgment( TapNoteScore score, bool bEarly )
 	{
 	case TNS_MARVELOUS:
 		m_sprJudgment.SetState( 0 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( (m_iCount%2) ? MARVELOUS_ODD_COMMAND : MARVELOUS_EVEN_COMMAND );
 		m_sprJudgment.RunCommands( MARVELOUS_COMMAND );
 		break;
 	case TNS_PERFECT:
 		m_sprJudgment.SetState( 1 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( (m_iCount%2) ? PERFECT_ODD_COMMAND : PERFECT_EVEN_COMMAND );
 		m_sprJudgment.RunCommands( PERFECT_COMMAND );
 		break;
 	case TNS_GREAT:
 		m_sprJudgment.SetState( 2 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( (m_iCount%2) ? GREAT_ODD_COMMAND : GREAT_EVEN_COMMAND );
 		m_sprJudgment.RunCommands( GREAT_COMMAND );
 		break;
 	case TNS_GOOD:
 		m_sprJudgment.SetState( 3 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( (m_iCount%2) ? GOOD_ODD_COMMAND : GOOD_EVEN_COMMAND );
 		m_sprJudgment.RunCommands( GOOD_COMMAND );
 		break;
 	case TNS_BOO:
 		m_sprJudgment.SetState( 4 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( (m_iCount%2) ? BOO_ODD_COMMAND : BOO_EVEN_COMMAND );
 		m_sprJudgment.RunCommands( BOO_COMMAND );
 		break;
 	case TNS_MISS:
 		m_sprJudgment.SetState( 5 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( (m_iCount%2) ? MISS_ODD_COMMAND : MISS_EVEN_COMMAND );
 		m_sprJudgment.RunCommands( MISS_COMMAND );
 		break;
 	default:
 		ASSERT(0);
 	}
-
-	m_iCount++;
 }
 
 /*

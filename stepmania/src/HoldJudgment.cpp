@@ -7,16 +7,10 @@
 
 ThemeMetric<apActorCommands>	OK_COMMAND	("HoldJudgment","OKCommand");
 ThemeMetric<apActorCommands>	NG_COMMAND	("HoldJudgment","NGCommand");
-ThemeMetric<apActorCommands>	OK_ODD_COMMAND	("HoldJudgment","OKOddCommand");
-ThemeMetric<apActorCommands>	NG_ODD_COMMAND	("HoldJudgment","NGOddCommand");
-ThemeMetric<apActorCommands>	OK_EVEN_COMMAND	("HoldJudgment","OKEvenCommand");
-ThemeMetric<apActorCommands>	NG_EVEN_COMMAND	("HoldJudgment","NGEvenCommand");
 
 
 HoldJudgment::HoldJudgment()
 {
-	m_iCount = 0;
-
 	m_sprJudgment.Load( THEME->GetPathG("HoldJudgment","label 1x2") );
 	m_sprJudgment.StopAnimating();
 	Reset();
@@ -43,19 +37,15 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 		ASSERT(0);
 	case HNS_OK:
 		m_sprJudgment.SetState( 0 );
-		m_sprJudgment.RunCommands( (m_iCount%2) ? OK_ODD_COMMAND : OK_EVEN_COMMAND );
 		m_sprJudgment.RunCommands( OK_COMMAND );
 		break;
 	case HNS_NG:
 		m_sprJudgment.SetState( 1 );
-		m_sprJudgment.RunCommands( (m_iCount%2) ? NG_ODD_COMMAND : NG_EVEN_COMMAND );
 		m_sprJudgment.RunCommands( NG_COMMAND );
 		break;
 	default:
 		ASSERT(0);
 	}
-
-	m_iCount++;
 }
 
 /*

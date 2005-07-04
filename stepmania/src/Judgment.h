@@ -18,7 +18,6 @@ public:
 
 protected:
 	Sprite		m_sprJudgment;
-	int			m_iCount;
 };
 
 #endif
