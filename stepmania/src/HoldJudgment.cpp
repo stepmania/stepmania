@@ -5,8 +5,8 @@
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
 
-ThemeMetric<apActorCommands>	OK_COMMAND	("HoldJudgment","OKCommand");
-ThemeMetric<apActorCommands>	NG_COMMAND	("HoldJudgment","NGCommand");
+static ThemeMetric<apActorCommands>	OK_COMMAND	("HoldJudgment","OKCommand");
+static ThemeMetric<apActorCommands>	NG_COMMAND	("HoldJudgment","NGCommand");
 
 
 HoldJudgment::HoldJudgment()
