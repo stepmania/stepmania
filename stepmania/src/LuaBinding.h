@@ -4,9 +4,12 @@
 #define LuaBinding_H
 
 #include "LuaManager.h"
+class LuaReference;
 
 void CreateMethodsTable( lua_State *L, const CString &szName );
 bool CheckLuaObjectType( lua_State *L, int narg, const char *szType );
+void *GetUserdataFromGlobalTable( Lua *L, const char *szType, int iArg );
+void ApplyDerivedType( Lua *L, const CString &sClassname, void *pSelf );
 
 template <typename Type>
 class Luna 
@@ -101,20 +104,29 @@ public:
 				LuaHelpers::TypeError( L, narg, m_sClassName );
 		}
 
-		void **pData = (void **) lua_touserdata( L, narg );
-		return (T *) *pData;
+		return get( L, narg );
 	}
 	
-	// push a userdata containing a pointer to T object
-	static int Push( Lua *L, T* p )
+	static T *get( lua_State *L, int narg )
 	{
-		void **pData = (void **) lua_newuserdata( L, sizeof(void *) );
-		*pData = p;  // store pointer to object in userdata
-		luaL_getmetatable( L, m_sClassName );  // lookup metatable in Lua registry
-		lua_setmetatable( L, -2 );
-		return 1;  // userdata containing pointer to T object
+		/* The stack has a userdata or a table.  If it's a table, look up the associated userdata. */
+		if( lua_istable(L, narg) )
+		{
+			return (T *) GetUserdataFromGlobalTable( L, m_sClassName, narg );
+		}
+		else if( lua_isuserdata(L, narg) )
+		{
+			void **pData = (void **) lua_touserdata( L, narg );
+			return (T *) *pData;
+		}
+		else
+			return NULL;
 	}
 	
+	/* Push a table or userdata for the given object.  This is called on the
+	 * base class, so we pick up the instance of the base class, if any. */ 
+	static void PushObject( Lua *L, T* p );
+
 	static void AddMethod( const char *szName, int (*pFunc)(T *p, lua_State *L) )
 	{
 		if( s_pvMethods == NULL )
@@ -140,9 +152,35 @@ private:
 	/* Two objects are equal if the underlying object is the same. */
 	static int equal( lua_State *L )
 	{
-		void **obj1 = (void **) lua_touserdata( L, 1 );
-		void **obj2 = (void **) lua_touserdata( L, 2 );
-		lua_pushboolean( L, *obj1 == *obj2 );
+		int iType = lua_type( L, 1 );
+		if( lua_type(L, 2) != iType )
+		{
+			lua_pushboolean( L, false );
+			return 1;
+		}
+
+		/* Use the regular method for tables.  If an object's table is
+		 * kept around after the actual object has been destroyed, the
+		 * table is still valid, and the pointer no longer exists. */
+		if( iType == LUA_TTABLE )
+		{
+			int iEqual = lua_rawequal( L, 1, 2 );
+			lua_pushboolean( L, iEqual );
+			return 1;
+		}
+
+		if( !CheckLuaObjectType(L, 1, m_sClassName) ||
+			!CheckLuaObjectType(L, 2, m_sClassName) )
+		{
+			lua_pushboolean( L, false );
+		}
+		else
+		{
+			void *pData1 = get( L, 1 );
+			void *pData2 = get( L, 2 );
+			lua_pushboolean( L, pData1 != NULL && pData1 == pData2 );
+		}
+
 		return 1;
 	}
 
@@ -155,22 +193,58 @@ private:
 	static int tostring_T( lua_State *L )
 	{
 		char buff[32];
-		void *pData = check( L, -1 );
+		void *pData = check( L, 1 );
 		sprintf( buff, "%p", pData );
 		lua_pushfstring( L, "%s (%s)", m_sClassName, buff );
 		return 1;
 	}
 };
 
+/*
+ * Instanced classes have an associated table, which is used as "self"
+ * instead of a raw userdata.  This should be as lightweight as possible.
+ */
+#include "LuaReference.h"
+class LuaClass: public LuaTable
+{
+public:
+	LuaClass();
+	LuaClass( const LuaClass &cpy );
+	virtual ~LuaClass();
+	LuaClass &operator=( const LuaClass &cpy );
+
+protected:
+	virtual void BeforeReset();
+	virtual void Register();
+
+	void *m_pSelf;
+
+	CString m_sClassName;
+};
+
+/* Only a base class has to indicate that it's instanced (has a per-object
+ * Lua table).  Derived classes simply call the base class's Push function,
+ * specifying a different class name, so they don't need to know about it. */
+#define LUA_REGISTER_INSTANCED_BASE_CLASS( T ) \
+	LUA_REGISTER_CLASS_BASIC( T, none ) \
+	void Luna<T>::PushObject( Lua *L, T* p ) { p->m_pLuaInstance->PushSelf( L ); } \
+	void T::PushSelf( lua_State *L ) { Luna<T>::PushObject( L, this ); ApplyDerivedType( L, #T, this ); }
+
 #define LUA_REGISTER_CLASS( T ) \
-	LUA_REGISTER_DERIVED_CLASS( T, none )
+	LUA_REGISTER_CLASS_BASIC( T, none ) \
+	void Luna<T>::PushObject( Lua *L, T* p ) { void **pData = (void **) lua_newuserdata( L, sizeof(void *) ); *pData = p; } \
+	void T::PushSelf( lua_State *L ) { Luna<T>::PushObject( L, this ); ApplyDerivedType( L, #T, this ); }
 
 #define LUA_REGISTER_DERIVED_CLASS( T, B ) \
+	LUA_REGISTER_CLASS_BASIC( T, B ) \
+	void Luna<T>::PushObject( Lua *L, T* p ) { Luna<B>::PushObject( L, p ); } \
+	void T::PushSelf( lua_State *L ) { Luna<B>::PushObject( L, this ); ApplyDerivedType( L, #T, this ); }
+
+#define LUA_REGISTER_CLASS_BASIC( T, B ) \
 	template<> const char *Luna<T>::m_sClassName = #T; \
 	template<> const char *Luna<T>::m_sBaseClassName = #B; \
 	template<> Luna<T>::RegTypeVector* Luna<T>::s_pvMethods = NULL; \
 	static Luna##T registera; \
-	void T::PushSelf( lua_State *L ) { Luna##T::Push( L, this ); } \
 	/* Call PushSelf, so we always call the derived Luna<T>::Push. */ \
 	namespace LuaHelpers { template<> void Push( T *pObject, lua_State *L ) { pObject->PushSelf( L ); } }
 
