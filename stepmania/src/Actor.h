@@ -4,12 +4,14 @@
 #define ACTOR_H
 
 #include "RageTypes.h"
+#include "RageUtil_AutoPtr.h"
 #include "ActorCommands.h"
 #include <deque>
 #include <map>
 struct XNode;
 struct lua_State;
 class LuaReference;
+class LuaClass;
 #include "MessageManager.h"
 
 
@@ -333,6 +335,7 @@ public:
 	// Lua
 	//
 	virtual void PushSelf( lua_State *L );
+	HiddenPtr<LuaClass> m_pLuaInstance;
 
 	//
 	// Commands

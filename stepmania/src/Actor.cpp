@@ -101,6 +101,7 @@ void Actor::UnsubcribeAndClearCommands()
 
 Actor::Actor()
 {
+	m_pLuaInstance = new LuaClass;
 	m_size = RageVector2( 1, 1 );
 	Reset();
 	m_bFirstUpdate = true;
@@ -1336,7 +1337,7 @@ public:
 	}
 };
 
-LUA_REGISTER_CLASS( Actor )
+LUA_REGISTER_INSTANCED_BASE_CLASS( Actor )
 // lua end
 
 
