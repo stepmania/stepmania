@@ -229,8 +229,6 @@ void ScreenEditCourse::AfterChangeValueInRow( PlayerNumber pn )
 
 void ScreenEditCourse::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	Course *pCourse = GAMESTATE->m_pCurCourse;
-
 	switch( iRow )
 	{
 	case ROW_EDIT_ENTRY:
