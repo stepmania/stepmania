@@ -122,8 +122,13 @@ struct NoteResource
 
 static map<NoteSkinAndPath, NoteResource *> g_NoteResource;
 
-static NoteResource *MakeNoteResource( const NoteSkinAndPath &nsap, bool bSpriteOnly )
+static NoteResource *MakeNoteResource( const CString &sButton, const CString &sElement, NoteType nt, bool bSpriteOnly )
 {
+	CString sElementAndType = sElement;
+	if( nt != NOTE_TYPE_INVALID )
+		sElementAndType += " " + NoteTypeToString(nt);
+	NoteSkinAndPath nsap( NOTESKIN->GetCurrentNoteSkin(), NOTESKIN->GetPath(sButton, sElementAndType) );
+
 	map<NoteSkinAndPath, NoteResource *>::iterator it = g_NoteResource.find( nsap );
 	if( it == g_NoteResource.end() )
 	{
@@ -179,15 +184,15 @@ static void DeleteNoteResource( const Actor *pActor )
 	delete pRes;
 }
 
-Actor *MakeRefcountedActor( const NoteSkinAndPath &nsap )
+Actor *MakeRefcountedActor( const CString &sButton, const CString &sElement, NoteType nt )
 {
-	NoteResource *pRes = MakeNoteResource( nsap, false );
+	NoteResource *pRes = MakeNoteResource( sButton, sElement, nt, false );
 	return pRes->m_pActor;
 }
 
-Sprite *MakeRefcountedSprite( const NoteSkinAndPath &nsap )
+Sprite *MakeRefcountedSprite( const CString &sButton, const CString &sElement, NoteType nt )
 {
-	NoteResource *pRes = MakeNoteResource( nsap, true );
+	NoteResource *pRes = MakeNoteResource( sButton, sElement, nt, true );
 	return (Sprite *) pRes->m_pActor; /* XXX ick */
 }
 
@@ -211,11 +216,11 @@ void NoteColorActor::Load( bool bIsNoteColor, const CString &sButton, const CStr
 	if( m_bIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-			m_p[i] = MakeRefcountedActor( NoteSkinAndPath( NOTESKIN->GetCurrentNoteSkin(), NOTESKIN->GetPath(sButton, sElement+" "+NoteTypeToString((NoteType)i)) ) );
+			m_p[i] = MakeRefcountedActor( sButton, sElement, (NoteType)i );
 	}
 	else
 	{
-		m_p[0] = MakeRefcountedActor( NoteSkinAndPath( NOTESKIN->GetCurrentNoteSkin(), NOTESKIN->GetPath(sButton, sElement) ) );
+		m_p[0] = MakeRefcountedActor( sButton, sElement, NOTE_TYPE_INVALID );
 	}
 }
 
@@ -251,11 +256,11 @@ void NoteColorSprite::Load( bool bIsNoteColor, const CString &sButton, const CSt
 	if( m_bIsNoteColor )
 	{
 		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-			m_p[i] = MakeRefcountedSprite( NoteSkinAndPath( NOTESKIN->GetCurrentNoteSkin(), NOTESKIN->GetPath(sButton, sElement+" "+NoteTypeToString((NoteType)i)) ) );
+			m_p[i] = MakeRefcountedSprite( sButton, sElement, (NoteType)i );
 	}
 	else
 	{
-		m_p[0] = MakeRefcountedSprite( NoteSkinAndPath( NOTESKIN->GetCurrentNoteSkin(), NOTESKIN->GetPath(sButton, sElement) ) );
+		m_p[0] = MakeRefcountedSprite( sButton, sElement, NOTE_TYPE_INVALID );
 	}
 }
 
