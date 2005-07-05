@@ -10,6 +10,8 @@ public:
 	virtual void Init();
 	virtual ~ScreenOptionsProfiles();
 
+	static CString s_sCurrentProfileID;
+
 protected:
 private:
 	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns );

@@ -43,8 +43,8 @@ void ScreenTextEntry::TextEntry(
 	CString sQuestion, 
 	CString sInitialAnswer, 
 	int iMaxInputLength,
-	bool(*Validate)(CString sAnswer,CString &sErrorOut), 
-	void(*OnOK)(CString sAnswer), 
+	bool(*Validate)(const CString &sAnswer,CString &sErrorOut), 
+	void(*OnOK)(const CString &sAnswer), 
 	void(*OnCancel)(),
 	bool bPassword
 	)
@@ -82,8 +82,8 @@ ScreenTextEntry::ScreenTextEntry(
 	CString sQuestion, 
 	CString sInitialAnswer, 
 	int iMaxInputLength,
-	bool(*Validate)(CString sAnswer,CString &sErrorOut), 
-	void(*OnOK)(CString sAnswer), 
+	bool(*Validate)(const CString &sAnswer,CString &sErrorOut), 
+	void(*OnOK)(const CString &sAnswer), 
 	void(*OnCancel)(), 
 	bool bPassword ) :
 	Screen( sClassName )

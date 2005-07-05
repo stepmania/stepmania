@@ -1865,49 +1865,49 @@ void ScreenEdit::OnSnapModeChange()
 // Begin helper functions for InputEdit
 
 
-void ChangeDescription( CString sNew )
+void ChangeDescription( const CString &sNew )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSteps->SetDescription(sNew);
 }
 
-void ChangeMainTitle( CString sNew )
+void ChangeMainTitle( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sMainTitle = sNew;
 }
 
-void ChangeSubTitle( CString sNew )
+void ChangeSubTitle( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sSubTitle = sNew;
 }
 
-void ChangeArtist( CString sNew )
+void ChangeArtist( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sArtist = sNew;
 }
 
-void ChangeCredit( CString sNew )
+void ChangeCredit( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sCredit = sNew;
 }
 
-void ChangeMainTitleTranslit( CString sNew )
+void ChangeMainTitleTranslit( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sMainTitleTranslit = sNew;
 }
 
-void ChangeSubTitleTranslit( CString sNew )
+void ChangeSubTitleTranslit( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sSubTitleTranslit = sNew;
 }
 
-void ChangeArtistTranslit( CString sNew )
+void ChangeArtistTranslit( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sArtistTranslit = sNew;

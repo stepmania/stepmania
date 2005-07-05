@@ -31,6 +31,9 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 #define MACHINE_PROFILE_DIR		"Data/MachineProfile/"
 const CString LAST_GOOD_DIR	=	"LastGood/";
 
+static ThemeMetric<CString> NEW_PROFILE_DEFAULT_NAME( "ProfileManager", "NewProfileDefaultName" );
+
+
 // Directories to search for a profile if m_sMemoryCardProfileSubdir doesn't
 // exist, separated by ";":
 static Preference<CString> g_sMemoryCardProfileImportSubdirs( "MemoryCardProfileImportSubdirs", "" );
@@ -69,19 +72,22 @@ void ProfileManager::GetLocalProfileIDs( vector<CString> &asProfileIDsOut ) cons
 
 void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut ) const
 {
+	asNamesOut.clear();
+
 	CStringArray vsProfileIDs;
 	GetLocalProfileIDs( vsProfileIDs );
 	LOG->Trace("GetLocalProfileNames: %u", unsigned(vsProfileIDs.size()));
-	for( unsigned i=0; i<vsProfileIDs.size(); i++ )
-	{
-		CString sProfileID = vsProfileIDs[i];
-		CString sProfileDir = USER_PROFILES_DIR + sProfileID + "/";
-		CString sDisplayName = Profile::GetProfileDisplayNameFromDir( sProfileDir );
-		LOG->Trace(" '%s'", sDisplayName.c_str());
-		asNamesOut.push_back( sDisplayName );
-	}
+	FOREACH_CONST( CString, vsProfileIDs, s )
+		asNamesOut.push_back( ProfileIDToName(*s) );
 }
 
+CString ProfileManager::ProfileIDToName( const CString &sProfileID ) const
+{
+	CString sProfileDir = USER_PROFILES_DIR + sProfileID + "/";
+	CString sDisplayName = Profile::GetProfileDisplayNameFromDir( sProfileDir );
+	LOG->Trace(" '%s'", sDisplayName.c_str());
+	return sDisplayName;
+}
 
 int ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard )
 {
@@ -327,7 +333,7 @@ bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
 {
 	ASSERT( !sProfileID.empty() );
 
-	CString sProfileDir = USER_PROFILES_DIR + sProfileID;
+	CString sProfileDir = USER_PROFILES_DIR + sProfileID + "/";
 
 	Profile pro;
 	Profile::LoadResult lr;
@@ -630,6 +636,22 @@ bool ProfileManager::IsPersistentProfile( ProfileSlot slot ) const
 		ASSERT(0);
 		return false;
 	}
+}
+
+CString ProfileManager::GetNewProfileDefaultName() const
+{
+	vector<CString> vsNames;
+	GetLocalProfileNames( vsNames );
+
+	CString sPotentialName;
+	for( int i=1; i<1000; i++ )
+	{
+		sPotentialName = ssprintf( "%s%04d", NEW_PROFILE_DEFAULT_NAME.GetValue().c_str(), i );
+		bool bNameIsUsed = find( vsNames.begin(), vsNames.end(), sPotentialName ) != vsNames.end();
+		if( !bNameIsUsed )
+			return sPotentialName;
+	}
+	return sPotentialName;
 }
 
 // lua start

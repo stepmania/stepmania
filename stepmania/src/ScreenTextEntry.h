@@ -32,12 +32,15 @@ public:
 		CString sQuestion, 
 		CString sInitialAnswer, 
 		int iMaxInputLength, 
-		bool(*Validate)(CString sAnswer,CString &sErrorOut) = NULL, 
-		void(*OnOK)(CString sAnswer) = NULL, 
+		bool(*Validate)(const CString &sAnswer,CString &sErrorOut) = NULL, 
+		void(*OnOK)(const CString &sAnswer) = NULL, 
 		void(*OnCanel)() = NULL,
-		bool bPassword = false
-		);
-	static void Password( ScreenMessage smSendOnPop, const CString &sQuestion, void(*OnOK)(CString sPassword) = NULL, void(*OnCanel)() = NULL )
+		bool bPassword = false );
+	static void Password( 
+		ScreenMessage smSendOnPop, 
+		const CString &sQuestion, 
+		void(*OnOK)(const CString &sPassword) = NULL, 
+		void(*OnCanel)() = NULL )
 	{
 		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCanel, true );
 	}
@@ -48,8 +51,8 @@ public:
 		CString sQuestion, 
 		CString sInitialAnswer, 
 		int iMaxInputLength,
-		bool(*Validate)(CString sAnswer,CString &sErrorOut) = NULL, 
-		void(*OnOK)(CString sAnswer) = NULL, 
+		bool(*Validate)(const CString &sAnswer,CString &sErrorOut) = NULL, 
+		void(*OnOK)(const CString &sAnswer) = NULL, 
 		void(*OnCanel)() = NULL, 
 		bool bPassword = false );
 	~ScreenTextEntry();
@@ -91,8 +94,8 @@ protected:
 	AutoActor		m_sprAnswerBox;
 	wstring			m_sAnswer;
 	BitmapText		m_textAnswer;
-	bool(*m_pValidate)( CString sAnswer, CString &sErrorOut );
-	void(*m_pOnOK)( CString sAnswer );
+	bool(*m_pValidate)( const CString &sAnswer, CString &sErrorOut );
+	void(*m_pOnOK)( const CString &sAnswer );
 	void(*m_pOnCancel)();
 	
 	AutoActor		m_sprCursor;

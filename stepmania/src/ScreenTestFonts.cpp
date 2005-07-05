@@ -13,7 +13,7 @@ static const float LineHeight = 50;
 
 CString CustomText;
 
-void ChangeText(CString txt)
+void ChangeText(const CString &txt)
 {
 	CustomText = txt;
 }

@@ -4,10 +4,40 @@
 #include "ScreenMiniMenu.h"
 #include "ProfileManager.h"
 #include "ScreenTextEntry.h"
+#include "ScreenPrompt.h"
 #include "RageUtil.h"
 
-AutoScreenMessage( SM_BackFromCreateNewName )
+AutoScreenMessage( SM_BackFromEnterName )
 AutoScreenMessage( SM_BackFromProfileContextMenu )
+AutoScreenMessage( SM_BackFromDelete )
+
+CString ScreenOptionsProfiles::s_sCurrentProfileID = "";
+const int PROFILE_MAX_NAME_LENGTH = 64;
+
+static bool ValidateProfileName( const CString &sAnswer, CString &sErrorOut )
+{
+	CString sCurrentProfileOldName = PROFILEMAN->ProfileIDToName( ScreenOptionsProfiles::s_sCurrentProfileID );
+	vector<CString> vsProfileNames;
+	PROFILEMAN->GetLocalProfileNames( vsProfileNames );
+	bool bAlreadyAProfileWithThisName = find( vsProfileNames.begin(), vsProfileNames.end(), sAnswer ) != vsProfileNames.end();
+	
+	if( sAnswer == "" )
+	{
+		sErrorOut = "Profile name cannot be blank.";
+		return false;
+	}
+	else if( sAnswer == sCurrentProfileOldName )
+	{
+		return true;
+	}
+	else if( bAlreadyAProfileWithThisName )
+	{
+		sErrorOut = "There is already another profile with this name.  Please choose a different name.";
+		return false;
+	}
+
+	return true;
+}
 
 enum ContextMenuAnswer
 {
@@ -19,10 +49,10 @@ enum ContextMenuAnswer
 
 static MenuDef g_ProfileContextMenu(
 	"ScreenMiniMenuProfiles",
-	MenuRowDef( -1, "Edit",		true, EDIT_MODE_PRACTICE, 0, "" ),
-	MenuRowDef( -1, "Rename",	true, EDIT_MODE_PRACTICE, 0, "" ),
-	MenuRowDef( -1, "Delete",	true, EDIT_MODE_PRACTICE, 0, "" ),
-	MenuRowDef( -1, "Cancel",	true, EDIT_MODE_PRACTICE, 0, "" )
+	MenuRowDef( A_EDIT,		"Edit",		true, EDIT_MODE_PRACTICE, 0, "" ),
+	MenuRowDef( A_RENAME,	"Rename",	true, EDIT_MODE_PRACTICE, 0, "" ),
+	MenuRowDef( A_DELETE,	"Delete",	true, EDIT_MODE_PRACTICE, 0, "" ),
+	MenuRowDef( A_CANCEL,	"Cancel",	true, EDIT_MODE_PRACTICE, 0, "" )
 );
 
 REGISTER_SCREEN_CLASS( ScreenOptionsProfiles );
@@ -93,17 +123,32 @@ void ScreenOptionsProfiles::GoToPrevScreen()
 
 void ScreenOptionsProfiles::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SM == SM_BackFromCreateNewName )
+	if( SM == SM_BackFromEnterName )
 	{
-		if( !ScreenTextEntry::s_bCancelledLast && ScreenTextEntry::s_sLastAnswer != "" )
+		if( !ScreenTextEntry::s_bCancelledLast )
 		{
+			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
+		
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
-			bool bResult = PROFILEMAN->CreateLocalProfile( sNewName );
-			if( bResult )
-				SCREENMAN->SetNewScreen( m_sName );	// reload
+			if( s_sCurrentProfileID.empty() )
+			{
+				// create
+				bool bResult = PROFILEMAN->CreateLocalProfile( sNewName );
+				if( bResult )
+					SCREENMAN->SetNewScreen( m_sName );	// reload
+				else
+					ScreenPrompt::Prompt( SM_None, ssprintf("Error creating profile '%s'.", sNewName.c_str()) );
+			}
 			else
-				SCREENMAN->Prompt( SM_None, ssprintf("Error creating profile '%s'.", sNewName.c_str()) );
-		}		
+			{
+				// rename
+				bool bResult = PROFILEMAN->RenameLocalProfile( s_sCurrentProfileID, sNewName );
+				if( bResult )
+					SCREENMAN->SetNewScreen( m_sName );	// reload
+				else
+					ScreenPrompt::Prompt( SM_None, ssprintf("Error renaming profile '%s'.", sNewName.c_str()) );
+			}
+		}
 	}
 	else if( SM == SM_BackFromProfileContextMenu )
 	{
@@ -112,11 +157,32 @@ void ScreenOptionsProfiles::HandleScreenMessage( const ScreenMessage SM )
 		default:
 			ASSERT(0);
 		case A_EDIT:
+			SCREENMAN->SetNewScreen( "ScreenOptionsEditProfile" );
+			break;
 		case A_RENAME: 
+			{
+				CString sCurrentProfileName = PROFILEMAN->ProfileIDToName( s_sCurrentProfileID );
+				ScreenTextEntry::TextEntry( SM_BackFromEnterName, "Enter a name for a new profile.", sCurrentProfileName, PROFILE_MAX_NAME_LENGTH, ValidateProfileName );
+			}
+			break;
 		case A_DELETE: 
+			{
+				CString sCurrentProfileName = PROFILEMAN->ProfileIDToName( s_sCurrentProfileID );
+				CString sMessage = ssprintf( "Are you sure you want to delete the profile '%s'?", sCurrentProfileName.c_str() );
+				ScreenPrompt::Prompt( SM_BackFromDelete, sMessage, PROMPT_YES_NO );
+			}
+			break;
 		case A_CANCEL:
 			SCREENMAN->PlayInvalidSound();
 			break;
+		}
+	}
+	else if( SM == SM_BackFromDelete )
+	{
+		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
+		{
+			PROFILEMAN->DeleteLocalProfile( s_sCurrentProfileID );
+			SCREENMAN->SetNewScreen( m_sName );	// reload
 		}
 	}
 }
@@ -128,17 +194,21 @@ void ScreenOptionsProfiles::ProcessMenuStart( PlayerNumber pn, const InputEventT
 
 	if( iRow == 0 )	// "create new"
 	{
-		//ScreenOptions::BeginFadingOut();
-		SCREENMAN->TextEntry( SM_BackFromCreateNewName, "Enter a name for a new profile.", "", 64 );
+		s_sCurrentProfileID = "";
+		ScreenTextEntry::TextEntry( SM_BackFromEnterName, "Enter a name for a new profile.", PROFILEMAN->GetNewProfileDefaultName(), PROFILE_MAX_NAME_LENGTH, ValidateProfileName );
 	}
 	else if( row.GetRowType() == OptionRow::ROW_EXIT )
 	{
+		s_sCurrentProfileID = "";
 		ScreenOptions::ProcessMenuStart( pn, type );
 	}
 	else
 	{
-		SCREENMAN->MiniMenu( &g_ProfileContextMenu, SM_BackFromProfileContextMenu );
-
+		int iProfileIndex = iRow - 1;
+		vector<CString> vsProfileIDs;
+		PROFILEMAN->GetLocalProfileIDs( vsProfileIDs );
+		s_sCurrentProfileID = vsProfileIDs[ iProfileIndex ];
+		ScreenMiniMenu::MiniMenu( &g_ProfileContextMenu, SM_BackFromProfileContextMenu );
 	}
 }
 

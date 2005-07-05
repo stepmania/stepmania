@@ -30,6 +30,9 @@ public:
 
 	void GetLocalProfileIDs( vector<CString> &asProfileIDsOut ) const;
 	void GetLocalProfileNames( vector<CString> &asNamesOut ) const;
+	CString ProfileIDToName( const CString &sProfileID ) const;
+
+	CString GetNewProfileDefaultName() const;
 
 	bool LoadFirstAvailableProfile( PlayerNumber pn );	// memory card or local profile
 	bool LoadLocalProfileFromMachine( PlayerNumber pn );

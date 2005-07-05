@@ -157,7 +157,7 @@ static CString GetCopyDescription( const Steps *pSourceSteps )
 	return s;
 }
 
-static bool ValidateCurrentStepsDescription( CString s, CString &sErrorOut )
+static bool ValidateCurrentStepsDescription( const CString &s, CString &sErrorOut )
 {
 	ASSERT( GAMESTATE->m_pCurSteps[0]->GetDifficulty() == DIFFICULTY_EDIT );
 
@@ -176,7 +176,7 @@ static bool ValidateCurrentStepsDescription( CString s, CString &sErrorOut )
 	return true;
 }
 	
-static void SetCurrentStepsDescription( CString s )
+static void SetCurrentStepsDescription( const CString &s )
 {
 	GAMESTATE->m_pCurSteps[0]->SetDescription( s );
 }
