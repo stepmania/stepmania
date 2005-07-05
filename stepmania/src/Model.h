@@ -20,7 +20,6 @@ public:
 	void	Load( CString sFile );
 
 	void	LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBomesPath );
-	void	LoadFromModelFile( CString sFile );
 	void	LoadMilkshapeAscii( CString sFile );
 	void 	LoadMaterialsFromMilkshapeAscii( CString sPath );
 	bool	LoadMilkshapeAsciiBones( CString sAniName, CString sPath );

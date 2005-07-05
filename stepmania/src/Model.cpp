@@ -61,40 +61,9 @@ void Model::Load( CString sFile )
 	sExt.MakeLower();
 	if( sExt=="txt" )
 		LoadMilkshapeAscii( sFile );
-	else if( sExt=="model" )
-		LoadFromModelFile( sFile );
 }
 
 #define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() )
-
-void Model::LoadFromModelFile( CString sPath )
-{
-	Clear();
-
-	IniFile ini;
-	if( !ini.ReadFile( sPath ) )
-		RageException::Throw( "Model::LoadFromModelFile: Could not open \"%s\": %s", sPath.c_str(), ini.GetError().c_str() );
-
-	CString sDir = Dirname( sPath );
-
-	CString sMeshes, sMaterials, sBones;
-	if( !ini.GetValue( "Model", "Meshes", sMeshes ) )
-		RageException::Throw( "The model file '%s' is missing the value [Model] Meshes.", sPath.c_str() );
-	if( !ini.GetValue( "Model", "Materials", sMaterials ) )
-		RageException::Throw( "The model file '%s' is missing the value [Model] Materials.", sPath.c_str() );
-	if( !ini.GetValue( "Model", "Bones", sBones ) )
-		RageException::Throw( "The model file '%s' is missing the value [Model] Bones.", sPath.c_str() );
-
-	sMeshes = sDir+sMeshes;
-	sMaterials = sDir+sMaterials;
-	sBones = sDir+sBones;
-
-	CollapsePath( sMeshes );
-	CollapsePath( sMaterials );
-	CollapsePath( sBones );
-
-	LoadPieces( sMeshes, sMaterials, sBones );
-}
 
 void Model::LoadMilkshapeAscii( CString sPath )
 {
