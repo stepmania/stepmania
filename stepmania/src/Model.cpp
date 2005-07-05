@@ -147,8 +147,20 @@ void Model::LoadFromNode( const CString& sDir, const XNode* pNode )
 	pNode->GetAttrValue( "Bones", s3 );
 	if( !s1.empty() || !s2.empty() || !s3.empty() )
 	{
+		LuaHelpers::RunAtExpressionS( s1 );
+		LuaHelpers::RunAtExpressionS( s2 );
+		LuaHelpers::RunAtExpressionS( s3 );
+
 		ASSERT( !s1.empty() && !s2.empty() && !s3.empty() );
-		LoadPieces( sDir+s1, sDir+s2, sDir+s3 );
+
+		if( s1.Left(1) != "/" )
+			s1 = sDir+s1;
+		if( s2.Left(1) != "/" )
+			s2 = sDir+s2;
+		if( s3.Left(1) != "/" )
+			s3 = sDir+s3;
+
+		LoadPieces( s1, s2, s3 );
 	}
 }
 
