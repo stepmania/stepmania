@@ -58,7 +58,7 @@ void ScreenDemonstration::Init()
 
 	if( GAMESTATE->m_pCurSong == NULL )	// we didn't find a song.
 	{
-		HandleScreenMessage( SM_GoToNextScreen );	// Abort demonstration.
+		PostScreenMessage( SM_GoToNextScreen, 0 );	// Abort demonstration.
 		return;
 	}
 
