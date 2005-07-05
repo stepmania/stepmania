@@ -124,9 +124,7 @@ static map<NoteSkinAndPath, NoteResource *> g_NoteResource;
 
 static NoteResource *MakeNoteResource( const CString &sButton, const CString &sElement, NoteType nt, bool bSpriteOnly )
 {
-	CString sElementAndType = sElement;
-	if( nt != NOTE_TYPE_INVALID )
-		sElementAndType += " " + NoteTypeToString(nt);
+	CString sElementAndType = sElement + " " + NoteTypeToString(nt);
 	NoteSkinAndPath nsap( NOTESKIN->GetCurrentNoteSkin(), NOTESKIN->GetPath(sButton, sElementAndType) );
 
 	map<NoteSkinAndPath, NoteResource *>::iterator it = g_NoteResource.find( nsap );
@@ -220,7 +218,7 @@ void NoteColorActor::Load( bool bIsNoteColor, const CString &sButton, const CStr
 	}
 	else
 	{
-		m_p[0] = MakeRefcountedActor( sButton, sElement, NOTE_TYPE_INVALID );
+		m_p[0] = MakeRefcountedActor( sButton, sElement, NOTE_TYPE_4TH );
 	}
 }
 
@@ -260,7 +258,7 @@ void NoteColorSprite::Load( bool bIsNoteColor, const CString &sButton, const CSt
 	}
 	else
 	{
-		m_p[0] = MakeRefcountedSprite( sButton, sElement, NOTE_TYPE_INVALID );
+		m_p[0] = MakeRefcountedSprite( sButton, sElement, NOTE_TYPE_4TH );
 	}
 }
 
