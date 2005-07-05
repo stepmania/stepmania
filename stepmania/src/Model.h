@@ -8,15 +8,17 @@
 #include "ModelTypes.h"
 #include <vector>
 #include <map>
-#include "RageModelGeometry.h"
+
+class RageModelGeometry;
+class RageCompiledGeometry;
 
 class Model : public Actor
 {
 public:
-	Model ();
-	virtual ~Model ();
+	Model();
+	virtual ~Model();
 
-	void	Clear ();
+	void	Clear();
 	void	Load( CString sFile );
 
 	void	LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBomesPath );
@@ -32,7 +34,6 @@ public:
 	virtual bool	EarlyAbortDraw();
 	virtual void	DrawPrimitives();
 
-	void	AdvanceFrame (float dt);
 	void	DrawCelShaded();
 
 	virtual int GetNumStates() const;
@@ -40,14 +41,14 @@ public:
 	virtual float GetAnimationLengthSeconds() const;
 	virtual void SetSecondsIntoAnimation( float fSeconds );
 
-	CString		GetDefaultAnimation() { return m_sDefaultAnimation; };
+	CString		GetDefaultAnimation() const { return m_sDefaultAnimation; };
 	void		SetDefaultAnimation( CString sAnimation, float fPlayRate = 1 );
 	bool		m_bRevertToDefaultAnimation;
 
 	bool	MaterialsNeedNormals() const;
 
 	//
-	// Commands
+	// Lua
 	//
 	virtual void PushSelf( lua_State *L );
 
@@ -72,6 +73,7 @@ private:
 	vector<msMesh>	m_vTempMeshes;
 
 	void DrawMesh( int i ) const;
+	void AdvanceFrame( float fDeltaTime );
 
 	float		m_fCurFrame;
 	CString		m_sDefaultAnimation;

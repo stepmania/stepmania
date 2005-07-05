@@ -5,7 +5,7 @@
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageTextureManager.h"
-#include "IniFile.h"
+#include "XmlFile.h"
 #include "RageFile.h"
 #include "RageLog.h"
 #include "ActorUtil.h"
