@@ -687,7 +687,9 @@ void Sprite::SetState( int iNewState )
 	// This assert will likely trigger if the "missing" theme element graphic 
 	// is loaded in place of a multi-frame sprite.  We want to know about these
 	// problems in debug builds, but they're not fatal.
-	if( iNewState < 0  ||  iNewState >= (int)m_States.size() )
+	//
+	// Never warn about setting state 0.
+	if( iNewState != 0 && (iNewState < 0  ||  iNewState >= (int)m_States.size()) )
 	{
 		// Don't warn about number of states in "_blank".
 		if( !m_pTexture || m_pTexture->GetID().filename.Find("_blank") == -1 )
