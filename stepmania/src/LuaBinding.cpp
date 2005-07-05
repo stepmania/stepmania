@@ -22,6 +22,8 @@ void CreateMethodsTable( lua_State *L, const CString &szName )
  */
 bool CheckLuaObjectType( lua_State *L, int narg, const char *szType )
 {
+	ASSERT_M( narg > 0, ssprintf("%i", narg) ); // negative offsets not supported
+
 	int iTop = lua_gettop(L);
 	lua_pushvalue( L, narg );
 
