@@ -29,11 +29,11 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 {
 	LOG->Trace("ScreenUnlock::ScreenUnlock()");
 
-	unsigned NumUnlocks = UNLOCKMAN->m_UnlockEntries.size();
+	unsigned iNumUnlocks = UNLOCKMAN->m_UnlockEntries.size();
 
-	if (!PREFSMAN->m_bUseUnlockSystem || NumUnlocks == 0)
+	if( !PREFSMAN->m_bUseUnlockSystem || iNumUnlocks == 0 )
 	{
-		this->HandleScreenMessage( SM_GoToNextScreen );
+		this->PostScreenMessage( SM_GoToNextScreen, 0 );
 		return;
 	}
 }
