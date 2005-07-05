@@ -251,12 +251,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenBookkeeping.h">
 			</File>
 			<File
-				RelativePath="ScreenBranch.cpp">
-			</File>
-			<File
-				RelativePath="ScreenBranch.h">
-			</File>
-			<File
 				RelativePath="ScreenCenterImage.cpp">
 			</File>
 			<File
