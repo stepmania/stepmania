@@ -443,8 +443,7 @@ FileType ActorUtil::GetFileType( const CString &sPath )
 	else if( 
 		sExt=="sprite" )	return FT_Sprite;
 	else if( 
-		sExt=="txt" ||
-		sExt=="model" )		return FT_Model;
+		sExt=="txt" )		return FT_Model;
 	else					return FT_Invalid;
 	
 }
