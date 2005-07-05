@@ -1,7 +1,6 @@
 #include "global.h"
 #include "Actor.h"
 #include "RageDisplay.h"
-#include "PrefsManager.h"
 #include "RageUtil.h"
 #include "RageMath.h"
 #include "GameConstantsAndTypes.h"
