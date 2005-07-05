@@ -333,121 +333,121 @@ const MapEditToDI *ScreenEdit::GetCurrentMap() const
 }
 
 
-static Menu g_EditHelp(
+static MenuDef g_EditHelp(
 	"ScreenMiniMenuEditHelp",
 #if defined(XBOX)
-	MenuRow( -1, "L + Up/Down: Change zoom",						false, NULL, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "R + Up/Down: Drag area marker",					false, NULL, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "L + Select: Play selection",						false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "R + Start: Play whole song",						false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "R + Select: Record",								false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "L + Black: Toggle assist tick",					false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "R + White: Insert beat and shift down",			false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "R + Black: Delete beat and shift up",				false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "R + button: Lay mine",							false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "L + button: Add to/remove from right half",		false, EDIT_MODE_PRACTICE, 0, NULL )
+	MenuRowDef( -1, "L + Up/Down: Change zoom",						false, NULL, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "R + Up/Down: Drag area marker",					false, NULL, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "L + Select: Play selection",						false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "R + Start: Play whole song",						false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "R + Select: Record",								false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "L + Black: Toggle assist tick",					false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "R + White: Insert beat and shift down",			false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "R + Black: Delete beat and shift up",				false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "R + button: Lay mine",							false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "L + button: Add to/remove from right half",		false, EDIT_MODE_PRACTICE, 0, NULL )
 #else
-	MenuRow( -1, "PgUp/PgDn: jump measure",							false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "Home/End: jump to first/last beat",				false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "Ctrl + Up/Down: Change zoom",						false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "Shift + Up/Down: Drag area marker",				false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "P: Play selection",								false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "Ctrl + P: Play whole song",						false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "Shift + P: Play current beat to end",				false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "Ctrl + R: Record",								false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "F4: Toggle assist tick",							false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "F5/F6: Next/prev steps of same StepsType",		false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "F7/F8: Decrease/increase BPM at cur beat",		false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "F9/F10: Decrease/increase stop at cur beat",		false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "F11/F12: Decrease/increase music offset",			false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "PgUp/PgDn: jump measure",							false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Home/End: jump to first/last beat",				false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Ctrl + Up/Down: Change zoom",						false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Shift + Up/Down: Drag area marker",				false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "P: Play selection",								false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Ctrl + P: Play whole song",						false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Shift + P: Play current beat to end",				false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Ctrl + R: Record",								false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "F4: Toggle assist tick",							false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "F5/F6: Next/prev steps of same StepsType",		false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "F7/F8: Decrease/increase BPM at cur beat",		false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "F9/F10: Decrease/increase stop at cur beat",		false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "F11/F12: Decrease/increase music offset",			false, EDIT_MODE_PRACTICE, 0, NULL ),
 			/* XXX: This would be better as a single submenu, to let people tweak
 			* and play the sample several times (without having to re-enter the
 			* menu each time), so it doesn't use a whole bunch of hotkeys. */
-	MenuRow( -1, "[ and ]: Decrease/increase sample music start",	false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "{ and }: Decrease/increase sample music length",	false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "M: Play sample music",							false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "B: Add/Edit Background Change",					false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "Insert: Insert beat and shift down",				false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "Ctrl + Insert: Shift BPM changes and stops down one beat",
+	MenuRowDef( -1, "[ and ]: Decrease/increase sample music start",	false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "{ and }: Decrease/increase sample music length",	false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "M: Play sample music",							false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "B: Add/Edit Background Change",					false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Insert: Insert beat and shift down",				false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Ctrl + Insert: Shift BPM changes and stops down one beat",
 																	false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "Delete: Delete beat and shift up",				false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "Ctrl + Delete: Shift BPM changes and stops up one beat",
+	MenuRowDef( -1, "Delete: Delete beat and shift up",				false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Ctrl + Delete: Shift BPM changes and stops up one beat",
 																	false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "Shift + number: Lay mine",						false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( -1, "Alt + number: Add to/remove from right half",		false, EDIT_MODE_PRACTICE, 0, NULL )
+	MenuRowDef( -1, "Shift + number: Lay mine",						false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Alt + number: Add to/remove from right half",		false, EDIT_MODE_PRACTICE, 0, NULL )
 #endif
 );
 
-static Menu g_MainMenu(
+static MenuDef g_MainMenu(
 	"ScreenMiniMenuMainMenu",
-	MenuRow( ScreenEdit::edit_steps_information,	"Edit Steps Information",		true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::play_whole_song,			"Play Whole Song",				true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::play_current_beat_to_end,	"Play Current Beat to End",		true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::save,						"Save",							true, EDIT_MODE_HOME, 0, NULL ),
-	MenuRow( ScreenEdit::revert_to_last_save,		"Revert to Last Save",			true, EDIT_MODE_HOME, 0, NULL ),
-	MenuRow( ScreenEdit::revert_from_disk,			"Revert from Disk",				true, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::player_options,			"Player Options",				true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::song_options,				"Song Options",					true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::edit_song_info,			"Edit Song Info",				true, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::edit_bpm,					"Edit BPM Change",				true, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::edit_stop,					"Edit Stop",					true, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::edit_bg_change,			"Add/Edit Background Change",	true, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::play_preview_music,		"Play Preview Music",			true, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::preferences,				"Preferences",					true, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::exit,						"Exit",							true, EDIT_MODE_PRACTICE, 0, NULL )
+	MenuRowDef( ScreenEdit::edit_steps_information,	"Edit Steps Information",		true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::play_whole_song,			"Play Whole Song",				true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::play_current_beat_to_end,	"Play Current Beat to End",		true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::save,						"Save",							true, EDIT_MODE_HOME, 0, NULL ),
+	MenuRowDef( ScreenEdit::revert_to_last_save,		"Revert to Last Save",			true, EDIT_MODE_HOME, 0, NULL ),
+	MenuRowDef( ScreenEdit::revert_from_disk,			"Revert from Disk",				true, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::player_options,			"Player Options",				true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::song_options,				"Song Options",					true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::edit_song_info,			"Edit Song Info",				true, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::edit_bpm,					"Edit BPM Change",				true, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::edit_stop,					"Edit Stop",					true, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::edit_bg_change,			"Add/Edit Background Change",	true, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::play_preview_music,		"Play Preview Music",			true, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::preferences,				"Preferences",					true, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::exit,						"Exit",							true, EDIT_MODE_PRACTICE, 0, NULL )
 );
 
-static Menu g_AreaMenu(
+static MenuDef g_AreaMenu(
 	"ScreenMiniMenuAreaMenu",
-	MenuRow( ScreenEdit::cut,					"Cut",								true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::copy,					"Copy",								true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::paste_at_current_beat,	"Paste at current beat",			true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::paste_at_begin_marker,	"Paste at begin marker",			true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::clear,					"Clear area",						true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::quantize,				"Quantize",							true, EDIT_MODE_PRACTICE, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
-	MenuRow( ScreenEdit::turn,					"Turn",								true, EDIT_MODE_PRACTICE, 0, "Left","Right","Mirror","Shuffle","SuperShuffle" ),
-	MenuRow( ScreenEdit::transform,				"Transform",						true, EDIT_MODE_PRACTICE, 0, "NoHolds","NoMines","Little","Wide","Big","Quick","Skippy","Mines","Echo","Stomp","Planted","Floored","Twister","NoJumps","NoHands","NoQuads","NoStretch" ),
-	MenuRow( ScreenEdit::alter,					"Alter",							true, EDIT_MODE_PRACTICE, 0, "Autogen To Fill Width","Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Collapse Left","Shift Left","Shift Right" ),
-	MenuRow( ScreenEdit::tempo,					"Tempo",							true, EDIT_MODE_FULL, 0, "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
-	MenuRow( ScreenEdit::play,					"Play selection",					true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::record,				"Record in selection",				true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::insert_and_shift,		"Insert beat and shift down",		true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::delete_and_shift,		"Delete beat and shift up",			true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::shift_pauses_forward,	"Shift pauses and BPM changes down",true, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::shift_pauses_backward,	"Shift pauses and BPM changes up",	true, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::convert_beat_to_pause,	"Convert beats to pause",			true, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",			true, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::undo,					"Undo",								true, EDIT_MODE_PRACTICE, 0, NULL )
+	MenuRowDef( ScreenEdit::cut,					"Cut",								true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::copy,					"Copy",								true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::paste_at_current_beat,	"Paste at current beat",			true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::paste_at_begin_marker,	"Paste at begin marker",			true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::clear,					"Clear area",						true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::quantize,				"Quantize",							true, EDIT_MODE_PRACTICE, 0, "4th","8th","12th","16th","24th","32nd","48th","64th","192nd"),
+	MenuRowDef( ScreenEdit::turn,					"Turn",								true, EDIT_MODE_PRACTICE, 0, "Left","Right","Mirror","Shuffle","SuperShuffle" ),
+	MenuRowDef( ScreenEdit::transform,				"Transform",						true, EDIT_MODE_PRACTICE, 0, "NoHolds","NoMines","Little","Wide","Big","Quick","Skippy","Mines","Echo","Stomp","Planted","Floored","Twister","NoJumps","NoHands","NoQuads","NoStretch" ),
+	MenuRowDef( ScreenEdit::alter,					"Alter",							true, EDIT_MODE_PRACTICE, 0, "Autogen To Fill Width","Backwards","Swap Sides","Copy Left To Right","Copy Right To Left","Clear Left","Clear Right","Collapse To One","Collapse Left","Shift Left","Shift Right" ),
+	MenuRowDef( ScreenEdit::tempo,					"Tempo",							true, EDIT_MODE_FULL, 0, "Compress 2x","Compress 3->2","Compress 4->3","Expand 3->4","Expand 2->3","Expand 2x" ),
+	MenuRowDef( ScreenEdit::play,					"Play selection",					true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::record,				"Record in selection",				true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::insert_and_shift,		"Insert beat and shift down",		true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::delete_and_shift,		"Delete beat and shift up",			true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::shift_pauses_forward,	"Shift pauses and BPM changes down",true, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::shift_pauses_backward,	"Shift pauses and BPM changes up",	true, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::convert_beat_to_pause,	"Convert beats to pause",			true, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",			true, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::undo,					"Undo",								true, EDIT_MODE_PRACTICE, 0, NULL )
 );
 
-static Menu g_StepsInformation(
+static MenuDef g_StepsInformation(
 	"ScreenMiniMenuStepsInformation",
-	MenuRow( ScreenEdit::difficulty,	"Difficulty",		true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::meter,			"Meter",			true, EDIT_MODE_PRACTICE, 0, "1","2","3","4","5","6","7","8","9","10","11","12","13" ),
-	MenuRow( ScreenEdit::description,	"Description",		true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::predict_meter,	"Predicted Meter",	false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::tap_notes,		"Tap Steps",		false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::jumps,			"Jumps",			false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::hands,			"Hands",			false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::quads,			"Quads",			false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::holds,			"Holds",			false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::mines,			"Mines",			false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::stream,		"Stream",			false, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::voltage,		"Voltage",			false, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::air,			"Air",				false, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::freeze,		"Freeze",			false, EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::chaos,			"Chaos",			false, EDIT_MODE_FULL, 0, NULL )
+	MenuRowDef( ScreenEdit::difficulty,	"Difficulty",		true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::meter,			"Meter",			true, EDIT_MODE_PRACTICE, 0, "1","2","3","4","5","6","7","8","9","10","11","12","13" ),
+	MenuRowDef( ScreenEdit::description,	"Description",		true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::predict_meter,	"Predicted Meter",	false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::tap_notes,		"Tap Steps",		false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::jumps,			"Jumps",			false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::hands,			"Hands",			false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::quads,			"Quads",			false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::holds,			"Holds",			false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::mines,			"Mines",			false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::stream,		"Stream",			false, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::voltage,		"Voltage",			false, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::air,			"Air",				false, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::freeze,		"Freeze",			false, EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::chaos,			"Chaos",			false, EDIT_MODE_FULL, 0, NULL )
 );
 
-static Menu g_SongInformation(
+static MenuDef g_SongInformation(
 	"ScreenMiniMenuSongInfomation",
-	MenuRow( ScreenEdit::main_title,					"Main title",					true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::sub_title,						"Sub title",					true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::artist,						"Artist",						true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::credit,						"Credit",						true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::main_title_transliteration,	"Main title transliteration",	true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::sub_title_transliteration,		"Sub title transliteration",	true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRow( ScreenEdit::artist_transliteration,		"Artist transliteration",		true, EDIT_MODE_PRACTICE, 0, NULL )
+	MenuRowDef( ScreenEdit::main_title,					"Main title",					true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::sub_title,						"Sub title",					true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::artist,						"Artist",						true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::credit,						"Credit",						true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::main_title_transliteration,	"Main title transliteration",	true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::sub_title_transliteration,		"Sub title transliteration",	true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::artist_transliteration,		"Artist transliteration",		true, EDIT_MODE_PRACTICE, 0, NULL )
 );
 
 enum { song_bganimation, song_movie, song_bitmap, global_bganimation, global_movie, global_movie_song_group, global_movie_song_group_and_genre, dynamic_random, baked_random, none };
@@ -465,31 +465,31 @@ static bool EnabledIfSet2GlobalBGAnimation();
 static bool EnabledIfSet2GlobalMovie();
 static bool EnabledIfSet2GlobalMovieSongGroup();
 static bool EnabledIfSet2GlobalMovieSongGroupAndGenre();
-static Menu g_BackgroundChange(
+static MenuDef g_BackgroundChange(
 	"ScreenMiniMenuBackgroundChange",
-	MenuRow( ScreenEdit::layer,										"Layer",								false,										EDIT_MODE_FULL, 0, "" ),
-	MenuRow( ScreenEdit::rate,										"Rate",									true,										EDIT_MODE_FULL, 10, "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" ),
-	MenuRow( ScreenEdit::transition,								"Force Transition",						true,										EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::effect,									"Force Effect",							true,										EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::color1,									"Force Color 1",						true,										EDIT_MODE_FULL, 0, "","1,1,1,1","0.5,0.5,0.5,1","1,1,1,0.5","0,0,0,1","1,0,0,1","0,1,0,1","0,0,1,1","1,1,0,1","0,1,1,1","1,0,1,1" ),
-	MenuRow( ScreenEdit::color2,									"Force Color 2",						true,										EDIT_MODE_FULL, 0, "","1,1,1,1","0.5,0.5,0.5,1","1,1,1,0.5","0,0,0,1","1,0,0,1","0,1,0,1","0,0,1,1","1,1,0,1","0,1,1,1","1,0,1,1" ),
-	MenuRow( ScreenEdit::file1_type,								"File1 Type",							true,										EDIT_MODE_FULL, 0, "Song BGAnimation", "Song Movie", "Song Bitmap", "Global BGAnimation", "Global Movie", "Global Movie from Song Group", "Global Movie from Song Group and Genre", "Dynamic Random", "Baked Random", "None" ),
-	MenuRow( ScreenEdit::file1_song_bganimation,					"File1 Song BGAnimation",				EnabledIfSet1SongBGAnimation,				EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file1_song_movie,							"File1 Song Movie",						EnabledIfSet1SongMovie,						EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file1_song_still,							"File1 Song Still",						EnabledIfSet1SongBitmap,					EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file1_global_bganimation,					"File1 Global BGAnimation",				EnabledIfSet1GlobalBGAnimation,				EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file1_global_movie,						"File1 Global Movie",					EnabledIfSet1GlobalMovie,					EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file1_global_movie_song_group,				"File1 Global Movie (Group)",			EnabledIfSet1GlobalMovieSongGroup,			EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file1_global_movie_song_group_and_genre,	"File1 Global Movie (Group + Genre)",	EnabledIfSet1GlobalMovieSongGroupAndGenre,	EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file2_type,								"File2 Type",							true,										EDIT_MODE_FULL, 0, "Song BGAnimation", "Song Movie", "Song Bitmap", "Global BGAnimation", "Global Movie", "Global Movie from Song Group", "Global Movie from Song Group and Genre", "Dynamic Random", "Baked Random", "None" ),
-	MenuRow( ScreenEdit::file2_song_bganimation,					"File2 Song BGAnimation",				EnabledIfSet2SongBGAnimation,				EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file2_song_movie,							"File2 Song Movie",						EnabledIfSet2SongMovie,						EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file2_song_still,							"File2 Song Still",						EnabledIfSet2SongBitmap,					EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file2_global_bganimation,					"File2 Global BGAnimation",				EnabledIfSet2GlobalBGAnimation,				EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file2_global_movie,						"File2 Global Movie",					EnabledIfSet2GlobalMovie,					EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file2_global_movie_song_group,				"File2 Global Movie (Group)",			EnabledIfSet2GlobalMovieSongGroup,			EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::file2_global_movie_song_group_and_genre,	"File2 Global Movie (Group + Genre)",	EnabledIfSet2GlobalMovieSongGroupAndGenre,	EDIT_MODE_FULL, 0, NULL ),
-	MenuRow( ScreenEdit::delete_change,								"Remove Change",						true,										EDIT_MODE_FULL, 0, NULL )
+	MenuRowDef( ScreenEdit::layer,										"Layer",								false,										EDIT_MODE_FULL, 0, "" ),
+	MenuRowDef( ScreenEdit::rate,										"Rate",									true,										EDIT_MODE_FULL, 10, "0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%","120%","140%","160%","180%","200%" ),
+	MenuRowDef( ScreenEdit::transition,								"Force Transition",						true,										EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::effect,									"Force Effect",							true,										EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::color1,									"Force Color 1",						true,										EDIT_MODE_FULL, 0, "","1,1,1,1","0.5,0.5,0.5,1","1,1,1,0.5","0,0,0,1","1,0,0,1","0,1,0,1","0,0,1,1","1,1,0,1","0,1,1,1","1,0,1,1" ),
+	MenuRowDef( ScreenEdit::color2,									"Force Color 2",						true,										EDIT_MODE_FULL, 0, "","1,1,1,1","0.5,0.5,0.5,1","1,1,1,0.5","0,0,0,1","1,0,0,1","0,1,0,1","0,0,1,1","1,1,0,1","0,1,1,1","1,0,1,1" ),
+	MenuRowDef( ScreenEdit::file1_type,								"File1 Type",							true,										EDIT_MODE_FULL, 0, "Song BGAnimation", "Song Movie", "Song Bitmap", "Global BGAnimation", "Global Movie", "Global Movie from Song Group", "Global Movie from Song Group and Genre", "Dynamic Random", "Baked Random", "None" ),
+	MenuRowDef( ScreenEdit::file1_song_bganimation,					"File1 Song BGAnimation",				EnabledIfSet1SongBGAnimation,				EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::file1_song_movie,							"File1 Song Movie",						EnabledIfSet1SongMovie,						EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::file1_song_still,							"File1 Song Still",						EnabledIfSet1SongBitmap,					EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::file1_global_bganimation,					"File1 Global BGAnimation",				EnabledIfSet1GlobalBGAnimation,				EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::file1_global_movie,						"File1 Global Movie",					EnabledIfSet1GlobalMovie,					EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::file1_global_movie_song_group,				"File1 Global Movie (Group)",			EnabledIfSet1GlobalMovieSongGroup,			EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::file1_global_movie_song_group_and_genre,	"File1 Global Movie (Group + Genre)",	EnabledIfSet1GlobalMovieSongGroupAndGenre,	EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::file2_type,								"File2 Type",							true,										EDIT_MODE_FULL, 0, "Song BGAnimation", "Song Movie", "Song Bitmap", "Global BGAnimation", "Global Movie", "Global Movie from Song Group", "Global Movie from Song Group and Genre", "Dynamic Random", "Baked Random", "None" ),
+	MenuRowDef( ScreenEdit::file2_song_bganimation,					"File2 Song BGAnimation",				EnabledIfSet2SongBGAnimation,				EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::file2_song_movie,							"File2 Song Movie",						EnabledIfSet2SongMovie,						EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::file2_song_still,							"File2 Song Still",						EnabledIfSet2SongBitmap,					EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::file2_global_bganimation,					"File2 Global BGAnimation",				EnabledIfSet2GlobalBGAnimation,				EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::file2_global_movie,						"File2 Global Movie",					EnabledIfSet2GlobalMovie,					EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::file2_global_movie_song_group,				"File2 Global Movie (Group)",			EnabledIfSet2GlobalMovieSongGroup,			EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::file2_global_movie_song_group_and_genre,	"File2 Global Movie (Group + Genre)",	EnabledIfSet2GlobalMovieSongGroupAndGenre,	EDIT_MODE_FULL, 0, NULL ),
+	MenuRowDef( ScreenEdit::delete_change,								"Remove Change",						true,										EDIT_MODE_FULL, 0, NULL )
 );
 static bool EnabledIfSet1SongBGAnimation()				{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == song_bganimation					&& !g_BackgroundChange.rows[ScreenEdit::file1_song_bganimation].choices.empty(); }
 static bool EnabledIfSet1SongMovie()					{ return ScreenMiniMenu::s_viLastAnswers[ScreenEdit::file1_type] == song_movie							&& !g_BackgroundChange.rows[ScreenEdit::file1_song_movie].choices.empty(); }
@@ -522,20 +522,20 @@ static CString GetOneBakedRandomFile( Song *pSong, bool bTryGenre = true )
 		return "";
 }
 
-static Menu g_Prefs(
+static MenuDef g_Prefs(
 	"ScreenMiniMenuPreferences",
-	MenuRow( ScreenEdit::pref_show_bgs_play,		"Show BGChanges during Play/Record",	true, EDIT_MODE_PRACTICE, 0, "NO","YES" )
+	MenuRowDef( ScreenEdit::pref_show_bgs_play,		"Show BGChanges during Play/Record",	true, EDIT_MODE_PRACTICE, 0, "NO","YES" )
 );
 
-static Menu g_InsertAttack(
+static MenuDef g_InsertAttack(
 	"ScreenMiniMenuInsertAttack",
-	MenuRow( -1, "Duration seconds",			true, EDIT_MODE_PRACTICE, 3, "5","10","15","20","25","30","35","40","45" ),
-	MenuRow( -1, "Set modifiers",				true, EDIT_MODE_PRACTICE, 0, "PRESS START" )
+	MenuRowDef( -1, "Duration seconds",			true, EDIT_MODE_PRACTICE, 3, "5","10","15","20","25","30","35","40","45" ),
+	MenuRowDef( -1, "Set modifiers",				true, EDIT_MODE_PRACTICE, 0, "PRESS START" )
 );
 
-static Menu g_CourseMode(
+static MenuDef g_CourseMode(
 	"ScreenMiniMenuCourseDisplay",
-	MenuRow( -1, "Play mods from course",		true, EDIT_MODE_PRACTICE, 0, NULL )
+	MenuRowDef( -1, "Play mods from course",		true, EDIT_MODE_PRACTICE, 0, NULL )
 );
 
 // HACK: need to remember the track we're inserting on so

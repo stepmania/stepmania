@@ -18,7 +18,7 @@ AutoScreenMessage( SM_GoToCancel )
 int	ScreenMiniMenu::s_iLastRowCode = -1;
 vector<int>	ScreenMiniMenu::s_viLastAnswers;
 
-void ScreenMiniMenu::MiniMenu( Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
+void ScreenMiniMenu::MiniMenu( MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
 {
 	ScreenMiniMenu *pNewScreen = new ScreenMiniMenu( pDef->sClassName );
 	pNewScreen->Init( pDef, SM_SendOnOK, SM_SendOnCancel );
@@ -31,7 +31,7 @@ ScreenMiniMenu::ScreenMiniMenu( CString sClassName ) :ScreenOptions( sClassName 
 {
 }
 
-void ScreenMiniMenu::Init( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
+void ScreenMiniMenu::Init( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
 {
 	ScreenOptions::Init();
 
@@ -48,7 +48,7 @@ void ScreenMiniMenu::Init( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMe
 	m_SMSendOnCancel = SM_SendOnCancel;
 
 
-	FOREACH_CONST( MenuRow, pDef->rows, r )
+	FOREACH_CONST( MenuRowDef, pDef->rows, r )
 	{
 		// Don't add rows that aren't applicable to HomeEditMode.
 		if( EDIT_MODE >= r->emShowIn )
@@ -60,7 +60,7 @@ void ScreenMiniMenu::Init( const Menu* pDef, ScreenMessage SM_SendOnOK, ScreenMe
 	vDefs.resize( m_vMenuRows.size() );
 	for( unsigned r=0; r<m_vMenuRows.size(); r++ )
 	{
-		const MenuRow &mr = m_vMenuRows[r];
+		const MenuRowDef &mr = m_vMenuRows[r];
 		OptionRowDefinition &def = vDefs[r];
 
 		def.name = mr.sName;
@@ -105,7 +105,7 @@ void ScreenMiniMenu::OnChange( PlayerNumber pn )
 
 	for( unsigned i=0; i<m_pRows.size(); i++ )
 	{
-		MenuRow &mr = m_vMenuRows[i];
+		MenuRowDef &mr = m_vMenuRows[i];
 		OptionRow &optrow = *m_pRows[i];
 		if( mr.pfnEnabled )
 		{
@@ -120,7 +120,7 @@ void ScreenMiniMenu::OnChange( PlayerNumber pn )
 void ScreenMiniMenu::ImportOptions( int r, const vector<PlayerNumber> &vpns )
 {
 	OptionRow &optrow = *m_pRows[r];
-	MenuRow &mr = m_vMenuRows[r];
+	MenuRowDef &mr = m_vMenuRows[r];
 	if( !mr.choices.empty() )
 		optrow.SetOneSharedSelection( mr.iDefaultChoice );
 }
