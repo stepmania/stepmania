@@ -1144,6 +1144,9 @@ public:
 	static int rotationy( T* p, lua_State *L )		{ p->SetRotationY(FArg(1)); return 0; }
 	static int rotationz( T* p, lua_State *L )		{ p->SetRotationZ(FArg(1)); return 0; }
 	static int getrotation( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetRotationX()); lua_pushnumber(L, p->GetRotationY()); lua_pushnumber(L, p->GetRotationZ()); return 3; }
+	static int baserotationx( T* p, lua_State *L )	{ p->SetBaseRotationX(FArg(1)); return 0; }
+	static int baserotationy( T* p, lua_State *L )	{ p->SetBaseRotationY(FArg(1)); return 0; }
+	static int baserotationz( T* p, lua_State *L )	{ p->SetBaseRotationZ(FArg(1)); return 0; }
 	static int skewx( T* p, lua_State *L )			{ p->SetSkewX(FArg(1)); return 0; }
 	static int heading( T* p, lua_State *L )		{ p->AddRotationH(FArg(1)); return 0; }
 	static int pitch( T* p, lua_State *L )			{ p->AddRotationP(FArg(1)); return 0; }
@@ -1265,6 +1268,9 @@ public:
 		ADD_METHOD( rotationy )
 		ADD_METHOD( rotationz )
 		ADD_METHOD( getrotation )
+		ADD_METHOD( baserotationx )
+		ADD_METHOD( baserotationy )
+		ADD_METHOD( baserotationz )
 		ADD_METHOD( skewx )
 		ADD_METHOD( heading )
 		ADD_METHOD( pitch )
