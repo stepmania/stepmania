@@ -818,14 +818,9 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	const vector<CourseEntry> &entries = m_bRandomize? tmp_entries:m_vEntries;
 
 	/* This can take some time, so don't fill it out unless we need it. */
-	bool bMostPlayedSet = false;
 	vector<Song*> vSongsByMostPlayed;
-	
-	bool bShuffledSet = false;
 	vector<Song*> AllSongsShuffled;
 
-	int CurSong = 0; /* Current offset into AllSongsShuffled */
-	
 	trail.m_StepsType = st;
 	trail.m_CourseDifficulty = cd;
 
