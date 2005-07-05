@@ -146,7 +146,7 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
 			bool bResult = PROFILEMAN->CreateLocalProfile( sNewName );
 			if( bResult )
-				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
+				SCREENMAN->SetNewScreen( m_sName );	// reload
 			else
 				ScreenPrompt::Prompt( SM_None, ssprintf("Error creating profile '%s'.", sNewName.c_str()) );
 		}

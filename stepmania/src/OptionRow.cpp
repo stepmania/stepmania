@@ -47,9 +47,15 @@ void OptionRow::PrepareItemText( CString &s ) const
 	if( CAPITALIZE_ALL_OPTION_NAMES )
 		s.MakeUpper(); 
 }
-static CString OPTION_TITLE( CString s )
+
+CString OptionRow::OptionTitle( CString s ) const
 {
-	return THEME->GetMetric("OptionTitles",s);
+	bool bTheme = false;
+	
+	// HACK: Always theme the NEXT_ROW and EXIT items, even if metrics says not to theme.
+	if( THEME_TITLES && m_RowDef.m_bAllowThemeTitles )	bTheme = true;
+
+	return bTheme ? THEME->GetMetric("OptionTitles",s) : s;
 }
 
 CString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",int(p+1)); }
@@ -174,7 +180,7 @@ void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pH
 CString OptionRow::GetRowTitle() const
 {
 	CString sLineName = m_RowDef.name;
-	CString sTitle = THEME_TITLES ? OPTION_TITLE(sLineName) : sLineName;
+	CString sTitle = OptionTitle(sLineName);
 
 	// HACK: tack the BPM onto the name of the speed line
 	if( sLineName.CompareNoCase("speed")==0 )

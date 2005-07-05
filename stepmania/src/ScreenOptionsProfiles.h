@@ -1,40 +1,31 @@
-#ifndef SCREEN_OPTIONS_MASTER_H
-#define SCREEN_OPTIONS_MASTER_H
+#ifndef ScreenOptionsProfiles_H
+#define ScreenOptionsProfiles_H
 
 #include "ScreenOptions.h"
 
-class OptionRowHandler;
-
-class ScreenOptionsMaster : public ScreenOptions
+class ScreenOptionsProfiles : public ScreenOptions
 {
 public:
-	ScreenOptionsMaster( CString sName );
+	ScreenOptionsProfiles( CString sName );
 	virtual void Init();
-	virtual ~ScreenOptionsMaster();
+	virtual ~ScreenOptionsProfiles();
 
 protected:
-	int m_iChangeMask;
-	bool m_bExportWillSetANewScreen;	// from an OptionRowHandler
-
-	vector<OptionRowHandler*> OptionRowHandlers;
-	
-protected:
-	virtual void HandleScreenMessage( const ScreenMessage SM );
-
+private:
 	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
 
-	virtual void BeginFadingOut();
 	virtual void GoToNextScreen();
 	virtual void GoToPrevScreen();
-
-	virtual void RefreshIcons( int row, PlayerNumber pn );
+	
+	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
 };
 
 #endif
 
 /*
- * (c) 2003-2004 Glenn Maynard
+ * (c) 2003-2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

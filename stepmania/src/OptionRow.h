@@ -42,6 +42,9 @@ struct OptionRowDefinition
 	set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
 	bool	m_bExportOnChange;
 	bool	m_bAllowThemeItems;	// if false, ignores ScreenOptions::THEME_ITEMS
+	bool	m_bAllowThemeTitles;	// if false, ignores ScreenOptions::THEME_TITLES
+	bool	m_bAllowExplanation;	// if false, ignores ScreenOptions::SHOW_EXPLANATIONS
+	bool	m_bShowChoicesListOnSelect;
 
 	bool IsEnabledForPlayer( PlayerNumber pn ) const 
 	{
@@ -61,6 +64,9 @@ struct OptionRowDefinition
 			m_vEnabledForPlayers.insert( pn );
 		m_bExportOnChange = false;
 		m_bAllowThemeItems = true;
+		m_bAllowThemeTitles = true;
+		m_bAllowExplanation = true;
+		m_bShowChoicesListOnSelect = false;
 	}
 
 	OptionRowDefinition( const char *n, bool b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
@@ -146,6 +152,7 @@ public:
 	bool GetFirstItemGoesDown() { return m_bFirstItemGoesDown; }
 
 	void PrepareItemText( CString &s ) const;
+	CString OptionTitle( CString s ) const;
 
 	void SetExitText( CString sExitText );
 
