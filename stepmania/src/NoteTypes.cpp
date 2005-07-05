@@ -1,6 +1,8 @@
 #include "global.h"
 #include "NoteTypes.h"
 #include "RageUtil.h"
+#include "LuaManager.h"
+#include "LuaFunctions.h"
 
 TapNote TAP_EMPTY					( TapNote::empty,		TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
 TapNote TAP_ORIGINAL_TAP			( TapNote::tap,			TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
@@ -24,6 +26,8 @@ static const CString NoteTypeNames[] = {
 	"192nd",
 };
 XToString( NoteType, NUM_NOTE_TYPES );
+LuaXToString( NoteType )
+LuaXType( NoteType, NUM_NOTE_TYPES , "NOTE_TYPE_" )
 
 float NoteTypeToBeat( NoteType nt )
 {

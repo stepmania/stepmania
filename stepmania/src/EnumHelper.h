@@ -72,6 +72,28 @@ static const CString EMPTY_STRING;
 		return (X)(i+1); /*invalid*/	\
 	}
 
+#define LuaXToString(X)	\
+LuaFunction( X##ToString, X##ToString( (X) IArg(1) ) );
+
+#define LuaStringToX(X)	\
+LuaFunction( StringTo##X, (X) StringTo##X( SArg(1) ) );
+
+#define LuaXType(X, CNT, Prefix)	\
+static void Lua##X(lua_State* L) \
+{ \
+	FOREACH_ENUM( X, CNT, i ) \
+	{ \
+		CString s = X##Names[i]; \
+		s.MakeUpper(); \
+		LUA->SetGlobal( Prefix+s, i ); \
+	} \
+	CString sType = "NUM" #X "S" ; \
+	sType.MakeUpper(); \
+	LUA->SetGlobal( sType, CNT ); \
+	LUA->SetGlobal( Prefix "INVALID", CNT+1 ); \
+} \
+REGISTER_WITH_LUA_FUNCTION( Lua##X );
+
 #endif
 
 /*

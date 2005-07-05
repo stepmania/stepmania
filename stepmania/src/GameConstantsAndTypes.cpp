@@ -11,12 +11,6 @@
 #include <float.h>
 
 #include "LuaFunctions.h"
-#define LuaXToString(X)	\
-LuaFunction( X##ToString, X##ToString( (X) IArg(1) ) );
-
-#define LuaStringToX(X)	\
-LuaFunction( StringTo##X, (X) StringTo##X( SArg(1) ) );
-
 
 const CString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS] = {"#P1#","#P2#"};
 
@@ -64,18 +58,7 @@ XToString( PlayMode, NUM_PLAY_MODES );
 XToThemedString( PlayMode, NUM_PLAY_MODES );
 StringToX( PlayMode );
 LuaXToString( PlayMode );
-static void LuaPlayMode(lua_State* L)
-{
-	FOREACH_PlayMode( pm )
-	{
-		CString s = PlayModeNames[pm];
-		s.MakeUpper();
-		LUA->SetGlobal( "PLAY_MODE_"+s, pm );
-	}
-	LUA->SetGlobal( "NUM_PLAY_MODES", NUM_PLAY_MODES );
-}
-REGISTER_WITH_LUA_FUNCTION( LuaPlayMode );
-
+LuaXType( PlayMode, NUM_PLAY_MODES, "PLAY_MODE_" )
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
 {
