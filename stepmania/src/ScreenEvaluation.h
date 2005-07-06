@@ -8,8 +8,6 @@
 #include "BitmapText.h"
 #include "GradeDisplay.h"
 #include "Banner.h"
-#include "ScoreDisplayNormal.h"
-#include "Banner.h"
 #include "DifficultyIcon.h"
 #include "DifficultyMeter.h"
 #include "PercentageDisplay.h"
