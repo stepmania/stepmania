@@ -317,32 +317,64 @@ static void InitCharAliases()
 
 	for(aliasmap::const_iterator i = CharAliases.begin(); i != CharAliases.end(); ++i)
 	{
-		CString from = ssprintf("&%s;", i->first.c_str());
+		CString from = i->first;
 		CString to = WcharToUTF8(i->second);
 		from.MakeUpper();
 		CharAliasRepl[from] = to;
 	}
 }
 
-void ReplaceText( CString &Text, const map<CString,CString> &m )
+static void ReplaceText( CString &sText, const map<CString,CString> &m )
 {
-	basic_string<char,char_traits_char_nocase> txt(Text);
-	
-	for(map<CString,CString>::const_iterator it = m.begin(); it != m.end(); ++it)
-	{
-		size_t start = 0;
-		while(1)
-		{
-			size_t pos = txt.find(it->first, start);
-			if(pos == txt.npos)
-				break;
+	CString sRet;
 
-			txt.replace(pos, it->first.size(), it->second);
-			start = pos+it->second.size();
+	size_t iOffset = 0;
+	while( iOffset != sText.size() )
+	{
+		size_t iStart = sText.find( '&', iOffset );
+		if( iStart == sText.npos )
+		{
+			/* Optimization: if we didn't replace anything at all, do nothing. */
+			if( iOffset == 0 )
+				return;
+
+			// Append the rest of the string.
+			sRet.append( sText, iOffset, sRet.npos );
+			break;
 		}
+
+		// Append the text between iOffset and iStart.
+		sRet.append( sText, iOffset, iStart-iOffset );
+		iOffset += iStart-iOffset;
+
+		// Optimization: stop early on "&", so "&&&&&&&&&&&" isn't n^2.
+		size_t iEnd = sText.find_first_of( "&;", iStart+1 );
+		if( iEnd == sText.npos || sText[iEnd] == '&' )
+		{
+			/* & with no matching ;, or two & in a row.  Append the & and
+			 * continue. */
+			sRet.append( sText, iStart, 1 );
+			++iOffset;
+			continue;
+		}
+
+		CString sElement = sText.substr( iStart+1, iEnd-iStart-1 );
+		sElement.MakeUpper();
+
+		map<CString,CString>::const_iterator it = m.find( sElement );
+		if( it == m.end() )
+		{
+			sRet.append( sText, iStart, iEnd-iStart+1 );
+			iOffset = iEnd + 1;
+			continue;
+		}
+
+		const CString &sTo = it->second;
+		sRet.append( sTo );
+		iOffset = iEnd + 1;
 	}
 
-	Text = txt.c_str();
+	sText = sRet;
 }
 
 /* Replace all &markers; and &#NNNN;s with UTF-8. */
