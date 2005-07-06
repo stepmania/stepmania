@@ -1205,10 +1205,8 @@ bool Course::IsFixed() const
 {
 	for(unsigned i = 0; i < m_vEntries.size(); i++)
 	{
-		if ( m_vEntries[i].pSong == NULL )
-			continue;
-
-		return false;
+		if( m_vEntries[i].pSong == NULL )
+			return false;
 	}
 
 	return true;
