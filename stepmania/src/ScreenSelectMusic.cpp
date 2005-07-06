@@ -1852,18 +1852,8 @@ void ScreenSelectMusic::AfterMusicChange()
 
 void ScreenSelectMusic::UpdateOptionsDisplays()
 {
-//	m_OptionIcons.Load( GAMESTATE->m_PlayerOptions, &GAMESTATE->m_SongOptions );
-
-//	m_PlayerOptionIcons.Refresh();
-
 	FOREACH_HumanPlayer( p )
-	{
 		m_OptionIconRow[p].Refresh();
-
-		CString s = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString();
-			s.Replace( ", ", "\n" );
-//		m_textPlayerOptions[p].SetText( s );
-	}
 
 	CString s = GAMESTATE->m_SongOptions.GetString();
 	s.Replace( ", ", "\n" );
