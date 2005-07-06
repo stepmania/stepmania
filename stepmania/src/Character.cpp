@@ -172,9 +172,12 @@ public:
 	LunaCharacter() { LUA->Register( Register ); }
 
 	static int GetStageIconPath( T* p, lua_State *L )	{ lua_pushstring(L, p->GetStageIconPath() ); return 1; }
+	static int GetSongSelectIconPath( T* p, lua_State *L )	{ lua_pushstring(L, p->GetSongSelectIconPath() ); return 1; }
+	
 	static void Register( Lua *L )
 	{
 		ADD_METHOD( GetStageIconPath )
+		ADD_METHOD( GetSongSelectIconPath )
 		Luna<T>::Register( L );
 	}
 };
