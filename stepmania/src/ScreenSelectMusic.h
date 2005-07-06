@@ -20,7 +20,6 @@
 #include "CourseContentsList.h"
 #include "HelpDisplay.h"
 #include "PaneDisplay.h"
-#include "Character.h"
 #include "RageUtil_BackgroundLoader.h"
 #include "ThemeMetric.h"
 #include "ActorCommands.h"
@@ -97,7 +96,6 @@ protected:
 	CString m_sCourseMusicPath;
 	CString m_sFallbackCDTitlePath;
 
-	Sprite				m_sprCharacterIcon[NUM_PLAYERS];
 	Sprite				m_sprBannerMask;
 	FadingBanner		m_Banner;
 	AutoActor			m_sprBannerFrame;

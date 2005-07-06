@@ -124,24 +124,6 @@ void ScreenSelectMusic::Init()
 
 	m_MusicWheel.Load( MUSIC_WHEEL_TYPE );
 
-	// pop'n music has this under the songwheel...
-	FOREACH_PlayerNumber( p )
-	{
-		m_sprCharacterIcon[p].SetName( ssprintf("CharacterIconP%d",p+1) );
-
-		Character* pChar = GAMESTATE->m_pCurCharacters[p];
-		CString sPath = pChar->GetSongSelectIconPath();
-
-		if( sPath.empty() )
-			continue;
-
-		m_sprCharacterIcon[p].Load( sPath );
-		SET_XY( m_sprCharacterIcon[p] );
-		this->AddChild( &m_sprCharacterIcon[p] );
-	}
-
-
-
 	m_MusicWheelUnder.Load( THEME->GetPathG(m_sName,"wheel under") );
 	m_MusicWheelUnder->SetName( "WheelUnder" );
 	SET_XY( m_MusicWheelUnder );
@@ -513,7 +495,6 @@ void ScreenSelectMusic::TweenOnScreen()
 
 	FOREACH_HumanPlayer( p )
 	{		
-		ON_COMMAND( m_sprCharacterIcon[p] );
 		ON_COMMAND( m_OptionIconRow[p] );
 		ON_COMMAND( m_sprHighScoreFrame[p] );
 		ON_COMMAND( m_textHighScore[p] );
@@ -566,7 +547,6 @@ void ScreenSelectMusic::TweenOffScreen()
 
 	FOREACH_HumanPlayer( p )
 	{		
-		OFF_COMMAND(m_sprCharacterIcon[p]);
 		OFF_COMMAND( m_OptionIconRow[p] );
 		OFF_COMMAND( m_sprHighScoreFrame[p] );
 		OFF_COMMAND( m_textHighScore[p] );
