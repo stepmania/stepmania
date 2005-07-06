@@ -2137,17 +2137,16 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			return;
 		}
 
+		TweenOffScreen();
+
 		// do they deserve an extra stage?
 		if( GAMESTATE->HasEarnedExtraStage() )
 		{
-			TweenOffScreen();
 			m_Extra.StartTransitioning( SM_GoToNextScreen );
 			SOUND->PlayOnceFromAnnouncer( "gameplay extra" );
 		}
 		else
 		{
-			TweenOffScreen();
-			
 			switch( GAMESTATE->m_PlayMode )
 			{
 			case PLAY_MODE_BATTLE:
