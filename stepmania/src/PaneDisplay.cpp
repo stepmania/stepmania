@@ -321,8 +321,6 @@ void PaneDisplay::SetFocus( PaneTypes NewPane )
 	}
 
 	m_CurPane = NewPane;
-
-	SetFromGameState( m_SortOrder );
 }
 
 /*
