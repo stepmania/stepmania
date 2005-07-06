@@ -132,7 +132,6 @@ void PaneDisplay::Load( const CString &sType, PlayerNumber pn )
 	}
 
 	m_CurPane = PANE_INVALID;
-	SetFocus( GetPane() );
 }
 
 void PaneDisplay::SetContent( PaneContents c )
