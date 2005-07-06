@@ -11,6 +11,7 @@
 #include "ActorUtil.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "LuaManager.h"
+#include "AutoActor.h"
 
 
 const float PARTICLE_SPEED = 300;
@@ -522,22 +523,19 @@ void BGAnimationLayer::LoadFromNode( const CString& sDir, const XNode* pNode )
 			CString sPath = sAniDir+sFile;
 			CollapsePath( sPath );
 
-			Sprite s;
-			RageTextureID ID(sPath);
-			ID.bStretch = true;
-			s.Load( ID );
+			AutoActor s;
+			s.Load( sPath );
 			if( m_fTilesSpacingX == -1 )
-				m_fTilesSpacingX = s.GetUnzoomedWidth();
+				m_fTilesSpacingX = s->GetUnzoomedWidth();
 			if( m_fTilesSpacingY == -1 )
-				m_fTilesSpacingY = s.GetUnzoomedHeight();
+				m_fTilesSpacingY = s->GetUnzoomedHeight();
 			m_iNumTilesWide = 2+(int)(SCREEN_WIDTH /m_fTilesSpacingX);
 			m_iNumTilesHigh = 2+(int)(SCREEN_HEIGHT/m_fTilesSpacingY);
 			unsigned NumSprites = m_iNumTilesWide * m_iNumTilesHigh;
 			for( unsigned i=0; i<NumSprites; i++ )
 			{
-				Sprite* pSprite = new Sprite;
+				Actor* pSprite = ActorUtil::MakeActor( sPath );
 				this->AddChild( pSprite );
-				pSprite->Load( ID );
 				pSprite->SetTextureWrapping( true );		// gets rid of some "cracks"
 				pSprite->SetZoom( randomf(fZoomMin,fZoomMax) );
 			}
