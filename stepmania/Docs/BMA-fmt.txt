@@ -1,0 +1,79 @@
+*** EXPLANATION ***
+
+BMA is merely a container. It is very expandable, though the
+file table could definately use a facelift. Have fun.
+
+Anything not specified in the file is considered null, and can
+be used for any purpose (considering those area are not read,
+so custom tags could be added after the main header but before
+the file table.)
+
+
+
+*** SOURCE HEADERS AND DEFINITIONS ***
+
+Make sure you use these typedefs:
+ TypeDef   Unsigned Char   Int8;
+ TypeDef    Signed Short   Int16;
+ TypeDef      Signed Int   Int32;
+
+And constants:
+ Const BlockSize = 4096;
+
+And these libraries:
+ ZLib
+
+
+
+*** HEADER ***
+
+(hex)
+Location	Type		Desc
+---------------------------------------------------------------
+00		String(6)	"BAMarc"
+06		Int16		0xFFFF, identifier
+08		Int16		Version #, always 1 for now
+0A		Int16		Entry count
+0C		Int8		Entry Table Block
+0D		Int8		First File Block
+0E		Int16		Reserved
+10		Int8		Creator's name length
+11		String(31)	Creator's name
+30		Int8		Description length
+31		String(63)	Description
+
+
+*** FILE TABLE ***
+ (at file offset: EntryTableBlock*BlockSize)
+
+(hex)
+Location	Type		Desc
+---------------------------------------------------------------
+00		Int32		File length, in bytes
+04		Int16		File offset, in blocks
+06		Int8		Filename length
+07		Int8		File flags:
+				  & 0x01 = unused
+				  & 0x02 = unused
+				  & 0x04 = unused
+				  & 0x08 = unused
+				  & 0x10 = unused
+				  & 0x20 = ZLib compressed
+				  & 0x40 = unused
+				  & 0x80 = unused
+08		String(24)	Filename
+
+
+*** FILE ***
+
+The file's true offset is at (FileOffsetBlock*BlockSize) in the
+file. If a file is ZLIB compressed, there will be an extra
+string at the end of the chunk, in ASCII, that contains the
+uncompressed file size in bytes.
+
+OGG audio is not compressed in these files because they can be
+loaded directly into memory and played by a sound library.
+
+
+
+           -=- Created by SaxxonPike, 2004-2005 -=-
