@@ -7,7 +7,6 @@
 #include "RageLog.h"
 #include "ProfileManager.h"
 #include "Profile.h"
-#include "SongManager.h"
 #include "Course.h"
 #include "Style.h"
 #include "Command.h"
@@ -36,25 +35,12 @@ static const Content_t g_Contents[NUM_PANE_CONTENTS] =
 	{ "SongRolls",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "SongMines",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "SongHands",				PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "DifficultyStream",		NUM_PANES,					NEED_NOTES }, // hide
-	{ "DifficultyChaos",		NUM_PANES,					NEED_NOTES },
-	{ "DifficultyFreeze",		NUM_PANES,					NEED_NOTES },
-	{ "DifficultyAir",			NUM_PANES,					NEED_NOTES },
-	{ "DifficultyVoltage",		NUM_PANES,					NEED_NOTES },
 	{ "MachineHighScore",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
-	{ "MachineNumPlays",		NUM_PANES,					NEED_NOTES },
-	{ "MachineRank",			NUM_PANES,					NEED_NOTES },
 	{ "MachineHighName",		PANE_SONG_DIFFICULTY,		NEED_NOTES },
 	{ "ProfileHighScore",		PANE_SONG_DIFFICULTY,		NEED_NOTES|NEED_PROFILE },
-	{ "ProfileNumPlays",		NUM_PANES,					NEED_NOTES|NEED_PROFILE },
-	{ "ProfileRank",			NUM_PANES,					NEED_NOTES|NEED_PROFILE },
 	{ "CourseMachineHighScore",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
-	{ "CourseMachineNumPlays",	NUM_PANES,					NEED_COURSE },
-	{ "CourseMachineRank",		NUM_PANES,					NEED_COURSE },
 	{ "CourseMachineHighName",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
 	{ "CourseProfileHighScore",	PANE_COURSE_MACHINE_SCORES,	NEED_COURSE|NEED_PROFILE },
-	{ "CourseProfileNumPlays",	NUM_PANES,					NEED_COURSE|NEED_PROFILE },
-	{ "CourseProfileRank",		NUM_PANES,					NEED_COURSE|NEED_PROFILE },
 	{ "CourseNumSteps",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
 	{ "CourseJumps",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
 	{ "CourseHolds",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
@@ -62,16 +48,6 @@ static const Content_t g_Contents[NUM_PANE_CONTENTS] =
 	{ "CourseHands",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE },
 	{ "CourseRolls",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE }
 };
-
-static ProfileSlot PlayerMemCard( PlayerNumber pn )
-{
-	switch( pn )
-	{
-	case PLAYER_1: return PROFILE_SLOT_PLAYER_1;
-	case PLAYER_2: return PROFILE_SLOT_PLAYER_2;
-	default: ASSERT(0);	return PROFILE_SLOT_MACHINE;
-	};
-}
 
 PaneDisplay::PaneDisplay()
 {
@@ -149,8 +125,6 @@ void PaneDisplay::Load( const CString &sType, PlayerNumber pn )
 
 	for( unsigned i = 0; i < NUM_PANE_CONTENTS; ++i )
 	{
-		if( g_Contents[i].type == NUM_PANES )
-			continue; /* skip, disabled */
 		COMMAND( m_textContents[i], "LoseFocus"  );
 		COMMAND( m_Labels[i], "LoseFocus"  );
 		m_textContents[i].FinishTweening();
@@ -159,11 +133,6 @@ void PaneDisplay::Load( const CString &sType, PlayerNumber pn )
 
 	m_CurPane = PANE_INVALID;
 	SetFocus( GetPane() );
-}
-
-void PaneDisplay::Update( float fDeltaTime )
-{
-	ActorFrame::Update( fDeltaTime );
 }
 
 void PaneDisplay::SetContent( PaneContents c )
@@ -210,16 +179,8 @@ void PaneDisplay::SetContent( PaneContents c )
 		case SONG_MINES:					val = rv[RADAR_NUM_MINES]; break;
 		case COURSE_HANDS:
 		case SONG_HANDS:					val = rv[RADAR_NUM_HANDS]; break;
-		case SONG_DIFFICULTY_RADAR_STREAM:	val = rv[RADAR_STREAM]; break;
-		case SONG_DIFFICULTY_RADAR_VOLTAGE:	val = rv[RADAR_VOLTAGE]; break;
-		case SONG_DIFFICULTY_RADAR_AIR:		val = rv[RADAR_AIR]; break;
-		case SONG_DIFFICULTY_RADAR_FREEZE:	val = rv[RADAR_FREEZE]; break;
-		case SONG_DIFFICULTY_RADAR_CHAOS:	val = rv[RADAR_CHAOS]; break;
 		case SONG_PROFILE_HIGH_SCORE:
 			val = PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsHighScoreList(pSong,pSteps).GetTopScore().fPercentDP;
-			break;
-		case SONG_PROFILE_NUM_PLAYS:
-			val = (float) PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsNumTimesPlayed(pSong,pSteps);
 			break;
 
 		case SONG_MACHINE_HIGH_NAME: /* set val for color */
@@ -228,73 +189,18 @@ void PaneDisplay::SetContent( PaneContents c )
 			val = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().fPercentDP;
 			break;
 
-		case SONG_MACHINE_RANK:
-			{
-			const vector<Song*> best = SONGMAN->GetBestSongs( PROFILE_SLOT_MACHINE );
-			val = (float) FindIndex( best.begin(), best.end(), pSong );
-			val += 1;
-			break;
-			}
-
-		case SONG_PROFILE_RANK:
-			{
-			const vector<Song*> best = SONGMAN->GetBestSongs( PlayerMemCard(m_PlayerNumber) );
-			val = (float) FindIndex( best.begin(), best.end(), pSong );
-			val += 1;
-			break;
-			}
-
 		case COURSE_MACHINE_HIGH_NAME: /* set val for color */
 		case COURSE_MACHINE_HIGH_SCORE:
 			val = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().fPercentDP;
 			break;
 
-		case COURSE_MACHINE_NUM_PLAYS:
-			val = (float) PROFILEMAN->GetMachineProfile()->GetCourseNumTimesPlayed( pCourse );
-			break;
-
-		case COURSE_MACHINE_RANK:
-			{
-				CourseType ct = PlayModeToCourseType( GAMESTATE->m_PlayMode );
-				const vector<Course*> best = SONGMAN->GetBestCourses( ct, PROFILE_SLOT_MACHINE );
-				val = (float) FindIndex( best.begin(), best.end(), pCourse );
-				val += 1;
-			}
-			break;
-
 		case COURSE_PROFILE_HIGH_SCORE:
 			val = PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().fPercentDP;
-			break;
-		case COURSE_PROFILE_NUM_PLAYS:
-			val = (float) PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseNumTimesPlayed( pCourse );
-			break;
-
-		case COURSE_PROFILE_RANK:
-			{
-				CourseType ct = PlayModeToCourseType( GAMESTATE->m_PlayMode );
-				const vector<Course*> best = SONGMAN->GetBestCourses( ct, PlayerMemCard(m_PlayerNumber) );
-				val = (float) FindIndex( best.begin(), best.end(), pCourse );
-				val += 1;
-			}
 			break;
 		};
 
 		if( val == RADAR_VAL_UNKNOWN )
 			goto done;
-
-		/* Scale, round, clamp, etc. for floats: */
-		switch( c )
-		{
-		case SONG_DIFFICULTY_RADAR_STREAM:
-		case SONG_DIFFICULTY_RADAR_VOLTAGE:
-		case SONG_DIFFICULTY_RADAR_AIR:
-		case SONG_DIFFICULTY_RADAR_FREEZE:
-		case SONG_DIFFICULTY_RADAR_CHAOS:
-			val = roundf( SCALE( val, 0, 1, 0, 10 ) );
-			val = clamp( val, 0, 10 );
-			str = ssprintf( "%.0f", val );
-			break;
-		}
 
 		switch( c )
 		{
@@ -347,14 +253,6 @@ void PaneDisplay::SetContent( PaneContents c )
 		case COURSE_ROLLS:
 		case COURSE_MINES:
 		case COURSE_HANDS:
-		case SONG_MACHINE_NUM_PLAYS:
-		case COURSE_MACHINE_NUM_PLAYS:
-		case SONG_PROFILE_NUM_PLAYS:
-		case COURSE_PROFILE_NUM_PLAYS:
-		case SONG_MACHINE_RANK:
-		case COURSE_MACHINE_RANK:
-		case SONG_PROFILE_RANK:
-		case COURSE_PROFILE_RANK:
 			str = ssprintf( "%.0f", val );
 		}
 	}
@@ -411,9 +309,6 @@ void PaneDisplay::SetFocus( PaneTypes NewPane )
 
 	for( unsigned i = 0; i < NUM_PANE_CONTENTS; ++i )
 	{
-		if( g_Contents[i].type == NUM_PANES )
-			continue; /* skip, disabled */
-
 		if( g_Contents[i].type == m_CurPane )
 		{
 			COMMAND( m_textContents[i], "LoseFocus"  );

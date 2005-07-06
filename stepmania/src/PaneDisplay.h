@@ -5,7 +5,6 @@
 
 #include "ActorFrame.h"
 #include "ActorCommands.h"
-#include "Sprite.h"
 #include "PlayerNumber.h"
 #include "BitmapText.h"
 #include "AutoActor.h"
@@ -30,25 +29,12 @@ enum PaneContents
 	SONG_ROLLS,
 	SONG_MINES,
 	SONG_HANDS,
-	SONG_DIFFICULTY_RADAR_STREAM,
-	SONG_DIFFICULTY_RADAR_CHAOS,
-	SONG_DIFFICULTY_RADAR_FREEZE,
-	SONG_DIFFICULTY_RADAR_AIR,
-	SONG_DIFFICULTY_RADAR_VOLTAGE,
 	SONG_MACHINE_HIGH_SCORE,
-	SONG_MACHINE_NUM_PLAYS,
-	SONG_MACHINE_RANK,
 	SONG_MACHINE_HIGH_NAME,
 	SONG_PROFILE_HIGH_SCORE,
-	SONG_PROFILE_NUM_PLAYS,
-	SONG_PROFILE_RANK,
 	COURSE_MACHINE_HIGH_SCORE,
-	COURSE_MACHINE_NUM_PLAYS,
-	COURSE_MACHINE_RANK,
 	COURSE_MACHINE_HIGH_NAME,
 	COURSE_PROFILE_HIGH_SCORE,
-	COURSE_PROFILE_NUM_PLAYS,
-	COURSE_PROFILE_RANK,
 	COURSE_NUM_STEPS,
 	COURSE_JUMPS,
 	COURSE_HOLDS,
@@ -66,8 +52,6 @@ public:
 
 	void Load( const CString &sClass, PlayerNumber pn );
 	void SetFromGameState( SortOrder so );
-
-	void Update( float fDeltaTime );
 
 private:
 	void SetFocus( PaneTypes NewPane );
