@@ -3,7 +3,10 @@
 #include "ThemeManager.h"
 #include "MemoryCardManager.h"
 #include "RageUtil.h"
+#include "XmlFile.h"
+#include "ActorUtil.h"
 
+REGISTER_ACTOR_CLASS( MemoryCardDisplay )
 
 MemoryCardDisplay::MemoryCardDisplay()
 {
@@ -23,6 +26,16 @@ void MemoryCardDisplay::Load( PlayerNumber pn )
 		m_spr[i].SetHidden( true );
 		this->AddChild( &m_spr[i] );
 	}
+}
+
+void MemoryCardDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	PlayerNumber pn;
+	pNode->GetAttrValue("PlayerNumber", (int&) pn );
+
+	Load( pn );
+
+	ActorFrame::LoadFromNode( sDir, pNode );
 }
 
 void MemoryCardDisplay::Update( float fDelta )

@@ -12,6 +12,7 @@ class MemoryCardDisplay : public ActorFrame
 public:
 	MemoryCardDisplay();
 	void Load( PlayerNumber pn );
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
 	void Update( float fDelta );
 
 protected:
