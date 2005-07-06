@@ -3,9 +3,10 @@
 #ifndef HOLDGHOSTARROW_H
 #define HOLDGHOSTARROW_H
 
-#include "Sprite.h"
+#include "ActorFrame.h"
+#include "AutoActor.h"
 
-class HoldGhostArrow : public Sprite
+class HoldGhostArrow : public ActorFrame
 {
 public:
 	HoldGhostArrow();
@@ -19,6 +20,7 @@ public:
 
 private:
 	bool m_bHoldIsActive;
+	AutoActor m_sprGhost;
 };
 
 

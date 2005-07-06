@@ -11,13 +11,14 @@ HoldGhostArrow::HoldGhostArrow()
 
 void HoldGhostArrow::Load( const CString &sButton, const CString &sElement )
 {
-	Sprite::Load( NOTESKIN->GetPath(sButton, sElement) );	// not optional
-	this->RunCommands( NOTESKIN->GetMetricA("HoldGhostArrow","OnCommand") );
+	m_sprGhost.Load( NOTESKIN->GetPath(sButton, sElement) );	// not optional
+	m_sprGhost->RunCommands( NOTESKIN->GetMetricA("HoldGhostArrow","OnCommand") );
+	this->AddChild( m_sprGhost );
 }
 
 void HoldGhostArrow::Update( float fDeltaTime )
 {
-	Sprite::Update( fDeltaTime );
+	ActorFrame::Update( fDeltaTime );
 	
 	m_bHoldIsActive = false;
 }
