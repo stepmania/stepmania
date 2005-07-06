@@ -67,59 +67,59 @@ void ScreenEditCourse::Init()
 	vector<OptionRowHandler*> vHands;
 
 	OptionRowDefinition def;
-	def.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	
-	def.name = "Title";
-	def.choices.clear();
-	def.choices.push_back( pCourse->GetTranslitFullTitle() );
+	def.m_sName = "Title";
+	def.m_vsChoices.clear();
+	def.m_vsChoices.push_back( pCourse->GetTranslitFullTitle() );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Repeat";
-	def.choices.clear();
-	def.choices.push_back( "NO" );
-	def.choices.push_back( "YES" );
+	def.m_sName = "Repeat";
+	def.m_vsChoices.clear();
+	def.m_vsChoices.push_back( "NO" );
+	def.m_vsChoices.push_back( "YES" );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Randomize";
-	def.choices.clear();
-	def.choices.push_back( "NO" );
-	def.choices.push_back( "YES" );
+	def.m_sName = "Randomize";
+	def.m_vsChoices.clear();
+	def.m_vsChoices.push_back( "NO" );
+	def.m_vsChoices.push_back( "YES" );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Lives";
-	def.choices.clear();
-	def.choices.push_back( "Use Bar Life" );
+	def.m_sName = "Lives";
+	def.m_vsChoices.clear();
+	def.m_vsChoices.push_back( "Use Bar Life" );
 	for( int i=1; i<=10; i++ )
-		def.choices.push_back( ssprintf("%d",i) );
+		def.m_vsChoices.push_back( ssprintf("%d",i) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Type";
-	def.choices.clear();
+	def.m_sName = "Type";
+	def.m_vsChoices.clear();
 	FOREACH_CONST( StepsType, STEPS_TYPES_TO_SHOW.GetValue(), st )
-		def.choices.push_back( GAMEMAN->StepsTypeToString(*st) );
+		def.m_vsChoices.push_back( GAMEMAN->StepsTypeToString(*st) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Type Meter";
-	def.choices.clear();
+	def.m_sName = "Type Meter";
+	def.m_vsChoices.clear();
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
-		def.choices.push_back( ssprintf("%d",i) );
+		def.m_vsChoices.push_back( ssprintf("%d",i) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Edit Entry";
-	def.choices.clear();
+	def.m_sName = "Edit Entry";
+	def.m_vsChoices.clear();
 	for( unsigned i=0; i<pCourse->m_vEntries.size(); i++ )
-		def.choices.push_back( ssprintf("%u of %u",i+1,pCourse->m_vEntries.size()) );
+		def.m_vsChoices.push_back( ssprintf("%u of %u",i+1,pCourse->m_vEntries.size()) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Insert Entry";
-	def.choices.clear();
+	def.m_sName = "Insert Entry";
+	def.m_vsChoices.clear();
 	for( unsigned i=0; i<=pCourse->m_vEntries.size(); i++ )
 	{
 		CString s;
@@ -127,15 +127,15 @@ void ScreenEditCourse::Init()
 			s = ssprintf("After %u",i);
 		else
 			s = ssprintf("Before %u",i+1);
-		def.choices.push_back( s );
+		def.m_vsChoices.push_back( s );
 	}
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Delete Entry";
-	def.choices.clear();
+	def.m_sName = "Delete Entry";
+	def.m_vsChoices.clear();
 	for( unsigned i=0; i<pCourse->m_vEntries.size(); i++ )
-		def.choices.push_back( ssprintf("%u of %u",i+1,pCourse->m_vEntries.size()) );
+		def.m_vsChoices.push_back( ssprintf("%u of %u",i+1,pCourse->m_vEntries.size()) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
@@ -173,9 +173,9 @@ void ScreenEditCourse::AfterChangeValueInRow( PlayerNumber pn )
 		{
 			OptionRow &row = *m_pRows[ROW_TYPE];
 			OptionRowDefinition def = row.GetRowDef();
-			def.choices.clear();
+			def.m_vsChoices.clear();
 			vector<StepsTypeAndDifficulty> vThrowAway;
-			GetStepsTypeAndDifficulty( vThrowAway, def.choices );
+			GetStepsTypeAndDifficulty( vThrowAway, def.m_vsChoices );
 			row.Reload( def );
 		}
 		// fall through

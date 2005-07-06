@@ -137,6 +137,7 @@ protected:
 	ThemeMetric<bool>				SHOW_SCROLL_BAR;
 	ThemeMetric<float>				SCROLL_BAR_HEIGHT;
 	ThemeMetric<float>				SCROLL_BAR_TIME;
+	ThemeMetric<float>				LINE_HIGHLIGHT_X;
 	ThemeMetric<float>				EXPLANATION_ZOOM;
 	ThemeMetric<bool>				SHOW_EXIT_ROW;
 	ThemeMetric<bool>				SEPARATE_EXIT_ROW;

@@ -204,7 +204,7 @@ void ScreenOptionsMaster::RefreshIcons( int r, PlayerNumber pn )
 	
 
 	/* XXX: hack to not display text in the song options menu */
-	if( def.bOneChoiceForAllPlayers )
+	if( def.m_bOneChoiceForAllPlayers )
 		sIcon = "";
 
 	LoadOptionIcon( pn, r, sIcon );

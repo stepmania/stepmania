@@ -85,6 +85,7 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	SHOW_SCROLL_BAR					(m_sName,"ShowScrollBar"),
 	SCROLL_BAR_HEIGHT				(m_sName,"ScrollBarHeight"),
 	SCROLL_BAR_TIME					(m_sName,"ScrollBarTime"),
+	LINE_HIGHLIGHT_X				(m_sName,"LineHighlightX"),
 	EXPLANATION_ZOOM				(m_sName,"ExplanationZoom"),
 	SHOW_EXIT_ROW					(m_sName,"ShowExitRow"),
 	SEPARATE_EXIT_ROW				(m_sName,"SeparateExitRow"),
@@ -157,7 +158,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 			vpns.push_back( p );
 		this->ImportOptions( r, vpns );
 	
-		CHECKPOINT_M( ssprintf("row %i: %s", r, row.GetRowDef().name.c_str()) );
+		CHECKPOINT_M( ssprintf("row %i: %s", r, row.GetRowDef().m_sName.c_str()) );
 
 		row.AfterImportOptions();
 	}
@@ -172,7 +173,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	{
 		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName,"line highlight") );
 		m_sprLineHighlight[p].SetName( "LineHighlight" );
-		m_sprLineHighlight[p].SetX( SCREEN_CENTER_X );
+		m_sprLineHighlight[p].SetX( LINE_HIGHLIGHT_X );
 		m_framePage.AddChild( &m_sprLineHighlight[p] );
 		ON_COMMAND( m_sprLineHighlight[p] );
 	}
@@ -317,7 +318,7 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 {
 	OptionRow &row = *m_pRows[iRow];
 
-	CString sLineName = row.GetRowDef().name;
+	CString sLineName = row.GetRowDef().m_sName;
 	ASSERT( !sLineName.empty() );
 
 	bool bAllowExplanation = row.GetRowDef().m_bAllowExplanation;
@@ -830,7 +831,7 @@ void ScreenOptions::ProcessMenuStart( PlayerNumber pn, const InputEventType type
 		}
 	}
 	
-	if( row.GetRowDef().selectType == SELECT_MULTIPLE )
+	if( row.GetRowDef().m_selectType == SELECT_MULTIPLE )
 	{
 		int iChoiceInRow = row.GetChoiceInRowWithFocus(pn);
 		bool bSelected = !row.GetSelected( pn, iChoiceInRow );
@@ -862,10 +863,10 @@ void ScreenOptions::ProcessMenuStart( PlayerNumber pn, const InputEventType type
 			break;
 		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
-			if( row.GetRowDef().selectType != SELECT_MULTIPLE )
+			if( row.GetRowDef().m_selectType != SELECT_MULTIPLE )
 			{
 				int iChoiceInRow = row.GetChoiceInRowWithFocus(pn);
-				if( row.GetRowDef().bOneChoiceForAllPlayers )
+				if( row.GetRowDef().m_bOneChoiceForAllPlayers )
 					row.SetOneSharedSelection( iChoiceInRow );
 				else
 					row.SetOneSelection( pn, iChoiceInRow );
@@ -894,7 +895,7 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 	/* Long rows always put us in the center, so don't update the focus. */
 	int iCurrentRow = m_iCurrentRow[pn];
 	const OptionRow &row = *m_pRows[iCurrentRow];
-	if( row.GetRowDef().layoutType == LAYOUT_SHOW_ONE_IN_ROW )
+	if( row.GetRowDef().m_layoutType == LAYOUT_SHOW_ONE_IN_ROW )
 		return;
 
 	int iWidth, iY;
@@ -912,7 +913,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 
 	OptionRow &row = *m_pRows[iCurRow];
 	
-	const int iNumChoices = row.GetRowDef().choices.size();
+	const int iNumChoices = row.GetRowDef().m_vsChoices.size();
 
 	if( m_OptionsNavigation == NAV_THREE_KEY_MENU && iNumChoices <= 1 )	// 1 or 0
 	{
@@ -945,7 +946,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	row.SetChoiceInRowWithFocus( pn, iNewChoiceWithFocus );
 	StoreFocus( pn );
 
-	if( row.GetRowDef().bOneChoiceForAllPlayers )
+	if( row.GetRowDef().m_bOneChoiceForAllPlayers )
 	{
 		/* If this row is bOneChoiceForAllPlayers, then lock the cursors together
 		 * for this row.  Don't do this in toggle modes, since the current selection
@@ -953,7 +954,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		bool bForceFocusedChoiceTogether = false;
 		if( m_OptionsNavigation!=NAV_TOGGLE_THREE_KEY &&
 			m_OptionsNavigation!=NAV_TOGGLE_FIVE_KEY &&
-			row.GetRowDef().bOneChoiceForAllPlayers )
+			row.GetRowDef().m_bOneChoiceForAllPlayers )
 		{
 			bForceFocusedChoiceTogether = true;
 		}
@@ -980,7 +981,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 			}
 			else
 			{
-				if( row.GetRowDef().selectType == SELECT_MULTIPLE )
+				if( row.GetRowDef().m_selectType == SELECT_MULTIPLE )
 					;	// do nothing.  User must press Start to toggle the selection.
 				else
 					row.SetOneSelection( p, iNewChoiceWithFocus );			
@@ -995,7 +996,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		}
 		else
 		{
-			if( row.GetRowDef().selectType == SELECT_MULTIPLE )
+			if( row.GetRowDef().m_selectType == SELECT_MULTIPLE )
 				;	// do nothing.  User must press Start to toggle the selection.
 			else
 				row.SetOneSelection( pn, iNewChoiceWithFocus );
@@ -1059,7 +1060,7 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 		{
 		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
-			if( row.GetRowDef().layoutType != LAYOUT_SHOW_ONE_IN_ROW )
+			if( row.GetRowDef().m_layoutType != LAYOUT_SHOW_ONE_IN_ROW )
 			{
 				int iSelectionDist = -1;
 				for( unsigned i = 0; i < row.GetTextItemsSize(); ++i )

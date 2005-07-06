@@ -15,13 +15,15 @@
 AutoScreenMessage( SM_GoToOK )
 AutoScreenMessage( SM_GoToCancel )
 
+bool ScreenMiniMenu::s_bCancelled = false;
 int	ScreenMiniMenu::s_iLastRowCode = -1;
 vector<int>	ScreenMiniMenu::s_viLastAnswers;
 
-void ScreenMiniMenu::MiniMenu( MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
+void ScreenMiniMenu::MiniMenu( MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel, float fX, float fY )
 {
 	ScreenMiniMenu *pNewScreen = new ScreenMiniMenu( pDef->sClassName );
 	pNewScreen->Init( pDef, SM_SendOnOK, SM_SendOnCancel );
+	pNewScreen->SetXY( fX, fY );
 	SCREENMAN->ZeroNextUpdate();
 	SCREENMAN->SetFromNewScreen( pNewScreen );
 }
@@ -63,8 +65,8 @@ void ScreenMiniMenu::Init( const MenuDef* pDef, ScreenMessage SM_SendOnOK, Scree
 		const MenuRowDef &mr = m_vMenuRows[r];
 		OptionRowDefinition &def = vDefs[r];
 
-		def.name = mr.sName;
-		FontCharAliases::ReplaceMarkers( def.name );	// Allow special characters
+		def.m_sName = mr.sName;
+		FontCharAliases::ReplaceMarkers( def.m_sName );	// Allow special characters
 		
 		if( mr.bEnabled )
 		{
@@ -77,14 +79,14 @@ void ScreenMiniMenu::Init( const MenuDef* pDef, ScreenMessage SM_SendOnOK, Scree
 			def.m_vEnabledForPlayers.clear();
 		}
 
-		def.bOneChoiceForAllPlayers = true;
-		def.selectType = SELECT_ONE;
-		def.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		def.m_bOneChoiceForAllPlayers = true;
+		def.m_selectType = SELECT_ONE;
+		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		def.m_bExportOnChange = false;
 			
-		def.choices = mr.choices;
+		def.m_vsChoices = mr.choices;
 
-		FOREACH( CString, def.choices, c )
+		FOREACH( CString, def.m_vsChoices, c )
 			FontCharAliases::ReplaceMarkers( *c );	// Allow special characters
 	}
 
@@ -135,11 +137,13 @@ void ScreenMiniMenu::ExportOptions( int r, const vector<PlayerNumber> &vpns )
 
 void ScreenMiniMenu::GoToNextScreen()
 {
+	s_bCancelled = false;
 	SCREENMAN->PopTopScreen( m_SMSendOnOK );
 }
 
 void ScreenMiniMenu::GoToPrevScreen()
 {
+	s_bCancelled = true;
 	SCREENMAN->PopTopScreen( m_SMSendOnCancel );
 }
 

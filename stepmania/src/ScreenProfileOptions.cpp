@@ -46,31 +46,31 @@ void ScreenProfileOptions::Init()
 {
 	ScreenOptions::Init();
 
-	g_ProfileOptionsLines[PO_PLAYER1].choices.clear();
-	g_ProfileOptionsLines[PO_PLAYER1].choices.push_back( "-NONE-" );
-	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_PLAYER1].choices );
+	g_ProfileOptionsLines[PO_PLAYER1].m_vsChoices.clear();
+	g_ProfileOptionsLines[PO_PLAYER1].m_vsChoices.push_back( "-NONE-" );
+	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_PLAYER1].m_vsChoices );
 
-	g_ProfileOptionsLines[PO_PLAYER2].choices.clear();
-	g_ProfileOptionsLines[PO_PLAYER2].choices.push_back( "-NONE-" );
-	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_PLAYER2].choices );
+	g_ProfileOptionsLines[PO_PLAYER2].m_vsChoices.clear();
+	g_ProfileOptionsLines[PO_PLAYER2].m_vsChoices.push_back( "-NONE-" );
+	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_PLAYER2].m_vsChoices );
 
-	g_ProfileOptionsLines[PO_DELETE_].choices.clear();
-	g_ProfileOptionsLines[PO_DELETE_].choices.push_back( "-NONE-" );
-	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_DELETE_].choices );
+	g_ProfileOptionsLines[PO_DELETE_].m_vsChoices.clear();
+	g_ProfileOptionsLines[PO_DELETE_].m_vsChoices.push_back( "-NONE-" );
+	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_DELETE_].m_vsChoices );
 
-	g_ProfileOptionsLines[PO_RENAME_].choices.clear();
-	g_ProfileOptionsLines[PO_RENAME_].choices.push_back( "-NONE-" );
-	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_RENAME_].choices );
+	g_ProfileOptionsLines[PO_RENAME_].m_vsChoices.clear();
+	g_ProfileOptionsLines[PO_RENAME_].m_vsChoices.push_back( "-NONE-" );
+	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_RENAME_].m_vsChoices );
 
 	if( PREFSMAN->GetMemoryCardOsMountPoint(PLAYER_1).Get().empty() )
-		g_ProfileOptionsLines[PO_OS_MOUNT_1].choices[0] = "-NOT SET IN INI-";
+		g_ProfileOptionsLines[PO_OS_MOUNT_1].m_vsChoices[0] = "-NOT SET IN INI-";
 	else
-		g_ProfileOptionsLines[PO_OS_MOUNT_1].choices[0] = PREFSMAN->GetMemoryCardOsMountPoint(PLAYER_1).Get();
+		g_ProfileOptionsLines[PO_OS_MOUNT_1].m_vsChoices[0] = PREFSMAN->GetMemoryCardOsMountPoint(PLAYER_1).Get();
 
 	if( PREFSMAN->GetMemoryCardOsMountPoint(PLAYER_2).Get().empty() )
-		g_ProfileOptionsLines[PO_OS_MOUNT_2].choices[0] = "-NOT SET IN INI-";
+		g_ProfileOptionsLines[PO_OS_MOUNT_2].m_vsChoices[0] = "-NOT SET IN INI-";
 	else
-		g_ProfileOptionsLines[PO_OS_MOUNT_2].choices[0] = PREFSMAN->GetMemoryCardOsMountPoint(PLAYER_2).Get();
+		g_ProfileOptionsLines[PO_OS_MOUNT_2].m_vsChoices[0] = PREFSMAN->GetMemoryCardOsMountPoint(PLAYER_2).Get();
 
 	//Enable all lines for all players
 	for ( unsigned int i = 0; i < NUM_PROFILE_OPTIONS_LINES; i++ )
@@ -235,7 +235,7 @@ CString ScreenProfileOptions::GetSelectedProfileName()
 	const int Selection = row.GetOneSharedSelection();
 	if( !Selection )
 		return "";
-	return g_ProfileOptionsLines[PO_PLAYER1].choices[ Selection ];
+	return g_ProfileOptionsLines[PO_PLAYER1].m_vsChoices[ Selection ];
 }
 
 /*

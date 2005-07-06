@@ -45,15 +45,15 @@ void ScreenNetworkOptions::Init()
 {
 	ScreenOptions::Init();
 
-	g_NetworkOptionsLines[PO_CONNECTION].choices.clear();
+	g_NetworkOptionsLines[PO_CONNECTION].m_vsChoices.clear();
 	if ( NSMAN->useSMserver )
-		g_NetworkOptionsLines[PO_CONNECTION].choices.push_back("Disconnect from "+NSMAN->GetServerName());
+		g_NetworkOptionsLines[PO_CONNECTION].m_vsChoices.push_back("Disconnect from "+NSMAN->GetServerName());
 	else
-		g_NetworkOptionsLines[PO_CONNECTION].choices.push_back("Connect...");
+		g_NetworkOptionsLines[PO_CONNECTION].m_vsChoices.push_back("Connect...");
 
-	g_NetworkOptionsLines[PO_SERVER].choices.clear();
-	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Stop");
-	g_NetworkOptionsLines[PO_SERVER].choices.push_back("Start...");
+	g_NetworkOptionsLines[PO_SERVER].m_vsChoices.clear();
+	g_NetworkOptionsLines[PO_SERVER].m_vsChoices.push_back("Stop");
+	g_NetworkOptionsLines[PO_SERVER].m_vsChoices.push_back("Start...");
 	
 	//Enable all lines for all players
 	for ( unsigned int i = 0; i < NUM_NETWORK_OPTIONS_LINES; i++ )

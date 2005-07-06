@@ -43,65 +43,65 @@ void ScreenEditCourseEntry::Init()
 	vector<OptionRowHandler*> vHands;
 
 	OptionRowDefinition def;
-	def.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	
-	def.name = "Song Group";
-	def.choices.clear();
+	def.m_sName = "Song Group";
+	def.m_vsChoices.clear();
 	vector<CString> vsSongGroups;
 	SONGMAN->GetSongGroupNames( vsSongGroups );
-	def.choices.push_back( "(any)" );
+	def.m_vsChoices.push_back( "(any)" );
 	FOREACH_CONST( CString, vsSongGroups, s )
-		def.choices.push_back( *s );
+		def.m_vsChoices.push_back( *s );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Song";
-	def.choices.clear();
-	def.choices.push_back( "" );
+	def.m_sName = "Song";
+	def.m_vsChoices.clear();
+	def.m_vsChoices.push_back( "" );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Base Difficulty";
-	def.choices.clear();
-	def.choices.push_back( "(any)" );
+	def.m_sName = "Base Difficulty";
+	def.m_vsChoices.clear();
+	def.m_vsChoices.push_back( "(any)" );
 	FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), dc )
-		def.choices.push_back( DifficultyToThemedString(*dc) );
+		def.m_vsChoices.push_back( DifficultyToThemedString(*dc) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Low Meter";
-	def.choices.clear();
-	def.choices.push_back( "(any)" );
+	def.m_sName = "Low Meter";
+	def.m_vsChoices.clear();
+	def.m_vsChoices.push_back( "(any)" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
-		def.choices.push_back( ssprintf("%i",i) );
+		def.m_vsChoices.push_back( ssprintf("%i",i) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "High Meter";
-	def.choices.clear();
-	def.choices.push_back( "(any)" );
+	def.m_sName = "High Meter";
+	def.m_vsChoices.clear();
+	def.m_vsChoices.push_back( "(any)" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
-		def.choices.push_back( ssprintf("%i",i) );
+		def.m_vsChoices.push_back( ssprintf("%i",i) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Sort";
-	def.choices.clear();
+	def.m_sName = "Sort";
+	def.m_vsChoices.clear();
 	FOREACH_SongSort( i )
-		def.choices.push_back( SongSortToThemedString(i) );
+		def.m_vsChoices.push_back( SongSortToThemedString(i) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Choose";
-	def.choices.clear();
+	def.m_sName = "Choose";
+	def.m_vsChoices.clear();
 	for( int i=0; i<20; i++ )
-		def.choices.push_back( FormatNumberAndSuffix(i+1) );
+		def.m_vsChoices.push_back( FormatNumberAndSuffix(i+1) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Set Mods";
-	def.choices.clear();
-	def.choices.push_back( "Set Mods" );
+	def.m_sName = "Set Mods";
+	def.m_vsChoices.clear();
+	def.m_vsChoices.push_back( "Set Mods" );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
@@ -131,21 +131,21 @@ void ScreenEditCourseEntry::AfterChangeValueInRow( PlayerNumber pn )
 			if( iChoice == 0 )
 				ce.sSongGroup = "";
 			else
-				ce.sSongGroup = row.GetRowDef().choices[ iChoice ];
+				ce.sSongGroup = row.GetRowDef().m_vsChoices[ iChoice ];
 		}
 		// refresh songs
 		{
 			OptionRow &row = *m_pRows[ROW_SONG];
 			OptionRowDefinition def = row.GetRowDef();
-			def.choices.clear();
-			def.choices.push_back( "(any)" );
+			def.m_vsChoices.clear();
+			def.m_vsChoices.push_back( "(any)" );
 			vector<Song*> vpSongs;
 			if( ce.sSongGroup.empty() )
 				SONGMAN->GetSongs( vpSongs );
 			else
 				SONGMAN->GetSongs( vpSongs, ce.sSongGroup );
 			FOREACH_CONST( Song*, vpSongs, s )
-				def.choices.push_back( (*s)->GetTranslitFullTitle() );
+				def.m_vsChoices.push_back( (*s)->GetTranslitFullTitle() );
 			vector<Song*>::const_iterator iter = find( vpSongs.begin(), vpSongs.end(), ce.pSong );
 			if( iter != vpSongs.end() )
 			{
@@ -235,11 +235,11 @@ void ScreenEditCourseEntry::ImportAllOptions()
 	// import song group
 	{
 		OptionRow &row = *m_pRows[ROW_SONG_GROUP];
-		FOREACH_CONST( CString, row.GetRowDef().choices, s )
+		FOREACH_CONST( CString, row.GetRowDef().m_vsChoices, s )
 		{
 			if( *s == ce.sSongGroup )
 			{
-				int iChoice = s - row.GetRowDef().choices.begin();
+				int iChoice = s - row.GetRowDef().m_vsChoices.begin();
 				row.SetOneSharedSelection( iChoice );
 				AfterChangeValueInRow( GAMESTATE->m_MasterPlayerNumber );
 				break;

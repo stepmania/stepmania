@@ -58,23 +58,23 @@ void ScreenCourseManager::Init()
 	vector<OptionRowHandler*> vHands;
 
 	OptionRowDefinition def;
-	def.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	
-	def.name = "Group";
-	def.choices.clear();
-	SONGMAN->GetCourseGroupNames( def.choices );
+	def.m_sName = "Group";
+	def.m_vsChoices.clear();
+	SONGMAN->GetCourseGroupNames( def.m_vsChoices );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Course Group";
-	def.choices.clear();
-	def.choices.push_back( "" );
+	def.m_sName = "Course Group";
+	def.m_vsChoices.clear();
+	def.m_vsChoices.push_back( "" );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	def.name = "Action";
-	def.choices.clear();
-	def.choices.push_back( "" );
+	def.m_sName = "Action";
+	def.m_vsChoices.clear();
+	def.m_vsChoices.push_back( "" );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
@@ -102,7 +102,7 @@ void ScreenCourseManager::AfterChangeValueInRow( PlayerNumber pn )
 		{
 			OptionRow &row = *m_pRows[ROW_COURSE_GROUP];
 			int iChoice = row.GetChoiceInRowWithFocus(pn);
-			CString sCourseGroup = row.GetRowDef().choices[iChoice];
+			CString sCourseGroup = row.GetRowDef().m_vsChoices[iChoice];
 			GAMESTATE->m_sPreferredCourseGroup.Set( sCourseGroup );
 		}
 		// Refresh courses
@@ -111,10 +111,10 @@ void ScreenCourseManager::AfterChangeValueInRow( PlayerNumber pn )
 			vector<Course*> vpCourses;
 			SONGMAN->GetCoursesInGroup( vpCourses, GAMESTATE->m_sPreferredCourseGroup.Get(), false );
 			OptionRowDefinition def = row.GetRowDef();
-			def.choices.clear();
+			def.m_vsChoices.clear();
 			FOREACH_CONST( Course*, vpCourses, c )
-				def.choices.push_back( (*c)->GetTranslitFullTitle() );
-			def.choices.push_back( NULL );	// new course
+				def.m_vsChoices.push_back( (*c)->GetTranslitFullTitle() );
+			def.m_vsChoices.push_back( NULL );	// new course
 			row.Reload( def );
 		}
 		// fall through
@@ -132,11 +132,11 @@ void ScreenCourseManager::AfterChangeValueInRow( PlayerNumber pn )
 		{
 			OptionRow &row = *m_pRows[ROW_ACTION];
 			OptionRowDefinition def = row.GetRowDef();
-			def.choices.clear();
+			def.m_vsChoices.clear();
 			vector<CourseManagerAction> vActions;
 			GetPossibleActions( vActions );
 			FOREACH_CONST( CourseManagerAction, vActions, a )
-				def.choices.push_back( CourseManagerActionToString(*a) );
+				def.m_vsChoices.push_back( CourseManagerActionToString(*a) );
 			row.Reload( def );
 		}
 		// fall through

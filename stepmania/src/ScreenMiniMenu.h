@@ -80,7 +80,7 @@ struct MenuDef
 class ScreenMiniMenu : public ScreenOptions
 {
 public:
-	static void MiniMenu( MenuDef* pDef, ScreenMessage smSendOnOK, ScreenMessage smSendOnCancel = SM_None );
+	static void MiniMenu( MenuDef* pDef, ScreenMessage smSendOnOK, ScreenMessage smSendOnCancel = SM_None, float fX = 0, float fY = 0 );
 
 	ScreenMiniMenu( CString sScreenClass );
 	void Init( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel );
@@ -103,6 +103,7 @@ protected:
 	vector<MenuRowDef> m_vMenuRows;
 
 public:
+	static bool s_bCancelled;
 	static int	s_iLastRowCode;
 	static vector<int>	s_viLastAnswers;
 };

@@ -34,10 +34,10 @@ void ScreenSMOnlineLogin::Init()
 {
 	ScreenOptions::Init();
 
-	g_ProfileLine[0].choices.clear();
-	PROFILEMAN->GetLocalProfileNames( g_ProfileLine[0].choices );
+	g_ProfileLine[0].m_vsChoices.clear();
+	PROFILEMAN->GetLocalProfileNames( g_ProfileLine[0].m_vsChoices );
 
-	if(!g_ProfileLine[0].choices.size())
+	if(!g_ProfileLine[0].m_vsChoices.size())
 	{
 		SCREENMAN->SystemMessage("You Must Define A Profile!");
 		SCREENMAN->SetNewScreen("ScreenProfileOptions");

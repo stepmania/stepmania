@@ -71,13 +71,14 @@ void ScreenOptionsProfiles::Init()
 	vector<OptionRowHandler*> vHands;
 
 	OptionRowDefinition def;
-	def.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	def.m_bOneChoiceForAllPlayers = true;
 	def.m_bAllowThemeItems = false;
 	def.m_bAllowThemeTitles = false;
 	def.m_bAllowExplanation = false;
 	
-	def.name = "Create New";
-	def.choices.clear();
+	def.m_sName = "Create New";
+	def.m_vsChoices.clear();
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
@@ -86,8 +87,8 @@ void ScreenOptionsProfiles::Init()
 
 	FOREACH_CONST( CString, vsProfileNames, s )
 	{
-		def.name = *s;
-		def.choices.clear();
+		def.m_sName = *s;
+		def.m_vsChoices.clear();
 		vDefs.push_back( def );
 		vHands.push_back( NULL );
 	}
@@ -152,29 +153,32 @@ void ScreenOptionsProfiles::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BackFromProfileContextMenu )
 	{
-		switch( ScreenMiniMenu::s_iLastRowCode )
+		if( !ScreenMiniMenu::s_bCancelled )
 		{
-		default:
-			ASSERT(0);
-		case A_EDIT:
-			SCREENMAN->SetNewScreen( "ScreenOptionsEditProfile" );
-			break;
-		case A_RENAME: 
+			switch( ScreenMiniMenu::s_iLastRowCode )
 			{
-				CString sCurrentProfileName = PROFILEMAN->ProfileIDToName( s_sCurrentProfileID );
-				ScreenTextEntry::TextEntry( SM_BackFromEnterName, "Enter a name for a new profile.", sCurrentProfileName, PROFILE_MAX_NAME_LENGTH, ValidateProfileName );
+			default:
+				ASSERT(0);
+			case A_EDIT:
+				SCREENMAN->SetNewScreen( "ScreenOptionsEditProfile" );
+				break;
+			case A_RENAME: 
+				{
+					CString sCurrentProfileName = PROFILEMAN->ProfileIDToName( s_sCurrentProfileID );
+					ScreenTextEntry::TextEntry( SM_BackFromEnterName, "Enter a name for a new profile.", sCurrentProfileName, PROFILE_MAX_NAME_LENGTH, ValidateProfileName );
+				}
+				break;
+			case A_DELETE: 
+				{
+					CString sCurrentProfileName = PROFILEMAN->ProfileIDToName( s_sCurrentProfileID );
+					CString sMessage = ssprintf( "Are you sure you want to delete the profile '%s'?", sCurrentProfileName.c_str() );
+					ScreenPrompt::Prompt( SM_BackFromDelete, sMessage, PROMPT_YES_NO );
+				}
+				break;
+			case A_CANCEL:
+				SCREENMAN->PlayInvalidSound();
+				break;
 			}
-			break;
-		case A_DELETE: 
-			{
-				CString sCurrentProfileName = PROFILEMAN->ProfileIDToName( s_sCurrentProfileID );
-				CString sMessage = ssprintf( "Are you sure you want to delete the profile '%s'?", sCurrentProfileName.c_str() );
-				ScreenPrompt::Prompt( SM_BackFromDelete, sMessage, PROMPT_YES_NO );
-			}
-			break;
-		case A_CANCEL:
-			SCREENMAN->PlayInvalidSound();
-			break;
 		}
 	}
 	else if( SM == SM_BackFromDelete )
@@ -185,6 +189,8 @@ void ScreenOptionsProfiles::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( m_sName );	// reload
 		}
 	}
+
+	ScreenOptions::HandleScreenMessage( SM );
 }
 
 void ScreenOptionsProfiles::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
@@ -208,7 +214,9 @@ void ScreenOptionsProfiles::ProcessMenuStart( PlayerNumber pn, const InputEventT
 		vector<CString> vsProfileIDs;
 		PROFILEMAN->GetLocalProfileIDs( vsProfileIDs );
 		s_sCurrentProfileID = vsProfileIDs[ iProfileIndex ];
-		ScreenMiniMenu::MiniMenu( &g_ProfileContextMenu, SM_BackFromProfileContextMenu );
+		int iThrowAway, iX, iY;
+		GetWidthXY( PLAYER_1, iRow, 0, iThrowAway, iX, iY );
+		ScreenMiniMenu::MiniMenu( &g_ProfileContextMenu, SM_BackFromProfileContextMenu, SM_BackFromProfileContextMenu, (float)iX, (float)iY );
 	}
 }
 

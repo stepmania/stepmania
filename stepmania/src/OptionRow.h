@@ -34,11 +34,11 @@ LayoutType StringToLayoutType( const CString& s );
 
 struct OptionRowDefinition
 {
-	CString name;
-	bool bOneChoiceForAllPlayers;
-	SelectType selectType;
-	LayoutType layoutType;
-	vector<CString> choices;
+	CString m_sName;
+	bool m_bOneChoiceForAllPlayers;
+	SelectType m_selectType;
+	LayoutType m_layoutType;
+	vector<CString> m_vsChoices;
 	set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
 	bool	m_bExportOnChange;
 	bool	m_bAllowThemeItems;	// if false, ignores ScreenOptions::THEME_ITEMS
@@ -54,11 +54,11 @@ struct OptionRowDefinition
 	OptionRowDefinition() { Init(); }
 	void Init()
 	{
-		name = "";
-		bOneChoiceForAllPlayers = false;
-		selectType = SELECT_ONE;
-		layoutType = LAYOUT_SHOW_ALL_IN_ROW;
-		choices.clear();
+		m_sName = "";
+		m_bOneChoiceForAllPlayers = false;
+		m_selectType = SELECT_ONE;
+		m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
+		m_vsChoices.clear();
 		m_vEnabledForPlayers.clear();
 		FOREACH_PlayerNumber( pn )
 			m_vEnabledForPlayers.insert( pn );
@@ -72,11 +72,11 @@ struct OptionRowDefinition
 	OptionRowDefinition( const char *n, bool b, const char *c0=NULL, const char *c1=NULL, const char *c2=NULL, const char *c3=NULL, const char *c4=NULL, const char *c5=NULL, const char *c6=NULL, const char *c7=NULL, const char *c8=NULL, const char *c9=NULL, const char *c10=NULL, const char *c11=NULL, const char *c12=NULL, const char *c13=NULL, const char *c14=NULL, const char *c15=NULL, const char *c16=NULL, const char *c17=NULL, const char *c18=NULL, const char *c19=NULL )
 	{
 		Init();
-		name=n;
-		bOneChoiceForAllPlayers=b;
-		selectType=SELECT_ONE;
-		layoutType=LAYOUT_SHOW_ALL_IN_ROW;
-#define PUSH( c )	if(c) choices.push_back(c);
+		m_sName=n;
+		m_bOneChoiceForAllPlayers=b;
+		m_selectType=SELECT_ONE;
+		m_layoutType=LAYOUT_SHOW_ALL_IN_ROW;
+#define PUSH( c )	if(c) m_vsChoices.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 #undef PUSH
 	}
@@ -120,13 +120,13 @@ public:
 
 	bool GetSelected( PlayerNumber pn, int iChoice ) const
 	{
-		if( m_RowDef.bOneChoiceForAllPlayers )
+		if( m_RowDef.m_bOneChoiceForAllPlayers )
 			pn = PLAYER_1;
 		return m_vbSelected[pn][iChoice];
 	}
 	void SetSelected( PlayerNumber pn, int iChoice, bool b )
 	{
-		if( m_RowDef.bOneChoiceForAllPlayers )
+		if( m_RowDef.m_bOneChoiceForAllPlayers )
 			pn = PLAYER_1;
 		m_vbSelected[pn][iChoice] = b;
 	}
@@ -190,12 +190,16 @@ protected:
 	ThemeMetric<float>				ARROWS_X;
 	ThemeMetric<float>				LABELS_X;
 	ThemeMetric<apActorCommands>	LABELS_ON_COMMAND;
+	ThemeMetric<apActorCommands>	LABEL_GAIN_FOCUS_COMMAND;
+	ThemeMetric<apActorCommands>	LABEL_LOSE_FOCUS_COMMAND;
 	ThemeMetric<float>				ITEMS_START_X;
 	ThemeMetric<float>				ITEMS_END_X;
 	ThemeMetric<float>				ITEMS_GAP_X;
 	ThemeMetric1D<float>			ITEMS_LONG_ROW_X;
 	ThemeMetric<float>				ITEMS_LONG_ROW_SHARED_X;
 	ThemeMetric<apActorCommands>	ITEMS_ON_COMMAND;
+	ThemeMetric<apActorCommands>	ITEM_GAIN_FOCUS_COMMAND;
+	ThemeMetric<apActorCommands>	ITEM_LOSE_FOCUS_COMMAND;
 	ThemeMetric1D<float>			ICONS_X;
 	ThemeMetric<apActorCommands>	ICONS_ON_COMMAND;
 	ThemeMetric<RageColor>			COLOR_SELECTED;

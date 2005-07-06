@@ -83,7 +83,7 @@ public:
 
 		m_bUseModNameForIcon = true;
 			
-		defOut.name = sParam;
+		defOut.m_sName = sParam;
 
 		Default.Load( -1, ParseCommands(ENTRY_DEFAULT(sParam)) );
 
@@ -92,18 +92,18 @@ public:
 		if( cmds.v.size() < 1 )
 			RageException::Throw( "Parse error in ScreenOptionsMaster::%s", sParam.c_str() );
 
-		defOut.bOneChoiceForAllPlayers = false;
+		defOut.m_bOneChoiceForAllPlayers = false;
 		const int NumCols = atoi( cmds.v[0].m_vsArgs[0] );
 		for( unsigned i=1; i<cmds.v.size(); i++ )
 		{
 			const Command &cmd = cmds.v[i];
 			CString sName = cmd.GetName();
 
-			if(		 sName == "together" )			defOut.bOneChoiceForAllPlayers = true;
-			else if( sName == "selectmultiple" )	defOut.selectType = SELECT_MULTIPLE;
-			else if( sName == "selectone" )			defOut.selectType = SELECT_ONE;
-			else if( sName == "selectnone" )		defOut.selectType = SELECT_NONE;
-			else if( sName == "showoneinrow" )		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+			if(		 sName == "together" )			defOut.m_bOneChoiceForAllPlayers = true;
+			else if( sName == "selectmultiple" )	defOut.m_selectType = SELECT_MULTIPLE;
+			else if( sName == "selectone" )			defOut.m_selectType = SELECT_ONE;
+			else if( sName == "selectnone" )		defOut.m_selectType = SELECT_NONE;
+			else if( sName == "showoneinrow" )		defOut.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 			else if( sName == "reloadrowmessages" )
 			{
 				for( unsigned a=1; a<cmd.m_vsArgs.size(); a++ )
@@ -150,7 +150,7 @@ public:
 
 			CString sName = mc.m_sName;
 			CString sChoice = mc.m_sName;
-			defOut.choices.push_back( sChoice );
+			defOut.m_vsChoices.push_back( sChoice );
 		}
 	}
 	void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
@@ -174,17 +174,17 @@ public:
 					/* The entry has no effect.  This is usually a default "none of the
 					 * above" entry.  It will always return true for DescribesCurrentMode().
 					 * It's only the selected choice if nothing else matches. */
-					if( def.selectType != SELECT_MULTIPLE )
+					if( def.m_selectType != SELECT_MULTIPLE )
 						iFallbackOption = e;
 					continue;
 				}
 
-				if( def.bOneChoiceForAllPlayers )
+				if( def.m_bOneChoiceForAllPlayers )
 				{
 					if( mc.DescribesCurrentModeForAllPlayers() )
 					{
 						bUseFallbackOption = false;
-						if( def.selectType != SELECT_MULTIPLE )
+						if( def.m_selectType != SELECT_MULTIPLE )
 							SelectExactlyOne( e, vbSelOut );
 						else
 							vbSelOut[e] = true;
@@ -195,7 +195,7 @@ public:
 					if( mc.DescribesCurrentMode( p) )
 					{
 						bUseFallbackOption = false;
-						if( def.selectType != SELECT_MULTIPLE )
+						if( def.m_selectType != SELECT_MULTIPLE )
 							SelectExactlyOne( e, vbSelOut );
 						else
 							vbSelOut[e] = true;
@@ -203,7 +203,7 @@ public:
 				}
 			}
 
-			if( def.selectType == SELECT_ONE && bUseFallbackOption )
+			if( def.m_selectType == SELECT_ONE && bUseFallbackOption )
 			{
 				if( iFallbackOption == -1 )
 				{
@@ -216,7 +216,7 @@ public:
 				SelectExactlyOne( iFallbackOption, vbSelOut );
 			}
 
-			VerifySelected( def.selectType, vbSelOut, def.name );
+			VerifySelected( def.m_selectType, vbSelOut, def.m_sName );
 		}
 	}
 
@@ -243,7 +243,7 @@ public:
 	{
 		return m_bUseModNameForIcon ?
 			ListEntries[iFirstSelection].m_sModifiers :
-			def.choices[iFirstSelection];
+			def.m_vsChoices[iFirstSelection];
 	}
 	virtual bool HasScreen( int iChoice ) const
 	{ 
@@ -259,8 +259,8 @@ public:
 		ASSERT( sParam.size() );
 		m_sName = sParam;
 
-		defOut.name = "NoteSkins";
-		defOut.bOneChoiceForAllPlayers = false;
+		defOut.m_sName = "NoteSkins";
+		defOut.m_bOneChoiceForAllPlayers = false;
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		CStringArray arraySkinNames;
@@ -272,7 +272,7 @@ public:
 			GameCommand mc;
 			mc.m_sModifiers = arraySkinNames[skin];
 			ListEntries.push_back( mc );
-			defOut.choices.push_back( arraySkinNames[skin] );
+			defOut.m_vsChoices.push_back( arraySkinNames[skin] );
 		}
 	}
 
@@ -284,19 +284,19 @@ public:
 		ASSERT( sParam.size() );
 		m_sName = sParam;
 
-		defOut.name = "Steps";
-		defOut.bOneChoiceForAllPlayers = bLockedTogether;
+		defOut.m_sName = "Steps";
+		defOut.m_bOneChoiceForAllPlayers = bLockedTogether;
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		// fill in difficulty names
 		if( GAMESTATE->m_bEditing )
 		{
-			defOut.choices.push_back( "" );
+			defOut.m_vsChoices.push_back( "" );
 			ListEntries.push_back( GameCommand() );
 		}
 		else if( GAMESTATE->IsCourseMode() )   // playing a course
 		{
-			defOut.bOneChoiceForAllPlayers = (bool)PREFSMAN->m_bLockCourseDifficulties;
+			defOut.m_bOneChoiceForAllPlayers = (bool)PREFSMAN->m_bLockCourseDifficulties;
 
 			vector<Trail*> vTrails;
 			GAMESTATE->m_pCurCourse->GetTrails( vTrails, GAMESTATE->GetCurrentStyle()->m_StepsType );
@@ -306,7 +306,7 @@ public:
 
 				CString s = CourseDifficultyToThemedString( pTrail->m_CourseDifficulty );
 				s += ssprintf( " %d", pTrail->GetMeter() );
-				defOut.choices.push_back( s );
+				defOut.m_vsChoices.push_back( s );
 				GameCommand mc;
 				mc.m_pTrail = pTrail;
 				ListEntries.push_back( mc );
@@ -329,7 +329,7 @@ public:
 				else
 					s = DifficultyToThemedString( pSteps->GetDifficulty() );
 				s += ssprintf( " %d", pSteps->GetMeter() );
-				defOut.choices.push_back( s );
+				defOut.m_vsChoices.push_back( s );
 				GameCommand mc;
 				mc.m_pSteps = pSteps;
 				mc.m_dc = pSteps->GetDifficulty();
@@ -346,13 +346,13 @@ public:
 		ASSERT( sParam.size() );
 		m_sName = sParam;
 
-		defOut.bOneChoiceForAllPlayers = false;
+		defOut.m_bOneChoiceForAllPlayers = false;
 		defOut.m_bAllowThemeItems = false;
-		defOut.name = "Characters";
+		defOut.m_sName = "Characters";
 		Default.m_pCharacter = GAMESTATE->GetDefaultCharacter();
 
 		{
-			defOut.choices.push_back( "Off" );
+			defOut.m_vsChoices.push_back( "Off" );
 			GameCommand mc;
 			mc.m_pCharacter = NULL;
 			ListEntries.push_back( mc );
@@ -366,7 +366,7 @@ public:
 			CString s = pCharacter->m_sName;
 			s.MakeUpper();
 
-			defOut.choices.push_back( s ); 
+			defOut.m_vsChoices.push_back( s ); 
 			GameCommand mc;
 			mc.m_pCharacter = pCharacter;
 			ListEntries.push_back( mc );
@@ -381,8 +381,8 @@ public:
 		ASSERT( sParam.size() );
 		m_sName = sParam;
 
-		defOut.bOneChoiceForAllPlayers = true;
-		defOut.name = "Style";
+		defOut.m_bOneChoiceForAllPlayers = true;
+		defOut.m_sName = "Style";
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		vector<const Style*> vStyles;
@@ -390,7 +390,7 @@ public:
 		ASSERT( vStyles.size() );
 		FOREACH_CONST( const Style*, vStyles, s )
 		{
-			defOut.choices.push_back( GAMEMAN->StyleToThemedString(*s) ); 
+			defOut.m_vsChoices.push_back( GAMEMAN->StyleToThemedString(*s) ); 
 			GameCommand mc;
 			mc.m_pStyle = *s;
 			ListEntries.push_back( mc );
@@ -407,9 +407,9 @@ public:
 		ASSERT( sParam.size() );
 		m_sName = sParam;
 
-		defOut.bOneChoiceForAllPlayers = true;
+		defOut.m_bOneChoiceForAllPlayers = true;
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
-		defOut.name = "Group";
+		defOut.m_sName = "Group";
 		Default.m_sSongGroup = GROUP_ALL;
 
 		vector<CString> vSongGroups;
@@ -417,7 +417,7 @@ public:
 		ASSERT( vSongGroups.size() );
 
 		{
-			defOut.choices.push_back( "AllGroups" );
+			defOut.m_vsChoices.push_back( "AllGroups" );
 			GameCommand mc;
 			mc.m_sSongGroup = GROUP_ALL;
 			ListEntries.push_back( mc );
@@ -425,7 +425,7 @@ public:
 
 		FOREACH_CONST( CString, vSongGroups, g )
 		{
-			defOut.choices.push_back( *g ); 
+			defOut.m_vsChoices.push_back( *g ); 
 			GameCommand mc;
 			mc.m_sSongGroup = *g;
 			ListEntries.push_back( mc );
@@ -440,13 +440,13 @@ public:
 		ASSERT( sParam.size() );
 		m_sName = sParam;
 
-		defOut.bOneChoiceForAllPlayers = true;
-		defOut.name = "Difficulty";
+		defOut.m_bOneChoiceForAllPlayers = true;
+		defOut.m_sName = "Difficulty";
 		Default.m_dc = DIFFICULTY_INVALID;
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		{
-			defOut.choices.push_back( "AllDifficulties" );
+			defOut.m_vsChoices.push_back( "AllDifficulties" );
 			GameCommand mc;
 			mc.m_dc = DIFFICULTY_INVALID;
 			ListEntries.push_back( mc );
@@ -456,7 +456,7 @@ public:
 		{
 			CString s = DifficultyToThemedString( *d );
 
-			defOut.choices.push_back( s ); 
+			defOut.m_vsChoices.push_back( s ); 
 			GameCommand mc;
 			mc.m_dc = *d;
 			ListEntries.push_back( mc );
@@ -477,14 +477,14 @@ public:
 		if( GAMESTATE->m_pCurSong == NULL )
 			GAMESTATE->m_pCurSong.Set( vpSongs[0] );
 
-		defOut.name = "SongsInCurrentSongGroup";
-		defOut.bOneChoiceForAllPlayers = true;
-		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		defOut.m_sName = "SongsInCurrentSongGroup";
+		defOut.m_bOneChoiceForAllPlayers = true;
+		defOut.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		defOut.m_bExportOnChange = true;
 
 		FOREACH_CONST( Song*, vpSongs, p )
 		{
-			defOut.choices.push_back( (*p)->GetTranslitFullTitle() ); 
+			defOut.m_vsChoices.push_back( (*p)->GetTranslitFullTitle() ); 
 			GameCommand mc;
 			mc.m_pSong = *p;
 			ListEntries.push_back( mc );
@@ -529,13 +529,13 @@ public:
 		const char *pStr = lua_tostring( L, -1 );
 		if( pStr == NULL )
 			RageException::Throw( "\"%s\" \"Name\" entry is not a string", sLuaFunction.c_str() );
-		defOut.name = pStr;
+		defOut.m_sName = pStr;
 		lua_pop( L, 1 );
 
 
 		lua_pushstring( L, "OneChoiceForAllPlayers" );
 		lua_gettable( L, -2 );
-		defOut.bOneChoiceForAllPlayers = !!lua_toboolean( L, -1 );
+		defOut.m_bOneChoiceForAllPlayers = !!lua_toboolean( L, -1 );
 		lua_pop( L, 1 );
 
 
@@ -550,8 +550,8 @@ public:
 		pStr = lua_tostring( L, -1 );
 		if( pStr == NULL )
 			RageException::Throw( "\"%s\" \"LayoutType\" entry is not a string", sLuaFunction.c_str() );
-		defOut.layoutType = StringToLayoutType( pStr );
-		ASSERT( defOut.layoutType != LAYOUT_INVALID );
+		defOut.m_layoutType = StringToLayoutType( pStr );
+		ASSERT( defOut.m_layoutType != LAYOUT_INVALID );
 		lua_pop( L, 1 );
 
 
@@ -560,8 +560,8 @@ public:
 		pStr = lua_tostring( L, -1 );
 		if( pStr == NULL )
 			RageException::Throw( "\"%s\" \"SelectType\" entry is not a string", sLuaFunction.c_str() );
-		defOut.selectType = StringToSelectType( pStr );
-		ASSERT( defOut.selectType != SELECT_INVALID );
+		defOut.m_selectType = StringToSelectType( pStr );
+		ASSERT( defOut.m_selectType != SELECT_INVALID );
 		lua_pop( L, 1 );
 
 
@@ -580,7 +580,7 @@ public:
 				RageException::Throw( "\"%s\" Column entry is not a string", sLuaFunction.c_str() );
 //				LOG->Trace( "'%s'", pValue);
 
-			defOut.choices.push_back( pValue );
+			defOut.m_vsChoices.push_back( pValue );
 
 			lua_pop( L, 1 );  /* removes `value'; keeps `key' for next iteration */
 		}
@@ -723,7 +723,7 @@ public:
 			lua_pushstring( L, "LoadSelections" );
 			lua_gettable( L, -2 );
 			if( !lua_isfunction( L, -1 ) )
-				RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function", def.name.c_str() );
+				RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function", def.m_sName.c_str() );
 
 			/* Argument 1 (self): */
 			m_pLuaTable->PushSelf( L );
@@ -777,7 +777,7 @@ public:
 			lua_pushstring( L, "SaveSelections" );
 			lua_gettable( L, -2 );
 			if( !lua_isfunction( L, -1 ) )
-				RageException::Throw( "\"%s\" \"SaveSelections\" entry is not a function", def.name.c_str() );
+				RageException::Throw( "\"%s\" \"SaveSelections\" entry is not a function", def.m_sName.c_str() );
 
 			/* Argument 1 (self): */
 			m_pLuaTable->PushSelf( L );
@@ -825,7 +825,7 @@ public:
 		defOut.Init();
 
 		/* Configuration values are never per-player. */
-		defOut.bOneChoiceForAllPlayers = true;
+		defOut.m_bOneChoiceForAllPlayers = true;
 
 		ConfOption *pConfOption = ConfOption::Find( sParam );
 		if( pConfOption == NULL )
@@ -834,9 +834,9 @@ public:
    		pConfOption->UpdateAvailableOptions();
 
 		opt = pConfOption;
-		opt->MakeOptionsList( defOut.choices );
+		opt->MakeOptionsList( defOut.m_vsChoices );
 
-		defOut.name = opt->name;
+		defOut.m_sName = opt->name;
 	}
 	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
@@ -917,9 +917,9 @@ public:
 		}
 
 		m_sName = sParam;
-		defOut.name = sParam;
-		defOut.bOneChoiceForAllPlayers = true;
-		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		defOut.m_sName = sParam;
+		defOut.m_bOneChoiceForAllPlayers = true;
+		defOut.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		defOut.m_bExportOnChange = true;
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
@@ -929,7 +929,7 @@ public:
 		FOREACH_CONST( StepsType, m_vStepsTypesToShow, st )
 		{
 			CString s = GAMEMAN->StepsTypeToThemedString( *st );
-			defOut.choices.push_back( s );
+			defOut.m_vsChoices.push_back( s );
 		}
 
 		if( *m_pstToFill == STEPS_TYPE_INVALID )
@@ -1019,9 +1019,9 @@ public:
 		}
 		
 		m_sName = sParam;
-		defOut.name = sParam;
-		defOut.bOneChoiceForAllPlayers = true;
-		defOut.layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		defOut.m_sName = sParam;
+		defOut.m_bOneChoiceForAllPlayers = true;
+		defOut.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		defOut.m_bExportOnChange = true;
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 		m_vsReloadRowMessages.push_back( MessageToString(MESSAGE_CURRENT_SONG_CHANGED) );
@@ -1062,14 +1062,14 @@ public:
 				{
 					s = DifficultyToThemedString( dc );
 				}
-				defOut.choices.push_back( s );
+				defOut.m_vsChoices.push_back( s );
 			}
 		}
 		else
 		{
 			m_vDifficulties.push_back( DIFFICULTY_EDIT );
 			m_vSteps.push_back( NULL );
-			defOut.choices.push_back( "none" );
+			defOut.m_vsChoices.push_back( "none" );
 		}
 
 		if( m_pDifficultyToFill )
