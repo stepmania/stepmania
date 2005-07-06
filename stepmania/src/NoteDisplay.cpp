@@ -10,6 +10,7 @@
 #include "ActorUtil.h"
 #include "Game.h"
 #include "PlayerState.h"
+#include "LuaBinding.h"
 
 enum Part
 {
@@ -131,16 +132,18 @@ static NoteResource *MakeNoteResource( const CString &sButton, const CString &sE
 	if( it == g_NoteResource.end() )
 	{
 		NoteResource *pRes = new NoteResource( nsap );
+
+		pRes->m_pActor = ActorUtil::MakeActor( nsap.sPath );
+		ASSERT( pRes->m_pActor );
+
+		/* Make sure pActor is a Sprite (or something derived from Sprite). */
 		if( bSpriteOnly )
 		{
-			Sprite *pSprite = new Sprite;
-			pSprite->Load( nsap.sPath );
-			pRes->m_pActor = pSprite;
-		}
-		else
-		{
-			pRes->m_pActor = ActorUtil::MakeActor( nsap.sPath );
-			ASSERT( pRes->m_pActor );
+			Lua *L = LUA->Get();
+			pRes->m_pActor->PushSelf( L );
+			Luna<Sprite>::check( L, lua_gettop(L) );
+			lua_pop( L, 1 );
+			LUA->Release( L );
 		}
 
 		g_NoteResource[nsap] = pRes;
