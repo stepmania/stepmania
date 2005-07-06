@@ -296,45 +296,19 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 {
 	m_bZeroNextUpdate = true;
 
-	// If the screen is already prepared, stop.
+	// Delete previously prepared versions of the screen.
 	for( int i = (int)m_vPreparedScreens.size()-1; i>=0; i-- )
 	{
 		Screen *&pScreen = m_vPreparedScreens[i];
 		if( pScreen->m_sName == sScreenName )
-			return;
-	}
-
-	Screen* pNewScreen = MakeNewScreen(sScreenName);
-	m_vPreparedScreens.push_back( pNewScreen );
-
-	/* Don't delete previously prepared versions of the screen's background,
-	 * and only prepare it if it's different than the current background
-	 * and not already loaded. */
-	CString sNewBGA;
-	if( pNewScreen->UsesBackground() )
-		sNewBGA = THEME->GetPathB(sScreenName,"background");
-
-	if( !sNewBGA.empty() && sNewBGA != m_pSharedBGA->GetName() )
-	{
-		Actor *pNewBGA = NULL;
-		FOREACH( Actor*, m_vPreparedBackgrounds, a )
 		{
-			if( (*a)->m_sName == sNewBGA )
-			{
-				pNewBGA = *a;
-				break;
-			}
-		}
-
-		// Create the new background before deleting the previous so that we keep
-		// any common textures loaded.
-		if( pNewBGA == NULL )
-		{
-			pNewBGA = ActorUtil::MakeActor( sNewBGA );
-			pNewBGA->SetName( sNewBGA );
-			m_vPreparedBackgrounds.push_back( pNewBGA );
+			SAFE_DELETE( pScreen );
+			m_vPreparedScreens.erase( m_vPreparedScreens.begin()+i );
+			break;
 		}
 	}
+
+	m_vPreparedScreens.push_back( MakeNewScreen(sScreenName) );
 }
 
 void ScreenManager::DeletePreparedScreens()
@@ -344,9 +318,6 @@ void ScreenManager::DeletePreparedScreens()
 	FOREACH( Screen*, m_vPreparedScreens, s )
 		SAFE_DELETE( *s );
 	m_vPreparedScreens.clear();
-	FOREACH( Actor*, m_vPreparedBackgrounds, a )
-		SAFE_DELETE( *a );
-	m_vPreparedBackgrounds.clear();
 
 	TEXTUREMAN->DeleteCachedTextures();
 }
@@ -399,15 +370,14 @@ void ScreenManager::LoadDelayedScreen()
 		EmptyDeleteQueue();
 	}
 
+retry:
 	CString sScreenName = m_sDelayedScreen;
 	m_sDelayedScreen = "";
 
 
-	// Load the screen, if it's not already prepared.
-	PrepareScreen( sScreenName );
-
 	//
-	// Find the prepped screen.
+	// Search prepped screens to see if we already have this screen available.
+	// If not prepped, then make it.
 	//
 	Screen* pNewScreen = NULL;
 	FOREACH( Screen*, m_vPreparedScreens, s )
@@ -419,43 +389,32 @@ void ScreenManager::LoadDelayedScreen()
 			break;
 		}
 	}
-	ASSERT( pNewScreen != NULL );
+	if( pNewScreen == NULL )
+		pNewScreen = MakeNewScreen(sScreenName);
 
 	if( m_sDelayedScreen != "" )
 	{
-		// While constructing this Screen, its constructor called
+		// While constructing this Screen, it's constructor called
 		// SetNewScreen again!  That SetNewScreen Command should
 		// override this older one.
-
-		// This is no longer allowed.  Instead, figure out which screen
-		// you really wanted in the first place with Lua, and don't waste
-		// time constructing an extra screen.
-
-		FAIL_M( ssprintf("%s, %s", sScreenName.c_str(), m_sDelayedScreen.c_str()) );
+		SAFE_DELETE( pNewScreen );
+		goto retry;
 	}
 	
-	// Find the prepared shared background (if any), and activate it.
+	// Load shared background
 	CString sNewBGA;
 	if( pNewScreen->UsesBackground() )
 		sNewBGA = THEME->GetPathB(sScreenName,"background");
 	if( sNewBGA != m_pSharedBGA->GetName() )
 	{
-		Actor *pNewBGA = NULL;
+		// Create the new background before deleting the previous so that we keep
+		// any common textures loaded.
+		Actor *pNewBGA;
 		if( sNewBGA.empty() )
 			pNewBGA = new Actor;
 		else
-		{
-			FOREACH( Actor*, m_vPreparedBackgrounds, a )
-			{
-				if( (*a)->m_sName == sNewBGA )
-				{
-					pNewBGA = *a;
-					m_vPreparedBackgrounds.erase( a );
-					break;
-				}
-			}
-		}
-		ASSERT( pNewBGA != NULL );
+			pNewBGA = ActorUtil::MakeActor( sNewBGA );
+		pNewBGA->SetName( sNewBGA );
 
 		SAFE_DELETE( m_pSharedBGA );
 		m_pSharedBGA = pNewBGA;
