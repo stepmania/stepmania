@@ -12,7 +12,7 @@ class Character
 {
 public:
 //	Character();
-	virtual ~Character() { }
+	~Character() { }
 
 	bool Load( CString sCharDir );	// return true if success
 
@@ -31,7 +31,7 @@ public:
 	//
 	// Lua
 	//
-	virtual void PushSelf( Lua *L );
+	void PushSelf( Lua *L );
 
 	CString m_sCharDir;
 	CString m_sName;
