@@ -245,14 +245,8 @@ void ScreenSelectStyle::UpdateSelectableChoices()
 		}
 	}
 
-	if( iSwitchToStyleIndex == -1 )// no styles are enabled.  We're stuck!
-	{
-		DEBUG_ASSERT(0);
-		SCREENMAN->SystemMessage( "No Styles are selectable." );
-		SCREENMAN->SetNewScreen( INITIAL_SCREEN );
-		return;
-	}
-	
+	// Apparently, we can't arbitrarily switch screens at the engine level.
+	ASSERT_M( iSwitchToStyleIndex != -1, "No Styles are selectable." );
 
 	m_iSelection = iSwitchToStyleIndex;
 	AfterChange();
