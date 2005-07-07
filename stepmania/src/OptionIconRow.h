@@ -19,7 +19,6 @@ public:
 
 	void Load( PlayerNumber pn );
 	void Refresh();
-	virtual void DrawPrimitives();
 
 protected:
 	PlayerNumber	m_PlayerNumber;

@@ -64,11 +64,6 @@ void OptionIcon::Set( PlayerNumber pn, const CString &_sText, bool bHeader )
 	m_text.CropToWidth( TEXT_WIDTH );
 }
 
-void OptionIcon::DrawPrimitives()
-{
-	ActorFrame::DrawPrimitives();
-}
-
 /*
  * (c) 2002-2004 Chris Danford
  * All rights reserved.

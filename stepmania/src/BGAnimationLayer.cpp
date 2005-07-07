@@ -672,11 +672,6 @@ bool BGAnimationLayer::EarlyAbortDraw()
 	return false;
 }
 
-void BGAnimationLayer::DrawPrimitives()
-{
-	ActorFrame::DrawPrimitives();
-}
-
 
 /*
  * (c) 2001-2004 Ben Nordstrom, Chris Danford, Glenn Maynard

@@ -28,7 +28,7 @@ struct OptionColumnEntry
 	int iSlotIndex;
 };
 
-const OptionColumnEntry g_OptionColumnEntries[] =
+static const OptionColumnEntry g_OptionColumnEntries[] =
 {
 	{"Boost",		0},
 	{"Brake",		0},
@@ -130,11 +130,6 @@ void OptionIconRow::Refresh()
 			m_OptionIcon[i].Set( m_PlayerNumber, "", true );
 		else
 			m_OptionIcon[i].Set( m_PlayerNumber, asTabs[i-1], false );		
-}
-
-void OptionIconRow::DrawPrimitives()
-{
-	ActorFrame::DrawPrimitives();
 }
 
 /*

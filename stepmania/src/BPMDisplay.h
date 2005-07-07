@@ -19,7 +19,7 @@ public:
 	BPMDisplay();
 	void Load();
 	virtual void Update( float fDeltaTime ); 
-	virtual void DrawPrimitives(); 
+
 	void SetBpmFromSong( const Song* pSong );
 	void SetBpmFromCourse( const Course* pCourse );
 	void SetConstantBpm( float fBPM );

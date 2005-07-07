@@ -148,33 +148,13 @@ void WheelBase::SetItemPosition( Actor &item, float fPosOffsetsFromMiddle )
 
 void WheelBase::DrawPrimitives()
 {
-	if( USE_3D )
-	{
-//		DISPLAY->PushMatrix();
-//		DISPLAY->EnterPerspective(45, false);  //Not needed for 3D
-
-		// construct view and project matrix
-//		RageVector3 Up( 0.0f, 1.0f, 0.0f );
-//		RageVector3 Eye( SCREEN_CENTER_X, SCREEN_CENTER_Y, 550 );
-//		RageVector3 At( SCREEN_CENTER_X, SCREEN_CENTER_Y, 0 );
-
-//		DISPLAY->LoadLookAt(60, Eye, At, Up); //Changed from DISPLAY->LookAt(Eye, At, Up)
-	}
-
 	// draw outside->inside
 	for( int i=0; i<NUM_WHEEL_ITEMS/2; i++ )
 		DrawItem( i );
 	for( int i=NUM_WHEEL_ITEMS-1; i>=NUM_WHEEL_ITEMS/2; i-- )
 		DrawItem( i );
 
-
 	ActorFrame::DrawPrimitives();
-	
-	if( USE_3D )
-	{
-//		DISPLAY->ExitPerspective(); //Not needed?
-//		DISPLAY->PopMatrix();
-	}
 }
 
 

@@ -15,7 +15,6 @@ public:
 	OptionIcon();
 	void Load( CString sType );
 	void Set( PlayerNumber pn, const CString &sText, bool bHeader = false );
-	void DrawPrimitives();
 
 protected:
 	BitmapText	m_text;

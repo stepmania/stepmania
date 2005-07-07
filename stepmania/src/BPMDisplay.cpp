@@ -227,11 +227,6 @@ void BPMDisplay::SetVarious()
 	m_textBPM.SetText( "Various" );
 }
 
-void BPMDisplay::DrawPrimitives()
-{
-	ActorFrame::DrawPrimitives();
-}
-
 /*
  * (c) 2001-2002 Chris Danford
  * All rights reserved.
