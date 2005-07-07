@@ -55,6 +55,7 @@ void GameCommand::Init()
 	m_iWeightPounds = -1;
 	m_iGoalCalories = -1;
 	m_GoalType = GOAL_INVALID;
+	m_sProfileID = "";
 
 	m_bClearBookkeepingData = false;
 	m_bClearMachineStats = false;
@@ -136,6 +137,8 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 	if( m_iGoalCalories != -1 && PROFILEMAN->GetProfile(pn)->m_iGoalCalories != m_iGoalCalories )
 		return false;
 	if( m_GoalType != GOAL_INVALID && PROFILEMAN->GetProfile(pn)->m_GoalType != m_GoalType )
+		return false;
+	if( !m_sProfileID.empty() && PREFSMAN->GetDefaultLocalProfileID(pn).Get() != m_sProfileID )
 		return false;
 
 	return true;
@@ -332,6 +335,11 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "goaltype" )
 	{
 		m_GoalType = StringToGoalType( sValue );
+	}
+
+	else if( sName == "profileid" )
+	{
+		m_sProfileID = sValue;
 	}
 
 	else if( sName == "unlock" )
@@ -778,6 +786,9 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_GoalType != GOAL_INVALID )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			PROFILEMAN->GetProfile(*pn)->m_GoalType = m_GoalType;
+	if( !m_sProfileID.empty() )
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+			PREFSMAN->GetDefaultLocalProfileID(*pn).Set( m_sProfileID );
 
 	/* If we're going to stop music, do so before preparing new screens, so we don't
 	 * stop music between preparing screens and loading screens. */
@@ -1076,12 +1087,35 @@ bool GameCommand::IsZero() const
 		m_SortOrder != SORT_INVALID ||
 		m_iWeightPounds != -1 ||
 		m_iGoalCalories != -1 ||
-		m_GoalType != GOAL_INVALID
+		m_GoalType != GOAL_INVALID ||
+		!m_sProfileID.empty()
 		)
 		return false;
 
 	return true;
 }
+
+// lua start
+#include "LuaBinding.h"
+#include "Game.h"
+
+class LunaGameCommand: public Luna<GameCommand>
+{
+public:
+	LunaGameCommand() { LUA->Register( Register ); }
+
+	static int GetProfileID( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sProfileID ); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetProfileID )
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( GameCommand )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

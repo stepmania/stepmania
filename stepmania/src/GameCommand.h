@@ -17,6 +17,7 @@ class Trail;
 class Character;
 class Style;
 class Game;
+struct lua_State;
 
 struct GameCommand		// used in SelectMode
 {
@@ -71,6 +72,7 @@ public:
 	int			m_iWeightPounds;	// -1 == none specified
 	int			m_iGoalCalories;	// -1 == none specified
 	GoalType	m_GoalType;
+	CString		m_sProfileID;
 
 	bool m_bClearBookkeepingData;
 	bool m_bClearMachineStats;
@@ -84,6 +86,9 @@ public:
 	bool m_bResetToFactoryDefaults;
 	bool m_bStopMusic;
 	bool m_bApplyDefaultOptions;
+
+	// Lua
+	virtual void PushSelf( lua_State *L );
 };
 
 #endif

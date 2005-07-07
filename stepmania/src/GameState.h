@@ -311,6 +311,9 @@ public:
 	void SaveSyncChanges();
 	void RevertSyncChanges();
 
+	// profile stuff
+	CString m_sEditingProfileID;
+
 	// Lua
 	void PushSelf( lua_State *L );
 };

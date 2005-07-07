@@ -114,11 +114,18 @@ void ScreenSelectMaster::Init()
 			
 			for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 			{
-				const GameCommand& mc = m_aGameCommands[c];
+				GameCommand& mc = m_aGameCommands[c];
+				
+				Lua *L = LUA->Get();
+				mc.PushSelf( L );
+				GAMESTATE->m_Environment->Set( L, "ThisGameCommand" );
 
 				m_sprScroll[c][*p].Load( THEME->GetPathG(m_sName,ssprintf("Scroll Choice%s",mc.m_sName.c_str())+APPEND_STRING_WITH_SPACE(*p)) );
 				m_sprScroll[c][*p]->SetName( "Scroll"+APPEND_STRING_NO_SPACE(*p) );
 				m_Scroller[*p].AddChild( m_sprScroll[c][*p] );
+
+				GAMESTATE->m_Environment->Unset( L, "ThisGameCommand" );
+				LUA->Release( L );
 			}
 		}
 	}
