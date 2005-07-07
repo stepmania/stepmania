@@ -323,7 +323,6 @@ CString SongManager::GetSongGroupBannerPath( CString sSongGroup )
 			return m_sSongGroupBannerPaths[i];
 	}
 
-	ASSERT_M( 0, ssprintf("requested banner for song group '%s' that doesn't exist",sSongGroup.c_str()) );
 	return "";
 }
 
