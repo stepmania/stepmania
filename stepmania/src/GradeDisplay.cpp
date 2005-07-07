@@ -2,7 +2,6 @@
 #include "GradeDisplay.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "RageTexture.h"
 #include "arch/Dialog/Dialog.h"
@@ -72,11 +71,6 @@ void GradeDisplay::Update( float fDeltaTime )
 
 		this->SetCustomTextureRect( m_frectCurTexCoords );
 	}
-}
-
-void GradeDisplay::DrawPrimitives()
-{
-	Sprite::DrawPrimitives();
 }
 
 int GradeDisplay::GetFrameIndex( PlayerNumber pn, Grade g )

@@ -23,7 +23,6 @@ public:
 	MusicWheelItem(CString sType = "MusicWheelItem");
 
 	virtual void LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded );
-	void DrawPrimitives();
 	void RefreshGrades();
 
 	WheelItemData *data;

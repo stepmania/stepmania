@@ -45,7 +45,6 @@ class EditMenu: public ActorFrame
 public:
 	EditMenu();
 	~EditMenu();
-	virtual void DrawPrimitives();
 
 	bool CanGoUp();
 	bool CanGoDown();

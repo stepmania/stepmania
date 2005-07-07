@@ -214,11 +214,6 @@ void EditMenu::RefreshAll()
 	}
 }
 
-void EditMenu::DrawPrimitives()
-{
-	ActorFrame::DrawPrimitives();
-}
-
 bool EditMenu::CanGoUp()
 {
 	return m_SelectedRow != 0;

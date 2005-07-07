@@ -265,11 +265,6 @@ void MusicWheelItem::RefreshGrades()
 	}
 }
 
-void MusicWheelItem::DrawPrimitives()
-{
-	WheelItemBase::DrawPrimitives();
-}
-
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez, Glenn Maynard
  * All rights reserved.

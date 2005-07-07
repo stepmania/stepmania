@@ -4,7 +4,6 @@
 #define GRADE_DISPLAY_H
 
 #include "Sprite.h"
-#include "PrefsManager.h"
 #include "Grade.h"
 #include "PlayerNumber.h"
 
@@ -16,16 +15,15 @@ public:
 	virtual bool Load( RageTextureID ID );
 
 	virtual void Update( float fDeltaTime );
-	virtual void DrawPrimitives();
 
 	void SetGrade( PlayerNumber pn, Grade g );
 	void Spin();
 	void SettleImmediately();
 	void SettleQuickly();
 
-	Grade GetGrade () const {return m_Grade;}
+	Grade GetGrade () const { return m_Grade; }
+
 protected:
-	
 	int GetFrameIndex( PlayerNumber pn, Grade g );
 
 	PlayerNumber m_PlayerNumber;
