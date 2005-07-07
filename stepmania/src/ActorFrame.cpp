@@ -337,6 +337,7 @@ public:
 	static int fov( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
 	static int SetUpdateRate( T* p, lua_State *L )		{ p->SetUpdateRate( FArg(1) ); return 0; }
 	static int SetFOV( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
+	static int vanishpoint( T* p, lua_State *L )		{ p->SetVanishPoint( FArg(1), FArg(2) ); return 0; }
 	static int GetChild( T* p, lua_State *L )
 	{
 		Actor *pChild = p->GetChild( SArg(1) );
@@ -355,6 +356,7 @@ public:
 		ADD_METHOD( fov )
 		ADD_METHOD( SetUpdateRate )
 		ADD_METHOD( SetFOV )
+		ADD_METHOD( vanishpoint )
 		ADD_METHOD( GetChild )
 		ADD_METHOD( GetNumChildren )
 		ADD_METHOD( SetDrawByZPosition )
