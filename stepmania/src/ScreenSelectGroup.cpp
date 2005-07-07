@@ -147,11 +147,6 @@ void ScreenSelectGroup::Input( const DeviceInput& DeviceI, const InputEventType 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }
 
-void ScreenSelectGroup::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
 void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )

@@ -140,11 +140,6 @@ void ScreenMapControllers::Update( float fDeltaTime )
 }
 
 
-void ScreenMapControllers::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
 /* Note that this isn't necessarily correct.  For example, JOY_LEFT might actually be
  * a D-pad and not an axis.  All this is actually doing is giving priority to some
  * inputs over others; this function is unsuitable for other use. */

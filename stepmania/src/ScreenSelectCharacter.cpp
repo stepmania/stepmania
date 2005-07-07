@@ -179,11 +179,6 @@ void ScreenSelectCharacter::Input( const DeviceInput& DeviceI, const InputEventT
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
 }
 
-void ScreenSelectCharacter::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
 void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )

@@ -469,11 +469,6 @@ void ScreenOptions::Update( float fDeltaTime )
 	ScreenWithMenuElements::Update( fDeltaTime );
 }
 
-void ScreenOptions::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
 void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	/* Allow input when transitioning in (m_In.IsTransitioning()), but ignore it

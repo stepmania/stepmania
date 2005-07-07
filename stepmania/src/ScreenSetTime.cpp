@@ -108,11 +108,6 @@ void ScreenSetTime::Update( float fDelta )
 	m_textValue[day].SetText(	ssprintf("%02d",now.tm_mday) );
 }
 
-void ScreenSetTime::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
 void ScreenSetTime::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	if( type != IET_FIRST_PRESS && type != IET_SLOW_REPEAT )

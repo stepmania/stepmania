@@ -14,7 +14,6 @@ public:
 	virtual void Init();
 	virtual ~ScreenTestInput();
 
-	virtual void DrawPrimitives();
 	virtual void Update( float fDelta );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );

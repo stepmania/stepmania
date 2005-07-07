@@ -203,16 +203,6 @@ void ScreenTextEntry::PositionCursor()
 	m_sprCursor->SetXY( bt.GetX(), bt.GetY() );
 }
 
-void ScreenTextEntry::Update( float fDeltaTime )
-{
-	Screen::Update( fDeltaTime );
-}
-
-void ScreenTextEntry::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
 void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )

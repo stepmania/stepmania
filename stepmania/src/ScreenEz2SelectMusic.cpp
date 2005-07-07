@@ -512,11 +512,6 @@ void ScreenEz2SelectMusic::Update( float fDeltaTime )
 	Screen::Update( fDeltaTime );
 }
 
-void ScreenEz2SelectMusic::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
 void ScreenEz2SelectMusic::EasierDifficulty( PlayerNumber pn )
 {
 	if(USE_MODE_SWITCHER == 1)

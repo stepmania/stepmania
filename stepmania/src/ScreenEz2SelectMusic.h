@@ -16,7 +16,6 @@ class ScreenEz2SelectMusic : public ScreenWithMenuElements
 public:
 	ScreenEz2SelectMusic( CString sName );
 	virtual void Init();
-	virtual void DrawPrimitives();
 
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );

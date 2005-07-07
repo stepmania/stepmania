@@ -1268,11 +1268,6 @@ void ScreenEvaluation::Update( float fDeltaTime )
 	}
 }
 
-void ScreenEvaluation::DrawPrimitives()
-{
-	ScreenWithMenuElements::DrawPrimitives();
-}
-
 void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 //	LOG->Trace( "ScreenEvaluation::Input()" );

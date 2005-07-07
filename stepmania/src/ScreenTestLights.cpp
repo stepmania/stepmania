@@ -88,11 +88,6 @@ void ScreenTestLights::Update( float fDeltaTime )
 }
 
 
-void ScreenTestLights::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
 void ScreenTestLights::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	if( type != IET_FIRST_PRESS && type != IET_SLOW_REPEAT )

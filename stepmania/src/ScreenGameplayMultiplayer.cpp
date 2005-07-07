@@ -492,12 +492,6 @@ void ScreenGameplayMultiplayer::Update( float fDeltaTime )
 }
 
 
-void ScreenGameplayMultiplayer::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
-
 void ScreenGameplayMultiplayer::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
 	//LOG->Trace( "ScreenGameplayMultiplayer::Input()" );

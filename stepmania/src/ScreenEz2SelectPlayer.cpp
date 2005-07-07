@@ -110,16 +110,6 @@ void ScreenEz2SelectPlayer::Update( float fDeltaTime )
 }
 
 /************************************
-DrawPrimitives
-Desc: Draws the screen =P
-************************************/
-
-void ScreenEz2SelectPlayer::DrawPrimitives()
-{
-	Screen::DrawPrimitives();
-}
-
-/************************************
 Input
 Desc: Handles player input.
 ************************************/
