@@ -377,30 +377,23 @@ try_element_again:
 	}
 	else	// look for all files starting with sFileName that have types we can use
 	{
-		/* First, look for redirs. */
-		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + "*.redir",
-						asElementPaths, false, true );
-
 		CStringArray asPaths;
 		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + "*",
 						asPaths, false, true );
 
 		for( unsigned p = 0; p < asPaths.size(); ++p )
 		{
-			static const char *masks[NUM_ElementCategory][13] = {
-				{ "", "actor", "xml", NULL },
-				{ "ini", NULL },
-				{ "xml", "actor", "sprite", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
-				{ "png", NULL },
-				{ "mp3", "ogg", "wav", NULL },
+			static const char *masks[NUM_ElementCategory][14] = {
+				{ "redir", "", "actor", "xml", NULL },
+				{ "redir", "ini", NULL },
+				{ "redir", "xml", "actor", "sprite", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
+				{ "redir", "png", NULL },
+				{ "redir", "mp3", "ogg", "wav", NULL },
 				{ "*", NULL },
 			};		
 			const char **asset_masks = masks[category];
 
 			const CString ext = GetExtension( asPaths[p] );
-
-			if( ext == "redir" )
-				continue; // got it already
 
 			for( int i = 0; asset_masks[i]; ++i )
 			{
