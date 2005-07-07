@@ -477,8 +477,6 @@ void ScreenManager::LoadDelayedScreen()
 
 void ScreenManager::AddNewScreenToTop( const CString &sScreenName )
 {
-	ZeroNextUpdate();
-
 	Screen* pNewScreen = MakeNewScreen(sScreenName);
 	SetFromNewScreen( pNewScreen );
 }
