@@ -370,9 +370,13 @@ void ScreenManager::ClearScreenStack()
 	if( m_ScreenStack.size() )
 		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
 
-	// move current screen(s) to ScreenToDelete
-	m_vScreensToDelete.insert( m_vScreensToDelete.end(), m_ScreenStack.begin(), m_ScreenStack.end() );
+	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
+		SAFE_DELETE( m_ScreenStack[i] );
 	m_ScreenStack.clear();
+
+	/* Now that we've actually deleted a screen, it makes sense to clear out
+	 * cached textures. */
+	TEXTUREMAN->DeleteCachedTextures();
 }
 
 /* Add a screen to m_ScreenStack.  This is the only function that adds to m_ScreenStack. */
