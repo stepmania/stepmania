@@ -5,7 +5,6 @@
 
 #include "Sprite.h"
 #include "RageTextureID.h"
-#include "RageTexturePreloader.h"
 class Song;
 class Course;
 class Character;
@@ -39,7 +38,6 @@ public:
 protected:
 	bool m_bScrolling;
 	float m_fPercentScrolling;
-	RageTexturePreloader m_TexturePreload;
 };
 
 #endif

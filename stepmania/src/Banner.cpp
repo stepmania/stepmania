@@ -16,15 +16,6 @@ Banner::Banner()
 {
 	m_bScrolling = false;
 	m_fPercentScrolling = 0;
-
-	if( PREFSMAN->m_BannerCache != PrefsManager::BNCACHE_OFF )
-	{
-		m_TexturePreload.Load( SongBannerTexture(THEME->GetPathG("Banner","all music")) );
-		m_TexturePreload.Load( SongBannerTexture(THEME->GetPathG("Common","fallback banner")) );
-		m_TexturePreload.Load( SongBannerTexture(THEME->GetPathG("Banner","roulette")) );
-		m_TexturePreload.Load( SongBannerTexture(THEME->GetPathG("Banner","random")) );
-		m_TexturePreload.Load( SongBannerTexture(THEME->GetPathG("Banner","Mode")) );
-	}
 }
 
 bool Banner::Load( RageTextureID ID )
