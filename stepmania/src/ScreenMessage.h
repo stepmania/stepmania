@@ -46,7 +46,9 @@ enum ScreenMessage {
 	SM_BattleDamageLevel2,
 	SM_BattleDamageLevel3,
 
-	SM_User
+	SM_User,
+
+	SM_Invalid = 999999
 };
 
 //AutoScreenMessageHandler Class
