@@ -327,6 +327,7 @@ void GameState::BeginGame()
 
 void GameState::PlayersFinalized()
 {
+	// If cards are already locked, this was already called.
 	if( MEMCARDMAN->GetCardsLocked() )
 		return;
 
@@ -1268,7 +1269,7 @@ void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
 	m_pPlayerState[pn]->m_PlayerOptions = po;
 
 
-	int iSumOfAttackLevels = GetSumOfActiveAttackLevels( pn );
+	int iSumOfAttackLevels = m_pPlayerState[pn]->GetSumOfActiveAttackLevels();
 	if( iSumOfAttackLevels > 0 )
 	{
 		m_pPlayerState[pn]->m_iLastPositiveSumOfAttackLevels = iSumOfAttackLevels;
@@ -1285,17 +1286,6 @@ void GameState::RemoveAllActiveAttacks()	// called on end of song
 {
 	FOREACH_PlayerNumber( p )
 		RemoveActiveAttacksForPlayer( p );
-}
-
-int GameState::GetSumOfActiveAttackLevels( PlayerNumber pn ) const
-{
-	int iSum = 0;
-
-	for( unsigned s=0; s<m_pPlayerState[pn]->m_ActiveAttacks.size(); s++ )
-		if( m_pPlayerState[pn]->m_ActiveAttacks[s].fSecsRemaining > 0 && m_pPlayerState[pn]->m_ActiveAttacks[s].level != NUM_ATTACK_LEVELS )
-			iSum += m_pPlayerState[pn]->m_ActiveAttacks[s].level;
-
-	return iSum;
 }
 
 template<class T>

@@ -12,6 +12,17 @@ void PlayerState::Update( float fDelta )
 	m_CurrentPlayerOptions.Approach( m_PlayerOptions, fDelta );
 }
 
+int PlayerState::GetSumOfActiveAttackLevels() const
+{
+	int iSum = 0;
+
+	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
+		if( m_ActiveAttacks[s].fSecsRemaining > 0 && m_ActiveAttacks[s].level != NUM_ATTACK_LEVELS )
+			iSum += m_pPlayerState[pn]m_ActiveAttacks[s].level;
+
+	return iSum;
+}
+
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.

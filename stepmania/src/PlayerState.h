@@ -71,6 +71,7 @@ struct PlayerState
 	//
 	// Used in Battle and Rave
 	//
+	int GetSumOfActiveAttackLevels() const;
 	int		m_iCpuSkill;	// only used when m_PlayerController is PC_CPU
 	// Attacks take a while to transition out of use.  Account for this in PlayerAI
 	// by still penalizing it for 1 second after the player options are rebuilt.
