@@ -463,6 +463,8 @@ void ScreenManager::LoadDelayedScreen()
 	if( !PREFSMAN->m_bDelayedScreenLoad )
 		ClearScreenStack();
 
+	TEXTUREMAN->DiagnosticOutput();
+
 	LOG->Trace("... SetFromNewScreen");
 	SetFromNewScreen( pNewScreen );
 }
