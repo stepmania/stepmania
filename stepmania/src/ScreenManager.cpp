@@ -561,6 +561,11 @@ void ScreenManager::RefreshCreditsMessages()
 	LOG->MapLog( "JOINED", "Players joined: %s", joined.c_str() );
 }
 
+void ScreenManager::ZeroNextUpdate()
+{
+	m_bZeroNextUpdate = true;
+}
+
 /* Always play these sounds, even if we're in a silent attract loop. */
 void ScreenManager::PlayStartSound()
 {

@@ -67,7 +67,7 @@ public:
 	void PushSelf( lua_State *L );
 
 	void	PlaySharedBackgroundOffCommand();
-	void    ZeroNextUpdate() { m_bZeroNextUpdate = true; }
+	void    ZeroNextUpdate();
 private:
 	//
 	// in draw order first to last
