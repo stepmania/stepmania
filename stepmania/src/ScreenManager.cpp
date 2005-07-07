@@ -472,7 +472,6 @@ void ScreenManager::LoadDelayedScreen()
 
 	LOG->Trace("... SetFromNewScreen");
 	SetFromNewScreen( pNewScreen );
-	ZeroNextUpdate();
 }
 
 void ScreenManager::AddNewScreenToTop( const CString &sScreenName )
