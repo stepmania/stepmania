@@ -4,7 +4,6 @@
 #define SCREEN_CREDITS_H
 
 #include "ScreenAttract.h"
-#include "Transition.h"
 #include "ActorScroller.h"
 
 

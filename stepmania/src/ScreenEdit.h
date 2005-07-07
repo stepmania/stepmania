@@ -5,7 +5,6 @@
 
 #include "ScreenWithMenuElements.h"
 #include "Sprite.h"
-#include "Transition.h"
 #include "BitmapText.h"
 #include "Player.h"
 #include "RageSound.h"

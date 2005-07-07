@@ -5,7 +5,6 @@
 
 #include "ScreenOptions.h"
 #include "BitmapText.h"
-#include "Transition.h"
 #include "Quad.h"
 #include "RageSound.h"
 
