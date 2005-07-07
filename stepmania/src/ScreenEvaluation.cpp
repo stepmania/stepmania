@@ -85,6 +85,7 @@ static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
 AutoScreenMessage( SM_PlayCheer )
 AutoScreenMessage( SM_AddBonus )
+AutoScreenMessage( SM_PlayPassSound )
 
 
 REGISTER_SCREEN_CLASS( ScreenEvaluation );
@@ -282,12 +283,12 @@ void ScreenEvaluation::Init()
 		m_SoundSequences.push_back(temp);
 	}
 	
-	m_bPassFailTriggered = false; // the sound hasn't been triggered yet
 	if( m_bFailed )
  		m_sndPassFail.Load( THEME->GetPathS(m_sName, "failed") );
 	else
 		m_sndPassFail.Load( THEME->GetPathS(m_sName, "passed") );
-	m_sndPassFail.Play();
+	this->PostScreenMessage( SM_PlayPassSound, 0 );
+	this->PostScreenMessage( SM_PlayPassSound, m_bFailed? FAILED_SOUND_TIME:PASSED_SOUND_TIME );
 
 	//
 	// load other sounds
@@ -1254,17 +1255,6 @@ void ScreenEvaluation::Update( float fDeltaTime )
 {
 	ScreenWithMenuElements::Update( fDeltaTime );
 
-	if( !m_bPassFailTriggered )
-	{
-		float fTime = m_bFailed? FAILED_SOUND_TIME:PASSED_SOUND_TIME;
-		if(	m_timerSoundSequences.Ago() > fTime )
-		{
-			if( !m_sndPassFail.IsPlaying() )
-				m_sndPassFail.Play();
-			m_bPassFailTriggered = true;
-		}
-	}
-
 	for( unsigned snd=0; snd<m_SoundSequences.size(); snd++ )
 	{
 		if(m_SoundSequences[snd].fTime != -1) // already played? skip...
@@ -1337,6 +1327,10 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_MenuTimer )
 	{
 		EndScreen();
+	}
+	else if( SM == SM_PlayPassSound )
+	{
+		m_sndPassFail.Play();
 	}
 	else if( SM == SM_GoToNextScreen )
 	{

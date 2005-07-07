@@ -132,7 +132,6 @@ protected:
 
 	// sound effects for other gametypes
 	RageSound	m_sndPassFail;	// sound played if the player passes or fails
-	bool m_bPassFailTriggered; // has the pass / fail sound been played yet?
 	RageTimer m_timerSoundSequences; // timer used for triggering sounds.
 	vector<EvalSoundSequence> m_SoundSequences; // a sequence of sounds to be played (although they're stored in no particular order!)	
 
