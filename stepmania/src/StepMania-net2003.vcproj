@@ -271,12 +271,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenBookkeeping.h">
 			</File>
 			<File
-				RelativePath="ScreenBranch.cpp">
-			</File>
-			<File
-				RelativePath="ScreenBranch.h">
-			</File>
-			<File
 				RelativePath="ScreenCenterImage.cpp">
 			</File>
 			<File
@@ -326,12 +320,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath=".\ScreenEditCourseEntry.h">
-			</File>
-			<File
-				RelativePath="ScreenEditCoursesMenu.cpp">
-			</File>
-			<File
-				RelativePath="ScreenEditCoursesMenu.h">
 			</File>
 			<File
 				RelativePath="ScreenEditMenu.cpp">
@@ -1590,18 +1578,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="DualScrollBar.h">
 			</File>
 			<File
-				RelativePath="EditCoursesMenu.cpp">
-			</File>
-			<File
-				RelativePath="EditCoursesMenu.h">
-			</File>
-			<File
-				RelativePath="EditCoursesSongMenu.cpp">
-			</File>
-			<File
-				RelativePath="EditCoursesSongMenu.h">
-			</File>
-			<File
 				RelativePath="EditMenu.cpp">
 			</File>
 			<File
@@ -2307,6 +2283,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath=".\RageTextureManager.h">
+			</File>
+			<File
+				RelativePath=".\RageTexturePreloader.cpp">
+			</File>
+			<File
+				RelativePath=".\RageTexturePreloader.h">
 			</File>
 			<File
 				RelativePath="RageThreads.cpp">
