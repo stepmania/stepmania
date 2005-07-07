@@ -393,13 +393,45 @@ bool LuaHelpers::RunAtExpressionS( CString &sStr )
 
 /* Like luaL_typerror, but without the special case for argument 1 being "self"
  * in method calls, so we give a correct error message after we remove self. */
+CString GetLuaBindingType( Lua *L, int iArgNo )
+{
+	if( lua_isnil(L, iArgNo) )
+		return "nil";
+
+	int iTop = lua_gettop(L);
+	if( !lua_getmetatable(L, iArgNo) )
+	{
+		lua_settop( L, iTop );
+		return ssprintf( "non-bound %s", lua_typename(L, lua_type(L, iArgNo)) );
+	}
+
+	int iMetatable = lua_gettop(L);
+	lua_pushstring( L, "type" );
+	lua_rawget( L, iMetatable );
+	CString sActualType = lua_tostring( L, -1 );
+
+	lua_settop( L, iTop );
+	return sActualType;
+}
+
+/* Like luaL_typerror, but without the special case for argument 1 being "self"
+ * in method calls, so we give a correct error message after we remove self. */
 int LuaHelpers::TypeError( Lua *L, int iArgNo, const char *szName )
 {
+	CString sType = GetLuaBindingType( L, iArgNo );
+
 	lua_Debug debug;
-	lua_getstack( L, 0, &debug );
-	lua_getinfo( L, "n", &debug );
-	return luaL_error( L, "bad argument #%d to \"%s\" (%s expected, got %s)",
-		iArgNo, debug.name? debug.name:"(unknown)", szName, lua_typename(L, lua_type(L, iArgNo)) );
+	if( !lua_getstack( L, 0, &debug ) )
+	{
+		return luaL_error( L, "invalid type (%s expected, got %s)",
+			szName, sType.c_str() );
+	}
+	else
+	{
+		lua_getinfo( L, "n", &debug );
+		return luaL_error( L, "bad argument #%d to \"%s\" (%s expected, got %s)",
+			iArgNo, debug.name? debug.name:"(unknown)", szName, sType.c_str() );
+	}
 }
 
 
