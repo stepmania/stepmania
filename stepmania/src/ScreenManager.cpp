@@ -105,8 +105,6 @@ void ScreenManager::EmptyDeleteQueue()
 	if( !m_vScreensToDelete.size() )
 		return;
 
-	ZeroNextUpdate();
-
 	for( unsigned i=0; i<m_vScreensToDelete.size(); i++ )
 		SAFE_DELETE( m_vScreensToDelete[i] );
 
