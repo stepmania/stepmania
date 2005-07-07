@@ -61,11 +61,8 @@ void ScreenSelectCharacter::Init()
 	
 	vector<Character*> apCharacters;
 	GAMESTATE->GetCharacters( apCharacters );
-	if(	apCharacters.empty() )
-	{
-		this->PostScreenMessage( SM_GoToNextScreen, 0 );
-		return;
-	}
+	// We're not allowed to skip screens at the engine level; thow an assert instead.
+	ASSERT( apCharacters.empty() );
 
 	switch( GAMESTATE->m_PlayMode )
 	{
