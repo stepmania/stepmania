@@ -826,7 +826,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 
 		/* Update attack bOn flags. */
 		GAMESTATE->Update(0);
-		GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( p );
+		GAMESTATE->m_pPlayerState[p]->RebuildPlayerOptionsFromActiveAttacks();
 
 		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
 		GAMESTATE->m_pPlayerState[p]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions;
