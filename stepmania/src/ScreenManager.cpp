@@ -55,6 +55,7 @@ ScreenManager::ScreenManager()
 	m_pSharedBGA = new Actor;
 
 	m_bZeroNextUpdate = false;
+	m_PopTopScreen = SM_Invalid;
 }
 
 
@@ -134,6 +135,24 @@ bool ScreenManager::IsStackedScreen( const Screen *pScreen ) const
 
 void ScreenManager::Update( float fDeltaTime )
 {
+	//
+	// Pop the top screen, if PopTopScreen was called.
+	//
+	if( m_PopTopScreen != SM_Invalid )
+	{
+		ScreenMessage SM = m_PopTopScreen;
+		m_PopTopScreen = SM_Invalid;
+
+		Screen* pScreenToPop = m_ScreenStack.back();	// top menu
+		m_ScreenStack.erase( m_ScreenStack.end()-1, m_ScreenStack.end() );
+
+		pScreenToPop->HandleScreenMessage( SM_LoseFocus );
+		SendMessageToTopScreen( SM );
+		SendMessageToTopScreen( SM_GainFocus );
+
+		delete pScreenToPop;
+	}
+
 	/*
 	 * Screens take some time to load.  If we don't do this, then screens
 	 * receive an initial update that includes all of the time they spent
@@ -480,16 +499,7 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
 {
 	ASSERT( m_ScreenStack.size() > 0 );
 
-	Screen* pScreenToPop = m_ScreenStack.back();	// top menu
-	pScreenToPop->HandleScreenMessage( SM_LoseFocus );
-	m_ScreenStack.erase( m_ScreenStack.end()-1, m_ScreenStack.end() );
-	m_vScreensToDelete.push_back( pScreenToPop );
-
-	/* Post to the new top.  This must be done now; otherwise, we'll have a single
-	 * frame between popping and these messages, which can result in a frame where eg.
-	 * input is accepted where it shouldn't be. */
-	SendMessageToTopScreen( SM );
-	SendMessageToTopScreen( SM_GainFocus );
+	m_PopTopScreen = SM;
 }
 
 void ScreenManager::PostMessageToTopScreen( ScreenMessage SM, float fDelay )

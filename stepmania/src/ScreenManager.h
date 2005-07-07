@@ -78,12 +78,16 @@ private:
 
 	Actor				*m_pSharedBGA;	// BGA object that's persistent between screens
 
-	CString				m_sDelayedScreen;
 	CString				m_sSystemMessage;
 	vector<Screen*>		m_vPreparedScreens;
 	vector<Actor*>		m_vPreparedBackgrounds;
 	vector<Screen*>		m_vScreensToDelete;
 	
+	// Screen loads and removals are delayed until the next update, so the
+	// screen being removed isn't on the stack.
+	CString				m_sDelayedScreen;
+	ScreenMessage		m_PopTopScreen;
+
 	// Set this to true anywhere we create of delete objects.  These 
 	// operations take a long time, and will cause a skip on the next update.
 	bool				m_bZeroNextUpdate;
