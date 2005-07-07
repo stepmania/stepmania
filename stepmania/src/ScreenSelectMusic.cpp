@@ -301,9 +301,10 @@ void ScreenSelectMusic::Init()
 	m_sprOptionsMessage.Load( THEME->GetPathG(m_sName,"options message 1x2") );
 	m_sprOptionsMessage.StopAnimating();
 	m_sprOptionsMessage.SetHidden( true );
+	m_sprOptionsMessage.SetDrawOrder( DRAW_ORDER_TRANSITIONS+1 );
 	SET_XY( m_sprOptionsMessage );
 	ActorUtil::LoadAllCommands( m_sprOptionsMessage, m_sName );
-	//this->AddChild( &m_sprOptionsMessage );	// we have to draw this manually over the top of transitions
+	this->AddChild( &m_sprOptionsMessage );
 
 	m_bgOptionsOut.Load( THEME->GetPathB(m_sName,"options out") );
 //	this->AddChild( &m_bgOptionsOut ); // drawn on top
@@ -345,7 +346,6 @@ void ScreenSelectMusic::DrawPrimitives()
 	DISPLAY->LoadMenuPerspective( FOV, FOV_CENTER_X, FOV_CENTER_Y );
 
 	Screen::DrawPrimitives();
-	m_sprOptionsMessage.Draw();
 	m_bgOptionsOut.Draw();
 	m_bgNoOptionsOut.Draw();
 	
@@ -705,7 +705,6 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 	Screen::Update( fDeltaTime );
 	m_bgOptionsOut.Update( fDeltaTime );
 	m_bgNoOptionsOut.Update( fDeltaTime );
-	m_sprOptionsMessage.Update( fDeltaTime );
 
 	CheckBackgroundRequests();
 }
