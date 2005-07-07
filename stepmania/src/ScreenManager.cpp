@@ -105,7 +105,7 @@ void ScreenManager::EmptyDeleteQueue()
 	if( !m_vScreensToDelete.size() )
 		return;
 
-	m_bZeroNextUpdate = true;
+	ZeroNextUpdate();
 
 	for( unsigned i=0; i<m_vScreensToDelete.size(); i++ )
 		SAFE_DELETE( m_vScreensToDelete[i] );
@@ -270,7 +270,7 @@ Screen* ScreenManager::MakeNewScreenInternal( const CString &sScreenName )
 
 Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 {
-	m_bZeroNextUpdate = true;
+	ZeroNextUpdate();
 
 	/* By default, RageSounds handles the song timer.  When we change screens, reset this;
 	 * screens turn this off in SM_GainFocus if they handle timers themselves (edit). 
@@ -294,7 +294,7 @@ Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 
 void ScreenManager::PrepareScreen( const CString &sScreenName )
 {
-	m_bZeroNextUpdate = true;
+	ZeroNextUpdate();
 
 	// If the screen is already prepared, stop.
 	for( int i = (int)m_vPreparedScreens.size()-1; i>=0; i-- )
@@ -339,7 +339,7 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 
 void ScreenManager::DeletePreparedScreens()
 {
-	m_bZeroNextUpdate = true;
+	ZeroNextUpdate();
 
 	FOREACH( Screen*, m_vPreparedScreens, s )
 		SAFE_DELETE( *s );
@@ -476,12 +476,12 @@ void ScreenManager::LoadDelayedScreen()
 
 	LOG->Trace("... SetFromNewScreen");
 	SetFromNewScreen( pNewScreen );
-	m_bZeroNextUpdate = true;
+	ZeroNextUpdate();
 }
 
 void ScreenManager::AddNewScreenToTop( const CString &sScreenName )
 {
-	m_bZeroNextUpdate = true;
+	ZeroNextUpdate();
 
 	Screen* pNewScreen = MakeNewScreen(sScreenName);
 	SetFromNewScreen( pNewScreen );
