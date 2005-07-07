@@ -81,7 +81,6 @@ private:
 	CString				m_sSystemMessage;
 	vector<Screen*>		m_vPreparedScreens;
 	vector<Actor*>		m_vPreparedBackgrounds;
-	vector<Screen*>		m_vScreensToDelete;
 	
 	// Screen loads and removals are delayed until the next update, so the
 	// screen being removed isn't on the stack.
@@ -95,7 +94,6 @@ private:
 	Screen* MakeNewScreen( const CString &sName );
 	Screen* MakeNewScreenInternal( const CString &sName );
 	void ClearScreenStack();
-	void EmptyDeleteQueue();
 	void LoadDelayedScreen();
 
 	// Keep these sounds always loaded, because they could be 

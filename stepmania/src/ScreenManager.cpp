@@ -63,8 +63,6 @@ ScreenManager::~ScreenManager()
 {
 	LOG->Trace( "ScreenManager::~ScreenManager()" );
 
-	EmptyDeleteQueue();
-
 	SAFE_DELETE( m_pSharedBGA );
 	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
 		SAFE_DELETE( m_ScreenStack[i] );
@@ -99,22 +97,6 @@ void ScreenManager::ThemeChanged()
 	}
 	
 	this->RefreshCreditsMessages();
-}
-
-void ScreenManager::EmptyDeleteQueue()
-{
-	if( !m_vScreensToDelete.size() )
-		return;
-
-	for( unsigned i=0; i<m_vScreensToDelete.size(); i++ )
-		SAFE_DELETE( m_vScreensToDelete[i] );
-
-	m_vScreensToDelete.clear();
-
-	/* Now that we've actually deleted a screen, it makes sense to clear out
-	 * cached textures. */
-	TEXTUREMAN->DeleteCachedTextures();
-	TEXTUREMAN->DiagnosticOutput();
 }
 
 Screen *ScreenManager::GetTopScreen()
@@ -197,8 +179,6 @@ void ScreenManager::Update( float fDeltaTime )
 	 * continuing, since it's strange to start rendering before the music starts. */
 	if( bFirstUpdate )
 		SOUND->Flush();
-
-	EmptyDeleteQueue();
 
 	if( m_sDelayedScreen.size() != 0 )
 	{
@@ -409,10 +389,7 @@ void ScreenManager::LoadDelayedScreen()
 	 * data.  If we don't unload the old screen here, it'll be deleted below.
 	 */
 	if( PREFSMAN->m_bDelayedScreenLoad )
-	{
 		ClearScreenStack();
-		EmptyDeleteQueue();
-	}
 
 	CString sScreenName = m_sDelayedScreen;
 	m_sDelayedScreen = "";
@@ -484,10 +461,7 @@ void ScreenManager::LoadDelayedScreen()
 		PREFSMAN->SaveGlobalPrefsToDisk();
 
 	if( !PREFSMAN->m_bDelayedScreenLoad )
-	{
 		ClearScreenStack();
-		EmptyDeleteQueue();
-	}
 
 	LOG->Trace("... SetFromNewScreen");
 	SetFromNewScreen( pNewScreen );
