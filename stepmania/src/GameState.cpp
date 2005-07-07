@@ -371,11 +371,8 @@ void GameState::PlayersFinalized()
 			m_pPreferredCourse = pProfile->m_lastCourse.ToCourse();
 	}
 
-	FOREACH_PlayerNumber( pn )
-	{
-		if( !IsHumanPlayer(pn) )
-			ApplyModifiers( pn, DEFAULT_CPU_MODIFIERS );
-	}
+	FOREACH_PotentialCpuPlayer( pn )
+		ApplyModifiers( pn, DEFAULT_CPU_MODIFIERS );
 }
 
 void GameState::EndGame()
