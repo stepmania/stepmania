@@ -73,11 +73,12 @@ void ScreenTestFonts::SetFont(CString font_)
 	SetText(curtext);
 }
 
-void ScreenTestFonts::Draw()
+void ScreenTestFonts::DrawPrimitives()
 {
-	/* Draw this manually, so we can breakpoint here ... */
+	Screen::DrawPrimitives();
+
+	/* Draw this manually, so we can breakpoint here. */
 	txt.Draw();
-	Screen::Draw();
 }
 
 
