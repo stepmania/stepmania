@@ -292,8 +292,6 @@ Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 
 void ScreenManager::PrepareScreen( const CString &sScreenName )
 {
-	ZeroNextUpdate();
-
 	// If the screen is already prepared, stop.
 	for( int i = (int)m_vPreparedScreens.size()-1; i>=0; i-- )
 	{
