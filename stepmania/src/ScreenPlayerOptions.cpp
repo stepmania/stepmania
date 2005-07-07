@@ -46,7 +46,8 @@ void ScreenPlayerOptions::Init()
 		m_sprOptionsMessage.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 		m_sprOptionsMessage.SetZoom( 1 );
 		m_sprOptionsMessage.SetDiffuse( RageColor(1,1,1,0) );
-		//this->AddChild( &m_sprOptionsMessage );       // we have to draw this manually over the top of transitions
+		m_sprOptionsMessage.SetDrawOrder( DRAW_ORDER_TRANSITIONS+1 );
+		this->AddChild( &m_sprOptionsMessage );
 	}
 
 	m_bAcceptedChoices = false;
@@ -64,20 +65,8 @@ void ScreenPlayerOptions::Init()
 		for( unsigned r=0; r<m_pRows.size(); r++ )
 			UpdateDisqualified( r, p );
 	}
-}
 
-void ScreenPlayerOptions::Update( float fDelta )
-{
-	ScreenOptionsMaster::Update( fDelta );
-	if( m_bAskOptionsMessage )
-		m_sprOptionsMessage.Update( fDelta );
-}
-
-void ScreenPlayerOptions::DrawPrimitives()
-{
-	ScreenOptionsMaster::DrawPrimitives();
-	if( m_bAskOptionsMessage )
-		m_sprOptionsMessage.Draw();
+	this->SortByDrawOrder();
 }
 
 
