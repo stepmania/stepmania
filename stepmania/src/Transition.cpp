@@ -93,7 +93,7 @@ void Transition::Reset()
 
 bool Transition::EarlyAbortDraw()
 {
-	return m_State != transitioning;
+	return m_State == waiting;
 }
 
 void Transition::StartTransitioning( ScreenMessage send_when_done )
