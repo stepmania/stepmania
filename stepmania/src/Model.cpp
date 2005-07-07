@@ -9,7 +9,6 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "ActorUtil.h"
-#include <cerrno>
 #include "ModelManager.h"
 #include "Foreach.h"
 #include "LuaBinding.h"
