@@ -307,9 +307,12 @@ void ScreenSelectMusic::Init()
 	this->AddChild( &m_sprOptionsMessage );
 
 	m_bgOptionsOut.Load( THEME->GetPathB(m_sName,"options out") );
-//	this->AddChild( &m_bgOptionsOut ); // drawn on top
+	m_bgOptionsOut.SetDrawOrder( DRAW_ORDER_TRANSITIONS+2 );
+	this->AddChild( &m_bgOptionsOut );
+
 	m_bgNoOptionsOut.Load( THEME->GetPathB(m_sName,"no options out") );
-//	this->AddChild( &m_bgNoOptionsOut ); // drawn on top
+	m_bgOptionsOut.SetDrawOrder( DRAW_ORDER_TRANSITIONS+2 );
+	this->AddChild( &m_bgNoOptionsOut );
 
 	m_soundDifficultyEasier.Load( THEME->GetPathS(m_sName,"difficulty easier") );
 	m_soundDifficultyHarder.Load( THEME->GetPathS(m_sName,"difficulty harder") );
@@ -346,8 +349,6 @@ void ScreenSelectMusic::DrawPrimitives()
 	DISPLAY->LoadMenuPerspective( FOV, FOV_CENTER_X, FOV_CENTER_Y );
 
 	Screen::DrawPrimitives();
-	m_bgOptionsOut.Draw();
-	m_bgNoOptionsOut.Draw();
 	
 	DISPLAY->CameraPopMatrix();
 }
@@ -703,8 +704,6 @@ void ScreenSelectMusic::CheckBackgroundRequests()
 void ScreenSelectMusic::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
-	m_bgOptionsOut.Update( fDeltaTime );
-	m_bgNoOptionsOut.Update( fDeltaTime );
 
 	CheckBackgroundRequests();
 }
