@@ -311,7 +311,7 @@ void ScreenSelectMusic::Init()
 	this->AddChild( &m_bgOptionsOut );
 
 	m_bgNoOptionsOut.Load( THEME->GetPathB(m_sName,"no options out") );
-	m_bgOptionsOut.SetDrawOrder( DRAW_ORDER_TRANSITIONS+2 );
+	m_bgNoOptionsOut.SetDrawOrder( DRAW_ORDER_TRANSITIONS+2 );
 	this->AddChild( &m_bgNoOptionsOut );
 
 	m_soundDifficultyEasier.Load( THEME->GetPathS(m_sName,"difficulty easier") );
