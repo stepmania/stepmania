@@ -32,8 +32,6 @@ public:
 	virtual ~ScreenSelectMusic();
 	virtual void Init();
 
-	virtual void DrawPrimitives();
-
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
@@ -70,9 +68,6 @@ protected:
 	vector<Trail*>		m_vpTrails;
 	int					m_iSelection[NUM_PLAYERS];
 
-	ThemeMetric<float> FOV;
-	ThemeMetric<float> FOV_CENTER_X;
-	ThemeMetric<float> FOV_CENTER_Y;
 	ThemeMetric<float> BANNER_WIDTH;
 	ThemeMetric<float> BANNER_HEIGHT;
 	ThemeMetric<apActorCommands> SONG_OPTIONS_EXTRA_COMMAND;

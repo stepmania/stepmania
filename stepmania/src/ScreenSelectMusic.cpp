@@ -57,9 +57,6 @@ static RageTimer g_StartedLoadingAt(RageZeroTimer);
 
 REGISTER_SCREEN_CLASS( ScreenSelectMusic );
 ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuElements( sClassName ),
-	FOV( m_sName, "FOV" ),
-	FOV_CENTER_X( m_sName, "FOVCenterX" ),
-	FOV_CENTER_Y( m_sName, "FOVCenterY" ),
 	BANNER_WIDTH( m_sName, "BannerWidth" ),
 	BANNER_HEIGHT( m_sName, "BannerHeight" ),
 	SONG_OPTIONS_EXTRA_COMMAND( m_sName, "SongOptionsExtraCommand" ),
@@ -341,16 +338,6 @@ ScreenSelectMusic::~ScreenSelectMusic()
 	LOG->Trace( "ScreenSelectMusic::~ScreenSelectMusic()" );
 	BANNERCACHE->Undemand();
 
-}
-
-void ScreenSelectMusic::DrawPrimitives()
-{
-	DISPLAY->CameraPushMatrix();
-	DISPLAY->LoadMenuPerspective( FOV, FOV_CENTER_X, FOV_CENTER_Y );
-
-	Screen::DrawPrimitives();
-	
-	DISPLAY->CameraPopMatrix();
 }
 
 void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
