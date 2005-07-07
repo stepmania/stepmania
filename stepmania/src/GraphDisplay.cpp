@@ -184,8 +184,10 @@ void GraphDisplay::DrawPrimitives()
 
 	DISPLAY->ClearAllTextures();
 	DISPLAY->SetTexture( 0, m_pTexture );
-	// don't bother setting texture render states for a null texture
-	//Actor::SetTextureRenderStates();
+
+	// Must call this after setting the texture or else texture 
+	// parameters have no effect.
+	Actor::SetTextureRenderStates();
 
 	DISPLAY->DrawQuads( m_Slices, ARRAYSIZE(m_Slices) );
 	DISPLAY->SetTexture( 0, NULL );
