@@ -14,7 +14,6 @@
 #include "ThemeManager.h"
 #include "Steps.h"
 #include "ActorUtil.h"
-#include "RageDisplay.h"
 #include "RageTextureManager.h"
 #include "Course.h"
 #include "ProfileManager.h"
