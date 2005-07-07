@@ -192,12 +192,10 @@ public:
 	
 	void GetUndisplayedBeats( const PlayerState* pPlayerState, float TotalSeconds, float &StartBeat, float &EndBeat ) const; // only meaningful when a NoteField is in use
 	void LaunchAttack( PlayerNumber target, const Attack& a );
-	void RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn );
 	void RemoveAllActiveAttacks();	// called on end of song
 	void RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al=NUM_ATTACK_LEVELS /*all*/ );
 	void EndActiveAttacksForPlayer( PlayerNumber pn );
 	void RemoveAllInventory();
-	int GetSumOfActiveAttackLevels( PlayerNumber pn ) const;
 	PlayerNumber GetBestPlayer() const;
 	StageResult GetStageResult( PlayerNumber pn ) const;
 

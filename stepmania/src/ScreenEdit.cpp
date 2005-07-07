@@ -1610,7 +1610,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 		/* Stop displaying course attacks, if any. */
 		GAMESTATE->RemoveAllActiveAttacks();
-		GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( PLAYER_1 );
+		GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 
 		if( old == STATE_RECORDING )
@@ -2820,7 +2820,7 @@ void ScreenEdit::SetupCourseAttacks()
 		for( unsigned i=0; i<Attacks.size(); ++i )
 			GAMESTATE->LaunchAttack( PLAYER_1, Attacks[i] );
 	}
-	GAMESTATE->RebuildPlayerOptionsFromActiveAttacks( PLAYER_1 );
+	GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
 }
 
 void ScreenEdit::CopyToLastSave()

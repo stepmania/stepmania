@@ -594,7 +594,7 @@ void GameState::Update( float fDelta )
 		}
 
 		if( bRebuildPlayerOptions )
-			RebuildPlayerOptionsFromActiveAttacks( p );
+			m_pPlayerState[p]->RebuildPlayerOptionsFromActiveAttacks();
 
 		if( m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut > 0 )
 			m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut = max( 0, m_pPlayerState[p]->m_fSecondsUntilAttacksPhasedOut - fDelta );
@@ -1223,7 +1223,7 @@ void GameState::LaunchAttack( PlayerNumber target, const Attack& a )
 		attack.fStartSecond = this->m_fMusicSeconds;
 	m_pPlayerState[target]->m_ActiveAttacks.push_back( attack );
 
-	this->RebuildPlayerOptionsFromActiveAttacks( target );
+	m_pPlayerState[target]->RebuildPlayerOptionsFromActiveAttacks();
 }
 
 void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al )
@@ -1235,7 +1235,7 @@ void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al )
 		m_pPlayerState[pn]->m_ActiveAttacks.erase( m_pPlayerState[pn]->m_ActiveAttacks.begin()+s, m_pPlayerState[pn]->m_ActiveAttacks.begin()+s+1 );
 		--s;
 	}
-	RebuildPlayerOptionsFromActiveAttacks( pn );
+	m_pPlayerState[pn]->RebuildPlayerOptionsFromActiveAttacks();
 }
 
 void GameState::EndActiveAttacksForPlayer( PlayerNumber pn )
@@ -1253,32 +1253,6 @@ void GameState::RemoveAllInventory()
 			m_pPlayerState[p]->m_Inventory[s].fSecsRemaining = 0;
 			m_pPlayerState[p]->m_Inventory[s].sModifiers = "";
 		}
-	}
-}
-
-void GameState::RebuildPlayerOptionsFromActiveAttacks( PlayerNumber pn )
-{
-	// rebuild player options
-	PlayerOptions po = m_pPlayerState[pn]->m_StoredPlayerOptions;
-	for( unsigned s=0; s<m_pPlayerState[pn]->m_ActiveAttacks.size(); s++ )
-	{
-		if( !m_pPlayerState[pn]->m_ActiveAttacks[s].bOn )
-			continue; /* hasn't started yet */
-		po.FromString( m_pPlayerState[pn]->m_ActiveAttacks[s].sModifiers );
-	}
-	m_pPlayerState[pn]->m_PlayerOptions = po;
-
-
-	int iSumOfAttackLevels = m_pPlayerState[pn]->GetSumOfActiveAttackLevels();
-	if( iSumOfAttackLevels > 0 )
-	{
-		m_pPlayerState[pn]->m_iLastPositiveSumOfAttackLevels = iSumOfAttackLevels;
-		m_pPlayerState[pn]->m_fSecondsUntilAttacksPhasedOut = 10000;	// any positive number that won't run out before the attacks
-	}
-	else
-	{
-		// don't change!  m_iLastPositiveSumOfAttackLevels[p] = iSumOfAttackLevels;
-		m_pPlayerState[pn]->m_fSecondsUntilAttacksPhasedOut = 2;	// 2 seconds to phase out
 	}
 }
 

@@ -12,13 +12,39 @@ void PlayerState::Update( float fDelta )
 	m_CurrentPlayerOptions.Approach( m_PlayerOptions, fDelta );
 }
 
+void PlayerState::RebuildPlayerOptionsFromActiveAttacks()
+{
+	// rebuild player options
+	PlayerOptions po = m_StoredPlayerOptions;
+	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
+	{
+		if( !m_ActiveAttacks[s].bOn )
+			continue; /* hasn't started yet */
+		po.FromString( m_ActiveAttacks[s].sModifiers );
+	}
+	m_PlayerOptions = po;
+
+
+	int iSumOfAttackLevels = GetSumOfActiveAttackLevels();
+	if( iSumOfAttackLevels > 0 )
+	{
+		m_iLastPositiveSumOfAttackLevels = iSumOfAttackLevels;
+		m_fSecondsUntilAttacksPhasedOut = 10000;	// any positive number that won't run out before the attacks
+	}
+	else
+	{
+		// don't change!  m_iLastPositiveSumOfAttackLevels[p] = iSumOfAttackLevels;
+		m_fSecondsUntilAttacksPhasedOut = 2;	// 2 seconds to phase out
+	}
+}
+
 int PlayerState::GetSumOfActiveAttackLevels() const
 {
 	int iSum = 0;
 
 	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
 		if( m_ActiveAttacks[s].fSecsRemaining > 0 && m_ActiveAttacks[s].level != NUM_ATTACK_LEVELS )
-			iSum += m_pPlayerState[pn]m_ActiveAttacks[s].level;
+			iSum += m_ActiveAttacks[s].level;
 
 	return iSum;
 }
