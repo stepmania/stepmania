@@ -333,8 +333,6 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 
 void ScreenManager::DeletePreparedScreens()
 {
-	ZeroNextUpdate();
-
 	FOREACH( Screen*, m_vPreparedScreens, s )
 		SAFE_DELETE( *s );
 	m_vPreparedScreens.clear();
