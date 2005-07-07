@@ -1539,7 +1539,11 @@ void RageDisplay_OGL::SetMaterial(
 	}
 	else
 	{
-		glColor4fv( emissive + ambient + diffuse );
+		RageColor c = diffuse;
+		c.r += emissive.r + ambient.r;
+		c.g += emissive.g + ambient.g;
+		c.b += emissive.b + ambient.b;
+		glColor4fv( c );
 	}
 }
 
