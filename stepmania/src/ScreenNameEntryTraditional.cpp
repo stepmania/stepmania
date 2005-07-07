@@ -189,7 +189,6 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 	}
 
-	FOV.Load( m_sName, "FOV" );
 	ALPHABET_GAP_X.Load( m_sName, "AlphabetGapX" );
 	NUM_ALPHABET_DISPLAYED.Load( m_sName, "NumAlphabetDisplayed" );
 	MAX_RANKING_NAME_LENGTH.Load( m_sName, "MaxRankingNameLength" );
@@ -508,16 +507,6 @@ void ScreenNameEntryTraditional::Update( float fDelta )
 		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("name entry") );
 
 	ScreenWithMenuElements::Update(fDelta);
-}
-
-void ScreenNameEntryTraditional::DrawPrimitives()
-{
-	DISPLAY->CameraPushMatrix();
-	DISPLAY->LoadMenuPerspective( FOV, SCREEN_CENTER_X, SCREEN_CENTER_Y );
-
-	ScreenWithMenuElements::DrawPrimitives();
-	
-	DISPLAY->CameraPopMatrix();
 }
 
 void ScreenNameEntryTraditional::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )

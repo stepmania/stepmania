@@ -46,7 +46,6 @@ public:
 	virtual ~ScreenNameEntryTraditional();
 
 	void Update( float fDeltaTime );
-	void DrawPrimitives();
 	void HandleScreenMessage( const ScreenMessage SM );
 	void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
@@ -65,7 +64,6 @@ private:
 	void SelectChar( PlayerNumber pn, int c );
 	void Backspace( PlayerNumber pn );
 
-	ThemeMetric<float> FOV;
 	ThemeMetric<float> ALPHABET_GAP_X;
 	ThemeMetric<int> NUM_ALPHABET_DISPLAYED;
 	ThemeMetric<int> MAX_RANKING_NAME_LENGTH;
