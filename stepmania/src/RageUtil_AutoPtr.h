@@ -143,6 +143,7 @@ public:
 			m_pPtr = HiddenPtrTraits<T>::Copy( cpy.m_pPtr );
 	}
 
+#if 0 // broken VC6
 	template<class U>
 	HiddenPtr( const HiddenPtr<U> &cpy )
 	{
@@ -151,6 +152,7 @@ public:
 		else
 			m_pPtr = HiddenPtrTraits<U>::Copy( cpy.m_pPtr );
 	}
+#endif
 
 	~HiddenPtr()
 	{
@@ -172,6 +174,7 @@ public:
 		return *this;
 	}
 
+#if 0 // broken VC6
 	template<class U>
 	HiddenPtr<T> &operator=( const HiddenPtr<U> &cpy )
 	{
@@ -179,12 +182,15 @@ public:
 		Swap( t );
 		return *this;
 	}
+#endif
 
 private:
 	T *m_pPtr;
 
+#if 0 // broken VC6
 	template<class U>
 	friend class HiddenPtr;
+#endif
 };
 
 template<class T>
