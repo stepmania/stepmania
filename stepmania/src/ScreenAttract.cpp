@@ -30,21 +30,6 @@ ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : ScreenWith
 	GAMESTATE->VisitAttractScreen( sName );
 }
 
-void ScreenAttract::Init()
-{
-	LOG->Trace( "ScreenAttract::ScreenAttract(%s)", m_sName.c_str() );
-
-	ScreenWithMenuElements::Init();
-
-	this->SortByDrawOrder();
-}
-
-
-ScreenAttract::~ScreenAttract()
-{
-	LOG->Trace( "ScreenAttract::~ScreenAttract()" );
-}
-
 
 void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
@@ -124,11 +109,6 @@ void ScreenAttract::StartPlayingMusic()
 	}
 
 	ScreenWithMenuElements::StartPlayingMusic();
-}
-
-void ScreenAttract::Update( float fDelta )
-{
-	ScreenWithMenuElements::Update(fDelta);
 }
 
 void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
