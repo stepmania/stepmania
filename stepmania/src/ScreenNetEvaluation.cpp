@@ -74,7 +74,7 @@ void ScreenNetEvaluation::MenuLeft( PlayerNumber pn, const InputEventType type )
 
 void ScreenNetEvaluation::MenuUp( PlayerNumber pn, const InputEventType type )
 {
-	if (!m_bHasStats)
+	if ( (!m_bHasStats) || ( m_iActivePlayers < 1 ) )
 		return;
 	COMMAND( m_textUsers[m_iCurrentPlayer], "DeSel" );
 	m_iCurrentPlayer = (m_iCurrentPlayer + m_iActivePlayers - 1) % m_iActivePlayers;
@@ -89,7 +89,7 @@ void ScreenNetEvaluation::MenuRight( PlayerNumber pn, const InputEventType type 
 
 void ScreenNetEvaluation::MenuDown( PlayerNumber pn, const InputEventType type )
 {
-	if (!m_bHasStats)
+	if ( (!m_bHasStats) || ( m_iActivePlayers < 1 ) )
 		return;
 	COMMAND( m_textUsers[m_iCurrentPlayer], "DeSel" );
 	m_iCurrentPlayer = (m_iCurrentPlayer + 1) % m_iActivePlayers;

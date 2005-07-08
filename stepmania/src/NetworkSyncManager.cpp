@@ -503,7 +503,6 @@ void NetworkSyncManager::ProcessInput()
 	}
 
 	//load new data into buffer
-
 	NetPlayerClient->update();
 
 	m_packet.ClearPacket();
@@ -561,7 +560,11 @@ void NetworkSyncManager::ProcessInput()
 				case NSSB_NAMES:
 					ColumnData = "Names\n";
 					for (i=0; i<NumberPlayers; ++i)
-						ColumnData += m_PlayerNames[m_packet.Read1()] + "\n";
+					{
+						unsigned int k = m_packet.Read1();
+						if ( k < m_PlayerNames.size() )
+							ColumnData += m_PlayerNames[k] + "\n";
+					}
 					break;
 				case NSSB_COMBO:
 					ColumnData = "Combo\n";
