@@ -392,7 +392,9 @@ all_test_SOURCES = \
 		DateTime.cpp DateTime.h \
 		PrefsManager.cpp PrefsManager.h \
 		Preference.cpp Preference.h \
+		LuaBinding.cpp LuaBinding.h \
 		LuaFunctions.h LuaHelpers.cpp LuaHelpers.h \
+		LuaReference.cpp LuaReference.h \
 		RageException.cpp \
 		RageLog.cpp \
 		RageThreads.cpp \
