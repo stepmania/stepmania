@@ -244,8 +244,8 @@ void ScreenSelectMusic::Init()
 		this->AddChild( &m_AutoGenIcon[p] );
 
 		m_OptionIconRow[p].SetName( ssprintf("OptionIconsP%d",p+1) );
-		m_OptionIconRow[p].Load( p );
-		m_OptionIconRow[p].Refresh();
+		m_OptionIconRow[p].Load();
+		m_OptionIconRow[p].SetFromGameState( p );
 		SET_XY( m_OptionIconRow[p] );
 		this->AddChild( &m_OptionIconRow[p] );
 
@@ -1844,7 +1844,7 @@ void ScreenSelectMusic::AfterMusicChange()
 void ScreenSelectMusic::UpdateOptionsDisplays()
 {
 	FOREACH_HumanPlayer( p )
-		m_OptionIconRow[p].Refresh();
+		m_OptionIconRow[p].SetFromGameState( p );
 
 	CString s = GAMESTATE->m_SongOptions.GetString();
 	s.Replace( ", ", "\n" );

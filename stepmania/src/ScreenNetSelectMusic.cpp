@@ -87,8 +87,8 @@ void ScreenNetSelectMusic::Init()
 	FOREACH_EnabledPlayer( p )
 	{
 		m_OptionIconRow[p].SetName( ssprintf("OptionIconsP%d",p+1) );
-		m_OptionIconRow[p].Load( p );
-		m_OptionIconRow[p].Refresh();
+		m_OptionIconRow[p].Load();
+		m_OptionIconRow[p].SetFromGameState( p );
 		SET_XY_AND_ON_COMMAND( m_OptionIconRow[p] );
 		this->AddChild( &m_OptionIconRow[p] );
 	}
@@ -274,7 +274,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 
 		//Update changes
 		FOREACH_EnabledPlayer(p)
-			m_OptionIconRow[p].Refresh();
+			m_OptionIconRow[p].SetFromGameState( p );
 	}
 	else if( SM == SM_SongChanged )
 	{
