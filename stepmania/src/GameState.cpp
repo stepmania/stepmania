@@ -2068,6 +2068,7 @@ public:
 	static int GetNumSidesJoined( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetNumSidesJoined() ); return 1; }
 	static int GetCoinMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetCoinMode() ); return 1; }
 	static int GetPremium( T* p, lua_State *L )				{ lua_pushnumber(L, p->GetPremium() ); return 1; }
+	static int GetSongOptionsString( T* p, lua_State *L )	{ lua_pushstring(L, p->m_SongOptions.GetString() ); return 1; }
 	static int IsSyncDataChanged( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsSyncDataChanged() ); return 1; }
 	static int IsWinner( T* p, lua_State *L )
 	{
@@ -2122,6 +2123,7 @@ public:
 		ADD_METHOD( GetNumSidesJoined )
 		ADD_METHOD( GetCoinMode )
 		ADD_METHOD( GetPremium )
+		ADD_METHOD( GetSongOptionsString )
 		ADD_METHOD( IsSyncDataChanged )
 		ADD_METHOD( IsWinner )
 		ADD_METHOD( GetCurrentGame )
