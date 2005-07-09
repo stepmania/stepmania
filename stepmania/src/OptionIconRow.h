@@ -7,7 +7,7 @@
 #include "ActorFrame.h"
 #include "OptionIcon.h"
 struct PlayerOptions;
-
+struct lua_State;
 
 const unsigned NUM_OPTION_COLS = 8;
 
@@ -18,7 +18,13 @@ public:
 	OptionIconRow();
 
 	void Load();
+	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
 	void SetFromGameState( PlayerNumber pn );
+
+	//
+	// Commands
+	//
+	virtual void PushSelf( lua_State *L );
 
 protected:
 	OptionIcon		m_OptionIcon[NUM_OPTION_COLS];

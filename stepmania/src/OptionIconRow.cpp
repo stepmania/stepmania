@@ -6,6 +6,8 @@
 #include "RageLog.h"
 #include "PlayerState.h"
 #include "ActorUtil.h"
+#include "XmlFile.h"
+#include "LuaManager.h"
 
 REGISTER_ACTOR_CLASS( OptionIconRow )
 
@@ -22,6 +24,12 @@ OptionIconRow::OptionIconRow()
 	}
 }
 
+void OptionIconRow::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	Load();
+
+	ActorFrame::LoadFromNode( sDir, pNode );
+}
 
 struct OptionColumnEntry
 {
@@ -129,6 +137,26 @@ void OptionIconRow::SetFromGameState( PlayerNumber pn )
 		else
 			m_OptionIcon[i].Set( pn, asTabs[i-1], false );		
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaOptionIconRow: public Luna<OptionIconRow>
+{
+public:
+	LunaOptionIconRow() { LUA->Register( Register ); }
+	static int set( T* p, lua_State *L )		{ p->SetFromGameState( (PlayerNumber) IArg(1) ); return 0; }
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( set )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( OptionIconRow, ActorFrame )
+
+// lua end
 
 /*
  * (c) 2002-2004 Chris Danford
