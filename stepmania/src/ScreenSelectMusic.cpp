@@ -58,7 +58,6 @@ REGISTER_SCREEN_CLASS( ScreenSelectMusic );
 ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuElements( sClassName ),
 	BANNER_WIDTH( m_sName, "BannerWidth" ),
 	BANNER_HEIGHT( m_sName, "BannerHeight" ),
-	SONG_OPTIONS_EXTRA_COMMAND( m_sName, "SongOptionsExtraCommand" ),
 	SAMPLE_MUSIC_DELAY( m_sName, "SampleMusicDelay" ),
 	SHOW_RADAR( m_sName, "ShowRadar" ),
 	SHOW_PANES( m_sName, "ShowPanes" ),
@@ -183,11 +182,6 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_GrooveRadar );
 	if( SHOW_RADAR )
 		this->AddChild( &m_GrooveRadar );
-
-	m_textSongOptions.SetName( "SongOptions" );
-	m_textSongOptions.LoadFromFont( THEME->GetPathF("Common","normal") );
-	SET_XY( m_textSongOptions );
-	this->AddChild( &m_textSongOptions );
 
 	m_textNumSongs.SetName( "NumSongs" );
 	m_textNumSongs.LoadFromFont( THEME->GetPathF(m_sName,"num songs") );
@@ -325,8 +319,6 @@ void ScreenSelectMusic::Init()
 	m_bGoToOptions = false;
 	m_bAllowOptionsMenu = m_bAllowOptionsMenuRepeat = false;
 	ZERO( m_iSelection );
-
-	UpdateOptionsDisplays();
 
 	AfterMusicChange();
 	TweenOnScreen();
@@ -470,7 +462,6 @@ void ScreenSelectMusic::TweenOnScreen()
 	ON_COMMAND( m_sprCDTitleFront );
 	ON_COMMAND( m_sprCDTitleBack );
 	ON_COMMAND( m_GrooveRadar );
-	ON_COMMAND( m_textSongOptions );
 	ON_COMMAND( m_textNumSongs );
 	ON_COMMAND( m_textTotalTime );
 	ON_COMMAND( m_MusicSortDisplay );
@@ -491,9 +482,6 @@ void ScreenSelectMusic::TweenOnScreen()
 			ON_COMMAND( m_PaneDisplay[p] );
 		ON_COMMAND( m_DifficultyMeter[p] );
 	}
-
-	if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
-		m_textSongOptions.RunCommands( SONG_OPTIONS_EXTRA_COMMAND );
 }
 
 void ScreenSelectMusic::TweenOffScreen()
@@ -521,7 +509,6 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_sprCDTitleFront );
 	OFF_COMMAND( m_sprCDTitleBack );
 	OFF_COMMAND( m_GrooveRadar );
-	OFF_COMMAND( m_textSongOptions );
 	OFF_COMMAND( m_textNumSongs );
 	OFF_COMMAND( m_textTotalTime );
 	OFF_COMMAND( m_MusicSortDisplay );
@@ -919,7 +906,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		{
 			m_soundOptionsChange.Play();
 			MESSAGEMAN->Broadcast( ssprintf("PlayerOptionsChangedP%i", pn+1) );
-			UpdateOptionsDisplays();
+			MESSAGEMAN->Broadcast( "SongOptionsChanged" );
 			return;
 		}
 	}
@@ -1833,13 +1820,6 @@ void ScreenSelectMusic::AfterMusicChange()
 	}
 }
 
-
-void ScreenSelectMusic::UpdateOptionsDisplays()
-{
-	CString s = GAMESTATE->m_SongOptions.GetString();
-	s.Replace( ", ", "\n" );
-	m_textSongOptions.SetText( s );
-}
 
 void ScreenSelectMusic::SortOrderChanged()
 {

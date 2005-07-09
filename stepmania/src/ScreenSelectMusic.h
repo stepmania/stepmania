@@ -60,7 +60,6 @@ protected:
 	void AfterMusicChange();
 	void SortOrderChanged();
 
-	void UpdateOptionsDisplays();
 	void CheckBackgroundRequests();
 
 	vector<Steps*>		m_vpSteps;
@@ -69,7 +68,6 @@ protected:
 
 	ThemeMetric<float> BANNER_WIDTH;
 	ThemeMetric<float> BANNER_HEIGHT;
-	ThemeMetric<apActorCommands> SONG_OPTIONS_EXTRA_COMMAND;
 	ThemeMetric<float> SAMPLE_MUSIC_DELAY;
 	ThemeMetric<bool> SHOW_RADAR;
 	ThemeMetric<bool> SHOW_PANES;
