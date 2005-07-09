@@ -17,11 +17,10 @@ class OptionIconRow : public ActorFrame
 public:
 	OptionIconRow();
 
-	void Load( PlayerNumber pn );
-	void Refresh();
+	void Load();
+	void SetFromGameState( PlayerNumber pn );
 
 protected:
-	PlayerNumber	m_PlayerNumber;
 	OptionIcon		m_OptionIcon[NUM_OPTION_COLS];
 };
 

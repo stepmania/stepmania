@@ -5,7 +5,9 @@
 #include "GameState.h"
 #include "RageLog.h"
 #include "PlayerState.h"
+#include "ActorUtil.h"
 
+REGISTER_ACTOR_CLASS( OptionIconRow )
 
 #define SPACING_X	THEME->GetMetricF("OptionIconRow","SpacingX")
 #define SPACING_Y	THEME->GetMetricF("OptionIconRow","SpacingY")
@@ -13,7 +15,6 @@
 
 OptionIconRow::OptionIconRow()
 {
-	m_PlayerNumber = NUM_PLAYERS;
 	for( unsigned i=0; i<NUM_OPTION_COLS; i++ )
 	{
 		m_OptionIcon[i].SetXY( i*SPACING_X, i*SPACING_Y );
@@ -83,20 +84,17 @@ int OptionToPreferredColumn( CString sOptionText )
 	return 0;
 }
 
-void OptionIconRow::Load( PlayerNumber pn )
+void OptionIconRow::Load()
 {
-	m_PlayerNumber = pn;
 	for( unsigned i=0; i<NUM_OPTION_COLS; i++ )
 		m_OptionIcon[i].Load( "OptionIconRow" );		
 }
 
-void OptionIconRow::Refresh()
+void OptionIconRow::SetFromGameState( PlayerNumber pn )
 {
-	ASSERT( m_PlayerNumber != NUM_PLAYERS );
-	
 	// init
 
-	CString sOptions = GAMESTATE->m_pPlayerState[m_PlayerNumber]->m_PlayerOptions.GetString();
+	CString sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetString();
 	CStringArray asOptions;
 	split( sOptions, ", ", asOptions, true );
 
@@ -127,9 +125,9 @@ void OptionIconRow::Refresh()
 
 	for( unsigned i=0; i<NUM_OPTION_COLS; i++ )
 		if( i == 0 )
-			m_OptionIcon[i].Set( m_PlayerNumber, "", true );
+			m_OptionIcon[i].Set( pn, "", true );
 		else
-			m_OptionIcon[i].Set( m_PlayerNumber, asTabs[i-1], false );		
+			m_OptionIcon[i].Set( pn, asTabs[i-1], false );		
 }
 
 /*
