@@ -243,12 +243,6 @@ void ScreenSelectMusic::Init()
 		SET_XY( m_AutoGenIcon[p] );
 		this->AddChild( &m_AutoGenIcon[p] );
 
-		m_OptionIconRow[p].SetName( ssprintf("OptionIconsP%d",p+1) );
-		m_OptionIconRow[p].Load();
-		m_OptionIconRow[p].SetFromGameState( p );
-		SET_XY( m_OptionIconRow[p] );
-		this->AddChild( &m_OptionIconRow[p] );
-
 		m_sprMeterFrame[p].SetName( ssprintf("MeterFrameP%d",p+1) );
 		m_sprMeterFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("meter frame p%d",p+1)) );
 		SET_XY( m_sprMeterFrame[p] );
@@ -491,7 +485,6 @@ void ScreenSelectMusic::TweenOnScreen()
 
 	FOREACH_HumanPlayer( p )
 	{		
-		ON_COMMAND( m_OptionIconRow[p] );
 		ON_COMMAND( m_sprHighScoreFrame[p] );
 		ON_COMMAND( m_textHighScore[p] );
 		if( SHOW_PANES )
@@ -543,7 +536,6 @@ void ScreenSelectMusic::TweenOffScreen()
 
 	FOREACH_HumanPlayer( p )
 	{		
-		OFF_COMMAND( m_OptionIconRow[p] );
 		OFF_COMMAND( m_sprHighScoreFrame[p] );
 		OFF_COMMAND( m_textHighScore[p] );
 		if( SHOW_PANES )
@@ -926,6 +918,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustMusicOptions(GameI.controller) )
 		{
 			m_soundOptionsChange.Play();
+			MESSAGEMAN->Broadcast( ssprintf("PlayerOptionsChangedP%i", pn+1) );
 			UpdateOptionsDisplays();
 			return;
 		}
@@ -1843,9 +1836,6 @@ void ScreenSelectMusic::AfterMusicChange()
 
 void ScreenSelectMusic::UpdateOptionsDisplays()
 {
-	FOREACH_HumanPlayer( p )
-		m_OptionIconRow[p].SetFromGameState( p );
-
 	CString s = GAMESTATE->m_SongOptions.GetString();
 	s.Replace( ", ", "\n" );
 	m_textSongOptions.SetText( s );

@@ -14,7 +14,6 @@
 #include "GrooveRadar.h"
 #include "DifficultyIcon.h"
 #include "DifficultyMeter.h"
-#include "OptionIconRow.h"
 #include "DifficultyDisplay.h"
 #include "DifficultyList.h"
 #include "CourseContentsList.h"
@@ -103,7 +102,6 @@ protected:
 	BitmapText			m_textSongOptions;
 	BitmapText			m_textNumSongs;
 	BitmapText			m_textTotalTime;
-	OptionIconRow		m_OptionIconRow[NUM_PLAYERS];
 	Sprite				m_sprMeterFrame[NUM_PLAYERS];
 	DifficultyMeter			m_DifficultyMeter[NUM_PLAYERS];
 	MusicSortDisplay	m_MusicSortDisplay;
