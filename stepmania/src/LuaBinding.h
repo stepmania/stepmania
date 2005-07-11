@@ -232,12 +232,12 @@ protected:
 
 #define LUA_REGISTER_CLASS( T ) \
 	LUA_REGISTER_CLASS_BASIC( T, none ) \
-	void Luna<T>::PushObject( Lua *L, T* p ) { void **pData = (void **) lua_newuserdata( L, sizeof(void *) ); *pData = p; } \
+	template<> void Luna<T>::PushObject( Lua *L, T* p ) { void **pData = (void **) lua_newuserdata( L, sizeof(void *) ); *pData = p; } \
 	void T::PushSelf( lua_State *L ) { Luna<T>::PushObject( L, this ); ApplyDerivedType( L, #T, this ); }
 
 #define LUA_REGISTER_DERIVED_CLASS( T, B ) \
 	LUA_REGISTER_CLASS_BASIC( T, B ) \
-	void Luna<T>::PushObject( Lua *L, T* p ) { Luna<B>::PushObject( L, p ); } \
+	template<> void Luna<T>::PushObject( Lua *L, T* p ) { Luna<B>::PushObject( L, p ); } \
 	void T::PushSelf( lua_State *L ) { Luna<B>::PushObject( L, this ); ApplyDerivedType( L, #T, this ); }
 
 #define LUA_REGISTER_CLASS_BASIC( T, B ) \
