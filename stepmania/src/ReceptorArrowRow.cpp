@@ -2,10 +2,8 @@
 #include "ReceptorArrowRow.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
 #include "ArrowEffects.h"
 #include "GameState.h"
-#include "PrefsManager.h"
 #include "NoteFieldPositioning.h"
 #include "PlayerState.h"
 #include "Style.h"
@@ -32,15 +30,16 @@ void ReceptorArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOff
 	{
 		m_ReceptorArrow[c].SetName( "ReceptorArrow" );
 		m_ReceptorArrow[c].Load( m_pPlayerState, c );
+		this->AddChild( &m_ReceptorArrow[c] );
 	}
 }
 
 void ReceptorArrowRow::Update( float fDeltaTime )
 {
+	ActorFrame::Update( fDeltaTime );
+
 	for( int c=0; c<m_iNumCols; c++ )
 	{
-		m_ReceptorArrow[c].Update( fDeltaTime );
-		
 		// m_fDark==1 or m_fFadeToFailPercent==1 should make fBaseAlpha==0
 		float fBaseAlpha = (1 - m_pPlayerState->m_CurrentPlayerOptions.m_fDark) * (1 - m_fFadeToFailPercent);
 		CLAMP( fBaseAlpha, 0.0f, 1.0f );
