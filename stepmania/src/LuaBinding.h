@@ -227,7 +227,7 @@ protected:
  * specifying a different class name, so they don't need to know about it. */
 #define LUA_REGISTER_INSTANCED_BASE_CLASS( T ) \
 	LUA_REGISTER_CLASS_BASIC( T, none ) \
-	void Luna<T>::PushObject( Lua *L, T* p ) { p->m_pLuaInstance->PushSelf( L ); } \
+	template<> void Luna<T>::PushObject( Lua *L, T* p ) { p->m_pLuaInstance->PushSelf( L ); } \
 	void T::PushSelf( lua_State *L ) { Luna<T>::PushObject( L, this ); ApplyDerivedType( L, #T, this ); }
 
 #define LUA_REGISTER_CLASS( T ) \
