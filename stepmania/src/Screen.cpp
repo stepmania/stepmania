@@ -40,22 +40,18 @@ void Screen::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	/* We need to ensure two things:
+	/*
+	 * We need to ensure two things:
 	 * 1. Messages must be sent in the order of delay.  If two messages are sent
 	 *    simultaneously, one with a .001 delay and another with a .002 delay, the
 	 *    .001 delay message must be sent first.
 	 * 2. Messages to be delivered simultaneously must be sent in the order queued.
 	 * 
-	 * Stable sort by time to ensure #2. */
+	 * Sort by time to ensure #1; use a stable sort to ensure #2.
+	 */
 	stable_sort(m_QueuedMessages.begin(), m_QueuedMessages.end(), SortMessagesByDelayRemaining);
 
-	// update the times of queued ScreenMessages and send if timer has expired
-	// The order you remove messages in must be very careful!  Sending a message can 
-	// potentially clear all m_QueuedMessages, and set a new state!
-	/* Also, it might call ClearMessageQueue() to clear a single message type.
-	 * This might clear previous messages on the queue.  So, first apply time to
-	 * everything. */
-	
+	/* Update the times of queued ScreenMessages. */
 	for( unsigned i=0; i<m_QueuedMessages.size(); i++ )
 	{
 		/* Hack:
@@ -71,11 +67,13 @@ void Screen::Update( float fDeltaTime )
 		 *
 		 * Let's delay all messages that have a non-zero time an extra frame. 
 		 */
-		if(m_QueuedMessages[i].fDelayRemaining > 0.0001f)
+		if( m_QueuedMessages[i].fDelayRemaining > 0.0001f )
 		{
 			m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
-			m_QueuedMessages[i].fDelayRemaining = max(m_QueuedMessages[i].fDelayRemaining, 0.0001f);
-		} else {
+			m_QueuedMessages[i].fDelayRemaining = max( m_QueuedMessages[i].fDelayRemaining, 0.0001f );
+		}
+		else
+		{
 			m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
 		}
 	}
@@ -91,17 +89,17 @@ void Screen::Update( float fDeltaTime )
 
 		/* Remove the message from the list. */
 		const ScreenMessage SM = m_QueuedMessages[i].SM;
-		m_QueuedMessages.erase(m_QueuedMessages.begin()+i);
+		m_QueuedMessages.erase( m_QueuedMessages.begin()+i );
 		i--;
 
-		unsigned size = m_QueuedMessages.size();
+		unsigned iSize = m_QueuedMessages.size();
 
 		// send this sucker!
 		CHECKPOINT_M( ssprintf("ScreenMessage(%i)", SM) );
 		this->HandleScreenMessage( SM );
 
 		/* If the size changed, start over. */
-		if(size != m_QueuedMessages.size())
+		if( iSize != m_QueuedMessages.size() )
 			i = 0;
 	}
 }
