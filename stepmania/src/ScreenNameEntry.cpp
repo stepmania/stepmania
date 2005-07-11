@@ -255,10 +255,14 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 
 	m_In.Load( THEME->GetPathB("ScreenNameEntry","in") );
 	m_In.StartTransitioning();
-//	this->AddChild( &m_In );	// draw and update this manually too
+	m_In.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
+	this->AddChild( &m_In );
 
 	m_Out.Load( THEME->GetPathB("ScreenNameEntry","out") );
-//	this->AddChild( &m_Out );	// draw and update this manually too
+	m_Out.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
+	this->AddChild( &m_Out );
+
+	this->SortByDrawOrder();
 
 	m_soundStep.Load( THEME->GetPathS("ScreenNameEntry","step") );
 
@@ -287,10 +291,8 @@ void ScreenNameEntry::Update( float fDelta )
 
 	m_fFakeBeat += fDelta * FAKE_BEATS_PER_SEC;
 	GAMESTATE->m_fSongBeat = m_fFakeBeat;
-	Screen::Update(fDelta);
 
-	m_In.Update( fDelta );
-	m_Out.Update( fDelta );
+	Screen::Update(fDelta);
 }
 
 void ScreenNameEntry::DrawPrimitives()
@@ -343,10 +345,6 @@ void ScreenNameEntry::DrawPrimitives()
 			m_textSelectedChars[p][t].Draw();
 		}
 	}
-
-
-	m_In.Draw();
-	m_Out.Draw();
 }
 
 void ScreenNameEntry::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
