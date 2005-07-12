@@ -187,6 +187,7 @@ void ScreenSelectStyle::MenuStart( PlayerNumber pn )
 		m_SubActors[i]->StopTweening();
 
 	SCREENMAN->PlayStartSound();
+	SCREENMAN->SendMessageToTopScreen( SM_BeginFadingOut );
 	SCREENMAN->SendMessageToTopScreen( SM_AllDoneChoosing );
 
 	const GameCommand& mc = m_aGameCommands[GetSelectionIndex(pn)];
