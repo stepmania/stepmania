@@ -1,5 +1,6 @@
 #include "global.h"
 #include "PlayerState.h"
+#include "GameState.h"
 
 void PlayerState::ResetNoteSkins()
 {
@@ -10,6 +11,47 @@ void PlayerState::ResetNoteSkins()
 void PlayerState::Update( float fDelta )
 {
 	m_CurrentPlayerOptions.Approach( m_PlayerOptions, fDelta );
+
+	// TRICKY: GAMESTATE->Update is run before any of the Screen update's,
+	// so we'll clear these flags here and let them get turned on later
+	m_bAttackBeganThisUpdate = false;
+	m_bAttackEndedThisUpdate = false;
+
+	bool bRebuildPlayerOptions = false;
+
+	/* See if any delayed attacks are starting or ending. */
+	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
+	{
+		Attack &attack = m_ActiveAttacks[s];
+		
+		// -1 is the "starts now" sentinel value.  You must add the attack
+		// by calling GameState::LaunchAttack, or else the -1 won't be 
+		// converted into the current music time.  
+		ASSERT( attack.fStartSecond != -1 );
+
+		bool bCurrentlyEnabled =
+			attack.bGlobal ||
+			( attack.fStartSecond < GAMESTATE->m_fMusicSeconds &&
+			GAMESTATE->m_fMusicSeconds < attack.fStartSecond+attack.fSecsRemaining );
+
+		if( m_ActiveAttacks[s].bOn == bCurrentlyEnabled )
+			continue; /* OK */
+
+		if( m_ActiveAttacks[s].bOn && !bCurrentlyEnabled )
+			m_bAttackEndedThisUpdate = true;
+		else if( !m_ActiveAttacks[s].bOn && bCurrentlyEnabled )
+			m_bAttackBeganThisUpdate = true;
+
+		bRebuildPlayerOptions = true;
+
+		m_ActiveAttacks[s].bOn = bCurrentlyEnabled;
+	}
+
+	if( bRebuildPlayerOptions )
+		RebuildPlayerOptionsFromActiveAttacks();
+
+	if( m_fSecondsUntilAttacksPhasedOut > 0 )
+		m_fSecondsUntilAttacksPhasedOut = max( 0, m_fSecondsUntilAttacksPhasedOut - fDelta );
 }
 
 void PlayerState::RebuildPlayerOptionsFromActiveAttacks()
