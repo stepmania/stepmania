@@ -2,15 +2,12 @@
 #include "ScreenReloadSongs.h"
 #include "SongManager.h"
 #include "UnlockManager.h"
-#include "ScreenManager.h"
 #include "RageTimer.h"
 #include "RageLog.h"
 #include "ThemeManager.h"
 #include "ScreenDimensions.h"
 
 #include "arch/LoadingWindow/LoadingWindow.h"
-
-#define NEXT_SCREEN							THEME->GetMetric (m_sName,"NextScreen")
 
 static const int DrawFrameRate = 20;
 class ScreenReloadSongsLoadingWindow: public LoadingWindow
@@ -82,7 +79,8 @@ void ScreenReloadSongs::Update( float fDeltaTime )
 
 	SONGMAN->Reload( m_LoadingWindow );
 	UNLOCKMAN->UpdateCachedPointers();
-	SCREENMAN->SetNewScreen( NEXT_SCREEN );
+
+	SCREENMAN->PostMessageToTopScreen( SM_GoToNextScreen, 0 );
 }
 
 /*

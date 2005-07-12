@@ -23,13 +23,6 @@
 #include "ActorUtil.h"
 #include "PrefsManager.h"
 
-//
-// Defines
-//
-#define PREV_SCREEN								THEME->GetMetric (m_sName,"PrevScreen")
-#define NEXT_SCREEN								THEME->GetMetric (m_sName,"NextScreen")
-
-
 // received while STATE_DANCING
 AutoScreenMessage( SM_NotesEnded )
 AutoScreenMessage( SM_Ready )
@@ -611,14 +604,16 @@ void ScreenGameplayMultiplayer::HandleScreenMessage( const ScreenMessage SM )
 		GAMESTATE->CancelStage();
 
 		SCREENMAN->DeletePreparedScreens();
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
+		SCREENMAN->PostMessageToTopScreen( SM_GoToPrevScreen, 0 );
 	}
 	else if( SM == SM_GoToStateAfterCleared )
 	{
 		StageFinished( false );
 
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
+		SCREENMAN->PostMessageToTopScreen( SM_GoToNextScreen, 0 );
 	}
+
+	Screen::HandleScreenMessage( SM );
 }
 
 

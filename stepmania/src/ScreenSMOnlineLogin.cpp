@@ -15,9 +15,6 @@
 
 REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 
-#define PREV_SCREEN		THEME->GetMetric (m_sName,"PrevScreen")
-#define NEXT_SCREEN		THEME->GetMetric (m_sName,"NextScreen")
-
 AutoScreenMessage( SM_SMOnlinePack )
 AutoScreenMessage( SM_PasswordDone )
 
@@ -102,7 +99,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 		if(!ScreenTextEntry::s_bCancelledLast)
 			SendLogin(ScreenTextEntry::s_sLastAnswer);
 		else
-			SCREENMAN->SetNewScreen(PREV_SCREEN);
+			SCREENMAN->PostMessageToTopScreen( SM_GoToPrevScreen, 0 );
 	}
 	else if( SM == SM_SMOnlinePack )
 	{
@@ -117,7 +114,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 				if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) && m_iPlayer < NUM_PLAYERS )
 					ScreenTextEntry::Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter your password.", NULL );
 				else
-					SCREENMAN->SetNewScreen(NEXT_SCREEN);
+					SCREENMAN->PostMessageToTopScreen( SM_GoToNextScreen, 0 );
 			}
 			else
 			{
@@ -156,7 +153,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 	}
 	else if( SM == SM_GoToPrevScreen )
 	{
-		SCREENMAN->SetNewScreen(PREV_SCREEN);
+		SCREENMAN->PostMessageToTopScreen( SM_GoToPrevScreen, 0 );
 		return;
 	}
 
