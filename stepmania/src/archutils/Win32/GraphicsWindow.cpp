@@ -391,8 +391,6 @@ RageDisplay::VideoModeParams GraphicsWindow::GetParams()
 
 void GraphicsWindow::Update()
 {
-	ASSERT( DISPLAY );
-
 	MSG msg;
 	while( PeekMessage( &msg, NULL, 0, 0, PM_NOREMOVE ) )
 	{
@@ -406,11 +404,13 @@ void GraphicsWindow::Update()
 		g_bLastHasFocus = g_bHasFocus;
 	}
 
-	if( g_bResolutionChanged )
+	if( g_bResolutionChanged && DISPLAY != NULL )
 	{
-		/* Let DISPLAY know that our resolution has changed. */
-		DISPLAY->ResolutionChanged();
+		/* Let DISPLAY know that our resolution has changed.  (Note that
+		 * ResolutionChanged() can come back here, so reset g_bResolutionChanged
+		 * first.) */
 		g_bResolutionChanged = false;
+		DISPLAY->ResolutionChanged();
 	}
 }
 
