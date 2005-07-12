@@ -60,8 +60,8 @@ protected:
 	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
 
 	virtual void BeginFadingOut() { this->PostScreenMessage( SM_BeginFadingOut, 0 ); }
-	virtual void GoToNextScreen() = 0;
-	virtual void GoToPrevScreen() = 0;
+	virtual void GoToNextScreen() { }
+	virtual void GoToPrevScreen() { }
 
 	void ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat );
 	virtual void AfterChangeValueInRow( PlayerNumber pn ) {}	// override this to detect when the value in a row has changed
