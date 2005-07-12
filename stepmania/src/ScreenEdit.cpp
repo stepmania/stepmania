@@ -545,8 +545,6 @@ int g_iLastInsertAttackTrack = -1;
 float g_fLastInsertAttackDurationSeconds = -1;
 BackgroundLayer g_CurrentBGChangeLayer = BACKGROUND_LAYER_INVALID;
 
-#define PREV_SCREEN THEME->GetMetric(m_sName,"PrevScreen")
-
 REGISTER_SCREEN_CLASS( ScreenEdit );
 ScreenEdit::ScreenEdit( CString sName ) : ScreenWithMenuElements( sName )
 {
@@ -1672,7 +1670,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
 		GAMESTATE->m_bEditing = false;
 	}
 	else if( SM == SM_BackFromMainMenu )
@@ -1845,6 +1842,8 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		/* Snap the trailing beat, in case we lose focus while tweening. */
 		m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 	}
+
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 void ScreenEdit::OnSnapModeChange()

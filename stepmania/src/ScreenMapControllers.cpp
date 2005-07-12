@@ -1,7 +1,6 @@
 #include "global.h"
 #include "ScreenMapControllers.h"
 #include "PrefsManager.h"
-#include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
@@ -320,16 +319,6 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 	LOG->Trace( "m_iCurSlot: %d m_iCurController: %d m_iCurButton: %d", m_iCurSlot, m_iCurController, m_iCurButton );
 
 	Refresh();
-}
-
-void ScreenMapControllers::HandleScreenMessage( const ScreenMessage SM )
-{
-	switch( SM )
-	{
-	case SM_GoToNextScreen:
-		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
-		break;
-	}
 }
 
 void ScreenMapControllers::Refresh()

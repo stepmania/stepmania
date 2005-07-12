@@ -1,7 +1,6 @@
 #include "global.h"
 #include "ScreenNameEntry.h"
 #include "SongManager.h"
-#include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
@@ -42,7 +41,6 @@
 #define FAKE_BEATS_PER_SEC			THEME->GetMetricF("ScreenNameEntry","FakeBeatsPerSec")
 #define TIMER_SECONDS				THEME->GetMetricF("ScreenNameEntry","TimerSeconds")
 #define MAX_RANKING_NAME_LENGTH		THEME->GetMetricI(m_sName,"MaxRankingNameLength")
-#define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
 #define PLAYER_X( p, styleType )	THEME->GetMetricF(m_sName,ssprintf("PlayerP%d%sX",p+1,StyleTypeToString(styleType).c_str()))
 
 
@@ -395,11 +393,11 @@ void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )
 //				SCREENMAN->SetNewScreen( "ScreenSelectCourse" );
 //				break;
 //			}
-
-			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		}
 		break;
 	}
+
+	Screen::HandleScreenMessage( SM );
 }
 
 
