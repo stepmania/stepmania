@@ -2013,8 +2013,10 @@ public:
 	static int IsGoalComplete( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsGoalComplete((PlayerNumber)IArg(1)) ); return 1; }
 	static int PlayerIsUsingModifier( T* p, lua_State *L )	{ lua_pushboolean(L, p->PlayerIsUsingModifier((PlayerNumber)IArg(1),SArg(2)) ); return 1; }
 	static int GetCourseSongIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetCourseSongIndex() ); return 1; }
+	static int IsFinalStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsFinalStage() ); return 1; }
 	static int IsExtraStage( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage() ); return 1; }
 	static int IsExtraStage2( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsExtraStage2() ); return 1; }
+	static int HasEarnedExtraStage( T* p, lua_State *L )	{ lua_pushboolean(L, p->HasEarnedExtraStage() ); return 1; }
 	static int GetEasiestStepsDifficulty( T* p, lua_State *L ){ lua_pushnumber(L, p->GetEasiestStepsDifficulty() ); return 1; }
 	static int IsEventMode( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsEventMode() ); return 1; }
 	static int GetNumPlayersEnabled( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumPlayersEnabled() ); return 1; }
@@ -2068,8 +2070,10 @@ public:
 		ADD_METHOD( IsGoalComplete )
 		ADD_METHOD( PlayerIsUsingModifier )
 		ADD_METHOD( GetCourseSongIndex )
+		ADD_METHOD( IsFinalStage )
 		ADD_METHOD( IsExtraStage )
 		ADD_METHOD( IsExtraStage2 )
+		ADD_METHOD( HasEarnedExtraStage )
 		ADD_METHOD( GetEasiestStepsDifficulty )
 		ADD_METHOD( IsEventMode )
 		ADD_METHOD( GetNumPlayersEnabled )
