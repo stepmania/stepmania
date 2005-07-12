@@ -60,7 +60,6 @@ protected:
 	// banner area
 	Banner				m_LargeBanner;
 	AutoActor			m_sprLargeBannerFrame;
-	AutoActor			m_sprStage;
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 	DifficultyMeter		m_DifficultyMeter[NUM_PLAYERS];
 	BitmapText			m_textPlayerOptions[NUM_PLAYERS];

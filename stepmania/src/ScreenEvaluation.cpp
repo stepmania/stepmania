@@ -316,11 +316,6 @@ void ScreenEvaluation::Init()
 				m_sprLargeBannerFrame->SetName( "LargeBannerFrame" );
 				SET_XY_AND_ON_COMMAND( m_sprLargeBannerFrame );
 				this->AddChild( m_sprLargeBannerFrame );
-
-				m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+StageToString(GAMESTATE->GetCurrentStage())) );
-				m_sprStage->SetName( "Stage" );
-				SET_XY_AND_ON_COMMAND( m_sprStage );
-				this->AddChild( m_sprStage );
 			}
 			break;
 		case summary:
@@ -354,11 +349,6 @@ void ScreenEvaluation::Init()
 				m_sprLargeBannerFrame->SetName( "LargeBannerFrame" );
 				SET_XY_AND_ON_COMMAND( m_sprLargeBannerFrame );
 				this->AddChild( m_sprLargeBannerFrame );
-
-				m_sprStage.Load( THEME->GetPathG(m_sName,"stage "+StageToString(GAMESTATE->GetCurrentStage())) );
-				m_sprStage->SetName( "Stage" );
-				SET_XY_AND_ON_COMMAND( m_sprStage );
-				this->AddChild( m_sprStage );
 			}
 			break;
 		default:
@@ -1102,7 +1092,6 @@ void ScreenEvaluation::TweenOffScreen()
 	// large banner area
 	OFF_COMMAND( m_LargeBanner );
 	OFF_COMMAND( m_sprLargeBannerFrame );
-	OFF_COMMAND( m_sprStage );
 	FOREACH_EnabledPlayer( p )
 	{
 		OFF_COMMAND( m_DifficultyIcon[p] );
