@@ -1214,6 +1214,7 @@ public:
 	static int GetSecsIntoEffect( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetSecsIntoEffect() ); return 1; }
 	static int GetEffectDelta( T* p, lua_State *L )	{ lua_pushnumber( L, p->GetEffectDelta() ); return 1; }
 
+	static int GetName( T* p, lua_State *L )			{ lua_pushstring( L, p->GetName() ); return 1; }
 
 	static void Register(lua_State *L) {
   		ADD_METHOD( sleep )
@@ -1337,6 +1338,8 @@ public:
 		ADD_METHOD( GetBaseZoomX )
 		ADD_METHOD( GetSecsIntoEffect )
 		ADD_METHOD( GetEffectDelta )
+
+		ADD_METHOD( GetName )
 
 		Luna<T>::Register( L );
 	}
