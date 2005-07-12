@@ -6,9 +6,6 @@
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 
-#define PREV_SCREEN		THEME->GetMetric ("ScreenSongOptions","PrevScreen")
-#define NEXT_SCREEN		THEME->GetMetric ("ScreenSongOptions","NextScreen")
-
 REGISTER_SCREEN_CLASS( ScreenSongOptions );
 ScreenSongOptions::ScreenSongOptions( CString sClassName ) :
 	ScreenOptionsMaster( sClassName )
@@ -44,23 +41,18 @@ void ScreenSongOptions::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_GoToNextScreen )
 	{
 		if( SCREENMAN->IsStackedScreen(this) )
+		{
 			SCREENMAN->PopTopScreen( SM_BackFromSongOptions );
-		else
-			SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		return;
+			return;
+		}
 	}
 	else if( SM == SM_GoToPrevScreen )
 	{
 		if( SCREENMAN->IsStackedScreen(this) )
 		{
 			SCREENMAN->PopTopScreen( SM_BackFromSongOptions );
+			return;
 		}
-		else
-		{
-			SCREENMAN->DeletePreparedScreens();
-			SCREENMAN->SetNewScreen( PREV_SCREEN );
-		}
-		return;
 	}
 
 	ScreenOptionsMaster::HandleScreenMessage( SM );
