@@ -160,7 +160,7 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
 			bool bResult = PROFILEMAN->RenameLocalProfile( sProfileID, sNewName );
 			if( bResult )
-				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
+				SCREENMAN->SetNewScreen( m_sName );	// reload
 			else
 				ScreenPrompt::Prompt( SM_None, ssprintf("Error renaming profile %s '%s'\nto '%s'.", sProfileID.c_str(), sName.c_str(), sNewName.c_str()) );
 		}
@@ -173,7 +173,7 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 			CString sName = GetSelectedProfileName();
 			bool bResult = PROFILEMAN->DeleteLocalProfile( sProfileID );
 			if( bResult )
-				SCREENMAN->SetNewScreen( "ScreenProfileOptions" );	// reload
+				SCREENMAN->SetNewScreen( m_sName );	// reload
 			else
 				ScreenPrompt::Prompt( SM_None, ssprintf("Error deleting profile %s '%s'.", sName.c_str(), sProfileID.c_str()) );
 		}
