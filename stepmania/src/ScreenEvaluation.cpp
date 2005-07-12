@@ -1351,12 +1351,7 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 			case stage:
 				if( m_bTryExtraStage || !(GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() ) )
 				{
-					/* Finish the stage before moving on, so the stage counter will be correct
-					 * for ScreenSelectMusic code which is called before the ctor.  Grab NEXT_SCREEN
-					 * first, NEXT_SCREEN is a Lua script that depends on the stage counter. */
-					CString sNextScreen = NEXT_SCREEN;
-					GAMESTATE->FinishStage();
-					SCREENMAN->SetNewScreen( sNextScreen );
+					SCREENMAN->SetNewScreen( NEXT_SCREEN );
 					break;
 				}
 
