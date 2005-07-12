@@ -52,9 +52,6 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define BAR_ACTUAL_MAX_COMMAND				THEME->GetMetricA(m_sName,"BarActualMaxCommand")
 
 // metrics that are specific to classes derived from ScreenEvaluation
-#define FAILED_SCREEN						THEME->GetMetric (m_sName, "FailedScreen")
-#define NEXT_SCREEN							THEME->GetMetric (m_sName,"NextScreen")
-#define END_SCREEN							THEME->GetMetric (m_sName,"EndScreen")
 #define SHOW_BANNER_AREA					THEME->GetMetricB(m_sName,"ShowBannerArea")
 #define SHOW_GRADE_AREA						THEME->GetMetricB(m_sName,"ShowGradeArea")
 #define SHOW_POINTS_AREA					THEME->GetMetricB(m_sName,"ShowPointsArea")
@@ -1319,43 +1316,8 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
-		if( GAMESTATE->IsEventMode() )
-		{
-			SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		}
-		else
-		{
-			/* Go to FAILED_SCREEN if we failed a non-extra stage. */
-			bool bReallyFailed = m_bFailed && !(GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2());
-
-			// If failed and not in event mode, go to the game over screen.
-			if( bReallyFailed )
-			{
-				SCREENMAN->SetNewScreen( FAILED_SCREEN );
-				return;
-			}
-
-			/* We passed.  If we have another stage to play, go to NEXT_SCREEN. */
-			switch( m_Type )
-			{
-			case stage:
-				if( m_bTryExtraStage || !(GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() ) )
-				{
-					SCREENMAN->SetNewScreen( NEXT_SCREEN );
-					break;
-				}
-
-			case summary:
-			case course:
-				SCREENMAN->SetNewScreen( END_SCREEN );
-				break;
-			}
-		}
-
 		if(	m_sndPassFail.IsPlaying() )
 			m_sndPassFail.Stop();
-
-		return;
 	}
 	else if( SM == SM_PlayCheer )
 	{
