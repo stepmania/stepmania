@@ -126,9 +126,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			}
 		}
 	}
-
-
-	if( SM == SM_GoToNextScreen )
+	else if( SM == SM_GoToNextScreen )
 	{
 		vector<PlayerNumber> v;
 		v.push_back( GAMESTATE->m_MasterPlayerNumber );
