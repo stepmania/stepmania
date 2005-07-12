@@ -3,8 +3,6 @@
 #ifndef LOADING_WINDOW_H
 #define LOADING_WINDOW_H
 
-#include "global.h"
-
 struct RageSurface;
 class LoadingWindow
 {
