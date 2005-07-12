@@ -9,7 +9,6 @@ public:
 	RageDisplay_D3D();
 	~RageDisplay_D3D();
 	CString Init( VideoModeParams p );
-	void Update(float fDeltaTime);
 
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;

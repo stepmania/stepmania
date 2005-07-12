@@ -279,11 +279,6 @@ CString RageDisplay_D3D::Init( VideoModeParams p )
 	return SetVideoMode( p, bIgnore );
 }
 
-void RageDisplay_D3D::Update(float fDeltaTime)
-{
-	GraphicsWindow::Update();
-}
-
 RageDisplay_D3D::~RageDisplay_D3D()
 {
 	LOG->Trace( "RageDisplay_D3D::~RageDisplay()" );
@@ -650,6 +645,8 @@ void RageDisplay_D3D::EndFrame()
 	g_pd3dDevice->EndScene();
 	g_pd3dDevice->Present( 0, 0, 0, 0 );
 	ProcessStatsOnFlip();
+
+	GraphicsWindow::Update();
 }
 
 bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
