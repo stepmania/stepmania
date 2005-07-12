@@ -31,9 +31,6 @@
 
 const int NUM_SCORE_DIGITS	=	9;
 
-#define NEXT_SCREEN							THEME->GetMetric (m_sName,"NextScreen")
-#define PREV_SCREEN							THEME->GetMetric (m_sName,"PrevScreen")
-#define NEXT_OPTIONS_SCREEN					THEME->GetMetric (m_sName,"NextOptionsScreen")
 #define SCORE_SORT_CHANGE_COMMAND(i) 		THEME->GetMetricA(m_sName,ssprintf("ScoreP%iSortChangeCommand", i+1))
 #define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetricA(m_sName,ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
 #define METER_TYPE							THEME->GetMetric (m_sName,"MeterType")
@@ -1092,14 +1089,10 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GoToPrevScreen )
 	{
-		SCREENMAN->DeletePreparedScreens();
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
-
 		/* We may have stray SM_SongChanged messages from the music wheel.  We can't
 		 * handle them anymore, since the title menu (and attract screens) reset
 		 * the game state, so just discard them. */
 		ClearMessageQueue();
-		return;
 	}
 	else if( SM == SM_BeginFadingOut )
 	{
@@ -1111,16 +1104,8 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
-		if( m_bGoToOptions )
-		{
-			SCREENMAN->SetNewScreen( NEXT_OPTIONS_SCREEN );
-		}
-		else
-		{
+		if( !m_bGoToOptions )
 			SOUND->StopMusic();
-			SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		}
-		return;
 	}
 	else if( SM == SM_SongChanged )
 	{
@@ -1846,6 +1831,25 @@ void ScreenSelectMusic::SortOrderChanged()
 	// tween music sort on screen
 //	m_MusicSortDisplay.FadeOn( 0, "fade", TWEEN_TIME );
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaScreenSelectMusic: public Luna<ScreenSelectMusic>
+{
+public:
+	LunaScreenSelectMusic() { LUA->Register( Register ); }
+
+	static int GetGoToOptions( T* p, lua_State *L ) { lua_pushboolean( L, p->GetGoToOptions() ); return 1; }
+	static void Register( Lua *L )
+	{
+  		ADD_METHOD( GetGoToOptions )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScreenSelectMusic, ScreenWithMenuElements )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford

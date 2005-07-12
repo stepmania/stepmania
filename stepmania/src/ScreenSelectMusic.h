@@ -38,6 +38,13 @@ public:
 	virtual void MenuStart( PlayerNumber pn );
 	virtual void MenuBack( PlayerNumber pn );
 
+	bool GetGoToOptions() const { return m_bGoToOptions; }
+
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+
 protected:
 	void TweenOnScreen();
 	void TweenOffScreen();
