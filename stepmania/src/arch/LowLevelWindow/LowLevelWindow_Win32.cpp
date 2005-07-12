@@ -216,7 +216,7 @@ void LowLevelWindow_Win32::SwapBuffers()
 	::SwapBuffers( GraphicsWindow::GetHDC() );
 }
 
-void LowLevelWindow_Win32::Update( float fDeltaTime )
+void LowLevelWindow_Win32::Update()
 {
 	GraphicsWindow::Update();
 }

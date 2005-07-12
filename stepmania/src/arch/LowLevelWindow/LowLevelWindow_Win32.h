@@ -11,7 +11,7 @@ public:
 	void *GetProcAddress( CString s );
 	CString TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut );
 	void SwapBuffers();
-	void Update( float fDeltaTime );
+	void Update();
 
 	RageDisplay::VideoModeParams GetVideoModeParams() const;
 };

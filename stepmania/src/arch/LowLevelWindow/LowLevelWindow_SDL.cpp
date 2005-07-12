@@ -178,7 +178,7 @@ void LowLevelWindow_SDL::SwapBuffers()
 	SDL_GL_SwapBuffers();
 }
 
-void LowLevelWindow_SDL::Update(float fDeltaTime)
+void LowLevelWindow_SDL::Update()
 {
 	/* This needs to be called before anything that handles SDL events. */
 	SDL_PumpEvents();

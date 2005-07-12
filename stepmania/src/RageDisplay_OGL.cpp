@@ -486,7 +486,7 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 
 void RageDisplay_OGL::Update(float fDeltaTime)
 {
-	wind->Update(fDeltaTime);
+	wind->Update();
 
 	if( PREFSMAN->m_bDisableScreenSaver )
 	{

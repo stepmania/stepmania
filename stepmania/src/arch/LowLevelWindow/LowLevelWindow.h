@@ -20,7 +20,7 @@ public:
 	virtual CString TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut ) = 0;
 
 	virtual void SwapBuffers() = 0;
-	virtual void Update(float fDeltaTime) { }
+	virtual void Update() { }
 
 	virtual RageDisplay::VideoModeParams GetVideoModeParams() const = 0;
 };
