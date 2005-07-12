@@ -1334,7 +1334,6 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 				continue;
 
 			int increment = STATSMAN->m_CurStageStats.m_player[p].iBonus/10;
-			/* XXX: What's this supposed to do?  If i < 1, then min(i, 1024) is i ... */
 			if( increment < 1 )
 				increment = min( 1024, STATSMAN->m_CurStageStats.m_player[p].iBonus );
 
