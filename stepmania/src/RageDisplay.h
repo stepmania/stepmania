@@ -3,7 +3,6 @@
 #ifndef RAGEDISPLAY_H
 #define RAGEDISPLAY_H
 
-#include "global.h"
 #include "RageTypes.h"
 #include "ModelTypes.h"
 
@@ -67,7 +66,7 @@ public:
 	};
 
 	static CString PixelFormatToString( PixelFormat pixfmt );
-	virtual const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const = 0;
+	virtual const PixelFormatDesc *GetPixelFormatDesc( PixelFormat pf ) const = 0;
 
 	struct VideoModeParams
 	{
@@ -126,7 +125,7 @@ public:
 	/* This is needed or the overridden classes' dtors will not be called. */
 	virtual ~RageDisplay() { }
 
-	virtual void Update(float fDeltaTime) { }
+	virtual void Update( float fDeltaTime ) { }
 
 	// Don't override this.  Override TryVideoMode() instead.
 	// This will set the video mode to be as close as possible to params.
@@ -242,8 +241,7 @@ protected:
 	// need to be reloaded.
 	virtual CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut ) = 0;
 
-	void DrawPolyLine(const RageSpriteVertex &p1, const RageSpriteVertex &p2, float LineWidth );
-
+	void DrawPolyLine( const RageSpriteVertex &p1, const RageSpriteVertex &p2, float LineWidth );
 
 	// Stuff in RageDisplay.cpp
 	void SetDefaultRenderStates();
@@ -291,7 +289,7 @@ public:
 	PixelFormat FindPixelFormat( int bpp, int Rmask, int Gmask, int Bmask, int Amask, bool realtime=false );
 
 protected:
-	RageMatrix GetPerspectiveMatrix(float fovy, float aspect, float zNear, float zFar);
+	RageMatrix GetPerspectiveMatrix( float fovy, float aspect, float zNear, float zFar );
 
 	// Different for D3D and OpenGL.  Not sure why they're not compatible. -Chris
 	virtual RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
