@@ -37,6 +37,7 @@ public:
 	virtual void RunCommandsOnLeaves( const LuaReference& cmds, Actor* pParent ); /* but not on self */
 
 	virtual void UpdateInternal( float fDeltaTime );
+	virtual void ProcessMessages( float fDeltaTime );
 	virtual void DrawPrimitives();
 
 	// propagated commands
