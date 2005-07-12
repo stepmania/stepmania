@@ -463,7 +463,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	if( m_CurrentPage == PAGE_2 )
 	{
 		// choose this for all the other players too
-		FOREACH_PlayerNumber( p )
+		FOREACH_HumanPlayer( p )
 		{
 			if( m_bChosen[p] )
 				continue;
