@@ -1,7 +1,6 @@
 #include "global.h"
 #include "ScreenNameEntryTraditional.h"
 #include "SongManager.h"
-#include "ScreenManager.h"
 #include "GameConstantsAndTypes.h"
 #include "RageUtil.h"
 #include "PrefsManager.h"
@@ -20,7 +19,6 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "StatsManager.h"
-#include "RageDisplay.h"
 #include "Foreach.h"
 #include "Style.h"
 #include "ScreenDimensions.h"
@@ -29,7 +27,6 @@
 //
 // Defines specific to ScreenNameEntryTraditional
 //
-#define NEXT_SCREEN					THEME->GetMetric(m_sName,"NextScreen")
 static const ThemeMetric<apActorCommands>	ALPHABET_INIT_COMMMAND	("ScreenNameEntryTraditional","AlphabetInitCommand");	// TODO: remove hard coded name
 static const ThemeMetric<apActorCommands>	OK_INIT_COMMMAND		("ScreenNameEntryTraditional","OKInitCommand");	// TODO: remove hard coded name
 
@@ -570,10 +567,8 @@ void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 		ChangeDisplayedFeat();
 		this->PostScreenMessage( SM_ChangeDisplayedFeat, FEAT_INTERVAL );
 	}
-	else if( SM == SM_GoToNextScreen )
-	{
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-	}
+
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 void ScreenNameEntryTraditional::Finish( PlayerNumber pn )
