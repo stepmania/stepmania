@@ -514,14 +514,6 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		}
 		this->HandleScreenMessage( SM_GoToNextScreen );
 	}
-	else if( SM == SM_GoToNextScreen )
-	{
-		this->GoToNextScreen();
-	}
-	else if( SM == SM_GoToPrevScreen )
-	{
-		this->GoToPrevScreen();
-	}
 	else if( SM == SM_BeginFadingOut )
 	{
 		if(IsTransitioning())
@@ -540,6 +532,8 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	{
 		INPUTFILTER->ResetRepeatRate();
 	}
+
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 
