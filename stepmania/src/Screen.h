@@ -53,6 +53,11 @@ public:
 
 	static bool JoinInput( const MenuInput &MenuI );	// return true if a player joined
 
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+
 protected:
 	// structure for holding messages sent to a Screen
 	struct QueuedScreenMessage {

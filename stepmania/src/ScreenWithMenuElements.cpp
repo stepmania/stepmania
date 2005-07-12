@@ -269,6 +269,23 @@ void ScreenWithMenuElements::UpdateStage()
 		m_sprStage[s]->SetHidden( s != GAMESTATE->GetCurrentStage() );
 }
 
+// lua start
+#include "LuaBinding.h"
+
+class LunaScreenWithMenuElements: public Luna<ScreenWithMenuElements>
+{
+public:
+	LunaScreenWithMenuElements() { LUA->Register( Register ); }
+
+	static void Register( Lua *L )
+	{
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScreenWithMenuElements, Screen )
+// lua end
+
 /*
  * (c) 2004 Chris Danford
  * All rights reserved.

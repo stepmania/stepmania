@@ -30,6 +30,11 @@ public:
 
 	void TweenOffScreen();
 
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+
 protected:
 	virtual void HandleMessage( const CString& sMessage );
 

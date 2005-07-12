@@ -255,6 +255,23 @@ void Screen::ClearMessageQueue( const ScreenMessage SM )
 			m_QueuedMessages.erase( m_QueuedMessages.begin()+i ); 
 }
 
+// lua start
+#include "LuaBinding.h"
+
+class LunaScreen: public Luna<Screen>
+{
+public:
+	LunaScreen() { LUA->Register( Register ); }
+
+	static void Register( Lua *L )
+	{
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( Screen, ActorFrame )
+// lua end
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
