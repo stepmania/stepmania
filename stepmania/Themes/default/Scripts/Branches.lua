@@ -30,6 +30,14 @@ function SMOnlineScreen()
 	return "ScreenNetRoom"
 end	
 
+function GetSelectMusicNext()
+	if SCREENMAN:GetTopScreen():GetGoToOptions() then
+		return SelectFirstOptionsScreen()
+	else
+		return "ScreenStage"
+	end
+end
+
 function SelectFirstOptionsScreen()
 	if PlayModeName() == "Rave" then return "ScreenRaveOptions" end
 	return "ScreenPlayerOptions"
