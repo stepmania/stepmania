@@ -69,16 +69,6 @@ void ScreenNetworkOptions::Init()
 }
 
 
-void ScreenNetworkOptions::GoToPrevScreen()
-{
-	SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
-}
-
-void ScreenNetworkOptions::GoToNextScreen()
-{
-	GoToPrevScreen();
-}
-
 void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_DoneConnecting )
@@ -107,6 +97,16 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 			else
 				SCREENMAN->SystemMessage( "Server failed: " + NSMAN->LANserver->lastError + ssprintf(" Code:%d",NSMAN->LANserver->lastErrorCode) );
 		}
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
+		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
+		return;
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
+		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
+		return;
 	}
 
 	ScreenOptions::HandleScreenMessage( SM );

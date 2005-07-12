@@ -146,6 +146,41 @@ void ScreenEditCourse::Init()
 
 void ScreenEditCourse::HandleScreenMessage( const ScreenMessage SM )
 {
+	if( SM == SM_GoToNextScreen )
+	{
+		switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
+		{
+		default:
+		case ROW_TITLE:
+		case ROW_REPEAT:
+		case ROW_RANDOMIZE:
+		case ROW_LIVES:
+		case ROW_TYPE:
+		case ROW_TYPE_METER:
+			ASSERT(0);
+		case ROW_INSERT_ENTRY:
+		case ROW_DELETE_ENTRY:
+			SCREENMAN->SetNewScreen( "ScreenEditCourse" );
+			break;
+		case ROW_EDIT_ENTRY:
+			SCREENMAN->SetNewScreen( "ScreenEditCourseEntry" );
+			break;
+		case ROW_DONE:
+			SCREENMAN->SetNewScreen( "ScreenCourseManager" );
+			break;
+		}
+		return;
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
+		// revert
+		Course *pCourse = GAMESTATE->m_pCurCourse;
+		*pCourse = m_Original;
+
+		SCREENMAN->SetNewScreen( "ScreenCourseManager" );
+		return;
+	}
+
 	ScreenOptions::HandleScreenMessage( SM );
 }
 	
@@ -243,40 +278,6 @@ void ScreenEditCourse::ImportOptions( int iRow, const vector<PlayerNumber> &vpns
 void ScreenEditCourse::ExportOptions( int row, const vector<PlayerNumber> &vpns )
 {
 
-}
-
-void ScreenEditCourse::GoToNextScreen()
-{
-	switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
-	{
-	default:
-	case ROW_TITLE:
-	case ROW_REPEAT:
-	case ROW_RANDOMIZE:
-	case ROW_LIVES:
-	case ROW_TYPE:
-	case ROW_TYPE_METER:
-		ASSERT(0);
-	case ROW_INSERT_ENTRY:
-	case ROW_DELETE_ENTRY:
-		SCREENMAN->SetNewScreen( "ScreenEditCourse" );
-		break;
-	case ROW_EDIT_ENTRY:
-		SCREENMAN->SetNewScreen( "ScreenEditCourseEntry" );
-		break;
-	case ROW_DONE:
-		SCREENMAN->SetNewScreen( "ScreenCourseManager" );
-		break;
-	}
-}
-
-void ScreenEditCourse::GoToPrevScreen()
-{
-	// revert
-	Course *pCourse = GAMESTATE->m_pCurCourse;
-	*pCourse = m_Original;
-
-	SCREENMAN->SetNewScreen( "ScreenCourseManager" );
 }
 
 void ScreenEditCourse::ProcessMenuStart( PlayerNumber pn, const InputEventType type )

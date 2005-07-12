@@ -39,25 +39,31 @@ void ScreenSongOptions::ExportOptions( int row, const vector<PlayerNumber> &vpns
 		GAMESTATE->m_bChangedFailTypeOnScreenSongOptions = true;
 }
 
-void ScreenSongOptions::GoToPrevScreen()
+void ScreenSongOptions::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SCREENMAN->IsStackedScreen(this) )
+	if( SM == SM_GoToNextScreen )
 	{
-		SCREENMAN->PopTopScreen( SM_BackFromSongOptions );
+		if( SCREENMAN->IsStackedScreen(this) )
+			SCREENMAN->PopTopScreen( SM_BackFromSongOptions );
+		else
+			SCREENMAN->SetNewScreen( NEXT_SCREEN );
+		return;
 	}
-	else
+	else if( SM == SM_GoToPrevScreen )
 	{
-		SCREENMAN->DeletePreparedScreens();
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
+		if( SCREENMAN->IsStackedScreen(this) )
+		{
+			SCREENMAN->PopTopScreen( SM_BackFromSongOptions );
+		}
+		else
+		{
+			SCREENMAN->DeletePreparedScreens();
+			SCREENMAN->SetNewScreen( PREV_SCREEN );
+		}
+		return;
 	}
-}
 
-void ScreenSongOptions::GoToNextScreen()
-{
-	if( SCREENMAN->IsStackedScreen(this) )
-		SCREENMAN->PopTopScreen( SM_BackFromSongOptions );
-	else
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
+	ScreenOptionsMaster::HandleScreenMessage( SM );
 }
 
 /*

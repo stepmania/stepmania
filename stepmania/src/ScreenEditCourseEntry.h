@@ -17,9 +17,6 @@ protected:
 	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns ) {}
 	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
 	
-	virtual void GoToNextScreen();
-	virtual void GoToPrevScreen();
-
 	virtual void AfterChangeValueInRow( PlayerNumber pn );
 	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
 

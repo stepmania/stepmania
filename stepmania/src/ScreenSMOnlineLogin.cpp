@@ -95,39 +95,6 @@ void ScreenSMOnlineLogin::ExportOptions( int row, const vector<PlayerNumber> &vp
 	}
 }
 
-void ScreenSMOnlineLogin::GoToPrevScreen()
-{
-	SCREENMAN->SetNewScreen(PREV_SCREEN);
-}
-
-void ScreenSMOnlineLogin::GoToNextScreen()
-{
-	vector<PlayerNumber> v;
-	v.push_back( GAMESTATE->m_MasterPlayerNumber );
-	for( unsigned r=0; r<m_pRows.size(); r++ )
-		ExportOptions( r, v );
-
-	PREFSMAN->SaveGlobalPrefsToDisk();
-	FOREACH_EnabledPlayer(pn)
-	{
-		PROFILEMAN->LoadLocalProfileFromMachine((PlayerNumber) pn);
-	}
-
-	if(GAMESTATE->IsPlayerEnabled((PlayerNumber) 0) && GAMESTATE->IsPlayerEnabled((PlayerNumber) 1) &&
-		(GAMESTATE->GetPlayerDisplayName((PlayerNumber) 0) == GAMESTATE->GetPlayerDisplayName((PlayerNumber) 1)))
-	{
-		SCREENMAN->SystemMessage("Each Player Needs A Unique Profile!");
-		SCREENMAN->SetNewScreen("ScreenSMOnlineLogin");
-	}
-	else
-	{
-		m_iPlayer=0;
-		while(!GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer))
-			++m_iPlayer;
-		ScreenTextEntry::Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter your password.", NULL );
-	}
-}
-
 void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 {
 	if( SM == SM_PasswordDone )
@@ -159,6 +126,42 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			}
 		}
 	}
+
+
+	if( SM == SM_GoToNextScreen )
+	{
+		vector<PlayerNumber> v;
+		v.push_back( GAMESTATE->m_MasterPlayerNumber );
+		for( unsigned r=0; r<m_pRows.size(); r++ )
+			ExportOptions( r, v );
+
+		PREFSMAN->SaveGlobalPrefsToDisk();
+		FOREACH_EnabledPlayer(pn)
+		{
+			PROFILEMAN->LoadLocalProfileFromMachine((PlayerNumber) pn);
+		}
+
+		if(GAMESTATE->IsPlayerEnabled((PlayerNumber) 0) && GAMESTATE->IsPlayerEnabled((PlayerNumber) 1) &&
+			(GAMESTATE->GetPlayerDisplayName((PlayerNumber) 0) == GAMESTATE->GetPlayerDisplayName((PlayerNumber) 1)))
+		{
+			SCREENMAN->SystemMessage("Each Player Needs A Unique Profile!");
+			SCREENMAN->SetNewScreen("ScreenSMOnlineLogin");
+		}
+		else
+		{
+			m_iPlayer=0;
+			while(!GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer))
+				++m_iPlayer;
+			ScreenTextEntry::Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter your password.", NULL );
+		}
+		return;
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
+		SCREENMAN->SetNewScreen(PREV_SCREEN);
+		return;
+	}
+
 	ScreenOptions::HandleScreenMessage(SM);
 }
 

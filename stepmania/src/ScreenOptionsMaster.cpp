@@ -154,29 +154,6 @@ void ScreenOptionsMaster::BeginFadingOut()
 		ScreenOptions::BeginFadingOut();
 }
 
-void ScreenOptionsMaster::GoToNextScreen()
-{
-	if( SCREENMAN->IsStackedScreen(this) )
-		SCREENMAN->PopTopScreen( SM_None );
-	else if( m_bExportWillSetANewScreen )
-		;	// Do nothing.  Let Export set the screen.
-	else if( NEXT_SCREEN != "" )
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-}
-
-void ScreenOptionsMaster::GoToPrevScreen()
-{
-	if( SCREENMAN->IsStackedScreen(this) )
-	{
-		SCREENMAN->PopTopScreen( SM_None );
-	}
-	else
-	{
-		SCREENMAN->DeletePreparedScreens();
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
-	}
-}
-
 void ScreenOptionsMaster::RefreshIcons( int r, PlayerNumber pn )
 {
 	OptionRow &row = *m_pRows[r];
@@ -272,6 +249,30 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		CHECKPOINT;
 		if( !(m_iChangeMask & OPT_RESET_GAME) )
 			this->HandleScreenMessage( SM_GoToNextScreen );
+		return;
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
+		if( SCREENMAN->IsStackedScreen(this) )
+			SCREENMAN->PopTopScreen( SM_None );
+		else if( m_bExportWillSetANewScreen )
+			;	// Do nothing.  Let Export set the screen.
+		else if( NEXT_SCREEN != "" )
+			SCREENMAN->SetNewScreen( NEXT_SCREEN );
+		return;
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
+		if( SCREENMAN->IsStackedScreen(this) )
+		{
+			SCREENMAN->PopTopScreen( SM_None );
+		}
+		else
+		{
+			SCREENMAN->DeletePreparedScreens();
+			SCREENMAN->SetNewScreen( PREV_SCREEN );
+		}
+		return;
 	}
 	else
 		ScreenOptions::HandleScreenMessage( SM );

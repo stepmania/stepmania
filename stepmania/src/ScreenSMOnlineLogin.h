@@ -15,8 +15,6 @@ public:
 private:
 	void ImportOptions( int row, const vector<PlayerNumber> &vpns );
 	void ExportOptions( int row, const vector<PlayerNumber> &vpns );
-	void GoToNextScreen();
-	void GoToPrevScreen();
 	CString GetSelectedProfileID();
 	int	m_iPlayer;
 };

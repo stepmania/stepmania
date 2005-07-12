@@ -25,8 +25,6 @@ protected:
 	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
 
 	virtual void BeginFadingOut();
-	virtual void GoToNextScreen();
-	virtual void GoToPrevScreen();
 
 	virtual void RefreshIcons( int row, PlayerNumber pn );
 };

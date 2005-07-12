@@ -112,6 +112,36 @@ void ScreenEditCourseEntry::Init()
 
 void ScreenEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 {
+	if( SM == SM_GoToNextScreen )
+	{
+		switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
+		{
+		case ROW_SONG_GROUP: 
+		case ROW_SONG: 
+		case ROW_BASE_DIFFICULTY: 
+		case ROW_LOW_METER:
+		case ROW_HIGH_METER: 
+		case ROW_CHOOSE_INDEX: 
+			break;
+		case ROW_SET_MODS:
+			SCREENMAN->SetNewScreen( "ScreenEditCourseMods" );
+			break;
+		case ROW_DONE:
+			SCREENMAN->SetNewScreen( "ScreenEditCourse" );
+			break;
+		}
+		return;
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
+		// revert
+		Course *pCourse = GAMESTATE->m_pCurCourse;
+		pCourse->m_vEntries[ GAMESTATE->m_iEditCourseEntryIndex ] = m_Original;
+
+		SCREENMAN->SetNewScreen( "ScreenEditCourse" );
+		return;
+	}
+
 	ScreenOptions::HandleScreenMessage( SM );
 }
 	
@@ -299,35 +329,6 @@ void ScreenEditCourseEntry::ImportAllOptions()
 void ScreenEditCourseEntry::ExportOptions( int row, const vector<PlayerNumber> &vpns )
 {
 
-}
-
-void ScreenEditCourseEntry::GoToNextScreen()
-{
-	switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
-	{
-	case ROW_SONG_GROUP: 
-	case ROW_SONG: 
-	case ROW_BASE_DIFFICULTY: 
-	case ROW_LOW_METER:
-	case ROW_HIGH_METER: 
-	case ROW_CHOOSE_INDEX: 
-		break;
-	case ROW_SET_MODS:
-		SCREENMAN->SetNewScreen( "ScreenEditCourseMods" );
-		break;
-	case ROW_DONE:
-		SCREENMAN->SetNewScreen( "ScreenEditCourse" );
-		break;
-	}
-}
-
-void ScreenEditCourseEntry::GoToPrevScreen()
-{
-	// revert
-	Course *pCourse = GAMESTATE->m_pCurCourse;
-	pCourse->m_vEntries[ GAMESTATE->m_iEditCourseEntryIndex ] = m_Original;
-
-	SCREENMAN->SetNewScreen( "ScreenEditCourse" );
 }
 
 void ScreenEditCourseEntry::ProcessMenuStart( PlayerNumber pn, const InputEventType type )

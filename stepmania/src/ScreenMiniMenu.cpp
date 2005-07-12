@@ -135,16 +135,22 @@ void ScreenMiniMenu::ExportOptions( int r, const vector<PlayerNumber> &vpns )
 	s_viLastAnswers[r] = m_pRows[r]->GetOneSharedSelection( true );
 }
 
-void ScreenMiniMenu::GoToNextScreen()
+void ScreenMiniMenu::HandleScreenMessage( const ScreenMessage SM )
 {
-	s_bCancelled = false;
-	SCREENMAN->PopTopScreen( m_SMSendOnOK );
-}
+	if( SM == SM_GoToNextScreen )
+	{
+		s_bCancelled = false;
+		SCREENMAN->PopTopScreen( m_SMSendOnOK );
+		return;
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
+		s_bCancelled = true;
+		SCREENMAN->PopTopScreen( m_SMSendOnCancel );
+		return;
+	}
 
-void ScreenMiniMenu::GoToPrevScreen()
-{
-	s_bCancelled = true;
-	SCREENMAN->PopTopScreen( m_SMSendOnCancel );
+	ScreenOptions::HandleScreenMessage( SM );
 }
 
 

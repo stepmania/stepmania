@@ -83,15 +83,13 @@ public:
 
 	ScreenMiniMenu( CString sScreenClass );
 	void Init( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel );
+	void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
 	virtual void OnChange( PlayerNumber pn );
 	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
 	
-	virtual void GoToNextScreen();
-	virtual void GoToPrevScreen();
-
 	// Screens that get pushed on top of other screens don't
 	// use the ScreenManager's shared background, so they must draw their own.
 	AutoActor		m_Background;

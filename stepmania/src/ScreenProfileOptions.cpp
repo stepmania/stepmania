@@ -126,20 +126,20 @@ void ScreenProfileOptions::ExportOptions( int row, const vector<PlayerNumber> &v
 	}
 }
 
-void ScreenProfileOptions::GoToPrevScreen()
-{
-	SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
-}
-
-void ScreenProfileOptions::GoToNextScreen()
-{
-	PREFSMAN->SaveGlobalPrefsToDisk();
-	GoToPrevScreen();
-}
-
 void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SM == SM_DoneCreating)
+	if( SM == SM_GoToNextScreen )
+	{
+		PREFSMAN->SaveGlobalPrefsToDisk();
+		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
+		return;
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
+		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
+		return;
+	}
+	else if( SM == SM_DoneCreating )
 	{
 		if( !ScreenTextEntry::s_bCancelledLast && ScreenTextEntry::s_sLastAnswer != "" )
 		{

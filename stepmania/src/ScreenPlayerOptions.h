@@ -22,9 +22,6 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 private:
-	void GoToNextScreen();
-	void GoToPrevScreen();
-
 	vector<bool>	m_bRowCausesDisqualified[NUM_PLAYERS];
 	void UpdateDisqualified( int row, PlayerNumber pn );
 

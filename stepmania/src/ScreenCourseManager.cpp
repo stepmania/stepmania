@@ -86,6 +86,58 @@ void ScreenCourseManager::Init()
 
 void ScreenCourseManager::HandleScreenMessage( const ScreenMessage SM )
 {
+	if( SM == SM_GoToNextScreen )
+	{
+		switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
+		{
+		default:
+			ASSERT(0);
+		case ROW_COURSE_GROUP:
+			SCREENMAN->PlayInvalidSound();
+			break;
+		case ROW_COURSE:
+			SCREENMAN->PlayInvalidSound();
+			break;
+		case ROW_ACTION:
+			{
+				OptionRow &row = *m_pRows[ROW_ACTION];
+				int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+
+				vector<CourseManagerAction> vActions;
+				GetPossibleActions( vActions );
+				CourseManagerAction action = vActions[iChoice];
+
+				switch( action )
+				{
+				default:
+					ASSERT(0);
+				case ACTION_EDIT:
+					GAMESTATE->m_iEditCourseEntryIndex.Set( 0 );
+					SCREENMAN->SetNewScreen( "ScreenEditCourse" );
+					break;
+				case ACTION_DELETE:
+					SCREENMAN->PlayInvalidSound();
+					break;
+				case ACTION_COPY_TO_NEW:
+					SCREENMAN->PlayInvalidSound();
+					break;
+				case ACTION_CREATE_NEW:
+					SCREENMAN->PlayInvalidSound();
+					break;
+				}
+			}
+			break;
+		case ROW_DONE:
+			SCREENMAN->SetNewScreen( FIRST_ATTRACT_SCREEN );
+			break;
+		}
+		return;
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
+		SCREENMAN->SetNewScreen( FIRST_ATTRACT_SCREEN );
+		return;
+	}
 	ScreenOptions::HandleScreenMessage( SM );
 }
 	
@@ -176,58 +228,6 @@ void ScreenCourseManager::ImportOptions( int row, const vector<PlayerNumber> &vp
 void ScreenCourseManager::ExportOptions( int row, const vector<PlayerNumber> &vpns )
 {
 
-}
-
-void ScreenCourseManager::GoToNextScreen()
-{
-	switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
-	{
-	default:
-		ASSERT(0);
-	case ROW_COURSE_GROUP:
-		SCREENMAN->PlayInvalidSound();
-		break;
-	case ROW_COURSE:
-		SCREENMAN->PlayInvalidSound();
-		break;
-	case ROW_ACTION:
-		{
-			OptionRow &row = *m_pRows[ROW_ACTION];
-			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-
-			vector<CourseManagerAction> vActions;
-			GetPossibleActions( vActions );
-			CourseManagerAction action = vActions[iChoice];
-
-			switch( action )
-			{
-			default:
-				ASSERT(0);
-			case ACTION_EDIT:
-				GAMESTATE->m_iEditCourseEntryIndex.Set( 0 );
-				SCREENMAN->SetNewScreen( "ScreenEditCourse" );
-				break;
-			case ACTION_DELETE:
-				SCREENMAN->PlayInvalidSound();
-				break;
-			case ACTION_COPY_TO_NEW:
-				SCREENMAN->PlayInvalidSound();
-				break;
-			case ACTION_CREATE_NEW:
-				SCREENMAN->PlayInvalidSound();
-				break;
-			}
-		}
-		break;
-	case ROW_DONE:
-		SCREENMAN->SetNewScreen( FIRST_ATTRACT_SCREEN );
-		break;
-	}
-}
-
-void ScreenCourseManager::GoToPrevScreen()
-{
-	SCREENMAN->SetNewScreen( FIRST_ATTRACT_SCREEN );
 }
 
 /*

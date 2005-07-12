@@ -10,12 +10,10 @@ class ScreenSongOptions : public ScreenOptionsMaster
 public:
 	ScreenSongOptions( CString sName );
 	virtual void Init();
+	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 private:
 	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
-
-	void GoToNextScreen();
-	void GoToPrevScreen();
 };
 
 #endif

@@ -144,32 +144,33 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 		}
 	}
 
+	if( SM == SM_GoToNextScreen )
+	{
+		if( SCREENMAN->IsStackedScreen(this) )
+		{
+			SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
+		}
+		else
+		{
+			SCREENMAN->SetNewScreen( NEXT_SCREEN );
+		}
+		return;
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
+		if( SCREENMAN->IsStackedScreen(this) )
+		{
+			SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
+		}
+		else
+		{
+			SCREENMAN->DeletePreparedScreens();
+			SCREENMAN->SetNewScreen( PREV_SCREEN );
+		}
+		return;
+	}
+
 	ScreenOptionsMaster::HandleScreenMessage( SM );
-}
-
-void ScreenPlayerOptions::GoToPrevScreen()
-{
-	if( SCREENMAN->IsStackedScreen(this) )
-	{
-		SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
-	}
-	else
-	{
-		SCREENMAN->DeletePreparedScreens();
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
-	}
-}
-
-void ScreenPlayerOptions::GoToNextScreen()
-{
-	if( SCREENMAN->IsStackedScreen(this) )
-	{
-		SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
-	}
-	else
-	{
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-	}
 }
 
 void ScreenPlayerOptions::UpdateDisqualified( int row, PlayerNumber pn )
