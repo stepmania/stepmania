@@ -1,9 +1,12 @@
 #include "global.h"
 #include "MessageManager.h"
 #include "Foreach.h"
-#include "Actor.h"
 #include "RageUtil.h"
+#include "RageThreads.h"
 #include "EnumHelper.h"
+
+#include <set>
+#include <map>
 
 MessageManager*	MESSAGEMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -54,6 +57,10 @@ static const CString MessageNames[] = {
 };
 XToString( Message, NUM_MESSAGES );
 
+static RageMutex g_Mutex( "MessageManager" );
+
+typedef set<IMessageSubscriber*> SubscribersSet;
+static map<CString,SubscribersSet> g_MessageToSubscribers;
 
 MessageManager::MessageManager()
 {
@@ -65,7 +72,9 @@ MessageManager::~MessageManager()
 
 void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, const CString& sMessage )
 {
-	SubscribersSet& subs = m_MessageToSubscribers[sMessage];
+	LockMut(g_Mutex);
+
+	SubscribersSet& subs = g_MessageToSubscribers[sMessage];
 #if _DEBUG
 	SubscribersSet::iterator iter = subs.find(pSubscriber);
 	ASSERT_M( iter == subs.end(), "already subscribed" );
@@ -80,7 +89,9 @@ void MessageManager::Subscribe( IMessageSubscriber* pSubscriber, Message m )
 
 void MessageManager::Unsubscribe( IMessageSubscriber* pSubscriber, const CString& sMessage )
 {
-	SubscribersSet& subs = m_MessageToSubscribers[sMessage];
+	LockMut(g_Mutex);
+
+	SubscribersSet& subs = g_MessageToSubscribers[sMessage];
 	SubscribersSet::iterator iter = subs.find(pSubscriber);
 	ASSERT( iter != subs.end() );
 	subs.erase( iter );
@@ -95,14 +106,16 @@ void MessageManager::Broadcast( const CString& sMessage ) const
 {
 	ASSERT( !sMessage.empty() );
 
-	map<CString,SubscribersSet>::const_iterator iter = m_MessageToSubscribers.find( sMessage );
-	if( iter == m_MessageToSubscribers.end() )
+	LockMut(g_Mutex);
+
+	map<CString,SubscribersSet>::const_iterator iter = g_MessageToSubscribers.find( sMessage );
+	if( iter == g_MessageToSubscribers.end() )
 		return;
 
 	FOREACHS_CONST( IMessageSubscriber*, iter->second, p )
 	{
 		IMessageSubscriber *pSub = *p;
-		pSub->HandleMessage( sMessage );
+		pSub->HandleMessageInternal( sMessage );
 	}
 }
 
@@ -110,6 +123,64 @@ void MessageManager::Broadcast( Message m ) const
 {
 	Broadcast( MessageToString(m) );
 }
+
+void IMessageSubscriber::ClearMessages( const CString sMessage )
+{
+	LockMut(g_Mutex);
+
+	if( sMessage.empty() )
+	{
+		m_aMessages.clear();
+		return;
+	}
+
+	for( int i=m_aMessages.size()-1; i>=0; i-- )
+		if( m_aMessages[i].sMessage == sMessage )
+			m_aMessages.erase( m_aMessages.begin()+i ); 
+}
+
+void IMessageSubscriber::HandleMessageInternal( const CString& sMessage )
+{
+	QueuedMessage QM;
+	QM.sMessage = sMessage;
+	QM.fDelayRemaining = 0;
+
+	g_Mutex.Lock();
+	m_aMessages.push_back( QM );
+	g_Mutex.Unlock();
+}
+
+void IMessageSubscriber::ProcessMessages( float fDeltaTime )
+{
+	/* Important optimization for the vast majority of cases: don't lock the
+	 * mutex if we have no messages. */
+	if( m_aMessages.empty() )
+		return;
+
+	g_Mutex.Lock();
+	for( unsigned i=0; i<m_aMessages.size(); i++ )
+		m_aMessages[i].fDelayRemaining -= fDeltaTime;
+
+	for( unsigned i = 0; i < m_aMessages.size(); ++i )
+	{
+		/* Remove the message from the list. */
+		const CString sMessage = m_aMessages[i].sMessage;
+		m_aMessages.erase( m_aMessages.begin()+i );
+		--i;
+
+		unsigned iSize = m_aMessages.size();
+
+		g_Mutex.Unlock();
+		HandleMessage( sMessage );
+		g_Mutex.Lock();
+
+		/* If the size changed, start over. */
+		if( iSize != m_aMessages.size() )
+			i = 0;
+	}
+	g_Mutex.Unlock();
+}
+
 
 // lua start
 #include "LuaBinding.h"

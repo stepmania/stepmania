@@ -3,14 +3,26 @@
 #ifndef MessageManager_H
 #define MessageManager_H
 
-#include <set>
-#include <map>
+#include <deque>
 
 class IMessageSubscriber
 {
 public:
 	virtual ~IMessageSubscriber() { }
 	virtual void HandleMessage( const CString& sMessage ) = 0;
+	virtual void ProcessMessages( float fDeltaTime );
+	void ClearMessages( const CString sMessage = "" );
+
+private:
+	struct QueuedMessage
+	{
+		CString sMessage;
+		float fDelayRemaining;
+	};
+	void HandleMessageInternal( const CString& sMessage );
+	deque<QueuedMessage> m_aMessages;
+
+	friend class MessageManager;
 };
 
 struct lua_State;
@@ -79,10 +91,6 @@ public:
 
 	// Lua
 	void PushSelf( lua_State *L );
-
-private:
-	typedef set<IMessageSubscriber*> SubscribersSet;
-	map<CString,SubscribersSet> m_MessageToSubscribers;
 };
 
 extern MessageManager*	MESSAGEMAN;	// global and accessable from anywhere in our program
