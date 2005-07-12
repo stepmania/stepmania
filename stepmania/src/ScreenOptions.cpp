@@ -503,12 +503,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	{
 		this->BeginFadingOut();
 	}
-	else if( SM == SM_GoToPrevScreen )
-	{
-//		this->ExportOptions();	// Don't save options if we're going back!
-		this->GoToPrevScreen();
-	}
-	else if( SM == SM_GoToNextScreen )
+	else if( SM == SM_ExportOptions )
 	{
 		for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
 		{
@@ -517,13 +512,21 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 				vpns.push_back( p );
 			this->ExportOptions( r, vpns );
 		}
+		this->HandleScreenMessage( SM_GoToNextScreen );
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		this->GoToNextScreen();
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
+		this->GoToPrevScreen();
 	}
 	else if( SM == SM_BeginFadingOut )
 	{
 		if(IsTransitioning())
 			return; /* already transitioning */
-		StartTransitioning( SM_GoToNextScreen );
+		StartTransitioning( SM_ExportOptions );
 
 		SCREENMAN->PlayStartSound();
 

@@ -12,6 +12,8 @@
 
 class OptionRowHandler;
 
+AutoScreenMessage( SM_ExportOptions )
+
 enum InputMode 
 { 
 	INPUTMODE_INDIVIDUAL, 	// each player controls their own cursor

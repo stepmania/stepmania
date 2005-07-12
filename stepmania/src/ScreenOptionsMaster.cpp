@@ -212,7 +212,7 @@ void ScreenOptionsMaster::RefreshIcons( int r, PlayerNumber pn )
 
 void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SM == SM_GoToNextScreen )
+	if( SM == SM_ExportOptions )
 	{
 		//
 		// Override ScreenOptions's calling of ExportOptions
@@ -271,7 +271,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 
 		CHECKPOINT;
 		if( !(m_iChangeMask & OPT_RESET_GAME) )
-			this->GoToNextScreen();
+			this->HandleScreenMessage( SM_GoToNextScreen );
 	}
 	else
 		ScreenOptions::HandleScreenMessage( SM );
