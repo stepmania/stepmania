@@ -24,15 +24,17 @@ public:
 
 	void Init();
 
+	// local profiles
+	void RefreshLocalProfilesEditableData();
+	Profile &GetLocalProfileEditableData( const CString &sProfileID );
+	
 	bool CreateLocalProfile( CString sName );
 	bool RenameLocalProfile( CString sProfileID, CString sNewName );
 	bool DeleteLocalProfile( CString sProfileID );
+	CString GetNewLocalProfileDefaultName() const;
+	void GetLocalProfileIDs( vector<CString> &vsProfileIDsOut ) const;
+	void GetLocalProfileDisplayNames( vector<CString> &vsProfileDisplayNamesOut ) const;
 
-	void GetLocalProfileIDs( vector<CString> &asProfileIDsOut ) const;
-	void GetLocalProfileNames( vector<CString> &asNamesOut ) const;
-	CString ProfileIDToName( const CString &sProfileID ) const;
-
-	CString GetNewProfileDefaultName() const;
 
 	bool LoadFirstAvailableProfile( PlayerNumber pn );	// memory card or local profile
 	bool LoadLocalProfileFromMachine( PlayerNumber pn );

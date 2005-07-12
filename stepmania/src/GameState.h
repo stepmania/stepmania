@@ -312,7 +312,7 @@ public:
 	void RevertSyncChanges();
 
 	// profile stuff
-	CString m_sEditingProfileID;
+	CString m_sLastSelectedProfileID;
 
 	// Lua
 	void PushSelf( lua_State *L );

@@ -7,6 +7,7 @@
 #include "ScreenPrompt.h"
 #include "RageUtil.h"
 #include "GameState.h"
+#include "Profile.h"
 
 AutoScreenMessage( SM_BackFromEnterName )
 AutoScreenMessage( SM_BackFromProfileContextMenu )
@@ -14,12 +15,19 @@ AutoScreenMessage( SM_BackFromDelete )
 
 const int PROFILE_MAX_NAME_LENGTH = 64;
 
+static CString GetLastSelectedProfileName()
+{
+	Profile &pro = PROFILEMAN->GetLocalProfileEditableData( GAMESTATE->m_sLastSelectedProfileID );
+	return pro.m_sDisplayName;
+}
+
 static bool ValidateProfileName( const CString &sAnswer, CString &sErrorOut )
 {
-	CString sCurrentProfileOldName = PROFILEMAN->ProfileIDToName( GAMESTATE->m_sEditingProfileID );
-	vector<CString> vsProfileNames;
-	PROFILEMAN->GetLocalProfileNames( vsProfileNames );
-	bool bAlreadyAProfileWithThisName = find( vsProfileNames.begin(), vsProfileNames.end(), sAnswer ) != vsProfileNames.end();
+	const CString &sCurrentProfileOldName = GetLastSelectedProfileName();
+
+	vector<CString> vsUsedNames;
+	PROFILEMAN->GetLocalProfileDisplayNames( vsUsedNames );
+	bool bAlreadyAProfileWithThisName = find( vsUsedNames.begin(), vsUsedNames.end(), sAnswer ) != vsUsedNames.end();
 	
 	if( sAnswer == "" )
 	{
@@ -47,13 +55,6 @@ enum ContextMenuAnswer
 	A_CANCEL, 
 };
 
-static MenuDef g_ProfileContextMenu(
-	"ScreenMiniMenuProfiles",
-	MenuRowDef( A_EDIT,		"Edit",		true, EDIT_MODE_PRACTICE, 0, "" ),
-	MenuRowDef( A_RENAME,	"Rename",	true, EDIT_MODE_PRACTICE, 0, "" ),
-	MenuRowDef( A_DELETE,	"Delete",	true, EDIT_MODE_PRACTICE, 0, "" ),
-	MenuRowDef( A_CANCEL,	"Cancel",	true, EDIT_MODE_PRACTICE, 0, "" )
-);
 
 REGISTER_SCREEN_CLASS( ScreenSelectProfile );
 ScreenSelectProfile::ScreenSelectProfile( CString sName ) : 
@@ -71,16 +72,17 @@ void ScreenSelectProfile::Init()
 	gc.m_sName = "create";
 	m_aGameCommands.push_back( gc );
 
-	vector<CString> vsProfileNames;
-	PROFILEMAN->GetLocalProfileNames( vsProfileNames );
-
-	FOREACH_CONST( CString, vsProfileNames, s )
+	vector<CString> vProfileIDs;
+	PROFILEMAN->GetLocalProfileIDs( vProfileIDs );
+	FOREACH_CONST( CString, vProfileIDs, s )
 	{
 		gc.m_sName = "profile";
+		gc.m_sProfileID = *s;
 		m_aGameCommands.push_back( gc );
 	}
 
 	gc.m_sName = "exit";
+	gc.m_sProfileID = "";
 	m_aGameCommands.push_back( gc );
 
 
@@ -101,7 +103,7 @@ void ScreenSelectProfile::HandleScreenMessage( const ScreenMessage SM )
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
 		
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
-			if( GAMESTATE->m_sEditingProfileID.empty() )
+			if( GAMESTATE->m_sLastSelectedProfileID.empty() )
 			{
 				// create
 				bool bResult = PROFILEMAN->CreateLocalProfile( sNewName );
@@ -113,7 +115,7 @@ void ScreenSelectProfile::HandleScreenMessage( const ScreenMessage SM )
 			else
 			{
 				// rename
-				bool bResult = PROFILEMAN->RenameLocalProfile( GAMESTATE->m_sEditingProfileID, sNewName );
+				bool bResult = PROFILEMAN->RenameLocalProfile( GAMESTATE->m_sLastSelectedProfileID, sNewName );
 				if( bResult )
 					SCREENMAN->SetNewScreen( m_sName );	// reload
 				else
@@ -134,14 +136,12 @@ void ScreenSelectProfile::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case A_RENAME: 
 				{
-					CString sCurrentProfileName = PROFILEMAN->ProfileIDToName( GAMESTATE->m_sEditingProfileID );
-					ScreenTextEntry::TextEntry( SM_BackFromEnterName, "Enter a name for a new profile.", sCurrentProfileName, PROFILE_MAX_NAME_LENGTH, ValidateProfileName );
+					ScreenTextEntry::TextEntry( SM_BackFromEnterName, "Enter a name for a new profile.", GetLastSelectedProfileName(), PROFILE_MAX_NAME_LENGTH, ValidateProfileName );
 				}
 				break;
 			case A_DELETE: 
 				{
-					CString sCurrentProfileName = PROFILEMAN->ProfileIDToName( GAMESTATE->m_sEditingProfileID );
-					CString sMessage = ssprintf( "Are you sure you want to delete the profile '%s'?", sCurrentProfileName.c_str() );
+					CString sMessage = ssprintf( "Are you sure you want to delete the profile '%s'?", GetLastSelectedProfileName().c_str() );
 					ScreenPrompt::Prompt( SM_BackFromDelete, sMessage, PROMPT_YES_NO );
 				}
 				break;
@@ -155,7 +155,7 @@ void ScreenSelectProfile::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
-			PROFILEMAN->DeleteLocalProfile( GAMESTATE->m_sEditingProfileID );
+			PROFILEMAN->DeleteLocalProfile( GAMESTATE->m_sLastSelectedProfileID );
 			SCREENMAN->SetNewScreen( m_sName );	// reload
 		}
 	}

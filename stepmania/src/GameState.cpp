@@ -260,7 +260,7 @@ void GameState::Reset()
 	
 	m_bBackedOutOfFinalStage = false;
 
-	m_sEditingProfileID = "";
+	m_sLastSelectedProfileID = "";
 
 	ApplyCmdline();
 }
@@ -2035,7 +2035,7 @@ public:
 		lua_pushboolean(L, p->GetStageResult(pn)==RESULT_WIN); return 1;
 	}
 	static int GetCurrentGame( T* p, lua_State *L )			{ const_cast<Game*>(p->GetCurrentGame())->PushSelf( L ); return 1; }
-	static int GetEditingProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sEditingProfileID ); return 1; }
+	static int GetLastSelectedProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastSelectedProfileID ); return 1; }
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( IsPlayerEnabled )
@@ -2086,7 +2086,7 @@ public:
 		ADD_METHOD( IsSyncDataChanged )
 		ADD_METHOD( IsWinner )
 		ADD_METHOD( GetCurrentGame )
-		ADD_METHOD( GetEditingProfileID )
+		ADD_METHOD( GetLastSelectedProfileID )
 
 		Luna<T>::Register( L );
 

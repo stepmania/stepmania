@@ -450,13 +450,6 @@ float Profile::GetSongsAndCoursesPercentCompleteAllDifficulties( StepsType st ) 
 	return fActual / fPossible;
 }
 
-CString Profile::GetProfileDisplayNameFromDir( CString sDir )
-{
-	Profile profile;
-	profile.LoadEditableDataFromDir( sDir );
-	return profile.GetDisplayName();
-}
-
 int Profile::GetSongNumTimesPlayed( const Song* pSong ) const
 {
 	SongID songID;
@@ -1835,6 +1828,7 @@ class LunaProfile: public Luna<Profile>
 public:
 	LunaProfile() { LUA->Register( Register ); }
 
+	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName ); return 1; }
 	static int GetWeightPounds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iWeightPounds ); return 1; }
 	static int SetWeightPounds( T* p, lua_State *L )		{ p->m_iWeightPounds = IArg(1); return 0; }
 	static int GetGoalType( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_GoalType ); return 1; }
@@ -1858,6 +1852,7 @@ public:
 
 	static void Register(lua_State *L)
 	{
+		ADD_METHOD( GetDisplayName )
 		ADD_METHOD( GetWeightPounds )
 		ADD_METHOD( SetWeightPounds )
 		ADD_METHOD( GetGoalType )

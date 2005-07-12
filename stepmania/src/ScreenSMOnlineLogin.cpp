@@ -12,6 +12,7 @@
 #include "GameState.h"
 #include "NetworkSyncManager.h"
 #include "ScreenTextEntry.h"
+#include "Profile.h"
 
 REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 
@@ -32,9 +33,9 @@ void ScreenSMOnlineLogin::Init()
 	ScreenOptions::Init();
 
 	g_ProfileLine[0].m_vsChoices.clear();
-	PROFILEMAN->GetLocalProfileNames( g_ProfileLine[0].m_vsChoices );
+	PROFILEMAN->GetLocalProfileDisplayNames( g_ProfileLine[0].m_vsChoices );
 
-	if(!g_ProfileLine[0].m_vsChoices.size())
+	if( g_ProfileLine[0].m_vsChoices.empty() )
 	{
 		SCREENMAN->SystemMessage("You Must Define A Profile!");
 		SCREENMAN->SetNewScreen("ScreenProfileOptions");
@@ -63,11 +64,9 @@ void ScreenSMOnlineLogin::ImportOptions( int row, const vector<PlayerNumber> &vp
 			vector<CString> vsProfiles;
 			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-			CStringArray::iterator iter;
-
 			FOREACH_PlayerNumber( pn )
 			{
-				iter = find(vsProfiles.begin(), vsProfiles.end(), PREFSMAN->GetDefaultLocalProfileID(pn).Get() );
+				CStringArray::iterator iter = find(vsProfiles.begin(), vsProfiles.end(), PREFSMAN->GetDefaultLocalProfileID(pn).Get() );
 				if( iter != vsProfiles.end() )
 					m_pRows[0]->SetOneSelection((PlayerNumber) pn, iter - vsProfiles.begin());
 			}

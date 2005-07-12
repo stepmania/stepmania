@@ -9,6 +9,7 @@
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
 #include "GameState.h"
+#include "Profile.h"
 
 
 enum {
@@ -48,19 +49,19 @@ void ScreenProfileOptions::Init()
 
 	g_ProfileOptionsLines[PO_PLAYER1].m_vsChoices.clear();
 	g_ProfileOptionsLines[PO_PLAYER1].m_vsChoices.push_back( "-NONE-" );
-	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_PLAYER1].m_vsChoices );
+	PROFILEMAN->GetLocalProfileDisplayNames( g_ProfileOptionsLines[PO_PLAYER1].m_vsChoices );
 
 	g_ProfileOptionsLines[PO_PLAYER2].m_vsChoices.clear();
 	g_ProfileOptionsLines[PO_PLAYER2].m_vsChoices.push_back( "-NONE-" );
-	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_PLAYER2].m_vsChoices );
+	PROFILEMAN->GetLocalProfileDisplayNames( g_ProfileOptionsLines[PO_PLAYER2].m_vsChoices );
 
 	g_ProfileOptionsLines[PO_DELETE_].m_vsChoices.clear();
 	g_ProfileOptionsLines[PO_DELETE_].m_vsChoices.push_back( "-NONE-" );
-	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_DELETE_].m_vsChoices );
+	PROFILEMAN->GetLocalProfileDisplayNames( g_ProfileOptionsLines[PO_DELETE_].m_vsChoices );
 
 	g_ProfileOptionsLines[PO_RENAME_].m_vsChoices.clear();
 	g_ProfileOptionsLines[PO_RENAME_].m_vsChoices.push_back( "-NONE-" );
-	PROFILEMAN->GetLocalProfileNames( g_ProfileOptionsLines[PO_RENAME_].m_vsChoices );
+	PROFILEMAN->GetLocalProfileDisplayNames( g_ProfileOptionsLines[PO_RENAME_].m_vsChoices );
 
 	if( PREFSMAN->GetMemoryCardOsMountPoint(PLAYER_1).Get().empty() )
 		g_ProfileOptionsLines[PO_OS_MOUNT_1].m_vsChoices[0] = "-NOT SET IN INI-";

@@ -78,7 +78,6 @@ public:
 	float GetSongsPercentComplete( StepsType st, Difficulty dc ) const;
 	float GetCoursesPercentComplete( StepsType st, CourseDifficulty cd ) const;
 	float GetSongsAndCoursesPercentCompleteAllDifficulties( StepsType st ) const;
-	static CString GetProfileDisplayNameFromDir( CString sDir );
 	bool GetDefaultModifiers( const Game* pGameType, CString &sModifiersOut ) const;
 	void SetDefaultModifiers( const Game* pGameType, const CString &sModifiers );
 	bool IsCodeUnlocked( int iCode ) const;

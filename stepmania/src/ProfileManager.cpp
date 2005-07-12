@@ -38,6 +38,10 @@ static ThemeMetric<CString> NEW_PROFILE_DEFAULT_NAME( "ProfileManager", "NewProf
 // exist, separated by ";":
 static Preference<CString> g_sMemoryCardProfileImportSubdirs( "MemoryCardProfileImportSubdirs", "" );
 
+static CString LocalProfileIdToDir( const CString &sProfileID ) { return USER_PROFILES_DIR + sProfileID + "/"; }
+
+static map<CString,Profile> g_mapLocalProfileIdToEditableData;
+
 
 ProfileManager::ProfileManager()
 {
@@ -48,9 +52,9 @@ ProfileManager::ProfileManager()
 
 ProfileManager::~ProfileManager()
 {
-	delete m_pMachineProfile;
+	SAFE_DELETE( m_pMachineProfile );
 	FOREACH_PlayerNumber(pn)
-		delete m_pProfile[pn];
+		SAFE_DELETE( m_pProfile[pn] );
 }
 
 void ProfileManager::Init()
@@ -63,30 +67,8 @@ void ProfileManager::Init()
 	}
 
 	LoadMachineProfile();
-}
 
-void ProfileManager::GetLocalProfileIDs( vector<CString> &asProfileIDsOut ) const
-{
-	GetDirListing( USER_PROFILES_DIR "*", asProfileIDsOut, true, false );
-}
-
-void ProfileManager::GetLocalProfileNames( vector<CString> &asNamesOut ) const
-{
-	asNamesOut.clear();
-
-	CStringArray vsProfileIDs;
-	GetLocalProfileIDs( vsProfileIDs );
-	LOG->Trace("GetLocalProfileNames: %u", unsigned(vsProfileIDs.size()));
-	FOREACH_CONST( CString, vsProfileIDs, s )
-		asNamesOut.push_back( ProfileIDToName(*s) );
-}
-
-CString ProfileManager::ProfileIDToName( const CString &sProfileID ) const
-{
-	CString sProfileDir = USER_PROFILES_DIR + sProfileID + "/";
-	CString sDisplayName = Profile::GetProfileDisplayNameFromDir( sProfileDir );
-	LOG->Trace(" '%s'", sDisplayName.c_str());
-	return sDisplayName;
+	RefreshLocalProfilesEditableData();
 }
 
 int ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard )
@@ -148,7 +130,7 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 		return false;
 	}
 
-	CString sDir = USER_PROFILES_DIR + sProfileID + "/";
+	CString sDir = LocalProfileIdToDir( sProfileID );
 
 	return LoadProfile( pn, sDir, false ) == Profile::success;
 }
@@ -305,6 +287,34 @@ CString ProfileManager::GetPlayerName( PlayerNumber pn ) const
 }
 
 
+void ProfileManager::RefreshLocalProfilesEditableData()
+{
+	g_mapLocalProfileIdToEditableData.clear();
+	vector<CString> vsProfileID;
+	GetDirListing( USER_PROFILES_DIR "*", vsProfileID, true, false );
+	FOREACH_CONST( CString, vsProfileID, s )
+	{
+		Profile &pro = g_mapLocalProfileIdToEditableData[*s];
+		CString sProfileDir = LocalProfileIdToDir( *s );
+		LOG->Trace(" '%s'", pro.GetDisplayName().c_str());
+		pro.LoadEditableDataFromDir( sProfileDir );
+	}
+}
+
+Profile &ProfileManager::GetLocalProfileEditableData( const CString &sProfileID )
+{
+	map<CString,Profile>::iterator iter = g_mapLocalProfileIdToEditableData.find( sProfileID );
+	if( iter == g_mapLocalProfileIdToEditableData.end() )
+	{
+		LOG->Warn( "ProfileID '%s' doesn't exist", sProfileID.c_str() );
+		static Profile s_pro;
+		s_pro.InitAll();
+		return s_pro;
+	}
+
+	return iter->second;
+}
+
 bool ProfileManager::CreateLocalProfile( CString sName )
 {
 	ASSERT( !sName.empty() );
@@ -318,22 +328,23 @@ bool ProfileManager::CreateLocalProfile( CString sName )
 	for( i=0; i<MAX_TRIES; i++ )
 	{
 		sProfileID = ssprintf("%08d",i);
-		sProfileDir = USER_PROFILES_DIR + sProfileID;
+		sProfileDir = LocalProfileIdToDir( sProfileID );
 		if( !DoesFileExist(sProfileDir) )
 			break;
 	}
 	if( i == MAX_TRIES )
 		return false;
-	sProfileDir += "/";
 
-	return Profile::CreateNewProfile( sProfileDir, sName );
+	bool bResult = Profile::CreateNewProfile( sProfileDir, sName );
+	RefreshLocalProfilesEditableData();
+	return bResult;
 }
 
 bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
 {
 	ASSERT( !sProfileID.empty() );
 
-	CString sProfileDir = USER_PROFILES_DIR + sProfileID + "/";
+	CString sProfileDir = LocalProfileIdToDir( sProfileID );
 
 	Profile pro;
 	Profile::LoadResult lr;
@@ -342,25 +353,27 @@ bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
 		return false;
 	pro.m_sDisplayName = sNewName;
 
-	return pro.SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
+	bool bResult = pro.SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
+	RefreshLocalProfilesEditableData();
+	return bResult;
 }
 
 bool ProfileManager::DeleteLocalProfile( CString sProfileID )
 {
 	// delete all files in profile dir
-	CString sProfileDir = USER_PROFILES_DIR + sProfileID;
+	CString sProfileDir = LocalProfileIdToDir( sProfileID );
 	CStringArray asFilesToDelete;
-	GetDirListing( sProfileDir + "/*", asFilesToDelete, false, true );
+	GetDirListing( sProfileDir + "*", asFilesToDelete, false, true );
 	for( unsigned i=0; i<asFilesToDelete.size(); i++ )
 		FILEMAN->Remove( asFilesToDelete[i] );
 
 	// delete edits
-	GetDirListing( sProfileDir + "/" + EDITS_SUBDIR + "*", asFilesToDelete, false, true );
+	GetDirListing( sProfileDir + EDITS_SUBDIR + "*", asFilesToDelete, false, true );
 	for( unsigned i=0; i<asFilesToDelete.size(); i++ )
 		FILEMAN->Remove( asFilesToDelete[i] );
 
 	// delete lastgood
-	GetDirListing( sProfileDir + "/" + LASTGOOD_SUBDIR + "*", asFilesToDelete, false, true );
+	GetDirListing( sProfileDir + LASTGOOD_SUBDIR + "*", asFilesToDelete, false, true );
 	for( unsigned i=0; i<asFilesToDelete.size(); i++ )
 		FILEMAN->Remove( asFilesToDelete[i] );
 
@@ -371,7 +384,10 @@ bool ProfileManager::DeleteLocalProfile( CString sProfileID )
 	FILEMAN->Remove( sProfileDir + "/" + LASTGOOD_SUBDIR );
 
 	// remove profile dir
-	return FILEMAN->Remove( sProfileDir );
+	bool bResult = FILEMAN->Remove( sProfileDir );
+
+	RefreshLocalProfilesEditableData();
+	return bResult;
 }
 
 void ProfileManager::SaveMachineProfile() const
@@ -638,21 +654,36 @@ bool ProfileManager::IsPersistentProfile( ProfileSlot slot ) const
 	}
 }
 
-CString ProfileManager::GetNewProfileDefaultName() const
+CString ProfileManager::GetNewLocalProfileDefaultName() const
 {
-	vector<CString> vsNames;
-	GetLocalProfileNames( vsNames );
+	vector<CString> vsUsedNames;
+	PROFILEMAN->GetLocalProfileDisplayNames( vsUsedNames );
 
 	CString sPotentialName;
 	for( int i=1; i<1000; i++ )
 	{
 		sPotentialName = ssprintf( "%s%04d", NEW_PROFILE_DEFAULT_NAME.GetValue().c_str(), i );
-		bool bNameIsUsed = find( vsNames.begin(), vsNames.end(), sPotentialName ) != vsNames.end();
+		bool bNameIsUsed = find( vsUsedNames.begin(), vsUsedNames.end(), sPotentialName ) != vsUsedNames.end();
 		if( !bNameIsUsed )
 			return sPotentialName;
 	}
 	return sPotentialName;
 }
+
+void ProfileManager::GetLocalProfileIDs( vector<CString> &vsProfileIDsOut ) const
+{
+	vsProfileIDsOut.clear();
+	FOREACHM_CONST( CString, Profile, g_mapLocalProfileIdToEditableData, iter )
+		vsProfileIDsOut.push_back( iter->first );
+}
+
+void ProfileManager::GetLocalProfileDisplayNames( vector<CString> &vsProfileDisplayNamesOut ) const
+{
+	vsProfileDisplayNamesOut.clear();
+	FOREACHM_CONST( CString, Profile, g_mapLocalProfileIdToEditableData, iter )
+		vsProfileDisplayNamesOut.push_back( iter->second.m_sDisplayName );
+}
+
 
 // lua start
 #include "LuaBinding.h"
@@ -666,6 +697,7 @@ public:
 	static int GetProfile( T* p, lua_State *L )				{ PlayerNumber pn = (PlayerNumber)IArg(1); Profile* pP = p->GetProfile(pn); ASSERT(pP); pP->PushSelf(L); return 1; }
 	static int GetMachineProfile( T* p, lua_State *L )		{ p->GetMachineProfile()->PushSelf(L); return 1; }
 	static int SaveMachineProfile( T* p, lua_State *L )		{ p->SaveMachineProfile(); return 1; }
+	static int GetLocalProfileEditableData( T* p, lua_State *L )	{ Profile &pro = p->GetLocalProfileEditableData(SArg(1)); pro.PushSelf(L); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -673,6 +705,7 @@ public:
 		ADD_METHOD( GetProfile )
 		ADD_METHOD( GetMachineProfile )
 		ADD_METHOD( SaveMachineProfile )
+		ADD_METHOD( GetLocalProfileEditableData )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
