@@ -67,6 +67,40 @@ function SelectEvaluationScreen()
 	if( Mode == "Battle" ) then return "ScreenEvaluationBattle" end
 end
 
+function GetTopScreenMetric( sElement )
+	local sClass = SCREENMAN:GetTopScreen():GetName();
+	return THEME:GetMetric( sClass, sElement )
+end
+
+function GetEvaluationNextScreen( sNextScreen, sFailedScreen, sEndScreen )
+	Trace( "GetEvaluationNextScreen: " .. sNextScreen .. ", " .. sFailedScreen .. ", " .. sEndScreen )
+
+	if GAMESTATE:IsEventMode() then
+		Trace( "IsEventMode" )
+		return sNextScreen
+	end
+
+	-- Not in event mode.  If failed, go to the game over screen.
+	if STATSMAN:GetCurStageStats():AllFailed() then
+		Trace( "Failed" )
+		return sFailedScreen
+	end
+
+	local sType = GetTopScreenMetric( "Type" )
+	if sType == "stage" then
+		local bHasAnotherStage = GAMESTATE:HasEarnedExtraStage()
+		bHasAnotherStage = bHasAnotherStage or not
+			(GAMESTATE:IsFinalStage() or GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() )
+		if bHasAnotherStage then
+			Trace( "Another" )
+			return sNextScreen
+		end
+	end
+
+	Trace( "End" )
+	return sEndScreen
+end
+
 function ScreenEvaluationExitBranch()
 	if( IsNetSMOnline() ) then return "ScreenNetRoom" end
 	if( IsNetConnected() ) then return "ScreenNetSelectMusic" end
