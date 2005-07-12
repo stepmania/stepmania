@@ -371,11 +371,7 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 {
 	Screen::HandleScreenMessage( SM );
 
-	if( SM == SM_GoToPrevScreen )
-	{
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
-	}
-	else if( SM == SM_GoToNextScreen )
+	if( SM == SM_GoToNextScreen )
 	{
 		if( m_bGoToOptions )
 		{
