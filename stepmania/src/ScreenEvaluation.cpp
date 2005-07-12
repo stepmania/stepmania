@@ -1369,6 +1369,8 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 
 		if(	m_sndPassFail.IsPlaying() )
 			m_sndPassFail.Stop();
+
+		return;
 	}
 	else if( SM == SM_PlayCheer )
 	{
@@ -1396,6 +1398,8 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 				m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, STATSMAN->m_CurStageStats.m_player[p].iScore) );
 		}
 	}
+
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 void ScreenEvaluation::MenuLeft( PlayerNumber pn )
