@@ -220,7 +220,7 @@ public:
 	}
 };
 
-LUA_REGISTER_DERIVED_CLASS( ScreenPlayerOptions, ActorFrame )
+LUA_REGISTER_DERIVED_CLASS( ScreenPlayerOptions, ScreenWithMenuElements )
 // lua end
 
 /*
