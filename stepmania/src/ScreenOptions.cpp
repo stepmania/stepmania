@@ -499,16 +499,17 @@ void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type
 
 void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_MenuTimer )
 	{
-	case SM_MenuTimer:
 		this->BeginFadingOut();
-		break;
-	case SM_GoToPrevScreen:
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
 //		this->ExportOptions();	// Don't save options if we're going back!
 		this->GoToPrevScreen();
-		break;
-	case SM_GoToNextScreen:
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
 		for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
 		{
 			vector<PlayerNumber> vpns;
@@ -517,8 +518,9 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 			this->ExportOptions( r, vpns );
 		}
 		this->GoToNextScreen();
-		break;
-	case SM_BeginFadingOut:
+	}
+	else if( SM == SM_BeginFadingOut )
+	{
 		if(IsTransitioning())
 			return; /* already transitioning */
 		StartTransitioning( SM_GoToNextScreen );
@@ -526,13 +528,14 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		SCREENMAN->PlayStartSound();
 
 		OFF_COMMAND( m_framePage );
-		break;
-	case SM_GainFocus:
+	}
+	else if( SM == SM_GainFocus )
+	{
 		INPUTFILTER->SetRepeatRate( 0.25f, 12, 0.25f, 12 );
-		break;
-	case SM_LoseFocus:
+	}
+	else if( SM == SM_LoseFocus )
+	{
 		INPUTFILTER->ResetRepeatRate();
-		break;
 	}
 }
 
