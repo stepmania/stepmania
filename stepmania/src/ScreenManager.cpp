@@ -165,15 +165,32 @@ void ScreenManager::Update( float fDeltaTime )
 		m_bZeroNextUpdate = false;
 	}
 
-	// Only update the topmost screen on the stack.
-	if( pScreen )
-		pScreen->Update( fDeltaTime );
+	//
+	// Update screens.
+	//
+	{
+		// Only update the topmost screen on the stack.
+		if( pScreen )
+			pScreen->Update( fDeltaTime );
 
-	m_pSharedBGA->Update( fDeltaTime );
+		m_pSharedBGA->Update( fDeltaTime );
 
-	for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
-		m_OverlayScreens[i]->Update( fDeltaTime );	
-	
+		for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
+			m_OverlayScreens[i]->Update( fDeltaTime );	
+	}
+	//
+	// Handle messages after updating.
+	//
+	{
+		for( unsigned i=0; i<m_ScreenStack.size(); i++ )
+			m_ScreenStack[i]->ProcessMessages( fDeltaTime );
+
+		m_pSharedBGA->ProcessMessages( fDeltaTime );
+
+		for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
+			m_OverlayScreens[i]->ProcessMessages( fDeltaTime );
+	}
+
 	/* The music may be started on the first update.  If we're reading from a CD,
 	 * it might not start immediately.  Make sure we start playing the sound before
 	 * continuing, since it's strange to start rendering before the music starts. */
