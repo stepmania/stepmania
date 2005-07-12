@@ -41,6 +41,10 @@ protected:
 
 	ThemeMetric<float> IDLE_COMMENT_SECONDS;
 	ThemeMetric<float> IDLE_TIMEOUT_SECONDS;
+
+private:
+	CString			m_sNextScreen;
+	bool			m_bTimeToFinalizePlayers;
 };
 
 #endif

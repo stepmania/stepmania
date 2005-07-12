@@ -39,6 +39,8 @@ void ScreenSelect::Init()
 {
 	ScreenWithMenuElements::Init();
 
+	m_bTimeToFinalizePlayers = false;
+
 	//
 	// Load messages to update on
 	//
@@ -181,41 +183,16 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_BeginFadingOut )	/* Screen is starting to tween out. */
 	{
-		/* At this point, we're tweening out; we can't change the selection.
-			* We don't want to allow players to join if the style will be set,
-			* since that can change the available selection and is likely to
-			* invalidate the choice we've already made.  Hack: apply the style.
-			* (Applying the style may have other side-effects, so it'll be re-applied
-			* in SM_GoToNextScreen.) */
-		FOREACH_HumanPlayer( p )
-		{
-			const int sel = GetSelectionIndex( p );
-			if( m_aGameCommands[sel].m_pStyle )
-				GAMESTATE->m_pCurStyle.Set( m_aGameCommands[sel].m_pStyle );
-		}
-		SCREENMAN->RefreshCreditsMessages();
-	}
-	else if( SM == SM_AllDoneChoosing ) 	/* It's our turn to tween out. */
-	{
-		if( !IsTransitioning() )
-			StartTransitioning( SM_GoToNextScreen );
-	}
-	else if( SM == SM_GoToNextScreen )
-	{
-		/* Apply here, not in SM_AllDoneChoosing, because applying can take a very
-			* long time (200+ms), and at SM_AllDoneChoosing, we're still tweening stuff
-			* off-screen.
-			*
-			* Hack: only apply one Screen. */
-		CString sScreen;
 		FOREACH_HumanPlayer( p )
 		{
 			GameCommand gc = m_aGameCommands[this->GetSelectionIndex(p)];
 			CString sThisScreen = gc.GetAndClearScreen();
-			if( sScreen == "" )
-				sScreen = sThisScreen;
+			if( m_sNextScreen == "" )
+				m_sNextScreen = sThisScreen;
 			gc.Apply( p );
 		}
+
+		SCREENMAN->RefreshCreditsMessages();
 
 		//
 		// Finalize players if we set a style on this screen.
@@ -225,18 +202,30 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			const int sel = GetSelectionIndex( p );
 			if( m_aGameCommands[sel].m_pStyle )
 			{
-				GAMESTATE->PlayersFinalized();
+				m_bTimeToFinalizePlayers = true;
 				break;
 			}
 		}
 
-		if( sScreen != "" )
-			SCREENMAN->SetNewScreen( sScreen );
-		else
+		if( m_sNextScreen == "" )
 		{
 			const int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-			SCREENMAN->SetNewScreen( NEXT_SCREEN(iSelectionIndex) );
+			m_sNextScreen = NEXT_SCREEN(iSelectionIndex);
 		}
+	}
+	else if( SM == SM_AllDoneChoosing ) 	/* It's our turn to tween out. */
+	{
+		if( !IsTransitioning() )
+			StartTransitioning( SM_GoToNextScreen );
+	}
+	else if( SM == SM_GoToNextScreen )
+	{
+		/* Finalizing players can take a long time, since it reads profile data.  Do it
+		 * here.(XXX: this should be done in a separate screen.) */
+		if( m_bTimeToFinalizePlayers )
+			GAMESTATE->PlayersFinalized();
+
+		SCREENMAN->SetNewScreen( m_sNextScreen );
 		return;
 	}
 
