@@ -11,7 +11,6 @@
 #include "LightsManager.h"
 
 #define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
-#define PREV_SCREEN				THEME->GetMetric (m_sName,"PrevScreen")
 #define MINIMUM_DELAY			THEME->GetMetricF(m_sName,"MinimumDelay")
 
 AutoScreenMessage( SM_PrepScreen )
