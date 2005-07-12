@@ -22,7 +22,6 @@
 #define LINE(sLineName)				THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
 
 #define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
-#define PREV_SCREEN					THEME->GetMetric (m_sName,"PrevScreen")
 
 
 REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
@@ -259,19 +258,6 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			;	// Do nothing.  Let Export set the screen.
 		else if( NEXT_SCREEN != "" )
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		return;
-	}
-	else if( SM == SM_GoToPrevScreen )
-	{
-		if( SCREENMAN->IsStackedScreen(this) )
-		{
-			SCREENMAN->PopTopScreen( SM_None );
-		}
-		else
-		{
-			SCREENMAN->DeletePreparedScreens();
-			SCREENMAN->SetNewScreen( PREV_SCREEN );
-		}
 		return;
 	}
 	else
