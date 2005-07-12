@@ -2197,12 +2197,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		int iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
 		iPlaySongIndex %= m_apSongsQueue.size();
-		Lua *L = LUA->Get();
-		m_apSongsQueue[iPlaySongIndex]->PushSelf( L );
-		GAMESTATE->m_Environment->Set( L, "NextSong" );
 		MESSAGEMAN->Broadcast( "NextCourseSong" );
-		GAMESTATE->m_Environment->Unset( L, "NextSong" );
-		LUA->Release( L );
 		m_NextSong.PlayCommand( "Start" );
 		m_NextSong.Reset();
 		m_NextSong.StartTransitioning( SM_LoadNextSong );
@@ -2414,6 +2409,34 @@ void ScreenGameplay::ShowOniGameOver( PlayerNumber pn )
 	m_sprOniGameOver[pn].PlayCommand( "Die" );
 }
 
+Song *ScreenGameplay::GetNextCourseSong() const
+{
+	ASSERT( GAMESTATE->IsCourseMode() );
+
+	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex()+1;
+	iPlaySongIndex %= m_apSongsQueue.size();
+
+	return m_apSongsQueue[iPlaySongIndex];
+}
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaScreenGameplay: public Luna<ScreenGameplay>
+{
+public:
+	LunaScreenGameplay() { LUA->Register( Register ); }
+
+	static int GetNextCourseSong( T* p, lua_State *L ) { p->GetNextCourseSong()->PushSelf(L); return 1; }
+	static void Register( Lua *L )
+	{
+  		ADD_METHOD( GetNextCourseSong )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScreenGameplay, ScreenWithMenuElements )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

@@ -44,6 +44,12 @@ public:
 	virtual bool UsesBackground() const { return false; }
 	virtual ScreenType GetScreenType() const { return gameplay; }
 
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+	Song *GetNextCourseSong() const;
+
 protected:
 	ThemeMetric<CString> PLAYER_TYPE;
 	ThemeMetric<CString> GIVE_UP_TEXT;
