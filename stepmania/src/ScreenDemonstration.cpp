@@ -14,7 +14,6 @@
 
 
 #define SECONDS_TO_SHOW			THEME->GetMetricF(m_sName,"SecondsToShow")
-#define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
 #define ALLOW_STYLE_TYPES		THEME->GetMetric (m_sName,"AllowStyleTypes")
 
 REGISTER_SCREEN_CLASS( ScreenDemonstration );
@@ -94,8 +93,6 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 		if( m_pSoundMusic )
 			m_pSoundMusic->Stop();
 		SOUNDMAN->SetPrefs( PREFSMAN->GetSoundVolume() );	// turn volume back on
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
-		return;
 	}
 
 	ScreenJukebox::HandleScreenMessage( SM );

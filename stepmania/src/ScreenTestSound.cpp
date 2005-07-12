@@ -201,10 +201,6 @@ void ScreenTestSound::Input( const DeviceInput& DeviceI, const InputEventType ty
 	}
 
 }
-void ScreenTestSound::HandleScreenMessage( const ScreenMessage SM )
-{
-	Screen::HandleScreenMessage( SM );
-}
 
 /*
  * (c) 2003 Glenn Maynard

@@ -70,17 +70,6 @@ void ScreenBookkeeping::Input( const DeviceInput& DeviceI, const InputEventType 
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default handler
 }
 
-void ScreenBookkeeping::HandleScreenMessage( const ScreenMessage SM )
-{
-	switch( SM )
-	{
-	case SM_GoToNextScreen:
-	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
-		break;
-	}
-}
-
 void ScreenBookkeeping::MenuLeft( PlayerNumber pn )
 {
 	m_View = (View)(m_View-1);

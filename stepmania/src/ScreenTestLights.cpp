@@ -100,9 +100,7 @@ void ScreenTestLights::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_GoToNextScreen:
-	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
+	case SM_LoseFocus:
 		LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 		break;
 	}

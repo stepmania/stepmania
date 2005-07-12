@@ -16,7 +16,6 @@
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
 
-#define PREV_SCREEN				THEME->GetMetric(m_sName,"PrevScreen")
 #define EXPLANATION_TEXT( row )	THEME->GetMetric(m_sName,"Explanation"+EditMenuRowToString(row))
 
 AutoScreenMessage( SM_RefreshSelector )
@@ -86,14 +85,6 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		m_Selector.RefreshAll();
 		RefreshNumStepsLoadedFromProfile();
 	}
-	else if( SM == SM_GoToPrevScreen )
-	{
-		SCREENMAN->SetNewScreen( PREV_SCREEN );
-	}
-	else if( SM == SM_GoToNextScreen )
-	{
-		SCREENMAN->SetNewScreen( "ScreenEdit" );
-	}
 	else if( SM == SM_Success )
 	{
 		LOG->Trace( "Delete successful; deleting steps from memory" );
@@ -111,6 +102,8 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 			StartTransitioning( SM_GoToNextScreen );
 		}
 	}
+
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 	
 void ScreenEditMenu::MenuUp( PlayerNumber pn )

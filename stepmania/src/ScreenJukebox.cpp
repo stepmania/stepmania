@@ -274,8 +274,6 @@ void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( m_pSoundMusic )
 			m_pSoundMusic->Stop();
-		SCREENMAN->SetNewScreen( "ScreenJukebox" );
-		return;
 	}
 	else if( SM == SM_GoToStartScreen )
 	{

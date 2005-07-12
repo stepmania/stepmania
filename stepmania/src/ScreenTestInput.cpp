@@ -121,17 +121,6 @@ void ScreenTestInput::Input( const DeviceInput& DeviceI, const InputEventType ty
 	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default handler
 }
 
-void ScreenTestInput::HandleScreenMessage( const ScreenMessage SM )
-{
-	switch( SM )
-	{
-	case SM_GoToNextScreen:
-	case SM_GoToPrevScreen:
-		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
-		break;
-	}
-}
-
 void ScreenTestInput::MenuStart( PlayerNumber pn )
 {
 	MenuBack(pn);
