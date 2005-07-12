@@ -212,74 +212,69 @@ void ScreenOptionsMaster::RefreshIcons( int r, PlayerNumber pn )
 
 void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 {
-	switch( SM )
+	if( SM == SM_GoToNextScreen )
 	{
-	case SM_GoToNextScreen:
+		//
+		// Override ScreenOptions's calling of ExportOptions
+		//
+		m_iChangeMask = 0;
+	
+		CHECKPOINT;
+
+		for( unsigned r = 0; r < OptionRowHandlers.size(); ++r )
 		{
-			//
-			// Override ScreenOptions's calling of ExportOptions
-			//
-			m_iChangeMask = 0;
-		
-			CHECKPOINT;
+			CHECKPOINT_M( ssprintf("%i/%i", r, int(OptionRowHandlers.size())) );
 
-			for( unsigned r = 0; r < OptionRowHandlers.size(); ++r )
-			{
-				CHECKPOINT_M( ssprintf("%i/%i", r, int(OptionRowHandlers.size())) );
-
-				vector<PlayerNumber> vpns;
-				FOREACH_OptionsPlayer( p )
-					vpns.push_back( p );
-				ExportOptions( r, vpns );
-			}
-
-			if( m_iChangeMask & OPT_APPLY_ASPECT_RATIO )
-			{
-				THEME->UpdateLuaGlobals();	// This needs to be done before resetting the projection matrix below
-				SCREENMAN->ThemeChanged();	// recreate ScreenSystemLayer and SharedBGA
-			}
-
-			/* If the theme changes, we need to reset RageDisplay to apply new theme 
-			* window title and icon. */
-			/* If the aspect ratio changes, we need to reset RageDisplay so that the 
-			* projection matrix is re-created using the new screen dimensions. */
-			if( (m_iChangeMask & OPT_APPLY_THEME) || 
-				(m_iChangeMask & OPT_APPLY_GRAPHICS) ||
-				(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) )
-				ApplyGraphicOptions();
-
-			if( m_iChangeMask & OPT_SAVE_PREFERENCES )
-			{
-				/* Save preferences. */
-				LOG->Trace("ROW_CONFIG used; saving ...");
-				PREFSMAN->SaveGlobalPrefsToDisk();
-				SaveGamePrefsToDisk();
-			}
-
-			if( m_iChangeMask & OPT_RESET_GAME )
-			{
-				ResetGame();
-				SCREENMAN->SetNewScreen( INITIAL_SCREEN );
-				m_bExportWillSetANewScreen = false;
-			}
-
-			if( m_iChangeMask & OPT_APPLY_SOUND )
-			{
-				SOUNDMAN->SetPrefs( PREFSMAN->GetSoundVolume() );
-			}
-			
-			if( m_iChangeMask & OPT_APPLY_SONG )
-				SONGMAN->SetPreferences();
-
-			CHECKPOINT;
-			if( !(m_iChangeMask & OPT_RESET_GAME) )
-				this->GoToNextScreen();
+			vector<PlayerNumber> vpns;
+			FOREACH_OptionsPlayer( p )
+				vpns.push_back( p );
+			ExportOptions( r, vpns );
 		}
-		break;
-	default:
-		ScreenOptions::HandleScreenMessage( SM );
-		break;
+
+		if( m_iChangeMask & OPT_APPLY_ASPECT_RATIO )
+		{
+			THEME->UpdateLuaGlobals();	// This needs to be done before resetting the projection matrix below
+			SCREENMAN->ThemeChanged();	// recreate ScreenSystemLayer and SharedBGA
+		}
+
+		/* If the theme changes, we need to reset RageDisplay to apply new theme 
+		 * window title and icon. */
+		/* If the aspect ratio changes, we need to reset RageDisplay so that the 
+		 * projection matrix is re-created using the new screen dimensions. */
+		if( (m_iChangeMask & OPT_APPLY_THEME) || 
+			(m_iChangeMask & OPT_APPLY_GRAPHICS) ||
+			(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) )
+			ApplyGraphicOptions();
+
+		if( m_iChangeMask & OPT_SAVE_PREFERENCES )
+		{
+			/* Save preferences. */
+			LOG->Trace("ROW_CONFIG used; saving ...");
+			PREFSMAN->SaveGlobalPrefsToDisk();
+			SaveGamePrefsToDisk();
+		}
+
+		if( m_iChangeMask & OPT_RESET_GAME )
+		{
+			ResetGame();
+			SCREENMAN->SetNewScreen( INITIAL_SCREEN );
+			m_bExportWillSetANewScreen = false;
+		}
+
+		if( m_iChangeMask & OPT_APPLY_SOUND )
+		{
+			SOUNDMAN->SetPrefs( PREFSMAN->GetSoundVolume() );
+		}
+		
+		if( m_iChangeMask & OPT_APPLY_SONG )
+			SONGMAN->SetPreferences();
+
+		CHECKPOINT;
+		if( !(m_iChangeMask & OPT_RESET_GAME) )
+			this->GoToNextScreen();
 	}
+	else
+		ScreenOptions::HandleScreenMessage( SM );
 }
 
 /*
