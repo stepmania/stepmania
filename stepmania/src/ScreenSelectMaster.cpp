@@ -695,6 +695,9 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	if( m_bChosen[pn] )
 		return;
 
+	if( !ProcessMenuStart( pn ) )
+		return;
+
 	GameCommand &mc = m_aGameCommands[m_iChoice[pn]];
 
 	/* If no options are playable, then we're just waiting for one to become available.
