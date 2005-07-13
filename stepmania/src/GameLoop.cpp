@@ -120,6 +120,73 @@ void GameLoop()
 	}
 }
 
+class ConcurrentRenderer
+{
+public:
+	ConcurrentRenderer();
+	~ConcurrentRenderer();
+
+private:
+	RageThread m_Thread;
+	bool m_bShutdown;
+	void RenderThread();
+	static int StartRenderThread( void *p );
+};
+static ConcurrentRenderer *g_pConcurrentRenderer = NULL;
+
+ConcurrentRenderer::ConcurrentRenderer()
+{
+	m_bShutdown = false;
+
+	m_Thread.SetName( "ConcurrentRenderer" );
+	m_Thread.Create( StartRenderThread, this );
+}
+
+ConcurrentRenderer::~ConcurrentRenderer()
+{
+	m_bShutdown = true;
+	m_Thread.Wait();
+}
+
+void ConcurrentRenderer::RenderThread()
+{
+	ASSERT( SCREENMAN != NULL );
+
+	HOOKS->SetupConcurrentRenderingThread();
+
+	LOG->Trace( "ConcurrentRenderer::RenderThread start" );
+
+	/* This is called during Update().  The next thing the game loop
+	 * will do is Draw, so shift operations around to put Draw at the
+	 * top.  This makes sure updates are seamless. */
+	while( !m_bShutdown )
+	{
+		SCREENMAN->Draw();
+
+		float fDeltaTime = g_GameplayTimer.GetDeltaTime();
+		SCREENMAN->Update( fDeltaTime );
+	}
+
+	LOG->Trace( "ConcurrentRenderer::RenderThread done" );
+}
+
+int ConcurrentRenderer::StartRenderThread( void *p )
+{
+	((ConcurrentRenderer *) p)->RenderThread();
+	return 0;
+}
+
+void StartConcurrentRendering()
+{
+	ASSERT( g_pConcurrentRenderer == NULL );
+	g_pConcurrentRenderer = new ConcurrentRenderer;
+}
+
+void FinishConcurrentRendering()
+{
+	SAFE_DELETE( g_pConcurrentRenderer );
+}
+
 /*
  * (c) 2001-2005 Chris Danford, Glenn Maynard
  * All rights reserved.

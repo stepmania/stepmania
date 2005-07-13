@@ -4,6 +4,8 @@
 #define GAME_LOOP_H
 
 void GameLoop();
+void StartConcurrentRendering();
+void FinishConcurrentRendering();
 
 #endif
 
