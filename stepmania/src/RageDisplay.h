@@ -141,6 +141,7 @@ public:
 	virtual void SetBlendMode( BlendMode mode ) = 0;
 
 	virtual bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false ) = 0;
+	virtual bool SupportsThreadedRendering() { return false; }
 
 	/* return 0 if failed or internal texture resource handle 
 	 * (unsigned in OpenGL, texture pointer in D3D) */

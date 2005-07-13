@@ -682,6 +682,11 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
     return SUCCEEDED( hr );
 }
 
+bool RageDisplay_D3D::SupportsThreadedRendering()
+{
+	return true;
+}
+
 RageSurface* RageDisplay_D3D::CreateScreenshot()
 {
 #if defined(XBOX)
