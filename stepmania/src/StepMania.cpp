@@ -66,6 +66,7 @@
 #include "NetworkSyncManager.h"
 #include "MessageManager.h"
 #include "StatsManager.h"
+#include "GameLoop.h"
 
 #if defined(XBOX)
 #include "Archutils/Xbox/VirtualMemory.h"
@@ -81,7 +82,6 @@ int g_argc = 0;
 char **g_argv = NULL;
 
 static bool g_bHasFocus = true;
-static bool g_bQuitting = false;
 
 void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame );
 
@@ -270,11 +270,6 @@ void HandleException( CString error )
 	exit(1);
 }
 	
-void ExitGame()
-{
-	g_bQuitting = true;
-}
-
 void ResetGame()
 {
 	GAMESTATE->Reset();
@@ -314,7 +309,6 @@ void ResetGame()
 	}
 }
 
-static void GameLoop();
 
 static bool ChangeAppPri()
 {
@@ -1384,7 +1378,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	return false;
 }
 
-static void HandleInputEvents(float fDeltaTime)
+void HandleInputEvents(float fDeltaTime)
 {
 	INPUTFILTER->Update( fDeltaTime );
 	
