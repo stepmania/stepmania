@@ -3,7 +3,7 @@
 #ifndef SCREEN_PROMPT_H
 #define SCREEN_PROMPT_H
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
 #include "Transition.h"
 #include "Quad.h"
@@ -26,7 +26,7 @@ enum PromptAnswer
 	NUM_PROMPT_ANSWERS
 };
 
-class ScreenPrompt : public Screen
+class ScreenPrompt : public ScreenWithMenuElements
 {
 public:
 	static void Prompt( ScreenMessage smSendOnPop, const CString &sText, PromptType type = PROMPT_OK, PromptAnswer defaultAnswer = ANSWER_NO, void(*OnYes)(void*) = NULL, void(*OnNo)(void*) = NULL, void* pCallbackData = NULL );
@@ -75,7 +75,6 @@ protected:
 	void PositionCursor();
 
 	CString			m_sText;
-	BGAnimation		m_Background;
 	BitmapText		m_textQuestion;
 	AutoActor		m_sprCursor;
 	BitmapText		m_textAnswer[NUM_PROMPT_ANSWERS];
@@ -85,10 +84,6 @@ protected:
 	void(*m_pOnYes)(void*);
 	void(*m_pOnNo)(void*);
 	void* m_pCallbackData;
-
-	Transition		m_In;
-	Transition		m_Out;
-	Transition		m_Cancel;
 
 	RageSound		m_sndChange;
 };

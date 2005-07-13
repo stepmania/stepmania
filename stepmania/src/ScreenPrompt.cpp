@@ -27,18 +27,14 @@ void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const CString &sText, Prom
 
 //REGISTER_SCREEN_CLASS( ScreenPrompt );
 ScreenPrompt::ScreenPrompt( const CString &sScreenName ):
-	Screen( sScreenName )
+	ScreenWithMenuElements( sScreenName )
 {
 	m_bIsTransparent = true;	// draw screens below us
 }
 
 void ScreenPrompt::Init()
 {
-	Screen::Init();
-
-	m_Background.LoadFromAniDir( THEME->GetPathB(m_sName,"background") );
-	m_Background.PlayCommand("On");
-	this->AddChild( &m_Background );
+	ScreenWithMenuElements::Init();
 
 	m_textQuestion.LoadFromFont( THEME->GetPathF(m_sName,"question") );
 	m_textQuestion.SetName( "Question" );
@@ -53,15 +49,6 @@ void ScreenPrompt::Init()
 		m_textAnswer[i].LoadFromFont( THEME->GetPathF(m_sName,"answer") );
 		this->AddChild( &m_textAnswer[i] );
 	}
-
-	m_In.Load( THEME->GetPathB(m_sName,"in") );
-	this->AddChild( &m_In );
-	
-	m_Out.Load( THEME->GetPathB(m_sName,"out") );
-	this->AddChild( &m_Out );
-	
-	m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
-	this->AddChild( &m_Cancel );
 
 	m_sndChange.Load( THEME->GetPathS(m_sName,"change"), true );
 }
@@ -126,7 +113,7 @@ void ScreenPrompt::Input( const DeviceInput& DeviceI, const InputEventType type,
 		}
 	}
 
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenWithMenuElements::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenPrompt::HandleScreenMessage( const ScreenMessage SM )
@@ -147,7 +134,7 @@ void ScreenPrompt::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	}
 
-	Screen::HandleScreenMessage( SM );
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 void ScreenPrompt::Change( int dir )
