@@ -158,7 +158,7 @@ void Profile::InitRecentCourseScores()
 	m_vRecentCourseScores.clear();
 }
 
-CString Profile::GetDisplayName() const
+CString Profile::GetDisplayNameOrHighScoreName() const
 {
 	if( !m_sDisplayName.empty() )
 		return m_sDisplayName;
@@ -897,7 +897,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	// TRICKY: These are write-only elements that are never read again.  This 
 	// data is required by other apps (like internet ranking), but is 
 	// redundant to the game app.
-	pGeneralDataNode->AppendChild( "DisplayName",					GetDisplayName() );
+	pGeneralDataNode->AppendChild( "DisplayName",					GetDisplayNameOrHighScoreName() );
 	pGeneralDataNode->AppendChild( "IsMachine",						IsMachine() );
 	pGeneralDataNode->AppendChild( "IsWeightSet",					m_iWeightPounds != 0 );
 

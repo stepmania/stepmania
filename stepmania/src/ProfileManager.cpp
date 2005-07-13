@@ -229,7 +229,7 @@ bool ProfileManager::FastLoadProfileNameFromMemoryCard( CString sRootDir, CStrin
 		Profile::LoadResult res = profile.LoadEditableDataFromDir( sDir );
 		if( res == Profile::success )
 		{
-			sName = profile.GetDisplayName();
+			sName = profile.GetDisplayNameOrHighScoreName();
 			return true;
 		}
 		else if( res != Profile::failed_no_profile )
@@ -283,7 +283,7 @@ const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
 CString ProfileManager::GetPlayerName( PlayerNumber pn ) const
 {
 	const Profile *prof = GetProfile( pn );
-	return prof ? prof->GetDisplayName() : CString("");
+	return prof ? prof->GetDisplayNameOrHighScoreName() : CString("");
 }
 
 
@@ -296,7 +296,7 @@ void ProfileManager::RefreshLocalProfilesEditableData()
 	{
 		Profile &pro = g_mapLocalProfileIdToEditableData[*s];
 		CString sProfileDir = LocalProfileIdToDir( *s );
-		LOG->Trace(" '%s'", pro.GetDisplayName().c_str());
+		LOG->Trace(" '%s'", pro.GetDisplayNameOrHighScoreName().c_str());
 		pro.LoadEditableDataFromDir( sProfileDir );
 	}
 }

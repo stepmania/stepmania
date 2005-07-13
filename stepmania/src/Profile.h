@@ -63,7 +63,7 @@ public:
 	//
 	// smart accessors
 	//
-	CString GetDisplayName() const;
+	CString GetDisplayNameOrHighScoreName() const;
 	CString GetDisplayTotalCaloriesBurned() const;		// remove me and use Lua instead
 	CString GetDisplayTotalCaloriesBurnedToday() const;	// remove me and use Lua instead
 	int GetCalculatedWeightPounds() const;	// returns a default value if m_iWeightPounds isn't set

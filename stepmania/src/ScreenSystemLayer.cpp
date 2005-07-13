@@ -142,12 +142,12 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 		case MEMORY_CARD_STATE_NO_CARD:
 			// this is a local machine profile
 			if( PROFILEMAN->LastLoadWasFromLastGood(pn) )
-				return pProfile->GetDisplayName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND.GetValue();
+				return pProfile->GetDisplayNameOrHighScoreName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND.GetValue();
 			else if( PROFILEMAN->LastLoadWasTamperedOrCorrupt(pn) )
 				return CREDITS_LOAD_FAILED.GetValue();
 			// Prefer the name of the profile over the name of the card.
 			else if( PROFILEMAN->IsPersistentProfile(pn) )
-				return pProfile->GetDisplayName();
+				return pProfile->GetDisplayNameOrHighScoreName();
 			else if( GAMESTATE->PlayersCanJoin() )
 				return CREDITS_INSERT_CARD.GetValue();
 			else
@@ -166,7 +166,7 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 				// If there is a local profile loaded, prefer it over the name of the memory card.
 				if( PROFILEMAN->IsPersistentProfile(pn) )
 				{
-					CString s = pProfile->GetDisplayName();
+					CString s = pProfile->GetDisplayNameOrHighScoreName();
 					if( s.empty() )
 						s = CREDITS_CARD_NO_NAME.GetValue();
 					if( PROFILEMAN->LastLoadWasFromLastGood(pn) )
