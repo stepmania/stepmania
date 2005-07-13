@@ -20,6 +20,7 @@ public:
 
 	void BoostPriority();
 	void UnBoostPriority();
+	void SetupConcurrentRenderingThread();
 
 private:
 	void CheckVideoDriver();

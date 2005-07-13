@@ -220,6 +220,11 @@ void ArchHooks_Win32::UnBoostPriority()
 	SetPriorityClass( GetCurrentProcess(), NORMAL_PRIORITY_CLASS );
 }
 
+void ArchHooks_Win32::SetupConcurrentRenderingThread()
+{
+	SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL );
+}
+
 static bool g_bTimerInitialized;
 static DWORD g_iStartTime;
 
