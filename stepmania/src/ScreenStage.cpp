@@ -51,9 +51,6 @@ void ScreenStage::Init()
 	m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Cancel );
 
-	/* Prep the new screen once m_In is complete. */ 	 
-	this->PostScreenMessage( SM_PrepScreen, m_sprOverlay->GetTweenTimeLeft() );
-
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("stage "+StageToString(GAMESTATE->GetCurrentStage())) );
 
 	this->SortByDrawOrder();
@@ -74,6 +71,12 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BeginFadingOut )
 	{
+		if( SCREENMAN->IsConcurrentlyLoading() || m_sprOverlay->GetTweenTimeLeft() )
+			return;
+
+		/* Clear any other SM_BeginFadingOut messages. */
+		this->ClearMessageQueue( SM_BeginFadingOut );
+
 		m_Out.StartTransitioning();
 		this->PostScreenMessage( SM_GoToNextScreen, this->GetTweenTimeLeft() );
 		return;
@@ -84,6 +87,20 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenStage::Update( float fDeltaTime )
 {
+	if( this->IsFirstUpdate() )
+	{
+		if( SCREENMAN->ConcurrentlyPrepareScreen(NEXT_SCREEN, SM_BeginFadingOut) )
+		{
+			/* Continue when both the screen finishes loading and the tween finishes. */
+			this->PostScreenMessage( SM_BeginFadingOut, m_sprOverlay->GetTweenTimeLeft() );
+		}
+		else
+		{
+			/* Prep the new screen once m_In is complete. */ 	 
+			this->PostScreenMessage( SM_PrepScreen, m_sprOverlay->GetTweenTimeLeft() );
+		}
+	}
+
 	if( m_bZeroDeltaOnNextUpdate )
 	{
 		m_bZeroDeltaOnNextUpdate = false;

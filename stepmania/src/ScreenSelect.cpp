@@ -205,6 +205,8 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			const int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
 			m_sNextScreen = NEXT_SCREEN(iSelectionIndex);
 		}
+
+		SCREENMAN->ConcurrentlyPrepareScreen( m_sNextScreen );
 	}
 	else if( SM == SM_AllDoneChoosing ) 	/* It's our turn to tween out. */
 	{
