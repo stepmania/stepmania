@@ -1,20 +1,25 @@
-#ifndef ScreenSelectProfile_H
-#define ScreenSelectProfile_H
+#ifndef ScreenOptionsEditProfile_H
+#define ScreenOptionsEditProfile_H
 
-#include "ScreenSelectMaster.h"
+#include "ScreenOptions.h"
 
-class ScreenSelectProfile : public ScreenSelectMaster
+class ScreenOptionsEditProfile : public ScreenOptions
 {
 public:
-	ScreenSelectProfile( CString sName );
+	ScreenOptionsEditProfile( CString sName );
 	virtual void Init();
-	virtual ~ScreenSelectProfile();
+	virtual ~ScreenOptionsEditProfile();
 
 protected:
-	virtual void HandleScreenMessage( const ScreenMessage SM );
-	virtual bool ProcessMenuStart( PlayerNumber pn );
+private:
+	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns );
+	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
 
-	ThemeMetric<CString>	NEXT_SCREEN;
+	virtual void GoToNextScreen();
+	virtual void GoToPrevScreen();
+	
+	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
 };
 
 #endif
