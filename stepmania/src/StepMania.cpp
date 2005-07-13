@@ -1461,6 +1461,11 @@ void FocusChanged( bool bHasFocus )
 	}
 }
 
+bool AppHasFocus()
+{
+	return g_bHasFocus;
+}
+
 static void CheckSkips( float fDeltaTime )
 {
 	if( !PREFSMAN->m_bLogSkips )
