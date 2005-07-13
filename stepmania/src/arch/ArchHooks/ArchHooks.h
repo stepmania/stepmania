@@ -27,6 +27,12 @@ public:
 	virtual void UnBoostPriority() { }
 
 	/*
+	 * The priority of the concurrent rendering thread may need to be boosted
+	 * on some schedulers.
+	 */
+	virtual void SetupConcurrentRenderingThread() { }
+
+	/*
 	 * Return the amount of time since the program started.  (This may actually be
 	 * since the initialization of HOOKS.
 	 *
