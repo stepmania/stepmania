@@ -721,6 +721,18 @@ void OptionRow::SetOneSharedSelection( int iChoice )
 		SetOneSelection( pn, iChoice );
 }
 
+void OptionRow::SetOneSharedSelectionIfPresent( const CString &sChoice )
+{
+	for( unsigned i=0; i<m_RowDef.m_vsChoices.size(); i++ )
+	{
+		if( sChoice == m_RowDef.m_vsChoices[i] )
+		{
+			SetOneSharedSelection( i );
+			break;
+		}
+	}
+}
+
 int OptionRow::GetChoiceInRowWithFocus( PlayerNumber pn ) const
 {
 	if( m_RowDef.m_bOneChoiceForAllPlayers )

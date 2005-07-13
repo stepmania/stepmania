@@ -112,6 +112,7 @@ public:
 	int GetOneSharedSelection( bool bAllowFail=false ) const;
 	void SetOneSelection( PlayerNumber pn, int iChoice );
 	void SetOneSharedSelection( int iChoice );
+	void SetOneSharedSelectionIfPresent( const CString &sChoice );
 
 	int GetChoiceInRowWithFocus( PlayerNumber pn ) const;
 	int GetChoiceInRowWithFocusShared() const;
