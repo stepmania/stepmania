@@ -104,6 +104,7 @@ FileTypes = IniFile.cpp IniFile.h \
 
 StepMania = StdString.h \
 		StepMania.cpp StepMania.h \
+		GameLoop.cpp GameLoop.h \
 		global.cpp global.h
 
 LoadingWindow = arch/LoadingWindow/LoadingWindow.h \
