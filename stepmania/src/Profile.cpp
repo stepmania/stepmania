@@ -23,6 +23,8 @@
 #include "CatalogXml.h"
 #include "Bookkeeper.h"
 #include "Game.h"
+#include "GameState.h"
+#include "Character.h"
 
 //
 // Old file versions for backward compatibility
@@ -46,7 +48,6 @@ const CString LASTGOOD_SUBDIR      = "LastGood/";
 	* 10 /* HighScores per Steps */		\
 	* 1024 /* size in bytes of a HighScores XNode */
 
-const unsigned int MAX_DISPLAY_NAME_LENGTH	= 12;
 const unsigned int DEFAULT_WEIGHT_POUNDS	= 120;
 
 #if defined(_MSC_VER)
@@ -56,7 +57,8 @@ const unsigned int DEFAULT_WEIGHT_POUNDS	= 120;
 
 void Profile::InitEditableData()
 {
-	m_sDisplayName = "";	
+	m_sDisplayName = "";
+	m_sCharacter = "";
 	m_sLastUsedHighScoreName = "";
 	m_iWeightPounds = 0;
 }
@@ -166,6 +168,18 @@ CString Profile::GetDisplayNameOrHighScoreName() const
 		return m_sLastUsedHighScoreName;
 	else
 		return "";
+}
+
+Character *Profile::GetCharacter() const
+{
+	vector<Character*> vpCharacters;
+	GAMESTATE->GetCharacters( vpCharacters );
+	FOREACH_CONST( Character*, vpCharacters, c )
+	{
+		if( (*c)->m_sName.CompareNoCase(m_sCharacter)==0 )
+			return *c;
+	}
+	return GAMESTATE->GetDefaultCharacter();
 }
 
 static CString FormatCalories( float fCals )
@@ -883,6 +897,7 @@ void Profile::SaveEditableDataToDir( CString sDir ) const
 	IniFile ini;
 
 	ini.SetValue( "Editable", "DisplayName",			m_sDisplayName );
+	ini.SetValue( "Editable", "Character",					m_sCharacter );
 	ini.SetValue( "Editable", "LastUsedHighScoreName",	m_sLastUsedHighScoreName );
 	ini.SetValue( "Editable", "WeightPounds",			m_iWeightPounds );
 
@@ -1037,13 +1052,14 @@ Profile::LoadResult Profile::LoadEditableDataFromDir( CString sDir )
 	ini.ReadFile( fn );
 
 	ini.GetValue("Editable","DisplayName",				m_sDisplayName);
+	ini.GetValue("Editable","Character",					m_sCharacter);
 	ini.GetValue("Editable","LastUsedHighScoreName",	m_sLastUsedHighScoreName);
 	ini.GetValue("Editable","WeightPounds",				m_iWeightPounds);
 
 	// This is data that the user can change, so we have to validate it.
 	wstring wstr = CStringToWstring(m_sDisplayName);
-	if( wstr.size() > MAX_DISPLAY_NAME_LENGTH )
-		wstr = wstr.substr(0, MAX_DISPLAY_NAME_LENGTH);
+	if( wstr.size() > PROFILE_MAX_DISPLAY_NAME_LENGTH )
+		wstr = wstr.substr(0, PROFILE_MAX_DISPLAY_NAME_LENGTH);
 	m_sDisplayName = WStringToCString(wstr);
 	// TODO: strip invalid chars?
 	if( m_iWeightPounds != 0 )
@@ -1829,6 +1845,7 @@ public:
 	LunaProfile() { LUA->Register( Register ); }
 
 	static int GetDisplayName( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sDisplayName ); return 1; }
+	static int GetCharacter( T* p, lua_State *L )			{ p->GetCharacter()->PushSelf(L); return 1; }
 	static int GetWeightPounds( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iWeightPounds ); return 1; }
 	static int SetWeightPounds( T* p, lua_State *L )		{ p->m_iWeightPounds = IArg(1); return 0; }
 	static int GetGoalType( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_GoalType ); return 1; }
@@ -1849,10 +1866,12 @@ public:
 	static int GetCoursesPercentComplete( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetCoursesPercentComplete((StepsType)IArg(1),(CourseDifficulty)IArg(2)) ); return 1; }
 	static int GetTotalStepsWithTopGrade( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalStepsWithTopGrade((StepsType)IArg(1),(Difficulty)IArg(2),(Grade)IArg(3)) ); return 1; }
 	static int GetTotalTrailsWithTopGrade( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalTrailsWithTopGrade((StepsType)IArg(1),(CourseDifficulty)IArg(2),(Grade)IArg(3)) ); return 1; }
+	static int GetNumTotalSongsPlayed( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetDisplayName )
+		ADD_METHOD( GetCharacter )
 		ADD_METHOD( GetWeightPounds )
 		ADD_METHOD( SetWeightPounds )
 		ADD_METHOD( GetGoalType )
@@ -1873,6 +1892,7 @@ public:
 		ADD_METHOD( GetCoursesPercentComplete )
 		ADD_METHOD( GetTotalStepsWithTopGrade )
 		ADD_METHOD( GetTotalTrailsWithTopGrade )
+		ADD_METHOD( GetNumTotalSongsPlayed )
 		Luna<T>::Register( L );
 	}
 };

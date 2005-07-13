@@ -19,6 +19,7 @@
 
 struct XNode;
 struct lua_State;
+class Character;
 
 //
 // Current file versions
@@ -45,6 +46,9 @@ extern const CString SCREENSHOTS_SUBDIR;
 extern const CString EDITS_SUBDIR;
 extern const CString LASTGOOD_SUBDIR;
 
+const unsigned int PROFILE_MAX_DISPLAY_NAME_LENGTH	= 12;
+
+
 class Style;
 
 class Song;
@@ -64,6 +68,7 @@ public:
 	// smart accessors
 	//
 	CString GetDisplayNameOrHighScoreName() const;
+	Character *GetCharacter() const;
 	CString GetDisplayTotalCaloriesBurned() const;		// remove me and use Lua instead
 	CString GetDisplayTotalCaloriesBurnedToday() const;	// remove me and use Lua instead
 	int GetCalculatedWeightPounds() const;	// returns a default value if m_iWeightPounds isn't set
@@ -90,6 +95,7 @@ public:
 	// Editable data
 	//
 	CString m_sDisplayName;
+	CString m_sCharacter;
 	CString m_sLastUsedHighScoreName;	// this doesn't really belong in "editable", but we need it in the smaller editable file so that it can be ready quickly.
 	int m_iWeightPounds;	// 0 == not set
 
