@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                               	cl                                                       /Zl                                                       /nologo                                                       /c                                                       verstub.cpp                                                       /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                 	cl                                                         /Zl                                                         /nologo                                                         /c                                                         verstub.cpp                                                         /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc         	cl          /Zl          /nologo          /c          verstub.cpp          /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc           	cl            /Zl            /nologo            /c            verstub.cpp            /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -589,6 +589,14 @@ SOURCE=.\RageTextureManager.cpp
 # Begin Source File
 
 SOURCE=.\RageTextureManager.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageTexturePreloader.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\RageTexturePreloader.h
 # End Source File
 # Begin Source File
 
@@ -1688,6 +1696,14 @@ SOURCE=.\archutils\Win32\WindowsResources.rc
 # End Group
 # Begin Source File
 
+SOURCE=.\GameLoop.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\GameLoop.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\global.cpp
 
 !IF  "$(CFG)" == "StepMania - Win32 Debug"
@@ -2486,14 +2502,6 @@ SOURCE=.\ScreenBookkeeping.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenBranch.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenBranch.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ScreenCenterImage.cpp
 # End Source File
 # Begin Source File
@@ -2760,6 +2768,14 @@ SOURCE=.\ScreenOptions.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenOptionsEditProfile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptionsEditProfile.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenOptionsMaster.cpp
 # End Source File
 # Begin Source File
@@ -2789,14 +2805,6 @@ SOURCE=.\ScreenPlayerOptions.cpp
 # Begin Source File
 
 SOURCE=.\ScreenPlayerOptions.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenProfileOptions.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenProfileOptions.h
 # End Source File
 # Begin Source File
 
@@ -2893,6 +2901,14 @@ SOURCE=.\ScreenSelectMusic.cpp
 # Begin Source File
 
 SOURCE=.\ScreenSelectMusic.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectProfile.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenSelectProfile.h
 # End Source File
 # Begin Source File
 

@@ -41,16 +41,22 @@ ScreenJukebox.cpp ScreenJukebox.h \
 ScreenMapControllers.cpp ScreenMapControllers.h \
 ScreenMessage.cpp ScreenMessage.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenMusicScroll.cpp ScreenMusicScroll.h \
 ScreenNameEntry.cpp ScreenNameEntry.h ScreenNameEntryTraditional.cpp ScreenNameEntryTraditional.h \
-ScreenOptions.cpp ScreenOptions.h ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
-ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h ScreenPackages.cpp ScreenPackages.h ScreenPlayerOptions.cpp ScreenPlayerOptions.h ScreenNetworkOptions.h \
-ScreenNetworkOptions.cpp ScreenProfileOptions.cpp ScreenProfileOptions.h ScreenPrompt.cpp ScreenPrompt.h ScreenRanking.cpp ScreenRanking.h \
+ScreenOptions.cpp ScreenOptions.h \
+ScreenOptionsEditProfile.cpp ScreenOptionsEditProfile.h \
+ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
+ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h ScreenPackages.cpp ScreenPackages.h \
+ScreenPlayerOptions.cpp ScreenPlayerOptions.h \
+ScreenNetworkOptions.h ScreenNetworkOptions.cpp \
+ScreenPrompt.cpp ScreenPrompt.h ScreenRanking.cpp ScreenRanking.h \
 ScreenReloadSongs.cpp ScreenReloadSongs.h \
 ScreenSandbox.cpp ScreenSandbox.h \
 ScreenSaveSync.cpp ScreenSaveSync.h \
 ScreenSelect.cpp ScreenSelect.h ScreenSelectCharacter.cpp ScreenSelectCharacter.h \
 ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h ScreenSelectGroup.cpp ScreenSelectGroup.h \
 ScreenSelectMaster.cpp ScreenSelectMaster.h ScreenSelectMode.cpp ScreenSelectMode.h \
-ScreenSelectMusic.cpp ScreenSelectMusic.h ScreenSelectStyle.cpp ScreenSelectStyle.h \
+ScreenSelectMusic.cpp ScreenSelectMusic.h \
+ScreenSelectProfile.cpp ScreenSelectProfile.h 
+ScreenSelectStyle.cpp ScreenSelectStyle.h \
 ScreenSyncOverlay.cpp ScreenSyncOverlay.h \
 ScreenSystemLayer.cpp ScreenSystemLayer.h ScreenSetTime.cpp ScreenSetTime.h \
 ScreenSongOptions.cpp ScreenSongOptions.h \

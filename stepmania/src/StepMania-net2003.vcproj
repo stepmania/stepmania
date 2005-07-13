@@ -568,6 +568,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenSelectMusic.h">
 			</File>
 			<File
+				RelativePath=".\ScreenSelectProfile.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenSelectProfile.h">
+			</File>
+			<File
 				RelativePath="ScreenSelectStyle.cpp">
 			</File>
 			<File
