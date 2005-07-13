@@ -171,13 +171,20 @@ class LunaCharacter: public Luna<Character>
 public:
 	LunaCharacter() { LUA->Register( Register ); }
 
-	static int GetStageIconPath( T* p, lua_State *L )	{ lua_pushstring(L, p->GetStageIconPath() ); return 1; }
+	static int GetCardPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetCardPath() ); return 1; }
+	static int GetIconPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetIconPath() ); return 1; }
 	static int GetSongSelectIconPath( T* p, lua_State *L )	{ lua_pushstring(L, p->GetSongSelectIconPath() ); return 1; }
+	static int GetStageIconPath( T* p, lua_State *L )		{ lua_pushstring(L, p->GetStageIconPath() ); return 1; }
+
+	CString GetCardPath() const;
+	CString GetIconPath() const;
 	
 	static void Register( Lua *L )
 	{
-		ADD_METHOD( GetStageIconPath )
+		ADD_METHOD( GetCardPath )
+		ADD_METHOD( GetIconPath )
 		ADD_METHOD( GetSongSelectIconPath )
+		ADD_METHOD( GetStageIconPath )
 		Luna<T>::Register( L );
 	}
 };
