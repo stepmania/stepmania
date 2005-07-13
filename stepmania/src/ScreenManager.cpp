@@ -215,10 +215,15 @@ void ScreenManager::Update( float fDeltaTime )
 		/* Don't call BackgroundPrepareScreen() from within another background load. */
 		ASSERT( !IsConcurrentlyLoading() );
 
-		/* Push rendering into a thread, and prepare the screen. */
+		CString sScreenName = m_sDelayedConcurrentPrepare;
+		m_sDelayedConcurrentPrepare = "";
+
+		ScreenMessage SM = m_OnDonePreparingScreen;
+		m_OnDonePreparingScreen = SM_None;
+
 		g_bIsConcurrentlyLoading = true;
 		StartConcurrentRendering();
-		PrepareScreen( m_sDelayedConcurrentPrepare );
+		PrepareScreen( sScreenName );
 		FinishConcurrentRendering();
 		g_bIsConcurrentlyLoading = false;
 
@@ -226,9 +231,6 @@ void ScreenManager::Update( float fDeltaTime )
 
 		/* We're done.  Send the message.  The screen is allowed to start
 		 * another concurrent prepare from this message. */
-		ScreenMessage SM = m_OnDonePreparingScreen;
-		m_sDelayedConcurrentPrepare = "";
-		m_OnDonePreparingScreen = SM_None;
 		SendMessageToTopScreen( SM );
 	}
 }
