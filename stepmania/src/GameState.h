@@ -90,9 +90,9 @@ public:
 	bool IsCpuPlayer( PlayerNumber pn ) const;
 	bool AnyPlayersAreCpu() const;
 
-	void GetCharacters( vector<Character*> &apCharactersOut );
-	Character* GameState::GetRandomCharacter();
-	Character* GameState::GetDefaultCharacter();
+	void GetCharacters( vector<Character*> &vpCharactersOut );
+	Character* GetRandomCharacter();
+	Character* GetDefaultCharacter();
 
 
 	bool IsCourseMode() const;
