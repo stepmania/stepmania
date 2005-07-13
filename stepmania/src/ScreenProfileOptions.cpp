@@ -85,14 +85,14 @@ void ScreenProfileOptions::Init()
 	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions","music") );
 }
 
-void ScreenProfileOptions::ImportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenProfileOptions::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	switch( row )
+	switch( iRow )
 	{
 	case PO_PLAYER1:
 	case PO_PLAYER2:
 		{
-			PlayerNumber pn = (PlayerNumber)(row - PO_PLAYER1);
+			PlayerNumber pn = (PlayerNumber)(iRow - PO_PLAYER1);
 			vector<CString> vsProfiles;
 			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
@@ -101,25 +101,25 @@ void ScreenProfileOptions::ImportOptions( int row, const vector<PlayerNumber> &v
 				vsProfiles.end(),
 				PREFSMAN->GetDefaultLocalProfileID(pn).Get() );
 			if( iter != vsProfiles.end() )
-				m_pRows[row]->SetOneSharedSelection( iter - vsProfiles.begin() + 1 );
+				m_pRows[iRow]->SetOneSharedSelection( iter - vsProfiles.begin() + 1 );
 		}
 		break;
 	}
 }
 
-void ScreenProfileOptions::ExportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenProfileOptions::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	switch( row )
+	switch( iRow )
 	{
 	case PO_PLAYER1:
 	case PO_PLAYER2:
 		{
-			PlayerNumber pn = (PlayerNumber)(row - PO_PLAYER1);
+			PlayerNumber pn = (PlayerNumber)(iRow - PO_PLAYER1);
 			vector<CString> vsProfiles;
 			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-			if( m_pRows[row]->GetOneSharedSelection() > 0 )
-				PREFSMAN->GetDefaultLocalProfileID(pn).Set( vsProfiles[m_pRows[row]->GetOneSharedSelection()-1] );
+			if( m_pRows[iRow]->GetOneSharedSelection() > 0 )
+				PREFSMAN->GetDefaultLocalProfileID(pn).Set( vsProfiles[m_pRows[iRow]->GetOneSharedSelection()-1] );
 			else
 				PREFSMAN->GetDefaultLocalProfileID(pn).Set( "" );
 		}

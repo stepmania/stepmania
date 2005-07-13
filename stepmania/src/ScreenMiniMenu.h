@@ -87,8 +87,8 @@ public:
 
 protected:
 	virtual void OnChange( PlayerNumber pn );
-	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns );
-	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
+	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
+	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	
 	// Screens that get pushed on top of other screens don't
 	// use the ScreenManager's shared background, so they must draw their own.

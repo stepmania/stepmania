@@ -14,8 +14,8 @@ public:
 	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
 
 private:
-	void ImportOptions( int row, const vector<PlayerNumber> &vpns );
-	void ExportOptions( int row, const vector<PlayerNumber> &vpns );
+	void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
+	void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 
 	void UpdateConnectStatus();
 

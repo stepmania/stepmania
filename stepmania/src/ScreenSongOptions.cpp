@@ -26,11 +26,11 @@ void ScreenSongOptions::Init()
 	}
 }
 
-void ScreenSongOptions::ExportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenSongOptions::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 	const SongOptions::FailType ft = GAMESTATE->m_SongOptions.m_FailType;
 
-	ScreenOptionsMaster::ExportOptions( row, vpns );
+	ScreenOptionsMaster::ExportOptions( iRow, vpns );
 
 	if( ft != GAMESTATE->m_SongOptions.m_FailType )
 		GAMESTATE->m_bChangedFailTypeOnScreenSongOptions = true;

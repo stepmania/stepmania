@@ -220,12 +220,12 @@ void ScreenCourseManager::ProcessMenuStart( PlayerNumber pn, const InputEventTyp
 	}
 }
 
-void ScreenCourseManager::ImportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenCourseManager::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 
 }
 
-void ScreenCourseManager::ExportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenCourseManager::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 
 }

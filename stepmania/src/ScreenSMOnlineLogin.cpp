@@ -55,9 +55,9 @@ void ScreenSMOnlineLogin::Init()
 	}
 }
 
-void ScreenSMOnlineLogin::ImportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenSMOnlineLogin::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	switch( row )
+	switch( iRow )
 	{
 	case 0:
 		{
@@ -75,9 +75,9 @@ void ScreenSMOnlineLogin::ImportOptions( int row, const vector<PlayerNumber> &vp
 	}
 }
 
-void ScreenSMOnlineLogin::ExportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenSMOnlineLogin::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	switch( row )
+	switch( iRow )
 	{
 	case 0:
 		{

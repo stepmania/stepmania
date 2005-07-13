@@ -326,7 +326,7 @@ void ScreenEditCourseEntry::ImportAllOptions()
 	}
 }
 
-void ScreenEditCourseEntry::ExportOptions( int row, const vector<PlayerNumber> &vpns )
+void ScreenEditCourseEntry::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 
 }

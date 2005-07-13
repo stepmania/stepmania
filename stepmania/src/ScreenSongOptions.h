@@ -13,7 +13,7 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 private:
-	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
+	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 };
 
 #endif
