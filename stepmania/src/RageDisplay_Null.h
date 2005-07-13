@@ -7,7 +7,6 @@ class RageDisplay_Null: public RageDisplay
 {
 public:
 	RageDisplay_Null( VideoModeParams p );
-	void Update( float fDeltaTime ) { }
 
 	void ResolutionChanged() { }
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;

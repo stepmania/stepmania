@@ -9,7 +9,6 @@ public:
 	RageDisplay_OGL();
 	virtual ~RageDisplay_OGL();
 	CString Init( VideoModeParams p, bool bAllowUnacceleratedRenderer );
-	void Update(float fDeltaTime);
 
 	bool IsSoftwareRenderer();
 	void ResolutionChanged();

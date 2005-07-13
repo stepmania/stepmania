@@ -484,45 +484,6 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 #include <X11/extensions/XTest.h>
 #endif
 
-void RageDisplay_OGL::Update(float fDeltaTime)
-{
-	wind->Update();
-
-	if( PREFSMAN->m_bDisableScreenSaver )
-	{
-		/* Disable the screensaver. */
-#if defined(UNIX) && defined(HAVE_LIBXTST)
-		ASSERT( g_X11Display );
-
-		/* This causes flicker. */
-		// XForceScreenSaver( g_X11Display, ScreenSaverReset );
-		
-		/*
-		 * Instead, send a null relative mouse motion, to trick X into thinking there has been
-		 * user activity. 
-		 *
-		 * This also handles XScreenSaver; XForceScreenSaver only handles the internal X11
-		 * screen blanker.
-		 *
-		 * This will delay the X blanker, DPMS and XScreenSaver from activating, and will
-		 * disable the blanker and XScreenSaver if they're already active (unless XSS is
-		 * locked).  For some reason, it doesn't un-blank DPMS if it's already active.
-		 */
-
-		XLockDisplay( g_X11Display );
-
-		int event_base, error_base, major, minor;
-		if( XTestQueryExtension( g_X11Display, &event_base, &error_base, &major, &minor ) )
-		{
-			XTestFakeRelativeMotionEvent( g_X11Display, 0, 0, 0 );
-			XSync( g_X11Display, False );
-		}
-
-		XUnlockDisplay( g_X11Display );
-#endif
-	}
-}
-
 bool RageDisplay_OGL::IsSoftwareRenderer()
 {
 #if defined(WIN32)
@@ -774,6 +735,42 @@ void RageDisplay_OGL::EndFrame()
 
 	wind->SwapBuffers();
 	ProcessStatsOnFlip();
+
+	wind->Update();
+
+	if( PREFSMAN->m_bDisableScreenSaver )
+	{
+		/* Disable the screensaver. */
+#if defined(UNIX) && defined(HAVE_LIBXTST)
+		ASSERT( g_X11Display );
+
+		/* This causes flicker. */
+		// XForceScreenSaver( g_X11Display, ScreenSaverReset );
+		
+		/*
+		 * Instead, send a null relative mouse motion, to trick X into thinking there has been
+		 * user activity. 
+		 *
+		 * This also handles XScreenSaver; XForceScreenSaver only handles the internal X11
+		 * screen blanker.
+		 *
+		 * This will delay the X blanker, DPMS and XScreenSaver from activating, and will
+		 * disable the blanker and XScreenSaver if they're already active (unless XSS is
+		 * locked).  For some reason, it doesn't un-blank DPMS if it's already active.
+		 */
+
+		XLockDisplay( g_X11Display );
+
+		int event_base, error_base, major, minor;
+		if( XTestQueryExtension( g_X11Display, &event_base, &error_base, &major, &minor ) )
+		{
+			XTestFakeRelativeMotionEvent( g_X11Display, 0, 0, 0 );
+			XSync( g_X11Display, False );
+		}
+
+		XUnlockDisplay( g_X11Display );
+#endif
+	}
 }
 
 RageSurface* RageDisplay_OGL::CreateScreenshot()
