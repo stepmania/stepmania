@@ -61,6 +61,7 @@ D3DDISPLAYMODE			g_DesktopMode;
 D3DPRESENT_PARAMETERS	g_d3dpp;
 int						g_ModelMatrixCnt=0;
 int						g_iCurrentTextureIndex = 0;
+static int				g_iActualRefreshRateInHz = 60;
 
 /* Direct3D doesn't associate a palette with textures.
  * Instead, we load a palette into a slot.  We need to keep track
@@ -572,6 +573,22 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 			p.rate = g_d3dpp.FullScreen_RefreshRateInHz;
 	}
 
+	/* Find the refresh rate. */
+	{
+		DEVMODE dm;
+		ZERO( dm );
+		dm.dmSize = sizeof(dm);
+		if( EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm) )
+		{
+			g_iActualRefreshRateInHz = dm.dmDisplayFrequency;
+		}
+		else
+		{
+			g_iActualRefreshRateInHz = 60;
+			LOG->Warn( "%s", werr_ssprintf(GetLastError(), "EnumDisplaySettings failed").c_str() );
+		}
+	}
+
 	/* Call this again after changing the display mode.  If we're going to a window
 	 * from fullscreen, the first call can't set a larger window than the old fullscreen
 	 * resolution or set the window position. */
@@ -640,10 +657,14 @@ bool RageDisplay_D3D::BeginFrame()
 	return true;
 }
 
+static RageTimer g_LastFrameEndedAt( RageZeroTimer );
 void RageDisplay_D3D::EndFrame()
 {
 	g_pd3dDevice->EndScene();
+
+	FrameLimitBeforeVsync( g_iActualRefreshRateInHz );
 	g_pd3dDevice->Present( 0, 0, 0, 0 );
+	FrameLimitAfterVsync();
 
 	GraphicsWindow::Update();
 
