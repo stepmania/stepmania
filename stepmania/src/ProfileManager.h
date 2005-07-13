@@ -25,8 +25,8 @@ public:
 	void Init();
 
 	// local profiles
-	void RefreshLocalProfilesEditableData();
-	Profile &GetLocalProfileEditableData( const CString &sProfileID );
+	void RefreshLocalProfilesFromDisk();
+	Profile &GetLocalProfile( const CString &sProfileID );
 	
 	bool CreateLocalProfile( CString sName );
 	bool RenameLocalProfile( CString sProfileID, CString sNewName );
@@ -102,6 +102,10 @@ public:
 	// Lua
 	void PushSelf( lua_State *L );
 
+
+	static bool ValidateLocalProfileName( const CString &sAnswer, CString &sErrorOut );
+
+
 private:
 	// returns Profile::LoadResult, but we don't want to depend on Profile
 	int LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );
@@ -118,9 +122,7 @@ private:
 	bool m_bLastLoadWasTamperedOrCorrupt[NUM_PLAYERS];	// true if Stats.xml was present, but failed to load (probably because of a signature failure)
 	bool m_bLastLoadWasFromLastGood[NUM_PLAYERS];		// if true, then m_bLastLoadWasTamperedOrCorrupt is also true
 	
-	// actual loaded profile data
-	Profile	*m_pProfile[NUM_PLAYERS];	
-
+	Profile	*m_pMemoryCardProfile[NUM_PLAYERS];	// holds Profile for the currently inserted card
 	Profile *m_pMachineProfile;
 };
 
