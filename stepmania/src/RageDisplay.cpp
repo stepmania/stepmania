@@ -27,10 +27,12 @@ static int			g_iFramesRenderedSinceLastCheck,
 					g_iFramesRenderedSinceLastReset,
 					g_iVertsRenderedSinceLastCheck,
 					g_iNumChecksSinceLastReset;
+static RageTimer g_LastFrameEndedAt( RageZeroTimer );
 
 RageDisplay*		DISPLAY	= NULL;
 
 Preference<bool>  LOG_FPS( "LogFPS", true );
+Preference<bool>  g_fFrameLimitPercent( "FrameLimitPercent", 0.0f );
 
 CString RageDisplay::PixelFormatToString( PixelFormat pixfmt )
 {
@@ -735,6 +737,39 @@ void RageDisplay::DrawCircle( const RageSpriteVertex &v, float radius )
 {
 	this->DrawCircleInternal( v, radius );
 }
+
+void RageDisplay::FrameLimitBeforeVsync( int iFPS )
+{
+	ASSERT( iFPS != 0 );
+
+	if( g_LastFrameEndedAt.IsZero() )
+		return;
+
+	if( g_fFrameLimitPercent.Get() == 0.0f )
+		return;
+
+	float fFrameTime = g_LastFrameEndedAt.GetDeltaTime();
+	float fExpectedTime = 1.0f / iFPS;
+
+	/* This is typically used to turn some of the delay that would normally
+	 * be waiting for vsync and turn it into a usleep, to make sure we give
+	 * up the CPU.  If we overshoot the sleep, then we'll miss the vsync,
+	 * so allow tweaking the amount of time we expect a frame to take.
+	 * Frame limiting is disabled by setting this to 0. */
+	fExpectedTime *= g_fFrameLimitPercent.Get();
+	float fExtraTime = fExpectedTime - fFrameTime;
+	if( fExtraTime > 0 )
+		usleep( int(fExtraTime * 1000000) );
+}
+
+void RageDisplay::FrameLimitAfterVsync()
+{
+	if( g_fFrameLimitPercent.Get() == 0.0f )
+		return;
+
+	g_LastFrameEndedAt.Touch();
+}
+
 
 RageCompiledGeometry::~RageCompiledGeometry()
 {
