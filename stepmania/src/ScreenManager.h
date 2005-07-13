@@ -39,6 +39,8 @@ public:
 	void SetNewScreen( const CString &sName );
 	void AddNewScreenToTop( const CString &sName );
 	void PrepareScreen( const CString &sScreenName );	// creates and caches screen so that the next call to SetNewScreen for the prep'd screen will be very quick.
+	bool ConcurrentlyPrepareScreen( const CString &sScreenName, ScreenMessage send_when_done = SM_None );
+	bool IsConcurrentlyLoading() const;
 	void DeletePreparedScreens();
 	void SetFromNewScreen( Screen *pNewScreen );
 	void PopTopScreen( ScreenMessage SM );
@@ -82,9 +84,10 @@ private:
 	vector<Screen*>		m_vPreparedScreens;
 	vector<Actor*>		m_vPreparedBackgrounds;
 	
-	// Screen loads and removals are delayed until the next update, so the
-	// screen being removed isn't on the stack.
+	// Screen loads, removals, and concurrent prepares are delayed until the next update.
 	CString				m_sDelayedScreen;
+	CString				m_sDelayedConcurrentPrepare;
+	ScreenMessage		m_OnDonePreparingScreen;
 	ScreenMessage		m_PopTopScreen;
 
 	// Set this to true anywhere we create of delete objects.  These 

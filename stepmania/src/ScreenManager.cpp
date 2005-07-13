@@ -31,9 +31,11 @@
 #include "Screen.h"
 #include "Foreach.h"
 #include "ActorUtil.h"
+#include "GameLoop.h"
 
 ScreenManager*	SCREENMAN = NULL;	// global and accessable from anywhere in our program
 
+static Preference<bool> g_bConcurrentLoading( "ConcurrentLoading",	false );
 
 // Screen registration
 static map<CString,CreateScreenFn>	*g_pmapRegistrees = NULL;
@@ -56,6 +58,7 @@ ScreenManager::ScreenManager()
 
 	m_bZeroNextUpdate = false;
 	m_PopTopScreen = SM_Invalid;
+	m_OnDonePreparingScreen = SM_Invalid;
 }
 
 
@@ -114,6 +117,8 @@ bool ScreenManager::IsStackedScreen( const Screen *pScreen ) const
 			return true;
 	return false;
 }
+
+static bool g_bIsConcurrentlyLoading = false;
 
 void ScreenManager::Update( float fDeltaTime )
 {
@@ -197,12 +202,41 @@ void ScreenManager::Update( float fDeltaTime )
 	if( bFirstUpdate )
 		SOUND->Flush();
 
-	if( m_sDelayedScreen.size() != 0 )
+	/* If we're currently inside a background screen load, and m_sDelayedScreen
+	 * is set, then the screen called SetNewScreen before we finished preparing.
+	 * Postpone it until we're finished loading. */
+	if( !IsConcurrentlyLoading() && m_sDelayedScreen.size() != 0 )
 	{
 		LoadDelayedScreen();
 	}
+
+	if( !m_sDelayedConcurrentPrepare.empty() )
+	{
+		/* Don't call BackgroundPrepareScreen() from within another background load. */
+		ASSERT( !IsConcurrentlyLoading() );
+
+		/* Push rendering into a thread, and prepare the screen. */
+		g_bIsConcurrentlyLoading = true;
+		StartConcurrentRendering();
+		PrepareScreen( m_sDelayedConcurrentPrepare );
+		FinishConcurrentRendering();
+		g_bIsConcurrentlyLoading = false;
+
+		LOG->Trace( "Concurrent prepare of %s finished", m_sDelayedConcurrentPrepare.c_str() );
+
+		/* We're done.  Send the message.  The screen is allowed to start
+		 * another concurrent prepare from this message. */
+		ScreenMessage SM = m_OnDonePreparingScreen;
+		m_sDelayedConcurrentPrepare = "";
+		m_OnDonePreparingScreen = SM_None;
+		SendMessageToTopScreen( SM );
+	}
 }
 
+bool ScreenManager::IsConcurrentlyLoading() const
+{
+	return g_bIsConcurrentlyLoading;
+}
 
 void ScreenManager::Draw()
 {
@@ -345,6 +379,21 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 			m_vPreparedBackgrounds.push_back( pNewBGA );
 		}
 	}
+}
+
+bool ScreenManager::ConcurrentlyPrepareScreen( const CString &sScreenName, ScreenMessage SM )
+{
+	ASSERT_M( m_sDelayedConcurrentPrepare == "", m_sDelayedConcurrentPrepare );
+
+	if( !g_bConcurrentLoading || !DISPLAY->SupportsThreadedRendering() )
+		return false;
+
+	LOG->Trace( "ConcurrentlyPrepareScreen(%s)", sScreenName.c_str() );
+	ASSERT( !IsConcurrentlyLoading() );
+
+	m_sDelayedConcurrentPrepare = sScreenName;
+	m_OnDonePreparingScreen = SM;
+	return true;
 }
 
 void ScreenManager::DeletePreparedScreens()
@@ -559,7 +608,11 @@ void ScreenManager::RefreshCreditsMessages()
 
 void ScreenManager::ZeroNextUpdate()
 {
-	m_bZeroNextUpdate = true;
+	if( !IsConcurrentlyLoading() )
+	{
+		LOG->Trace("ScreenManager::ZeroNextUpdate");
+		m_bZeroNextUpdate = true;
+	}
 }
 
 /* Always play these sounds, even if we're in a silent attract loop. */
