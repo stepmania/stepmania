@@ -11,11 +11,10 @@
 #include "Command.h"
 
 #define CHOICE_NAMES			THEME->GetMetric (m_sName,"ChoiceNames")
-#define CHOICE( sChoiceName )	THEME->GetMetricM(m_sName,ssprintf("Choice%s",sChoiceName.c_str()))
+#define CHOICE( s )				THEME->GetMetricM(m_sName,ssprintf("Choice%s",s.c_str()))
 #define CODE_NAMES				THEME->GetMetric (m_sName,"CodeNames")
 #define CODE( s )				THEME->GetMetric (m_sName,ssprintf("Code%s",s.c_str()))
 #define CODE_ACTION( s )		THEME->GetMetricM(m_sName,ssprintf("Code%sAction",s.c_str()))
-#define NEXT_SCREEN( c )		THEME->GetMetric (m_sName,ssprintf("NextScreen%d",c+1))
 #define IDLE_TIMEOUT_SCREEN		THEME->GetMetric (m_sName,"IdleTimeoutScreen")
 #define ALLOW_DISABLED_PLAYER_INPUT		THEME->GetMetricB(m_sName,"AllowDisabledPlayerInput")
 #define UPDATE_ON_MESSAGE		THEME->GetMetric (m_sName,"UpdateOnMessage")
@@ -178,7 +177,8 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 	{
 		FOREACH_HumanPlayer( p )
 		{
-			GameCommand gc = m_aGameCommands[this->GetSelectionIndex(p)];
+			int iIndex = this->GetSelectionIndex(p);
+			GameCommand &gc = m_aGameCommands[iIndex];
 			CString sThisScreen = gc.GetAndClearScreen();
 			if( m_sNextScreen == "" )
 				m_sNextScreen = sThisScreen;
@@ -198,12 +198,6 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 				m_bTimeToFinalizePlayers = true;
 				break;
 			}
-		}
-
-		if( m_sNextScreen == "" )
-		{
-			const int iSelectionIndex = GetSelectionIndex(GAMESTATE->m_MasterPlayerNumber);
-			m_sNextScreen = NEXT_SCREEN(iSelectionIndex);
 		}
 
 		SCREENMAN->ConcurrentlyPrepareScreen( m_sNextScreen );
