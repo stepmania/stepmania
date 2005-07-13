@@ -1512,8 +1512,6 @@ static void GameLoop()
 			fDeltaTime /= 4;
 		}
 
-		DISPLAY->Update( fDeltaTime );
-
 		/* Update SOUNDMAN early (before any RageSound::GetPosition calls), to flush position data. */
 		SOUNDMAN->Update( fDeltaTime );
 
