@@ -16,6 +16,8 @@ class Trail;
 struct HighScore;
 struct lua_State;
 
+const int MAX_NUM_LOCAL_PROFILES = 16;
+
 class ProfileManager
 {
 public:
