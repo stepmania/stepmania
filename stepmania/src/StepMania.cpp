@@ -1166,6 +1166,9 @@ int main(int argc, char* argv[])
 	/* Run the main loop. */
 	GameLoop();
 
+	/* If we ended mid-game, finish up. */
+	GAMESTATE->EndGame();
+
 	PREFSMAN->SaveGlobalPrefsToDisk();
 	SaveGamePrefsToDisk();
 
@@ -1552,8 +1555,6 @@ static void GameLoop()
 			usleep( 1000 );	// give some time to other processes and threads
 #endif
 	}
-
-	GAMESTATE->EndGame();
 }
 
 /*
