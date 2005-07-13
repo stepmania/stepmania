@@ -106,6 +106,11 @@ CString RageDisplay::GetStats() const
 	return ssprintf( "%i FPS\n%i av FPS\n%i VPF", GetFPS(), GetCumFPS(), GetVPF() );
 }
 
+void RageDisplay::EndFrame()
+{
+	ProcessStatsOnFlip();
+}
+
 void RageDisplay::StatsAddVerts( int iNumVertsRendered ) { g_iVertsRenderedSinceLastCheck += iNumVertsRendered; }
 
 /* Draw a line as a quad.  GL_LINES with SmoothLines off can draw line

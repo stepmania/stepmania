@@ -644,9 +644,10 @@ void RageDisplay_D3D::EndFrame()
 {
 	g_pd3dDevice->EndScene();
 	g_pd3dDevice->Present( 0, 0, 0, 0 );
-	ProcessStatsOnFlip();
 
 	GraphicsWindow::Update();
+
+	RageDisplay::EndFrame();
 }
 
 bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )

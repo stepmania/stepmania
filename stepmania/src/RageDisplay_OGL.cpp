@@ -734,7 +734,6 @@ void RageDisplay_OGL::EndFrame()
 	glFlush();
 
 	wind->SwapBuffers();
-	ProcessStatsOnFlip();
 
 	wind->Update();
 
@@ -771,6 +770,8 @@ void RageDisplay_OGL::EndFrame()
 		XUnlockDisplay( g_X11Display );
 #endif
 	}
+
+	RageDisplay::EndFrame();
 }
 
 RageSurface* RageDisplay_OGL::CreateScreenshot()
