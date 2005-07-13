@@ -179,17 +179,8 @@ void ScreenNetSelectBase::Input( const DeviceInput& DeviceI, const InputEventTyp
 
 void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )
 {
-	Screen::HandleScreenMessage( SM );
-	
-	if( SM == SM_GoToPrevScreen )
-	{
-		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "PrevScreen") );
-	}
-	else if( SM == SM_GoToNextScreen )
-	{
+	if( SM == SM_GoToNextScreen )
 		SOUND->StopMusic();
-		SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName, "NextScreen") );
-	}
 	else if( SM == SM_AddToChat )
 	{
 		m_textChatOutput.SetText( NSMAN->m_sChatText );
@@ -200,6 +191,7 @@ void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )
 		UpdateUsers();
 	}
 
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 void ScreenNetSelectBase::TweenOffScreen()
