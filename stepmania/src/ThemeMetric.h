@@ -226,8 +226,17 @@ public:
 	bool operator ==( T other ) const { return GetValue() == other; }
 };
 
-/* Like ThemeMetric, but evaluates Lua expressions each time.  This is fast,
- * since we only compile the expression once, but not as fast as ThemeMetric. */
+/*
+ * Like ThemeMetric, but allows evaluating Lua expressions each time.  This is
+ * fast, since we only compile the expression once.  To evaluate every time,
+ * return a function instead of a value.
+ *
+ * This is just as fast as ThemeMetric when the value is not a function.
+ *
+ * This differs from ThemeMetric: the value of the metric must be a valid Lua
+ * expression; strings must be enclosed in quotes.  (This is probably how
+ * all metrics will eventually behave.)
+ */
 template <class T>
 class DynamicThemeMetric : public IThemeMetric
 {
@@ -236,7 +245,7 @@ private:
 	CString		m_sName;
 	mutable T	m_currentValue;
 	bool		m_bIsLoaded;
-	LuaExpression m_Expr;
+	LuaReference m_Value;
 
 public:
 	/* Initializing with no group and name is allowed; if you do this, you must
@@ -258,7 +267,7 @@ public:
 		m_sName( cpy.m_sName ),
 		m_currentValue( cpy.m_currentValue ),
 		m_bIsLoaded( cpy.m_bIsLoaded ),
-		m_Expr( cpy.m_Expr )
+		m_Value( cpy.m_Value )
 	{
 		ThemeManager::Subscribe( this );
 	}
@@ -287,7 +296,21 @@ public:
 		{
 			CString sExpression;
 			THEME->GetMetric( m_sGroup, m_sName, sExpression );
-			m_Expr.SetFromExpression( "function() return " + sExpression + " end" );
+
+			Lua *L = LUA->Get();
+			LuaHelpers::RunScript( L, "return " + sExpression, ssprintf("%s:%s", m_sGroup.c_str(), m_sName.c_str()), 1 );
+
+			if( lua_type(L, -1) == LUA_TFUNCTION )
+			{
+				m_Value.SetFromStack( L );
+			}
+			else
+			{
+				m_Value.Unset();
+				LuaHelpers::PopStack( m_currentValue, L );
+			}
+
+			LUA->Release(L);
 
 			m_bIsLoaded = true;
 		}
@@ -298,18 +321,19 @@ public:
 		ASSERT( m_sName != "" );
 		ASSERT( m_bIsLoaded );
 
-		Lua *L = LUA->Get();
+		/* If the value is a function, evaluate it every time. */
+		if( m_Value.IsSet() )
+		{
+			Lua *L = LUA->Get();
 
-		// function
-		m_Expr.PushSelf( L );
-		ASSERT( !lua_isnil(L, -1) );
+			// call function with 0 arguments and 1 result
+			m_Value.PushSelf( L );
+			lua_call(L, 0, 1); 
+			ASSERT( !lua_isnil(L, -1) );
+			LuaHelpers::PopStack( m_currentValue, L );
+			LUA->Release(L);
+		}
 
-		// call function with 0 arguments and 1 result
-		lua_call(L, 0, 1); 
-
-		LuaHelpers::PopStack( m_currentValue, L );
-
-		LUA->Release(L);
 		return m_currentValue;
 	}
 	
