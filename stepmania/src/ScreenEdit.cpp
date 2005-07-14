@@ -1657,6 +1657,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	m_Background.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == STATE_EDITING );
 	m_sprUnderlay->SetHidden( em != STATE_EDITING );
 	m_sprOverlay->SetHidden( em != STATE_EDITING );
+	m_autoHeader->SetHidden( em != STATE_EDITING );
 	m_textInputTips.SetHidden( em != STATE_EDITING );
 	m_textInfo.SetHidden( em != STATE_EDITING );
 	// Play the OnCommands again so that these will be re-hidden if the OnCommand hides them.
