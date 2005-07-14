@@ -527,7 +527,7 @@ void NoteField::DrawPrimitives()
 		//
 		// BGChange text
 		//
-		switch( EDIT_MODE.GetValue() )
+		switch( GAMESTATE->m_EditMode )
 		{
 		case EDIT_MODE_HOME:
 		case EDIT_MODE_PRACTICE:
