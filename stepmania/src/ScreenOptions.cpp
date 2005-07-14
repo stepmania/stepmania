@@ -50,7 +50,7 @@
  *  left, right -> change row
  *  up, down -> change row
  *  start -> next screen
- * This is a specialized navigation for ScreenOptionsMenu.  It must be enabled to
+ * This is a specialized navigation for ScreenOptionsService.  It must be enabled to
  * allow screens that use rows to select other screens to work with only three
  * buttons.  (It's also used when in five-key mode.)
  *

@@ -81,11 +81,12 @@ ScreenOptionsEditProfile::~ScreenOptionsEditProfile()
 
 void ScreenOptionsEditProfile::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
+	Profile &pro = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sLastSelectedProfileID );
+	OptionRow &row = *m_pRows[iRow];
+
 	switch( iRow )
 	{
 	case ROW_CHARACTER:
-		Profile &pro = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sLastSelectedProfileID );
-		OptionRow &row = *m_pRows[ROW_CHARACTER];
 		row.SetOneSharedSelectionIfPresent( pro.m_sCharacter );
 		break;
 	}
@@ -93,17 +94,32 @@ void ScreenOptionsEditProfile::ImportOptions( int iRow, const vector<PlayerNumbe
 
 void ScreenOptionsEditProfile::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
+	Profile &pro = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sLastSelectedProfileID );
+	OptionRow &row = *m_pRows[iRow];
+	int iIndex = row.GetOneSharedSelection( true );
+	CString sValue;
+	if( iIndex >= 0 )
+		sValue = row.GetRowDef().m_vsChoices[ iIndex ];
 
+	switch( iRow )
+	{
+	case ROW_NAME:
+		pro.m_sDisplayName = sValue;
+		break;
+	case ROW_CHARACTER:
+		pro.m_sCharacter = sValue;
+		break;
+	}
 }
 
 void ScreenOptionsEditProfile::GoToNextScreen()
 {
-	SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
+	SCREENMAN->SetNewScreen( "ScreenOptionsService" );
 }
 
 void ScreenOptionsEditProfile::GoToPrevScreen()
 {
-	SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
+	SCREENMAN->SetNewScreen( "ScreenOptionsService" );
 }
 
 void ScreenOptionsEditProfile::HandleScreenMessage( const ScreenMessage SM )
@@ -152,12 +168,6 @@ void ScreenOptionsEditProfile::ProcessMenuStart( PlayerNumber pn, const InputEve
 		break;
 	case ROW_CHARACTER:
 		{
-			/*
-			int iProfileIndex = iRow - 1;
-			int iThrowAway, iX, iY;
-			GetWidthXY( PLAYER_1, iRow, 0, iThrowAway, iX, iY );
-			ScreenMiniMenu::MiniMenu( &g_ProfileContextMenu, SM_BackFromProfileContextMenu, SM_BackFromProfileContextMenu, (float)iX, (float)iY );
-			*/
 		}
 		break;
 	case ROW_DELETE:
@@ -166,6 +176,9 @@ void ScreenOptionsEditProfile::ProcessMenuStart( PlayerNumber pn, const InputEve
 			CString sMessage = ssprintf( "Are you sure you want to delete the profile '%s'?", sCurrentProfileName.c_str() );
 			ScreenPrompt::Prompt( SM_BackFromDelete, sMessage, PROMPT_YES_NO );
 		}
+		break;
+	default:
+		ScreenOptions::ProcessMenuStart( pn, type );
 		break;
 	}
 }

@@ -132,12 +132,12 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_GoToNextScreen )
 	{
 		PREFSMAN->SaveGlobalPrefsToDisk();
-		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
+		SCREENMAN->SetNewScreen( "ScreenOptionsService" );
 		return;
 	}
 	else if( SM == SM_GoToPrevScreen )
 	{
-		SCREENMAN->SetNewScreen( "ScreenOptionsMenu" );
+		SCREENMAN->SetNewScreen( "ScreenOptionsService" );
 		return;
 	}
 	else if( SM == SM_DoneCreating )
