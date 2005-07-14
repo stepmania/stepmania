@@ -216,6 +216,16 @@ public:
 	}
 };
 
+template <class T>
+class ThemeMetricEnum : public ThemeMetric<int>
+{
+public:
+	ThemeMetricEnum() : ThemeMetric<int>() {}
+	ThemeMetricEnum( const CString& sGroup, const CString& sName ) : ThemeMetric<int>(sGroup,sName) {}
+	T GetValue() const { return (T)ThemeMetric<int>::GetValue(); }
+	bool operator ==( T other ) const { return GetValue() == other; }
+};
+
 /* Like ThemeMetric, but evaluates Lua expressions each time.  This is fast,
  * since we only compile the expression once, but not as fast as ThemeMetric. */
 template <class T>

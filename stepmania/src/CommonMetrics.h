@@ -39,14 +39,6 @@ public:
 private:
 	vector<StepsType> m_v;
 };
-template <class T>
-class ThemeMetricEnum : public ThemeMetric<int>
-{
-public:
-	ThemeMetricEnum( const CString& sGroup, const CString& sName ) : ThemeMetric<int>(sGroup,sName) {}
-	T GetValue() const { return (T)ThemeMetric<int>::GetValue(); }
-	bool operator ==( T other ) const { return GetValue() == other; }
-};
 
 
 //
