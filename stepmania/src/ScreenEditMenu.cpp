@@ -57,24 +57,38 @@ void ScreenEditMenu::Init()
 	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 }
 
-// helpers for MenuStart() below
-static void DeleteCurSteps( void* pThrowAway )
+/* This is actually just an adapter to make ScreenPrompt send different messages
+ * on yes and no: */
+class ScreenEditMenuDeleteSteps: public ScreenPrompt
 {
-	Song* pSong = GAMESTATE->m_pCurSong;
-	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
-	bool bSaveSong = !pStepsToDelete->WasLoadedFromProfile();
-	pSong->RemoveSteps( pStepsToDelete );
-
-	/* Only save to the main .SM file if the steps we're deleting were loaded
-	 * from it. */
-	if( bSaveSong )
+public:
+	ScreenEditMenuDeleteSteps( const CString &sName ):
+		ScreenPrompt(sName)
 	{
-		pSong->Save();
-		SCREENMAN->ZeroNextUpdate();
 	}
-	SCREENMAN->SendMessageToTopScreen( SM_RefreshSelector );
-}
 
+	void Init()
+	{
+		ScreenPrompt::Init();
+		this->Load( SM_None, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
+	}
+
+	void End( bool bCancelled )
+	{
+		switch( m_Answer )
+		{
+		case ANSWER_YES:
+			m_smSendOnPop = SM_Success;
+			break;
+		case ANSWER_NO:
+			m_smSendOnPop = SM_Failure;
+			break;
+		}
+
+		ScreenPrompt::End( bCancelled );
+	}
+};
+REGISTER_SCREEN_CLASS( ScreenEditMenuDeleteSteps );
 
 
 void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
@@ -87,7 +101,20 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_Success )
 	{
 		LOG->Trace( "Delete successful; deleting steps from memory" );
-		DeleteCurSteps( NULL );
+
+		Song* pSong = GAMESTATE->m_pCurSong;
+		Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
+		bool bSaveSong = !pStepsToDelete->WasLoadedFromProfile();
+		pSong->RemoveSteps( pStepsToDelete );
+
+		/* Only save to the main .SM file if the steps we're deleting were loaded
+		 * from it. */
+		if( bSaveSong )
+		{
+			pSong->Save();
+			SCREENMAN->ZeroNextUpdate();
+		}
+		SCREENMAN->SendMessageToTopScreen( SM_RefreshSelector );
 	}
 	else if( SM == SM_Failure )
 	{
@@ -223,17 +250,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		break;
 	case EDIT_MENU_ACTION_DELETE:
 		ASSERT( pSteps );
-		switch( EDIT_MODE.GetValue() )
-		{
-		case EDIT_MODE_HOME:
-			SCREENMAN->AddNewScreenToTop( "ScreenEditMenuDeleteSteps" );
-			break;
-		case EDIT_MODE_FULL:
-			ScreenPrompt::Prompt( SM_RefreshSelector, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO, DeleteCurSteps );
-			break;
-		default:
-			ASSERT(0);
-		}
+		SCREENMAN->AddNewScreenToTop( "ScreenEditMenuDeleteSteps" );
 		break;
 	case EDIT_MENU_ACTION_CREATE:
 		ASSERT( !pSteps );
