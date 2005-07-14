@@ -34,7 +34,6 @@ protected:
 	Page GetCurrentPage() const;
 
 	ThemeMetric<bool>		SHOW_ICON;
-	ThemeMetric<bool>		SHOW_PREVIEW;
 	ThemeMetric<bool>		SHOW_CURSOR;
 	ThemeMetric<bool>		SHOW_SCROLLER;
 	ThemeMetric<bool>		SHARED_PREVIEW_AND_CURSOR;
@@ -74,15 +73,13 @@ protected:
 
 	AutoActor	m_sprExplanation[NUM_PAGES];
 	AutoActor	m_sprMore[NUM_PAGES];
-	// icon is the piece shared, per-choice piece
+	// icon is the shared, per-choice piece
 	AutoActor m_sprIcon[MAX_CHOICES];
-	// preview is per-choice, per-player piece
-	AutoActor m_sprPreview[MAX_CHOICES][NUM_PLAYERS];
-	// cursor is the per-player that's shared by all choices
-	AutoActor	m_sprCursor[NUM_PLAYERS];
-	// scroll is the per-player, per-choice piece that's scrolled
-	AutoActor	m_sprScroll[MAX_CHOICES][NUM_PLAYERS];
+	// preview is per-player, per-choice piece
+	AutoActor m_sprScroll[MAX_CHOICES][NUM_PLAYERS];
 	ActorScroller	m_Scroller[NUM_PLAYERS];
+	// cursor is the per-player, shared by all choices
+	AutoActor	m_sprCursor[NUM_PLAYERS];
 
 	RageSound	m_soundChange;
 	RandomSample m_soundDifficult;
