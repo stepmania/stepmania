@@ -44,7 +44,8 @@ public:
 	// so that we know the order of commands when it comes time to Apply.
 	Commands	m_Commands;
 
-	CString		m_sName;	// display name
+	CString		m_sName;	// choice name
+	CString		m_sText;	// display text
 	bool		m_bInvalid;
 	CString		m_sInvalidReason;
 	int			m_iIndex;

@@ -31,6 +31,7 @@
 void GameCommand::Init()
 {
 	m_sName = "";
+	m_sText = "";
 	m_bInvalid = true;
 	m_iIndex = -1;
 	m_pGame = NULL;
@@ -212,6 +213,11 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "name" )
 	{
 		m_sName = sValue;
+	}
+
+	else if( sName == "text" )
+	{
+		m_sText = sValue;
 	}
 
 	else if( sName == "mod" )
@@ -1104,10 +1110,16 @@ class LunaGameCommand: public Luna<GameCommand>
 public:
 	LunaGameCommand() { LUA->Register( Register ); }
 
-	static int GetProfileID( T* p, lua_State *L )			{ lua_pushstring(L, p->m_sProfileID ); return 1; }
+	static int GetName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sName ); return 1; }
+	static int GetText( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sText ); return 1; }
+	static int GetIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iIndex ); return 1; }
+	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID ); return 1; }
 
 	static void Register(lua_State *L)
 	{
+		ADD_METHOD( GetName )
+		ADD_METHOD( GetText )
+		ADD_METHOD( GetIndex )
 		ADD_METHOD( GetProfileID )
 
 		Luna<T>::Register( L );
