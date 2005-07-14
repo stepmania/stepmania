@@ -16,6 +16,7 @@
 #include "ScreenPrompt.h"
 
 #define EXPLANATION_TEXT( row )	THEME->GetMetric(m_sName,"Explanation"+EditMenuRowToString(row))
+#define EDIT_MENU_TYPE			THEME->GetMetric(m_sName,"EditMenuType")
 
 AutoScreenMessage( SM_RefreshSelector )
 AutoScreenMessage( SM_BackFromEditDescription )
@@ -34,7 +35,7 @@ void ScreenEditMenu::Init()
 {
 	ScreenWithMenuElements::Init();
 
-	m_Selector.SetName( "EditMenu" );
+	m_Selector.SetName( EDIT_MENU_TYPE );
 	m_Selector.Load( "EditMenu" );
 	m_Selector.SetXY( 0, 0 );
 	this->AddChild( &m_Selector );
