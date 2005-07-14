@@ -62,7 +62,7 @@ static void DeleteCurSteps( void* pThrowAway )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
-	bool bSaveSong = pStepsToDelete->WasLoadedFromProfile();
+	bool bSaveSong = !pStepsToDelete->WasLoadedFromProfile();
 	pSong->RemoveSteps( pStepsToDelete );
 
 	/* Only save to the main .SM file if the steps we're deleting were loaded
