@@ -5,7 +5,7 @@ function FormatNumSongsPlayed( num )
 	else 
 		s = s .. ' songs played'
 	end
-	return ret
+	return s
 end
 
 -- (c) 2005 Chris Danford
