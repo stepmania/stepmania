@@ -58,21 +58,19 @@ void ScreenEditMenu::Init()
 }
 
 // helpers for MenuStart() below
-void DeleteCurSteps( void* pThrowAway )
+static void DeleteCurSteps( void* pThrowAway )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
+	bool bSaveSong = pStepsToDelete->WasLoadedFromProfile();
 	pSong->RemoveSteps( pStepsToDelete );
-	switch( EDIT_MODE.GetValue() )
+
+	/* Only save to the main .SM file if the steps we're deleting were loaded
+	 * from it. */
+	if( bSaveSong )
 	{
-	case EDIT_MODE_HOME:
-		break;
-	case EDIT_MODE_FULL:
 		pSong->Save();
 		SCREENMAN->ZeroNextUpdate();
-		break;
-	default:
-		ASSERT(0);
 	}
 	SCREENMAN->SendMessageToTopScreen( SM_RefreshSelector );
 }
