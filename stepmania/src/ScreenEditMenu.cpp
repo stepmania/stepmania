@@ -248,6 +248,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	switch( action )
 	{
 	case EDIT_MENU_ACTION_EDIT:
+	case EDIT_MENU_ACTION_PRACTICE:
 		break;
 	case EDIT_MENU_ACTION_DELETE:
 		ASSERT( pSteps );
@@ -295,10 +296,11 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	{
 	case EDIT_MENU_ACTION_EDIT:
 	case EDIT_MENU_ACTION_CREATE:
+	case EDIT_MENU_ACTION_PRACTICE:
 		{
 			// Prepare prepare for ScreenEdit
 			ASSERT( pSteps );
-			bool bPromptToNameSteps = (action != EDIT_MENU_ACTION_EDIT && dc == DIFFICULTY_EDIT);
+			bool bPromptToNameSteps = (action == EDIT_MENU_ACTION_CREATE && dc == DIFFICULTY_EDIT);
 			if( bPromptToNameSteps )
 			{
 				ScreenTextEntry::TextEntry( 

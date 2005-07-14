@@ -31,6 +31,7 @@ static const CString EditMenuActionNames[] = {
 	"Edit",
 	"Delete",
 	"Create",
+	"Practice",
 };
 XToString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
 XToThemedString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
@@ -476,13 +477,14 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			m_Actions.clear();
 			if( GetSelectedSteps() )
 			{
-				m_Actions.push_back( EDIT_MENU_ACTION_EDIT );
 				switch( EDIT_MODE.GetValue() )
 				{
 				case EDIT_MODE_PRACTICE:
+					m_Actions.push_back( EDIT_MENU_ACTION_PRACTICE );
 					break;
 				case EDIT_MODE_HOME:
 				case EDIT_MODE_FULL:
+					m_Actions.push_back( EDIT_MENU_ACTION_EDIT );
 					m_Actions.push_back( EDIT_MENU_ACTION_DELETE );
 					break;
 				default:
