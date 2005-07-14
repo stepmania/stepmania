@@ -1084,7 +1084,7 @@ void ScreenEvaluation::CommitScores(
 }
 
 
-void ScreenEvaluation::TweenOffScreen()
+void ScreenEvaluation::TweenOursOffScreen()
 {
 	// large banner area
 	OFF_COMMAND( m_LargeBanner );
@@ -1379,7 +1379,7 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 
 void ScreenEvaluation::EndScreen()
 {
-	TweenOffScreen();
+	TweenOursOffScreen();
 
 	FOREACH_PlayerNumber( p )
 		m_Grades[p].SettleImmediately();
@@ -1394,7 +1394,7 @@ void ScreenEvaluation::EndScreen()
 				/* Tween the screen out, but leave the MenuElements where they are.
 				 * Play the "swoosh" sound manually (would normally be played by the ME
 				 * tween out). */
-				TweenOffScreen();
+				TweenOursOffScreen();
 			}
 			break;
 		}

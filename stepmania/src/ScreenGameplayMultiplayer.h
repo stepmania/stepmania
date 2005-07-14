@@ -53,8 +53,8 @@ public:
 	virtual bool UsesBackground() const { return false; }
 
 protected:
-	void TweenOnScreen();
-	void TweenOffScreen();
+	void TweenOursOnScreen();
+	void TweenOursOffScreen();
 
 	bool IsLastSong();
 	void SetupSong( MultiPlayer p, int iSongIndex );

@@ -23,8 +23,8 @@ public:
 	virtual void MenuStart( PlayerNumber pn );
 	virtual void MenuBack( PlayerNumber pn );
 private:
-	void TweenOffScreen();
-	void TweenOnScreen();
+	void TweenOursOffScreen();
+	void TweenOursOnScreen();
 	
 	Sprite	m_sprJoinMessage[NUM_PLAYERS];
 	Sprite	m_sprJoinFrame[NUM_PLAYERS];

@@ -235,10 +235,10 @@ void ScreenGameplayMultiplayer::Init()
 
 
 	/* LoadNextSong first, since that positions some elements which need to be
-	 * positioned before we TweenOnScreen. */
+	 * positioned before we TweenOursOnScreen. */
 	LoadNextSong();
 
-	TweenOnScreen();
+	TweenOursOnScreen();
 
 	this->SortByDrawOrder();
 
@@ -617,7 +617,7 @@ void ScreenGameplayMultiplayer::HandleScreenMessage( const ScreenMessage SM )
 }
 
 
-void ScreenGameplayMultiplayer::TweenOnScreen()
+void ScreenGameplayMultiplayer::TweenOursOnScreen()
 {
     FOREACH_MultiPlayer(p)
 	{
@@ -628,7 +628,7 @@ void ScreenGameplayMultiplayer::TweenOnScreen()
 	m_In.StartTransitioning( SM_Ready );
 }
 
-void ScreenGameplayMultiplayer::TweenOffScreen()
+void ScreenGameplayMultiplayer::TweenOursOffScreen()
 {
     FOREACH_MultiPlayer(p)
 	{

@@ -318,7 +318,7 @@ void ScreenSelectMusic::Init()
 	ZERO( m_iSelection );
 
 	AfterMusicChange();
-	TweenOnScreen();
+	TweenOursOnScreen();
 
 	this->SortByDrawOrder();
 }
@@ -431,7 +431,7 @@ void ScreenSelectMusic::SkipCoursePartTweens()
 		m_CourseContents.FinishTweening();
 }
 
-void ScreenSelectMusic::TweenOnScreen()
+void ScreenSelectMusic::TweenOursOnScreen()
 {
 	TweenSongPartsOnScreen( true );
 	TweenCoursePartsOnScreen( true );
@@ -481,7 +481,7 @@ void ScreenSelectMusic::TweenOnScreen()
 	}
 }
 
-void ScreenSelectMusic::TweenOffScreen()
+void ScreenSelectMusic::TweenOursOffScreen()
 {
 	ScreenWithMenuElements::TweenOffScreen();
 
@@ -1215,7 +1215,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 
 	if( m_bMadeChoice )
 	{
-		TweenOffScreen();
+		TweenOursOffScreen();
 		SCREENMAN->PlayStartSound();
 
 		if( OPTIONS_MENU_AVAILABLE )

@@ -657,7 +657,7 @@ void ScreenGameplay::Init()
 	 * positioned before we TweenOnScreen. */
 	LoadNextSong();
 
-	TweenOnScreen();
+	TweenOursOnScreen();
 
 	this->SortByDrawOrder();
 
@@ -2137,7 +2137,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			return;
 		}
 
-		TweenOffScreen();
+		TweenOursOffScreen();
 
 		// do they deserve an extra stage?
 		if( GAMESTATE->HasEarnedExtraStage() )
@@ -2287,7 +2287,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		AbortGiveUp( false );
 		m_pSoundMusic->StopPlaying();
 		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
-		TweenOffScreen();
+		TweenOursOffScreen();
 		m_Failed.StartTransitioning( SM_GoToNextScreen );
 
 		// show the survive time if extra stage
@@ -2326,7 +2326,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 }
 
 
-void ScreenGameplay::TweenOnScreen()
+void ScreenGameplay::TweenOursOnScreen()
 {
 	ON_COMMAND( m_sprLifeFrame );
 	ON_COMMAND( m_sprCourseSongNumber );
@@ -2362,7 +2362,7 @@ void ScreenGameplay::TweenOnScreen()
 			ON_COMMAND( m_Scoreboard[sc] );
 }
 
-void ScreenGameplay::TweenOffScreen()
+void ScreenGameplay::TweenOursOffScreen()
 {
 	ScreenWithMenuElements::TweenOffScreen();
 

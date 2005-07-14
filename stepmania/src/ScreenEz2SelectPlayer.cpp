@@ -85,7 +85,7 @@ void ScreenEz2SelectPlayer::Init()
 
 	SOUND->PlayMusic( THEME->GetPathS("ScreenSelectPlayer","music") );
 
-	TweenOnScreen();
+	TweenOursOnScreen();
 }
 
 /************************************
@@ -138,7 +138,7 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 			MenuStart(PLAYER_1);
 		}
 
-		TweenOffScreen();
+		TweenOursOffScreen();
 		StartTransitioning( SM_GoToNextScreen );
 		break;
 	}
@@ -201,7 +201,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 
 	if( bBothSidesJoined )
 	{
-		TweenOffScreen();
+		TweenOursOffScreen();
 		StartTransitioning( SM_GoToNextScreen );
 	}
 	else
@@ -213,7 +213,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 	}
 }
 
-void ScreenEz2SelectPlayer::TweenOnScreen()
+void ScreenEz2SelectPlayer::TweenOursOnScreen()
 {
 	FOREACH_PlayerNumber( p )
 	{
@@ -233,7 +233,7 @@ void ScreenEz2SelectPlayer::TweenOnScreen()
 	}
 }
 
-void ScreenEz2SelectPlayer::TweenOffScreen()
+void ScreenEz2SelectPlayer::TweenOursOffScreen()
 {
 	FOREACH_PlayerNumber( p )
 	{
