@@ -15,7 +15,6 @@ ThemeMetric<CString>	DEFAULT_MODIFIERS					("Common","DefaultModifiers" );
 ThemeMetric<CString>	DEFAULT_CPU_MODIFIERS				("Common","DefaultCpuModifiers" );
 ThemeMetric1D<RageColor> PLAYER_COLOR						("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);
 ThemeMetric<CString>	WINDOW_TITLE						("Common","WindowTitle");
-ThemeMetricEnum<EditMode>	EDIT_MODE						("Common","EditMode");
 ThemeMetric<int>		MAX_COURSE_ENTRIES_BEFORE_VARIOUS	("Common","MaxCourseEntriesBeforeShowVarious");
 ThemeMetric<float>		TICK_EARLY_SECONDS					("ScreenGameplay","TickEarlySeconds");
 ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW		("Common","DifficultiesToShow");

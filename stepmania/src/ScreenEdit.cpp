@@ -556,6 +556,8 @@ ScreenEdit::ScreenEdit( CString sName ) : ScreenWithMenuElements( sName )
 
 void ScreenEdit::Init()
 {
+	EDIT_MODE.Load(m_sName,"EditMode");
+
 	ScreenWithMenuElements::Init();
 
 	InitEditMappings();

@@ -50,7 +50,6 @@ extern ThemeMetric<CString>		DEFAULT_MODIFIERS;
 extern ThemeMetric<CString>		DEFAULT_CPU_MODIFIERS;
 extern ThemeMetric1D<RageColor> PLAYER_COLOR;
 extern ThemeMetric<CString>		WINDOW_TITLE;
-extern ThemeMetricEnum<EditMode>	EDIT_MODE;
 extern ThemeMetric<int>			MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
 extern ThemeMetric<float>		TICK_EARLY_SECONDS;
 extern ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
