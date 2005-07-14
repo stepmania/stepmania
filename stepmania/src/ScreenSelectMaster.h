@@ -8,9 +8,6 @@
 #include "ActorScroller.h"
 
 #define MAX_CHOICES 30
-#define MAX_ICON_PARTS 3
-#define MAX_PREVIEW_PARTS 3
-#define MAX_CURSOR_PARTS 3
 
 class ScreenSelectMaster : public ScreenSelect
 {
@@ -36,13 +33,14 @@ protected:
 	Page GetPage( int iChoiceIndex ) const;
 	Page GetCurrentPage() const;
 
-	ThemeMetric<int>		NUM_ICON_PARTS;
-	ThemeMetric<int>		NUM_PREVIEW_PARTS;
-	ThemeMetric<int>		NUM_CURSOR_PARTS;
+	ThemeMetric<bool>		SHOW_ICON;
+	ThemeMetric<bool>		SHOW_PREVIEW;
+	ThemeMetric<bool>		SHOW_CURSOR;
+	ThemeMetric<bool>		SHOW_SCROLLER;
 	ThemeMetric<bool>		SHARED_PREVIEW_AND_CURSOR;
 	ThemeMetric<int>		NUM_CHOICES_ON_PAGE_1;
-	ThemeMetric2D<float>	CURSOR_OFFSET_X_FROM_ICON;
-	ThemeMetric2D<float>	CURSOR_OFFSET_Y_FROM_ICON;
+	ThemeMetric1D<float>	CURSOR_OFFSET_X_FROM_ICON;
+	ThemeMetric1D<float>	CURSOR_OFFSET_Y_FROM_ICON;
 	ThemeMetric<bool>		OVERRIDE_LOCK_INPUT_SECONDS;
 	ThemeMetric<float>		LOCK_INPUT_SECONDS;
 	ThemeMetric<float>		PRE_SWITCH_PAGE_SECONDS;
@@ -54,7 +52,6 @@ protected:
 	ThemeMetric<bool>		WRAP_SCROLLER;
 	ThemeMetric<bool>		SCROLLER_FAST_CATCHUP;
 	ThemeMetric<bool>		ALLOW_REPEATING_INPUT;
-	ThemeMetric<bool>		SHOW_SCROLLER;
 	ThemeMetric<float>		SCROLLER_SECONDS_PER_ITEM;
 	ThemeMetric<float>		SCROLLER_NUM_ITEMS_TO_DRAW;
 	ThemeMetric<CString>	SCROLLER_TRANSFORM;
@@ -72,17 +69,17 @@ protected:
 	float DoMenuStart( PlayerNumber pn );
 	virtual bool ProcessMenuStart( PlayerNumber pn ) { return true; }
 
-	float GetCursorX( PlayerNumber pn, int iPartIndex );
-	float GetCursorY( PlayerNumber pn, int iPartIndex );
+	float GetCursorX( PlayerNumber pn );
+	float GetCursorY( PlayerNumber pn );
 
 	AutoActor	m_sprExplanation[NUM_PAGES];
 	AutoActor	m_sprMore[NUM_PAGES];
 	// icon is the piece shared, per-choice piece
-	AutoActor m_sprIcon[MAX_ICON_PARTS][MAX_CHOICES];
+	AutoActor m_sprIcon[MAX_CHOICES];
 	// preview is per-choice, per-player piece
-	AutoActor m_sprPreview[MAX_PREVIEW_PARTS][MAX_CHOICES][NUM_PLAYERS];
+	AutoActor m_sprPreview[MAX_CHOICES][NUM_PLAYERS];
 	// cursor is the per-player that's shared by all choices
-	AutoActor	m_sprCursor[MAX_CURSOR_PARTS][NUM_PLAYERS];
+	AutoActor	m_sprCursor[NUM_PLAYERS];
 	// scroll is the per-player, per-choice piece that's scrolled
 	AutoActor	m_sprScroll[MAX_CHOICES][NUM_PLAYERS];
 	ActorScroller	m_Scroller[NUM_PLAYERS];
