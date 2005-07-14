@@ -19,6 +19,7 @@
 #include "PlayerState.h"
 
 const int NUM_EDIT_BUTTON_COLUMNS = 10;
+struct MenuDef;
 
 enum EditButton
 {
@@ -149,6 +150,8 @@ protected:
 	void PlayTicks();
 	void PlayPreviewMusic();
 	
+	void EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK = SM_None, ScreenMessage SM_SendOnCancel = SM_None );
+
 	// Call this before modifying m_NoteDataEdit.
 	void SaveUndo();
 	// Revert m_NoteDataEdit using m_Undo.

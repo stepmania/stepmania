@@ -1,14 +1,11 @@
 #include "global.h"
 #include "ScreenMiniMenu.h"
-#include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
 #include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "Foreach.h"
 #include "ScreenDimensions.h"
-#include "CommonMetrics.h"
 #include "GameState.h"
 #include "FontCharAliases.h"
 
@@ -48,14 +45,7 @@ void ScreenMiniMenu::Init( const MenuDef* pDef, ScreenMessage SM_SendOnOK, Scree
 
 	m_SMSendOnOK = SM_SendOnOK;
 	m_SMSendOnCancel = SM_SendOnCancel;
-
-
-	FOREACH_CONST( MenuRowDef, pDef->rows, r )
-	{
-		// Don't add rows that aren't applicable to HomeEditMode.
-		if( EDIT_MODE >= r->emShowIn )
-			m_vMenuRows.push_back( *r );
-	}
+	m_vMenuRows = pDef->rows;
 
 	// Convert from m_vMenuRows to vector<OptionRowDefinition>
 	vector<OptionRowDefinition> vDefs;

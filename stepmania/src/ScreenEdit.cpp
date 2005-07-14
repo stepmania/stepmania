@@ -729,6 +729,22 @@ void ScreenEdit::PlayPreviewMusic()
 		1.5f );
 }
 
+void ScreenEdit::EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
+{
+	MenuDef menu( *pDef );
+	menu.rows.clear();
+
+	vector<MenuRowDef> aRows;
+	FOREACH_CONST( MenuRowDef, pDef->rows, r )
+	{
+		// Don't add rows that aren't applicable to this edit mode.
+		if( EDIT_MODE >= r->emShowIn )
+			menu.rows.push_back( *r );
+	}
+
+	ScreenMiniMenu::MiniMenu( &menu, SM_SendOnOK, SM_SendOnCancel );
+}
+
 void ScreenEdit::Update( float fDeltaTime )
 {
 	m_PlayerStateEdit.Update( fDeltaTime );
@@ -990,7 +1006,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_ATTACK) )
 			{
 				g_iLastInsertAttackTrack = iCol;
-				ScreenMiniMenu::MiniMenu( &g_InsertAttack, SM_BackFromInsertAttack );
+				EditMiniMenu( &g_InsertAttack, SM_BackFromInsertAttack );
 			}
 			else
 			{
@@ -1179,14 +1195,14 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			g_AreaMenu.rows[record].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[convert_beat_to_pause].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[undo].bEnabled = m_bHasUndo;
-			ScreenMiniMenu::MiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
+			EditMiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
 		}
 		break;
 	case EDIT_BUTTON_OPEN_EDIT_MENU:
-		ScreenMiniMenu::MiniMenu( &g_MainMenu, SM_BackFromMainMenu );
+		EditMiniMenu( &g_MainMenu, SM_BackFromMainMenu );
 		break;
 	case EDIT_BUTTON_OPEN_INPUT_HELP:
-		ScreenMiniMenu::MiniMenu( &g_EditHelp, SM_None );
+		EditMiniMenu( &g_EditHelp, SM_None );
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
 		GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
@@ -1399,7 +1415,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				}
 			}
 
-			ScreenMiniMenu::MiniMenu( &g_CourseMode, SM_BackFromCourseModeMenu );
+			EditMiniMenu( &g_CourseMode, SM_BackFromCourseModeMenu );
 			break;
 		}
 	case EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP:
@@ -1982,7 +1998,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[air].choices.resize(1);			g_StepsInformation.rows[air].choices[0] = ssprintf("%.2f", NoteDataUtil::GetAirRadarValue(m_NoteDataEdit,fMusicSeconds));
 				g_StepsInformation.rows[freeze].choices.resize(1);		g_StepsInformation.rows[freeze].choices[0] = ssprintf("%.2f", NoteDataUtil::GetFreezeRadarValue(m_NoteDataEdit,fMusicSeconds));
 				g_StepsInformation.rows[chaos].choices.resize(1);		g_StepsInformation.rows[chaos].choices[0] = ssprintf("%.2f", NoteDataUtil::GetChaosRadarValue(m_NoteDataEdit,fMusicSeconds));
-				ScreenMiniMenu::MiniMenu( &g_StepsInformation, SM_BackFromStepsInformation );
+				EditMiniMenu( &g_StepsInformation, SM_BackFromStepsInformation );
 			}
 			break;
 		case play_whole_song:
@@ -2081,7 +2097,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_SongInformation.rows[sub_title_transliteration].choices.resize(1);	g_SongInformation.rows[sub_title_transliteration].choices[0] = pSong->m_sSubTitleTranslit;
 				g_SongInformation.rows[artist_transliteration].choices.resize(1);		g_SongInformation.rows[artist_transliteration].choices[0] = pSong->m_sArtistTranslit;
 
-				ScreenMiniMenu::MiniMenu( &g_SongInformation, SM_BackFromSongInformation );
+				EditMiniMenu( &g_SongInformation, SM_BackFromSongInformation );
 			}
 			break;
 		case edit_bpm:
@@ -2212,13 +2228,13 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_BackgroundChange.rows[color1].										SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor1 );
 				g_BackgroundChange.rows[color2].										SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor2 );
 
-				ScreenMiniMenu::MiniMenu( &g_BackgroundChange, SM_BackFromBGChange );
+				EditMiniMenu( &g_BackgroundChange, SM_BackFromBGChange );
 			}
 			break;
 		case preferences:
 			g_Prefs.rows[pref_show_bgs_play].iDefaultChoice = PREFSMAN->m_bEditorShowBGChangesPlay;
 
-			ScreenMiniMenu::MiniMenu( &g_Prefs, SM_BackFromPrefs );
+			EditMiniMenu( &g_Prefs, SM_BackFromPrefs );
 			break;
 
 		case play_preview_music:
