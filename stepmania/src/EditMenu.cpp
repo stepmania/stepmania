@@ -54,7 +54,7 @@ static ThemeMetric<apActorCommands> ROW_VALUE_ON_COMMAND("EditMenu","RowValueOnC
 static ThemeMetric1D<float> ROW_Y						("EditMenu",ROW_Y_NAME,NUM_EDIT_MENU_ROWS);
 
 
-static void GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSongsOut )
+void EditMenu::GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSongsOut )
 {
 	vpSongsOut.clear();
 	SONGMAN->GetSongs( vpSongsOut, sGroup );
@@ -76,7 +76,8 @@ static void GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSong
 	}
 	SongUtil::SortSongPointerArrayByTitle( vpSongsOut );
 }
-static void GetGroupsToShow( vector<CString> &vsGroupsOut )
+
+void EditMenu::GetGroupsToShow( vector<CString> &vsGroupsOut )
 {
 	vsGroupsOut.clear();
 	SONGMAN->GetSongGroupNames( vsGroupsOut );

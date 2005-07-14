@@ -24,8 +24,9 @@ private:
 
 	void RefreshExplanationText();
 	void RefreshNumStepsLoadedFromProfile();
-public:
+
 	EditMenu		m_Selector;
+
 private:
 	BitmapText		m_textExplanation;
 	BitmapText		m_textNumStepsLoadedFromProfile;

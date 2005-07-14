@@ -71,6 +71,9 @@ public:
 	EditMenuRow GetSelectedRow() const { return m_SelectedRow; }
 
 private:
+	void GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSongsOut );
+	void GetGroupsToShow( vector<CString> &vsGroupsOut );
+
 	void UpdateArrows();
 	Sprite	m_sprArrows[NUM_ARROWS];
 
