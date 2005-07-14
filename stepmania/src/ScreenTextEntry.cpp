@@ -62,7 +62,7 @@ void ScreenTextEntry::TextEntry(
 		bPassword );
 	pNewScreen->Init();
 	SCREENMAN->ZeroNextUpdate();
-	SCREENMAN->SetFromNewScreen( pNewScreen );
+	SCREENMAN->PushScreen( pNewScreen, true );
 }
 
 bool ScreenTextEntry::s_bCancelledLast = false;

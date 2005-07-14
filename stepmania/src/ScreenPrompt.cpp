@@ -21,7 +21,7 @@ void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const CString &sText, Prom
 	pNewScreen->Init();
 	pNewScreen->Load( smSendOnPop, sText, type, defaultAnswer, OnYes, OnNo, pCallbackData );
 	SCREENMAN->ZeroNextUpdate();
-	SCREENMAN->SetFromNewScreen( pNewScreen );
+	SCREENMAN->PushScreen( pNewScreen, true );
 }
 
 

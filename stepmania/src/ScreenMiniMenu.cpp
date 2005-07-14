@@ -22,7 +22,7 @@ void ScreenMiniMenu::MiniMenu( MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenM
 	pNewScreen->Init( pDef, SM_SendOnOK, SM_SendOnCancel );
 	pNewScreen->SetXY( fX, fY );
 	SCREENMAN->ZeroNextUpdate();
-	SCREENMAN->SetFromNewScreen( pNewScreen );
+	SCREENMAN->PushScreen( pNewScreen, true );
 }
 
 //REGISTER_SCREEN_CLASS( ScreenMiniMenu );

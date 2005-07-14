@@ -68,7 +68,10 @@ ScreenManager::~ScreenManager()
 
 	SAFE_DELETE( m_pSharedBGA );
 	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
-		SAFE_DELETE( m_ScreenStack[i] );
+	{
+		if( m_ScreenStack[i].m_bDeleteWhenDone )
+			SAFE_DELETE( m_ScreenStack[i].m_pScreen );
+	}
 	DeletePreparedScreens();
 	for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
 		SAFE_DELETE( m_OverlayScreens[i] );
@@ -106,14 +109,14 @@ Screen *ScreenManager::GetTopScreen()
 {
 	if( m_ScreenStack.empty() )
 		return NULL;
-	return m_ScreenStack[m_ScreenStack.size()-1];
+	return m_ScreenStack[m_ScreenStack.size()-1].m_pScreen;
 }
 
 bool ScreenManager::IsStackedScreen( const Screen *pScreen ) const
 {
 	/* True if the screen is in the screen stack, but not the first. */
 	for( unsigned i = 1; i < m_ScreenStack.size(); ++i )
-		if( m_ScreenStack[i] == pScreen )
+		if( m_ScreenStack[i].m_pScreen == pScreen )
 			return true;
 	return false;
 }
@@ -130,14 +133,15 @@ void ScreenManager::Update( float fDeltaTime )
 		ScreenMessage SM = m_PopTopScreen;
 		m_PopTopScreen = SM_Invalid;
 
-		Screen* pScreenToPop = m_ScreenStack.back();	// top menu
+		LoadedScreen ls = m_ScreenStack.back();	// top menu
 		m_ScreenStack.erase( m_ScreenStack.end()-1, m_ScreenStack.end() );
 
-		pScreenToPop->HandleScreenMessage( SM_LoseFocus );
+		ls.m_pScreen->HandleScreenMessage( SM_LoseFocus );
 		SendMessageToTopScreen( SM );
 		SendMessageToTopScreen( SM_GainFocus );
 
-		delete pScreenToPop;
+		if( ls.m_bDeleteWhenDone )
+			delete ls.m_pScreen;
 	}
 
 	/*
@@ -188,7 +192,7 @@ void ScreenManager::Update( float fDeltaTime )
 	//
 	{
 		for( unsigned i=0; i<m_ScreenStack.size(); i++ )
-			m_ScreenStack[i]->ProcessMessages( fDeltaTime );
+			m_ScreenStack[i].m_pScreen->ProcessMessages( fDeltaTime );
 
 		m_pSharedBGA->ProcessMessages( fDeltaTime );
 
@@ -246,7 +250,7 @@ void ScreenManager::Draw()
 	 * that'll confuse the "zero out the next update after loading a screen logic.
 	 * If we don't render, don't call BeginFrame or EndFrame.  That way, we won't
 	 * clear the buffer, and we won't wait for vsync. */
-	if( m_ScreenStack.size() && m_ScreenStack.back()->IsFirstUpdate() )
+	if( m_ScreenStack.size() && m_ScreenStack.back().m_pScreen->IsFirstUpdate() )
 		return;
 
 	if( !DISPLAY->BeginFrame() )
@@ -254,14 +258,14 @@ void ScreenManager::Draw()
 
 	m_pSharedBGA->Draw();
 
-	if( !m_ScreenStack.empty() && !m_ScreenStack.back()->IsTransparent() )	// top screen isn't transparent
+	if( !m_ScreenStack.empty() && !m_ScreenStack.back().m_pScreen->IsTransparent() )	// top screen isn't transparent
 	{
-		m_ScreenStack.back()->Draw();
+		m_ScreenStack.back().m_pScreen->Draw();
 	}
 	else
 	{
 		for( unsigned i=0; i<m_ScreenStack.size(); i++ )	// Draw all screens bottom to top
-			m_ScreenStack[i]->Draw();
+			m_ScreenStack[i].m_pScreen->Draw();
 	}
 
 	for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
@@ -294,7 +298,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 		return;
 
 	if( !m_ScreenStack.empty() )
-		m_ScreenStack.back()->Input( DeviceI, type, GameI, MenuI, StyleI );
+		m_ScreenStack.back().m_pScreen->Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 /* Just create a new screen; don't do any associated cleanup. */
@@ -416,10 +420,13 @@ void ScreenManager::DeletePreparedScreens()
 void ScreenManager::ClearScreenStack()
 {
 	if( m_ScreenStack.size() )
-		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
+		m_ScreenStack.back().m_pScreen->HandleScreenMessage( SM_LoseFocus );
 
 	for( unsigned i=0; i<m_ScreenStack.size(); i++ )
-		SAFE_DELETE( m_ScreenStack[i] );
+	{
+		if( m_ScreenStack[i].m_bDeleteWhenDone )
+			SAFE_DELETE( m_ScreenStack[i].m_pScreen );
+	}
 	m_ScreenStack.clear();
 
 	/* Now that we've actually deleted a screen, it makes sense to clear out
@@ -428,12 +435,16 @@ void ScreenManager::ClearScreenStack()
 }
 
 /* Add a screen to m_ScreenStack.  This is the only function that adds to m_ScreenStack. */
-void ScreenManager::SetFromNewScreen( Screen *pNewScreen )
+void ScreenManager::PushScreen( Screen *pNewScreen, bool bDeleteWhenDone )
 {
 	if( m_ScreenStack.size() )
-		m_ScreenStack.back()->HandleScreenMessage( SM_LoseFocus );
+		m_ScreenStack.back().m_pScreen->HandleScreenMessage( SM_LoseFocus );
 
-	m_ScreenStack.push_back( pNewScreen );
+	LoadedScreen ls;
+	ls.m_pScreen = pNewScreen;
+	ls.m_bDeleteWhenDone = bDeleteWhenDone;
+
+	m_ScreenStack.push_back( ls );
 	
 	RefreshCreditsMessages();
 
@@ -448,7 +459,7 @@ void ScreenManager::SetNewScreen( const CString &sScreenName )
 
 void ScreenManager::LoadDelayedScreen()
 {
-	const bool bWasOnSystemMenu = !m_ScreenStack.empty() && m_ScreenStack.back()->GetScreenType() == system_menu;
+	const bool bWasOnSystemMenu = !m_ScreenStack.empty() && m_ScreenStack.back().m_pScreen->GetScreenType() == system_menu;
 
 	/*
 	 * We have a screen to display.  Delete the current screens and load it.
@@ -533,14 +544,14 @@ void ScreenManager::LoadDelayedScreen()
 
 	TEXTUREMAN->DiagnosticOutput();
 
-	LOG->Trace("... SetFromNewScreen");
-	SetFromNewScreen( pNewScreen );
+	LOG->Trace("... PushScreen");
+	PushScreen( pNewScreen, true );
 }
 
 void ScreenManager::AddNewScreenToTop( const CString &sScreenName )
 {
 	Screen* pNewScreen = MakeNewScreen(sScreenName);
-	SetFromNewScreen( pNewScreen );
+	PushScreen( pNewScreen, true );
 }
 
 void ScreenManager::PopTopScreen( ScreenMessage SM )
@@ -552,20 +563,16 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
 
 void ScreenManager::PostMessageToTopScreen( ScreenMessage SM, float fDelay )
 {
-	if( m_ScreenStack.size() )
-	{
-		Screen* pTopScreen = m_ScreenStack.back();
+	Screen* pTopScreen = GetTopScreen();
+	if( pTopScreen != NULL )
 		pTopScreen->PostScreenMessage( SM, fDelay );
-	}
 }
 
 void ScreenManager::SendMessageToTopScreen( ScreenMessage SM )
 {
-	if( m_ScreenStack.size() )
-	{
-		Screen* pTopScreen = m_ScreenStack.back();
+	Screen* pTopScreen = GetTopScreen();
+	if( pTopScreen != NULL )
 		pTopScreen->HandleScreenMessage( SM );
-	}
 }
 
 
