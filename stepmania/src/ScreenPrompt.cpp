@@ -120,12 +120,12 @@ void ScreenPrompt::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_DoneOpeningWipingRight:
+	case SM_GoToNextScreen:
 		if( SCREENMAN->IsStackedScreen(this) )
+		{
 			SCREENMAN->PopTopScreen( m_smSendOnPop );
-		else
-			this->HandleScreenMessage( SM_GoToNextScreen );
-		break;
+			return;
+		}
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );
@@ -183,12 +183,12 @@ void ScreenPrompt::End( bool bCancelled )
 {
 	if( bCancelled )
 	{
-		m_Cancel.StartTransitioning( SM_DoneOpeningWipingRight );
+		m_Cancel.StartTransitioning( SM_GoToNextScreen );
 	}
 	else
 	{
 		SCREENMAN->PlayStartSound();
-		m_Out.StartTransitioning( SM_DoneOpeningWipingRight );
+		m_Out.StartTransitioning( SM_GoToNextScreen );
 	}
 
 	OFF_COMMAND( m_textQuestion );

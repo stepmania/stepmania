@@ -271,10 +271,15 @@ void ScreenTextEntry::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_DoneOpeningWipingRight:
-		SCREENMAN->PopTopScreen( m_smSendOnPop );
-		break;
+	case SM_GoToNextScreen:
+		if( SCREENMAN->IsStackedScreen(this) )
+		{
+			SCREENMAN->PopTopScreen( m_smSendOnPop );
+			return;
+		}
 	}
+
+	Screen::HandleScreenMessage( SM );
 }
 
 void ScreenTextEntry::MoveX( int iDir )
@@ -388,7 +393,7 @@ void ScreenTextEntry::End( bool bCancelled )
 		if( m_pOnCancel ) 
 			m_pOnCancel();
 		
-		m_Cancel.StartTransitioning( SM_DoneOpeningWipingRight );
+		m_Cancel.StartTransitioning( SM_GoToNextScreen );
 	}
 	else
 	{
@@ -411,7 +416,7 @@ void ScreenTextEntry::End( bool bCancelled )
 			m_pOnOK( ret );
 		}
 
-		m_Out.StartTransitioning( SM_DoneOpeningWipingRight );
+		m_Out.StartTransitioning( SM_GoToNextScreen );
 		SCREENMAN->PlayStartSound();
 	}
 
