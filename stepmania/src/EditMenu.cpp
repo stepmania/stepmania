@@ -104,6 +104,7 @@ void EditMenu::Load( const CString &sType )
 	ROW_VALUE_X.Load(sType,ROW_VALUE_X_NAME,NUM_EDIT_MENU_ROWS);
 	ROW_VALUE_ON_COMMAND.Load(sType,"RowValueOnCommand");
 	ROW_Y.Load(sType,ROW_Y_NAME,NUM_EDIT_MENU_ROWS);
+	EDIT_MODE.Load(sType,"EditMode");
 
 	for( int i=0; i<2; i++ )
 	{

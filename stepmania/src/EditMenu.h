@@ -11,6 +11,7 @@
 #include "RandomSample.h"
 #include "EnumHelper.h"
 #include "ThemeMetric.h"
+#include "GameConstantsAndTypes.h"
 
 
 enum EditMenuRow 
@@ -123,6 +124,7 @@ private:
 	ThemeMetric1D<float> ROW_VALUE_X;
 	ThemeMetric<apActorCommands> ROW_VALUE_ON_COMMAND;
 	ThemeMetric1D<float> ROW_Y;
+	ThemeMetricEnum<EditMode> EDIT_MODE;
 };
 
 #endif
