@@ -36,7 +36,7 @@ protected:
 	ThemeMetric<bool>		SHOW_ICON;
 	ThemeMetric<bool>		SHOW_CURSOR;
 	ThemeMetric<bool>		SHOW_SCROLLER;
-	ThemeMetric<bool>		SHARED_PREVIEW_AND_CURSOR;
+	ThemeMetric<bool>		SHARED_SELECTION;
 	ThemeMetric<int>		NUM_CHOICES_ON_PAGE_1;
 	ThemeMetric1D<float>	CURSOR_OFFSET_X_FROM_ICON;
 	ThemeMetric1D<float>	CURSOR_OFFSET_Y_FROM_ICON;

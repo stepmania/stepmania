@@ -28,18 +28,19 @@ void ScreenSelectProfile::Init()
 	int iIndex = 0;
 	m_aGameCommands.clear();
 
-	gc.Load( iIndex++, ParseCommands("name,create") );
+	gc.Load( iIndex++, ParseCommands("name,Create") );
 	m_aGameCommands.push_back( gc );
 
-	vector<CString> vProfileIDs;
-	PROFILEMAN->GetLocalProfileIDs( vProfileIDs );
-	FOREACH_CONST( CString, vProfileIDs, s )
+	vector<CString> vsProfileID;
+	PROFILEMAN->GetLocalProfileIDs( vsProfileID );
+	FOREACH_CONST( CString, vsProfileID, s )
 	{
-		gc.Load( iIndex++, ParseCommands("name,profile;profileid," + *s + ";screen," + NEXT_SCREEN.GetValue()) );
+		CString sCommand = ssprintf( "name,Profile;profileid,%s;screen,%s", s->c_str(), NEXT_SCREEN.GetValue().c_str() );
+		gc.Load( iIndex++, ParseCommands(sCommand) );
 		m_aGameCommands.push_back( gc );
 	}
 
-	gc.Load( iIndex++, ParseCommands("name,exit") );
+	gc.Load( iIndex++, ParseCommands("name,Exit") );
 	m_aGameCommands.push_back( gc );
 
 
@@ -88,7 +89,7 @@ void ScreenSelectProfile::HandleScreenMessage( const ScreenMessage SM )
 			// create
 			bool bResult = PROFILEMAN->CreateLocalProfile( sNewName );
 			if( bResult )
-				SCREENMAN->SetNewScreen( m_sName );	// reload
+				SCREENMAN->SetNewScreen( NEXT_SCREEN );
 			else
 				ScreenPrompt::Prompt( SM_None, ssprintf("Error creating profile '%s'.", sNewName.c_str()) );
 		}

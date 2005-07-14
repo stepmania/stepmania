@@ -26,7 +26,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	SHOW_ICON(m_sName,"ShowIcon"),
 	SHOW_CURSOR(m_sName,"ShowCursor"),
 	SHOW_SCROLLER(m_sName,"ShowScroller"),
-	SHARED_PREVIEW_AND_CURSOR(m_sName,"SharedPreviewAndCursor"),
+	SHARED_SELECTION(m_sName,"SharedSelection"),
 	NUM_CHOICES_ON_PAGE_1(m_sName,"NumChoicesOnPage1"),
 	CURSOR_OFFSET_X_FROM_ICON(m_sName,CURSOR_OFFSET_X_FROM_ICON_NAME,NUM_PLAYERS),
 	CURSOR_OFFSET_Y_FROM_ICON(m_sName,CURSOR_OFFSET_Y_FROM_ICON_NAME,NUM_PLAYERS),
@@ -73,7 +73,7 @@ void ScreenSelectMaster::Init()
 
 
 	vector<PlayerNumber> vpns;
-	if( SHARED_PREVIEW_AND_CURSOR )
+	if( SHARED_SELECTION )
 	{
 		vpns.push_back( (PlayerNumber)0 );
 	}
@@ -83,8 +83,8 @@ void ScreenSelectMaster::Init()
 			vpns.push_back( p );
 	}
 
-#define PLAYER_APPEND_WITH_SPACE(p)	(SHARED_PREVIEW_AND_CURSOR ? CString() : ssprintf(" P%d",(p)+1))
-#define PLAYER_APPEND_NO_SPACE(p)	(SHARED_PREVIEW_AND_CURSOR ? CString() : ssprintf("P%d",(p)+1))
+#define PLAYER_APPEND_WITH_SPACE(p)	(SHARED_SELECTION ? CString() : ssprintf(" P%d",(p)+1))
+#define PLAYER_APPEND_NO_SPACE(p)	(SHARED_SELECTION ? CString() : ssprintf("P%d",(p)+1))
 	
 	// init cursor
 	if( SHOW_CURSOR )
@@ -249,7 +249,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 
 
 	vector<PlayerNumber> vpns;
-	if( SHARED_PREVIEW_AND_CURSOR )
+	if( SHARED_SELECTION )
 	{
 		vpns.push_back( (PlayerNumber)0 );
 	}
@@ -322,7 +322,7 @@ int ScreenSelectMaster::GetSelectionIndex( PlayerNumber pn )
 void ScreenSelectMaster::UpdateSelectableChoices()
 {
 	vector<PlayerNumber> vpns;
-	if( SHARED_PREVIEW_AND_CURSOR )
+	if( SHARED_SELECTION )
 	{
 		vpns.push_back( (PlayerNumber)0 );
 	}
@@ -457,7 +457,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 
 
 	vector<PlayerNumber> vpns;
-	if( SHARED_PREVIEW_AND_CURSOR )
+	if( SHARED_SELECTION )
 	{
 		vpns.push_back( (PlayerNumber)0 );
 	}
@@ -485,7 +485,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 
 	if( SHOW_SCROLLER )
 	{
-		if( SHARED_PREVIEW_AND_CURSOR )
+		if( SHARED_SELECTION )
 		{
 			int iChoice = m_iChoice[GetSharedPlayer()];
 			COMMAND( m_sprScroll[iChoice][0], "PreSwitchPage" );
@@ -540,7 +540,7 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 		const int iOldChoice = m_iChoice[p];
 
 		/* Set the new m_iChoice even for disabled players, since a player might
-		 * join on a SHARED_PREVIEW_AND_CURSOR after the cursor has been moved. */
+		 * join on a SHARED_SELECTION after the cursor has been moved. */
 		m_iChoice[p] = iNewChoice;
 
 		if( p!=pn )
@@ -556,7 +556,7 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 
 		if( SHOW_CURSOR )
 		{
-			if( SHARED_PREVIEW_AND_CURSOR )
+			if( SHARED_SELECTION )
 			{
 				COMMAND( m_sprCursor[0], "Change" );
 				m_sprCursor[0]->SetXY( GetCursorX((PlayerNumber)0), GetCursorY((PlayerNumber)0) );
@@ -579,7 +579,7 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 
 				if( iPressedDir != iActualDir )	// wrapped
 				{
-					ActorScroller &scroller = SHARED_PREVIEW_AND_CURSOR ? m_Scroller[0] : m_Scroller[p];
+					ActorScroller &scroller = SHARED_SELECTION ? m_Scroller[0] : m_Scroller[p];
 					float fItem = scroller.GetCurrentItem();
 					int iNumChoices = m_aGameCommands.size();
 					fItem += iActualDir * iNumChoices;
@@ -587,12 +587,12 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 				}
 			}
 
-			if( SHARED_PREVIEW_AND_CURSOR )
+			if( SHARED_SELECTION )
 				m_Scroller[0].SetDestinationItem( (float)iNewChoice );
 			else
 				m_Scroller[p].SetDestinationItem( (float)iNewChoice );
 			
-			if( SHARED_PREVIEW_AND_CURSOR )
+			if( SHARED_SELECTION )
 			{
 				m_sprScroll[iOldChoice][0]->PlayCommand( "LoseFocus" );
 				m_sprScroll[iNewChoice][0]->PlayCommand( "GainFocus" );
@@ -654,7 +654,7 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 			fSecs = max( fSecs, m_sprMore[page]->GetTweenTimeLeft() );
 		}
 
-		int iIndex = SHARED_PREVIEW_AND_CURSOR ? 0 : pn;
+		int iIndex = SHARED_SELECTION ? 0 : pn;
 
 		if( SHOW_CURSOR )
 		{
@@ -704,7 +704,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 
 	float fSecs = 0;
 	bool bAllDone = true;
-	if( (bool)SHARED_PREVIEW_AND_CURSOR || GetCurrentPage() == PAGE_2 )
+	if( (bool)SHARED_SELECTION || GetCurrentPage() == PAGE_2 )
 	{
 		/* Only one player has to pick.  Choose this for all the other players, too. */
 		FOREACH_PlayerNumber( p )
@@ -740,7 +740,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 void ScreenSelectMaster::TweenOnScreen() 
 {
 	vector<PlayerNumber> vpns;
-	if( SHARED_PREVIEW_AND_CURSOR )
+	if( SHARED_SELECTION )
 	{
 		vpns.push_back( (PlayerNumber)0 );
 	}
@@ -806,7 +806,7 @@ void ScreenSelectMaster::TweenOnScreen()
 void ScreenSelectMaster::TweenOffScreen()
 {
 	vector<PlayerNumber> vpns;
-	if( SHARED_PREVIEW_AND_CURSOR )
+	if( SHARED_SELECTION )
 	{
 		vpns.push_back( (PlayerNumber)0 );
 	}
