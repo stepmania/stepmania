@@ -34,6 +34,8 @@ void ScreenEditMenu::Init()
 {
 	ScreenWithMenuElements::Init();
 
+	m_Selector.SetName( "EditMenu" );
+	m_Selector.Load( "EditMenu" );
 	m_Selector.SetXY( 0, 0 );
 	this->AddChild( &m_Selector );
 

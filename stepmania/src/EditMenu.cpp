@@ -40,19 +40,6 @@ static CString ARROWS_X_NAME( size_t i )	{ return ssprintf("Arrows%dX",int(i+1))
 static CString ROW_VALUE_X_NAME( size_t i )	{ return ssprintf("RowValue%dX",int(i+1)); }
 static CString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",int(i+1)); }
 
-static ThemeMetric1D<float> ARROWS_X					("EditMenu",ARROWS_X_NAME,NUM_ARROWS);
-static ThemeMetric<RageColor> ARROWS_ENABLED_COLOR		("EditMenu","ArrowsEnabledColor");
-static ThemeMetric<RageColor> ARROWS_DISABLED_COLOR		("EditMenu","ArrowsDisabledColor");
-static ThemeMetric<float> SONG_BANNER_WIDTH				("EditMenu","SongBannerWidth");
-static ThemeMetric<float> SONG_BANNER_HEIGHT			("EditMenu","SongBannerHeight");
-static ThemeMetric<float> GROUP_BANNER_WIDTH			("EditMenu","GroupBannerWidth");
-static ThemeMetric<float> GROUP_BANNER_HEIGHT			("EditMenu","GroupBannerHeight");
-static ThemeMetric<float> ROW_LABELS_X					("EditMenu","RowLabelsX");
-static ThemeMetric<apActorCommands> ROW_LABEL_ON_COMMAND("EditMenu","RowLabelOnCommand");
-static ThemeMetric1D<float> ROW_VALUE_X					("EditMenu",ROW_VALUE_X_NAME,NUM_EDIT_MENU_ROWS);
-static ThemeMetric<apActorCommands> ROW_VALUE_ON_COMMAND("EditMenu","RowValueOnCommand");
-static ThemeMetric1D<float> ROW_Y						("EditMenu",ROW_Y_NAME,NUM_EDIT_MENU_ROWS);
-
 
 void EditMenu::GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSongsOut )
 {
@@ -94,13 +81,33 @@ void EditMenu::GetGroupsToShow( vector<CString> &vsGroupsOut )
 
 EditMenu::EditMenu()
 {
-	LOG->Trace( "EditMenu::EditMenu()" );
+}
 
-	SetName( "EditMenu" );
+EditMenu::~EditMenu()
+{
+	BANNERCACHE->Undemand();
+}
+
+void EditMenu::Load( const CString &sType )
+{
+	LOG->Trace( "EditMenu::Load" );
+
+	ARROWS_X.Load(sType,ARROWS_X_NAME,NUM_ARROWS);
+	ARROWS_ENABLED_COLOR.Load(sType,"ArrowsEnabledColor");
+	ARROWS_DISABLED_COLOR.Load(sType,"ArrowsDisabledColor");
+	SONG_BANNER_WIDTH.Load(sType,"SongBannerWidth");
+	SONG_BANNER_HEIGHT.Load(sType,"SongBannerHeight");
+	GROUP_BANNER_WIDTH.Load(sType,"GroupBannerWidth");
+	GROUP_BANNER_HEIGHT.Load(sType,"GroupBannerHeight");
+	ROW_LABELS_X.Load(sType,"RowLabelsX");
+	ROW_LABEL_ON_COMMAND.Load(sType,"RowLabelOnCommand");
+	ROW_VALUE_X.Load(sType,ROW_VALUE_X_NAME,NUM_EDIT_MENU_ROWS);
+	ROW_VALUE_ON_COMMAND.Load(sType,"RowValueOnCommand");
+	ROW_Y.Load(sType,ROW_Y_NAME,NUM_EDIT_MENU_ROWS);
 
 	for( int i=0; i<2; i++ )
 	{
-		m_sprArrows[i].Load( THEME->GetPathG("EditMenu",i==0?"left":"right") );
+		m_sprArrows[i].Load( THEME->GetPathG(sType,i==0?"left":"right") );
 		m_sprArrows[i].SetX( ARROWS_X.GetValue(i) );
 		this->AddChild( &m_sprArrows[i] );
 	}
@@ -112,14 +119,14 @@ EditMenu::EditMenu()
 
 	FOREACH_EditMenuRow( r )
 	{
-		m_textLabel[r].LoadFromFont( THEME->GetPathF("EditMenu","title") );
+		m_textLabel[r].LoadFromFont( THEME->GetPathF(sType,"title") );
 		m_textLabel[r].SetXY( ROW_LABELS_X, ROW_Y.GetValue(r) );
 		m_textLabel[r].SetText( EditMenuRowToThemedString(r) );
 		m_textLabel[r].RunCommands( ROW_LABEL_ON_COMMAND );
 		m_textLabel[r].SetHorizAlign( Actor::align_left );
 		this->AddChild( &m_textLabel[r] );
 
-		m_textValue[r].LoadFromFont( THEME->GetPathF("EditMenu","value") );
+		m_textValue[r].LoadFromFont( THEME->GetPathF(sType,"value") );
 		m_textValue[r].SetXY( ROW_VALUE_X.GetValue(r), ROW_Y.GetValue(r) );
 		m_textValue[r].SetText( "blah" );
 		m_textValue[r].RunCommands( ROW_VALUE_ON_COMMAND );
@@ -130,32 +137,30 @@ EditMenu::EditMenu()
 	BANNERCACHE->Demand();
 
 	m_GroupBanner.SetName( "GroupBanner" );
-	SET_XY( m_GroupBanner );
+	ActorUtil::SetXY( m_GroupBanner, sType );
 	this->AddChild( &m_GroupBanner );
 
 	m_SongBanner.SetName( "SongBanner" );
-	SET_XY( m_SongBanner );
+	ActorUtil::SetXY( m_SongBanner, sType );
 	this->AddChild( &m_SongBanner );
 
 	m_SongTextBanner.SetName( "SongTextBanner" );
 	m_SongTextBanner.Load( "TextBanner" );
-	SET_XY( m_SongTextBanner );
+	ActorUtil::SetXY( m_SongTextBanner, sType );
 	this->AddChild( &m_SongTextBanner );
 	
 	m_Meter.SetName( "Meter" );
 	m_Meter.Load( "EditDifficultyMeter" );
-	SET_XY( m_Meter );
+	ActorUtil::SetXY( m_Meter, sType );
 	this->AddChild( &m_Meter );
 	
 	m_SourceMeter.SetName( "SourceMeter" );
 	m_SourceMeter.Load( "EditDifficultyMeter" );
-	SET_XY( m_SourceMeter );
+	ActorUtil::SetXY( m_SourceMeter, sType );
 	this->AddChild( &m_SourceMeter );
 
-
-	m_soundChangeRow.Load( THEME->GetPathS("EditMenu","row") );
-	m_soundChangeValue.Load( THEME->GetPathS("EditMenu","value") );
-
+	m_soundChangeRow.Load( THEME->GetPathS(sType,"row") );
+	m_soundChangeValue.Load( THEME->GetPathS(sType,"value") );
 
 	//
 	// fill in data structures
@@ -165,11 +170,6 @@ EditMenu::EditMenu()
 
 
 	RefreshAll();
-}
-
-EditMenu::~EditMenu()
-{
-	BANNERCACHE->Undemand();
 }
 
 void EditMenu::RefreshAll()

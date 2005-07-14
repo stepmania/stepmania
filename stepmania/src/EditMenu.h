@@ -10,6 +10,7 @@
 #include "DifficultyMeter.h"
 #include "RandomSample.h"
 #include "EnumHelper.h"
+#include "ThemeMetric.h"
 
 
 enum EditMenuRow 
@@ -45,6 +46,7 @@ class EditMenu: public ActorFrame
 public:
 	EditMenu();
 	~EditMenu();
+	void Load( const CString &sType );
 
 	bool CanGoUp();
 	bool CanGoDown();
@@ -108,6 +110,19 @@ private:
 
 	RandomSample	m_soundChangeRow;
 	RandomSample	m_soundChangeValue;
+
+	ThemeMetric1D<float> ARROWS_X;
+	ThemeMetric<RageColor> ARROWS_ENABLED_COLOR;
+	ThemeMetric<RageColor> ARROWS_DISABLED_COLOR;
+	ThemeMetric<float> SONG_BANNER_WIDTH;
+	ThemeMetric<float> SONG_BANNER_HEIGHT;
+	ThemeMetric<float> GROUP_BANNER_WIDTH;
+	ThemeMetric<float> GROUP_BANNER_HEIGHT;
+	ThemeMetric<float> ROW_LABELS_X;
+	ThemeMetric<apActorCommands> ROW_LABEL_ON_COMMAND;
+	ThemeMetric1D<float> ROW_VALUE_X;
+	ThemeMetric<apActorCommands> ROW_VALUE_ON_COMMAND;
+	ThemeMetric1D<float> ROW_Y;
 };
 
 #endif
