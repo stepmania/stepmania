@@ -154,7 +154,6 @@ void ScreenSelectCharacter::Init()
 		for( unsigned i=0; i<MAX_CHAR_ICONS_TO_SHOW; i++ )
 			m_sprIcons[p][i].RunCommands( ICONS_ON_COMMAND(p) );
 	}
-	TweenOnScreen();
 
 	this->SortByDrawOrder();
 }
@@ -357,7 +356,7 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 		}
 
 		StopTimer();
-		TweenOffScreen();
+		TweenOursOffScreen();
 		this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_TWEEN_OFF_SECONDS );
 	}
 }
@@ -367,7 +366,7 @@ void ScreenSelectCharacter::MenuBack( PlayerNumber pn )
 	Cancel( SM_GoToPrevScreen );
 }
 
-void ScreenSelectCharacter::TweenOffScreen()
+void ScreenSelectCharacter::TweenOursOffScreen()
 {
 	FOREACH_PlayerNumber( p )
 	{
@@ -385,10 +384,6 @@ void ScreenSelectCharacter::TweenOffScreen()
 			m_sprIcons[p][i].RunCommands( ICONS_OFF_COMMAND(p) );
 	}
 	m_sprExplanation.RunCommands( EXPLANATION_OFF_COMMAND );
-}
-
-void ScreenSelectCharacter::TweenOnScreen() 
-{
 }
 
 /*

@@ -229,7 +229,7 @@ void ScreenSelectMaster::Init()
 
 	this->UpdateSelectableChoices();
 
-	TweenOnScreen();
+	TweenOursOnScreen();
 
 	m_fLockInputSecs = (bool)OVERRIDE_LOCK_INPUT_SECONDS ? LOCK_INPUT_SECONDS : this->GetTweenTimeLeft();
 	if( m_fLockInputSecs == 0 )
@@ -284,9 +284,9 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BeginFadingOut )
 	{
-		TweenOffScreen();
+		TweenOursOffScreen();
 		/*
-			* We start our own tween-out (TweenOffScreen), wait some amount of time, then
+			* We start our own tween-out (TweenOursOffScreen), wait some amount of time, then
 			* start the base tween (ScreenWithMenuElements, called from SM_AllDoneChoosing);
 			* we move on when that finishes.  This is a pain to tweak, especially now
 			* that elements essentially owned by the derived class are starting to tween
@@ -295,7 +295,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 			* before moving on.
 			*
 			* Send a command to all children, so we can run overlay and underlay tweens at the
-			* same time as the elements controlled by TweenOffScreen.  Run this here, so
+			* same time as the elements controlled by TweenOursOffScreen.  Run this here, so
 			* it affects the result of GetTweenTimeLeft().
 			*/
 		this->PlayCommand( "TweenOff" );
@@ -737,7 +737,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
  * This means that the focus command should be position neutral; eg. only use "addx",
  * not "x".
  */
-void ScreenSelectMaster::TweenOnScreen() 
+void ScreenSelectMaster::TweenOursOnScreen() 
 {
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
@@ -803,7 +803,7 @@ void ScreenSelectMaster::TweenOnScreen()
 	this->SortByDrawOrder();
 }
 
-void ScreenSelectMaster::TweenOffScreen()
+void ScreenSelectMaster::TweenOursOffScreen()
 {
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )

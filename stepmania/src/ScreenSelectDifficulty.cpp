@@ -116,7 +116,7 @@ void ScreenSelectDifficulty::Init()
 	
 	this->UpdateSelectableChoices();
 
-	TweenOnScreen();
+	TweenOursOnScreen();
 
 	this->SortByDrawOrder();
 }
@@ -134,7 +134,7 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_BeginFadingOut:
-		TweenOffScreen();
+		TweenOursOffScreen();
 		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, SLEEP_AFTER_TWEEN_OFF_SECONDS );	// nofify parent that we're finished
 		StopTimer();
 		break;
@@ -490,7 +490,7 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on
 }
 
-void ScreenSelectDifficulty::TweenOnScreen() 
+void ScreenSelectDifficulty::TweenOursOnScreen() 
 {
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
@@ -517,7 +517,7 @@ void ScreenSelectDifficulty::TweenOnScreen()
 	}
 }
 
-void ScreenSelectDifficulty::TweenOffScreen()
+void ScreenSelectDifficulty::TweenOursOffScreen()
 {	
 	const int page = m_CurrentPage;
 

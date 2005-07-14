@@ -22,8 +22,8 @@ public:
 	virtual void MenuUp( PlayerNumber pn, const InputEventType type );
 	virtual void MenuDown( PlayerNumber pn, const InputEventType type );
 	virtual void MenuStart( PlayerNumber pn );
-	void TweenOffScreen();
-	void TweenOnScreen();
+	void TweenOursOnScreen();
+	void TweenOursOffScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
