@@ -281,8 +281,8 @@ void Player::Load( const NoteData& noteData )
 		break;
 	}
 
-	int iStartDrawingAtPixels = GAMESTATE->m_bEditing ? -100 : START_DRAWING_AT_PIXELS;
-	int iStopDrawingAtPixels = GAMESTATE->m_bEditing ? 400 : STOP_DRAWING_AT_PIXELS;
+	int iStartDrawingAtPixels = GAMESTATE->IsEditing() ? -100 : START_DRAWING_AT_PIXELS;
+	int iStopDrawingAtPixels = GAMESTATE->IsEditing() ? 400 : STOP_DRAWING_AT_PIXELS;
 
 	float fNoteFieldMiddle = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
 	

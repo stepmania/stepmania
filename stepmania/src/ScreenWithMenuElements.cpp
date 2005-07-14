@@ -184,7 +184,7 @@ void ScreenWithMenuElements::Update( float fDeltaTime )
 
 void ScreenWithMenuElements::ResetTimer()
 {
-	if( TIMER_SECONDS > 0.0f  &&  (PREFSMAN->m_bMenuTimer || FORCE_TIMER)  &&  !GAMESTATE->m_bEditing )
+	if( TIMER_SECONDS > 0.0f  &&  (PREFSMAN->m_bMenuTimer || FORCE_TIMER)  &&  !GAMESTATE->IsEditing() )
 	{
 		m_MenuTimer->SetSeconds( TIMER_SECONDS );
 		m_MenuTimer->Start();

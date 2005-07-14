@@ -479,7 +479,7 @@ void NoteField::DrawPrimitives()
 
 #define IS_ON_SCREEN( fBeat )  IsOnScreen( fBeat, iFirstPixelToDraw, iLastPixelToDraw )
 
-	if( GAMESTATE->m_bEditing )
+	if( GAMESTATE->IsEditing() )
 	{
 		ASSERT(GAMESTATE->m_pCurSong);
 

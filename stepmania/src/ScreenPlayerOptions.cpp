@@ -26,11 +26,11 @@ void ScreenPlayerOptions::Init()
 	ScreenOptionsMaster::Init();
 
 	m_bAskOptionsMessage =
-		!GAMESTATE->m_bEditing && PREFSMAN->m_ShowSongOptions == PrefsManager::ASK;
+		!GAMESTATE->IsEditing() && PREFSMAN->m_ShowSongOptions == PrefsManager::ASK;
 
 	/* If we're going to "press start for more options" or skipping options
 	 * entirely, we need a different fade out. XXX: this is a hack */
-	if( PREFSMAN->m_ShowSongOptions == PrefsManager::NO || GAMESTATE->m_bEditing )
+	if( PREFSMAN->m_ShowSongOptions == PrefsManager::NO || GAMESTATE->IsEditing() )
 	{
 		m_Out.Load( THEME->GetPathB("ScreenPlayerOptions","direct out") ); /* direct to stage */
 	}

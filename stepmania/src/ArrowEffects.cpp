@@ -488,7 +488,7 @@ float ArrowEffects::GetGlow( const PlayerState* pPlayerState, int iCol, float fY
 
 float ArrowEffects::GetBrightness( const PlayerState* pPlayerState, float fNoteBeat )
 {
-	if( GAMESTATE->m_bEditing )
+	if( GAMESTATE->IsEditing() )
 		return 1;
 
 	float fSongBeat = GAMESTATE->m_fSongBeat;

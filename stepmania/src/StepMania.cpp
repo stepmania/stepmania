@@ -1310,7 +1310,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 
 	case MENU_BUTTON_COIN:
 		/* Handle a coin insertion. */
-		if( GAMESTATE->m_bEditing )	// no coins while editing
+		if( GAMESTATE->IsEditing() )	// no coins while editing
 		{
 			LOG->Trace( "Ignored coin insertion (editing)" );
 			break;

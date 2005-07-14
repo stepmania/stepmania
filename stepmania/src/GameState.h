@@ -108,6 +108,8 @@ public:
 	SortOrder		m_SortOrder;			// set by MusicWheel
 	SortOrder		m_PreferredSortOrder;			// used by MusicWheel
 	bool			m_bEditing;			// NoteField does special stuff when this is true
+	EditMode		m_EditMode;
+	bool			IsEditing() const { return m_EditMode != EDIT_MODE_INVALID; }
 	bool			m_bDemonstrationOrJukebox;	// ScreenGameplay does special stuff when this is true
 	bool			m_bJukeboxUsesModifiers;
 	int				m_iNumStagesOfThisSong;

@@ -289,7 +289,7 @@ public:
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		// fill in difficulty names
-		if( GAMESTATE->m_bEditing )
+		if( GAMESTATE->IsEditing() )
 		{
 			defOut.m_vsChoices.push_back( "" );
 			ListEntries.push_back( GameCommand() );
