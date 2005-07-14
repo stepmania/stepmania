@@ -71,7 +71,7 @@ protected:
 	void MenuBack( PlayerNumber pn );
 	void MenuStart( PlayerNumber pn );
 
-	void End( bool bCancelled );
+	virtual void End( bool bCancelled );
 	void PositionCursor();
 
 	CString			m_sText;
