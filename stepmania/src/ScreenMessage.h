@@ -7,7 +7,6 @@
 
 enum ScreenMessage {
 	SM_None = 0,
-	SM_DoneOpeningWipingRight,
 	SM_MenuTimer,
 	SM_DoneFadingIn,
 	SM_BeginFadingOut,
