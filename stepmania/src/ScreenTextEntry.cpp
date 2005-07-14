@@ -1,10 +1,10 @@
 #include "global.h"
 #include "ScreenTextEntry.h"
-#include "PrefsManager.h"
+#include "RageUtil.h"
+#include "Preference.h"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
 #include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "FontCharAliases.h"
 #include "ScreenDimensions.h"
@@ -271,12 +271,6 @@ void ScreenTextEntry::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_DoneClosingWipingLeft:
-		break;
-	case SM_DoneClosingWipingRight:
-		break;
-	case SM_DoneOpeningWipingLeft:
-		break;
 	case SM_DoneOpeningWipingRight:
 		SCREENMAN->PopTopScreen( m_smSendOnPop );
 		break;

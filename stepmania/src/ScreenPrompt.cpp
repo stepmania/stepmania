@@ -120,12 +120,6 @@ void ScreenPrompt::HandleScreenMessage( const ScreenMessage SM )
 {
 	switch( SM )
 	{
-	case SM_DoneClosingWipingLeft:
-		break;
-	case SM_DoneClosingWipingRight:
-		break;
-	case SM_DoneOpeningWipingLeft:
-		break;
 	case SM_DoneOpeningWipingRight:
 		if( SCREENMAN->IsStackedScreen(this) )
 			SCREENMAN->PopTopScreen( m_smSendOnPop );
