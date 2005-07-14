@@ -43,7 +43,7 @@ void ScreenWithMenuElements::Init()
 
 	m_autoHeader.Load( THEME->GetPathG(m_sName,"header") );
 	m_autoHeader->SetName("Header");
-	SET_XY_AND_ON_COMMAND( m_autoHeader );
+	SET_XY( m_autoHeader );
 	this->AddChild( m_autoHeader );
 
 	if( STYLE_ICON && GAMESTATE->m_pCurStyle )
@@ -52,7 +52,7 @@ void ScreenWithMenuElements::Init()
 		m_sprStyleIcon.Load( THEME->GetPathG("MenuElements",CString("icon ")+GAMESTATE->GetCurrentStyle()->m_szName) );
 		m_sprStyleIcon.StopAnimating();
 		m_sprStyleIcon.SetState( GAMESTATE->m_MasterPlayerNumber );
-		SET_XY_AND_ON_COMMAND( m_sprStyleIcon );
+		SET_XY( m_sprStyleIcon );
 		this->AddChild( &m_sprStyleIcon );
 	}
 	
@@ -73,7 +73,7 @@ void ScreenWithMenuElements::Init()
 		
 		FOREACH_CONST( Stage, vStages, s )
 		{
-			SET_XY_AND_ON_COMMAND( m_sprStage[*s] );
+			SET_XY( m_sprStage[*s] );
 			this->AddChild( m_sprStage[*s] );
 		}
 	}
@@ -84,7 +84,7 @@ void ScreenWithMenuElements::Init()
 		{
 			m_MemoryCardDisplay[p].Load( p );
 			m_MemoryCardDisplay[p].SetName( ssprintf("MemoryCardDisplayP%d",p+1) );
-			SET_XY_AND_ON_COMMAND( m_MemoryCardDisplay[p] );
+			SET_XY( m_MemoryCardDisplay[p] );
 			this->AddChild( &m_MemoryCardDisplay[p] );
 		}
 	}
@@ -95,32 +95,32 @@ void ScreenWithMenuElements::Init()
 		m_MenuTimer->SetName( "Timer" );
 		if( TIMER_STEALTH )
 			m_MenuTimer->EnableStealth( true );
-		SET_XY_AND_ON_COMMAND( m_MenuTimer );
+		SET_XY( m_MenuTimer );
 		ResetTimer();
 		this->AddChild( m_MenuTimer );
 	}
 
 	m_autoFooter.Load( THEME->GetPathG(m_sName,"footer") );
 	m_autoFooter->SetName("Footer");
-	SET_XY_AND_ON_COMMAND( m_autoFooter );
+	SET_XY( m_autoFooter );
 	this->AddChild( m_autoFooter );
 
 	m_textHelp->SetName( "Help" );
 	m_textHelp->Load( "HelpDisplay" );
-	SET_XY_AND_ON_COMMAND( m_textHelp );
+	SET_XY( m_textHelp );
 	LoadHelpText();
 	this->AddChild( m_textHelp );
 
 	m_sprUnderlay.Load( THEME->GetPathB(m_sName,"underlay") );
 	m_sprUnderlay->SetName("Underlay");
 	m_sprUnderlay->SetDrawOrder( DRAW_ORDER_UNDERLAY );
-	SET_XY_AND_ON_COMMAND( m_sprUnderlay );
+	SET_XY( m_sprUnderlay );
 	this->AddChild( m_sprUnderlay );
 	
 	m_sprOverlay.Load( THEME->GetPathB(m_sName,"overlay") );
 	m_sprOverlay->SetName("Overlay");
 	m_sprOverlay->SetDrawOrder( DRAW_ORDER_OVERLAY );
-	SET_XY_AND_ON_COMMAND( m_sprOverlay );
+	SET_XY( m_sprOverlay );
 	this->AddChild( m_sprOverlay );
 
 	m_In.SetName( "In" );
@@ -140,7 +140,43 @@ void ScreenWithMenuElements::Init()
 
 	this->SortByDrawOrder();
 
+	TweenOnScreen();
 	m_In.StartTransitioning( SM_DoneFadingIn );
+}
+
+void ScreenWithMenuElements::TweenOnScreen()
+{
+	ON_COMMAND( m_autoHeader );
+	if( STYLE_ICON && GAMESTATE->m_pCurStyle )
+		ON_COMMAND( m_sprStyleIcon );
+
+	if( SHOW_STAGE && GAMESTATE->m_pCurStyle )
+	{
+		// UpdateStage to hide/show the appropriate stage graphic.  Do this before
+		// running the OnCommand so that it won't override the OnCommand if On chooses
+		// to hide the graphic.
+		UpdateStage();
+
+		vector<Stage> vStages;
+		GAMESTATE->GetPossibleStages( vStages );
+		FOREACH_CONST( Stage, vStages, s )
+			ON_COMMAND( m_sprStage[*s] );
+	}
+
+	if( MEMORY_CARD_ICONS )
+	{
+		FOREACH_PlayerNumber( p )
+			ON_COMMAND( m_MemoryCardDisplay[p] );
+	}
+
+	if( m_bTimerEnabled )
+		ON_COMMAND( m_MenuTimer );
+
+	ON_COMMAND( m_autoFooter );
+	ON_COMMAND( m_textHelp );
+	ON_COMMAND( m_sprUnderlay );
+	ON_COMMAND( m_sprOverlay );
+
 }
 
 ScreenWithMenuElements::~ScreenWithMenuElements()

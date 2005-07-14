@@ -28,7 +28,8 @@ public:
 	void StopTimer();
 	void ResetTimer();
 
-	void TweenOffScreen();
+	virtual void TweenOnScreen();
+	virtual void TweenOffScreen();
 
 	//
 	// Lua
