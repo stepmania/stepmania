@@ -576,7 +576,7 @@ void ScreenEdit::Init()
 
 
 	GAMESTATE->m_bPastHereWeGo = false;
-	GAMESTATE->m_bEditing = true;
+	GAMESTATE->m_EditMode = EDIT_MODE.GetValue();
 	GAMESTATE->m_fSongBeat = 0;
 	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 
@@ -1686,7 +1686,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
-		GAMESTATE->m_bEditing = false;
+		GAMESTATE->m_EditMode = EDIT_MODE_INVALID;
 	}
 	else if( SM == SM_BackFromMainMenu )
 	{

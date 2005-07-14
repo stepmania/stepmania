@@ -184,7 +184,6 @@ void GameState::Reset()
 	m_SortOrder = SORT_INVALID;
 	m_PreferredSortOrder = GetDefaultSort();
 	m_PlayMode = PLAY_MODE_INVALID;
-	m_bEditing = false;
 	m_EditMode = EDIT_MODE_INVALID;
 	m_bDemonstrationOrJukebox = false;
 	m_bJukeboxUsesModifiers = false;
