@@ -17,6 +17,7 @@ class ScreenWithMenuElements : public Screen
 public:
 	ScreenWithMenuElements( CString sName );
 	virtual void Init();
+	virtual void BeginScreen();
 	virtual ~ScreenWithMenuElements();
 
 	void Update( float fDeltaTime );

@@ -139,9 +139,18 @@ void ScreenWithMenuElements::Init()
 	this->AddChild( &m_Cancel );
 
 	this->SortByDrawOrder();
+}
+
+void ScreenWithMenuElements::BeginScreen()
+{
+	m_In.Reset();
+	m_Out.Reset();
+	m_Cancel.Reset();
 
 	TweenOnScreen();
 	m_In.StartTransitioning( SM_DoneFadingIn );
+
+	Screen::BeginScreen();
 }
 
 void ScreenWithMenuElements::TweenOnScreen()
