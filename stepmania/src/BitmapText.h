@@ -12,6 +12,7 @@ class BitmapText : public Actor
 {
 public:
 	BitmapText();
+	BitmapText( const BitmapText &cpy );
 	virtual ~BitmapText();
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
