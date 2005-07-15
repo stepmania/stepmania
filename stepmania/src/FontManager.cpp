@@ -61,6 +61,11 @@ Font* FontManager::LoadFont( const CString &sFontOrTextureFilePath, CString sCha
 	return f;
 }
 
+Font *FontManager::CopyFont( Font *pFont )
+{
+	++pFont->m_iRefCount;
+	return pFont;
+}
 
 void FontManager::UnloadFont( Font *fp )
 {

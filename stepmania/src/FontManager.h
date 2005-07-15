@@ -13,6 +13,7 @@ public:
 	~FontManager();
 
 	Font* LoadFont( const CString &sFontOrTextureFilePath, CString sChars = "" );
+	Font *CopyFont( Font *pFont );
 	void UnloadFont( Font *fp );
 
 	/* Warning: This reloads fonts completely, so all BitmapTexts need to be
