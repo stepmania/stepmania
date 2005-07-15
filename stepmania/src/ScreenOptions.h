@@ -28,6 +28,7 @@ class ScreenOptions : public ScreenWithMenuElements
 public:
 	ScreenOptions( CString sClassName );
 	virtual void Init();
+	virtual void BeginScreen();
 	void InitMenu( InputMode im, const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
@@ -35,6 +36,8 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
+	virtual void TweenOnScreen();
+
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;
 

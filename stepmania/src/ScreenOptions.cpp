@@ -115,17 +115,6 @@ void ScreenOptions::Init()
 	// add everything to m_framePage so we can animate everything at once
 	m_framePage.SetName( "Frame" );
 	this->AddChild( &m_framePage );
-
-	m_bMoreShown = false;
-	FOREACH_PlayerNumber( p )
-	{
-		m_iCurrentRow[p] = -1;
-		m_iFocusX[p] = -1;
-		m_bWasOnExit[p] = false;
-		m_bGotAtLeastOneStartPressed[p] = false;
-	}
-
-	ON_COMMAND( m_framePage );
 }
 
 void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
@@ -165,7 +154,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 
 	m_sprPage.Load( THEME->GetPathG(m_sName,"page") );
 	m_sprPage->SetName( "Page" );
-	SET_XY_AND_ON_COMMAND( m_sprPage );
+	SET_XY( m_sprPage );
 	m_framePage.AddChild( m_sprPage );
 
 	// init line line highlights
@@ -175,7 +164,6 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		m_sprLineHighlight[p].SetName( "LineHighlight" );
 		m_sprLineHighlight[p].SetX( LINE_HIGHLIGHT_X );
 		m_framePage.AddChild( &m_sprLineHighlight[p] );
-		ON_COMMAND( m_sprLineHighlight[p] );
 	}
 	
 	// init cursors
@@ -225,8 +213,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 
 	m_sprMore.Load( THEME->GetPathG( m_sName,"more") );
 	m_sprMore->SetName( "More" );
-	SET_XY_AND_ON_COMMAND( m_sprMore );
-	COMMAND( m_sprMore, m_bMoreShown? "ShowMore":"HideMore" );
+	SET_XY( m_sprMore );
 	m_framePage.AddChild( m_sprMore );
 
 	switch( m_InputMode )
@@ -248,7 +235,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	{
 		m_sprDisqualify[p].Load( THEME->GetPathG(m_sName,"disqualify") );
 		m_sprDisqualify[p]->SetName( ssprintf("DisqualifyP%i",p+1) );
-		SET_XY_AND_ON_COMMAND( m_sprDisqualify[p] );
+		SET_XY( m_sprDisqualify[p] );
 		m_sprDisqualify[p]->SetHidden( true );	// unhide later if handicapping options are discovered
 		m_framePage.AddChild( m_sprDisqualify[p] );
 	}
@@ -257,6 +244,24 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 	for( int r=0; r<(int)m_pRows.size(); r++ )		// foreach row
 	{
 		GetExplanationText( r );
+	}
+
+	this->SortByDrawOrder();
+}
+
+void ScreenOptions::BeginScreen()
+{
+	ScreenWithMenuElements::BeginScreen();
+
+	ON_COMMAND( m_framePage );
+
+	m_bMoreShown = false;
+	FOREACH_PlayerNumber( p )
+	{
+		m_iCurrentRow[p] = -1;
+		m_iFocusX[p] = -1;
+		m_bWasOnExit[p] = false;
+		m_bGotAtLeastOneStartPressed[p] = false;
 	}
 
 	// put focus on the first enabled row
@@ -275,8 +280,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 
 	// Hide highlight if no rows are enabled.
 	FOREACH_HumanPlayer( p )
-		if( m_iCurrentRow[p] == -1 )
-			m_sprLineHighlight[p].SetHidden( true );
+		m_sprLineHighlight[p].SetHidden( m_iCurrentRow[p] == -1 );
 
 
 	CHECKPOINT;
@@ -302,9 +306,22 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		row.FinishTweening();
 	}
 
-	m_sprMore->FinishTweening();
+}
 
-	this->SortByDrawOrder();
+void ScreenOptions::TweenOnScreen()
+{
+	ScreenWithMenuElements::TweenOnScreen();
+
+	ON_COMMAND( m_sprPage );
+	FOREACH_HumanPlayer( p )
+		ON_COMMAND( m_sprLineHighlight[p] );
+
+	COMMAND( m_sprMore, m_bMoreShown? "ShowMore":"HideMore" );
+	m_sprMore->FinishTweening();
+	ON_COMMAND( m_sprMore );
+
+	FOREACH_PlayerNumber( p )
+		ON_COMMAND( m_sprDisqualify[p] );
 }
 
 ScreenOptions::~ScreenOptions()
