@@ -116,6 +116,67 @@ void ScreenOptions::Init()
 	// add everything to m_framePage so we can animate everything at once
 	m_framePage.SetName( "Frame" );
 	this->AddChild( &m_framePage );
+
+	m_sprPage.Load( THEME->GetPathG(m_sName,"page") );
+	m_sprPage->SetName( "Page" );
+	SET_XY( m_sprPage );
+	m_framePage.AddChild( m_sprPage );
+
+	// init line line highlights
+	FOREACH_HumanPlayer( p )
+	{
+		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName,"line highlight") );
+		m_sprLineHighlight[p].SetName( "LineHighlight" );
+		m_sprLineHighlight[p].SetX( LINE_HIGHLIGHT_X );
+		m_framePage.AddChild( &m_sprLineHighlight[p] );
+	}
+
+	// init cursors
+	FOREACH_HumanPlayer( p )
+	{
+		m_Cursor[p].Load( m_sName, OptionsCursor::cursor );
+		m_Cursor[p].Set( p );
+		m_framePage.AddChild( &m_Cursor[p] );
+	}
+	
+	// on top:
+	FOREACH_PlayerNumber( p )
+	{
+		m_textExplanation[p].LoadFromFont( THEME->GetPathF(m_sName,"explanation") );
+		m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
+		m_textExplanation[p].SetShadowLength( 0 );
+		m_textExplanation[p].SetDrawOrder( 2 );
+		m_framePage.AddChild( &m_textExplanation[p] );
+	}
+
+	if( SHOW_SCROLL_BAR )
+	{
+		m_ScrollBar.SetName( "ScrollBar" );
+		m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT );
+		m_ScrollBar.SetBarTime( SCROLL_BAR_TIME );
+		FOREACH_PlayerNumber( p )
+			m_ScrollBar.EnablePlayer( p, GAMESTATE->IsHumanPlayer(p) );
+		m_ScrollBar.Load( "DualScrollBar" );
+		SET_XY( m_ScrollBar );
+		m_ScrollBar.SetDrawOrder( 2 );
+		m_framePage.AddChild( &m_ScrollBar );
+	}
+
+	m_sprMore.Load( THEME->GetPathG( m_sName,"more") );
+	m_sprMore->SetName( "More" );
+	SET_XY( m_sprMore );
+	m_sprMore->SetDrawOrder( 2 );
+	m_framePage.AddChild( m_sprMore );
+
+	FOREACH_PlayerNumber( p )
+	{
+		m_sprDisqualify[p].Load( THEME->GetPathG(m_sName,"disqualify") );
+		m_sprDisqualify[p]->SetName( ssprintf("DisqualifyP%i",p+1) );
+		SET_XY( m_sprDisqualify[p] );
+		m_sprDisqualify[p]->SetHidden( true );	// unhide later if handicapping options are discovered
+		m_sprDisqualify[p]->SetDrawOrder( 2 );
+		m_framePage.AddChild( m_sprDisqualify[p] );
+	}
 }
 
 void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
@@ -153,31 +214,10 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		row.AfterImportOptions();
 	}
 
-	m_sprPage.Load( THEME->GetPathG(m_sName,"page") );
-	m_sprPage->SetName( "Page" );
-	SET_XY( m_sprPage );
-	m_framePage.AddChild( m_sprPage );
-
-	// init line line highlights
-	FOREACH_HumanPlayer( p )
-	{
-		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName,"line highlight") );
-		m_sprLineHighlight[p].SetName( "LineHighlight" );
-		m_sprLineHighlight[p].SetX( LINE_HIGHLIGHT_X );
-		m_framePage.AddChild( &m_sprLineHighlight[p] );
-	}
-	
-	// init cursors
-	FOREACH_HumanPlayer( p )
-	{
-		m_Cursor[p].Load( m_sName, OptionsCursor::cursor );
-		m_Cursor[p].Set( p );
-		m_framePage.AddChild( &m_Cursor[p] );
-	}
-	
 	for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
 	{
 		OptionRow &row = *m_pRows[r];
+		row.SetDrawOrder( 1 );
 		m_framePage.AddChild( &row );
 	}
 
@@ -188,34 +228,9 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		OptionRow &row = *m_pRows.back();
 		row.LoadMetrics( m_sName );
 		row.LoadExit();
+		row.SetDrawOrder( 1 );
 		m_framePage.AddChild( &row );
 	}
-
-	// add explanation here so it appears on top
-	FOREACH_PlayerNumber( p )
-	{
-		m_textExplanation[p].LoadFromFont( THEME->GetPathF(m_sName,"explanation") );
-		m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
-		m_textExplanation[p].SetShadowLength( 0 );
-		m_framePage.AddChild( &m_textExplanation[p] );
-	}
-
-	if( SHOW_SCROLL_BAR )
-	{
-		m_ScrollBar.SetName( "ScrollBar" );
-		m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT );
-		m_ScrollBar.SetBarTime( SCROLL_BAR_TIME );
-		FOREACH_PlayerNumber( p )
-			m_ScrollBar.EnablePlayer( p, GAMESTATE->IsHumanPlayer(p) );
-		m_ScrollBar.Load( "DualScrollBar" );
-		SET_XY( m_ScrollBar );
-		m_framePage.AddChild( &m_ScrollBar );
-	}
-
-	m_sprMore.Load( THEME->GetPathG( m_sName,"more") );
-	m_sprMore->SetName( "More" );
-	SET_XY( m_sprMore );
-	m_framePage.AddChild( m_sprMore );
 
 	switch( m_InputMode )
 	{
@@ -232,14 +247,7 @@ void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &v
 		ASSERT(0);
 	}
 
-	FOREACH_PlayerNumber( p )
-	{
-		m_sprDisqualify[p].Load( THEME->GetPathG(m_sName,"disqualify") );
-		m_sprDisqualify[p]->SetName( ssprintf("DisqualifyP%i",p+1) );
-		SET_XY( m_sprDisqualify[p] );
-		m_sprDisqualify[p]->SetHidden( true );	// unhide later if handicapping options are discovered
-		m_framePage.AddChild( m_sprDisqualify[p] );
-	}
+	m_framePage.SortByDrawOrder();
 
 	// poke once at all the explanation metrics so that we catch missing ones early
 	for( int r=0; r<(int)m_pRows.size(); r++ )		// foreach row
