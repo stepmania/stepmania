@@ -105,7 +105,7 @@ void ScreenEditCourseEntry::Init()
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	ScreenOptions::InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
+	ScreenOptions::InitMenu( vDefs, vHands );
 
 	ImportAllOptions();
 }

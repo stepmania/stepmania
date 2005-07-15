@@ -78,7 +78,7 @@ void ScreenCourseManager::Init()
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
-	ScreenOptions::InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
+	ScreenOptions::InitMenu( vDefs, vHands );
 
 
 	AfterChangeValueInRow( GAMESTATE->m_MasterPlayerNumber );

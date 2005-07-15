@@ -63,7 +63,7 @@ void ScreenNetworkOptions::Init()
 	vector<OptionRowDefinition> vDefs( &g_NetworkOptionsLines[0], &g_NetworkOptionsLines[ARRAYSIZE(g_NetworkOptionsLines)] );
 	vector<OptionRowHandler*> vHands( vDefs.size(), NULL );
 
-	InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
+	InitMenu( vDefs, vHands );
 
 	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions","music") );
 }

@@ -96,8 +96,9 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 {
 	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 	
-	// This can be overridden in a derived Init().
+	// These can be overridden in a derived Init().
 	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
+	m_InputMode = INPUTMODE_SHARE_CURSOR;
 
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 }
@@ -184,13 +185,11 @@ void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
 	m_pRows[iRow]->LoadOptionIcon( pn, sText );
 }
 
-void ScreenOptions::InitMenu( InputMode im, const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands )
+void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands )
 {
 	LOG->Trace( "ScreenOptions::Set()" );
 
 	ASSERT( vDefs.size() == vHands.size() );
-
-	m_InputMode = im;
 
 	for( unsigned r=0; r<vDefs.size(); r++ )		// foreach row
 	{

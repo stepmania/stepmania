@@ -67,6 +67,8 @@ void ScreenOptionsMaster::Init()
 			RageException::Throw( "Unknown flag \"%s\"", sFlag.c_str() );
 	}
 
+	SetInputMode( im );
+
 	// Call this after enabling players, if any.
 	ScreenOptions::Init();
 
@@ -94,7 +96,7 @@ void ScreenOptionsMaster::Init()
 
 	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
 
-	InitMenu( im, OptionRowDefs, OptionRowHandlers );
+	InitMenu( OptionRowDefs, OptionRowHandlers );
 }
 
 ScreenOptionsMaster::~ScreenOptionsMaster()

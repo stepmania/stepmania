@@ -29,7 +29,7 @@ public:
 	ScreenOptions( CString sClassName );
 	virtual void Init();
 	virtual void BeginScreen();
-	void InitMenu( InputMode im, const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands );
+	void InitMenu( const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
@@ -84,6 +84,7 @@ protected:	// derived classes need access to these
 	void LoadOptionIcon( PlayerNumber pn, int iRow, CString sText );
 	enum Navigation { NAV_THREE_KEY, NAV_THREE_KEY_MENU, NAV_FIVE_KEY, NAV_TOGGLE_THREE_KEY, NAV_TOGGLE_FIVE_KEY };
 	void SetNavigation( Navigation nav ) { m_OptionsNavigation = nav; }
+	void SetInputMode( InputMode im ) { m_InputMode = im; }
 
 protected:
 	/* Map menu lines to m_OptionRow entries. */
