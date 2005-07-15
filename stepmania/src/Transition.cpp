@@ -89,6 +89,13 @@ void Transition::UpdateInternal( float fDeltaTime )
 void Transition::Reset()
 {
 	m_State = waiting;
+	m_bFirstUpdate = true;
+
+	if( m_sprTransition.IsLoaded() )
+	{
+		m_sprTransition->FinishTweening();
+		m_sprTransition->PlayCommand( "On" );
+	}
 }
 
 bool Transition::EarlyAbortDraw()
