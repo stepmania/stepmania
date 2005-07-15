@@ -5,8 +5,6 @@
 #include "Font.h"
 #include "Foreach.h"
 #include "OptionRowHandler.h"
-#include "FontManager.h"
-#include "Font.h"
 #include "CommonMetrics.h"
 #include "GameState.h"
 #include "song.h"
@@ -829,7 +827,10 @@ void OptionRow::Reload( const OptionRowDefinition &def )
 			//}
 
 			UpdateEnabledDisabled();
-			UpdateText();
+
+			/* Update the text to show the options we just updated. */
+			InitText();
+
 			FOREACH_HumanPlayer( p )
 				PositionUnderlines( p );
 		}
