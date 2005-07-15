@@ -32,7 +32,7 @@ ScreenEdit.cpp ScreenEdit.h \
 ScreenEditCourse.cpp ScreenEditCourse.h \
 ScreenEditCourseEntry.cpp ScreenEditCourseEntry.h \
 ScreenEditMenu.cpp ScreenEditMenu.h ScreenEnding.cpp ScreenEnding.h \
-ScreenEndlessBreak.cpp ScreenEndlessBreak.h ScreenEvaluation.cpp ScreenEvaluation.h ScreenExit.cpp ScreenExit.h ScreenNetEvaluation.cpp ScreenNetEvaluation.h \
+ScreenEvaluation.cpp ScreenEvaluation.h ScreenExit.cpp ScreenExit.h ScreenNetEvaluation.cpp ScreenNetEvaluation.h \
 ScreenNetSelectMusic.cpp ScreenNetSelectMusic.h ScreenNetSelectBase.cpp ScreenNetSelectBase.h ScreenNetRoom.cpp ScreenNetRoom.h \
 ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h \
 ScreenGameplay.cpp ScreenGameplay.h ScreenHowToPlay.cpp ScreenHowToPlay.h \

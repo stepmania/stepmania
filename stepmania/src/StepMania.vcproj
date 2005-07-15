@@ -314,12 +314,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenEnding.h">
 			</File>
 			<File
-				RelativePath="ScreenEndlessBreak.cpp">
-			</File>
-			<File
-				RelativePath="ScreenEndlessBreak.h">
-			</File>
-			<File
 				RelativePath="ScreenEvaluation.cpp">
 			</File>
 			<File
