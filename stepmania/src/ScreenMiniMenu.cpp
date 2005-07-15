@@ -83,7 +83,7 @@ void ScreenMiniMenu::Init( const MenuDef* pDef, ScreenMessage SM_SendOnOK, Scree
 	vector<OptionRowHandler*> vHands;
 	vHands.resize( vDefs.size(), NULL );
 
-	ScreenOptions::InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
+	ScreenOptions::InitMenu( vDefs, vHands );
 }
 
 void ScreenMiniMenu::OnChange( PlayerNumber pn )

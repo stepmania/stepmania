@@ -48,7 +48,7 @@ void ScreenSMOnlineLogin::Init()
 		vector<OptionRowDefinition> vDefs( &g_ProfileLine[0], &g_ProfileLine[ARRAYSIZE(g_ProfileLine)] );
 		vector<OptionRowHandler*> vHands( vDefs.size(), NULL );
 
-		InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
+		InitMenu( vDefs, vHands );
   		SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions", "music"));
 		OptionRow &row = *m_pRows.back();
 		row.SetExitText("Login");
