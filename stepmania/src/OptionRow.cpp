@@ -71,6 +71,7 @@ OptionRow::OptionRow()
 		m_Frame.AddChild( &m_OptionIcons[p] );
 	m_Frame.AddChild( &m_sprBullet );
 	m_Frame.AddChild( &m_textTitle );
+	m_Frame.AddChild( &m_ItemFrame );
 
 	this->AddChild( &m_Frame );
 }
@@ -87,15 +88,10 @@ void OptionRow::Clear()
 	FOREACH_PlayerNumber( p )
 		m_vbSelected[p].clear();
 
-	for( unsigned i = 0; i < m_textItems.size(); ++i )
-		SAFE_DELETE( m_textItems[i] );
+	m_ItemFrame.DeleteAllChildren();
 	m_textItems.clear();
 	FOREACH_PlayerNumber( p )
-	{
-		for( unsigned i = 0; i < m_Underline[p].size(); ++i )
-			SAFE_DELETE( m_Underline[p][i] );
 		m_Underline[p].clear();
-	}
 
 	ASSERT( m_pHand == NULL );
 
@@ -391,11 +387,10 @@ void OptionRow::AfterImportOptions()
 	}
 
 	for( unsigned c=0; c<m_textItems.size(); c++ )
-		m_Frame.AddChild( m_textItems[c] );
+		m_ItemFrame.AddChild( m_textItems[c] );
 	FOREACH_PlayerNumber( p )
 		for( unsigned c=0; c<m_Underline[p].size(); c++ )
-			m_Frame.AddChild( m_Underline[p][c] );
-
+			m_ItemFrame.AddChild( m_Underline[p][c] );
 
 	CString sTitle = GetRowTitle();
 	m_textTitle.SetText( sTitle );
