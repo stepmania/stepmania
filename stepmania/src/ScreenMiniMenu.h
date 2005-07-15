@@ -4,9 +4,6 @@
 #define SCREEN_MINI_MENU_H
 
 #include "ScreenOptions.h"
-#include "BitmapText.h"
-#include "Quad.h"
-#include "RageSound.h"
 
 typedef bool (*MenuRowUpdateEnabled)();
 
