@@ -12,6 +12,7 @@ class Sprite: public Actor
 {
 public:
 	Sprite();
+	Sprite( const Sprite &cpy );
 	virtual ~Sprite();
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );

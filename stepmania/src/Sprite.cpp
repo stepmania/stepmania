@@ -14,6 +14,7 @@
 #include "Foreach.h"
 #include "LuaBinding.h"
 #include "LuaManager.h"
+#include "RageUtil_AutoPtr.h"
 
 REGISTER_ACTOR_CLASS( Sprite )
 
@@ -38,6 +39,26 @@ Sprite::Sprite()
 Sprite::~Sprite()
 {
 	UnloadTexture();
+}
+
+Sprite::Sprite( const Sprite &cpy )
+{
+#define CPY(a) a = cpy.a
+	CPY( m_sSpritePath );
+	CPY( m_bDrawIfTextureNull );
+	CPY( m_States );
+	CPY( m_iCurState );
+	CPY( m_fSecsIntoState );
+	CPY( m_bUsingCustomTexCoords );
+	CPY( m_bSkipNextUpdate );
+	memcpy( m_CustomTexCoords, cpy.m_CustomTexCoords, sizeof(m_CustomTexCoords) );
+	CPY( m_fRememberedClipWidth );
+	CPY( m_fRememberedClipHeight );
+	CPY( m_fTexCoordVelocityX );
+	CPY( m_fTexCoordVelocityY );
+#undef CPY
+
+	m_pTexture = TEXTUREMAN->CopyTexture( cpy.m_pTexture );
 }
 
 RageTextureID Sprite::SongBGTexture( RageTextureID ID )
