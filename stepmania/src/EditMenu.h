@@ -83,6 +83,7 @@ private:
 
 	EditMenuRow m_SelectedRow;
 	EditMenuRow GetFirstRow() const { return SHOW_GROUPS.GetValue()? ROW_GROUP:ROW_SONG; }
+	int GetRowSize( EditMenuRow er ) const;
 	int			m_iSelection[NUM_EDIT_MENU_ROWS];
 	BitmapText	m_textLabel[NUM_EDIT_MENU_ROWS];
 	BitmapText	m_textValue[NUM_EDIT_MENU_ROWS];

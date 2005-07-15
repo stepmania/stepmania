@@ -246,20 +246,25 @@ bool EditMenu::CanGoLeft()
 	return m_iSelection[m_SelectedRow] != 0;
 }
 
+int EditMenu::GetRowSize( EditMenuRow er ) const
+{
+	switch( er )
+	{
+	case ROW_GROUP: return m_sGroups.size();
+	case ROW_SONG: return m_pSongs.size();
+	case ROW_STEPS_TYPE: return m_StepsTypes.size();
+	case ROW_STEPS: return m_vpSteps.size();
+	case ROW_SOURCE_STEPS_TYPE: return m_StepsTypes.size();
+	case ROW_SOURCE_STEPS: return m_vpSourceSteps.size();
+	case ROW_ACTION: return m_Actions.size();
+	default: FAIL_M( ssprintf("%i", er) );
+	}
+}
+
+
 bool EditMenu::CanGoRight()
 {
-	int num_values[NUM_EDIT_MENU_ROWS] = 
-	{
-		m_sGroups.size(),
-		m_pSongs.size(),
-		m_StepsTypes.size(),
-		m_vpSteps.size(),
-		m_StepsTypes.size(),
-		m_vpSourceSteps.size(),
-		m_Actions.size()
-	};
-
-	return m_iSelection[m_SelectedRow] != (num_values[m_SelectedRow]-1);
+	return m_iSelection[m_SelectedRow] != GetRowSize(m_SelectedRow)-1;
 }
 
 void EditMenu::Up()
