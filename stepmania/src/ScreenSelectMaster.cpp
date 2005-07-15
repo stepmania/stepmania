@@ -750,23 +750,13 @@ void ScreenSelectMaster::TweenOursOnScreen()
 			vpns.push_back( p );
 	}
 
-	if( SHOW_CURSOR )
+	if( SHOW_ICON )
 	{
 		for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 		{
 			m_sprIcon[c]->PlayCommand( (int(c) == m_iChoice[0])? "GainFocus":"LoseFocus" );
 			m_sprIcon[c]->FinishTweening();
 			SET_XY_AND_ON_COMMAND( m_sprIcon[c] );
-		}
-	}
-
-	// Need to SetXY of Cursor after Icons since it depends on the Icons' positions.
-	if( SHOW_CURSOR )
-	{
-		FOREACH( PlayerNumber, vpns, p )
-		{
-			m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
-			ON_COMMAND( m_sprCursor[*p] );
 		}
 	}
 
@@ -785,6 +775,16 @@ void ScreenSelectMaster::TweenOursOnScreen()
 
 			m_Scroller[*p].SetCurrentAndDestinationItem( (float)m_iChoice[*p] );
 			SET_XY_AND_ON_COMMAND( m_Scroller[*p] );
+		}
+	}
+
+	// Need to SetXY of Cursor after Icons since it depends on the Icons' positions.
+	if( SHOW_CURSOR )
+	{
+		FOREACH( PlayerNumber, vpns, p )
+		{
+			m_sprCursor[*p]->SetXY( GetCursorX(*p), GetCursorY(*p) );
+			ON_COMMAND( m_sprCursor[*p] );
 		}
 	}
 
@@ -844,10 +844,7 @@ void ScreenSelectMaster::TweenOursOffScreen()
 		if( SHOW_SCROLLER )
 		{
 			FOREACH( PlayerNumber, vpns, p )
-			{
-				OFF_COMMAND( m_sprScroll[c][*p] );
 				COMMAND( m_sprScroll[c][*p], SelectedByEitherPlayer? "OffFocused":"OffUnfocused" );
-			}
 		}
 	}
 
@@ -865,13 +862,15 @@ void ScreenSelectMaster::TweenOursOffScreen()
 float ScreenSelectMaster::GetCursorX( PlayerNumber pn )
 {
 	int iChoice = m_iChoice[pn];
-	return m_sprIcon[iChoice]->GetX() + CURSOR_OFFSET_X_FROM_ICON.GetValue(pn);
+	AutoActor spr = m_sprIcon[iChoice];
+	return spr->GetX() + CURSOR_OFFSET_X_FROM_ICON.GetValue(pn);
 }
 
 float ScreenSelectMaster::GetCursorY( PlayerNumber pn )
 {
 	int iChoice = m_iChoice[pn];
-	return m_sprIcon[iChoice]->GetY() + CURSOR_OFFSET_Y_FROM_ICON.GetValue(pn);
+	AutoActor &spr = m_sprIcon[iChoice];
+	return spr->GetY() + CURSOR_OFFSET_Y_FROM_ICON.GetValue(pn);
 }
 
 /*
