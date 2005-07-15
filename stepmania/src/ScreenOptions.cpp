@@ -96,6 +96,9 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 {
 	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 	
+	// This can be overridden in a derived Init().
+	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
+
 	LOG->Trace( "ScreenOptions::ScreenOptions()" );
 }
 
@@ -103,8 +106,6 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 void ScreenOptions::Init()
 {
 	ScreenWithMenuElements::Init();
-
-	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
 
 	m_SoundChangeCol.Load( THEME->GetPathS(m_sName,"change"), true );
 	m_SoundNextRow.Load( THEME->GetPathS(m_sName,"next"), true );
