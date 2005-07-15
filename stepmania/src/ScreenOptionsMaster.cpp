@@ -186,7 +186,7 @@ void ScreenOptionsMaster::RefreshIcons( int r, PlayerNumber pn )
 	if( def.m_bOneChoiceForAllPlayers )
 		sIcon = "";
 
-	LoadOptionIcon( pn, r, sIcon );
+	SetOptionIcon( pn, r, sIcon );
 }
 
 void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )

@@ -279,9 +279,7 @@ void OptionRow::AfterImportOptions()
 
 	// init row icons
 	FOREACH_HumanPlayer( p )
-	{
-		LoadOptionIcon( p, "" );
-	}
+		SetOptionIcon( p, "" );
 
 	// If the items will go off the edge of the screen, then re-init with the "long row" style.
 	{
@@ -645,7 +643,7 @@ void OptionRow::UpdateEnabledDisabled()
 	}
 }
 
-void OptionRow::LoadOptionIcon( PlayerNumber pn, const CString &sText )
+void OptionRow::SetOptionIcon( PlayerNumber pn, const CString &sText )
 {
 	m_OptionIcons[pn].Set( pn, sText, false );
 }

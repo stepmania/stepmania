@@ -195,9 +195,9 @@ void ScreenOptions::Init()
 	}
 }
 
-void ScreenOptions::LoadOptionIcon( PlayerNumber pn, int iRow, CString sText )
+void ScreenOptions::SetOptionIcon( PlayerNumber pn, int iRow, CString sText )
 {
-	m_pRows[iRow]->LoadOptionIcon( pn, sText );
+	m_pRows[iRow]->SetOptionIcon( pn, sText );
 }
 
 void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands )

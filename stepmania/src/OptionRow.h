@@ -92,7 +92,7 @@ public:
 	void LoadMetrics( const CString &sType );
 	void LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown );
 	void LoadExit();
-	void LoadOptionIcon( PlayerNumber pn, const CString &sText );
+	void SetOptionIcon( PlayerNumber pn, const CString &sText );
 
 	CString GetRowTitle() const;
 
