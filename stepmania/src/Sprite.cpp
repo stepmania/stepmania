@@ -41,7 +41,8 @@ Sprite::~Sprite()
 	UnloadTexture();
 }
 
-Sprite::Sprite( const Sprite &cpy )
+Sprite::Sprite( const Sprite &cpy ):
+	Actor( cpy )
 {
 #define CPY(a) a = cpy.a
 	CPY( m_sSpritePath );
