@@ -62,7 +62,7 @@ public:
 
 	void RefreshAll();
 
-	CString			GetSelectedGroup() const			{ ASSERT(m_iSelection[ROW_GROUP]			< (int)m_sGroups.size());		return m_sGroups[m_iSelection[ROW_GROUP]]; }
+	CString			GetSelectedGroup() const			{ if( !SHOW_GROUPS.GetValue() ) return GROUP_ALL; ASSERT(m_iSelection[ROW_GROUP]			< (int)m_sGroups.size());		return m_sGroups[m_iSelection[ROW_GROUP]]; }
 	Song*			GetSelectedSong() const				{ ASSERT(m_iSelection[ROW_SONG]				< (int)m_pSongs.size());		return m_pSongs[m_iSelection[ROW_SONG]]; }
 	StepsType		GetSelectedStepsType() const		{ ASSERT(m_iSelection[ROW_STEPS_TYPE]		< (int)m_StepsTypes.size());	return m_StepsTypes[m_iSelection[ROW_STEPS_TYPE]]; }
 	Steps*			GetSelectedSteps() const			{ ASSERT(m_iSelection[ROW_STEPS]			< (int)m_vpSteps.size());		return m_vpSteps[m_iSelection[ROW_STEPS]].pSteps; }
@@ -82,6 +82,7 @@ private:
 	Sprite	m_sprArrows[NUM_ARROWS];
 
 	EditMenuRow m_SelectedRow;
+	EditMenuRow GetFirstRow() const { return SHOW_GROUPS.GetValue()? ROW_GROUP:ROW_SONG; }
 	int			m_iSelection[NUM_EDIT_MENU_ROWS];
 	BitmapText	m_textLabel[NUM_EDIT_MENU_ROWS];
 	BitmapText	m_textValue[NUM_EDIT_MENU_ROWS];
@@ -113,6 +114,7 @@ private:
 	RandomSample	m_soundChangeRow;
 	RandomSample	m_soundChangeValue;
 
+	ThemeMetric<bool> SHOW_GROUPS;
 	ThemeMetric1D<float> ARROWS_X;
 	ThemeMetric<RageColor> ARROWS_ENABLED_COLOR;
 	ThemeMetric<RageColor> ARROWS_DISABLED_COLOR;

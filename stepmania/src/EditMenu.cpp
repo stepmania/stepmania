@@ -45,7 +45,10 @@ static CString ROW_Y_NAME( size_t i )		{ return ssprintf("Row%dY",int(i+1)); }
 void EditMenu::GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpSongsOut )
 {
 	vpSongsOut.clear();
-	SONGMAN->GetSongs( vpSongsOut, sGroup );
+	if( !SHOW_GROUPS.GetValue() )
+		SONGMAN->GetSongs( vpSongsOut );
+	else
+		SONGMAN->GetSongs( vpSongsOut, sGroup );
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EDIT_MODE_PRACTICE:
@@ -68,6 +71,9 @@ void EditMenu::GetSongsToShowForGroup( const CString &sGroup, vector<Song*> &vpS
 void EditMenu::GetGroupsToShow( vector<CString> &vsGroupsOut )
 {
 	vsGroupsOut.clear();
+	if( !SHOW_GROUPS.GetValue() )
+		return;
+
 	SONGMAN->GetSongGroupNames( vsGroupsOut );
 	for( int i = vsGroupsOut.size()-1; i>=0; i-- )
 	{
@@ -93,6 +99,7 @@ void EditMenu::Load( const CString &sType )
 {
 	LOG->Trace( "EditMenu::Load" );
 
+	SHOW_GROUPS.Load(sType,"ShowGroups");
 	ARROWS_X.Load(sType,ARROWS_X_NAME,NUM_ARROWS);
 	ARROWS_ENABLED_COLOR.Load(sType,"ArrowsEnabledColor");
 	ARROWS_DISABLED_COLOR.Load(sType,"ArrowsDisabledColor");
@@ -114,7 +121,7 @@ void EditMenu::Load( const CString &sType )
 		this->AddChild( &m_sprArrows[i] );
 	}
 
-	m_SelectedRow = (EditMenuRow)0;
+	m_SelectedRow = GetFirstRow();
 
 	ZERO( m_iSelection );
 
@@ -135,12 +142,19 @@ void EditMenu::Load( const CString &sType )
 		this->AddChild( &m_textValue[r] );
 	}
 
+	m_textLabel[ROW_GROUP].SetHidden( !SHOW_GROUPS.GetValue() );
+	m_textValue[ROW_GROUP].SetHidden( !SHOW_GROUPS.GetValue() );
+
+
 	/* Load low-res banners, if needed. */
 	BANNERCACHE->Demand();
 
-	m_GroupBanner.SetName( "GroupBanner" );
-	ActorUtil::SetXY( m_GroupBanner, sType );
-	this->AddChild( &m_GroupBanner );
+	if( SHOW_GROUPS.GetValue() )
+	{
+		m_GroupBanner.SetName( "GroupBanner" );
+		ActorUtil::SetXY( m_GroupBanner, sType );
+		this->AddChild( &m_GroupBanner );
+	}
 
 	m_SongBanner.SetName( "SongBanner" );
 	ActorUtil::SetXY( m_SongBanner, sType );
@@ -176,7 +190,7 @@ void EditMenu::Load( const CString &sType )
 
 void EditMenu::RefreshAll()
 {
-	ChangeToRow( (EditMenuRow)0 );
+	ChangeToRow( GetFirstRow() );
 	OnRowValueChanged( (EditMenuRow)0 );
 
 	// Select the current song if any
@@ -219,7 +233,7 @@ void EditMenu::RefreshAll()
 
 bool EditMenu::CanGoUp()
 {
-	return m_SelectedRow != 0;
+	return m_SelectedRow != GetFirstRow();
 }
 
 bool EditMenu::CanGoDown()
@@ -318,8 +332,11 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 	{
 	case ROW_GROUP:
 		m_textValue[ROW_GROUP].SetText( SONGMAN->ShortenGroupName(GetSelectedGroup()) );
-		m_GroupBanner.LoadFromSongGroup( GetSelectedGroup() );
-		m_GroupBanner.ScaleToClipped( GROUP_BANNER_WIDTH, GROUP_BANNER_HEIGHT );
+		if( SHOW_GROUPS.GetValue() )
+		{
+			m_GroupBanner.LoadFromSongGroup( GetSelectedGroup() );
+			m_GroupBanner.ScaleToClipped( GROUP_BANNER_WIDTH, GROUP_BANNER_HEIGHT );
+		}
 		m_pSongs.clear();
 		GetSongsToShowForGroup( GetSelectedGroup(), m_pSongs );
 		m_iSelection[ROW_SONG] = 0;
