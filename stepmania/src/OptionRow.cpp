@@ -279,11 +279,6 @@ void OptionRow::InitText()
 			BitmapText *bt = new BitmapText( m_textItemParent );
 			m_textItems.push_back( bt );
 
-			const int iChoiceInRowWithFocus = m_iChoiceInRowWithFocus[p];
-
-			CString sText = (iChoiceInRowWithFocus==-1) ? "" : m_RowDef.m_vsChoices[iChoiceInRowWithFocus];
-			PrepareItemText( sText );
-			bt->SetText( sText );
 			bt->RunCommands( ITEMS_ON_COMMAND );
 			bt->SetShadowLength( 0 );
 
@@ -418,6 +413,8 @@ void OptionRow::AfterImportOptions()
 	if( m_bFirstItemGoesDown )
 		FOREACH_PlayerNumber( p )
 			m_iChoiceInRowWithFocus[p] = 0;	
+
+	UpdateText();
 }
 
 void OptionRow::LoadExit()
@@ -504,6 +501,8 @@ void OptionRow::UpdateText()
 		{
 			unsigned pn = m_RowDef.m_bOneChoiceForAllPlayers ? 0 : p;
 			int iChoiceWithFocus = m_iChoiceInRowWithFocus[pn];
+			if( iChoiceWithFocus == -1 )
+				continue;
 
 			CString sText = m_RowDef.m_vsChoices[iChoiceWithFocus];
 			PrepareItemText( sText );
