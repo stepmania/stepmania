@@ -150,6 +150,21 @@ void ScreenOptions::Init()
 		m_framePage.AddChild( &m_textExplanation[p] );
 	}
 
+	switch( m_InputMode )
+	{
+	case INPUTMODE_INDIVIDUAL:
+		{
+			FOREACH_PlayerNumber( p )
+				m_textExplanation[p].SetXY( EXPLANATION_X.GetValue(p), EXPLANATION_Y.GetValue(p) );
+		}
+		break;
+	case INPUTMODE_SHARE_CURSOR:
+		m_textExplanation[0].SetXY( EXPLANATION_TOGETHER_X, EXPLANATION_TOGETHER_Y );
+		break;
+	default:
+		ASSERT(0);
+	}
+
 	if( SHOW_SCROLL_BAR )
 	{
 		m_ScrollBar.SetName( "ScrollBar" );
@@ -229,21 +244,6 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 		row.LoadExit();
 		row.SetDrawOrder( 1 );
 		m_framePage.AddChild( &row );
-	}
-
-	switch( m_InputMode )
-	{
-	case INPUTMODE_INDIVIDUAL:
-		{
-			FOREACH_PlayerNumber( p )
-				m_textExplanation[p].SetXY( EXPLANATION_X.GetValue(p), EXPLANATION_Y.GetValue(p) );
-		}
-		break;
-	case INPUTMODE_SHARE_CURSOR:
-		m_textExplanation[0].SetXY( EXPLANATION_TOGETHER_X, EXPLANATION_TOGETHER_Y );
-		break;
-	default:
-		ASSERT(0);
 	}
 
 	m_framePage.SortByDrawOrder();
