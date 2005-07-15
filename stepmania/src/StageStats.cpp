@@ -112,12 +112,14 @@ public:
 
 	static int GetPlayerStageStats( T* p, lua_State *L )	{ p->m_player[IArg(1)].PushSelf(L); return 1; }
 	static int GetGameplaySeconds( T* p, lua_State *L )		{ lua_pushnumber(L, p->fGameplaySeconds); return 1; }
+	static int OnePassed( T* p, lua_State *L )				{ lua_pushboolean(L, p->OnePassed()); return 1; }
 	static int AllFailed( T* p, lua_State *L )				{ lua_pushboolean(L, p->AllFailed()); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetPlayerStageStats )
 		ADD_METHOD( GetGameplaySeconds )
+		ADD_METHOD( OnePassed )
 		ADD_METHOD( AllFailed )
 		Luna<T>::Register( L );
 	}
