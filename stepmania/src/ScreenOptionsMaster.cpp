@@ -33,8 +33,6 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 
 void ScreenOptionsMaster::Init()
 {
-	ScreenOptions::Init();
-
 	CStringArray asLineNames;
 	split( LINE_NAMES, ",", asLineNames );
 	if( asLineNames.empty() )
@@ -68,6 +66,9 @@ void ScreenOptionsMaster::Init()
 		else
 			RageException::Throw( "Unknown flag \"%s\"", sFlag.c_str() );
 	}
+
+	// Call this after enabling players, if any.
+	ScreenOptions::Init();
 
 	vector<OptionRowDefinition> OptionRowDefs;
 	OptionRowDefs.resize( asLineNames.size() );
