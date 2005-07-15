@@ -3,7 +3,7 @@
 #ifndef SCREEN_TEXT_ENTRY_H
 #define SCREEN_TEXT_ENTRY_H
 
-#include "Screen.h"
+#include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
 #include "Transition.h"
 #include "Quad.h"
@@ -24,7 +24,7 @@ enum KeyboardRowSpecialKey
 	SPACEBAR=2, BACKSPACE=5, CANCEL=8, DONE=11
 };
 
-class ScreenTextEntry : public Screen
+class ScreenTextEntry : public ScreenWithMenuElements
 {
 public:
 	static void TextEntry( 
@@ -87,7 +87,6 @@ protected:
 	CString			m_sQuestion;
 	int				m_iMaxInputLength;
 	bool            m_bPassword;
-	AutoActor		m_Background;
 	BitmapText		m_textQuestion;
 	AutoActor		m_sprAnswerBox;
 	wstring			m_sAnswer;
@@ -104,10 +103,6 @@ protected:
 	void PositionCursor();
 
 	BitmapText		m_textKeyboardChars[NUM_KEYBOARD_ROWS][KEYS_PER_ROW];
-
-	Transition		m_In;
-	Transition		m_Out;
-	Transition		m_Cancel;
 
 	RageSound	m_sndType;
 	RageSound	m_sndBackspace;

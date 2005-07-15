@@ -86,7 +86,7 @@ ScreenTextEntry::ScreenTextEntry(
 	void(*OnOK)(const CString &sAnswer), 
 	void(*OnCancel)(), 
 	bool bPassword ) :
-	Screen( sClassName )
+	ScreenWithMenuElements( sClassName )
 {
 	m_bIsTransparent = true;	// draw screens below us
 
@@ -102,10 +102,7 @@ ScreenTextEntry::ScreenTextEntry(
 
 void ScreenTextEntry::Init()
 {
-	m_Background.Load( THEME->GetPathB(m_sName,"background") );
-	m_Background->SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
-	this->AddChild( m_Background );
-	m_Background->PlayCommand( "On" );
+	ScreenWithMenuElements::Init();
 
 	m_textQuestion.LoadFromFont( THEME->GetPathF(m_sName,"question") );
 	m_textQuestion.SetName( "Question" );
@@ -149,17 +146,6 @@ void ScreenTextEntry::Init()
 	UpdateKeyboardText();
 
 	PositionCursor();
-
-	m_In.Load( THEME->GetPathB(m_sName,"in") );
-	m_In.StartTransitioning();
-	this->AddChild( &m_In );
-	
-	m_Out.Load( THEME->GetPathB(m_sName,"out") );
-	this->AddChild( &m_Out );
-	
-	m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
-	this->AddChild( &m_Cancel );
-
 
 	m_sndType.Load( THEME->GetPathS(m_sName,"type"), true );
 	m_sndBackspace.Load( THEME->GetPathS(m_sName,"backspace"), true );
@@ -264,7 +250,7 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 		}
 	}
 
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenWithMenuElements::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
 void ScreenTextEntry::HandleScreenMessage( const ScreenMessage SM )
@@ -419,8 +405,6 @@ void ScreenTextEntry::End( bool bCancelled )
 		m_Out.StartTransitioning( SM_GoToNextScreen );
 		SCREENMAN->PlayStartSound();
 	}
-
-	m_Background->PlayCommand("Off");
 
 	OFF_COMMAND( m_textQuestion );
 	OFF_COMMAND( m_sprAnswerBox );
