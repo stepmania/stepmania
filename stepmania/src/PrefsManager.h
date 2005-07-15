@@ -199,9 +199,6 @@ public:
 	Preference<int>		m_iProgressiveStageLifebar;
 	Preference<int>		m_iProgressiveNonstopLifebar;
 	Preference<bool>	m_bShowBeginnerHelper;
-	Preference<bool>	m_bEndlessBreakEnabled;
-	Preference<int>		m_iEndlessNumStagesUntilBreak;
-	Preference<int>		m_iEndlessBreakLength;
 	Preference<bool>	m_bDisableScreenSaver;
 	Preference<CString>	m_sLanguage;
 	Preference<CString>	m_sMemoryCardProfileSubdir;	// the directory on a memory card to look in for a profile
