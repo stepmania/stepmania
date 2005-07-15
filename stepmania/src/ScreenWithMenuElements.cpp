@@ -137,8 +137,6 @@ void ScreenWithMenuElements::Init()
 	m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
 	m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Cancel );
-
-	this->SortByDrawOrder();
 }
 
 void ScreenWithMenuElements::BeginScreen()
@@ -186,6 +184,7 @@ void ScreenWithMenuElements::TweenOnScreen()
 	ON_COMMAND( m_sprUnderlay );
 	ON_COMMAND( m_sprOverlay );
 
+	this->SortByDrawOrder();
 }
 
 ScreenWithMenuElements::~ScreenWithMenuElements()
