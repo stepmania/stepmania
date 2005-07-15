@@ -243,6 +243,8 @@ bool EditMenu::CanGoDown()
 
 bool EditMenu::CanGoLeft()
 {
+	if( m_SelectedRow == ROW_SONG )
+		return true; /* wraps */
 	return m_iSelection[m_SelectedRow] != 0;
 }
 
@@ -264,6 +266,8 @@ int EditMenu::GetRowSize( EditMenuRow er ) const
 
 bool EditMenu::CanGoRight()
 {
+	if( m_SelectedRow == ROW_SONG )
+		return true; /* wraps */
 	return m_iSelection[m_SelectedRow] != GetRowSize(m_SelectedRow)-1;
 }
 
@@ -296,6 +300,7 @@ void EditMenu::Left()
 	if( CanGoLeft() )
 	{
 		m_iSelection[m_SelectedRow]--;
+		wrap( m_iSelection[m_SelectedRow], GetRowSize(m_SelectedRow) );
 		OnRowValueChanged( m_SelectedRow );
 		m_soundChangeValue.PlayRandom();
 	}
@@ -306,6 +311,7 @@ void EditMenu::Right()
 	if( CanGoRight() )
 	{
 		m_iSelection[m_SelectedRow]++;
+		wrap( m_iSelection[m_SelectedRow], GetRowSize(m_SelectedRow) );
 		OnRowValueChanged( m_SelectedRow );
 		m_soundChangeValue.PlayRandom();
 	}
