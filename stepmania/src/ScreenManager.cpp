@@ -445,6 +445,7 @@ void ScreenManager::PushScreen( Screen *pNewScreen, bool bDeleteWhenDone )
 	ls.m_bDeleteWhenDone = bDeleteWhenDone;
 
 	m_ScreenStack.push_back( ls );
+	pNewScreen->BeginScreen();
 	
 	RefreshCreditsMessages();
 
