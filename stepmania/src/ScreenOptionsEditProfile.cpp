@@ -71,7 +71,7 @@ void ScreenOptionsEditProfile::Init()
 		vHands.push_back( NULL );
 	}
 
-	InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
+	InitMenu( vDefs, vHands );
 }
 
 ScreenOptionsEditProfile::~ScreenOptionsEditProfile()
