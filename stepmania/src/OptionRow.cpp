@@ -230,52 +230,16 @@ CString OptionRow::GetRowTitle() const
 	return sTitle;
 }
 
-void OptionRow::AfterImportOptions()
+/* Set up text, underlines and titles for options.  This can be called
+ * as soon as m_RowDef is available. */
+void OptionRow::InitText()
 {
-	// Make all selections the same if bOneChoiceForAllPlayers
-	// Hack: we only import active players, so if only player 2 is imported,
-	// we need to copy p2 to p1, not p1 to p2.
-	if( m_RowDef.m_bOneChoiceForAllPlayers )
-	{
-		PlayerNumber pnCopyFrom = GAMESTATE->m_MasterPlayerNumber;
-		if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
-			pnCopyFrom = PLAYER_1;
-		FOREACH_PlayerNumber( p )
-			m_vbSelected[p] = m_vbSelected[pnCopyFrom];
-	}
-
+	/* If we have elements already, we're being updated from a new set of options.
+	 * Delete the old ones. */
+	m_ItemFrame.DeleteAllChildren();
+	m_textItems.clear();
 	FOREACH_PlayerNumber( p )
-	{
-		switch( m_RowDef.m_selectType )
-		{
-		case SELECT_ONE:
-			{
-				/* Make sure the row actually has a selection. */
-				bool bHasASelection = false;
-				for( unsigned i=0; i<m_vbSelected[p].size(); i++ )
-				{
-					if( m_vbSelected[p][i] )
-						bHasASelection = true;
-				}
-
-				if( !bHasASelection && !m_vbSelected[p].empty() )
-					m_vbSelected[p][0] = true;
-				
-				m_iChoiceInRowWithFocus[p] = GetOneSelection(p, true);	// focus on the selection we just set
-			}
-			break;
-		case SELECT_MULTIPLE:
-		case SELECT_NONE:
-			m_iChoiceInRowWithFocus[p] = 0;
-			break;
-		default:
-			ASSERT(0);
-		}
-	}
-
-	// init row icons
-	FOREACH_HumanPlayer( p )
-		SetOptionIcon( p, "" );
+		m_Underline[p].clear();
 
 	// If the items will go off the edge of the screen, then re-init with the "long row" style.
 	{
@@ -398,7 +362,56 @@ void OptionRow::AfterImportOptions()
 	m_textTitle.RunCommands( LABELS_ON_COMMAND );
 
 	m_sprBullet.SetX( ARROWS_X );
-	
+}
+
+/* After importing options, choose which item is focused. */
+void OptionRow::AfterImportOptions()
+{
+	// Make all selections the same if bOneChoiceForAllPlayers
+	// Hack: we only import active players, so if only player 2 is imported,
+	// we need to copy p2 to p1, not p1 to p2.
+	if( m_RowDef.m_bOneChoiceForAllPlayers )
+	{
+		PlayerNumber pnCopyFrom = GAMESTATE->m_MasterPlayerNumber;
+		if( GAMESTATE->m_MasterPlayerNumber == PLAYER_INVALID )
+			pnCopyFrom = PLAYER_1;
+		FOREACH_PlayerNumber( p )
+			m_vbSelected[p] = m_vbSelected[pnCopyFrom];
+	}
+
+	FOREACH_PlayerNumber( p )
+	{
+		switch( m_RowDef.m_selectType )
+		{
+		case SELECT_ONE:
+			{
+				/* Make sure the row actually has a selection. */
+				bool bHasASelection = false;
+				for( unsigned i=0; i<m_vbSelected[p].size(); i++ )
+				{
+					if( m_vbSelected[p][i] )
+						bHasASelection = true;
+				}
+
+				if( !bHasASelection && !m_vbSelected[p].empty() )
+					m_vbSelected[p][0] = true;
+				
+				m_iChoiceInRowWithFocus[p] = GetOneSelection(p, true);	// focus on the selection we just set
+			}
+			break;
+		case SELECT_MULTIPLE:
+		case SELECT_NONE:
+			m_iChoiceInRowWithFocus[p] = 0;
+			break;
+		default:
+			ASSERT(0);
+		}
+	}
+
+	// init row icons
+	FOREACH_HumanPlayer( p )
+		SetOptionIcon( p, "" );
+
 	//
 	// HACK: Set focus to one item in the row, which is "go down"
 	//

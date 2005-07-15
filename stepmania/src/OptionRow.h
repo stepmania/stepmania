@@ -99,6 +99,7 @@ public:
 	void ImportOptions( const vector<PlayerNumber> &vpns );
 	int ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] );
 
+	void InitText();
 	void AfterImportOptions();
 	void DetachHandler();
 

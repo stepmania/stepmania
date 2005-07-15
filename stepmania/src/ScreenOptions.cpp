@@ -217,6 +217,7 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 
 		row.LoadMetrics( m_sName );
 		row.LoadNormal( def, hand, bFirstRowGoesDown );
+		row.InitText();
 
 		vector<PlayerNumber> vpns;
 		FOREACH_HumanPlayer( p )
