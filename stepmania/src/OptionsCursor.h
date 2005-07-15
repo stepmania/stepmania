@@ -12,6 +12,7 @@ class OptionsCursor : public ActorFrame
 {
 public:
 	OptionsCursor();
+	OptionsCursor( const OptionsCursor &cpy );
 
 	enum Element { cursor, underline };
 	void Load( CString sType, Element elem );

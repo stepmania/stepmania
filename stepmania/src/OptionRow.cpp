@@ -146,6 +146,11 @@ void OptionRow::LoadMetrics( const CString &sType )
 		m_OptionIcons[p].Load( m_sType );
 		m_OptionIcons[p].RunCommands( ICONS_ON_COMMAND );
 	}
+
+	m_textItemParent.LoadFromFont( THEME->GetPathF(m_sType,"item") );
+	m_UnderlineParent.Load( m_sType, OptionsCursor::underline );
+	m_textTitle.LoadFromFont( THEME->GetPathF(m_sType,"title") );
+	m_sprBullet.Load( THEME->GetPathG(m_sType,"bullet") );
 }
 
 void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown )
@@ -278,11 +283,9 @@ void OptionRow::AfterImportOptions()
 		LoadOptionIcon( p, "" );
 	}
 
-
 	// If the items will go off the edge of the screen, then re-init with the "long row" style.
 	{
-		BitmapText bt;
-		bt.LoadFromFont( THEME->GetPathF(m_sType,"item") );
+		BitmapText bt( m_textItemParent );
 		bt.RunCommands( ITEMS_ON_COMMAND );
 
 		float fX = ITEMS_START_X;
@@ -315,12 +318,11 @@ void OptionRow::AfterImportOptions()
 		// init text
 		FOREACH_HumanPlayer( p )
 		{
-			BitmapText *bt = new BitmapText;
+			BitmapText *bt = new BitmapText( m_textItemParent );
 			m_textItems.push_back( bt );
 
 			const int iChoiceInRowWithFocus = m_iChoiceInRowWithFocus[p];
 
-			bt->LoadFromFont( THEME->GetPathF(m_sType,"item") );
 			CString sText = (iChoiceInRowWithFocus==-1) ? "" : m_RowDef.m_vsChoices[iChoiceInRowWithFocus];
 			PrepareItemText( sText );
 			bt->SetText( sText );
@@ -341,9 +343,9 @@ void OptionRow::AfterImportOptions()
 		// init underlines
 		FOREACH_HumanPlayer( p )
 		{
-			OptionsCursor *ul = new OptionsCursor;
+			OptionsCursor *ul = new OptionsCursor( m_UnderlineParent );
 			m_Underline[p].push_back( ul );
-			ul->Load( m_sType, OptionsCursor::underline );
+
 			ul->Set( p );
 			int iWidth, iX, iY;
 			GetWidthXY( p, 0, iWidth, iX, iY );
@@ -375,9 +377,8 @@ void OptionRow::AfterImportOptions()
 				// init underlines
 				FOREACH_HumanPlayer( p )
 				{
-					OptionsCursor *ul = new OptionsCursor;
+					OptionsCursor *ul = new OptionsCursor( m_UnderlineParent );
 					m_Underline[p].push_back( ul );
-					ul->Load( m_sType, OptionsCursor::underline );
 					ul->Set( p );
 					ul->SetX( fX );
 					ul->SetWidth( truncf(fItemWidth) );
@@ -399,13 +400,11 @@ void OptionRow::AfterImportOptions()
 			m_Frame.AddChild( m_Underline[p][c] );
 
 
-	m_textTitle.LoadFromFont( THEME->GetPathF(m_sType,"title") );
 	CString sTitle = GetRowTitle();
 	m_textTitle.SetText( sTitle );
 	m_textTitle.SetX( LABELS_X );
 	m_textTitle.RunCommands( LABELS_ON_COMMAND );
 
-	m_sprBullet.Load( THEME->GetPathG(m_sType,"bullet") );
 	m_sprBullet.SetX( ARROWS_X );
 	
 	//

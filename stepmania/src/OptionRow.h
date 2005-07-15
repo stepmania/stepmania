@@ -171,7 +171,9 @@ protected:
 	RowType					m_RowType;
 	OptionRowHandler*		m_pHand;
 	ActorFrame				m_Frame;
+	BitmapText				m_textItemParent;
 	vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
+	OptionsCursor			m_UnderlineParent;
 	vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 	Sprite					m_sprBullet;
 	BitmapText				m_textTitle;

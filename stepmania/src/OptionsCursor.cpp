@@ -7,16 +7,26 @@
 
 OptionsCursor::OptionsCursor()
 {
+	this->AddChild( &m_sprMiddle );
+	this->AddChild( &m_sprLeft );
+	this->AddChild( &m_sprRight );
+}
+
+OptionsCursor::OptionsCursor( const OptionsCursor &cpy ):
+	ActorFrame( cpy ),
+	m_sprLeft( cpy.m_sprLeft ),
+	m_sprMiddle( cpy.m_sprMiddle ),
+	m_sprRight( cpy.m_sprRight )
+{
+	/* Re-add children, or m_SubActors will point to cpy's children and not our own. */
+	m_SubActors.clear();
+	this->AddChild( &m_sprMiddle );
+	this->AddChild( &m_sprLeft );
+	this->AddChild( &m_sprRight );
 }
 
 void OptionsCursor::Load( CString sType, Element elem )
 {
-	ASSERT( m_SubActors.empty() );	// don't load twice
-
-	this->AddChild( &m_sprMiddle );
-	this->AddChild( &m_sprLeft );
-	this->AddChild( &m_sprRight );
-
 	CString sPath = THEME->GetPathG( sType, ssprintf("%s 3x2",elem==cursor?"cursor":"underline") );
 
 	m_sprLeft.Load( sPath );
