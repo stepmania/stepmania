@@ -358,9 +358,8 @@ void OptionRow::AfterImportOptions()
 			for( unsigned c=0; c<m_RowDef.m_vsChoices.size(); c++ )
 			{
 				// init text
-				BitmapText *bt = new BitmapText;
+				BitmapText *bt = new BitmapText( m_textItemParent );
 				m_textItems.push_back( bt );
-				bt->LoadFromFont( THEME->GetPathF(m_sType,"item") );
 				CString sText = m_RowDef.m_vsChoices[c];
 				PrepareItemText( sText );
 				bt->SetText( sText );
