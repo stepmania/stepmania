@@ -32,7 +32,7 @@ static const XENTITY x_EntityTable[] = {
 XENTITYS entityDefault((XENTITY*)x_EntityTable, sizeof(x_EntityTable)/sizeof(x_EntityTable[0]) );
 
 // skip spaces
-char* tcsskip( const char* psz )
+static char* tcsskip( const char* psz )
 {
 	while( psz && isspace(*psz) ) psz++;
 		
@@ -42,7 +42,7 @@ char* tcsskip( const char* psz )
 // Name   : tcsechr
 // Desc   : similar with strchr with escape process
 // Param  : escape - will be escape character
-char* tcsechr( const char* psz, int ch, int escape )
+static char* tcsechr( const char* psz, int ch, int escape )
 {
 	char* pch = (char*)psz;
 	char* prev_escape = NULL;
@@ -62,7 +62,7 @@ char* tcsechr( const char* psz, int ch, int escape )
 
 // Desc   : similar with strlen with escape process
 // Param  : escape - will be escape character
-int tcselen( int escape, const char *start, const char *end )
+static int tcselen( int escape, const char *start, const char *end )
 {
 	int len = 0;
 	if( end == NULL )
@@ -84,7 +84,7 @@ int tcselen( int escape, const char *start, const char *end )
 
 // Desc   : similar with _tcscpy with escape process
 // Param  : escape - will be escape character
-void unescape( char *psz, int escape, char* srt, char* end = NULL )
+static void unescape( char *psz, int escape, char* srt, char* end = NULL )
 {
 	const char* pch = srt;
 	if( end==NULL ) end = (char*)sizeof(long);
@@ -107,7 +107,7 @@ void unescape( char *psz, int escape, char* srt, char* end = NULL )
 
 // Desc   : similar with strpbrk with escape process
 // Param  : escape - will be escape character
-char* tcsepbrk( const char* psz, const char* chset, int escape )
+static char* tcsepbrk( const char* psz, const char* chset, int escape )
 {
 	char* pch = (char*)psz;
 	char* prev_escape = NULL;
@@ -127,7 +127,7 @@ char* tcsepbrk( const char* psz, const char* chset, int escape )
 }
 
 // Desc   : put string of (psz~end) on ps string
-void SetString( char* psz, char* end, CString* ps, bool trim = false, int escape = 0 )
+static void SetString( char* psz, char* end, CString* ps, bool trim = false, int escape = 0 )
 {
 	if( trim )
 	{
@@ -505,29 +505,15 @@ char* XNode::Load( const char* pszXml, PARSEINFO *pi /*= &piDefault*/ )
 	return xml;
 }
 
-//========================================================
-// Name   : GetXML
 // Desc   : convert plain xml text from parsed xml attirbute
-// Param  :
 // Return : converted plain string
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
 bool XAttr::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 {
 	return f.Write(m_sName + "='" + (opt && opt->reference_value && opt->entitys ? opt->entitys->Entity2Ref(m_sValue) : m_sValue) + "' ") != -1;
 }
 
-//========================================================
-// Name   : GetXML
 // Desc   : convert plain xml text from parsed xml node
-// Param  :
 // Return : converted plain string
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
 bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 {
 	// tab
@@ -614,15 +600,8 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 	return true;
 }
 
-//========================================================
-// Name   : GetXML
 // Desc   : convert plain xml text from parsed xml node
-// Param  :
 // Return : converted plain string
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
 CString XNode::GetXML() const
 {
 	RageFileObjMem f;
@@ -630,14 +609,6 @@ CString XNode::GetXML() const
 	return f.GetString();
 }
 
-//========================================================
-// Name   : GetValue
-// Desc   : 
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-//========================================================
 void XNode::GetValue(CString &out) const	{ out = m_sValue; }
 void XNode::GetValue(int &out) const		{ out = atoi(m_sValue); }
 void XNode::GetValue(float &out) const		{ out = strtof(m_sValue, NULL); }
@@ -652,29 +623,12 @@ void XAttr::GetValue(bool &out) const		{ out = atoi(m_sValue) != 0; }
 void XAttr::GetValue(unsigned &out) const	{ out = 0; sscanf(m_sValue,"%u",&out); }
 void XAttr::GetValue(DateTime &out) const	{ out.FromString( m_sValue ); }
 
-//========================================================
-// Name   : SetValue
-// Desc   : 
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-//========================================================
 void XNode::SetValue(int v)				{ m_sValue = ssprintf("%d",v); }
 void XNode::SetValue(float v)			{ m_sValue = ssprintf("%f",v); }
 void XNode::SetValue(bool v)			{ m_sValue = ssprintf("%d",v); }
 void XNode::SetValue(unsigned v)		{ m_sValue = ssprintf("%u",v); }
 void XNode::SetValue(const DateTime &v) { m_sValue = v.GetString(); }
 
-//========================================================
-// Name   : GetAttr
-// Desc   : get attribute with attribute name
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
 const XAttr *XNode::GetAttr( const char* attrname ) const
 {
 	multimap<CString, XAttr*>::const_iterator it = m_attrs.find( attrname );
@@ -697,15 +651,7 @@ XAttr *XNode::GetAttr( const char* attrname )
 	return NULL;
 }
 
-//========================================================
-// Name   : GetAttrValue
 // Desc   : get attribute with attribute name, return its value
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
 const char*	XNode::GetAttrValue( const char* attrname )
 {
 	XAttr *attr = GetAttr( attrname );
@@ -713,29 +659,14 @@ const char*	XNode::GetAttrValue( const char* attrname )
 }
 
 
-//========================================================
-// Name   : GetChildCount
-// Desc   : get child node count
-// Param  :
-// Return : 0 return if no child
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-12-26
-//========================================================
+// get child node count
 int	XNode::GetChildCount()
 {
 	return m_childs.size();
 }
 
-//========================================================
-// Name   : GetChild
 // Desc   : Find child with name and return child
-// Param  :
 // Return : NULL return if no child.
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
 XNode *XNode::GetChild( const char* name )
 {
 	multimap<CString, XNode*>::iterator it = m_childs.find( name );
@@ -758,15 +689,8 @@ const XNode *XNode::GetChild( const char* name ) const
 	return NULL;
 }
 
-//========================================================
-// Name   : GetChildValue
 // Desc   : Find child with name and return child's value
-// Param  :
 // Return : NULL return if no child.
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
 const char*	XNode::GetChildValue( const char* name )
 {
 	XNode *node = GetChild( name );
@@ -786,30 +710,12 @@ const char* XNode::GetChildAttrValue( const char* name, const char* attrname )
 }
 
 
-//========================================================
-// Name   : AppendChild
-// Desc   : add node
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
 XNode *XNode::AppendChild( const char* name, const char* value )		{ XNode *p = new XNode; p->m_sName = name; p->m_sValue = value; return AppendChild( p ); }
 XNode *XNode::AppendChild( const char* name, float value )				{ XNode *p = new XNode; p->m_sName = name; p->SetValue( value ); return AppendChild( p ); }
 XNode *XNode::AppendChild( const char* name, int value )				{ XNode *p = new XNode; p->m_sName = name; p->SetValue( value ); return AppendChild( p ); }
 XNode *XNode::AppendChild( const char* name, unsigned value )			{ XNode *p = new XNode; p->m_sName = name; p->SetValue( value ); return AppendChild( p ); }
 XNode *XNode::AppendChild( const char* name, const DateTime &value )	{ XNode *p = new XNode; p->m_sName = name; p->SetValue( value ); return AppendChild( p ); }
 
-//========================================================
-// Name   : AppendChild
-// Desc   : add node
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
 XNode *XNode::AppendChild( XNode *node )
 {
 	DEBUG_ASSERT( node->m_sName.size() );
@@ -817,15 +723,7 @@ XNode *XNode::AppendChild( XNode *node )
 	return node;
 }
 
-//========================================================
-// Name   : RemoveChild
-// Desc   : detach node and delete object
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
+// detach node and delete object
 bool XNode::RemoveChild( XNode *node )
 {
 	FOREACHMM( CString, XNode*, m_childs, p )
@@ -841,15 +739,7 @@ bool XNode::RemoveChild( XNode *node )
 }
 
 
-//========================================================
-// Name   : AppendAttr
-// Desc   : add attribute
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
+// add attribute
 XAttr *XNode::AppendAttr( XAttr *attr )
 {
 	DEBUG_ASSERT( attr->m_sName.size() );
@@ -857,15 +747,7 @@ XAttr *XNode::AppendAttr( XAttr *attr )
 	return attr;
 }
 
-//========================================================
-// Name   : RemoveAttr
 // Desc   : detach attribute and delete object
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
 bool XNode::RemoveAttr( XAttr *attr )
 {
 	FOREACHMM( CString, XAttr*, m_attrs, p )
@@ -880,15 +762,7 @@ bool XNode::RemoveAttr( XAttr *attr )
 	return false;
 }
 
-//========================================================
-// Name   : AppendAttr
 // Desc   : add attribute
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
 XAttr *XNode::AppendAttr( const char* name /*= NULL*/, const char* value /*= NULL*/ )
 {
 	XAttr *attr = new XAttr;
@@ -901,15 +775,7 @@ XAttr *XNode::AppendAttr( const char* name, float value ){ return AppendAttr(nam
 XAttr *XNode::AppendAttr( const char* name, int value )	{ return AppendAttr(name,ssprintf("%d",value)); }
 XAttr *XNode::AppendAttr( const char* name, unsigned value )	{ return AppendAttr(name,ssprintf("%u",value)); }
 
-//========================================================
-// Name   : SetAttrValue
 // Desc   : add attribute
-// Param  :
-// Return : 
-//--------------------------------------------------------
-// Coder    Date                      Desc
-// bro      2002-10-29
-//========================================================
 void XNode::SetAttrValue( const char* name, const char* value )
 {
 	XAttr* pAttr = GetAttr( name );
