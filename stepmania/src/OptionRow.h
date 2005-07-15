@@ -94,8 +94,6 @@ public:
 	void LoadExit();
 	void SetOptionIcon( PlayerNumber pn, const CString &sText );
 
-	CString GetRowTitle() const;
-
 	void ImportOptions( const vector<PlayerNumber> &vpns );
 	int ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] );
 
@@ -167,6 +165,8 @@ public:
 	virtual void HandleMessage( const CString& sMessage );
 
 protected:
+	CString GetRowTitle() const;
+
 	CString 				m_sType;
 	OptionRowDefinition		m_RowDef;
 	RowType					m_RowType;
