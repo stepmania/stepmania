@@ -13,6 +13,7 @@ class OptionIcon : public ActorFrame
 {
 public:
 	OptionIcon();
+	OptionIcon( const OptionIcon &cpy );
 	void Load( CString sType );
 	void Set( PlayerNumber pn, const CString &sText, bool bHeader = false );
 

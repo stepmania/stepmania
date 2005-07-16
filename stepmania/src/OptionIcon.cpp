@@ -17,10 +17,18 @@ OptionIcon::OptionIcon()
 {
 }
 
+OptionIcon::OptionIcon( const OptionIcon &cpy ):
+	ActorFrame(cpy),
+	m_text(cpy.m_text),
+	m_spr(cpy.m_spr)
+{
+	this->RemoveAllChildren();
+	this->AddChild( &m_spr );
+	this->AddChild( &m_text );
+}
+
 void OptionIcon::Load( CString sType )
 {
-	ASSERT( m_SubActors.empty() );	// don't load twice
-
 	m_spr.Load( THEME->GetPathG(sType,"icon 3x2") );
 	m_spr.StopAnimating();
 	this->AddChild( &m_spr );
