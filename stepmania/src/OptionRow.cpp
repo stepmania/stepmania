@@ -37,11 +37,11 @@ void OptionRow::PrepareItemText( CString &s ) const
 	// HACK: Always theme the NEXT_ROW and EXIT items, even if metrics says not to theme.
 	if( s == NEXT_ROW_NAME )							bTheme = true;
 	if( s == EXIT_NAME )								bTheme = true;
-	if( THEME_ITEMS && m_RowDef.m_bAllowThemeItems )	bTheme = true;
+	if( m_pParentType->THEME_ITEMS && m_RowDef.m_bAllowThemeItems )	bTheme = true;
 
 	if( bTheme ) 
 		s = THEME_OPTION_ITEM( s, false ); 
-	if( CAPITALIZE_ALL_OPTION_NAMES )
+	if( m_pParentType->CAPITALIZE_ALL_OPTION_NAMES )
 		s.MakeUpper(); 
 }
 
@@ -50,7 +50,7 @@ CString OptionRow::OptionTitle( CString s ) const
 	bool bTheme = false;
 	
 	// HACK: Always theme the NEXT_ROW and EXIT items, even if metrics says not to theme.
-	if( THEME_TITLES && m_RowDef.m_bAllowThemeTitles )	bTheme = true;
+	if( m_pParentType->THEME_TITLES && m_RowDef.m_bAllowThemeTitles )	bTheme = true;
 
 	return bTheme ? THEME->GetMetric("OptionTitles",s) : s;
 }
@@ -60,7 +60,7 @@ CString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",int(p+1)); }
 
 OptionRow::OptionRow( const OptionRowType *pSource )
 {
-	m_pActors = pSource;
+	m_pParentType = pSource;
 	m_pHand = NULL;
 
 	m_sprBullet = NULL;
@@ -113,10 +113,7 @@ void OptionRowType::Load( const CString &sType )
 	m_textTitle.LoadFromFont( THEME->GetPathF(sType,"title") );
 	m_sprBullet.Load( THEME->GetPathG(sType,"bullet") );
 	m_OptionIcon.Load( sType );
-}
 
-void OptionRow::LoadMetrics( const CString &sType )
-{
 	ARROWS_X   						.Load(sType,"ArrowsX");
 	LABELS_X						.Load(sType,"LabelsX");
 	LABELS_ON_COMMAND				.Load(sType,"LabelsOnCommand");
@@ -183,7 +180,7 @@ CString OptionRow::GetRowTitle() const
 	// HACK: tack the BPM onto the name of the speed line
 	if( sLineName.CompareNoCase("speed")==0 )
 	{
-		bool bShowBpmInSpeedTitle = SHOW_BPM_IN_SPEED_TITLE;
+		bool bShowBpmInSpeedTitle = m_pParentType->SHOW_BPM_IN_SPEED_TITLE;
 
 		if( GAMESTATE->m_pCurCourse )
 		{
@@ -234,10 +231,10 @@ void OptionRow::InitText()
 	FOREACH_PlayerNumber( p )
 		m_Underline[p].clear();
 
-	m_textTitle = new BitmapText( m_pActors->m_textTitle );
+	m_textTitle = new BitmapText( m_pParentType->m_textTitle );
 	m_Frame.AddChild( m_textTitle );
 
-	m_sprBullet = new Sprite( m_pActors->m_sprBullet );
+	m_sprBullet = new Sprite( m_pParentType->m_sprBullet );
 	m_sprBullet->SetDrawOrder(-1); // under title
 	m_Frame.AddChild( m_sprBullet );
 
@@ -246,9 +243,9 @@ void OptionRow::InitText()
 	case ROW_NORMAL:
 		FOREACH_PlayerNumber( p )
 		{
-			m_OptionIcons[p] = new OptionIcon( m_pActors->m_OptionIcon );
+			m_OptionIcons[p] = new OptionIcon( m_pParentType->m_OptionIcon );
 			m_OptionIcons[p]->SetDrawOrder(-1); // under title
-			m_OptionIcons[p]->RunCommands( ICONS_ON_COMMAND );
+			m_OptionIcons[p]->RunCommands( m_pParentType->ICONS_ON_COMMAND );
 			
 			m_Frame.AddChild( m_OptionIcons[p] );
 			SetOptionIcon( p, "" );
@@ -260,10 +257,10 @@ void OptionRow::InitText()
 
 	// If the items will go off the edge of the screen, then re-init with the "long row" style.
 	{
-		BitmapText bt( m_pActors->m_textItemParent );
-		bt.RunCommands( ITEMS_ON_COMMAND );
+		BitmapText bt( m_pParentType->m_textItemParent );
+		bt.RunCommands( m_pParentType->ITEMS_ON_COMMAND );
 
-		float fX = ITEMS_START_X;
+		float fX = m_pParentType->ITEMS_START_X;
 		
 		for( unsigned c=0; c<m_RowDef.m_vsChoices.size(); c++ )
 		{
@@ -274,9 +271,9 @@ void OptionRow::InitText()
 			fX += bt.GetZoomedWidth();
 			
 			if( c != m_RowDef.m_vsChoices.size()-1 )
-				fX += ITEMS_GAP_X;
+				fX += m_pParentType->ITEMS_GAP_X;
 
-			if( fX > ITEMS_END_X ) 
+			if( fX > m_pParentType->ITEMS_END_X ) 
 			{
 				m_RowDef.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 				break;
@@ -293,27 +290,27 @@ void OptionRow::InitText()
 		// init text
 		FOREACH_HumanPlayer( p )
 		{
-			BitmapText *bt = new BitmapText( m_pActors->m_textItemParent );
+			BitmapText *bt = new BitmapText( m_pParentType->m_textItemParent );
 			m_textItems.push_back( bt );
 
-			bt->RunCommands( ITEMS_ON_COMMAND );
+			bt->RunCommands( m_pParentType->ITEMS_ON_COMMAND );
 			bt->SetShadowLength( 0 );
 
 			if( m_RowDef.m_bOneChoiceForAllPlayers )
 			{
-				bt->SetX( ITEMS_LONG_ROW_SHARED_X );
+				bt->SetX( m_pParentType->ITEMS_LONG_ROW_SHARED_X );
 				break;	// only initialize one item since it's shared
 			}
 			else
 			{
-				bt->SetX( ITEMS_LONG_ROW_X.GetValue(p) );
+				bt->SetX( m_pParentType->ITEMS_LONG_ROW_X.GetValue(p) );
 			}
 		}
 
 		// init underlines
 		FOREACH_HumanPlayer( p )
 		{
-			OptionsCursor *ul = new OptionsCursor( m_pActors->m_UnderlineParent );
+			OptionsCursor *ul = new OptionsCursor( m_pParentType->m_UnderlineParent );
 			m_Underline[p].push_back( ul );
 
 			ul->Set( p );
@@ -328,16 +325,16 @@ void OptionRow::InitText()
 
 	case LAYOUT_SHOW_ALL_IN_ROW:
 		{
-			float fX = ITEMS_START_X;
+			float fX = m_pParentType->ITEMS_START_X;
 			for( unsigned c=0; c<m_RowDef.m_vsChoices.size(); c++ )
 			{
 				// init text
-				BitmapText *bt = new BitmapText( m_pActors->m_textItemParent );
+				BitmapText *bt = new BitmapText( m_pParentType->m_textItemParent );
 				m_textItems.push_back( bt );
 				CString sText = m_RowDef.m_vsChoices[c];
 				PrepareItemText( sText );
 				bt->SetText( sText );
-				bt->RunCommands( ITEMS_ON_COMMAND );
+				bt->RunCommands( m_pParentType->ITEMS_ON_COMMAND );
 				bt->SetShadowLength( 0 );
 
 				// set the X position of each item in the line
@@ -348,14 +345,14 @@ void OptionRow::InitText()
 				// init underlines
 				FOREACH_HumanPlayer( p )
 				{
-					OptionsCursor *ul = new OptionsCursor( m_pActors->m_UnderlineParent );
+					OptionsCursor *ul = new OptionsCursor( m_pParentType->m_UnderlineParent );
 					m_Underline[p].push_back( ul );
 					ul->Set( p );
 					ul->SetX( fX );
 					ul->SetWidth( truncf(fItemWidth) );
 				}
 
-				fX += fItemWidth/2 + ITEMS_GAP_X;
+				fX += fItemWidth/2 + m_pParentType->ITEMS_GAP_X;
 			}
 		}
 		break;
@@ -375,10 +372,10 @@ void OptionRow::InitText()
 	{
 	case OptionRow::ROW_NORMAL:
 		m_textTitle->SetText( GetRowTitle() );
-		m_textTitle->SetX( LABELS_X );
-		m_textTitle->RunCommands( LABELS_ON_COMMAND );
+		m_textTitle->SetX( m_pParentType->LABELS_X );
+		m_textTitle->RunCommands( m_pParentType->LABELS_ON_COMMAND );
 
-		m_sprBullet->SetX( ARROWS_X );
+		m_sprBullet->SetX( m_pParentType->ARROWS_X );
 		break;
 	case OptionRow::ROW_EXIT:
 		m_textTitle->SetHidden( true );
@@ -486,7 +483,7 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 		bool bHidden = !bSelected || m_bHidden;
 
 		ul.StopTweening();
-		ul.BeginTweening( TWEEN_SECONDS );
+		ul.BeginTweening( m_pParentType->TWEEN_SECONDS );
 		ul.SetHidden( bHidden );
 		ul.SetBarWidth( iWidth );
 	}
@@ -501,7 +498,7 @@ void OptionRow::PositionIcons()
 	{
 		OptionIcon &icon = *m_OptionIcons[p];
 
-		icon.SetX( ICONS_X.GetValue(p) );
+		icon.SetX( m_pParentType->ICONS_X.GetValue(p) );
 
 		/* XXX: this doesn't work since icon is an ActorFrame */
 		icon.SetDiffuse( RageColor(1,1,1, m_bHidden? 0.0f:1.0f) );
@@ -554,20 +551,20 @@ void OptionRow::UpdateEnabledDisabled()
 	if( m_Frame.GetDestY() != m_fY )
 	{
 		m_Frame.StopTweening();
-		m_Frame.BeginTweening( TWEEN_SECONDS );
+		m_Frame.BeginTweening( m_pParentType->TWEEN_SECONDS );
 		m_Frame.SetY( m_fY );
 	}
 
 	if( bThisRowHasFocusByAny )
-		m_textTitle->RunCommands( LABEL_GAIN_FOCUS_COMMAND );
+		m_textTitle->RunCommands( m_pParentType->LABEL_GAIN_FOCUS_COMMAND );
 	else
-		m_textTitle->RunCommands( LABEL_LOSE_FOCUS_COMMAND );
+		m_textTitle->RunCommands( m_pParentType->LABEL_LOSE_FOCUS_COMMAND );
 
 	/* Don't tween selection colors at all. */
 	RageColor color;
-	if( bThisRowHasFocusByAny )	color = COLOR_SELECTED;
-	else if( bRowEnabled )		color = COLOR_NOT_SELECTED;
-	else						color = COLOR_DISABLED;
+	if( bThisRowHasFocusByAny )	color = m_pParentType->COLOR_SELECTED;
+	else if( bRowEnabled )		color = m_pParentType->COLOR_NOT_SELECTED;
+	else						color = m_pParentType->COLOR_DISABLED;
 
 	if( m_bHidden )
 		color.a = 0;
@@ -592,9 +589,9 @@ void OptionRow::UpdateEnabledDisabled()
 		}
 
 		if( bThisItemHasFocusByAny )
-			m_textItems[j]->RunCommands( ITEM_GAIN_FOCUS_COMMAND );
+			m_textItems[j]->RunCommands( m_pParentType->ITEM_GAIN_FOCUS_COMMAND );
 		else
-			m_textItems[j]->RunCommands( ITEM_LOSE_FOCUS_COMMAND );
+			m_textItems[j]->RunCommands( m_pParentType->ITEM_LOSE_FOCUS_COMMAND );
 	}
 
 	switch( m_RowDef.m_layoutType )
@@ -606,7 +603,7 @@ void OptionRow::UpdateEnabledDisabled()
 				continue;
 
 			m_textItems[j]->StopTweening();
-			m_textItems[j]->BeginTweening( TWEEN_SECONDS );
+			m_textItems[j]->BeginTweening( m_pParentType->TWEEN_SECONDS );
 			m_textItems[j]->SetDiffuse( color );
 		}
 		break;
@@ -615,9 +612,9 @@ void OptionRow::UpdateEnabledDisabled()
 		{
 			bool bRowEnabled = m_RowDef.m_vEnabledForPlayers.find(pn) != m_RowDef.m_vEnabledForPlayers.end();
 			
-			if( m_bRowHasFocus[pn] )	color = COLOR_SELECTED;
-			else if( bRowEnabled )		color = COLOR_NOT_SELECTED;
-			else						color = COLOR_DISABLED;
+			if( m_bRowHasFocus[pn] )	color = m_pParentType->COLOR_SELECTED;
+			else if( bRowEnabled )		color = m_pParentType->COLOR_NOT_SELECTED;
+			else						color = m_pParentType->COLOR_DISABLED;
 
 			if( m_bHidden )
 				color.a = 0;
@@ -632,12 +629,12 @@ void OptionRow::UpdateEnabledDisabled()
 			if( bt.DestTweenState().diffuse[0] != color )
 			{
 				bt.StopTweening();
-				bt.BeginTweening( TWEEN_SECONDS );
+				bt.BeginTweening( m_pParentType->TWEEN_SECONDS );
 				bt.SetDiffuse( color );
 
 				OptionsCursor &ul = *m_Underline[pn][0];
 				ul.StopTweening();
-				ul.BeginTweening( TWEEN_SECONDS );
+				ul.BeginTweening( m_pParentType->TWEEN_SECONDS );
 				ul.SetDiffuseAlpha( color.a );
 			}
 		}
@@ -649,7 +646,7 @@ void OptionRow::UpdateEnabledDisabled()
 	if( m_RowType == OptionRow::ROW_EXIT )
 	{
 		if( bThisRowHasFocusByAll )
-			m_textItems[0]->SetEffectDiffuseShift( 1.0f, COLOR_SELECTED, COLOR_NOT_SELECTED );
+			m_textItems[0]->SetEffectDiffuseShift( 1.0f, m_pParentType->COLOR_SELECTED, m_pParentType->COLOR_NOT_SELECTED );
 		else
 			m_textItems[0]->SetEffectNone();
 	}
@@ -658,8 +655,8 @@ void OptionRow::UpdateEnabledDisabled()
 	{
 		m_sprBullet->StopTweening();
 		m_textTitle->StopTweening();
-		m_sprBullet->BeginTweening( TWEEN_SECONDS );
-		m_textTitle->BeginTweening( TWEEN_SECONDS );
+		m_sprBullet->BeginTweening( m_pParentType->TWEEN_SECONDS );
+		m_textTitle->BeginTweening( m_pParentType->TWEEN_SECONDS );
 		m_sprBullet->SetDiffuseAlpha( color.a );
 		m_textTitle->SetDiffuseAlpha( color.a );
 	}

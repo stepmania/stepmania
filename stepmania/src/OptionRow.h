@@ -87,22 +87,48 @@ class OptionRowType
 public:
 	void Load( const CString &sType );
 
+private:
 	BitmapText				m_textItemParent;
 	OptionsCursor			m_UnderlineParent;
 	Sprite					m_sprBullet;
 	BitmapText				m_textTitle;
 	OptionIcon				m_OptionIcon;
+
+	// metrics
+	ThemeMetric<float>				ARROWS_X;
+	ThemeMetric<float>				LABELS_X;
+	ThemeMetric<apActorCommands>	LABELS_ON_COMMAND;
+	ThemeMetric<apActorCommands>	LABEL_GAIN_FOCUS_COMMAND;
+	ThemeMetric<apActorCommands>	LABEL_LOSE_FOCUS_COMMAND;
+	ThemeMetric<float>				ITEMS_START_X;
+	ThemeMetric<float>				ITEMS_END_X;
+	ThemeMetric<float>				ITEMS_GAP_X;
+	ThemeMetric1D<float>			ITEMS_LONG_ROW_X;
+	ThemeMetric<float>				ITEMS_LONG_ROW_SHARED_X;
+	ThemeMetric<apActorCommands>	ITEMS_ON_COMMAND;
+	ThemeMetric<apActorCommands>	ITEM_GAIN_FOCUS_COMMAND;
+	ThemeMetric<apActorCommands>	ITEM_LOSE_FOCUS_COMMAND;
+	ThemeMetric1D<float>			ICONS_X;
+	ThemeMetric<apActorCommands>	ICONS_ON_COMMAND;
+	ThemeMetric<RageColor>			COLOR_SELECTED;
+	ThemeMetric<RageColor>			COLOR_NOT_SELECTED;
+	ThemeMetric<RageColor>			COLOR_DISABLED;
+	ThemeMetric<bool>				CAPITALIZE_ALL_OPTION_NAMES;
+	ThemeMetric<float>				TWEEN_SECONDS;
+	ThemeMetric<bool>				THEME_ITEMS;
+	ThemeMetric<bool>				THEME_TITLES;
+	ThemeMetric<bool>				SHOW_BPM_IN_SPEED_TITLE;
+
+	friend class OptionRow;
 };
 
 class OptionRow : public ActorFrame
 {
 public:
-	const OptionRowType *m_pActors;
 	OptionRow( const OptionRowType *pType );
 	~OptionRow();
 
 	void Clear();
-	void LoadMetrics( const CString &sType );
 	void LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown );
 	void LoadExit();
 	void SetOptionIcon( PlayerNumber pn, const CString &sText );
@@ -180,6 +206,7 @@ public:
 protected:
 	CString GetRowTitle() const;
 
+	const OptionRowType		*m_pParentType;
 	OptionRowDefinition		m_RowDef;
 	RowType					m_RowType;
 	OptionRowHandler*		m_pHand;
@@ -201,32 +228,6 @@ protected:
 
 	float m_fY;
 	bool m_bHidden; // currently off screen
-
-	
-	// metrics
-	ThemeMetric<float>				ARROWS_X;
-	ThemeMetric<float>				LABELS_X;
-	ThemeMetric<apActorCommands>	LABELS_ON_COMMAND;
-	ThemeMetric<apActorCommands>	LABEL_GAIN_FOCUS_COMMAND;
-	ThemeMetric<apActorCommands>	LABEL_LOSE_FOCUS_COMMAND;
-	ThemeMetric<float>				ITEMS_START_X;
-	ThemeMetric<float>				ITEMS_END_X;
-	ThemeMetric<float>				ITEMS_GAP_X;
-	ThemeMetric1D<float>			ITEMS_LONG_ROW_X;
-	ThemeMetric<float>				ITEMS_LONG_ROW_SHARED_X;
-	ThemeMetric<apActorCommands>	ITEMS_ON_COMMAND;
-	ThemeMetric<apActorCommands>	ITEM_GAIN_FOCUS_COMMAND;
-	ThemeMetric<apActorCommands>	ITEM_LOSE_FOCUS_COMMAND;
-	ThemeMetric1D<float>			ICONS_X;
-	ThemeMetric<apActorCommands>	ICONS_ON_COMMAND;
-	ThemeMetric<RageColor>			COLOR_SELECTED;
-	ThemeMetric<RageColor>			COLOR_NOT_SELECTED;
-	ThemeMetric<RageColor>			COLOR_DISABLED;
-	ThemeMetric<bool>				CAPITALIZE_ALL_OPTION_NAMES;
-	ThemeMetric<float>				TWEEN_SECONDS;
-	ThemeMetric<bool>				THEME_ITEMS;
-	ThemeMetric<bool>				THEME_TITLES;
-	ThemeMetric<bool>				SHOW_BPM_IN_SPEED_TITLE;
 };
 
 #endif

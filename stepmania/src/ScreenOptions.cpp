@@ -220,7 +220,6 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 		
 		bool bFirstRowGoesDown = m_OptionsNavigation==NAV_TOGGLE_THREE_KEY;
 
-		row.LoadMetrics( m_sName );
 		row.LoadNormal( def, hand, bFirstRowGoesDown );
 		row.InitText();
 
@@ -239,7 +238,6 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 		// TRICKY:  Add "EXIT" item
 		m_pRows.push_back( new OptionRow(&m_OptionRowType) );
 		OptionRow &row = *m_pRows.back();
-		row.LoadMetrics( m_sName );
 		row.LoadExit();
 		row.InitText();
 		row.SetDrawOrder( 1 );
