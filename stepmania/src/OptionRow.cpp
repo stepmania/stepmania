@@ -301,6 +301,8 @@ void OptionRow::InitText()
 			GetWidthXY( p, 0, iWidth, iX, iY );
 			ul->SetX( float(iX) );
 			ul->SetWidth( float(iWidth) );
+			if( GetRowType() == OptionRow::ROW_EXIT )
+				ul->SetHidden( true );
 		}
 		break;
 
