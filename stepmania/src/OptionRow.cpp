@@ -9,6 +9,7 @@
 #include "song.h"
 #include "Course.h"
 #include "Style.h"
+#include "ActorUtil.h"
 
 static const CString SelectTypeNames[] = {
 	"SelectOne",
@@ -220,7 +221,7 @@ CString OptionRow::GetRowTitle() const
 
 	return sTitle;
 }
-#include "ActorUtil.h"
+
 /* Set up text, underlines and titles for options.  This can be called
  * as soon as m_RowDef is available. */
 void OptionRow::InitText()
