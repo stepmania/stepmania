@@ -97,7 +97,7 @@ void ScreenOptionsSelectProfile::Init()
 		vHands.push_back( pHand );
 	}
 
-	InitMenu( INPUTMODE_SHARE_CURSOR, vDefs, vHands );
+	InitMenu( vDefs, vHands );
 }
 
 ScreenOptionsSelectProfile::~ScreenOptionsSelectProfile()
