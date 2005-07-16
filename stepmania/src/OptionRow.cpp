@@ -110,29 +110,29 @@ void OptionRow::DetachHandler()
 void OptionRow::LoadMetrics( const CString &sType )
 {
 	m_sType = sType;
-	ARROWS_X   						.Load(m_sType,"ArrowsX");
-	LABELS_X						.Load(m_sType,"LabelsX");
-	LABELS_ON_COMMAND				.Load(m_sType,"LabelsOnCommand");
-	LABEL_GAIN_FOCUS_COMMAND		.Load(m_sType,"LabelGainFocusCommand");
-	LABEL_LOSE_FOCUS_COMMAND		.Load(m_sType,"LabelLoseFocusCommand");
-	ITEMS_START_X					.Load(m_sType,"ItemsStartX");
-	ITEMS_END_X						.Load(m_sType,"ItemsEndX");
-	ITEMS_GAP_X						.Load(m_sType,"ItemsGapX");
-	ITEMS_LONG_ROW_X				.Load(m_sType,ITEMS_LONG_ROW_X_NAME,NUM_PLAYERS);
-	ITEMS_LONG_ROW_SHARED_X			.Load(m_sType,"ItemsLongRowSharedX");
-	ITEMS_ON_COMMAND				.Load(m_sType,"ItemsOnCommand");
-	ITEM_GAIN_FOCUS_COMMAND			.Load(m_sType,"ItemGainFocusCommand");
-	ITEM_LOSE_FOCUS_COMMAND			.Load(m_sType,"ItemLoseFocusCommand");
-	ICONS_X							.Load(m_sType,ICONS_X_NAME,NUM_PLAYERS);
-	ICONS_ON_COMMAND				.Load(m_sType,"IconsOnCommand");
-	COLOR_SELECTED					.Load(m_sType,"ColorSelected");
-	COLOR_NOT_SELECTED				.Load(m_sType,"ColorNotSelected");
-	COLOR_DISABLED					.Load(m_sType,"ColorDisabled");
-	CAPITALIZE_ALL_OPTION_NAMES		.Load(m_sType,"CapitalizeAllOptionNames");
-	TWEEN_SECONDS					.Load(m_sType,"TweenSeconds");
-	THEME_ITEMS						.Load(m_sType,"ThemeItems");
-	THEME_TITLES					.Load(m_sType,"ThemeTitles");
-	SHOW_BPM_IN_SPEED_TITLE			.Load(m_sType,"ShowBpmInSpeedTitle");
+	ARROWS_X   						.Load(sType,"ArrowsX");
+	LABELS_X						.Load(sType,"LabelsX");
+	LABELS_ON_COMMAND				.Load(sType,"LabelsOnCommand");
+	LABEL_GAIN_FOCUS_COMMAND		.Load(sType,"LabelGainFocusCommand");
+	LABEL_LOSE_FOCUS_COMMAND		.Load(sType,"LabelLoseFocusCommand");
+	ITEMS_START_X					.Load(sType,"ItemsStartX");
+	ITEMS_END_X						.Load(sType,"ItemsEndX");
+	ITEMS_GAP_X						.Load(sType,"ItemsGapX");
+	ITEMS_LONG_ROW_X				.Load(sType,ITEMS_LONG_ROW_X_NAME,NUM_PLAYERS);
+	ITEMS_LONG_ROW_SHARED_X			.Load(sType,"ItemsLongRowSharedX");
+	ITEMS_ON_COMMAND				.Load(sType,"ItemsOnCommand");
+	ITEM_GAIN_FOCUS_COMMAND			.Load(sType,"ItemGainFocusCommand");
+	ITEM_LOSE_FOCUS_COMMAND			.Load(sType,"ItemLoseFocusCommand");
+	ICONS_X							.Load(sType,ICONS_X_NAME,NUM_PLAYERS);
+	ICONS_ON_COMMAND				.Load(sType,"IconsOnCommand");
+	COLOR_SELECTED					.Load(sType,"ColorSelected");
+	COLOR_NOT_SELECTED				.Load(sType,"ColorNotSelected");
+	COLOR_DISABLED					.Load(sType,"ColorDisabled");
+	CAPITALIZE_ALL_OPTION_NAMES		.Load(sType,"CapitalizeAllOptionNames");
+	TWEEN_SECONDS					.Load(sType,"TweenSeconds");
+	THEME_ITEMS						.Load(sType,"ThemeItems");
+	THEME_TITLES					.Load(sType,"ThemeTitles");
+	SHOW_BPM_IN_SPEED_TITLE			.Load(sType,"ShowBpmInSpeedTitle");
 
 	FOREACH_PlayerNumber( p )
 	{
