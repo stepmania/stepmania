@@ -206,10 +206,15 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 
 	ASSERT( vDefs.size() == vHands.size() );
 
+	m_OptionRowType.Load( m_sName );
+
 	for( unsigned r=0; r<vDefs.size(); r++ )		// foreach row
 	{
-		m_pRows.push_back( new OptionRow() );
+		m_pRows.push_back( new OptionRow(&m_OptionRowType) );
 		OptionRow &row = *m_pRows.back();
+		row.SetDrawOrder( 1 );
+		m_framePage.AddChild( &row );
+
 		const OptionRowDefinition &def = vDefs[r];
 		OptionRowHandler* hand = vHands[r];
 		
@@ -229,17 +234,10 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 		row.AfterImportOptions();
 	}
 
-	for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
-	{
-		OptionRow &row = *m_pRows[r];
-		row.SetDrawOrder( 1 );
-		m_framePage.AddChild( &row );
-	}
-
 	if( SHOW_EXIT_ROW )
 	{
 		// TRICKY:  Add "EXIT" item
-		m_pRows.push_back( new OptionRow() );
+		m_pRows.push_back( new OptionRow(&m_OptionRowType) );
 		OptionRow &row = *m_pRows.back();
 		row.LoadMetrics( m_sName );
 		row.LoadExit();

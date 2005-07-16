@@ -58,17 +58,16 @@ CString OptionRow::OptionTitle( CString s ) const
 CString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",int(p+1)); }
 CString ICONS_X_NAME( size_t p )				{ return ssprintf("IconsP%dX",int(p+1)); }
 
-OptionRow::OptionRow()
+OptionRow::OptionRow( const OptionRowType *pSource )
 {
+	m_pActors = pSource;
 	m_pHand = NULL;
 
-	Clear();
+	m_sprBullet = NULL;
+	m_textTitle = NULL;
+	ZERO( m_OptionIcons );
 
-	FOREACH_PlayerNumber( p )
-		m_Frame.AddChild( &m_OptionIcons[p] );
-	m_Frame.AddChild( &m_sprBullet );
-	m_Frame.AddChild( &m_textTitle );
-	m_Frame.AddChild( &m_ItemFrame );
+	Clear();
 
 	this->AddChild( &m_Frame );
 }
@@ -85,7 +84,7 @@ void OptionRow::Clear()
 	FOREACH_PlayerNumber( p )
 		m_vbSelected[p].clear();
 
-	m_ItemFrame.DeleteAllChildren();
+	m_Frame.DeleteAllChildren();
 	m_textItems.clear();
 	FOREACH_PlayerNumber( p )
 		m_Underline[p].clear();
@@ -107,9 +106,17 @@ void OptionRow::DetachHandler()
 	m_pHand = NULL;
 }
 
+void OptionRowType::Load( const CString &sType )
+{
+	m_textItemParent.LoadFromFont( THEME->GetPathF(sType,"item") );
+	m_UnderlineParent.Load( sType, OptionsCursor::underline );
+	m_textTitle.LoadFromFont( THEME->GetPathF(sType,"title") );
+	m_sprBullet.Load( THEME->GetPathG(sType,"bullet") );
+	m_OptionIcon.Load( sType );
+}
+
 void OptionRow::LoadMetrics( const CString &sType )
 {
-	m_sType = sType;
 	ARROWS_X   						.Load(sType,"ArrowsX");
 	LABELS_X						.Load(sType,"LabelsX");
 	LABELS_ON_COMMAND				.Load(sType,"LabelsOnCommand");
@@ -133,17 +140,6 @@ void OptionRow::LoadMetrics( const CString &sType )
 	THEME_ITEMS						.Load(sType,"ThemeItems");
 	THEME_TITLES					.Load(sType,"ThemeTitles");
 	SHOW_BPM_IN_SPEED_TITLE			.Load(sType,"ShowBpmInSpeedTitle");
-
-	FOREACH_PlayerNumber( p )
-	{
-		m_OptionIcons[p].Load( m_sType );
-		m_OptionIcons[p].RunCommands( ICONS_ON_COMMAND );
-	}
-
-	m_textItemParent.LoadFromFont( THEME->GetPathF(m_sType,"item") );
-	m_UnderlineParent.Load( m_sType, OptionsCursor::underline );
-	m_textTitle.LoadFromFont( THEME->GetPathF(m_sType,"title") );
-	m_sprBullet.Load( THEME->GetPathG(m_sType,"bullet") );
 }
 
 void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown )
@@ -233,14 +229,38 @@ void OptionRow::InitText()
 {
 	/* If we have elements already, we're being updated from a new set of options.
 	 * Delete the old ones. */
-	m_ItemFrame.DeleteAllChildren();
+	m_Frame.DeleteAllChildren();
 	m_textItems.clear();
 	FOREACH_PlayerNumber( p )
 		m_Underline[p].clear();
 
+	m_textTitle = new BitmapText( m_pActors->m_textTitle );
+	m_Frame.AddChild( m_textTitle );
+
+	m_sprBullet = new Sprite( m_pActors->m_sprBullet );
+	m_sprBullet->SetDrawOrder(-1); // under title
+	m_Frame.AddChild( m_sprBullet );
+
+	switch( m_RowType )
+	{
+	case ROW_NORMAL:
+		FOREACH_PlayerNumber( p )
+		{
+			m_OptionIcons[p] = new OptionIcon( m_pActors->m_OptionIcon );
+			m_OptionIcons[p]->SetDrawOrder(-1); // under title
+			m_OptionIcons[p]->RunCommands( ICONS_ON_COMMAND );
+			
+			m_Frame.AddChild( m_OptionIcons[p] );
+			SetOptionIcon( p, "" );
+		}
+		break;
+	case ROW_EXIT:
+		break;
+	}
+
 	// If the items will go off the edge of the screen, then re-init with the "long row" style.
 	{
-		BitmapText bt( m_textItemParent );
+		BitmapText bt( m_pActors->m_textItemParent );
 		bt.RunCommands( ITEMS_ON_COMMAND );
 
 		float fX = ITEMS_START_X;
@@ -273,7 +293,7 @@ void OptionRow::InitText()
 		// init text
 		FOREACH_HumanPlayer( p )
 		{
-			BitmapText *bt = new BitmapText( m_textItemParent );
+			BitmapText *bt = new BitmapText( m_pActors->m_textItemParent );
 			m_textItems.push_back( bt );
 
 			bt->RunCommands( ITEMS_ON_COMMAND );
@@ -293,7 +313,7 @@ void OptionRow::InitText()
 		// init underlines
 		FOREACH_HumanPlayer( p )
 		{
-			OptionsCursor *ul = new OptionsCursor( m_UnderlineParent );
+			OptionsCursor *ul = new OptionsCursor( m_pActors->m_UnderlineParent );
 			m_Underline[p].push_back( ul );
 
 			ul->Set( p );
@@ -312,7 +332,7 @@ void OptionRow::InitText()
 			for( unsigned c=0; c<m_RowDef.m_vsChoices.size(); c++ )
 			{
 				// init text
-				BitmapText *bt = new BitmapText( m_textItemParent );
+				BitmapText *bt = new BitmapText( m_pActors->m_textItemParent );
 				m_textItems.push_back( bt );
 				CString sText = m_RowDef.m_vsChoices[c];
 				PrepareItemText( sText );
@@ -328,7 +348,7 @@ void OptionRow::InitText()
 				// init underlines
 				FOREACH_HumanPlayer( p )
 				{
-					OptionsCursor *ul = new OptionsCursor( m_UnderlineParent );
+					OptionsCursor *ul = new OptionsCursor( m_pActors->m_UnderlineParent );
 					m_Underline[p].push_back( ul );
 					ul->Set( p );
 					ul->SetX( fX );
@@ -345,22 +365,24 @@ void OptionRow::InitText()
 	}
 
 	for( unsigned c=0; c<m_textItems.size(); c++ )
-		m_ItemFrame.AddChild( m_textItems[c] );
+		m_Frame.AddChild( m_textItems[c] );
 	FOREACH_PlayerNumber( p )
 		for( unsigned c=0; c<m_Underline[p].size(); c++ )
-			m_ItemFrame.AddChild( m_Underline[p][c] );
+			m_Frame.AddChild( m_Underline[p][c] );
+	m_Frame.SortByDrawOrder();
 
 	switch( GetRowType() )
 	{
 	case OptionRow::ROW_NORMAL:
-		m_textTitle.SetText( GetRowTitle() );
-		m_textTitle.SetX( LABELS_X );
-		m_textTitle.RunCommands( LABELS_ON_COMMAND );
-		m_sprBullet.SetX( ARROWS_X );
+		m_textTitle->SetText( GetRowTitle() );
+		m_textTitle->SetX( LABELS_X );
+		m_textTitle->RunCommands( LABELS_ON_COMMAND );
+
+		m_sprBullet->SetX( ARROWS_X );
 		break;
 	case OptionRow::ROW_EXIT:
-		m_textTitle.SetHidden( true );
-		m_sprBullet.SetHidden( true );
+		m_textTitle->SetHidden( true );
+		m_sprBullet->SetHidden( true );
 		break;
 	}
 }
@@ -409,10 +431,6 @@ void OptionRow::AfterImportOptions()
 		}
 	}
 
-	// init row icons
-	FOREACH_HumanPlayer( p )
-		SetOptionIcon( p, "" );
-
 	//
 	// HACK: Set focus to one item in the row, which is "go down"
 	//
@@ -437,9 +455,6 @@ void OptionRow::LoadExit()
 		vbSelected.resize( m_RowDef.m_vsChoices.size(), false );
 		vbSelected[0] = true;
 	}
-
-	FOREACH_PlayerNumber( p )
-		m_OptionIcons[p].SetHidden( true );
 }
 
 void OptionRow::PositionUnderlines( PlayerNumber pn )
@@ -484,7 +499,7 @@ void OptionRow::PositionIcons()
 
 	FOREACH_HumanPlayer( p )	// foreach player
 	{
-		OptionIcon &icon = m_OptionIcons[p];
+		OptionIcon &icon = *m_OptionIcons[p];
 
 		icon.SetX( ICONS_X.GetValue(p) );
 
@@ -544,9 +559,9 @@ void OptionRow::UpdateEnabledDisabled()
 	}
 
 	if( bThisRowHasFocusByAny )
-		m_textTitle.RunCommands( LABEL_GAIN_FOCUS_COMMAND );
+		m_textTitle->RunCommands( LABEL_GAIN_FOCUS_COMMAND );
 	else
-		m_textTitle.RunCommands( LABEL_LOSE_FOCUS_COMMAND );
+		m_textTitle->RunCommands( LABEL_LOSE_FOCUS_COMMAND );
 
 	/* Don't tween selection colors at all. */
 	RageColor color;
@@ -557,8 +572,8 @@ void OptionRow::UpdateEnabledDisabled()
 	if( m_bHidden )
 		color.a = 0;
 
-	m_sprBullet.SetGlobalDiffuseColor( color );
-	m_textTitle.SetGlobalDiffuseColor( color );
+	m_sprBullet->SetGlobalDiffuseColor( color );
+	m_textTitle->SetGlobalDiffuseColor( color );
 
 
 	for( unsigned j=0; j<m_textItems.size(); j++ )
@@ -639,20 +654,20 @@ void OptionRow::UpdateEnabledDisabled()
 			m_textItems[0]->SetEffectNone();
 	}
 
-	if( m_sprBullet.DestTweenState().diffuse[0] != color )
+	if( m_sprBullet->DestTweenState().diffuse[0] != color )
 	{
-		m_sprBullet.StopTweening();
-		m_textTitle.StopTweening();
-		m_sprBullet.BeginTweening( TWEEN_SECONDS );
-		m_textTitle.BeginTweening( TWEEN_SECONDS );
-		m_sprBullet.SetDiffuseAlpha( color.a );
-		m_textTitle.SetDiffuseAlpha( color.a );
+		m_sprBullet->StopTweening();
+		m_textTitle->StopTweening();
+		m_sprBullet->BeginTweening( TWEEN_SECONDS );
+		m_textTitle->BeginTweening( TWEEN_SECONDS );
+		m_sprBullet->SetDiffuseAlpha( color.a );
+		m_textTitle->SetDiffuseAlpha( color.a );
 	}
 }
 
 void OptionRow::SetOptionIcon( PlayerNumber pn, const CString &sText )
 {
-	m_OptionIcons[pn].Set( pn, sText, false );
+	m_OptionIcons[pn]->Set( pn, sText, false );
 }
 
 BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow )

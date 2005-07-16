@@ -36,6 +36,8 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
+	OptionRowType m_OptionRowType;
+
 	virtual void TweenOnScreen();
 
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;

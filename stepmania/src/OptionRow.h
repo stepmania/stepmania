@@ -82,10 +82,23 @@ struct OptionRowDefinition
 	}
 };
 
+class OptionRowType
+{
+public:
+	void Load( const CString &sType );
+
+	BitmapText				m_textItemParent;
+	OptionsCursor			m_UnderlineParent;
+	Sprite					m_sprBullet;
+	BitmapText				m_textTitle;
+	OptionIcon				m_OptionIcon;
+};
+
 class OptionRow : public ActorFrame
 {
 public:
-	OptionRow();
+	const OptionRowType *m_pActors;
+	OptionRow( const OptionRowType *pType );
 	~OptionRow();
 
 	void Clear();
@@ -167,19 +180,18 @@ public:
 protected:
 	CString GetRowTitle() const;
 
-	CString 				m_sType;
 	OptionRowDefinition		m_RowDef;
 	RowType					m_RowType;
 	OptionRowHandler*		m_pHand;
+
 	ActorFrame				m_Frame;
-	ActorFrame				m_ItemFrame;
-	BitmapText				m_textItemParent;
+
 	vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
-	OptionsCursor			m_UnderlineParent;
 	vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
-	Sprite					m_sprBullet;
-	BitmapText				m_textTitle;
-	OptionIcon				m_OptionIcons[NUM_PLAYERS];
+	Sprite					*m_sprBullet;
+	BitmapText				*m_textTitle;
+	OptionIcon				*m_OptionIcons[NUM_PLAYERS];
+
 	bool					m_bFirstItemGoesDown;
 	bool					m_bRowHasFocus[NUM_PLAYERS];
 
