@@ -243,8 +243,10 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 		OptionRow &row = *m_pRows.back();
 		row.LoadMetrics( m_sName );
 		row.LoadExit();
+		row.InitText();
 		row.SetDrawOrder( 1 );
 		m_framePage.AddChild( &row );
+		row.AfterImportOptions();
 	}
 
 	m_framePage.SortByDrawOrder();
