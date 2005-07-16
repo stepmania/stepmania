@@ -220,7 +220,7 @@ CString OptionRow::GetRowTitle() const
 
 	return sTitle;
 }
-
+#include "ActorUtil.h"
 /* Set up text, underlines and titles for options.  This can be called
  * as soon as m_RowDef is available. */
 void OptionRow::InitText()
@@ -235,7 +235,7 @@ void OptionRow::InitText()
 	m_textTitle = new BitmapText( m_pParentType->m_textTitle );
 	m_Frame.AddChild( m_textTitle );
 
-	m_sprBullet.Load( THEME->GetPathG(m_pParentType->m_sType,"bullet") );
+	m_sprBullet = ActorUtil::MakeActor( THEME->GetPathG(m_pParentType->m_sType,"bullet") );
 	m_sprBullet->SetDrawOrder(-1); // under title
 	m_Frame.AddChild( m_sprBullet );
 
@@ -573,7 +573,7 @@ void OptionRow::UpdateEnabledDisabled()
 	if( m_bHidden )
 		color.a = 0;
 
-	if( m_sprBullet.IsLoaded() )
+	if( m_sprBullet != NULL )
 		m_sprBullet->SetGlobalDiffuseColor( color );
 	m_textTitle->SetGlobalDiffuseColor( color );
 
@@ -662,7 +662,7 @@ void OptionRow::UpdateEnabledDisabled()
 		m_textTitle->BeginTweening( m_pParentType->TWEEN_SECONDS );
 		m_textTitle->SetDiffuseAlpha( color.a );
 		
-		if( m_sprBullet.IsLoaded() )
+		if( m_sprBullet != NULL )
 		{
 			m_sprBullet->StopTweening();
 			m_sprBullet->BeginTweening( m_pParentType->TWEEN_SECONDS );

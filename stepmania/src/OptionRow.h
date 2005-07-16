@@ -221,7 +221,7 @@ protected:
 	vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
 	vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 
-	AutoActor				m_sprBullet;
+	Actor					*m_sprBullet;
 	BitmapText				*m_textTitle;
 	OptionIcon				*m_OptionIcons[NUM_PLAYERS];
 
