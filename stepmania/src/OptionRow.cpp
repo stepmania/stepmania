@@ -427,24 +427,12 @@ void OptionRow::LoadExit()
 {
 	m_RowType = OptionRow::ROW_EXIT;
 	m_RowDef.m_sName = EXIT_NAME;
-	m_RowDef.m_vsChoices.push_back( "" );
-
-	BitmapText *bt = new BitmapText;
-	m_textItems.push_back( bt );
-
-	bt->LoadFromFont( THEME->GetPathF(m_sType,"item") );
-	CString sText = "Exit";
-	PrepareItemText( sText );
-	bt->SetText( sText );
-	bt->RunCommands( ITEMS_ON_COMMAND );
-	bt->SetShadowLength( 0 );
-	bt->SetX( ITEMS_LONG_ROW_SHARED_X );
-	m_Frame.AddChild( bt );
+	m_RowDef.m_vsChoices.push_back( "Exit" );
+	m_RowDef.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	m_RowDef.m_bOneChoiceForAllPlayers = true;
 
 	FOREACH_PlayerNumber( p )
 		m_OptionIcons[p].SetHidden( true );
-	m_sprBullet.SetHidden( true );
-	m_textTitle.SetHidden( true );
 }
 
 void OptionRow::PositionUnderlines( PlayerNumber pn )
