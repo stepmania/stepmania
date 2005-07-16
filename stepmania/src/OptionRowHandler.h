@@ -28,7 +28,7 @@ public:
 	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const = 0;
 	/* Returns an OPT mask. */
 	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const = 0;
-	virtual CString GetIconText( const OptionRowDefinition &def, int iFirstSelection ) const { return ""; }
+	virtual void GetIconTextAndGameCommand( const OptionRowDefinition &def, int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const;
 	virtual bool HasScreen( int iChoice ) const { return false; }
 };
 

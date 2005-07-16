@@ -63,7 +63,6 @@ OptionRow::OptionRow( const OptionRowType *pSource )
 	m_pParentType = pSource;
 	m_pHand = NULL;
 
-	m_sprBullet = NULL;
 	m_textTitle = NULL;
 	ZERO( m_OptionIcons );
 
@@ -108,13 +107,15 @@ void OptionRow::DetachHandler()
 
 void OptionRowType::Load( const CString &sType )
 {
+	m_sType = sType;
+
 	m_textItemParent.LoadFromFont( THEME->GetPathF(sType,"item") );
 	m_UnderlineParent.Load( sType, OptionsCursor::underline );
 	m_textTitle.LoadFromFont( THEME->GetPathF(sType,"title") );
-	m_sprBullet.Load( THEME->GetPathG(sType,"bullet") );
+	//m_sprBullet.Load( THEME->GetPathG(sType,"bullet") );
 	m_OptionIcon.Load( sType );
 
-	ARROWS_X   						.Load(sType,"ArrowsX");
+	BULLET_X   						.Load(sType,"BulletX");
 	LABELS_X						.Load(sType,"LabelsX");
 	LABELS_ON_COMMAND				.Load(sType,"LabelsOnCommand");
 	LABEL_GAIN_FOCUS_COMMAND		.Load(sType,"LabelGainFocusCommand");
@@ -234,7 +235,7 @@ void OptionRow::InitText()
 	m_textTitle = new BitmapText( m_pParentType->m_textTitle );
 	m_Frame.AddChild( m_textTitle );
 
-	m_sprBullet = new Sprite( m_pParentType->m_sprBullet );
+	m_sprBullet.Load( THEME->GetPathG(m_pParentType->m_sType,"bullet") );
 	m_sprBullet->SetDrawOrder(-1); // under title
 	m_Frame.AddChild( m_sprBullet );
 
@@ -248,7 +249,9 @@ void OptionRow::InitText()
 			m_OptionIcons[p]->RunCommands( m_pParentType->ICONS_ON_COMMAND );
 			
 			m_Frame.AddChild( m_OptionIcons[p] );
-			SetOptionIcon( p, "" );
+
+			GameCommand gc;
+			SetOptionIcon( p, "", gc );
 		}
 		break;
 	case ROW_EXIT:
@@ -375,7 +378,7 @@ void OptionRow::InitText()
 		m_textTitle->SetX( m_pParentType->LABELS_X );
 		m_textTitle->RunCommands( m_pParentType->LABELS_ON_COMMAND );
 
-		m_sprBullet->SetX( m_pParentType->ARROWS_X );
+		m_sprBullet->SetX( m_pParentType->BULLET_X );
 		break;
 	case OptionRow::ROW_EXIT:
 		m_textTitle->SetHidden( true );
@@ -427,6 +430,7 @@ void OptionRow::AfterImportOptions()
 			ASSERT(0);
 		}
 	}
+
 
 	//
 	// HACK: Set focus to one item in the row, which is "go down"
@@ -569,7 +573,8 @@ void OptionRow::UpdateEnabledDisabled()
 	if( m_bHidden )
 		color.a = 0;
 
-	m_sprBullet->SetGlobalDiffuseColor( color );
+	if( m_sprBullet.IsLoaded() )
+		m_sprBullet->SetGlobalDiffuseColor( color );
 	m_textTitle->SetGlobalDiffuseColor( color );
 
 
@@ -653,18 +658,33 @@ void OptionRow::UpdateEnabledDisabled()
 
 	if( m_sprBullet->DestTweenState().diffuse[0] != color )
 	{
-		m_sprBullet->StopTweening();
 		m_textTitle->StopTweening();
-		m_sprBullet->BeginTweening( m_pParentType->TWEEN_SECONDS );
 		m_textTitle->BeginTweening( m_pParentType->TWEEN_SECONDS );
-		m_sprBullet->SetDiffuseAlpha( color.a );
 		m_textTitle->SetDiffuseAlpha( color.a );
+		
+		if( m_sprBullet.IsLoaded() )
+		{
+			m_sprBullet->StopTweening();
+			m_sprBullet->BeginTweening( m_pParentType->TWEEN_SECONDS );
+			m_sprBullet->SetDiffuseAlpha( color.a );
+		}
 	}
 }
 
-void OptionRow::SetOptionIcon( PlayerNumber pn, const CString &sText )
+void OptionRow::SetOptionIcon( PlayerNumber pn, const CString &sText, GameCommand &gc )
 {
+	// update bullet
+	Lua *L = LUA->Get();
+	gc.PushSelf( L );
+	GAMESTATE->m_Environment->Set( L, "ThisGameCommand" );
+	LUA->Release( L );
+
+	m_sprBullet->PlayCommand( "Refresh" );
 	m_OptionIcons[pn]->Set( pn, sText, false );
+
+	L = LUA->Get();
+	GAMESTATE->m_Environment->Unset( L, "ThisGameCommand" );
+	LUA->Release( L );
 }
 
 BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow )

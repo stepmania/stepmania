@@ -195,9 +195,9 @@ void ScreenOptions::Init()
 	}
 }
 
-void ScreenOptions::SetOptionIcon( PlayerNumber pn, int iRow, CString sText )
+void ScreenOptions::SetOptionIcon( PlayerNumber pn, int iRow, CString sText, GameCommand &gc )
 {
-	m_pRows[iRow]->SetOptionIcon( pn, sText );
+	m_pRows[iRow]->SetOptionIcon( pn, sText, gc );
 }
 
 void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands )
@@ -342,11 +342,15 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 {
 	OptionRow &row = *m_pRows[iRow];
 
+	bool bAllowExplanation = row.GetRowDef().m_bAllowExplanation;
+	bool bShowExplanations = bAllowExplanation && SHOW_EXPLANATIONS.GetValue();
+	if( !bShowExplanations )
+		return "";
+
 	CString sLineName = row.GetRowDef().m_sName;
 	ASSERT( !sLineName.empty() );
 
-	bool bAllowExplanation = row.GetRowDef().m_bAllowExplanation;
-	return (bAllowExplanation && SHOW_EXPLANATIONS.GetValue()) ? OPTION_EXPLANATION(sLineName) : "";
+	return OPTION_EXPLANATION(sLineName);
 }
 
 BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow )

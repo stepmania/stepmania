@@ -83,7 +83,8 @@ protected:
 	bool AllAreOnLastRow() const;
 
 protected:	// derived classes need access to these
-	void SetOptionIcon( PlayerNumber pn, int iRow, CString sText );
+	void SetOptionIcon( PlayerNumber pn, int iRow, CString sText, GameCommand &gc );
+
 	enum Navigation { NAV_THREE_KEY, NAV_THREE_KEY_MENU, NAV_FIVE_KEY, NAV_TOGGLE_THREE_KEY, NAV_TOGGLE_FIVE_KEY };
 	void SetNavigation( Navigation nav ) { m_OptionsNavigation = nav; }
 	void SetInputMode( InputMode im ) { m_InputMode = im; }

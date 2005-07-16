@@ -24,6 +24,12 @@
 #define ENTRY_MODE(s,i)				THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)			THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
 
+void OptionRowHandler::GetIconTextAndGameCommand( const OptionRowDefinition &def, int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const
+{
+	sIconTextOut = "";
+	gcOut.Init();
+}
+
 static void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
 {
 	ASSERT_M( iSelection >= 0  &&  iSelection < (int) vbSelectedOut.size(),
@@ -239,16 +245,18 @@ public:
 		return 0;
 	}
 
-	virtual CString GetIconText( const OptionRowDefinition &def, int iFirstSelection ) const
+	virtual void GetIconTextAndGameCommand( const OptionRowDefinition &def, int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const
 	{
-		return m_bUseModNameForIcon ?
+		sIconTextOut = m_bUseModNameForIcon ?
 			ListEntries[iFirstSelection].m_sModifiers :
 			def.m_vsChoices[iFirstSelection];
+
+		gcOut = ListEntries[iFirstSelection];
 	}
 	virtual bool HasScreen( int iChoice ) const
 	{ 
-		const GameCommand &mc = ListEntries[iChoice];
-		return !mc.m_sScreen.empty();
+		const GameCommand &gc = ListEntries[iChoice];
+		return !gc.m_sScreen.empty();
 	}
 
 	void FillNoteSkins( OptionRowDefinition &defOut, CString sParam )

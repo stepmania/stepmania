@@ -8,8 +8,10 @@
 #include "OptionsCursor.h"
 #include "OptionIcon.h"
 #include "ThemeMetric.h"
+#include "AutoActor.h"
 
 class OptionRowHandler;
+class GameCommand;
 
 enum SelectType
 {
@@ -88,14 +90,16 @@ public:
 	void Load( const CString &sType );
 
 private:
+	CString		m_sType;
+
 	BitmapText				m_textItemParent;
 	OptionsCursor			m_UnderlineParent;
-	Sprite					m_sprBullet;
+	//Sprite					m_sprBullet;
 	BitmapText				m_textTitle;
 	OptionIcon				m_OptionIcon;
 
 	// metrics
-	ThemeMetric<float>				ARROWS_X;
+	ThemeMetric<float>				BULLET_X;
 	ThemeMetric<float>				LABELS_X;
 	ThemeMetric<apActorCommands>	LABELS_ON_COMMAND;
 	ThemeMetric<apActorCommands>	LABEL_GAIN_FOCUS_COMMAND;
@@ -131,7 +135,8 @@ public:
 	void Clear();
 	void LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown );
 	void LoadExit();
-	void SetOptionIcon( PlayerNumber pn, const CString &sText );
+
+	void SetOptionIcon( PlayerNumber pn, const CString &sText, GameCommand &gc );
 
 	void ImportOptions( const vector<PlayerNumber> &vpns );
 	int ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] );
@@ -215,7 +220,8 @@ protected:
 
 	vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
 	vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
-	Sprite					*m_sprBullet;
+
+	AutoActor				m_sprBullet;
 	BitmapText				*m_textTitle;
 	OptionIcon				*m_OptionIcons[NUM_PLAYERS];
 
