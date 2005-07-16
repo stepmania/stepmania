@@ -348,12 +348,19 @@ void OptionRow::InitText()
 		for( unsigned c=0; c<m_Underline[p].size(); c++ )
 			m_ItemFrame.AddChild( m_Underline[p][c] );
 
-	CString sTitle = GetRowTitle();
-	m_textTitle.SetText( sTitle );
-	m_textTitle.SetX( LABELS_X );
-	m_textTitle.RunCommands( LABELS_ON_COMMAND );
-
-	m_sprBullet.SetX( ARROWS_X );
+	switch( GetRowType() )
+	{
+	case OptionRow::ROW_NORMAL:
+		m_textTitle.SetText( GetRowTitle() );
+		m_textTitle.SetX( LABELS_X );
+		m_textTitle.RunCommands( LABELS_ON_COMMAND );
+		m_sprBullet.SetX( ARROWS_X );
+		break;
+	case OptionRow::ROW_EXIT:
+		m_textTitle.SetHidden( true );
+		m_sprBullet.SetHidden( true );
+		break;
+	}
 }
 
 /* After importing options, choose which item is focused. */
