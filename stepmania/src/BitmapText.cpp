@@ -97,7 +97,10 @@ BitmapText::BitmapText( const BitmapText &cpy ):
 	CPY( m_pTextures );
 #undef CPY
 
-	m_pFont = FONT->CopyFont( cpy.m_pFont );
+	if( cpy.m_pFont != NULL )
+		m_pFont = FONT->CopyFont( cpy.m_pFont );
+	else
+		m_pFont = NULL;
 }
 
 void BitmapText::LoadFromNode( const CString& sDir, const XNode* pNode )

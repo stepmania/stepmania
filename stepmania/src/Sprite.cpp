@@ -59,7 +59,10 @@ Sprite::Sprite( const Sprite &cpy ):
 	CPY( m_fTexCoordVelocityY );
 #undef CPY
 
-	m_pTexture = TEXTUREMAN->CopyTexture( cpy.m_pTexture );
+	if( cpy.m_pTexture != NULL )
+		m_pTexture = TEXTUREMAN->CopyTexture( cpy.m_pTexture );
+	else
+		m_pTexture = NULL;
 }
 
 RageTextureID Sprite::SongBGTexture( RageTextureID ID )
