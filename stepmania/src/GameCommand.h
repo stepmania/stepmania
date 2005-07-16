@@ -19,8 +19,9 @@ class Style;
 class Game;
 struct lua_State;
 
-struct GameCommand		// used in SelectMode
+class GameCommand
 {
+public:
 	GameCommand() { Init(); }
 	void Init();
 
