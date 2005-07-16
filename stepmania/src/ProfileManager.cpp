@@ -322,7 +322,7 @@ Profile &ProfileManager::GetLocalProfile( const CString &sProfileID )
 	return *iter->second;
 }
 
-bool ProfileManager::CreateLocalProfile( CString sName )
+bool ProfileManager::CreateLocalProfile( CString sName, CString &sProfileIDOut )
 {
 	ASSERT( !sName.empty() );
 
@@ -343,6 +343,10 @@ bool ProfileManager::CreateLocalProfile( CString sName )
 		return false;
 
 	bool bResult = Profile::CreateNewProfile( sProfileDir, sName );
+	if( bResult )
+		sProfileIDOut = sProfileID;
+	else
+		sProfileIDOut = "";
 	RefreshLocalProfilesFromDisk();
 	return bResult;
 }

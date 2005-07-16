@@ -30,7 +30,7 @@ public:
 	void RefreshLocalProfilesFromDisk();
 	Profile &GetLocalProfile( const CString &sProfileID );
 	
-	bool CreateLocalProfile( CString sName );
+	bool CreateLocalProfile( CString sName, CString &sProfileIDOut );
 	bool RenameLocalProfile( CString sProfileID, CString sNewName );
 	bool DeleteLocalProfile( CString sProfileID );
 	CString GetNewLocalProfileDefaultName() const;

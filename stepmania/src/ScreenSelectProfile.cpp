@@ -87,7 +87,7 @@ void ScreenSelectProfile::HandleScreenMessage( const ScreenMessage SM )
 			ASSERT( GAMESTATE->m_sLastSelectedProfileID.empty() )
 
 			// create
-			bool bResult = PROFILEMAN->CreateLocalProfile( sNewName );
+			bool bResult = PROFILEMAN->CreateLocalProfile( sNewName, GAMESTATE->m_sLastSelectedProfileID );
 			if( bResult )
 				SCREENMAN->SetNewScreen( NEXT_SCREEN );
 			else
