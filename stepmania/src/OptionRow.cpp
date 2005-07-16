@@ -432,6 +432,13 @@ void OptionRow::LoadExit()
 	m_RowDef.m_bOneChoiceForAllPlayers = true;
 
 	FOREACH_PlayerNumber( p )
+	{
+		vector<bool> &vbSelected = m_vbSelected[p];
+		vbSelected.resize( m_RowDef.m_vsChoices.size(), false );
+		vbSelected[0] = true;
+	}
+
+	FOREACH_PlayerNumber( p )
 		m_OptionIcons[p].SetHidden( true );
 }
 
