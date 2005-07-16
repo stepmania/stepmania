@@ -74,13 +74,13 @@ void ScreenOptionsMaster::Init()
 
 	vector<OptionRowDefinition> OptionRowDefs;
 	OptionRowDefs.resize( asLineNames.size() );
-	OptionRowHandlers.resize( asLineNames.size() );
+	m_OptionRowHandlers.resize( asLineNames.size() );
 	for( unsigned i = 0; i < asLineNames.size(); ++i )
 	{
 		CString sLineName = asLineNames[i];
 		OptionRowDefinition &def = OptionRowDefs[i];
 		CString sRowCommands = LINE(sLineName);
-		OptionRowHandler* &pHand = OptionRowHandlers[i];
+		OptionRowHandler* &pHand = m_OptionRowHandlers[i];
 		pHand = NULL;
 		
 		Commands vCommands;
@@ -94,18 +94,19 @@ void ScreenOptionsMaster::Init()
             RageException::Throw( "Invalid OptionRowHandler '%s' in %s::Line%i", command.GetOriginalCommandString().c_str(), m_sName.c_str(), i );
 	}
 
-	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
+	ASSERT( m_OptionRowHandlers.size() == asLineNames.size() );
 
-	InitMenu( OptionRowDefs, OptionRowHandlers );
+
+	InitMenu( OptionRowDefs, m_OptionRowHandlers );
 }
 
 ScreenOptionsMaster::~ScreenOptionsMaster()
 {
 	FOREACH( OptionRow*, m_pRows, r )
 		(*r)->DetachHandler();
-	FOREACH( OptionRowHandler*, OptionRowHandlers, h )
+	FOREACH( OptionRowHandler*, m_OptionRowHandlers, h )
 		SAFE_DELETE( *h );
-	OptionRowHandlers.clear();
+	m_OptionRowHandlers.clear();
 }
 
 void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns )
@@ -146,7 +147,7 @@ void ScreenOptionsMaster::BeginFadingOut()
 			iChoice--;
 		if( iChoice != -1 )	// not the "goes down" item
 		{
-			OptionRowHandler *pHand = OptionRowHandlers[iCurRow];
+			OptionRowHandler *pHand = m_OptionRowHandlers[iCurRow];
 			m_bExportWillSetANewScreen = pHand->HasScreen( iChoice );
 		}
 	}
@@ -168,8 +169,9 @@ void ScreenOptionsMaster::RefreshIcons( int r, PlayerNumber pn )
 	// find first selection and whether multiple are selected
 	int iFirstSelection = row.GetOneSelection( pn, true );
 
-	// set icon name
+	// set icon name and bullet
 	CString sIcon;
+	GameCommand gc;
 
 	if( iFirstSelection == -1 )
 	{
@@ -177,8 +179,9 @@ void ScreenOptionsMaster::RefreshIcons( int r, PlayerNumber pn )
 	}
 	else if( iFirstSelection != -1 )
 	{
-		const OptionRowHandler *pHand = OptionRowHandlers[r];
-		sIcon = pHand->GetIconText( def, iFirstSelection+(m_OptionsNavigation==NAV_TOGGLE_THREE_KEY?-1:0) );
+		const OptionRowHandler *pHand = m_OptionRowHandlers[r];
+		int iSelection = iFirstSelection+(m_OptionsNavigation==NAV_TOGGLE_THREE_KEY?-1:0);
+		pHand->GetIconTextAndGameCommand( def, iSelection, sIcon, gc );
 	}
 	
 
@@ -186,7 +189,7 @@ void ScreenOptionsMaster::RefreshIcons( int r, PlayerNumber pn )
 	if( def.m_bOneChoiceForAllPlayers )
 		sIcon = "";
 
-	SetOptionIcon( pn, r, sIcon );
+	SetOptionIcon( pn, r, sIcon, gc );
 }
 
 void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
@@ -200,9 +203,9 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 	
 		CHECKPOINT;
 
-		for( unsigned r = 0; r < OptionRowHandlers.size(); ++r )
+		for( unsigned r = 0; r < m_OptionRowHandlers.size(); ++r )
 		{
-			CHECKPOINT_M( ssprintf("%i/%i", r, int(OptionRowHandlers.size())) );
+			CHECKPOINT_M( ssprintf("%i/%i", r, int(m_OptionRowHandlers.size())) );
 
 			vector<PlayerNumber> vpns;
 			FOREACH_OptionsPlayer( p )

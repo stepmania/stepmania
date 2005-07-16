@@ -16,7 +16,7 @@ protected:
 	int m_iChangeMask;
 	bool m_bExportWillSetANewScreen;	// from an OptionRowHandler
 
-	vector<OptionRowHandler*> OptionRowHandlers;
+	vector<OptionRowHandler*> m_OptionRowHandlers;
 	
 protected:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
