@@ -36,28 +36,6 @@ void ScreenSongOptions::ExportOptions( int iRow, const vector<PlayerNumber> &vpn
 		GAMESTATE->m_bChangedFailTypeOnScreenSongOptions = true;
 }
 
-void ScreenSongOptions::HandleScreenMessage( const ScreenMessage SM )
-{
-	if( SM == SM_GoToNextScreen )
-	{
-		if( SCREENMAN->IsStackedScreen(this) )
-		{
-			SCREENMAN->PopTopScreen( SM_BackFromSongOptions );
-			return;
-		}
-	}
-	else if( SM == SM_GoToPrevScreen )
-	{
-		if( SCREENMAN->IsStackedScreen(this) )
-		{
-			SCREENMAN->PopTopScreen( SM_BackFromSongOptions );
-			return;
-		}
-	}
-
-	ScreenOptionsMaster::HandleScreenMessage( SM );
-}
-
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

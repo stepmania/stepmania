@@ -141,23 +141,6 @@ void ScreenPlayerOptions::HandleScreenMessage( const ScreenMessage SM )
 		}
 	}
 
-	if( SM == SM_GoToNextScreen )
-	{
-		if( SCREENMAN->IsStackedScreen(this) )
-		{
-			SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
-			return;
-		}
-	}
-	else if( SM == SM_GoToPrevScreen )
-	{
-		if( SCREENMAN->IsStackedScreen(this) )
-		{
-			SCREENMAN->PopTopScreen( SM_BackFromPlayerOptions );
-			return;
-		}
-	}
-
 	ScreenOptionsMaster::HandleScreenMessage( SM );
 }
 

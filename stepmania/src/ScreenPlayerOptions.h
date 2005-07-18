@@ -4,8 +4,6 @@
 #include "ScreenOptionsMaster.h"
 struct lua_State;
 
-AutoScreenMessage( SM_BackFromPlayerOptions )
-
 class ScreenPlayerOptions : public ScreenOptionsMaster
 {
 public:

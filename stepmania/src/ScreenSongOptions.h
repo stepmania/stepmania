@@ -3,14 +3,11 @@
 
 #include "ScreenOptionsMaster.h"
 
-AutoScreenMessage( SM_BackFromSongOptions )
-
 class ScreenSongOptions : public ScreenOptionsMaster
 {
 public:
 	ScreenSongOptions( CString sName );
 	virtual void Init();
-	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 private:
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
