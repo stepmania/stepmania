@@ -643,8 +643,12 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 	if( bStaticBackgroundUsed )
 	{
-		bool bSuccess = mainlayer.CreateBackground( m_pSong, STATIC_BACKGROUND_DEF );
-		ASSERT( bSuccess );
+		bool bIsAlreadyLoaded = mainlayer.m_BGAnimations.find(STATIC_BACKGROUND_DEF) != mainlayer.m_BGAnimations.end();
+		if( !bIsAlreadyLoaded )
+		{
+			bool bSuccess = mainlayer.CreateBackground( m_pSong, STATIC_BACKGROUND_DEF );
+			ASSERT( bSuccess );
+		}
 	}
 
 
