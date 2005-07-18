@@ -135,7 +135,7 @@ private:
 	T *val;
 public:
 	BroadcastOnChangePtr( Message m ) { mSendWhenChanged = m; val = NULL; }
-	const T* Get() const { return val; }
+	T* Get() const { return val; }
 	void Set( T* t ) { val = t; if(MESSAGEMAN) MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
 	operator T* () const { return val; }
 	T* operator->() const { return val; }
