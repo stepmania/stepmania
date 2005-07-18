@@ -5,11 +5,6 @@
 
 #include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
-#include "Transition.h"
-#include "Quad.h"
-#include "RandomSample.h"
-#include "BGAnimation.h"
-#include "ScreenManager.h"
 
 enum PromptType
 {
