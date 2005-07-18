@@ -629,15 +629,6 @@ void OptionRow::UpdateEnabledDisabled()
 			m_textItems[j]->BeginTweening( m_pParentType->TWEEN_SECONDS );
 			m_textItems[j]->SetDiffuse( color );
 		}
-		for( unsigned j=0; j<m_Underline[0].size(); j++ )
-		{
-			OptionsCursor *pUnderline = m_Underline[0][j];
-			if( pUnderline->DestTweenState().diffuse[0].a != color.a )
-				continue;
-			pUnderline->StopTweening();
-			pUnderline->BeginTweening( m_pParentType->TWEEN_SECONDS );
-			pUnderline->SetDiffuseAlpha( color.a );
-		}
 		
 		break;
 	case LAYOUT_SHOW_ONE_IN_ROW:
@@ -664,14 +655,18 @@ void OptionRow::UpdateEnabledDisabled()
 				bt.StopTweening();
 				bt.BeginTweening( m_pParentType->TWEEN_SECONDS );
 				bt.SetDiffuse( color );
-			}
 
-			OptionsCursor *pUnderline = m_Underline[pn].size()? m_Underline[pn][0]:NULL;
-			if( pUnderline != NULL && pUnderline->DestTweenState().diffuse[0].a != color.a )
-			{
-				pUnderline->StopTweening();
-				pUnderline->BeginTweening( m_pParentType->TWEEN_SECONDS );
-				pUnderline->SetDiffuseAlpha( color.a );
+				/* Only reposition the underline if the text changed, too, or
+				 * we'll cancel PositionUnderlines moving and resizing the
+				 * underline.  (XXX: This is brittle; if we're actually changing
+				 * available options, this will break, too.  Use m_fBaseAlpha?) */
+				if( m_Underline[pn].size() )
+				{
+					OptionsCursor *pUnderline = m_Underline[pn][0];
+					pUnderline->StopTweening();
+					pUnderline->BeginTweening( m_pParentType->TWEEN_SECONDS );
+					pUnderline->SetDiffuseAlpha( color.a );
+				}
 			}
 		}
 		break;
