@@ -130,9 +130,18 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 		return false;
 	}
 
-	CString sDir = LocalProfileIdToDir( sProfileID );
+	m_sProfileDir[pn] = LocalProfileIdToDir( sProfileID );
+	m_bWasLoadedFromMemoryCard[pn] = false;
+	m_bLastLoadWasFromLastGood[pn] = false;
 
-	return LoadProfile( pn, sDir, false ) == Profile::success;
+	map<CString,Profile*>::iterator iter = g_mapLocalProfileDirToProfile.find( m_sProfileDir[pn] );
+	if( iter == g_mapLocalProfileDirToProfile.end() )
+	{
+		m_sProfileDir[pn] = "";
+		return false;
+	}
+
+	return true;
 }
 
 void ProfileManager::GetMemoryCardProfileDirectoriesToTry( vector<CString> &asDirsToTry ) const
@@ -278,9 +287,15 @@ const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
 	ASSERT( pn >= 0 && pn < NUM_PLAYERS );
 
 	if( m_sProfileDir[pn].empty() || ProfileWasLoadedFromMemoryCard(pn) )
+	{
 		return m_pMemoryCardProfile[pn];
+	}
 	else
-		return g_mapLocalProfileDirToProfile[ m_sProfileDir[pn] ];
+	{
+		map<CString,Profile*>::iterator iter = g_mapLocalProfileDirToProfile.find( m_sProfileDir[pn] );
+		ASSERT( iter != g_mapLocalProfileDirToProfile.end() );
+		return iter->second;
+	}
 }
 
 CString ProfileManager::GetPlayerName( PlayerNumber pn ) const
@@ -476,10 +491,7 @@ const Profile* ProfileManager::GetProfile( ProfileSlot slot ) const
 	{
 	case PROFILE_SLOT_PLAYER_1:
 	case PROFILE_SLOT_PLAYER_2:
-		if( m_sProfileDir[slot].empty() )
-			return NULL;
-		else
-			return GetProfile( (PlayerNumber)slot );
+		return GetProfile( (PlayerNumber)slot );
 	case PROFILE_SLOT_MACHINE:
 		return m_pMachineProfile;
 	default:
