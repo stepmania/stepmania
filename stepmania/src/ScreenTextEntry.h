@@ -47,7 +47,6 @@ public:
 
 	ScreenTextEntry( 
 		CString sName, 
-		ScreenMessage smSendOnPop,
 		CString sQuestion, 
 		CString sInitialAnswer, 
 		int iMaxInputLength,
@@ -59,7 +58,6 @@ public:
 	virtual void Init();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	static CString s_sLastAnswer;
 	static bool s_bCancelledLast;
@@ -83,7 +81,6 @@ protected:
 	void UpdateKeyboardText();
 	void UpdateAnswerText();
 
-	ScreenMessage	m_smSendOnPop;
 	CString			m_sQuestion;
 	int				m_iMaxInputLength;
 	bool            m_bPassword;

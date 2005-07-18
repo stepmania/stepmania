@@ -52,7 +52,6 @@ void ScreenTextEntry::TextEntry(
 	// add the new state onto the back of the array
 	ScreenTextEntry *pNewScreen = new ScreenTextEntry( 
 		"ScreenTextEntry", 
-		smSendOnPop,
 		sQuestion, 
 		sInitialAnswer, 
 		iMaxInputLength, 
@@ -62,7 +61,7 @@ void ScreenTextEntry::TextEntry(
 		bPassword );
 	pNewScreen->Init();
 	SCREENMAN->ZeroNextUpdate();
-	SCREENMAN->PushScreen( pNewScreen, true );
+	SCREENMAN->PushScreen( pNewScreen, true, smSendOnPop );
 }
 
 bool ScreenTextEntry::s_bCancelledLast = false;
@@ -78,7 +77,6 @@ bool ScreenTextEntry::s_bCancelledLast = false;
 
 ScreenTextEntry::ScreenTextEntry( 
 	CString sClassName, 
-	ScreenMessage smSendOnPop,
 	CString sQuestion, 
 	CString sInitialAnswer, 
 	int iMaxInputLength,
@@ -90,7 +88,6 @@ ScreenTextEntry::ScreenTextEntry(
 {
 	m_bIsTransparent = true;	// draw screens below us
 
-	m_smSendOnPop = smSendOnPop;
 	m_sQuestion = sQuestion;
 	m_sAnswer = CStringToWstring( sInitialAnswer );
 	m_iMaxInputLength = iMaxInputLength;
@@ -251,21 +248,6 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 	}
 
 	ScreenWithMenuElements::Input( DeviceI, type, GameI, MenuI, StyleI );
-}
-
-void ScreenTextEntry::HandleScreenMessage( const ScreenMessage SM )
-{
-	switch( SM )
-	{
-	case SM_GoToNextScreen:
-		if( SCREENMAN->IsStackedScreen(this) )
-		{
-			SCREENMAN->PopTopScreen( m_smSendOnPop );
-			return;
-		}
-	}
-
-	Screen::HandleScreenMessage( SM );
 }
 
 void ScreenTextEntry::MoveX( int iDir )
