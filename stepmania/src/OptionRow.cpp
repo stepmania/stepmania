@@ -140,7 +140,7 @@ void OptionRowType::Load( const CString &sType )
 	if( SHOW_UNDERLINES )
 		m_UnderlineParent.Load( sType, OptionsCursor::underline );
 	m_textTitle.LoadFromFont( THEME->GetPathF(sType,"title") );
-	//m_sprBullet.Load( THEME->GetPathG(sType,"bullet") );
+	m_sprBullet = ActorUtil::MakeActor( THEME->GetPathG(sType,"bullet") );
 	if( SHOW_OPTION_ICONS )
 		m_OptionIcon.Load( sType );
 }
@@ -240,7 +240,7 @@ void OptionRow::InitText()
 	m_textTitle = new BitmapText( m_pParentType->m_textTitle );
 	m_Frame.AddChild( m_textTitle );
 
-	m_sprBullet = ActorUtil::MakeActor( THEME->GetPathG(m_pParentType->m_sType,"bullet") );
+	m_sprBullet = m_pParentType->m_sprBullet->Copy();
 	m_sprBullet->SetDrawOrder(-1); // under title
 	m_Frame.AddChild( m_sprBullet );
 
