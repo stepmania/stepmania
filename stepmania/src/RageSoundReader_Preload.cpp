@@ -118,6 +118,11 @@ SoundReader *RageSoundReader_Preload::Copy() const
 	return new RageSoundReader_Preload(*this);
 }
 
+int RageSoundReader_Preload::GetReferenceCount() const
+{
+	return buf.GetReferenceCount();
+}
+
 rc_string::rc_string()
 {
 	buf = new string;

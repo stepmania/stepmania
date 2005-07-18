@@ -18,6 +18,7 @@ public:
 	~rc_string();
 	string &get_owned();
 	const string &get() const;
+	int GetReferenceCount() const { return *cnt; }
 };
 
 class RageSoundReader_Preload: public SoundReader
@@ -45,6 +46,10 @@ public:
 	int GetSampleRate() const { return samplerate; }
 	unsigned GetNumChannels() const { return channels; }
 	bool IsStreamingFromDisk() const { return false; }
+
+	/* Return the total number of copies of this sound.  (If 1 is returned,
+	 * this is the last copy.) */
+	int GetReferenceCount() const;
 
 	SoundReader *Copy() const;
 	~RageSoundReader_Preload() { }
