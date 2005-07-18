@@ -117,7 +117,6 @@ void ScreenSaveSync::Init()
 	ScreenPrompt::Init();
 
 	Load(
-		SM_None,
 		GetPromptText(), 
 		PROMPT_YES_NO, 
 		ANSWER_YES, 

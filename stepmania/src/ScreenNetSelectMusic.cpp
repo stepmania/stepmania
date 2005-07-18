@@ -340,7 +340,7 @@ void ScreenNetSelectMusic::MenuUp( PlayerNumber pn, const InputEventType type )
 {
 	NSMAN->ReportNSSOnOff(3);
 	GAMESTATE->m_EditMode = EDIT_MODE_FULL;
-	SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions" );
+	SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
 }
 
 void ScreenNetSelectMusic::MenuDown( PlayerNumber pn, const InputEventType type )

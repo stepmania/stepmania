@@ -34,7 +34,6 @@ public:
 	ScreenPrompt( const CString &sScreenName );
 	virtual void Init();
 	void Load( 
-		ScreenMessage smSendOnPop,
 		CString sText, 
 		PromptType type = PROMPT_OK, 
 		PromptAnswer defaultAnswer = ANSWER_NO, 
@@ -43,7 +42,6 @@ public:
 		void* pCallbackData = NULL 
 		);
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	static PromptAnswer s_LastAnswer;
 	static bool s_bCancelledLast;

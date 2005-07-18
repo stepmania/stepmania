@@ -19,9 +19,9 @@ void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const CString &sText, Prom
 	// add the new state onto the back of the array
 	ScreenPrompt *pNewScreen = new ScreenPrompt( "ScreenPrompt" );
 	pNewScreen->Init();
-	pNewScreen->Load( smSendOnPop, sText, type, defaultAnswer, OnYes, OnNo, pCallbackData );
+	pNewScreen->Load( sText, type, defaultAnswer, OnYes, OnNo, pCallbackData );
 	SCREENMAN->ZeroNextUpdate();
-	SCREENMAN->PushScreen( pNewScreen, true );
+	SCREENMAN->PushScreen( pNewScreen, true, smSendOnPop );
 }
 
 
@@ -54,7 +54,6 @@ void ScreenPrompt::Init()
 }
 
 void ScreenPrompt::Load( 
-	ScreenMessage smSendOnPop,
 	CString sText, 
 	PromptType type, 
 	PromptAnswer defaultAnswer, 
@@ -62,7 +61,6 @@ void ScreenPrompt::Load(
 	void (*OnNo)(void*), 
 	void* pCallbackData )
 {
-	m_smSendOnPop = smSendOnPop;
 	m_sText = sText;
 	m_PromptType = type;
 	m_Answer = defaultAnswer;
@@ -114,21 +112,6 @@ void ScreenPrompt::Input( const DeviceInput& DeviceI, const InputEventType type,
 	}
 
 	ScreenWithMenuElements::Input( DeviceI, type, GameI, MenuI, StyleI );
-}
-
-void ScreenPrompt::HandleScreenMessage( const ScreenMessage SM )
-{
-	switch( SM )
-	{
-	case SM_GoToNextScreen:
-		if( SCREENMAN->IsStackedScreen(this) )
-		{
-			SCREENMAN->PopTopScreen( m_smSendOnPop );
-			return;
-		}
-	}
-
-	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 void ScreenPrompt::Change( int dir )

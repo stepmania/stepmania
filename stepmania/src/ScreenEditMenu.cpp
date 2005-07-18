@@ -71,7 +71,7 @@ public:
 	void Init()
 	{
 		ScreenPrompt::Init();
-		this->Load( SM_None, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
+		this->Load( "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
 	}
 
 	void End( bool bCancelled )
