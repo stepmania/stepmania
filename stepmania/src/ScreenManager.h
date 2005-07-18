@@ -42,7 +42,7 @@ public:
 	bool ConcurrentlyPrepareScreen( const CString &sScreenName, ScreenMessage send_when_done = SM_None );
 	bool IsConcurrentlyLoading() const;
 	void DeletePreparedScreens();
-	void PushScreen( Screen *pNewScreen, bool bDeleteWhenDone=false );
+	void PushScreen( Screen *pNewScreen, bool bDeleteWhenDone=false, ScreenMessage SendOnPop=SM_None );
 	void PopTopScreen( ScreenMessage SM );
 	Screen *GetTopScreen();
 
@@ -78,6 +78,7 @@ private:
 	{
 		Screen *m_pScreen;
 		bool m_bDeleteWhenDone;
+		ScreenMessage m_SendOnPop;
 	};
 	vector<LoadedScreen>	m_ScreenStack;	// bottommost to topmost
 	vector<Screen*>		m_OverlayScreens;

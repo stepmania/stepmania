@@ -138,6 +138,7 @@ void ScreenManager::Update( float fDeltaTime )
 
 		ls.m_pScreen->HandleScreenMessage( SM_LoseFocus );
 		SendMessageToTopScreen( SM );
+		SendMessageToTopScreen( ls.m_SendOnPop );
 		SendMessageToTopScreen( SM_GainFocus );
 
 		if( ls.m_bDeleteWhenDone )
@@ -435,7 +436,7 @@ void ScreenManager::ClearScreenStack()
 }
 
 /* Add a screen to m_ScreenStack.  This is the only function that adds to m_ScreenStack. */
-void ScreenManager::PushScreen( Screen *pNewScreen, bool bDeleteWhenDone )
+void ScreenManager::PushScreen( Screen *pNewScreen, bool bDeleteWhenDone, ScreenMessage SendOnPop )
 {
 	if( m_ScreenStack.size() )
 		m_ScreenStack.back().m_pScreen->HandleScreenMessage( SM_LoseFocus );
@@ -443,6 +444,7 @@ void ScreenManager::PushScreen( Screen *pNewScreen, bool bDeleteWhenDone )
 	LoadedScreen ls;
 	ls.m_pScreen = pNewScreen;
 	ls.m_bDeleteWhenDone = bDeleteWhenDone;
+	ls.m_SendOnPop = SendOnPop;
 
 	m_ScreenStack.push_back( ls );
 	pNewScreen->BeginScreen();
