@@ -9,6 +9,7 @@ class ActorFrame : public Actor
 {
 public:
 	ActorFrame();
+	ActorFrame( const ActorFrame &cpy );
 	virtual ~ActorFrame();
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );

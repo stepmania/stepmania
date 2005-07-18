@@ -39,6 +39,34 @@ ActorFrame::~ActorFrame()
 		DeleteAllChildren();
 }
 
+ActorFrame::ActorFrame( const ActorFrame &cpy ):
+	Actor( cpy )
+{
+#define CPY(x) this->x = cpy.x;
+	CPY( m_bPropagateCommands );
+	CPY( m_bDeleteChildren );
+	CPY( m_bDrawByZPosition );
+	CPY( m_fUpdateRate );
+	CPY( m_fFOV );
+	CPY( m_fVanishX );
+	CPY( m_fVanishY );
+	CPY( m_bOverrideLighting );
+	CPY( m_bLighting );
+#undef CPY
+
+	/* If m_bDeleteChildren, we own our children and it's up to us to copy
+	 * them.  If not, the derived class owns the children.  This must preserve
+	 * the current order of m_SubActors. */
+	if( m_bDeleteChildren )
+	{
+		for( unsigned i = 0; i < cpy.m_SubActors.size(); ++i )
+		{
+			Actor *pActor = cpy.m_SubActors[i]->Copy();
+			this->AddChild( pActor );
+		}
+	}
+}
+
 void ActorFrame::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
 	Actor::LoadFromNode( sDir, pNode );
