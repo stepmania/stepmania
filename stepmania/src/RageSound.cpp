@@ -173,14 +173,26 @@ bool RageSound::Load( CString sSoundFilePath, bool bPrecache )
 {
 	LOG->Trace( "RageSound::LoadSound( '%s', %d )", sSoundFilePath.c_str(), bPrecache );
 
-	CString error;
-	SoundReader *pSound = SoundReader_FileReader::OpenFile( sSoundFilePath, error );
+	/* If this sound is already preloaded and held by SOUNDMAN, just make a
+	 * copy of that.  Since RageSoundReader_Preload is reference counted, this
+	 * is cheap. */
+	SoundReader *pSound = SOUNDMAN->GetLoadedSound( sSoundFilePath );
 	if( pSound == NULL )
 	{
-		LOG->Warn( "RageSound::Load: error opening sound \"%s\": %s",
-			sSoundFilePath.c_str(), error.c_str() );
+		CString error;
+		pSound = SoundReader_FileReader::OpenFile( sSoundFilePath, error );
+		if( pSound == NULL )
+		{
+			LOG->Warn( "RageSound::Load: error opening sound \"%s\": %s",
+				sSoundFilePath.c_str(), error.c_str() );
 
-		pSound = new RageSoundReader_Silence;
+			pSound = new RageSoundReader_Silence;
+		}
+	}
+	else
+	{
+		/* The sound we were given from SOUNDMAN is already preloaded. */
+		bPrecache = false;
 	}
 
 	LoadSoundReader( pSound );
@@ -188,7 +200,13 @@ bool RageSound::Load( CString sSoundFilePath, bool bPrecache )
 	/* Try to precache.  Do this after calling LoadSoundReader() to put the
 	 * sound in this->m_pSource, so we preload after resampling. */
 	if( bPrecache )
-		RageSoundReader_Preload::PreloadSound( m_pSource );
+	{
+		if( RageSoundReader_Preload::PreloadSound(m_pSource) )
+		{
+			/* We've preloaded the sound.  Pass it to SOUNDMAN, for reuse. */
+			SOUNDMAN->AddLoadedSound( sSoundFilePath, (RageSoundReader_Preload *) m_pSource );
+		}
+	}
 
 	m_sFilePath = sSoundFilePath;
 
