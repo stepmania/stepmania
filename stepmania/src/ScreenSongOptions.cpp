@@ -1,6 +1,5 @@
 #include "global.h"
 #include "ScreenSongOptions.h"
-#include "ScreenManager.h"
 #include "RageLog.h"
 #include "GameState.h"
 #include "ThemeManager.h"
