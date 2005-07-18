@@ -134,9 +134,11 @@ void OptionRowType::Load( const CString &sType )
 	THEME_TITLES					.Load(sType,"ThemeTitles");
 	SHOW_BPM_IN_SPEED_TITLE			.Load(sType,"ShowBpmInSpeedTitle");
 	SHOW_OPTION_ICONS				.Load(sType,"ShowOptionIcons");
+	SHOW_UNDERLINES					.Load(sType,"ShowUnderlines");
 
 	m_textItemParent.LoadFromFont( THEME->GetPathF(sType,"item") );
-	m_UnderlineParent.Load( sType, OptionsCursor::underline );
+	if( SHOW_UNDERLINES )
+		m_UnderlineParent.Load( sType, OptionsCursor::underline );
 	m_textTitle.LoadFromFont( THEME->GetPathF(sType,"title") );
 	//m_sprBullet.Load( THEME->GetPathG(sType,"bullet") );
 	if( SHOW_OPTION_ICONS )
@@ -317,18 +319,21 @@ void OptionRow::InitText()
 		}
 
 		// init underlines
-		FOREACH_HumanPlayer( p )
+		if( m_pParentType->SHOW_UNDERLINES )
 		{
-			OptionsCursor *ul = new OptionsCursor( m_pParentType->m_UnderlineParent );
-			m_Underline[p].push_back( ul );
+			FOREACH_HumanPlayer( p )
+			{
+				OptionsCursor *ul = new OptionsCursor( m_pParentType->m_UnderlineParent );
+				m_Underline[p].push_back( ul );
 
-			ul->Set( p );
-			int iWidth, iX, iY;
-			GetWidthXY( p, 0, iWidth, iX, iY );
-			ul->SetX( float(iX) );
-			ul->SetWidth( float(iWidth) );
-			if( GetRowType() == OptionRow::ROW_EXIT )
-				ul->SetHidden( true );
+				ul->Set( p );
+				int iWidth, iX, iY;
+				GetWidthXY( p, 0, iWidth, iX, iY );
+				ul->SetX( float(iX) );
+				ul->SetWidth( float(iWidth) );
+				if( GetRowType() == OptionRow::ROW_EXIT )
+					ul->SetHidden( true );
+			}
 		}
 		break;
 
@@ -352,13 +357,16 @@ void OptionRow::InitText()
 				bt->SetX( fX );
 
 				// init underlines
-				FOREACH_HumanPlayer( p )
+				if( m_pParentType->SHOW_UNDERLINES )
 				{
-					OptionsCursor *ul = new OptionsCursor( m_pParentType->m_UnderlineParent );
-					m_Underline[p].push_back( ul );
-					ul->Set( p );
-					ul->SetX( fX );
-					ul->SetWidth( truncf(fItemWidth) );
+					FOREACH_HumanPlayer( p )
+					{
+						OptionsCursor *ul = new OptionsCursor( m_pParentType->m_UnderlineParent );
+						m_Underline[p].push_back( ul );
+						ul->Set( p );
+						ul->SetX( fX );
+						ul->SetWidth( truncf(fItemWidth) );
+					}
 				}
 
 				fX += fItemWidth/2 + m_pParentType->ITEMS_GAP_X;
@@ -470,6 +478,8 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 		return;
 
 	vector<OptionsCursor*> &vpUnderlines = m_Underline[pn];
+	if( vpUnderlines.empty() )
+		return;
 
 	PlayerNumber pnTakeSelectedFrom = m_RowDef.m_bOneChoiceForAllPlayers ? PLAYER_1 : pn;
 
@@ -619,6 +629,16 @@ void OptionRow::UpdateEnabledDisabled()
 			m_textItems[j]->BeginTweening( m_pParentType->TWEEN_SECONDS );
 			m_textItems[j]->SetDiffuse( color );
 		}
+		for( unsigned j=0; j<m_Underline[0].size(); j++ )
+		{
+			OptionsCursor *pUnderline = m_Underline[0][j];
+			if( pUnderline->DestTweenState().diffuse[0].a != color.a )
+				continue;
+			pUnderline->StopTweening();
+			pUnderline->BeginTweening( m_pParentType->TWEEN_SECONDS );
+			pUnderline->SetDiffuseAlpha( color.a );
+		}
+		
 		break;
 	case LAYOUT_SHOW_ONE_IN_ROW:
 		FOREACH_HumanPlayer( pn )
@@ -644,11 +664,14 @@ void OptionRow::UpdateEnabledDisabled()
 				bt.StopTweening();
 				bt.BeginTweening( m_pParentType->TWEEN_SECONDS );
 				bt.SetDiffuse( color );
+			}
 
-				OptionsCursor &ul = *m_Underline[pn][0];
-				ul.StopTweening();
-				ul.BeginTweening( m_pParentType->TWEEN_SECONDS );
-				ul.SetDiffuseAlpha( color.a );
+			OptionsCursor *pUnderline = m_Underline[pn].size()? m_Underline[pn][0]:NULL;
+			if( pUnderline != NULL && pUnderline->DestTweenState().diffuse[0].a != color.a )
+			{
+				pUnderline->StopTweening();
+				pUnderline->BeginTweening( m_pParentType->TWEEN_SECONDS );
+				pUnderline->SetDiffuseAlpha( color.a );
 			}
 		}
 		break;
