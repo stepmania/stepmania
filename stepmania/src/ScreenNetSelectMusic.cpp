@@ -20,7 +20,6 @@
 #include "MusicWheel.h"
 #include "InputMapper.h"
 #include "RageLog.h"
-#include "ScreenPlayerOptions.h"	// for SM_BackFromPlayerOptions
 
 AutoScreenMessage( SM_NoSongs )
 AutoScreenMessage( SM_ChangeSong )
@@ -29,6 +28,7 @@ AutoScreenMessage( SM_SetWheelSong )
 AutoScreenMessage( SM_RefreshWheelLocation )
 AutoScreenMessage( SM_SongChanged )
 AutoScreenMessage( SM_UsersUpdate )
+AutoScreenMessage( SM_BackFromPlayerOptions )
 
 const CString AllGroups			= "[ALL MUSIC]";
 
