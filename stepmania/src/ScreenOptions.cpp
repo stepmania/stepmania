@@ -805,7 +805,7 @@ void ScreenOptions::MenuStart( PlayerNumber pn, const InputEventType type )
 				INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) );
 			if( bHoldingLeftAndRight )
 			{
-				MoveRow( pn, -1, type != IET_FIRST_PRESS );		
+				MoveRowRelative( pn, -1, type != IET_FIRST_PRESS );		
 				return;
 			}
 		}
@@ -907,7 +907,7 @@ void ScreenOptions::ProcessMenuStart( PlayerNumber pn, const InputEventType type
 		case NAV_FIVE_KEY:
 			/* Jump to the exit row.  (If everyone's already on the exit row, then
 			 * we'll have already gone to the next screen above.) */
-			MoveRow( pn, m_pRows.size()-m_iCurrentRow[pn]-1, type != IET_FIRST_PRESS );
+			MoveRowRelative( pn, m_pRows.size()-m_iCurrentRow[pn]-1, type != IET_FIRST_PRESS );
 			break;
 		}
 	}
@@ -945,7 +945,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		 *
 		 * XXX: Only allow repeats if the opposite key isn't pressed; otherwise, holding both
 		 * directions will repeat in place continuously, which is weird. */
-		MoveRow( pn, iDelta, Repeat );
+		MoveRowRelative( pn, iDelta, Repeat );
 		return;
 	}
 
@@ -1045,7 +1045,7 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 
 
 /* Up/down */
-void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat ) 
+void ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat ) 
 {
 	const int iCurrentRow = m_iCurrentRow[pn];
 	OptionRow &row = *m_pRows[iCurrentRow];
@@ -1057,14 +1057,14 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 		row.SetChoiceInRowWithFocus( pn, 0 );
 	}
 
-	LOG->Trace("move pn %i, dir %i, rep %i", pn, dir, Repeat);
+	LOG->Trace("move pn %i, dir %i, rep %i", pn, iDir, Repeat);
 	bool changed = false;
 	FOREACH_PlayerNumber( p )
 	{
 		if( m_InputMode == INPUTMODE_INDIVIDUAL && p != pn )
 			continue;	// skip
 
-		int r = m_iCurrentRow[p] + dir;
+		int r = m_iCurrentRow[p] + iDir;
 		if( Repeat && ( r == -1 || r == (int) m_pRows.size() ) )
 			continue; // don't wrap while repeating
 
@@ -1106,11 +1106,17 @@ void ScreenOptions::MoveRow( PlayerNumber pn, int dir, bool Repeat )
 	}
 	if( changed )
 	{
-		if( dir < 0 )
+		if( iDir < 0 )
 			m_SoundPrevRow.Play();
 		else
 			m_SoundNextRow.Play();
 	}
+}
+
+void ScreenOptions::MoveRowAbsolute( PlayerNumber pn, int iRow, bool bRepeat ) 
+{
+	int iDir = iRow - m_iCurrentRow[pn];
+	MoveRowRelative( pn, iDir, bRepeat );
 }
 
 void ScreenOptions::MenuUp( PlayerNumber pn, const InputEventType type )
@@ -1170,7 +1176,7 @@ void ScreenOptions::MenuUpDown( PlayerNumber pn, const InputEventType type, int 
 
 		if( row.GetRowDef().IsEnabledForPlayer(pn) )
 		{
-			MoveRow( pn, iDelta, bRepeat );
+			MoveRowRelative( pn, iDelta, bRepeat );
 			return;
 		}
 	}

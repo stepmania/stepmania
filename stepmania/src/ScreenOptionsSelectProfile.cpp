@@ -55,7 +55,6 @@ void ScreenOptionsSelectProfile::Init()
 
 
 	vector<OptionRowDefinition> vDefs;
-	vector<OptionRowHandler*> vHands;
 
 	OptionRowDefinition def;
 	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
@@ -66,6 +65,7 @@ void ScreenOptionsSelectProfile::Init()
 	def.m_bAllowExplanation = false;
 	
 	int iIndex = 0;
+	int iRowToSelect = -1;
 
 	{
 		def.m_sName = "";
@@ -77,13 +77,15 @@ void ScreenOptionsSelectProfile::Init()
 		GameCommand &gc = pHand->m_gc;
 		CString sCommand = "screen,ScreenOptionsEditProfile";
 		gc.Load( iIndex++, ParseCommands(sCommand) );
-		vHands.push_back( pHand );
 	}
 
 	vector<CString> vsProfileID;
 	PROFILEMAN->GetLocalProfileIDs( vsProfileID );
 	FOREACH_CONST( CString, vsProfileID, s )
 	{
+		if( *s == GAMESTATE->m_sLastSelectedProfileID )
+			iRowToSelect = iIndex;
+
 		Profile &pro = PROFILEMAN->GetLocalProfile( *s );
 		def.m_sName = "";
 		def.m_vsChoices.clear();
@@ -94,10 +96,14 @@ void ScreenOptionsSelectProfile::Init()
 		GameCommand &gc = pHand->m_gc;
 		CString sCommand = "profileid," + *s;
 		gc.Load( iIndex++, ParseCommands(sCommand) );
-		vHands.push_back( pHand );
 	}
 
-	InitMenu( vDefs, vHands );
+	InitMenu( vDefs, m_OptionRowHandlers );
+
+	if( iRowToSelect != -1 )
+		MoveRowAbsolute( PLAYER_1, iRowToSelect, false );
+
+	GAMESTATE->m_sLastSelectedProfileID = "";
 }
 
 ScreenOptionsSelectProfile::~ScreenOptionsSelectProfile()

@@ -66,9 +66,10 @@ protected:
 
 	virtual void BeginFadingOut() { this->PostScreenMessage( SM_BeginFadingOut, 0 ); }
 
-	void ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat );
+	void ChangeValueInRow( PlayerNumber pn, int iDelta, bool bRepeat );
 	virtual void AfterChangeValueInRow( PlayerNumber pn ) {}	// override this to detect when the value in a row has changed
-	void MoveRow( PlayerNumber pn, int dir, bool Repeat );
+	void MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat );
+	void MoveRowAbsolute( PlayerNumber pn, int iRow, bool bRepeat );
 
 	void MenuLeft( PlayerNumber pn, const InputEventType type )		{ ChangeValueInRow(pn,-1,type != IET_FIRST_PRESS); }
 	void MenuRight( PlayerNumber pn, const InputEventType type )	{ ChangeValueInRow(pn,+1,type != IET_FIRST_PRESS); }
