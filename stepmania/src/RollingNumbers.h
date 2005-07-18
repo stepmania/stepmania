@@ -11,6 +11,7 @@ public:
 	RollingNumbers();
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual Actor *Copy() const;
 
 	virtual void Update( float fDeltaTime );
 

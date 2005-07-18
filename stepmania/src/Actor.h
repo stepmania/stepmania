@@ -28,6 +28,7 @@ class Actor : public IMessageSubscriber
 public:
 	Actor();
 	virtual ~Actor();
+	virtual Actor *Copy() const;
 	void UnsubcribeAndClearCommands();
 	virtual void Reset();
 	void LoadFromNode( const CString& sDir, const XNode* pNode );

@@ -13,6 +13,7 @@ public:
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 	void LoadChildrenFromNode( const CString& sDir, const XNode* pNode );
+	virtual Actor *Copy() const;
 
 	virtual void AddChild( Actor* pActor );
 	virtual void RemoveChild( Actor* pActor );
@@ -88,6 +89,7 @@ public:
 
 		LoadChildrenFromNode( sDir, pNode );
 	}
+	virtual Actor *Copy() const;
 };
 
 #endif

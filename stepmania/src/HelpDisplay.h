@@ -16,6 +16,7 @@ public:
 	void Load( const CString &sType );
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual Actor *Copy() const;
 
 	void SetTips( const CStringArray &arrayTips ) { SetTips( arrayTips, arrayTips ); }
 	void SetTips( const CStringArray &arrayTips, const CStringArray &arrayTipsAlt );
@@ -42,6 +43,7 @@ public:
 	GenreDisplay();
 	~GenreDisplay();
 	void PlayCommand( const CString &sCommandName, Actor* pParent );
+	virtual Actor *Copy() const;
 };
 
 #endif

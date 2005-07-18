@@ -18,6 +18,8 @@
 
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 
+Actor *Actor::Copy() const { return new Actor(*this); }
+
 static float g_fCabinetLights[NUM_CABINET_LIGHTS];
 
 void Actor::SetBGMTime( float fTime, float fBeat )

@@ -19,6 +19,7 @@ public:
 
 	bool Load( CString sFilePath );
 	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual Actor *Copy() const;
 
 	void SetFromSteps( PlayerNumber pn, const Steps* pSteps );
 	void SetFromTrail( PlayerNumber pn, const Trail* pTrail );

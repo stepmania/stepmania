@@ -16,6 +16,7 @@
  */
 //REGISTER_ACTOR_CLASS( ActorScroller )
 REGISTER_ACTOR_CLASS_WITH_NAME( ActorScrollerAutoDeleteChildren, ActorScroller )
+Actor *ActorScroller::Copy() const { return new ActorScroller(*this); }
 
 
 ActorScroller::ActorScroller()

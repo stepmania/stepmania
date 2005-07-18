@@ -20,7 +20,8 @@ typedef Actor* (*CreateActorFn)(const CString& sDir, const XNode* pNode);
 	public: \
 		Register##className() { ActorUtil::Register(#externalClassName,Create##className); } \
 	}; \
-	static Register##className register##className;
+	static Register##className register##className; \
+	Actor *className::Copy() const { return new className(*this); }
 
 #define REGISTER_ACTOR_CLASS( className ) REGISTER_ACTOR_CLASS_WITH_NAME( className, className )
 

@@ -15,6 +15,7 @@ public:
 	}	
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual Actor *Copy() const;
 };
 
 #endif

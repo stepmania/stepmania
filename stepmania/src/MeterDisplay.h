@@ -12,6 +12,7 @@ public:
 	MeterDisplay();
 	void Load( CString sStreamPath, float fStreamWidth, CString sTipPath );
 	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual Actor *Copy() const;
 
 	void SetPercent( float fPercent );
 
@@ -26,6 +27,7 @@ class SongMeterDisplay: public MeterDisplay
 {
 public:
 	virtual void Update( float fDeltaTime );
+	virtual Actor *Copy() const;
 };
 
 #endif

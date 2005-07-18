@@ -23,6 +23,7 @@ public:
 	void Load( const CString &sType );
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual Actor *Copy() const;
 
 	void SetFromGameState( PlayerNumber pn );
 	void SetFromMeterAndDifficulty( int iMeter, Difficulty dc );
