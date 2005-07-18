@@ -193,6 +193,8 @@ void ScreenOptions::Init()
 		m_sprDisqualify[p]->SetDrawOrder( 2 );
 		m_framePage.AddChild( m_sprDisqualify[p] );
 	}
+
+	m_OptionRowType.Load( m_sName );
 }
 
 void ScreenOptions::SetOptionIcon( PlayerNumber pn, int iRow, CString sText, GameCommand &gc )
@@ -205,8 +207,6 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 	LOG->Trace( "ScreenOptions::InitMenu()" );
 
 	ASSERT( vDefs.size() == vHands.size() );
-
-	m_OptionRowType.Load( m_sName );
 
 	for( unsigned r=0; r<vDefs.size(); r++ )		// foreach row
 	{
