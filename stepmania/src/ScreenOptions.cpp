@@ -202,7 +202,7 @@ void ScreenOptions::SetOptionIcon( PlayerNumber pn, int iRow, CString sText, Gam
 
 void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands )
 {
-	LOG->Trace( "ScreenOptions::Set()" );
+	LOG->Trace( "ScreenOptions::InitMenu()" );
 
 	ASSERT( vDefs.size() == vHands.size() );
 
@@ -222,15 +222,6 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 
 		row.LoadNormal( def, hand, bFirstRowGoesDown );
 		row.InitText();
-
-		vector<PlayerNumber> vpns;
-		FOREACH_HumanPlayer( p )
-			vpns.push_back( p );
-		this->ImportOptions( r, vpns );
-	
-		CHECKPOINT_M( ssprintf("row %i: %s", r, row.GetRowDef().m_sName.c_str()) );
-
-		row.AfterImportOptions();
 	}
 
 	if( SHOW_EXIT_ROW )
@@ -242,7 +233,6 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 		row.InitText();
 		row.SetDrawOrder( 1 );
 		m_framePage.AddChild( &row );
-		row.AfterImportOptions();
 	}
 
 	m_framePage.SortByDrawOrder();
@@ -259,6 +249,17 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 void ScreenOptions::BeginScreen()
 {
 	ScreenWithMenuElements::BeginScreen();
+
+	for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
+	{
+		vector<PlayerNumber> vpns;
+		FOREACH_HumanPlayer( p )
+			vpns.push_back( p );
+		this->ImportOptions( r, vpns );
+	
+		OptionRow *pRow = m_pRows[r];
+		pRow->AfterImportOptions();
+	}
 
 	ON_COMMAND( m_framePage );
 
