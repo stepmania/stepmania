@@ -30,8 +30,6 @@
 #include "ActorUtil.h"
 #include "ScreenPrompt.h"
 #include "CommonMetrics.h"
-#include "ScreenPlayerOptions.h"	// for SM_BackFromPlayerOptions
-#include "ScreenSongOptions.h"	// for SM_BackFromSongOptions
 #include <float.h>
 #include "BackgroundUtil.h"
 
@@ -57,6 +55,7 @@ AutoScreenMessage( SM_UpdateTextInfo )
 AutoScreenMessage( SM_BackFromMainMenu )
 AutoScreenMessage( SM_BackFromAreaMenu )
 AutoScreenMessage( SM_BackFromStepsInformation )
+AutoScreenMessage( SM_BackFromPlayerOptions )
 AutoScreenMessage( SM_BackFromEditOptions )
 AutoScreenMessage( SM_BackFromSongInformation )
 AutoScreenMessage( SM_BackFromBGChange )
@@ -1739,9 +1738,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			ASSERT( m_pAttacksFromCourse );
 		}
 	}
-	else if( 
-		SM == SM_BackFromPlayerOptions ||
-		SM == SM_BackFromSongOptions )
+	else if( SM == SM_BackFromPlayerOptions )
 	{
 		GAMESTATE->StoreSelectedOptions();	// so that the options stick when we reset Course attacks
 
@@ -2084,10 +2081,10 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				PROMPT_YES_NO, ANSWER_NO );
 			break;
 		case player_options:
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptionsEdit" );
+			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptionsEdit", SM_BackFromPlayerOptions );
 			break;
 		case song_options:
-			SCREENMAN->AddNewScreenToTop( "ScreenSongOptionsEdit" );
+			SCREENMAN->AddNewScreenToTop( "ScreenSongOptionsEdit", SM_BackFromPlayerOptions );
 			break;
 		case edit_song_info:
 			{
