@@ -37,7 +37,7 @@ public:
 
 	// Main screen stack management
 	void SetNewScreen( const CString &sName );
-	void AddNewScreenToTop( const CString &sName );
+	void AddNewScreenToTop( const CString &sName, ScreenMessage SendOnPop=SM_None );
 	void PrepareScreen( const CString &sScreenName );	// creates and caches screen so that the next call to SetNewScreen for the prep'd screen will be very quick.
 	bool ConcurrentlyPrepareScreen( const CString &sScreenName, ScreenMessage send_when_done = SM_None );
 	bool IsConcurrentlyLoading() const;

@@ -551,10 +551,10 @@ void ScreenManager::LoadDelayedScreen()
 	PushScreen( pNewScreen, true );
 }
 
-void ScreenManager::AddNewScreenToTop( const CString &sScreenName )
+void ScreenManager::AddNewScreenToTop( const CString &sScreenName, ScreenMessage SendOnPop )
 {
 	Screen* pNewScreen = MakeNewScreen(sScreenName);
-	PushScreen( pNewScreen, true );
+	PushScreen( pNewScreen, true, SendOnPop );
 }
 
 void ScreenManager::PopTopScreen( ScreenMessage SM )
