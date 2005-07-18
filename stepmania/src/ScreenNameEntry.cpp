@@ -244,6 +244,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	}
 
 
+	m_Timer.Load();
 	if( !PREFSMAN->m_bMenuTimer )
 		m_Timer.Disable();
 	else

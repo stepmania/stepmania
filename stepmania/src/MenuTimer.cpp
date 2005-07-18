@@ -27,7 +27,10 @@ MenuTimer::MenuTimer() :
 	m_fStallSeconds = 0;
 	m_fStallSecondsLeft = MAX_STALL_SECONDS;
 	m_bPaused = false;
+}
 
+void MenuTimer::Load()
+{
 	for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
 	{
 		m_text[i].LoadFromFont( THEME->GetPathF("MenuTimer","numbers") );

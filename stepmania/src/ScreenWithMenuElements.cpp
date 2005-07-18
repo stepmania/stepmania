@@ -92,6 +92,7 @@ void ScreenWithMenuElements::Init()
 	m_bTimerEnabled = (TIMER_SECONDS != -1);
 	if( m_bTimerEnabled )
 	{
+		m_MenuTimer->Load();
 		m_MenuTimer->SetName( "Timer" );
 		if( TIMER_STEALTH )
 			m_MenuTimer->EnableStealth( true );

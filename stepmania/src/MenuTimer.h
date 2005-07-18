@@ -15,6 +15,7 @@ class MenuTimer : public ActorFrame
 {
 public:
 	MenuTimer();
+	void Load();
 	
 	virtual void Update( float fDeltaTime ); 
 
