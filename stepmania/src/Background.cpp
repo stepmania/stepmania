@@ -78,6 +78,7 @@ public:
 	
 	DancingCharacters* GetDancingCharacters() { return m_pDancingCharacters; };
 
+	void GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgroundChangesOut[NUM_BackgroundLayer] );
 
 protected:
 	bool m_bInitted;
@@ -313,7 +314,8 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		if( sToResolve.empty() )
 		{
 			if( i == 0 )
-				return false;
+		return false;
+
 			else
 				continue;
 		}
@@ -378,8 +380,8 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 
 	// Set Lua color globals
-	LUA->SetGlobal( ssprintf("Color%d",1), bd.m_sColor1.empty() ? CString("1,1,1,1") : bd.m_sColor1 );
-	LUA->SetGlobal( ssprintf("Color%d",2), bd.m_sColor2.empty() ? CString("1,1,1,1") : bd.m_sColor2 );
+	LUA->SetGlobal( "Color1", bd.m_sColor1.empty() ? CString("1,1,1,1") : bd.m_sColor1 );
+	LUA->SetGlobal( "Color2", bd.m_sColor2.empty() ? CString("1,1,1,1") : bd.m_sColor2 );
 
 
 	// Resolve the effect file.
@@ -408,13 +410,14 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 
 	Actor *pActor = ActorUtil::MakeActor( sEffectFile );
+
 	ASSERT( pActor );
 	m_BGAnimations[bd] = pActor;
 
 	for( unsigned i=0; i<vsResolved.size(); i++ )
 		LUA->SetGlobal( ssprintf("File%d",i+1), CString() );
-	LUA->SetGlobal( ssprintf("Color%d",1), CString() );
-	LUA->SetGlobal( ssprintf("Color%d",2), CString() );
+	LUA->UnsetGlobal( "Color1" );
+	LUA->UnsetGlobal( "Color2" );
 
 	return true;
 }
@@ -914,6 +917,12 @@ void BackgroundImpl::DrawPrimitives()
 	ActorFrame::DrawPrimitives();
 }
 
+void BackgroundImpl::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgroundChangesOut[NUM_BackgroundLayer] )
+{
+	FOREACH_BackgroundLayer( i )
+		*pBackgroundChangesOut[i] = m_Layer[i].m_aBGChanges;
+}
+
 bool BackgroundImpl::IsDangerAllVisible()
 {
 	FOREACH_PlayerNumber( p )
@@ -1014,6 +1023,7 @@ void Background::Unload()								{ m_pImpl->Unload(); }
 void Background::FadeToActualBrightness()				{ m_pImpl->FadeToActualBrightness(); }
 void Background::SetBrightness( float fBrightness )		{ m_pImpl->SetBrightness(fBrightness); }
 DancingCharacters* Background::GetDancingCharacters()	{ return m_pImpl->GetDancingCharacters(); }
+void Background::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBackgroundChangesOut[NUM_BackgroundLayer] ) { m_pImpl->GetLoadedBackgroundChanges(pBackgroundChangesOut); }
 
 
 /*

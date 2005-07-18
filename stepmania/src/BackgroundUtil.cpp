@@ -6,6 +6,7 @@
 #include "IniFile.h"
 #include "RageLog.h"
 #include <set>
+#include "Background.h"
 
 
 bool BackgroundDef::operator<( const BackgroundDef &other ) const
@@ -297,6 +298,16 @@ found_files:
 		vsNamesOut.push_back( sName );
 	}
 	StripCvs( vsPathsOut, vsNamesOut );
+}
+
+void BackgroundUtil::BakeAllBackgroundChanges( Song *pSong )
+{
+	Background bg;
+	bg.LoadFromSong( pSong );
+	vector<BackgroundChange> *vBGChanges[NUM_BackgroundLayer];
+	FOREACH_BackgroundLayer( i )
+		vBGChanges[i] = &pSong->GetBackgroundChanges(i);
+	bg.GetLoadedBackgroundChanges( vBGChanges );
 }
 
 /*

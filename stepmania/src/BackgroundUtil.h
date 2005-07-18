@@ -72,6 +72,8 @@ namespace BackgroundUtil
 	void GetSongBitmaps(			const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
 	void GetGlobalBGAnimations(		const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut );
 	void GetGlobalRandomMovies(		const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut, bool bTryInsideOfSongGroupAndGenreFirst = true, bool bTryInsideOfSongGroupFirst = true );
+
+	void BakeAllBackgroundChanges( Song *pSong );
 };
 
 

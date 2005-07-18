@@ -30,6 +30,8 @@ public:
 	
 	DancingCharacters* GetDancingCharacters();
 
+	void GetLoadedBackgroundChanges( vector<BackgroundChange> **pBackgroundChangesOut );
+
 protected:
 	BackgroundImpl *m_pImpl;
 };
