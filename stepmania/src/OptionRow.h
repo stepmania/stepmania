@@ -122,6 +122,7 @@ private:
 	ThemeMetric<bool>				THEME_ITEMS;
 	ThemeMetric<bool>				THEME_TITLES;
 	ThemeMetric<bool>				SHOW_BPM_IN_SPEED_TITLE;
+	ThemeMetric<bool>				SHOW_OPTION_ICONS;
 
 	friend class OptionRow;
 };

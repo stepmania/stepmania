@@ -110,12 +110,6 @@ void OptionRowType::Load( const CString &sType )
 {
 	m_sType = sType;
 
-	m_textItemParent.LoadFromFont( THEME->GetPathF(sType,"item") );
-	m_UnderlineParent.Load( sType, OptionsCursor::underline );
-	m_textTitle.LoadFromFont( THEME->GetPathF(sType,"title") );
-	//m_sprBullet.Load( THEME->GetPathG(sType,"bullet") );
-	m_OptionIcon.Load( sType );
-
 	BULLET_X   						.Load(sType,"BulletX");
 	LABELS_X						.Load(sType,"LabelsX");
 	LABELS_ON_COMMAND				.Load(sType,"LabelsOnCommand");
@@ -139,6 +133,14 @@ void OptionRowType::Load( const CString &sType )
 	THEME_ITEMS						.Load(sType,"ThemeItems");
 	THEME_TITLES					.Load(sType,"ThemeTitles");
 	SHOW_BPM_IN_SPEED_TITLE			.Load(sType,"ShowBpmInSpeedTitle");
+	SHOW_OPTION_ICONS				.Load(sType,"ShowOptionIcons");
+
+	m_textItemParent.LoadFromFont( THEME->GetPathF(sType,"item") );
+	m_UnderlineParent.Load( sType, OptionsCursor::underline );
+	m_textTitle.LoadFromFont( THEME->GetPathF(sType,"title") );
+	//m_sprBullet.Load( THEME->GetPathG(sType,"bullet") );
+	if( SHOW_OPTION_ICONS )
+		m_OptionIcon.Load( sType );
 }
 
 void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown )
@@ -240,23 +242,26 @@ void OptionRow::InitText()
 	m_sprBullet->SetDrawOrder(-1); // under title
 	m_Frame.AddChild( m_sprBullet );
 
-	switch( m_RowType )
+	if( m_pParentType->SHOW_OPTION_ICONS )
 	{
-	case ROW_NORMAL:
-		FOREACH_PlayerNumber( p )
+		switch( m_RowType )
 		{
-			m_OptionIcons[p] = new OptionIcon( m_pParentType->m_OptionIcon );
-			m_OptionIcons[p]->SetDrawOrder(-1); // under title
-			m_OptionIcons[p]->RunCommands( m_pParentType->ICONS_ON_COMMAND );
-			
-			m_Frame.AddChild( m_OptionIcons[p] );
+		case ROW_NORMAL:
+			FOREACH_PlayerNumber( p )
+			{
+				m_OptionIcons[p] = new OptionIcon( m_pParentType->m_OptionIcon );
+				m_OptionIcons[p]->SetDrawOrder(-1); // under title
+				m_OptionIcons[p]->RunCommands( m_pParentType->ICONS_ON_COMMAND );
+				
+				m_Frame.AddChild( m_OptionIcons[p] );
 
-			GameCommand gc;
-			SetOptionIcon( p, "", gc );
+				GameCommand gc;
+				SetOptionIcon( p, "", gc );
+			}
+			break;
+		case ROW_EXIT:
+			break;
 		}
-		break;
-	case ROW_EXIT:
-		break;
 	}
 
 	// If the items will go off the edge of the screen, then re-init with the "long row" style.
@@ -501,12 +506,14 @@ void OptionRow::PositionIcons()
 
 	FOREACH_HumanPlayer( p )	// foreach player
 	{
-		OptionIcon &icon = *m_OptionIcons[p];
+		OptionIcon *pIcon = m_OptionIcons[p];
+		if( pIcon == NULL )
+			continue;
 
-		icon.SetX( m_pParentType->ICONS_X.GetValue(p) );
+		pIcon->SetX( m_pParentType->ICONS_X.GetValue(p) );
 
 		/* XXX: this doesn't work since icon is an ActorFrame */
-		icon.SetDiffuse( RageColor(1,1,1, m_bHidden? 0.0f:1.0f) );
+		pIcon->SetDiffuse( RageColor(1,1,1, m_bHidden? 0.0f:1.0f) );
 	}
 }
 
@@ -681,7 +688,8 @@ void OptionRow::SetOptionIcon( PlayerNumber pn, const CString &sText, GameComman
 	LUA->Release( L );
 
 	m_sprBullet->PlayCommand( "Refresh" );
-	m_OptionIcons[pn]->Set( pn, sText, false );
+	if( m_OptionIcons[pn] != NULL )
+		m_OptionIcons[pn]->Set( pn, sText, false );
 
 	L = LUA->Get();
 	GAMESTATE->m_Environment->Unset( L, "ThisGameCommand" );
