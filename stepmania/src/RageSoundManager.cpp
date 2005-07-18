@@ -114,9 +114,6 @@ void RageSoundManager::Update( float fDeltaTime )
 				delete it->second;
 				m_mapPreloadedSounds.erase( it );
 			}
-			else
-				LOG->Trace( "Kept sound \"%s\" (%i)", it->first.c_str(),
-					it->second->GetReferenceCount() );
 
 			it = next;
 		}
