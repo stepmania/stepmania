@@ -229,6 +229,9 @@ void ScreenWithMenuElements::Update( float fDeltaTime )
 
 void ScreenWithMenuElements::ResetTimer()
 {
+	if( !m_bTimerEnabled )
+		return;
+
 	if( TIMER_SECONDS > 0.0f  &&  (PREFSMAN->m_bMenuTimer || FORCE_TIMER)  &&  !GAMESTATE->IsEditing() )
 	{
 		m_MenuTimer->SetSeconds( TIMER_SECONDS );
@@ -286,7 +289,8 @@ void ScreenWithMenuElements::Cancel( ScreenMessage smSendWhenDone )
 	if( STOP_MUSIC_ON_BACK )
 		SOUND->StopMusic();
 
-	m_MenuTimer->Stop();
+	if( m_bTimerEnabled )
+		m_MenuTimer->Stop();
 	m_Cancel.StartTransitioning( smSendWhenDone );
 }
 
@@ -297,7 +301,8 @@ bool ScreenWithMenuElements::IsTransitioning()
 
 void ScreenWithMenuElements::StopTimer()
 {
-	m_MenuTimer->Stop();
+	if( m_bTimerEnabled )
+		m_MenuTimer->Stop();
 }
 
 void ScreenWithMenuElements::HandleMessage( const CString& sMessage )
