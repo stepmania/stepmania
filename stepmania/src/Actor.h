@@ -398,7 +398,6 @@ protected:
 	//
 	// Temporary variables that are filled just before drawing
 	//
-	TweenState m_tempState;
 	TweenState *m_pTempState;
 
 	bool	m_bFirstUpdate;
