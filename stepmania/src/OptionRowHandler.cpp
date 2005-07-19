@@ -16,7 +16,6 @@
 #include "StepsUtil.h"
 #include "GameManager.h"
 #include "Foreach.h"
-#include "ScreenManager.h"
 #include "GameSoundManager.h"
 #include "CommonMetrics.h"
 
