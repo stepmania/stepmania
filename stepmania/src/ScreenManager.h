@@ -44,6 +44,7 @@ public:
 	void DeletePreparedScreens();
 	void PushScreen( Screen *pNewScreen, bool bDeleteWhenDone=false, ScreenMessage SendOnPop=SM_None );
 	void PopTopScreen( ScreenMessage SM );
+	Screen* MakeNewScreen( const CString &sName );
 	Screen *GetTopScreen();
 
 	// System messages
@@ -100,7 +101,6 @@ private:
 	// operations take a long time, and will cause a skip on the next update.
 	bool				m_bZeroNextUpdate;
 
-	Screen* MakeNewScreen( const CString &sName );
 	void ClearScreenStack();
 	void LoadDelayedScreen();
 
