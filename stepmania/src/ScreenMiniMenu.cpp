@@ -37,7 +37,6 @@ void ScreenMiniMenu::Init( const MenuDef* pDef, ScreenMessage SM_SendOnOK, Scree
 	m_Background.Load( THEME->GetPathB(m_sName,"background") );
 	m_Background->SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );
 	this->AddChild( m_Background );
-	m_Background->PlayCommand( "On" );
 
 	this->SortByDrawOrder();
 
@@ -82,6 +81,13 @@ void ScreenMiniMenu::Init( const MenuDef* pDef, ScreenMessage SM_SendOnOK, Scree
 	vHands.resize( vDefs.size(), NULL );
 
 	ScreenOptions::InitMenu( vDefs, vHands );
+}
+
+void ScreenMiniMenu::BeginScreen()
+{
+	ScreenOptions::BeginScreen();
+
+	m_Background->PlayCommand( "On" );
 }
 
 void ScreenMiniMenu::OnChange( PlayerNumber pn )

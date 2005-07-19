@@ -80,6 +80,7 @@ public:
 
 	ScreenMiniMenu( CString sScreenClass );
 	void Init( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel );
+	virtual void BeginScreen();
 	void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
