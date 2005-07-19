@@ -38,7 +38,7 @@ void Actor::SetBGMLight( int iLightNumber, float fCabinetLights )
  * that shouldn't change the position of the actor. */
 void Actor::Reset()
 {
-	m_Tweens.clear();
+	StopTweening();
 
 	m_pTempState = NULL;
 
