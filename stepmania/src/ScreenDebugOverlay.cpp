@@ -267,7 +267,7 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_FillMachineStats:	s2="";					break;
 		case DebugLine_SendNotesEnded:		s2="";					break;
 		case DebugLine_Volume:				s2=bOn ? "on":"off";	break;
-		case DebugLine_ReloadCurrentScreen:	s2=SCREENMAN ? SCREENMAN->GetTopScreen()->m_sName:"";	break;
+		case DebugLine_ReloadCurrentScreen:	s2=SCREENMAN ? SCREENMAN->GetTopScreen()->GetName():"";	break;
 		case DebugLine_ReloadTheme:			s2="";					break;
 		case DebugLine_WriteProfiles:		s2="";					break;
 		case DebugLine_WritePreferences:	s2="";					break;
@@ -415,7 +415,7 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 			case DebugLine_ReloadCurrentScreen:
 				SOUND->StopMusic();
 				ResetGame();
-				SCREENMAN->SetNewScreen( SCREENMAN->GetTopScreen()->m_sName );
+				SCREENMAN->SetNewScreen( SCREENMAN->GetTopScreen()->GetName() );
 				break;
 			case DebugLine_ReloadTheme:
 				THEME->ReloadMetrics();

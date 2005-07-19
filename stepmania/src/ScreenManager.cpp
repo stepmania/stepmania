@@ -351,7 +351,7 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 	for( int i = (int)m_vPreparedScreens.size()-1; i>=0; i-- )
 	{
 		Screen *&pScreen = m_vPreparedScreens[i];
-		if( pScreen->m_sName == sScreenName )
+		if( pScreen->GetName() == sScreenName )
 			return;
 	}
 
@@ -370,7 +370,7 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 		Actor *pNewBGA = NULL;
 		FOREACH( Actor*, m_vPreparedBackgrounds, a )
 		{
-			if( (*a)->m_sName == sNewBGA )
+			if( (*a)->GetName() == sNewBGA )
 			{
 				pNewBGA = *a;
 				break;
@@ -486,7 +486,7 @@ void ScreenManager::LoadDelayedScreen()
 	Screen* pNewScreen = NULL;
 	FOREACH( Screen*, m_vPreparedScreens, s )
 	{
-		if( (*s)->m_sName == sScreenName )
+		if( (*s)->GetName() == sScreenName )
 		{
 			pNewScreen = *s;
 			m_vPreparedScreens.erase( s );
@@ -521,7 +521,7 @@ void ScreenManager::LoadDelayedScreen()
 		{
 			FOREACH( Actor*, m_vPreparedBackgrounds, a )
 			{
-				if( (*a)->m_sName == sNewBGA )
+				if( (*a)->GetName() == sNewBGA )
 				{
 					pNewBGA = *a;
 					m_vPreparedBackgrounds.erase( a );
