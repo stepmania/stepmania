@@ -60,7 +60,7 @@ bool ScreenSelectProfile::ProcessMenuStart( PlayerNumber pn )
 	{
 		vector<CString> vProfileIDs;
 		PROFILEMAN->GetLocalProfileIDs( vProfileIDs );
-		if( vProfileIDs.size() >= MAX_NUM_LOCAL_PROFILES )
+		if( (int) vProfileIDs.size() >= MAX_NUM_LOCAL_PROFILES )
 		{
 			CString sError = ssprintf( "You may only create up to %d profiles.  You must delete an existing profile before creating a new one.", MAX_NUM_LOCAL_PROFILES );
 			ScreenPrompt::Prompt( SM_None, sError );
@@ -100,7 +100,7 @@ void ScreenSelectProfile::HandleScreenMessage( const ScreenMessage SM )
 		
 		vector<CString> vsProfileID;
 		PROFILEMAN->GetLocalProfileIDs( vsProfileID );
-		if( iSelection == 0 || iSelection == vsProfileID.size()+1 )
+		if( iSelection == 0 || iSelection == (int) vsProfileID.size()+1 )
 		{
 			GAMESTATE->m_sLastSelectedProfileID = "";
 		}

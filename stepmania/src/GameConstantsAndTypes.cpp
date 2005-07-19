@@ -14,7 +14,7 @@
 
 const CString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS] = {"#P1#","#P2#"};
 
-const extern CString GROUP_ALL = "---Group All---";
+extern const CString GROUP_ALL = "---Group All---";
 
 static const CString RadarCategoryNames[] = {
 	"Stream",
