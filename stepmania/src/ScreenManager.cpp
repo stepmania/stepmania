@@ -318,11 +318,6 @@ Screen* ScreenManager::MakeNewScreenInternal( const CString &sScreenName )
 
 Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 {
-	/* By default, RageSounds handles the song timer.  When we change screens, reset this;
-	 * screens turn this off in SM_GainFocus if they handle timers themselves (edit). 
-	 * XXX: screens should turn this on in SM_LoseFocus if they handle timers themselves, too */
-	SOUND->HandleSongTimer( true );
-
 	/* Cleanup song data.  This can free up a fair bit of memory, so do it before
 	 * creating the new screen, to lower peak memory usage slightly. */
 	SONGMAN->Cleanup();
