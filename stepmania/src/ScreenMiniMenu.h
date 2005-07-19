@@ -79,7 +79,7 @@ public:
 	static void MiniMenu( MenuDef* pDef, ScreenMessage smSendOnOK, ScreenMessage smSendOnCancel = SM_None, float fX = 0, float fY = 0 );
 
 	ScreenMiniMenu( CString sScreenClass );
-	void Init( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel );
+	void LoadMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel );
 	void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
