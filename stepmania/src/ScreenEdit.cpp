@@ -439,7 +439,7 @@ static MenuDef g_StepsInformation(
 );
 
 static MenuDef g_SongInformation(
-	"ScreenMiniMenuSongInfomation",
+	"ScreenMiniMenuSongInformation",
 	MenuRowDef( ScreenEdit::main_title,					"Main title",					true, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( ScreenEdit::sub_title,						"Sub title",					true, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( ScreenEdit::artist,						"Artist",						true, EDIT_MODE_PRACTICE, 0, NULL ),
