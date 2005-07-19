@@ -18,7 +18,6 @@
 #include "ThemeMetric.h"
 #include "PlayerState.h"
 #include "ScreenMiniMenu.h"
-#include "ScreenPlayerOptions.h"
 
 const int NUM_EDIT_BUTTON_COLUMNS = 10;
 struct MenuDef;
@@ -425,7 +424,7 @@ public:
 	ScreenMiniMenu *m_pPrefsMenu;
 	ScreenMiniMenu *m_pInsertAttackMenu;
 	ScreenMiniMenu *m_pCourseModeMenu;
-	ScreenOptions *m_pScreenPlayerOptions;
+	Screen *m_pScreenPlayerOptions;
 };
 
 #endif

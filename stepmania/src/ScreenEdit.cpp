@@ -672,8 +672,7 @@ void ScreenEdit::Init()
 	m_pPrefsMenu = LoadEditMiniMenu( &g_Prefs );
 	m_pInsertAttackMenu = LoadEditMiniMenu( &g_InsertAttack );
 	m_pCourseModeMenu = LoadEditMiniMenu( &g_CourseMode );
-	m_pScreenPlayerOptions = new ScreenPlayerOptions( "ScreenPlayerOptionsEdit" );
-	m_pScreenPlayerOptions->Init();
+	m_pScreenPlayerOptions = SCREENMAN->MakeNewScreen( "ScreenPlayerOptionsEdit" );
 
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
 
