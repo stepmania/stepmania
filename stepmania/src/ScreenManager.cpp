@@ -318,10 +318,6 @@ Screen* ScreenManager::MakeNewScreenInternal( const CString &sScreenName )
 
 Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 {
-	/* Cleanup song data.  This can free up a fair bit of memory, so do it before
-	 * creating the new screen, to lower peak memory usage slightly. */
-	SONGMAN->Cleanup();
-
 	Screen* ret = MakeNewScreenInternal( sScreenName );
 
 	return ret;
@@ -336,6 +332,10 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 		if( pScreen->GetName() == sScreenName )
 			return;
 	}
+
+	/* Cleanup song data.  This can free up a fair bit of memory, so do it before
+	 * creating the new screen, to lower peak memory usage slightly. */
+	SONGMAN->Cleanup();
 
 	Screen* pNewScreen = MakeNewScreen(sScreenName);
 	m_vPreparedScreens.push_back( pNewScreen );
