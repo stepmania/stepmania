@@ -16,6 +16,7 @@ public:
 	virtual ~Sprite();
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual Actor *Copy() const;
 
 	virtual bool EarlyAbortDraw();
 	virtual void DrawPrimitives();
