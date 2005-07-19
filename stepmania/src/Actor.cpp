@@ -168,7 +168,6 @@ Actor::Actor( const Actor &cpy )
 
 	CPY( m_mapNameToCommands );
 	CPY( m_vsSubscribedTo );
-	vector<CString> m_vsSubscribedTo;
 #undef CPY
 }
 
