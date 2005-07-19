@@ -226,7 +226,6 @@ void ArchHooks_Win32::SetupConcurrentRenderingThread()
 }
 
 static bool g_bTimerInitialized;
-static DWORD g_iStartTime;
 
 static void InitTimer()
 {
@@ -235,7 +234,6 @@ static void InitTimer()
 	g_bTimerInitialized = true;
 
 	timeBeginPeriod( 1 );
-	g_iStartTime = timeGetTime();
 }
 
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
@@ -243,7 +241,7 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 	if( !g_bTimerInitialized )
 		InitTimer();
 
-	int64_t ret = (timeGetTime() - g_iStartTime) * int64_t(1000);
+	int64_t ret = timeGetTime() * int64_t(1000);
 	if( bAccurate )
 	{
 		ret = FixupTimeIfLooped( ret );
