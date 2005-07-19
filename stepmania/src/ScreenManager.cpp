@@ -98,7 +98,7 @@ void ScreenManager::ThemeChanged()
 	split( sOverlays, ",", asOverlays );
 	for( unsigned i=0; i<asOverlays.size(); i++ )
 	{
-		Screen *pScreen = MakeNewScreenInternal( asOverlays[i] );
+		Screen *pScreen = MakeNewScreen( asOverlays[i] );
 		m_OverlayScreens.push_back( pScreen );
 	}
 	
@@ -296,7 +296,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 }
 
 /* Just create a new screen; don't do any associated cleanup. */
-Screen* ScreenManager::MakeNewScreenInternal( const CString &sScreenName )
+Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 {
 	RageTimer t;
 	LOG->Trace( "Loading screen name '%s'", sScreenName.c_str() );
@@ -312,13 +312,6 @@ Screen* ScreenManager::MakeNewScreenInternal( const CString &sScreenName )
 	LOG->Trace( "Loaded '%s' ('%s') in %f", sScreenName.c_str(), sClassName.c_str(), t.GetDeltaTime());
 
 	this->ZeroNextUpdate();
-
-	return ret;
-}
-
-Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
-{
-	Screen* ret = MakeNewScreenInternal( sScreenName );
 
 	return ret;
 }

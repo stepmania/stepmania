@@ -101,7 +101,6 @@ private:
 	bool				m_bZeroNextUpdate;
 
 	Screen* MakeNewScreen( const CString &sName );
-	Screen* MakeNewScreenInternal( const CString &sName );
 	void ClearScreenStack();
 	void LoadDelayedScreen();
 
