@@ -259,15 +259,8 @@ void ScreenManager::Draw()
 
 	m_pSharedBGA->Draw();
 
-	if( !m_ScreenStack.empty() && !m_ScreenStack.back().m_pScreen->IsTransparent() )	// top screen isn't transparent
-	{
-		m_ScreenStack.back().m_pScreen->Draw();
-	}
-	else
-	{
-		for( unsigned i=0; i<m_ScreenStack.size(); i++ )	// Draw all screens bottom to top
-			m_ScreenStack[i].m_pScreen->Draw();
-	}
+	for( unsigned i=0; i<m_ScreenStack.size(); i++ )	// Draw all screens bottom to top
+		m_ScreenStack[i].m_pScreen->Draw();
 
 	for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
 		m_OverlayScreens[i]->Draw();
