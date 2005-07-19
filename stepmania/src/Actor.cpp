@@ -118,6 +118,7 @@ Actor::Actor( const Actor &cpy )
 {
 	/* Don't copy an Actor in the middle of rendering. */
 	ASSERT( cpy.m_pTempState == NULL );
+	m_pTempState = NULL;
 
 #define CPY(x) x = cpy.x
 	CPY( m_sName );
