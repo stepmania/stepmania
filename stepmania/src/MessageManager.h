@@ -20,7 +20,7 @@ private:
 		float fDelayRemaining;
 	};
 	void HandleMessageInternal( const CString& sMessage );
-	deque<QueuedMessage> m_aMessages;
+	vector<QueuedMessage> m_aMessages;
 
 	friend class MessageManager;
 };
