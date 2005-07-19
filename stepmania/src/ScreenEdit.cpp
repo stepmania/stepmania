@@ -663,6 +663,17 @@ void ScreenEdit::Init()
 	m_soundSwitch.Load(		THEME->GetPathS("ScreenEdit","switch") );
 	m_soundSave.Load(		THEME->GetPathS("ScreenEdit","save") );
 
+	m_pHelpMenu = LoadEditMiniMenu( &g_EditHelp );
+	m_pMainMenu = LoadEditMiniMenu( &g_MainMenu );
+	m_pAreaMenu = LoadEditMiniMenu( &g_AreaMenu );
+	m_pStepsInformation = LoadEditMiniMenu( &g_StepsInformation );
+	m_pSongInformation = LoadEditMiniMenu( &g_SongInformation );
+	m_pBackgroundChangeMenu = LoadEditMiniMenu( &g_BackgroundChange );
+	m_pPrefsMenu = LoadEditMiniMenu( &g_Prefs );
+	m_pInsertAttackMenu = LoadEditMiniMenu( &g_InsertAttack );
+	m_pCourseModeMenu = LoadEditMiniMenu( &g_CourseMode );
+	m_pScreenPlayerOptions = new ScreenPlayerOptions( "ScreenPlayerOptionsEdit" );
+	m_pScreenPlayerOptions->Init();
 
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
 
@@ -679,6 +690,17 @@ ScreenEdit::~ScreenEdit()
 
 	LOG->Trace( "ScreenEdit::~ScreenEdit()" );
 	m_soundMusic.StopPlaying();
+
+	SAFE_DELETE( m_pHelpMenu );
+	SAFE_DELETE( m_pMainMenu );
+	SAFE_DELETE( m_pAreaMenu );
+	SAFE_DELETE( m_pStepsInformation );
+	SAFE_DELETE( m_pSongInformation );
+	SAFE_DELETE( m_pBackgroundChangeMenu );
+	SAFE_DELETE( m_pPrefsMenu );
+	SAFE_DELETE( m_pInsertAttackMenu );
+	SAFE_DELETE( m_pCourseModeMenu );
+	SAFE_DELETE( m_pScreenPlayerOptions );
 }
 
 // play assist ticks
@@ -730,9 +752,9 @@ void ScreenEdit::PlayPreviewMusic()
 		1.5f );
 }
 
-void ScreenEdit::EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
+void ScreenEdit::MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu )
 {
-	MenuDef menu( *pDef );
+	menu = *pDef;
 	menu.rows.clear();
 
 	vector<MenuRowDef> aRows;
@@ -742,8 +764,32 @@ void ScreenEdit::EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, S
 		if( EDIT_MODE >= r->emShowIn )
 			menu.rows.push_back( *r );
 	}
+}
 
-	ScreenMiniMenu::MiniMenu( &menu, SM_SendOnOK, SM_SendOnCancel );
+ScreenMiniMenu *ScreenEdit::LoadEditMiniMenu( const MenuDef* pDef )
+{
+	MenuDef menu("");
+	MakeFilteredMenuDef( pDef, menu );
+
+	ScreenMiniMenu *pScreen = new ScreenMiniMenu( pDef->sClassName );
+	pScreen->Init();
+	pScreen->LoadMenu( &menu );
+	return pScreen;
+}
+
+void ScreenEdit::EditMiniMenu( ScreenMiniMenu *pScreen, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel, const MenuDef* pDef )
+{
+	if( pDef != NULL )
+	{
+		/* Reload options. */
+		MenuDef menu("");
+		MakeFilteredMenuDef( pDef, menu );
+		pScreen->LoadMenu( &menu );
+	}
+
+	pScreen->SetOKMessage( SM_SendOnOK );
+	pScreen->SetCancelMessage( SM_SendOnCancel );
+	SCREENMAN->PushScreen( pScreen );
 }
 
 void ScreenEdit::Update( float fDeltaTime )
@@ -1007,7 +1053,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			else if( EditIsBeingPressed(EDIT_BUTTON_LAY_ATTACK) )
 			{
 				g_iLastInsertAttackTrack = iCol;
-				EditMiniMenu( &g_InsertAttack, SM_BackFromInsertAttack );
+				EditMiniMenu( m_pInsertAttackMenu, SM_BackFromInsertAttack );
 			}
 			else
 			{
@@ -1196,14 +1242,14 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			g_AreaMenu.rows[record].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[convert_beat_to_pause].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[undo].bEnabled = m_bHasUndo;
-			EditMiniMenu( &g_AreaMenu, SM_BackFromAreaMenu );
+			EditMiniMenu( m_pAreaMenu, SM_BackFromAreaMenu );
 		}
 		break;
 	case EDIT_BUTTON_OPEN_EDIT_MENU:
-		EditMiniMenu( &g_MainMenu, SM_BackFromMainMenu );
+		EditMiniMenu( m_pMainMenu, SM_BackFromMainMenu );
 		break;
 	case EDIT_BUTTON_OPEN_INPUT_HELP:
-		EditMiniMenu( &g_EditHelp, SM_None );
+		EditMiniMenu( m_pHelpMenu );
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
 		GAMESTATE->m_SongOptions.m_bAssistTick ^= 1;
@@ -1416,7 +1462,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				}
 			}
 
-			EditMiniMenu( &g_CourseMode, SM_BackFromCourseModeMenu );
+			EditMiniMenu( m_pCourseModeMenu, SM_BackFromCourseModeMenu );
 			break;
 		}
 	case EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP:
@@ -1963,7 +2009,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_StepsInformation.rows[air].choices.resize(1);			g_StepsInformation.rows[air].choices[0] = ssprintf("%.2f", NoteDataUtil::GetAirRadarValue(m_NoteDataEdit,fMusicSeconds));
 				g_StepsInformation.rows[freeze].choices.resize(1);		g_StepsInformation.rows[freeze].choices[0] = ssprintf("%.2f", NoteDataUtil::GetFreezeRadarValue(m_NoteDataEdit,fMusicSeconds));
 				g_StepsInformation.rows[chaos].choices.resize(1);		g_StepsInformation.rows[chaos].choices[0] = ssprintf("%.2f", NoteDataUtil::GetChaosRadarValue(m_NoteDataEdit,fMusicSeconds));
-				EditMiniMenu( &g_StepsInformation, SM_BackFromStepsInformation );
+				EditMiniMenu( m_pStepsInformation, SM_BackFromStepsInformation, SM_None, &g_StepsInformation );
 			}
 			break;
 		case play_whole_song:
@@ -2046,7 +2092,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				PROMPT_YES_NO, ANSWER_NO );
 			break;
 		case player_options:
-			SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptionsEdit", SM_BackFromPlayerOptions );
+			SCREENMAN->PushScreen( m_pScreenPlayerOptions, false, SM_BackFromPlayerOptions );
 			break;
 		case song_options:
 			SCREENMAN->AddNewScreenToTop( "ScreenSongOptionsEdit", SM_BackFromPlayerOptions );
@@ -2062,7 +2108,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_SongInformation.rows[sub_title_transliteration].choices.resize(1);	g_SongInformation.rows[sub_title_transliteration].choices[0] = pSong->m_sSubTitleTranslit;
 				g_SongInformation.rows[artist_transliteration].choices.resize(1);		g_SongInformation.rows[artist_transliteration].choices[0] = pSong->m_sArtistTranslit;
 
-				EditMiniMenu( &g_SongInformation, SM_BackFromSongInformation );
+				EditMiniMenu( m_pSongInformation, SM_BackFromSongInformation, SM_None, &g_SongInformation );
 			}
 			break;
 		case edit_bpm:
@@ -2193,13 +2239,13 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_BackgroundChange.rows[color1].										SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor1 );
 				g_BackgroundChange.rows[color2].										SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor2 );
 
-				EditMiniMenu( &g_BackgroundChange, SM_BackFromBGChange );
+				EditMiniMenu( m_pBackgroundChangeMenu, SM_BackFromBGChange );
 			}
 			break;
 		case preferences:
 			g_Prefs.rows[pref_show_bgs_play].iDefaultChoice = PREFSMAN->m_bEditorShowBGChangesPlay;
 
-			EditMiniMenu( &g_Prefs, SM_BackFromPrefs );
+			EditMiniMenu( m_pPrefsMenu, SM_BackFromPrefs );
 			break;
 
 		case play_preview_music:

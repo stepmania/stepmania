@@ -17,6 +17,8 @@
 #include "Steps.h"
 #include "ThemeMetric.h"
 #include "PlayerState.h"
+#include "ScreenMiniMenu.h"
+#include "ScreenPlayerOptions.h"
 
 const int NUM_EDIT_BUTTON_COLUMNS = 10;
 struct MenuDef;
@@ -150,8 +152,6 @@ protected:
 	void PlayTicks();
 	void PlayPreviewMusic();
 	
-	void EditMiniMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK = SM_None, ScreenMessage SM_SendOnCancel = SM_None );
-
 	// Call this before modifying m_NoteDataEdit.
 	void SaveUndo();
 	// Revert m_NoteDataEdit using m_Undo.
@@ -410,6 +410,22 @@ public:
 	bool EditIsBeingPressed( EditButton button ) const;
 	const MapEditToDI *GetCurrentMap() const;
 	MapEditToDI g_EditMappings, g_PlayMappings, g_RecordMappings;
+
+	void MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu );
+	ScreenMiniMenu *LoadEditMiniMenu( const MenuDef* pDef );
+	void EditMiniMenu( ScreenMiniMenu *pScreen, ScreenMessage SM_SendOnOK = SM_None, ScreenMessage SM_SendOnCancel = SM_None, const MenuDef* pDef = NULL );
+
+	ScreenMiniMenu *m_pHelpMenu;
+	ScreenMiniMenu *m_pMiniMenu;
+	ScreenMiniMenu *m_pMainMenu;
+	ScreenMiniMenu *m_pAreaMenu;
+	ScreenMiniMenu *m_pStepsInformation;
+	ScreenMiniMenu *m_pSongInformation;
+	ScreenMiniMenu *m_pBackgroundChangeMenu;
+	ScreenMiniMenu *m_pPrefsMenu;
+	ScreenMiniMenu *m_pInsertAttackMenu;
+	ScreenMiniMenu *m_pCourseModeMenu;
+	ScreenOptions *m_pScreenPlayerOptions;
 };
 
 #endif
