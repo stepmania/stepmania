@@ -29,7 +29,6 @@ void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const CString &sText, Prom
 ScreenPrompt::ScreenPrompt( const CString &sScreenName ):
 	ScreenWithMenuElements( sScreenName )
 {
-	m_bIsTransparent = true;	// draw screens below us
 }
 
 void ScreenPrompt::Init()

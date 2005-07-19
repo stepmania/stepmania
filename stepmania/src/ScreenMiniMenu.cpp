@@ -41,8 +41,6 @@ void ScreenMiniMenu::Init( const MenuDef* pDef, ScreenMessage SM_SendOnOK, Scree
 
 	this->SortByDrawOrder();
 
-	m_bIsTransparent = true;	// draw screens below us
-
 	m_SMSendOnOK = SM_SendOnOK;
 	m_SMSendOnCancel = SM_SendOnCancel;
 	m_vMenuRows = pDef->rows;

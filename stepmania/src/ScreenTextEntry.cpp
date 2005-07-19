@@ -86,8 +86,6 @@ ScreenTextEntry::ScreenTextEntry(
 	bool bPassword ) :
 	ScreenWithMenuElements( sClassName )
 {
-	m_bIsTransparent = true;	// draw screens below us
-
 	m_sQuestion = sQuestion;
 	m_sAnswer = CStringToWstring( sInitialAnswer );
 	m_iMaxInputLength = iMaxInputLength;

@@ -51,7 +51,6 @@ public:
 	void ClearMessageQueue();
 	void ClearMessageQueue( const ScreenMessage SM );	// clear of a specific SM
 
-	bool IsTransparent() const { return m_bIsTransparent; }
 	virtual bool UsesBackground() const { return true; }	// override and set false if this screen shouldn't load a background
 	virtual ScreenType GetScreenType() const { return ALLOW_OPERATOR_MENU_BUTTON ? game_menu : system_menu; }
 
@@ -70,8 +69,6 @@ protected:
 	};
 	vector<QueuedScreenMessage>	m_QueuedMessages;
 	static bool SortMessagesByDelayRemaining(const QueuedScreenMessage &m1, const QueuedScreenMessage &m2);
-
-	bool m_bIsTransparent;	// screens below us need to be drawn first
 
 	ThemeMetric<bool>	ALLOW_OPERATOR_MENU_BUTTON;
 
