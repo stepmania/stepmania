@@ -6,7 +6,6 @@
 #include "RageTypes.h"
 #include "RageUtil_AutoPtr.h"
 #include "ActorCommands.h"
-#include <deque>
 #include <map>
 struct XNode;
 struct lua_State;
@@ -216,7 +215,7 @@ public:
 		else if( m_Tweens.empty() )	// not tweening
 			return m_current;
 		else
-			return m_Tweens.back().state;
+			return m_Tweens.back()->state;
 	}
 
 	
@@ -394,7 +393,7 @@ protected:
 		TweenState state;
 		TweenInfo info;
 	};
-	deque<TweenStateAndInfo>	m_Tweens;	// use deque for contant time delete of the head
+	vector<TweenStateAndInfo *>	m_Tweens;
 
 	//
 	// Temporary variables that are filled just before drawing

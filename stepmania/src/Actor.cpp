@@ -110,6 +110,7 @@ Actor::Actor()
 
 Actor::~Actor()
 {
+	StopTweening();
 	UnsubcribeAndClearCommands();
 }
 
@@ -418,8 +419,8 @@ void Actor::UpdateTweening( float fDeltaTime )
 
 		// update current tween state
 		// earliest tween
-		TweenState &TS = m_Tweens[0].state;	
-		TweenInfo  &TI = m_Tweens[0].info;
+		TweenState &TS = m_Tweens[0]->state;	
+		TweenInfo  &TI = m_Tweens[0]->info;
 
 		if( TI.m_fTimeLeftInTween == TI.m_fTweenTime )	// we are just beginning this tween
 		{
@@ -448,7 +449,8 @@ void Actor::UpdateTweening( float fDeltaTime )
 			m_current.sCommandName = "";
 			
 			// delete the head tween
-			m_Tweens.pop_front();
+			delete m_Tweens.front();
+			m_Tweens.erase( m_Tweens.begin() );
 		}
 		else		// in the middle of tweening.  Recalcute the current position.
 		{
@@ -563,16 +565,16 @@ void Actor::BeginTweening( float time, TweenType tt )
 	}
 
 	// add a new TweenState to the tail, and initialize it
-	m_Tweens.resize( m_Tweens.size()+1 );
+	m_Tweens.push_back( new TweenStateAndInfo );
 
 	// latest
-	TweenState &TS = m_Tweens.back().state;
-	TweenInfo  &TI = m_Tweens.back().info;
+	TweenState &TS = m_Tweens.back()->state;
+	TweenInfo  &TI = m_Tweens.back()->info;
 
 	if( m_Tweens.size() >= 2 )		// if there was already a TS on the stack
 	{
 		// initialize the new TS from the last TS in the list
-		TS = m_Tweens[m_Tweens.size()-2].state;
+		TS = m_Tweens[m_Tweens.size()-2]->state;
 
 		// don't inherit the queued state's command
 		TS.sCommandName = "";
@@ -591,6 +593,8 @@ void Actor::BeginTweening( float time, TweenType tt )
 
 void Actor::StopTweening()
 {
+	for( unsigned i = 0; i < m_Tweens.size(); ++i )
+		delete m_Tweens[i];
 	m_Tweens.clear();
 }
 
@@ -604,8 +608,8 @@ void Actor::HurryTweening( float factor )
 {
 	for( unsigned i = 0; i < m_Tweens.size(); ++i )
 	{
-		m_Tweens[i].info.m_fTimeLeftInTween *= factor;
-		m_Tweens[i].info.m_fTweenTime *= factor;
+		m_Tweens[i]->info.m_fTimeLeftInTween *= factor;
+		m_Tweens[i]->info.m_fTweenTime *= factor;
 	}
 }
 
@@ -882,7 +886,7 @@ float Actor::GetTweenTimeLeft() const
 	tot += m_fHibernateSecondsLeft;
 
 	for( unsigned i=0; i<m_Tweens.size(); ++i )
-		tot += m_Tweens[i].info.m_fTimeLeftInTween;
+		tot += m_Tweens[i]->info.m_fTimeLeftInTween;
 
 	return tot;
 }
@@ -902,9 +906,9 @@ void Actor::SetGlobalDiffuseColor( RageColor c )
 	{
 		for( unsigned ts = 0; ts < m_Tweens.size(); ++ts )
 		{
-			m_Tweens[ts].state.diffuse[i].r = c.r; 
-			m_Tweens[ts].state.diffuse[i].g = c.g; 
-			m_Tweens[ts].state.diffuse[i].b = c.b; 
+			m_Tweens[ts]->state.diffuse[i].r = c.r; 
+			m_Tweens[ts]->state.diffuse[i].g = c.g; 
+			m_Tweens[ts]->state.diffuse[i].b = c.b; 
 		}
 		m_current.diffuse[i].r = c.r;
 		m_current.diffuse[i].g = c.g;
@@ -918,7 +922,7 @@ void Actor::SetGlobalDiffuseColor( RageColor c )
 void Actor::SetGlobalX( float x )
 {
 	for( unsigned ts = 0; ts < m_Tweens.size(); ++ts )
-		m_Tweens[ts].state.pos.x = x; 
+		m_Tweens[ts]->state.pos.x = x; 
 	m_current.pos.x = x;
 	m_start.pos.x = x;
 }
