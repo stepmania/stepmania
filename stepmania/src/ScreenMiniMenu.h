@@ -79,8 +79,11 @@ public:
 	static void MiniMenu( MenuDef* pDef, ScreenMessage smSendOnOK, ScreenMessage smSendOnCancel = SM_None, float fX = 0, float fY = 0 );
 
 	ScreenMiniMenu( CString sScreenClass );
-	void LoadMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel );
+	void LoadMenu( const MenuDef* pDef );
 	void HandleScreenMessage( const ScreenMessage SM );
+
+	void SetOKMessage( ScreenMessage SM_SendOnOK ) { m_SMSendOnOK = SM_SendOnOK; }
+	void SetCancelMessage( ScreenMessage SM_SendOnCancel ) { m_SMSendOnCancel = SM_SendOnCancel; }
 
 protected:
 	virtual void OnChange( PlayerNumber pn );

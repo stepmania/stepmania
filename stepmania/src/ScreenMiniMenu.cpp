@@ -20,7 +20,9 @@ void ScreenMiniMenu::MiniMenu( MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenM
 {
 	ScreenMiniMenu *pNewScreen = new ScreenMiniMenu( pDef->sClassName );
 	pNewScreen->Init();
-	pNewScreen->LoadMenu( pDef, SM_SendOnOK, SM_SendOnCancel );
+	pNewScreen->LoadMenu( pDef );
+	pNewScreen->SetOKMessage( SM_SendOnOK );
+	pNewScreen->SetCancelMessage( SM_SendOnCancel );
 	pNewScreen->SetXY( fX, fY );
 	SCREENMAN->ZeroNextUpdate();
 	SCREENMAN->PushScreen( pNewScreen, true );
@@ -31,12 +33,8 @@ ScreenMiniMenu::ScreenMiniMenu( CString sClassName ) :ScreenOptions( sClassName 
 {
 }
 
-void ScreenMiniMenu::LoadMenu( const MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel )
+void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 {
-	ScreenOptions::Init();
-
-	m_SMSendOnOK = SM_SendOnOK;
-	m_SMSendOnCancel = SM_SendOnCancel;
 	m_vMenuRows = pDef->rows;
 
 	// Convert from m_vMenuRows to vector<OptionRowDefinition>
