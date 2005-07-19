@@ -324,12 +324,6 @@ Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 
 	Screen* ret = MakeNewScreenInternal( sScreenName );
 
-	/* Loading probably took a little while.  Let's reset stats.  This prevents us
-	 * from displaying an unnaturally low FPS value, and the next FPS value we
-	 * display will be accurate, which makes skips in the initial tween-ins more
-	 * apparent. */
-	DISPLAY->ResetStats();
-
 	return ret;
 }
 
@@ -612,6 +606,12 @@ void ScreenManager::ZeroNextUpdate()
 	{
 		LOG->Trace("ScreenManager::ZeroNextUpdate");
 		m_bZeroNextUpdate = true;
+
+		/* Loading probably took a little while.  Let's reset stats.  This prevents us
+		 * from displaying an unnaturally low FPS value, and the next FPS value we
+		 * display will be accurate, which makes skips in the initial tween-ins more
+		 * apparent. */
+		DISPLAY->ResetStats();
 	}
 }
 
