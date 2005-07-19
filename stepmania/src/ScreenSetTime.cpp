@@ -104,7 +104,7 @@ void ScreenSetTime::Update( float fDelta )
 	m_textValue[minute].SetText( ssprintf("%02d",now.tm_min) );
 	m_textValue[second].SetText( ssprintf("%02d",now.tm_sec) );
 	m_textValue[year].SetText(	ssprintf("%02d",now.tm_year+1900) );
-	m_textValue[month].SetText(	ssprintf("%02d",now.tm_mon+1) );
+	m_textValue[month].SetText(	MonthToString(now.tm_mon) );
 	m_textValue[day].SetText(	ssprintf("%02d",now.tm_mday) );
 }
 
