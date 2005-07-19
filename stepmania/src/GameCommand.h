@@ -90,7 +90,7 @@ public:
 	bool m_bApplyDefaultOptions;
 
 	// Lua
-	virtual void PushSelf( lua_State *L );
+	void PushSelf( lua_State *L );
 };
 
 #endif
