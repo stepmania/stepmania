@@ -208,6 +208,13 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 
 	ASSERT( vDefs.size() == vHands.size() );
 
+	for( unsigned i=0; i<m_pRows.size(); i++ )
+	{
+		m_framePage.RemoveChild( m_pRows[i] );
+		SAFE_DELETE( m_pRows[i] );
+	}
+	m_pRows.clear();
+
 	for( unsigned r=0; r<vDefs.size(); r++ )		// foreach row
 	{
 		m_pRows.push_back( new OptionRow(&m_OptionRowType) );
