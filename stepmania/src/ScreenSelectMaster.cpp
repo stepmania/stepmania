@@ -24,8 +24,8 @@ CString OPTION_ORDER_NAME( size_t dir )							{ return "OptionOrder"+MenuDirToSt
 REGISTER_SCREEN_CLASS( ScreenSelectMaster );
 ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName ),
 	SHOW_ICON(m_sName,"ShowIcon"),
-	SHOW_CURSOR(m_sName,"ShowCursor"),
 	SHOW_SCROLLER(m_sName,"ShowScroller"),
+	SHOW_CURSOR(m_sName,"ShowCursor"),
 	SHARED_SELECTION(m_sName,"SharedSelection"),
 	NUM_CHOICES_ON_PAGE_1(m_sName,"NumChoicesOnPage1"),
 	CURSOR_OFFSET_X_FROM_ICON(m_sName,CURSOR_OFFSET_X_FROM_ICON_NAME,NUM_PLAYERS),
