@@ -29,29 +29,31 @@
 #define TIMESTAMP_RESOLUTION 1000000
 
 const RageTimer RageZeroTimer(0,0);
+static uint64_t g_iStartTime = ArchHooks::GetMicrosecondsSinceStart( true );
 
-static void GetTime( unsigned &secs, unsigned &us, bool bAccurate )
+static uint64_t GetTime( bool bAccurate )
 {
 	// if !bAccurate, then don't call ArchHooks to find the current time.  Just return the 
 	// last calculated time.  GetMicrosecondsSinceStart is slow on some archs.
 	static uint64_t usecs = 0;
 	if( bAccurate )
 		usecs = ArchHooks::GetMicrosecondsSinceStart( true );
-
-	secs = unsigned(usecs / 1000000);
-	us =   unsigned(usecs % 1000000);
+	return usecs;
 }
 
 float RageTimer::GetTimeSinceStart( bool bAccurate )
 {
-	unsigned secs, us;
-	GetTime( secs, us, bAccurate );
-	return secs + (us / 1000000.0f);
+	uint64_t usecs = GetTime( bAccurate );
+	usecs -= g_iStartTime;
+	return usecs / 1000000.0f;
 }
 
 void RageTimer::Touch()
 {
-	GetTime( this->m_secs, this->m_us, true );
+	uint64_t usecs = GetTime( true );
+
+	this->m_secs = unsigned(usecs / 1000000);
+	this->m_us = unsigned(usecs % 1000000);
 }
 
 float RageTimer::Ago() const
