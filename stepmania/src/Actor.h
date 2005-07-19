@@ -26,6 +26,7 @@ class Actor : public IMessageSubscriber
 {
 public:
 	Actor();
+	Actor( const Actor &cpy );
 	virtual ~Actor();
 	virtual Actor *Copy() const;
 	void UnsubcribeAndClearCommands();
@@ -95,9 +96,6 @@ public:
 	virtual void UpdateInternal( float fDeltaTime );	// override this
 	void UpdateTweening( float fDeltaTime );
 	void CopyTweening( const Actor &from );
-
-
-	CString m_sName;
 
 	const CString &GetName() const		{ return m_sName; }
 	virtual void SetName( const CString &sName ) { m_sName = sName; }
@@ -335,7 +333,6 @@ public:
 	// Lua
 	//
 	virtual void PushSelf( lua_State *L );
-	HiddenPtr<LuaClass> m_pLuaInstance;
 
 	//
 	// Commands
@@ -369,7 +366,10 @@ public:
 	virtual void SetSecondsIntoAnimation( float fSeconds ) {}
 	virtual void SetUpdateRate( float fRate ) {}
 
+	HiddenPtr<LuaClass> m_pLuaInstance;
+
 protected:
+	CString m_sName;
 
 	struct TweenInfo
 	{

@@ -114,6 +114,64 @@ Actor::~Actor()
 	UnsubcribeAndClearCommands();
 }
 
+Actor::Actor( const Actor &cpy )
+{
+#define CPY(x) x = cpy.x
+	CPY( m_sName );
+	CPY( m_pLuaInstance );
+
+	CPY( m_baseRotation );
+	CPY( m_baseScale );
+	CPY( m_fBaseAlpha );
+
+
+	CPY( m_size );
+	CPY( m_current );
+	CPY( m_start );
+	for( unsigned i = 0; i < cpy.m_Tweens.size(); ++i )
+		m_Tweens.push_back( new TweenStateAndInfo(*cpy.m_Tweens[i]) );
+
+	CPY( m_tempState );
+	CPY( m_pTempState );
+
+	CPY( m_bFirstUpdate );
+
+	CPY( m_HorizAlign );
+	CPY( m_VertAlign );
+
+	CPY( m_Effect );
+	CPY( m_sEffectCommand );
+	CPY( m_fSecsIntoEffect );
+	CPY( m_fEffectDelta );
+	CPY( m_fEffectPeriodSeconds );
+	CPY( m_fEffectDelay );
+	CPY( m_fEffectOffset );
+	CPY( m_EffectClock );
+
+	CPY( m_effectColor1 );
+	CPY( m_effectColor2 );
+	CPY( m_vEffectMagnitude );
+
+	CPY( m_bVisible );
+	CPY( m_fHibernateSecondsLeft );
+	CPY( m_fShadowLength );
+	CPY( m_bIsAnimating );
+	CPY( m_iDrawOrder );
+
+	CPY( m_bTextureWrapping );
+	CPY( m_BlendMode );
+	CPY( m_bClearZBuffer );
+	CPY( m_ZTestMode );
+	CPY( m_bZWrite );
+	CPY( m_fZBias );
+	CPY( m_CullMode );
+
+	CPY( m_mapNameToCommands );
+	CPY( m_vsSubscribedTo );
+	vector<CString> m_vsSubscribedTo;
+#undef CPY
+}
+
 void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
 	// Load Name, if any.
