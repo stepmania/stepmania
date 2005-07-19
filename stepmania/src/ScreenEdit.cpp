@@ -1945,47 +1945,12 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				FOREACH_Difficulty( dc )
 					g_StepsInformation.rows[difficulty].choices.push_back( DifficultyToThemedString(pSteps->GetDifficulty()) );
 				g_StepsInformation.rows[difficulty].iDefaultChoice = pSteps->GetDifficulty();
-				switch( EDIT_MODE.GetValue() )
-				{
-				case EDIT_MODE_PRACTICE:
-				case EDIT_MODE_HOME:
-					g_StepsInformation.rows[difficulty].bEnabled = false;
-					break;
-				case EDIT_MODE_FULL:
-					g_StepsInformation.rows[difficulty].bEnabled = true;
-					break;
-				default:
-					ASSERT(0);
-				}
+				g_StepsInformation.rows[difficulty].bEnabled = (EDIT_MODE.GetValue() >= EDIT_MODE_FULL);
 				g_StepsInformation.rows[meter].iDefaultChoice = clamp( pSteps->GetMeter()-1, 0, MAX_METER+1 );
-				switch( EDIT_MODE.GetValue() )
-				{
-				case EDIT_MODE_PRACTICE:
-					g_StepsInformation.rows[meter].bEnabled = false;
-					break;
-				case EDIT_MODE_HOME:
-				case EDIT_MODE_FULL:
-					g_StepsInformation.rows[meter].bEnabled = true;
-					break;
-				default:
-					ASSERT(0);
-				}
+				g_StepsInformation.rows[meter].bEnabled = (EDIT_MODE.GetValue() >= EDIT_MODE_HOME);
 				g_StepsInformation.rows[predict_meter].choices.resize(1);
 				g_StepsInformation.rows[predict_meter].choices[0] = ssprintf("%.2f",pSteps->PredictMeter());
-				g_StepsInformation.rows[description].choices.resize(1);	
-				g_StepsInformation.rows[description].choices[0] = pSteps->GetDescription();
-				switch( EDIT_MODE.GetValue() )
-				{
-				case EDIT_MODE_PRACTICE:
-				case EDIT_MODE_HOME:
-					g_StepsInformation.rows[description].bEnabled = false;
-					break;
-				case EDIT_MODE_FULL:
-					g_StepsInformation.rows[description].bEnabled = true;
-					break;
-				default:
-					ASSERT(0);
-				}
+				g_StepsInformation.rows[description].bEnabled = (EDIT_MODE.GetValue() >= EDIT_MODE_FULL);
 				g_StepsInformation.rows[description].choices.resize(1);	g_StepsInformation.rows[description].choices[0] = pSteps->GetDescription();
 				g_StepsInformation.rows[tap_notes].choices.resize(1);	g_StepsInformation.rows[tap_notes].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumTapNotes());
 				g_StepsInformation.rows[jumps].choices.resize(1);		g_StepsInformation.rows[jumps].choices[0] = ssprintf("%d", m_NoteDataEdit.GetNumJumps());
