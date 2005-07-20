@@ -225,6 +225,7 @@ protected:
 	Course			*m_pAttacksFromCourse;
 
 // for MODE_RECORD and MODE_PLAY
+	int				m_iStartPlayingAt, m_iStopPlayingAt;
 
 	RageSound		m_soundMusic;
 

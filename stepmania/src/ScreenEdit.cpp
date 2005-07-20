@@ -582,6 +582,8 @@ void ScreenEdit::Init()
 	GAMESTATE->StoreSelectedOptions();
 
 	m_iShiftAnchor = -1;
+	m_iStartPlayingAt = -1;
+	m_iStopPlayingAt = -1;
 
 	m_EditState = STATE_INVALID;
 	TransitionEditState( STATE_EDITING );
@@ -815,7 +817,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	{
 		// check for end of playback/record
 
-		if( GAMESTATE->m_fSongBeat > NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) + 4 )		// give a one measure lead out
+		if( GAMESTATE->m_fSongBeat > NoteRowToBeat(m_iStopPlayingAt) )
 		{
 			TransitionEditState( STATE_EDITING );
 			GAMESTATE->m_fSongBeat = NoteRowToBeat( m_NoteFieldEdit.m_iEndMarker );
@@ -1799,6 +1801,16 @@ void ScreenEdit::TransitionEditState( EditState em )
 	switch( em )
 	{
 	case STATE_PLAYING:
+	case STATE_RECORDING:
+		/* Give a 1 secord lead-in.  If we're loading Player, this must be done first. */
+		float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;
+		GAMESTATE->UpdateSongPosition( fSeconds, m_pSong->m_Timing );
+		break;
+	}
+
+	switch( em )
+	{
+	case STATE_PLAYING:
 	{
 		m_sprOverlay->PlayCommand( "Play" );
 
@@ -1806,12 +1818,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 		/* Reset the note skin, in case preferences have changed. */
 		GAMESTATE->ResetNoteSkins();
-
-
-		/* Give a 1 secord lead-in.  Set this before loading Player, so it knows
-		 * where we're starting. */
-		float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) ) - 1;
-		GAMESTATE->UpdateSongPosition( fSeconds, m_pSong->m_Timing );
 
 		/* If we're in course display mode, set that up. */
 		SetupCourseAttacks();
@@ -1848,8 +1854,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 		// initialize m_NoteFieldRecord
 		m_NoteDataRecord.CopyAll( m_NoteDataEdit );
-
-		GAMESTATE->m_fSongBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker - ROWS_PER_MEASURE );	// give a 1 measure lead-in
 
 		break;
 	}
@@ -2161,16 +2165,20 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			break;
 		case play_whole_song:
 			{
-				m_NoteFieldEdit.m_iBeginMarker = 0;
-				m_NoteFieldEdit.m_iEndMarker = m_NoteDataEdit.GetLastRow();
-				HandleAreaMenuChoice( play );
+				m_iStartPlayingAt = 0;
+				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
+				m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
+
+				TransitionEditState( STATE_PLAYING );
 			}
 			break;
 		case play_current_beat_to_end:
 			{
-				m_NoteFieldEdit.m_iBeginMarker = BeatToNoteRow(GAMESTATE->m_fSongBeat);
-				m_NoteFieldEdit.m_iEndMarker = m_NoteDataEdit.GetLastRow();
-				HandleAreaMenuChoice( play );
+				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
+				m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
+
+				TransitionEditState( STATE_PLAYING );
 			}
 			break;
 		case save:
@@ -2562,10 +2570,14 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			break;
 		case play:
 			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+			m_iStartPlayingAt = m_NoteFieldEdit.m_iBeginMarker;
+			m_iStopPlayingAt = m_NoteFieldEdit.m_iEndMarker;
 			TransitionEditState( STATE_PLAYING );
 			break;
 		case record:
 			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+			m_iStartPlayingAt = m_NoteFieldEdit.m_iBeginMarker;
+			m_iStopPlayingAt = m_NoteFieldEdit.m_iEndMarker;
 			TransitionEditState( STATE_RECORDING );
 			break;
 		case insert_and_shift:
