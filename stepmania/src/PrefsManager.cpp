@@ -77,7 +77,6 @@ PrefsManager::PrefsManager() :
 	m_bHiddenSongs			( "HiddenSongs",			false ),
 	m_bVsync				( "Vsync",					true ),
 	m_bInterlaced			( "Interlaced",				false ),
-	/* XXX: Set these defaults for individual consoles using VideoCardDefaults.ini. */
 	m_bPAL					( "PAL",					false ),
 	m_bDelayedTextureDelete	( "DelayedTextureDelete",	true ),
 	m_bTexturePreload		( "TexturePreload",			false ),
