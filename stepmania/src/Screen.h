@@ -9,14 +9,17 @@
 #include "GameInput.h"
 #include "MenuInput.h"
 #include "StyleInput.h"
-#include "ScreenManager.h"
 #include "ThemeMetric.h"
+
+class Screen;
+typedef Screen* (*CreateScreenFn)(const CString& sClassName);
+void RegisterScreenClass( const CString& sClassName, CreateScreenFn pfn );
 
 // Each Screen class should have a REGISTER_SCREEN_CLASS in its CPP file.
 #define REGISTER_SCREEN_CLASS( className ) \
 	static Screen* Create##className( const CString &sName ) { Screen *pRet = new className( sName ); pRet->Init(); return pRet; } \
 	struct Register##className { \
-		Register##className() { SCREENMAN->Register(#className,Create##className); } \
+		Register##className() { RegisterScreenClass( #className,Create##className); } \
 	}; \
 	static Register##className register_##className;
 

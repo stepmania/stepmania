@@ -23,10 +23,6 @@ typedef Screen* (*CreateScreenFn)(const CString& sClassName);
 class ScreenManager
 {
 public:
-	// Every screen should register its class at program initialization.
-	static void Register( const CString& sClassName, CreateScreenFn pfn );
-
-	
 	ScreenManager();
 	~ScreenManager();
 

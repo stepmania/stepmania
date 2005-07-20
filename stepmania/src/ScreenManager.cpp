@@ -40,7 +40,7 @@ static Preference<bool> g_bConcurrentLoading( "ConcurrentLoading",	false );
 // Screen registration
 static map<CString,CreateScreenFn>	*g_pmapRegistrees = NULL;
 
-void ScreenManager::Register( const CString& sClassName, CreateScreenFn pfn )
+void RegisterScreenClass( const CString& sClassName, CreateScreenFn pfn )
 {
 	if( g_pmapRegistrees == NULL )
 		g_pmapRegistrees = new map<CString,CreateScreenFn>;
