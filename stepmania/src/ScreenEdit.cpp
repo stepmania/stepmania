@@ -662,7 +662,7 @@ void ScreenEdit::Init()
 	m_pBackgroundChangeMenu = LoadEditMiniMenu( &g_BackgroundChange );
 	m_pInsertAttackMenu = LoadEditMiniMenu( &g_InsertAttack );
 	m_pCourseModeMenu = LoadEditMiniMenu( &g_CourseMode );
-	m_pScreenPlayerOptions = SCREENMAN->MakeNewScreen( "ScreenPlayerOptionsEdit" );
+	m_pScreenOptions = SCREENMAN->MakeNewScreen( "ScreenEditOptions" );
 
 	m_soundMusic.Load( m_pSong->GetMusicPath() );
 
@@ -688,7 +688,7 @@ ScreenEdit::~ScreenEdit()
 	SAFE_DELETE( m_pBackgroundChangeMenu );
 	SAFE_DELETE( m_pInsertAttackMenu );
 	SAFE_DELETE( m_pCourseModeMenu );
-	SAFE_DELETE( m_pScreenPlayerOptions );
+	SAFE_DELETE( m_pScreenOptions );
 }
 
 // play assist ticks
@@ -2075,7 +2075,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				PROMPT_YES_NO, ANSWER_NO );
 			break;
 		case options:
-			SCREENMAN->PushScreen( m_pScreenPlayerOptions, false, SM_BackFromOptions );
+			SCREENMAN->PushScreen( m_pScreenOptions, false, SM_BackFromOptions );
 			break;
 		case edit_song_info:
 			{

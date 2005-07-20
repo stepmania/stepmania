@@ -417,7 +417,7 @@ public:
 	ScreenMiniMenu *m_pBackgroundChangeMenu;
 	ScreenMiniMenu *m_pInsertAttackMenu;
 	ScreenMiniMenu *m_pCourseModeMenu;
-	Screen *m_pScreenPlayerOptions;
+	Screen *m_pScreenOptions;
 };
 
 #endif
