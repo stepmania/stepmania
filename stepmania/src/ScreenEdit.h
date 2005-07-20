@@ -246,7 +246,6 @@ public:
 		edit_stop,
 		edit_bg_change,
 		play_preview_music,
-		preferences,
 		exit,
 		save_on_exit,
 		NUM_MAIN_MENU_CHOICES,
@@ -395,10 +394,6 @@ public:
 		NUM_BGCHANGE_CHOICES
 	};
 
-	enum PrefsChoice {
-		pref_show_bgs_play,
-		NUM_PREFS_CHOICES
-	};
 	void HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAnswers );
 
 	void InitEditMappings();
@@ -420,7 +415,6 @@ public:
 	ScreenMiniMenu *m_pStepsInformation;
 	ScreenMiniMenu *m_pSongInformation;
 	ScreenMiniMenu *m_pBackgroundChangeMenu;
-	ScreenMiniMenu *m_pPrefsMenu;
 	ScreenMiniMenu *m_pInsertAttackMenu;
 	ScreenMiniMenu *m_pCourseModeMenu;
 	Screen *m_pScreenPlayerOptions;

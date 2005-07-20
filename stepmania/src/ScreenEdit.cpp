@@ -61,7 +61,6 @@ AutoScreenMessage( SM_BackFromSongInformation )
 AutoScreenMessage( SM_BackFromBGChange )
 AutoScreenMessage( SM_BackFromInsertAttack )
 AutoScreenMessage( SM_BackFromInsertAttackPlayerOptions )
-AutoScreenMessage( SM_BackFromPrefs ) 
 AutoScreenMessage( SM_BackFromCourseModeMenu )
 AutoScreenMessage( SM_DoRevertToLastSave )
 AutoScreenMessage( SM_DoRevertFromDisk )
@@ -391,7 +390,6 @@ static MenuDef g_MainMenu(
 	MenuRowDef( ScreenEdit::edit_stop,					"Edit Stop",					true, EDIT_MODE_FULL, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_bg_change,			"Add/Edit Background Change",	true, EDIT_MODE_FULL, 0, NULL ),
 	MenuRowDef( ScreenEdit::play_preview_music,		"Play Preview Music",			true, EDIT_MODE_FULL, 0, NULL ),
-	MenuRowDef( ScreenEdit::preferences,				"Preferences",					true, EDIT_MODE_FULL, 0, NULL ),
 	MenuRowDef( ScreenEdit::exit,						"Exit",							true, EDIT_MODE_PRACTICE, 0, NULL )
 );
 
@@ -519,11 +517,6 @@ static CString GetOneBakedRandomFile( Song *pSong, bool bTryGenre = true )
 	else
 		return "";
 }
-
-static MenuDef g_Prefs(
-	"ScreenMiniMenuPreferences",
-	MenuRowDef( ScreenEdit::pref_show_bgs_play,		"Show BGChanges during Play/Record",	true, EDIT_MODE_PRACTICE, 0, "NO","YES" )
-);
 
 static MenuDef g_InsertAttack(
 	"ScreenMiniMenuInsertAttack",
@@ -668,7 +661,6 @@ void ScreenEdit::Init()
 	m_pStepsInformation = LoadEditMiniMenu( &g_StepsInformation );
 	m_pSongInformation = LoadEditMiniMenu( &g_SongInformation );
 	m_pBackgroundChangeMenu = LoadEditMiniMenu( &g_BackgroundChange );
-	m_pPrefsMenu = LoadEditMiniMenu( &g_Prefs );
 	m_pInsertAttackMenu = LoadEditMiniMenu( &g_InsertAttack );
 	m_pCourseModeMenu = LoadEditMiniMenu( &g_CourseMode );
 	m_pScreenPlayerOptions = SCREENMAN->MakeNewScreen( "ScreenPlayerOptionsEdit" );
@@ -695,7 +687,6 @@ ScreenEdit::~ScreenEdit()
 	SAFE_DELETE( m_pStepsInformation );
 	SAFE_DELETE( m_pSongInformation );
 	SAFE_DELETE( m_pBackgroundChangeMenu );
-	SAFE_DELETE( m_pPrefsMenu );
 	SAFE_DELETE( m_pInsertAttackMenu );
 	SAFE_DELETE( m_pCourseModeMenu );
 	SAFE_DELETE( m_pScreenPlayerOptions );
@@ -1766,11 +1757,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		HandleBGChangeChoice( (BGChangeChoice)ScreenMiniMenu::s_iLastRowCode, ScreenMiniMenu::s_viLastAnswers );
 	}
-	else if( SM == SM_BackFromPrefs )
-	{
-		PREFSMAN->m_bEditorShowBGChangesPlay.Set( !!ScreenMiniMenu::s_viLastAnswers[pref_show_bgs_play] );
-		PREFSMAN->SaveGlobalPrefsToDisk();
-	}
 	else if( SM == SM_BackFromCourseModeMenu )
 	{
 		const int num = ScreenMiniMenu::s_viLastAnswers[0];
@@ -2236,11 +2222,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 
 				EditMiniMenu( m_pBackgroundChangeMenu, SM_BackFromBGChange );
 			}
-			break;
-		case preferences:
-			g_Prefs.rows[pref_show_bgs_play].iDefaultChoice = PREFSMAN->m_bEditorShowBGChangesPlay;
-
-			EditMiniMenu( m_pPrefsMenu, SM_BackFromPrefs );
 			break;
 
 		case play_preview_music:
