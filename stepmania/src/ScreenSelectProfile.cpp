@@ -5,6 +5,7 @@
 #include "ProfileManager.h"
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
+#include "ScreenManager.h"
 #include "RageUtil.h"
 #include "GameState.h"
 #include "Profile.h"

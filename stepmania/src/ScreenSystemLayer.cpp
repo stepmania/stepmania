@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenSystemLayer.h"
+#include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "ActorUtil.h"

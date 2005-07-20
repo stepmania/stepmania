@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ScreenSyncOverlay.h"
 #include "ScreenDimensions.h"
+#include "ScreenManager.h"
 #include "GameState.h"
 #include "song.h"
 #include "PrefsManager.h"

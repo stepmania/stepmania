@@ -2,6 +2,7 @@
 #include "ScreenMapControllers.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
+#include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "InputMapper.h"

@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenEnding.h"
+#include "ScreenManager.h"
 #include "SongManager.h"
 #include "GameSoundManager.h"
 #include "ThemeManager.h"

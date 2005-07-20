@@ -2,6 +2,7 @@
 #include "ScreenSplash.h"
 #include "ThemeManager.h"
 #include "RageUtil.h"
+#include "ScreenManager.h"
 
 AutoScreenMessage( SM_PrepScreen )
 

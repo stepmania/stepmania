@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenRanking.h"
+#include "ScreenManager.h"
 #include "ThemeManager.h"
 #include "SongManager.h"
 #include "GameState.h"

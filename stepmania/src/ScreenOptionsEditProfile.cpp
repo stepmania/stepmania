@@ -2,6 +2,7 @@
 
 #include "ScreenOptionsEditProfile.h"
 #include "ScreenMiniMenu.h"
+#include "ScreenManager.h"
 #include "ProfileManager.h"
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
