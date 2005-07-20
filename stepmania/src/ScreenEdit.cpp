@@ -532,9 +532,9 @@ static MenuDef g_CourseMode(
 // HACK: need to remember the track we're inserting on so
 // that we can lay the attack note after coming back from
 // menus.
-int g_iLastInsertAttackTrack = -1;
-float g_fLastInsertAttackDurationSeconds = -1;
-BackgroundLayer g_CurrentBGChangeLayer = BACKGROUND_LAYER_INVALID;
+static int g_iLastInsertAttackTrack = -1;
+static float g_fLastInsertAttackDurationSeconds = -1;
+static BackgroundLayer g_CurrentBGChangeLayer = BACKGROUND_LAYER_INVALID;
 
 REGISTER_SCREEN_CLASS( ScreenEdit );
 ScreenEdit::ScreenEdit( CString sName ) : ScreenWithMenuElements( sName )
