@@ -581,7 +581,7 @@ void ScreenEdit::Init()
 	GAMESTATE->ResetNoteSkins();
 	GAMESTATE->StoreSelectedOptions();
 
-	g_iShiftAnchor = -1;
+	m_iShiftAnchor = -1;
 
 	m_EditState = STATE_INVALID;
 	TransitionEditState( STATE_EDITING );
@@ -973,7 +973,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	if( type == IET_RELEASE )
 	{
 		if( EditPressed( EDIT_BUTTON_SCROLL_SELECT, DeviceI ) )
-			g_iShiftAnchor = -1;
+			m_iShiftAnchor = -1;
 		return;
 	}
 
@@ -1152,17 +1152,17 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				 * If this is the first time we've moved since shift was depressed,
 				 * the old position (before this move) becomes the start pos: */
 				int iDestinationRow = BeatToNoteRow( fDestinationBeat );
-				if( g_iShiftAnchor == -1 )
-					g_iShiftAnchor = BeatToNoteRow(fOriginalBeat);
+				if( m_iShiftAnchor == -1 )
+					m_iShiftAnchor = BeatToNoteRow(fOriginalBeat);
 				
-				if( iDestinationRow == g_iShiftAnchor )
+				if( iDestinationRow == m_iShiftAnchor )
 				{
 					/* We're back at the anchor, so we have nothing selected. */
 					m_NoteFieldEdit.m_iBeginMarker = m_NoteFieldEdit.m_iEndMarker = -1;
 				}
 				else
 				{
-					m_NoteFieldEdit.m_iBeginMarker = g_iShiftAnchor;
+					m_NoteFieldEdit.m_iBeginMarker = m_iShiftAnchor;
 					m_NoteFieldEdit.m_iEndMarker = iDestinationRow;
 					if( m_NoteFieldEdit.m_iBeginMarker > m_NoteFieldEdit.m_iEndMarker )
 						swap( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
