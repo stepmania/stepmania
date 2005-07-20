@@ -241,7 +241,6 @@ public:
 		revert_to_last_save,
 		revert_from_disk,
 		player_options,
-		song_options,
 		edit_song_info,
 		edit_bpm,
 		edit_stop,

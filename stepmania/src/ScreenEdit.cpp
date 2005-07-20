@@ -386,7 +386,6 @@ static MenuDef g_MainMenu(
 	MenuRowDef( ScreenEdit::revert_to_last_save,		"Revert to Last Save",			true, EDIT_MODE_HOME, 0, NULL ),
 	MenuRowDef( ScreenEdit::revert_from_disk,			"Revert from Disk",				true, EDIT_MODE_FULL, 0, NULL ),
 	MenuRowDef( ScreenEdit::player_options,			"Player Options",				true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRowDef( ScreenEdit::song_options,				"Song Options",					true, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_song_info,			"Edit Song Info",				true, EDIT_MODE_FULL, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_bpm,					"Edit BPM Change",				true, EDIT_MODE_FULL, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_stop,					"Edit Stop",					true, EDIT_MODE_FULL, 0, NULL ),
@@ -2092,9 +2091,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			break;
 		case player_options:
 			SCREENMAN->PushScreen( m_pScreenPlayerOptions, false, SM_BackFromPlayerOptions );
-			break;
-		case song_options:
-			SCREENMAN->AddNewScreenToTop( "ScreenSongOptionsEdit", SM_BackFromPlayerOptions );
 			break;
 		case edit_song_info:
 			{
