@@ -1819,6 +1819,12 @@ void ScreenEdit::TransitionEditState( EditState em )
 		/* Give a 1 secord lead-in.  If we're loading Player, this must be done first. */
 		float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;
 		GAMESTATE->UpdateSongPosition( fSeconds, m_pSong->m_Timing );
+
+		GAMESTATE->m_bPastHereWeGo = true;
+
+		/* Reset the note skin, in case preferences have changed. */
+		GAMESTATE->ResetNoteSkins();
+
 		break;
 	}
 
@@ -1827,11 +1833,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 	case STATE_PLAYING:
 	{
 		m_sprOverlay->PlayCommand( "Play" );
-
-		GAMESTATE->m_bPastHereWeGo = true;
-
-		/* Reset the note skin, in case preferences have changed. */
-		GAMESTATE->ResetNoteSkins();
 
 		/* If we're in course display mode, set that up. */
 		SetupCourseAttacks();
@@ -1861,10 +1862,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 	case STATE_RECORDING:
 	{
 		m_sprOverlay->PlayCommand( "Record" );
-		GAMESTATE->m_bPastHereWeGo = true;
-
-		/* Reset the note skin, in case preferences have changed. */
-		GAMESTATE->ResetNoteSkins();
 
 		// initialize m_NoteFieldRecord
 		m_NoteDataRecord.CopyAll( m_NoteDataEdit );
