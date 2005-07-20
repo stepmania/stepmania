@@ -209,6 +209,8 @@ void ScreenEdit::InitEditMappings()
 	m_PlayMappings.button[EDIT_BUTTON_OFFSET_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F12);
 	m_PlayMappings.button[EDIT_BUTTON_OFFSET_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_F11);
 
+	m_RecordMappings.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
+	m_RecordMappings.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 	m_RecordMappings.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 }
 
@@ -808,8 +810,11 @@ void ScreenEdit::Update( float fDeltaTime )
 				fStartBeat = Quantize( fStartBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 				fEndBeat = Quantize( fEndBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
-				// create a new hold note
-				m_NoteDataRecord.AddHoldNote( t, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), TAP_ORIGINAL_HOLD_HEAD );
+				// create a new hold or roll note
+				TapNote tn = TAP_ORIGINAL_HOLD_HEAD;
+				if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
+					tn = TAP_ORIGINAL_ROLL_HEAD;
+				m_NoteDataRecord.AddHoldNote( t, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), tn );
 			}
 		}
 	}
@@ -1655,7 +1660,11 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 			if( m_NoteDataRecord.IsHoldNoteAtBeat( iCol, iRow, &iHeadRow ) )
 				m_NoteDataRecord.SetTapNote( iCol, iHeadRow, TAP_EMPTY );
 
-			m_NoteDataRecord.SetTapNote(iCol, iRow, TAP_ORIGINAL_TAP);
+			TapNote tn = TAP_ORIGINAL_TAP;
+			if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
+				tn = TAP_ORIGINAL_MINE;
+
+			m_NoteDataRecord.SetTapNote( iCol, iRow, tn );
 			m_NoteFieldRecord.Step( iCol, TNS_MARVELOUS );
 		}
 		break;
