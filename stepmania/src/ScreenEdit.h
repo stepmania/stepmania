@@ -402,7 +402,7 @@ public:
 	bool EditPressed( EditButton button, const DeviceInput &DeviceI );
 	bool EditIsBeingPressed( EditButton button ) const;
 	const MapEditToDI *GetCurrentMap() const;
-	MapEditToDI g_EditMappings, g_PlayMappings, g_RecordMappings;
+	MapEditToDI m_EditMappings, m_PlayMappings, m_RecordMappings;
 
 	void MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu );
 	ScreenMiniMenu *LoadEditMiniMenu( const MenuDef* pDef );
