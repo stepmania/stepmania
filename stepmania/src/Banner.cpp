@@ -1,6 +1,5 @@
 #include "global.h"
 #include "Banner.h"
-#include "PrefsManager.h"
 #include "SongManager.h"
 #include "RageUtil.h"
 #include "song.h"
