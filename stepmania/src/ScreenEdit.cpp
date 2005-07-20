@@ -1949,7 +1949,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_DoExit )
 	{
-		// IMPORTANT: CopyFromLastSave before deleteing the Steps below
+		// IMPORTANT: CopyFromLastSave before deleting the Steps below
 		CopyFromLastSave();
 
 		// If these steps have never been saved, then we should delete them.
@@ -2002,49 +2002,49 @@ void ScreenEdit::OnSnapModeChange()
 // Begin helper functions for InputEdit
 
 
-void ChangeDescription( const CString &sNew )
+static void ChangeDescription( const CString &sNew )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	pSteps->SetDescription(sNew);
 }
 
-void ChangeMainTitle( const CString &sNew )
+static void ChangeMainTitle( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sMainTitle = sNew;
 }
 
-void ChangeSubTitle( const CString &sNew )
+static void ChangeSubTitle( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sSubTitle = sNew;
 }
 
-void ChangeArtist( const CString &sNew )
+static void ChangeArtist( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sArtist = sNew;
 }
 
-void ChangeCredit( const CString &sNew )
+static void ChangeCredit( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sCredit = sNew;
 }
 
-void ChangeMainTitleTranslit( const CString &sNew )
+static void ChangeMainTitleTranslit( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sMainTitleTranslit = sNew;
 }
 
-void ChangeSubTitleTranslit( const CString &sNew )
+static void ChangeSubTitleTranslit( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sSubTitleTranslit = sNew;
 }
 
-void ChangeArtistTranslit( const CString &sNew )
+static void ChangeArtistTranslit( const CString &sNew )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
 	pSong->m_sArtistTranslit = sNew;
@@ -2514,9 +2514,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				m_Player.Load( m_NoteDataEdit );
 				GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PREFSMAN->m_AutoPlay;
 
-				const float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) ;
-				LOG->Trace( "Starting playback at %f", fStartSeconds );
-			
 				if( PREFSMAN->m_bEditorShowBGChangesPlay )
 				{
 					/* FirstBeat affects backgrounds, so commit changes to memory (not to disk)
@@ -2533,6 +2530,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 					m_Foreground.LoadFromSong( m_pSong );
 				}
 
+				const float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat);
+				LOG->Trace( "Starting playback at %f", fStartSeconds );
+			
 				RageSoundParams p;
 				p.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 				p.m_StartSecond = fStartSeconds;
@@ -2560,6 +2560,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				m_NoteFieldRecord.Load( &m_NoteDataRecord, -150, 350 );
 
 				GAMESTATE->m_fSongBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker - ROWS_PER_MEASURE );	// give a 1 measure lead-in
+
 				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat);
 				LOG->Trace( "Starting playback at %f", fStartSeconds );
 
