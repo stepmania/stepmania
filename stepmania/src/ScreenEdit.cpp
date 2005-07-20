@@ -795,12 +795,13 @@ void ScreenEdit::Update( float fDeltaTime )
 			StyleInput StyleI( PLAYER_1, t );
 			float fSecsHeld = INPUTMAPPER->GetSecsHeld( StyleI );
 
-			if( fSecsHeld > RECORD_HOLD_SECONDS && GAMESTATE->m_fSongBeat > 0 )
+			float fStartPlayingAtBeat = NoteRowToBeat(m_iStartPlayingAt);
+			if( fSecsHeld > RECORD_HOLD_SECONDS && GAMESTATE->m_fSongBeat > fStartPlayingAtBeat )
 			{
 				// add or extend hold
 				const float fHoldStartSeconds = m_soundMusic.GetPositionSeconds() - fSecsHeld;
 
-				float fStartBeat = max( 0, m_pSong->GetBeatFromElapsedTime( fHoldStartSeconds ) );
+				float fStartBeat = max( fStartPlayingAtBeat, m_pSong->GetBeatFromElapsedTime( fHoldStartSeconds ) );
 				float fEndBeat = max( fStartBeat, GAMESTATE->m_fSongBeat );
 
 				// Round hold start and end to the nearest snap interval
@@ -1636,8 +1637,12 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 	{
 	case IET_FIRST_PRESS:
 		{
-			// Add a tap
+			// Don't add outside of the range.
+			if( GAMESTATE->m_fSongBeat < NoteRowToBeat(m_iStartPlayingAt) ||
+				GAMESTATE->m_fSongBeat > NoteRowToBeat(m_iStopPlayingAt) )
+				return;
 
+			// Add a tap
 			float fBeat = GAMESTATE->m_fSongBeat;
 			fBeat = Quantize( fBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 			
@@ -1657,7 +1662,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 	case IET_SLOW_REPEAT:
 	case IET_FAST_REPEAT:
 	case IET_RELEASE:
-		// don't add or extend holds here
+		// don't add or extend holds here; we do it in Update()
 		break;
 	}
 }
