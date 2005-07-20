@@ -593,17 +593,13 @@ void ScreenEdit::Init()
 	m_SnapDisplay.SetZoom( 0.5f );
 	this->AddChild( &m_SnapDisplay );
 
-	NoteData noteData;
-	m_pSteps->GetNoteData( noteData );
-	m_NoteDataEdit.CopyAll( noteData );
-
+	m_pSteps->GetNoteData( m_NoteDataEdit );
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
 	m_NoteFieldEdit.SetZoom( 0.5f );
 	m_NoteFieldEdit.Init( &m_PlayerStateEdit, PLAYER_HEIGHT*2 );
 	m_NoteFieldEdit.Load( &m_NoteDataEdit, -240, 850 );
 	this->AddChild( &m_NoteFieldEdit );
 
-	m_NoteDataRecord.CopyAll( noteData );
 	m_NoteFieldRecord.SetXY( RECORD_X, RECORD_Y );
 	m_NoteFieldRecord.Init( GAMESTATE->m_pPlayerState[PLAYER_1], 10 );
 	this->AddChild( &m_NoteFieldRecord );
