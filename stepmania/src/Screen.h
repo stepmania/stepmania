@@ -14,9 +14,8 @@
 
 // Each Screen class should have a REGISTER_SCREEN_CLASS in its CPP file.
 #define REGISTER_SCREEN_CLASS( className ) \
-	Screen* Create##className( const CString &sName ) { Screen *pRet = new className( sName ); pRet->Init(); return pRet; } \
-	class Register##className { \
-	public: \
+	static Screen* Create##className( const CString &sName ) { Screen *pRet = new className( sName ); pRet->Init(); return pRet; } \
+	struct Register##className { \
 		Register##className() { SCREENMAN->Register(#className,Create##className); } \
 	}; \
 	static Register##className register_##className;
