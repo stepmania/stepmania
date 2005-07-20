@@ -1790,28 +1790,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 	}
 
 
-	//
-	// Show/hide depending on em
-	//
-	m_Background.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == STATE_EDITING );
-	m_sprUnderlay->SetHidden( em != STATE_EDITING );
-	m_sprOverlay->SetHidden( em != STATE_EDITING );
-	m_autoHeader->SetHidden( em != STATE_EDITING );
-	m_textInputTips.SetHidden( em != STATE_EDITING );
-	m_textInfo.SetHidden( em != STATE_EDITING );
-	// Play the OnCommands again so that these will be re-hidden if the OnCommand hides them.
-	if( em == STATE_EDITING )
-	{
-		m_textInputTips.PlayCommand( "On" );
-		m_textInfo.PlayCommand( "On" );
-	}
-	m_textPlayRecordHelp.SetHidden( em == STATE_EDITING );
-	m_SnapDisplay.SetHidden( em != STATE_EDITING );
-	m_NoteFieldEdit.SetHidden( em != STATE_EDITING );
-	m_NoteFieldRecord.SetHidden( em != STATE_RECORDING );
-	m_Player.SetHidden( em != STATE_PLAYING );
-	m_Foreground.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == STATE_EDITING );
-
 	switch( em )
 	{
 	case STATE_PLAYING:
@@ -1869,6 +1847,28 @@ void ScreenEdit::TransitionEditState( EditState em )
 		break;
 	}
 	}
+
+	//
+	// Show/hide depending on em
+	//
+	m_Background.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == STATE_EDITING );
+	m_sprUnderlay->SetHidden( em != STATE_EDITING );
+	m_sprOverlay->SetHidden( em != STATE_EDITING );
+	m_autoHeader->SetHidden( em != STATE_EDITING );
+	m_textInputTips.SetHidden( em != STATE_EDITING );
+	m_textInfo.SetHidden( em != STATE_EDITING );
+	// Play the OnCommands again so that these will be re-hidden if the OnCommand hides them.
+	if( em == STATE_EDITING )
+	{
+		m_textInputTips.PlayCommand( "On" );
+		m_textInfo.PlayCommand( "On" );
+	}
+	m_textPlayRecordHelp.SetHidden( em == STATE_EDITING );
+	m_SnapDisplay.SetHidden( em != STATE_EDITING );
+	m_NoteFieldEdit.SetHidden( em != STATE_EDITING );
+	m_NoteFieldRecord.SetHidden( em != STATE_RECORDING );
+	m_Player.SetHidden( em != STATE_PLAYING );
+	m_Foreground.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == STATE_EDITING );
 
 	switch( em )
 	{
