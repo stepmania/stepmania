@@ -1796,6 +1796,80 @@ void ScreenEdit::TransitionEditState( EditState em )
 	m_Player.SetHidden( em != STATE_PLAYING );
 	m_Foreground.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == STATE_EDITING );
 
+	switch( em )
+	{
+	case STATE_PLAYING:
+	{
+		m_sprOverlay->PlayCommand( "Play" );
+
+		GAMESTATE->m_bPastHereWeGo = true;
+
+		/* Reset the note skin, in case preferences have changed. */
+		GAMESTATE->ResetNoteSkins();
+
+
+		/* Give a 1 secord lead-in.  Set this before loading Player, so it knows
+		 * where we're starting. */
+		float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) ) - 1;
+		GAMESTATE->UpdateSongPosition( fSeconds, m_pSong->m_Timing );
+
+		/* If we're in course display mode, set that up. */
+		SetupCourseAttacks();
+
+		m_Player.Load( m_NoteDataEdit );
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PREFSMAN->m_AutoPlay;
+
+		if( PREFSMAN->m_bEditorShowBGChangesPlay )
+		{
+			/* FirstBeat affects backgrounds, so commit changes to memory (not to disk)
+			 * and recalc it. */
+			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+			ASSERT( pSteps );
+			pSteps->SetNoteData( m_NoteDataEdit );
+			m_pSong->ReCalculateRadarValuesAndLastBeat();
+
+			m_Background.Unload();
+			m_Background.LoadFromSong( m_pSong );
+
+			m_Foreground.Unload();
+			m_Foreground.LoadFromSong( m_pSong );
+		}
+
+		break;
+	}
+
+	case STATE_RECORDING:
+	{
+		m_sprOverlay->PlayCommand( "Record" );
+		GAMESTATE->m_bPastHereWeGo = true;
+
+		/* Reset the note skin, in case preferences have changed. */
+		GAMESTATE->ResetNoteSkins();
+
+		// initialize m_NoteFieldRecord
+		m_NoteDataRecord.CopyAll( m_NoteDataEdit );
+
+		GAMESTATE->m_fSongBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker - ROWS_PER_MEASURE );	// give a 1 measure lead-in
+
+		break;
+	}
+	}
+
+	switch( em )
+	{
+	case STATE_PLAYING:
+	case STATE_RECORDING:
+		const float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat);
+		LOG->Trace( "Starting playback at %f", fStartSeconds );
+
+		RageSoundParams p;
+		p.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
+		p.m_StartSecond = fStartSeconds;
+		p.AccurateSync = true;
+		p.StopMode = RageSoundParams::M_CONTINUE;
+		m_soundMusic.Play( &p );
+		break;
+	}
 
 	m_EditState = em;
 }
@@ -2487,81 +2561,12 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			}
 			break;
 		case play:
-			{
-				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
-
-				TransitionEditState( STATE_PLAYING );
-				m_sprOverlay->PlayCommand( "Play" );
-
-				GAMESTATE->m_bPastHereWeGo = true;
-
-				/* Reset the note skin, in case preferences have changed. */
-				GAMESTATE->ResetNoteSkins();
-
-				/* Give a 1 secord lead-in.  Set this before loading Player, so it knows
-				 * where we're starting. */
-				float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) ) - 1;
-				GAMESTATE->UpdateSongPosition( fSeconds, m_pSong->m_Timing );
-
-				/* If we're in course display mode, set that up. */
-				SetupCourseAttacks();
-
-				m_Player.Load( m_NoteDataEdit );
-				GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PREFSMAN->m_AutoPlay;
-
-				if( PREFSMAN->m_bEditorShowBGChangesPlay )
-				{
-					/* FirstBeat affects backgrounds, so commit changes to memory (not to disk)
-					 * and recalc it. */
-					Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-					ASSERT( pSteps );
-					pSteps->SetNoteData( m_NoteDataEdit );
-					m_pSong->ReCalculateRadarValuesAndLastBeat();
-
-					m_Background.Unload();
-					m_Background.LoadFromSong( m_pSong );
-
-					m_Foreground.Unload();
-					m_Foreground.LoadFromSong( m_pSong );
-				}
-
-				const float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat);
-				LOG->Trace( "Starting playback at %f", fStartSeconds );
-			
-				RageSoundParams p;
-				p.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
-				p.m_StartSecond = fStartSeconds;
-				p.AccurateSync = true;
-				p.StopMode = RageSoundParams::M_CONTINUE;
-				m_soundMusic.Play( &p );
-			}
+			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+			TransitionEditState( STATE_PLAYING );
 			break;
 		case record:
-			{
-				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
-
-				TransitionEditState( STATE_RECORDING );
-				m_sprOverlay->PlayCommand( "Record" );
-				GAMESTATE->m_bPastHereWeGo = true;
-
-				/* Reset the note skin, in case preferences have changed. */
-				GAMESTATE->ResetNoteSkins();
-
-				// initialize m_NoteFieldRecord
-				m_NoteDataRecord.CopyAll( m_NoteDataEdit );
-
-				GAMESTATE->m_fSongBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker - ROWS_PER_MEASURE );	// give a 1 measure lead-in
-
-				float fStartSeconds = m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat);
-				LOG->Trace( "Starting playback at %f", fStartSeconds );
-
-				RageSoundParams p;
-				p.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
-				p.m_StartSecond = fStartSeconds;
-				p.AccurateSync = true;
-				p.StopMode = RageSoundParams::M_CONTINUE;
-				m_soundMusic.Play( &p );
-			}
+			ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
+			TransitionEditState( STATE_RECORDING );
 			break;
 		case insert_and_shift:
 			NoteDataUtil::ShiftRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(1) );
