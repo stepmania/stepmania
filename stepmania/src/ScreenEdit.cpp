@@ -1987,20 +1987,18 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
+			SaveUndo();
 			CopyFromLastSave();
 			m_pSteps->GetNoteData( m_NoteDataEdit );
-			m_bHasUndo = false;
-			m_Undo.ClearAll();
 		}
 	}
 	else if( SM == SM_DoRevertFromDisk )
 	{
 		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
+			SaveUndo();
 			RevertFromDisk();
 			m_pSteps->GetNoteData( m_NoteDataEdit );
-			m_bHasUndo = false;
-			m_Undo.ClearAll();
 		}
 	}
 	else if( SM == SM_DoSaveAndExit ) // just asked "save before exiting? yes, no, cancel"
@@ -2886,9 +2884,9 @@ void ScreenEdit::Undo()
 {
 	if( m_bHasUndo )
 	{
+		NoteData temp( m_NoteDataEdit );
 		m_NoteDataEdit.CopyAll( m_Undo );
-		m_bHasUndo = false;
-		m_Undo.ClearAll();
+		m_Undo.CopyAll( temp );
 		SCREENMAN->SystemMessage( "Undo" );
 	}
 	else
@@ -2908,6 +2906,7 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 		if( iNumNotesThisMeasure > MAX_NOTES_PER_MEASURE )
 		{
 			Undo();
+			m_bHasUndo = false;
 			CString sError = ssprintf(
 				"This change creates more than %d notes in a measure.\n\nMore than %d notes per measure is not allowed.  This change has been reverted.", 
 				MAX_NOTES_PER_MEASURE, MAX_NOTES_PER_MEASURE );
@@ -2927,6 +2926,7 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 		if( bLastBeatIncreased && bPassedTheEnd )
 		{
 			Undo();
+			m_bHasUndo = false;
 			CString sError = ssprintf(
 				"This change creates notes past the end of the music and is not allowed.\n\nThe change has been reverted." );
 			ScreenPrompt::Prompt( SM_None, sError );
