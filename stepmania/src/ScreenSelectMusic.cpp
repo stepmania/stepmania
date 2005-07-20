@@ -1220,8 +1220,6 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 
 		if( OPTIONS_MENU_AVAILABLE )
 		{
-//			float fShowSeconds = m_Out.GetLengthSeconds();
-
 			// show "hold START for options"
 			m_sprOptionsMessage.SetHidden( false );
 			ON_COMMAND( m_sprOptionsMessage );

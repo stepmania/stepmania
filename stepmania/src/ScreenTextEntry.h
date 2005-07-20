@@ -8,7 +8,6 @@
 #include "Transition.h"
 #include "Quad.h"
 #include "RandomSample.h"
-#include "BGAnimation.h"
 #include "EnumHelper.h"
 
 enum KeyboardRow
