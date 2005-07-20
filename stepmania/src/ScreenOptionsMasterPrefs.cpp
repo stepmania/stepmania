@@ -626,6 +626,9 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "AttractSoundFrequency",		AttractSoundFrequency,	"NEVER","ALWAYS","2 TIMES","3 TIMES","4 TIMES","5 TIMES" ) );
 	ADD( ConfOption( "SoundVolume",					SoundVolume,		"SILENT","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_SOUND;
+
+	/* Editor options */
+	ADD( ConfOption( "EditorShowBGChangesPlay",		MovePref,			"HIDE","SHOW") );
 }
 
 /* Get a mask of effects to apply if the given option changes. */
