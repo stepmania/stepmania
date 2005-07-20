@@ -1718,6 +1718,9 @@ void ScreenEdit::TransitionEditState( EditState em )
 {
 	EditState old = m_EditState;
 	
+	/* If we're playing sample music when changing modes, stop it. */
+	SOUND->PlayMusic("");
+
 	if( old == STATE_PLAYING )
 	{
 		if( GAMESTATE->IsSyncDataChanged() )
@@ -2487,8 +2490,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			{
 				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 
-				SOUND->PlayMusic("");
-
 				TransitionEditState( STATE_PLAYING );
 				m_sprOverlay->PlayCommand( "Play" );
 
@@ -2538,8 +2539,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case record:
 			{
 				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
-
-				SOUND->PlayMusic("");
 
 				TransitionEditState( STATE_RECORDING );
 				m_sprOverlay->PlayCommand( "Record" );
