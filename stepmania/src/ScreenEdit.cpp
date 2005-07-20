@@ -2219,7 +2219,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				g_BackgroundChange.rows[color1].										SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor1 );
 				g_BackgroundChange.rows[color2].										SetDefaultChoiceIfPresent( bgChange.m_def.m_sColor2 );
 
-				EditMiniMenu( m_pBackgroundChangeMenu, SM_BackFromBGChange );
+				EditMiniMenu( m_pBackgroundChangeMenu, SM_BackFromBGChange, SM_None, &g_BackgroundChange );
 			}
 			break;
 
