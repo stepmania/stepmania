@@ -90,6 +90,7 @@ void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixe
 	m_pPlayerState = pPlayerState;
 	m_fYReverseOffsetPixels = fYReverseOffsetPixels;
 	CacheAllUsedNoteSkins();
+	RefreshBeatToNoteSkin();
 }
 
 void NoteField::Load( 

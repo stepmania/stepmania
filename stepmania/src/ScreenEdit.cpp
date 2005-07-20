@@ -606,7 +606,6 @@ void ScreenEdit::Init()
 	m_NoteDataRecord.CopyAll( noteData );
 	m_NoteFieldRecord.SetXY( RECORD_X, RECORD_Y );
 	m_NoteFieldRecord.Init( GAMESTATE->m_pPlayerState[PLAYER_1], 10 );
-	m_NoteFieldRecord.Load( &m_NoteDataRecord, -(int)SCREEN_HEIGHT/2, (int)SCREEN_HEIGHT/2 );
 	this->AddChild( &m_NoteFieldRecord );
 
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
@@ -2557,7 +2556,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				// initialize m_NoteFieldRecord
 				m_NoteDataRecord.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 				m_NoteDataRecord.CopyAll( m_NoteDataEdit );
-				m_NoteFieldRecord.Load( &m_NoteDataRecord, -150, 350 );
+				m_NoteFieldRecord.Load( &m_NoteDataRecord, -(int)SCREEN_HEIGHT/2, (int)SCREEN_HEIGHT/2 );
 
 				GAMESTATE->m_fSongBeat = NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker - ROWS_PER_MEASURE );	// give a 1 measure lead-in
 
