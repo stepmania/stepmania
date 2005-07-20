@@ -10,7 +10,6 @@
 #include "song.h"
 #include "GameState.h"
 #include "RageTextureManager.h"
-#include "SongManager.h"
 #include "Course.h"
 #include "XmlFile.h"
 #include "FontCharAliases.h"
@@ -185,20 +184,6 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 	else if( sClass == "SongBanner" )
 	{
 		Song *pSong = GAMESTATE->m_pCurSong;
-		if( pSong == NULL )
-		{
-			// probe for a random banner
-			for( int i=0; i<300; i++ )
-			{
-				pSong = SONGMAN->GetRandomSong();
-				if( pSong == NULL )
-					break;
-				if( !pSong->ShowInDemonstrationAndRanking() )
-					continue;
-				break;
-			}
-		}
-
 		if( pSong && pSong->HasBanner() )
 			sFile = pSong->GetBannerPath();
 		else
@@ -217,22 +202,6 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 	else if( sClass == "CourseBanner" )
 	{
 		Course *pCourse = GAMESTATE->m_pCurCourse;
-		if( pCourse == NULL )
-		{
-			// probe for a random banner
-			for( int i=0; i<300; i++ )
-			{
-				pCourse = SONGMAN->GetRandomCourse();
-				if( pCourse == NULL )
-					break;
-				if( !pCourse->ShowInDemonstrationAndRanking() )
-					continue;
-				if( pCourse->m_bIsAutogen )
-					continue;
-				break;
-			}
-		}
-
 		if( pCourse && pCourse->HasBanner() )
 			sFile = pCourse->m_sBannerPath;
 		else
