@@ -244,7 +244,6 @@ public:
 		edit_song_info,
 		edit_bpm,
 		edit_stop,
-		edit_bg_change,
 		play_preview_music,
 		exit,
 		save_on_exit,
