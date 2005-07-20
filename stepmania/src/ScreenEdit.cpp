@@ -55,8 +55,7 @@ AutoScreenMessage( SM_UpdateTextInfo )
 AutoScreenMessage( SM_BackFromMainMenu )
 AutoScreenMessage( SM_BackFromAreaMenu )
 AutoScreenMessage( SM_BackFromStepsInformation )
-AutoScreenMessage( SM_BackFromPlayerOptions )
-AutoScreenMessage( SM_BackFromEditOptions )
+AutoScreenMessage( SM_BackFromOptions )
 AutoScreenMessage( SM_BackFromSongInformation )
 AutoScreenMessage( SM_BackFromBGChange )
 AutoScreenMessage( SM_BackFromInsertAttack )
@@ -384,7 +383,7 @@ static MenuDef g_MainMenu(
 	MenuRowDef( ScreenEdit::save,						"Save",							true, EDIT_MODE_HOME, 0, NULL ),
 	MenuRowDef( ScreenEdit::revert_to_last_save,		"Revert to Last Save",			true, EDIT_MODE_HOME, 0, NULL ),
 	MenuRowDef( ScreenEdit::revert_from_disk,			"Revert from Disk",				true, EDIT_MODE_FULL, 0, NULL ),
-	MenuRowDef( ScreenEdit::player_options,			"Player Options",				true, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::options,					"Editor Options",				true, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_song_info,			"Edit Song Info",				true, EDIT_MODE_FULL, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_bpm,					"Edit BPM Change",				true, EDIT_MODE_FULL, 0, NULL ),
 	MenuRowDef( ScreenEdit::edit_stop,					"Edit Stop",					true, EDIT_MODE_FULL, 0, NULL ),
@@ -1768,7 +1767,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			ASSERT( m_pAttacksFromCourse );
 		}
 	}
-	else if( SM == SM_BackFromPlayerOptions )
+	else if( SM == SM_BackFromOptions )
 	{
 		GAMESTATE->StoreSelectedOptions();	// so that the options stick when we reset Course attacks
 
@@ -2075,8 +2074,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				"Do you want to revert from disk?\n\nThis will destroy all unsaved changes.",
 				PROMPT_YES_NO, ANSWER_NO );
 			break;
-		case player_options:
-			SCREENMAN->PushScreen( m_pScreenPlayerOptions, false, SM_BackFromPlayerOptions );
+		case options:
+			SCREENMAN->PushScreen( m_pScreenPlayerOptions, false, SM_BackFromOptions );
 			break;
 		case edit_song_info:
 			{
