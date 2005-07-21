@@ -1147,71 +1147,11 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				break;
 			}
 
-			const float fOriginalBeat = GAMESTATE->m_fSongBeat;
 			float fDestinationBeat = GAMESTATE->m_fSongBeat + fBeatsToMove;
 			fDestinationBeat = Quantize( fDestinationBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 			CLAMP( fDestinationBeat, 0, GetMaximumBeatForMoving() );
 
-			// Don't play the sound and do the hold note logic below if our position didn't change.
-			if( fOriginalBeat == fDestinationBeat )
-				return;
-
-			GAMESTATE->m_fSongBeat = fDestinationBeat;
-
-			// check to see if they're holding a button
-			for( int n=0; n<NUM_EDIT_BUTTON_COLUMNS; n++ )
-			{
-				int iCol = n;
-
-				// Ctrl + number = input to right half
-				if( EditIsBeingPressed(EDIT_BUTTON_RIGHT_SIDE) )
-					ShiftToRightSide( iCol, m_NoteDataEdit.GetNumTracks() );
-
-				if( iCol >= m_NoteDataEdit.GetNumTracks() )
-					continue;	// skip
-
-				EditButton b = EditButton(EDIT_BUTTON_COLUMN_0+n);
-				if( !EditIsBeingPressed(b) )
-					continue;
-
-				// create a new hold note
-				int iStartRow = BeatToNoteRow( min(fOriginalBeat, fDestinationBeat) );
-				int iEndRow = BeatToNoteRow( max(fOriginalBeat, fDestinationBeat) );
-
-				// Don't SaveUndo.  We want to undo the whole hold, not just the last segment
-				// that the user made.  Dragging the hold bigger can only absorb and remove
-				// other taps, so dragging won't cause us to exceed the note limit.
-				if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
-					m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_ROLL_HEAD );
-				else
-					m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_HOLD_HEAD );
-			}
-
-			if( EditIsBeingPressed(EDIT_BUTTON_SCROLL_SELECT) )
-			{
-				/* Shift is being held. 
-				 *
-				 * If this is the first time we've moved since shift was depressed,
-				 * the old position (before this move) becomes the start pos: */
-				int iDestinationRow = BeatToNoteRow( fDestinationBeat );
-				if( m_iShiftAnchor == -1 )
-					m_iShiftAnchor = BeatToNoteRow(fOriginalBeat);
-				
-				if( iDestinationRow == m_iShiftAnchor )
-				{
-					/* We're back at the anchor, so we have nothing selected. */
-					m_NoteFieldEdit.m_iBeginMarker = m_NoteFieldEdit.m_iEndMarker = -1;
-				}
-				else
-				{
-					m_NoteFieldEdit.m_iBeginMarker = m_iShiftAnchor;
-					m_NoteFieldEdit.m_iEndMarker = iDestinationRow;
-					if( m_NoteFieldEdit.m_iBeginMarker > m_NoteFieldEdit.m_iEndMarker )
-						swap( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
-				}
-			}
-
-			m_soundChangeLine.Play();
+			ScrollTo( fDestinationBeat );
 		}
 		break;
 	case EDIT_BUTTON_SNAP_NEXT:
@@ -2027,6 +1967,71 @@ void ScreenEdit::TransitionEditState( EditState em )
 	}
 
 	m_EditState = em;
+}
+
+void ScreenEdit::ScrollTo( float fDestinationBeat )
+{
+	// Don't play the sound and do the hold note logic below if our position didn't change.
+	const float fOriginalBeat = GAMESTATE->m_fSongBeat;
+	if( fOriginalBeat == fDestinationBeat )
+		return;
+
+	GAMESTATE->m_fSongBeat = fDestinationBeat;
+
+	// check to see if they're holding a button
+	for( int n=0; n<NUM_EDIT_BUTTON_COLUMNS; n++ )
+	{
+		int iCol = n;
+
+		// Ctrl + number = input to right half
+		if( EditIsBeingPressed(EDIT_BUTTON_RIGHT_SIDE) )
+			ShiftToRightSide( iCol, m_NoteDataEdit.GetNumTracks() );
+
+		if( iCol >= m_NoteDataEdit.GetNumTracks() )
+			continue;	// skip
+
+		EditButton b = EditButton(EDIT_BUTTON_COLUMN_0+n);
+		if( !EditIsBeingPressed(b) )
+			continue;
+
+		// create a new hold note
+		int iStartRow = BeatToNoteRow( min(fOriginalBeat, fDestinationBeat) );
+		int iEndRow = BeatToNoteRow( max(fOriginalBeat, fDestinationBeat) );
+
+		// Don't SaveUndo.  We want to undo the whole hold, not just the last segment
+		// that the user made.  Dragging the hold bigger can only absorb and remove
+		// other taps, so dragging won't cause us to exceed the note limit.
+		if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
+			m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_ROLL_HEAD );
+		else
+			m_NoteDataEdit.AddHoldNote( iCol, iStartRow, iEndRow, TAP_ORIGINAL_HOLD_HEAD );
+	}
+
+	if( EditIsBeingPressed(EDIT_BUTTON_SCROLL_SELECT) )
+	{
+		/* Shift is being held. 
+			*
+			* If this is the first time we've moved since shift was depressed,
+			* the old position (before this move) becomes the start pos: */
+		int iDestinationRow = BeatToNoteRow( fDestinationBeat );
+		if( m_iShiftAnchor == -1 )
+			m_iShiftAnchor = BeatToNoteRow(fOriginalBeat);
+		
+		if( iDestinationRow == m_iShiftAnchor )
+		{
+			/* We're back at the anchor, so we have nothing selected. */
+			m_NoteFieldEdit.m_iBeginMarker = m_NoteFieldEdit.m_iEndMarker = -1;
+		}
+		else
+		{
+			m_NoteFieldEdit.m_iBeginMarker = m_iShiftAnchor;
+			m_NoteFieldEdit.m_iEndMarker = iDestinationRow;
+			if( m_NoteFieldEdit.m_iBeginMarker > m_NoteFieldEdit.m_iEndMarker )
+				swap( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
+		}
+	}
+
+	m_soundChangeLine.Play();
 }
 
 void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )

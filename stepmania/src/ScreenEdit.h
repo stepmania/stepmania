@@ -157,6 +157,7 @@ protected:
 		STATE_INVALID
 	};
 	void TransitionEditState( EditState em );
+	void ScrollTo( float fDestinationBeat );
 	void PlayTicks();
 	void PlayPreviewMusic();
 	
