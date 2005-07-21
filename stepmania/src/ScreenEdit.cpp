@@ -839,7 +839,7 @@ void ScreenEdit::Update( float fDeltaTime )
 	float fDelta = GAMESTATE->m_fSongBeat - m_fTrailingBeat;
 	if( fabsf(fDelta) < 10 )
 		fapproach( m_fTrailingBeat, GAMESTATE->m_fSongBeat,
-			fDeltaTime*40 / m_PlayerStateEdit.m_CurrentPlayerOptions.m_fScrollSpeed );
+			fDeltaTime*40 / m_NoteFieldEdit.GetPlayerState()->m_CurrentPlayerOptions.m_fScrollSpeed );
 	else
 		fapproach( m_fTrailingBeat, GAMESTATE->m_fSongBeat,
 			fabsf(fDelta) * fDeltaTime*5 );
@@ -1056,7 +1056,8 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case EDIT_BUTTON_SCROLL_SPEED_UP:
 	case EDIT_BUTTON_SCROLL_SPEED_DOWN:
 		{
-			float& fScrollSpeed = m_PlayerStateEdit.m_PlayerOptions.m_fScrollSpeed;
+			PlayerState *pPlayerState = const_cast<PlayerState *> (m_NoteFieldEdit.GetPlayerState());
+			float& fScrollSpeed = pPlayerState->m_PlayerOptions.m_fScrollSpeed;
 			float fNewScrollSpeed = fScrollSpeed;
 
 			if( EditB == EDIT_BUTTON_SCROLL_SPEED_DOWN )
