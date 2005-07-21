@@ -39,6 +39,7 @@ public:
 	void DidTapNote( int iCol, TapNoteScore score, bool bBright );
 	void DidHoldNote( int iCol, HoldNoteScore score, bool bBright );
 
+	const PlayerState *GetPlayerState() const { return m_pPlayerState; }
 	void RefreshBeatToNoteSkin();
 
 protected:
