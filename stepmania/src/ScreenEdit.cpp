@@ -1754,8 +1754,11 @@ void ScreenEdit::TransitionEditState( EditState em )
 {
 	EditState old = m_EditState;
 	
-	/* If we're playing sample music when changing modes, stop it. */
+	/* If we're playing music, sample music or assist ticks when changing modes, stop. */
 	SOUND->PlayMusic("");
+	m_soundMusic.StopPlaying();
+	m_soundAssistTick.StopPlaying();
+	GAMESTATE->m_bPastHereWeGo = false;
 
 	// If exiting EDIT mode, save the cursor position.
 	if( old == STATE_EDITING )
@@ -1775,10 +1778,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 		/* Important: people will stop playing, change the BG and start again; make sure we reload */
 		m_Background.Unload();
 		m_Foreground.Unload();
-
-		GAMESTATE->m_bPastHereWeGo = false;
-		m_soundMusic.StopPlaying();
-		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
 
 		/* Restore the cursor position. */
 		GAMESTATE->m_fSongBeat = m_fBeatToReturnTo;
