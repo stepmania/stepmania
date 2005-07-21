@@ -804,6 +804,7 @@ void ScreenEdit::Update( float fDeltaTime )
 
 				float fStartBeat = max( fStartPlayingAtBeat, m_pSong->GetBeatFromElapsedTime( fHoldStartSeconds ) );
 				float fEndBeat = max( fStartBeat, GAMESTATE->m_fSongBeat );
+				fEndBeat = min( fEndBeat, NoteRowToBeat(m_iStopPlayingAt) );
 
 				// Round hold start and end to the nearest snap interval
 				fStartBeat = Quantize( fStartBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
@@ -818,11 +819,33 @@ void ScreenEdit::Update( float fDeltaTime )
 		}
 	}
 
+	//
+	// check for end of playback/record
+	//
 	if( m_EditState == STATE_RECORDING  ||  m_EditState == STATE_PLAYING )
 	{
-		// check for end of playback/record
+		/*
+		 * If any arrow is being held, continue for up to half a second after
+		 * the end marker.  This makes it possible to start a hold note near
+		 * the end of the range.  We won't allow placing anything outside of the
+		 * range.
+		 */
+		bool bButtonIsBeingPressed = false;
+		for( int t=0; t<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; t++ )	// for each track
+		{
+			StyleInput StyleI( PLAYER_1, t );
+			if( INPUTMAPPER->IsButtonDown(StyleI) )
+				bButtonIsBeingPressed = true;
+		}
 
-		if( GAMESTATE->m_fSongBeat > NoteRowToBeat(m_iStopPlayingAt) )
+		float fLastBeat = NoteRowToBeat(m_iStopPlayingAt);
+		if( bButtonIsBeingPressed && m_EditState == STATE_RECORDING )
+		{
+			float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( fLastBeat );
+			fLastBeat = m_pSong->m_Timing.GetBeatFromElapsedTime( fSeconds + 0.5f );
+		}
+
+		if( GAMESTATE->m_fSongBeat > fLastBeat )
 		{
 			TransitionEditState( STATE_EDITING );
 			GAMESTATE->m_fSongBeat = NoteRowToBeat( m_iStartPlayingAt );
