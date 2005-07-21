@@ -1786,9 +1786,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 			* make sure we don't stay there if we escaped out early. */
 		GAMESTATE->m_fSongBeat = max( GAMESTATE->m_fSongBeat, 0 );
 
-		/* Stop displaying course attacks, if any. */
-		GAMESTATE->RemoveAllActiveAttacks();
-		GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 
 		if( old == STATE_RECORDING )
@@ -1817,6 +1814,12 @@ void ScreenEdit::TransitionEditState( EditState em )
 	{
 	case STATE_PLAYING:
 	case STATE_RECORDING:
+		/* Stop displaying course attacks, if any, and return to the player's defaults. */
+		GAMESTATE->RemoveAllActiveAttacks();
+
+		/* Snap to current options. */
+		GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
+
 		/* Give a 1 secord lead-in.  If we're loading Player, this must be done first. */
 		float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;
 		GAMESTATE->UpdateSongPosition( fSeconds, m_pSong->m_Timing );
