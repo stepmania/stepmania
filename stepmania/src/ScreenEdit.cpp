@@ -1665,11 +1665,6 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 	{
 	case IET_FIRST_PRESS:
 		{
-			// Don't add outside of the range.
-			if( GAMESTATE->m_fSongBeat < NoteRowToBeat(m_iStartPlayingAt) ||
-				GAMESTATE->m_fSongBeat > NoteRowToBeat(m_iStopPlayingAt) )
-				return;
-
 			// Add a tap
 			float fBeat = GAMESTATE->m_fSongBeat;
 			fBeat = Quantize( fBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
@@ -1677,6 +1672,10 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 			const int iRow = BeatToNoteRow( fBeat );
 			if( iRow < 0 )
 				break;
+
+			// Don't add outside of the range.
+			if( iRow < m_iStartPlayingAt || iRow >= m_iStopPlayingAt )
+				return;
 
 			// Remove hold if any so that we don't have taps inside of a hold.
 			int iHeadRow;
