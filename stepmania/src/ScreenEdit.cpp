@@ -1771,6 +1771,17 @@ void ScreenEdit::TransitionEditState( EditState em )
 		if( GAMESTATE->IsSyncDataChanged() )
 			SCREENMAN->AddNewScreenToTop( "ScreenSaveSync" );
 		break;
+
+	case STATE_RECORDING:
+		SaveUndo();
+
+		// delete old TapNotes in the range
+		m_NoteDataEdit.ClearRange( m_iStartPlayingAt, m_iStopPlayingAt );
+		m_NoteDataEdit.CopyRange( m_NoteDataRecord, m_iStartPlayingAt, m_iStopPlayingAt, m_iStartPlayingAt );
+		m_NoteDataRecord.ClearAll();
+
+		CheckNumberOfNotesAndUndo();
+		break;
 	}
 
 	switch( em )
@@ -1789,20 +1800,9 @@ void ScreenEdit::TransitionEditState( EditState em )
 		GAMESTATE->m_fSongBeat = Quantize( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
 
 		/* Playing and recording have lead-ins, which may start before beat 0;
-			* make sure we don't stay there if we escaped out early. */
+		 * make sure we don't stay there if we escaped out early. */
 		GAMESTATE->m_fSongBeat = max( GAMESTATE->m_fSongBeat, 0 );
 
-		if( old == STATE_RECORDING )
-		{
-			SaveUndo();
-
-			// delete old TapNotes in the range
-			m_NoteDataEdit.ClearRange( m_iStartPlayingAt, m_iStopPlayingAt );
-			m_NoteDataEdit.CopyRange( m_NoteDataRecord, m_iStartPlayingAt, m_iStopPlayingAt, m_iStartPlayingAt );
-			m_NoteDataRecord.ClearAll();
-
-			CheckNumberOfNotesAndUndo();
-		}
 		break;
 	case STATE_RECORDING:
 		break;
