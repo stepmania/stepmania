@@ -573,13 +573,6 @@ void ScreenEdit::Init()
 	GAMESTATE->m_fSongBeat = 0;
 	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 
-	/* Not all games have a noteskin named "note" ... */
-	if( NOTESKIN->DoesNoteSkinExist("note") )
-		m_PlayerStateEdit.m_PlayerOptions.m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
-	m_PlayerStateEdit.m_PlayerNumber = PLAYER_1;
-	m_PlayerStateEdit.m_PlayerOptions.m_sNoteSkin = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin;
-	m_PlayerStateEdit.ResetNoteSkins();
-
 	GAMESTATE->ResetNoteSkins();
 	GAMESTATE->StoreSelectedOptions();
 
@@ -596,6 +589,12 @@ void ScreenEdit::Init()
 	m_SnapDisplay.Load( PLAYER_1 );
 	m_SnapDisplay.SetZoom( 0.5f );
 	this->AddChild( &m_SnapDisplay );
+
+	if( NOTESKIN->DoesNoteSkinExist("note") )
+		m_PlayerStateEdit.m_PlayerOptions.m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
+	m_PlayerStateEdit.m_PlayerNumber = PLAYER_1;
+	m_PlayerStateEdit.m_PlayerOptions.m_sNoteSkin = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin;
+	m_PlayerStateEdit.ResetNoteSkins();
 
 	m_pSteps->GetNoteData( m_NoteDataEdit );
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
