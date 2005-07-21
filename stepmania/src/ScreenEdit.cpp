@@ -1252,7 +1252,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			g_AreaMenu.rows[record].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[convert_beat_to_pause].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[undo].bEnabled = m_bHasUndo;
-			EditMiniMenu( m_pAreaMenu, SM_BackFromAreaMenu );
+			EditMiniMenu( m_pAreaMenu, SM_BackFromAreaMenu, SM_None, &g_AreaMenu );
 		}
 		break;
 	case EDIT_BUTTON_OPEN_EDIT_MENU:
