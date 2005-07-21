@@ -1568,7 +1568,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				}
 			}
 
-			EditMiniMenu( m_pCourseModeMenu, SM_BackFromCourseModeMenu );
+			EditMiniMenu( m_pCourseModeMenu, SM_BackFromCourseModeMenu, SM_None, &g_CourseMode );
 			break;
 		}
 	case EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP:
