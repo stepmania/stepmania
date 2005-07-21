@@ -372,7 +372,7 @@ GameSoundManager::GameSoundManager()
 	g_Mutex = new RageEvent("GameSoundManager");
 	g_Playing = new MusicPlaying( new RageSound );
 
-	g_UpdatingTimer = false;
+	g_UpdatingTimer = true;
 
 	g_Shutdown = false;
 	MusicThread.SetName( "MusicThread" );
