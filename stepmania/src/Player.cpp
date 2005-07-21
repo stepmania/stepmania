@@ -213,6 +213,7 @@ void Player::Init(
 
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
 	m_pNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
+	m_pNoteField->RefreshBeatToNoteSkin();
 }
 
 void Player::Load( const NoteData& noteData )
