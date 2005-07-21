@@ -232,7 +232,7 @@ void ScreenManager::Update( float fDeltaTime )
 		FinishConcurrentRendering();
 		g_bIsConcurrentlyLoading = false;
 
-		LOG->Trace( "Concurrent prepare of %s finished", m_sDelayedConcurrentPrepare.c_str() );
+		LOG->Trace( "Concurrent prepare of %s finished", sScreenName.c_str() );
 
 		/* We're done.  Send the message.  The screen is allowed to start
 		 * another concurrent prepare from this message. */
