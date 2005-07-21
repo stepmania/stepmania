@@ -71,6 +71,7 @@ enum EditButton
 	EDIT_BUTTON_PLAY_FROM_START,
 	EDIT_BUTTON_PLAY_FROM_CURSOR,
 	EDIT_BUTTON_PLAY_SELECTION,
+	EDIT_BUTTON_RECORD_FROM_CURSOR,
 	EDIT_BUTTON_RECORD_SELECTION,
 
 	EDIT_BUTTON_RETURN_TO_EDIT,
@@ -140,13 +141,21 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	void InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB );
 	void InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB );
+	void InputRecordPaused( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB );
 	void InputPlay( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
 	virtual ScreenType GetScreenType() const { return m_EditState==STATE_PLAYING ? gameplay : system_menu; }
 
-	enum EditState { STATE_EDITING, STATE_RECORDING, STATE_PLAYING, NUM_EDIT_STATES, STATE_INVALID };
+	enum EditState {
+		STATE_EDITING,
+		STATE_RECORDING,
+		STATE_RECORDING_PAUSED,
+		STATE_PLAYING,
+		NUM_EDIT_STATES,
+		STATE_INVALID
+	};
 	void TransitionEditState( EditState em );
 	void PlayTicks();
 	void PlayPreviewMusic();
@@ -223,6 +232,7 @@ protected:
 	Background		m_Background;
 	Foreground		m_Foreground;
 	Course			*m_pAttacksFromCourse;
+	bool			m_bReturnToRecordMenuAfterPlay;
 
 // for MODE_RECORD and MODE_PLAY
 	int				m_iStartPlayingAt, m_iStopPlayingAt;
@@ -403,7 +413,7 @@ public:
 	bool EditPressed( EditButton button, const DeviceInput &DeviceI );
 	bool EditIsBeingPressed( EditButton button ) const;
 	const MapEditToDI *GetCurrentMap() const;
-	MapEditToDI m_EditMappings, m_PlayMappings, m_RecordMappings;
+	MapEditToDI m_EditMappings, m_PlayMappings, m_RecordMappings, m_RecordPausedMappings;
 
 	void MakeFilteredMenuDef( const MenuDef* pDef, MenuDef &menu );
 	ScreenMiniMenu *LoadEditMiniMenu( const MenuDef* pDef );

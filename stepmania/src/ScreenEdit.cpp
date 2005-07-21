@@ -31,6 +31,8 @@
 #include <utility>
 #include <float.h>
 
+static Preference<float> g_iDefaultRecordLength( "DefaultRecordLength", 4 );
+
 //
 // Defines specific to ScreenEdit
 //
@@ -210,6 +212,14 @@ void ScreenEdit::InitEditMappings()
 	m_RecordMappings.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	m_RecordMappings.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
 	m_RecordMappings.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+
+	m_RecordPausedMappings.button[EDIT_BUTTON_PLAY_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
+	m_RecordPausedMappings.button[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
+	m_RecordPausedMappings.hold[EDIT_BUTTON_RECORD_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
+	m_RecordPausedMappings.hold[EDIT_BUTTON_RECORD_SELECTION][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL);
+	m_RecordPausedMappings.button[EDIT_BUTTON_RECORD_FROM_CURSOR][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
+	m_RecordPausedMappings.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
+	m_RecordPausedMappings.button[EDIT_BUTTON_UNDO][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
 }
 
 #endif
@@ -325,6 +335,7 @@ const MapEditToDI *ScreenEdit::GetCurrentMap() const
 	case STATE_EDITING: return &m_EditMappings;
 	case STATE_PLAYING: return &m_PlayMappings;
 	case STATE_RECORDING: return &m_RecordMappings;
+	case STATE_RECORDING_PAUSED: return &m_RecordPausedMappings;
 	default: FAIL_M( ssprintf("%i",m_EditState) );
 	}
 }
@@ -564,6 +575,7 @@ void ScreenEdit::Init()
 	m_pSong = GAMESTATE->m_pCurSong;
 	m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	m_pAttacksFromCourse = NULL;
+	m_bReturnToRecordMenuAfterPlay = false;
 	m_fBeatToReturnTo = 0;
 
 
@@ -968,6 +980,9 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 		break;
 	case STATE_RECORDING:
 		InputRecord( di, type, GameI, MenuI, StyleI, EditB );
+		break;
+	case STATE_RECORDING_PAUSED:
+		InputRecordPaused( di, type, GameI, MenuI, StyleI, EditB );
 		break;
 	case STATE_PLAYING:
 		InputPlay( di, type, GameI, MenuI, StyleI, EditB );
@@ -1617,7 +1632,27 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case EDIT_BUTTON_RECORD_SELECTION:
 		if( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 )
 			HandleAreaMenuChoice( record );
+		else
+		{
+			m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+
+			if( g_iDefaultRecordLength.Get() == -1 )
+				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow() + 1;
+			else
+				m_iStopPlayingAt = m_iStartPlayingAt + BeatToNoteRow( g_iDefaultRecordLength.Get() );
+			if( GAMESTATE->m_pCurSteps[0]->IsAnEdit() )
+				m_iStopPlayingAt = min( m_iStopPlayingAt, BeatToNoteRow(GetMaximumBeatForNewNote()) );
+
+			TransitionEditState( STATE_RECORDING );
+		}
 		break;
+	case EDIT_BUTTON_RECORD_FROM_CURSOR:
+		m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
+		m_iStopPlayingAt = m_NoteDataEdit.GetLastRow();
+		m_iStopPlayingAt += BeatToNoteRow(4);		// give a one measure lead out
+		TransitionEditState( STATE_RECORDING );
+		break;
+
 	case EDIT_BUTTON_INSERT:
 		HandleAreaMenuChoice( insert_and_shift );
 		SCREENMAN->PlayInvalidSound();
@@ -1694,6 +1729,59 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 	}
 }
 
+void ScreenEdit::InputRecordPaused( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB )
+{
+	if( type != IET_FIRST_PRESS )
+		return;		// don't care
+
+	switch( EditB )
+	{
+	case EDIT_BUTTON_UNDO:
+		/* We've already actually committed changes to m_NoteDataEdit, so all we have
+		 * to do to undo is Undo() as usual, and copy the note data back in. */
+		Undo();
+		m_NoteDataRecord.CopyAll( m_NoteDataEdit );
+		break;
+
+	case EDIT_BUTTON_PLAY_SELECTION:
+		TransitionEditState( STATE_PLAYING );
+		break;
+
+	case EDIT_BUTTON_RECORD_SELECTION:
+		TransitionEditState( STATE_RECORDING );
+		break;
+
+	case EDIT_BUTTON_RECORD_FROM_CURSOR:
+		if( GAMESTATE->m_pCurSteps[0]->IsAnEdit() )
+		{
+			float fMaximumBeat = GetMaximumBeatForNewNote();
+			if( NoteRowToBeat(m_iStopPlayingAt) >= fMaximumBeat )
+			{
+				// We're already at the end.
+				SCREENMAN->PlayInvalidSound();
+				return;
+			}
+		}
+
+		/* Pick up where we left off. */
+		{
+			int iSize = m_iStopPlayingAt - m_iStartPlayingAt;
+			m_iStartPlayingAt = m_iStopPlayingAt;
+			m_iStopPlayingAt += iSize;
+
+			if( GAMESTATE->m_pCurSteps[0]->IsAnEdit() )
+				m_iStopPlayingAt = min( m_iStopPlayingAt, BeatToNoteRow(GetMaximumBeatForNewNote()) );
+		}
+
+		TransitionEditState( STATE_RECORDING );
+		break;
+
+	case EDIT_BUTTON_RETURN_TO_EDIT:
+		TransitionEditState( STATE_EDITING );
+		break;
+	}
+}
+
 void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB )
 {
 	if( type != IET_FIRST_PRESS )
@@ -1754,6 +1842,25 @@ void ScreenEdit::TransitionEditState( EditState em )
 {
 	EditState old = m_EditState;
 	
+	// If we're going from recording to paused, come back when we're done.
+	if( old == STATE_RECORDING_PAUSED && em == STATE_PLAYING )
+		m_bReturnToRecordMenuAfterPlay = true;
+
+	//
+	// If switching out of record, open the menu.
+	//
+	{
+		bool bGoToRecordMenu = (old == STATE_RECORDING);
+		if( m_bReturnToRecordMenuAfterPlay && old == STATE_PLAYING )
+		{
+			bGoToRecordMenu = true;
+			m_bReturnToRecordMenuAfterPlay = false;
+		}
+		
+		if( bGoToRecordMenu )
+			em = STATE_RECORDING_PAUSED;
+	}
+
 	/* If we're playing music, sample music or assist ticks when changing modes, stop. */
 	SOUND->PlayMusic("");
 	m_soundMusic.StopPlaying();
@@ -1828,6 +1935,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 		break;
 	}
+	case STATE_RECORDING_PAUSED:
+		break;
 	default:
 		ASSERT(0);
 	}
@@ -1864,8 +1973,9 @@ void ScreenEdit::TransitionEditState( EditState em )
 	}
 
 	case STATE_RECORDING:
+	case STATE_RECORDING_PAUSED:
 	{
-		m_sprOverlay->PlayCommand( "Record" );
+		m_sprOverlay->PlayCommand( em == STATE_RECORDING? "Record":"RecordPaused" );
 
 		// initialize m_NoteFieldRecord
 		m_NoteDataRecord.CopyAll( m_NoteDataEdit );
@@ -1896,7 +2006,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	m_textPlayRecordHelp.SetHidden( em == STATE_EDITING );
 	m_SnapDisplay.SetHidden( em != STATE_EDITING );
 	m_NoteFieldEdit.SetHidden( em != STATE_EDITING );
-	m_NoteFieldRecord.SetHidden( em != STATE_RECORDING );
+	m_NoteFieldRecord.SetHidden( em != STATE_RECORDING && em != STATE_RECORDING_PAUSED );
 	m_Player.SetHidden( em != STATE_PLAYING );
 	m_Foreground.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == STATE_EDITING );
 
