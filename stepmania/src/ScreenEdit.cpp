@@ -1796,8 +1796,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 			SaveUndo();
 
 			// delete old TapNotes in the range
-			m_NoteDataEdit.ClearRange( m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
-			m_NoteDataEdit.CopyRange( m_NoteDataRecord, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker, m_NoteFieldEdit.m_iBeginMarker );
+			m_NoteDataEdit.ClearRange( m_iStartPlayingAt, m_iStopPlayingAt );
+			m_NoteDataEdit.CopyRange( m_NoteDataRecord, m_iStartPlayingAt, m_iStopPlayingAt, m_iStartPlayingAt );
 			m_NoteDataRecord.ClearAll();
 
 			CheckNumberOfNotesAndUndo();
