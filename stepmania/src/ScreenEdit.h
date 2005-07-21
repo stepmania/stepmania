@@ -226,6 +226,7 @@ protected:
 
 // for MODE_RECORD and MODE_PLAY
 	int				m_iStartPlayingAt, m_iStopPlayingAt;
+	float			m_fBeatToReturnTo;
 
 	RageSound		m_soundMusic;
 

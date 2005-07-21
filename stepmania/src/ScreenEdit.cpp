@@ -566,6 +566,7 @@ void ScreenEdit::Init()
 	m_pSong = GAMESTATE->m_pCurSong;
 	m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
 	m_pAttacksFromCourse = NULL;
+	m_fBeatToReturnTo = 0;
 
 
 	GAMESTATE->m_bPastHereWeGo = false;
@@ -1706,6 +1707,8 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 	switch( EditB )
 	{
 	case EDIT_BUTTON_RETURN_TO_EDIT:
+		/* When exiting play mode manually, leave the cursor where it is. */
+		m_fBeatToReturnTo = GAMESTATE->m_fSongBeat;
 		TransitionEditState( STATE_EDITING );
 		break;
 	case EDIT_BUTTON_TOGGLE_ASSIST_TICK:
@@ -1759,6 +1762,10 @@ void ScreenEdit::TransitionEditState( EditState em )
 	/* If we're playing sample music when changing modes, stop it. */
 	SOUND->PlayMusic("");
 
+	// If exiting EDIT mode, save the cursor position.
+	if( old == STATE_EDITING )
+		m_fBeatToReturnTo = GAMESTATE->m_fSongBeat;
+
 	if( old == STATE_PLAYING )
 	{
 		if( GAMESTATE->IsSyncDataChanged() )
@@ -1777,6 +1784,9 @@ void ScreenEdit::TransitionEditState( EditState em )
 		GAMESTATE->m_bPastHereWeGo = false;
 		m_soundMusic.StopPlaying();
 		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
+
+		/* Restore the cursor position. */
+		GAMESTATE->m_fSongBeat = m_fBeatToReturnTo;
 
 		/* Make sure we're snapped. */
 		GAMESTATE->m_fSongBeat = Quantize( GAMESTATE->m_fSongBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
