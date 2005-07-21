@@ -847,10 +847,7 @@ void ScreenEdit::Update( float fDeltaTime )
 		}
 
 		if( GAMESTATE->m_fSongBeat > fLastBeat )
-		{
 			TransitionEditState( STATE_EDITING );
-			GAMESTATE->m_fSongBeat = NoteRowToBeat( m_iStartPlayingAt );
-		}
 	}
 
 
