@@ -1867,6 +1867,10 @@ void ScreenEdit::TransitionEditState( EditState em )
 		// initialize m_NoteFieldRecord
 		m_NoteDataRecord.CopyAll( m_NoteDataEdit );
 
+		// highlight the section being recorded
+		m_NoteFieldRecord.m_iBeginMarker = m_iStartPlayingAt;
+		m_NoteFieldRecord.m_iEndMarker = m_iStopPlayingAt;
+
 		break;
 	}
 	}
