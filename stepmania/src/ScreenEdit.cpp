@@ -1807,6 +1807,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 	case STATE_PLAYING:
 	case STATE_RECORDING:
+	{
 		GAMESTATE->ResetOriginalSyncData();
 
 		/* Stop displaying course attacks, if any, and return to the player's defaults. */
@@ -1826,6 +1827,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		GAMESTATE->ResetNoteSkins();
 
 		break;
+	}
 	default:
 		ASSERT(0);
 	}
