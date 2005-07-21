@@ -1760,14 +1760,17 @@ void ScreenEdit::TransitionEditState( EditState em )
 	m_soundAssistTick.StopPlaying();
 	GAMESTATE->m_bPastHereWeGo = false;
 
-	// If exiting EDIT mode, save the cursor position.
-	if( old == STATE_EDITING )
-		m_fBeatToReturnTo = GAMESTATE->m_fSongBeat;
-
-	if( old == STATE_PLAYING )
+	switch( old )
 	{
+	case STATE_EDITING:
+		// If exiting EDIT mode, save the cursor position.
+		m_fBeatToReturnTo = GAMESTATE->m_fSongBeat;
+		break;
+
+	case STATE_PLAYING:
 		if( GAMESTATE->IsSyncDataChanged() )
 			SCREENMAN->AddNewScreenToTop( "ScreenSaveSync" );
+		break;
 	}
 
 	switch( em )
