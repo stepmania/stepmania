@@ -81,6 +81,7 @@ public:
 	bool GetNextTapNoteRowForTrack( int track, int &rowInOut ) const;
 	bool GetNextTapNoteRowForAllTracks( int &rowInOut ) const;
 	bool GetPrevTapNoteRowForTrack( int track, int &rowInOut ) const;
+	bool GetPrevTapNoteRowForAllTracks( int &rowInOut ) const;
 	
 	void MoveTapNoteTrack( int dest, int src );
 	void SetTapNote( int track, int row, const TapNote& tn );

@@ -837,6 +837,32 @@ bool NoteData::GetNextTapNoteRowForAllTracks( int &rowInOut ) const
 	}
 }
 
+bool NoteData::GetPrevTapNoteRowForAllTracks( int &rowInOut ) const
+{
+	int iClosestPrevRow = 0;
+	bool bAnyHavePrevNote = false;
+	for( int t=0; t<GetNumTracks(); t++ )
+	{
+		int iNewRowThisTrack = rowInOut;
+		if( GetPrevTapNoteRowForTrack( t, iNewRowThisTrack ) )
+		{
+			bAnyHavePrevNote = true;
+			ASSERT( iNewRowThisTrack < MAX_NOTE_ROW );
+			iClosestPrevRow = max( iClosestPrevRow, iNewRowThisTrack );
+		}
+	}
+
+	if( bAnyHavePrevNote )
+	{
+		rowInOut = iClosestPrevRow;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
