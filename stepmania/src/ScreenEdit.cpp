@@ -1804,20 +1804,11 @@ void ScreenEdit::TransitionEditState( EditState em )
 		GAMESTATE->m_fSongBeat = max( GAMESTATE->m_fSongBeat, 0 );
 
 		break;
-	case STATE_RECORDING:
-		break;
+
 	case STATE_PLAYING:
+	case STATE_RECORDING:
 		GAMESTATE->ResetOriginalSyncData();
-		break;
-	default:
-		ASSERT(0);
-	}
 
-
-	switch( em )
-	{
-	case STATE_PLAYING:
-	case STATE_RECORDING:
 		/* Stop displaying course attacks, if any, and return to the player's defaults. */
 		GAMESTATE->RemoveAllActiveAttacks();
 		GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
@@ -1835,6 +1826,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 		GAMESTATE->ResetNoteSkins();
 
 		break;
+	default:
+		ASSERT(0);
 	}
 
 	switch( em )
