@@ -202,6 +202,11 @@ inline int QuantizeUp( int i, int iInterval )
 	return int( (i+iInterval-1)/iInterval ) * iInterval;
 }
 
+inline float QuantizeUp( float i, float iInterval )
+{
+	return ceilf( i/iInterval ) * iInterval;
+}
+
 // Move val toward other_val by to_move.
 void fapproach( float& val, float other_val, float to_move );
 
