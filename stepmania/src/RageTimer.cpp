@@ -45,7 +45,8 @@ float RageTimer::GetTimeSinceStart( bool bAccurate )
 {
 	uint64_t usecs = GetTime( bAccurate );
 	usecs -= g_iStartTime;
-	return usecs / 1000000.0f;
+	uint32_t ret = usecs / 1000000;
+	return (float)ret;
 }
 
 void RageTimer::Touch()
