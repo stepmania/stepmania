@@ -65,14 +65,9 @@ public:
 	void	PlaySharedBackgroundOffCommand();
 	void    ZeroNextUpdate();
 private:
-	vector<Screen*>		m_OverlayScreens;
 	Screen				*m_pInputFocus; // NULL = top of m_ScreenStack
 
-	Actor				*m_pSharedBGA;	// BGA object that's persistent between screens
-
 	CString				m_sSystemMessage;
-	vector<Screen*>		m_vPreparedScreens;
-	vector<Actor*>		m_vPreparedBackgrounds;
 	
 	// Screen loads, removals, and concurrent prepares are delayed until the next update.
 	CString				m_sDelayedScreen;

@@ -51,7 +51,12 @@ namespace
 		bool m_bDeleteWhenDone;
 		ScreenMessage m_SendOnPop;
 	};
+        Actor                   *g_pSharedBGA;  // BGA object that's persistent between screens
 	vector<LoadedScreen>    g_ScreenStack;  // bottommost to topmost
+	vector<Screen*>         g_OverlayScreens;
+
+	vector<Screen*>         g_vPreparedScreens;
+	vector<Actor*>          g_vPreparedBackgrounds;
 };
 
 void RegisterScreenClass( const CString& sClassName, CreateScreenFn pfn )
@@ -68,7 +73,7 @@ void RegisterScreenClass( const CString& sClassName, CreateScreenFn pfn )
 
 ScreenManager::ScreenManager()
 {
-	m_pSharedBGA = new Actor;
+	g_pSharedBGA = new Actor;
 
 	m_bZeroNextUpdate = false;
 	m_PopTopScreen = SM_Invalid;
@@ -80,15 +85,15 @@ ScreenManager::~ScreenManager()
 {
 	LOG->Trace( "ScreenManager::~ScreenManager()" );
 
-	SAFE_DELETE( m_pSharedBGA );
+	SAFE_DELETE( g_pSharedBGA );
 	for( unsigned i=0; i<g_ScreenStack.size(); i++ )
 	{
 		if( g_ScreenStack[i].m_bDeleteWhenDone )
 			SAFE_DELETE( g_ScreenStack[i].m_pScreen );
 	}
 	DeletePreparedScreens();
-	for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
-		SAFE_DELETE( m_OverlayScreens[i] );
+	for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
+		SAFE_DELETE( g_OverlayScreens[i] );
 }
 
 /* This is called when we start up, and when the theme changes or is reloaded. */
@@ -103,9 +108,9 @@ void ScreenManager::ThemeChanged()
 	m_soundScreenshot.Load( THEME->GetPathS("Common","screenshot") );
 
 	// reload overlay screens
-	for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
-		SAFE_DELETE( m_OverlayScreens[i] );
-	m_OverlayScreens.clear();
+	for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
+		SAFE_DELETE( g_OverlayScreens[i] );
+	g_OverlayScreens.clear();
 
 	CString sOverlays = THEME->GetMetric( "Common","OverlayScreens" );
 	vector<CString> asOverlays;
@@ -113,7 +118,7 @@ void ScreenManager::ThemeChanged()
 	for( unsigned i=0; i<asOverlays.size(); i++ )
 	{
 		Screen *pScreen = MakeNewScreen( asOverlays[i] );
-		m_OverlayScreens.push_back( pScreen );
+		g_OverlayScreens.push_back( pScreen );
 	}
 	
 	this->RefreshCreditsMessages();
@@ -197,10 +202,10 @@ void ScreenManager::Update( float fDeltaTime )
 		if( pScreen )
 			pScreen->Update( fDeltaTime );
 
-		m_pSharedBGA->Update( fDeltaTime );
+		g_pSharedBGA->Update( fDeltaTime );
 
-		for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
-			m_OverlayScreens[i]->Update( fDeltaTime );	
+		for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
+			g_OverlayScreens[i]->Update( fDeltaTime );	
 	}
 	//
 	// Handle messages after updating.
@@ -209,10 +214,10 @@ void ScreenManager::Update( float fDeltaTime )
 		for( unsigned i=0; i<g_ScreenStack.size(); i++ )
 			g_ScreenStack[i].m_pScreen->ProcessMessages( fDeltaTime );
 
-		m_pSharedBGA->ProcessMessages( fDeltaTime );
+		g_pSharedBGA->ProcessMessages( fDeltaTime );
 
-		for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
-			m_OverlayScreens[i]->ProcessMessages( fDeltaTime );
+		for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
+			g_OverlayScreens[i]->ProcessMessages( fDeltaTime );
 	}
 
 	/* The music may be started on the first update.  If we're reading from a CD,
@@ -271,13 +276,13 @@ void ScreenManager::Draw()
 	if( !DISPLAY->BeginFrame() )
 		return;
 
-	m_pSharedBGA->Draw();
+	g_pSharedBGA->Draw();
 
 	for( unsigned i=0; i<g_ScreenStack.size(); i++ )	// Draw all screens bottom to top
 		g_ScreenStack[i].m_pScreen->Draw();
 
-	for( unsigned i=0; i<m_OverlayScreens.size(); i++ )
-		m_OverlayScreens[i]->Draw();
+	for( unsigned i=0; i<g_OverlayScreens.size(); i++ )
+		g_OverlayScreens[i]->Draw();
 
 
 	DISPLAY->EndFrame();
@@ -293,9 +298,9 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 	// true, it handled the input, so don't pass it further.  OverlayInput could
 	// probably be merged with Input, but that would require changing all Input
 	// overloads, as well as all MenuLeft, etc. overloads.
-	for( unsigned i = 0; i < m_OverlayScreens.size(); ++i )
+	for( unsigned i = 0; i < g_OverlayScreens.size(); ++i )
 	{
-		Screen *pScreen = m_OverlayScreens[i];
+		Screen *pScreen = g_OverlayScreens[i];
 		if( pScreen->OverlayInput(DeviceI, type, GameI, MenuI, StyleI) )
 			return;
 	}
@@ -333,9 +338,9 @@ Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 void ScreenManager::PrepareScreen( const CString &sScreenName )
 {
 	// If the screen is already prepared, stop.
-	for( int i = (int)m_vPreparedScreens.size()-1; i>=0; i-- )
+	for( int i = (int)g_vPreparedScreens.size()-1; i>=0; i-- )
 	{
-		Screen *&pScreen = m_vPreparedScreens[i];
+		Screen *&pScreen = g_vPreparedScreens[i];
 		if( pScreen->GetName() == sScreenName )
 			return;
 	}
@@ -345,7 +350,7 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 	SONGMAN->Cleanup();
 
 	Screen* pNewScreen = MakeNewScreen(sScreenName);
-	m_vPreparedScreens.push_back( pNewScreen );
+	g_vPreparedScreens.push_back( pNewScreen );
 
 	/* Don't delete previously prepared versions of the screen's background,
 	 * and only prepare it if it's different than the current background
@@ -354,10 +359,10 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 	if( pNewScreen->UsesBackground() )
 		sNewBGA = THEME->GetPathB(sScreenName,"background");
 
-	if( !sNewBGA.empty() && sNewBGA != m_pSharedBGA->GetName() )
+	if( !sNewBGA.empty() && sNewBGA != g_pSharedBGA->GetName() )
 	{
 		Actor *pNewBGA = NULL;
-		FOREACH( Actor*, m_vPreparedBackgrounds, a )
+		FOREACH( Actor*, g_vPreparedBackgrounds, a )
 		{
 			if( (*a)->GetName() == sNewBGA )
 			{
@@ -372,7 +377,7 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 		{
 			pNewBGA = ActorUtil::MakeActor( sNewBGA );
 			pNewBGA->SetName( sNewBGA );
-			m_vPreparedBackgrounds.push_back( pNewBGA );
+			g_vPreparedBackgrounds.push_back( pNewBGA );
 		}
 	}
 }
@@ -394,12 +399,12 @@ bool ScreenManager::ConcurrentlyPrepareScreen( const CString &sScreenName, Scree
 
 void ScreenManager::DeletePreparedScreens()
 {
-	FOREACH( Screen*, m_vPreparedScreens, s )
+	FOREACH( Screen*, g_vPreparedScreens, s )
 		SAFE_DELETE( *s );
-	m_vPreparedScreens.clear();
-	FOREACH( Actor*, m_vPreparedBackgrounds, a )
+	g_vPreparedScreens.clear();
+	FOREACH( Actor*, g_vPreparedBackgrounds, a )
 		SAFE_DELETE( *a );
-	m_vPreparedBackgrounds.clear();
+	g_vPreparedBackgrounds.clear();
 
 	TEXTUREMAN->DeleteCachedTextures();
 }
@@ -473,12 +478,12 @@ void ScreenManager::LoadDelayedScreen()
 	// Find the prepped screen.
 	//
 	Screen* pNewScreen = NULL;
-	FOREACH( Screen*, m_vPreparedScreens, s )
+	FOREACH( Screen*, g_vPreparedScreens, s )
 	{
 		if( (*s)->GetName() == sScreenName )
 		{
 			pNewScreen = *s;
-			m_vPreparedScreens.erase( s );
+			g_vPreparedScreens.erase( s );
 			break;
 		}
 	}
@@ -501,28 +506,28 @@ void ScreenManager::LoadDelayedScreen()
 	CString sNewBGA;
 	if( pNewScreen->UsesBackground() )
 		sNewBGA = THEME->GetPathB(sScreenName,"background");
-	if( sNewBGA != m_pSharedBGA->GetName() )
+	if( sNewBGA != g_pSharedBGA->GetName() )
 	{
 		Actor *pNewBGA = NULL;
 		if( sNewBGA.empty() )
 			pNewBGA = new Actor;
 		else
 		{
-			FOREACH( Actor*, m_vPreparedBackgrounds, a )
+			FOREACH( Actor*, g_vPreparedBackgrounds, a )
 			{
 				if( (*a)->GetName() == sNewBGA )
 				{
 					pNewBGA = *a;
-					m_vPreparedBackgrounds.erase( a );
+					g_vPreparedBackgrounds.erase( a );
 					break;
 				}
 			}
 		}
 		ASSERT( pNewBGA != NULL );
 
-		SAFE_DELETE( m_pSharedBGA );
-		m_pSharedBGA = pNewBGA;
-		m_pSharedBGA->PlayCommand( "On" );
+		SAFE_DELETE( g_pSharedBGA );
+		g_pSharedBGA = pNewBGA;
+		g_pSharedBGA->PlayCommand( "On" );
 	}
 
 	bool bIsOnSystemMenu = pNewScreen->GetScreenType() == system_menu;
@@ -653,7 +658,7 @@ void ScreenManager::PlayScreenshotSound()
 
 void ScreenManager::PlaySharedBackgroundOffCommand()
 {
-	m_pSharedBGA->PlayCommand("Off");
+	g_pSharedBGA->PlayCommand("Off");
 }
 
 // lua start
