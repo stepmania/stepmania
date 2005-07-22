@@ -88,6 +88,28 @@ public:
 
 		ScreenPrompt::End( bCancelled );
 	}
+
+	void HandleScreenMessage( const ScreenMessage SM )
+	{
+		switch( SM )
+		{
+		case SM_GoToNextScreen:
+			if( SCREENMAN->IsStackedScreen(this) )
+				SCREENMAN->PopTopScreen( m_smSendOnPop );
+			else
+				SCREENMAN->SetNewScreen( GetNextScreen() );
+			return;
+		case SM_GoToPrevScreen:
+			if( SCREENMAN->IsStackedScreen(this) )
+				SCREENMAN->PopTopScreen( m_smSendOnPop );
+			else
+				SCREENMAN->SetNewScreen( GetPrevScreen() );
+			return;
+		}
+		ScreenPrompt::HandleScreenMessage( SM );
+	}
+
+	ScreenMessage m_smSendOnPop;
 };
 REGISTER_SCREEN_CLASS( ScreenEditMenuDeleteSteps );
 
