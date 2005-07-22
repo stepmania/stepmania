@@ -68,16 +68,6 @@ public:
 	void	PlaySharedBackgroundOffCommand();
 	void    ZeroNextUpdate();
 private:
-	//
-	// in draw order first to last
-	//
-	struct LoadedScreen
-	{
-		Screen *m_pScreen;
-		bool m_bDeleteWhenDone;
-		ScreenMessage m_SendOnPop;
-	};
-	vector<LoadedScreen>	m_ScreenStack;	// bottommost to topmost
 	vector<Screen*>		m_OverlayScreens;
 	Screen				*m_pInputFocus; // NULL = top of m_ScreenStack
 
