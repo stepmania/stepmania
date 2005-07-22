@@ -68,6 +68,14 @@ AutoScreenMessage( SM_BackFromStopChange )
 AutoScreenMessage( SM_DoSaveAndExit )
 AutoScreenMessage( SM_DoExit )
 
+static const CString EditStateNames[] = {
+	"Edit",
+	"Record",
+	"RecordPaused",
+	"Playing"
+};
+XToString( EditState, NUM_EDIT_STATES );
+
 const CString INPUT_TIPS_TEXT = 
 #if defined(XBOX)
 	"Up/Down:\n     change beat\n"
@@ -1872,8 +1880,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 	switch( em )
 	{
 	case STATE_EDITING:
-		m_sprOverlay->PlayCommand( "Edit" );
-
 		/* Important: people will stop playing, change the BG and start again; make sure we reload */
 		m_Background.Unload();
 		m_Foreground.Unload();
@@ -1923,8 +1929,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 	{
 	case STATE_PLAYING:
 	{
-		m_sprOverlay->PlayCommand( "Play" );
-
 		/* If we're in course display mode, set that up. */
 		SetupCourseAttacks();
 
@@ -1953,8 +1957,6 @@ void ScreenEdit::TransitionEditState( EditState em )
 	case STATE_RECORDING:
 	case STATE_RECORDING_PAUSED:
 	{
-		m_sprOverlay->PlayCommand( em == STATE_RECORDING? "Record":"RecordPaused" );
-
 		// initialize m_NoteFieldRecord
 		m_NoteDataRecord.CopyAll( m_NoteDataEdit );
 
@@ -1969,9 +1971,10 @@ void ScreenEdit::TransitionEditState( EditState em )
 	//
 	// Show/hide depending on em
 	//
+	m_sprOverlay->PlayCommand( EditStateToString(em) );
+	m_sprUnderlay->PlayCommand( EditStateToString(em) );
+
 	m_Background.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == STATE_EDITING );
-	m_sprUnderlay->SetHidden( em != STATE_EDITING );
-	m_sprOverlay->SetHidden( em != STATE_EDITING );
 	m_autoHeader->SetHidden( em != STATE_EDITING );
 	m_textInputTips.SetHidden( em != STATE_EDITING );
 	m_textInfo.SetHidden( em != STATE_EDITING );

@@ -22,6 +22,15 @@
 const int NUM_EDIT_BUTTON_COLUMNS = 10;
 struct MenuDef;
 
+enum EditState {
+	STATE_EDITING,
+	STATE_RECORDING,
+	STATE_RECORDING_PAUSED,
+	STATE_PLAYING,
+	NUM_EDIT_STATES,
+	STATE_INVALID
+};
+
 enum EditButton
 {
 	EDIT_BUTTON_COLUMN_0,
@@ -152,14 +161,6 @@ public:
 protected:
 	virtual ScreenType GetScreenType() const { return m_EditState==STATE_PLAYING ? gameplay : system_menu; }
 
-	enum EditState {
-		STATE_EDITING,
-		STATE_RECORDING,
-		STATE_RECORDING_PAUSED,
-		STATE_PLAYING,
-		NUM_EDIT_STATES,
-		STATE_INVALID
-	};
 	void TransitionEditState( EditState em );
 	void ScrollTo( float fDestinationBeat );
 	void PlayTicks();
