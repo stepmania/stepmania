@@ -204,7 +204,7 @@ void ScreenSelectMusic::Init()
 	{
 		m_DifficultyList.SetName( "DifficultyList" );
 		m_DifficultyList.Load();
-		SET_XY_AND_ON_COMMAND( m_DifficultyList );
+		SET_XY( m_DifficultyList );
 		this->AddChild( &m_DifficultyList );
 	}
 
@@ -249,7 +249,7 @@ void ScreenSelectMusic::Init()
 
 		m_DifficultyMeter[p].SetName( ssprintf("MeterP%d",p+1) );
 		m_DifficultyMeter[p].Load( METER_TYPE );
-		SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
+		SET_XY( m_DifficultyMeter[p] );
 		this->AddChild( &m_DifficultyMeter[p] );
 
 		// add an icon onto the song select to show what
@@ -310,7 +310,12 @@ void ScreenSelectMusic::Init()
 	m_soundLocked.Load( THEME->GetPathS(m_sName,"locked") );
 	m_soundSelectPressed.Load( THEME->GetPathS(m_sName,"select down"), true );
 
-	SOUND->PlayOnceFromAnnouncer( "select music intro" );
+	this->SortByDrawOrder();
+}
+
+void ScreenSelectMusic::BeginScreen()
+{
+	ScreenWithMenuElements::BeginScreen();
 
 	m_bMadeChoice = false;
 	m_bGoToOptions = false;
@@ -318,11 +323,66 @@ void ScreenSelectMusic::Init()
 	ZERO( m_iSelection );
 
 	AfterMusicChange();
-	TweenOursOnScreen();
 
-	this->SortByDrawOrder();
+	m_bgOptionsOut.Reset();
+	m_bgNoOptionsOut.Reset();
+
+	FOREACH_HumanPlayer( p )
+	{
+		ON_COMMAND( m_DifficultyMeter[p] );
+	}
+
+	if( SHOW_DIFFICULTY_LIST )
+		ON_COMMAND( m_DifficultyList );
+
+	TweenSongPartsOnScreen( true );
+	TweenCoursePartsOnScreen( true );
+
+	switch( GAMESTATE->m_SortOrder )
+	{
+	case SORT_ALL_COURSES:
+	case SORT_NONSTOP_COURSES:
+	case SORT_ONI_COURSES:
+	case SORT_ENDLESS_COURSES:
+		TweenSongPartsOffScreen( false );
+		SkipSongPartTweens();
+		break;
+	default:
+		TweenCoursePartsOffScreen( false );
+		SkipCoursePartTweens();
+		break;
+	}
+
+	ON_COMMAND( m_sprBannerMask );
+	ON_COMMAND( m_Banner );
+	ON_COMMAND( m_sprBannerFrame );
+	ON_COMMAND( m_BPMDisplay );
+	ON_COMMAND( m_DifficultyDisplay );
+	ON_COMMAND( m_sprCDTitleFront );
+	ON_COMMAND( m_sprCDTitleBack );
+	ON_COMMAND( m_GrooveRadar );
+	ON_COMMAND( m_textNumSongs );
+	ON_COMMAND( m_textTotalTime );
+	ON_COMMAND( m_MusicSortDisplay );
+	ON_COMMAND( m_MusicWheelUnder );
+	m_MusicWheel.TweenOnScreen();
+	ON_COMMAND( m_sprLongBalloon );
+	ON_COMMAND( m_sprMarathonBalloon );
+	ON_COMMAND( m_sprCourseHasMods );
+	ON_COMMAND( m_MusicWheel );
+	ON_COMMAND( m_Artist );
+	ON_COMMAND( m_MachineRank );
+
+	FOREACH_HumanPlayer( p )
+	{		
+		ON_COMMAND( m_sprHighScoreFrame[p] );
+		ON_COMMAND( m_textHighScore[p] );
+		if( SHOW_PANES )
+			ON_COMMAND( m_PaneDisplay[p] );
+	}
+
+	SOUND->PlayOnceFromAnnouncer( "select music intro" );
 }
-
 
 ScreenSelectMusic::~ScreenSelectMusic()
 {
@@ -338,10 +398,7 @@ void ScreenSelectMusic::TweenSongPartsOnScreen( bool Initial )
 	if( SHOW_DIFFICULTY_LIST )
 	{
 		if( Initial )
-		{
-			ON_COMMAND( m_DifficultyList );
 			m_DifficultyList.TweenOnScreen();
-		}
 //		else // do this after SM_SortOrderChanged
 //			m_DifficultyList.Show();
 	}
@@ -431,57 +488,7 @@ void ScreenSelectMusic::SkipCoursePartTweens()
 		m_CourseContents.FinishTweening();
 }
 
-void ScreenSelectMusic::TweenOursOnScreen()
-{
-	TweenSongPartsOnScreen( true );
-	TweenCoursePartsOnScreen( true );
-
-	switch( GAMESTATE->m_SortOrder )
-	{
-	case SORT_ALL_COURSES:
-	case SORT_NONSTOP_COURSES:
-	case SORT_ONI_COURSES:
-	case SORT_ENDLESS_COURSES:
-		TweenSongPartsOffScreen( false );
-		SkipSongPartTweens();
-		break;
-	default:
-		TweenCoursePartsOffScreen( false );
-		SkipCoursePartTweens();
-		break;
-	}
-
-	ON_COMMAND( m_sprBannerMask );
-	ON_COMMAND( m_Banner );
-	ON_COMMAND( m_sprBannerFrame );
-	ON_COMMAND( m_BPMDisplay );
-	ON_COMMAND( m_DifficultyDisplay );
-	ON_COMMAND( m_sprCDTitleFront );
-	ON_COMMAND( m_sprCDTitleBack );
-	ON_COMMAND( m_GrooveRadar );
-	ON_COMMAND( m_textNumSongs );
-	ON_COMMAND( m_textTotalTime );
-	ON_COMMAND( m_MusicSortDisplay );
-	ON_COMMAND( m_MusicWheelUnder );
-	m_MusicWheel.TweenOnScreen();
-	ON_COMMAND( m_sprLongBalloon );
-	ON_COMMAND( m_sprMarathonBalloon );
-	ON_COMMAND( m_sprCourseHasMods );
-	ON_COMMAND( m_MusicWheel );
-	ON_COMMAND( m_Artist );
-	ON_COMMAND( m_MachineRank );
-
-	FOREACH_HumanPlayer( p )
-	{		
-		ON_COMMAND( m_sprHighScoreFrame[p] );
-		ON_COMMAND( m_textHighScore[p] );
-		if( SHOW_PANES )
-			ON_COMMAND( m_PaneDisplay[p] );
-		ON_COMMAND( m_DifficultyMeter[p] );
-	}
-}
-
-void ScreenSelectMusic::TweenOursOffScreen()
+void ScreenSelectMusic::TweenOffScreen()
 {
 	ScreenWithMenuElements::TweenOffScreen();
 
@@ -1215,7 +1222,6 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 
 	if( m_bMadeChoice )
 	{
-		TweenOursOffScreen();
 		SCREENMAN->PlayStartSound();
 
 		if( OPTIONS_MENU_AVAILABLE )

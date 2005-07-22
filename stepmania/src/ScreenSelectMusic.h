@@ -30,6 +30,7 @@ public:
 	ScreenSelectMusic( CString sName );
 	virtual ~ScreenSelectMusic();
 	virtual void Init();
+	virtual void BeginScreen();
 
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
@@ -46,8 +47,7 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	void TweenOursOnScreen();
-	void TweenOursOffScreen();
+	void TweenOffScreen();
 	void TweenScoreOnAndOffAfterChangeSort();
 	enum DisplayMode { DISPLAY_SONGS, DISPLAY_COURSES, DISPLAY_MODES } m_DisplayMode;
 	void SwitchDisplayMode( DisplayMode dm );
