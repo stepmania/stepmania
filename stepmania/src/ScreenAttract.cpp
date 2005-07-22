@@ -101,7 +101,7 @@ void ScreenAttract::StartPlayingMusic()
 {
 	if( !GAMESTATE->IsTimeToPlayAttractSounds() )
 	{
-		SOUND->PlayMusic( "" ); // stop music
+		SOUND->StopMusic();
 		return;
 	}
 
@@ -130,7 +130,7 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 			bMusicChanging = THEME->GetPathS(m_sName,"music") != THEME->GetPathS(GetNextScreen(),"music",true);	// GetPath optional on the next screen because it may not have music.
 
 		if( bMusicChanging )
-			SOUND->PlayMusic( "" );	// stop the music
+			SOUND->StopMusic();
 	}
 
 	ScreenWithMenuElements::HandleScreenMessage( SM );

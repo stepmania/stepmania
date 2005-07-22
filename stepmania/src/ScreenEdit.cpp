@@ -750,7 +750,6 @@ void ScreenEdit::PlayTicks()
 
 void ScreenEdit::PlayPreviewMusic()
 {
-	SOUND->PlayMusic("");
 	SOUND->PlayMusic( 
 		m_pSong->GetMusicPath(), 
 		NULL,
@@ -1851,7 +1850,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	}
 
 	/* If we're playing music, sample music or assist ticks when changing modes, stop. */
-	SOUND->PlayMusic("");
+	SOUND->StopMusic();
 	m_soundMusic.StopPlaying();
 	m_soundAssistTick.StopPlaying();
 	GAMESTATE->m_bPastHereWeGo = false;
