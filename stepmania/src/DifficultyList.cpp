@@ -64,12 +64,6 @@ void DifficultyList::Load()
 		this->AddChild( &m_Lines[m].m_Meter );
 	}
 
-	FOREACH_HumanPlayer( pn )
-		ON_COMMAND( m_Cursors[pn] );
-
-	for( int m = 0; m < MAX_METERS; ++m )
-		ON_COMMAND( m_Lines[m].m_Meter );
-
 	UpdatePositions();
 	PositionItems();
 }
@@ -323,6 +317,12 @@ void DifficultyList::HideRows()
 
 void DifficultyList::TweenOnScreen()
 {
+	FOREACH_HumanPlayer( pn )
+		ON_COMMAND( m_Cursors[pn] );
+
+	for( int m = 0; m < MAX_METERS; ++m )
+		ON_COMMAND( m_Lines[m].m_Meter );
+
 	this->SetHibernate( 0.5f );
 	m_bShown = true;
 	for( unsigned m = 0; m < m_Rows.size(); ++m )
