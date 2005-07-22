@@ -48,9 +48,21 @@ namespace
 	struct LoadedScreen
 	{
 		Screen *m_pScreen;
+	
+		/* Normally true.  If false, the screen is owned by another screen
+		 * and was given to us for use, and it's not ours to free. */
 		bool m_bDeleteWhenDone;
+
 		ScreenMessage m_SendOnPop;
+
+		LoadedScreen()
+		{
+			m_pScreen = NULL;
+			m_bDeleteWhenDone = true;
+			m_SendOnPop = SM_None;
+		}
 	};
+
 	Actor                   *g_pSharedBGA;  // BGA object that's persistent between screens
 	vector<LoadedScreen>    g_ScreenStack;  // bottommost to topmost
 	vector<Screen*>         g_OverlayScreens;
