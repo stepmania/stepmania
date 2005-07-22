@@ -1151,11 +1151,24 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			float fDestinationBeat = GAMESTATE->m_fSongBeat + fBeatsToMove;
 			fDestinationBeat = Quantize( fDestinationBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
-			CLAMP( fDestinationBeat, 0, GetMaximumBeatForMoving() );
 
 			ScrollTo( fDestinationBeat );
 		}
 		break;
+	case EDIT_BUTTON_SCROLL_NEXT_MEASURE:
+		{
+			float fDestinationBeat = GAMESTATE->m_fSongBeat + BEATS_PER_MEASURE;
+			fDestinationBeat = ftruncf( fDestinationBeat, (float)BEATS_PER_MEASURE );
+			ScrollTo( fDestinationBeat );
+			break;
+		}
+	case EDIT_BUTTON_SCROLL_PREV_MEASURE:
+		{
+			float fDestinationBeat = QuantizeUp( GAMESTATE->m_fSongBeat, (float)BEATS_PER_MEASURE );
+			fDestinationBeat -= (float)BEATS_PER_MEASURE;
+			ScrollTo( fDestinationBeat );
+			break;
+		}
 	case EDIT_BUTTON_SCROLL_NEXT:
 		{
 			int iRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
@@ -1987,6 +2000,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 void ScreenEdit::ScrollTo( float fDestinationBeat )
 {
+	CLAMP( fDestinationBeat, 0, GetMaximumBeatForMoving() );
+
 	// Don't play the sound and do the hold note logic below if our position didn't change.
 	const float fOriginalBeat = GAMESTATE->m_fSongBeat;
 	if( fOriginalBeat == fDestinationBeat )
