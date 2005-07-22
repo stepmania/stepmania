@@ -337,7 +337,25 @@ void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 	SetTapNote( iTrack, iStartRow, tn );
 }
 
-/* Return true if a hold note lies on or adjacent to the given spot. */
+/* Determine if a hold note lies on the given spot.  Return true if so.  If
+ * pHeadRow is non-NULL, return the row of the head. */
+bool NoteData::IsHoldHeadOrBodyAtRow( int iTrack, int iRow, int *pHeadRow ) const
+{
+	const TapNote &tn = GetTapNote( iTrack, iRow );
+	if( tn.type == TapNote::hold_head )
+	{
+		if( pHeadRow != NULL )
+			*pHeadRow = iRow;
+		return true;
+	}
+
+	return IsHoldNoteAtRow( iTrack, iRow, pHeadRow );
+}
+
+/* Determine if a hold note lies on the given spot.  Return true if so.  If
+ * pHeadRow is non-NULL, return the row of the head.  (Note that this returns
+ * false if a hold head lies on iRow itself.) */
+/* XXX: rename this to IsHoldBodyAtRow */
 bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 {
 	int iDummy;
@@ -354,7 +372,6 @@ bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 		switch( tn.type )
 		{
 		case TapNote::hold_head:
-//			if( tn.iDuration + r <= iRow )
 			if( tn.iDuration + r < iRow )
 				return false;
 			*pHeadRow = r;

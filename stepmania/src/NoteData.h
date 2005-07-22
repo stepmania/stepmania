@@ -116,11 +116,9 @@ public:
 	void GetTracksHeldAtRow( int row, set<int>& addTo );
 	int GetNumTracksHeldAtRow( int row );
 
-	/* Determine if a given spot is within a hold note (being on the tail doesn't count).
-	 * Return true if so.  If pHeadRow is non-NULL, return the row of the head.  If pTailRow is
-	 * non-NULL, return the row of the tail.  This function is faster if pTailRow is NULL. */
 	bool IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow = NULL ) const;
-
+	bool IsHoldHeadOrBodyAtRow( int iTrack, int iRow, int *pHeadRow ) const;
+	
 	//
 	// statistics
 	//
