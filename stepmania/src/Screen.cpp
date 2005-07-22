@@ -172,16 +172,31 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 		if( SCREENMAN->IsStackedScreen(this) )
 			SCREENMAN->PopTopScreen( SM_None );
 		else
-			SCREENMAN->SetNewScreen( NEXT_SCREEN );
+			SCREENMAN->SetNewScreen( GetNextScreen() );
 		break;
 	case SM_GoToPrevScreen:
 		if( SCREENMAN->IsStackedScreen(this) )
 			SCREENMAN->PopTopScreen( SM_None );
 		else
-			SCREENMAN->SetNewScreen( PREV_SCREEN );
+			SCREENMAN->SetNewScreen( GetPrevScreen() );
 		break;
 	}
 }
+
+CString Screen::GetNextScreen() const
+{
+	if( !m_sNextScreen.empty() )
+		return m_sNextScreen;
+	return NEXT_SCREEN;
+}
+
+CString Screen::GetPrevScreen() const
+{
+	if( !m_sPrevScreen.empty() )
+		return m_sPrevScreen;
+	return PREV_SCREEN;
+}
+
 
 bool Screen::JoinInput( const MenuInput &MenuI )
 {
