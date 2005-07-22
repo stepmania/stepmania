@@ -10,6 +10,7 @@
 #include "Profile.h"
 #include "Character.h"
 #include "OptionRowHandler.h"
+#include "ScreenManager.h"
 
 AutoScreenMessage( SM_BackFromEnterName )
 AutoScreenMessage( SM_BackFromDelete )
