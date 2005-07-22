@@ -1975,6 +1975,71 @@ bool NoteDataUtil::AnyTapsAndHoldsInTrackRange( const NoteData& in, int iTrack, 
 	return false;
 }
 
+/* Find the next row that either starts a TapNote, or ends a previous one. */
+bool NoteDataUtil::GetNextEditorPosition( const NoteData& in, int &rowInOut )
+{
+	int iOriginalRow = rowInOut;
+	bool bAnyHaveNextNote = in.GetNextTapNoteRowForAllTracks( rowInOut );
+
+	int iClosestNextRow = rowInOut;
+	if( !bAnyHaveNextNote )
+		iClosestNextRow = MAX_NOTE_ROW;
+
+	for( int t=0; t<in.GetNumTracks(); t++ )
+	{
+		int iHeadRow;
+		if( !in.IsHoldHeadOrBodyAtRow(t, iOriginalRow, &iHeadRow) )
+			continue;
+
+		const TapNote &tn = in.GetTapNote( t, iHeadRow );
+		int iEndRow = iHeadRow + tn.iDuration;
+		if( iEndRow == iOriginalRow )
+			continue;
+
+		bAnyHaveNextNote = true;
+		ASSERT( iEndRow < MAX_NOTE_ROW );
+		iClosestNextRow = min( iClosestNextRow, iEndRow );
+	}
+
+	if( !bAnyHaveNextNote )
+		return false;
+
+	rowInOut = iClosestNextRow;
+	return true;
+}
+
+bool NoteDataUtil::GetPrevEditorPosition( const NoteData& in, int &rowInOut )
+{
+	int iOriginalRow = rowInOut;
+	bool bAnyHavePrevNote = in.GetPrevTapNoteRowForAllTracks( rowInOut );
+
+	int iClosestPrevRow = rowInOut;
+	for( int t=0; t<in.GetNumTracks(); t++ )
+	{
+		int iHeadRow = iOriginalRow;
+		if( !in.GetPrevTapNoteRowForTrack(t, iHeadRow) )
+			continue;
+
+		const TapNote &tn = in.GetTapNote( t, iHeadRow );
+		if( tn.type != TapNote::hold_head )
+			continue;
+
+		int iEndRow = iHeadRow + tn.iDuration;
+		if( iEndRow >= iOriginalRow )
+			continue;
+
+		bAnyHavePrevNote = true;
+		ASSERT( iEndRow < MAX_NOTE_ROW );
+		iClosestPrevRow = max( iClosestPrevRow, iEndRow );
+	}
+
+	if( !bAnyHavePrevNote )
+		return false;
+
+	rowInOut = iClosestPrevRow;
+	return true;
+}
+
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

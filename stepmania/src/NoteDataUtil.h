@@ -108,6 +108,9 @@ namespace NoteDataUtil
 
 	int GetNumUsedTracks( const NoteData& in );
 	bool AnyTapsAndHoldsInTrackRange( const NoteData& in, int iTrack, int iStart, int iEnd );
+
+	bool GetNextEditorPosition( const NoteData& in, int &rowInOut );
+	bool GetPrevEditorPosition( const NoteData& in, int &rowInOut );
 };
 
 #endif

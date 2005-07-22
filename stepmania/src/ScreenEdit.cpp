@@ -122,6 +122,8 @@ void ScreenEdit::InitEditMappings()
 	m_EditMappings.button[EDIT_BUTTON_SCROLL_DOWN_PAGE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PGDN);
 	m_EditMappings.button[EDIT_BUTTON_SCROLL_HOME][0] = DeviceInput(DEVICE_KEYBOARD, KEY_HOME);
 	m_EditMappings.button[EDIT_BUTTON_SCROLL_END][0] = DeviceInput(DEVICE_KEYBOARD, KEY_END);
+	m_EditMappings.button[EDIT_BUTTON_SCROLL_NEXT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_PERIOD);
+	m_EditMappings.button[EDIT_BUTTON_SCROLL_PREV][0] = DeviceInput(DEVICE_KEYBOARD, KEY_COMMA);
 
 	m_EditMappings.button    [EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
 	m_EditMappings.hold[EDIT_BUTTON_SCROLL_SPEED_UP][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LCTRL);
@@ -1152,6 +1154,20 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			CLAMP( fDestinationBeat, 0, GetMaximumBeatForMoving() );
 
 			ScrollTo( fDestinationBeat );
+		}
+		break;
+	case EDIT_BUTTON_SCROLL_NEXT:
+		{
+			int iRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+			NoteDataUtil::GetNextEditorPosition( m_NoteDataEdit, iRow );
+			ScrollTo( NoteRowToBeat(iRow) );
+		}
+		break;
+	case EDIT_BUTTON_SCROLL_PREV:
+		{
+			int iRow = BeatToNoteRow( GAMESTATE->m_fSongBeat );
+			NoteDataUtil::GetPrevEditorPosition( m_NoteDataEdit, iRow );
+			ScrollTo( NoteRowToBeat(iRow) );
 		}
 		break;
 	case EDIT_BUTTON_SNAP_NEXT:
