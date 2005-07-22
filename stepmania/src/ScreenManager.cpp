@@ -51,7 +51,7 @@ namespace
 		bool m_bDeleteWhenDone;
 		ScreenMessage m_SendOnPop;
 	};
-        Actor                   *g_pSharedBGA;  // BGA object that's persistent between screens
+	Actor                   *g_pSharedBGA;  // BGA object that's persistent between screens
 	vector<LoadedScreen>    g_ScreenStack;  // bottommost to topmost
 	vector<Screen*>         g_OverlayScreens;
 
