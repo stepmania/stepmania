@@ -139,7 +139,7 @@ public:
 	float GetZoomX()				{ return DestTweenState().scale.x; }
 	float GetZoomY()				{ return DestTweenState().scale.y; }
 	float GetZoomZ()				{ return DestTweenState().scale.z; }
-	void  SetZoom( float zoom )		{ DestTweenState().scale.x = zoom;	DestTweenState().scale.y = zoom; }
+	void  SetZoom( float zoom )		{ DestTweenState().scale.x = zoom;	DestTweenState().scale.y = zoom; DestTweenState().scale.z = zoom; }
 	void  SetZoomX( float zoom )	{ DestTweenState().scale.x = zoom;	}
 	void  SetZoomY( float zoom )	{ DestTweenState().scale.y = zoom; }
 	void  SetZoomZ( float zoom )	{ DestTweenState().scale.z = zoom; }
