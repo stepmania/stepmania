@@ -175,7 +175,6 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( NEXT_SCREEN );
 		break;
 	case SM_GoToPrevScreen:
-		SCREENMAN->DeletePreparedScreens();
 		if( SCREENMAN->IsStackedScreen(this) )
 			SCREENMAN->PopTopScreen( SM_None );
 		else

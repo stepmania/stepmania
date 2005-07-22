@@ -603,7 +603,6 @@ void ScreenGameplayMultiplayer::HandleScreenMessage( const ScreenMessage SM )
 
 		GAMESTATE->CancelStage();
 
-		SCREENMAN->DeletePreparedScreens();
 		SCREENMAN->PostMessageToTopScreen( SM_GoToPrevScreen, 0 );
 	}
 	else if( SM == SM_GoToStateAfterCleared )
