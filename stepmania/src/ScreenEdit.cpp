@@ -1613,8 +1613,15 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				m_iStartPlayingAt = BeatToNoteRow( ftruncf(GAMESTATE->m_fSongBeat, g_iDefaultRecordLength.Get()) );
 				m_iStopPlayingAt = m_iStartPlayingAt + BeatToNoteRow( g_iDefaultRecordLength.Get() );
 			}
+
 			if( GAMESTATE->m_pCurSteps[0]->IsAnEdit() )
 				m_iStopPlayingAt = min( m_iStopPlayingAt, BeatToNoteRow(GetMaximumBeatForNewNote()) );
+
+			if( m_iStartPlayingAt >= m_iStopPlayingAt )
+			{
+				SCREENMAN->PlayInvalidSound();
+				return;
+			}
 
 			TransitionEditState( STATE_RECORDING );
 		}
