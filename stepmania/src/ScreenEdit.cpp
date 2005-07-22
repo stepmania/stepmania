@@ -1119,12 +1119,16 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 		}
 
 		break;
+	case EDIT_BUTTON_SCROLL_HOME:
+		ScrollTo( 0 );
+		break;
+	case EDIT_BUTTON_SCROLL_END:
+		ScrollTo( m_NoteDataEdit.GetLastBeat() );
+		break;
 	case EDIT_BUTTON_SCROLL_UP_LINE:
 	case EDIT_BUTTON_SCROLL_UP_PAGE:
 	case EDIT_BUTTON_SCROLL_DOWN_LINE:
 	case EDIT_BUTTON_SCROLL_DOWN_PAGE:
-	case EDIT_BUTTON_SCROLL_HOME:
-	case EDIT_BUTTON_SCROLL_END:
 		{
 			float fBeatsToMove=0.f;
 			switch( EditB )
@@ -1140,12 +1144,6 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				fBeatsToMove = BEATS_PER_MEASURE;
 				if( EditB == EDIT_BUTTON_SCROLL_UP_PAGE )	
 					fBeatsToMove *= -1;
-				break;
-			case EDIT_BUTTON_SCROLL_HOME:
-				fBeatsToMove = -GAMESTATE->m_fSongBeat;
-				break;
-			case EDIT_BUTTON_SCROLL_END:
-				fBeatsToMove = m_NoteDataEdit.GetLastBeat() - GAMESTATE->m_fSongBeat;
 				break;
 			}
 
