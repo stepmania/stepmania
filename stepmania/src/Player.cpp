@@ -92,6 +92,8 @@ float AdjustedWindowHold( HoldWindow hw, bool bIsPlayingBeginner )
 
 Player::Player()
 {
+	m_bLoaded = false;
+
 	m_pPlayerState = NULL;
 	m_pPlayerStageStats = NULL;
 	m_fNoteFieldHeight = 0;
@@ -213,11 +215,12 @@ void Player::Init(
 
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
 	m_pNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
-	m_pNoteField->RefreshBeatToNoteSkin();
 }
 
 void Player::Load( const NoteData& noteData )
 {
+	m_bLoaded = true;
+
 	m_LastTapNoteScore = TNS_NONE;
 
 	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
@@ -329,6 +332,10 @@ void Player::Load( const NoteData& noteData )
 
 void Player::Update( float fDeltaTime )
 {
+	// Don't update if we havn't been loaded yet.
+	if( !m_bLoaded )
+		return;
+
 	//LOG->Trace( "Player::Update(%f)", fDeltaTime );
 
 	if( GAMESTATE->m_pCurSong==NULL )

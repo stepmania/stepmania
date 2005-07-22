@@ -74,6 +74,8 @@ protected:
 
 	bool IsPlayingBeginner() const;
 
+	bool			m_bLoaded;
+
 	PlayerState*	m_pPlayerState;
 	PlayerStageStats*	m_pPlayerStageStats;
 	float			m_fNoteFieldHeight;
