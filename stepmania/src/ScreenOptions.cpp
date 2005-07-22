@@ -293,6 +293,12 @@ void ScreenOptions::BeginScreen()
 		}
 	}
 
+	FOREACH_PlayerNumber( p )
+	{
+		m_sprLineHighlight[p].SetHidden( !GAMESTATE->IsHumanPlayer(p) );
+		m_Cursor[p].SetHidden( !GAMESTATE->IsHumanPlayer(p) );
+	}
+
 	// Hide highlight if no rows are enabled.
 	FOREACH_HumanPlayer( p )
 		m_sprLineHighlight[p].SetHidden( m_iCurrentRow[p] == -1 );
