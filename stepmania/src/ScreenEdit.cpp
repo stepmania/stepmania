@@ -1603,12 +1603,16 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			HandleAreaMenuChoice( record );
 		else
 		{
-			m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
-
 			if( g_iDefaultRecordLength.Get() == -1 )
+			{
+				m_iStartPlayingAt = BeatToNoteRow(GAMESTATE->m_fSongBeat);
 				m_iStopPlayingAt = m_NoteDataEdit.GetLastRow() + 1;
+			}
 			else
+			{
+				m_iStartPlayingAt = BeatToNoteRow( ftruncf(GAMESTATE->m_fSongBeat, g_iDefaultRecordLength.Get()) );
 				m_iStopPlayingAt = m_iStartPlayingAt + BeatToNoteRow( g_iDefaultRecordLength.Get() );
+			}
 			if( GAMESTATE->m_pCurSteps[0]->IsAnEdit() )
 				m_iStopPlayingAt = min( m_iStopPlayingAt, BeatToNoteRow(GetMaximumBeatForNewNote()) );
 
