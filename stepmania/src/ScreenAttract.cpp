@@ -14,7 +14,6 @@
 #include "GameSoundManager.h"
 #include "CommonMetrics.h"
 
-#define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
 #define START_SCREEN(sScreenName)	THEME->GetMetric (sScreenName,"StartScreen")
 
 ThemeMetric<bool>	BACK_GOES_TO_START_SCREEN( "ScreenAttract", "BackGoesToStartScreen" );
@@ -128,13 +127,13 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 		 * going to interrupt it when we fade in, stop the old music before we fade out. */
 		bool bMusicChanging = false;
 		if( PLAY_MUSIC )
-			bMusicChanging = THEME->GetPathS(m_sName,"music") != THEME->GetPathS(NEXT_SCREEN,"music",true);	// GetPath optional on the next screen because it may not have music.
+			bMusicChanging = THEME->GetPathS(m_sName,"music") != THEME->GetPathS(GetNextScreen(),"music",true);	// GetPath optional on the next screen because it may not have music.
 
 		if( bMusicChanging )
 			SOUND->PlayMusic( "" );	// stop the music
-
-		SCREENMAN->SetNewScreen( NEXT_SCREEN );
 	}
+
+	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
 void ScreenAttract::GoToStartScreen( CString sScreenName )
