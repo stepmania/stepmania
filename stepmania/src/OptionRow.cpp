@@ -404,6 +404,22 @@ void OptionRow::InitText()
 /* After importing options, choose which item is focused. */
 void OptionRow::AfterImportOptions()
 {
+	/* We load items for both players on start, since we don't know at that point
+	 * which players will be joined when we're displayed.  Hide items for inactive
+	 * players. */
+	FOREACH_PlayerNumber( p )
+	{
+		if( m_RowDef.m_layoutType == LAYOUT_SHOW_ONE_IN_ROW &&
+			!m_RowDef.m_bOneChoiceForAllPlayers )
+			m_textItems[p]->SetHidden( !GAMESTATE->IsHumanPlayer(p) );
+
+		if( m_RowType != OptionRow::ROW_EXIT )
+		{
+			for( unsigned c=0; c<m_Underline[p].size(); c++ )
+				m_Underline[p][c]->SetHidden( !GAMESTATE->IsHumanPlayer(p) );
+		}
+	}
+
 	// Make all selections the same if bOneChoiceForAllPlayers
 	// Hack: we only import active players, so if only player 2 is imported,
 	// we need to copy p2 to p1, not p1 to p2.
