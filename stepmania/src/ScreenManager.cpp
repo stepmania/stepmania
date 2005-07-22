@@ -42,16 +42,16 @@ static map<CString,CreateScreenFn>	*g_pmapRegistrees = NULL;
 
 namespace
 {
-        //
-        // in draw order first to last
-        //
-        struct LoadedScreen
-        {
-                Screen *m_pScreen;
-                bool m_bDeleteWhenDone;
-                ScreenMessage m_SendOnPop;
-        };
-        vector<LoadedScreen>    g_ScreenStack;  // bottommost to topmost
+	//
+	// in draw order first to last
+	//
+	struct LoadedScreen
+	{
+		Screen *m_pScreen;
+		bool m_bDeleteWhenDone;
+		ScreenMessage m_SendOnPop;
+	};
+	vector<LoadedScreen>    g_ScreenStack;  // bottommost to topmost
 };
 
 void RegisterScreenClass( const CString& sClassName, CreateScreenFn pfn )
