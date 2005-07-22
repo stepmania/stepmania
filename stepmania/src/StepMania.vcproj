@@ -13,7 +13,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="./../Program"
+			OutputDirectory="$(TargetDir)"
 			IntermediateDirectory="./../Debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
@@ -552,6 +552,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenSelectMusic.h">
+			</File>
+			<File
+				RelativePath="ScreenSelectProfile.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSelectProfile.h">
 			</File>
 			<File
 				RelativePath="ScreenSelectStyle.cpp">
