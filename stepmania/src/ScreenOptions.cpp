@@ -124,7 +124,7 @@ void ScreenOptions::Init()
 	m_framePage.AddChild( m_sprPage );
 
 	// init line line highlights
-	FOREACH_HumanPlayer( p )
+	FOREACH_PlayerNumber( p )
 	{
 		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName,"line highlight") );
 		m_sprLineHighlight[p].SetName( "LineHighlight" );
@@ -133,7 +133,7 @@ void ScreenOptions::Init()
 	}
 
 	// init cursors
-	FOREACH_HumanPlayer( p )
+	FOREACH_PlayerNumber( p )
 	{
 		m_Cursor[p].Load( m_sName, OptionsCursor::cursor );
 		m_Cursor[p].Set( p );

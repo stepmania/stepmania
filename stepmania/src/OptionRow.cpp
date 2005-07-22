@@ -299,7 +299,7 @@ void OptionRow::InitText()
 	{
 	case LAYOUT_SHOW_ONE_IN_ROW:
 		// init text
-		FOREACH_HumanPlayer( p )
+		FOREACH_PlayerNumber( p )
 		{
 			BitmapText *bt = new BitmapText( m_pParentType->m_textItemParent );
 			m_textItems.push_back( bt );
@@ -321,7 +321,7 @@ void OptionRow::InitText()
 		// init underlines
 		if( m_pParentType->SHOW_UNDERLINES )
 		{
-			FOREACH_HumanPlayer( p )
+			FOREACH_PlayerNumber( p )
 			{
 				OptionsCursor *ul = new OptionsCursor( m_pParentType->m_UnderlineParent );
 				m_Underline[p].push_back( ul );
@@ -359,7 +359,7 @@ void OptionRow::InitText()
 				// init underlines
 				if( m_pParentType->SHOW_UNDERLINES )
 				{
-					FOREACH_HumanPlayer( p )
+					FOREACH_PlayerNumber( p )
 					{
 						OptionsCursor *ul = new OptionsCursor( m_pParentType->m_UnderlineParent );
 						m_Underline[p].push_back( ul );
