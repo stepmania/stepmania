@@ -533,36 +533,18 @@ CString GameSoundManager::GetMusicPath() const
 	return g_Playing->m_Music->GetLoadedFilePath();
 }
 
-/* This function should not touch the disk at all. */
-void GameSoundManager::PlayMusic( const CString &file, const CString &timing_file, bool force_loop, float start_sec, float length_sec, float fade_len, bool align_beat )
+void GameSoundManager::PlayMusic( 
+	const CString &file, 
+	const TimingData *pTiming, 
+	bool force_loop, 
+	float start_sec, 
+	float length_sec, 
+	float fade_len, 
+	bool align_beat )
 {
-//	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music->GetLoadedFilePath().c_str());
+	//	LOG->Trace("play '%s' (current '%s')", file.c_str(), g_Playing->m_Music->GetLoadedFilePath().c_str());
 
 	MusicToPlay ToPlay;
-
-	ToPlay.file = file;
-	ToPlay.force_loop = force_loop;
-	ToPlay.start_sec = start_sec;
-	ToPlay.length_sec = length_sec;
-	ToPlay.fade_len = fade_len;
-	ToPlay.timing_file = timing_file;
-	ToPlay.align_beat = align_beat;
-
-	/* If no timing file was specified, look for one in the same place as the music file. */
-	if( ToPlay.timing_file == "" && file != "" )
-		ToPlay.timing_file = SetExtension( file, "sm" );
-
-	/* Add the MusicToPlay to the g_MusicsToPlay queue. */
-	g_Mutex->Lock();
-	g_MusicsToPlay.push_back( ToPlay );
-	g_Mutex->Broadcast();
-	g_Mutex->Unlock();
-}
-
-void GameSoundManager::PlayMusic( const CString &file, const TimingData *pTiming, bool force_loop, float start_sec, float length_sec, float fade_len, bool align_beat )
-{
-	MusicToPlay ToPlay;
-	
 
 	ToPlay.file = file;
 	if( pTiming )
@@ -571,7 +553,10 @@ void GameSoundManager::PlayMusic( const CString &file, const TimingData *pTiming
 		ToPlay.timing_data = *pTiming;
 	}
 	else
+	{
+		/* If no timing file was specified, look for one in the same place as the music file. */
 		ToPlay.timing_file = SetExtension( file, "sm" );
+	}
 
 	ToPlay.force_loop = force_loop;
 	ToPlay.start_sec = start_sec;

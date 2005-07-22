@@ -358,9 +358,12 @@ void MusicBannerWheel::PlayMusicSample()
 		{
 			
 			SOUND->StopMusic();
-			SOUND->PlayMusic(pSong->GetMusicPath(), true,
+			SOUND->PlayMusic(
+				pSong->GetMusicPath(), 
+				NULL,
+				true,
 				pSong->m_fMusicSampleStartSeconds,
-				pSong->m_fMusicSampleLengthSeconds);
+				pSong->m_fMusicSampleLengthSeconds );
 		}
 	}
 }
