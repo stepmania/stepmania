@@ -73,7 +73,6 @@ protected:
 	BitmapText		m_textAnswer[NUM_PROMPT_ANSWERS];
 	PromptType		m_PromptType;
 	PromptAnswer	m_Answer;
-	ScreenMessage	m_smSendOnPop;	// don't send on ANSWER_CANCEL
 	void(*m_pOnYes)(void*);
 	void(*m_pOnNo)(void*);
 	void* m_pCallbackData;
