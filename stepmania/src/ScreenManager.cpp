@@ -340,7 +340,7 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 	// If the screen is already prepared, stop.
 	for( int i = (int)g_vPreparedScreens.size()-1; i>=0; i-- )
 	{
-		Screen *&pScreen = g_vPreparedScreens[i];
+		const Screen *&pScreen = g_vPreparedScreens[i];
 		if( pScreen->GetName() == sScreenName )
 			return;
 	}
