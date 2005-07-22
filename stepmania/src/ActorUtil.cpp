@@ -109,7 +109,7 @@ retry:
 }
 
 
-Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode )
+Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 {
 	ASSERT( pNode );
 
@@ -121,6 +121,43 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 				return NULL;
 		}
 	}
+
+	// Load Params
+	{
+		FOREACH_CONST_Child( pNode, pChild )
+		{
+			if( pChild->m_sName == "Param" )
+			{
+				CString sName;
+				if( !pChild->GetAttrValue( "Name", sName ) )
+				{
+					RageException::Throw( ssprintf("Param node in '%s' is missing the attribute 'Name'", sDir.c_str()) );
+				}
+
+				CString s;
+				if( pChild->GetAttrValue( "Function", s ) )
+				{
+					LuaExpression expr;
+					expr.SetFromExpression( s );
+					Lua *L = LUA->Get();
+					expr.PushSelf( L );
+					ASSERT( !lua_isnil(L, -1) );
+					lua_call( L, 0, 1 ); // 0 args, 1 results
+					lua_setglobal( L, sName );
+					LUA->Release(L);
+				}
+				else if( pChild->GetAttrValue( "Value", s ) )
+				{
+					LUA->SetGlobalFromExpression( sName, s );
+				}
+				else
+				{
+					RageException::Throw( ssprintf("Param node in '%s' is missing the attribute 'Function' or 'Value'", sDir.c_str()) );
+				}
+			}
+		}
+	}
+
 
 	// Element name is the type in XML.
 	// Type= is the name in INI.
@@ -135,7 +172,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		if( sFile == "" )
 		{
 			CString sError = ssprintf( "The actor file in '%s' is as a blank, invalid File attribute \"%s\"",
-				sAniDir.c_str(), sClass.c_str() );
+				sDir.c_str(), sClass.c_str() );
 			RageException::Throw( sError );
 		}
 	}
@@ -160,10 +197,11 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 	else if( sFile.CompareNoCase("coursebanner") == 0 )
 		sClass = "CourseBanner";
 
+	Actor *pReturn = NULL;
 
 	if( IsRegistered(sClass) )
 	{
-		return ActorUtil::Create( sClass, sAniDir, pNode );
+		pReturn = ActorUtil::Create( sClass, sDir, pNode );
 	}
 	else if( sClass == "SongBackground" )
 	{
@@ -178,8 +216,8 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		 * with duplicates. */
 		Sprite* pSprite = new Sprite;
 		pSprite->LoadBG( sFile );
-	 	pSprite->LoadFromNode( sAniDir, pNode );
-		return pSprite;
+	 	pSprite->LoadFromNode( sDir, pNode );
+		pReturn = pSprite;
 	}
 	else if( sClass == "SongBanner" )
 	{
@@ -195,9 +233,9 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		 * with duplicates. */
 		Sprite* pSprite = new Sprite;
 		pSprite->Load( Sprite::SongBannerTexture(sFile) );
-	 	pSprite->LoadFromNode( sAniDir, pNode );
+	 	pSprite->LoadFromNode( sDir, pNode );
 		TEXTUREMAN->EnableOddDimensionWarning();
-		return pSprite;
+		pReturn = pSprite;
 	}
 	else if( sClass == "CourseBanner" )
 	{
@@ -210,9 +248,9 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		TEXTUREMAN->DisableOddDimensionWarning();
 		Sprite* pSprite = new Sprite;
 		pSprite->Load( Sprite::SongBannerTexture(sFile) );
-	 	pSprite->LoadFromNode( sAniDir, pNode );
+	 	pSprite->LoadFromNode( sDir, pNode );
 		TEXTUREMAN->EnableOddDimensionWarning();
-		return pSprite;
+		pReturn = pSprite;
 	}
 	else // sClass is empty or garbage (e.g. "1" // 0==Sprite")
 	{
@@ -222,21 +260,41 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sAniDir, const XNode* pNode 
 		if( sFile == "" )
 		{
 			CString sError = ssprintf( "The actor file in '%s' is missing the File attribute or has an invalid Class \"%s\"",
-				sAniDir.c_str(), sClass.c_str() );
+				sDir.c_str(), sClass.c_str() );
 			Dialog::OK( sError );
-			return NULL;
+			goto all_done;
 		}
 
-		CString sNewPath = bIsAbsolutePath ? sFile : sAniDir+sFile;
+		CString sNewPath = bIsAbsolutePath ? sFile : sDir+sFile;
 
-		ActorUtil::ResolvePath( sNewPath, sAniDir );
+		ActorUtil::ResolvePath( sNewPath, sDir );
 
-		Actor *pActor = ActorUtil::MakeActor( sNewPath );
-		if( pActor == NULL )
-			return NULL;
-	 	pActor->LoadFromNode( sAniDir, pNode );
-		return pActor;
+		pReturn = ActorUtil::MakeActor( sNewPath );
+		if( pReturn == NULL )
+			goto all_done;
+	 	pReturn->LoadFromNode( sDir, pNode );
 	}
+
+all_done:
+
+	// Unload Params
+	{
+		FOREACH_CONST_Child( pNode, pChild )
+		{
+			if( pChild->m_sName == "Param" )
+			{
+				CString sName;
+				if( !pChild->GetAttrValue( "Name", sName ) )
+				{
+					RageException::Throw( ssprintf("Param node in '%s' is missing the attribute 'Name'", sDir.c_str()) );
+				}
+
+				LUA->UnsetGlobal( sName );
+			}
+		}
+	}
+
+	return pReturn;
 }
 
 Actor* ActorUtil::MakeActor( const RageTextureID &ID )

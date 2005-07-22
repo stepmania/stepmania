@@ -73,6 +73,24 @@ void LuaManager::SetGlobal( const CString &sName, const CString &val )
 	LUA->Release(L);
 }
 
+void LuaManager::SetGlobalFromExpression( const CString &sName, const CString &expr )
+{
+	Lua *L = LUA->Get();
+	if( !LuaHelpers::RunScript(L, "return " + expr, "", 1) )
+	{
+		LUA->Release(L);
+		return;
+	}
+
+	/* Don't accept a function as a return value. */
+	if( lua_isfunction( L, -1 ) )
+		RageException::Throw( "result is a function; did you forget \"()\"?" );
+
+	lua_setglobal( L, sName );
+
+	LUA->Release(L);
+}
+
 void LuaManager::UnsetGlobal( const CString &sName )
 {
 	Lua *L = LUA->Get();
