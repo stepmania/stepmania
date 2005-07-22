@@ -4,6 +4,7 @@
 #include "GameState.h"
 #include "PrefsManager.h"
 #include "RageSound.h"
+#include "RageLog.h"
 #include "ThemeManager.h"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
@@ -11,6 +12,8 @@
 
 #define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
 #define PREV_SCREEN					THEME->GetMetric (m_sName,"PrevScreen")
+#define SCREENS_TO_PREPARE			THEME->GetMetric (m_sName,"ScreensToPrepare")
+#define SCREENS_TO_GROUP			THEME->GetMetric (m_sName,"ScreensToGroup")
 
 Screen::Screen( CString sName )
 {
@@ -33,6 +36,19 @@ bool Screen::SortMessagesByDelayRemaining(const Screen::QueuedScreenMessage &m1,
 void Screen::Init()
 {
 	this->RunCommands( THEME->GetMetricA(m_sName, "InitCommand") );
+
+	vector<CString> asList;
+	split( SCREENS_TO_PREPARE, ",", asList );
+	for( unsigned i = 0; i < asList.size(); ++i )
+	{
+		LOG->Trace( "Screen %s preparing \"%s\"", asList[i].c_str() );
+		SCREENMAN->PrepareScreen( asList[i] );
+	}
+
+	asList.clear();
+	split( SCREENS_TO_GROUP, ",", asList );
+	for( unsigned i = 0; i < asList.size(); ++i )
+		SCREENMAN->GroupScreen( asList[i] );
 }
 
 void Screen::Update( float fDeltaTime )
