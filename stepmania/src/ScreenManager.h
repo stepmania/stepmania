@@ -17,9 +17,6 @@ struct Menu;
 struct lua_State;
 
 
-
-typedef Screen* (*CreateScreenFn)(const CString& sClassName);
-
 class ScreenManager
 {
 public:
