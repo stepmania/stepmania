@@ -52,7 +52,6 @@ void GameCommand::Init()
 	m_iUnlockIndex = -1;
 	m_sSoundPath = "";
 	m_vsScreensToPrepare.clear();
-	m_bDeletePreparedScreens = false;
 	m_iWeightPounds = -1;
 	m_iGoalCalories = -1;
 	m_GoalType = GOAL_INVALID;
@@ -361,11 +360,6 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "preparescreen" )
 	{
 		m_vsScreensToPrepare.push_back( sValue );
-	}
-	
-	else if( sName == "deletepreparedscreens" )
-	{
-		m_bDeletePreparedScreens = true;
 	}
 	
 	else if( sName == "clearbookkeepingdata" )
@@ -803,8 +797,6 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 	FOREACH_CONST( CString, m_vsScreensToPrepare, s )
 		SCREENMAN->PrepareScreen( *s );
-	if( m_bDeletePreparedScreens )
-		SCREENMAN->DeletePreparedScreens();
 
 	if( m_bClearBookkeepingData )
 	{

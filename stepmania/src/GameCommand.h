@@ -70,7 +70,6 @@ public:
 	int			m_iUnlockIndex;	// -1 for no unlock
 	CString		m_sSoundPath;	// "" for no sound
 	vector<CString>	m_vsScreensToPrepare;
-	bool		m_bDeletePreparedScreens;
 	int			m_iWeightPounds;	// -1 == none specified
 	int			m_iGoalCalories;	// -1 == none specified
 	GoalType	m_GoalType;
