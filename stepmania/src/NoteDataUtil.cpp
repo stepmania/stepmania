@@ -120,7 +120,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 				{
 					/* This is the end of a hold.  Search for the beginning. */
 					int iHeadRow;
-					if( !out.IsHoldNoteAtBeat( iTrack, iIndex, &iHeadRow ) )
+					if( !out.IsHoldNoteAtRow( iTrack, iIndex, &iHeadRow ) )
 					{
 						LOG->Warn( "Unmatched 3 in \"%s\"", sMeasureLine.c_str() );
 					}
@@ -372,8 +372,8 @@ void NoteDataUtil::LoadTransformedSlidingWindow( const NoteData &in, NoteData &o
 
 			for( int t=0; t<in.GetNumTracks(); t++ )
 			{
-				if( in.IsHoldNoteAtBeat( t, r-1 ) &&
-				    in.IsHoldNoteAtBeat( t, r ) )
+				if( in.IsHoldNoteAtRow( t, r-1 ) &&
+				    in.IsHoldNoteAtRow( t, r ) )
 				{
 					bHoldCrossesThisMeasure = true;
 					break;
@@ -723,7 +723,7 @@ void NoteDataUtil::RemoveSimultaneousNotes( NoteData &in, int iMaxSimultaneous, 
 			else if( tn.type == TapNote::hold_head )
 			{
 				int iStartTrack;
-				if( !in.IsHoldNoteAtBeat( t, r, &iStartTrack ) )
+				if( !in.IsHoldNoteAtRow( t, r, &iStartTrack ) )
 					continue;
 
 				in.SetTapNote( t, iStartTrack, TAP_EMPTY );
@@ -942,7 +942,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 			}
 
 #if _DEBUG
-			ASSERT_M( !inout.IsHoldNoteAtBeat(t1,r), ssprintf("There is a tap.type = %d inside of a hold at row %d", tn1.type, r) );
+			ASSERT_M( !inout.IsHoldNoteAtRow(t1,r), ssprintf("There is a tap.type = %d inside of a hold at row %d", tn1.type, r) );
 #endif
 
 			// Probe for a spot to swap with.
@@ -975,7 +975,7 @@ static void SuperShuffleTaps( NoteData &inout, int iStartIndex, int iEndIndex )
 				}
 
 				// don't swap into the middle of a hold note
-				if( inout.IsHoldNoteAtBeat(t2,r) )
+				if( inout.IsHoldNoteAtRow(t2,r) )
 					continue;
 
 				// do the swap
@@ -1070,7 +1070,7 @@ void NoteDataUtil::Wide( NoteData &inout, int iStartIndex, int iEndIndex )
 
 		bool bHoldNoteAtBeat = false;
 		for( int t = 0; !bHoldNoteAtBeat && t < inout.GetNumTracks(); ++t )
-			if( inout.IsHoldNoteAtBeat(t, i) )
+			if( inout.IsHoldNoteAtRow(t, i) )
 				bHoldNoteAtBeat = true;
 		if( bHoldNoteAtBeat )
 			continue;	// skip.  Don't place during holds
@@ -1176,7 +1176,7 @@ void NoteDataUtil::InsertIntelligentTaps(
 		// don't insert a new note if there's already one within this interval
 		bool bNoteInMiddle = false;
 		for( int t = 0; t < inout.GetNumTracks(); ++t )
-			if( inout.IsHoldNoteAtBeat(t, iRowEarlier+1) )
+			if( inout.IsHoldNoteAtRow(t, iRowEarlier+1) )
 				bNoteInMiddle = true;
 		FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, j, iRowEarlier+1, iRowLater-1 )
 			bNoteInMiddle = true;
@@ -1537,7 +1537,7 @@ void NoteDataUtil::SnapToNearestNoteType( NoteData &inout, NoteType nt1, NoteTyp
 
 			inout.SetTapNote(c, iOldIndex, TAP_EMPTY);
 
-			if( tnNew.type == TapNote::tap && inout.IsHoldNoteAtBeat(c, iNewIndex) )
+			if( tnNew.type == TapNote::tap && inout.IsHoldNoteAtRow(c, iNewIndex) )
 				continue; // HoldNotes override TapNotes
 
 			if( tnNew.type == TapNote::hold_head )
@@ -1969,7 +1969,7 @@ bool NoteDataUtil::AnyTapsAndHoldsInTrackRange( const NoteData& in, int iTrack, 
 		}
 	}
 
-	if( in.IsHoldNoteAtBeat( iTrack, iEnd ) )
+	if( in.IsHoldNoteAtRow( iTrack, iEnd ) )
 		return true;
 
 	return false;

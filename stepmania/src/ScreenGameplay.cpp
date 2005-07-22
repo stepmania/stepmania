@@ -1663,7 +1663,7 @@ void ScreenGameplay::UpdateLights()
 					bBlinkCabinetLight[cl] = true;
 			}
 
-			if( m_CabinetLightsNoteData.IsHoldNoteAtBeat( cl, iSongRow ) )
+			if( m_CabinetLightsNoteData.IsHoldNoteAtRow( cl, iSongRow ) )
 				bBlinkCabinetLight[cl] = true;
 		}
 
@@ -1682,7 +1682,7 @@ void ScreenGameplay::UpdateLights()
 				}
 
 				// check if a hold should be active
-				if( m_Player[pn].m_NoteData.IsHoldNoteAtBeat( t, iSongRow ) )
+				if( m_Player[pn].m_NoteData.IsHoldNoteAtRow( t, iSongRow ) )
 					bBlink = true;
 
 				if( bBlink )

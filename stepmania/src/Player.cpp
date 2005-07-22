@@ -430,7 +430,7 @@ void Player::Update( float fDeltaTime )
 		{
 			// TODO: Make the CPU miss sometimes.
 			int iHeadRow;
-			if( !m_NoteData.IsHoldNoteAtBeat(iTrack, iSongRow, &iHeadRow) )
+			if( !m_NoteData.IsHoldNoteAtRow(iTrack, iSongRow, &iHeadRow) )
 				continue;
 
 			const TapNote &tn = m_NoteData.GetTapNote( iTrack, iHeadRow );
@@ -1468,7 +1468,7 @@ void Player::RandomizeNotes( int iNoteRow )
 			continue;
 
 		/* Make sure the destination row isn't in the middle of a hold. */
-		if( m_NoteData.IsHoldNoteAtBeat(iSwapWith, iNoteRow) )
+		if( m_NoteData.IsHoldNoteAtRow(iSwapWith, iNoteRow) )
 			continue;
 		
 		m_NoteData.SetTapNote( t, iNewNoteRow, t2 );

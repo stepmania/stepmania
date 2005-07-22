@@ -338,7 +338,7 @@ void NoteData::AddHoldNote( int iTrack, int iStartRow, int iEndRow, TapNote tn )
 }
 
 /* Return true if a hold note lies on or adjacent to the given spot. */
-bool NoteData::IsHoldNoteAtBeat( int iTrack, int iRow, int *pHeadRow ) const
+bool NoteData::IsHoldNoteAtRow( int iTrack, int iRow, int *pHeadRow ) const
 {
 	int iDummy;
 	if( pHeadRow == NULL )
@@ -512,7 +512,7 @@ bool NoteData::RowNeedsAtLeastSimultaneousPresses( int iMinSimultaneousPresses, 
 		/* We have at least one, but not enough.  Count holds.  Do count adjacent holds. */
 		for( int t=0; t<GetNumTracks(); ++t )
 		{
-			if( IsHoldNoteAtBeat(t, row) )
+			if( IsHoldNoteAtRow(t, row) )
 				++iNumNotesThisIndex;
 		}
 	}
@@ -649,7 +649,7 @@ void NoteData::SetTapNote( int track, int row, const TapNote& t )
 void NoteData::GetTracksHeldAtRow( int row, set<int>& addTo )
 {
 	for( int t=0; t<GetNumTracks(); ++t )
-		if( IsHoldNoteAtBeat( t, row ) )
+		if( IsHoldNoteAtRow( t, row ) )
 			addTo.insert( t );
 }
 

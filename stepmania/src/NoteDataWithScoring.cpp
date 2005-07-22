@@ -108,7 +108,7 @@ int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 		for( int t=0; t<in.GetNumTracks(); ++t )
 		{
 			int iHeadRow;
-			if( !in.IsHoldNoteAtBeat( t, i, &iHeadRow ) )
+			if( !in.IsHoldNoteAtRow( t, i, &iHeadRow ) )
 				continue;
 			const TapNote &tn = in.GetTapNote( t, iHeadRow );
 

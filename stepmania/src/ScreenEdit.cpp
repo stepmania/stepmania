@@ -1051,7 +1051,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 
 			// check for to see if the user intended to remove a HoldNote
 			int iHeadRow;
-			if( m_NoteDataEdit.IsHoldNoteAtBeat( iCol, iSongIndex, &iHeadRow ) )
+			if( m_NoteDataEdit.IsHoldNoteAtRow( iCol, iSongIndex, &iHeadRow ) )
 			{
 				m_soundRemoveNote.Play();
 				SaveUndo();
@@ -1650,7 +1650,7 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 
 			// Remove hold if any so that we don't have taps inside of a hold.
 			int iHeadRow;
-			if( m_NoteDataRecord.IsHoldNoteAtBeat( iCol, iRow, &iHeadRow ) )
+			if( m_NoteDataRecord.IsHoldNoteAtRow( iCol, iRow, &iHeadRow ) )
 				m_NoteDataRecord.SetTapNote( iCol, iHeadRow, TAP_EMPTY );
 
 			TapNote tn = TAP_ORIGINAL_TAP;
