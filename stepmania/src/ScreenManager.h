@@ -36,7 +36,6 @@ public:
 	void PersistantScreen( const CString &sScreenName );
 	bool ConcurrentlyPrepareScreen( const CString &sScreenName, ScreenMessage send_when_done = SM_None );
 	bool IsConcurrentlyLoading() const;
-	void DeletePreparedScreens();
 	void PushScreen( Screen *pNewScreen, bool bDeleteWhenDone=false, ScreenMessage SendOnPop=SM_None );
 	void PopTopScreen( ScreenMessage SM );
 	Screen* MakeNewScreen( const CString &sName );

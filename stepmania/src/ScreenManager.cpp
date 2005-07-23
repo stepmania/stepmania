@@ -141,6 +141,39 @@ namespace
 		}
 		return false;
 	}
+
+	/* If we're deleting a screen, it's probably releasing texture and other
+	 * resources, so trigger cleanups. */
+	void AfterDeletingScreen()
+	{
+		/* Now that we've actually deleted a screen, it makes sense to clear out
+		 * cached textures. */
+		TEXTUREMAN->DeleteCachedTextures();
+
+		/* Cleanup song data.  This can free up a fair bit of memory, so do it after
+		 * deleting screens. */
+		SONGMAN->Cleanup();
+	}
+
+	/* Called when changing screen groups.  Delete all prepared screens,
+	 * reset the screen group and list of persistant screens. */
+	void DeletePreparedScreens()
+	{
+		FOREACH( LoadedScreen, g_vPreparedScreens, s )
+		{
+			if( s->m_bDeleteWhenDone )
+				SAFE_DELETE( s->m_pScreen );
+		}
+		g_vPreparedScreens.clear();
+		FOREACH( Actor*, g_vPreparedBackgrounds, a )
+			SAFE_DELETE( *a );
+		g_vPreparedBackgrounds.clear();
+
+		g_setGroupedScreens.clear();
+		g_setPersistantScreens.clear();
+
+		AfterDeletingScreen();
+	}
 };
 
 void RegisterScreenClass( const CString& sClassName, CreateScreenFn pfn )
@@ -247,7 +280,10 @@ ScreenMessage ScreenManager::PopTopScreenInternal()
 	else
 	{
 		if( ls.m_bDeleteWhenDone )
+		{
 			SAFE_DELETE( ls.m_pScreen );
+			AfterDeletingScreen();
+		}
 	}
 
 	return ls.m_SendOnPop;
@@ -515,30 +551,6 @@ bool ScreenManager::ConcurrentlyPrepareScreen( const CString &sScreenName, Scree
 	m_sDelayedConcurrentPrepare = sScreenName;
 	m_OnDonePreparingScreen = SM;
 	return true;
-}
-
-void ScreenManager::DeletePreparedScreens()
-{
-	FOREACH( LoadedScreen, g_vPreparedScreens, s )
-	{
-		if( s->m_bDeleteWhenDone )
-			SAFE_DELETE( s->m_pScreen );
-	}
-	g_vPreparedScreens.clear();
-	FOREACH( Actor*, g_vPreparedBackgrounds, a )
-		SAFE_DELETE( *a );
-	g_vPreparedBackgrounds.clear();
-
-	g_setGroupedScreens.clear();
-	g_setPersistantScreens.clear();
-
-	/* Now that we've actually deleted a screen, it makes sense to clear out
-	 * cached textures. */
-	TEXTUREMAN->DeleteCachedTextures();
-
-	/* Cleanup song data.  This can free up a fair bit of memory, so do it after
-	 * deleting screens. */
-	SONGMAN->Cleanup();
 }
 
 void ScreenManager::PushScreen( Screen *pNewScreen, bool bDeleteWhenDone, ScreenMessage SendOnPop )
