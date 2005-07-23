@@ -12,8 +12,9 @@
 
 #define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
 #define PREV_SCREEN					THEME->GetMetric (m_sName,"PrevScreen")
-#define SCREENS_TO_PREPARE			THEME->GetMetric (m_sName,"ScreensToPrepare")
-#define SCREENS_TO_GROUP			THEME->GetMetric (m_sName,"ScreensToGroup")
+#define PREPARE_SCREENS				THEME->GetMetric (m_sName,"PrepareScreens")
+#define PERSIST_SCREENS				THEME->GetMetric (m_sName,"PersistScreens")
+#define GROUPED_SCREENS				THEME->GetMetric (m_sName,"GroupedScreens")
 
 Screen::Screen( CString sName )
 {
@@ -38,7 +39,7 @@ void Screen::Init()
 	this->RunCommands( THEME->GetMetricA(m_sName, "InitCommand") );
 
 	vector<CString> asList;
-	split( SCREENS_TO_PREPARE, ",", asList );
+	split( PREPARE_SCREENS, ",", asList );
 	for( unsigned i = 0; i < asList.size(); ++i )
 	{
 		LOG->Trace( "Screen %s preparing \"%s\"", asList[i].c_str() );
@@ -46,9 +47,14 @@ void Screen::Init()
 	}
 
 	asList.clear();
-	split( SCREENS_TO_GROUP, ",", asList );
+	split( GROUPED_SCREENS, ",", asList );
 	for( unsigned i = 0; i < asList.size(); ++i )
 		SCREENMAN->GroupScreen( asList[i] );
+
+	asList.clear();
+	split( PERSIST_SCREENS, ",", asList );
+	for( unsigned i = 0; i < asList.size(); ++i )
+		SCREENMAN->PersistantScreen( asList[i] );
 }
 
 void Screen::Update( float fDeltaTime )

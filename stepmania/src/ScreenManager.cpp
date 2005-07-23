@@ -2,20 +2,12 @@
  * We maintain a pool of "prepared" screens, which are screens previously loaded
  * to be available on demand.
  *
- * A used screen, when finished, goes to the prepared list.  If that screen is
- * used again before it's deleted, it'll be reused.  This behavior works for
- * several models of screen use: pushing screens, 
+ * When a screen pops off the stack that's in g_setPersistantScreens, it goes to
+ * the prepared list.  If that screen is used again before it's deleted, it'll be
+ * reused.
  *
  * Typically, the first screen in a group will prepare all of the nearby screens it
- * may load.  (This can happen recursively; a prepared screen can prepare more
- * screens.)  When it loads one, the prepared screen will be used.  If the initial
- * screen is being taken off of the stack, it'll be placed back in the prepared
- * list; if the new screen then reloads the initial screen, it'll be used out
- * of the prepared list, and we're back where we started.
- *
- * When a screen is used that isn't prepared, it indicates that we've left that
- * group of screens, and the prepared screens are no longer needed, so we unload
- * all prepared screens.
+ * may load.  When it loads one, the prepared screen will be used.
  *
  * A group of screens may only want to preload some screens, and not others,
  * while still considering those screens part of the same group.  For example,
@@ -25,6 +17,26 @@
  * to load all at once.  By calling GroupScreen(), entering these screens will not
  * trigger cleanup.
  * 
+ * Example uses:
+ *  - ScreenOptions1 preloads ScreenOptions2, and persists both.  Moving from Options1
+ *    and Options2 and back is instant and reuses both.
+ *  - ScreenMenu groups and persists itself and ScreenSubmenu.  ScreenSubmenu
+ *    is not preloaded, so it will be loaded on demand the first time it's used,
+ *    but will remain loaded if it returns to ScreenMenu.
+ *  - ScreenSelectMusic groups itself and ScreenPlayerOptions, and persists only
+ *    ScreenSelectMusic.  This will cause SSMusic will be loaded once, and SPO to
+ *    be loaded on demand.
+ *  - ScreenAttract1 preloads and persists ScreenAttract1, 3, 5 and 7, and groups 1
+ *    through 7.  1, 3, 5 and 7 will remain in memory; the rest will be loaded on
+ *    demand.
+ * 
+ * If a screen is added to the screen stack that isn't in the current screen group
+ * (added to by GroupScreen), the screen group is reset: all prepared screens are
+ * unloaded and the persistance list is cleared.
+ *
+ * (For persistance, concurrently preparing a screen is logically equivalent
+ * to SetNewScreen, since it's going to be set after it finishes loading.)
+ *
  * Note that not all screens yet support reuse in this way; proper use of BeginScreen
  * is required.  This will misbehave if a screen pushes another screen that's already
  * in use lower on the stack, but that's not useful; it would allow infinite screen
@@ -98,6 +110,7 @@ namespace
 	vector<LoadedScreen>    g_ScreenStack;  // bottommost to topmost
 	vector<Screen*>         g_OverlayScreens;
 	set<CString>			g_setGroupedScreens;
+	set<CString>			g_setPersistantScreens;
 
 	vector<LoadedScreen>    g_vPreparedScreens;
 	vector<Actor*>          g_vPreparedBackgrounds;
@@ -226,18 +239,15 @@ ScreenMessage ScreenManager::PopTopScreenInternal()
 
 	ls.m_pScreen->HandleScreenMessage( SM_LoseFocus );
 
-	if( g_setGroupedScreens.find(ls.m_pScreen->GetName()) != g_setGroupedScreens.end() )
-	{
-		/* The screen wasn't grouped in with the preloaded screens, not preloaded
-		 * itself.  It's probably expensive--otherwise we would have preloaded it--so
-		 * delete it now, don't move it to g_vPreparedScreens. */
-		if( ls.m_bDeleteWhenDone )
-			SAFE_DELETE( ls.m_pScreen );
-	}
-	else
+	if( g_setPersistantScreens.find(ls.m_pScreen->GetName()) != g_setPersistantScreens.end() )
 	{
 		/* Move the screen back to the prepared list. */
 		g_vPreparedScreens.push_back( ls );
+	}
+	else
+	{
+		if( ls.m_bDeleteWhenDone )
+			SAFE_DELETE( ls.m_pScreen );
 	}
 
 	return ls.m_SendOnPop;
@@ -343,8 +353,9 @@ void ScreenManager::Update( float fDeltaTime )
 		g_bIsConcurrentlyLoading = true;
 		StartConcurrentRendering();
 
-		AboutToLoadScreen( sScreenName );
-		PrepareScreenInternal( sScreenName );
+		if( g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end() )
+			DeletePreparedScreens();
+		PrepareScreen( sScreenName );
 		FinishConcurrentRendering();
 		g_bIsConcurrentlyLoading = false;
 
@@ -432,24 +443,7 @@ Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 	return ret;
 }
 
-/* This is called by other code to explicitly preload a screen. */
 void ScreenManager::PrepareScreen( const CString &sScreenName )
-{
-	/* Normally, a screen is always either preloaded, or grouped in with the
-	 * preloaded screens, not both.  If preloading a screen that's also grouped,
-	 * warn and remove from g_setGroupedScreens; if we leave it, we'll have
-	 * obscure inconsistent screen loading behavior (the preloaded screen won't
-	 * be reused). */
-	if( g_setGroupedScreens.find(sScreenName) != g_setGroupedScreens.end() )
-	{
-		LOG->Warn( "PrepareScreen: screen %s was prepared when already grouped", sScreenName.c_str() );
-		g_setGroupedScreens.erase( sScreenName );
-	}
-
-	PrepareScreenInternal( sScreenName );
-}
-
-void ScreenManager::PrepareScreenInternal( const CString &sScreenName )
 {
 	// If the screen is already prepared, stop.
 	for( int i = (int)g_vPreparedScreens.size()-1; i>=0; i-- )
@@ -500,19 +494,12 @@ void ScreenManager::PrepareScreenInternal( const CString &sScreenName )
 
 void ScreenManager::GroupScreen( const CString &sScreenName )
 {
-	/* If a screen is preloaded, don't add it to g_setGroupedScreens (see
-	 * PrepareScreen() comment). */
-	for( int i = (int)g_vPreparedScreens.size()-1; i>=0; i-- )
-	{
-		const Screen *pScreen = g_vPreparedScreens[i].m_pScreen;
-		if( pScreen->GetName() == sScreenName )
-		{
-			LOG->Warn( "GroupScreen: screen %s was grouped when already prepared", sScreenName.c_str() );
-			return;
-		}
-	}
-
 	g_setGroupedScreens.insert( sScreenName );
+}
+
+void ScreenManager::PersistantScreen( const CString &sScreenName )
+{
+	g_setPersistantScreens.insert( sScreenName );
 }
 
 bool ScreenManager::ConcurrentlyPrepareScreen( const CString &sScreenName, ScreenMessage SM )
@@ -542,6 +529,9 @@ void ScreenManager::DeletePreparedScreens()
 		SAFE_DELETE( *a );
 	g_vPreparedBackgrounds.clear();
 
+	g_setGroupedScreens.clear();
+	g_setPersistantScreens.clear();
+
 	/* Now that we've actually deleted a screen, it makes sense to clear out
 	 * cached textures. */
 	TEXTUREMAN->DeleteCachedTextures();
@@ -570,25 +560,6 @@ void ScreenManager::SetNewScreen( const CString &sScreenName )
 	m_sDelayedScreen = sScreenName;
 }
 
-/* This is called before loading (not preparing) a screen.  If the screen isn't
- * already prepared, then delete all prepared screens and backgrounds. */
-void ScreenManager::AboutToLoadScreen( const CString &sScreenName )
-{
-	FOREACH( LoadedScreen, g_vPreparedScreens, s )
-	{
-		if( s->m_pScreen->GetName() == sScreenName )
-			return;
-	}
-
-	if( g_setGroupedScreens.find(sScreenName) != g_setGroupedScreens.end() )
-			return;
-
-	// We're not loading a screen that was preloaded, or that was listed as part
-	// of the same screen group, so we're entering something new.  Clear all preloaded
-	// screens.
-	DeletePreparedScreens();
-}
-
 void ScreenManager::LoadDelayedScreen()
 {
 	const bool bWasOnSystemMenu = !g_ScreenStack.empty() && g_ScreenStack.back().m_pScreen->GetScreenType() == system_menu;
@@ -603,11 +574,12 @@ void ScreenManager::LoadDelayedScreen()
 	 * If DelayedScreenLoad is true, delete old screens first; this lowers
 	 * memory requirements, but results in redundant loads as we unload common
 	 * data. */
-	if( PREFSMAN->m_bDelayedScreenLoad )
-		AboutToLoadScreen( sScreenName );
+	bool bTimeToDeleteScreens = (g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end());
+	if( bTimeToDeleteScreens && PREFSMAN->m_bDelayedScreenLoad )
+		DeletePreparedScreens();
 
 	// Load the screen, if it's not already prepared.
-	PrepareScreenInternal( sScreenName );
+	PrepareScreen( sScreenName );
 
 	//
 	// Find the prepped screen.
@@ -664,8 +636,8 @@ void ScreenManager::LoadDelayedScreen()
 	if( bWasOnSystemMenu && !bIsOnSystemMenu )
 		PREFSMAN->SaveGlobalPrefsToDisk();
 
-	if( !PREFSMAN->m_bDelayedScreenLoad )
-		AboutToLoadScreen( sScreenName );
+	if( bTimeToDeleteScreens && !PREFSMAN->m_bDelayedScreenLoad )
+		DeletePreparedScreens();
 
 	TEXTUREMAN->DiagnosticOutput();
 
@@ -678,7 +650,7 @@ void ScreenManager::LoadDelayedScreen()
 void ScreenManager::AddNewScreenToTop( const CString &sScreenName, ScreenMessage SendOnPop )
 {
 	// Load the screen, if it's not already prepared.
-	PrepareScreenInternal( sScreenName );
+	PrepareScreen( sScreenName );
 
 	// Find the prepped screen.
 	LoadedScreen ls;
@@ -810,6 +782,9 @@ class LunaScreenManager: public Luna<ScreenManager>
 public:
 	LunaScreenManager() { LUA->Register( Register ); }
 
+	// Note: PrepareScreen binding is not allowed; loading data inside
+	// Lua causes the Lua lock to be held for the duration of the load,
+	// which blocks concurrent rendering
 	static int SetNewScreen( T* p, lua_State *L )		{ p->SetNewScreen( SArg(1) ); return 0; }
 	static int GetTopScreen( T* p, lua_State *L )
 	{

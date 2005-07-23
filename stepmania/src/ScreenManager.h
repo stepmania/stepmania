@@ -33,6 +33,7 @@ public:
 	void AddNewScreenToTop( const CString &sName, ScreenMessage SendOnPop=SM_None );
 	void PrepareScreen( const CString &sScreenName );	// creates and caches screen so that the next call to SetNewScreen for the prep'd screen will be very quick.
 	void GroupScreen( const CString &sScreenName );
+	void PersistantScreen( const CString &sScreenName );
 	bool ConcurrentlyPrepareScreen( const CString &sScreenName, ScreenMessage send_when_done = SM_None );
 	bool IsConcurrentlyLoading() const;
 	void DeletePreparedScreens();
@@ -66,8 +67,6 @@ public:
 	void	PlaySharedBackgroundOffCommand();
 	void    ZeroNextUpdate();
 private:
-	void AboutToLoadScreen( const CString &sScreenName );
-
 	Screen				*m_pInputFocus; // NULL = top of m_ScreenStack
 
 	CString				m_sSystemMessage;
@@ -83,7 +82,6 @@ private:
 	bool				m_bZeroNextUpdate;
 
 	void LoadDelayedScreen();
-	void PrepareScreenInternal( const CString &sScreenName );
 	ScreenMessage PopTopScreenInternal();
 
 	// Keep these sounds always loaded, because they could be 
