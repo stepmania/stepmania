@@ -126,6 +126,16 @@ namespace
 		SCREENMAN->PostMessageToTopScreen( SM_GainFocus, 0 );
 	}
 
+	bool ScreenIsPrepped( const CString &sScreenName )
+	{
+		FOREACH( LoadedScreen, g_vPreparedScreens, s )
+		{
+			if( s->m_pScreen->GetName() == sScreenName )
+			return true;
+		}
+		return false;
+	}
+
 	/* If the named screen is loaded, remove it from the prepared list and
 	 * return it in ls. */
 	bool GetPreppedScreen( const CString &sScreenName, LoadedScreen &ls )
@@ -482,12 +492,8 @@ Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 void ScreenManager::PrepareScreen( const CString &sScreenName )
 {
 	// If the screen is already prepared, stop.
-	for( int i = (int)g_vPreparedScreens.size()-1; i>=0; i-- )
-	{
-		const Screen *pScreen = g_vPreparedScreens[i].m_pScreen;
-		if( pScreen->GetName() == sScreenName )
-			return;
-	}
+	if( ScreenIsPrepped(sScreenName) )
+		return;
 
 	Screen* pNewScreen = MakeNewScreen(sScreenName);
 
