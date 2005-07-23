@@ -152,9 +152,15 @@ namespace
 		return false;
 	}
 
+	void BeforeDeleteScreen()
+	{
+		/* Deleting a screen can take enough time to cause a frame skip. */
+		SCREENMAN->ZeroNextUpdate();
+	}
+
 	/* If we're deleting a screen, it's probably releasing texture and other
 	 * resources, so trigger cleanups. */
-	void AfterDeletingScreen()
+	void AfterDeleteScreen()
 	{
 		/* Now that we've actually deleted a screen, it makes sense to clear out
 		 * cached textures. */
@@ -169,6 +175,8 @@ namespace
 	 * reset the screen group and list of persistant screens. */
 	void DeletePreparedScreens()
 	{
+		BeforeDeleteScreen();
+
 		FOREACH( LoadedScreen, g_vPreparedScreens, s )
 		{
 			if( s->m_bDeleteWhenDone )
@@ -182,7 +190,7 @@ namespace
 		g_setGroupedScreens.clear();
 		g_setPersistantScreens.clear();
 
-		AfterDeletingScreen();
+		AfterDeleteScreen();
 	}
 };
 
@@ -291,8 +299,9 @@ ScreenMessage ScreenManager::PopTopScreenInternal()
 	{
 		if( ls.m_bDeleteWhenDone )
 		{
+			BeforeDeleteScreen();
 			SAFE_DELETE( ls.m_pScreen );
-			AfterDeletingScreen();
+			AfterDeleteScreen();
 		}
 	}
 
