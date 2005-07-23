@@ -56,16 +56,23 @@ void ScreenPlayerOptions::Init()
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("player options intro") );
 
+	this->SortByDrawOrder();
+
+	FOREACH_PlayerNumber( p )
+		m_bRowCausesDisqualified[p].resize( m_pRows.size(), false );
+}
+
+
+void ScreenPlayerOptions::BeginScreen()
+{
+	ScreenOptionsMaster::BeginScreen();
+
 	FOREACH_HumanPlayer( p )
 	{
-		m_bRowCausesDisqualified[p].resize( m_pRows.size(), false );
 		for( unsigned r=0; r<m_pRows.size(); r++ )
 			UpdateDisqualified( r, p );
 	}
-
-	this->SortByDrawOrder();
 }
-
 
 void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
