@@ -1301,7 +1301,6 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		 * (to prevent quitting without storing changes). */
 		if( SCREENMAN->GetTopScreen()->GetScreenType() != system_menu )
 		{
-			SCREENMAN->DeletePreparedScreens();
 			SCREENMAN->SystemMessage( "Service switch pressed" );
 			GAMESTATE->Reset();
 			SCREENMAN->SetNewScreen( "ScreenOptionsService" );
