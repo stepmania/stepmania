@@ -949,7 +949,28 @@ void RageDisplay_D3D::DrawCompiledGeometryInternal( const RageCompiledGeometry *
 {
 	SendCurrentMatrices();
 
+	/* If lighting is off, then the current material will have no effect.
+	 * We want to still be able to color models with lighting off,
+	 * so shove the material color in texture factor and modify the 
+	 * texture stage to use it instead of the vertex color (our models
+	 * don't have vertex coloring anyway). 
+	 */
+	DWORD bLighting;
+	g_pd3dDevice->GetRenderState( D3DRS_LIGHTING, &bLighting );
+
+	if( !bLighting )
+	{
+		g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_TFACTOR );
+		g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_TFACTOR );
+	}
+
 	p->Draw( iMeshIndex );
+
+	if( !bLighting )
+	{
+		g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+		g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+	}
 }
 
 /* Use the default poly-based implementation.  D3D lines apparently don't support
@@ -1040,10 +1061,10 @@ void RageDisplay_D3D::SetTextureModeAdd()
 		return;
 
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_CURRENT );
+	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLOROP,   D3DTOP_ADD );
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
+	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAOP,   D3DTOP_ADD );
 }
 
@@ -1140,19 +1161,37 @@ void RageDisplay_D3D::SetMaterial(
 	float shininess
 	)
 {
-	D3DMATERIAL8 mat;
-	memcpy( &mat.Diffuse, diffuse, sizeof(float)*4 );
-	memcpy( &mat.Ambient, ambient, sizeof(float)*4 );
-	memcpy( &mat.Specular, specular, sizeof(float)*4 );
-	memcpy( &mat.Emissive, emissive, sizeof(float)*4 );
-	mat.Power = shininess;
-	g_pd3dDevice->SetMaterial( &mat );
+	/* If lighting is off, then the current material will have no effect.
+	 * We want to still be able to color models with lighting off,
+	 * so shove the material color in texture factor and modify the 
+	 * texture stage to use it instead of the vertex color (our models
+	 * don't have vertex coloring anyway). 
+	 */
+	DWORD bLighting;
+	g_pd3dDevice->GetRenderState( D3DRS_LIGHTING, &bLighting );
+
+	if( bLighting )
+	{
+		D3DMATERIAL8 mat;
+		memcpy( &mat.Diffuse, diffuse, sizeof(float)*4 );
+		memcpy( &mat.Ambient, ambient, sizeof(float)*4 );
+		memcpy( &mat.Specular, specular, sizeof(float)*4 );
+		memcpy( &mat.Emissive, emissive, sizeof(float)*4 );
+		mat.Power = shininess;
+		g_pd3dDevice->SetMaterial( &mat );
+	}
+	else
+	{
+		RageColor c = diffuse;
+		c.r += emissive.r + ambient.r;
+		c.g += emissive.g + ambient.g;
+		c.b += emissive.b + ambient.b;
+		c.r = 1;
+		RageVColor c2 = c;
+		DWORD c3 = *(DWORD*)&c2;
+		g_pd3dDevice->SetRenderState( D3DRS_TEXTUREFACTOR, c3 );
+	}
 }
-
-// need this?
-//  device->SetRenderState(D3DRENDERSTATE_DIFFUSEMATERIALSOURCE,D3DMCS_MATERIAL);
-//  device->SetRenderState(D3DRENDERSTATE_AMBIENTMATERIALSOURCE,D3DMCS_MATERIAL);
-
 
 void RageDisplay_D3D::SetLighting( bool b )
 {
