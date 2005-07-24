@@ -960,16 +960,16 @@ void RageDisplay_D3D::DrawCompiledGeometryInternal( const RageCompiledGeometry *
 
 	if( !bLighting )
 	{
-		g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_TFACTOR );
-		g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_TFACTOR );
+		g_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_TFACTOR );
+		g_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_TFACTOR );
 	}
 
 	p->Draw( iMeshIndex );
 
 	if( !bLighting )
 	{
-		g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
-		g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+		g_pd3dDevice->SetTextureStageState( 0, D3DTSS_COLORARG2, D3DTA_CURRENT );
+		g_pd3dDevice->SetTextureStageState( 0, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
 	}
 }
 
@@ -1034,11 +1034,14 @@ void RageDisplay_D3D::SetTextureModeModulate()
 	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
+	// Use D3DTA_CURRENT instead of diffuse so that multitexturing works 
+	// properly.  For stage 0, D3DTA_CURRENT is the diffuse color.
+
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_CURRENT );
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLOROP,   D3DTOP_MODULATE );
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 }
 
@@ -1048,10 +1051,10 @@ void RageDisplay_D3D::SetTextureModeGlow()
 		return;
 
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_CURRENT );
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 }
 
@@ -1061,10 +1064,10 @@ void RageDisplay_D3D::SetTextureModeAdd()
 		return;
 
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_DIFFUSE );
+	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_CURRENT );
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLOROP,   D3DTOP_ADD );
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE );
+	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
 	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAOP,   D3DTOP_ADD );
 }
 
@@ -1186,7 +1189,6 @@ void RageDisplay_D3D::SetMaterial(
 		c.r += emissive.r + ambient.r;
 		c.g += emissive.g + ambient.g;
 		c.b += emissive.b + ambient.b;
-		c.r = 1;
 		RageVColor c2 = c;
 		DWORD c3 = *(DWORD*)&c2;
 		g_pd3dDevice->SetRenderState( D3DRS_TEXTUREFACTOR, c3 );
