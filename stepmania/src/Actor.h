@@ -241,16 +241,17 @@ public:
 	//
 	// effects
 	//
-	void SetEffectNone()						{ m_Effect = no_effect; }
+	void StopEffect()						{ m_Effect = no_effect; }
 	Effect GetEffect() const					{ return m_Effect; }
 	float GetSecsIntoEffect() const				{ return m_fSecsIntoEffect; }
 	float GetEffectDelta() const				{ return m_fEffectDelta; }
 
 	void SetEffectColor1( RageColor c )			{ m_effectColor1 = c; }
 	void SetEffectColor2( RageColor c )			{ m_effectColor2 = c; }
-	void SetEffectPeriod( float fSecs )			{ m_fEffectPeriodSeconds = fSecs; } 
-	void SetEffectDelay( float fTime )			{ m_fEffectDelay = fTime; }
-	void SetEffectOffset( float fPercent )		{ m_fEffectOffset = fPercent; }
+	void SetEffectPeriod( float fTime );
+	float GetEffectPeriod();
+	void SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, float fAtZero );
+	void SetEffectOffset( float fTime )			{ m_fEffectOffset = fTime; }
 	void SetEffectClock( EffectClock c )		{ m_EffectClock = c; }
 	void SetEffectClockString( const CString &s );	// convenience
 
@@ -415,8 +416,12 @@ protected:
 	Effect m_Effect;
 	CString m_sEffectCommand; // effect_lua
 	float m_fSecsIntoEffect, m_fEffectDelta;
-	float m_fEffectPeriodSeconds;
-	float m_fEffectDelay;
+	
+	// units depend on m_EffectClock
+	float m_fEffectRampUp;
+	float m_fEffectHoldAtHalf;
+	float m_fEffectRampDown;
+	float m_fEffectHoldAtZero;
 	float m_fEffectOffset;
 	EffectClock m_EffectClock;
 

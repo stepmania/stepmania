@@ -55,8 +55,10 @@ void Actor::Reset()
 	m_Effect =  no_effect;
 	m_fSecsIntoEffect = 0;
 	m_fEffectDelta = 0;
-	m_fEffectPeriodSeconds = 1;
-	m_fEffectDelay = 0;
+	m_fEffectRampUp = 0.5;
+	m_fEffectHoldAtHalf = 0;
+	m_fEffectRampDown = 0.5;
+	m_fEffectHoldAtZero = 0;
 	m_fEffectOffset = 0;
 	m_EffectClock = CLOCK_TIMER;
 	m_vEffectMagnitude = RageVector3(0,0,10);
@@ -144,8 +146,10 @@ Actor::Actor( const Actor &cpy )
 	CPY( m_sEffectCommand );
 	CPY( m_fSecsIntoEffect );
 	CPY( m_fEffectDelta );
-	CPY( m_fEffectPeriodSeconds );
-	CPY( m_fEffectDelay );
+	CPY( m_fEffectRampUp );
+	CPY( m_fEffectHoldAtHalf );
+	CPY( m_fEffectRampDown );
+	CPY( m_fEffectHoldAtZero );
 	CPY( m_fEffectOffset );
 	CPY( m_EffectClock );
 
@@ -263,21 +267,43 @@ void Actor::BeginDraw()		// set the world matrix and calculate actor properties
 		m_pTempState = &tempState;
 		tempState = m_current;
 
-		/* EffectPeriodSeconds is the total time of the effect (including delay).
-		 * m_fEffectDelay is the amount of time to stick on 0%.  Offset shifts the
-		 * entire thing forwards.  For example, if m_fEffectPeriodSeconds is 1,
-		 * the effect can happen from .40 to .55 by setting offset to .40 and
-		 * delay to .85. */
-		const float fTotalPeriod = m_fEffectPeriodSeconds + m_fEffectDelay;
-		CHECKPOINT_M( ssprintf("%f = %f + %f", fTotalPeriod, m_fEffectPeriodSeconds, m_fEffectDelay) );
-		const float fSecsIntoPeriod = fmodfp( m_fSecsIntoEffect+m_fEffectOffset, fTotalPeriod );
-		CHECKPOINT_M( ssprintf("%f = fmodfp(%f + %f, %f)", fSecsIntoPeriod, m_fSecsIntoEffect, m_fEffectOffset, fTotalPeriod) );
+		/*
+		 */
+		const float fTotalPeriod = GetEffectPeriod();
+		ASSERT( fTotalPeriod > 0 );
+		const float fTimeIntoEffect = fmodfp( m_fSecsIntoEffect+m_fEffectOffset, fTotalPeriod );
 
-		float fPercentThroughEffect = SCALE( fSecsIntoPeriod, 0, m_fEffectPeriodSeconds, 0, 1 );
-		CHECKPOINT_M( ssprintf("%f = SCALE(%f, 0, %f, 0, 1)", fPercentThroughEffect, fSecsIntoPeriod, m_fEffectPeriodSeconds) );
-		fPercentThroughEffect = clamp( fPercentThroughEffect, 0, 1 );
-		ASSERT_M( fPercentThroughEffect >= 0 && fPercentThroughEffect <= 1,
+
+		float fPercentThroughEffect;
+		if( fTimeIntoEffect < m_fEffectRampUp )
+		{
+			fPercentThroughEffect = SCALE( 
+				fTimeIntoEffect, 
+				0, 
+				m_fEffectRampUp, 
+				0.0f, 
+				0.5f );
+		}
+		else if( fTimeIntoEffect < m_fEffectRampUp + m_fEffectHoldAtHalf )
+		{
+			fPercentThroughEffect = 0.5f;
+		}
+		else if( fTimeIntoEffect < m_fEffectRampUp + m_fEffectHoldAtHalf + m_fEffectRampDown )
+		{
+			fPercentThroughEffect = SCALE( 
+				fTimeIntoEffect, 
+				m_fEffectRampUp + m_fEffectHoldAtHalf, 
+				m_fEffectRampUp + m_fEffectHoldAtHalf + m_fEffectRampDown, 
+				0.5f, 
+				1.0f );
+		}
+		else
+		{
+			fPercentThroughEffect = 0;
+		}
+		ASSERT_M( fPercentThroughEffect >= 0 && fPercentThroughEffect <= 1, 
 			ssprintf("%f", fPercentThroughEffect) );
+
 
 		bool bBlinkOn = fPercentThroughEffect > 0.5f;
 		float fPercentBetweenColors = RageFastSin( (fPercentThroughEffect + 0.25f) * 2 * PI ) / 2 + 0.5f;
@@ -570,8 +596,8 @@ void Actor::UpdateInternal( float fDeltaTime )
 
 		/* Wrap the counter, so it doesn't increase indefinitely (causing loss of
 		 * precision if a screen is left to sit for a day). */
-		if( m_fSecsIntoEffect >= m_fEffectPeriodSeconds + m_fEffectDelay )
-			m_fSecsIntoEffect -= m_fEffectPeriodSeconds + m_fEffectDelay;
+		if( m_fSecsIntoEffect >= GetEffectPeriod() )
+			m_fSecsIntoEffect -= GetEffectPeriod();
 		break;
 
 	case CLOCK_BGM_BEAT:
@@ -759,7 +785,28 @@ void Actor::StretchTo( const RectF &r )
 }
 
 
+void Actor::SetEffectPeriod( float fTime )
+{
+	ASSERT( fTime > 0 );
+	m_fEffectRampUp = fTime/2;
+	m_fEffectHoldAtHalf = 0;
+	m_fEffectRampDown = fTime/2;
+	m_fEffectHoldAtZero = 0;
+}
 
+float Actor::GetEffectPeriod()
+{
+	return m_fEffectRampUp + m_fEffectHoldAtHalf + m_fEffectRampDown + m_fEffectHoldAtZero;
+}
+
+void Actor::SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, float fAtZero )
+{
+	m_fEffectRampUp = fRampUp; 
+	m_fEffectHoldAtHalf = fAtHalf; 
+	m_fEffectRampDown = fRampDown;
+	m_fEffectHoldAtZero = fAtZero;
+	ASSERT( GetEffectPeriod() > 0 );
+}
 
 // effect "macros"
 
@@ -774,7 +821,7 @@ void Actor::SetEffectDiffuseBlink( float fEffectPeriodSeconds, RageColor c1, Rag
 	if( m_Effect != diffuse_blink )
 	{
 		m_Effect = diffuse_blink;
-		m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+		SetEffectPeriod( fEffectPeriodSeconds );
 		m_fSecsIntoEffect = 0;
 	}
 	m_effectColor1 = c1;
@@ -786,7 +833,7 @@ void Actor::SetEffectDiffuseShift( float fEffectPeriodSeconds, RageColor c1, Rag
 	if( m_Effect != diffuse_shift )
 	{
 		m_Effect = diffuse_shift;
-		m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+		SetEffectPeriod( fEffectPeriodSeconds );
 		m_fSecsIntoEffect = 0;
 	}
 	m_effectColor1 = c1;
@@ -798,7 +845,7 @@ void Actor::SetEffectDiffuseRamp( float fEffectPeriodSeconds, RageColor c1, Rage
 	if( m_Effect != diffuse_ramp )
 	{
 		m_Effect = diffuse_ramp;
-		m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+		SetEffectPeriod( fEffectPeriodSeconds );
 		m_fSecsIntoEffect = 0;
 	}
 	m_effectColor1 = c1;
@@ -810,7 +857,7 @@ void Actor::SetEffectGlowBlink( float fEffectPeriodSeconds, RageColor c1, RageCo
 	if( m_Effect != glow_blink )
 	{
 		m_Effect = glow_blink;
-		m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+		SetEffectPeriod( fEffectPeriodSeconds );
 		m_fSecsIntoEffect = 0;
 	}
 	m_effectColor1 = c1;
@@ -822,7 +869,7 @@ void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageCo
 	if( m_Effect != glow_shift )
 	{
 		m_Effect = glow_shift;
-		m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+		SetEffectPeriod( fEffectPeriodSeconds );
 		m_fSecsIntoEffect = 0;
 	}
 	m_effectColor1 = c1;
@@ -832,7 +879,7 @@ void Actor::SetEffectGlowShift( float fEffectPeriodSeconds, RageColor c1, RageCo
 void Actor::SetEffectRainbow( float fEffectPeriodSeconds )
 {
 	m_Effect = rainbow;
-	m_fEffectPeriodSeconds = fEffectPeriodSeconds;
+	SetEffectPeriod( fEffectPeriodSeconds );
 	m_fSecsIntoEffect = 0;
 }
 
@@ -843,24 +890,24 @@ void Actor::SetEffectWag( float fPeriod, RageVector3 vect )
 		m_Effect = wag;
 		m_fSecsIntoEffect = 0;
 	}
-	m_fEffectPeriodSeconds = fPeriod;
+	SetEffectPeriod( fPeriod );
 	m_vEffectMagnitude = vect;
 }
 
 void Actor::SetEffectBounce( float fPeriod, RageVector3 vect )
 {
 	m_Effect = bounce;
-	m_fEffectPeriodSeconds = fPeriod;
+	SetEffectPeriod( fPeriod );
 	m_vEffectMagnitude = vect;
 	m_fSecsIntoEffect = 0;
 }
 
 void Actor::SetEffectBob( float fPeriod, RageVector3 vect )
 {
-	if( m_Effect!=bob || m_fEffectPeriodSeconds!=fPeriod )
+	if( m_Effect!=bob || GetEffectPeriod() != fPeriod )
 	{
 		m_Effect = bob;
-		m_fEffectPeriodSeconds = fPeriod;
+		SetEffectPeriod( fPeriod );
 		m_fSecsIntoEffect = 0;
 	}
 	m_vEffectMagnitude = vect;
@@ -881,7 +928,7 @@ void Actor::SetEffectVibrate( RageVector3 vect )
 void Actor::SetEffectPulse( float fPeriod, float fMinZoom, float fMaxZoom )
 {
 	m_Effect = pulse;
-	m_fEffectPeriodSeconds = fPeriod;
+	SetEffectPeriod( fPeriod );
 	m_vEffectMagnitude[0] = fMinZoom;
 	m_vEffectMagnitude[1] = fMaxZoom;
 }
@@ -1232,12 +1279,12 @@ public:
 	static int pulse( T* p, lua_State *L )			{ p->SetEffectPulse(); return 0; }
 	static int spin( T* p, lua_State *L )			{ p->SetEffectSpin(); return 0; }
 	static int vibrate( T* p, lua_State *L )		{ p->SetEffectVibrate(); return 0; }
-	static int stopeffect( T* p, lua_State *L )		{ p->SetEffectNone(); return 0; }
+	static int stopeffect( T* p, lua_State *L )		{ p->StopEffect(); return 0; }
 	static int effectcolor1( T* p, lua_State *L )		{ p->SetEffectColor1( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
 	static int effectcolor2( T* p, lua_State *L )		{ p->SetEffectColor2( RageColor(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
 	static int effectperiod( T* p, lua_State *L )		{ p->SetEffectPeriod(FArg(1)); return 0; }
+	static int effecttiming( T* p, lua_State *L )		{ p->SetEffectTiming(FArg(1),FArg(2),FArg(3),FArg(4)); return 0; }
 	static int effectoffset( T* p, lua_State *L )		{ p->SetEffectOffset(FArg(1)); return 0; }
-	static int effectdelay( T* p, lua_State *L )		{ p->SetEffectDelay(FArg(1)); return 0; }
 	static int effectclock( T* p, lua_State *L )		{ p->SetEffectClockString(SArg(1)); return 0; }
 	static int effectmagnitude( T* p, lua_State *L )	{ p->SetEffectMagnitude( RageVector3(FArg(1),FArg(2),FArg(3)) ); return 0; }
 	static int geteffectmagnitude( T* p, lua_State *L )	{ RageVector3 v = p->GetEffectMagnitude(); lua_pushnumber(L, v[0]); lua_pushnumber(L, v[1]); lua_pushnumber(L, v[2]); return 3; }
@@ -1361,8 +1408,8 @@ public:
 		ADD_METHOD( effectcolor1 )
 		ADD_METHOD( effectcolor2 )
 		ADD_METHOD( effectperiod )
+		ADD_METHOD( effecttiming )
 		ADD_METHOD( effectoffset )
-		ADD_METHOD( effectdelay )
 		ADD_METHOD( effectclock )
 		ADD_METHOD( effectmagnitude )
 		ADD_METHOD( geteffectmagnitude )
