@@ -214,7 +214,7 @@ void ScreenSelectCharacter::BeforeRowChange( PlayerNumber pn )
 	{
 	case CHOOSING_CPU_CHARACTER:
 	case CHOOSING_HUMAN_CHARACTER:
-		m_sprCardArrows[pnAffected].SetEffectNone();
+		m_sprCardArrows[pnAffected].StopEffect();
 		break;
 	}
 }

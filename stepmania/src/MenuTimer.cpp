@@ -104,7 +104,7 @@ void MenuTimer::Update( float fDeltaTime )
 		Stop();
 		SCREENMAN->PostMessageToTopScreen( SM_MenuTimer, 0 );
 		for( int i=0; i<NUM_MENU_TIMER_TEXTS; i++ )
-			m_text[i].SetEffectNone();
+			m_text[i].StopEffect();
 	}
 }
 

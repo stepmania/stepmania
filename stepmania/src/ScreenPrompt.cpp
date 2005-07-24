@@ -115,7 +115,7 @@ void ScreenPrompt::Input( const DeviceInput& DeviceI, const InputEventType type,
 
 void ScreenPrompt::Change( int dir )
 {
-	m_textAnswer[m_Answer].SetEffectNone();
+	m_textAnswer[m_Answer].StopEffect();
 	m_Answer = (PromptAnswer)(m_Answer+dir);
 	ASSERT( m_Answer >= 0  &&  m_Answer < NUM_PROMPT_ANSWERS );  
 

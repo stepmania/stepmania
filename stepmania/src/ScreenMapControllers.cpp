@@ -364,7 +364,7 @@ void ScreenMapControllers::Refresh()
 				if( bPulse )
 					m_textMappedTo[p][b][s].SetEffectPulse( .5f, .5f, .6f );
 				else
-					m_textMappedTo[p][b][s].SetEffectNone();
+					m_textMappedTo[p][b][s].StopEffect();
 			}
 		}
 	}

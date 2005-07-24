@@ -780,8 +780,8 @@ float ScreenRanking::SetPage( PageToShow pts )
 				}
 				else
 				{
-					m_textNames[l].SetEffectNone();
-					m_textScores[l].SetEffectNone();
+					m_textNames[l].StopEffect();
+					m_textScores[l].StopEffect();
 				}
 			}
 		}
@@ -831,8 +831,8 @@ float ScreenRanking::SetPage( PageToShow pts )
 				}
 				else
 				{
-					m_textNames[l].SetEffectNone();
-					m_textScores[l].SetEffectNone();
+					m_textNames[l].StopEffect();
+					m_textScores[l].StopEffect();
 				}
 			}
 		}

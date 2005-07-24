@@ -31,7 +31,7 @@ void Judgment::Reset()
 {
 	m_sprJudgment.FinishTweening();
 	m_sprJudgment.SetXY( 0, 0 );
-	m_sprJudgment.SetEffectNone();
+	m_sprJudgment.StopEffect();
 	m_sprJudgment.SetHidden( true );
 }
 

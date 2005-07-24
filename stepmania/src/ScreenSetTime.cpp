@@ -157,7 +157,7 @@ void ScreenSetTime::ChangeSelection( int iDirection )
 	if( iDirection != 0 && m_Selection == OldSelection )
 		return; // can't move any more
 
-	m_textValue[OldSelection].SetEffectNone();
+	m_textValue[OldSelection].StopEffect();
 	m_textValue[m_Selection].SetEffectDiffuseShift( 1.f,
 		RageColor(0.3f,0.3f,0.3f,1), 
 		RageColor(1,1,1,1) );

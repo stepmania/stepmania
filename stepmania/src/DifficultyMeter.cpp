@@ -211,7 +211,7 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const CString &sDi
 		if( iMeter > m_iGlowIfMeterGreaterThan )
 			m_textFeet.SetEffectGlowShift();
 		else
-			m_textFeet.SetEffectNone();
+			m_textFeet.StopEffect();
 	}
 
 	if( m_bShowMeter )
