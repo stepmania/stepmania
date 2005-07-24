@@ -10,6 +10,10 @@
 #include "PrefsManager.h"
 #include "RageDisplay.h"
 #include "AnnouncerManager.h"
+#include "NoteData.h"
+#include "song.h"
+#include "Steps.h"
+#include "LightsManager.h"
 
 GameSoundManager *SOUND = NULL;
 
@@ -43,6 +47,7 @@ struct MusicPlaying
 	bool m_bHasTiming;
 	/* The timing data that we're currently using. */
 	TimingData m_Timing;
+	NoteData m_Lights;
 
 	/* If m_bTimingDelayed is true, this will be the timing data for the song that's starting.
 	 * We'll copy it to m_Timing once sound is heard. */
@@ -76,6 +81,7 @@ struct MusicToPlay
 	CString file, timing_file;
 	bool HasTiming;
 	TimingData timing_data;
+	NoteData lights_data;
 	bool force_loop;
 	float start_sec, length_sec, fade_len;
 	bool align_beat;
@@ -123,17 +129,30 @@ static void StartMusic( MusicToPlay &ToPlay )
 	}
 
 	NewMusic->m_Timing = g_Playing->m_Timing;
+	NewMusic->m_Lights = g_Playing->m_Lights;
 
 	/* See if we can find timing data, if it's not already loaded. */
 	if( !ToPlay.HasTiming && IsAFile(ToPlay.timing_file) )
 	{
 		LOG->Trace("Found '%s'", ToPlay.timing_file.c_str());
-		if( SMLoader::LoadTimingFromFile( ToPlay.timing_file, ToPlay.timing_data ) )
+		Song song;
+		SMLoader sml;
+		if( sml.LoadFromSMFile( ToPlay.timing_file, song ) )
+		{
 			ToPlay.HasTiming = true;
+			ToPlay.timing_data = song.m_Timing;
+			// get cabinet lights if any
+			Steps *pStepsCabinetLights = song.GetOneSteps( STEPS_TYPE_LIGHTS_CABINET );
+			if( pStepsCabinetLights )
+				pStepsCabinetLights->GetNoteData( ToPlay.lights_data );
+		}
 	}
 
 	if( ToPlay.HasTiming )
+	{
 		NewMusic->m_NewTiming = ToPlay.timing_data;
+		NewMusic->m_Lights = ToPlay.lights_data;
+	}
 
 	if( ToPlay.align_beat && ToPlay.HasTiming && ToPlay.force_loop && ToPlay.length_sec != -1 )
 	{
@@ -523,6 +542,77 @@ void GameSoundManager::Update( float fDeltaTime )
 	else
 	{
 		GAMESTATE->UpdateSongPosition( fSeconds + fAdjust, g_Playing->m_Timing, tm + fAdjust );
+	}
+
+
+	//
+	// Send crossed messages
+	//
+	if( GAMESTATE->m_pCurSong )
+	{
+		static int iRowLastCrossed = 0;
+
+		float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
+		float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
+
+		int iRowNow = BeatToNoteRowNotRounded( fSongBeat );
+		iRowNow = max( 0, iRowNow );
+
+		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )
+		{
+			if( GetNoteType( r ) == NOTE_TYPE_4TH )
+			{
+				int iBeat = NoteRowToBeat( r );
+				if( iBeat == 16 )
+					int kfjg =0;
+				MESSAGEMAN->Broadcast( ssprintf("CrossedBeat%d", iBeat) );
+			}
+		}
+
+		iRowLastCrossed = iRowNow;
+	}
+
+
+	//
+	// Update lights
+	//
+	NoteData &lights = g_Playing->m_Lights;
+	if( lights.GetNumTracks() > 0 )	// lights data was loaded
+	{
+		bool bCrossedABeat = false;
+		
+		const float fSongBeat = GAMESTATE->m_fLightSongBeat;
+		const int iSongRow = BeatToNoteRowNotRounded( fSongBeat );
+
+		static int iRowLastCrossed = 0;
+
+		float fBeatLast = roundf(NoteRowToBeat(iRowLastCrossed));
+		float fBeatNow = roundf(NoteRowToBeat(iSongRow));
+
+		bCrossedABeat = fBeatLast != fBeatNow;
+
+		FOREACH_CabinetLight( cl )
+		{	
+			// for each index we crossed since the last update:
+			FOREACH_NONEMPTY_ROW_IN_TRACK_RANGE( lights, cl, r, iRowLastCrossed+1, iSongRow+1 )
+			{
+				if( lights.GetTapNote( cl, r ).type != TapNote::empty )
+				{
+					LIGHTSMAN->BlinkCabinetLight( cl );
+					goto done_with_cabinet_light;
+				}
+			}
+
+			if( lights.IsHoldNoteAtRow( cl, iSongRow ) )
+			{
+				LIGHTSMAN->BlinkCabinetLight( cl );
+				goto done_with_cabinet_light;
+			}
+done_with_cabinet_light:
+			;
+		}
+
+		iRowLastCrossed = iSongRow;
 	}
 }
 
