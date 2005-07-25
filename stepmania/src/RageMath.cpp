@@ -191,9 +191,30 @@ void RageMatrixSkewX( RageMatrix* pOut, float fAmount )
  * RageMatrixScaling( &scale, fScaleX, float fScaleY, float fScaleZ );
  * RageMatrixMultiply( pOut, &translate, &scale );
  */
-void RageMatrixTranslateAndScale( RageMatrix* pOut,
-			float fTransX, float fTransY, float fTransZ,
-			float fScaleX, float fScaleY, float fScaleZ )
+void RageMatrixTranslate( RageMatrix* pOut, float fTransX, float fTransY, float fTransZ )
+{
+	pOut->m00 = 1;
+	pOut->m01 = 0;
+	pOut->m02 = 0;
+	pOut->m03 = 0;
+
+	pOut->m10 = 0;
+	pOut->m11 = 1;
+	pOut->m12 = 0;
+	pOut->m13 = 0;
+
+	pOut->m20 = 0;
+	pOut->m21 = 0;
+	pOut->m22 = 1;
+	pOut->m23 = 0;
+
+	pOut->m30 = fTransX;
+	pOut->m31 = fTransY;
+	pOut->m32 = fTransZ;
+	pOut->m33 = 1;
+}
+
+void RageMatrixScale( RageMatrix* pOut, float fScaleX, float fScaleY, float fScaleZ )
 {
 	pOut->m00 = fScaleX;
 	pOut->m01 = 0;
@@ -210,9 +231,9 @@ void RageMatrixTranslateAndScale( RageMatrix* pOut,
 	pOut->m22 = fScaleZ;
 	pOut->m23 = 0;
 
-	pOut->m30 = fTransX;
-	pOut->m31 = fTransY;
-	pOut->m32 = fTransZ;
+	pOut->m30 = 0;
+	pOut->m31 = 0;
+	pOut->m32 = 0;
 	pOut->m33 = 1;
 }
 
