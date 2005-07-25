@@ -683,7 +683,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 	if( !ProcessMenuStart( pn ) )
 		return;
 
-	GameCommand &mc = m_aGameCommands[m_iChoice[pn]];
+	const GameCommand &mc = m_aGameCommands[m_iChoice[pn]];
 
 	/* If no options are playable, then we're just waiting for one to become available.
 	 * If any options are playable, then the selection must be playable. */
@@ -701,7 +701,7 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
 		mc.ApplyToAllPlayers();
 		return;
 	}
-
+	
 	float fSecs = 0;
 	bool bAllDone = true;
 	if( (bool)SHARED_SELECTION || GetCurrentPage() == PAGE_2 )
