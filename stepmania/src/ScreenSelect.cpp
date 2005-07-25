@@ -175,15 +175,45 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_BeginFadingOut )	/* Screen is starting to tween out. */
 	{
+		/*
+		 * Don't call GameCommand::Apply once per player on screens that 
+		 * have a shared selection.  This can cause change messages to be broadcast
+		 * multiple times.  Detect whether all players have the same choice, and 
+		 * if so, call ApplyToAll instead.
+		 * TODO: Think of a better way to handle this.
+		 */
+		int iMastersIndex = this->GetSelectionIndex( GAMESTATE->m_MasterPlayerNumber );
+		bool bAllPlayersChoseTheSame = true;
 		FOREACH_HumanPlayer( p )
 		{
-			int iIndex = this->GetSelectionIndex(p);
-			GameCommand &gc = m_aGameCommands[iIndex];
+			if( this->GetSelectionIndex(p) != iMastersIndex )
+			{
+				bAllPlayersChoseTheSame = false;
+				break;
+			}
+		}
+
+		if( bAllPlayersChoseTheSame )
+		{
+			GameCommand &gc = m_aGameCommands[iMastersIndex];
 			CString sThisScreen = gc.GetAndClearScreen();
 			if( m_sNextScreen == "" )
 				m_sNextScreen = sThisScreen;
-			gc.Apply( p );
+			gc.ApplyToAllPlayers();
 		}
+		else
+		{
+			FOREACH_HumanPlayer( p )
+			{
+				int iIndex = this->GetSelectionIndex(p);
+				GameCommand &gc = m_aGameCommands[iIndex];
+				CString sThisScreen = gc.GetAndClearScreen();
+				if( m_sNextScreen == "" )
+					m_sNextScreen = sThisScreen;
+				gc.Apply( p );
+			}
+		}
+
 
 		SCREENMAN->RefreshCreditsMessages();
 
