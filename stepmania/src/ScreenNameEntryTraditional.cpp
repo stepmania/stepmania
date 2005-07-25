@@ -143,7 +143,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 		GAMESTATE->m_bSideIsJoined[PLAYER_2] = true;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-		GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
+		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		GAMESTATE->m_pCurStyle.Set( GAMEMAN->GameAndStringToStyle( GAMEMAN->GetDefaultGame(),"versus") );
 		StageStats ss;
 		for( int z = 0; z < 3; ++z )

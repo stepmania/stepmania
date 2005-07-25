@@ -74,7 +74,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 	if( PREFSMAN->m_bScreenTestMode )
 	{
-		GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
+		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		GAMESTATE->m_pCurStyle.Set( GAMEMAN->GameAndStringToStyle(GAMEMAN->GetDefaultGame(),"versus") );
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
@@ -1189,7 +1189,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			/* If we're in event mode, we may have just played a course (putting us
 			 * in course mode).  Make sure we're in a single song mode. */
 			if( GAMESTATE->IsCourseMode() )
-				GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
+				GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 		}
 		break;
 
@@ -1199,7 +1199,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 
 			Course *pCourse = m_MusicWheel.GetSelectedCourse();
 			ASSERT( pCourse );
-			GAMESTATE->m_PlayMode = pCourse->GetPlayMode();
+			GAMESTATE->m_PlayMode.Set( pCourse->GetPlayMode() );
 
 			// apply #LIVES
 			if( pCourse->m_iLives != -1 )

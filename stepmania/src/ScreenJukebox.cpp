@@ -149,7 +149,8 @@ void ScreenJukebox::SetSong()
 				m_pCourseEntry = apOptions[iIndex];
 				Course *pCourse = apPossibleCourses[iIndex]; 
 			
-				GAMESTATE->m_PlayMode = CourseTypeToPlayMode( pCourse->GetCourseType() );
+				PlayMode pm = CourseTypeToPlayMode( pCourse->GetCourseType() );
+				GAMESTATE->m_PlayMode.Set( pm );
 				GAMESTATE->m_pCurCourse.Set( pCourse );
 				FOREACH_PlayerNumber( p )
 				{
@@ -177,7 +178,7 @@ void ScreenJukebox::Init()
 {
 	// ScreeJukeboxMenu must set this
 	ASSERT( GAMESTATE->m_pCurStyle );
-	GAMESTATE->m_PlayMode = PLAY_MODE_REGULAR;
+	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 
 	SetSong();
 

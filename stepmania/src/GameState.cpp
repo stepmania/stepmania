@@ -67,6 +67,7 @@ Song* GetDefaultSong()
 
 GameState::GameState() :
     m_pCurStyle(			MESSAGE_CURRENT_STYLE_CHANGED ),
+    m_PlayMode(				MESSAGE_PLAY_MODE_CHANGED ),
 	m_sPreferredSongGroup(	MESSAGE_PREFERRED_SONG_GROUP_CHANGED ),
 	m_sPreferredCourseGroup(MESSAGE_PREFERRED_COURSE_GROUP_CHANGED ),
 	m_PreferredCourseDifficulty( MESSAGE_EDIT_PREFERRED_COURSE_DIFFICULTY_P1_CHANGED ),
@@ -92,7 +93,7 @@ GameState::GameState() :
 	m_iNumTimesThroughAttract = -1;	// initial screen will bump this up to 0
 	m_iStageSeed = m_iGameSeed = 0;
 
-	m_PlayMode = PLAY_MODE_INVALID; // used by IsPlayerEnabled before the first screen
+	m_PlayMode.Set( PLAY_MODE_INVALID ); // used by IsPlayerEnabled before the first screen
 	FOREACH_PlayerNumber( p )
 		m_bSideIsJoined[p] = false; // used by GetNumSidesJoined before the first screen
 
@@ -183,7 +184,7 @@ void GameState::Reset()
 	}
 	m_SortOrder = SORT_INVALID;
 	m_PreferredSortOrder = GetDefaultSort();
-	m_PlayMode = PLAY_MODE_INVALID;
+	m_PlayMode.Set( PLAY_MODE_INVALID );
 	m_EditMode = EDIT_MODE_INVALID;
 	m_bDemonstrationOrJukebox = false;
 	m_bJukeboxUsesModifiers = false;

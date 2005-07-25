@@ -684,7 +684,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_pGame != NULL )
 		GAMESTATE->m_pCurGame = m_pGame;
 	if( m_pm != PLAY_MODE_INVALID )
-		GAMESTATE->m_PlayMode = m_pm;
+		GAMESTATE->m_PlayMode.Set( m_pm );
 
 	if( m_pStyle != NULL )
 	{
