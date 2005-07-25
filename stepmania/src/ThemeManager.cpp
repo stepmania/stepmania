@@ -685,7 +685,8 @@ CString ThemeManager::GetMetric( const CString &sClassName, const CString &sValu
 
 void ThemeManager::EvaluateString( CString &sText )
 {
-	/* If the string begins with an @, treat it as a Lua expression.
+	/* If the string begins with an @, then this is a Lua expression
+	 * that should be evaluated immediately.
 	 * Still do font aliases on the resulting string. */
 	LuaHelpers::RunAtExpressionS( sText );
 

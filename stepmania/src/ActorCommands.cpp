@@ -8,7 +8,7 @@
 
 ActorCommands::ActorCommands( const CString &sCommands )
 {
-	if( sCommands.Left(1) == "%" )
+	if( sCommands.size() > 0 && sCommands[0] == '%' )
 	{
 		m_sLuaFunction = sCommands;
 		m_sLuaFunction.erase( m_sLuaFunction.begin() );
