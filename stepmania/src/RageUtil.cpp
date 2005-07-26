@@ -1343,39 +1343,68 @@ CString FixSlashes( CString sPath )
 
 void CollapsePath( CString &sPath, bool bRemoveLeadingDot )
 {
-	/* Don't ignore empty: we do want to keep trailing slashes. */
-	CStringArray as;
-	split( sPath, "/", as, false );
+	CString sOut;
+	sOut.reserve( sPath.size() );
 
-	for( unsigned i=0; i<as.size(); i++ )
+	size_t iPos = 0;
+	size_t iNext;
+	for( ; iPos < sPath.size(); iPos = iNext )
 	{
-		if( as[i] == ".." && i != 0 )
+		/* Find the next slash. */
+		iNext = sPath.find( '/', iPos );
+		if( iNext == CString::npos )
+			iNext = sPath.size();
+		else
+			++iNext;
+
+		/* Strip extra slashes, but don't remove slashes from the beginning of the string. */
+		if( iNext - iPos == 1 && sPath[iPos] == '/' )
 		{
-			/* If the previous element is also "..", then we have a path beginning
-			 * with multiple "../"--one .. can't eat another .., since that would
-			 * cause "../../foo" to become "foo". */
-			if( as[i-1] != ".." )
+			if( !sOut.empty() )
+				continue;
+		}
+
+		/* If this is a dot, skip it. */
+		if( iNext - iPos == 2 && sPath[iPos] == '.' && sPath[iPos+1] == '/' )
+		{
+			if( bRemoveLeadingDot || !sOut.empty() )
+				continue;
+		}
+
+		/* If this is two dots, */
+		if( iNext - iPos == 3 && sPath[iPos] == '.' && sPath[iPos+1] == '.' && sPath[iPos+2] == '/' )
+		{
+			/* If this is the first path element (nothing to delete), or all we have is a slash,
+			 * leave it. */
+			if( sOut.empty() || (sOut.size() == 1 && sOut[0] == '/') )
 			{
-				as.erase( as.begin()+i-1 );
-				as.erase( as.begin()+i-1 );
-				i -= 2;
+				sOut.append( sPath, iPos, iNext-iPos );
+				continue;
 			}
+
+			/* Search backwards for the previous path element. */
+			size_t iPrev = sOut.rfind( '/', sOut.size()-2 );
+			if( iPrev == CString::npos )
+				iPrev = 0;
+			else
+				++iPrev;
+			
+			/* If the previous element is also .., leave it. */
+			bool bLastIsTwoDots = (sOut.size() - iPrev == 3 && sOut[iPrev] == '.' && sOut[iPrev+1] == '.' );
+			if( bLastIsTwoDots )
+			{
+				sOut.append( sPath, iPos, iNext-iPos );
+				continue;
+			}
+
+			sOut.erase( iPrev );
+			continue;
 		}
-		else if( as[i] == "" && i != 0 && i+1 < as.size() )
-		{
-			/* Remove empty parts that aren't at the beginning or end;
-			 * "foo//bar/" -> "foo/bar/", but "/foo" -> "/foo" and "foo/"
-			 * to "foo/". */
-			as.erase( as.begin()+i );
-			i -= 1;
-		}
-		else if( as[i] == "." && (bRemoveLeadingDot || i != 0) )
-		{
-			as.erase( as.begin()+i );
-			i -= 1;
-		}
+
+		sOut.append( sPath, iPos, iNext-iPos );
 	}
-	sPath = join( "/", as );
+	
+	sOut.swap( sPath );
 }
 
 
