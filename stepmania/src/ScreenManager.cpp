@@ -280,7 +280,7 @@ static bool g_bIsConcurrentlyLoading = false;
 /* Pop the top screen off the stack, sending SM_LoseFocus messages and
  * returning the message the popped screen wants sent to the new top
  * screen.  Does not send SM_GainFocus. */
-ScreenMessage ScreenManager::PopTopScreenInternal()
+ScreenMessage ScreenManager::PopTopScreenInternal( bool bSendLoseFocus )
 {
 	if( g_ScreenStack.empty() )
 		return SM_None;
@@ -288,7 +288,8 @@ ScreenMessage ScreenManager::PopTopScreenInternal()
 	LoadedScreen ls = g_ScreenStack.back();
 	g_ScreenStack.erase( g_ScreenStack.end()-1, g_ScreenStack.end() );
 
-	ls.m_pScreen->HandleScreenMessage( SM_LoseFocus );
+	if( bSendLoseFocus )
+		ls.m_pScreen->HandleScreenMessage( SM_LoseFocus );
 
 	if( g_setPersistantScreens.find(ls.m_pScreen->GetName()) != g_setPersistantScreens.end() )
 	{
@@ -696,6 +697,23 @@ void ScreenManager::PopTopScreen( ScreenMessage SM )
 	ASSERT( g_ScreenStack.size() > 0 );
 
 	m_PopTopScreen = SM;
+}
+
+/* Clear the screen stack; only used before major, unusual state changes,
+ * such as resetting the game or jumping to the service menu.  Don't call
+ * from inside a screen. */
+void ScreenManager::PopAllScreens()
+{
+	if( g_ScreenStack.empty() )
+		return;
+
+	/* Make sure only the top screen receives LoseFocus. */
+	bool bFirst = true;
+	while( !g_ScreenStack.empty() )
+	{
+		PopTopScreenInternal( bFirst );
+		bFirst = false;
+	}
 }
 
 void ScreenManager::PostMessageToTopScreen( ScreenMessage SM, float fDelay )

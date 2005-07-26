@@ -38,6 +38,7 @@ public:
 	bool IsConcurrentlyLoading() const;
 	void PushScreen( Screen *pNewScreen, bool bDeleteWhenDone=false, ScreenMessage SendOnPop=SM_None );
 	void PopTopScreen( ScreenMessage SM );
+	void PopAllScreens();
 	Screen* MakeNewScreen( const CString &sName );
 	Screen *GetTopScreen();
 
@@ -81,7 +82,7 @@ private:
 	bool				m_bZeroNextUpdate;
 
 	void LoadDelayedScreen();
-	ScreenMessage PopTopScreenInternal();
+	ScreenMessage PopTopScreenInternal( bool bSendLoseFocus = true );
 
 	// Keep these sounds always loaded, because they could be 
 	// played at any time.  We want to eliminate SOUND->PlayOnce

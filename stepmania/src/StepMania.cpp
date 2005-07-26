@@ -1303,6 +1303,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		{
 			SCREENMAN->SystemMessage( "Service switch pressed" );
 			GAMESTATE->Reset();
+			SCREENMAN->PopAllScreens();
 			SCREENMAN->SetNewScreen( "ScreenOptionsService" );
 		}
 		return true;
