@@ -183,8 +183,13 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 	bool bIsAbsolutePath = sFile.Left(1) == "/";
 	FixSlashesInPlace( sFile );
 
-	CString sText;
-	bool bHasText = pNode->GetAttrValue( "Text", sText );
+	// backward compat hack
+	if( !bHasClass )
+	{
+		CString sText;
+		if( pNode->GetAttrValue( "Text", sText ) )
+			sClass = "BitmapText";
+	}
 
 	Actor *pReturn = NULL;
 
