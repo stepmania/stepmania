@@ -386,7 +386,7 @@ try_element_again:
 			static const char *masks[NUM_ElementCategory][14] = {
 				{ "redir", "", "actor", "xml", NULL },
 				{ "redir", "ini", NULL },
-				{ "redir", "xml", "actor", "sprite", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
+				{ "redir", "xml", "actor", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
 				{ "redir", "png", NULL },
 				{ "redir", "mp3", "ogg", "wav", NULL },
 				{ "*", NULL },

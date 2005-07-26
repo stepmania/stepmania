@@ -29,7 +29,6 @@ enum FileType
 {
 	FT_Actor, 
 	FT_Bitmap, 
-	FT_Sprite, 
 	FT_Movie, 
 	FT_Directory, 
 	FT_Xml, 

@@ -111,9 +111,8 @@ bool Sprite::LoadBG( RageTextureID ID )
 bool Sprite::Load( RageTextureID ID )
 {
 	bool result;
-	if( ID.filename == "" ) result = true;
-	if( ID.filename.Right(7) == ".sprite" )
-		result = LoadFromSpriteFile( ID );
+	if( ID.filename == "" ) 
+		result = true;
 	else 
 		result = LoadFromTexture( ID );
 
@@ -138,7 +137,7 @@ retry:
 		GetDirListing( sPath + "*", asElementPaths, false, true );
 		if( asElementPaths.size() == 0 )
 		{
-			CString sMessage = ssprintf( "The sprite file '%s' points to a texture '%s' which doesn't exist.", m_sSpritePath.c_str(), sPath.c_str() );
+			CString sMessage = ssprintf( "A Sprite in '%s' points to a texture '%s' which doesn't exist.", sDir.c_str(), sPath.c_str() );
 			switch( Dialog::AbortRetryIgnore(sMessage) )
 			{
 			case Dialog::abort:	
@@ -194,37 +193,6 @@ retry:
 
 
 	Actor::LoadFromNode( sDir, pNode );
-}
-
-// Sprite file has the format:
-//
-// [Sprite]
-// Texture=Textures\Logo.bmp
-// Frame0000=0
-// Delay0000=1.0
-// Frame0001=3
-// Delay0000=2.0
-// BaseRotationXDegrees=0
-// BaseRotationYDegrees=0
-// BaseRotationZDegrees=0
-// BaseZoomX=1
-// BaseZoomY=1
-// BaseZoomZ=1
-bool Sprite::LoadFromSpriteFile( RageTextureID ID )
-{
-	LOG->Trace( ssprintf("Sprite::LoadFromSpriteFile(%s)", ID.filename.c_str()) );
-
-	//Init();
-	m_sSpritePath = ID.filename;
-
-	// read sprite file
-	IniFile ini;
-	if( !ini.ReadFile( m_sSpritePath ) )
-		RageException::Throw( "Error opening Sprite file '%s'.", m_sSpritePath.c_str() );
-
-	LoadFromNode( Dirname(m_sSpritePath), ini.GetChild("Sprite") );
-
-	return true;
 }
 
 void Sprite::UnloadTexture()

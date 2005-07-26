@@ -74,7 +74,6 @@ public:
 
 protected:
 	virtual bool LoadFromTexture( RageTextureID ID );
-	virtual bool LoadFromSpriteFile( RageTextureID ID );
 
 	void DrawTexture( const TweenState *state );
 

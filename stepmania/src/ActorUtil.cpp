@@ -440,7 +440,6 @@ void ActorUtil::SortByZPosition( vector<Actor*> &vActors )
 static const CString FileTypeNames[] = {
 	"Actor", 
 	"Bitmap", 
-	"Sprite", 
 	"Movie", 
 	"Directory", 
 	"Xml", 
@@ -468,8 +467,6 @@ FileType ActorUtil::GetFileType( const CString &sPath )
 		sExt=="avi" || 
 		sExt=="mpeg" || 
 		sExt=="mpg" )		return FT_Movie;
-	else if( 
-		sExt=="sprite" )	return FT_Sprite;
 	else if( 
 		sExt=="txt" )		return FT_Model;
 	else					return FT_Invalid;
