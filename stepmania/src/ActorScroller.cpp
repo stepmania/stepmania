@@ -90,7 +90,8 @@ void ActorScroller::Load3(
 	float fNumItemsToDraw, 
 	bool bFastCatchup,
 	const CString &sTransformFunction,
-	bool bUseMask
+	bool bUseMask,
+	bool bLoop
 	)
 {
 	m_fSecondsPerItem = fSecondsPerItem;
@@ -99,6 +100,7 @@ void ActorScroller::Load3(
 	m_exprTransformFunction.SetFromExpression( sTransformFunction );
 	m_fQuantizePixels = 0;
 	m_bUseMask = bUseMask;
+	m_bLoop = bLoop;
 	m_bLoaded = true;
 }
 
@@ -142,6 +144,7 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 		fNumItemsToDraw,
 		false,
 		sTransformFunction,
+		false,
 		false );
 	SetCurrentAndDestinationItem( -fItemPaddingStart );
 	SetDestinationItem( m_SubActors.size()-1+fItemPaddingEnd );
@@ -260,7 +263,7 @@ void ActorScroller::DrawPrimitives()
 		float fPosition = iItem - m_fCurrentItem;
 		int iIndex = iItem;
 		if( m_bLoop )
-			wrap( iIndex, m_SubActors.size()-1 );
+			wrap( iIndex, m_SubActors.size() );
 		else if( iIndex < 0 || iIndex >= (int)m_SubActors.size() )
 			continue;
 

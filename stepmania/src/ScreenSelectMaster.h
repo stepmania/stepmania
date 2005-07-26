@@ -49,6 +49,7 @@ protected:
 	ThemeMetric1D<CString>	OPTION_ORDER;
 	ThemeMetric<bool>		WRAP_CURSOR;
 	ThemeMetric<bool>		WRAP_SCROLLER;
+	ThemeMetric<bool>		LOOP_SCROLLER;
 	ThemeMetric<bool>		SCROLLER_FAST_CATCHUP;
 	ThemeMetric<bool>		ALLOW_REPEATING_INPUT;
 	ThemeMetric<float>		SCROLLER_SECONDS_PER_ITEM;

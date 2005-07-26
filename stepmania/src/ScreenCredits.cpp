@@ -179,6 +179,7 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 		4,
 		false,
 		sBackgroundsTransformFunction,
+		false,
 		false );
 	SET_XY( m_ScrollerBackgrounds );
 	this->AddChild( &m_ScrollerBackgrounds );
@@ -189,6 +190,7 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 		4,
 		false,
 		sBackgroundsTransformFunction,
+		false,
 		false );
 	SET_XY( m_ScrollerFrames );
 	this->AddChild( &m_ScrollerFrames );
@@ -239,6 +241,7 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 		40,
 		false,
 		sTextsTransformFunction,
+		false,
 		false );
 	SET_XY( m_ScrollerTexts );
 	this->AddChild( &m_ScrollerTexts );

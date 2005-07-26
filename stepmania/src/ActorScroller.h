@@ -25,10 +25,11 @@ public:
 		float fNumItemsToDraw, 
 		bool bFastCatchup,
 		const CString &sTransformFunction,
-		bool bUseMask );
+		bool bUseMask,
+		bool bLoop );
 
 	virtual void UpdateInternal( float fDelta );
-	virtual void DrawPrimitives();	// DOES draw
+	virtual void DrawPrimitives();	// handles drawing and doesn't call ActorFrame::DrawPrimitives
 
 	void LoadFromNode( const CString &sDir, const XNode *pNode );
 	virtual Actor *Copy() const;
