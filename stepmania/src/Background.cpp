@@ -364,7 +364,6 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		default:
 			ASSERT(0);	// fall through
 		case FT_Bitmap:
-		case FT_Sprite:
 		case FT_Movie:
 			sEffect = SBE_StretchNormal;
 			break;

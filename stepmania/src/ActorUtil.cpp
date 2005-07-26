@@ -186,18 +186,6 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 	CString sText;
 	bool bHasText = pNode->GetAttrValue( "Text", sText );
 
-	//
-	// backward compatibility hacks
-	//
-	if( bHasText && !bHasClass )
-		sClass = "BitmapText";
-	else if( sFile.CompareNoCase("songbackground") == 0 )
-		sClass = "SongBackground";
-	else if( sFile.CompareNoCase("songbanner") == 0 )
-		sClass = "SongBanner";
-	else if( sFile.CompareNoCase("coursebanner") == 0 )
-		sClass = "CourseBanner";
-
 	Actor *pReturn = NULL;
 
 	if( IsRegistered(sClass) )
@@ -350,7 +338,6 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 		}
 	case FT_Bitmap:
 	case FT_Movie:
-	case FT_Sprite:
 		{
 			Sprite* pSprite = new Sprite;
 			pSprite->Load( ID );
