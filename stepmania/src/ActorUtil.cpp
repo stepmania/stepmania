@@ -331,7 +331,10 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 			{
 				XNode xml;
 				if( !xml.LoadFromFile(sXml) )
-					RageException::Throw( ssprintf("Error loading %s", sXml.c_str()) );
+				{
+					// XNode will warn about the error
+					return new Sprite;
+				}
 				return LoadFromActorFile( sDir, &xml );
 			}
 			else
