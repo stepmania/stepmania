@@ -562,9 +562,7 @@ void GameSoundManager::Update( float fDeltaTime )
 		{
 			if( GetNoteType( r ) == NOTE_TYPE_4TH )
 			{
-				int iBeat = NoteRowToBeat( r );
-				if( iBeat == 16 )
-					int kfjg =0;
+				int iBeat = (int) NoteRowToBeat( r );
 				MESSAGEMAN->Broadcast( ssprintf("CrossedBeat%d", iBeat) );
 			}
 		}
