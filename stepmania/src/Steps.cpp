@@ -250,9 +250,7 @@ void Steps::Compress() const
 		return;
 	}
 
-	/* We have no file on disk.  XXX: check whether there's any memory benefit to storing
-	 * data in SMData form.  We don't want to decompress everything on load (much too slow),
-	 * but there may be litle benefit to recompressing here. */
+	/* We have no file on disk.  Compress the data, if necessary. */
 	if( m_sNoteDataCompressed.empty() )
 	{
 		if( !m_bNoteDataIsFilled )
