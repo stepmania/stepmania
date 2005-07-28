@@ -128,8 +128,10 @@ void ShowWarning( const char *file, int line, const char *message ); // don't pu
 #if !defined(ALIGN)
 #if defined(__GNUC__)
 #define ALIGN(n) __attribute__((aligned(n)))
+#define CONST_FUNCTION __attribute__((const))
 #else
 #define ALIGN(n)
+#define CONST_FUNCTION
 #endif
 #endif
 
