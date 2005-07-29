@@ -256,6 +256,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 			CString sError = ssprintf( "The actor file in '%s' is missing the File attribute or has an invalid Class \"%s\"",
 				sDir.c_str(), sClass.c_str() );
 			Dialog::OK( sError );
+			pReturn = new Sprite;	// Return a dummy object so that we don't crash in AutoActor later.
 			goto all_done;
 		}
 
