@@ -17,12 +17,8 @@ typedef uint8_t apixel[4];
    do { (p)[0] = (red); (p)[1] = (grn); (p)[2] = (blu); (p)[3] = (alf); } while (0)
 #define PAM_EQUAL(p,q) \
    ((p)[0] == (q)[0] && (p)[1] == (q)[1] && (p)[2] == (q)[2] && (p)[3] == (q)[3])
-#define PAM_DEPTH(newp,p,oldmaxval,newmaxval) \
-   PAM_ASSIGN( (newp), \
-      ( (uint8_t) PAM_GETR(p) * (newmaxval) + (oldmaxval) / 2 ) / (oldmaxval), \
-      ( (uint8_t) PAM_GETG(p) * (newmaxval) + (oldmaxval) / 2 ) / (oldmaxval), \
-      ( (uint8_t) PAM_GETB(p) * (newmaxval) + (oldmaxval) / 2 ) / (oldmaxval), \
-      ( (uint8_t) PAM_GETA(p) * (newmaxval) + (oldmaxval) / 2 ) / (oldmaxval) )
+#define PAM_DEPTH(p) \
+   PAM_ASSIGN( (p), (uint8_t) table[PAM_GETR(p)], (uint8_t) table[PAM_GETG(p)], (uint8_t) table[PAM_GETB(p)], (uint8_t) table[PAM_GETA(p)] )
 
 struct acolorhist_item
 {
@@ -37,9 +33,10 @@ struct acolorhist_list_item
     acolorhist_list next;
 };
 
+static const unsigned int HASH_SIZE = 20023u;
+
 struct acolorhash_hash
 {
-	enum { HASH_SIZE = 20023 };
 	acolorhist_list hash[HASH_SIZE];
 	acolorhash_hash()
 	{
@@ -48,13 +45,13 @@ struct acolorhash_hash
 
 	~acolorhash_hash()
 	{
-		for ( int i = 0; i < HASH_SIZE; ++i )
+		for( unsigned i = 0; i < HASH_SIZE; ++i )
 		{
 			acolorhist_list achl, achlnext;
 			for ( achl = hash[i]; achl != NULL; achl = achlnext )
 			{
 				achlnext = achl->next;
-				free( (char*) achl );
+				free( achl );
 			}
 		}
 	}
@@ -72,24 +69,24 @@ struct acolorhash_hash
 
 static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, int maxval, int newcolors );
 
-static bool redcompare( const acolorhist_item &ch1, const acolorhist_item &ch2 )
+static bool compare_index_0( const acolorhist_item &ch1, const acolorhist_item &ch2 )
 {
-	return PAM_GETR( ch1.acolor ) < PAM_GETR( ch2.acolor );
+	return ch1.acolor[0] < ch2.acolor[0];
 }
 
-static bool greencompare( const acolorhist_item &ch1, const acolorhist_item &ch2 )
+static bool compare_index_1( const acolorhist_item &ch1, const acolorhist_item &ch2 )
 {
-	return PAM_GETG( ch1.acolor ) < PAM_GETG( ch2.acolor );
+	return ch1.acolor[1] < ch2.acolor[1];
 }
 
-static bool bluecompare( const acolorhist_item &ch1, const acolorhist_item &ch2 )
+static bool compare_index_2( const acolorhist_item &ch1, const acolorhist_item &ch2 )
 {
-	return PAM_GETB( ch1.acolor ) < PAM_GETB( ch2.acolor );
+	return ch1.acolor[2] < ch2.acolor[2];
 }
 
-static bool alphacompare( const acolorhist_item &ch1, const acolorhist_item &ch2 )
+static bool compare_index_3( const acolorhist_item &ch1, const acolorhist_item &ch2 )
 {
-	return PAM_GETA( ch1.acolor ) < PAM_GETA( ch2.acolor );
+	return ch1.acolor[3] < ch2.acolor[3];
 }
 
 static acolorhist_item *pam_computeacolorhist( const RageSurface *src, int maxacolors, int* acolorsP );
@@ -132,11 +129,15 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
                 break;
             pixval newmaxval = maxval / 2;
 
+			int table[256];
+			for( int c = 0; c <= maxval; ++c )
+				table[c] = ( (uint8_t) c * newmaxval + maxval/2 ) / maxval;
+
             for( int row = 0; row < pImg->h; ++row )
 			{
 				apixel *pP = (apixel *) (pImg->pixels+row*pImg->pitch);
                 for( int col = 0; col < pImg->w; ++col, ++pP )
-                    PAM_DEPTH( *pP, *pP, maxval, newmaxval );
+                    PAM_DEPTH( *pP );
 			}
             maxval = newmaxval;
         }
@@ -223,14 +224,24 @@ void RageSurfaceUtils::Palettize( RageSurface *&pImg, int iColors, bool bDither 
 			if( ind == -1 )
 			{
 				/* No; search acolormap for closest match. */
+				static int square_table[512], *pSquareTable = NULL;
+				if( pSquareTable == NULL )
+				{
+					pSquareTable = square_table+256;
+					for( int c = -256; c < 256; ++c )
+						pSquareTable[c] = c*c;
+				}
+
 				long dist = 2000000000;
 				for( int i = 0; i < newcolors; ++i )
 				{
 					const uint8_t *colors2 = acolormap[i].acolor;
 
 					int newdist = 0;
-					for( int c = 0; c < 4; ++c )
-						newdist += ( int(pixel[c]) - colors2[c] ) * ( int(pixel[c]) - colors2[c] );
+					newdist += pSquareTable[ int(pixel[0]) - colors2[0] ];
+					newdist += pSquareTable[ int(pixel[1]) - colors2[1] ];
+					newdist += pSquareTable[ int(pixel[2]) - colors2[2] ];
+					newdist += pSquareTable[ int(pixel[3]) - colors2[3] ];
 
 					if( newdist < dist )
 					{
@@ -343,7 +354,6 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 	{
 		int indx, clrs;
 		int sm;
-		int minr, maxr, ming, mina, maxg, minb, maxb, maxa, v;
 		int halfsum, lowersum;
 
 		/* Find the first splittable box. */
@@ -361,36 +371,44 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
 		 * Go through the box finding the minimum and maximum of each
 		 * component - the boundaries of the box.
 		 */
-		minr = maxr = PAM_GETR( achv[indx].acolor );
-		ming = maxg = PAM_GETG( achv[indx].acolor );
-		minb = maxb = PAM_GETB( achv[indx].acolor );
-		mina = maxa = PAM_GETA( achv[indx].acolor );
+		int mins[4], maxs[4];
+		mins[0] = maxs[0] = achv[indx].acolor[0];
+		mins[1] = maxs[1] = achv[indx].acolor[1];
+		mins[2] = maxs[2] = achv[indx].acolor[2];
+		mins[3] = maxs[3] = achv[indx].acolor[3];
+
 		for ( int i = 1; i < clrs; ++i )
 		{
-			v = PAM_GETR( achv[indx + i].acolor );
-			if ( v < minr ) minr = v;
-			if ( v > maxr ) maxr = v;
-			v = PAM_GETG( achv[indx + i].acolor );
-			if ( v < ming ) ming = v;
-			if ( v > maxg ) maxg = v;
-			v = PAM_GETB( achv[indx + i].acolor );
-			if ( v < minb ) minb = v;
-			if ( v > maxb ) maxb = v;
-			v = PAM_GETA( achv[indx + i].acolor );
-			if ( v < mina ) mina = v;
-			if ( v > maxa ) maxa = v;
+			int v;
+			v = achv[indx + i].acolor[0];
+			mins[0] = min( mins[0], v );
+			maxs[0] = max( maxs[0], v );
+			v = achv[indx + i].acolor[1];
+			mins[1] = min( mins[1], v );
+			maxs[1] = max( maxs[1], v );
+			v = achv[indx + i].acolor[2];
+			mins[2] = min( mins[2], v );
+			maxs[2] = max( maxs[2], v );
+			v = achv[indx + i].acolor[3];
+			mins[3] = min( mins[3], v );
+			maxs[3] = max( maxs[3], v );
 		}
 
 		/* Find the largest dimension, and sort by that component. */
-		if ( maxa - mina >= maxr - minr && maxa - mina >= maxg - ming && maxa - mina >= maxb - minb )
-			sort( &achv[indx], &achv[indx+clrs], alphacompare );
-		else if ( maxr - minr >= maxg - ming && maxr - minr >= maxb - minb )
-			sort( &achv[indx], &achv[indx+clrs], redcompare );
-		else if ( maxg - ming >= maxb - minb )
-			sort( &achv[indx], &achv[indx+clrs], greencompare );
-		else
-			sort( &achv[indx], &achv[indx+clrs], bluecompare );
+		{
+			int iMax = 0;
+			for( int i = 1; i < 3; ++i )
+				if( maxs[i] - mins[i] > maxs[iMax] - mins[iMax] )
+					iMax = i;
 
+			switch( iMax )
+			{
+			case 0: sort( &achv[indx], &achv[indx+clrs], compare_index_0 ); break;
+			case 1: sort( &achv[indx], &achv[indx+clrs], compare_index_1 ); break;
+			case 2: sort( &achv[indx], &achv[indx+clrs], compare_index_2 ); break;
+			case 3: sort( &achv[indx], &achv[indx+clrs], compare_index_3 ); break;
+			}
+		}
 		/*
 		 * Now find the median based on the counts, so that about half the
 		 * pixels (not colors, pixels) are in each subdivision.
@@ -490,13 +508,11 @@ static acolorhist_item *mediancut( acolorhist_item *achv, int colors, int sum, i
  * implied warranty.
  */
 
-#define HASH_SIZE 20023
-
-#define pam_hashapixel(p) ( ( ( (long) PAM_GETR(p) * 33023 + \
-                                (long) PAM_GETG(p) * 30013 + \
-                                (long) PAM_GETB(p) * 27011 + \
-                                (long) PAM_GETA(p) * 24007 ) \
-                              & 0x7fffffff ) % HASH_SIZE )
+#define pam_hashapixel(p) ( ( (unsigned) PAM_GETR(p) * 33023 + \
+                              (unsigned) PAM_GETG(p) * 30013 + \
+                              (unsigned) PAM_GETB(p) * 27011 + \
+                              (unsigned) PAM_GETA(p) * 24007 ) \
+                              % (unsigned) HASH_SIZE )
 
 static bool pam_computeacolorhash( const RageSurface *src, int maxacolors, int* acolorsP, acolorhash_hash &hash )
 {
@@ -543,7 +559,7 @@ static acolorhist_item *pam_acolorhashtoacolorhist( const acolorhash_hash &acht,
 
 	/* Loop through the hash table. */
 	int j = 0;
-	for ( int i = 0; i < HASH_SIZE; ++i )
+	for( unsigned i = 0; i < HASH_SIZE; ++i )
 	{
 		for ( acolorhist_list achl = acht.hash[i]; achl != NULL; achl = achl->next )
 		{
@@ -563,7 +579,7 @@ static acolorhist_item *pam_computeacolorhist( const RageSurface *src, int maxac
 	if ( !pam_computeacolorhash( src, maxacolors, acolorsP, acht ) )
 		return NULL;
 
-	acolorhist_item *achv = pam_acolorhashtoacolorhist( acht, maxacolors );
+	acolorhist_item *achv = pam_acolorhashtoacolorhist( acht, *acolorsP );
 	return achv;
 }
 
