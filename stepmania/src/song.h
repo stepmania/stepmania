@@ -219,7 +219,7 @@ public:
 	bool ShowInDemonstrationAndRanking() const;
 
 	void AddSteps( Steps* pSteps );		// we are responsible for deleting the memory pointed to by pSteps!
-	void RemoveSteps( const Steps* pSteps );
+	void DeleteSteps( const Steps* pSteps );
 
 	void FreeAllLoadedFromProfile( ProfileSlot slot = PROFILE_SLOT_INVALID );
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }

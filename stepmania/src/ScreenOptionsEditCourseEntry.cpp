@@ -1,5 +1,5 @@
 #include "global.h"
-#include "ScreenEditCourseEntry.h"
+#include "ScreenOptionsEditCourseEntry.h"
 #include "ScreenManager.h"
 #include "RageLog.h"
 #include "GameState.h"
@@ -24,13 +24,13 @@ enum EditCourseEntryRow
 #define FOREACH_EditCourseEntryRow( i ) FOREACH_ENUM( EditCourseEntryRow, NUM_EditCourseEntryRow, i )
 
 
-REGISTER_SCREEN_CLASS( ScreenEditCourseEntry );
-ScreenEditCourseEntry::ScreenEditCourseEntry( CString sName ) : ScreenOptions( sName )
+REGISTER_SCREEN_CLASS( ScreenOptionsEditCourseEntry );
+ScreenOptionsEditCourseEntry::ScreenOptionsEditCourseEntry( CString sName ) : ScreenOptions( sName )
 {
-	LOG->Trace( "ScreenEditCourseEntry::ScreenEditCourseEntry()" );
+	LOG->Trace( "ScreenOptionsEditCourseEntry::ScreenOptionsEditCourseEntry()" );
 }
 
-void ScreenEditCourseEntry::Init()
+void ScreenOptionsEditCourseEntry::Init()
 {
 	ScreenOptions::Init();
 
@@ -111,7 +111,7 @@ void ScreenEditCourseEntry::Init()
 	ImportAllOptions();
 }
 
-void ScreenEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
+void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToNextScreen )
 	{
@@ -146,7 +146,7 @@ void ScreenEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 	ScreenOptions::HandleScreenMessage( SM );
 }
 	
-void ScreenEditCourseEntry::AfterChangeValueInRow( PlayerNumber pn )
+void ScreenOptionsEditCourseEntry::AfterChangeValueInRow( PlayerNumber pn )
 {
 	ScreenOptions::AfterChangeValueInRow( pn );
 	Course *pCourse = GAMESTATE->m_pCurCourse;
@@ -254,7 +254,7 @@ void ScreenEditCourseEntry::AfterChangeValueInRow( PlayerNumber pn )
 	}
 }
 
-void ScreenEditCourseEntry::ImportAllOptions()
+void ScreenOptionsEditCourseEntry::ImportAllOptions()
 {
 	// fill choices before importing
 	AfterChangeValueInRow( GAMESTATE->m_MasterPlayerNumber );
@@ -327,12 +327,12 @@ void ScreenEditCourseEntry::ImportAllOptions()
 	}
 }
 
-void ScreenEditCourseEntry::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
+void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 
 }
 
-void ScreenEditCourseEntry::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
+void ScreenOptionsEditCourseEntry::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
 {
 	switch( m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber] )
 	{

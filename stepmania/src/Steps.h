@@ -13,7 +13,7 @@ class Profile;
 class NoteData;
 struct lua_State;
 
-const int MAX_EDIT_DESCRIPTION_LENGTH = 12;
+const int MAX_EDIT_STEPS_DESCRIPTION_LENGTH = 12;
 
 class Steps
 {

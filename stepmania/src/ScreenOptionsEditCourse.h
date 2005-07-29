@@ -1,28 +1,29 @@
-#ifndef ScreenEditCourseEntry_H
-#define ScreenEditCourseEntry_H
+#ifndef ScreenOptionsEditCourse_H
+#define ScreenOptionsEditCourse_H
 
 #include "ScreenOptions.h"
 #include "Course.h"
 
-class ScreenEditCourseEntry : public ScreenOptions
+class ScreenOptionsEditCourse : public ScreenOptions
 {
 public:
-	ScreenEditCourseEntry( CString sName );
+	ScreenOptionsEditCourse( CString sName );
 
 	void Init();
+	virtual void BeginScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns ) {}
+	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	
 	virtual void AfterChangeValueInRow( PlayerNumber pn );
 	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
 
-	void ImportAllOptions();
+	int GetCourseEntryIndexWithFocus() const;
 
-	CourseEntry m_Original;
+	Course m_Original;
 };
 
 #endif

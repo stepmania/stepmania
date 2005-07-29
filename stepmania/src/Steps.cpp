@@ -337,9 +337,9 @@ void Steps::SetDifficultyAndDescription( Difficulty dc, CString sDescription )
 
 bool Steps::MakeValidEditDescription( CString &sPreferredDescription )
 {
-	if( int(sPreferredDescription.size()) > MAX_EDIT_DESCRIPTION_LENGTH )
+	if( int(sPreferredDescription.size()) > MAX_EDIT_STEPS_DESCRIPTION_LENGTH )
 	{
-		sPreferredDescription = sPreferredDescription.Left( MAX_EDIT_DESCRIPTION_LENGTH );
+		sPreferredDescription = sPreferredDescription.Left( MAX_EDIT_STEPS_DESCRIPTION_LENGTH );
 		return true;
 	}
 	return false;

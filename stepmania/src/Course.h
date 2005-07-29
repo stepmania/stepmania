@@ -18,6 +18,8 @@ class Steps;
 class Profile;
 struct lua_State;
 
+const int MAX_EDIT_COURSE_TITLE_LENGTH = 12;
+
 enum CourseType
 {
 	COURSE_TYPE_NONSTOP,	// if life meter type is BAR
@@ -180,6 +182,9 @@ public:
 
 	const CourseEntry *FindFixedSong( const Song *pSong ) const;
 
+	ProfileSlot GetLoadedFromProfileSlot() const { return m_LoadedFromProfile; }
+	void SetLoadedFromProfile( ProfileSlot slot ) { m_LoadedFromProfile = slot; }
+
 	// Lua
 	void PushSelf( lua_State *L );
 
@@ -188,6 +193,8 @@ private:
 
 	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 	bool GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
+
+	ProfileSlot		m_LoadedFromProfile;	// PROFILE_SLOT_INVALID if wasn't loaded from a profile
 
 	typedef pair<StepsType,Difficulty> CacheEntry;
 	struct CacheData

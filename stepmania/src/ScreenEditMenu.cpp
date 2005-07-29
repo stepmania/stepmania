@@ -128,7 +128,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		Song* pSong = GAMESTATE->m_pCurSong;
 		Steps* pStepsToDelete = GAMESTATE->m_pCurSteps[PLAYER_1];
 		bool bSaveSong = !pStepsToDelete->WasLoadedFromProfile();
-		pSong->RemoveSteps( pStepsToDelete );
+		pSong->DeleteSteps( pStepsToDelete );
 
 		/* Only save to the main .SM file if the steps we're deleting were loaded
 		 * from it. */
@@ -225,7 +225,7 @@ static void SetCurrentStepsDescription( const CString &s )
 	
 static void DeleteCurrentSteps()
 {
-	GAMESTATE->m_pCurSong->RemoveSteps( GAMESTATE->m_pCurSteps[0] );
+	GAMESTATE->m_pCurSong->DeleteSteps( GAMESTATE->m_pCurSteps[0] );
 	GAMESTATE->m_pCurSteps[0].Set( NULL );
 }
 	
@@ -329,7 +329,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 					SM_BackFromEditDescription, 
 					"Name the new edit.", 
 					GAMESTATE->m_pCurSteps[0]->GetDescription(), 
-					MAX_EDIT_DESCRIPTION_LENGTH,
+					MAX_EDIT_STEPS_DESCRIPTION_LENGTH,
 					ValidateCurrentStepsDescription,
 					SetCurrentStepsDescription, 
 					DeleteCurrentSteps );

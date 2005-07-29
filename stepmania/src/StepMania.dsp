@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="StepMania" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 6.00
+# Microsoft Developer Studio Generated Build File, Format Version 60000
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -59,10 +59,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\stepmania\stepmania\Program
+TargetDir=\cvs\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                   	cl                                                           /Zl                                                           /nologo                                                           /c                                                           verstub.cpp                                                           /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                    	cl                                                            /Zl                                                            /nologo                                                            /c                                                            verstub.cpp                                                            /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -96,10 +96,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\stepmania\stepmania\Program
+TargetDir=\cvs\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc             	cl              /Zl              /nologo              /c              verstub.cpp              /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc              	cl               /Zl               /nologo               /c               verstub.cpp               /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -2510,14 +2510,6 @@ SOURCE=.\ScreenCenterImage.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\ScreenCourseManager.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenCourseManager.h
-# End Source File
-# Begin Source File
-
 SOURCE=.\ScreenCredits.cpp
 # End Source File
 # Begin Source File
@@ -2547,22 +2539,6 @@ SOURCE=.\ScreenEdit.cpp
 # Begin Source File
 
 SOURCE=.\ScreenEdit.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenEditCourse.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenEditCourse.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenEditCourseEntry.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenEditCourseEntry.h
 # End Source File
 # Begin Source File
 
@@ -2760,11 +2736,35 @@ SOURCE=.\ScreenOptions.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenOptionsEditCourse.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptionsEditCourse.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptionsEditCourseEntry.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptionsEditCourseEntry.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenOptionsEditProfile.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\ScreenOptionsEditProfile.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptionsManageCourses.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptionsManageCourses.h
 # End Source File
 # Begin Source File
 

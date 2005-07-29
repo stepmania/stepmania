@@ -2233,7 +2233,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		if( !pSteps->GetSavedToDisk() )
 		{
 			Song* pSong = GAMESTATE->m_pCurSong;
-			pSong->RemoveSteps( pSteps );
+			pSong->DeleteSteps( pSteps );
 			m_pSteps = NULL;
 			GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
 		}
@@ -2886,7 +2886,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 			SM_None, 
 			"Enter a description.", 
 			m_pSteps->GetDescription(), 
-			(dc == DIFFICULTY_EDIT) ? MAX_EDIT_DESCRIPTION_LENGTH : 255,
+			(dc == DIFFICULTY_EDIT) ? MAX_EDIT_STEPS_DESCRIPTION_LENGTH : 255,
 			NULL,
 			ChangeDescription, 
 			NULL 

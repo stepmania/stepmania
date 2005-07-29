@@ -1,15 +1,17 @@
-#ifndef ScreenEditCourse_H
-#define ScreenEditCourse_H
+#ifndef ScreenOptionsManageCourses_H
+#define ScreenOptionsManageCourses_H
 
 #include "ScreenOptions.h"
-#include "Course.h"
 
-class ScreenEditCourse : public ScreenOptions
+class Course;
+
+class ScreenOptionsManageCourses : public ScreenOptions
 {
 public:
-	ScreenEditCourse( CString sName );
+	ScreenOptionsManageCourses( CString sName );
 
 	void Init();
+	virtual void BeginScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
@@ -20,7 +22,9 @@ protected:
 	virtual void AfterChangeValueInRow( PlayerNumber pn );
 	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
 
-	Course m_Original;
+	Course *GetCourseWithFocus() const;
+
+	vector<Course*> m_vpCourses;
 };
 
 #endif

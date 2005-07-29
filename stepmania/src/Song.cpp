@@ -1341,7 +1341,7 @@ void Song::AddSteps( Steps* pSteps )
 	m_vpStepsByType[pSteps->m_StepsType].push_back( pSteps );
 }
 
-void Song::RemoveSteps( const Steps* pSteps )
+void Song::DeleteSteps( const Steps* pSteps )
 {
 	// Avoid any stale Note::parent pointers by removing all AutoGen'd Steps,
 	// then adding them again.
@@ -1409,7 +1409,7 @@ void Song::FreeAllLoadedFromProfile( ProfileSlot slot )
 	}
 
 	for( unsigned i = 0; i < apToRemove.size(); ++i )
-		this->RemoveSteps( apToRemove[i] );
+		this->DeleteSteps( apToRemove[i] );
 }
 
 int Song::GetNumStepsLoadedFromProfile( ProfileSlot slot ) const
@@ -1496,7 +1496,7 @@ void Song::MakeUniqueEditDescription( StepsType st, CString &sPreferredDescripti
 	{
 		// make name "My Edit" -> "My Edit"
 		CString sNum = ssprintf("%d", i+1);
-		sTemp = sPreferredDescriptionInOut.Left( MAX_EDIT_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
+		sTemp = sPreferredDescriptionInOut.Left( MAX_EDIT_STEPS_DESCRIPTION_LENGTH - sNum.size() ) + sNum;
 
 		if( IsEditDescriptionUnique(st, sTemp, NULL) )
 		{

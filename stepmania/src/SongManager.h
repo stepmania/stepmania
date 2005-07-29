@@ -45,6 +45,8 @@ public:
 	void InitCoursesFromDisk( LoadingWindow *ld );
 	void InitAutogenCourses();
 	void FreeCourses();
+	void AddCourse( Course *pCourse );	// transfers ownership of pCourse
+	void DeleteCourse( Course *pCourse );	// transfers ownership of pCourse
 
 	void InitAll( LoadingWindow *ld );	// songs, courses, groups - everything.
 	void Reload( LoadingWindow *ld=NULL );	// songs, courses, groups - everything.
@@ -105,6 +107,9 @@ public:
 
 	// Lua
 	void PushSelf( lua_State *L );
+
+
+	static bool ValidateEditCourseName( const CString &sAnswer, CString &sErrorOut );
 
 protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );

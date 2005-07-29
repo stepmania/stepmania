@@ -254,7 +254,7 @@ void SongManager::LoadGroupSymLinks(CString sDir, CString sGroupFolder)
 		{
 			const vector<Steps*>& vpSteps = pNewSong->GetAllSteps();
 			while( vpSteps.size() )
-				pNewSong->RemoveSteps( vpSteps[0] );
+				pNewSong->DeleteSteps( vpSteps[0] );
 
 			FOREACH_BackgroundLayer( i )
 				pNewSong->GetBackgroundChanges(i).clear();
@@ -680,6 +680,22 @@ void SongManager::FreeCourses()
 	m_pShuffledCourses.clear();
 
 	m_sCourseGroupNames.clear();
+}
+
+void SongManager::AddCourse( Course *pCourse )
+{
+	m_pCourses.push_back( pCourse );
+	UpdateBest();
+	UpdateShuffled();
+}
+
+void SongManager::DeleteCourse( Course *pCourse )
+{
+	vector<Course*>::iterator iter = find( m_pCourses.begin(), m_pCourses.end(), pCourse );
+	ASSERT( iter != m_pCourses.end() );
+	m_pCourses.erase( iter );
+	UpdateBest();
+	UpdateShuffled();
 }
 
 /* Called periodically to wipe out cached NoteData.  This is called when we change
@@ -1317,6 +1333,12 @@ int SongManager::GetNumStepsLoadedFromProfile()
 	}	
 
 	return iCount;
+}
+
+bool SongManager::ValidateEditCourseName( const CString &sAnswer, CString &sErrorOut )
+{
+	// TODO
+	return true;
 }
 
 
