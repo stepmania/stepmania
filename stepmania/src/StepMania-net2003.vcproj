@@ -277,12 +277,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenCenterImage.h">
 			</File>
 			<File
-				RelativePath=".\ScreenCourseManager.cpp">
-			</File>
-			<File
-				RelativePath=".\ScreenCourseManager.h">
-			</File>
-			<File
 				RelativePath="ScreenCredits.cpp">
 			</File>
 			<File
@@ -308,18 +302,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenEdit.h">
-			</File>
-			<File
-				RelativePath=".\ScreenEditCourse.cpp">
-			</File>
-			<File
-				RelativePath=".\ScreenEditCourse.h">
-			</File>
-			<File
-				RelativePath=".\ScreenEditCourseEntry.cpp">
-			</File>
-			<File
-				RelativePath=".\ScreenEditCourseEntry.h">
 			</File>
 			<File
 				RelativePath="ScreenEditMenu.cpp">
@@ -458,6 +440,24 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenOptions.h">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditCourse.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditCourse.h">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditCourseEntry.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsEditCourseEntry.h">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsManageCourses.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsManageCourses.h">
 			</File>
 			<File
 				RelativePath="ScreenOptionsMaster.cpp">

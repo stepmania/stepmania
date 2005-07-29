@@ -25,12 +25,9 @@ Screens = \
 Screen.cpp Screen.h ScreenAttract.cpp ScreenAttract.h \
 ScreenBookkeeping.cpp ScreenBookkeeping.h \
 ScreenCenterImage.cpp ScreenCenterImage.h ScreenCredits.cpp ScreenCredits.h \
-ScreenCourseManager.cpp ScreenCourseManager.h \
 ScreenDebugOverlay.cpp ScreenDebugOverlay.h \
 ScreenDemonstration.cpp ScreenDemonstration.h ScreenDimensions.h \
 ScreenEdit.cpp ScreenEdit.h \
-ScreenEditCourse.cpp ScreenEditCourse.h \
-ScreenEditCourseEntry.cpp ScreenEditCourseEntry.h \
 ScreenEditMenu.cpp ScreenEditMenu.h ScreenEnding.cpp ScreenEnding.h \
 ScreenEvaluation.cpp ScreenEvaluation.h ScreenExit.cpp ScreenExit.h ScreenNetEvaluation.cpp ScreenNetEvaluation.h \
 ScreenNetSelectMusic.cpp ScreenNetSelectMusic.h ScreenNetSelectBase.cpp ScreenNetSelectBase.h ScreenNetRoom.cpp ScreenNetRoom.h \
@@ -42,7 +39,10 @@ ScreenMapControllers.cpp ScreenMapControllers.h \
 ScreenMessage.cpp ScreenMessage.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenMusicScroll.cpp ScreenMusicScroll.h \
 ScreenNameEntry.cpp ScreenNameEntry.h ScreenNameEntryTraditional.cpp ScreenNameEntryTraditional.h \
 ScreenOptions.cpp ScreenOptions.h \
+ScreenOptionsEditCourse.cpp ScreenOptionsEditCourse.h \
+ScreenOptionsEditCourseEntry.cpp ScreenOptionsEditCourseEntry.h \
 ScreenOptionsEditProfile.cpp ScreenOptionsEditProfile.h \
+ScreenOptionsManageCourses.cpp ScreenOptionsManageCourses.h \
 ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
 ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h ScreenPackages.cpp ScreenPackages.h \
 ScreenPlayerOptions.cpp ScreenPlayerOptions.h \
