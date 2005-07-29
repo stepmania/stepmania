@@ -353,6 +353,7 @@ void ScreenSelectMusic::BeginScreen()
 		break;
 	}
 
+	m_sprOptionsMessage.SetState( 0 );
 	ON_COMMAND( m_sprBannerMask );
 	ON_COMMAND( m_Banner );
 	ON_COMMAND( m_sprBannerFrame );
