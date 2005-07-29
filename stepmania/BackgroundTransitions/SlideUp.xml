@@ -1,4 +1,4 @@
 <BackgroundTransition
 	LeavesCommand="linear,1.0;diffusealpha,0"
-	RootCommand="stoptweening;linear,1.0;addx,SCREEN_WIDTH"
+	RootCommand="stoptweening;linear,1.0;addy,-SCREEN_HEIGHT"
 />
