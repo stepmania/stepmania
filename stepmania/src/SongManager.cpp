@@ -1311,7 +1311,7 @@ int SongManager::GetNumStepsLoadedFromProfile()
 
 		FOREACH( Steps*, vpAllSteps, ss )
 		{
-			if( (*ss)->GetLoadedFromProfile() != PROFILE_SLOT_INVALID )
+			if( (*ss)->GetLoadedFromProfileSlot() != PROFILE_SLOT_INVALID )
 				iCount++;
 		}
 	}	
