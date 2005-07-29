@@ -150,6 +150,12 @@ void ScreenWithMenuElements::BeginScreen()
 	m_In.StartTransitioning( SM_DoneFadingIn );
 
 	Screen::BeginScreen();
+
+	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
+	StartPlayingMusic();
+
+	/* Evaluate FirstUpdateCommand. */
+	this->RunCommands( FIRST_UPDATE_COMMAND );
 }
 
 void ScreenWithMenuElements::TweenOnScreen()
@@ -212,18 +218,6 @@ void ScreenWithMenuElements::StartPlayingMusic()
 
 void ScreenWithMenuElements::Update( float fDeltaTime )
 {
-	if( m_bFirstUpdate )
-	{
-		/* Don't play sounds during the ctor, since derived classes havn't loaded yet.
-		 * Play sounds after so loading so we don't thrash while loading files. */
-		SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo(m_sName+" intro") );
-
-		StartPlayingMusic();
-		
-		/* Evaluate FirstUpdateCommand. */
-		this->RunCommands( FIRST_UPDATE_COMMAND );
-	}
-
 	Screen::Update( fDeltaTime );
 }
 
