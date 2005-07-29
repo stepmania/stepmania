@@ -537,6 +537,7 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 		// any common textures loaded.
 		if( pNewBGA == NULL )
 		{
+			LOG->Trace( "Loading screen background \"%s\"", sNewBGA.c_str() );
 			Actor *pActor = ActorUtil::MakeActor( sNewBGA );
 			pActor->SetName( sNewBGA );
 			g_vPreparedBackgrounds.push_back( pActor );
