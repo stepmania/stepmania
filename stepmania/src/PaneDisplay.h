@@ -49,9 +49,13 @@ class PaneDisplay: public ActorFrame
 {
 public:
 	PaneDisplay();
+	virtual Actor *Copy() const;
 
 	void Load( const CString &sClass, PlayerNumber pn );
 	void SetFromGameState( SortOrder so );
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	void SetFocus( PaneTypes NewPane );

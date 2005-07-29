@@ -13,9 +13,12 @@
 #include "Style.h"
 #include "RageTexture.h"
 #include "CourseEntryDisplay.h"
+#include "ActorUtil.h"
 
 const int MAX_VISIBLE_ITEMS = 5;
 const int MAX_ITEMS = MAX_VISIBLE_ITEMS+2;
+
+REGISTER_ACTOR_CLASS( CourseContentsList )
 
 CourseContentsList::CourseContentsList()
 {
@@ -38,6 +41,13 @@ void CourseContentsList::Load()
 		(*d)->Load();
 		(*d)->SetUseZBuffer( true );
 	}
+}
+
+void CourseContentsList::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	ActorScroller::LoadFromNode( sDir, pNode );
+
+	Load();
 }
 
 void CourseContentsList::SetFromGameState()
@@ -108,6 +118,27 @@ void CourseContentsList::TweenInAfterChangedCourse()
 	}
 	*/
 }
+
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaCourseContentsList: public Luna<CourseContentsList>
+{
+public:
+	LunaCourseContentsList() { LUA->Register( Register ); }
+
+	static int SetFromGameState( T* p, lua_State *L )			{ p->SetFromGameState(); return 0; }
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( SetFromGameState )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( CourseContentsList, ActorScroller )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford

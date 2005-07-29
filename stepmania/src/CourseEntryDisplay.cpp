@@ -13,11 +13,11 @@
 #include "Style.h"
 #include "ActorUtil.h"
 
-#define SEPARATE_COURSE_METERS		THEME->GetMetricB(m_sName,"SeparateCourseMeters")
-#define TEXT_BANNER_TYPE			THEME->GetMetric (m_sName,"TextBannerType")
-
 void CourseEntryDisplay::Load()
 {
+	SEPARATE_COURSE_METERS	.Load( "CourseEntryDisplay", "SeparateCourseMeters" );
+	TEXT_BANNER_TYPE		.Load( "CourseEntryDisplay", "TextBannerType" );
+
 	m_sprFrame.SetName( "Bar" );
 	m_sprFrame.Load( THEME->GetPathG("CourseEntryDisplay","bar") );
 	SET_XY_AND_ON_COMMAND( &m_sprFrame );

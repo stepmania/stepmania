@@ -3,15 +3,13 @@
 #ifndef COURSE_ENTRY_DISPLAY_H
 #define COURSE_ENTRY_DISPLAY_H
 
+#include "ActorFrame.h"
 #include "BitmapText.h"
 #include "TextBanner.h"
-#include "ActorFrame.h"
 #include "Sprite.h"
-#include "GameConstantsAndTypes.h"
-class Course;
-class Song;
-class Steps;
+#include "PlayerNumber.h"
 struct TrailEntry;
+#include "ThemeMetric.h"
 
 class CourseEntryDisplay : public ActorFrame
 {
@@ -29,6 +27,9 @@ private:
 	BitmapText	m_textFoot[NUM_PLAYERS];
 	BitmapText	m_textDifficultyNumber[NUM_PLAYERS];
 	BitmapText	m_textModifiers;
+
+	ThemeMetric<bool>		SEPARATE_COURSE_METERS;
+	ThemeMetric<CString>	TEXT_BANNER_TYPE;
 };
 
 #endif

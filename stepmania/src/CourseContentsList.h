@@ -11,11 +11,16 @@ class CourseContentsList : public ActorScroller
 public:
 	CourseContentsList();
 	~CourseContentsList();
+	virtual Actor *Copy() const;
 	
 	void Load();
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 	void SetFromGameState();
 	void TweenInAfterChangedCourse();
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 protected:
 

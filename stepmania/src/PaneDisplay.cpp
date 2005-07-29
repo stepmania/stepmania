@@ -49,6 +49,8 @@ static const Content_t g_Contents[NUM_PANE_CONTENTS] =
 	{ "CourseRolls",			PANE_COURSE_MACHINE_SCORES,	NEED_COURSE }
 };
 
+REGISTER_ACTOR_CLASS( PaneDisplay )
+
 PaneDisplay::PaneDisplay()
 {
 	m_CurPane = PANE_INVALID;
@@ -322,6 +324,27 @@ void PaneDisplay::SetFocus( PaneTypes NewPane )
 
 	m_CurPane = NewPane;
 }
+
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaPaneDisplay: public Luna<PaneDisplay>
+{
+public:
+	LunaPaneDisplay() { LUA->Register( Register ); }
+
+	static int SetFromGameState( T* p, lua_State *L )			{ p->SetFromGameState(SORT_PREFERRED); return 0; }
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( SetFromGameState )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( PaneDisplay, ActorFrame )
+// lua end
 
 /*
  * (c) 2003 Glenn Maynard

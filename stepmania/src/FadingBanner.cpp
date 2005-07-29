@@ -184,6 +184,14 @@ void FadingBanner::LoadFromSongGroup( CString sSongGroup )
 
 void FadingBanner::LoadFromCourse( const Course* pCourse )
 {
+	if( pCourse == NULL )
+	{
+		LoadFallback();
+		return;
+	}
+
+	/* Don't call HasBanner.  That'll do disk access and cause the music wheel
+	 * to skip. */
 	LoadFromCachedBanner( pCourse->m_sBannerPath );
 }
 
@@ -221,11 +229,18 @@ public:
 		else { Song *pS = Luna<Song>::check(L,1); p->LoadFromSong( pS ); }
 		return 0;
 	}
+	static int LoadFromCourse( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) ) { p->LoadFromCourse( NULL ); }
+		else { Course *pC = Luna<Course>::check(L,1); p->LoadFromCourse( pC ); }
+		return 0;
+	}
 
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( ScaleToClipped )
 		ADD_METHOD( LoadFromSong )
+		ADD_METHOD( LoadFromCourse )
 		Luna<T>::Register( L );
 	}
 };
