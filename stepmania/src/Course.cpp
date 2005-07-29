@@ -24,6 +24,15 @@
 #include <limits.h>
 
 
+static const CString CourseTypeNames[] = {
+	"Nonstop",
+	"Oni",
+	"Endless",
+	"Survival",
+};
+XToString( CourseType, NUM_CourseType );
+XToThemedString( CourseType, NUM_CourseType );
+
 static const CString SongSortNames[] = {
 	"Randomize",
 	"MostPlays",
@@ -1351,12 +1360,14 @@ public:
 	static int GetPlayMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetPlayMode() ); return 1; }
 	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
 	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
+	static int HasMods( T* p, lua_State *L )				{ lua_pushboolean(L, p->HasMods() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetPlayMode )
 		ADD_METHOD( GetDisplayFullTitle )
 		ADD_METHOD( GetTranslitFullTitle )
+		ADD_METHOD( HasMods )
 		Luna<T>::Register( L );
 	}
 };

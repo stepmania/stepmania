@@ -26,9 +26,11 @@ enum CourseType
 	COURSE_TYPE_ONI,		// if life meter type is BATTERY
 	COURSE_TYPE_ENDLESS,	// if set to REPEAT
 	COURSE_TYPE_SURVIVAL,	// if life meter type is TIME
-	NUM_COURSE_TYPES
+	NUM_CourseType
 };
-#define FOREACH_CourseType( i ) FOREACH_ENUM( CourseType, NUM_COURSE_TYPES, i )
+#define FOREACH_CourseType( i ) FOREACH_ENUM( CourseType, NUM_CourseType, i )
+const CString& CourseTypeToString( CourseType i );
+const CString& CourseTypeToThemedString( CourseType i );
 
 inline PlayMode CourseTypeToPlayMode( CourseType ct ) { return (PlayMode)(PLAY_MODE_NONSTOP+ct); }
 inline CourseType PlayModeToCourseType( PlayMode pm ) { return (CourseType)(pm-PLAY_MODE_NONSTOP); }
