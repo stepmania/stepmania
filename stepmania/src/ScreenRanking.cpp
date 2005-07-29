@@ -99,7 +99,7 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, bool bSh
 CString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
 
 REGISTER_SCREEN_CLASS( ScreenRanking );
-ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName ),
+ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName, false/*dont reset GAMESTATE*/ ),
 	STEPS_TYPES_TO_SHOW			(m_sName,"StepsTypesToHide"),
 	DIFFICULTIES_TO_SHOW		(m_sName,"DifficultiesToShow"),
 	COURSE_DIFFICULTIES_TO_SHOW	(m_sName,"CourseDifficultiesToShow"),
