@@ -7,6 +7,7 @@
 #include "CommonMetrics.h"
 #include "GameManager.h"
 #include "song.h"
+#include "FontCharAliases.h"
 
 enum EditCourseEntryRow
 {
@@ -58,7 +59,9 @@ void ScreenOptionsEditCourseEntry::Init()
 
 	def.m_sName = "Song";
 	def.m_vsChoices.clear();
-	def.m_vsChoices.push_back( "" );
+	CString sStart = "&Start;";
+	FontCharAliases::ReplaceMarkers( sStart );
+	def.m_vsChoices.push_back( sStart );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 

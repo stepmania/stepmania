@@ -129,7 +129,7 @@ protected:
 	CStringArray		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
 
 	vector<Course*>		m_pCourses;
-	vector<Course*>		m_pBestCourses[NUM_PROFILE_SLOTS][NUM_COURSE_TYPES];
+	vector<Course*>		m_pBestCourses[NUM_PROFILE_SLOTS][NUM_CourseType];
 	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
 	CStringArray		m_sCourseGroupNames;
 	CStringArray		m_sCourseGroupBannerPaths; // each course group may have a banner associated with it

@@ -1,7 +1,6 @@
 #include "global.h"
 
 #include "ScreenOptionsSelectProfile.h"
-#include "ScreenMiniMenu.h"
 #include "ProfileManager.h"
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"

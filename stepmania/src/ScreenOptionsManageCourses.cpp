@@ -7,9 +7,12 @@
 #include "CommonMetrics.h"
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
+#include "FontCharAliases.h"
+#include "ScreenMiniMenu.h"
 
 AutoScreenMessage( SM_BackFromEnterName )
 AutoScreenMessage( SM_BackFromDeleteConfirm )
+AutoScreenMessage( SM_BackFromContextMenu )
 
 enum CourseAction
 {
@@ -26,6 +29,9 @@ static const CString CourseActionNames[] = {
 XToString( CourseAction, NUM_CourseAction );
 #define FOREACH_CourseAction( i ) FOREACH_ENUM( CourseAction, NUM_CourseAction, i )
 
+static MenuDef g_TempMenu(
+	"ScreenMiniMenuContext"
+);
 
 REGISTER_SCREEN_CLASS( ScreenOptionsManageCourses );
 ScreenOptionsManageCourses::ScreenOptionsManageCourses( CString sName ) : ScreenOptions( sName )
@@ -43,19 +49,20 @@ void ScreenOptionsManageCourses::Init()
 	OptionRowDefinition def;
 	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	
-	def.m_sName = "Create New";
+	def.m_sName = "";
 	def.m_vsChoices.clear();
-	def.m_vsChoices.push_back( "" );
+	CString sStart = "Create New";
+	FontCharAliases::ReplaceMarkers( sStart );
+	def.m_vsChoices.push_back( sStart );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
 	SONGMAN->GetAllCourses( m_vpCourses, false );
 	FOREACH_CONST( Course*, m_vpCourses, c )
 	{
-		def.m_sName = (*c)->GetDisplayFullTitle();
+		def.m_sName = CourseTypeToThemedString( (*c)->GetCourseType() );
 		def.m_vsChoices.clear();
-		FOREACH_CourseAction( i )
-			def.m_vsChoices.push_back( CourseActionToString(i) );
+		def.m_vsChoices.push_back( (*c)->GetDisplayFullTitle() );
 		vDefs.push_back( def );
 		vHands.push_back( NULL );
 	}
@@ -66,8 +73,8 @@ void ScreenOptionsManageCourses::Init()
 void ScreenOptionsManageCourses::BeginScreen()
 {
 	ScreenOptions::BeginScreen();
-
-	AfterChangeValueInRow( GAMESTATE->m_MasterPlayerNumber );
+	
+	AfterChangeRow( PLAYER_1 );
 }
 
 void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
@@ -106,13 +113,50 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
+	else if( SM == SM_BackFromContextMenu )
+	{
+		if( !ScreenMiniMenu::s_bCancelled )
+		{
+			switch( ScreenMiniMenu::s_iLastRowCode )
+			{
+			case CourseAction_Edit:
+				GAMESTATE->m_pCurCourse.Set( GetCourseWithFocus() );
+				ScreenOptions::BeginFadingOut();
+				break;
+			case CourseAction_Rename:
+				{
+					CString sCurrentProfileName = "New Course";
+					ScreenTextEntry::TextEntry( 
+						SM_BackFromEnterName, 
+						"Enter a name for a new course.", 
+						sCurrentProfileName, 
+						MAX_EDIT_COURSE_TITLE_LENGTH, 
+						SongManager::ValidateEditCourseName );
+				}
+				break;
+			case CourseAction_Delete:
+				{
+					CString sTitle = GetCourseWithFocus()->GetDisplayFullTitle();
+					CString sMessage = ssprintf( "Are you sure you want to delete the course '%s'?", sTitle.c_str() );
+					ScreenPrompt::Prompt( SM_BackFromDeleteConfirm, sMessage, PROMPT_YES_NO );
+				}
+				break;
+			}
+		}
+	}
 
 	ScreenOptions::HandleScreenMessage( SM );
 }
 	
-void ScreenOptionsManageCourses::AfterChangeValueInRow( PlayerNumber pn )
+void ScreenOptionsManageCourses::AfterChangeRow( PlayerNumber pn )
 {
-	ScreenOptions::AfterChangeValueInRow( pn );
+	Course *pCourse = GetCourseWithFocus();
+	Trail *pTrail = pCourse ? pCourse->GetTrail( STEPS_TYPE_DANCE_SINGLE ) : NULL;
+	
+	GAMESTATE->m_pCurCourse.Set( pCourse );
+	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
+
+	ScreenOptions::AfterChangeRow( pn );
 }
 
 void ScreenOptionsManageCourses::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
@@ -136,31 +180,16 @@ void ScreenOptionsManageCourses::ProcessMenuStart( PlayerNumber pn, const InputE
 	}
 	else	// a course
 	{
-		switch( row.GetChoiceInRowWithFocusShared() )
+		g_TempMenu.rows.clear();
+		FOREACH_CourseAction( i )
 		{
-		case CourseAction_Edit:
-			GAMESTATE->m_pCurCourse.Set( GetCourseWithFocus() );
-			ScreenOptions::BeginFadingOut();
-			break;
-		case CourseAction_Rename:
-			{
-				CString sCurrentProfileName = "New Course";
-				ScreenTextEntry::TextEntry( 
-					SM_BackFromEnterName, 
-					"Enter a name for a new course.", 
-					sCurrentProfileName, 
-					MAX_EDIT_COURSE_TITLE_LENGTH, 
-					SongManager::ValidateEditCourseName );
-			}
-			break;
-		case CourseAction_Delete:
-			{
-				CString sTitle = GetCourseWithFocus()->GetDisplayFullTitle();
-				CString sMessage = ssprintf( "Are you sure you want to delete the course '%s'?", sTitle.c_str() );
-				ScreenPrompt::Prompt( SM_BackFromDeleteConfirm, sMessage, PROMPT_YES_NO );
-			}
-			break;
+			MenuRowDef mrd( i, CourseActionToString(i), true, EDIT_MODE_HOME, 0, "" );
+			g_TempMenu.rows.push_back( mrd );
 		}
+
+		int iWidth, iX, iY;
+		this->GetWidthXY( PLAYER_1, iCurRow, 0, iWidth, iX, iY );
+		ScreenMiniMenu::MiniMenu( &g_TempMenu, SM_BackFromContextMenu, SM_BackFromContextMenu, iX, iY );
 	}
 }
 
@@ -181,8 +210,10 @@ Course *ScreenOptionsManageCourses::GetCourseWithFocus() const
 		return NULL;
 	else if( iCurRow == m_pRows.size()-1 )	// "done"
 		return NULL;
-	else	// a course
-		return m_vpCourses[iCurRow];
+	
+	// a course
+	int iCourseIndex = iCurRow - 1;
+	return m_vpCourses[iCourseIndex];
 }
 
 /*

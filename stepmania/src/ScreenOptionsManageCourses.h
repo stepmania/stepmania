@@ -19,7 +19,7 @@ protected:
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	
-	virtual void AfterChangeValueInRow( PlayerNumber pn );
+	virtual void AfterChangeRow( PlayerNumber pn );
 	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
 
 	Course *GetCourseWithFocus() const;
