@@ -76,9 +76,9 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 	ScreenOptions::InitMenu( vDefs, vHands );
 }
 
-void ScreenMiniMenu::OnChange( PlayerNumber pn )
+void ScreenMiniMenu::AfterChangeValueOrRow( PlayerNumber pn )
 {
-	ScreenOptions::OnChange( pn );
+	ScreenOptions::AfterChangeValueOrRow( pn );
 
 	vector<PlayerNumber> vpns;
 	vpns.push_back( GAMESTATE->m_MasterPlayerNumber );

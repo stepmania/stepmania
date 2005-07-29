@@ -86,7 +86,7 @@ public:
 	void SetCancelMessage( ScreenMessage SM_SendOnCancel ) { m_SMSendOnCancel = SM_SendOnCancel; }
 
 protected:
-	virtual void OnChange( PlayerNumber pn );
+	virtual void AfterChangeValueOrRow( PlayerNumber pn );
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	

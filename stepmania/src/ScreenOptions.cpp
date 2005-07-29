@@ -314,7 +314,7 @@ void ScreenOptions::BeginScreen()
 	UpdateEnabledDisabled();
 
 	FOREACH_PlayerNumber( p )
-		OnChange( p );
+		AfterChangeValueOrRow( p );
 
 	CHECKPOINT;
 
@@ -687,7 +687,7 @@ void ScreenOptions::PositionItems()
 }
 
 
-void ScreenOptions::OnChange( PlayerNumber pn )
+void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 {
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
@@ -1042,7 +1042,6 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 
 	UpdateText( iCurRow );
 
-	OnChange( pn );
 	this->AfterChangeValueInRow( pn );
 
 	if( m_OptionsNavigation != NAV_THREE_KEY_MENU )
@@ -1057,6 +1056,10 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 	}
 }
 
+void ScreenOptions::AfterChangeValueInRow( PlayerNumber pn ) 
+{
+	AfterChangeValueOrRow( pn );
+}
 
 /* Up/down */
 void ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat ) 
@@ -1115,7 +1118,7 @@ void ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 			}
 		}
 
-		OnChange( p );
+		AfterChangeRow( p );
 		changed = true;
 	}
 	if( changed )
@@ -1125,6 +1128,11 @@ void ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 		else
 			m_SoundNextRow.Play();
 	}
+}
+
+void ScreenOptions::AfterChangeRow( PlayerNumber pn ) 
+{
+	AfterChangeValueOrRow( pn );
 }
 
 void ScreenOptions::MoveRowAbsolute( PlayerNumber pn, int iRow, bool bRepeat ) 

@@ -58,7 +58,6 @@ protected:
 	void UpdateText( int row );
 	void UpdateEnabledDisabled();
 	void UpdateEnabledDisabled( int row );
-	virtual void OnChange( PlayerNumber pn );
 
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
@@ -67,9 +66,11 @@ protected:
 	virtual void BeginFadingOut() { this->PostScreenMessage( SM_BeginFadingOut, 0 ); }
 
 	void ChangeValueInRow( PlayerNumber pn, int iDelta, bool bRepeat );
-	virtual void AfterChangeValueInRow( PlayerNumber pn ) {}	// override this to detect when the value in a row has changed
+	virtual void AfterChangeValueInRow( PlayerNumber pn );	// override this to detect when the value in a row has changed
 	void MoveRowRelative( PlayerNumber pn, int iDir, bool bRepeat );
 	void MoveRowAbsolute( PlayerNumber pn, int iRow, bool bRepeat );
+	virtual void AfterChangeRow( PlayerNumber pn );	// override this to detect when the row has changed
+	virtual void AfterChangeValueOrRow( PlayerNumber pn );
 
 	void MenuLeft( PlayerNumber pn, const InputEventType type )		{ ChangeValueInRow(pn,-1,type != IET_FIRST_PRESS); }
 	void MenuRight( PlayerNumber pn, const InputEventType type )	{ ChangeValueInRow(pn,+1,type != IET_FIRST_PRESS); }
