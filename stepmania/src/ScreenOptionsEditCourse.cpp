@@ -142,7 +142,7 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 			case CourseEntryAction_InsertEntry:
 				{
 					Course *pCourse = GAMESTATE->m_pCurCourse;
-					pCourse->m_vEntries.insert( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus() );
+					pCourse->m_vEntries.insert( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus(), CourseEntry() );
 					SCREENMAN->SetNewScreen( this->m_sName ); // reload
 				}
 				break;
