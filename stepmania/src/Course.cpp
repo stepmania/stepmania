@@ -54,6 +54,39 @@ const int MAX_BOTTOM_RANGE = 10;
 #define SORT_LEVEL5_COLOR		THEME->GetMetricC("Course","SortLevel5Color")
 
 
+CString CourseEntry::GetTextDescription() const
+{
+	vector<CString> vsEntryDescription;
+	if( pSong )
+		vsEntryDescription.push_back( pSong->GetTranslitFullTitle() ); 
+	else
+		vsEntryDescription.push_back( "Random" );
+	if( !sSongGroup.empty() )
+		vsEntryDescription.push_back( sSongGroup );
+	if( baseDifficulty != DIFFICULTY_INVALID )
+		vsEntryDescription.push_back( DifficultyToThemedString(baseDifficulty) );
+	if( iLowMeter != -1 )
+		vsEntryDescription.push_back( ssprintf("Low meter: %d", iLowMeter) );
+	if( iHighMeter != -1 )
+		vsEntryDescription.push_back( ssprintf("High meter: %d", iHighMeter) );
+	if( songSort != SongSort_Randomize )
+		vsEntryDescription.push_back( "Sort: %d" + SongSortToThemedString(songSort) );
+	if( songSort != SongSort_Randomize && iChooseIndex != 0 )
+		vsEntryDescription.push_back( "Choose " + FormatNumberAndSuffix(iChooseIndex) + " match" );
+	int iNumModChanges = 0;
+	if( !sModifiers.empty() )
+		iNumModChanges++;
+	iNumModChanges += attacks.size();
+	if( iNumModChanges != 0 )
+		vsEntryDescription.push_back( ssprintf("%d mod changes", iNumModChanges) );
+	if( fGainSeconds != 0 )
+		vsEntryDescription.push_back( ssprintf("Low meter: %.0f", fGainSeconds) );
+
+	CString s = join( ",", vsEntryDescription );
+	return s;
+}
+
+
 Course::Course()
 {
 	Init();

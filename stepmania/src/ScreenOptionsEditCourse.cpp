@@ -7,7 +7,7 @@
 #include "CommonMetrics.h"
 #include "GameManager.h"
 #include "song.h"
-#include "FontCharAliases.h"
+#include "ScreenMiniMenu.h"
 
 enum EditCourseRow
 {
@@ -17,6 +17,8 @@ enum EditCourseRow
 	ROW_METER,
 	NUM_EditCourseRow
 };
+
+AutoScreenMessage( SM_BackFromContextMenu )
 
 enum CourseEntryAction
 {
@@ -33,6 +35,9 @@ static const CString CourseEntryActionNames[] = {
 XToString( CourseEntryAction, NUM_CourseEntryAction );
 #define FOREACH_CourseEntryAction( i ) FOREACH_ENUM( CourseEntryAction, NUM_CourseEntryAction, i )
 
+static MenuDef g_TempMenu(
+	"ScreenMiniMenuContext"
+);
 
 REGISTER_SCREEN_CLASS( ScreenOptionsEditCourse );
 ScreenOptionsEditCourse::ScreenOptionsEditCourse( CString sName ) : ScreenOptions( sName )
@@ -89,19 +94,17 @@ void ScreenOptionsEditCourse::Init()
 	FOREACH_CONST( CourseEntry, pCourse->m_vEntries, ce )
 	{
 		int iEntryIndex = ce - pCourse->m_vEntries.begin();
+		CourseEntry &ce = pCourse->m_vEntries[iEntryIndex];
 		def.m_sName = ssprintf( "Entry %d", iEntryIndex+1 );
 		def.m_vsChoices.clear();
-		FOREACH_CourseEntryAction( i )
-			def.m_vsChoices.push_back( CourseEntryActionToString(i) );
+		def.m_vsChoices.push_back( ce.GetTextDescription() );
 		vDefs.push_back( def );
 		vHands.push_back( NULL );
 	}
 
-	def.m_sName = "Insert Entry";
+	def.m_sName = "";
 	def.m_vsChoices.clear();
-	CString sStart = "&Start;";
-	FontCharAliases::ReplaceMarkers( sStart );
-	def.m_vsChoices.push_back( sStart );
+	def.m_vsChoices.push_back( "Insert Entry" );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
@@ -112,7 +115,8 @@ void ScreenOptionsEditCourse::BeginScreen()
 {
 	ScreenOptions::BeginScreen();
 
-	AfterChangeValueInRow( GAMESTATE->m_MasterPlayerNumber );
+	this->MoveRowAbsolute( PLAYER_1, NUM_EditCourseRow + GAMESTATE->m_iEditCourseEntryIndex, false );
+	AfterChangeRow( GAMESTATE->m_MasterPlayerNumber );
 }
 
 void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
@@ -120,37 +124,49 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_GoToNextScreen )
 	{
 		int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
-		if( iCurRow < NUM_EditCourseRow )
-		{
-			ASSERT( 0 );
-		}
-		else if( iCurRow == m_pRows.size() - 1 )
+		if( iCurRow == m_pRows.size() - 1 )
 		{
 			this->HandleScreenMessage( SM_GoToPrevScreen );
 			return;	// don't call base
 		}
-		else
-		{
-			int iCourseEntry = iCurRow - NUM_EditCourseRow;
-			GAMESTATE->m_iEditCourseEntryIndex.Set( iCourseEntry );
-		}
 	}
-	else if( SM == SM_GoToPrevScreen )
+	else if( SM == SM_BackFromContextMenu )
 	{
-		// revert
-		//Course *pCourse = GAMESTATE->m_pCurCourse;
-		//*pCourse = m_Original;
-
-		//SCREENMAN->SetNewScreen( "ScreenCourseManager" );
-		//return;
+		if( !ScreenMiniMenu::s_bCancelled )
+		{
+			switch( ScreenMiniMenu::s_iLastRowCode )
+			{
+			case CourseEntryAction_Edit:
+				ScreenOptions::BeginFadingOut();
+				break;
+			case CourseEntryAction_InsertEntry:
+				{
+					Course *pCourse = GAMESTATE->m_pCurCourse;
+					pCourse->m_vEntries.insert( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus() );
+					SCREENMAN->SetNewScreen( this->m_sName ); // reload
+				}
+				break;
+			case CourseEntryAction_Delete:
+				{
+					Course *pCourse = GAMESTATE->m_pCurCourse;
+					pCourse->m_vEntries.erase( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus() );
+					GAMESTATE->m_iEditCourseEntryIndex.Set( GAMESTATE->m_iEditCourseEntryIndex-1 );
+					SCREENMAN->SetNewScreen( this->m_sName ); // reload
+				}
+				break;
+			}
+		}
 	}
 
 	ScreenOptions::HandleScreenMessage( SM );
 }
 	
-void ScreenOptionsEditCourse::AfterChangeValueInRow( PlayerNumber pn )
+void ScreenOptionsEditCourse::AfterChangeRow( PlayerNumber pn )
 {
-	ScreenOptions::AfterChangeValueInRow( pn );
+	ScreenOptions::AfterChangeRow( pn );
+
+	int iCourseEntry = GetCourseEntryIndexWithFocus();
+	GAMESTATE->m_iEditCourseEntryIndex.Set( iCourseEntry );
 }
 
 void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
@@ -178,38 +194,35 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 
 void ScreenOptionsEditCourse::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
 {
-	Course *pCourse = GAMESTATE->m_pCurCourse;
-
-	int iCourseEntry = GetCourseEntryIndexWithFocus();
-	GAMESTATE->m_iEditCourseEntryIndex.Set( iCourseEntry );
-
-	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+	int iCurRow = m_iCurrentRow[PLAYER_1];
 	OptionRow &row = *m_pRows[iCurRow];
 
-	if( iCourseEntry != -1 )
+	if( iCurRow < NUM_EditCourseRow )
 	{
-		switch( row.GetChoiceInRowWithFocusShared() )
+		// ignore
+	}
+	else if( iCurRow == m_pRows.size()-2 )	// "create entry"
+	{
+		ASSERT( 0 );
+	}
+	else if( iCurRow == m_pRows.size()-1 )	// "done"
+	{
+		this->BeginFadingOut();
+	}
+	else	// a course entry
+	{
+		g_TempMenu.rows.clear();
+		FOREACH_CourseEntryAction( i )
 		{
-		case CourseEntryAction_Edit:
-			ScreenOptions::BeginFadingOut();
-			break;
-		case CourseEntryAction_InsertEntry:
-			{
-				pCourse->m_vEntries.erase( pCourse->m_vEntries.begin() + iCourseEntry );
-				SCREENMAN->SetNewScreen( this->m_sName ); // reload
-			}
-			break;
-		case CourseEntryAction_Delete:
-			{
-				pCourse->m_vEntries.erase( pCourse->m_vEntries.begin() + iCourseEntry );
-				SCREENMAN->SetNewScreen( this->m_sName ); // reload
-			}
-			break;
+			MenuRowDef mrd( i, CourseEntryActionToString(i), true, EDIT_MODE_HOME, 0, "" );
+			g_TempMenu.rows.push_back( mrd );
 		}
-		return;
+
+		int iWidth, iX, iY;
+		this->GetWidthXY( PLAYER_1, iCurRow, 0, iWidth, iX, iY );
+		ScreenMiniMenu::MiniMenu( &g_TempMenu, SM_BackFromContextMenu, SM_BackFromContextMenu, iX, iY );
 	}
 
-	ScreenOptions::ProcessMenuStart( pn, type );
 }
 
 int ScreenOptionsEditCourse::GetCourseEntryIndexWithFocus() const

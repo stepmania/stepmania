@@ -43,7 +43,7 @@ enum SongSort
 	SongSort_FewestPlays,
 	SongSort_TopGrades,
 	SongSort_LowestGrades,
-	NUM_SongSort
+	NUM_SongSort,
 };
 #define FOREACH_SongSort( i ) FOREACH_ENUM( SongSort, NUM_SongSort, i )
 const CString& SongSortToString( SongSort ss );
@@ -55,6 +55,7 @@ public:
 	bool bSecret;			// show "??????" instead of an exact song
 
 	// filter criteria, applied from top to bottom
+	// TODO: change this to be a SongID
 	Song* pSong;			// don't filter if NULL
 	CString sSongGroup;		// don't filter if empty
 	Difficulty baseDifficulty;	// don't filter if DIFFICULTY_INVALID
@@ -93,6 +94,8 @@ public:
 			iChooseIndex == -1  &&
 			pSong == NULL;
 	}
+
+	CString GetTextDescription() const;
 };
 
 class Course

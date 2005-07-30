@@ -110,7 +110,12 @@ void ScreenOptionsEditCourseEntry::Init()
 	vHands.push_back( NULL );
 
 	ScreenOptions::InitMenu( vDefs, vHands );
+}
 
+void ScreenOptionsEditCourseEntry::BeginScreen()
+{
+	ScreenOptions::BeginScreen();
+	
 	ImportAllOptions();
 }
 
@@ -131,7 +136,7 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( "ScreenEditCourseMods" );
 			break;
 		case ROW_DONE:
-			SCREENMAN->SetNewScreen( "ScreenEditCourse" );
+			SCREENMAN->SetNewScreen( "ScreenOptionsEditCourse" );
 			break;
 		}
 		return;
@@ -142,7 +147,7 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 		Course *pCourse = GAMESTATE->m_pCurCourse;
 		pCourse->m_vEntries[ GAMESTATE->m_iEditCourseEntryIndex ] = m_Original;
 
-		SCREENMAN->SetNewScreen( "ScreenEditCourse" );
+		SCREENMAN->SetNewScreen( "ScreenOptionsEditCourse" );
 		return;
 	}
 

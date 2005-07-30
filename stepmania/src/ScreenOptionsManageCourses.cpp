@@ -7,7 +7,6 @@
 #include "CommonMetrics.h"
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
-#include "FontCharAliases.h"
 #include "ScreenMiniMenu.h"
 
 AutoScreenMessage( SM_BackFromEnterName )
@@ -51,9 +50,7 @@ void ScreenOptionsManageCourses::Init()
 	
 	def.m_sName = "";
 	def.m_vsChoices.clear();
-	CString sStart = "Create New";
-	FontCharAliases::ReplaceMarkers( sStart );
-	def.m_vsChoices.push_back( sStart );
+	def.m_vsChoices.push_back( "Create New" );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
@@ -176,7 +173,7 @@ void ScreenOptionsManageCourses::ProcessMenuStart( PlayerNumber pn, const InputE
 	}
 	else if( iCurRow == m_pRows.size()-1 )	// "done"
 	{
-		SCREENMAN->SetNewScreen( FIRST_ATTRACT_SCREEN );
+		this->BeginFadingOut();
 	}
 	else	// a course
 	{
