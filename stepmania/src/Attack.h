@@ -50,6 +50,7 @@ struct Attack
 	bool operator== ( const Attack &rhs ) const;
 	bool ContainsTransformOrTurn() const;
 	static Attack FromGlobalCourseModifier( const CString &sModifiers );
+	CString GetTextDescription() const;
 };
 
 struct AttackArray : public vector<Attack>

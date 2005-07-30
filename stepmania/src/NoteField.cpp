@@ -20,6 +20,7 @@
 #include "CommonMetrics.h"
 #include <float.h>
 #include "BackgroundUtil.h"
+#include "Course.h"
 
 NoteField::NoteField()
 {	
@@ -319,6 +320,19 @@ void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 	m_textMeasureNumber.Draw();
 }
 
+void NoteField::DrawAttackText( const float fBeat, const Attack &attack )
+{
+	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
+ 	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+
+	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
+	m_textMeasureNumber.SetDiffuse( RageColor(0,0.8f,0.8f,1) );
+	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
+	m_textMeasureNumber.SetText( attack.GetTextDescription() );
+	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 10, fYPos );
+	m_textMeasureNumber.Draw();
+}
+
 void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
@@ -509,6 +523,7 @@ void NoteField::DrawPrimitives()
 					DrawBPMText( fBeat, aBPMSegments[i].GetBPM() );
 			}
 		}
+
 		//
 		// Freeze text
 		//
@@ -521,6 +536,27 @@ void NoteField::DrawPrimitives()
 				float fBeat = NoteRowToBeat(aStopSegments[i].m_iStartRow);
 				if( IS_ON_SCREEN(fBeat) )
 					DrawFreezeText( fBeat, aStopSegments[i].m_fStopSeconds );
+			}
+		}
+
+		//
+		// Course mods text
+		//
+		Course *pCourse = GAMESTATE->m_pCurCourse;
+		const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
+		if( pCourse )
+		{
+			FOREACH_CONST( Attack, ce.attacks, a )
+			{
+				float fSecond = a->fStartSecond;
+				float fBeat = GAMESTATE->m_pCurSong->m_Timing.GetBeatFromElapsedTime( fSecond );
+
+				if( BeatToNoteRow(fBeat) >= iFirstIndexToDraw &&
+					BeatToNoteRow(fBeat) <= iLastIndexToDraw)
+				{
+					if( IS_ON_SCREEN(fBeat) )
+						DrawAttackText( fBeat, *a );
+				}
 			}
 		}
 
@@ -574,22 +610,11 @@ void NoteField::DrawPrimitives()
 						FOREACH_CONST( BackgroundLayer, viLowestIndex, i )
 						{
 							ASSERT( iter[*i] != GAMESTATE->m_pCurSong->GetBackgroundChanges(*i).end() );
-
 							const BackgroundChange& change = *iter[*i];
-							vector<CString> vsParts;
-							if( *i!=0 )								vsParts.push_back( ssprintf("%d: ",*i) );
-							if( !change.m_def.m_sFile1.empty() )	vsParts.push_back( change.m_def.m_sFile1 );
-							if( !change.m_def.m_sFile2.empty() )	vsParts.push_back( change.m_def.m_sFile2 );
-							if( change.m_fRate!=1.0f )				vsParts.push_back( ssprintf("%.2f%%",change.m_fRate*100) );
-							if( !change.m_sTransition.empty() )		vsParts.push_back( change.m_sTransition );
-							if( !change.m_def.m_sEffect.empty() )	vsParts.push_back( change.m_def.m_sEffect );
-							if( !change.m_def.m_sColor1.empty() )	vsParts.push_back( change.m_def.m_sColor1 );
-							if( !change.m_def.m_sColor2.empty() )	vsParts.push_back( change.m_def.m_sColor2 );
-							
-							if( vsParts.empty() )
-								vsParts.push_back( "(empty)" );
-
-							vsBGChanges.push_back( join("\n",vsParts) );
+							CString s = change.GetTextDescription();
+							if( *i!=0 )
+								s = ssprintf("%d: ",*i) + s;
+							vsBGChanges.push_back( s );
 						}
 						DrawBGChangeText( fLowestBeat, join("\n",vsBGChanges) );
 					}

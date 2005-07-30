@@ -58,6 +58,8 @@ struct BackgroundChange
 	float m_fStartBeat;
 	float m_fRate;
 	CString m_sTransition;
+
+	CString GetTextDescription() const;
 };
 
 namespace BackgroundUtil

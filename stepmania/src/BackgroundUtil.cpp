@@ -50,6 +50,26 @@ XNode *BackgroundDef::CreateNode() const
 	return pNode;
 }
 
+
+CString BackgroundChange::GetTextDescription() const
+{
+	vector<CString> vsParts;
+	if( !m_def.m_sFile1.empty() )	vsParts.push_back( m_def.m_sFile1 );
+	if( !m_def.m_sFile2.empty() )	vsParts.push_back( m_def.m_sFile2 );
+	if( m_fRate!=1.0f )				vsParts.push_back( ssprintf("%.2f%%",m_fRate*100) );
+	if( !m_sTransition.empty() )	vsParts.push_back( m_sTransition );
+	if( !m_def.m_sEffect.empty() )	vsParts.push_back( m_def.m_sEffect );
+	if( !m_def.m_sColor1.empty() )	vsParts.push_back( m_def.m_sColor1 );
+	if( !m_def.m_sColor2.empty() )	vsParts.push_back( m_def.m_sColor2 );
+	
+	if( vsParts.empty() )
+		vsParts.push_back( "(empty)" );
+
+	CString s = join( "\n", vsParts );
+	return s;
+}
+
+
 const CString BACKGROUND_EFFECTS_DIR =		"BackgroundEffects/";
 const CString BACKGROUND_TRANSITIONS_DIR =	"BackgroundTransitions/";
 const CString BG_ANIMS_DIR			= "BGAnimations/";

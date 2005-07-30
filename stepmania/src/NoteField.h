@@ -52,6 +52,7 @@ protected:
 	void DrawAreaHighlight( int iStartBeat, int iEndBeat );
 	void DrawBPMText( const float fBeat, const float fBPM );
 	void DrawFreezeText( const float fBeat, const float fBPM );
+	void DrawAttackText( const float fBeat, const Attack &attack );
 	void DrawBGChangeText( const float fBeat, const CString sNewBGName );
 	float GetWidth();
 

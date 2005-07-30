@@ -66,6 +66,12 @@ Attack Attack::FromGlobalCourseModifier( const CString &sModifiers )
 	return a;
 }
 
+CString Attack::GetTextDescription() const
+{
+	CString s = sModifiers + " " + ssprintf("(%.2f seconds)", fSecsRemaining);
+	return s;
+}
+
 bool AttackArray::ContainsTransformOrTurn() const
 {
 	FOREACH_CONST( Attack, *this, a )
