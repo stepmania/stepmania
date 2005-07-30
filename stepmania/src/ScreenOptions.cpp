@@ -135,7 +135,7 @@ void ScreenOptions::Init()
 	// init cursors
 	FOREACH_PlayerNumber( p )
 	{
-		m_Cursor[p].Load( m_sName, OptionsCursor::cursor );
+		m_Cursor[p].Load( m_sName, OptionsCursorPlus::cursor );
 		m_Cursor[p].Set( p );
 		m_framePage.AddChild( &m_Cursor[p] );
 	}
@@ -427,10 +427,10 @@ void ScreenOptions::PositionCursors()
 			continue;
 
 		ASSERT_M( iRow >= 0 && iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
-		OptionRow &OptionRow = *m_pRows[iRow];
-		OptionsCursor &cursor = m_Cursor[pn];
+		const OptionRow &row = *m_pRows[iRow];
+		OptionsCursorPlus &cursor = m_Cursor[pn];
 
-		const int iChoiceWithFocus = OptionRow.GetChoiceInRowWithFocus(pn);
+		const int iChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
 		if( iChoiceWithFocus == -1 )
 			continue;	// skip
 
@@ -438,6 +438,9 @@ void ScreenOptions::PositionCursors()
 		GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
 		cursor.SetBarWidth( iWidth );
 		cursor.SetXY( (float)iX, (float)iY );
+		bool bCanGoLeft = iChoiceWithFocus > 0;
+		bool bCanGoRight = iChoiceWithFocus >= 0 && iChoiceWithFocus < row.GetRowDef().m_vsChoices.size()-1;
+		cursor.SetCanGo( bCanGoLeft, bCanGoRight );
 	}
 }
 
@@ -445,7 +448,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 {
 	// Set the position of the cursor showing the current option the user is changing.
 	const int iRow = m_iCurrentRow[pn];
-	ASSERT_M( iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
+	ASSERT_M( iRow >= 0  &&  iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
 
 	const OptionRow &row = *m_pRows[iRow];
 	const int iChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
@@ -453,15 +456,21 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	int iWidth, iX, iY;
 	GetWidthXY( pn, iRow, iChoiceWithFocus, iWidth, iX, iY );
 
-	OptionsCursor &cursor = m_Cursor[pn];
-	if( cursor.GetDestX() != (float) iX || cursor.GetDestY() != (float) iY )
+	OptionsCursorPlus &cursor = m_Cursor[pn];
+	if( cursor.GetDestX() != (float) iX  || 
+		cursor.GetDestY() != (float) iY  || 
+		cursor.GetBarWidth() != iWidth )
 	{
 		cursor.StopTweening();
 		cursor.BeginTweening( CURSOR_TWEEN_SECONDS );
 		cursor.SetXY( (float)iX, (float)iY );
+		cursor.SetBarWidth( iWidth );
 	}
 
-	cursor.SetBarWidth( iWidth );
+
+	bool bCanGoLeft = iChoiceWithFocus > 0;
+	bool bCanGoRight = iChoiceWithFocus >= 0 && iChoiceWithFocus < row.GetRowDef().m_vsChoices.size()-1;
+	cursor.SetCanGo( bCanGoLeft, bCanGoRight );
 
 	if( GAMESTATE->IsHumanPlayer(pn) )  
 	{

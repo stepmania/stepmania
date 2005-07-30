@@ -9,6 +9,7 @@
 #include "DualScrollBar.h"
 #include "ThemeMetric.h"
 #include "OptionRow.h"
+#include "OptionsCursor.h"
 
 class OptionRowHandler;
 
@@ -106,7 +107,7 @@ protected:
 	ActorFrame		m_framePage;
 	AutoActor		m_sprPage;
 
-	OptionsCursor	m_Cursor[NUM_PLAYERS];
+	OptionsCursorPlus	m_Cursor[NUM_PLAYERS];
 	Sprite			m_sprLineHighlight[NUM_PLAYERS];
 
 	BitmapText		m_textPlayerName[NUM_PLAYERS];
