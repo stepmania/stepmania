@@ -28,9 +28,6 @@ protected:
 	Sprite m_sprMiddle;
 	Sprite m_sprLeft;
 	Sprite m_sprRight;
-
-	Sprite m_sprCanGoLeft;
-	Sprite m_sprCanGoRight;
 };
 
 class OptionsCursorPlus : public OptionsCursor

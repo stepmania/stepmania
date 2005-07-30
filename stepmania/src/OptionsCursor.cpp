@@ -24,18 +24,13 @@ OptionsCursor::OptionsCursor( const OptionsCursor &cpy ):
 	ActorFrame( cpy ),
 	m_sprLeft( cpy.m_sprLeft ),
 	m_sprMiddle( cpy.m_sprMiddle ),
-	m_sprRight( cpy.m_sprRight ),
-	m_sprCanGoLeft( cpy.m_sprCanGoLeft ),
-	m_sprCanGoRight( cpy.m_sprCanGoRight )
+	m_sprRight( cpy.m_sprRight )
 {
 	/* Re-add children, or m_SubActors will point to cpy's children and not our own. */
 	m_SubActors.clear();
 	this->AddChild( &m_sprMiddle );
 	this->AddChild( &m_sprLeft );
 	this->AddChild( &m_sprRight );
-
-	this->AddChild( &m_sprCanGoLeft );
-	this->AddChild( &m_sprCanGoRight );
 }
 
 OptionsCursorPlus::OptionsCursorPlus( const OptionsCursorPlus &cpy ):
