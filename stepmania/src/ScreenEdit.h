@@ -48,6 +48,7 @@ enum EditButton
 	EDIT_BUTTON_RIGHT_SIDE,
 	EDIT_BUTTON_LAY_MINE_OR_ROLL,
 	EDIT_BUTTON_LAY_ATTACK,
+	EDIT_BUTTON_REMOVE_NOTE,
 
 	EDIT_BUTTON_SCROLL_UP_LINE,
 	EDIT_BUTTON_SCROLL_UP_PAGE,
@@ -231,6 +232,8 @@ protected:
 
 	NoteField		m_NoteFieldRecord;
 	NoteData		m_NoteDataRecord;
+	RageTimer		m_RemoveNoteButtonLastChanged;
+	bool			m_bRemoveNoteButtonDown;
 
 // for MODE_PLAY
 	void SetupCourseAttacks();

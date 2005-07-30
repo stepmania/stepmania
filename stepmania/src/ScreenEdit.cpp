@@ -221,6 +221,8 @@ void ScreenEdit::InitEditMappings()
 
 	m_RecordMappings.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT);
 	m_RecordMappings.button[EDIT_BUTTON_LAY_MINE_OR_ROLL][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT);
+	m_RecordMappings.button[EDIT_BUTTON_REMOVE_NOTE][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LALT);
+	m_RecordMappings.button[EDIT_BUTTON_REMOVE_NOTE][1] = DeviceInput(DEVICE_KEYBOARD, KEY_RALT);
 	m_RecordMappings.button[EDIT_BUTTON_RETURN_TO_EDIT][0] = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 
 	m_RecordPausedMappings.button[EDIT_BUTTON_PLAY_SELECTION][0] = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
@@ -630,6 +632,8 @@ void ScreenEdit::Init()
 	m_NoteFieldRecord.Load( &m_NoteDataRecord, -(int)SCREEN_HEIGHT/2, (int)SCREEN_HEIGHT/2 );
 	this->AddChild( &m_NoteFieldRecord );
 
+	m_bRemoveNoteButtonDown = false;
+
 	m_Clipboard.SetNumTracks( m_NoteDataEdit.GetNumTracks() );
 
 	m_bHasUndo = false;
@@ -812,28 +816,34 @@ void ScreenEdit::Update( float fDeltaTime )
 
 	if( m_EditState == STATE_RECORDING  )	
 	{
-		// add or extend holds
-
 		for( int t=0; t<GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; t++ )	// for each track
 		{
 			StyleInput StyleI( PLAYER_1, t );
 			float fSecsHeld = INPUTMAPPER->GetSecsHeld( StyleI );
+			fSecsHeld = min( fSecsHeld, m_RemoveNoteButtonLastChanged.Ago() );
+			if( fSecsHeld == 0 )
+				continue;
 
 			float fStartPlayingAtBeat = NoteRowToBeat(m_iStartPlayingAt);
-			if( fSecsHeld > RECORD_HOLD_SECONDS && GAMESTATE->m_fSongBeat > fStartPlayingAtBeat )
+			if( GAMESTATE->m_fSongBeat <= fStartPlayingAtBeat )
+				continue;
+
+			float fStartedHoldingSeconds = m_soundMusic.GetPositionSeconds() - fSecsHeld;
+			float fStartBeat = max( fStartPlayingAtBeat, m_pSong->GetBeatFromElapsedTime(fStartedHoldingSeconds) );
+			float fEndBeat = max( fStartBeat, GAMESTATE->m_fSongBeat );
+			fEndBeat = min( fEndBeat, NoteRowToBeat(m_iStopPlayingAt) );
+
+			// Round start and end to the nearest snap interval
+			fStartBeat = Quantize( fStartBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
+			fEndBeat = Quantize( fEndBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
+
+			if( m_bRemoveNoteButtonDown )
 			{
-				// add or extend hold
-				const float fHoldStartSeconds = m_soundMusic.GetPositionSeconds() - fSecsHeld;
-
-				float fStartBeat = max( fStartPlayingAtBeat, m_pSong->GetBeatFromElapsedTime( fHoldStartSeconds ) );
-				float fEndBeat = max( fStartBeat, GAMESTATE->m_fSongBeat );
-				fEndBeat = min( fEndBeat, NoteRowToBeat(m_iStopPlayingAt) );
-
-				// Round hold start and end to the nearest snap interval
-				fStartBeat = Quantize( fStartBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
-				fEndBeat = Quantize( fEndBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
-
-				// create a new hold or roll note
+				m_NoteDataRecord.ClearRangeForTrack( BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat), t );
+			}
+			else if( fSecsHeld > RECORD_HOLD_SECONDS )
+			{
+				// create or extend a hold or roll note
 				TapNote tn = TAP_ORIGINAL_HOLD_HEAD;
 				if( EditIsBeingPressed(EDIT_BUTTON_LAY_MINE_OR_ROLL) )
 					tn = TAP_ORIGINAL_ROLL_HEAD;
@@ -984,6 +994,16 @@ void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, c
 
 	EditButton EditB;
 	DeviceToEdit( di, EditB );
+
+	if( EditB == EDIT_BUTTON_REMOVE_NOTE )
+	{
+		// Ugly: we need to know when the button was pressed or released, so we
+		// can clamp operations to that time.  Should InputFilter keep track of
+		// last release, too?
+		m_bRemoveNoteButtonDown = (type != IET_RELEASE);
+		m_RemoveNoteButtonLastChanged.Touch();
+	}
+
 	switch( m_EditState )
 	{
 	case STATE_EDITING:
@@ -1684,6 +1704,12 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 	{
 	case IET_FIRST_PRESS:
 		{
+			if( EditIsBeingPressed(EDIT_BUTTON_REMOVE_NOTE) )
+			{
+				// Remove notes in Update.
+				break;
+			}
+
 			// Add a tap
 			float fBeat = GAMESTATE->m_fSongBeat;
 			fBeat = Quantize( fBeat, NoteTypeToBeat(m_SnapDisplay.GetNoteType()) );
