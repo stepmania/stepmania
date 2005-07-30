@@ -99,6 +99,8 @@ public:
 	int GetNumModChanges() const;
 };
 
+const int MAX_ENTRIES_PER_COURSE = 50;
+
 class Course
 {
 public:

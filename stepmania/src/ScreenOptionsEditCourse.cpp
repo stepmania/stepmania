@@ -8,6 +8,7 @@
 #include "GameManager.h"
 #include "song.h"
 #include "ScreenMiniMenu.h"
+#include "ScreenPrompt.h"
 
 enum EditCourseRow
 {
@@ -115,12 +116,15 @@ void ScreenOptionsEditCourse::BeginScreen()
 {
 	ScreenOptions::BeginScreen();
 
-	this->MoveRowAbsolute( PLAYER_1, NUM_EditCourseRow + GAMESTATE->m_iEditCourseEntryIndex, false );
+	if( GAMESTATE->m_iEditCourseEntryIndex > -1 )
+		this->MoveRowAbsolute( PLAYER_1, NUM_EditCourseRow + GAMESTATE->m_iEditCourseEntryIndex, false );
 	AfterChangeRow( GAMESTATE->m_MasterPlayerNumber );
 }
 
 void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 {
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+
 	if( SM == SM_GoToNextScreen )
 	{
 		int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
@@ -129,6 +133,10 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 			this->HandleScreenMessage( SM_GoToPrevScreen );
 			return;	// don't call base
 		}
+	}
+	else if( SM == SM_GoToPrevScreen )
+	{
+		GAMESTATE->m_iEditCourseEntryIndex.Set( -1 );
 	}
 	else if( SM == SM_BackFromContextMenu )
 	{
@@ -141,16 +149,20 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case CourseEntryAction_InsertEntry:
 				{
-					Course *pCourse = GAMESTATE->m_pCurCourse;
+					if( pCourse->m_vEntries.size() >= MAX_ENTRIES_PER_COURSE )
+					{
+						CString sError = "The maximum number of entries per course is %d.  This course already has %d entries.";
+						ScreenPrompt::Prompt( SM_None, sError );
+						return;
+					}
 					pCourse->m_vEntries.insert( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus(), CourseEntry() );
 					SCREENMAN->SetNewScreen( this->m_sName ); // reload
 				}
 				break;
 			case CourseEntryAction_Delete:
 				{
-					Course *pCourse = GAMESTATE->m_pCurCourse;
 					pCourse->m_vEntries.erase( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus() );
-					GAMESTATE->m_iEditCourseEntryIndex.Set( GAMESTATE->m_iEditCourseEntryIndex-1 );
+					GAMESTATE->m_iEditCourseEntryIndex.Set( GAMESTATE->m_iEditCourseEntryIndex );
 					SCREENMAN->SetNewScreen( this->m_sName ); // reload
 				}
 				break;
@@ -196,6 +208,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( PlayerNumber pn, const InputEven
 {
 	int iCurRow = m_iCurrentRow[PLAYER_1];
 	OptionRow &row = *m_pRows[iCurRow];
+	Course *pCourse = GAMESTATE->m_pCurCourse;
 
 	if( iCurRow < NUM_EditCourseRow )
 	{
@@ -203,9 +216,15 @@ void ScreenOptionsEditCourse::ProcessMenuStart( PlayerNumber pn, const InputEven
 	}
 	else if( iCurRow == m_pRows.size()-2 )	// "create entry"
 	{
-		SCREENMAN->PlayInvalidSound();
-
-		// ASSERT( 0 );
+		if( pCourse->m_vEntries.size() >= MAX_ENTRIES_PER_COURSE )
+		{
+			CString sError = "The maximum number of entries per course is %d.  This course already has %d entries.";
+			ScreenPrompt::Prompt( SM_None, sError );
+			return;
+		}
+		pCourse->m_vEntries.push_back( CourseEntry() );
+		GAMESTATE->m_iEditCourseEntryIndex.Set( pCourse->m_vEntries.size()-1 );
+		SCREENMAN->SetNewScreen( this->m_sName ); // reload
 	}
 	else if( iCurRow == m_pRows.size()-1 )	// "done"
 	{
