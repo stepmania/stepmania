@@ -80,7 +80,7 @@ void CourseContentsList::SetFromGameState()
 			if( unsigned(i) < pTrail->m_vEntries.size() )
 				pte[pn] = &pTrail->m_vEntries[i];
 		}
-		d.LoadFromTrailEntry( (int)(truncf(m_fItemAtPosition0InList))+i+1, pte );
+		d.SetFromTrailEntry( (int)(truncf(m_fItemAtPosition0InList))+i+1, pte );
 	}
 
 	bool bLoop = pMasterTrail->m_vEntries.size() > uNumEntriesToShow;

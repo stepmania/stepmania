@@ -14,9 +14,17 @@ struct TrailEntry;
 class CourseEntryDisplay : public ActorFrame
 {
 public:
-	void Load();
+	CourseEntryDisplay();
+	virtual Actor *Copy() const;
 
-	void LoadFromTrailEntry( int iNum, const TrailEntry *te[NUM_PLAYERS] );
+	void Load();
+	void LoadFromNode( const CString& sDir, const XNode* pNode );
+
+	void SetFromTrailEntry( int iCourseEntryIndex, const TrailEntry *te[NUM_PLAYERS] );
+	void SetFromGameState( int iCourseEntryIndex );
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 private:
 	void SetDifficulty( PlayerNumber pn, const CString &text, RageColor c );

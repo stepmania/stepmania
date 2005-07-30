@@ -13,6 +13,13 @@
 #include "Style.h"
 #include "ActorUtil.h"
 
+REGISTER_ACTOR_CLASS( CourseEntryDisplay )
+
+CourseEntryDisplay::CourseEntryDisplay()
+{
+	m_sName = "CourseEntryDisplay";
+}
+
 void CourseEntryDisplay::Load()
 {
 	SEPARATE_COURSE_METERS	.Load( "CourseEntryDisplay", "SeparateCourseMeters" );
@@ -60,6 +67,13 @@ void CourseEntryDisplay::Load()
 	this->AddChild( &m_textModifiers );
 }
 
+void CourseEntryDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	ActorFrame::LoadFromNode( sDir, pNode );
+
+	Load();
+}
+
 void CourseEntryDisplay::SetDifficulty( PlayerNumber pn, const CString &text, RageColor c )
 {
 	if( !GAMESTATE->IsHumanPlayer(pn) )
@@ -74,7 +88,7 @@ void CourseEntryDisplay::SetDifficulty( PlayerNumber pn, const CString &text, Ra
 	m_textFoot[pn].SetDiffuse( c );
 }
 
-void CourseEntryDisplay::LoadFromTrailEntry( int iNum, const TrailEntry *tes[NUM_PLAYERS] )
+void CourseEntryDisplay::SetFromTrailEntry( int iCourseEntryIndex, const TrailEntry *tes[NUM_PLAYERS] )
 {
 	const TrailEntry *te = tes[GAMESTATE->m_MasterPlayerNumber];
 	if( te == NULL )
@@ -120,10 +134,46 @@ void CourseEntryDisplay::LoadFromTrailEntry( int iNum, const TrailEntry *tes[NUM
 		m_TextBanner.SetDiffuse( SONGMAN->GetSongColor( te->pSong ) );
 	}
 
-	m_textNumber.SetText( ssprintf("%d", iNum) );
+	m_textNumber.SetText( ssprintf("%d", iCourseEntryIndex) );
 
 	m_textModifiers.SetText( te->Modifiers );
 }
+
+void CourseEntryDisplay::SetFromGameState( int iCourseEntryIndex )
+{
+	const TrailEntry *pTrailEntry[NUM_PLAYERS];
+	FOREACH_PlayerNumber( p )
+	{
+		Trail *pTrail = GAMESTATE->m_pCurTrail[p];
+		if( pTrail )
+			pTrailEntry[p] = &pTrail->m_vEntries[iCourseEntryIndex];
+		else
+			pTrailEntry[p] = NULL;
+	}
+
+	SetFromTrailEntry( iCourseEntryIndex, pTrailEntry );
+}
+
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaCourseEntryDisplay: public Luna<CourseEntryDisplay>
+{
+public:
+	LunaCourseEntryDisplay() { LUA->Register( Register ); }
+
+	static int SetFromGameState( T* p, lua_State *L )	{ p->SetFromGameState(IArg(1)); return 0; }
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( SetFromGameState )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( CourseEntryDisplay, ActorFrame )
+// lua end
 
 /*
  * (c) 2001-2004 Chris Danford
