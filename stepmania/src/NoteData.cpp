@@ -122,7 +122,7 @@ void NoteData::ClearAll()
 		m_TapNotes[t].clear();
 }
 
-/* Copy a range from pFrom to this.  (Note that this does *not* overlay;
+/* Copy [rowFromBegin,rowFromEnd) from pFrom to this.  (Note that this does *not* overlay;
  * all data in the range is overwritten.) */
 void NoteData::CopyRange( const NoteData& from, int rowFromBegin, int rowFromEnd, int rowToBegin )
 {
