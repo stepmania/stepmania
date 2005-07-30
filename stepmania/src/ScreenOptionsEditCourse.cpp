@@ -203,7 +203,9 @@ void ScreenOptionsEditCourse::ProcessMenuStart( PlayerNumber pn, const InputEven
 	}
 	else if( iCurRow == m_pRows.size()-2 )	// "create entry"
 	{
-		ASSERT( 0 );
+		SCREENMAN->PlayInvalidSound();
+
+		// ASSERT( 0 );
 	}
 	else if( iCurRow == m_pRows.size()-1 )	// "done"
 	{
