@@ -325,11 +325,11 @@ void NoteField::DrawAttackText( const float fBeat, const Attack &attack )
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
  	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 
-	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
+	m_textMeasureNumber.SetHorizAlign( Actor::align_left );
 	m_textMeasureNumber.SetDiffuse( RageColor(0,0.8f,0.8f,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
 	m_textMeasureNumber.SetText( attack.GetTextDescription() );
-	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 10, fYPos );
+	m_textMeasureNumber.SetXY( +GetWidth()/2.f + 10, fYPos );
 	m_textMeasureNumber.Draw();
 }
 
