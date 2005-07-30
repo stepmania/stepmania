@@ -1,37 +1,22 @@
-#ifndef ScreenOptionsEditCourseEntry_H
-#define ScreenOptionsEditCourseEntry_H
+#include "global.h"
+#include "ScreenEditCourseMods.h"
+#include "RageLog.h"
 
-#include "ScreenOptions.h"
-#include "Course.h"
-class Song;
-
-class ScreenOptionsEditCourseEntry : public ScreenOptions
+REGISTER_SCREEN_CLASS( ScreenEditCourseMods );
+ScreenEditCourseMods::ScreenEditCourseMods( CString sName ) : ScreenEdit( sName )
 {
-public:
-	ScreenOptionsEditCourseEntry( CString sName );
+	LOG->Trace( "ScreenEditCourseMods::ScreenEditCourseMods()" );
+}
 
-	void Init();
-	void BeginScreen();
+void ScreenEditCourseMods::Init()
+{
+	ScreenEdit::Init();
 
-	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-protected:
-
-	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
-	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
-	
-	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );
-	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
-
-	vector<Song*>	m_vpDisplayedSongs;	// corresponds with the choices in the Song row
-
-	CourseEntry m_Original;	// use this to revert when cancelling
-};
-
-#endif
+}
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2002-2005 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

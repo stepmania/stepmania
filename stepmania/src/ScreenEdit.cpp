@@ -586,7 +586,6 @@ void ScreenEdit::Init()
 
 	m_pSong = GAMESTATE->m_pCurSong;
 	m_pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
-	m_pAttacksFromCourse = NULL;
 	m_bReturnToRecordMenuAfterPlay = false;
 	m_fBeatToReturnTo = 0;
 
@@ -1571,7 +1570,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 				if( bUsesThisSong )
 				{
 					g_CourseMode.rows[0].choices.push_back( crs->GetDisplayFullTitle() );
-					if( crs == m_pAttacksFromCourse )
+					if( crs == GAMESTATE->m_pCurCourse )
 						g_CourseMode.rows[0].iDefaultChoice = g_CourseMode.rows[0].choices.size()-1;
 				}
 			}
@@ -2154,12 +2153,13 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_BackFromCourseModeMenu )
 	{
 		const int num = ScreenMiniMenu::s_viLastAnswers[0];
-		m_pAttacksFromCourse = NULL;
+		GAMESTATE->m_pCurCourse.Set( NULL );
 		if( num != 0 )
 		{
 			const CString name = g_CourseMode.rows[0].choices[num];
-			m_pAttacksFromCourse = SONGMAN->FindCourse( name );
-			ASSERT( m_pAttacksFromCourse );
+			Course *pCourse = SONGMAN->FindCourse( name );
+			GAMESTATE->m_pCurCourse.Set( pCourse );
+			ASSERT( GAMESTATE->m_pCurCourse );
 		}
 	}
 	else if( SM == SM_BackFromOptions )
@@ -3036,17 +3036,17 @@ void ScreenEdit::SetupCourseAttacks()
 	GAMESTATE->RemoveActiveAttacksForPlayer( PLAYER_1 );
 
 
-	if( m_pAttacksFromCourse )
+	if( GAMESTATE->m_pCurCourse )
 	{
-		m_pAttacksFromCourse->LoadFromCRSFile( m_pAttacksFromCourse->m_sPath );
+		GAMESTATE->m_pCurCourse->LoadFromCRSFile( GAMESTATE->m_pCurCourse->m_sPath );
 
 		AttackArray Attacks;
-		for( unsigned e = 0; e < m_pAttacksFromCourse->m_vEntries.size(); ++e )
+		for( unsigned e = 0; e < GAMESTATE->m_pCurCourse->m_vEntries.size(); ++e )
 		{
-			if( m_pAttacksFromCourse->m_vEntries[e].pSong != m_pSong )
+			if( GAMESTATE->m_pCurCourse->m_vEntries[e].pSong != m_pSong )
 				continue;
 
-			Attacks = m_pAttacksFromCourse->m_vEntries[e].attacks;
+			Attacks = GAMESTATE->m_pCurCourse->m_vEntries[e].attacks;
 			break;
 		}
 

@@ -894,7 +894,7 @@ void ScreenOptions::ProcessMenuStart( PlayerNumber pn, const InputEventType type
 		if( row.GetFirstItemGoesDown() )
 		{
 			// move to the first choice in the row
-			ChangeValueInRow( pn, -row.GetChoiceInRowWithFocus(pn), type != IET_FIRST_PRESS );
+			ChangeValueInRowRelative( m_iCurrentRow[pn], pn, -row.GetChoiceInRowWithFocus(pn), type != IET_FIRST_PRESS );
 		}
 	}
 	else	// data.selectType != SELECT_MULTIPLE
@@ -918,9 +918,9 @@ void ScreenOptions::ProcessMenuStart( PlayerNumber pn, const InputEventType type
 					row.SetOneSelection( pn, iChoiceInRow );
 			}
 			if( row.GetFirstItemGoesDown() )
-				ChangeValueInRow( pn, -row.GetChoiceInRowWithFocus(pn), type != IET_FIRST_PRESS );	// move to the first choice
+				ChangeValueInRowRelative( m_iCurrentRow[pn], pn, -row.GetChoiceInRowWithFocus(pn), type != IET_FIRST_PRESS );	// move to the first choice
 			else
-				ChangeValueInRow( pn, 0, type != IET_FIRST_PRESS );
+				ChangeValueInRowRelative( m_iCurrentRow[pn], pn, 0, type != IET_FIRST_PRESS );
 			break;
 		case NAV_THREE_KEY_MENU:
 			/* Don't accept START to go to the next screen if we're still transitioning in. */
@@ -951,13 +951,28 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 }
 
 /* Left/right */
-void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
+void ScreenOptions::ChangeValueInRowAbsolute( int iRow, PlayerNumber pn, int iChoiceIndex, bool bRepeat )
 {
-	const int iCurRow = m_iCurrentRow[pn];
-	if( iCurRow == -1	)	// no row selected
+	if( iRow == -1	)	// no row selected
 		return;		// don't allow a move
 
-	OptionRow &row = *m_pRows[iCurRow];
+	OptionRow &row = *m_pRows[iRow];
+	
+	const int iNumChoices = row.GetRowDef().m_vsChoices.size();
+	ASSERT( iNumChoices >= 0 && iChoiceIndex < iNumChoices );
+
+	int iCurrentChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
+	int iDelta = iChoiceIndex - iCurrentChoiceWithFocus;
+
+	ChangeValueInRowRelative( iRow, pn, iDelta, bRepeat );
+}
+
+void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDelta, bool bRepeat )
+{
+	if( iRow == -1	)	// no row selected
+		return;		// don't allow a move
+
+	OptionRow &row = *m_pRows[iRow];
 	
 	const int iNumChoices = row.GetRowDef().m_vsChoices.size();
 
@@ -968,14 +983,14 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		 *
 		 * XXX: Only allow repeats if the opposite key isn't pressed; otherwise, holding both
 		 * directions will repeat in place continuously, which is weird. */
-		MoveRowRelative( pn, iDelta, Repeat );
+		MoveRowRelative( pn, iDelta, bRepeat );
 		return;
 	}
 
 	if( iNumChoices <= 1 )	// nowhere to move
 		return;
 
-	if( Repeat && !ALLOW_REPEATING_CHANGE_VALUE_INPUT )
+	if( bRepeat && !ALLOW_REPEATING_CHANGE_VALUE_INPUT )
 		return;
 
 	bool bOneChanged = false;
@@ -983,7 +998,6 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 
 	int iCurrentChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
 	int iNewChoiceWithFocus = iCurrentChoiceWithFocus + iDelta;
-	ASSERT( iNumChoices > 0 );
 	wrap( iNewChoiceWithFocus, iNumChoices );
 	
 	if( iCurrentChoiceWithFocus != iNewChoiceWithFocus )
@@ -1049,9 +1063,9 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		}
 	}
 
-	UpdateText( iCurRow );
+	UpdateText( iRow );
 
-	this->AfterChangeValueInRow( pn );
+	this->AfterChangeValueInRow( iRow, pn );
 
 	if( m_OptionsNavigation != NAV_THREE_KEY_MENU )
 		m_SoundChangeCol.Play();
@@ -1061,11 +1075,11 @@ void ScreenOptions::ChangeValueInRow( PlayerNumber pn, int iDelta, bool Repeat )
 		vector<PlayerNumber> vpns;
 		FOREACH_HumanPlayer( p )
 			vpns.push_back( p );
-		ExportOptions( iCurRow, vpns );
+		ExportOptions( iRow, vpns );
 	}
 }
 
-void ScreenOptions::AfterChangeValueInRow( PlayerNumber pn ) 
+void ScreenOptions::AfterChangeValueInRow( int iRow, PlayerNumber pn ) 
 {
 	AfterChangeValueOrRow( pn );
 }

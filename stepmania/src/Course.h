@@ -96,6 +96,7 @@ public:
 	}
 
 	CString GetTextDescription() const;
+	int GetNumModChanges() const;
 };
 
 class Course

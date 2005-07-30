@@ -2039,6 +2039,8 @@ public:
 	}
 	static int GetCurrentGame( T* p, lua_State *L )			{ const_cast<Game*>(p->GetCurrentGame())->PushSelf( L ); return 1; }
 	static int GetLastSelectedProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastSelectedProfileID ); return 1; }
+	static int GetEditCourseEntryIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iEditCourseEntryIndex ); return 1; }
+
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( IsPlayerEnabled )
@@ -2092,6 +2094,7 @@ public:
 		ADD_METHOD( IsWinner )
 		ADD_METHOD( GetCurrentGame )
 		ADD_METHOD( GetLastSelectedProfileID )
+		ADD_METHOD( GetEditCourseEntryIndex )
 
 		Luna<T>::Register( L );
 

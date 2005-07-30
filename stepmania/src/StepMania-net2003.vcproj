@@ -304,6 +304,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenEdit.h">
 			</File>
 			<File
+				RelativePath=".\ScreenEditCourseMods.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenEditCourseMods.h">
+			</File>
+			<File
 				RelativePath="ScreenEditMenu.cpp">
 			</File>
 			<File

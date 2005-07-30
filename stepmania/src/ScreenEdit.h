@@ -240,7 +240,6 @@ protected:
 	Player			m_Player;
 	Background		m_Background;
 	Foreground		m_Foreground;
-	Course			*m_pAttacksFromCourse;
 	bool			m_bReturnToRecordMenuAfterPlay;
 
 // for MODE_RECORD and MODE_PLAY

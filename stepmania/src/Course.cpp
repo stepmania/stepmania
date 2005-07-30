@@ -73,10 +73,7 @@ CString CourseEntry::GetTextDescription() const
 		vsEntryDescription.push_back( "Sort: %d" + SongSortToThemedString(songSort) );
 	if( songSort != SongSort_Randomize && iChooseIndex != 0 )
 		vsEntryDescription.push_back( "Choose " + FormatNumberAndSuffix(iChooseIndex) + " match" );
-	int iNumModChanges = 0;
-	if( !sModifiers.empty() )
-		iNumModChanges++;
-	iNumModChanges += attacks.size();
+	int iNumModChanges = GetNumModChanges();
 	if( iNumModChanges != 0 )
 		vsEntryDescription.push_back( ssprintf("%d mod changes", iNumModChanges) );
 	if( fGainSeconds != 0 )
@@ -84,6 +81,15 @@ CString CourseEntry::GetTextDescription() const
 
 	CString s = join( ",", vsEntryDescription );
 	return s;
+}
+
+int CourseEntry::GetNumModChanges() const
+{
+	int iNumModChanges = 0;
+	if( !sModifiers.empty() )
+		iNumModChanges++;
+	iNumModChanges += attacks.size();
+	return iNumModChanges;
 }
 
 

@@ -1,31 +1,17 @@
-#ifndef ScreenOptionsEditCourseEntry_H
-#define ScreenOptionsEditCourseEntry_H
+#ifndef ScreenEditCourseMods_H
+#define ScreenEditCourseMods_H
 
-#include "ScreenOptions.h"
-#include "Course.h"
-class Song;
+#include "ScreenEdit.h"
 
-class ScreenOptionsEditCourseEntry : public ScreenOptions
+class ScreenEditCourseMods : public ScreenEdit
 {
 public:
-	ScreenOptionsEditCourseEntry( CString sName );
+	ScreenEditCourseMods( CString sName );
 
 	void Init();
-	void BeginScreen();
-
-	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
 
-	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
-	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
-	
-	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );
-	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
-
-	vector<Song*>	m_vpDisplayedSongs;	// corresponds with the choices in the Song row
-
-	CourseEntry m_Original;	// use this to revert when cancelling
 };
 
 #endif
