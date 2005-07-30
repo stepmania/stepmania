@@ -34,17 +34,6 @@ static const CString ElementCategoryNames[] = {
 };
 XToString( ElementCategory, NUM_ElementCategory );
 StringToX( ElementCategory );
-static void LuaElementCategory(lua_State* L)
-{
-	FOREACH_ElementCategory( ec ) 
-	{
-		CString s = ElementCategoryNames[ec];
-		s.MakeUpper();
-		LUA->SetGlobal( "EC_"+s, ec );
-	}
-}
-REGISTER_WITH_LUA_FUNCTION( LuaElementCategory );
-
 
 
 const CString BASE_THEME_NAME = "default";
@@ -910,16 +899,16 @@ public:
 	LunaThemeManager() { LUA->Register( Register ); }
 
 	static int GetMetric( T* p, lua_State *L )			{ lua_pushstring(L, p->GetMetric(SArg(1),SArg(2)) ); return 1; }
-	static int GetPath( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPath((ElementCategory)IArg(1),SArg(2),SArg(3)) ); return 1; }
 	static int GetPathG( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathG(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
+	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetMetric )
-		ADD_METHOD( GetPath )
 		ADD_METHOD( GetPathG )
 		ADD_METHOD( GetPathB )
+		ADD_METHOD( GetPathS )
 
 		Luna<T>::Register( L );
 
