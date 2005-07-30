@@ -15,18 +15,41 @@ public:
 	OptionsCursor( const OptionsCursor &cpy );
 
 	enum Element { cursor, underline };
-	void Load( CString sType, Element elem );
+	void Load( const CString &sType, Element elem );
 	void Set( PlayerNumber pn );
 
 	void StopTweening();
 	void BeginTweening( float fSecs );
 	void SetBarWidth( int iWidth );
+	int GetBarWidth();
 
 protected:
 
-	Sprite m_sprLeft;
 	Sprite m_sprMiddle;
+	Sprite m_sprLeft;
 	Sprite m_sprRight;
+
+	Sprite m_sprCanGoLeft;
+	Sprite m_sprCanGoRight;
+};
+
+class OptionsCursorPlus : public OptionsCursor
+{
+public:
+	OptionsCursorPlus();
+	OptionsCursorPlus( const OptionsCursorPlus &cpy );
+
+	void Load( const CString &sType, Element elem );
+
+	void StopTweening();
+	void BeginTweening( float fSecs );
+	void SetBarWidth( int iWidth );
+	void SetCanGo( bool bCanGoLeft, bool bCanGoRight );
+
+protected:
+
+	Sprite m_sprCanGoLeft;
+	Sprite m_sprCanGoRight;
 };
 
 #endif

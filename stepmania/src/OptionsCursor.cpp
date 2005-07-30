@@ -12,35 +12,64 @@ OptionsCursor::OptionsCursor()
 	this->AddChild( &m_sprRight );
 }
 
+OptionsCursorPlus::OptionsCursorPlus()
+{
+	this->AddChild( &m_sprCanGoLeft );
+	this->AddChild( &m_sprCanGoRight );
+
+	SetCanGo( false, false );
+}
+
 OptionsCursor::OptionsCursor( const OptionsCursor &cpy ):
 	ActorFrame( cpy ),
 	m_sprLeft( cpy.m_sprLeft ),
 	m_sprMiddle( cpy.m_sprMiddle ),
-	m_sprRight( cpy.m_sprRight )
+	m_sprRight( cpy.m_sprRight ),
+	m_sprCanGoLeft( cpy.m_sprCanGoLeft ),
+	m_sprCanGoRight( cpy.m_sprCanGoRight )
 {
 	/* Re-add children, or m_SubActors will point to cpy's children and not our own. */
 	m_SubActors.clear();
 	this->AddChild( &m_sprMiddle );
 	this->AddChild( &m_sprLeft );
 	this->AddChild( &m_sprRight );
+
+	this->AddChild( &m_sprCanGoLeft );
+	this->AddChild( &m_sprCanGoRight );
 }
 
-void OptionsCursor::Load( CString sType, Element elem )
+OptionsCursorPlus::OptionsCursorPlus( const OptionsCursorPlus &cpy ):
+	OptionsCursor( cpy ),
+	m_sprCanGoLeft( cpy.m_sprCanGoLeft ),
+	m_sprCanGoRight( cpy.m_sprCanGoRight )
+{
+	this->AddChild( &m_sprCanGoLeft );
+	this->AddChild( &m_sprCanGoRight );
+}
+
+void OptionsCursor::Load( const CString &sType, Element elem )
 {
 	CString sPath = THEME->GetPathG( sType, ssprintf("%s 3x2",elem==cursor?"cursor":"underline") );
-
-	m_sprLeft.Load( sPath );
+	
 	m_sprMiddle.Load( sPath );
+	m_sprLeft.Load( sPath );
 	m_sprRight.Load( sPath );
 
-	m_sprLeft.StopAnimating();
 	m_sprMiddle.StopAnimating();
+	m_sprLeft.StopAnimating();
 	m_sprRight.StopAnimating();
+}
+
+void OptionsCursorPlus::Load( const CString &sType, Element elem )
+{
+	OptionsCursor::Load( sType, elem );
+
+	m_sprCanGoLeft.Load( THEME->GetPathG(sType,"CanGoLeft") );
+	m_sprCanGoRight.Load( THEME->GetPathG(sType,"CanGoRight") );
 }
 
 void OptionsCursor::Set( PlayerNumber pn )
 {
-
 	int iBaseFrameNo;
 	switch( pn )
 	{
@@ -53,22 +82,47 @@ void OptionsCursor::Set( PlayerNumber pn )
 	m_sprRight.SetState(  iBaseFrameNo+2 );
 }
 
+void OptionsCursorPlus::SetCanGo( bool bCanGoLeft, bool bCanGoRight )
+{
+	m_sprCanGoLeft.EnableAnimation( bCanGoLeft );
+	m_sprCanGoRight.EnableAnimation( bCanGoRight );
+
+	m_sprCanGoLeft.SetDiffuse( bCanGoLeft ? RageColor(1,1,1,1) : RageColor(0.5,0.5,0.5,1) );
+	m_sprCanGoRight.SetDiffuse( bCanGoRight ? RageColor(1,1,1,1) : RageColor(0.5,0.5,0.5,1) );
+}
+
 void OptionsCursor::StopTweening()
 {
 	ActorFrame::StopTweening();
 
-	m_sprLeft.StopTweening();
 	m_sprMiddle.StopTweening();
+	m_sprLeft.StopTweening();
 	m_sprRight.StopTweening();
+}
+
+void OptionsCursorPlus::StopTweening()
+{
+	OptionsCursor::StopTweening();
+
+	m_sprCanGoLeft.StopTweening();
+	m_sprCanGoRight.StopTweening();
 }
 
 void OptionsCursor::BeginTweening( float fSecs )
 {
 	ActorFrame::BeginTweening( fSecs );
 
-	m_sprLeft.BeginTweening( fSecs );
 	m_sprMiddle.BeginTweening( fSecs );
+	m_sprLeft.BeginTweening( fSecs );
 	m_sprRight.BeginTweening( fSecs );
+}
+
+void OptionsCursorPlus::BeginTweening( float fSecs )
+{
+	OptionsCursor::BeginTweening( fSecs );
+
+	m_sprCanGoLeft.BeginTweening( fSecs );
+	m_sprCanGoRight.BeginTweening( fSecs );
 }
 
 void OptionsCursor::SetBarWidth( int iWidth )
@@ -81,6 +135,21 @@ void OptionsCursor::SetBarWidth( int iWidth )
 
 	m_sprLeft.SetX( -iWidth/2 - fFrameWidth/2 );
 	m_sprRight.SetX( +iWidth/2 + fFrameWidth/2 );
+}
+
+void OptionsCursorPlus::SetBarWidth( int iWidth )
+{
+	OptionsCursor::SetBarWidth( iWidth );
+
+	float fFrameWidth = m_sprLeft.GetUnzoomedWidth();
+
+	m_sprCanGoLeft.SetX( m_sprLeft.GetDestX() );
+	m_sprCanGoRight.SetX( m_sprRight.GetDestX() );
+}
+
+int OptionsCursor::GetBarWidth()
+{
+	return m_sprLeft.GetZoomX() * m_sprLeft.GetUnzoomedWidth();
 }
 
 /*
