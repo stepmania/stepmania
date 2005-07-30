@@ -45,6 +45,11 @@ void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 		return;
 	}
 
+	/* If the range is empty, don't do anything.  Otherwise, an empty range will cause
+	 * hold notes to be split when they shouldn't be. */
+	if( rowBegin == rowEnd )
+		return;
+
 	iterator begin, end;
 	GetTapNoteRangeInclusive( iTrack, rowBegin, rowEnd, begin, end );
 
