@@ -80,8 +80,15 @@ Character.cpp Character.h \
 CodeDetector.cpp CodeDetector.h \
 Command.cpp Command.h \
 CommonMetrics.cpp CommonMetrics.h \
-Difficulty.cpp Difficulty.h EnumHelper.cpp EnumHelper.h Course.cpp Course.h \
-CourseUtil.cpp CourseUtil.h DateTime.cpp DateTime.h Font.cpp Font.h FontCharAliases.cpp FontCharAliases.h \
+Course.cpp Course.h \
+CourseLoaderCRS.cpp CourseLoaderCRS.h \
+CourseUtil.cpp CourseUtil.h \
+CourseWriterCRS.cpp CourseWriterCRS.h \
+DateTime.cpp DateTime.h \
+Difficulty.cpp Difficulty.h \
+EnumHelper.cpp EnumHelper.h \
+Font.cpp Font.h \
+FontCharAliases.cpp FontCharAliases.h \
 FontCharmaps.cpp FontCharmaps.h Game.cpp Game.h GameCommand.cpp GameCommand.h \
 GameConstantsAndTypes.cpp GameConstantsAndTypes.h \
 GameInput.cpp GameInput.h Grade.cpp Grade.h HighScore.cpp HighScore.h Inventory.cpp Inventory.h LuaFunctions.h \
