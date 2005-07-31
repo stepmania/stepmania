@@ -820,7 +820,8 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		int iNumSuccessful = 0;
 		
 		vector<CString> vsEditFiles;
-		GetDirListing( PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE)+EDIT_SUBDIR+"*.edit", vsEditFiles, false, true );
+		GetDirListing( PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE)+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
+		GetDirListing( PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE)+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
 		FOREACH_CONST( CString, vsEditFiles, i )
 		{
 			iNumAttempted++;
@@ -966,23 +967,42 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 			bTriedToCopy = true;
 
-			CString sFromDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_SUBDIR;
-			CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDITS_SUBDIR;
-
 			int iNumAttempted = 0;
 			int iNumSuccessful = 0;
 			int iNumOverwritten = 0;
 			
-			vector<CString> vsEditFiles;
-			GetDirListing( sFromDir+"*.edit", vsEditFiles, false, false );
-			FOREACH_CONST( CString, vsEditFiles, i )
 			{
-				iNumAttempted++;
-				if( DoesFileExist(sToDir+*i) )
-					iNumOverwritten++;
-				bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
-				if( bSuccess )
-					iNumSuccessful++;
+				CString sFromDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_STEPS_SUBDIR;
+				CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_STEPS_SUBDIR;
+
+				vector<CString> vsFiles;
+				GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
+				FOREACH_CONST( CString, vsFiles, i )
+				{
+					iNumAttempted++;
+					if( DoesFileExist(sToDir+*i) )
+						iNumOverwritten++;
+					bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
+					if( bSuccess )
+						iNumSuccessful++;
+				}
+			}
+			
+			{
+				CString sFromDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_COURSES_SUBDIR;
+				CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_COURSES_SUBDIR;
+
+				vector<CString> vsFiles;
+				GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
+				FOREACH_CONST( CString, vsFiles, i )
+				{
+					iNumAttempted++;
+					if( DoesFileExist(sToDir+*i) )
+						iNumOverwritten++;
+					bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
+					if( bSuccess )
+						iNumSuccessful++;
+				}
 			}
 			
 			MEMCARDMAN->UnmountCard(pn);
@@ -1008,23 +1028,42 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 			bTriedToCopy = true;
 
-			CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDITS_SUBDIR;
-			CString sToDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_SUBDIR;
-
 			int iNumAttempted = 0;
 			int iNumSuccessful = 0;
 			int iNumOverwritten = 0;
 			
-			vector<CString> vsEditFiles;
-			GetDirListing( sFromDir+"*.edit", vsEditFiles, false, false );
-			FOREACH_CONST( CString, vsEditFiles, i )
 			{
-				iNumAttempted++;
-				if( DoesFileExist(sToDir+*i) )
-					iNumOverwritten++;
-				bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
-				if( bSuccess )
-					iNumSuccessful++;
+				CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_STEPS_SUBDIR;
+				CString sToDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_STEPS_SUBDIR;
+
+				vector<CString> vsFiles;
+				GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
+				FOREACH_CONST( CString, vsFiles, i )
+				{
+					iNumAttempted++;
+					if( DoesFileExist(sToDir+*i) )
+						iNumOverwritten++;
+					bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
+					if( bSuccess )
+						iNumSuccessful++;
+				}
+			}
+			
+			{
+				CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_COURSES_SUBDIR;
+				CString sToDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_COURSES_SUBDIR;
+
+				vector<CString> vsFiles;
+				GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
+				FOREACH_CONST( CString, vsFiles, i )
+				{
+					iNumAttempted++;
+					if( DoesFileExist(sToDir+*i) )
+						iNumOverwritten++;
+					bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
+					if( bSuccess )
+						iNumSuccessful++;
+				}
 			}
 			
 			MEMCARDMAN->UnmountCard(pn);

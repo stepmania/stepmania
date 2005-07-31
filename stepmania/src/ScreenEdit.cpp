@@ -3038,7 +3038,7 @@ void ScreenEdit::SetupCourseAttacks()
 
 	if( GAMESTATE->m_pCurCourse )
 	{
-		GAMESTATE->m_pCurCourse->LoadFromCRSFile( GAMESTATE->m_pCurCourse->m_sPath );
+		GAMESTATE->m_pCurCourse->RevertFromDisk();	// Remove this and have a separate reload key?
 
 		AttackArray Attacks;
 		for( unsigned e = 0; e < GAMESTATE->m_pCurCourse->m_vEntries.size(); ++e )

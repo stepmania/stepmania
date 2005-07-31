@@ -59,9 +59,9 @@ public:
 	RageColor GetSongColor( const Song* pSong );
 	RageColor GetDifficultyColor( Difficulty dc ) const;
 
-	CString GetCourseGroupBannerPath( CString sCourseGroup );
+	CString GetCourseGroupBannerPath( const CString &sCourseGroup );
 	void GetCourseGroupNames( CStringArray &AddTo );
-	bool DoesCourseGroupExist( CString sCourseGroup );
+	bool DoesCourseGroupExist( const CString &sCourseGroup );
 	RageColor GetCourseGroupColor( const CString &sCourseGroupName );
 	RageColor GetCourseColor( const Course* pCourse );
 	
@@ -104,6 +104,7 @@ public:
 	void SortSongs();				// sort m_pSongs
 
 	void UpdateRankingCourses();	// courses shown on the ranking screen
+	void RefreshCourseGroupInfo();
 
 	// Lua
 	void PushSelf( lua_State *L );
@@ -131,8 +132,11 @@ protected:
 	vector<Course*>		m_pCourses;
 	vector<Course*>		m_pBestCourses[NUM_PROFILE_SLOTS][NUM_CourseType];
 	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
-	CStringArray		m_sCourseGroupNames;
-	CStringArray		m_sCourseGroupBannerPaths; // each course group may have a banner associated with it
+	struct CourseGroupInfo
+	{
+		CString m_sBannerPath;
+	};
+	map<CString,CourseGroupInfo> m_mapCourseGroupToInfo;
 
 	RageTexturePreloader m_TexturePreload;
 
@@ -141,8 +145,6 @@ protected:
 	ThemeMetric<int>			NUM_COURSE_GROUP_COLORS;
 	ThemeMetric1D<RageColor>	COURSE_GROUP_COLOR;
 };
-
-static const CString EDIT_SUBDIR = "Edits/";
 
 extern SongManager*	SONGMAN;	// global and accessable from anywhere in our program
 

@@ -5,6 +5,7 @@
 #include "RageUtil_FileDB.h"
 #include "RageLog.h"
 #include "RageThreads.h"
+#include "Foreach.h"
 
 #include <cerrno>
 #if defined(LINUX)
@@ -872,6 +873,23 @@ void GetDirListingRecursive( const CString &sDir, const CString &sMatch, CString
 			i--;
 		}
 	}
+}
+
+bool DeleteRecursive( const CString &sDir )
+{
+	ASSERT( sDir.Right(1) == "/" );
+
+	vector<CString> vsFiles;
+	GetDirListing( sDir+"*", vsFiles, false, true );
+	FOREACH_CONST( CString, vsFiles, s )
+	{
+		if( IsADirectory(*s) )
+			DeleteRecursive( *s );
+		else
+			FILEMAN->Remove( *s );
+	}
+
+	return FILEMAN->Remove( sDir );
 }
 
 void FlushDirCache()

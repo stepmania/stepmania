@@ -108,11 +108,10 @@ public:
 
 	bool		m_bIsAutogen;		// was this created by AutoGen?
 	CString		m_sPath;
-private:
+
 	CString		m_sMainTitle, m_sMainTitleTranslit;
 	CString		m_sSubTitle, m_sSubTitleTranslit;
 
-public:
 	bool HasBanner() const;
 
 	CString		m_sBannerPath;
@@ -164,10 +163,8 @@ public:
 
 	bool ShowInDemonstrationAndRanking() const;
 
-	void LoadFromCRSFile( CString sPath );
 	void RevertFromDisk();
 	void Init();
-	void Save( CString sPath = "", bool bSavingCache=false ); /* default is source file */
 	void AutogenEndlessFromGroup( CString sGroupName, Difficulty dc );
 	void AutogenNonstopFromGroup( CString sGroupName, Difficulty dc );
 	void AutogenOniFromArtist( CString sArtistName, CString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc );
@@ -196,7 +193,6 @@ public:
 	// Lua
 	void PushSelf( lua_State *L );
 
-private:
 	void CalculateRadarValues();
 
 	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;

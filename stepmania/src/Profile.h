@@ -43,7 +43,8 @@ extern const CString DONT_SHARE_SIG;
 // The file contains a signature of the STATS_XML's signature.
 extern const CString PUBLIC_KEY_FILE;
 extern const CString SCREENSHOTS_SUBDIR;
-extern const CString EDITS_SUBDIR;
+extern const CString EDIT_STEPS_SUBDIR;
+extern const CString EDIT_COURSES_SUBDIR;
 extern const CString LASTGOOD_SUBDIR;
 
 const unsigned int PROFILE_MAX_DISPLAY_NAME_LENGTH	= 12;

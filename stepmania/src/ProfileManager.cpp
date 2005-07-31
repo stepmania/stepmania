@@ -386,31 +386,8 @@ bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
 
 bool ProfileManager::DeleteLocalProfile( CString sProfileID )
 {
-	// delete all files in profile dir
 	CString sProfileDir = LocalProfileIdToDir( sProfileID );
-	CStringArray asFilesToDelete;
-	GetDirListing( sProfileDir + "*", asFilesToDelete, false, true );
-	for( unsigned i=0; i<asFilesToDelete.size(); i++ )
-		FILEMAN->Remove( asFilesToDelete[i] );
-
-	// delete edits
-	GetDirListing( sProfileDir + EDITS_SUBDIR + "*", asFilesToDelete, false, true );
-	for( unsigned i=0; i<asFilesToDelete.size(); i++ )
-		FILEMAN->Remove( asFilesToDelete[i] );
-
-	// delete lastgood
-	GetDirListing( sProfileDir + LASTGOOD_SUBDIR + "*", asFilesToDelete, false, true );
-	for( unsigned i=0; i<asFilesToDelete.size(); i++ )
-		FILEMAN->Remove( asFilesToDelete[i] );
-
-	// remove edits dir
-	FILEMAN->Remove( sProfileDir + "/" + EDITS_SUBDIR );
-
-	// remove lastgood dir
-	FILEMAN->Remove( sProfileDir + "/" + LASTGOOD_SUBDIR );
-
-	// remove profile dir
-	bool bResult = FILEMAN->Remove( sProfileDir );
+	bool bResult = DeleteRecursive( sProfileDir );
 
 	RefreshLocalProfilesFromDisk();
 	return bResult;

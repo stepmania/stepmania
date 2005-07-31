@@ -32,6 +32,8 @@
 #include "StatsManager.h"
 #include "Style.h"
 #include "BackgroundUtil.h"
+#include "Profile.h"
+#include "CourseLoaderCRS.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -39,7 +41,6 @@ const CString SONGS_DIR		= "Songs/";
 const CString COURSES_DIR	= "Courses/";
 
 const int MAX_EDITS_PER_PROFILE	= 200;
-const int MAX_EDIT_SIZE_BYTES	= 30*1024;	// 30KB
 
 static const ThemeMetric<RageColor> BEGINNER_COLOR		("SongManager","BeginnerColor");
 static const ThemeMetric<RageColor> EASY_COLOR			("SongManager","EasyColor");
@@ -386,34 +387,39 @@ RageColor SongManager::GetSongColor( const Song* pSong )
 	return GetSongGroupColor( pSong->m_sGroupName );
 }
 
-CString SongManager::GetCourseGroupBannerPath( CString sCourseGroup )
+CString SongManager::GetCourseGroupBannerPath( const CString &sCourseGroup )
 {
-	for( unsigned i = 0; i < m_sCourseGroupNames.size(); ++i )
+	map<CString, CourseGroupInfo>::const_iterator iter = m_mapCourseGroupToInfo.find( sCourseGroup );
+	if( iter == m_mapCourseGroupToInfo.end() )
 	{
-		if( sCourseGroup == m_sCourseGroupNames[i] ) 
-			return m_sCourseGroupBannerPaths[i];
+		ASSERT_M( 0, ssprintf("requested banner for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
+		return "";
 	}
-
-	ASSERT_M( 0, ssprintf("requested banner for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
-	return "";
+	else 
+	{
+		return iter->second.m_sBannerPath;
+	}
 }
 
 void SongManager::GetCourseGroupNames( CStringArray &AddTo )
 {
-	AddTo.insert(AddTo.end(), m_sCourseGroupNames.begin(), m_sCourseGroupNames.end() );
+	FOREACHM_CONST( CString, CourseGroupInfo, m_mapCourseGroupToInfo, iter )
+		AddTo.push_back( iter->first );
 }
 
-bool SongManager::DoesCourseGroupExist( CString sCourseGroup )
+bool SongManager::DoesCourseGroupExist( const CString &sCourseGroup )
 {
-	return find( m_sCourseGroupNames.begin(), m_sCourseGroupNames.end(), sCourseGroup ) != m_sCourseGroupNames.end();
+	return m_mapCourseGroupToInfo.find( sCourseGroup ) != m_mapCourseGroupToInfo.end();
 }
 
 RageColor SongManager::GetCourseGroupColor( const CString &sCourseGroup )
 {
-	for( unsigned i=0; i<m_sCourseGroupNames.size(); i++ )
+	int iIndex = 0;
+	FOREACHM_CONST( CString, CourseGroupInfo, m_mapCourseGroupToInfo, iter )
 	{
-		if( m_sCourseGroupNames[i] == sCourseGroup )
-			return SONG_GROUP_COLOR.GetValue( i%NUM_SONG_GROUP_COLORS );
+		if( iter->first == sCourseGroup )
+			return SONG_GROUP_COLOR.GetValue( iIndex%NUM_SONG_GROUP_COLORS );
+		iIndex++;
 	}
 	
 	ASSERT_M( 0, ssprintf("requested color for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
@@ -476,7 +482,7 @@ int SongManager::GetNumCourses() const
 
 int SongManager::GetNumCourseGroups() const
 {
-	return m_sCourseGroupNames.size();
+	return m_mapCourseGroupToInfo.size();
 }
 
 CString SongManager::ShortenGroupName( CString sLongGroupName )
@@ -524,7 +530,6 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 {
 	LOG->Trace( "Loading courses." );
 
-	m_sCourseGroupNames.clear();
 
 	//
 	// Load courses from in Courses dir
@@ -535,7 +540,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 		for( unsigned i=0; i<saCourseFiles.size(); i++ )
 		{
 			Course* pCourse = new Course;
-			pCourse->LoadFromCRSFile( saCourseFiles[i] );
+			CourseLoaderCRS::LoadFromCRSFile( saCourseFiles[i], *pCourse );
 			m_pCourses.push_back( pCourse );
 
 			if( ld )
@@ -545,24 +550,18 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 					Basename(saCourseFiles[i]).c_str()));
 				ld->Paint();
 			}
-
 		}
-		if( !saCourseFiles.empty() )
-			m_sCourseGroupNames.push_back( "" );
 	}
-
-	// TODO: Search for course group banners if any
-	FOREACH( CString, m_sCourseGroupNames, s )
-		m_sCourseGroupBannerPaths.push_back( "" );
 
 
 	// Find all group directories in Courses dir
 	{
-		GetDirListing( COURSES_DIR+"*", m_sCourseGroupNames, true );
-		StripCvs( m_sCourseGroupNames );
-		SortCStringArray( m_sCourseGroupNames );
+		vector<CString> vsCourseGroupNames;
+		GetDirListing( COURSES_DIR+"*", vsCourseGroupNames, true );
+		StripCvs( vsCourseGroupNames );
+		SortCStringArray( vsCourseGroupNames );
 		
-		FOREACH( CString, m_sCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
+		FOREACH( CString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
 		{
 			// Find all CRS files in this group directory
 			CStringArray vsCoursePaths;
@@ -580,11 +579,13 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 				}
 
 				Course* pCourse = new Course;
-				pCourse->LoadFromCRSFile( *sCoursePath );
+				CourseLoaderCRS::LoadFromCRSFile( *sCoursePath, *pCourse );
 				m_pCourses.push_back( pCourse );
 			}
 		}
 	}
+
+	RefreshCourseGroupInfo();
 }
 	
 void SongManager::InitAutogenCourses()
@@ -679,7 +680,7 @@ void SongManager::FreeCourses()
 			m_pBestCourses[i][ct].clear();
 	m_pShuffledCourses.clear();
 
-	m_sCourseGroupNames.clear();
+	m_mapCourseGroupToInfo.clear();
 }
 
 void SongManager::AddCourse( Course *pCourse )
@@ -687,6 +688,7 @@ void SongManager::AddCourse( Course *pCourse )
 	m_pCourses.push_back( pCourse );
 	UpdateBest();
 	UpdateShuffled();
+	m_mapCourseGroupToInfo[ pCourse->m_sGroupName ];	// insert
 }
 
 void SongManager::DeleteCourse( Course *pCourse )
@@ -696,6 +698,7 @@ void SongManager::DeleteCourse( Course *pCourse )
 	m_pCourses.erase( iter );
 	UpdateBest();
 	UpdateShuffled();
+	RefreshCourseGroupInfo();
 }
 
 /* Called periodically to wipe out cached NoteData.  This is called when we change
@@ -927,7 +930,7 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 		return false;
 
 	Course course;
-	course.LoadFromCRSFile( sCoursePath );
+	CourseLoaderCRS::LoadFromCRSFile( sCoursePath, course );
 	if( course.GetEstimatedNumStages() <= 0 ) return false;
 
 	Trail *pTrail = course.GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType );
@@ -1259,31 +1262,61 @@ void SongManager::UpdateRankingCourses()
 	}
 }
 
+void SongManager::RefreshCourseGroupInfo()
+{
+	m_mapCourseGroupToInfo.clear();
+
+	FOREACH_CONST( Course*, m_pCourses, c )
+	{
+		m_mapCourseGroupToInfo[(*c)->m_sGroupName];	// insert
+	}
+
+	// TODO: Search for course group banners
+	FOREACHM( CString, CourseGroupInfo, m_mapCourseGroupToInfo, iter )
+	{
+	}
+}
+
 void SongManager::LoadAllFromProfileDir( const CString &sProfileDir, ProfileSlot slot )
 {
-	//
-	// Load all .edit files.
-	//
-	CString sEditsDir = sProfileDir + EDIT_SUBDIR;
-
-	CStringArray asEditsFilesWithPath;
-	GetDirListing( sEditsDir+"*.edit", asEditsFilesWithPath, false, true );
-
-	int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
-	int size = min( (int) asEditsFilesWithPath.size(), MAX_EDITS_PER_PROFILE - iNumEditsLoaded );
-
-	for( int i=0; i<size; i++ )
 	{
-		CString fn = asEditsFilesWithPath[i];
+		//
+		// Load all edit steps
+		//
+		CString sDir = sProfileDir + EDIT_STEPS_SUBDIR;
 
-		int iBytes = FILEMAN->GetFileSizeInBytes( fn );
-		if( iBytes > MAX_EDIT_SIZE_BYTES )
+		CStringArray vsFiles;
+		GetDirListing( sDir+"*.edit", vsFiles, false, true );
+
+		int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
+		int size = min( (int) vsFiles.size(), MAX_EDITS_PER_PROFILE - iNumEditsLoaded );
+
+		for( int i=0; i<size; i++ )
 		{
-			LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
-			continue;
-		}
+			CString fn = vsFiles[i];
 
-		SMLoader::LoadEdit( fn, slot );
+			SMLoader::LoadEdit( fn, slot );
+		}
+	}
+
+	{
+		//
+		// Load all edit courses
+		//
+		CString sDir = sProfileDir + EDIT_COURSES_SUBDIR;
+
+		CStringArray vsFiles;
+		GetDirListing( sDir+"*.crs", vsFiles, false, true );
+
+		int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
+		int size = min( (int) vsFiles.size(), MAX_EDITS_PER_PROFILE - iNumEditsLoaded );
+
+		for( int i=0; i<size; i++ )
+		{
+			CString fn = vsFiles[i];
+
+			CourseLoaderCRS::LoadEdit( fn, slot );
+		}
 	}
 }
 
@@ -1308,10 +1341,13 @@ int SongManager::GetNumEditsLoadedFromProfile( ProfileSlot slot ) const
 
 void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 {
-	for( unsigned s=0; s<m_pSongs.size(); s++ )
+	FOREACH( Song*, m_pSongs, s )
+		(*s)->FreeAllLoadedFromProfile( slot );
+
+	FOREACH( Course*, m_pCourses, c )
 	{
-		Song* pSong = m_pSongs[s];
-		pSong->FreeAllLoadedFromProfile( slot );
+		if( (*c)->m_LoadedFromProfile == slot )
+			this->DeleteCourse( *c );
 	}
 
 	// After freeing some Steps pointers, the cache will be invalid.

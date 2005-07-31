@@ -12,7 +12,7 @@
 #include "song.h"
 #include "Steps.h"
 
-#define MAX_EDIT_SIZE_BYTES  20*1024	// 20 KB
+const int MAX_EDIT_STEPS_SIZE_BYTES		= 30*1024;	// 30KB
 
 void SMLoader::LoadFromSMTokens( 
 	CString sStepsType, 
@@ -464,10 +464,10 @@ bool SMLoader::LoadFromDir( CString sPath, Song &out )
 
 bool SMLoader::LoadEdit( CString sEditFilePath, ProfileSlot slot )
 {
-	LOG->Trace( "Song::LoadEdit(%s)", sEditFilePath.c_str() );
+	LOG->Trace( "SMLoader::LoadEdit(%s)", sEditFilePath.c_str() );
 
 	int iBytes = FILEMAN->GetFileSizeInBytes( sEditFilePath );
-	if( iBytes > MAX_EDIT_SIZE_BYTES )
+	if( iBytes > MAX_EDIT_STEPS_SIZE_BYTES )
 	{
 		LOG->Warn( "The edit '%s' is unreasonably large.  It won't be loaded.", sEditFilePath.c_str() );
 		return false;

@@ -26,9 +26,6 @@
 #include "GameState.h"
 #include "Character.h"
 
-//
-// Old file versions for backward compatibility
-//
 const CString STATS_XSL            = "Stats.xsl";
 const CString COMMON_XSL           = "Common.xsl";
 const CString STATS_XML            = "Stats.xml";
@@ -36,7 +33,8 @@ const CString EDITABLE_INI         = "Editable.ini";
 const CString DONT_SHARE_SIG       = "DontShare.sig";
 const CString PUBLIC_KEY_FILE      = "public.key";
 const CString SCREENSHOTS_SUBDIR   = "Screenshots/";
-const CString EDITS_SUBDIR         = "Edits/";
+const CString EDIT_STEPS_SUBDIR    = "Edits/";
+const CString EDIT_COURSES_SUBDIR  = "EditCourses/";
 const CString LASTGOOD_SUBDIR      = "LastGood/";
 
 #define GUID_SIZE_BYTES 8
@@ -834,7 +832,8 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 	SaveStatsWebPageToDir( sDir );
 
 	// Empty directories if none exist.
-	FILEMAN->CreateDir( sDir + EDITS_SUBDIR );
+	FILEMAN->CreateDir( sDir + EDIT_STEPS_SUBDIR );
+	FILEMAN->CreateDir( sDir + EDIT_COURSES_SUBDIR );
 	FILEMAN->CreateDir( sDir + SCREENSHOTS_SUBDIR );
 
 	return bSaved;
