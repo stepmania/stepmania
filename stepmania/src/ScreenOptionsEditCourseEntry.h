@@ -1,11 +1,11 @@
 #ifndef ScreenOptionsEditCourseEntry_H
 #define ScreenOptionsEditCourseEntry_H
 
-#include "ScreenOptions.h"
+#include "ScreenOptionsManageCourses.h"
 #include "Course.h"
 class Song;
 
-class ScreenOptionsEditCourseEntry : public ScreenOptions
+class ScreenOptionsEditCourseEntry : public ScreenOptionsEditCourseSubMenu
 {
 public:
 	ScreenOptionsEditCourseEntry( CString sName );

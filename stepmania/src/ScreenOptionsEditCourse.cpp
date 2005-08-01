@@ -12,10 +12,8 @@
 
 enum EditCourseRow
 {
-	ROW_REPEAT,
-	ROW_RANDOMIZE,
-	ROW_LIVES,
-	ROW_METER,
+	EditCourseRow_Type,
+	EditCourseRow_Meter,
 	NUM_EditCourseRow
 };
 
@@ -41,7 +39,7 @@ static MenuDef g_TempMenu(
 );
 
 REGISTER_SCREEN_CLASS( ScreenOptionsEditCourse );
-ScreenOptionsEditCourse::ScreenOptionsEditCourse( CString sName ) : ScreenOptions( sName )
+ScreenOptionsEditCourse::ScreenOptionsEditCourse( CString sName ) : ScreenOptionsEditCourseSubMenu( sName )
 {
 	LOG->Trace( "ScreenOptionsEditCourse::ScreenOptionsEditCourse()" );
 }
@@ -62,31 +60,19 @@ void ScreenOptionsEditCourse::Init()
 
 	OptionRowDefinition def;
 	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-	
-	def.m_sName = "Repeat";
-	def.m_vsChoices.clear();
-	def.m_vsChoices.push_back( "NO" );
-	def.m_vsChoices.push_back( "YES" );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
+	def.m_bExportOnChange = true;
 
-	def.m_sName = "Randomize";
-	def.m_vsChoices.clear();
-	def.m_vsChoices.push_back( "NO" );
-	def.m_vsChoices.push_back( "YES" );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
 
-	def.m_sName = "Lives";
+	def.m_sName = "Type";
 	def.m_vsChoices.clear();
-	def.m_vsChoices.push_back( "Use Bar Life" );
-	for( int i=1; i<=10; i++ )
-		def.m_vsChoices.push_back( ssprintf("%d",i) );
+	FOREACH_CourseType( i )
+		def.m_vsChoices.push_back( CourseTypeToThemedString(i) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
 	def.m_sName = "Meter";
 	def.m_vsChoices.clear();
+	def.m_vsChoices.push_back( "Auto" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
 		def.m_vsChoices.push_back( ssprintf("%d",i) );
 	vDefs.push_back( def );
@@ -95,10 +81,9 @@ void ScreenOptionsEditCourse::Init()
 	FOREACH_CONST( CourseEntry, pCourse->m_vEntries, ce )
 	{
 		int iEntryIndex = ce - pCourse->m_vEntries.begin();
-		CourseEntry &ce = pCourse->m_vEntries[iEntryIndex];
 		def.m_sName = ssprintf( "Entry %d", iEntryIndex+1 );
 		def.m_vsChoices.clear();
-		def.m_vsChoices.push_back( ce.GetTextDescription() );
+		def.m_vsChoices.push_back( ce->GetTextDescription() );
 		vDefs.push_back( def );
 		vHands.push_back( NULL );
 	}
@@ -128,7 +113,7 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_GoToNextScreen )
 	{
 		int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
-		if( iCurRow == m_pRows.size() - 1 )
+		if( iCurRow == (int)m_pRows.size() - 1 )
 		{
 			this->HandleScreenMessage( SM_GoToPrevScreen );
 			return;	// don't call base
@@ -161,6 +146,12 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case CourseEntryAction_Delete:
 				{
+					if( pCourse->m_vEntries.size() == 1 )
+					{
+						CString sError = "You cannot delete the last entry in a course.";
+						ScreenPrompt::Prompt( SM_None, sError );
+						return;
+					}
 					pCourse->m_vEntries.erase( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus() );
 					GAMESTATE->m_iEditCourseEntryIndex.Set( GAMESTATE->m_iEditCourseEntryIndex );
 					SCREENMAN->SetNewScreen( this->m_sName ); // reload
@@ -181,40 +172,79 @@ void ScreenOptionsEditCourse::AfterChangeRow( PlayerNumber pn )
 	GAMESTATE->m_iEditCourseEntryIndex.Set( iCourseEntry );
 }
 
+void ScreenOptionsEditCourse::AfterChangeValueInRow( int iRow, PlayerNumber pn )
+{
+	ScreenOptions::AfterChangeValueInRow( iRow, pn );
+	
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+	
+	// Regemerate Trails so that the new values propagate
+	GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
+	Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_stEdit, GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] );
+
+	// cause overlay elements to refresh by changing the course
+	GAMESTATE->m_pCurCourse.Set( pCourse );
+	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
+}
+
 void ScreenOptionsEditCourse::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
+	OptionRow &row = *m_pRows[iRow];
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+
 	switch( iRow )
 	{
-	case ROW_REPEAT:
-		//row.SetChoiceInRowWithFocusShared( iEntryIndex );
+	case EditCourseRow_Type:
+		row.SetOneSharedSelection( pCourse->GetCourseType() );
 		break;
-	case ROW_RANDOMIZE:
-		//row.SetChoiceInRowWithFocusShared( iEntryIndex );
-		break;
-	case ROW_LIVES:
-		//row.SetChoiceInRowWithFocusShared( iEntryIndex );
-		break;
-	case ROW_METER:
+	case EditCourseRow_Meter:
+		{
+			int iMeter = pCourse->m_iCustomMeter[DIFFICULTY_MEDIUM];
+			if( iMeter == -1 )
+				row.SetOneSharedSelection( 0 );
+			else
+				row.SetOneSharedSelection( iMeter + 1 - MIN_METER );
+		}
 		break;
 	}
 }
 
 void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
+	OptionRow &row = *m_pRows[iRow];
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+	Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
 
+	switch( iRow )
+	{
+	case EditCourseRow_Type:
+		{
+			CourseType ct = (CourseType)row.GetOneSharedSelection();
+			pCourse->SetCourseType( ct );
+		}
+		break;
+	case EditCourseRow_Meter:
+		{
+			int iSel = row.GetOneSharedSelection();
+			if( iSel == 0 )	// "auto"
+				pCourse->m_iCustomMeter[DIFFICULTY_MEDIUM] = -1;
+			else
+				pCourse->m_iCustomMeter[DIFFICULTY_MEDIUM] = iSel - 1 + MIN_METER;
+		}
+		break;
+	}
 }
 
 void ScreenOptionsEditCourse::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
 {
 	int iCurRow = m_iCurrentRow[PLAYER_1];
-	OptionRow &row = *m_pRows[iCurRow];
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 
 	if( iCurRow < NUM_EditCourseRow )
 	{
 		// ignore
 	}
-	else if( iCurRow == m_pRows.size()-2 )	// "create entry"
+	else if( iCurRow == (int)m_pRows.size()-2 )	// "create entry"
 	{
 		if( pCourse->m_vEntries.size() >= MAX_ENTRIES_PER_COURSE )
 		{
@@ -226,7 +256,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( PlayerNumber pn, const InputEven
 		GAMESTATE->m_iEditCourseEntryIndex.Set( pCourse->m_vEntries.size()-1 );
 		SCREENMAN->SetNewScreen( this->m_sName ); // reload
 	}
-	else if( iCurRow == m_pRows.size()-1 )	// "done"
+	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
 	{
 		this->BeginFadingOut();
 	}
@@ -241,7 +271,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( PlayerNumber pn, const InputEven
 
 		int iWidth, iX, iY;
 		this->GetWidthXY( PLAYER_1, iCurRow, 0, iWidth, iX, iY );
-		ScreenMiniMenu::MiniMenu( &g_TempMenu, SM_BackFromContextMenu, SM_BackFromContextMenu, iX, iY );
+		ScreenMiniMenu::MiniMenu( &g_TempMenu, SM_BackFromContextMenu, SM_BackFromContextMenu, (float)iX, (float)iY );
 	}
 
 }
@@ -251,7 +281,7 @@ int ScreenOptionsEditCourse::GetCourseEntryIndexWithFocus() const
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 	if( iCurRow < NUM_EditCourseRow )	// not a CourseEntry
 		return -1;
-	else if( iCurRow == m_pRows.size() - 1 )	// "done"
+	else if( iCurRow == (int)m_pRows.size() - 1 )	// "done"
 		return -1;
 	else
 		return iCurRow - NUM_EditCourseRow;

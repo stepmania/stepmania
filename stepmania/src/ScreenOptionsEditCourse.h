@@ -1,10 +1,10 @@
 #ifndef ScreenOptionsEditCourse_H
 #define ScreenOptionsEditCourse_H
 
-#include "ScreenOptions.h"
+#include "ScreenOptionsManageCourses.h"
 #include "Course.h"
 
-class ScreenOptionsEditCourse : public ScreenOptions
+class ScreenOptionsEditCourse : public ScreenOptionsEditCourseSubMenu
 {
 public:
 	ScreenOptionsEditCourse( CString sName );
@@ -19,6 +19,7 @@ protected:
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	
 	virtual void AfterChangeRow( PlayerNumber pn );
+	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );
 	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
 
 	int GetCourseEntryIndexWithFocus() const;

@@ -46,7 +46,7 @@ static void FillSongsAndChoices( const CString &sSongGroup, vector<Song*> &vpSon
 
 
 REGISTER_SCREEN_CLASS( ScreenOptionsEditCourseEntry );
-ScreenOptionsEditCourseEntry::ScreenOptionsEditCourseEntry( CString sName ) : ScreenOptions( sName )
+ScreenOptionsEditCourseEntry::ScreenOptionsEditCourseEntry( CString sName ) : ScreenOptionsEditCourseSubMenu( sName )
 {
 	LOG->Trace( "ScreenOptionsEditCourseEntry::ScreenOptionsEditCourseEntry()" );
 }
@@ -67,6 +67,7 @@ void ScreenOptionsEditCourseEntry::Init()
 
 	OptionRowDefinition def;
 	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	def.m_bExportOnChange = true;
 	
 	def.m_sName = "Song Group";
 	def.m_vsChoices.clear();
@@ -154,7 +155,7 @@ void ScreenOptionsEditCourseEntry::HandleScreenMessage( const ScreenMessage SM )
 			break;
 		case ROW_SET_MODS:
 			{
-				Trail *pTrail = pCourse->GetTrail( STEPS_TYPE_DANCE_SINGLE );
+				Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
 				TrailEntry *pTrailEntry = &pTrail->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 				Song *pSong = pTrailEntry->pSong;
 				Steps *pSteps = pTrailEntry->pSteps;
@@ -191,6 +192,8 @@ void ScreenOptionsEditCourseEntry::AfterChangeValueInRow( int iRow, PlayerNumber
 	ScreenOptions::AfterChangeValueInRow( iRow, pn );
 
 	Course *pCourse = GAMESTATE->m_pCurCourse;
+	GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
+	Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_stEdit, GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] );
 	int iEntryIndex = GAMESTATE->m_iEditCourseEntryIndex;
 	ASSERT( iEntryIndex >= 0 && iEntryIndex < pCourse->m_vEntries.size() );
 	CourseEntry &ce = pCourse->m_vEntries[ iEntryIndex ];
@@ -223,6 +226,12 @@ void ScreenOptionsEditCourseEntry::AfterChangeValueInRow( int iRow, PlayerNumber
 		}
 		break;
 	}
+
+
+	// cause overlay elements to refresh by changing the course
+	GAMESTATE->m_pCurCourse.Set( pCourse );
+	GAMESTATE->m_pCurTrail[PLAYER_1].Set( pTrail );
+
 }
 
 void ScreenOptionsEditCourseEntry::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
@@ -325,17 +334,22 @@ void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerN
 		{
 			OptionRow &row = *m_pRows[ROW_SONG];
 			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			if( iChoice == 0 )
-				ce.pSong = NULL;
-			else
-				ce.pSong = m_vpDisplayedSongs[iChoice-1];
+			ce.pSong = m_vpDisplayedSongs[iChoice];
 		}
 		break;
 	case ROW_BASE_DIFFICULTY:
 		{
 			OptionRow &row = *m_pRows[ROW_BASE_DIFFICULTY];
 			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			ce.baseDifficulty = DIFFICULTIES_TO_SHOW.GetValue()[iChoice];
+			if( iChoice == 0 )
+			{
+				ce.baseDifficulty = DIFFICULTY_INVALID;
+			}
+			else
+			{
+				Difficulty d = DIFFICULTIES_TO_SHOW.GetValue()[iChoice-1];
+				ce.baseDifficulty = d;
+			}
 		}
 		break;
 	case ROW_LOW_METER:

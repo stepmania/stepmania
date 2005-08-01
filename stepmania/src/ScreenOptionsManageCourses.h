@@ -5,7 +5,16 @@
 
 class Course;
 
-class ScreenOptionsManageCourses : public ScreenOptions
+class ScreenOptionsEditCourseSubMenu : public ScreenOptions
+{
+public:
+	ScreenOptionsEditCourseSubMenu( CString sName );
+
+protected:
+	virtual void MenuSelect( PlayerNumber pn, const InputEventType type );
+};
+
+class ScreenOptionsManageCourses : public ScreenOptionsEditCourseSubMenu
 {
 public:
 	ScreenOptionsManageCourses( CString sName );
@@ -25,6 +34,8 @@ protected:
 	Course *GetCourseWithFocus() const;
 
 	vector<Course*> m_vpCourses;
+
+	ThemeMetricEnum<EditMode> EDIT_MODE;
 };
 
 #endif
