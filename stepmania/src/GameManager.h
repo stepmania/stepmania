@@ -5,6 +5,7 @@
 
 class Style;
 class Game;
+struct lua_State;
 
 #include "GameConstantsAndTypes.h"
 #include "GameInput.h"
@@ -36,6 +37,9 @@ public:
 	const Style* GameAndStringToStyle( const Game* pGame, CString sStyle );
 	static CString StyleToThemedString( const Style* s );
 	CString GetMenuButtonSecondaryFunction( const Game *pGame, GameButton gb ) const;
+
+	// Lua
+	void PushSelf( lua_State *L );
 };
 
 extern GameManager*	GAMEMAN;	// global and accessable from anywhere in our program

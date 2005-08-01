@@ -160,7 +160,7 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY,		 	// DANCE_BUTTON_UPLEFT,
 				NO_DEFAULT_KEY,			// DANCE_BUTTON_UPRIGHT,
 				KEY_ENTER,			// DANCE_BUTTON_START,
-				NO_DEFAULT_KEY,		 	// DANCE_BUTTON_SELECT,
+				KEY_BACKSLASH,		 	// DANCE_BUTTON_SELECT,
 				KEY_ESC,			// DANCE_BUTTON_BACK
 				KEY_DEL,			// DANCE_BUTTON_MENULEFT
 				KEY_PGDN,			// DANCE_BUTTON_MENURIGHT
@@ -245,7 +245,7 @@ Game g_Games[NUM_GAMES] =
 				KEY_Cz,					// PUMP_BUTTON_DOWNLEFT,
 				KEY_Cc,  				// PUMP_BUTTON_DOWNRIGHT,
 				KEY_ENTER,			// PUMP_BUTTON_START,
-				NO_DEFAULT_KEY,		 	// PUMP_BUTTON_SELECT,
+				KEY_BACKSLASH,		 	// PUMP_BUTTON_SELECT,
 				KEY_ESC,			// PUMP_BUTTON_BACK,
 				KEY_LEFT,				// PUMP_BUTTON_MENULEFT
 				KEY_RIGHT,				// PUMP_BUTTON_MENURIGHT
@@ -333,7 +333,7 @@ Game g_Games[NUM_GAMES] =
 				KEY_Cs,					// EZ2_BUTTON_HANDLRLEFT,
 				KEY_Cf,  				// EZ2_BUTTON_HANDLRRIGHT,
 				KEY_ENTER,			// EZ2_BUTTON_START,
-				NO_DEFAULT_KEY,		 	// EZ2_BUTTON_SELECT,
+				KEY_BACKSLASH,		 	// EZ2_BUTTON_SELECT,
 				KEY_ESC,			// EZ2_BUTTON_BACK,
 				KEY_LEFT,				// EZ2_BUTTON_MENULEFT
 				KEY_RIGHT,				// EZ2_BUTTON_MENURIGHT
@@ -419,7 +419,7 @@ Game g_Games[NUM_GAMES] =
 				KEY_Cv,							// PARA_BUTTON_UPRIGHT,
 				KEY_Cb,							// PARA_BUTTON_RIGHT,
 				KEY_ENTER,					// PARA_BUTTON_START,
-				NO_DEFAULT_KEY,		 			// PARA_BUTTON_SELECT,
+				KEY_BACKSLASH,		 			// PARA_BUTTON_SELECT,
 				KEY_ESC,					// PARA_BUTTON_BACK
 				KEY_LEFT, //no default key		// PARA_BUTTON_MENULEFT
 				KEY_RIGHT, //no default key	// PARA_BUTTON_MENURIGHT
@@ -509,7 +509,7 @@ Game g_Games[NUM_GAMES] =
 				KEY_Cc,							// DS3DDX_BUTTON_FOOTDOWNRIGHT,
 				KEY_Cd,							// DS3DDX_BUTTON_HANDRIGHT,
 				KEY_ENTER,						// DS3DDX_BUTTON_START,
-				NO_DEFAULT_KEY,		 			// DS3DDX_BUTTON_SELECT,
+				KEY_BACKSLASH,		 			// DS3DDX_BUTTON_SELECT,
 				KEY_ESC,						// DS3DDX_BUTTON_BACK
 				KEY_LEFT, //no default key		// DS3DDX_BUTTON_MENULEFT
 				KEY_RIGHT, //no default key		// DS3DDX_BUTTON_MENURIGHT
@@ -604,7 +604,7 @@ Game g_Games[NUM_GAMES] =
 				KEY_LSHIFT,			// BM_BUTTON_SCRATCHUP,
 				NO_DEFAULT_KEY,		// BM_BUTTON_SCRATCHDOWN,
 				KEY_ENTER,			// BM_BUTTON_START,
-				NO_DEFAULT_KEY,		// BM_BUTTON_SELECT,
+				KEY_BACKSLASH,		// BM_BUTTON_SELECT,
 				KEY_ESC,			// BM_BUTTON_BACK,
 				KEY_LEFT,			// BM_BUTTON_MENULEFT
 				KEY_RIGHT,			// BM_BUTTON_MENURIGHT
@@ -690,7 +690,7 @@ Game g_Games[NUM_GAMES] =
 				KEY_Cz,				// MANIAX_BUTTON_HANDLRLEFT,
 				KEY_Cx,				// MANIAX_BUTTON_HANDLRRIGHT,
 				KEY_ENTER,		// MANIAX_BUTTON_START,
-				NO_DEFAULT_KEY,		// MANIAX_BUTTON_SELECT,
+				KEY_BACKSLASH,		// MANIAX_BUTTON_SELECT,
 				KEY_ESC,		// MANIAX_BUTTON_BACK
 				KEY_LEFT,			// MANIAX_BUTTON_MENULEFT
 				KEY_RIGHT,			// MANIAX_BUTTON_MENURIGHT
@@ -781,7 +781,7 @@ Game g_Games[NUM_GAMES] =
 				KEY_Cz,				// TECHNO_BUTTON_DOWNLEFT,
 				KEY_Cc,				// TECHNO_BUTTON_DOWNRIGHT,
 				KEY_ENTER,		// TECHNO_BUTTON_START,
-				NO_DEFAULT_KEY,		// TECHNO_BUTTON_SELECT,
+				KEY_BACKSLASH,		// TECHNO_BUTTON_SELECT,
 				KEY_ESC,		// TECHNO_BUTTON_BACK
 				KEY_LEFT,			// TECHNO_BUTTON_MENULEFT
 				KEY_RIGHT,			// TECHNO_BUTTON_MENURIGHT
@@ -877,7 +877,7 @@ Game g_Games[NUM_GAMES] =
 				KEY_Cg,			// PNM_BUTTON_RIGHT_YELLOW,
 				KEY_Cb,						// PNM_BUTTON_RIGHT_WHITE,
 				KEY_ENTER,				// PNM_BUTTON_MENUSTART
-				NO_DEFAULT_KEY,			// PNM_BUTTON_SELECT,
+				KEY_BACKSLASH,			// PNM_BUTTON_SELECT,
 				KEY_ESC,				// PNM_BUTTON_MENUBACK		
 				KEY_LEFT,			// PNM_BUTTON_MENULEFT,
 				KEY_RIGHT,						// PNM_BUTTON_MENURIGHT,
@@ -971,7 +971,7 @@ Game g_Games[NUM_GAMES] =
 				KEY_Cu,					// LIGHTS_BUTTON_BASS_LEFT,
 				KEY_Ci,					// LIGHTS_BUTTON_BASS_RIGHT,
 				KEY_ENTER,			// LIGHTS_BUTTON_START,
-				NO_DEFAULT_KEY,			// LIGHTS_BUTTON_SELECT,
+				KEY_BACKSLASH,			// LIGHTS_BUTTON_SELECT,
 				KEY_ESC,			// LIGHTS_BUTTON_BACK
 				KEY_DEL,			// LIGHTS_BUTTON_MENULEFT
 				KEY_PGDN,			// LIGHTS_BUTTON_MENURIGHT
@@ -2807,6 +2807,39 @@ CString GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameButt
 
 	return ""; // only used in gameplay
 }
+
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaGameManager: public Luna<GameManager>
+{
+public:
+	LunaGameManager() { LUA->Register( Register ); }
+
+	static int StepsTypeToThemedString( T* p, lua_State *L )	{ lua_pushstring(L, p->StepsTypeToThemedString((StepsType)IArg(1)) ); return 1; }
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( StepsTypeToThemedString )
+
+		Luna<T>::Register( L );
+
+		// Add global singleton if constructed already.  If it's not constructed yet,
+		// then we'll register it later when we reinit Lua just before 
+		// initializing the display.
+		if( GAMEMAN )
+		{
+			lua_pushstring(L, "GAMEMAN");
+			GAMEMAN->PushSelf( L );
+			lua_settable(L, LUA_GLOBALSINDEX);
+		}
+	}
+};
+
+LUA_REGISTER_CLASS( GameManager )
+// lua end
+
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
