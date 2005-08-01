@@ -28,7 +28,7 @@ struct TrailEntry
 	Steps*		pSteps;
 	CString		Modifiers;
 	AttackArray Attacks;
-	bool		bSecret;
+	bool		bSecret;	// show "???"
 
 	/* These represent the meter and difficulty used by the course to pick the
 	 * steps; if you want the real difficulty and meter, look at pSteps. */
