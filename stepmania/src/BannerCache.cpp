@@ -1,11 +1,11 @@
 #include "global.h"
 
+#include "BannerCache.h"
 #include "Foreach.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageSurface_Load.h"
-#include "BannerCache.h"
 #include "SongCacheIndex.h"
 #include "Sprite.h"
 #include "PrefsManager.h"
