@@ -26,6 +26,7 @@ public:
 	void LoadRoulette();
 	void LoadRandom();
 	void LoadFallback();
+	void LoadCourseFallback();
 
 	bool LoadFromCachedBanner( const CString &path );
 

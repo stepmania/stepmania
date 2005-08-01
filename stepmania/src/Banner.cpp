@@ -99,7 +99,7 @@ void Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
 {
 	if( pCourse == NULL )						LoadFallback();
 	else if( pCourse->m_sBannerPath != "" )		Load( pCourse->m_sBannerPath );
-	else										LoadFallback();
+	else										LoadCourseFallback();
 
 	m_bScrolling = false;
 }
@@ -138,6 +138,11 @@ void Banner::LoadTABreakFromCharacter( Character* pCharacter )
 void Banner::LoadFallback()
 {
 	Load( THEME->GetPathG("Common","fallback banner") );
+}
+
+void Banner::LoadCourseFallback()
+{
+	Load( THEME->GetPathG("Banner","course fallback") );
 }
 
 void Banner::LoadRoulette()

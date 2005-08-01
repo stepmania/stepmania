@@ -161,7 +161,11 @@ void FadingBanner::LoadFromSong( const Song* pSong )
 
 	/* Don't call HasBanner.  That'll do disk access and cause the music wheel
 	 * to skip. */
-	LoadFromCachedBanner( pSong->GetBannerPath() );
+	CString sPath = pSong->GetBannerPath();
+	if( sPath.empty() )
+		LoadFallback();
+	else
+		LoadFromCachedBanner( sPath );
 }
 
 void FadingBanner::LoadAllMusic()
@@ -192,7 +196,11 @@ void FadingBanner::LoadFromCourse( const Course* pCourse )
 
 	/* Don't call HasBanner.  That'll do disk access and cause the music wheel
 	 * to skip. */
-	LoadFromCachedBanner( pCourse->m_sBannerPath );
+	CString sPath = pCourse->m_sBannerPath;
+	if( sPath.empty() )
+		LoadCourseFallback();
+	else
+		LoadFromCachedBanner( sPath );
 }
 
 void FadingBanner::LoadRoulette()
@@ -211,6 +219,12 @@ void FadingBanner::LoadFallback()
 {
 	BeforeChange();
 	m_Banner[m_iIndexLatest].LoadFallback();
+}
+
+void FadingBanner::LoadCourseFallback()
+{
+	BeforeChange();
+	m_Banner[m_iIndexLatest].LoadCourseFallback();
 }
 
 
