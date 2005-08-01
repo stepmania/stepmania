@@ -22,6 +22,7 @@
 #include "UnlockManager.h"
 #include <limits.h>
 #include "CourseLoaderCRS.h"
+#include "LuaFunctions.h"
 
 
 static const CString CourseTypeNames[] = {
@@ -32,6 +33,9 @@ static const CString CourseTypeNames[] = {
 };
 XToString( CourseType, NUM_CourseType );
 XToThemedString( CourseType, NUM_CourseType );
+
+LuaFunction( CourseTypeToThemedString, CourseTypeToThemedString((CourseType) IArg(1)) );
+
 
 static const CString SongSortNames[] = {
 	"Randomize",
@@ -104,12 +108,37 @@ CourseType Course::GetCourseType() const
 		return COURSE_TYPE_ENDLESS;
 	if( m_iLives > 0 ) 
 		return COURSE_TYPE_ONI;
-	FOREACH_CONST( CourseEntry, m_vEntries, e )
-	{
-		if( e->fGainSeconds > 0 )
-			return COURSE_TYPE_SURVIVAL;
-	}
+	if( !m_vEntries.empty()  &&  m_vEntries[0].fGainSeconds > 0 )
+		return COURSE_TYPE_SURVIVAL;
 	return COURSE_TYPE_NONSTOP;
+}
+
+void Course::SetCourseType( CourseType ct )
+{
+	if( GetCourseType() == ct )
+		return;
+
+	m_bRepeat = false;
+	m_iLives = -1;
+	if( !m_vEntries.empty() )
+		m_vEntries[0].fGainSeconds = 0;
+	
+	switch( ct )
+	{
+	default:	ASSERT(0);
+	case COURSE_TYPE_NONSTOP:
+		break;		
+	case COURSE_TYPE_ONI:
+		m_iLives = 4;
+		break;		
+	case COURSE_TYPE_ENDLESS:
+		m_bRepeat = true;
+		break;		
+	case COURSE_TYPE_SURVIVAL:
+		if( !m_vEntries.empty() )
+			m_vEntries[0].fGainSeconds = 120;
+		break;		
+	}		
 }
 
 PlayMode Course::GetPlayMode() const
@@ -141,7 +170,7 @@ void Course::Init()
 {
 	m_bIsAutogen = false;
 	m_bRepeat = false;
-	m_bRandomize = false;
+	m_bShuffle = false;
 	m_iLives = -1;
 	m_bSortByMeter = false;
 	m_vEntries.clear();
@@ -164,7 +193,7 @@ void Course::AutogenEndlessFromGroup( CString sGroupName, Difficulty diff )
 {
 	m_bIsAutogen = true;
 	m_bRepeat = true;
-	m_bRandomize = true;
+	m_bShuffle = true;
 	m_iLives = -1;
 	FOREACH_Difficulty(dc)
 		m_iCustomMeter[dc] = -1;
@@ -213,7 +242,7 @@ void Course::AutogenOniFromArtist( CString sArtistName, CString sArtistNameTrans
 {
 	m_bIsAutogen = true;
 	m_bRepeat = false;
-	m_bRandomize = true;
+	m_bShuffle = true;
 	m_bSortByMeter = true;
 
 	m_iLives = 4;
@@ -342,6 +371,11 @@ Trail* Course::GetTrail( StepsType st, CourseDifficulty cd ) const
 		}
 	}
 
+	return GetTrailForceRegenCache( st, cd );
+}
+
+Trail* Course::GetTrailForceRegenCache( StepsType st, CourseDifficulty cd ) const
+{
 	//
 	// Construct a new Trail, add it to the cache, then return it.
 	//
@@ -428,7 +462,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	RandomGen rnd( GAMESTATE->m_iStageSeed + GetHashForString(m_sMainTitle) );
 
 	vector<CourseEntry> tmp_entries;
-	if( m_bRandomize )
+	if( m_bShuffle )
 	{
 		/* Always randomize the same way per round.  Otherwise, the displayed course
 		 * will change every time it's viewed, and the displayed order will have no
@@ -437,7 +471,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		random_shuffle( tmp_entries.begin(), tmp_entries.end(), rnd );
 	}
 
-	const vector<CourseEntry> &entries = m_bRandomize? tmp_entries:m_vEntries;
+	const vector<CourseEntry> &entries = m_bShuffle? tmp_entries:m_vEntries;
 
 	/* This can take some time, so don't fill it out unless we need it. */
 	vector<Song*> vSongsByMostPlayed;
@@ -572,12 +606,14 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 
 		// TODO: Move Course initialization after PROFILEMAN is created
+		bool bForceSecret = false;
 		switch( e->songSort )
 		{
 		default:
 			ASSERT(0);
 		case SongSort_Randomize:
 			random_shuffle( vpPossibleSongs.begin(), vpPossibleSongs.end(), rnd );
+			bForceSecret = vpPossibleSongs.size() > 1;
 			break;
 		case SongSort_MostPlays:
 			if( PROFILEMAN )
@@ -667,7 +703,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		te.pSteps = pResolvedSteps;
 		te.Modifiers = e->sModifiers;
 		te.Attacks = e->attacks;
-		te.bSecret = e->bSecret;
+		te.bSecret = e->bSecret || bForceSecret;
 		te.iLowMeter = iLowMeter;
 		te.iHighMeter = iHighMeter;
 
@@ -686,12 +722,12 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		trail.m_vEntries.push_back( te ); 
 	}
 
-	/* Hack: If any entry was non-FIXED, or m_bRandomize is set, then radar values
+	/* Hack: If any entry was non-FIXED, or m_bShuffle is set, then radar values
 	 * for this trail will be meaningless as they'll change every time.  Pre-cache
 	 * empty data.  XXX: How can we do this cleanly, without propagating lots of
-	 * otherwise unnecessary data (course entry types, m_bRandomize) to Trail, or
+	 * otherwise unnecessary data (course entry types, m_bShuffle) to Trail, or
 	 * storing a Course pointer in Trail (yuck)? */
-	if( !AllSongsAreFixed() || m_bRandomize )
+	if( !AllSongsAreFixed() || m_bShuffle )
 	{
 		trail.m_bRadarValuesCached = true;
 		trail.m_CachedRadarValues = RadarValues();
@@ -764,6 +800,7 @@ void Course::Invalidate( Song *pStaleSong )
 	// non-fixed entry.  So, regenerating the Trail will force different
 	// songs to be chosen.
 	FOREACH_StepsType( st )
+	{
 		FOREACH_ShownCourseDifficulty( cd )
 		{
 			TrailCache_t::iterator it = m_TrailCache.find( CacheEntry(st, cd) );
@@ -774,6 +811,7 @@ void Course::Invalidate( Song *pStaleSong )
 				if( GetTrail( st, cd )->ContainsSong( pStaleSong ) )
 					m_TrailCache.erase( it );
 		}
+	}
 }
 
 void Course::RegenerateNonFixedTrails()
@@ -973,6 +1011,7 @@ public:
 	static int GetDisplayFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDisplayFullTitle() ); return 1; }
 	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
 	static int HasMods( T* p, lua_State *L )				{ lua_pushboolean(L, p->HasMods() ); return 1; }
+	static int GetCourseType( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetCourseType() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -980,6 +1019,8 @@ public:
 		ADD_METHOD( GetDisplayFullTitle )
 		ADD_METHOD( GetTranslitFullTitle )
 		ADD_METHOD( HasMods )
+		ADD_METHOD( GetCourseType )
+
 		Luna<T>::Register( L );
 	}
 };

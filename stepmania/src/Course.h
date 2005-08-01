@@ -119,7 +119,7 @@ public:
 	CString		m_sGroupName;
 
 	bool		m_bRepeat;	// repeat after last song?  "Endless"
-	bool		m_bRandomize;	// play the songs in a random order
+	bool		m_bShuffle;	// play the songs in a random order
 	int			m_iLives;	// -1 means use bar life meter
 	int			m_iCustomMeter[NUM_DIFFICULTIES];	// -1 = no meter specified
 	bool		m_bSortByMeter;
@@ -141,6 +141,7 @@ public:
 
 	// Dereferences course_entries and returns only the playable Songs and Steps
 	Trail* GetTrail( StepsType st, CourseDifficulty cd=DIFFICULTY_MEDIUM ) const;
+	Trail* GetTrailForceRegenCache( StepsType st, CourseDifficulty cd=DIFFICULTY_MEDIUM ) const;
 	void GetTrails( vector<Trail*> &AddTo, StepsType st ) const;
 	void GetAllTrails( vector<Trail*> &AddTo ) const;
 	float GetMeter( StepsType st, CourseDifficulty cd=DIFFICULTY_MEDIUM ) const;
@@ -157,6 +158,7 @@ public:
 	bool IsOni() const { return GetPlayMode() == PLAY_MODE_ONI; }
 	bool IsEndless() const { return GetPlayMode() == PLAY_MODE_ENDLESS; }
 	CourseType GetCourseType() const;
+	void SetCourseType( CourseType ct );
 	PlayMode GetPlayMode() const;
 
 	bool IsFixed() const;
@@ -198,6 +200,7 @@ public:
 	bool GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 	bool GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) const;
 
+	bool IsAnEdit() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
 	ProfileSlot		m_LoadedFromProfile;	// PROFILE_SLOT_INVALID if wasn't loaded from a profile
 
 	typedef pair<StepsType,Difficulty> CacheEntry;
