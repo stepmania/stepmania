@@ -20,7 +20,6 @@ public:
 	void Load();
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
-	void SetFromTrailEntry( int iCourseEntryIndex, const TrailEntry *te[NUM_PLAYERS] );
 	void SetFromGameState( int iCourseEntryIndex );
 
 	// Lua

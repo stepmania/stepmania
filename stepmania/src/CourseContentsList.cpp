@@ -24,6 +24,9 @@ CourseContentsList::CourseContentsList()
 {
 	for( int i=0; i<MAX_ITEMS; i++ )
 		m_vpDisplay.push_back( new CourseEntryDisplay );
+
+	m_fTimeUntilScroll = 0;
+	m_fItemAtPosition0InList = 0;
 }
 
 CourseContentsList::~CourseContentsList()
@@ -69,18 +72,7 @@ void CourseContentsList::SetFromGameState()
 
 		this->AddChild( &d );
 
-		const TrailEntry* pte[NUM_PLAYERS];
-		ZERO( pte );
-
-		FOREACH_EnabledPlayer(pn)
-		{
-			Trail* pTrail = GAMESTATE->m_pCurTrail[pn];
-			if( pTrail == NULL )
-				continue;	// skip
-			if( unsigned(i) < pTrail->m_vEntries.size() )
-				pte[pn] = &pTrail->m_vEntries[i];
-		}
-		d.SetFromTrailEntry( (int)(truncf(m_fItemAtPosition0InList))+i+1, pte );
+		d.SetFromGameState( (int)(truncf(m_fItemAtPosition0InList))+i );
 	}
 
 	bool bLoop = pMasterTrail->m_vEntries.size() > uNumEntriesToShow;

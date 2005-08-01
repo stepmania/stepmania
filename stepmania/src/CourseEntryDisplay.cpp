@@ -88,8 +88,28 @@ void CourseEntryDisplay::SetDifficulty( PlayerNumber pn, const CString &text, Ra
 	m_textFoot[pn].SetDiffuse( c );
 }
 
-void CourseEntryDisplay::SetFromTrailEntry( int iCourseEntryIndex, const TrailEntry *tes[NUM_PLAYERS] )
+void CourseEntryDisplay::SetFromGameState( int iCourseEntryIndex )
 {
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+
+	const TrailEntry *tes[NUM_PLAYERS];
+	const CourseEntry *ces[NUM_PLAYERS];
+	FOREACH_PlayerNumber( p )
+	{
+		Trail *pTrail = GAMESTATE->m_pCurTrail[p];
+		if( pTrail  &&  iCourseEntryIndex < pTrail->m_vEntries.size() )
+		{
+			tes[p] = &pTrail->m_vEntries[iCourseEntryIndex];
+			ces[p] = &pCourse->m_vEntries[iCourseEntryIndex];
+		}
+		else
+		{
+			tes[p] = NULL;
+			ces[p] = NULL;
+		}
+	}
+
+
 	const TrailEntry *te = tes[GAMESTATE->m_MasterPlayerNumber];
 	if( te == NULL )
 		return;
@@ -99,16 +119,28 @@ void CourseEntryDisplay::SetFromTrailEntry( int iCourseEntryIndex, const TrailEn
 		FOREACH_EnabledPlayer(pn)
 		{
 			const TrailEntry *te = tes[pn];
-			if( te == NULL )
+			const CourseEntry *ce = ces[pn];
+			if( te == NULL || ce == NULL )
 				continue;
 
 			Difficulty dc = te->dc;
 			if( dc == DIFFICULTY_INVALID )
 			{
-				int iLow = te->iLowMeter;
-				int iHigh = te->iHighMeter;
+				int iLow = ce->iLowMeter;
+				int iHigh = ce->iHighMeter;
+
+				CString s;
+				if( iLow == -1  &&  iHigh != -1 )
+					s = ssprintf( "<=%d", iHigh );
+				else if( iLow != -1  &&  iHigh == -1 )
+					s = ssprintf( ">=%d", iLow );
+				else if( iLow != -1  &&  iHigh != -1 )
+					s = ssprintf( "%d-%d", iLow, iHigh );
+				else
+					s = "?";
+
 				RageColor colorNotes = SONGMAN->GetDifficultyColor( te->pSteps->GetDifficulty() );
-				SetDifficulty( pn, ssprintf(iLow==iHigh?"%d":"%d-%d", iLow, iHigh), colorNotes );
+				SetDifficulty( pn, s, colorNotes );
 			}
 			else
 			{
@@ -134,24 +166,9 @@ void CourseEntryDisplay::SetFromTrailEntry( int iCourseEntryIndex, const TrailEn
 		m_TextBanner.SetDiffuse( SONGMAN->GetSongColor( te->pSong ) );
 	}
 
-	m_textNumber.SetText( ssprintf("%d", iCourseEntryIndex) );
+	m_textNumber.SetText( ssprintf("%d", iCourseEntryIndex+1) );
 
 	m_textModifiers.SetText( te->Modifiers );
-}
-
-void CourseEntryDisplay::SetFromGameState( int iCourseEntryIndex )
-{
-	const TrailEntry *pTrailEntry[NUM_PLAYERS];
-	FOREACH_PlayerNumber( p )
-	{
-		Trail *pTrail = GAMESTATE->m_pCurTrail[p];
-		if( pTrail )
-			pTrailEntry[p] = &pTrail->m_vEntries[iCourseEntryIndex];
-		else
-			pTrailEntry[p] = NULL;
-	}
-
-	SetFromTrailEntry( iCourseEntryIndex, pTrailEntry );
 }
 
 
