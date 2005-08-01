@@ -1065,8 +1065,6 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 
 	UpdateText( iRow );
 
-	this->AfterChangeValueInRow( iRow, pn );
-
 	if( m_OptionsNavigation != NAV_THREE_KEY_MENU )
 		m_SoundChangeCol.Play();
 
@@ -1077,6 +1075,8 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 			vpns.push_back( p );
 		ExportOptions( iRow, vpns );
 	}
+
+	this->AfterChangeValueInRow( iRow, pn );
 }
 
 void ScreenOptions::AfterChangeValueInRow( int iRow, PlayerNumber pn ) 
