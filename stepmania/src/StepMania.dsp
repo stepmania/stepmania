@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                     	cl                                                             /Zl                                                             /nologo                                                             /c                                                             verstub.cpp                                                             /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                      	cl                                                              /Zl                                                              /nologo                                                              /c                                                              verstub.cpp                                                              /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc               	cl                /Zl                /nologo                /c                verstub.cpp                /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                	cl                 /Zl                 /nologo                 /c                 verstub.cpp                 /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -756,11 +756,27 @@ SOURCE=.\Course.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\CourseLoaderCRS.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CourseLoaderCRS.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\CourseUtil.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\CourseUtil.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\CourseWriterCRS.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\CourseWriterCRS.h
 # End Source File
 # Begin Source File
 
