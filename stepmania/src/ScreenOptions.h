@@ -74,12 +74,12 @@ protected:
 	virtual void AfterChangeRow( PlayerNumber pn );	// override this to detect when the row has changed
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );
 
-	void MenuLeft( PlayerNumber pn, const InputEventType type )		{ ChangeValueInRowRelative(m_iCurrentRow[pn],pn,-1,type != IET_FIRST_PRESS); }
-	void MenuRight( PlayerNumber pn, const InputEventType type )	{ ChangeValueInRowRelative(m_iCurrentRow[pn],pn,+1,type != IET_FIRST_PRESS); }
-	void MenuUp( PlayerNumber pn, const InputEventType type );
-	void MenuDown( PlayerNumber pn, const InputEventType type );
-	void MenuSelect( PlayerNumber pn, const InputEventType type );
-	void MenuUpDown( PlayerNumber pn, const InputEventType type, int iDir );	// iDir == -1 or iDir == +1
+	virtual void MenuLeft( PlayerNumber pn, const InputEventType type )		{ ChangeValueInRowRelative(m_iCurrentRow[pn],pn,-1,type != IET_FIRST_PRESS); }
+	virtual void MenuRight( PlayerNumber pn, const InputEventType type )	{ ChangeValueInRowRelative(m_iCurrentRow[pn],pn,+1,type != IET_FIRST_PRESS); }
+	virtual void MenuUp( PlayerNumber pn, const InputEventType type );
+	virtual void MenuDown( PlayerNumber pn, const InputEventType type );
+	virtual void MenuSelect( PlayerNumber pn, const InputEventType type );
+	virtual void MenuUpDown( PlayerNumber pn, const InputEventType type, int iDir );	// iDir == -1 or iDir == +1
 
 	/* Returns -1 if on a row with no OptionRowDefinition (eg. EXIT). */
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;
