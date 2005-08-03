@@ -203,6 +203,12 @@ void FadingBanner::LoadFromCourse( const Course* pCourse )
 		LoadFromCachedBanner( sPath );
 }
 
+void FadingBanner::LoadIconFromCharacter( Character* pCharacter )
+{
+	BeforeChange();
+	m_Banner[m_iIndexLatest].LoadIconFromCharacter( pCharacter );
+}
+
 void FadingBanner::LoadRoulette()
 {
 	BeforeChange();
@@ -249,12 +255,19 @@ public:
 		else { Course *pC = Luna<Course>::check(L,1); p->LoadFromCourse( pC ); }
 		return 0;
 	}
+	static int LoadIconFromCharacter( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( NULL ); }
+		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
+		return 0;
+	}
 
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( ScaleToClipped )
 		ADD_METHOD( LoadFromSong )
 		ADD_METHOD( LoadFromCourse )
+		ADD_METHOD( LoadIconFromCharacter )
 		Luna<T>::Register( L );
 	}
 };

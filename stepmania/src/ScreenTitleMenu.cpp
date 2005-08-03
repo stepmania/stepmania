@@ -14,8 +14,31 @@
 #include "RageTextureManager.h"
 #include "LightsManager.h"
 #include "Game.h"
+#include "InputMapper.h"
+#include "ProfileManager.h"
 
 #define COIN_MODE_CHANGE_SCREEN		THEME->GetMetric (m_sName,"CoinModeChangeScreen")
+
+static void ChangeDefaultLocalProfile( PlayerNumber pn, int iDir )
+{
+	CString sCurrent = PREFSMAN->GetDefaultLocalProfileID(pn);
+	vector<CString> vsProfileID;
+	PROFILEMAN->GetLocalProfileIDs( vsProfileID );
+	if( vsProfileID.empty() )
+		return;
+
+	int iIndex = 0;
+	vector<CString>::const_iterator iter = find( vsProfileID.begin(), vsProfileID.end(), sCurrent );
+	if( iter != vsProfileID.end() )
+	{
+		iIndex = iter - vsProfileID.begin();
+		iIndex += iDir;
+		wrap( iIndex, vsProfileID.size() );
+	}
+
+	sCurrent = vsProfileID[iIndex];
+	PREFSMAN->GetDefaultLocalProfileID(pn).Set( sCurrent );
+}
 
 
 REGISTER_SCREEN_CLASS( ScreenTitleMenu );
@@ -38,7 +61,11 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 
 void ScreenTitleMenu::Init()
 {
+	m_bSelectIsDown = false; // used by LoadHelpText which is called by ScreenWithMenuElements::Init()
+
 	ScreenSelectMaster::Init();
+
+	m_soundSelectPressed.Load( THEME->GetPathS(m_sName,"select down"), true );
 
 	this->SortByDrawOrder();
 
@@ -54,11 +81,11 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 {
 	LOG->Trace( "ScreenTitleMenu::Input( %d-%d )", DeviceI.device, DeviceI.button );	// debugging gameport joystick problem
 
+	if( m_In.IsTransitioning() || m_Cancel.IsTransitioning() ) /* not m_Out */
+		return;
+
 	if( type == IET_FIRST_PRESS )
 	{
-		if( m_In.IsTransitioning() || m_Cancel.IsTransitioning() ) /* not m_Out */
-			return;
-		
 		//
 		// detect codes
 		//
@@ -105,6 +132,37 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		}
 	}
 
+
+	if( MenuI.IsValid() )
+	{
+		LoadHelpText();
+
+		PlayerNumber pn = MenuI.player;
+
+		bool bSelectIsDown = false;
+		FOREACH_PlayerNumber( p )
+			bSelectIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_SELECT) );
+		if( bSelectIsDown )
+		{
+			if( type == IET_FIRST_PRESS )
+			{
+				switch( MenuI.button )
+				{
+				case MENU_BUTTON_LEFT:
+					ChangeDefaultLocalProfile( pn, -1 );
+					MESSAGEMAN->Broadcast( ssprintf("MenuLeftP%d",pn+1) );
+					break;
+				case MENU_BUTTON_RIGHT:
+					ChangeDefaultLocalProfile( pn, +1 );
+					MESSAGEMAN->Broadcast( ssprintf("MenuRightP%d",pn+1) );
+					break;
+				}
+			}
+			return;
+		}
+	}
+
+
 	ScreenSelectMaster::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
@@ -117,6 +175,32 @@ void ScreenTitleMenu::HandleMessage( const CString& sMessage )
 		SCREENMAN->SetNewScreen( COIN_MODE_CHANGE_SCREEN );
 	}
 }
+
+void ScreenTitleMenu::LoadHelpText()
+{
+	ScreenWithMenuElements::LoadHelpText();
+
+	bool bSelectIsDown = false;
+	FOREACH_PlayerNumber( p )
+		bSelectIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_SELECT) );
+
+	if( bSelectIsDown )
+		LOG->Trace( "bSelectIsDown" );
+
+	/* If m_soundSelectPressed isn't loaded yet, wait until it is before we do this. */
+	if( m_bSelectIsDown != bSelectIsDown && m_soundSelectPressed.IsLoaded() )
+	{
+		if( bSelectIsDown )
+			m_soundSelectPressed.Play();
+
+		m_bSelectIsDown = bSelectIsDown;
+		if( bSelectIsDown )
+			MESSAGEMAN->Broadcast( "SelectMenuOn" );
+		else
+			MESSAGEMAN->Broadcast( "SelectMenuOff" );
+	}
+}
+
 
 /*
  * (c) 2001-2004 Chris Danford

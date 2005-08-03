@@ -15,6 +15,13 @@ public:
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
 	virtual void HandleMessage( const CString& sMessage );
+
+protected:
+	virtual void LoadHelpText();
+
+	RageSound			m_soundSelectPressed;
+
+	bool m_bSelectIsDown;
 };
 
 #endif

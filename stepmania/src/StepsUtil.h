@@ -44,6 +44,8 @@ public:
 	CString ToString() const;
 	bool IsValid() const;
 	static void ClearCache();
+	
+	StepsType GetStepsType() const { return st; }
 };
 
 #endif

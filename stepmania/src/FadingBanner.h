@@ -23,6 +23,7 @@ public:
 	void LoadMode();
 	void LoadFromSongGroup( CString sSongGroup );
 	void LoadFromCourse( const Course* pCourse );
+	void LoadIconFromCharacter( Character* pCharacter );
 	void LoadRoulette();
 	void LoadRandom();
 	void LoadFallback();
