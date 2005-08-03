@@ -8,6 +8,7 @@
 class Course;
 class Profile;
 struct XNode;
+class CourseEntry;
 
 namespace CourseUtil
 {
@@ -22,6 +23,8 @@ namespace CourseUtil
 	void SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesInOut );
 
 	void MoveRandomToEnd( vector<Course*> &vpCoursesInOut );
+
+	void MakeDefaultEditCourseEntry( CourseEntry &out );
 };
 
 class CourseID

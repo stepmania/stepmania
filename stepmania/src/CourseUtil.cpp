@@ -9,6 +9,7 @@
 #include "GameState.h"
 #include "Style.h"
 #include "Foreach.h"
+#include "GameState.h"
 
 
 //
@@ -188,6 +189,11 @@ void CourseUtil::SortByMostRecentlyPlayedForMachine( vector<Course*> &vpCoursesI
 	course_sort_val.clear();
 }
 
+void CourseUtil::MakeDefaultEditCourseEntry( CourseEntry& out )
+{
+	out.pSong = GAMESTATE->GetDefaultSong();
+	out.baseDifficulty = DIFFICULTY_MEDIUM;
+}
 
 
 //////////////////////////////////

@@ -9,6 +9,7 @@
 #include "song.h"
 #include "ScreenMiniMenu.h"
 #include "ScreenPrompt.h"
+#include "CourseUtil.h"
 
 enum EditCourseRow
 {
@@ -140,7 +141,9 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 						ScreenPrompt::Prompt( SM_None, sError );
 						return;
 					}
-					pCourse->m_vEntries.insert( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus(), CourseEntry() );
+					CourseEntry ce;
+					CourseUtil::MakeDefaultEditCourseEntry( ce );
+					pCourse->m_vEntries.insert( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus(), ce );
 					SCREENMAN->SetNewScreen( this->m_sName ); // reload
 				}
 				break;
@@ -252,7 +255,9 @@ void ScreenOptionsEditCourse::ProcessMenuStart( PlayerNumber pn, const InputEven
 			ScreenPrompt::Prompt( SM_None, sError );
 			return;
 		}
-		pCourse->m_vEntries.push_back( CourseEntry() );
+		CourseEntry ce;
+		CourseUtil::MakeDefaultEditCourseEntry( ce );
+		pCourse->m_vEntries.push_back( ce );
 		GAMESTATE->m_iEditCourseEntryIndex.Set( pCourse->m_vEntries.size()-1 );
 		SCREENMAN->SetNewScreen( this->m_sName ); // reload
 	}

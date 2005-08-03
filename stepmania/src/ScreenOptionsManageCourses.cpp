@@ -10,6 +10,7 @@
 #include "ScreenMiniMenu.h"
 #include "GameManager.h"
 #include "Difficulty.h"
+#include "CourseUtil.h"
 
 static void RefreshTrail()
 {
@@ -82,7 +83,8 @@ void ScreenOptionsEditCourseSubMenu::MenuSelect( PlayerNumber pn, const InputEve
 
 
 
-AutoScreenMessage( SM_BackFromEnterName )
+AutoScreenMessage( SM_BackFromEnterNameForNew )
+AutoScreenMessage( SM_BackFromRename )
 AutoScreenMessage( SM_BackFromDeleteConfirm )
 AutoScreenMessage( SM_BackFromContextMenu )
 
@@ -104,6 +106,28 @@ XToString( CourseAction, NUM_CourseAction );
 static MenuDef g_TempMenu(
 	"ScreenMiniMenuContext"
 );
+
+
+static bool ValidateEditCourseName( const CString &sAnswer, CString &sErrorOut )
+{
+	if( sAnswer.empty() )
+		return false;
+
+	// Course name must be unique
+	vector<Course*> v;
+	SONGMAN->GetAllCourses( v, false );
+	FOREACH_CONST( Course*, v, c )
+	{
+		if( GAMESTATE->m_pCurCourse.Get() == *c )
+			continue;	// don't comepare name against ourself
+
+		if( (*c)->GetDisplayFullTitle() == sAnswer )
+			return false;
+	}
+
+	return true;
+}
+
 
 REGISTER_SCREEN_CLASS( ScreenOptionsManageCourses );
 ScreenOptionsManageCourses::ScreenOptionsManageCourses( CString sName ) : ScreenOptionsEditCourseSubMenu( sName )
@@ -212,7 +236,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			return;	// don't call base
 		}
 	}
-	else if( SM == SM_BackFromEnterName )
+	else if( SM == SM_BackFromEnterNameForNew )
 	{
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
@@ -225,14 +249,26 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			Course *pCourse = new Course;
 			pCourse->m_sMainTitle = ScreenTextEntry::s_sLastAnswer;
 			pCourse->SetLoadedFromProfile( PROFILE_SLOT_MACHINE );
-			pCourse->m_vEntries.push_back( CourseEntry() );	// one blank entry
-			pCourse->m_vEntries[0].baseDifficulty = DIFFICULTY_MEDIUM;
+			CourseEntry ce;
+			CourseUtil::MakeDefaultEditCourseEntry( ce );
+			pCourse->m_vEntries.push_back( ce );
 			SONGMAN->AddCourse( pCourse );
 			GAMESTATE->m_pCurCourse.Set( pCourse );
 
 			RefreshTrail();
 
 			this->HandleScreenMessage( SM_GoToNextScreen );
+		}
+	}
+	else if( SM == SM_BackFromRename )
+	{
+		if( !ScreenTextEntry::s_bCancelledLast )
+		{
+			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
+		
+			GAMESTATE->m_pCurCourse->m_sMainTitle = ScreenTextEntry::s_sLastAnswer;
+
+			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
 	else if( SM == SM_BackFromDeleteConfirm )
@@ -261,13 +297,12 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case CourseAction_Rename:
 				{
-					CString sCurrentProfileName = "New Course";
 					ScreenTextEntry::TextEntry( 
-						SM_BackFromEnterName, 
-						"Enter a name for a new course.", 
-						sCurrentProfileName, 
+						SM_BackFromRename, 
+						"Enter a name for the course.", 
+						GAMESTATE->m_pCurCourse->GetDisplayFullTitle(), 
 						MAX_EDIT_COURSE_TITLE_LENGTH, 
-						SongManager::ValidateEditCourseName );
+						ValidateEditCourseName );
 				}
 				break;
 			case CourseAction_Delete:
@@ -301,13 +336,20 @@ void ScreenOptionsManageCourses::ProcessMenuStart( PlayerNumber pn, const InputE
 
 	if( iCurRow == 0 )	// "create new"
 	{
-		CString sCurrentProfileName = "New Course";
+		CString sDefaultName;
+		CString sThrowAway;
+		for( int i=1; i<=9999; i++ )
+		{
+			sDefaultName = ssprintf( "NewCourse%04d", i );
+			if( ValidateEditCourseName(sDefaultName,sThrowAway) )
+				break;
+		}
 		ScreenTextEntry::TextEntry( 
-			SM_BackFromEnterName, 
+			SM_BackFromEnterNameForNew, 
 			"Enter a name for a new course.", 
-			sCurrentProfileName, 
+			sDefaultName, 
 			MAX_EDIT_COURSE_TITLE_LENGTH, 
-			SongManager::ValidateEditCourseName );
+			ValidateEditCourseName );
 	}
 	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
 	{

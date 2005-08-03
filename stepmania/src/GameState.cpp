@@ -57,7 +57,7 @@ SortOrder GetDefaultSort()
 	return StringToSortOrder( DEFAULT_SORT );
 }
 ThemeMetric<CString> DEFAULT_SONG	("GameState","DefaultSong");
-Song* GetDefaultSong()
+Song* GameState::GetDefaultSong() const
 {
 	SongID sid;
 	sid.LoadFromDir( DEFAULT_SONG );
