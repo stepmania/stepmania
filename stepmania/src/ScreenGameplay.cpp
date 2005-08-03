@@ -62,7 +62,6 @@
 #define SONG_POSITION_METER_WIDTH				THEME->GetMetricF(m_sName,"SongPositionMeterWidth")
 #define PLAYER_X( p, styleType )				THEME->GetMetricF(m_sName,ssprintf("PlayerP%d%sX",p+1,StyleTypeToString(styleType).c_str()))
 #define STOP_COURSE_EARLY						THEME->GetMetricB(m_sName,"StopCourseEarly")	// evaluate this every time it's used
-#define PRE_INIT_COMMAND						THEME->GetMetricA(m_sName,"ScreenPreInitCommand")
 
 static ThemeMetric<float> INITIAL_BACKGROUND_BRIGHTNESS	("ScreenGameplay","InitialBackgroundBrightness");
 static ThemeMetric<float> SECONDS_BETWEEN_COMMENTS	("ScreenGameplay","SecondsBetweenComments");
@@ -114,10 +113,6 @@ ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
 
 void ScreenGameplay::Init()
 {
-	// Experimental: run a pre-command on the screen itself, to allow setting up
-	// state before initializing actors.
-	this->RunCommands( PRE_INIT_COMMAND );
-
 	ScreenWithMenuElements::Init();
 
 	/* Pause MEMCARDMAN.  If a memory card is remove, we don't want to interrupt the
