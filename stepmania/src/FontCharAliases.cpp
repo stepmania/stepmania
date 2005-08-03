@@ -300,15 +300,20 @@ static void InitCharAliases()
 		{ "ok",			0xE00A },
 		{ "nextrow",	0xE00B },
 		{ "select",		0xE00C },
-		{ "aux1",		0xE010 },
-		{ "aux2",		0xE011 },
-		{ "aux3",		0xE012 },
-		{ "aux4",		0xE013 },
-		{ "aux5",		0xE014 },
-		{ "aux6",		0xE015 },
-		{ "aux7",		0xE016 },
-		{ "aux8",		0xE017 },
-		{ "aux9",		0xE018 },
+		/* PlayStation-style controller */
+		{ "auxx",		0xE010 },
+		{ "auxtriangle",0xE011 },
+		{ "auxsquare",	0xE012 },
+		{ "auxcircle",	0xE013 },
+		{ "auxl1",		0xE014 },
+		{ "auxl2",		0xE015 },
+		{ "auxl3",		0xE016 },
+		{ "auxr1",		0xE017 },
+		{ "auxr2",		0xE018 },
+		{ "auxr3",		0xE017 },
+		{ "auxselect",	0xE018 },
+		{ "auxstart",	0xE018 },
+
 		{ NULL, 	0 }
 	};
 
