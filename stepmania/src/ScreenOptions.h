@@ -155,6 +155,7 @@ protected:
 	ThemeMetric<bool>				SHOW_EXPLANATIONS;
 	ThemeMetric<bool>				ALLOW_REPEATING_CHANGE_VALUE_INPUT;
 	ThemeMetric<float>				CURSOR_TWEEN_SECONDS;
+	ThemeMetric<bool>				WRAP_VALUE_IN_ROW;
 
 	float m_fLockInputSecs;
 };

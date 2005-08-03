@@ -92,7 +92,8 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
 	SHOW_EXPLANATIONS				(m_sName,"ShowExplanations"),
 	ALLOW_REPEATING_CHANGE_VALUE_INPUT(m_sName,"AllowRepeatingChangeValueInput"),
-	CURSOR_TWEEN_SECONDS			(m_sName,"CursorTweenSeconds")
+	CURSOR_TWEEN_SECONDS			(m_sName,"CursorTweenSeconds"),
+	WRAP_VALUE_IN_ROW				(m_sName,"WrapValueInRow")
 {
 	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 	
@@ -998,7 +999,10 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 
 	int iCurrentChoiceWithFocus = row.GetChoiceInRowWithFocus(pn);
 	int iNewChoiceWithFocus = iCurrentChoiceWithFocus + iDelta;
-	wrap( iNewChoiceWithFocus, iNumChoices );
+	if( !bRepeat  &&  WRAP_VALUE_IN_ROW.GetValue() )
+		wrap( iNewChoiceWithFocus, iNumChoices );
+	else
+		CLAMP( iNewChoiceWithFocus, 0, iNumChoices-1 );
 	
 	if( iCurrentChoiceWithFocus != iNewChoiceWithFocus )
 		bOneChanged = true;
