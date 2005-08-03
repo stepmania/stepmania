@@ -104,7 +104,7 @@ public class VerifySignature
 		InputStream is = new FileInputStream(file);
 
 		// Get the size of the file
-		long length = ile.length();
+		long length = file.length();
 
 		// You cannot create an array using a long type.
 		// It needs to be an int type.
