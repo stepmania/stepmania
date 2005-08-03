@@ -36,7 +36,7 @@ bool Screen::SortMessagesByDelayRemaining(const Screen::QueuedScreenMessage &m1,
 
 void Screen::Init()
 {
-	this->RunCommands( THEME->GetMetricA(m_sName, "InitCommand") );
+	this->RunCommands( THEME->GetMetricA(m_sName, "ScreenInitCommand") );
 
 	vector<CString> asList;
 	split( PREPARE_SCREENS, ",", asList );
