@@ -177,7 +177,7 @@ Game g_Games[NUM_GAMES] =
 				KEY_KP_C7,				// DANCE_BUTTON_UPLEFT,
 				KEY_KP_C9,				// DANCE_BUTTON_UPRIGHT,
 				KEY_KP_ENTER,			// DANCE_BUTTON_START,
-				NO_DEFAULT_KEY,		 	// DANCE_BUTTON_SELECT,
+				KEY_KP_C0,			 	// DANCE_BUTTON_SELECT,
 				KEY_NUMLOCK,			// DANCE_BUTTON_BACK
 				KEY_KP_SLASH,			// DANCE_BUTTON_MENULEFT
 				KEY_KP_ASTERISK,		// DANCE_BUTTON_MENURIGHT
@@ -261,7 +261,7 @@ Game g_Games[NUM_GAMES] =
 				KEY_KP_C1,				// PUMP_BUTTON_DOWNLEFT,
 				KEY_KP_C3,  				// PUMP_BUTTON_DOWNRIGHT,
 				KEY_KP_ENTER,			// PUMP_BUTTON_START,
-				NO_DEFAULT_KEY,		 	// PUMP_BUTTON_SELECT,
+				KEY_KP_C0,		 	// PUMP_BUTTON_SELECT,
 				KEY_NUMLOCK,			// PUMP_BUTTON_BACK,
 				NO_DEFAULT_KEY	// PUMP_BUTTON_MENULEFT
 				NO_DEFAULT_KEY	// PUMP_BUTTON_MENURIGHT
@@ -705,7 +705,7 @@ Game g_Games[NUM_GAMES] =
 				KEY_KP_C1,			// MANIAX_BUTTON_HANDLRLEFT,
 				KEY_KP_C2,			// MANIAX_BUTTON_HANDLRRIGHT,
 				KEY_KP_ENTER,		// MANIAX_BUTTON_START,
-				NO_DEFAULT_KEY,		// MANIAX_BUTTON_SELECT,
+				KEY_KP_C0,		// MANIAX_BUTTON_SELECT,
 				KEY_NUMLOCK,		// MANIAX_BUTTON_BACK
 				KEY_KP_SLASH,		// MANIAX_BUTTON_MENULEFT
 				KEY_KP_ASTERISK,	// MANIAX_BUTTON_MENURIGHT
@@ -801,7 +801,7 @@ Game g_Games[NUM_GAMES] =
 				KEY_KP_C1,			// TECHNO_BUTTON_DOWNLEFT,
 				KEY_KP_C3,			// TECHNO_BUTTON_DOWNRIGHT,
 				KEY_KP_ENTER,		// TECHNO_BUTTON_START,
-				NO_DEFAULT_KEY,		// TECHNO_BUTTON_SELECT,
+				KEY_KP_C0,		// TECHNO_BUTTON_SELECT,
 				KEY_NUMLOCK,		// TECHNO_BUTTON_BACK
 				KEY_KP_SLASH,		// TECHNO_BUTTON_MENULEFT
 				KEY_KP_ASTERISK,	// TECHNO_BUTTON_MENURIGHT
@@ -2818,10 +2818,20 @@ public:
 	LunaGameManager() { LUA->Register( Register ); }
 
 	static int StepsTypeToThemedString( T* p, lua_State *L )	{ lua_pushstring(L, p->StepsTypeToThemedString((StepsType)IArg(1)) ); return 1; }
+	static int GetFirstStepsTypeForCurrentGame( T* p, lua_State *L )
+	{
+		vector<StepsType> vstAddTo;
+		p->GetStepsTypesForGame( GAMESTATE->m_pCurGame, vstAddTo );
+		ASSERT( !vstAddTo.empty() );
+		StepsType st = vstAddTo[0];
+		lua_pushnumber(L, st);
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( StepsTypeToThemedString )
+		ADD_METHOD( GetFirstStepsTypeForCurrentGame )
 
 		Luna<T>::Register( L );
 
