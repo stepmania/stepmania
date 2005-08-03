@@ -82,10 +82,6 @@ void LuaManager::SetGlobalFromExpression( const CString &sName, const CString &e
 		return;
 	}
 
-	/* Don't accept a function as a return value. */
-	if( lua_isfunction( L, -1 ) )
-		RageException::Throw( "result is a function; did you forget \"()\"?" );
-
 	lua_setglobal( L, sName );
 
 	LUA->Release(L);
