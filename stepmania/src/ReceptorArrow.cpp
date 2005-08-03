@@ -56,7 +56,7 @@ void ReceptorArrow::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 
 	// update pressblock alignment based on scroll direction
-	bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(m_iColNo) > 0.5;
+	bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(m_iColNo) > 0.5f;
 	m_pPressBlock->SetVertAlign( bReverse ? Actor::align_bottom : Actor::align_top );
 
 
