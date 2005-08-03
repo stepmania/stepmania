@@ -130,7 +130,7 @@ void InputFilter::Update(float fDeltaTime)
 			di.level = bs.m_Level;
 
 			/* Generate IET_LEVEL_CHANGED events. */
-			if( bs.m_LastLevel != bs.m_Level )
+			if( bs.m_LastLevel != bs.m_Level && bs.m_Level != -1 )
 			{
 				queue.push_back( InputEvent(di,IET_LEVEL_CHANGED) );
 				bs.m_LastLevel = bs.m_Level;
