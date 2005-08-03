@@ -42,6 +42,7 @@ static void LuaStepsType(lua_State* L)
 		s.Replace('-','_');
 		LUA->SetGlobal( "STEPS_TYPE_"+s, st );
 	}
+	LUA->SetGlobal( "STEPS_TYPE_INVALID", STEPS_TYPE_INVALID );
 }
 REGISTER_WITH_LUA_FUNCTION( LuaStepsType );
 
