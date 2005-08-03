@@ -96,6 +96,38 @@ int CourseEntry::GetNumModChanges() const
 	return iNumModChanges;
 }
 
+// lua start
+/*
+#include "LuaBinding.h"
+
+class LunaCourseEntry: public Luna<CourseEntry>
+{
+public:
+	LunaCourseEntry() { LUA->Register( Register ); }
+
+	static int GetSong( T* p, lua_State *L )
+	{
+		if( p->pSong )
+			p->pSong->PushSelf(L);
+		else
+			lua_pushnil(L);
+		return 1;
+	}
+
+	static void Register(lua_State *L)
+	{
+		ADD_METHOD( GetSong )
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( CourseEntry )
+*/
+// lua end
+
+
+
 
 Course::Course()
 {

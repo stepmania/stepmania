@@ -18,7 +18,7 @@ class Steps;
 class Profile;
 struct lua_State;
 
-const int MAX_EDIT_COURSE_TITLE_LENGTH = 12;
+const int MAX_EDIT_COURSE_TITLE_LENGTH = 20;
 
 enum CourseType
 {
@@ -97,6 +97,9 @@ public:
 
 	CString GetTextDescription() const;
 	int GetNumModChanges() const;
+
+	// Lua
+	void PushSelf( lua_State *L );
 };
 
 const int MAX_ENTRIES_PER_COURSE = 50;
