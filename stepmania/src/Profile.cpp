@@ -1750,6 +1750,13 @@ void Profile::AddCourseRecentScore( const Course* pCourse, const Trail* pTrail, 
 		m_vRecentCourseScores.erase( m_vRecentCourseScores.begin(), m_vRecentCourseScores.begin() +  iNumToErase );
 }
 
+StepsType Profile::GetLastPlayedStepsType() const
+{
+	if( m_vRecentStepsScores.empty() )
+		return STEPS_TYPE_INVALID;
+	return m_vRecentStepsScores.back().stepsID.GetStepsType();
+}
+
 const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID& songID ) const
 {
 	map<SongID,HighScoresForASong>::const_iterator it;
@@ -1866,6 +1873,8 @@ public:
 	static int GetTotalStepsWithTopGrade( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalStepsWithTopGrade((StepsType)IArg(1),(Difficulty)IArg(2),(Grade)IArg(3)) ); return 1; }
 	static int GetTotalTrailsWithTopGrade( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetTotalTrailsWithTopGrade((StepsType)IArg(1),(CourseDifficulty)IArg(2),(Grade)IArg(3)) ); return 1; }
 	static int GetNumTotalSongsPlayed( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
+	static int GetLastPlayedStepsType( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetLastPlayedStepsType() ); return 1; }
+	static int GetSongsAndCoursesPercentCompleteAllDifficulties( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetSongsAndCoursesPercentCompleteAllDifficulties((StepsType)IArg(1)) ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1892,6 +1901,9 @@ public:
 		ADD_METHOD( GetTotalStepsWithTopGrade )
 		ADD_METHOD( GetTotalTrailsWithTopGrade )
 		ADD_METHOD( GetNumTotalSongsPlayed )
+		ADD_METHOD( GetLastPlayedStepsType )
+		ADD_METHOD( GetSongsAndCoursesPercentCompleteAllDifficulties )
+
 		Luna<T>::Register( L );
 	}
 };

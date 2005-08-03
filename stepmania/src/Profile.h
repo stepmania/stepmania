@@ -247,6 +247,9 @@ public:
 	deque<HighScoreForASongAndSteps> m_vRecentStepsScores;
 	void AddStepsRecentScore( const Song* pSong, const Steps* pSteps, HighScore hs );
 	
+	
+	StepsType GetLastPlayedStepsType() const;
+	
 	//
 	// RecentCourseScores
 	//
@@ -262,7 +265,7 @@ public:
 		XNode* CreateNode() const;
 		void LoadFromNode( const XNode* pNode );
 	};
-	deque<HighScoreForACourseAndTrail> m_vRecentCourseScores;
+	deque<HighScoreForACourseAndTrail> m_vRecentCourseScores;	// add to back, erase from front
 	void AddCourseRecentScore( const Course* pCourse, const Trail* pTrail, HighScore hs );
 
 	//
