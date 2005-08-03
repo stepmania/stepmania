@@ -191,6 +191,7 @@ public:
 	void SetDiffuseLeftEdge( RageColor c )		{ DestTweenState().diffuse[0] = DestTweenState().diffuse[2] = c; };
 	RageColor GetDiffuse()						{ return DestTweenState().diffuse[0]; };
 	RageColor GetDiffuses( int i )				{ return DestTweenState().diffuse[i]; };
+	float GetDiffuseAlpha()						{ return DestTweenState().diffuse[0].a; };
 	void SetGlow( RageColor c )					{ DestTweenState().glow = c; };
 	RageColor GetGlow()							{ return DestTweenState().glow; };
 
