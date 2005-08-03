@@ -42,7 +42,7 @@ public:
 	virtual void Init();
 
 	/* This is called immediately before the screen is used. */
-	virtual void BeginScreen() { }
+	virtual void BeginScreen();
 
 	virtual void Update( float fDeltaTime );
 	virtual bool OverlayInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );

@@ -57,6 +57,11 @@ void Screen::Init()
 		SCREENMAN->PersistantScreen( asList[i] );
 }
 
+void Screen::BeginScreen()
+{
+	this->RunCommands( THEME->GetMetricA(m_sName, "ScreenOnCommand") );
+}
+
 void Screen::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
