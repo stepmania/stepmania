@@ -109,9 +109,6 @@ public:
 	// Lua
 	void PushSelf( lua_State *L );
 
-
-	static bool ValidateEditCourseName( const CString &sAnswer, CString &sErrorOut );
-
 protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );
 	void LoadDWISongDir( CString sDir );

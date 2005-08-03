@@ -40,7 +40,8 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 const CString SONGS_DIR		= "Songs/";
 const CString COURSES_DIR	= "Courses/";
 
-const int MAX_EDITS_PER_PROFILE	= 200;
+const int MAX_EDIT_STEPS_PER_PROFILE	= 200;
+const int MAX_EDIT_COURSES_PER_PROFILE	= 20;
 
 static const ThemeMetric<RageColor> BEGINNER_COLOR		("SongManager","BeginnerColor");
 static const ThemeMetric<RageColor> EASY_COLOR			("SongManager","EasyColor");
@@ -1289,7 +1290,7 @@ void SongManager::LoadAllFromProfileDir( const CString &sProfileDir, ProfileSlot
 		GetDirListing( sDir+"*.edit", vsFiles, false, true );
 
 		int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
-		int size = min( (int) vsFiles.size(), MAX_EDITS_PER_PROFILE - iNumEditsLoaded );
+		int size = min( (int) vsFiles.size(), MAX_EDIT_STEPS_PER_PROFILE - iNumEditsLoaded );
 
 		for( int i=0; i<size; i++ )
 		{
@@ -1309,7 +1310,7 @@ void SongManager::LoadAllFromProfileDir( const CString &sProfileDir, ProfileSlot
 		GetDirListing( sDir+"*.crs", vsFiles, false, true );
 
 		int iNumEditsLoaded = GetNumEditsLoadedFromProfile( slot );
-		int size = min( (int) vsFiles.size(), MAX_EDITS_PER_PROFILE - iNumEditsLoaded );
+		int size = min( (int) vsFiles.size(), MAX_EDIT_COURSES_PER_PROFILE - iNumEditsLoaded );
 
 		for( int i=0; i<size; i++ )
 		{
@@ -1369,12 +1370,6 @@ int SongManager::GetNumStepsLoadedFromProfile()
 	}	
 
 	return iCount;
-}
-
-bool SongManager::ValidateEditCourseName( const CString &sAnswer, CString &sErrorOut )
-{
-	// TODO
-	return true;
 }
 
 
