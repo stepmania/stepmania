@@ -123,7 +123,10 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 		Song *pSong = vpSongsInOut[i];
 
 		int iCounts[NUM_GRADES];
-		PROFILEMAN->GetMachineProfile()->GetGrades( pSong, GAMESTATE->GetCurrentStyle()->m_StepsType, iCounts );
+		const Profile *pProfile = PROFILEMAN->GetMachineProfile();
+		const Style *pStyle = GAMESTATE->GetCurrentStyle();
+		StepsType st = pStyle->m_StepsType;
+		pProfile->GetGrades( pSong, st, iCounts );
 
 		CString foo;
 		foo.reserve(256);

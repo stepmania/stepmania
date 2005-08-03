@@ -286,7 +286,12 @@ const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
 {
 	ASSERT( pn >= 0 && pn < NUM_PLAYERS );
 
-	if( m_sProfileDir[pn].empty() || ProfileWasLoadedFromMemoryCard(pn) )
+	if( m_sProfileDir[pn].empty() )
+	{
+		// return an empty profile
+		return m_pMemoryCardProfile[pn];
+	}
+	else if( ProfileWasLoadedFromMemoryCard(pn) )
 	{
 		return m_pMemoryCardProfile[pn];
 	}
