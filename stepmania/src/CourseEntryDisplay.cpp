@@ -123,29 +123,24 @@ void CourseEntryDisplay::SetFromGameState( int iCourseEntryIndex )
 			if( te == NULL || ce == NULL )
 				continue;
 
+			int iLow = ce->iLowMeter;
+			int iHigh = ce->iHighMeter;
+
+			CString s;
+			if( iLow == -1  &&  iHigh != -1 )
+				s = ssprintf( "%d+", iHigh );
+			else if( iLow != -1  &&  iHigh == -1 )
+				s = ssprintf( "%d-", iLow );
+			else if( iLow != -1  &&  iHigh != -1 )
+				s = ssprintf( "%d-%d", iLow, iHigh );
+			else
+				s = "?";
+
 			Difficulty dc = te->dc;
 			if( dc == DIFFICULTY_INVALID )
-			{
-				int iLow = ce->iLowMeter;
-				int iHigh = ce->iHighMeter;
-
-				CString s;
-				if( iLow == -1  &&  iHigh != -1 )
-					s = ssprintf( "<=%d", iHigh );
-				else if( iLow != -1  &&  iHigh == -1 )
-					s = ssprintf( ">=%d", iLow );
-				else if( iLow != -1  &&  iHigh != -1 )
-					s = ssprintf( "%d-%d", iLow, iHigh );
-				else
-					s = "?";
-
-				RageColor colorNotes = SONGMAN->GetDifficultyColor( te->pSteps->GetDifficulty() );
-				SetDifficulty( pn, s, colorNotes );
-			}
-			else
-			{
-				SetDifficulty( pn, "?", SONGMAN->GetDifficultyColor( dc ) );
-			}
+				dc = DIFFICULTY_EDIT;
+			
+			SetDifficulty( pn, s, SONGMAN->GetDifficultyColor(dc) );
 		}
 
 		m_TextBanner.LoadFromString( "??????????", "??????????", "", "", "", "" );
