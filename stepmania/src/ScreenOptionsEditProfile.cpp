@@ -10,14 +10,9 @@
 #include "Profile.h"
 #include "Character.h"
 
-AutoScreenMessage( SM_BackFromEnterName )
-AutoScreenMessage( SM_BackFromDelete )
-
 enum EditProfileRow
 {
-	ROW_NAME,
 	ROW_CHARACTER,
-	ROW_DELETE
 };
 
 REGISTER_SCREEN_CLASS( ScreenOptionsEditProfile );
@@ -42,16 +37,7 @@ void ScreenOptionsEditProfile::Init()
 	def.m_bAllowThemeTitles = false;
 	def.m_bAllowExplanation = false;
 	
-	Profile &pro = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sLastSelectedProfileID );
-
-	{
-		def.m_sName = "Name";
-		def.m_vsChoices.clear();
-		CString s = pro.m_sDisplayName;
-		def.m_vsChoices.push_back( s );
-		vDefs.push_back( def );
-		vHands.push_back( NULL );
-	}
+	Profile &pro = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 
 	{
 		def.m_sName = "Character";
@@ -60,13 +46,6 @@ void ScreenOptionsEditProfile::Init()
 		GAMESTATE->GetCharacters( vpCharacters );
 		FOREACH_CONST( Character*, vpCharacters, c )
 			def.m_vsChoices.push_back( (*c)->m_sName );
-		vDefs.push_back( def );
-		vHands.push_back( NULL );
-	}
-
-	{
-		def.m_sName = "Delete";
-		def.m_vsChoices.clear();
 		vDefs.push_back( def );
 		vHands.push_back( NULL );
 	}
@@ -81,7 +60,7 @@ ScreenOptionsEditProfile::~ScreenOptionsEditProfile()
 
 void ScreenOptionsEditProfile::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	Profile &pro = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sLastSelectedProfileID );
+	Profile &pro = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	OptionRow &row = *m_pRows[iRow];
 
 	switch( iRow )
@@ -94,7 +73,7 @@ void ScreenOptionsEditProfile::ImportOptions( int iRow, const vector<PlayerNumbe
 
 void ScreenOptionsEditProfile::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	Profile &pro = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sLastSelectedProfileID );
+	Profile &pro = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	OptionRow &row = *m_pRows[iRow];
 	int iIndex = row.GetOneSharedSelection( true );
 	CString sValue;
@@ -103,9 +82,6 @@ void ScreenOptionsEditProfile::ExportOptions( int iRow, const vector<PlayerNumbe
 
 	switch( iRow )
 	{
-	case ROW_NAME:
-		pro.m_sDisplayName = sValue;
-		break;
 	case ROW_CHARACTER:
 		pro.m_sCharacter = sValue;
 		break;
@@ -124,32 +100,6 @@ void ScreenOptionsEditProfile::GoToPrevScreen()
 
 void ScreenOptionsEditProfile::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SM == SM_BackFromEnterName )
-	{
-		if( !ScreenTextEntry::s_bCancelledLast )
-		{
-			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
-		
-			CString sNewName = ScreenTextEntry::s_sLastAnswer;
-			ASSERT( !GAMESTATE->m_sLastSelectedProfileID.empty() )
-
-			// rename
-			bool bResult = PROFILEMAN->RenameLocalProfile( GAMESTATE->m_sLastSelectedProfileID, sNewName );
-			if( bResult )
-				SCREENMAN->SetNewScreen( m_sName );	// reload
-			else
-				ScreenPrompt::Prompt( SM_None, ssprintf("Error renaming profile '%s'.", sNewName.c_str()) );
-		}
-	}
-	else if( SM == SM_BackFromDelete )
-	{
-		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
-		{
-			PROFILEMAN->DeleteLocalProfile( GAMESTATE->m_sLastSelectedProfileID );
-			HandleScreenMessage( SM_GoToPrevScreen );
-		}
-	}
-
 	ScreenOptions::HandleScreenMessage( SM );
 }
 
@@ -160,21 +110,8 @@ void ScreenOptionsEditProfile::ProcessMenuStart( PlayerNumber pn, const InputEve
 
 	switch( iRow )
 	{
-	case ROW_NAME:
-		{
-			CString sCurrentProfileName = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sLastSelectedProfileID ).m_sDisplayName;
-			ScreenTextEntry::TextEntry( SM_BackFromEnterName, "Enter a name for a new profile.", sCurrentProfileName, PROFILE_MAX_DISPLAY_NAME_LENGTH, ProfileManager::ValidateLocalProfileName );
-		}
-		break;
 	case ROW_CHARACTER:
 		{
-		}
-		break;
-	case ROW_DELETE:
-		{
-			CString sCurrentProfileName = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sLastSelectedProfileID ).m_sDisplayName;
-			CString sMessage = ssprintf( "Are you sure you want to delete the profile '%s'?", sCurrentProfileName.c_str() );
-			ScreenPrompt::Prompt( SM_BackFromDelete, sMessage, PROMPT_YES_NO );
 		}
 		break;
 	default:

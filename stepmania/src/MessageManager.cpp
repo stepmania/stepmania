@@ -28,6 +28,7 @@ static const CString MessageNames[] = {
 	"EditPreferredCourseDifficutyP1Changed",
 	"EditPreferredCourseDifficutyP2Changed",
 	"EditCourseEntryIndexChanged",
+	"EditLocalProfileIDChanged",
 	"GoalCompleteP1",
 	"GoalCompleteP2",
 	"NoteCrossed",

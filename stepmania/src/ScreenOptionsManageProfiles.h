@@ -1,25 +1,31 @@
-#ifndef ScreenOptionsSelectProfile_H
-#define ScreenOptionsSelectProfile_H
+#ifndef ScreenOptionsManageProfiles_H
+#define ScreenOptionsManageProfiles_H
 
 #include "ScreenOptions.h"
 
-class ScreenOptionsSelectProfile : public ScreenOptions
+class Course;
+
+class ScreenOptionsManageProfiles : public ScreenOptions
 {
 public:
-	ScreenOptionsSelectProfile( CString sName );
-	virtual void Init();
-	virtual ~ScreenOptionsSelectProfile();
+	ScreenOptionsManageProfiles( CString sName );
+	~ScreenOptionsManageProfiles();
+
+	void Init();
+	virtual void BeginScreen();
+
+	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-private:
-	virtual void ImportOptions( int row, const vector<PlayerNumber> &vpns );
-	virtual void ExportOptions( int row, const vector<PlayerNumber> &vpns );
-
-	virtual void GoToNextScreen();
-	virtual void GoToPrevScreen();
+	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
+	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void AfterChangeRow( PlayerNumber pn );
 	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
+
+	CString GetLocalProfileIDWithFocus() const;
+
+	vector<CString> m_vsLocalProfileID;
 
 	vector<OptionRowHandler*> m_OptionRowHandlers;
 };

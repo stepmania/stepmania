@@ -33,7 +33,6 @@ public:
 	bool CreateLocalProfile( CString sName, CString &sProfileIDOut );
 	bool RenameLocalProfile( CString sProfileID, CString sNewName );
 	bool DeleteLocalProfile( CString sProfileID );
-	CString GetNewLocalProfileDefaultName() const;
 	void GetLocalProfileIDs( vector<CString> &vsProfileIDsOut ) const;
 	void GetLocalProfileDisplayNames( vector<CString> &vsProfileDisplayNamesOut ) const;
 
@@ -103,10 +102,6 @@ public:
 
 	// Lua
 	void PushSelf( lua_State *L );
-
-
-	static bool ValidateLocalProfileName( const CString &sAnswer, CString &sErrorOut );
-
 
 private:
 	// returns Profile::LoadResult, but we don't want to depend on Profile

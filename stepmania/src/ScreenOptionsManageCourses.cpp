@@ -243,7 +243,6 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
 		
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
-			ASSERT( GAMESTATE->m_sLastSelectedProfileID.empty() );
 
 			// create
 			Course *pCourse = new Course;

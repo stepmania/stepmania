@@ -31,8 +31,6 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 #define MACHINE_PROFILE_DIR		"Data/MachineProfile/"
 const CString LAST_GOOD_DIR	=	"LastGood/";
 
-static ThemeMetric<CString> NEW_PROFILE_DEFAULT_NAME( "ProfileManager", "NewProfileDefaultName" );
-
 
 // Directories to search for a profile if m_sMemoryCardProfileSubdir doesn't
 // exist, separated by ";":
@@ -659,22 +657,6 @@ bool ProfileManager::IsPersistentProfile( ProfileSlot slot ) const
 	}
 }
 
-CString ProfileManager::GetNewLocalProfileDefaultName() const
-{
-	vector<CString> vsUsedNames;
-	PROFILEMAN->GetLocalProfileDisplayNames( vsUsedNames );
-
-	CString sPotentialName;
-	for( int i=1; i<1000; i++ )
-	{
-		sPotentialName = ssprintf( "%s%04d", NEW_PROFILE_DEFAULT_NAME.GetValue().c_str(), i );
-		bool bNameIsUsed = find( vsUsedNames.begin(), vsUsedNames.end(), sPotentialName ) != vsUsedNames.end();
-		if( !bNameIsUsed )
-			return sPotentialName;
-	}
-	return sPotentialName;
-}
-
 void ProfileManager::GetLocalProfileIDs( vector<CString> &vsProfileIDsOut ) const
 {
 	vsProfileIDsOut.clear();
@@ -687,31 +669,6 @@ void ProfileManager::GetLocalProfileDisplayNames( vector<CString> &vsProfileDisp
 	vsProfileDisplayNamesOut.clear();
 	FOREACHM_CONST( CString, Profile*, g_mapLocalProfileDirToProfile, iter )
 		vsProfileDisplayNamesOut.push_back( iter->second->m_sDisplayName );
-}
-
-bool ProfileManager::ValidateLocalProfileName( const CString &sAnswer, CString &sErrorOut )
-{
-	CString sCurrentProfileOldName = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sLastSelectedProfileID ).m_sDisplayName;
-	vector<CString> vsProfileNames;
-	PROFILEMAN->GetLocalProfileDisplayNames( vsProfileNames );
-	bool bAlreadyAProfileWithThisName = find( vsProfileNames.begin(), vsProfileNames.end(), sAnswer ) != vsProfileNames.end();
-	
-	if( sAnswer == "" )
-	{
-		sErrorOut = "Profile name cannot be blank.";
-		return false;
-	}
-	else if( sAnswer == sCurrentProfileOldName )
-	{
-		return true;
-	}
-	else if( bAlreadyAProfileWithThisName )
-	{
-		sErrorOut = "There is already another profile with this name.  Please choose a different name.";
-		return false;
-	}
-
-	return true;
 }
 
 

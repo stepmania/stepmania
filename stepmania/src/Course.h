@@ -18,7 +18,7 @@ class Steps;
 class Profile;
 struct lua_State;
 
-const int MAX_EDIT_COURSE_TITLE_LENGTH = 20;
+const int MAX_EDIT_COURSE_TITLE_LENGTH = 12;
 
 enum CourseType
 {

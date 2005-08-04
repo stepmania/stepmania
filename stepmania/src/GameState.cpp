@@ -79,7 +79,8 @@ GameState::GameState() :
 	m_stEdit(				MESSAGE_EDIT_STEPS_TYPE_CHANGED ),
     m_pEditSourceSteps(		MESSAGE_EDIT_SOURCE_STEPS_CHANGED ),
 	m_stEditSource(			MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED ),
-	m_iEditCourseEntryIndex(MESSAGE_EDIT_COURSE_ENTRY_INDEX_CHANGED )
+	m_iEditCourseEntryIndex(MESSAGE_EDIT_COURSE_ENTRY_INDEX_CHANGED ),
+	m_sEditLocalProfileID(	Message_EditLocalProfileIDChanged )
 {
 	m_pCurStyle.Set( NULL );
 
@@ -258,10 +259,9 @@ void GameState::Reset()
 	m_pEditSourceSteps.Set( NULL );
 	m_stEditSource.Set( STEPS_TYPE_INVALID );
 	m_iEditCourseEntryIndex.Set( -1 );
+	m_sEditLocalProfileID.Set( "" );
 	
 	m_bBackedOutOfFinalStage = false;
-
-	m_sLastSelectedProfileID = "";
 
 	ApplyCmdline();
 }
@@ -1872,6 +1872,13 @@ bool GameState::PlayerIsUsingModifier( PlayerNumber pn, const CString &sModifier
 	return po == GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions && so == GAMESTATE->m_SongOptions;
 }
 
+Profile* GameState::GetEditLocalProfile()
+{
+	if( m_sEditLocalProfileID.Get().empty() )
+		return NULL;
+	return &PROFILEMAN->GetLocalProfile( m_sEditLocalProfileID );
+}
+
 void GameState::ResetOriginalSyncData()
 {
 	if( m_pCurSong )
@@ -2038,8 +2045,16 @@ public:
 		lua_pushboolean(L, p->GetStageResult(pn)==RESULT_WIN); return 1;
 	}
 	static int GetCurrentGame( T* p, lua_State *L )			{ const_cast<Game*>(p->GetCurrentGame())->PushSelf( L ); return 1; }
-	static int GetLastSelectedProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sLastSelectedProfileID ); return 1; }
 	static int GetEditCourseEntryIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iEditCourseEntryIndex ); return 1; }
+	static int GetEditLocalProfile( T* p, lua_State *L )
+	{
+		Profile *pProfile = p->GetEditLocalProfile();
+		if( pProfile )
+			pProfile->PushSelf(L);
+		else
+			lua_pushnil( L );
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -2093,8 +2108,8 @@ public:
 		ADD_METHOD( IsSyncDataChanged )
 		ADD_METHOD( IsWinner )
 		ADD_METHOD( GetCurrentGame )
-		ADD_METHOD( GetLastSelectedProfileID )
 		ADD_METHOD( GetEditCourseEntryIndex )
+		ADD_METHOD( GetEditLocalProfile )
 
 		Luna<T>::Register( L );
 

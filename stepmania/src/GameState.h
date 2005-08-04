@@ -28,6 +28,7 @@ struct StageStats;
 struct PlayerState;
 struct lua_State;
 class LuaTable;
+class Profile;
 
 class GameState
 {
@@ -300,6 +301,8 @@ public:
 	BroadcastOnChangePtr<Steps> m_pEditSourceSteps;
 	BroadcastOnChange<StepsType> m_stEditSource;
 	BroadcastOnChange<int> m_iEditCourseEntryIndex;
+	BroadcastOnChange<CString> m_sEditLocalProfileID;
+	Profile* GetEditLocalProfile();
 
 	// Workout stuff
 	float GetGoalPercentComplete( PlayerNumber pn );
@@ -312,9 +315,6 @@ public:
 	bool IsSyncDataChanged();
 	void SaveSyncChanges();
 	void RevertSyncChanges();
-
-	// profile stuff
-	CString m_sLastSelectedProfileID;
 
 	// Lua
 	void PushSelf( lua_State *L );

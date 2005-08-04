@@ -106,9 +106,8 @@ void Banner::LoadFromCourse( Course* pCourse )		// NULL means no course
 
 void Banner::LoadCardFromCharacter( Character* pCharacter )	
 {
-	ASSERT( pCharacter );
-
-	if( pCharacter->GetCardPath() != "" )		Load( pCharacter->GetCardPath() );
+	if( pCharacter == NULL )					LoadFallback();
+	else if( pCharacter->GetCardPath() != "" )	Load( pCharacter->GetCardPath() );
 	else										LoadFallback();
 
 	m_bScrolling = false;
@@ -116,10 +115,8 @@ void Banner::LoadCardFromCharacter( Character* pCharacter )
 
 void Banner::LoadIconFromCharacter( Character* pCharacter )	
 {
-	ASSERT( pCharacter );
-
-	if( pCharacter->GetIconPath() != "" )		Load( pCharacter->GetIconPath() );
-	else if( pCharacter->GetCardPath() != "" )	Load( pCharacter->GetCardPath() );
+	if( pCharacter == NULL )					LoadFallback();
+	else if( pCharacter->GetIconPath() != "" )	Load( pCharacter->GetIconPath() );
 	else										LoadFallback();
 
 	m_bScrolling = false;
