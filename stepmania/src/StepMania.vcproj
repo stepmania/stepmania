@@ -452,6 +452,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenOptionsManageCourses.h">
 			</File>
 			<File
+				RelativePath="ScreenOptionsManageProfiles.cpp">
+			</File>
+			<File
+				RelativePath="ScreenOptionsManageProfiles.h">
+			</File>
+			<File
 				RelativePath="ScreenOptionsMaster.cpp">
 			</File>
 			<File
@@ -558,12 +564,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ScreenSelectMusic.h">
-			</File>
-			<File
-				RelativePath="ScreenSelectProfile.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSelectProfile.h">
 			</File>
 			<File
 				RelativePath="ScreenSelectStyle.cpp">

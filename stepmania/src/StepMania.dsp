@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                      	cl                                                              /Zl                                                              /nologo                                                              /c                                                              verstub.cpp                                                              /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                       	cl                                                               /Zl                                                               /nologo                                                               /c                                                               verstub.cpp                                                               /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                	cl                 /Zl                 /nologo                 /c                 verstub.cpp                 /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                 	cl                  /Zl                  /nologo                  /c                  verstub.cpp                  /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -2792,6 +2792,14 @@ SOURCE=.\ScreenOptionsManageCourses.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenOptionsManageProfiles.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptionsManageProfiles.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenOptionsMaster.cpp
 # End Source File
 # Begin Source File
@@ -2805,14 +2813,6 @@ SOURCE=.\ScreenOptionsMasterPrefs.cpp
 # Begin Source File
 
 SOURCE=.\ScreenOptionsMasterPrefs.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenOptionsSelectProfile.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenOptionsSelectProfile.h
 # End Source File
 # Begin Source File
 
@@ -2925,14 +2925,6 @@ SOURCE=.\ScreenSelectMusic.cpp
 # Begin Source File
 
 SOURCE=.\ScreenSelectMusic.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectProfile.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenSelectProfile.h
 # End Source File
 # Begin Source File
 
