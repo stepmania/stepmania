@@ -4,7 +4,7 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "Song.h"
+#include "song.h"
 
 
 bool CourseWriterCRS::Write( const Course &course, const CString &sPath, bool bSavingCache )
