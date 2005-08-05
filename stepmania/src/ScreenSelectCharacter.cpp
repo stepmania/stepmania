@@ -59,28 +59,7 @@ void ScreenSelectCharacter::Init()
 	
 	vector<Character*> apCharacters;
 	GAMESTATE->GetCharacters( apCharacters );
-	if( apCharacters.empty() )
-	{
-		this->PostScreenMessage( SM_GoToNextScreen, 0 );
-		return;
-	}
-
-	switch( GAMESTATE->m_PlayMode )
-	{
-	// For Rave/Battle mode, we force the players to select characters
-	// (by not returning in this switch)
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-		break;
-
-	default:
-		/* Non Rave/Battle mode, just skip this screen if disabled. */
-		if(	PREFSMAN->m_ShowDancingCharacters != PrefsManager::CO_SELECT )
-		{
-			this->PostScreenMessage( SM_GoToNextScreen, 0 );
-			return;
-		}
-	}
+	ASSERT_M( !apCharacters.empty(), "No characters are available" );
 
 	FOREACH_PlayerNumber( p )
 	{
