@@ -53,6 +53,27 @@ const unsigned int DEFAULT_WEIGHT_POUNDS	= 120;
 #endif
 
 
+int Profile::HighScoresForASong::GetNumTimesPlayed() const
+{
+	int iCount = 0;
+	FOREACHM_CONST( StepsID, HighScoresForASteps, m_StepsHighScores, i )
+	{
+		iCount += i->second.hsl.GetNumTimesPlayed();
+	}
+	return iCount;
+}
+
+int Profile::HighScoresForACourse::GetNumTimesPlayed() const
+{
+	int iCount = 0;
+	FOREACHM_CONST( TrailID, HighScoresForATrail, m_TrailHighScores, i )
+	{
+		iCount += i->second.hsl.GetNumTimesPlayed();
+	}
+	return iCount;
+}
+
+
 void Profile::InitEditableData()
 {
 	m_sDisplayName = "";
@@ -515,6 +536,41 @@ void Profile::SetDefaultModifiers( const Game* pGameType, const CString &sModifi
 bool Profile::IsCodeUnlocked( int iCode ) const
 {
 	return m_UnlockedSongs.find( iCode ) != m_UnlockedSongs.end();
+}
+
+
+Song *Profile::GetMostPopularSong() const
+{
+	int iMaxNumTimesPlayed = 0;
+	SongID id;
+	FOREACHM_CONST( SongID, HighScoresForASong, m_SongHighScores, i )
+	{
+		int iNumTimesPlayed = i->second.GetNumTimesPlayed();
+		if( iNumTimesPlayed > iMaxNumTimesPlayed )
+		{
+			id = i->first;
+			iMaxNumTimesPlayed = iNumTimesPlayed;
+		}
+	}
+
+	return id.ToSong();
+}
+
+Course *Profile::GetMostPopularCourse() const
+{
+	int iMaxNumTimesPlayed = 0;
+	CourseID id;
+	FOREACHM_CONST( CourseID, HighScoresForACourse, m_CourseHighScores, i )
+	{
+		int iNumTimesPlayed = i->second.GetNumTimesPlayed();
+		if( iNumTimesPlayed > iMaxNumTimesPlayed )
+		{
+			id = i->first;
+			iMaxNumTimesPlayed = iNumTimesPlayed;
+		}
+	}
+
+	return id.ToCourse();
 }
 
 //
@@ -1875,6 +1931,25 @@ public:
 	static int GetNumTotalSongsPlayed( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iNumTotalSongsPlayed ); return 1; }
 	static int GetLastPlayedStepsType( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetLastPlayedStepsType() ); return 1; }
 	static int GetSongsAndCoursesPercentCompleteAllDifficulties( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetSongsAndCoursesPercentCompleteAllDifficulties((StepsType)IArg(1)) ); return 1; }
+	static int GetDisplayTotalCaloriesBurned( T* p, lua_State *L )		{ lua_pushstring(L, p->GetDisplayTotalCaloriesBurned() ); return 1; }
+	static int GetMostPopularSong( T* p, lua_State *L )
+	{
+		Song *p2 = p->GetMostPopularSong();
+		if( p2 )
+			p2->PushSelf(L);
+		else
+			lua_pushnil( L );
+		return 1;
+	}
+	static int GetMostPopularCourse( T* p, lua_State *L )
+	{
+		Course *p2 = p->GetMostPopularCourse();
+		if( p2 )
+			p2->PushSelf(L);
+		else
+			lua_pushnil( L );
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -1903,6 +1978,9 @@ public:
 		ADD_METHOD( GetNumTotalSongsPlayed )
 		ADD_METHOD( GetLastPlayedStepsType )
 		ADD_METHOD( GetSongsAndCoursesPercentCompleteAllDifficulties )
+		ADD_METHOD( GetDisplayTotalCaloriesBurned )
+		ADD_METHOD( GetMostPopularSong )
+		ADD_METHOD( GetMostPopularCourse )
 
 		Luna<T>::Register( L );
 	}

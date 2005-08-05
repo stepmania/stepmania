@@ -87,6 +87,8 @@ public:
 	bool GetDefaultModifiers( const Game* pGameType, CString &sModifiersOut ) const;
 	void SetDefaultModifiers( const Game* pGameType, const CString &sModifiers );
 	bool IsCodeUnlocked( int iCode ) const;
+	Song *GetMostPopularSong() const;
+	Course *GetMostPopularCourse() const;
 	
 	void AddStepTotals( int iNumTapsAndHolds, int iNumJumps, int iNumHolds, int iNumRolls, int iNumMines, int iNumHands, float fCaloriesBurned );
 
@@ -154,6 +156,7 @@ public:
 	struct HighScoresForASong
 	{
 		std::map<StepsID,HighScoresForASteps>	m_StepsHighScores;
+		int GetNumTimesPlayed() const;
 	};
 	std::map<SongID,HighScoresForASong>	m_SongHighScores;
 
@@ -179,6 +182,7 @@ public:
 	struct HighScoresForACourse	
 	{
 		std::map<TrailID,HighScoresForATrail>	m_TrailHighScores;
+		int GetNumTimesPlayed() const;
 	};
 	std::map<CourseID,HighScoresForACourse>	m_CourseHighScores;
 

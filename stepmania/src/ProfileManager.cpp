@@ -269,6 +269,14 @@ bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 	return b;
 }
 
+bool ProfileManager::SaveLocalProfile( CString sProfileID )
+{
+	Profile &profile = GetLocalProfile( sProfileID );
+	CString sDir = LocalProfileIdToDir( sProfileID );
+	bool b = profile.SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
+	return b;
+}
+
 void ProfileManager::UnloadProfile( PlayerNumber pn )
 {
 	m_sProfileDir[pn] = "";

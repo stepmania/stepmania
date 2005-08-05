@@ -100,6 +100,11 @@ void ScreenOptionsEditProfile::GoToPrevScreen()
 
 void ScreenOptionsEditProfile::HandleScreenMessage( const ScreenMessage SM )
 {
+	if( SM == SM_GoToNextScreen )
+	{
+		PROFILEMAN->SaveLocalProfile( GAMESTATE->m_sEditLocalProfileID );
+	}
+
 	ScreenOptions::HandleScreenMessage( SM );
 }
 

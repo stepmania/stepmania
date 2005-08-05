@@ -43,6 +43,7 @@ public:
 	bool FastLoadProfileNameFromMemoryCard( CString sRootDir, CString &sName ) const;
 	void SaveAllProfiles() const;
 	bool SaveProfile( PlayerNumber pn ) const;
+	bool SaveLocalProfile( CString sProfileID );
 	void UnloadProfile( PlayerNumber pn );
 	
 	//
