@@ -145,7 +145,9 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 		if( !ScreenTextEntry::s_bCancelledLast && ScreenTextEntry::s_sLastAnswer != "" )
 		{
 			CString sNewName = ScreenTextEntry::s_sLastAnswer;
-			bool bResult = PROFILEMAN->CreateLocalProfile( sNewName, GAMESTATE->m_sLastSelectedProfileID );
+			CString s;
+			bool bResult = PROFILEMAN->CreateLocalProfile( sNewName, s );
+//			bool bResult = PROFILEMAN->CreateLocalProfile( sNewName, GAMESTATE->m_sLastSelectedProfileID );
 			if( bResult )
 				SCREENMAN->SetNewScreen( m_sName );	// reload
 			else
