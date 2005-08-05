@@ -37,6 +37,7 @@ const CString LAST_GOOD_DIR	=	"LastGood/";
 static Preference<CString> g_sMemoryCardProfileImportSubdirs( "MemoryCardProfileImportSubdirs", "" );
 
 static CString LocalProfileIdToDir( const CString &sProfileID ) { return USER_PROFILES_DIR + sProfileID + "/"; }
+static CString LocalProfileDirToId( const CString &sDir ) { return Basename( sDir ); }
 
 static map<CString,Profile*> g_mapLocalProfileDirToProfile;
 
@@ -353,22 +354,20 @@ bool ProfileManager::CreateLocalProfile( CString sName, CString &sProfileIDOut )
 	ASSERT( !sName.empty() );
 
 	//
-	// Find a free directory name in the profiles directory
+	// Find a directory directory name that's a number greater than all 
+	// existing numbers.  This preserves the "order by create date".
 	//
-	CString sProfileID, sProfileDir;
-	const int MAX_TRIES = 1000;
-    int i;
-	for( i=0; i<MAX_TRIES; i++ )
-	{
-		sProfileID = ssprintf("%08d",i);
-		sProfileDir = LocalProfileIdToDir( sProfileID );
-		if( !DoesFileExist(sProfileDir) )
-			break;
-	}
-	if( i == MAX_TRIES )
-		return false;
+	int iMaxProfileNumber = -1;
+	vector<CString> vs;
+	GetLocalProfileIDs( vs );
+	FOREACH_CONST( CString, vs, s )
+		iMaxProfileNumber = atoi( *s );
 
-	bool bResult = Profile::CreateNewProfile( sProfileDir, sName );
+	int iProfileNumber = iMaxProfileNumber + 1;
+	CString sProfileID = ssprintf( "%08d", iProfileNumber );
+	CString sProfileDir = LocalProfileIdToDir( sProfileID );
+
+	bool bResult = Profile::CreateNewProfile( sProfileDir, sName, true );
 	if( bResult )
 		sProfileIDOut = sProfileID;
 	else
@@ -419,7 +418,7 @@ void ProfileManager::LoadMachineProfile()
 	Profile::LoadResult lr = m_pMachineProfile->LoadAllFromDir(MACHINE_PROFILE_DIR, false);
 	if( lr == Profile::failed_no_profile )
 	{
-		Profile::CreateNewProfile(MACHINE_PROFILE_DIR, "Machine");
+		Profile::CreateNewProfile( MACHINE_PROFILE_DIR, "Machine", false );
 		m_pMachineProfile->LoadAllFromDir( MACHINE_PROFILE_DIR, false );
 	}
 
@@ -669,7 +668,10 @@ void ProfileManager::GetLocalProfileIDs( vector<CString> &vsProfileIDsOut ) cons
 {
 	vsProfileIDsOut.clear();
 	FOREACHM_CONST( CString, Profile*, g_mapLocalProfileDirToProfile, iter )
-		vsProfileIDsOut.push_back( iter->first );
+	{
+		CString sID = LocalProfileDirToId( iter->first );
+		vsProfileIDsOut.push_back( sID );
+	}
 }
 
 void ProfileManager::GetLocalProfileDisplayNames( vector<CString> &vsProfileDisplayNamesOut ) const
@@ -677,6 +679,11 @@ void ProfileManager::GetLocalProfileDisplayNames( vector<CString> &vsProfileDisp
 	vsProfileDisplayNamesOut.clear();
 	FOREACHM_CONST( CString, Profile*, g_mapLocalProfileDirToProfile, iter )
 		vsProfileDisplayNamesOut.push_back( iter->second->m_sDisplayName );
+}
+
+int ProfileManager::GetNumLocalProfiles() const
+{
+	return g_mapLocalProfileDirToProfile.size();
 }
 
 

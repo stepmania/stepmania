@@ -35,6 +35,7 @@ public:
 	bool DeleteLocalProfile( CString sProfileID );
 	void GetLocalProfileIDs( vector<CString> &vsProfileIDsOut ) const;
 	void GetLocalProfileDisplayNames( vector<CString> &vsProfileDisplayNamesOut ) const;
+	int GetNumLocalProfiles() const;
 
 
 	bool LoadFirstAvailableProfile( PlayerNumber pn );	// memory card or local profile
