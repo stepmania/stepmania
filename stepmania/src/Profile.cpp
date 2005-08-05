@@ -1810,7 +1810,8 @@ StepsType Profile::GetLastPlayedStepsType() const
 {
 	if( m_vRecentStepsScores.empty() )
 		return STEPS_TYPE_INVALID;
-	return m_vRecentStepsScores.back()->stepsID.GetStepsType();
+	const HighScoreForASongAndSteps &h = m_vRecentStepsScores.back();
+	return h.stepsID.GetStepsType();
 }
 
 const Profile::HighScoresForASong *Profile::GetHighScoresForASong( const SongID& songID ) const
