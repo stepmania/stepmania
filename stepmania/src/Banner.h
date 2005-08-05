@@ -31,6 +31,7 @@ public:
 	void LoadRandom();
 	void LoadFallback();
 	void LoadCourseFallback();
+	void LoadCourseFallbackCharacterIcon();
 
 	void SetScrolling( bool bScroll, float Percent = 0);
 	bool IsScrolling() const { return m_bScrolling; }

@@ -7,6 +7,7 @@
 #include "Course.h"
 #include "Character.h"
 #include "ThemeMetric.h"
+#include "GameState.h"
 
 ThemeMetric<bool> SCROLL_RANDOM		("Banner","ScrollRandom");
 ThemeMetric<bool> SCROLL_ROULETTE		("Banner","ScrollRoulette");
@@ -115,9 +116,9 @@ void Banner::LoadCardFromCharacter( Character* pCharacter )
 
 void Banner::LoadIconFromCharacter( Character* pCharacter )	
 {
-	if( pCharacter == NULL )					LoadFallback();
+	if( pCharacter == NULL )					LoadCourseFallbackCharacterIcon();
 	else if( pCharacter->GetIconPath() != "" )	Load( pCharacter->GetIconPath() );
-	else										LoadFallback();
+	else										LoadCourseFallbackCharacterIcon();
 
 	m_bScrolling = false;
 }
@@ -140,6 +141,15 @@ void Banner::LoadFallback()
 void Banner::LoadCourseFallback()
 {
 	Load( THEME->GetPathG("Banner","course fallback") );
+}
+
+void Banner::LoadCourseFallbackCharacterIcon()
+{
+	Character *pCharacter = GAMESTATE->GetDefaultCharacter();
+	if( pCharacter  &&  !pCharacter->GetIconPath().empty() )
+		Load( pCharacter->GetIconPath() );
+	else
+		LoadFallback();
 }
 
 void Banner::LoadRoulette()
