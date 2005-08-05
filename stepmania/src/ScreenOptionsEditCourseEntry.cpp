@@ -74,8 +74,8 @@ void ScreenOptionsEditCourseEntry::Init()
 	vector<CString> vsSongGroups;
 	SONGMAN->GetSongGroupNames( vsSongGroups );
 	def.m_vsChoices.push_back( "(any)" );
-	FOREACH_CONST( CString, vsSongGroups, s )
-		def.m_vsChoices.push_back( *s );
+	FOREACH_CONST( CString, vsSongGroups, song )
+		def.m_vsChoices.push_back( *song );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
