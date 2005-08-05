@@ -440,7 +440,7 @@ void ScreenOptions::PositionCursors()
 		cursor.SetBarWidth( iWidth );
 		cursor.SetXY( (float)iX, (float)iY );
 		bool bCanGoLeft = iChoiceWithFocus > 0;
-		bool bCanGoRight = iChoiceWithFocus >= 0 && iChoiceWithFocus < row.GetRowDef().m_vsChoices.size()-1;
+		bool bCanGoRight = iChoiceWithFocus >= 0 && iChoiceWithFocus < (int) row.GetRowDef().m_vsChoices.size()-1;
 		cursor.SetCanGo( bCanGoLeft, bCanGoRight );
 	}
 }
@@ -470,7 +470,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 
 
 	bool bCanGoLeft = iChoiceWithFocus > 0;
-	bool bCanGoRight = iChoiceWithFocus >= 0 && iChoiceWithFocus < row.GetRowDef().m_vsChoices.size()-1;
+	bool bCanGoRight = iChoiceWithFocus >= 0 && iChoiceWithFocus < (int) row.GetRowDef().m_vsChoices.size()-1;
 	cursor.SetCanGo( bCanGoLeft, bCanGoRight );
 
 	if( GAMESTATE->IsHumanPlayer(pn) )  

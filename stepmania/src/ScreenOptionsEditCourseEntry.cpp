@@ -195,7 +195,7 @@ void ScreenOptionsEditCourseEntry::AfterChangeValueInRow( int iRow, PlayerNumber
 	GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
 	Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_stEdit, GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] );
 	int iEntryIndex = GAMESTATE->m_iEditCourseEntryIndex;
-	ASSERT( iEntryIndex >= 0 && iEntryIndex < pCourse->m_vEntries.size() );
+	ASSERT( iEntryIndex >= 0 && iEntryIndex < (int) pCourse->m_vEntries.size() );
 	CourseEntry &ce = pCourse->m_vEntries[ iEntryIndex ];
 
 	switch( iRow )
@@ -238,7 +238,7 @@ void ScreenOptionsEditCourseEntry::ImportOptions( int iRow, const vector<PlayerN
 {
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	int iEntryIndex = GAMESTATE->m_iEditCourseEntryIndex;
-	ASSERT( iEntryIndex >= 0 && iEntryIndex < pCourse->m_vEntries.size() );
+	ASSERT( iEntryIndex >= 0 && iEntryIndex < (int) pCourse->m_vEntries.size() );
 	CourseEntry &ce = pCourse->m_vEntries[ iEntryIndex ];
 
 	OptionRow &row = *m_pRows[iRow];
@@ -315,7 +315,7 @@ void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerN
 {
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	int iEntryIndex = GAMESTATE->m_iEditCourseEntryIndex;
-	ASSERT( iEntryIndex >= 0 && iEntryIndex < pCourse->m_vEntries.size() );
+	ASSERT( iEntryIndex >= 0 && iEntryIndex < (int) pCourse->m_vEntries.size() );
 	CourseEntry &ce = pCourse->m_vEntries[ iEntryIndex ];
 
 	switch( iRow )
