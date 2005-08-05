@@ -1888,10 +1888,12 @@ void Profile::BackupToDir( CString sFromDir, CString sToDir )
 	FileCopy( sFromDir+DONT_SHARE_SIG,				sToDir+DONT_SHARE_SIG );
 }
 
-bool Profile::CreateNewProfile( CString sProfileDir, CString sName )
+bool Profile::CreateNewProfile( CString sProfileDir, CString sName, bool bFillWithRandomCharacter )
 {
 	Profile pro;
 	pro.m_sDisplayName = sName;
+	if( bFillWithRandomCharacter )
+		pro.m_sCharacter = GAMESTATE->GetRandomCharacter()->m_sName;
 	bool bResult = pro.SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
 	FlushDirCache();
 	return bResult;
