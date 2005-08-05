@@ -884,7 +884,7 @@ bool DeleteRecursive( const CString &sDir )
 	FOREACH_CONST( CString, vsFiles, s )
 	{
 		if( IsADirectory(*s) )
-			DeleteRecursive( *s );
+			DeleteRecursive( *s+"/" );
 		else
 			FILEMAN->Remove( *s );
 	}
