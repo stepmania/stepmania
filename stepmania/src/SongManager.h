@@ -20,6 +20,9 @@ struct lua_State;
 #include "ThemeMetric.h"
 #include "RageTexturePreloader.h"
 
+const int MAX_EDIT_STEPS_PER_PROFILE	= 200;
+const int MAX_EDIT_COURSES_PER_PROFILE	= 20;
+
 class SongManager
 {
 public:
@@ -47,6 +50,7 @@ public:
 	void FreeCourses();
 	void AddCourse( Course *pCourse );	// transfers ownership of pCourse
 	void DeleteCourse( Course *pCourse );	// transfers ownership of pCourse
+
 
 	void InitAll( LoadingWindow *ld );	// songs, courses, groups - everything.
 	void Reload( LoadingWindow *ld=NULL );	// songs, courses, groups - everything.
@@ -83,6 +87,7 @@ public:
 	int GetNumSongGroups() const;
 	int GetNumCourses() const;
 	int GetNumCourseGroups() const;
+	int GetNumEditCourses( ProfileSlot slot ) const;
 	Song* GetRandomSong();
 	Course* GetRandomCourse();
 

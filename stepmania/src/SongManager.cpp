@@ -40,9 +40,6 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 const CString SONGS_DIR		= "Songs/";
 const CString COURSES_DIR	= "Courses/";
 
-const int MAX_EDIT_STEPS_PER_PROFILE	= 200;
-const int MAX_EDIT_COURSES_PER_PROFILE	= 20;
-
 static const ThemeMetric<RageColor> BEGINNER_COLOR		("SongManager","BeginnerColor");
 static const ThemeMetric<RageColor> EASY_COLOR			("SongManager","EasyColor");
 static const ThemeMetric<RageColor> MEDIUM_COLOR		("SongManager","MediumColor");
@@ -484,6 +481,17 @@ int SongManager::GetNumCourses() const
 int SongManager::GetNumCourseGroups() const
 {
 	return m_mapCourseGroupToInfo.size();
+}
+
+int SongManager::GetNumEditCourses( ProfileSlot slot ) const
+{
+	int iNum = 0;
+	FOREACH_CONST( Course*, m_pCourses, p )
+	{
+		if( (*p)->GetLoadedFromProfileSlot() == slot )
+			iNum++;
+	}
+	return iNum;
 }
 
 CString SongManager::ShortenGroupName( CString sLongGroupName )

@@ -26,6 +26,7 @@ void ScreenOptionsEditProfile::Init()
 {
 	ScreenOptions::Init();
 
+	m_Original = *GAMESTATE->GetEditLocalProfile();
 
 	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
@@ -36,6 +37,7 @@ void ScreenOptionsEditProfile::Init()
 	def.m_bAllowThemeItems = false;
 	def.m_bAllowThemeTitles = false;
 	def.m_bAllowExplanation = false;
+	def.m_bExportOnChange = true;
 	
 	Profile &pro = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 
@@ -90,12 +92,10 @@ void ScreenOptionsEditProfile::ExportOptions( int iRow, const vector<PlayerNumbe
 
 void ScreenOptionsEditProfile::GoToNextScreen()
 {
-	SCREENMAN->SetNewScreen( "ScreenOptionsService" );
 }
 
 void ScreenOptionsEditProfile::GoToPrevScreen()
 {
-	SCREENMAN->SetNewScreen( "ScreenOptionsService" );
 }
 
 void ScreenOptionsEditProfile::HandleScreenMessage( const ScreenMessage SM )
@@ -104,8 +104,20 @@ void ScreenOptionsEditProfile::HandleScreenMessage( const ScreenMessage SM )
 	{
 		PROFILEMAN->SaveLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	}
+	else if( SM == SM_GoToPrevScreen )
+	{
+		*GAMESTATE->GetEditLocalProfile() = m_Original;
+	}
 
 	ScreenOptions::HandleScreenMessage( SM );
+}
+
+void ScreenOptionsEditProfile::AfterChangeValueInRow( int iRow, PlayerNumber pn )
+{
+	ScreenOptions::AfterChangeValueInRow( iRow, pn );
+
+	// cause the overlay to reload
+	GAMESTATE->m_sEditLocalProfileID.Set( GAMESTATE->m_sEditLocalProfileID );
 }
 
 void ScreenOptionsEditProfile::ProcessMenuStart( PlayerNumber pn, const InputEventType type )

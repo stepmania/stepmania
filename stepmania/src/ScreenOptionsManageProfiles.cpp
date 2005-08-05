@@ -119,7 +119,6 @@ void ScreenOptionsManageProfiles::Init()
 	int iIndex = 0;
 
 	{
-		def.m_sName = "";
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( "Create New" );
 		vDefs.push_back( def );
@@ -137,6 +136,7 @@ void ScreenOptionsManageProfiles::Init()
 	{
 		Profile &profile = PROFILEMAN->GetLocalProfile( *s );
 
+		def.m_sName = ssprintf( "%d", iIndex );
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( profile.m_sDisplayName );
 		vDefs.push_back( def );
@@ -166,6 +166,11 @@ void ScreenOptionsManageProfiles::BeginScreen()
 			int iIndex = iter - m_vsLocalProfileID.begin();
 			this->MoveRowAbsolute( PLAYER_1, 1 + iIndex, false );
 		}
+	}
+	else if( !m_vsLocalProfileID.empty() )
+	{
+		// select the first item below "create new"
+		this->MoveRowAbsolute( PLAYER_1, 1, false );
 	}
 
 	AfterChangeRow( PLAYER_1 );
@@ -215,7 +220,16 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
 		{
+			// Select the profile nearest to the one that was just deleted.
+			int iIndex = -1;
+			vector<CString>::const_iterator iter = find( m_vsLocalProfileID.begin(), m_vsLocalProfileID.end(), GAMESTATE->m_sEditLocalProfileID.Get() );
+			if( iter != m_vsLocalProfileID.end() )
+				iIndex = iter - m_vsLocalProfileID.begin();
+			CLAMP( iIndex, 0, m_vsLocalProfileID.size()-1 );
+			GAMESTATE->m_sEditLocalProfileID.Set( m_vsLocalProfileID[iIndex] );
+
 			PROFILEMAN->DeleteLocalProfile( GetLocalProfileIDWithFocus() );
+			
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
@@ -271,6 +285,16 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( PlayerNumber pn, const Input
 
 	if( iCurRow == 0 )	// "create new"
 	{
+		if( PROFILEMAN->GetNumLocalProfiles() >= MAX_NUM_LOCAL_PROFILES )
+		{
+			CString s = ssprintf( 
+				"You have %d profiles, the maximum number allowed.\n\n"
+				"You must delete an existing profile before creating a new profile.",
+				MAX_NUM_LOCAL_PROFILES );
+			ScreenPrompt::Prompt( SM_None, s );
+			return;
+		}
+
 		vector<CString> vsUsedNames;
 		PROFILEMAN->GetLocalProfileDisplayNames( vsUsedNames );
 

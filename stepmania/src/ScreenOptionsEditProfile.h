@@ -2,13 +2,15 @@
 #define ScreenOptionsEditProfile_H
 
 #include "ScreenOptions.h"
+#include "Profile.h"
 
 class ScreenOptionsEditProfile : public ScreenOptions
 {
 public:
 	ScreenOptionsEditProfile( CString sName );
-	virtual void Init();
 	virtual ~ScreenOptionsEditProfile();
+
+	virtual void Init();
 
 protected:
 private:
@@ -19,7 +21,10 @@ private:
 	virtual void GoToPrevScreen();
 	
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );
 	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
+
+	Profile	m_Original;	// restore this on revert
 };
 
 #endif

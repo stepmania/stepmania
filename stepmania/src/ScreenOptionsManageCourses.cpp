@@ -154,12 +154,17 @@ void ScreenOptionsManageCourses::Init()
 
 	OptionRowDefinition def;
 	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+
+	int iIndex = 0;
 	
-	def.m_sName = "";
-	def.m_vsChoices.clear();
-	def.m_vsChoices.push_back( "Create New" );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
+	{
+		def.m_sName = "";
+		def.m_vsChoices.clear();
+		def.m_vsChoices.push_back( "Create New" );
+		vDefs.push_back( def );
+		vHands.push_back( NULL );
+		iIndex++;
+	}
 
 	SONGMAN->GetAllCourses( m_vpCourses, false );
 
@@ -198,10 +203,13 @@ void ScreenOptionsManageCourses::Init()
 			break;
 		}
 
+		def.m_sName = ssprintf("%d",iIndex) + " " + def.m_sName;
+
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( (*c)->GetDisplayFullTitle() );
 		vDefs.push_back( def );
 		vHands.push_back( NULL );
+		iIndex++;
 	}
 
 	ScreenOptions::InitMenu( vDefs, vHands );
@@ -335,6 +343,16 @@ void ScreenOptionsManageCourses::ProcessMenuStart( PlayerNumber pn, const InputE
 
 	if( iCurRow == 0 )	// "create new"
 	{
+		if( SONGMAN->GetNumEditCourses(PROFILE_SLOT_MACHINE) >= MAX_EDIT_COURSES_PER_PROFILE )
+		{
+			CString s = ssprintf( 
+				"You have %d course edits, the maximum number allowed.\n\n"
+				"You must delete an existing course edit before creating a new course edit.",
+				MAX_EDIT_COURSES_PER_PROFILE );
+			ScreenPrompt::Prompt( SM_None, s );
+			return;
+		}
+
 		CString sDefaultName;
 		CString sThrowAway;
 		for( int i=1; i<=9999; i++ )
