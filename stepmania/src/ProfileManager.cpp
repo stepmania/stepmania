@@ -39,7 +39,7 @@ static Preference<CString> g_sMemoryCardProfileImportSubdirs( "MemoryCardProfile
 static CString LocalProfileIdToDir( const CString &sProfileID ) { return USER_PROFILES_DIR + sProfileID + "/"; }
 static CString LocalProfileDirToId( const CString &sDir ) { return Basename( sDir ); }
 
-static map<CString,Profile*> g_mapLocalProfileDirToProfile;
+static map<CString,Profile*> g_mapLocalProfileIdToProfile;
 
 
 ProfileManager::ProfileManager()
@@ -133,8 +133,8 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 	m_bWasLoadedFromMemoryCard[pn] = false;
 	m_bLastLoadWasFromLastGood[pn] = false;
 
-	map<CString,Profile*>::iterator iter = g_mapLocalProfileDirToProfile.find( m_sProfileDir[pn] );
-	if( iter == g_mapLocalProfileDirToProfile.end() )
+	map<CString,Profile*>::iterator iter = g_mapLocalProfileIdToProfile.find( m_sProfileDir[pn] );
+	if( iter == g_mapLocalProfileIdToProfile.end() )
 	{
 		m_sProfileDir[pn] = "";
 		return false;
@@ -304,8 +304,8 @@ const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
 	}
 	else
 	{
-		map<CString,Profile*>::iterator iter = g_mapLocalProfileDirToProfile.find( m_sProfileDir[pn] );
-		ASSERT( iter != g_mapLocalProfileDirToProfile.end() );
+		map<CString,Profile*>::iterator iter = g_mapLocalProfileIdToProfile.find( m_sProfileDir[pn] );
+		ASSERT( iter != g_mapLocalProfileIdToProfile.end() );
 		return iter->second;
 	}
 }
@@ -319,15 +319,15 @@ CString ProfileManager::GetPlayerName( PlayerNumber pn ) const
 
 void ProfileManager::RefreshLocalProfilesFromDisk()
 {
-	FOREACHM( CString, Profile*, g_mapLocalProfileDirToProfile, iter )
+	FOREACHM( CString, Profile*, g_mapLocalProfileIdToProfile, iter )
 		SAFE_DELETE( iter->second );
-	g_mapLocalProfileDirToProfile.clear();
+	g_mapLocalProfileIdToProfile.clear();
 
 	vector<CString> vsProfileID;
 	GetDirListing( USER_PROFILES_DIR "*", vsProfileID, true, false );
 	FOREACH_CONST( CString, vsProfileID, s )
 	{
-		Profile *&pProfile = g_mapLocalProfileDirToProfile[*s];
+		Profile *&pProfile = g_mapLocalProfileIdToProfile[*s];
 		pProfile = new Profile;
 		CString sProfileDir = LocalProfileIdToDir( *s );
 		LOG->Trace(" '%s'", pProfile->GetDisplayNameOrHighScoreName().c_str());
@@ -337,8 +337,8 @@ void ProfileManager::RefreshLocalProfilesFromDisk()
 
 Profile &ProfileManager::GetLocalProfile( const CString &sProfileID )
 {
-	map<CString,Profile*>::iterator iter = g_mapLocalProfileDirToProfile.find( sProfileID );
-	if( iter == g_mapLocalProfileDirToProfile.end() )
+	map<CString,Profile*>::iterator iter = g_mapLocalProfileIdToProfile.find( sProfileID );
+	if( iter == g_mapLocalProfileIdToProfile.end() )
 	{
 		LOG->Warn( "ProfileID '%s' doesn't exist", sProfileID.c_str() );
 		static Profile s_pro;
@@ -667,7 +667,7 @@ bool ProfileManager::IsPersistentProfile( ProfileSlot slot ) const
 void ProfileManager::GetLocalProfileIDs( vector<CString> &vsProfileIDsOut ) const
 {
 	vsProfileIDsOut.clear();
-	FOREACHM_CONST( CString, Profile*, g_mapLocalProfileDirToProfile, iter )
+	FOREACHM_CONST( CString, Profile*, g_mapLocalProfileIdToProfile, iter )
 	{
 		CString sID = LocalProfileDirToId( iter->first );
 		vsProfileIDsOut.push_back( sID );
@@ -677,13 +677,26 @@ void ProfileManager::GetLocalProfileIDs( vector<CString> &vsProfileIDsOut ) cons
 void ProfileManager::GetLocalProfileDisplayNames( vector<CString> &vsProfileDisplayNamesOut ) const
 {
 	vsProfileDisplayNamesOut.clear();
-	FOREACHM_CONST( CString, Profile*, g_mapLocalProfileDirToProfile, iter )
+	FOREACHM_CONST( CString, Profile*, g_mapLocalProfileIdToProfile, iter )
 		vsProfileDisplayNamesOut.push_back( iter->second->m_sDisplayName );
+}
+
+int ProfileManager::GetLocalProfileIndex( CString sProfileID ) const
+{
+	int iIndex = 0;
+	CString sDir = LocalProfileIdToDir( sProfileID );
+	FOREACHM_CONST( CString, Profile*, g_mapLocalProfileIdToProfile, iter )
+	{
+		if( iter->first == sProfileID )
+			return iIndex;
+		iIndex++;
+	}
+	return -1;
 }
 
 int ProfileManager::GetNumLocalProfiles() const
 {
-	return g_mapLocalProfileDirToProfile.size();
+	return g_mapLocalProfileIdToProfile.size();
 }
 
 
@@ -700,6 +713,8 @@ public:
 	static int GetMachineProfile( T* p, lua_State *L )		{ p->GetMachineProfile()->PushSelf(L); return 1; }
 	static int SaveMachineProfile( T* p, lua_State *L )		{ p->SaveMachineProfile(); return 1; }
 	static int GetLocalProfile( T* p, lua_State *L )		{ Profile &pro = p->GetLocalProfile(SArg(1)); pro.PushSelf(L); return 1; }
+	static int GetLocalProfileIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetLocalProfileIndex(SArg(1)) ); return 1; }
+	static int GetNumLocalProfiles( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumLocalProfiles() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -708,6 +723,8 @@ public:
 		ADD_METHOD( GetMachineProfile )
 		ADD_METHOD( SaveMachineProfile )
 		ADD_METHOD( GetLocalProfile )
+		ADD_METHOD( GetLocalProfileIndex )
+		ADD_METHOD( GetNumLocalProfiles )
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,
