@@ -192,7 +192,7 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 
 	//
-	// Load commands
+	// Load command attributes
 	//
 	FOREACH_CONST_Attr( pNode, a )
 	{
@@ -212,6 +212,28 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 		else
 			sCmdName = sKeyName.Left( sKeyName.size()-7 );
 		AddCommand( sCmdName, apac );
+	}
+
+	//
+	// Load command elements
+	//
+	FOREACH_CONST_Child( pNode, c )
+	{
+		CString sKeyName = c->m_sName; /* "OnCommand" */
+
+		if( sKeyName != "Command" )
+			continue; /* not a command */
+
+		CString sName;
+		c->GetAttrValue( "Name", sName );
+		CString sValue;
+		c->GetAttrValue( "Value", sValue );
+
+		THEME->EvaluateString( sName );
+		THEME->EvaluateString( sValue );
+		apActorCommands apac( new ActorCommands( sValue ) );
+
+		AddCommand( sName, apac );
 	}
 
 	/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
