@@ -2046,6 +2046,7 @@ public:
 	}
 	static int GetCurrentGame( T* p, lua_State *L )			{ const_cast<Game*>(p->GetCurrentGame())->PushSelf( L ); return 1; }
 	static int GetEditCourseEntryIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iEditCourseEntryIndex ); return 1; }
+	static int GetEditLocalProfileID( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sEditLocalProfileID.Get() ); return 1; }
 	static int GetEditLocalProfile( T* p, lua_State *L )
 	{
 		Profile *pProfile = p->GetEditLocalProfile();
@@ -2109,6 +2110,7 @@ public:
 		ADD_METHOD( IsWinner )
 		ADD_METHOD( GetCurrentGame )
 		ADD_METHOD( GetEditCourseEntryIndex )
+		ADD_METHOD( GetEditLocalProfileID )
 		ADD_METHOD( GetEditLocalProfile )
 
 		Luna<T>::Register( L );
