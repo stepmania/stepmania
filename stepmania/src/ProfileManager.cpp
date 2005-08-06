@@ -133,7 +133,7 @@ bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 	m_bWasLoadedFromMemoryCard[pn] = false;
 	m_bLastLoadWasFromLastGood[pn] = false;
 
-	map<CString,Profile*>::iterator iter = g_mapLocalProfileIdToProfile.find( m_sProfileDir[pn] );
+	map<CString,Profile*>::iterator iter = g_mapLocalProfileIdToProfile.find( sProfileID );
 	if( iter == g_mapLocalProfileIdToProfile.end() )
 	{
 		m_sProfileDir[pn] = "";
@@ -304,7 +304,8 @@ const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
 	}
 	else
 	{
-		map<CString,Profile*>::iterator iter = g_mapLocalProfileIdToProfile.find( m_sProfileDir[pn] );
+		CString sProfileID = LocalProfileDirToId( m_sProfileDir[pn] );
+		map<CString,Profile*>::iterator iter = g_mapLocalProfileIdToProfile.find( sProfileID );
 		ASSERT( iter != g_mapLocalProfileIdToProfile.end() );
 		return iter->second;
 	}
