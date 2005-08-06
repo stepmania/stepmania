@@ -19,28 +19,6 @@
 
 #define COIN_MODE_CHANGE_SCREEN		THEME->GetMetric (m_sName,"CoinModeChangeScreen")
 
-static void ChangeDefaultLocalProfile( PlayerNumber pn, int iDir )
-{
-	CString sCurrent = PREFSMAN->GetDefaultLocalProfileID(pn);
-	vector<CString> vsProfileID;
-	PROFILEMAN->GetLocalProfileIDs( vsProfileID );
-	if( vsProfileID.empty() )
-		return;
-
-	int iIndex = 0;
-	vector<CString>::const_iterator iter = find( vsProfileID.begin(), vsProfileID.end(), sCurrent );
-	if( iter != vsProfileID.end() )
-	{
-		iIndex = iter - vsProfileID.begin();
-		iIndex += iDir;
-		wrap( iIndex, vsProfileID.size() );
-	}
-
-	sCurrent = vsProfileID[iIndex];
-	PREFSMAN->GetDefaultLocalProfileID(pn).Set( sCurrent );
-}
-
-
 REGISTER_SCREEN_CLASS( ScreenTitleMenu );
 ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) : 
 	ScreenSelectMaster( sScreenName )
@@ -66,6 +44,8 @@ void ScreenTitleMenu::Init()
 	ScreenSelectMaster::Init();
 
 	m_soundSelectPressed.Load( THEME->GetPathS(m_sName,"select down"), true );
+	m_soundProfileChange.Load( THEME->GetPathS(m_sName,"profile change"), true );
+	m_soundProfileSwap.Load( THEME->GetPathS(m_sName,"profile swap"), true );
 
 	this->SortByDrawOrder();
 
@@ -156,6 +136,9 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 					ChangeDefaultLocalProfile( pn, +1 );
 					MESSAGEMAN->Broadcast( ssprintf("MenuRightP%d",pn+1) );
 					break;
+				case MENU_BUTTON_DOWN:
+					SwapDefaultLocalProfiles();
+					break;
 				}
 			}
 			return;
@@ -199,6 +182,55 @@ void ScreenTitleMenu::LoadHelpText()
 		else
 			MESSAGEMAN->Broadcast( "SelectMenuOff" );
 	}
+}
+
+void ScreenTitleMenu::ChangeDefaultLocalProfile( PlayerNumber pn, int iDir )
+{
+	CString sCurrent = PREFSMAN->GetDefaultLocalProfileID(pn);
+	vector<CString> vsProfileID;
+	PROFILEMAN->GetLocalProfileIDs( vsProfileID );
+	if( vsProfileID.empty() )
+		return;
+
+	int iIndex = 0;
+	vector<CString>::const_iterator iter = find( vsProfileID.begin(), vsProfileID.end(), sCurrent );
+	if( iter != vsProfileID.end() )
+	{
+		iIndex = iter - vsProfileID.begin();
+
+		for( int i=0; i<PROFILEMAN->GetNumLocalProfiles(); i++ )
+		{
+			iIndex += iDir;
+			wrap( iIndex, vsProfileID.size() );
+			sCurrent = vsProfileID[iIndex];
+
+			bool bAnyOtherIsUsingThisProfile = false;
+			FOREACH_PlayerNumber( p )
+			{
+				if( p!=pn  &&  PREFSMAN->GetDefaultLocalProfileID(p).Get() == sCurrent )
+				{
+					bAnyOtherIsUsingThisProfile = true;
+					break;
+				}
+			}
+			if( !bAnyOtherIsUsingThisProfile )
+				break;
+		}
+	}
+
+	m_soundProfileChange.Play();
+
+	PREFSMAN->GetDefaultLocalProfileID(pn).Set( sCurrent );
+}
+
+void ScreenTitleMenu::SwapDefaultLocalProfiles()
+{
+	CString s1 = PREFSMAN->GetDefaultLocalProfileID(PLAYER_1);
+	CString s2 = PREFSMAN->GetDefaultLocalProfileID(PLAYER_2);
+	PREFSMAN->GetDefaultLocalProfileID(PLAYER_1).Set( s2 );
+	PREFSMAN->GetDefaultLocalProfileID(PLAYER_2).Set( s1 );
+
+	m_soundProfileSwap.Play();
 }
 
 
