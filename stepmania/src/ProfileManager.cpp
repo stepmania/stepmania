@@ -163,7 +163,6 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 	vector<CString> asDirsToTry;
 	GetMemoryCardProfileDirectoriesToTry( asDirsToTry );
 
-	int iLoadedFrom = -1;
 	for( unsigned i = 0; i < asDirsToTry.size(); ++i )
 	{
 		const CString &sSubdir = asDirsToTry[i];
@@ -180,18 +179,14 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 		Profile::LoadResult res = (Profile::LoadResult) LoadProfile( pn, sDir, true );
 		if( res == Profile::success )
 		{
-			iLoadedFrom = i;
+			/* If importing, store the directory we imported from, for display purposes. */
+			if( i > 0 )
+				m_sProfileDirImportedFrom[pn] = asDirsToTry[i];
 			break;
 		}
 		
 		if( res == Profile::failed_tampered )
 			break;
-	}
-
-	/* Store the directory we imported from, for display purposes. */
-	if( iLoadedFrom > 0 )
-	{
-		m_sProfileDirImportedFrom[pn] = asDirsToTry[iLoadedFrom];
 	}
 
 	/* If we imported a profile fallback directory, change the memory card
