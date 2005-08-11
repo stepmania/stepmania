@@ -27,6 +27,7 @@ public:
 	void Init();
 
 	// local profiles
+	void UnloadAllLocalProfiles();
 	void RefreshLocalProfilesFromDisk();
 	Profile &GetLocalProfile( const CString &sProfileID );
 	

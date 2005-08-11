@@ -318,11 +318,16 @@ CString ProfileManager::GetPlayerName( PlayerNumber pn ) const
 }
 
 
-void ProfileManager::RefreshLocalProfilesFromDisk()
+void ProfileManager::UnloadAllLocalProfiles()
 {
 	FOREACHM( CString, Profile*, g_mapLocalProfileIdToProfile, iter )
 		SAFE_DELETE( iter->second );
 	g_mapLocalProfileIdToProfile.clear();
+}
+
+void ProfileManager::RefreshLocalProfilesFromDisk()
+{
+	UnloadAllLocalProfiles();
 
 	vector<CString> vsProfileID;
 	GetDirListing( USER_PROFILES_DIR "*", vsProfileID, true, false );
