@@ -1353,11 +1353,20 @@ void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 	FOREACH( Song*, m_pSongs, s )
 		(*s)->FreeAllLoadedFromProfile( slot );
 
+	vector<Course*> apToDelete;
 	FOREACH( Course*, m_pCourses, c )
 	{
-		if( (*c)->m_LoadedFromProfile == slot )
-			this->DeleteCourse( *c );
+		Course *pCourse = *c;
+		if( pCourse->GetLoadedFromProfileSlot() == PROFILE_SLOT_INVALID )
+			continue;
+		
+		if( slot == PROFILE_SLOT_INVALID || pCourse->GetLoadedFromProfileSlot() == slot )
+			apToDelete.push_back( *c );
 	}
+
+	// XXX: this will update best, etc. every time; too slow
+	for( unsigned i = 0; i < apToDelete.size(); ++i )
+		this->DeleteCourse( apToDelete[i] );
 
 	// After freeing some Steps pointers, the cache will be invalid.
 	StepsID::ClearCache();
