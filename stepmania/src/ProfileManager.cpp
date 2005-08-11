@@ -305,9 +305,7 @@ const Profile* ProfileManager::GetProfile( PlayerNumber pn ) const
 	else
 	{
 		CString sProfileID = LocalProfileDirToId( m_sProfileDir[pn] );
-		map<CString,Profile*>::iterator iter = g_mapLocalProfileIdToProfile.find( sProfileID );
-		ASSERT( iter != g_mapLocalProfileIdToProfile.end() );
-		return iter->second;
+		return GetLocalProfileByID( sProfileID );
 	}
 }
 
@@ -390,6 +388,13 @@ bool ProfileManager::CreateLocalProfileByID( CString sName, CString sProfileID )
 
 	RefreshLocalProfilesFromDisk();
 	return true;
+}
+
+const Profile* ProfileManager::GetLocalProfileByID( const CString &sProfileID ) const
+{
+	map<CString,Profile*>::const_iterator iter = g_mapLocalProfileIdToProfile.find( sProfileID );
+	ASSERT( iter != g_mapLocalProfileIdToProfile.end() );
+	return iter->second;
 }
 
 bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )

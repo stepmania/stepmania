@@ -71,6 +71,8 @@ public:
 	Profile* GetProfile( PlayerNumber pn ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(pn); }
 	const Profile* GetProfile( ProfileSlot slot ) const;
 	Profile* GetProfile( ProfileSlot slot ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(slot); }
+	const Profile* GetLocalProfileByID( const CString &sProfileID ) const;
+	Profile* GetLocalProfileByID( const CString &sProfileID ) { return (Profile*) ((const ProfileManager *) this)->GetLocalProfileByID(sProfileID); }
 	
 	CString GetProfileDir( ProfileSlot slot ) const;
 	CString GetProfileDirImportedFrom( ProfileSlot slot ) const;
