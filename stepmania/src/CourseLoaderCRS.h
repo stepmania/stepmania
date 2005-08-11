@@ -5,12 +5,16 @@
 
 #include "GameConstantsAndTypes.h"
 class Course;
+class MsdFile;
 
 class CourseLoaderCRS
 {
 public:
 	static bool LoadFromCRSFile( const CString &sPath, Course &out );
+	static bool LoadFromMsd( const CString &sPath, const MsdFile &msd, Course &out, bool bFromCache );
+	static bool LoadFromBuffer( const CString &sPath, const CString &sBuffer, Course &out );
 	static bool LoadEdit( const CString &sEditFilePath, ProfileSlot slot );
+	static bool LoadEditFromBuffer( const CString &sBuffer, const CString &sPath, ProfileSlot slot );
 };
 
 #endif

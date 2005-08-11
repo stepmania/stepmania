@@ -16,52 +16,15 @@
 
 const int MAX_EDIT_COURSE_SIZE_BYTES	= 30*1024;	// 30KB
 
-bool CourseLoaderCRS::LoadFromCRSFile( const CString &_sPath, Course &out )
+bool CourseLoaderCRS::LoadFromBuffer( const CString &sPath, const CString &sBuffer, Course &out )
 {
-	CString sPath = _sPath;
-
-	out.Init();
-
-	out.m_sPath = sPath;	// save path
-
-	// save group name
-	{
-		CStringArray parts;
-		split( sPath, "/", parts, false );
-		if( parts.size() >= 4 )		// e.g. "/Courses/blah/fun.cvs"
-			out.m_sGroupName = parts[parts.size()-2];
-	}
-
-
-	bool bUseCache = true;
-	{
-		/* First look in the cache for this course.  Don't bother
-		 * honoring FastLoad for checking the course hash, since
-		 * courses are normally grouped into a few directories, not
-		 * one directory per course. XXX: if !FastLoad, regen
-		 * cache if the used songs have changed */
-		unsigned uHash = SONGINDEX->GetCacheHash( out.m_sPath );
-		if( !DoesFileExist(out.GetCacheFilePath()) )
-			bUseCache = false;
-		if( !PREFSMAN->m_bFastLoad && GetHashForDirectory(out.m_sPath) != uHash )
-			bUseCache = false; // this cache is out of date 
-	}
-
-	if( bUseCache )
-	{
-		CString sCacheFile = out.GetCacheFilePath();
-		LOG->Trace( "CourseLoaderCRS::LoadFromCRSFile(\"%s\") (\"%s\")", sPath.c_str(), sCacheFile.c_str() );
-		sPath = sCacheFile.c_str();
-	}
-	else
-	{
-		LOG->Trace( "CourseLoaderCRS::LoadFromCRSFile(\"%s\")", sPath.c_str() );
-	}
-
 	MsdFile msd;
-	if( !msd.ReadFile(sPath) )
-		RageException::Throw( "Error opening CRS file '%s'.", sPath.c_str() );
+	msd.ReadFromString( sBuffer );
+	return LoadFromMsd( sPath, msd, out, true );
+}
 
+bool CourseLoaderCRS::LoadFromMsd( const CString &sPath, const MsdFile &msd, Course &out, bool bFromCache )
+{
 	const CString sFName = SetExtension( out.m_sPath, "" );
 
 	CStringArray arrayPossibleBanners;
@@ -269,7 +232,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const CString &_sPath, Course &out )
 			
 			out.m_vEntries.push_back( new_entry );
 		}
-		else if( bUseCache && !stricmp(sValueName, "RADAR") )
+		else if( bFromCache && !stricmp(sValueName, "RADAR") )
 		{
 			StepsType st = (StepsType) atoi(sParams[1]);
 			CourseDifficulty cd = (CourseDifficulty) atoi(sParams[2]);
@@ -299,10 +262,63 @@ bool CourseLoaderCRS::LoadFromCRSFile( const CString &_sPath, Course &out )
 
 	/* Cache each trail RadarValues that's slow to load, so we
 	 * don't have to do it at runtime. */
-	if( !bUseCache )
-	{
+	if( !bFromCache )
 		out.CalculateRadarValues();
 
+	return true;
+}
+
+bool CourseLoaderCRS::LoadFromCRSFile( const CString &_sPath, Course &out )
+{
+	CString sPath = _sPath;
+
+	out.Init();
+
+	out.m_sPath = sPath;	// save path
+
+	// save group name
+	{
+		CStringArray parts;
+		split( sPath, "/", parts, false );
+		if( parts.size() >= 4 )		// e.g. "/Courses/blah/fun.cvs"
+			out.m_sGroupName = parts[parts.size()-2];
+	}
+
+
+	bool bUseCache = true;
+	{
+		/* First look in the cache for this course.  Don't bother
+		 * honoring FastLoad for checking the course hash, since
+		 * courses are normally grouped into a few directories, not
+		 * one directory per course. XXX: if !FastLoad, regen
+		 * cache if the used songs have changed */
+		unsigned uHash = SONGINDEX->GetCacheHash( out.m_sPath );
+		if( !DoesFileExist(out.GetCacheFilePath()) )
+			bUseCache = false;
+		if( !PREFSMAN->m_bFastLoad && GetHashForDirectory(out.m_sPath) != uHash )
+			bUseCache = false; // this cache is out of date 
+	}
+
+	if( bUseCache )
+	{
+		CString sCacheFile = out.GetCacheFilePath();
+		LOG->Trace( "CourseLoaderCRS::LoadFromCRSFile(\"%s\") (\"%s\")", sPath.c_str(), sCacheFile.c_str() );
+		sPath = sCacheFile.c_str();
+	}
+	else
+	{
+		LOG->Trace( "CourseLoaderCRS::LoadFromCRSFile(\"%s\")", sPath.c_str() );
+	}
+
+	MsdFile msd;
+	if( !msd.ReadFile(sPath) )
+		RageException::Throw( "Error opening CRS file '%s'.", sPath.c_str() );
+	
+	if( !LoadFromMsd(sPath, msd, out, bUseCache) )
+		return false;
+
+	if( !bUseCache )
+	{
 		/* If we have any cache data, write the cache file. */
 		if( out.m_RadarCache.size() )
 		{
@@ -327,13 +343,27 @@ bool CourseLoaderCRS::LoadEdit( const CString &sEditFilePath, ProfileSlot slot )
 		return false;
 	}
 
-	Course *pCourse = new Course;
-	LoadFromCRSFile( sEditFilePath, *pCourse );
 	MsdFile msd;
 	if( !msd.ReadFile( sEditFilePath ) )
 	{
 		LOG->Warn( "Error opening edit file \"%s\": %s", sEditFilePath.c_str(), msd.GetError().c_str() );
-		SAFE_DELETE( pCourse );
+		return false;
+	}
+	Course *pCourse = new Course;
+	LoadFromMsd( sEditFilePath, msd, *pCourse, true );
+
+	pCourse->m_LoadedFromProfile = slot;
+
+	SONGMAN->AddCourse( pCourse );
+	return true;
+}
+
+bool CourseLoaderCRS::LoadEditFromBuffer( const CString &sBuffer, const CString &sPath, ProfileSlot slot )
+{
+	Course *pCourse = new Course;
+	if( !LoadFromBuffer(sPath, sBuffer, *pCourse) )
+	{
+		delete pCourse;
 		return false;
 	}
 
