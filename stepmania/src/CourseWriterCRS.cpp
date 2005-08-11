@@ -5,18 +5,31 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "song.h"
+#include "RageFileDriverMemory.h"
 
 
 bool CourseWriterCRS::Write( const Course &course, const CString &sPath, bool bSavingCache )
 {
-	ASSERT( !course.m_bIsAutogen );
-
 	RageFile f;
 	if( !f.Open( sPath, RageFile::WRITE ) )
 	{
 		LOG->Warn( "Could not write course file '%s': %s", sPath.c_str(), f.GetError().c_str() );
 		return false;
 	}
+
+	return CourseWriterCRS::Write( course, f, bSavingCache );
+}
+
+void CourseWriterCRS::GetEditFile( const Course *pCourse, CString &sOut )
+{
+	RageFileObjMem mem;
+	CourseWriterCRS::Write( *pCourse, mem, true );
+	sOut = mem.GetString();
+}
+
+bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavingCache )
+{
+	ASSERT( !course.m_bIsAutogen );
 
 	f.PutLine( ssprintf("#COURSE:%s;", course.m_sMainTitle.c_str()) );
 	if( course.m_sMainTitleTranslit != "" )
@@ -135,11 +148,6 @@ bool CourseWriterCRS::Write( const Course &course, const CString &sPath, bool bS
 	}	
 	
 	return true;
-}
-
-void CourseWriterCRS::GetEditFile( const Course *pCourse, CString &sOut )
-{
-
 }
 
 
