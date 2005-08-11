@@ -371,15 +371,25 @@ bool ProfileManager::CreateLocalProfile( CString sName, CString &sProfileIDOut )
 
 	int iProfileNumber = iMaxProfileNumber + 1;
 	CString sProfileID = ssprintf( "%08d", iProfileNumber );
-	CString sProfileDir = LocalProfileIdToDir( sProfileID );
 
-	bool bResult = Profile::CreateNewProfile( sProfileDir, sName, true );
-	if( bResult )
-		sProfileIDOut = sProfileID;
-	else
+	if( !CreateLocalProfileByID(sName, sProfileID) )
+	{
 		sProfileIDOut = "";
+		return false;
+	}
+
+	sProfileIDOut = sProfileID;
+	return true;
+}
+
+bool ProfileManager::CreateLocalProfileByID( CString sName, CString sProfileID )
+{
+	CString sProfileDir = LocalProfileIdToDir( sProfileID );
+	if( !Profile::CreateNewProfile(sProfileDir, sName, true) )
+		return false;
+
 	RefreshLocalProfilesFromDisk();
-	return bResult;
+	return true;
 }
 
 bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )

@@ -32,6 +32,7 @@ public:
 	Profile &GetLocalProfile( const CString &sProfileID );
 	
 	bool CreateLocalProfile( CString sName, CString &sProfileIDOut );
+	bool CreateLocalProfileByID( CString sName, CString sProfileID );
 	bool RenameLocalProfile( CString sProfileID, CString sNewName );
 	bool DeleteLocalProfile( CString sProfileID );
 	void GetLocalProfileIDs( vector<CString> &vsProfileIDsOut ) const;
