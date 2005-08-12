@@ -378,10 +378,11 @@ bool ProfileManager::CreateLocalProfile( CString sName, CString &sProfileIDOut )
 bool ProfileManager::CreateLocalProfileByID( CString sName, CString sProfileID )
 {
 	CString sProfileDir = LocalProfileIdToDir( sProfileID );
-	if( !Profile::CreateNewProfile(sProfileDir, sName, true) )
+	Profile *pProfile = Profile::CreateNewProfile( sProfileDir, sName, true );
+	if( pProfile == NULL )
 		return false;
 
-	RefreshLocalProfilesFromDisk();
+	g_mapLocalProfileIdToProfile[sProfileID] = pProfile;
 	return true;
 }
 
@@ -434,8 +435,9 @@ void ProfileManager::LoadMachineProfile()
 	Profile::LoadResult lr = m_pMachineProfile->LoadAllFromDir(MACHINE_PROFILE_DIR, false);
 	if( lr == Profile::failed_no_profile )
 	{
-		Profile::CreateNewProfile( MACHINE_PROFILE_DIR, "Machine", false );
-		m_pMachineProfile->LoadAllFromDir( MACHINE_PROFILE_DIR, false );
+		Profile *pProfile = Profile::CreateNewProfile( MACHINE_PROFILE_DIR, "Machine", false );
+		delete m_pMachineProfile;
+		m_pMachineProfile = pProfile;
 	}
 
 	// If the machine name has changed, make sure we use the new name
