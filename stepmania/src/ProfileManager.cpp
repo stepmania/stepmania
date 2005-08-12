@@ -377,6 +377,10 @@ bool ProfileManager::CreateLocalProfile( CString sName, CString &sProfileIDOut )
 
 bool ProfileManager::CreateLocalProfileByID( CString sName, CString sProfileID )
 {
+	ASSERT_M( g_mapLocalProfileIdToProfile.find(sProfileID) == g_mapLocalProfileIdToProfile.end(),
+		ssprintf("creating \"%s\" \"%s\" that already exists",
+		sName.c_str(), sProfileID.c_str()) );
+
 	CString sProfileDir = LocalProfileIdToDir( sProfileID );
 	Profile *pProfile = Profile::CreateNewProfile( sProfileDir, sName, true );
 	if( pProfile == NULL )
@@ -397,18 +401,11 @@ bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
 {
 	ASSERT( !sProfileID.empty() );
 
-	CString sProfileDir = LocalProfileIdToDir( sProfileID );
-
-	Profile pro;
-	Profile::LoadResult lr;
-	lr = pro.LoadAllFromDir( sProfileDir, PREFSMAN->m_bSignProfileData );
-	if( lr != Profile::success )
-		return false;
+	Profile &pro = ProfileManager::GetLocalProfile( sProfileID );
 	pro.m_sDisplayName = sNewName;
 
-	bool bResult = pro.SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
-	RefreshLocalProfilesFromDisk();
-	return bResult;
+	CString sProfileDir = LocalProfileIdToDir( sProfileID );
+	return pro.SaveAllToDir( sProfileDir, PREFSMAN->m_bSignProfileData );
 }
 
 bool ProfileManager::DeleteLocalProfile( CString sProfileID )
