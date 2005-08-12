@@ -587,6 +587,27 @@ void Actor::UpdateTweening( float fDeltaTime )
 			case TWEEN_LINEAR:		fPercentAlongPath = fPercentThroughTween;													break;
 			case TWEEN_ACCELERATE:	fPercentAlongPath = fPercentThroughTween * fPercentThroughTween;							break;
 			case TWEEN_DECELERATE:	fPercentAlongPath = 1 - (1-fPercentThroughTween) * (1-fPercentThroughTween);				break;
+			case TWEEN_SMOOTH:
+			{
+				/* Sccelerate, reaching full speed at fShift, then decelerate the rest of
+				 * the way.  fShift = 1 degrades to TWEEN_ACCELERATE.  fShift = 0 degrades
+				 * to TWEEN_DECELERATE.  (This is a rough approximation of a sigmoid.) */
+				const float fShift = 0.5f;
+				if( fPercentThroughTween < fShift )
+				{
+					fPercentAlongPath = SCALE( fPercentThroughTween, 0.0f, fShift, 0.0f, 1.0f );
+					fPercentAlongPath = fPercentThroughTween * fPercentThroughTween;
+					fPercentAlongPath = SCALE( fPercentAlongPath, 0.0f, 1.0f, 0.0f, fShift );
+				}
+				else
+				{
+					fPercentAlongPath = SCALE( fPercentThroughTween, fShift, 1.0f, 0.0f, 1.0f );
+					fPercentAlongPath = 1 - (1-fPercentAlongPath) * (1-fPercentAlongPath);
+					fPercentAlongPath = SCALE( fPercentAlongPath, 0.0f, 1.0f, fShift, 1.0f );
+				}
+				break;
+			}
+
 			case TWEEN_BOUNCE_BEGIN:fPercentAlongPath = 1 - RageFastSin( 1.1f + fPercentThroughTween*(PI-1.1f) ) / 0.89f;				break;
 			case TWEEN_BOUNCE_END:	fPercentAlongPath = RageFastSin( 1.1f + (1-fPercentThroughTween)*(PI-1.1f) ) / 0.89f;				break;
 			case TWEEN_SPRING:		fPercentAlongPath = 1 - RageFastCos( fPercentThroughTween*PI*2.5f )/(1+fPercentThroughTween*3);	break;
@@ -1247,6 +1268,7 @@ public:
 	static int linear( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),Actor::TWEEN_LINEAR); return 0; }
 	static int accelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),Actor::TWEEN_ACCELERATE); return 0; }
 	static int decelerate( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),Actor::TWEEN_DECELERATE); return 0; }
+	static int smooth( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),Actor::TWEEN_SMOOTH); return 0; }
 	static int bouncebegin( T* p, lua_State *L )	{ p->BeginTweening(FArg(1),Actor::TWEEN_BOUNCE_BEGIN); return 0; }
 	static int bounceend( T* p, lua_State *L )		{ p->BeginTweening(FArg(1),Actor::TWEEN_BOUNCE_END); return 0; }
 	static int spring( T* p, lua_State *L )			{ p->BeginTweening(FArg(1),Actor::TWEEN_SPRING); return 0; }
@@ -1373,6 +1395,7 @@ public:
 		ADD_METHOD( linear )
 		ADD_METHOD( accelerate )
 		ADD_METHOD( decelerate )
+		ADD_METHOD( smooth )
 		ADD_METHOD( bouncebegin )
 		ADD_METHOD( bounceend )
 		ADD_METHOD( spring )
