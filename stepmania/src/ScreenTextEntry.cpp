@@ -26,12 +26,12 @@ static const char* g_szKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW] =
 
 static Preference<bool> g_bAllowOldKeyboardInput( "AllowOldKeyboardInput",	true );
 
-float GetButtonX( int x )
+static float GetButtonX( int x )
 {
 	return roundf( SCALE( x, 0, KEYS_PER_ROW-1, SCREEN_LEFT+100, SCREEN_RIGHT-100 ) );
 }
 
-float GetButtonY( KeyboardRow r )
+static float GetButtonY( KeyboardRow r )
 {
 	return roundf( SCALE( r, 0, NUM_KEYBOARD_ROWS-1, SCREEN_CENTER_Y-30, SCREEN_BOTTOM-80 ) );
 }
