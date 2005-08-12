@@ -26,7 +26,7 @@ struct HighScoreImpl
 	RadarValues radarValues;
 	float fLifeRemainingSeconds;
 
-	void Unset();
+	HighScoreImpl();
 	XNode *CreateNode() const;
 	void LoadFromNode( const XNode *pNode );
 
@@ -58,7 +58,7 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 	return true;
 }
 
-void HighScoreImpl::Unset()
+HighScoreImpl::HighScoreImpl()
 {
 	sName = "";
 	grade = GRADE_NO_DATA;
@@ -145,12 +145,11 @@ REGISTER_CLASS_TRAITS( HighScoreImpl, new HighScoreImpl(*pCopy) )
 HighScore::HighScore()
 {
 	m_Impl = new HighScoreImpl;
-	Unset();
 }
 
 void HighScore::Unset()
 {
-	m_Impl->Unset();
+	m_Impl = new HighScoreImpl;
 }
 
 CString	HighScore::GetName() const { return m_Impl->sName; }
