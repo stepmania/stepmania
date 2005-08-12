@@ -27,7 +27,7 @@ struct HighScoreImpl
 	float fLifeRemainingSeconds;
 
 	void Unset();
-	void AppendChildren( XNode *pNode ) const;
+	XNode *CreateNode() const;
 	void LoadFromNode( const XNode *pNode );
 
 	bool operator==( const HighScoreImpl& other ) const;
@@ -76,8 +76,11 @@ void HighScoreImpl::Unset()
 	fLifeRemainingSeconds = 0;
 }
 
-void HighScoreImpl::AppendChildren( XNode *pNode ) const
+XNode *HighScoreImpl::CreateNode() const
 {
+	XNode *pNode = new XNode;
+	pNode->m_sName = "HighScore";
+
 	// TRICKY:  Don't write "name to fill in" markers.
 	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? CString("") : sName );
 	pNode->AppendChild( "Grade",			GradeToString(grade) );
@@ -99,10 +102,14 @@ void HighScoreImpl::AppendChildren( XNode *pNode ) const
 			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 	pNode->AppendChild( radarValues.CreateNode() );
 	pNode->AppendChild( "LifeRemainingSeconds",		fLifeRemainingSeconds );
+
+	return pNode;
 }
 
 void HighScoreImpl::LoadFromNode( const XNode *pNode )
 {
+	ASSERT( pNode->m_sName == "HighScore" );
+
 	CString s;
 
 	pNode->GetChildValue( "Name", sName );
@@ -208,17 +215,11 @@ bool HighScore::operator==( const HighScore& other ) const
 
 XNode* HighScore::CreateNode() const
 {
-	XNode* pNode = new XNode;
-	pNode->m_sName = "HighScore";
-
-	m_Impl->AppendChildren( pNode );
-	return pNode;
+	return m_Impl->CreateNode();
 }
 
 void HighScore::LoadFromNode( const XNode* pNode ) 
 {
-	ASSERT( pNode->m_sName == "HighScore" );
-
 	m_Impl->LoadFromNode( pNode );
 }
 
