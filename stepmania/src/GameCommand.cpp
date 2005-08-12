@@ -618,10 +618,10 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 	hs.SetSurviveSeconds( randomf(30.0f, 100.0f) );
 	PlayerOptions po;
 	po.ChooseRandomMofifiers();
-	hs.sModifiers = po.GetString();
-	hs.dateTime = DateTime::GetNowDateTime();
-	hs.sPlayerGuid = Profile::MakeGuid();
-	hs.sMachineGuid = Profile::MakeGuid();
+	hs.SetModifiers( po.GetString() );
+	hs.SetDateTime( DateTime::GetNowDateTime() );
+	hs.SetPlayerGuid( Profile::MakeGuid() );
+	hs.SetMachineGuid( Profile::MakeGuid() );
 	hs.iProductID = rand()%10;
 	FOREACH_TapNoteScore( tns )
 		hs.iTapNoteScores[tns] = rand() % 100;

@@ -16,6 +16,10 @@ struct HighScoreImpl
 	int iScore;
 	float fPercentDP;
 	float fSurviveSeconds;
+	CString	sModifiers;
+	DateTime dateTime;		// return value of time() when screenshot was taken
+	CString sPlayerGuid;	// who made this high score
+	CString sMachineGuid;	// where this high score was made
 
 	void Unset();
 	void AppendChildren( XNode *pNode ) const;
@@ -33,6 +37,10 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 	COMPARE( iScore );
 	COMPARE( fPercentDP );
 	COMPARE( fSurviveSeconds );
+	COMPARE( sModifiers );
+	COMPARE( dateTime );
+	COMPARE( sPlayerGuid );
+	COMPARE( sMachineGuid );
 #undef COMPARE
 
 	return true;
@@ -45,6 +53,10 @@ void HighScoreImpl::Unset()
 	iScore = 0;
 	fPercentDP = 0;
 	fSurviveSeconds = 0;
+	sModifiers = "";
+	dateTime.Init();
+	sPlayerGuid = "";
+	sMachineGuid = "";
 
 }
 
@@ -55,6 +67,10 @@ void HighScoreImpl::AppendChildren( XNode *pNode ) const
 	pNode->AppendChild( "Score",			iScore );
 	pNode->AppendChild( "PercentDP",		fPercentDP );
 	pNode->AppendChild( "SurviveSeconds",	fSurviveSeconds );
+	pNode->AppendChild( "Modifiers",		sModifiers );
+	pNode->AppendChild( "DateTime",			dateTime );
+	pNode->AppendChild( "PlayerGuid",		sPlayerGuid );
+	pNode->AppendChild( "MachineGuid",		sMachineGuid );
 }
 
 void HighScoreImpl::LoadFromNode( const XNode *pNode )
@@ -67,6 +83,10 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	pNode->GetChildValue( "Score",			iScore );
 	pNode->GetChildValue( "PercentDP",		fPercentDP );
 	pNode->GetChildValue( "SurviveSeconds", fSurviveSeconds );
+	pNode->GetChildValue( "Modifiers",		sModifiers );
+	pNode->GetChildValue( "DateTime",		dateTime );
+	pNode->GetChildValue( "PlayerGuid",		sPlayerGuid );
+	pNode->GetChildValue( "MachineGuid",	sMachineGuid );
 
 	/* Validate input. */
 	grade = clamp( grade, GRADE_TIER01, GRADE_FAILED );
@@ -83,10 +103,6 @@ HighScore::HighScore()
 void HighScore::Unset()
 {
 	m_Impl->Unset();
-	sModifiers = "";
-	dateTime.Init();
-	sPlayerGuid = "";
-	sMachineGuid = "";
 	iProductID = 0;
 	ZERO( iTapNoteScores );
 	ZERO( iHoldNoteScores );
@@ -105,6 +121,14 @@ void HighScore::SetPercentDP( float f ) { m_Impl->fPercentDP = f; }
 float HighScore::GetSurviveSeconds() const { return m_Impl->fSurviveSeconds; }
 void HighScore::SetSurviveSeconds( float f ) { m_Impl->fSurviveSeconds = f; }
 float HighScore::GetSurvivalSeconds() const { return GetSurviveSeconds() + fLifeRemainingSeconds; }
+CString HighScore::GetModifiers() const { return m_Impl->sModifiers; }
+void HighScore::SetModifiers( CString s ) { m_Impl->sModifiers = s; }
+DateTime HighScore::GetDateTime() const { return m_Impl->dateTime; }
+void HighScore::SetDateTime( DateTime d ) { m_Impl->dateTime = d; }
+CString HighScore::GetPlayerGuid() const { return m_Impl->sPlayerGuid; }
+void HighScore::SetPlayerGuid( CString s ) { m_Impl->sPlayerGuid = s; }
+CString HighScore::GetMachineGuid() const { return m_Impl->sMachineGuid; }
+void HighScore::SetMachineGuid( CString s ) { m_Impl->sMachineGuid = s; }
 
 /* We normally don't give direct access to the members.  We need this one
  * for NameToFillIn; use a special accessor so it's easy to find where this
@@ -136,10 +160,6 @@ bool HighScore::operator==( const HighScore& other ) const
 	if( *m_Impl != *other.m_Impl )
 		return false;
 #define COMPARE(x)	if( x!=other.x )	return false;
-	COMPARE( sModifiers );
-	COMPARE( dateTime );
-	COMPARE( sPlayerGuid );
-	COMPARE( sMachineGuid );
 	COMPARE( iProductID );
 	FOREACH_TapNoteScore( tns )
 		COMPARE( iTapNoteScores[tns] );
@@ -158,10 +178,6 @@ XNode* HighScore::CreateNode() const
 
 	// TRICKY:  Don't write "name to fill in" markers.
 	m_Impl->AppendChildren( pNode );
-	pNode->AppendChild( "Modifiers",		sModifiers );
-	pNode->AppendChild( "DateTime",			dateTime );
-	pNode->AppendChild( "PlayerGuid",		sPlayerGuid );
-	pNode->AppendChild( "MachineGuid",		sMachineGuid );
 	pNode->AppendChild( "ProductID",		iProductID );
 	XNode* pTapNoteScores = pNode->AppendChild( "TapNoteScores" );
 	FOREACH_TapNoteScore( tns )
@@ -181,10 +197,6 @@ void HighScore::LoadFromNode( const XNode* pNode )
 	ASSERT( pNode->m_sName == "HighScore" );
 
 	m_Impl->LoadFromNode( pNode );
-	pNode->GetChildValue( "Modifiers",		sModifiers );
-	pNode->GetChildValue( "DateTime",		dateTime );
-	pNode->GetChildValue( "PlayerGuid",		sPlayerGuid );
-	pNode->GetChildValue( "MachineGuid",	sMachineGuid );
 	pNode->GetChildValue( "ProductID",		iProductID );
 	const XNode* pTapNoteScores = pNode->GetChild( "TapNoteScores" );
 	if( pTapNoteScores )

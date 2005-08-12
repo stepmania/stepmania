@@ -28,10 +28,15 @@ struct HighScore
 	float GetSurviveSeconds() const;
 	void SetSurviveSeconds( float f );
 	float GetSurvivalSeconds() const;
-	CString	sModifiers;
-	DateTime dateTime;		// return value of time() when screenshot was taken
-	CString sPlayerGuid;	// who made this high score
-	CString sMachineGuid;	// where this high score was made
+	CString GetModifiers() const;
+	void SetModifiers( CString s );
+	DateTime GetDateTime() const;
+	void SetDateTime( DateTime d );
+	CString GetPlayerGuid() const;
+	void SetPlayerGuid( CString s );
+	CString GetMachineGuid() const;
+	void SetMachineGuid( CString s );
+
 	int	iProductID;
 	int		iTapNoteScores[NUM_TAP_NOTE_SCORES];
 	int		iHoldNoteScores[NUM_HOLD_NOTE_SCORES];

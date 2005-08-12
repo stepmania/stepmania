@@ -901,10 +901,10 @@ void ScreenEvaluation::CommitScores(
 		hs.SetScore( stageStats.m_player[p].iScore );
 		hs.SetPercentDP( stageStats.m_player[p].GetPercentDancePoints() );
 		hs.SetSurviveSeconds( stageStats.m_player[p].fAliveSeconds );
-		hs.sModifiers = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString();
-		hs.dateTime = DateTime::GetNowDateTime();
-		hs.sPlayerGuid = PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : CString("");
-		hs.sMachineGuid = PROFILEMAN->GetMachineProfile()->m_sGuid;
+		hs.SetModifiers( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString() );
+		hs.SetDateTime( DateTime::GetNowDateTime() );
+		hs.SetPlayerGuid( PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : CString("") );
+		hs.SetMachineGuid( PROFILEMAN->GetMachineProfile()->m_sGuid );
 		hs.iProductID = PREFSMAN->m_iProductID;
 		memcpy( hs.iTapNoteScores, stageStats.m_player[p].iTapNoteScores, sizeof(hs.iTapNoteScores) );
 		memcpy( hs.iHoldNoteScores, stageStats.m_player[p].iHoldNoteScores, sizeof(hs.iHoldNoteScores) );
