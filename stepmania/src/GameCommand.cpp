@@ -627,8 +627,10 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 		hs.SetTapNoteScore( tns, rand() % 100 );
 	FOREACH_HoldNoteScore( hns )
 		hs.SetHoldNoteScore( hns, rand() % 100 );
+	RadarValues rv;
 	FOREACH_RadarCategory( rc )
-		hs.radarValues.m_Values.f[rc] = randomf( 0, 1 );
+		rv.m_Values.f[rc] = randomf( 0, 1 );
+	hs.SetRadarValues( rv );
 
 	return hs;
 }

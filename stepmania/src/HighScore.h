@@ -42,9 +42,10 @@ struct HighScore
 	void SetTapNoteScore( TapNoteScore tns, int i );
 	int GetHoldNoteScore( HoldNoteScore tns ) const;
 	void SetHoldNoteScore( HoldNoteScore tns, int i );
-
-	RadarValues radarValues;
-	float fLifeRemainingSeconds;
+	const RadarValues &GetRadarValues() const;
+	void SetRadarValues( const RadarValues &rv );
+	float GetLifeRemainingSeconds() const;
+	void SetLifeRemainingSeconds( float f );
 
 	HighScore();
 

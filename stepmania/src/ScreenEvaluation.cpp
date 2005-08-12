@@ -910,8 +910,8 @@ void ScreenEvaluation::CommitScores(
 			hs.SetTapNoteScore( tns, stageStats.m_player[p].iTapNoteScores[tns] );
 		FOREACH_HoldNoteScore( hns )
 			hs.SetHoldNoteScore( hns, stageStats.m_player[p].iHoldNoteScores[hns] );
-		hs.radarValues = stageStats.m_player[p].radarActual;
-		hs.fLifeRemainingSeconds = stageStats.m_player[p].fLifeRemainingSeconds;
+		hs.SetRadarValues( stageStats.m_player[p].radarActual );
+		hs.SetLifeRemainingSeconds( stageStats.m_player[p].fLifeRemainingSeconds );
 
 
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;

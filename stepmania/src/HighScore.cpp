@@ -23,6 +23,8 @@ struct HighScoreImpl
 	int iProductID;
 	int iTapNoteScores[NUM_TAP_NOTE_SCORES];
 	int iHoldNoteScores[NUM_HOLD_NOTE_SCORES];
+	RadarValues radarValues;
+	float fLifeRemainingSeconds;
 
 	void Unset();
 	void AppendChildren( XNode *pNode ) const;
@@ -49,6 +51,8 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 		COMPARE( iTapNoteScores[tns] );
 	FOREACH_HoldNoteScore( hns )
 		COMPARE( iHoldNoteScores[hns] );
+	COMPARE( radarValues );
+	COMPARE( fLifeRemainingSeconds );
 #undef COMPARE
 
 	return true;
@@ -68,11 +72,13 @@ void HighScoreImpl::Unset()
 	iProductID = 0;
 	ZERO( iTapNoteScores );
 	ZERO( iHoldNoteScores );
-
+	radarValues.MakeUnknown();
+	fLifeRemainingSeconds = 0;
 }
 
 void HighScoreImpl::AppendChildren( XNode *pNode ) const
 {
+	// TRICKY:  Don't write "name to fill in" markers.
 	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? CString("") : sName );
 	pNode->AppendChild( "Grade",			GradeToString(grade) );
 	pNode->AppendChild( "Score",			iScore );
@@ -91,6 +97,8 @@ void HighScoreImpl::AppendChildren( XNode *pNode ) const
 	FOREACH_HoldNoteScore( hns )
 		if( hns != HNS_NONE )	// HACK: don't save meaningless "none" count
 			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
+	pNode->AppendChild( radarValues.CreateNode() );
+	pNode->AppendChild( "LifeRemainingSeconds",		fLifeRemainingSeconds );
 }
 
 void HighScoreImpl::LoadFromNode( const XNode *pNode )
@@ -116,6 +124,10 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	if( pHoldNoteScores )
 		FOREACH_HoldNoteScore( hns )
 			pHoldNoteScores->GetChildValue( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
+	const XNode* pRadarValues = pNode->GetChild( "RadarValues" );
+	if( pRadarValues )
+		radarValues.LoadFromNode( pRadarValues );
+	pNode->GetChildValue( "LifeRemainingSeconds",		fLifeRemainingSeconds );
 
 	/* Validate input. */
 	grade = clamp( grade, GRADE_TIER01, GRADE_FAILED );
@@ -132,8 +144,6 @@ HighScore::HighScore()
 void HighScore::Unset()
 {
 	m_Impl->Unset();
-	radarValues.MakeUnknown();
-	fLifeRemainingSeconds = 0;
 }
 
 CString	HighScore::GetName() const { return m_Impl->sName; }
@@ -146,7 +156,7 @@ float HighScore::GetPercentDP() const { return m_Impl->fPercentDP; }
 void HighScore::SetPercentDP( float f ) { m_Impl->fPercentDP = f; }
 float HighScore::GetSurviveSeconds() const { return m_Impl->fSurviveSeconds; }
 void HighScore::SetSurviveSeconds( float f ) { m_Impl->fSurviveSeconds = f; }
-float HighScore::GetSurvivalSeconds() const { return GetSurviveSeconds() + fLifeRemainingSeconds; }
+float HighScore::GetSurvivalSeconds() const { return GetSurviveSeconds() + GetLifeRemainingSeconds(); }
 CString HighScore::GetModifiers() const { return m_Impl->sModifiers; }
 void HighScore::SetModifiers( CString s ) { m_Impl->sModifiers = s; }
 DateTime HighScore::GetDateTime() const { return m_Impl->dateTime; }
@@ -161,6 +171,10 @@ int HighScore::GetTapNoteScore( TapNoteScore tns ) const { return m_Impl->iTapNo
 void HighScore::SetTapNoteScore( TapNoteScore tns, int i ) { m_Impl->iTapNoteScores[tns] = i; }
 int HighScore::GetHoldNoteScore( HoldNoteScore hns ) const { return m_Impl->iHoldNoteScores[hns]; }
 void HighScore::SetHoldNoteScore( HoldNoteScore hns, int i ) { m_Impl->iHoldNoteScores[hns] = i; }
+const RadarValues &HighScore::GetRadarValues() const { return m_Impl->radarValues; }
+void HighScore::SetRadarValues( const RadarValues &rv ) { m_Impl->radarValues = rv; }
+float HighScore::GetLifeRemainingSeconds() const { return m_Impl->fLifeRemainingSeconds; }
+void HighScore::SetLifeRemainingSeconds( float f ) { m_Impl->fLifeRemainingSeconds = f; }
 
 /* We normally don't give direct access to the members.  We need this one
  * for NameToFillIn; use a special accessor so it's easy to find where this
@@ -189,13 +203,7 @@ bool HighScore::operator>=( const HighScore& other ) const
 
 bool HighScore::operator==( const HighScore& other ) const 
 {
-	if( *m_Impl != *other.m_Impl )
-		return false;
-#define COMPARE(x)	if( x!=other.x )	return false;
-	COMPARE( radarValues );
-	COMPARE( fLifeRemainingSeconds );
-#undef COMPARE
-	return true;
+	return *m_Impl == *other.m_Impl;
 }
 
 XNode* HighScore::CreateNode() const
@@ -203,10 +211,7 @@ XNode* HighScore::CreateNode() const
 	XNode* pNode = new XNode;
 	pNode->m_sName = "HighScore";
 
-	// TRICKY:  Don't write "name to fill in" markers.
 	m_Impl->AppendChildren( pNode );
-	pNode->AppendChild( radarValues.CreateNode() );
-	pNode->AppendChild( "LifeRemainingSeconds",		fLifeRemainingSeconds );
 	return pNode;
 }
 
@@ -215,10 +220,6 @@ void HighScore::LoadFromNode( const XNode* pNode )
 	ASSERT( pNode->m_sName == "HighScore" );
 
 	m_Impl->LoadFromNode( pNode );
-	const XNode* pRadarValues = pNode->GetChild( "RadarValues" );
-	if( pRadarValues )
-		radarValues.LoadFromNode( pRadarValues );
-	pNode->GetChildValue( "LifeRemainingSeconds",		fLifeRemainingSeconds );
 }
 
 CString HighScore::GetDisplayName() const
