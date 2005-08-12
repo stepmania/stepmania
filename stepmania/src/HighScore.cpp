@@ -9,14 +9,22 @@
 #define EMPTY_NAME			THEME->GetMetric ("HighScore","EmptyName")
 
 
+struct HighScoreImpl
+{
+
+};
+REGISTER_CLASS_TRAITS( HighScoreImpl, new HighScoreImpl(*pCopy) )
+
+HighScore::HighScore()
+{
+	m_Impl = new HighScoreImpl;
+	Unset();
+}
+
 bool HighScore::operator>=( const HighScore& other ) const
 {
 	/* Make sure we treat AAAA as higher than AAA, even though the score
- 	 * is the same.
-	 *
-	 * XXX: Isn't it possible to beat the grade but not beat the score, since
-	 * grading and scores are on completely different systems?  Should we be
-	 * checking for these completely separately? */
+ 	 * is the same. */
 	if( PREFSMAN->m_bPercentageScoring )
 	{
 		if( fPercentDP == other.fPercentDP )
@@ -31,6 +39,29 @@ bool HighScore::operator>=( const HighScore& other ) const
 		else
 			return iScore >= other.iScore;
 	}
+}
+
+bool HighScore::operator==( const HighScore& other ) const 
+{
+#define COMPARE(x)	if( x!=other.x )	return false;
+	COMPARE( sName );
+	COMPARE( grade );
+	COMPARE( iScore );
+	COMPARE( fPercentDP );
+	COMPARE( fSurviveSeconds );
+	COMPARE( sModifiers );
+	COMPARE( dateTime );
+	COMPARE( sPlayerGuid );
+	COMPARE( sMachineGuid );
+	COMPARE( iProductID );
+	FOREACH_TapNoteScore( tns )
+		COMPARE( iTapNoteScores[tns] );
+	FOREACH_HoldNoteScore( hns )
+		COMPARE( iHoldNoteScores[hns] );
+	COMPARE( radarValues );
+	COMPARE( fLifeRemainingSeconds );
+#undef COMPARE
+	return true;
 }
 
 XNode* HighScore::CreateNode() const

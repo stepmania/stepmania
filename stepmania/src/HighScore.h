@@ -7,9 +7,11 @@
 #include "GameConstantsAndTypes.h"
 #include "RadarValues.h"
 #include "DateTime.h"
+#include "RageUtil_AutoPtr.h"
 
 struct XNode;
 
+struct HighScoreImpl;
 struct HighScore
 {
 	CString	sName;	// name that shows in the machine's ranking screen
@@ -27,7 +29,8 @@ struct HighScore
 	RadarValues radarValues;
 	float fLifeRemainingSeconds;
 
-	HighScore() { Unset(); }
+	HighScore();
+
 	void Unset()
 	{
 		sName = "";
@@ -47,28 +50,7 @@ struct HighScore
 	}
 
 	bool operator>=( const HighScore& other ) const;
-	bool operator==( const HighScore& other ) const 
-	{
-#define COMPARE(x)	if( x!=other.x )	return false;
-		COMPARE( sName );
-		COMPARE( grade );
-		COMPARE( iScore );
-		COMPARE( fPercentDP );
-		COMPARE( fSurviveSeconds );
-		COMPARE( sModifiers );
-		COMPARE( dateTime );
-		COMPARE( sPlayerGuid );
-		COMPARE( sMachineGuid );
-		COMPARE( iProductID );
-		FOREACH_TapNoteScore( tns )
-			COMPARE( iTapNoteScores[tns] );
-		FOREACH_HoldNoteScore( hns )
-			COMPARE( iHoldNoteScores[hns] );
-		COMPARE( radarValues );
-		COMPARE( fLifeRemainingSeconds );
-#undef COMPARE
-		return true;
-	}
+	bool operator==( const HighScore& other ) const;
 
 	float GetSurvivalSeconds() { return fSurviveSeconds + fLifeRemainingSeconds; }
 
@@ -76,6 +58,8 @@ struct HighScore
 	void LoadFromNode( const XNode* pNode );
 
 	CString GetDisplayName() const;
+private:
+	HiddenPtr<HighScoreImpl> m_Impl;
 };
 
 struct HighScoreList
