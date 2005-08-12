@@ -622,11 +622,11 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 	hs.SetDateTime( DateTime::GetNowDateTime() );
 	hs.SetPlayerGuid( Profile::MakeGuid() );
 	hs.SetMachineGuid( Profile::MakeGuid() );
-	hs.iProductID = rand()%10;
+	hs.SetProductID( rand()%10 );
 	FOREACH_TapNoteScore( tns )
-		hs.iTapNoteScores[tns] = rand() % 100;
+		hs.SetTapNoteScore( tns, rand() % 100 );
 	FOREACH_HoldNoteScore( hns )
-		hs.iHoldNoteScores[hns] = rand() % 100;
+		hs.SetHoldNoteScore( hns, rand() % 100 );
 	FOREACH_RadarCategory( rc )
 		hs.radarValues.m_Values.f[rc] = randomf( 0, 1 );
 

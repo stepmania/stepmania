@@ -36,10 +36,13 @@ struct HighScore
 	void SetPlayerGuid( CString s );
 	CString GetMachineGuid() const;
 	void SetMachineGuid( CString s );
+	int GetProductID() const;
+	void SetProductID( int i );
+	int GetTapNoteScore( TapNoteScore tns ) const;
+	void SetTapNoteScore( TapNoteScore tns, int i );
+	int GetHoldNoteScore( HoldNoteScore tns ) const;
+	void SetHoldNoteScore( HoldNoteScore tns, int i );
 
-	int	iProductID;
-	int		iTapNoteScores[NUM_TAP_NOTE_SCORES];
-	int		iHoldNoteScores[NUM_HOLD_NOTE_SCORES];
 	RadarValues radarValues;
 	float fLifeRemainingSeconds;
 

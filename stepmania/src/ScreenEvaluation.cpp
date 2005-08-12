@@ -905,9 +905,11 @@ void ScreenEvaluation::CommitScores(
 		hs.SetDateTime( DateTime::GetNowDateTime() );
 		hs.SetPlayerGuid( PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : CString("") );
 		hs.SetMachineGuid( PROFILEMAN->GetMachineProfile()->m_sGuid );
-		hs.iProductID = PREFSMAN->m_iProductID;
-		memcpy( hs.iTapNoteScores, stageStats.m_player[p].iTapNoteScores, sizeof(hs.iTapNoteScores) );
-		memcpy( hs.iHoldNoteScores, stageStats.m_player[p].iHoldNoteScores, sizeof(hs.iHoldNoteScores) );
+		hs.SetProductID( PREFSMAN->m_iProductID );
+		FOREACH_TapNoteScore( tns )
+			hs.SetTapNoteScore( tns, stageStats.m_player[p].iTapNoteScores[tns] );
+		FOREACH_HoldNoteScore( hns )
+			hs.SetHoldNoteScore( hns, stageStats.m_player[p].iHoldNoteScores[hns] );
 		hs.radarValues = stageStats.m_player[p].radarActual;
 		hs.fLifeRemainingSeconds = stageStats.m_player[p].fLifeRemainingSeconds;
 

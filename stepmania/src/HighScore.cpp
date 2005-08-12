@@ -20,6 +20,9 @@ struct HighScoreImpl
 	DateTime dateTime;		// return value of time() when screenshot was taken
 	CString sPlayerGuid;	// who made this high score
 	CString sMachineGuid;	// where this high score was made
+	int iProductID;
+	int iTapNoteScores[NUM_TAP_NOTE_SCORES];
+	int iHoldNoteScores[NUM_HOLD_NOTE_SCORES];
 
 	void Unset();
 	void AppendChildren( XNode *pNode ) const;
@@ -41,6 +44,11 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 	COMPARE( dateTime );
 	COMPARE( sPlayerGuid );
 	COMPARE( sMachineGuid );
+	COMPARE( iProductID );
+	FOREACH_TapNoteScore( tns )
+		COMPARE( iTapNoteScores[tns] );
+	FOREACH_HoldNoteScore( hns )
+		COMPARE( iHoldNoteScores[hns] );
 #undef COMPARE
 
 	return true;
@@ -57,6 +65,9 @@ void HighScoreImpl::Unset()
 	dateTime.Init();
 	sPlayerGuid = "";
 	sMachineGuid = "";
+	iProductID = 0;
+	ZERO( iTapNoteScores );
+	ZERO( iHoldNoteScores );
 
 }
 
@@ -71,6 +82,15 @@ void HighScoreImpl::AppendChildren( XNode *pNode ) const
 	pNode->AppendChild( "DateTime",			dateTime );
 	pNode->AppendChild( "PlayerGuid",		sPlayerGuid );
 	pNode->AppendChild( "MachineGuid",		sMachineGuid );
+	pNode->AppendChild( "ProductID",		iProductID );
+	XNode* pTapNoteScores = pNode->AppendChild( "TapNoteScores" );
+	FOREACH_TapNoteScore( tns )
+		if( tns != TNS_NONE )	// HACK: don't save meaningless "none" count
+			pTapNoteScores->AppendChild( TapNoteScoreToString(tns), iTapNoteScores[tns] );
+	XNode* pHoldNoteScores = pNode->AppendChild( "HoldNoteScores" );
+	FOREACH_HoldNoteScore( hns )
+		if( hns != HNS_NONE )	// HACK: don't save meaningless "none" count
+			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 }
 
 void HighScoreImpl::LoadFromNode( const XNode *pNode )
@@ -87,6 +107,15 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	pNode->GetChildValue( "DateTime",		dateTime );
 	pNode->GetChildValue( "PlayerGuid",		sPlayerGuid );
 	pNode->GetChildValue( "MachineGuid",	sMachineGuid );
+	pNode->GetChildValue( "ProductID",		iProductID );
+	const XNode* pTapNoteScores = pNode->GetChild( "TapNoteScores" );
+	if( pTapNoteScores )
+		FOREACH_TapNoteScore( tns )
+			pTapNoteScores->GetChildValue( TapNoteScoreToString(tns), iTapNoteScores[tns] );
+	const XNode* pHoldNoteScores = pNode->GetChild( "HoldNoteScores" );
+	if( pHoldNoteScores )
+		FOREACH_HoldNoteScore( hns )
+			pHoldNoteScores->GetChildValue( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 
 	/* Validate input. */
 	grade = clamp( grade, GRADE_TIER01, GRADE_FAILED );
@@ -103,9 +132,6 @@ HighScore::HighScore()
 void HighScore::Unset()
 {
 	m_Impl->Unset();
-	iProductID = 0;
-	ZERO( iTapNoteScores );
-	ZERO( iHoldNoteScores );
 	radarValues.MakeUnknown();
 	fLifeRemainingSeconds = 0;
 }
@@ -129,6 +155,12 @@ CString HighScore::GetPlayerGuid() const { return m_Impl->sPlayerGuid; }
 void HighScore::SetPlayerGuid( CString s ) { m_Impl->sPlayerGuid = s; }
 CString HighScore::GetMachineGuid() const { return m_Impl->sMachineGuid; }
 void HighScore::SetMachineGuid( CString s ) { m_Impl->sMachineGuid = s; }
+int HighScore::GetProductID() const { return m_Impl->iProductID; }
+void HighScore::SetProductID( int i ) { m_Impl->iProductID = i; }
+int HighScore::GetTapNoteScore( TapNoteScore tns ) const { return m_Impl->iTapNoteScores[tns]; }
+void HighScore::SetTapNoteScore( TapNoteScore tns, int i ) { m_Impl->iTapNoteScores[tns] = i; }
+int HighScore::GetHoldNoteScore( HoldNoteScore hns ) const { return m_Impl->iHoldNoteScores[hns]; }
+void HighScore::SetHoldNoteScore( HoldNoteScore hns, int i ) { m_Impl->iHoldNoteScores[hns] = i; }
 
 /* We normally don't give direct access to the members.  We need this one
  * for NameToFillIn; use a special accessor so it's easy to find where this
@@ -160,11 +192,6 @@ bool HighScore::operator==( const HighScore& other ) const
 	if( *m_Impl != *other.m_Impl )
 		return false;
 #define COMPARE(x)	if( x!=other.x )	return false;
-	COMPARE( iProductID );
-	FOREACH_TapNoteScore( tns )
-		COMPARE( iTapNoteScores[tns] );
-	FOREACH_HoldNoteScore( hns )
-		COMPARE( iHoldNoteScores[hns] );
 	COMPARE( radarValues );
 	COMPARE( fLifeRemainingSeconds );
 #undef COMPARE
@@ -178,15 +205,6 @@ XNode* HighScore::CreateNode() const
 
 	// TRICKY:  Don't write "name to fill in" markers.
 	m_Impl->AppendChildren( pNode );
-	pNode->AppendChild( "ProductID",		iProductID );
-	XNode* pTapNoteScores = pNode->AppendChild( "TapNoteScores" );
-	FOREACH_TapNoteScore( tns )
-		if( tns != TNS_NONE )	// HACK: don't save meaningless "none" count
-			pTapNoteScores->AppendChild( TapNoteScoreToString(tns), iTapNoteScores[tns] );
-	XNode* pHoldNoteScores = pNode->AppendChild( "HoldNoteScores" );
-	FOREACH_HoldNoteScore( hns )
-		if( hns != HNS_NONE )	// HACK: don't save meaningless "none" count
-			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 	pNode->AppendChild( radarValues.CreateNode() );
 	pNode->AppendChild( "LifeRemainingSeconds",		fLifeRemainingSeconds );
 	return pNode;
@@ -197,15 +215,6 @@ void HighScore::LoadFromNode( const XNode* pNode )
 	ASSERT( pNode->m_sName == "HighScore" );
 
 	m_Impl->LoadFromNode( pNode );
-	pNode->GetChildValue( "ProductID",		iProductID );
-	const XNode* pTapNoteScores = pNode->GetChild( "TapNoteScores" );
-	if( pTapNoteScores )
-		FOREACH_TapNoteScore( tns )
-			pTapNoteScores->GetChildValue( TapNoteScoreToString(tns), iTapNoteScores[tns] );
-	const XNode* pHoldNoteScores = pNode->GetChild( "HoldNoteScores" );
-	if( pHoldNoteScores )
-		FOREACH_HoldNoteScore( hns )
-			pHoldNoteScores->GetChildValue( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 	const XNode* pRadarValues = pNode->GetChild( "RadarValues" );
 	if( pRadarValues )
 		radarValues.LoadFromNode( pRadarValues );
