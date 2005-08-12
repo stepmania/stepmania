@@ -44,8 +44,12 @@ public:
 		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCanel, true );
 	}
 
-	ScreenTextEntry( 
-		CString sName, 
+	ScreenTextEntry( CString sName );
+	~ScreenTextEntry();
+	virtual void Init();
+	virtual void BeginScreen();
+
+	void LoadMenu(
 		CString sQuestion, 
 		CString sInitialAnswer, 
 		int iMaxInputLength,
@@ -53,8 +57,6 @@ public:
 		void(*OnOK)(const CString &sAnswer) = NULL, 
 		void(*OnCanel)() = NULL, 
 		bool bPassword = false );
-	~ScreenTextEntry();
-	virtual void Init();
 
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 

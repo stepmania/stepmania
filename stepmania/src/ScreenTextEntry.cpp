@@ -50,8 +50,9 @@ void ScreenTextEntry::TextEntry(
 	)
 {	
 	// add the new state onto the back of the array
-	ScreenTextEntry *pNewScreen = new ScreenTextEntry( 
-		"ScreenTextEntry", 
+	ScreenTextEntry *pNewScreen = new ScreenTextEntry( "ScreenTextEntry" );
+	pNewScreen->Init();
+	pNewScreen->LoadMenu(
 		sQuestion, 
 		sInitialAnswer, 
 		iMaxInputLength, 
@@ -59,7 +60,7 @@ void ScreenTextEntry::TextEntry(
 		OnOK, 
 		OnCancel, 
 		bPassword );
-	pNewScreen->Init();
+
 	SCREENMAN->ZeroNextUpdate();
 	SCREENMAN->PushScreen( pNewScreen, true, smSendOnPop );
 }
@@ -75,16 +76,60 @@ bool ScreenTextEntry::s_bCancelledLast = false;
  */
 //REGISTER_SCREEN_CLASS( ScreenTextEntry );
 
-ScreenTextEntry::ScreenTextEntry( 
-	CString sClassName, 
+ScreenTextEntry::ScreenTextEntry( CString sClassName ) :
+	ScreenWithMenuElements( sClassName )
+{
+}
+
+void ScreenTextEntry::Init()
+{
+	ScreenWithMenuElements::Init();
+
+	m_textQuestion.LoadFromFont( THEME->GetPathF(m_sName,"question") );
+	m_textQuestion.SetName( "Question" );
+	this->AddChild( &m_textQuestion );
+
+	m_sprAnswerBox.Load( THEME->GetPathG(m_sName,"AnswerBox") );
+	m_sprAnswerBox->SetName( "AnswerBox" );
+	this->AddChild( m_sprAnswerBox );
+
+	m_textAnswer.LoadFromFont( THEME->GetPathF(m_sName,"answer") );
+	m_textAnswer.SetName( "Answer" );
+	this->AddChild( &m_textAnswer );
+
+
+	m_sprCursor.Load( THEME->GetPathG(m_sName,"cursor") );
+	m_sprCursor->SetName( "Cursor" );
+	this->AddChild( m_sprCursor );
+
+	// Init keyboard
+	FOREACH_KeyboardRow( r )
+	{
+		for( int x=0; x<KEYS_PER_ROW; ++x )
+		{
+			BitmapText &bt = m_textKeyboardChars[r][x];
+			bt.LoadFromFont( THEME->GetPathF(m_sName,"keyboard") );
+			this->AddChild( &bt );
+		}
+	}
+
+	m_sndType.Load( THEME->GetPathS(m_sName,"type"), true );
+	m_sndBackspace.Load( THEME->GetPathS(m_sName,"backspace"), true );
+	m_sndChange.Load( THEME->GetPathS(m_sName,"change"), true );
+}
+
+ScreenTextEntry::~ScreenTextEntry()
+{
+}
+
+void ScreenTextEntry::LoadMenu( 
 	CString sQuestion, 
 	CString sInitialAnswer, 
 	int iMaxInputLength,
 	bool(*Validate)(const CString &sAnswer,CString &sErrorOut), 
 	void(*OnOK)(const CString &sAnswer), 
 	void(*OnCancel)(), 
-	bool bPassword ) :
-	ScreenWithMenuElements( sClassName )
+	bool bPassword )
 {
 	m_sQuestion = sQuestion;
 	m_sAnswer = CStringToWstring( sInitialAnswer );
@@ -95,60 +140,33 @@ ScreenTextEntry::ScreenTextEntry(
 	m_bPassword = bPassword;
 }
 
-void ScreenTextEntry::Init()
+void ScreenTextEntry::BeginScreen()
 {
-	ScreenWithMenuElements::Init();
+	ScreenWithMenuElements::BeginScreen();
 
-	m_textQuestion.LoadFromFont( THEME->GetPathF(m_sName,"question") );
-	m_textQuestion.SetName( "Question" );
 	m_textQuestion.SetText( m_sQuestion );
 	SET_XY_AND_ON_COMMAND( m_textQuestion );
-	this->AddChild( &m_textQuestion );
-
-	m_sprAnswerBox.Load( THEME->GetPathG(m_sName,"AnswerBox") );
-	m_sprAnswerBox->SetName( "AnswerBox" );
 	SET_XY_AND_ON_COMMAND( m_sprAnswerBox );
-	this->AddChild( m_sprAnswerBox );
-
-	m_textAnswer.LoadFromFont( THEME->GetPathF(m_sName,"answer") );
-	m_textAnswer.SetName( "Answer" );
 	SET_XY_AND_ON_COMMAND( m_textAnswer );
+
 	UpdateAnswerText();
-	this->AddChild( &m_textAnswer );
 
-
-	m_sprCursor.Load( THEME->GetPathG(m_sName,"cursor") );
-	m_sprCursor->SetName( "Cursor" );
 	ON_COMMAND( m_sprCursor );
-	this->AddChild( m_sprCursor );
-
 	m_iFocusX = 0;
 	m_iFocusY = (KeyboardRow)0;
 
-
-	// Init keyboard
 	FOREACH_KeyboardRow( r )
 	{
 		for( int x=0; x<KEYS_PER_ROW; ++x )
 		{
 			BitmapText &bt = m_textKeyboardChars[r][x];
-			bt.LoadFromFont( THEME->GetPathF(m_sName,"keyboard") );
 			bt.SetXY( GetButtonX(x), GetButtonY(r) );
-			this->AddChild( &bt );
 		}
 	}
 
 	UpdateKeyboardText();
 
 	PositionCursor();
-
-	m_sndType.Load( THEME->GetPathS(m_sName,"type"), true );
-	m_sndBackspace.Load( THEME->GetPathS(m_sName,"backspace"), true );
-	m_sndChange.Load( THEME->GetPathS(m_sName,"change"), true );
-}
-
-ScreenTextEntry::~ScreenTextEntry()
-{
 }
 
 void ScreenTextEntry::UpdateKeyboardText()
