@@ -195,17 +195,17 @@ bool HighScore::operator>=( const HighScore& other ) const
  	 * is the same. */
 	if( PREFSMAN->m_bPercentageScoring )
 	{
-		if( GetPercentDP() == other.GetPercentDP() )
-			return GetGrade() >= other.GetGrade();
-		else
+		if( GetPercentDP() != other.GetPercentDP() )
 			return GetPercentDP() >= other.GetPercentDP();
+		else
+			return GetGrade() >= other.GetGrade();
 	}
 	else
 	{
-		if( GetScore() == other.GetScore() )
-			return GetGrade() >= other.GetGrade();
-		else
+		if( GetScore() != other.GetScore() )
 			return GetScore() >= other.GetScore();
+		else
+			return GetGrade() >= other.GetGrade();
 	}
 }
 
