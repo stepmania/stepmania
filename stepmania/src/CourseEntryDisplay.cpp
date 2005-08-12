@@ -97,7 +97,7 @@ void CourseEntryDisplay::SetFromGameState( int iCourseEntryIndex )
 	FOREACH_PlayerNumber( p )
 	{
 		Trail *pTrail = GAMESTATE->m_pCurTrail[p];
-		if( pTrail  &&  iCourseEntryIndex < pTrail->m_vEntries.size() )
+		if( pTrail  &&  iCourseEntryIndex < (int) pTrail->m_vEntries.size() )
 		{
 			tes[p] = &pTrail->m_vEntries[iCourseEntryIndex];
 			ces[p] = &pCourse->m_vEntries[iCourseEntryIndex];
