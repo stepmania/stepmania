@@ -589,7 +589,7 @@ void Actor::UpdateTweening( float fDeltaTime )
 			case TWEEN_DECELERATE:	fPercentAlongPath = 1 - (1-fPercentThroughTween) * (1-fPercentThroughTween);				break;
 			case TWEEN_SMOOTH:
 			{
-				/* Sccelerate, reaching full speed at fShift, then decelerate the rest of
+				/* Accelerate, reaching full speed at fShift, then decelerate the rest of
 				 * the way.  fShift = 1 degrades to TWEEN_ACCELERATE.  fShift = 0 degrades
 				 * to TWEEN_DECELERATE.  (This is a rough approximation of a sigmoid.) */
 				const float fShift = 0.5f;
