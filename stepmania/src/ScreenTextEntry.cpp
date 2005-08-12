@@ -26,16 +26,6 @@ static const char* g_szKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW] =
 
 static Preference<bool> g_bAllowOldKeyboardInput( "AllowOldKeyboardInput",	true );
 
-static float GetButtonX( int x )
-{
-	return roundf( SCALE( x, 0, KEYS_PER_ROW-1, SCREEN_LEFT+100, SCREEN_RIGHT-100 ) );
-}
-
-static float GetButtonY( KeyboardRow r )
-{
-	return roundf( SCALE( r, 0, NUM_KEYBOARD_ROWS-1, SCREEN_CENTER_Y-30, SCREEN_BOTTOM-80 ) );
-}
-
 CString ScreenTextEntry::s_sLastAnswer = "";
 
 void ScreenTextEntry::TextEntry( 
@@ -160,7 +150,9 @@ void ScreenTextEntry::BeginScreen()
 		for( int x=0; x<KEYS_PER_ROW; ++x )
 		{
 			BitmapText &bt = m_textKeyboardChars[r][x];
-			bt.SetXY( GetButtonX(x), GetButtonY(r) );
+			float fX = roundf( SCALE( x, 0, KEYS_PER_ROW-1, SCREEN_LEFT+100, SCREEN_RIGHT-100 ) );
+			float fY = roundf( SCALE( r, 0, NUM_KEYBOARD_ROWS-1, SCREEN_CENTER_Y-30, SCREEN_BOTTOM-80 ) );
+			bt.SetXY( fX, fY );
 		}
 	}
 
