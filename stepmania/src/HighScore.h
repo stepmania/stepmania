@@ -31,28 +31,12 @@ struct HighScore
 
 	HighScore();
 
-	void Unset()
-	{
-		sName = "";
-		grade = GRADE_NO_DATA;
-		iScore = 0;
-		fPercentDP = 0;
-		fSurviveSeconds = 0;
-		sModifiers = "";
-		dateTime.Init();
-		sPlayerGuid = "";
-		sMachineGuid = "";
-		iProductID = 0;
-		ZERO( iTapNoteScores );
-		ZERO( iHoldNoteScores );
-		radarValues.MakeUnknown();
-		fLifeRemainingSeconds = 0;
-	}
+	void Unset();
 
 	bool operator>=( const HighScore& other ) const;
 	bool operator==( const HighScore& other ) const;
 
-	float GetSurvivalSeconds() { return fSurviveSeconds + fLifeRemainingSeconds; }
+	float GetSurvivalSeconds() const { return fSurviveSeconds + fLifeRemainingSeconds; }
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );
