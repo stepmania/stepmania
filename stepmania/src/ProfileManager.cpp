@@ -410,11 +410,21 @@ bool ProfileManager::RenameLocalProfile( CString sProfileID, CString sNewName )
 
 bool ProfileManager::DeleteLocalProfile( CString sProfileID )
 {
-	CString sProfileDir = LocalProfileIdToDir( sProfileID );
-	bool bResult = DeleteRecursive( sProfileDir );
+	map<CString,Profile*>::iterator it = g_mapLocalProfileIdToProfile.find( sProfileID );
+	if( it == g_mapLocalProfileIdToProfile.end() )
+	{
+		LOG->Warn( "DeleteLocalProfile: ProfileID '%s' doesn't exist", sProfileID.c_str() );
+		return false;
+	}
 
-	RefreshLocalProfilesFromDisk();
-	return bResult;
+	CString sProfileDir = LocalProfileIdToDir( sProfileID );
+	if( !DeleteRecursive(sProfileDir) )
+		return false;
+
+	delete it->second;
+	g_mapLocalProfileIdToProfile.erase( it );
+
+	return true;
 }
 
 void ProfileManager::SaveMachineProfile() const
