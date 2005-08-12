@@ -67,7 +67,11 @@ void ScreenPrompt::Load(
 	m_pOnYes = OnYes;
 	m_pOnNo = OnNo;
 	m_pCallbackData = pCallbackData;
+}
 
+void ScreenPrompt::BeginScreen()
+{
+	ScreenWithMenuElements::BeginScreen();
 
 	m_textQuestion.SetText( m_sText );
 	SET_XY_AND_ON_COMMAND( m_textQuestion );

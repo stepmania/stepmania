@@ -28,6 +28,7 @@ public:
 
 	ScreenPrompt( const CString &sScreenName );
 	virtual void Init();
+	virtual void BeginScreen();
 	void Load( 
 		CString sText, 
 		PromptType type = PROMPT_OK, 
