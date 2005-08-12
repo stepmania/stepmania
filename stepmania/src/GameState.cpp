@@ -1392,7 +1392,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 						feat.Feat = ssprintf("MR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
 						feat.pStringToFill = hs.GetNameMutable();
 						feat.grade = hs.GetGrade();
-						feat.fPercentDP = hs.fPercentDP;
+						feat.fPercentDP = hs.GetPercentDP();
 						feat.iScore = hs.GetScore();
 
 						if( pSong->HasBanner() )
@@ -1420,7 +1420,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 						feat.Feat = ssprintf("PR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
 						feat.pStringToFill = hs.GetNameMutable();
 						feat.grade = hs.GetGrade();
-						feat.fPercentDP = hs.fPercentDP;
+						feat.fPercentDP = hs.GetPercentDP();
 						feat.iScore = hs.GetScore();
 
 						// XXX: temporary hack
@@ -1455,7 +1455,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					feat.pStringToFill = hs.GetNameMutable();
 					feat.grade = GRADE_NO_DATA;
 					feat.iScore = hs.GetScore();
-					feat.fPercentDP = hs.fPercentDP;
+					feat.fPercentDP = hs.GetPercentDP();
 					asFeatsOut.push_back( feat );
 				}
 			}
@@ -1478,7 +1478,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 						feat.pStringToFill = hs.GetNameMutable();
 						feat.grade = GRADE_NO_DATA;
 						feat.iScore = hs.GetScore();
-						feat.fPercentDP = hs.fPercentDP;
+						feat.fPercentDP = hs.GetPercentDP();
 						asFeatsOut.push_back( feat );
 					}
 				}
@@ -1515,7 +1515,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					feat.pStringToFill = hs.GetNameMutable();
 					feat.grade = GRADE_NO_DATA;
 					feat.iScore = hs.GetScore();
-					feat.fPercentDP = hs.fPercentDP;
+					feat.fPercentDP = hs.GetPercentDP();
 					if( pCourse->HasBanner() )
 						feat.Banner = pCourse->m_sBannerPath;
 					asFeatsOut.push_back( feat );
@@ -1539,7 +1539,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					feat.pStringToFill = hs.GetNameMutable();
 					feat.grade = GRADE_NO_DATA;
 					feat.iScore = hs.GetScore();
-					feat.fPercentDP = hs.fPercentDP;
+					feat.fPercentDP = hs.GetPercentDP();
 					if( pCourse->HasBanner() )
 						feat.Banner = pCourse->m_sBannerPath;
 					asFeatsOut.push_back( feat );

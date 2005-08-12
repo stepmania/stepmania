@@ -812,7 +812,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 				if( pts.pCourse->IsOni() )
 				{
 					m_textPoints[l].SetText( ssprintf("%04d",hs.GetScore()) );
-					m_textTime[l].SetText( SecondsToMMSSMsMs(hs.fSurviveSeconds) );
+					m_textTime[l].SetText( SecondsToMMSSMsMs(hs.GetSurviveSeconds()) );
 					m_textScores[l].SetText( "" );
 				} else {
 					m_textPoints[l].SetText( "" );
@@ -876,7 +876,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 							hs.SetName( NO_SCORE_NAME );				
 						}
 
-						CString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.fPercentDP );
+						CString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.GetPercentDP() );
 						if( SHOW_SURVIVAL_TIME )
 							s += "   " + SecondsToMSSMsMs(hs.GetSurvivalSeconds());
 						pTextStepsScore->SetText( s );
@@ -923,7 +923,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 						hs.SetName( NO_SCORE_NAME );
 					}
 
-					CString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.fPercentDP );
+					CString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.GetPercentDP() );
 					if( SHOW_SURVIVAL_TIME )
 						s += "   " + SecondsToMSSMsMs(hs.GetSurvivalSeconds());
 					pTextStepsScore->SetText( s );

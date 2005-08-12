@@ -14,6 +14,8 @@ struct HighScoreImpl
 	CString	sName;	// name that shows in the machine's ranking screen
 	Grade grade;
 	int iScore;
+	float fPercentDP;
+	float fSurviveSeconds;
 
 	void Unset();
 	void AppendChildren( XNode *pNode ) const;
@@ -29,6 +31,8 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 	COMPARE( sName );
 	COMPARE( grade );
 	COMPARE( iScore );
+	COMPARE( fPercentDP );
+	COMPARE( fSurviveSeconds );
 #undef COMPARE
 
 	return true;
@@ -39,6 +43,8 @@ void HighScoreImpl::Unset()
 	sName = "";
 	grade = GRADE_NO_DATA;
 	iScore = 0;
+	fPercentDP = 0;
+	fSurviveSeconds = 0;
 
 }
 
@@ -47,6 +53,8 @@ void HighScoreImpl::AppendChildren( XNode *pNode ) const
 	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? CString("") : sName );
 	pNode->AppendChild( "Grade",			GradeToString(grade) );
 	pNode->AppendChild( "Score",			iScore );
+	pNode->AppendChild( "PercentDP",		fPercentDP );
+	pNode->AppendChild( "SurviveSeconds",	fSurviveSeconds );
 }
 
 void HighScoreImpl::LoadFromNode( const XNode *pNode )
@@ -57,6 +65,8 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	pNode->GetChildValue( "Grade", s );
 	grade = StringToGrade( s );
 	pNode->GetChildValue( "Score",			iScore );
+	pNode->GetChildValue( "PercentDP",		fPercentDP );
+	pNode->GetChildValue( "SurviveSeconds", fSurviveSeconds );
 
 	/* Validate input. */
 	grade = clamp( grade, GRADE_TIER01, GRADE_FAILED );
@@ -73,8 +83,6 @@ HighScore::HighScore()
 void HighScore::Unset()
 {
 	m_Impl->Unset();
-	fPercentDP = 0;
-	fSurviveSeconds = 0;
 	sModifiers = "";
 	dateTime.Init();
 	sPlayerGuid = "";
@@ -92,6 +100,11 @@ Grade HighScore::GetGrade() const { return m_Impl->grade; }
 void HighScore::SetGrade( Grade g ) { m_Impl->grade = g; }
 int HighScore::GetScore() const { return m_Impl->iScore; }
 void HighScore::SetScore( int iScore ) { m_Impl->iScore = iScore; }
+float HighScore::GetPercentDP() const { return m_Impl->fPercentDP; }
+void HighScore::SetPercentDP( float f ) { m_Impl->fPercentDP = f; }
+float HighScore::GetSurviveSeconds() const { return m_Impl->fSurviveSeconds; }
+void HighScore::SetSurviveSeconds( float f ) { m_Impl->fSurviveSeconds = f; }
+float HighScore::GetSurvivalSeconds() const { return GetSurviveSeconds() + fLifeRemainingSeconds; }
 
 /* We normally don't give direct access to the members.  We need this one
  * for NameToFillIn; use a special accessor so it's easy to find where this
@@ -104,10 +117,10 @@ bool HighScore::operator>=( const HighScore& other ) const
  	 * is the same. */
 	if( PREFSMAN->m_bPercentageScoring )
 	{
-		if( fPercentDP == other.fPercentDP )
+		if( GetPercentDP() == other.GetPercentDP() )
 			return GetGrade() >= other.GetGrade();
 		else
-			return fPercentDP >= other.fPercentDP;
+			return GetPercentDP() >= other.GetPercentDP();
 	}
 	else
 	{
@@ -123,8 +136,6 @@ bool HighScore::operator==( const HighScore& other ) const
 	if( *m_Impl != *other.m_Impl )
 		return false;
 #define COMPARE(x)	if( x!=other.x )	return false;
-	COMPARE( fPercentDP );
-	COMPARE( fSurviveSeconds );
 	COMPARE( sModifiers );
 	COMPARE( dateTime );
 	COMPARE( sPlayerGuid );
@@ -147,8 +158,6 @@ XNode* HighScore::CreateNode() const
 
 	// TRICKY:  Don't write "name to fill in" markers.
 	m_Impl->AppendChildren( pNode );
-	pNode->AppendChild( "PercentDP",		fPercentDP );
-	pNode->AppendChild( "SurviveSeconds",	fSurviveSeconds );
 	pNode->AppendChild( "Modifiers",		sModifiers );
 	pNode->AppendChild( "DateTime",			dateTime );
 	pNode->AppendChild( "PlayerGuid",		sPlayerGuid );
@@ -172,8 +181,6 @@ void HighScore::LoadFromNode( const XNode* pNode )
 	ASSERT( pNode->m_sName == "HighScore" );
 
 	m_Impl->LoadFromNode( pNode );
-	pNode->GetChildValue( "PercentDP",		fPercentDP );
-	pNode->GetChildValue( "SurviveSeconds", fSurviveSeconds );
 	pNode->GetChildValue( "Modifiers",		sModifiers );
 	pNode->GetChildValue( "DateTime",		dateTime );
 	pNode->GetChildValue( "PlayerGuid",		sPlayerGuid );

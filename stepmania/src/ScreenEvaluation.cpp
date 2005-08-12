@@ -899,8 +899,8 @@ void ScreenEvaluation::CommitScores(
 		hs.SetName( RANKING_TO_FILL_IN_MARKER[p] );
 		hs.SetGrade( stageStats.m_player[p].GetGrade() );
 		hs.SetScore( stageStats.m_player[p].iScore );
-		hs.fPercentDP = stageStats.m_player[p].GetPercentDancePoints();
-		hs.fSurviveSeconds = stageStats.m_player[p].fAliveSeconds;
+		hs.SetPercentDP( stageStats.m_player[p].GetPercentDancePoints() );
+		hs.SetSurviveSeconds( stageStats.m_player[p].fAliveSeconds );
 		hs.sModifiers = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString();
 		hs.dateTime = DateTime::GetNowDateTime();
 		hs.sPlayerGuid = PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : CString("");

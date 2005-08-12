@@ -61,7 +61,7 @@ void HighScoreWheelItem::Load( int iRankIndex, const HighScore& hs )
 	m_textScore.SetName( "Score" );
 	m_textScore.LoadFromFont( THEME->GetPathF(m_sName,"score") );
 	if( PREFSMAN->m_bPercentageScoring )
-		m_textScore.SetText( PercentageDisplay::FormatPercentScore(hs.fPercentDP) );
+		m_textScore.SetText( PercentageDisplay::FormatPercentScore(hs.GetPercentDP()) );
 	else
 		m_textScore.SetText( ssprintf("%i", hs.GetScore()) );
 	m_textScore.SetShadowLength( 2 );
@@ -170,7 +170,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 
 				HighScore hs;
 				hs.SetGrade( GRADE_TIER03 );
-				hs.fPercentDP = ss.m_player[p].GetPercentDancePoints();
+				hs.SetPercentDP( ss.m_player[p].GetPercentDancePoints() );
 				hs.SetScore( ss.m_player[p].iScore );
 				hs.dateTime = DateTime::GetNowDateTime();
 				int a, b;
@@ -360,7 +360,7 @@ void ScreenNameEntryTraditional::Init()
 			{
 				const HighScore &hs = hsl.vHighScores[h];
 				if( hs.GetName() == RANKING_TO_FILL_IN_MARKER[p]  &&
-					hs.fPercentDP == fPercentDP  && 
+					hs.GetPercentDP() == fPercentDP  && 
 					hs.GetScore() == iScore )
 				{
 					iHighScoreIndex = h;

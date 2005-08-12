@@ -181,22 +181,22 @@ void PaneDisplay::SetContent( PaneContents c )
 		case COURSE_HANDS:
 		case SONG_HANDS:					val = rv[RADAR_NUM_HANDS]; break;
 		case SONG_PROFILE_HIGH_SCORE:
-			val = PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsHighScoreList(pSong,pSteps).GetTopScore().fPercentDP;
+			val = PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsHighScoreList(pSong,pSteps).GetTopScore().GetPercentDP();
 			break;
 
 		case SONG_MACHINE_HIGH_NAME: /* set val for color */
 		case SONG_MACHINE_HIGH_SCORE:
 			CHECKPOINT;
-			val = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().fPercentDP;
+			val = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().GetPercentDP();
 			break;
 
 		case COURSE_MACHINE_HIGH_NAME: /* set val for color */
 		case COURSE_MACHINE_HIGH_SCORE:
-			val = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().fPercentDP;
+			val = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().GetPercentDP();
 			break;
 
 		case COURSE_PROFILE_HIGH_SCORE:
-			val = PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().fPercentDP;
+			val = PROFILEMAN->GetProfile(m_PlayerNumber)->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().GetPercentDP();
 			break;
 		};
 

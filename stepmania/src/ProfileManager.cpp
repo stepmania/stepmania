@@ -530,7 +530,7 @@ int ProfileManager::GetSongNumTimesPlayed( const Song* pSong, ProfileSlot slot )
 void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, PlayerNumber pn, const HighScore &hs_, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
 	HighScore hs = hs_;
-	hs.fPercentDP = max( 0, hs.fPercentDP );	// bump up negative scores
+	hs.SetPercentDP( max(0, hs.GetPercentDP()) ); // bump up negative scores
 
 	iPersonalIndexOut = -1;
 	iMachineIndexOut = -1;
@@ -556,7 +556,7 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 	if( PROFILEMAN->IsPersistentProfile(pn) )
 		PROFILEMAN->GetProfile(pn)->AddStepsHighScore( pSong, pSteps, hs, iPersonalIndexOut );
 
-	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForMachineSongHighScore )
+	if( hs.GetPercentDP() >= PREFSMAN->m_fMinPercentageForMachineSongHighScore )
 	{
 		// don't leave machine high scores for edits loaded from the player's card
 		if( !pSteps->IsAPlayerEdit() )
@@ -600,7 +600,7 @@ void ProfileManager::GetHighScoreForDifficulty( const Song *s, const Style *st, 
 void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail, PlayerNumber pn, const HighScore &hs_, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
 	HighScore hs = hs_;
-	hs.fPercentDP = max( 0, hs.fPercentDP );	// bump up negative scores
+	hs.SetPercentDP(max( 0, hs.GetPercentDP()) ); // bump up negative scores
 
 	iPersonalIndexOut = -1;
 	iMachineIndexOut = -1;
@@ -626,7 +626,7 @@ void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail,
 	//
 	if( PROFILEMAN->IsPersistentProfile(pn) )
 		PROFILEMAN->GetProfile(pn)->AddCourseHighScore( pCourse, pTrail, hs, iPersonalIndexOut );
-	if( hs.fPercentDP >= PREFSMAN->m_fMinPercentageForMachineCourseHighScore )
+	if( hs.GetPercentDP() >= PREFSMAN->m_fMinPercentageForMachineCourseHighScore )
 		PROFILEMAN->GetMachineProfile()->AddCourseHighScore( pCourse, pTrail, hs, iMachineIndexOut );
 
 	//
@@ -654,7 +654,7 @@ void ProfileManager::AddCategoryScore( StepsType st, RankingCategory rc, PlayerN
 	hs.SetName( RANKING_TO_FILL_IN_MARKER[pn] );
 	if( PROFILEMAN->IsPersistentProfile(pn) )
 		PROFILEMAN->GetProfile(pn)->AddCategoryHighScore( st, rc, hs, iPersonalIndexOut );
-	if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForMachineSongHighScore )
+	if( hs.GetPercentDP() > PREFSMAN->m_fMinPercentageForMachineSongHighScore )
 		PROFILEMAN->GetMachineProfile()->AddCategoryHighScore( st, rc, hs, iMachineIndexOut );
 }
 

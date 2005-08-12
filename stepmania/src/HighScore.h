@@ -23,8 +23,11 @@ struct HighScore
 	void SetGrade( Grade g );
 	int GetScore() const;
 	void SetScore( int iScore );
-	float fPercentDP;
-	float fSurviveSeconds;
+	float GetPercentDP() const;
+	void SetPercentDP( float f );
+	float GetSurviveSeconds() const;
+	void SetSurviveSeconds( float f );
+	float GetSurvivalSeconds() const;
 	CString	sModifiers;
 	DateTime dateTime;		// return value of time() when screenshot was taken
 	CString sPlayerGuid;	// who made this high score
@@ -41,8 +44,6 @@ struct HighScore
 
 	bool operator>=( const HighScore& other ) const;
 	bool operator==( const HighScore& other ) const;
-
-	float GetSurvivalSeconds() const { return fSurviveSeconds + fLifeRemainingSeconds; }
 
 	XNode* CreateNode() const;
 	void LoadFromNode( const XNode* pNode );

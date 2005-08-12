@@ -375,7 +375,7 @@ float Profile::GetSongsActual( StepsType st, Difficulty dc ) const
 			const HighScoresForASteps& h = j->second;
 			const HighScoreList& hsl = h.hsl;
 			
-			fTotalPercents += hsl.GetTopScore().fPercentDP;
+			fTotalPercents += hsl.GetTopScore().GetPercentDP();
 		}
 		CHECKPOINT;
 	}
@@ -454,7 +454,7 @@ float Profile::GetCoursesActual( StepsType st, CourseDifficulty cd ) const
 			const HighScoresForATrail& h = j->second;
 			const HighScoreList& hsl = h.hsl;
 
-			fTotalPercents += hsl.GetTopScore().fPercentDP;
+			fTotalPercents += hsl.GetTopScore().GetPercentDP();
 		}
 	}
 

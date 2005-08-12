@@ -614,8 +614,8 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 	hs.SetName( "FAKE" );
 	hs.SetGrade( (Grade)SCALE( rand()%5, 0, 4, GRADE_TIER01, GRADE_TIER05 ) );
 	hs.SetScore( rand()%100*1000 );
-	hs.fPercentDP = fPercentDP;
-	hs.fSurviveSeconds = randomf( 30.0f, 100.0f );
+	hs.SetPercentDP( fPercentDP );
+	hs.SetSurviveSeconds( randomf(30.0f, 100.0f) );
 	PlayerOptions po;
 	po.ChooseRandomMofifiers();
 	hs.sModifiers = po.GetString();
