@@ -197,16 +197,14 @@ bool HighScore::operator>=( const HighScore& other ) const
 	{
 		if( GetPercentDP() != other.GetPercentDP() )
 			return GetPercentDP() >= other.GetPercentDP();
-		else
-			return GetGrade() >= other.GetGrade();
 	}
 	else
 	{
 		if( GetScore() != other.GetScore() )
 			return GetScore() >= other.GetScore();
-		else
-			return GetGrade() >= other.GetGrade();
 	}
+
+	return GetGrade() >= other.GetGrade();
 }
 
 bool HighScore::operator==( const HighScore& other ) const 
