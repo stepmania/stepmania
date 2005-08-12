@@ -154,33 +154,34 @@ void HighScore::Unset()
 }
 
 CString	HighScore::GetName() const { return m_Impl->sName; }
-void HighScore::SetName( const CString &sName ) { m_Impl->sName = sName; }
 Grade HighScore::GetGrade() const { return m_Impl->grade; }
-void HighScore::SetGrade( Grade g ) { m_Impl->grade = g; }
 int HighScore::GetScore() const { return m_Impl->iScore; }
-void HighScore::SetScore( int iScore ) { m_Impl->iScore = iScore; }
 float HighScore::GetPercentDP() const { return m_Impl->fPercentDP; }
-void HighScore::SetPercentDP( float f ) { m_Impl->fPercentDP = f; }
 float HighScore::GetSurviveSeconds() const { return m_Impl->fSurviveSeconds; }
-void HighScore::SetSurviveSeconds( float f ) { m_Impl->fSurviveSeconds = f; }
 float HighScore::GetSurvivalSeconds() const { return GetSurviveSeconds() + GetLifeRemainingSeconds(); }
 CString HighScore::GetModifiers() const { return m_Impl->sModifiers; }
-void HighScore::SetModifiers( CString s ) { m_Impl->sModifiers = s; }
 DateTime HighScore::GetDateTime() const { return m_Impl->dateTime; }
-void HighScore::SetDateTime( DateTime d ) { m_Impl->dateTime = d; }
 CString HighScore::GetPlayerGuid() const { return m_Impl->sPlayerGuid; }
-void HighScore::SetPlayerGuid( CString s ) { m_Impl->sPlayerGuid = s; }
 CString HighScore::GetMachineGuid() const { return m_Impl->sMachineGuid; }
-void HighScore::SetMachineGuid( CString s ) { m_Impl->sMachineGuid = s; }
 int HighScore::GetProductID() const { return m_Impl->iProductID; }
-void HighScore::SetProductID( int i ) { m_Impl->iProductID = i; }
 int HighScore::GetTapNoteScore( TapNoteScore tns ) const { return m_Impl->iTapNoteScores[tns]; }
-void HighScore::SetTapNoteScore( TapNoteScore tns, int i ) { m_Impl->iTapNoteScores[tns] = i; }
 int HighScore::GetHoldNoteScore( HoldNoteScore hns ) const { return m_Impl->iHoldNoteScores[hns]; }
-void HighScore::SetHoldNoteScore( HoldNoteScore hns, int i ) { m_Impl->iHoldNoteScores[hns] = i; }
 const RadarValues &HighScore::GetRadarValues() const { return m_Impl->radarValues; }
-void HighScore::SetRadarValues( const RadarValues &rv ) { m_Impl->radarValues = rv; }
 float HighScore::GetLifeRemainingSeconds() const { return m_Impl->fLifeRemainingSeconds; }
+
+void HighScore::SetName( const CString &sName ) { m_Impl->sName = sName; }
+void HighScore::SetGrade( Grade g ) { m_Impl->grade = g; }
+void HighScore::SetScore( int iScore ) { m_Impl->iScore = iScore; }
+void HighScore::SetPercentDP( float f ) { m_Impl->fPercentDP = f; }
+void HighScore::SetSurviveSeconds( float f ) { m_Impl->fSurviveSeconds = f; }
+void HighScore::SetModifiers( CString s ) { m_Impl->sModifiers = s; }
+void HighScore::SetDateTime( DateTime d ) { m_Impl->dateTime = d; }
+void HighScore::SetPlayerGuid( CString s ) { m_Impl->sPlayerGuid = s; }
+void HighScore::SetMachineGuid( CString s ) { m_Impl->sMachineGuid = s; }
+void HighScore::SetProductID( int i ) { m_Impl->iProductID = i; }
+void HighScore::SetTapNoteScore( TapNoteScore tns, int i ) { m_Impl->iTapNoteScores[tns] = i; }
+void HighScore::SetHoldNoteScore( HoldNoteScore hns, int i ) { m_Impl->iHoldNoteScores[hns] = i; }
+void HighScore::SetRadarValues( const RadarValues &rv ) { m_Impl->radarValues = rv; }
 void HighScore::SetLifeRemainingSeconds( float f ) { m_Impl->fLifeRemainingSeconds = f; }
 
 /* We normally don't give direct access to the members.  We need this one

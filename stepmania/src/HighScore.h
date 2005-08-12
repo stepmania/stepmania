@@ -14,40 +14,41 @@ struct XNode;
 struct HighScoreImpl;
 struct HighScore
 {
-	CString	GetName() const;
-	void SetName( const CString &sName );
-	CString *GetNameMutable();
-	const CString *GetNameMutable() const { return const_cast<CString *> (const_cast<HighScore *>(this)->GetNameMutable()); }
+	HighScore();
 
+	CString	GetName() const;
 	Grade GetGrade() const;
-	void SetGrade( Grade g );
 	int GetScore() const;
-	void SetScore( int iScore );
 	float GetPercentDP() const;
-	void SetPercentDP( float f );
 	float GetSurviveSeconds() const;
-	void SetSurviveSeconds( float f );
 	float GetSurvivalSeconds() const;
 	CString GetModifiers() const;
-	void SetModifiers( CString s );
 	DateTime GetDateTime() const;
-	void SetDateTime( DateTime d );
 	CString GetPlayerGuid() const;
-	void SetPlayerGuid( CString s );
 	CString GetMachineGuid() const;
-	void SetMachineGuid( CString s );
 	int GetProductID() const;
-	void SetProductID( int i );
 	int GetTapNoteScore( TapNoteScore tns ) const;
-	void SetTapNoteScore( TapNoteScore tns, int i );
 	int GetHoldNoteScore( HoldNoteScore tns ) const;
-	void SetHoldNoteScore( HoldNoteScore tns, int i );
 	const RadarValues &GetRadarValues() const;
-	void SetRadarValues( const RadarValues &rv );
 	float GetLifeRemainingSeconds() const;
+
+	void SetName( const CString &sName );
+	void SetGrade( Grade g );
+	void SetScore( int iScore );
+	void SetPercentDP( float f );
+	void SetSurviveSeconds( float f );
+	void SetModifiers( CString s );
+	void SetDateTime( DateTime d );
+	void SetPlayerGuid( CString s );
+	void SetMachineGuid( CString s );
+	void SetProductID( int i );
+	void SetTapNoteScore( TapNoteScore tns, int i );
+	void SetHoldNoteScore( HoldNoteScore tns, int i );
+	void SetRadarValues( const RadarValues &rv );
 	void SetLifeRemainingSeconds( float f );
 
-	HighScore();
+	CString *GetNameMutable();
+	const CString *GetNameMutable() const { return const_cast<CString *> (const_cast<HighScore *>(this)->GetNameMutable()); }
 
 	void Unset();
 
