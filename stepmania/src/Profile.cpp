@@ -260,7 +260,7 @@ int Profile::GetTotalStepsWithTopGrade( StepsType st, Difficulty d, Grade g ) co
 			if( hsl.vHighScores.empty() )
 				continue;	// skip
 
-			if( hsl.vHighScores[0].grade == g )
+			if( hsl.vHighScores[0].GetGrade() == g )
 				iCount++;
 		}
 	}
@@ -290,7 +290,7 @@ int Profile::GetTotalTrailsWithTopGrade( StepsType st, CourseDifficulty d, Grade
 		if( hsl.vHighScores.empty() )
 			continue;	// skip
 
-		if( hsl.vHighScores[0].grade == g )
+		if( hsl.vHighScores[0].GetGrade() == g )
 			iCount++;
 	}
 
@@ -653,7 +653,7 @@ void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_GRADES
 				continue;
 
 			const HighScoresForASteps &hsSteps = it->second;
-			if( hsSteps.hsl.GetTopScore().grade == g )
+			if( hsSteps.hsl.GetTopScore().GetGrade() == g )
 				iCounts[g]++;
 		}
 	}

@@ -1391,7 +1391,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 						feat.pSteps = pSteps;
 						feat.Feat = ssprintf("MR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
 						feat.pStringToFill = hs.GetNameMutable();
-						feat.grade = hs.grade;
+						feat.grade = hs.GetGrade();
 						feat.fPercentDP = hs.fPercentDP;
 						feat.iScore = hs.iScore;
 
@@ -1419,7 +1419,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 						feat.Type = RankingFeat::SONG;
 						feat.Feat = ssprintf("PR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
 						feat.pStringToFill = hs.GetNameMutable();
-						feat.grade = hs.grade;
+						feat.grade = hs.GetGrade();
 						feat.fPercentDP = hs.fPercentDP;
 						feat.iScore = hs.iScore;
 

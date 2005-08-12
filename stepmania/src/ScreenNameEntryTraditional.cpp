@@ -169,7 +169,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				ss.m_player[p].vpPossibleSteps.push_back( pSteps );
 
 				HighScore hs;
-				hs.grade = GRADE_TIER03;
+				hs.SetGrade( GRADE_TIER03 );
 				hs.fPercentDP = ss.m_player[p].GetPercentDancePoints();
 				hs.iScore = ss.m_player[p].iScore;
 				hs.dateTime = DateTime::GetNowDateTime();
