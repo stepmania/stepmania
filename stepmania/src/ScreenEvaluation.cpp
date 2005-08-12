@@ -898,7 +898,7 @@ void ScreenEvaluation::CommitScores(
 		HighScore &hs = m_HighScore[p];
 		hs.SetName( RANKING_TO_FILL_IN_MARKER[p] );
 		hs.SetGrade( stageStats.m_player[p].GetGrade() );
-		hs.iScore = stageStats.m_player[p].iScore;
+		hs.SetScore( stageStats.m_player[p].iScore );
 		hs.fPercentDP = stageStats.m_player[p].GetPercentDancePoints();
 		hs.fSurviveSeconds = stageStats.m_player[p].fAliveSeconds;
 		hs.sModifiers = GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString();

@@ -19,8 +19,10 @@ struct HighScore
 	CString *GetNameMutable();
 	const CString *GetNameMutable() const { return const_cast<CString *> (const_cast<HighScore *>(this)->GetNameMutable()); }
 
-	Grade grade;
-	int iScore;
+	Grade GetGrade() const;
+	void SetGrade( Grade g );
+	int GetScore() const;
+	void SetScore( int iScore );
 	float fPercentDP;
 	float fSurviveSeconds;
 	CString	sModifiers;

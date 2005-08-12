@@ -12,6 +12,8 @@
 struct HighScoreImpl
 {
 	CString	sName;	// name that shows in the machine's ranking screen
+	Grade grade;
+	int iScore;
 
 	void Unset();
 	void AppendChildren( XNode *pNode ) const;
@@ -25,6 +27,8 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 {
 #define COMPARE(x)	if( x!=other.x )	return false;
 	COMPARE( sName );
+	COMPARE( grade );
+	COMPARE( iScore );
 #undef COMPARE
 
 	return true;
@@ -33,17 +37,29 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 void HighScoreImpl::Unset()
 {
 	sName = "";
+	grade = GRADE_NO_DATA;
+	iScore = 0;
 
 }
 
 void HighScoreImpl::AppendChildren( XNode *pNode ) const
 {
 	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? CString("") : sName );
+	pNode->AppendChild( "Grade",			GradeToString(grade) );
+	pNode->AppendChild( "Score",			iScore );
 }
 
 void HighScoreImpl::LoadFromNode( const XNode *pNode )
 {
+	CString s;
+
 	pNode->GetChildValue( "Name", sName );
+	pNode->GetChildValue( "Grade", s );
+	grade = StringToGrade( s );
+	pNode->GetChildValue( "Score",			iScore );
+
+	/* Validate input. */
+	grade = clamp( grade, GRADE_TIER01, GRADE_FAILED );
 }
 
 REGISTER_CLASS_TRAITS( HighScoreImpl, new HighScoreImpl(*pCopy) )
@@ -57,8 +73,6 @@ HighScore::HighScore()
 void HighScore::Unset()
 {
 	m_Impl->Unset();
-	grade = GRADE_NO_DATA;
-	iScore = 0;
 	fPercentDP = 0;
 	fSurviveSeconds = 0;
 	sModifiers = "";
@@ -74,6 +88,10 @@ void HighScore::Unset()
 
 CString	HighScore::GetName() const { return m_Impl->sName; }
 void HighScore::SetName( const CString &sName ) { m_Impl->sName = sName; }
+Grade HighScore::GetGrade() const { return m_Impl->grade; }
+void HighScore::SetGrade( Grade g ) { m_Impl->grade = g; }
+int HighScore::GetScore() const { return m_Impl->iScore; }
+void HighScore::SetScore( int iScore ) { m_Impl->iScore = iScore; }
 
 /* We normally don't give direct access to the members.  We need this one
  * for NameToFillIn; use a special accessor so it's easy to find where this
@@ -87,16 +105,16 @@ bool HighScore::operator>=( const HighScore& other ) const
 	if( PREFSMAN->m_bPercentageScoring )
 	{
 		if( fPercentDP == other.fPercentDP )
-			return grade >= other.grade;
+			return GetGrade() >= other.GetGrade();
 		else
 			return fPercentDP >= other.fPercentDP;
 	}
 	else
 	{
-		if( iScore == other.iScore )
-			return grade >= other.grade;
+		if( GetScore() == other.GetScore() )
+			return GetGrade() >= other.GetGrade();
 		else
-			return iScore >= other.iScore;
+			return GetScore() >= other.GetScore();
 	}
 }
 
@@ -105,8 +123,6 @@ bool HighScore::operator==( const HighScore& other ) const
 	if( *m_Impl != *other.m_Impl )
 		return false;
 #define COMPARE(x)	if( x!=other.x )	return false;
-	COMPARE( grade );
-	COMPARE( iScore );
 	COMPARE( fPercentDP );
 	COMPARE( fSurviveSeconds );
 	COMPARE( sModifiers );
@@ -131,8 +147,6 @@ XNode* HighScore::CreateNode() const
 
 	// TRICKY:  Don't write "name to fill in" markers.
 	m_Impl->AppendChildren( pNode );
-	pNode->AppendChild( "Grade",			GradeToString(grade) );
-	pNode->AppendChild( "Score",			iScore );
 	pNode->AppendChild( "PercentDP",		fPercentDP );
 	pNode->AppendChild( "SurviveSeconds",	fSurviveSeconds );
 	pNode->AppendChild( "Modifiers",		sModifiers );
@@ -157,16 +171,7 @@ void HighScore::LoadFromNode( const XNode* pNode )
 {
 	ASSERT( pNode->m_sName == "HighScore" );
 
-	CString s;
-
 	m_Impl->LoadFromNode( pNode );
-	pNode->GetChildValue( "Grade", s );
-	/* Pre-a19 compatibility; remove eventually */
-	if( IsAnInt(s) )
-		grade = (Grade) atoi( s );
-	else
-		grade = StringToGrade( s );
-	pNode->GetChildValue( "Score",			iScore );
 	pNode->GetChildValue( "PercentDP",		fPercentDP );
 	pNode->GetChildValue( "SurviveSeconds", fSurviveSeconds );
 	pNode->GetChildValue( "Modifiers",		sModifiers );
@@ -186,9 +191,6 @@ void HighScore::LoadFromNode( const XNode* pNode )
 	if( pRadarValues )
 		radarValues.LoadFromNode( pRadarValues );
 	pNode->GetChildValue( "LifeRemainingSeconds",		fLifeRemainingSeconds );
-
-	/* Validate input. */
-	grade = clamp( grade, GRADE_TIER01, GRADE_FAILED );
 }
 
 CString HighScore::GetDisplayName() const
@@ -289,7 +291,7 @@ void HighScoreList::LoadFromNode( const XNode* pHighScoreList )
 			vHighScores.back().LoadFromNode( p );
 			
 			// ignore all high scores that are 0
-			if( vHighScores.back().iScore == 0 )
+			if( vHighScores.back().GetScore() == 0 )
 				vHighScores.pop_back();
 		}
 	}

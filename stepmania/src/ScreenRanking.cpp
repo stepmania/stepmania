@@ -769,7 +769,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 				}
 
 				m_textNames[l].SetText( hs.GetDisplayName() );
-				m_textScores[l].SetText( ssprintf("%09i",hs.iScore) );
+				m_textScores[l].SetText( ssprintf("%09i",hs.GetScore()) );
 				m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 				m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 
@@ -811,13 +811,13 @@ float ScreenRanking::SetPage( PageToShow pts )
 				m_textNames[l].SetText( hs.GetDisplayName() );
 				if( pts.pCourse->IsOni() )
 				{
-					m_textPoints[l].SetText( ssprintf("%04d",hs.iScore) );
+					m_textPoints[l].SetText( ssprintf("%04d",hs.GetScore()) );
 					m_textTime[l].SetText( SecondsToMMSSMsMs(hs.fSurviveSeconds) );
 					m_textScores[l].SetText( "" );
 				} else {
 					m_textPoints[l].SetText( "" );
 					m_textTime[l].SetText( "" );
-					m_textScores[l].SetText( ssprintf("%09d",hs.iScore) );
+					m_textScores[l].SetText( ssprintf("%09d",hs.GetScore()) );
 				}
 				m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 				m_textPoints[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
