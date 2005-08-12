@@ -1382,7 +1382,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					{
 						HighScore &hs = hsl.vHighScores[j];
 
-						if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
+						if( hs.GetName() != RANKING_TO_FILL_IN_MARKER[pn] )
 							continue;
 
 						RankingFeat feat;
@@ -1390,7 +1390,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 						feat.pSong = pSong;
 						feat.pSteps = pSteps;
 						feat.Feat = ssprintf("MR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
-						feat.pStringToFill = &hs.sName;
+						feat.pStringToFill = hs.GetNameMutable();
 						feat.grade = hs.grade;
 						feat.fPercentDP = hs.fPercentDP;
 						feat.iScore = hs.iScore;
@@ -1410,7 +1410,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					{
 						HighScore &hs = hsl.vHighScores[j];
 
-						if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
+						if( hs.GetName() != RANKING_TO_FILL_IN_MARKER[pn] )
 							continue;
 
 						RankingFeat feat;
@@ -1418,7 +1418,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 						feat.pSteps = pSteps;
 						feat.Type = RankingFeat::SONG;
 						feat.Feat = ssprintf("PR #%d in %s %s", j+1, pSong->GetTranslitMainTitle().c_str(), DifficultyToString(pSteps->GetDifficulty()).c_str() );
-						feat.pStringToFill = &hs.sName;
+						feat.pStringToFill = hs.GetNameMutable();
 						feat.grade = hs.grade;
 						feat.fPercentDP = hs.fPercentDP;
 						feat.iScore = hs.iScore;
@@ -1446,13 +1446,13 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				for( unsigned j=0; j<hsl.vHighScores.size(); j++ )
 				{
 					HighScore &hs = hsl.vHighScores[j];
-					if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
+					if( hs.GetName() != RANKING_TO_FILL_IN_MARKER[pn] )
 						continue;
 
 					RankingFeat feat;
 					feat.Type = RankingFeat::CATEGORY;
 					feat.Feat = ssprintf("MR #%d in Type %c (%d)", j+1, 'A'+rc, stats.GetAverageMeter(pn) );
-					feat.pStringToFill = &hs.sName;
+					feat.pStringToFill = hs.GetNameMutable();
 					feat.grade = GRADE_NO_DATA;
 					feat.iScore = hs.iScore;
 					feat.fPercentDP = hs.fPercentDP;
@@ -1469,13 +1469,13 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					for( unsigned j=0; j<hsl.vHighScores.size(); j++ )
 					{
 						HighScore &hs = hsl.vHighScores[j];
-						if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
+						if( hs.GetName() != RANKING_TO_FILL_IN_MARKER[pn] )
 							continue;
 
 						RankingFeat feat;
 						feat.Type = RankingFeat::CATEGORY;
 						feat.Feat = ssprintf("PR #%d in Type %c (%d)", j+1, 'A'+rc, stats.GetAverageMeter(pn) );
-						feat.pStringToFill = &hs.sName;
+						feat.pStringToFill = hs.GetNameMutable();
 						feat.grade = GRADE_NO_DATA;
 						feat.iScore = hs.iScore;
 						feat.fPercentDP = hs.fPercentDP;
@@ -1503,7 +1503,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
 				{
 					HighScore &hs = hsl.vHighScores[i];
-					if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
+					if( hs.GetName() != RANKING_TO_FILL_IN_MARKER[pn] )
 							continue;
 
 					RankingFeat feat;
@@ -1512,7 +1512,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					feat.Feat = ssprintf("MR #%d in %s", i+1, pCourse->GetDisplayFullTitle().c_str() );
 					if( cd != DIFFICULTY_MEDIUM )
 						feat.Feat += " " + CourseDifficultyToThemedString(cd);
-					feat.pStringToFill = &hs.sName;
+					feat.pStringToFill = hs.GetNameMutable();
 					feat.grade = GRADE_NO_DATA;
 					feat.iScore = hs.iScore;
 					feat.fPercentDP = hs.fPercentDP;
@@ -1529,14 +1529,14 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 				for( unsigned i=0; i<hsl.vHighScores.size(); i++ )
 				{
 					HighScore& hs = hsl.vHighScores[i];
-					if( hs.sName != RANKING_TO_FILL_IN_MARKER[pn] )
+					if( hs.GetName() != RANKING_TO_FILL_IN_MARKER[pn] )
 							continue;
 
 					RankingFeat feat;
 					feat.Type = RankingFeat::COURSE;
 					feat.pCourse = pCourse;
 					feat.Feat = ssprintf("PR #%d in %s", i+1, pCourse->GetDisplayFullTitle().c_str() );
-					feat.pStringToFill = &hs.sName;
+					feat.pStringToFill = hs.GetNameMutable();
 					feat.grade = GRADE_NO_DATA;
 					feat.iScore = hs.iScore;
 					feat.fPercentDP = hs.fPercentDP;

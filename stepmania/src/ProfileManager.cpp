@@ -541,13 +541,13 @@ void ProfileManager::AddStepsScore( const Song* pSong, const Steps* pSteps, Play
 	{
 		Profile* pProfile = PROFILEMAN->GetProfile(pn);
 		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
-			hs.sName = pProfile->m_sLastUsedHighScoreName;
+			hs.SetName( pProfile->m_sLastUsedHighScoreName );
 		else
-			hs.sName = "EVNT";
+			hs.SetName( "EVNT" );
 	}
 	else
 	{
-		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+		hs.SetName( RANKING_TO_FILL_IN_MARKER[pn] );
 	}
 
 	//
@@ -611,13 +611,13 @@ void ProfileManager::AddCourseScore( const Course* pCourse, const Trail* pTrail,
 	{
 		Profile* pProfile = PROFILEMAN->GetProfile(pn);
 		if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
-			hs.sName = pProfile->m_sLastUsedHighScoreName;
+			hs.SetName(  pProfile->m_sLastUsedHighScoreName );
 		else
-			hs.sName = "EVNT";
+			hs.SetName( "EVNT" );
 	}
 	else
 	{
-		hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+		hs.SetName( RANKING_TO_FILL_IN_MARKER[pn] );
 	}
 
 
@@ -651,7 +651,7 @@ void ProfileManager::IncrementCoursePlayCount( const Course* pCourse, const Trai
 void ProfileManager::AddCategoryScore( StepsType st, RankingCategory rc, PlayerNumber pn, const HighScore &hs_, int &iPersonalIndexOut, int &iMachineIndexOut )
 {
 	HighScore hs = hs_;
-	hs.sName = RANKING_TO_FILL_IN_MARKER[pn];
+	hs.SetName( RANKING_TO_FILL_IN_MARKER[pn] );
 	if( PROFILEMAN->IsPersistentProfile(pn) )
 		PROFILEMAN->GetProfile(pn)->AddCategoryHighScore( st, rc, hs, iPersonalIndexOut );
 	if( hs.fPercentDP > PREFSMAN->m_fMinPercentageForMachineSongHighScore )

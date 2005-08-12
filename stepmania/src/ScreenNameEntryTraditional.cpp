@@ -359,7 +359,7 @@ void ScreenNameEntryTraditional::Init()
 			for( int h=0; h<(int)hsl.vHighScores.size() && h<PREFSMAN->m_iMaxHighScoresPerListForMachine; h++ )
 			{
 				const HighScore &hs = hsl.vHighScores[h];
-				if( hs.sName == RANKING_TO_FILL_IN_MARKER[p]  &&
+				if( hs.GetName() == RANKING_TO_FILL_IN_MARKER[p]  &&
 					hs.fPercentDP == fPercentDP  && 
 					hs.iScore == iScore )
 				{

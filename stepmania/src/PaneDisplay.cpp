@@ -212,7 +212,7 @@ void PaneDisplay::SetContent( PaneContents c )
 			}
 			else
 			{
-				str = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().sName;
+				str = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps).GetTopScore().GetName();
 				if( str.empty() )
 					str = "????";
 			}
@@ -224,7 +224,7 @@ void PaneDisplay::SetContent( PaneContents c )
 			}
 			else
 			{
-				str = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().sName;
+				str = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList(pCourse,pTrail).GetTopScore().GetName();
 				if( str.empty() )
 					str = "????";
 			}

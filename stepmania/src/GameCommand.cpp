@@ -611,7 +611,7 @@ void GameCommand::Apply( PlayerNumber pn ) const
 static HighScore MakeRandomHighScore( float fPercentDP )
 {
 	HighScore hs;
-	hs.sName = "FAKE";
+	hs.SetName( "FAKE" );
 	hs.grade = (Grade)SCALE( rand()%5, 0, 4, GRADE_TIER01, GRADE_TIER05 );
 	hs.iScore = rand()%100*1000;
 	hs.fPercentDP = fPercentDP;

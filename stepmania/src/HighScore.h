@@ -14,7 +14,11 @@ struct XNode;
 struct HighScoreImpl;
 struct HighScore
 {
-	CString	sName;	// name that shows in the machine's ranking screen
+	CString	GetName() const;
+	void SetName( const CString &sName );
+	CString *GetNameMutable();
+	const CString *GetNameMutable() const { return const_cast<CString *> (const_cast<HighScore *>(this)->GetNameMutable()); }
+
 	Grade grade;
 	int iScore;
 	float fPercentDP;

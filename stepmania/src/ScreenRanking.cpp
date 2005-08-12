@@ -760,12 +760,12 @@ float ScreenRanking::SetPage( PageToShow pts )
 				if( l < (int)hsl.vHighScores.size() )
 				{
 					hs = hsl.vHighScores[l];
-					CString *psName = &hsl.vHighScores[l].sName;
+					CString *psName = hsl.vHighScores[l].GetNameMutable();
 					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else
 				{
-					hs.sName = NO_SCORE_NAME;				
+					hs.SetName( NO_SCORE_NAME );				
 				}
 
 				m_textNames[l].SetText( hs.GetDisplayName() );
@@ -800,12 +800,12 @@ float ScreenRanking::SetPage( PageToShow pts )
 				if( l < (int)hsl.vHighScores.size() )
 				{
 					hs = hsl.vHighScores[l];
-					const CString *psName = &hsl.vHighScores[l].sName;
+					const CString *psName = hsl.vHighScores[l].GetNameMutable();
 					bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 				}
 				else
 				{
-					hs.sName = NO_SCORE_NAME;				
+					hs.SetName( NO_SCORE_NAME );				
 				}
 
 				m_textNames[l].SetText( hs.GetDisplayName() );
@@ -868,12 +868,12 @@ float ScreenRanking::SetPage( PageToShow pts )
 						if( !hsl.vHighScores.empty() )
 						{
 							hs = hsl.GetTopScore();
-							const CString *psName = &hsl.GetTopScore().sName;
+							const CString *psName = hsl.GetTopScore().GetNameMutable();
 							bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 						}
 						else
 						{
-							hs.sName = NO_SCORE_NAME;				
+							hs.SetName( NO_SCORE_NAME );				
 						}
 
 						CString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.fPercentDP );
@@ -915,12 +915,12 @@ float ScreenRanking::SetPage( PageToShow pts )
 					if( !hsl.vHighScores.empty() )
 					{
 						hs = hsl.vHighScores[0];
-						const CString *psName = &hsl.GetTopScore().sName;
+						const CString *psName = hsl.GetTopScore().GetNameMutable();
 						bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 					}
 					else
 					{
-						hs.sName = NO_SCORE_NAME;				
+						hs.SetName( NO_SCORE_NAME );
 					}
 
 					CString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.fPercentDP );

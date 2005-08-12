@@ -11,8 +11,41 @@
 
 struct HighScoreImpl
 {
+	CString	sName;	// name that shows in the machine's ranking screen
 
+	void Unset();
+	void AppendChildren( XNode *pNode ) const;
+	void LoadFromNode( const XNode *pNode );
+
+	bool operator==( const HighScoreImpl& other ) const;
+	bool operator!=( const HighScoreImpl& other ) const { return !(*this == other); }
 };
+
+bool HighScoreImpl::operator==( const HighScoreImpl& other ) const 
+{
+#define COMPARE(x)	if( x!=other.x )	return false;
+	COMPARE( sName );
+#undef COMPARE
+
+	return true;
+}
+
+void HighScoreImpl::Unset()
+{
+	sName = "";
+
+}
+
+void HighScoreImpl::AppendChildren( XNode *pNode ) const
+{
+	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? CString("") : sName );
+}
+
+void HighScoreImpl::LoadFromNode( const XNode *pNode )
+{
+	pNode->GetChildValue( "Name", sName );
+}
+
 REGISTER_CLASS_TRAITS( HighScoreImpl, new HighScoreImpl(*pCopy) )
 
 HighScore::HighScore()
@@ -23,7 +56,7 @@ HighScore::HighScore()
 
 void HighScore::Unset()
 {
-	sName = "";
+	m_Impl->Unset();
 	grade = GRADE_NO_DATA;
 	iScore = 0;
 	fPercentDP = 0;
@@ -38,6 +71,14 @@ void HighScore::Unset()
 	radarValues.MakeUnknown();
 	fLifeRemainingSeconds = 0;
 }
+
+CString	HighScore::GetName() const { return m_Impl->sName; }
+void HighScore::SetName( const CString &sName ) { m_Impl->sName = sName; }
+
+/* We normally don't give direct access to the members.  We need this one
+ * for NameToFillIn; use a special accessor so it's easy to find where this
+ * is used. */
+CString *HighScore::GetNameMutable() { return &m_Impl->sName; }
 
 bool HighScore::operator>=( const HighScore& other ) const
 {
@@ -61,8 +102,9 @@ bool HighScore::operator>=( const HighScore& other ) const
 
 bool HighScore::operator==( const HighScore& other ) const 
 {
+	if( *m_Impl != *other.m_Impl )
+		return false;
 #define COMPARE(x)	if( x!=other.x )	return false;
-	COMPARE( sName );
 	COMPARE( grade );
 	COMPARE( iScore );
 	COMPARE( fPercentDP );
@@ -88,7 +130,7 @@ XNode* HighScore::CreateNode() const
 	pNode->m_sName = "HighScore";
 
 	// TRICKY:  Don't write "name to fill in" markers.
-	pNode->AppendChild( "Name", IsRankingToFillIn(sName) ? CString("") : sName );
+	m_Impl->AppendChildren( pNode );
 	pNode->AppendChild( "Grade",			GradeToString(grade) );
 	pNode->AppendChild( "Score",			iScore );
 	pNode->AppendChild( "PercentDP",		fPercentDP );
@@ -117,7 +159,7 @@ void HighScore::LoadFromNode( const XNode* pNode )
 
 	CString s;
 
-	pNode->GetChildValue( "Name", sName );
+	m_Impl->LoadFromNode( pNode );
 	pNode->GetChildValue( "Grade", s );
 	/* Pre-a19 compatibility; remove eventually */
 	if( IsAnInt(s) )
@@ -151,10 +193,10 @@ void HighScore::LoadFromNode( const XNode* pNode )
 
 CString HighScore::GetDisplayName() const
 {
-	if( sName.empty() )
+	if( GetName().empty() )
 		return EMPTY_NAME;
 	else
-		return sName;
+		return GetName();
 }
 
 
@@ -259,7 +301,7 @@ void HighScoreList::RemoveAllButOneOfEachName()
 	{
 		for( vector<HighScore>::iterator j = i+1; j != vHighScores.end(); j++ )
 		{
-			if( i->sName == j->sName )
+			if( i->GetName() == j->GetName() )
 			{
 				j--;
 				vHighScores.erase( j+1 );
