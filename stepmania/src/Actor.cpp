@@ -596,7 +596,7 @@ void Actor::UpdateTweening( float fDeltaTime )
 				if( fPercentThroughTween < fShift )
 				{
 					fPercentAlongPath = SCALE( fPercentThroughTween, 0.0f, fShift, 0.0f, 1.0f );
-					fPercentAlongPath = fPercentThroughTween * fPercentThroughTween;
+					fPercentAlongPath = fPercentAlongPath * fPercentAlongPath;
 					fPercentAlongPath = SCALE( fPercentAlongPath, 0.0f, 1.0f, 0.0f, fShift );
 				}
 				else
