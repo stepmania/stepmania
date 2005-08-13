@@ -378,7 +378,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case CourseAction_Delete:
 				{
-					SCREENMAN->AddNewScreenToTop( "ScreenPromptConfirmDeleteSteps" );
+					SCREENMAN->AddNewScreenToTop( "ScreenPromptConfirmDeleteCourse" );
 				}
 				break;
 			}
