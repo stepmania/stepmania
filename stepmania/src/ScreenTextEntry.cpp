@@ -57,12 +57,12 @@ void ScreenTextEntry::TextEntry(
 
 bool ScreenTextEntry::s_bCancelledLast = false;
 
-/* XXX: Don't let the user use internal-use codepoints (those
- * that resolve to Unicode codepoints above 0xFFFF); those are
- * subject to change and shouldn't be written to .SMs.
- *
+/*
  * Handle UTF-8.  Right now, we need to at least be able to backspace
- * a whole UTF-8 character.  Better would be to operate in longchars.
+ * a whole UTF-8 character.  Better would be to operate in wchar_t.
+ *
+ * XXX: Don't allow internal-use codepoints (above 0xFFFF); those are
+ * subject to change and shouldn't be written to disk.
  */
 //REGISTER_SCREEN_CLASS( ScreenTextEntry );
 
