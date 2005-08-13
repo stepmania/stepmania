@@ -111,8 +111,7 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	// returns Profile::LoadResult, but we don't want to depend on Profile
-	int LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );
+	ProfileLoadResult LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );
 	void GetMemoryCardProfileDirectoriesToTry( vector<CString> &asDirsToTry ) const;
 
 	// Directory that contains the profile.  Either on local machine or

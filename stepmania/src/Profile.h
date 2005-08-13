@@ -300,12 +300,11 @@ public:
 	//
 	// Loading and saving
 	//
-	enum LoadResult { success, failed_no_profile, failed_tampered };
-	LoadResult LoadAllFromDir( CString sDir, bool bRequireSignature );
+	ProfileLoadResult LoadAllFromDir( CString sDir, bool bRequireSignature );
 	bool SaveAllToDir( CString sDir, bool bSignData ) const;
 
-	LoadResult LoadEditableDataFromDir( CString sDir );
-	LoadResult LoadStatsXmlFromNode( const XNode* pNode, bool bIgnoreEditable = true );
+	ProfileLoadResult LoadEditableDataFromDir( CString sDir );
+	ProfileLoadResult LoadStatsXmlFromNode( const XNode* pNode, bool bIgnoreEditable = true );
 	void LoadGeneralDataFromNode( const XNode* pNode );
 	void LoadSongScoresFromNode( const XNode* pNode );
 	void LoadCourseScoresFromNode( const XNode* pNode );

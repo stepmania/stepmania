@@ -788,7 +788,7 @@ void Profile::IncrementCategoryPlayCount( StepsType st, RankingCategory rc )
 	if( X==NULL ) LOG->Warn("Failed to read section " #X); \
 	else Load##X##FromNode(X); }
 
-Profile::LoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
+ProfileLoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignature )
 {
 	CHECKPOINT;
 
@@ -802,7 +802,7 @@ Profile::LoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignatur
 	// Check for the existance of stats.xml
 	CString fn = sDir + STATS_XML;
 	if( !IsAFile(fn) )
-		return failed_no_profile;
+		return ProfileLoadResult_FailedNoProfile;
 
 	//
 	// Don't unreasonably large stats.xml files.
@@ -813,7 +813,7 @@ Profile::LoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignatur
 		if( iBytes > MAX_PLAYER_STATS_XML_SIZE_BYTES )
 		{
 			LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
-			return failed_tampered;
+			return ProfileLoadResult_FailedTampered;
 		}
 	}
 
@@ -827,7 +827,7 @@ Profile::LoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignatur
 		if( !CryptManager::VerifyFileWithFile(sStatsXmlSigFile, sDontShareFile) )
 		{
 			LOG->Warn( "The don't share check for '%s' failed.  Data will be ignored.", sStatsXmlSigFile.c_str() );
-			return failed_tampered;
+			return ProfileLoadResult_FailedTampered;
 		}
 		LOG->Trace( "Done." );
 
@@ -836,7 +836,7 @@ Profile::LoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignatur
 		if( !CryptManager::VerifyFileWithFile(fn, sStatsXmlSigFile) )
 		{
 			LOG->Warn( "The signature check for '%s' failed.  Data will be ignored.", fn.c_str() );
-			return failed_tampered;
+			return ProfileLoadResult_FailedTampered;
 		}
 		LOG->Trace( "Done." );
 	}
@@ -844,23 +844,23 @@ Profile::LoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignatur
 	LOG->Trace( "Loading %s", fn.c_str() );
 	XNode xml;
 	if( !xml.LoadFromFile(fn) )
-		return failed_tampered;
+		return ProfileLoadResult_FailedTampered;
 	LOG->Trace( "Done." );
 
 	return LoadStatsXmlFromNode( &xml );
 }
 
-Profile::LoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreEditable )
+ProfileLoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreEditable )
 {
 	/* The placeholder stats.xml file has an <html> tag.  Don't load it, but don't
 	 * warn about it. */
 	if( xml->m_sName == "html" )
-		return failed_no_profile;
+		return ProfileLoadResult_FailedNoProfile;
 
 	if( xml->m_sName != "Stats" )
 	{
 		WARN_M( xml->m_sName );
-		return failed_tampered;
+		return ProfileLoadResult_FailedTampered;
 	}
 
 	/* These are loaded from Editable, so we usually want to ignore them
@@ -887,7 +887,7 @@ Profile::LoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnor
 		m_iWeightPounds = iWeightPounds;
 	}
 
-	return success;
+	return ProfileLoadResult_Success;
 }
 
 bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
@@ -1106,7 +1106,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	return pGeneralDataNode;
 }
 
-Profile::LoadResult Profile::LoadEditableDataFromDir( CString sDir )
+ProfileLoadResult Profile::LoadEditableDataFromDir( CString sDir )
 {
 	CString fn = sDir + EDITABLE_INI;
 
@@ -1117,11 +1117,11 @@ Profile::LoadResult Profile::LoadEditableDataFromDir( CString sDir )
 	if( iBytes > MAX_EDITABLE_INI_SIZE_BYTES )
 	{
 		LOG->Warn( "The file '%s' is unreasonably large.  It won't be loaded.", fn.c_str() );
-		return failed_tampered;
+		return ProfileLoadResult_FailedTampered;
 	}
 
 	if( !IsAFile(fn) )
-		return failed_no_profile;
+		return ProfileLoadResult_FailedNoProfile;
 
 	IniFile ini;
 	ini.ReadFile( fn );
@@ -1140,7 +1140,7 @@ Profile::LoadResult Profile::LoadEditableDataFromDir( CString sDir )
 	if( m_iWeightPounds != 0 )
 		CLAMP( m_iWeightPounds, 20, 1000 );
 
-	return success;
+	return ProfileLoadResult_Success;
 }
 
 void Profile::LoadGeneralDataFromNode( const XNode* pNode )
@@ -1150,10 +1150,10 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	CString s;
 	const XNode* pTemp;
 
-	pNode->GetChildValue( "DisplayName",							m_sDisplayName );
-	pNode->GetChildValue( "Character",								m_sCharacter );
-	pNode->GetChildValue( "LastUsedHighScoreName",					m_sLastUsedHighScoreName );
-	pNode->GetChildValue( "WeightPounds",							m_iWeightPounds );
+	pNode->GetChildValue( "DisplayName",					m_sDisplayName );
+	pNode->GetChildValue( "Character",						m_sCharacter );
+	pNode->GetChildValue( "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
+	pNode->GetChildValue( "WeightPounds",					m_iWeightPounds );
 	pNode->GetChildValue( "Guid",							m_sGuid );
 	pNode->GetChildValue( "SortOrder",						s );	m_SortOrder = StringToSortOrder( s );
 	pNode->GetChildValue( "LastDifficulty",					s );	m_LastDifficulty = StringToDifficulty( s );

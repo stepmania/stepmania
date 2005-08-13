@@ -416,6 +416,14 @@ enum Stage
 const CString& StageToString( Stage s );
 
 
+enum ProfileLoadResult
+{
+	ProfileLoadResult_Success, 
+	ProfileLoadResult_FailedNoProfile, 
+	ProfileLoadResult_FailedTampered
+};
+
+
 #endif
 
 /*

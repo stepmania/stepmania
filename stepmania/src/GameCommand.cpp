@@ -939,17 +939,17 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 			Profile backup = *PROFILEMAN->GetMachineProfile();
 
-			Profile::LoadResult lr = PROFILEMAN->GetMachineProfile()->LoadAllFromDir( sDir, PREFSMAN->m_bSignProfileData );
+			ProfileLoadResult lr = PROFILEMAN->GetMachineProfile()->LoadAllFromDir( sDir, PREFSMAN->m_bSignProfileData );
 			switch( lr )
 			{
-			case Profile::success:
+			case ProfileLoadResult_Success:
 				SCREENMAN->SystemMessage( ssprintf("Machine stats loaded from P%d card.",pn+1) );
 				break;
-			case Profile::failed_no_profile:
+			case ProfileLoadResult_FailedNoProfile:
 				SCREENMAN->SystemMessage( ssprintf("There is no machine profile on P%d card.",pn+1) );
 				*PROFILEMAN->GetMachineProfile() = backup;
 				break;
-			case Profile::failed_tampered:
+			case ProfileLoadResult_FailedTampered:
 				SCREENMAN->SystemMessage( ssprintf("The profile on P%d card contains corrupt or tampered data.",pn+1) );
 				*PROFILEMAN->GetMachineProfile() = backup;
 				break;

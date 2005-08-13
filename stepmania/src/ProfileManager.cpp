@@ -71,7 +71,7 @@ void ProfileManager::Init()
 	RefreshLocalProfilesFromDisk();
 }
 
-int ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard )
+ProfileLoadResult ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard )
 {
 	LOG->Trace( "LoadingProfile P%d, %s, %d", pn+1, sProfileDir.c_str(), bIsMemCard );
 
@@ -84,35 +84,35 @@ int ProfileManager::LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsM
 	m_bLastLoadWasFromLastGood[pn] = false;
 
 	// Try to load the original, non-backup data.
-	Profile::LoadResult lr = GetProfile(pn)->LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
+	ProfileLoadResult lr = GetProfile(pn)->LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
 	
 	CString sBackupDir = m_sProfileDir[pn] + LAST_GOOD_DIR;
 
 	// Save a backup of the non-backup profile now that we've loaded it and know 
 	// it's good. This should be reasonably fast because we're only saving Stats.xml 
 	// and signatures - not all of the files in the Profile.
-	if( lr == Profile::success )
+	if( lr == ProfileLoadResult_Success )
 	{
 		Profile::BackupToDir( m_sProfileDir[pn], sBackupDir );
 	}
 
-	m_bLastLoadWasTamperedOrCorrupt[pn] = lr == Profile::failed_tampered;
+	m_bLastLoadWasTamperedOrCorrupt[pn] = lr == ProfileLoadResult_FailedTampered;
 
 	//
 	// Try to load from the backup if the original data fails to load
 	//
-	if( lr == Profile::failed_tampered )
+	if( lr == ProfileLoadResult_FailedTampered )
 	{
 		lr = GetProfile(pn)->LoadAllFromDir( sBackupDir, PREFSMAN->m_bSignProfileData );
-		m_bLastLoadWasFromLastGood[pn] = lr == Profile::success;
+		m_bLastLoadWasFromLastGood[pn] = lr == ProfileLoadResult_Success;
 
 		/* If the LastGood profile doesn't exist at all, and the actual profile was failed_tampered,
 		 * then the error should be failed_tampered and not failed_no_profile. */
-		if( lr == Profile::failed_no_profile )
+		if( lr == ProfileLoadResult_FailedNoProfile )
 		{
-			LOG->Trace( "Profile was corrupt and LastGood for %s doesn't exist; error is Profile::failed_tampered",
+			LOG->Trace( "Profile was corrupt and LastGood for %s doesn't exist; error is ProfileLoadResult_FailedTampered",
 					sProfileDir.c_str() );
-			lr = Profile::failed_tampered;
+			lr = ProfileLoadResult_FailedTampered;
 		}
 	}
 
@@ -169,7 +169,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 		const CString &sSubdir = asDirsToTry[i];
 		CString sDir = MEM_CARD_MOUNT_POINT[pn] + sSubdir + "/";
 
-		/* If the load fails with Profile::failed_no_profile, keep searching.  However,
+		/* If the load fails with ProfileLoadResult_FailedNoProfile, keep searching.  However,
 		 * if it fails with failed_tampered, data existed but couldn't be loaded;
 		 * we don't want to mess with it, since it's confusing and may wipe out
 		 * recoverable backup data.  The only time we really want to import data
@@ -177,8 +177,8 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 		 * but we also want to import scores in the case where the player created
 		 * a directory for edits before playing, so keep searching if the directory
 		 * exists with exists with no scores. */
-		Profile::LoadResult res = (Profile::LoadResult) LoadProfile( pn, sDir, true );
-		if( res == Profile::success )
+		ProfileLoadResult res = LoadProfile( pn, sDir, true );
+		if( res == ProfileLoadResult_Success )
 		{
 			/* If importing, store the directory we imported from, for display purposes. */
 			if( i > 0 )
@@ -186,7 +186,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 			break;
 		}
 		
-		if( res == Profile::failed_tampered )
+		if( res == ProfileLoadResult_FailedTampered )
 			break;
 	}
 
@@ -230,13 +230,13 @@ bool ProfileManager::FastLoadProfileNameFromMemoryCard( CString sRootDir, CStrin
 		CString sDir = sRootDir + sSubdir + "/";
 
 		Profile profile;
-		Profile::LoadResult res = profile.LoadEditableDataFromDir( sDir );
-		if( res == Profile::success )
+		ProfileLoadResult res = profile.LoadEditableDataFromDir( sDir );
+		if( res == ProfileLoadResult_Success )
 		{
 			sName = profile.GetDisplayNameOrHighScoreName();
 			return true;
 		}
-		else if( res != Profile::failed_no_profile )
+		else if( res != ProfileLoadResult_FailedNoProfile )
 			break;
 	}
 
@@ -448,8 +448,8 @@ void ProfileManager::SaveMachineProfile() const
 
 void ProfileManager::LoadMachineProfile()
 {
-	Profile::LoadResult lr = m_pMachineProfile->LoadAllFromDir(MACHINE_PROFILE_DIR, false);
-	if( lr == Profile::failed_no_profile )
+	ProfileLoadResult lr = m_pMachineProfile->LoadAllFromDir(MACHINE_PROFILE_DIR, false);
+	if( lr == ProfileLoadResult_FailedNoProfile )
 	{
 		m_pMachineProfile->InitAll();
 		m_pMachineProfile->SaveAllToDir( MACHINE_PROFILE_DIR, PREFSMAN->m_bSignProfileData );
