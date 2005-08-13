@@ -83,9 +83,70 @@ void ScreenOptionsEditCourseSubMenu::MenuSelect( PlayerNumber pn, const InputEve
 
 
 
+
+
+
+
+/* This is actually just an adapter to make ScreenPrompt send different messages
+ * on yes and no: */
+class ScreenPromptConfirmDeleteSteps : public ScreenPrompt
+{
+public:
+	ScreenPromptConfirmDeleteSteps( const CString &sName ):
+		ScreenPrompt(sName)
+	{
+	}
+
+	void Init()
+	{
+		ScreenPrompt::Init();
+		this->Load( "This course will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
+	}
+
+	void End( bool bCancelled )
+	{
+		switch( m_Answer )
+		{
+		case ANSWER_YES:
+			m_smSendOnPop = SM_Success;
+			break;
+		case ANSWER_NO:
+			m_smSendOnPop = SM_Failure;
+			break;
+		}
+
+		ScreenPrompt::End( bCancelled );
+	}
+
+	void HandleScreenMessage( const ScreenMessage SM )
+	{
+		switch( SM )
+		{
+		case SM_GoToNextScreen:
+			if( SCREENMAN->IsStackedScreen(this) )
+				SCREENMAN->PopTopScreen( m_smSendOnPop );
+			else
+				SCREENMAN->SetNewScreen( GetNextScreen() );
+			return;
+		case SM_GoToPrevScreen:
+			if( SCREENMAN->IsStackedScreen(this) )
+				SCREENMAN->PopTopScreen( m_smSendOnPop );
+			else
+				SCREENMAN->SetNewScreen( GetPrevScreen() );
+			return;
+		}
+		ScreenPrompt::HandleScreenMessage( SM );
+	}
+
+	ScreenMessage m_smSendOnPop;
+};
+REGISTER_SCREEN_CLASS( ScreenPromptConfirmDeleteSteps );
+
+
+
+
 AutoScreenMessage( SM_BackFromEnterNameForNew )
 AutoScreenMessage( SM_BackFromRename )
-AutoScreenMessage( SM_BackFromDeleteConfirm )
 AutoScreenMessage( SM_BackFromContextMenu )
 
 enum CourseAction
@@ -235,7 +296,18 @@ void ScreenOptionsManageCourses::BeginScreen()
 
 void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SM == SM_GoToNextScreen )
+	if( SM == SM_Success )
+	{
+		LOG->Trace( "Delete successful; deleting course from memory" );
+
+		SONGMAN->DeleteCourse( GetCourseWithFocus() );
+		SCREENMAN->SetNewScreen( this->m_sName ); // reload
+	}
+	else if( SM == SM_Failure )
+	{
+		LOG->Trace( "Delete failed; not deleting course" );
+	}
+	else if( SM == SM_GoToNextScreen )
 	{
 		int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 		if( iCurRow == (int)m_pRows.size() - 1 )
@@ -278,14 +350,6 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
-	else if( SM == SM_BackFromDeleteConfirm )
-	{
-		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
-		{
-			SONGMAN->DeleteCourse( GetCourseWithFocus() );
-			SCREENMAN->SetNewScreen( this->m_sName ); // reload
-		}
-	}
 	else if( SM == SM_BackFromContextMenu )
 	{
 		if( !ScreenMiniMenu::s_bCancelled )
@@ -314,9 +378,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case CourseAction_Delete:
 				{
-					CString sTitle = GetCourseWithFocus()->GetDisplayFullTitle();
-					CString sMessage = ssprintf( "Are you sure you want to delete the course '%s'?", sTitle.c_str() );
-					ScreenPrompt::Prompt( SM_BackFromDeleteConfirm, sMessage, PROMPT_YES_NO );
+					SCREENMAN->AddNewScreenToTop( "ScreenPromptConfirmDeleteSteps" );
 				}
 				break;
 			}
