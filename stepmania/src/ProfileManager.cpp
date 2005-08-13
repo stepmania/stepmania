@@ -442,9 +442,8 @@ void ProfileManager::LoadMachineProfile()
 	Profile::LoadResult lr = m_pMachineProfile->LoadAllFromDir(MACHINE_PROFILE_DIR, false);
 	if( lr == Profile::failed_no_profile )
 	{
-		Profile *pProfile = Profile::CreateNewProfile( MACHINE_PROFILE_DIR, "Machine", false );
-		delete m_pMachineProfile;
-		m_pMachineProfile = pProfile;
+		m_pMachineProfile->InitAll();
+		m_pMachineProfile->SaveAllToDir( MACHINE_PROFILE_DIR, PREFSMAN->m_bSignProfileData );
 	}
 
 	// If the machine name has changed, make sure we use the new name
