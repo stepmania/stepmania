@@ -109,7 +109,15 @@ void ScreenOptionsManageProfiles::Init()
 {
 	ScreenOptions::Init();
 
+	SetInputMode( INPUTMODE_SHARE_CURSOR );
+}
+
+void ScreenOptionsManageProfiles::BeginScreen()
+{
 	vector<OptionRowDefinition> vDefs;
+	for( unsigned i = 0; i < m_OptionRowHandlers.size(); ++i )
+		delete m_OptionRowHandlers[i];
+	m_OptionRowHandlers.clear();
 
 	OptionRowDefinition def;
 	def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
@@ -150,11 +158,6 @@ void ScreenOptionsManageProfiles::Init()
 
 	ScreenOptions::InitMenu( vDefs, m_OptionRowHandlers );
 
-	SetInputMode( INPUTMODE_SHARE_CURSOR );
-}
-
-void ScreenOptionsManageProfiles::BeginScreen()
-{
 	ScreenOptions::BeginScreen();
 	
 	// select the last chosen profile
