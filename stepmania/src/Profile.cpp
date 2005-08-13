@@ -892,6 +892,8 @@ bool Profile::SaveAllToDir( CString sDir, bool bSignData ) const
 	FILEMAN->CreateDir( sDir + EDIT_COURSES_SUBDIR );
 	FILEMAN->CreateDir( sDir + SCREENSHOTS_SUBDIR );
 
+	FlushDirCache();
+
 	return bSaved;
 }
 
@@ -1901,7 +1903,6 @@ Profile *Profile::CreateNewProfile( CString sProfileDir, CString sName, bool bFi
 		return NULL;
 	}
 
-	FlushDirCache();
 	return pProfile;
 }
 
