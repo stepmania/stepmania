@@ -212,6 +212,7 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 	for( unsigned i=0; i<m_pRows.size(); i++ )
 	{
 		m_framePage.RemoveChild( m_pRows[i] );
+		m_pRows[i]->DetachHandler();
 		SAFE_DELETE( m_pRows[i] );
 	}
 	m_pRows.clear();
