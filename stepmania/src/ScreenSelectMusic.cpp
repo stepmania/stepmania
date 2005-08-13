@@ -761,16 +761,16 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 			{
 			case MENU_BUTTON_LEFT:
 				ChangeDifficulty( pn, -1 );
-				break;
+				return;
 			case MENU_BUTTON_RIGHT:
 				ChangeDifficulty( pn, +1 );
-				break;
+				return;
 			case MENU_BUTTON_START:
 				if( MODE_MENU_AVAILABLE )
 					m_MusicWheel.ChangeSort( SORT_MODE_MENU );
 				else
 					m_soundLocked.Play();
-				break;
+				return;
 			}
 		}
 	}
