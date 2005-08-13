@@ -332,7 +332,6 @@ public:
 	void SaveStatsWebPageToDir( CString sDir ) const;
 	void SaveMachinePublicKeyToDir( CString sDir ) const;
 
-	static Profile *CreateNewProfile( CString sProfileDir, CString sName, bool bFillWithRandomCharacter );
 	static void BackupToDir( CString sFromDir, CString sToDir );
 
 	// Lua

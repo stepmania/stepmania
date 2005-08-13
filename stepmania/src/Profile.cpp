@@ -1891,22 +1891,6 @@ void Profile::BackupToDir( CString sFromDir, CString sToDir )
 	FileCopy( sFromDir+DONT_SHARE_SIG,				sToDir+DONT_SHARE_SIG );
 }
 
-Profile *Profile::CreateNewProfile( CString sProfileDir, CString sName, bool bFillWithRandomCharacter )
-{
-	Profile *pProfile = new Profile;
-	pProfile->m_sDisplayName = sName;
-	if( bFillWithRandomCharacter )
-		pProfile->m_sCharacter = GAMESTATE->GetRandomCharacter()->m_sName;
-	if( !pProfile->SaveAllToDir(sProfileDir, PREFSMAN->m_bSignProfileData) )
-	{
-		delete pProfile;
-		return NULL;
-	}
-
-	return pProfile;
-}
-
-
 // lua start
 #include "LuaBinding.h"
 
