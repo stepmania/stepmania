@@ -305,7 +305,7 @@ public:
 	bool SaveAllToDir( CString sDir, bool bSignData ) const;
 
 	LoadResult LoadEditableDataFromDir( CString sDir );
-	LoadResult LoadStatsXmlFromNode( const XNode* pNode );
+	LoadResult LoadStatsXmlFromNode( const XNode* pNode, bool bIgnoreEditable = true );
 	void LoadGeneralDataFromNode( const XNode* pNode );
 	void LoadSongScoresFromNode( const XNode* pNode );
 	void LoadCourseScoresFromNode( const XNode* pNode );

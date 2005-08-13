@@ -850,7 +850,7 @@ Profile::LoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignatur
 	return LoadStatsXmlFromNode( &xml );
 }
 
-Profile::LoadResult Profile::LoadStatsXmlFromNode( const XNode *xml )
+Profile::LoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreEditable )
 {
 	/* The placeholder stats.xml file has an <html> tag.  Don't load it, but don't
 	 * warn about it. */
@@ -863,6 +863,13 @@ Profile::LoadResult Profile::LoadStatsXmlFromNode( const XNode *xml )
 		return failed_tampered;
 	}
 
+	/* These are loaded from Editable, so we usually want to ignore them
+	 * here. */
+	CString sName = m_sDisplayName;
+	CString sCharacter = m_sCharacter;
+	CString sLastUsedHighScoreName = m_sLastUsedHighScoreName;
+	int iWeightPounds = m_iWeightPounds;
+
 	LOAD_NODE( GeneralData );
 	LOAD_NODE( SongScores );
 	LOAD_NODE( CourseScores );
@@ -872,6 +879,14 @@ Profile::LoadResult Profile::LoadStatsXmlFromNode( const XNode *xml )
 	LOAD_NODE( RecentSongScores );
 	LOAD_NODE( RecentCourseScores );
 		
+	if( bIgnoreEditable )
+	{
+		m_sDisplayName = sName;
+		m_sCharacter = sCharacter;
+		m_sLastUsedHighScoreName = sLastUsedHighScoreName;
+		m_iWeightPounds = iWeightPounds;
+	}
+
 	return success;
 }
 
@@ -966,10 +981,13 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	XNode* pGeneralDataNode = new XNode;
 	pGeneralDataNode->m_sName = "GeneralData";
 
-	// TRICKY: These are write-only elements that are never read again.  This 
-	// data is required by other apps (like internet ranking), but is 
+	// TRICKY: These are write-only elements that are normally never read again.
+	// This data is required by other apps (like internet ranking), but is 
 	// redundant to the game app.
 	pGeneralDataNode->AppendChild( "DisplayName",					GetDisplayNameOrHighScoreName() );
+	pGeneralDataNode->AppendChild( "Character",						m_sCharacter );
+	pGeneralDataNode->AppendChild( "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
+	pGeneralDataNode->AppendChild( "WeightPounds",					m_iWeightPounds );
 	pGeneralDataNode->AppendChild( "IsMachine",						IsMachine() );
 	pGeneralDataNode->AppendChild( "IsWeightSet",					m_iWeightPounds != 0 );
 
@@ -1132,6 +1150,10 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	CString s;
 	const XNode* pTemp;
 
+	pNode->GetChildValue( "DisplayName",							m_sDisplayName );
+	pNode->GetChildValue( "Character",								m_sCharacter );
+	pNode->GetChildValue( "LastUsedHighScoreName",					m_sLastUsedHighScoreName );
+	pNode->GetChildValue( "WeightPounds",							m_iWeightPounds );
 	pNode->GetChildValue( "Guid",							m_sGuid );
 	pNode->GetChildValue( "SortOrder",						s );	m_SortOrder = StringToSortOrder( s );
 	pNode->GetChildValue( "LastDifficulty",					s );	m_LastDifficulty = StringToDifficulty( s );
