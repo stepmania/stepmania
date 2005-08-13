@@ -635,6 +635,51 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 	return hs;
 }
 
+static void FillProfile( Profile *pProfile )
+{
+	// Choose a percent for all scores.  This is useful for testing unlocks
+	// where some elements are unlocked at a certain percent complete
+	float fPercentDP = randomf( 0.6f, 1.2f );
+	CLAMP( fPercentDP, 0.0f, 1.0f );
+
+	int iCount = pProfile->IsMachine()? 
+		PREFSMAN->m_iMaxHighScoresPerListForMachine.Get():
+		PREFSMAN->m_iMaxHighScoresPerListForPlayer.Get();
+
+	vector<Song*> vpAllSongs = SONGMAN->GetAllSongs();
+	FOREACH( Song*, vpAllSongs, pSong )
+	{
+		vector<Steps*> vpAllSteps = (*pSong)->GetAllSteps();
+		FOREACH( Steps*, vpAllSteps, pSteps )
+		{
+			pProfile->IncrementStepsPlayCount( *pSong, *pSteps );
+			for( int i=0; i<iCount; i++ )
+			{
+				int iIndex = 0;
+				pProfile->AddStepsHighScore( *pSong, *pSteps, MakeRandomHighScore(fPercentDP), iIndex );
+			}
+		}
+	}
+	
+	vector<Course*> vpAllCourses;
+	SONGMAN->GetAllCourses( vpAllCourses, true );
+	FOREACH( Course*, vpAllCourses, pCourse )
+	{
+		vector<Trail*> vpAllTrails;
+		(*pCourse)->GetAllTrails( vpAllTrails );
+		FOREACH( Trail*, vpAllTrails, pTrail )
+		{
+			pProfile->IncrementCoursePlayCount( *pCourse, *pTrail );
+			for( int i=0; i<iCount; i++ )
+			{
+				int iIndex = 0;
+				pProfile->AddCourseHighScore( *pCourse, *pTrail, MakeRandomHighScore(fPercentDP), iIndex );
+			}
+		}
+	}
+}
+
+
 /* Hack: if this GameCommand would set the screen, clear the setting and return
  * the screen that would have been set. */
 CString GameCommand::GetAndClearScreen()
@@ -840,45 +885,9 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	}
 	if( m_bFillMachineStats )
 	{
-		// Choose a percent for all scores.  This is useful for testing unlocks
-		// where some elements are unlocked at a certain percent complete
-		float fPercentDP = randomf( 0.6f, 1.2f );
-		CLAMP( fPercentDP, 0.0f, 1.0f );
-
 		Profile* pProfile = PROFILEMAN->GetMachineProfile();
+		FillProfile( pProfile );
 
-		vector<Song*> vpAllSongs = SONGMAN->GetAllSongs();
-		FOREACH( Song*, vpAllSongs, pSong )
-		{
-			vector<Steps*> vpAllSteps = (*pSong)->GetAllSteps();
-			FOREACH( Steps*, vpAllSteps, pSteps )
-			{
-				pProfile->IncrementStepsPlayCount( *pSong, *pSteps );
-				for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerListForMachine; i++ )
-				{
-					int iIndex = 0;
-					pProfile->AddStepsHighScore( *pSong, *pSteps, MakeRandomHighScore(fPercentDP), iIndex );
-				}
-			}
-		}
-		
-		vector<Course*> vpAllCourses;
-		SONGMAN->GetAllCourses( vpAllCourses, true );
-		FOREACH( Course*, vpAllCourses, pCourse )
-		{
-			vector<Trail*> vpAllTrails;
-			(*pCourse)->GetAllTrails( vpAllTrails );
-			FOREACH( Trail*, vpAllTrails, pTrail )
-			{
-				pProfile->IncrementCoursePlayCount( *pCourse, *pTrail );
-				for( int i=0; i<PREFSMAN->m_iMaxHighScoresPerListForMachine.Get(); i++ )
-				{
-					int iIndex = 0;
-					pProfile->AddCourseHighScore( *pCourse, *pTrail, MakeRandomHighScore(fPercentDP), iIndex );
-				}
-			}
-		}
-		
 		PROFILEMAN->SaveMachineProfile();
 		SCREENMAN->SystemMessage( "Machine stats filled." );
 	}
