@@ -1108,10 +1108,10 @@ Profile::LoadResult Profile::LoadEditableDataFromDir( CString sDir )
 	IniFile ini;
 	ini.ReadFile( fn );
 
-	ini.GetValue("Editable","DisplayName",				m_sDisplayName);
-	ini.GetValue("Editable","Character",					m_sCharacter);
-	ini.GetValue("Editable","LastUsedHighScoreName",	m_sLastUsedHighScoreName);
-	ini.GetValue("Editable","WeightPounds",				m_iWeightPounds);
+	ini.GetValue( "Editable", "DisplayName",				m_sDisplayName );
+	ini.GetValue( "Editable", "Character",					m_sCharacter );
+	ini.GetValue( "Editable", "LastUsedHighScoreName",	m_sLastUsedHighScoreName );
+	ini.GetValue( "Editable", "WeightPounds",				m_iWeightPounds );
 
 	// This is data that the user can change, so we have to validate it.
 	wstring wstr = CStringToWstring(m_sDisplayName);
