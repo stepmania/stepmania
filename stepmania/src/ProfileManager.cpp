@@ -22,6 +22,7 @@
 #include "StepsUtil.h"
 #include "Style.h"
 #include "HighScore.h"
+#include "Character.h"
 
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
@@ -365,29 +366,37 @@ bool ProfileManager::CreateLocalProfile( CString sName, CString &sProfileIDOut )
 	int iProfileNumber = iMaxProfileNumber + 1;
 	CString sProfileID = ssprintf( "%08d", iProfileNumber );
 
-	if( !CreateLocalProfileByID(sName, sProfileID) )
+	//
+	// Create the new profile.
+	//
+	Profile *pProfile = new Profile;
+	pProfile->m_sDisplayName = sName;
+	pProfile->m_sCharacter = GAMESTATE->GetRandomCharacter()->m_sName;
+
+	//
+	// Save it to disk.
+	//
+	CString sProfileDir = LocalProfileIdToDir( sProfileID );
+	if( !pProfile->SaveAllToDir(sProfileDir, PREFSMAN->m_bSignProfileData) )
 	{
+		delete pProfile;
 		sProfileIDOut = "";
 		return false;
 	}
+
+	AddLocalProfileByID( pProfile, sProfileID );
 
 	sProfileIDOut = sProfileID;
 	return true;
 }
 
-bool ProfileManager::CreateLocalProfileByID( CString sName, CString sProfileID )
+void ProfileManager::AddLocalProfileByID( Profile *pProfile, CString sProfileID )
 {
 	ASSERT_M( g_mapLocalProfileIdToProfile.find(sProfileID) == g_mapLocalProfileIdToProfile.end(),
 		ssprintf("creating \"%s\" \"%s\" that already exists",
-		sName.c_str(), sProfileID.c_str()) );
-
-	CString sProfileDir = LocalProfileIdToDir( sProfileID );
-	Profile *pProfile = Profile::CreateNewProfile( sProfileDir, sName, true );
-	if( pProfile == NULL )
-		return false;
+		pProfile->m_sDisplayName.c_str(), sProfileID.c_str()) );
 
 	g_mapLocalProfileIdToProfile[sProfileID] = pProfile;
-	return true;
 }
 
 const Profile* ProfileManager::GetLocalProfileByID( const CString &sProfileID ) const
