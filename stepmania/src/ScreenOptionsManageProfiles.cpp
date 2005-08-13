@@ -213,8 +213,8 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 		{
 			ASSERT( ScreenTextEntry::s_sLastAnswer != "" );	// validate should have assured this
 		
-			Profile &profile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-			profile.m_sDisplayName = ScreenTextEntry::s_sLastAnswer;
+			CString sNewName = ScreenTextEntry::s_sLastAnswer;
+			PROFILEMAN->RenameLocalProfile( GAMESTATE->m_sEditLocalProfileID, sNewName );
 
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
