@@ -11,6 +11,7 @@ public:
 	virtual ~ScreenOptionsEditProfile();
 
 	virtual void Init();
+	virtual void BeginScreen();
 
 protected:
 private:

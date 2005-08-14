@@ -25,7 +25,10 @@ ScreenOptionsEditProfile::ScreenOptionsEditProfile( CString sName ) :
 void ScreenOptionsEditProfile::Init()
 {
 	ScreenOptions::Init();
+}
 
+void ScreenOptionsEditProfile::BeginScreen()
+{
 	m_Original = *GAMESTATE->GetEditLocalProfile();
 
 	vector<OptionRowDefinition> vDefs;
@@ -53,6 +56,8 @@ void ScreenOptionsEditProfile::Init()
 	}
 
 	InitMenu( vDefs, vHands );
+
+	ScreenOptions::BeginScreen();
 }
 
 ScreenOptionsEditProfile::~ScreenOptionsEditProfile()
