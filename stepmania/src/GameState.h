@@ -95,6 +95,7 @@ public:
 	void GetCharacters( vector<Character*> &vpCharactersOut );
 	Character* GetRandomCharacter();
 	Character* GetDefaultCharacter();
+	Character* GetCharacterFromID( CString sCharacterID );
 
 
 	bool IsCourseMode() const;

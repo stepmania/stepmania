@@ -1290,7 +1290,7 @@ bool GameState::ShowMarvelous() const
 void GameState::GetCharacters( vector<Character*> &apCharactersOut )
 {
 	for( unsigned i=0; i<m_pCharacters.size(); i++ )
-		if( m_pCharacters[i]->m_sName.CompareNoCase("default")!=0 )
+		if( !m_pCharacters[i]->IsDefaultCharacter() )
 			apCharactersOut.push_back( m_pCharacters[i] );
 }
 
@@ -1308,12 +1308,23 @@ Character* GameState::GetDefaultCharacter()
 {
 	for( unsigned i=0; i<m_pCharacters.size(); i++ )
 	{
-		if( m_pCharacters[i]->m_sName.CompareNoCase("default")==0 )
+		if( m_pCharacters[i]->IsDefaultCharacter() )
 			return m_pCharacters[i];
 	}
 
 	/* We always have the default character. */
 	ASSERT(0);
+	return NULL;
+}
+
+Character* GameState::GetCharacterFromID( CString sCharacterID )
+{
+	for( unsigned i=0; i<m_pCharacters.size(); i++ )
+	{
+		if( m_pCharacters[i]->m_sCharacterID == sCharacterID )
+			return m_pCharacters[i];
+	}
+
 	return NULL;
 }
 
@@ -1876,7 +1887,7 @@ Profile* GameState::GetEditLocalProfile()
 {
 	if( m_sEditLocalProfileID.Get().empty() )
 		return NULL;
-	return &PROFILEMAN->GetLocalProfile( m_sEditLocalProfileID );
+	return PROFILEMAN->GetLocalProfile( m_sEditLocalProfileID );
 }
 
 void GameState::ResetOriginalSyncData()
