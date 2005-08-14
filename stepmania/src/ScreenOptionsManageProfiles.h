@@ -2,6 +2,7 @@
 #define ScreenOptionsManageProfiles_H
 
 #include "ScreenOptions.h"
+#include "ScreenMiniMenu.h"
 
 class Course;
 
@@ -28,6 +29,8 @@ protected:
 	vector<CString> m_vsLocalProfileID;
 
 	vector<OptionRowHandler*> m_OptionRowHandlers;
+
+	ScreenMiniMenu *m_pContextMenu;
 };
 
 #endif
