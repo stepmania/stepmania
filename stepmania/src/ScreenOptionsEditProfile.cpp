@@ -9,6 +9,7 @@
 #include "GameState.h"
 #include "Profile.h"
 #include "Character.h"
+#include "CharacterManager.h"
 
 enum EditProfileRow
 {
@@ -49,7 +50,7 @@ void ScreenOptionsEditProfile::BeginScreen()
 		def.m_sName = "Character";
 		def.m_vsChoices.clear();
 		vector<Character*> vpCharacters;
-		GAMESTATE->GetCharacters( vpCharacters );
+		CHARMAN->GetCharacters( vpCharacters );
 		FOREACH_CONST( Character*, vpCharacters, c )
 			def.m_vsChoices.push_back( (*c)->GetDisplayName() );
 		vDefs.push_back( def );
