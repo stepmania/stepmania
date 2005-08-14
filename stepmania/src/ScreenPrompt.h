@@ -29,14 +29,6 @@ public:
 	ScreenPrompt( const CString &sScreenName );
 	virtual void Init();
 	virtual void BeginScreen();
-	void Load( 
-		CString sText, 
-		PromptType type = PROMPT_OK, 
-		PromptAnswer defaultAnswer = ANSWER_NO, 
-		void(*OnYes)(void*) = NULL, 
-		void(*OnNo)(void*) = NULL, 
-		void* pCallbackData = NULL 
-		);
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
 	static PromptAnswer s_LastAnswer;

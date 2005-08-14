@@ -65,16 +65,6 @@ void ScreenPrompt::Init()
 	m_sndChange.Load( THEME->GetPathS(m_sName,"change"), true );
 }
 
-void ScreenPrompt::Load( 
-	CString sText, 
-	PromptType type, 
-	PromptAnswer defaultAnswer, 
-	void (*OnYes)(void*), 
-	void (*OnNo)(void*), 
-	void* pCallbackData )
-{
-}
-
 void ScreenPrompt::BeginScreen()
 {
 	ScreenWithMenuElements::BeginScreen();
