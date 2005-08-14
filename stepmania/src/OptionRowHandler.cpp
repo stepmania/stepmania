@@ -370,7 +370,7 @@ public:
 		for( unsigned i=0; i<apCharacters.size(); i++ )
 		{
 			Character* pCharacter = apCharacters[i];
-			CString s = pCharacter->m_sName;
+			CString s = pCharacter->GetDisplayName();
 			s.MakeUpper();
 
 			defOut.m_vsChoices.push_back( s ); 

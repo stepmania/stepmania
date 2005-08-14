@@ -77,7 +77,7 @@ int Profile::HighScoresForACourse::GetNumTimesPlayed() const
 void Profile::InitEditableData()
 {
 	m_sDisplayName = "";
-	m_sCharacter = "";
+	m_sCharacterID = "";
 	m_sLastUsedHighScoreName = "";
 	m_iWeightPounds = 0;
 }
@@ -195,7 +195,7 @@ Character *Profile::GetCharacter() const
 	GAMESTATE->GetCharacters( vpCharacters );
 	FOREACH_CONST( Character*, vpCharacters, c )
 	{
-		if( (*c)->m_sName.CompareNoCase(m_sCharacter)==0 )
+		if( (*c)->m_sCharacterID.CompareNoCase(m_sCharacterID)==0 )
 			return *c;
 	}
 	return GAMESTATE->GetDefaultCharacter();
@@ -866,7 +866,7 @@ ProfileLoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreE
 	/* These are loaded from Editable, so we usually want to ignore them
 	 * here. */
 	CString sName = m_sDisplayName;
-	CString sCharacter = m_sCharacter;
+	CString sCharacterID = m_sCharacterID;
 	CString sLastUsedHighScoreName = m_sLastUsedHighScoreName;
 	int iWeightPounds = m_iWeightPounds;
 
@@ -882,7 +882,7 @@ ProfileLoadResult Profile::LoadStatsXmlFromNode( const XNode *xml, bool bIgnoreE
 	if( bIgnoreEditable )
 	{
 		m_sDisplayName = sName;
-		m_sCharacter = sCharacter;
+		m_sCharacterID = sCharacterID;
 		m_sLastUsedHighScoreName = sLastUsedHighScoreName;
 		m_iWeightPounds = iWeightPounds;
 	}
@@ -969,7 +969,7 @@ void Profile::SaveEditableDataToDir( CString sDir ) const
 	IniFile ini;
 
 	ini.SetValue( "Editable", "DisplayName",			m_sDisplayName );
-	ini.SetValue( "Editable", "Character",					m_sCharacter );
+	ini.SetValue( "Editable", "CharacterID",			m_sCharacterID );
 	ini.SetValue( "Editable", "LastUsedHighScoreName",	m_sLastUsedHighScoreName );
 	ini.SetValue( "Editable", "WeightPounds",			m_iWeightPounds );
 
@@ -985,7 +985,7 @@ XNode* Profile::SaveGeneralDataCreateNode() const
 	// This data is required by other apps (like internet ranking), but is 
 	// redundant to the game app.
 	pGeneralDataNode->AppendChild( "DisplayName",					GetDisplayNameOrHighScoreName() );
-	pGeneralDataNode->AppendChild( "Character",						m_sCharacter );
+	pGeneralDataNode->AppendChild( "CharacterID",					m_sCharacterID );
 	pGeneralDataNode->AppendChild( "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
 	pGeneralDataNode->AppendChild( "WeightPounds",					m_iWeightPounds );
 	pGeneralDataNode->AppendChild( "IsMachine",						IsMachine() );
@@ -1126,10 +1126,10 @@ ProfileLoadResult Profile::LoadEditableDataFromDir( CString sDir )
 	IniFile ini;
 	ini.ReadFile( fn );
 
-	ini.GetValue( "Editable", "DisplayName",				m_sDisplayName );
-	ini.GetValue( "Editable", "Character",					m_sCharacter );
+	ini.GetValue( "Editable", "DisplayName",			m_sDisplayName );
+	ini.GetValue( "Editable", "CharacterID",			m_sCharacterID );
 	ini.GetValue( "Editable", "LastUsedHighScoreName",	m_sLastUsedHighScoreName );
-	ini.GetValue( "Editable", "WeightPounds",				m_iWeightPounds );
+	ini.GetValue( "Editable", "WeightPounds",			m_iWeightPounds );
 
 	// This is data that the user can change, so we have to validate it.
 	wstring wstr = CStringToWstring(m_sDisplayName);
@@ -1151,7 +1151,7 @@ void Profile::LoadGeneralDataFromNode( const XNode* pNode )
 	const XNode* pTemp;
 
 	pNode->GetChildValue( "DisplayName",					m_sDisplayName );
-	pNode->GetChildValue( "Character",						m_sCharacter );
+	pNode->GetChildValue( "CharacterID",					m_sCharacterID );
 	pNode->GetChildValue( "LastUsedHighScoreName",			m_sLastUsedHighScoreName );
 	pNode->GetChildValue( "WeightPounds",					m_iWeightPounds );
 	pNode->GetChildValue( "Guid",							m_sGuid );

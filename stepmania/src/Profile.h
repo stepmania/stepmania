@@ -98,7 +98,7 @@ public:
 	// Editable data
 	//
 	CString m_sDisplayName;
-	CString m_sCharacter;
+	CString m_sCharacterID;
 	CString m_sLastUsedHighScoreName;	// this doesn't really belong in "editable", but we need it in the smaller editable file so that it can be ready quickly.
 	int m_iWeightPounds;	// 0 == not set
 
