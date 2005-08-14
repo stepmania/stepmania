@@ -32,6 +32,7 @@ public:
 	const Profile *GetLocalProfile( const CString &sProfileID ) const;
 	Profile *GetLocalProfile( const CString &sProfileID ) { return (Profile*) ((const ProfileManager *) this)->GetLocalProfile(sProfileID); }
 	Profile *GetLocalProfileFromIndex( int iIndex );
+	CString GetLocalProfileIDFromIndex( int iIndex );
 	
 	bool CreateLocalProfile( CString sName, CString &sProfileIDOut );
 	void AddLocalProfileByID( Profile *pProfile, CString sProfileID ); // transfers ownership of pProfile
