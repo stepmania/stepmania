@@ -16,13 +16,13 @@
 #define CODE( s )				THEME->GetMetric (m_sName,ssprintf("Code%s",s.c_str()))
 #define CODE_ACTION( s )		THEME->GetMetricM(m_sName,ssprintf("Code%sAction",s.c_str()))
 #define IDLE_TIMEOUT_SCREEN		THEME->GetMetric (m_sName,"IdleTimeoutScreen")
-#define ALLOW_DISABLED_PLAYER_INPUT		THEME->GetMetricB(m_sName,"AllowDisabledPlayerInput")
 #define UPDATE_ON_MESSAGE		THEME->GetMetric (m_sName,"UpdateOnMessage")
 
 ScreenSelect::ScreenSelect( CString sClassName ) : 
 	ScreenWithMenuElements(sClassName),
 	IDLE_COMMENT_SECONDS(m_sName,"IdleCommentSeconds"),
-	IDLE_TIMEOUT_SECONDS(m_sName,"IdleTimeoutSeconds")
+	IDLE_TIMEOUT_SECONDS(m_sName,"IdleTimeoutSeconds"),
+	ALLOW_DISABLED_PLAYER_INPUT(m_sName,"AllowDisabledPlayerInput")
 {
 	LOG->Trace( "ScreenSelect::ScreenSelect()" );
 }

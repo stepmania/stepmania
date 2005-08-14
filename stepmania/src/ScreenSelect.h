@@ -41,6 +41,7 @@ protected:
 
 	ThemeMetric<float> IDLE_COMMENT_SECONDS;
 	ThemeMetric<float> IDLE_TIMEOUT_SECONDS;
+	ThemeMetric<bool> ALLOW_DISABLED_PLAYER_INPUT;
 
 private:
 	CString			m_sNextScreen;
