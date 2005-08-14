@@ -11,11 +11,12 @@
 #include "Profile.h"
 #include "OptionRowHandler.h"
 
-static ThemeMetric<CString> NEW_PROFILE_DEFAULT_NAME( "ScreenOptionsManageProfiles", "NewProfileDefaultName" );
+static ThemeMetric<CString> NEW_PROFILE_DEFAULT_NAME(	"ScreenOptionsManageProfiles", "NewProfileDefaultName" );
 
 AutoScreenMessage( SM_BackFromEnterNameForNew )
 AutoScreenMessage( SM_BackFromRename )
 AutoScreenMessage( SM_BackFromDeleteConfirm )
+AutoScreenMessage( SM_BackFromClearConfirm )
 AutoScreenMessage( SM_BackFromContextMenu )
 
 enum ProfileAction
@@ -23,12 +24,14 @@ enum ProfileAction
 	ProfileAction_Edit,
 	ProfileAction_Rename,
 	ProfileAction_Delete,
+	ProfileAction_Clear,
 	NUM_ProfileAction
 };
 static const CString ProfileActionNames[] = {
 	"Edit",
 	"Rename",
 	"Delete",
+	"Clear",
 };
 XToString( ProfileAction, NUM_ProfileAction );
 #define FOREACH_ProfileAction( i ) FOREACH_ENUM( ProfileAction, NUM_ProfileAction, i )
@@ -39,7 +42,9 @@ static MenuDef g_TempMenu(
 
 static bool ValidateLocalProfileName( const CString &sAnswer, CString &sErrorOut )
 {
-	CString sCurrentProfileOldName = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID ).m_sDisplayName;
+	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
+	ASSERT( pProfile );
+	CString sCurrentProfileOldName = pProfile->m_sDisplayName;
 	vector<CString> vsProfileNames;
 	PROFILEMAN->GetLocalProfileDisplayNames( vsProfileNames );
 	bool bAlreadyAProfileWithThisName = find( vsProfileNames.begin(), vsProfileNames.end(), sAnswer ) != vsProfileNames.end();
@@ -142,11 +147,12 @@ void ScreenOptionsManageProfiles::BeginScreen()
 
 	FOREACH_CONST( CString, m_vsLocalProfileID, s )
 	{
-		Profile &profile = PROFILEMAN->GetLocalProfile( *s );
+		Profile *pProfile = PROFILEMAN->GetLocalProfile( *s );
+		ASSERT( pProfile );
 
 		def.m_sName = ssprintf( "%d", iIndex );
 		def.m_vsChoices.clear();
-		def.m_vsChoices.push_back( profile.m_sDisplayName );
+		def.m_vsChoices.push_back( pProfile->m_sDisplayName );
 		vDefs.push_back( def );
 
 		OptionRowHandlerSimple *pHand = new OptionRowHandlerSimple;
@@ -236,12 +242,26 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
+	else if( SM == SM_BackFromClearConfirm )
+	{
+		if( ScreenPrompt::s_LastAnswer == ANSWER_YES )
+		{
+			GAMESTATE->GetEditLocalProfile()->InitAll();
+
+			SCREENMAN->SetNewScreen( this->m_sName ); // reload
+		}
+	}
 	else if( SM == SM_BackFromContextMenu )
 	{
 		if( !ScreenMiniMenu::s_bCancelled )
 		{
+			Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
+			ASSERT( pProfile );
+
 			switch( ScreenMiniMenu::s_iLastRowCode )
 			{
+			default:
+				ASSERT(0);
 			case ProfileAction_Edit:
 				{
 					GAMESTATE->m_sEditLocalProfileID.Set( GetLocalProfileIDWithFocus() );
@@ -251,21 +271,26 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case ProfileAction_Rename:
 				{
-					Profile &profile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 					ScreenTextEntry::TextEntry( 
 						SM_BackFromRename, 
 						"Enter a name for the profile.", 
-						profile.m_sDisplayName, 
+						pProfile->m_sDisplayName, 
 						PROFILE_MAX_DISPLAY_NAME_LENGTH, 
 						ValidateLocalProfileName );
 				}
 				break;
 			case ProfileAction_Delete:
 				{
-					Profile &profile = PROFILEMAN->GetLocalProfile( GetLocalProfileIDWithFocus() );
-					CString sTitle = profile.m_sDisplayName;
-					CString sMessage = ssprintf( "Are you sure you want to delete the course '%s'?", sTitle.c_str() );
+					CString sTitle = pProfile->m_sDisplayName;
+					CString sMessage = ssprintf( "Are you sure you want to delete the profile '%s'?", sTitle.c_str() );
 					ScreenPrompt::Prompt( SM_BackFromDeleteConfirm, sMessage, PROMPT_YES_NO );
+				}
+				break;
+			case ProfileAction_Clear:
+				{
+					CString sTitle = pProfile->m_sDisplayName;
+					CString sMessage = ssprintf( "Are you sure you want to clear all data in the profile '%s'?", sTitle.c_str() );
+					ScreenPrompt::Prompt( SM_BackFromClearConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;
 			}
@@ -288,16 +313,6 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( PlayerNumber pn, const Input
 
 	if( iCurRow == 0 )	// "create new"
 	{
-		if( PROFILEMAN->GetNumLocalProfiles() >= MAX_NUM_LOCAL_PROFILES )
-		{
-			CString s = ssprintf( 
-				"You have %d profiles, the maximum number allowed.\n\n"
-				"You must delete an existing profile before creating a new profile.",
-				MAX_NUM_LOCAL_PROFILES );
-			ScreenPrompt::Prompt( SM_None, s );
-			return;
-		}
-
 		vector<CString> vsUsedNames;
 		PROFILEMAN->GetLocalProfileDisplayNames( vsUsedNames );
 
@@ -323,10 +338,20 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( PlayerNumber pn, const Input
 	else	// a course
 	{
 		g_TempMenu.rows.clear();
-		FOREACH_ProfileAction( i )
+
+#define ADD_ACTION( i )	\
+		g_TempMenu.rows.push_back( MenuRowDef( i, ProfileActionToString(i), true, EDIT_MODE_HOME, 0, "" ) );
+
+		if( PROFILEMAN->FixedProfiles() )
 		{
-			MenuRowDef mrd( i, ProfileActionToString(i), true, EDIT_MODE_HOME, 0, "" );
-			g_TempMenu.rows.push_back( mrd );
+			ADD_ACTION( ProfileAction_Rename );
+			ADD_ACTION( ProfileAction_Clear );
+		}
+		else
+		{
+			ADD_ACTION( ProfileAction_Edit );
+			ADD_ACTION( ProfileAction_Rename );
+			ADD_ACTION( ProfileAction_Delete );
 		}
 
 		int iWidth, iX, iY;
