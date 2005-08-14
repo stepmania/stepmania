@@ -42,23 +42,20 @@ static MenuDef g_TempMenu(
 
 static bool ValidateLocalProfileName( const CString &sAnswer, CString &sErrorOut )
 {
-	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
-	ASSERT( pProfile );
-	CString sCurrentProfileOldName = pProfile->m_sDisplayName;
-	vector<CString> vsProfileNames;
-	PROFILEMAN->GetLocalProfileDisplayNames( vsProfileNames );
-	bool bAlreadyAProfileWithThisName = find( vsProfileNames.begin(), vsProfileNames.end(), sAnswer ) != vsProfileNames.end();
-	
 	if( sAnswer == "" )
 	{
 		sErrorOut = "Profile name cannot be blank.";
 		return false;
 	}
-	else if( sAnswer == sCurrentProfileOldName )
-	{
-		return true;
-	}
-	else if( bAlreadyAProfileWithThisName )
+
+	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
+	if( pProfile != NULL && sAnswer == pProfile->m_sDisplayName )
+		return true; // unchanged
+
+	vector<CString> vsProfileNames;
+	PROFILEMAN->GetLocalProfileDisplayNames( vsProfileNames );
+	bool bAlreadyAProfileWithThisName = find( vsProfileNames.begin(), vsProfileNames.end(), sAnswer ) != vsProfileNames.end();
+	if( bAlreadyAProfileWithThisName )
 	{
 		sErrorOut = "There is already another profile with this name.  Please choose a different name.";
 		return false;
