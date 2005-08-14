@@ -95,10 +95,6 @@ void Screen::Update( float fDeltaTime )
 		 *
 		 * Let's delay all messages that have a non-zero time an extra frame. 
 		 */
-		/* I don't think this is needed anymore, since SetNewScreen is always delayed
-		 * until the next update.  It might have other impacts, though, so I'm not sure. */
-		m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
-		/*
 		if( m_QueuedMessages[i].fDelayRemaining > 0.0001f )
 		{
 			m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
@@ -108,7 +104,6 @@ void Screen::Update( float fDeltaTime )
 		{
 			m_QueuedMessages[i].fDelayRemaining -= fDeltaTime;
 		}
-		*/
 	}
 
 	/* Now dispatch messages.  If the number of messages on the queue changes
