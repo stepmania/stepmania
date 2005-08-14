@@ -543,9 +543,9 @@ void NoteField::DrawPrimitives()
 		// Course mods text
 		//
 		Course *pCourse = GAMESTATE->m_pCurCourse;
-		const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 		if( pCourse )
 		{
+			const CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
 			FOREACH_CONST( Attack, ce.attacks, a )
 			{
 				float fSecond = a->fStartSecond;
