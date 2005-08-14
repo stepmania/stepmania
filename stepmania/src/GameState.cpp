@@ -793,8 +793,8 @@ bool GameState::PlayersCanJoin() const
 int GameState::GetNumSidesJoined() const
 { 
 	int iNumSidesJoined = 0;
-	for( int c=0; c<NUM_PLAYERS; c++ )
-		if( m_bSideIsJoined[c] )
+	FOREACH_PlayerNumber( p )
+		if( m_bSideIsJoined[p] )
 			iNumSidesJoined++;	// left side, and right side
 	return iNumSidesJoined;
 }
