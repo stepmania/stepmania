@@ -16,8 +16,6 @@ class Trail;
 struct HighScore;
 struct lua_State;
 
-const int MAX_NUM_LOCAL_PROFILES = 8;
-
 class ProfileManager
 {
 public:
@@ -26,10 +24,13 @@ public:
 
 	void Init();
 
+	bool FixedProfiles() const;	// If true, profiles shouldn't be added/deleted
+
 	// local profiles
 	void UnloadAllLocalProfiles();
 	void RefreshLocalProfilesFromDisk();
-	Profile &GetLocalProfile( const CString &sProfileID );
+	const Profile *GetLocalProfile( const CString &sProfileID ) const;
+	Profile *GetLocalProfile( const CString &sProfileID ) { return (Profile*) ((const ProfileManager *) this)->GetLocalProfile(sProfileID); }
 	
 	bool CreateLocalProfile( CString sName, CString &sProfileIDOut );
 	void AddLocalProfileByID( Profile *pProfile, CString sProfileID ); // transfers ownership of pProfile
@@ -71,8 +72,6 @@ public:
 	Profile* GetProfile( PlayerNumber pn ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(pn); }
 	const Profile* GetProfile( ProfileSlot slot ) const;
 	Profile* GetProfile( ProfileSlot slot ) { return (Profile*) ((const ProfileManager *) this)->GetProfile(slot); }
-	const Profile* GetLocalProfileByID( const CString &sProfileID ) const;
-	Profile* GetLocalProfileByID( const CString &sProfileID ) { return (Profile*) ((const ProfileManager *) this)->GetLocalProfileByID(sProfileID); }
 	
 	CString GetProfileDir( ProfileSlot slot ) const;
 	CString GetProfileDirImportedFrom( ProfileSlot slot ) const;
