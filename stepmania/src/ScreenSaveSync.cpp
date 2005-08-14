@@ -3,6 +3,7 @@
 #include "GameState.h"
 #include "song.h"
 #include "PrefsManager.h"
+#include "ScreenPrompt.h"
 
 
 static CString GetPromptText()
@@ -106,17 +107,10 @@ static void RevertSyncChanges( void* pThrowAway )
 	GAMESTATE->RevertSyncChanges();
 }
 
-REGISTER_SCREEN_CLASS( ScreenSaveSync );
-ScreenSaveSync::ScreenSaveSync( const CString &sScreenName ) :
-	ScreenPrompt( sScreenName )
+void ScreenSaveSync::SaveSync()
 {
-}
-
-void ScreenSaveSync::Init()
-{
-	ScreenPrompt::Init();
-
-	Load(
+	ScreenPrompt::Prompt(
+		SM_None,
 		GetPromptText(), 
 		PROMPT_YES_NO, 
 		ANSWER_YES, 
