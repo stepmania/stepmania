@@ -22,7 +22,6 @@ static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
 static bool g_bIsHalt = false;
 static RageTimer g_HaltTimer(RageZeroTimer);
-static bool g_bMute = false;
 
 static bool IsGameplay()
 {
@@ -96,7 +95,9 @@ void ScreenDebugOverlay::Init()
 		g_Mappings.debugButton[16] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
 		g_Mappings.debugButton[17] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
 		g_Mappings.debugButton[18] = DeviceInput(DEVICE_KEYBOARD, KEY_Cy);
-		g_Mappings.debugButton[19] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
+		g_Mappings.debugButton[19] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
+		g_Mappings.debugButton[20] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
+
 	}
 
 
@@ -197,12 +198,13 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_ClearMachineStats:	s1="Clear Machine Stats";	break;
 		case DebugLine_FillMachineStats:	s1="Fill Machine Stats";	break;
 		case DebugLine_SendNotesEnded:		s1="Send Notes Ended";		break;
-		case DebugLine_Volume:				s1="Mute";					break;
 		case DebugLine_ReloadCurrentScreen:	s1="Reload";				break;
 		case DebugLine_ReloadTheme:			s1="Reload Theme and Textures";	break;
 		case DebugLine_WriteProfiles:		s1="Write Profiles";		break;
 		case DebugLine_WritePreferences:	s1="Write Preferences";		break;
 		case DebugLine_MenuTimer:			s1="Menu Timer";			break;
+		case DebugLine_VolumeUp:			s1="Volume Up";				break;
+		case DebugLine_VolumeDown:			s1="Volume Down";			break;
 		case DebugLine_Uptime:				s1="Uptime";				break;
 		default:	ASSERT(0);
 		}
@@ -224,12 +226,13 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_ClearMachineStats:	bOn=true;								break;
 		case DebugLine_FillMachineStats:	bOn=true;								break;
 		case DebugLine_SendNotesEnded:		bOn=true;								break;
-		case DebugLine_Volume:				bOn=g_bMute;							break;
 		case DebugLine_ReloadCurrentScreen:	bOn=true;								break;
 		case DebugLine_ReloadTheme:			bOn=true;								break;
 		case DebugLine_WriteProfiles:		bOn=true;								break;
 		case DebugLine_WritePreferences:	bOn=true;								break;
 		case DebugLine_MenuTimer:			bOn=PREFSMAN->m_bMenuTimer.Get();		break;
+		case DebugLine_VolumeUp:			bOn=true;								break;
+		case DebugLine_VolumeDown:			bOn=true;								break;
 		case DebugLine_Uptime:				bOn=false;								break;
 		default:	ASSERT(0);
 		}
@@ -267,12 +270,13 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_ClearMachineStats:	s2="";					break;
 		case DebugLine_FillMachineStats:	s2="";					break;
 		case DebugLine_SendNotesEnded:		s2="";					break;
-		case DebugLine_Volume:				s2=bOn ? "on":"off";	break;
 		case DebugLine_ReloadCurrentScreen:	s2=SCREENMAN ? SCREENMAN->GetTopScreen()->GetName():"";	break;
 		case DebugLine_ReloadTheme:			s2="";					break;
 		case DebugLine_WriteProfiles:		s2="";					break;
 		case DebugLine_WritePreferences:	s2="";					break;
-		case DebugLine_MenuTimer:			s2=bOn ? "on":"off";	break;
+		case DebugLine_MenuTimer:			s2="";					break;
+		case DebugLine_VolumeUp:			s2=ssprintf("%.0f%%",PREFSMAN->m_fSoundVolume.Get()*100);	break;
+		case DebugLine_VolumeDown:			s2="";					break;
 		case DebugLine_Uptime:				s2=SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart());	break;
 		default:	ASSERT(0);
 		}
@@ -409,10 +413,6 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 			case DebugLine_SendNotesEnded:
 				SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
 				break;
-			case DebugLine_Volume:
-				g_bMute = !g_bMute;
-				SOUNDMAN->SetPrefs( g_bMute ? 0 : PREFSMAN->GetSoundVolume() );
-				break;
 			case DebugLine_ReloadCurrentScreen:
 				SOUND->StopMusic();
 				ResetGame();
@@ -450,6 +450,21 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 				break;
 			case DebugLine_MenuTimer:
 				PREFSMAN->m_bMenuTimer.Set( !PREFSMAN->m_bMenuTimer );
+				break;
+			case DebugLine_VolumeUp:
+			case DebugLine_VolumeDown:
+				{
+					float fVol = PREFSMAN->m_fSoundVolume;
+					switch( i )
+					{
+					default:	ASSERT(0);
+					case DebugLine_VolumeUp:	fVol += 0.1f;	break;
+					case DebugLine_VolumeDown:	fVol -= 0.1f;	break;
+					}
+					CLAMP( fVol, 0.0f, 1.0f );
+					PREFSMAN->m_fSoundVolume.Set( fVol );
+					SOUNDMAN->SetPrefs( PREFSMAN->m_fSoundVolume );
+				}
 				break;
 			case DebugLine_Uptime:
 				break;

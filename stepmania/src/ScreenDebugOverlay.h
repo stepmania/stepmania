@@ -23,12 +23,13 @@ enum DebugLine
 	DebugLine_ClearMachineStats,
 	DebugLine_FillMachineStats,
 	DebugLine_SendNotesEnded,
-	DebugLine_Volume,
 	DebugLine_ReloadCurrentScreen,
 	DebugLine_ReloadTheme,
 	DebugLine_WriteProfiles,
 	DebugLine_WritePreferences,
 	DebugLine_MenuTimer,
+	DebugLine_VolumeUp,
+	DebugLine_VolumeDown,
 	DebugLine_Uptime,
 	NUM_DEBUG_LINES
 };
