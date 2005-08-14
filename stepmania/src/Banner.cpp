@@ -7,7 +7,7 @@
 #include "Course.h"
 #include "Character.h"
 #include "ThemeMetric.h"
-#include "GameState.h"
+#include "CharacterManager.h"
 
 ThemeMetric<bool> SCROLL_RANDOM		("Banner","ScrollRandom");
 ThemeMetric<bool> SCROLL_ROULETTE		("Banner","ScrollRoulette");
@@ -145,7 +145,7 @@ void Banner::LoadCourseFallback()
 
 void Banner::LoadCourseFallbackCharacterIcon()
 {
-	Character *pCharacter = GAMESTATE->GetDefaultCharacter();
+	Character *pCharacter = CHARMAN->GetDefaultCharacter();
 	if( pCharacter  &&  !pCharacter->GetIconPath().empty() )
 		Load( pCharacter->GetIconPath() );
 	else

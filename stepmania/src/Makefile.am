@@ -325,9 +325,14 @@ Quad.cpp Quad.h \
 RollingNumbers.cpp RollingNumbers.h Sprite.cpp Sprite.h
 
 GlobalSingletons = \
-AnnouncerManager.cpp AnnouncerManager.h Bookkeeper.cpp Bookkeeper.h CryptManager.cpp CryptManager.h \
-FontManager.cpp FontManager.h GameSoundManager.cpp GameSoundManager.h GameManager.cpp GameManager.h \
-GameState.cpp GameState.h InputFilter.cpp InputFilter.h \
+AnnouncerManager.cpp AnnouncerManager.h \
+Bookkeeper.cpp Bookkeeper.h \
+CharacterManager.cpp CharacterManager.h \
+CryptManager.cpp CryptManager.h \
+FontManager.cpp FontManager.h GameSoundManager.cpp GameSoundManager.h \
+GameManager.cpp GameManager.h \
+GameState.cpp GameState.h \
+InputFilter.cpp InputFilter.h \
 InputMapper.cpp InputMapper.h InputQueue.cpp InputQueue.h \
 LuaBinding.cpp LuaBinding.h \
 LuaManager.cpp LuaManager.h LightsManager.cpp LightsManager.h \

@@ -18,6 +18,7 @@
 #include "Style.h"
 #include "ActorUtil.h"
 #include "PrefsManager.h"
+#include "CharacterManager.h"
 
 static const ThemeMetric<CString>		STEPFILE			("ScreenHowToPlay","Stepfile");
 static const ThemeMetric<int>			NUM_PERFECTS		("ScreenHowToPlay","NumPerfects");
@@ -91,11 +92,11 @@ void ScreenHowToPlay::Init()
 	}
 	
 	// Display random character
-	vector<Character*> apCharacters;
-	GAMESTATE->GetCharacters( apCharacters );
-	if( (bool)USECHARACTER && apCharacters.size() && HaveAllCharAnimations() )
+	vector<Character*> vpCharacters;
+	CHARMAN->GetCharacters( vpCharacters );
+	if( (bool)USECHARACTER && vpCharacters.size() && HaveAllCharAnimations() )
 	{
-		Character* rndchar = GAMESTATE->GetRandomCharacter();
+		Character* rndchar = CHARMAN->GetRandomCharacter();
 
 		CString sModelPath = rndchar->GetModelPath();
 		if( sModelPath != "" )

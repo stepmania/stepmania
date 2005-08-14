@@ -39,6 +39,7 @@
 #include "CommonMetrics.h"
 #include "ScreenManager.h"
 #include "Screen.h"
+#include "CharacterManager.h"
 
 #include <ctime>
 #include <set>
@@ -46,8 +47,7 @@
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
 
-#define CHARACTERS_DIR "Characters/"
-#define NAME_BLACKLIST_FILE "Data/NamesBlacklist.dat"
+#define NAME_BLACKLIST_FILE "/Data/NamesBlacklist.dat"
 
 ThemeMetric<bool> USE_NAME_BLACKLIST("GameState","UseNameBlacklist");
 
@@ -89,8 +89,6 @@ GameState::GameState() :
 	m_timeGameStarted.SetZero();
 	m_bDemonstrationOrJukebox = false;
 
-	ReloadCharacters();
-
 	m_iNumTimesThroughAttract = -1;	// initial screen will bump this up to 0
 	m_iStageSeed = m_iGameSeed = 0;
 
@@ -115,9 +113,6 @@ GameState::GameState() :
 
 GameState::~GameState()
 {
-	for( unsigned i=0; i<m_pCharacters.size(); i++ )
-		SAFE_DELETE( m_pCharacters[i] );
-
 	FOREACH_PlayerNumber( p )
 		SAFE_DELETE( m_pPlayerState[p] );
 
@@ -243,10 +238,10 @@ void GameState::Reset()
 
 	FOREACH_PlayerNumber(p)
 	{
-		if( PREFSMAN->m_ShowDancingCharacters == PrefsManager::CO_RANDOM)
-			m_pCurCharacters[p] = GetRandomCharacter();
+		if( PREFSMAN->m_ShowDancingCharacters == PrefsManager::CO_RANDOM )
+			m_pCurCharacters[p] = CHARMAN->GetRandomCharacter();
 		else
-			m_pCurCharacters[p] = GetDefaultCharacter();
+			m_pCurCharacters[p] = CHARMAN->GetDefaultCharacter();
 		ASSERT( m_pCurCharacters[p] );
 	}
 
@@ -567,44 +562,6 @@ void GameState::Update( float fDelta )
 			MESSAGEMAN->Broadcast( (Message)(Message_GoalCompleteP1+p) );
 		}
 	}
-}
-
-void GameState::ReloadCharacters()
-{
-	for( unsigned i=0; i<m_pCharacters.size(); i++ )
-		SAFE_DELETE( m_pCharacters[i] );
-	m_pCharacters.clear();
-
-	FOREACH_PlayerNumber( p )
-		m_pCurCharacters[p] = NULL;
-
-	CStringArray as;
-	GetDirListing( CHARACTERS_DIR "*", as, true, true );
-	StripCvs( as );
-
-	bool FoundDefault = false;
-	for( unsigned i=0; i<as.size(); i++ )
-	{
-		CString sCharName, sDummy;
-		splitpath(as[i], sDummy, sCharName, sDummy);
-		sCharName.MakeLower();
-
-		if( sCharName.CompareNoCase("default")==0 )
-			FoundDefault = true;
-
-		Character* pChar = new Character;
-		if( pChar->Load( as[i] ) )
-			m_pCharacters.push_back( pChar );
-		else
-			delete pChar;
-	}
-	
-	if( !FoundDefault )
-		RageException::Throw( "'Characters/default' is missing." );
-
-	// If FoundDefault, then we're not empty. -Chris
-//	if( m_pCharacters.empty() )
-//		RageException::Throw( "Couldn't find any character definitions" );
 }
 
 const float GameState::MUSIC_SECONDS_INVALID = -5000.0f;
@@ -1285,47 +1242,6 @@ bool GameState::ShowMarvelous() const
 	case PrefsManager::MARVELOUS_EVERYWHERE:	return true;
 	default:	ASSERT(0);
 	}
-}
-
-void GameState::GetCharacters( vector<Character*> &apCharactersOut )
-{
-	for( unsigned i=0; i<m_pCharacters.size(); i++ )
-		if( !m_pCharacters[i]->IsDefaultCharacter() )
-			apCharactersOut.push_back( m_pCharacters[i] );
-}
-
-Character* GameState::GetRandomCharacter()
-{
-	vector<Character*> apCharacters;
-	GetCharacters( apCharacters );
-	if( apCharacters.size() )
-		return apCharacters[rand()%apCharacters.size()];
-	else
-		return GetDefaultCharacter();
-}
-
-Character* GameState::GetDefaultCharacter()
-{
-	for( unsigned i=0; i<m_pCharacters.size(); i++ )
-	{
-		if( m_pCharacters[i]->IsDefaultCharacter() )
-			return m_pCharacters[i];
-	}
-
-	/* We always have the default character. */
-	ASSERT(0);
-	return NULL;
-}
-
-Character* GameState::GetCharacterFromID( CString sCharacterID )
-{
-	for( unsigned i=0; i<m_pCharacters.size(); i++ )
-	{
-		if( m_pCharacters[i]->m_sCharacterID == sCharacterID )
-			return m_pCharacters[i];
-	}
-
-	return NULL;
 }
 
 struct SongAndSteps
@@ -2014,16 +1930,6 @@ public:
 	}
 	static int GetPreferredDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_PreferredDifficulty[IArg(1)] ); return 1; }
 	static int AnyPlayerHasRankingFeats( T* p, lua_State *L )	{ lua_pushboolean(L, p->AnyPlayerHasRankingFeats() ); return 1; }
-	static int GetCharacter( T* p, lua_State *L )
-	{
-		Character *pCharacter = p->m_pCurCharacters[IArg(1)];
-		if( pCharacter != NULL )
-			pCharacter->PushSelf( L );
-		else
-			lua_pushnil( L );
-
-		return 1;
-	}
 	static int IsCourseMode( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsCourseMode() ); return 1; }
 	static int IsDemonstration( T* p, lua_State *L )		{ lua_pushboolean(L, p->m_bDemonstrationOrJukebox ); return 1; }
 	static int GetPlayMode( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_PlayMode ); return 1; }
@@ -2091,7 +1997,6 @@ public:
 		ADD_METHOD( GetEditSourceSteps )
 		ADD_METHOD( GetPreferredDifficulty )
 		ADD_METHOD( AnyPlayerHasRankingFeats )
-		ADD_METHOD( GetCharacter )
 		ADD_METHOD( IsCourseMode )
 		ADD_METHOD( IsDemonstration )
 		ADD_METHOD( GetPlayMode )

@@ -23,6 +23,7 @@
 #include "Style.h"
 #include "HighScore.h"
 #include "Character.h"
+#include "CharacterManager.h"
 
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
@@ -89,7 +90,7 @@ void ProfileManager::Init()
 		for( int i=g_vLocalProfile.size(); i<NUM_FIXED_PROFILES; i++ )
 		{
 			CString sCharacterID = FIXED_PROFILE_CHARACTER_ID( i );
-			Character *pCharacter = GAMESTATE->GetCharacterFromID( sCharacterID );
+			Character *pCharacter = CHARMAN->GetCharacterFromID( sCharacterID );
 			CString sThrowAway;
 			CreateLocalProfile( pCharacter->GetDisplayName(), sThrowAway );
 		}
@@ -406,7 +407,7 @@ bool ProfileManager::CreateLocalProfile( CString sName, CString &sProfileIDOut )
 	//
 	Profile *pProfile = new Profile;
 	pProfile->m_sDisplayName = sName;
-	pProfile->m_sCharacterID = GAMESTATE->GetRandomCharacter()->m_sCharacterID;
+	pProfile->m_sCharacterID = CHARMAN->GetRandomCharacter()->m_sCharacterID;
 
 	//
 	// Save it to disk.

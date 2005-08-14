@@ -92,11 +92,6 @@ public:
 	bool IsCpuPlayer( PlayerNumber pn ) const;
 	bool AnyPlayersAreCpu() const;
 
-	void GetCharacters( vector<Character*> &vpCharactersOut );
-	Character* GetRandomCharacter();
-	Character* GetDefaultCharacter();
-	Character* GetCharacterFromID( CString sCharacterID );
-
 
 	bool IsCourseMode() const;
 	bool IsBattleMode() const; /* not Rave */
@@ -227,15 +222,7 @@ public:
 	SongOptions::FailType GetPlayerFailType( PlayerNumber pn ) const;
 
 	// character stuff
-private:
-	vector<Character*> m_pCharacters;
-
-public:
 	Character* m_pCurCharacters[NUM_PLAYERS];
-
-	void ReloadCharacters();
-
-	
 
 
 	bool HasEarnedExtraStage() const;

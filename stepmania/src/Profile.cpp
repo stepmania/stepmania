@@ -23,7 +23,7 @@
 #include "CatalogXml.h"
 #include "Bookkeeper.h"
 #include "Game.h"
-#include "GameState.h"
+#include "CharacterManager.h"
 #include "Character.h"
 
 const CString STATS_XSL            = "Stats.xsl";
@@ -192,13 +192,13 @@ CString Profile::GetDisplayNameOrHighScoreName() const
 Character *Profile::GetCharacter() const
 {
 	vector<Character*> vpCharacters;
-	GAMESTATE->GetCharacters( vpCharacters );
+	CHARMAN->GetCharacters( vpCharacters );
 	FOREACH_CONST( Character*, vpCharacters, c )
 	{
 		if( (*c)->m_sCharacterID.CompareNoCase(m_sCharacterID)==0 )
 			return *c;
 	}
-	return GAMESTATE->GetDefaultCharacter();
+	return CHARMAN->GetDefaultCharacter();
 }
 
 static CString FormatCalories( float fCals )

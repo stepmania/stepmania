@@ -44,6 +44,7 @@
 #include "NoteSkinManager.h"
 #include "PrefsManager.h"
 #include "SongManager.h"
+#include "CharacterManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"
 #include "ProfileManager.h"
@@ -228,6 +229,7 @@ void ShutdownGame()
 	SAFE_DELETE( INPUTFILTER );
 	SAFE_DELETE( MODELMAN );
 	SAFE_DELETE( PROFILEMAN );	// PROFILEMAN needs the songs still loaded
+	SAFE_DELETE( CHARMAN );
 	SAFE_DELETE( UNLOCKMAN );
 	SAFE_DELETE( CRYPTMAN );
 	SAFE_DELETE( MEMCARDMAN );
@@ -1102,6 +1104,7 @@ int main(int argc, char* argv[])
 	SONGMAN->InitAll( loading_window );		// this takes a long time
 	CRYPTMAN	= new CryptManager;	// need to do this before ProfileMan
 	MEMCARDMAN	= new MemoryCardManager;
+	CHARMAN		= new CharacterManager;
 	PROFILEMAN	= new ProfileManager;
 	PROFILEMAN->Init();				// must load after SONGMAN
 	UNLOCKMAN	= new UnlockManager;

@@ -18,6 +18,7 @@
 #include "Foreach.h"
 #include "GameSoundManager.h"
 #include "CommonMetrics.h"
+#include "CharacterManager.h"
 
 #define ENTRY(s)					THEME->GetMetric ("ScreenOptionsMaster",s)
 #define ENTRY_MODE(s,i)				THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
@@ -356,7 +357,7 @@ public:
 		defOut.m_bOneChoiceForAllPlayers = false;
 		defOut.m_bAllowThemeItems = false;
 		defOut.m_sName = "Characters";
-		Default.m_pCharacter = GAMESTATE->GetDefaultCharacter();
+		Default.m_pCharacter = CHARMAN->GetDefaultCharacter();
 
 		{
 			defOut.m_vsChoices.push_back( "Off" );
@@ -365,11 +366,11 @@ public:
 			ListEntries.push_back( mc );
 		}
 
-		vector<Character*> apCharacters;
-		GAMESTATE->GetCharacters( apCharacters );
-		for( unsigned i=0; i<apCharacters.size(); i++ )
+		vector<Character*> vpCharacters;
+		CHARMAN->GetCharacters( vpCharacters );
+		for( unsigned i=0; i<vpCharacters.size(); i++ )
 		{
-			Character* pCharacter = apCharacters[i];
+			Character* pCharacter = vpCharacters[i];
 			CString s = pCharacter->GetDisplayName();
 			s.MakeUpper();
 

@@ -11,6 +11,7 @@
 #include "PrefsManager.h"
 #include "RageTextureManager.h"
 #include "Command.h"
+#include "CharacterManager.h"
 
 
 #define TITLE_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("TitleP%dOnCommand",p+1))
@@ -58,7 +59,7 @@ void ScreenSelectCharacter::Init()
 	ScreenWithMenuElements::Init();
 	
 	vector<Character*> apCharacters;
-	GAMESTATE->GetCharacters( apCharacters );
+	CHARMAN->GetCharacters( apCharacters );
 	if( apCharacters.empty() )
 	{
 		this->PostScreenMessage( SM_GoToNextScreen, 0 );
@@ -240,7 +241,7 @@ void ScreenSelectCharacter::AfterValueChange( PlayerNumber pn )
 	case CHOOSING_HUMAN_CHARACTER:
 		{
 			vector<Character*> apCharacters;
-			GAMESTATE->GetCharacters( apCharacters );
+			CHARMAN->GetCharacters( apCharacters );
 			Character* pChar = apCharacters[ m_iSelectedCharacter[pnAffected] ];
 			m_sprCard[pnAffected].UnloadTexture();
 			m_sprCard[pnAffected].Load( pChar->GetCardPath() );
@@ -307,7 +308,7 @@ void ScreenSelectCharacter::Move( PlayerNumber pn, int deltaValue )
 	case CHOOSING_CPU_CHARACTER:
 	case CHOOSING_HUMAN_CHARACTER:
 		vector<Character*> apCharacters;
-		GAMESTATE->GetCharacters( apCharacters );
+		CHARMAN->GetCharacters( apCharacters );
 		m_iSelectedCharacter[pnAffected] += deltaValue;
 		wrap( m_iSelectedCharacter[pnAffected], apCharacters.size() );
 		AfterValueChange(pn);
@@ -350,7 +351,7 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 		FOREACH_PlayerNumber( p )
 		{
 			vector<Character*> apCharacters;
-			GAMESTATE->GetCharacters( apCharacters );
+			CHARMAN->GetCharacters( apCharacters );
 			Character* pChar = apCharacters[ m_iSelectedCharacter[p] ];
 			GAMESTATE->m_pCurCharacters[p] = pChar;
 		}

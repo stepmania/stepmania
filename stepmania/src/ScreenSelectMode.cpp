@@ -12,6 +12,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "ActorUtil.h"
+#include "CharacterManager.h"
 
 /* Constants */
 
@@ -81,25 +82,25 @@ void ScreenSelectMode::Init()
 	}
 
 	// check for character availability
-	vector<Character*> apCharacters;
-	if(ENABLE_CHAR_SELECT)
+	vector<Character*> vpCharacters;
+	if( ENABLE_CHAR_SELECT )
 	{
-		GAMESTATE->GetCharacters( apCharacters );
+		CHARMAN->GetCharacters( vpCharacters );
 
-		for(unsigned i=0; i<apCharacters.size(); i++)
+		for(unsigned i=0; i<vpCharacters.size(); i++)
 		{
-			if(apCharacters[i] != NULL) // check its not null
+			if(vpCharacters[i] != NULL) // check its not null
 			{
 				m_bCharsAvailable = true;
-				if(apCharacters[i]->Has2DElems())
+				if(vpCharacters[i]->Has2DElems())
 				{
-					CString mpath = apCharacters[i]->GetSongSelectIconPath();
+					CString mpath = vpCharacters[i]->GetSongSelectIconPath();
 					LOG->Trace("Char: %d, %s, 2D: true",i,mpath.c_str());						
 					m_b2DAvailable = true;
 				}
 				else
 				{
-					CString mpath = apCharacters[i]->GetSongSelectIconPath();
+					CString mpath = vpCharacters[i]->GetSongSelectIconPath();
 					LOG->Trace("Char: %d, %s, 2D: false",i,mpath.c_str());						
 				}
 			}
@@ -260,34 +261,34 @@ void ScreenSelectMode::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenSelectMode::SetCharacters()
 {
-	vector<Character*> apCharactersToUse;
+	vector<Character*> vpCharactersToUse;
 	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
 	{
 		if(ONLY_2D_CHARS && m_b2DAvailable)
 		{
-			vector<Character*> apCharacters;
-			GAMESTATE->GetCharacters( apCharacters );
-			for(unsigned i=0; i<apCharacters.size(); i++)
+			vector<Character*> vpCharacters;
+			CHARMAN->GetCharacters( vpCharacters );
+			for(unsigned i=0; i<vpCharacters.size(); i++)
 			{
-				if(apCharacters[i] != NULL) // check its not null
+				if(vpCharacters[i] != NULL) // check its not null
 				{
-					if(apCharacters[i]->Has2DElems())
+					if(vpCharacters[i]->Has2DElems())
 					{
-						apCharactersToUse.push_back(apCharacters[i]);
+						vpCharactersToUse.push_back(vpCharacters[i]);
 					}
 				}
 			}
 		}
 		else if(m_bCharsAvailable)
 		{
-			GAMESTATE->GetCharacters( apCharactersToUse );
+			CHARMAN->GetCharacters( vpCharactersToUse );
 		}
 	}
 	FOREACH_EnabledPlayer( pn )
 	{
 		if(ENABLE_CHAR_SELECT && m_iCurrentChar[pn] != -1)
 		{
-			Character* pChar = apCharactersToUse[m_iCurrentChar[pn]];
+			Character* pChar = vpCharactersToUse[m_iCurrentChar[pn]];
 			GAMESTATE->m_pCurCharacters[pn] = pChar;
 		}
 	}
@@ -360,27 +361,27 @@ void ScreenSelectMode::DrawPrimitives()
 
 void ScreenSelectMode::MenuUp(PlayerNumber pn)
 {
-	vector<Character*> apCharactersToUse;
+	vector<Character*> vpCharactersToUse;
 	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
 	{
 		if(ONLY_2D_CHARS && m_b2DAvailable)
 		{
-			vector<Character*> apCharacters;
-			GAMESTATE->GetCharacters( apCharacters );
-			for(unsigned i=0; i<apCharacters.size(); i++)
+			vector<Character*> vpCharacters;
+			CHARMAN->GetCharacters( vpCharacters );
+			for(unsigned i=0; i<vpCharacters.size(); i++)
 			{
-				if(apCharacters[i] != NULL) // check its not null
+				if(vpCharacters[i] != NULL) // check its not null
 				{
-					if(apCharacters[i]->Has2DElems())
+					if(vpCharacters[i]->Has2DElems())
 					{
-						apCharactersToUse.push_back(apCharacters[i]);
+						vpCharactersToUse.push_back(vpCharacters[i]);
 					}
 				}
 			}
 		}
 		else if(m_bCharsAvailable)
 		{
-			GAMESTATE->GetCharacters( apCharactersToUse );
+			CHARMAN->GetCharacters( vpCharactersToUse );
 		}
 	}
 
@@ -388,14 +389,14 @@ void ScreenSelectMode::MenuUp(PlayerNumber pn)
 	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
 	{
 		if(m_iCurrentChar[pn] <= -1)
-			m_iCurrentChar[pn] = apCharactersToUse.size() -1;
+			m_iCurrentChar[pn] = vpCharactersToUse.size() -1;
 		else
 			m_iCurrentChar[pn]--; // set to no character
 	
 		if(m_iCurrentChar[pn] != -1)
 		{
-			if(apCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() != "")
-				m_CurChar[pn].Load( apCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() );
+			if(vpCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() != "")
+				m_CurChar[pn].Load( vpCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() );
 			else
 				m_CurChar[pn].Load( THEME->GetPathG("ScreenSelectMode","chariconmissing") );
 		}
@@ -406,41 +407,41 @@ void ScreenSelectMode::MenuUp(PlayerNumber pn)
 
 void ScreenSelectMode::MenuDown(PlayerNumber pn)
 {
-	vector<Character*> apCharactersToUse;
+	vector<Character*> vpCharactersToUse;
 	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
 	{
 		if(ONLY_2D_CHARS && m_b2DAvailable)
 		{
-			vector<Character*> apCharacters;
-			GAMESTATE->GetCharacters( apCharacters );
-			for(unsigned i=0; i<apCharacters.size(); i++)
+			vector<Character*> vpCharacters;
+			CHARMAN->GetCharacters( vpCharacters );
+			for(unsigned i=0; i<vpCharacters.size(); i++)
 			{
-				if(apCharacters[i] != NULL) // check its not null
+				if(vpCharacters[i] != NULL) // check its not null
 				{
-					if(apCharacters[i]->Has2DElems())
+					if(vpCharacters[i]->Has2DElems())
 					{
-						apCharactersToUse.push_back(apCharacters[i]);
+						vpCharactersToUse.push_back(vpCharacters[i]);
 					}
 				}
 			}
 		}
 		else if(m_bCharsAvailable)
 		{
-			GAMESTATE->GetCharacters( apCharactersToUse );
+			CHARMAN->GetCharacters( vpCharactersToUse );
 		}
 	}
 
 	m_CurChar[pn].UnloadTexture();
 	if(ENABLE_CHAR_SELECT && m_bCharsAvailable)
 	{
-		if(m_iCurrentChar[pn] < (int)apCharactersToUse.size() - 1 || m_iCurrentChar[pn] == -1)
+		if(m_iCurrentChar[pn] < (int)vpCharactersToUse.size() - 1 || m_iCurrentChar[pn] == -1)
 			m_iCurrentChar[pn]++;
 		else
 			m_iCurrentChar[pn] = -1; // set to no character
 		if(m_iCurrentChar[pn] != -1)
 		{
-			if(apCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() != "")
-				m_CurChar[pn].Load( apCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() );
+			if(vpCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() != "")
+				m_CurChar[pn].Load( vpCharactersToUse[m_iCurrentChar[pn]]->GetSongSelectIconPath() );
 			else
 				m_CurChar[pn].Load( THEME->GetPathG("ScreenSelectMode","chariconmissing") );
 		}

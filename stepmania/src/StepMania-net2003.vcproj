@@ -2496,6 +2496,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Bookkeeper.h">
 			</File>
 			<File
+				RelativePath=".\CharacterManager.cpp">
+			</File>
+			<File
+				RelativePath=".\CharacterManager.h">
+			</File>
+			<File
 				RelativePath="CryptManager.cpp">
 			</File>
 			<File
