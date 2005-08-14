@@ -201,8 +201,10 @@ void ScreenOptionsManageCourses::Init()
 	ScreenOptions::Init();
 
 	EDIT_MODE.Load(m_sName,"EditMode");
+}
 
-
+void ScreenOptionsManageCourses::BeginScreen()
+{
 	if( GAMESTATE->m_stEdit == STEPS_TYPE_INVALID  ||
 		GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] == DIFFICULTY_INVALID )
 	{
@@ -274,10 +276,7 @@ void ScreenOptionsManageCourses::Init()
 	}
 
 	ScreenOptions::InitMenu( vDefs, vHands );
-}
 
-void ScreenOptionsManageCourses::BeginScreen()
-{
 	ScreenOptions::BeginScreen();
 	
 	// select the last chosen course
