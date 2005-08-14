@@ -44,21 +44,7 @@ public:
 
 protected:
 	bool CanGoLeft() { return m_Answer > 0; }
-	bool CanGoRight()
-	{
-		switch( m_PromptType )
-		{
-		case PROMPT_OK:
-			return false;
-		case PROMPT_YES_NO:
-			return m_Answer < ANSWER_NO;
-		case PROMPT_YES_NO_CANCEL:
-			return m_Answer < ANSWER_CANCEL;
-		default:
-			ASSERT(0);
-		}
-		return false;
-	}
+	bool CanGoRight();
 	void Change( int dir );
 	void MenuLeft( PlayerNumber pn );
 	void MenuRight( PlayerNumber pn );
@@ -68,15 +54,10 @@ protected:
 	virtual void End( bool bCancelled );
 	void PositionCursor();
 
-	CString			m_sText;
 	BitmapText		m_textQuestion;
 	AutoActor		m_sprCursor;
 	BitmapText		m_textAnswer[NUM_PROMPT_ANSWERS];
-	PromptType		m_PromptType;
 	PromptAnswer	m_Answer;
-	void(*m_pOnYes)(void*);
-	void(*m_pOnNo)(void*);
-	void* m_pCallbackData;
 
 	RageSound		m_sndChange;
 };

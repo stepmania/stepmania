@@ -14,18 +14,31 @@ bool ScreenPrompt::s_bCancelledLast = false;
 
 #define ANSWER_TEXT( elem )		THEME->GetMetric(m_sName,elem+"Text")
 
+/* Settings: */
+namespace
+{
+	CString g_sText;
+	PromptType g_PromptType;
+	PromptAnswer g_defaultAnswer;
+	void(*g_pOnYes)(void*);
+	void(*g_pOnNo)(void*);
+	void *g_pCallbackData;
+};
+
 void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const CString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
 {
-	// add the new state onto the back of the array
-	ScreenPrompt *pNewScreen = new ScreenPrompt( "ScreenPrompt" );
-	pNewScreen->Init();
-	pNewScreen->Load( sText, type, defaultAnswer, OnYes, OnNo, pCallbackData );
-	SCREENMAN->ZeroNextUpdate();
-	SCREENMAN->PushScreen( pNewScreen, true, smSendOnPop );
+	g_sText = sText;
+	g_PromptType = type;
+	g_defaultAnswer = defaultAnswer;
+	g_pOnYes = OnYes;
+	g_pOnNo = OnNo;
+	g_pCallbackData = pCallbackData;
+
+	SCREENMAN->AddNewScreenToTop( "ScreenPrompt", smSendOnPop );
 }
 
 
-//REGISTER_SCREEN_CLASS( ScreenPrompt );
+REGISTER_SCREEN_CLASS( ScreenPrompt );
 ScreenPrompt::ScreenPrompt( const CString &sScreenName ):
 	ScreenWithMenuElements( sScreenName )
 {
@@ -60,27 +73,22 @@ void ScreenPrompt::Load(
 	void (*OnNo)(void*), 
 	void* pCallbackData )
 {
-	m_sText = sText;
-	m_PromptType = type;
-	m_Answer = defaultAnswer;
-	CLAMP( (int&)m_Answer, 0, m_PromptType );
-	m_pOnYes = OnYes;
-	m_pOnNo = OnNo;
-	m_pCallbackData = pCallbackData;
+	m_Answer = g_defaultAnswer;
+	CLAMP( (int&)m_Answer, 0, g_PromptType );
 }
 
 void ScreenPrompt::BeginScreen()
 {
 	ScreenWithMenuElements::BeginScreen();
 
-	m_textQuestion.SetText( m_sText );
+	m_textQuestion.SetText( g_sText );
 	SET_XY_AND_ON_COMMAND( m_textQuestion );
 
 	ON_COMMAND( m_sprCursor );
 
-	for( int i=0; i<=m_PromptType; i++ )
+	for( int i=0; i<=g_PromptType; i++ )
 	{
-		CString sElem = ssprintf("Answer%dOf%d", i+1, m_PromptType+1);
+		CString sElem = ssprintf("Answer%dOf%d", i+1, g_PromptType+1);
 		m_textAnswer[i].SetName( sElem );
 		m_textAnswer[i].SetText( ANSWER_TEXT(sElem) );
 		SET_XY_AND_ON_COMMAND( m_textAnswer[i] );
@@ -115,6 +123,22 @@ void ScreenPrompt::Input( const DeviceInput& DeviceI, const InputEventType type,
 	}
 
 	ScreenWithMenuElements::Input( DeviceI, type, GameI, MenuI, StyleI );
+}
+
+bool ScreenPrompt::CanGoRight()
+{
+	switch( g_PromptType )
+	{
+	case PROMPT_OK:
+		return false;
+	case PROMPT_YES_NO:
+		return m_Answer < ANSWER_NO;
+	case PROMPT_YES_NO_CANCEL:
+		return m_Answer < ANSWER_CANCEL;
+	default:
+		ASSERT(0);
+	}
+	return false;
 }
 
 void ScreenPrompt::Change( int dir )
@@ -153,7 +177,7 @@ void ScreenPrompt::MenuBack( PlayerNumber pn )
 	if( m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
 		return;
 
-	switch( m_PromptType )
+	switch( g_PromptType )
 	{
 	case PROMPT_OK:
 	case PROMPT_YES_NO:
@@ -179,18 +203,18 @@ void ScreenPrompt::End( bool bCancelled )
 
 	OFF_COMMAND( m_textQuestion );
 	OFF_COMMAND( m_sprCursor );
-	for( int i=0; i<=m_PromptType; i++ )
+	for( int i=0; i<=g_PromptType; i++ )
 		OFF_COMMAND( m_textAnswer[i] );
 
 	switch( m_Answer )
 	{
 	case ANSWER_YES:
-		if( m_pOnYes )
-			m_pOnYes(m_pCallbackData);
+		if( g_pOnYes )
+			g_pOnYes(g_pCallbackData);
 		break;
 	case ANSWER_NO:
-		if( m_pOnNo )
-			m_pOnNo(m_pCallbackData);
+		if( g_pOnNo )
+			g_pOnNo(g_pCallbackData);
 		break;
 	}
 
