@@ -82,69 +82,6 @@ void ScreenOptionsEditCourseSubMenu::MenuSelect( PlayerNumber pn, const InputEve
 }
 
 
-
-
-
-
-
-/* This is actually just an adapter to make ScreenPrompt send different messages
- * on yes and no: */
-class ScreenPromptConfirmDeleteCourse : public ScreenPrompt
-{
-public:
-	ScreenPromptConfirmDeleteCourse( const CString &sName ):
-		ScreenPrompt(sName)
-	{
-	}
-
-	void Init()
-	{
-		ScreenPrompt::Init();
-		this->Load( "This course will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
-	}
-
-	void End( bool bCancelled )
-	{
-		switch( m_Answer )
-		{
-		case ANSWER_YES:
-			m_smSendOnPop = SM_Success;
-			break;
-		case ANSWER_NO:
-			m_smSendOnPop = SM_Failure;
-			break;
-		}
-
-		ScreenPrompt::End( bCancelled );
-	}
-
-	void HandleScreenMessage( const ScreenMessage SM )
-	{
-		switch( SM )
-		{
-		case SM_GoToNextScreen:
-			if( SCREENMAN->IsStackedScreen(this) )
-				SCREENMAN->PopTopScreen( m_smSendOnPop );
-			else
-				SCREENMAN->SetNewScreen( GetNextScreen() );
-			return;
-		case SM_GoToPrevScreen:
-			if( SCREENMAN->IsStackedScreen(this) )
-				SCREENMAN->PopTopScreen( m_smSendOnPop );
-			else
-				SCREENMAN->SetNewScreen( GetPrevScreen() );
-			return;
-		}
-		ScreenPrompt::HandleScreenMessage( SM );
-	}
-
-	ScreenMessage m_smSendOnPop;
-};
-REGISTER_SCREEN_CLASS( ScreenPromptConfirmDeleteCourse );
-
-
-
-
 AutoScreenMessage( SM_BackFromEnterNameForNew )
 AutoScreenMessage( SM_BackFromRename )
 AutoScreenMessage( SM_BackFromContextMenu )
@@ -377,7 +314,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case CourseAction_Delete:
 				{
-					SCREENMAN->AddNewScreenToTop( "ScreenPromptConfirmDeleteCourse" );
+					ScreenPrompt::Prompt( SM_None, "This course will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
 				}
 				break;
 			}

@@ -58,61 +58,6 @@ void ScreenEditMenu::Init()
 	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 }
 
-/* This is actually just an adapter to make ScreenPrompt send different messages
- * on yes and no: */
-class ScreenEditMenuDeleteSteps: public ScreenPrompt
-{
-public:
-	ScreenEditMenuDeleteSteps( const CString &sName ):
-		ScreenPrompt(sName)
-	{
-	}
-
-	void Init()
-	{
-		ScreenPrompt::Init();
-		this->Load( "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
-	}
-
-	void End( bool bCancelled )
-	{
-		switch( m_Answer )
-		{
-		case ANSWER_YES:
-			m_smSendOnPop = SM_Success;
-			break;
-		case ANSWER_NO:
-			m_smSendOnPop = SM_Failure;
-			break;
-		}
-
-		ScreenPrompt::End( bCancelled );
-	}
-
-	void HandleScreenMessage( const ScreenMessage SM )
-	{
-		switch( SM )
-		{
-		case SM_GoToNextScreen:
-			if( SCREENMAN->IsStackedScreen(this) )
-				SCREENMAN->PopTopScreen( m_smSendOnPop );
-			else
-				SCREENMAN->SetNewScreen( GetNextScreen() );
-			return;
-		case SM_GoToPrevScreen:
-			if( SCREENMAN->IsStackedScreen(this) )
-				SCREENMAN->PopTopScreen( m_smSendOnPop );
-			else
-				SCREENMAN->SetNewScreen( GetPrevScreen() );
-			return;
-		}
-		ScreenPrompt::HandleScreenMessage( SM );
-	}
-
-	ScreenMessage m_smSendOnPop;
-};
-REGISTER_SCREEN_CLASS( ScreenEditMenuDeleteSteps );
-
 
 void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 {
@@ -274,7 +219,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		break;
 	case EDIT_MENU_ACTION_DELETE:
 		ASSERT( pSteps );
-		SCREENMAN->AddNewScreenToTop( "ScreenEditMenuDeleteSteps" );
+		ScreenPrompt::Prompt( SM_None, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
 		break;
 	case EDIT_MENU_ACTION_CREATE:
 		ASSERT( !pSteps );
