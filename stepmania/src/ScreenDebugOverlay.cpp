@@ -350,7 +350,7 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 					GAMESTATE->m_SongOptions.m_bAssistTick = !GAMESTATE->m_SongOptions.m_bAssistTick;
 					/* Store this change, so it sticks if we change songs: */
 					GAMESTATE->m_StoredSongOptions.m_bAssistTick = GAMESTATE->m_SongOptions.m_bAssistTick;
-					MESSAGEMAN->Broadcast( MESSAGE_ASSIST_TICK_CHANGED );
+					MESSAGEMAN->Broadcast( Message_AssistTickChanged );
 				}
 				break;
 			case DebugLine_Autosync:
@@ -360,7 +360,7 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 					SongOptions::AutosyncType as = (SongOptions::AutosyncType)(GAMESTATE->m_SongOptions.m_AutosyncType+1);
 					wrap( (int&)as, SongOptions::NUM_AUTOSYNC_TYPES );
 					GAMESTATE->m_SongOptions.m_AutosyncType = as;
-					MESSAGEMAN->Broadcast( MESSAGE_AUTOSYNC_CHANGED );
+					MESSAGEMAN->Broadcast( Message_AutosyncChanged );
 				}
 				break;
 			case DebugLine_CoinMode:

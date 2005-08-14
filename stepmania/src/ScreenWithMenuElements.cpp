@@ -301,7 +301,7 @@ void ScreenWithMenuElements::StopTimer()
 
 void ScreenWithMenuElements::HandleMessage( const CString& sMessage )
 {
-	if( sMessage == MessageToString(MESSAGE_CURRENT_SONG_CHANGED) )
+	if( sMessage == MessageToString(Message_CurrentSongChanged) )
 		UpdateStage();
 }
 	

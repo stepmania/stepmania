@@ -13,7 +13,7 @@ Combo::Combo()
 	m_pPlayerState = NULL;
 	m_pPlayerStageStats = NULL;
 
-	this->SubscribeToMessage( MESSAGE_BEAT_CROSSED );
+	this->SubscribeToMessage( Message_BeatCrossed );
 }
 
 void Combo::Load( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )

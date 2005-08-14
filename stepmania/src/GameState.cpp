@@ -66,20 +66,20 @@ Song* GameState::GetDefaultSong() const
 
 
 GameState::GameState() :
-    m_pCurStyle(			MESSAGE_CURRENT_STYLE_CHANGED ),
-    m_PlayMode(				MESSAGE_PLAY_MODE_CHANGED ),
-	m_sPreferredSongGroup(	MESSAGE_PREFERRED_SONG_GROUP_CHANGED ),
-	m_sPreferredCourseGroup(MESSAGE_PREFERRED_COURSE_GROUP_CHANGED ),
-	m_PreferredCourseDifficulty( MESSAGE_EDIT_PREFERRED_COURSE_DIFFICULTY_P1_CHANGED ),
-	m_PreferredDifficulty(	MESSAGE_EDIT_PREFERRED_DIFFICULTY_P1_CHANGED ),
-    m_pCurSong(				MESSAGE_CURRENT_SONG_CHANGED ),
-	m_pCurSteps(			MESSAGE_CURRENT_STEPS_P1_CHANGED ),
-    m_pCurCourse(			MESSAGE_CURRENT_COURSE_CHANGED ),
-	m_pCurTrail(			MESSAGE_CURRENT_TRAIL_P1_CHANGED ),
-	m_stEdit(				MESSAGE_EDIT_STEPS_TYPE_CHANGED ),
-    m_pEditSourceSteps(		MESSAGE_EDIT_SOURCE_STEPS_CHANGED ),
-	m_stEditSource(			MESSAGE_EDIT_SOURCE_STEPS_TYPE_CHANGED ),
-	m_iEditCourseEntryIndex(MESSAGE_EDIT_COURSE_ENTRY_INDEX_CHANGED ),
+    m_pCurStyle(			Message_CurrentStyleChanged ),
+    m_PlayMode(				Message_PlayModeChanged ),
+	m_sPreferredSongGroup(	Message_PreferredSongGroupChanged ),
+	m_sPreferredCourseGroup(Message_PreferredCourseGroupChanged ),
+	m_PreferredCourseDifficulty( Message_PreferredCourseDifficultyP1Changed ),
+	m_PreferredDifficulty(	Message_PreferredDifficultyP1Changed ),
+    m_pCurSong(				Message_CurrentSongChanged ),
+	m_pCurSteps(			Message_CurrentStepsP1Changed ),
+    m_pCurCourse(			Message_CurrentCourseChanged ),
+	m_pCurTrail(			Message_CurrentTrailP1Changed ),
+	m_stEdit(				Message_EditStepsTypeChanged ),
+    m_pEditSourceSteps(		Message_EditSourceStepsChanged ),
+	m_stEditSource(			Message_EditSourceStepsTypeChanged ),
+	m_iEditCourseEntryIndex(Message_EditCourseEntryIndexChanged ),
 	m_sEditLocalProfileID(	Message_EditLocalProfileIDChanged )
 {
 	m_pCurStyle.Set( NULL );
@@ -269,7 +269,7 @@ void GameState::Reset()
 void GameState::JoinPlayer( PlayerNumber pn )
 {
 	this->m_bSideIsJoined[pn] = true;
-	MESSAGEMAN->Broadcast( (Message)(MESSAGE_SIDE_JOINED_P1+pn) );
+	MESSAGEMAN->Broadcast( (Message)(Message_SideJoinedP1+pn) );
 
 	if( this->m_MasterPlayerNumber == PLAYER_INVALID )
 		this->m_MasterPlayerNumber = pn;
@@ -334,7 +334,7 @@ void GameState::PlayersFinalized()
 	if( MEMCARDMAN->GetCardsLocked() )
 		return;
 
-	MESSAGEMAN->Broadcast( MESSAGE_PLAYERS_FINALIZED );
+	MESSAGEMAN->Broadcast( Message_PlayersFinalized );
 
 	MEMCARDMAN->LockCards();
 
@@ -564,7 +564,7 @@ void GameState::Update( float fDelta )
 		if( !m_bGoalComplete[p] && IsGoalComplete(p) )
 		{
 			m_bGoalComplete[p] = true;
-			MESSAGEMAN->Broadcast( (Message)(MESSAGE_GOAL_COMPLETE_P1+p) );
+			MESSAGEMAN->Broadcast( (Message)(Message_GoalCompleteP1+p) );
 		}
 	}
 }
@@ -1968,7 +1968,7 @@ public:
 		PlayerNumber pn = (PlayerNumber)IArg(1);
 		if( lua_isnil(L,2) )	{ p->m_pCurSteps[pn].Set( NULL ); }
 		else					{ Steps *pS = Luna<Steps>::check(L,2); p->m_pCurSteps[pn].Set( pS ); }
-		MESSAGEMAN->Broadcast( (Message)(MESSAGE_CURRENT_STEPS_P1_CHANGED+pn) );
+		MESSAGEMAN->Broadcast( (Message)(Message_CurrentStepsP1Changed+pn) );
 		return 0;
 	}
 	static int GetCurrentCourse( T* p, lua_State *L )		{ if(p->m_pCurCourse) p->m_pCurCourse->PushSelf(L); else lua_pushnil(L); return 1; }

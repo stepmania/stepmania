@@ -488,7 +488,7 @@ void MemoryCardManager::CheckStateChanges()
 				if( LastState == MEMORY_CARD_STATE_READY )
 				{
 					m_soundDisconnect.Play();
-					MESSAGEMAN->Broadcast( (Message)(MESSAGE_CARD_REMOVED_P1+p) );
+					MESSAGEMAN->Broadcast( (Message)(Message_CardRemovedP1+p) );
 				}
 				break;
 			case MEMORY_CARD_STATE_READY:

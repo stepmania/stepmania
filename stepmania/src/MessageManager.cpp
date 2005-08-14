@@ -23,10 +23,10 @@ static const CString MessageNames[] = {
 	"EditStepsTypeChanged",
 	"EditSourceStepsChanged",
 	"EditSourceStepsTypeChanged",
-	"EditPreferredDifficutyP1Changed",
-	"EditPreferredDifficutyP2Changed",
-	"EditPreferredCourseDifficutyP1Changed",
-	"EditPreferredCourseDifficutyP2Changed",
+	"PreferredDifficutyP1Changed",
+	"PreferredDifficutyP2Changed",
+	"PreferredCourseDifficutyP1Changed",
+	"PreferredCourseDifficutyP2Changed",
 	"EditCourseEntryIndexChanged",
 	"EditLocalProfileIDChanged",
 	"GoalCompleteP1",
@@ -57,7 +57,7 @@ static const CString MessageNames[] = {
 	"PreferredSongGroupChanged",
 	"PreferredCourseGroupChanged",
 };
-XToString( Message, NUM_MESSAGES );
+XToString( Message, NUM_Message );
 
 static RageMutex g_Mutex( "MessageManager" );
 

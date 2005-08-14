@@ -1276,7 +1276,7 @@ void InsertCoin( int iNum, const RageTimer *pTime )
 	BOOKKEEPER->CoinInserted();
 	SCREENMAN->RefreshCreditsMessages();
 	SCREENMAN->PlayCoinSound();
-	MESSAGEMAN->Broadcast( MESSAGE_COIN_INSERTED );
+	MESSAGEMAN->Broadcast( Message_CoinInserted );
 }
 
 void InsertCredit()

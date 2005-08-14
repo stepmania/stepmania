@@ -1739,7 +1739,7 @@ void ScreenGameplay::SendCrossedMessages()
 		for( int r=iRowLastCrossed+1; r<=iRowNow; r++ )
 		{
 			if( GetNoteType( r ) == NOTE_TYPE_4TH )
-				MESSAGEMAN->Broadcast( MESSAGE_BEAT_CROSSED );
+				MESSAGEMAN->Broadcast( Message_BeatCrossed );
 		}
 
 		iRowLastCrossed = iRowNow;
@@ -1797,7 +1797,7 @@ void ScreenGameplay::SendCrossedMessages()
 				}
 
 				if( iNumTracksWithTapOrHoldHead > 0 )
-					MESSAGEMAN->Broadcast( (Message)(MESSAGE_NOTE_CROSSED + i) );
+					MESSAGEMAN->Broadcast( (Message)(Message_NoteCrossed + i) );
 				if( i == 0  &&  iNumTracksWithTapOrHoldHead >= 2 )
 				{
 					CString sMessageName = "NoteCrossedJump";

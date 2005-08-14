@@ -137,8 +137,8 @@ REGISTER_ACTOR_CLASS( GenreDisplay )
 
 GenreDisplay::GenreDisplay()
 {
-	this->SubscribeToMessage( MESSAGE_CURRENT_SONG_CHANGED );
-	this->SubscribeToMessage( MESSAGE_CURRENT_COURSE_CHANGED );
+	this->SubscribeToMessage( Message_CurrentSongChanged );
+	this->SubscribeToMessage( Message_CurrentCourseChanged);
 }
 
 GenreDisplay::~GenreDisplay()
@@ -147,7 +147,7 @@ GenreDisplay::~GenreDisplay()
 
 void GenreDisplay::PlayCommand( const CString &sCommandName, Actor* pParent )
 {
-	if( sCommandName == MessageToString(MESSAGE_CURRENT_SONG_CHANGED) )
+	if( sCommandName == MessageToString(Message_CurrentSongChanged) )
 	{
 		vector<CString> m_Artists, m_AltArtists;
 
@@ -159,7 +159,7 @@ void GenreDisplay::PlayCommand( const CString &sCommandName, Actor* pParent )
 		
 		SetTips( m_Artists, m_AltArtists );
 	}
-	else if( sCommandName == MessageToString(MESSAGE_CURRENT_COURSE_CHANGED) )
+	else if( sCommandName == MessageToString(Message_CurrentCourseChanged) )
 	{
 		vector<CString> m_Artists, m_AltArtists;
 

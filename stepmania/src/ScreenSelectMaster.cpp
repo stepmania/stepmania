@@ -397,7 +397,7 @@ void ScreenSelectMaster::MenuLeft( PlayerNumber pn, const InputEventType type )
 	if( Move(pn, MENU_DIR_LEFT) )
 	{
 		m_soundChange.Play();
-		MESSAGEMAN->Broadcast( (Message)(MESSAGE_MENU_LEFT_P1+pn) );
+		MESSAGEMAN->Broadcast( (Message)(Message_MenuLeftP1+pn) );
 	}
 }
 
@@ -412,7 +412,7 @@ void ScreenSelectMaster::MenuRight( PlayerNumber pn, const InputEventType type )
 	if( Move(pn, MENU_DIR_RIGHT) )
 	{
 		m_soundChange.Play();
-		MESSAGEMAN->Broadcast( (Message)(MESSAGE_MENU_RIGHT_P1+pn) );
+		MESSAGEMAN->Broadcast( (Message)(Message_MenuRightP1+pn) );
 	}
 }
 
@@ -427,7 +427,7 @@ void ScreenSelectMaster::MenuUp( PlayerNumber pn, const InputEventType type )
 	if( Move(pn, MENU_DIR_UP) )
 	{
 		m_soundChange.Play();
-		MESSAGEMAN->Broadcast( (Message)(MESSAGE_MENU_UP_P1+pn) );
+		MESSAGEMAN->Broadcast( (Message)(Message_MenuUpP1+pn) );
 	}
 }
 
@@ -442,7 +442,7 @@ void ScreenSelectMaster::MenuDown( PlayerNumber pn, const InputEventType type )
 	if( Move(pn, MENU_DIR_DOWN) )
 	{
 		m_soundChange.Play();
-		MESSAGEMAN->Broadcast( (Message)(MESSAGE_MENU_DOWN_P1+pn) );
+		MESSAGEMAN->Broadcast( (Message)(Message_MenuDownP1+pn) );
 	}
 }
 
@@ -642,7 +642,7 @@ float ScreenSelectMaster::DoMenuStart( PlayerNumber pn )
 
 	m_bChosen[pn] = true;
 
-	MESSAGEMAN->Broadcast( (Message)(MESSAGE_MADE_CHOICE_P1+pn) );
+	MESSAGEMAN->Broadcast( (Message)(Message_MadeChoiceP1+pn) );
 
 	bool bIsFirstToChoose = bAnyChosen;
 

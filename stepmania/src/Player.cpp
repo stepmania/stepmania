@@ -119,7 +119,7 @@ Player::Player()
 
 	m_pNoteField = new NoteField;
 
-	this->SubscribeToMessage( MESSAGE_AUTOSYNC_CHANGED );
+	this->SubscribeToMessage( Message_AutosyncChanged );
 }
 
 Player::~Player()
@@ -1705,7 +1705,7 @@ bool Player::IsPlayingBeginner() const
 void Player::HandleMessage( const CString& sMessage )
 {
 	// Reset autosync samples when toggling
-	if( sMessage == MessageToString(MESSAGE_AUTOSYNC_CHANGED) )
+	if( sMessage == MessageToString(Message_AutosyncChanged) )
 		m_iOffsetSample = 0;
 }
 
