@@ -73,13 +73,14 @@ void ScreenPrompt::Load(
 	void (*OnNo)(void*), 
 	void* pCallbackData )
 {
-	m_Answer = g_defaultAnswer;
-	CLAMP( (int&)m_Answer, 0, g_PromptType );
 }
 
 void ScreenPrompt::BeginScreen()
 {
 	ScreenWithMenuElements::BeginScreen();
+
+	m_Answer = g_defaultAnswer;
+	CLAMP( (int&)m_Answer, 0, g_PromptType );
 
 	m_textQuestion.SetText( g_sText );
 	SET_XY_AND_ON_COMMAND( m_textQuestion );
