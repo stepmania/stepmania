@@ -949,7 +949,7 @@ bool GameState::HasEarnedExtraStage() const
 			if( PREFSMAN->m_bPickExtraStage && this->IsExtraStage() && !this->m_bAllow2ndExtraStage )
 				continue;
 
-			if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= GRADE_TIER03 )
+			if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= Grade_Tier03 )
 				return true;
 		}
 	}
@@ -1464,7 +1464,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					feat.Type = RankingFeat::CATEGORY;
 					feat.Feat = ssprintf("MR #%d in Type %c (%d)", j+1, 'A'+rc, stats.GetAverageMeter(pn) );
 					feat.pStringToFill = hs.GetNameMutable();
-					feat.grade = GRADE_NO_DATA;
+					feat.grade = Grade_NoData;
 					feat.iScore = hs.GetScore();
 					feat.fPercentDP = hs.GetPercentDP();
 					asFeatsOut.push_back( feat );
@@ -1487,7 +1487,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 						feat.Type = RankingFeat::CATEGORY;
 						feat.Feat = ssprintf("PR #%d in Type %c (%d)", j+1, 'A'+rc, stats.GetAverageMeter(pn) );
 						feat.pStringToFill = hs.GetNameMutable();
-						feat.grade = GRADE_NO_DATA;
+						feat.grade = Grade_NoData;
 						feat.iScore = hs.GetScore();
 						feat.fPercentDP = hs.GetPercentDP();
 						asFeatsOut.push_back( feat );
@@ -1524,7 +1524,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					if( cd != DIFFICULTY_MEDIUM )
 						feat.Feat += " " + CourseDifficultyToThemedString(cd);
 					feat.pStringToFill = hs.GetNameMutable();
-					feat.grade = GRADE_NO_DATA;
+					feat.grade = Grade_NoData;
 					feat.iScore = hs.GetScore();
 					feat.fPercentDP = hs.GetPercentDP();
 					if( pCourse->HasBanner() )
@@ -1548,7 +1548,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					feat.pCourse = pCourse;
 					feat.Feat = ssprintf("PR #%d in %s", i+1, pCourse->GetDisplayFullTitle().c_str() );
 					feat.pStringToFill = hs.GetNameMutable();
-					feat.grade = GRADE_NO_DATA;
+					feat.grade = Grade_NoData;
 					feat.iScore = hs.GetScore();
 					feat.fPercentDP = hs.GetPercentDP();
 					if( pCourse->HasBanner() )

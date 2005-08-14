@@ -612,7 +612,7 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 {
 	HighScore hs;
 	hs.SetName( "FAKE" );
-	hs.SetGrade( (Grade)SCALE( rand()%5, 0, 4, GRADE_TIER01, GRADE_TIER05 ) );
+	hs.SetGrade( (Grade)SCALE( rand()%5, 0, 4, Grade_Tier01, Grade_Tier05 ) );
 	hs.SetScore( rand()%100*1000 );
 	hs.SetPercentDP( fPercentDP );
 	hs.SetSurviveSeconds( randomf(30.0f, 100.0f) );

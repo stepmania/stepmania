@@ -20,7 +20,7 @@ GradeDisplay::GradeDisplay()
 	m_fTimeLeftInScroll = 0;
 	m_bDoScrolling = 0;
 
-	SetGrade( PLAYER_1, GRADE_NO_DATA );
+	SetGrade( PLAYER_1, Grade_NoData );
 }
 
 bool GradeDisplay::Load( RageTextureID ID )
@@ -91,14 +91,14 @@ int GradeDisplay::GetFrameIndex( PlayerNumber pn, Grade g )
 	int iFrame;
 	switch( g )
 	{
-	case GRADE_TIER01:	iFrame = 0;	break;
-	case GRADE_TIER02:	iFrame = 1;	break;
-	case GRADE_TIER03:	iFrame = 2;	break;
-	case GRADE_TIER04:	iFrame = 3;	break;
-	case GRADE_TIER05:	iFrame = 4;	break;
-	case GRADE_TIER06:	iFrame = 5;	break;
-	case GRADE_TIER07:	iFrame = 6;	break;
-	case GRADE_FAILED:	iFrame = 7;	break;
+	case Grade_Tier01:	iFrame = 0;	break;
+	case Grade_Tier02:	iFrame = 1;	break;
+	case Grade_Tier03:	iFrame = 2;	break;
+	case Grade_Tier04:	iFrame = 3;	break;
+	case Grade_Tier05:	iFrame = 4;	break;
+	case Grade_Tier06:	iFrame = 5;	break;
+	case Grade_Tier07:	iFrame = 6;	break;
+	case Grade_Failed:	iFrame = 7;	break;
 	default:			iFrame = 7;	break;
 	}
 	iFrame *= iNumCols;
@@ -115,7 +115,7 @@ void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 	m_bDoScrolling = false;
 	StopUsingCustomCoords();
 
-	if(g != GRADE_NO_DATA)
+	if(g != Grade_NoData)
 	{
 		SetState( GetFrameIndex(pn,g) );
 		SetDiffuseAlpha( 1 );

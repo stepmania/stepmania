@@ -241,7 +241,7 @@ void ScreenEvaluation::Init()
 		if( GAMESTATE->IsPlayerEnabled(p) )
 			grade[p] = stageStats.m_player[p].GetGrade();
 		else
-			grade[p] = GRADE_FAILED;
+			grade[p] = Grade_Failed;
 
 		if( PREFSMAN->m_ScoringType == PrefsManager::SCORING_5TH )
 		{
@@ -774,7 +774,7 @@ void ScreenEvaluation::Init()
 		if( GAMESTATE->IsPlayerEnabled(p) && (iMachineHighScoreIndex[p] != -1 || iPersonalHighScoreIndex[p] != -1) )
 			bOneHasNewTopRecord = true;
 
-	Grade best_grade = GRADE_NO_DATA;
+	Grade best_grade = Grade_NoData;
 	FOREACH_PlayerNumber( p )
 		best_grade = min( best_grade, grade[p] ); 
 	
@@ -826,9 +826,9 @@ void ScreenEvaluation::Init()
 
 	switch( best_grade )
 	{
-	case GRADE_TIER01:
-	case GRADE_TIER02:	
-	case GRADE_TIER03:	
+	case Grade_Tier01:
+	case Grade_Tier02:	
+	case Grade_Tier03:	
 		this->PostScreenMessage( SM_PlayCheer, CHEER_DELAY_SECONDS );	
 		break;
 	}

@@ -169,7 +169,7 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 				ss.m_player[p].vpPossibleSteps.push_back( pSteps );
 
 				HighScore hs;
-				hs.SetGrade( GRADE_TIER03 );
+				hs.SetGrade( Grade_Tier03 );
 				hs.SetPercentDP( ss.m_player[p].GetPercentDancePoints() );
 				hs.SetScore( ss.m_player[p].iScore );
 				hs.SetDateTime( DateTime::GetNowDateTime() );
@@ -387,7 +387,7 @@ void ScreenNameEntryTraditional::Init()
 				this->AddChild( &display.m_sprBanner );
 			}
 
-			if( grade != GRADE_NO_DATA )
+			if( grade != Grade_NoData )
 			{
 				display.m_Grade.SetName( ssprintf("GradeP%i",p+1) );
 				display.m_Grade.Load( THEME->GetPathG(m_sName,"grades") );

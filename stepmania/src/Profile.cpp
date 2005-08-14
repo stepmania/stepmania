@@ -633,13 +633,13 @@ void Profile::IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps )
 	GetStepsHighScoreList(pSong,pSteps).IncrementPlayCount( now );
 }
 
-void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_GRADES] ) const
+void Profile::GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_Grade] ) const
 {
 	SongID songID;
 	songID.FromSong( pSong );
 
 	
-	memset( iCounts, 0, sizeof(int)*NUM_GRADES );
+	memset( iCounts, 0, sizeof(int)*NUM_Grade );
 	const HighScoresForASong *hsSong = GetHighScoresForASong( songID );
 	if( hsSong == NULL )
 		return;

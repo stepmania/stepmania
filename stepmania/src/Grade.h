@@ -5,52 +5,53 @@
 
 #include "RageUtil.h"
 
-#define NUM_GRADE_TIERS 20
+#define NUM_Grade_TierS 20
 enum Grade 
 { 
-	GRADE_TIER01,	// = AAAA
-	GRADE_TIER02,	// = AAA
-	GRADE_TIER03,	// = AA
-	GRADE_TIER04,	// = A
-	GRADE_TIER05,	// = B
-	GRADE_TIER06,	// = C
-	GRADE_TIER07,	// = D
-	GRADE_TIER08,
-	GRADE_TIER09,
-	GRADE_TIER10,
-	GRADE_TIER11,
-	GRADE_TIER12,
-	GRADE_TIER13,
-	GRADE_TIER14,
-	GRADE_TIER15,
-	GRADE_TIER16,
-	GRADE_TIER17,
-	GRADE_TIER18,
-	GRADE_TIER19,
-	GRADE_TIER20,
-	GRADE_FAILED,	// = E
-	NUM_GRADES, 
-	GRADE_NO_DATA,	// ~GRADE_INVALID
+	Grade_Tier01,	// = AAAA
+	Grade_Tier02,	// = AAA
+	Grade_Tier03,	// = AA
+	Grade_Tier04,	// = A
+	Grade_Tier05,	// = B
+	Grade_Tier06,	// = C
+	Grade_Tier07,	// = D
+	Grade_Tier08,
+	Grade_Tier09,
+	Grade_Tier10,
+	Grade_Tier11,
+	Grade_Tier12,
+	Grade_Tier13,
+	Grade_Tier14,
+	Grade_Tier15,
+	Grade_Tier16,
+	Grade_Tier17,
+	Grade_Tier18,
+	Grade_Tier19,
+	Grade_Tier20,
+	Grade_Failed,	// = E
+	NUM_Grade, 
+	Grade_NoData,	// ~GRADE_INVALID
 };
 
 /* This is in the header so the test sets don't require Grade.cpp (through PrefsManager),
  * since that pulls in ThemeManager. */
 static inline CString GradeToString( Grade g )
 {
-        // string is meant to be human readable
-        switch( g )
-        {
-        case GRADE_NO_DATA:     return "NoData";
-        case GRADE_FAILED:      return "Failed";
-        default:
-                return ssprintf("Tier%02d",g+1);
-        }
+	ASSERT_M( (g >= 0 && g<NUM_Grade) || g == Grade_NoData, ssprintf("grade = %d",g) );
+
+	switch( g )
+    {
+    case Grade_NoData:	return "NoData";
+    case Grade_Failed:	return "Failed";
+    default:
+            return ssprintf("Tier%02d",g+1);
+    }
 }
 
-CString GradeToOldString( Grade g );	// "AAA", "B", etc for backward compatibility
+CString GradeToOldString( Grade g );	// "AAA", "B", etc for backward compatibility.  Used in announcer
 CString GradeToThemedString( Grade g );
 Grade StringToGrade( const CString &s );
-#define FOREACH_Grade( g ) FOREACH_ENUM( Grade, NUM_GRADES, g )
+#define FOREACH_Grade( g ) FOREACH_ENUM( Grade, NUM_Grade, g )
 #define FOREACH_UsedGrade( g ) FOREACH_ENUM( Grade, THEME->GetMetricI("PlayerStageStats","NumGradeTiersUsed"), g )
 
 #endif

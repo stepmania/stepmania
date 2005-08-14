@@ -22,15 +22,15 @@ CString GradeToOldString( Grade g )
 	// string is meant to be human readable
 	switch( g )
 	{
-	case GRADE_TIER01:	return "AAAA";
-	case GRADE_TIER02:	return "AAA";
-	case GRADE_TIER03:	return "AA";
-	case GRADE_TIER04:	return "A";
-	case GRADE_TIER05:	return "B";
-	case GRADE_TIER06:	return "C";
-	case GRADE_TIER07:	return "D";
-	case GRADE_FAILED:	return "E";
-	case GRADE_NO_DATA:	return "N";
+	case Grade_Tier01:	return "AAAA";
+	case Grade_Tier02:	return "AAA";
+	case Grade_Tier03:	return "AA";
+	case Grade_Tier04:	return "A";
+	case Grade_Tier05:	return "B";
+	case Grade_Tier06:	return "C";
+	case Grade_Tier07:	return "D";
+	case Grade_Failed:	return "E";
+	case Grade_NoData:	return "N";
 	default:			return "N";
 	}
 };
@@ -41,27 +41,27 @@ Grade StringToGrade( const CString &sGrade )
 	s.MakeUpper();
 
 	// for backward compatibility
-	if	   ( s == "AAAA" )		return GRADE_TIER01;
-	else if( s == "AAA" )		return GRADE_TIER02;
-	else if( s == "AA" )		return GRADE_TIER03;
-	else if( s == "A" )			return GRADE_TIER04;
-	else if( s == "B" )			return GRADE_TIER05;
-	else if( s == "C" )			return GRADE_TIER06;
-	else if( s == "D" )			return GRADE_TIER07;
-	else if( s == "E" )			return GRADE_FAILED;
-	else if( s == "N" )			return GRADE_NO_DATA;
+	if	   ( s == "AAAA" )		return Grade_Tier01;
+	else if( s == "AAA" )		return Grade_Tier02;
+	else if( s == "AA" )		return Grade_Tier03;
+	else if( s == "A" )			return Grade_Tier04;
+	else if( s == "B" )			return Grade_Tier05;
+	else if( s == "C" )			return Grade_Tier06;
+	else if( s == "D" )			return Grade_Tier07;
+	else if( s == "E" )			return Grade_Failed;
+	else if( s == "N" )			return Grade_NoData;
 
 
 	// new style
-	if	   ( s == "FAILED" )	return GRADE_FAILED;
-	else if( s == "NODATA" )	return GRADE_NO_DATA;
+	if	   ( s == "FAILED" )	return Grade_Failed;
+	else if( s == "NODATA" )	return Grade_NoData;
 
 	int iTier;
 	if( sscanf(sGrade.c_str(),"Tier%02d",&iTier) == 1 )
 		return (Grade)(iTier-1);
 
 	LOG->Warn( "Invalid grade: %s", sGrade.c_str() );
-	return GRADE_NO_DATA;
+	return Grade_NoData;
 };
 
 static void LuaGrade(lua_State* L)
@@ -69,10 +69,9 @@ static void LuaGrade(lua_State* L)
 	FOREACH_Grade( g )
 	{
 		CString s = GradeToString(g);
-		s.MakeUpper();
-		LUA->SetGlobal( "GRADE_"+s, g );
+		LUA->SetGlobal( "Grade_"+s, g );
 	}
-	LUA->SetGlobal( "NUM_GRADES", NUM_GRADES );
+	LUA->SetGlobal( "NUM_Grade", NUM_Grade );
 }
 REGISTER_WITH_LUA_FUNCTION( LuaGrade );
 

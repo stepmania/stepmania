@@ -114,7 +114,7 @@ function ScreenBranchNetAfterEval()
 end	
 
 function SelectEndingScreen()
-	if GetBestFinalGrade() >= GRADE_TIER03 then return "ScreenMusicScroll" end
+	if GetBestFinalGrade() >= Grade_Tier03 then return "ScreenMusicScroll" end
 	return "ScreenCredits"
 end	
 

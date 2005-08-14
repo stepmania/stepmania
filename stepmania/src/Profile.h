@@ -144,7 +144,7 @@ public:
 	/* This stat counts once per song, even if two players are active. */
 	int m_iNumTotalSongsPlayed;
 	int m_iNumStagesPassedByPlayMode[NUM_PLAY_MODES];
-	int m_iNumStagesPassedByGrade[NUM_GRADES];
+	int m_iNumStagesPassedByGrade[NUM_Grade];
 
 	//
 	// Song high scores
@@ -165,7 +165,7 @@ public:
 	HighScoreList& GetStepsHighScoreList( const Song* pSong, const Steps* pSteps );
 	int GetStepsNumTimesPlayed( const Song* pSong, const Steps* pSteps ) const;
 	void IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps );
-	void GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_GRADES] ) const;
+	void GetGrades( const Song* pSong, StepsType st, int iCounts[NUM_Grade] ) const;
 	int GetSongNumTimesPlayed( const Song* pSong ) const;
 	int GetSongNumTimesPlayed( const SongID& songID ) const;
 	DateTime GetSongLastPlayedDateTime( const Song* pSong ) const;

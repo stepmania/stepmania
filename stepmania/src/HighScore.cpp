@@ -61,7 +61,7 @@ bool HighScoreImpl::operator==( const HighScoreImpl& other ) const
 HighScoreImpl::HighScoreImpl()
 {
 	sName = "";
-	grade = GRADE_NO_DATA;
+	grade = Grade_NoData;
 	iScore = 0;
 	fPercentDP = 0;
 	fSurviveSeconds = 0;
@@ -137,7 +137,7 @@ void HighScoreImpl::LoadFromNode( const XNode *pNode )
 	pNode->GetChildValue( "LifeRemainingSeconds",		fLifeRemainingSeconds );
 
 	/* Validate input. */
-	grade = clamp( grade, GRADE_TIER01, GRADE_FAILED );
+	grade = clamp( grade, Grade_Tier01, Grade_Failed );
 }
 
 REGISTER_CLASS_TRAITS( HighScoreImpl, new HighScoreImpl(*pCopy) )

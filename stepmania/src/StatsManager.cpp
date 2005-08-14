@@ -205,7 +205,7 @@ public:
 		PlayerNumber pn = (PlayerNumber)IArg(1);
 
 		if( !GAMESTATE->IsHumanPlayer(pn) )
-			lua_pushnumber( L, GRADE_NO_DATA );
+			lua_pushnumber( L, Grade_NoData );
 		else
 		{
 			StageStats stats;
@@ -218,7 +218,7 @@ public:
 
 	static int GetBestGrade( T* p, lua_State *L )
 	{
-		Grade g = NUM_GRADES;
+		Grade g = NUM_Grade;
 		FOREACH_EnabledPlayer( pn )
 			g = min( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
 		lua_pushnumber( L, g );
@@ -227,7 +227,7 @@ public:
 
 	static int GetWorstGrade( T* p, lua_State *L )
 	{
-		Grade g = GRADE_TIER01;
+		Grade g = Grade_Tier01;
 		FOREACH_EnabledPlayer( pn )
 			g = max( g, STATSMAN->m_CurStageStats.m_player[pn].GetGrade() );
 		lua_pushnumber( L, g );
@@ -283,7 +283,7 @@ const StageStats *GetStageStatsN( int n )
 
 Grade GetBestFinalGrade()
 {
-	Grade top_grade = GRADE_FAILED;
+	Grade top_grade = Grade_Failed;
 	StageStats stats;
 	STATSMAN->GetFinalEvalStageStats( stats );
 	FOREACH_HumanPlayer( p )

@@ -116,7 +116,7 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 
 Grade PlayerStageStats::GetGradeFromPercent( float fPercent )
 {
-	Grade grade = GRADE_FAILED;
+	Grade grade = Grade_Failed;
 
 	FOREACH_Grade(g)
 	{
@@ -132,7 +132,7 @@ Grade PlayerStageStats::GetGradeFromPercent( float fPercent )
 Grade PlayerStageStats::GetGrade() const
 {
 	if( bFailedEarlier )
-		return GRADE_FAILED;
+		return Grade_Failed;
 
 	/* XXX: This entire calculation should be in ScoreKeeper, but final evaluation
 	 * is tricky since at that point the ScoreKeepers no longer exist. */
@@ -174,7 +174,7 @@ Grade PlayerStageStats::GetGrade() const
 			iTapNoteScores[TNS_MISS] == 0 &&
 			iTapNoteScores[TNS_HIT_MINE] == 0 &&
 			iHoldNoteScores[HNS_NG] == 0 )
-			return GRADE_TIER01;
+			return Grade_Tier01;
 
 		if( iTapNoteScores[TNS_PERFECT] > 0 &&
 			iTapNoteScores[TNS_GREAT] == 0 &&
@@ -183,9 +183,9 @@ Grade PlayerStageStats::GetGrade() const
 			iTapNoteScores[TNS_MISS] == 0 &&
 			iTapNoteScores[TNS_HIT_MINE] == 0 &&
 			iHoldNoteScores[HNS_NG] == 0 )
-			return GRADE_TIER02;
+			return Grade_Tier02;
 
-		return max( grade, GRADE_TIER03 );
+		return max( grade, Grade_Tier03 );
 	}
 
 	return grade;
