@@ -36,6 +36,8 @@ bool Screen::SortMessagesByDelayRemaining(const Screen::QueuedScreenMessage &m1,
 
 void Screen::Init()
 {
+	m_smSendOnPop = SM_None;
+
 	this->RunCommands( THEME->GetMetricA(m_sName, "ScreenInitCommand") );
 
 	vector<CString> asList;
@@ -197,13 +199,13 @@ void Screen::HandleScreenMessage( const ScreenMessage SM )
 		break;
 	case SM_GoToNextScreen:
 		if( SCREENMAN->IsStackedScreen(this) )
-			SCREENMAN->PopTopScreen( SM_None );
+			SCREENMAN->PopTopScreen( m_smSendOnPop );
 		else
 			SCREENMAN->SetNewScreen( GetNextScreen() );
 		break;
 	case SM_GoToPrevScreen:
 		if( SCREENMAN->IsStackedScreen(this) )
-			SCREENMAN->PopTopScreen( SM_None );
+			SCREENMAN->PopTopScreen( m_smSendOnPop );
 		else
 			SCREENMAN->SetNewScreen( GetPrevScreen() );
 		break;

@@ -79,6 +79,7 @@ protected:
 
 	// If these are left blank, the NextScreen and PrevScreen metrics will be used.
 	CString m_sNextScreen, m_sPrevScreen;
+	ScreenMessage m_smSendOnPop;
 
 public:
 
