@@ -91,18 +91,14 @@ void ProfileManager::Init()
 		{
 			CString sCharacterID = FIXED_PROFILE_CHARACTER_ID( i );
 			Character *pCharacter = CHARMAN->GetCharacterFromID( sCharacterID );
-			CString sThrowAway;
-			CreateLocalProfile( pCharacter->GetDisplayName(), sThrowAway );
+			CString sProfileID;
+			CreateLocalProfile( pCharacter->GetDisplayName(), sProfileID );
+			Profile* pProfile = GetLocalProfile( sProfileID );
+			pProfile->m_sCharacterID = sCharacterID;
+			SaveLocalProfile( sProfileID );
 		}
 
 		ASSERT( (int)g_vLocalProfile.size() == NUM_FIXED_PROFILES );
-
-		// apply fixed characters
-		for( int i=0; i<NUM_FIXED_PROFILES; i++ )
-		{
-			CString sCharacterID = FIXED_PROFILE_CHARACTER_ID( i );
-			g_vLocalProfile[i].profile.m_sCharacterID = sCharacterID;
-		}
 	}
 }
 
@@ -368,7 +364,7 @@ void ProfileManager::RefreshLocalProfilesFromDisk()
 		g_vLocalProfile.push_back( DirAndProfile() );
 		DirAndProfile &dap = g_vLocalProfile.back();
 		dap.sDir = *p + "/";
-		dap.profile.LoadAllFromDir( *p, PREFSMAN->m_bSignProfileData );
+		dap.profile.LoadAllFromDir( dap.sDir, PREFSMAN->m_bSignProfileData );
 	}
 }
 
@@ -756,7 +752,7 @@ void ProfileManager::GetLocalProfileDisplayNames( vector<CString> &vsProfileDisp
 		vsProfileDisplayNamesOut.push_back( i->profile.m_sDisplayName );
 }
 
-int ProfileManager::GetLocalProfileIndex( CString sProfileID ) const
+int ProfileManager::GetLocalProfileIndexFromID( CString sProfileID ) const
 {
 	CString sDir = LocalProfileIdToDir( sProfileID );
 	FOREACH_CONST( DirAndProfile, g_vLocalProfile, i )
@@ -765,6 +761,11 @@ int ProfileManager::GetLocalProfileIndex( CString sProfileID ) const
 			return i - g_vLocalProfile.begin();
 	}
 	return -1;
+}
+
+Profile *ProfileManager::GetLocalProfileFromIndex( int iIndex )
+{
+	return &g_vLocalProfile[iIndex].profile;
 }
 
 int ProfileManager::GetNumLocalProfiles() const
@@ -794,7 +795,8 @@ public:
 			lua_pushnil(L );
 		return 1;
 	}
-	static int GetLocalProfileIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetLocalProfileIndex(SArg(1)) ); return 1; }
+	static int GetLocalProfileFromIndex( T* p, lua_State *L ) { Profile *pProfile = p->GetLocalProfileFromIndex(IArg(1)); ASSERT(pProfile); pProfile->PushSelf(L); return 1; }
+	static int GetLocalProfileIndexFromID( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetLocalProfileIndexFromID(SArg(1)) ); return 1; }
 	static int GetNumLocalProfiles( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumLocalProfiles() ); return 1; }
 
 	static void Register(lua_State *L)
@@ -804,7 +806,8 @@ public:
 		ADD_METHOD( GetMachineProfile )
 		ADD_METHOD( SaveMachineProfile )
 		ADD_METHOD( GetLocalProfile )
-		ADD_METHOD( GetLocalProfileIndex )
+		ADD_METHOD( GetLocalProfileFromIndex )
+		ADD_METHOD( GetLocalProfileIndexFromID )
 		ADD_METHOD( GetNumLocalProfiles )
 		Luna<T>::Register( L );
 

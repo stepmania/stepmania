@@ -794,6 +794,8 @@ ProfileLoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignature 
 
 	LOG->Trace( "Profile::LoadAllFromDir( %s )", sDir.c_str() );
 
+	ASSERT( sDir.Right(1) == "/" );
+
 	InitAll();
 
 	// Not critical if this fails

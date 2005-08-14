@@ -195,27 +195,25 @@ void ScreenTitleMenu::ChangeDefaultLocalProfile( PlayerNumber pn, int iDir )
 	int iIndex = 0;
 	vector<CString>::const_iterator iter = find( vsProfileID.begin(), vsProfileID.end(), sCurrent );
 	if( iter != vsProfileID.end() )
-	{
 		iIndex = iter - vsProfileID.begin();
 
-		for( int i=0; i<PROFILEMAN->GetNumLocalProfiles(); i++ )
-		{
-			iIndex += iDir;
-			wrap( iIndex, vsProfileID.size() );
-			sCurrent = vsProfileID[iIndex];
+	for( int i=0; i<PROFILEMAN->GetNumLocalProfiles(); i++ )
+	{
+		iIndex += iDir;
+		wrap( iIndex, vsProfileID.size() );
+		sCurrent = vsProfileID[iIndex];
 
-			bool bAnyOtherIsUsingThisProfile = false;
-			FOREACH_PlayerNumber( p )
+		bool bAnyOtherIsUsingThisProfile = false;
+		FOREACH_PlayerNumber( p )
+		{
+			if( p!=pn  &&  PREFSMAN->GetDefaultLocalProfileID(p).Get() == sCurrent )
 			{
-				if( p!=pn  &&  PREFSMAN->GetDefaultLocalProfileID(p).Get() == sCurrent )
-				{
-					bAnyOtherIsUsingThisProfile = true;
-					break;
-				}
-			}
-			if( !bAnyOtherIsUsingThisProfile )
+				bAnyOtherIsUsingThisProfile = true;
 				break;
+			}
 		}
+		if( !bAnyOtherIsUsingThisProfile )
+			break;
 	}
 
 	m_soundProfileChange.Play();
