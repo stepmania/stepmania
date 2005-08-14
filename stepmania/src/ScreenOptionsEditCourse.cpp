@@ -216,7 +216,6 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 {
 	OptionRow &row = *m_pRows[iRow];
 	Course *pCourse = GAMESTATE->m_pCurCourse;
-	Trail *pTrail = GAMESTATE->m_pCurTrail[PLAYER_1];
 
 	switch( iRow )
 	{
