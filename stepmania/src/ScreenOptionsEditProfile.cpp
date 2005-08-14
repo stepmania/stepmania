@@ -42,7 +42,8 @@ void ScreenOptionsEditProfile::BeginScreen()
 	def.m_bAllowExplanation = false;
 	def.m_bExportOnChange = true;
 	
-	Profile &pro = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
+	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
+	ASSERT( pProfile );
 
 	{
 		def.m_sName = "Character";
@@ -50,7 +51,7 @@ void ScreenOptionsEditProfile::BeginScreen()
 		vector<Character*> vpCharacters;
 		GAMESTATE->GetCharacters( vpCharacters );
 		FOREACH_CONST( Character*, vpCharacters, c )
-			def.m_vsChoices.push_back( (*c)->m_sName );
+			def.m_vsChoices.push_back( (*c)->GetDisplayName() );
 		vDefs.push_back( def );
 		vHands.push_back( NULL );
 	}
@@ -67,20 +68,22 @@ ScreenOptionsEditProfile::~ScreenOptionsEditProfile()
 
 void ScreenOptionsEditProfile::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	Profile &pro = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
+	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
+	ASSERT( pProfile );
 	OptionRow &row = *m_pRows[iRow];
 
 	switch( iRow )
 	{
 	case ROW_CHARACTER:
-		row.SetOneSharedSelectionIfPresent( pro.m_sCharacter );
+		row.SetOneSharedSelectionIfPresent( pProfile->m_sCharacterID );
 		break;
 	}
 }
 
 void ScreenOptionsEditProfile::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	Profile &pro = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
+	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
+	ASSERT( pProfile );
 	OptionRow &row = *m_pRows[iRow];
 	int iIndex = row.GetOneSharedSelection( true );
 	CString sValue;
@@ -90,7 +93,7 @@ void ScreenOptionsEditProfile::ExportOptions( int iRow, const vector<PlayerNumbe
 	switch( iRow )
 	{
 	case ROW_CHARACTER:
-		pro.m_sCharacter = sValue;
+		pProfile->m_sCharacterID = sValue;
 		break;
 	}
 }
