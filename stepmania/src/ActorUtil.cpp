@@ -135,10 +135,13 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 					RageException::Throw( ssprintf("Param node in '%s' is missing the attribute 'Name'", sDir.c_str()) );
 				}
 
+				THEME->EvaluateString( sName );
+
 				CString s;
 				if( pChild->GetAttrValue( "Function", s ) )
 				{
 					LuaExpression expr;
+					THEME->EvaluateString( s );
 					expr.SetFromExpression( s );
 					Lua *L = LUA->Get();
 					expr.PushSelf( L );
@@ -149,6 +152,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 				}
 				else if( pChild->GetAttrValue( "Value", s ) )
 				{
+					THEME->EvaluateString( s );
 					LUA->SetGlobalFromExpression( sName, s );
 				}
 				else
