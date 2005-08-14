@@ -89,10 +89,10 @@ void ScreenOptionsEditCourseSubMenu::MenuSelect( PlayerNumber pn, const InputEve
 
 /* This is actually just an adapter to make ScreenPrompt send different messages
  * on yes and no: */
-class ScreenPromptConfirmDeleteSteps : public ScreenPrompt
+class ScreenPromptConfirmDeleteCourse : public ScreenPrompt
 {
 public:
-	ScreenPromptConfirmDeleteSteps( const CString &sName ):
+	ScreenPromptConfirmDeleteCourse( const CString &sName ):
 		ScreenPrompt(sName)
 	{
 	}
@@ -140,7 +140,7 @@ public:
 
 	ScreenMessage m_smSendOnPop;
 };
-REGISTER_SCREEN_CLASS( ScreenPromptConfirmDeleteSteps );
+REGISTER_SCREEN_CLASS( ScreenPromptConfirmDeleteCourse );
 
 
 
