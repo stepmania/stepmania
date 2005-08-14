@@ -28,15 +28,24 @@ public:
 	CString GetStageIconPath() const;
 	bool Has2DElems();
 
+	bool IsDefaultCharacter() const
+	{
+		return m_sCharacterID.CompareNoCase("default") == 0;
+	}
+
 	//
 	// Lua
 	//
 	void PushSelf( Lua *L );
 
+	// smart accessor
+	const CString &GetDisplayName() { return !m_sDisplayName.empty() ? m_sDisplayName : m_sCharacterID; }
+
 	CString m_sCharDir;
-	CString m_sName;
-
-
+	CString m_sCharacterID;
+private:
+	CString m_sDisplayName;
+public:
 
 	// All the stuff below will be filled in if this character is playable in Rave mode
 	bool	m_bUsableInRave;	

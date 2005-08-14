@@ -11,18 +11,27 @@ bool Character::Load( CString sCharDir )
 		sCharDir += "/";
 	m_sCharDir = sCharDir;
 
-	// Save character name
-	vector<CString> as;
-	split( sCharDir, "/", as );
-	m_sName = as.back();
+
+	// save ID
+	{
+		vector<CString> as;
+		split( sCharDir, "/", as );
+		m_sCharacterID = as.back();
+	}
+
 
 	// Save attacks
 	IniFile ini;
 	if( !ini.ReadFile( sCharDir+"character.ini" ) )
 		return false;
 	for( int i=0; i<NUM_ATTACK_LEVELS; i++ )
+	{
 		for( int j=0; j<NUM_ATTACKS_PER_LEVEL; j++ )
 			ini.GetValue( "Character", ssprintf("Level%dAttack%d",i+1,j+1), m_sAttacks[i][j] );
+	}
+
+	// get display name (if any)
+	ini.GetValue( "Character", "DisplayName", m_sDisplayName );
 
 	return true;
 }
