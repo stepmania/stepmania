@@ -28,9 +28,9 @@
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
 
 #define NEW_MEM_CARD_NAME		""
-#define USER_PROFILES_DIR		"Data/LocalProfiles/"
-#define MACHINE_PROFILE_DIR		"Data/MachineProfile/"
-const CString LAST_GOOD_DIR	=	"LastGood/";
+#define USER_PROFILES_DIR		"/Data/LocalProfiles/"
+#define MACHINE_PROFILE_DIR		"/Data/MachineProfile/"
+const CString LAST_GOOD_SUBDIR	=	"LastGood/";
 
 
 // Directories to search for a profile if m_sMemoryCardProfileSubdir doesn't
@@ -94,10 +94,12 @@ void ProfileManager::Init()
 			CreateLocalProfile( pCharacter->GetDisplayName(), sThrowAway );
 		}
 
+		ASSERT( (int)g_vLocalProfile.size() == NUM_FIXED_PROFILES );
+
 		// apply fixed characters
 		for( int i=0; i<NUM_FIXED_PROFILES; i++ )
 		{
-			CString sCharacterID = THEME->GetMetric( "ProfileManager", ssprintf("FixedProfileCharacterID%d",int(i+1)) );
+			CString sCharacterID = FIXED_PROFILE_CHARACTER_ID( i );
 			g_vLocalProfile[i].profile.m_sCharacterID = sCharacterID;
 		}
 	}
@@ -123,7 +125,7 @@ ProfileLoadResult ProfileManager::LoadProfile( PlayerNumber pn, CString sProfile
 	// Try to load the original, non-backup data.
 	ProfileLoadResult lr = GetProfile(pn)->LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
 	
-	CString sBackupDir = m_sProfileDir[pn] + LAST_GOOD_DIR;
+	CString sBackupDir = m_sProfileDir[pn] + LAST_GOOD_SUBDIR;
 
 	// Save a backup of the non-backup profile now that we've loaded it and know 
 	// it's good. This should be reasonably fast because we're only saving Stats.xml 
@@ -364,7 +366,7 @@ void ProfileManager::RefreshLocalProfilesFromDisk()
 	{
 		g_vLocalProfile.push_back( DirAndProfile() );
 		DirAndProfile &dap = g_vLocalProfile.back();
-		dap.sDir = *p;
+		dap.sDir = *p + "/";
 		dap.profile.LoadAllFromDir( *p, PREFSMAN->m_bSignProfileData );
 	}
 }
@@ -374,7 +376,8 @@ const Profile *ProfileManager::GetLocalProfile( const CString &sProfileID ) cons
 	CString sDir = LocalProfileIdToDir( sProfileID );
 	FOREACH_CONST( DirAndProfile, g_vLocalProfile, dap )
 	{
-		if( dap->sDir == sDir )
+		const CString &sOther = dap->sDir;
+		if( sOther == sDir )
 			return &dap->profile;
 	}
 
