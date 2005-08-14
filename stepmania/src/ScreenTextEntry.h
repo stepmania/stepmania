@@ -45,15 +45,6 @@ public:
 	virtual void Init();
 	virtual void BeginScreen();
 
-	void LoadMenu(
-		CString sQuestion, 
-		CString sInitialAnswer, 
-		int iMaxInputLength,
-		bool(*Validate)(const CString &sAnswer,CString &sErrorOut) = NULL, 
-		void(*OnOK)(const CString &sAnswer) = NULL, 
-		void(*OnCanel)() = NULL, 
-		bool bPassword = false );
-
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
 	static CString s_sLastAnswer;
@@ -78,16 +69,10 @@ protected:
 	void UpdateKeyboardText();
 	void UpdateAnswerText();
 
-	CString			m_sQuestion;
-	int				m_iMaxInputLength;
-	bool            m_bPassword;
 	BitmapText		m_textQuestion;
 	AutoActor		m_sprAnswerBox;
 	wstring			m_sAnswer;
 	BitmapText		m_textAnswer;
-	bool(*m_pValidate)( const CString &sAnswer, CString &sErrorOut );
-	void(*m_pOnOK)( const CString &sAnswer );
-	void(*m_pOnCancel)();
 	
 	AutoActor		m_sprCursor;
 

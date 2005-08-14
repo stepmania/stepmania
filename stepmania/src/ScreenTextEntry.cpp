@@ -28,6 +28,18 @@ static Preference<bool> g_bAllowOldKeyboardInput( "AllowOldKeyboardInput",	true 
 
 CString ScreenTextEntry::s_sLastAnswer = "";
 
+/* Settings: */
+namespace
+{
+	CString g_sQuestion;
+	CString g_sInitialAnswer;
+	int g_iMaxInputLength;
+	bool(*g_pValidate)(const CString &sAnswer,CString &sErrorOut);
+	void(*g_pOnOK)(const CString &sAnswer);
+	void(*g_pOnCancel)();
+	bool g_bPassword;
+};
+
 void ScreenTextEntry::TextEntry( 
 	ScreenMessage smSendOnPop, 
 	CString sQuestion, 
@@ -39,20 +51,15 @@ void ScreenTextEntry::TextEntry(
 	bool bPassword
 	)
 {	
-	// add the new state onto the back of the array
-	ScreenTextEntry *pNewScreen = new ScreenTextEntry( "ScreenTextEntry" );
-	pNewScreen->Init();
-	pNewScreen->LoadMenu(
-		sQuestion, 
-		sInitialAnswer, 
-		iMaxInputLength, 
-		Validate, 
-		OnOK, 
-		OnCancel, 
-		bPassword );
+	g_sQuestion = sQuestion;
+	g_sInitialAnswer = sInitialAnswer;
+	g_iMaxInputLength = iMaxInputLength;
+	g_pValidate = Validate;
+	g_pOnOK = OnOK;
+	g_pOnCancel = OnCancel;
+	g_bPassword = bPassword;
 
-	SCREENMAN->ZeroNextUpdate();
-	SCREENMAN->PushScreen( pNewScreen, true, smSendOnPop );
+	SCREENMAN->AddNewScreenToTop( "ScreenTextEntry", smSendOnPop );
 }
 
 bool ScreenTextEntry::s_bCancelledLast = false;
@@ -64,7 +71,7 @@ bool ScreenTextEntry::s_bCancelledLast = false;
  * XXX: Don't allow internal-use codepoints (above 0xFFFF); those are
  * subject to change and shouldn't be written to disk.
  */
-//REGISTER_SCREEN_CLASS( ScreenTextEntry );
+REGISTER_SCREEN_CLASS( ScreenTextEntry );
 
 ScreenTextEntry::ScreenTextEntry( CString sClassName ) :
 	ScreenWithMenuElements( sClassName )
@@ -112,29 +119,13 @@ ScreenTextEntry::~ScreenTextEntry()
 {
 }
 
-void ScreenTextEntry::LoadMenu( 
-	CString sQuestion, 
-	CString sInitialAnswer, 
-	int iMaxInputLength,
-	bool(*Validate)(const CString &sAnswer,CString &sErrorOut), 
-	void(*OnOK)(const CString &sAnswer), 
-	void(*OnCancel)(), 
-	bool bPassword )
-{
-	m_sQuestion = sQuestion;
-	m_sAnswer = CStringToWstring( sInitialAnswer );
-	m_iMaxInputLength = iMaxInputLength;
-	m_pValidate = Validate;
-	m_pOnOK = OnOK;
-	m_pOnCancel = OnCancel;
-	m_bPassword = bPassword;
-}
-
 void ScreenTextEntry::BeginScreen()
 {
+	m_sAnswer = CStringToWstring( g_sInitialAnswer );
+
 	ScreenWithMenuElements::BeginScreen();
 
-	m_textQuestion.SetText( m_sQuestion );
+	m_textQuestion.SetText( g_sQuestion );
 	SET_XY_AND_ON_COMMAND( m_textQuestion );
 	SET_XY_AND_ON_COMMAND( m_sprAnswerBox );
 	SET_XY_AND_ON_COMMAND( m_textAnswer );
@@ -177,7 +168,7 @@ void ScreenTextEntry::UpdateKeyboardText()
 void ScreenTextEntry::UpdateAnswerText()
 {
 	CString txt = WStringToCString(m_sAnswer);
-	if( m_bPassword )
+	if( g_bPassword )
 	{
 		int len = txt.GetLength();
 		txt = "";
@@ -309,7 +300,7 @@ void ScreenTextEntry::MoveY( int iDir )
 void ScreenTextEntry::AppendToAnswer( CString s )
 {
 	wstring sNewAnswer = m_sAnswer+CStringToWstring(s);
-	if( (int)sNewAnswer.length() > m_iMaxInputLength )
+	if( (int)sNewAnswer.length() > g_iMaxInputLength )
 	{
 		SCREENMAN->PlayInvalidSound();
 		return;
@@ -366,8 +357,8 @@ void ScreenTextEntry::End( bool bCancelled )
 {
 	if( bCancelled )
 	{
-		if( m_pOnCancel ) 
-			m_pOnCancel();
+		if( g_pOnCancel ) 
+			g_pOnCancel();
 		
 		m_Cancel.StartTransitioning( SM_GoToNextScreen );
 	}
@@ -375,9 +366,9 @@ void ScreenTextEntry::End( bool bCancelled )
 	{
 		CString sAnswer = WStringToCString(m_sAnswer);
 		CString sError;
-		if ( m_pValidate != NULL )
+		if ( g_pValidate != NULL )
 		{
-			bool bValidAnswer = m_pValidate( sAnswer, sError );
+			bool bValidAnswer = g_pValidate( sAnswer, sError );
 			if( !bValidAnswer )
 			{
 				ScreenPrompt::Prompt( SM_None, sError );
@@ -385,11 +376,11 @@ void ScreenTextEntry::End( bool bCancelled )
 			}
 		}
 
-		if( m_pOnOK )
+		if( g_pOnOK )
 		{
 			CString ret = WStringToCString(m_sAnswer);
 			FontCharAliases::ReplaceMarkers(ret);
-			m_pOnOK( ret );
+			g_pOnOK( ret );
 		}
 
 		m_Out.StartTransitioning( SM_GoToNextScreen );
