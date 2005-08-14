@@ -3,6 +3,7 @@
 #include "PrefsManager.h"
 #include "SongManager.h"
 #include "ScreenManager.h"
+#include "ScreenSaveSync.h"
 #include "GameConstantsAndTypes.h"
 #include "GameManager.h"
 #include "RageLog.h"
@@ -1889,7 +1890,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 	case STATE_PLAYING:
 		if( GAMESTATE->IsSyncDataChanged() )
-			SCREENMAN->AddNewScreenToTop( "ScreenSaveSync" );
+			ScreenSaveSync::SaveSync();
 		break;
 
 	case STATE_RECORDING:
