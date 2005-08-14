@@ -192,6 +192,16 @@ void ScreenPrompt::MenuBack( PlayerNumber pn )
 
 void ScreenPrompt::End( bool bCancelled )
 {
+	switch( m_Answer )
+	{
+	case ANSWER_YES:
+		m_smSendOnPop = SM_Success;
+		break;
+	case ANSWER_NO:
+		m_smSendOnPop = SM_Failure;
+		break;
+	}
+
 	if( bCancelled )
 	{
 		m_Cancel.StartTransitioning( SM_GoToNextScreen );
