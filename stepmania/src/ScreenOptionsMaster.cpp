@@ -159,37 +159,7 @@ void ScreenOptionsMaster::BeginFadingOut()
 
 void ScreenOptionsMaster::RefreshIcons( int r, PlayerNumber pn )
 {
-	OptionRow &row = *m_pRows[r];
-	
-	if( row.GetRowType() == OptionRow::ROW_EXIT )
-		return;	// skip
-
-	const OptionRowDefinition &def = row.GetRowDef();
-
-	// find first selection and whether multiple are selected
-	int iFirstSelection = row.GetOneSelection( pn, true );
-
-	// set icon name and bullet
-	CString sIcon;
-	GameCommand gc;
-
-	if( iFirstSelection == -1 )
-	{
-		sIcon = "Multi";
-	}
-	else if( iFirstSelection != -1 )
-	{
-		const OptionRowHandler *pHand = m_OptionRowHandlers[r];
-		int iSelection = iFirstSelection+(m_OptionsNavigation==NAV_TOGGLE_THREE_KEY?-1:0);
-		pHand->GetIconTextAndGameCommand( def, iSelection, sIcon, gc );
-	}
-	
-
-	/* XXX: hack to not display text in the song options menu */
-	if( def.m_bOneChoiceForAllPlayers )
-		sIcon = "";
-
-	SetOptionIcon( pn, r, sIcon, gc );
+	ScreenOptions::RefreshIcons( r, pn );
 }
 
 void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )

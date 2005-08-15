@@ -12,6 +12,7 @@ struct lua_State;
 class LuaReference;
 class LuaClass;
 #include "MessageManager.h"
+#include "RageUtil.h"	// for ARRAYSIZE
 
 
 #define DRAW_ORDER_BEFORE_EVERYTHING	-200
@@ -55,6 +56,25 @@ public:
 
 	struct TweenState
 	{
+		bool operator==( const TweenState &other ) const
+		{
+#define COMPARE( x )	if( x != other.x ) return false;
+			COMPARE( pos );
+			COMPARE( rotation );
+			COMPARE( quat );
+			COMPARE( scale );
+			COMPARE( fSkewX );
+			COMPARE( crop );
+			COMPARE( fade );
+			for( int i=0; i<ARRAYSIZE(diffuse); i++ )
+				COMPARE( diffuse[i] );
+			COMPARE( glow );
+			COMPARE( aux );
+#undef COMPARE
+			return true;
+		}
+		bool operator!=( const TweenState &other ) const { return !operator==(other); }
+
 		// start and end position for tweening
 		RageVector3 pos;
 		RageVector3 rotation;

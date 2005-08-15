@@ -190,8 +190,8 @@ public:
 	BitmapText &GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow );
 	void GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );
 
-	void SetRowY( float fRowY )				{ m_fY = fRowY; }
-	float GetRowY()							{ return m_fY; }
+	// ScreenOptions calls positions m_FrameDestination, then m_Frame tween to that same TweenState.
+	Actor &GetFrameDestination()			{ return m_FrameDestination; }
 	void SetRowHidden( bool bRowHidden )	{ m_bHidden = bRowHidden; }
 	bool GetRowHidden()						{ return m_bHidden; }
 	unsigned GetTextItemsSize() { return m_textItems.size(); }
@@ -234,7 +234,7 @@ protected:
 	// Only one will true at a time if m_RowDef.bMultiSelect
 	vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size()
 
-	float m_fY;
+	Actor m_FrameDestination;	// m_Frame should approach the destination TweenState of this.
 	bool m_bHidden; // currently off screen
 };
 

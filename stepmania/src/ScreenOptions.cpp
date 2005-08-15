@@ -11,6 +11,8 @@
 #include "ActorUtil.h"
 #include "ScreenDimensions.h"
 #include "Command.h"
+#include "GameCommand.h"
+#include "OptionRowHandler.h"
 
 
 /*
@@ -59,7 +61,6 @@
  * in player options menus, but it should in the options menu.
  */
 
-static CString ROW_Y_NAME( size_t r )					{ return ssprintf("Row%dY",int(r+1)); }
 static CString EXPLANATION_X_NAME( size_t p )			{ return ssprintf("ExplanationP%dX",int(p+1)); }
 static CString EXPLANATION_Y_NAME( size_t p )			{ return ssprintf("ExplanationP%dY",int(p+1)); }
 static CString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("ExplanationP%dOnCommand",int(p+1)); }
@@ -72,10 +73,6 @@ static CString OPTION_EXPLANATION( CString s )
 //REGISTER_SCREEN_CLASS( ScreenOptions );	// can't be instantiated
 ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName),
 	NUM_ROWS_SHOWN					(m_sName,"NumRowsShown"),
-	ROW_Y							(m_sName,ROW_Y_NAME,NUM_ROWS_SHOWN),
-	ROW_Y_OFF_SCREEN_TOP			(m_sName,"RowYOffScreenTop"),
-	ROW_Y_OFF_SCREEN_CENTER			(m_sName,"RowYOffScreenCenter"),
-	ROW_Y_OFF_SCREEN_BOTTOM			(m_sName,"RowYOffScreenBottom"),
 	EXPLANATION_X					(m_sName,EXPLANATION_X_NAME,NUM_PLAYERS),
 	EXPLANATION_Y					(m_sName,EXPLANATION_Y_NAME,NUM_PLAYERS),
 	EXPLANATION_ON_COMMAND			(m_sName,EXPLANATION_ON_COMMAND_NAME,NUM_PLAYERS),
@@ -95,13 +92,18 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	CURSOR_TWEEN_SECONDS			(m_sName,"CursorTweenSeconds"),
 	WRAP_VALUE_IN_ROW				(m_sName,"WrapValueInRow")
 {
+	LOG->Trace( "ScreenOptions::ScreenOptions()" );
+	
 	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 	
 	// These can be overridden in a derived Init().
 	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
 	m_InputMode = INPUTMODE_SHARE_CURSOR;
 
-	LOG->Trace( "ScreenOptions::ScreenOptions()" );
+	m_exprRowPositionTransformFunction			.SetFromExpression( THEME->GetMetric(m_sName,"RowPositionTransformFunction") );
+	m_exprRowOffScreenTopTransformFunction		.SetFromExpression( THEME->GetMetric(m_sName,"RowOffScreenTopTransformFunction") );
+	m_exprRowOffScreenCenterTransformFunction	.SetFromExpression( THEME->GetMetric(m_sName,"RowOffScreenCenterTransformFunction") );
+	m_exprRowOffScreenBottomTransformFunction	.SetFromExpression( THEME->GetMetric(m_sName,"RowOffScreenBottomTransformFunction") );
 }
 
 
@@ -406,9 +408,42 @@ void ScreenOptions::PositionIcons()
 	}
 }
 
-void ScreenOptions::RefreshIcons( int row, PlayerNumber pn )
+void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 {
-	// overridden by ScreenOptionsMaster
+	OptionRow &row = *m_pRows[iRow];
+	
+	if( row.GetRowType() == OptionRow::ROW_EXIT )
+		return;	// skip
+
+	const OptionRowDefinition &def = row.GetRowDef();
+
+	// find first selection and whether multiple are selected
+	int iFirstSelection = row.GetOneSelection( pn, true );
+
+	// set icon name and bullet
+	CString sIcon;
+	GameCommand gc;
+
+	if( iFirstSelection == -1 )
+	{
+		sIcon = "Multi";
+	}
+	else if( iFirstSelection != -1 )
+	{
+		const OptionRowHandler *pHand = row.GetHandler();
+		if( pHand )
+		{
+			int iSelection = iFirstSelection+(m_OptionsNavigation==NAV_TOGGLE_THREE_KEY?-1:0);
+			pHand->GetIconTextAndGameCommand( def, iSelection, sIcon, gc );
+		}
+	}
+	
+
+	/* XXX: hack to not display text in the song options menu */
+	if( def.m_bOneChoiceForAllPlayers )
+		sIcon = "";
+
+	SetOptionIcon( pn, iRow, sIcon, gc );
 }
 
 void ScreenOptions::RefreshAllIcons()
@@ -668,31 +703,45 @@ void ScreenOptions::PositionItems()
 	int pos = 0;
 	for( int i=0; i<(int) Rows.size(); i++ )		// foreach row
 	{
-		float fY;
-		if( i < first_start )
-			fY = ROW_Y_OFF_SCREEN_TOP;
-		else if( i < first_end )
-			fY = ROW_Y.GetValue( pos++ );
-		else if( i < second_start )
-			fY = ROW_Y_OFF_SCREEN_CENTER;
-		else if( i < second_end )
-			fY = ROW_Y.GetValue( pos++ );
-		else
-			fY = ROW_Y_OFF_SCREEN_BOTTOM;
-			
 		OptionRow &row = *Rows[i];
 
-		row.SetRowY( fY );
+
+		LuaExpression *pExpr = NULL;
+		if( i < first_start )
+			pExpr = &m_exprRowOffScreenTopTransformFunction;
+		else if( i < first_end )
+			pExpr = &m_exprRowPositionTransformFunction; 
+		else if( i < second_start )
+			pExpr = &m_exprRowOffScreenCenterTransformFunction;
+		else if( i < second_end )
+			pExpr = &m_exprRowPositionTransformFunction; 
+		else
+			pExpr = &m_exprRowOffScreenBottomTransformFunction;
+
+		Lua *L = LUA->Get();
+
+		pExpr->PushSelf( L );
+	
+		ASSERT( !lua_isnil(L, -1) );
+		row.GetFrameDestination().PushSelf( L );
+		LuaHelpers::Push( pos, L );
+		LuaHelpers::Push( i, L );
+		LuaHelpers::Push( NUM_ROWS_SHOWN, L );
+		lua_call( L, 4, 0 ); // 4 args, 0 results
+		LUA->Release(L);
+
 		bool bHidden = 
 			i < first_start ||
 			(i >= first_end && i < second_start) ||
 			i >= second_end;
+		if( !bHidden )
+			pos++;
 		row.SetRowHidden( bHidden );
 	}
 
 	if( ExitRow )
 	{
-		ExitRow->SetRowY( SEPARATE_EXIT_ROW_Y );
+		ExitRow->GetFrameDestination().SetY( SEPARATE_EXIT_ROW_Y );
 		ExitRow->SetRowHidden( second_end != (int) Rows.size() );
 	}
 }
@@ -713,7 +762,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 
 	/* Do positioning. */
 	PositionAllUnderlines();
-	RefreshIcons( iCurRow, pn );
+	this->RefreshIcons( iCurRow, pn );
 	PositionIcons();
 	UpdateEnabledDisabled();
 

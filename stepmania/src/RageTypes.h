@@ -215,6 +215,18 @@ public:
 	T GetCenterX() const	{ return (left+right)/2; };
 	T GetCenterY() const	{ return (top+bottom)/2; };
 
+	bool operator==( const Rect &other ) const
+	{
+#define COMPARE( x )	if( x != other.x ) return false;
+		COMPARE( left );
+		COMPARE( top );
+		COMPARE( right );
+		COMPARE( bottom );
+#undef COMPARE
+		return true;
+	}
+	bool operator!=( const Rect &other ) const { return !operator==(other); }
+
     T    left, top, right, bottom;
 };
 

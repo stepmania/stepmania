@@ -46,19 +46,19 @@ protected:
 
 	void InitOptionsText();
 	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );
-	CString GetExplanationText( int row ) const;
+	CString GetExplanationText( int iRow ) const;
 	BitmapText &GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow );
-	void PositionUnderlines( int row, PlayerNumber pn );
+	void PositionUnderlines( int iRow, PlayerNumber pn );
 	void PositionAllUnderlines();
 	void PositionIcons();
-	virtual void RefreshIcons( int row, PlayerNumber pn );
+	virtual void RefreshIcons( int iRow, PlayerNumber pn );
 	void RefreshAllIcons();
 	void PositionCursors();
 	void PositionItems();
 	void TweenCursor( PlayerNumber pn );
-	void UpdateText( int row );
+	void UpdateText( int iRow );
 	void UpdateEnabledDisabled();
-	void UpdateEnabledDisabled( int row );
+	void UpdateEnabledDisabled( int iRow );
 
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
@@ -134,10 +134,10 @@ protected:
 
 	// metrics
 	ThemeMetric<int>				NUM_ROWS_SHOWN;
-	ThemeMetric1D<float>			ROW_Y;
-	ThemeMetric<float>				ROW_Y_OFF_SCREEN_TOP;
-	ThemeMetric<float>				ROW_Y_OFF_SCREEN_CENTER;
-	ThemeMetric<float>				ROW_Y_OFF_SCREEN_BOTTOM;
+	LuaExpression m_exprRowPositionTransformFunction;	// params: self,positionIndex,itemIndex,numItems
+	LuaExpression m_exprRowOffScreenTopTransformFunction;	// params: self,positionIndex,itemIndex,numItems
+	LuaExpression m_exprRowOffScreenCenterTransformFunction;	// params: self,positionIndex,itemIndex,numItems
+	LuaExpression m_exprRowOffScreenBottomTransformFunction;	// params: self,positionIndex,itemIndex,numItems
 	ThemeMetric1D<float>			EXPLANATION_X;
 	ThemeMetric1D<float>			EXPLANATION_Y;
 	ThemeMetric1D<apActorCommands>	EXPLANATION_ON_COMMAND;
