@@ -82,8 +82,8 @@ void OptionsCursorPlus::SetCanGo( bool bCanGoLeft, bool bCanGoRight )
 	m_sprCanGoLeft.EnableAnimation( bCanGoLeft );
 	m_sprCanGoRight.EnableAnimation( bCanGoRight );
 
-	m_sprCanGoLeft.SetDiffuse( bCanGoLeft ? RageColor(1,1,1,1) : RageColor(0.5,0.5,0.5,1) );
-	m_sprCanGoRight.SetDiffuse( bCanGoRight ? RageColor(1,1,1,1) : RageColor(0.5,0.5,0.5,1) );
+	m_sprCanGoLeft.SetDiffuse( bCanGoLeft ? RageColor(1,1,1,1) : RageColor(1,1,1,0) );
+	m_sprCanGoRight.SetDiffuse( bCanGoRight ? RageColor(1,1,1,1) : RageColor(1,1,1,0) );
 }
 
 void OptionsCursor::StopTweening()
