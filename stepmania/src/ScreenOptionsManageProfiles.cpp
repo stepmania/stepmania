@@ -114,6 +114,7 @@ void ScreenOptionsManageProfiles::Init()
 {
 	ScreenOptions::Init();
 
+	SetNavigation( NAV_THREE_KEY_MENU );
 	SetInputMode( INPUTMODE_SHARE_CURSOR );
 
 	m_pContextMenu = new ScreenMiniMenu( g_TempMenu.sClassName );
@@ -195,7 +196,8 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_GoToNextScreen )
 	{
 		int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
-		if( iCurRow == (int)m_pRows.size() - 1 )
+		OptionRow &row = *m_pRows[iCurRow];
+		if( row.GetRowType() == OptionRow::ROW_EXIT )
 		{
 			this->HandleScreenMessage( SM_GoToPrevScreen );
 			return;	// don't call base
@@ -315,7 +317,8 @@ void ScreenOptionsManageProfiles::AfterChangeRow( PlayerNumber pn )
 void ScreenOptionsManageProfiles::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
-
+	OptionRow &row = *m_pRows[iCurRow];
+	
 	if( SHOW_CREATE_NEW && iCurRow == 0 )	// "create new"
 	{
 		vector<CString> vsUsedNames;
@@ -336,7 +339,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( PlayerNumber pn, const Input
 			PROFILE_MAX_DISPLAY_NAME_LENGTH, 
 			ValidateLocalProfileName );
 	}
-	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
+	else if( row.GetRowType() == OptionRow::ROW_EXIT )
 	{
 		this->BeginFadingOut();
 	}
@@ -383,9 +386,11 @@ void ScreenOptionsManageProfiles::ExportOptions( int iRow, const vector<PlayerNu
 CString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+	OptionRow &row = *m_pRows[iCurRow];
+
 	if( SHOW_CREATE_NEW && iCurRow == 0 )	// "create new"
 		return NULL;
-	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
+	else if( row.GetRowType() == OptionRow::ROW_EXIT )
 		return NULL;
 	
 	// a profile
