@@ -67,7 +67,7 @@ CString CourseEntry::GetTextDescription() const
 		vsEntryDescription.push_back( "Random" );
 	if( !sSongGroup.empty() )
 		vsEntryDescription.push_back( sSongGroup );
-	if( baseDifficulty != DIFFICULTY_INVALID )
+	if( baseDifficulty != DIFFICULTY_INVALID && baseDifficulty != DIFFICULTY_MEDIUM )
 		vsEntryDescription.push_back( DifficultyToThemedString(baseDifficulty) );
 	if( iLowMeter != -1 )
 		vsEntryDescription.push_back( ssprintf("Low meter: %d", iLowMeter) );
