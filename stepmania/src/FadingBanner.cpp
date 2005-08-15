@@ -261,6 +261,12 @@ public:
 		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
 		return 0;
 	}
+	static int LoadCardFromCharacter( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( NULL ); }
+		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
+		return 0;
+	}
 
 	static void Register(lua_State *L) 
 	{
@@ -268,6 +274,7 @@ public:
 		ADD_METHOD( LoadFromSong )
 		ADD_METHOD( LoadFromCourse )
 		ADD_METHOD( LoadIconFromCharacter )
+		ADD_METHOD( LoadCardFromCharacter )
 		Luna<T>::Register( L );
 	}
 };
