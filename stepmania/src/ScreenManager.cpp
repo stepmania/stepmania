@@ -397,29 +397,7 @@ void ScreenManager::Update( float fDeltaTime )
 
 	if( !m_sDelayedConcurrentPrepare.empty() )
 	{
-		/* Don't call BackgroundPrepareScreen() from within another background load. */
-		ASSERT( !IsConcurrentlyLoading() );
-
-		CString sScreenName = m_sDelayedConcurrentPrepare;
-		m_sDelayedConcurrentPrepare = "";
-
-		ScreenMessage SM = m_OnDonePreparingScreen;
-		m_OnDonePreparingScreen = SM_None;
-
-		g_bIsConcurrentlyLoading = true;
-		StartConcurrentRendering();
-
-		if( g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end() )
-			DeletePreparedScreens();
-		PrepareScreen( sScreenName );
-		FinishConcurrentRendering();
-		g_bIsConcurrentlyLoading = false;
-
-		LOG->Trace( "Concurrent prepare of %s finished", sScreenName.c_str() );
-
-		/* We're done.  Send the message.  The screen is allowed to start
-		 * another concurrent prepare from this message. */
-		SendMessageToTopScreen( SM );
+		RunConcurrentlyPrepareScreen();
 	}
 }
 
@@ -568,6 +546,33 @@ bool ScreenManager::ConcurrentlyPrepareScreen( const CString &sScreenName, Scree
 	m_sDelayedConcurrentPrepare = sScreenName;
 	m_OnDonePreparingScreen = SM;
 	return true;
+}
+
+void ScreenManager::RunConcurrentlyPrepareScreen()
+{
+	/* Don't call BackgroundPrepareScreen() from within another background load. */
+	ASSERT( !IsConcurrentlyLoading() );
+
+	CString sScreenName = m_sDelayedConcurrentPrepare;
+	m_sDelayedConcurrentPrepare = "";
+
+	ScreenMessage SM = m_OnDonePreparingScreen;
+	m_OnDonePreparingScreen = SM_None;
+
+	g_bIsConcurrentlyLoading = true;
+	StartConcurrentRendering();
+
+	if( g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end() )
+		DeletePreparedScreens();
+	PrepareScreen( sScreenName );
+	FinishConcurrentRendering();
+	g_bIsConcurrentlyLoading = false;
+
+	LOG->Trace( "Concurrent prepare of %s finished", sScreenName.c_str() );
+
+	/* We're done.  Send the message.  The screen is allowed to start
+	 * another concurrent prepare from this message. */
+	SendMessageToTopScreen( SM );
 }
 
 void ScreenManager::PushScreen( Screen *pNewScreen, bool bDeleteWhenDone, ScreenMessage SendOnPop )

@@ -83,6 +83,7 @@ private:
 
 	void LoadDelayedScreen();
 	ScreenMessage PopTopScreenInternal( bool bSendLoseFocus = true );
+	void RunConcurrentlyPrepareScreen();
 
 	// Keep these sounds always loaded, because they could be 
 	// played at any time.  We want to eliminate SOUND->PlayOnce
