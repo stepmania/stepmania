@@ -559,6 +559,13 @@ void ScreenManager::RunConcurrentlyPrepareScreen()
 	ScreenMessage SM = m_OnDonePreparingScreen;
 	m_OnDonePreparingScreen = SM_None;
 
+	/* If the screen is already prepared, we're all set. */
+	if( ScreenIsPrepped(sScreenName) )
+	{
+		SendMessageToTopScreen( SM );
+		return;
+	}
+
 	g_bIsConcurrentlyLoading = true;
 	StartConcurrentRendering();
 
