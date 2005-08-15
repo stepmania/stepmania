@@ -359,7 +359,7 @@ public:
 		return ! operator==( other );
 	}
 	
-	CString toString();
+	CString toString() const;
 	bool fromString( const CString &s );
 
 	bool IsValid() const { return device != DEVICE_NONE; };

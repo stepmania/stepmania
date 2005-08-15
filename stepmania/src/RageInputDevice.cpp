@@ -305,7 +305,7 @@ DeviceButton StringToDeviceButton( InputDevice device, const CString& s )
 	}
 }
 
-CString DeviceInput::toString() 
+CString DeviceInput::toString() const
 {
 	if( device == DEVICE_NONE )
 		return "";
