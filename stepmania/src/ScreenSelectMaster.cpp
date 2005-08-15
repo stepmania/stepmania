@@ -123,7 +123,7 @@ void ScreenSelectMaster::Init()
 
 		Lua *L = LUA->Get();
 		mc.PushSelf( L );
-		GAMESTATE->m_Environment->Set( L, "ThisGameCommand" );
+		lua_setglobal( L, "ThisGameCommand" );
 		LUA->Release( L );
 
 		// init icon
@@ -149,9 +149,7 @@ void ScreenSelectMaster::Init()
 			}
 		}
 
-		L = LUA->Get();
-		GAMESTATE->m_Environment->Unset( L, "ThisGameCommand" );
-		LUA->Release( L );
+		LUA->UnsetGlobal( "ThisGameCommand" );
 	}
 
 
