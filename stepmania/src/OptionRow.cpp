@@ -586,11 +586,11 @@ void OptionRow::UpdateEnabledDisabled()
 		bThisRowHasFocusByAll &= m_bRowHasFocus[p];
 	
 	bool bRowEnabled = !m_RowDef.m_vEnabledForPlayers.empty();
-	if( m_Frame.GetDestY() != m_fY )
+	if( m_Frame.DestTweenState() != m_FrameDestination.DestTweenState() )
 	{
 		m_Frame.StopTweening();
 		m_Frame.BeginTweening( m_pParentType->TWEEN_SECONDS );
-		m_Frame.SetY( m_fY );
+		m_Frame.DestTweenState() = m_FrameDestination.DestTweenState();
 	}
 
 	if( bThisRowHasFocusByAny )
@@ -718,16 +718,14 @@ void OptionRow::SetOptionIcon( PlayerNumber pn, const CString &sText, GameComman
 	// update bullet
 	Lua *L = LUA->Get();
 	gc.PushSelf( L );
-	GAMESTATE->m_Environment->Set( L, "ThisGameCommand" );
+	lua_setglobal( L, "ThisGameCommand" );
 	LUA->Release( L );
 
 	m_sprBullet->PlayCommand( "Refresh" );
 	if( m_OptionIcons[pn] != NULL )
 		m_OptionIcons[pn]->Set( pn, sText, false );
 
-	L = LUA->Get();
-	GAMESTATE->m_Environment->Unset( L, "ThisGameCommand" );
-	LUA->Release( L );
+	LUA->UnsetGlobal( "ThisGameCommand" );
 }
 
 BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow )
@@ -762,11 +760,12 @@ void OptionRow::GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, i
 
 	iWidthOut = int(roundf( text.GetZoomedWidth() ));
 	iXOut = int(roundf( text.GetDestX() ));
-	/* We update m_fY, change colors and tween items, and then tween rows to
-	* their final positions.  (This is so we don't tween colors, too.)  m_fY
+	/* We update m_FrameDestination, change colors and tween items, and then tween rows to
+	* their final positions.  (This is so we don't tween colors, too.)  m_FrameDestination
 	* is the actual destination position, even though we may not have set up the
 	* tween yet. */
-	iYOut = int(roundf( m_fY ));
+	float fY = m_FrameDestination.DestTweenState().pos.y;
+	iYOut = int(roundf(fY));
 }
 
 
