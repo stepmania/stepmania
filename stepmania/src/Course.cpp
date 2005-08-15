@@ -97,7 +97,6 @@ int CourseEntry::GetNumModChanges() const
 }
 
 // lua start
-/*
 #include "LuaBinding.h"
 
 class LunaCourseEntry: public Luna<CourseEntry>
@@ -123,7 +122,6 @@ public:
 };
 
 LUA_REGISTER_CLASS( CourseEntry )
-*/
 // lua end
 
 
@@ -1044,6 +1042,7 @@ public:
 	static int GetTranslitFullTitle( T* p, lua_State *L )	{ lua_pushstring(L, p->GetTranslitFullTitle() ); return 1; }
 	static int HasMods( T* p, lua_State *L )				{ lua_pushboolean(L, p->HasMods() ); return 1; }
 	static int GetCourseType( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetCourseType() ); return 1; }
+	static int GetCourseEntry( T* p, lua_State *L )			{ CourseEntry &ce = p->m_vEntries[IArg(1)]; ce.PushSelf(L); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1052,6 +1051,7 @@ public:
 		ADD_METHOD( GetTranslitFullTitle )
 		ADD_METHOD( HasMods )
 		ADD_METHOD( GetCourseType )
+		ADD_METHOD( GetCourseEntry )
 
 		Luna<T>::Register( L );
 	}
