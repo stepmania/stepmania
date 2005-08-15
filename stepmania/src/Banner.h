@@ -15,7 +15,7 @@ public:
 	Banner();
 	virtual ~Banner() { }
 
-	virtual bool Load( RageTextureID ID );
+	virtual bool Load( RageTextureID ID, bool bIsBanner=true );
 
 	virtual void Update( float fDeltaTime );
 
@@ -31,7 +31,7 @@ public:
 	void LoadRandom();
 	void LoadFallback();
 	void LoadCourseFallback();
-	void LoadCourseFallbackCharacterIcon();
+	void LoadFallbackCharacterIcon();
 
 	void SetScrolling( bool bScroll, float Percent = 0);
 	bool IsScrolling() const { return m_bScrolling; }

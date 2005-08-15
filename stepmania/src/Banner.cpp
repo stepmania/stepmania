@@ -18,12 +18,14 @@ Banner::Banner()
 	m_fPercentScrolling = 0;
 }
 
-bool Banner::Load( RageTextureID ID )
+/* Ugly: if sIsBanner is false, we're actually loading something other than a banner. */
+bool Banner::Load( RageTextureID ID, bool bIsBanner )
 {
 	if( ID.filename == "" )
 		ID = THEME->GetPathG("Common","fallback banner");
 
-	ID = SongBannerTexture(ID);
+	if( bIsBanner )
+		ID = SongBannerTexture(ID);
 
 	m_fPercentScrolling = 0;
 	m_bScrolling = false;
@@ -42,7 +44,7 @@ void Banner::Update( float fDeltaTime )
 
 	if( m_bScrolling )
 	{
-        m_fPercentScrolling += fDeltaTime/2;
+		m_fPercentScrolling += fDeltaTime/2;
 		m_fPercentScrolling -= (int)m_fPercentScrolling;
 
 		const RectF *pTextureRect = m_pTexture->GetTextureCoordRect(0);
@@ -116,9 +118,9 @@ void Banner::LoadCardFromCharacter( Character* pCharacter )
 
 void Banner::LoadIconFromCharacter( Character* pCharacter )	
 {
-	if( pCharacter == NULL )					LoadCourseFallbackCharacterIcon();
-	else if( pCharacter->GetIconPath() != "" )	Load( pCharacter->GetIconPath() );
-	else										LoadCourseFallbackCharacterIcon();
+	if( pCharacter == NULL )					LoadFallbackCharacterIcon();
+	else if( pCharacter->GetIconPath() != "" )	Load( pCharacter->GetIconPath(), false );
+	else										LoadFallbackCharacterIcon();
 
 	m_bScrolling = false;
 }
@@ -143,11 +145,11 @@ void Banner::LoadCourseFallback()
 	Load( THEME->GetPathG("Banner","course fallback") );
 }
 
-void Banner::LoadCourseFallbackCharacterIcon()
+void Banner::LoadFallbackCharacterIcon()
 {
 	Character *pCharacter = CHARMAN->GetDefaultCharacter();
 	if( pCharacter  &&  !pCharacter->GetIconPath().empty() )
-		Load( pCharacter->GetIconPath() );
+		Load( pCharacter->GetIconPath(), false );
 	else
 		LoadFallback();
 }
