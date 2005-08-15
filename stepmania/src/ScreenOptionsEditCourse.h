@@ -25,6 +25,8 @@ protected:
 	int GetCourseEntryIndexWithFocus() const;
 
 	Course m_Original;
+
+	vector<Song*>	m_vpDisplayedSongs;	// corresponds with the choices in the Entry row
 };
 
 #endif

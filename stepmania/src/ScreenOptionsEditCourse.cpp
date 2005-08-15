@@ -56,6 +56,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 	ASSERT( GAMESTATE->m_pCurCourse );
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	m_Original = *pCourse;
+	SONGMAN->GetSongs( m_vpDisplayedSongs );
 
 
 	vector<OptionRowDefinition> vDefs;
@@ -86,7 +87,8 @@ void ScreenOptionsEditCourse::BeginScreen()
 		int iEntryIndex = ce - pCourse->m_vEntries.begin();
 		def.m_sName = ssprintf( "Entry %d", iEntryIndex+1 );
 		def.m_vsChoices.clear();
-		def.m_vsChoices.push_back( ce->GetTextDescription() );
+		FOREACH_CONST( Song*, m_vpDisplayedSongs, s )
+			def.m_vsChoices.push_back( (*s)->GetTranslitFullTitle() );
 		vDefs.push_back( def );
 		vHands.push_back( NULL );
 	}
