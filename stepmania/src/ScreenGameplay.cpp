@@ -354,14 +354,13 @@ void ScreenGameplay::Init()
 		break;
 	}
 
-	m_ShowScoreboard=false;
-
+#if !defined(WITHOUT_NETWORKING)
 	//the following is only used in SMLAN/SMOnline
 	if( NSMAN->useSMserver && ( !GAMESTATE->PlayerUsingBothSides() ) )
 	{
+		m_ShowScoreboard = PREFSMAN->m_bEnableScoreboard;
 		PlayerNumber pn = GAMESTATE->GetFirstDisabledPlayer();
 		if( pn != PLAYER_INVALID )
-		{
 			FOREACH_NSScoreBoardColumn( col )
 			{
 				m_Scoreboard[col].LoadFromFont( THEME->GetPathF(m_sName,"scoreboard") );
@@ -371,10 +370,13 @@ void ScreenGameplay::Init()
 				this->AddChild( &m_Scoreboard[col] );
 				m_Scoreboard[col].SetText( NSMAN->m_Scoreboard[col] );
 				m_Scoreboard[col].SetVertAlign( align_top );
-				m_ShowScoreboard = true;
 			}
-		}
 	}
+	else
+		m_ShowScoreboard = false;
+#else
+	m_ShowScoreboard = false;
+#endif
 
 	m_MaxCombo.LoadFromFont( THEME->GetPathF(m_sName,"max combo") );
 	m_MaxCombo.SetName( "MaxCombo" );
@@ -1619,9 +1621,10 @@ void ScreenGameplay::Update( float fDeltaTime )
 			if( m_pLifeMeter[pn2] )
 				NSMAN->m_playerLife[pn2] = int(m_pLifeMeter[pn2]->GetLife()*10000);
 
-		FOREACH_NSScoreBoardColumn(cn)
-			if( m_ShowScoreboard && NSMAN->ChangedScoreboard(cn) )
-				m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
+		if (m_ShowScoreboard)
+			FOREACH_NSScoreBoardColumn(cn)
+				if( m_ShowScoreboard && NSMAN->ChangedScoreboard(cn) )
+					m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
 	}
 }
 

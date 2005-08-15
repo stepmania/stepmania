@@ -311,6 +311,12 @@ PrefsManager::PrefsManager() :
 	m_iPageThreshold			( "PageThreshold",					8 ),
 	m_bLogVirtualMemory 		( "LogVirtualMemory",				false )
 #endif
+
+#if !defined(WITHOUT_NETWORKING)
+	,
+	m_bEnableScoreboard			( "EnableScoreboard",				true )
+#endif
+
 {
 	Init();
 	ReadGlobalPrefsFromDisk();

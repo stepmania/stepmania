@@ -328,6 +328,10 @@ public:
 	Preference<bool>	m_bLogVirtualMemory; // (under debug) log the virtual memory allocation, etc.
 #endif
 
+#if !defined(WITHOUT_NETWORKING)
+	Preference<bool>	m_bEnableScoreboard;  //Alows disabling of scoreboard in network play
+#endif
+
 
 	// wrappers
 	CString GetVideoRenderers();

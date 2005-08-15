@@ -15,6 +15,7 @@
 enum {
 	PO_CONNECTION,
 	PO_SERVER,
+	PO_SCOREBOARD,
 	NUM_NETWORK_OPTIONS_LINES
 };
 
@@ -23,9 +24,16 @@ enum {
 	NO_START_SERVER
 };
 
+enum
+{
+	NO_SCOREBOARD_OFF=0,
+	NO_SCOREBOARD_ON
+};
+
 OptionRowDefinition g_NetworkOptionsLines[NUM_NETWORK_OPTIONS_LINES] = {
 	OptionRowDefinition( "Connection",	true, "PRESS START" ),
-	OptionRowDefinition( "Server",		true, "PRESS START" )
+	OptionRowDefinition( "Server",		true, "PRESS START" ),
+	OptionRowDefinition( "Scoreboard",		true, "PRESS START" )
 };
 
 AutoScreenMessage( SM_DoneConnecting )
@@ -54,6 +62,10 @@ void ScreenNetworkOptions::Init()
 	g_NetworkOptionsLines[PO_SERVER].m_vsChoices.clear();
 	g_NetworkOptionsLines[PO_SERVER].m_vsChoices.push_back("Stop");
 	g_NetworkOptionsLines[PO_SERVER].m_vsChoices.push_back("Start...");
+
+	g_NetworkOptionsLines[PO_SCOREBOARD].m_vsChoices.clear();
+	g_NetworkOptionsLines[PO_SCOREBOARD].m_vsChoices.push_back("Off");
+	g_NetworkOptionsLines[PO_SCOREBOARD].m_vsChoices.push_back("On");
 	
 	//Enable all lines for all players
 	for ( unsigned int i = 0; i < NUM_NETWORK_OPTIONS_LINES; i++ )
@@ -64,6 +76,8 @@ void ScreenNetworkOptions::Init()
 	vector<OptionRowHandler*> vHands( vDefs.size(), NULL );
 
 	InitMenu( vDefs, vHands );
+
+	m_pRows[PO_SCOREBOARD]->SetOneSharedSelection(PREFSMAN->m_bEnableScoreboard);
 
 	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions","music") );
 }
@@ -138,6 +152,12 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 			break;
 		}
 		break;
+	case PO_SCOREBOARD:
+		if (m_pRows[PO_SCOREBOARD]->GetOneSharedSelection() == NO_SCOREBOARD_ON)
+			PREFSMAN->m_bEnableScoreboard.Set(true);
+		else
+			PREFSMAN->m_bEnableScoreboard.Set(false);
+		break;
 	default:
 		ScreenOptions::MenuStart( pn, type );
 	}
@@ -154,7 +174,7 @@ void ScreenNetworkOptions::UpdateConnectStatus( )
 #endif
 
 /*
- * (c) 2004 Charles Lohr
+ * (c) 2004 Charles Lohr, Josh Allen
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
