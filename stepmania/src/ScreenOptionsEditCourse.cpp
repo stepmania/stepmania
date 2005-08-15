@@ -48,8 +48,10 @@ ScreenOptionsEditCourse::ScreenOptionsEditCourse( CString sName ) : ScreenOption
 void ScreenOptionsEditCourse::Init()
 {
 	ScreenOptions::Init();
+}
 
-
+void ScreenOptionsEditCourse::BeginScreen()
+{
 	// save a backup that we'll use if we revert.
 	ASSERT( GAMESTATE->m_pCurCourse );
 	Course *pCourse = GAMESTATE->m_pCurCourse;
@@ -96,10 +98,7 @@ void ScreenOptionsEditCourse::Init()
 	vHands.push_back( NULL );
 
 	ScreenOptions::InitMenu( vDefs, vHands );
-}
 
-void ScreenOptionsEditCourse::BeginScreen()
-{
 	ScreenOptions::BeginScreen();
 
 	if( GAMESTATE->m_iEditCourseEntryIndex > -1 )
