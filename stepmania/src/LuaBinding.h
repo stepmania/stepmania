@@ -244,7 +244,7 @@ protected:
 	template<> const char *Luna<T>::m_sClassName = #T; \
 	template<> const char *Luna<T>::m_sBaseClassName = #B; \
 	template<> Luna<T>::RegTypeVector* Luna<T>::s_pvMethods = NULL; \
-	static Luna##T registera; \
+	static Luna##T registera##T; \
 	/* Call PushSelf, so we always call the derived Luna<T>::Push. */ \
 	namespace LuaHelpers { template<> void Push( T *pObject, lua_State *L ) { pObject->PushSelf( L ); } }
 
