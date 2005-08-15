@@ -13,6 +13,8 @@
 
 static ThemeMetric<CString> NEW_PROFILE_DEFAULT_NAME(	"ScreenOptionsManageProfiles", "NewProfileDefaultName" );
 
+#define SHOW_CREATE_NEW (!PROFILEMAN->FixedProfiles())
+
 AutoScreenMessage( SM_BackFromEnterNameForNew )
 AutoScreenMessage( SM_BackFromRename )
 AutoScreenMessage( SM_BackFromDeleteConfirm )
@@ -133,6 +135,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 
 	int iIndex = 0;
 
+	if( SHOW_CREATE_NEW )
 	{
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( "Create New" );
@@ -160,7 +163,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 		OptionRowHandlerSimple *pHand = new OptionRowHandlerSimple;
 		m_OptionRowHandlers.push_back( pHand );
 		GameCommand &gc = pHand->m_gc;
-		CString sCommand = "screen,ScreenOptionsEditProfile";
+		CString sCommand = "screen,ScreenOptionsEditProfile;profileid,"+*s;
 		gc.Load( iIndex++, ParseCommands(sCommand) );
 	}
 
@@ -313,7 +316,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( PlayerNumber pn, const Input
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 
-	if( iCurRow == 0 )	// "create new"
+	if( SHOW_CREATE_NEW && iCurRow == 0 )	// "create new"
 	{
 		vector<CString> vsUsedNames;
 		PROFILEMAN->GetLocalProfileDisplayNames( vsUsedNames );
@@ -337,7 +340,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( PlayerNumber pn, const Input
 	{
 		this->BeginFadingOut();
 	}
-	else	// a course
+	else	// a profile
 	{
 		g_TempMenu.rows.clear();
 
@@ -380,13 +383,13 @@ void ScreenOptionsManageProfiles::ExportOptions( int iRow, const vector<PlayerNu
 CString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
-	if( iCurRow == 0 )
+	if( SHOW_CREATE_NEW && iCurRow == 0 )	// "create new"
 		return NULL;
 	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
 		return NULL;
 	
 	// a profile
-	int iIndex = iCurRow - 1;
+	int iIndex = iCurRow + (SHOW_CREATE_NEW ? -1 : 0);
 	return m_vsLocalProfileID[iIndex];
 }
 
