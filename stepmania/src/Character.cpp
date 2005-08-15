@@ -2,10 +2,13 @@
 #include "Character.h"
 #include "IniFile.h"
 #include "RageUtil.h"
+#include "RageTextureID.h"
 
 
 bool Character::Load( CString sCharDir )
 {
+	m_Preload.UnloadAll();
+	
 	// Save character directory
 	if( sCharDir.Right(1) != "/" )
 		sCharDir += "/";
@@ -32,6 +35,10 @@ bool Character::Load( CString sCharDir )
 
 	// get display name (if any)
 	ini.GetValue( "Character", "DisplayName", m_sDisplayName );
+
+	CString sIconPath = GetIconPath();
+	if( !sIconPath.empty() )
+		m_Preload.Load( sIconPath );
 
 	return true;
 }

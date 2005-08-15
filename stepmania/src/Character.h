@@ -4,6 +4,7 @@
 #define Character_H
 
 #include "GameConstantsAndTypes.h"
+#include "RageTexturePreloader.h"
 struct lua_State;
 typedef lua_State Lua;
 
@@ -51,6 +52,7 @@ public:
 	bool	m_bUsableInRave;	
 
 	CString	m_sAttacks[NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
+	RageTexturePreloader m_Preload;
 };
 
 #endif
