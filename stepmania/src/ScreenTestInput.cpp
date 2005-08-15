@@ -115,6 +115,21 @@ void ScreenTestInput::Update( float fDeltaTime )
 
 void ScreenTestInput::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
+	CString sMessage = DeviceI.toString();
+	switch( type )
+	{
+	case IET_FIRST_PRESS:
+	case IET_RELEASE:
+		{
+			switch( type )
+			{
+			case IET_FIRST_PRESS:	sMessage += "Pressed";	break;
+			case IET_RELEASE:		sMessage += "Released";	break;
+			}
+			MESSAGEMAN->Broadcast( sMessage );
+		}
+	}
+
 	if( type != IET_FIRST_PRESS && type != IET_SLOW_REPEAT )
 		return;	// ignore
 
