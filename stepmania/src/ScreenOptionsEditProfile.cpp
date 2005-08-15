@@ -132,7 +132,7 @@ void ScreenOptionsEditProfile::AfterChangeValueInRow( int iRow, PlayerNumber pn 
 void ScreenOptionsEditProfile::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
 {
 	int iRow = GetCurrentRow();;
-	OptionRow &row = *m_pRows[iRow];
+	//OptionRow &row = *m_pRows[iRow];
 
 	switch( iRow )
 	{
