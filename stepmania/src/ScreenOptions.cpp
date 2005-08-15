@@ -726,7 +726,7 @@ void ScreenOptions::PositionItems()
 		row.GetFrameDestination().PushSelf( L );
 		LuaHelpers::Push( pos, L );
 		LuaHelpers::Push( i, L );
-		LuaHelpers::Push( NUM_ROWS_SHOWN, L );
+		LuaHelpers::Push( min( (int)Rows.size(), (int)NUM_ROWS_SHOWN ), L );
 		lua_call( L, 4, 0 ); // 4 args, 0 results
 		LUA->Release(L);
 
