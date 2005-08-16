@@ -66,7 +66,7 @@ public:
 			COMPARE( fSkewX );
 			COMPARE( crop );
 			COMPARE( fade );
-			for( int i=0; i<ARRAYSIZE(diffuse); i++ )
+			for( unsigned i=0; i<ARRAYSIZE(diffuse); i++ )
 				COMPARE( diffuse[i] );
 			COMPARE( glow );
 			COMPARE( aux );
