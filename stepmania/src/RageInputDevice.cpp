@@ -305,6 +305,35 @@ DeviceButton StringToDeviceButton( InputDevice device, const CString& s )
 	}
 }
 
+int GetNumDeviceButtons( InputDevice device )
+{
+	switch( device )
+	{
+	case DEVICE_KEYBOARD:	return NUM_KEYS;
+	case DEVICE_JOY1:
+	case DEVICE_JOY2:
+	case DEVICE_JOY3:
+	case DEVICE_JOY4:
+	case DEVICE_JOY5:
+	case DEVICE_JOY6:
+	case DEVICE_JOY7:
+	case DEVICE_JOY8:
+	case DEVICE_JOY9:
+	case DEVICE_JOY10:
+	case DEVICE_JOY11:
+	case DEVICE_JOY12:
+	case DEVICE_JOY13:
+	case DEVICE_JOY14:
+	case DEVICE_JOY15:
+	case DEVICE_JOY16:	return NUM_JOYSTICK_BUTTONS;
+	case DEVICE_PUMP1:
+	case DEVICE_PUMP2:	return NUM_PUMP_PAD_BUTTONS;
+	case DEVICE_MIDI:	return NUM_MIDI_CHANNELS;
+	case DEVICE_PARA1:	return NUM_PARA_PAD_BUTTONS;
+	default:	ASSERT_M(0,ssprintf("%d",device));	return 0;
+	}
+};
+
 CString DeviceInput::toString() const
 {
 	if( device == DEVICE_NONE )
