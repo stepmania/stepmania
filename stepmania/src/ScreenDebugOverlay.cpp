@@ -39,12 +39,14 @@ ScreenDebugOverlay::~ScreenDebugOverlay()
 
 struct MapDebugToDI
 {
-	DeviceInput holdForDebug;
+	DeviceInput holdForDebug1;
+	DeviceInput holdForDebug2;
 	DeviceInput debugButton[NUM_DEBUG_LINES];
 	DeviceInput gameplayButton[NUM_DEBUG_LINES];
 	void Clear()
 	{
-		holdForDebug.MakeInvalid();
+		holdForDebug1.MakeInvalid();
+		holdForDebug2.MakeInvalid();
 		FOREACH_DebugLine(i)
 		{
 			debugButton[i].MakeInvalid();
@@ -74,7 +76,8 @@ void ScreenDebugOverlay::Init()
 	{
 		g_Mappings.Clear();
 
-		g_Mappings.holdForDebug = DeviceInput(DEVICE_KEYBOARD, KEY_F3);
+		g_Mappings.holdForDebug1 = DeviceInput(DEVICE_KEYBOARD, KEY_F3);
+		g_Mappings.holdForDebug2.MakeInvalid();
 
 		g_Mappings.gameplayButton[0]	= DeviceInput(DEVICE_KEYBOARD, KEY_F8);
 		g_Mappings.gameplayButton[1]	= DeviceInput(DEVICE_KEYBOARD, KEY_F7);
@@ -307,11 +310,16 @@ void ScreenDebugOverlay::UpdateText()
 
 bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
 {
-	if( DeviceI == g_Mappings.holdForDebug )
+	if( DeviceI == g_Mappings.holdForDebug1 || 
+		DeviceI == g_Mappings.holdForDebug2 )
 	{
-		if( type == IET_FIRST_PRESS )
+		bool bHoldingBoth =
+			(!g_Mappings.holdForDebug1.IsValid() || INPUTFILTER->IsBeingPressed(g_Mappings.holdForDebug1)) &&
+			(!g_Mappings.holdForDebug2.IsValid() || INPUTFILTER->IsBeingPressed(g_Mappings.holdForDebug2));
+			
+		if( bHoldingBoth )
 			g_bIsDisplayed = true;
-		else if( type == IET_RELEASE )
+		else
 			g_bIsDisplayed = false;
 	}
 
