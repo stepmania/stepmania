@@ -7,35 +7,6 @@
 #include "BitmapText.h"
 #include "Quad.h"
 
-enum DebugLine
-{
-	DebugLine_Autoplay,
-	DebugLine_AssistTick,
-	DebugLine_Autosync,
-	DebugLine_CoinMode,
-	DebugLine_Slow,
-	DebugLine_Halt,
-	DebugLine_LightsDebug,
-	DebugLine_MonkeyInput,
-	DebugLine_Stats,
-	DebugLine_Vsync,
-	DebugLine_ScreenTestMode,
-	DebugLine_ClearMachineStats,
-	DebugLine_FillMachineStats,
-	DebugLine_SendNotesEnded,
-	DebugLine_ReloadCurrentScreen,
-	DebugLine_ReloadTheme,
-	DebugLine_WriteProfiles,
-	DebugLine_WritePreferences,
-	DebugLine_MenuTimer,
-	DebugLine_FlushLog,
-	DebugLine_VolumeUp,
-	DebugLine_VolumeDown,
-	DebugLine_Uptime,
-	NUM_DEBUG_LINES
-};
-#define FOREACH_DebugLine( i ) FOREACH_ENUM( DebugLine, NUM_DEBUG_LINES, i )
-
 class ScreenDebugOverlay : public Screen
 {
 public:
@@ -52,8 +23,8 @@ private:
 
 	Quad m_Quad;
 	BitmapText m_textHeader;
-	BitmapText m_textButton[NUM_DEBUG_LINES];
-	BitmapText m_textFunction[NUM_DEBUG_LINES];
+	vector<BitmapText*> m_vptextButton;
+	vector<BitmapText*> m_vptextFunction;
 };
 
 
