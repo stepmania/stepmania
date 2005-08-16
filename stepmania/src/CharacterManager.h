@@ -18,6 +18,9 @@ public:
 	Character* GetDefaultCharacter();
 	Character* GetCharacterFromID( CString sCharacterID );
 
+	void DemandGraphics();
+	void UndemandGraphics();
+
 	// Lua
 	void PushSelf( lua_State *L );
 

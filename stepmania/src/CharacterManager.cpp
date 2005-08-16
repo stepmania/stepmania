@@ -2,6 +2,7 @@
 #include "CharacterManager.h"
 #include "Character.h"
 #include "GameState.h"
+#include "Foreach.h"
 
 #define CHARACTERS_DIR "/Characters/"
 
@@ -76,6 +77,18 @@ Character* CharacterManager::GetDefaultCharacter()
 	/* We always have the default character. */
 	ASSERT(0);
 	return NULL;
+}
+
+void CharacterManager::DemandGraphics()
+{
+	FOREACH( Character*, m_pCharacters, c )
+		(*c)->DemandGraphics();
+}
+
+void CharacterManager::UndemandGraphics()
+{
+	FOREACH( Character*, m_pCharacters, c )
+		(*c)->UndemandGraphics();
 }
 
 Character* CharacterManager::GetCharacterFromID( CString sCharacterID )

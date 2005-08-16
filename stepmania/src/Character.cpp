@@ -7,8 +7,6 @@
 
 bool Character::Load( CString sCharDir )
 {
-	m_Preload.UnloadAll();
-	
 	// Save character directory
 	if( sCharDir.Right(1) != "/" )
 		sCharDir += "/";
@@ -35,10 +33,6 @@ bool Character::Load( CString sCharDir )
 
 	// get display name (if any)
 	ini.GetValue( "Character", "DisplayName", m_sDisplayName );
-
-	CString sIconPath = GetIconPath();
-	if( !sIconPath.empty() )
-		m_Preload.Load( sIconPath );
 
 	return true;
 }
@@ -177,6 +171,18 @@ bool Character::Has2DElems()
 	if( DoesFileExist(m_sCharDir + "2DIdle/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		return true;
 	return false;
+}
+
+void Character::DemandGraphics()
+{
+	CString s = GetIconPath();
+	if( !s.empty() )
+		m_Preload.Load( s );
+}
+
+void Character::UndemandGraphics()
+{
+	m_Preload.UnloadAll();
 }
 
 // lua start

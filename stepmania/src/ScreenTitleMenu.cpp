@@ -16,6 +16,7 @@
 #include "Game.h"
 #include "InputMapper.h"
 #include "ProfileManager.h"
+#include "CharacterManager.h"
 
 #define COIN_MODE_CHANGE_SCREEN		THEME->GetMetric (m_sName,"CoinModeChangeScreen")
 
@@ -49,12 +50,16 @@ void ScreenTitleMenu::Init()
 
 	this->SortByDrawOrder();
 
+	CHARMAN->DemandGraphics();
+
 	SOUND->PlayOnceFromAnnouncer( "title menu game name" );
 }
 
 ScreenTitleMenu::~ScreenTitleMenu()
 {
 	LOG->Trace( "ScreenTitleMenu::~ScreenTitleMenu()" );
+	
+	CHARMAN->UndemandGraphics();
 }
 
 void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )

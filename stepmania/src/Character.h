@@ -34,6 +34,9 @@ public:
 		return m_sCharacterID.CompareNoCase("default") == 0;
 	}
 
+	void DemandGraphics();
+	void UndemandGraphics();
+
 	//
 	// Lua
 	//
