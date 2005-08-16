@@ -28,6 +28,7 @@ enum DebugLine
 	DebugLine_WriteProfiles,
 	DebugLine_WritePreferences,
 	DebugLine_MenuTimer,
+	DebugLine_FlushLog,
 	DebugLine_VolumeUp,
 	DebugLine_VolumeDown,
 	DebugLine_Uptime,

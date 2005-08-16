@@ -98,8 +98,9 @@ void ScreenDebugOverlay::Init()
 		g_Mappings.debugButton[16] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
 		g_Mappings.debugButton[17] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
 		g_Mappings.debugButton[18] = DeviceInput(DEVICE_KEYBOARD, KEY_Cy);
-		g_Mappings.debugButton[19] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
-		g_Mappings.debugButton[20] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
+		g_Mappings.debugButton[19] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
+		g_Mappings.debugButton[20] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
+		g_Mappings.debugButton[21] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
 
 	}
 
@@ -206,6 +207,7 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_WriteProfiles:		s1="Write Profiles";		break;
 		case DebugLine_WritePreferences:	s1="Write Preferences";		break;
 		case DebugLine_MenuTimer:			s1="Menu Timer";			break;
+		case DebugLine_FlushLog:			s1="Flush Log";				break;
 		case DebugLine_VolumeUp:			s1="Volume Up";				break;
 		case DebugLine_VolumeDown:			s1="Volume Down";			break;
 		case DebugLine_Uptime:				s1="Uptime";				break;
@@ -234,6 +236,7 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_WriteProfiles:		bOn=true;								break;
 		case DebugLine_WritePreferences:	bOn=true;								break;
 		case DebugLine_MenuTimer:			bOn=PREFSMAN->m_bMenuTimer.Get();		break;
+		case DebugLine_FlushLog:			bOn=true;								break;
 		case DebugLine_VolumeUp:			bOn=true;								break;
 		case DebugLine_VolumeDown:			bOn=true;								break;
 		case DebugLine_Uptime:				bOn=false;								break;
@@ -278,6 +281,7 @@ void ScreenDebugOverlay::UpdateText()
 		case DebugLine_WriteProfiles:		s2="";					break;
 		case DebugLine_WritePreferences:	s2="";					break;
 		case DebugLine_MenuTimer:			s2="";					break;
+		case DebugLine_FlushLog:			s2="";					break;
 		case DebugLine_VolumeUp:			s2=ssprintf("%.0f%%",PREFSMAN->m_fSoundVolume.Get()*100);	break;
 		case DebugLine_VolumeDown:			s2="";					break;
 		case DebugLine_Uptime:				s2=SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart());	break;
@@ -458,6 +462,9 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 				break;
 			case DebugLine_MenuTimer:
 				PREFSMAN->m_bMenuTimer.Set( !PREFSMAN->m_bMenuTimer );
+				break;
+			case DebugLine_FlushLog:
+				LOG->Flush();
 				break;
 			case DebugLine_VolumeUp:
 			case DebugLine_VolumeDown:
