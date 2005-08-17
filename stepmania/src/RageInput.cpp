@@ -3,8 +3,8 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include "arch/InputHandler/InputHandler.h"
-
 #include "arch/arch.h"
+#include "Foreach.h"
 
 RageInput*		INPUTMAN	= NULL;		// globally accessable input device
 
@@ -50,6 +50,22 @@ void RageInput::AddHandler( InputHandler *pHandler )
 {
 	ASSERT( pHandler != NULL );
 	m_pDevices.push_back( pHandler );
+}
+
+CString RageInput::GetDeviceSpecificInputString( const DeviceInput &di )
+{
+	FOREACH( InputHandler*, m_pDevices, i )
+	{
+		vector<InputDevice> vDevices;
+		vector<CString> vDescriptions;
+		(*i)->GetDevicesAndDescriptions( vDevices, vDescriptions );
+
+		bool bMatch = find(vDevices.begin(), vDevices.end(), di.device) != vDevices.end();
+		if( bMatch )
+			return (*i)->GetDeviceSpecificInputString(di);
+	}
+
+	return di.toString();
 }
 
 

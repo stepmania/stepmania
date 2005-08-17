@@ -17,6 +17,7 @@
 #include "Bookkeeper.h"
 #include "ProfileManager.h"
 #include "CodeDetector.h"
+#include "RageInput.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
@@ -90,12 +91,11 @@ static MapDebugToDI g_Mappings;
 
 static CString GetDebugButtonName( int i )
 {
-	// TODO: Make arch appropriate.
 	vector<CString> v;
 	if( g_Mappings.debugButton[i].IsValid() )
-		v.push_back( g_Mappings.debugButton[i].toString() );
+		v.push_back( INPUTMAN->GetDeviceSpecificInputString(g_Mappings.debugButton[i]) );
 	if( g_Mappings.gameplayButton[i].IsValid() )
-		v.push_back( g_Mappings.gameplayButton[i].toString()+" in gameplay" );
+		v.push_back( INPUTMAN->GetDeviceSpecificInputString(g_Mappings.gameplayButton[i])+" in gameplay" );
 	return join( " or ", v );
 }
 

@@ -81,7 +81,7 @@ void ScreenTestInput::Update( float fDeltaTime )
 				continue;
 
 			CString sTemp;
-			sTemp += di.toString();
+			sTemp += INPUTMAN->GetDeviceSpecificInputString(di);
 			
 			GameInput gi;
 			if( INPUTMAPPER->DeviceToGame(di,gi) )

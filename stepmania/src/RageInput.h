@@ -18,6 +18,7 @@ public:
 	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vsDescriptionsOut );
 	void WindowReset();
 	void AddHandler( InputHandler *pHandler );
+	CString GetDeviceSpecificInputString( const DeviceInput &di );
 
 	// Lua
 	void PushSelf( lua_State *L );
