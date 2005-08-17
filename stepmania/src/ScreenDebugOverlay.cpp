@@ -559,7 +559,7 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineStats g_DebugLineReloadCurrentScreen;
+static DebugLineReloadCurrentScreen g_DebugLineReloadCurrentScreen;
 
 class DebugLineReloadTheme : public IDebugLine
 {
