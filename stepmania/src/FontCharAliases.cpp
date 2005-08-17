@@ -310,9 +310,9 @@ static void InitCharAliases()
 		{ "auxl3",		0xE016 },
 		{ "auxr1",		0xE017 },
 		{ "auxr2",		0xE018 },
-		{ "auxr3",		0xE017 },
-		{ "auxselect",	0xE018 },
-		{ "auxstart",	0xE018 },
+		{ "auxr3",		0xE019 },
+		{ "auxselect",	0xE01A },
+		{ "auxstart",	0xE01B },
 
 		{ NULL, 	0 }
 	};
