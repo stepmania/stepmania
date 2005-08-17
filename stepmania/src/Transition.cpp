@@ -4,6 +4,8 @@
 #include "ScreenManager.h"
 #include "IniFile.h"
 #include "RageFile.h"
+#include "Screen.h"
+#include "GameState.h"
 
 
 /*
@@ -73,7 +75,11 @@ void Transition::UpdateInternal( float fDeltaTime )
 	/* Start the transition on the first update, not in the ctor, so
 	 * we don't play a sound while our parent is still loading. */
 	if( m_bFirstUpdate )
-		m_sound.PlayCopyOfRandom();
+	{
+		bool bIsAttract = SCREENMAN->GetTopScreen()->GetScreenType() == attract;
+		if( !bIsAttract || GAMESTATE->IsTimeToPlayAttractSounds() )
+			m_sound.PlayCopyOfRandom();
+	}
 
 	// Check this before running Update, so we draw the last frame of the finished
 	// transition before sending m_MessageToSendWhenDone.
