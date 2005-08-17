@@ -18,12 +18,14 @@
 #include "ProfileManager.h"
 #include "CodeDetector.h"
 #include "RageInput.h"
+#include "RageDisplay.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
 static bool g_bIsHalt = false;
 static RageTimer g_HaltTimer(RageZeroTimer);
-
+static float g_fImageScaleCurrent = 1;
+static float g_fImageScaleDestination = 1;
 
 //
 // self-registering debug lines
@@ -138,8 +140,9 @@ void ScreenDebugOverlay::Init()
 		g_Mappings.debugButton[17] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
 		g_Mappings.debugButton[18] = DeviceInput(DEVICE_KEYBOARD, KEY_Cy);
 		g_Mappings.debugButton[19] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
-		g_Mappings.debugButton[20] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
-		g_Mappings.debugButton[21] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
+		g_Mappings.debugButton[20] = DeviceInput(DEVICE_KEYBOARD, KEY_Ci);
+		g_Mappings.debugButton[21] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
+		g_Mappings.debugButton[22] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
 
 	}
 
@@ -183,6 +186,17 @@ void ScreenDebugOverlay::Init()
 
 void ScreenDebugOverlay::Update( float fDeltaTime )
 {
+	bool bCenteringNeedsUpdate = g_fImageScaleCurrent != g_fImageScaleDestination;
+	fapproach( g_fImageScaleCurrent, g_fImageScaleDestination, fDeltaTime );
+	if( bCenteringNeedsUpdate )
+	{
+		DISPLAY->ChangeCentering(
+			PREFSMAN->m_iCenterImageTranslateX, 
+			PREFSMAN->m_iCenterImageTranslateY,
+			PREFSMAN->m_fCenterImageAddWidth - SCREEN_WIDTH + (int)(g_fImageScaleCurrent*SCREEN_WIDTH),
+			PREFSMAN->m_fCenterImageAddHeight - SCREEN_HEIGHT + (int)(g_fImageScaleCurrent*SCREEN_HEIGHT) );
+	}
+
 	Screen::Update(fDeltaTime);
 
 	this->SetVisible( g_bIsDisplayed );
@@ -645,6 +659,22 @@ class DebugLineFlushLog : public IDebugLine
 	}
 };
 static DebugLineFlushLog g_DebugLineFlushLog;
+
+class DebugLinePullBackCamera : public IDebugLine
+{
+	virtual CString GetDescription() { return "Pull Back Camera"; }
+	virtual CString GetValue() { return NULL; }
+	virtual bool IsEnabled() { return g_fImageScaleDestination != 1; }
+	virtual void Do( CString &sMessageOut )
+	{
+		if( g_fImageScaleDestination == 1 )
+			g_fImageScaleDestination = 0.5f;
+		else
+			g_fImageScaleDestination = 1;
+		IDebugLine::Do( sMessageOut );
+	}
+};
+static DebugLinePullBackCamera g_DebugLinePullBackCamera;
 
 class DebugLineVolumeUp : public IDebugLine
 {
