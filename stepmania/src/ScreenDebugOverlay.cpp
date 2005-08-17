@@ -42,7 +42,14 @@ public:
 	virtual CString GetDescription() = 0;
 	virtual CString GetValue() = 0;
 	virtual bool IsEnabled() = 0;
-	virtual void Do() = 0;
+	virtual void Do( CString &sMessageOut )
+	{
+		CString s1 = GetDescription();
+		CString s2 = GetValue();
+		if( !s2.empty() )
+			s1 += " - ";
+		sMessageOut = s1 + s2;
+	};
 };
 
 
@@ -267,14 +274,11 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 			txt1.BeginTweening( 0.2f, Actor::TWEEN_LINEAR );
 			txt1.SetZoom( fZoom );
 
-			BitmapText &txt2 = *m_vptextFunction[i];
-
-			(*p)->Do();
+			CString sMessage;
+			(*p)->Do( sMessage );
+			SCREENMAN->SystemMessage( sMessage );
 
 			UpdateText();
-
-			SCREENMAN->SystemMessage( txt2.GetText() );
-
 			return true;
 		}
 	}
@@ -335,13 +339,14 @@ class DebugLineAutoplay : public IDebugLine
 		}
 	}
 	virtual bool IsEnabled() { return PREFSMAN->m_AutoPlay.Get() != PC_HUMAN; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		PlayerController pc = (PlayerController)(PREFSMAN->m_AutoPlay+1);
 		wrap( (int&)pc, NUM_PLAYER_CONTROLLERS );
 		PREFSMAN->m_AutoPlay.Set( pc );
 		FOREACH_HumanPlayer(pn)
 			GAMESTATE->m_pPlayerState[pn]->m_PlayerController = PREFSMAN->m_AutoPlay;
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineAutoplay g_DebugLineAutoplay;
@@ -351,12 +356,13 @@ class DebugLineAssistTick : public IDebugLine
 	virtual CString GetDescription() { return "AssistTick"; }
 	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
 	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.m_bAssistTick; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		GAMESTATE->m_SongOptions.m_bAssistTick = !GAMESTATE->m_SongOptions.m_bAssistTick;
 		// Store this change, so it sticks if we change songs
 		GAMESTATE->m_StoredSongOptions.m_bAssistTick = GAMESTATE->m_SongOptions.m_bAssistTick;
 		MESSAGEMAN->Broadcast( Message_AssistTickChanged );
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineAssistTick g_DebugLineAssistTick;
@@ -375,8 +381,13 @@ class DebugLineAutosync : public IDebugLine
 		}
 	}
 	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.m_AutosyncType!=SongOptions::AUTOSYNC_OFF; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
+		SongOptions::AutosyncType as = (SongOptions::AutosyncType)(GAMESTATE->m_SongOptions.m_AutosyncType+1);
+		wrap( (int&)as, SongOptions::NUM_AUTOSYNC_TYPES );
+		GAMESTATE->m_SongOptions.m_AutosyncType = as;
+		MESSAGEMAN->Broadcast( Message_AutosyncChanged );
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineAutosync g_DebugLineAutosync;
@@ -386,12 +397,13 @@ class DebugLineCoinMode : public IDebugLine
 	virtual CString GetDescription() { return "CoinMode"; }
 	virtual CString GetValue() { return CoinModeToString(PREFSMAN->m_CoinMode); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		CoinMode cm = (CoinMode)(PREFSMAN->m_CoinMode+1);
 		wrap( (int&)cm, NUM_COIN_MODES );
 		PREFSMAN->m_CoinMode.Set( cm );
 		SCREENMAN->RefreshCreditsMessages();
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineCoinMode g_DebugLineCoinMode;
@@ -401,10 +413,11 @@ class DebugLineSlow : public IDebugLine
 	virtual CString GetDescription() { return "Slow"; }
 	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
 	virtual bool IsEnabled() { return g_bIsSlow; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		g_bIsSlow = !g_bIsSlow;
 		SetSpeed();
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineSlow g_DebugLineSlow;
@@ -414,11 +427,12 @@ class DebugLineHalt : public IDebugLine
 	virtual CString GetDescription() { return "Halt"; }
 	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
 	virtual bool IsEnabled() { return g_bIsHalt; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		g_bIsHalt = !g_bIsHalt;
 		g_HaltTimer.Touch();
 		SetSpeed();
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineHalt g_DebugLineHalt;
@@ -428,9 +442,10 @@ class DebugLineLightsDebug : public IDebugLine
 	virtual CString GetDescription() { return "Lights Debug"; }
 	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
 	virtual bool IsEnabled() { return PREFSMAN->m_bDebugLights.Get(); }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		PREFSMAN->m_bDebugLights.Set( !PREFSMAN->m_bDebugLights );
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineLightsDebug g_DebugLineLightsDebug;
@@ -440,9 +455,10 @@ class DebugLineMonkeyInput : public IDebugLine
 	virtual CString GetDescription() { return "MonkeyInput"; }
 	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
 	virtual bool IsEnabled() { return PREFSMAN->m_bMonkeyInput.Get(); }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		PREFSMAN->m_bMonkeyInput.Set( !PREFSMAN->m_bMonkeyInput );
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineMonkeyInput g_DebugLineMonkeyInput;
@@ -452,9 +468,10 @@ class DebugLineStats : public IDebugLine
 	virtual CString GetDescription() { return "Rendering Stats"; }
 	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
 	virtual bool IsEnabled() { return PREFSMAN->m_bShowStats.Get(); }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		PREFSMAN->m_bShowStats.Set( !PREFSMAN->m_bShowStats );
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineStats g_DebugLineStats;
@@ -464,10 +481,11 @@ class DebugLineVsync : public IDebugLine
 	virtual CString GetDescription() { return "Vsync"; }
 	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
 	virtual bool IsEnabled() { return PREFSMAN->m_bVsync.Get(); }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		PREFSMAN->m_bVsync.Set( !PREFSMAN->m_bVsync );
 		ApplyGraphicOptions();
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineVsync g_DebugLineVsync;
@@ -477,9 +495,10 @@ class DebugLineScreenTestMode : public IDebugLine
 	virtual CString GetDescription() { return "Screen Test Mode"; }
 	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
 	virtual bool IsEnabled() { return PREFSMAN->m_bScreenTestMode.Get(); }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		PREFSMAN->m_bScreenTestMode.Set( !PREFSMAN->m_bScreenTestMode );
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineScreenTestMode g_DebugLineScreenTestMode;
@@ -489,11 +508,12 @@ class DebugLineClearMachineStats : public IDebugLine
 	virtual CString GetDescription() { return "Clear Machine Stats"; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		GameCommand gc;
 		gc.Load( 0, ParseCommands("ClearMachineStats") );
 		gc.ApplyToAllPlayers();
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineClearMachineStats g_DebugClearMachineStats;
@@ -503,11 +523,12 @@ class DebugLineFillMachineStats : public IDebugLine
 	virtual CString GetDescription() { return "Fill Machine Stats"; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		GameCommand gc;
 		gc.Load( 0, ParseCommands("FillMachineStats") );
 		gc.ApplyToAllPlayers();
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineFillMachineStats g_DebugLineFillMachineStats;
@@ -517,9 +538,10 @@ class DebugLineSendNotesEnded : public IDebugLine
 	virtual CString GetDescription() { return "Send Notes Ended"; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		SCREENMAN->PostMessageToTopScreen( SM_NotesEnded, 0 );
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineSendNotesEnded g_DebugLineSendNotesEnded;
@@ -529,11 +551,12 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 	virtual CString GetDescription() { return "Reload"; }
 	virtual CString GetValue() { return SCREENMAN ? SCREENMAN->GetTopScreen()->GetName() : NULL; }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		SOUND->StopMusic();
 		ResetGame();
 		SCREENMAN->SetNewScreen( SCREENMAN->GetTopScreen()->GetName() );
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineStats g_DebugLineReloadCurrentScreen;
@@ -543,15 +566,15 @@ class DebugLineReloadTheme : public IDebugLine
 	virtual CString GetDescription() { return "Reload Theme and Textures"; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		THEME->ReloadMetrics();
 		TEXTUREMAN->ReloadAll();
 		NOTESKIN->RefreshNoteSkinData( GAMESTATE->m_pCurGame );
 		CodeDetector::RefreshCacheItems();
-		SCREENMAN->SystemMessage( "Theme reloaded." );
 		// HACK: Don't update text below.  Return immediately because this screen.
 		// was just destroyed as part of the them reload.
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineReloadTheme g_DebugLineReloadTheme;
@@ -561,7 +584,7 @@ class DebugLineWriteProfiles : public IDebugLine
 	virtual CString GetDescription() { return "Write Profiles"; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		// Also save bookkeeping and profile info for debugging
 		// so we don't have to play through a whole song to get new output.
@@ -579,6 +602,7 @@ class DebugLineWriteProfiles : public IDebugLine
 			if( bWasMemoryCard )
 				MEMCARDMAN->UnmountCard( p );
 		}
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineWriteProfiles g_DebugLineWriteProfiles;
@@ -588,9 +612,10 @@ class DebugLineWritePreferences : public IDebugLine
 	virtual CString GetDescription() { return "Write Preferences"; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		PREFSMAN->SaveGlobalPrefsToDisk();
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineStats g_DebugLineWritePreferences;
@@ -600,9 +625,10 @@ class DebugLineMenuTimer : public IDebugLine
 	virtual CString GetDescription() { return "Menu Timer"; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return PREFSMAN->m_bMenuTimer.Get(); }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		PREFSMAN->m_bMenuTimer.Set( !PREFSMAN->m_bMenuTimer );
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineMenuTimer g_DebugLineMenuTimer;
@@ -612,9 +638,10 @@ class DebugLineFlushLog : public IDebugLine
 	virtual CString GetDescription() { return "Flush Log"; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		LOG->Flush();
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineFlushLog g_DebugLineFlushLog;
@@ -624,9 +651,10 @@ class DebugLineVolumeUp : public IDebugLine
 	virtual CString GetDescription() { return "Volume Up"; }
 	virtual CString GetValue() { return ssprintf("%.0f%%",PREFSMAN->m_fSoundVolume.Get()*100); }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		ChangeVolume( +0.1f );
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineVolumeUp g_DebugLineVolumeUp;
@@ -636,9 +664,10 @@ class DebugLineVolumeDown : public IDebugLine
 	virtual CString GetDescription() { return "Volume Down"; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
-	virtual void Do()
+	virtual void Do( CString &sMessageOut )
 	{
 		ChangeVolume( -0.1f );
+		IDebugLine::Do( sMessageOut );
 	}
 };
 static DebugLineVolumeDown g_DebugLineVolumeDown;
@@ -648,7 +677,7 @@ class DebugLineUptime : public IDebugLine
 	virtual CString GetDescription() { return "Uptime"; }
 	virtual CString GetValue() { return SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()); }
 	virtual bool IsEnabled() { return false; }
-	virtual void Do() {}
+	virtual void Do( CString &sMessageOut ) {}
 };
 static DebugLineUptime g_DebugLineUptime;
 
