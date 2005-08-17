@@ -151,21 +151,24 @@ void ScreenDebugOverlay::Init()
 
 	FOREACH_CONST( IDebugLine*, *g_pvpSubscribers, p )
 	{
-		BitmapText *pT1 = new BitmapText;
-		pT1->LoadFromFont( THEME->GetPathToF("Common normal") );
-		pT1->SetHorizAlign( Actor::align_right );
-		pT1->SetText( "blah" );
-		pT1->SetShadowLength( 2 );
-		m_vptextButton.push_back( pT1 );
-		this->AddChild( pT1 );
-
-		BitmapText *pT2 = new BitmapText;
-		pT2->LoadFromFont( THEME->GetPathToF("Common normal") );
-		pT2->SetHorizAlign( Actor::align_left );
-		pT2->SetText( "blah" );
-		pT2->SetShadowLength( 2 );
-		m_vptextFunction.push_back( pT2 );
-		this->AddChild( pT2 );
+		{
+			BitmapText *pT1 = new BitmapText;
+			pT1->LoadFromFont( THEME->GetPathToF("Common normal") );
+			pT1->SetHorizAlign( Actor::align_right );
+			pT1->SetText( "blah" );
+			pT1->SetShadowLength( 2 );
+			m_vptextButton.push_back( pT1 );
+			this->AddChild( pT1 );
+		}
+		{
+			BitmapText *pT2 = new BitmapText;
+			pT2->LoadFromFont( THEME->GetPathToF("Common normal") );
+			pT2->SetHorizAlign( Actor::align_left );
+			pT2->SetText( "blah" );
+			pT2->SetShadowLength( 2 );
+			m_vptextFunction.push_back( pT2 );
+			this->AddChild( pT2 );
+		}
 	}
 
 	Update( 0 );
@@ -175,7 +178,7 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 {
 	Screen::Update(fDeltaTime);
 
-    this->SetVisible( g_bIsDisplayed );
+	this->SetVisible( g_bIsDisplayed );
 	if( !g_bIsDisplayed )
 		return;
 
