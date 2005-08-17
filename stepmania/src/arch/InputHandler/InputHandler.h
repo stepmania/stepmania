@@ -29,6 +29,9 @@ public:
 	virtual ~InputHandler() { }
 	virtual void Update( float fDeltaTime ) { }
 	virtual void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut ) = 0;
+	
+	// override to return a pretty string that's specific to the controller type
+	virtual CString GetDeviceSpecificInputString( const DeviceInput &di ) { return di.toString(); }
 
 	/* In Windows, some devices need to be recreated if we recreate our main window.
 	 * Override this if you need to do that. */
