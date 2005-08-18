@@ -30,7 +30,8 @@ private:
 	BitmapText m_textTime;
 	BitmapText m_textSkips[NUM_SKIPS_TO_SHOW];
 	int m_LastSkip;
-	Quad m_SkipBackground;
+	Quad m_quadSkipBackground;
+	Quad m_quadBrightnessAdd;
 
 	RageTimer SkipTimer;
 	void AddTimestampLine( const CString &txt, const RageColor &color );

@@ -237,6 +237,7 @@ PrefsManager::PrefsManager() :
 	m_iCenterImageTranslateY		( "CenterImageTranslateY",		0 ),
 	m_fCenterImageAddWidth			( "CenterImageAddWidth",		0 ),
 	m_fCenterImageAddHeight			( "CenterImageAddHeight",		0 ),
+	m_fBrightnessAdd				( "BrightnessAdd",				0 ),
 	m_AttractSoundFrequency			( "AttractSoundFrequency",		ASF_EVERY_TIME ),
 	m_bAllowExtraStage				( "AllowExtraStage",			true ),
 	m_bHideDefaultNoteSkin			( "HideDefaultNoteSkin",		false ),

@@ -11,6 +11,7 @@
 #include "RageDisplay.h"
 #include "RageLog.h"
 #include "Command.h"
+#include "ScreenDimensions.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenSystemLayer );
@@ -60,11 +61,11 @@ void ScreenSystemLayer::Init()
 	const float SKIP_LEFT = 320.0f, SKIP_TOP = 60.0f, 
 		SKIP_WIDTH = 160.0f, SKIP_Y_DIST = 16.0f;
 
-	m_SkipBackground.StretchTo(RectF(SKIP_LEFT-8, SKIP_TOP-8,
+	m_quadSkipBackground.StretchTo(RectF(SKIP_LEFT-8, SKIP_TOP-8,
 						SKIP_LEFT+SKIP_WIDTH, SKIP_TOP+SKIP_Y_DIST*NUM_SKIPS_TO_SHOW));
-	m_SkipBackground.SetDiffuse( RageColor(0,0,0,0.4f) );
-	m_SkipBackground.SetHidden( !PREFSMAN->m_bTimestamping );
-	this->AddChild(&m_SkipBackground);
+	m_quadSkipBackground.SetDiffuse( RageColor(0,0,0,0.4f) );
+	m_quadSkipBackground.SetHidden( !PREFSMAN->m_bTimestamping );
+	this->AddChild(&m_quadSkipBackground);
 
 	for( int i=0; i<NUM_SKIPS_TO_SHOW; i++ )
 	{
@@ -80,6 +81,13 @@ void ScreenSystemLayer::Init()
 		m_textSkips[i].SetShadowLength( 0 );
 		this->AddChild(&m_textSkips[i]);
 	}
+
+	m_quadBrightnessAdd.StretchTo( RectF(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
+	m_quadBrightnessAdd.SetDiffuse( RageColor(1,1,1,PREFSMAN->m_fBrightnessAdd) );
+	m_quadBrightnessAdd.SetHidden( PREFSMAN->m_fBrightnessAdd == 0 );
+	m_quadBrightnessAdd.SetBlendMode( BLEND_ADD );
+	this->AddChild( &m_quadBrightnessAdd );
+
 
 	ReloadCreditsText();
 	/* This will be done when we set up the first screen, after GAMESTATE->Reset has
