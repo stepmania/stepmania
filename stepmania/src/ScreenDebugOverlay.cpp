@@ -193,8 +193,8 @@ void ScreenDebugOverlay::Update( float fDeltaTime )
 		DISPLAY->ChangeCentering(
 			PREFSMAN->m_iCenterImageTranslateX, 
 			PREFSMAN->m_iCenterImageTranslateY,
-			PREFSMAN->m_fCenterImageAddWidth - SCREEN_WIDTH + (int)(g_fImageScaleCurrent*SCREEN_WIDTH),
-			PREFSMAN->m_fCenterImageAddHeight - SCREEN_HEIGHT + (int)(g_fImageScaleCurrent*SCREEN_HEIGHT) );
+			PREFSMAN->m_fCenterImageAddWidth - (int)SCREEN_WIDTH + (int)(g_fImageScaleCurrent*SCREEN_WIDTH),
+			PREFSMAN->m_fCenterImageAddHeight - (int)SCREEN_HEIGHT + (int)(g_fImageScaleCurrent*SCREEN_HEIGHT) );
 	}
 
 	Screen::Update(fDeltaTime);
