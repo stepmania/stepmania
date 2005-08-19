@@ -1261,7 +1261,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 
 	// Check for feats even if the PlayMode is rave or battle because the player may have
 	// made high scores then switched modes.
-	CHECKPOINT_M(ssprintf("PlayMode %i",this->m_PlayMode));
+	CHECKPOINT_M(ssprintf("PlayMode %i", int(this->m_PlayMode)));
 	switch( this->m_PlayMode )
 	{
 	case PLAY_MODE_REGULAR:
