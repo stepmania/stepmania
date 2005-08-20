@@ -23,7 +23,7 @@
 #if defined(_XBOX)
 #  include <malloc.h>	// for alloca
 #  include "archutils/Xbox/VirtualMemory.h"
-#elif !defined(WIN32)
+#elif !defined(WIN32) && !defined(__MACOSX__)
 #  include <alloca.h>
 #endif
 
