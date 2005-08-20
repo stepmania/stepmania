@@ -29,6 +29,22 @@ PlayerNumber GetNextPotentialCpuPlayer( PlayerNumber pn );
 
 const PlayerNumber	OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
+
+enum MultiPlayer {
+	MultiPlayer_1 = 0,
+	MultiPlayer_2,
+	MultiPlayer_3,
+	MultiPlayer_4,
+	MultiPlayer_5,
+	MultiPlayer_6,
+	MultiPlayer_7,
+	MultiPlayer_8,
+	NUM_MultiPlayer,	// leave this at the end
+	MultiPlayer_Invalid
+};
+#define FOREACH_MultiPlayer( pn ) FOREACH_ENUM( MultiPlayer, NUM_MultiPlayer, pn )
+
+
 #endif
 
 /*

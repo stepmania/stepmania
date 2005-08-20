@@ -554,7 +554,7 @@ void ScreenGameplayMultiplayer::Input( const DeviceInput& DeviceI, const InputEv
 
 			MultiPlayer mp = (MultiPlayer)(DeviceI.device - DEVICE_JOY1);
 
-			ASSERT( mp>=0 && mp<NUM_MULTI_PLAYERS );
+			ASSERT( mp>=0 && mp<NUM_MultiPlayer );
 			m_HumanPlayer[mp].Step( _StyleI.col, DeviceI.ts );
 		}
 	}

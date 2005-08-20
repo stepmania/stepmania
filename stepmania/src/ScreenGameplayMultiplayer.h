@@ -14,28 +14,6 @@
 #include "PlayerState.h"
 #include "StageStats.h"
 
-enum MultiPlayer {
-	MPLAYER_1 = 0,
-	MPLAYER_2,
-	MPLAYER_3,
-	MPLAYER_4,
-	MPLAYER_5,
-	MPLAYER_6,
-	MPLAYER_7,
-	MPLAYER_8,
-	MPLAYER_9,
-	MPLAYER_10,
-	MPLAYER_11,
-	MPLAYER_12,
-	MPLAYER_13,
-	MPLAYER_14,
-	MPLAYER_15,
-	MPLAYER_16,
-	NUM_MULTI_PLAYERS,	// leave this at the end
-	MULTI_PLAYER_INVALID
-};
-#define FOREACH_MultiPlayer( pn ) FOREACH_ENUM( MultiPlayer, NUM_MULTI_PLAYERS, pn )
-
 class Song;
 class Steps;
 
@@ -72,17 +50,17 @@ protected:
 	Background			m_Background;
 	Foreground			m_Foreground;
 
-	ScoreDisplay*		m_pPrimaryScoreDisplay[NUM_MULTI_PLAYERS];
-	ScoreKeeper*		m_pPrimaryScoreKeeper[NUM_MULTI_PLAYERS];
+	ScoreDisplay*		m_pPrimaryScoreDisplay[NUM_MultiPlayer];
+	ScoreKeeper*		m_pPrimaryScoreKeeper[NUM_MultiPlayer];
 
 	Transition		m_In;
 	Transition		m_Out;
 	Transition		m_Cancel;
 
 	Player				m_AutoPlayer;
-	PlayerState			m_PlayerState[NUM_MULTI_PLAYERS];
-	PlayerStageStats	m_PlayerStageStats[NUM_MULTI_PLAYERS];
-	Player				m_HumanPlayer[NUM_MULTI_PLAYERS];
+	PlayerState			m_PlayerState[NUM_MultiPlayer];
+	PlayerStageStats	m_PlayerStageStats[NUM_MultiPlayer];
+	Player				m_HumanPlayer[NUM_MultiPlayer];
 
 	AutoKeysounds	m_AutoKeysounds;
 	RageSound		*m_pSoundMusic;

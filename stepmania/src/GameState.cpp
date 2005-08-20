@@ -166,6 +166,8 @@ void GameState::Reset()
 	m_pCurStyle.Set( NULL );
 	FOREACH_PlayerNumber( p )
 		m_bSideIsJoined[p] = false;
+	FOREACH_MultiPlayer( p )
+		m_bIsMultiPlayerJoined[p] = false;
 	MEMCARDMAN->UnlockCards();
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
