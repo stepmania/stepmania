@@ -39,6 +39,16 @@ const CString& InputDeviceToString( InputDevice i );
 InputDevice StringToInputDevice( const CString& s );
 
 
+enum InputDeviceState
+{
+	InputDeviceState_Connected,
+	InputDeviceState_Disconnected,
+	InputDeviceState_MissingMultitap,
+	NUM_InputDeviceState,
+	InputDeviceState_INVALID
+};
+
+
 /* Only raw, unshifted keys go in this table; this doesn't include internationalized
  * keyboards, only keys that we might actually want to test for programmatically.  Any
  * other keys are mapped to KEY_OTHER_0 and up.  (If we want to support real international

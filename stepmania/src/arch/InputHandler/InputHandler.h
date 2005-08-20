@@ -30,8 +30,12 @@ public:
 	virtual void Update( float fDeltaTime ) { }
 	virtual void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut ) = 0;
 	
-	// override to return a pretty string that's specific to the controller type
+	// Override to return a pretty string that's specific to the controller type.
 	virtual CString GetDeviceSpecificInputString( const DeviceInput &di ) { return di.toString(); }
+
+	// Override to find out whether the controller is currently plugged in.
+	// Not all InputHandlers will support this.  Not applicable to all InputHandlers.
+	virtual InputDeviceState GetInputDeviceState( InputDevice id ) { return InputDeviceState_Connected; }
 
 	/* In Windows, some devices need to be recreated if we recreate our main window.
 	 * Override this if you need to do that. */

@@ -68,6 +68,22 @@ CString RageInput::GetDeviceSpecificInputString( const DeviceInput &di )
 	return di.toString();
 }
 
+InputDeviceState RageInput::GetInputDeviceState( InputDevice id )
+{
+	FOREACH( InputHandler*, m_pDevices, i )
+	{
+		vector<InputDevice> vDevices;
+		vector<CString> vDescriptions;
+		(*i)->GetDevicesAndDescriptions( vDevices, vDescriptions );
+
+		bool bMatch = find(vDevices.begin(), vDevices.end(), id) != vDevices.end();
+		if( bMatch )
+			return (*i)->GetInputDeviceState(id);
+	}
+
+	return InputDeviceState_INVALID;
+}
+
 
 // lua start
 #include "LuaBinding.h"

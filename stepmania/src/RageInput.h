@@ -19,6 +19,7 @@ public:
 	void WindowReset();
 	void AddHandler( InputHandler *pHandler );
 	CString GetDeviceSpecificInputString( const DeviceInput &di );
+	InputDeviceState GetInputDeviceState( InputDevice id );
 
 	// Lua
 	void PushSelf( lua_State *L );
