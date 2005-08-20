@@ -8,15 +8,37 @@ typedef unsigned long long UInt64;
 #define __TYPES__
 #include <libkern/OSByteOrder.h>
 #undef __TYPES__
-#if 0
-#define DARWIN 1
-#define NEED_POWF
-#define NEED_SQRTF
-#define NEED_SINF
-#define NEED_COSF
-#define NEED_TANF
-#define NEED_ACOSF
-#define NEED_STRTOF
+#include <AvailabilityMacros.h>
+#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)
+# define NEED_POWF
+# define NEED_SQRTF
+# define NEED_SINF
+# define NEED_COSF
+# define NEED_TANF
+# define NEED_ACOSF
+# define NEED_STRTOF
+# include <cstddef>
+# include <string>
+# include <cstdlib>
+namespace std
+{
+	typedef basic_string<wchar_t> wstring;
+}
+typedef int socklen_t;
+/* cmath #undefs all of the math.h macros but fails to replace some of them
+* with functions if _GLIBCPP_USE_C99 is not defined. As such, yank the
+* definition out of math.h.
+*/
+# include <cmath>
+# define isnan( x ) ( ( sizeof ( x ) == sizeof(double) ) ?           \
+					  __isnand ( x ) :                               \
+					  ( sizeof ( x ) == sizeof( float) ) ?           \
+					  __isnanf ( x ) :                               \
+					  __isnan  ( x ) )
+// llabs is not defined either, copy it
+inline long long llabs(long long __x) { return __x >= 0 ? __x : -__x; }
+#else
+# define NEED_CSTDLIB_WORKAROUND
 #endif
 #define BACKTRACE_LOOKUP_METHOD_DARWIN_DYLD
 #define BACKTRACE_METHOD_POWERPC_DARWIN
@@ -25,7 +47,6 @@ typedef unsigned long long UInt64;
 #define HAVE_FFMPEG
 #define HAVE_SDL
 #define CRASH_HANDLER
-#define _BSD_WCHAR_T_DEFINED_
 #define ENDIAN_BIG
 #define CRYPTOPP_UNIX_AVAILABLE
 #ifndef __MACOSX__
@@ -35,11 +56,10 @@ typedef unsigned long long UInt64;
 #define ArchSwap24(n) (OSSwapInt32((n)) >> 8)
 #define ArchSwap16(n) OSSwapInt16((n))
 #define HAVE_BYTE_SWAPS
-#define NEED_CSTDLIB_WORKAROUND
 #endif
 
 /*
- * (c) 2003-2004 Steve Checkoway
+ * (c) 2003-2005 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
