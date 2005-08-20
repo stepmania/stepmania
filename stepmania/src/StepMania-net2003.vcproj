@@ -370,6 +370,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenInstructions.h">
 			</File>
 			<File
+				RelativePath=".\ScreenJoinMultiplayer.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenJoinMultiplayer.h">
+			</File>
+			<File
 				RelativePath="ScreenJukebox.cpp">
 			</File>
 			<File

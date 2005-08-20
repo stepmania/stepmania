@@ -35,6 +35,7 @@ ScreenNetSelectMusic.cpp ScreenNetSelectMusic.h ScreenNetSelectBase.cpp ScreenNe
 ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h \
 ScreenGameplay.cpp ScreenGameplay.h ScreenHowToPlay.cpp ScreenHowToPlay.h \
 ScreenInstructions.cpp ScreenInstructions.h \
+ScreenJoinMultiplayer.cpp ScreenJoinMultiplayer.h \
 ScreenJukebox.cpp ScreenJukebox.h \
 ScreenMapControllers.cpp ScreenMapControllers.h \
 ScreenMessage.cpp ScreenMessage.h ScreenMiniMenu.cpp ScreenMiniMenu.h ScreenMusicScroll.cpp ScreenMusicScroll.h \
