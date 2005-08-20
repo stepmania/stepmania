@@ -14,7 +14,16 @@
 #include <float.h>
 
 #if defined(__MACOSX__)
+// Work around global namespace pollution.
+namespace vblas
+{
 # include <vecLib/vBLAS.h>
+}
+using vblas::cblas_sgemv;
+using vblas::cblas_sgemm;
+using vblas::CblasRowMajor;
+using vblas::CblasTrans;
+using vblas::CblasNoTrans;
 #endif
 
 void RageVec3ClearBounds( RageVector3 &mins, RageVector3 &maxs )
