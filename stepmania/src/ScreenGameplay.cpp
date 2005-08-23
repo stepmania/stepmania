@@ -90,7 +90,7 @@ AutoScreenMessage( SM_StopHereWeGo )
 static Preference<float> g_fNetStartOffset( "NetworkStartOffset",	-3.0 );
 
 
-ScreenGameplay::PlayerInfo::PlayerInfo()
+PlayerInfo::PlayerInfo()
 {
 	m_pn = PLAYER_INVALID;
 	m_mp = MultiPlayer_INVALID;
@@ -111,7 +111,7 @@ ScreenGameplay::PlayerInfo::PlayerInfo()
 	m_pDifficultyMeter = NULL;
 }
 
-void ScreenGameplay::PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
+void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 {
 	m_pn = pn;
 	m_mp = mp;
@@ -190,7 +190,7 @@ void ScreenGameplay::PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bSh
 	}
 }
 
-void ScreenGameplay::PlayerInfo::LoadDummyP1()
+void PlayerInfo::LoadDummyP1()
 {
 	m_pn = PLAYER_1;
 	m_bIsDummy = true;
@@ -202,7 +202,7 @@ void ScreenGameplay::PlayerInfo::LoadDummyP1()
 	m_PlayerStateDummy.m_PlayerController = PC_AUTOPLAY;
 }
 
-ScreenGameplay::PlayerInfo::~PlayerInfo()
+PlayerInfo::~PlayerInfo()
 {
 	SAFE_DELETE( m_pLifeMeter );
 	SAFE_DELETE( m_ptextCourseSongNumber );
@@ -220,12 +220,12 @@ ScreenGameplay::PlayerInfo::~PlayerInfo()
 	SAFE_DELETE( m_pDifficultyMeter );
 }
 
-void ScreenGameplay::PlayerInfo::ShowOniGameOver()
+void PlayerInfo::ShowOniGameOver()
 {
 	m_sprOniGameOver->PlayCommand( "Die" );
 }
 
-PlayerState *ScreenGameplay::PlayerInfo::GetPlayerState()
+PlayerState *PlayerInfo::GetPlayerState()
 {
 	if( m_bIsDummy )
 		return &m_PlayerStateDummy;
@@ -234,7 +234,7 @@ PlayerState *ScreenGameplay::PlayerInfo::GetPlayerState()
 		GAMESTATE->m_pPlayerState[ GetPlayerStateAndStageStatsIndex() ];
 }
 
-PlayerStageStats *ScreenGameplay::PlayerInfo::GetPlayerStageStats()
+PlayerStageStats *PlayerInfo::GetPlayerStageStats()
 {
 	if( m_bIsDummy )
 		return &m_PlayerStageStatsDummy;
@@ -243,7 +243,7 @@ PlayerStageStats *ScreenGameplay::PlayerInfo::GetPlayerStageStats()
 		&STATSMAN->m_CurStageStats.m_player[ GetPlayerStateAndStageStatsIndex() ];
 }
 				
-bool ScreenGameplay::PlayerInfo::IsEnabled()
+bool PlayerInfo::IsEnabled()
 {
 	if( m_pn != PLAYER_INVALID )
 		return GAMESTATE->IsPlayerEnabled( m_pn );
@@ -255,8 +255,8 @@ bool ScreenGameplay::PlayerInfo::IsEnabled()
 	return false;
 }
 
-vector<ScreenGameplay::PlayerInfo>::iterator 
-GetNextEnabledPlayerInfo( vector<ScreenGameplay::PlayerInfo>::iterator iter, vector<ScreenGameplay::PlayerInfo> &v )
+vector<PlayerInfo>::iterator 
+GetNextEnabledPlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v )
 {
 	iter++;
 	for( ; iter != v.end(); iter++ )
@@ -268,8 +268,8 @@ GetNextEnabledPlayerInfo( vector<ScreenGameplay::PlayerInfo>::iterator iter, vec
 	return iter;
 }
 
-vector<ScreenGameplay::PlayerInfo>::iterator 
-GetNextEnabledPlayerInfoNotDummy( vector<ScreenGameplay::PlayerInfo>::iterator iter, vector<ScreenGameplay::PlayerInfo> &v )
+vector<PlayerInfo>::iterator 
+GetNextEnabledPlayerInfoNotDummy( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v )
 {
 	iter++;
 	for( ; iter != v.end(); iter++ )
@@ -283,8 +283,8 @@ GetNextEnabledPlayerInfoNotDummy( vector<ScreenGameplay::PlayerInfo>::iterator i
 	return iter;
 }
 
-vector<ScreenGameplay::PlayerInfo>::iterator
-GetNextEnabledPlayerNumberInfo( vector<ScreenGameplay::PlayerInfo>::iterator iter, vector<ScreenGameplay::PlayerInfo> &v )
+vector<PlayerInfo>::iterator
+GetNextEnabledPlayerNumberInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v )
 {
 	iter++;
 	for( ; iter != v.end(); iter++ )
@@ -300,8 +300,8 @@ GetNextEnabledPlayerNumberInfo( vector<ScreenGameplay::PlayerInfo>::iterator ite
 	return iter;
 }
 
-vector<ScreenGameplay::PlayerInfo>::iterator
-GetNextPlayerNumberInfo( vector<ScreenGameplay::PlayerInfo>::iterator iter, vector<ScreenGameplay::PlayerInfo> &v )
+vector<PlayerInfo>::iterator
+GetNextPlayerNumberInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v )
 {
 	iter++;
 	for( ; iter != v.end(); iter++ )
@@ -315,8 +315,8 @@ GetNextPlayerNumberInfo( vector<ScreenGameplay::PlayerInfo>::iterator iter, vect
 	return iter;
 }
 
-vector<ScreenGameplay::PlayerInfo>::iterator
-GetNextVisiblePlayerInfo( vector<ScreenGameplay::PlayerInfo>::iterator iter, vector<ScreenGameplay::PlayerInfo> &v )
+vector<PlayerInfo>::iterator
+GetNextVisiblePlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> &v )
 {
 	iter++;
 	for( ; iter != v.end(); iter++ )

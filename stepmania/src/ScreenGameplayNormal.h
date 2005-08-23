@@ -10,7 +10,7 @@ class ScreenGameplayNormal : public ScreenGameplay
 {
 public:
 	ScreenGameplayNormal( CString sName );
-	virtual void FillPlayerInfo( vector<ScreenGameplay::PlayerInfo> &vPlayerInfoOut );
+	virtual void FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut );
 };
 
 

@@ -11,7 +11,7 @@ class ScreenGameplayMultiplayer : public ScreenGameplay
 public:
 	ScreenGameplayMultiplayer( CString sName );
 	void Init();
-	virtual void FillPlayerInfo( vector<ScreenGameplay::PlayerInfo> &vPlayerInfoOut );
+	virtual void FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut );
 };
 
 
