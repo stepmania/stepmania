@@ -3052,7 +3052,7 @@ void ScreenEdit::SetupCourseAttacks()
 		}
 
 		for( unsigned i=0; i<Attacks.size(); ++i )
-			GAMESTATE->LaunchAttack( PLAYER_1, Attacks[i] );
+			GAMESTATE->LaunchAttack( (MultiPlayer)PLAYER_1, Attacks[i] );
 	}
 	GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
 }

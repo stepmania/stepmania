@@ -150,7 +150,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 	GAMESTATE->RemoveActiveAttacksForPlayer( pnToAttack );
 
 	// apply new attack
-	GAMESTATE->LaunchAttack( pnToAttack, a );
+	GAMESTATE->LaunchAttack( (MultiPlayer)pnToAttack, a );
 
 //	SCREENMAN->SystemMessage( ssprintf( "attacking %d with %s", pnToAttack, sAttackToGive.c_str() ) );
 }

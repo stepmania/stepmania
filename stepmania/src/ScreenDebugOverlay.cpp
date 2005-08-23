@@ -358,8 +358,10 @@ class DebugLineAutoplay : public IDebugLine
 		PlayerController pc = (PlayerController)(PREFSMAN->m_AutoPlay+1);
 		wrap( (int&)pc, NUM_PLAYER_CONTROLLERS );
 		PREFSMAN->m_AutoPlay.Set( pc );
-		FOREACH_HumanPlayer(pn)
-			GAMESTATE->m_pPlayerState[pn]->m_PlayerController = PREFSMAN->m_AutoPlay;
+		FOREACH_HumanPlayer(p)
+			GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_AutoPlay;
+		FOREACH_MultiPlayer(p)
+			GAMESTATE->m_pMultiPlayerState[p]->m_PlayerController = PREFSMAN->m_AutoPlay;
 		IDebugLine::Do( sMessageOut );
 	}
 };

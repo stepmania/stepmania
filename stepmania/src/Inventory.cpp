@@ -192,7 +192,7 @@ void Inventory::UseItem( int iSlot )
 	pInventory[iSlot].MakeBlank();
 	m_vpSoundUseItem[a.level]->Play();
 
-	GAMESTATE->LaunchAttack( pnToAttack, a );
+	GAMESTATE->LaunchAttack( (MultiPlayer)pnToAttack, a );
 
 	float fPercentHealthToDrain = (a.level+1) / 10.f;
 	ASSERT( fPercentHealthToDrain > 0 );

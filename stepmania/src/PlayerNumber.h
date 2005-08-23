@@ -16,6 +16,8 @@ enum PlayerNumber {
 	NUM_PLAYERS,	// leave this at the end
 	PLAYER_INVALID
 };
+const CString& PlayerNumberToString( PlayerNumber pn );
+
 #define FOREACH_PlayerNumber( pn ) FOREACH_ENUM( PlayerNumber, NUM_PLAYERS, pn )
 #define FOREACH_HumanPlayer( pn ) for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextHumanPlayer(pn) )
 #define FOREACH_EnabledPlayer( pn ) for( PlayerNumber pn=GetNextEnabledPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextEnabledPlayer(pn) )
@@ -40,10 +42,15 @@ enum MultiPlayer {
 	MultiPlayer_7,
 	MultiPlayer_8,
 	NUM_MultiPlayer,	// leave this at the end
-	MultiPlayer_Invalid
+	MultiPlayer_INVALID
 };
+const CString& MultiPlayerToString( MultiPlayer mp );
+
 #define FOREACH_MultiPlayer( pn ) FOREACH_ENUM( MultiPlayer, NUM_MultiPlayer, pn )
 
+#define FOREACH_EnabledMultiPlayer( mp ) for( MultiPlayer mp=GetNextEnabledMultiPlayer((MultiPlayer)-1); mp!=MultiPlayer_INVALID; mp=GetNextEnabledMultiPlayer(mp) )
+
+MultiPlayer GetNextEnabledMultiPlayer( MultiPlayer mp );
 
 #endif
 

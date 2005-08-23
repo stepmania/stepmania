@@ -5,6 +5,25 @@
 #include "CommonMetrics.h"
 #include "LuaManager.h"
 
+static const CString PlayerNumberNames[] = {
+	"P1",
+	"P2",
+};
+XToString( PlayerNumber, NUM_PLAYERS );
+
+
+static const CString MultiPlayerNames[] = {
+	"P1",
+	"P2",
+	"P3",
+	"P4",
+	"P5",
+	"P6",
+	"P7",
+	"P8",
+};
+XToString( MultiPlayer, NUM_MultiPlayer );
+
 
 PlayerNumber GetNextHumanPlayer( PlayerNumber pn )
 {
@@ -45,6 +64,17 @@ PlayerNumber GetNextPotentialCpuPlayer( PlayerNumber pn )
 	}
 	return PLAYER_INVALID;
 }
+
+MultiPlayer GetNextEnabledMultiPlayer( MultiPlayer mp )
+{
+	for( MultiPlayer p=(MultiPlayer)(mp+1); p<NUM_MultiPlayer; ((int&)p)++ )
+	{
+		if( GAMESTATE->IsMultiPlayerEnabled(p) )
+			return p;
+	}
+	return MultiPlayer_INVALID;
+}
+
 
 void LuaPlayerNumber(lua_State* L)
 {
