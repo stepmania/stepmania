@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding = "Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.0"
+	Version="7.00"
 	Name="StepMania"
 	SccProjectName=""
 	SccLocalPath=""
@@ -80,13 +80,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
 				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Debug|Xbox"
@@ -221,13 +215,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCWebServiceProxyGeneratorTool"/>
 			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
 				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Xbox"
@@ -293,8 +281,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				TitleImage=""/>
 		</Configuration>
 	</Configurations>
-	<References>
-	</References>
 	<Files>
 		<Filter
 			Name="Screens"
@@ -318,12 +304,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenBookkeeping.h">
 			</File>
 			<File
-				RelativePath="ScreenBranch.cpp">
-			</File>
-			<File
-				RelativePath="ScreenBranch.h">
-			</File>
-			<File
 				RelativePath="ScreenCenterImage.cpp">
 			</File>
 			<File
@@ -334,6 +314,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenCredits.h">
+			</File>
+			<File
+				RelativePath="ScreenDebugOverlay.cpp">
+			</File>
+			<File
+				RelativePath="ScreenDebugOverlay.h">
 			</File>
 			<File
 				RelativePath="ScreenDemonstration.cpp">
@@ -354,10 +340,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenEdit.h">
 			</File>
 			<File
-				RelativePath="ScreenEditCoursesMenu.cpp">
+				RelativePath="ScreenEditCourseMods.cpp">
 			</File>
 			<File
-				RelativePath="ScreenEditCoursesMenu.h">
+				RelativePath="ScreenEditCourseMods.h">
 			</File>
 			<File
 				RelativePath="ScreenEditMenu.cpp">
@@ -370,12 +356,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenEnding.h">
-			</File>
-			<File
-				RelativePath="ScreenEndlessBreak.cpp">
-			</File>
-			<File
-				RelativePath="ScreenEndlessBreak.h">
 			</File>
 			<File
 				RelativePath="ScreenEvaluation.cpp">
@@ -408,6 +388,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenGameplay.h">
 			</File>
 			<File
+				RelativePath="ScreenGameplayMultiplayer.cpp">
+			</File>
+			<File
+				RelativePath="ScreenGameplayMultiplayer.h">
+			</File>
+			<File
 				RelativePath="ScreenHowToPlay.cpp">
 			</File>
 			<File
@@ -420,16 +406,16 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenInstructions.h">
 			</File>
 			<File
+				RelativePath="ScreenJoinMultiplayer.cpp">
+			</File>
+			<File
+				RelativePath="ScreenJoinMultiplayer.h">
+			</File>
+			<File
 				RelativePath="ScreenJukebox.cpp">
 			</File>
 			<File
 				RelativePath="ScreenJukebox.h">
-			</File>
-			<File
-				RelativePath="ScreenLogo.cpp">
-			</File>
-			<File
-				RelativePath="ScreenLogo.h">
 			</File>
 			<File
 				RelativePath="ScreenMapControllers.cpp">
@@ -504,6 +490,36 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenOptions.h">
 			</File>
 			<File
+				RelativePath="ScreenOptionsEditCourse.cpp">
+			</File>
+			<File
+				RelativePath="ScreenOptionsEditCourse.h">
+			</File>
+			<File
+				RelativePath="ScreenOptionsEditCourseEntry.cpp">
+			</File>
+			<File
+				RelativePath="ScreenOptionsEditCourseEntry.h">
+			</File>
+			<File
+				RelativePath="ScreenOptionsEditProfile.cpp">
+			</File>
+			<File
+				RelativePath="ScreenOptionsEditProfile.h">
+			</File>
+			<File
+				RelativePath="ScreenOptionsManageCourses.cpp">
+			</File>
+			<File
+				RelativePath="ScreenOptionsManageCourses.h">
+			</File>
+			<File
+				RelativePath="ScreenOptionsManageProfiles.cpp">
+			</File>
+			<File
+				RelativePath="ScreenOptionsManageProfiles.h">
+			</File>
+			<File
 				RelativePath="ScreenOptionsMaster.cpp">
 			</File>
 			<File
@@ -552,10 +568,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenReloadSongs.h">
 			</File>
 			<File
+				RelativePath="ScreenSMOnlineLogin.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSMOnlineLogin.h">
+			</File>
+			<File
 				RelativePath="ScreenSandbox.cpp">
 			</File>
 			<File
 				RelativePath="ScreenSandbox.h">
+			</File>
+			<File
+				RelativePath="ScreenSaveSync.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSaveSync.h">
 			</File>
 			<File
 				RelativePath="ScreenSelect.cpp">
@@ -612,16 +640,16 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenSetTime.h">
 			</File>
 			<File
-				RelativePath="ScreenSMOnlineLogin.cpp">
-			</File>
-			<File
-				RelativePath="ScreenSMOnlineLogin.h">
-			</File>
-			<File
 				RelativePath="ScreenSongOptions.cpp">
 			</File>
 			<File
 				RelativePath="ScreenSongOptions.h">
+			</File>
+			<File
+				RelativePath="ScreenSplash.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSplash.h">
 			</File>
 			<File
 				RelativePath="ScreenStage.cpp">
@@ -630,10 +658,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenStage.h">
 			</File>
 			<File
-				RelativePath="ScreenStyleSplash.cpp">
+				RelativePath="ScreenSyncOverlay.cpp">
 			</File>
 			<File
-				RelativePath="ScreenStyleSplash.h">
+				RelativePath="ScreenSyncOverlay.h">
 			</File>
 			<File
 				RelativePath=".\ScreenSystemLayer.cpp">
@@ -718,6 +746,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="AutoKeysounds.h">
 			</File>
 			<File
+				RelativePath="BackgroundUtil.cpp">
+			</File>
+			<File
+				RelativePath="BackgroundUtil.h">
+			</File>
+			<File
 				RelativePath="BannerCache.cpp">
 			</File>
 			<File
@@ -760,10 +794,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="Course.h">
 			</File>
 			<File
+				RelativePath="CourseLoaderCRS.cpp">
+			</File>
+			<File
+				RelativePath="CourseLoaderCRS.h">
+			</File>
+			<File
 				RelativePath="CourseUtil.cpp">
 			</File>
 			<File
 				RelativePath="CourseUtil.h">
+			</File>
+			<File
+				RelativePath="CourseWriterCRS.cpp">
+			</File>
+			<File
+				RelativePath="CourseWriterCRS.h">
 			</File>
 			<File
 				RelativePath="DateTime.cpp">
@@ -800,6 +846,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="FontCharmaps.h">
+			</File>
+			<File
+				RelativePath="Foreach.h">
 			</File>
 			<File
 				RelativePath="Game.cpp">
@@ -844,6 +893,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="Inventory.h">
 			</File>
 			<File
+				RelativePath="LuaBinding.cpp">
+			</File>
+			<File
+				RelativePath="LuaBinding.h">
+			</File>
+			<File
 				RelativePath="LuaFunctions.h">
 			</File>
 			<File
@@ -886,6 +941,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="NoteFieldPositioning.h">
 			</File>
 			<File
+				RelativePath="NoteTypes.cpp">
+			</File>
+			<File
+				RelativePath="NoteTypes.h">
+			</File>
+			<File
 				RelativePath="NotesLoader.cpp">
 			</File>
 			<File
@@ -926,12 +987,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="NotesWriterSM.h">
-			</File>
-			<File
-				RelativePath="NoteTypes.cpp">
-			</File>
-			<File
-				RelativePath="NoteTypes.h">
 			</File>
 			<File
 				RelativePath=".\OptionRowHandler.cpp">
@@ -1066,6 +1121,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="StyleUtil.h">
 			</File>
 			<File
+				RelativePath="SubscriptionManager.h">
+			</File>
+			<File
 				RelativePath="ThemeMetric.h">
 			</File>
 			<File
@@ -1119,12 +1177,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			Name="StepMania"
 			Filter="">
 			<File
-				RelativePath=".\global.cpp">
-			</File>
-			<File
-				RelativePath=".\global.h">
-			</File>
-			<File
 				RelativePath="ProductInfo.h">
 			</File>
 			<File
@@ -1135,6 +1187,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\StepMania.h">
+			</File>
+			<File
+				RelativePath=".\global.cpp">
+			</File>
+			<File
+				RelativePath=".\global.h">
 			</File>
 			<Filter
 				Name="arch"
@@ -1327,6 +1385,24 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				Name="system"
 				Filter="">
 				<File
+					RelativePath="GameLoop.cpp">
+				</File>
+				<File
+					RelativePath="GameLoop.h">
+				</File>
+				<File
+					RelativePath="archutils\Xbox\GraphicsWindow.cpp">
+				</File>
+				<File
+					RelativePath="archutils\Xbox\GraphicsWindow.h">
+				</File>
+				<File
+					RelativePath=".\archutils\Xbox\VirtualMemory.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Xbox\VirtualMemory.h">
+				</File>
+				<File
 					RelativePath="archutils\Win32\arch_setup.cpp">
 				</File>
 				<File
@@ -1341,29 +1417,11 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				<File
 					RelativePath="archutils\Xbox\custom_launch_params.h">
 				</File>
-				<File
-					RelativePath="archutils\Xbox\GraphicsWindow.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Xbox\GraphicsWindow.h">
-				</File>
-				<File
-					RelativePath=".\archutils\Xbox\VirtualMemory.cpp">
-				</File>
-				<File
-					RelativePath=".\archutils\Xbox\VirtualMemory.h">
-				</File>
 			</Filter>
 		</Filter>
 		<Filter
 			Name="Actors used in Gameplay and Menus"
 			Filter="">
-			<File
-				RelativePath=".\Banner.cpp">
-			</File>
-			<File
-				RelativePath=".\Banner.h">
-			</File>
 			<File
 				RelativePath="BGAnimation.cpp">
 			</File>
@@ -1375,6 +1433,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="BGAnimationLayer.h">
+			</File>
+			<File
+				RelativePath=".\Banner.cpp">
+			</File>
+			<File
+				RelativePath=".\Banner.h">
 			</File>
 			<File
 				RelativePath="DifficultyIcon.cpp">
@@ -1459,18 +1523,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="DualScrollBar.h">
 			</File>
 			<File
-				RelativePath="EditCoursesMenu.cpp">
-			</File>
-			<File
-				RelativePath="EditCoursesMenu.h">
-			</File>
-			<File
-				RelativePath="EditCoursesSongMenu.cpp">
-			</File>
-			<File
-				RelativePath="EditCoursesSongMenu.h">
-			</File>
-			<File
 				RelativePath="EditMenu.cpp">
 			</File>
 			<File
@@ -1493,12 +1545,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="GraphDisplay.h">
-			</File>
-			<File
-				RelativePath="GrooveGraph.cpp">
-			</File>
-			<File
-				RelativePath="GrooveGraph.h">
 			</File>
 			<File
 				RelativePath="GrooveRadar.cpp">
@@ -1597,6 +1643,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="PaneDisplay.h">
 			</File>
 			<File
+				RelativePath="RoomWheel.cpp">
+			</File>
+			<File
+				RelativePath="RoomWheel.h">
+			</File>
+			<File
 				RelativePath="ScrollBar.cpp">
 			</File>
 			<File
@@ -1671,12 +1723,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="BeginnerHelper.h">
-			</File>
-			<File
-				RelativePath="CharacterHead.cpp">
-			</File>
-			<File
-				RelativePath="CharacterHead.h">
 			</File>
 			<File
 				RelativePath="CombinedLifeMeter.h">
@@ -2076,6 +2122,30 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="RageSurface.h">
 			</File>
 			<File
+				RelativePath="RageSurfaceUtils.cpp">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils.h">
+			</File>
+			<File
+				RelativePath=".\RageSurfaceUtils_Dither.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSurfaceUtils_Dither.h">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Palettize.cpp">
+			</File>
+			<File
+				RelativePath="RageSurfaceUtils_Palettize.h">
+			</File>
+			<File
+				RelativePath=".\RageSurfaceUtils_Zoom.cpp">
+			</File>
+			<File
+				RelativePath=".\RageSurfaceUtils_Zoom.h">
+			</File>
+			<File
 				RelativePath="RageSurface_Load.cpp">
 			</File>
 			<File
@@ -2124,30 +2194,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\RageSurface_Save_JPEG.h">
 			</File>
 			<File
-				RelativePath="RageSurfaceUtils.cpp">
-			</File>
-			<File
-				RelativePath="RageSurfaceUtils.h">
-			</File>
-			<File
-				RelativePath=".\RageSurfaceUtils_Dither.cpp">
-			</File>
-			<File
-				RelativePath=".\RageSurfaceUtils_Dither.h">
-			</File>
-			<File
-				RelativePath="RageSurfaceUtils_Palettize.cpp">
-			</File>
-			<File
-				RelativePath="RageSurfaceUtils_Palettize.h">
-			</File>
-			<File
-				RelativePath=".\RageSurfaceUtils_Zoom.cpp">
-			</File>
-			<File
-				RelativePath=".\RageSurfaceUtils_Zoom.h">
-			</File>
-			<File
 				RelativePath=".\RageTexture.cpp">
 			</File>
 			<File
@@ -2164,6 +2210,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath=".\RageTextureManager.h">
+			</File>
+			<File
+				RelativePath="RageTexturePreloader.cpp">
+			</File>
+			<File
+				RelativePath="RageTexturePreloader.h">
 			</File>
 			<File
 				RelativePath="RageThreads.cpp">
@@ -2313,6 +2365,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ModelTypes.h">
 			</File>
 			<File
+				RelativePath="Quad.cpp">
+			</File>
+			<File
 				RelativePath="Quad.h">
 			</File>
 			<File
@@ -2344,16 +2399,16 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="Bookkeeper.h">
 			</File>
 			<File
+				RelativePath="CharacterManager.cpp">
+			</File>
+			<File
+				RelativePath="CharacterManager.h">
+			</File>
+			<File
 				RelativePath="CryptManager.cpp">
 			</File>
 			<File
 				RelativePath="CryptManager.h">
-			</File>
-			<File
-				RelativePath="ezsockets.cpp">
-			</File>
-			<File
-				RelativePath="ezsockets.h">
 			</File>
 			<File
 				RelativePath=".\FontManager.cpp">
@@ -2481,6 +2536,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			<File
 				RelativePath=".\UnlockManager.h">
 			</File>
+			<File
+				RelativePath="ezsockets.cpp">
+			</File>
+			<File
+				RelativePath="ezsockets.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="Crypto"
@@ -2513,16 +2574,16 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="crypto\CryptPrime.h">
 			</File>
 			<File
-				RelativePath="crypto\CryptRand.cpp">
-			</File>
-			<File
-				RelativePath="crypto\CryptRand.h">
-			</File>
-			<File
 				RelativePath="crypto\CryptRSA.cpp">
 			</File>
 			<File
 				RelativePath="crypto\CryptRSA.h">
+			</File>
+			<File
+				RelativePath="crypto\CryptRand.cpp">
+			</File>
+			<File
+				RelativePath="crypto\CryptRand.h">
 			</File>
 			<File
 				RelativePath="crypto\CryptSH512.cpp">
