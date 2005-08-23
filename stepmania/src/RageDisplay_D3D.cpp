@@ -572,6 +572,7 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 		else
 			p.rate = g_d3dpp.FullScreen_RefreshRateInHz;
 	}
+#ifndef _XBOX
 
 	/* Find the refresh rate. */
 	{
@@ -588,6 +589,7 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 			LOG->Warn( "%s", werr_ssprintf(GetLastError(), "EnumDisplaySettings failed").c_str() );
 		}
 	}
+#endif
 
 	/* Call this again after changing the display mode.  If we're going to a window
 	 * from fullscreen, the first call can't set a larger window than the old fullscreen
