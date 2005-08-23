@@ -14,7 +14,14 @@
 #define PATH_MAX _MAX_PATH
 
 #if _MSC_VER < 1300 /* VC6, not VC7 */
-#define NEED_MINMAX_TEMPLATES 1
+template<class T>
+inline const T& max(const T &a, const T &b)			{ return a < b? b:a; }
+template<class T, class P>
+inline const T& max(const T &a, const T &b, P Pr)	{ return Pr(a, b)? b:a; }
+template<class T>
+inline const T& min(const T &a, const T &b)			{ return b < a? b:a; }
+template<class T, class P>
+inline const T& min(const T &a, const T &b, P Pr)	{ return Pr(b, a)? b:a; }
 #endif
 
 // HACK: Fake correct scoping rules in VC6.
