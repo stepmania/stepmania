@@ -2,7 +2,7 @@
 #define ACTIVE_ATTACK_LIST_H
 
 #include "BitmapText.h"
-struct PlayerState;
+class PlayerState;
 
 class ActiveAttackList : public BitmapText
 {

@@ -8,7 +8,7 @@
 #include "GameConstantsAndTypes.h"
 #include "NoteTypes.h"
 
-struct PlayerState;
+class PlayerState;
 
 class ReceptorArrowRow : public ActorFrame
 {

@@ -25,6 +25,8 @@
 
 void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& original, NoteData& noteDataOut ) const
 {
+	ASSERT( pn >=0 && pn <= NUM_PLAYERS );
+
 	int iNewToOriginalTrack[MAX_COLS_PER_PLAYER];
 	for( int col=0; col<m_iColsPerPlayer; col++ )
 	{

@@ -4,8 +4,8 @@
 #include "ActorFrame.h"
 #include "PlayerNumber.h"
 
-struct StageStats;
-struct PlayerStageStats;
+class StageStats;
+class PlayerStageStats;
 
 class ComboGraph: public ActorFrame
 {

@@ -4,7 +4,7 @@
 #include "GameConstantsAndTypes.h"
 #include "PlayerNumber.h"
 class Song;
-struct PlayerState;
+class PlayerState;
 
 struct Attack
 {

@@ -3,7 +3,7 @@
 #ifndef ARROWEFFECTS_H
 #define ARROWEFFECTS_H
 
-struct PlayerState;
+class PlayerState;
 
 class ArrowEffects
 {

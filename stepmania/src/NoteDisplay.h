@@ -9,7 +9,7 @@ class Model;
 
 struct HoldNoteResult;
 struct NoteMetricCache_t;
-struct PlayerState;
+class PlayerState;
 
 #define NOTE_COLOR_IMAGES 8
 

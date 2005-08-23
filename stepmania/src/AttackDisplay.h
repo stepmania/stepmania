@@ -6,7 +6,7 @@
 #include "GameConstantsAndTypes.h"	// for TapNoteScore
 #include "RageTexturePreloader.h"
 
-struct PlayerState;
+class PlayerState;
 
 class AttackDisplay : public ActorFrame
 {

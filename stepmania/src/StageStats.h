@@ -10,12 +10,14 @@ class Style;
 struct lua_State;
 
 
-struct StageStats
+class StageStats
 {
+public:
 	StageStats();
 	void Init();
 
 	void AssertValid( PlayerNumber pn ) const;
+	void AssertValid( MultiPlayer mp ) const;
 
 	void AddStats( const StageStats& other );		// accumulate
 
@@ -40,6 +42,7 @@ struct StageStats
 	float GetTotalPossibleStepsSeconds() const;	// TODO: Scale this by the music rate
 
 	PlayerStageStats m_player[NUM_PLAYERS];
+	PlayerStageStats m_multiPlayer[NUM_MultiPlayer];
 
 	// Lua
 	void PushSelf( lua_State *L );

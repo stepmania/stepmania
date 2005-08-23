@@ -8,11 +8,13 @@
 #include <map>
 #include "Attack.h"
 
-struct PlayerState
+class PlayerState
 {
+public:
 	PlayerState()
 	{
 		m_PlayerNumber = PLAYER_INVALID;
+		m_mp = MultiPlayer_INVALID;
 		Reset();
 	}
 	void Reset()
@@ -51,6 +53,7 @@ struct PlayerState
 	// in PlayerState and callers should not use PlayerNumber to index into 
 	// GameState.
 	PlayerNumber m_PlayerNumber;
+	MultiPlayer m_mp;
 	
 
 	PlayerOptions	m_CurrentPlayerOptions;    // current approaches destination

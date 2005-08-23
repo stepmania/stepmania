@@ -17,8 +17,8 @@ class NoteData;
 class Inventory;
 class Song;
 class Steps;
-struct PlayerState;
-struct PlayerStageStats;
+class PlayerState;
+class PlayerStageStats;
 
 
 class ScoreKeeper

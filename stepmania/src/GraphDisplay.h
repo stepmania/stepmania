@@ -5,8 +5,8 @@
 #include "RageTexture.h"
 #include "AutoActor.h"
 
-struct StageStats;
-struct PlayerStageStats;
+class StageStats;
+class PlayerStageStats;
 
 class GraphDisplay: public ActorFrame
 {

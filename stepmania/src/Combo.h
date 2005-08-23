@@ -8,8 +8,8 @@
 #include "BitmapText.h"
 #include "PlayerNumber.h"
 #include "ThemeMetric.h"
-struct PlayerState;
-struct PlayerStageStats;
+class PlayerState;
+class PlayerStageStats;
 
 class Combo : public ActorFrame
 {

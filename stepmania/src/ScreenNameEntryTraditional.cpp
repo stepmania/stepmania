@@ -414,7 +414,7 @@ void ScreenNameEntryTraditional::Init()
 			SET_ON( display.m_DifficultyMeter );
 			this->AddChild( &display.m_DifficultyMeter );
 
-			display.m_textScore.Load( p, &ss.m_player[p], "ScreenNameEntryTraditional Percent", false );
+			display.m_textScore.Load( GAMESTATE->m_pPlayerState[p], &ss.m_player[p], "ScreenNameEntryTraditional Percent", false );
 			display.m_textScore.SetName( ssprintf("ScoreP%i",p+1) );
 			SET_ON( display.m_textScore );
 			this->AddChild( &display.m_textScore );

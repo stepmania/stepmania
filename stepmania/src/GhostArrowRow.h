@@ -8,7 +8,7 @@
 #include "HoldGhostArrow.h"
 #include "GameConstantsAndTypes.h"
 
-struct PlayerState;
+class PlayerState;
 
 class GhostArrowRow : public ActorFrame
 {

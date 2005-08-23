@@ -46,15 +46,22 @@ StageStats AccumStageStats( const vector<StageStats>& vss )
 	 * and the rest, which are counters. */
 	// FIXME: Weight each song by the number of stages it took to account for 
 	// long, marathon.
-	FOREACH_EnabledPlayer( pn )
+	FOREACH_EnabledPlayer( p )
 	{
 		for( int r = 0; r < RADAR_NUM_TAPS_AND_HOLDS; r++)
 		{
-			ssreturn.m_player[pn].radarPossible[r] /= uNumSongs;
-			ssreturn.m_player[pn].radarActual[r] /= uNumSongs;
+			ssreturn.m_player[p].radarPossible[r] /= uNumSongs;
+			ssreturn.m_player[p].radarActual[r] /= uNumSongs;
 		}
 	}
-
+	FOREACH_EnabledMultiPlayer( p )
+	{
+		for( int r = 0; r < RADAR_NUM_TAPS_AND_HOLDS; r++)
+		{
+			ssreturn.m_multiPlayer[p].radarPossible[r] /= uNumSongs;
+			ssreturn.m_multiPlayer[p].radarActual[r] /= uNumSongs;
+		}
+	}
 	return ssreturn;
 }
 

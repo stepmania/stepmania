@@ -7,7 +7,7 @@
 #include "PlayerNumber.h"
 #include "RageSound.h"
 
-struct PlayerState;
+class PlayerState;
 
 class Inventory : public Actor
 {

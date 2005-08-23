@@ -36,6 +36,21 @@ void StageStats::AssertValid( PlayerNumber pn ) const
 	ASSERT( vpPossibleSongs.size() == m_player[pn].vpPossibleSteps.size() );
 }
 
+void StageStats::AssertValid( MultiPlayer pn ) const
+{
+	ASSERT( vpPlayedSongs.size() != 0 );
+	ASSERT( vpPossibleSongs.size() != 0 );
+	if( vpPlayedSongs[0] )
+		CHECKPOINT_M( vpPlayedSongs[0]->GetTranslitFullTitle() );
+	ASSERT( m_multiPlayer[pn].vpPlayedSteps.size() != 0 );
+	ASSERT( m_multiPlayer[pn].vpPlayedSteps[0] );
+	ASSERT_M( playMode < NUM_PLAY_MODES, ssprintf("playmode %i", playMode) );
+	ASSERT( pStyle != NULL );
+	ASSERT_M( m_player[pn].vpPlayedSteps[0]->GetDifficulty() < NUM_DIFFICULTIES, ssprintf("difficulty %i", m_player[pn].vpPlayedSteps[0]->GetDifficulty()) );
+	ASSERT( vpPlayedSongs.size() == m_player[pn].vpPlayedSteps.size() );
+	ASSERT( vpPossibleSongs.size() == m_player[pn].vpPossibleSteps.size() );
+}
+
 
 int StageStats::GetAverageMeter( PlayerNumber pn ) const
 {
@@ -65,13 +80,13 @@ void StageStats::AddStats( const StageStats& other )
 	fGameplaySeconds += other.fGameplaySeconds;
 	fStepsSeconds += other.fStepsSeconds;
 
-	FOREACH_PlayerNumber( p )
+	FOREACH_EnabledMultiPlayer( p )
 		m_player[p].AddStats( other.m_player[p] );
 }
 
 bool StageStats::OnePassed() const
 {
-	FOREACH_HumanPlayer( p )
+	FOREACH_EnabledMultiPlayer( p )
 		if( !m_player[p].bFailed )
 			return true;
 	return false;
@@ -79,7 +94,7 @@ bool StageStats::OnePassed() const
 
 bool StageStats::AllFailed() const
 {
-	FOREACH_EnabledPlayer( pn )
+	FOREACH_EnabledMultiPlayer( pn )
 		if( !m_player[pn].bFailed )
 			return false;
 	return true;
@@ -87,7 +102,7 @@ bool StageStats::AllFailed() const
 
 bool StageStats::AllFailedEarlier() const
 {
-	FOREACH_EnabledPlayer( p )
+	FOREACH_EnabledMultiPlayer( p )
 		if( !m_player[p].bFailedEarlier )
 			return false;
 	return true;

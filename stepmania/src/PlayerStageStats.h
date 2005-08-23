@@ -10,8 +10,9 @@ class Steps;
 struct lua_State;
 
 
-struct PlayerStageStats
+class PlayerStageStats
 {
+public:
 	PlayerStageStats() { Init(); }
 	void Init();
 
