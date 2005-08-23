@@ -101,6 +101,12 @@ GameState::GameState() :
 		m_pPlayerState[p] = new PlayerState;
 		m_pPlayerState[p]->m_PlayerNumber = p;
 	}
+	FOREACH_MultiPlayer( p )
+	{
+		m_pMultiPlayerState[p] = new PlayerState;
+		m_pMultiPlayerState[p]->m_PlayerNumber = PLAYER_1;
+		m_pMultiPlayerState[p]->m_mp = p;
+	}
 
 	m_Environment = new LuaTable;
 
@@ -115,6 +121,8 @@ GameState::~GameState()
 {
 	FOREACH_PlayerNumber( p )
 		SAFE_DELETE( m_pPlayerState[p] );
+	FOREACH_MultiPlayer( p )
+		SAFE_DELETE( m_pMultiPlayerState[p] );
 
 	SAFE_DELETE( m_Environment );
 
@@ -171,6 +179,7 @@ void GameState::Reset()
 	MEMCARDMAN->UnlockCards();
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
+	m_bMultiplayer = false;
 	m_mapEnv.clear();
 	m_sPreferredSongGroup.Set( GROUP_ALL );
 	m_sPreferredCourseGroup.Set( GROUP_ALL );
@@ -207,6 +216,8 @@ void GameState::Reset()
 
 	FOREACH_PlayerNumber( p )
 		m_pPlayerState[p]->Reset();
+	FOREACH_MultiPlayer( p )
+		m_pMultiPlayerState[p]->Reset();
 
 	ResetMusicStatistics();
 	ResetStageStatistics();
@@ -783,6 +794,20 @@ bool GameState::IsPlayerEnabled( PlayerNumber pn ) const
 	return IsHumanPlayer( pn );
 }
 
+bool GameState::IsMultiPlayerEnabled( MultiPlayer mp ) const
+{
+	return m_bIsMultiPlayerJoined[ mp ];
+}
+
+bool GameState::IsPlayerEnabled( const PlayerState* pPlayerState ) const
+{
+	if( pPlayerState->m_mp != MultiPlayer_INVALID )
+		return m_bIsMultiPlayerJoined[ pPlayerState->m_mp ];
+	if( pPlayerState->m_PlayerNumber != PLAYER_INVALID )
+		return IsPlayerEnabled( pPlayerState->m_PlayerNumber );
+	return false;
+}
+
 int	GameState::GetNumPlayersEnabled() const
 {
 	int count = 0;
@@ -1017,14 +1042,14 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 void GameState::ResetNoteSkins()
 {
 	FOREACH_PlayerNumber( pn )
-		ResetNoteSkinsForPlayer(  pn );
+		ResetNoteSkinsForPlayer( m_pPlayerState[pn] );
 
 	++m_BeatToNoteSkinRev;
 }
 
-void GameState::ResetNoteSkinsForPlayer( PlayerNumber pn )
+void GameState::ResetNoteSkinsForPlayer( PlayerState *ps )
 {
-	m_pPlayerState[pn]->ResetNoteSkins();
+	ps->ResetNoteSkins();
 
 	++m_BeatToNoteSkinRev;
 }
@@ -1129,7 +1154,7 @@ void GameState::SetNoteSkinForBeatRange( PlayerState* pPlayerState, const CStrin
 
 /* This is called to launch an attack, or to queue an attack if a.fStartSecond
  * is set.  This is also called by GameState::Update when activating a queued attack. */
-void GameState::LaunchAttack( PlayerNumber target, const Attack& a )
+void GameState::LaunchAttack( MultiPlayer target, const Attack& a )
 {
 	LOG->Trace( "Launch attack '%s' against P%d at %f", a.sModifiers.c_str(), target+1, a.fStartSecond );
 
@@ -1195,8 +1220,9 @@ void setmax( T &a, const T &b )
 	a = max(a, b);
 }
 
-SongOptions::FailType GameState::GetPlayerFailType( PlayerNumber pn ) const
+SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerState ) const
 {
+	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 	SongOptions::FailType ft = m_SongOptions.m_FailType;
 
 	/* If the player changed the fail mode explicitly, leave it alone. */
@@ -1739,25 +1765,25 @@ Premium	GameState::GetPremium()
 		return PREFSMAN->m_Premium; 
 }
 
-bool GameState::IsPlayerHot( PlayerNumber pn ) const
+bool GameState::IsPlayerHot( const PlayerState *pPlayerState ) const
 {
-	return GAMESTATE->m_pPlayerState[pn]->m_HealthState == PlayerState::HOT;
+	return pPlayerState->m_HealthState == PlayerState::HOT;
 }
 
-bool GameState::IsPlayerInDanger( PlayerNumber pn ) const
+bool GameState::IsPlayerInDanger( const PlayerState *pPlayerState ) const
 {
-	if( GAMESTATE->GetPlayerFailType(pn) == SongOptions::FAIL_OFF )
+	if( GAMESTATE->GetPlayerFailType(pPlayerState) == SongOptions::FAIL_OFF )
 		return false;
 	if( !PREFSMAN->m_bShowDanger )
 		return false;
-	return GAMESTATE->m_pPlayerState[pn]->m_HealthState == PlayerState::DANGER;
+	return pPlayerState->m_HealthState == PlayerState::DANGER;
 }
 
-bool GameState::IsPlayerDead( PlayerNumber pn ) const
+bool GameState::IsPlayerDead( const PlayerState *pPlayerState ) const
 {
-	if( GAMESTATE->GetPlayerFailType(pn) == SongOptions::FAIL_OFF )
+	if( GAMESTATE->GetPlayerFailType(pPlayerState) == SongOptions::FAIL_OFF )
 		return false;
-	return GAMESTATE->m_pPlayerState[pn]->m_HealthState == PlayerState::DEAD;
+	return pPlayerState->m_HealthState == PlayerState::DEAD;
 }
 
 float GameState::GetGoalPercentComplete( PlayerNumber pn )
@@ -1858,6 +1884,7 @@ public:
 	static int IsHumanPlayer( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsHumanPlayer((PlayerNumber)IArg(1)) ); return 1; }
 	static int GetPlayerDisplayName( T* p, lua_State *L )	{ lua_pushstring(L, p->GetPlayerDisplayName((PlayerNumber)IArg(1)) ); return 1; }
 	static int GetMasterPlayerNumber( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_MasterPlayerNumber ); return 1; }
+	static int GetMultiplayer( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_bMultiplayer); return 1; }
 	static int ApplyGameCommand( T* p, lua_State *L )
 	{
 		PlayerNumber pn = PLAYER_INVALID;
@@ -1982,6 +2009,7 @@ public:
 		ADD_METHOD( IsHumanPlayer )
 		ADD_METHOD( GetPlayerDisplayName )
 		ADD_METHOD( GetMasterPlayerNumber )
+		ADD_METHOD( GetMultiplayer )
 		ADD_METHOD( ApplyGameCommand )
 		ADD_METHOD( GetCurrentSong )
 		ADD_METHOD( SetCurrentSong )

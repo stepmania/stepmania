@@ -24,8 +24,8 @@ class Game;
 class Style;
 class Character;
 class TimingData;
-struct StageStats;
-struct PlayerState;
+class StageStats;
+class PlayerState;
 struct lua_State;
 class LuaTable;
 class Profile;
@@ -58,6 +58,7 @@ public:
 	BroadcastOnChange<PlayMode>			m_PlayMode;			// many screens display different info depending on this value
 	int									m_iCoins;			// not "credits"
 	PlayerNumber						m_MasterPlayerNumber;	// used in Styles where one player controls both sides
+	bool								m_bMultiplayer;
 	BroadcastOnChange1D<CourseDifficulty,NUM_PLAYERS>	m_PreferredCourseDifficulty;// used in nonstop
 	bool DifficultiesLocked();
 	bool ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc );
@@ -83,6 +84,8 @@ public:
 
 	void GetPlayerInfo( PlayerNumber pn, bool& bIsEnabledOut, bool& bIsHumanOut );
 	bool IsPlayerEnabled( PlayerNumber pn ) const;
+	bool IsMultiPlayerEnabled( MultiPlayer mp ) const;
+	bool IsPlayerEnabled( const PlayerState* pPlayerState ) const;
 	int	GetNumPlayersEnabled() const;
 	bool PlayerUsingBothSides() const;
 
@@ -161,7 +164,7 @@ public:
 
 	int			m_BeatToNoteSkinRev; /* hack: incremented whenever m_BeatToNoteSkin changes */
 	void ResetNoteSkins();
-	void ResetNoteSkinsForPlayer( PlayerNumber pn );
+	void ResetNoteSkinsForPlayer( PlayerState *ps );
 	void GetAllUsedNoteSkins( vector<CString> &out ) const;
 
 	static const float MUSIC_SECONDS_INVALID;
@@ -170,9 +173,9 @@ public:
 	void UpdateSongPosition( float fPositionSeconds, const TimingData &timing, const RageTimer &timestamp = RageZeroTimer );
 	float GetSongPercent( float beat ) const;
 
-	bool IsPlayerHot( PlayerNumber pn ) const;
-	bool IsPlayerInDanger( PlayerNumber pn ) const;
-	bool IsPlayerDead( PlayerNumber pn ) const;
+	bool IsPlayerHot( const PlayerState *pPlayerState ) const;
+	bool IsPlayerInDanger( const PlayerState *pPlayerState ) const;
+	bool IsPlayerDead( const PlayerState *pPlayerState ) const;
 	bool AllAreInDangerOrWorse() const;
 	bool AllAreDead() const;
 	bool AllHumanHaveComboOf30OrMoreMisses() const;
@@ -191,7 +194,7 @@ public:
 	bool	m_bGoalComplete[NUM_PLAYERS];
 	
 	void GetUndisplayedBeats( const PlayerState* pPlayerState, float TotalSeconds, float &StartBeat, float &EndBeat ) const; // only meaningful when a NoteField is in use
-	void LaunchAttack( PlayerNumber target, const Attack& a );
+	void LaunchAttack( MultiPlayer target, const Attack& a );
 	void RemoveAllActiveAttacks();	// called on end of song
 	void RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al=NUM_ATTACK_LEVELS /*all*/ );
 	void EndActiveAttacksForPlayer( PlayerNumber pn );
@@ -220,7 +223,7 @@ public:
 	bool IsDisqualified( PlayerNumber pn );
 	bool PlayerIsUsingModifier( PlayerNumber pn, const CString &sModifier );
 
-	SongOptions::FailType GetPlayerFailType( PlayerNumber pn ) const;
+	SongOptions::FailType GetPlayerFailType( const PlayerState *pPlayerState ) const;
 
 	// character stuff
 	Character* m_pCurCharacters[NUM_PLAYERS];
@@ -272,6 +275,7 @@ public:
 	// PlayerState
 	//
 	PlayerState* m_pPlayerState[NUM_PLAYERS];
+	PlayerState* m_pMultiPlayerState[NUM_MultiPlayer];
 
 	//
 	// Preference wrappers
