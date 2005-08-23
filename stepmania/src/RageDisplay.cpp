@@ -86,7 +86,11 @@ void RageDisplay::ProcessStatsOnFlip()
 		g_iVPF = g_iVertsRenderedSinceLastCheck / g_iFPS;
 		g_iFramesRenderedSinceLastCheck = g_iVertsRenderedSinceLastCheck = 0;
 		if( LOG_FPS )
-			LOG->Trace( "FPS: %d, CFPS %d, VPF: %d", g_iFPS, g_iCFPS, g_iVPF );
+		{
+			CString sStats = GetStats();
+			sStats.Replace( "\n", ", " );
+			LOG->Trace( "%s", sStats.c_str() );
+		}
 	}
 }
 
