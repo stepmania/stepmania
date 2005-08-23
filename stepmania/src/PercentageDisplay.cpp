@@ -15,13 +15,14 @@ ThemeMetric<int> PERCENT_TOTAL_SIZE		( "PercentageDisplay", "PercentTotalSize" )
 
 PercentageDisplay::PercentageDisplay()
 {
-	m_pSource = NULL;
+	m_pPlayerState = NULL;
+	m_pPlayerStageStats = NULL;
 }
 
-void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, const CString &sMetricsGroup, bool bAutoRefresh )
+void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const CString &sMetricsGroup, bool bAutoRefresh )
 {
-	m_PlayerNumber = pn;
-	m_pSource = pSource;
+	m_pPlayerState = pPlayerState;
+	m_pPlayerStageStats = pPlayerStageStats;
 	m_bAutoRefresh = bAutoRefresh;
 	m_Last = -1;
 	m_LastMax = -1;
@@ -32,9 +33,9 @@ void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, const 
 
 
 	if( PREFSMAN->m_bDancePointsForOni )
-		m_textPercent.SetName( ssprintf("DancePointsP%i", pn+1) );
+		m_textPercent.SetName( "DancePoints" + PlayerNumberToString(m_pPlayerState->m_PlayerNumber) );
 	else
-		m_textPercent.SetName( ssprintf("PercentP%i", pn+1) );
+		m_textPercent.SetName( "Percent" + PlayerNumberToString(m_pPlayerState->m_PlayerNumber) );
 
 	m_textPercent.LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
 	ActorUtil::SetXYAndOnCommand( m_textPercent, sMetricsGroup );
@@ -43,7 +44,7 @@ void PercentageDisplay::Load( PlayerNumber pn, PlayerStageStats* pSource, const 
 
 	if( !PREFSMAN->m_bDancePointsForOni && (bool)PERCENT_USE_REMAINDER )
 	{
-		m_textPercentRemainder.SetName( ssprintf("PercentRemainderP%d",pn+1) );
+		m_textPercentRemainder.SetName( "PercentRemainder" + PlayerNumberToString(m_pPlayerState->m_PlayerNumber) );
 		m_textPercentRemainder.LoadFromFont( THEME->GetPathF(sMetricsGroup,"remainder") );
 		ActorUtil::SetXYAndOnCommand( m_textPercentRemainder, sMetricsGroup );
 		ASSERT( m_textPercentRemainder.HasCommand("Off") );
@@ -71,8 +72,8 @@ void PercentageDisplay::Update( float fDeltaTime )
 
 void PercentageDisplay::Refresh()
 {
-	const int iActualDancePoints = m_pSource->iActualDancePoints;
-	const int iCurPossibleDancePoints = m_pSource->iCurPossibleDancePoints;
+	const int iActualDancePoints = m_pPlayerStageStats->iActualDancePoints;
+	const int iCurPossibleDancePoints = m_pPlayerStageStats->iCurPossibleDancePoints;
 
 	if( iActualDancePoints == m_Last && iCurPossibleDancePoints == m_LastMax )
 		return;
@@ -88,12 +89,12 @@ void PercentageDisplay::Refresh()
 	}
 	else
 	{
-		float fPercentDancePoints = m_pSource->GetPercentDancePoints();
-		float fCurMaxPercentDancePoints = m_pSource->GetCurMaxPercentDancePoints();
+		float fPercentDancePoints = m_pPlayerStageStats->GetPercentDancePoints();
+		float fCurMaxPercentDancePoints = m_pPlayerStageStats->GetCurMaxPercentDancePoints();
 		
-		if ( APPLY_SCORE_DISPLAY_OPTIONS )
+		if( APPLY_SCORE_DISPLAY_OPTIONS )
 		{
-			switch( GAMESTATE->m_pPlayerState[m_PlayerNumber]->m_CurrentPlayerOptions.m_ScoreDisplay )
+			switch( m_pPlayerState->m_CurrentPlayerOptions.m_ScoreDisplay )
 			{
 			case PlayerOptions::SCORING_ADD:
 				// nothing to do

@@ -19,6 +19,7 @@
 #include "ActorUtil.h"
 #include "PrefsManager.h"
 #include "CharacterManager.h"
+#include "StatsManager.h"
 
 static const ThemeMetric<CString>		STEPFILE			("ScreenHowToPlay","Stepfile");
 static const ThemeMetric<int>			NUM_PERFECTS		("ScreenHowToPlay","NumPerfects");
@@ -125,7 +126,7 @@ void ScreenHowToPlay::Init()
 	{
 		m_pLifeMeterBar = new LifeMeterBar;
 		m_pLifeMeterBar->SetName("LifeMeterBar");
-		m_pLifeMeterBar->Load( PLAYER_1 );
+		m_pLifeMeterBar->Load( GAMESTATE->m_pPlayerState[PLAYER_1], &STATSMAN->m_CurStageStats.m_player[PLAYER_1] );
 		SET_XY_AND_ON_COMMAND( m_pLifeMeterBar );
 		m_pLifeMeterBar->FillForHowToPlay( NUM_PERFECTS, NUM_MISSES );
 	}

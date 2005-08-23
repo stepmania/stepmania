@@ -856,10 +856,10 @@ void BackgroundImpl::Update( float fDeltaTime )
 
 	FOREACH_PlayerNumber( p )
 	{
-		if( GAMESTATE->IsPlayerInDanger(p) )
+		if( GAMESTATE->IsPlayerInDanger(GAMESTATE->m_pPlayerState[p]) )
 			m_DangerPlayer[p].Update( fDeltaTime );
 			
-		if( GAMESTATE->IsPlayerDead(p) )
+		if( GAMESTATE->IsPlayerDead(GAMESTATE->m_pPlayerState[p]) )
 			m_DeadPlayer[p].Update( fDeltaTime );
 	}
 
@@ -907,9 +907,9 @@ void BackgroundImpl::DrawPrimitives()
 
 		FOREACH_PlayerNumber( p )
 		{
-			if( GAMESTATE->IsPlayerInDanger(p) )
+			if( GAMESTATE->IsPlayerInDanger(GAMESTATE->m_pPlayerState[p]) )
 				m_DangerPlayer[p].Draw();
-			if( GAMESTATE->IsPlayerDead(p) )
+			if( GAMESTATE->IsPlayerDead(GAMESTATE->m_pPlayerState[p]) )
 				m_DeadPlayer[p].Draw();
 		}
 	}
@@ -929,7 +929,7 @@ void BackgroundImpl::GetLoadedBackgroundChanges( vector<BackgroundChange> *pBack
 bool BackgroundImpl::IsDangerAllVisible()
 {
 	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->GetPlayerFailType(p) == SongOptions::FAIL_OFF )
+		if( GAMESTATE->GetPlayerFailType(GAMESTATE->m_pPlayerState[p]) == SongOptions::FAIL_OFF )
 			return false;
 	if( !PREFSMAN->m_bShowDanger )
 		return false;

@@ -9,13 +9,13 @@
 #include "StageStats.h"
 #include "ThemeMetric.h"
 
-struct PlayerState;
+class PlayerState;
 
 class PercentageDisplay: public ActorFrame
 {
 public:
 	PercentageDisplay();
-	void Load( PlayerNumber pn, PlayerStageStats *pSource, const CString &sMetricsGroup, bool bAutoRefresh );
+	void Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const CString &sMetricsGroup, bool bAutoRefresh );
 	void Update( float fDeltaTime );
 	void TweenOffScreen();
 
@@ -27,8 +27,8 @@ private:
 	ThemeMetric<bool> APPLY_SCORE_DISPLAY_OPTIONS;
 
 	void Refresh();
-	PlayerNumber m_PlayerNumber;
-	PlayerStageStats *m_pSource;
+	const PlayerState *m_pPlayerState;
+	const PlayerStageStats *m_pPlayerStageStats;
 	bool m_bAutoRefresh;
 	int m_Last;
 	int m_LastMax;

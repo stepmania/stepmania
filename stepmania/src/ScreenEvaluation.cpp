@@ -491,7 +491,7 @@ void ScreenEvaluation::Init()
 			/* Use "ScreenEvaluation Percent" for the [metric set], but position and
 			 * tween it with "PercentP1X", etc. */
 			m_Percent[p].SetName( ssprintf("PercentP%d",p+1) );
-			m_Percent[p].Load( p, &STATSMAN->m_CurStageStats.m_player[p], "ScreenEvaluation Percent", true );
+			m_Percent[p].Load( GAMESTATE->m_pPlayerState[p], &STATSMAN->m_CurStageStats.m_player[p], "ScreenEvaluation Percent", true );
 			SET_XY_AND_ON_COMMAND( m_Percent[p] );
 			this->AddChild( &m_Percent[p] );
 		}
