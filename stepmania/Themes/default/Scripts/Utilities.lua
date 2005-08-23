@@ -30,16 +30,6 @@ function TableMetricLookup( t, group )
 	return ret
 end
 
--- Scales x so that l1 corresponds to l2 and h1 corresponds to h2.
-function scale( x, l1, h1, l2, h2 )
-	return (((x) - (l1)) * ((h2) - (l2)) / ((h1) - (l1)) + (l2))
-end
-
--- Scales x so that l1 corresponds to l2 and h1 corresponds to h2.
-function scale( x, l1, h1, l2, h2 )
-	return (((x) - (l1)) * ((h2) - (l2)) / ((h1) - (l1)) + (l2))
-end
-
 function split( delimiter, text )
 	local list = {}
 	local pos = 1
@@ -62,10 +52,6 @@ function join( delimiter, list )
 		ret = ret .. delimiter .. list[i] 
 	end
 	return ret
-end
-
-function clamp(val,low,high)
-	return math.max( low, math.min(val,high) )
 end
 
 function wrap(val,n)
