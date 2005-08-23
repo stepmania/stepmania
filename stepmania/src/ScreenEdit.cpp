@@ -357,8 +357,8 @@ const MapEditToDI *ScreenEdit::GetCurrentMap() const
 static MenuDef g_EditHelp(
 	"ScreenMiniMenuEditHelp",
 #if defined(XBOX)
-	MenuRowDef( -1, "L + Up/Down: Change zoom",						false, NULL, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRowDef( -1, "R + Up/Down: Drag area marker",					false, NULL, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "L + Up/Down: Change zoom",						false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "R + Up/Down: Drag area marker",					false, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( -1, "L + Select: Play selection",						false, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( -1, "R + Start: Play whole song",						false, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( -1, "R + Select: Record",								false, EDIT_MODE_PRACTICE, 0, NULL ),
