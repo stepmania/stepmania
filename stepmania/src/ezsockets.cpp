@@ -10,7 +10,7 @@
 
 #if defined(_MSC_VER) && !defined(_XBOX) // We need the WinSock32 Library on Windows
 #pragma comment(lib,"wsock32.lib")
-#elif !defined(__MINGW32__)
+#elif !defined(__MINGW32__) && !defined(_XBOX)
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>

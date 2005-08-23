@@ -6,7 +6,7 @@
 #include "RageSurface.h"
 
 
-#if defined(_WINDOWS)
+#if defined(_WINDOWS) || defined(_XBOX)
 #  include "libpng/include/png.h"
 #  if defined(_MSC_VER)
 #  if defined(_XBOX)
