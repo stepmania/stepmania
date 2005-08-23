@@ -18,7 +18,7 @@
 #elif defined(HAVE_WIN32)
 #include "LoadingWindow_Win32.h"
 
-#elif defined(HAVE_XBOX)
+#elif defined(HAVE_XDK)
 #include "LoadingWindow_Xbox.h"
 #endif
 
