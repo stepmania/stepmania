@@ -5,7 +5,7 @@
 
 #include "GameConstantsAndTypes.h"
 
-struct PlayerState;
+class PlayerState;
 
 const int NUM_SKILL_LEVELS = 6;	// 0-5
 
