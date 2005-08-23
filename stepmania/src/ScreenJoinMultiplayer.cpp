@@ -11,6 +11,8 @@ class Style;
 #include "InputMapper.h"
 #include "GameSoundManager.h"
 #include "GameCommand.h"
+#include "ScreenPrompt.h"
+#include "ScreenManager.h"
 
 enum MultiPlayerStatus
 {
@@ -49,10 +51,14 @@ void ScreenJoinMultiplayer::Init()
 {
 	ScreenWithMenuElements::Init();
 
+	GAMESTATE->m_bMultiplayer = true;
+
 	// Set Style to the first style (should be a one player style)
 	vector<const Style*> v;
 	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, v, false );
 	GAMESTATE->m_pCurStyle.Set( v[0] );
+
+	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 
 	FOREACH_MultiPlayer( p )
 	{
@@ -218,7 +224,24 @@ void ScreenJoinMultiplayer::MenuBack( PlayerNumber pn )
 
 void ScreenJoinMultiplayer::MenuStart( PlayerNumber pn )
 {
-	this->StartTransitioning( SM_BeginFadingOut );
+	int iNumJoinedPlayers = 0;
+	FOREACH_MultiPlayer( p )
+	{
+		bool bJoined = g_MultiPlayerStatus[p] == MultiPlayerStatus_Joined;
+		GAMESTATE->m_bIsMultiPlayerJoined[p] = bJoined;
+		if( bJoined )
+			iNumJoinedPlayers++;
+	}
+
+	SCREENMAN->PlayStartSound();
+
+	if( iNumJoinedPlayers < 2 )
+	{
+		ScreenPrompt::Prompt( SM_None, "You must join 2 or more players before continuing." );
+		return;
+	}
+	
+	this->StartTransitioning( SM_GoToNextScreen );
 }
 
 
