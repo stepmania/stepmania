@@ -4,7 +4,7 @@
 #include "arch/arch_platform.h"
 
 /* MovieTexture driver selector. */
-#if defined(HAVE_DIRECTX) && !defined(HAVE_XBOX)
+#if defined(HAVE_DIRECTX) && !defined(HAVE_XDK)
 #include "MovieTexture_DShow.h"
 #endif
 

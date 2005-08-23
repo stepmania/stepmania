@@ -13,7 +13,7 @@
 #elif defined(HAVE_WIN32) // XXX: Better name for this API?
 #include "ArchHooks_Win32.h"
 
-#elif defined(HAVE_XBOX) // XXX: Better name for this API?
+#elif defined(HAVE_XDK)
 #include "ArchHooks_Xbox.h"
 
 #else

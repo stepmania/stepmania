@@ -4,7 +4,7 @@
 #include "arch/arch_platform.h"
 
 /* InputHandler drivers selector. */
-#if defined(HAVE_DIRECTX) && !defined(XBOX)
+#if defined(HAVE_DIRECTX) && !defined(HAVE_XDK)
 #include "InputHandler_DirectInput.h"
 #endif
 
@@ -29,7 +29,7 @@
 #include "InputHandler_Win32_MIDI.h"
 #endif
 
-#ifdef HAVE_XBOX
+#ifdef HAVE_XDK
 #include "InputHandler_Xbox.h"
 #endif
 

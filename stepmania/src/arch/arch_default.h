@@ -9,9 +9,9 @@
  * InputHandler_SDL to be used.) */
 
 /* InputHandler drivers */
-#if defined (HAVE_XBOX)
+#if defined (HAVE_XDK)
  #define DEFAULT_INPUT_DRIVER_LIST "Xbox"
-#elif defined(HAVE_DIRECTX)
+#elif defined(HAVE_DIRECTX) && !defined(HAVE_XDK)
  #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
 #elif defined(HAVE_X11) // Prefer X11 over SDL
  #define DEFAULT_INPUT_DRIVER_LIST "X11,Joystick"

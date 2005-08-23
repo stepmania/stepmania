@@ -24,7 +24,7 @@ namespace avcodec
 #endif
 };
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(XBOX)
 	#pragma comment(lib, "ffmpeg/lib/avcodec.lib")
 	#pragma comment(lib, "ffmpeg/lib/avformat.lib")
 #endif
