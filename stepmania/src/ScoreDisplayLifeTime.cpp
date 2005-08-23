@@ -18,9 +18,9 @@ ScoreDisplayLifeTime::ScoreDisplayLifeTime()
 	LOG->Trace( "ScoreDisplayLifeTime::ScoreDisplayLifeTime()" );
 }
 
-void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState ) 
+void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats ) 
 {
-	ScoreDisplay::Init( pPlayerState );
+	ScoreDisplay::Init( pPlayerState, pPlayerStageStats );
 
 	const CString sType = "ScoreDisplayLifeTime";
 
@@ -65,7 +65,7 @@ void ScoreDisplayLifeTime::Update( float fDelta )
 {
 	ScoreDisplay::Update( fDelta );
 
-	float fSecs = STATSMAN->m_CurStageStats.m_player[m_pPlayerState->m_PlayerNumber].fLifeRemainingSeconds;
+	float fSecs = m_pPlayerStageStats->fLifeRemainingSeconds;
 
 	CString s = SecondsToMSSMsMs(fSecs);
 	m_textTimeRemaining.SetText( s );

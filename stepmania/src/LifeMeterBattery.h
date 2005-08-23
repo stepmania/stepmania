@@ -15,7 +15,7 @@ class LifeMeterBattery : public LifeMeter
 public:
 	LifeMeterBattery();
 
-	virtual void Load( PlayerNumber pn );
+	virtual void Load( const PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 
 	virtual void Update( float fDeltaTime );
 

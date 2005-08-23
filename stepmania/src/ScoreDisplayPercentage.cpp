@@ -14,11 +14,13 @@ ScoreDisplayPercentage::ScoreDisplayPercentage()
 	this->AddChild( &m_Percent );
 }
 
-void ScoreDisplayPercentage::Init( const PlayerState* pPlayerState ) 
+void ScoreDisplayPercentage::Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats ) 
 {
+	ScoreDisplay::Init( pPlayerState, pPlayerStageStats );
+
 	m_Percent.Load( 
-		pPlayerState->m_PlayerNumber, 
-		&STATSMAN->m_CurStageStats.m_player[pPlayerState->m_PlayerNumber], 
+		pPlayerState, 
+		pPlayerStageStats, 
 		"ScoreDisplayPercentage Percent",
 		true );
 }

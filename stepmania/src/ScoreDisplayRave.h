@@ -13,7 +13,7 @@ class ScoreDisplayRave : public ScoreDisplay
 {
 public:
 	ScoreDisplayRave();
-	virtual void Init( const PlayerState* pPlayerState );
+	virtual void Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats );
 
 	virtual void Update( float fDelta );
 

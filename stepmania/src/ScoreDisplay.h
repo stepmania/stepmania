@@ -5,12 +5,13 @@
 #include "ActorFrame.h"
 #include "GameConstantsAndTypes.h"
 
-struct PlayerState;
+class PlayerState;
+class PlayerStageStats;
 
 class ScoreDisplay : public ActorFrame
 {
 public:
-	virtual void Init( const PlayerState* pPlayerState ) { m_pPlayerState = pPlayerState; }
+	virtual void Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats );
 
 	virtual void SetScore( int iNewScore ) {}
 	virtual void OnLoadSong() {};
@@ -23,7 +24,8 @@ public:
 	virtual void OnJudgment( HoldNoteScore score, TapNoteScore tscore ) {};
 
 protected:
-	const PlayerState* m_pPlayerState;	// needed to look up statistics in GAMESTATE
+	const PlayerState* m_pPlayerState;	// needed to look up stats
+	const PlayerStageStats* m_pPlayerStageStats;	// needed to look up stats
 };
 
 #endif

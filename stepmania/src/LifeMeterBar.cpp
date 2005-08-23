@@ -100,15 +100,17 @@ LifeMeterBar::~LifeMeterBar()
 	SAFE_DELETE( m_pStream );
 }
 
-void LifeMeterBar::Load( PlayerNumber pn )
+void LifeMeterBar::Load( const PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )
 {
-	LifeMeter::Load( pn );
+	LifeMeter::Load( pPlayerState, pPlayerStageStats );
+
+	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
 	// Change life difficulty to really easy if merciful beginner on
 	bool bMercifulBeginnerInEffect = 
 		GAMESTATE->m_PlayMode == PLAY_MODE_REGULAR  &&  
-		GAMESTATE->IsPlayerEnabled( pn )  &&
-		GAMESTATE->m_pCurSteps[m_PlayerNumber]->GetDifficulty() == DIFFICULTY_BEGINNER  &&
+		GAMESTATE->IsPlayerEnabled( pPlayerState )  &&
+		GAMESTATE->m_pCurSteps[pn]->GetDifficulty() == DIFFICULTY_BEGINNER  &&
 		PREFSMAN->m_bMercifulBeginner;
 	if( bMercifulBeginnerInEffect )
 	{
@@ -247,7 +249,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	}
 
 	/* If we've already failed, there's no point in letting them fill up the bar again.  */
-	if( STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailed )
+	if( m_pPlayerStageStats->bFailed )
 		fDeltaLife = 0;
 
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
@@ -277,7 +279,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	AfterLifeChanged();
 
 	if( m_fLifePercentage <= FAIL_THRESHOLD )
-		STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier = true;
+		m_pPlayerStageStats->bFailedEarlier = true;
 }
 
 void LifeMeterBar::AfterLifeChanged()
@@ -287,9 +289,9 @@ void LifeMeterBar::AfterLifeChanged()
 
 bool LifeMeterBar::IsPastPassmark() const
 {
-    if( GAMESTATE->m_pPlayerState[m_PlayerNumber]->m_PlayerOptions.m_fPassmark > 0 )
+    if( m_pPlayerState->m_PlayerOptions.m_fPassmark > 0 )
     {
-		return m_fLifePercentage >= GAMESTATE->m_pPlayerState[m_PlayerNumber]->m_PlayerOptions.m_fPassmark;
+		return m_fLifePercentage >= m_pPlayerState->m_PlayerOptions.m_fPassmark;
     }
     else
     {
@@ -326,7 +328,7 @@ void LifeMeterBar::Update( float fDeltaTime )
 	m_pStream->SetPassingAlpha( m_fPassingAlpha );
 	m_pStream->SetHotAlpha( m_fHotAlpha );
 
-	if( m_fLifePercentage < DANGER_THRESHOLD && !GAMESTATE->IsPlayerDead(m_PlayerNumber) )
+	if( m_fLifePercentage < DANGER_THRESHOLD && !GAMESTATE->IsPlayerDead(m_pPlayerState) )
 		m_quadDangerGlow.SetDiffuseAlpha( 1 );
 	else
 		m_quadDangerGlow.SetDiffuseAlpha( 0 );

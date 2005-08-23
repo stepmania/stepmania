@@ -24,9 +24,9 @@ ScoreDisplayNormal::ScoreDisplayNormal()
 	this->AddChild( &m_text );
 }
 
-void ScoreDisplayNormal::Init( const PlayerState* pPlayerState ) 
+void ScoreDisplayNormal::Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats ) 
 {
-	ScoreDisplay::Init( pPlayerState );
+	ScoreDisplay::Init( pPlayerState, pPlayerStageStats );
 
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;

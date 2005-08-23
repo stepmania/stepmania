@@ -32,9 +32,9 @@ ScoreDisplayBattle::ScoreDisplayBattle()
 		m_TexturePreload.Load( asIconPaths[j] );
 }
 
-void ScoreDisplayBattle::Init( const PlayerState* pPlayerState )
+void ScoreDisplayBattle::Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats )
 {
-	ScoreDisplay::Init( pPlayerState );
+	ScoreDisplay::Init( pPlayerState, pPlayerStageStats );
 }
 
 void ScoreDisplayBattle::Update( float fDelta )

@@ -5,6 +5,8 @@
 #include "GameConstantsAndTypes.h"
 #include "ActorFrame.h"
 
+class PlayerState;
+class PlayerStageStats;
 
 class LifeMeter : public ActorFrame
 {
@@ -12,7 +14,11 @@ public:
 	LifeMeter() {};
 	virtual ~LifeMeter() {};
 	
-	virtual void Load( PlayerNumber pn ) { m_PlayerNumber = pn; }
+	virtual void Load( const PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )
+	{
+		m_pPlayerState = pPlayerState;
+		m_pPlayerStageStats = pPlayerStageStats;
+	}
 	virtual void OnLoadSong() {};
 	virtual void OnSongEnded() {};
 	/* Change life after receiving a tap note grade.  This *is* called for
@@ -30,7 +36,8 @@ public:
 	virtual void ForceFail() = 0;
 
 protected:
-	PlayerNumber m_PlayerNumber;
+	const PlayerState *m_pPlayerState;
+	PlayerStageStats *m_pPlayerStageStats;
 };
 
 

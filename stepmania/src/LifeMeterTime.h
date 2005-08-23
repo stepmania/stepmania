@@ -18,7 +18,7 @@ class LifeMeterTime : public LifeMeter
 public:
 	LifeMeterTime();
 
-	virtual void Load( PlayerNumber pn );
+	virtual void Load( const PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats );
 
 	virtual void Update( float fDeltaTime );
 

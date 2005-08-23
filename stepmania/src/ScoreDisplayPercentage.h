@@ -11,7 +11,7 @@ class ScoreDisplayPercentage: public ScoreDisplay
 {
 public:
 	ScoreDisplayPercentage();
-	void Init( const PlayerState* pPlayerState );
+	void Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats );
 
 private:
 	AutoActor			m_sprFrame;

@@ -13,7 +13,7 @@ class ScoreDisplayBattle : public ScoreDisplay
 {
 public:
 	ScoreDisplayBattle();
-	virtual void Init( const PlayerState* pPlayerState );
+	virtual void Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats );
 
 	virtual void Update( float fDelta );
 

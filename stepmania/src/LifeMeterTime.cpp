@@ -1,13 +1,13 @@
 #include "global.h"
 #include "LifeMeterTime.h"
-#include "GameState.h"
 #include "ThemeManager.h"
 #include "Steps.h"
-#include "StatsManager.h"
 #include "ActorUtil.h"
 #include "Course.h"
 #include "PrefsManager.h"
 #include "StreamDisplay.h"
+#include "GameState.h"
+#include "StatsManager.h"
 
 const float FULL_LIFE_SECONDS = 1.5f*60;
 
@@ -24,9 +24,9 @@ LifeMeterTime::LifeMeterTime()
 	m_fLifeTotalLostSeconds = 0;
 }
 
-void LifeMeterTime::Load( PlayerNumber pn )
+void LifeMeterTime::Load( const PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )
 {
-	LifeMeter::Load( pn );
+	LifeMeter::Load( pPlayerState, pPlayerStageStats );
 
 	const CString sType = "LifeMeterTime";
 
@@ -70,7 +70,7 @@ void LifeMeterTime::Load( PlayerNumber pn )
 
 void LifeMeterTime::OnLoadSong()
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier )
+	if( m_pPlayerStageStats->bFailedEarlier )
 		return;
 
 	Course* pCourse = GAMESTATE->m_pCurCourse;
@@ -85,7 +85,7 @@ void LifeMeterTime::OnLoadSong()
 
 void LifeMeterTime::ChangeLife( TapNoteScore tns )
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier )
+	if( m_pPlayerStageStats->bFailedEarlier )
 		return;
 
 	float fMeterChange = 0;
@@ -104,12 +104,12 @@ void LifeMeterTime::ChangeLife( TapNoteScore tns )
 	m_fLifeTotalLostSeconds -= fMeterChange;
 
 	if( GetLifeSeconds() <= 0 )
-		STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier = true;
+		m_pPlayerStageStats->bFailedEarlier = true;
 }
 
 void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier )
+	if( m_pPlayerStageStats->bFailedEarlier )
 		return;
 
 	float fMeterChange = 0;
@@ -123,7 +123,7 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 	m_fLifeTotalLostSeconds -= fMeterChange;
 
 	if( GetLifeSeconds() <= 0 )
-		STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier = true;
+		m_pPlayerStageStats->bFailedEarlier = true;
 }
 
 void LifeMeterTime::OnDancePointsChange()
@@ -143,7 +143,7 @@ bool LifeMeterTime::IsHot() const
 
 bool LifeMeterTime::IsFailing() const
 {
-	return STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier;
+	return m_pPlayerStageStats->bFailedEarlier;
 }
 
 void LifeMeterTime::Update( float fDeltaTime )
@@ -151,7 +151,7 @@ void LifeMeterTime::Update( float fDeltaTime )
 	// update current stage stats so ScoreDisplayLifeTime can show the right thing
 	float fSecs = GetLifeSeconds();
 	fSecs = max( 0, fSecs );
-	STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].fLifeRemainingSeconds = fSecs;
+	m_pPlayerStageStats->fLifeRemainingSeconds = fSecs;
 	
 	LifeMeter::Update( fDeltaTime );
 
@@ -160,7 +160,7 @@ void LifeMeterTime::Update( float fDeltaTime )
 	m_pStream->SetPassingAlpha( 0 );
 	m_pStream->SetHotAlpha( 0 );
 
-	if( m_pStream->GetTrailingLifePercent() < DANGER_THRESHOLD && !GAMESTATE->IsPlayerDead(m_PlayerNumber) )
+	if( m_pStream->GetTrailingLifePercent() < DANGER_THRESHOLD && !GAMESTATE->IsPlayerDead(m_pPlayerState) )
 		m_quadDangerGlow.SetDiffuseAlpha( 1 );
 	else
 		m_quadDangerGlow.SetDiffuseAlpha( 0 );

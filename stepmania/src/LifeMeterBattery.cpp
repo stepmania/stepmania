@@ -3,7 +3,7 @@
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "Steps.h"
-#include "StatsManager.h"
+#include "PlayerState.h"
 
 
 const float	BATTERY_X[NUM_PLAYERS]	=	{ -92, +92 };
@@ -25,11 +25,11 @@ LifeMeterBattery::LifeMeterBattery()
 	m_soundLoseLife.Load( THEME->GetPathS("LifeMeterBattery","lose"),true );
 }
 
-void LifeMeterBattery::Load( PlayerNumber pn )
+void LifeMeterBattery::Load( const PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats )
 {
-	LifeMeter::Load( pn );
+	LifeMeter::Load( pPlayerState, pPlayerStageStats );
 
-	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled(pn);
+	bool bPlayerEnabled = GAMESTATE->IsPlayerEnabled( pPlayerState );
 
 	m_sprFrame.Load( THEME->GetPathG("LifeMeterBattery","frame") );
 	this->AddChild( &m_sprFrame );
@@ -45,6 +45,8 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 	if( bPlayerEnabled )
 		this->AddChild( &m_textNumLives );
 
+	PlayerNumber pn = pPlayerState->m_PlayerNumber;
+
 	m_sprFrame.SetZoomX( pn==PLAYER_1 ? 1.0f : -1.0f );
 	m_sprBattery.SetZoomX( pn==PLAYER_1 ? 1.0f : -1.0f );
 	m_sprBattery.SetX( BATTERY_X[pn] );
@@ -53,7 +55,7 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 
 	if( bPlayerEnabled )
 	{
-		m_Percent.Load( pn, &STATSMAN->m_CurStageStats.m_player[pn], "LifeMeterBattery Percent", true );
+		m_Percent.Load( pPlayerState, pPlayerStageStats, "LifeMeterBattery Percent", true );
 		this->AddChild( &m_Percent );
 	}
 
@@ -62,13 +64,14 @@ void LifeMeterBattery::Load( PlayerNumber pn )
 
 void LifeMeterBattery::OnSongEnded()
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier )
+	if( m_pPlayerStageStats->bFailedEarlier )
 		return;
 
 	if( m_iLivesLeft < GAMESTATE->m_SongOptions.m_iBatteryLives )
 	{
 		m_iTrailingLivesLeft = m_iLivesLeft;
-		m_iLivesLeft += ( GAMESTATE->m_pCurSteps[m_PlayerNumber]->GetMeter()>=8 ? 2 : 1 );
+		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
+		m_iLivesLeft += ( GAMESTATE->m_pCurSteps[pn]->GetMeter()>=8 ? 2 : 1 );
 		m_iLivesLeft = min( m_iLivesLeft, GAMESTATE->m_SongOptions.m_iBatteryLives );
 		m_soundGainLife.Play();
 	}
@@ -79,7 +82,7 @@ void LifeMeterBattery::OnSongEnded()
 
 void LifeMeterBattery::ChangeLife( TapNoteScore score )
 {
-	if( STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier )
+	if( m_pPlayerStageStats->bFailedEarlier )
 		return;
 
 	switch( score )
@@ -107,7 +110,7 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 		ASSERT(0);
 	}
 	if( m_iLivesLeft == 0 )
-		STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier = true;
+		m_pPlayerStageStats->bFailedEarlier = true;
 }
 
 void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
@@ -145,7 +148,7 @@ bool LifeMeterBattery::IsHot() const
 
 bool LifeMeterBattery::IsFailing() const
 {
-	return STATSMAN->m_CurStageStats.m_player[m_PlayerNumber].bFailedEarlier;
+	return m_pPlayerStageStats->bFailedEarlier;
 }
 
 float LifeMeterBattery::GetLife() const

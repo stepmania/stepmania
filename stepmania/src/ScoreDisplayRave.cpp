@@ -4,7 +4,6 @@
 #include "RageLog.h"
 #include "PrefsManager.h"
 #include "RageLog.h"
-#include "GameState.h"
 #include "ThemeManager.h"
 #include "ActorUtil.h"
 #include "PlayerState.h"
@@ -34,9 +33,9 @@ ScoreDisplayRave::ScoreDisplayRave()
 	this->AddChild( &m_textLevel );
 }
 
-void ScoreDisplayRave::Init( const PlayerState* pPlayerState )
+void ScoreDisplayRave::Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats )
 {
-	ScoreDisplay::Init( pPlayerState );
+	ScoreDisplay::Init( pPlayerState, pPlayerStageStats );
 
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 

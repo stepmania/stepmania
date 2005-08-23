@@ -24,9 +24,9 @@ ScoreDisplayOni::ScoreDisplayOni()
 	this->AddChild( &m_text );
 }
 
-void ScoreDisplayOni::Init( const PlayerState* pPlayerState ) 
+void ScoreDisplayOni::Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats ) 
 {
-	ScoreDisplay::Init( pPlayerState );
+	ScoreDisplay::Init( pPlayerState, pPlayerStageStats );
 
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;

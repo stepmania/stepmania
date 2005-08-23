@@ -12,7 +12,7 @@ class ScoreDisplayNormal : public ScoreDisplay
 public:
 	ScoreDisplayNormal();
 
-	virtual void Init( const PlayerState* pPlayerState );
+	virtual void Init( const PlayerState* pPlayerState, const PlayerStageStats* pPlayerStageStats );
 
 	virtual void SetScore( int iNewScore );
 	virtual void SetText( CString s ) { m_text.SetText(s); }
