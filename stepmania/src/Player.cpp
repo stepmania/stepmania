@@ -90,7 +90,7 @@ float AdjustedWindowHold( HoldWindow hw, bool bIsPlayingBeginner )
 #define ADJUSTED_WINDOW_HOLD( hw )	AdjustedWindowHold( hw, IsPlayingBeginner() )
 
 
-Player::Player()
+Player::Player( bool bShowNoteField )
 {
 	m_bLoaded = false;
 
@@ -117,14 +117,16 @@ Player::Player()
 
 	PlayerAI::InitFromDisk();
 
-	m_pNoteField = new NoteField;
+	m_pNoteField = NULL;
+	if( bShowNoteField )
+		m_pNoteField = new NoteField;
 
 	this->SubscribeToMessage( Message_AutosyncChanged );
 }
 
 Player::~Player()
 {
-	delete m_pNoteField;
+	SAFE_DELETE( m_pNoteField );
 }
 
 /* Init() does the expensive stuff: load sounds and note skins.  Load() just loads a NoteData. */
@@ -214,7 +216,8 @@ void Player::Init(
 	ActorUtil::OnCommand( m_Judgment, sType );
 
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
-	m_pNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
+	if( m_pNoteField )
+		m_pNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
 }
 
 void Player::Load( const NoteData& noteData )
@@ -229,7 +232,7 @@ void Player::Load( const NoteData& noteData )
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	GAMESTATE->ResetNoteSkinsForPlayer( pn );
+	GAMESTATE->ResetNoteSkinsForPlayer( m_pPlayerState );
 
 	// init steps
 	m_NoteData.Init();
@@ -291,8 +294,10 @@ void Player::Load( const NoteData& noteData )
 	float fNoteFieldMiddle = (GRAY_ARROWS_Y_STANDARD+GRAY_ARROWS_Y_REVERSE)/2;
 	
 	if( m_pNoteField )
+	{
 		m_pNoteField->SetY( fNoteFieldMiddle );
-	m_pNoteField->Load( &m_NoteData, iStartDrawingAtPixels, iStopDrawingAtPixels );
+		m_pNoteField->Load( &m_NoteData, iStartDrawingAtPixels, iStopDrawingAtPixels );
+	}
 
 	const bool bReverse = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetReversePercentForColumn(0) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;
@@ -642,7 +647,8 @@ void Player::ApplyWaitingTransforms()
 	m_pPlayerState->m_ModsToApply.clear();
 
 	// Cache used NoteSkins now, not on the next update.
-	m_pNoteField->RefreshBeatToNoteSkin();
+	if( m_pNoteField )
+		m_pNoteField->RefreshBeatToNoteSkin();
 }
 
 void Player::DrawPrimitives()
@@ -1007,7 +1013,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			// TODO: Remove use of PlayerNumber
 			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-			GAMESTATE->LaunchAttack( OPPOSITE_PLAYER[pn], attack );
+			GAMESTATE->LaunchAttack( (MultiPlayer)OPPOSITE_PLAYER[pn], attack );
 
 			// remove all TapAttacks on this row
 			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
@@ -1693,13 +1699,14 @@ bool Player::IsPlayingBeginner() const
 		Steps *pSteps = m_pPlayerStageStats->vpPossibleSteps[0];
 		return pSteps->GetDifficulty() == DIFFICULTY_BEGINNER;
 	}
-	else
-	{
-		if( m_pPlayerState->m_PlayerNumber == PLAYER_INVALID )
-			return false;
-		Steps *pSteps = GAMESTATE->m_pCurSteps[ m_pPlayerState->m_PlayerNumber ];
-		return pSteps && pSteps->GetDifficulty() == DIFFICULTY_BEGINNER;
-	}	
+
+	if( m_pPlayerState == NULL )
+		return false;
+
+	if( m_pPlayerState->m_PlayerNumber == PLAYER_INVALID )
+		return false;
+	Steps *pSteps = GAMESTATE->m_pCurSteps[ m_pPlayerState->m_PlayerNumber ];
+	return pSteps && pSteps->GetDifficulty() == DIFFICULTY_BEGINNER;
 }
 
 void Player::HandleMessage( const CString& sMessage )

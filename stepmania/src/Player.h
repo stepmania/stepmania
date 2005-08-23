@@ -19,14 +19,14 @@ class ScoreKeeper;
 class Inventory;
 class RageTimer;
 class NoteField;
-struct PlayerStageStats;
+class PlayerStageStats;
 
 #define	SAMPLE_COUNT	32
 
 class Player: public ActorFrame
 {
 public:
-	Player();
+	Player( bool bShowNoteField = true );
 	~Player();
 
 	virtual void Update( float fDeltaTime );
@@ -57,6 +57,8 @@ public:
 	float GetMaxStepDistanceSeconds();
 
 	NoteData m_NoteData;
+	
+	bool HasNoteField() { return m_pNoteField != NULL; }
 
 protected:
 	void HandleStep( int col, const RageTimer &tm, bool bHeld );
