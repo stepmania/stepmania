@@ -1884,7 +1884,7 @@ public:
 	static int IsHumanPlayer( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsHumanPlayer((PlayerNumber)IArg(1)) ); return 1; }
 	static int GetPlayerDisplayName( T* p, lua_State *L )	{ lua_pushstring(L, p->GetPlayerDisplayName((PlayerNumber)IArg(1)) ); return 1; }
 	static int GetMasterPlayerNumber( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_MasterPlayerNumber ); return 1; }
-	static int GetMultiplayer( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_bMultiplayer); return 1; }
+	static int GetMultiplayer( T* p, lua_State *L )			{ lua_pushboolean(L, p->m_bMultiplayer); return 1; }
 	static int ApplyGameCommand( T* p, lua_State *L )
 	{
 		PlayerNumber pn = PLAYER_INVALID;

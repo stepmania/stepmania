@@ -1,35 +1,25 @@
-/* ScreenJukebox - Plays whole songs continuously. */
-
-#ifndef ScreenJukebox_H
-#define ScreenJukebox_H
-
+#include "global.h"
 #include "ScreenGameplayNormal.h"
-#include "Sprite.h"
-class CourseEntry;
 
-class ScreenJukebox : public ScreenGameplayNormal
+
+REGISTER_SCREEN_CLASS( ScreenGameplayNormal );
+
+ScreenGameplayNormal::ScreenGameplayNormal( CString sName ) : ScreenGameplay(sName)
 {
-public:
-	ScreenJukebox( CString sName );
-	virtual void Init();
 
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
+}
 
-	void SetSong();
-
-protected:
-	bool m_bDemonstration;
-
-	const CourseEntry *m_pCourseEntry;
-
-	virtual void InitSongQueues();
+void ScreenGameplayNormal::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
+{
+	vPlayerInfoOut.resize( NUM_PLAYERS );
+	FOREACH_PlayerNumber( p )
+		vPlayerInfoOut[p].Load( p, MultiPlayer_INVALID, true );
 };
 
-#endif
+// lua end
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2005 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

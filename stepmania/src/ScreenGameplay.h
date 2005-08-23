@@ -1,35 +1,39 @@
 /* ScreenGameplay - The music plays, the notes scroll, and the Player is pressing buttons. */
 
-#ifndef SCREEN_GAMEPLAY_H
-#define SCREEN_GAMEPLAY_H
+#ifndef ScreenGameplay_H
+#define ScreenGameplay_H
 
 #include "ScreenWithMenuElements.h"
 #include "Sprite.h"
 #include "Transition.h"
 #include "BitmapText.h"
-#include "Player.h"
 #include "RandomSample.h"
 #include "RageSound.h"
 #include "Background.h"
 #include "Foreground.h"
-#include "LifeMeter.h"
-#include "ScoreDisplay.h"
-#include "DifficultyIcon.h"
-#include "DifficultyMeter.h"
 #include "BPMDisplay.h"
-class Inventory;
 #include "BeginnerHelper.h"
 #include "LyricDisplay.h"
-#include "Character.h"
 #include "Attack.h"
-#include "ActiveAttackList.h"
 #include "NetworkSyncManager.h"
 #include "AutoKeysounds.h"
 #include "ThemeMetric.h"
+#include "PlayerStageStats.h"
+#include "PlayerState.h"
+
+class LyricsLoader;
+class ActiveAttackList;
+class CombinedLifeMeter;
+class Player;
+class LifeMeter;
+class ScoreDisplay;
+class DifficultyIcon;
+class DifficultyMeter;
+class Inventory;
+class ScoreKeeper;
 
 AutoScreenMessage( SM_NotesEnded )
 
-class LyricsLoader;
 class ScreenGameplay : public ScreenWithMenuElements
 {
 public:
@@ -93,10 +97,9 @@ protected:
 		NUM_DANCING_STATES
 	} m_DancingState;
 	bool				m_bPaused;
+
 	GameController			m_PauseController;
 	vector<Song*>		m_apSongsQueue;					// size may be >1 if playing a course
-	vector<Steps*>		m_vpStepsQueue[NUM_PLAYERS];	// size may be >1 if playing a course
-	vector<AttackArray>	m_asModifiersQueue[NUM_PLAYERS];// size may be >1 if playing a course
 
 	float				m_fTimeSinceLastDancingComment;	// this counter is only running while STATE_DANCING
 
@@ -110,24 +113,15 @@ protected:
 
 	Sprite				m_sprStaticBackground;
 	AutoActor			m_sprLifeFrame;
-	LifeMeter*			m_pLifeMeter[NUM_PLAYERS];
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
 	Sprite				m_sprCourseSongNumber;
 	AutoActor			m_sprStageFrame;
-	BitmapText			m_textCourseSongNumber[NUM_PLAYERS];
-	BitmapText			m_textStepsDescription[NUM_PLAYERS];
 
 	BPMDisplay			m_BPMDisplay;
 	float				m_fLastBPS;
 
 	Sprite				m_sprScoreFrame;
-	ScoreDisplay*		m_pPrimaryScoreDisplay[NUM_PLAYERS];
-	ScoreDisplay*		m_pSecondaryScoreDisplay[NUM_PLAYERS];
-	ScoreKeeper*		m_pPrimaryScoreKeeper[NUM_PLAYERS];
-	ScoreKeeper*		m_pSecondaryScoreKeeper[NUM_PLAYERS];
-	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
 	BitmapText			m_textSongOptions;
-	ActiveAttackList	m_ActiveAttackList[NUM_PLAYERS];
 	BitmapText			m_Scoreboard[NUM_NSSB_CATEGORIES];	// for NSMAN, so we can have a scoreboard
 
 	bool				m_ShowScoreboard;
@@ -145,23 +139,12 @@ protected:
 	Transition	m_Failed;
 	Transition	m_Extra;
 	Transition	m_Toasty;	// easter egg
-	Transition	m_Win[NUM_PLAYERS];
 	Transition	m_Draw;
 
 	BitmapText			m_textSurviveTime;	// used in extra stage
 
-	Player				m_Player[NUM_PLAYERS];
 
 	AutoKeysounds	m_AutoKeysounds;
-
-	// used in PLAY_MODE_BATTLE
-	Inventory*			m_pInventory[NUM_PLAYERS];
-	
-	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
-	DifficultyMeter		m_DifficultyMeter[NUM_PLAYERS];
-
-	Sprite				m_sprOniGameOver[NUM_PLAYERS];
-	void				ShowOniGameOver( PlayerNumber pn );
 
 	RageSound		m_soundBattleTrickLevel1;
 	RageSound		m_soundBattleTrickLevel2;
@@ -175,7 +158,80 @@ protected:
 	BeginnerHelper	m_BeginnerHelper;
 
 	NoteData		m_CabinetLightsNoteData;
+
+	class PlayerInfo
+	{
+	public:
+		PlayerInfo();
+		~PlayerInfo();
+
+		void Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField );
+		void LoadDummyP1();
+
+		void ShowOniGameOver();
+		MultiPlayer GetPlayerStateAndStageStatsIndex()	{ return m_pn == PLAYER_INVALID ? m_mp : (MultiPlayer)m_pn; }
+		PlayerState *GetPlayerState();
+		PlayerStageStats *GetPlayerStageStats();
+		PlayerNumber GetStepsAndTrailIndex()			{ return m_pn == PLAYER_INVALID ? PLAYER_1 : m_pn; }
+		bool IsEnabled();
+		bool IsMultiPlayer() { return m_mp != MultiPlayer_INVALID; }
+		CString GetName()
+		{
+			if( m_bIsDummy )
+				return "Dummy";
+			if( IsMultiPlayer() ) 
+				return MultiPlayerToString( m_mp );
+			else
+				return PlayerNumberToString( m_pn );
+		}
+
+		PlayerNumber m_pn;
+		MultiPlayer m_mp;
+		bool m_bIsDummy;
+		PlayerState	m_PlayerStateDummy;
+		PlayerStageStats m_PlayerStageStatsDummy;
+
+		vector<Steps*>		m_vpStepsQueue;	// size may be >1 if playing a course
+		vector<AttackArray>	m_asModifiersQueue;// size may be >1 if playing a course
+
+		LifeMeter			*m_pLifeMeter;
+		BitmapText			*m_ptextCourseSongNumber;
+		BitmapText			*m_ptextStepsDescription;
+
+		ScoreDisplay		*m_pPrimaryScoreDisplay;
+		ScoreDisplay		*m_pSecondaryScoreDisplay;
+		ScoreKeeper			*m_pPrimaryScoreKeeper;
+		ScoreKeeper			*m_pSecondaryScoreKeeper;
+		BitmapText			*m_ptextPlayerOptions;
+		ActiveAttackList	*m_pActiveAttackList;
+
+		Transition			*m_pWin;
+
+		Player				*m_pPlayer;
+
+		// used in PLAY_MODE_BATTLE
+		Inventory			*m_pInventory;
+		
+		DifficultyIcon		*m_pDifficultyIcon;
+		DifficultyMeter		*m_pDifficultyMeter;
+
+		AutoActor			m_sprOniGameOver;
+	};
+	vector<PlayerInfo>	m_vPlayerInfo;	// filled by SGameplay derivatives in Init
+	virtual void FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut ) = 0;
 };
+
+vector<ScreenGameplay::PlayerInfo>::iterator GetNextEnabledPlayerInfo			( vector<ScreenGameplay::PlayerInfo>::iterator iter, vector<ScreenGameplay::PlayerInfo> &v );
+vector<ScreenGameplay::PlayerInfo>::iterator GetNextEnabledPlayerInfoNotDummy	( vector<ScreenGameplay::PlayerInfo>::iterator iter, vector<ScreenGameplay::PlayerInfo> &v );
+vector<ScreenGameplay::PlayerInfo>::iterator GetNextEnabledPlayerNumberInfo		( vector<ScreenGameplay::PlayerInfo>::iterator iter, vector<ScreenGameplay::PlayerInfo> &v );
+vector<ScreenGameplay::PlayerInfo>::iterator GetNextPlayerNumberInfo			( vector<ScreenGameplay::PlayerInfo>::iterator iter, vector<ScreenGameplay::PlayerInfo> &v );
+vector<ScreenGameplay::PlayerInfo>::iterator GetNextVisiblePlayerInfo			( vector<ScreenGameplay::PlayerInfo>::iterator iter, vector<ScreenGameplay::PlayerInfo> &v );
+
+#define FOREACH_EnabledPlayerInfo( v, pi )			for( vector<PlayerInfo>::iterator pi = GetNextEnabledPlayerInfo			(v.begin()-1,v);	pi != v.end(); pi = GetNextEnabledPlayerInfo(pi,v) )
+#define FOREACH_EnabledPlayerInfoNotDummy( v, pi )	for( vector<PlayerInfo>::iterator pi = GetNextEnabledPlayerInfoNotDummy	(v.begin()-1,v);	pi != v.end(); pi = GetNextEnabledPlayerInfoNotDummy(pi,v) )
+#define FOREACH_EnabledPlayerNumberInfo( v, pi )	for( vector<PlayerInfo>::iterator pi = GetNextEnabledPlayerNumberInfo	(v.begin()-1,v);	pi != v.end(); pi = GetNextEnabledPlayerNumberInfo(pi,v) )
+#define FOREACH_PlayerNumberInfo( v, pi )			for( vector<PlayerInfo>::iterator pi = GetNextPlayerNumberInfo			(v.begin()-1,v);	pi != v.end(); pi = GetNextPlayerNumberInfo(pi,v) )
+#define FOREACH_VisiblePlayerInfo( v, pi )			for( vector<PlayerInfo>::iterator pi = GetNextVisiblePlayerInfo			(v.begin()-1,v);	pi != v.end(); pi = GetNextVisiblePlayerInfo(pi,v) )
 
 
 #endif

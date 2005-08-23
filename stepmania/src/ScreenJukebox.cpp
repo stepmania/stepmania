@@ -166,7 +166,7 @@ void ScreenJukebox::SetSong()
 	return;	// didn't find a song
 }
 
-ScreenJukebox::ScreenJukebox( CString sName ) : ScreenGameplay( sName )
+ScreenJukebox::ScreenJukebox( CString sName ) : ScreenGameplayNormal( sName )
 {
 	LOG->Trace( "ScreenJukebox::ScreenJukebox()" );
 	m_bDemonstration = false;
@@ -307,19 +307,19 @@ void ScreenJukebox::InitSongQueues()
 		if( i != iIndexToKeep )
 		{
 			m_apSongsQueue.erase( m_apSongsQueue.begin()+i );
-			FOREACH_EnabledPlayer(p)
+			FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 			{
-				m_vpStepsQueue[p].erase( m_vpStepsQueue[p].begin()+i );
-				m_asModifiersQueue[p].erase( m_asModifiersQueue[p].begin()+i );
+				pi->m_vpStepsQueue.erase( pi->m_vpStepsQueue.begin()+i );
+				pi->m_asModifiersQueue.erase( pi->m_asModifiersQueue.begin()+i );
 			}
 		}
 	}
 
 	ASSERT_M( m_apSongsQueue.size() == 1, ssprintf("%i", (int) m_apSongsQueue.size()) );
-	FOREACH_PlayerNumber(p)
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
-		ASSERT_M( m_vpStepsQueue[p].size() == 1, ssprintf("%i", (int) m_vpStepsQueue[p].size()) );
-		ASSERT_M( m_asModifiersQueue[p].size() == 1, ssprintf("%i", (int) m_asModifiersQueue[p].size()) );
+		ASSERT_M( pi->m_vpStepsQueue.size() == 1, ssprintf("%i", (int) pi->m_vpStepsQueue.size()) );
+		ASSERT_M( pi->m_asModifiersQueue.size() == 1, ssprintf("%i", (int) pi->m_asModifiersQueue.size()) );
 	}
 }
 

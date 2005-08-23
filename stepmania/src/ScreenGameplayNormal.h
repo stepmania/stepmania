@@ -1,35 +1,23 @@
-/* ScreenJukebox - Plays whole songs continuously. */
+/* ScreenGameplay - The music plays, the notes scroll, and the Player is pressing buttons. */
 
-#ifndef ScreenJukebox_H
-#define ScreenJukebox_H
+#ifndef ScreenGameplayNormal_H
+#define ScreenGameplayNormal_H
 
-#include "ScreenGameplayNormal.h"
-#include "Sprite.h"
-class CourseEntry;
+#include "ScreenGameplay.h"
 
-class ScreenJukebox : public ScreenGameplayNormal
+class LyricsLoader;
+class ScreenGameplayNormal : public ScreenGameplay
 {
 public:
-	ScreenJukebox( CString sName );
-	virtual void Init();
-
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
-
-	void SetSong();
-
-protected:
-	bool m_bDemonstration;
-
-	const CourseEntry *m_pCourseEntry;
-
-	virtual void InitSongQueues();
+	ScreenGameplayNormal( CString sName );
+	virtual void FillPlayerInfo( vector<ScreenGameplay::PlayerInfo> &vPlayerInfoOut );
 };
+
 
 #endif
 
 /*
- * (c) 2003-2004 Chris Danford
+ * (c) 2005 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

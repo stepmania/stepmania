@@ -1,76 +1,24 @@
-/* ScreenGameplayMultiplayer */
+/* ScreenGameplayMultiplayer - The music plays, the notes scroll, and the Player is pressing buttons. */
 
 #ifndef ScreenGameplayMultiplayer_H
 #define ScreenGameplayMultiplayer_H
 
-#include "Screen.h"
-#include "Background.h"
-#include "Foreground.h"
-#include "ScoreDisplay.h"
-#include "Transition.h"
-#include "Player.h"
-#include "EnumHelper.h"
-#include "AutoKeysounds.h"
-#include "PlayerState.h"
-#include "StageStats.h"
+#include "ScreenGameplay.h"
 
-class Song;
-class Steps;
-
-class ScreenGameplayMultiplayer : public Screen
+class LyricsLoader;
+class ScreenGameplayMultiplayer : public ScreenGameplay
 {
 public:
-	ScreenGameplayMultiplayer( CString sName, bool bDemonstration = false );
-	virtual void Init();
-	virtual ~ScreenGameplayMultiplayer();
-
-	virtual void Update( float fDeltaTime );
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	virtual void HandleScreenMessage( const ScreenMessage SM );
-
-	virtual bool UsesBackground() const { return false; }
-
-protected:
-	void TweenOursOnScreen();
-	void TweenOursOffScreen();
-
-	bool IsLastSong();
-	void SetupSong( MultiPlayer p, int iSongIndex );
-	void LoadNextSong();
-	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
-	void ShowSavePrompt( ScreenMessage SM_SendWhenDone );
-
-	void UpdateSongPosition( float fDeltaTime );
-	void StageFinished( bool bBackedOut );
-
-	vector<Song*>		m_vpSongsQueue;
-	vector<Steps*>		m_vpStepsQueue;
-	vector<AttackArray>	m_vModifiersQueue;
-
-	Background			m_Background;
-	Foreground			m_Foreground;
-
-	ScoreDisplay*		m_pPrimaryScoreDisplay[NUM_MultiPlayer];
-	ScoreKeeper*		m_pPrimaryScoreKeeper[NUM_MultiPlayer];
-
-	Transition		m_In;
-	Transition		m_Out;
-	Transition		m_Cancel;
-
-	Player				m_AutoPlayer;
-	PlayerState			m_PlayerState[NUM_MultiPlayer];
-	PlayerStageStats	m_PlayerStageStats[NUM_MultiPlayer];
-	Player				m_HumanPlayer[NUM_MultiPlayer];
-
-	AutoKeysounds	m_AutoKeysounds;
-	RageSound		*m_pSoundMusic;
+	ScreenGameplayMultiplayer( CString sName );
+	void Init();
+	virtual void FillPlayerInfo( vector<ScreenGameplay::PlayerInfo> &vPlayerInfoOut );
 };
 
 
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+ * (c) 2005 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
