@@ -1,7 +1,9 @@
 #ifndef ARCH_SETUP_WINDOWS_H
 #define ARCH_SETUP_WINDOWS_H
 
+#if !defined(XBOX)
 #define HAVE_FFMPEG
+#endif
 
 #if defined(__MINGW32__)
 #define _WINDOWS // This isn't defined under MinGW
