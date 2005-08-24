@@ -53,6 +53,15 @@
 #include <stdint.h>
 #endif
 
+/* Branch optimizations: */
+#if defined(__GNUC__)
+#define likely(x) (!!__builtin_expect((x), 1))
+#define unlikely(x) (!!__builtin_expect((x), 0))
+#else
+#define likely(x) (x)
+#define unlikely(x) (x)
+#endif
+
 #if defined(NEED_CSTDLIB_WORKAROUND)
 #define llabs ::llabs
 #endif
@@ -91,7 +100,7 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
  * exception in most cases we expect never to happen (but not in cases that
  * we do expect, such as DSound init failure.) */
 #define FAIL_M(MESSAGE) { CHECKPOINT_M(MESSAGE); sm_crash(MESSAGE); }
-#define ASSERT_M(COND, MESSAGE) { if(!(COND)) { FAIL_M(MESSAGE); } }
+#define ASSERT_M(COND, MESSAGE) { if(unlikely(!(COND))) { FAIL_M(MESSAGE); } }
 #define ASSERT(COND) ASSERT_M((COND), "Assertion '" #COND "' failed")
 
 void ShowWarning( const char *file, int line, const char *message ); // don't pull in LOG here
