@@ -112,7 +112,6 @@ protected:
 	BitmapText			m_textTotalTime;
 	Sprite				m_sprMeterFrame[NUM_PLAYERS];
 	DifficultyMeter			m_DifficultyMeter[NUM_PLAYERS];
-	MusicSortDisplay	m_MusicSortDisplay;
 	Sprite				m_sprHighScoreFrame[NUM_PLAYERS];
 	BitmapText			m_textHighScore[NUM_PLAYERS];
 	MusicWheel			m_MusicWheel;

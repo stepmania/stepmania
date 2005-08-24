@@ -268,10 +268,6 @@ void ScreenSelectMusic::Init()
 		this->AddChild( &m_textHighScore[p] );
 	}	
 
-	m_MusicSortDisplay.SetName( "SortIcon" );
-	SET_XY( m_MusicSortDisplay );
-	this->AddChild( &m_MusicSortDisplay );
-
 	m_sprLongBalloon.Load( THEME->GetPathG(m_sName,"balloon long") );
 	m_sprLongBalloon->SetName( "Balloon" );
 	m_sprLongBalloon->SetHidden( 1 );
@@ -363,7 +359,6 @@ void ScreenSelectMusic::BeginScreen()
 	ON_COMMAND( m_GrooveRadar );
 	ON_COMMAND( m_textNumSongs );
 	ON_COMMAND( m_textTotalTime );
-	ON_COMMAND( m_MusicSortDisplay );
 	ON_COMMAND( m_MusicWheelUnder );
 	m_MusicWheel.TweenOnScreen();
 	ON_COMMAND( m_sprLongBalloon );
@@ -515,7 +510,6 @@ void ScreenSelectMusic::TweenOffScreen()
 	OFF_COMMAND( m_GrooveRadar );
 	OFF_COMMAND( m_textNumSongs );
 	OFF_COMMAND( m_textTotalTime );
-	OFF_COMMAND( m_MusicSortDisplay );
 	m_MusicWheel.TweenOffScreen();
 	OFF_COMMAND( m_MusicWheelUnder );
 	OFF_COMMAND( m_MusicWheel );
