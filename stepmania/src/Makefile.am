@@ -34,7 +34,6 @@ ScreenEvaluation.cpp ScreenEvaluation.h ScreenExit.cpp ScreenExit.h ScreenNetEva
 ScreenNetSelectMusic.cpp ScreenNetSelectMusic.h ScreenNetSelectBase.cpp ScreenNetSelectBase.h ScreenNetRoom.cpp ScreenNetRoom.h \
 ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h \
 ScreenGameplay.cpp ScreenGameplay.h \
-ScreenGameplayMultiplayer.cpp ScreenGameplayMultiplayer.h \
 ScreenGameplayNormal.cpp ScreenGameplayNormal.h \
 ScreenHowToPlay.cpp ScreenHowToPlay.h \
 ScreenInstructions.cpp ScreenInstructions.h \
