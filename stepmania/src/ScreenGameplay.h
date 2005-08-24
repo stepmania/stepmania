@@ -183,7 +183,7 @@ protected:
 	BitmapText			m_textSongOptions;
 	BitmapText			m_Scoreboard[NUM_NSSB_CATEGORIES];	// for NSMAN, so we can have a scoreboard
 
-	bool				m_ShowScoreboard;
+	bool				m_bShowScoreboard;
 
 	BitmapText			m_textDebug;
 

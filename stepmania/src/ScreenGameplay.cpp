@@ -575,13 +575,13 @@ void ScreenGameplay::Init()
 		break;
 	}
 
-	m_ShowScoreboard = false;
+	m_bShowScoreboard = false;
 
 #if !defined(WITHOUT_NETWORKING)
-	//the following is only used in SMLAN/SMOnline
+	// Only used in SMLAN/SMOnline:
 	if( NSMAN->useSMserver && !GAMESTATE->PlayerUsingBothSides() )
 	{
-		m_ShowScoreboard = PREFSMAN->m_bEnableScoreboard.Get();
+		m_bShowScoreboard = PREFSMAN->m_bEnableScoreboard.Get();
 		PlayerNumber pn = GAMESTATE->GetFirstDisabledPlayer();
 		if( pn != PLAYER_INVALID )
 		{
@@ -591,9 +591,9 @@ void ScreenGameplay::Init()
 				m_Scoreboard[col].SetShadowLength( 0 );
 				m_Scoreboard[col].SetName( ssprintf("ScoreboardC%iP%i",col+1,pn+1) );
 				SET_XY( m_Scoreboard[col] );
-				this->AddChild( &m_Scoreboard[col] );
 				m_Scoreboard[col].SetText( NSMAN->m_Scoreboard[col] );
 				m_Scoreboard[col].SetVertAlign( align_top );
+				this->AddChild( &m_Scoreboard[col] );
 			}
 		}
 	}
@@ -1840,9 +1840,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 			if( pi->m_pLifeMeter )
 				NSMAN->m_playerLife[pi->m_pn] = int(pi->m_pLifeMeter->GetLife()*10000);
 
-		if (m_ShowScoreboard)
+		if( m_bShowScoreboard )
 			FOREACH_NSScoreBoardColumn(cn)
-				if( m_ShowScoreboard && NSMAN->ChangedScoreboard(cn) )
+				if( m_bShowScoreboard && NSMAN->ChangedScoreboard(cn) )
 					m_Scoreboard[cn].SetText( NSMAN->m_Scoreboard[cn] );
 	}
 }
@@ -2606,7 +2606,7 @@ void ScreenGameplay::TweenOursOnScreen()
 			ON_COMMAND( pi->m_pPlayer );
 	}
 
-	if( m_ShowScoreboard )
+	if( m_bShowScoreboard )
 		FOREACH_NSScoreBoardColumn( sc )
 			ON_COMMAND( m_Scoreboard[sc] );
 }
@@ -2646,7 +2646,7 @@ void ScreenGameplay::TweenOursOffScreen()
 			OFF_COMMAND( pi->m_pPlayer );
 	}
 
-	if (m_ShowScoreboard)
+	if( m_bShowScoreboard )
 		FOREACH_NSScoreBoardColumn( sc )
 			OFF_COMMAND( m_Scoreboard[sc] );
 
