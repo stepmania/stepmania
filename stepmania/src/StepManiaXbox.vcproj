@@ -396,6 +396,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenGameplayMultiplayer.h">
 			</File>
 			<File
+				RelativePath="ScreenGameplayNormal.cpp">
+			</File>
+			<File
+				RelativePath="ScreenGameplayNormal.h">
+			</File>
+			<File
 				RelativePath="ScreenHowToPlay.cpp">
 			</File>
 			<File
@@ -1406,6 +1412,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				</File>
 				<File
 					RelativePath="archutils\Win32\arch_setup.cpp">
+				</File>
+				<File
+					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 				<File
 					RelativePath=".\archutils\Xbox\arch_setup.h">
