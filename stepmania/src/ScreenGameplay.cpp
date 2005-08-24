@@ -575,9 +575,11 @@ void ScreenGameplay::Init()
 		break;
 	}
 
+	m_ShowScoreboard = false;
+
 #if !defined(WITHOUT_NETWORKING)
 	//the following is only used in SMLAN/SMOnline
-	if( NSMAN->useSMserver && ( !GAMESTATE->PlayerUsingBothSides() ) )
+	if( NSMAN->useSMserver && !GAMESTATE->PlayerUsingBothSides() )
 	{
 		m_ShowScoreboard = PREFSMAN->m_bEnableScoreboard.Get();
 		PlayerNumber pn = GAMESTATE->GetFirstDisabledPlayer();
@@ -595,10 +597,6 @@ void ScreenGameplay::Init()
 			}
 		}
 	}
-	else
-		m_ShowScoreboard = false;
-#else
-	m_ShowScoreboard = false;
 #endif
 
 	m_MaxCombo.LoadFromFont( THEME->GetPathF(m_sName,"max combo") );
