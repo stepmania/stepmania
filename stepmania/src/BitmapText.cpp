@@ -26,28 +26,6 @@ REGISTER_ACTOR_CLASS( BitmapText )
  *
  * Better, we could go all the way, drop all of the actor-specific font aliases,
  * and do "font=header2;valign=top;...".
- *
- * However, let's wait until Pango support is in, so we can figure out how to
- * integrate font selection at the same time.
- */
-/*
- * Forward planning:
- *
- * This can't handle full CJK fonts; it's not reasonable to load a 2000+ glyph bitmap
- * font into memory.  We want to be able to fall back on a real font renderer when
- * we're missing characters.  However, we make use of custom glyphs, and we don't want
- * custom glyphs and fallback fonts to be mutually exclusive.
- *
- * So, if we have a fallback font renderer active, and we're missing any characters at
- * all, send the text to the fallback renderer.  If it can't render a character
- * (because it's a special-use character), render up to that character, render the
- * special character ourself, then start again on the next character.  The data
- * rendered can be put into textures and put into the m_aVertices/m_pTextures lists as
- * if it came from a regular font (nothing says we can't put more than one character
- * per quad) and DrawChars won't have to be changed at all.
- *
- * Some mechanism to hint which fallback font size/style a given font wants, to make
- * a best effort to line up font types.  This could be a setting in the font INI.
  */
 #define RAINBOW_COLOR(n)	THEME->GetMetricC("BitmapText",ssprintf("RainbowColor%i", n+1))
 
