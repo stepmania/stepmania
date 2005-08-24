@@ -220,7 +220,6 @@ void ScreenSelectMusic::Init()
 	{
 		m_sprDifficultyFrame[p].SetName( ssprintf("DifficultyFrameP%d",p+1) );
 		m_sprDifficultyFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("difficulty frame p%d",p+1)) );
-		m_sprDifficultyFrame[p].StopAnimating();
 		SET_XY( m_sprDifficultyFrame[p] );
 		this->AddChild( &m_sprDifficultyFrame[p] );
 
