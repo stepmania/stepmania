@@ -269,7 +269,6 @@ void ScreenSelectMusic::Init()
 	}	
 
 	m_MusicSortDisplay.SetName( "SortIcon" );
-	m_MusicSortDisplay.Set( GAMESTATE->m_SortOrder );
 	SET_XY( m_MusicSortDisplay );
 	this->AddChild( &m_MusicSortDisplay );
 
@@ -1121,7 +1120,6 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_SortOrderChanging ) /* happens immediately */
 	{
-//		m_MusicSortDisplay.FadeOff( 0, "fade", TWEEN_TIME );
 		TweenScoreOnAndOffAfterChangeSort();
 	}
 	else if( SM == SM_SortOrderChanged ) /* happens after the wheel is off and the new song is selected */
@@ -1813,7 +1811,6 @@ void ScreenSelectMusic::AfterMusicChange()
 
 void ScreenSelectMusic::SortOrderChanged()
 {
-	m_MusicSortDisplay.Set( GAMESTATE->m_SortOrder );
 	if( SHOW_PANES )
 		FOREACH_HumanPlayer(pn)
 			m_PaneDisplay[pn].SetFromGameState( GAMESTATE->m_SortOrder );
@@ -1832,9 +1829,6 @@ void ScreenSelectMusic::SortOrderChanged()
 			m_DifficultyList.Show();
 		break;
 	}
-
-	// tween music sort on screen
-//	m_MusicSortDisplay.FadeOn( 0, "fade", TWEEN_TIME );
 }
 
 // lua start

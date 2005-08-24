@@ -2,15 +2,29 @@
 #include "MusicSortDisplay.h"
 #include "ThemeManager.h"
 #include "RageUtil.h"
-
+#include "GameState.h"
 
 MusicSortDisplay::MusicSortDisplay()
 {
+	this->SubscribeToMessage( Message_SortOrderChanged );
+
+	Set( GAMESTATE->m_SortOrder );
 }
 
 void MusicSortDisplay::Set( SortOrder so ) 
 { 
-	Load( THEME->GetPathG("MusicSortDisplay",SortOrderToString(so)) );
+	if( so == SORT_INVALID )
+		this->UnloadTexture();
+	else
+		Load( THEME->GetPathG("MusicSortDisplay",SortOrderToString(so)) );
+}
+
+void MusicSortDisplay::HandleMessage( const CString& sMessage )
+{
+	if( sMessage == "SortOrderChanged" )
+		Set( GAMESTATE->m_SortOrder );
+
+	Sprite::HandleMessage( sMessage );
 }
 
 /*

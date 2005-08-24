@@ -1,5 +1,5 @@
-#ifndef MUSICSORTDISPLAY_H
-#define MUSICSORTDISPLAY_H
+#ifndef MUSIC_SORT_DISPLAY_H
+#define MUSIC_SORT_DISPLAY_H
 
 #include "Sprite.h"
 #include "GameConstantsAndTypes.h"
@@ -11,6 +11,7 @@ class MusicSortDisplay : public Sprite
 public:
 	MusicSortDisplay();
 	void Set( SortOrder so );
+	virtual void HandleMessage( const CString& sMessage );
 
 protected:
 
