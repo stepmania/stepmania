@@ -56,6 +56,7 @@ static const CString MessageNames[] = {
 	"AutosyncChanged",
 	"PreferredSongGroupChanged",
 	"PreferredCourseGroupChanged",
+	"SortOrderChanged"
 };
 XToString( Message, NUM_Message );
 

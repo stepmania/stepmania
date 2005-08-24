@@ -3,8 +3,6 @@
 #ifndef MessageManager_H
 #define MessageManager_H
 
-#include <deque>
-
 class IMessageSubscriber
 {
 public:
@@ -73,6 +71,7 @@ enum Message
 	Message_AutosyncChanged,
 	Message_PreferredSongGroupChanged,
 	Message_PreferredCourseGroupChanged,
+	Message_SortOrderChanged,
 	NUM_Message,	// leave this at the end
 	Message_Invalud
 };
