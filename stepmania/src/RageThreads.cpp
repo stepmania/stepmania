@@ -550,7 +550,8 @@ RageMutex::~RageMutex()
 
 void RageMutex::Lock()
 {
-	if( m_LockedBy == (uint64_t) GetThisThreadId() )
+	uint64_t iThisThreadId = (uint64_t) GetThisThreadId();
+	if( m_LockedBy == iThisThreadId )
 	{
 		++m_LockCnt;
 		return;
@@ -583,7 +584,7 @@ void RageMutex::Lock()
 #endif
 	}
 
-	m_LockedBy = GetThisThreadId();
+	m_LockedBy = iThisThreadId;
 
 	/* This has internal thread safety issues itself (eg. one thread may delete
 	 * a mutex while another locks one); disable for now. */
