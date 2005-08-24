@@ -142,13 +142,13 @@ void MusicWheel::Load( CString sType )
 		GAMESTATE->m_SongOptions = so;
 	}
 
-	GAMESTATE->m_SortOrder = GAMESTATE->m_PreferredSortOrder;
+	GAMESTATE->m_SortOrder.Set( GAMESTATE->m_PreferredSortOrder );
 
 	/* Never start in the mode menu; some elements may not initialize correctly. */
 	if( GAMESTATE->m_SortOrder == SORT_MODE_MENU )
-		GAMESTATE->m_SortOrder = SORT_INVALID;
+		GAMESTATE->m_SortOrder.Set( SORT_INVALID );
 
-	GAMESTATE->m_SortOrder = ForceAppropriateSort( GAMESTATE->m_PlayMode, GAMESTATE->m_SortOrder );
+	GAMESTATE->m_SortOrder.Set( ForceAppropriateSort(GAMESTATE->m_PlayMode, GAMESTATE->m_SortOrder) );
 
 	/* Only save the sort order if the player didn't already have one.  If he did, don't
 	 * overwrite it. */
@@ -1039,9 +1039,7 @@ bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change success
 	/* Save the new preference. */
 	if( IsSongSort(new_so) )
 		GAMESTATE->m_PreferredSortOrder = new_so;
-	GAMESTATE->m_SortOrder = new_so;
-
-	GAMESTATE->m_SortOrder = new_so;
+	GAMESTATE->m_SortOrder.Set( new_so );
 	
 	m_WheelState = STATE_FLYING_OFF_BEFORE_NEXT_SORT;
 	return true;
@@ -1184,7 +1182,7 @@ void MusicWheel::StartRandom()
 void MusicWheel::SetOpenGroup(CString group, SortOrder so)
 {
 	if( so != SORT_INVALID )
-		GAMESTATE->m_SortOrder = so;
+		GAMESTATE->m_SortOrder.Set( so );
 
 	m_sExpandedSectionName = group;
 

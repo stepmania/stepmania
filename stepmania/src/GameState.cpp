@@ -72,6 +72,7 @@ GameState::GameState() :
 	m_sPreferredCourseGroup(Message_PreferredCourseGroupChanged ),
 	m_PreferredCourseDifficulty( Message_PreferredCourseDifficultyP1Changed ),
 	m_PreferredDifficulty(	Message_PreferredDifficultyP1Changed ),
+	m_SortOrder(			Message_SortOrderChanged ),
     m_pCurSong(				Message_CurrentSongChanged ),
 	m_pCurSteps(			Message_CurrentStepsP1Changed ),
     m_pCurCourse(			Message_CurrentCourseChanged ),
@@ -189,7 +190,7 @@ void GameState::Reset()
 		m_PreferredDifficulty[p].Set( DIFFICULTY_INVALID );
 		m_PreferredCourseDifficulty[p].Set( DIFFICULTY_MEDIUM );
 	}
-	m_SortOrder = SORT_INVALID;
+	m_SortOrder.Set( SORT_INVALID );
 	m_PreferredSortOrder = GetDefaultSort();
 	m_PlayMode.Set( PLAY_MODE_INVALID );
 	m_EditMode = EDIT_MODE_INVALID;

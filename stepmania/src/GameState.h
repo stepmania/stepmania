@@ -107,7 +107,7 @@ public:
 	BroadcastOnChange<CString>	m_sPreferredCourseGroup;	// GROUP_ALL denotes no preferred group
 	bool			m_bChangedFailTypeOnScreenSongOptions;	// true if FailType was changed in the song options screen
 	BroadcastOnChange1D<Difficulty,NUM_PLAYERS>	m_PreferredDifficulty;
-	SortOrder		m_SortOrder;			// set by MusicWheel
+	BroadcastOnChange<SortOrder> m_SortOrder;			// set by MusicWheel
 	SortOrder		m_PreferredSortOrder;			// used by MusicWheel
 	EditMode		m_EditMode;
 	bool			IsEditing() const { return m_EditMode != EDIT_MODE_INVALID; }
