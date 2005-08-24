@@ -2,7 +2,10 @@
 #include "MusicSortDisplay.h"
 #include "ThemeManager.h"
 #include "RageUtil.h"
+#include "ActorUtil.h"
 #include "GameState.h"
+
+REGISTER_ACTOR_CLASS( MusicSortDisplay )
 
 MusicSortDisplay::MusicSortDisplay()
 {
