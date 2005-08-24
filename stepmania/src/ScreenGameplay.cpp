@@ -579,7 +579,7 @@ void ScreenGameplay::Init()
 	//the following is only used in SMLAN/SMOnline
 	if( NSMAN->useSMserver && ( !GAMESTATE->PlayerUsingBothSides() ) )
 	{
-		m_ShowScoreboard = PREFSMAN->m_bEnableScoreboard;
+		m_ShowScoreboard = PREFSMAN->m_bEnableScoreboard.Get();
 		PlayerNumber pn = GAMESTATE->GetFirstDisabledPlayer();
 		if( pn != PLAYER_INVALID )
 		{
