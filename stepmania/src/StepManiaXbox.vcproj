@@ -226,6 +226,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0/include&quot;"
 				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG"
@@ -267,8 +268,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="XboxDeploymentTool"
+				ExcludedFromBuild="TRUE"
 				Progress="TRUE"
-				ForceCopy="TRUE"/>
+				ForceCopy="FALSE"/>
 			<Tool
 				Name="XboxImageTool"
 				FileName="../default.xbe"
@@ -1221,6 +1223,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					<File
 						RelativePath=".\arch\LoadingWindow\LoadingWindow_Xbox.h">
 					</File>
+					<File
+						RelativePath="arch\LoadingWindow\Selector_LoadingWindow.h">
+					</File>
 				</Filter>
 				<Filter
 					Name="Sound"
@@ -1257,6 +1262,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_Null.h">
+					</File>
+					<File
+						RelativePath="arch\Sound\Selector_RageSoundDriver.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1308,12 +1316,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture.h">
-					</File>
-					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_FFMpeg.cpp">
-					</File>
-					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_FFMpeg.h">
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_Null.cpp">
@@ -1404,9 +1406,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				</File>
 				<File
 					RelativePath="archutils\Win32\arch_setup.cpp">
-				</File>
-				<File
-					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 				<File
 					RelativePath=".\archutils\Xbox\arch_setup.h">
