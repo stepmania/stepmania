@@ -8,7 +8,6 @@
 #include "RageSound.h"
 #include "RandomSample.h"
 #include "GameConstantsAndTypes.h"
-#include "MusicSortDisplay.h"
 #include "ScreenMessage.h"
 #include "ScoreDisplayNormal.h"
 #include "ScrollBar.h"
