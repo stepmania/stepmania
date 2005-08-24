@@ -252,9 +252,6 @@ void ScreenSelectMusic::Init()
 		SET_XY( m_DifficultyMeter[p] );
 		this->AddChild( &m_DifficultyMeter[p] );
 
-		// add an icon onto the song select to show what
-		// character they're using.
-
 		m_sprHighScoreFrame[p].SetName( ssprintf("ScoreFrameP%d",p+1) );
 		m_sprHighScoreFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("score frame p%d",p+1)) );
 		SET_XY( m_sprHighScoreFrame[p] );
