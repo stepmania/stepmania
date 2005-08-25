@@ -157,10 +157,12 @@ void ScreenSelectMaster::Init()
 	{
 		m_sprMore[page].Load( THEME->GetPathG(m_sName, ssprintf("more page%d",page+1)) );
 		m_sprMore[page]->SetName( ssprintf("MorePage%d",page+1) );
+		ActorUtil::LoadAllCommands( *m_sprMore[page], m_sName );
 		this->AddChild( m_sprMore[page] );
 
 		m_sprExplanation[page].Load( THEME->GetPathG(m_sName, ssprintf("explanation page%d",page+1)) );
 		m_sprExplanation[page]->SetName( ssprintf("ExplanationPage%d",page+1) );
+		ActorUtil::LoadAllCommands( *m_sprExplanation[page], m_sName );
 		this->AddChild( m_sprExplanation[page] );
 	}
 
