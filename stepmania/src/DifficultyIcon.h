@@ -15,7 +15,7 @@ class DifficultyIcon : public Sprite
 {
 public:
 	DifficultyIcon();
-	virtual bool EarlyAbortDraw() { return m_bBlank || Sprite::EarlyAbortDraw(); }
+	virtual bool EarlyAbortDraw() const { return m_bBlank || Sprite::EarlyAbortDraw(); }
 
 	bool Load( CString sFilePath );
 	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
