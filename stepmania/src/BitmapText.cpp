@@ -255,13 +255,13 @@ void BitmapText::DrawChars()
 		RectF FadeSize = FadeDist;
 
 		/* If the cropped size is less than the fade distance, clamp. */
-		const float HorizRemaining = 1.0f - (m_pTempState->crop.left + m_pTempState->crop.right);
+		const float fHorizRemaining = 1.0f - (m_pTempState->crop.left + m_pTempState->crop.right);
 		if( FadeDist.left+FadeDist.right > 0 &&
-			HorizRemaining < FadeDist.left+FadeDist.right )
+			fHorizRemaining < FadeDist.left+FadeDist.right )
 		{
 			const float LeftPercent = FadeDist.left/(FadeDist.left+FadeDist.right);
-			FadeSize.left = LeftPercent * HorizRemaining;
-			FadeSize.right = (1.0f-LeftPercent) * HorizRemaining;
+			FadeSize.left = LeftPercent * fHorizRemaining;
+			FadeSize.right = (1.0f-LeftPercent) * fHorizRemaining;
 		}
 
 		/* We fade from 0 to LeftColor, then from RightColor to 0.  (We won't fade all the way to
