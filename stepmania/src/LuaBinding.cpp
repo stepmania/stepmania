@@ -2,16 +2,16 @@
 #include "LuaBinding.h"
 #include "RageUtil.h"
 
-void CreateMethodsTable( lua_State *L, const CString &szName )
+void CreateMethodsTable( lua_State *L, const CString &sName )
 {
-	lua_pushstring( L, szName );
+	lua_pushlstring( L, sName.data(), sName.size() );
 	lua_rawget( L, LUA_GLOBALSINDEX );
 	if( !lua_isnil(L, -1) )
 		return;
 
 	lua_pop( L, 1 );
 	lua_newtable( L );
-	lua_pushstring( L, szName );
+	lua_pushlstring( L, sName.data(), sName.size() );
 	lua_pushvalue( L, -2 );
 	lua_rawset( L, LUA_GLOBALSINDEX );
 }

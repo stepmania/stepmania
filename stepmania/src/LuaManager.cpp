@@ -99,7 +99,7 @@ void LuaManager::UnsetGlobal( const CString &sName )
 void LuaHelpers::Push( const bool &Object, lua_State *L ) { lua_pushboolean( L, Object ); }
 void LuaHelpers::Push( const float &Object, lua_State *L ) { lua_pushnumber( L, Object ); }
 void LuaHelpers::Push( const int &Object, lua_State *L ) { lua_pushnumber( L, Object ); }
-void LuaHelpers::Push( const CString &Object, lua_State *L ) { lua_pushstring( L, Object ); }
+void LuaHelpers::Push( const CString &Object, lua_State *L ) { lua_pushlstring( L, Object.data(), Object.size() ); }
 
 bool LuaHelpers::FromStack( bool &Object, int iOffset, lua_State *L ) { Object = !!lua_toboolean( L, iOffset ); return true; }
 bool LuaHelpers::FromStack( float &Object, int iOffset, lua_State *L ) { Object = (float)lua_tonumber( L, iOffset ); return true; }
