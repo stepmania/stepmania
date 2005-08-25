@@ -280,18 +280,18 @@ void BitmapText::DrawChars()
 
 		/* We fade from 0 to LeftColor, then from RightColor to 0.  (We won't fade all the way to
 		 * 0 if the crop is beyond the outer edge.) */
-		const float RightAlpha  = SCALE( FadeSize.right,  FadeDist.right,  0, 1, 0 );
-		const float LeftAlpha   = SCALE( FadeSize.left,   FadeDist.left,   0, 1, 0 );
+		const float fRightAlpha  = SCALE( FadeSize.right,  FadeDist.right,  0, 1, 0 );
+		const float fLeftAlpha   = SCALE( FadeSize.left,   FadeDist.left,   0, 1, 0 );
 
-		const float StartFadeLeftPercent = m_pTempState->crop.left;
-		const float StopFadeLeftPercent = m_pTempState->crop.left + FadeSize.left;
-		const float fLeftFadeStartGlyph = SCALE( StartFadeLeftPercent, 0.f, 1.f, 0, (float) iNumGlyphs );
-		const float fLeftFadeStopGlyph = SCALE( StopFadeLeftPercent, 0.f, 1.f, 0, (float) iNumGlyphs );
+		const float fStartFadeLeftPercent = m_pTempState->crop.left;
+		const float fStopFadeLeftPercent = m_pTempState->crop.left + FadeSize.left;
+		const float fLeftFadeStartGlyph = SCALE( fStartFadeLeftPercent, 0.f, 1.f, 0, (float) iNumGlyphs );
+		const float fLeftFadeStopGlyph = SCALE( fStopFadeLeftPercent, 0.f, 1.f, 0, (float) iNumGlyphs );
 
-		const float StartFadeRightPercent = 1-(m_pTempState->crop.right + FadeSize.right);
-		const float StopFadeRightPercent = 1-(m_pTempState->crop.right);
-		const float fRightFadeStartGlyph = SCALE( StartFadeRightPercent, 0.f, 1.f, 0, (float) iNumGlyphs );
-		const float fRightFadeStopGlyph = SCALE( StopFadeRightPercent, 0.f, 1.f, 0, (float) iNumGlyphs );
+		const float fStartFadeRightPercent = 1-(m_pTempState->crop.right + FadeSize.right);
+		const float fStopFadeRightPercent = 1-(m_pTempState->crop.right);
+		const float fRightFadeStartGlyph = SCALE( fStartFadeRightPercent, 0.f, 1.f, 0, (float) iNumGlyphs );
+		const float fRightFadeStopGlyph = SCALE( fStopFadeRightPercent, 0.f, 1.f, 0, (float) iNumGlyphs );
 
 		for( int start = iStartGlyph; start < iEndGlyph; ++start )
 		{
@@ -303,14 +303,14 @@ void BitmapText::DrawChars()
 				/* Add .5, so we fade wrt. the center of the vert, not the left side. */
 				float fPercent = SCALE( start+0.5f, fLeftFadeStartGlyph, fLeftFadeStopGlyph, 0.0f, 1.0f );
 				fPercent = clamp( fPercent, 0.0f, 1.0f );
-				fAlpha *= fPercent * LeftAlpha;
+				fAlpha *= fPercent * fLeftAlpha;
 			}
 
 			if( FadeSize.right > 0.001f )
 			{
 				float fPercent = SCALE( start+0.5f, fRightFadeStartGlyph, fRightFadeStopGlyph, 1.0f, 0.0f );
 				fPercent = clamp( fPercent, 0.0f, 1.0f );
-				fAlpha *= fPercent * RightAlpha;
+				fAlpha *= fPercent * fRightAlpha;
 			}
 
 			for( int j = 0; j < 4; ++j )
@@ -510,9 +510,9 @@ void BitmapText::DrawPrimitives()
 	/* Draw if we're not fully transparent or the zbuffer is enabled */
 	if( m_pTempState->diffuse[0].a != 0 )
 	{
-		//////////////////////
+		//
 		// render the shadow
-		//////////////////////
+		//
 		if( m_fShadowLength != 0 )
 		{
 			DISPLAY->PushMatrix();
@@ -527,9 +527,9 @@ void BitmapText::DrawPrimitives()
 			DISPLAY->PopMatrix();
 		}
 
-		//////////////////////
+		//
 		// render the diffuse pass
-		//////////////////////
+		//
 		if( m_bRainbow )
 		{
 			int color_index = int(RageTimer::GetTimeSinceStartFast() / 0.200) % NUM_RAINBOW_COLORS;
@@ -611,7 +611,7 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 	m_sText = sNewText;
 	m_iWrapWidthPixels = iWrapWidthPixels;
 
-	//Set up the first color.
+	// Set up the first color.
 	m_vColors.clear();
 	ColorChange change;
 	change.c = RageColor ( 1, 1, 1, 1 );
@@ -627,14 +627,14 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 	int		iWordWidth = 0;
 	int		iGlyphsSoFar = 0;
 
-	for ( unsigned i = 0; i < m_sText.length(); i++ )
+	for( unsigned i = 0; i < m_sText.length(); i++ )
 	{
 		int iCharsLeft = m_sText.length() - i - 1;
 
-		//First: Check for the special (color) case.
+		// First: Check for the special (color) case.
 
 		CString FirstThree = m_sText.substr( i, 3 );
-		if ( ( FirstThree.CompareNoCase( "|c0" ) == 0 ) && ( iCharsLeft > 8 ) )
+		if( FirstThree.CompareNoCase("|c0") == 0 && iCharsLeft > 8 )
 		{
 			ColorChange change;
 			int k;
@@ -643,7 +643,7 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 			sscanf( m_sText.substr( i+7, 2 ).c_str(), "%x", &k ); change.c.b = float( k ) / 255.0f;
 			change.c.a = 1;
 			change.l = iGlyphsSoFar;
-			if ( iGlyphsSoFar == 0 )
+			if( iGlyphsSoFar == 0 )
 				m_vColors[0] = change;
 			else
 				m_vColors.push_back( change );
@@ -655,10 +655,10 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 		char curChar = curCStr.c_str()[0];
 		int iCharLen = m_pFont->GetLineWidthInSourcePixels( CStringToWstring( curCStr ) );
 
-		switch ( curChar )
+		switch( curChar )
 		{
 		case ' ':
-			if ( /*( iLineWidth == 0 ) &&*/ ( iWordWidth == 0 ) )
+			if( /* iLineWidth == 0 &&*/ iWordWidth == 0 )
 				break;
 			sCurrentLine += sCurrentWord + " ";
 			iLineWidth += iWordWidth + iCharLen;
@@ -667,12 +667,12 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 			iGlyphsSoFar++;
 			break;
 		case '\n':
-			if ( iLineWidth + iWordWidth > iWrapWidthPixels )
+			if( iLineWidth + iWordWidth > iWrapWidthPixels )
 			{
 				SimpleAddLine( sCurrentLine, iLineWidth );
-				if ( iWordWidth > 0 )
-				iLineWidth = iWordWidth +	//Add the width of a space
-					m_pFont->GetLineWidthInSourcePixels( CStringToWstring( " " ) );
+				if( iWordWidth > 0 )
+					iLineWidth = iWordWidth +	//Add the width of a space
+						m_pFont->GetLineWidthInSourcePixels( CStringToWstring( " " ) );
 				sCurrentLine = sCurrentWord + " ";
 				iWordWidth = 0;
 				sCurrentWord = "";
@@ -686,12 +686,12 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 			}
 			break;
 		default:
-			if ( ( iWordWidth + iCharLen > iWrapWidthPixels ) && ( iLineWidth == 0 ) )
+			if( iWordWidth + iCharLen > iWrapWidthPixels && iLineWidth == 0 )
 			{
 				SimpleAddLine( sCurrentWord, iWordWidth );
 				sCurrentWord = curChar;	iWordWidth = iCharLen;
 			}
-			else if ( iWordWidth + iLineWidth + iCharLen > iWrapWidthPixels )
+			else if( iWordWidth + iLineWidth + iCharLen > iWrapWidthPixels )
 			{
 				SimpleAddLine( sCurrentLine, iLineWidth );
 				sCurrentLine = ""; 
@@ -709,13 +709,13 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 		}
 	}
 	
-	if ( iWordWidth > 0 )
+	if( iWordWidth > 0 )
 	{
 		sCurrentLine += sCurrentWord;
 		iLineWidth += iWordWidth;
 	}
 
-	if ( iLineWidth > 0 )
+	if( iLineWidth > 0 )
 		SimpleAddLine( sCurrentLine, iLineWidth );
 
 	BuildChars();
@@ -736,9 +736,9 @@ void ColorBitmapText::DrawPrimitives( )
 	/* Draw if we're not fully transparent or the zbuffer is enabled */
 	if( m_pTempState->diffuse[0].a != 0 )
 	{
-		//////////////////////
+		//
 		// render the shadow
-		//////////////////////
+		//
 		if( m_fShadowLength != 0 )
 		{
 			DISPLAY->PushMatrix();
@@ -753,22 +753,24 @@ void ColorBitmapText::DrawPrimitives( )
 			DISPLAY->PopMatrix();
 		}
 
-		//////////////////////
+		//
 		// render the diffuse pass
-		//////////////////////
+		//
 		int loc = 0, cur = 0;
 		RageColor c = m_pTempState->diffuse[0];
 
 		for( unsigned i=0; i<m_aVertices.size(); i+=4 )
 		{
 			loc++;
-			if ( cur < (int)m_vColors.size() )
+			if( cur < (int)m_vColors.size() )
+			{
 				if ( loc > m_vColors[cur].l )
 				{
 					c = m_vColors[cur].c;
 					cur++;
 				}
-			for ( unsigned j=0; j<4; j++ )
+			}
+			for( unsigned j=0; j<4; j++ )
 				m_aVertices[i+j].c = c;
 		}
 
@@ -799,21 +801,21 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 	}
 	else
 	{
-		//Because colors are relative to the beginning, we have to crop them back
+		// Because colors are relative to the beginning, we have to crop them back
 		unsigned shift = 0;
 
-		for ( unsigned i = 0; i < m_wTextLines.size() - iNumLines; i++ )
-			shift  += m_wTextLines[i].length();
+		for( unsigned i = 0; i < m_wTextLines.size() - iNumLines; i++ )
+			shift += m_wTextLines[i].length();
 
 
-		//When we're cutting out text, we need to maintain the last
-		//color, so our text at the top doesn't become colorless.
+		// When we're cutting out text, we need to maintain the last
+		// color, so our text at the top doesn't become colorless.
 		RageColor LastColor;
 
-		for ( unsigned i = 0; i < m_vColors.size(); i++ )
+		for( unsigned i = 0; i < m_vColors.size(); i++ )
 		{
 			m_vColors[i].l -= shift;
-			if ( m_vColors[i].l < 0 )
+			if( m_vColors[i].l < 0 )
 			{
 				LastColor = m_vColors[i].c;
 				m_vColors.erase( m_vColors.begin() + i );
@@ -821,9 +823,9 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 			}
 		}
 
-		//If we already have a color set for the first char
-		//do not override it.
-		if ( ( m_vColors.size() > 0 ) && ( m_vColors[0].l > 0 ) )
+		// If we already have a color set for the first char
+		// do not override it.
+		if( m_vColors.size() > 0 && m_vColors[0].l > 0 )
 		{
 			ColorChange tmp;
 			tmp.c = LastColor;
