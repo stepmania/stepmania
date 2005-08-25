@@ -7,7 +7,7 @@
 class LuaReference;
 
 void CreateMethodsTable( lua_State *L, const CString &szName );
-bool CheckLuaObjectType( lua_State *L, int narg, const char *szType );
+bool CheckLuaObjectType( lua_State *L, int narg, const char *szType, bool bOptional=false );
 void *GetUserdataFromGlobalTable( Lua *L, const char *szType, int iArg );
 void ApplyDerivedType( Lua *L, const CString &sClassname, void *pSelf );
 
@@ -96,7 +96,7 @@ public:
 	// Get userdata from the Lua stack and return a pointer to T object.
 	static T *check( lua_State *L, int narg, bool bIsSelf = false )
 	{
-		if( !CheckLuaObjectType(L, narg, m_sClassName) )
+		if( !CheckLuaObjectType(L, narg, m_sClassName, true) )
 		{
 			if( bIsSelf )
 				luaL_typerror( L, narg, m_sClassName );

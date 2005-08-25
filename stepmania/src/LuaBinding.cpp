@@ -2,6 +2,12 @@
 #include "LuaBinding.h"
 #include "RageUtil.h"
 
+// If defined, type checks for functions will be skipped.  These add
+// up and can become expensive (performed for every function dispatch),
+// but without them it's possible to call functions on incompatible
+// types (eg. "Actor.x(GAMESTATE, 10)"), which will crash or cause corruption.
+// #define FAST_LUA
+
 void CreateMethodsTable( lua_State *L, const CString &sName )
 {
 	lua_pushlstring( L, sName.data(), sName.size() );
@@ -20,8 +26,13 @@ void CreateMethodsTable( lua_State *L, const CString &sName )
  * Get a userdata, and check that it's either szType or a type
  * derived from szType, by walking the __index chain.
  */
-bool CheckLuaObjectType( lua_State *L, int narg, const char *szType )
+bool CheckLuaObjectType( lua_State *L, int narg, const char *szType, bool bOptional )
 {
+#if defined(FAST_LUA)
+	if( bOptional )
+		return true;
+#endif
+
 	ASSERT_M( narg > 0, ssprintf("%i", narg) ); // negative offsets not supported
 
 	int iTop = lua_gettop(L);
