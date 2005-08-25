@@ -374,6 +374,15 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 void ActorUtil::SetXY( Actor& actor, const CString &sType )
 {
 	ASSERT( !actor.GetName().empty() );
+
+	/*
+	 * Hack: We normally SET_XY in Init(), and run ON_COMMAND in BeginScreen.  We
+	 * want to load the actor's commands in Init(), since that takes long enough
+	 * to skip.  So, run LoadAllCommands here if it hasn't been run yet.
+	 */
+	if( !actor.HasCommand("On") )	// this actor hasn't loaded commands yet
+		LoadAllCommands( actor, sType );
+
 	actor.SetXY( THEME->GetMetricF(sType,actor.GetName()+"X"), THEME->GetMetricF(sType,actor.GetName()+"Y") );
 }
 
