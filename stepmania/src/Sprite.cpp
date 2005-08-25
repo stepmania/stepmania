@@ -545,7 +545,7 @@ RageColor scale( float x, float l1, float h1, const RageColor &a, const RageColo
 		SCALE( x, l1, h1, a.a, b.a ) );
 }
 
-bool Sprite::EarlyAbortDraw()
+bool Sprite::EarlyAbortDraw() const
 {
 	return m_pTexture == NULL && !m_bDrawIfTextureNull;
 //	return false;

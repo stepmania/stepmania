@@ -32,7 +32,7 @@ public:
 	void	PlayAnimation( CString sAniName, float fPlayRate = 1 );
 
 	virtual void	Update( float fDelta );
-	virtual bool	EarlyAbortDraw();
+	virtual bool	EarlyAbortDraw() const;
 	virtual void	DrawPrimitives();
 
 	void	DrawCelShaded();

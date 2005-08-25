@@ -59,7 +59,7 @@ void WheelNotifyIcon::SetFlags( Flags flags )
 	Update(0);
 }
 
-bool WheelNotifyIcon::EarlyAbortDraw()
+bool WheelNotifyIcon::EarlyAbortDraw() const
 {
 	if( m_vIconsToShow.empty() )
 		return true;

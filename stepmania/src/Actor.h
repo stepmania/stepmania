@@ -103,7 +103,7 @@ public:
 	};
 
 	void Draw();						// calls, NeedsDraw, BeginDraw, DrawPrimitives, EndDraw
-	virtual bool EarlyAbortDraw() { return false; }	// return true to early abort drawing of this Actor
+	virtual bool EarlyAbortDraw() const { return false; }	// return true to early abort drawing of this Actor
 	virtual void BeginDraw();			// pushes transform onto world matrix stack
 	virtual void SetGlobalRenderStates();		// Actor should call this at beginning of their DrawPrimitives()
 	virtual void SetTextureRenderStates();		// Actor should call this after setting a texture

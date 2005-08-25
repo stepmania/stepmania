@@ -21,7 +21,7 @@ public:
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 	void UpdateInternal( float fDeltaTime );
-	bool EarlyAbortDraw();
+	bool EarlyAbortDraw() const;
 
 	float GetMaxTweenTimeLeft() const;
 

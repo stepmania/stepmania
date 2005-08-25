@@ -22,7 +22,7 @@ public:
 	void SetFlags( Flags flags );
 
 	virtual void Update( float fDeltaTime );
-	virtual bool EarlyAbortDraw();
+	virtual bool EarlyAbortDraw() const;
 
 protected:
 	enum Icons { training=0, best1, best2, best3, edits, long_ver, marathon, empty };

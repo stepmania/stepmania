@@ -297,7 +297,7 @@ bool Model::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 	return true;
 }
 
-bool Model::EarlyAbortDraw()
+bool Model::EarlyAbortDraw() const
 {
 	return m_pGeometry == NULL || m_pGeometry->m_Meshes.empty();
 }

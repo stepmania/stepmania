@@ -496,7 +496,7 @@ void BitmapText::CropToWidth( int iMaxWidthInSourcePixels )
 	BuildChars();
 }
 
-bool BitmapText::EarlyAbortDraw()
+bool BitmapText::EarlyAbortDraw() const
 {
 	return m_wTextLines.empty();
 }

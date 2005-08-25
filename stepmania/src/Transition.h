@@ -19,7 +19,7 @@ public:
 	virtual void UpdateInternal( float fDeltaTime );
 
 	virtual void StartTransitioning( ScreenMessage send_when_done = SM_None );
-	virtual bool EarlyAbortDraw();
+	virtual bool EarlyAbortDraw() const;
 	virtual float GetTweenTimeLeft() const;
 	void Reset(); // explicitly allow transitioning again
 

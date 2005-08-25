@@ -14,7 +14,7 @@ public:
 	virtual void Load( const CString &sButton, const CString &sElement );
 
 	virtual void Update( float fDeltaTime );
-	virtual bool EarlyAbortDraw() { return !m_bHoldIsActive; }
+	virtual bool EarlyAbortDraw() const { return !m_bHoldIsActive; }
 
 	void  SetHoldIsActive( bool bHoldIsActive ) { m_bHoldIsActive = bHoldIsActive; }
 

@@ -104,7 +104,7 @@ void Transition::Reset()
 	}
 }
 
-bool Transition::EarlyAbortDraw()
+bool Transition::EarlyAbortDraw() const
 {
 	return m_State == waiting;
 }

@@ -26,7 +26,7 @@ public:
 	void SetWrapWidthPixels( int iWrapWidthPixels );
 	void CropToWidth( int iWidthInSourcePixels );
 
-	virtual bool EarlyAbortDraw();
+	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 
 	void TurnRainbowOn()	{ m_bRainbow = true; };

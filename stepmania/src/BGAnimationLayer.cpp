@@ -660,7 +660,7 @@ void BGAnimationLayer::UpdateInternal( float fDeltaTime )
 	}
 }
 
-bool BGAnimationLayer::EarlyAbortDraw()
+bool BGAnimationLayer::EarlyAbortDraw() const
 {
 	if( m_sDrawCond.empty() )
 		return false;

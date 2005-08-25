@@ -18,7 +18,7 @@ public:
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
-	virtual bool EarlyAbortDraw();
+	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );
 
