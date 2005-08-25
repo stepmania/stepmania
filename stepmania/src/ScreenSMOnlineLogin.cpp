@@ -113,7 +113,9 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 				if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) && m_iPlayer < NUM_PLAYERS )
 					ScreenTextEntry::Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter your password.", NULL );
 				else
-					SCREENMAN->PostMessageToTopScreen( SM_GoToNextScreen, 0 );
+				{
+					SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName,"NextScreen") );
+				}
 			}
 			else
 			{
@@ -148,11 +150,6 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 				++m_iPlayer;
 			ScreenTextEntry::Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter your password.", NULL );
 		}
-		return;
-	}
-	else if( SM == SM_GoToPrevScreen )
-	{
-		SCREENMAN->PostMessageToTopScreen( SM_GoToPrevScreen, 0 );
 		return;
 	}
 
@@ -201,7 +198,7 @@ void ScreenSMOnlineLogin::SendLogin(CString sPassword)
 #endif
 
 /*
- * (c) 2004 Charles Lohr Adam Lowman
+ * (c) 2004-2005 Charles Lohr Adam Lowman
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
