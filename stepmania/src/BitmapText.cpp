@@ -83,24 +83,10 @@ BitmapText::BitmapText( const BitmapText &cpy ):
 
 void BitmapText::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
-	/* XXX: How to handle translations?  Maybe we should have one metrics section,
-	 * "Text", eg:
-	 *
-	 * [Text]
-	 * SoundVolume=Sound Volume
-	 * TextItem=Hello
-	 *
-	 * and allow "$TextItem$" in .actors to reference that.
-	 */
-	/* It's a BitmapText. Note that we could do the actual text setting with metrics,
-	 * by adding "text" and "alttext" commands, but right now metrics can't contain
-	 * commas or semicolons.  It's useful to be able to refer to fonts in the real
-	 * theme font dirs, too. */
-
 	CString sText;
-	pNode->GetAttrValue("Text", sText );
+	pNode->GetAttrValue( "Text", sText );
 	CString sAltText;
-	pNode->GetAttrValue("AltText", sAltText );
+	pNode->GetAttrValue( "AltText", sAltText );
 
 	ThemeManager::EvaluateString( sText );
 	ThemeManager::EvaluateString( sAltText );
