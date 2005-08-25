@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.00"
 	Name="LibLua"
+	ProjectGUID="{93B36940-E3EB-4E3C-9F53-CB3322CE05C5}"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -84,6 +85,87 @@
 			<Tool
 				Name="VCLibrarianTool"
 				OutputFile="..\lib\LibLuaXbox.lib"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+		</Configuration>
+		<Configuration
+			Name="DebugXbox|Win32"
+			OutputDirectory=".\..\obj"
+			IntermediateDirectory=".\..\obj"
+			ConfigurationType="4"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\include"
+				PreprocessorDefinitions="WIN32,NDEBUG,_LIB"
+				StringPooling="TRUE"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="TRUE"
+				PrecompiledHeaderFile=".\..\obj/LibLua.pch"
+				AssemblerListingLocation=".\..\obj/"
+				ObjectFile=".\..\obj/"
+				ProgramDataBaseFileName=".\..\obj/"
+				WarningLevel="4"
+				SuppressStartupBanner="TRUE"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="..\bin\LibLua.lib"
+				SuppressStartupBanner="TRUE"/>
+			<Tool
+				Name="VCMIDLTool"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+		</Configuration>
+		<Configuration
+			Name="DebugXbox|Xbox"
+			OutputDirectory="DebugXbox"
+			IntermediateDirectory="DebugXbox"
+			ConfigurationType="4"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\include"
+				PreprocessorDefinitions="WIN32,NDEBUG,_LIB,_XBOX"
+				StringPooling="TRUE"
+				RuntimeLibrary="0"
+				EnableFunctionLevelLinking="TRUE"
+				PrecompiledHeaderFile=".\..\obj/LibLua.pch"
+				AssemblerListingLocation=".\..\obj/"
+				ObjectFile=".\..\obj/"
+				ProgramDataBaseFileName=".\..\obj/"
+				WarningLevel="4"
+				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="3"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLibrarianTool"
+				OutputFile="..\lib\LibLuaXboxD.lib"
 				SuppressStartupBanner="TRUE"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
