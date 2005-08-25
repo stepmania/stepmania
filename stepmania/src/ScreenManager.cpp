@@ -521,6 +521,8 @@ void ScreenManager::PrepareScreen( const CString &sScreenName )
 			g_vPreparedBackgrounds.push_back( pActor );
 		}
 	}
+
+	TEXTUREMAN->DiagnosticOutput();
 }
 
 void ScreenManager::GroupScreen( const CString &sScreenName )
@@ -679,8 +681,6 @@ void ScreenManager::LoadDelayedScreen()
 
 	if( bTimeToDeleteScreens && !PREFSMAN->m_bDelayedScreenLoad )
 		DeletePreparedScreens();
-
-	TEXTUREMAN->DiagnosticOutput();
 
 	LOG->Trace("... PushScreen");
 	PushLoadedScreen( ls );
