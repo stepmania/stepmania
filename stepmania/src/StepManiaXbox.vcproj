@@ -94,7 +94,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Optimization="0"
 				OptimizeForProcessor="2"
 				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0/include&quot;"
-				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG"
+				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG,_XDBG"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="global.h"
