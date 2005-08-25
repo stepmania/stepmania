@@ -94,9 +94,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Optimization="0"
 				OptimizeForProcessor="2"
 				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0/include&quot;"
-				PreprocessorDefinitions="WIN32,_XBOX,XBOX,_DEBUG,OGG_ONLY,_INC_WINDOWS"
+				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="global.h"
 				PrecompiledHeaderFile=".\Debug/StepMania.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -109,17 +110,19 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386 /FIXED:NO"
+				AdditionalOptions="/MACHINE:I386 /FIXED:NO /FORCE:MULTIPLE"
 				AdditionalDependencies="xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib debug\verstub.obj"
 				OutputFile="../StepManiaXbox-debug.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="TRUE"
 				IgnoreDefaultLibraryNames="libcd,libcmt"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/StepManiaXbox-debug.pdb"/>
+				ProgramDatabaseFile=".\Debug/StepManiaXbox-debug.pdb"
+				OptimizeReferences="0"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)StepMania.vdi ia32.vdi"/>
+				Description="disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)StepMania.vdi ia32.vdi"
+				ExcludedFromBuild="TRUE"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -128,10 +131,13 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 cl                                                                                                                                                                                    /Zl                                                                                                                                                                                    /nologo                                                                                                                                                                                    /c                                                                                                                                                                                    verstub.cpp                                                                                                                                                                                    /Fo$(IntDir)\
 "/>
 			<Tool
-				Name="XboxDeploymentTool"/>
+				Name="XboxDeploymentTool"
+				ExcludedFromBuild="FALSE"
+				RemotePath="xe:\$(SolutionName)\default.xbe"
+				Progress="TRUE"/>
 			<Tool
 				Name="XboxImageTool"
-				FileName="../default.xbe"
+				FileName="../default-debug.xbe"
 				StackSize="0x10000"
 				IncludeDebugInfo="TRUE"
 				LimitAvailableMemoryTo64MB="TRUE"
@@ -278,6 +284,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				IncludeDebugInfo="TRUE"
 				SuppressStartupBanner="TRUE"
 				TitleID=""
+				XboxGameRating="5"
 				TitleInfo=""
 				TitleName="StepmaniaX"
 				TitleImage=""/>
@@ -1414,10 +1421,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath="archutils\Win32\arch_setup.cpp">
 				</File>
 				<File
-					RelativePath="archutils\Win32\arch_setup.h">
+					RelativePath=".\archutils\Xbox\arch_setup.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Xbox\arch_setup.h">
+					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 				<File
 					RelativePath="archutils\Xbox\custom_launch_params.cpp">
