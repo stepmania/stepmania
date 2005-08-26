@@ -23,7 +23,8 @@
 #define SHADOW_LENGTH_X						THEME->GetMetricF(m_sName,"ShadowLengthX")
 #define SHADOW_LENGTH_Y						THEME->GetMetricF(m_sName,"ShadowLengthY")
 #define OK_CHOOSE_COMMAND					THEME->GetMetricA(m_sName,"OKChooseCommand")
-#define DISABLED_COLOR						THEME->GetMetricC(m_sName,"DisabledColor")
+#define ENABLED_COMMAND						THEME->GetMetricA(m_sName,"EnabledCommand")
+#define DISABLED_COMMAND					THEME->GetMetricA(m_sName,"DisabledCommand")
 
 #define IGNORED_ELEMENT_COMMAND				THEME->GetMetricA(m_sName,"IgnoredElementOnCommand")
 
@@ -162,13 +163,13 @@ void ScreenSelectDifficulty::UpdateSelectableChoices()
 			 * able to see the glow. */
 			if( m_GameCommands[page][i].IsPlayable() )
 			{
-				m_sprInfo[page][i].SetDiffuse( RageColor(1,1,1,1) );
-				m_sprPicture[page][i].SetDiffuse( RageColor(1,1,1,1) );
+				m_sprInfo[page][i].RunCommands( ENABLED_COMMAND );
+				m_sprPicture[page][i].RunCommands( ENABLED_COMMAND );
 			}
 			else
 			{
-				m_sprInfo[page][i].SetDiffuse( DISABLED_COLOR );
-				m_sprPicture[page][i].SetDiffuse( DISABLED_COLOR );
+				m_sprInfo[page][i].RunCommands( DISABLED_COMMAND );
+				m_sprPicture[page][i].RunCommands( DISABLED_COMMAND );
 			}
 		}
 	}

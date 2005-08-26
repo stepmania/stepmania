@@ -95,7 +95,7 @@ void ScreenPackages::Init()
 	m_sprDL.Load( THEME->GetPathG( m_sName, "Download" ) );
 	SET_XY_AND_ON_COMMAND( m_sprDL );
 	this->AddChild( &m_sprDL );
-	m_sprDL.SetDiffuse( THEME->GetMetricC( m_sName, "DownloadProgressColor" ) );
+	m_sprDL.RunCommands( THEME->GetMetricA( m_sName, "DownloadProgressCommand" ) );
 
 	m_textStatus.LoadFromFont( THEME->GetPathF(m_sName,"default") );
 	m_textStatus.SetShadowLength( 0 );

@@ -16,7 +16,7 @@
 
 #define ICON_GAIN_FOCUS_COMMAND		THEME->GetMetricA(m_sName,"IconGainFocusCommand")
 #define ICON_LOSE_FOCUS_COMMAND		THEME->GetMetricA(m_sName,"IconLoseFocusCommand")
-#define DISABLED_COLOR				THEME->GetMetricC(m_sName,"DisabledColor")
+#define DISABLED_COMMAND			THEME->GetMetricA(m_sName,"DisabledCommand")
 
 
 REGISTER_SCREEN_CLASS( ScreenSelectStyle );
@@ -227,8 +227,8 @@ void ScreenSelectStyle::UpdateSelectableChoices()
 		}
 		else
 		{
-			m_sprIcon[i].SetDiffuse( DISABLED_COLOR );
-			m_textIcon[i].SetDiffuse( DISABLED_COLOR );
+			m_sprIcon[i].RunCommands( DISABLED_COMMAND );
+			m_textIcon[i].RunCommands( DISABLED_COMMAND );
 		}
 	}
 

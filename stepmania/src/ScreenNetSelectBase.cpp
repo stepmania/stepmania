@@ -256,7 +256,7 @@ void ScreenNetSelectBase::UpdateUsers()
 void UtilSetQuadInit( Actor& actor, const CString &sClassName )
 {
 	ActorUtil::SetXYAndOnCommand( actor, sClassName );
-	actor.SetDiffuse( THEME->GetMetricC( sClassName, actor.GetName() + "Color" ) );
+	actor.RunCommands( THEME->GetMetricA( sClassName, actor.GetName() + "Command" ) );
 	actor.SetWidth( THEME->GetMetricF( sClassName, actor.GetName() + "Width" ) );
 	actor.SetHeight( THEME->GetMetricF( sClassName, actor.GetName() + "Height" ) );
 }

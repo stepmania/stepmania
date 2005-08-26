@@ -33,8 +33,8 @@
 #define CHARS_ZOOM_SMALL			THEME->GetMetricF("ScreenNameEntry","CharsZoomSmall")
 #define CHARS_ZOOM_LARGE			THEME->GetMetricF("ScreenNameEntry","CharsZoomLarge")
 #define CHARS_SPACING_Y				THEME->GetMetricF("ScreenNameEntry","CharsSpacingY")
-#define SCROLLING_CHARS_COLOR		THEME->GetMetricC("ScreenNameEntry","ScrollingCharsColor")
-#define SELECTED_CHARS_COLOR		THEME->GetMetricC("ScreenNameEntry","SelectedCharsColor")
+#define SCROLLING_CHARS_COMMAND		THEME->GetMetricA("ScreenNameEntry","ScrollingCharsCommand")
+#define SELECTED_CHARS_COMMAND		THEME->GetMetricA("ScreenNameEntry","SelectedCharsCommand")
 #define GRAY_ARROWS_Y				THEME->GetMetricF("ScreenNameEntry","ReceptorArrowsY")
 #define NUM_CHARS_TO_DRAW_BEHIND	THEME->GetMetricI("ScreenNameEntry","NumCharsToDrawBehind")
 #define NUM_CHARS_TO_DRAW_TOTAL		THEME->GetMetricI("ScreenNameEntry","NumCharsToDrawTotal")
@@ -48,8 +48,6 @@
 float	g_fCharsZoomSmall;
 float	g_fCharsZoomLarge; 
 float	g_fCharsSpacingY;
-RageColor	g_ScrollingCharsColor; 
-RageColor	g_SelectedCharsColor; 
 float	g_fReceptorArrowsY;
 int		g_iNumCharsToDrawBehind;
 int		g_iNumCharsToDrawTotal;
@@ -98,8 +96,6 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	g_fCharsZoomSmall = CHARS_ZOOM_SMALL;
 	g_fCharsZoomLarge = CHARS_ZOOM_LARGE;
 	g_fCharsSpacingY = CHARS_SPACING_Y;
-	g_ScrollingCharsColor = SCROLLING_CHARS_COLOR;
-	g_SelectedCharsColor = SELECTED_CHARS_COLOR;
 	g_fReceptorArrowsY = GRAY_ARROWS_Y;
 	g_iNumCharsToDrawBehind = NUM_CHARS_TO_DRAW_BEHIND;
 	g_iNumCharsToDrawTotal = NUM_CHARS_TO_DRAW_TOTAL;
@@ -135,13 +131,14 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	FOREACH_PlayerNumber( p )
 	{
 		GAMESTATE->GetRankingFeats( p, aFeats[p] );
-		m_bStillEnteringName[p] = aFeats[p].size()>0;
+		GAMESTATE->JoinPlayer( p );
+		m_bStillEnteringName[p] = true;//aFeats[p].size()>0;
 	}
 
 	if( !AnyStillEntering() )
 	{
 		/* Nobody made a high score. */
-		HandleScreenMessage( SM_GoToNextScreen );
+		PostScreenMessage( SM_GoToNextScreen, 0 );
 		return;
 	}
 
@@ -214,7 +211,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 			m_textSelectedChars[p][t].LoadFromFont( THEME->GetPathF("ScreenNameEntry","letters") );
 			m_textSelectedChars[p][t].SetX( ColX );
 			m_textSelectedChars[p][t].SetY( GRAY_ARROWS_Y );
-			m_textSelectedChars[p][t].SetDiffuse( g_SelectedCharsColor );
+			m_textSelectedChars[p][t].RunCommands( SELECTED_CHARS_COMMAND );
 			m_textSelectedChars[p][t].SetZoom( CHARS_ZOOM_LARGE );
 			if( t < (int)m_sSelectedName[p].length() )
 				m_textSelectedChars[p][t].SetText( m_sSelectedName[p].substr(t,1) );
@@ -223,7 +220,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 			m_textScrollingChars[p][t].LoadFromFont( THEME->GetPathF("ScreenNameEntry","letters") );
 			m_textScrollingChars[p][t].SetX( ColX );
 			m_textScrollingChars[p][t].SetY( GRAY_ARROWS_Y );
-			m_textScrollingChars[p][t].SetDiffuse( g_ScrollingCharsColor );
+			m_textScrollingChars[p][t].RunCommands( SCROLLING_CHARS_COMMAND );
 			//this->AddChild( &m_textScrollingChars[p][t] );	// draw these manually
 		}
 
@@ -326,12 +323,12 @@ void ScreenNameEntry::DrawPrimitives()
 				if( iCharIndex==iClosestIndex )
 					fZoom = SCALE(fabsf(GetClosestCharYOffset(m_fFakeBeat)),0,0.5f,g_fCharsZoomLarge,g_fCharsZoomSmall);
 				m_textScrollingChars[p][t].SetZoom(fZoom);
-				RageColor color = g_ScrollingCharsColor;
+				float fAlpha = m_textScrollingChars[p][t].GetDiffuseAlpha();
 				if( i==0 )
-					color.a *= SCALE(GetClosestCharYOffset(m_fFakeBeat),-0.5f,0.f,0.f,1.f);
+					fAlpha *= SCALE(GetClosestCharYOffset(m_fFakeBeat),-0.5f,0.f,0.f,1.f);
 				if( i==g_iNumCharsToDrawTotal-1 )
-					color.a *= SCALE(GetClosestCharYOffset(m_fFakeBeat),0.f,0.5f,1.f,0.f);
-				m_textScrollingChars[p][t].SetDiffuse( color );
+					fAlpha *= SCALE(GetClosestCharYOffset(m_fFakeBeat),0.f,0.5f,1.f,0.f);
+				m_textScrollingChars[p][t].SetDiffuseAlpha( fAlpha  );
 				m_textScrollingChars[p][t].Draw();
 			}
 			fY += g_fCharsSpacingY;

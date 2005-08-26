@@ -10,7 +10,7 @@ const int NUM_SCORE_DIGITS	=	9;
 
 #define USERSBG_WIDTH				THEME->GetMetricF("ScreenNetEvaluation","UsersBGWidth")
 #define USERSBG_HEIGHT				THEME->GetMetricF("ScreenNetEvaluation","UsersBGHeight")
-#define USERSBG_COLOR				THEME->GetMetricC("ScreenNetEvaluation","UsersBGColor")
+#define USERSBG_COMMAND				THEME->GetMetricA("ScreenNetEvaluation","UsersBGCommand")
 
 #define USERDX						THEME->GetMetricF("ScreenNetEvaluation","UserDX")
 #define USERDY						THEME->GetMetricF("ScreenNetEvaluation","UserDY")
@@ -43,7 +43,7 @@ void ScreenNetEvaluation::Init()
 
 	m_rectUsersBG.SetWidth( USERSBG_WIDTH );
 	m_rectUsersBG.SetHeight( USERSBG_HEIGHT );
-	m_rectUsersBG.SetDiffuse( USERSBG_COLOR );
+	m_rectUsersBG.RunCommands( USERSBG_COMMAND );
 	m_rectUsersBG.SetName( "UsersBG" );
 	ON_COMMAND( m_rectUsersBG );
 	
