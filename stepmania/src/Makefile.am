@@ -93,7 +93,10 @@ Font.cpp Font.h \
 FontCharAliases.cpp FontCharAliases.h \
 FontCharmaps.cpp FontCharmaps.h Game.cpp Game.h GameCommand.cpp GameCommand.h \
 GameConstantsAndTypes.cpp GameConstantsAndTypes.h \
-GameInput.cpp GameInput.h Grade.cpp Grade.h HighScore.cpp HighScore.h Inventory.cpp Inventory.h LuaFunctions.h \
+GameInput.cpp GameInput.h Grade.cpp Grade.h \
+HighScore.cpp HighScore.h \
+InputEventPlus.cpp InputEventPlus.h \
+Inventory.cpp Inventory.h LuaFunctions.h \
 LuaReference.cpp LuaReference.h \
 LyricsLoader.cpp LyricsLoader.h MenuInput.h \
 NoteData.cpp NoteData.h NoteDataUtil.cpp NoteDataUtil.h NoteDataWithScoring.cpp NoteDataWithScoring.h \

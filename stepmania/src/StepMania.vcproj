@@ -837,6 +837,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="HighScore.h">
 			</File>
 			<File
+				RelativePath="InputEventPlus.h">
+			</File>
+			<File
 				RelativePath="Inventory.cpp">
 			</File>
 			<File
@@ -1908,6 +1911,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath=".\Player.h">
+			</File>
+			<File
+				RelativePath="PlayerScoreList.cpp">
+			</File>
+			<File
+				RelativePath="PlayerScoreList.h">
 			</File>
 			<File
 				RelativePath=".\ReceptorArrow.cpp">
