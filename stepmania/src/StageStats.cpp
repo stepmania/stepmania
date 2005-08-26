@@ -80,13 +80,13 @@ void StageStats::AddStats( const StageStats& other )
 	fGameplaySeconds += other.fGameplaySeconds;
 	fStepsSeconds += other.fStepsSeconds;
 
-	FOREACH_EnabledMultiPlayer( p )
+	FOREACH_EnabledPlayer( p )
 		m_player[p].AddStats( other.m_player[p] );
 }
 
 bool StageStats::OnePassed() const
 {
-	FOREACH_EnabledMultiPlayer( p )
+	FOREACH_EnabledPlayer( p )
 		if( !m_player[p].bFailed )
 			return true;
 	return false;
@@ -94,7 +94,7 @@ bool StageStats::OnePassed() const
 
 bool StageStats::AllFailed() const
 {
-	FOREACH_EnabledMultiPlayer( pn )
+	FOREACH_EnabledPlayer( pn )
 		if( !m_player[pn].bFailed )
 			return false;
 	return true;
@@ -102,7 +102,7 @@ bool StageStats::AllFailed() const
 
 bool StageStats::AllFailedEarlier() const
 {
-	FOREACH_EnabledMultiPlayer( p )
+	FOREACH_EnabledPlayer( p )
 		if( !m_player[p].bFailedEarlier )
 			return false;
 	return true;
