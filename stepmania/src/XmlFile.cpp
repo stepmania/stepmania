@@ -126,6 +126,11 @@ static char* tcsepbrk( const char* psz, const char* chset, int escape )
 	return pch;
 }
 
+static bool XIsEmptyString( const CString &s )
+{
+	return s.find_first_not_of( "\r\n\t " ) == s.npos;
+}
+
 // Desc   : put string of (psz~end) on ps string
 static void SetString( char* psz, char* end, CString* ps, bool trim = false, int escape = 0 )
 {
@@ -986,13 +991,4 @@ bool XNode::SaveToFile( const CString &sFile, DISP_OPT *opt ) const
 	}
 
 	return SaveToFile( f, opt );
-}
-
-bool XIsEmptyString( const char* str )
-{
-	CString s(str);
-	TrimLeft( s );
-	TrimRight( s );
-
-	return ( s.empty() || s == "" );
 }

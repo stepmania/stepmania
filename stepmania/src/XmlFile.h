@@ -235,6 +235,4 @@ inline long XStr2Int( const char* str, long default_value = 0 )
 	return str ? atol(str) : default_value;
 }
 
-bool XIsEmptyString( const char* str );
-
 #endif
