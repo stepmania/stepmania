@@ -8,6 +8,36 @@ function FormatNumSongsPlayed( num )
 	return s
 end
 
+function JudgmentTransformCommand( self, pn, mp, iEnabledPlayerIndex, iNumEnabledPlayers, bUsingBothSides, bReverse, bCenetered )
+	if GAMESTATE:GetMultiplayer() then
+		local x = 0
+		local y = -20
+		local judgmentHeight = 50
+		
+		local iNumOnLeft = math.ceil( iNumEnabledPlayers/2 )
+		local iNumOnRight = iNumEnabledPlayers - iNumOnLeft
+		local bOnLeft = iEnabledPlayerIndex < iNumOnLeft
+		local iIndexOnThisSide = (bOnLeft and iEnabledPlayerIndex) or (not bOnLeft and (iEnabledPlayerIndex-iNumOnLeft))
+		local iNumOnThisSide = (bOnLeft and iNumOnLeft) or (not bOnLeft and iNumOnRight)
+		if bOnLeft then
+			x = -216
+		else
+			x = 216
+		end
+		y = y + (iIndexOnThisSide - (iNumOnThisSide-1)/2) * judgmentHeight
+		self:x( x )
+		self:y( y )
+	else
+		local x = 0
+		local y = -30
+		if bReverse then y = y * -1 end
+		if bCentered then y = y * 2 end
+		self:x( x )
+		self:y( y )
+	end
+end
+
+
 -- (c) 2005 Chris Danford
 -- All rights reserved.
 -- 
