@@ -6,6 +6,7 @@
 #include "BGAnimation.h"
 #include "IniFile.h"
 #include "ThemeManager.h"
+#include "RageFileManager.h"
 #include "RageLog.h"
 #include "song.h"
 #include "GameState.h"
@@ -58,7 +59,8 @@ retry:
 
 	// If we know this is an exact match, don't bother with the GetDirListing,
 	// so "foo" doesn't partial match "foobar" if "foo" exists.
-	if( !IsAFile(sPath) && !IsADirectory(sPath) )
+	RageFileManager::FileType ft = FILEMAN->GetFileType( sPath );
+	if( ft != RageFileManager::TYPE_FILE && ft != RageFileManager::TYPE_DIR )
 	{
 		CStringArray asPaths;
 		GetDirListing( sPath + "*", asPaths, false, true );	// return path too
