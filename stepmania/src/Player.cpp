@@ -421,10 +421,10 @@ void Player::Load( const NoteData& noteData )
 
 	// Load HoldJudgments
 	FOREACH( HoldJudgment, m_vHoldJudgment, i )
-		this->RemoveChild( i );
+		this->RemoveChild( &*i );
 	m_vHoldJudgment.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
 	FOREACH( HoldJudgment, m_vHoldJudgment, i )
-		this->AddChild( i );
+		this->AddChild( &*i );
 
 
 	//
