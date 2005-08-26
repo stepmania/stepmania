@@ -115,7 +115,8 @@ void ScreenJoinMultiplayer::Input( const DeviceInput& DeviceI, const InputEventT
 
 	// Translate input and sent to the appropriate player.  Assume that all 
 	// joystick devices are mapped the same as the master player.
-	if( DeviceI.device >= DEVICE_JOY1  &&  
+	if( type == IET_FIRST_PRESS  &&
+		DeviceI.device >= DEVICE_JOY1  &&  
 		DeviceI.device < DEVICE_JOY1 + NUM_MultiPlayer )
 	{
 		DeviceInput di = DeviceI;
@@ -129,6 +130,14 @@ void ScreenJoinMultiplayer::Input( const DeviceInput& DeviceI, const InputEventT
 			INPUTMAPPER->GameToMenu( gi, mi );
 
 			MultiPlayer p = (MultiPlayer)(DeviceI.device - DEVICE_JOY1);
+
+			// testing hack
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LSHIFT) ) )
+				p = (MultiPlayer)(p + 1);
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL) ) )
+				p = (MultiPlayer)(p + 2);
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LALT) ) )
+				p = (MultiPlayer)(p + 4);
 
 			ASSERT( p>=0 && p<NUM_MultiPlayer );
 			
