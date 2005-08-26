@@ -468,10 +468,6 @@ FileType ActorUtil::GetFileType( const CString &sPath )
 	
 	if( sExt=="xml" )			return FT_Xml;
 	else if( sExt=="actor" )	return FT_Actor;
-	/* Do this last, to avoid the IsADirectory in most cases. */
-	/* Yuck.  Some directories end in ".mpg", so do the directory 
-	 * check before the extensions check. */
-	else if( IsADirectory(sPath)  )	return FT_Directory;
 	else if( 
 		sExt=="png" ||
 		sExt=="jpg" || 
@@ -483,8 +479,9 @@ FileType ActorUtil::GetFileType( const CString &sPath )
 		sExt=="mpg" )		return FT_Movie;
 	else if( 
 		sExt=="txt" )		return FT_Model;
+	/* Do this last, to avoid the IsADirectory in most cases. */
+	else if( IsADirectory(sPath)  )	return FT_Directory;
 	else					return FT_Invalid;
-	
 }
 
 /*
