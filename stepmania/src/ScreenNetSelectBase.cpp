@@ -15,10 +15,8 @@
 
 #define CHATINPUT_WIDTH				THEME->GetMetricF(m_sName,"ChatInputBoxWidth")
 #define CHATINPUT_HEIGHT			THEME->GetMetricF(m_sName,"ChatInputBoxHeight")
-#define CHATINPUT_COLOR				THEME->GetMetricC(m_sName,"ChatInputBoxColor")
 #define CHATOUTPUT_WIDTH			THEME->GetMetricF(m_sName,"ChatOutputBoxWidth")
 #define CHATOUTPUT_HEIGHT			THEME->GetMetricF(m_sName,"ChatOutputBoxHeight")
-#define CHATOUTPUT_COLOR			THEME->GetMetricC(m_sName,"ChatOutputBoxColor")
 #define SHOW_CHAT_LINES				THEME->GetMetricI(m_sName,"ChatOutputLines")
 
 #define CHAT_TEXT_OUTPUT_WIDTH		THEME->GetMetricF(m_sName,"ChatTextOutputWidth")
@@ -246,8 +244,8 @@ void ScreenNetSelectBase::UpdateUsers()
 			ON_COMMAND( m_textUsers[i] );
 	
 		m_textUsers[i].SetText( NSMAN->m_PlayerNames[NSMAN->m_ActivePlayer[i]] );
-		m_textUsers[i].SetDiffuseColor ( THEME->GetMetricC( m_sName,
-			ssprintf("Users%dColor", NSMAN->m_PlayerStatus[NSMAN->m_ActivePlayer[i]] ) ) );
+		m_textUsers[i].RunCommands( THEME->GetMetricA( m_sName,
+			ssprintf("Users%dCommand", NSMAN->m_PlayerStatus[NSMAN->m_ActivePlayer[i]] ) ) );
 
 		this->AddChild( &m_textUsers[i] );
 	}
