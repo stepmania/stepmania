@@ -34,6 +34,7 @@ void GameCommand::Init()
 	m_sText = "";
 	m_bInvalid = true;
 	m_iIndex = -1;
+	m_MultiPlayer = MultiPlayer_INVALID;
 	m_pGame = NULL;
 	m_pStyle = NULL;
 	m_pm = PLAY_MODE_INVALID;
@@ -1155,6 +1156,7 @@ public:
 	static int GetName( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sName ); return 1; }
 	static int GetText( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sText ); return 1; }
 	static int GetIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iIndex ); return 1; }
+	static int GetMultiPlayer( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_MultiPlayer); return 1; }
 	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID ); return 1; }
 
 	static void Register(lua_State *L)
@@ -1162,6 +1164,7 @@ public:
 		ADD_METHOD( GetName )
 		ADD_METHOD( GetText )
 		ADD_METHOD( GetIndex )
+		ADD_METHOD( GetMultiPlayer )
 		ADD_METHOD( GetProfileID )
 
 		Luna<T>::Register( L );
