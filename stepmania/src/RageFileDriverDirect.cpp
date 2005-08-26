@@ -271,7 +271,7 @@ RageFileObjDirect::~RageFileObjDirect()
 		CString sNewPath = m_sPath;
 
 #if defined(WIN32)
-		if( WinMoveFile(sOldPath, sNewPath) )
+		if( WinMoveFile(DoPathReplace(sOldPath), DoPathReplace(sNewPath)) )
 			return;
 
 		/* We failed. */

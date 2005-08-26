@@ -20,6 +20,7 @@ HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd );
 #define DoRemove remove
 #define DoRmdir rmdir
 #endif
+CString DoPathReplace( const CString &sPath );
 
 #if defined(WIN32)
 bool WinMoveFile( CString sOldPath, CString sNewPath );

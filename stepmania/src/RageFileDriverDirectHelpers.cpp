@@ -21,47 +21,45 @@
 /* Wrappers for low-level file functions, to work around Xbox issues: */
 int DoMkdir( const CString &sPath, int perm )
 {
-	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" );
-	return mkdir( TempPath );
+	return mkdir( DoPathReplace(sPath), perm );
 }
 
 int DoOpen( const CString &sPath, int flags, int perm )
 {
-	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" );
-	return open( TempPath, flags, perm );
+	return open( DoPathReplace(sPath), flags, perm );
 }
 
 int DoStat( const CString &sPath, struct stat *st )
 {
-	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" );
-	return stat( sPath, st );
+	return stat( DoPathReplace(sPath), st );
 }
 
 int DoRemove( const CString &sPath )
 {
-	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" );
-	return remove( sPath );
+	return remove( DoPathReplace(sPath) );
 }
 
 int DoRmdir( const CString &sPath )
 {
-	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" );
-	return rmdir( sPath );
+	return rmdir( DoPathReplace(sPath) );
 }
 
 HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd )
 {
-	CString TempPath = sPath;
-	TempPath.Replace( "/", "\\" );
-	return FindFirstFile( TempPath, fd );
+	return FindFirstFile( DoPathReplace(sPath), fd );
 }
 
 #endif
+CString DoPathReplace(const CString &sPath)
+{
+	CString TempPath = sPath;
+#if defined(XBOX)
+	TempPath.Replace( "//", "\\" );
+	TempPath.Replace( "/", "\\" );
+#endif
+	return TempPath;
+}
+
 
 #if defined(WIN32)
 static bool WinMoveFileInternal( const CString &sOldPath, const CString &sNewPath )
@@ -100,11 +98,6 @@ static bool WinMoveFileInternal( const CString &sOldPath, const CString &sNewPat
 
 bool WinMoveFile( CString sOldPath, CString sNewPath )
 {
-#if defined(_XBOX)
-	sOldPath.Replace( "/", "\\" );
-	sNewPath.Replace( "/", "\\" );
-#endif
-
 	if( WinMoveFileInternal(sOldPath, sNewPath) )
 		return true;
 	if( GetLastError() != ERROR_ACCESS_DENIED )
@@ -112,7 +105,7 @@ bool WinMoveFile( CString sOldPath, CString sNewPath )
 	/* Try turning off the read-only bit on the file we're overwriting. */
 	SetFileAttributes( sNewPath, FILE_ATTRIBUTE_NORMAL );
 
-	return WinMoveFileInternal( sOldPath, sNewPath );
+	return WinMoveFileInternal( DoPathReplace(sOldPath), DoPathReplace(sNewPath) );
 }
 #endif
 
@@ -290,7 +283,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 }
 
 /*
- * Copyright (c) 2003-2004 Glenn Maynard, Chris Danford
+ * Copyright (c) 2003-2005 Glenn Maynard, Chris Danford, Renaud Lepage
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
