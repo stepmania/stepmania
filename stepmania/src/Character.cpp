@@ -20,6 +20,29 @@ bool Character::Load( CString sCharDir )
 		m_sCharacterID = as.back();
 	}
 
+	{
+		CStringArray as;
+		GetDirListing( m_sCharDir+"card.png", as, false, true );
+		GetDirListing( m_sCharDir+"card.jpg", as, false, true );
+		GetDirListing( m_sCharDir+"card.gif", as, false, true );
+		GetDirListing( m_sCharDir+"card.bmp", as, false, true );
+		if( as.empty() )
+			m_sCardPath = "";
+		else
+			m_sCardPath = as[0];
+	}
+
+	{
+		CStringArray as;
+		GetDirListing( m_sCharDir+"icon.png", as, false, true );
+		GetDirListing( m_sCharDir+"icon.jpg", as, false, true );
+		GetDirListing( m_sCharDir+"icon.gif", as, false, true );
+		GetDirListing( m_sCharDir+"icon.bmp", as, false, true );
+		if( as.empty() )
+			m_sIconPath = "";
+		else
+			m_sIconPath = as[0];
+	}
 
 	// Save attacks
 	IniFile ini;
@@ -122,32 +145,6 @@ CString Character::GetStageIconPath() const
 		else
 			return as[0];
 	}
-	else
-		return as[0];
-}
-
-CString Character::GetCardPath() const
-{
-	CStringArray as;
-	GetDirListing( m_sCharDir+"card.png", as, false, true );
-	GetDirListing( m_sCharDir+"card.jpg", as, false, true );
-	GetDirListing( m_sCharDir+"card.gif", as, false, true );
-	GetDirListing( m_sCharDir+"card.bmp", as, false, true );
-	if( as.empty() )
-		return "";
-	else
-		return as[0];
-}
-
-CString Character::GetIconPath() const
-{
-	CStringArray as;
-	GetDirListing( m_sCharDir+"icon.png", as, false, true );
-	GetDirListing( m_sCharDir+"icon.jpg", as, false, true );
-	GetDirListing( m_sCharDir+"icon.gif", as, false, true );
-	GetDirListing( m_sCharDir+"icon.bmp", as, false, true );
-	if( as.empty() )
-		return "";
 	else
 		return as[0];
 }

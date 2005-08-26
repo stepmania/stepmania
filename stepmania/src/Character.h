@@ -18,8 +18,8 @@ public:
 	bool Load( CString sCharDir );	// return true if success
 
 	CString GetTakingABreakPath() const;
-	CString GetCardPath() const;
-	CString GetIconPath() const;
+	CString GetCardPath() const { return m_sCardPath; }
+	CString GetIconPath() const { return m_sIconPath; }
 
 	CString GetModelPath() const;
 	CString GetRestAnimationPath() const;
@@ -49,6 +49,9 @@ public:
 	CString m_sCharacterID;
 private:
 	CString m_sDisplayName;
+	CString m_sCardPath;
+	CString m_sIconPath;
+
 public:
 
 	// All the stuff below will be filled in if this character is playable in Rave mode
