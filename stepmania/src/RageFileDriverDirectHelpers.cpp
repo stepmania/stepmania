@@ -98,12 +98,12 @@ static bool WinMoveFileInternal( const CString &sOldPath, const CString &sNewPat
 
 bool WinMoveFile( CString sOldPath, CString sNewPath )
 {
-	if( WinMoveFileInternal(sOldPath, sNewPath) )
+	if( WinMoveFileInternal( DoPathReplace(sOldPath), DoPathReplace(sNewPath) )
 		return true;
 	if( GetLastError() != ERROR_ACCESS_DENIED )
 		return false;
 	/* Try turning off the read-only bit on the file we're overwriting. */
-	SetFileAttributes( sNewPath, FILE_ATTRIBUTE_NORMAL );
+	SetFileAttributes( DoPathReplace(sNewPath), FILE_ATTRIBUTE_NORMAL );
 
 	return WinMoveFileInternal( DoPathReplace(sOldPath), DoPathReplace(sNewPath) );
 }
