@@ -22,7 +22,7 @@ FontPage::FontPage()
 	m_iDrawExtraPixelsLeft = m_iDrawExtraPixelsRight = 0;
 }
 
-void FontPage::Load( FontPageSettings cfg )
+void FontPage::Load( const FontPageSettings &cfg )
 {
 	m_sTexturePath = cfg.m_sTexturePath;
 
@@ -74,19 +74,20 @@ void FontPage::Load( FontPageSettings cfg )
 	int iBaseline=0;
 	/* If we don't have a top and/or baseline, assume we're centered in the
 	 * frame, and that LineSpacing is the total height. */
-	if( cfg.m_iBaseline == -1 )
+	iBaseline = cfg.m_iBaseline;
+	if( iBaseline == -1 )
 	{
 		float center = m_pTexture->GetSourceFrameHeight()/2.0f;
-		cfg.m_iBaseline = int( center + m_iLineSpacing/2 );
+		iBaseline = int( center + m_iLineSpacing/2 );
 	}
 
-	if( cfg.m_iTop == -1 )
+	int iTop = cfg.m_iTop;
+	if( iTop == -1 )
 	{
 		float center = m_pTexture->GetSourceFrameHeight()/2.0f;
-		cfg.m_iTop = int( center - m_iLineSpacing/2 );
+		iTop = int( center - m_iLineSpacing/2 );
 	}
-	iBaseline = cfg.m_iBaseline;
-	m_iHeight = iBaseline - cfg.m_iTop;
+	m_iHeight = iBaseline - iTop;
 	m_iDrawExtraPixelsLeft = cfg.m_iDrawExtraPixelsLeft;
 	m_iDrawExtraPixelsRight = cfg.m_iDrawExtraPixelsRight;
 
