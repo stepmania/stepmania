@@ -31,6 +31,7 @@ class DifficultyIcon;
 class DifficultyMeter;
 class Inventory;
 class ScoreKeeper;
+class PlayerScoreList;
 
 AutoScreenMessage( SM_NotesEnded )
 
@@ -190,7 +191,9 @@ protected:
 	RageTimer			m_GiveUpTimer;
 	void AbortGiveUp( bool bShowText );
 
-	BitmapText			m_MaxCombo;
+	BitmapText			m_MaxCombo;		// TODO: move this into an overlay
+
+	PlayerScoreList		*m_pPlayerScoreList;
 
 	Transition	m_Ready;
 	Transition	m_Go;
@@ -200,7 +203,7 @@ protected:
 	Transition	m_Toasty;	// easter egg
 	Transition	m_Draw;
 
-	BitmapText			m_textSurviveTime;	// used in extra stage
+	BitmapText			m_textSurviveTime;	// used in extra stage.  TODO: Move this into a BGA
 
 
 	AutoKeysounds	m_AutoKeysounds;

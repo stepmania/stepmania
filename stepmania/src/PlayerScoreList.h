@@ -1,32 +1,49 @@
-#include "global.h"
-#include "ScreenGameplayMultiplayer.h"
+#ifndef PlayerScoreList_H
+#define PlayerScoreList_H
 
+#include "ActorFrame.h"
+#include "AutoActor.h"
+#include "PercentageDisplay.h"
+class PlayerState;
+class PlayerStageStats;
 
-REGISTER_SCREEN_CLASS( ScreenGameplayMultiplayer );
-
-ScreenGameplayMultiplayer::ScreenGameplayMultiplayer( CString sName ) : ScreenGameplay(sName)
+class PlayerScoreItem : public ActorFrame
 {
+public:
+	void Init( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats );
 
-}
-
-void ScreenGameplayMultiplayer::Init()
-{
-	ScreenGameplay::Init();
-}
-
-void ScreenGameplayMultiplayer::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
-{
-	vPlayerInfoOut.resize( NUM_MultiPlayer+1 );
-	FOREACH_MultiPlayer( p )
-		vPlayerInfoOut[p].Load( PLAYER_INVALID, p, false );
-	PlayerInfo &pi = vPlayerInfoOut.back();
-	pi.LoadDummyP1();	// dummy autoplay NoteField
+protected:
+	AutoActor			m_sprFrame;
+	PercentageDisplay	m_score;
 };
 
-// lua end
+class PlayerScoreList : public ActorFrame
+{
+public:
+	PlayerScoreList();
+
+	void Init( vector<const PlayerState*> vpPlayerState, vector<const PlayerStageStats*> vpPlayerStageStats );
+
+	virtual void Update( float fDelta );
+
+	void Refresh();
+
+protected:
+	vector<const PlayerState*> m_vpPlayerState;
+	vector<const PlayerStageStats*> m_vpPlayerStageStats;
+
+	LuaExpression m_exprItemPositionCommandFunction;	// params: self,itemIndex,numItems
+
+	RageTimer m_timerRefreshCountdown;
+
+	vector<AutoActor>		m_vsprBullet;
+	vector<PlayerScoreItem>	m_vScoreItem;
+};
+
+#endif
 
 /*
- * (c) 2005 Chris Danford
+ * (c) 2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

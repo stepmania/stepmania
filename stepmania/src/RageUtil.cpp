@@ -179,15 +179,17 @@ CString Commify( int iNum )
 	return sReturn;
 }
 
+LuaFunction( FormatNumberAndSuffix, FormatNumberAndSuffix( IArg(1) ) )
+
 CString FormatNumberAndSuffix( int i )
 {
 	CString sSuffix;
 	switch( i%10 )
 	{
-	case 1:         sSuffix = "st"; break;
-	case 2:         sSuffix = "nd"; break;
-	case 3:         sSuffix = "rd"; break;
-	default:        sSuffix = "th"; break;
+	case 1:		sSuffix = "st"; break;
+	case 2:		sSuffix = "nd"; break;
+	case 3:		sSuffix = "rd"; break;
+	default:	sSuffix = "th"; break;
 	}
 
 	// "11th", "113th", etc.

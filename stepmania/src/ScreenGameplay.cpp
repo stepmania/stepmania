@@ -56,6 +56,7 @@
 #include "Player.h"
 #include "DifficultyIcon.h"
 #include "DifficultyMeter.h"
+#include "PlayerScoreList.h"
 
 //
 // Defines
@@ -120,29 +121,33 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 	m_ptextCourseSongNumber = NULL;
 	m_ptextStepsDescription = NULL;
 
-	switch( GAMESTATE->m_PlayMode )
+	if( !IsMultiPlayer() )
 	{
-	case PLAY_MODE_REGULAR:
-	case PLAY_MODE_NONSTOP:
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-		if( PREFSMAN->m_bPercentageScoring )
-			m_pPrimaryScoreDisplay = new ScoreDisplayPercentage;
-		else
-			m_pPrimaryScoreDisplay = new ScoreDisplayNormal;
-		break;
-	case PLAY_MODE_ONI:
-	case PLAY_MODE_ENDLESS:
-		if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_TIME )
-			m_pPrimaryScoreDisplay = new ScoreDisplayLifeTime;
-		else
-			m_pPrimaryScoreDisplay = new ScoreDisplayOni;
-		break;
-	default:
-		ASSERT(0);
+		switch( GAMESTATE->m_PlayMode )
+		{
+		case PLAY_MODE_REGULAR:
+		case PLAY_MODE_NONSTOP:
+		case PLAY_MODE_BATTLE:
+		case PLAY_MODE_RAVE:
+			if( PREFSMAN->m_bPercentageScoring )
+				m_pPrimaryScoreDisplay = new ScoreDisplayPercentage;
+			else
+				m_pPrimaryScoreDisplay = new ScoreDisplayNormal;
+			break;
+		case PLAY_MODE_ONI:
+		case PLAY_MODE_ENDLESS:
+			if( GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_TIME )
+				m_pPrimaryScoreDisplay = new ScoreDisplayLifeTime;
+			else
+				m_pPrimaryScoreDisplay = new ScoreDisplayOni;
+			break;
+		default:
+			ASSERT(0);
+		}
 	}
 
-	m_pPrimaryScoreDisplay->Init( GetPlayerState(), GetPlayerStageStats() );
+	if(  m_pPrimaryScoreDisplay )
+		m_pPrimaryScoreDisplay->Init( GetPlayerState(), GetPlayerStageStats() );
 
 	switch( GAMESTATE->m_PlayMode )
 	{
@@ -179,14 +184,16 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 	m_ptextPlayerOptions = NULL;
 	m_pActiveAttackList = NULL;
 	m_pWin = NULL;
-	m_pPlayer = new Player( bShowNoteField || mp == MultiPlayer_1 );
+	m_pPlayer = new Player( bShowNoteField, true );
 	m_pInventory = NULL;
 	m_pDifficultyIcon = NULL;
 	m_pDifficultyMeter = NULL;
 
 	if( IsMultiPlayer() )
 	{
-		*GetPlayerState() = *GAMESTATE->m_pPlayerState[PLAYER_1];
+		GetPlayerState()->m_CurrentPlayerOptions	= GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions;
+		GetPlayerState()->m_PlayerOptions			= GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+		GetPlayerState()->m_StoredPlayerOptions		= GAMESTATE->m_pPlayerState[PLAYER_1]->m_StoredPlayerOptions;
 	}
 }
 
@@ -196,7 +203,7 @@ void PlayerInfo::LoadDummyP1()
 	m_bIsDummy = true;
 
 	// don't init any of the scoring objects
-	m_pPlayer = new Player( true );	// show NoteField
+	m_pPlayer = new Player( true, false );
 
 	m_PlayerStateDummy = *GAMESTATE->m_pPlayerState[PLAYER_1];
 	m_PlayerStateDummy.m_PlayerController = PC_AUTOPLAY;
@@ -331,6 +338,8 @@ GetNextVisiblePlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> 
 
 ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
 {
+	m_pPlayerScoreList = NULL;
+
 	PLAYER_TYPE.Load( sName, "PlayerType" );
 	GIVE_UP_TEXT.Load( sName, "GiveUpText" );
 	GIVE_UP_ABORTED_TEXT.Load( sName, "GiveUpAbortedText" );
@@ -454,22 +463,20 @@ void ScreenGameplay::Init()
 		pi->m_pPlayer->SetName( ssprintf("Player%s", pi->GetName().c_str()) );
 		// If pi->m_pn is set, then the player will be visible.  If not, then it's not 
 		// visible and don't bother setting its position.
-		if( pi->m_pPlayer->HasNoteField() )
-		{
-			float fPlayerX = PLAYER_X( pi->GetName(), GAMESTATE->GetCurrentStyle()->m_StyleType );
 
-			/* Perhaps this should be handled better by defining a new
-			 * StyleType for ONE_PLAYER_ONE_CREDIT_AND_ONE_COMPUTER,
-			 * but for now just ignore SoloSingles when it's Battle or Rave
-			 * Mode.  This doesn't begin to address two-player solo (6 arrows) */
-			if( PREFSMAN->m_bSoloSingle && 
-				GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
-				GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
-				GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_ONE_SIDE )
-				fPlayerX = SCREEN_CENTER_X;
+		float fPlayerX = PLAYER_X( pi->GetName(), GAMESTATE->GetCurrentStyle()->m_StyleType );
 
-			pi->m_pPlayer->SetXY( fPlayerX, SCREEN_CENTER_Y );
-		}
+		/* Perhaps this should be handled better by defining a new
+		 * StyleType for ONE_PLAYER_ONE_CREDIT_AND_ONE_COMPUTER,
+		 * but for now just ignore SoloSingles when it's Battle or Rave
+		 * Mode.  This doesn't begin to address two-player solo (6 arrows) */
+		if( PREFSMAN->m_bSoloSingle && 
+			GAMESTATE->m_PlayMode != PLAY_MODE_BATTLE &&
+			GAMESTATE->m_PlayMode != PLAY_MODE_RAVE &&
+			GAMESTATE->GetCurrentStyle()->m_StyleType == ONE_PLAYER_ONE_SIDE )
+			fPlayerX = SCREEN_CENTER_X;
+
+		pi->m_pPlayer->SetXY( fPlayerX, SCREEN_CENTER_Y );
 		this->AddChild( pi->m_pPlayer );
 	}
 	
@@ -604,6 +611,26 @@ void ScreenGameplay::Init()
 	SET_XY( m_MaxCombo );
 	m_MaxCombo.SetText( ssprintf("%d", m_vPlayerInfo[0].GetPlayerStageStats()->iMaxCombo) ); // TODO: Make this work for both players
 	this->AddChild( &m_MaxCombo );
+
+
+	if( GAMESTATE->m_bMultiplayer )
+	{
+		vector<const PlayerState*> vpPlayerState;
+		vector<const PlayerStageStats*> vpPlayerStageStats;
+
+		FOREACH_EnabledMultiPlayer( p )
+		{
+			vpPlayerState.push_back( m_vPlayerInfo[p].GetPlayerState() );
+			vpPlayerStageStats.push_back( m_vPlayerInfo[p].GetPlayerStageStats() );
+		}
+
+		m_pPlayerScoreList = new PlayerScoreList;
+		m_pPlayerScoreList->Init( vpPlayerState, vpPlayerStageStats );
+		m_pPlayerScoreList->SetName( "PlayerScoreList" );
+		SET_XY( m_pPlayerScoreList );
+		this->AddChild( m_pPlayerScoreList );
+	}
+
 
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
@@ -924,6 +951,8 @@ ScreenGameplay::~ScreenGameplay()
 	}
 
 	LOG->Trace( "ScreenGameplay::~ScreenGameplay()" );
+
+	SAFE_DELETE( m_pPlayerScoreList );
 	
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		MEMCARDMAN->UnPauseMountingThread();
@@ -2155,6 +2184,8 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 	if( GAMESTATE->m_bMultiplayer )
 	{
+		MultiPlayer mp = MultiPlayer_INVALID;
+
 		// Translate input and sent to the appropriate player.  Assume that all 
 		// joystick devices are mapped the same as the master player.
 		if( DeviceI.IsJoystick() )
@@ -2169,7 +2200,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				StyleInput _StyleI;
 				INPUTMAPPER->GameToStyle( _GameI, _StyleI );
 
-				MultiPlayer mp = (MultiPlayer)(DeviceI.device - DEVICE_JOY1);
+				mp = (MultiPlayer)(DeviceI.device - DEVICE_JOY1);
 
 				if( mp>=0 && mp<NUM_MultiPlayer )
 					m_vPlayerInfo[mp].m_pPlayer->Step( _StyleI.col, DeviceI.ts );
@@ -2582,6 +2613,7 @@ void ScreenGameplay::TweenOursOnScreen()
 	ON_COMMAND( m_sprScoreFrame );
 	ON_COMMAND( m_BPMDisplay );
 	ON_COMMAND( m_MaxCombo );
+	ON_COMMAND( m_pPlayerScoreList );
 
 	if( m_pCombinedLifeMeter )
 		ON_COMMAND( *m_pCombinedLifeMeter );
@@ -2622,6 +2654,7 @@ void ScreenGameplay::TweenOursOffScreen()
 	OFF_COMMAND( m_sprScoreFrame );
 	OFF_COMMAND( m_BPMDisplay );
 	OFF_COMMAND( m_MaxCombo );
+	OFF_COMMAND( m_pPlayerScoreList );
 
 	if( m_pCombinedLifeMeter )
 		OFF_COMMAND( *m_pCombinedLifeMeter );

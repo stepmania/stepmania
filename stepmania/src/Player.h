@@ -26,7 +26,7 @@ class PlayerStageStats;
 class Player: public ActorFrame
 {
 public:
-	Player( bool bShowNoteField = true );
+	Player( bool bShowNoteField = true, bool bShowJudgment = true );
 	~Player();
 
 	virtual void Update( float fDeltaTime );
@@ -78,23 +78,24 @@ protected:
 
 	bool			m_bLoaded;
 
-	PlayerState*	m_pPlayerState;
-	PlayerStageStats*	m_pPlayerStageStats;
+	PlayerState		*m_pPlayerState;
+	PlayerStageStats*m_pPlayerStageStats;
 	float			m_fNoteFieldHeight;
 
 	bool			m_bPaused;
 	float			m_fOffset[SAMPLE_COUNT]; // for AutoSync
 	int				m_iOffsetSample;
 
-	NoteField*		m_pNoteField;
+	NoteField		*m_pNoteField;
 
-	HoldJudgment	m_HoldJudgment[MAX_NOTE_TRACKS];
+	vector<HoldJudgment>	m_vHoldJudgment;
 
-	Judgment		m_Judgment;
+	Judgment		*m_pJudgment;
+	AutoActor		m_sprJudgmentFrame;
 	
-	Combo			m_Combo;
+	Combo			*m_pCombo;
 
-	AttackDisplay	m_AttackDisplay;
+	AttackDisplay	*m_pAttackDisplay;
 
 	TapNoteScore		m_LastTapNoteScore;
 	LifeMeter*			m_pLifeMeter;
@@ -118,11 +119,6 @@ protected:
 
 	ThemeMetric<float>		GRAY_ARROWS_Y_STANDARD;
 	ThemeMetric<float>		GRAY_ARROWS_Y_REVERSE;
-	ThemeMetric2D<float>	JUDGMENT_X;
-	ThemeMetric<float>		JUDGMENT_Y;
-	ThemeMetric<float>		JUDGMENT_Y_REVERSE;
-	ThemeMetric<float>		JUDGMENT_CENTERED_ADDY;
-	ThemeMetric<float>		JUDGMENT_CENTERED_ADDY_REVERSE;
 	ThemeMetric2D<float>	COMBO_X;
 	ThemeMetric<float>		COMBO_Y;
 	ThemeMetric<float>		COMBO_Y_REVERSE;
@@ -139,6 +135,10 @@ protected:
 	ThemeMetric<int>		START_DRAWING_AT_PIXELS;
 	ThemeMetric<int>		STOP_DRAWING_AT_PIXELS;
 	ThemeMetric<int>		MAX_PRO_TIMING_ERROR;
+	
+#define NUM_REVERSE 2
+#define NUM_CENTERED 2
+	TweenState				m_tsJudgment[NUM_REVERSE][NUM_CENTERED];
 };
 
 #endif

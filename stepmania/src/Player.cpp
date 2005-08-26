@@ -39,8 +39,8 @@
 #include "Profile.h"
 #include "StatsManager.h"
 #include "Steps.h"
+#include "GameCommand.h"
 
-CString JUDGMENT_X_NAME( size_t p, size_t both_sides )		{ return "JudgmentXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 CString COMBO_X_NAME( size_t p, size_t both_sides )			{ return "ComboXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 CString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides ){ return "AttackDisplayXOffset" + (both_sides ? CString("BothSides") : ssprintf("OneSideP%d",int(p+1)) ); }
 
@@ -90,7 +90,7 @@ float AdjustedWindowHold( HoldWindow hw, bool bIsPlayingBeginner )
 #define ADJUSTED_WINDOW_HOLD( hw )	AdjustedWindowHold( hw, IsPlayingBeginner() )
 
 
-Player::Player( bool bShowNoteField )
+Player::Player( bool bShowNoteField, bool bShowJudgment )
 {
 	m_bLoaded = false;
 
@@ -109,23 +109,43 @@ Player::Player( bool bShowNoteField )
 	m_bPaused = false;
 	m_iOffsetSample = 0;
 
-	this->AddChild( &m_Judgment );
-	this->AddChild( &m_Combo );
-	this->AddChild( &m_AttackDisplay );
-	for( int c=0; c<MAX_NOTE_TRACKS; c++ )
-		this->AddChild( &m_HoldJudgment[c] );
+	m_pJudgment = NULL;
+	if( bShowJudgment )
+	{
+		m_pJudgment = new Judgment;
+		this->AddChild( m_pJudgment );
+	}
+
+	m_pCombo = NULL;
+	if( bShowNoteField )
+	{
+		m_pCombo = new Combo;
+		this->AddChild( m_pCombo );
+	}
+
+	m_pAttackDisplay = NULL;
+	if( bShowNoteField )
+	{
+		m_pAttackDisplay = new AttackDisplay;
+		this->AddChild( m_pAttackDisplay );
+	}
 
 	PlayerAI::InitFromDisk();
 
 	m_pNoteField = NULL;
 	if( bShowNoteField )
+	{
 		m_pNoteField = new NoteField;
+	}
 
 	this->SubscribeToMessage( Message_AutosyncChanged );
 }
 
 Player::~Player()
 {
+	SAFE_DELETE( m_pJudgment );
+	SAFE_DELETE( m_pCombo );
+	SAFE_DELETE( m_pAttackDisplay );
 	SAFE_DELETE( m_pNoteField );
 }
 
@@ -144,11 +164,6 @@ void Player::Init(
 {
 	GRAY_ARROWS_Y_STANDARD.Load(sType,"ReceptorArrowsYStandard");
 	GRAY_ARROWS_Y_REVERSE.Load(sType,"ReceptorArrowsYReverse");
-	JUDGMENT_X.Load(sType,JUDGMENT_X_NAME,NUM_PLAYERS,2);
-	JUDGMENT_Y.Load(sType,"JudgmentY");
-	JUDGMENT_Y_REVERSE.Load(sType,"JudgmentYReverse");
-	JUDGMENT_CENTERED_ADDY.Load(sType,"JudgmentCenteredAddY");
-	JUDGMENT_CENTERED_ADDY_REVERSE.Load(sType,"JudgmentCenteredAddYReverse");
 	COMBO_X.Load(sType,COMBO_X_NAME,NUM_PLAYERS,2);
 	COMBO_Y.Load(sType,"ComboY");
 	COMBO_Y_REVERSE.Load(sType,"ComboYReverse");
@@ -165,6 +180,80 @@ void Player::Init(
 	START_DRAWING_AT_PIXELS.Load(sType,"StartDrawingAtPixels");
 	STOP_DRAWING_AT_PIXELS.Load(sType,"StopDrawingAtPixels");
 	MAX_PRO_TIMING_ERROR.Load(sType,"MaxProTimingError");
+
+	if( m_pJudgment )
+	{
+		//
+		// Init judgment positions
+		//
+		LuaExpression expr;
+		expr.SetFromExpression( THEME->GetMetric(sType,"JudgmentTransformCommandFunction") );
+
+		bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;
+		Actor temp;
+
+		int iEnabledPlayerIndex = -1;
+		int iNumEnabledPlayers = 0;
+		if( GAMESTATE->m_bMultiplayer )
+		{
+			FOREACH_EnabledMultiPlayer( p )
+			{
+				if( p == pPlayerState->m_mp )
+					iEnabledPlayerIndex = iNumEnabledPlayers;
+				iNumEnabledPlayers++;
+			}
+		}
+		else
+		{
+			FOREACH_EnabledPlayer( p )
+			{
+				if( p == pPlayerState->m_PlayerNumber )
+					iEnabledPlayerIndex = iNumEnabledPlayers;
+				iNumEnabledPlayers++;
+			}
+		}
+		ASSERT( iEnabledPlayerIndex != -1 );
+		ASSERT( iNumEnabledPlayers > 0 );
+
+		for( int i=0; i<NUM_REVERSE; i++ )
+		{
+			for( int j=0; j<NUM_CENTERED; j++ )
+			{
+				Lua *L = LUA->Get();
+				expr.PushSelf( L );
+				ASSERT( !lua_isnil(L, -1) );
+				temp.PushSelf( L );
+				LuaHelpers::Push( pPlayerState->m_PlayerNumber, L );
+				LuaHelpers::Push( pPlayerState->m_mp, L );
+				LuaHelpers::Push( iEnabledPlayerIndex, L );
+				LuaHelpers::Push( iNumEnabledPlayers, L );
+				LuaHelpers::Push( bPlayerUsingBothSides, L );
+				LuaHelpers::Push( !!i, L );
+				LuaHelpers::Push( !!j, L );
+				lua_call( L, 8, 0 ); // 8 args, 0 results
+				LUA->Release(L);
+				
+				m_tsJudgment[i][j] = temp.DestTweenState();
+			}
+		}
+
+		// Load Judgment frame
+		if( GAMESTATE->m_bMultiplayer  &&  !m_sprJudgmentFrame.IsLoaded() )	// only load the first time
+		{
+			GameCommand gc;
+			ASSERT( pPlayerState->m_mp != MultiPlayer_INVALID );
+			gc.m_MultiPlayer = pPlayerState->m_mp;
+			Lua *L = LUA->Get();
+			gc.PushSelf( L );
+			lua_setglobal( L, "ThisGameCommand" );
+			LUA->Release( L );
+
+			m_sprJudgmentFrame.Load( THEME->GetPathG(sType,"JudgmentFrame") );
+
+			LUA->UnsetGlobal( "ThisGameCommand" );
+			this->AddChild( m_sprJudgmentFrame );
+		}
+	}
 
 	m_pPlayerState = pPlayerState;
 	m_pPlayerStageStats = pPlayerStageStats;
@@ -207,13 +296,19 @@ void Player::Init(
 	m_soundAttackLaunch.SetParams( p );
 	m_soundAttackEnding.SetParams( p );
 
-	m_Combo.SetName( "Combo" );
-	m_Combo.Load( m_pPlayerState, m_pPlayerStageStats );
-	ActorUtil::OnCommand( m_Combo, sType );
+	if( m_pCombo )
+	{
+		m_pCombo->SetName( "Combo" );
+		m_pCombo->Load( m_pPlayerState, m_pPlayerStageStats );
+		ActorUtil::OnCommand( m_pCombo, sType );
+	}
 
-	m_Judgment.SetName( "Judgment" );
-	m_Judgment.Load( IsPlayingBeginner() );
-	ActorUtil::OnCommand( m_Judgment, sType );
+	if( m_pJudgment )
+	{
+		m_pJudgment->SetName( "Judgment" );
+		m_pJudgment->Load( IsPlayingBeginner() );
+		ActorUtil::OnCommand( m_pJudgment, sType );
+	}
 
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
 	if( m_pNoteField )
@@ -244,12 +339,18 @@ void Player::Load( const NoteData& noteData )
 	/* The editor reuses Players ... so we really need to make sure everything
 	 * is reset and not tweening.  Perhaps ActorFrame should recurse to subactors;
 	 * then we could just this->StopTweening()? -glenn */
-	m_Judgment.StopTweening();
-//	m_Combo.Reset();				// don't reset combos between songs in a course!
+	if( m_pJudgment )
+		m_pJudgment->StopTweening();
+//	m_pCombo->Reset();				// don't reset combos between songs in a course!
 	if( m_pPlayerStageStats )
-		m_Combo.SetCombo( m_pPlayerStageStats->iCurCombo, m_pPlayerStageStats->iCurMissCombo );	// combo can persist between songs and games
-	m_AttackDisplay.Init( m_pPlayerState );
-	m_Judgment.Reset();
+	{
+		if( m_pCombo ) 
+			m_pCombo->SetCombo( m_pPlayerStageStats->iCurCombo, m_pPlayerStageStats->iCurMissCombo );	// combo can persist between songs and games
+	}
+	if( m_pAttackDisplay )
+		m_pAttackDisplay->Init( m_pPlayerState );
+	if( m_pJudgment )
+		m_pJudgment->Reset();
 
 	/* Don't re-init this; that'll reload graphics.  Add a separate Reset() call
 	 * if some ScoreDisplays need it. */
@@ -301,15 +402,30 @@ void Player::Load( const NoteData& noteData )
 
 	const bool bReverse = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetReversePercentForColumn(0) == 1;
 	bool bPlayerUsingBothSides = GAMESTATE->GetCurrentStyle()->m_StyleType==ONE_PLAYER_TWO_SIDES;
-	m_Combo.SetX( COMBO_X.GetValue(pn,bPlayerUsingBothSides) );
-	m_Combo.SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
-	m_AttackDisplay.SetX( ATTACK_DISPLAY_X.GetValue(pn,bPlayerUsingBothSides) - 40 );
-	// set this in Update //m_AttackDisplay.SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
-	m_Judgment.SetX( JUDGMENT_X.GetValue(pn,bPlayerUsingBothSides) );
-	// set this in Update //m_Judgment.SetY( bReverse ? JUDGMENT_Y_REVERSE : JUDGMENT_Y );
+	if( m_pCombo )
+	{
+		m_pCombo->SetX( COMBO_X.GetValue(pn,bPlayerUsingBothSides) );
+		m_pCombo->SetY( bReverse ? COMBO_Y_REVERSE : COMBO_Y );
+	}
+	if( m_pAttackDisplay )
+		m_pAttackDisplay->SetX( ATTACK_DISPLAY_X.GetValue(pn,bPlayerUsingBothSides) - 40 );
+	// set this in Update //m_pAttackDisplay->SetY( bReverse ? ATTACK_DISPLAY_Y_REVERSE : ATTACK_DISPLAY_Y );
+
+	// set this in Update 
+	//m_pJudgment->SetX( JUDGMENT_X.GetValue(pn,bPlayerUsingBothSides) );
+	//m_pJudgment->SetY( bReverse ? JUDGMENT_Y_REVERSE : JUDGMENT_Y );
 
 	// Need to set Y positions of all these elements in Update since
 	// they change depending on PlayerOptions.
+
+
+	// Load HoldJudgments
+	FOREACH( HoldJudgment, m_vHoldJudgment, i )
+		this->RemoveChild( i );
+	m_vHoldJudgment.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
+	FOREACH( HoldJudgment, m_vHoldJudgment, i )
+		this->AddChild( i );
+
 
 	//
 	// Load keysounds.  If sounds are already loaded (as in the editor), don't reload them.
@@ -373,9 +489,9 @@ void Player::Update( float fDeltaTime )
 			const float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
 			const float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
 
-			m_HoldJudgment[c].SetX( fX );
-			m_HoldJudgment[c].SetY( fHoldJudgeYPos );
-			m_HoldJudgment[c].SetZ( fZ );
+			m_vHoldJudgment[c].SetX( fX );
+			m_vHoldJudgment[c].SetY( fHoldJudgeYPos );
+			m_vHoldJudgment[c].SetZ( fZ );
 		}
 	}
 
@@ -385,14 +501,21 @@ void Player::Update( float fDeltaTime )
 
 	const bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(0) == 1;
 	float fPercentCentered = m_pPlayerState->m_CurrentPlayerOptions.m_fScrolls[PlayerOptions::SCROLL_CENTERED];
-	m_Combo.SetY( 
-		bReverse ? 
-		COMBO_Y_REVERSE + fPercentCentered * COMBO_CENTERED_ADDY_REVERSE : 
-		COMBO_Y + fPercentCentered * COMBO_CENTERED_ADDY );
-	m_Judgment.SetY(
-		bReverse ? 
-		JUDGMENT_Y_REVERSE + fPercentCentered * JUDGMENT_CENTERED_ADDY_REVERSE : 
-		JUDGMENT_Y + fPercentCentered * JUDGMENT_CENTERED_ADDY );
+	if( m_pCombo )
+	{
+		m_pCombo->SetY( 
+			bReverse ? 
+			COMBO_Y_REVERSE + fPercentCentered * COMBO_CENTERED_ADDY_REVERSE : 
+			COMBO_Y + fPercentCentered * COMBO_CENTERED_ADDY );
+	}
+	if( m_pJudgment )
+	{
+		const Actor::TweenState &ts1 = m_tsJudgment[bReverse?1:0][0];
+		const Actor::TweenState &ts2 = m_tsJudgment[bReverse?1:0][1];
+		Actor::TweenState::MakeWeightedAverage( m_pJudgment->DestTweenState(), ts1, ts2, fPercentCentered );
+		if( m_sprJudgmentFrame.IsLoaded() )
+			Actor::TweenState::MakeWeightedAverage( m_sprJudgmentFrame->DestTweenState(), ts1, ts2, fPercentCentered );
+	}
 
 
 	float fMiniPercent = m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
@@ -400,7 +523,10 @@ void Player::Update( float fDeltaTime )
 	float fJudgmentZoom = 1 - fMiniPercent*0.25f;
 	if( m_pNoteField )
 		m_pNoteField->SetZoom( fNoteFieldZoom );
-	m_Judgment.SetZoom( fJudgmentZoom );
+	if( m_pJudgment )
+		m_pJudgment->SetZoom( m_pJudgment->GetZoom() * fJudgmentZoom );
+	if( m_sprJudgmentFrame.IsLoaded() )
+		m_sprJudgmentFrame->SetZoom( m_sprJudgmentFrame->GetZoom() * fJudgmentZoom );
 
 	// If we're paused, don't update tap or hold note logic, so hold notes can be released
 	// during pause.
@@ -570,7 +696,7 @@ void Player::Update( float fDeltaTime )
 			{
 				/* this note has been judged */
 				HandleHoldScore( hns, tns );
-				m_HoldJudgment[iTrack].SetHoldJudgment( hns );
+				m_vHoldJudgment[iTrack].SetHoldJudgment( hns );
 
 				int ms_error = (hns == HNS_OK)? 0:MAX_PRO_TIMING_ERROR;
 
@@ -653,9 +779,6 @@ void Player::ApplyWaitingTransforms()
 
 void Player::DrawPrimitives()
 {
-	if( m_pNoteField == NULL )
-		return;
-
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
@@ -667,9 +790,13 @@ void Player::DrawPrimitives()
 
 	// Draw these below everything else.
 	if( m_pPlayerState->m_PlayerOptions.m_fBlind == 0 )
-		m_Combo.Draw();
+	{
+		if( m_pCombo )
+			m_pCombo->Draw();
+	}
 
-	m_AttackDisplay.Draw();
+	if( m_pAttackDisplay )
+		m_pAttackDisplay->Draw();
 
 	if( TAP_JUDGMENTS_UNDER_FIELD )
 		DrawTapJudgments();
@@ -689,29 +816,32 @@ void Player::DrawPrimitives()
 
 	DISPLAY->LoadMenuPerspective( 45, SCALE(fSkew,0.f,1.f,this->GetX(),SCREEN_CENTER_X), fCenterY );
 
-	float fOriginalY = 	m_pNoteField->GetY();
+	if( m_pNoteField )
+	{
+		float fOriginalY = 	m_pNoteField->GetY();
 
-	float fTiltDegrees = SCALE(fTilt,-1.f,+1.f,+30,-30) * (bReverse?-1:1);
+		float fTiltDegrees = SCALE(fTilt,-1.f,+1.f,+30,-30) * (bReverse?-1:1);
 
 
-	float fZoom = SCALE( m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI], 0.f, 1.f, 1.f, 0.5f );
-	if( fTilt > 0 )
-		fZoom *= SCALE( fTilt, 0.f, 1.f, 1.f, 0.9f );
-	else
-		fZoom *= SCALE( fTilt, 0.f, -1.f, 1.f, 0.9f );
+		float fZoom = SCALE( m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI], 0.f, 1.f, 1.f, 0.5f );
+		if( fTilt > 0 )
+			fZoom *= SCALE( fTilt, 0.f, 1.f, 1.f, 0.9f );
+		else
+			fZoom *= SCALE( fTilt, 0.f, -1.f, 1.f, 0.9f );
 
-	float fYOffset;
-	if( fTilt > 0 )
-		fYOffset = SCALE( fTilt, 0.f, 1.f, 0.f, -45.f ) * (bReverse?-1:1);
-	else
-		fYOffset = SCALE( fTilt, 0.f, -1.f, 0.f, -20.f ) * (bReverse?-1:1);
+		float fYOffset;
+		if( fTilt > 0 )
+			fYOffset = SCALE( fTilt, 0.f, 1.f, 0.f, -45.f ) * (bReverse?-1:1);
+		else
+			fYOffset = SCALE( fTilt, 0.f, -1.f, 0.f, -20.f ) * (bReverse?-1:1);
 
-	m_pNoteField->SetY( fOriginalY + fYOffset );
-	m_pNoteField->SetZoom( fZoom );
-	m_pNoteField->SetRotationX( fTiltDegrees );
-	m_pNoteField->Draw();
+		m_pNoteField->SetY( fOriginalY + fYOffset );
+		m_pNoteField->SetZoom( fZoom );
+		m_pNoteField->SetRotationX( fTiltDegrees );
+		m_pNoteField->Draw();
 
-	m_pNoteField->SetY( fOriginalY );
+		m_pNoteField->SetY( fOriginalY );
+	}
 
 	DISPLAY->CameraPopMatrix();
 	DISPLAY->PopMatrix();
@@ -729,7 +859,10 @@ void Player::DrawTapJudgments()
 	if( m_pPlayerState->m_PlayerOptions.m_fBlind > 0 )
 		return;
 
-	m_Judgment.Draw();
+	if( m_sprJudgmentFrame.IsLoaded() )
+		m_sprJudgmentFrame->Draw();
+	if( m_pJudgment )
+		m_pJudgment->Draw();
 }
 
 void Player::DrawHoldJudgments()
@@ -744,7 +877,7 @@ void Player::DrawHoldJudgments()
 	{
 		NoteFieldMode::BeginDrawTrack( pn, c );
 
-		m_HoldJudgment[c].Draw();
+		m_vHoldJudgment[c].Draw();
 
 		NoteFieldMode::EndDrawTrack(c);
 	}
@@ -1062,7 +1195,8 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		bool bSteppedEarly = -fNoteOffset < 0;
 		if( IsPlayingBeginner() && PREFSMAN->m_bMercifulBeginner && score==TNS_BOO && bSteppedEarly )
 		{
-			m_Judgment.SetJudgment( score, bSteppedEarly );
+			if( m_pJudgment )
+				m_pJudgment->SetJudgment( score, bSteppedEarly );
 		}
 		else
 		{
@@ -1313,7 +1447,8 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 			DisplayJudgedRow( iIndexThatWasSteppedOn, score, c );
 		}
 
-		m_Judgment.SetJudgment( score, tnr.fTapNoteOffset < 0 );
+		if( m_pJudgment )
+			m_pJudgment->SetJudgment( score, tnr.fTapNoteOffset < 0 );
 	}
 	else
 	{
@@ -1328,7 +1463,8 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 
 			DisplayJudgedRow( iIndexThatWasSteppedOn, score, c );
 
-			m_Judgment.SetJudgment( score, tnr.fTapNoteOffset < 0 );
+			if( m_pJudgment )
+				m_pJudgment->SetJudgment( score, tnr.fTapNoteOffset < 0 );
 		}
 	}
 
@@ -1406,7 +1542,10 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	}
 
 	if( iNumMissesFound > 0 )
-		m_Judgment.SetJudgment( TNS_MISS, false );
+	{
+		if( m_pJudgment )
+			m_pJudgment->SetJudgment( TNS_MISS, false );
+	}
 }
 
 
@@ -1546,7 +1685,10 @@ void Player::HandleTapRowScore( unsigned row )
 		m_pSecondaryScoreKeeper->HandleTapRowScore( scoreOfLastTap, iNumTapsInRow );
 
 	if( m_pPlayerStageStats )
-		m_Combo.SetCombo( m_pPlayerStageStats->iCurCombo, m_pPlayerStageStats->iCurMissCombo );
+	{
+		if( m_pCombo )
+			m_pCombo->SetCombo( m_pPlayerStageStats->iCurCombo, m_pPlayerStageStats->iCurMissCombo );
+	}
 
 #define CROSSED( x ) (iOldCombo<x && iCurCombo>=x)
 	if ( CROSSED(100) )	
@@ -1689,7 +1831,8 @@ void Player::FadeToFail()
 		m_pNoteField->FadeToFail();
 
 	// clear miss combo
-	m_Combo.SetCombo( 0, 0 );
+	if( m_pCombo )
+		m_pCombo->SetCombo( 0, 0 );
 }
 
 bool Player::IsPlayingBeginner() const
