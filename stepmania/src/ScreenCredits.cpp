@@ -18,9 +18,9 @@
 #define BACKGROUNDS_SCROLL_SECONDS_PER_ITEM	THEME->GetMetricF("ScreenCredits","BackgroundsScrollSecondsPerItem")
 #define BACKGROUNDS_WIDTH					THEME->GetMetricF("ScreenCredits","BackgroundsWidth")
 #define BACKGROUNDS_HEIGHT					THEME->GetMetricF("ScreenCredits","BackgroundsHeight")
-#define TEXTS_COLOR_INTRO					THEME->GetMetricC("ScreenCredits","TextsColorIntro")
-#define TEXTS_COLOR_HEADER					THEME->GetMetricC("ScreenCredits","TextsColorHeader")
-#define TEXTS_COLOR_NORMAL					THEME->GetMetricC("ScreenCredits","TextsColorNormal")
+#define TEXTS_INTRO_COMMAND					THEME->GetMetricA("ScreenCredits","TextsIntroCommand")
+#define TEXTS_HEADER_COMMAND				THEME->GetMetricA("ScreenCredits","TextsHeaderCommand")
+#define TEXTS_NORMAL_COMMAND				THEME->GetMetricA("ScreenCredits","TextsNormalCommand")
 #define TEXTS_ZOOM							THEME->GetMetricF("ScreenCredits","TextsZoom")
 #define TEXTS_SPACING_X						THEME->GetMetricF("ScreenCredits","TextsSpacingX")
 #define TEXTS_SPACING_Y						THEME->GetMetricF("ScreenCredits","TextsSpacingY")
@@ -160,6 +160,12 @@ static const CreditLine CREDIT_LINES[] =
 REGISTER_SCREEN_CLASS( ScreenCredits );
 ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 {
+}
+
+void ScreenCredits::Init()
+{
+	ScreenAttract::Init();
+
 	vector<Song*> arraySongs;
 	SONGMAN->GetSongs( arraySongs );
 	SongUtil::SortSongPointerArrayByTitle( arraySongs );
@@ -254,9 +260,9 @@ ScreenCredits::ScreenCredits( CString sName ) : ScreenAttract( sName )
 			pText->SetText( CREDIT_LINES[i].text );
 			switch( CREDIT_LINES[i].colorIndex )
 			{
-			case 1:	pText->SetDiffuse( TEXTS_COLOR_INTRO );		break;
-			case 2:	pText->SetDiffuse( TEXTS_COLOR_HEADER );	break;
-			case 0:	pText->SetDiffuse( TEXTS_COLOR_NORMAL );	break;
+			case 1:	pText->RunCommands( TEXTS_INTRO_COMMAND );		break;
+			case 2:	pText->RunCommands( TEXTS_HEADER_COMMAND );	break;
+			case 0:	pText->RunCommands( TEXTS_NORMAL_COMMAND );	break;
 			default:	ASSERT(0);
 			}
 			pText->SetZoom( TEXTS_ZOOM );
