@@ -98,7 +98,7 @@ static bool WinMoveFileInternal( const CString &sOldPath, const CString &sNewPat
 
 bool WinMoveFile( CString sOldPath, CString sNewPath )
 {
-	if( WinMoveFileInternal( DoPathReplace(sOldPath), DoPathReplace(sNewPath) )
+	if( WinMoveFileInternal( DoPathReplace(sOldPath), DoPathReplace(sNewPath) ) )
 		return true;
 	if( GetLastError() != ERROR_ACCESS_DENIED )
 		return false;
