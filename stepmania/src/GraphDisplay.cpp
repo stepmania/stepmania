@@ -189,6 +189,7 @@ void GraphDisplay::DrawPrimitives()
 	// parameters have no effect.
 	Actor::SetTextureRenderStates();
 
+	DISPLAY->SetTextureModeModulate();
 	DISPLAY->DrawQuads( m_Slices, ARRAYSIZE(m_Slices) );
 	DISPLAY->SetTexture( 0, NULL );
 
