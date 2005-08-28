@@ -30,7 +30,9 @@ ScreenDemonstration.cpp ScreenDemonstration.h ScreenDimensions.h \
 ScreenEdit.cpp ScreenEdit.h \
 ScreenEditCourseMods.cpp ScreenEditCourseMods.h \
 ScreenEditMenu.cpp ScreenEditMenu.h ScreenEnding.cpp ScreenEnding.h \
-ScreenEvaluation.cpp ScreenEvaluation.h ScreenExit.cpp ScreenExit.h ScreenNetEvaluation.cpp ScreenNetEvaluation.h \
+ScreenEvaluation.cpp ScreenEvaluation.h \
+ScreenEvaluationMultiplayer.cpp ScreenEvaluationMultiplayer.h \
+ScreenExit.cpp ScreenExit.h ScreenNetEvaluation.cpp ScreenNetEvaluation.h \
 ScreenNetSelectMusic.cpp ScreenNetSelectMusic.h ScreenNetSelectBase.cpp ScreenNetSelectBase.h ScreenNetRoom.cpp ScreenNetRoom.h \
 ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h \
 ScreenGameplay.cpp ScreenGameplay.h \
