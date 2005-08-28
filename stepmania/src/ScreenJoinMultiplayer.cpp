@@ -60,6 +60,8 @@ void ScreenJoinMultiplayer::Init()
 
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 
+	GAMESTATE->m_bTemporaryEventMode = true;
+
 	FOREACH_MultiPlayer( p )
 	{
 		GameCommand gc;
