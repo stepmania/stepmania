@@ -15,9 +15,10 @@ function ScreenCautionBranch()
 end
 
 function SongSelectionScreen()
-	if PlayModeName() == "Nonstop" then return "ScreenSelectCourseNonstop" end
-	if PlayModeName() == "Oni" then return "ScreenSelectCourseOni" end
-	if PlayModeName() == "Endless" then return "ScreenSelectCourseEndless" end
+	local pm = GAMESTATE:GetPlayMode()
+	if pm==PLAY_MODE_NONSTOP	then return "ScreenSelectCourseNonstop" end
+	if pm==PLAY_MODE_ONI		then return "ScreenSelectCourseOni" end
+	if pm==PLAY_MODE_ENDLESS	then return "ScreenSelectCourseEndless" end
 	if IsNetConnected() then ReportStyle() end
 	if IsNetSMOnline() then return SMOnlineScreen() end
 	if IsNetConnected() then return "ScreenNetSelectMusic" end
@@ -58,13 +59,14 @@ end
 
 function SelectEvaluationScreen()
 	if IsNetConnected() then return "ScreenNetEvaluation" end
-	Mode = PlayModeName()
-	if( Mode == "Regular" ) then return "ScreenEvaluationStage" end
-	if( Mode == "Nonstop" ) then return "ScreenEvaluationNonstop" end
-	if( Mode == "Oni" ) then return "ScreenEvaluationOni" end
-	if( Mode == "Endless" ) then return "ScreenEvaluationEndless" end
-	if( Mode == "Rave" ) then return "ScreenEvaluationRave" end
-	if( Mode == "Battle" ) then return "ScreenEvaluationBattle" end
+	local pm = GAMESTATE:GetPlayMode()
+	if( GAMESTATE:GetMultiplayer() ) then return "ScreenEvaluationMultiplayer" end
+	if( pm==PLAY_MODE_REGULAR )		then return "ScreenEvaluationStage" end
+	if( pm==PLAY_MODE_NONSTOP )		then return "ScreenEvaluationNonstop" end
+	if( pm==PLAY_MODE_ONI )			then return "ScreenEvaluationOni" end
+	if( pm==PLAY_MODE_ENDLESS )		then return "ScreenEvaluationEndless" end
+	if( pm==PLAY_MODE_RAVE )		then return "ScreenEvaluationRave" end
+	if( pm==PLAY_MODE_BATTLE )		then return "ScreenEvaluationBattle" end
 end
 
 function GetTopScreenMetric( sElement )
