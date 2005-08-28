@@ -32,12 +32,11 @@ protected:
 	vector<const PlayerState*> m_vpPlayerState;
 	vector<const PlayerStageStats*> m_vpPlayerStageStats;
 
-	LuaExpression m_exprItemPositionCommandFunction;	// params: self,itemIndex,numItems
-
 	RageTimer m_timerRefreshCountdown;
 
-	vector<AutoActor>		m_vsprBullet;
-	vector<PlayerScoreItem>	m_vScoreItem;
+	vector<Actor::TweenState> m_vtsPositions;	// size = num joined players
+	vector<AutoActor>		m_vsprBullet;	// size = num joined players
+	vector<PlayerScoreItem>	m_vScoreItem;	// size = num joined players
 };
 
 #endif

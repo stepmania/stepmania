@@ -48,7 +48,19 @@ void PlayerScoreList::Init( vector<const PlayerState*> vpPlayerState, vector<con
 	m_vsprBullet.resize( vpPlayerState.size() );
 	m_vScoreItem.resize( vpPlayerState.size() );
 
-	m_exprItemPositionCommandFunction.SetFromExpression( THEME->GetMetric("PlayerScoreList","ItemPositionCommandFunction") );
+	// 
+	{
+		LuaExpression expr;
+		expr.SetFromExpression( THEME->GetMetric("PlayerScoreList","ItemPositionCommandFunction") );
+		Actor a;
+		FOREACH( const PlayerState*, m_vpPlayerState, iter )
+		{
+			int i = iter - m_vpPlayerState.begin();
+
+			PositionItem( expr, &a, i, vpPlayerState.size() );
+			m_vtsPositions.push_back( a.DestTweenState() );
+		}
+	}
 
 	GameCommand gc;
 	FOREACH( const PlayerState*, m_vpPlayerState, iter )
@@ -64,7 +76,7 @@ void PlayerScoreList::Init( vector<const PlayerState*> vpPlayerState, vector<con
 		LUA->Release( L );
 
 		m_vsprBullet[i].Load( THEME->GetPathG("PlayerScoreList","Bullet") );
-		PositionItem( m_exprItemPositionCommandFunction, m_vsprBullet[i], i, vpPlayerState.size() );
+		m_vsprBullet[i]->DestTweenState() = m_vtsPositions[i];
 		this->AddChild( m_vsprBullet[i] );
 
 		m_vScoreItem[i].Init( vpPlayerState[i], vpPlayerStageStats[i] );
@@ -113,7 +125,7 @@ void PlayerScoreList::Refresh()
 		PlayerScoreItem &psi = m_vScoreItem[iter->iEnabledPlayerIndex];
 		psi.SetDrawOrder( -i );
 		psi.BeginTweening( 0.5f, Actor::TWEEN_DECELERATE );
-		PositionItem( m_exprItemPositionCommandFunction, &psi, i, m_vpPlayerStageStats.size() );
+		psi.DestTweenState() = m_vtsPositions[i];
 	}
 
 	this->SortByDrawOrder();
