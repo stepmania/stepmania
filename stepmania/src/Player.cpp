@@ -212,8 +212,12 @@ void Player::Init(
 				iNumEnabledPlayers++;
 			}
 		}
-		ASSERT( iEnabledPlayerIndex != -1 );
-		ASSERT( iNumEnabledPlayers > 0 );
+
+		if( iNumEnabledPlayers == 0 )	// hack for ScreenHowToPlay where no players are joined
+		{
+			iEnabledPlayerIndex = 0;
+			iNumEnabledPlayers = 1;
+		}
 
 		for( int i=0; i<NUM_REVERSE; i++ )
 		{
