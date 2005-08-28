@@ -517,7 +517,8 @@ void GameState::FinishStage()
 		return;
 
 	/* If we havn't committed stats yet, do so. */
-	CommitStageStats();
+	if( !m_bMultiplayer )	// no saved stats in multiplayer
+		CommitStageStats();
 
 	m_bStatsCommitted = false;
 
