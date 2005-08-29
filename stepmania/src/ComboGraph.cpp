@@ -6,12 +6,9 @@
 #include "ActorUtil.h"
 #include "BitmapText.h"
 #include "Sprite.h"
-#include "ThemeMetric.h"
 #include "XmlFile.h"
 
 const int MinComboSizeToShow = 5;
-
-static ThemeMetric<float> NUMBERS_Y("ComboGraph","NumbersY");
 
 REGISTER_ACTOR_CLASS( ComboGraph )
 
@@ -105,7 +102,6 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 		const float CenterPercent = start + size/2;
 		const float CenterXPos = SCALE( CenterPercent, 0.0f, 1.0f, -fWidth/2.0f, fWidth/2.0f );
 		text->SetX( CenterXPos );
-		text->SetY( NUMBERS_Y );
 
 		text->SetText( ssprintf("%i",combo.GetStageCnt()) );
 
