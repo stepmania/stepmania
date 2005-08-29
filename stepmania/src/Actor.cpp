@@ -241,7 +241,7 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 	//
 	FOREACH_CONST_Child( pNode, c )
 	{
-		CString sKeyName = c->m_sName; /* "OnCommand" */
+		CString sKeyName = c->m_sName;
 
 		if( sKeyName != "Command" )
 			continue; /* not a command */
