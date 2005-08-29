@@ -15,7 +15,6 @@ GraphDisplay::GraphDisplay()
 	m_pTexture = NULL;
 }
 
-/* Draw the graph as a z-buffer mask. */
 void GraphDisplay::Load( const CString &TexturePath, const CString &sJustBarelyPath )
 {
 	memset( m_Values, 0, sizeof(m_Values) );
