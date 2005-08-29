@@ -27,6 +27,7 @@ void AutoActor::LoadAndSetName( const CString &sScreenName, const CString &sActo
 {
 	Load( THEME->GetPathG(sScreenName,sActorName) );
 	m_pActor->SetName( sActorName );
+	ActorUtil::LoadAllCommands( *m_pActor, sScreenName );
 }
 
 /*
