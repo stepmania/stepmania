@@ -1,6 +1,5 @@
 #include "global.h"
 #include "ComboGraph.h"
-#include "ThemeManager.h"
 #include "RageLog.h"
 #include "StageStats.h"
 #include "ActorUtil.h"
