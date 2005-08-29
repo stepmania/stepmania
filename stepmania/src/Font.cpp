@@ -111,7 +111,7 @@ void FontPage::SetTextureCoords( const vector<int> &widths, int iAdvanceExtraPix
 
 		/* Make a copy of each texture rect, reducing each to the actual dimensions
 		 * of the character (most characters don't take a full block). */
-		g.m_TexRect = *m_pTexture->GetTextureCoordRect(i);;
+		g.m_TexRect = *m_pTexture->GetTextureCoordRect(i);
 
 		/* Set the width and height to the width and line spacing, respectively. */
 		g.m_fWidth = float( widths[i] );
