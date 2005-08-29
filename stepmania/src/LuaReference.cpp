@@ -45,7 +45,9 @@ LuaReference &LuaReference::operator=( const LuaReference &cpy )
 	Unregister();
 
 	if( cpy.m_iReference == LUA_NOREF )
+	{
 		m_iReference = LUA_NOREF;
+	}
 	else
 	{
 		/* Make a new reference. */
