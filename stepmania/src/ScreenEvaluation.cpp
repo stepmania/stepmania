@@ -442,10 +442,10 @@ void ScreenEvaluation::Init()
 	{
 		FOREACH_EnabledPlayer( p )
 		{
-//			m_ComboGraph[p].SetName( ssprintf("ComboGraphP%i",p+1) );
-//			m_ComboGraph[p].Load( m_sName, ssprintf("ComboGraph p%i",p+1), m_StageStats, m_StageStats.m_player[p] );
-//			SET_XY_AND_ON_COMMAND( m_ComboGraph[p] );
-//			this->AddChild( &m_ComboGraph[p] );
+			m_ComboGraph[p].SetName( ssprintf("ComboGraphP%i",p+1) );
+			m_ComboGraph[p].Load( m_sName, ssprintf("ComboGraph p%i",p+1), m_StageStats, m_StageStats.m_player[p] );
+			SET_XY_AND_ON_COMMAND( m_ComboGraph[p] );
+			this->AddChild( &m_ComboGraph[p] );
 		}
 	}
 
