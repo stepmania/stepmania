@@ -174,8 +174,7 @@ LuaClass::LuaClass( const LuaClass &cpy ):
 	if( !IsSet() )
 		return;
 
-	CString sData = Serialize();
-	LoadFromString( sData );
+	DeepCopy();
 }
 
 LuaClass &LuaClass::operator=( const LuaClass &cpy )
@@ -185,8 +184,7 @@ LuaClass &LuaClass::operator=( const LuaClass &cpy )
 	if( !IsSet() )
 		return *this;
 
-	CString sData = Serialize();
-	LoadFromString( sData );
+	DeepCopy();
 
 	return *this;
 }
