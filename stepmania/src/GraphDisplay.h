@@ -2,37 +2,42 @@
 #define GRAPH_DISPLAY_H
 
 #include "ActorFrame.h"
-#include "RageTexture.h"
 #include "AutoActor.h"
 
 class StageStats;
 class PlayerStageStats;
-
+class GraphLine;
+class GraphBody;
 class GraphDisplay: public ActorFrame
 {
 public:
 	GraphDisplay();
-	~GraphDisplay() { Unload(); }
-	void Load( const CString &sTexturePath, const CString &sJustBarelyPath );
-	void Unload();
+	~GraphDisplay();
+	virtual Actor *Copy() const;
+	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
 
-	void LoadFromStageStats( const StageStats &ss, const PlayerStageStats &s, const CString &sSongBoundaryPath );
+	void LoadFromStageStats( const StageStats &ss, const PlayerStageStats &s );
 	void Update( float fDeltaTime );
-	void DrawPrimitives();
+
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
 
 private:
 	void UpdateVerts();
 
-	enum { VALUE_RESOLUTION=200 };
-	float m_Values[VALUE_RESOLUTION];
+	vector<float> m_Values;
 
 	RectF m_quadVertices;
-	RageSpriteVertex m_Slices[4*(VALUE_RESOLUTION-1)];
 
-	RageTexture	*m_pTexture;
-
-	vector<AutoActor*> m_vpSongBoundaries;
+	vector<Actor*> m_vpSongBoundaries;
 	AutoActor m_sprJustBarely;
+	AutoActor m_sprTexture;
+	AutoActor m_sprSongBoundary;
+
+	GraphLine *m_pGraphLine;
+	GraphBody *m_pGraphBody;
 };
 
 #endif

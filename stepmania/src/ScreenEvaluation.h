@@ -11,7 +11,6 @@
 #include "DifficultyIcon.h"
 #include "DifficultyMeter.h"
 #include "PercentageDisplay.h"
-#include "GraphDisplay.h"
 #include "ActorUtil.h"
 #include "HighScore.h"
 #include "RageSound.h"
@@ -76,10 +75,6 @@ protected:
 	AutoActor			m_sprGradeFrame[NUM_PLAYERS];
 	GradeDisplay		m_Grades[NUM_PLAYERS];
 	AutoActor			m_sprGrade[NUM_PLAYERS];
-
-	// graph area
-	AutoActor			m_sprGraphFrame[NUM_PLAYERS];
-	GraphDisplay		m_LifeGraph[NUM_PLAYERS];
 
 	// points area
 	bool				m_bNewSongsUnlocked;

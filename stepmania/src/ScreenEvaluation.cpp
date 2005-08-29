@@ -63,7 +63,6 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define SHOW_SCORE_AREA						THEME->GetMetricB(m_sName,"ShowScoreArea")
 #define SHOW_TOTAL_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
 #define SHOW_TIME_AREA						THEME->GetMetricB(m_sName,"ShowTimeArea")
-#define SHOW_GRAPH_AREA						THEME->GetMetricB(m_sName,"ShowGraphArea")
 #define SHOW_PER_DIFFICULTY_AWARD			THEME->GetMetricB(m_sName,"ShowPerDifficultyAward")
 #define SHOW_PEAK_COMBO_AWARD				THEME->GetMetricB(m_sName,"ShowPeakComboAward")
 #define TYPE								THEME->GetMetric (m_sName,"Type")
@@ -414,26 +413,6 @@ void ScreenEvaluation::Init()
 			break;
 		default:
 			ASSERT(0);
-		}
-	}
-
-	//
-	// init graph area
-	//
-	if( SHOW_GRAPH_AREA )
-	{
-		FOREACH_EnabledPlayer( p )
-		{
-			m_sprGraphFrame[p].Load( THEME->GetPathG(m_sName,ssprintf("graph frame p%d",p+1)) );
-			m_sprGraphFrame[p]->SetName( ssprintf("GraphFrameP%d",p+1) );
-			SET_XY_AND_ON_COMMAND( m_sprGraphFrame[p] );
-			this->AddChild( m_sprGraphFrame[p] );
-
-			m_LifeGraph[p].SetName( ssprintf("LifeGraphP%i",p+1) );
-			m_LifeGraph[p].Load( THEME->GetPathG(m_sName,ssprintf("LifeGraph p%i", p+1)), THEME->GetPathG(m_sName,"JustBarely") );
-			m_LifeGraph[p].LoadFromStageStats( m_StageStats, m_StageStats.m_player[p], THEME->GetPathG(m_sName,"SongBoundary") );
-			SET_XY_AND_ON_COMMAND( m_LifeGraph[p] );
-			this->AddChild( &m_LifeGraph[p] );
 		}
 	}
 
@@ -1102,15 +1081,6 @@ void ScreenEvaluation::TweenOursOffScreen()
 			OFF_COMMAND( m_sprGradeFrame[p] );
 			OFF_COMMAND( m_Grades[p] );
 			OFF_COMMAND( m_sprGrade[p] );
-		}
-	}
-
-	if( SHOW_GRAPH_AREA )
-	{
-		FOREACH_EnabledPlayer( p ) 
-		{
-			OFF_COMMAND( m_sprGraphFrame[p] );
-			OFF_COMMAND( m_LifeGraph[p] );
 		}
 	}
 

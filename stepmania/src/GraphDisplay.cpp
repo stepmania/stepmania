@@ -3,51 +3,135 @@
 #include "ThemeManager.h"
 #include "RageTextureManager.h"
 #include "RageDisplay.h"
+#include "ActorUtil.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 #include "StageStats.h"
 #include "Foreach.h"
 #include "song.h"
+#include "XmlFile.h"
 
 //#define DIVIDE_LINE_WIDTH			THEME->GetMetricI(m_sName,"TexturedBottomHalf")
+REGISTER_ACTOR_CLASS( GraphDisplay )
+
+enum { VALUE_RESOLUTION=20 };
+class GraphLine: public Actor
+{
+public:
+	GraphLine()
+	{
+		for( unsigned i = 0; i < ARRAYSIZE(m_LineStrip); ++i )
+		{
+			m_LineStrip[i].c = RageColor( 1,1,1,1 );
+			m_LineStrip[i].t = RageVector2( 0,0 );
+		}
+	}
+
+	void DrawPrimitives()
+	{
+		Actor::SetGlobalRenderStates();	// set Actor-specified render states
+
+		DISPLAY->ClearAllTextures();
+
+		// Must call this after setting the texture or else texture 
+		// parameters have no effect.
+		Actor::SetTextureRenderStates();
+
+		for( int i = 0; i < ARRAYSIZE(m_LineStrip); ++i )
+			m_LineStrip[i].c = this->m_pTempState->diffuse[0];
+
+		// XXX: order: mask, sprite, line, others
+		DISPLAY->DrawLineStrip( m_LineStrip, ARRAYSIZE(m_LineStrip), 2 );
+	}
+
+	RageSpriteVertex m_LineStrip[VALUE_RESOLUTION];
+};
+
+class GraphBody: public Actor
+{
+public:
+	GraphBody()
+	{
+		for( int i = 0; i < 2*VALUE_RESOLUTION; ++i )
+		{
+			m_Slices[i].c = RageColor(1,1,1,1);
+			m_Slices[i].t = RageVector2( 0,0 );
+		}
+	}
+
+	void DrawPrimitives()
+	{
+		Actor::SetGlobalRenderStates();	// set Actor-specified render states
+
+		DISPLAY->ClearAllTextures();
+
+		// Must call this after setting the texture or else texture 
+		// parameters have no effect.
+		Actor::SetTextureRenderStates();
+
+		DISPLAY->SetTextureModeModulate();
+		DISPLAY->DrawQuadStrip( m_Slices, ARRAYSIZE(m_Slices) );
+	}
+
+	RageSpriteVertex m_Slices[2*VALUE_RESOLUTION];
+};
 
 GraphDisplay::GraphDisplay()
 {
-	m_pTexture = NULL;
+	m_pGraphLine = new GraphLine;
+	m_pGraphBody = new GraphBody;
 }
 
-void GraphDisplay::Load( const CString &TexturePath, const CString &sJustBarelyPath )
+GraphDisplay::~GraphDisplay()
 {
-	memset( m_Values, 0, sizeof(m_Values) );
-
-	Unload();
-	m_pTexture = TEXTUREMAN->LoadTexture( TexturePath );
-	m_size.x = (float) m_pTexture->GetSourceWidth();
-	m_size.y = (float) m_pTexture->GetSourceHeight();
-
-	m_sprJustBarely.Load( sJustBarelyPath );
-}
-
-void GraphDisplay::Unload()
-{
-	if( m_pTexture != NULL )
-		TEXTUREMAN->UnloadTexture( m_pTexture );
-
-	m_pTexture = NULL;
-
-	FOREACH( AutoActor*, m_vpSongBoundaries, p )
+	FOREACH( Actor*, m_vpSongBoundaries, p )
 		SAFE_DELETE( *p );
 	m_vpSongBoundaries.clear();
-
-	m_sprJustBarely.Unload();
-
-	ActorFrame::RemoveAllChildren();
+	SAFE_DELETE( m_pGraphLine );
+	SAFE_DELETE( m_pGraphBody );
 }
 
-void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageStats &pss, const CString &sSongBoundaryPath )
+void GraphDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	ActorFrame::LoadFromNode( sDir, pNode );
+
+	const XNode *pChild = pNode->GetChild( "Body" );
+	if( pChild == NULL )
+		RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"Body\"", sDir.c_str()) );
+	m_pGraphBody->LoadFromNode( sDir, pChild );
+	this->AddChild( m_pGraphBody );
+
+	pChild = pNode->GetChild( "Texture" );
+	if( pChild == NULL )
+		RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"Texture\"", sDir.c_str()) );
+	m_sprTexture.LoadFromNode( sDir, pChild );
+	m_size.x = m_sprTexture->GetUnzoomedWidth();
+	m_size.y = m_sprTexture->GetUnzoomedHeight();
+	this->AddChild( m_sprTexture );
+
+	pChild = pNode->GetChild( "Line" );
+	if( pChild == NULL )
+		RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"Line\"", sDir.c_str()) );
+	m_pGraphLine->LoadFromNode( sDir, pChild );
+	this->AddChild( m_pGraphLine );
+
+	pChild = pNode->GetChild( "SongBoundary" );
+	if( pChild == NULL )
+		RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"SongBoundary\"", sDir.c_str()) );
+	m_sprSongBoundary.LoadFromNode( sDir, pChild );
+
+	pChild = pNode->GetChild( "Barely" );
+	if( pChild == NULL )
+		RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"Barely\"", sDir.c_str()) );
+	m_sprJustBarely.LoadFromNode( sDir, pChild );
+}
+
+void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageStats &pss )
 {
 	float fTotalStepSeconds = ss.GetTotalPossibleStepsSeconds();
 
-	pss.GetLifeRecord( m_Values, VALUE_RESOLUTION, ss.GetTotalPossibleStepsSeconds() );
+	m_Values.resize( VALUE_RESOLUTION );
+	pss.GetLifeRecord( &m_Values[0], VALUE_RESOLUTION, ss.GetTotalPossibleStepsSeconds() );
 	for( unsigned i=0; i<ARRAYSIZE(m_Values); i++ )
 		CLAMP( m_Values[i], 0.f, 1.f );
 
@@ -61,13 +145,14 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 			continue;
 		fSec += (*song)->GetStepsSeconds();
 
-		AutoActor *p = new AutoActor;
+		Actor *p = m_sprSongBoundary->Copy();
 		m_vpSongBoundaries.push_back( p );
-		p->Load( sSongBoundaryPath );
 		float fX = SCALE( fSec, 0, fTotalStepSeconds, m_quadVertices.left, m_quadVertices.right );
-		(*p)->SetX( fX );
-		this->AddChild( *p );
+		p->SetX( fX );
+		this->AddChild( p );
 	}
+
+	UpdateVerts();
 
 	if( !pss.bFailed && !pss.bGaveUp )
 	{
@@ -77,10 +162,10 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 		float fMinLifeSoFar = 1.0f;
 		int iMinLifeSoFarAt = 0;
 
-		int NumSlices = VALUE_RESOLUTION-1;
-		for( int i = 0; i < NumSlices; ++i )
+		for( int i = 0; i < VALUE_RESOLUTION; ++i )
 		{
 			float fLife = m_Values[i];
+				LOG->Trace( "m %i: %f", i, fLife );
 			if( fLife < fMinLifeSoFar )
 			{
 				fMinLifeSoFar = fLife;
@@ -90,8 +175,8 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 
 		if( fMinLifeSoFar > 0.0f  &&  fMinLifeSoFar < 0.1f )
 		{
-			float fX = SCALE( float(iMinLifeSoFarAt), 0.0f, float(NumSlices), m_quadVertices.left, m_quadVertices.right );
-			m_sprJustBarely->SetXY( fX, 0 );
+			float fX = SCALE( float(iMinLifeSoFarAt), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );
+			m_sprJustBarely->SetX( fX );
 		}
 		else
 		{
@@ -99,53 +184,24 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 		}
 		this->AddChild( m_sprJustBarely );
 	}
-
-	UpdateVerts();
 }
 
 void GraphDisplay::UpdateVerts()
 {
-	switch( m_HorizAlign )
+	m_quadVertices.left = -m_size.x/2;
+	m_quadVertices.right = m_size.x/2;
+	m_quadVertices.top = -m_size.y/2;
+	m_quadVertices.bottom = m_size.y/2;
+
+	for( int i = 0; i < VALUE_RESOLUTION; ++i )
 	{
-	case align_left:	m_quadVertices.left = 0;			m_quadVertices.right = m_size.x;		break;
-	case align_center:	m_quadVertices.left = -m_size.x/2;	m_quadVertices.right = m_size.x/2;	break;
-	case align_right:	m_quadVertices.left = -m_size.x;	m_quadVertices.right = 0;			break;
-	default:		ASSERT( false );
-	}
+		const float fX = SCALE( float(i), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );
+		const float fY = SCALE( m_Values[i], 0.0f, 1.0f, m_quadVertices.bottom, m_quadVertices.top );
 
-	switch( m_VertAlign )
-	{
-	case align_top:		m_quadVertices.top = 0;				m_quadVertices.bottom = m_size.y;	break;
-	case align_middle:	m_quadVertices.top = -m_size.y/2;	m_quadVertices.bottom = m_size.y/2;	break;
-	case align_bottom:	m_quadVertices.top = -m_size.y;		m_quadVertices.bottom = 0;			break;
-	default:		ASSERT(0);
-	}
+		m_pGraphBody->m_Slices[i*2+0].p = RageVector3( fX, m_quadVertices.bottom, 0 );
+		m_pGraphBody->m_Slices[i*2+1].p = RageVector3( fX, fY, 0 );
 
-	int iNumSlices = VALUE_RESOLUTION-1;
-
-	for( int i = 0; i < 4*iNumSlices; ++i )
-		m_Slices[i].c = RageColor(1,1,1,1);
-
-	for( int i = 0; i < iNumSlices; ++i )
-	{
-		const float fLeft = SCALE( float(i), 0.0f, float(iNumSlices), m_quadVertices.left, m_quadVertices.right );
-		const float fRight = SCALE( float(i+1), 0.0f, float(iNumSlices), m_quadVertices.left, m_quadVertices.right );
-		const float fLeftBottom = SCALE( float(m_Values[i]), 0.0f, 1.0f, m_quadVertices.top, m_quadVertices.bottom );
-		const float fRightBottom = SCALE( float(m_Values[i+1]), 0.0f, 1.0f, m_quadVertices.top, m_quadVertices.bottom );
-
-		m_Slices[i*4+0].p = RageVector3( fLeft,		m_quadVertices.top,	0 );	// top left
-		m_Slices[i*4+1].p = RageVector3( fLeft,		fLeftBottom,	0 );	// bottom left
-		m_Slices[i*4+2].p = RageVector3( fRight,	fRightBottom,	0 );	// bottom right
-		m_Slices[i*4+3].p = RageVector3( fRight,	m_quadVertices.top,	0 );	// top right
-	}
-
-	const RectF *tex = m_pTexture->GetTextureCoordRect( 0 );
-	for( unsigned i = 0; i < ARRAYSIZE(m_Slices); ++i )
-	{
-		m_Slices[i].t = RageVector2( 
-			SCALE( m_Slices[i].p.x, m_quadVertices.left, m_quadVertices.right, tex->left, tex->right ),
-			SCALE( m_Slices[i].p.y, m_quadVertices.top, m_quadVertices.bottom, tex->top, tex->bottom )
-			);
+		m_pGraphLine->m_LineStrip[i].p = RageVector3( fX, fY, 0 );
 	}
 }
 
@@ -156,23 +212,31 @@ void GraphDisplay::Update( float fDeltaTime )
 	UpdateVerts();
 }
 
-void GraphDisplay::DrawPrimitives()
+// lua start
+#include "LuaBinding.h"
+
+class LunaGraphDisplay: public Luna<GraphDisplay>
 {
-	Actor::SetGlobalRenderStates();	// set Actor-specified render states
+public:
+	LunaGraphDisplay() { LUA->Register( Register ); }
 
-	DISPLAY->ClearAllTextures();
-	DISPLAY->SetTexture( 0, m_pTexture );
+	static int LoadFromStats( T* p, lua_State *L )
+	{
+		StageStats *pStageStats = Luna<StageStats>::check( L, 1 );
+		PlayerStageStats *pPlayerStageStats = Luna<PlayerStageStats>::check( L, 2 );
+		p->LoadFromStageStats( *pStageStats, *pPlayerStageStats );
+		return 0;
+	}
 
-	// Must call this after setting the texture or else texture 
-	// parameters have no effect.
-	Actor::SetTextureRenderStates();
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( LoadFromStats )
+		Luna<T>::Register( L );
+	}
+};
 
-	DISPLAY->SetTextureModeModulate();
-	DISPLAY->DrawQuads( m_Slices, ARRAYSIZE(m_Slices) );
-	DISPLAY->SetTexture( 0, NULL );
-
-	ActorFrame::DrawPrimitives();
-}
+LUA_REGISTER_DERIVED_CLASS( GraphDisplay, ActorFrame )
+// lua end
 
 /*
  * (c) 2003 Glenn Maynard
