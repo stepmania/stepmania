@@ -15,22 +15,15 @@ GraphDisplay::GraphDisplay()
 	m_pTexture = NULL;
 }
 
-
-void GraphDisplay::Load( const CString &TexturePath, float fInitialHeight, const CString &sJustBarelyPath )
+/* Draw the graph as a z-buffer mask. */
+void GraphDisplay::Load( const CString &TexturePath, const CString &sJustBarelyPath )
 {
-	m_Position = 1;
-	memset( m_CurValues, 0, sizeof(m_CurValues) );
-	memset( m_DestValues, 0, sizeof(m_DestValues) );
-	memset( m_LastValues, 0, sizeof(m_LastValues) );
+	memset( m_Values, 0, sizeof(m_Values) );
 
 	Unload();
 	m_pTexture = TEXTUREMAN->LoadTexture( TexturePath );
 	m_size.x = (float) m_pTexture->GetSourceWidth();
 	m_size.y = (float) m_pTexture->GetSourceHeight();
-
-	for( int i = 0; i < VALUE_RESOLUTION; ++i )
-		m_CurValues[i] = fInitialHeight;
-	UpdateVerts();
 
 	m_sprJustBarely.Load( sJustBarelyPath );
 }
@@ -55,13 +48,9 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 {
 	float fTotalStepSeconds = ss.GetTotalPossibleStepsSeconds();
 
-	memcpy( m_LastValues, m_CurValues, sizeof(m_CurValues) );
-	m_Position = 0;
-	pss.GetLifeRecord( m_DestValues, VALUE_RESOLUTION, ss.GetTotalPossibleStepsSeconds() );
-	for( unsigned i=0; i<ARRAYSIZE(m_DestValues); i++ )
-		CLAMP( m_DestValues[i], 0.f, 1.f );
-	UpdateVerts();
-
+	pss.GetLifeRecord( m_Values, VALUE_RESOLUTION, ss.GetTotalPossibleStepsSeconds() );
+	for( unsigned i=0; i<ARRAYSIZE(m_Values); i++ )
+		CLAMP( m_Values[i], 0.f, 1.f );
 
 	//
 	// Show song boundaries
@@ -92,7 +81,7 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 		int NumSlices = VALUE_RESOLUTION-1;
 		for( int i = 0; i < NumSlices; ++i )
 		{
-			float fLife = m_DestValues[i];
+			float fLife = m_Values[i];
 			if( fLife < fMinLifeSoFar )
 			{
 				fMinLifeSoFar = fLife;
@@ -111,6 +100,8 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 		}
 		this->AddChild( m_sprJustBarely );
 	}
+
+	UpdateVerts();
 }
 
 void GraphDisplay::UpdateVerts()
@@ -131,27 +122,22 @@ void GraphDisplay::UpdateVerts()
 	default:		ASSERT(0);
 	}
 
-	int NumSlices = VALUE_RESOLUTION-1;
+	int iNumSlices = VALUE_RESOLUTION-1;
 
-	for( int i = 0; i < 4*NumSlices; ++i )
+	for( int i = 0; i < 4*iNumSlices; ++i )
 		m_Slices[i].c = RageColor(1,1,1,1);
 
-	for( int i = 0; i < NumSlices; ++i )
+	for( int i = 0; i < iNumSlices; ++i )
 	{
-		const float Left = SCALE( float(i), 0.0f, float(NumSlices), m_quadVertices.left, m_quadVertices.right );
-		const float Right = SCALE( float(i+1), 0.0f, float(NumSlices), m_quadVertices.left, m_quadVertices.right );
-		const float LeftTop = SCALE( float(m_CurValues[i]), 0.0f, 1.0f, m_quadVertices.bottom, m_quadVertices.top );
-		const float RightTop = SCALE( float(m_CurValues[i+1]), 0.0f, 1.0f, m_quadVertices.bottom, m_quadVertices.top );
+		const float fLeft = SCALE( float(i), 0.0f, float(iNumSlices), m_quadVertices.left, m_quadVertices.right );
+		const float fRight = SCALE( float(i+1), 0.0f, float(iNumSlices), m_quadVertices.left, m_quadVertices.right );
+		const float fLeftBottom = SCALE( float(m_Values[i]), 0.0f, 1.0f, m_quadVertices.top, m_quadVertices.bottom );
+		const float fRightBottom = SCALE( float(m_Values[i+1]), 0.0f, 1.0f, m_quadVertices.top, m_quadVertices.bottom );
 
-		m_Slices[i*4+0].p = RageVector3( Left,		LeftTop,	0 );	// top left
-		m_Slices[i*4+1].p = RageVector3( Left,		m_quadVertices.bottom,	0 );	// bottom left
-		m_Slices[i*4+2].p = RageVector3( Right,		m_quadVertices.bottom,	0 );	// bottom right
-		m_Slices[i*4+3].p = RageVector3( Right,		RightTop,	0 );	// top right
-
-	//	m_Slices[i*4+0].c = RageColor(.2,.2,.2,1);
-	//	m_Slices[i*4+1].c = RageColor(1,1,1,1);
-	//	m_Slices[i*4+2].c = RageColor(1,1,1,1);
-	//	m_Slices[i*4+3].c = RageColor(.2,.2,.2,1);
+		m_Slices[i*4+0].p = RageVector3( fLeft,		m_quadVertices.top,	0 );	// top left
+		m_Slices[i*4+1].p = RageVector3( fLeft,		fLeftBottom,	0 );	// bottom left
+		m_Slices[i*4+2].p = RageVector3( fRight,	fRightBottom,	0 );	// bottom right
+		m_Slices[i*4+3].p = RageVector3( fRight,	m_quadVertices.top,	0 );	// top right
 	}
 
 	const RectF *tex = m_pTexture->GetTextureCoordRect( 0 );
@@ -167,13 +153,6 @@ void GraphDisplay::UpdateVerts()
 void GraphDisplay::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
-
-	if( m_Position == 1 )
-		return;
-
-	m_Position = clamp( m_Position+fDeltaTime, 0, 1 );
-	for( int i = 0; i < VALUE_RESOLUTION; ++i )
-		m_CurValues[i] = m_DestValues[i]*m_Position + m_LastValues[i]*(1-m_Position);
 
 	UpdateVerts();
 }

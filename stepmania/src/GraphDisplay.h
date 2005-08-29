@@ -13,7 +13,7 @@ class GraphDisplay: public ActorFrame
 public:
 	GraphDisplay();
 	~GraphDisplay() { Unload(); }
-	void Load( const CString &sTexturePath, float fInitialHeight, const CString &sJustBarelyPath );
+	void Load( const CString &sTexturePath, const CString &sJustBarelyPath );
 	void Unload();
 
 	void LoadFromStageStats( const StageStats &ss, const PlayerStageStats &s, const CString &sSongBoundaryPath );
@@ -24,10 +24,7 @@ private:
 	void UpdateVerts();
 
 	enum { VALUE_RESOLUTION=200 };
-	float m_CurValues[VALUE_RESOLUTION];
-	float m_DestValues[VALUE_RESOLUTION];
-	float m_LastValues[VALUE_RESOLUTION];
-	float m_Position;
+	float m_Values[VALUE_RESOLUTION];
 
 	RectF m_quadVertices;
 	RageSpriteVertex m_Slices[4*(VALUE_RESOLUTION-1)];
