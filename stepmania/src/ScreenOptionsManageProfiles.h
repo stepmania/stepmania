@@ -24,6 +24,7 @@ protected:
 	virtual void AfterChangeRow( PlayerNumber pn );
 	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
 
+	int GetLocalProfileIndexWithFocus() const;
 	CString GetLocalProfileIDWithFocus() const;
 
 	vector<CString> m_vsLocalProfileID;

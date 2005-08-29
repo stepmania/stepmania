@@ -10,6 +10,7 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "OptionRowHandler.h"
+#include "PrefsManager.h"
 
 static ThemeMetric<CString> NEW_PROFILE_DEFAULT_NAME(	"ScreenOptionsManageProfiles", "NewProfileDefaultName" );
 
@@ -23,6 +24,8 @@ AutoScreenMessage( SM_BackFromContextMenu )
 
 enum ProfileAction
 {
+	ProfileAction_SetDefaultP1,
+	ProfileAction_SetDefaultP2,
 	ProfileAction_Edit,
 	ProfileAction_Rename,
 	ProfileAction_Delete,
@@ -30,12 +33,15 @@ enum ProfileAction
 	NUM_ProfileAction
 };
 static const CString ProfileActionNames[] = {
+	"SetDefaultP1",
+	"SetDefaultP2",
 	"Edit",
 	"Rename",
 	"Delete",
 	"Clear",
 };
 XToString( ProfileAction, NUM_ProfileAction );
+XToThemedString( ProfileAction, NUM_ProfileAction );
 #define FOREACH_ProfileAction( i ) FOREACH_ENUM( ProfileAction, NUM_ProfileAction, i )
 
 static MenuDef g_TempMenu(
@@ -269,6 +275,30 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			{
 			default:
 				ASSERT(0);
+			case ProfileAction_SetDefaultP1:
+				{
+					PREFSMAN->m_sDefaultLocalProfileIDP1.Set( GetLocalProfileIDWithFocus() );
+					if( PREFSMAN->m_sDefaultLocalProfileIDP1.Get() == PREFSMAN->m_sDefaultLocalProfileIDP2.Get() )
+					{
+						int iIndex = GetLocalProfileIndexWithFocus();
+						iIndex++;
+						wrap( iIndex, m_vsLocalProfileID.size() );
+						PREFSMAN->m_sDefaultLocalProfileIDP2.Set( m_vsLocalProfileID[iIndex] );
+					}
+				}
+				break;
+			case ProfileAction_SetDefaultP2:
+				{
+					PREFSMAN->m_sDefaultLocalProfileIDP2.Set( GetLocalProfileIDWithFocus() );
+					if( PREFSMAN->m_sDefaultLocalProfileIDP1.Get() == PREFSMAN->m_sDefaultLocalProfileIDP2.Get() )
+					{
+						int iIndex = GetLocalProfileIndexWithFocus();
+						iIndex++;
+						wrap( iIndex, m_vsLocalProfileID.size() );
+						PREFSMAN->m_sDefaultLocalProfileIDP1.Set( m_vsLocalProfileID[iIndex] );
+					}
+				}
+				break;
 			case ProfileAction_Edit:
 				{
 					GAMESTATE->m_sEditLocalProfileID.Set( GetLocalProfileIDWithFocus() );
@@ -348,8 +378,10 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( PlayerNumber pn, const Input
 		g_TempMenu.rows.clear();
 
 #define ADD_ACTION( i )	\
-		g_TempMenu.rows.push_back( MenuRowDef( i, ProfileActionToString(i), true, EDIT_MODE_HOME, 0, "" ) );
+		g_TempMenu.rows.push_back( MenuRowDef( i, ProfileActionToThemedString(i), true, EDIT_MODE_HOME, 0, "" ) );
 
+		ADD_ACTION( ProfileAction_SetDefaultP1 );
+		ADD_ACTION( ProfileAction_SetDefaultP2 );
 		if( PROFILEMAN->FixedProfiles() )
 		{
 			ADD_ACTION( ProfileAction_Rename );
@@ -383,18 +415,26 @@ void ScreenOptionsManageProfiles::ExportOptions( int iRow, const vector<PlayerNu
 
 }
 
-CString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
+int ScreenOptionsManageProfiles::GetLocalProfileIndexWithFocus() const
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 	OptionRow &row = *m_pRows[iCurRow];
 
 	if( SHOW_CREATE_NEW && iCurRow == 0 )	// "create new"
-		return NULL;
+		return -1;
 	else if( row.GetRowType() == OptionRow::ROW_EXIT )
-		return NULL;
+		return -1;
 	
 	// a profile
 	int iIndex = iCurRow + (SHOW_CREATE_NEW ? -1 : 0);
+	return iIndex;
+}
+
+CString ScreenOptionsManageProfiles::GetLocalProfileIDWithFocus() const
+{
+	int iIndex = GetLocalProfileIndexWithFocus();
+	if( iIndex == -1 )
+		return NULL;
 	return m_vsLocalProfileID[iIndex];
 }
 
