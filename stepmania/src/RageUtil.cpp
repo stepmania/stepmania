@@ -1339,8 +1339,8 @@ CString FixSlashes( CString sPath )
  * ../foo -> ../foo
  * ../../foo -> ../../foo
  * ./foo -> foo (if bRemoveLeadingDot), ./foo (if !bRemoveLeadingDot)
- * ./ -> .
- * ./// -> .
+ * ./ -> ./
+ * ./// -> ./
  */
 
 void CollapsePath( CString &sPath, bool bRemoveLeadingDot )
