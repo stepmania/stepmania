@@ -64,7 +64,6 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define SHOW_TOTAL_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
 #define SHOW_TIME_AREA						THEME->GetMetricB(m_sName,"ShowTimeArea")
 #define SHOW_GRAPH_AREA						THEME->GetMetricB(m_sName,"ShowGraphArea")
-#define SHOW_COMBO_AREA						THEME->GetMetricB(m_sName,"ShowComboArea")
 #define SHOW_PER_DIFFICULTY_AWARD			THEME->GetMetricB(m_sName,"ShowPerDifficultyAward")
 #define SHOW_PEAK_COMBO_AWARD				THEME->GetMetricB(m_sName,"ShowPeakComboAward")
 #define LIFE_GRAPH_START_HEIGHT				THEME->GetMetricF(m_sName,"LifeGraphStartHeight")
@@ -435,17 +434,6 @@ void ScreenEvaluation::Init()
 			m_LifeGraph[p].LoadFromStageStats( m_StageStats, m_StageStats.m_player[p], THEME->GetPathG(m_sName,"SongBoundary") );
 			SET_XY_AND_ON_COMMAND( m_LifeGraph[p] );
 			this->AddChild( &m_LifeGraph[p] );
-		}
-	}
-
-	if( SHOW_COMBO_AREA )
-	{
-		FOREACH_EnabledPlayer( p )
-		{
-			m_ComboGraph[p].SetName( ssprintf("ComboGraphP%i",p+1) );
-			m_ComboGraph[p].Load( m_sName, ssprintf("ComboGraph p%i",p+1), m_StageStats, m_StageStats.m_player[p] );
-			SET_XY_AND_ON_COMMAND( m_ComboGraph[p] );
-			this->AddChild( &m_ComboGraph[p] );
 		}
 	}
 
@@ -1123,14 +1111,6 @@ void ScreenEvaluation::TweenOursOffScreen()
 		{
 			OFF_COMMAND( m_sprGraphFrame[p] );
 			OFF_COMMAND( m_LifeGraph[p] );
-		}
-	}
-
-	if( SHOW_COMBO_AREA )
-	{
-		FOREACH_EnabledPlayer( p ) 
-		{
-			OFF_COMMAND( m_ComboGraph[p] );
 		}
 	}
 

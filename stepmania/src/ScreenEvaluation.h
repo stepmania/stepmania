@@ -12,7 +12,6 @@
 #include "DifficultyMeter.h"
 #include "PercentageDisplay.h"
 #include "GraphDisplay.h"
-#include "ComboGraph.h"
 #include "ActorUtil.h"
 #include "HighScore.h"
 #include "RageSound.h"
@@ -81,9 +80,6 @@ protected:
 	// graph area
 	AutoActor			m_sprGraphFrame[NUM_PLAYERS];
 	GraphDisplay		m_LifeGraph[NUM_PLAYERS];
-
-	// combo area
-	ComboGraph			m_ComboGraph[NUM_PLAYERS];
 
 	// points area
 	bool				m_bNewSongsUnlocked;
