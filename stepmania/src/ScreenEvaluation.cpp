@@ -66,7 +66,6 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define SHOW_GRAPH_AREA						THEME->GetMetricB(m_sName,"ShowGraphArea")
 #define SHOW_PER_DIFFICULTY_AWARD			THEME->GetMetricB(m_sName,"ShowPerDifficultyAward")
 #define SHOW_PEAK_COMBO_AWARD				THEME->GetMetricB(m_sName,"ShowPeakComboAward")
-#define LIFE_GRAPH_START_HEIGHT				THEME->GetMetricF(m_sName,"LifeGraphStartHeight")
 #define TYPE								THEME->GetMetric (m_sName,"Type")
 #define PASSED_SOUND_TIME					THEME->GetMetricF(m_sName,"PassedSoundTime")
 #define FAILED_SOUND_TIME					THEME->GetMetricF(m_sName,"FailedSoundTime")
@@ -350,8 +349,9 @@ void ScreenEvaluation::Init()
 		default:
 			ASSERT(0);
 		}
+	}
 
-
+	{
 		switch( m_Type )
 		{
 		case stage:
@@ -430,7 +430,7 @@ void ScreenEvaluation::Init()
 			this->AddChild( m_sprGraphFrame[p] );
 
 			m_LifeGraph[p].SetName( ssprintf("LifeGraphP%i",p+1) );
-			m_LifeGraph[p].Load( THEME->GetPathG(m_sName,ssprintf("LifeGraph p%i", p+1)), LIFE_GRAPH_START_HEIGHT, THEME->GetPathG(m_sName,"JustBarely") );
+			m_LifeGraph[p].Load( THEME->GetPathG(m_sName,ssprintf("LifeGraph p%i", p+1)), THEME->GetPathG(m_sName,"JustBarely") );
 			m_LifeGraph[p].LoadFromStageStats( m_StageStats, m_StageStats.m_player[p], THEME->GetPathG(m_sName,"SongBoundary") );
 			SET_XY_AND_ON_COMMAND( m_LifeGraph[p] );
 			this->AddChild( &m_LifeGraph[p] );
