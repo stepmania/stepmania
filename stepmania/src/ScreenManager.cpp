@@ -118,6 +118,8 @@ namespace
 	/* Add a screen to g_ScreenStack.  This is the only function that adds to g_ScreenStack. */
 	void PushLoadedScreen( const LoadedScreen &ls )
 	{
+		// Be sure to push the screen first, so GetTopScreen returns the screen
+		// during BeginScreen.
 		g_ScreenStack.push_back( ls );
 		ls.m_pScreen->BeginScreen();
 
