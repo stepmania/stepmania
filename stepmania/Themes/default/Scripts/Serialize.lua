@@ -62,15 +62,20 @@ function Serialize(t)
 end
 
 -- Recursively deep-copy a table.
-function DeepCopy(t)
+function DeepCopy(t, already_copied)
+	already_copied = already_copied or { }
+
 	if type(t) ~= "table" then
 		return t
 	end
 
-	local ret = {}
-	for a,b in pairs(t) do
-		ret[a] = DeepCopy(b)
+	if already_copied[t] then
+		return already_copied[t]
 	end
+	already_copied[t] = { }
+	local ret = already_copied[t]
+
+	table.foreach(t, function(a,b) ret[a] = DeepCopy(b, already_copied) end)
 	return ret
 end
 
