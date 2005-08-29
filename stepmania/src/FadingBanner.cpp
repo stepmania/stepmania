@@ -243,6 +243,7 @@ public:
 	LunaFadingBanner() { LUA->Register( Register ); }
 
 	static int scaletoclipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); return 0; }
+	static int ScaleToClipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); return 0; }
 	static int LoadFromSong( T* p, lua_State *L )
 	{ 
 		if( lua_isnil(L,1) ) { p->LoadFromSong( NULL ); }
@@ -271,6 +272,7 @@ public:
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( scaletoclipped )
+		ADD_METHOD( ScaleToClipped )
 		ADD_METHOD( LoadFromSong )
 		ADD_METHOD( LoadFromCourse )
 		ADD_METHOD( LoadIconFromCharacter )
