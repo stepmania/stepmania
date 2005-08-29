@@ -61,6 +61,19 @@ function Serialize(t)
 	return ret
 end
 
+-- Recursively deep-copy a table.
+function DeepCopy(t)
+	if type(t) ~= "table" then
+		return t
+	end
+
+	local ret = {}
+	for a,b in pairs(t) do
+		ret[a] = DeepCopy(b)
+	end
+	return ret
+end
+
 -- (c) 2005 Glenn Maynard
 -- All rights reserved.
 -- 
