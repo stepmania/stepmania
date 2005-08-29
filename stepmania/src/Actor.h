@@ -305,10 +305,10 @@ public:
 		RageVector3 vect = RageVector3(0,0,20) );
 	void SetEffectBounce( 
 		float fPeriod = 2.f, 
-		RageVector3 vect = RageVector3(0,0,20) );
+		RageVector3 vect = RageVector3(0,20,0) );
 	void SetEffectBob( 
 		float fPeriod = 2.f, 
-		RageVector3 vect = RageVector3(0,0,20) );
+		RageVector3 vect = RageVector3(0,20,0) );
 	void SetEffectPulse( 
 		float fPeriod = 2.f,
 		float fMinZoom = 0.5f,
