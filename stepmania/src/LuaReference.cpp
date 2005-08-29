@@ -5,6 +5,9 @@
 #include "Foreach.h"
 #include "RageLog.h"
 #include "SubscriptionManager.h"
+#include "RageUtil_AutoPtr.h"
+
+REGISTER_CLASS_TRAITS( LuaReference, new LuaReference(*pCopy) )
 
 template<>
 set<LuaReference*>* SubscriptionManager<LuaReference>::s_pSubscribers = NULL;
