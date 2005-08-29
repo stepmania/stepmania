@@ -40,13 +40,9 @@ ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) :
 
 void ScreenTitleMenu::Init()
 {
-	m_bSelectIsDown = false; // used by LoadHelpText which is called by ScreenWithMenuElements::Init()
-
 	ScreenSelectMaster::Init();
 
 	m_soundSelectPressed.Load( THEME->GetPathS(m_sName,"select down"), true );
-	m_soundProfileChange.Load( THEME->GetPathS(m_sName,"profile change"), true );
-	m_soundProfileSwap.Load( THEME->GetPathS(m_sName,"profile swap"), true );
 
 	this->SortByDrawOrder();
 
@@ -117,40 +113,6 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		}
 	}
 
-
-	if( MenuI.IsValid() )
-	{
-		LoadHelpText();
-
-		PlayerNumber pn = MenuI.player;
-
-		bool bSelectIsDown = false;
-		FOREACH_PlayerNumber( p )
-			bSelectIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_SELECT) );
-		if( bSelectIsDown )
-		{
-			if( type == IET_FIRST_PRESS )
-			{
-				switch( MenuI.button )
-				{
-				case MENU_BUTTON_LEFT:
-					ChangeDefaultLocalProfile( pn, -1 );
-					MESSAGEMAN->Broadcast( ssprintf("MenuLeftP%d",pn+1) );
-					break;
-				case MENU_BUTTON_RIGHT:
-					ChangeDefaultLocalProfile( pn, +1 );
-					MESSAGEMAN->Broadcast( ssprintf("MenuRightP%d",pn+1) );
-					break;
-				case MENU_BUTTON_DOWN:
-					SwapDefaultLocalProfiles();
-					break;
-				}
-			}
-			return;
-		}
-	}
-
-
 	ScreenSelectMaster::Input( DeviceI, type, GameI, MenuI, StyleI );
 }
 
@@ -162,78 +124,6 @@ void ScreenTitleMenu::HandleMessage( const CString& sMessage )
 		 * so that the right m_aGameCommands will show */
 		SCREENMAN->SetNewScreen( COIN_MODE_CHANGE_SCREEN );
 	}
-}
-
-void ScreenTitleMenu::LoadHelpText()
-{
-	ScreenWithMenuElements::LoadHelpText();
-
-	bool bSelectIsDown = false;
-	FOREACH_PlayerNumber( p )
-		bSelectIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_SELECT) );
-
-	if( bSelectIsDown )
-		LOG->Trace( "bSelectIsDown" );
-
-	/* If m_soundSelectPressed isn't loaded yet, wait until it is before we do this. */
-	if( m_bSelectIsDown != bSelectIsDown && m_soundSelectPressed.IsLoaded() )
-	{
-		if( bSelectIsDown )
-			m_soundSelectPressed.Play();
-
-		m_bSelectIsDown = bSelectIsDown;
-		if( bSelectIsDown )
-			MESSAGEMAN->Broadcast( "SelectMenuOn" );
-		else
-			MESSAGEMAN->Broadcast( "SelectMenuOff" );
-	}
-}
-
-void ScreenTitleMenu::ChangeDefaultLocalProfile( PlayerNumber pn, int iDir )
-{
-	CString sCurrent = PREFSMAN->GetDefaultLocalProfileID(pn);
-	vector<CString> vsProfileID;
-	PROFILEMAN->GetLocalProfileIDs( vsProfileID );
-	if( vsProfileID.empty() )
-		return;
-
-	int iIndex = 0;
-	vector<CString>::const_iterator iter = find( vsProfileID.begin(), vsProfileID.end(), sCurrent );
-	if( iter != vsProfileID.end() )
-		iIndex = iter - vsProfileID.begin();
-
-	for( int i=0; i<PROFILEMAN->GetNumLocalProfiles(); i++ )
-	{
-		iIndex += iDir;
-		wrap( iIndex, vsProfileID.size() );
-		sCurrent = vsProfileID[iIndex];
-
-		bool bAnyOtherIsUsingThisProfile = false;
-		FOREACH_PlayerNumber( p )
-		{
-			if( p!=pn  &&  PREFSMAN->GetDefaultLocalProfileID(p).Get() == sCurrent )
-			{
-				bAnyOtherIsUsingThisProfile = true;
-				break;
-			}
-		}
-		if( !bAnyOtherIsUsingThisProfile )
-			break;
-	}
-
-	m_soundProfileChange.Play();
-
-	PREFSMAN->GetDefaultLocalProfileID(pn).Set( sCurrent );
-}
-
-void ScreenTitleMenu::SwapDefaultLocalProfiles()
-{
-	CString s1 = PREFSMAN->GetDefaultLocalProfileID(PLAYER_1);
-	CString s2 = PREFSMAN->GetDefaultLocalProfileID(PLAYER_2);
-	PREFSMAN->GetDefaultLocalProfileID(PLAYER_1).Set( s2 );
-	PREFSMAN->GetDefaultLocalProfileID(PLAYER_2).Set( s1 );
-
-	m_soundProfileSwap.Play();
 }
 
 

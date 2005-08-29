@@ -17,16 +17,7 @@ public:
 	virtual void HandleMessage( const CString& sMessage );
 
 protected:
-	virtual void LoadHelpText();
-	
-	void ChangeDefaultLocalProfile( PlayerNumber pn, int iDir );
-	void SwapDefaultLocalProfiles();
-
 	RageSound			m_soundSelectPressed;
-	RageSound			m_soundProfileChange;
-	RageSound			m_soundProfileSwap;
-
-	bool m_bSelectIsDown;
 };
 
 #endif
