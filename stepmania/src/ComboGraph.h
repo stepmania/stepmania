@@ -3,21 +3,28 @@
 
 #include "ActorFrame.h"
 #include "PlayerNumber.h"
+#include "BitmapText.h"
 
 class StageStats;
 class PlayerStageStats;
-
 class ComboGraph: public ActorFrame
 {
 public:
-	~ComboGraph() { Unload(); }
-	void Load( const CString& sScreen, const CString& sElement, const StageStats &s, const PlayerStageStats &pss );
-	void Unload();
-	void TweenOffScreen();
+	ComboGraph();
+	~ComboGraph();
+	void Load( const StageStats &s, const PlayerStageStats &pss );
+	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual Actor *Copy() const;
+
+	//
+	// Commands
+	//
+	virtual void PushSelf( lua_State *L );
 
 private:
-	vector<Actor*>		m_Sprites;
-	vector<Actor*>		m_Numbers;
+	Actor *m_pNormalCombo;
+	Actor *m_pMaxCombo;
+	BitmapText m_MaxComboText;
 };
 
 #endif
