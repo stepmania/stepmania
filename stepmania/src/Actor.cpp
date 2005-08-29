@@ -181,19 +181,15 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 	// Load Name, if any.
 	pNode->GetAttrValue( "Name", m_sName );
 
-	FOREACH_CONST_Child( pNode, pChild )
+	FOREACH_CONST_Attr( pNode, pChild )
 	{
 		if( pChild->m_sName == "Input" )
 		{
 			/* Parameters are set as globals by ActorUtil::LoadFromActorFile.
 			 * If parameters are specified here, save them to the actor.  Accessing
 			 * parameters as globals directly is deprecated. */
-			CString sName;
-			if( !pChild->GetAttrValue( "Name", sName ) )
-			{
-				RageException::Throw( ssprintf("Input node in '%s' is missing the attribute 'Name'", sDir.c_str()) );
-			}
-
+			const CString &sName = pChild->m_sValue;
+			
 			Lua *L = LUA->Get();
 			this->PushSelf( L );
 			LuaHelpers::Push( sName, L );
