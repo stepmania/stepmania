@@ -76,6 +76,26 @@ void LuaReference::SetFromNil()
 	m_iReference = LUA_REFNIL;
 }
 
+void LuaReference::DeepCopy()
+{
+	/* Call DeepCopy(t), where t is our referenced object. */
+	Lua *L = LUA->Get();
+	lua_pushstring( L, "DeepCopy" );
+	lua_gettable( L, LUA_GLOBALSINDEX );
+
+	ASSERT_M( !lua_isnil(L, -1), "DeepCopy() missing" );
+	ASSERT_M( lua_isfunction(L, -1), "DeepCopy() not a function" );
+
+	/* Arg 1 (t): */
+	this->PushSelf( L );
+
+	lua_call( L, 1, 1 );
+
+	this->SetFromStack( L );
+
+	LUA->Release( L );
+}
+
 void LuaReference::PushSelf( lua_State *L ) const
 {
 	lua_rawgeti( L, LUA_REGISTRYINDEX, m_iReference );

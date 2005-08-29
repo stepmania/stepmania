@@ -21,6 +21,9 @@ public:
 	void SetFromStack( Lua *L );
 	void SetFromNil();
 
+	/* Deep-copy tables, detaching this reference from any others. */
+	void DeepCopy();
+
 	/* Push the referenced object onto the stack.  If not set (or set to nil), push nil. */
 	virtual void PushSelf( Lua *L ) const;
 
