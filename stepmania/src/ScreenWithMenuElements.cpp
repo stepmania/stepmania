@@ -202,9 +202,15 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 
 void ScreenWithMenuElements::LoadHelpText()
 {
-	CStringArray asHelpTips;
-	split( THEME->GetMetric(m_sName,"HelpText"), "\n", asHelpTips );
-	m_textHelp->SetTips( asHelpTips );
+	CStringArray vs;
+	CString s = THEME->GetMetric(m_sName,"HelpText");
+	split( s, "\n", vs );
+
+	// hack to get newlines in a tip
+	FOREACH( CString, vs, s )
+		s->Replace( "\\n", "\n" );
+
+	m_textHelp->SetTips( vs );
 	m_textHelp->PlayCommand( "Changed" );
 }
 
