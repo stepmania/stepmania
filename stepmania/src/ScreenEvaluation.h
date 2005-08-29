@@ -44,6 +44,13 @@ public:
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn );
 
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+
+	StageStats m_StageStats;
+
 protected:
 	void CommitScores( 
 		const StageStats &stageStats, 
