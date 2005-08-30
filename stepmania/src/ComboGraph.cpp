@@ -4,7 +4,6 @@
 #include "StageStats.h"
 #include "ActorUtil.h"
 #include "BitmapText.h"
-#include "Sprite.h"
 #include "XmlFile.h"
 
 const int MinComboSizeToShow = 5;
