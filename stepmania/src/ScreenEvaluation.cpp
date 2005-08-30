@@ -255,12 +255,8 @@ void ScreenEvaluation::Init()
 	//
 	// update persistent statistics
 	//
-	int iPersonalHighScoreIndex[NUM_PLAYERS];
-	int iMachineHighScoreIndex[NUM_PLAYERS];
 	RankingCategory rc[NUM_PLAYERS];;
-	PerDifficultyAward pdaToShow[NUM_PLAYERS];
-	PeakComboAward pcaToShow[NUM_PLAYERS];
-	CommitScores( m_StageStats, iPersonalHighScoreIndex, iMachineHighScoreIndex, rc, pdaToShow, pcaToShow );
+	CommitScores( m_StageStats, m_iPersonalHighScoreIndex, m_iMachineHighScoreIndex, rc, m_pdaToShow, m_pcaToShow );
 
 	m_bTryExtraStage = 
 		GAMESTATE->HasEarnedExtraStage()  && 
@@ -694,32 +690,32 @@ void ScreenEvaluation::Init()
 	//
 	FOREACH_EnabledPlayer( p )
 	{
-		if( iMachineHighScoreIndex[p] != -1 )
+		if( m_iMachineHighScoreIndex[p] != -1 )
 		{
-			m_sprMachineRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("MachineRecord %02d",iMachineHighScoreIndex[p]+1) ) );
+			m_sprMachineRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("MachineRecord %02d",m_iMachineHighScoreIndex[p]+1) ) );
 			m_sprMachineRecord[p]->SetName( ssprintf("MachineRecordP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_sprMachineRecord[p] );
 			this->AddChild( m_sprMachineRecord[p] );
 		}
-		if( iPersonalHighScoreIndex[p] != -1 )
+		if( m_iPersonalHighScoreIndex[p] != -1 )
 		{
-			m_sprPersonalRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("PersonalRecord %02d",iPersonalHighScoreIndex[p]+1) ) );
+			m_sprPersonalRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("PersonalRecord %02d",m_iPersonalHighScoreIndex[p]+1) ) );
 			m_sprPersonalRecord[p]->SetName( ssprintf("PersonalRecordP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_sprPersonalRecord[p] );
 			this->AddChild( m_sprPersonalRecord[p] );
 		}
-		if( SHOW_PER_DIFFICULTY_AWARD && pdaToShow[p]!=PER_DIFFICULTY_AWARD_INVALID )
+		if( SHOW_PER_DIFFICULTY_AWARD && m_pdaToShow[p]!=PER_DIFFICULTY_AWARD_INVALID )
 		{
-			CString sAward = PerDifficultyAwardToString( pdaToShow[p] );
+			CString sAward = PerDifficultyAwardToString( m_pdaToShow[p] );
 
 			m_PerDifficultyAward[p].Load( THEME->GetPathG(m_sName,"PerDifficultyAward "+sAward) );
 			m_PerDifficultyAward[p]->SetName( ssprintf("PerDifficultyAwardP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_PerDifficultyAward[p] );
 			this->AddChild( m_PerDifficultyAward[p] );
 		}
-		if( SHOW_PEAK_COMBO_AWARD && pcaToShow[p]!=PEAK_COMBO_AWARD_INVALID )
+		if( SHOW_PEAK_COMBO_AWARD && m_pcaToShow[p]!=PEAK_COMBO_AWARD_INVALID )
 		{
-			CString sAward = PeakComboAwardToString( pcaToShow[p] );
+			CString sAward = PeakComboAwardToString( m_pcaToShow[p] );
 
 			m_PeakComboAward[p].Load( THEME->GetPathG(m_sName,"PeakComboAward "+sAward) );
 			m_PeakComboAward[p]->SetName( ssprintf("PeakComboAwardP%d",p+1) );
@@ -730,7 +726,7 @@ void ScreenEvaluation::Init()
 
 	bool bOneHasNewTopRecord = false;
 	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->IsPlayerEnabled(p) && (iMachineHighScoreIndex[p] != -1 || iPersonalHighScoreIndex[p] != -1) )
+		if( GAMESTATE->IsPlayerEnabled(p) && (m_iMachineHighScoreIndex[p] != -1 || m_iPersonalHighScoreIndex[p] != -1) )
 			bOneHasNewTopRecord = true;
 
 	Grade best_grade = Grade_NoData;
@@ -1352,10 +1348,18 @@ class LunaScreenEvaluation: public Luna<ScreenEvaluation>
 public:
 	LunaScreenEvaluation() { LUA->Register( Register ); }
 	static int GetEvalStageStats( T* p, lua_State *L ) { p->m_StageStats.PushSelf( L ); return 1; }
+	static int GetPersonalHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, p->m_iPersonalHighScoreIndex[IArg(1)] ); return 1; }
+	static int GetMachineHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, p->m_iMachineHighScoreIndex[IArg(1)] ); return 1; }
+	static int GetPerDifficultyAward( T* p, lua_State *L ) { lua_pushnumber( L, p->m_pdaToShow[IArg(1)] ); return 1; }
+	static int GetPeakComboAward( T* p, lua_State *L ) { lua_pushnumber( L, p->m_pcaToShow[IArg(1)] ); return 1; }
 
 	static void Register( Lua *L )
 	{
 		ADD_METHOD( GetEvalStageStats )
+		ADD_METHOD( GetPersonalHighScoreIndex )
+		ADD_METHOD( GetMachineHighScoreIndex )
+		ADD_METHOD( GetPerDifficultyAward )
+		ADD_METHOD( GetPeakComboAward )
 		Luna<T>::Register( L );
 	}
 };

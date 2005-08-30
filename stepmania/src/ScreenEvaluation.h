@@ -48,6 +48,10 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 	StageStats m_StageStats;
+	int m_iPersonalHighScoreIndex[NUM_PLAYERS];
+	int m_iMachineHighScoreIndex[NUM_PLAYERS];
+	PerDifficultyAward m_pdaToShow[NUM_PLAYERS];
+	PeakComboAward m_pcaToShow[NUM_PLAYERS];
 
 protected:
 	void CommitScores( 

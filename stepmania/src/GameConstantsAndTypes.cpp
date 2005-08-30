@@ -242,7 +242,12 @@ static const CString PerDifficultyAwardNames[] = {
 XToString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );
 XToThemedString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );
 StringToX( PerDifficultyAward );
-
+static void LuaPerDifficultyAward( lua_State* L )
+{
+	FOREACH_PerDifficultyAward( i )
+		LUA->SetGlobal( PerDifficultyAwardNames[i], i );
+}
+REGISTER_WITH_LUA_FUNCTION( LuaPerDifficultyAward );
 
 // Numbers are intentially not at the front of these strings so that the 
 // strings can be used as XML entity names.
@@ -263,7 +268,12 @@ static const CString PeakComboAwardNames[] = {
 XToString( PeakComboAward, NUM_PEAK_COMBO_AWARDS );
 XToThemedString( PeakComboAward, NUM_PEAK_COMBO_AWARDS );
 StringToX( PeakComboAward );
-
+static void LuaPeakComboAward( lua_State* L )
+{
+	FOREACH_PeakComboAward( i )
+		LUA->SetGlobal( PeakComboAwardNames[i], i );
+}
+REGISTER_WITH_LUA_FUNCTION( LuaPeakComboAward );
 
 LuaXToString( Difficulty );
 LuaStringToX( Difficulty );
