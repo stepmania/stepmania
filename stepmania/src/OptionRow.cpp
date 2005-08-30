@@ -111,6 +111,7 @@ void OptionRowType::Load( const CString &sType )
 	m_sType = sType;
 
 	BULLET_X   						.Load(sType,"BulletX");
+	BULLET_ON_COMMAND   			.Load(sType,"BulletOnCommand");
 	LABELS_X						.Load(sType,"LabelsX");
 	LABELS_ON_COMMAND				.Load(sType,"LabelsOnCommand");
 	LABEL_GAIN_FOCUS_COMMAND		.Load(sType,"LabelGainFocusCommand");
@@ -393,12 +394,15 @@ void OptionRow::InitText()
 		m_textTitle->RunCommands( m_pParentType->LABELS_ON_COMMAND );
 
 		m_sprBullet->SetX( m_pParentType->BULLET_X );
+		m_sprBullet->RunCommands( m_pParentType->BULLET_ON_COMMAND );
 		break;
 	case OptionRow::ROW_EXIT:
 		m_textTitle->SetHidden( true );
 		m_sprBullet->SetHidden( true );
 		break;
 	}
+
+	this->SortByDrawOrder();
 }
 
 /* After importing options, choose which item is focused. */
@@ -609,6 +613,7 @@ void OptionRow::UpdateEnabledDisabled()
 
 	if( m_sprBullet != NULL )
 		m_sprBullet->SetGlobalDiffuseColor( color );
+	m_sprBullet->PlayCommand( bThisRowHasFocusByAny ? "GainFocus" : "LoseFocus" );
 	m_textTitle->SetGlobalDiffuseColor( color );
 
 

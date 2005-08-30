@@ -100,6 +100,7 @@ private:
 
 	// metrics
 	ThemeMetric<float>				BULLET_X;
+	ThemeMetric<apActorCommands>	BULLET_ON_COMMAND;
 	ThemeMetric<float>				LABELS_X;
 	ThemeMetric<apActorCommands>	LABELS_ON_COMMAND;
 	ThemeMetric<apActorCommands>	LABEL_GAIN_FOCUS_COMMAND;
