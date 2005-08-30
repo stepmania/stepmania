@@ -98,6 +98,7 @@ void BitmapText::LoadFromNode( const CString& sDir, const XNode* pNode )
 	pNode->GetAttrValue( "Font", sFont );
 	if( sFont.empty() )
 		pNode->GetAttrValue("File", sFont );	// accept "File" for backward compatibility
+	LuaHelpers::RunAtExpressionS( sFont );
 
 	if( sFont == "" )
 		RageException::Throw( "An object '%s' in '%s' is missing the Font attribute",
