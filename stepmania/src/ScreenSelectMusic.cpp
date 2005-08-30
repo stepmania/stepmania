@@ -284,7 +284,6 @@ void ScreenSelectMusic::Init()
 	m_sprOptionsMessage.SetHidden( true );
 	m_sprOptionsMessage.SetDrawOrder( DRAW_ORDER_TRANSITIONS+1 );
 	SET_XY( m_sprOptionsMessage );
-	ActorUtil::LoadAllCommands( m_sprOptionsMessage, m_sName );
 	this->AddChild( &m_sprOptionsMessage );
 
 	m_bgOptionsOut.Load( THEME->GetPathB(m_sName,"options out") );
