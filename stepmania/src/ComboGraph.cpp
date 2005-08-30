@@ -72,7 +72,6 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 		sprite->SetCropLeft ( SCALE( size, 0.0f, 1.0f, 0.5f, 0.0f ) );
 		sprite->SetCropRight( SCALE( size, 0.0f, 1.0f, 0.5f, 0.0f ) );
 
-		sprite->BeginTweening( .5f );
 		sprite->SetCropLeft( start );
 		sprite->SetCropRight( 1 - (size + start) );
 
