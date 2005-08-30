@@ -91,6 +91,23 @@ int PlayerState::GetSumOfActiveAttackLevels() const
 	return iSum;
 }
 
+// lua start
+#include "LuaBinding.h"
+
+class LunaPlayerState: public Luna<PlayerState>
+{
+public:
+	LunaPlayerState() { LUA->Register( Register ); }
+
+	static void Register(lua_State *L)
+	{
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_CLASS( PlayerState )
+// lua end
+
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez
  * All rights reserved.

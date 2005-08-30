@@ -7,6 +7,7 @@
 #include "PlayerOptions.h"
 #include <map>
 #include "Attack.h"
+struct lua_State;
 
 class PlayerState
 {
@@ -96,6 +97,9 @@ public:
 	// Used in Battle
 	//
 	Attack	m_Inventory[NUM_INVENTORY_SLOTS];
+
+	// Lua
+	void PushSelf( lua_State *L );
 };
 
 #endif
