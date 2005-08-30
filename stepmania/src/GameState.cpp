@@ -1887,6 +1887,10 @@ public:
 	static int GetPlayerDisplayName( T* p, lua_State *L )	{ lua_pushstring(L, p->GetPlayerDisplayName((PlayerNumber)IArg(1)) ); return 1; }
 	static int GetMasterPlayerNumber( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_MasterPlayerNumber ); return 1; }
 	static int GetMultiplayer( T* p, lua_State *L )			{ lua_pushboolean(L, p->m_bMultiplayer); return 1; }
+	static int GetPlayerState( T* p, lua_State *L )			{ 
+		PlayerNumber pn = (PlayerNumber)IArg(1);
+		p->m_pPlayerState[pn]->PushSelf(L);return 1; }
+
 	static int ApplyGameCommand( T* p, lua_State *L )
 	{
 		PlayerNumber pn = PLAYER_INVALID;
@@ -2012,6 +2016,7 @@ public:
 		ADD_METHOD( GetPlayerDisplayName )
 		ADD_METHOD( GetMasterPlayerNumber )
 		ADD_METHOD( GetMultiplayer )
+		ADD_METHOD( GetPlayerState )
 		ADD_METHOD( ApplyGameCommand )
 		ADD_METHOD( GetCurrentSong )
 		ADD_METHOD( SetCurrentSong )
