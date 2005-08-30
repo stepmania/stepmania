@@ -47,7 +47,6 @@ void PercentageDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
 			RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"PercentRemainder\"", sDir.c_str()) );
 		m_textPercentRemainder.LoadFromNode( sDir, pChild );
 		this->AddChild( &m_textPercentRemainder );
-
 	}
 }
 
@@ -75,7 +74,7 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	else
 		m_textPercent.SetName( "Percent" + PlayerNumberToString(m_pPlayerState->m_PlayerNumber) );
 
-	m_textPercent.LoadFromFont( THEME->GetPathF(sMetricsGroup,ssprintf("text p%i",m_pPlayerState->m_PlayerNumber+1)) );
+	m_textPercent.LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
 	ActorUtil::SetXY( m_textPercent, sMetricsGroup );
 	ASSERT( m_textPercent.HasCommand("Off") );
 	this->AddChild( &m_textPercent );
