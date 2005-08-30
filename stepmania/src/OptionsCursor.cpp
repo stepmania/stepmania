@@ -14,10 +14,6 @@ OptionsCursor::OptionsCursor()
 
 OptionsCursorPlus::OptionsCursorPlus()
 {
-	this->AddChild( &m_sprCanGoLeft );
-	this->AddChild( &m_sprCanGoRight );
-
-	SetCanGo( false, false );
 }
 
 OptionsCursor::OptionsCursor( const OptionsCursor &cpy ):
@@ -38,8 +34,8 @@ OptionsCursorPlus::OptionsCursorPlus( const OptionsCursorPlus &cpy ):
 	m_sprCanGoLeft( cpy.m_sprCanGoLeft ),
 	m_sprCanGoRight( cpy.m_sprCanGoRight )
 {
-	this->AddChild( &m_sprCanGoLeft );
-	this->AddChild( &m_sprCanGoRight );
+	this->AddChild( m_sprCanGoLeft );
+	this->AddChild( m_sprCanGoRight );
 }
 
 void OptionsCursor::Load( const CString &sType, Element elem )
@@ -61,6 +57,11 @@ void OptionsCursorPlus::Load( const CString &sType, Element elem )
 
 	m_sprCanGoLeft.Load( THEME->GetPathG(sType,"CanGoLeft") );
 	m_sprCanGoRight.Load( THEME->GetPathG(sType,"CanGoRight") );
+
+	this->AddChild( m_sprCanGoLeft );
+	this->AddChild( m_sprCanGoRight );
+
+	SetCanGo( false, false );
 }
 
 void OptionsCursor::Set( PlayerNumber pn )
@@ -79,11 +80,11 @@ void OptionsCursor::Set( PlayerNumber pn )
 
 void OptionsCursorPlus::SetCanGo( bool bCanGoLeft, bool bCanGoRight )
 {
-	m_sprCanGoLeft.EnableAnimation( bCanGoLeft );
-	m_sprCanGoRight.EnableAnimation( bCanGoRight );
+	m_sprCanGoLeft->EnableAnimation( bCanGoLeft );
+	m_sprCanGoRight->EnableAnimation( bCanGoRight );
 
-	m_sprCanGoLeft.SetDiffuse( bCanGoLeft ? RageColor(1,1,1,1) : RageColor(1,1,1,0) );
-	m_sprCanGoRight.SetDiffuse( bCanGoRight ? RageColor(1,1,1,1) : RageColor(1,1,1,0) );
+	m_sprCanGoLeft->SetDiffuse( bCanGoLeft ? RageColor(1,1,1,1) : RageColor(1,1,1,0) );
+	m_sprCanGoRight->SetDiffuse( bCanGoRight ? RageColor(1,1,1,1) : RageColor(1,1,1,0) );
 }
 
 void OptionsCursor::StopTweening()
@@ -99,8 +100,8 @@ void OptionsCursorPlus::StopTweening()
 {
 	OptionsCursor::StopTweening();
 
-	m_sprCanGoLeft.StopTweening();
-	m_sprCanGoRight.StopTweening();
+	m_sprCanGoLeft->StopTweening();
+	m_sprCanGoRight->StopTweening();
 }
 
 void OptionsCursor::BeginTweening( float fSecs )
@@ -116,8 +117,8 @@ void OptionsCursorPlus::BeginTweening( float fSecs )
 {
 	OptionsCursor::BeginTweening( fSecs );
 
-	m_sprCanGoLeft.BeginTweening( fSecs );
-	m_sprCanGoRight.BeginTweening( fSecs );
+	m_sprCanGoLeft->BeginTweening( fSecs );
+	m_sprCanGoRight->BeginTweening( fSecs );
 }
 
 void OptionsCursor::SetBarWidth( int iWidth )
@@ -136,8 +137,8 @@ void OptionsCursorPlus::SetBarWidth( int iWidth )
 {
 	OptionsCursor::SetBarWidth( iWidth );
 
-	m_sprCanGoLeft.SetX( m_sprLeft.GetDestX() );
-	m_sprCanGoRight.SetX( m_sprRight.GetDestX() );
+	m_sprCanGoLeft->SetX( m_sprLeft.GetDestX() );
+	m_sprCanGoRight->SetX( m_sprRight.GetDestX() );
 }
 
 int OptionsCursor::GetBarWidth()

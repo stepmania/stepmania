@@ -6,6 +6,7 @@
 #include "Sprite.h"
 #include "ActorFrame.h"
 #include "PlayerNumber.h"
+#include "AutoActor.h"
 
 
 class OptionsCursor : public ActorFrame
@@ -45,8 +46,8 @@ public:
 
 protected:
 
-	Sprite m_sprCanGoLeft;
-	Sprite m_sprCanGoRight;
+	AutoActor m_sprCanGoLeft;
+	AutoActor m_sprCanGoRight;
 };
 
 #endif
