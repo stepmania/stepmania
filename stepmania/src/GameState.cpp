@@ -1996,6 +1996,11 @@ public:
 		PlayerNumber pn = (PlayerNumber)IArg(1);
 		lua_pushboolean(L, p->GetStageResult(pn)==RESULT_WIN); return 1;
 	}
+	static int IsDisqualified( T* p, lua_State *L )
+	{
+		PlayerNumber pn = (PlayerNumber)IArg(1);
+		lua_pushboolean(L, p->IsDisqualified(pn)); return 1;
+	}
 	static int GetCurrentGame( T* p, lua_State *L )			{ const_cast<Game*>(p->GetCurrentGame())->PushSelf( L ); return 1; }
 	static int GetEditCourseEntryIndex( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_iEditCourseEntryIndex ); return 1; }
 	static int GetEditLocalProfileID( T* p, lua_State *L )		{ lua_pushstring(L, p->m_sEditLocalProfileID.Get() ); return 1; }
@@ -2061,6 +2066,7 @@ public:
 		ADD_METHOD( GetSongOptionsString )
 		ADD_METHOD( IsSyncDataChanged )
 		ADD_METHOD( IsWinner )
+		ADD_METHOD( IsDisqualified )
 		ADD_METHOD( GetCurrentGame )
 		ADD_METHOD( GetEditCourseEntryIndex )
 		ADD_METHOD( GetEditLocalProfileID )
