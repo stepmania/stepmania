@@ -140,6 +140,7 @@ void ScreenOptions::Init()
 	{
 		m_Cursor[p].Load( m_sName, OptionsCursorPlus::cursor );
 		m_Cursor[p].Set( p );
+		m_Cursor[p].SetName( "Cursor" );
 		m_framePage.AddChild( &m_Cursor[p] );
 	}
 	
@@ -253,8 +254,6 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 	{
 		GetExplanationText( r );
 	}
-
-	this->SortByDrawOrder();
 }
 
 void ScreenOptions::BeginScreen()
@@ -339,7 +338,10 @@ void ScreenOptions::TweenOnScreen()
 
 	ON_COMMAND( m_sprPage );
 	FOREACH_HumanPlayer( p )
+	{
+		ON_COMMAND( m_Cursor[p] );
 		ON_COMMAND( m_sprLineHighlight[p] );
+	}
 
 	COMMAND( m_sprMore, m_bMoreShown? "ShowMore":"HideMore" );
 	m_sprMore->FinishTweening();
@@ -347,6 +349,8 @@ void ScreenOptions::TweenOnScreen()
 
 	FOREACH_PlayerNumber( p )
 		ON_COMMAND( m_sprDisqualify[p] );
+
+	m_framePage.SortByDrawOrder();
 }
 
 ScreenOptions::~ScreenOptions()
