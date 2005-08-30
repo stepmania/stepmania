@@ -275,6 +275,7 @@ Judgment.cpp Judgment.h LifeMeter.h LifeMeterBar.cpp LifeMeterBar.h \
 LifeMeterBattery.cpp LifeMeterBattery.h LifeMeterTime.cpp LifeMeterTime.h \
 LyricDisplay.cpp LyricDisplay.h NoteDisplay.cpp NoteDisplay.h NoteField.cpp NoteField.h \
 PercentageDisplay.cpp PercentageDisplay.h Player.cpp Player.h \
+PlayerScoreList.cpp PlayerScoreList.h \
 ReceptorArrow.cpp ReceptorArrow.h ReceptorArrowRow.cpp ReceptorArrowRow.h \
 ScoreDisplay.cpp ScoreDisplay.h \
 ScoreDisplayBattle.cpp ScoreDisplayBattle.h \
