@@ -46,8 +46,8 @@ void ScreenJoinMultiplayer::Init()
 	GAMESTATE->m_pCurStyle.Set( v[0] );
 
 	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
-
 	GAMESTATE->m_bTemporaryEventMode = true;
+	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 
 	FOREACH_MultiPlayer( p )
 	{
@@ -113,12 +113,12 @@ void ScreenJoinMultiplayer::Input( const DeviceInput& DeviceI, const InputEventT
 		GameInput gi;
 		INPUTMAPPER->DeviceToGame( di, gi );
 
-		if( GameI.IsValid() )
+		if( gi.IsValid() )
 		{
 			MenuInput mi;
 			INPUTMAPPER->GameToMenu( gi, mi );
 
-			MultiPlayer p = (MultiPlayer)(DeviceI.device - DEVICE_JOY1);
+			MultiPlayer p = InputMapper::InputDeviceToMultiPlayer( DeviceI.device );
 
 			// testing hack
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LSHIFT) ) )
@@ -179,7 +179,7 @@ void ScreenJoinMultiplayer::UpdatePlayerStatus( bool bFirstUpdate )
 {
 	FOREACH_MultiPlayer( p )
 	{
-		InputDevice id = (InputDevice)p;
+		InputDevice id = InputMapper::MultiPlayerToInputDevice( p );
 	
 		InputDeviceState idsOld = m_InputDeviceState[p];
 		bool bWasConnected = idsOld == InputDeviceState_Connected;

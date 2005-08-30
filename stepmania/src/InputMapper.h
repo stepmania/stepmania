@@ -73,6 +73,9 @@ public:
 		bool SecondController;
 	};
 
+	static InputDevice MultiPlayerToInputDevice( MultiPlayer mp );
+	static MultiPlayer InputDeviceToMultiPlayer( InputDevice id );
+
 	void ApplyMapping( const Mapping *maps, GameController gc, InputDevice device );
 
 protected:

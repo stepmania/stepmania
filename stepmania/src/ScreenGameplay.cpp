@@ -2200,7 +2200,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				StyleInput _StyleI;
 				INPUTMAPPER->GameToStyle( _GameI, _StyleI );
 
-				mp = (MultiPlayer)(DeviceI.device - DEVICE_JOY1);
+				mp = InputMapper::InputDeviceToMultiPlayer( DeviceI.device );
 
 				if( mp>=0 && mp<NUM_MultiPlayer )
 					m_vPlayerInfo[mp].m_pPlayer->Step( _StyleI.col, DeviceI.ts );

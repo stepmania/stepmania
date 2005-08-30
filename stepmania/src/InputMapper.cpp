@@ -695,6 +695,16 @@ void InputMapper::ResetKeyRepeat( StyleInput StyleI )
 	ResetKeyRepeat( GameI );
 }
 
+InputDevice InputMapper::MultiPlayerToInputDevice( MultiPlayer mp )
+{
+	return (InputDevice)(mp + DEVICE_JOY1);
+}
+
+MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
+{
+	return (MultiPlayer)(id - DEVICE_JOY1);
+}
+
 /*
  * (c) 2001-2003 Chris Danford
  * All rights reserved.
