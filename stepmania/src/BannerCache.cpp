@@ -340,10 +340,16 @@ void BannerCache::CacheBanner( CString BannerPath )
 	/* Check the full file hash.  If it's the loaded and identical, don't recache. */
 	if( DoesFileExist(CachePath) )
 	{
-		unsigned CurFullHash;
-		const unsigned FullHash = GetHashForFile( BannerPath );
-		if( BannerData.GetValue( BannerPath, "FullHash", CurFullHash ) &&
-			CurFullHash == FullHash )
+		bool bCacheUpToDate = PREFSMAN->m_bFastLoad;
+		if( !bCacheUpToDate )
+		{
+			unsigned CurFullHash;
+			const unsigned FullHash = GetHashForFile( BannerPath );
+			if( BannerData.GetValue( BannerPath, "FullHash", CurFullHash ) && CurFullHash == FullHash )
+				bCacheUpToDate = true;
+		}
+
+		if( bCacheUpToDate )
 		{
 			/* It's identical.  Just load it, if in preload. */
 			if( PREFSMAN->m_BannerCache == PrefsManager::BNCACHE_LOW_RES_PRELOAD )
