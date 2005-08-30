@@ -9,7 +9,7 @@
 #include <tlhelp32.h>
 
 #include "arch/Threads/Threads_Win32.h"
-#include "archutils/win32/WindowsResources.h"
+#include "archutils/Win32/WindowsResources.h"
 #include "archutils/Win32/GraphicsWindow.h" /* for GraphicsWindow::GetHwnd */
 #include "crash.h"
 #include "ProductInfo.h"
