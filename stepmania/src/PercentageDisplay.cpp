@@ -55,13 +55,6 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	Refresh();
 }
 
-void PercentageDisplay::TweenOffScreen()
-{
-	m_textPercent.PlayCommand( "Off" );
-	if( !PREFSMAN->m_bDancePointsForOni && (bool)PERCENT_USE_REMAINDER )
-		m_textPercentRemainder.PlayCommand( "Off" );
-}
-
 void PercentageDisplay::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );

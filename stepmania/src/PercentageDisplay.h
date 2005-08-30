@@ -17,7 +17,6 @@ public:
 	PercentageDisplay();
 	void Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const CString &sMetricsGroup, bool bAutoRefresh );
 	void Update( float fDeltaTime );
-	void TweenOffScreen();
 
 	static CString FormatPercentScore( float fPercentDancePoints );
 
