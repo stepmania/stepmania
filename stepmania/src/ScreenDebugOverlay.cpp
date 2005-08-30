@@ -290,7 +290,8 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 
 			CString sMessage;
 			(*p)->Do( sMessage );
-			SCREENMAN->SystemMessage( sMessage );
+			if( !sMessage.empty() )
+				SCREENMAN->SystemMessage( sMessage );
 
 			UpdateText();
 			return true;
@@ -573,6 +574,7 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 		ResetGame();
 		SCREENMAN->SetNewScreen( SCREENMAN->GetTopScreen()->GetName() );
 		IDebugLine::Do( sMessageOut );
+		sMessageOut = "";
 	}
 };
 static DebugLineReloadCurrentScreen g_DebugLineReloadCurrentScreen;
