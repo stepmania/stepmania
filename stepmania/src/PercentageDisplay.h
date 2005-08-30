@@ -15,15 +15,23 @@ class PercentageDisplay: public ActorFrame
 {
 public:
 	PercentageDisplay();
+	void Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats );
 	void Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const CString &sMetricsGroup, bool bAutoRefresh );
 	void Update( float fDeltaTime );
+	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual Actor *Copy() const;
 
 	static CString FormatPercentScore( float fPercentDancePoints );
 
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+
 private:
-	ThemeMetric<int> DANCE_POINT_DIGITS;
-	ThemeMetric<bool> PERCENT_USE_REMAINDER;
-	ThemeMetric<bool> APPLY_SCORE_DISPLAY_OPTIONS;
+	int m_iDancePointsDigits;
+	bool m_bUseRemainder;
+	bool m_bApplyScoreDisplayOptions;
 
 	void Refresh();
 	const PlayerState *m_pPlayerState;

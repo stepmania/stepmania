@@ -9,14 +9,54 @@
 #include "StageStats.h"
 #include "PlayerState.h"
 #include "LuaFunctions.h"
+#include "XmlFile.h"
 
 ThemeMetric<int> PERCENT_DECIMAL_PLACES	( "PercentageDisplay", "PercentDecimalPlaces" );
 ThemeMetric<int> PERCENT_TOTAL_SIZE		( "PercentageDisplay", "PercentTotalSize" );
+
+REGISTER_ACTOR_CLASS( PercentageDisplay )
 
 PercentageDisplay::PercentageDisplay()
 {
 	m_pPlayerState = NULL;
 	m_pPlayerStageStats = NULL;
+
+	m_Last = -1;
+	m_LastMax = -1;
+}
+
+void PercentageDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
+{
+	ActorFrame::LoadFromNode( sDir, pNode );
+
+	pNode->GetAttrValue( "DancePointsDigits", m_iDancePointsDigits );
+	pNode->GetAttrValue( "PercentUseRemainder", m_bUseRemainder );
+	pNode->GetAttrValue( "ApplyScoreDisplayOptions", m_bApplyScoreDisplayOptions );
+	pNode->GetAttrValue( "AutoRefresh", m_bAutoRefresh );
+
+	const XNode *pChild = pNode->GetChild( "Percent" );
+	if( pChild == NULL )
+		RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"Percent\"", sDir.c_str()) );
+	m_textPercent.LoadFromNode( sDir, pChild );
+	this->AddChild( &m_textPercent );
+
+	if( !PREFSMAN->m_bDancePointsForOni && m_bUseRemainder )
+	{
+		const XNode *pChild = pNode->GetChild( "PercentRemainder" );
+		if( pChild == NULL )
+			RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"PercentRemainder\"", sDir.c_str()) );
+		m_textPercentRemainder.LoadFromNode( sDir, pChild );
+		this->AddChild( &m_textPercentRemainder );
+
+	}
+}
+
+void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats )
+{
+	m_pPlayerState = pPlayerState;
+	m_pPlayerStageStats = pPlayerStageStats;
+
+	Refresh();
 }
 
 void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStageStats *pPlayerStageStats, const CString &sMetricsGroup, bool bAutoRefresh )
@@ -24,12 +64,10 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	m_pPlayerState = pPlayerState;
 	m_pPlayerStageStats = pPlayerStageStats;
 	m_bAutoRefresh = bAutoRefresh;
-	m_Last = -1;
-	m_LastMax = -1;
 
-	DANCE_POINT_DIGITS.Load( sMetricsGroup, "DancePointsDigits" );
-	PERCENT_USE_REMAINDER.Load( sMetricsGroup, "PercentUseRemainder" );
-	APPLY_SCORE_DISPLAY_OPTIONS.Load( sMetricsGroup, "ApplyScoreDisplayOptions" );
+	m_iDancePointsDigits = THEME->GetMetricI( sMetricsGroup, "DancePointsDigits" );
+	m_bUseRemainder = THEME->GetMetricB( sMetricsGroup, "PercentUseRemainder" );
+	m_bApplyScoreDisplayOptions = THEME->GetMetricB( sMetricsGroup, "ApplyScoreDisplayOptions" );
 
 
 	if( PREFSMAN->m_bDancePointsForOni )
@@ -37,12 +75,12 @@ void PercentageDisplay::Load( const PlayerState *pPlayerState, const PlayerStage
 	else
 		m_textPercent.SetName( "Percent" + PlayerNumberToString(m_pPlayerState->m_PlayerNumber) );
 
-	m_textPercent.LoadFromFont( THEME->GetPathF(sMetricsGroup,"text") );
+	m_textPercent.LoadFromFont( THEME->GetPathF(sMetricsGroup,ssprintf("text p%i",m_pPlayerState->m_PlayerNumber+1)) );
 	ActorUtil::SetXY( m_textPercent, sMetricsGroup );
 	ASSERT( m_textPercent.HasCommand("Off") );
 	this->AddChild( &m_textPercent );
 
-	if( !PREFSMAN->m_bDancePointsForOni && (bool)PERCENT_USE_REMAINDER )
+	if( !PREFSMAN->m_bDancePointsForOni && m_bUseRemainder )
 	{
 		m_textPercentRemainder.SetName( "PercentRemainder" + PlayerNumberToString(m_pPlayerState->m_PlayerNumber) );
 		m_textPercentRemainder.LoadFromFont( THEME->GetPathF(sMetricsGroup,"remainder") );
@@ -78,14 +116,14 @@ void PercentageDisplay::Refresh()
 
 	if( PREFSMAN->m_bDancePointsForOni )
 	{
-		sNumToDisplay = ssprintf( "%*d", (int) DANCE_POINT_DIGITS, max( 0, iActualDancePoints ) );
+		sNumToDisplay = ssprintf( "%*d", m_iDancePointsDigits, max( 0, iActualDancePoints ) );
 	}
 	else
 	{
 		float fPercentDancePoints = m_pPlayerStageStats->GetPercentDancePoints();
 		float fCurMaxPercentDancePoints = m_pPlayerStageStats->GetCurMaxPercentDancePoints();
 		
-		if( APPLY_SCORE_DISPLAY_OPTIONS )
+		if( m_bApplyScoreDisplayOptions )
 		{
 			switch( m_pPlayerState->m_CurrentPlayerOptions.m_ScoreDisplay )
 			{
@@ -107,7 +145,7 @@ void PercentageDisplay::Refresh()
 		// clamp percentage - feedback is that negative numbers look weird here.
 		CLAMP( fPercentDancePoints, 0.f, 1.f );
 
-		if( PERCENT_USE_REMAINDER )
+		if( m_bUseRemainder )
 		{
 			int iPercentWhole = int(fPercentDancePoints*100);
 			int iPercentRemainder = int( (fPercentDancePoints*100 - int(fPercentDancePoints*100)) * 10 );
@@ -142,7 +180,33 @@ CString PercentageDisplay::FormatPercentScore( float fPercentDancePoints )
 	return s;
 }
 
+// lua start
 LuaFunction( FormatPercentScore,	PercentageDisplay::FormatPercentScore( FArg(1) ) )
+
+#include "LuaBinding.h"
+
+class LunaPercentageDisplay: public Luna<PercentageDisplay>
+{
+public:
+	LunaPercentageDisplay() { LUA->Register( Register ); }
+
+	static int LoadFromStats( T* p, lua_State *L )
+	{
+		const PlayerState *pStageStats = Luna<PlayerState>::check( L, 1 );
+		const PlayerStageStats *pPlayerStageStats = Luna<PlayerStageStats>::check( L, 2 );
+		p->Load( pStageStats, pPlayerStageStats );
+		return 0;
+	}
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( LoadFromStats )
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( PercentageDisplay, ActorFrame )
+// lua end
 
 
 /*
