@@ -3,6 +3,18 @@
 
 #include "ScreenWithMenuElements.h"
 
+enum MultiPlayerStatus
+{
+	MultiPlayerStatus_Joined,
+	MultiPlayerStatus_NotJoined,
+	MultiPlayerStatus_Unplugged,
+	MultiPlayerStatus_MissingMultitap,
+	NUM_MultiPlayerStatus,
+	MultiPlayerStatus_INVALID
+};
+const CString& MultiPlayerStatusToString( MultiPlayerStatus i );
+
+
 class ScreenJoinMultiplayer : public ScreenWithMenuElements
 {
 public:
@@ -15,11 +27,14 @@ public:
 	virtual void DrawPrimitives();
 
 protected:
-	void UpdatePlayerStatus();
+	void UpdatePlayerStatus( bool bFirstUpdate );
 	void PositionItem( Actor *pActor, int iItemIndex, int iNumItems );
 
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( PlayerNumber pn );
+
+	InputDeviceState m_InputDeviceState[NUM_MultiPlayer];
+	MultiPlayerStatus m_MultiPlayerStatus[NUM_MultiPlayer];
 
 	AutoActor m_sprPlayer[NUM_MultiPlayer];
 

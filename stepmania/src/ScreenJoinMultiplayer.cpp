@@ -14,15 +14,6 @@ class Style;
 #include "ScreenPrompt.h"
 #include "ScreenManager.h"
 
-enum MultiPlayerStatus
-{
-	MultiPlayerStatus_Joined,
-	MultiPlayerStatus_NotJoined,
-	MultiPlayerStatus_Unplugged,
-	MultiPlayerStatus_MissingMultitap,
-	NUM_MultiPlayerStatus,
-	MultiPlayerStatus_Invalid
-};
 
 static const CString MultiPlayerStatusNames[] = {
 	"Joined",
@@ -32,19 +23,15 @@ static const CString MultiPlayerStatusNames[] = {
 };
 XToString( MultiPlayerStatus, NUM_MultiPlayerStatus );
 
-static bool IsConnected( MultiPlayerStatus s )
-{
- 	return s == MultiPlayerStatus_Joined || s == MultiPlayerStatus_NotJoined;
-}
-
-
-static MultiPlayerStatus g_MultiPlayerStatus[NUM_MultiPlayer];
 
 REGISTER_SCREEN_CLASS( ScreenJoinMultiplayer );
 ScreenJoinMultiplayer::ScreenJoinMultiplayer( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 	FOREACH_MultiPlayer( p )
-		g_MultiPlayerStatus[p] = MultiPlayerStatus_Invalid;
+	{
+		m_InputDeviceState[p] = InputDeviceState_INVALID;
+		m_MultiPlayerStatus[p] = MultiPlayerStatus_INVALID;
+	}
 }
 
 void ScreenJoinMultiplayer::Init()
@@ -90,7 +77,7 @@ void ScreenJoinMultiplayer::Init()
 	m_soundJoin.Load(	THEME->GetPathS(m_sName,"Join") );
 	m_soundUnjoin.Load(	THEME->GetPathS(m_sName,"Unjoin") );
 
-	UpdatePlayerStatus();
+	UpdatePlayerStatus( true );
 }
 
 void ScreenJoinMultiplayer::PositionItem( Actor *pActor, int iItemIndex, int iNumItems )
@@ -143,7 +130,7 @@ void ScreenJoinMultiplayer::Input( const DeviceInput& DeviceI, const InputEventT
 
 			ASSERT( p>=0 && p<NUM_MultiPlayer );
 			
-			MultiPlayerStatus old = g_MultiPlayerStatus[p];
+			MultiPlayerStatus old = m_MultiPlayerStatus[p];
 
 			switch( mi.button )
 			{
@@ -151,16 +138,16 @@ void ScreenJoinMultiplayer::Input( const DeviceInput& DeviceI, const InputEventT
 				if( old == MultiPlayerStatus_NotJoined )
 				{
 					m_soundJoin.Play();
-					g_MultiPlayerStatus[p] = MultiPlayerStatus_Joined;
-					m_sprPlayer[p]->PlayCommand( MultiPlayerStatusToString(g_MultiPlayerStatus[p]) );
+					m_MultiPlayerStatus[p] = MultiPlayerStatus_Joined;
+					m_sprPlayer[p]->PlayCommand( MultiPlayerStatusToString(m_MultiPlayerStatus[p]) );
 				}
 				return;	// input handled
 			case MENU_BUTTON_DOWN:
 				if( old == MultiPlayerStatus_Joined )
 				{
 					m_soundUnjoin.Play();
-					g_MultiPlayerStatus[p] = MultiPlayerStatus_NotJoined;
-					m_sprPlayer[p]->PlayCommand( MultiPlayerStatusToString(g_MultiPlayerStatus[p]) );
+					m_MultiPlayerStatus[p] = MultiPlayerStatus_NotJoined;
+					m_sprPlayer[p]->PlayCommand( MultiPlayerStatusToString(m_MultiPlayerStatus[p]) );
 				}
 				return;	// input handled
 			case MENU_BUTTON_BACK:
@@ -179,6 +166,8 @@ void ScreenJoinMultiplayer::Input( const DeviceInput& DeviceI, const InputEventT
 void ScreenJoinMultiplayer::Update( float fDeltaTime )
 {
 	ScreenWithMenuElements::Update(fDeltaTime);
+
+	UpdatePlayerStatus( false );
 }
 
 void ScreenJoinMultiplayer::DrawPrimitives()
@@ -186,44 +175,56 @@ void ScreenJoinMultiplayer::DrawPrimitives()
 	ScreenWithMenuElements::DrawPrimitives();
 }
 
-void ScreenJoinMultiplayer::UpdatePlayerStatus()
+void ScreenJoinMultiplayer::UpdatePlayerStatus( bool bFirstUpdate )
 {
 	FOREACH_MultiPlayer( p )
 	{
 		InputDevice id = (InputDevice)p;
 	
-		MultiPlayerStatus old = g_MultiPlayerStatus[p];
-		bool bWasConnected = IsConnected( old );
+		InputDeviceState idsOld = m_InputDeviceState[p];
+		bool bWasConnected = idsOld == InputDeviceState_Connected;
+		
+		InputDeviceState idsNew = INPUTMAN->GetInputDeviceState(id);
+		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LSHIFT)) )
+			idsNew = InputDeviceState_Disconnected;
+		bool bIsConnected = idsNew == InputDeviceState_Connected;
 
-		MultiPlayerStatus s = MultiPlayerStatus_Invalid;
-		switch( INPUTMAN->GetInputDeviceState(id) )
+		MultiPlayerStatus &mps = m_MultiPlayerStatus[p];
+
+		if( bFirstUpdate  ||  idsOld != idsNew )
 		{
-		default:
-			ASSERT(0);
-		case InputDeviceState_Connected:
-			s = MultiPlayerStatus_NotJoined;
-			break;
-		case InputDeviceState_INVALID:
-		case InputDeviceState_Disconnected:
-			s = MultiPlayerStatus_Unplugged;
-			break;
-		case InputDeviceState_MissingMultitap:
-			s = MultiPlayerStatus_MissingMultitap;
-			break;
+			switch( idsNew )
+			{
+			default:
+				ASSERT(0);
+			case InputDeviceState_Connected:
+				mps = MultiPlayerStatus_NotJoined;
+				break;
+			case InputDeviceState_INVALID:
+			case InputDeviceState_Disconnected:
+				mps = MultiPlayerStatus_Unplugged;
+				break;
+			case InputDeviceState_MissingMultitap:
+				mps = MultiPlayerStatus_MissingMultitap;
+				break;
+			}
+
+			m_sprPlayer[p]->PlayCommand( MultiPlayerStatusToString(mps) );
+
+			if( idsOld == InputDeviceState_INVALID )
+			{
+				m_sprPlayer[p]->FinishTweening();
+			}
+			else
+			{
+				if( !bWasConnected && bIsConnected )
+					m_soundPlugIn.Play();
+				else if( bWasConnected && !bIsConnected )
+					m_soundUnplug.Play();
+			}
 		}
 
-		if( old != s )
-		{
-			m_sprPlayer[p]->PlayCommand( MultiPlayerStatusToString(s) );
-			g_MultiPlayerStatus[p] = s;
-
-			bool bIsConnected = IsConnected( s );
-
-			if( !bWasConnected && bIsConnected )
-				m_soundPlugIn.Play();
-			else if( bWasConnected && !bIsConnected )
-				m_soundUnplug.Play();
-		}
+		m_InputDeviceState[p] = idsNew;
 	}
 }
 
@@ -238,7 +239,7 @@ void ScreenJoinMultiplayer::MenuStart( PlayerNumber pn )
 	int iNumJoinedPlayers = 0;
 	FOREACH_MultiPlayer( p )
 	{
-		bool bJoined = g_MultiPlayerStatus[p] == MultiPlayerStatus_Joined;
+		bool bJoined = m_MultiPlayerStatus[p] == MultiPlayerStatus_Joined;
 		GAMESTATE->m_bIsMultiPlayerJoined[p] = bJoined;
 		if( bJoined )
 			iNumJoinedPlayers++;
