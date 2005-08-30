@@ -40,7 +40,7 @@ function GetSelectMusicNext()
 end
 
 function SelectFirstOptionsScreen()
-	if PlayModeName() == "Rave" then return "ScreenRaveOptions" end
+	if GAMESTATE:GetPlayMode() == PLAY_MODE_RAVE then return "ScreenRaveOptions" end
 	return "ScreenPlayerOptions"
 end
 
