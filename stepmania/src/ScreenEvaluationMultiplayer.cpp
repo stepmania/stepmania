@@ -9,7 +9,7 @@
 #include "PrefsManager.h"
 #include "GameManager.h"
 #include "SongManager.h"
-#include "Song.h"
+#include "song.h"
 #include "ScoreKeeperMAX2.h"
 #include "PercentageDisplay.h"
 
