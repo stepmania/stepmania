@@ -67,7 +67,6 @@ protected:
 	DifficultyIcon		m_DifficultyIcon[NUM_PLAYERS];
 	DifficultyMeter		m_DifficultyMeter[NUM_PLAYERS];
 	BitmapText			m_textPlayerOptions[NUM_PLAYERS];
-	AutoActor			m_sprDisqualified[NUM_PLAYERS];
 	Banner				m_SmallBanner[MAX_SONGS_TO_SHOW];
 	AutoActor			m_sprSmallBannerFrame[MAX_SONGS_TO_SHOW];
 

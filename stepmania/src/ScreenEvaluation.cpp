@@ -398,14 +398,6 @@ void ScreenEvaluation::Init()
 					CString sPO = join( PLAYER_OPTIONS_SEPARATOR, v );
 					m_textPlayerOptions[p].SetText( sPO );
 					this->AddChild( &m_textPlayerOptions[p] );
-
-					if( GAMESTATE->IsDisqualified(p) )
-					{
-						m_sprDisqualified[p].Load( THEME->GetPathG(m_sName,"disqualified") );
-						m_sprDisqualified[p]->SetName( ssprintf("DisqualifiedP%d",p+1) );
-						SET_XY_AND_ON_COMMAND( m_sprDisqualified[p] );
-						this->AddChild( m_sprDisqualified[p] );
-					}
 				}
 			}
 			break;
@@ -1063,7 +1055,6 @@ void ScreenEvaluation::TweenOursOffScreen()
 		OFF_COMMAND( m_DifficultyIcon[p] );
 		OFF_COMMAND( m_DifficultyMeter[p] );
 		OFF_COMMAND( m_textPlayerOptions[p] );
-		OFF_COMMAND( m_sprDisqualified[p] );
 	}
 
 	// small banner area
