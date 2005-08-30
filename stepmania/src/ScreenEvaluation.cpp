@@ -1091,7 +1091,6 @@ void ScreenEvaluation::TweenOursOffScreen()
 		{
 			OFF_COMMAND( m_sprPercentFrame[p] );
 			OFF_COMMAND( m_Percent[p] );
-			m_Percent[p].TweenOffScreen();
 		}
 	}
 
