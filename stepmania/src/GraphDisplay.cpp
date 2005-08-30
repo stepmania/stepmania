@@ -6,6 +6,7 @@
 #include "ActorUtil.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageMath.h"
 #include "StageStats.h"
 #include "Foreach.h"
 #include "song.h"
@@ -14,7 +15,7 @@
 //#define DIVIDE_LINE_WIDTH			THEME->GetMetricI(m_sName,"TexturedBottomHalf")
 REGISTER_ACTOR_CLASS( GraphDisplay )
 
-enum { VALUE_RESOLUTION=200 };
+enum { VALUE_RESOLUTION=100 };
 class GraphLine: public Actor
 {
 public:
@@ -25,8 +26,17 @@ public:
 			m_LineStrip[i].c = RageColor( 1,1,1,1 );
 			m_LineStrip[i].t = RageVector2( 0,0 );
 		}
+
+		m_pCircles = NULL;
 	}
 
+	~GraphLine()
+	{
+		delete[] m_pCircles;
+	}
+
+	static const int iSubdivisions = 4;
+	static const int iCircleVertices = iSubdivisions+2;
 	void DrawPrimitives()
 	{
 		Actor::SetGlobalRenderStates();	// set Actor-specified render states
@@ -40,11 +50,76 @@ public:
 		for( int i = 0; i < ARRAYSIZE(m_LineStrip); ++i )
 			m_LineStrip[i].c = this->m_pTempState->diffuse[0];
 
-		// XXX: order: mask, sprite, line, others
-		DISPLAY->DrawLineStrip( m_LineStrip, ARRAYSIZE(m_LineStrip), 2 );
+		DISPLAY->DrawQuads( &m_Quads[0], m_Quads.size() );
+
+		for( int i = 0; i < VALUE_RESOLUTION; ++i )
+			DISPLAY->DrawFan( m_pCircles+iCircleVertices*i, iCircleVertices );
+	}
+
+	static void MakeCircle( const RageSpriteVertex &v, RageSpriteVertex *pVerts, int iSubdivisions, float fRadius )
+	{
+		pVerts[0] = v;
+
+		for( int i = 0; i < iSubdivisions+1; ++i )
+		{
+			const float fRotation = float(i) / iSubdivisions * 2*PI;
+			const float fX = RageFastCos(fRotation) * fRadius;
+			const float fY = -RageFastSin(fRotation) * fRadius;
+			pVerts[1+i] = v;
+			pVerts[1+i].p.x += fX;
+			pVerts[1+i].p.y += fY;
+		}
+	}
+
+	void Set()
+	{
+		delete[] m_pCircles;
+		m_pCircles = new RageSpriteVertex[VALUE_RESOLUTION * iCircleVertices];
+
+		for( int i = 0; i < VALUE_RESOLUTION; ++i )
+		{
+			MakeCircle( m_LineStrip[i], m_pCircles + iCircleVertices*i, iSubdivisions, 1 );
+		}
+		
+		int iNumLines = VALUE_RESOLUTION-1;
+		m_Quads.resize( iNumLines * 4 );
+		for( int i = 0; i < iNumLines-1; ++i )
+		{
+			const RageSpriteVertex &p1 = m_LineStrip[i];
+			const RageSpriteVertex &p2 = m_LineStrip[i+1];
+
+			float opp = p2.p.x - p1.p.x;
+			float adj = p2.p.y - p1.p.y;
+			float hyp = powf(opp*opp + adj*adj, 0.5f);
+
+			float lsin = opp/hyp;
+			float lcos = adj/hyp;
+
+			RageSpriteVertex *v = &m_Quads[i*4];
+			v[0] = v[1] = p1;
+			v[2] = v[3] = p2;
+
+			int iLineWidth = 2;
+			float ydist = lsin * iLineWidth/2;
+			float xdist = lcos * iLineWidth/2;
+			
+			v[0].p.x += xdist;
+			v[0].p.y -= ydist;
+			v[1].p.x -= xdist;
+			v[1].p.y += ydist;
+			v[2].p.x -= xdist;
+			v[2].p.y += ydist;
+			v[3].p.x += xdist;
+			v[3].p.y -= ydist;
+		}
+
 	}
 
 	RageSpriteVertex m_LineStrip[VALUE_RESOLUTION];
+
+private:
+	vector<RageSpriteVertex> m_Quads;
+	RageSpriteVertex *m_pCircles;
 };
 
 class GraphBody: public Actor
@@ -203,6 +278,8 @@ void GraphDisplay::UpdateVerts()
 
 		m_pGraphLine->m_LineStrip[i].p = RageVector3( fX, fY, 0 );
 	}
+
+	m_pGraphLine->Set();
 }
 
 void GraphDisplay::Update( float fDeltaTime )
