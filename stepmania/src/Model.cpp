@@ -18,7 +18,7 @@ REGISTER_ACTOR_CLASS( Model )
 const float FRAMES_PER_SECOND = 30;
 const CString DEFAULT_ANIMATION_NAME = "default";
 
-Model::Model ()
+Model::Model()
 {
 	m_bTextureWrapping = true;
 	SetUseZBuffer( true );
@@ -31,12 +31,12 @@ Model::Model ()
 	m_pTempGeometry = NULL;
 }
 
-Model::~Model ()
+Model::~Model()
 {
-	Clear ();
+	Clear();
 }
 
-void Model::Clear ()
+void Model::Clear()
 {
 	if( m_pGeometry )
 	{
@@ -149,16 +149,16 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
     {
 		iLineNum++;
 
-        if (!strncmp (sLine, "//", 2))
+        if( !strncmp (sLine, "//", 2) )
             continue;
 
         int nFrame;
-        if (sscanf (sLine, "Frames: %d", &nFrame) == 1)
+        if( sscanf(sLine, "Frames: %d", &nFrame) == 1 )
         {
 			// ignore
 			// m_pModel->nTotalFrames = nFrame;
         }
-        if (sscanf (sLine, "Frame: %d", &nFrame) == 1)
+        if( sscanf(sLine, "Frame: %d", &nFrame) == 1 )
         {
 			// ignore
 			// m_pModel->nFrame = nFrame;
@@ -169,20 +169,20 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
         // materials
         //
         int nNumMaterials = 0;
-        if (sscanf (sLine, "Materials: %d", &nNumMaterials) == 1)
+        if( sscanf(sLine, "Materials: %d", &nNumMaterials) == 1 )
         {
             m_Materials.resize( nNumMaterials );
       
             char szName[256];
 
-            for (int i = 0; i < nNumMaterials; i++)
+            for( int i = 0; i < nNumMaterials; i++ )
             {
 				msMaterial& Material = m_Materials[i];
 
                 // name
 			    if( f.GetLine( sLine ) <= 0 )
 					THROW;
-                if (sscanf (sLine, "\"%[^\"]\"", szName) != 1)
+                if( sscanf(sLine, "\"%[^\"]\"", szName) != 1 )
 					THROW;
                 Material.sName = szName;
 
@@ -190,7 +190,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 			    if( f.GetLine( sLine ) <= 0 )
 					THROW;
                 RageVector4 Ambient;
-                if (sscanf (sLine, "%f %f %f %f", &Ambient[0], &Ambient[1], &Ambient[2], &Ambient[3]) != 4)
+                if( sscanf(sLine, "%f %f %f %f", &Ambient[0], &Ambient[1], &Ambient[2], &Ambient[3]) != 4 )
 					THROW;
                 memcpy( &Material.Ambient, &Ambient, sizeof(Material.Ambient) );
 
@@ -198,7 +198,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 			    if( f.GetLine( sLine ) <= 0 )
 					THROW;
                 RageVector4 Diffuse;
-                if (sscanf (sLine, "%f %f %f %f", &Diffuse[0], &Diffuse[1], &Diffuse[2], &Diffuse[3]) != 4)
+                if( sscanf(sLine, "%f %f %f %f", &Diffuse[0], &Diffuse[1], &Diffuse[2], &Diffuse[3]) != 4 )
 					THROW;
                 memcpy( &Material.Diffuse, &Diffuse, sizeof(Material.Diffuse) );
 
@@ -206,7 +206,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 			    if( f.GetLine( sLine ) <= 0 )
 					THROW;
                 RageVector4 Specular;
-                if (sscanf (sLine, "%f %f %f %f", &Specular[0], &Specular[1], &Specular[2], &Specular[3]) != 4)
+                if( sscanf(sLine, "%f %f %f %f", &Specular[0], &Specular[1], &Specular[2], &Specular[3]) != 4 )
 					THROW;
                 memcpy( &Material.Specular, &Specular, sizeof(Material.Specular) );
 
@@ -214,7 +214,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 			    if( f.GetLine( sLine ) <= 0 )
 					THROW;
                 RageVector4 Emissive;
-                if (sscanf (sLine, "%f %f %f %f", &Emissive[0], &Emissive[1], &Emissive[2], &Emissive[3]) != 4)
+                if( sscanf (sLine, "%f %f %f %f", &Emissive[0], &Emissive[1], &Emissive[2], &Emissive[3]) != 4 )
 					THROW;
                 memcpy( &Material.Emissive, &Emissive, sizeof(Material.Emissive) );
 
@@ -223,7 +223,7 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 					THROW;
 				char *p;
                 float fShininess = strtof( sLine, &p );
-                if ( p == sLine )
+                if( p == sLine )
 					THROW;
                 Material.fShininess = fShininess;
 
@@ -231,15 +231,15 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
 			    if( f.GetLine( sLine ) <= 0 )
 					THROW;
                 float fTransparency = strtof( sLine, &p );
-                if ( p == sLine )
+                if( p == sLine )
 					THROW;
                 Material.fTransparency = fTransparency;
 
                 // diffuse texture
 			    if( f.GetLine( sLine ) <= 0 )
 					THROW;
-                strcpy (szName, "");
-                sscanf (sLine, "\"%[^\"]\"", szName);
+                strcpy( szName, "" );
+                sscanf( sLine, "\"%[^\"]\"", szName );
                 CString sDiffuseTexture = szName;
 
 				if( sDiffuseTexture != "" )
@@ -259,8 +259,8 @@ void Model::LoadMaterialsFromMilkshapeAscii( CString sPath )
                 // alpha texture
 			    if( f.GetLine( sLine ) <= 0 )
 					THROW;
-                strcpy (szName, "");
-                sscanf (sLine, "\"%[^\"]\"", szName);
+                strcpy( szName, "" );
+                sscanf( sLine, "\"%[^\"]\"", szName );
 				CString sAlphaTexture = szName;
 
 				if( sAlphaTexture != "" )
