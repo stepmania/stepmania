@@ -10,13 +10,13 @@
 #include "RageLog.h"
 #include "song.h"
 #include "GameState.h"
-#include "RageTextureManager.h"
 #include "Course.h"
 #include "XmlFile.h"
 #include "FontCharAliases.h"
 #include "LuaManager.h"
 #include "MessageManager.h"
 #include "Foreach.h"
+#include "Banner.h"
 
 #include "arch/Dialog/Dialog.h"
 
@@ -178,7 +178,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 	{
 		if( sFile == "" )
 		{
-			CString sError = ssprintf( "The actor file in '%s' is as a blank, invalid File attribute \"%s\"",
+			CString sError = ssprintf( "The actor file in '%s' has a blank, invalid File attribute \"%s\"",
 				sDir.c_str(), sClass.c_str() );
 			RageException::Throw( sError );
 		}
@@ -221,36 +221,17 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 	}
 	else if( sClass == "SongBanner" )
 	{
-		Song *pSong = GAMESTATE->m_pCurSong;
-		if( pSong && pSong->HasBanner() )
-			sFile = pSong->GetBannerPath();
-		else
-			sFile = THEME->GetPathG("Common","fallback banner");
-
-		TEXTUREMAN->DisableOddDimensionWarning();
-		/* Always load banners with BannerTex.  It sets texture properties;
-		 * if we load a background without setting those properties, we'll end up
-		 * with duplicates. */
-		Sprite* pSprite = new Sprite;
-		pSprite->Load( Sprite::SongBannerTexture(sFile) );
-	 	pSprite->LoadFromNode( sDir, pNode );
-		TEXTUREMAN->EnableOddDimensionWarning();
-		pReturn = pSprite;
+		Banner *pBanner = new Banner;
+		pBanner->LoadFromSong( GAMESTATE->m_pCurSong );
+	 	pBanner->LoadFromNode( sDir, pNode );
+		pReturn = pBanner;
 	}
 	else if( sClass == "CourseBanner" )
 	{
-		Course *pCourse = GAMESTATE->m_pCurCourse;
-		if( pCourse && pCourse->HasBanner() )
-			sFile = pCourse->m_sBannerPath;
-		else
-			sFile = THEME->GetPathG("Common","fallback banner");
-
-		TEXTUREMAN->DisableOddDimensionWarning();
-		Sprite* pSprite = new Sprite;
-		pSprite->Load( Sprite::SongBannerTexture(sFile) );
-	 	pSprite->LoadFromNode( sDir, pNode );
-		TEXTUREMAN->EnableOddDimensionWarning();
-		pReturn = pSprite;
+		Banner *pBanner = new Banner;
+		pBanner->LoadFromCourse( GAMESTATE->m_pCurCourse );
+	 	pBanner->LoadFromNode( sDir, pNode );
+		pReturn = pBanner;
 	}
 	else // sClass is empty or garbage (e.g. "1" // 0==Sprite")
 	{
