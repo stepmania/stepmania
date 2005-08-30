@@ -47,7 +47,7 @@ enum EditButton
 	/* These are modifiers to EDIT_BUTTON_COLUMN_*. */
 	EDIT_BUTTON_RIGHT_SIDE,
 	EDIT_BUTTON_LAY_MINE_OR_ROLL,
-	EDIT_BUTTON_LAY_ATTACK,
+	EDIT_BUTTON_LAY_TAP_ATTACK,
 	EDIT_BUTTON_REMOVE_NOTE,
 
 	EDIT_BUTTON_SCROLL_UP_LINE,
@@ -77,6 +77,7 @@ enum EditButton
 	EDIT_BUTTON_OPEN_BGCHANGE_LAYER1_MENU,
 	EDIT_BUTTON_OPEN_BGCHANGE_LAYER2_MENU,
 	EDIT_BUTTON_OPEN_COURSE_MENU,
+	EDIT_BUTTON_OPEN_COURSE_ATTACK_MENU,
 	EDIT_BUTTON_OPEN_INPUT_HELP,
 
 	EDIT_BUTTON_BAKE_RANDOM_FROM_SONG_GROUP,
@@ -415,6 +416,13 @@ public:
 
 	void HandleBGChangeChoice( BGChangeChoice c, const vector<int> &iAnswers );
 
+	enum CourseAttackChoice {
+		duration,
+		set_mods,
+		remove,
+		NUM_CourseAttackChoice
+	};
+
 	void InitEditMappings();
 	bool DeviceToEdit( DeviceInput DeviceI, EditButton &button ) const;
 	bool EditToDevice( EditButton button, int iSlotNum, DeviceInput &DeviceI ) const;
@@ -434,7 +442,8 @@ public:
 	ScreenMiniMenu *m_pStepsInformation;
 	ScreenMiniMenu *m_pSongInformation;
 	ScreenMiniMenu *m_pBackgroundChangeMenu;
-	ScreenMiniMenu *m_pInsertAttackMenu;
+	ScreenMiniMenu *m_pInsertTapAttackMenu;
+	ScreenMiniMenu *m_pInsertCourseAttackMenu;
 	ScreenMiniMenu *m_pCourseModeMenu;
 	Screen *m_pScreenOptions;
 };
