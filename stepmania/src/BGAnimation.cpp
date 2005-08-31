@@ -17,11 +17,6 @@ BGAnimation::BGAnimation()
 
 BGAnimation::~BGAnimation()
 {
-	Unload();
-}
-
-void BGAnimation::Unload()
-{
     DeleteAllChildren();
 }
 
@@ -106,7 +101,7 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& i
 
 void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
 {
-	Unload();
+	DeleteAllChildren();
 
 	if( _sAniDir.empty() )
 		 return;

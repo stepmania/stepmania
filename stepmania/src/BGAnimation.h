@@ -16,8 +16,6 @@ public:
 	BGAnimation();
 	virtual ~BGAnimation();
 
-	void Unload();
-
 	void LoadFromAniDir( const CString &sAniDir, bool bGeneric=true );
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
