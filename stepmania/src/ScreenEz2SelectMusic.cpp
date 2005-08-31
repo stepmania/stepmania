@@ -677,7 +677,8 @@ void ScreenEz2SelectMusic::AfterNotesChange( PlayerNumber pn )
 	if( pSteps != NULL && pn == GAMESTATE->m_MasterPlayerNumber )
 	{
 		m_PumpDifficultyRating.SetText(ssprintf("Lv.%d",pSteps->GetMeter()));
-		m_PumpDifficultyRating.SetDiffuse(  SONGMAN->GetDifficultyColor(pSteps->GetDifficulty()) );
+		// XXX
+//		m_PumpDifficultyRating.SetDiffuse(  SONGMAN->GetDifficultyColor(pSteps->GetDifficulty()) );
 		m_DifficultyRating.SetDifficulty(pSteps->GetMeter());
 	}
 
