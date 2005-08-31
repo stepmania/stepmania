@@ -40,12 +40,6 @@ SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our progr
 const CString SONGS_DIR		= "Songs/";
 const CString COURSES_DIR	= "Courses/";
 
-static const ThemeMetric<RageColor> BEGINNER_COLOR		("SongManager","BeginnerColor");
-static const ThemeMetric<RageColor> EASY_COLOR			("SongManager","EasyColor");
-static const ThemeMetric<RageColor> MEDIUM_COLOR		("SongManager","MediumColor");
-static const ThemeMetric<RageColor> HARD_COLOR			("SongManager","HardColor");
-static const ThemeMetric<RageColor> CHALLENGE_COLOR		("SongManager","ChallengeColor");
-static const ThemeMetric<RageColor> EDIT_COLOR			("SongManager","EditColor");
 static const ThemeMetric<RageColor> EXTRA_COLOR			("SongManager","ExtraColor");
 static const ThemeMetric<int>		EXTRA_COLOR_METER	("SongManager","ExtraColorMeter");
 
@@ -427,20 +421,6 @@ RageColor SongManager::GetCourseGroupColor( const CString &sCourseGroup )
 RageColor SongManager::GetCourseColor( const Course* pCourse )
 {
 	return GetCourseGroupColor( pCourse->m_sGroupName );
-}
-
-RageColor SongManager::GetDifficultyColor( Difficulty dc ) const
-{
-	switch( dc )
-	{
-	case DIFFICULTY_BEGINNER:	return (RageColor)BEGINNER_COLOR;
-	case DIFFICULTY_EASY:		return (RageColor)EASY_COLOR;
-	case DIFFICULTY_MEDIUM:		return (RageColor)MEDIUM_COLOR;
-	case DIFFICULTY_HARD:		return (RageColor)HARD_COLOR;
-	case DIFFICULTY_CHALLENGE:	return (RageColor)CHALLENGE_COLOR;
-	case DIFFICULTY_EDIT:		return (RageColor)EDIT_COLOR;
-	default:	ASSERT(0);		return (RageColor)EDIT_COLOR;
-	}
 }
 
 static void GetSongsFromVector( const vector<Song*> &Songs, vector<Song*> &AddTo, CString sGroupName, int iMaxStages )

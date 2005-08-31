@@ -61,7 +61,6 @@ public:
 	bool DoesSongGroupExist( CString sSongGroup );
 	RageColor GetSongGroupColor( const CString &sSongGroupName );
 	RageColor GetSongColor( const Song* pSong );
-	RageColor GetDifficultyColor( Difficulty dc ) const;
 
 	CString GetCourseGroupBannerPath( const CString &sCourseGroup );
 	void GetCourseGroupNames( CStringArray &AddTo );
