@@ -556,7 +556,7 @@ void ScreenEvaluation::Init()
 			{
 				m_textJudgeNumbers[l][p].LoadFromFont( THEME->GetPathF(m_sName, "judge") );
 				m_textJudgeNumbers[l][p].SetShadowLength( 0 );
-				m_textJudgeNumbers[l][p].SetDiffuse( PLAYER_COLOR.GetValue(p) );
+				m_textJudgeNumbers[l][p].RunCommands( PLAYER_COLOR.GetValue(p) );
 				m_textJudgeNumbers[l][p].SetName( ssprintf("%sNumberP%d",JUDGE_STRING[l],p+1) );
 				SET_XY_AND_ON_COMMAND( m_textJudgeNumbers[l][p] );
 				this->AddChild( &m_textJudgeNumbers[l][p] );
@@ -597,7 +597,7 @@ void ScreenEvaluation::Init()
 		FOREACH_EnabledPlayer( p )
 		{
 			m_textStatsText[l][p].LoadFromFont( THEME->GetPathF(m_sName,"stats") );
-			m_textStatsText[l][p].SetDiffuse( PLAYER_COLOR.GetValue(p) );
+			m_textStatsText[l][p].RunCommands( PLAYER_COLOR.GetValue(p) );
 			m_textStatsText[l][p].SetName( ssprintf("%sTextP%d",STATS_STRING[l],p+1) );
 			SET_XY_AND_ON_COMMAND( m_textStatsText[l][p] );
 			this->AddChild( &m_textStatsText[l][p] );
@@ -628,7 +628,7 @@ void ScreenEvaluation::Init()
 		{
 			m_textScore[p].LoadFromFont( THEME->GetPathF(m_sName, "score") );
 			m_textScore[p].SetShadowLength( 0 );
-			m_textScore[p].SetDiffuse( PLAYER_COLOR.GetValue(p) );
+			m_textScore[p].RunCommands( PLAYER_COLOR.GetValue(p) );
 			m_textScore[p].SetName( ssprintf("ScoreNumberP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_textScore[p] );
 			m_textScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, m_StageStats.m_player[p].iScore) );
@@ -653,7 +653,7 @@ void ScreenEvaluation::Init()
 
 			m_textTotalScore[p].LoadFromFont( THEME->GetPathF(m_sName, "totalscore") );
 			m_textTotalScore[p].SetShadowLength( 0 );
-			m_textTotalScore[p].SetDiffuse( PLAYER_COLOR.GetValue(p) );
+			m_textTotalScore[p].RunCommands( PLAYER_COLOR.GetValue(p) );
 			m_textTotalScore[p].SetName( ssprintf("TotalScoreNumberP%d",p+1) );
 			m_textTotalScore[p].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS+2, iTotalScore) );
 			SET_XY_AND_ON_COMMAND( m_textTotalScore[p] );
@@ -676,7 +676,7 @@ void ScreenEvaluation::Init()
 		{
 			m_textTime[p].LoadFromFont( THEME->GetPathF(m_sName, "time") );
 			m_textTime[p].SetShadowLength( 0 );
-			m_textTime[p].SetDiffuse( PLAYER_COLOR.GetValue(p) );
+			m_textTime[p].RunCommands( PLAYER_COLOR.GetValue(p) );
 			m_textTime[p].SetName( ssprintf("TimeNumberP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_textTime[p] );
 			m_textTime[p].SetText( SecondsToMMSSMsMs(m_StageStats.m_player[p].fAliveSeconds) );
