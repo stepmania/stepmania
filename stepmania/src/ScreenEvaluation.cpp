@@ -77,7 +77,6 @@ static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 
 AutoScreenMessage( SM_PlayCheer )
 AutoScreenMessage( SM_AddBonus )
-AutoScreenMessage( SM_PlayPassSound )
 
 
 REGISTER_SCREEN_CLASS( ScreenEvaluation );
@@ -262,17 +261,7 @@ void ScreenEvaluation::Init()
  
 
 	//
-	// load pass/fail sound
-	//
-	if( m_bFailed )
- 		m_sndPassFail.Load( THEME->GetPathS(m_sName, "failed") );
-	else
-		m_sndPassFail.Load( THEME->GetPathS(m_sName, "passed") );
-	this->PostScreenMessage( SM_PlayPassSound, 0 );
-	this->PostScreenMessage( SM_PlayPassSound, m_bFailed? FAILED_SOUND_TIME:PASSED_SOUND_TIME );
-
-	//
-	// load other sounds
+	// load sounds
 	//
 	m_soundStart.Load( THEME->GetPathS(m_sName,"start") );
 
@@ -1216,15 +1205,6 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_MenuTimer )
 	{
 		EndScreen();
-	}
-	else if( SM == SM_PlayPassSound )
-	{
-		m_sndPassFail.Play();
-	}
-	else if( SM == SM_GoToNextScreen )
-	{
-		if(	m_sndPassFail.IsPlaying() )
-			m_sndPassFail.Stop();
 	}
 	else if( SM == SM_PlayCheer )
 	{

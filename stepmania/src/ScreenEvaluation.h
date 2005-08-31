@@ -120,9 +120,6 @@ protected:
 
 	RageSound	m_soundStart;	// sound played if the player passes or fails
 
-	// sound effects for other gametypes
-	RageSound	m_sndPassFail;	// sound played if the player passes or fails
-
 	HighScore m_HighScore[NUM_PLAYERS];
 	bool m_bSavedScreenshot[NUM_PLAYERS];
 };
