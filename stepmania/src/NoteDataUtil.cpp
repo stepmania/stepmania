@@ -1486,8 +1486,8 @@ void NoteDataUtil::Stomp( NoteData &inout, StepsType st, int iStartIndex, int iE
 			{
 				// Look to see if there is enough empty space on either side of the note
 				// to turn this into a jump.
-				int iRowWindowBegin = r - BeatToNoteRow(0.5);
-				int iRowWindowEnd = r + BeatToNoteRow(0.5);
+				int iRowWindowBegin = r - BeatToNoteRow(0.5f);
+				int iRowWindowEnd = r + BeatToNoteRow(0.5f);
 
 				bool bTapInMiddle = false;
 				FOREACH_NONEMPTY_ROW_ALL_TRACKS_RANGE( inout, r2, iRowWindowBegin+1, iRowWindowEnd-1 )
