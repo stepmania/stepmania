@@ -133,7 +133,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 		//
 		// use a fan to draw the volume
 		//
-		RageColor color = PLAYER_COLOR.GetValue(p);
+		RageColor color = this->m_pTempState->diffuse[0];
 		color.a = 0.5f;
 		v[0].p = RageVector3( 0, 0, 0 );
 		v[0].c = color;
@@ -166,7 +166,7 @@ void GrooveRadar::GrooveRadarValueMap::DrawPrimitives()
 			const float fY = -RageFastSin(fRotation) * fDistFromCenter;
 
 			v[i].p = RageVector3( fX, fY, 0 );
-			v[i].c = PLAYER_COLOR.GetValue( p );
+			v[i].c = this->m_pTempState->diffuse[0];
 		}
 
 		// TODO: Add this back in.  -Chris
