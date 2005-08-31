@@ -69,8 +69,6 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define PASSED_SOUND_TIME					THEME->GetMetricF(m_sName,"PassedSoundTime")
 #define FAILED_SOUND_TIME					THEME->GetMetricF(m_sName,"FailedSoundTime")
 #define NUM_SEQUENCE_SOUNDS					THEME->GetMetricI(m_sName,"NumSequenceSounds")
-#define SOUNDSEQ_TIME( i )					THEME->GetMetricF(m_sName,ssprintf("SoundSeqTime%d", i+1))
-#define SOUNDSEQ_NAME( i )					THEME->GetMetric (m_sName,ssprintf("SoundSeqName%d", i+1))
 #define MAX_COMBO_NUM_DIGITS				THEME->GetMetricI(m_sName,"MaxComboNumDigits")
 #define PLAYER_OPTIONS_SEPARATOR			THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
 
@@ -266,14 +264,6 @@ void ScreenEvaluation::Init()
 	//
 	// load pass/fail sound
 	//
-	for( int snd=0; snd < NUM_SEQUENCE_SOUNDS; ++snd ) // grab in any sound sequence the user may want to throw onto this screen
-	{
-		EvalSoundSequence temp;
-		temp.fTime = SOUNDSEQ_TIME(snd);
-		temp.sSound.Load( THEME->GetPathToS(SOUNDSEQ_NAME(snd)) );
-		m_SoundSequences.push_back(temp);
-	}
-	
 	if( m_bFailed )
  		m_sndPassFail.Load( THEME->GetPathS(m_sName, "failed") );
 	else
@@ -790,10 +780,6 @@ void ScreenEvaluation::Init()
 
 	this->SortByDrawOrder();
 
-
-	m_timerSoundSequences.SetZero(); // zero the sound sequence timer
-	m_timerSoundSequences.Touch(); // set the timer going :]
-
 	this->PostScreenMessage( SM_AddBonus, 1.5f );
  }
 
@@ -1174,23 +1160,6 @@ void ScreenEvaluation::TweenOursOffScreen()
 			OFF_COMMAND( m_PeakComboAward[p] );
 	}
 	OFF_COMMAND( m_sprTryExtraStage );
-}
-
-void ScreenEvaluation::Update( float fDeltaTime )
-{
-	ScreenWithMenuElements::Update( fDeltaTime );
-
-	for( unsigned snd=0; snd<m_SoundSequences.size(); snd++ )
-	{
-		if(m_SoundSequences[snd].fTime != -1) // already played? skip...
-		{
-			if(m_timerSoundSequences.Ago() > m_SoundSequences[snd].fTime )
-			{
-				m_SoundSequences[snd].fTime = -1; // -1 indicates already started playing
-				m_SoundSequences[snd].sSound.Play();
-			}
-		}
-	}
 }
 
 void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )

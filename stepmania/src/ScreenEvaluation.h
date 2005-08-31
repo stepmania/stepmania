@@ -19,20 +19,12 @@ const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extr
 enum JudgeLine { marvelous, perfect, great, good, boo, miss, ok, max_combo, error, NUM_JUDGE_LINES };
 enum StatsLine { jumps, holds, mines, hands, rolls, NUM_STATS_LINES };
 
-// sound sequences for the evaluation screen
-struct EvalSoundSequence
-{
-	float fTime;
-	RageSound sSound;
-};
-
 class ScreenEvaluation : public ScreenWithMenuElements
 {
 public:
 	enum Type	{ stage, summary, course };
 	ScreenEvaluation( CString sClassName );
 	virtual void Init();
-	virtual void Update( float fDeltaTime );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
@@ -130,8 +122,6 @@ protected:
 
 	// sound effects for other gametypes
 	RageSound	m_sndPassFail;	// sound played if the player passes or fails
-	RageTimer m_timerSoundSequences; // timer used for triggering sounds.
-	vector<EvalSoundSequence> m_SoundSequences; // a sequence of sounds to be played (although they're stored in no particular order!)	
 
 	HighScore m_HighScore[NUM_PLAYERS];
 	bool m_bSavedScreenshot[NUM_PLAYERS];
