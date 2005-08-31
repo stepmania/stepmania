@@ -116,8 +116,8 @@ protected:
 
 	float m_fLastMusicSeconds;
 
-	BGAnimation		m_DangerPlayer[NUM_PLAYERS];
-	BGAnimation		m_DangerAll;
+	AutoActor		m_DangerPlayer[NUM_PLAYERS];
+	AutoActor		m_DangerAll;
 
 	AutoActor		m_DeadPlayer[NUM_PLAYERS];
 	
@@ -196,9 +196,9 @@ void BackgroundImpl::Init()
 		}
 	}
 
-	m_DangerAll.LoadFromAniDir( THEME->GetPathB("ScreenGameplay","danger all") );
+	m_DangerAll.Load( THEME->GetPathB("ScreenGameplay","danger all") );
 	FOREACH_PlayerNumber( p )
-		m_DangerPlayer[p].LoadFromAniDir( THEME->GetPathB("ScreenGameplay",ssprintf("danger p%d",p+1)) );
+		m_DangerPlayer[p].Load( THEME->GetPathB("ScreenGameplay",ssprintf("danger p%d",p+1)) );
 	FOREACH_PlayerNumber( p )
 		m_DeadPlayer[p].Load( THEME->GetPathB("ScreenGameplay",ssprintf("dead p%d",p+1)) );
 
@@ -676,17 +676,17 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	// Re-sort.
 	BackgroundUtil::SortBackgroundChangesArray( mainlayer.m_aBGChanges );
 
-	m_DangerAll.SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
-	m_DangerAll.SetZoomX( fXZoom );
-	m_DangerAll.SetZoomY( fYZoom );	
+	m_DangerAll->SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
+	m_DangerAll->SetZoomX( fXZoom );
+	m_DangerAll->SetZoomY( fYZoom );	
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_DangerPlayer[p].SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
-		m_DangerPlayer[p].SetZoomX( fXZoom );
-		m_DangerPlayer[p].SetZoomY( fYZoom );
-		m_DangerPlayer[p].FinishTweening();
-		m_DangerPlayer[p].PlayCommand( "On" );
+		m_DangerPlayer[p]->SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
+		m_DangerPlayer[p]->SetZoomX( fXZoom );
+		m_DangerPlayer[p]->SetZoomY( fYZoom );
+		m_DangerPlayer[p]->FinishTweening();
+		m_DangerPlayer[p]->PlayCommand( "On" );
 	
 		m_DeadPlayer[p]->SetXY( (float)LEFT_EDGE, (float)TOP_EDGE );
 		m_DeadPlayer[p]->SetZoomX( fXZoom );
@@ -852,13 +852,13 @@ void BackgroundImpl::Update( float fDeltaTime )
 
 	if( IsDangerAllVisible() )
 	{
-		m_DangerAll.Update( fDeltaTime );
+		m_DangerAll->Update( fDeltaTime );
 	}
 
 	FOREACH_PlayerNumber( p )
 	{
 		if( GAMESTATE->IsPlayerInDanger(GAMESTATE->m_pPlayerState[p]) )
-			m_DangerPlayer[p].Update( fDeltaTime );
+			m_DangerPlayer[p]->Update( fDeltaTime );
 			
 		if( GAMESTATE->IsPlayerDead(GAMESTATE->m_pPlayerState[p]) )
 			m_DeadPlayer[p]->Update( fDeltaTime );
@@ -889,7 +889,7 @@ void BackgroundImpl::DrawPrimitives()
 		// Since this only shows when DANGER is visible, it will flash red on it's own accord :)
 		if( m_pDancingCharacters )
 			m_pDancingCharacters->m_bDrawDangerLight = true;
-		m_DangerAll.Draw();
+		m_DangerAll->Draw();
 	}
 	
 	if( !IsDangerAllVisible() || !(bool)DANGER_ALL_IS_OPAQUE ) 
@@ -909,7 +909,7 @@ void BackgroundImpl::DrawPrimitives()
 		FOREACH_PlayerNumber( p )
 		{
 			if( GAMESTATE->IsPlayerInDanger(GAMESTATE->m_pPlayerState[p]) )
-				m_DangerPlayer[p].Draw();
+				m_DangerPlayer[p]->Draw();
 			if( GAMESTATE->IsPlayerDead(GAMESTATE->m_pPlayerState[p]) )
 				m_DeadPlayer[p]->Draw();
 		}
