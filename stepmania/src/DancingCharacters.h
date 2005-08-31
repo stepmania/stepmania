@@ -3,9 +3,9 @@
 
 #include "ActorFrame.h"
 #include "PlayerNumber.h"
-#include "BGAnimation.h"
 #include "ThemeManager.h"
 #include "RageTimer.h"
+#include "AutoActor.h"
 class Model;
 
 enum ANIM_STATES_2D
@@ -49,22 +49,14 @@ protected:
 
 	bool m_bHas2DElements[NUM_PLAYERS];
 	
-	bool m_bHasIdleAnim[NUM_PLAYERS];
-	BGAnimation m_bgIdle[NUM_PLAYERS];
-	bool m_bHasMissAnim[NUM_PLAYERS];
-	BGAnimation m_bgMiss[NUM_PLAYERS];
-	bool m_bHasGoodAnim[NUM_PLAYERS];
-	BGAnimation m_bgGood[NUM_PLAYERS];
-	bool m_bHasGreatAnim[NUM_PLAYERS];
-	BGAnimation m_bgGreat[NUM_PLAYERS];
-	bool m_bHasFeverAnim[NUM_PLAYERS];
-	BGAnimation m_bgFever[NUM_PLAYERS];
-	bool m_bHasFailAnim[NUM_PLAYERS];
-	BGAnimation m_bgFail[NUM_PLAYERS];
-	bool m_bHasWinAnim[NUM_PLAYERS];
-	BGAnimation m_bgWin[NUM_PLAYERS];
-	bool m_bHasWinFeverAnim[NUM_PLAYERS];
-	BGAnimation m_bgWinFever[NUM_PLAYERS];
+	AutoActor m_bgIdle[NUM_PLAYERS];
+	AutoActor m_bgMiss[NUM_PLAYERS];
+	AutoActor m_bgGood[NUM_PLAYERS];
+	AutoActor m_bgGreat[NUM_PLAYERS];
+	AutoActor m_bgFever[NUM_PLAYERS];
+	AutoActor m_bgFail[NUM_PLAYERS];
+	AutoActor m_bgWin[NUM_PLAYERS];
+	AutoActor m_bgWinFever[NUM_PLAYERS];
 	RageTimer m_2DIdleTimer[NUM_PLAYERS];
 
 	int m_i2DAnimState[NUM_PLAYERS];

@@ -38,21 +38,12 @@ const float MODEL_ROTATIONY_TWO_PLAYERS[NUM_PLAYERS] = { -90, 90 };
 DancingCharacters::DancingCharacters()
 {
 	m_bDrawDangerLight = false;
-	memset( m_bHasIdleAnim, 0, sizeof(m_bHasIdleAnim) );
-	memset( m_bHasMissAnim, 0, sizeof(m_bHasMissAnim) );
-	memset( m_bHasGoodAnim, 0, sizeof(m_bHasGoodAnim) );
-	memset( m_bHasGreatAnim, 0, sizeof(m_bHasGreatAnim) );
-	memset( m_bHasFeverAnim, 0, sizeof(m_bHasFeverAnim) );
-	memset( m_bHasWinFeverAnim, 0, sizeof(m_bHasWinFeverAnim) );
-	memset( m_bHasWinAnim, 0, sizeof(m_bHasWinAnim) );
-	memset( m_bHasFailAnim, 0, sizeof(m_bHasFailAnim) );
 
 	FOREACH_PlayerNumber( p )
 	{
 		m_pCharacter[p] = new Model;
 		m_2DIdleTimer[p].SetZero();
 		m_i2DAnimState[p] = AS2D_IDLE; // start on idle state
-		m_bHasIdleAnim[p] = m_bHas2DElements[p] = false;
 		if( !GAMESTATE->IsPlayerEnabled(p) )
 			continue;
 
@@ -66,65 +57,57 @@ DancingCharacters::DancingCharacters()
 		sCurrentAnim = sCharacterDirectory + "2DIdle";
 		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
-			m_bHasIdleAnim[p] = m_bHas2DElements[p] = true;
-			m_bgIdle[p].LoadFromAniDir( sCurrentAnim );
-			m_bgIdle[p].SetXY(DC_X(p),DC_Y(p));
+			m_bgIdle[p].Load( sCurrentAnim );
+			m_bgIdle[p]->SetXY(DC_X(p),DC_Y(p));
 		}	
 
 		sCurrentAnim = sCharacterDirectory + "2DMiss";
 		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
-			m_bHasMissAnim[p] = m_bHas2DElements[p] = true;
-			m_bgMiss[p].LoadFromAniDir( sCurrentAnim );
-			m_bgMiss[p].SetXY(DC_X(p),DC_Y(p));
+			m_bgMiss[p].Load( sCurrentAnim );
+			m_bgMiss[p]->SetXY(DC_X(p),DC_Y(p));
 		}	
 
 		sCurrentAnim = sCharacterDirectory + "2DGood";
 		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
-			m_bHasGoodAnim[p] = m_bHas2DElements[p] = true;
-			m_bgGood[p].LoadFromAniDir( sCurrentAnim );
-			m_bgGood[p].SetXY(DC_X(p),DC_Y(p));
+			m_bgGood[p].Load( sCurrentAnim );
+			m_bgGood[p]->SetXY(DC_X(p),DC_Y(p));
 		}	
 
 		sCurrentAnim = sCharacterDirectory + "2DGreat";
 		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
-			m_bHasGreatAnim[p] = m_bHas2DElements[p] = true;
-			m_bgGreat[p].LoadFromAniDir( sCurrentAnim );
-			m_bgGreat[p].SetXY(DC_X(p),DC_Y(p));
+			m_bgGreat[p].Load( sCurrentAnim );
+			m_bgGreat[p]->SetXY(DC_X(p),DC_Y(p));
 		}	
 
 		sCurrentAnim = sCharacterDirectory + "2DFever";
 		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
-			m_bHasFeverAnim[p] = m_bHas2DElements[p] = true;
-			m_bgFever[p].LoadFromAniDir( sCurrentAnim );
-			m_bgFever[p].SetXY(DC_X(p),DC_Y(p));
+			m_bgFever[p].Load( sCurrentAnim );
+			m_bgFever[p]->SetXY(DC_X(p),DC_Y(p));
 		}
 
 		sCurrentAnim = sCharacterDirectory + "2DFail";
 		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
-			m_bHasFailAnim[p] = m_bHas2DElements[p] = true;
-			m_bgFail[p].LoadFromAniDir( sCurrentAnim );
-			m_bgFail[p].SetXY(DC_X(p),DC_Y(p));
+			m_bgFail[p].Load( sCurrentAnim );
+			m_bgFail[p]->SetXY(DC_X(p),DC_Y(p));
 		}
 
 		sCurrentAnim = sCharacterDirectory + "2DWin";
 		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
-			m_bHasWinAnim[p] = m_bHas2DElements[p] = true;
-			m_bgWin[p].LoadFromAniDir( sCurrentAnim );
-			m_bgWin[p].SetXY(DC_X(p),DC_Y(p));
+			m_bgWin[p].Load( sCurrentAnim );
+			m_bgWin[p]->SetXY(DC_X(p),DC_Y(p));
 		}
 
 		sCurrentAnim = sCharacterDirectory + "2DWinFever";
 		if( DoesFileExist(sCurrentAnim + "/BGAnimation.ini") ) // check 2D Idle BGAnim exists
 		{
-			m_bHasWinFeverAnim[p] = m_bHas2DElements[p] = true;
-			m_bgWinFever[p].LoadFromAniDir( sCurrentAnim );
-			m_bgWinFever[p].SetXY(DC_X(p),DC_Y(p));
+			m_bgWinFever[p].Load( sCurrentAnim );
+			m_bgWinFever[p]->SetXY(DC_X(p),DC_Y(p));
 		}
 
 		if( pChar->GetModelPath().empty() )
@@ -266,24 +249,24 @@ void DancingCharacters::Update( float fDelta )
 	// update any 2D stuff
 	FOREACH_PlayerNumber( p )
 	{
-		if(m_bHasIdleAnim[p])
+		if( m_bgIdle[p].IsLoaded() )
 		{
-			if(m_bHasIdleAnim[p] && m_i2DAnimState[p] == AS2D_IDLE)
-				m_bgIdle[p].Update(fDelta);
-			if(m_bHasMissAnim[p] && m_i2DAnimState[p] == AS2D_MISS)
-				m_bgMiss[p].Update(fDelta);
-			if(m_bHasGoodAnim[p] && m_i2DAnimState[p] == AS2D_GOOD)
-				m_bgGood[p].Update(fDelta);
-			if(m_bHasGreatAnim[p] && m_i2DAnimState[p] == AS2D_GREAT)
-				m_bgGreat[p].Update(fDelta);
-			if(m_bHasFeverAnim[p] && m_i2DAnimState[p] == AS2D_FEVER)
-				m_bgFever[p].Update(fDelta);
-			if(m_bHasFailAnim[p] && m_i2DAnimState[p] == AS2D_FAIL)
-				m_bgFail[p].Update(fDelta);
-			if(m_bHasWinAnim[p] && m_i2DAnimState[p] == AS2D_WIN)
-				m_bgWin[p].Update(fDelta);
-			if(m_bHasWinFeverAnim[p] && m_i2DAnimState[p] == AS2D_WINFEVER)
-				m_bgWinFever[p].Update(fDelta);
+			if( m_bgIdle[p].IsLoaded() && m_i2DAnimState[p] == AS2D_IDLE )
+				m_bgIdle[p]->Update( fDelta );
+			if( m_bgMiss[p].IsLoaded() && m_i2DAnimState[p] == AS2D_MISS )
+				m_bgMiss[p]->Update( fDelta );
+			if( m_bgGood[p].IsLoaded() && m_i2DAnimState[p] == AS2D_GOOD )
+				m_bgGood[p]->Update( fDelta );
+			if( m_bgGreat[p].IsLoaded() && m_i2DAnimState[p] == AS2D_GREAT )
+				m_bgGreat[p]->Update( fDelta );
+			if( m_bgFever[p].IsLoaded() && m_i2DAnimState[p] == AS2D_FEVER )
+				m_bgFever[p]->Update( fDelta );
+			if( m_bgFail[p].IsLoaded() && m_i2DAnimState[p] == AS2D_FAIL )
+				m_bgFail[p]->Update( fDelta );
+			if( m_bgWin[p].IsLoaded() && m_i2DAnimState[p] == AS2D_WIN )
+				m_bgWin[p]->Update( fDelta );
+			if( m_bgWinFever[p].IsLoaded() && m_i2DAnimState[p] == AS2D_WINFEVER )
+				m_bgWinFever[p]->Update(fDelta);
 
 			if(m_i2DAnimState[p] != AS2D_IDLE) // if we're not in idle state, start a timer to return us to idle
 			{
@@ -368,22 +351,22 @@ void DancingCharacters::DrawPrimitives()
 	// now draw any potential 2D stuff
 	FOREACH_PlayerNumber( p )
 	{
-		if(m_bHasIdleAnim[p] && m_i2DAnimState[p] == AS2D_IDLE)
-			m_bgIdle[p].Draw();
-		if(m_bHasMissAnim[p] && m_i2DAnimState[p] == AS2D_MISS)
-			m_bgMiss[p].Draw();
-		if(m_bHasGoodAnim[p] && m_i2DAnimState[p] == AS2D_GOOD)
-			m_bgGood[p].Draw();
-		if(m_bHasGreatAnim[p] && m_i2DAnimState[p] == AS2D_GREAT)
-			m_bgGreat[p].Draw();
-		if(m_bHasFeverAnim[p] && m_i2DAnimState[p] == AS2D_FEVER)
-			m_bgFever[p].Draw();
-		if(m_bHasWinFeverAnim[p] && m_i2DAnimState[p] == AS2D_WINFEVER)
-			m_bgWinFever[p].Draw();
-		if(m_bHasWinAnim[p] && m_i2DAnimState[p] == AS2D_WIN)
-			m_bgWin[p].Draw();
-		if(m_bHasFailAnim[p] && m_i2DAnimState[p] == AS2D_FAIL)
-			m_bgFail[p].Draw();
+		if(m_bgIdle[p].IsLoaded() && m_i2DAnimState[p] == AS2D_IDLE)
+			m_bgIdle[p]->Draw();
+		if(m_bgMiss[p].IsLoaded() && m_i2DAnimState[p] == AS2D_MISS)
+			m_bgMiss[p]->Draw();
+		if(m_bgGood[p].IsLoaded() && m_i2DAnimState[p] == AS2D_GOOD)
+			m_bgGood[p]->Draw();
+		if(m_bgGreat[p].IsLoaded() && m_i2DAnimState[p] == AS2D_GREAT)
+			m_bgGreat[p]->Draw();
+		if(m_bgFever[p].IsLoaded() && m_i2DAnimState[p] == AS2D_FEVER)
+			m_bgFever[p]->Draw();
+		if(m_bgWinFever[p].IsLoaded() && m_i2DAnimState[p] == AS2D_WINFEVER)
+			m_bgWinFever[p]->Draw();
+		if(m_bgWin[p].IsLoaded() && m_i2DAnimState[p] == AS2D_WIN)
+			m_bgWin[p]->Draw();
+		if(m_bgFail[p].IsLoaded() && m_i2DAnimState[p] == AS2D_FAIL)
+			m_bgFail[p]->Draw();
 	}
 }
 
