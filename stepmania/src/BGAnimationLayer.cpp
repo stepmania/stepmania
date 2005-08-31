@@ -375,7 +375,7 @@ void BGAnimationLayer::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 	{
 		CString expr;
-		if( pNode->GetAttrValue("Cond",expr) || pNode->GetAttrValue("Condition",expr) )
+		if( pNode->GetAttrValue("Condition", expr) )
 		{
 			if( !LuaHelpers::RunExpressionB(expr) )
 				return;
