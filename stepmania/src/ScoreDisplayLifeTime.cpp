@@ -33,10 +33,10 @@ void ScoreDisplayLifeTime::Init( const PlayerState* pPlayerState, const PlayerSt
 	ActorUtil::OnCommand( m_sprFrame, sType );
 
 	m_textTimeRemaining.LoadFromFont( THEME->GetPathF(sType, "TimeRemaining") );
-	m_textTimeRemaining.SetDiffuse( PLAYER_COLOR.GetValue(pn) );
 	m_textTimeRemaining.SetName( "TimeRemaining" );
 	this->AddChild( &m_textTimeRemaining );
 	ActorUtil::OnCommand( m_textTimeRemaining, sType );
+	m_textTimeRemaining.RunCommands( PLAYER_COLOR.GetValue(pn) );
 	
 	m_textDeltaSeconds.LoadFromFont( THEME->GetPathF(sType,"DeltaSeconds") );
 	m_textDeltaSeconds.SetName( "DeltaSeconds" );

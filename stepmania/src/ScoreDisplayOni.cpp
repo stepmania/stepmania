@@ -31,7 +31,7 @@ void ScoreDisplayOni::Init( const PlayerState* pPlayerState, const PlayerStageSt
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 
-	m_text.SetDiffuse( PLAYER_COLOR.GetValue(pn) );
+	m_text.RunCommands( PLAYER_COLOR.GetValue(pn) );
 }
 
 

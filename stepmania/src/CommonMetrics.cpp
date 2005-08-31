@@ -7,13 +7,13 @@
 #include "GameState.h"
 
 
-CString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%d",int(p+1)); }
+static CString PLAYER_COLOR_NAME( size_t p ) { return ssprintf("ColorP%dCommand",int(p+1)); }
 
 ThemeMetric<CString>	INITIAL_SCREEN						("Common","InitialScreen", true); // always reevaluate metric
 ThemeMetric<CString>	FIRST_ATTRACT_SCREEN				("Common","FirstAttractScreen");
 ThemeMetric<CString>	DEFAULT_MODIFIERS					("Common","DefaultModifiers" );
 ThemeMetric<CString>	DEFAULT_CPU_MODIFIERS				("Common","DefaultCpuModifiers" );
-ThemeMetric1D<RageColor> PLAYER_COLOR						("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);
+ThemeMetric1D<apActorCommands> PLAYER_COLOR						("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);
 ThemeMetric<CString>	WINDOW_TITLE						("Common","WindowTitle");
 ThemeMetric<int>		MAX_COURSE_ENTRIES_BEFORE_VARIOUS	("Common","MaxCourseEntriesBeforeShowVarious");
 ThemeMetric<float>		TICK_EARLY_SECONDS					("ScreenGameplay","TickEarlySeconds");
