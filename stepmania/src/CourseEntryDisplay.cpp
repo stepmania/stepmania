@@ -74,13 +74,14 @@ void CourseEntryDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
 	Load();
 }
 
-void CourseEntryDisplay::SetDifficulty( PlayerNumber pn, const CString &text, RageColor c )
+void CourseEntryDisplay::SetDifficulty( PlayerNumber pn, const CString &text, Difficulty dc )
 {
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;	// skip
 	if( !SEPARATE_COURSE_METERS && pn != GAMESTATE->m_MasterPlayerNumber )
 		return;
 
+	RageColor c = SONGMAN->GetDifficultyColor( dc );
 	m_textDifficultyNumber[pn].SetText( text );
 	m_textDifficultyNumber[pn].SetDiffuse( c );
 
@@ -140,7 +141,7 @@ void CourseEntryDisplay::SetFromGameState( int iCourseEntryIndex )
 			if( dc == DIFFICULTY_INVALID )
 				dc = DIFFICULTY_EDIT;
 			
-			SetDifficulty( pn, s, SONGMAN->GetDifficultyColor(dc) );
+			SetDifficulty( pn, s, dc );
 		}
 
 		m_TextBanner.LoadFromString( "??????????", "??????????", "", "", "", "" );
@@ -153,8 +154,7 @@ void CourseEntryDisplay::SetFromGameState( int iCourseEntryIndex )
 			const TrailEntry *te = tes[pn];
 			if( te == NULL )
 				continue;
-			RageColor colorNotes = SONGMAN->GetDifficultyColor( te->pSteps->GetDifficulty() );
-			SetDifficulty( pn, ssprintf("%d", te->pSteps->GetMeter()), colorNotes );
+			SetDifficulty( pn, ssprintf("%d", te->pSteps->GetMeter()), te->pSteps->GetDifficulty() );
 		}
 
 		m_TextBanner.LoadFromSong( te->pSong );

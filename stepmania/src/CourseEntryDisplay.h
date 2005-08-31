@@ -10,6 +10,7 @@
 #include "PlayerNumber.h"
 struct TrailEntry;
 #include "ThemeMetric.h"
+#include "Difficulty.h"
 
 class CourseEntryDisplay : public ActorFrame
 {
@@ -26,7 +27,7 @@ public:
 	void PushSelf( lua_State *L );
 
 private:
-	void SetDifficulty( PlayerNumber pn, const CString &text, RageColor c );
+	void SetDifficulty( PlayerNumber pn, const CString &text, Difficulty dc );
 
 	Sprite		m_sprFrame;
 	BitmapText	m_textNumber;
