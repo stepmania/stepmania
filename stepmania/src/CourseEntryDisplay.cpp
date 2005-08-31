@@ -12,6 +12,7 @@
 #include "GameState.h"
 #include "Style.h"
 #include "ActorUtil.h"
+#include "LuaBinding.h"
 
 REGISTER_ACTOR_CLASS( CourseEntryDisplay )
 
@@ -81,12 +82,18 @@ void CourseEntryDisplay::SetDifficulty( PlayerNumber pn, const CString &text, Di
 	if( !SEPARATE_COURSE_METERS && pn != GAMESTATE->m_MasterPlayerNumber )
 		return;
 
-	RageColor c = SONGMAN->GetDifficultyColor( dc );
+	Lua *L = LUA->Get();
+	LuaHelpers::Push( dc, L );
+	m_textDifficultyNumber[pn].m_pLuaInstance->Set( L, "Difficulty" );
+	LuaHelpers::Push( dc, L );
+	m_textFoot[pn].m_pLuaInstance->Set( L, "Difficulty" );
+	LUA->Release(L);
+
 	m_textDifficultyNumber[pn].SetText( text );
-	m_textDifficultyNumber[pn].SetDiffuse( c );
+	m_textDifficultyNumber[pn].PlayCommand( "DifficultyChanged" );
 
 	m_textFoot[pn].SetText( "1" );
-	m_textFoot[pn].SetDiffuse( c );
+	m_textFoot[pn].PlayCommand( "DifficultyChanged" );
 }
 
 void CourseEntryDisplay::SetFromGameState( int iCourseEntryIndex )

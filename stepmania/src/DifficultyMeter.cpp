@@ -11,6 +11,7 @@
 #include "ActorUtil.h"
 #include "Style.h"
 #include "XmlFile.h"
+#include "LuaBinding.h"
 
 REGISTER_ACTOR_CLASS( DifficultyMeter );
 
@@ -51,7 +52,6 @@ void DifficultyMeter::Load( const CString &sType )
 	 * DifficultyMeters on screen at once, with different names. */
 	m_iNumFeetInMeter.Load(sType,"NumFeetInMeter");
 	m_iMaxFeetInMeter.Load(sType,"MaxFeetInMeter");
-	m_iGlowIfMeterGreaterThan.Load(sType,"GlowIfMeterGreaterThan");
 	m_bShowFeet.Load(sType,"ShowFeet");
 	m_bShowDifficulty.Load(sType,"ShowDifficulty");
 	m_bShowMeter.Load(sType,"ShowMeter");
@@ -204,14 +204,15 @@ void DifficultyMeter::SetInternal( int iMeter, Difficulty dc, const CString &sDi
 		int iNumOff = max( 0, m_iNumFeetInMeter-iNumOn );
 		sNewText.insert( sNewText.end(), iNumOff, off );
 
-		m_textFeet.SetText( sNewText );
-		if( m_bAutoColorFeet )
-			m_textFeet.SetDiffuse( SONGMAN->GetDifficultyColor(dc) );
+		Lua *L = LUA->Get();
+		LuaHelpers::Push( dc, L );
+		m_textFeet.m_pLuaInstance->Set( L, "Difficulty" );
+		LuaHelpers::Push( iMeter, L );
+		m_textFeet.m_pLuaInstance->Set( L, "Meter" );
+		LUA->Release(L);
+		m_textFeet.PlayCommand( "DifficultyChanged" );
 
-		if( iMeter > m_iGlowIfMeterGreaterThan )
-			m_textFeet.SetEffectGlowShift();
-		else
-			m_textFeet.StopEffect();
+		m_textFeet.SetText( sNewText );
 	}
 
 	if( m_bShowMeter )

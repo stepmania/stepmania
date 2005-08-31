@@ -46,7 +46,6 @@ private:
 
 	ThemeMetric<int>	m_iNumFeetInMeter;
 	ThemeMetric<int>	m_iMaxFeetInMeter;
-	ThemeMetric<int>	m_iGlowIfMeterGreaterThan;
 	ThemeMetric<bool>	m_bShowFeet;
 	ThemeMetric<bool>	m_bShowDifficulty;
 	ThemeMetric<bool>	m_bShowMeter;
