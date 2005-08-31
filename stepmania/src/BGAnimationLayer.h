@@ -12,7 +12,7 @@ struct XNode;
 class BGAnimationLayer : public ActorFrame
 {
 public:
-	BGAnimationLayer( bool Generic );
+	BGAnimationLayer();
 	~BGAnimationLayer();
 	void Init();
 	void Unload();
@@ -43,8 +43,6 @@ protected:
 	//
 	
 	// common stuff
-	bool m_bGeneric;
-
 	CString m_sDrawCond;
 
 	// stretch stuff

@@ -16,11 +16,11 @@ public:
 	BGAnimation();
 	virtual ~BGAnimation();
 
-	void LoadFromAniDir( const CString &sAniDir, bool bGeneric=true );
+	void LoadFromAniDir( const CString &sAniDir );
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 protected:
-	void AddLayersFromAniDir( const CString &_sAniDir, const IniFile& ini, bool bGeneric );
+	void AddLayersFromAniDir( const CString &_sAniDir, const IniFile& ini );
 };
 
 #endif

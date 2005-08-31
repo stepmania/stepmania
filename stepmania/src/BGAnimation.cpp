@@ -29,7 +29,7 @@ static bool CompareLayerNames( const CString& s1, const CString& s2 )
 	return i1 < i2;
 }
 
-void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& ini, bool bGeneric )
+void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& ini )
 {
 	const CString& sAniDir = _sAniDir;
 
@@ -83,12 +83,12 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& i
 				IniFile ini2;
 				ini2.ReadFile( sPathToIni );
 
-				AddLayersFromAniDir( sImportDir, ini2, bGeneric );
+				AddLayersFromAniDir( sImportDir, ini2 );
 			}
 			else
 			{
 				// import as a single layer
-				BGAnimationLayer* pLayer = new BGAnimationLayer( bGeneric );
+				BGAnimationLayer* pLayer = new BGAnimationLayer;
 				pLayer->LoadFromNode( sAniDir, pKey );
 				this->AddChild( pLayer );
 			}
@@ -96,7 +96,7 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& i
 	}
 }
 
-void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
+void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
 {
 	DeleteAllChildren();
 
@@ -117,7 +117,7 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
 		IniFile ini;
 		ini.ReadFile( sPathToIni );
 
-		AddLayersFromAniDir( sAniDir, ini, bGeneric );	// TODO: Check for circular load
+		AddLayersFromAniDir( sAniDir, ini );	// TODO: Check for circular load
 
 		XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
 		XNode dummy;
@@ -162,7 +162,7 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir, bool bGeneric )
 			const CString sPath = asImagePaths[i];
 			if( Basename(sPath).Left(1) == "_" )
 				continue;	// don't directly load files starting with an underscore
-			BGAnimationLayer* pLayer = new BGAnimationLayer( bGeneric );
+			BGAnimationLayer* pLayer = new BGAnimationLayer;
 			pLayer->LoadFromAniLayerFile( asImagePaths[i] );
 			AddChild( pLayer );
 		}

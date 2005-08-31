@@ -24,15 +24,8 @@ const float SPIRAL_MIN_ZOOM = 0.3f;
 #define MAX_SPRITES (MAX_TILES_WIDE*MAX_TILES_HIGH)
 
 
-BGAnimationLayer::BGAnimationLayer( bool bGeneric )
+BGAnimationLayer::BGAnimationLayer()
 {
-	/*
-	 * If Generic is false, this is a layer in a real BGA--one that was loaded
-	 * by simply constructing a BGAnimation.  In this mode, loaded images are given
-	 * a default position of SCREEN_CENTER_X, SCREEN_CENTER_Y.
-	 */
-	m_bGeneric = bGeneric;
-
 	Init();
 }
 
@@ -370,8 +363,7 @@ void BGAnimationLayer::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 	DEBUG_ASSERT( IsADirectory(sAniDir) );
 
-	CHECKPOINT_M( ssprintf( "BGAnimationLayer::LoadFromIni \"%s\" %s",
-		sAniDir.c_str(), m_bGeneric? "(generic) ":"" ) );
+	CHECKPOINT_M( ssprintf( "BGAnimationLayer::LoadFromIni \"%s\"", sAniDir.c_str() ) );
 
 	{
 		CString expr;
@@ -474,13 +466,6 @@ void BGAnimationLayer::LoadFromNode( const CString& sDir, const XNode* pNode )
 			this->AddChild( pActor );
 			if( bStretch )
 				pActor->StretchTo( FullScreenRectF );
-
-			/* Annoying: old BGAnimations (those in theme BGAnimations/ and, more importantly,
-			 * those included with songs) expect a 640x480 coordinate system with a default
-			 * of 320x240.  We can't just move the whole layer to the center (that'll move the
-			 * whole coordinate system, not just the default), we have to move the actor. */
-			if( !m_bGeneric )
-				pActor->SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 		}
 		break;
 	case TYPE_PARTICLES:
