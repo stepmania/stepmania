@@ -243,9 +243,6 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		 * here.(XXX: this should be done in a separate screen.) */
 		if( m_bTimeToFinalizePlayers )
 			GAMESTATE->PlayersFinalized();
-
-		SCREENMAN->SetNewScreen( m_sNextScreen );
-		return;
 	}
 
 	Screen::HandleScreenMessage( SM );
