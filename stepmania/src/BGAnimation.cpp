@@ -116,18 +116,6 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
 		if( pBGAnimation == NULL )
 			pBGAnimation = &dummy;
 
-		// Ugly: Scroller attributes in BGAnimation.ini files are in an element called 
-		// "Scroller", and not in the "BGAnimation" element.  Move the attributes from 
-		// Scroller to BGAnimation.
-		XNode* pScrollerNode = ini.GetChild( "Scroller" );
-		if( pScrollerNode )
-		{
-			FOREACH_Attr( pScrollerNode, pAttr )
-				pBGAnimation->m_attrs.insert( make_pair(pAttr->m_sName, pAttr) );
-			// Clear the copies in the Scroller node so that we don't double-delete.
-			pScrollerNode->m_attrs.clear();	
-		}
-
 		LoadFromNode( sAniDir, pBGAnimation );
 	}
 	else
