@@ -34,15 +34,6 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& i
 	const CString& sAniDir = _sAniDir;
 
 	{
-		CString expr;
-		if( ini.GetValue("BGAnimation", "Condition", expr) )
-		{
-			if( !LuaHelpers::RunExpressionB( expr ) )
-				return;
-		}
-	}
-
-	{
 		vector<CString> vsLayerNames;
 		FOREACH_CONST_Child( &ini, pLayer )
 		{
