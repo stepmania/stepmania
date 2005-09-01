@@ -29,13 +29,13 @@ static bool CompareLayerNames( const CString& s1, const CString& s2 )
 	return i1 < i2;
 }
 
-void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& ini )
+void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const XNode *pNode )
 {
 	const CString& sAniDir = _sAniDir;
 
 	{
 		vector<CString> vsLayerNames;
-		FOREACH_CONST_Child( &ini, pLayer )
+		FOREACH_CONST_Child( pNode, pLayer )
 		{
 			if( strncmp(pLayer->m_sName, "Layer", 5) == 0 )
 				vsLayerNames.push_back( pLayer->m_sName );
@@ -47,7 +47,7 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& i
 		FOREACH_CONST( CString, vsLayerNames, s )
 		{
 			const CString &sLayer = *s;
-			const XNode* pKey = ini.GetChild( sLayer );
+			const XNode* pKey = pNode->GetChild( sLayer );
 			ASSERT( pKey );
 
 			CString sImportDir;
@@ -74,7 +74,7 @@ void BGAnimation::AddLayersFromAniDir( const CString &_sAniDir, const IniFile& i
 				IniFile ini2;
 				ini2.ReadFile( sPathToIni );
 
-				AddLayersFromAniDir( sImportDir, ini2 );
+				AddLayersFromAniDir( sImportDir, &ini2 );
 			}
 			else
 			{
@@ -108,7 +108,7 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
 		IniFile ini;
 		ini.ReadFile( sPathToIni );
 
-		AddLayersFromAniDir( sAniDir, ini );	// TODO: Check for circular load
+		AddLayersFromAniDir( sAniDir, &ini );	// TODO: Check for circular load
 
 		XNode* pBGAnimation = ini.GetChild( "BGAnimation" );
 		XNode dummy;

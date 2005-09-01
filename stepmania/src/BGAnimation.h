@@ -6,7 +6,6 @@
 #include "ActorScroller.h"
 
 struct XNode;
-class IniFile;
 
 class BGAnimation : public ActorScrollerAutoDeleteChildren
 {
@@ -18,7 +17,7 @@ public:
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 protected:
-	void AddLayersFromAniDir( const CString &_sAniDir, const IniFile& ini );
+	void AddLayersFromAniDir( const CString &_sAniDir, const XNode *pNode );
 };
 
 #endif
