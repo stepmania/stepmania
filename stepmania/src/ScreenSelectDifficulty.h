@@ -16,6 +16,7 @@ class ScreenSelectDifficulty : public ScreenSelect
 public:
 	ScreenSelectDifficulty( CString sName );
 	virtual void Init();
+	virtual void BeginScreen();
 
 	virtual void Update( float fDelta );
 
@@ -25,7 +26,6 @@ public:
 	virtual void MenuDown( PlayerNumber pn ) {};
 	virtual void MenuStart( PlayerNumber pn );
 //	virtual void MenuBack( PlayerNumber pn );
-	virtual void TweenOursOnScreen();
 	virtual void TweenOursOffScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );

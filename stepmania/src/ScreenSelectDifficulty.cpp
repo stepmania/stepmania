@@ -60,21 +60,25 @@ void ScreenSelectDifficulty::Init()
 		{
 			m_sprPicture[page][choice].SetName( ssprintf("PicturePage%dChoice%d",page+1,choice+1) );
 			m_sprPicture[page][choice].Load( THEME->GetPathG(m_sName,ssprintf("picture%d",c+1)) );
+			SET_XY( m_sprPicture[page][choice] );
 			m_framePages.AddChild( &m_sprPicture[page][choice] );
 
 			m_sprInfo[page][choice].SetName( ssprintf("InfoPage%dChoice%d",page+1,choice+1) );
 			m_sprInfo[page][choice].Load( THEME->GetPathG(m_sName,ssprintf("info%d",c+1)) );
+			SET_XY( m_sprInfo[page][choice] );
 			m_framePages.AddChild( &m_sprInfo[page][choice] );
 		}
 
 		m_sprMore[page].SetName( ssprintf("MorePage%d",page+1) );
 		m_sprMore[page].Load( THEME->GetPathG(m_sName,ssprintf("more page%d",page+1)) );
+		SET_XY( m_sprMore[page] );
 		m_framePages.AddChild( &m_sprMore[page] );
 
 		m_sprExplanation[page].SetName( ssprintf("ExplanationPage%d",page+1) );
 		m_sprExplanation[page].Load( THEME->GetPathG(m_sName,"explanation") );
 		m_sprExplanation[page].StopAnimating();
 		m_sprExplanation[page].SetState( page );
+		SET_XY( m_sprExplanation[page] );
 		m_framePages.AddChild( &m_sprExplanation[page] );
 	}
 
@@ -87,17 +91,24 @@ void ScreenSelectDifficulty::Init()
 		if( !GAMESTATE->IsHumanPlayer(p) )
 			continue;
 
+		float fCursorX = GetCursorX( p );
+		float fCursorY = GetCursorY( p );
+
 		m_sprShadow[p].SetName( "Shadow" );
 		m_sprShadow[p].Load( THEME->GetPathG(m_sName,"shadow 2x1") );
+		ActorUtil::LoadAllCommands( m_sprShadow[p], m_sName );
 		m_sprShadow[p].StopAnimating();
 		m_sprShadow[p].SetState( p );
 		m_sprShadow[p].SetDiffuse( RageColor(0,0,0,0.6f) );
+		m_sprShadow[p].SetXY( fCursorX + SHADOW_LENGTH_X, fCursorY + SHADOW_LENGTH_Y );
 		m_framePages.AddChild( &m_sprShadow[p] );
 
 		m_sprCursor[p].SetName( "Cursor" );
 		m_sprCursor[p].Load( THEME->GetPathG(m_sName,"cursor 2x1") );
+		ActorUtil::LoadAllCommands( m_sprCursor[p], m_sName );
 		m_sprCursor[p].StopAnimating();
 		m_sprCursor[p].SetState( p );
+		m_sprCursor[p].SetXY( fCursorX, fCursorY );
 		m_framePages.AddChild( &m_sprCursor[p] );
 
 		m_sprOK[p].SetName( "OK" );
@@ -117,9 +128,30 @@ void ScreenSelectDifficulty::Init()
 	
 	this->UpdateSelectableChoices();
 
-	TweenOursOnScreen();
-
 	this->SortByDrawOrder();
+}
+
+void ScreenSelectDifficulty::BeginScreen()
+{
+	ScreenSelect::BeginScreen();
+
+	for( int page=0; page<NUM_PAGES; page++ )
+	{
+		ON_COMMAND( m_sprExplanation[page] );
+		ON_COMMAND( m_sprMore[page] );
+
+		for( unsigned c=0; c<m_GameCommands[page].size(); c++ )
+		{			
+			ON_COMMAND( m_sprInfo[page][c] );
+			ON_COMMAND( m_sprPicture[page][c] );
+		}
+	}
+
+	FOREACH_HumanPlayer( p )
+	{
+		ON_COMMAND( m_sprCursor[p] );
+		ON_COMMAND( m_sprShadow[p] );
+	}
 }
 
 void ScreenSelectDifficulty::Update( float fDelta )
@@ -489,33 +521,6 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 			return;
 	}
 	this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on
-}
-
-void ScreenSelectDifficulty::TweenOursOnScreen() 
-{
-	for( int page=0; page<NUM_PAGES; page++ )
-	{
-		SET_XY_AND_ON_COMMAND( m_sprExplanation[page] );
-		SET_XY_AND_ON_COMMAND( m_sprMore[page] );
-
-		for( unsigned c=0; c<m_GameCommands[page].size(); c++ )
-		{			
-			SET_XY_AND_ON_COMMAND( m_sprInfo[page][c] );
-			SET_XY_AND_ON_COMMAND( m_sprPicture[page][c] );
-		}
-	}
-
-	FOREACH_HumanPlayer( p )
-	{
-		float fCursorX = GetCursorX( p );
-		float fCursorY = GetCursorY( p );
-
-		m_sprCursor[p].SetXY( fCursorX, fCursorY );
-		ON_COMMAND( m_sprCursor[p] );
-
-		m_sprShadow[p].SetXY( fCursorX + SHADOW_LENGTH_X, fCursorY + SHADOW_LENGTH_Y );
-		ON_COMMAND( m_sprShadow[p] );
-	}
 }
 
 void ScreenSelectDifficulty::TweenOursOffScreen()
