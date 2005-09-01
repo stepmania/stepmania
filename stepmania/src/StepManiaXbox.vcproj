@@ -143,7 +143,10 @@ cl                                                                              
 				LimitAvailableMemoryTo64MB="TRUE"
 				SuppressStartupBanner="TRUE"
 				XboxGameRating="5"
-				TitleName="StepmaniaX"/>
+				TitleInfo=""
+				TitleName="StepmaniaX"
+				TitleImage=".\archutils\Xbox\smicon.XBX"
+				SaveGameImage=".\archutils\Xbox\saveblue.XBX"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -1026,6 +1029,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="PlayerOptions.h">
+			</File>
+			<File
+				RelativePath="PlayerScoreList.cpp">
+			</File>
+			<File
+				RelativePath="PlayerScoreList.h">
 			</File>
 			<File
 				RelativePath=".\PlayerStageStats.cpp">
