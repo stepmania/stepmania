@@ -15,6 +15,18 @@
 #include "LuaReference.h"
 #include "MessageManager.h"
 #include "LightsManager.h" // for NUM_CABINET_LIGHTS
+#include "ActorUtil.h"
+
+/* It's useful to be able to construct a basic Actor in XML, in
+ * order to simply delay a Transition, or receive and send broadcasts.
+ * Since these actors will never draw, set them hidden by default. */
+class HiddenActor: public Actor
+{
+public:
+	HiddenActor() { SetHidden(true); }
+	virtual Actor *Copy() const;
+};
+REGISTER_ACTOR_CLASS_WITH_NAME( HiddenActor, Actor )
 
 float Actor::g_fCurrentBGMTime = 0, Actor::g_fCurrentBGMBeat;
 
