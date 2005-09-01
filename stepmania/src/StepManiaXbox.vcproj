@@ -1430,10 +1430,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath="archutils\Win32\arch_setup.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Xbox\arch_setup.h">
+					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 				<File
-					RelativePath="archutils\Win32\arch_setup.h">
+					RelativePath=".\archutils\Xbox\arch_setup.h">
 				</File>
 				<File
 					RelativePath="archutils\Xbox\custom_launch_params.cpp">
@@ -2351,6 +2351,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ActorScroller.h">
+			</File>
+			<File
+				RelativePath="ActorSound.cpp">
+			</File>
+			<File
+				RelativePath="ActorSound.h">
 			</File>
 			<File
 				RelativePath="ActorUtil.cpp">
