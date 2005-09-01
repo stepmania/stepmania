@@ -3,8 +3,6 @@
 #ifndef BGANIMATION_H
 #define BGANIMATION_H
 
-/* Note that the names "BGAnimation" and "BGAnimationLayer" are historical; this class
- * is used for many things other than backgrounds. */
 #include "ActorScroller.h"
 
 struct XNode;

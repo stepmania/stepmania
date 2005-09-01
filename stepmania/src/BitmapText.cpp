@@ -91,9 +91,6 @@ void BitmapText::LoadFromNode( const CString& sDir, const XNode* pNode )
 	ThemeManager::EvaluateString( sText );
 	ThemeManager::EvaluateString( sAltText );
 
-
-	/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
-	 * loading the BGAnimationLayer that we're in. */
 	CString sFont;
 	pNode->GetAttrValue( "Font", sFont );
 	if( sFont.empty() )
