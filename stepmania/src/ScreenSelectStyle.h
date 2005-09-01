@@ -15,6 +15,7 @@ class ScreenSelectStyle : public ScreenSelect
 public:
 	ScreenSelectStyle( CString sName );
 	virtual void Init();
+	virtual void BeginScreen();
 
 	virtual void MenuLeft( PlayerNumber pn );
 	virtual void MenuRight( PlayerNumber pn );

@@ -101,8 +101,6 @@ void ScreenSelectStyle::Init()
 		this->MoveToTail( &m_sprInfo[i] );
 
 
-	this->UpdateSelectableChoices();
-
 	m_sprPremium.SetName( "Premium" );
 
 	switch( GAMESTATE->GetPremium() )
@@ -126,15 +124,34 @@ void ScreenSelectStyle::Init()
 	//
 	for( unsigned i=0; i<m_aGameCommands.size(); i++ )
 	{
-		SET_XY_AND_ON_COMMAND( m_textIcon[i] );
-		SET_XY_AND_ON_COMMAND( m_sprIcon[i] );
+		SET_XY( m_textIcon[i] );
+		SET_XY( m_sprIcon[i] );
 	}
-	SET_XY_AND_ON_COMMAND( m_sprExplanation );
-	SET_XY_AND_ON_COMMAND( m_sprWarning );
-	SET_XY_AND_ON_COMMAND( m_sprPremium );
+	SET_XY( m_sprExplanation );
+	SET_XY( m_sprWarning );
+	SET_XY( m_sprPremium );
 
 	// let AfterChange tween Picture and Info
 	this->SortByDrawOrder();
+}
+
+void ScreenSelectStyle::BeginScreen()
+{
+	this->UpdateSelectableChoices();
+
+	//
+	// TweenOnScreen
+	//
+	for( unsigned i=0; i<m_aGameCommands.size(); i++ )
+	{
+		ON_COMMAND( m_textIcon[i] );
+		ON_COMMAND( m_sprIcon[i] );
+	}
+	ON_COMMAND( m_sprExplanation );
+	ON_COMMAND( m_sprWarning );
+	ON_COMMAND( m_sprPremium );
+
+	ScreenSelect::BeginScreen();
 }
 
 void ScreenSelectStyle::MenuLeft( PlayerNumber pn )

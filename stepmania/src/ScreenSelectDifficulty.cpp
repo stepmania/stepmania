@@ -133,8 +133,6 @@ void ScreenSelectDifficulty::Init()
 
 void ScreenSelectDifficulty::BeginScreen()
 {
-	ScreenSelect::BeginScreen();
-
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
 		ON_COMMAND( m_sprExplanation[page] );
@@ -152,6 +150,8 @@ void ScreenSelectDifficulty::BeginScreen()
 		ON_COMMAND( m_sprCursor[p] );
 		ON_COMMAND( m_sprShadow[p] );
 	}
+
+	ScreenSelect::BeginScreen();
 }
 
 void ScreenSelectDifficulty::Update( float fDelta )
