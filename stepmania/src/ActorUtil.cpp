@@ -173,22 +173,6 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 	if( !bHasClass )
 		bHasClass = pNode->GetAttrValue( "Type", sClass );	// for backward compatibility
 
-	CString sFile;
-	if( pNode->GetAttrValue( "File", sFile ) )
-	{
-		if( sFile == "" )
-		{
-			CString sError = ssprintf( "The actor file in '%s' has a blank, invalid File attribute \"%s\"",
-				sDir.c_str(), sClass.c_str() );
-			RageException::Throw( sError );
-		}
-	}
-
-
-	LuaHelpers::RunAtExpressionS( sFile );
-	bool bIsAbsolutePath = sFile.Left(1) == "/";
-	FixSlashesInPlace( sFile );
-
 	// backward compat hack
 	if( !bHasClass )
 	{
@@ -206,6 +190,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 	else if( sClass == "SongBackground" )
 	{
 		Song *pSong = GAMESTATE->m_pCurSong;
+		CString sFile;
 		if( pSong && pSong->HasBackground() )
 			sFile = pSong->GetBackgroundPath();
 		else
@@ -236,8 +221,15 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 	else // sClass is empty or garbage (e.g. "1" // 0==Sprite")
 	{
 		// automatically figure out the type
+		CString sFile;
+		pNode->GetAttrValue( "File", sFile );
+
+		LuaHelpers::RunAtExpressionS( sFile );
+		bool bIsAbsolutePath = sFile.Left(1) == "/";
+		FixSlashesInPlace( sFile );
+
 		/* Be careful: if sFile is "", and we don't check it, then we can end up recursively
-		 * loading the BGAnimationLayer that we're in. */
+		 * loading the layer we're in. */
 		if( sFile == "" )
 		{
 			CString sError = ssprintf( "The actor file in '%s' is missing the File attribute or has an invalid Class \"%s\"",
