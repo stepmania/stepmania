@@ -16,6 +16,9 @@
 REGISTER_ACTOR_CLASS( GraphDisplay )
 
 enum { VALUE_RESOLUTION=100 };
+static const int iSubdivisions = 4;
+static const int iCircleVertices = iSubdivisions+2;
+
 class GraphLine: public Actor
 {
 public:
@@ -35,8 +38,6 @@ public:
 		delete[] m_pCircles;
 	}
 
-	static const int iSubdivisions = 4;
-	static const int iCircleVertices = iSubdivisions+2;
 	void DrawPrimitives()
 	{
 		Actor::SetGlobalRenderStates();	// set Actor-specified render states
