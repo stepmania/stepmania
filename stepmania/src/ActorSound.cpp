@@ -3,6 +3,7 @@
 #include "ActorUtil.h"
 #include "LuaManager.h"
 #include "XmlFile.h"
+#include "RageSoundManager.h"
 
 REGISTER_ACTOR_CLASS_WITH_NAME( ActorSound, Sound )
 
@@ -13,7 +14,7 @@ void ActorSound::Load( const CString &sPath )
 
 void ActorSound::Play()
 {
-	m_Sound.Play();
+	SOUNDMAN->PlayCopyOfSound( m_Sound );
 }
 
 void ActorSound::LoadFromNode( const CString& sDir, const XNode* pNode )
