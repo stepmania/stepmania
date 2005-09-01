@@ -260,6 +260,8 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 	/* There's an InitCommand.  Run it now.  This can be used to eg. change Z to
 	 * modify draw order between BGAs in a Foreground. */
+	// XXX: We should run Init last, after the derived class finishes initializing,
+	// but we want to set up input parameters before the derived class loads ...
 	PlayCommand( "Init" );
 }
 
