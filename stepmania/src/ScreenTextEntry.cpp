@@ -21,7 +21,7 @@ static const char* g_szKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW] =
 	{"0","1","2","3","4","5","6","7","8","9"},
 	{"!","@","#","$","%","^","&","(",")","[","]","{","}"},
 	{"+","-","=","_",",",".","'","\"",":"},
-	{"","","Space","","","Backsp","","","Cancel","","","Done",""},
+	{"","","Space","","","Backspace","","","Cancel","","","Done",""},
 };
 
 static Preference<bool> g_bAllowOldKeyboardInput( "AllowOldKeyboardInput",	true );
@@ -94,19 +94,28 @@ void ScreenTextEntry::Init()
 	m_textAnswer.SetName( "Answer" );
 	this->AddChild( &m_textAnswer );
 
+	m_bShowAnswerCaret = false;
 
 	m_sprCursor.Load( THEME->GetPathG(m_sName,"cursor") );
 	m_sprCursor->SetName( "Cursor" );
 	this->AddChild( m_sprCursor );
 
 	// Init keyboard
-	FOREACH_KeyboardRow( r )
 	{
-		for( int x=0; x<KEYS_PER_ROW; ++x )
+		BitmapText text;
+		text.LoadFromFont( THEME->GetPathF(m_sName,"keyboard") );
+		text.SetName( "Keys" );
+		ActorUtil::LoadAllCommands( text, m_sName );
+		text.PlayCommand( "Init" );
+
+		FOREACH_KeyboardRow( r )
 		{
-			BitmapText &bt = m_textKeyboardChars[r][x];
-			bt.LoadFromFont( THEME->GetPathF(m_sName,"keyboard") );
-			this->AddChild( &bt );
+			for( int x=0; x<KEYS_PER_ROW; ++x )
+			{
+				BitmapText *&pbt = m_ptextKeys[r][x];
+				pbt = static_cast<BitmapText *>( text.Copy() );
+				this->AddChild( pbt );
+			}
 		}
 	}
 
@@ -117,6 +126,9 @@ void ScreenTextEntry::Init()
 
 ScreenTextEntry::~ScreenTextEntry()
 {
+	FOREACH_KeyboardRow( r )
+		for( int x=0; x<KEYS_PER_ROW; ++x )
+			SAFE_DELETE( m_ptextKeys[r][x] );
 }
 
 void ScreenTextEntry::BeginScreen()
@@ -140,7 +152,7 @@ void ScreenTextEntry::BeginScreen()
 	{
 		for( int x=0; x<KEYS_PER_ROW; ++x )
 		{
-			BitmapText &bt = m_textKeyboardChars[r][x];
+			BitmapText &bt = *m_ptextKeys[r][x];
 			float fX = roundf( SCALE( x, 0, KEYS_PER_ROW-1, SCREEN_LEFT+100, SCREEN_RIGHT-100 ) );
 			float fY = roundf( SCALE( r, 0, NUM_KEYBOARD_ROWS-1, SCREEN_CENTER_Y-30, SCREEN_BOTTOM-80 ) );
 			bt.SetXY( fX, fY );
@@ -158,8 +170,10 @@ void ScreenTextEntry::UpdateKeyboardText()
 	{
 		for( int x=0; x<KEYS_PER_ROW; ++x )
 		{
-			const char *s = g_szKeys[r][x];
-			BitmapText &bt = m_textKeyboardChars[r][x];
+			CString s = g_szKeys[r][x];
+			if( !s.empty()  &&  r == KEYBOARD_ROW_SPECIAL )
+				s = THEME->GetMetric( "ScreenTextEntry", s );
+			BitmapText &bt = *m_ptextKeys[r][x];
 			bt.SetText( s );
 		}
 	}
@@ -167,22 +181,42 @@ void ScreenTextEntry::UpdateKeyboardText()
 
 void ScreenTextEntry::UpdateAnswerText()
 {
-	CString txt = WStringToCString(m_sAnswer);
+	CString s = WStringToCString(m_sAnswer);
 	if( g_bPassword )
 	{
-		int len = txt.GetLength();
-		txt = "";
+		int len = s.GetLength();
+		s = "";
 		for( int i=0; i<len; ++i )
-			txt += "*";
+			s += '*';
 	}
-	FontCharAliases::ReplaceMarkers(txt);
-	m_textAnswer.SetText( txt );
+
+	bool bAnswerFull = s.length() >= g_iMaxInputLength;
+	if( m_bShowAnswerCaret 	&&  !bAnswerFull )
+		s += '_';
+	else
+		s += "  ";	// assumes that underscore is the width of two spaces
+
+	FontCharAliases::ReplaceMarkers( s );
+	m_textAnswer.SetText( s );
 }
 
 void ScreenTextEntry::PositionCursor()
 {
-	BitmapText &bt = m_textKeyboardChars[m_iFocusY][m_iFocusX];
+	BitmapText &bt = *m_ptextKeys[m_iFocusY][m_iFocusX];
 	m_sprCursor->SetXY( bt.GetX(), bt.GetY() );
+	m_sprCursor->PlayCommand( m_iFocusY == KEYBOARD_ROW_SPECIAL ? "SpecialKey" : "RegularKey" );
+}
+
+void ScreenTextEntry::Update( float fDelta )
+{
+	ScreenWithMenuElements::Update( fDelta );
+
+	if( m_timerToggleCursor.PeekDeltaTime() > 0.25f )
+	{
+		m_timerToggleCursor.Touch();
+		m_bShowAnswerCaret = !m_bShowAnswerCaret;
+		UpdateAnswerText();
+	}
 }
 
 void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
