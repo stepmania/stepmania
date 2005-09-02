@@ -404,12 +404,7 @@ try_element_again:
 	
 
 	if( asElementPaths.size() == 0 )
-	{
-		// HACK: have Fonts fall back to Numbers.  Eventually Numbers will be removed.
-		if( category == EC_FONTS )
-			return GetPathToRaw( sThemeName, EC_NUMBERS, sClassName, sElement ) ;
 		return NULL;	// This isn't fatal.
-	}
 
 	if( asElementPaths.size() > 1 )
 	{
