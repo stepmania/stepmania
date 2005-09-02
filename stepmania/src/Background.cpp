@@ -368,7 +368,6 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		case FT_Movie:
 			sEffect = SBE_StretchNormal;
 			break;
-		case FT_Actor:
 		case FT_Directory:
 		case FT_Xml:
 		case FT_Model:

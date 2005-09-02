@@ -334,7 +334,7 @@ CString ThemeManager::GetPathToAndFallback( const CString &sThemeName, ElementCa
 		CString sFallback;
 		GetMetricRaw( sClass, "Fallback", sFallback );
 		if( sFallback.empty() )
-			return "";
+			return NULL;
 		sClass = sFallback;
 	}
 
@@ -373,9 +373,9 @@ try_element_again:
 		for( unsigned p = 0; p < asPaths.size(); ++p )
 		{
 			static const char *masks[NUM_ElementCategory][14] = {
-				{ "redir", "", "actor", "xml", NULL },
+				{ "redir", "", "xml", NULL },
 				{ "redir", "ini", NULL },
-				{ "redir", "xml", "actor", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
+				{ "redir", "xml", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
 				{ "redir", "png", NULL },
 				{ "redir", "mp3", "ogg", "wav", NULL },
 				{ "*", NULL },
@@ -408,7 +408,7 @@ try_element_again:
 		// HACK: have Fonts fall back to Numbers.  Eventually Numbers will be removed.
 		if( category == EC_FONTS )
 			return GetPathToRaw( sThemeName, EC_NUMBERS, sClassName, sElement ) ;
-		return "";	// This isn't fatal.
+		return NULL;	// This isn't fatal.
 	}
 
 	if( asElementPaths.size() > 1 )
@@ -524,7 +524,7 @@ try_element_again:
 	if( bOptional )
 	{
 		Cache[sFileName] = "";
-		return "";
+		return NULL;
 	}
 
 	const CString &sCategory = ElementCategoryToString(category);
@@ -564,7 +564,7 @@ try_element_again:
 			GetThemeDirFromName(BASE_THEME_NAME).c_str() );
 	default:
 		ASSERT(0);
-		return "";
+		return NULL;
 	}
 }
 
@@ -645,7 +645,7 @@ try_metric_again:
 		ReloadMetrics();
 		goto try_metric_again;
 	case Dialog::ignore:
-		return "";
+		return NULL;
 	default:
 		ASSERT(0);
 	}

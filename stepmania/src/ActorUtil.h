@@ -27,7 +27,6 @@ typedef Actor* (*CreateActorFn)(const CString& sDir, const XNode* pNode);
 
 enum FileType
 {
-	FT_Actor, 
 	FT_Bitmap, 
 	FT_Movie, 
 	FT_Directory, 

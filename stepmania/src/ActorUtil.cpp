@@ -232,7 +232,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 		 * loading the layer we're in. */
 		if( sFile == "" )
 		{
-			CString sError = ssprintf( "The actor file in '%s' is missing the File attribute or has an invalid Class \"%s\"",
+			CString sError = ssprintf( "An xml file in '%s' is missing the File attribute or has an invalid Class \"%s\"",
 				sDir.c_str(), sClass.c_str() );
 			Dialog::OK( sError );
 			pReturn = new Sprite;	// Return a dummy object so that we don't crash in AutoActor later.
@@ -286,21 +286,6 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 			}
 			CString sDir = Dirname( ID.filename );
 			return LoadFromActorFile( sDir, &xml );
-		}
-	case FT_Actor:
-		{
-			// TODO: Check for recursive loading
-			IniFile ini;
-			if( !ini.ReadFile( ID.filename ) )
-				RageException::Throw( "%s", ini.GetError().c_str() );
-		
-			CString sDir = Dirname( ID.filename );
-
-			const XNode* pNode = ini.GetChild( "Actor" );
-			if( pNode == NULL )
-				RageException::Throw( "The file '%s' doesn't have layer 'Actor'.", ID.filename.c_str() );
-
-			return LoadFromActorFile( sDir, pNode );
 		}
 	case FT_Directory:
 		{
@@ -425,7 +410,6 @@ void ActorUtil::SortByZPosition( vector<Actor*> &vActors )
 }
 
 static const CString FileTypeNames[] = {
-	"Actor", 
 	"Bitmap", 
 	"Movie", 
 	"Directory", 
@@ -439,8 +423,7 @@ FileType ActorUtil::GetFileType( const CString &sPath )
 	CString sExt = GetExtension( sPath );
 	sExt.MakeLower();
 	
-	if( sExt=="xml" )			return FT_Xml;
-	else if( sExt=="actor" )	return FT_Actor;
+	if( sExt=="xml" )		return FT_Xml;
 	else if( 
 		sExt=="png" ||
 		sExt=="jpg" || 
