@@ -6,7 +6,6 @@
 #include "ActorFrame.h"
 #include "AutoActor.h"
 #include "ScreenMessage.h"
-#include "RandomSample.h"
 
 
 class Transition : public ActorFrame
@@ -37,7 +36,6 @@ protected:
 
 	AutoActor m_sprTransition;
 	float	m_fLengthSeconds;
-	RandomSample	m_sound;
 
 	ScreenMessage	m_MessageToSendWhenDone;
 };

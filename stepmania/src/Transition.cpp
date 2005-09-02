@@ -2,8 +2,6 @@
 #include "Transition.h"
 #include "RageUtil.h"
 #include "ScreenManager.h"
-#include "IniFile.h"
-#include "RageFile.h"
 #include "Screen.h"
 #include "GameState.h"
 
@@ -35,35 +33,6 @@ void Transition::Load( CString sBGAniDir )
 	m_fLengthSeconds = m_sprTransition->GetTweenTimeLeft();
 
 	m_State = waiting;
-
-	// load sound from file specified by ini, or use the first sound in the directory
-	
-	if( IsADirectory(sBGAniDir) )
-	{
-		IniFile ini;
-		ini.ReadFile( sBGAniDir+"/BGAnimation.ini" );
-
-		CString sSoundFileName;
-		if( ini.GetValue("BGAnimation","Sound", sSoundFileName) )
-		{
-			FixSlashesInPlace( sSoundFileName );
-			CString sPath = sBGAniDir+sSoundFileName;
-			CollapsePath( sPath );
-			m_sound.Load( sPath );
-		}
-		else
-		{
-			m_sound.Load( sBGAniDir );
-		}
-	}
-	else if( GetExtension(sBGAniDir).CompareNoCase("xml") == 0 )
-	{
-		CString sSoundFile;
-		XNode xml;
-		xml.LoadFromFile( sBGAniDir );
-		if( xml.GetAttrValue( "Sound", sSoundFile ) )
-			m_sound.Load( Dirname(sBGAniDir) + sSoundFile );
-	}
 }
 
 
@@ -71,15 +40,6 @@ void Transition::UpdateInternal( float fDeltaTime )
 {
 	if( m_State != transitioning )
 		return;
-
-	/* Start the transition on the first update, not in the ctor, so
-	 * we don't play a sound while our parent is still loading. */
-	if( m_bFirstUpdate )
-	{
-		bool bIsAttract = SCREENMAN->GetTopScreen()->GetScreenType() == attract;
-		if( !bIsAttract || GAMESTATE->IsTimeToPlayAttractSounds() )
-			m_sound.PlayCopyOfRandom();
-	}
 
 	// Check this before running Update, so we draw the last frame of the finished
 	// transition before sending m_MessageToSendWhenDone.
