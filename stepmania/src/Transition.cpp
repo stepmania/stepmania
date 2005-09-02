@@ -22,9 +22,6 @@ Transition::Transition()
 
 void Transition::Load( CString sBGAniDir )
 {
-	if( IsADirectory(sBGAniDir) && sBGAniDir.Right(1) != "/" )
-		sBGAniDir += "/";
-
 	this->RemoveAllChildren();
 
 	m_sprTransition.Load( sBGAniDir );
