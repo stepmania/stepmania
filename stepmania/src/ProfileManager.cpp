@@ -538,7 +538,7 @@ CString ProfileManager::GetProfileDirImportedFrom( ProfileSlot slot ) const
 	case PROFILE_SLOT_PLAYER_2:
 		return m_sProfileDirImportedFrom[slot];
 	case PROFILE_SLOT_MACHINE:
-		return "";
+		return NULL;
 	default:
 		ASSERT(0);
 	}

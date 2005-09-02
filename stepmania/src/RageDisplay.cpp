@@ -54,20 +54,20 @@ CString RageDisplay::SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures 
 	CString err;
 	err = this->TryVideoMode(p,bNeedReloadTextures);
 	if( err == "" )
-		return "";
+		return NULL;
 	LOG->Trace( "TryVideoMode failed: %s", err.c_str() );
 	
 	// fall back
 	p.windowed = false;
 	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
-		return "";
+		return NULL;
 	p.bpp = 16;
 	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
-		return "";
+		return NULL;
 	p.width = 640;
 	p.height = 480;
 	if( this->TryVideoMode(p,bNeedReloadTextures) == "" )
-		return "";
+		return NULL;
 
 	return ssprintf( "SetVideoMode failed: %s", err.c_str() );
 }

@@ -33,7 +33,7 @@ RageFileBasic *RageFile::Copy() const
 CString RageFile::GetPath() const
 {
 	if ( !IsOpen() )
-		return "";
+		return NULL;
 
 	CString sRet = m_File->GetDisplayPath();
 	if( sRet != "" )
@@ -219,7 +219,7 @@ void FileReading::ReadBytes( RageFileBasic &f, void *buf, int size, CString &sEr
 CString FileReading::ReadString( RageFileBasic &f, int size, CString &sError )
 {
 	if( sError.size() != 0 )
-		return "";
+		return NULL;
 
 	CString sBuf;
 	int ret = f.Read( sBuf, size );

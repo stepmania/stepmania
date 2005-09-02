@@ -392,7 +392,7 @@ CString SetD3DParams( bool &bNewDeviceOut )
 		}
 	}
 
-	return "";
+	return NULL;
 }
 
 /* If the given parameters have failed, try to lower them. */
@@ -605,7 +605,7 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	/* Palettes were lost by Reset(), so mark them unloaded. */
 	g_TexResourceToPaletteIndex.clear();
 
-	return "";	// mode change successful
+	return NULL;	// mode change successful
 }
 
 void RageDisplay_D3D::ResolutionChanged()

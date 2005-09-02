@@ -222,7 +222,7 @@ public:
 	};
 	bool SaveScreenshot( CString sPath, GraphicsFileFormat format );
 
-	virtual CString GetTextureDiagnostics( unsigned id ) const { return ""; }
+	virtual CString GetTextureDiagnostics( unsigned id ) const { return NULL; }
 	virtual RageSurface* CreateScreenshot() = 0;	// allocates a surface.  Caller must delete it.
 
 protected:
@@ -235,7 +235,7 @@ protected:
 	virtual void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 	virtual void DrawCircleInternal( const RageSpriteVertex &v, float radius );
 
-	// Return "" if mode change was successful, an error message otherwise.
+	// return NULL if mode change was successful, an error message otherwise.
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
 	virtual CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut ) = 0;

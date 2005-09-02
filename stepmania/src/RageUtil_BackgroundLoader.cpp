@@ -69,11 +69,11 @@ BackgroundLoader::~BackgroundLoader()
 CString BackgroundLoader::GetRequest()
 {
 	if( !g_bEnableBackgroundLoading )
-		return "";
+		return NULL;
 
 	LockMut( m_Mutex );
 	if( !m_CacheRequests.size() )
-		return "";
+		return NULL;
 
 	CString ret;
 	ret = m_CacheRequests.front();

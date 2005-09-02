@@ -357,7 +357,7 @@ public:
 CString ReadString( RageFile &f, int iSize, CString &sError )
 {
 	if( sError.size() != 0 )
-		return "";
+		return NULL;
 
 	CString sBuf;
 	char *pBuf = sBuf.GetBuffer( iSize );

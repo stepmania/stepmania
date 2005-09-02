@@ -313,6 +313,7 @@ inline T Decrement( T a ) { --a; return a; }
 void TrimLeft(CString &str, const char *s = "\r\n\t ");
 void TrimRight(CString &str, const char *s = "\r\n\t ");
 void StripCrnl(CString &s);
+bool EndsWith( const CString &sTestThis, const CString &sEnding );
 
 void StripCvs( vector<CString> &vs );	// remove all items that end in "cvs"
 

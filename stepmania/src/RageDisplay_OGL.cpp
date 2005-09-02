@@ -334,7 +334,7 @@ CString GetInfoLog( GLhandleARB h )
 	GLint iLength;
 	GLExt.glGetObjectParameterivARB( h, GL_OBJECT_INFO_LOG_LENGTH_ARB, &iLength );
 	if( !iLength )
-		return "";
+		return NULL;
 
 	GLcharARB *pInfoLog = new GLcharARB[iLength];
 	GLExt.glGetInfoLogARB( h, iLength, &iLength, pInfoLog );
@@ -477,7 +477,7 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 
 	InitScalingScript();
 
-	return "";
+	return NULL;
 }
 
 #if defined(UNIX) && defined(HAVE_LIBXTST)
@@ -698,7 +698,7 @@ CString RageDisplay_OGL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	
 	ResolutionChanged();
 
-	return "";	// successfully set mode
+	return NULL;	// successfully set mode
 }
 
 void RageDisplay_OGL::SetViewport(int shift_left, int shift_down)
@@ -1884,7 +1884,7 @@ void RageDisplay_OGL::SetLineWidth( float fWidth )
 
 CString RageDisplay_OGL::GetTextureDiagnostics( unsigned id ) const
 {
-	return "";
+	return NULL;
 }
 
 void RageDisplay_OGL::SetAlphaTest( bool b )

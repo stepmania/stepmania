@@ -278,7 +278,7 @@ CString CourseID::ToString() const
 		return sPath;
 	if( !sFullTitle.empty() )
 		return sFullTitle;
-	return "";
+	return NULL;
 }
 
 bool CourseID::IsValid() const

@@ -45,7 +45,7 @@ CString	ASMHClass::NumberToString( ScreenMessage SM )
 		if ( SM == iter->second )
 			return (*iter).first;
 
-	return "";
+	return NULL;
 }
 
 /*

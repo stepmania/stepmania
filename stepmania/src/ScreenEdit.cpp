@@ -540,7 +540,7 @@ static CString GetOneBakedRandomFile( Song *pSong, bool bTryGenre = true )
 	if( !vsNamesOut.empty() )
 		return vsNamesOut[rand()%vsNamesOut.size()];
 	else
-		return "";
+		return NULL;
 }
 
 static MenuDef g_InsertTapAttack(

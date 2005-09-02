@@ -169,7 +169,7 @@ CString ScreenSMOnlineLogin::GetSelectedProfileID()
 	const OptionRow &row = *m_pRows[GetCurrentRow()];
 	const int Selection = row.GetOneSharedSelection();
 	if( !Selection )
-		return "";
+		return NULL;
 	return vsProfiles[ Selection-1 ];
 }
 

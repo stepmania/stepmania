@@ -132,7 +132,7 @@ void ScreenSystemLayer::ReloadCreditsText()
 CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 {
 	if( (bool)CREDITS_JOIN_ONLY && !GAMESTATE->PlayersCanJoin() )
-		return "";
+		return NULL;
 
 	bool bShowCreditsMessage;
 	if( SCREENMAN && SCREENMAN->GetTopScreen() && SCREENMAN->GetTopScreen()->GetScreenType() == system_menu )
@@ -160,7 +160,7 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 			else if( GAMESTATE->PlayersCanJoin() )
 				return CREDITS_INSERT_CARD.GetValue();
 			else
-				return "";
+				return NULL;
 
 		case MEMORY_CARD_STATE_ERROR: 		return THEME->GetMetric( m_sName, "CreditsCard" + MEMCARDMAN->GetCardError(pn) );
 		case MEMORY_CARD_STATE_TOO_LATE:	return CREDITS_CARD_TOO_LATE.GetValue();

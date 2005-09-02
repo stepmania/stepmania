@@ -270,8 +270,8 @@ CString DeviceButtonToString( InputDevice device, DeviceButton i )
 	case DEVICE_PUMP2:		return PumpPadButtonToString( (PumpPadButton)i );
 	case DEVICE_MIDI:		return MidiButtonToString( i );
 	case DEVICE_PARA1:		return ParaPadButtonToString( (ParaPadButton)i );
-	case DEVICE_NONE:		return "";
-	default:	ASSERT(0);	return "";
+	case DEVICE_NONE:		return NULL;
+	default:	ASSERT(0);	return NULL;
 	}
 }
 
@@ -337,7 +337,7 @@ int GetNumDeviceButtons( InputDevice device )
 CString DeviceInput::toString() const
 {
 	if( device == DEVICE_NONE )
-		return "";
+		return NULL;
 
 	CString s = InputDeviceToString(device) + "_" + DeviceButtonToString(device,button);
 	return s;

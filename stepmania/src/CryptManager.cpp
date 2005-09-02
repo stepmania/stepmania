@@ -244,7 +244,7 @@ CString CryptManager::GetMD5( CString fn )
        if( !file.Open( fn, RageFile::READ ) )
        {
                LOG->Warn( "GetMD5: Failed to open file '%s'", fn.c_str() );
-               return "";
+               return NULL;
        }
 
        MD5Init(&md5c);

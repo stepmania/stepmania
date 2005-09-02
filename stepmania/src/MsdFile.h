@@ -11,7 +11,7 @@ public:
 	{
 		vector<CString> params;
 
-		CString operator[](unsigned i) const { if(i >= params.size()) return ""; return params[i]; }
+		CString operator[](unsigned i) const { if(i >= params.size()) return NULL; return params[i]; }
 	};
 
 	virtual ~MsdFile() { }
