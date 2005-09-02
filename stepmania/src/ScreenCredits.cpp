@@ -185,6 +185,7 @@ void ScreenCredits::Init()
 		4,
 		false,
 		sBackgroundsTransformFunction,
+		1,
 		false,
 		false );
 	SET_XY( m_ScrollerBackgrounds );
@@ -196,6 +197,7 @@ void ScreenCredits::Init()
 		4,
 		false,
 		sBackgroundsTransformFunction,
+		1,
 		false,
 		false );
 	SET_XY( m_ScrollerFrames );
@@ -247,6 +249,7 @@ void ScreenCredits::Init()
 		40,
 		false,
 		sTextsTransformFunction,
+		1,
 		false,
 		false );
 	SET_XY( m_ScrollerTexts );

@@ -25,6 +25,7 @@ public:
 		float fNumItemsToDraw, 
 		bool bFastCatchup,
 		const CString &sTransformFunction,
+		int iSubdivisions,
 		bool bUseMask,
 		bool bLoop );
 
@@ -48,6 +49,7 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
+	const Actor::TweenState &GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
 	void PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
 
 	bool	m_bLoaded;
@@ -67,6 +69,23 @@ protected:
 	Quad	m_quadMask;
 
 	LuaExpression m_exprTransformFunction;	// params: self,offset,itemIndex,numItems
+	int m_iSubdivisions;	// 1 == one evaluation per position
+	struct PositionOffsetAndItemIndex
+	{
+		float fPositionOffsetFromCenter;
+		int iItemIndex;
+
+		bool operator<( const PositionOffsetAndItemIndex &other ) const
+		{
+			if( fPositionOffsetFromCenter < other.fPositionOffsetFromCenter )
+				return true;
+			else if( fPositionOffsetFromCenter > other.fPositionOffsetFromCenter )
+				return false;
+			else
+				return iItemIndex < other.iItemIndex;
+		}
+	};
+	map<PositionOffsetAndItemIndex,Actor::TweenState> m_mapPositionToTweenStateCache;
 };
 
 class ActorScrollerAutoDeleteChildren : public ActorScroller

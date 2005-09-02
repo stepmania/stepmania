@@ -39,6 +39,8 @@ ActorScroller::ActorScroller()
 	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );	// don't change color values
 	m_quadMask.SetUseZBuffer( true );	// we want to write to the Zbuffer
 	m_quadMask.SetHidden( true );
+
+	m_iSubdivisions = 1;
 }
 
 void ActorScroller::Load2(
@@ -62,6 +64,7 @@ void ActorScroller::Load2(
 	m_exprTransformFunction.SetFromExpression( 
 		ssprintf("function(self,offset,itemIndex,numItems) return self:y(%f*offset) end",fItemHeight) 
 		);
+	m_iSubdivisions = 1;
 
 	m_bLoop = bLoop; 
 	m_fSecondsPerItem = fSecondsPerItem; 
@@ -90,6 +93,7 @@ void ActorScroller::Load3(
 	float fNumItemsToDraw, 
 	bool bFastCatchup,
 	const CString &sTransformFunction,
+	int iSubdivisions,
 	bool bUseMask,
 	bool bLoop
 	)
@@ -98,6 +102,7 @@ void ActorScroller::Load3(
 	m_fNumItemsToDraw = fNumItemsToDraw;
 	m_bFastCatchup = bFastCatchup;
 	m_exprTransformFunction.SetFromExpression( sTransformFunction );
+	m_iSubdivisions = iSubdivisions;
 	m_fQuantizePixels = 0;
 	m_bUseMask = bUseMask;
 	m_bLoop = bLoop;
@@ -131,12 +136,14 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 	float fItemPaddingStart = 0;
 	float fItemPaddingEnd = 0;
 	CString sTransformFunction;
+	int iSubdivisions = 0;
 
 	GET_VALUE( "SecondsPerItem", fSecondsPerItem );
 	GET_VALUE( "NumItemsToDraw", fNumItemsToDraw );
 	GET_VALUE( "ItemPaddingStart", fItemPaddingStart );
 	GET_VALUE( "ItemPaddingEnd", fItemPaddingEnd );
 	GET_VALUE( "TransformFunction", sTransformFunction );
+	pNode->GetAttrValue( "Subdivisions", m_iSubdivisions );
 #undef GET_VALUE
 
 	Load3( 
@@ -144,6 +151,7 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 		fNumItemsToDraw,
 		false,
 		sTransformFunction,
+		iSubdivisions,
 		false,
 		false );
 	SetCurrentAndDestinationItem( -fItemPaddingStart );
@@ -201,18 +209,47 @@ void ActorScroller::UpdateInternal( float fDeltaTime )
 		m_fCurrentItem = fmodf( m_fCurrentItem, m_fNumItemsToDraw+1 );
 }
 
-
-void ActorScroller::PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems )
+const Actor::TweenState &ActorScroller::GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems )
 {
+	PositionOffsetAndItemIndex key = { fPositionOffsetFromCenter, iItemIndex };
+
+	map<PositionOffsetAndItemIndex,Actor::TweenState>::iterator iter = m_mapPositionToTweenStateCache.find( key );
+	if( iter != m_mapPositionToTweenStateCache.end() )
+		return iter->second;
+
+	Actor a;
+
 	Lua *L = LUA->Get();
 	m_exprTransformFunction.PushSelf( L );
 	ASSERT( !lua_isnil(L, -1) );
-	pActor->PushSelf( L );
+	a.PushSelf( L );
 	LuaHelpers::Push( fPositionOffsetFromCenter, L );
 	LuaHelpers::Push( iItemIndex, L );
 	LuaHelpers::Push( iNumItems, L );
 	lua_call( L, 4, 0 ); // 4 args, 0 results
 	LUA->Release(L);
+
+	return m_mapPositionToTweenStateCache[key] = a.DestTweenState();
+}
+
+void ActorScroller::PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems )
+{
+	float fInterval = 1.0f / m_iSubdivisions;
+	float fFloor = QuantizeDown( fPositionOffsetFromCenter, fInterval );
+	float fCeil = QuantizeUp( fPositionOffsetFromCenter, fInterval );
+
+	if( fFloor == fCeil )
+	{
+		pActor->DestTweenState() = GetPosition( fCeil, iItemIndex, iNumItems );
+	}
+	else
+	{
+		const Actor::TweenState &tsFloor = GetPosition( fFloor, iItemIndex, iNumItems );
+		const Actor::TweenState &tsCeil = GetPosition( fCeil, iItemIndex, iNumItems );
+
+		float fPercentTowardCeil = SCALE( fPositionOffsetFromCenter, fFloor, fCeil, 0.0f, 1.0f );
+		Actor::TweenState::MakeWeightedAverage( pActor->DestTweenState(), tsFloor, tsCeil, fPercentTowardCeil );
+	}
 }
 
 void ActorScroller::DrawPrimitives()

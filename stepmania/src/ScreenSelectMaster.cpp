@@ -45,6 +45,7 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	SCROLLER_SECONDS_PER_ITEM(m_sName,"ScrollerSecondsPerItem"),
 	SCROLLER_NUM_ITEMS_TO_DRAW(m_sName,"ScrollerNumItemsToDraw"),
 	SCROLLER_TRANSFORM(m_sName,"ScrollerTransform"),
+	SCROLLER_SUBDIVISIONS(m_sName,"ScrollerSubdivisions"),
 	DEFAULT_CHOICE(m_sName,"DefaultChoice")
 {
 }
@@ -110,6 +111,7 @@ void ScreenSelectMaster::Init()
 				SCROLLER_NUM_ITEMS_TO_DRAW,
 				SCROLLER_FAST_CATCHUP,
 				SCROLLER_TRANSFORM,
+				SCROLLER_SUBDIVISIONS,
 				false,
 				LOOP_SCROLLER );
 			m_Scroller[*p].SetName( "Scroller"+PLAYER_APPEND_NO_SPACE(*p) );
