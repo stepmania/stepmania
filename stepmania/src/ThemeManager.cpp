@@ -28,7 +28,6 @@ static const CString ElementCategoryNames[] = {
 	"BGAnimations",
 	"Fonts",
 	"Graphics",
-	"Numbers",
 	"Sounds",
 	"Other"
 };
@@ -376,7 +375,6 @@ try_element_again:
 				{ "redir", "", "xml", NULL },
 				{ "redir", "ini", NULL },
 				{ "redir", "xml", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
-				{ "redir", "png", NULL },
 				{ "redir", "mp3", "ogg", "wav", NULL },
 				{ "*", NULL },
 			};		

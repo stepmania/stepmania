@@ -19,7 +19,6 @@ enum ElementCategory
 	EC_BGANIMATIONS,
 	EC_FONTS,
 	EC_GRAPHICS,
-	EC_NUMBERS,
 	EC_SOUNDS,
 	EC_OTHER,
 	NUM_ElementCategory
