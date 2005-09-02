@@ -444,10 +444,6 @@ try_element_again:
 		CString sNewClassName, sNewFile;
 		FileNameToClassAndElement(sNewFileName, sNewClassName, sNewFile);
 		
-		/* backwards-compatibility hack */
-		if( category == EC_FONTS )
-			sNewFileName.Replace(" 16x16.png", "");
-
 		/* Search again.  For example, themes/default/Fonts/foo might redir
 		* to "Hello"; but "Hello" might be overridden in themes/hot pink/Fonts/Hello. */
 		/* Important: We need to do a full search.  For example, BG redirs in
