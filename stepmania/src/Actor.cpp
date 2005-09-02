@@ -190,17 +190,19 @@ Actor::Actor( const Actor &cpy )
 
 void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
-	// Load Name, if any.
-	pNode->GetAttrValue( "Name", m_sName );
-
-	FOREACH_CONST_Attr( pNode, pChild )
+	FOREACH_CONST_Attr( pNode, pAttr )
 	{
-		if( pChild->m_sName == "Input" )
+		// Load Name, if any.
+		if( pAttr->m_sName == "Name" )
+		{
+			m_sName = pAttr->m_sValue;
+		}
+		else if( pAttr->m_sName == "Input" )
 		{
 			/* Parameters are set as globals by ActorUtil::LoadFromActorFile.
 			 * If parameters are specified here, save them to the actor.  Accessing
 			 * parameters as globals directly is deprecated. */
-			const CString &sName = pChild->m_sValue;
+			const CString &sName = pAttr->m_sValue;
 			
 			Lua *L = LUA->Get();
 			this->PushSelf( L );
@@ -214,38 +216,28 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 			lua_pop( L, 1 );
 			LUA->Release( L );
 		}
-	}
+		else if( pAttr->m_sName == "BaseRotationXDegrees" )	SetBaseRotationX( atof( pAttr->m_sValue ) );
+		else if( pAttr->m_sName == "BaseRotationYDegrees" )	SetBaseRotationY( atof( pAttr->m_sValue ) );
+		else if( pAttr->m_sName == "BaseRotationZDegrees" )	SetBaseRotationZ( atof( pAttr->m_sValue ) );
+		else if( pAttr->m_sName == "BaseZoomX" )			SetBaseZoomX( atof( pAttr->m_sValue ) );
+		else if( pAttr->m_sName == "BaseZoomY" )			SetBaseZoomY( atof( pAttr->m_sValue ) );
+		else if( pAttr->m_sName == "BaseZoomZ" )			SetBaseZoomZ( atof( pAttr->m_sValue ) );
+		else if( EndsWith(pAttr->m_sName,"Command") )
+		{
+			CString sKeyName = pAttr->m_sName; /* "OnCommand" */
 
-	float f;
-	if( pNode->GetAttrValue( "BaseRotationXDegrees", f ) )	SetBaseRotationX( f );
-	if( pNode->GetAttrValue( "BaseRotationYDegrees", f ) )	SetBaseRotationY( f );
-	if( pNode->GetAttrValue( "BaseRotationZDegrees", f ) )	SetBaseRotationZ( f );
-	if( pNode->GetAttrValue( "BaseZoomX", f ) )			SetBaseZoomX( f );
-	if( pNode->GetAttrValue( "BaseZoomY", f ) )			SetBaseZoomY( f );
-	if( pNode->GetAttrValue( "BaseZoomZ", f ) )			SetBaseZoomZ( f );
+			CString sValue = pAttr->m_sValue;
+			THEME->EvaluateString( sValue );
+			apActorCommands apac( new ActorCommands( sValue ) );
 
-
-	//
-	// Load command attributes
-	//
-	FOREACH_CONST_Attr( pNode, a )
-	{
-		CString sKeyName = a->m_sName; /* "OnCommand" */
-
-		if( sKeyName.Right(7).CompareNoCase("Command") != 0 )
-			continue; /* not a command */
-
-		CString sValue = a->m_sValue;
-		THEME->EvaluateString( sValue );
-		apActorCommands apac( new ActorCommands( sValue ) );
-
-		CString sCmdName;
-		/* Special case: "Command=foo" -> "OnCommand=foo" */
-		if( sKeyName.size() == 7 )
-			sCmdName="On";
-		else
-			sCmdName = sKeyName.Left( sKeyName.size()-7 );
-		AddCommand( sCmdName, apac );
+			CString sCmdName;
+			/* Special case: "Command=foo" -> "OnCommand=foo" */
+			if( sKeyName.size() == 7 )
+				sCmdName="On";
+			else
+				sCmdName = sKeyName.Left( sKeyName.size()-7 );
+			AddCommand( sCmdName, apac );
+		}
 	}
 
 	//
