@@ -276,6 +276,7 @@ typedef char*			PSTR;
 // (basic_string assignment bug)
 
 #if defined ( _MSC_VER ) && ( _MSC_VER < 1200 )
+	#define HAVE_ASSIGN_FIX
 	#define Q172398(x) (x).erase()
 #else
 	#define Q172398(x)
@@ -351,6 +352,7 @@ inline void	ssasn(std::string& sDst, PCSTR pA)
 		sDst.erase();
 	}
 
+#if defined(HAVE_ASSIGN_FIX)
 	// If pA actually points to part of sDst, we must NOT erase(), but
 	// rather take a substring
 
@@ -367,6 +369,10 @@ inline void	ssasn(std::string& sDst, PCSTR pA)
 		Q172398(sDst);
 		sDst.assign(pA);
 	}
+#else
+	else
+		sDst.assign(pA);
+#endif
 }
 inline void ssasn(std::string& sDst, const int nNull)
 {
