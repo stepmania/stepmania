@@ -361,7 +361,7 @@ void ScreenOptionsManageCourses::ProcessMenuStart( PlayerNumber pn, const InputE
 		}
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromEnterNameForNew, 
-			"Enter a name for a new course.", 
+			"Enter a name for the new course.", 
 			sDefaultName, 
 			MAX_EDIT_COURSE_TITLE_LENGTH, 
 			ValidateEditCourseName );

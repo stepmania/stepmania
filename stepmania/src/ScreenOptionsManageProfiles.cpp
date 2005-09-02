@@ -364,7 +364,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( PlayerNumber pn, const Input
 		}
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromEnterNameForNew, 
-			"Enter a name for a new course.", 
+			"Enter a name for the new profile.", 
 			sPotentialName, 
 			PROFILE_MAX_DISPLAY_NAME_LENGTH, 
 			ValidateLocalProfileName );
