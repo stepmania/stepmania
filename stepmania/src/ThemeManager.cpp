@@ -48,7 +48,7 @@ struct Theme
 	IniFile *iniMetrics;	// pointer because the copy constructor isn't a deep copy
 };
 // When looking for a metric or an element, search these from head to tail.
-deque<Theme> g_vThemes;
+static deque<Theme> g_vThemes;
 
 
 //
@@ -84,7 +84,7 @@ void ThemeManager::ClearThemePathCache()
 		g_ThemePathCache[i].clear();
 }
 
-void FileNameToClassAndElement( const CString &sFileName, CString &sClassNameOut, CString &sElementOut )
+static void FileNameToClassAndElement( const CString &sFileName, CString &sClassNameOut, CString &sElementOut )
 {
 	// split into class name and file name
 	int iIndexOfFirstSpace = sFileName.Find(" ");
@@ -433,47 +433,43 @@ try_element_again:
 	bool bIsARedirect = GetExtension(sPath).CompareNoCase("redir")==0;
 
 	if( !bIsARedirect )
-	{
 		return sPath;
-	}
-	else	// bIsARedirect
+
+	CString sNewFileName;
+	GetFileContents( sPath, sNewFileName, true );
+
+	CString sNewClassName, sNewFile;
+	FileNameToClassAndElement(sNewFileName, sNewClassName, sNewFile);
+	
+	/* Search again.  For example, themes/default/Fonts/foo might redir
+	 * to "Hello"; but "Hello" might be overridden in themes/hot pink/Fonts/Hello. */
+	/* Important: We need to do a full search.  For example, BG redirs in
+	 * the default theme point to "_shared background", and themes override
+	 * just "_shared background"; the redirs in the default theme should end
+	 * up resolving to the overridden background. */
+	/* Use GetPathToOptional because we don't want report that there's an element
+	 * missing.  Instead we want to report that the redirect is invalid. */
+	CString sNewPath = GetPath(category, sNewClassName, sNewFile, true);
+
+	if( !sNewPath.empty() )
 	{
-		CString sNewFileName;
-		GetFileContents( sPath, sNewFileName, true );
+		return sNewPath;
+	}
+	else
+	{
+		CString message = ssprintf(
+				"ThemeManager:  The redirect '%s' points to the file '%s', which does not exist. "
+				"Verify that this redirect is correct.",
+				sPath.c_str(), sNewFileName.c_str());
 
-		CString sNewClassName, sNewFile;
-		FileNameToClassAndElement(sNewFileName, sNewClassName, sNewFile);
-		
-		/* Search again.  For example, themes/default/Fonts/foo might redir
-		* to "Hello"; but "Hello" might be overridden in themes/hot pink/Fonts/Hello. */
-		/* Important: We need to do a full search.  For example, BG redirs in
-		* the default theme point to "_shared background", and themes override
-		* just "_shared background"; the redirs in the default theme should end
-		* up resolving to the overridden background. */
-		/* Use GetPathToOptional because we don't want report that there's an element
-		 * missing.  Instead we want to report that the redirect is invalid. */
-		CString sNewPath = GetPath(category, sNewClassName, sNewFile, true);
-
-		if( !sNewPath.empty() )
+		if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
 		{
-			return sNewPath;
+			FlushDirCache();
+			ReloadMetrics();
+			goto try_element_again;
 		}
-		else
-		{
-			CString message = ssprintf(
-					"ThemeManager:  The redirect '%s' points to the file '%s', which does not exist. "
-					"Verify that this redirect is correct.",
-					sPath.c_str(), sNewFileName.c_str());
 
-			if( Dialog::AbortRetryIgnore(message) == Dialog::retry )
-			{
-				FlushDirCache();
-				ReloadMetrics();
-				goto try_element_again;
-			}
-
-			RageException::Throw( "%s", message.c_str() ); 
-		}
+		RageException::Throw( "%s", message.c_str() ); 
 	}
 }
 
