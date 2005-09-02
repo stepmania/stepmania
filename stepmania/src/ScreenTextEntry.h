@@ -45,6 +45,7 @@ public:
 	virtual void Init();
 	virtual void BeginScreen();
 
+	virtual void Update( float fDelta );
 	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
 
 	static CString s_sLastAnswer;
@@ -73,6 +74,7 @@ protected:
 	AutoActor		m_sprAnswerBox;
 	wstring			m_sAnswer;
 	BitmapText		m_textAnswer;
+	bool			m_bShowAnswerCaret;
 	
 	AutoActor		m_sprCursor;
 
@@ -81,11 +83,13 @@ protected:
 	
 	void PositionCursor();
 
-	BitmapText		m_textKeyboardChars[NUM_KEYBOARD_ROWS][KEYS_PER_ROW];
+	BitmapText		*m_ptextKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW];
 
 	RageSound	m_sndType;
 	RageSound	m_sndBackspace;
 	RageSound	m_sndChange;
+	
+	RageTimer	m_timerToggleCursor;
 };
 
 
