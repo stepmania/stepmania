@@ -136,10 +136,6 @@ public:
 
 	static const wchar_t DEFAULT_GLYPH;
 
-	static CString GetFontName(CString FileName);
-	/* Remove filenames in 'v' that aren't in the same font as "FileName". */
-	static void WeedFontNames(vector<CString> &v, const CString &FileName);
-
 private:
 	/* List of pages and fonts that we use (and are responsible for freeing). */
 	vector<FontPage *> m_apPages;
@@ -156,7 +152,7 @@ private:
 	CString m_sChars;
 
 	void LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const CString &sTexturePath, const CString &PageName, CString sChars );
-	static void GetFontPaths( const CString &sFontOrTextureFilePath, CStringArray &TexturePaths, CString &IniPath );
+	static void GetFontPaths( const CString &sFontOrTextureFilePath, CStringArray &sTexturePaths );
 	CString GetPageNameFromFileName( const CString &sFilename );
 };
 

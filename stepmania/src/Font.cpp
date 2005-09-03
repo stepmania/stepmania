@@ -338,112 +338,17 @@ void Font::SetDefaultGlyph( FontPage *pPage )
 }
 
 
-CString Font::GetFontName( CString sFileName )
+/* Given the INI for a font, find all of the texture pages for the font. */
+void Font::GetFontPaths( const CString &sFontIniPath, CStringArray &asTexturePathsOut )
 {
-	CString sOrig = sFileName;
-
-	CString sDir, sFName, sExt;
-	splitpath( sFileName, sDir, sFName, sExt );
-	sFileName = sFName;
-
-	/* If it ends in an extension, remove it. */
-	static Regex drop_ext( "\\....$" );
-	if( drop_ext.Compare(sFileName) )
-		sFileName.erase( sFileName.size()-4 );
-
-	/* If it ends in a resolution spec, remove it. */
-	CStringArray asMatch;
-	static Regex ResSpec( "( \\(res [0-9]+x[0-9]+\\))$" );
-	if( ResSpec.Compare(sFileName, asMatch) )
-		sFileName.erase(sFileName.size()-asMatch[0].size());
-
-	/* If it ends in a dimension spec, remove it. */
-	static Regex DimSpec( "( [0-9]+x[0-9]+)$" );
-	if( DimSpec.Compare(sFileName, asMatch) )
-		sFileName.erase( sFileName.size()-asMatch[0].size() );
-
-	/* If it ends in texture hints, remove them. */
-	static Regex Hints( "( \\([^\\)]+\\))$" );
-	if( Hints.Compare(sFileName, asMatch) )
-		sFileName.erase( sFileName.size()-asMatch[0].size() );
-
-	/* If it ends in a page name, remove it. */
-	static Regex PageName("( \\[.+\\])$");
-	if( PageName.Compare( sFileName, asMatch ) )
-		sFileName.erase( sFileName.size()-asMatch[0].size() );
-
-	TrimRight( sFileName );
-
-	if( sFileName.empty() )
-		RageException::Throw( "Can't parse font filename \"%s\"", sOrig.c_str() );
-
-	sFileName.MakeLower();
-	return sFileName;
-}
-
-
-void Font::WeedFontNames( vector<CString> &v, const CString &sFileName )
-{
-	CString sFontName = Font::GetFontName( sFileName );
-
-	/* Weed out false matches.  (For example, this gets rid of "normal2" when
-	 * we're really looking for "normal".) */
-	for( unsigned i = 0; i < v.size(); )
-	{
-		if( sFontName.CompareNoCase(Font::GetFontName(v[i])) )
-			v.erase( v.begin()+i );
-		else
-			++i;
-	}
-}
-
-/* Given a file in a font, find all of the files for the font.
- * 
- * Possibilities:
- *
- * Normal 16x16.png
- * Normal [other] 16x16.png
- * Normal [more] 8x8.png
- * Normal 16x16.ini
- * Normal.ini
- *
- * Any of the above should find all of the above.  Allow the
- * extension to be omitted. */
-void Font::GetFontPaths( const CString &sFontOrTextureFilePath,
-							   CStringArray &asTexturePathsOut, CString &sIniPath )
-{
-	CString sDir, sFName, sExt;
-	splitpath( sFontOrTextureFilePath, sDir, sFName, sExt );
-
-	/* Don't give us a redir; resolve those before sending them here. */
-	ASSERT( sExt.CompareNoCase("redir") );
-
-	/* sFName can't be empty, or we don't know what to search for. */
-	ASSERT( !sFName.empty() );
-
-	CString sFontName = GetFontName( sFName );
-
+	CString sPrefix = SetExtension( sFontIniPath, "" );
 	CStringArray asFiles;
-	GetDirListing( sDir+sFontName + "*", asFiles, false, false );
+	GetDirListing( sPrefix + "*", asFiles, false, true );
 
 	for( unsigned i = 0; i < asFiles.size(); ++i )
 	{
-		/* We now have a list of possibilities, but it may include false positives,
-		 * such as "Normal2" when the font name is "Normal".  Weed them. */
-		if( GetFontName(asFiles[i]).CompareNoCase(sFontName) )
-			continue;
-
-		/* If it's an INI, and we don't already have an INI, use it. */
-		if( !asFiles[i].Right(4).CompareNoCase(".ini"))  
-		{
-			if( !sIniPath.empty() )
-				RageException::Throw( "More than one INI found\n%s\n%s", sIniPath.c_str(), asFiles[i].c_str() );
-			
-			sIniPath = sDir+asFiles[i];
-			continue;
-		}
-
-		asTexturePathsOut.push_back( sDir+asFiles[i] );
+		if( asFiles[i].Right(4).CompareNoCase(".ini"))  
+			asTexturePathsOut.push_back( asFiles[i] );
 	}
 }
 
@@ -739,56 +644,43 @@ static CStringArray LoadStack;
  * Normal [more] 8x8.png
  * Normal 16x16.ini           (the 16x16 here is optional)
  *
- * Only one texture is required; the INI is optional.  [1] This is
- * designed to be backwards-compatible.
- *
- * sFontOrTextureFilePath can be a partial path, eg.
- * "Themes/default/Fonts/Normal"
- * or a complete path to a texture file (in which case no other
- * files will be searched for).
+ * One INI and at least one texture is required.
  *
  * The entire font can be redirected; that's handled in ThemeManager.
  * Individual font files can not be redirected.
  *
- * TODO: 
- * [main]
- * import=FontName,FontName2 (load other fonts)
- *
- * [1] If a file has no INI and sChars is not set, it will receive a default
+ * If a file has no characters and sChars is not set, it will receive a default
  * mapping of ASCII or ISO-8859-1 if the font has exactly 128 or 256 frames.
  * However, if it doesn't, we don't know what it is and the font will receive
  * no default mapping.  A font isn't useful with no characters mapped.
  */
-void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
+void Font::Load( const CString &sIniPath, CString sChars )
 {
+	ASSERT_M( !GetExtension(sIniPath).CompareNoCase("ini"), sIniPath );
+
 	/* Check for recursion (recursive imports). */
 	{
 		for(unsigned i = 0; i < LoadStack.size(); ++i)
 		{
-			if(LoadStack[i] == sFontOrTextureFilePath)
+			if( LoadStack[i] == sIniPath )
 			{
 				CString str = join("\n", LoadStack);
-				str += "\n" + sFontOrTextureFilePath;
+				str += "\n" + sIniPath;
 				RageException::Throw("Font import recursion detected\n%s", str.c_str());
 			}
 		}
-		LoadStack.push_back(sFontOrTextureFilePath);
+		LoadStack.push_back( sIniPath );
 	}
 
 	/* The font is not already loaded.  Figure out what we have. */
-	CHECKPOINT_M( ssprintf("Font::Load(\"%s\",\"%s\").", sFontOrTextureFilePath.c_str(), m_sChars.c_str()) );
+	CHECKPOINT_M( ssprintf("Font::Load(\"%s\",\"%s\").", sIniPath.c_str(), m_sChars.c_str()) );
 
-	path = sFontOrTextureFilePath;
+	path = sIniPath;
 	m_sChars = sChars;
 
 	/* Get the filenames associated with this font. */
-	CStringArray TexturePaths;
-	CString sIniPath;
-	GetFontPaths( sFontOrTextureFilePath, TexturePaths, sIniPath );
-
-	/* If we don't have at least one INI or at least one texture path,
-	 * we have nothing at all. */
-	ASSERT( !sIniPath.empty() || TexturePaths.size() );
+	CStringArray asTexturePaths;
+	GetFontPaths( sIniPath, asTexturePaths );
 
 	bool bCapitalsOnly = false;
 
@@ -818,7 +710,7 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 			CString path = THEME->GetPathF( "", ImportList[i], true );
 			if( path == "" )
 			{
-				LOG->Warn("Font \"%s\" imports a font \"%s\" that doesn't exist", sFontOrTextureFilePath.c_str(), ImportList[i].c_str());
+				LOG->Warn("Font \"%s\" imports a font \"%s\" that doesn't exist", sIniPath.c_str(), ImportList[i].c_str());
 				continue;
 			}
 
@@ -829,9 +721,9 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 	}
 
 	/* Load each font page. */
-	for(unsigned i = 0; i < TexturePaths.size(); ++i)
+	for(unsigned i = 0; i < asTexturePaths.size(); ++i)
 	{
-		const CString sTexturePath = TexturePaths[i];
+		const CString &sTexturePath = asTexturePaths[i];
 
 		FontPage *pPage = new FontPage;
 
@@ -840,8 +732,8 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 
 		/* Load settings for this page from the INI. */
 		FontPageSettings cfg;
-		LoadFontPageSettings( cfg, ini, TexturePaths[i], "common", sChars );
-		LoadFontPageSettings( cfg, ini, TexturePaths[i], sPagename, sChars );
+		LoadFontPageSettings( cfg, ini, sTexturePath, "common", sChars );
+		LoadFontPageSettings( cfg, ini, sTexturePath, sPagename, sChars );
 
 		/* Go. */
 		pPage->Load( cfg );
@@ -855,7 +747,7 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 			if( it->second < pPage->m_pTexture->GetNumFrames() )
 				continue; /* OK */
 			CString sError = ssprintf( "The font '%s' maps %s to frame %i, but the font only has %i frames.",
-				TexturePaths[i].c_str(), WcharDisplayText(wchar_t(it->first)).c_str(), it->second, pPage->m_pTexture->GetNumFrames() );
+				sTexturePath.c_str(), WcharDisplayText(wchar_t(it->first)).c_str(), it->second, pPage->m_pTexture->GetNumFrames() );
 			RageException::Throw( sError );
 		}
 
@@ -874,7 +766,7 @@ void Font::Load(const CString &sFontOrTextureFilePath, CString sChars)
 		CapsOnly();
 
 	if( m_iCharToGlyph.empty() )
-		LOG->Warn("Font %s has no characters", sFontOrTextureFilePath.c_str());
+		LOG->Warn( "Font %s has no characters", sIniPath.c_str() );
 
 	LoadStack.pop_back();
 
