@@ -68,8 +68,9 @@ OptionRow::OptionRow( const OptionRowType *pSource )
 	ZERO( m_OptionIcons );
 
 	Clear();
-
 	this->AddChild( &m_Frame );
+
+	m_tsDestination.Init();
 }
 
 OptionRow::~OptionRow()
@@ -590,11 +591,12 @@ void OptionRow::UpdateEnabledDisabled()
 		bThisRowHasFocusByAll &= m_bRowHasFocus[p];
 	
 	bool bRowEnabled = !m_RowDef.m_vEnabledForPlayers.empty();
-	if( m_Frame.DestTweenState() != m_FrameDestination.DestTweenState() )
+	
+	if( m_Frame.DestTweenState() != m_tsDestination )
 	{
 		m_Frame.StopTweening();
 		m_Frame.BeginTweening( m_pParentType->TWEEN_SECONDS );
-		m_Frame.DestTweenState() = m_FrameDestination.DestTweenState();
+		m_Frame.DestTweenState() = m_tsDestination;
 	}
 
 	if( bThisRowHasFocusByAny )
@@ -769,7 +771,7 @@ void OptionRow::GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, i
 	* their final positions.  (This is so we don't tween colors, too.)  m_FrameDestination
 	* is the actual destination position, even though we may not have set up the
 	* tween yet. */
-	float fY = m_FrameDestination.DestTweenState().pos.y;
+	float fY = m_tsDestination.pos.y;
 	iYOut = int(roundf(fY));
 }
 

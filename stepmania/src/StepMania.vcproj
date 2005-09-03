@@ -858,6 +858,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="LuaBinding.h">
 			</File>
 			<File
+				RelativePath="LuaExpressionTransform.cpp">
+			</File>
+			<File
+				RelativePath="LuaExpressionTransform.h">
+			</File>
+			<File
 				RelativePath="LuaFunctions.h">
 			</File>
 			<File

@@ -9,6 +9,7 @@
 #include "ThemeMetric.h"
 #include "OptionRow.h"
 #include "OptionsCursor.h"
+#include "LuaExpressionTransform.h"
 
 class OptionRowHandler;
 
@@ -39,6 +40,7 @@ protected:
 	OptionRowType m_OptionRowType;
 
 	virtual void TweenOnScreen();
+	virtual void TweenOffScreen();
 
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;
@@ -53,7 +55,7 @@ protected:
 	virtual void RefreshIcons( int iRow, PlayerNumber pn );
 	void RefreshAllIcons();
 	void PositionCursors();
-	void PositionItems();
+	void PositionRows();
 	void TweenCursor( PlayerNumber pn );
 	void UpdateText( int iRow );
 	void UpdateEnabledDisabled();
@@ -133,10 +135,13 @@ protected:
 
 	// metrics
 	ThemeMetric<int>				NUM_ROWS_SHOWN;
-	LuaExpression m_exprRowPositionTransformFunction;	// params: self,positionIndex,itemIndex,numItems
-	LuaExpression m_exprRowOffScreenTopTransformFunction;	// params: self,positionIndex,itemIndex,numItems
-	LuaExpression m_exprRowOffScreenCenterTransformFunction;	// params: self,positionIndex,itemIndex,numItems
-	LuaExpression m_exprRowOffScreenBottomTransformFunction;	// params: self,positionIndex,itemIndex,numItems
+	ThemeMetric<apActorCommands>	ROW_INIT_COMMAND;
+	ThemeMetric<apActorCommands>	ROW_ON_COMMAND;
+	ThemeMetric<apActorCommands>	ROW_OFF_COMMAND;
+	LuaExpressionTransform m_exprRowPositionTransformFunction;		// params: self,positionIndex,itemIndex,numItems
+	LuaExpressionTransform m_exprRowOffScreenTopTransformFunction;	// params: self,positionIndex,itemIndex,numItems
+	LuaExpressionTransform m_exprRowOffScreenCenterTransformFunction;	// params: self,positionIndex,itemIndex,numItems
+	LuaExpressionTransform m_exprRowOffScreenBottomTransformFunction;	// params: self,positionIndex,itemIndex,numItems
 	ThemeMetric1D<float>			EXPLANATION_X;
 	ThemeMetric1D<float>			EXPLANATION_Y;
 	ThemeMetric1D<apActorCommands>	EXPLANATION_ON_COMMAND;

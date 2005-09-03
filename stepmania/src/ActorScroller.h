@@ -6,6 +6,7 @@
 #include "ActorFrame.h"
 #include "Quad.h"
 struct XNode;
+#include "LuaExpressionTransform.h"
 
 class ActorScroller : public ActorFrame
 {
@@ -32,6 +33,8 @@ public:
 	virtual void UpdateInternal( float fDelta );
 	virtual void DrawPrimitives();	// handles drawing and doesn't call ActorFrame::DrawPrimitives
 
+	void PositionItems();
+
 	void LoadFromNode( const CString &sDir, const XNode *pNode );
 	virtual Actor *Copy() const;
 	
@@ -49,8 +52,9 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
+	void PositionItemsAndDrawPrimitives( bool bPosition, bool bDrawPrimitives );
+
 	const Actor::TweenState &GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
-	void PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
 
 	bool	m_bLoaded;
 	float	m_fCurrentItem; // Item at top of list, usually between 0 and m_SubActors.size(), approaches destination
@@ -68,24 +72,7 @@ protected:
 	float	m_fMaskHeight;
 	Quad	m_quadMask;
 
-	LuaExpression m_exprTransformFunction;	// params: self,offset,itemIndex,numItems
-	int m_iSubdivisions;	// 1 == one evaluation per position
-	struct PositionOffsetAndItemIndex
-	{
-		float fPositionOffsetFromCenter;
-		int iItemIndex;
-
-		bool operator<( const PositionOffsetAndItemIndex &other ) const
-		{
-			if( fPositionOffsetFromCenter < other.fPositionOffsetFromCenter )
-				return true;
-			else if( fPositionOffsetFromCenter > other.fPositionOffsetFromCenter )
-				return false;
-			else
-				return iItemIndex < other.iItemIndex;
-		}
-	};
-	map<PositionOffsetAndItemIndex,Actor::TweenState> m_mapPositionToTweenStateCache;
+	LuaExpressionTransform m_exprTransformFunction;	// params: self,offset,itemIndex,numItems
 };
 
 class ActorScrollerAutoDeleteChildren : public ActorScroller

@@ -13,6 +13,7 @@
 #include "Command.h"
 #include "GameCommand.h"
 #include "OptionRowHandler.h"
+#include "LuaBinding.h"
 
 
 /*
@@ -73,6 +74,9 @@ static CString OPTION_EXPLANATION( CString s )
 //REGISTER_SCREEN_CLASS( ScreenOptions );	// can't be instantiated
 ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName),
 	NUM_ROWS_SHOWN					(m_sName,"NumRowsShown"),
+	ROW_INIT_COMMAND				(m_sName,"RowInitCommand"),
+	ROW_ON_COMMAND					(m_sName,"RowOnCommand"),
+	ROW_OFF_COMMAND					(m_sName,"RowOffCommand"),
 	EXPLANATION_X					(m_sName,EXPLANATION_X_NAME,NUM_PLAYERS),
 	EXPLANATION_Y					(m_sName,EXPLANATION_Y_NAME,NUM_PLAYERS),
 	EXPLANATION_ON_COMMAND			(m_sName,EXPLANATION_ON_COMMAND_NAME,NUM_PLAYERS),
@@ -100,10 +104,10 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
 	m_InputMode = INPUTMODE_SHARE_CURSOR;
 
-	m_exprRowPositionTransformFunction			.SetFromExpression( THEME->GetMetric(m_sName,"RowPositionTransformFunction") );
-	m_exprRowOffScreenTopTransformFunction		.SetFromExpression( THEME->GetMetric(m_sName,"RowOffScreenTopTransformFunction") );
-	m_exprRowOffScreenCenterTransformFunction	.SetFromExpression( THEME->GetMetric(m_sName,"RowOffScreenCenterTransformFunction") );
-	m_exprRowOffScreenBottomTransformFunction	.SetFromExpression( THEME->GetMetric(m_sName,"RowOffScreenBottomTransformFunction") );
+	m_exprRowPositionTransformFunction			.SetFromExpression( THEME->GetMetric(m_sName,"RowPositionTransformFunction"), 1 );
+	m_exprRowOffScreenTopTransformFunction		.SetFromExpression( THEME->GetMetric(m_sName,"RowOffScreenTopTransformFunction"), 1 );
+	m_exprRowOffScreenCenterTransformFunction	.SetFromExpression( THEME->GetMetric(m_sName,"RowOffScreenCenterTransformFunction"), 1 );
+	m_exprRowOffScreenBottomTransformFunction	.SetFromExpression( THEME->GetMetric(m_sName,"RowOffScreenBottomTransformFunction"), 1 );
 }
 
 
@@ -249,6 +253,18 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 
 	m_framePage.SortByDrawOrder();
 
+	FOREACH( OptionRow*, m_pRows, p )
+	{
+		int iIndex = p - m_pRows.begin();
+
+		Lua *L = LUA->Get();
+		LuaHelpers::Push( iIndex, L );
+		(*p)->m_pLuaInstance->Set( L, "iIndex" );
+		LUA->Release( L );
+
+		(*p)->RunCommands( ROW_INIT_COMMAND );
+	}
+
 	// poke once at all the explanation metrics so that we catch missing ones early
 	for( int r=0; r<(int)m_pRows.size(); r++ )		// foreach row
 	{
@@ -309,7 +325,7 @@ void ScreenOptions::BeginScreen()
 
 	CHECKPOINT;
 
-	PositionItems();
+	PositionRows();
 	PositionAllUnderlines();
 	PositionIcons();
 	RefreshAllIcons();
@@ -320,21 +336,14 @@ void ScreenOptions::BeginScreen()
 		AfterChangeValueOrRow( p );
 
 	CHECKPOINT;
-
-	/* It's tweening into position, but on the initial tween-in we only want to
-	 * tween in the whole page at once.  Since the tweens are nontrivial, it's
-	 * easiest to queue the tweens and then force them to finish. */
-	for( int r=0; r<(int) m_pRows.size(); r++ )	// foreach options line
-	{
-		OptionRow &row = *m_pRows[r];
-		row.FinishTweening();
-	}
-
 }
 
 void ScreenOptions::TweenOnScreen()
 {
 	ScreenWithMenuElements::TweenOnScreen();
+
+	FOREACH( OptionRow*, m_pRows, p )
+		(*p)->RunCommands( ROW_ON_COMMAND );
 
 	ON_COMMAND( m_sprPage );
 	FOREACH_HumanPlayer( p )
@@ -351,6 +360,16 @@ void ScreenOptions::TweenOnScreen()
 		ON_COMMAND( m_sprDisqualify[p] );
 
 	m_framePage.SortByDrawOrder();
+}
+
+void ScreenOptions::TweenOffScreen()
+{
+	ScreenWithMenuElements::TweenOffScreen();
+
+	FOREACH( OptionRow*, m_pRows, p )
+		(*p)->RunCommands( ROW_OFF_COMMAND );
+
+	OFF_COMMAND( m_framePage );
 }
 
 ScreenOptions::~ScreenOptions()
@@ -614,7 +633,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 
 		SCREENMAN->PlayStartSound();
 
-		OFF_COMMAND( m_framePage );
+		TweenOffScreen();
 	}
 	else if( SM == SM_GainFocus )
 	{
@@ -629,7 +648,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 }
 
 
-void ScreenOptions::PositionItems()
+void ScreenOptions::PositionRows()
 {
 	const int total = NUM_ROWS_SHOWN;
 	const int halfsize = total / 2;
@@ -663,7 +682,9 @@ void ScreenOptions::PositionItems()
 		first_start = max( P1Choice - halfsize, 0 );
 		first_end = first_start + total;
 		second_start = second_end = first_end;
-	} else {
+	}
+	else
+	{
 		/* First half: */
 		const int earliest = min( P1Choice, P2Choice );
 		first_start = max( earliest - halfsize/2, 0 );
@@ -710,29 +731,14 @@ void ScreenOptions::PositionItems()
 		OptionRow &row = *Rows[i];
 
 
-		LuaExpression *pExpr = NULL;
-		if( i < first_start )
-			pExpr = &m_exprRowOffScreenTopTransformFunction;
-		else if( i < first_end )
-			pExpr = &m_exprRowPositionTransformFunction; 
-		else if( i < second_start )
-			pExpr = &m_exprRowOffScreenCenterTransformFunction;
-		else if( i < second_end )
-			pExpr = &m_exprRowPositionTransformFunction; 
-		else
-			pExpr = &m_exprRowOffScreenBottomTransformFunction;
+		LuaExpressionTransform *pExpr = NULL;
+		if( i < first_start )		pExpr = &m_exprRowOffScreenTopTransformFunction;
+		else if( i < first_end )	pExpr = &m_exprRowPositionTransformFunction; 
+		else if( i < second_start )	pExpr = &m_exprRowOffScreenCenterTransformFunction;
+		else if( i < second_end )	pExpr = &m_exprRowPositionTransformFunction; 
+		else						pExpr = &m_exprRowOffScreenBottomTransformFunction;
 
-		Lua *L = LUA->Get();
-
-		pExpr->PushSelf( L );
-	
-		ASSERT( !lua_isnil(L, -1) );
-		row.GetFrameDestination().PushSelf( L );
-		LuaHelpers::Push( pos, L );
-		LuaHelpers::Push( i, L );
-		LuaHelpers::Push( min( (int)Rows.size(), (int)NUM_ROWS_SHOWN ), L );
-		lua_call( L, 4, 0 ); // 4 args, 0 results
-		LUA->Release(L);
+		row.m_tsDestination = pExpr->GetPosition( pos, i, min( (int)Rows.size(), (int)NUM_ROWS_SHOWN ) );
 
 		bool bHidden = 
 			i < first_start ||
@@ -745,7 +751,7 @@ void ScreenOptions::PositionItems()
 
 	if( ExitRow )
 	{
-		ExitRow->GetFrameDestination().SetY( SEPARATE_EXIT_ROW_Y );
+		ExitRow->m_tsDestination.pos.y = SEPARATE_EXIT_ROW_Y;
 		ExitRow->SetRowHidden( second_end != (int) Rows.size() );
 	}
 }
@@ -762,7 +768,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 		return;
 	
 	/* Update m_fY and m_bHidden[]. */
-	PositionItems();
+	PositionRows();
 
 	/* Do positioning. */
 	PositionAllUnderlines();

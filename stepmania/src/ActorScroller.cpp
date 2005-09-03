@@ -39,8 +39,6 @@ ActorScroller::ActorScroller()
 	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );	// don't change color values
 	m_quadMask.SetUseZBuffer( true );	// we want to write to the Zbuffer
 	m_quadMask.SetHidden( true );
-
-	m_iSubdivisions = 1;
 }
 
 void ActorScroller::Load2(
@@ -62,9 +60,9 @@ void ActorScroller::Load2(
 	m_fMaskHeight = fItemHeight;
 
 	m_exprTransformFunction.SetFromExpression( 
-		ssprintf("function(self,offset,itemIndex,numItems) return self:y(%f*offset) end",fItemHeight) 
+		ssprintf("function(self,offset,itemIndex,numItems) return self:y(%f*offset) end",fItemHeight),
+		1
 		);
-	m_iSubdivisions = 1;
 
 	m_bLoop = bLoop; 
 	m_fSecondsPerItem = fSecondsPerItem; 
@@ -101,8 +99,7 @@ void ActorScroller::Load3(
 	m_fSecondsPerItem = fSecondsPerItem;
 	m_fNumItemsToDraw = fNumItemsToDraw;
 	m_bFastCatchup = bFastCatchup;
-	m_exprTransformFunction.SetFromExpression( sTransformFunction );
-	m_iSubdivisions = iSubdivisions;
+	m_exprTransformFunction.SetFromExpression( sTransformFunction, iSubdivisions );
 	m_fQuantizePixels = 0;
 	m_bUseMask = bUseMask;
 	m_bLoop = bLoop;
@@ -143,7 +140,7 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 	GET_VALUE( "ItemPaddingStart", fItemPaddingStart );
 	GET_VALUE( "ItemPaddingEnd", fItemPaddingEnd );
 	GET_VALUE( "TransformFunction", sTransformFunction );
-	pNode->GetAttrValue( "Subdivisions", m_iSubdivisions );
+	pNode->GetAttrValue( "Subdivisions", iSubdivisions );
 #undef GET_VALUE
 
 	Load3( 
@@ -209,50 +206,17 @@ void ActorScroller::UpdateInternal( float fDeltaTime )
 		m_fCurrentItem = fmodf( m_fCurrentItem, m_fNumItemsToDraw+1 );
 }
 
-const Actor::TweenState &ActorScroller::GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems )
-{
-	PositionOffsetAndItemIndex key = { fPositionOffsetFromCenter, iItemIndex };
-
-	map<PositionOffsetAndItemIndex,Actor::TweenState>::iterator iter = m_mapPositionToTweenStateCache.find( key );
-	if( iter != m_mapPositionToTweenStateCache.end() )
-		return iter->second;
-
-	Actor a;
-
-	Lua *L = LUA->Get();
-	m_exprTransformFunction.PushSelf( L );
-	ASSERT( !lua_isnil(L, -1) );
-	a.PushSelf( L );
-	LuaHelpers::Push( fPositionOffsetFromCenter, L );
-	LuaHelpers::Push( iItemIndex, L );
-	LuaHelpers::Push( iNumItems, L );
-	lua_call( L, 4, 0 ); // 4 args, 0 results
-	LUA->Release(L);
-
-	return m_mapPositionToTweenStateCache[key] = a.DestTweenState();
-}
-
-void ActorScroller::PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems )
-{
-	float fInterval = 1.0f / m_iSubdivisions;
-	float fFloor = QuantizeDown( fPositionOffsetFromCenter, fInterval );
-	float fCeil = QuantizeUp( fPositionOffsetFromCenter, fInterval );
-
-	if( fFloor == fCeil )
-	{
-		pActor->DestTweenState() = GetPosition( fCeil, iItemIndex, iNumItems );
-	}
-	else
-	{
-		const Actor::TweenState &tsFloor = GetPosition( fFloor, iItemIndex, iNumItems );
-		const Actor::TweenState &tsCeil = GetPosition( fCeil, iItemIndex, iNumItems );
-
-		float fPercentTowardCeil = SCALE( fPositionOffsetFromCenter, fFloor, fCeil, 0.0f, 1.0f );
-		Actor::TweenState::MakeWeightedAverage( pActor->DestTweenState(), tsFloor, tsCeil, fPercentTowardCeil );
-	}
-}
-
 void ActorScroller::DrawPrimitives()
+{
+	PositionItemsAndDrawPrimitives( true, true );
+}
+
+void ActorScroller::PositionItems()
+{
+	PositionItemsAndDrawPrimitives( true, false );
+}
+
+void ActorScroller::PositionItemsAndDrawPrimitives( bool bPosition, bool bDrawPrimitives )
 {
 	// Optimization:  If we weren't loaded, then fall back to the ActorFrame logic
 	if( !m_bLoaded )
@@ -277,11 +241,11 @@ void ActorScroller::DrawPrimitives()
 
 	if( m_bUseMask )
 	{
-		PositionItem( &m_quadMask, fPositionFullyOffScreenTop, -1, m_SubActors.size() );
-		m_quadMask.Draw();
+		if( bPosition )			m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenTop, -1, m_SubActors.size() );
+		if( bDrawPrimitives )	m_quadMask.Draw();
 
-		PositionItem( &m_quadMask, fPositionFullyOffScreenBottom, m_SubActors.size(), m_SubActors.size() );
-		m_quadMask.Draw();
+		if( bPosition )			m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenBottom, m_SubActors.size(), m_SubActors.size() );
+		if( bDrawPrimitives )	m_quadMask.Draw();
 
 		fFirstItemToDraw = fPositionFullyOffScreenTop + m_fCurrentItem;
 		fLastItemToDraw = fPositionFullyOffScreenBottom + m_fCurrentItem;
@@ -304,11 +268,15 @@ void ActorScroller::DrawPrimitives()
 		else if( iIndex < 0 || iIndex >= (int)m_SubActors.size() )
 			continue;
 
-		PositionItem( m_SubActors[iIndex], fPosition, iIndex, m_SubActors.size() );
-		if( bDelayedDraw )
-			subs.push_back( m_SubActors[iIndex] );
-		else
-			m_SubActors[iIndex]->Draw();
+		if( bPosition )		
+			m_exprTransformFunction.PositionItem( m_SubActors[iIndex], fPosition, iIndex, m_SubActors.size() );
+		if( bDrawPrimitives )
+		{
+			if( bDelayedDraw )
+				subs.push_back( m_SubActors[iIndex] );
+			else
+				m_SubActors[iIndex]->Draw();
+		}
 	}
 
 	if( bDelayedDraw )

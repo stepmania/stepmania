@@ -100,6 +100,7 @@ HighScore.cpp HighScore.h \
 InputEventPlus.h \
 Inventory.cpp Inventory.h LuaFunctions.h \
 LuaReference.cpp LuaReference.h \
+LuaExpressionTransform.cpp LuaExpressionTransform.h \
 LyricsLoader.cpp LyricsLoader.h MenuInput.h \
 NoteData.cpp NoteData.h NoteDataUtil.cpp NoteDataUtil.h NoteDataWithScoring.cpp NoteDataWithScoring.h \
 NoteFieldPositioning.cpp NoteFieldPositioning.h NoteTypes.cpp NoteTypes.h NotesLoader.cpp NotesLoader.h \

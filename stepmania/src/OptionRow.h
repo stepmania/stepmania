@@ -192,7 +192,6 @@ public:
 	void GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );
 
 	// ScreenOptions calls positions m_FrameDestination, then m_Frame tween to that same TweenState.
-	Actor &GetFrameDestination()			{ return m_FrameDestination; }
 	void SetRowHidden( bool bRowHidden )	{ m_bHidden = bRowHidden; }
 	bool GetRowHidden()						{ return m_bHidden; }
 	unsigned GetTextItemsSize() { return m_textItems.size(); }
@@ -235,7 +234,9 @@ protected:
 	// Only one will true at a time if m_RowDef.bMultiSelect
 	vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size()
 
-	Actor m_FrameDestination;	// m_Frame should approach the destination TweenState of this.
+public:
+	Actor::TweenState m_tsDestination;	// this should approach m_tsDestination.
+protected:
 	bool m_bHidden; // currently off screen
 };
 
