@@ -395,9 +395,6 @@ try_element_again:
 				}
 			}
 		}
-		
-		if( category == EC_FONTS )
-			Font::WeedFontNames(asElementPaths, ClassAndElementToFileName(sClassName,sElement));
 	}
 	
 
