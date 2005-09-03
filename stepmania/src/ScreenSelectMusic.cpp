@@ -1243,21 +1243,6 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 			StartTransitioning( SM_BeginFadingOut );
 		}
 	}
-
-	if( GAMESTATE->IsExtraStage() && PREFSMAN->m_bPickExtraStage )
-	{
-		/* Check if user selected the real extra stage. */
-		Song* pSong;
-		Steps* pSteps;
-		SONGMAN->GetExtraStageInfo( false, GAMESTATE->GetCurrentStyle(), pSong, pSteps, NULL, NULL );
-		ASSERT(pSong);
-		
-		/* Enable 2nd extra stage if user chose the correct song */
-		if( m_MusicWheel.GetSelectedSong() == pSong )
-			GAMESTATE->m_bAllow2ndExtraStage = true;
-		else
-			GAMESTATE->m_bAllow2ndExtraStage = false;
-	}
 }
 
 

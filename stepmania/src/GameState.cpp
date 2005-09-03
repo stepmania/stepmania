@@ -196,7 +196,6 @@ void GameState::Reset()
 	m_bDemonstrationOrJukebox = false;
 	m_bJukeboxUsesModifiers = false;
 	m_iCurrentStageIndex = 0;
-	m_bAllow2ndExtraStage = true;
 	m_BeatToNoteSkinRev = 0;
 	m_iNumStagesOfThisSong = 0;
 
@@ -921,6 +920,18 @@ bool GameState::HasEarnedExtraStage() const
 	if( m_bBackedOutOfFinalStage )
 		return false;
 
+	/* If PickExtraStage, allow EX2 if the chosen song was correct. */
+	if( PREFSMAN->m_bPickExtraStage && this->IsExtraStage() )
+	{
+		Song* pSong;
+		Steps* pSteps;
+		SONGMAN->GetExtraStageInfo( false, GAMESTATE->GetCurrentStyle(), pSong, pSteps, NULL, NULL );
+		ASSERT(pSong);
+
+		const StageStats &stats = STATSMAN->m_CurStageStats;
+		return stats.vpPlayedSongs.size() && stats.vpPlayedSongs.back() == pSong;
+	}
+
 	if( (this->IsFinalStage() || this->IsExtraStage()) )
 	{
 		FOREACH_EnabledPlayer( pn )
@@ -928,11 +939,6 @@ bool GameState::HasEarnedExtraStage() const
 			if( this->m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_HARD && 
 				this->m_pCurSteps[pn]->GetDifficulty() != DIFFICULTY_CHALLENGE )
 				continue; /* not hard enough! */
-
-			/* If "choose EX" is enabled, then we should only grant EX2 if the chosen
-			 * stage was the EX we would have chosen (m_bAllow2ndExtraStage is true). */
-			if( PREFSMAN->m_bPickExtraStage && this->IsExtraStage() && !this->m_bAllow2ndExtraStage )
-				continue;
 
 			if( STATSMAN->m_CurStageStats.m_player[pn].GetGrade() <= Grade_Tier03 )
 				return true;
