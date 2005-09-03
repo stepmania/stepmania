@@ -738,7 +738,7 @@ void ScreenOptions::PositionRows()
 		else if( i < second_end )	pExpr = &m_exprRowPositionTransformFunction; 
 		else						pExpr = &m_exprRowOffScreenBottomTransformFunction;
 
-		row.m_tsDestination = pExpr->GetPosition( pos, i, min( (int)Rows.size(), (int)NUM_ROWS_SHOWN ) );
+		row.m_tsDestination = pExpr->GetPosition( (float) pos, i, min( (int)Rows.size(), (int)NUM_ROWS_SHOWN ) );
 
 		bool bHidden = 
 			i < first_start ||
