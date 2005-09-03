@@ -36,6 +36,7 @@ ScreenExit.cpp ScreenExit.h ScreenNetEvaluation.cpp ScreenNetEvaluation.h \
 ScreenNetSelectMusic.cpp ScreenNetSelectMusic.h ScreenNetSelectBase.cpp ScreenNetSelectBase.h ScreenNetRoom.cpp ScreenNetRoom.h \
 ScreenEz2SelectMusic.cpp ScreenEz2SelectMusic.h ScreenEz2SelectPlayer.cpp ScreenEz2SelectPlayer.h \
 ScreenGameplay.cpp ScreenGameplay.h \
+ScreenGameplayMultiplayer.cpp ScreenGameplayMultiplayer.h \
 ScreenGameplayNormal.cpp ScreenGameplayNormal.h \
 ScreenHowToPlay.cpp ScreenHowToPlay.h \
 ScreenInstructions.cpp ScreenInstructions.h \
@@ -73,7 +74,7 @@ ScreenTestLights.cpp ScreenTestLights.h ScreenTestSound.cpp ScreenTestSound.h Sc
 ScreenTitleMenu.cpp ScreenTitleMenu.h ScreenUnlock.cpp ScreenUnlock.h ScreenWithMenuElements.cpp ScreenWithMenuElements.h
 
 if !WITHOUT_NETWORKING
-Screens += ScreenGameplayMultiplayer.cpp ScreenGameplayMultiplayer.h ScreenSMOnlineLogin.cpp ScreenSMOnlineLogin.h
+Screens += ScreenSMOnlineLogin.cpp ScreenSMOnlineLogin.h
 endif
 
 DataStructures = \
