@@ -12,7 +12,7 @@
 #include <sys/stat.h>
 #endif
 
-#if defined(_WIN32) && !defined(XBOX)
+#if defined(WIN32) && !defined(XBOX)
 #include <windows.h>
 #endif
 
@@ -173,7 +173,7 @@ static CString GetDirOfExecutable( CString argv0 )
 	/* argv[0] can be wrong in most OS's; try to avoid using it. */
 
 	CString sPath;
-#if defined(_WIN32)
+#if defined(WIN32)
 	char buf[MAX_PATH];
 	GetModuleFileName( NULL, buf, sizeof(buf) );
 	sPath = buf;
@@ -186,7 +186,7 @@ static CString GetDirOfExecutable( CString argv0 )
 	bool IsAbsolutePath = false;
 	if( sPath.size() == 0 || sPath[0] == '/' )
 		IsAbsolutePath = true;
-#if defined(_WIN32)
+#if defined(WIN32)
 	if( sPath.size() > 2 && sPath[1] == ':' && sPath[2] == '/' )
 		IsAbsolutePath = true;
 #endif

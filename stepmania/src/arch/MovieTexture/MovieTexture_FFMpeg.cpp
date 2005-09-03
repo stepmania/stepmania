@@ -17,7 +17,7 @@
 
 namespace avcodec
 {
-#if defined(_WIN32)
+#if defined(WIN32)
 #include "ffmpeg/include/ffmpeg/avformat.h"
 #else
 #include <ffmpeg/avformat.h>

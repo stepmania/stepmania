@@ -317,7 +317,7 @@ int RageFileObj::GetLine( CString &out )
 
 // Always use "\r\n".  Even though the program may be running on Unix, the
 // files written to a memory card are likely to be edited using Windows.
-//#if defined(_WIN32)
+//#if defined(WIN32)
 #define NEWLINE "\r\n"
 //#else
 //#define NEWLINE "\n"

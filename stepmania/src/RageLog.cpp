@@ -274,7 +274,7 @@ void RageLog::Flush()
  * way, crash handlers can simply write() the buffer to a file without having
  * to convert line endings, which is tedious when you can't malloc(). */
 
-#if defined(_WIN32)
+#if defined(WIN32)
 #define NEWLINE "\r\n"
 #else
 #define NEWLINE "\n"
