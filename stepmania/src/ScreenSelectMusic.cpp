@@ -28,6 +28,7 @@
 #include "Command.h"
 #include "CommonMetrics.h"
 #include "BannerCache.h"
+#include "song.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 

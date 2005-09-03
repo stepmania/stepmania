@@ -20,6 +20,7 @@
 #include "MusicWheel.h"
 #include "InputMapper.h"
 #include "RageLog.h"
+#include "song.h"
 
 AutoScreenMessage( SM_NoSongs )
 AutoScreenMessage( SM_ChangeSong )
