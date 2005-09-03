@@ -149,11 +149,19 @@ void ScreenSelectMaster::Init()
 				m_sprScroll[c][*p]->SetName( sElement );
 				m_Scroller[*p].AddChild( m_sprScroll[c][*p] );
 			}
+
 		}
 
 		LUA->UnsetGlobal( "ThisGameCommand" );
 	}
 
+	// position scroller items so that the items' will start from their resting 
+	// position when they execute their OnCommand.
+	if( SHOW_SCROLLER )
+	{
+		FOREACH( PlayerNumber, vpns, p )
+		m_Scroller[*p].PositionItems();
+	}
 
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
