@@ -5,12 +5,16 @@
 #include "RageLog.h"
 
 /* Search for "beginning*containing*ending". */
-void FileSet::GetFilesMatching( const CString &sBeginning, const CString &sContaining, const CString &sEnding, vector<CString> &asOut, bool bOnlyDirs ) const
+void FileSet::GetFilesMatching( const CString &sBeginning_, const CString &sContaining_, const CString &sEnding_, vector<CString> &asOut, bool bOnlyDirs ) const
 {
 	/* "files" is a case-insensitive mapping, by filename.  Use lower_bound to figure
 	 * out where to start. */
-	CString sContainingLower = sContaining;
-	sContainingLower.ToLower();
+	CString sBeginning = sBeginning_;
+	sBeginning.ToLower();
+	CString sContaining = sContaining_;
+	sContaining.ToLower();
+	CString sEnding = sEnding_;
+	sEnding.ToLower();
 
 	set<File>::const_iterator i = files.lower_bound( File(sBeginning) );
 	for( ; i != files.end(); ++i )
@@ -20,31 +24,30 @@ void FileSet::GetFilesMatching( const CString &sBeginning, const CString &sConta
 		if( bOnlyDirs && !f.dir )
 			continue;
 
+		const CString &sPath = f.lname;
+
 		/* Check sBeginning. Once we hit a filename that no longer matches sBeginning,
 		 * we're past all possible matches in the sort, so stop. */
-		if( sBeginning.size() > f.name.size() )
+		if( sBeginning.size() > sPath.size() )
 			break; /* can't start with it */
-		if( strnicmp(i->name, sBeginning, sBeginning.size()) )
+		if( sPath.compare(0, sBeginning.size(), sBeginning) )
 			break; /* doesn't start with it */
 
 		/* Position the end starts on: */
-		int end_pos = int(f.name.size())-int(sEnding.size());
+		int end_pos = int(sPath.size())-int(sEnding.size());
 
 		/* Check end. */
 		if( end_pos < 0 )
 			continue; /* can't end with it */
-		if( stricmp(f.name.c_str()+end_pos, sEnding) )
+		if( sPath.compare(end_pos, string::npos, sEnding) )
 			continue; /* doesn't end with it */
 
 		/* Check sContaining.  Do this last, since it's the slowest (substring
 		 * search instead of string match). */
-		if( sContaining.size() )
+		if( !sContaining.empty() )
 		{
-			CString name = f.name;
-			name.ToLower();
-
-			size_t pos = name.find( sContainingLower, sBeginning.size() );
-			if( pos == name.npos )
+			size_t pos = sPath.find( sContaining, sBeginning.size() );
+			if( pos == sPath.npos )
 				continue; /* doesn't contain it */
 			if( pos + sContaining.size() > unsigned(end_pos) )
 				continue; /* found it but it overlaps with the end */
