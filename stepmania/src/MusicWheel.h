@@ -1,7 +1,7 @@
 /* MusicWheel - A wheel with song names used in the Select Music screen. */
 
-#ifndef MUSICWHEEL_H
-#define MUSICWHEEL_H
+#ifndef MUSIC_WHEEL_H
+#define MUSIC_WHEEL_H
 
 #include "AutoActor.h"
 #include "ActorFrame.h"

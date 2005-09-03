@@ -553,11 +553,10 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				// Sorting twice isn't necessary.  Instead, modify the compatator functions 
 				// in Song.cpp to have the desired effect. -Chris
 				/* Keeping groups together with the sorts is tricky and brittle; we
-					* keep getting OTHER split up without this.  However, it puts the 
-					* Grade and BPM sorts in the wrong order, and they're already correct,
-					* so don't re-sort for them. */
-	//				/* We're using sections, so use the section name as the top-level
-	//				 * sort. */
+				 * keep getting OTHER split up without this.  However, it puts the 
+				 * Grade and BPM sorts in the wrong order, and they're already correct,
+				 * so don't re-sort for them. */
+				/* We're using sections, so use the section name as the top-level sort. */
 				if( so != SORT_TOP_GRADES && so != SORT_BPM )
 					SongUtil::SortSongPointerArrayBySectionName(arraySongs, so);
 
@@ -569,8 +568,9 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 					Song* pSong = arraySongs[i];
 					CString sThisSection = SongUtil::GetSectionNameFromSongAndSort( pSong, so );
 
-					if( sThisSection != sLastSection)	// new section, make a section item
+					if( sThisSection != sLastSection )
 					{
+						// new section, make a section item
 						RageColor colorSection = (so==SORT_GROUP) ? SONGMAN->GetSongGroupColor(pSong->m_sGroupName) : SECTION_COLORS.GetValue(iSectionColorIndex);
 						iSectionColorIndex = (iSectionColorIndex+1) % NUM_SECTION_COLORS;
 						arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection) );
