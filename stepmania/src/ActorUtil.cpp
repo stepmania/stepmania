@@ -1,7 +1,6 @@
 #include "global.h"
 #include "ActorUtil.h"
 #include "Sprite.h"
-#include "BitmapText.h"
 #include "Model.h"
 #include "BGAnimation.h"
 #include "ThemeManager.h"
@@ -10,7 +9,6 @@
 #include "EnumHelper.h"
 #include "XmlFile.h"
 #include "LuaManager.h"
-#include "MessageManager.h"
 #include "Foreach.h"
 
 #include "arch/Dialog/Dialog.h"
@@ -199,7 +197,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 			CString sError = ssprintf( "An xml file in '%s' is missing the File attribute or has an invalid Class \"%s\"",
 				sDir.c_str(), sClass.c_str() );
 			Dialog::OK( sError );
-			pReturn = new Sprite;	// Return a dummy object so that we don't crash in AutoActor later.
+			pReturn = new Actor;	// Return a dummy object so that we don't crash in AutoActor later.
 			goto all_done;
 		}
 
@@ -246,7 +244,7 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 			if( !xml.LoadFromFile(ID.filename) )
 			{
 				// XNode will warn about the error
-				return new Sprite;
+				return new Actor;
 			}
 			CString sDir = Dirname( ID.filename );
 			return LoadFromActorFile( sDir, &xml );
