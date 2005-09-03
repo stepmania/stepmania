@@ -4,7 +4,6 @@
 #define THEMEMANAGER_H
 
 #include "RageTypes.h"
-#include "RageTimer.h"
 #include <set>
 #include <deque>
 #include "Command.h"
@@ -61,13 +60,6 @@ public:
 	CString GetPathS( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(EC_SOUNDS,sClassName,sElement,bOptional); };
 	CString GetPathO( const CString &sClassName, const CString &sElement, bool bOptional=false ) { return GetPath(EC_OTHER,sClassName,sElement,bOptional); };
 	void ClearThemePathCache();
-
-	// TODO: remove these and update the places that use them
-	CString GetPathToB( const CString &sFileName, bool bOptional=false );
-	CString GetPathToF( const CString &sFileName, bool bOptional=false );
-	CString GetPathToG( const CString &sFileName, bool bOptional=false );
-	CString GetPathToS( const CString &sFileName, bool bOptional=false );
-	CString GetPathToO( const CString &sFileName, bool bOptional=false );
 
 	// TODO: Make these return values const refs.
 	bool		HasMetric( const CString &sClassName, const CString &sValueName );

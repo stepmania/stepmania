@@ -5,12 +5,9 @@
 #include "RageException.h"
 #include "RageTimer.h"
 #include "RageUtil.h"
-#include "Game.h"
 #include "IniFile.h"
 #include "RageTimer.h"
-#include "Font.h"
 #include "FontCharAliases.h"
-#include "RageDisplay.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageFile.h"
 #include "ScreenManager.h"
@@ -762,13 +759,6 @@ CString ThemeManager::GetLanguageIniPath( const CString &sThemeName, const CStri
 {
 	return GetThemeDirFromName(sThemeName) + LANGUAGES_SUBDIR + sLanguage + ".ini";
 }
-
-// TODO: remove these and update the places that use them
-CString ThemeManager::GetPathToB( const CString &sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathB(sClassName,sElement,bOptional); }
-CString ThemeManager::GetPathToF( const CString &sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathF(sClassName,sElement,bOptional); }
-CString ThemeManager::GetPathToG( const CString &sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathG(sClassName,sElement,bOptional); }
-CString ThemeManager::GetPathToS( const CString &sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathS(sClassName,sElement,bOptional); }
-CString ThemeManager::GetPathToO( const CString &sFileName, bool bOptional ) { CString sClassName, sElement; FileNameToClassAndElement(sFileName,sClassName,sElement); return GetPathO(sClassName,sElement,bOptional); }
 
 void ThemeManager::GetModifierNames( vector<CString>& AddTo )
 {
