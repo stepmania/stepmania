@@ -136,7 +136,7 @@ void ScreenHowToPlay::Init()
 	if( USEPLAYER )
 	{
 		SMLoader smfile;		
-		smfile.LoadFromSMFile( THEME->GetPathToO(STEPFILE), m_Song, false );
+		smfile.LoadFromSMFile( THEME->GetPathO("", STEPFILE), m_Song, false );
 		m_Song.AddAutoGenNotes();
 
 		const Style* pStyle = GAMESTATE->GetCurrentStyle();

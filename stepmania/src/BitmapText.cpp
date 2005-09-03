@@ -101,7 +101,7 @@ void BitmapText::LoadFromNode( const CString& sDir, const XNode* pNode )
 		RageException::Throw( "An object '%s' in '%s' is missing the Font attribute",
 			pNode->m_sName.c_str(), sDir.c_str() );
 
-	LoadFromFont( THEME->GetPathToF( sFont ) );
+	LoadFromFont( THEME->GetPathF( "", sFont ) );
 	SetText( sText, sAltText );
 
 	Actor::LoadFromNode( sDir, pNode );

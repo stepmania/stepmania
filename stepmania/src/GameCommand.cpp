@@ -824,7 +824,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_iUnlockIndex != -1 )
 		UNLOCKMAN->UnlockCode( m_iUnlockIndex );
 	if( m_sSoundPath != "" )
-		SOUND->PlayOnce( THEME->GetPathToS( m_sSoundPath ) );
+		SOUND->PlayOnce( THEME->GetPathS( "", m_sSoundPath ) );
 	if( m_iWeightPounds != -1 )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			PROFILEMAN->GetProfile(*pn)->m_iWeightPounds = m_iWeightPounds;
