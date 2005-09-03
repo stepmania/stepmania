@@ -4,6 +4,7 @@
 #include "ActorFrame.h"
 #include "AutoActor.h"
 #include "PercentageDisplay.h"
+#include "RageTimer.h"
 class PlayerState;
 class PlayerStageStats;
 
