@@ -173,7 +173,7 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThem
 	static int depth = 0;
 	static bool loaded_base = false;
 	depth++;
-	ASSERT_M( depth < 20, "Circular NoteSkin fallback references detected." );
+	ASSERT_M( depth < 20, "Circular theme fallback references detected." );
 
 	if( !sThemeName.CompareNoCase(BASE_THEME_NAME) )
 		loaded_base = true;
