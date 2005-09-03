@@ -6,7 +6,6 @@
 #include "IniFile.h"
 #include "GameManager.h"
 #include "RageLog.h"
-#include "RageFile.h"
 #include "song.h"
 #include "SongManager.h"
 #include "Steps.h"

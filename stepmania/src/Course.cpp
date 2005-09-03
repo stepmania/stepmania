@@ -15,7 +15,6 @@
 #include "TitleSubstitution.h"
 #include "Steps.h"
 #include "BannerCache.h"
-#include "RageFile.h"
 #include "ThemeManager.h"
 #include "ProfileManager.h"
 #include "Foreach.h"

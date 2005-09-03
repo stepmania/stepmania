@@ -16,7 +16,6 @@
 #include "TitleSubstitution.h"
 #include "BannerCache.h"
 #include "Sprite.h"
-#include "RageFile.h"
 #include "RageFileManager.h"
 #include "RageSurface.h"
 #include "NoteDataUtil.h"
