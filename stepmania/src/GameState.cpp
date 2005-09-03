@@ -2,7 +2,6 @@
 #include "GameState.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
-#include "InputMapper.h"
 #include "song.h"
 #include "Course.h"
 #include "RageLog.h"
@@ -36,8 +35,6 @@
 #include "Foreach.h"
 #include "LuaReference.h"
 #include "CommonMetrics.h"
-#include "ScreenManager.h"
-#include "Screen.h"
 #include "CharacterManager.h"
 
 #include <ctime>

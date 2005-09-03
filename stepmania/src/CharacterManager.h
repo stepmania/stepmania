@@ -3,9 +3,8 @@
 #ifndef CharacterManager_H
 #define CharacterManager_H
 
-#include "StageStats.h"
-
 class Character;
+struct lua_State;
 
 class CharacterManager
 {
