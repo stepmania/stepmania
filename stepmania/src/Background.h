@@ -5,7 +5,6 @@
 
 #include "ActorFrame.h"
 #include "Quad.h"
-#include "BGAnimation.h"
 #include "PlayerNumber.h"
 #include "BackgroundUtil.h"
 #include <deque>

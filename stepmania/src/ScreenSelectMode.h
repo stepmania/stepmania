@@ -5,7 +5,6 @@
 /* Includes */
 
 #include "ScreenSelect.h"
-#include "BGAnimation.h"
 #include "Screen.h"
 #include "Sprite.h"
 #include "Quad.h"
@@ -53,7 +52,7 @@ protected:
 	Sprite m_CurChar[NUM_PLAYERS];
 	int m_iCurrentChar[NUM_PLAYERS];
 	Sprite m_Guide;
-	vector<BGAnimation*>	m_Backgrounds;
+//	vector<BGAnimation*>	m_Backgrounds;
 	bool m_bSelected;
 	bool m_b2DAvailable;
 	bool m_bCharsAvailable;

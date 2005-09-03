@@ -1,4 +1,4 @@
-/* Transition - Transition that draws a BGAnimation. */
+/* Transition - Transition that draws an actor. */
 
 #ifndef TRANSITION_H
 #define TRANSITION_H

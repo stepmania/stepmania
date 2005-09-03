@@ -256,16 +256,15 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 			CString sDir = ID.filename;
 			if( sDir.Right(1) != "/" )
 				sDir += '/';
-			CString sIni = sDir + "BGAnimation.ini";
-			CString sXml = sDir + "default.xml";
 
+			CString sXml = sDir + "default.xml";
 			if( DoesFileExist(sXml) )
 			{
 				XNode xml;
 				if( !xml.LoadFromFile(sXml) )
 				{
 					// XNode will warn about the error
-					return new Sprite;
+					return new Actor;
 				}
 				return LoadFromActorFile( sDir, &xml );
 			}
