@@ -40,7 +40,6 @@ static char* tcsskip( const char* psz )
 	return (char*)psz;
 }
 
-// Name   : tcsechr
 // Desc   : similar with strchr with escape process
 // Param  : escape - will be escape character
 static const char* tcsechr( const char* pch, int ch, char escape )
@@ -177,8 +176,6 @@ void XNode::Clear()
 	
 // attr1="value1" attr2='value2' attr3=value3 />
 //                                            ^- return pointer
-//========================================================
-// Name   : LoadAttributes
 // Desc   : loading attribute plain xml text
 // Param  : pszAttrs - xml of attributes
 //          pi = parser information
@@ -270,8 +267,6 @@ const char* XNode::LoadAttributes( const char* xml, PARSEINFO *pi /*= &piDefault
 // or
 // <TAG />
 //        ^- return pointer
-//========================================================
-// Name   : Load
 // Desc   : load xml plain text
 // Param  : pszXml - plain xml text
 //          pi = parser information
@@ -733,7 +728,7 @@ XAttr *XNode::AppendAttr( XAttr *attr )
 	return attr;
 }
 
-// Desc   : detach attribute and delete object
+// detach attribute and delete object
 bool XNode::RemoveAttr( XAttr *attr )
 {
 	FOREACHMM( CString, XAttr*, m_attrs, p )
@@ -748,7 +743,6 @@ bool XNode::RemoveAttr( XAttr *attr )
 	return false;
 }
 
-// Desc   : add attribute
 XAttr *XNode::AppendAttr( const char* name /*= NULL*/, const char* value /*= NULL*/ )
 {
 	XAttr *attr = new XAttr;
@@ -865,11 +859,9 @@ CString XENTITYS::Ref2Entity( const char* estr )
 	if( estr )
 	{
 		int len = strlen(estr);
-//		char* esbuf = es.GetBufferSetLength( len+1 );
 		char* szTemp = new char[len+1];
-		if( szTemp )
-			Ref2Entity( estr, szTemp, len );
-		es = szTemp;
+		int iLen = Ref2Entity( estr, szTemp, len );
+		es.assign( szTemp, iLen );
 		delete [] szTemp;
 	}
 	return es;
@@ -883,11 +875,10 @@ CString XENTITYS::Entity2Ref( const char* str )
 		int nEntityCount = GetEntityCount(str);
 		if( nEntityCount == 0 )
 			return CString(str);
-		int len = strlen(str) + nEntityCount*10 ;
-		//char* sbuf = s.GetBufferSetLength( len+1 );
+		int len = strlen(str) + nEntityCount*10;
 		char* szTemp = new char[len+1];
-		Entity2Ref( str, szTemp, len );
-		s = szTemp;
+		int iLen = Entity2Ref( str, szTemp, len );
+		s.assign( szTemp, iLen );
 		delete [] szTemp;
 	}
 	return s;

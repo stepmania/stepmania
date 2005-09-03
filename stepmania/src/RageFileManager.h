@@ -3,11 +3,10 @@
 #ifndef RAGE_FILE_MANAGER_H
 #define RAGE_FILE_MANAGER_H
 
-#include "RageFile.h"
-
 extern CString InitialWorkingDirectory;
 extern CString DirOfExecutable;
 class RageFileDriver;
+class RageFileBasic;
 
 class RageFileManager
 {
