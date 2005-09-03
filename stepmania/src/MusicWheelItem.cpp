@@ -36,8 +36,8 @@ ThemeMetric1D<float>			GRADE_X				("MusicWheelItem",GRADE_X_NAME,NUM_PLAYERS);
 ThemeMetric1D<float>			GRADE_Y				("MusicWheelItem",GRADE_Y_NAME,NUM_PLAYERS);
 
 
-WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color )
-	:WheelItemBaseData(wit, sSectionName, color)
+WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color ):
+	WheelItemBaseData(wit, sSectionName, color)
 {
 	m_pSong = pSong;
 	m_pCourse = pCourse;
