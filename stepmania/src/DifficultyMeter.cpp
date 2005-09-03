@@ -73,8 +73,7 @@ void DifficultyMeter::Load( const CString &sType )
 		{
 			Feet = "0X";
 		}
-		int iNumFrames = m_bAutoColorFeet ? 2 : NUM_DIFFICULTIES+1;
-		m_textFeet.LoadFromTextureAndChars( THEME->GetPathG(sType,ssprintf("bar %dx1",iNumFrames)), Feet );
+		m_textFeet.LoadFromTextureAndChars( THEME->GetPathF(sType,"bar"), Feet );
 		ActorUtil::SetXYAndOnCommand( m_textFeet, sType );
 		this->AddChild( &m_textFeet );
 	}

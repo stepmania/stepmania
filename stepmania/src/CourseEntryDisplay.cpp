@@ -52,7 +52,7 @@ void CourseEntryDisplay::Load()
 			continue;	// skip
 
 		m_textFoot[pn].SetName( SEPARATE_COURSE_METERS? ssprintf("FootP%i", pn+1):CString("Foot") );
-		m_textFoot[pn].LoadFromTextureAndChars( THEME->GetPathG("CourseEntryDisplay","difficulty 2x1"),"10" );
+		m_textFoot[pn].LoadFromTextureAndChars( THEME->GetPathF("CourseEntryDisplay","difficulty"),"10" );
 		SET_XY_AND_ON_COMMAND( &m_textFoot[pn] );
 		this->AddChild( &m_textFoot[pn] );
 
