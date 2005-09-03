@@ -132,7 +132,6 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
 		GetDirListing( sAniDir+"*.avi", asImagePaths, false, true );
 		GetDirListing( sAniDir+"*.mpg", asImagePaths, false, true );
 		GetDirListing( sAniDir+"*.mpeg", asImagePaths, false, true );
-		GetDirListing( sAniDir+"*.sprite", asImagePaths, false, true );
 
 		SortCStringArray( asImagePaths );
 
