@@ -230,12 +230,7 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 			THEME->EvaluateString( sValue );
 			apActorCommands apac( new ActorCommands( sValue ) );
 
-			CString sCmdName;
-			/* Special case: "Command=foo" -> "OnCommand=foo" */
-			if( sKeyName.size() == 7 )
-				sCmdName="On";
-			else
-				sCmdName = sKeyName.Left( sKeyName.size()-7 );
+			CString sCmdName = sKeyName.Left( sKeyName.size()-7 );
 			AddCommand( sCmdName, apac );
 		}
 	}
