@@ -281,7 +281,8 @@ void ScreenPackages::TweenOffScreen( )
 
 void ScreenPackages::RefreshPackages()
 {
-	GetDirListing( "Packages/*.*zip", m_Packages, false, false );
+	GetDirListing( "Packages/*.zip", m_Packages, false, false );
+	GetDirListing( "Packages/*.smzip", m_Packages, false, false );
 	
 	if ( m_iPackagesPos < 0 )
 		m_iPackagesPos = 0;
