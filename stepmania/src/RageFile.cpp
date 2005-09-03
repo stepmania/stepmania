@@ -20,7 +20,7 @@ RageFile::RageFile( const RageFile &cpy ):
 	RageFileBasic( cpy )
 {
 	/* This will copy the file driver, including its internal file pointer. */
-	m_File = FILEMAN->CopyFileObj( cpy.m_File );
+	m_File = cpy.m_File->Copy();
 	m_Path = cpy.m_Path;
 	m_Mode = cpy.m_Mode;
 }
@@ -78,8 +78,7 @@ bool RageFile::Open( const CString& path, int mode )
 
 void RageFile::Close()
 {
-	FILEMAN->Close( m_File );
-	m_File = NULL;
+	SAFE_DELETE( m_File );
 }
 
 #define ASSERT_OPEN ASSERT_M( IsOpen(), ssprintf("\"%s\" is not open.", m_Path.c_str()) );
