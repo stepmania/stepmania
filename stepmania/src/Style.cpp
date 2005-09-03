@@ -17,7 +17,6 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "Game.h"
-#include "IniFile.h"
 #include "GameState.h"
 #include "NoteData.h"
 #include <float.h>

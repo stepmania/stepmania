@@ -1,6 +1,5 @@
 #include "global.h"
 #include "InputQueue.h"
-#include "IniFile.h"
 #include "GameManager.h"
 #include "RageException.h"
 #include "RageTimer.h"

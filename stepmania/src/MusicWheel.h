@@ -6,7 +6,6 @@
 #include "AutoActor.h"
 #include "ActorFrame.h"
 #include "RageSound.h"
-#include "RandomSample.h"
 #include "GameConstantsAndTypes.h"
 #include "ScreenMessage.h"
 #include "ScoreDisplayNormal.h"

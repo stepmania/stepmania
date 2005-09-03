@@ -4,7 +4,6 @@
 #include "BitmapText.h"
 #include "Model.h"
 #include "BGAnimation.h"
-#include "IniFile.h"
 #include "ThemeManager.h"
 #include "RageFileManager.h"
 #include "RageLog.h"

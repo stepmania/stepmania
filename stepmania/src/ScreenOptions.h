@@ -5,7 +5,6 @@
 
 #include "ScreenWithMenuElements.h"
 #include "Sprite.h"
-#include "RandomSample.h"
 #include "DualScrollBar.h"
 #include "ThemeMetric.h"
 #include "OptionRow.h"

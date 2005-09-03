@@ -13,7 +13,6 @@
 #include "GameConstantsAndTypes.h"
 #include "GameCommand.h"
 #include "BitmapText.h"
-#include "RandomSample.h"
 #include "Character.h"
 
 /* Class Definition */

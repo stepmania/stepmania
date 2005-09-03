@@ -1,7 +1,7 @@
 #include "global.h"
 #include "BGAnimationLayer.h"
 #include "GameState.h"
-#include "IniFile.h"
+#include "XmlFile.h"
 #include "RageMath.h"
 #include "RageLog.h"
 #include "song.h"

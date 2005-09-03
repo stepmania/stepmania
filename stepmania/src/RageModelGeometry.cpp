@@ -4,7 +4,7 @@
 #include "RageFile.h"
 #include "RageMath.h"
 #include "RageDisplay.h"
-#include "IniFile.h" // Added by Ym2413a, needed for code changes.
+#include "IniFile.h"
 
 RageModelGeometry::RageModelGeometry ()
 {

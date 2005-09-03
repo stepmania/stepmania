@@ -1,6 +1,5 @@
 #include "global.h"
 #include "SongManager.h"
-#include "IniFile.h"
 #include "RageLog.h"
 #include "MsdFile.h"
 #include "NotesLoaderDWI.h"

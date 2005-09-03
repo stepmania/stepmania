@@ -3,7 +3,6 @@
 #include "Steps.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "IniFile.h"
 #include "NoteData.h"
 #include "RageSoundReader_FileReader.h"
 #include "RageSurface_Load.h"

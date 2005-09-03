@@ -1,6 +1,5 @@
 #include "global.h"
 #include "GameState.h"
-#include "IniFile.h"
 #include "GameManager.h"
 #include "PrefsManager.h"
 #include "InputMapper.h"

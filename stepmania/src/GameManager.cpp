@@ -4,7 +4,6 @@
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 #include "GameInput.h"	// for GameButton constants
-#include "IniFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "NoteSkinManager.h"

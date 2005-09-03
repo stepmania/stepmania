@@ -7,7 +7,6 @@
 #include "Sprite.h"
 #include "Transition.h"
 #include "BitmapText.h"
-#include "RandomSample.h"
 #include "RageSound.h"
 #include "Background.h"
 #include "Foreground.h"
