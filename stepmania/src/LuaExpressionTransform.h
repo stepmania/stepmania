@@ -15,7 +15,7 @@ public:
 	void SetFromExpression( const CString &sExpression, int iNumSubdivisions );
 
 	void PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
-	const Actor::TweenState &GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
+	const Actor::TweenState &GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const;
 
 protected:
 
@@ -28,15 +28,12 @@ protected:
 
 		bool operator<( const PositionOffsetAndItemIndex &other ) const
 		{
-			if( fPositionOffsetFromCenter < other.fPositionOffsetFromCenter )
-				return true;
-			else if( fPositionOffsetFromCenter > other.fPositionOffsetFromCenter )
-				return false;
-			else
-				return iItemIndex < other.iItemIndex;
+			if( fPositionOffsetFromCenter != other.fPositionOffsetFromCenter )
+				return fPositionOffsetFromCenter < other.fPositionOffsetFromCenter;
+			return iItemIndex < other.iItemIndex;
 		}
 	};
-	map<PositionOffsetAndItemIndex,Actor::TweenState> m_mapPositionToTweenStateCache;
+	mutable map<PositionOffsetAndItemIndex,Actor::TweenState> m_mapPositionToTweenStateCache;
 };
 
 #endif

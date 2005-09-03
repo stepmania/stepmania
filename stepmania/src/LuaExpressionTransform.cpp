@@ -15,11 +15,11 @@ void LuaExpressionTransform::SetFromExpression( const CString &sExpression, int 
 	m_iNumSubdivisions = iNumSubdivisions;
 }
 
-const Actor::TweenState &LuaExpressionTransform::GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems )
+const Actor::TweenState &LuaExpressionTransform::GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const
 {
 	PositionOffsetAndItemIndex key = { fPositionOffsetFromCenter, iItemIndex };
 
-	map<PositionOffsetAndItemIndex,Actor::TweenState>::iterator iter = m_mapPositionToTweenStateCache.find( key );
+	map<PositionOffsetAndItemIndex,Actor::TweenState>::const_iterator iter = m_mapPositionToTweenStateCache.find( key );
 	if( iter != m_mapPositionToTweenStateCache.end() )
 		return iter->second;
 
