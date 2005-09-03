@@ -511,7 +511,7 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 	m_fCurFrame = 0;
 	m_fCurAnimationRate = fPlayRate;
 
-	if ( m_pCurAnimation == pNewAnimation )
+	if( m_pCurAnimation == pNewAnimation )
 		return;
 
 	m_pCurAnimation = pNewAnimation;
@@ -532,7 +532,7 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 		m_vpBones[i].mRelative.m[3][2] = pBone->Position[2];
 		
 		int nParentBone = m_pCurAnimation->FindBoneByName( pBone->szParentName );
-		if (nParentBone != -1)
+		if( nParentBone != -1 )
 		{
 			RageMatrixMultiply( &m_vpBones[i].mAbsolute, &m_vpBones[nParentBone].mAbsolute, &m_vpBones[i].mRelative );
 
@@ -546,11 +546,11 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 	}
 
 	// subtract out the bone's resting position
-	for ( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
+	for( unsigned i = 0; i < m_pGeometry->m_Meshes.size(); ++i )
 	{
 		msMesh *pMesh = &m_pGeometry->m_Meshes[i];
 		vector<RageModelVertex> &Vertices = pMesh->Vertices;
-		for (unsigned j = 0; j < Vertices.size(); j++)
+		for( unsigned j = 0; j < Vertices.size(); j++ )
 		{
 //			int nBoneIndex = (pMesh->nBoneIndex!=-1) ? pMesh->nBoneIndex : bone;
 			RageVector3 &pos = Vertices[j].p;
@@ -663,7 +663,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 				}
 				pLastRotationKey = pRotationKey;
 			}
-			if (pLastRotationKey != 0 && pThisRotationKey != 0)
+			if( pLastRotationKey != 0 && pThisRotationKey != 0 )
 			{
 				const float s = SCALE( fFrame, pLastRotationKey->fTime, pThisRotationKey->fTime, 0, 1 );
 
@@ -674,12 +674,12 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 
 				RageMatrixFromQuat( &m, q );
 			}
-			else if (pLastRotationKey == 0)
+			else if( pLastRotationKey == 0 )
 			{
 				vRot = pThisRotationKey->Rotation;
 				RageMatrixAngles( &m, vRot );
 			}
-			else if (pThisRotationKey == 0)
+			else if( pThisRotationKey == 0 )
 			{
 				vRot = pLastRotationKey->Rotation;
 				RageMatrixAngles( &m, vRot );

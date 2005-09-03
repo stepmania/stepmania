@@ -22,7 +22,10 @@ Banner::Banner()
 bool Banner::Load( RageTextureID ID, bool bIsBanner )
 {
 	if( ID.filename == "" )
-		ID = THEME->GetPathG("Common","fallback banner");
+	{
+		LoadFallback();
+		return true;
+	}
 
 	if( bIsBanner )
 		ID = SongBannerTexture(ID);
