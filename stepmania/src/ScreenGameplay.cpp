@@ -181,9 +181,16 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 		break;
 	}
 
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
+		m_pWin = new Transition;
+		break;
+	}
+
 	m_ptextPlayerOptions = NULL;
 	m_pActiveAttackList = NULL;
-	m_pWin = NULL;
 	m_pPlayer = new Player( bShowNoteField, true );
 	m_pInventory = NULL;
 	m_pDifficultyIcon = NULL;
