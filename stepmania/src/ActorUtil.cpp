@@ -7,15 +7,11 @@
 #include "ThemeManager.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
-#include "song.h"
-#include "GameState.h"
-#include "Course.h"
+#include "EnumHelper.h"
 #include "XmlFile.h"
-#include "FontCharAliases.h"
 #include "LuaManager.h"
 #include "MessageManager.h"
 #include "Foreach.h"
-#include "Banner.h"
 
 #include "arch/Dialog/Dialog.h"
 
@@ -185,37 +181,6 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 	if( IsRegistered(sClass) )
 	{
 		pReturn = ActorUtil::Create( sClass, sDir, pNode );
-	}
-	else if( sClass == "SongBackground" )
-	{
-		Song *pSong = GAMESTATE->m_pCurSong;
-		CString sFile;
-		if( pSong && pSong->HasBackground() )
-			sFile = pSong->GetBackgroundPath();
-		else
-			sFile = THEME->GetPathG("Common","fallback background");
-
-		/* Always load song backgrounds with SongBGTexture.  It sets texture properties;
-		 * if we load a background without setting those properties, we'll end up
-		 * with duplicates. */
-		Sprite* pSprite = new Sprite;
-		pSprite->LoadBG( sFile );
-	 	pSprite->LoadFromNode( sDir, pNode );
-		pReturn = pSprite;
-	}
-	else if( sClass == "SongBanner" )
-	{
-		Banner *pBanner = new Banner;
-		pBanner->LoadFromSong( GAMESTATE->m_pCurSong );
-	 	pBanner->LoadFromNode( sDir, pNode );
-		pReturn = pBanner;
-	}
-	else if( sClass == "CourseBanner" )
-	{
-		Banner *pBanner = new Banner;
-		pBanner->LoadFromCourse( GAMESTATE->m_pCurCourse );
-	 	pBanner->LoadFromNode( sDir, pNode );
-		pReturn = pBanner;
 	}
 	else // sClass is empty or garbage (e.g. "1" // 0==Sprite")
 	{
