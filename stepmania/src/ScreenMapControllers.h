@@ -4,7 +4,6 @@
 #define SCREEN_MAP_CONTROLLERS_H
 
 #include "ScreenWithMenuElements.h"
-#include "Sprite.h"
 #include "BitmapText.h"
 #include "InputMapper.h"
 

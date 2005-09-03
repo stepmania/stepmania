@@ -1,19 +1,14 @@
 #include "global.h"
 #include "ScreenMapControllers.h"
-#include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
 #include "ScreenManager.h"
-#include "PrefsManager.h"
 #include "RageLog.h"
 #include "InputMapper.h"
 #include "GameManager.h"
 #include "GameState.h"
-#include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "Game.h"
-#include "HelpDisplay.h"
 #include "ScreenDimensions.h"
-#include "ThemeMetric.h"
 #include "Command.h"
 
 static const ThemeMetric<apActorCommands> EVEN_LINE_IN	("ScreenMapControllers","EvenLineIn");
@@ -101,8 +96,6 @@ void ScreenMapControllers::Init()
 	m_iCurSlot = 0;
 
 	m_iWaitingForPress = 0;
-
-	SOUND->PlayMusic( THEME->GetPathS("ScreenMapControllers","music") );
 
 	Refresh();
 }

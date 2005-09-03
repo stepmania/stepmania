@@ -4,10 +4,7 @@
 #define SCREEN_BOOKKEEPING_H
 
 #include "ScreenWithMenuElements.h"
-#include "Sprite.h"
 #include "BitmapText.h"
-#include "PrefsManager.h"
-#include "InputMapper.h"
 
 const int NUM_BOOKKEEPING_COLS = 4;
 

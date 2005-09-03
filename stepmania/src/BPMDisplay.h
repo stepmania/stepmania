@@ -3,8 +3,6 @@
 #ifndef BPM_DISPLAY_H
 #define BPM_DISPLAY_H
 
-#include "Sprite.h"
-#include "song.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
 #include "Quad.h"
@@ -12,6 +10,7 @@
 #include "ThemeMetric.h"
 class Song;
 class Course;
+struct DisplayBpms;
 
 class BPMDisplay : public ActorFrame
 {

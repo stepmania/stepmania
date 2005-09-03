@@ -2,7 +2,6 @@
 #define METER_DISPLAY_H
 
 #include "ActorFrame.h"
-#include "Sprite.h"
 #include "AutoActor.h"
 
 

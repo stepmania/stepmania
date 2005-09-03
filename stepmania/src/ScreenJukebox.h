@@ -4,7 +4,6 @@
 #define ScreenJukebox_H
 
 #include "ScreenGameplayNormal.h"
-#include "Sprite.h"
 class CourseEntry;
 
 class ScreenJukebox : public ScreenGameplayNormal

@@ -4,7 +4,6 @@
 #define CombinedLifeMeterTug_H
 
 #include "CombinedLifeMeter.h"
-#include "Sprite.h"
 #include "MeterDisplay.h"
 
 

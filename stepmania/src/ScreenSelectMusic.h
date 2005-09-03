@@ -23,6 +23,7 @@
 #include "ThemeMetric.h"
 #include "ActorCommands.h"
 #include "RageTexturePreloader.h"
+#include "TimingData.h"
 
 class ScreenSelectMusic : public ScreenWithMenuElements
 {

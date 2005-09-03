@@ -3,8 +3,6 @@
 #ifndef MENU_TIMER_H
 #define MENU_TIMER_H
 
-#include "Sprite.h"
-#include "song.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
 #include "RageSound.h"
