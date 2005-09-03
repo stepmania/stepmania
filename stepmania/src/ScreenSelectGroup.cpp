@@ -123,7 +123,7 @@ void ScreenSelectGroup::Init()
 	this->AddChild( &m_GroupList );
 
 
-	m_soundChange.Load( THEME->GetPathS("ScreenSelectGroup","change") );
+	m_soundChange.Load( THEME->GetPathS("ScreenSelectGroup","change"), true );
 
 	SOUND->PlayOnceFromAnnouncer( "select group intro" );
 
@@ -193,7 +193,7 @@ void ScreenSelectGroup::MenuUp( PlayerNumber pn )
 
 	AfterChange();
 
-	m_soundChange.PlayRandom();
+	m_soundChange.Play();
 }
 
 
@@ -206,7 +206,7 @@ void ScreenSelectGroup::MenuDown( PlayerNumber pn )
 	
 	AfterChange();
 
-	m_soundChange.PlayRandom();
+	m_soundChange.Play();
 }
 
 void ScreenSelectGroup::MenuStart( PlayerNumber pn )

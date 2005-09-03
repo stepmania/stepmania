@@ -175,8 +175,8 @@ void EditMenu::Load( const CString &sType )
 	ActorUtil::SetXY( m_SourceMeter, sType );
 	this->AddChild( &m_SourceMeter );
 
-	m_soundChangeRow.Load( THEME->GetPathS(sType,"row") );
-	m_soundChangeValue.Load( THEME->GetPathS(sType,"value") );
+	m_soundChangeRow.Load( THEME->GetPathS(sType,"row"), true );
+	m_soundChangeValue.Load( THEME->GetPathS(sType,"value"), true );
 
 	//
 	// fill in data structures
@@ -279,7 +279,7 @@ void EditMenu::Up()
 			ChangeToRow( ROW_STEPS );
 		else
 			ChangeToRow( EditMenuRow(m_SelectedRow-1) );
-		m_soundChangeRow.PlayRandom();
+		m_soundChangeRow.Play();
 	}
 }
 
@@ -291,7 +291,7 @@ void EditMenu::Down()
 			ChangeToRow( ROW_ACTION );
 		else
 			ChangeToRow( EditMenuRow(m_SelectedRow+1) );
-		m_soundChangeRow.PlayRandom();
+		m_soundChangeRow.Play();
 	}
 }
 
@@ -302,7 +302,7 @@ void EditMenu::Left()
 		m_iSelection[m_SelectedRow]--;
 		wrap( m_iSelection[m_SelectedRow], GetRowSize(m_SelectedRow) );
 		OnRowValueChanged( m_SelectedRow );
-		m_soundChangeValue.PlayRandom();
+		m_soundChangeValue.Play();
 	}
 }
 
@@ -313,7 +313,7 @@ void EditMenu::Right()
 		m_iSelection[m_SelectedRow]++;
 		wrap( m_iSelection[m_SelectedRow], GetRowSize(m_SelectedRow) );
 		OnRowValueChanged( m_SelectedRow );
-		m_soundChangeValue.PlayRandom();
+		m_soundChangeValue.Play();
 	}
 }
 

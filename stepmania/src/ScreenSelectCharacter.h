@@ -5,7 +5,7 @@
 
 #include "ScreenWithMenuElements.h"
 #include "Sprite.h"
-#include "RandomSample.h"
+#include "RageSound.h"
 #include "GameConstantsAndTypes.h"
 #include "OptionIcon.h"
 #include "Banner.h"
@@ -63,7 +63,7 @@ private:
 
 	Sprite			m_sprExplanation;
 
-	RandomSample	m_soundChange;
+	RageSound		m_soundChange;
 };
 
 #endif

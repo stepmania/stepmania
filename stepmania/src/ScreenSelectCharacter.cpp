@@ -138,7 +138,7 @@ void ScreenSelectCharacter::Init()
 	this->AddChild( &m_sprExplanation );
 
 
-	m_soundChange.Load( THEME->GetPathS("ScreenSelectCharacter","change") );
+	m_soundChange.Load( THEME->GetPathS("ScreenSelectCharacter","change"), true );
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
 
@@ -312,7 +312,7 @@ void ScreenSelectCharacter::Move( PlayerNumber pn, int deltaValue )
 		m_iSelectedCharacter[pnAffected] += deltaValue;
 		wrap( m_iSelectedCharacter[pnAffected], apCharacters.size() );
 		AfterValueChange(pn);
-		m_soundChange.PlayRandom();
+		m_soundChange.Play();
 		break;
 	}
 }

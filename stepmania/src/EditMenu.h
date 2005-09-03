@@ -8,7 +8,7 @@
 #include "TextBanner.h"
 #include "GameConstantsAndTypes.h"
 #include "DifficultyMeter.h"
-#include "RandomSample.h"
+#include "RageSound.h"
 #include "EnumHelper.h"
 #include "ThemeMetric.h"
 #include "GameConstantsAndTypes.h"
@@ -112,8 +112,8 @@ private:
 	void OnRowValueChanged( EditMenuRow row );
 	void ChangeToRow( EditMenuRow newRow );
 
-	RandomSample	m_soundChangeRow;
-	RandomSample	m_soundChangeValue;
+	RageSound m_soundChangeRow;
+	RageSound m_soundChangeValue;
 
 	ThemeMetric<bool> SHOW_GROUPS;
 	ThemeMetric1D<float> ARROWS_X;

@@ -5,7 +5,7 @@
 
 #include "ScreenWithMenuElements.h"
 #include "Sprite.h"
-#include "RandomSample.h"
+#include "RageSound.h"
 #include "FadingBanner.h"
 #include "MusicList.h"
 #include "GroupList.h"
@@ -43,7 +43,7 @@ private:
 	MusicList		m_MusicList;
 	GroupList		m_GroupList;
 
-	RandomSample m_soundChange;
+	RageSound m_soundChange;
 
 	bool m_bChosen;
 };
