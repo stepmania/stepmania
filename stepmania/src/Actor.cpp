@@ -216,12 +216,12 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 			lua_pop( L, 1 );
 			LUA->Release( L );
 		}
-		else if( pAttr->m_sName == "BaseRotationXDegrees" )	SetBaseRotationX( atof( pAttr->m_sValue ) );
-		else if( pAttr->m_sName == "BaseRotationYDegrees" )	SetBaseRotationY( atof( pAttr->m_sValue ) );
-		else if( pAttr->m_sName == "BaseRotationZDegrees" )	SetBaseRotationZ( atof( pAttr->m_sValue ) );
-		else if( pAttr->m_sName == "BaseZoomX" )			SetBaseZoomX( atof( pAttr->m_sValue ) );
-		else if( pAttr->m_sName == "BaseZoomY" )			SetBaseZoomY( atof( pAttr->m_sValue ) );
-		else if( pAttr->m_sName == "BaseZoomZ" )			SetBaseZoomZ( atof( pAttr->m_sValue ) );
+		else if( pAttr->m_sName == "BaseRotationXDegrees" )	SetBaseRotationX( strtof( pAttr->m_sValue, NULL ) );
+		else if( pAttr->m_sName == "BaseRotationYDegrees" )	SetBaseRotationY( strtof( pAttr->m_sValue, NULL ) );
+		else if( pAttr->m_sName == "BaseRotationZDegrees" )	SetBaseRotationZ( strtof( pAttr->m_sValue, NULL ) );
+		else if( pAttr->m_sName == "BaseZoomX" )			SetBaseZoomX( strtof( pAttr->m_sValue, NULL ) );
+		else if( pAttr->m_sName == "BaseZoomY" )			SetBaseZoomY( strtof( pAttr->m_sValue, NULL ) );
+		else if( pAttr->m_sName == "BaseZoomZ" )			SetBaseZoomZ( strtof( pAttr->m_sValue, NULL ) );
 		else if( EndsWith(pAttr->m_sName,"Command") )
 		{
 			CString sKeyName = pAttr->m_sName; /* "OnCommand" */
