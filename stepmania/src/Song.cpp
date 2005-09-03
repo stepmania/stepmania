@@ -714,9 +714,6 @@ void Song::TidyUpData()
 	if( !HasBGChanges() )
 	{
 		CStringArray arrayPossibleMovies;
-		GetDirListing( m_sSongDir + CString("*movie*.avi"), arrayPossibleMovies );
-		GetDirListing( m_sSongDir + CString("*movie*.mpg"), arrayPossibleMovies );
-		GetDirListing( m_sSongDir + CString("*movie*.mpeg"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + CString("*.avi"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + CString("*.mpg"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleMovies );
