@@ -70,13 +70,13 @@ struct FileSet
 	FileSet() { m_bFilled = true; }
 
 	void GetFilesMatching(
-		const CString &beginning, const CString &containing, const CString &ending,
-		vector<CString> &out, bool bOnlyDirs) const;
-	void GetFilesEqualTo(const CString &pat, vector<CString> &out, bool bOnlyDirs) const;
+		const CString &sBeginning, const CString &sContaining, const CString &sEnding,
+		vector<CString> &asOut, bool bOnlyDirs ) const;
+	void GetFilesEqualTo( const CString &pat, vector<CString> &out, bool bOnlyDirs ) const;
 
-	RageFileManager::FileType GetFileType( const CString &path ) const;
-	int GetFileSize(const CString &path) const;
-	int GetFileHash(const CString &path) const;
+	RageFileManager::FileType GetFileType( const CString &sPath ) const;
+	int GetFileSize( const CString &sPath ) const;
+	int GetFileHash( const CString &sPath ) const;
 };
 
 class FilenameDB
@@ -84,17 +84,17 @@ class FilenameDB
 protected:
 	RageEvent m_Mutex;
 
-	FileSet *GetFileSet( CString dir, bool create=true );
+	FileSet *GetFileSet( CString sDir, bool create=true );
 
 	/* Directories we have cached: */
 	map<CString, FileSet *> dirs;
 
 	int ExpireSeconds;
 
-	void GetFilesEqualTo(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs);
-	void GetFilesMatching(const CString &dir, 
-		const CString &beginning, const CString &containing, const CString &ending, 
-		vector<CString> &out, bool bOnlyDirs);
+	void GetFilesEqualTo( const CString &sDir, const CString &sName, vector<CString> &asOut, bool bOnlyDirs );
+	void GetFilesMatching( const CString &sDir,
+		const CString &sBeginning, const CString &sContaining, const CString &sEnding, 
+		vector<CString> &asOut, bool bOnlyDirs );
 	void DelFileSet( map<CString, FileSet *>::iterator dir );
 
 	/* The given path wasn't cached.  Cache it. */
@@ -105,24 +105,24 @@ public:
 		m_Mutex("FilenameDB"), ExpireSeconds( -1 ) { }
 	virtual FilenameDB::~FilenameDB() { FlushDirCache(); }
 
-	void AddFile( const CString &sPath, int size, int hash, void *priv=NULL );
+	void AddFile( const CString &sPath, int iSize, int iHash, void *pPriv=NULL );
 	void DelFile( const CString &sPath );
-	const File *GetFile( const CString &path );
-	const void *GetFilePriv( const CString &path );
+	const File *GetFile( const CString &sPath );
+	const void *GetFilePriv( const CString &sPath );
 
 	/* This handles at most two * wildcards.  If we need anything more complicated,
 	 * we'll need to use fnmatch or regex. */
-	void GetFilesSimpleMatch(const CString &dir, const CString &fn, vector<CString> &out, bool bOnlyDirs);
+	void GetFilesSimpleMatch( const CString &sDir, const CString &sFile, vector<CString> &asOut, bool bOnlyDirs );
 
 	/* Search for "path" case-insensitively and replace it with the correct
 	 * case.  If only a portion of the path exists, resolve as much as possible.
 	 * Return true if the entire path was matched. */
-	bool ResolvePath( CString &path );
+	bool ResolvePath( CString &sPath );
 
-	RageFileManager::FileType GetFileType( const CString &path );
-	int GetFileSize(const CString &path);
+	RageFileManager::FileType GetFileType( const CString &sPath );
+	int GetFileSize( const CString &sPath );
 	int GetFileHash( const CString &sFilePath );
-	void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	void GetDirListing( CString sPath, CStringArray &asAddTo, bool bOnlyDirs, bool bReturnPathToo );
 
 	void FlushDirCache();
 
