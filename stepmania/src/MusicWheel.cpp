@@ -8,13 +8,9 @@
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
-#include "RageMath.h"
 #include "ThemeManager.h"
 #include "song.h"
 #include "Course.h"
-#include "RageDisplay.h"
-#include "RageTextureManager.h"
-#include "Banner.h"
 #include "Steps.h"
 #include "UnlockManager.h"
 #include "GameCommand.h"
@@ -52,7 +48,7 @@ MusicWheel::MusicWheel()
 {
 }
 
-SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
+static SortOrder ForceAppropriateSort( PlayMode pm, SortOrder so )
 {
 	switch( pm )
 	{
@@ -98,14 +94,6 @@ void MusicWheel::Load( CString sType )
 
 	SONGMAN->UpdateRankingCourses();
 
-	/*
-	// for debugging.
-	// Whatever Screen uses MusicWheel should set the Style if it needs to be set.
-	if( GAMESTATE->m_CurStyle == NULL )
-		GAMESTATE->m_CurStyle = GAMEMAN->STYLE_DANCE_SINGLE;
-	*/
-	
-	/* We play a lot of this one, so precache it. */
 	m_soundChangeSort.Load(		THEME->GetPathS(sType,"sort") );
 	m_soundExpand.Load(			THEME->GetPathS(sType,"expand"), true );
 
@@ -124,13 +112,7 @@ void MusicWheel::Load( CString sType )
 		Steps* pSteps;
 		PlayerOptions po;
 		SongOptions so;
-		SONGMAN->GetExtraStageInfo(
-			GAMESTATE->IsExtraStage2(),
-			GAMESTATE->GetCurrentStyle(),
-			pSong,
-			pSteps,
-			&po,
-			&so );
+		SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, &po, &so );
 		GAMESTATE->m_pCurSong.Set( pSong );
 		GAMESTATE->m_pPreferredSong = pSong;
 		FOREACH_HumanPlayer( p )
@@ -1115,13 +1097,8 @@ bool MusicWheel::Select()	// return true if this selection ends the screen
 		StartRandom();
 		return false;
 	case TYPE_SONG:
-	case TYPE_PORTAL:
-		// Don't -permanently- unlock the song.  Just let them play 
-		// the unlocked song once.
-//		if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() )
-//			UNLOCKMAN->UnlockSong( m_CurWheelItemData[m_iSelection]->m_pSong );
-		return true;
 	case TYPE_COURSE:
+	case TYPE_PORTAL:
 		return true;
 	case TYPE_SORT:
 		LOG->Trace("New sort order selected: %s - %s", 
