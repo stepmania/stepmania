@@ -20,6 +20,8 @@
 #include "PlayerState.h"
 #include "Command.h"
 #include "RageLog.h"
+#include "song.h"
+
 
 #define PREV_SCREEN				THEME->GetMetric ("ScreenEz2SelectMusic","PrevScreen")
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")
