@@ -908,7 +908,7 @@ void SongManager::GetCoursesInGroup( vector<Course*> &AddTo, const CString &sCou
 }
 
 bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
-								   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out )
+								   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut )
 {
 	const CString sCourseSuffix = sPreferredGroup + "/" + (bExtra2 ? "extra2" : "extra1") + ".crs";
 	CString sCoursePath = SONGS_DIR + sCourseSuffix;
@@ -925,10 +925,16 @@ bool SongManager::GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredG
 	if( pTrail->m_vEntries.empty() )
 		return false;
 
-	po_out.Init();
-	po_out.FromString( pTrail->m_vEntries[0].Modifiers );
-	so_out.Init();
-	so_out.FromString( pTrail->m_vEntries[0].Modifiers );
+	if( pPlayerOptionsOut != NULL )
+	{
+		pPlayerOptionsOut->Init();
+		pPlayerOptionsOut->FromString( pTrail->m_vEntries[0].Modifiers );
+	}
+	if( pSongOptionsOut != NULL )
+	{
+		pSongOptionsOut->Init();
+		pSongOptionsOut->FromString( pTrail->m_vEntries[0].Modifiers );
+	}
 
 	pSongOut = pTrail->m_vEntries[0].pSong;
 	pStepsOut = pTrail->m_vEntries[0].pSteps;
@@ -954,7 +960,7 @@ bool CompareNotesPointersForExtra(const Steps *n1, const Steps *n2)
 }
 
 void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd, 
-								   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out )
+								   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut )
 {
 	CString sGroup = GAMESTATE->m_sPreferredSongGroup;
 	if( sGroup == GROUP_ALL )
@@ -973,7 +979,7 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd,
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->GetSongDir().c_str():"",
 		GAMESTATE->m_pCurSong? GAMESTATE->m_pCurSong->m_sGroupName.c_str():"") );
 
-	if(GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pStepsOut, po_out, so_out))
+	if( GetExtraStageInfoFromCourse(bExtra2, sGroup, pSongOut, pStepsOut, pPlayerOptionsOut, pSongOptionsOut) )
 		return;
 	
 	// Choose a hard song for the extra stage
@@ -1026,12 +1032,19 @@ void SongManager::GetExtraStageInfo( bool bExtra2, const Style *sd,
 	pStepsOut = (bExtra2 ? pExtra2Notes : pExtra1Notes);
 
 
-	po_out.Init();
-	so_out.Init();
-	po_out.m_fScrolls[PlayerOptions::SCROLL_REVERSE] = 1;
-	po_out.m_fScrollSpeed = 1.5f;
-	so_out.m_DrainType = (bExtra2 ? SongOptions::DRAIN_SUDDEN_DEATH : SongOptions::DRAIN_NO_RECOVER);
-	po_out.m_fDark = 1;
+	if( pPlayerOptionsOut != NULL )
+	{
+		pPlayerOptionsOut->Init();
+		pPlayerOptionsOut->m_fScrolls[PlayerOptions::SCROLL_REVERSE] = 1;
+		pPlayerOptionsOut->m_fScrollSpeed = 1.5f;
+		pPlayerOptionsOut->m_fDark = 1;
+	}
+
+	if( pSongOptionsOut != NULL )
+	{
+		pSongOptionsOut->Init();
+		pSongOptionsOut->m_DrainType = (bExtra2 ? SongOptions::DRAIN_SUDDEN_DEATH : SongOptions::DRAIN_NO_RECOVER);
+	}
 }
 
 Song* SongManager::GetRandomSong()

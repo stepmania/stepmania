@@ -129,8 +129,8 @@ void MusicWheel::Load( CString sType )
 			GAMESTATE->GetCurrentStyle(),
 			pSong,
 			pSteps,
-			po,
-			so );
+			&po,
+			&so );
 		GAMESTATE->m_pCurSong.Set( pSong );
 		GAMESTATE->m_pPreferredSong = pSong;
 		FOREACH_HumanPlayer( p )
@@ -413,9 +413,7 @@ void MusicWheel::GetSongList(vector<Song*> &arraySongs, SortOrder so, CString sP
 	{
 		Song* pSong;
 		Steps* pSteps;
-		PlayerOptions po;
-		SongOptions so;
-		SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, po, so );
+		SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, NULL, NULL );
 
 		if( find( arraySongs.begin(), arraySongs.end(), pSong ) == arraySongs.end() )
 			arraySongs.push_back( pSong );
@@ -612,9 +610,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			{
 				Song* pSong;
 				Steps* pSteps;
-				PlayerOptions po;
-				SongOptions so;
-				SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, po, so );
+				SONGMAN->GetExtraStageInfo( GAMESTATE->IsExtraStage2(), GAMESTATE->GetCurrentStyle(), pSong, pSteps, NULL, NULL );
 				
 				for( unsigned i=0; i<arrayWheelItemDatas.size(); i++ )
 				{

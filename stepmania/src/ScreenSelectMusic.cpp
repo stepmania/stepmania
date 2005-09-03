@@ -1249,9 +1249,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		/* Check if user selected the real extra stage. */
 		Song* pSong;
 		Steps* pSteps;
-		PlayerOptions po;
-		SongOptions so;
-		SONGMAN->GetExtraStageInfo( false, GAMESTATE->GetCurrentStyle(), pSong, pSteps, po, so );
+		SONGMAN->GetExtraStageInfo( false, GAMESTATE->GetCurrentStyle(), pSong, pSteps, NULL, NULL );
 		ASSERT(pSong);
 		
 		/* Enable 2nd extra stage if user chose the correct song */

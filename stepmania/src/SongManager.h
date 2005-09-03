@@ -96,8 +96,7 @@ public:
 	void GetCoursesInGroup( vector<Course*> &AddTo, const CString &sCourseGroup, bool bIncludeAutogen );
 
 	void GetExtraStageInfo( bool bExtra2, const Style *s, 
-		Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out );
-
+		Song*& pSongOut, Steps*& pStepsOut, PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut );
 	Song* GetSongFromDir( CString sDir );
 	Course* GetCourseFromPath( CString sPath );	// path to .crs file, or path to song group dir
 	Course* GetCourseFromName( CString sName );
@@ -117,7 +116,7 @@ protected:
 	void LoadStepManiaSongDir( CString sDir, LoadingWindow *ld );
 	void LoadDWISongDir( CString sDir );
 	bool GetExtraStageInfoFromCourse( bool bExtra2, CString sPreferredGroup,
-					   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions& po_out, SongOptions& so_out );
+					   Song*& pSongOut, Steps*& pStepsOut, PlayerOptions *pPlayerOptionsOut, SongOptions *pSongOptionsOut );
 	void SanityCheckGroupDir( CString sDir ) const;
 	void AddGroup( CString sDir, CString sGroupDirName );
 	int GetNumEditsLoadedFromProfile( ProfileSlot slot ) const;
