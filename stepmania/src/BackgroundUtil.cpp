@@ -147,11 +147,11 @@ void BackgroundUtil::GetSongBGAnimations( const Song *pSong, const CString &sMat
 	vsPathsOut.clear();
 	if( sMatch.empty() )
 	{
-		GetDirListing( pSong->GetSongDir()+sMatch+"*",	vsPathsOut, true, true );
+		GetDirListing( pSong->GetSongDir()+"*",    vsPathsOut, true, true );
 	}
 	else
 	{
-		GetDirListing( pSong->GetSongDir()+sMatch,		vsPathsOut, true, true );
+		GetDirListing( pSong->GetSongDir()+sMatch, vsPathsOut, true, true );
 	}
 	
 	vsNamesOut.clear();
