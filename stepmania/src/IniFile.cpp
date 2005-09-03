@@ -189,7 +189,6 @@ bool IniFile::RenameKey(const CString &from, const CString &to)
 
 /*
  * (c) 2001-2004 Adam Clauss, Chris Danford
- *
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
