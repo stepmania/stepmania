@@ -799,11 +799,11 @@ RageFileBasic *RageFileManager::OpenForWriting( CString sPath, int mode, int &iE
 	{
 		const int iDriver = Values[i].first;
 		LoadedDriver &ld = aDriverList[iDriver];
-		const CString sPath = ld.GetPath( sPath );
-		ASSERT( !sPath.empty() );
+		const CString sDriverPath = ld.GetPath( sPath );
+		ASSERT( !sDriverPath.empty() );
 
 		int iThisError;
-		RageFileBasic *pRet = ld.m_pDriver->Open( sPath, mode, iThisError );
+		RageFileBasic *pRet = ld.m_pDriver->Open( sDriverPath, mode, iThisError );
 		if( pRet )
 			return pRet;
 
