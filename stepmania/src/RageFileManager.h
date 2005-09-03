@@ -30,9 +30,9 @@ public:
 	int GetFileSizeInBytes( CString sPath );
 	int GetFileHash( CString sPath );
 
-	void Mount( CString Type, CString RealPath, CString MountPoint, bool bAddToEnd = true );
+	void Mount( CString sType, CString sRealPath, CString sMountPoint, bool bAddToEnd = true );
 	void Mount( RageFileDriver *pDriver, CString sMountPoint, bool bAddToEnd = true );
-	void Unmount( CString Type, CString Root, CString MountPoint );
+	void Unmount( CString sType, CString sRoot, CString sMountPoint );
 
 	/* Change the root of a filesystem.  Only a couple drivers support this; it's
 	 * used to change memory card mountpoints without having to actually unmount
@@ -43,22 +43,20 @@ public:
 	{
 		CString Type, Root, MountPoint;
 	};
-	void GetLoadedDrivers( vector<DriverLocation> &Mounts );
+	void GetLoadedDrivers( vector<DriverLocation> &asMounts );
 
 	void FlushDirCache( CString sPath );
 
 	/* Used only by RageFile: */
-	RageFileBasic *Open( CString sPath, int mode, int &err );
-	void Close( RageFileBasic *obj );
-	RageFileBasic *CopyFileObj( const RageFileBasic *cpy );
+	RageFileBasic *Open( CString sPath, int iMode, int &iError );
 
 	/* Retrieve or release a reference to the low-level driver for a mountpoint. */
 	RageFileDriver *GetFileDriver( CString sMountpoint );
 	void ReleaseFileDriver( RageFileDriver *pDriver );
 
 private:
-	RageFileBasic *OpenForReading( CString sPath, int mode, int &err );
-	RageFileBasic *OpenForWriting( CString sPath, int mode, int &err );
+	RageFileBasic *OpenForReading( CString sPath, int iMode, int &iError );
+	RageFileBasic *OpenForWriting( CString sPath, int iMode, int &iError );
 };
 
 extern RageFileManager *FILEMAN;
