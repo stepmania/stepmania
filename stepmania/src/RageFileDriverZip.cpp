@@ -6,6 +6,7 @@
 #include "RageFileDriverZip.h"
 #include "RageFileDriverSlice.h"
 #include "RageFileDriverDeflate.h"
+#include "RageFile.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"

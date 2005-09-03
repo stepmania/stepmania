@@ -2,6 +2,7 @@
 #include "CryptManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "RageFile.h"
 #include "PrefsManager.h"
 #include "RageFileManager.h"
 #include "crypto/CryptMD5.h"

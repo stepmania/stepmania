@@ -1,6 +1,7 @@
 #include "global.h"
 #include "RageFileDriverDirect.h"
 #include "RageFileDriverDirectHelpers.h"
+#include "RageFile.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
 #include "RageLog.h"

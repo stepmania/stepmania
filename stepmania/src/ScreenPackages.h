@@ -5,6 +5,7 @@
 #include "BitmapText.h"
 #include "ezsockets.h"
 #include "RageFileManager.h"
+#include "RageFile.h"
 
 #if !defined(WITHOUT_NETWORKING)
 

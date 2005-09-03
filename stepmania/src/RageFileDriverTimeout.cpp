@@ -42,6 +42,7 @@
 
 #include "global.h"
 #include "RageFileDriverTimeout.h"
+#include "RageFile.h"
 #include "RageUtil.h"
 #include "RageUtil_FileDB.h"
 #include "RageUtil_WorkerThread.h"
