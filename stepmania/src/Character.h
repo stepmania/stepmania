@@ -12,7 +12,7 @@ typedef lua_State Lua;
 class Character
 {
 public:
-//	Character();
+	Character();
 	~Character() { }
 
 	bool Load( CString sCharDir );	// return true if success
@@ -59,6 +59,7 @@ public:
 
 	CString	m_sAttacks[NUM_ATTACK_LEVELS][NUM_ATTACKS_PER_LEVEL];
 	RageTexturePreloader m_Preload;
+	int m_iPreloadRefcount;
 };
 
 #endif
