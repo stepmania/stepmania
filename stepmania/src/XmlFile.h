@@ -177,50 +177,47 @@ struct XNode
 	bool SaveToFile( RageFileBasic &f, DISP_OPT *opt ) const;
 
 	// in own attribute list
-	const XAttr *GetAttr( const CString &attrname ) const; 
-	XAttr *GetAttr( const CString &attrname ); 
-	const char*	GetAttrValue( const CString &attrname ); 
-	bool GetAttrValue( const char* name, CString &out ) const  { const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	bool GetAttrValue( const char* name, int &out ) const      { const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	bool GetAttrValue( const char* name, float &out ) const    { const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	bool GetAttrValue( const char* name, bool &out ) const     { const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	bool GetAttrValue( const char* name, unsigned &out ) const { const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	bool GetAttrValue( const char* name, DateTime &out ) const { const XAttr* pAttr=GetAttr(name); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	const XAttr *GetAttr( const CString &sAttrName ) const; 
+	XAttr *GetAttr( const CString &sAttrName ); 
+	bool GetAttrValue( const CString &sName, CString &out ) const  { const XAttr* pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue( const CString &sName, int &out ) const      { const XAttr* pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue( const CString &sName, float &out ) const    { const XAttr* pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue( const CString &sName, bool &out ) const     { const XAttr* pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue( const CString &sName, unsigned &out ) const { const XAttr* pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	bool GetAttrValue( const CString &sName, DateTime &out ) const { const XAttr* pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
 
 	// in one level child nodes
-	const XNode *GetChild( const char* m_sName ) const; 
-	XNode *GetChild( const char* m_sName ); 
-	const char*	GetChildValue( const char* m_sName ); 
-	bool GetChildValue( const char* name, CString &out ) const  { const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue( const char* name, int &out ) const      { const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue( const char* name, float &out ) const    { const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue( const char* name, bool &out ) const     { const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue( const char* name, unsigned &out ) const { const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
-	bool GetChildValue( const char* name, DateTime &out ) const { const XNode* pChild=GetChild(name); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	const XNode *GetChild( const CString &sName ) const; 
+	XNode *GetChild( const CString &sName ); 
+	bool GetChildValue( const CString &sName, CString &out ) const  { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue( const CString &sName, int &out ) const      { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue( const CString &sName, float &out ) const    { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue( const CString &sName, bool &out ) const     { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue( const CString &sName, unsigned &out ) const { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
+	bool GetChildValue( const CString &sName, DateTime &out ) const { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 
 	XAttr *GetChildAttr( const char* name, const char* attrname );
-	const char* GetChildAttrValue( const char* name, const char* attrname );
 	
 	// modify DOM 
 	int GetChildCount() const;
-	XNode *AppendChild( const char* m_sName = NULL, const char* value = NULL );
-	XNode *AppendChild( const char* m_sName, float value );
-	XNode *AppendChild( const char* m_sName, int value );
-	XNode *AppendChild( const char* m_sName, unsigned value );
-	XNode *AppendChild( const char* m_sName, const DateTime &value );
+	XNode *AppendChild( const CString &sName = "", const char* value = "" );
+	XNode *AppendChild( const CString &sName, float value );
+	XNode *AppendChild( const CString &sName, int value );
+	XNode *AppendChild( const CString &sName, unsigned value );
+	XNode *AppendChild( const CString &sName, const DateTime &value );
 	XNode *AppendChild( XNode *node );
 	bool RemoveChild( XNode *node );
 
-	XAttr *AppendAttr( const char* m_sName = NULL, const char* value = NULL );
-	XAttr *AppendAttr( const char* m_sName, float value );
-	XAttr *AppendAttr( const char* m_sName, int value );
-	XAttr *AppendAttr( const char* m_sName, unsigned value );
-	XAttr *AppendAttr( const char* m_sName, const DateTime &value );
-	XAttr *AppendAttr( XAttr *attr );
-	bool RemoveAttr( XAttr *attr );
+	XAttr *AppendAttr( const CString &sName = "", const CString &sValue = "" );
+	XAttr *AppendAttr( const CString &sName, float value );
+	XAttr *AppendAttr( const CString &sName, int value );
+	XAttr *AppendAttr( const CString &sName, unsigned value );
+	XAttr *AppendAttr( const CString &sName, const DateTime &value );
+	XAttr *AppendAttr( XAttr *pAttr );
+	bool RemoveAttr( XAttr *pAttr );
 
 	// creates the attribute if it doesn't already exist
-	void	SetAttrValue( const char* m_sName, const char* value );
+	void SetAttrValue( const CString &sName, const CString &sValue );
 
 	XNode() { }
 	~XNode();

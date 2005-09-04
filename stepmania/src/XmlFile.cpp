@@ -632,14 +632,6 @@ XAttr *XNode::GetAttr( const CString &attrname )
 	return NULL;
 }
 
-// Desc   : get attribute with attribute name, return its value
-const char*	XNode::GetAttrValue( const CString &attrname )
-{
-	XAttr *attr = GetAttr( attrname );
-	return attr ? (const char*)attr->m_sValue : NULL;
-}
-
-
 // get child node count
 int	XNode::GetChildCount() const
 {
@@ -648,9 +640,9 @@ int	XNode::GetChildCount() const
 
 // Desc   : Find child with name and return child
 // Return : NULL return if no child.
-XNode *XNode::GetChild( const char* name )
+XNode *XNode::GetChild( const CString &sName )
 {
-	multimap<CString, XNode*>::iterator it = m_childs.find( name );
+	multimap<CString, XNode*>::iterator it = m_childs.find( sName );
 	if( it != m_childs.end() )
 	{
 		DEBUG_ASSERT( name == it->second->m_sName );
@@ -659,23 +651,15 @@ XNode *XNode::GetChild( const char* name )
 	return NULL;
 }
 
-const XNode *XNode::GetChild( const char* name ) const
+const XNode *XNode::GetChild( const CString &sName ) const
 {
-	multimap<CString, XNode*>::const_iterator it = m_childs.find( name );
+	multimap<CString, XNode*>::const_iterator it = m_childs.find( sName );
 	if( it != m_childs.end() )
 	{
 		DEBUG_ASSERT( name == it->second->m_sName );
 		return it->second;
 	}
 	return NULL;
-}
-
-// Desc   : Find child with name and return child's value
-// Return : NULL return if no child.
-const char*	XNode::GetChildValue( const char* name )
-{
-	XNode *node = GetChild( name );
-	return (node != NULL)? (const char*)node->m_sValue : NULL;
 }
 
 XAttr *XNode::GetChildAttr( const char* name, const char* attrname )
@@ -684,18 +668,11 @@ XAttr *XNode::GetChildAttr( const char* name, const char* attrname )
 	return node ? node->GetAttr(attrname) : NULL;
 }
 
-const char* XNode::GetChildAttrValue( const char* name, const char* attrname )
-{
-	XAttr *attr = GetChildAttr( name, attrname );
-	return attr ? (const char*)attr->m_sValue : NULL;
-}
-
-
-XNode *XNode::AppendChild( const char* name, const char* value )		{ XNode *p = new XNode; p->m_sName = name; p->m_sValue = value; return AppendChild( p ); }
-XNode *XNode::AppendChild( const char* name, float value )				{ XNode *p = new XNode; p->m_sName = name; p->SetValue( value ); return AppendChild( p ); }
-XNode *XNode::AppendChild( const char* name, int value )				{ XNode *p = new XNode; p->m_sName = name; p->SetValue( value ); return AppendChild( p ); }
-XNode *XNode::AppendChild( const char* name, unsigned value )			{ XNode *p = new XNode; p->m_sName = name; p->SetValue( value ); return AppendChild( p ); }
-XNode *XNode::AppendChild( const char* name, const DateTime &value )	{ XNode *p = new XNode; p->m_sName = name; p->SetValue( value ); return AppendChild( p ); }
+XNode *XNode::AppendChild( const CString &sName, const char* value )		{ XNode *p = new XNode; p->m_sName = sName; p->m_sValue = value; return AppendChild( p ); }
+XNode *XNode::AppendChild( const CString &sName, float value )				{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
+XNode *XNode::AppendChild( const CString &sName, int value )				{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
+XNode *XNode::AppendChild( const CString &sName, unsigned value )			{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
+XNode *XNode::AppendChild( const CString &sName, const DateTime &value )	{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
 
 XNode *XNode::AppendChild( XNode *node )
 {
@@ -743,26 +720,25 @@ bool XNode::RemoveAttr( XAttr *attr )
 	return false;
 }
 
-XAttr *XNode::AppendAttr( const char* name /*= NULL*/, const char* value /*= NULL*/ )
+XAttr *XNode::AppendAttr( const CString &sName, const CString &sValue )
 {
-	XAttr *attr = new XAttr;
-	attr->m_sName = name;
-	attr->m_sValue = value;
-	return AppendAttr( attr );
+	XAttr *pAttr = new XAttr;
+	pAttr->m_sName = sName;
+	pAttr->m_sValue = sValue;
+	return AppendAttr( pAttr );
 }
 
-XAttr *XNode::AppendAttr( const char* name, float value ){ return AppendAttr(name,ssprintf("%f",value)); }
-XAttr *XNode::AppendAttr( const char* name, int value )	{ return AppendAttr(name,ssprintf("%d",value)); }
-XAttr *XNode::AppendAttr( const char* name, unsigned value )	{ return AppendAttr(name,ssprintf("%u",value)); }
+XAttr *XNode::AppendAttr( const CString &sName, float value ){ return AppendAttr(sName,ssprintf("%f",value)); }
+XAttr *XNode::AppendAttr( const CString &sName, int value )	{ return AppendAttr(sName,ssprintf("%d",value)); }
+XAttr *XNode::AppendAttr( const CString &sName, unsigned value )	{ return AppendAttr(sName,ssprintf("%u",value)); }
 
-// Desc   : add attribute
-void XNode::SetAttrValue( const char* name, const char* value )
+void XNode::SetAttrValue( const CString &sName, const CString &sValue )
 {
-	XAttr* pAttr = GetAttr( name );
+	XAttr* pAttr = GetAttr( sName );
 	if( pAttr )
-		pAttr->m_sValue = value;
+		pAttr->m_sValue = sValue;
 	else
-		AppendAttr( name, value );
+		AppendAttr( sName, sValue );
 }
 
 
