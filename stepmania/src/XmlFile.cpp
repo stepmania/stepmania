@@ -645,7 +645,7 @@ XNode *XNode::GetChild( const CString &sName )
 	multimap<CString, XNode*>::iterator it = m_childs.find( sName );
 	if( it != m_childs.end() )
 	{
-		DEBUG_ASSERT( name == it->second->m_sName );
+		DEBUG_ASSERT( sName == it->second->m_sName );
 		return it->second;
 	}
 	return NULL;
@@ -656,7 +656,7 @@ const XNode *XNode::GetChild( const CString &sName ) const
 	multimap<CString, XNode*>::const_iterator it = m_childs.find( sName );
 	if( it != m_childs.end() )
 	{
-		DEBUG_ASSERT( name == it->second->m_sName );
+		DEBUG_ASSERT( sName == it->second->m_sName );
 		return it->second;
 	}
 	return NULL;

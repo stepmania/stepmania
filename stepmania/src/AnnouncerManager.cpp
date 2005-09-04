@@ -2,6 +2,7 @@
 #include "AnnouncerManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "RageFile.h"
 
 AnnouncerManager*	ANNOUNCER = NULL;	// global object accessable from anywhere in the program
 
