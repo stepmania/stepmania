@@ -10,6 +10,9 @@
 #include "Game.h"
 #include "ScreenDimensions.h"
 #include "Command.h"
+#if defined(XBOX)
+#include "HelpDisplay.h" //We still need this for Xbox controller mapping.
+#endif
 
 static const ThemeMetric<apActorCommands> EVEN_LINE_IN	("ScreenMapControllers","EvenLineIn");
 static const ThemeMetric<apActorCommands> EVEN_LINE_OUT	("ScreenMapControllers","EvenLineOut");
