@@ -22,15 +22,40 @@ static const char chXMLExclamation	= '!';
 static const char chXMLDash			= '-';
 
 
-static const XENTITY x_EntityTable[] = {
-		{ '&',  "&amp;", 5 } ,
-		{ '\"', "&quot;", 6 } ,
-		{ '\'', "&apos;", 6 } ,
-		{ '<',  "&lt;", 4 } ,
-		{ '>',  "&gt;", 4 } 
+static map<CString,CString> g_mapEntitiesToChars;
+static map<char,CString> g_mapCharsToEntities;
+
+static void InitEntities()
+{
+	if( !g_mapEntitiesToChars.empty() )
+		return;
+
+	struct Entity
+	{
+		char c;
+		const char *pEntity;
+	}
+	static const EntityTable[] =
+	{
+		{ '&',  "amp", },
+		{ '\"', "quot", },
+		{ '\'', "apos", },
+		{ '<',  "lt", },
+		{ '>',  "gt", } 
 	};
 
-XENTITYS entityDefault(x_EntityTable, sizeof(x_EntityTable)/sizeof(x_EntityTable[0]) );
+	for( unsigned i = 0; i < ARRAYSIZE(EntityTable); ++i )
+	{
+		const Entity &ent = EntityTable[i];
+		g_mapEntitiesToChars[ent.pEntity] = CString(1, ent.c);
+		g_mapCharsToEntities[ent.c] = ent.pEntity;
+	}
+}
+
+struct RunInitEntities
+{
+	RunInitEntities() { InitEntities(); }
+} static g_RunInitEntities;
 
 // skip spaces
 static char* tcsskip( const char* psz )
@@ -249,8 +274,8 @@ const char* XNode::LoadAttributes( const char* xml, PARSEINFO *pi /*= &piDefault
 			SetString( xml, pEnd, &attr->m_sValue, trim, escape );
 			xml = pEnd;
 			// ATTRVALUE 
-			if( pi->entity_value && pi->entitys )
-				attr->m_sValue = pi->entitys->Ref2Entity(attr->m_sValue);
+			if( pi->entity_value )
+				ReplaceEntityText( attr->m_sValue, g_mapEntitiesToChars );
 
 			if( quote == '"' || quote == '\'' )
 				xml++;
@@ -383,8 +408,8 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 
 		xml = pEnd;
 		// TEXTVALUE reference
-		if( pi->entity_value && pi->entitys )
-			m_sValue = pi->entitys->Ref2Entity(m_sValue);
+		if( pi->entity_value )
+			ReplaceEntityText( m_sValue, g_mapEntitiesToChars );
 	}
 
 	// generate child nodes
@@ -477,8 +502,8 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 
 				xml = pEnd;
 				//TEXTVALUE
-				if( pi->entity_value && pi->entitys )
-					m_sValue = pi->entitys->Ref2Entity(m_sValue);
+				if( pi->entity_value )
+					ReplaceEntityText( m_sValue, g_mapEntitiesToChars );
 			}
 		}
 	}
@@ -490,7 +515,10 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 // Return : converted plain string
 bool XAttr::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 {
-	return f.Write(m_sName + "='" + (opt && opt->reference_value && opt->entitys ? opt->entitys->Entity2Ref(m_sValue) : m_sValue) + "' ") != -1;
+	CString s(m_sValue);
+	if( opt && opt->reference_value )
+		ReplaceEntityText( s, g_mapCharsToEntities );
+	return f.Write(m_sName + "='" + s + "' ") != -1;
 }
 
 // Desc   : convert plain xml text from parsed xml node
@@ -542,7 +570,7 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 				return false;
 		
 		// Text Value
-		if( m_sValue != ("") )
+		if( !m_sValue.empty() )
 		{
 			if( opt && opt->newline && !m_childs.empty() )
 			{
@@ -554,7 +582,10 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 						if( f.Write("\t") == -1 )
 							return false;
 			}
-			if( f.Write((opt && opt->reference_value && opt->entitys ? opt->entitys->Entity2Ref(m_sValue) : m_sValue)) == -1 )
+			CString s( m_sValue );
+			if( opt && opt->reference_value )
+					ReplaceEntityText( s, g_mapCharsToEntities );
+			if( f.Write(s) == -1 )
 				return false;
 		}
 
@@ -728,124 +759,6 @@ void XNode::SetAttrValue( const CString &sName, const CString &sValue )
 		AppendAttr( sName, sValue );
 }
 
-
-XENTITYS::XENTITYS( const XENTITY *entities, int count )
-{
-	for( int i = 0; i < count; i++)
-		push_back( entities[i] );
-}
-
-const XENTITY *XENTITYS::GetEntity( char entity ) const
-{
-	for( unsigned i = 0 ; i < size(); i ++ )
-	{
-		if( at(i).entity == entity )
-			return &at(i);
-	}
-	return NULL;
-}
-
-const XENTITY *XENTITYS::GetEntity( const char* entity ) const
-{
-	for( unsigned i = 0 ; i < size(); i ++ )
-	{
-		const char* ref = at(i).ref;
-		const char* ps = entity;
-		while( ref && *ref )
-			if( *ref++ != *ps++ )
-				break;
-		if( ref && !*ref )	// found!
-			return &at(i);
-	}
-	return NULL;
-}
-
-int XENTITYS::GetEntityCount( const char* str ) const
-{
-	int nCount = 0;
-	while( str && *str )
-		if( GetEntity(*str++) )
-			++nCount;
-	return nCount;
-}
-
-int XENTITYS::Ref2Entity( const char* pes, char* str, int len ) const
-{
-	char* ps = str;
-	char* ps_end = ps+len;
-	while( pes && *pes && ps < ps_end )
-	{
-		const XENTITY *ent = GetEntity( pes );
-		if( ent )
-		{
-			// copy entity meanning char
-			*ps = ent->entity;
-			pes += ent->ref_len;
-		}
-		else
-			*ps = *pes++;	// default character copy
-		ps++;
-	}
-	*ps = '\0';
-	
-	// total copied characters
-	return ps-str;	
-}
-
-int XENTITYS::Entity2Ref( const char* ps, char* estr, int estrlen ) const
-{
-	char* pes = estr;
-	char* pes_end = pes+estrlen;
-	while( ps && *ps && pes < pes_end )
-	{
-		const XENTITY *ent = GetEntity( *ps );
-		if( ent )
-		{
-			// copy entity string
-			const char* ref = ent->ref;
-			while( ref && *ref )
-				*pes++ = *ref++;
-		}
-		else
-			*pes++ = *ps;	// default character copy
-		ps++;
-	}
-	*pes = '\0';
-	
-	// total copied characters
-	return pes-estr;
-}
-
-CString XENTITYS::Ref2Entity( const char* estr ) const
-{
-	CString es;
-	if( estr )
-	{
-		int len = strlen(estr);
-		char* szTemp = new char[len+1];
-		int iLen = Ref2Entity( estr, szTemp, len );
-		es.assign( szTemp, iLen );
-		delete [] szTemp;
-	}
-	return es;
-}
-
-CString XENTITYS::Entity2Ref( const char* str ) const
-{
-	CString s;
-	if( str )
-	{
-		int nEntityCount = GetEntityCount(str);
-		if( nEntityCount == 0 )
-			return CString(str);
-		int len = strlen(str) + nEntityCount*10;
-		char* szTemp = new char[len+1];
-		int iLen = Entity2Ref( str, szTemp, len );
-		s.assign( szTemp, iLen );
-		delete [] szTemp;
-	}
-	return s;
-}
 
 bool XNode::LoadFromFile( const CString &sFile )
 {

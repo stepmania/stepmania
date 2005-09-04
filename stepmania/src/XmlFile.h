@@ -57,29 +57,6 @@ typedef multimap<CString,XNode*> XNodes;
 		++Var##Iter, Var = Var##Iter->second )
 
 
-// Entity Encode/Decode Support
-struct XENTITY
-{
-	char entity;					// entity ( & " ' < > )
-	char ref[10];					// entity reference ( &amp; &quot; etc )
-	int ref_len;					// entity reference length
-};
-
-struct XENTITYS : public vector<XENTITY>
-{
-	const XENTITY *GetEntity( char entity ) const;
-	const XENTITY *GetEntity( const char* entity ) const;
-	int GetEntityCount( const char* str ) const;
-	int Ref2Entity( const char* estr, char* str, int strlen ) const;
-	int Entity2Ref( const char* str, char* estr, int estrlen ) const;
-	CString Ref2Entity( const char* estr ) const;
-	CString Entity2Ref( const char* str ) const;
-
-	XENTITYS(){};
-	XENTITYS( const XENTITY *entities, int count );
-};
-extern XENTITYS entityDefault;
-
 enum PCODE
 {
 	PIE_PARSE_WELL_FORMED = 0,
@@ -95,7 +72,6 @@ struct PARSEINFO
 {
 	bool		trim_value;			// [set] do trim when parse?
 	bool		entity_value;		// [set] do convert from reference to entity? ( &lt; -> < )
-	XENTITYS	*entitys;			// [set] entity table for entity decode
 	char		escape_value;		// [set] escape value (default '\\')
 
 	char*		xml;				// [get] xml source
@@ -104,7 +80,7 @@ struct PARSEINFO
 	PCODE		error_code;			// [get] error code
 	CString		error_string;		// [get] error string
 
-	PARSEINFO() { trim_value = true; entity_value = true; entitys = &entityDefault; xml = NULL; error_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELL_FORMED; escape_value = 0; }
+	PARSEINFO() { trim_value = true; entity_value = true; xml = NULL; error_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELL_FORMED; escape_value = 0; }
 };
 
 // display optional environment
@@ -112,7 +88,6 @@ struct DISP_OPT
 {
 	bool newline;			// newline when new tag
 	bool reference_value;	// do convert from entity to reference ( < -> &lt; )
-	XENTITYS	*entitys;	// entity table for entity encode
 	CString stylesheet;		// empty string = no stylesheet
 	bool write_tabs;		// if false, don't write tab indent characters
 
@@ -121,7 +96,6 @@ struct DISP_OPT
 	{
 		newline = true;
 		reference_value = true;
-		entitys = &entityDefault;
 		stylesheet = "";
 		write_tabs = true;
 		tab_base = 0;
