@@ -328,7 +328,7 @@ CString ThemeManager::GetPathToAndFallback( const CString &sThemeName, ElementCa
 
 		// search fallback name (if any)
 		CString sFallback;
-		GetMetricRaw( sClass, "Fallback", sFallback );
+		GetMetricRawRecursive( sClass, "Fallback", sFallback );
 		if( sFallback.empty() )
 			return NULL;
 		sClass = sFallback;
@@ -556,7 +556,7 @@ CString ThemeManager::GetMetricsIniPath( const CString &sThemeName )
 bool ThemeManager::HasMetric( const CString &sClassName, const CString &sValueName )
 {
 	CString sThrowAway;
-	return GetMetricRaw( sClassName, sValueName, sThrowAway );
+	return GetMetricRawRecursive( sClassName, sValueName, sThrowAway );
 }
 
 void ThemeManager::ReloadMetrics()
@@ -579,7 +579,7 @@ void ThemeManager::ReloadMetrics()
 }
 
 
-bool ThemeManager::GetMetricRaw( const CString &sClassName, const CString &sValueName, CString &ret, int level )
+bool ThemeManager::GetMetricRawRecursive( const CString &sClassName, const CString &sValueName, CString &ret, int level )
 {
 	if( level > 100 )
 		RageException::Throw("Infinite recursion looking up theme metric \"%s::%s\"", sClassName.c_str(), sValueName.c_str() );
@@ -592,7 +592,7 @@ bool ThemeManager::GetMetricRaw( const CString &sClassName, const CString &sValu
 			return true;
 		if( iter->iniMetrics->GetValue(sClassName,"Fallback",sFallback) )
 		{
-			if( GetMetricRaw(sFallback,sValueName,ret,level+1) )
+			if( GetMetricRawRecursive(sFallback,sValueName,ret,level+1) )
 				return true;
 		}
 	}
@@ -610,7 +610,7 @@ CString ThemeManager::GetMetricRaw( const CString &sClassName_, const CString &s
 try_metric_again:
 
 	CString ret;
-	if( ThemeManager::GetMetricRaw( sClassName, sValueName, ret ) )
+	if( ThemeManager::GetMetricRawRecursive( sClassName, sValueName, ret ) )
 		return ret;
 
 
@@ -801,7 +801,7 @@ void ThemeManager::GetMetricsThatBeginWith( const CString &_sClassName, const CS
 				continue;
 
 			// Iterate over all metrics that match.
-			for( XAttrs::const_iterator j = cur->m_attrs.lower_bound( sValueName ); j != cur->m_attrs.end(); j++ )
+			for( XAttrs::const_iterator j = cur->m_attrs.lower_bound( sValueName ); j != cur->m_attrs.end(); ++j )
 			{
 				const CString &sv = j->first;
 				if( sv.Left(sValueName.size()) == sValueName )
@@ -813,7 +813,7 @@ void ThemeManager::GetMetricsThatBeginWith( const CString &_sClassName, const CS
 
 		// put the fallback (if any) in sClassName
 		CString sFallback;
-		if( GetMetricRaw( sClassName, "Fallback", sFallback ) )
+		if( GetMetricRawRecursive( sClassName, "Fallback", sFallback ) )
 			sClassName = sFallback;
 		else
 			sClassName = "";
