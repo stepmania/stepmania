@@ -32,8 +32,8 @@ NoteSkinManager::~NoteSkinManager()
 
 void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 {
-	/* Reload even if we don't need to, so exiting out of the menus refreshes the note
-	 * skin list (so you don't have to restart to see new noteskins). */
+	if( m_pCurGame == pGame )
+		return;
 	m_pCurGame = pGame;
 
 	// clear path cache
