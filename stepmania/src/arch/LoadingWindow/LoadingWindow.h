@@ -7,7 +7,7 @@ struct RageSurface;
 class LoadingWindow
 {
 public:
-	virtual CString Init() { return ""; }
+	virtual CString Init() { return CString(); }
 	virtual ~LoadingWindow() { }
 
 	virtual void Paint() = 0;

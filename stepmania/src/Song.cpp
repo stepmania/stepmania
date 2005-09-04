@@ -1240,7 +1240,7 @@ vector<BackgroundChange> &Song::GetForegroundChanges()
 CString GetSongAssetPath( CString sPath, const CString &sSongPath )
 {
 	if( sPath == "" )
-		return NULL;
+		return CString();
 
 	/* If there's no path in the file, the file is in the same directory
 	 * as the song.  (This is the preferred configuration.) */
@@ -1259,7 +1259,7 @@ CString GetSongAssetPath( CString sPath, const CString &sSongPath )
 	/* If the path still begins with "../", then there were an unreasonable number
 	 * of them at the beginning of the path.  Ignore the path entirely. */
 	if( sPath.Left(3) == "../" )
-		return NULL;
+		return CString();
 
 	return sPath;
 }

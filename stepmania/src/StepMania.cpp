@@ -1236,7 +1236,7 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature,
 	if( !bResult )
 	{
 		SCREENMAN->PlayInvalidSound();
-		return NULL;
+		return CString();
 	}
 
 	SCREENMAN->PlayScreenshotSound();

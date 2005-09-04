@@ -600,7 +600,7 @@ CString FontPageSettings::MapRange( CString sMapping, int iMapOffset, int iGlyph
 			iCount--;
 		}
 
-		return NULL;
+		return CString();
 	}
 
 	const wchar_t *pMapping = FontCharmaps::get_char_map( sMapping );
@@ -631,7 +631,7 @@ CString FontPageSettings::MapRange( CString sMapping, int iMapOffset, int iGlyph
 	if( iCount )
 		return "Map overflow"; /* there aren't enough characters in the map */
 
-	return NULL;
+	return CString();
 }
 
 static CStringArray LoadStack;

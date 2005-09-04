@@ -409,7 +409,7 @@ CString ScreenPackages::URLEncode( const CString &URL )
 CString ScreenPackages::StripOutContainers( const CString & In )
 {
 	if( In.size() == 0 )
-		return NULL;
+		return CString();
 
 	unsigned i = 0;
 	char t = In.at(i);

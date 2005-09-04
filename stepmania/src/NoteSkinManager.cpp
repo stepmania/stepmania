@@ -273,7 +273,7 @@ CString NoteSkinManager::GetPathFromDirAndFile( const CString &sDir, const CStri
 	GetDirListing( sDir+sFileName+"*",		matches, false, true );
 
 	if( matches.empty() )
-		return NULL;
+		return CString();
 
 	if( matches.size() > 1 )
 	{

@@ -212,12 +212,12 @@ void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, cons
 CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so )
 {
 	if( pSong == NULL )
-		return NULL;
+		return CString();
 
 	switch( so )
 	{
 	case SORT_PREFERRED:
-		return NULL;
+		return CString();
 	case SORT_GROUP:
 		// guaranteed not empty	
 		return pSong->m_sGroupName;
@@ -234,7 +234,7 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			s = MakeSortString(s);	// resulting string will be uppercase
 			
 			if( s.empty() )
-				return NULL;
+				return CString();
 			else if( s[0] >= '0' && s[0] <= '9' )
 				return "NUM";
 			else if( s[0] < 'A' || s[0] > 'Z')
@@ -256,7 +256,7 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			return ssprintf("%03d-%03d",iMaxBPM-(iBPMGroupSize-1), iMaxBPM);
 		}
 	case SORT_POPULARITY:
-		return NULL;
+		return CString();
 	case SORT_TOP_GRADES:
 		{
 			int iCounts[NUM_Grade];
@@ -299,14 +299,14 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			return "N/A";
 		}
 	case SORT_MODE_MENU:
-		return NULL;
+		return CString();
 	case SORT_ALL_COURSES:
 	case SORT_NONSTOP_COURSES:
 	case SORT_ONI_COURSES:
 	case SORT_ENDLESS_COURSES:
 	default:
 		ASSERT(0);
-		return NULL;
+		return CString();
 	}
 }
 

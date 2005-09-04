@@ -251,7 +251,7 @@ CString RageSound_DSound::Init()
 	MixingThread.SetName("Mixer thread");
 	MixingThread.Create( MixerThread_start, this );
 
-	return "";
+	return CString();
 }
 
 RageSound_DSound::~RageSound_DSound()

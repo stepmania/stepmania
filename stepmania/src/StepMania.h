@@ -18,7 +18,7 @@ void ChangeCurrentGame( const Game* g );
 void FocusChanged( bool bHasFocus );
 bool AppHasFocus();
 
-// If successful, return filename of screenshot in sDir, else return NULL
+// If successful, return filename of screenshot in sDir, else return CString()
 CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex = -1 );
 
 void InsertCoin( int iNum = 1, const RageTimer *pTime = NULL );

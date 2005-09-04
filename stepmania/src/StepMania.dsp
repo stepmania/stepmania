@@ -55,11 +55,11 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 $(intdir)\verstub.obj kernel32.lib shell32.lib user32.lib gdi32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /pdb:"../debug6/StepMania-debug.pdb" /map /debug /machine:I386 /nodefaultlib:"libcmtd.lib" /out:"../StepMania-debug.exe"
 # SUBTRACT BASE LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
-# ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /map /debug /machine:I386 /nodefaultlib:"msvcrt.lib" /out:"../Program/StepMania-debug.exe"
+# ADD LINK32 $(intdir)\verstub.obj kernel32.lib gdi32.lib shell32.lib user32.lib advapi32.lib winmm.lib /nologo /subsystem:windows /map /debug /machine:I386 /nodefaultlib:"msvcrt.lib" /out:"../../itg/Program/StepMania-debug.exe"
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\cvs\stepmania\Program
+TargetDir=\cvs\itg\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
 PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                              	cl                                                                      /Zl                                                                      /nologo                                                                      /c                                                                      verstub.cpp                                                                      /Fo$(IntDir)\ 

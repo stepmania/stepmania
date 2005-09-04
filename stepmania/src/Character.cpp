@@ -66,7 +66,7 @@ CString GetRandomFileInDir( CString sDir )
 	CStringArray asFiles;
 	GetDirListing( sDir, asFiles, false, true );
 	if( asFiles.empty() )
-		return NULL;
+		return CString();
 	else
 		return asFiles[rand()%asFiles.size()];
 }
@@ -78,7 +78,7 @@ CString Character::GetModelPath() const
 	if( DoesFileExist(s) )
 		return s; 
 	else 
-		return NULL;
+		return CString();
 }
 
 CString Character::GetRestAnimationPath() const	{ return DerefRedir(GetRandomFileInDir(m_sCharDir + "Rest/")); }
@@ -92,7 +92,7 @@ CString Character::GetTakingABreakPath() const
 	GetDirListing( m_sCharDir+"break.gif", as, false, true );
 	GetDirListing( m_sCharDir+"break.bmp", as, false, true );
 	if( as.empty() )
-		return NULL;
+		return CString();
 	else
 		return as[0];
 }
@@ -115,7 +115,7 @@ CString Character::GetSongSelectIconPath() const
 		GetDirListing( m_sCharDir+"icon.gif", as, false, true );
 		GetDirListing( m_sCharDir+"icon.bmp", as, false, true );
 		if( as.empty() )
-			return NULL;
+			return CString();
 		else
 			return as[0];
 	}
@@ -141,7 +141,7 @@ CString Character::GetStageIconPath() const
 		GetDirListing( m_sCharDir+"card.gif", as, false, true );
 		GetDirListing( m_sCharDir+"card.bmp", as, false, true );
 		if( as.empty() )
-			return NULL;
+			return CString();
 		else
 			return as[0];
 	}

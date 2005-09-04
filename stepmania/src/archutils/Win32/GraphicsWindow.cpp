@@ -140,7 +140,7 @@ CString GraphicsWindow::SetScreenMode( const RageDisplay::VideoModeParams &p )
 		if( !g_CurrentParams.windowed )
 			ChangeDisplaySettings( NULL, 0 );
 
-		return "";
+		return CString();
 	}
 
 	DEVMODE DevMode;
@@ -169,7 +169,7 @@ CString GraphicsWindow::SetScreenMode( const RageDisplay::VideoModeParams &p )
 	if( ret != DISP_CHANGE_SUCCESSFUL )
 		return "Couldn't set screen mode";
 
-	return "";
+	return CString();
 }
 
 static int GetWindowStyle( const RageDisplay::VideoModeParams &p )

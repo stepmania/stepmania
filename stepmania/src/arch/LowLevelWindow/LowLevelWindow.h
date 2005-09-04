@@ -14,7 +14,7 @@ public:
 
 	virtual void *GetProcAddress(CString s) = 0;
 
-	// Return "" if mode change was successful, otherwise an error message.
+	// return NULL if mode change was successful, otherwise an error message.
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
 	virtual CString TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut ) = 0;

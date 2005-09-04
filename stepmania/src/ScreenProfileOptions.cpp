@@ -228,7 +228,7 @@ CString ScreenProfileOptions::GetSelectedProfileID()
 	const OptionRow &row = *m_pRows[GetCurrentRow()];
 	const int Selection = row.GetOneSharedSelection();
 	if( !Selection )
-		return NULL;
+		return CString();
 	return vsProfiles[ Selection-1 ];
 }
 
@@ -237,7 +237,7 @@ CString ScreenProfileOptions::GetSelectedProfileName()
 	const OptionRow &row = *m_pRows[GetCurrentRow()];
 	const int Selection = row.GetOneSharedSelection();
 	if( !Selection )
-		return NULL;
+		return CString();
 	return g_ProfileOptionsLines[PO_PLAYER1].m_vsChoices[ Selection ];
 }
 

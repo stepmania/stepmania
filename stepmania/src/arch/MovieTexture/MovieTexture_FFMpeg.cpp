@@ -453,7 +453,7 @@ CString MovieTexture_FFMpeg::Init()
 
 	StartThread();
 
-	return "";
+	return CString();
 }
 
 MovieTexture_FFMpeg::~MovieTexture_FFMpeg()
@@ -599,7 +599,7 @@ CString MovieTexture_FFMpeg::CreateDecoder()
 	 * on an exception unless it was really opened. */
 	decoder->m_stream = stream;
 
-	return "";
+	return CString();
 }
 
 

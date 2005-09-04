@@ -157,7 +157,7 @@ CString MovieTexture_DShow::Init()
 	// flip all frame rects because movies are upside down
 	for( unsigned i=0; i<m_TextureCoordRects.size(); i++ )
 		swap(m_TextureCoordRects[i].top, m_TextureCoordRects[i].bottom);
-	return "";
+	return CString();
 }
 
 /* Hold buffer_lock.  If it's held, then the decoding thread is waiting
@@ -411,7 +411,7 @@ CString MovieTexture_DShow::Create()
 	// Start the graph running
     Play();
 
-	return "";
+	return CString();
 }
 
 

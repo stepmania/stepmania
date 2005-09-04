@@ -160,8 +160,8 @@ void MsdFile::ReadFromString( const CString &sString )
 
 CString MsdFile::GetParam(unsigned val, unsigned par) const
 {
-	if(val >= GetNumValues()) return NULL;
-	if(par >= GetNumParams(val)) return NULL;
+	if(val >= GetNumValues()) return CString();
+	if(par >= GetNumParams(val)) return CString();
 
 	return values[val].params[par];
 }

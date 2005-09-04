@@ -78,7 +78,7 @@ CString FindSystemFile( CString fn )
 	if( !stat( sPath, &buf ) )
 		return sPath;
 
-	return "";
+	return CString();
 }
 
 /* Get the full path of the process running in iProcessID.  On error, false is

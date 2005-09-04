@@ -315,7 +315,7 @@ CString SongManager::GetSongGroupBannerPath( CString sSongGroup )
 			return m_sSongGroupBannerPaths[i];
 	}
 
-	return NULL;
+	return CString();
 }
 
 void SongManager::GetSongGroupNames( CStringArray &AddTo )
@@ -384,7 +384,7 @@ CString SongManager::GetCourseGroupBannerPath( const CString &sCourseGroup )
 	if( iter == m_mapCourseGroupToInfo.end() )
 	{
 		ASSERT_M( 0, ssprintf("requested banner for course group '%s' that doesn't exist",sCourseGroup.c_str()) );
-		return NULL;
+		return CString();
 	}
 	else 
 	{
@@ -1451,7 +1451,7 @@ CString GetCurrentSongDisplayTitle()
 {
 	const Song* pSong = GAMESTATE->m_pCurSong;
 	if( pSong == NULL )
-		return NULL;
+		return CString();
 	return pSong->GetDisplayFullTitle();
 }
 
@@ -1459,7 +1459,7 @@ CString GetCurrentSongDisplayArtist()
 {
 	const Song* pSong = GAMESTATE->m_pCurSong;
 	if( pSong == NULL )
-		return NULL;
+		return CString();
 	return pSong->GetDisplayArtist();
 }
 
@@ -1467,7 +1467,7 @@ CString GetCurrentSongCredit()
 {
 	const Song* pSong = GAMESTATE->m_pCurSong;
 	if( pSong == NULL )
-		return NULL;
+		return CString();
 	return pSong->m_sCredit;
 }
 
@@ -1475,7 +1475,7 @@ CString GetCurrentStepsCredits()
 {
 	const Song* pSong = GAMESTATE->m_pCurSong;
 	if( pSong == NULL )
-		return NULL;
+		return CString();
 
 	CString s;
 

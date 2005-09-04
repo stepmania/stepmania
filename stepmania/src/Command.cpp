@@ -17,7 +17,7 @@ void IncorrectNumberArgsWarning( const Command &command, int iMaxIndexAccessed )
 CString Command::GetName() const 
 {
 	if( m_vsArgs.empty() )
-		return NULL;
+		return CString();
 	CString s = m_vsArgs[0];
 	s.MakeLower();
 	return s;

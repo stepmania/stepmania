@@ -185,7 +185,7 @@ CString Profile::GetDisplayNameOrHighScoreName() const
 	else if( !m_sLastUsedHighScoreName.empty() )
 		return m_sLastUsedHighScoreName;
 	else
-		return NULL;
+		return CString();
 }
 
 Character *Profile::GetCharacter() const

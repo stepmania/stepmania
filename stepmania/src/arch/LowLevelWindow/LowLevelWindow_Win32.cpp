@@ -208,7 +208,7 @@ CString LowLevelWindow_Win32::TryVideoMode( RageDisplay::VideoModeParams p, bool
 			return hr_ssprintf( GetLastError(), "wglCreateContext" );
 		}
 	}
-	return "";	// we set the video mode successfully
+	return CString();	// we set the video mode successfully
 }
 
 void LowLevelWindow_Win32::SwapBuffers()

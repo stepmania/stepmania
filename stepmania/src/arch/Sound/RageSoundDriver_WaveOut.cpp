@@ -140,7 +140,7 @@ CString RageSound_WaveOut::Init()
 	MixingThread.SetName( "Mixer thread" );
 	MixingThread.Create( MixerThread_start, this );
 
-	return "";
+	return CString();
 }
 
 RageSound_WaveOut::~RageSound_WaveOut()

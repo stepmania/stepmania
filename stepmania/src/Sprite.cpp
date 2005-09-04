@@ -733,7 +733,7 @@ void Sprite::SetSecondsIntoAnimation( float fSeconds )
 CString	Sprite::GetTexturePath() const
 {
 	if( m_pTexture==NULL )
-		return NULL;
+		return CString();
 
 	return m_pTexture->GetID().filename;
 }

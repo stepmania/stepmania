@@ -386,7 +386,7 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 	bool bAllowExplanation = row.GetRowDef().m_bAllowExplanation;
 	bool bShowExplanations = bAllowExplanation && SHOW_EXPLANATIONS.GetValue();
 	if( !bShowExplanations )
-		return NULL;
+		return CString();
 
 	CString sLineName = row.GetRowDef().m_sName;
 	ASSERT( !sLineName.empty() );

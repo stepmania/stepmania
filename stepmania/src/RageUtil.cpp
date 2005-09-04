@@ -277,7 +277,7 @@ CString werr_ssprintf( int err, const char *fmt, ...)
 CString ConvertWstringToACP( wstring s )
 {
 	if( s.empty() )
-		return NULL;
+		return CString();
 
 	int iBytes = WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), 
 					NULL, 0, NULL, FALSE );
@@ -301,7 +301,7 @@ CString ConvertUTF8ToACP( CString s )
 CString join( const CString &Deliminator, const CStringArray& Source)
 {
 	if( Source.empty() )
-		return NULL;
+		return CString();
 
 	CString csTmp;
 
@@ -317,7 +317,7 @@ CString join( const CString &Deliminator, const CStringArray& Source)
 CString join( const CString &Delimitor, CStringArray::const_iterator begin, CStringArray::const_iterator end )
 {
 	if( begin == end )
-		return NULL;
+		return CString();
 
 	CString ret;
 	while( begin != end )
@@ -512,11 +512,11 @@ CString GetExtension( const CString &sPath )
 {
 	size_t pos = sPath.rfind( '.' );
 	if( pos == sPath.npos )
-		return NULL;
+		return CString();
 
 	size_t slash = sPath.find( '/', pos );
 	if( slash != sPath.npos )
-		return NULL; /* rare: path/dir.ext/fn */
+		return CString(); /* rare: path/dir.ext/fn */
 
 	return sPath.substr( pos+1, sPath.size()-pos+1 );
 }
@@ -695,7 +695,7 @@ CString DerefRedir(const CString &_path)
 
 		/* Empty is invalid. */
 		if( sNewFileName == "" )
-			return NULL;
+			return CString();
 
 		FixSlashesInPlace( sNewFileName );
 
@@ -1253,7 +1253,7 @@ CString Basename( const CString &dir )
 {
 	size_t  end = dir.find_last_not_of( "/\\" );
 	if( end == dir.npos )
-		return NULL;
+		return CString();
 
 	size_t  start = dir.find_last_of( "/\\", end );
 	if( start == dir.npos )
@@ -1295,7 +1295,7 @@ CString Dirname( const CString &dir )
 CString Capitalize( const CString &s )	
 {
 	if( s.GetLength()==0 )
-		return NULL;
+		return CString();
 	CString s2 = s;
 	/* XXX: utf-8 */
 	if( !(s2[0] & 0x80) )

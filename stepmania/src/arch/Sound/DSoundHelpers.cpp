@@ -138,7 +138,7 @@ CString DSound::Init()
 
 	SetPrimaryBufferMode();
 
-	return "";
+	return CString();
 }
 
 DSound::~DSound()
@@ -292,7 +292,7 @@ CString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 	
 	m_pTempBuffer = new char[m_iBufferSize];
 
-	return "";
+	return CString();
 }
 
 void DSoundBuf::SetSampleRate( int hz )

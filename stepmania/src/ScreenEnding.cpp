@@ -43,7 +43,7 @@ CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 				CourseDifficulty cd = (CourseDifficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
 				ASSERT( cd >= 0 && cd < NUM_COURSE_DIFFICULTIES );
 				if( !GAMESTATE->IsCourseDifficultyShown(cd) )
-					return NULL;
+					return CString();
 				return CourseDifficultyToThemedString(cd);
 			}
 			else
@@ -53,7 +53,7 @@ CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
 				return DifficultyToThemedString(dc);
 			}
 		}
-	default:	ASSERT(0);	return NULL;
+	default:	ASSERT(0);	return CString();
 	}
 }
 
@@ -107,7 +107,7 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 				CourseDifficulty cd = (CourseDifficulty)(DIFFICULTY_EASY+line-PERCENT_COMPLETE_EASY);
 				ASSERT( cd >= 0 && cd < NUM_COURSE_DIFFICULTIES );
 				if( !GAMESTATE->IsCourseDifficultyShown(cd) )
-					return NULL;
+					return CString();
 				CString sDifficulty = CourseDifficultyToThemedString(cd);
 				fPercent = pProfile->GetCoursesPercentComplete(st,cd);
 			}
@@ -120,7 +120,7 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 			}
 			return ssprintf( "%05.2f%%", fPercent*100 );
 		}
-	default:	ASSERT(0);	return NULL;
+	default:	ASSERT(0);	return CString();
 	}
 }
 

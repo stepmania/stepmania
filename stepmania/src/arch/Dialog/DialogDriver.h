@@ -11,7 +11,7 @@ public:
 	virtual Dialog::Result AbortRetryIgnore( CString sMessage, CString sID ) { return Dialog::ignore; } 
 	virtual Dialog::Result AbortRetry( CString sMessage, CString sID ) { return Dialog::abort; } 
 
-	virtual CString Init() { return ""; }
+	virtual CString Init() { return CString(); }
 	virtual ~DialogDriver() { }
 };
 

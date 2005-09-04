@@ -335,11 +335,11 @@ CString LoadedDriver::GetPath( const CString &sPath ) const
 	if( sPath.size() >= 2 && sPath[1] == '@' )
 	{
 		if( m_sMountPoint.size() < 2 || m_sMountPoint[1] != '@' )
-			return NULL;
+			return CString();
 	}
 	
 	if( sPath.Left(m_sMountPoint.size()).CompareNoCase(m_sMountPoint) )
-		return NULL; /* no match */
+		return CString(); /* no match */
 
 	/* Add one, so we don't cut off the leading slash. */
 	CString sRet = sPath.Right( sPath.size() - m_sMountPoint.size() + 1 );

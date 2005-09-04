@@ -42,7 +42,7 @@ public:
 	virtual int Flush() = 0;
 
 	/* This returns a descriptive path for the file, or "". */
-	virtual CString GetDisplayPath() const { return NULL; }
+	virtual CString GetDisplayPath() const { return CString(); }
 
 	virtual RageFileBasic *Copy() const = 0;
 
@@ -88,7 +88,7 @@ public:
 	bool GetCRC32( uint32_t *iRet );
 
 	virtual int GetFileSize() const = 0;
-	virtual CString GetDisplayPath() const { return NULL; }
+	virtual CString GetDisplayPath() const { return CString(); }
 	virtual RageFileBasic *Copy() const { FAIL_M( "Copying unimplemented" ); }
 
 protected:

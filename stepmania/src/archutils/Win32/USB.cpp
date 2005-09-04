@@ -29,7 +29,7 @@ static CString GetUSBDevicePath (int num)
                NULL, &guid, num, &DeviceInterface))
 	{
 	    SetupDiDestroyDeviceInfoList (DeviceInfo);
-	    return "";
+	    return CString();
 	}
 
     unsigned long size;

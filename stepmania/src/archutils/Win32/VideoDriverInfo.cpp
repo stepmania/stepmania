@@ -14,14 +14,14 @@ CString GetPrimaryVideoName()
     
     hInstUser32 = LoadLibrary("User32.DLL");
     if( !hInstUser32 ) 
-		return "";  
+		return CString();  
 
 	// VC6 don't have a stub to static link with, so link dynamically.
 	EnumDisplayDevices = (pfnEnumDisplayDevices)GetProcAddress(hInstUser32,"EnumDisplayDevicesA");
     if( EnumDisplayDevices == NULL )
 	{
         FreeLibrary(hInstUser32);
-        return "";
+        return CString();
     }
 	
 	CString sPrimaryDeviceName;
