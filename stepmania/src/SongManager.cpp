@@ -1191,38 +1191,44 @@ Course *SongManager::FindCourse( CString sName )
 void SongManager::UpdateBest()
 {
 	// update players best
+	vector<Song*> apBestSongs = m_pSongs;
+	for ( unsigned j=0; j < apBestSongs.size() ; ++j )
+	{
+		bool bFiltered = false;
+		/* Filter out hidden songs. */
+		if( apBestSongs[j]->GetDisplayed() != Song::SHOW_ALWAYS )
+			bFiltered = true;
+		/* Filter out locked songs. */
+		if( UNLOCKMAN->SongIsLocked(apBestSongs[j]) )
+			bFiltered = true;
+		if( !bFiltered )
+			continue;
+
+		/* Remove it. */
+		swap( apBestSongs[j], apBestSongs.back() );
+		apBestSongs.erase( apBestSongs.end()-1 );
+		--j;
+	}
+
+	SongUtil::SortSongPointerArrayByTitle( apBestSongs );
+	
+	vector<Course*> apBestCourses[NUM_CourseType];
+	FOREACH_CourseType( ct )
+	{
+		GetCourses( ct, apBestCourses[ct], PREFSMAN->m_bAutogenGroupCourses );
+		CourseUtil::SortCoursePointerArrayByTitle( apBestCourses[ct] );
+	}
+
 	FOREACH_ProfileSlot( i )
 	{
-		vector<Song*> &Best = m_pBestSongs[i];
-		Best = m_pSongs;
+		m_pBestSongs[i] = apBestSongs;
 
-		for ( unsigned j=0; j < Best.size() ; ++j )
-		{
-			bool bFiltered = false;
-			/* Filter out hidden songs. */
-			if( Best[j]->GetDisplayed() != Song::SHOW_ALWAYS )
-				bFiltered = true;
-			/* Filter out locked songs. */
-			if( UNLOCKMAN->SongIsLocked(Best[j]) )
-				bFiltered = true;
-			if( !bFiltered )
-				continue;
-
-			/* Remove it. */
-			swap( Best[j], Best.back() );
-			Best.erase( Best.end()-1 );
-			--j;
-		}
-
-		SongUtil::SortSongPointerArrayByTitle( m_pBestSongs[i] );
 		SongUtil::SortSongPointerArrayByNumPlays( m_pBestSongs[i], i, true );
 
 		FOREACH_CourseType( ct )
 		{
 			vector<Course*> &vpCourses = m_pBestCourses[i][ct];
-			vpCourses.clear();
-			GetCourses( ct, vpCourses, PREFSMAN->m_bAutogenGroupCourses );
-			CourseUtil::SortCoursePointerArrayByTitle( vpCourses );
+			vpCourses = apBestCourses[ct];
 			CourseUtil::SortCoursePointerArrayByNumPlays( vpCourses, i, true );
 		}
 	}
