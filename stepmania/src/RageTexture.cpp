@@ -53,8 +53,6 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWi
 {
 	*piFramesWide = *piFramesHigh = 1;	// set default values in case we don't find the dimension in the file name
 
-	sPath.MakeLower();
-
 	const CString sFName = SetExtension( sPath, "" );
 
 	CStringArray arrayBits;
@@ -78,7 +76,6 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWi
 		*piFramesHigh = atoi(arrayDimensionsBits[1]);
 		return;
 	}
-
 }
 
 int RageTexture::GetFrameCountFromFileName( CString sPath )
