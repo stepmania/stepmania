@@ -251,7 +251,7 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 #define SET_FLOAT( opt ) { m_ ## opt = level; m_Speed ## opt = speed; }
 		const bool on = (level > 0.5f);
 
-		Regex mult("^([0-9]+(\\.[0-9]+)?)x$");
+		static Regex mult("^([0-9]+(\\.[0-9]+)?)x$");
 		vector<CString> matches;
 		if( mult.Compare(sBit, matches) )
 		{
