@@ -78,13 +78,6 @@ void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWi
 	}
 }
 
-int RageTexture::GetFrameCountFromFileName( CString sPath )
-{
-	int iWide, iHigh;
-	GetFrameDimensionsFromFileName( sPath, &iWide, &iHigh );
-	return iWide * iHigh;
-}
-
 const RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const
 {
 	return &m_TextureCoordRects[iFrameNo];

@@ -58,7 +58,6 @@ public:
 	const RageTextureID &GetID() const { return m_ID; }
 
 	static void GetFrameDimensionsFromFileName( CString sPath, int* puFramesWide, int* puFramesHigh );
-	static int GetFrameCountFromFileName( CString sPath );
 
 private:
 	/* We might change settings when loading (due to hints, hardware
