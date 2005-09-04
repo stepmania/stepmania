@@ -67,24 +67,22 @@ struct XENTITY
 
 struct XENTITYS : public vector<XENTITY>
 {
-	XENTITY *GetEntity( int entity );
-	XENTITY *GetEntity( const char* entity );	
-	int GetEntityCount( const char* str );
-	int Ref2Entity( const char* estr, char* str, int strlen );
-	int Entity2Ref( const char* str, char* estr, int estrlen );
-	CString Ref2Entity( const char* estr );
-	CString Entity2Ref( const char* str );	
+	const XENTITY *GetEntity( char entity ) const;
+	const XENTITY *GetEntity( const char* entity ) const;
+	int GetEntityCount( const char* str ) const;
+	int Ref2Entity( const char* estr, char* str, int strlen ) const;
+	int Entity2Ref( const char* str, char* estr, int estrlen ) const;
+	CString Ref2Entity( const char* estr ) const;
+	CString Entity2Ref( const char* str ) const;
 
 	XENTITYS(){};
-	XENTITYS( XENTITY *entities, int count );
+	XENTITYS( const XENTITY *entities, int count );
 };
 extern XENTITYS entityDefault;
-CString XRef2Entity( const char* estr );
-CString XEntity2Ref( const char* str );	
 
 enum PCODE
 {
-	PIE_PARSE_WELFORMED	= 0,
+	PIE_PARSE_WELL_FORMED = 0,
 	PIE_ALONE_NOT_CLOSED,
 	PIE_NOT_CLOSED,
 	PIE_NOT_NESTED,
@@ -106,7 +104,7 @@ struct PARSEINFO
 	PCODE		error_code;			// [get] error code
 	CString		error_string;		// [get] error string
 
-	PARSEINFO() { trim_value = true; entity_value = true; entitys = &entityDefault; xml = NULL; error_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELFORMED; escape_value = 0; }
+	PARSEINFO() { trim_value = true; entity_value = true; entitys = &entityDefault; xml = NULL; error_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELL_FORMED; escape_value = 0; }
 };
 
 // display optional environment
@@ -196,11 +194,8 @@ struct XNode
 	bool GetChildValue( const CString &sName, unsigned &out ) const { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 	bool GetChildValue( const CString &sName, DateTime &out ) const { const XNode* pChild=GetChild(sName); if(pChild==NULL) return false; pChild->GetValue(out); return true; }
 
-	XAttr *GetChildAttr( const char* name, const char* attrname );
-	
 	// modify DOM 
-	int GetChildCount() const;
-	XNode *AppendChild( const CString &sName = "", const char* value = "" );
+	XNode *AppendChild( const CString &sName = CString(), const CString &value = CString() );
 	XNode *AppendChild( const CString &sName, float value );
 	XNode *AppendChild( const CString &sName, int value );
 	XNode *AppendChild( const CString &sName, unsigned value );
@@ -208,7 +203,7 @@ struct XNode
 	XNode *AppendChild( XNode *node );
 	bool RemoveChild( XNode *node );
 
-	XAttr *AppendAttr( const CString &sName = "", const CString &sValue = "" );
+	XAttr *AppendAttr( const CString &sName = CString(), const CString &sValue = CString() );
 	XAttr *AppendAttr( const CString &sName, float value );
 	XAttr *AppendAttr( const CString &sName, int value );
 	XAttr *AppendAttr( const CString &sName, unsigned value );

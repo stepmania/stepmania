@@ -23,14 +23,14 @@ static const char chXMLDash			= '-';
 
 
 static const XENTITY x_EntityTable[] = {
-		{ '&', ("&amp;"), 5 } ,
-		{ '\"', ("&quot;"), 6 } ,
-		{ '\'', ("&apos;"), 6 } ,
-		{ '<', ("&lt;"), 4 } ,
-		{ '>', ("&gt;"), 4 } 
+		{ '&',  "&amp;", 5 } ,
+		{ '\"', "&quot;", 6 } ,
+		{ '\'', "&apos;", 6 } ,
+		{ '<',  "&lt;", 4 } ,
+		{ '>',  "&gt;", 4 } 
 	};
 
-XENTITYS entityDefault((XENTITY*)x_EntityTable, sizeof(x_EntityTable)/sizeof(x_EntityTable[0]) );
+XENTITYS entityDefault(x_EntityTable, sizeof(x_EntityTable)/sizeof(x_EntityTable[0]) );
 
 // skip spaces
 static char* tcsskip( const char* psz )
@@ -190,8 +190,7 @@ const char* XNode::LoadAttributes( const char* xml, PARSEINFO *pi /*= &piDefault
 
 		// close tag
 		if( *xml == chXMLTagClose || *xml == chXMLTagPre || *xml == chXMLQuestion || *xml == chXMLDash )
-			// wel-formed tag
-			return xml;
+			return xml; // well-formed tag
 
 		// XML Attr Name
 		const char* pEnd = strpbrk( xml, " =" );
@@ -632,12 +631,6 @@ XAttr *XNode::GetAttr( const CString &attrname )
 	return NULL;
 }
 
-// get child node count
-int	XNode::GetChildCount() const
-{
-	return m_childs.size();
-}
-
 // Desc   : Find child with name and return child
 // Return : NULL return if no child.
 XNode *XNode::GetChild( const CString &sName )
@@ -662,13 +655,7 @@ const XNode *XNode::GetChild( const CString &sName ) const
 	return NULL;
 }
 
-XAttr *XNode::GetChildAttr( const char* name, const char* attrname )
-{
-	XNode *node = GetChild(name);
-	return node ? node->GetAttr(attrname) : NULL;
-}
-
-XNode *XNode::AppendChild( const CString &sName, const char* value )		{ XNode *p = new XNode; p->m_sName = sName; p->m_sValue = value; return AppendChild( p ); }
+XNode *XNode::AppendChild( const CString &sName, const CString &value )		{ XNode *p = new XNode; p->m_sName = sName; p->m_sValue = value; return AppendChild( p ); }
 XNode *XNode::AppendChild( const CString &sName, float value )				{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
 XNode *XNode::AppendChild( const CString &sName, int value )				{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
 XNode *XNode::AppendChild( const CString &sName, unsigned value )			{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
@@ -742,23 +729,23 @@ void XNode::SetAttrValue( const CString &sName, const CString &sValue )
 }
 
 
-XENTITYS::XENTITYS( XENTITY *entities, int count )
+XENTITYS::XENTITYS( const XENTITY *entities, int count )
 {
 	for( int i = 0; i < count; i++)
 		push_back( entities[i] );
 }
 
-XENTITY *XENTITYS::GetEntity( int entity )
+const XENTITY *XENTITYS::GetEntity( char entity ) const
 {
 	for( unsigned i = 0 ; i < size(); i ++ )
 	{
 		if( at(i).entity == entity )
-			return (XENTITY *) (&at(i));
+			return &at(i);
 	}
 	return NULL;
 }
 
-XENTITY *XENTITYS::GetEntity( const char* entity )
+const XENTITY *XENTITYS::GetEntity( const char* entity ) const
 {
 	for( unsigned i = 0 ; i < size(); i ++ )
 	{
@@ -768,12 +755,12 @@ XENTITY *XENTITYS::GetEntity( const char* entity )
 			if( *ref++ != *ps++ )
 				break;
 		if( ref && !*ref )	// found!
-			return (XENTITY *) (&at(i));
+			return &at(i);
 	}
 	return NULL;
 }
 
-int XENTITYS::GetEntityCount( const char* str )
+int XENTITYS::GetEntityCount( const char* str ) const
 {
 	int nCount = 0;
 	while( str && *str )
@@ -782,13 +769,13 @@ int XENTITYS::GetEntityCount( const char* str )
 	return nCount;
 }
 
-int XENTITYS::Ref2Entity( const char* pes, char* str, int len )
+int XENTITYS::Ref2Entity( const char* pes, char* str, int len ) const
 {
 	char* ps = str;
 	char* ps_end = ps+len;
 	while( pes && *pes && ps < ps_end )
 	{
-		XENTITY *ent = GetEntity( pes );
+		const XENTITY *ent = GetEntity( pes );
 		if( ent )
 		{
 			// copy entity meanning char
@@ -805,13 +792,13 @@ int XENTITYS::Ref2Entity( const char* pes, char* str, int len )
 	return ps-str;	
 }
 
-int XENTITYS::Entity2Ref( const char* ps, char* estr, int estrlen )
+int XENTITYS::Entity2Ref( const char* ps, char* estr, int estrlen ) const
 {
-	char* pes = (char*)estr;
+	char* pes = estr;
 	char* pes_end = pes+estrlen;
 	while( ps && *ps && pes < pes_end )
 	{
-		XENTITY *ent = GetEntity( *ps );
+		const XENTITY *ent = GetEntity( *ps );
 		if( ent )
 		{
 			// copy entity string
@@ -829,7 +816,7 @@ int XENTITYS::Entity2Ref( const char* ps, char* estr, int estrlen )
 	return pes-estr;
 }
 
-CString XENTITYS::Ref2Entity( const char* estr )
+CString XENTITYS::Ref2Entity( const char* estr ) const
 {
 	CString es;
 	if( estr )
@@ -843,7 +830,7 @@ CString XENTITYS::Ref2Entity( const char* estr )
 	return es;
 }
 
-CString XENTITYS::Entity2Ref( const char* str )
+CString XENTITYS::Entity2Ref( const char* str ) const
 {
 	CString s;
 	if( str )
@@ -858,16 +845,6 @@ CString XENTITYS::Entity2Ref( const char* str )
 		delete [] szTemp;
 	}
 	return s;
-}
-
-CString XRef2Entity( const char* estr )
-{
-	return entityDefault.Ref2Entity( estr );
-}
-
-CString XEntity2Ref( const char* str )
-{
-	return entityDefault.Entity2Ref( str );
 }
 
 bool XNode::LoadFromFile( const CString &sFile )
