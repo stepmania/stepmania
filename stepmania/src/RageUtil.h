@@ -3,6 +3,8 @@
 #ifndef RAGE_UTIL_H
 #define RAGE_UTIL_H
 
+#include <map>
+
 #define SAFE_DELETE(p)       { delete (p);     (p)=NULL; }
 #define SAFE_DELETE_ARRAY(p) { delete[] (p);   (p)=NULL; }
 
@@ -348,6 +350,8 @@ public:
 };
 
 
+void ReplaceEntityText( CString &sText, const map<CString,CString> &m );
+void ReplaceEntityText( CString &sText, const map<char,CString> &m );
 void Replace_Unicode_Markers( CString &Text );
 CString WcharDisplayText(wchar_t c);
 

@@ -3,6 +3,7 @@
 #include "RageMath.h"
 #include "RageLog.h"
 #include "RageFile.h"
+#include "Foreach.h"
 
 #include <numeric>
 #include <ctime>
@@ -1191,6 +1192,103 @@ CString WcharToUTF8( wchar_t c )
 	return ret;
 }
 
+/* &a; -> a */
+void ReplaceEntityText( CString &sText, const map<CString,CString> &m )
+{
+	CString sRet;
+
+	size_t iOffset = 0;
+	while( iOffset != sText.size() )
+	{
+		size_t iStart = sText.find( '&', iOffset );
+		if( iStart == sText.npos )
+		{
+			/* Optimization: if we didn't replace anything at all, do nothing. */
+			if( iOffset == 0 )
+				return;
+
+			// Append the rest of the string.
+			sRet.append( sText, iOffset, sRet.npos );
+			break;
+		}
+
+		// Append the text between iOffset and iStart.
+		sRet.append( sText, iOffset, iStart-iOffset );
+		iOffset += iStart-iOffset;
+
+		// Optimization: stop early on "&", so "&&&&&&&&&&&" isn't n^2.
+		size_t iEnd = sText.find_first_of( "&;", iStart+1 );
+		if( iEnd == sText.npos || sText[iEnd] == '&' )
+		{
+			/* & with no matching ;, or two & in a row.  Append the & and
+			 * continue. */
+			sRet.append( sText, iStart, 1 );
+			++iOffset;
+			continue;
+		}
+
+		CString sElement = sText.substr( iStart+1, iEnd-iStart-1 );
+		sElement.MakeLower();
+
+		map<CString,CString>::const_iterator it = m.find( sElement );
+		if( it == m.end() )
+		{
+			sRet.append( sText, iStart, iEnd-iStart+1 );
+			iOffset = iEnd + 1;
+			continue;
+		}
+
+		const CString &sTo = it->second;
+		sRet.append( sTo );
+		iOffset = iEnd + 1;
+	}
+
+	sText = sRet;
+}
+
+/* abcd -> &a; &b; &c; &d; */
+void ReplaceEntityText( CString &sText, const map<char,CString> &m )
+{
+	CString sFind;
+
+	FOREACHM_CONST( char, CString, m, c )
+		sFind.append( 1, c->first );
+
+	CString sRet;
+
+	size_t iOffset = 0;
+	while( iOffset != sText.size() )
+	{
+		size_t iStart = sText.find_first_of( sFind, iOffset );
+		if( iStart == sText.npos )
+		{
+			/* Optimization: if we didn't replace anything at all, do nothing. */
+			if( iOffset == 0 )
+				return;
+
+			// Append the rest of the string.
+			sRet.append( sText, iOffset, sRet.npos );
+			break;
+		}
+
+		// Append the text between iOffset and iStart.
+		sRet.append( sText, iOffset, iStart-iOffset );
+		iOffset += iStart-iOffset;
+
+		char sElement = sText[iStart];
+
+		map<char,CString>::const_iterator it = m.find( sElement );
+		ASSERT( it != m.end() );
+
+		const CString &sTo = it->second;
+		sRet.append( 1, '&' );
+		sRet.append( sTo );
+		sRet.append( 1, ';' );
+		++iOffset;
+	}
+
+	sText = sRet;
+}
 
 /* Replace &#nnnn; (decimal) &xnnnn; (hex) with corresponding UTF-8 characters. */
 void Replace_Unicode_Markers( CString &Text )

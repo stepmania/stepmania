@@ -324,69 +324,16 @@ static void InitCharAliases()
 	{
 		CString from = i->first;
 		CString to = WcharToUTF8(i->second);
-		from.MakeUpper();
+		from.MakeLower();
 		CharAliasRepl[from] = to;
 	}
-}
-
-static void ReplaceText( CString &sText, const map<CString,CString> &m )
-{
-	CString sRet;
-
-	size_t iOffset = 0;
-	while( iOffset != sText.size() )
-	{
-		size_t iStart = sText.find( '&', iOffset );
-		if( iStart == sText.npos )
-		{
-			/* Optimization: if we didn't replace anything at all, do nothing. */
-			if( iOffset == 0 )
-				return;
-
-			// Append the rest of the string.
-			sRet.append( sText, iOffset, sRet.npos );
-			break;
-		}
-
-		// Append the text between iOffset and iStart.
-		sRet.append( sText, iOffset, iStart-iOffset );
-		iOffset += iStart-iOffset;
-
-		// Optimization: stop early on "&", so "&&&&&&&&&&&" isn't n^2.
-		size_t iEnd = sText.find_first_of( "&;", iStart+1 );
-		if( iEnd == sText.npos || sText[iEnd] == '&' )
-		{
-			/* & with no matching ;, or two & in a row.  Append the & and
-			 * continue. */
-			sRet.append( sText, iStart, 1 );
-			++iOffset;
-			continue;
-		}
-
-		CString sElement = sText.substr( iStart+1, iEnd-iStart-1 );
-		sElement.MakeUpper();
-
-		map<CString,CString>::const_iterator it = m.find( sElement );
-		if( it == m.end() )
-		{
-			sRet.append( sText, iStart, iEnd-iStart+1 );
-			iOffset = iEnd + 1;
-			continue;
-		}
-
-		const CString &sTo = it->second;
-		sRet.append( sTo );
-		iOffset = iEnd + 1;
-	}
-
-	sText = sRet;
 }
 
 /* Replace all &markers; and &#NNNN;s with UTF-8. */
 void FontCharAliases::ReplaceMarkers( CString &sText )
 {
 	InitCharAliases();
-	ReplaceText(sText, CharAliasRepl);
+	ReplaceEntityText( sText, CharAliasRepl );
 	Replace_Unicode_Markers(sText);
 }
 
