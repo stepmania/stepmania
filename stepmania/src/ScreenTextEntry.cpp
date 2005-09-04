@@ -190,7 +190,7 @@ void ScreenTextEntry::UpdateAnswerText()
 			s += '*';
 	}
 
-	bool bAnswerFull = s.length() >= g_iMaxInputLength;
+	bool bAnswerFull = (int) s.length() >= g_iMaxInputLength;
 	if( m_bShowAnswerCaret 	&&  !bAnswerFull )
 		s += '_';
 	else
