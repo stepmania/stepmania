@@ -18,6 +18,7 @@
 #include "StatsManager.h"
 #include "PlayerState.h"
 #include "CommonMetrics.h"
+#include "InputEventPlus.h"
 
 
 CString GetStatsLineTitle( PlayerNumber pn, EndingStatsLine line )
@@ -237,12 +238,12 @@ void ScreenEnding::Init()
 	GAMESTATE->Reset();
 }
 
-void ScreenEnding::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenEnding::Input( const InputEventPlus &input )
 {
 	bool bIsTransitioning = m_In.IsTransitioning() || m_Out.IsTransitioning();
-	if( MenuI.IsValid() && !bIsTransitioning )
+	if( input.MenuI.IsValid() && !bIsTransitioning )
 	{
-		switch( MenuI.button )
+		switch( input.MenuI.button )
 		{
 		case MENU_BUTTON_START:
 			SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
@@ -250,7 +251,7 @@ void ScreenEnding::Input( const DeviceInput& DeviceI, const InputEventType type,
 		}
 	}
 
-	ScreenAttract::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenAttract::Input( input );
 }
 
 /*

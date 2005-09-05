@@ -14,13 +14,13 @@ void ScreenInstructions::Init()
 	this->SortByDrawOrder();
 }
 
-void ScreenInstructions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenInstructions::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return;
 
 	// default input handler
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+	Screen::Input( input );
 }
 
 void ScreenInstructions::MenuBack( PlayerNumber pn )

@@ -15,6 +15,7 @@ class Actor;
 class Screen;
 struct Menu;
 struct lua_State;
+class InputEventPlus;
 
 
 class ScreenManager
@@ -26,7 +27,7 @@ public:
 	// pass these messages along to the current state
 	void Update( float fDeltaTime );
 	void Draw();
-	void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	void Input( const InputEventPlus &input );
 
 	// Main screen stack management
 	void SetNewScreen( const CString &sName );

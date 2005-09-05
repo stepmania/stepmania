@@ -17,6 +17,7 @@
 #include "InputMapper.h"
 #include "ProfileManager.h"
 #include "CharacterManager.h"
+#include "InputEventPlus.h"
 
 #define COIN_MODE_CHANGE_SCREEN		THEME->GetMetric (m_sName,"CoinModeChangeScreen")
 
@@ -58,20 +59,20 @@ ScreenTitleMenu::~ScreenTitleMenu()
 	CHARMAN->UndemandGraphics();
 }
 
-void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenTitleMenu::Input( const InputEventPlus &input )
 {
-	LOG->Trace( "ScreenTitleMenu::Input( %d-%d )", DeviceI.device, DeviceI.button );	// debugging gameport joystick problem
+	LOG->Trace( "ScreenTitleMenu::Input( %d-%d )", input.DeviceI.device, input.DeviceI.button );	// debugging gameport joystick problem
 
 	if( m_In.IsTransitioning() || m_Cancel.IsTransitioning() ) /* not m_Out */
 		return;
 
-	if( type == IET_FIRST_PRESS )
+	if( input.type == IET_FIRST_PRESS )
 	{
 		//
 		// detect codes
 		//
-		if( CodeDetector::EnteredCode(GameI.controller,CODE_NEXT_THEME) ||
-			CodeDetector::EnteredCode(GameI.controller,CODE_NEXT_THEME2) )
+		if( CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_THEME) ||
+			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_THEME2) )
 		{
 			THEME->NextTheme();
 			ApplyGraphicOptions();	// update window title and icon
@@ -79,8 +80,8 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			SCREENMAN->SetNewScreen( m_sName );
 			TEXTUREMAN->DoDelayedDelete();
 		}
-		if( CodeDetector::EnteredCode(GameI.controller,CODE_NEXT_ANNOUNCER) ||
-			CodeDetector::EnteredCode(GameI.controller,CODE_NEXT_ANNOUNCER2) )
+		if( CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_ANNOUNCER) ||
+			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_ANNOUNCER2) )
 		{
 			ANNOUNCER->NextAnnouncer();
 			CString sName = ANNOUNCER->GetCurAnnouncerName();
@@ -88,8 +89,8 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 			SCREENMAN->SystemMessage( "Announcer: "+sName );
 			SCREENMAN->SetNewScreen( m_sName );
 		}
-		if( CodeDetector::EnteredCode(GameI.controller,CODE_NEXT_GAME) ||
-			CodeDetector::EnteredCode(GameI.controller,CODE_NEXT_GAME2) )
+		if( CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_GAME) ||
+			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_GAME2) )
 		{
 			vector<const Game*> vGames;
 			GAMEMAN->GetEnabledGames( vGames );
@@ -113,7 +114,7 @@ void ScreenTitleMenu::Input( const DeviceInput& DeviceI, const InputEventType ty
 		}
 	}
 
-	ScreenSelectMaster::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenSelectMaster::Input( input );
 }
 
 void ScreenTitleMenu::HandleMessage( const CString& sMessage )

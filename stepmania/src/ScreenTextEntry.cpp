@@ -10,6 +10,7 @@
 #include "ScreenDimensions.h"
 #include "ScreenPrompt.h"
 #include "ActorUtil.h"
+#include "InputEventPlus.h"
 
 
 static const char* g_szKeys[NUM_KEYBOARD_ROWS][KEYS_PER_ROW] =
@@ -219,19 +220,19 @@ void ScreenTextEntry::Update( float fDelta )
 	}
 }
 
-void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenTextEntry::Input( const InputEventPlus &input )
 {
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() || m_Cancel.IsTransitioning() )
 		return;
 
 	//The user wants to input text traditionally
-	if ( g_bAllowOldKeyboardInput.Get() && ( type == IET_FIRST_PRESS ) )
+	if( g_bAllowOldKeyboardInput.Get() && ( input.type == IET_FIRST_PRESS ) )
 	{
-		if ( DeviceI.button == KEY_BACK )
+		if( input.DeviceI.button == KEY_BACK )
 		{
 			BackspaceInAnswer();
 		}
-		else if ( DeviceI.ToChar() >= ' ' ) 
+		else if( input.DeviceI.ToChar() >= ' ' ) 
 		{
 			bool bIsHoldingShift = 
 					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
@@ -239,7 +240,7 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 			if ( bIsHoldingShift )
 			{
 
-				char c = (char)toupper( DeviceI.ToChar() );
+				char c = (char)toupper( input.DeviceI.ToChar() );
 
 				switch( c )
 				{
@@ -269,7 +270,9 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 				AppendToAnswer( ssprintf( "%c", c ) );
 			}
 			else
-				AppendToAnswer( ssprintf( "%c", DeviceI.ToChar() ) );
+			{
+				AppendToAnswer( ssprintf( "%c", input.DeviceI.ToChar() ) );
+			}
 
 			//If the user wishes to select text in traditional way, start should finish text entry
 			m_iFocusY = KEYBOARD_ROW_SPECIAL;
@@ -280,7 +283,7 @@ void ScreenTextEntry::Input( const DeviceInput& DeviceI, const InputEventType ty
 		}
 	}
 
-	ScreenWithMenuElements::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenWithMenuElements::Input( input );
 }
 
 void ScreenTextEntry::MoveX( int iDir )

@@ -31,6 +31,7 @@
 #include "Command.h"
 #include "CommonMetrics.h"
 #include "ScoreKeeperMAX2.h"
+#include "InputEventPlus.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -1151,21 +1152,21 @@ void ScreenEvaluation::TweenOursOffScreen()
 	OFF_COMMAND( m_sprTryExtraStage );
 }
 
-void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenEvaluation::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenEvaluation::Input()" );
 
 	if( IsTransitioning() )
 		return;
 
-	if( GameI.IsValid() )
+	if( input.GameI.IsValid() )
 	{
-		PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
+		PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( input.GameI.controller );
 		HighScore &hs = m_HighScore[pn];
 
 
-		if( CodeDetector::EnteredCode(GameI.controller, CODE_SAVE_SCREENSHOT1) ||
-			CodeDetector::EnteredCode(GameI.controller, CODE_SAVE_SCREENSHOT2) )
+		if( CodeDetector::EnteredCode(input.GameI.controller, CODE_SAVE_SCREENSHOT1) ||
+			CodeDetector::EnteredCode(input.GameI.controller, CODE_SAVE_SCREENSHOT2) )
 		{
 			if( !m_bSavedScreenshot[pn]  &&	// only allow one screenshot
 				PROFILEMAN->IsPersistentProfile(pn) )
@@ -1197,7 +1198,7 @@ void ScreenEvaluation::Input( const DeviceInput& DeviceI, const InputEventType t
 		}
 	}
 
-	ScreenWithMenuElements::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenWithMenuElements::Input( input );
 }
 
 void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )

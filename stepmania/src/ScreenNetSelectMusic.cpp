@@ -21,6 +21,7 @@
 #include "InputMapper.h"
 #include "RageLog.h"
 #include "song.h"
+#include "InputEventPlus.h"
 
 AutoScreenMessage( SM_NoSongs )
 AutoScreenMessage( SM_ChangeSong )
@@ -105,9 +106,7 @@ void ScreenNetSelectMusic::Init()
 	m_bAllowInput = false;
 }
 
-void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type,
-								  const GameInput& GameI, const MenuInput& MenuI,
-								  const StyleInput& StyleI )
+void ScreenNetSelectMusic::Input( const InputEventPlus &input )
 {	
 	if( !m_bAllowInput )
 		return;
@@ -115,13 +114,13 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
-	if ( type == IET_RELEASE )
+	if ( input.type == IET_RELEASE )
 	{
 		m_MusicWheel.Move(0);
 		return;
 	}
 
-	if( (type != IET_FIRST_PRESS) && (type != IET_SLOW_REPEAT) && (type != IET_FAST_REPEAT ) )
+	if( (input.type != IET_FIRST_PRESS) && (input.type != IET_SLOW_REPEAT) && (input.type != IET_FAST_REPEAT ) )
 		return;
 
 	bool bHoldingCtrl = 
@@ -129,7 +128,7 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
 		(!NSMAN->useSMserver);	//If we are disconnected, assume no chatting
 
-	char c = (char) toupper(DeviceI.ToChar() );
+	char c = (char) toupper(input.DeviceI.ToChar() );
 
 	if ( bHoldingCtrl && ( c >= 'A' ) && ( c <= 'Z' ) )
 	{
@@ -146,7 +145,7 @@ void ScreenNetSelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 		//m_MusicWheel.Move( -1 );
 	}
 
-	ScreenNetSelectBase::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenNetSelectBase::Input( input );
 }
 
 void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )

@@ -508,12 +508,12 @@ void ScreenNameEntryTraditional::Update( float fDelta )
 	ScreenWithMenuElements::Update(fDelta);
 }
 
-void ScreenNameEntryTraditional::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenNameEntryTraditional::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return;
 
-	ScreenWithMenuElements::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenWithMenuElements::Input( input );
 }
 
 void ScreenNameEntryTraditional::ChangeDisplayedFeat()

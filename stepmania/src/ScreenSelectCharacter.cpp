@@ -167,14 +167,14 @@ ScreenSelectCharacter::~ScreenSelectCharacter()
 }
 
 
-void ScreenSelectCharacter::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenSelectCharacter::Input( const InputEventPlus &input )
 {
 	LOG->Trace( "ScreenSelectCharacter::Input()" );
 
 	if( IsTransitioning() )
 		return;
 
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
+	Screen::Input( input );	// default input handler
 }
 
 void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )

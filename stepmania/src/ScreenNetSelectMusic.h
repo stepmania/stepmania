@@ -24,9 +24,7 @@ public:
 	ScreenNetSelectMusic( const CString& sName );
 	virtual void Init();
 
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type,
-						const GameInput& GameI, const MenuInput& MenuI,
-						const StyleInput& StyleI );
+	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	void UpdateSongsListPos();

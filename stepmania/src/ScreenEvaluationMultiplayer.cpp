@@ -259,12 +259,12 @@ void ScreenEvaluationMultiplayer::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenEvaluationMultiplayer::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenEvaluationMultiplayer::Input( const InputEventPlus &input )
 {
 	if( this->IsTransitioning() )
 		return;
 
-	ScreenWithMenuElements::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenWithMenuElements::Input( input );
 }
 
 void ScreenEvaluationMultiplayer::Update( float fDeltaTime )

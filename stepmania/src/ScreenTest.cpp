@@ -7,6 +7,7 @@
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "CommonMetrics.h"
+#include "InputEventPlus.h"
 
 
 ScreenTest::~ScreenTest()
@@ -48,25 +49,25 @@ void ScreenTest::Update(float f) { current->Update(f); Screen::Update(f); }
 void ScreenTest::HandleScreenMessage( const ScreenMessage SM ) { current->HandleScreenMessage(SM); }
 void ScreenTest::Draw() { current->Draw(); }
 
-void ScreenTest::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenTest::Input( const InputEventPlus &input )
 {
-	if(DeviceI.device == DEVICE_KEYBOARD)
+	if( input.DeviceI.device == DEVICE_KEYBOARD )
 	{
-		if( DeviceI.button >= KEY_F9 && DeviceI.button <= KEY_F12 )
+		if( input.DeviceI.button >= KEY_F9 && input.DeviceI.button <= KEY_F12 )
 		{
-			if( type != IET_FIRST_PRESS ) return;
-			SetScreen( DeviceI.button - KEY_F9 );
+			if( input.type != IET_FIRST_PRESS ) return;
+			SetScreen( input.DeviceI.button - KEY_F9 );
 			return;
 		}
-		if( DeviceI.button == KEY_ESC )
+		if( input.DeviceI.button == KEY_ESC )
 		{
-			if( type != IET_FIRST_PRESS ) return;
+			if( input.type != IET_FIRST_PRESS ) return;
 			SCREENMAN->SetNewScreen( INITIAL_SCREEN );
 			return;
 		}
 	}
 	
-	current->Input( DeviceI, type, GameI, MenuI, StyleI );
+	current->Input( input );
 }
 
 /*

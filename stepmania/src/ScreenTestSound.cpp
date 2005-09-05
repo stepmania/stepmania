@@ -5,6 +5,7 @@
 #include "RageSoundManager.h"
 #include "ThemeManager.h"
 #include "RageUtil.h"
+#include "InputEventPlus.h"
 
 REGISTER_SCREEN_CLASS( ScreenTestSound );
 ScreenTestSound::ScreenTestSound( CString sClassName ) : Screen( sClassName )
@@ -126,21 +127,21 @@ void ScreenTestSound::Update(float f)
 	}
 }
 
-void ScreenTestSound::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenTestSound::Input( const InputEventPlus &input )
 {
-	if( type != IET_FIRST_PRESS )
+	if( input.type != IET_FIRST_PRESS )
 		return;	// ignore
 
-	switch( DeviceI.device)
+	switch( input.DeviceI.device )
 	{
 	case DEVICE_KEYBOARD:
-		switch( DeviceI.button )
+		switch( input.DeviceI.button )
 		{
 		case '1':
 		case '2':
 		case '3':
 		case '4':
-		case '5': selected = DeviceI.button - '0'-1; break;
+		case '5': selected = input.DeviceI.button - '0'-1; break;
 		case 'p':
 		{
 			/* We want to be able to read the position of copied sounds; if we let

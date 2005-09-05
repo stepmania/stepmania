@@ -5,6 +5,7 @@
 #include "GameState.h"
 #include "song.h"
 #include "PrefsManager.h"
+#include "InputEventPlus.h"
 
 static bool IsGameplay()
 {
@@ -154,15 +155,15 @@ void ScreenSyncOverlay::UpdateText()
 	m_textStatus.SetText( s );
 }
 
-bool ScreenSyncOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 {
 	if( !IsGameplay() )
 		return false;
 
-	if( DeviceI.device != DEVICE_KEYBOARD )
+	if( input.DeviceI.device != DEVICE_KEYBOARD )
 		return false;
 
-	switch( DeviceI.button )
+	switch( input.DeviceI.button )
 	{
 	case KEY_F4:
 	case KEY_F9:
@@ -179,7 +180,7 @@ bool ScreenSyncOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEve
 		return false;
 	}
 
-	switch( DeviceI.button )
+	switch( input.DeviceI.button )
 	{
 	case KEY_F4:
 		SCREENMAN->SystemMessage( "Sync changes reverted." );
@@ -189,7 +190,7 @@ bool ScreenSyncOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEve
 	case KEY_F10:
 		{
 			float fDelta;
-			switch( DeviceI.button )
+			switch( input.DeviceI.button )
 			{
 			case KEY_F9:	fDelta = -0.02f;		break;
 			case KEY_F10:	fDelta = +0.02f;		break;
@@ -197,8 +198,10 @@ bool ScreenSyncOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEve
 			}
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
 				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
+			{
 				fDelta /= 20;
-			switch( type )
+			}
+			switch( input.type )
 			{
 			case IET_RELEASE:		fDelta *= 0;	break;
 			case IET_SLOW_REPEAT:	fDelta *= 0;	break;
@@ -215,7 +218,7 @@ bool ScreenSyncOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEve
 	case KEY_F12:
 		{
 			float fDelta;
-			switch( DeviceI.button )
+			switch( input.DeviceI.button )
 			{
 			case KEY_F11:	fDelta = +0.02f;	break;	// notes earlier
 			case KEY_F12:	fDelta = -0.02f;	break;	// notes earlier
@@ -223,8 +226,10 @@ bool ScreenSyncOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEve
 			}
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
 				INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
+			{
 				fDelta /= 20; /* 1ms */
-			switch( type )
+			}
+			switch( input.type )
 			{
 			case IET_RELEASE:		fDelta *= 0;	break;
 			case IET_SLOW_REPEAT:	fDelta *= 0;	break;

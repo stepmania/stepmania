@@ -13,6 +13,7 @@
 #include "Style.h"
 #include "PlayerState.h"
 #include "Foreach.h"
+#include "InputEventPlus.h"
 
 REGISTER_SCREEN_CLASS( ScreenPlayerOptions );
 ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
@@ -74,13 +75,13 @@ void ScreenPlayerOptions::BeginScreen()
 	}
 }
 
-void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenPlayerOptions::Input( const InputEventPlus &input )
 {
 	if( m_bAskOptionsMessage &&
-		type == IET_FIRST_PRESS  &&
+		input.type == IET_FIRST_PRESS  &&
 		!m_In.IsTransitioning()  &&
-		MenuI.IsValid()  &&
-		MenuI.button == MENU_BUTTON_START )
+		input.MenuI.IsValid()  &&
+		input.MenuI.button == MENU_BUTTON_START )
 	{
 		if( m_bAcceptedChoices  &&  !m_bGoToOptions )
 		{
@@ -90,8 +91,8 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		}
 	}
 
-	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
-	if( GAMESTATE->IsHumanPlayer(pn) && CodeDetector::EnteredCode(GameI.controller,CODE_CANCEL_ALL_PLAYER_OPTIONS) )
+	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( input.GameI.controller );
+	if( GAMESTATE->IsHumanPlayer(pn) && CodeDetector::EnteredCode(input.GameI.controller,CODE_CANCEL_ALL_PLAYER_OPTIONS) )
 	{
 		if( m_CancelAll.IsLoaded() )
 			m_CancelAll.Play();
@@ -112,10 +113,10 @@ void ScreenPlayerOptions::Input( const DeviceInput& DeviceI, const InputEventTyp
 		}
 	}
 
-	ScreenOptionsMaster::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenOptionsMaster::Input( input );
 
 	// UGLY: Update m_Disqualified whenever Start is pressed
-	if( GAMESTATE->IsHumanPlayer(pn) && MenuI.IsValid() && MenuI.button == MENU_BUTTON_START )
+	if( GAMESTATE->IsHumanPlayer(pn) && input.MenuI.IsValid() && input.MenuI.button == MENU_BUTTON_START )
 	{
 		int row = m_iCurrentRow[pn];
 		UpdateDisqualified( row, pn );

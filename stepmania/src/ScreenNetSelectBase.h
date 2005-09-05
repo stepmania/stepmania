@@ -14,9 +14,7 @@ public:
 	ScreenNetSelectBase( const CString& sName );
 	virtual void Init();
 
-	void Input( const DeviceInput& DeviceI, const InputEventType type,
-						const GameInput& GameI, const MenuInput& MenuI,
-						const StyleInput& StyleI );
+	void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void TweenOffScreen();
 

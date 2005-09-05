@@ -9,6 +9,7 @@
 #include "LightsManager.h"
 #include "Game.h"
 #include "ScreenDimensions.h"
+#include "InputEventPlus.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenTestLights );
@@ -88,12 +89,12 @@ void ScreenTestLights::Update( float fDeltaTime )
 }
 
 
-void ScreenTestLights::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenTestLights::Input( const InputEventPlus &input )
 {
-	if( type != IET_FIRST_PRESS && type != IET_SLOW_REPEAT )
+	if( input.type != IET_FIRST_PRESS && input.type != IET_SLOW_REPEAT )
 		return;	// ignore
 
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default handler
+	Screen::Input( input );	// default handler
 }
 
 void ScreenTestLights::HandleScreenMessage( const ScreenMessage SM )

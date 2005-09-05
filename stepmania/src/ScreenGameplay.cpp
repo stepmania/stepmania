@@ -57,6 +57,7 @@
 #include "DifficultyIcon.h"
 #include "DifficultyMeter.h"
 #include "PlayerScoreList.h"
+#include "InputEventPlus.h"
 
 //
 // Defines
@@ -2104,27 +2105,27 @@ void ScreenGameplay::AbortGiveUp( bool bShowText )
 }
 
 
-void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenGameplay::Input( const InputEventPlus &input )
 {
 	//LOG->Trace( "ScreenGameplay::Input()" );
 
-	if( type == IET_LEVEL_CHANGED )
+	if( input.type == IET_LEVEL_CHANGED )
 		return;
 
 	if( m_bPaused )
 	{
 		/* If we're paused, only accept MENU_BUTTON_START to unpause. */
-		if( MenuI.IsValid() && GAMESTATE->IsHumanPlayer(MenuI.player) && MenuI.button == MENU_BUTTON_START && type == IET_FIRST_PRESS )
+		if( input.MenuI.IsValid() && GAMESTATE->IsHumanPlayer(input.MenuI.player) && input.MenuI.button == MENU_BUTTON_START && input.type == IET_FIRST_PRESS )
 		{
-			if( m_PauseController == GAME_CONTROLLER_INVALID || m_PauseController == GameI.controller )
+			if( m_PauseController == GAME_CONTROLLER_INVALID || m_PauseController == input.GameI.controller )
 				this->PauseGame( false );
 		}
 		return;
 	}
 
-	if( MenuI.IsValid()  &&  
+	if( input.MenuI.IsValid()  &&  
 		m_DancingState != STATE_OUTRO  &&
-		GAMESTATE->IsHumanPlayer(MenuI.player) &&
+		GAMESTATE->IsHumanPlayer(input.MenuI.player) &&
 		!m_Cancel.IsTransitioning() )
 	{
 		/* Allow bailing out by holding the START button of all active players.  This
@@ -2133,15 +2134,15 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		 *
 		 * However, if this is also a style button, don't do this. (pump center = start) */
 		bool bHoldingGiveUp = false;
-		bHoldingGiveUp |= ( START_GIVES_UP && MenuI.button == MENU_BUTTON_START && !StyleI.IsValid() );
-		bHoldingGiveUp |= ( BACK_GIVES_UP && MenuI.button == MENU_BUTTON_BACK && !StyleI.IsValid() );
+		bHoldingGiveUp |= ( START_GIVES_UP && input.MenuI.button == MENU_BUTTON_START && !input.StyleI.IsValid() );
+		bHoldingGiveUp |= ( BACK_GIVES_UP && input.MenuI.button == MENU_BUTTON_BACK && !input.StyleI.IsValid() );
 		
 		if( bHoldingGiveUp )
 		{
 			/* No PREFSMAN->m_bDelayedEscape; always delayed. */
-			if( type==IET_RELEASE )
+			if( input.type==IET_RELEASE )
 				AbortGiveUp( true );
-			else if( type==IET_FIRST_PRESS && m_GiveUpTimer.IsZero() )
+			else if( input.type==IET_FIRST_PRESS && m_GiveUpTimer.IsZero() )
 			{
 				m_textDebug.SetText( GIVE_UP_TEXT );
 				m_textDebug.StopTweening();
@@ -2156,16 +2157,16 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 		/* Only handle MENU_BUTTON_BACK as a regular BACK button if BACK_GIVES_UP is
 		 * disabled. */
-		if( MenuI.button == MENU_BUTTON_BACK && !BACK_GIVES_UP )
+		if( input.MenuI.button == MENU_BUTTON_BACK && !BACK_GIVES_UP )
 		{
-			if( ((!PREFSMAN->m_bDelayedBack && type==IET_FIRST_PRESS) ||
-				(DeviceI.device==DEVICE_KEYBOARD && (type==IET_SLOW_REPEAT||type==IET_FAST_REPEAT)) ||
-				(DeviceI.device!=DEVICE_KEYBOARD && type==IET_FAST_REPEAT)) )
+			if( ((!PREFSMAN->m_bDelayedBack && input.type==IET_FIRST_PRESS) ||
+				(input.DeviceI.device==DEVICE_KEYBOARD && (input.type==IET_SLOW_REPEAT||input.type==IET_FAST_REPEAT)) ||
+				(input.DeviceI.device!=DEVICE_KEYBOARD && input.type==IET_FAST_REPEAT)) )
 			{
-				LOG->Trace("Player %i went back", MenuI.player+1);
+				LOG->Trace("Player %i went back", input.MenuI.player+1);
 				BackOutFromGameplay();
 			}
-			else if( PREFSMAN->m_bDelayedBack && type==IET_FIRST_PRESS )
+			else if( PREFSMAN->m_bDelayedBack && input.type==IET_FIRST_PRESS )
 			{
 				m_textDebug.SetText( "Continue holding BACK to quit" );
 				m_textDebug.StopTweening();
@@ -2173,7 +2174,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 				m_textDebug.BeginTweening( 1/8.f );
 				m_textDebug.SetDiffuse( RageColor(1,1,1,1) );
 			}
-			else if( PREFSMAN->m_bDelayedBack && type==IET_RELEASE )
+			else if( PREFSMAN->m_bDelayedBack && input.type==IET_RELEASE )
 			{
 				m_textDebug.StopTweening();
 				m_textDebug.BeginTweening( 1/8.f );
@@ -2185,7 +2186,7 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 	}
 
 	/* Nothing below cares about releases. */
-	if(type == IET_RELEASE)
+	if( input.type == IET_RELEASE )
 		return;
 
 
@@ -2195,22 +2196,22 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 
 		// Translate input and sent to the appropriate player.  Assume that all 
 		// joystick devices are mapped the same as the master player.
-		if( DeviceI.IsJoystick() )
+		if( input.DeviceI.IsJoystick() )
 		{
-			DeviceInput _DeviceI = DeviceI;
+			DeviceInput _DeviceI = input.DeviceI;
 			_DeviceI.device = DEVICE_JOY1;
 			GameInput _GameI;
 			INPUTMAPPER->DeviceToGame( _DeviceI, _GameI );
 
-			if( GameI.IsValid() )
+			if( input.GameI.IsValid() )
 			{
 				StyleInput _StyleI;
 				INPUTMAPPER->GameToStyle( _GameI, _StyleI );
 
-				mp = InputMapper::InputDeviceToMultiPlayer( DeviceI.device );
+				mp = InputMapper::InputDeviceToMultiPlayer( input.DeviceI.device );
 
 				if( mp>=0 && mp<NUM_MultiPlayer )
-					m_vPlayerInfo[mp].m_pPlayer->Step( _StyleI.col, DeviceI.ts );
+					m_vPlayerInfo[mp].m_pPlayer->Step( _StyleI.col, input.DeviceI.ts );
 			}
 		}
 	}
@@ -2219,14 +2220,14 @@ void ScreenGameplay::Input( const DeviceInput& DeviceI, const InputEventType typ
 		//
 		// handle a step or battle item activate
 		//
-		if( type==IET_FIRST_PRESS && 
-			StyleI.IsValid() &&
-			GAMESTATE->IsHumanPlayer( StyleI.player ) )
+		if( input.type==IET_FIRST_PRESS && 
+			input.StyleI.IsValid() &&
+			GAMESTATE->IsHumanPlayer( input.StyleI.player ) )
 		{
 			AbortGiveUp( true );
 			
 			if( PREFSMAN->m_AutoPlay == PC_HUMAN )
-				m_vPlayerInfo[StyleI.player].m_pPlayer->Step( StyleI.col, DeviceI.ts ); 
+				m_vPlayerInfo[input.StyleI.player].m_pPlayer->Step( input.StyleI.col, input.DeviceI.ts ); 
 		}
 	}
 }

@@ -37,7 +37,7 @@ public:
 	virtual void Init();
 	~ScreenRanking();
 
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	virtual void Input( const InputEventPlus &input );
 	virtual void MenuLeft( PlayerNumber pn, const InputEventType type )		{ Scroll(-1); }
 	virtual void MenuRight( PlayerNumber pn, const InputEventType type )	{ Scroll(+1); }
 	virtual void MenuUp( PlayerNumber pn, const InputEventType type )		{ Scroll(-1); }

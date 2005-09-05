@@ -18,6 +18,7 @@
 #include "StatsManager.h"
 #include "CommonMetrics.h"
 #include "PrefsManager.h"
+#include "InputEventPlus.h"
 
 #define SHOW_COURSE_MODIFIERS_PROBABILITY	THEME->GetMetricF(m_sName,"ShowCourseModifiersProbability")
 
@@ -241,16 +242,16 @@ void ScreenJukebox::Init()
 	m_DancingState = STATE_DANCING;
 }
 
-void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenJukebox::Input( const InputEventPlus &input )
 {
 	//LOG->Trace( "ScreenJukebox::Input()" );
 
-	if( type != IET_FIRST_PRESS )
+	if( input.type != IET_FIRST_PRESS )
 		return; /* ignore */
 
-	if( MenuI.IsValid() )
+	if( input.MenuI.IsValid() )
 	{
-		switch( MenuI.button )
+		switch( input.MenuI.button )
 		{
 		case MENU_BUTTON_LEFT:
 		case MENU_BUTTON_RIGHT:
@@ -259,7 +260,7 @@ void ScreenJukebox::Input( const DeviceInput& DeviceI, const InputEventType type
 		}
 	}
 
-	ScreenAttract::AttractInput( DeviceI, type, GameI, MenuI, StyleI, this );
+	ScreenAttract::AttractInput( input, this );
 }
 
 void ScreenJukebox::HandleScreenMessage( const ScreenMessage SM )

@@ -14,7 +14,7 @@ public:
 	virtual void Init();
 	~ScreenTestSound();
 
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	virtual void Input( const InputEventPlus &input );
 
 	void Update(float f);
 	void UpdateText(int n);

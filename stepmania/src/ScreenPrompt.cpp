@@ -8,6 +8,7 @@
 #include "ThemeManager.h"
 #include "ScreenDimensions.h"
 #include "ActorUtil.h"
+#include "InputEventPlus.h"
 
 PromptAnswer ScreenPrompt::s_LastAnswer = ANSWER_YES;
 bool ScreenPrompt::s_bCancelledLast = false;
@@ -90,19 +91,19 @@ void ScreenPrompt::BeginScreen()
 	m_In.StartTransitioning();
 }
 
-void ScreenPrompt::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenPrompt::Input( const InputEventPlus &input )
 {
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
-	if( DeviceI.device==DEVICE_KEYBOARD && type==IET_FIRST_PRESS )
+	if( input.DeviceI.device==DEVICE_KEYBOARD && input.type==IET_FIRST_PRESS )
 	{
 		PlayerNumber pn;
 		if ( GAMESTATE->GetCurrentStyle() == NULL )
-			pn = (PlayerNumber)GameI.controller;
+			pn = (PlayerNumber)input.GameI.controller;
 		else
-			pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
-		switch( DeviceI.button )
+			pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( input.GameI.controller );
+		switch( input.DeviceI.button )
 		{
 		case KEY_LEFT:
 			this->MenuLeft( pn );
@@ -113,7 +114,7 @@ void ScreenPrompt::Input( const DeviceInput& DeviceI, const InputEventType type,
 		}
 	}
 
-	ScreenWithMenuElements::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenWithMenuElements::Input( input );
 }
 
 bool ScreenPrompt::CanGoRight()

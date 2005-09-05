@@ -14,7 +14,7 @@ public:
 	virtual ~ScreenSyncOverlay();
 	virtual void Init();
 	
-	bool OverlayInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	bool OverlayInput( const InputEventPlus &input );
 
 	void Update( float fDeltaTime );
 

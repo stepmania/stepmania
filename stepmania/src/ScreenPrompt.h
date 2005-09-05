@@ -29,7 +29,7 @@ public:
 	ScreenPrompt( const CString &sScreenName );
 	virtual void Init();
 	virtual void BeginScreen();
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	virtual void Input( const InputEventPlus &input );
 
 	static PromptAnswer s_LastAnswer;
 	static bool s_bCancelledLast;

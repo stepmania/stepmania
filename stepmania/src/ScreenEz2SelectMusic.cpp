@@ -21,6 +21,7 @@
 #include "Command.h"
 #include "RageLog.h"
 #include "song.h"
+#include "InputEventPlus.h"
 
 
 #define PREV_SCREEN				THEME->GetMetric ("ScreenEz2SelectMusic","PrevScreen")
@@ -232,20 +233,20 @@ void ScreenEz2SelectMusic::Init()
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select music intro") );
 }
 
-void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenEz2SelectMusic::Input( const InputEventPlus &input )
 {
 //	if( type != IET_FIRST_PRESS )
 //		return;	// ignore
 
 	if(i_ErrorDetected) return; // don't let the user do anything if theres an error
 
-	if( type == IET_RELEASE || type == IET_LEVEL_CHANGED )	return;		// don't care
+	if( input.type == IET_RELEASE || input.type == IET_LEVEL_CHANGED )	return;		// don't care
 
 	if( IsTransitioning() )	return;		// ignore
 
-	if( !GameI.IsValid() )		return;		// don't care
+	if( !input.GameI.IsValid() )		return;		// don't care
 
-	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  MenuI.IsValid()  &&  MenuI.button == MENU_BUTTON_START )
+	if( m_bMadeChoice  &&  !m_bGoToOptions  &&  input.MenuI.IsValid()  &&  input.MenuI.button == MENU_BUTTON_START )
 	{
 		SCREENMAN->PlayStartSound();
 		m_bGoToOptions = true;
@@ -255,31 +256,31 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 	if( m_bMadeChoice )
 		return;
 
-	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
+	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( input.GameI.controller );
 
-	if( CodeDetector::EnteredEasierDifficulty(GameI.controller) )
+	if( CodeDetector::EnteredEasierDifficulty(input.GameI.controller) )
 	{
 		EasierDifficulty( pn );
 		return;
 	}
-	if( CodeDetector::EnteredHarderDifficulty(GameI.controller) )
+	if( CodeDetector::EnteredHarderDifficulty(input.GameI.controller) )
 	{
 		HarderDifficulty( pn );
 		return;
 	}
-	if( CodeDetector::DetectAndAdjustMusicOptions(GameI.controller) )
+	if( CodeDetector::DetectAndAdjustMusicOptions(input.GameI.controller) )
 	{
 		UpdateOptions(pn,1);
 	}
 
-	if( CodeDetector::EnteredNextBannerGroup(GameI.controller))
+	if( CodeDetector::EnteredNextBannerGroup(input.GameI.controller))
 	{
 		m_MusicBannerWheel.ScanToNextGroup();
 		MusicChanged();
 		return;
 	}
 
-	if( type != IET_FIRST_PRESS )
+	if( input.type != IET_FIRST_PRESS )
 	{
 		m_bScanning = true;
 		m_soundMusicCycle.Play();
@@ -310,7 +311,7 @@ void ScreenEz2SelectMusic::Input( const DeviceInput& DeviceI, const InputEventTy
 		m_soundButtonPress.Play();
 	}
 	LastInputTime = RageTimer::GetTimeSinceStartFast();
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+	Screen::Input( input );
 }
 
 void ScreenEz2SelectMusic::UpdateOptions(PlayerNumber pn, int nosound)

@@ -46,7 +46,7 @@ public:
 	virtual void BeginScreen();
 
 	virtual void Update( float fDelta );
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	virtual void Input( const InputEventPlus &input );
 
 	static CString s_sLastAnswer;
 	static bool s_bCancelledLast;

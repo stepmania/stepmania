@@ -433,7 +433,7 @@ void ScreenManager::Draw()
 }
 
 
-void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenManager::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenManager::Input( %d-%d, %d-%d, %d-%d, %d-%d )", 
 //		DeviceI.device, DeviceI.button, GameI.controller, GameI.button, MenuI.player, MenuI.button, StyleI.player, StyleI.col );
@@ -445,7 +445,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 	for( unsigned i = 0; i < g_OverlayScreens.size(); ++i )
 	{
 		Screen *pScreen = g_OverlayScreens[i];
-		if( pScreen->OverlayInput(DeviceI, type, GameI, MenuI, StyleI) )
+		if( pScreen->OverlayInput(input) )
 			return;
 	}
 
@@ -455,7 +455,7 @@ void ScreenManager::Input( const DeviceInput& DeviceI, const InputEventType type
 		return;
 
 	if( !g_ScreenStack.empty() )
-		g_ScreenStack.back().m_pScreen->Input( DeviceI, type, GameI, MenuI, StyleI );
+		g_ScreenStack.back().m_pScreen->Input( input );
 }
 
 /* Just create a new screen; don't do any associated cleanup. */

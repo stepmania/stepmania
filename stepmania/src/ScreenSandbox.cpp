@@ -23,9 +23,9 @@ void ScreenSandbox::HandleScreenMessage( const ScreenMessage SM )
 	Screen::HandleScreenMessage( SM );
 }
 
-void ScreenSandbox::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenSandbox::Input( const InputEventPlus &input )
 {
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+	Screen::Input( input );
 }
 
 void ScreenSandbox::Update( float fDeltaTime )

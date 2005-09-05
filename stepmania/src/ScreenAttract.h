@@ -12,10 +12,10 @@ class ScreenAttract : public ScreenWithMenuElements
 public:
 	ScreenAttract( CString sName, bool bResetGameState=true );
 
-	static void AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, ScreenWithMenuElements *pScreen );
+	static void AttractInput( const InputEventPlus &input, ScreenWithMenuElements *pScreen );
 	static void GoToStartScreen( CString sScreenName );
 	
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	virtual ScreenType GetScreenType() const { return attract; }

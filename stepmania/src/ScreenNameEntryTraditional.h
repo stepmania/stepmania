@@ -47,7 +47,7 @@ public:
 
 	void Update( float fDeltaTime );
 	void HandleScreenMessage( const ScreenMessage SM );
-	void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	void Input( const InputEventPlus &input );
 
 	void MenuStart( PlayerNumber pn, const InputEventType type );
 	void MenuSelect( PlayerNumber pn, const InputEventType type );

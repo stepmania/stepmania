@@ -16,7 +16,7 @@ public:
 	virtual ~ScreenBookkeeping();
 
 	virtual void Update( float fDelta );
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	virtual void Input( const InputEventPlus &input );
 
 	virtual void MenuLeft( PlayerNumber pn );
 	virtual void MenuRight( PlayerNumber pn );

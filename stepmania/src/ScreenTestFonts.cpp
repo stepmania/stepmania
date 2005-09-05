@@ -5,6 +5,7 @@
 #include "ScreenTextEntry.h"
 #include "GameConstantsAndTypes.h"
 #include "ScreenDimensions.h"
+#include "InputEventPlus.h"
 
 
 static const float LineWidth = 400;
@@ -82,11 +83,11 @@ void ScreenTestFonts::DrawPrimitives()
 }
 
 
-void ScreenTestFonts::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenTestFonts::Input( const InputEventPlus &input )
 {
-	if( type != IET_FIRST_PRESS )
+	if( input.type != IET_FIRST_PRESS )
 		return;
-	switch( DeviceI.button )
+	switch( input.DeviceI.button )
 	{
 	case '[': txt.SetVertAlign(align_bottom); break;
 	case '\\': txt.SetVertAlign(align_middle); break;

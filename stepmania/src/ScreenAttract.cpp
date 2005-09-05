@@ -13,6 +13,7 @@
 #include "ThemeManager.h"
 #include "GameSoundManager.h"
 #include "CommonMetrics.h"
+#include "InputEventPlus.h"
 
 #define START_SCREEN(sScreenName)	THEME->GetMetric (sScreenName,"StartScreen")
 
@@ -28,21 +29,21 @@ ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : ScreenWith
 }
 
 
-void ScreenAttract::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenAttract::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenAttract::Input()" );
 
-	AttractInput( DeviceI, type, GameI, MenuI, StyleI, this );
+	AttractInput( input, this );
 }
 
-void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, ScreenWithMenuElements *pScreen )
+void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuElements *pScreen )
 {
-	if(type != IET_FIRST_PRESS) 
+	if( input.type != IET_FIRST_PRESS ) 
 		return; // don't care
 
-	if( MenuI.IsValid() )
+	if( input.MenuI.IsValid() )
 	{
-		switch( MenuI.button )
+		switch( input.MenuI.button )
 		{
 		case MENU_BUTTON_BACK:
 			if( !(bool)BACK_GOES_TO_START_SCREEN )
@@ -68,7 +69,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 				SCREENMAN->SendMessageToTopScreen( SM_StopMusic );
 
 				/* HandleGlobalInputs() already played the coin sound.  Don't play it again. */
-				if( MenuI.button != MENU_BUTTON_COIN )
+				if( input.MenuI.button != MENU_BUTTON_COIN )
 					SCREENMAN->PlayCoinSound();
 				
 				pScreen->Cancel( SM_GoToStartScreen );
@@ -83,9 +84,9 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 	if( pScreen->IsTransitioning() )
 		return;
 
-	if( MenuI.IsValid() )
+	if( input.MenuI.IsValid() )
 	{
-		switch( MenuI.button )
+		switch( input.MenuI.button )
 		{
 		case MENU_BUTTON_LEFT:
 		case MENU_BUTTON_RIGHT:
@@ -94,7 +95,7 @@ void ScreenAttract::AttractInput( const DeviceInput& DeviceI, const InputEventTy
 		}
 	}	
 
-//	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+//	Screen::Input( input );
 }
 
 void ScreenAttract::StartPlayingMusic()

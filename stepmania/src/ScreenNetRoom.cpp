@@ -10,6 +10,7 @@
 #include "Command.h"
 #include "WheelItemBase.h"
 #include "RageLog.h"
+#include "InputEventPlus.h"
 
 #define TITLEBG_WIDTH				THEME->GetMetricF(m_sName,"TitleBGWidth")
 #define TITLEBG_HEIGHT				THEME->GetMetricF(m_sName,"TitleBGHeight")
@@ -66,14 +67,12 @@ void ScreenNetRoom::Init()
 	NSMAN->ReportNSSOnOff(7);
 }
 
-void ScreenNetRoom::Input( const DeviceInput& DeviceI, const InputEventType type,
-								  const GameInput& GameI, const MenuInput& MenuI,
-								  const StyleInput& StyleI )
+void ScreenNetRoom::Input( const InputEventPlus &input )
 {
-	if (((MenuI.button == MENU_BUTTON_LEFT) || (MenuI.button == MENU_BUTTON_RIGHT)) && (type == IET_RELEASE))
+	if (((input.MenuI.button == MENU_BUTTON_LEFT) || (input.MenuI.button == MENU_BUTTON_RIGHT)) && (input.type == IET_RELEASE))
 		m_RoomWheel.Move(0);
 		
-	ScreenNetSelectBase::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenNetSelectBase::Input( input );
 }
 
 void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )

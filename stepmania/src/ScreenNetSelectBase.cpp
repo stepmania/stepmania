@@ -12,6 +12,7 @@
 #include "NetworkSyncManager.h"
 #include "RageUtil.h"
 #include "GameState.h"
+#include "InputEventPlus.h"
 
 #define CHATINPUT_WIDTH				THEME->GetMetricF(m_sName,"ChatInputBoxWidth")
 #define CHATINPUT_HEIGHT			THEME->GetMetricF(m_sName,"ChatInputBoxHeight")
@@ -88,14 +89,12 @@ void ScreenNetSelectBase::Init()
 	return;
 }
 
-void ScreenNetSelectBase::Input( const DeviceInput& DeviceI, const InputEventType type,
-								  const GameInput& GameI, const MenuInput& MenuI,
-								  const StyleInput& StyleI )
+void ScreenNetSelectBase::Input( const InputEventPlus &input )
 {
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
-	if( (type != IET_FIRST_PRESS) && (type != IET_SLOW_REPEAT) && (type != IET_FAST_REPEAT ) )
+	if( (input.type != IET_FIRST_PRESS) && (input.type != IET_SLOW_REPEAT) && (input.type != IET_FAST_REPEAT ) )
 		return;
 
 	bool bHoldingShift = 
@@ -107,7 +106,7 @@ void ScreenNetSelectBase::Input( const DeviceInput& DeviceI, const InputEventTyp
 		INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RCTRL)) ||
 		(!NSMAN->useSMserver);	//If we are disconnected, assume no chatting
 
-	switch( DeviceI.button )
+	switch( input.DeviceI.button )
 	{
 	case KEY_ENTER:
 	case KEY_KP_ENTER:
@@ -127,7 +126,7 @@ void ScreenNetSelectBase::Input( const DeviceInput& DeviceI, const InputEventTyp
 		break;
 	default:
 		char c;
-		c = DeviceI.ToChar();
+		c = input.DeviceI.ToChar();
 
 		if( bHoldingShift && !bHoldingCtrl )
 		{
@@ -172,7 +171,7 @@ void ScreenNetSelectBase::Input( const DeviceInput& DeviceI, const InputEventTyp
 			return;
 		break;
 	}
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
+	Screen::Input( input );	// default input handler
 }
 
 void ScreenNetSelectBase::HandleScreenMessage( const ScreenMessage SM )

@@ -19,6 +19,7 @@
 #include "CodeDetector.h"
 #include "RageInput.h"
 #include "RageDisplay.h"
+#include "InputEventPlus.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
@@ -256,10 +257,10 @@ void ScreenDebugOverlay::UpdateText()
     }
 }
 
-bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+bool ScreenDebugOverlay::OverlayInput( const InputEventPlus &input )
 {
-	if( DeviceI == g_Mappings.holdForDebug1 || 
-		DeviceI == g_Mappings.holdForDebug2 )
+	if( input.DeviceI == g_Mappings.holdForDebug1 || 
+		input.DeviceI == g_Mappings.holdForDebug2 )
 	{
 		bool bHoldingBoth =
 			(!g_Mappings.holdForDebug1.IsValid() || INPUTFILTER->IsBeingPressed(g_Mappings.holdForDebug1)) &&
@@ -275,10 +276,10 @@ bool ScreenDebugOverlay::OverlayInput( const DeviceInput& DeviceI, const InputEv
 	{
 		int i = p-g_pvpSubscribers->begin();
 
-		if( (g_bIsDisplayed && DeviceI == g_Mappings.debugButton[i]) ||
-			(IsGameplay() && DeviceI == g_Mappings.gameplayButton[i]) )
+		if( (g_bIsDisplayed && input.DeviceI == g_Mappings.debugButton[i]) ||
+			(IsGameplay() && input.DeviceI == g_Mappings.gameplayButton[i]) )
 		{
-			if( type != IET_FIRST_PRESS )
+			if( input.type != IET_FIRST_PRESS )
 				return true; /* eat the input but do nothing */
 
 			BitmapText &txt1 = *m_vptextButton[i];

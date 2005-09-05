@@ -9,6 +9,7 @@
 #include "DateTime.h"
 #include "EnumHelper.h"
 #include "arch/ArchHooks/ArchHooks.h"
+#include "InputEventPlus.h"
 
 static const CString SetTimeSelectionNames[] = {
 	"Year", 
@@ -108,15 +109,15 @@ void ScreenSetTime::Update( float fDelta )
 	m_textValue[day].SetText(	ssprintf("%02d",now.tm_mday) );
 }
 
-void ScreenSetTime::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenSetTime::Input( const InputEventPlus &input )
 {
-	if( type != IET_FIRST_PRESS && type != IET_SLOW_REPEAT )
+	if( input.type != IET_FIRST_PRESS && input.type != IET_SLOW_REPEAT )
 		return;	// ignore
 
 	if( IsTransitioning() )
 		return;
 
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default handler
+	Screen::Input( input );	// default handler
 }
 
 void ScreenSetTime::ChangeValue( int iDirection )

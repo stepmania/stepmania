@@ -14,6 +14,7 @@
 #include "GameCommand.h"
 #include "OptionRowHandler.h"
 #include "LuaBinding.h"
+#include "InputEventPlus.h"
 
 
 /*
@@ -580,32 +581,32 @@ void ScreenOptions::Update( float fDeltaTime )
 	ScreenWithMenuElements::Update( fDeltaTime );
 }
 
-void ScreenOptions::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenOptions::Input( const InputEventPlus &input )
 {
 	/* Allow input when transitioning in (m_In.IsTransitioning()), but ignore it
 	 * when we're transitioning out. */
 	if( m_Cancel.IsTransitioning() || m_Out.IsTransitioning() || m_fLockInputSecs > 0 )
 		return;
 
-	if( !GAMESTATE->IsHumanPlayer(MenuI.player) )
+	if( !GAMESTATE->IsHumanPlayer(input.MenuI.player) )
 		return;
 
-	if( type == IET_RELEASE )
+	if( input.type == IET_RELEASE )
 	{
-		switch( MenuI.button )
+		switch( input.MenuI.button )
 		{
 		case MENU_BUTTON_START:
 		case MENU_BUTTON_SELECT:
 		case MENU_BUTTON_RIGHT:
 		case MENU_BUTTON_LEFT:
-			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_START) );
-			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_RIGHT) );
-			INPUTMAPPER->ResetKeyRepeat( MenuInput(MenuI.player, MENU_BUTTON_LEFT) );
+			INPUTMAPPER->ResetKeyRepeat( MenuInput(input.MenuI.player, MENU_BUTTON_START) );
+			INPUTMAPPER->ResetKeyRepeat( MenuInput(input.MenuI.player, MENU_BUTTON_RIGHT) );
+			INPUTMAPPER->ResetKeyRepeat( MenuInput(input.MenuI.player, MENU_BUTTON_LEFT) );
 		}
 	}
 
 	// default input handler
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+	Screen::Input( input );
 }
 
 void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )

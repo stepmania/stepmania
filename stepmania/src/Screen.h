@@ -6,11 +6,11 @@
 #include "ActorFrame.h"
 #include "ScreenMessage.h"
 #include "InputFilter.h"
-#include "GameInput.h"
-#include "MenuInput.h"
-#include "StyleInput.h"
 #include "ThemeMetric.h"
+#include "PlayerNumber.h"
 
+class InputEventPlus;
+struct MenuInput;
 class Screen;
 typedef Screen* (*CreateScreenFn)(const CString& sClassName);
 void RegisterScreenClass( const CString& sClassName, CreateScreenFn pfn );
@@ -45,8 +45,8 @@ public:
 	virtual void BeginScreen();
 
 	virtual void Update( float fDeltaTime );
-	virtual bool OverlayInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	virtual bool OverlayInput( const InputEventPlus &input );
+	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	void PostScreenMessage( const ScreenMessage SM, float fDelay );

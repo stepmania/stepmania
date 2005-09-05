@@ -28,6 +28,7 @@
 #endif
 
 #include "Screen.h"
+#include "InputEventPlus.h"
 #include "ScreenDimensions.h"
 #include "CodeDetector.h"
 #include "CommonMetrics.h"
@@ -1289,13 +1290,13 @@ void InsertCredit()
 
 /* Returns true if the key has been handled and should be discarded, false if
  * the key should be sent on to screens. */
-bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput GameI, MenuInput MenuI, StyleInput StyleI )
+bool HandleGlobalInputs( const InputEventPlus &input )
 {
 	/* None of the globals keys act on types other than FIRST_PRESS */
-	if( type != IET_FIRST_PRESS ) 
+	if( input.type != IET_FIRST_PRESS ) 
 		return false;
 
-	switch( MenuI.button )
+	switch( input.MenuI.button )
 	{
 	case MENU_BUTTON_OPERATOR:
 
@@ -1318,12 +1319,12 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 			LOG->Trace( "Ignored coin insertion (editing)" );
 			break;
 		}
-		InsertCoin( 1, &DeviceI.ts );
+		InsertCoin( 1, &input.DeviceI.ts );
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 
 #ifndef __MACOSX__
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F4))
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F4) )
 	{
 		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
 			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
@@ -1334,7 +1335,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		}
 	}
 #else
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_Cq))
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_Cq) )
 	{
 		if(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA)) ||
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA)))
@@ -1346,19 +1347,23 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 	}
 #endif
 
+	bool bDoScreenshot = 
+#if defined(__MACOSX__)
+	/* Pressing F13 on an Apple keyboard sends KEY_PRINT.
+	 * However, notebooks don't have F13. Use cmd-F12 then*/
+		input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) && 
+		( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA)) || INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA)) );
+#else
 	/* The default Windows message handler will capture the desktop window upon
 	 * pressing PrntScrn, or will capture the foregroud with focus upon pressing
 	 * Alt+PrntScrn.  Windows will do this whether or not we save a screenshot 
 	 * ourself by dumping the frame buffer.  */
-	/* Pressing F13 on an Apple keyboard sends KEY_PRINT.
-	 * However, notebooks don't have F13. Use cmd-F12 then*/
 	// "if pressing PrintScreen and not pressing Alt"
-	if( (DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_PRTSC) &&
-		 !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) &&
-		 !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT))) ||
-	    (DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) &&
-		 (INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RMETA)) ||
-             INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LMETA)))))
+		input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_PRTSC) && 
+		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) &&
+		!INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT));
+#endif
+	if( bDoScreenshot )
 	{
 		// If holding LShift save uncompressed, else save compressed
 		bool bSaveCompressed = !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
@@ -1366,7 +1371,7 @@ bool HandleGlobalInputs( DeviceInput DeviceI, InputEventType type, GameInput Gam
 		return true;	// handled
 	}
 
-	if(DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_ENTER))
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_ENTER) )
 	{
 		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
 			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
@@ -1402,20 +1407,52 @@ void HandleInputEvents(float fDeltaTime)
 
 	for( unsigned i=0; i<ieArray.size(); i++ )
 	{
-		DeviceInput DeviceI = (DeviceInput)ieArray[i];
-		InputEventType type = ieArray[i].type;
-		GameInput GameI;
-		MenuInput MenuI;
-		StyleInput StyleI;
+		InputEventPlus input;
+		input.DeviceI = (DeviceInput)ieArray[i];
+		input.type = ieArray[i].type;
 
-		INPUTMAPPER->DeviceToGame( DeviceI, GameI );
+		INPUTMAPPER->DeviceToGame( input.DeviceI, input.GameI );
 		
-		if( GameI.IsValid()  &&  type == IET_FIRST_PRESS )
-			INPUTQUEUE->RememberInput( GameI );
-		if( GameI.IsValid() )
+		if( input.GameI.IsValid()  &&  input.type == IET_FIRST_PRESS )
+			INPUTQUEUE->RememberInput( input.GameI );
+		if( input.GameI.IsValid() )
 		{
-			INPUTMAPPER->GameToMenu( GameI, MenuI );
-			INPUTMAPPER->GameToStyle( GameI, StyleI );
+			INPUTMAPPER->GameToMenu( input.GameI, input.MenuI );
+			INPUTMAPPER->GameToStyle( input.GameI, input.StyleI );
+		}
+
+		if( !GAMESTATE->m_bMultiplayer )
+		{
+			input.mp = MultiPlayer_INVALID;
+		}
+		else
+		{
+			// Translate input and sent to the appropriate player.  Assume that all 
+			// joystick devices are mapped the same as the master player.
+			if( input.DeviceI.IsJoystick() )
+			{
+				DeviceInput _DeviceI = input.DeviceI;
+				_DeviceI.device = DEVICE_JOY1;
+				GameInput _GameI;
+				INPUTMAPPER->DeviceToGame( _DeviceI, _GameI );
+
+				if( input.GameI.IsValid() )
+				{
+					StyleInput _StyleI;
+					INPUTMAPPER->GameToStyle( _GameI, _StyleI );
+					input.mp = InputMapper::InputDeviceToMultiPlayer( input.DeviceI.device );
+				}
+
+				/*
+				// hack for testing with only one joytick
+				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LSHIFT) ) )
+					p = (MultiPlayer)(p + 1);
+				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL) ) )
+					p = (MultiPlayer)(p + 2);
+				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LALT) ) )
+					p = (MultiPlayer)(p + 4);
+				*/
+			}
 		}
 
 		// HACK:  Numlock is read is being pressed if the NumLock light is on.
@@ -1425,18 +1462,18 @@ void HandleInputEvents(float fDeltaTime)
 //		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_NUMLOCK && type != IET_FIRST_PRESS )
 //			continue;	// skip
 
-		if( HandleGlobalInputs(DeviceI, type, GameI, MenuI, StyleI ) )
+		if( HandleGlobalInputs(input) )
 			continue;	// skip
 		
 		// check back in event mode
 		if( GAMESTATE->IsEventMode() &&
-			CodeDetector::EnteredCode(GameI.controller,CODE_BACK_IN_EVENT_MODE) )
+			CodeDetector::EnteredCode(input.GameI.controller,CODE_BACK_IN_EVENT_MODE) )
 		{
-			MenuI.player = PLAYER_1;
-			MenuI.button = MENU_BUTTON_BACK;
+			input.MenuI.player = PLAYER_1;
+			input.MenuI.button = MENU_BUTTON_BACK;
 		}
 
-		SCREENMAN->Input( DeviceI, type, GameI, MenuI, StyleI );
+		SCREENMAN->Input( input );
 	}
 }
 

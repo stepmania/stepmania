@@ -19,6 +19,7 @@
 #include "ThemeMetric.h"
 #include "PlayerStageStats.h"
 #include "PlayerState.h"
+#include "GameInput.h"
 
 class LyricsLoader;
 class ActiveAttackList;
@@ -101,7 +102,7 @@ public:
 	virtual ~ScreenGameplay();
 
 	virtual void Update( float fDeltaTime );
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	virtual bool UsesBackground() const { return false; }

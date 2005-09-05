@@ -402,15 +402,15 @@ ScreenRanking::~ScreenRanking()
 {
 }
 
-void ScreenRanking::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenRanking::Input( const InputEventPlus &input )
 {
 	LOG->Trace( "ScreenRanking::Input()" );
 
 	// If manually scrolling, then pass the input to Scree::Input so it will call Menu*
 	if( (bool)MANUAL_SCROLLING )
-		Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+		Screen::Input( input );
 	else
-		ScreenAttract::Input( DeviceI, type, GameI, MenuI, StyleI );
+		ScreenAttract::Input( input );
 }
 
 void ScreenRanking::Scroll( int iDir )

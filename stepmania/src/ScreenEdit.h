@@ -153,11 +153,11 @@ public:
 	virtual ~ScreenEdit();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
-	void InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB );
-	void InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB );
-	void InputRecordPaused( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB );
-	void InputPlay( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB );
+	virtual void Input( const InputEventPlus &input );
+	void InputEdit( const InputEventPlus &input, EditButton EditB );
+	void InputRecord( const InputEventPlus &input, EditButton EditB );
+	void InputRecordPaused( const InputEventPlus &input, EditButton EditB );
+	void InputPlay( const InputEventPlus &input, EditButton EditB );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:

@@ -5,6 +5,7 @@
 #include "ThemeManager.h"
 #include "Bookkeeper.h"
 #include "ScreenDimensions.h"
+#include "InputEventPlus.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenBookkeeping );
@@ -54,12 +55,12 @@ void ScreenBookkeeping::Update( float fDelta )
 	ScreenWithMenuElements::Update( fDelta );
 }
 
-void ScreenBookkeeping::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenBookkeeping::Input( const InputEventPlus &input )
 {
-	if( type != IET_FIRST_PRESS && type != IET_SLOW_REPEAT )
+	if( input.type != IET_FIRST_PRESS && input.type != IET_SLOW_REPEAT )
 		return;	// ignore
 
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default handler
+	Screen::Input( input );	// default handler
 }
 
 void ScreenBookkeeping::MenuLeft( PlayerNumber pn )

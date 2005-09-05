@@ -9,6 +9,7 @@
 #include "RageDisplay.h"
 #include "HelpDisplay.h"
 #include "ScreenDimensions.h"
+#include "InputEventPlus.h"
 
 static ThemeMetric<bool>	ALLOW_RESIZE("ScreenCenterImage","AllowResize");
 
@@ -49,14 +50,14 @@ ScreenCenterImage::~ScreenCenterImage()
 
 
 
-void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenCenterImage::Input( const InputEventPlus &input )
 {
 	if( IsTransitioning() )
 		return;
 
-	if( type == IET_FIRST_PRESS  )
+	if( input.type == IET_FIRST_PRESS  )
 	{
-		if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_SPACE )
+		if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_SPACE )
 		{
 			PREFSMAN->m_iCenterImageTranslateX.Set( 0 );
 			PREFSMAN->m_iCenterImageTranslateY.Set( 0 );
@@ -65,7 +66,7 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 			return;
 		}
 
-		switch( MenuI.button )
+		switch( input.MenuI.button )
 		{
 		case MENU_BUTTON_START:
 			SCREENMAN->PlayStartSound();
@@ -84,20 +85,20 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 	bool bIncrease = false;
 
 	Axis axis = NUM_AXES;
-	switch( MenuI.button )
+	switch( input.MenuI.button )
 	{
 	case MENU_BUTTON_UP:	axis = AXIS_TRANS_Y; bIncrease = false;	break;
 	case MENU_BUTTON_DOWN:	axis = AXIS_TRANS_Y; bIncrease = true;	break;
 	case MENU_BUTTON_LEFT:	axis = AXIS_TRANS_X; bIncrease = false;	break;
 	case MENU_BUTTON_RIGHT:	axis = AXIS_TRANS_X; bIncrease = true;	break;
 	default:
-		if( !DeviceI.IsJoystick() )
+		if( !input.DeviceI.IsJoystick() )
 			return;
 
 		/* Secondary axes aren't always mapped correctly; for example, PS2 converters
 		 * tend to map the right stick to weird things, and every one is different,
 		 * so they usually won't work. */
-		switch( DeviceI.button )
+		switch( input.DeviceI.button )
 		{
 		case JOY_UP:		axis = AXIS_TRANS_Y;	bIncrease = false;	break;
 		case JOY_DOWN:		axis = AXIS_TRANS_Y;	bIncrease = true;	break;
@@ -121,21 +122,21 @@ void ScreenCenterImage::Input( const DeviceInput& DeviceI, const InputEventType 
 	}
 
 	float fScale = 1.0f;
-	if( type == IET_RELEASE )
+	if( input.type == IET_RELEASE )
 		fScale = 0;
 
-	if( DeviceI.level >= 0 )
+	if( input.DeviceI.level >= 0 )
 	{
 		/* Increase the dead zone.  XXX: input drivers should handle dead zones */
-		if( DeviceI.level < 0.10f )
+		if( input.DeviceI.level < 0.10f )
 			fScale = 0;
 		else
-			fScale = SCALE( DeviceI.level, 0.10f, 1.0f, 0.0f, 1.0f );
+			fScale = SCALE( input.DeviceI.level, 0.10f, 1.0f, 0.0f, 1.0f );
 	}
 
-	if( DeviceI.level < 0 )
+	if( input.DeviceI.level < 0 )
 	{
-		switch( type )
+		switch( input.type )
 		{
 		case IET_SLOW_REPEAT:	fScale *= 4;	break;
 		case IET_FAST_REPEAT:	fScale *= 16;	break;

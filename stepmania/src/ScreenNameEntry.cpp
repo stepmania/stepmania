@@ -21,6 +21,7 @@
 #include "PlayerState.h"
 #include "Style.h"
 #include "NoteSkinManager.h"
+#include "InputEventPlus.h"
 
 
 //
@@ -343,30 +344,30 @@ void ScreenNameEntry::DrawPrimitives()
 	}
 }
 
-void ScreenNameEntry::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenNameEntry::Input( const InputEventPlus &input )
 {
 	LOG->Trace( "ScreenNameEntry::Input()" );
 
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;	
 
-	if( type != IET_FIRST_PRESS )
+	if( input.type != IET_FIRST_PRESS )
 		return;		// ignore
 
-	if( StyleI.IsValid() && m_bStillEnteringName[StyleI.player])
+	if( input.StyleI.IsValid() && m_bStillEnteringName[input.StyleI.player])
 	{
-		int StringIndex = m_ColToStringIndex[StyleI.player][StyleI.col];
-		if(StringIndex != -1)
+		int iStringIndex = m_ColToStringIndex[input.StyleI.player][input.StyleI.col];
+		if( iStringIndex != -1 )
 		{
-			m_ReceptorArrowRow[StyleI.player].Step( StyleI.col, TNS_MARVELOUS );
+			m_ReceptorArrowRow[input.StyleI.player].Step( input.StyleI.col, TNS_MARVELOUS );
 			m_soundStep.Play();
 			char c = NAME_CHARS[GetClosestCharIndex(m_fFakeBeat)];
-			m_textSelectedChars[StyleI.player][StyleI.col].SetText( ssprintf("%c",c) );
-			m_sSelectedName[StyleI.player][StringIndex] = c;
+			m_textSelectedChars[input.StyleI.player][input.StyleI.col].SetText( ssprintf("%c",c) );
+			m_sSelectedName[input.StyleI.player][iStringIndex] = c;
 		}
 	}
 
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );
+	Screen::Input( input );
 }
 
 void ScreenNameEntry::HandleScreenMessage( const ScreenMessage SM )

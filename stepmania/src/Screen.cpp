@@ -9,6 +9,7 @@
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
 #include "ActorUtil.h"
+#include "InputEventPlus.h"
 
 #define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
 #define PREV_SCREEN					THEME->GetMetric (m_sName,"PrevScreen")
@@ -142,15 +143,15 @@ void Screen::MenuBack(	PlayerNumber pn, const InputEventType type )
  * pass at input.  Return true if the input was handled and should not be passed
  * to lower screens, or false if not handled.  If true is returned, Input() will
  * not be called, either.  Normal screens should not overload this function. */
-bool Screen::OverlayInput( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+bool Screen::OverlayInput( const InputEventPlus &input )
 {
 	return false;
 }
 
-void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void Screen::Input( const InputEventPlus &input )
 {
 	/* Don't send release messages with the default handler. */
-	switch( type )
+	switch( input.type )
 	{
 	case IET_FIRST_PRESS:
 	case IET_SLOW_REPEAT:
@@ -161,26 +162,26 @@ void Screen::Input( const DeviceInput& DeviceI, const InputEventType type, const
 	}
 
 	/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
-	if( MenuI.button == MENU_BUTTON_BACK && DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == KEY_ESC )
+	if( input.MenuI.button == MENU_BUTTON_BACK && input.DeviceI.device == DEVICE_KEYBOARD  &&  input.DeviceI.button == KEY_ESC )
 	{
-		this->MenuBack( MenuI.player );
+		this->MenuBack( input.MenuI.player );
 		return;
 	}
 
 	// default input handler used by most menus
-	if( !MenuI.IsValid() )
+	if( !input.MenuI.IsValid() )
 		return;
 
-	switch( MenuI.button )
+	switch( input.MenuI.button )
 	{
-	case MENU_BUTTON_UP:	this->MenuUp( MenuI.player, type );		return;
-	case MENU_BUTTON_DOWN:	this->MenuDown( MenuI.player, type );	return;
-	case MENU_BUTTON_LEFT:	this->MenuLeft( MenuI.player, type );	return;
-	case MENU_BUTTON_RIGHT:	this->MenuRight( MenuI.player, type );	return;
-	case MENU_BUTTON_BACK:	this->MenuBack( MenuI.player, type );	return;
-	case MENU_BUTTON_START:	this->MenuStart( MenuI.player, type );	return;
-	case MENU_BUTTON_SELECT:this->MenuSelect( MenuI.player, type );	return;
-	case MENU_BUTTON_COIN:	this->MenuCoin( MenuI.player, type );	return;
+	case MENU_BUTTON_UP:	this->MenuUp	( input.MenuI.player, input.type );	return;
+	case MENU_BUTTON_DOWN:	this->MenuDown	( input.MenuI.player, input.type );	return;
+	case MENU_BUTTON_LEFT:	this->MenuLeft	( input.MenuI.player, input.type );	return;
+	case MENU_BUTTON_RIGHT:	this->MenuRight	( input.MenuI.player, input.type );	return;
+	case MENU_BUTTON_BACK:	this->MenuBack	( input.MenuI.player, input.type );	return;
+	case MENU_BUTTON_START:	this->MenuStart	( input.MenuI.player, input.type );	return;
+	case MENU_BUTTON_SELECT:this->MenuSelect( input.MenuI.player, input.type );	return;
+	case MENU_BUTTON_COIN:	this->MenuCoin	( input.MenuI.player, input.type );	return;
 	}
 }
 

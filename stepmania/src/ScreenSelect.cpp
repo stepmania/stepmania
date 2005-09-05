@@ -9,6 +9,7 @@
 #include "GameCommand.h"
 #include "LightsManager.h"
 #include "Command.h"
+#include "InputEventPlus.h"
 
 #define CHOICE_NAMES			THEME->GetMetric (m_sName,"ChoiceNames")
 #define CHOICE( s )				THEME->GetMetricM(m_sName,ssprintf("Choice%s",s.c_str()))
@@ -129,7 +130,7 @@ void ScreenSelect::DrawPrimitives()
 	Screen::DrawPrimitives();
 }
 
-void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenSelect::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenSelect::Input()" );
 
@@ -143,10 +144,10 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 	// user will still be on the title menu.
 	bool bAllowJoinInput = !ALLOW_DISABLED_PLAYER_INPUT;
 
-	if( MenuI.button == MENU_BUTTON_COIN ||
-		(bAllowJoinInput && Screen::JoinInput(MenuI)) )
+	if( input.MenuI.button == MENU_BUTTON_COIN ||
+		(bAllowJoinInput && Screen::JoinInput(input.MenuI)) )
 	{
-		if( type == IET_FIRST_PRESS )
+		if( input.type == IET_FIRST_PRESS )
 			this->UpdateSelectableChoices();
 	
 		if( !ALLOW_DISABLED_PLAYER_INPUT )
@@ -154,7 +155,7 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 	}
 
 	// block input of disabled players
-	if( !ALLOW_DISABLED_PLAYER_INPUT && !GAMESTATE->IsPlayerEnabled(MenuI.player) )
+	if( !ALLOW_DISABLED_PLAYER_INPUT && !GAMESTATE->IsPlayerEnabled(input.MenuI.player) )
 		return;
 
 	if( IsTransitioning() )
@@ -162,13 +163,13 @@ void ScreenSelect::Input( const DeviceInput& DeviceI, const InputEventType type,
 
 	for( unsigned i = 0; i < m_aCodes.size(); ++i )
 	{
-		if( !m_aCodes[i].EnteredCode( GameI.controller ) )
+		if( !m_aCodes[i].EnteredCode( input.GameI.controller ) )
 			continue;
 
 		LOG->Trace("entered code for index %d", i);
-		m_aCodeChoices[i].Apply( MenuI.player );
+		m_aCodeChoices[i].Apply( input.MenuI.player );
 	}
-	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default input handler
+	Screen::Input( input );	// default input handler
 }
 
 void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )

@@ -31,6 +31,7 @@
 #include "BackgroundUtil.h"
 #include <utility>
 #include <float.h>
+#include "InputEventPlus.h"
 
 static Preference<float> g_iDefaultRecordLength( "DefaultRecordLength", 4 );
 
@@ -995,41 +996,39 @@ void ScreenEdit::DrawPrimitives()
 	GAMESTATE->m_fSongBeat = fSongBeat;	// restore real song beat
 }
 
-void ScreenEdit::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenEdit::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenEdit::Input()" );
 
 	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
 		return;
 
-	const DeviceInput& di = DeviceI;
-
 	EditButton EditB;
-	DeviceToEdit( di, EditB );
+	DeviceToEdit( input.DeviceI, EditB );
 
 	if( EditB == EDIT_BUTTON_REMOVE_NOTE )
 	{
 		// Ugly: we need to know when the button was pressed or released, so we
 		// can clamp operations to that time.  Should InputFilter keep track of
 		// last release, too?
-		m_bRemoveNoteButtonDown = (type != IET_RELEASE);
+		m_bRemoveNoteButtonDown = (input.type != IET_RELEASE);
 		m_RemoveNoteButtonLastChanged.Touch();
 	}
 
 	switch( m_EditState )
 	{
 	case STATE_EDITING:
-		InputEdit( di, type, GameI, MenuI, StyleI, EditB );
+		InputEdit( input, EditB );
 		m_bTextInfoNeedsUpdate = true;
 		break;
 	case STATE_RECORDING:
-		InputRecord( di, type, GameI, MenuI, StyleI, EditB );
+		InputRecord( input, EditB );
 		break;
 	case STATE_RECORDING_PAUSED:
-		InputRecordPaused( di, type, GameI, MenuI, StyleI, EditB );
+		InputRecordPaused( input, EditB );
 		break;
 	case STATE_PLAYING:
-		InputPlay( di, type, GameI, MenuI, StyleI, EditB );
+		InputPlay( input, EditB );
 		break;
 	default:	ASSERT(0);
 	}
@@ -1050,14 +1049,14 @@ static void ShiftToRightSide( int &iCol, int iNumTracks )
 	}
 }
 
-void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB )
+void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 {
-	if( type == IET_LEVEL_CHANGED )
+	if( input.type == IET_LEVEL_CHANGED )
 		return;		// don't care
 
-	if( type == IET_RELEASE )
+	if( input.type == IET_RELEASE )
 	{
-		if( EditPressed( EDIT_BUTTON_SCROLL_SELECT, DeviceI ) )
+		if( EditPressed( EDIT_BUTTON_SCROLL_SELECT, input.DeviceI ) )
 			m_iShiftAnchor = -1;
 		return;
 	}
@@ -1076,7 +1075,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	case EDIT_BUTTON_COLUMN_8:
 	case EDIT_BUTTON_COLUMN_9:
 		{
-			if( type != IET_FIRST_PRESS )
+			if( input.type != IET_FIRST_PRESS )
 				break;	// We only care about first presses
 
 			int iCol = EditB - EDIT_BUTTON_COLUMN_0;
@@ -1355,11 +1354,16 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			default:	ASSERT(0);						return;
 			}
 			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
-				fDeltaBPM /= 2;
-			else switch( type )
 			{
-			case IET_SLOW_REPEAT:	fDeltaBPM *= 10;	break;
-			case IET_FAST_REPEAT:	fDeltaBPM *= 40;	break;
+				fDeltaBPM /= 2;
+			}
+			else 
+			{
+				switch( input.type )
+				{
+				case IET_SLOW_REPEAT:	fDeltaBPM *= 10;	break;
+				case IET_FAST_REPEAT:	fDeltaBPM *= 40;	break;
+				}
 			}
 			
 			float fNewBPM = fBPM + fDeltaBPM;
@@ -1377,13 +1381,17 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			default:	ASSERT(0);						return;
 			}
 			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
-				fStopDelta /= 20; /* 1ms */
-			else switch( type )
 			{
-			case IET_SLOW_REPEAT:	fStopDelta *= 10;	break;
-			case IET_FAST_REPEAT:	fStopDelta *= 40;	break;
+				fStopDelta /= 20; /* 1ms */
 			}
-
+			else 
+			{
+				switch( input.type )
+				{
+				case IET_SLOW_REPEAT:	fStopDelta *= 10;	break;
+				case IET_FAST_REPEAT:	fStopDelta *= 40;	break;
+				}
+			}
 			unsigned i;
 			for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
 			{
@@ -1417,13 +1425,17 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			default:	ASSERT(0);						return;
 			}
 			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
-				fOffsetDelta /= 20; /* 1ms */
-			else switch( type )
 			{
-			case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
-			case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+				fOffsetDelta /= 20; /* 1ms */
 			}
-
+			else 
+			{
+				switch( input.type )
+				{
+				case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
+				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+				}
+			}
 			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
 		}
 		break;
@@ -1439,7 +1451,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 			case EDIT_BUTTON_SAMPLE_LENGTH_UP:			fDelta = +0.02f;	break;
 			default:	ASSERT(0);						return;
 			}
-			switch( type )
+			switch( input.type )
 			{
 			case IET_SLOW_REPEAT:	fDelta *= 10;	break;
 			case IET_FAST_REPEAT:	fDelta *= 40;	break;
@@ -1718,7 +1730,7 @@ void ScreenEdit::InputEdit( const DeviceInput& DeviceI, const InputEventType typ
 	}
 }
 
-void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB )
+void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 {
 	if( EditB == EDIT_BUTTON_RETURN_TO_EDIT )
 	{
@@ -1726,12 +1738,12 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 		return;
 	}	
 
-	if( StyleI.player != PLAYER_1 )
+	if( input.StyleI.player != PLAYER_1 )
 		return;		// ignore
 
-	const int iCol = StyleI.col;
+	const int iCol = input.StyleI.col;
 
-	switch( type )
+	switch( input.type )
 	{
 	case IET_FIRST_PRESS:
 		{
@@ -1774,9 +1786,9 @@ void ScreenEdit::InputRecord( const DeviceInput& DeviceI, const InputEventType t
 	}
 }
 
-void ScreenEdit::InputRecordPaused( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB )
+void ScreenEdit::InputRecordPaused( const InputEventPlus &input, EditButton EditB )
 {
-	if( type != IET_FIRST_PRESS )
+	if( input.type != IET_FIRST_PRESS )
 		return;		// don't care
 
 	switch( EditB )
@@ -1827,9 +1839,9 @@ void ScreenEdit::InputRecordPaused( const DeviceInput& DeviceI, const InputEvent
 	}
 }
 
-void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI, EditButton EditB )
+void ScreenEdit::InputPlay( const InputEventPlus &input, EditButton EditB )
 {
-	if( type != IET_FIRST_PRESS )
+	if( input.type != IET_FIRST_PRESS )
 		return;
 
 	switch( EditB )
@@ -1861,11 +1873,16 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 			}
 
 			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
-				fOffsetDelta /= 20; /* 1ms */
-			else switch( type )
 			{
-			case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
-			case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+				fOffsetDelta /= 20; /* 1ms */
+			}
+			else 
+			{
+				switch( input.type )
+				{
+				case IET_SLOW_REPEAT:	fOffsetDelta *= 10;	break;
+				case IET_FAST_REPEAT:	fOffsetDelta *= 40;	break;
+				}
 			}
 
 			m_pSong->m_Timing.m_fBeat0OffsetInSeconds += fOffsetDelta;
@@ -1873,11 +1890,11 @@ void ScreenEdit::InputPlay( const DeviceInput& DeviceI, const InputEventType typ
 		break;
 	}
 
-	switch( StyleI.player )
+	switch( input.StyleI.player )
 	{
 	case PLAYER_1:	
 		if( PREFSMAN->m_AutoPlay == PC_HUMAN )
-			m_Player.Step( StyleI.col, DeviceI.ts ); 
+			m_Player.Step( input.StyleI.col, input.DeviceI.ts ); 
 		break;
 	}
 
@@ -2236,7 +2253,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		{
 			Course *pCourse = GAMESTATE->m_pCurCourse;
 			CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];
-			bool bAnyAttackAtThisBeat = false;
 			FOREACH( Attack, ce.attacks, a )
 			{
 				if( a->fStartSecond == m_pSong->GetElapsedTimeFromBeat(GAMESTATE->m_fSongBeat) )
@@ -2255,7 +2271,6 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 	{
 		PlayerOptions poChosen = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
 		CString sMods = poChosen.GetString();
-		const int row = BeatToNoteRow( GAMESTATE->m_fSongBeat );
 
 		Course *pCourse = GAMESTATE->m_pCurCourse;
 		CourseEntry &ce = pCourse->m_vEntries[GAMESTATE->m_iEditCourseEntryIndex];

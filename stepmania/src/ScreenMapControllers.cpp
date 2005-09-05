@@ -10,6 +10,7 @@
 #include "Game.h"
 #include "ScreenDimensions.h"
 #include "Command.h"
+#include "InputEventPlus.h"
 #if defined(XBOX)
 #include "HelpDisplay.h" //We still need this for Xbox controller mapping.
 #endif
@@ -162,34 +163,34 @@ static bool IsAxis( const DeviceInput& DeviceI )
 	return false;
 }
 
-void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenMapControllers::Input( const InputEventPlus &input )
 {
-	if( type != IET_FIRST_PRESS && type != IET_SLOW_REPEAT )
+	if( input.type != IET_FIRST_PRESS && input.type != IET_SLOW_REPEAT )
 		return;	// ignore
 
 	LOG->Trace( "ScreenMapControllers::Input():  device: %d, button: %d", 
-		DeviceI.device, DeviceI.button );
+		input.DeviceI.device, input.DeviceI.button );
 
-	int button = DeviceI.button;
+	int button = input.DeviceI.button;
 
 #ifdef _XBOX
-	if(!m_iWaitingForPress && DeviceI.device == DEVICE_JOY1)
+	if( !m_iWaitingForPress && input.DeviceI.device == DEVICE_JOY1 )
 	{
 		// map the xbox controller buttons to the keyboard equivalents
-		if(DeviceI.button == JOY_HAT_LEFT)
+		if( input.DeviceI.button == JOY_HAT_LEFT )
 			button = KEY_LEFT;
-		else if(DeviceI.button == JOY_HAT_RIGHT)
+		else if( input.DeviceI.button == JOY_HAT_RIGHT )
 			button = KEY_RIGHT;
-		else if(DeviceI.button == JOY_HAT_UP)
+		else if( input.DeviceI.button == JOY_HAT_UP )
 			button = KEY_UP;
-		else if(DeviceI.button == JOY_HAT_DOWN)
+		else if( input.DeviceI.button == JOY_HAT_DOWN )
 			button = KEY_DOWN;
-		else if(DeviceI.button == JOY_AUX_1)
+		else if( input.DeviceI.button == JOY_AUX_1 )
 			button = KEY_ENTER;
-		else if(DeviceI.button == JOY_AUX_2)
+		else if( input.DeviceI.button == JOY_AUX_2 )
 			button = KEY_ESC;
-		else if(DeviceI.button == JOY_1 || DeviceI.button == JOY_2 ||
-				DeviceI.button == JOY_3 || DeviceI.button == JOY_4)
+		else if( input.DeviceI.button == JOY_1 || input.DeviceI.button == JOY_2 ||
+				input.DeviceI.button == JOY_3 || input.DeviceI.button == JOY_4 )
 			button = KEY_DEL;
 	}
 #endif
@@ -206,7 +207,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 	if( m_iWaitingForPress )
 	{
 		/* Don't allow function keys to be mapped. */
-		if ( DeviceI.device == DEVICE_KEYBOARD && (DeviceI.button >= KEY_F1 && DeviceI.button <= KEY_F12) )
+		if( input.DeviceI.device == DEVICE_KEYBOARD && (input.DeviceI.button >= KEY_F1 && input.DeviceI.button <= KEY_F12) )
 		{
 			m_textError.SetText( "That key can not be mapped." );
 			SCREENMAN->PlayInvalidSound();
@@ -220,19 +221,19 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		{
 			if( m_DeviceIToMap.IsValid() &&
 				!IsAxis(m_DeviceIToMap) &&
-				IsAxis(DeviceI) )
+				IsAxis(input.DeviceI) )
 			{
 				LOG->Trace("Ignored input; non-axis event already received");
 				return;	// ignore this press
 			}
 
-			m_DeviceIToMap = DeviceI;
+			m_DeviceIToMap = input.DeviceI;
 		}
 	}
 #ifdef _XBOX
-	else if( DeviceI.device == DEVICE_JOY1 )
+	else if( input.DeviceI.device == DEVICE_JOY1 )
 #else
-	else if( DeviceI.device == DEVICE_KEYBOARD )
+	else if( input.DeviceI.device == DEVICE_KEYBOARD )
 #endif
 	{
 		switch( button )
@@ -311,7 +312,7 @@ void ScreenMapControllers::Input( const DeviceInput& DeviceI, const InputEventTy
 		}
 	}
 
-//	Screen::Input( DeviceI, type, GameI, MenuI, StyleI );	// default handler
+//	Screen::Input( input );	// default handler
 
 	LOG->Trace( "m_iCurSlot: %d m_iCurController: %d m_iCurButton: %d", m_iCurSlot, m_iCurController, m_iCurButton );
 

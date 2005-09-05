@@ -17,7 +17,7 @@ public:
 	virtual ~ScreenMapControllers();
 
 	virtual void Update( float fDeltaTime );
-	virtual void Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI );
+	virtual void Input( const InputEventPlus &input );
 
 private:
 	void KeyLeft();

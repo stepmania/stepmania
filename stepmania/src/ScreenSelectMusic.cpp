@@ -29,6 +29,7 @@
 #include "CommonMetrics.h"
 #include "BannerCache.h"
 #include "song.h"
+#include "InputEventPlus.h"
 
 const int NUM_SCORE_DIGITS	=	9;
 
@@ -676,15 +677,16 @@ void ScreenSelectMusic::Update( float fDeltaTime )
 	CheckBackgroundRequests();
 }
 
-void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenSelectMusic::Input( const InputEventPlus &input )
 {
 //	LOG->Trace( "ScreenSelectMusic::Input()" );
 
 	// debugging?
 	// I just like being able to see untransliterated titles occasionally.
-	if( DeviceI.device == DEVICE_KEYBOARD && DeviceI.button == KEY_F9 )
+	if( input.DeviceI.device == DEVICE_KEYBOARD && input.DeviceI.button == KEY_F9 )
 	{
-		if( type != IET_FIRST_PRESS ) return;
+		if( input.type != IET_FIRST_PRESS ) 
+			return;
 		PREFSMAN->m_bShowNativeLanguage.Set( !PREFSMAN->m_bShowNativeLanguage );
 		m_MusicWheel.RebuildAllMusicWheelItems();
 		if( SHOW_COURSE_CONTENTS )
@@ -692,29 +694,30 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		return;
 	}
 
-	if( !GameI.IsValid() )		return;		// don't care
+	if( !input.GameI.IsValid() )
+		return;		// don't care
 
 
 	/* XXX: What's the difference between this and StyleI.player? */
 	/* StyleI won't be valid if it's a menu button that's pressed.  
 	 * There's got to be a better way of doing this.  -Chris */
-	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( GameI.controller );
+	PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( input.GameI.controller );
 	if( !GAMESTATE->IsHumanPlayer(pn) )
 		return;
 
 	// Check for "Press START again for options" button press
 	if( m_bMadeChoice  &&
-		MenuI.IsValid()  &&
-		MenuI.button == MENU_BUTTON_START  &&
-		type != IET_RELEASE  &&
-		type != IET_LEVEL_CHANGED &&
+		input.MenuI.IsValid()  &&
+		input.MenuI.button == MENU_BUTTON_START  &&
+		input.type != IET_RELEASE  &&
+		input.type != IET_LEVEL_CHANGED &&
 		OPTIONS_MENU_AVAILABLE.GetValue() )
 	{
 		if(m_bGoToOptions) return; /* got it already */
 		if(!m_bAllowOptionsMenu) return; /* not allowed */
 
 		if( !m_bAllowOptionsMenuRepeat &&
-			(type == IET_SLOW_REPEAT || type == IET_FAST_REPEAT ))
+			(input.type == IET_SLOW_REPEAT || input.type == IET_FAST_REPEAT ))
 			return; /* not allowed yet */
 		
 		m_bGoToOptions = true;
@@ -744,9 +747,9 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		SELECT_MENU_AVAILABLE && INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_SELECT) );
 	if( bSelectIsPressed )
 	{
-		if( type == IET_FIRST_PRESS )
+		if( input.type == IET_FIRST_PRESS )
 		{
-			switch( MenuI.button )
+			switch( input.MenuI.button )
 			{
 			case MENU_BUTTON_LEFT:
 				ChangeDifficulty( pn, -1 );
@@ -764,7 +767,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		}
 	}
 
-	switch( MenuI.button )
+	switch( input.MenuI.button )
 	{
 	case MENU_BUTTON_RIGHT:
 	case MENU_BUTTON_LEFT:
@@ -791,9 +794,9 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 			if( bBothDown || bNeitherDown )
 			{
 				m_MusicWheel.Move( 0 );
-				if( type == IET_FIRST_PRESS )
+				if( input.type == IET_FIRST_PRESS )
 				{
-					switch( MenuI.button )
+					switch( input.MenuI.button )
 					{
 					case MENU_BUTTON_LEFT:
 						m_MusicWheel.ChangeMusic( -1 );
@@ -806,12 +809,12 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 			}
 			else if( bLeftIsDown )
 			{
-				if( type != IET_RELEASE )
+				if( input.type != IET_RELEASE )
 					m_MusicWheel.Move( -1 );
 			}
 			else if( bRightIsDown )
 			{
-				if( type != IET_RELEASE )
+				if( input.type != IET_RELEASE )
 					m_MusicWheel.Move( +1 );
 			}
 			else
@@ -823,7 +826,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 			// Reset the repeat timer when the button is released.
 			// This fixes jumping when you release Left and Right after entering the sort 
 			// code at the same if L & R aren't released at the exact same time.
-			if( type == IET_RELEASE )
+			if( input.type == IET_RELEASE )
 			{
 				FOREACH_HumanPlayer( p )
 				{
@@ -843,28 +846,28 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 	// codes.  Do default processing of Start AFTER detecting codes.  This gives us a 
 	// change to return if Start is part of a code because we don't want to process 
 	// Start as "move to the next screen" if it was just part of a code.
-	switch( MenuI.button )
+	switch( input.MenuI.button )
 	{
-	case MENU_BUTTON_UP:	this->MenuUp( MenuI.player, type );		break;
-	case MENU_BUTTON_DOWN:	this->MenuDown( MenuI.player, type );	break;
-	case MENU_BUTTON_LEFT:	this->MenuLeft( MenuI.player, type );	break;
-	case MENU_BUTTON_RIGHT:	this->MenuRight( MenuI.player, type );	break;
+	case MENU_BUTTON_UP:	this->MenuUp( input.MenuI.player, input.type );		break;
+	case MENU_BUTTON_DOWN:	this->MenuDown( input.MenuI.player, input.type );	break;
+	case MENU_BUTTON_LEFT:	this->MenuLeft( input.MenuI.player, input.type );	break;
+	case MENU_BUTTON_RIGHT:	this->MenuRight( input.MenuI.player, input.type );	break;
 	case MENU_BUTTON_BACK:
 		/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
-		if( DeviceI.device == DEVICE_KEYBOARD  &&  DeviceI.button == KEY_ESC )
-			this->MenuBack( MenuI.player );
+		if( input.DeviceI.device == DEVICE_KEYBOARD  &&  input.DeviceI.button == KEY_ESC )
+			this->MenuBack( input.MenuI.player );
 		else
-			Screen::MenuBack( MenuI.player, type );
+			Screen::MenuBack( input.MenuI.player, input.type );
 		break;
 	// Do the default handler for Start after detecting codes.
 //	case MENU_BUTTON_START:	this->MenuStart( MenuI.player, type );	break;
-	case MENU_BUTTON_COIN:	this->MenuCoin( MenuI.player, type );	break;
+	case MENU_BUTTON_COIN:	this->MenuCoin( input.MenuI.player, input.type );	break;
 	}
 
 
-	if( type == IET_FIRST_PRESS )
+	if( input.type == IET_FIRST_PRESS )
 	{
-		if( CodeDetector::EnteredEasierDifficulty(GameI.controller) )
+		if( CodeDetector::EnteredEasierDifficulty(input.GameI.controller) )
 		{
 			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 				m_soundLocked.Play();
@@ -872,7 +875,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 				ChangeDifficulty( pn, -1 );
 			return;
 		}
-		if( CodeDetector::EnteredHarderDifficulty(GameI.controller) )
+		if( CodeDetector::EnteredHarderDifficulty(input.GameI.controller) )
 		{
 			if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )
 				m_soundLocked.Play();
@@ -880,7 +883,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 				ChangeDifficulty( pn, +1 );
 			return;
 		}
-		if( CodeDetector::EnteredModeMenu(GameI.controller) )
+		if( CodeDetector::EnteredModeMenu(input.GameI.controller) )
 		{
 			if( MODE_MENU_AVAILABLE )
 				m_MusicWheel.ChangeSort( SORT_MODE_MENU );
@@ -888,7 +891,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 				m_soundLocked.Play();
 			return;
 		}
-		if( CodeDetector::EnteredNextSort(GameI.controller) )
+		if( CodeDetector::EnteredNextSort(input.GameI.controller) )
 		{
 			if( ( GAMESTATE->IsExtraStage() && !PREFSMAN->m_bPickExtraStage ) || GAMESTATE->IsExtraStage2() )
 				m_soundLocked.Play();
@@ -896,7 +899,7 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 				m_MusicWheel.NextSort();
 			return;
 		}
-		if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustMusicOptions(GameI.controller) )
+		if( !GAMESTATE->IsExtraStage() && !GAMESTATE->IsExtraStage2() && CodeDetector::DetectAndAdjustMusicOptions(input.GameI.controller) )
 		{
 			m_soundOptionsChange.Play();
 			MESSAGEMAN->Broadcast( ssprintf("PlayerOptionsChangedP%i", pn+1) );
@@ -905,9 +908,9 @@ void ScreenSelectMusic::Input( const DeviceInput& DeviceI, InputEventType type, 
 		}
 	}
 
-	switch( MenuI.button )
+	switch( input.MenuI.button )
 	{
-	case MENU_BUTTON_START:	Screen::MenuStart( MenuI.player, type );	break;
+	case MENU_BUTTON_START:	Screen::MenuStart( input.MenuI.player, input.type );	break;
 	}
 }
 

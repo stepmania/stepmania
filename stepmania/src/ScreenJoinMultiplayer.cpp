@@ -1,7 +1,6 @@
 /*
  * Join players in perparation for ScreenGameplayMultiplayer.
  */
-
 #include "global.h"
 #include "ScreenJoinMultiplayer.h"
 #include "RageInput.h"
@@ -13,6 +12,7 @@ class Style;
 #include "GameCommand.h"
 #include "ScreenPrompt.h"
 #include "ScreenManager.h"
+#include "InputEventPlus.h"
 
 
 static const CString MultiPlayerStatusNames[] = {
@@ -97,18 +97,18 @@ void ScreenJoinMultiplayer::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenJoinMultiplayer::Input( const DeviceInput& DeviceI, const InputEventType type, const GameInput &GameI, const MenuInput &MenuI, const StyleInput &StyleI )
+void ScreenJoinMultiplayer::Input( const InputEventPlus &input )
 {
 	if( this->IsTransitioning() )
 		return;
 
 	// Translate input and sent to the appropriate player.  Assume that all 
 	// joystick devices are mapped the same as the master player.
-	if( type == IET_FIRST_PRESS  &&
-		DeviceI.device >= DEVICE_JOY1  &&  
-		DeviceI.device < DEVICE_JOY1 + NUM_MultiPlayer )
+	if( input.type == IET_FIRST_PRESS  &&
+		input.DeviceI.device >= DEVICE_JOY1  &&  
+		input.DeviceI.device < DEVICE_JOY1 + NUM_MultiPlayer )
 	{
-		DeviceInput di = DeviceI;
+		DeviceInput di = input.DeviceI;
 		di.device = DEVICE_JOY1;
 		GameInput gi;
 		INPUTMAPPER->DeviceToGame( di, gi );
@@ -118,7 +118,7 @@ void ScreenJoinMultiplayer::Input( const DeviceInput& DeviceI, const InputEventT
 			MenuInput mi;
 			INPUTMAPPER->GameToMenu( gi, mi );
 
-			MultiPlayer p = InputMapper::InputDeviceToMultiPlayer( DeviceI.device );
+			MultiPlayer p = InputMapper::InputDeviceToMultiPlayer( input.DeviceI.device );
 
 			// testing hack
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LSHIFT) ) )
@@ -160,7 +160,7 @@ void ScreenJoinMultiplayer::Input( const DeviceInput& DeviceI, const InputEventT
 		}
 	}
 
-	ScreenWithMenuElements::Input( DeviceI, type, GameI, MenuI, StyleI );
+	ScreenWithMenuElements::Input( input );
 }
 
 void ScreenJoinMultiplayer::Update( float fDeltaTime )
