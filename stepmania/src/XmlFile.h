@@ -72,7 +72,6 @@ struct PARSEINFO
 {
 	bool		trim_value;			// [set] do trim when parse?
 	bool		entity_value;		// [set] do convert from reference to entity? ( &lt; -> < )
-	char		escape_value;		// [set] escape value (default '\\')
 
 	char*		xml;				// [get] xml source
 	bool		error_occur;		// [get] is occurance of error?
@@ -80,7 +79,7 @@ struct PARSEINFO
 	PCODE		error_code;			// [get] error code
 	CString		error_string;		// [get] error string
 
-	PARSEINFO() { trim_value = true; entity_value = true; xml = NULL; error_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELL_FORMED; escape_value = 0; }
+	PARSEINFO() { trim_value = true; entity_value = true; xml = NULL; error_occur = false; error_pointer = NULL; error_code = PIE_PARSE_WELL_FORMED; }
 };
 
 // display optional environment

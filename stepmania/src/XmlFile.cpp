@@ -17,7 +17,6 @@ static const char chXMLTagOpen		= '<';
 static const char chXMLTagClose		= '>';
 static const char chXMLQuestion		= '?';	// used in checking for meta tags: "<?TAG ... ?/>"
 static const char chXMLTagPre		= '/';
-static const char chXMLEscape		= '\\';	// for value field escape
 static const char chXMLExclamation	= '!';
 static const char chXMLDash			= '-';
 
@@ -65,97 +64,13 @@ static char* tcsskip( const char* psz )
 	return (char*)psz;
 }
 
-// Desc   : similar with strchr with escape process
-// Param  : escape - will be escape character
-static const char* tcsechr( const char* pch, int ch, char escape )
-{
-	bool bInEscape = false;
-	while( pch && *pch )
-	{
-		if( *pch == escape && !bInEscape )
-			bInEscape = true;
-		else
-		{
-			bInEscape = false;
-			if( *pch == ch )
-				return pch;
-		}
-		pch++;
-	}
-	return pch;
-}
-
-// Desc   : similar with strlen with escape process
-// Param  : escape - will be escape character
-static int tcselen( char escape, const char *start, const char *end )
-{
-	int len = 0;
-	bool bInEscape = false;
-	while( start && *start && start<end )
-	{
-		if( *start == escape && !bInEscape )
-			bInEscape = true;
-		else
-		{
-			bInEscape = false;
-			len++;
-		}
-		++start;
-	}
-	return len;
-}
-
-// Desc   : similar with _tcscpy with escape process
-// Param  : escape - will be escape character
-static void unescape( char *psz, int escape, const char* srt, const char* end = NULL )
-{
-	const char* pch = srt;
-	if( end==NULL ) end = (char*)sizeof(long);
-	const char* prev_escape = NULL;
-	while( pch && *pch && pch<end )
-	{
-		if( *pch == escape && prev_escape == NULL )
-			prev_escape = pch;
-		else
-		{
-			prev_escape = NULL;
-			*psz++ = *pch;
-		}
-
-		pch++;
-	}
-
-	*psz = '\0';
-}
-
-// Desc   : similar with strpbrk with escape process
-// Param  : escape - will be escape character
-static char* tcsepbrk( const char* psz, const char* chset, int escape )
-{
-	char* pch = (char*)psz;
-	char* prev_escape = NULL;
-	while( pch && *pch )
-	{
-		if( *pch == escape && prev_escape == NULL )
-			prev_escape = pch;
-		else
-		{
-			prev_escape = NULL;
-			if( strchr( chset, *pch ) )
-				return (char*)pch;		
-		}
-		pch++;
-	}
-	return pch;
-}
-
 static bool XIsEmptyString( const CString &s )
 {
 	return s.find_first_not_of( "\r\n\t " ) == s.npos;
 }
 
 // put string of (psz~end) on ps string
-static void SetString( const char* psz, const char* end, CString* ps, bool trim = false, char escape = 0 )
+static void SetString( const char* psz, const char* end, CString* ps, bool trim = false )
 {
 	if( trim )
 	{
@@ -169,18 +84,7 @@ static void SetString( const char* psz, const char* end, CString* ps, bool trim 
 	if( len <= 0 )
 		return;
 
-	if( escape )
-	{
-		len = tcselen( escape, psz, end );
-		char* szTemp = new char[len];
-		unescape( szTemp, escape, psz, end );
-		*ps = szTemp;
-		delete [] szTemp;
-	}
-	else
-	{
-		ps->assign( psz, len );
-	}
+	ps->assign( psz, len );
 }
 
 XNode::~XNode()
@@ -258,20 +162,17 @@ const char* XNode::LoadAttributes( const char* xml, PARSEINFO *pi /*= &piDefault
 			int quote = *xml;
 			if( quote == '"' || quote == '\'' )
 			{
-				pEnd = tcsechr( ++xml, quote, chXMLEscape );
+				pEnd = strchr( ++xml, quote );
 			}
 			else
 			{
 				//attr= value> 
 				// none quote mode
-				//pEnd = tcsechr( xml, ' ', '\\' );
-				pEnd = tcsepbrk( xml, (" >"), chXMLEscape );
+				pEnd = strpbrk( xml, " >" );
 			}
 
 			bool trim = pi->trim_value;
-			char escape = pi->escape_value;
-			//SetString( xml, pEnd, &attr->m_sValue, trim, chXMLEscape );	
-			SetString( xml, pEnd, &attr->m_sValue, trim, escape );
+			SetString( xml, pEnd, &attr->m_sValue, trim );
 			xml = pEnd;
 			// ATTRVALUE 
 			if( pi->entity_value )
@@ -388,7 +289,7 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 	if( XIsEmptyString( m_sValue ) )
 	{
 		// Text Value 
-		const char* pEnd = tcsechr( ++xml, chXMLTagOpen, chXMLEscape );
+		const char* pEnd = strchr( ++xml, chXMLTagOpen );
 		if( pEnd == NULL ) 
 		{
 			if( !pi->error_occur ) 
@@ -403,8 +304,7 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 		}
 		
 		bool trim = pi->trim_value;
-		char escape = pi->escape_value;
-		SetString( xml, pEnd, &m_sValue, trim, escape );
+		SetString( xml, pEnd, &m_sValue, trim );
 
 		xml = pEnd;
 		// TEXTVALUE reference
@@ -482,7 +382,7 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 			if( xml && XIsEmptyString( m_sValue ) && *xml !=chXMLTagOpen )
 			{
 				// Text Value 
-				const char* pEnd = tcsechr( xml, chXMLTagOpen, chXMLEscape );
+				const char* pEnd = strchr( xml, chXMLTagOpen );
 				if( pEnd == NULL ) 
 				{
 					// error cos not exist CloseTag </TAG>
@@ -497,8 +397,7 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 				}
 				
 				bool trim = pi->trim_value;
-				char escape = pi->escape_value;
-				SetString( xml, pEnd, &m_sValue, trim, escape );
+				SetString( xml, pEnd, &m_sValue, trim );
 
 				xml = pEnd;
 				//TEXTVALUE
