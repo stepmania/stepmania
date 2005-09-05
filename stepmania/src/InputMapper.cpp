@@ -697,11 +697,15 @@ void InputMapper::ResetKeyRepeat( StyleInput StyleI )
 
 InputDevice InputMapper::MultiPlayerToInputDevice( MultiPlayer mp )
 {
+	if( mp == MultiPlayer_INVALID )
+		return DEVICE_NONE;
 	return (InputDevice)(mp + DEVICE_JOY1);
 }
 
 MultiPlayer InputMapper::InputDeviceToMultiPlayer( InputDevice id )
 {
+	if( id == DEVICE_NONE )
+		return MultiPlayer_INVALID;
 	return (MultiPlayer)(id - DEVICE_JOY1);
 }
 
