@@ -55,8 +55,9 @@ bool IniFile::ReadFile( RageFileBasic &f )
 			/* New section. */
 			keyname = line.substr(1, line.size()-2);
 		}
-		else //if a value
+		else
 		{
+			/* New value. */
 			int iEqualIndex = line.Find("=");
 			if( iEqualIndex != -1 )
 			{
