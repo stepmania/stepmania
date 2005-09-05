@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
+		1215D7A308C6559A00B87D8B /* ScreenGameplayNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */; };
 		AA07A55F0843E72B00E33D21 /* ScreenDebugOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A5550843E72B00E33D21 /* ScreenDebugOverlay.cpp */; };
 		AA07A5600843E72B00E33D21 /* ScreenDebugOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A5560843E72B00E33D21 /* ScreenDebugOverlay.h */; };
 		AA07A5610843E72B00E33D21 /* ScreenGameplayMultiplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A5570843E72B00E33D21 /* ScreenGameplayMultiplayer.cpp */; };
@@ -996,6 +998,8 @@
 /* Begin PBXFileReference section */
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenGameplayNormal.cpp; path = ../src/ScreenGameplayNormal.cpp; sourceTree = "<group>"; };
+		1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenGameplayNormal.h; path = ../src/ScreenGameplayNormal.h; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		AA07A5550843E72B00E33D21 /* ScreenDebugOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenDebugOverlay.cpp; path = ../src/ScreenDebugOverlay.cpp; sourceTree = "<group>"; };
@@ -2141,6 +2145,8 @@
 				AA6E002A047711F3005F316C /* ScreenGameplay.h */,
 				AA07A5570843E72B00E33D21 /* ScreenGameplayMultiplayer.cpp */,
 				AA07A5580843E72B00E33D21 /* ScreenGameplayMultiplayer.h */,
+				1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */,
+				1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */,
 				AA6E002F047711F3005F316C /* ScreenHowToPlay.cpp */,
 				AA6E0030047711F3005F316C /* ScreenHowToPlay.h */,
 				AA6E0033047711F3005F316C /* ScreenInstructions.cpp */,
@@ -3602,6 +3608,7 @@
 				AA77E76408B64B9A00FA24CA /* ScreenOptionsEditCourseEntry.h in Headers */,
 				AA77E76608B64B9A00FA24CA /* ScreenOptionsManageCourses.h in Headers */,
 				AA77E76808B64B9A00FA24CA /* ScreenOptionsManageProfiles.h in Headers */,
+				1215D7A308C6559A00B87D8B /* ScreenGameplayNormal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4195,6 +4202,7 @@
 				AA77E76508B64B9A00FA24CA /* ScreenOptionsManageCourses.cpp in Sources */,
 				AA77E76708B64B9A00FA24CA /* ScreenOptionsManageProfiles.cpp in Sources */,
 				AA77E8B808B6AC0000FA24CA /* wchar.cpp in Sources */,
+				1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
