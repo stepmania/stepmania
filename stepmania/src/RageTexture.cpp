@@ -51,31 +51,15 @@ void RageTexture::CreateFrameRects()
 
 void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWide, int* piFramesHigh )
 {
-	*piFramesWide = *piFramesHigh = 1;	// set default values in case we don't find the dimension in the file name
-
-	const CString sFName = SetExtension( sPath, "" );
-
-	CStringArray arrayBits;
-	split( sFName, " ", arrayBits, false );
-
-	for( unsigned i=0; i<arrayBits.size(); i++ )
+	static Regex match( " ([0-9]+)x([0-9]+)(\\.|$)" );
+        CStringArray asMatch;
+	if( !match.Compare(sPath, asMatch) )
 	{
-		CString &sBit = arrayBits[ i ];	
-		
-		// Test to see if it looks like "%ux%u" (e.g. 16x8)
-
-		CStringArray arrayDimensionsBits;
-		split( sBit, "x", arrayDimensionsBits, false );
-
-		if( arrayDimensionsBits.size() != 2 )
-			continue;
-		else if( !IsAnInt(arrayDimensionsBits[0]) || !IsAnInt(arrayDimensionsBits[1]) )
-			continue;
-
-		*piFramesWide = atoi(arrayDimensionsBits[0]);
-		*piFramesHigh = atoi(arrayDimensionsBits[1]);
+		*piFramesWide = *piFramesHigh = 1;
 		return;
 	}
+	*piFramesWide = atoi(asMatch[0]);
+	*piFramesHigh = atoi(asMatch[1]);
 }
 
 const RectF *RageTexture::GetTextureCoordRect( int iFrameNo ) const
