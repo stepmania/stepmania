@@ -3,16 +3,21 @@
 #include "Command.h"
 #include "Foreach.h"
 #include "RageUtil.h"
+#include "RageLog.h"
 #include <sstream>
 #include "LuaBinding.h"
 
 ActorCommands::ActorCommands( const CString &sCommands )
 {
-	if( sCommands.size() > 0 && sCommands[0] == '%' )
+	if( sCommands.size() > 4 && sCommands[1] == '\033'  )
 	{
+		/* This is a compiled Lua chunk.  Just pass it on directly. */
 		m_sLuaFunction = sCommands;
-		m_sLuaFunction.erase( m_sLuaFunction.begin() );
-		m_sLuaFunction = "return " + m_sLuaFunction;
+	}
+	else if( sCommands.size() > 0 && sCommands[0] == '%' )
+	{
+		m_sLuaFunction = "return ";
+		m_sLuaFunction.append( sCommands.begin()+1, sCommands.end() );
 	}
 	else
 	{
