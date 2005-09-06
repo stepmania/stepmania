@@ -57,12 +57,9 @@ struct RunInitEntities
 } static g_RunInitEntities;
 
 // skip spaces
-static char* tcsskip( const char* psz )
+static void tcsskip( const CString &s, unsigned &i )
 {
-	while( psz && isspace(*psz) )
-		++psz;
-
-	return (char*)psz;
+	i = s.find_first_not_of( " \t\r\n", i );
 }
 
 static bool XIsEmptyString( const CString &s )
@@ -71,21 +68,21 @@ static bool XIsEmptyString( const CString &s )
 }
 
 // put string of (psz~end) on ps string
-static void SetString( const char* psz, const char* end, CString* ps, bool trim = false )
+static void SetString( const CString &s, int iStart, int iEnd, CString* ps, bool trim = false )
 {
 	if( trim )
 	{
-		while( psz < end && isspace(*psz) )
-			psz++;
-		while( end-1 >= psz && isspace(end[-1]) )
-			end--;
+		while( iStart < iEnd && isspace(s[iStart]) )
+			iStart++;
+		while( iEnd-1 >= iStart && isspace(s[iEnd-1]) )
+			iEnd--;
 	}
 
-	int len = end - psz;
+	int len = iEnd - iStart;
 	if( len <= 0 )
 		return;
 
-	ps->assign( psz, len );
+	ps->assign( s, iStart, len );
 }
 
 XNode::~XNode()
@@ -109,22 +106,23 @@ void XNode::Clear()
 // Desc   : loading attribute plain xml text
 // Param  : pszAttrs - xml of attributes
 //          pi = parser information
-// Return : advanced string pointer. (error return NULL)
-const char* XNode::LoadAttributes( const char* xml, PARSEINFO *pi /*= &piDefault*/)
+// Return : advanced string pointer. (error return npos)
+unsigned XNode::LoadAttributes( const CString &xml, PARSEINFO *pi, unsigned iOffset )
 {
-	while( xml && *xml )
+	while( iOffset < xml.size() )
 	{
-		xml = tcsskip( xml );
-		if( !xml )
+		tcsskip( xml, iOffset );
+		if( iOffset >= xml.size()  )
 			continue;
 
 		// close tag
-		if( *xml == chXMLTagClose || *xml == chXMLTagPre || *xml == chXMLQuestion || *xml == chXMLDash )
-			return xml; // well-formed tag
+		if( iOffset < xml.size() &&
+			(xml[iOffset] == chXMLTagClose || xml[iOffset] == chXMLTagPre || xml[iOffset] == chXMLQuestion || xml[iOffset] == chXMLDash) )
+			return iOffset; // well-formed tag
 
 		// XML Attr Name
-		const char* pEnd = strpbrk( xml, " =" );
-		if( pEnd == NULL ) 
+		unsigned iEnd = xml.find_first_of( " =", iOffset );
+		if( iEnd == xml.npos ) 
 		{
 			// error
 			if( !pi->error_occur ) 
@@ -134,58 +132,59 @@ const char* XNode::LoadAttributes( const char* xml, PARSEINFO *pi /*= &piDefault
 				pi->error_code = PIE_ATTR_NO_VALUE;
 				pi->error_string = ssprintf( "<%s> attribute has error ", m_sName.c_str() );
 			}
-			return NULL;
+			return string.npos;
 		}
 		
 		XAttr *attr = new XAttr;
 
 		// XML Attr Name
-		SetString( xml, pEnd, &attr->m_sName );
+		SetString( xml, iOffset, iEnd, &attr->m_sName );
 		
 		// add new attribute
 		DEBUG_ASSERT( attr->m_sName.size() );
 		m_attrs.insert( make_pair(attr->m_sName, attr) );
-		xml = pEnd;
+		iOffset = iEnd;
 		
 		// XML Attr Value
-		xml = tcsskip( xml );
-		if( !xml )
-			continue;
+		tcsskip( xml, iOffset );
 
-		//if( xml = strchr( xml, '=' ) )
-		if( *xml == '=' )
+		if( iOffset < xml.size() && xml[iOffset] == '=' )
 		{
-			xml = tcsskip( ++xml );
-			if( !xml )
+			++iOffset;
+
+			tcsskip( xml, iOffset );
+			if( iOffset >= xml.size()  )
 				continue;
+
 			// if " or '
 			// or none quote
-			int quote = *xml;
+			char quote = xml[iOffset];
 			if( quote == '"' || quote == '\'' )
 			{
-				pEnd = strchr( ++xml, quote );
+				++iOffset;
+				iEnd = xml.find( quote, iOffset );
 			}
 			else
 			{
 				//attr= value> 
 				// none quote mode
-				pEnd = strpbrk( xml, " >" );
+				iEnd = xml.find_first_of( " >", iOffset );
 			}
 
 			bool trim = pi->trim_value;
-			SetString( xml, pEnd, &attr->m_sValue, trim );
-			xml = pEnd;
+			SetString( xml, iOffset, iEnd, &attr->m_sValue, trim );
+			iOffset = iEnd;
 			// ATTRVALUE 
 			if( pi->entity_value )
 				ReplaceEntityText( attr->m_sValue, g_mapEntitiesToChars );
 
 			if( quote == '"' || quote == '\'' )
-				xml++;
+				++iOffset;
 		}
 	}
 
 	// not well-formed tag
-	return NULL;
+	return string::npos;
 }
 
 // <TAG attr1="value1" attr2='value2' attr3=value3 >
@@ -196,28 +195,28 @@ const char* XNode::LoadAttributes( const char* xml, PARSEINFO *pi /*= &piDefault
 // Desc   : load xml plain text
 // Param  : pszXml - plain xml text
 //          pi = parser information
-// Return : advanced string pointer  (error return NULL)
-const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
+// Return : advanced string pointer  (error return npos)
+unsigned XNode::Load( const CString &xml, PARSEINFO *pi, unsigned iOffset )
 {
 	Clear();
 
 	// <
-	xml = strchr( xml, chXMLTagOpen );
-	if( xml == NULL )
-		return NULL;
+	iOffset = xml.find( chXMLTagOpen, iOffset );
+	if( iOffset == string.npos )
+		return string.npos;
 
 	// </
-	if( xml[1] == chXMLTagPre )
-		return xml;
+	if( xml[iOffset+1] == chXMLTagPre )
+		return iOffset;
 
 	/* <!-- */
-	if( !strncmp(xml+1, "!--", 3) )
+	if( !xml.compare(iOffset+1, 3, "!--") )
 	{
-		xml += 4;
+		iOffset += 4;
 
 		/* Find the close tag. */
-		char *pEnd = strstr( xml, "-->" );
-		if( pEnd == NULL )
+		unsigned iEnd = xml.find( "-->" );
+		if( iEnd == string.npos )
 		{
 			if( !pi->error_occur ) 
 			{
@@ -227,38 +226,38 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 				pi->error_string = "Unterminated comment";
 			}
 
-			return NULL;
+			return string.npos;
 		}
 
 		// Skip -->.
-		xml = pEnd + 3;
+		iOffset = iEnd + 3;
 
-		return Load( xml, pi );
+		return Load( xml, pi, iOffset );
 	}
 
 	// XML Node Tag Name Open
-	xml++;
-	const char* pTagEnd = strpbrk( xml, " \t\r\n/>" );
-	SetString( xml, pTagEnd, &m_sName );
+	iOffset++;
+	unsigned iTagEnd = xml.find_first_of( " \t\r\n/>", iOffset );
+	SetString( xml, iOffset, iTagEnd, &m_sName );
+	iOffset = iTagEnd;
 
-	xml = pTagEnd;
 	// Generate XML Attributte List
-	xml = LoadAttributes( xml, pi );
-	if( xml == NULL )
-		return NULL;
+	iOffset = LoadAttributes( xml, pi, iOffset );
+	if( iOffset == string.npos )
+		return string.npos;
 
 	// alone tag <TAG ... /> or <?TAG ... ?> or <!-- ... --> 
 	// current pointer:   ^               ^              ^
 
-	if( *xml == chXMLTagPre || *xml == chXMLQuestion || *xml == chXMLDash )
+	if( iOffset < xml.size() && (xml[iOffset] == chXMLTagPre || xml[iOffset] == chXMLQuestion || xml[iOffset] == chXMLDash) )
 	{
-		xml++;
+		iOffset++;
 
 		// skip over 2nd dash
-		if( *xml == chXMLDash )
-			xml++;
+		if( iOffset < xml.size() && xml[iOffset] == chXMLDash )
+			iOffset++;
 
-		if( *xml != chXMLTagClose )
+		if( iOffset == xml.size() || xml[iOffset] != chXMLTagClose )
 		{
 			// error: <TAG ... / >
 			if( !pi->error_occur ) 
@@ -270,19 +269,19 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 			}
 
 			// ill-formed tag
-			return NULL;
+			return string.npos;
 		}
 
 		// well-formed tag
-		++xml;
+		++iOffset;
 
 		// UGLY: We want to ignore all XML meta tags.  So, since the Node we 
 		// just loaded is a meta tag, then Load ourself again using the rest 
 		// of the file until we reach a non-meta tag.
 		if( !m_sName.empty() && (m_sName[0] == chXMLQuestion || m_sName[0] == chXMLExclamation) )
-			xml = Load( xml, pi );
+			iOffset = Load( xml, pi, iOffset );
 
-		return xml;
+		return iOffset;
 	}
 
 	// open/close tag <TAG ..> ... </TAG>
@@ -290,8 +289,9 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 	if( XIsEmptyString( m_sValue ) )
 	{
 		// Text Value 
-		const char* pEnd = strchr( ++xml, chXMLTagOpen );
-		if( pEnd == NULL ) 
+		++iOffset;
+		unsigned iEnd = xml.find( chXMLTagOpen, iOffset );
+		if( iEnd == string.npos )
 		{
 			if( !pi->error_occur ) 
 			{
@@ -301,24 +301,24 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 				pi->error_string = ssprintf( "%s must be closed with </%s>", m_sName.c_str(), m_sName.c_str() );
 			}
 			// error cos not exist CloseTag </TAG>
-			return NULL;
+			return string.npos;
 		}
 		
 		bool trim = pi->trim_value;
-		SetString( xml, pEnd, &m_sValue, trim );
+		SetString( xml, iOffset, iEnd, &m_sValue, trim );
 
-		xml = pEnd;
+		iOffset = iEnd;
 		// TEXTVALUE reference
 		if( pi->entity_value )
 			ReplaceEntityText( m_sValue, g_mapEntitiesToChars );
 	}
 
 	// generate child nodes
-	while( xml && *xml )
+	while( iOffset < xml.size() )
 	{
 		XNode *node = new XNode;
 		
-		xml = node->Load( xml,pi );
+		iOffset = node->Load( xml, pi, iOffset );
 		if( !node->m_sName.empty() )
 		{
 			DEBUG_ASSERT( node->m_sName.size() );
@@ -332,17 +332,17 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 		// open/close tag <TAG ..> ... </TAG>
 		//                             ^- current pointer
 		// CloseTag case
-		if( xml && xml[0] == chXMLTagOpen && xml[1] == chXMLTagPre )
+		if( iOffset+1 < xml.size() && xml[iOffset] == chXMLTagOpen && xml[iOffset+1] == chXMLTagPre )
 		{
 			// </Close>
-			xml+=2; // C
+			iOffset += 2; // C
 			
-			xml = tcsskip( xml );
-			if( xml == NULL )
-				return NULL;
+			tcsskip( xml, iOffset );
+			if( iOffset >= xml.size()  )
+				continue;
 
-			const char* pEnd = strpbrk( xml, " >" );
-			if( pEnd == NULL ) 
+			unsigned iEnd = xml.find_first_of( " >", iOffset );
+			if( iEnd == string.npos )
 			{
 				if( !pi->error_occur ) 
 				{
@@ -352,17 +352,17 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 					pi->error_string = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
 				}
 				// error
-				return NULL;
+				return string.npos;
 			}
 
 			CString closename;
-			SetString( xml, pEnd, &closename );
-			xml = pEnd+1;
+			SetString( xml, iOffset, iEnd, &closename );
+			iOffset = iEnd+1;
 			if( closename == this->m_sName )
 			{
 				// wel-formed open/close
 				// return '>' or ' ' after pointer
-				return xml;
+				return iOffset;
 			}
 			else
 			{
@@ -374,16 +374,16 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 					pi->error_code = PIE_NOT_NESTED;
 					pi->error_string = ssprintf( "'<%s> ... </%s>' is not well-formed.", m_sName.c_str(), closename.c_str() );
 				}
-				return NULL;
+				return string.npos;
 			}
 		}
 		else	// Alone child Tag Loaded
 		{
-			if( xml && XIsEmptyString( m_sValue ) && *xml !=chXMLTagOpen )
+			if( XIsEmptyString( m_sValue ) && iOffset < xml.size() && xml[iOffset] != chXMLTagOpen )
 			{
 				// Text Value 
-				const char* pEnd = strchr( xml, chXMLTagOpen );
-				if( pEnd == NULL ) 
+				unsigned iEnd = xml.find( chXMLTagOpen, iOffset );
+				if( iEnd == string.npos ) 
 				{
 					// error cos not exist CloseTag </TAG>
 					if( !pi->error_occur )  
@@ -393,13 +393,13 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 						pi->error_code = PIE_NOT_CLOSED;
 						pi->error_string = ssprintf( "it must be closed with </%s>", m_sName.c_str() );
 					}
-					return NULL;
+					return string.npos;
 				}
 				
 				bool trim = pi->trim_value;
-				SetString( xml, pEnd, &m_sValue, trim );
+				SetString( xml, iOffset, iEnd, &m_sValue, trim );
 
-				xml = pEnd;
+				iOffset = iEnd;
 				//TEXTVALUE
 				if( pi->entity_value )
 					ReplaceEntityText( m_sValue, g_mapEntitiesToChars );
@@ -407,7 +407,7 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 		}
 	}
 
-	return xml;
+	return iOffset;
 }
 
 // Desc   : convert plain xml text from parsed xml attirbute

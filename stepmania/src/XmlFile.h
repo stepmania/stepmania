@@ -137,8 +137,8 @@ struct XNode
 	void SetValue( const DateTime &v );
 
 	// Load/Save XML
-	const char *Load( const char* pszXml, PARSEINFO *pi );
-	const char *LoadAttributes( const char* pszAttrs, PARSEINFO *pi );
+	unsigned Load( const CString &sXml, PARSEINFO *pi, unsigned iOffset = 0 );
+	unsigned LoadAttributes( const CString &sAttrs, PARSEINFO *pi, unsigned iOffset );
 	bool GetXML( RageFileBasic &f, DISP_OPT *opt ) const;
 	CString GetXML() const;
 
