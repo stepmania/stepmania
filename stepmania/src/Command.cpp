@@ -1,4 +1,4 @@
-#include "global.h"	// testing updates
+#include "global.h"
 #include "Command.h"
 #include "RageUtil.h"
 #include "RageLog.h"
