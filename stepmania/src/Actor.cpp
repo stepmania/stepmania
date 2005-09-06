@@ -190,6 +190,31 @@ Actor::Actor( const Actor &cpy )
 
 void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
+	FOREACH_CONST_Child( pNode, pChild )
+	{
+        if( pChild->m_sName == "Input" )
+        {
+			/* Parameters are set as globals by ActorUtil::LoadFromActorFile.
+			 * If parameters are specified here, save them to the actor.  Accessing
+			 * parameters as globals directly is deprecated. */
+			CString sName;
+			if( !pChild->GetAttrValue( "Name", sName ) )
+				RageException::Throw( ssprintf("Input node in '%s' is missing the attribute 'Name'", sDir.c_str()) );
+
+            Lua *L = LUA->Get();
+            this->PushSelf( L );
+            LuaHelpers::Push( sName, L );
+			lua_getglobal( L, sName );
+
+			if( lua_isnil(L, -1) )
+				RageException::Throw( "Actor in \"%s\" requires parameter \"%s\" that is not set", sDir.c_str(), sName.c_str() );
+
+			lua_settable( L, -3 );
+			lua_pop( L, 1 );
+			LUA->Release( L );
+		}
+	}
+
 	FOREACH_CONST_Attr( pNode, pAttr )
 	{
 		// Load Name, if any.
