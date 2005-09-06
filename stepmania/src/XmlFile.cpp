@@ -59,8 +59,9 @@ struct RunInitEntities
 // skip spaces
 static char* tcsskip( const char* psz )
 {
-	while( psz && isspace(*psz) ) psz++;
-		
+	while( psz && isspace(*psz) )
+		++psz;
+
 	return (char*)psz;
 }
 
@@ -131,7 +132,7 @@ const char* XNode::LoadAttributes( const char* xml, PARSEINFO *pi /*= &piDefault
 				pi->error_occur = true;
 				pi->error_pointer = xml;
 				pi->error_code = PIE_ATTR_NO_VALUE;
-				pi->error_string = ssprintf( ("<%s> attribute has error "), m_sName.c_str() );
+				pi->error_string = ssprintf( "<%s> attribute has error ", m_sName.c_str() );
 			}
 			return NULL;
 		}
@@ -331,7 +332,7 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 		// open/close tag <TAG ..> ... </TAG>
 		//                             ^- current pointer
 		// CloseTag case
-		if( xml && *xml && *(xml+1) && *xml == chXMLTagOpen && *(xml+1) == chXMLTagPre )
+		if( xml && xml[0] == chXMLTagOpen && xml[1] == chXMLTagPre )
 		{
 			// </Close>
 			xml+=2; // C
@@ -340,7 +341,6 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 			if( xml == NULL )
 				return NULL;
 
-			CString closename;
 			const char* pEnd = strpbrk( xml, " >" );
 			if( pEnd == NULL ) 
 			{
@@ -354,17 +354,18 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 				// error
 				return NULL;
 			}
+
+			CString closename;
 			SetString( xml, pEnd, &closename );
+			xml = pEnd+1;
 			if( closename == this->m_sName )
 			{
 				// wel-formed open/close
-				xml = pEnd+1;
 				// return '>' or ' ' after pointer
 				return xml;
 			}
 			else
 			{
-				xml = pEnd+1;
 				// not welformed open/close
 				if( !pi->error_occur ) 
 				{
@@ -372,7 +373,6 @@ const char* XNode::Load( const char* xml, PARSEINFO *pi /*= &piDefault*/ )
 					pi->error_pointer = xml;
 					pi->error_code = PIE_NOT_NESTED;
 					pi->error_string = ssprintf( "'<%s> ... </%s>' is not well-formed.", m_sName.c_str(), closename.c_str() );
-
 				}
 				return NULL;
 			}
