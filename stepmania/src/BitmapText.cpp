@@ -824,7 +824,7 @@ void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
 }
 
 // lua start
-
+#include "FontCharAliases.h"
 class LunaBitmapText: public Luna<BitmapText>
 {
 public:
@@ -833,7 +833,19 @@ public:
 	static int wrapwidthpixels( T* p, lua_State *L )	{ p->SetWrapWidthPixels( IArg(1) ); return 0; }
 	static int maxwidth( T* p, lua_State *L )			{ p->SetMaxWidth( FArg(1) ); return 0; }
 	static int maxheight( T* p, lua_State *L )			{ p->SetMaxHeight( FArg(1) ); return 0; }
-	static int settext( T* p, lua_State *L )			{ p->SetText( SArg(1) ); return 0; }
+	static int settext( T* p, lua_State *L )
+	{
+		CString s = SArg(1);
+		// XXX: Lua strings should simply use "\n" natively.  However, some
+		// settext calls may be made from GetMetric() calls to other strings,
+		// and it's confusing for :: to work in some strings and not others.
+		// Eventually, all strings should be Lua expressions, but until then
+		// continue to support this.
+		s.Replace("::","\n");
+		FontCharAliases::ReplaceMarkers( s );
+
+		p->SetText( s ); return 0;
+	}
 	static int GetText( T* p, lua_State *L )			{ lua_pushstring( L, p->GetText() ); return 1; }
 
 	static void Register(lua_State *L) 

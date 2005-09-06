@@ -75,7 +75,7 @@ void HelpDisplay::Update( float fDeltaTime )
 
 
 #include "LuaBinding.h"
-
+#include "FontCharAliases.h"
 class LunaHelpDisplay: public Luna<HelpDisplay>
 {
 public:
@@ -88,7 +88,12 @@ public:
 		vector<CString> arrayTips;
 		LuaHelpers::ReadArrayFromTable( arrayTips, L );
 		lua_pop( L, 1 );
-
+		for( unsigned i = 0; i < arrayTips.size(); ++i )
+		{
+			// XXX: see BitmapText settext
+			arrayTips[i].Replace("::","\n");
+			FontCharAliases::ReplaceMarkers( arrayTips[i] );
+		}
 		if( lua_gettop(L) > 1 && !lua_isnil( L, 2 ) )
 		{
 			vector<CString> arrayTipsAlt;
@@ -96,6 +101,11 @@ public:
 			lua_pushvalue( L, 2 );
 			LuaHelpers::ReadArrayFromTable( arrayTipsAlt, L );
 			lua_pop( L, 1 );
+			for( unsigned i = 0; i < arrayTipsAlt.size(); ++i )
+			{
+				arrayTipsAlt[i].Replace("::","\n");
+				FontCharAliases::ReplaceMarkers( arrayTipsAlt[i] );
+			}
 
 			p->SetTips( arrayTips, arrayTipsAlt );
 		}
