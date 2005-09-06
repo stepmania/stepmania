@@ -70,11 +70,55 @@ CString Command::GetOriginalCommandString() const
 	return join( ",", m_vsArgs );
 }
 
+static void SplitWithQuotes( const CString sSource, const char Delimitor, vector<CString> &asOut, const bool bIgnoreEmpty )
+{
+	/* Short-circuit if the source is empty; we want to return an empty vector if
+	 * the string is empty, even if bIgnoreEmpty is true. */
+	if( sSource.empty() )
+		return;
+
+	size_t startpos = 0;
+	do {
+		size_t pos = startpos;
+		while( pos < sSource.size() )
+		{
+			if( sSource[pos] == Delimitor )
+				break;
+
+			if( sSource[pos] == '"' || sSource[pos] == '\'' )
+			{
+				/* We've found a quote.  Search for the close. */
+				pos = sSource.find( sSource[pos], pos+1 );
+				if( pos == string::npos )
+					pos = sSource.size();
+				else
+					++pos;
+			}
+			else
+				++pos;
+		}
+
+		if( pos-startpos > 0 || !bIgnoreEmpty )
+		{
+			/* Optimization: if we're copying the whole string, avoid substr; this
+			 * allows this copy to be refcounted, which is much faster. */
+			if( startpos == 0 && pos-startpos == sSource.size() )
+				asOut.push_back( sSource );
+			else
+			{
+				const CString AddCString = sSource.substr( startpos, pos-startpos );
+				asOut.push_back( AddCString );
+			}
+		}
+
+		startpos = pos+1;
+	} while( startpos <= sSource.size() );
+}
+
 void ParseCommands( const CString &sCommands, Commands &vCommandsOut )
 {
 	CStringArray vsCommands;
-	split( sCommands, ";", vsCommands, true );	// do ignore empty
-	
+	SplitWithQuotes( sCommands, ';', vsCommands, true );	// do ignore empty
 	vCommandsOut.v.resize( vsCommands.size() );
 
 	for( unsigned i=0; i<vsCommands.size(); i++ )
