@@ -314,30 +314,6 @@ CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 	return THEMES_DIR + sThemeName + "/";
 }
 
-CString ThemeManager::GetPathToAndFallback( const CString &sThemeName, ElementCategory category, const CString &sClassName, const CString &sElement ) 
-{
-	CString sClass = sClassName;
-
-	int n = 100;
-	while( n-- )
-	{
-		// search with requested name
-		CString sRet = GetPathToRaw( sThemeName, category, sClass, sElement );
-		if( !sRet.empty() )
-			return sRet;
-
-		// search fallback name (if any)
-		CString sFallback;
-		GetMetricRawRecursive( sClass, "Fallback", sFallback );
-		if( sFallback.empty() )
-			return NULL;
-		sClass = sFallback;
-	}
-
-	RageException::Throw("Infinite recursion looking up theme element from theme \"%s\", class \"%s\"",
-		sThemeName.c_str(), sClass.c_str() );
-}
-
 CString ThemeManager::GetPathToRaw( const CString &sThemeName_, ElementCategory category, const CString &sClassName_, const CString &sElement_ ) 
 {
 	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
@@ -465,6 +441,30 @@ try_element_again:
 
 		RageException::Throw( "%s", message.c_str() ); 
 	}
+}
+
+CString ThemeManager::GetPathToAndFallback( const CString &sThemeName, ElementCategory category, const CString &sClassName, const CString &sElement ) 
+{
+	CString sClass = sClassName;
+
+	int n = 100;
+	while( n-- )
+	{
+		// search with requested name
+		CString sRet = GetPathToRaw( sThemeName, category, sClass, sElement );
+		if( !sRet.empty() )
+			return sRet;
+
+		// search fallback name (if any)
+		CString sFallback;
+		GetMetricRawRecursive( sClass, "Fallback", sFallback );
+		if( sFallback.empty() )
+			return NULL;
+		sClass = sFallback;
+	}
+
+	RageException::Throw("Infinite recursion looking up theme element from theme \"%s\", class \"%s\"",
+		sThemeName.c_str(), sClass.c_str() );
 }
 
 CString ThemeManager::GetPath( ElementCategory category, const CString &sClassName_, const CString &sElement_, bool bOptional ) 
