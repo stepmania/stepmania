@@ -47,10 +47,6 @@ struct Theme
 // When looking for a metric or an element, search these from head to tail.
 static deque<Theme> g_vThemes;
 
-class ThemePathCache
-{
-
-};
 
 //
 // For self-registering metrics
