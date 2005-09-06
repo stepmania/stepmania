@@ -50,7 +50,6 @@ Commands ParseCommands( const CString &sCmds );
 #define fArg(i) GetArg<float>(command,i,iMaxIndexAccessed)
 #define iArg(i) GetArg<int>(command,i,iMaxIndexAccessed)
 #define bArg(i) GetArg<bool>(command,i,iMaxIndexAccessed)
-#define cArg(i) GetColorArg(command,i,iMaxIndexAccessed)
 #define EndHandleArgs if( iMaxIndexAccessed != (int)command.m_vsArgs.size()-1 ) { IncorrectNumberArgsWarning( command, iMaxIndexAccessed ); }
 void IncorrectNumberArgsWarning( const Command& command, int iMaxIndexAccessed );
 
@@ -59,15 +58,6 @@ inline T GetArg( const Command& command, int iIndex, int& iMaxIndexAccessedOut )
 {
 	iMaxIndexAccessedOut = max( iIndex, iMaxIndexAccessedOut );
 	return (T)command.GetArg(iIndex);
-}
-
-inline RageColor GetColorArg( const Command& command, int iIndex, int& iMaxIndexAccessed )
-{
-	RageColor c;
-	if( c.FromString( GetArg<CString>(command,iIndex,iMaxIndexAccessed) ) )
-		return c;
-	else 
-		return RageColor( fArg(iIndex+0),fArg(iIndex+1),fArg(iIndex+2),fArg(iIndex+3) );
 }
 
 #endif
