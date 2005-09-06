@@ -31,29 +31,32 @@ Command::Arg Command::GetArg( unsigned index ) const
 	return a;
 }
 
-Command::Arg::operator CString ()
+Command::Arg::operator CString () const
 {
 	CString sValue = s;
 	LuaHelpers::RunAtExpressionS( sValue );
 	return sValue;
 }
 
-Command::Arg::operator float ()
+Command::Arg::operator float () const
 {
-	LuaHelpers::PrepareExpression( s );	// strip invalid chars
-	return LuaHelpers::RunExpressionF( s );
+	CString sValue = s;
+	LuaHelpers::PrepareExpression( sValue );	// strip invalid chars
+	return LuaHelpers::RunExpressionF( sValue );
 }
 
-Command::Arg::operator int ()
+Command::Arg::operator int () const
 {
-	LuaHelpers::PrepareExpression( s );	// strip invalid chars
-	return (int) LuaHelpers::RunExpressionF( s );
+	CString sValue = s;
+	LuaHelpers::PrepareExpression( sValue );	// strip invalid chars
+	return (int) LuaHelpers::RunExpressionF( sValue );
 }
 
-Command::Arg::operator bool ()
+Command::Arg::operator bool () const
 {
-	LuaHelpers::PrepareExpression( s );	// strip invalid chars
-	return LuaHelpers::RunExpressionF( s ) != 0.0f;
+	CString sValue = s;
+	LuaHelpers::PrepareExpression( sValue );	// strip invalid chars
+	return LuaHelpers::RunExpressionF( sValue ) != 0.0f;
 }
 
 void Command::Load( const CString &sCommand )

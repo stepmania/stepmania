@@ -19,10 +19,10 @@ public:
 	struct Arg
 	{
 		CString s;
-		operator CString ();
-		operator float ();
-		operator int ();
-		operator bool ();
+		operator CString () const;
+		operator float () const;
+		operator int () const;
+		operator bool () const;
 	};
 	Arg GetArg( unsigned index ) const;
 
