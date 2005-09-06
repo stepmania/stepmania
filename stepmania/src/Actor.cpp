@@ -227,7 +227,6 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 			CString sKeyName = pAttr->m_sName; /* "OnCommand" */
 
 			CString sValue = pAttr->m_sValue;
-			THEME->EvaluateString( sValue );
 			apActorCommands apac( new ActorCommands( sValue ) );
 
 			CString sCmdName = sKeyName.Left( sKeyName.size()-7 );
@@ -251,7 +250,6 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 		c->GetAttrValue( "Value", sValue );
 
 		THEME->EvaluateString( sName );
-		THEME->EvaluateString( sValue );
 		apActorCommands apac( new ActorCommands( sValue ) );
 
 		AddCommand( sName, apac );
