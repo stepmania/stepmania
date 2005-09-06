@@ -249,7 +249,7 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 		CString sValue;
 		c->GetAttrValue( "Value", sValue );
 
-		THEME->EvaluateString( sName );
+		LuaHelpers::RunAtExpressionS( sName );
 		apActorCommands apac( new ActorCommands( sValue ) );
 
 		AddCommand( sName, apac );
