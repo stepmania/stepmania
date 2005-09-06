@@ -807,15 +807,15 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		m_pCurrentBGA->SetUpdateRate( change.m_fRate );
 
 		// Set Lua color globals before calling Init and On
-		LUA->SetGlobal( ssprintf("Color%d",1), change.m_def.m_sColor1.empty() ? CString("1,1,1,1") : change.m_def.m_sColor1 );
-		LUA->SetGlobal( ssprintf("Color%d",2), change.m_def.m_sColor2.empty() ? CString("1,1,1,1") : change.m_def.m_sColor2 );
+		LUA->SetGlobal( "Color1", change.m_def.m_sColor1.empty() ? CString("1,1,1,1") : change.m_def.m_sColor1 );
+		LUA->SetGlobal( "Color2", change.m_def.m_sColor2.empty() ? CString("1,1,1,1") : change.m_def.m_sColor2 );
 		
 		m_pCurrentBGA->PlayCommand( "Init" );
 		m_pCurrentBGA->PlayCommand( "On" );
 		m_pCurrentBGA->PlayCommand( "GainFocus" );
 
-		LUA->SetGlobal( ssprintf("Color%d",1), CString() );
-		LUA->SetGlobal( ssprintf("Color%d",2), CString() );
+		LUA->UnsetGlobal( "Color1" );
+		LUA->UnsetGlobal( "Color2" );
 
 		m_fSecsLeftInFade = m_pFadingBGA ? m_pFadingBGA->GetTweenTimeLeft() / oldChange.m_fRate : 0;
 
