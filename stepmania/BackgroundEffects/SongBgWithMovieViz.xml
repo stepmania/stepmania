@@ -1,11 +1,10 @@
 <ActorFrame><children>
-	<AutoActor
-		Type="SongBackground"
-		Command="@'x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;ZoomToWidth,SCREEN_WIDTH;ZoomToHeight,SCREEN_HEIGHT;diffuse,'..Color1"
+	<Sprite
+		Command="LoadBackground,GAMESTATE:GetCurrentSong():GetBackgroundPath();x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;ZoomToWidth,SCREEN_WIDTH;ZoomToHeight,SCREEN_HEIGHT;diffuse,color(Color1)"
 	/>
 	<AutoActor
 		File="@File1"
-		OnCommand="@'Pause;blend,add;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;ZoomToWidth,SCREEN_WIDTH;ZoomToHeight,SCREEN_HEIGHT;diffuse,'..Color2"
+		OnCommand="Pause;blend,add;x,SCREEN_CENTER_X;y,SCREEN_CENTER_Y;ZoomToWidth,SCREEN_WIDTH;ZoomToHeight,SCREEN_HEIGHT;diffuse,color(Color2)"
 		GainFocusCommand="Play"
 		LoseFocusCommand="Pause"
 	/>
