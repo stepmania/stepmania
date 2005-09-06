@@ -215,7 +215,7 @@ unsigned XNode::Load( const CString &xml, PARSEINFO *pi, unsigned iOffset )
 		iOffset += 4;
 
 		/* Find the close tag. */
-		unsigned iEnd = xml.find( "-->" );
+		unsigned iEnd = xml.find( "-->", iOffset );
 		if( iEnd == string.npos )
 		{
 			if( !pi->error_occur ) 
