@@ -87,6 +87,8 @@ ActorCommands::ActorCommands( const CString &sCommands )
 	}
 
 	Register();
+
+	ASSERT_M( !this->IsNil(), m_sLuaFunction.c_str() );
 }
 
 void ActorCommands::Register()
