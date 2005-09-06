@@ -222,25 +222,6 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 		{
 			m_sName = pAttr->m_sValue;
 		}
-		else if( pAttr->m_sName == "Input" )
-		{
-			/* Parameters are set as globals by ActorUtil::LoadFromActorFile.
-			 * If parameters are specified here, save them to the actor.  Accessing
-			 * parameters as globals directly is deprecated. */
-			const CString &sName = pAttr->m_sValue;
-			
-			Lua *L = LUA->Get();
-			this->PushSelf( L );
-			LuaHelpers::Push( sName, L );
-			lua_getglobal( L, sName );
-
-			if( lua_isnil(L, -1) )
-				RageException::Throw( "Actor in \"%s\" requires parameter \"%s\" that is not set", sDir.c_str(), sName.c_str() );
-
-			lua_settable( L, -3 );
-			lua_pop( L, 1 );
-			LUA->Release( L );
-		}
 		else if( pAttr->m_sName == "BaseRotationXDegrees" )	SetBaseRotationX( strtof( pAttr->m_sValue, NULL ) );
 		else if( pAttr->m_sName == "BaseRotationYDegrees" )	SetBaseRotationY( strtof( pAttr->m_sValue, NULL ) );
 		else if( pAttr->m_sName == "BaseRotationZDegrees" )	SetBaseRotationZ( strtof( pAttr->m_sValue, NULL ) );
