@@ -47,6 +47,10 @@ struct Theme
 // When looking for a metric or an element, search these from head to tail.
 static deque<Theme> g_vThemes;
 
+class ThemePathCache
+{
+
+};
 
 //
 // For self-registering metrics
@@ -84,8 +88,8 @@ void ThemeManager::ClearThemePathCache()
 static void FileNameToClassAndElement( const CString &sFileName, CString &sClassNameOut, CString &sElementOut )
 {
 	// split into class name and file name
-	int iIndexOfFirstSpace = sFileName.Find(" ");
-	if( iIndexOfFirstSpace == -1 )	// no space
+	unsigned iIndexOfFirstSpace = sFileName.find(" ");
+	if( iIndexOfFirstSpace == string::npos )	// no space
 	{
 		sClassNameOut = "";
 		sElementOut = sFileName;
@@ -93,7 +97,7 @@ static void FileNameToClassAndElement( const CString &sFileName, CString &sClass
 	else
 	{
 		sClassNameOut = sFileName.Left( iIndexOfFirstSpace );
-		sElementOut = sFileName.Right( sFileName.length() - iIndexOfFirstSpace - 1 );
+		sElementOut = sFileName.Right( sFileName.size() - iIndexOfFirstSpace - 1 );
 	}
 }
 
