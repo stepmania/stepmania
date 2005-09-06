@@ -130,7 +130,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 					RageException::Throw( ssprintf("Param node in '%s' is missing the attribute 'Name'", sDir.c_str()) );
 				}
 
-				THEME->EvaluateString( sName );
+				LuaHelpers::RunAtExpressionS( sName );
 
 				CString s;
 				if( pChild->GetAttrValue( "Function", s ) )
