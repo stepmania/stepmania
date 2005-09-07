@@ -581,25 +581,30 @@ void ThemeManager::ReloadMetrics()
 }
 
 
-bool ThemeManager::GetMetricRawRecursive( const CString &sClassName, const CString &sValueName, CString &ret, int level )
+bool ThemeManager::GetMetricRawRecursive( const CString &sClassName_, const CString &sValueName, CString &sOut )
 {
-	if( level > 100 )
-		RageException::Throw("Infinite recursion looking up theme metric \"%s::%s\"", sClassName.c_str(), sValueName.c_str() );
+	CString sClassName( sClassName_ );
 
-	FOREACHD_CONST( Theme, g_vThemes, iter )
+	int n = 100;
+	while( n-- )
 	{
-		if( iter->iniMetrics->GetValue(sClassName,sValueName,ret) )
-			return true;
-	}
+		FOREACHD_CONST( Theme, g_vThemes, iter )
+		{
+			if( iter->iniMetrics->GetValue(sClassName,sValueName,sOut) )
+				return true;
+		}
 
-	FOREACHD_CONST( Theme, g_vThemes, iter )
-	{
+		if( !sValueName.compare("Fallback") )
+			return false;
+
 		CString sFallback;
-		if( iter->iniMetrics->GetValue(sClassName,"Fallback",sFallback) )
-			return GetMetricRawRecursive(sFallback,sValueName,ret,level+1);
+		if( !GetMetricRawRecursive(sClassName,"Fallback",sFallback) )
+			return false;
+
+		sClassName = sFallback;
 	}
 
-	return false;
+	RageException::Throw( "Infinite recursion looking up theme metric \"%s::%s\"", sClassName.c_str(), sValueName.c_str() );
 }
 
 CString ThemeManager::GetMetricRaw( const CString &sClassName_, const CString &sValueName_ )
