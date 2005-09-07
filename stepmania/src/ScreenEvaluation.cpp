@@ -1236,23 +1236,6 @@ void ScreenEvaluation::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenEvaluation::MenuLeft( PlayerNumber pn )
-{
-	// What is the purpose of this?  I keep my feet on the pads and 
-	// was wondering why the grades weren't spinning. -Chris
-	// To be able to see the grade without having to wait for it to
-	// stop spinning.  (I was hitting left repeatedly and wondering
-	// why it kept spinning ...)
-	//m_Grades[pn].SettleQuickly();
-}
-
-void ScreenEvaluation::MenuRight( PlayerNumber pn )
-{
-	// What is the purpose of this?  I keep my feet on the pads and 
-	// was wondering why the grades weren't spinning. -Chris
-	//m_Grades[pn].SettleQuickly();
-}
-
 void ScreenEvaluation::MenuBack( PlayerNumber pn )
 {
 	MenuStart( pn );
