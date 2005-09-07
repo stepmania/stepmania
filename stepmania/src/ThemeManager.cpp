@@ -443,28 +443,28 @@ try_element_again:
 	}
 }
 
-CString ThemeManager::GetPathToAndFallback( const CString &sThemeName, ElementCategory category, const CString &sClassName, const CString &sElement ) 
+CString ThemeManager::GetPathToAndFallback( const CString &sThemeName, ElementCategory category, const CString &sClassName_, const CString &sElement ) 
 {
-	CString sClass = sClassName;
+	CString sClassName = sClassName_;
 
 	int n = 100;
 	while( n-- )
 	{
 		// search with requested name
-		CString sRet = GetPathToRaw( sThemeName, category, sClass, sElement );
+		CString sRet = GetPathToRaw( sThemeName, category, sClassName, sElement );
 		if( !sRet.empty() )
 			return sRet;
 
 		// search fallback name (if any)
 		CString sFallback;
-		GetMetricRawRecursive( sClass, "Fallback", sFallback );
+		GetMetricRawRecursive( sClassName, "Fallback", sFallback );
 		if( sFallback.empty() )
 			return NULL;
-		sClass = sFallback;
+		sClassName = sFallback;
 	}
 
 	RageException::Throw("Infinite recursion looking up theme element from theme \"%s\", class \"%s\"",
-		sThemeName.c_str(), sClass.c_str() );
+		sThemeName.c_str(), sClassName.c_str() );
 }
 
 CString ThemeManager::GetPath( ElementCategory category, const CString &sClassName_, const CString &sElement_, bool bOptional ) 
