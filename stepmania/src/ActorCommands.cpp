@@ -9,7 +9,7 @@
 
 ActorCommands::ActorCommands( const CString &sCommands )
 {
-	if( sCommands.size() > 4 && sCommands[1] == '\033'  )
+	if( sCommands.size() > 0 && sCommands[0] == '\033' )
 	{
 		/* This is a compiled Lua chunk.  Just pass it on directly. */
 		m_sLuaFunction = sCommands;
