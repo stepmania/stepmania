@@ -443,17 +443,20 @@ try_element_again:
 	}
 }
 
-CString ThemeManager::GetPathToAndFallback( const CString &sThemeName, ElementCategory category, const CString &sClassName_, const CString &sElement ) 
+CString ThemeManager::GetPathToAndFallback( ElementCategory category, const CString &sClassName_, const CString &sElement ) 
 {
 	CString sClassName( sClassName_ );
 
 	int n = 100;
 	while( n-- )
 	{
-		// search with requested name
-		CString sRet = GetPathToRaw( sThemeName, category, sClassName, sElement );
-		if( !sRet.empty() )
-			return sRet;
+		FOREACHD_CONST( Theme, g_vThemes, iter )
+		{
+			// search with requested name
+			CString sRet = GetPathToRaw( iter->sThemeName, category, sClassName, sElement );
+			if( !sRet.empty() )
+				return sRet;
+		}
 
 		if( sClassName.empty() )
 			return CString();
@@ -465,8 +468,8 @@ CString ThemeManager::GetPathToAndFallback( const CString &sThemeName, ElementCa
 		sClassName = sFallback;
 	}
 
-	RageException::Throw("Infinite recursion looking up theme element from theme \"%s\", class \"%s\"",
-		sThemeName.c_str(), sClassName.c_str() );
+	RageException::Throw( "Infinite recursion looking up theme element \"%s\"",
+		ClassAndElementToFileName(sClassName, sElement).c_str() );
 }
 
 CString ThemeManager::GetPath( ElementCategory category, const CString &sClassName_, const CString &sElement_, bool bOptional ) 
@@ -489,17 +492,12 @@ CString ThemeManager::GetPath( ElementCategory category, const CString &sClassNa
 	
 try_element_again:
 	
-	for( deque<Theme>::const_iterator iter = g_vThemes.begin();
-		iter != g_vThemes.end();
-		iter++ )
+	// search the current theme
+	CString ret = GetPathToAndFallback( category, sClassName, sElement );
+	if( !ret.empty() )	// we found something
 	{
-		// search the current theme
-		CString ret = GetPathToAndFallback( iter->sThemeName, category, sClassName, sElement );
-		if( !ret.empty() )	// we found something
-		{
-			Cache[sFileName] = ret;
-			return ret;
-		}
+		Cache[sFileName] = ret;
+		return ret;
 	}
 
 	if( bOptional )
