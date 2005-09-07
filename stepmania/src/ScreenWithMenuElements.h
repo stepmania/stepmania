@@ -59,7 +59,7 @@ protected:
 	Transition	m_Out;
 	Transition	m_Cancel;
 
-	ThemeMetric<LuaExpression>	FIRST_UPDATE_COMMAND;
+	ThemeMetric<apActorCommands>		FIRST_UPDATE_COMMAND;
 	ThemeMetric<bool>			PLAY_MUSIC;
 };
 
