@@ -1158,6 +1158,7 @@ public:
 	static int GetIndex( T* p, lua_State *L )		{ lua_pushnumber(L, p->m_iIndex ); return 1; }
 	static int GetMultiPlayer( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_MultiPlayer); return 1; }
 	static int GetProfileID( T* p, lua_State *L )	{ lua_pushstring(L, p->m_sProfileID ); return 1; }
+	static int GetSong( T* p, lua_State *L )		{ if(p->m_pSong==NULL) lua_pushnil(L); else p->m_pSong->PushSelf(L); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1166,6 +1167,7 @@ public:
 		ADD_METHOD( GetIndex )
 		ADD_METHOD( GetMultiPlayer )
 		ADD_METHOD( GetProfileID )
+		ADD_METHOD( GetSong )
 
 		Luna<T>::Register( L );
 	}
