@@ -39,7 +39,9 @@ void Screen::Init()
 {
 	m_smSendOnPop = SM_None;
 
-	this->RunCommands( THEME->GetMetricA(m_sName, "ScreenInitCommand") );
+	ActorUtil::LoadAllCommandsFromName( *this, m_sName, "Screen" );
+
+	this->PlayCommand( "Init" );
 
 	vector<CString> asList;
 	split( PREPARE_SCREENS, ",", asList );
