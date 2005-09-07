@@ -457,9 +457,8 @@ CString ThemeManager::GetPathToAndFallback( const CString &sThemeName, ElementCa
 
 		// search fallback name (if any)
 		CString sFallback;
-		GetMetricRawRecursive( sClassName, "Fallback", sFallback );
-		if( sFallback.empty() )
-			return NULL;
+		if( !GetMetricRawRecursive(sClassName, "Fallback", sFallback) )
+			return CString();
 		sClassName = sFallback;
 	}
 
