@@ -51,7 +51,7 @@ void RageTexture::CreateFrameRects()
 
 void RageTexture::GetFrameDimensionsFromFileName( CString sPath, int* piFramesWide, int* piFramesHigh )
 {
-	static Regex match( " ([0-9]+)x([0-9]+)(\\.|$)" );
+	static Regex match( " ([0-9]+)x([0-9]+)([\\. ]|$)" );
         CStringArray asMatch;
 	if( !match.Compare(sPath, asMatch) )
 	{
