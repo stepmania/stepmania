@@ -345,15 +345,20 @@ void ActorUtil::LoadAndPlayCommand( Actor& actor, const CString &sType, const CS
 
 void ActorUtil::LoadAllCommands( Actor& actor, const CString &sType )
 {
+	LoadAllCommandsFromName( actor, sType, actor.GetName() );
+}
+
+void ActorUtil::LoadAllCommandsFromName( Actor& actor, const CString &sType, const CString &sName )
+{
 	set<CString> vsValueNames;
-	THEME->GetMetricsThatBeginWith( sType, actor.GetName(), vsValueNames );
+	THEME->GetMetricsThatBeginWith( sType, sName, vsValueNames );
 
 	FOREACHS_CONST( CString, vsValueNames, v )
 	{
 		const CString &sv = *v;
 		if( sv.Right(7) == "Command" )
 		{
-			CString sCommandName( sv.begin()+actor.GetName().size(), sv.end()-7 );
+			CString sCommandName( sv.begin()+sName.size(), sv.end()-7 );
 			LoadCommand( actor, sType, sCommandName );
 		}
 	}

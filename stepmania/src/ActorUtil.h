@@ -48,6 +48,7 @@ namespace ActorUtil
 	void LoadCommand( Actor& actor, const CString &sType, const CString &sCommandName );
 	void LoadAndPlayCommand( Actor& actor, const CString &sType, const CString &sCommandName, Actor* pParent = NULL );
 	void LoadAllCommands( Actor& actor, const CString &sType );
+	void LoadAllCommandsFromName( Actor& actor, const CString &sType, const CString &sName );
 	inline void OnCommand( Actor& actor, const CString &sType, Actor* pParent = NULL ) { LoadAndPlayCommand( actor, sType, "On", pParent ); }
 	inline void OffCommand( Actor& actor, const CString &sType ) { LoadAndPlayCommand( actor, sType, "Off" ); }
 	inline void SetXYAndOnCommand( Actor& actor, const CString &sType, Actor* pParent = NULL )
