@@ -59,7 +59,6 @@ protected:
 	Transition	m_Out;
 	Transition	m_Cancel;
 
-	ThemeMetric<apActorCommands>		FIRST_UPDATE_COMMAND;
 	ThemeMetric<bool>			PLAY_MUSIC;
 };
 

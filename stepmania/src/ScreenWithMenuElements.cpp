@@ -37,8 +37,6 @@ void ScreenWithMenuElements::Init()
 
 	Screen::Init();
 
-	FIRST_UPDATE_COMMAND.Load( m_sName, "FirstUpdateCommand" );
-
 	ASSERT( this->m_SubActors.empty() );	// don't call Init twice!
 
 	m_autoHeader.Load( THEME->GetPathG(m_sName,"header") );
@@ -155,7 +153,7 @@ void ScreenWithMenuElements::BeginScreen()
 	StartPlayingMusic();
 
 	/* Evaluate FirstUpdateCommand. */
-	this->RunCommands( FIRST_UPDATE_COMMAND );
+	this->PlayCommand( "FirstUpdate" );
 }
 
 void ScreenWithMenuElements::TweenOnScreen()
