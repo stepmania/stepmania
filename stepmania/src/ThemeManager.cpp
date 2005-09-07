@@ -445,7 +445,7 @@ try_element_again:
 
 CString ThemeManager::GetPathToAndFallback( const CString &sThemeName, ElementCategory category, const CString &sClassName_, const CString &sElement ) 
 {
-	CString sClassName = sClassName_;
+	CString sClassName( sClassName_ );
 
 	int n = 100;
 	while( n-- )
