@@ -230,9 +230,8 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 		else if( pAttr->m_sName == "BaseZoomZ" )			SetBaseZoomZ( strtof( pAttr->m_sValue, NULL ) );
 		else if( EndsWith(pAttr->m_sName,"Command") )
 		{
-			CString sKeyName = pAttr->m_sName; /* "OnCommand" */
-
-			CString sValue = pAttr->m_sValue;
+			const CString &sKeyName = pAttr->m_sName; /* "OnCommand" */
+			const CString &sValue = pAttr->m_sValue;
 			apActorCommands apac( new ActorCommands( sValue ) );
 
 			CString sCmdName = sKeyName.Left( sKeyName.size()-7 );
