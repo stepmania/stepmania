@@ -11,7 +11,6 @@
 #include "GameSoundManager.h"
 #include "AnnouncerManager.h"
 
-#define TIMER_SECONDS			THEME->GetMetricF(m_sName,"TimerSeconds")
 #define TIMER_STEALTH			THEME->GetMetricB(m_sName,"TimerStealth")
 #define STYLE_ICON				THEME->GetMetricB(m_sName,"StyleIcon")
 #define SHOW_STAGE				THEME->GetMetricB(m_sName,"ShowStage")
@@ -23,12 +22,16 @@
 //REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
 ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( sClassName )
 {
-	m_MenuTimer = new MenuTimer;
+	m_MenuTimer = NULL;
 	m_textHelp = new HelpDisplay;
+	FOREACH_PlayerNumber( p )
+		m_MemoryCardDisplay[p] = NULL;
+	m_MenuTimer = NULL;
 
 	// Needs to be in the constructor in case a derivitive decides to skip 
 	// itself and sends SM_GoToNextScreen to ScreenAttract.
-	PLAY_MUSIC.Load( m_sName, "PlayMusic" );
+	PLAY_MUSIC		.Load( m_sName, "PlayMusic" );
+	TIMER_SECONDS	.Load( m_sName, "TimerSeconds" );
 }
 
 void ScreenWithMenuElements::Init()
@@ -80,16 +83,19 @@ void ScreenWithMenuElements::Init()
 	{
 		FOREACH_PlayerNumber( p )
 		{
-			m_MemoryCardDisplay[p].Load( p );
-			m_MemoryCardDisplay[p].SetName( ssprintf("MemoryCardDisplayP%d",p+1) );
+			ASSERT( m_MemoryCardDisplay[p] == NULL );
+			m_MemoryCardDisplay[p] = new MemoryCardDisplay;
+			m_MemoryCardDisplay[p]->Load( p );
+			m_MemoryCardDisplay[p]->SetName( ssprintf("MemoryCardDisplayP%d",p+1) );
 			SET_XY( m_MemoryCardDisplay[p] );
-			this->AddChild( &m_MemoryCardDisplay[p] );
+			this->AddChild( m_MemoryCardDisplay[p] );
 		}
 	}
 
-	m_bTimerEnabled = (TIMER_SECONDS != -1);
-	if( m_bTimerEnabled )
+	if( TIMER_SECONDS != -1 )
 	{
+		ASSERT( m_MenuTimer == NULL );	// don't load twice
+		m_MenuTimer = new MenuTimer;
 		m_MenuTimer->Load();
 		m_MenuTimer->SetName( "Timer" );
 		if( TIMER_STEALTH )
@@ -181,7 +187,7 @@ void ScreenWithMenuElements::TweenOnScreen()
 			ON_COMMAND( m_MemoryCardDisplay[p] );
 	}
 
-	if( m_bTimerEnabled )
+	if( m_MenuTimer )
 		ON_COMMAND( m_MenuTimer );
 
 	ON_COMMAND( m_autoFooter );
@@ -227,7 +233,7 @@ void ScreenWithMenuElements::Update( float fDeltaTime )
 
 void ScreenWithMenuElements::ResetTimer()
 {
-	if( !m_bTimerEnabled )
+	if( m_MenuTimer == NULL )
 		return;
 
 	if( TIMER_SECONDS > 0.0f  &&  (PREFSMAN->m_bMenuTimer || FORCE_TIMER)  &&  !GAMESTATE->IsEditing() )
@@ -258,7 +264,7 @@ void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
 
 void ScreenWithMenuElements::TweenOffScreen()
 {
-	if( m_bTimerEnabled )
+	if( m_MenuTimer )
 	{
 		m_MenuTimer->SetSeconds( 0 );
 		m_MenuTimer->Stop();
@@ -269,7 +275,8 @@ void ScreenWithMenuElements::TweenOffScreen()
 	ActorUtil::OffCommand( m_sprStyleIcon, m_sName );
 	OFF_COMMAND( m_sprStage[GAMESTATE->GetCurrentStage()] );
 	FOREACH_PlayerNumber( p )
-		ActorUtil::OffCommand( m_MemoryCardDisplay[p], m_sName );
+		if( m_MemoryCardDisplay[p] )
+			ActorUtil::OffCommand( m_MemoryCardDisplay[p], m_sName );
 	ActorUtil::OffCommand( m_autoFooter, m_sName );
 	ActorUtil::OffCommand( m_textHelp, m_sName );
 	OFF_COMMAND( m_sprUnderlay );
@@ -287,7 +294,7 @@ void ScreenWithMenuElements::Cancel( ScreenMessage smSendWhenDone )
 	if( STOP_MUSIC_ON_BACK )
 		SOUND->StopMusic();
 
-	if( m_bTimerEnabled )
+	if( m_MenuTimer )
 		m_MenuTimer->Stop();
 	m_Cancel.StartTransitioning( smSendWhenDone );
 }
@@ -299,7 +306,7 @@ bool ScreenWithMenuElements::IsTransitioning()
 
 void ScreenWithMenuElements::StopTimer()
 {
-	if( m_bTimerEnabled )
+	if( m_MenuTimer )
 		m_MenuTimer->Stop();
 }
 

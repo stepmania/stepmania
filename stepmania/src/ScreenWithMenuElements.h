@@ -11,6 +11,7 @@
 
 class MenuTimer;
 class HelpDisplay;
+class MemoryCardDisplay;
 
 class ScreenWithMenuElements : public Screen
 {
@@ -24,7 +25,6 @@ public:
 	void StartTransitioning( ScreenMessage smSendWhenDone );
 	void Cancel( ScreenMessage smSendWhenDone );
 	bool IsTransitioning();
-	bool m_bTimerEnabled;
 
 	void StopTimer();
 	void ResetTimer();
@@ -49,7 +49,7 @@ protected:
 	AutoActor			m_autoHeader;
 	Sprite				m_sprStyleIcon;
 	AutoActor			m_sprStage[NUM_STAGES];
-	MemoryCardDisplay	m_MemoryCardDisplay[NUM_PLAYERS];
+	MemoryCardDisplay	*m_MemoryCardDisplay[NUM_PLAYERS];
 	MenuTimer			*m_MenuTimer;
 	AutoActor			m_autoFooter;
 	HelpDisplay			*m_textHelp;
@@ -60,6 +60,8 @@ protected:
 	Transition	m_Cancel;
 
 	ThemeMetric<bool>			PLAY_MUSIC;
+	ThemeMetric<float>			TIMER_SECONDS;
+
 };
 
 #endif
