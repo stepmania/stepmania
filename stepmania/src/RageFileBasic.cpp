@@ -136,7 +136,6 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes )
 
 int RageFileObj::Read( CString &sBuffer, int iBytes )
 {
-	sBuffer.erase( sBuffer.begin(), sBuffer.end() );
 	sBuffer.reserve( iBytes != -1? iBytes: this->GetFileSize() );
 
 	int iRet = 0;
@@ -156,6 +155,8 @@ int RageFileObj::Read( CString &sBuffer, int iBytes )
 		sBuffer.append( buf, iGot );
 		iRet += iGot;
 	}
+
+	sBuffer.erase( sBuffer.begin()+iRet );
 
 	return iRet;
 }
