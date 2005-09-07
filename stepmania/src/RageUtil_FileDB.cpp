@@ -577,7 +577,6 @@ void FilenameDB::GetDirListing( CString sPath, CStringArray &asAddTo, bool bOnly
 
 	if( bReturnPathToo && iStart < asAddTo.size() )
 	{
-		ResolvePath( sPath );
 		while( iStart < asAddTo.size() )
 		{
 			asAddTo[iStart].insert( 0, sPath );
