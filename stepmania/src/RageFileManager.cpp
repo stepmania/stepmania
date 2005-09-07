@@ -363,6 +363,8 @@ void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bO
 	vector<LoadedDriver *> apDriverList;
 	ReferenceAllDrivers( apDriverList );
 
+	int iDriversThatReturnedFiles = 0;
+	int iOldSize = AddTo.size();
 	for( unsigned i = 0; i < apDriverList.size(); ++i )
 	{
 		LoadedDriver *pLoadedDriver = apDriverList[i];
@@ -373,6 +375,8 @@ void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bO
 		const unsigned OldStart = AddTo.size();
 		
 		pLoadedDriver->m_pDriver->GetDirListing( p, AddTo, bOnlyDirs, bReturnPathToo );
+		if( AddTo.size() != OldStart )
+			++iDriversThatReturnedFiles;
 
 		/* If returning the path, prepend the mountpoint name to the files this driver returned. */
 		if( bReturnPathToo && pLoadedDriver->m_sMountPoint.size() > 0 )
@@ -388,11 +392,13 @@ void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bO
 
 	UnreferenceAllDrivers( apDriverList );
 
-	/* More than one driver might return the same file.  Remove duplicates (case-
-	 * insensitively). */
-	sort( AddTo.begin(), AddTo.end(), ilt );
-	CStringArray::iterator it = unique( AddTo.begin(), AddTo.end(), ieq );
-	AddTo.erase(it, AddTo.end());
+	if( iDriversThatReturnedFiles > 1 )
+	{
+		/* More than one driver returned files.  Remove duplicates (case-insensitively). */
+		sort( AddTo.begin()+iOldSize, AddTo.end(), ilt );
+		CStringArray::iterator it = unique( AddTo.begin()+iOldSize, AddTo.end(), ieq );
+		AddTo.erase(it, AddTo.end());
+	}
 }
 
 bool RageFileManager::Remove( CString sPath )
