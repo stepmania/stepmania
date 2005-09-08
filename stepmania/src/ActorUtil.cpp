@@ -309,7 +309,12 @@ void ActorUtil::SetXY( Actor& actor, const CString &sType )
 
 void ActorUtil::LoadCommand( Actor& actor, const CString &sType, const CString &sCommandName )
 {
-	actor.AddCommand( sCommandName, THEME->GetMetricA(sType,actor.GetName()+sCommandName+"Command") );
+	ActorUtil::LoadCommandFromName( actor, sType, sCommandName, actor.GetName() );
+}
+
+void ActorUtil::LoadCommandFromName( Actor& actor, const CString &sType, const CString &sCommandName, const CString &sName )
+{
+	actor.AddCommand( sCommandName, THEME->GetMetricA(sType,sName+sCommandName+"Command") );
 }
 
 void ActorUtil::LoadAndPlayCommand( Actor& actor, const CString &sType, const CString &sCommandName, Actor* pParent )
@@ -359,7 +364,7 @@ void ActorUtil::LoadAllCommandsFromName( Actor& actor, const CString &sType, con
 		if( sv.Right(7) == "Command" )
 		{
 			CString sCommandName( sv.begin()+sName.size(), sv.end()-7 );
-			LoadCommand( actor, sType, sCommandName );
+			LoadCommandFromName( actor, sType, sCommandName, sName );
 		}
 	}
 }

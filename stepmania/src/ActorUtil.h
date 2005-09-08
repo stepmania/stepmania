@@ -46,6 +46,7 @@ namespace ActorUtil
 
 	void SetXY( Actor& actor, const CString &sType );
 	void LoadCommand( Actor& actor, const CString &sType, const CString &sCommandName );
+	void LoadCommandFromName( Actor& actor, const CString &sType, const CString &sCommandName, const CString &sName );
 	void LoadAndPlayCommand( Actor& actor, const CString &sType, const CString &sCommandName, Actor* pParent = NULL );
 	void LoadAllCommands( Actor& actor, const CString &sType );
 	void LoadAllCommandsFromName( Actor& actor, const CString &sType, const CString &sName );
