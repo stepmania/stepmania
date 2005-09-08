@@ -720,8 +720,27 @@ Stage GameState::GetCurrentStage() const
 
 bool GameState::IsStagePossible( Stage s ) const
 {
-	// Optimize me so that we don't load graphics that can't possibly be shown
-	return true;
+	/* HACK: Find out what the stage would be without long or marathon.
+	 * This should never change during a screen. */
+	Song *pSong = GAMESTATE->m_pCurSong;
+	GAMESTATE->m_pCurSong.SetWithoutBroadcast( NULL );
+	Stage actual = GetCurrentStage();
+	GAMESTATE->m_pCurSong.SetWithoutBroadcast( pSong );
+
+	/* Check long/marathon, which can change the stage to FINAL. */
+	if( s == STAGE_FINAL && actual >= STAGE_1 && actual <= STAGE_FINAL )
+	{
+		Stage max_actual = actual;
+		if( PREFSMAN->m_fMarathonVerSongSeconds < 9999 )
+			enum_add( max_actual, +2 );
+		else if( PREFSMAN->m_fLongVerSongSeconds < 9999 )
+			enum_add( max_actual, +1 );
+
+		if( max_actual >= STAGE_FINAL )
+			return true;
+	}
+
+	return s == actual;
 }
 
 int GameState::GetCourseSongIndex() const
