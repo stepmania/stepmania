@@ -59,26 +59,10 @@ void ScreenWithMenuElements::Init()
 	
 	if( SHOW_STAGE && GAMESTATE->m_pCurStyle )
 	{
-		FOREACH_Stage( s )
-		{
-			if( !GAMESTATE->IsStagePossible(s) )
-				continue;
-			m_sprStage[s].Load( THEME->GetPathG(m_sName,"stage "+StageToString(s)) );
-			m_sprStage[s]->SetName( "Stage" );
-		}
-
-		// UpdateStage to hide/show the appropriate stage graphic.  Do this before
-		// running the OnCommand so that it won't override the OnCommand if On chooses
-		// to hide the graphic.
-		UpdateStage();
-		
-		FOREACH_Stage( s )
-		{
-			if( !GAMESTATE->IsStagePossible(s) )
-				continue;
-			SET_XY( m_sprStage[s] );
-			this->AddChild( m_sprStage[s] );
-		}
+		m_sprStage.Load( THEME->GetPathG(m_sName,"stage") );
+		m_sprStage->SetName( "Stage" );
+		SET_XY( m_sprStage );
+		this->AddChild( m_sprStage );
 	}
 	
 	if( MEMORY_CARD_ICONS )
@@ -171,19 +155,7 @@ void ScreenWithMenuElements::TweenOnScreen()
 		ON_COMMAND( m_sprStyleIcon );
 
 	if( SHOW_STAGE && GAMESTATE->m_pCurStyle )
-	{
-		// UpdateStage to hide/show the appropriate stage graphic.  Do this before
-		// running the OnCommand so that it won't override the OnCommand if On chooses
-		// to hide the graphic.
-		UpdateStage();
-
-		FOREACH_Stage( s )
-		{
-			if( !GAMESTATE->IsStagePossible(s) )
-				continue;
-			ON_COMMAND( m_sprStage[s] );
-		}
-	}
+		ON_COMMAND( m_sprStage );
 
 	if( MEMORY_CARD_ICONS )
 	{
@@ -277,7 +249,7 @@ void ScreenWithMenuElements::TweenOffScreen()
 
 	ActorUtil::OffCommand( m_autoHeader, m_sName );
 	ActorUtil::OffCommand( m_sprStyleIcon, m_sName );
-	OFF_COMMAND( m_sprStage[GAMESTATE->GetCurrentStage()] );
+	OFF_COMMAND( m_sprStage );
 	FOREACH_PlayerNumber( p )
 		if( m_MemoryCardDisplay[p] )
 			ActorUtil::OffCommand( m_MemoryCardDisplay[p], m_sName );
@@ -312,20 +284,6 @@ void ScreenWithMenuElements::StopTimer()
 {
 	if( m_MenuTimer )
 		m_MenuTimer->Stop();
-}
-
-void ScreenWithMenuElements::HandleMessage( const CString& sMessage )
-{
-	if( sMessage == MessageToString(Message_CurrentSongChanged) )
-		UpdateStage();
-}
-	
-void ScreenWithMenuElements::UpdateStage()
-{
-	// Refresh the stage counter display.  This is useful when changing 
-	// between long versions/marathons songs on the wheel.
-	FOREACH_Stage( s )
-		m_sprStage[s]->SetHidden( s != GAMESTATE->GetCurrentStage() );
 }
 
 // lua start
