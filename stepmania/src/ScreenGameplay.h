@@ -175,7 +175,6 @@ protected:
 	AutoActor			m_sprLifeFrame;
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
 	Sprite				m_sprCourseSongNumber;
-	AutoActor			m_sprStageFrame;
 
 	BPMDisplay			m_BPMDisplay;
 	float				m_fLastBPS;

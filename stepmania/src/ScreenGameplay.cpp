@@ -692,12 +692,6 @@ void ScreenGameplay::Init()
 		this->AddChild( pi->m_ptextStepsDescription );
 	}
 
-
-	m_sprStageFrame.Load( THEME->GetPathG(m_sName,"stage frame") );
-	m_sprStageFrame->SetName( "StageFrame" );
-	SET_XY( m_sprStageFrame );
-	this->AddChild( m_sprStageFrame );
-
 	//
 	// Player/Song options
 	//
@@ -2616,7 +2610,6 @@ void ScreenGameplay::TweenOursOnScreen()
 {
 	ON_COMMAND( m_sprLifeFrame );
 	ON_COMMAND( m_sprCourseSongNumber );
-	ON_COMMAND( m_sprStageFrame );
 	ON_COMMAND( m_textSongOptions );
 	ON_COMMAND( m_sprScoreFrame );
 	ON_COMMAND( m_BPMDisplay );
@@ -2657,7 +2650,6 @@ void ScreenGameplay::TweenOursOffScreen()
 
 	OFF_COMMAND( m_sprLifeFrame );
 	OFF_COMMAND( m_sprCourseSongNumber );
-	OFF_COMMAND( m_sprStageFrame );
 	OFF_COMMAND( m_textSongOptions );
 	OFF_COMMAND( m_sprScoreFrame );
 	OFF_COMMAND( m_BPMDisplay );
