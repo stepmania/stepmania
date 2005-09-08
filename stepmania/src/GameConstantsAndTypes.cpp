@@ -379,6 +379,17 @@ static const CString StageNames[] = {
 	"Demo",
 };
 XToString( Stage, NUM_STAGES );
+static void LuaStage(lua_State* L)
+{
+	FOREACH_Stage( st )
+	{
+		CString s = StageNames[st];
+		s.MakeUpper();
+		LUA->SetGlobal( "STAGE_"+s, st );
+	}
+}
+REGISTER_WITH_LUA_FUNCTION( LuaStage );
+LuaXToString( Stage );
 
 
 /*
