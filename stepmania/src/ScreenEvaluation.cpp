@@ -120,7 +120,7 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElement
 			STATSMAN->m_CurStageStats.m_player[p].vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			STATSMAN->m_CurStageStats.m_player[p].vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.m_fScrollSpeed = 2;
-			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.ChooseRandomMofifiers();
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.ChooseRandomModifiers();
 		}
 
 		for( float f = 0; f < 100.0f; f += 1.0f )

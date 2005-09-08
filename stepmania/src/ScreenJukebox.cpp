@@ -215,7 +215,7 @@ void ScreenJukebox::Init()
 		{
 			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.Init();
 			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.FromString( PREFSMAN->m_sDefaultModifiers );
-			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.ChooseRandomMofifiers();
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.ChooseRandomModifiers();
 		}
 	}
 

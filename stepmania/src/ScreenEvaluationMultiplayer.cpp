@@ -121,7 +121,7 @@ ScreenEvaluationMultiplayer::ScreenEvaluationMultiplayer( CString sClassName ) :
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].vpPlayedSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].vpPossibleSteps.push_back( GAMESTATE->m_pCurSteps[PLAYER_1] );
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrollSpeed = 2;
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.ChooseRandomMofifiers();
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.ChooseRandomModifiers();
 	
 		FOREACH_MultiPlayer( p )
 		{

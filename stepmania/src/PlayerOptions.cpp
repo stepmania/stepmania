@@ -335,7 +335,7 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 		else if( sBit == "addscore" )			m_ScoreDisplay = SCORING_ADD;
 		else if( sBit == "subtractscore" )		m_ScoreDisplay = SCORING_SUBTRACT;
 		else if( sBit == "averagescore" )		m_ScoreDisplay = SCORING_AVERAGE;
-		else if( sBit == "random" )				ChooseRandomMofifiers();
+		else if( sBit == "random" )				ChooseRandomModifiers();
 		else
 		{
 			if( bWarnOnInvalid )
@@ -430,7 +430,7 @@ void PlayerOptions::NextPerspective()
 	}
 }
 
-void PlayerOptions::ChooseRandomMofifiers()
+void PlayerOptions::ChooseRandomModifiers()
 {
 	if( RandomFloat(0,1)>0.8f )
 		m_fScrollSpeed = 1.5f;

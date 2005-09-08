@@ -618,7 +618,7 @@ static HighScore MakeRandomHighScore( float fPercentDP )
 	hs.SetPercentDP( fPercentDP );
 	hs.SetSurviveSeconds( randomf(30.0f, 100.0f) );
 	PlayerOptions po;
-	po.ChooseRandomMofifiers();
+	po.ChooseRandomModifiers();
 	hs.SetModifiers( po.GetString() );
 	hs.SetDateTime( DateTime::GetNowDateTime() );
 	hs.SetPlayerGuid( Profile::MakeGuid() );

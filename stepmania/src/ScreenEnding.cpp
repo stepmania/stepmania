@@ -148,8 +148,8 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_fScrollSpeed = 2;
 		GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.m_fScrollSpeed = 2;
 		GAMESTATE->m_iCurrentStageIndex = 0;
-		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.ChooseRandomMofifiers();
-		GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.ChooseRandomMofifiers();
+		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.ChooseRandomModifiers();
+		GAMESTATE->m_pPlayerState[PLAYER_2]->m_PlayerOptions.ChooseRandomModifiers();
 
 		for( float f = 0; f < 100.0f; f += 1.0f )
 		{

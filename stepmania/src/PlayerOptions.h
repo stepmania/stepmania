@@ -21,7 +21,7 @@ struct PlayerOptions
 	void GetMods( vector<CString> &AddTo ) const;
 	void GetThemedMods( vector<CString> &AddTo ) const;
 	void FromString( CString sOptions, bool bWarnOnInvalid = false );
-	void ChooseRandomMofifiers();
+	void ChooseRandomModifiers();
 	bool ContainsTransformOrTurn() const;
 
 	bool operator==( const PlayerOptions &other ) const;
