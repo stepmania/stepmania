@@ -138,6 +138,10 @@ public:
 	BroadcastOnChangePtr( Message m ) { mSendWhenChanged = m; val = NULL; }
 	T* Get() const { return val; }
 	void Set( T* t ) { val = t; if(MESSAGEMAN) MESSAGEMAN->Broadcast( MessageToString(mSendWhenChanged) ); }
+	/* This is only intended to be used for setting temporary values; always
+	 * restore the original value when finished, so listeners don't get confused
+	 * due to missing a message. */
+	void SetWithoutBroadcast( T* t ) { val = t; }
 	operator T* () const { return val; }
 	T* operator->() const { return val; }
 };
