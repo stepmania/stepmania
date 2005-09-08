@@ -59,12 +59,12 @@ void ScreenWithMenuElements::Init()
 	
 	if( SHOW_STAGE && GAMESTATE->m_pCurStyle )
 	{
-		vector<Stage> vStages;
-		GAMESTATE->GetPossibleStages( vStages );
-		FOREACH_CONST( Stage, vStages, s )
+		FOREACH_Stage( s )
 		{
-			m_sprStage[*s].Load( THEME->GetPathG(m_sName,"stage "+StageToString(*s)) );
-			m_sprStage[*s]->SetName( "Stage" );
+			if( !GAMESTATE->IsStagePossible(s) )
+				continue;
+			m_sprStage[s].Load( THEME->GetPathG(m_sName,"stage "+StageToString(s)) );
+			m_sprStage[s]->SetName( "Stage" );
 		}
 
 		// UpdateStage to hide/show the appropriate stage graphic.  Do this before
@@ -72,10 +72,12 @@ void ScreenWithMenuElements::Init()
 		// to hide the graphic.
 		UpdateStage();
 		
-		FOREACH_CONST( Stage, vStages, s )
+		FOREACH_Stage( s )
 		{
-			SET_XY( m_sprStage[*s] );
-			this->AddChild( m_sprStage[*s] );
+			if( !GAMESTATE->IsStagePossible(s) )
+				continue;
+			SET_XY( m_sprStage[s] );
+			this->AddChild( m_sprStage[s] );
 		}
 	}
 	
@@ -175,10 +177,12 @@ void ScreenWithMenuElements::TweenOnScreen()
 		// to hide the graphic.
 		UpdateStage();
 
-		vector<Stage> vStages;
-		GAMESTATE->GetPossibleStages( vStages );
-		FOREACH_CONST( Stage, vStages, s )
-			ON_COMMAND( m_sprStage[*s] );
+		FOREACH_Stage( s )
+		{
+			if( !GAMESTATE->IsStagePossible(s) )
+				continue;
+			ON_COMMAND( m_sprStage[s] );
+		}
 	}
 
 	if( MEMORY_CARD_ICONS )

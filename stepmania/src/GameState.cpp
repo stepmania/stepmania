@@ -718,12 +718,10 @@ Stage GameState::GetCurrentStage() const
 	else										return (Stage)(STAGE_1+m_iCurrentStageIndex);
 }
 
-void GameState::GetPossibleStages( vector<Stage> &out ) const
+bool GameState::IsStagePossible( Stage s ) const
 {
-	// Optimze me so that we don't load graphics that can't possibly be shown
-	out.clear();
-	FOREACH_Stage( s )
-		out.push_back( s );
+	// Optimize me so that we don't load graphics that can't possibly be shown
+	return true;
 }
 
 int GameState::GetCourseSongIndex() const

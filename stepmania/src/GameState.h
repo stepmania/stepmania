@@ -126,7 +126,7 @@ public:
 	bool			IsExtraStage() const;
 	bool			IsExtraStage2() const;
 	Stage			GetCurrentStage() const;
-	void			GetPossibleStages( vector<Stage> &out ) const;
+	bool			IsStagePossible( Stage s ) const;
 	int				GetCourseSongIndex() const;
 	CString			GetPlayerDisplayName( PlayerNumber pn ) const;
 
