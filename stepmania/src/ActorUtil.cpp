@@ -133,19 +133,7 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 				LuaHelpers::RunAtExpressionS( sName );
 
 				CString s;
-				if( pChild->GetAttrValue( "Function", s ) )
-				{
-					LuaExpression expr;
-					THEME->EvaluateString( s );
-					expr.SetFromExpression( s );
-					Lua *L = LUA->Get();
-					expr.PushSelf( L );
-					ASSERT( !lua_isnil(L, -1) );
-					lua_call( L, 0, 1 ); // 0 args, 1 results
-					lua_setglobal( L, sName );
-					LUA->Release(L);
-				}
-				else if( pChild->GetAttrValue( "Value", s ) )
+				if( pChild->GetAttrValue( "Value", s ) )
 				{
 					THEME->EvaluateString( s );
 					LUA->SetGlobalFromExpression( sName, s );
