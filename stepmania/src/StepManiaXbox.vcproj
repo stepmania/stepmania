@@ -111,7 +111,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386 /FIXED:NO /FORCE:MULTIPLE"
-				AdditionalDependencies="xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib debug\verstub.obj"
+				AdditionalDependencies="xbdm.lib xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib debug\verstub.obj"
 				OutputFile="../StepManiaXbox-debug.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="TRUE"
@@ -133,7 +133,7 @@ cl                                                                              
 			<Tool
 				Name="XboxDeploymentTool"
 				ExcludedFromBuild="FALSE"
-				RemotePath="xe:\$(SolutionName)\default.xbe"
+				RemotePath="xe:\$(SolutionName)\default-dbg.xbe"
 				Progress="TRUE"/>
 			<Tool
 				Name="XboxImageTool"
@@ -277,7 +277,8 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="XboxDeploymentTool"
-				ExcludedFromBuild="TRUE"
+				ExcludedFromBuild="FALSE"
+				RemotePath="xe:\$(SolutionName)\default-rls.xbe"
 				Progress="TRUE"
 				ForceCopy="FALSE"/>
 			<Tool
@@ -376,6 +377,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenEvaluation.h">
 			</File>
 			<File
+				RelativePath="ScreenEvaluationMultiplayer.cpp">
+			</File>
+			<File
+				RelativePath="ScreenEvaluationMultiplayer.h">
+			</File>
+			<File
 				RelativePath="ScreenExit.cpp">
 			</File>
 			<File
@@ -398,6 +405,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenGameplay.h">
+			</File>
+			<File
+				RelativePath="ScreenGameplayLesson.cpp">
+			</File>
+			<File
+				RelativePath="ScreenGameplayLesson.h">
 			</File>
 			<File
 				RelativePath="ScreenGameplayMultiplayer.cpp">
@@ -917,6 +930,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="LuaBinding.h">
 			</File>
 			<File
+				RelativePath="LuaExpressionTransform.cpp">
+			</File>
+			<File
+				RelativePath="LuaExpressionTransform.h">
+			</File>
+			<File
 				RelativePath="LuaFunctions.h">
 			</File>
 			<File
@@ -1430,10 +1449,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath="archutils\Win32\arch_setup.cpp">
 				</File>
 				<File
-					RelativePath="archutils\Win32\arch_setup.h">
+					RelativePath=".\archutils\Xbox\arch_setup.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Xbox\arch_setup.h">
+					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 				<File
 					RelativePath="archutils\Xbox\custom_launch_params.cpp">
