@@ -1148,6 +1148,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ProductInfo.h">
 			</File>
 			<File
+				RelativePath="ScreenGameplayLesson.cpp">
+			</File>
+			<File
+				RelativePath="ScreenGameplayLesson.h">
+			</File>
+			<File
 				RelativePath="StdString.h">
 			</File>
 			<File
