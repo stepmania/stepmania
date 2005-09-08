@@ -66,7 +66,7 @@ bool RageModelGeometry::HasAnyPerVertexBones() const
 	return false;
 }
 
-#define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() );
+#define THROW RageException::Throw( "Parse error in \"%s\" at line %d: '%s'", sPath.c_str(), iLineNum, sLine.c_str() )
 
 void RageModelGeometry::LoadMilkshapeAscii( const CString& _sPath, bool bNeedsNormals )
 {
@@ -80,149 +80,149 @@ void RageModelGeometry::LoadMilkshapeAscii( const CString& _sPath, bool bNeedsNo
 
 	CString sLine;
 	int iLineNum = 0;
-    char szName[MS_MAX_NAME];
-    int nFlags, nIndex, i, j;
+	char szName[MS_MAX_NAME];
+	int nFlags, nIndex, i, j;
 
 	RageVec3ClearBounds( m_vMins, m_vMaxs );
 
-    while( f.GetLine( sLine ) > 0 )
-    {
+	while( f.GetLine( sLine ) > 0 )
+	{
 		iLineNum++;
 
-        if (!strncmp (sLine, "//", 2))
-            continue;
+		if (!strncmp (sLine, "//", 2))
+			continue;
 
-        int nFrame;
-        if (sscanf (sLine, "Frames: %d", &nFrame) == 1)
-        {
+		int nFrame;
+		if (sscanf (sLine, "Frames: %d", &nFrame) == 1)
+		{
 			// ignore
 			// m_pRageModelGeometry->nTotalFrames = nFrame;
-        }
-        if (sscanf (sLine, "Frame: %d", &nFrame) == 1)
-        {
+		}
+		if (sscanf (sLine, "Frame: %d", &nFrame) == 1)
+		{
 			// ignore
 			// m_pRageModelGeometry->nFrame = nFrame;
-        }
+		}
 
-        int nNumMeshes = 0;
-        if (sscanf (sLine, "Meshes: %d", &nNumMeshes) == 1)
-        {
+		int nNumMeshes = 0;
+		if (sscanf (sLine, "Meshes: %d", &nNumMeshes) == 1)
+		{
 			ASSERT( m_Meshes.empty() );
-            m_Meshes.resize( nNumMeshes );
+			m_Meshes.resize( nNumMeshes );
 
-            for (i = 0; i < nNumMeshes; i++)
-            {
+			for (i = 0; i < nNumMeshes; i++)
+			{
 				msMesh &mesh = m_Meshes[i];
 				vector<RageModelVertex> &Vertices = mesh.Vertices;
 				vector<msTriangle> &Triangles = mesh.Triangles;
 
-			    if( f.GetLine( sLine ) <= 0 )
-					THROW
+				if( f.GetLine( sLine ) <= 0 )
+					THROW;
 
-                // mesh: name, flags, material index
-                if (sscanf (sLine, "\"%[^\"]\" %d %d",szName, &nFlags, &nIndex) != 3)
-					THROW
+				// mesh: name, flags, material index
+				if (sscanf (sLine, "\"%[^\"]\" %d %d",szName, &nFlags, &nIndex) != 3)
+					THROW;
 
-                strcpy( mesh.szName, szName );
-//                mesh.nFlags = nFlags;
-                mesh.nMaterialIndex = (uint8_t) nIndex;
+				strcpy( mesh.szName, szName );
+				// mesh.nFlags = nFlags;
+				mesh.nMaterialIndex = (uint8_t) nIndex;
 
 				mesh.nBoneIndex = -1;
 
-                //
-                // vertices
-                //
-			    if( f.GetLine( sLine ) <= 0 )
-					THROW
+				//
+				// vertices
+				//
+				if( f.GetLine( sLine ) <= 0 )
+					THROW;
 
-                int nNumVertices = 0;
-                if (sscanf (sLine, "%d", &nNumVertices) != 1)
-					THROW
+				int nNumVertices = 0;
+				if (sscanf (sLine, "%d", &nNumVertices) != 1)
+					THROW;
 
 				Vertices.resize( nNumVertices );
 
-                for (j = 0; j < nNumVertices; j++)
-                {
+				for (j = 0; j < nNumVertices; j++)
+				{
 					RageModelVertex &v = Vertices[j];
 
-				    if( f.GetLine( sLine ) <= 0 )
-						THROW
+					if( f.GetLine( sLine ) <= 0 )
+						THROW;
 
-                    if (sscanf (sLine, "%d %f %f %f %f %f %d",
-                        &nFlags,
-                        &v.p[0], &v.p[1], &v.p[2],
-                        &v.t[0], &v.t[1],
-                        &nIndex
-                        ) != 7)
-                    {
-						THROW
-                    }
+					if (sscanf (sLine, "%d %f %f %f %f %f %d",
+								&nFlags,
+								&v.p[0], &v.p[1], &v.p[2],
+								&v.t[0], &v.t[1],
+								&nIndex
+						   ) != 7)
+					{
+						THROW;
+					}
 
-//                  vertex.nFlags = nFlags;
+					// vertex.nFlags = nFlags;
 					if( nFlags & 1 )
 						v.TextureMatrixScale.x = 0;
 					if( nFlags & 2 )
 						v.TextureMatrixScale.y = 0;
-                    v.bone = (uint8_t) nIndex;
+					v.bone = (uint8_t) nIndex;
 					RageVec3AddToBounds( v.p, m_vMins, m_vMaxs );
-                }
+				}
 
 
-                //
-                // normals
-                //
-			    if( f.GetLine( sLine ) <= 0 )
-					THROW
+				//
+				// normals
+				//
+				if( f.GetLine( sLine ) <= 0 )
+					THROW;
 
-                int nNumNormals = 0;
-                if (sscanf (sLine, "%d", &nNumNormals) != 1)
-					THROW
-                
+				int nNumNormals = 0;
+				if (sscanf (sLine, "%d", &nNumNormals) != 1)
+					THROW;
+
 				vector<RageVector3> Normals;
 				Normals.resize( nNumNormals );
-                for (j = 0; j < nNumNormals; j++)
-                {
-				    if( f.GetLine( sLine ) <= 0 )
-						THROW
+				for (j = 0; j < nNumNormals; j++)
+				{
+					if( f.GetLine( sLine ) <= 0 )
+						THROW;
 
-                    RageVector3 Normal;
-                    if (sscanf (sLine, "%f %f %f", &Normal[0], &Normal[1], &Normal[2]) != 3)
-						THROW
+					RageVector3 Normal;
+					if (sscanf (sLine, "%f %f %f", &Normal[0], &Normal[1], &Normal[2]) != 3)
+						THROW;
 
 					RageVec3Normalize( (RageVector3*)&Normal, (RageVector3*)&Normal );
-                    Normals[j] = Normal;
-                }
+					Normals[j] = Normal;
+				}
 
 
 
-                //
-                // triangles
-                //
-			    if( f.GetLine( sLine ) <= 0 )
-					THROW
+				//
+				// triangles
+				//
+				if( f.GetLine( sLine ) <= 0 )
+					THROW;
 
-                int nNumTriangles = 0;
-                if (sscanf (sLine, "%d", &nNumTriangles) != 1)
-					THROW
+				int nNumTriangles = 0;
+				if (sscanf (sLine, "%d", &nNumTriangles) != 1)
+					THROW;
 
 				Triangles.resize( nNumTriangles );
 
-                for (j = 0; j < nNumTriangles; j++)
-                {
-				    if( f.GetLine( sLine ) <= 0 )
-						THROW
+				for (j = 0; j < nNumTriangles; j++)
+				{
+					if( f.GetLine( sLine ) <= 0 )
+						THROW;
 
-                    uint16_t nIndices[3];
-                    uint16_t nNormalIndices[3];
-                    if (sscanf (sLine, "%d %hd %hd %hd %hd %hd %hd %d",
-                        &nFlags,
-                        &nIndices[0], &nIndices[1], &nIndices[2],
-                        &nNormalIndices[0], &nNormalIndices[1], &nNormalIndices[2],
-                        &nIndex
-                        ) != 8)
-                    {
-						THROW
-                    }
+					uint16_t nIndices[3];
+					uint16_t nNormalIndices[3];
+					if (sscanf (sLine, "%d %hd %hd %hd %hd %hd %hd %d",
+								&nFlags,
+								&nIndices[0], &nIndices[1], &nIndices[2],
+								&nNormalIndices[0], &nNormalIndices[1], &nNormalIndices[2],
+								&nIndex
+						   ) != 8)
+					{
+						THROW;
+					}
 
 					// deflate the normals into vertices
 					for( int k=0; k<3; k++ )
@@ -234,13 +234,13 @@ void RageModelGeometry::LoadMilkshapeAscii( const CString& _sPath, bool bNeedsNo
 					}
 
 					msTriangle& Triangle = Triangles[j];
-//                  Triangle.nFlags = nFlags;
-                    memcpy( &Triangle.nVertexIndices, nIndices, sizeof(Triangle.nVertexIndices) );
-//                  Triangle.nSmoothingGroup = nIndex;
-                }
-            }
-        }
-    }
+					// Triangle.nFlags = nFlags;
+					memcpy( &Triangle.nVertexIndices, nIndices, sizeof(Triangle.nVertexIndices) );
+					// Triangle.nSmoothingGroup = nIndex;
+				}
+			}
+		}
+	}
 
 	OptimizeBones();
 
