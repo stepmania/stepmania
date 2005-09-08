@@ -156,7 +156,7 @@ int RageFileObj::Read( CString &sBuffer, int iBytes )
 		iRet += iGot;
 	}
 
-	sBuffer.erase( sBuffer.begin()+iRet );
+	sBuffer.erase( sBuffer.begin()+iRet, sBuffer.end() );
 
 	return iRet;
 }
