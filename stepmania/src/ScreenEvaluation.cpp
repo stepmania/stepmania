@@ -64,8 +64,6 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define SHOW_SCORE_AREA						THEME->GetMetricB(m_sName,"ShowScoreArea")
 #define SHOW_TOTAL_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
 #define SHOW_TIME_AREA						THEME->GetMetricB(m_sName,"ShowTimeArea")
-#define SHOW_PER_DIFFICULTY_AWARD			THEME->GetMetricB(m_sName,"ShowPerDifficultyAward")
-#define SHOW_PEAK_COMBO_AWARD				THEME->GetMetricB(m_sName,"ShowPeakComboAward")
 #define TYPE								THEME->GetMetric (m_sName,"Type")
 #define PASSED_SOUND_TIME					THEME->GetMetricF(m_sName,"PassedSoundTime")
 #define FAILED_SOUND_TIME					THEME->GetMetricF(m_sName,"FailedSoundTime")
@@ -684,24 +682,6 @@ void ScreenEvaluation::Init()
 			SET_XY_AND_ON_COMMAND( m_sprPersonalRecord[p] );
 			this->AddChild( m_sprPersonalRecord[p] );
 		}
-		if( SHOW_PER_DIFFICULTY_AWARD && m_pdaToShow[p]!=PER_DIFFICULTY_AWARD_INVALID )
-		{
-			CString sAward = PerDifficultyAwardToString( m_pdaToShow[p] );
-
-			m_PerDifficultyAward[p].Load( THEME->GetPathG(m_sName,"PerDifficultyAward "+sAward) );
-			m_PerDifficultyAward[p]->SetName( ssprintf("PerDifficultyAwardP%d",p+1) );
-			SET_XY_AND_ON_COMMAND( m_PerDifficultyAward[p] );
-			this->AddChild( m_PerDifficultyAward[p] );
-		}
-		if( SHOW_PEAK_COMBO_AWARD && m_pcaToShow[p]!=PEAK_COMBO_AWARD_INVALID )
-		{
-			CString sAward = PeakComboAwardToString( m_pcaToShow[p] );
-
-			m_PeakComboAward[p].Load( THEME->GetPathG(m_sName,"PeakComboAward "+sAward) );
-			m_PeakComboAward[p]->SetName( ssprintf("PeakComboAwardP%d",p+1) );
-			SET_XY_AND_ON_COMMAND( m_PeakComboAward[p] );
-			this->AddChild( m_PeakComboAward[p] );
-		}
 	}
 
 	bool bOneHasNewTopRecord = false;
@@ -1144,10 +1124,6 @@ void ScreenEvaluation::TweenOursOffScreen()
 	{
 		OFF_COMMAND( m_sprMachineRecord[p] );
 		OFF_COMMAND( m_sprPersonalRecord[p] );
-		if( m_PerDifficultyAward[p].IsLoaded() )
-			OFF_COMMAND( m_PerDifficultyAward[p] );
-		if( m_PeakComboAward[p].IsLoaded() )
-			OFF_COMMAND( m_PeakComboAward[p] );
 	}
 	OFF_COMMAND( m_sprTryExtraStage );
 }

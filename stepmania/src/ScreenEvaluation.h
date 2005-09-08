@@ -112,8 +112,6 @@ protected:
 	AutoActor			m_sprPersonalRecord[NUM_PLAYERS];
 	bool				m_bTryExtraStage;
 	AutoActor			m_sprTryExtraStage;
-	AutoActor			m_PerDifficultyAward[NUM_PLAYERS];
-	AutoActor			m_PeakComboAward[NUM_PLAYERS];
 	bool m_bFailed;
 
 	RageSound	m_soundStart;	// sound played if the player passes or fails
