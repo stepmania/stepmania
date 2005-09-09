@@ -113,7 +113,7 @@ void ScreenSelectMusic::Init()
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Common","fallback banner")) );
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","roulette")) );
 		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","random")) );
-		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","Mode")) );
+		m_TexturePreload.Load( Banner::SongBannerTexture(THEME->GetPathG("Banner","mode")) );
 	}
 
 	if( GAMESTATE->m_pCurStyle == NULL )
