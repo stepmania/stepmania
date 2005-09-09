@@ -9,6 +9,22 @@ WheelItemBaseData::WheelItemBaseData( WheelItemType wit, CString sText, RageColo
 	m_Flags = WheelNotifyIcon::Flags();
 }
 
+WheelItemBase::WheelItemBase( const WheelItemBase &cpy ):
+	ActorFrame( cpy ),
+	m_sprBar( cpy.m_sprBar ),
+	m_text( cpy.m_text ),
+	m_Type( cpy.m_Type ),
+	m_color( cpy.m_color )
+{
+	if( cpy.m_pBar == const_cast<Sprite *> (&cpy.m_sprBar) )
+		m_pBar = &m_sprBar;
+
+	if( cpy.GetNumChildren() != 0 )
+	{
+		this->AddChild( &m_sprBar );
+		this->AddChild( &m_text );
+	}
+}
 
 WheelItemBase::WheelItemBase(CString sType)
 {

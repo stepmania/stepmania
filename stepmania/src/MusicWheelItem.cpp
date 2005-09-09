@@ -106,13 +106,54 @@ MusicWheelItem::MusicWheelItem( CString sType ):
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_GradeDisplay[p].Load( THEME->GetPathG(sType,"grades") );
-		m_GradeDisplay[p].SetZoom( 1.0f );
-		m_GradeDisplay[p].SetXY( GRADE_X.GetValue(p), 0 );
-		this->AddChild( &m_GradeDisplay[p] );
+		m_pGradeDisplay[p] = new GradeDisplay;
+		m_pGradeDisplay[p]->Load( THEME->GetPathG(sType,"grades") );
+		m_pGradeDisplay[p]->SetZoom( 1.0f );
+		m_pGradeDisplay[p]->SetXY( GRADE_X.GetValue(p), 0 );
+		this->AddChild( m_pGradeDisplay[p] );
 	}
 }
 
+MusicWheelItem::MusicWheelItem( const MusicWheelItem &cpy ):
+	WheelItemBase( cpy ),
+	m_sprSongBar( cpy.m_sprSongBar ),
+	m_sprSectionBar( cpy.m_sprSectionBar ),
+	m_sprExpandedBar( cpy.m_sprExpandedBar ),
+	m_sprModeBar( cpy.m_sprModeBar ),
+	m_sprSortBar( cpy.m_sprSortBar ),
+	m_WheelNotifyIcon( cpy.m_WheelNotifyIcon ),
+	m_TextBanner( cpy.m_TextBanner ),
+	m_textSection( cpy.m_textSection ),
+	m_textRoulette( cpy.m_textRoulette ),
+	m_textCourse( cpy.m_textCourse ),
+	m_textSort( cpy.m_textSort )
+{
+	data = NULL;
+
+	this->AddChild( &m_sprSongBar );
+	this->AddChild( &m_sprSectionBar );
+	this->AddChild( &m_sprExpandedBar );
+	this->AddChild( &m_sprModeBar );
+	this->AddChild( &m_sprSortBar );
+	this->AddChild( &m_WheelNotifyIcon );
+	this->AddChild( &m_TextBanner );
+	this->AddChild( &m_textSection );
+	this->AddChild( &m_textRoulette );
+	this->AddChild( &m_textCourse );
+	this->AddChild( &m_textSort );
+
+	FOREACH_PlayerNumber( p )
+	{
+		m_pGradeDisplay[p] = new GradeDisplay( *cpy.m_pGradeDisplay[p] );
+		this->AddChild( m_pGradeDisplay[p] );
+	}
+}
+
+MusicWheelItem::~MusicWheelItem()
+{
+	FOREACH_PlayerNumber( p )
+		delete m_pGradeDisplay[p];
+}
 
 void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded )
 {
@@ -131,7 +172,7 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 	m_textSection.SetHidden( true );
 	m_textRoulette.SetHidden( true );
 	FOREACH_PlayerNumber( p )
-		m_GradeDisplay[p].SetHidden( true );
+		m_pGradeDisplay[p]->SetHidden( true );
 	m_textCourse.SetHidden( true );
 	m_textSort.SetHidden( true );
 
@@ -245,7 +286,7 @@ void MusicWheelItem::RefreshGrades()
 		if( !data->m_pSong  ||	// this isn't a song display
 			!GAMESTATE->IsHumanPlayer(p) )
 		{
-			m_GradeDisplay[p].SetDiffuse( RageColor(1,1,1,0) );
+			m_pGradeDisplay[p]->SetDiffuse( RageColor(1,1,1,0) );
 			continue;
 		}
 
@@ -261,7 +302,7 @@ void MusicWheelItem::RefreshGrades()
 		else
 			PROFILEMAN->GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle(), PROFILE_SLOT_MACHINE, dc, hs );
 
-		m_GradeDisplay[p].SetGrade( p, hs.GetGrade() );
+		m_pGradeDisplay[p]->SetGrade( p, hs.GetGrade() );
 	}
 }
 

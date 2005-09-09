@@ -27,6 +27,7 @@ class WheelItemBase : public ActorFrame
 {
 public:
 	WheelItemBase( CString sType = "WheelItemBase" );
+	WheelItemBase( const WheelItemBase &cpy );
 	virtual void DrawPrimitives();
 	
 	void Load( CString sType );
