@@ -29,6 +29,7 @@ public:
 
 	WheelItemData *data;
 
+private:
 	Sprite				m_sprSongBar;
 	Sprite				m_sprSectionBar;
 	Sprite				m_sprExpandedBar;
