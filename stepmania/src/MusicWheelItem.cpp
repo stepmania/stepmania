@@ -52,23 +52,18 @@ MusicWheelItem::MusicWheelItem( CString sType ):
 	SetName( sType );
 
 	m_sprSongBar.Load( THEME->GetPathG(sType,"song") );
-	m_sprSongBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprSongBar );
 
 	m_sprSectionBar.Load( THEME->GetPathG(sType,"section") );
-	m_sprSectionBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprSectionBar );
 
 	m_sprExpandedBar.Load( THEME->GetPathG(sType,"expanded") );
-	m_sprExpandedBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprExpandedBar );
 
 	m_sprModeBar.Load( THEME->GetPathG(sType,"mode") );
-	m_sprModeBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprModeBar );
 
 	m_sprSortBar.Load( THEME->GetPathG(sType,"sort") );
-	m_sprSortBar.SetXY( 0, 0 );
 	this->AddChild( &m_sprSortBar );
 
 	m_fPercentGray = 0;
