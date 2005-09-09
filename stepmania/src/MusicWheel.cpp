@@ -82,8 +82,10 @@ void MusicWheel::Load( CString sType )
 	FOREACH( MusicWheelItem*, m_MusicWheelItems, i )
 		SAFE_DELETE( *i );
 	m_MusicWheelItems.clear();
+	MusicWheelItem *pTempl = new MusicWheelItem;
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
-		m_MusicWheelItems.push_back( new MusicWheelItem );
+		m_MusicWheelItems.push_back( new MusicWheelItem(*pTempl) );
+	SAFE_DELETE( pTempl );
 
 
 	LOG->Trace( "MusicWheel::Load('%s')", sType.c_str() );
