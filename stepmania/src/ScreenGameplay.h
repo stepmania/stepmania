@@ -34,6 +34,8 @@ class ScoreKeeper;
 class PlayerScoreList;
 
 AutoScreenMessage( SM_NotesEnded )
+AutoScreenMessage( SM_BeginFailed )
+AutoScreenMessage( SM_LeaveGameplay )
 
 class PlayerInfo
 {
@@ -132,6 +134,7 @@ protected:
 
 	bool IsLastSong();
 	void SetupSong( int iSongIndex );
+	void ReloadCurrentSong();
 	void LoadNextSong();
 	void LoadCourseSongNumber( int SongNumber );
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);

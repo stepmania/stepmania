@@ -3,13 +3,15 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "PrefsManager.h"
+#include "StatsManager.h"
 
 REGISTER_SCREEN_CLASS( ScreenGameplayLesson );
 ScreenGameplayLesson::ScreenGameplayLesson( CString sName ) : ScreenGameplayNormal( sName )
 {
 	LOG->Trace( "ScreenGameplayLesson::ScreenGameplayLesson()" );
 
-	m_iCurrentLessonPageIndex = 0;
+	m_iCurrentPageIndex = 0;
+	m_Try = Try_1;
 }
 
 void ScreenGameplayLesson::Init()
@@ -27,16 +29,16 @@ void ScreenGameplayLesson::Init()
 	m_DancingState = STATE_DANCING;
 
 
-	// Load lessons
+	// Load pages
 	Song *pSong = GAMESTATE->m_pCurSong;
 	CString sDir = pSong->GetSongDir();
 	vector<CString> vs;
 	GetDirListing( sDir+"Page*", vs, true, true );
-	m_vLessonPages.resize( vs.size() );
+	m_vPages.resize( vs.size() );
 	FOREACH( CString, vs, s )
 	{
 		int i = s - vs.begin();
-		AutoActor &aa = m_vLessonPages[i];
+		AutoActor &aa = m_vPages[i];
 
 
 		LUA->SetGlobal( "PageIndex", i );
@@ -46,28 +48,44 @@ void ScreenGameplayLesson::Init()
 		LUA->UnsetGlobal( "NumPages" );
 
 
-		aa->SetDrawOrder( DRAW_ORDER_OVERLAY );
+		aa->SetDrawOrder( DRAW_ORDER_OVERLAY+1 );
 		this->AddChild( aa );
 	}
 
 	this->SortByDrawOrder();
 
 	// Show the first lesson page
-	if( !m_vLessonPages.empty() )
+	if( !m_vPages.empty() )
 	{
-		AutoActor &aa = m_vLessonPages[0];
-		aa->PlayCommand( "Show" );
+		AutoActor &aa = m_vPages[0];
 	}
 
-	FOREACH( AutoActor, m_vLessonPages, aa )
+	FOREACH( AutoActor, m_vPages, aa )
+	{
+		bool bIsFirst = aa == m_vPages.begin();
+		(*aa)->PlayCommand( bIsFirst ? "Show" : "Hide" );
 		(*aa)->PlayCommand( "On" );
+	}
+
+
+	// load Try graphics
+	for( int i=0; i<NUM_Try; i++ )
+	{
+		CString s = ssprintf("Try%d",i+1);
+		m_sprTry[i].Load( THEME->GetPathB(m_sName,s) );
+		m_sprTry[i]->PlayCommand( "Hide" );
+		m_sprTry[i]->SetDrawOrder( DRAW_ORDER_OVERLAY+1 );
+		this->AddChild( m_sprTry[i] );
+	}
+
+	this->SortByDrawOrder();
 }
 
 void ScreenGameplayLesson::Input( const InputEventPlus &input )
 {
 	//LOG->Trace( "ScreenGameplayLesson::Input()" );
 
-	if( m_iCurrentLessonPageIndex != -1 )
+	if( m_iCurrentPageIndex != -1 )
 	{
 		// show a lesson page
 		Screen::Input( input );
@@ -83,16 +101,37 @@ void ScreenGameplayLesson::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_NotesEnded )
 	{
-		bool bShowingAPage = m_iCurrentLessonPageIndex != -1;
+		bool bShowingAPage = m_iCurrentPageIndex != -1;
 
+		// While showing a page, loop the music.
 		if( bShowingAPage )
 		{
-			// reload and loop
+			ResetAndRestartCurrentSong();
 		}
 		else
 		{
-			// show finish message if passed, loop if failed
+			bool bCleared = false;	// TODO
+			bool bAnyTriesLeft = m_Try + 1 < NUM_Try;
+
+			if( bCleared )
+			{
+				this->HandleScreenMessage( SM_LeaveGameplay );
+			}
+			else if( bAnyTriesLeft )
+			{
+				ResetAndRestartCurrentSong();
+
+				m_sprTry[m_Try]->PlayCommand( "Hide" );
+				m_Try = (Try)(m_Try+1);
+				m_sprTry[m_Try]->PlayCommand( "Show" );
+			}
+			else
+			{
+				m_sprTry[m_Try]->PlayCommand( "Hide" );
+				this->HandleScreenMessage( SM_BeginFailed );
+			}
 		}
+		return;	// handled
 	}
 
 	ScreenGameplay::HandleScreenMessage( SM );
@@ -100,39 +139,49 @@ void ScreenGameplayLesson::HandleScreenMessage( const ScreenMessage SM )
 
 void ScreenGameplayLesson::MenuStart( PlayerNumber pn )
 {
-	if( m_iCurrentLessonPageIndex == -1 )
+	if( m_iCurrentPageIndex == -1 )
 		return;
 	ChangeLessonPage( +1 );
 }
 
 void ScreenGameplayLesson::MenuBack( PlayerNumber pn )
 {
-	if( m_iCurrentLessonPageIndex == -1 )
+	if( m_iCurrentPageIndex == -1 )
 		return;
 	ChangeLessonPage( -1 );
 }
 
 void ScreenGameplayLesson::ChangeLessonPage( int iDir )
 {
-	if( m_iCurrentLessonPageIndex + iDir < 0 )
+	if( m_iCurrentPageIndex + iDir < 0 )
 	{
 		// don't change
 		return;
 	}
-	else if( m_iCurrentLessonPageIndex + iDir >= m_vLessonPages.size() )
+	else if( m_iCurrentPageIndex + iDir >= m_vPages.size() )
 	{
-		// dismissed the last page.  Proceed to the "your turn" portion.
-		FOREACH( AutoActor, m_vLessonPages, aa )
-			(*aa)->PlayCommand( "Off" );
+		m_vPages[m_iCurrentPageIndex]->PlayCommand( "Hide" );
+		m_iCurrentPageIndex = -1;
+		m_sprTry[m_Try]->PlayCommand( "Show" );
 
-		m_iCurrentLessonPageIndex = -1;
+		ResetAndRestartCurrentSong();
+
+		MESSAGEMAN->Broadcast( Message_LessonYourTurn );
 	}
 	else
 	{
-		m_vLessonPages[m_iCurrentLessonPageIndex]->PlayCommand( "Hide" );
-		m_iCurrentLessonPageIndex += iDir;
-		m_vLessonPages[m_iCurrentLessonPageIndex]->PlayCommand( "Show" );
+		m_vPages[m_iCurrentPageIndex]->PlayCommand( "Hide" );
+		m_iCurrentPageIndex += iDir;
+		m_vPages[m_iCurrentPageIndex]->PlayCommand( "Show" );
 	}
+}
+
+void ScreenGameplayLesson::ResetAndRestartCurrentSong()
+{
+	STATSMAN->m_CurStageStats.m_player[PLAYER_1].ResetScoreForLesson();
+	m_pSoundMusic->Stop();
+	ReloadCurrentSong();
+	StartPlayingSong( 2, 0 );
 }
 
 /*

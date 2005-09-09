@@ -1,4 +1,4 @@
-/* ScreenGameplayLesson - Plays whole songs continuously. */
+/* ScreenGameplayLesson - Shows some explanation pages, then allows 3 tries to pass a song. */
 
 #ifndef ScreenGameplayLesson_H
 #define ScreenGameplayLesson_H
@@ -20,9 +20,20 @@ public:
 
 protected:
 	void ChangeLessonPage( int iDir );
+	void ResetAndRestartCurrentSong();
 
-	vector<AutoActor> m_vLessonPages;
-	int m_iCurrentLessonPageIndex;
+	vector<AutoActor> m_vPages;
+	int m_iCurrentPageIndex;
+
+	enum Try
+	{
+		Try_1,
+		Try_2,
+		Try_3,
+		NUM_Try
+	};
+	AutoActor m_sprTry[NUM_Try];
+	Try m_Try;
 };
 
 #endif

@@ -23,6 +23,10 @@ public:
 	float GetPercentDancePoints() const;
 	float GetCurMaxPercentDancePoints() const;
 
+	int GetLessonScoreActual() const;
+	int GetLessonScorePossible() const;
+	void ResetScoreForLesson();
+
 	vector<Steps*>  vpPlayedSteps;
 	vector<Steps*>  vpPossibleSteps;
 	float	fAliveSeconds;		// how far into the music did they last before failing?  Updated by Gameplay, scaled by music rate.

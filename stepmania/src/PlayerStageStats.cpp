@@ -220,6 +220,68 @@ float PlayerStageStats::GetCurMaxPercentDancePoints() const
 	return fCurMaxPercentDancePoints;
 }
 
+int PlayerStageStats::GetLessonScoreActual() const
+{
+	int iScore = 0;
+
+	FOREACH_TapNoteScore( tns )
+	{
+		switch( tns )
+		{
+		case TNS_AVOIDED_MINE:
+		case TNS_MISS:
+		case TNS_BOO:
+		case TNS_GOOD:
+		case TNS_GREAT:
+		case TNS_PERFECT:
+		case TNS_MARVELOUS:
+			iScore += iTapNoteScores[tns];
+			break;
+		}
+	}
+
+	FOREACH_HoldNoteScore( hns )
+	{
+		switch( hns )
+		{
+		case HNS_OK:
+			iScore += iHoldNoteScores[hns];
+			break;
+		}
+	}
+
+	return iScore;
+}
+
+int PlayerStageStats::GetLessonScorePossible() const
+{
+	int iScore = 0;
+
+	FOREACH_TapNoteScore( tns )
+		iScore += iTapNoteScores[tns];
+
+	FOREACH_HoldNoteScore( hns )
+		iScore += iHoldNoteScores[hns];
+
+	return iScore;
+}
+
+void PlayerStageStats::ResetScoreForLesson()
+{
+	iCurPossibleDancePoints = 0;
+	iActualDancePoints = 0;
+	FOREACH_TapNoteScore( tns )
+		iTapNoteScores[tns] = 0;
+	FOREACH_HoldNoteScore( hns )
+		iHoldNoteScores[hns] = 0;
+	iCurCombo = 0;
+	iMaxCombo = 0;
+	iCurMissCombo = 0;
+	iScore = 0;
+	iCurMaxScore = 0;
+	iMaxScore = 0;
+}
+
 void PlayerStageStats::SetLifeRecordAt( float fLife, float fStepsSecond )
 {
 	// Don't save life stats in endless courses, or could run OOM in a few hours.
@@ -462,6 +524,8 @@ public:
 	static int FullCombo( T* p, lua_State *L )					{ lua_pushnumber(L, p->FullCombo()); return 1; }
 	static int MaxCombo( T* p, lua_State *L )					{ lua_pushnumber(L, p->GetMaxCombo().cnt); return 1; }
 	static int GetGrade( T* p, lua_State *L )					{ lua_pushnumber(L, p->GetGrade()); return 1; }
+	static int GetLessonScoreActual( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetLessonScoreActual()); return 1; }
+	static int GetLessonScorePossible( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetLessonScorePossible()); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -471,6 +535,8 @@ public:
 		ADD_METHOD( FullCombo )
 		ADD_METHOD( MaxCombo )
 		ADD_METHOD( GetGrade )
+		ADD_METHOD( GetLessonScoreActual )
+		ADD_METHOD( GetLessonScorePossible )
 		Luna<T>::Register( L );
 	}
 };

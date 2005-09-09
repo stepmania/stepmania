@@ -82,9 +82,6 @@ AutoScreenMessage( SM_StartLoadingNextSong )
 // received while STATE_OUTRO
 AutoScreenMessage( SM_GoToScreenAfterBack )
 
-AutoScreenMessage( SM_BeginFailed )
-AutoScreenMessage( SM_LeaveGameplay )
-
 // received while STATE_INTRO
 AutoScreenMessage( SM_StartHereWeGo )
 AutoScreenMessage( SM_StopHereWeGo )
@@ -1049,6 +1046,14 @@ void ScreenGameplay::LoadCourseSongNumber( int iSongNumber )
 	else
 		m_sprCourseSongNumber.UnloadTexture();
 	SCREENMAN->ZeroNextUpdate();
+}
+
+void ScreenGameplay::ReloadCurrentSong()
+{
+	FOREACH_EnabledPlayerInfoNotDummy( m_vPlayerInfo, pi )
+		pi->GetPlayerStageStats()->iSongsPlayed--;
+
+	LoadNextSong();
 }
 
 void ScreenGameplay::LoadNextSong()

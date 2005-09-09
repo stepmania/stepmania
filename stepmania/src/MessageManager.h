@@ -72,6 +72,7 @@ enum Message
 	Message_PreferredSongGroupChanged,
 	Message_PreferredCourseGroupChanged,
 	Message_SortOrderChanged,
+	Message_LessonYourTurn,
 	NUM_Message,	// leave this at the end
 	Message_Invalud
 };
