@@ -3,8 +3,6 @@
 #include "RageUtil.h"
 #include "SongManager.h"
 #include "GameManager.h"
-#include "PrefsManager.h"
-#include "ScreenManager.h"	// for sending SM_PlayMusicSample
 #include "RageLog.h"
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
@@ -20,20 +18,20 @@
 CString GRADE_X_NAME( size_t p ) { return ssprintf("GradeP%dX",int(p+1)); }
 CString GRADE_Y_NAME( size_t p ) { return ssprintf("GradeP%dY",int(p+1)); }
 
-ThemeMetric<float>				ICON_X				("MusicWheelItem","IconX");
-ThemeMetric<float>				ICON_Y				("MusicWheelItem","IconY");
-ThemeMetric<apActorCommands>	ICON_ON_COMMAND		("MusicWheelItem","IconOnCommand");
-ThemeMetric<float>				SONG_NAME_X			("MusicWheelItem","SongNameX");
-ThemeMetric<float>				SONG_NAME_Y			("MusicWheelItem","SongNameY");
-ThemeMetric<apActorCommands>	SONG_NAME_ON_COMMAND("MusicWheelItem","SongNameOnCommand");
-ThemeMetric<float>				SECTION_X			("MusicWheelItem","SectionX");
-ThemeMetric<float>				SECTION_Y			("MusicWheelItem","SectionY");
-ThemeMetric<apActorCommands>	SECTION_ON_COMMAND	("MusicWheelItem","SectionOnCommand");
-ThemeMetric<float>				ROULETTE_X			("MusicWheelItem","RouletteX");
-ThemeMetric<float>				ROULETTE_Y			("MusicWheelItem","RouletteY");
-ThemeMetric<apActorCommands>	ROULETTE_ON_COMMAND	("MusicWheelItem","RouletteOnCommand");
-ThemeMetric1D<float>			GRADE_X				("MusicWheelItem",GRADE_X_NAME,NUM_PLAYERS);
-ThemeMetric1D<float>			GRADE_Y				("MusicWheelItem",GRADE_Y_NAME,NUM_PLAYERS);
+static ThemeMetric<float>				ICON_X				("MusicWheelItem","IconX");
+static ThemeMetric<float>				ICON_Y				("MusicWheelItem","IconY");
+static ThemeMetric<apActorCommands>		ICON_ON_COMMAND		("MusicWheelItem","IconOnCommand");
+static ThemeMetric<float>				SONG_NAME_X			("MusicWheelItem","SongNameX");
+static ThemeMetric<float>				SONG_NAME_Y			("MusicWheelItem","SongNameY");
+static ThemeMetric<apActorCommands>		SONG_NAME_ON_COMMAND("MusicWheelItem","SongNameOnCommand");
+static ThemeMetric<float>				SECTION_X			("MusicWheelItem","SectionX");
+static ThemeMetric<float>				SECTION_Y			("MusicWheelItem","SectionY");
+static ThemeMetric<apActorCommands>		SECTION_ON_COMMAND	("MusicWheelItem","SectionOnCommand");
+static ThemeMetric<float>				ROULETTE_X			("MusicWheelItem","RouletteX");
+static ThemeMetric<float>				ROULETTE_Y			("MusicWheelItem","RouletteY");
+static ThemeMetric<apActorCommands>		ROULETTE_ON_COMMAND	("MusicWheelItem","RouletteOnCommand");
+static ThemeMetric1D<float>				GRADE_X				("MusicWheelItem",GRADE_X_NAME,NUM_PLAYERS);
+static ThemeMetric1D<float>				GRADE_Y				("MusicWheelItem",GRADE_Y_NAME,NUM_PLAYERS);
 
 
 WheelItemData::WheelItemData( WheelItemType wit, Song* pSong, CString sSectionName, Course* pCourse, RageColor color ):
@@ -48,8 +46,6 @@ MusicWheelItem::MusicWheelItem( CString sType ):
 	WheelItemBase( sType )
 {
 	data = NULL;
-
-	SetName( sType );
 
 	m_sprSongBar.Load( THEME->GetPathG(sType,"song") );
 	this->AddChild( &m_sprSongBar );
