@@ -12,6 +12,7 @@ class TextBanner : public ActorFrame
 {
 public:
 	TextBanner();
+	TextBanner( const TextBanner &cpy );
 	void Load( CString sType );	// load metrics
 	void LoadFromSong( const Song* pSong );
 	void LoadFromString( 

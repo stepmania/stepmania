@@ -45,6 +45,24 @@ TextBanner::TextBanner()
 	m_bInitted = false;
 }
 
+TextBanner::TextBanner( const TextBanner &cpy ):
+	ActorFrame( cpy ),
+	m_bInitted( cpy.m_bInitted ),
+	m_textTitle( cpy.m_textTitle ),
+	m_textSubTitle( cpy.m_textSubTitle ),
+	m_textArtist( cpy.m_textArtist ),
+	ARTIST_PREPEND_STRING( cpy.ARTIST_PREPEND_STRING ),
+	TWO_LINES_TITLE_COMMAND( cpy.TWO_LINES_TITLE_COMMAND ),
+	TWO_LINES_SUBTITLE_COMMAND( cpy.TWO_LINES_SUBTITLE_COMMAND ),
+	TWO_LINES_ARTIST_COMMAND( cpy.TWO_LINES_ARTIST_COMMAND ),
+	THREE_LINES_TITLE_COMMAND( cpy.THREE_LINES_TITLE_COMMAND ),
+	THREE_LINES_SUBTITLE_COMMAND( cpy.THREE_LINES_SUBTITLE_COMMAND ),
+	THREE_LINES_ARTIST_COMMAND( cpy.THREE_LINES_ARTIST_COMMAND )
+{
+	this->AddChild( &m_textTitle );
+	this->AddChild( &m_textSubTitle );
+	this->AddChild( &m_textArtist );
+}
 
 void TextBanner::LoadFromString( 
 	const CString &sDisplayTitle, const CString &sTranslitTitle, 
