@@ -147,8 +147,8 @@ void CourseUtil::SortCoursePointerArrayByAvgDifficulty( vector<Course*> &vpCours
 	course_sort_val.clear();
 	for( unsigned i = 0; i < vpCoursesInOut.size(); ++i )
 	{
-		const Trail* pTrail = vpCoursesInOut[i]->GetTrail( GAMESTATE->GetCurrentStyle()->m_StepsType );
-		course_sort_val[vpCoursesInOut[i]] = ssprintf("%09.3f", pTrail != NULL? (float) pTrail->GetMeter(): 0.0f);
+		int iMeter = vpCoursesInOut[i]->GetMeter( GAMESTATE->GetCurrentStyle()->m_StepsType, DIFFICULTY_MEDIUM );
+		course_sort_val[vpCoursesInOut[i]] = ssprintf( "%06i", iMeter );
 	}
 	sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersByTitle );
 	stable_sort( vpCoursesInOut.begin(), vpCoursesInOut.end(), CompareCoursePointersBySortValueAscending );

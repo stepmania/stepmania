@@ -792,6 +792,16 @@ void Course::GetAllTrails( vector<Trail*> &AddTo ) const
 	}
 }
 
+int Course::GetMeter( StepsType st, CourseDifficulty cd ) const
+{
+    if( m_iCustomMeter[cd] != -1 )
+		return m_iCustomMeter[cd];
+	const Trail* pTrail = GetTrail( st );
+	if( pTrail != NULL )
+		return pTrail->GetMeter();
+	return 0;
+}
+
 bool Course::HasMods() const
 {
 	FOREACH_CONST( CourseEntry, m_vEntries, e )
