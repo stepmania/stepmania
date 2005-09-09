@@ -15,8 +15,8 @@
 #include "ThemeMetric.h"
 #include "HighScore.h"
 
-CString GRADE_X_NAME( size_t p ) { return ssprintf("GradeP%dX",int(p+1)); }
-CString GRADE_Y_NAME( size_t p ) { return ssprintf("GradeP%dY",int(p+1)); }
+static CString GRADE_X_NAME( size_t p ) { return ssprintf("GradeP%dX",int(p+1)); }
+static CString GRADE_Y_NAME( size_t p ) { return ssprintf("GradeP%dY",int(p+1)); }
 
 static ThemeMetric<float>				ICON_X				("MusicWheelItem","IconX");
 static ThemeMetric<float>				ICON_Y				("MusicWheelItem","IconY");
@@ -179,21 +179,21 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 			BitmapText *bt = NULL;
 			switch( pWID->m_Type )
 			{
-				case TYPE_SECTION:
-					sDisplayName = SONGMAN->ShortenGroupName(data->m_sText);
-					bt = &m_textSection;
-					break;
-				case TYPE_COURSE:
-					sDisplayName = data->m_pCourse->GetDisplayFullTitle();
-					sTranslitName = data->m_pCourse->GetTranslitFullTitle();
-					bt = &m_textCourse;
-					break;
-				case TYPE_SORT:
-					sDisplayName = data->m_sLabel;
-					bt = &m_textSort;
-					break;
-				default:
-					ASSERT(0);
+			case TYPE_SECTION:
+				sDisplayName = SONGMAN->ShortenGroupName(data->m_sText);
+				bt = &m_textSection;
+				break;
+			case TYPE_COURSE:
+				sDisplayName = data->m_pCourse->GetDisplayFullTitle();
+				sTranslitName = data->m_pCourse->GetTranslitFullTitle();
+				bt = &m_textCourse;
+				break;
+			case TYPE_SORT:
+				sDisplayName = data->m_sLabel;
+				bt = &m_textSort;
+				break;
+			default:
+				ASSERT(0);
 			}
 
 			bt->SetText( sDisplayName, sTranslitName );
