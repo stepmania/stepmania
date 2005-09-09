@@ -226,7 +226,6 @@ done:
 	m_textContents[c].SetText( str );
 
 	Lua *L = LUA->Get();
-	LUA->SetGlobal( "PaneLevel", val );
 
 	m_textContents[c].PushSelf( L );
 	lua_pushstring( L, "PaneLevel" );
