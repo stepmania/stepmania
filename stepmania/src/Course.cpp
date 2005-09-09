@@ -583,45 +583,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			}
 
 			vector<Steps*> vpMatchingSteps;
-			(*song)->GetSteps( vpMatchingSteps, st );
-	
-			FOREACH( Steps*, vpMatchingSteps, steps )
-			{
-				if( e->baseDifficulty != DIFFICULTY_INVALID )
-				{
-					Difficulty dc = e->baseDifficulty;
-					if( (*steps)->GetDifficulty() != dc )
-					{
-						vector<Steps*>::iterator eraseme = steps;
-						steps--;
-						vpMatchingSteps.erase( eraseme );
-						continue;
-					}
-				}
-
-				if( e->iLowMeter != -1 )
-				{
-					if( (*steps)->GetMeter() < e->iLowMeter )
-					{
-						vector<Steps*>::iterator eraseme = steps;
-						steps--;
-						vpMatchingSteps.erase( eraseme );
-						continue;
-					}
-				}
-
-				if( e->iHighMeter != -1 )
-				{
-					if( (*steps)->GetMeter() > e->iHighMeter )
-					{
-						vector<Steps*>::iterator eraseme = steps;
-						steps--;
-						vpMatchingSteps.erase( eraseme );
-						continue;
-					}
-				}
-			}
-
+			(*song)->GetSteps( vpMatchingSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
 			if( vpMatchingSteps.empty() )
 			{
 				vector<Song*>::iterator eraseme = song;
