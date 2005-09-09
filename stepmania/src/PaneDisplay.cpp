@@ -120,11 +120,6 @@ void PaneDisplay::Load( const CString &sType, PlayerNumber pn )
 	m_ContentsFrame.SetXY( SHIFT_X(m_PlayerNumber), SHIFT_Y(m_PlayerNumber) );
 	this->AddChild( &m_ContentsFrame );
 
-	m_sprPaneOver.Load( THEME->GetPathG(sType,ssprintf("over p%i", pn+1)) );
-	m_sprPaneOver->SetName( "Over" );
-	ActorUtil::OnCommand( m_sprPaneOver, sType );
-	this->AddChild( m_sprPaneOver );
-
 	for( unsigned i = 0; i < NUM_PANE_CONTENTS; ++i )
 	{
 		COMMAND( m_textContents[i], "LoseFocus"  );

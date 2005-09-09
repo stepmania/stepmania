@@ -64,7 +64,6 @@ private:
 
 	SortOrder		m_SortOrder;
 	AutoActor		m_sprPaneUnder;
-	AutoActor		m_sprPaneOver;
 
 	BitmapText		m_textContents[NUM_PANE_CONTENTS];
 	AutoActor		m_Labels[NUM_PANE_CONTENTS];
