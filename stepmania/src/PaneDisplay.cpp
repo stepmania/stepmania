@@ -13,11 +13,10 @@
 #include "ActorUtil.h"
 #include "Foreach.h"
 #include "PercentageDisplay.h"
+#include "LuaManager.h"
 
 #define SHIFT_X(p)			THEME->GetMetricF(sType, ssprintf("ShiftP%iX", p+1))
 #define SHIFT_Y(p)			THEME->GetMetricF(sType, ssprintf("ShiftP%iY", p+1))
-#define NUM_ITEM_COLORS(s)	THEME->GetMetricI(sType, ssprintf("%sNumLevels",s))
-#define ITEM_COLOR(s,n)		THEME->GetMetric (sType, ssprintf("%sLevel%i",s,n+1))
 
 enum { NEED_NOTES=1, NEED_COURSE=2, NEED_PROFILE=4 };
 struct Content_t
@@ -65,39 +64,6 @@ void PaneDisplay::Load( const CString &sType, PlayerNumber pn )
 	ActorUtil::OnCommand( m_sprPaneUnder, sType );
 	this->AddChild( m_sprPaneUnder );
 
-	FOREACH_PaneContents(p)
-	{
-		ArrayLevels &levels = m_Levels[p];
-		levels.clear();
-
-		if( g_Contents[p].type == NUM_PANES )
-			continue;
-
-		const int num = NUM_ITEM_COLORS( g_Contents[p].name );
-		for( int c = 0; c < num; ++c )
-		{
-			levels.push_back( Level() );
-			Level &level = levels.back();
-
-			const CString metric = ITEM_COLOR(g_Contents[p].name, c);
-
-			Commands cmds;
-			ParseCommands( metric, cmds );
-			if( cmds.v.size() < 2 )
-				RageException::Throw( "Metric '%s' malformed", metric.c_str() );
-
-			level.m_fIfLessThan = cmds.v[0].GetArg(0);
-			cmds.v.erase( cmds.v.begin(), cmds.v.begin()+1 );
-
-			// TODO: clean this up
-			vector<CString> vs;
-			FOREACH_CONST( Command, cmds.v, cmd )
-				vs.push_back( cmd->GetOriginalCommandString() );
-
-			level.m_Command = apActorCommands( new ActorCommands(join(";",vs)) );
-		}
-	}
-
 	EMPTY_MACHINE_HIGH_SCORE_NAME.Load( sType, "EmptyMachineHighScoreName" );
 
 
@@ -115,6 +81,8 @@ void PaneDisplay::Load( const CString &sType, PlayerNumber pn )
 		m_Labels[p]->SetName( ssprintf("%sLabel", g_Contents[p].name) );
 		ActorUtil::SetXYAndOnCommand( m_Labels[p], sType, this );
 		m_ContentsFrame.AddChild( m_Labels[p] );
+
+		ActorUtil::LoadAllCommandsFromName( m_textContents[p], sType, g_Contents[p].name );
 	}
 
 	m_ContentsFrame.SetXY( SHIFT_X(m_PlayerNumber), SHIFT_Y(m_PlayerNumber) );
@@ -257,14 +225,18 @@ void PaneDisplay::SetContent( PaneContents c )
 done:
 	m_textContents[c].SetText( str );
 
-	const ArrayLevels &levels = m_Levels[c];
-	unsigned p;
-	for( p = 0; p+1 < levels.size(); ++p )
-		if( val < levels[p].m_fIfLessThan )
-			break;
+	Lua *L = LUA->Get();
+	LUA->SetGlobal( "PaneLevel", val );
 
-	if( p < levels.size() )
-		m_textContents[c].RunCommands( levels[p].m_Command );
+	m_textContents[c].PushSelf( L );
+	lua_pushstring( L, "PaneLevel" );
+	lua_pushnumber( L, val );
+	lua_settable( L, -3 );
+	lua_pop( L, 1 );
+
+	m_textContents[c].PlayCommand( "Level" );
+
+	LUA->Release(L);
 }
 
 void PaneDisplay::SetFromGameState( SortOrder so )

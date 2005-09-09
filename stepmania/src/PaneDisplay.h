@@ -72,14 +72,6 @@ private:
 	PaneTypes		m_CurPane;
 	PlayerNumber	m_PlayerNumber;
 
-	struct Level
-	{
-		apActorCommands m_Command;
-		float m_fIfLessThan;
-	};
-	typedef vector<Level> ArrayLevels;
-	ArrayLevels m_Levels[NUM_PANE_CONTENTS];
-
 	ThemeMetric<CString> EMPTY_MACHINE_HIGH_SCORE_NAME;
 };
 
