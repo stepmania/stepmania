@@ -14,7 +14,6 @@ enum ScreenMessage {
 	SM_GoToPrevScreen,
 	SM_GainFocus,
 	SM_LoseFocus,
-	SM_StopMusic,
 	SM_Pause,
 	SM_Success,
 	SM_Failure,
