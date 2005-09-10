@@ -6,6 +6,7 @@
 #include "ProfileManager.h"
 #include "PrefsManager.h"
 #include "Foreach.h"
+#include "RageFile.h"
 
 #include <cstdio>
 #include <cstring>
