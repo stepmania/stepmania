@@ -2594,10 +2594,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		else
 			SOUND->PlayOnceFromAnnouncer( "gameplay failed" );
 	}
-	else if( SM == SM_StopMusic )
-	{
-		m_pSoundMusic->Stop();
-	}
 	else if( SM == SM_Pause )
 	{
 		/* Ignore SM_Pause when in demonstration. */
@@ -2611,6 +2607,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
+
+void ScreenGameplay::Cancel( ScreenMessage smSendWhenDone )
+{
+	m_pSoundMusic->Stop();
+
+	ScreenWithMenuElements::Cancel( smSendWhenDone );
+}
 
 void ScreenGameplay::TweenOursOnScreen()
 {

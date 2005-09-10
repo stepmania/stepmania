@@ -106,6 +106,7 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
+	virtual void Cancel( ScreenMessage smSendWhenDone );
 
 	virtual bool UsesBackground() const { return false; }
 	virtual ScreenType GetScreenType() const { return gameplay; }
