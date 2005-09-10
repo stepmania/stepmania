@@ -2019,6 +2019,10 @@ public:
 		PlayerNumber pn = (PlayerNumber)IArg(1);
 		lua_pushboolean(L, p->GetStageResult(pn)==RESULT_WIN); return 1;
 	}
+	static int IsDraw( T* p, lua_State *L )
+	{
+		lua_pushboolean(L, p->GetStageResult(PLAYER_1)==RESULT_DRAW); return 1;
+	}
 	static int IsDisqualified( T* p, lua_State *L )
 	{
 		PlayerNumber pn = (PlayerNumber)IArg(1);
@@ -2091,6 +2095,7 @@ public:
 		ADD_METHOD( GetSongOptionsString );
 		ADD_METHOD( IsSyncDataChanged );
 		ADD_METHOD( IsWinner );
+		ADD_METHOD( IsDraw );
 		ADD_METHOD( IsDisqualified );
 		ADD_METHOD( GetCurrentGame );
 		ADD_METHOD( GetEditCourseEntryIndex );
