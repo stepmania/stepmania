@@ -64,6 +64,7 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define SHOW_SCORE_AREA						THEME->GetMetricB(m_sName,"ShowScoreArea")
 #define SHOW_TOTAL_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
 #define SHOW_TIME_AREA						THEME->GetMetricB(m_sName,"ShowTimeArea")
+#define SHOW_RECORDS_AREA					THEME->GetMetricB(m_sName,"ShowRecordsArea")
 #define TYPE								THEME->GetMetric (m_sName,"Type")
 #define PASSED_SOUND_TIME					THEME->GetMetricF(m_sName,"PassedSoundTime")
 #define FAILED_SOUND_TIME					THEME->GetMetricF(m_sName,"FailedSoundTime")
@@ -664,23 +665,26 @@ void ScreenEvaluation::Init()
 
 
 	//
-	// init extra area
+	// init records area
 	//
-	FOREACH_EnabledPlayer( p )
+	if( SHOW_RECORDS_AREA )
 	{
-		if( m_iMachineHighScoreIndex[p] != -1 )
+		FOREACH_EnabledPlayer( p )
 		{
-			m_sprMachineRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("MachineRecord %02d",m_iMachineHighScoreIndex[p]+1) ) );
-			m_sprMachineRecord[p]->SetName( ssprintf("MachineRecordP%d",p+1) );
-			SET_XY_AND_ON_COMMAND( m_sprMachineRecord[p] );
-			this->AddChild( m_sprMachineRecord[p] );
-		}
-		if( m_iPersonalHighScoreIndex[p] != -1 )
-		{
-			m_sprPersonalRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("PersonalRecord %02d",m_iPersonalHighScoreIndex[p]+1) ) );
-			m_sprPersonalRecord[p]->SetName( ssprintf("PersonalRecordP%d",p+1) );
-			SET_XY_AND_ON_COMMAND( m_sprPersonalRecord[p] );
-			this->AddChild( m_sprPersonalRecord[p] );
+			if( m_iMachineHighScoreIndex[p] != -1 )
+			{
+				m_sprMachineRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("MachineRecord %02d",m_iMachineHighScoreIndex[p]+1) ) );
+				m_sprMachineRecord[p]->SetName( ssprintf("MachineRecordP%d",p+1) );
+				SET_XY_AND_ON_COMMAND( m_sprMachineRecord[p] );
+				this->AddChild( m_sprMachineRecord[p] );
+			}
+			if( m_iPersonalHighScoreIndex[p] != -1 )
+			{
+				m_sprPersonalRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("PersonalRecord %02d",m_iPersonalHighScoreIndex[p]+1) ) );
+				m_sprPersonalRecord[p]->SetName( ssprintf("PersonalRecordP%d",p+1) );
+				SET_XY_AND_ON_COMMAND( m_sprPersonalRecord[p] );
+				this->AddChild( m_sprPersonalRecord[p] );
+			}
 		}
 	}
 
@@ -1119,11 +1123,14 @@ void ScreenEvaluation::TweenOursOffScreen()
 			OFF_COMMAND( m_textTime[p] );
 	}
 
-	// extra area
-	FOREACH_EnabledPlayer( p ) 
+	// records area
+	if( SHOW_RECORDS_AREA )
 	{
-		OFF_COMMAND( m_sprMachineRecord[p] );
-		OFF_COMMAND( m_sprPersonalRecord[p] );
+		FOREACH_EnabledPlayer( p ) 
+		{
+			OFF_COMMAND( m_sprMachineRecord[p] );
+			OFF_COMMAND( m_sprPersonalRecord[p] );
+		}
 	}
 	OFF_COMMAND( m_sprTryExtraStage );
 }
