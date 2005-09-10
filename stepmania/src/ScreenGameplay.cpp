@@ -441,7 +441,7 @@ void ScreenGameplay::Init()
 
 	m_SongForeground.SetName( "SongForeground" );
 	m_SongForeground.SetDrawOrder( DRAW_ORDER_OVERLAY+1 );	// on top of the overlay, but under transitions
-	ON_COMMAND( m_SongBackground );
+	ON_COMMAND( m_SongForeground );
 	this->AddChild( &m_SongForeground );
 
 	if( PREFSMAN->m_bShowBeginnerHelper )
