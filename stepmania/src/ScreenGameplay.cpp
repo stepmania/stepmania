@@ -501,6 +501,7 @@ void ScreenGameplay::Init()
 	this->AddChild( &m_NextSong );
 
 	m_SongFinished.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );
+	m_SongFinished.Load( THEME->GetPathB(m_sName,"song finished") );
 	this->AddChild( &m_SongFinished );
 
 
@@ -1211,7 +1212,7 @@ void ScreenGameplay::LoadNextSong()
 	m_LyricDisplay.SetName( ssprintf( "Lyrics%s", bAllReverse? "Reverse": (bAtLeastOneReverse? "OneReverse": "")) );
 	SET_XY( m_LyricDisplay );
 
-	m_SongFinished.Load( THEME->GetPathB(m_sName,"song finished") );
+	m_SongFinished.Reset();
 
 	// Load lyrics
 	// XXX: don't load this here
