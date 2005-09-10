@@ -48,16 +48,6 @@ public:
 	void PushSelf( lua_State *L );
 };
 
-/*
- * This was in GameState, but GameState.h is used by tons of files, and this object
- * is only used by 20 or so.
- *
- * Stage Statistics: 
- * Arcade:	for the current stage (one song).  
- * Nonstop/Oni/Endless:	 for current course (which usually contains multiple songs)
- */
-
-
 #endif
 
 /*
