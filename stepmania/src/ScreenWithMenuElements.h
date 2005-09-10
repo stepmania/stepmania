@@ -23,7 +23,7 @@ public:
 
 	void Update( float fDeltaTime );
 	void StartTransitioning( ScreenMessage smSendWhenDone );
-	void Cancel( ScreenMessage smSendWhenDone );
+	virtual void Cancel( ScreenMessage smSendWhenDone );
 	bool IsTransitioning();
 
 	void StopTimer();
