@@ -59,7 +59,10 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define SHOW_BONUS_AREA						THEME->GetMetricB(m_sName,"ShowBonusArea")
 #define SHOW_SURVIVED_AREA					THEME->GetMetricB(m_sName,"ShowSurvivedArea")
 #define SHOW_WIN_AREA						THEME->GetMetricB(m_sName,"ShowWinArea")
+#define SHOW_JUDGMENT_LABELS				THEME->GetMetricB(m_sName,"ShowJudgmentLabels")
 #define SHOW_JUDGMENT( l )					THEME->GetMetricB(m_sName,ssprintf("Show%s",JUDGE_STRING[l]))
+#define SHOW_STATS_LABELS					THEME->GetMetricB(m_sName,"ShowStatsLabels")
+
 #define SHOW_STAT( s )						THEME->GetMetricB(m_sName,ssprintf("Show%s",STATS_STRING[l]))
 #define SHOW_SCORE_AREA						THEME->GetMetricB(m_sName,"ShowScoreArea")
 #define SHOW_TOTAL_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
@@ -524,12 +527,15 @@ void ScreenEvaluation::Init()
 
 		if( SHOW_JUDGMENT(l) )
 		{
-			m_sprJudgeLabels[l].Load( THEME->GetPathG(m_sName,"judge labels") );
-			m_sprJudgeLabels[l].StopAnimating();
-			m_sprJudgeLabels[l].SetState( l );
-			m_sprJudgeLabels[l].SetName( ssprintf("%sLabel",JUDGE_STRING[l]) );
-			SET_XY_AND_ON_COMMAND( m_sprJudgeLabels[l] );
-			this->AddChild( &m_sprJudgeLabels[l] );
+			if( SHOW_JUDGMENT_LABELS )
+			{
+				m_sprJudgeLabels[l].Load( THEME->GetPathG(m_sName,"judge labels") );
+				m_sprJudgeLabels[l].StopAnimating();
+				m_sprJudgeLabels[l].SetState( l );
+				m_sprJudgeLabels[l].SetName( ssprintf("%sLabel",JUDGE_STRING[l]) );
+				SET_XY_AND_ON_COMMAND( m_sprJudgeLabels[l] );
+				this->AddChild( &m_sprJudgeLabels[l] );
+			}
 
 			FOREACH_EnabledPlayer( p )
 			{
@@ -567,11 +573,14 @@ void ScreenEvaluation::Init()
 		if( !SHOW_STAT(l) )
 			continue;
 
-		m_sprStatsLabel[l].Load( THEME->GetPathG(m_sName,ssprintf("label %s", STATS_STRING[l])) );
-		m_sprStatsLabel[l]->StopAnimating();
-		m_sprStatsLabel[l]->SetName( ssprintf("%sLabel",STATS_STRING[l]) );
-		SET_XY_AND_ON_COMMAND( m_sprStatsLabel[l] );
-		this->AddChild( m_sprStatsLabel[l] );
+		if( SHOW_STATS_LABELS )
+		{
+			m_sprStatsLabel[l].Load( THEME->GetPathG(m_sName,ssprintf("label %s", STATS_STRING[l])) );
+			m_sprStatsLabel[l]->StopAnimating();
+			m_sprStatsLabel[l]->SetName( ssprintf("%sLabel",STATS_STRING[l]) );
+			SET_XY_AND_ON_COMMAND( m_sprStatsLabel[l] );
+			this->AddChild( m_sprStatsLabel[l] );
+		}
 
 		FOREACH_EnabledPlayer( p )
 		{
