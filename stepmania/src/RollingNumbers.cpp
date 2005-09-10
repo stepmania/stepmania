@@ -64,9 +64,11 @@ class LunaRollingNumbers: public Luna<RollingNumbers>
 {
 public:
 	LunaRollingNumbers() { LUA->Register( Register ); }
+	static int targetnumber( T* p, lua_State *L )	{ p->SetTargetNumber( FArg(1) ); return 0; }
 
 	static void Register(lua_State *L) 
 	{
+		ADD_METHOD( targetnumber );
 		Luna<T>::Register( L );
 	}
 };
