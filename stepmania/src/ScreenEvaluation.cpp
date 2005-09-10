@@ -1264,11 +1264,12 @@ public:
 
 	static void Register( Lua *L )
 	{
-		ADD_METHOD( GetEvalStageStats )
-		ADD_METHOD( GetPersonalHighScoreIndex )
-		ADD_METHOD( GetMachineHighScoreIndex )
-		ADD_METHOD( GetPerDifficultyAward )
-		ADD_METHOD( GetPeakComboAward )
+		ADD_METHOD( GetEvalStageStats );
+		ADD_METHOD( GetPersonalHighScoreIndex );
+		ADD_METHOD( GetMachineHighScoreIndex );
+		ADD_METHOD( GetPerDifficultyAward );
+		ADD_METHOD( GetPeakComboAward );
+
 		Luna<T>::Register( L );
 	}
 };

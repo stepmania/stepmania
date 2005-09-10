@@ -195,7 +195,8 @@ public:
 	static int GetGoToOptions( T* p, lua_State *L ) { lua_pushboolean( L, p->GetGoToOptions() ); return 1; }
 	static void Register( Lua *L )
 	{
-  		ADD_METHOD( GetGoToOptions )
+  		ADD_METHOD( GetGoToOptions );
+
 		Luna<T>::Register( L );
 	}
 };

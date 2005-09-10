@@ -124,7 +124,8 @@ public:
 
 	static void Register(lua_State *L) 
 	{
-		ADD_METHOD( LoadFromStats )
+		ADD_METHOD( LoadFromStats );
+
 		Luna<T>::Register( L );
 	}
 };

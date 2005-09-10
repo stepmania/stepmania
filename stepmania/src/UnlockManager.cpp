@@ -535,12 +535,13 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( FindCode )
-		ADD_METHOD( UnlockCode )
-		ADD_METHOD( PreferUnlockCode )
-		ADD_METHOD( GetNumUnlocks )
-		ADD_METHOD( GetSongsUnlockedByCode )
-		ADD_METHOD( GetStepsUnlockedByCode )
+		ADD_METHOD( FindCode );
+		ADD_METHOD( UnlockCode );
+		ADD_METHOD( PreferUnlockCode );
+		ADD_METHOD( GetNumUnlocks );
+		ADD_METHOD( GetSongsUnlockedByCode );
+		ADD_METHOD( GetStepsUnlockedByCode );
+
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,

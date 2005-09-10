@@ -809,15 +809,16 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( IsPersistentProfile )
-		ADD_METHOD( GetProfile )
-		ADD_METHOD( GetMachineProfile )
-		ADD_METHOD( SaveMachineProfile )
-		ADD_METHOD( GetLocalProfile )
-		ADD_METHOD( GetLocalProfileFromIndex )
-		ADD_METHOD( GetLocalProfileIDFromIndex )
-		ADD_METHOD( GetLocalProfileIndexFromID )
-		ADD_METHOD( GetNumLocalProfiles )
+		ADD_METHOD( IsPersistentProfile );
+		ADD_METHOD( GetProfile );
+		ADD_METHOD( GetMachineProfile );
+		ADD_METHOD( SaveMachineProfile );
+		ADD_METHOD( GetLocalProfile );
+		ADD_METHOD( GetLocalProfileFromIndex );
+		ADD_METHOD( GetLocalProfileIDFromIndex );
+		ADD_METHOD( GetLocalProfileIndexFromID );
+		ADD_METHOD( GetNumLocalProfiles );
+
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,

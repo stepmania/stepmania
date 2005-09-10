@@ -850,11 +850,11 @@ public:
 
 	static void Register(lua_State *L) 
 	{
-		ADD_METHOD( wrapwidthpixels )
-		ADD_METHOD( maxwidth )
-		ADD_METHOD( maxheight )
-		ADD_METHOD( settext )
-		ADD_METHOD( GetText )
+		ADD_METHOD( wrapwidthpixels );
+		ADD_METHOD( maxwidth );
+		ADD_METHOD( maxheight );
+		ADD_METHOD( settext );
+		ADD_METHOD( GetText );
 		Luna<T>::Register( L );
 	}
 };

@@ -859,9 +859,9 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( SetNewScreen )
-		ADD_METHOD( GetTopScreen )
-		ADD_METHOD( SystemMessage )
+		ADD_METHOD( SetNewScreen );
+		ADD_METHOD( GetTopScreen );
+		ADD_METHOD( SystemMessage );
 
 		Luna<T>::Register( L );
 

@@ -186,7 +186,8 @@ public:
 
 	static void Register(lua_State *L) 
 	{
-		ADD_METHOD( SetFromGameState )
+		ADD_METHOD( SetFromGameState );
+
 		Luna<T>::Register( L );
 	}
 };

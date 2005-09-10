@@ -823,7 +823,8 @@ public:
 
 	static void Register(lua_State *L) 
 	{
-		ADD_METHOD( playanimation )
+		ADD_METHOD( playanimation );
+
 		Luna<T>::Register( L );
 	}
 };

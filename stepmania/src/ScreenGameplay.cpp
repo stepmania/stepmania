@@ -2714,7 +2714,8 @@ public:
 	static int GetNextCourseSong( T* p, lua_State *L ) { p->GetNextCourseSong()->PushSelf(L); return 1; }
 	static void Register( Lua *L )
 	{
-  		ADD_METHOD( GetNextCourseSong )
+  		ADD_METHOD( GetNextCourseSong );
+
 		Luna<T>::Register( L );
 	}
 };

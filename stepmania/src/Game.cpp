@@ -125,7 +125,8 @@ public:
 	static int GetName( T* p, lua_State *L )			{ lua_pushstring( L, p->m_szName ); return 1; }
 	static void Register( Lua *L )
 	{
-  		ADD_METHOD( GetName )
+  		ADD_METHOD( GetName );
+
 		Luna<T>::Register( L );
 	}
 };

@@ -972,17 +972,18 @@ public:
 	static int rate( T* p, lua_State *L )				{ p->SetPlaybackRate(FArg(1)); return 0; }
 
 	static void Register(lua_State *L) {
-		ADD_METHOD( Load )
-		ADD_METHOD( LoadBanner )
-		ADD_METHOD( LoadBackground )
-		ADD_METHOD( customtexturerect )
-		ADD_METHOD( texcoordvelocity )
-		ADD_METHOD( scaletoclipped )
-		ADD_METHOD( stretchtexcoords )
-		ADD_METHOD( setstate )
-		ADD_METHOD( position )
-		ADD_METHOD( loop )
-		ADD_METHOD( rate )
+		ADD_METHOD( Load );
+		ADD_METHOD( LoadBanner );
+		ADD_METHOD( LoadBackground );
+		ADD_METHOD( customtexturerect );
+		ADD_METHOD( texcoordvelocity );
+		ADD_METHOD( scaletoclipped );
+		ADD_METHOD( stretchtexcoords );
+		ADD_METHOD( setstate );
+		ADD_METHOD( position );
+		ADD_METHOD( loop );
+		ADD_METHOD( rate );
+
 		Luna<T>::Register( L );
 	}
 };

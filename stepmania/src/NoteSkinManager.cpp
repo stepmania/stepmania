@@ -296,7 +296,8 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetPath )
+		ADD_METHOD( GetPath );
+
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,

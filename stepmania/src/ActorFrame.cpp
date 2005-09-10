@@ -393,14 +393,14 @@ public:
 
 	static void Register(lua_State *L) 
 	{
-		ADD_METHOD( propagate )
-		ADD_METHOD( fov )
-		ADD_METHOD( SetUpdateRate )
-		ADD_METHOD( SetFOV )
-		ADD_METHOD( vanishpoint )
-		ADD_METHOD( GetChild )
-		ADD_METHOD( GetNumChildren )
-		ADD_METHOD( SetDrawByZPosition )
+		ADD_METHOD( propagate );
+		ADD_METHOD( fov );
+		ADD_METHOD( SetUpdateRate );
+		ADD_METHOD( SetFOV );
+		ADD_METHOD( vanishpoint );
+		ADD_METHOD( GetChild );
+		ADD_METHOD( GetNumChildren );
+		ADD_METHOD( SetDrawByZPosition );
 		Luna<T>::Register( L );
 	}
 };

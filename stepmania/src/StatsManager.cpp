@@ -244,13 +244,13 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetCurStageStats )
-		ADD_METHOD( GetAccumStageStats )
-		ADD_METHOD( Reset )
-		ADD_METHOD( GetFinalGrade )
-		ADD_METHOD( GetStagesPlayed )
-		ADD_METHOD( GetBestGrade )
-		ADD_METHOD( GetWorstGrade )
+		ADD_METHOD( GetCurStageStats );
+		ADD_METHOD( GetAccumStageStats );
+		ADD_METHOD( Reset );
+		ADD_METHOD( GetFinalGrade );
+		ADD_METHOD( GetStagesPlayed );
+		ADD_METHOD( GetBestGrade );
+		ADD_METHOD( GetWorstGrade );
 
 		Luna<T>::Register( L );
 

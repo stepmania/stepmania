@@ -1539,19 +1539,20 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetDisplayFullTitle )
-		ADD_METHOD( GetTranslitFullTitle )
-		ADD_METHOD( GetDisplayMainTitle )
-		ADD_METHOD( GetTranslitMainTitle )
-		ADD_METHOD( GetDisplayArtist )
-		ADD_METHOD( GetTranslitArtist )
-		ADD_METHOD( GetGenre )
-		ADD_METHOD( GetAllSteps )
-		ADD_METHOD( GetStepsByStepsType )
-		ADD_METHOD( GetSongDir )
-		ADD_METHOD( GetBannerPath )
-		ADD_METHOD( GetBackgroundPath )
-		ADD_METHOD( IsTutorial )
+		ADD_METHOD( GetDisplayFullTitle );
+		ADD_METHOD( GetTranslitFullTitle );
+		ADD_METHOD( GetDisplayMainTitle );
+		ADD_METHOD( GetTranslitMainTitle );
+		ADD_METHOD( GetDisplayArtist );
+		ADD_METHOD( GetTranslitArtist );
+		ADD_METHOD( GetGenre );
+		ADD_METHOD( GetAllSteps );
+		ADD_METHOD( GetStepsByStepsType );
+		ADD_METHOD( GetSongDir );
+		ADD_METHOD( GetBannerPath );
+		ADD_METHOD( GetBackgroundPath );
+		ADD_METHOD( IsTutorial );
+
 		Luna<T>::Register( L );
 	}
 };

@@ -1969,34 +1969,34 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetDisplayName )
-		ADD_METHOD( GetCharacter )
-		ADD_METHOD( GetWeightPounds )
-		ADD_METHOD( SetWeightPounds )
-		ADD_METHOD( GetGoalType )
-		ADD_METHOD( SetGoalType )
-		ADD_METHOD( GetGoalCalories )
-		ADD_METHOD( SetGoalCalories )
-		ADD_METHOD( GetGoalSeconds )
-		ADD_METHOD( SetGoalSeconds )
-		ADD_METHOD( GetCaloriesBurnedToday )
-		ADD_METHOD( GetSaved )
-		ADD_METHOD( GetTotalNumSongsPlayed )
-		ADD_METHOD( IsCodeUnlocked )
-		ADD_METHOD( GetSongsActual )
-		ADD_METHOD( GetCoursesActual )
-		ADD_METHOD( GetSongsPossible )
-		ADD_METHOD( GetCoursesPossible )
-		ADD_METHOD( GetSongsPercentComplete )
-		ADD_METHOD( GetCoursesPercentComplete )
-		ADD_METHOD( GetTotalStepsWithTopGrade )
-		ADD_METHOD( GetTotalTrailsWithTopGrade )
-		ADD_METHOD( GetNumTotalSongsPlayed )
-		ADD_METHOD( GetLastPlayedStepsType )
-		ADD_METHOD( GetSongsAndCoursesPercentCompleteAllDifficulties )
-		ADD_METHOD( GetDisplayTotalCaloriesBurned )
-		ADD_METHOD( GetMostPopularSong )
-		ADD_METHOD( GetMostPopularCourse )
+		ADD_METHOD( GetDisplayName );
+		ADD_METHOD( GetCharacter );
+		ADD_METHOD( GetWeightPounds );
+		ADD_METHOD( SetWeightPounds );
+		ADD_METHOD( GetGoalType );
+		ADD_METHOD( SetGoalType );
+		ADD_METHOD( GetGoalCalories );
+		ADD_METHOD( SetGoalCalories );
+		ADD_METHOD( GetGoalSeconds );
+		ADD_METHOD( SetGoalSeconds );
+		ADD_METHOD( GetCaloriesBurnedToday );
+		ADD_METHOD( GetSaved );
+		ADD_METHOD( GetTotalNumSongsPlayed );
+		ADD_METHOD( IsCodeUnlocked );
+		ADD_METHOD( GetSongsActual );
+		ADD_METHOD( GetCoursesActual );
+		ADD_METHOD( GetSongsPossible );
+		ADD_METHOD( GetCoursesPossible );
+		ADD_METHOD( GetSongsPercentComplete );
+		ADD_METHOD( GetCoursesPercentComplete );
+		ADD_METHOD( GetTotalStepsWithTopGrade );
+		ADD_METHOD( GetTotalTrailsWithTopGrade );
+		ADD_METHOD( GetNumTotalSongsPlayed );
+		ADD_METHOD( GetLastPlayedStepsType );
+		ADD_METHOD( GetSongsAndCoursesPercentCompleteAllDifficulties );
+		ADD_METHOD( GetDisplayTotalCaloriesBurned );
+		ADD_METHOD( GetMostPopularSong );
+		ADD_METHOD( GetMostPopularCourse );
 
 		Luna<T>::Register( L );
 	}

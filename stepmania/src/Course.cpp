@@ -114,7 +114,7 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetSong )
+		ADD_METHOD( GetSong );
 
 		Luna<T>::Register( L );
 	}
@@ -1017,12 +1017,12 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetPlayMode )
-		ADD_METHOD( GetDisplayFullTitle )
-		ADD_METHOD( GetTranslitFullTitle )
-		ADD_METHOD( HasMods )
-		ADD_METHOD( GetCourseType )
-		ADD_METHOD( GetCourseEntry )
+		ADD_METHOD( GetPlayMode );
+		ADD_METHOD( GetDisplayFullTitle );
+		ADD_METHOD( GetTranslitFullTitle );
+		ADD_METHOD( HasMods );
+		ADD_METHOD( GetCourseType );
+		ADD_METHOD( GetCourseEntry );
 
 		Luna<T>::Register( L );
 	}

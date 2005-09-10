@@ -47,8 +47,8 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( load )
-		ADD_METHOD( play )
+		ADD_METHOD( load );
+		ADD_METHOD( play );
 
 		Luna<T>::Register( L );
 	}

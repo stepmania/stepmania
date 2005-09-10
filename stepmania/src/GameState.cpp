@@ -1901,15 +1901,17 @@ class LunaGameState: public Luna<GameState>
 public:
 	LunaGameState() { LUA->Register( Register ); }
 
-	static int IsPlayerEnabled( T* p, lua_State *L )		{ lua_pushboolean(L, p->IsPlayerEnabled((PlayerNumber)IArg(1)) ); return 1; }
-	static int IsHumanPlayer( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsHumanPlayer((PlayerNumber)IArg(1)) ); return 1; }
-	static int GetPlayerDisplayName( T* p, lua_State *L )	{ lua_pushstring(L, p->GetPlayerDisplayName((PlayerNumber)IArg(1)) ); return 1; }
-	static int GetMasterPlayerNumber( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_MasterPlayerNumber ); return 1; }
-	static int GetMultiplayer( T* p, lua_State *L )			{ lua_pushboolean(L, p->m_bMultiplayer); return 1; }
-	static int GetPlayerState( T* p, lua_State *L )			{ 
+	DEFINE_METHOD( IsPlayerEnabled,			IsPlayerEnabled((PlayerNumber)IArg(1)) )
+	DEFINE_METHOD( IsHumanPlayer,			IsHumanPlayer((PlayerNumber)IArg(1)) )
+	DEFINE_METHOD( GetPlayerDisplayName,	GetPlayerDisplayName((PlayerNumber)IArg(1)) )
+	DEFINE_METHOD( GetMasterPlayerNumber,	m_MasterPlayerNumber )
+	DEFINE_METHOD( GetMultiplayer,			m_bMultiplayer )
+	static int GetPlayerState( T* p, lua_State *L )
+	{ 
 		PlayerNumber pn = (PlayerNumber)IArg(1);
-		p->m_pPlayerState[pn]->PushSelf(L);return 1; }
-
+		p->m_pPlayerState[pn]->PushSelf(L);
+		return 1;
+	}
 	static int ApplyGameCommand( T* p, lua_State *L )
 	{
 		PlayerNumber pn = PLAYER_INVALID;
@@ -2037,63 +2039,63 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( IsPlayerEnabled )
-		ADD_METHOD( IsHumanPlayer )
-		ADD_METHOD( GetPlayerDisplayName )
-		ADD_METHOD( GetMasterPlayerNumber )
-		ADD_METHOD( GetMultiplayer )
-		ADD_METHOD( GetPlayerState )
-		ADD_METHOD( ApplyGameCommand )
-		ADD_METHOD( GetCurrentSong )
-		ADD_METHOD( SetCurrentSong )
-		ADD_METHOD( GetCurrentSteps )
-		ADD_METHOD( SetCurrentSteps )
-		ADD_METHOD( GetCurrentCourse )
-		ADD_METHOD( SetCurrentCourse )
-		ADD_METHOD( GetCurrentTrail )
-		ADD_METHOD( SetPreferredSong )
-		ADD_METHOD( GetPreferredSong )
-		ADD_METHOD( SetTemporaryEventMode )
-		ADD_METHOD( Env )
-		ADD_METHOD( SetEnv )
-		ADD_METHOD( GetEnv )
-		ADD_METHOD( GetEditSourceSteps )
-		ADD_METHOD( GetPreferredDifficulty )
-		ADD_METHOD( AnyPlayerHasRankingFeats )
-		ADD_METHOD( IsCourseMode )
-		ADD_METHOD( IsDemonstration )
-		ADD_METHOD( GetPlayMode )
-		ADD_METHOD( GetSortOrder )
-		ADD_METHOD( StageIndex )
-		ADD_METHOD( IsGoalComplete )
-		ADD_METHOD( PlayerIsUsingModifier )
-		ADD_METHOD( GetCourseSongIndex )
-		ADD_METHOD( IsFinalStage )
-		ADD_METHOD( IsExtraStage )
-		ADD_METHOD( IsExtraStage2 )
-		ADD_METHOD( GetCurrentStage )
-		ADD_METHOD( IsStagePossible )
-		ADD_METHOD( HasEarnedExtraStage )
-		ADD_METHOD( GetEasiestStepsDifficulty )
-		ADD_METHOD( IsEventMode )
-		ADD_METHOD( GetNumPlayersEnabled )
-		ADD_METHOD( GetSongBeat )
-		ADD_METHOD( PlayerUsingBothSides )
-		ADD_METHOD( GetCoins )
-		ADD_METHOD( IsSideJoined )
-		ADD_METHOD( GetCoinsNeededToJoin )
-		ADD_METHOD( PlayersCanJoin )
-		ADD_METHOD( GetNumSidesJoined )
-		ADD_METHOD( GetCoinMode )
-		ADD_METHOD( GetPremium )
-		ADD_METHOD( GetSongOptionsString )
-		ADD_METHOD( IsSyncDataChanged )
-		ADD_METHOD( IsWinner )
-		ADD_METHOD( IsDisqualified )
-		ADD_METHOD( GetCurrentGame )
-		ADD_METHOD( GetEditCourseEntryIndex )
-		ADD_METHOD( GetEditLocalProfileID )
-		ADD_METHOD( GetEditLocalProfile )
+		ADD_METHOD( IsPlayerEnabled );
+		ADD_METHOD( IsHumanPlayer );
+		ADD_METHOD( GetPlayerDisplayName );
+		ADD_METHOD( GetMasterPlayerNumber );
+		ADD_METHOD( GetMultiplayer );
+		ADD_METHOD( GetPlayerState );
+		ADD_METHOD( ApplyGameCommand );
+		ADD_METHOD( GetCurrentSong );
+		ADD_METHOD( SetCurrentSong );
+		ADD_METHOD( GetCurrentSteps );
+		ADD_METHOD( SetCurrentSteps );
+		ADD_METHOD( GetCurrentCourse );
+		ADD_METHOD( SetCurrentCourse );
+		ADD_METHOD( GetCurrentTrail );
+		ADD_METHOD( SetPreferredSong );
+		ADD_METHOD( GetPreferredSong );
+		ADD_METHOD( SetTemporaryEventMode );
+		ADD_METHOD( Env );
+		ADD_METHOD( SetEnv );
+		ADD_METHOD( GetEnv );
+		ADD_METHOD( GetEditSourceSteps );
+		ADD_METHOD( GetPreferredDifficulty );
+		ADD_METHOD( AnyPlayerHasRankingFeats );
+		ADD_METHOD( IsCourseMode );
+		ADD_METHOD( IsDemonstration );
+		ADD_METHOD( GetPlayMode );
+		ADD_METHOD( GetSortOrder );
+		ADD_METHOD( StageIndex );
+		ADD_METHOD( IsGoalComplete );
+		ADD_METHOD( PlayerIsUsingModifier );
+		ADD_METHOD( GetCourseSongIndex );
+		ADD_METHOD( IsFinalStage );
+		ADD_METHOD( IsExtraStage );
+		ADD_METHOD( IsExtraStage2 );
+		ADD_METHOD( GetCurrentStage );
+		ADD_METHOD( IsStagePossible );
+		ADD_METHOD( HasEarnedExtraStage );
+		ADD_METHOD( GetEasiestStepsDifficulty );
+		ADD_METHOD( IsEventMode );
+		ADD_METHOD( GetNumPlayersEnabled );
+		ADD_METHOD( GetSongBeat );
+		ADD_METHOD( PlayerUsingBothSides );
+		ADD_METHOD( GetCoins );
+		ADD_METHOD( IsSideJoined );
+		ADD_METHOD( GetCoinsNeededToJoin );
+		ADD_METHOD( PlayersCanJoin );
+		ADD_METHOD( GetNumSidesJoined );
+		ADD_METHOD( GetCoinMode );
+		ADD_METHOD( GetPremium );
+		ADD_METHOD( GetSongOptionsString );
+		ADD_METHOD( IsSyncDataChanged );
+		ADD_METHOD( IsWinner );
+		ADD_METHOD( IsDisqualified );
+		ADD_METHOD( GetCurrentGame );
+		ADD_METHOD( GetEditCourseEntryIndex );
+		ADD_METHOD( GetEditLocalProfileID );
+		ADD_METHOD( GetEditLocalProfile );
 
 		Luna<T>::Register( L );
 

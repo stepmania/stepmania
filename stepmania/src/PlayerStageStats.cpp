@@ -529,14 +529,15 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetCaloriesBurned )
-		ADD_METHOD( GetLifeRemainingSeconds )
-		ADD_METHOD( GetSurvivalSeconds )
-		ADD_METHOD( FullCombo )
-		ADD_METHOD( MaxCombo )
-		ADD_METHOD( GetGrade )
-		ADD_METHOD( GetLessonScoreActual )
-		ADD_METHOD( GetLessonScorePossible )
+		ADD_METHOD( GetCaloriesBurned );
+		ADD_METHOD( GetLifeRemainingSeconds );
+		ADD_METHOD( GetSurvivalSeconds );
+		ADD_METHOD( FullCombo );
+		ADD_METHOD( MaxCombo );
+		ADD_METHOD( GetGrade );
+		ADD_METHOD( GetLessonScoreActual );
+		ADD_METHOD( GetLessonScorePossible );
+
 		Luna<T>::Register( L );
 	}
 };

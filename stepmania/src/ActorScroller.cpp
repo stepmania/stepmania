@@ -299,7 +299,7 @@ public:
 
 	static void Register(lua_State *L) 
 	{
-		ADD_METHOD( SetCurrentAndDestinationItem )
+		ADD_METHOD( SetCurrentAndDestinationItem );
 		Luna<T>::Register( L );
 	}
 };

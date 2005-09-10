@@ -271,12 +271,13 @@ public:
 
 	static void Register(lua_State *L) 
 	{
-		ADD_METHOD( scaletoclipped )
-		ADD_METHOD( ScaleToClipped )
-		ADD_METHOD( LoadFromSong )
-		ADD_METHOD( LoadFromCourse )
-		ADD_METHOD( LoadIconFromCharacter )
-		ADD_METHOD( LoadCardFromCharacter )
+		ADD_METHOD( scaletoclipped );
+		ADD_METHOD( ScaleToClipped );
+		ADD_METHOD( LoadFromSong );
+		ADD_METHOD( LoadFromCourse );
+		ADD_METHOD( LoadIconFromCharacter );
+		ADD_METHOD( LoadCardFromCharacter );
+
 		Luna<T>::Register( L );
 	}
 };

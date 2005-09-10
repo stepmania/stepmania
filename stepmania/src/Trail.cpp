@@ -196,8 +196,8 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetCourseDifficulty )
-		ADD_METHOD( GetStepsType )
+		ADD_METHOD( GetCourseDifficulty );
+		ADD_METHOD( GetStepsType );
 
 		Luna<T>::Register( L );
 	}

@@ -210,10 +210,11 @@ public:
 	
 	static void Register( Lua *L )
 	{
-		ADD_METHOD( GetCardPath )
-		ADD_METHOD( GetIconPath )
-		ADD_METHOD( GetSongSelectIconPath )
-		ADD_METHOD( GetStageIconPath )
+		ADD_METHOD( GetCardPath );
+		ADD_METHOD( GetIconPath );
+		ADD_METHOD( GetSongSelectIconPath );
+		ADD_METHOD( GetStageIconPath );
+
 		Luna<T>::Register( L );
 	}
 };

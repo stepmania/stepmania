@@ -291,10 +291,11 @@ public:
 
 	static void Register(lua_State *L) 
 	{
-		ADD_METHOD( Load )
-		ADD_METHOD( SetFromMeterAndDifficulty )
-		ADD_METHOD( SetFromSteps )
-		ADD_METHOD( SetFromTrail )
+		ADD_METHOD( Load );
+		ADD_METHOD( SetFromMeterAndDifficulty );
+		ADD_METHOD( SetFromSteps );
+		ADD_METHOD( SetFromTrail );
+
 		Luna<T>::Register( L );
 	}
 };

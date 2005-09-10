@@ -739,8 +739,9 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( DimMusic )
-		ADD_METHOD( PlayOnce )
+		ADD_METHOD( DimMusic );
+		ADD_METHOD( PlayOnce );
+
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,

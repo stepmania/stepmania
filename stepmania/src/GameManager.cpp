@@ -2829,8 +2829,8 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( StepsTypeToThemedString )
-		ADD_METHOD( GetFirstStepsTypeForCurrentGame )
+		ADD_METHOD( StepsTypeToThemedString );
+		ADD_METHOD( GetFirstStepsTypeForCurrentGame );
 
 		Luna<T>::Register( L );
 

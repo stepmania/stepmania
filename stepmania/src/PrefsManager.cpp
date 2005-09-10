@@ -468,8 +468,9 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetPreference )
-		ADD_METHOD( SetPreference )
+		ADD_METHOD( GetPreference );
+		ADD_METHOD( SetPreference );
+
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,

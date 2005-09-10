@@ -132,10 +132,11 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetPlayerStageStats )
-		ADD_METHOD( GetGameplaySeconds )
-		ADD_METHOD( OnePassed )
-		ADD_METHOD( AllFailed )
+		ADD_METHOD( GetPlayerStageStats );
+		ADD_METHOD( GetGameplaySeconds );
+		ADD_METHOD( OnePassed );
+		ADD_METHOD( AllFailed );
+
 		Luna<T>::Register( L );
 	}
 };

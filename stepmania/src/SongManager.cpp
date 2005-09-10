@@ -1420,16 +1420,17 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetAllSongs )
-		ADD_METHOD( GetAllCourses )
-		ADD_METHOD( FindSong )
-		ADD_METHOD( FindCourse )
-		ADD_METHOD( GetRandomSong )
-		ADD_METHOD( GetRandomCourse )
-		ADD_METHOD( GetNumSongs )
-		ADD_METHOD( GetNumSongGroups )
-		ADD_METHOD( GetNumCourses )
-		ADD_METHOD( GetNumCourseGroups )
+		ADD_METHOD( GetAllSongs );
+		ADD_METHOD( GetAllCourses );
+		ADD_METHOD( FindSong );
+		ADD_METHOD( FindCourse );
+		ADD_METHOD( GetRandomSong );
+		ADD_METHOD( GetRandomCourse );
+		ADD_METHOD( GetNumSongs );
+		ADD_METHOD( GetNumSongGroups );
+		ADD_METHOD( GetNumCourses );
+		ADD_METHOD( GetNumCourseGroups );
+
 		Luna<T>::Register( L );
 
 		// Add global singleton if constructed already.  If it's not constructed yet,

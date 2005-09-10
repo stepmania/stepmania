@@ -149,7 +149,8 @@ public:
 
 	static void Register(lua_State *L) 
 	{
-		ADD_METHOD( set )
+		ADD_METHOD( set );
+
 		Luna<T>::Register( L );
 	}
 };

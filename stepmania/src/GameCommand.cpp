@@ -1162,12 +1162,12 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetName )
-		ADD_METHOD( GetText )
-		ADD_METHOD( GetIndex )
-		ADD_METHOD( GetMultiPlayer )
-		ADD_METHOD( GetProfileID )
-		ADD_METHOD( GetSong )
+		ADD_METHOD( GetName );
+		ADD_METHOD( GetText );
+		ADD_METHOD( GetIndex );
+		ADD_METHOD( GetMultiPlayer );
+		ADD_METHOD( GetProfileID );
+		ADD_METHOD( GetSong );
 
 		Luna<T>::Register( L );
 	}

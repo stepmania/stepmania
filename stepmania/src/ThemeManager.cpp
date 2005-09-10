@@ -882,10 +882,10 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( GetMetric )
-		ADD_METHOD( GetPathG )
-		ADD_METHOD( GetPathB )
-		ADD_METHOD( GetPathS )
+		ADD_METHOD( GetMetric );
+		ADD_METHOD( GetPathG );
+		ADD_METHOD( GetPathB );
+		ADD_METHOD( GetPathS );
 
 		Luna<T>::Register( L );
 

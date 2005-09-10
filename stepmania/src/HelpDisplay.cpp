@@ -128,8 +128,9 @@ public:
 
 	static void Register(lua_State *L) 
 	{
-		ADD_METHOD( settips )
-		ADD_METHOD( gettips )
+		ADD_METHOD( settips );
+		ADD_METHOD( gettips );
+
 		Luna<T>::Register( L );
 	}
 };
