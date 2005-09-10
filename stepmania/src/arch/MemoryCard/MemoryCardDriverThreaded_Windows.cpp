@@ -71,6 +71,7 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 		vector<UsbStorageDevice> vNewStorageDevices;
 
 		const int MAX_DRIVES = 26;
+		CString sDrives;
 		for( int i=2; i<MAX_DRIVES; i++ )	// skip 'a:" and "b:"
 		{
 			DWORD mask = (1 << i);
@@ -79,7 +80,9 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 
 			CString sDrive = ssprintf( "%c:\\", 'a'+i%26 );
 
-			LOG->Trace( "Found drive %s", sDrive.c_str() );
+			if( !sDrives.empty() )
+				sDrives += ", ";
+			sDrives += sDrive;
 
 			if( GetDriveType(sDrive) != DRIVE_REMOVABLE )	// is a removable drive
 				continue;
@@ -112,6 +115,7 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 		vStorageDevicesOut = vNewStorageDevices;
 
 		CHECKPOINT;
+		LOG->Trace( "Found drives: %s", sDrives.c_str() );
 	}
 	return true;
 }
