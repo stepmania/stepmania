@@ -764,7 +764,7 @@ void ScreenEvaluation::Init()
 	this->SortByDrawOrder();
 
 	this->PostScreenMessage( SM_AddBonus, 1.5f );
- }
+}
 
 
 void ScreenEvaluation::CommitScores(
