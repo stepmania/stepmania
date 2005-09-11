@@ -24,12 +24,9 @@ public:
 	int m_iPersonalHighScoreIndex;
 	int m_iMachineHighScoreIndex;
 	RankingCategory m_rc;
-	PerDifficultyAward m_pdaToShow;
-	PeakComboAward m_pcaToShow;
 	HighScore m_HighScore;
 	Grade m_Grade;
 
-	void CalcAwards( const PlayerStageStats &m_PlayerStageStats, PlayerNumber p );
 	static void CommitScores( const StageStats &stageStats, StageResults out[NUM_PLAYERS], bool bSummary );
 };
 

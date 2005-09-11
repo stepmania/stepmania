@@ -91,8 +91,6 @@ void StageResults::Init()
 	m_iPersonalHighScoreIndex = -1;
 	m_iMachineHighScoreIndex = -1;
 	m_rc = RANKING_INVALID;
-	m_pdaToShow = PER_DIFFICULTY_AWARD_INVALID;
-	m_pcaToShow = PEAK_COMBO_AWARD_INVALID;
 }
 
 
@@ -260,6 +258,8 @@ void ScreenEvaluation::Init()
 	// update persistent statistics
 	//
 	StageResults::CommitScores( m_StageStats, m_StageResults, m_Type == summary );
+	FOREACH_HumanPlayer( p )
+		m_StageStats.m_player[p].CalcAwards( p );
 
 	m_bTryExtraStage = 
 		GAMESTATE->HasEarnedExtraStage()  && 
@@ -921,74 +921,6 @@ void StageResults::CommitScores(
 		else
 			out[p].m_iMachineHighScoreIndex = iter - pHSL->vHighScores.begin();
 	}
-
-	FOREACH_HumanPlayer( p )
-		out[p].CalcAwards( m_StageStats.m_player[p], p );
-}
-
-void StageResults::CalcAwards( const PlayerStageStats &m_PlayerStageStats, PlayerNumber p )
-{
-	LOG->Trace( "hand out awards" );
-	
-	deque<PerDifficultyAward> &vPdas = GAMESTATE->m_vLastPerDifficultyAwards[p];
-
-	LOG->Trace( "per difficulty awards" );
-
-	// per-difficulty awards
-	// don't give per-difficutly awards if using easy mods
-	if( !GAMESTATE->IsDisqualified(p) )
-	{
-		if( m_PlayerStageStats.FullComboOfScore( TNS_GREAT ) )
-			vPdas.push_back( AWARD_FULL_COMBO_GREATS );
-		if( m_PlayerStageStats.SingleDigitsOfScore( TNS_GREAT ) )
-			vPdas.push_back( AWARD_SINGLE_DIGIT_GREATS );
-		if( m_PlayerStageStats.FullComboOfScore( TNS_PERFECT ) )
-			vPdas.push_back( AWARD_FULL_COMBO_PERFECTS );
-		if( m_PlayerStageStats.SingleDigitsOfScore( TNS_PERFECT ) )
-			vPdas.push_back( AWARD_SINGLE_DIGIT_PERFECTS );
-		if( m_PlayerStageStats.FullComboOfScore( TNS_MARVELOUS ) )
-			vPdas.push_back( AWARD_FULL_COMBO_MARVELOUSES );
-		
-		if( m_PlayerStageStats.OneOfScore( TNS_GREAT ) )
-			vPdas.push_back( AWARD_ONE_GREAT );
-		if( m_PlayerStageStats.OneOfScore( TNS_PERFECT ) )
-			vPdas.push_back( AWARD_ONE_PERFECT );
-
-		float fPercentGreats = m_PlayerStageStats.GetPercentageOfTaps( TNS_GREAT );
-		if( fPercentGreats >= 0.8f )
-			vPdas.push_back( AWARD_GREATS_80_PERCENT );
-		if( fPercentGreats >= 0.9f )
-			vPdas.push_back( AWARD_GREATS_90_PERCENT );
-		if( fPercentGreats >= 1.f )
-			vPdas.push_back( AWARD_GREATS_100_PERCENT );
-	}
-
-	// Max one PDA per stage
-	if( !vPdas.empty() )
-		vPdas.erase( vPdas.begin(), vPdas.end()-1 );
-	
-	if( !vPdas.empty() )
-		m_pdaToShow = vPdas.back();
-
-	LOG->Trace( "done with per difficulty awards" );
-
-	// DO give peak combo awards if using easy mods
-	int iComboAtStartOfStage = m_PlayerStageStats.GetComboAtStartOfStage();
-	int iPeakCombo = m_PlayerStageStats.GetMaxCombo().cnt;
-
-	FOREACH_PeakComboAward( pca )
-	{
-		int iLevel = 1000 * (pca+1);
-		bool bCrossedLevel = iComboAtStartOfStage < iLevel && iPeakCombo >= iLevel;
-		LOG->Trace( "pca = %d, iLevel = %d, bCrossedLevel = %d", pca, iLevel, bCrossedLevel );
-		if( bCrossedLevel )
-			GAMESTATE->m_vLastPeakComboAwards[p].push_back( pca );
-	}
-
-	if( !GAMESTATE->m_vLastPeakComboAwards[p].empty() )
-		m_pcaToShow = GAMESTATE->m_vLastPeakComboAwards[p].back();
-
-	LOG->Trace( "done with per combo awards" );
 }
 
 
@@ -1257,8 +1189,8 @@ public:
 	static int GetEvalStageStats( T* p, lua_State *L ) { p->m_StageStats.PushSelf( L ); return 1; }
 	static int GetPersonalHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageResults[IArg(1)].m_iPersonalHighScoreIndex ); return 1; }
 	static int GetMachineHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageResults[IArg(1)].m_iMachineHighScoreIndex ); return 1; }
-	static int GetPerDifficultyAward( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageResults[IArg(1)].m_pdaToShow ); return 1; }
-	static int GetPeakComboAward( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageResults[IArg(1)].m_pcaToShow ); return 1; }
+	static int GetPerDifficultyAward( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageStats.m_player[IArg(1)].m_pdaToShow ); return 1; }
+	static int GetPeakComboAward( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageStats.m_player[IArg(1)].m_pcaToShow ); return 1; }
 
 	static void Register( Lua *L )
 	{

@@ -506,6 +506,76 @@ float PlayerStageStats::GetPercentageOfTaps( TapNoteScore tns ) const
 	return iTapNoteScores[tns] / (float)iTotalTaps;
 }
 
+void PlayerStageStats::CalcAwards( PlayerNumber p )
+{
+	LOG->Trace( "hand out awards" );
+	
+	deque<PerDifficultyAward> &vPdas = GAMESTATE->m_vLastPerDifficultyAwards[p];
+
+	LOG->Trace( "per difficulty awards" );
+
+	// per-difficulty awards
+	// don't give per-difficutly awards if using easy mods
+	if( !GAMESTATE->IsDisqualified(p) )
+	{
+		if( FullComboOfScore( TNS_GREAT ) )
+			vPdas.push_back( AWARD_FULL_COMBO_GREATS );
+		if( SingleDigitsOfScore( TNS_GREAT ) )
+			vPdas.push_back( AWARD_SINGLE_DIGIT_GREATS );
+		if( FullComboOfScore( TNS_PERFECT ) )
+			vPdas.push_back( AWARD_FULL_COMBO_PERFECTS );
+		if( SingleDigitsOfScore( TNS_PERFECT ) )
+			vPdas.push_back( AWARD_SINGLE_DIGIT_PERFECTS );
+		if( FullComboOfScore( TNS_MARVELOUS ) )
+			vPdas.push_back( AWARD_FULL_COMBO_MARVELOUSES );
+		
+		if( OneOfScore( TNS_GREAT ) )
+			vPdas.push_back( AWARD_ONE_GREAT );
+		if( OneOfScore( TNS_PERFECT ) )
+			vPdas.push_back( AWARD_ONE_PERFECT );
+
+		float fPercentGreats = GetPercentageOfTaps( TNS_GREAT );
+		if( fPercentGreats >= 0.8f )
+			vPdas.push_back( AWARD_GREATS_80_PERCENT );
+		if( fPercentGreats >= 0.9f )
+			vPdas.push_back( AWARD_GREATS_90_PERCENT );
+		if( fPercentGreats >= 1.f )
+			vPdas.push_back( AWARD_GREATS_100_PERCENT );
+	}
+
+	// Max one PDA per stage
+	if( !vPdas.empty() )
+		vPdas.erase( vPdas.begin(), vPdas.end()-1 );
+	
+	if( !vPdas.empty() )
+		m_pdaToShow = vPdas.back();
+	else
+		m_pdaToShow = PER_DIFFICULTY_AWARD_INVALID;
+
+	LOG->Trace( "done with per difficulty awards" );
+
+	// DO give peak combo awards if using easy mods
+	int iComboAtStartOfStage = GetComboAtStartOfStage();
+	int iPeakCombo = GetMaxCombo().cnt;
+
+	FOREACH_PeakComboAward( pca )
+	{
+		int iLevel = 1000 * (pca+1);
+		bool bCrossedLevel = iComboAtStartOfStage < iLevel && iPeakCombo >= iLevel;
+		LOG->Trace( "pca = %d, iLevel = %d, bCrossedLevel = %d", pca, iLevel, bCrossedLevel );
+		if( bCrossedLevel )
+			GAMESTATE->m_vLastPeakComboAwards[p].push_back( pca );
+	}
+
+	if( !GAMESTATE->m_vLastPeakComboAwards[p].empty() )
+		m_pcaToShow = GAMESTATE->m_vLastPeakComboAwards[p].back();
+	else
+		m_pcaToShow = PEAK_COMBO_AWARD_INVALID;
+
+	LOG->Trace( "done with per combo awards" );
+
+}
+
 
 LuaFunction( GetGradeFromPercent,	PlayerStageStats::GetGradeFromPercent( FArg(1) ) )
 

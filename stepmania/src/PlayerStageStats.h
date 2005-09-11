@@ -105,6 +105,10 @@ public:
 
 	float GetSurvivalSeconds() { return fAliveSeconds + fLifeRemainingSeconds; }
 
+	void CalcAwards( PlayerNumber p );
+	PerDifficultyAward m_pdaToShow;
+	PeakComboAward m_pcaToShow;
+
 	// Lua
 	void PushSelf( lua_State *L );
 };
