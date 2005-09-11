@@ -1,3 +1,5 @@
+/* ScreenTestFonts - Display and test fonts. */
+
 #ifndef SCREEN_TEST_FONTS_H
 #define SCREEN_TEST_FONTS_H
 
@@ -15,10 +17,11 @@ public:
 	void DrawPrimitives();
 	void HandleScreenMessage( const ScreenMessage SM );
 
-	void SetText(CString txt);
-	void SetFont(CString font);
+private:
+	void SetText( CString sText );
+	void SetFont( CString sFont );
 
-	CString			curtext, curfont;
+	CString m_sCurText, m_sFont;
 	BitmapText txt, font;
 	Quad Vline, Hline;
 };
@@ -26,7 +29,7 @@ public:
 #endif
 
 /*
- * (c) 2003 Glenn Maynard
+ * (c) 2003-2005 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

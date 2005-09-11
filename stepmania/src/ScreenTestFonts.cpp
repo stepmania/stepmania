@@ -11,20 +11,22 @@
 static const float LineWidth = 400;
 static const float LineHeight = 50;
 
+#define FONT( i )			THEME->GetMetric (m_sName,ssprintf("Font%i",i))
+#define TEXT( i )			THEME->GetMetric (m_sName,ssprintf("Text%i",i))
 
-CString CustomText;
+static CString g_sCustomText;
 
-void ChangeText(const CString &txt)
+static void ChangeText( const CString &sText )
 {
-	CustomText = txt;
+	g_sCustomText = sText;
 }
 
 AutoScreenMessage( SM_ChangeText )
 
 void ScreenTestFonts::HandleScreenMessage( const ScreenMessage SM )
 {
-	if(SM == ScreenMessage(SM_ChangeText))
-		SetText(CustomText);
+	if( SM == ScreenMessage(SM_ChangeText) )
+		SetText( g_sCustomText );
 }
 
 REGISTER_SCREEN_CLASS( ScreenTestFonts );
@@ -47,31 +49,33 @@ void ScreenTestFonts::Init()
 	this->AddChild(&Vline);
 	
 	font.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y+100 );
-	font.LoadFromFont( "Themes/default/Fonts/Common Normal" );
+	font.LoadFromFont( THEME->GetPathF("Common", "normal") );
 	font.SetZoom(.5);
 	this->AddChild(&font);
 
-	txt.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
-	SetFont( "Themes/default/Fonts/Common Normal" );
+	txt.SetName( "Text" );
+	SetFont( THEME->GetPathF("", FONT(1)) );
+	SET_XY_AND_ON_COMMAND( txt );
 	SetText( "Foo" );
 }
 
-void ScreenTestFonts::SetText(CString text)
+void ScreenTestFonts::SetText( CString sText )
 {
 	txt.SetShadowLength( 0 );
-	txt.SetText(""); /* force it */
-	txt.SetText(text);
-	curtext = text;
+	txt.SetText( "" ); /* force it */
+	txt.SetText( sText );
+	m_sCurText = sText;
 }
-void ScreenTestFonts::SetFont(CString font_)
-{
-	curfont = font_;
 
-	txt.LoadFromFont(curfont);
-	font.SetText(curfont);
+void ScreenTestFonts::SetFont( CString sFont )
+{
+	m_sFont = sFont;
+
+	txt.LoadFromFont( m_sFont );
+	font.SetText( m_sFont );
 	/* The font changed, so we need to reset the text or it'll be
 	 * misaligned. */
-	SetText(curtext);
+	SetText( m_sCurText );
 }
 
 void ScreenTestFonts::DrawPrimitives()
@@ -89,42 +93,43 @@ void ScreenTestFonts::Input( const InputEventPlus &input )
 		return;
 	switch( input.DeviceI.button )
 	{
-	case '[': txt.SetVertAlign(align_bottom); break;
-	case '\\': txt.SetVertAlign(align_middle); break;
-	case ']': txt.SetVertAlign(align_top); break;
+	case '[': txt.SetVertAlign( align_bottom ); break;
+	case '\\': txt.SetVertAlign( align_middle ); break;
+	case ']': txt.SetVertAlign( align_top ); break;
 
-	case ',': txt.SetHorizAlign(align_left); break;
-	case '.': txt.SetHorizAlign(align_center); break;
-	case '/': txt.SetHorizAlign(align_right); break;
+	case ',': txt.SetHorizAlign( align_left ); break;
+	case '.': txt.SetHorizAlign( align_center ); break;
+	case '/': txt.SetHorizAlign( align_right ); break;
 
-	case '`': if(curtext != CustomText)
-				  SetText(CustomText);
+	case '`': if( m_sCurText != g_sCustomText )
+				  SetText( g_sCustomText );
 			  else
-				  ScreenTextEntry::TextEntry( SM_ChangeText, "Edit text.", CustomText, 100, NULL, ChangeText, NULL);
+				  ScreenTextEntry::TextEntry( SM_ChangeText, "Edit text.", g_sCustomText, 100, NULL, ChangeText, NULL);
 			  break;
-	case '1': SetText("Waaai"); break;
-	case '2': SetText("WAAI &#9769;"); break;
-	case '3': SetText("WAAI &#93bc;"); break;
+	case '1': SetText( TEXT(1) ); break;
+	case '2': SetText( TEXT(2) ); break;
+	case '3': SetText( TEXT(3) ); break;
+	case '4': SetText( TEXT(4) ); break;
+	case '5': SetText( TEXT(5) ); break;
 
-	case '4': SetText("WAAI\nWAAI"); break;
-	case '5': SetText("WAAI &#93bc;\nWAAI"); break;
+	case 'q': SetFont( THEME->GetPathF("", FONT(1)) ); break;
+	case 'w': SetFont( THEME->GetPathF("", FONT(2)) ); break;
+	case 'e': SetFont( THEME->GetPathF("", FONT(3)) ); break;
+	case 'r': SetFont( THEME->GetPathF("", FONT(4)) ); break;
+	case 't': SetFont( THEME->GetPathF("", FONT(5)) ); break;
 
-	case 'q': SetFont( "Themes/default/Fonts/_shared2" ); break;
-	case 'w': SetFont( "Themes/default/Fonts/Common Normal" ); break;
-	case 'e': SetFont( "Themes/default/Fonts/MusicList titles" ); break;
-	case 'r': SetFont( "Themes/default/Fonts/_shared1" ); break;
-	case 't': SetFont( "Themes/default/Fonts/ScreenRanking letters" ); break;
+	case 'a': SetFont( THEME->GetPathF("", FONT(1)) ); break;
 
 	case 'z': FONT->ReloadFonts();
 			  TEXTUREMAN->ReloadAll();
-			  SetText(curtext);
-			  SetFont(curfont);
+			  SetText( m_sCurText );
+			  SetFont( m_sFont );
 			  break;
 	}
 }
 
 /*
- * (c) 2003 Glenn Maynard
+ * (c) 2003-2005 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
