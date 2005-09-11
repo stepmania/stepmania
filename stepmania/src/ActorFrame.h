@@ -54,6 +54,7 @@ public:
 
 	void SetUpdateRate( float fUpdateRate ) { m_fUpdateRate = fUpdateRate; }
 	void SetFOV( float fFOV ) { m_fFOV = fFOV; }
+	void SetSize( float fX, float fY ) { m_size.x = fX; m_size.y = fY; }
 	void SetVanishPoint( float fX, float fY) { m_fVanishX = fX; m_fVanishY = fY; }
 
 	virtual void SetPropagateCommands( bool b );

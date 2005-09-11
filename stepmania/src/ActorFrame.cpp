@@ -376,6 +376,7 @@ public:
 
 	static int propagate( T* p, lua_State *L )			{ p->SetPropagateCommands( !!IArg(1) ); return 0; }
 	static int fov( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
+	static int setsize( T* p, lua_State *L )			{ p->SetSize( FArg(1), FArg(2) ); return 0; }
 	static int SetUpdateRate( T* p, lua_State *L )		{ p->SetUpdateRate( FArg(1) ); return 0; }
 	static int SetFOV( T* p, lua_State *L )				{ p->SetFOV( FArg(1) ); return 0; }
 	static int vanishpoint( T* p, lua_State *L )		{ p->SetVanishPoint( FArg(1), FArg(2) ); return 0; }
@@ -395,6 +396,7 @@ public:
 	{
 		ADD_METHOD( propagate );
 		ADD_METHOD( fov );
+		ADD_METHOD( setsize );
 		ADD_METHOD( SetUpdateRate );
 		ADD_METHOD( SetFOV );
 		ADD_METHOD( vanishpoint );
