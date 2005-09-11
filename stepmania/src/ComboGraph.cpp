@@ -51,9 +51,9 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 	const float fLastSecond = s.GetTotalPossibleStepsSeconds();
 
 	/* Find the largest combo. */
-	int MaxComboSize = 0;
+	int iMaxComboSize = 0;
 	for( unsigned i = 0; i < pss.ComboList.size(); ++i )
-		MaxComboSize = max( MaxComboSize, pss.ComboList[i].GetStageCnt() );
+		iMaxComboSize = max( iMaxComboSize, pss.ComboList[i].GetStageCnt() );
 
 	for( unsigned i = 0; i < pss.ComboList.size(); ++i )
 	{
@@ -61,20 +61,20 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 		if( combo.GetStageCnt() < MinComboSizeToShow )
 			continue; /* too small */
 
-		const bool IsMax = (combo.GetStageCnt() == MaxComboSize);
+		const bool bIsMax = (combo.GetStageCnt() == iMaxComboSize);
 
-		LOG->Trace("combo %i is %f+%f", i, combo.fStartSecond, combo.fSizeSeconds);
-		Actor *sprite = IsMax? m_pMaxCombo->Copy():m_pNormalCombo->Copy();
+		LOG->Trace( "combo %i is %f+%f of %f", i, combo.fStartSecond, combo.fSizeSeconds, fLastSecond );
+		Actor *pSprite = bIsMax? m_pMaxCombo->Copy():m_pNormalCombo->Copy();
 
-		const float start = SCALE( combo.fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
-		const float size = SCALE( combo.fSizeSeconds, 0, fLastSecond-fFirstSecond, 0.0f, 1.0f );
-		sprite->SetCropLeft ( SCALE( size, 0.0f, 1.0f, 0.5f, 0.0f ) );
-		sprite->SetCropRight( SCALE( size, 0.0f, 1.0f, 0.5f, 0.0f ) );
+		const float fStart = SCALE( combo.fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
+		const float fSize = SCALE( combo.fSizeSeconds, 0, fLastSecond-fFirstSecond, 0.0f, 1.0f );
+		pSprite->SetCropLeft ( SCALE( fSize, 0.0f, 1.0f, 0.5f, 0.0f ) );
+		pSprite->SetCropRight( SCALE( fSize, 0.0f, 1.0f, 0.5f, 0.0f ) );
 
-		sprite->SetCropLeft( start );
-		sprite->SetCropRight( 1 - (size + start) );
+		pSprite->SetCropLeft( fStart );
+		pSprite->SetCropRight( 1 - (fSize + fStart) );
 
-		this->AddChild( sprite );
+		this->AddChild( pSprite );
 	}
 
 	for( unsigned i = 0; i < pss.ComboList.size(); ++i )
@@ -83,14 +83,14 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 		if( combo.GetStageCnt() < MinComboSizeToShow )
 			continue; /* too small */
 	
-		if( !MaxComboSize )
+		if( !iMaxComboSize )
 			continue;
 
-		const bool IsMax = (combo.GetStageCnt() == MaxComboSize);
-		if( !IsMax )
+		const bool bIsMax = (combo.GetStageCnt() == iMaxComboSize);
+		if( !bIsMax )
 			continue;
 
-		BitmapText *text = (BitmapText *) m_MaxComboText.Copy(); // XXX Copy should be covariant
+		BitmapText *pText = (BitmapText *) m_MaxComboText.Copy(); // XXX Copy should be covariant
 
 		const float start = SCALE( combo.fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
 		const float size = SCALE( combo.fSizeSeconds, 0, fLastSecond-fFirstSecond, 0.0f, 1.0f );
@@ -98,11 +98,11 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 		const float fWidth = m_pNormalCombo->GetUnzoomedWidth();
 		const float CenterPercent = start + size/2;
 		const float CenterXPos = SCALE( CenterPercent, 0.0f, 1.0f, -fWidth/2.0f, fWidth/2.0f );
-		text->SetX( CenterXPos );
+		pText->SetX( CenterXPos );
 
-		text->SetText( ssprintf("%i",combo.GetStageCnt()) );
+		pText->SetText( ssprintf("%i",combo.GetStageCnt()) );
 
-		this->AddChild( text );
+		this->AddChild( pText );
 	}
 }
 
