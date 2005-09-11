@@ -15,6 +15,20 @@
 #include "HighScore.h"
 #include "RageSound.h"
 
+class StageResults
+{
+public:
+	StageResults();
+	void Init();
+
+	int m_iPersonalHighScoreIndex;
+	int m_iMachineHighScoreIndex;
+	RankingCategory m_rc;
+	PerDifficultyAward m_pdaToShow;
+	PeakComboAward m_pcaToShow;
+	HighScore m_HighScore;
+};
+
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
 enum JudgeLine { marvelous, perfect, great, good, boo, miss, ok, max_combo, error, NUM_JUDGE_LINES };
 enum StatsLine { jumps, holds, mines, hands, rolls, NUM_STATS_LINES };
@@ -38,19 +52,10 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 	StageStats m_StageStats;
-	int m_iPersonalHighScoreIndex[NUM_PLAYERS];
-	int m_iMachineHighScoreIndex[NUM_PLAYERS];
-	PerDifficultyAward m_pdaToShow[NUM_PLAYERS];
-	PeakComboAward m_pcaToShow[NUM_PLAYERS];
+	StageResults m_StageResults[NUM_PLAYERS];
 
 protected:
-	void CommitScores( 
-		const StageStats &stageStats, 
-		int iPersonalHighScoreIndexOut[NUM_PLAYERS], 
-		int iMachineHighScoreIndexOut[NUM_PLAYERS], 
-		RankingCategory rcOut[NUM_PLAYERS],
-		PerDifficultyAward pdaToShowOut[NUM_PLAYERS],
-		PeakComboAward pcaToShowOut[NUM_PLAYERS] );
+	static void CommitScores( const StageStats &stageStats, StageResults out[NUM_PLAYERS], ScreenEvaluation::Type type );
 	void EndScreen();
 
 	Type				m_Type;

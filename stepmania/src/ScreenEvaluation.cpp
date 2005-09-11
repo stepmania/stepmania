@@ -81,6 +81,20 @@ static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 AutoScreenMessage( SM_PlayCheer )
 AutoScreenMessage( SM_AddBonus )
 
+StageResults::StageResults()
+{
+	Init();
+}
+
+void StageResults::Init()
+{
+	m_iPersonalHighScoreIndex = -1;
+	m_iMachineHighScoreIndex = -1;
+	m_rc = RANKING_INVALID;
+	m_pdaToShow = PER_DIFFICULTY_AWARD_INVALID;
+	m_pcaToShow = PEAK_COMBO_AWARD_INVALID;
+}
+
 
 REGISTER_SCREEN_CLASS( ScreenEvaluation );
 ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElements(sClassName)
@@ -255,8 +269,7 @@ void ScreenEvaluation::Init()
 	//
 	// update persistent statistics
 	//
-	RankingCategory rc[NUM_PLAYERS];;
-	CommitScores( m_StageStats, m_iPersonalHighScoreIndex, m_iMachineHighScoreIndex, rc, m_pdaToShow, m_pcaToShow );
+	CommitScores( m_StageStats, m_StageResults, m_Type );
 
 	m_bTryExtraStage = 
 		GAMESTATE->HasEarnedExtraStage()  && 
@@ -680,16 +693,16 @@ void ScreenEvaluation::Init()
 	{
 		FOREACH_EnabledPlayer( p )
 		{
-			if( m_iMachineHighScoreIndex[p] != -1 )
+			if( m_StageResults[p].m_iMachineHighScoreIndex != -1 )
 			{
-				m_sprMachineRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("MachineRecord %02d",m_iMachineHighScoreIndex[p]+1) ) );
+				m_sprMachineRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("MachineRecord %02d",m_StageResults[p].m_iMachineHighScoreIndex+1) ) );
 				m_sprMachineRecord[p]->SetName( ssprintf("MachineRecordP%d",p+1) );
 				SET_XY_AND_ON_COMMAND( m_sprMachineRecord[p] );
 				this->AddChild( m_sprMachineRecord[p] );
 			}
-			if( m_iPersonalHighScoreIndex[p] != -1 )
+			if( m_StageResults[p].m_iPersonalHighScoreIndex != -1 )
 			{
-				m_sprPersonalRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("PersonalRecord %02d",m_iPersonalHighScoreIndex[p]+1) ) );
+				m_sprPersonalRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("PersonalRecord %02d",m_StageResults[p].m_iPersonalHighScoreIndex+1) ) );
 				m_sprPersonalRecord[p]->SetName( ssprintf("PersonalRecordP%d",p+1) );
 				SET_XY_AND_ON_COMMAND( m_sprPersonalRecord[p] );
 				this->AddChild( m_sprPersonalRecord[p] );
@@ -699,7 +712,7 @@ void ScreenEvaluation::Init()
 
 	bool bOneHasNewTopRecord = false;
 	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->IsPlayerEnabled(p) && (m_iMachineHighScoreIndex[p] != -1 || m_iPersonalHighScoreIndex[p] != -1) )
+		if( GAMESTATE->IsPlayerEnabled(p) && (m_StageResults[p].m_iMachineHighScoreIndex != -1 || m_StageResults[p].m_iPersonalHighScoreIndex != -1) )
 			bOneHasNewTopRecord = true;
 
 	Grade best_grade = Grade_NoData;
@@ -769,19 +782,12 @@ void ScreenEvaluation::Init()
 
 void ScreenEvaluation::CommitScores(
 	const StageStats &m_StageStats, 
-	int iPersonalHighScoreIndexOut[NUM_PLAYERS], 
-	int iMachineHighScoreIndexOut[NUM_PLAYERS], 
-	RankingCategory rcOut[NUM_PLAYERS],
-	PerDifficultyAward pdaToShowOut[NUM_PLAYERS],
-	PeakComboAward pcaToShowOut[NUM_PLAYERS] )
+	StageResults out[NUM_PLAYERS], 
+	ScreenEvaluation::Type type )
 {
 	FOREACH_PlayerNumber( pn )
 	{
-		iPersonalHighScoreIndexOut[pn] = -1;
-		iMachineHighScoreIndexOut[pn] = -1;
-		rcOut[pn] = RANKING_INVALID;
-		pdaToShowOut[pn] = PER_DIFFICULTY_AWARD_INVALID;
-		pcaToShowOut[pn] = PEAK_COMBO_AWARD_INVALID;
+		out[pn].Init();
 	}
 
 	switch( GAMESTATE->m_PlayMode )
@@ -795,8 +801,8 @@ void ScreenEvaluation::CommitScores(
 	{
 		FOREACH_PlayerNumber( pn )
 		{
-			iPersonalHighScoreIndexOut[pn] = 0;
-			iMachineHighScoreIndexOut[pn] = 0;
+			out[pn].m_iPersonalHighScoreIndex = 0;
+			out[pn].m_iMachineHighScoreIndex = 0;
 		}
 	}
 
@@ -819,7 +825,7 @@ void ScreenEvaluation::CommitScores(
 		// depends on if this is a course or not ... it's handled
 		// below in the switch
 
-		HighScore &hs = m_HighScore[p];
+		HighScore &hs = out[p].m_HighScore;
 		hs.SetName( RANKING_TO_FILL_IN_MARKER[p] );
 		hs.SetGrade( m_StageStats.m_player[p].GetGrade() );
 		hs.SetScore( m_StageStats.m_player[p].iScore );
@@ -840,7 +846,7 @@ void ScreenEvaluation::CommitScores(
 
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
-		switch( m_Type )
+		switch( type )
 		{
 		case stage:
 			{
@@ -850,7 +856,7 @@ void ScreenEvaluation::CommitScores(
 
 				ASSERT( pSteps );
 
-				PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+				PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, out[p].m_iPersonalHighScoreIndex, out[p].m_iMachineHighScoreIndex );
 			}
 			break;
 
@@ -861,12 +867,12 @@ void ScreenEvaluation::CommitScores(
 					continue;
 
 				int iAverageMeter = m_StageStats.GetAverageMeter(p);
-				rcOut[p] = AverageMeterToRankingCategory( iAverageMeter );
+				out[p].m_rc = AverageMeterToRankingCategory( iAverageMeter );
 
-				PROFILEMAN->AddCategoryScore( st, rcOut[p], p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+				PROFILEMAN->AddCategoryScore( st, out[p].m_rc, p, hs, out[p].m_iPersonalHighScoreIndex, out[p].m_iMachineHighScoreIndex );
 				
 				// TRICKY:  Increment play count here, and not on ScreenGameplay like the others.
-				PROFILEMAN->IncrementCategoryPlayCount( st, rcOut[p], p );
+				PROFILEMAN->IncrementCategoryPlayCount( st, out[p].m_rc, p );
 			}
 			break;
 
@@ -876,7 +882,7 @@ void ScreenEvaluation::CommitScores(
 				ASSERT( pCourse );
 				Trail* pTrail = GAMESTATE->m_pCurTrail[p];
 
-				PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, iPersonalHighScoreIndexOut[p], iMachineHighScoreIndexOut[p] );
+				PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, out[p].m_iPersonalHighScoreIndex, out[p].m_iMachineHighScoreIndex );
 			}
 			break;
 		default:
@@ -891,15 +897,15 @@ void ScreenEvaluation::CommitScores(
 	// the HighScoreList and re-get the high score index.
 	FOREACH_HumanPlayer( p )
 	{
-		if( iMachineHighScoreIndexOut[p] == -1 )	// no record
+		if( out[p].m_iMachineHighScoreIndex == -1 )	// no record
 			continue;	// skip
 
-		HighScore &hs = m_HighScore[p];
+		HighScore &hs = out[p].m_HighScore;
 		Profile* pProfile = PROFILEMAN->GetMachineProfile();
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
 		const HighScoreList *pHSL = NULL;
-		switch( m_Type )
+		switch( type )
 		{
 		case stage:
 			{
@@ -910,7 +916,7 @@ void ScreenEvaluation::CommitScores(
 			break;
 		case summary:
 			{
-				pHSL = &pProfile->GetCategoryHighScoreList( st, rcOut[p] );
+				pHSL = &pProfile->GetCategoryHighScoreList( st, out[p].m_rc );
 			}
 			break;
 		case course:
@@ -928,9 +934,9 @@ void ScreenEvaluation::CommitScores(
 		
 		vector<HighScore>::const_iterator iter = find( pHSL->vHighScores.begin(), pHSL->vHighScores.end(), hs );
 		if( iter == pHSL->vHighScores.end() )
-			iMachineHighScoreIndexOut[p] = -1;
+			out[p].m_iMachineHighScoreIndex = -1;
 		else
-			iMachineHighScoreIndexOut[p] = iter - pHSL->vHighScores.begin();
+			out[p].m_iMachineHighScoreIndex = iter - pHSL->vHighScores.begin();
 	}
 
 	
@@ -943,7 +949,7 @@ void ScreenEvaluation::CommitScores(
 		LOG->Trace( "per difficulty awards" );
 
 		// per-difficulty awards
-		switch( m_Type )
+		switch( type )
 		{
 		case stage:
 		case course:
@@ -981,7 +987,7 @@ void ScreenEvaluation::CommitScores(
 			vPdas.erase( vPdas.begin(), vPdas.end()-1 );
 		
 		if( !vPdas.empty() )
-			pdaToShowOut[p] = vPdas.back();
+			out[p].m_pdaToShow = vPdas.back();
 
 		LOG->Trace( "done with per difficulty awards" );
 
@@ -1001,7 +1007,7 @@ void ScreenEvaluation::CommitScores(
 		}
 
 		if( !GAMESTATE->m_vLastPeakComboAwards[p].empty() )
-			pcaToShowOut[p] = GAMESTATE->m_vLastPeakComboAwards[p].back();
+			out[p].m_pcaToShow = GAMESTATE->m_vLastPeakComboAwards[p].back();
 
 		LOG->Trace( "done with per combo awards" );
 	}
@@ -1273,10 +1279,10 @@ class LunaScreenEvaluation: public Luna<ScreenEvaluation>
 public:
 	LunaScreenEvaluation() { LUA->Register( Register ); }
 	static int GetEvalStageStats( T* p, lua_State *L ) { p->m_StageStats.PushSelf( L ); return 1; }
-	static int GetPersonalHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, p->m_iPersonalHighScoreIndex[IArg(1)] ); return 1; }
-	static int GetMachineHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, p->m_iMachineHighScoreIndex[IArg(1)] ); return 1; }
-	static int GetPerDifficultyAward( T* p, lua_State *L ) { lua_pushnumber( L, p->m_pdaToShow[IArg(1)] ); return 1; }
-	static int GetPeakComboAward( T* p, lua_State *L ) { lua_pushnumber( L, p->m_pcaToShow[IArg(1)] ); return 1; }
+	static int GetPersonalHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageResults[IArg(1)].m_iPersonalHighScoreIndex ); return 1; }
+	static int GetMachineHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageResults[IArg(1)].m_iMachineHighScoreIndex ); return 1; }
+	static int GetPerDifficultyAward( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageResults[IArg(1)].m_pdaToShow ); return 1; }
+	static int GetPeakComboAward( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageResults[IArg(1)].m_pcaToShow ); return 1; }
 
 	static void Register( Lua *L )
 	{
