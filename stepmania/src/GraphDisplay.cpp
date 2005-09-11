@@ -84,7 +84,7 @@ public:
 		
 		int iNumLines = VALUE_RESOLUTION-1;
 		m_Quads.resize( iNumLines * 4 );
-		for( int i = 0; i < iNumLines-1; ++i )
+		for( int i = 0; i < iNumLines; ++i )
 		{
 			const RageSpriteVertex &p1 = m_LineStrip[i];
 			const RageSpriteVertex &p2 = m_LineStrip[i+1];
