@@ -16,28 +16,12 @@
 REGISTER_ACTOR_CLASS( GraphDisplay )
 
 enum { VALUE_RESOLUTION=100 };
-static const int iSubdivisions = 4;
-static const int iCircleVertices = iSubdivisions+2;
 
 class GraphLine: public Actor
 {
 public:
-	GraphLine()
-	{
-		for( unsigned i = 0; i < ARRAYSIZE(m_LineStrip); ++i )
-		{
-			m_LineStrip[i].c = RageColor( 1,1,1,1 );
-			m_LineStrip[i].t = RageVector2( 0,0 );
-		}
-
-		m_pCircles = NULL;
-	}
-
-	~GraphLine()
-	{
-		delete[] m_pCircles;
-	}
-
+	enum { iSubdivisions = 4 };
+	enum { iCircleVertices = iSubdivisions+2 };
 	void DrawPrimitives()
 	{
 		Actor::SetGlobalRenderStates();	// set Actor-specified render states
@@ -50,13 +34,14 @@ public:
 
 		for( unsigned i = 0; i < m_Quads.size(); ++i )
 			m_Quads[i].c = this->m_pTempState->diffuse[0];
-		for( unsigned i = 0; i < VALUE_RESOLUTION*iCircleVertices; ++i )
+		for( unsigned i = 0; i < m_pCircles.size(); ++i )
 			m_pCircles[i].c = this->m_pTempState->diffuse[0];
 
 		DISPLAY->DrawQuads( &m_Quads[0], m_Quads.size() );
 
-		for( int i = 0; i < VALUE_RESOLUTION; ++i )
-			DISPLAY->DrawFan( m_pCircles+iCircleVertices*i, iCircleVertices );
+		int iFans = m_pCircles.size() / iCircleVertices;
+		for( int i = 0; i < iFans; ++i )
+			DISPLAY->DrawFan( &m_pCircles[0]+iCircleVertices*i, iCircleVertices );
 	}
 
 	static void MakeCircle( const RageSpriteVertex &v, RageSpriteVertex *pVerts, int iSubdivisions, float fRadius )
@@ -74,17 +59,16 @@ public:
 		}
 	}
 
-	void Set()
+	void Set( const RageSpriteVertex *m_LineStrip, int iSize )
 	{
-		delete[] m_pCircles;
-		m_pCircles = new RageSpriteVertex[VALUE_RESOLUTION * iCircleVertices];
+		m_pCircles.resize( iSize * iCircleVertices );
 
-		for( int i = 0; i < VALUE_RESOLUTION; ++i )
+		for( int i = 0; i < iSize; ++i )
 		{
-			MakeCircle( m_LineStrip[i], m_pCircles + iCircleVertices*i, iSubdivisions, 1 );
+			MakeCircle( m_LineStrip[i], &m_pCircles[0] + iCircleVertices*i, iSubdivisions, 1 );
 		}
 		
-		int iNumLines = VALUE_RESOLUTION-1;
+		int iNumLines = iSize-1;
 		m_Quads.resize( iNumLines * 4 );
 		for( int i = 0; i < iNumLines; ++i )
 		{
@@ -118,11 +102,9 @@ public:
 
 	}
 
-	RageSpriteVertex m_LineStrip[VALUE_RESOLUTION];
-
 private:
 	vector<RageSpriteVertex> m_Quads;
-	RageSpriteVertex *m_pCircles;
+	vector<RageSpriteVertex> m_pCircles;
 };
 
 class GraphBody: public Actor
@@ -243,7 +225,6 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 		for( int i = 0; i < VALUE_RESOLUTION; ++i )
 		{
 			float fLife = m_Values[i];
-				LOG->Trace( "m %i: %f", i, fLife );
 			if( fLife < fMinLifeSoFar )
 			{
 				fMinLifeSoFar = fLife;
@@ -271,6 +252,7 @@ void GraphDisplay::UpdateVerts()
 	m_quadVertices.top = -m_size.y/2;
 	m_quadVertices.bottom = m_size.y/2;
 
+	RageSpriteVertex LineStrip[VALUE_RESOLUTION];
 	for( int i = 0; i < VALUE_RESOLUTION; ++i )
 	{
 		const float fX = SCALE( float(i), 0.0f, float(VALUE_RESOLUTION-1), m_quadVertices.left, m_quadVertices.right );
@@ -279,10 +261,12 @@ void GraphDisplay::UpdateVerts()
 		m_pGraphBody->m_Slices[i*2+0].p = RageVector3( fX, m_quadVertices.top, 0 );
 		m_pGraphBody->m_Slices[i*2+1].p = RageVector3( fX, fY, 0 );
 
-		m_pGraphLine->m_LineStrip[i].p = RageVector3( fX, fY, 0 );
+		LineStrip[i].p = RageVector3( fX, fY, 0 );
+		LineStrip[i].c = RageColor( 1,1,1,1 );
+		LineStrip[i].t = RageVector2( 0,0 );
 	}
 
-	m_pGraphLine->Set();
+	m_pGraphLine->Set( LineStrip, VALUE_RESOLUTION );
 }
 
 // lua start
