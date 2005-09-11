@@ -187,8 +187,6 @@ void ScreenEvaluation::Init()
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
-	m_bFailed = STATSMAN->m_CurStageStats.AllFailed();
-
 	ZERO( m_bSavedScreenshot );
 
 
@@ -212,6 +210,8 @@ void ScreenEvaluation::Init()
 		STATSMAN->GetFinalEvalStageStats( STATSMAN->m_CurStageStats );
 
 	m_StageStats = STATSMAN->m_CurStageStats;
+
+	m_bFailed = STATSMAN->m_CurStageStats.AllFailed();
 
 	LOG->Trace( "total error: %i, %i", m_StageStats.m_player[PLAYER_1].iTotalError, m_StageStats.m_player[PLAYER_2].iTotalError );
 
