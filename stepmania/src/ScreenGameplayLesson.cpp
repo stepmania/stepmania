@@ -54,12 +54,6 @@ void ScreenGameplayLesson::Init()
 
 	this->SortByDrawOrder();
 
-	// Show the first lesson page
-	if( !m_vPages.empty() )
-	{
-		AutoActor &aa = m_vPages[0];
-	}
-
 	FOREACH( AutoActor, m_vPages, aa )
 	{
 		bool bIsFirst = aa == m_vPages.begin();
@@ -158,7 +152,7 @@ void ScreenGameplayLesson::ChangeLessonPage( int iDir )
 		// don't change
 		return;
 	}
-	else if( m_iCurrentPageIndex + iDir >= m_vPages.size() )
+	else if( m_iCurrentPageIndex + iDir >= (int)m_vPages.size() )
 	{
 		m_vPages[m_iCurrentPageIndex]->PlayCommand( "Hide" );
 		m_iCurrentPageIndex = -1;
