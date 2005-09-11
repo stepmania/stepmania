@@ -88,8 +88,8 @@ function GetEvaluationNextScreen( sNextScreen, sFailedScreen, sEndScreen )
 		return sFailedScreen
 	end
 
-	local sType = GetTopScreenMetric( "Type" )
-	if sType == "stage" then
+	local sIsStage = GetTopScreenMetric( "Summary" ) == "0" and not GAMESTATE:IsCourseMode()
+	if sIsStage then
 		local bHasAnotherStage = GAMESTATE:HasEarnedExtraStage()
 		bHasAnotherStage = bHasAnotherStage or not
 			(GAMESTATE:IsFinalStage() or GAMESTATE:IsExtraStage() or GAMESTATE:IsExtraStage2() )
