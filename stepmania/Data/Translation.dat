@@ -81,10 +81,6 @@ ArtistFrom: .*(Re-Venge)|(RevenG).*
 TitleTo: 祭 JAPAN
 *
 # Fix up hacked titles:
-TitleFrom: Max 300
-ArtistFrom: %
-ArtistTo: Ω
-*
 TitleFrom: } JAPAN
 TitleTo: 祭 JAPAN
 *
@@ -101,9 +97,6 @@ TitleTo: 祭 JAPAN
 TitleFrom: Kakumei
 TitleTo: 革命
 *
-TitleFrom: Sweet Sweet (Love )?Magic
-TitleTo: Sweet Sweet ♡ Magic
-*
 TitleFrom: Bre[a=]k ?Down!?
 TitleTo: BRE∀K DOWN!
 *
@@ -117,10 +110,6 @@ TitleTo: HYPNØTIC CRISIS
 *
 TitleFrom: Yozora no Muko
 TitleTo: 夜空ノムコウ
-*
-# Handle "Mobo Moga:Mobo * Moga"; spaces optional.
-TitleFrom: Mobo ?\*? ?Moga
-TitleTo: MOBO★MOGA
 *
 # Handle a typo:
 TitleFrom: (A(oi|io) Shoudou|Blue Impulse)
@@ -137,10 +126,6 @@ TitleTo: ロマンスの神様
 *
 TitleFrom: (Dancing Pompokolin)|(Odoru Pompokolin)
 TitleTo: おどるポンポコリン
-*
-# Handle a typo:
-TitleFrom: (Aoi Shoudou)|(Blue Impulse)|(Aio Shoudou)
-TitleTo: 蒼い衝動
 *
 TitleFrom: Aoi Shoudou\(for EXTREME\)
 TitleTo: 蒼い衝動(for EXTREME)
@@ -165,11 +150,6 @@ TitleTo: 桜
 *
 TitleFrom: Waltz of the Flowers
 TitleTo: 花のワルツ
-*
-# Handle Door and Doors
-TitleFrom: (Doors? of Magic)|(Mahou no Tobira)
-TitleTo: 魔法の扉
-SubtitleTo: (スペース&planet;マコのテーマ)
 *
 TitleFrom: Chotto Kiitena
 TitleTo: ちょっときいてな
