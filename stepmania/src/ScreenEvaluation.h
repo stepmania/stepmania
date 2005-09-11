@@ -13,6 +13,7 @@
 #include "PercentageDisplay.h"
 #include "ActorUtil.h"
 #include "RageSound.h"
+#include "ThemeMetric.h"
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
 enum JudgeLine { marvelous, perfect, great, good, boo, miss, ok, max_combo, error, NUM_JUDGE_LINES };
@@ -21,7 +22,6 @@ enum StatsLine { jumps, holds, mines, hands, rolls, NUM_STATS_LINES };
 class ScreenEvaluation : public ScreenWithMenuElements
 {
 public:
-	enum Type	{ stage, summary, course };
 	ScreenEvaluation( CString sClassName );
 	virtual void Init();
 	virtual void Input( const InputEventPlus &input );
@@ -34,7 +34,7 @@ public:
 protected:
 	void EndScreen();
 
-	Type				m_Type;
+	bool m_bSummary;
 
 	// banner area
 	Banner				m_LargeBanner;
@@ -96,6 +96,8 @@ protected:
 	bool m_bFailed;
 
 	RageSound	m_soundStart;	// sound played if the player passes or fails
+
+	ThemeMetric<bool> SUMMARY;
 
 	bool m_bSavedScreenshot[NUM_PLAYERS];
 };

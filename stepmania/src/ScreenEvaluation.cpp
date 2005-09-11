@@ -68,10 +68,6 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define SHOW_TOTAL_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
 #define SHOW_TIME_AREA						THEME->GetMetricB(m_sName,"ShowTimeArea")
 #define SHOW_RECORDS_AREA					THEME->GetMetricB(m_sName,"ShowRecordsArea")
-#define TYPE								THEME->GetMetric (m_sName,"Type")
-#define PASSED_SOUND_TIME					THEME->GetMetricF(m_sName,"PassedSoundTime")
-#define FAILED_SOUND_TIME					THEME->GetMetricF(m_sName,"FailedSoundTime")
-#define NUM_SEQUENCE_SOUNDS					THEME->GetMetricI(m_sName,"NumSequenceSounds")
 #define MAX_COMBO_NUM_DIGITS				THEME->GetMetricI(m_sName,"MaxComboNumDigits")
 #define PLAYER_OPTIONS_SEPARATOR			THEME->GetMetric (m_sName,"PlayerOptionsSeparator")
 
@@ -177,23 +173,14 @@ void ScreenEvaluation::Init()
 	ZERO( m_bSavedScreenshot );
 
 
-	CString sType = TYPE;
-	if( !sType.CompareNoCase("stage") )
-		m_Type = stage;
-	else if( !sType.CompareNoCase("summary") )
-		m_Type = summary;
-	else if( !sType.CompareNoCase("course") )
-		m_Type = course;
-	else
-		RageException::Throw("Unknown evaluation type \"%s\"", TYPE.c_str() );
-		
+	SUMMARY.Load( m_sName, "Summary" );
 
 	//
 	// Figure out which statistics and songs we're going to display
 	//
 	STATSMAN->CalcAccumStageStats();
 
-	if( m_Type == summary )
+	if( SUMMARY )
 		STATSMAN->GetFinalEvalStageStats( STATSMAN->m_CurStageStats );
 
 	m_bFailed = STATSMAN->m_CurStageStats.AllFailed();
@@ -232,7 +219,7 @@ void ScreenEvaluation::Init()
 	//
 	// update persistent statistics
 	//
-	STATSMAN->m_CurStageStats.CommitScores( m_Type == summary );
+	STATSMAN->m_CurStageStats.CommitScores( SUMMARY );
 
 	FOREACH_HumanPlayer( p )
 		STATSMAN->m_CurStageStats.m_player[p].CalcAwards( p );
@@ -256,7 +243,7 @@ void ScreenEvaluation::Init()
 	m_bTryExtraStage = 
 		GAMESTATE->HasEarnedExtraStage()  && 
 		!GAMESTATE->IsCourseMode() &&
-		m_Type != summary;
+		!SUMMARY;
  
 
 	//
@@ -270,91 +257,74 @@ void ScreenEvaluation::Init()
 	//
 	if( SHOW_BANNER_AREA )
 	{
-		switch( m_Type )
+		if( SUMMARY )
 		{
-		case stage:
-		case course:
+			for( unsigned i=0; i<STATSMAN->m_CurStageStats.vpPlayedSongs.size(); i++ )
 			{
-				if( GAMESTATE->IsCourseMode() )
-					m_LargeBanner.LoadFromCourse( GAMESTATE->m_pCurCourse );
-				else
-					m_LargeBanner.LoadFromSong( GAMESTATE->m_pCurSong );
-				m_LargeBanner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
-				m_LargeBanner.SetName( "LargeBanner" );
-				SET_XY_AND_ON_COMMAND( m_LargeBanner );
-				this->AddChild( &m_LargeBanner );
+				Song *pSong = STATSMAN->m_CurStageStats.vpPlayedSongs[i];
 
-				m_sprLargeBannerFrame.Load( THEME->GetPathG(m_sName,"banner frame") );
-				m_sprLargeBannerFrame->SetName( "LargeBannerFrame" );
-				SET_XY_AND_ON_COMMAND( m_sprLargeBannerFrame );
-				this->AddChild( m_sprLargeBannerFrame );
+				m_SmallBanner[i].LoadFromSong( pSong );
+				m_SmallBanner[i].ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
+				m_SmallBanner[i].SetName( ssprintf("SmallBanner%d",i+1) );
+				SET_XY_AND_ON_COMMAND( m_SmallBanner[i] );
+				this->AddChild( &m_SmallBanner[i] );
+
+				m_sprSmallBannerFrame[i].Load( THEME->GetPathG(m_sName,"banner frame") );
+				m_sprSmallBannerFrame[i]->SetName( ssprintf("SmallBanner%d",i+1) );
+				SET_XY_AND_ON_COMMAND( m_sprSmallBannerFrame[i] );
+				this->AddChild( m_sprSmallBannerFrame[i] );
 			}
-			break;
-		case summary:
-			{
-				for( unsigned i=0; i<STATSMAN->m_CurStageStats.vpPlayedSongs.size(); i++ )
-				{
-					Song *pSong = STATSMAN->m_CurStageStats.vpPlayedSongs[i];
+		}
+		else
+		{
+			if( GAMESTATE->IsCourseMode() )
+				m_LargeBanner.LoadFromCourse( GAMESTATE->m_pCurCourse );
+			else
+				m_LargeBanner.LoadFromSong( GAMESTATE->m_pCurSong );
+			m_LargeBanner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
+			m_LargeBanner.SetName( "LargeBanner" );
+			SET_XY_AND_ON_COMMAND( m_LargeBanner );
+			this->AddChild( &m_LargeBanner );
 
-					m_SmallBanner[i].LoadFromSong( pSong );
-					m_SmallBanner[i].ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
-					m_SmallBanner[i].SetName( ssprintf("SmallBanner%d",i+1) );
-					SET_XY_AND_ON_COMMAND( m_SmallBanner[i] );
-					this->AddChild( &m_SmallBanner[i] );
-
-					m_sprSmallBannerFrame[i].Load( THEME->GetPathG(m_sName,"banner frame") );
-					m_sprSmallBannerFrame[i]->SetName( ssprintf("SmallBanner%d",i+1) );
-					SET_XY_AND_ON_COMMAND( m_sprSmallBannerFrame[i] );
-					this->AddChild( m_sprSmallBannerFrame[i] );
-				}
-			}
-			break;
-		default:
-			ASSERT(0);
+			m_sprLargeBannerFrame.Load( THEME->GetPathG(m_sName,"banner frame") );
+			m_sprLargeBannerFrame->SetName( "LargeBannerFrame" );
+			SET_XY_AND_ON_COMMAND( m_sprLargeBannerFrame );
+			this->AddChild( m_sprLargeBannerFrame );
 		}
 	}
 
 	{
-		switch( m_Type )
+		if( !SUMMARY )
 		{
-		case stage:
-		case course:
+			FOREACH_EnabledPlayer( p )
 			{
-				FOREACH_EnabledPlayer( p )
-				{
-					m_DifficultyIcon[p].Load( THEME->GetPathG(m_sName,"difficulty icons") );
-					if( GAMESTATE->IsCourseMode() )
-						m_DifficultyIcon[p].SetFromTrail( p, GAMESTATE->m_pCurTrail[p] );
-					else
-						m_DifficultyIcon[p].SetFromSteps( p, GAMESTATE->m_pCurSteps[p] );
-					m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
-					SET_XY_AND_ON_COMMAND( m_DifficultyIcon[p] );
-					this->AddChild( &m_DifficultyIcon[p] );
-					
-					m_DifficultyMeter[p].SetName( ssprintf("DifficultyMeterP%d",p+1) );
-					m_DifficultyMeter[p].Load( ssprintf("ScreenEvaluation DifficultyMeterP%d",p+1) );
-					if( GAMESTATE->IsCourseMode() )
-						m_DifficultyMeter[p].SetFromTrail( GAMESTATE->m_pCurTrail[p] );
-					else
-						m_DifficultyMeter[p].SetFromSteps( GAMESTATE->m_pCurSteps[p] );
-					SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
-					this->AddChild( &m_DifficultyMeter[p] );
-					
-					m_textPlayerOptions[p].LoadFromFont( THEME->GetPathF(m_sName,"PlayerOptions") );
-					m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
-					SET_XY_AND_ON_COMMAND( m_textPlayerOptions[p] );
-					vector<CString> v;
-					GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetThemedMods( v );
-					CString sPO = join( PLAYER_OPTIONS_SEPARATOR, v );
-					m_textPlayerOptions[p].SetText( sPO );
-					this->AddChild( &m_textPlayerOptions[p] );
-				}
+				m_DifficultyIcon[p].Load( THEME->GetPathG(m_sName,"difficulty icons") );
+				if( GAMESTATE->IsCourseMode() )
+					m_DifficultyIcon[p].SetFromTrail( p, GAMESTATE->m_pCurTrail[p] );
+				else
+					m_DifficultyIcon[p].SetFromSteps( p, GAMESTATE->m_pCurSteps[p] );
+				m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
+				SET_XY_AND_ON_COMMAND( m_DifficultyIcon[p] );
+				this->AddChild( &m_DifficultyIcon[p] );
+				
+				m_DifficultyMeter[p].SetName( ssprintf("DifficultyMeterP%d",p+1) );
+				m_DifficultyMeter[p].Load( ssprintf("ScreenEvaluation DifficultyMeterP%d",p+1) );
+				if( GAMESTATE->IsCourseMode() )
+					m_DifficultyMeter[p].SetFromTrail( GAMESTATE->m_pCurTrail[p] );
+				else
+					m_DifficultyMeter[p].SetFromSteps( GAMESTATE->m_pCurSteps[p] );
+				SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
+				this->AddChild( &m_DifficultyMeter[p] );
+				
+				m_textPlayerOptions[p].LoadFromFont( THEME->GetPathF(m_sName,"PlayerOptions") );
+				m_textPlayerOptions[p].SetName( ssprintf("PlayerOptionsP%d",p+1) );
+				SET_XY_AND_ON_COMMAND( m_textPlayerOptions[p] );
+				vector<CString> v;
+				GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetThemedMods( v );
+				CString sPO = join( PLAYER_OPTIONS_SEPARATOR, v );
+				m_textPlayerOptions[p].SetText( sPO );
+				this->AddChild( &m_textPlayerOptions[p] );
 			}
-			break;
-		case summary:
-			break;
-		default:
-			ASSERT(0);
 		}
 	}
 
@@ -696,9 +666,12 @@ void ScreenEvaluation::Init()
 	}
 	else
 	{	
-		switch( m_Type )
+		if( SUMMARY || GAMESTATE->IsCourseMode() )
 		{
-		case stage:
+			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final "+GradeToOldString(best_grade)) );
+		}
+		else
+		{
 			switch( GAMESTATE->m_PlayMode )
 			{
 			case PLAY_MODE_BATTLE:
@@ -714,13 +687,6 @@ void ScreenEvaluation::Init()
 				SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation "+GradeToOldString(best_grade)) );
 				break;
 			}
-			break;
-		case course:
-		case summary:
-			SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("evaluation final "+GradeToOldString(best_grade)) );
-			break;
-		default:
-			ASSERT(0);
 		}
 	}
 
@@ -978,9 +944,8 @@ void ScreenEvaluation::EndScreen()
 
 	if( !GAMESTATE->IsEventMode() )
 	{
-		switch( m_Type )
+		if( !SUMMARY && !GAMESTATE->IsCourseMode() )
 		{
-		case stage:
 			if( !m_bTryExtraStage && (GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2()) )
 			{
 				/* Tween the screen out, but leave the MenuElements where they are.
@@ -988,7 +953,6 @@ void ScreenEvaluation::EndScreen()
 				 * tween out). */
 				TweenOursOffScreen();
 			}
-			break;
 		}
 	}
 	StartTransitioning( SM_GoToNextScreen );
