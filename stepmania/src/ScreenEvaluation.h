@@ -37,8 +37,6 @@ public:
 	//
 	virtual void PushSelf( lua_State *L );
 
-	StageStats m_StageStats;
-
 protected:
 	void EndScreen();
 
