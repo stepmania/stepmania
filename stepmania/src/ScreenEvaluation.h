@@ -27,6 +27,8 @@ public:
 	PerDifficultyAward m_pdaToShow;
 	PeakComboAward m_pcaToShow;
 	HighScore m_HighScore;
+
+	void CalcAwards( const PlayerStageStats &m_PlayerStageStats, PlayerNumber p );
 };
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed

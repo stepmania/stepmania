@@ -818,9 +818,6 @@ void ScreenEvaluation::CommitScores(
 		if( GAMESTATE->IsDisqualified(p) )
 			continue;
 
-		Song* pSong = GAMESTATE->m_pCurSong;
-		Steps* pSteps = GAMESTATE->m_pCurSteps[p];
-
 		// whether or not to save scores when the stage was failed
 		// depends on if this is a course or not ... it's handled
 		// below in the switch
@@ -842,9 +839,15 @@ void ScreenEvaluation::CommitScores(
 			hs.SetHoldNoteScore( hns, m_StageStats.m_player[p].iHoldNoteScores[hns] );
 		hs.SetRadarValues( m_StageStats.m_player[p].radarActual );
 		hs.SetLifeRemainingSeconds( m_StageStats.m_player[p].fLifeRemainingSeconds );
+	}
 
-
+	FOREACH_HumanPlayer( p )
+	{
+		const HighScore &hs = out[p].m_HighScore;
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+
+		const Song* pSong = GAMESTATE->m_pCurSong;
+		const Steps* pSteps = GAMESTATE->m_pCurSteps[p];
 
 		switch( type )
 		{
@@ -939,80 +942,73 @@ void ScreenEvaluation::CommitScores(
 			out[p].m_iMachineHighScoreIndex = iter - pHSL->vHighScores.begin();
 	}
 
-	
+	FOREACH_HumanPlayer( p )
+		out[p].CalcAwards( m_StageStats.m_player[p], p );
+}
+
+void StageResults::CalcAwards( const PlayerStageStats &m_PlayerStageStats, PlayerNumber p )
+{
 	LOG->Trace( "hand out awards" );
 	
-	FOREACH_HumanPlayer( p )
+	deque<PerDifficultyAward> &vPdas = GAMESTATE->m_vLastPerDifficultyAwards[p];
+
+	LOG->Trace( "per difficulty awards" );
+
+	// per-difficulty awards
+	// don't give per-difficutly awards if using easy mods
+	if( !GAMESTATE->IsDisqualified(p) )
 	{
-		deque<PerDifficultyAward> &vPdas = GAMESTATE->m_vLastPerDifficultyAwards[p];
-
-		LOG->Trace( "per difficulty awards" );
-
-		// per-difficulty awards
-		switch( type )
-		{
-		case stage:
-		case course:
-			// don't give per-difficutly awards if using easy mods
-			if( !GAMESTATE->IsDisqualified(p) )
-			{
-				if( m_StageStats.m_player[p].FullComboOfScore( TNS_GREAT ) )
-					vPdas.push_back( AWARD_FULL_COMBO_GREATS );
-				if( m_StageStats.m_player[p].SingleDigitsOfScore( TNS_GREAT ) )
-					vPdas.push_back( AWARD_SINGLE_DIGIT_GREATS );
-				if( m_StageStats.m_player[p].FullComboOfScore( TNS_PERFECT ) )
-					vPdas.push_back( AWARD_FULL_COMBO_PERFECTS );
-				if( m_StageStats.m_player[p].SingleDigitsOfScore( TNS_PERFECT ) )
-					vPdas.push_back( AWARD_SINGLE_DIGIT_PERFECTS );
-				if( m_StageStats.m_player[p].FullComboOfScore( TNS_MARVELOUS ) )
-					vPdas.push_back( AWARD_FULL_COMBO_MARVELOUSES );
-				
-				if( m_StageStats.m_player[p].OneOfScore( TNS_GREAT ) )
-					vPdas.push_back( AWARD_ONE_GREAT );
-				if( m_StageStats.m_player[p].OneOfScore( TNS_PERFECT ) )
-					vPdas.push_back( AWARD_ONE_PERFECT );
-
-				float fPercentGreats = m_StageStats.m_player[p].GetPercentageOfTaps( TNS_GREAT );
-				if( fPercentGreats >= 0.8f )
-					vPdas.push_back( AWARD_GREATS_80_PERCENT );
-				if( fPercentGreats >= 0.9f )
-					vPdas.push_back( AWARD_GREATS_90_PERCENT );
-				if( fPercentGreats >= 1.f )
-					vPdas.push_back( AWARD_GREATS_100_PERCENT );
-			}
-		}
-
-		// Max one PDA per stage
-		if( !vPdas.empty() )
-			vPdas.erase( vPdas.begin(), vPdas.end()-1 );
+		if( m_PlayerStageStats.FullComboOfScore( TNS_GREAT ) )
+			vPdas.push_back( AWARD_FULL_COMBO_GREATS );
+		if( m_PlayerStageStats.SingleDigitsOfScore( TNS_GREAT ) )
+			vPdas.push_back( AWARD_SINGLE_DIGIT_GREATS );
+		if( m_PlayerStageStats.FullComboOfScore( TNS_PERFECT ) )
+			vPdas.push_back( AWARD_FULL_COMBO_PERFECTS );
+		if( m_PlayerStageStats.SingleDigitsOfScore( TNS_PERFECT ) )
+			vPdas.push_back( AWARD_SINGLE_DIGIT_PERFECTS );
+		if( m_PlayerStageStats.FullComboOfScore( TNS_MARVELOUS ) )
+			vPdas.push_back( AWARD_FULL_COMBO_MARVELOUSES );
 		
-		if( !vPdas.empty() )
-			out[p].m_pdaToShow = vPdas.back();
+		if( m_PlayerStageStats.OneOfScore( TNS_GREAT ) )
+			vPdas.push_back( AWARD_ONE_GREAT );
+		if( m_PlayerStageStats.OneOfScore( TNS_PERFECT ) )
+			vPdas.push_back( AWARD_ONE_PERFECT );
 
-		LOG->Trace( "done with per difficulty awards" );
-
-		// DO give peak combo awards if using easy mods
-		int iComboAtStartOfStage = m_StageStats.m_player[p].GetComboAtStartOfStage();
-		int iPeakCombo = m_StageStats.m_player[p].GetMaxCombo().cnt;
-
-		FOREACH_PeakComboAward( pca )
-		{
-			  int iLevel = 1000 * (pca+1);
-			bool bCrossedLevel = iComboAtStartOfStage < iLevel && iPeakCombo >= iLevel;
-			LOG->Trace( "pca = %d, iLevel = %d, bCrossedLevel = %d", pca, iLevel, bCrossedLevel );
-			if( bCrossedLevel )
-			{
-				GAMESTATE->m_vLastPeakComboAwards[p].push_back( pca );
-			}
-		}
-
-		if( !GAMESTATE->m_vLastPeakComboAwards[p].empty() )
-			out[p].m_pcaToShow = GAMESTATE->m_vLastPeakComboAwards[p].back();
-
-		LOG->Trace( "done with per combo awards" );
+		float fPercentGreats = m_PlayerStageStats.GetPercentageOfTaps( TNS_GREAT );
+		if( fPercentGreats >= 0.8f )
+			vPdas.push_back( AWARD_GREATS_80_PERCENT );
+		if( fPercentGreats >= 0.9f )
+			vPdas.push_back( AWARD_GREATS_90_PERCENT );
+		if( fPercentGreats >= 1.f )
+			vPdas.push_back( AWARD_GREATS_100_PERCENT );
 	}
 
-	LOG->Trace( "done handing out awards." );
+	// Max one PDA per stage
+	if( !vPdas.empty() )
+		vPdas.erase( vPdas.begin(), vPdas.end()-1 );
+	
+	if( !vPdas.empty() )
+		m_pdaToShow = vPdas.back();
+
+	LOG->Trace( "done with per difficulty awards" );
+
+	// DO give peak combo awards if using easy mods
+	int iComboAtStartOfStage = m_PlayerStageStats.GetComboAtStartOfStage();
+	int iPeakCombo = m_PlayerStageStats.GetMaxCombo().cnt;
+
+	FOREACH_PeakComboAward( pca )
+	{
+		int iLevel = 1000 * (pca+1);
+		bool bCrossedLevel = iComboAtStartOfStage < iLevel && iPeakCombo >= iLevel;
+		LOG->Trace( "pca = %d, iLevel = %d, bCrossedLevel = %d", pca, iLevel, bCrossedLevel );
+		if( bCrossedLevel )
+			GAMESTATE->m_vLastPeakComboAwards[p].push_back( pca );
+	}
+
+	if( !GAMESTATE->m_vLastPeakComboAwards[p].empty() )
+		m_pcaToShow = GAMESTATE->m_vLastPeakComboAwards[p].back();
+
+	LOG->Trace( "done with per combo awards" );
 }
 
 
