@@ -39,6 +39,9 @@ void PlayerStageStats::Init()
 
 	fFirstSecond = FLT_MAX;
 	fLastSecond = 0;
+
+	m_pdaToShow = PER_DIFFICULTY_AWARD_INVALID;
+	m_pcaToShow = PEAK_COMBO_AWARD_INVALID;
 }
 
 void PlayerStageStats::AddStats( const PlayerStageStats& other )
