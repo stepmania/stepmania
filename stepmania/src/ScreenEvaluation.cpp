@@ -255,7 +255,8 @@ void ScreenEvaluation::Init()
 	
 	m_bTryExtraStage = 
 		GAMESTATE->HasEarnedExtraStage()  && 
-		m_Type==stage;
+		!GAMESTATE->IsCourseMode() &&
+		m_Type != summary;
  
 
 	//
@@ -322,34 +323,20 @@ void ScreenEvaluation::Init()
 				FOREACH_EnabledPlayer( p )
 				{
 					m_DifficultyIcon[p].Load( THEME->GetPathG(m_sName,"difficulty icons") );
-					switch( m_Type )
-					{
-					case stage:
-						m_DifficultyIcon[p].SetFromSteps( p, GAMESTATE->m_pCurSteps[p] );
-						break;
-					case course:
+					if( GAMESTATE->IsCourseMode() )
 						m_DifficultyIcon[p].SetFromTrail( p, GAMESTATE->m_pCurTrail[p] );
-						break;
-					default:
-						ASSERT(0);
-					}
+					else
+						m_DifficultyIcon[p].SetFromSteps( p, GAMESTATE->m_pCurSteps[p] );
 					m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
 					SET_XY_AND_ON_COMMAND( m_DifficultyIcon[p] );
 					this->AddChild( &m_DifficultyIcon[p] );
 					
 					m_DifficultyMeter[p].SetName( ssprintf("DifficultyMeterP%d",p+1) );
 					m_DifficultyMeter[p].Load( ssprintf("ScreenEvaluation DifficultyMeterP%d",p+1) );
-					switch( m_Type )
-					{
-					case stage:
-						m_DifficultyMeter[p].SetFromSteps( GAMESTATE->m_pCurSteps[p] );
-						break;
-					case course:
+					if( GAMESTATE->IsCourseMode() )
 						m_DifficultyMeter[p].SetFromTrail( GAMESTATE->m_pCurTrail[p] );
-						break;
-					default:
-						ASSERT(0);
-					}
+					else
+						m_DifficultyMeter[p].SetFromSteps( GAMESTATE->m_pCurSteps[p] );
 					SET_XY_AND_ON_COMMAND( m_DifficultyMeter[p] );
 					this->AddChild( &m_DifficultyMeter[p] );
 					
