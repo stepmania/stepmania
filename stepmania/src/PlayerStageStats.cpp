@@ -42,6 +42,10 @@ void PlayerStageStats::Init()
 
 	m_pdaToShow = PER_DIFFICULTY_AWARD_INVALID;
 	m_pcaToShow = PEAK_COMBO_AWARD_INVALID;
+	m_iPersonalHighScoreIndex = -1;
+	m_iMachineHighScoreIndex = -1;
+	m_rc = RANKING_INVALID;
+	m_HighScore = HighScore();
 }
 
 void PlayerStageStats::AddStats( const PlayerStageStats& other )

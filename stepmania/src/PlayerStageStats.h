@@ -5,6 +5,7 @@
 
 #include "Grade.h"
 #include "RadarValues.h"
+#include "HighScore.h"
 #include <map>
 class Steps;
 struct lua_State;
@@ -105,9 +106,15 @@ public:
 
 	float GetSurvivalSeconds() { return fAliveSeconds + fLifeRemainingSeconds; }
 
+	// Final results:
 	void CalcAwards( PlayerNumber p );
 	PerDifficultyAward m_pdaToShow;
 	PeakComboAward m_pcaToShow;
+
+	int m_iPersonalHighScoreIndex;
+	int m_iMachineHighScoreIndex;
+	RankingCategory m_rc;
+	HighScore m_HighScore;
 
 	// Lua
 	void PushSelf( lua_State *L );

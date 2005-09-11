@@ -15,21 +15,6 @@
 #include "HighScore.h"
 #include "RageSound.h"
 
-class StageResults
-{
-public:
-	StageResults();
-	void Init();
-
-	int m_iPersonalHighScoreIndex;
-	int m_iMachineHighScoreIndex;
-	RankingCategory m_rc;
-	HighScore m_HighScore;
-	Grade m_Grade;
-
-	static void CommitScores( StageResults out[NUM_PLAYERS], bool bSummary );
-};
-
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
 enum JudgeLine { marvelous, perfect, great, good, boo, miss, ok, max_combo, error, NUM_JUDGE_LINES };
 enum StatsLine { jumps, holds, mines, hands, rolls, NUM_STATS_LINES };
@@ -53,7 +38,6 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 	StageStats m_StageStats;
-	StageResults m_StageResults[NUM_PLAYERS];
 
 protected:
 	void EndScreen();

@@ -81,19 +81,6 @@ static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 AutoScreenMessage( SM_PlayCheer )
 AutoScreenMessage( SM_AddBonus )
 
-StageResults::StageResults()
-{
-	Init();
-}
-
-void StageResults::Init()
-{
-	m_iPersonalHighScoreIndex = -1;
-	m_iMachineHighScoreIndex = -1;
-	m_rc = RANKING_INVALID;
-}
-
-
 REGISTER_SCREEN_CLASS( ScreenEvaluation );
 ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElements(sClassName)
 {
@@ -250,7 +237,8 @@ void ScreenEvaluation::Init()
 	//
 	// update persistent statistics
 	//
-	StageResults::CommitScores( m_StageResults, m_Type == summary );
+	STATSMAN->m_CurStageStats.CommitScores( m_Type == summary );
+
 	FOREACH_HumanPlayer( p )
 		m_StageStats.m_player[p].CalcAwards( p );
 
@@ -689,16 +677,16 @@ void ScreenEvaluation::Init()
 	{
 		FOREACH_EnabledPlayer( p )
 		{
-			if( m_StageResults[p].m_iMachineHighScoreIndex != -1 )
+			if( STATSMAN->m_CurStageStats.m_player[p].m_iMachineHighScoreIndex != -1 )
 			{
-				m_sprMachineRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("MachineRecord %02d",m_StageResults[p].m_iMachineHighScoreIndex+1) ) );
+				m_sprMachineRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("MachineRecord %02d",STATSMAN->m_CurStageStats.m_player[p].m_iMachineHighScoreIndex+1) ) );
 				m_sprMachineRecord[p]->SetName( ssprintf("MachineRecordP%d",p+1) );
 				SET_XY_AND_ON_COMMAND( m_sprMachineRecord[p] );
 				this->AddChild( m_sprMachineRecord[p] );
 			}
-			if( m_StageResults[p].m_iPersonalHighScoreIndex != -1 )
+			if( STATSMAN->m_CurStageStats.m_player[p].m_iPersonalHighScoreIndex != -1 )
 			{
-				m_sprPersonalRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("PersonalRecord %02d",m_StageResults[p].m_iPersonalHighScoreIndex+1) ) );
+				m_sprPersonalRecord[p].Load( THEME->GetPathG( m_sName, ssprintf("PersonalRecord %02d",STATSMAN->m_CurStageStats.m_player[p].m_iPersonalHighScoreIndex+1) ) );
 				m_sprPersonalRecord[p]->SetName( ssprintf("PersonalRecordP%d",p+1) );
 				SET_XY_AND_ON_COMMAND( m_sprPersonalRecord[p] );
 				this->AddChild( m_sprPersonalRecord[p] );
@@ -708,7 +696,7 @@ void ScreenEvaluation::Init()
 
 	bool bOneHasNewTopRecord = false;
 	FOREACH_PlayerNumber( p )
-		if( GAMESTATE->IsPlayerEnabled(p) && (m_StageResults[p].m_iMachineHighScoreIndex != -1 || m_StageResults[p].m_iPersonalHighScoreIndex != -1) )
+		if( GAMESTATE->IsPlayerEnabled(p) && (STATSMAN->m_CurStageStats.m_player[p].m_iMachineHighScoreIndex != -1 || STATSMAN->m_CurStageStats.m_player[p].m_iPersonalHighScoreIndex != -1) )
 			bOneHasNewTopRecord = true;
 
 	Grade best_grade = Grade_NoData;
@@ -773,153 +761,6 @@ void ScreenEvaluation::Init()
 	this->SortByDrawOrder();
 
 	this->PostScreenMessage( SM_AddBonus, 1.5f );
-}
-
-
-void StageResults::CommitScores(
-	StageResults out[NUM_PLAYERS], 
-	bool bSummary )
-{
-	const StageStats &m_StageStats = STATSMAN->m_CurStageStats;
-
-	FOREACH_PlayerNumber( pn )
-	{
-		out[pn].Init();
-	}
-
-	switch( GAMESTATE->m_PlayMode )
-	{
-	case PLAY_MODE_BATTLE:
-	case PLAY_MODE_RAVE:
-		return; /* don't save scores in battle */
-	}
-
-	if( PREFSMAN->m_bScreenTestMode )
-	{
-		FOREACH_PlayerNumber( pn )
-		{
-			out[pn].m_iPersonalHighScoreIndex = 0;
-			out[pn].m_iMachineHighScoreIndex = 0;
-		}
-	}
-
-	// don't save scores if the player chose not to
-	if( !GAMESTATE->m_SongOptions.m_bSaveScore )
-		return;
-
-	LOG->Trace( "saving stats and high scores" );
-
-	FOREACH_HumanPlayer( p )
-	{
-		// don't save scores if the player is disqualified
-		if( GAMESTATE->IsDisqualified(p) )
-			continue;
-
-		// whether or not to save scores when the stage was failed
-		// depends on if this is a course or not ... it's handled
-		// below in the switch
-
-		HighScore &hs = out[p].m_HighScore;
-		hs.SetName( RANKING_TO_FILL_IN_MARKER[p] );
-		hs.SetGrade( m_StageStats.m_player[p].GetGrade() );
-		hs.SetScore( m_StageStats.m_player[p].iScore );
-		hs.SetPercentDP( m_StageStats.m_player[p].GetPercentDancePoints() );
-		hs.SetSurviveSeconds( m_StageStats.m_player[p].fAliveSeconds );
-		hs.SetModifiers( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString() );
-		hs.SetDateTime( DateTime::GetNowDateTime() );
-		hs.SetPlayerGuid( PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : CString("") );
-		hs.SetMachineGuid( PROFILEMAN->GetMachineProfile()->m_sGuid );
-		hs.SetProductID( PREFSMAN->m_iProductID );
-		FOREACH_TapNoteScore( tns )
-			hs.SetTapNoteScore( tns, m_StageStats.m_player[p].iTapNoteScores[tns] );
-		FOREACH_HoldNoteScore( hns )
-			hs.SetHoldNoteScore( hns, m_StageStats.m_player[p].iHoldNoteScores[hns] );
-		hs.SetRadarValues( m_StageStats.m_player[p].radarActual );
-		hs.SetLifeRemainingSeconds( m_StageStats.m_player[p].fLifeRemainingSeconds );
-	}
-
-	FOREACH_HumanPlayer( p )
-	{
-		const HighScore &hs = out[p].m_HighScore;
-		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-
-		const Song* pSong = GAMESTATE->m_pCurSong;
-		const Steps* pSteps = GAMESTATE->m_pCurSteps[p];
-
-		if( bSummary )
-		{
-			// don't save scores if any stage was failed
-			if( m_StageStats.m_player[p].bFailed ) 
-				continue;
-
-			int iAverageMeter = m_StageStats.GetAverageMeter(p);
-			out[p].m_rc = AverageMeterToRankingCategory( iAverageMeter );
-
-			PROFILEMAN->AddCategoryScore( st, out[p].m_rc, p, hs, out[p].m_iPersonalHighScoreIndex, out[p].m_iMachineHighScoreIndex );
-			
-			// TRICKY:  Increment play count here, and not on ScreenGameplay like the others.
-			PROFILEMAN->IncrementCategoryPlayCount( st, out[p].m_rc, p );
-		}
-		else if( GAMESTATE->IsCourseMode() )
-		{
-			Course* pCourse = GAMESTATE->m_pCurCourse;
-			ASSERT( pCourse );
-			Trail* pTrail = GAMESTATE->m_pCurTrail[p];
-
-			PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, out[p].m_iPersonalHighScoreIndex, out[p].m_iMachineHighScoreIndex );
-		}
-		else
-		{
-			// don't save scores for a failed song
-			if( m_StageStats.m_player[p].bFailed )
-				continue;
-
-			ASSERT( pSteps );
-
-			PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, out[p].m_iPersonalHighScoreIndex, out[p].m_iMachineHighScoreIndex );
-		}
-	}
-
-	LOG->Trace( "done saving stats and high scores" );
-
-	// If both players get a machine high score in the same HighScoreList,
-	// then one player's score may have bumped the other player.  Look in 
-	// the HighScoreList and re-get the high score index.
-	FOREACH_HumanPlayer( p )
-	{
-		if( out[p].m_iMachineHighScoreIndex == -1 )	// no record
-			continue;	// skip
-
-		HighScore &hs = out[p].m_HighScore;
-		Profile* pProfile = PROFILEMAN->GetMachineProfile();
-		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-
-		const HighScoreList *pHSL = NULL;
-		if( bSummary )
-		{
-			pHSL = &pProfile->GetCategoryHighScoreList( st, out[p].m_rc );
-		}
-		else if( GAMESTATE->IsCourseMode() )
-		{
-			Course* pCourse = GAMESTATE->m_pCurCourse;
-			ASSERT( pCourse );
-			Trail *pTrail = GAMESTATE->m_pCurTrail[p];
-			ASSERT( pTrail );
-			pHSL = &pProfile->GetCourseHighScoreList( pCourse, pTrail );
-		}
-		else
-		{
-			Song* pSong = GAMESTATE->m_pCurSong;
-			Steps* pSteps = GAMESTATE->m_pCurSteps[p];
-			pHSL = &pProfile->GetStepsHighScoreList( pSong, pSteps );
-		}
-		
-		vector<HighScore>::const_iterator iter = find( pHSL->vHighScores.begin(), pHSL->vHighScores.end(), hs );
-		if( iter == pHSL->vHighScores.end() )
-			out[p].m_iMachineHighScoreIndex = -1;
-		else
-			out[p].m_iMachineHighScoreIndex = iter - pHSL->vHighScores.begin();
-	}
 }
 
 
@@ -1186,8 +1027,8 @@ class LunaScreenEvaluation: public Luna<ScreenEvaluation>
 public:
 	LunaScreenEvaluation() { LUA->Register( Register ); }
 	static int GetEvalStageStats( T* p, lua_State *L ) { p->m_StageStats.PushSelf( L ); return 1; }
-	static int GetPersonalHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageResults[IArg(1)].m_iPersonalHighScoreIndex ); return 1; }
-	static int GetMachineHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageResults[IArg(1)].m_iMachineHighScoreIndex ); return 1; }
+	static int GetPersonalHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, STATSMAN->m_CurStageStats.m_player[IArg(1)].m_iPersonalHighScoreIndex ); return 1; }
+	static int GetMachineHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, STATSMAN->m_CurStageStats.m_player[IArg(1)].m_iMachineHighScoreIndex ); return 1; }
 	static int GetPerDifficultyAward( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageStats.m_player[IArg(1)].m_pdaToShow ); return 1; }
 	static int GetPeakComboAward( T* p, lua_State *L ) { lua_pushnumber( L, p->m_StageStats.m_player[IArg(1)].m_pcaToShow ); return 1; }
 

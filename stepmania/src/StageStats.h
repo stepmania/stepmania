@@ -44,6 +44,8 @@ public:
 	PlayerStageStats m_player[NUM_PLAYERS];
 	PlayerStageStats m_multiPlayer[NUM_MultiPlayer];
 
+	void CommitScores( bool bSummary );
+
 	// Lua
 	void PushSelf( lua_State *L );
 };

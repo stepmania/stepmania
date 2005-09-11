@@ -4,6 +4,12 @@
 #include "Foreach.h"
 #include "Steps.h"
 #include "song.h"
+#include "RageLog.h"
+#include "PrefsManager.h"
+#include "PlayerState.h"
+#include "Style.h"
+#include "Profile.h"
+#include "ProfileManager.h"
 
 /*
  * Arcade:	for the current stage (one song).  
@@ -121,6 +127,144 @@ float StageStats::GetTotalPossibleStepsSeconds() const
 	return fSecs;
 }
 
+void StageStats::CommitScores( bool bSummary )
+{
+	switch( GAMESTATE->m_PlayMode )
+	{
+	case PLAY_MODE_BATTLE:
+	case PLAY_MODE_RAVE:
+		return; /* don't save scores in battle */
+	}
+
+	if( PREFSMAN->m_bScreenTestMode )
+	{
+		FOREACH_PlayerNumber( pn )
+		{
+			m_player[pn].m_iPersonalHighScoreIndex = 0;
+			m_player[pn].m_iMachineHighScoreIndex = 0;
+		}
+	}
+
+	// don't save scores if the player chose not to
+	if( !GAMESTATE->m_SongOptions.m_bSaveScore )
+		return;
+
+	LOG->Trace( "saving stats and high scores" );
+
+	FOREACH_HumanPlayer( p )
+	{
+		// don't save scores if the player is disqualified
+		if( GAMESTATE->IsDisqualified(p) )
+			continue;
+
+		// whether or not to save scores when the stage was failed
+		// depends on if this is a course or not ... it's handled
+		// below in the switch
+
+		HighScore &hs = m_player[p].m_HighScore;
+		hs.SetName( RANKING_TO_FILL_IN_MARKER[p] );
+		hs.SetGrade( m_player[p].GetGrade() );
+		hs.SetScore( m_player[p].iScore );
+		hs.SetPercentDP( m_player[p].GetPercentDancePoints() );
+		hs.SetSurviveSeconds( m_player[p].fAliveSeconds );
+		hs.SetModifiers( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.GetString() );
+		hs.SetDateTime( DateTime::GetNowDateTime() );
+		hs.SetPlayerGuid( PROFILEMAN->IsPersistentProfile(p) ? PROFILEMAN->GetProfile(p)->m_sGuid : CString("") );
+		hs.SetMachineGuid( PROFILEMAN->GetMachineProfile()->m_sGuid );
+		hs.SetProductID( PREFSMAN->m_iProductID );
+		FOREACH_TapNoteScore( tns )
+			hs.SetTapNoteScore( tns, m_player[p].iTapNoteScores[tns] );
+		FOREACH_HoldNoteScore( hns )
+			hs.SetHoldNoteScore( hns, m_player[p].iHoldNoteScores[hns] );
+		hs.SetRadarValues( m_player[p].radarActual );
+		hs.SetLifeRemainingSeconds( m_player[p].fLifeRemainingSeconds );
+	}
+
+	FOREACH_HumanPlayer( p )
+	{
+		const HighScore &hs = m_player[p].m_HighScore;
+		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+
+		const Song* pSong = GAMESTATE->m_pCurSong;
+		const Steps* pSteps = GAMESTATE->m_pCurSteps[p];
+
+		if( bSummary )
+		{
+			// don't save scores if any stage was failed
+			if( m_player[p].bFailed ) 
+				continue;
+
+			int iAverageMeter = GetAverageMeter(p);
+			m_player[p].m_rc = AverageMeterToRankingCategory( iAverageMeter );
+
+			PROFILEMAN->AddCategoryScore( st, m_player[p].m_rc, p, hs, m_player[p].m_iPersonalHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
+			
+			// TRICKY:  Increment play count here, and not on ScreenGameplay like the others.
+			PROFILEMAN->IncrementCategoryPlayCount( st, m_player[p].m_rc, p );
+		}
+		else if( GAMESTATE->IsCourseMode() )
+		{
+			Course* pCourse = GAMESTATE->m_pCurCourse;
+			ASSERT( pCourse );
+			Trail* pTrail = GAMESTATE->m_pCurTrail[p];
+
+			PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, m_player[p].m_iPersonalHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
+		}
+		else
+		{
+			// don't save scores for a failed song
+			if( m_player[p].bFailed )
+				continue;
+
+			ASSERT( pSteps );
+
+			PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, m_player[p].m_iPersonalHighScoreIndex, m_player[p].m_iMachineHighScoreIndex );
+		}
+	}
+
+	LOG->Trace( "done saving stats and high scores" );
+
+	// If both players get a machine high score in the same HighScoreList,
+	// then one player's score may have bumped the other player.  Look in 
+	// the HighScoreList and re-get the high score index.
+	FOREACH_HumanPlayer( p )
+	{
+		if( m_player[p].m_iMachineHighScoreIndex == -1 )	// no record
+			continue;	// skip
+
+		HighScore &hs = m_player[p].m_HighScore;
+		Profile* pProfile = PROFILEMAN->GetMachineProfile();
+		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
+
+		const HighScoreList *pHSL = NULL;
+		if( bSummary )
+		{
+			pHSL = &pProfile->GetCategoryHighScoreList( st, m_player[p].m_rc );
+		}
+		else if( GAMESTATE->IsCourseMode() )
+		{
+			Course* pCourse = GAMESTATE->m_pCurCourse;
+			ASSERT( pCourse );
+			Trail *pTrail = GAMESTATE->m_pCurTrail[p];
+			ASSERT( pTrail );
+			pHSL = &pProfile->GetCourseHighScoreList( pCourse, pTrail );
+		}
+		else
+		{
+			Song* pSong = GAMESTATE->m_pCurSong;
+			Steps* pSteps = GAMESTATE->m_pCurSteps[p];
+			pHSL = &pProfile->GetStepsHighScoreList( pSong, pSteps );
+		}
+		
+		vector<HighScore>::const_iterator iter = find( pHSL->vHighScores.begin(), pHSL->vHighScores.end(), hs );
+		if( iter == pHSL->vHighScores.end() )
+			m_player[p].m_iMachineHighScoreIndex = -1;
+		else
+			m_player[p].m_iMachineHighScoreIndex = iter - pHSL->vHighScores.begin();
+	}
+
+
+}
 
 // lua start
 #include "LuaBinding.h"
