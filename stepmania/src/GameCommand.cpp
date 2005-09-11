@@ -719,7 +719,7 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 	}
 	else
 	{
-		// We were filled by an OptionRowHandler in code.  GameCommand isn't filled,
+		// We were filled by an OptionRowHandler in code.  m_Commands isn't filled,
 		// so just apply the values that are already set in this.
 		this->ApplySelf( vpns );
 	}
