@@ -246,6 +246,14 @@ void ScreenEvaluation::Init()
 		}
 	}
 
+
+	//
+	// update persistent statistics
+	//
+	StageResults::CommitScores( m_StageResults, m_Type == summary );
+	FOREACH_HumanPlayer( p )
+		m_StageStats.m_player[p].CalcAwards( p );
+
 	//
 	// Calculate grades
 	//
@@ -254,18 +262,11 @@ void ScreenEvaluation::Init()
 	FOREACH_PlayerNumber( p )
 	{
 		if( GAMESTATE->IsPlayerEnabled(p) )
-			grade[p] = m_StageStats.m_player[p].GetGrade();
+			grade[p] = STATSMAN->m_CurStageStats.m_player[p].GetGrade();
 		else
 			grade[p] = Grade_Failed;
 	}
 	
-	//
-	// update persistent statistics
-	//
-	StageResults::CommitScores( m_StageResults, m_Type == summary );
-	FOREACH_HumanPlayer( p )
-		m_StageStats.m_player[p].CalcAwards( p );
-
 	m_bTryExtraStage = 
 		GAMESTATE->HasEarnedExtraStage()  && 
 		m_Type==stage;
