@@ -269,7 +269,7 @@ void ScreenEvaluation::Init()
 	//
 	// update persistent statistics
 	//
-	CommitScores( m_StageStats, m_StageResults, m_Type );
+	StageResults::CommitScores( m_StageStats, m_StageResults, m_Type == summary );
 
 	m_bTryExtraStage = 
 		GAMESTATE->HasEarnedExtraStage()  && 
@@ -780,10 +780,10 @@ void ScreenEvaluation::Init()
 }
 
 
-void ScreenEvaluation::CommitScores(
+void StageResults::CommitScores(
 	const StageStats &m_StageStats, 
 	StageResults out[NUM_PLAYERS], 
-	ScreenEvaluation::Type type )
+	bool bSummary )
 {
 	FOREACH_PlayerNumber( pn )
 	{
@@ -849,47 +849,37 @@ void ScreenEvaluation::CommitScores(
 		const Song* pSong = GAMESTATE->m_pCurSong;
 		const Steps* pSteps = GAMESTATE->m_pCurSteps[p];
 
-		switch( type )
+		if( bSummary )
 		{
-		case stage:
-			{
-				// don't save scores for a failed song
-				if( m_StageStats.m_player[p].bFailed )
-					continue;
+			// don't save scores if any stage was failed
+			if( m_StageStats.m_player[p].bFailed ) 
+				continue;
 
-				ASSERT( pSteps );
+			int iAverageMeter = m_StageStats.GetAverageMeter(p);
+			out[p].m_rc = AverageMeterToRankingCategory( iAverageMeter );
 
-				PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, out[p].m_iPersonalHighScoreIndex, out[p].m_iMachineHighScoreIndex );
-			}
-			break;
+			PROFILEMAN->AddCategoryScore( st, out[p].m_rc, p, hs, out[p].m_iPersonalHighScoreIndex, out[p].m_iMachineHighScoreIndex );
+			
+			// TRICKY:  Increment play count here, and not on ScreenGameplay like the others.
+			PROFILEMAN->IncrementCategoryPlayCount( st, out[p].m_rc, p );
+		}
+		else if( GAMESTATE->IsCourseMode() )
+		{
+			Course* pCourse = GAMESTATE->m_pCurCourse;
+			ASSERT( pCourse );
+			Trail* pTrail = GAMESTATE->m_pCurTrail[p];
 
-		case summary:
-			{
-				// don't save scores if any stage was failed
-				if( m_StageStats.m_player[p].bFailed ) 
-					continue;
+			PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, out[p].m_iPersonalHighScoreIndex, out[p].m_iMachineHighScoreIndex );
+		}
+		else
+		{
+			// don't save scores for a failed song
+			if( m_StageStats.m_player[p].bFailed )
+				continue;
 
-				int iAverageMeter = m_StageStats.GetAverageMeter(p);
-				out[p].m_rc = AverageMeterToRankingCategory( iAverageMeter );
+			ASSERT( pSteps );
 
-				PROFILEMAN->AddCategoryScore( st, out[p].m_rc, p, hs, out[p].m_iPersonalHighScoreIndex, out[p].m_iMachineHighScoreIndex );
-				
-				// TRICKY:  Increment play count here, and not on ScreenGameplay like the others.
-				PROFILEMAN->IncrementCategoryPlayCount( st, out[p].m_rc, p );
-			}
-			break;
-
-		case course:
-			{
-				Course* pCourse = GAMESTATE->m_pCurCourse;
-				ASSERT( pCourse );
-				Trail* pTrail = GAMESTATE->m_pCurTrail[p];
-
-				PROFILEMAN->AddCourseScore( pCourse, pTrail, p, hs, out[p].m_iPersonalHighScoreIndex, out[p].m_iMachineHighScoreIndex );
-			}
-			break;
-		default:
-			ASSERT(0);
+			PROFILEMAN->AddStepsScore( pSong, pSteps, p, hs, out[p].m_iPersonalHighScoreIndex, out[p].m_iMachineHighScoreIndex );
 		}
 	}
 
@@ -908,31 +898,23 @@ void ScreenEvaluation::CommitScores(
 		StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
 
 		const HighScoreList *pHSL = NULL;
-		switch( type )
+		if( bSummary )
 		{
-		case stage:
-			{
-				Song* pSong = GAMESTATE->m_pCurSong;
-				Steps* pSteps = GAMESTATE->m_pCurSteps[p];
-				pHSL = &pProfile->GetStepsHighScoreList( pSong, pSteps );
-			}
-			break;
-		case summary:
-			{
-				pHSL = &pProfile->GetCategoryHighScoreList( st, out[p].m_rc );
-			}
-			break;
-		case course:
-			{
-				Course* pCourse = GAMESTATE->m_pCurCourse;
-				ASSERT( pCourse );
-				Trail *pTrail = GAMESTATE->m_pCurTrail[p];
-				ASSERT( pTrail );
-				pHSL = &pProfile->GetCourseHighScoreList( pCourse, pTrail );
-			}
-			break;
-		default:
-			ASSERT(0);
+			pHSL = &pProfile->GetCategoryHighScoreList( st, out[p].m_rc );
+		}
+		else if( GAMESTATE->IsCourseMode() )
+		{
+			Course* pCourse = GAMESTATE->m_pCurCourse;
+			ASSERT( pCourse );
+			Trail *pTrail = GAMESTATE->m_pCurTrail[p];
+			ASSERT( pTrail );
+			pHSL = &pProfile->GetCourseHighScoreList( pCourse, pTrail );
+		}
+		else
+		{
+			Song* pSong = GAMESTATE->m_pCurSong;
+			Steps* pSteps = GAMESTATE->m_pCurSteps[p];
+			pHSL = &pProfile->GetStepsHighScoreList( pSong, pSteps );
 		}
 		
 		vector<HighScore>::const_iterator iter = find( pHSL->vHighScores.begin(), pHSL->vHighScores.end(), hs );

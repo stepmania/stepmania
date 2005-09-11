@@ -29,6 +29,7 @@ public:
 	HighScore m_HighScore;
 
 	void CalcAwards( const PlayerStageStats &m_PlayerStageStats, PlayerNumber p );
+	static void CommitScores( const StageStats &stageStats, StageResults out[NUM_PLAYERS], bool bSummary );
 };
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
@@ -57,7 +58,6 @@ public:
 	StageResults m_StageResults[NUM_PLAYERS];
 
 protected:
-	static void CommitScores( const StageStats &stageStats, StageResults out[NUM_PLAYERS], ScreenEvaluation::Type type );
 	void EndScreen();
 
 	Type				m_Type;
