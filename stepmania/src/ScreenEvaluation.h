@@ -12,7 +12,6 @@
 #include "DifficultyMeter.h"
 #include "PercentageDisplay.h"
 #include "ActorUtil.h"
-#include "HighScore.h"
 #include "RageSound.h"
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
@@ -103,7 +102,6 @@ protected:
 
 	RageSound	m_soundStart;	// sound played if the player passes or fails
 
-	HighScore m_HighScore[NUM_PLAYERS];
 	bool m_bSavedScreenshot[NUM_PLAYERS];
 };
 

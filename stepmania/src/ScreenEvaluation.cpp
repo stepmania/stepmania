@@ -906,7 +906,7 @@ void ScreenEvaluation::Input( const InputEventPlus &input )
 	if( input.GameI.IsValid() )
 	{
 		PlayerNumber pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( input.GameI.controller );
-		HighScore &hs = m_HighScore[pn];
+		const HighScore &hs = STATSMAN->m_CurStageStats.m_player[pn].m_HighScore;
 
 
 		if( CodeDetector::EnteredCode(input.GameI.controller, CODE_SAVE_SCREENSHOT1) ||
