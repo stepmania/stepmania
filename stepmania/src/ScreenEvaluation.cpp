@@ -200,9 +200,6 @@ void ScreenEvaluation::Init()
 
 	LOG->Trace( "total error: %i, %i", STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTotalError, STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTotalError );
 
-	// Run this here, so STATSMAN->m_CurStageStats is available to overlays.
-	ScreenWithMenuElements::Init();
-
 /*
 	//
 	// Debugging
@@ -239,6 +236,9 @@ void ScreenEvaluation::Init()
 
 	FOREACH_HumanPlayer( p )
 		STATSMAN->m_CurStageStats.m_player[p].CalcAwards( p );
+
+	// Run this here, so STATSMAN->m_CurStageStats is available to overlays.
+	ScreenWithMenuElements::Init();
 
 	//
 	// Calculate grades
