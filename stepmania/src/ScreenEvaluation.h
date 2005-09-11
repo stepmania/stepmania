@@ -27,6 +27,7 @@ public:
 	PerDifficultyAward m_pdaToShow;
 	PeakComboAward m_pcaToShow;
 	HighScore m_HighScore;
+	Grade m_Grade;
 
 	void CalcAwards( const PlayerStageStats &m_PlayerStageStats, PlayerNumber p );
 	static void CommitScores( const StageStats &stageStats, StageResults out[NUM_PLAYERS], bool bSummary );
