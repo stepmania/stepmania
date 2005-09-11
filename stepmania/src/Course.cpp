@@ -597,14 +597,12 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 
 		// TODO: Move Course initialization after PROFILEMAN is created
-		bool bForceSecret = false;
 		switch( e->songSort )
 		{
 		default:
 			ASSERT(0);
 		case SongSort_Randomize:
 			random_shuffle( vpPossibleSongs.begin(), vpPossibleSongs.end(), rnd );
-			bForceSecret = vpPossibleSongs.size() > 1;
 			break;
 		case SongSort_MostPlays:
 			if( PROFILEMAN )
@@ -694,7 +692,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		te.pSteps = pResolvedSteps;
 		te.Modifiers = e->sModifiers;
 		te.Attacks = e->attacks;
-		te.bSecret = e->bSecret || bForceSecret;
+		te.bSecret = e->bSecret;
 		te.iLowMeter = iLowMeter;
 		te.iHighMeter = iHighMeter;
 
