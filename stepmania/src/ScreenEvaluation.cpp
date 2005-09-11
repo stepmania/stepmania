@@ -272,8 +272,12 @@ void ScreenEvaluation::Init()
 		switch( m_Type )
 		{
 		case stage:
+		case course:
 			{
-				m_LargeBanner.LoadFromSong( GAMESTATE->m_pCurSong );
+				if( GAMESTATE->IsCourseMode() )
+					m_LargeBanner.LoadFromCourse( GAMESTATE->m_pCurCourse );
+				else
+					m_LargeBanner.LoadFromSong( GAMESTATE->m_pCurSong );
 				m_LargeBanner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 				m_LargeBanner.SetName( "LargeBanner" );
 				SET_XY_AND_ON_COMMAND( m_LargeBanner );
@@ -302,20 +306,6 @@ void ScreenEvaluation::Init()
 					SET_XY_AND_ON_COMMAND( m_sprSmallBannerFrame[i] );
 					this->AddChild( m_sprSmallBannerFrame[i] );
 				}
-			}
-			break;
-		case course:
-			{
-				m_LargeBanner.LoadFromCourse( GAMESTATE->m_pCurCourse );
-				m_LargeBanner.ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
-				m_LargeBanner.SetName( "LargeBanner" );
-				SET_XY_AND_ON_COMMAND( m_LargeBanner );
-				this->AddChild( &m_LargeBanner );
-
-				m_sprLargeBannerFrame.Load( THEME->GetPathG(m_sName,"banner frame") );
-				m_sprLargeBannerFrame->SetName( "LargeBannerFrame" );
-				SET_XY_AND_ON_COMMAND( m_sprLargeBannerFrame );
-				this->AddChild( m_sprLargeBannerFrame );
 			}
 			break;
 		default:
