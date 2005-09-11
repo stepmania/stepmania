@@ -92,13 +92,13 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 
 		BitmapText *pText = (BitmapText *) m_MaxComboText.Copy(); // XXX Copy should be covariant
 
-		const float start = SCALE( combo.fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
-		const float size = SCALE( combo.fSizeSeconds, 0, fLastSecond-fFirstSecond, 0.0f, 1.0f );
+		const float fStart = SCALE( combo.fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
+		const float fSize = SCALE( combo.fSizeSeconds, 0, fLastSecond-fFirstSecond, 0.0f, 1.0f );
 
 		const float fWidth = m_pNormalCombo->GetUnzoomedWidth();
-		const float CenterPercent = start + size/2;
-		const float CenterXPos = SCALE( CenterPercent, 0.0f, 1.0f, -fWidth/2.0f, fWidth/2.0f );
-		pText->SetX( CenterXPos );
+		const float fCenterPercent = fStart + fSize/2;
+		const float fCenterXPos = SCALE( fCenterPercent, 0.0f, 1.0f, -fWidth/2.0f, fWidth/2.0f );
+		pText->SetX( fCenterXPos );
 
 		pText->SetText( ssprintf("%i",combo.GetStageCnt()) );
 
