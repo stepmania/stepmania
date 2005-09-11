@@ -48,8 +48,10 @@ public:
 		// parameters have no effect.
 		Actor::SetTextureRenderStates();
 
-		for( int i = 0; i < ARRAYSIZE(m_LineStrip); ++i )
-			m_LineStrip[i].c = this->m_pTempState->diffuse[0];
+		for( unsigned i = 0; i < m_Quads.size(); ++i )
+			m_Quads[i].c = this->m_pTempState->diffuse[0];
+		for( unsigned i = 0; i < VALUE_RESOLUTION*iCircleVertices; ++i )
+			m_pCircles[i].c = this->m_pTempState->diffuse[0];
 
 		DISPLAY->DrawQuads( &m_Quads[0], m_Quads.size() );
 
