@@ -1017,35 +1017,6 @@ void ScreenEvaluation::EndScreen()
 	StartTransitioning( SM_GoToNextScreen );
 }
 
-// lua start
-#include "LuaBinding.h"
-
-class LunaScreenEvaluation: public Luna<ScreenEvaluation>
-{
-public:
-	LunaScreenEvaluation() { LUA->Register( Register ); }
-	// all deprecated
-	static int GetEvalStageStats( T* p, lua_State *L ) { STATSMAN->m_CurStageStats.PushSelf( L ); return 1; }
-	static int GetPersonalHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, STATSMAN->m_CurStageStats.m_player[IArg(1)].m_iPersonalHighScoreIndex ); return 1; }
-	static int GetMachineHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, STATSMAN->m_CurStageStats.m_player[IArg(1)].m_iMachineHighScoreIndex ); return 1; }
-	static int GetPerDifficultyAward( T* p, lua_State *L ) { lua_pushnumber( L, STATSMAN->m_CurStageStats.m_player[IArg(1)].m_pdaToShow ); return 1; }
-	static int GetPeakComboAward( T* p, lua_State *L ) { lua_pushnumber( L, STATSMAN->m_CurStageStats.m_player[IArg(1)].m_pcaToShow ); return 1; }
-
-	static void Register( Lua *L )
-	{
-		ADD_METHOD( GetEvalStageStats );
-		ADD_METHOD( GetPersonalHighScoreIndex );
-		ADD_METHOD( GetMachineHighScoreIndex );
-		ADD_METHOD( GetPerDifficultyAward );
-		ADD_METHOD( GetPeakComboAward );
-
-		Luna<T>::Register( L );
-	}
-};
-
-LUA_REGISTER_DERIVED_CLASS( ScreenEvaluation, ScreenWithMenuElements );
-// lua end
-
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.
