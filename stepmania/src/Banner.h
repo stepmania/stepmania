@@ -14,6 +14,7 @@ class Banner : public Sprite
 public:
 	Banner();
 	virtual ~Banner() { }
+	virtual Actor *Copy() const;
 
 	virtual bool Load( RageTextureID ID, bool bIsBanner=true );
 
@@ -36,6 +37,9 @@ public:
 	void SetScrolling( bool bScroll, float Percent = 0);
 	bool IsScrolling() const { return m_bScrolling; }
 	float ScrollingPercent() const { return m_fPercentScrolling; }
+
+	// Lua
+	void PushSelf( lua_State *L );
 
 protected:
 	bool m_bScrolling;

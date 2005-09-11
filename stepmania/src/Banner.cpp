@@ -8,6 +8,9 @@
 #include "Character.h"
 #include "ThemeMetric.h"
 #include "CharacterManager.h"
+#include "ActorUtil.h"
+
+REGISTER_ACTOR_CLASS( Banner )
 
 ThemeMetric<bool> SCROLL_RANDOM		("Banner","ScrollRandom");
 ThemeMetric<bool> SCROLL_ROULETTE		("Banner","ScrollRoulette");
@@ -168,6 +171,57 @@ void Banner::LoadRandom()
 	Load( THEME->GetPathG("Banner","random") );
 	m_bScrolling = (bool)SCROLL_ROULETTE;
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaBanner: public Luna<Banner>
+{
+public:
+	LunaBanner() { LUA->Register( Register ); }
+
+	static int scaletoclipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); return 0; }
+	static int ScaleToClipped( T* p, lua_State *L )			{ p->ScaleToClipped(FArg(1),FArg(2)); return 0; }
+	static int LoadFromSong( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) ) { p->LoadFromSong( NULL ); }
+		else { Song *pS = Luna<Song>::check(L,1); p->LoadFromSong( pS ); }
+		return 0;
+	}
+	static int LoadFromCourse( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) ) { p->LoadFromCourse( NULL ); }
+		else { Course *pC = Luna<Course>::check(L,1); p->LoadFromCourse( pC ); }
+		return 0;
+	}
+	static int LoadIconFromCharacter( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( NULL ); }
+		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
+		return 0;
+	}
+	static int LoadCardFromCharacter( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) ) { p->LoadIconFromCharacter( NULL ); }
+		else { Character *pC = Luna<Character>::check(L,1); p->LoadIconFromCharacter( pC ); }
+		return 0;
+	}
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( scaletoclipped );
+		ADD_METHOD( ScaleToClipped );
+		ADD_METHOD( LoadFromSong );
+		ADD_METHOD( LoadFromCourse );
+		ADD_METHOD( LoadIconFromCharacter );
+		ADD_METHOD( LoadCardFromCharacter );
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( Banner, Sprite )
+// lua end
 
 
 /*
