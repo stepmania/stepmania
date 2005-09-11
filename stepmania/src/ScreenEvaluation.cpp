@@ -247,6 +247,19 @@ void ScreenEvaluation::Init()
 	}
 
 	//
+	// Calculate grades
+	//
+	Grade grade[NUM_PLAYERS];
+
+	FOREACH_PlayerNumber( p )
+	{
+		if( GAMESTATE->IsPlayerEnabled(p) )
+			grade[p] = m_StageStats.m_player[p].GetGrade();
+		else
+			grade[p] = Grade_Failed;
+	}
+	
+	//
 	// update persistent statistics
 	//
 	StageResults::CommitScores( m_StageResults, m_Type == summary );
@@ -394,14 +407,14 @@ void ScreenEvaluation::Init()
 			this->AddChild( m_sprGradeFrame[p] );
 
 			m_Grades[p].Load( THEME->GetPathG(m_sName,"grades") );
-			m_Grades[p].SetGrade( p, m_StageResults[p].m_Grade );
+			m_Grades[p].SetGrade( p, grade[p] );
 			m_Grades[p].SetName( ssprintf("GradeP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_Grades[p] );
 			if( SPIN_GRADES )
 				m_Grades[p].Spin();
 			this->AddChild( &m_Grades[p] );
 
-			m_sprGrade[p].Load( THEME->GetPathG(m_sName,"grade "+GradeToString(m_StageResults[p].m_Grade)) );
+			m_sprGrade[p].Load( THEME->GetPathG(m_sName,"grade "+GradeToString(grade[p])) );
 			m_sprGrade[p]->SetName( ssprintf("GradeP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_sprGrade[p] );
 			this->AddChild( m_sprGrade[p] );
@@ -699,7 +712,7 @@ void ScreenEvaluation::Init()
 
 	Grade best_grade = Grade_NoData;
 	FOREACH_PlayerNumber( p )
-		best_grade = min( best_grade, m_StageResults[p].m_Grade ); 
+		best_grade = min( best_grade, grade[p] ); 
 	
 	if( PREFSMAN->m_bAllowExtraStage && m_bTryExtraStage )
 	{
@@ -771,14 +784,6 @@ void StageResults::CommitScores(
 	FOREACH_PlayerNumber( pn )
 	{
 		out[pn].Init();
-	}
-
-	FOREACH_PlayerNumber( p )
-	{
-		if( GAMESTATE->IsPlayerEnabled(p) )
-			out[p].m_Grade = m_StageStats.m_player[p].GetGrade();
-		else
-			out[p].m_Grade = Grade_Failed;
 	}
 
 	switch( GAMESTATE->m_PlayMode )
