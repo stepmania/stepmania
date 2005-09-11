@@ -208,18 +208,10 @@ void ScreenEvaluation::Init()
 	//
 	STATSMAN->CalcAccumStageStats();
 
-	switch( m_Type )
-	{
-	case summary:
-		STATSMAN->GetFinalEvalStageStats( m_StageStats );
-		break;
-	case stage:
-	case course:
-		m_StageStats = STATSMAN->m_CurStageStats;
-		break;
-	default:
-		ASSERT(0);
-	}
+	if( m_Type == summary )
+		STATSMAN->GetFinalEvalStageStats( STATSMAN->m_CurStageStats );
+
+	m_StageStats = STATSMAN->m_CurStageStats;
 
 	LOG->Trace( "total error: %i, %i", m_StageStats.m_player[PLAYER_1].iTotalError, m_StageStats.m_player[PLAYER_2].iTotalError );
 
