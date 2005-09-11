@@ -137,7 +137,7 @@ void NoteField::RefreshBeatToNoteSkin()
 		if( display == m_NoteDisplays.end() )
 		{
 			/* Skins should always be loaded by CacheAllUsedNoteSkins. */
-			LOG->Warn( "NoteField::RefreshBeatToNoteSkin: need note skin \"%s\" which should have been loaded alraedy", Skin.c_str() );
+			LOG->Warn( "NoteField::RefreshBeatToNoteSkin: need note skin \"%s\" which should have been loaded already", Skin.c_str() );
 			this->CacheNoteSkin( Skin );
 			display = m_NoteDisplays.find( Skin );
 		}
