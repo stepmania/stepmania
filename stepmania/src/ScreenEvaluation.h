@@ -27,7 +27,7 @@ public:
 	HighScore m_HighScore;
 	Grade m_Grade;
 
-	static void CommitScores( const StageStats &stageStats, StageResults out[NUM_PLAYERS], bool bSummary );
+	static void CommitScores( StageResults out[NUM_PLAYERS], bool bSummary );
 };
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed

@@ -249,7 +249,7 @@ void ScreenEvaluation::Init()
 	//
 	// update persistent statistics
 	//
-	StageResults::CommitScores( m_StageStats, m_StageResults, m_Type == summary );
+	StageResults::CommitScores( m_StageResults, m_Type == summary );
 	FOREACH_HumanPlayer( p )
 		m_StageStats.m_player[p].CalcAwards( p );
 
@@ -763,10 +763,11 @@ void ScreenEvaluation::Init()
 
 
 void StageResults::CommitScores(
-	const StageStats &m_StageStats, 
 	StageResults out[NUM_PLAYERS], 
 	bool bSummary )
 {
+	const StageStats &m_StageStats = STATSMAN->m_CurStageStats;
+
 	FOREACH_PlayerNumber( pn )
 	{
 		out[pn].Init();
