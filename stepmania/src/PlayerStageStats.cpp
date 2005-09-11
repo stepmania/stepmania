@@ -603,6 +603,10 @@ public:
 	static int GetGrade( T* p, lua_State *L )					{ lua_pushnumber(L, p->GetGrade()); return 1; }
 	static int GetLessonScoreActual( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetLessonScoreActual()); return 1; }
 	static int GetLessonScorePossible( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetLessonScorePossible()); return 1; }
+	static int GetPersonalHighScoreIndex( T* p, lua_State *L )	{ lua_pushnumber( L, p->m_iPersonalHighScoreIndex ); return 1; }
+	static int GetMachineHighScoreIndex( T* p, lua_State *L )	{ lua_pushnumber( L, p->m_iMachineHighScoreIndex ); return 1; }
+	static int GetPerDifficultyAward( T* p, lua_State *L )		{ lua_pushnumber( L, p->m_pdaToShow ); return 1; }
+	static int GetPeakComboAward( T* p, lua_State *L )			{ lua_pushnumber( L, p->m_pcaToShow ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -614,6 +618,10 @@ public:
 		ADD_METHOD( GetGrade );
 		ADD_METHOD( GetLessonScoreActual );
 		ADD_METHOD( GetLessonScorePossible );
+		ADD_METHOD( GetPersonalHighScoreIndex );
+		ADD_METHOD( GetMachineHighScoreIndex );
+		ADD_METHOD( GetPerDifficultyAward );
+		ADD_METHOD( GetPeakComboAward );
 
 		Luna<T>::Register( L );
 	}

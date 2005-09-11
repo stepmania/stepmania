@@ -1024,6 +1024,7 @@ class LunaScreenEvaluation: public Luna<ScreenEvaluation>
 {
 public:
 	LunaScreenEvaluation() { LUA->Register( Register ); }
+	// all deprecated
 	static int GetEvalStageStats( T* p, lua_State *L ) { STATSMAN->m_CurStageStats.PushSelf( L ); return 1; }
 	static int GetPersonalHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, STATSMAN->m_CurStageStats.m_player[IArg(1)].m_iPersonalHighScoreIndex ); return 1; }
 	static int GetMachineHighScoreIndex( T* p, lua_State *L ) { lua_pushnumber( L, STATSMAN->m_CurStageStats.m_player[IArg(1)].m_iMachineHighScoreIndex ); return 1; }
