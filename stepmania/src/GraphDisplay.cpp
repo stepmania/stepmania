@@ -285,13 +285,6 @@ void GraphDisplay::UpdateVerts()
 	m_pGraphLine->Set();
 }
 
-void GraphDisplay::Update( float fDeltaTime )
-{
-	ActorFrame::Update( fDeltaTime );
-
-	UpdateVerts();
-}
-
 // lua start
 #include "LuaBinding.h"
 

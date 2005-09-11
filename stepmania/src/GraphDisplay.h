@@ -17,7 +17,6 @@ public:
 	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 	void LoadFromStageStats( const StageStats &ss, const PlayerStageStats &s );
-	void Update( float fDeltaTime );
 
 	//
 	// Lua
