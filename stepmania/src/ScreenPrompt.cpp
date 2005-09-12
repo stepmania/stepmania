@@ -99,7 +99,7 @@ void ScreenPrompt::Input( const InputEventPlus &input )
 	if( input.DeviceI.device==DEVICE_KEYBOARD && input.type==IET_FIRST_PRESS )
 	{
 		PlayerNumber pn;
-		if ( GAMESTATE->GetCurrentStyle() == NULL )
+		if( GAMESTATE->GetCurrentStyle() == NULL )
 			pn = (PlayerNumber)input.GameI.controller;
 		else
 			pn = GAMESTATE->GetCurrentStyle()->ControllerToPlayerNumber( input.GameI.controller );
