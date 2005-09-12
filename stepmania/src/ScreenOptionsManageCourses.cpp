@@ -320,6 +320,14 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 	}
+	else if( SM == SM_LoseFocus )
+	{
+		this->PlayCommand( "ScreenLoseFocus" );
+	}
+	else if( SM == SM_GainFocus )
+	{
+		this->PlayCommand( "ScreenGainFocus" );
+	}
 
 	ScreenOptions::HandleScreenMessage( SM );
 }
