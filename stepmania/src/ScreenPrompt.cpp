@@ -87,8 +87,6 @@ void ScreenPrompt::BeginScreen()
 	}
 
 	PositionCursor();
-
-	m_In.StartTransitioning();
 }
 
 void ScreenPrompt::Input( const InputEventPlus &input )
