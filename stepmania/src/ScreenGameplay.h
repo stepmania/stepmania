@@ -144,7 +144,7 @@ protected:
 	void PlayAnnouncer( CString type, float fSeconds );
 	void UpdateLights();
 	void SendCrossedMessages();
-	void BackOutFromGameplay();
+	void BeginBackingOutFromGameplay();
 
 	void PlayTicks();
 	void UpdateSongPosition( float fDeltaTime );

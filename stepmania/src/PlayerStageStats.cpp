@@ -238,7 +238,6 @@ int PlayerStageStats::GetLessonScoreActual() const
 		switch( tns )
 		{
 		case TNS_AVOIDED_MINE:
-		case TNS_MISS:
 		case TNS_BOO:
 		case TNS_GOOD:
 		case TNS_GREAT:

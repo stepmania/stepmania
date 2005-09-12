@@ -62,6 +62,13 @@ void ScreenGameplayLesson::Init()
 	}
 
 	this->SortByDrawOrder();
+
+	// Reset stage number (not relevant in lessons)
+	GAMESTATE->m_iCurrentStageIndex = 0;
+
+	// Autoplay during demonstration
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+		pi->GetPlayerState()->m_PlayerController = PC_AUTOPLAY;
 }
 
 void ScreenGameplayLesson::Input( const InputEventPlus &input )
@@ -94,13 +101,19 @@ void ScreenGameplayLesson::HandleScreenMessage( const ScreenMessage SM )
 		else
 		{
 			PlayerStageStats &pss = STATSMAN->m_CurStageStats.m_player[PLAYER_1];
-			bool bCleared = pss.GetLessonScoreActual() >= pss.GetLessonScoreNeeded();
+			int iActual = pss.GetLessonScoreActual();
+			int iNeeded = pss.GetLessonScoreNeeded();
+			bool bCleared = iActual >= iNeeded;
 			bool bAnyTriesLeft = m_Try + 1 < NUM_Try;
 
 			if( bCleared )
 			{
 				MESSAGEMAN->Broadcast( Message_LessonCleared );
 				this->HandleScreenMessage( SM_LeaveGameplay );
+
+				// Commit scores here since we don't go through an eval screen.
+				// Only commit if we've cleared.  Don't commit if we've failed all 3 tries.
+				STATSMAN->m_CurStageStats.CommitScores( false );
 			}
 			else if( bAnyTriesLeft )
 			{
@@ -130,6 +143,11 @@ void ScreenGameplayLesson::MenuStart( PlayerNumber pn )
 
 void ScreenGameplayLesson::MenuBack( PlayerNumber pn )
 {
+	if( m_iCurrentPageIndex == 0 )
+	{
+		BeginBackingOutFromGameplay();
+		return;
+	}
 	if( m_iCurrentPageIndex == -1 )
 		return;
 	ChangeLessonPage( -1 );
@@ -150,6 +168,10 @@ void ScreenGameplayLesson::ChangeLessonPage( int iDir )
 		ResetAndRestartCurrentSong();
 
 		MESSAGEMAN->Broadcast( (Message)(Message_LessonTry1+m_Try) );
+
+		// Change back to the current autoplay setting (in most cases, human controlled).
+		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+			pi->GetPlayerState()->m_PlayerController = PREFSMAN->m_AutoPlay;
 	}
 	else
 	{

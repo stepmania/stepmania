@@ -1841,7 +1841,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 		if( GIVING_UP_GOES_TO_PREV_SCREEN )
 		{
-			BackOutFromGameplay();
+			BeginBackingOutFromGameplay();
 
 		}
 		else if( GIVING_UP_GOES_TO_NEXT_SCREEN )
@@ -2069,7 +2069,7 @@ void ScreenGameplay::SendCrossedMessages()
 	}
 }
 
-void ScreenGameplay::BackOutFromGameplay()
+void ScreenGameplay::BeginBackingOutFromGameplay()
 {
 	m_DancingState = STATE_OUTRO;
 	AbortGiveUp( false );
@@ -2164,7 +2164,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 				(input.DeviceI.device!=DEVICE_KEYBOARD && input.type==IET_FAST_REPEAT)) )
 			{
 				LOG->Trace("Player %i went back", input.MenuI.player+1);
-				BackOutFromGameplay();
+				BeginBackingOutFromGameplay();
 			}
 			else if( PREFSMAN->m_bDelayedBack && input.type==IET_FIRST_PRESS )
 			{
