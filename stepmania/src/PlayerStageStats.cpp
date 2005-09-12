@@ -265,7 +265,7 @@ int PlayerStageStats::GetLessonScoreNeeded() const
 {
 	int iScore = 0;
 
-	FOREACH_CONST( const Steps*, vpPossibleSteps, steps )
+	FOREACH_CONST( Steps*, vpPossibleSteps, steps )
 		iScore += (*steps)->GetRadarValues().m_Values.v.fNumTapsAndHolds;
 
 	iScore = (int)floorf( iScore * LESSON_PASS_THRESHOLD );

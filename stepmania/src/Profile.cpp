@@ -628,7 +628,7 @@ DateTime Profile::GetSongLastPlayedDateTime( const Song* pSong ) const
 
 bool Profile::HasPassedAnyStepsInSong( const Song* pSong ) const
 {
-	FOREACH_CONST( const Steps*, pSong->GetAllSteps(), steps )
+	FOREACH_CONST( Steps*, pSong->GetAllSteps(), steps )
 	{
 		const HighScoreList &hsl = GetStepsHighScoreList( pSong, *steps );
 		Grade grade = hsl.GetTopScore().GetGrade();
