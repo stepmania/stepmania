@@ -265,7 +265,7 @@ void InputHandler_DInput::UpdatePolled(DIDevice &device, const RageTimer &tm)
 		{
 		case in.BUTTON:
 		{
-			DeviceInput di(dev, JOY_1 + in.num, -1, tm);
+			DeviceInput di(dev, JOY_BUTTON_1 + in.num, -1, tm);
 			ButtonPressed(di, !!state.rgbButtons[in.ofs - DIJOFS_BUTTON0]);
 			break;
 		}
@@ -371,7 +371,7 @@ void InputHandler_DInput::UpdateBuffered(DIDevice &device, const RageTimer &tm)
 				break;
 
 			case in.BUTTON:
-				ButtonPressed(DeviceInput(dev, JOY_1 + in.num, -1, tm), !!evtbuf[i].dwData);
+				ButtonPressed(DeviceInput(dev, JOY_BUTTON_1 + in.num, -1, tm), !!evtbuf[i].dwData);
 				break;
 
 			case in.AXIS:

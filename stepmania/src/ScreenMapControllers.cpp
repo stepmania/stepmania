@@ -189,8 +189,8 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			button = KEY_ENTER;
 		else if( input.DeviceI.button == JOY_AUX_2 )
 			button = KEY_ESC;
-		else if( input.DeviceI.button == JOY_1 || input.DeviceI.button == JOY_2 ||
-				input.DeviceI.button == JOY_3 || input.DeviceI.button == JOY_4 )
+		else if( input.DeviceI.button == JOY_BUTTON_1 || input.DeviceI.button == JOY_BUTTON_2 ||
+				input.DeviceI.button == JOY_BUTTON_3 || input.DeviceI.button == JOY_BUTTON_4 )
 			button = KEY_DEL;
 	}
 #endif
