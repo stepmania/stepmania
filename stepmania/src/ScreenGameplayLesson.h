@@ -32,7 +32,6 @@ protected:
 		Try_3,
 		NUM_Try
 	};
-	AutoActor m_sprTry[NUM_Try];
 	Try m_Try;
 };
 

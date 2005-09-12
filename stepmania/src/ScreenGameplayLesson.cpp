@@ -61,17 +61,6 @@ void ScreenGameplayLesson::Init()
 		(*aa)->PlayCommand( "On" );
 	}
 
-
-	// load Try graphics
-	for( int i=0; i<NUM_Try; i++ )
-	{
-		CString s = ssprintf("Try%d",i+1);
-		m_sprTry[i].Load( THEME->GetPathB(m_sName,s) );
-		m_sprTry[i]->PlayCommand( "Hide" );
-		m_sprTry[i]->SetDrawOrder( DRAW_ORDER_OVERLAY+1 );
-		this->AddChild( m_sprTry[i] );
-	}
-
 	this->SortByDrawOrder();
 }
 
@@ -104,25 +93,26 @@ void ScreenGameplayLesson::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			bool bCleared = false;	// TODO
+			PlayerStageStats &pss = STATSMAN->m_CurStageStats.m_player[PLAYER_1];
+			bool bCleared = pss.GetLessonScoreActual() >= pss.GetLessonScoreNeeded();
 			bool bAnyTriesLeft = m_Try + 1 < NUM_Try;
 
 			if( bCleared )
 			{
+				MESSAGEMAN->Broadcast( Message_LessonCleared );
 				this->HandleScreenMessage( SM_LeaveGameplay );
 			}
 			else if( bAnyTriesLeft )
 			{
 				ResetAndRestartCurrentSong();
 
-				m_sprTry[m_Try]->PlayCommand( "Hide" );
 				m_Try = (Try)(m_Try+1);
-				m_sprTry[m_Try]->PlayCommand( "Show" );
+				MESSAGEMAN->Broadcast( (Message)(Message_LessonTry1+m_Try) );
 			}
 			else
 			{
-				m_sprTry[m_Try]->PlayCommand( "Hide" );
 				this->HandleScreenMessage( SM_BeginFailed );
+				MESSAGEMAN->Broadcast( Message_LessonFailed );
 			}
 		}
 		return;	// handled
@@ -156,11 +146,10 @@ void ScreenGameplayLesson::ChangeLessonPage( int iDir )
 	{
 		m_vPages[m_iCurrentPageIndex]->PlayCommand( "Hide" );
 		m_iCurrentPageIndex = -1;
-		m_sprTry[m_Try]->PlayCommand( "Show" );
 
 		ResetAndRestartCurrentSong();
 
-		MESSAGEMAN->Broadcast( Message_LessonYourTurn );
+		MESSAGEMAN->Broadcast( (Message)(Message_LessonTry1+m_Try) );
 	}
 	else
 	{

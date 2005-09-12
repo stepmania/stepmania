@@ -169,6 +169,7 @@ public:
 	int GetSongNumTimesPlayed( const Song* pSong ) const;
 	int GetSongNumTimesPlayed( const SongID& songID ) const;
 	DateTime GetSongLastPlayedDateTime( const Song* pSong ) const;
+	bool HasPassedAnyStepsInSong( const Song* pSong ) const;
 
 	//
 	// Course high scores

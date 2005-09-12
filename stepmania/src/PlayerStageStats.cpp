@@ -15,6 +15,8 @@
 #define GRADE_PERCENT_TIER(i)			THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 #define GRADE_TIER02_IS_ALL_PERFECTS	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllPerfects")
 
+const float LESSON_PASS_THRESHOLD = 0.8f;
+
 void PlayerStageStats::Init()
 {
 	vpPlayedSteps.clear();
@@ -260,16 +262,14 @@ int PlayerStageStats::GetLessonScoreActual() const
 	return iScore;
 }
 
-int PlayerStageStats::GetLessonScorePossible() const
+int PlayerStageStats::GetLessonScoreNeeded() const
 {
 	int iScore = 0;
 
-	FOREACH_TapNoteScore( tns )
-		iScore += iTapNoteScores[tns];
+	FOREACH_CONST( const Steps*, vpPossibleSteps, steps )
+		iScore += (*steps)->GetRadarValues().m_Values.v.fNumTapsAndHolds;
 
-	FOREACH_HoldNoteScore( hns )
-		iScore += iHoldNoteScores[hns];
-
+	iScore = (int)floorf( iScore * LESSON_PASS_THRESHOLD );
 	return iScore;
 }
 
@@ -595,18 +595,18 @@ class LunaPlayerStageStats: public Luna<PlayerStageStats>
 public:
 	LunaPlayerStageStats() { LUA->Register( Register ); }
 
-	static int GetCaloriesBurned( T* p, lua_State *L )			{ lua_pushnumber(L, p->fCaloriesBurned ); return 1; }
-	static int GetLifeRemainingSeconds( T* p, lua_State *L )	{ lua_pushnumber(L, p->fLifeRemainingSeconds); return 1; }
-	static int GetSurvivalSeconds( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetSurvivalSeconds()); return 1; }
-	static int FullCombo( T* p, lua_State *L )					{ lua_pushnumber(L, p->FullCombo()); return 1; }
-	static int MaxCombo( T* p, lua_State *L )					{ lua_pushnumber(L, p->GetMaxCombo().cnt); return 1; }
-	static int GetGrade( T* p, lua_State *L )					{ lua_pushnumber(L, p->GetGrade()); return 1; }
-	static int GetLessonScoreActual( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetLessonScoreActual()); return 1; }
-	static int GetLessonScorePossible( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetLessonScorePossible()); return 1; }
-	static int GetPersonalHighScoreIndex( T* p, lua_State *L )	{ lua_pushnumber( L, p->m_iPersonalHighScoreIndex ); return 1; }
-	static int GetMachineHighScoreIndex( T* p, lua_State *L )	{ lua_pushnumber( L, p->m_iMachineHighScoreIndex ); return 1; }
-	static int GetPerDifficultyAward( T* p, lua_State *L )		{ lua_pushnumber( L, p->m_pdaToShow ); return 1; }
-	static int GetPeakComboAward( T* p, lua_State *L )			{ lua_pushnumber( L, p->m_pcaToShow ); return 1; }
+	DEFINE_METHOD( GetCaloriesBurned,			fCaloriesBurned )
+	DEFINE_METHOD( GetLifeRemainingSeconds,		fLifeRemainingSeconds )
+	DEFINE_METHOD( GetSurvivalSeconds,			GetSurvivalSeconds() )
+	DEFINE_METHOD( FullCombo,					FullCombo() )
+	DEFINE_METHOD( MaxCombo,					GetMaxCombo().cnt )
+	DEFINE_METHOD( GetGrade,					GetGrade() )
+	DEFINE_METHOD( GetLessonScoreActual,		GetLessonScoreActual() )
+	DEFINE_METHOD( GetLessonScoreNeeded,		GetLessonScoreNeeded() )
+	DEFINE_METHOD( GetPersonalHighScoreIndex,	m_iPersonalHighScoreIndex )
+	DEFINE_METHOD( GetMachineHighScoreIndex,	m_iMachineHighScoreIndex )
+	DEFINE_METHOD( GetPerDifficultyAward,		m_pdaToShow )
+	DEFINE_METHOD( GetPeakComboAward,			m_pcaToShow )
 
 	static void Register(lua_State *L)
 	{
@@ -617,7 +617,7 @@ public:
 		ADD_METHOD( MaxCombo );
 		ADD_METHOD( GetGrade );
 		ADD_METHOD( GetLessonScoreActual );
-		ADD_METHOD( GetLessonScorePossible );
+		ADD_METHOD( GetLessonScoreNeeded );
 		ADD_METHOD( GetPersonalHighScoreIndex );
 		ADD_METHOD( GetMachineHighScoreIndex );
 		ADD_METHOD( GetPerDifficultyAward );

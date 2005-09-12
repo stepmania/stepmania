@@ -57,7 +57,11 @@ static const CString MessageNames[] = {
 	"PreferredSongGroupChanged",
 	"PreferredCourseGroupChanged",
 	"SortOrderChanged",
-	"LessonYourTurn",
+	"LessonTry1",
+	"LessonTry2",
+	"LessonTry3",
+	"LessonCleared",
+	"LessonFailed",
 };
 XToString( Message, NUM_Message );
 

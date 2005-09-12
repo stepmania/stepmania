@@ -10,7 +10,6 @@
 class Steps;
 struct lua_State;
 
-
 class PlayerStageStats
 {
 public:
@@ -25,7 +24,7 @@ public:
 	float GetCurMaxPercentDancePoints() const;
 
 	int GetLessonScoreActual() const;
-	int GetLessonScorePossible() const;
+	int GetLessonScoreNeeded() const;
 	void ResetScoreForLesson();
 
 	vector<Steps*>  vpPlayedSteps;

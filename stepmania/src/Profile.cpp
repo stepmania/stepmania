@@ -626,6 +626,24 @@ DateTime Profile::GetSongLastPlayedDateTime( const Song* pSong ) const
 	return dtLatest;
 }
 
+bool Profile::HasPassedAnyStepsInSong( const Song* pSong ) const
+{
+	FOREACH_CONST( const Steps*, pSong->GetAllSteps(), steps )
+	{
+		const HighScoreList &hsl = GetStepsHighScoreList( pSong, *steps );
+		Grade grade = hsl.GetTopScore().GetGrade();
+		switch( grade )
+		{
+		case Grade_Failed:
+		case Grade_NoData:
+			break;
+		default:
+			return true;
+		}
+	}
+	return false;
+}
+
 void Profile::IncrementStepsPlayCount( const Song* pSong, const Steps* pSteps )
 {
 	DateTime now = DateTime::GetNowDate();
@@ -1966,6 +1984,20 @@ public:
 			lua_pushnil( L );
 		return 1;
 	}
+	static int GetSongNumTimesPlayed( T* p, lua_State *L )
+	{
+		ASSERT( !lua_isnil(L,1) );
+		Song *pS = Luna<Song>::check(L,1);
+		lua_pushnumber( L, p->GetSongNumTimesPlayed(pS) );
+		return 1;
+	}
+	static int HasPassedAnyStepsInSong( T* p, lua_State *L )
+	{
+		ASSERT( !lua_isnil(L,1) );
+		Song *pS = Luna<Song>::check(L,1);
+		lua_pushboolean( L, p->HasPassedAnyStepsInSong(pS) );
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -1997,6 +2029,8 @@ public:
 		ADD_METHOD( GetDisplayTotalCaloriesBurned );
 		ADD_METHOD( GetMostPopularSong );
 		ADD_METHOD( GetMostPopularCourse );
+		ADD_METHOD( GetSongNumTimesPlayed );
+		ADD_METHOD( HasPassedAnyStepsInSong );
 
 		Luna<T>::Register( L );
 	}
