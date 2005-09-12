@@ -93,7 +93,7 @@ void ScreenPrompt::BeginScreen()
 
 void ScreenPrompt::Input( const InputEventPlus &input )
 {
-	if( m_In.IsTransitioning() || m_Out.IsTransitioning() )
+	if( IsTransitioning() )
 		return;
 
 	if( input.DeviceI.device==DEVICE_KEYBOARD && input.type==IET_FIRST_PRESS )
