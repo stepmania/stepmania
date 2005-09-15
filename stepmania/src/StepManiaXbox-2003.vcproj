@@ -100,9 +100,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Optimization="0"
 				OptimizeForProcessor="2"
 				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0/include&quot;"
-				PreprocessorDefinitions="WIN32,_XBOX,XBOX,_DEBUG,OGG_ONLY,_INC_WINDOWS"
+				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG,_XDBG"
 				RuntimeLibrary="1"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="global.h"
 				PrecompiledHeaderFile=".\Debug/StepMania.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
@@ -115,35 +116,44 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="/MACHINE:I386 /FIXED:NO"
-				AdditionalDependencies="xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib debug\verstub.obj"
+				AdditionalOptions="/MACHINE:I386 /FIXED:NO /FORCE:MULTIPLE"
+				AdditionalDependencies="xbdm.lib xapilibd.lib d3d8d.lib d3dx8d.lib xgraphicsd.lib dsoundd.lib dmusicd.lib xnetd.lib xboxkrnl.lib debug\verstub.obj"
 				OutputFile="../StepManiaXbox-debug.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="TRUE"
 				IgnoreDefaultLibraryNames="libcd,libcmt"
 				GenerateDebugInformation="TRUE"
-				ProgramDatabaseFile=".\Debug/StepManiaXbox-debug.pdb"/>
+				ProgramDatabaseFile=".\Debug/StepManiaXbox-debug.pdb"
+				OptimizeReferences="0"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)StepMania.vdi ia32.vdi"/>
+				Description="disasm\mapconv $(IntDir)\$(TargetName).map $(TargetDir)StepMania.vdi ia32.vdi"
+				ExcludedFromBuild="TRUE"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
 				Name="VCPreLinkEventTool"
 				CommandLine="disasm\verinc
 cl                                                                                                                                                                                    /Zl                                                                                                                                                                                    /nologo                                                                                                                                                                                    /c                                                                                                                                                                                    verstub.cpp                                                                                                                                                                                    /Fo$(IntDir)\
-"/>
+"
+				ExcludedFromBuild="TRUE"/>
 			<Tool
-				Name="XboxDeploymentTool"/>
+				Name="XboxDeploymentTool"
+				ExcludedFromBuild="FALSE"
+				RemotePath="xe:\$(SolutionName)\default-dbg.xbe"
+				Progress="TRUE"/>
 			<Tool
 				Name="XboxImageTool"
-				FileName="../default.xbe"
+				FileName="../default-debug.xbe"
 				StackSize="0x10000"
 				IncludeDebugInfo="TRUE"
 				LimitAvailableMemoryTo64MB="TRUE"
 				SuppressStartupBanner="TRUE"
 				XboxGameRating="5"
-				TitleName="StepmaniaX"/>
+				TitleInfo=""
+				TitleName="StepmaniaX"
+				TitleImage=".\archutils\Xbox\smicon.XBX"
+				SaveGameImage=".\archutils\Xbox\saveblue.XBX"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -238,6 +248,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			ATLMinimizesCRunTimeLibraryUsage="FALSE">
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0/include&quot;"
 				PreprocessorDefinitions="WIN32,_XBOX,XBOX,NDEBUG"
@@ -279,8 +290,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="XboxDeploymentTool"
+				ExcludedFromBuild="FALSE"
+				RemotePath="xe:\$(SolutionName)\default-rls.xbe"
 				Progress="TRUE"
-				ForceCopy="TRUE"/>
+				ForceCopy="FALSE"/>
 			<Tool
 				Name="XboxImageTool"
 				FileName="../default.xbe"
@@ -288,6 +301,7 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				IncludeDebugInfo="TRUE"
 				SuppressStartupBanner="TRUE"
 				TitleID=""
+				XboxGameRating="5"
 				TitleInfo=""
 				TitleName="StepmaniaX"
 				TitleImage=""/>
@@ -318,12 +332,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenBookkeeping.h">
 			</File>
 			<File
-				RelativePath="ScreenBranch.cpp">
-			</File>
-			<File
-				RelativePath="ScreenBranch.h">
-			</File>
-			<File
 				RelativePath="ScreenCenterImage.cpp">
 			</File>
 			<File
@@ -334,6 +342,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenCredits.h">
+			</File>
+			<File
+				RelativePath="ScreenDebugOverlay.cpp">
+			</File>
+			<File
+				RelativePath="ScreenDebugOverlay.h">
 			</File>
 			<File
 				RelativePath="ScreenDemonstration.cpp">
@@ -354,10 +368,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenEdit.h">
 			</File>
 			<File
-				RelativePath="ScreenEditCoursesMenu.cpp">
+				RelativePath="ScreenEditCourseMods.cpp">
 			</File>
 			<File
-				RelativePath="ScreenEditCoursesMenu.h">
+				RelativePath="ScreenEditCourseMods.h">
 			</File>
 			<File
 				RelativePath="ScreenEditMenu.cpp">
@@ -372,16 +386,16 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenEnding.h">
 			</File>
 			<File
-				RelativePath="ScreenEndlessBreak.cpp">
-			</File>
-			<File
-				RelativePath="ScreenEndlessBreak.h">
-			</File>
-			<File
 				RelativePath="ScreenEvaluation.cpp">
 			</File>
 			<File
 				RelativePath="ScreenEvaluation.h">
+			</File>
+			<File
+				RelativePath="ScreenEvaluationMultiplayer.cpp">
+			</File>
+			<File
+				RelativePath="ScreenEvaluationMultiplayer.h">
 			</File>
 			<File
 				RelativePath="ScreenExit.cpp">
@@ -408,6 +422,24 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenGameplay.h">
 			</File>
 			<File
+				RelativePath="ScreenGameplayLesson.cpp">
+			</File>
+			<File
+				RelativePath="ScreenGameplayLesson.h">
+			</File>
+			<File
+				RelativePath="ScreenGameplayMultiplayer.cpp">
+			</File>
+			<File
+				RelativePath="ScreenGameplayMultiplayer.h">
+			</File>
+			<File
+				RelativePath="ScreenGameplayNormal.cpp">
+			</File>
+			<File
+				RelativePath="ScreenGameplayNormal.h">
+			</File>
+			<File
 				RelativePath="ScreenHowToPlay.cpp">
 			</File>
 			<File
@@ -420,16 +452,16 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenInstructions.h">
 			</File>
 			<File
+				RelativePath="ScreenJoinMultiplayer.cpp">
+			</File>
+			<File
+				RelativePath="ScreenJoinMultiplayer.h">
+			</File>
+			<File
 				RelativePath="ScreenJukebox.cpp">
 			</File>
 			<File
 				RelativePath="ScreenJukebox.h">
-			</File>
-			<File
-				RelativePath="ScreenLogo.cpp">
-			</File>
-			<File
-				RelativePath="ScreenLogo.h">
 			</File>
 			<File
 				RelativePath="ScreenMapControllers.cpp">
@@ -504,6 +536,36 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenOptions.h">
 			</File>
 			<File
+				RelativePath="ScreenOptionsEditCourse.cpp">
+			</File>
+			<File
+				RelativePath="ScreenOptionsEditCourse.h">
+			</File>
+			<File
+				RelativePath="ScreenOptionsEditCourseEntry.cpp">
+			</File>
+			<File
+				RelativePath="ScreenOptionsEditCourseEntry.h">
+			</File>
+			<File
+				RelativePath="ScreenOptionsEditProfile.cpp">
+			</File>
+			<File
+				RelativePath="ScreenOptionsEditProfile.h">
+			</File>
+			<File
+				RelativePath="ScreenOptionsManageCourses.cpp">
+			</File>
+			<File
+				RelativePath="ScreenOptionsManageCourses.h">
+			</File>
+			<File
+				RelativePath="ScreenOptionsManageProfiles.cpp">
+			</File>
+			<File
+				RelativePath="ScreenOptionsManageProfiles.h">
+			</File>
+			<File
 				RelativePath="ScreenOptionsMaster.cpp">
 			</File>
 			<File
@@ -556,6 +618,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="ScreenSandbox.h">
+			</File>
+			<File
+				RelativePath="ScreenSaveSync.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSaveSync.h">
 			</File>
 			<File
 				RelativePath="ScreenSelect.cpp">
@@ -624,10 +692,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ScreenSongOptions.h">
 			</File>
 			<File
+				RelativePath="ScreenSplash.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSplash.h">
+			</File>
+			<File
 				RelativePath="ScreenStage.cpp">
 			</File>
 			<File
 				RelativePath="ScreenStage.h">
+			</File>
+			<File
+				RelativePath="ScreenSyncOverlay.cpp">
+			</File>
+			<File
+				RelativePath="ScreenSyncOverlay.h">
 			</File>
 			<File
 				RelativePath=".\ScreenSystemLayer.cpp">
@@ -712,10 +792,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="AutoKeysounds.h">
 			</File>
 			<File
-				RelativePath=".\BackgroundUtil.cpp">
+				RelativePath="BackgroundUtil.cpp">
 			</File>
 			<File
-				RelativePath=".\BackgroundUtil.h">
+				RelativePath="BackgroundUtil.h">
 			</File>
 			<File
 				RelativePath="BannerCache.cpp">
@@ -760,10 +840,22 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="Course.h">
 			</File>
 			<File
+				RelativePath="CourseLoaderCRS.cpp">
+			</File>
+			<File
+				RelativePath="CourseLoaderCRS.h">
+			</File>
+			<File
 				RelativePath="CourseUtil.cpp">
 			</File>
 			<File
 				RelativePath="CourseUtil.h">
+			</File>
+			<File
+				RelativePath="CourseWriterCRS.cpp">
+			</File>
+			<File
+				RelativePath="CourseWriterCRS.h">
 			</File>
 			<File
 				RelativePath="DateTime.cpp">
@@ -800,6 +892,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="FontCharmaps.h">
+			</File>
+			<File
+				RelativePath="Foreach.h">
 			</File>
 			<File
 				RelativePath="Game.cpp">
@@ -842,6 +937,18 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="Inventory.h">
+			</File>
+			<File
+				RelativePath="LuaBinding.cpp">
+			</File>
+			<File
+				RelativePath="LuaBinding.h">
+			</File>
+			<File
+				RelativePath="LuaExpressionTransform.cpp">
+			</File>
+			<File
+				RelativePath="LuaExpressionTransform.h">
 			</File>
 			<File
 				RelativePath="LuaFunctions.h">
@@ -958,6 +1065,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="PlayerOptions.h">
 			</File>
 			<File
+				RelativePath="PlayerScoreList.cpp">
+			</File>
+			<File
+				RelativePath="PlayerScoreList.h">
+			</File>
+			<File
 				RelativePath=".\PlayerStageStats.cpp">
 			</File>
 			<File
@@ -1066,6 +1179,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="StyleUtil.h">
 			</File>
 			<File
+				RelativePath="SubscriptionManager.h">
+			</File>
+			<File
 				RelativePath="ThemeMetric.h">
 			</File>
 			<File
@@ -1163,6 +1279,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					<File
 						RelativePath=".\arch\LoadingWindow\LoadingWindow_Xbox.h">
 					</File>
+					<File
+						RelativePath="arch\LoadingWindow\Selector_LoadingWindow.h">
+					</File>
 				</Filter>
 				<Filter
 					Name="Sound"
@@ -1199,6 +1318,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 					<File
 						RelativePath="arch\Sound\RageSoundDriver_Null.h">
+					</File>
+					<File
+						RelativePath="arch\Sound\Selector_RageSoundDriver.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1250,12 +1372,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture.h">
-					</File>
-					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_FFMpeg.cpp">
-					</File>
-					<File
-						RelativePath=".\arch\MovieTexture\MovieTexture_FFMpeg.h">
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_Null.cpp">
@@ -1340,6 +1456,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				</File>
 				<File
 					RelativePath="archutils\Xbox\custom_launch_params.h">
+				</File>
+				<File
+					RelativePath="GameLoop.cpp">
+				</File>
+				<File
+					RelativePath="GameLoop.h">
 				</File>
 				<File
 					RelativePath="archutils\Xbox\GraphicsWindow.cpp">
@@ -1459,18 +1581,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="DualScrollBar.h">
 			</File>
 			<File
-				RelativePath="EditCoursesMenu.cpp">
-			</File>
-			<File
-				RelativePath="EditCoursesMenu.h">
-			</File>
-			<File
-				RelativePath="EditCoursesSongMenu.cpp">
-			</File>
-			<File
-				RelativePath="EditCoursesSongMenu.h">
-			</File>
-			<File
 				RelativePath="EditMenu.cpp">
 			</File>
 			<File
@@ -1493,12 +1603,6 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="GraphDisplay.h">
-			</File>
-			<File
-				RelativePath="GrooveGraph.cpp">
-			</File>
-			<File
-				RelativePath="GrooveGraph.h">
 			</File>
 			<File
 				RelativePath="GrooveRadar.cpp">
@@ -1597,10 +1701,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="PaneDisplay.h">
 			</File>
 			<File
-				RelativePath=".\RoomWheel.cpp">
+				RelativePath="RoomWheel.cpp">
 			</File>
 			<File
-				RelativePath=".\RoomWheel.h">
+				RelativePath="RoomWheel.h">
 			</File>
 			<File
 				RelativePath="ScrollBar.cpp">
@@ -2166,6 +2270,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath=".\RageTextureManager.h">
 			</File>
 			<File
+				RelativePath="RageTexturePreloader.cpp">
+			</File>
+			<File
+				RelativePath="RageTexturePreloader.h">
+			</File>
+			<File
 				RelativePath="RageThreads.cpp">
 			</File>
 			<File
@@ -2277,6 +2387,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ActorScroller.h">
 			</File>
 			<File
+				RelativePath="ActorSound.cpp">
+			</File>
+			<File
+				RelativePath="ActorSound.h">
+			</File>
+			<File
 				RelativePath="ActorUtil.cpp">
 			</File>
 			<File
@@ -2313,6 +2429,9 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 				RelativePath="ModelTypes.h">
 			</File>
 			<File
+				RelativePath="Quad.cpp">
+			</File>
+			<File
 				RelativePath="Quad.h">
 			</File>
 			<File
@@ -2342,6 +2461,12 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 			</File>
 			<File
 				RelativePath="Bookkeeper.h">
+			</File>
+			<File
+				RelativePath="CharacterManager.cpp">
+			</File>
+			<File
+				RelativePath="CharacterManager.h">
 			</File>
 			<File
 				RelativePath="CryptManager.cpp">
