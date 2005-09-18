@@ -743,9 +743,15 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	LoadHelpText();
 
-	bool bSelectIsPressed =
-		SELECT_MENU_AVAILABLE && INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_SELECT) );
-	if( bSelectIsPressed )
+	if( input.MenuI.button == MENU_BUTTON_SELECT )
+	{
+		if( input.type == IET_FIRST_PRESS )
+			m_MusicWheel.Move( 0 );
+
+		return;
+	}
+
+	if( SELECT_MENU_AVAILABLE && INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_SELECT) ) )
 	{
 		if( input.type == IET_FIRST_PRESS )
 		{
@@ -765,6 +771,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 				return;
 			}
 		}
+		return;
 	}
 
 	switch( input.MenuI.button )
@@ -780,11 +787,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			bool bRightIsDown = false;
 			FOREACH_EnabledPlayer( p )
 			{
-				if( !bSelectIsPressed )
-				{
-					bLeftIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) );
-					bRightIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) );
-				}
+				bLeftIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_LEFT) );
+				bRightIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_RIGHT) );
 			}
 			
 			bool bBothDown = bLeftIsDown && bRightIsDown;
@@ -793,6 +797,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 			if( bNeitherDown )
 			{
+				/* Both buttons released. */
 				m_MusicWheel.Move( 0 );
 			}
 			else if( bBothDown )
@@ -841,10 +846,6 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 		}
 		break;
 	}
-
-
-	if( bSelectIsPressed )
-		return;
 
 	// TRICKY:  Do default processing of MenuLeft and MenuRight before detecting 
 	// codes.  Do default processing of Start AFTER detecting codes.  This gives us a 
