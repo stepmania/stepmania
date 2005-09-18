@@ -791,7 +791,11 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			bool bNeitherDown = !bLeftIsDown && !bRightIsDown;
 			
 
-			if( bBothDown || bNeitherDown )
+			if( bNeitherDown )
+			{
+				m_MusicWheel.Move( 0 );
+			}
+			else if( bBothDown )
 			{
 				m_MusicWheel.Move( 0 );
 				if( input.type == IET_FIRST_PRESS )
