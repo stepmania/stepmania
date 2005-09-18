@@ -739,7 +739,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	if( IsTransitioning() )
 		return;		// ignore
 
-	if( m_bMadeChoice )		return;		// ignore
+	if( m_bMadeChoice )
+		return;		// ignore
 
 	LoadHelpText();
 
