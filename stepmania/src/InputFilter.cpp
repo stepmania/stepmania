@@ -4,7 +4,25 @@
 #include "RageInput.h"
 #include "RageUtil.h"
 #include "RageThreads.h"
+#include "Preference.h"
 
+/*
+ * Some input devices require debouncing.  Do this on both press and release.  After
+ * reporting a change in state, don't report another for the debounce period.  If a
+ * button is reported pressed, report it.  If the button is immediately reported
+ * released, wait a period before reporting it; if the button is repressed during
+ * that time, the release is never reported.
+ *
+ * The detail is important: if a button is pressed for 1ms and released, we must
+ * always report it, even if the debounce period is 10ms, since it might be a coin
+ * counter with a very short signal.  The only time we discard events is if a button
+ * is pressed, released and then pressed again quickly.
+ *
+ * This delay in events is ordinarily not noticable, because the we report initial
+ * presses and releases immediately.  However, if a real press is ever delayed,
+ * this won't cause timing problems, because the event timestamp is preserved.
+ */
+static Preference<float> g_fInputDebounceTime( "InputDebounceTime", 0 );
 
 InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our program
 
@@ -49,6 +67,15 @@ void InputFilter::ResetRepeatRate()
 	SetRepeatRate( TIME_BEFORE_SLOW_REPEATS, SLOW_REPEATS_PER_SEC, TIME_BEFORE_FAST_REPEATS, FAST_REPEATS_PER_SEC );
 }
 
+InputFilter::ButtonState::ButtonState():
+	m_BeingHeldTime(RageZeroTimer),
+	m_LastReportTime(RageZeroTimer)
+{
+	m_BeingHeld = false;
+	m_bLastReportedHeld = false;
+	m_fSecsHeld = m_Level = m_LastLevel = 0;
+}
+
 void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 {
 	LockMut(*queuemutex);
@@ -71,13 +98,11 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 
 	bs.m_Level = di.level;
 
-	if( bs.m_BeingHeld == Down )
-		return;
-
-	bs.m_BeingHeld = Down;
-	bs.m_fSecsHeld = 0;
-
-	queue.push_back( InputEvent(di,Down? IET_FIRST_PRESS:IET_RELEASE) );
+	if( bs.m_BeingHeld != Down )
+	{
+		bs.m_BeingHeld = Down;
+		bs.m_BeingHeldTime = di.ts;
+	}
 }
 
 void InputFilter::SetButtonComment( DeviceInput di, const CString &sComment )
@@ -129,6 +154,17 @@ void InputFilter::Update(float fDeltaTime)
 			di.button = b;
 			di.level = bs.m_Level;
 
+			/* Generate IET_FIRST_PRESS and IET_RELEASE events. */
+			if( now - bs.m_LastReportTime >= g_fInputDebounceTime && bs.m_BeingHeld != bs.m_bLastReportedHeld )
+			{
+				bs.m_LastReportTime = now;
+				bs.m_bLastReportedHeld = bs.m_BeingHeld;
+				bs.m_fSecsHeld = 0;
+
+				di.ts = bs.m_BeingHeldTime;
+				queue.push_back( InputEvent(di,bs.m_bLastReportedHeld? IET_FIRST_PRESS:IET_RELEASE) );
+			}
+
 			/* Generate IET_LEVEL_CHANGED events. */
 			if( bs.m_LastLevel != bs.m_Level && bs.m_Level != -1 )
 			{
@@ -137,7 +173,7 @@ void InputFilter::Update(float fDeltaTime)
 			}
 
 			/* Generate IET_FAST_REPEAT and IET_SLOW_REPEAT events. */
-			if( !bs.m_BeingHeld )
+			if( !bs.m_bLastReportedHeld )
 				continue;
 
 			const float fOldHoldTime = bs.m_fSecsHeld;
@@ -170,7 +206,7 @@ void InputFilter::Update(float fDeltaTime)
 
 bool InputFilter::IsBeingPressed( DeviceInput di )
 {
-	return m_ButtonState[di.device][di.button].m_BeingHeld;
+	return m_ButtonState[di.device][di.button].m_bLastReportedHeld;
 }
 
 float InputFilter::GetSecsHeld( DeviceInput di )

@@ -63,11 +63,18 @@ public:
 private:
 	struct ButtonState
 	{
-		ButtonState() { m_BeingHeld = false; m_fSecsHeld = m_Level = m_LastLevel = 0; }
-		bool m_BeingHeld;
+		ButtonState();
+		bool m_BeingHeld; // actual current state
+		bool m_bLastReportedHeld; // last state reported by Update()
 		CString m_sComment;
 		float m_fSecsHeld;
 		float m_Level, m_LastLevel;
+
+		// Timestamp of the last real event that came in: the time m_BeingHeld changed.
+		RageTimer m_BeingHeldTime;
+
+		// The time that we actually reported the last event (used for debouncing).
+		RageTimer m_LastReportTime;
 	};
 	ButtonState m_ButtonState[NUM_INPUT_DEVICES][MAX_DEVICE_BUTTONS];
 
