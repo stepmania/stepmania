@@ -24,7 +24,7 @@ void RoomWheel::Load( CString sType )
 		m_WheelBaseItems.push_back( new RoomWheelItem );
 	}
 
-	m_WheelState = STATE_SELECTING_GENERIC;
+	m_WheelState = STATE_SELECTING;
 
 	AddPerminateItem( new RoomWheelData(TYPE_GENERIC, "Create Room", "Create a new game room", THEME->GetMetricC( m_sName, "CreateRoomColor")) );
 

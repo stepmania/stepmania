@@ -87,7 +87,7 @@ protected:
 	float				m_TimeBeforeMovingBegins;
 	float				m_SpinSpeed;
 	enum WheelState { 
-		STATE_SELECTING_GENERIC,
+		STATE_SELECTING,
 		STATE_FLYING_OFF_BEFORE_NEXT_SORT, 
 		STATE_FLYING_ON_AFTER_NEXT_SORT, 
 		STATE_TWEENING_ON_SCREEN, 

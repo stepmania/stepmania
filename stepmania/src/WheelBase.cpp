@@ -52,7 +52,7 @@ void WheelBase::Load( CString sType )
 		m_WheelBaseItems.push_back( new WheelItemBase );
 	}
 
-	m_WheelState = STATE_SELECTING_GENERIC;
+	m_WheelState = STATE_SELECTING;
 
 	BuildWheelItemsData(m_WheelBaseItemsData);
 	RebuildWheelItems();
@@ -165,7 +165,7 @@ void WheelBase::DrawItem( int i, WheelItemBase *display, const float fThisBanner
 
 	switch( m_WheelState )
 	{
-	case STATE_SELECTING_GENERIC:
+	case STATE_SELECTING:
 	case STATE_LOCKED:
 		{
 			SetItemPosition( *display, fThisBannerPositionOffsetFromSelection );
@@ -204,7 +204,7 @@ bool WheelBase::IsSettled() const
 {
 	if( m_Moving )
 		return false;
-	if( m_WheelState != STATE_SELECTING_GENERIC && m_WheelState != STATE_LOCKED )
+	if( m_WheelState != STATE_SELECTING && m_WheelState != STATE_LOCKED )
 		return false;
 	if( m_fPositionOffsetFromSelection != 0 )
 		return false;
@@ -335,14 +335,14 @@ void WheelBase::UpdateSwitch()
 		}
 		else
 		{
-			m_WheelState = STATE_SELECTING_GENERIC;
+			m_WheelState = STATE_SELECTING;
 		}
 		break;
 	case STATE_TWEENING_OFF_SCREEN:
 		m_WheelState = STATE_WAITING_OFF_SCREEN;
 		m_fTimeLeftInState = 0;
 		break;
-	case STATE_SELECTING_GENERIC:
+	case STATE_SELECTING:
 		m_fTimeLeftInState = 0;
 		break;
 	case STATE_WAITING_OFF_SCREEN:
@@ -554,7 +554,7 @@ bool WheelBase::MoveSpecific( int n )
 	 * Move(0). -Chris */
 	switch( m_WheelState )
 	{
-	case STATE_SELECTING_GENERIC:
+	case STATE_SELECTING:
 		break;
 	case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 	case STATE_FLYING_ON_AFTER_NEXT_SORT:
