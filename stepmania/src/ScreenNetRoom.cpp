@@ -9,7 +9,7 @@
 #include "ScreenTextEntry.h"
 #include "Command.h"
 #include "WheelItemBase.h"
-#include "RageLog.h"
+//#include "RageLog.h"
 #include "InputEventPlus.h"
 
 #define TITLEBG_WIDTH				THEME->GetMetricF(m_sName,"TitleBGWidth")
@@ -86,7 +86,6 @@ void ScreenNetRoom::Input( const InputEventPlus &input )
 		m_RoomWheel.Move(0);
 		m_deployDelay.Touch();
 		m_RoomInfoState = CLOSED;
-		LOG->Info("touched");
 	}
 
 	if (((input.MenuI.button == MENU_BUTTON_LEFT) || (input.MenuI.button == MENU_BUTTON_RIGHT)) && (input.type != IET_RELEASE))
