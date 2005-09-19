@@ -522,7 +522,8 @@ void WheelBase::Move(int n)
 		ChangeMusic(m_Moving);
 }
 
-bool WheelBase::MoveSpecific(int n) {
+bool WheelBase::MoveSpecific( int n )
+{
 	/* If we're not selecting, discard this.  We won't ignore it; we'll
 	 * get called again every time the key is repeated. */
 	/* Still process Move(0) so we sometimes continue moving immediate 
