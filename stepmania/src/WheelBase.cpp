@@ -541,7 +541,7 @@ void WheelBase::Move(int n)
 	m_SpinSpeed = float(PREFSMAN->m_iMusicWheelSwitchSpeed);
 	m_Moving = n;
 	
-	if(m_Moving)
+	if( m_Moving )
 		ChangeMusic(m_Moving);
 }
 
@@ -581,12 +581,11 @@ bool WheelBase::MoveSpecific( int n )
 	return true;
 }
 
-void WheelBase::AddItem(WheelItemBaseData* itemdata)
+void WheelBase::AddItem( WheelItemBaseData* pItemData )
 {
-	int visible, index;
-	m_WheelBaseItemsData.push_back(itemdata);
-	visible = FirstVisibleIndex();
-	index = m_WheelBaseItemsData.size();
+	m_WheelBaseItemsData.push_back( pItemData );
+	int iVisible = FirstVisibleIndex();
+	int iIndex = m_WheelBaseItemsData.size();
 
 	if( m_isEmpty )
 	{
@@ -596,7 +595,7 @@ void WheelBase::AddItem(WheelItemBaseData* itemdata)
 	}
 
 	// If the item was shown in the wheel, rebuild the wheel
-	if( (0 <= (index - visible)) && ((index - visible) < NUM_WHEEL_ITEMS) )
+	if( 0 <= iIndex - iVisible && iIndex - iVisible < NUM_WHEEL_ITEMS )
 	{
 		RebuildWheelItems();
 	}
