@@ -627,16 +627,19 @@ void WheelBase::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemD
 
 void WheelBase::RebuildWheelItems( int iDist )
 {
+	vector<WheelItemBaseData *> &data = m_WheelBaseItemsData;
+	vector<WheelItemBase *> &items = m_WheelBaseItems;
+
 	// rewind to first index that will be displayed;
 	int iFirstVisibleIndex = m_iSelection;
-	if( m_iSelection > int(m_WheelBaseItemsData.size()-1) )
+	if( m_iSelection > int(data.size()-1) )
 		m_iSelection = 0;
 		
 	// find the first wheel item shown
 	iFirstVisibleIndex -= NUM_WHEEL_ITEMS/2;
 
-	ASSERT(m_WheelBaseItemsData.size());
-	wrap( iFirstVisibleIndex, m_WheelBaseItemsData.size() );
+	ASSERT(data.size());
+	wrap( iFirstVisibleIndex, data.size() );
 
 	// iIndex is now the index of the lowest WheelItem to draw
 
@@ -646,29 +649,29 @@ void WheelBase::RebuildWheelItems( int iDist )
 		for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 		{
 			int iIndex = iFirstVisibleIndex + i;
-			wrap( iIndex, m_WheelBaseItemsData.size() );
+			wrap( iIndex, data.size() );
 
-			WheelItemBaseData	*data   = m_WheelBaseItemsData[iIndex];
-			WheelItemBase	*display = m_WheelBaseItems[i];
+			WheelItemBaseData *pData    = data[iIndex];
+			WheelItemBase     *pDisplay = items[i];
 
-			display->LoadFromWheelItemBaseData( data );
+			pDisplay->LoadFromWheelItemBaseData( pData );
 		}
 	}
 	else
 	{
 		// Shift items and refresh only those that have changed.
-		CircularShift( m_WheelBaseItems, iDist );
+		CircularShift( items, iDist );
 		if( iDist > 0 )
 		{
 			for( int i=NUM_WHEEL_ITEMS-iDist; i<NUM_WHEEL_ITEMS; i++ )
 			{
 				int iIndex = iFirstVisibleIndex + i;
-				wrap( iIndex, m_WheelBaseItemsData.size() );
+				wrap( iIndex, data.size() );
 
-				WheelItemBaseData	*data   = m_WheelBaseItemsData[iIndex];
-				WheelItemBase	*display = m_WheelBaseItems[i];
+				WheelItemBaseData *pData    = data[iIndex];
+				WheelItemBase     *pDisplay = items[i];
 
-				display->LoadFromWheelItemBaseData( data );
+				pDisplay->LoadFromWheelItemBaseData( pData );
 			}
 		}
 		else if( iDist < 0 )
@@ -678,10 +681,10 @@ void WheelBase::RebuildWheelItems( int iDist )
 				int iIndex = iFirstVisibleIndex + i;
 				wrap( iIndex, m_WheelBaseItemsData.size() );
 
-				WheelItemBaseData	*data   = m_WheelBaseItemsData[iIndex];
-				WheelItemBase	*display = m_WheelBaseItems[i];
+				WheelItemBaseData *pData    = data[iIndex];
+				WheelItemBase     *pDisplay = items[i];
 
-				display->LoadFromWheelItemBaseData( data );
+				pDisplay->LoadFromWheelItemBaseData( pData );
 			}
 		}
 	}
