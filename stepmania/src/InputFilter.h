@@ -40,19 +40,6 @@ typedef vector<InputEvent> InputEventArray;
 class RageMutex;
 class InputFilter
 {
-	struct ButtonState
-	{
-		ButtonState() { m_BeingHeld = false; m_fSecsHeld = m_Level = m_LastLevel = 0; }
-		bool m_BeingHeld;
-		CString m_sComment;
-		float m_fSecsHeld;
-		float m_Level, m_LastLevel;
-	};
-	ButtonState m_ButtonState[NUM_INPUT_DEVICES][MAX_DEVICE_BUTTONS];
-
-	InputEventArray queue;
-	RageMutex *queuemutex;
-
 public:
 	void ButtonPressed( DeviceInput di, bool Down );
 	void SetButtonComment( DeviceInput di, const CString &sComment = "" );
@@ -72,6 +59,20 @@ public:
 	CString GetButtonComment( DeviceInput di ) const;
 	
 	void GetInputEvents( InputEventArray &array );
+
+private:
+	struct ButtonState
+	{
+		ButtonState() { m_BeingHeld = false; m_fSecsHeld = m_Level = m_LastLevel = 0; }
+		bool m_BeingHeld;
+		CString m_sComment;
+		float m_fSecsHeld;
+		float m_Level, m_LastLevel;
+	};
+	ButtonState m_ButtonState[NUM_INPUT_DEVICES][MAX_DEVICE_BUTTONS];
+
+	InputEventArray queue;
+	RageMutex *queuemutex;
 };
 
 
