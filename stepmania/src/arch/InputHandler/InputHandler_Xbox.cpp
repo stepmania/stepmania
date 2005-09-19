@@ -123,7 +123,7 @@ void InputHandler_Xbox::Update(float fDeltaTime)
 
 			if(nowPressed != wasPressed)
 			{
-				JoystickButton Button = JoystickButton(JOY_1 + j);
+				JoystickButton Button = JoystickButton(JOY_BUTTON_1 + j);
 				if(Button >= NUM_JOYSTICK_BUTTONS)
 				{
 					LOG->Warn("Ignored joystick event (button too high)");
@@ -168,7 +168,7 @@ void InputHandler_Xbox::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesO
 		if( joysticks[i] != 0 )
 		{
 			vDevicesOut.push_back( InputDevice(DEVICE_JOY1+i) );
-			vDescriptionsOut.push_back( "" );
+			vDescriptionsOut.push_back( "XboxGameHardware" );
 		}
 	}
 }
