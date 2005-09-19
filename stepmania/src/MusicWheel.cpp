@@ -737,7 +737,7 @@ void MusicWheel::RebuildAllMusicWheelItems()
 	RebuildMusicWheelItems( INT_MAX );
 }
 
-void MusicWheel::RebuildMusicWheelItems( int dist )
+void MusicWheel::RebuildMusicWheelItems( int iDist )
 {
 	// rewind to first index that will be displayed;
 	int iFirstVisibleIndex = m_iSelection;
@@ -752,7 +752,7 @@ void MusicWheel::RebuildMusicWheelItems( int dist )
 
 	// iIndex is now the index of the lowest WheelItem to draw
 
-	if( dist == INT_MAX )
+	if( iDist == INT_MAX )
 	{
 		// Refresh all
 		for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
@@ -770,10 +770,10 @@ void MusicWheel::RebuildMusicWheelItems( int dist )
 	else
 	{
 		// Shift items and refresh only those that have changed.
-		CircularShift( m_MusicWheelItems, dist );
-		if( dist > 0 )
+		CircularShift( m_MusicWheelItems, iDist );
+		if( iDist > 0 )
 		{
-			for( int i=NUM_WHEEL_ITEMS-dist; i<NUM_WHEEL_ITEMS; i++ )
+			for( int i=NUM_WHEEL_ITEMS-iDist; i<NUM_WHEEL_ITEMS; i++ )
 			{
 				int iIndex = iFirstVisibleIndex + i;
 				wrap( iIndex, m_CurWheelItemData.size() );
@@ -785,9 +785,9 @@ void MusicWheel::RebuildMusicWheelItems( int dist )
 				display->LoadFromWheelItemData( data, bExpanded );
 			}
 		}
-		else if( dist < 0 )
+		else if( iDist < 0 )
 		{
-			for( int i=0; i<-dist; i++ )
+			for( int i=0; i < -iDist; i++ )
 			{
 				int iIndex = iFirstVisibleIndex + i;
 				wrap( iIndex, m_CurWheelItemData.size() );

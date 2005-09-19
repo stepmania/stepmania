@@ -46,7 +46,7 @@ public:
 	virtual bool Select();	// return true if this selection ends the screen
 
 	bool WheelIsLocked() { return (m_WheelState == STATE_LOCKED ? true : false); }
-	virtual void RebuildWheelItems( int dist = -999999 );	// -999999 = refresh all
+	virtual void RebuildWheelItems( int dist = INT_MAX );	// INT_MAX = refresh all
 
 	void AddItem( WheelItemBaseData* itemdata );
 	virtual void RemoveItem( int index );
