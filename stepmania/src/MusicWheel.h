@@ -73,7 +73,7 @@ protected:
 	virtual void UpdateItems(float fDeltaTime );
 	virtual void UpdateSwitch();
 
-	virtual inline void UpdateScrollbar() { WheelBase::UpdateScrollbar(m_CurWheelItemData.size()); }
+	virtual void UpdateScrollbar() { WheelBase::UpdateScrollbar(m_CurWheelItemData.size()); }
 
 	vector<WheelItemData> m_WheelItemDatas[NUM_SORT_ORDERS];
 	vector<WheelItemData *> m_CurWheelItemData;

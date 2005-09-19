@@ -107,7 +107,7 @@ protected:
 	RageSound m_soundLocked;
 
 //	bool WheelItemIsVisible(int n);
-	virtual inline void UpdateScrollbar() { UpdateScrollbar(m_WheelBaseItemsData.size()); }
+	virtual void UpdateScrollbar() { UpdateScrollbar(m_WheelBaseItemsData.size()); }
 	void UpdateScrollbar(unsigned int size);
 
 	ThemeMetric<float>	SWITCH_SECONDS;
