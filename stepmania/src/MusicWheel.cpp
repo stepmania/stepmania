@@ -99,7 +99,7 @@ void MusicWheel::Load( CString sType )
 	m_soundChangeSort.Load(		THEME->GetPathS(sType,"sort") );
 	m_soundExpand.Load(			THEME->GetPathS(sType,"expand"), true );
 
-	m_WheelState = STATE_SELECTING_MUSIC;
+	m_WheelState = STATE_SELECTING_GENERIC;
 
 	if( GAMESTATE->IsExtraStage() ||  GAMESTATE->IsExtraStage2() )
 	{
@@ -821,7 +821,7 @@ void MusicWheel::DrawItem( int i )
 
 	switch( m_WheelState )
 	{
-	case STATE_SELECTING_MUSIC:
+	case STATE_SELECTING_GENERIC:
 	case STATE_ROULETTE_SPINNING:
 	case STATE_ROULETTE_SLOWING_DOWN:
 	case STATE_RANDOM_SPINNING:
@@ -838,7 +838,7 @@ bool MusicWheel::IsSettled() const
 {
 	if( m_Moving )
 		return false;
-	if( m_WheelState != STATE_SELECTING_MUSIC && m_WheelState != STATE_LOCKED )
+	if( m_WheelState != STATE_SELECTING_GENERIC && m_WheelState != STATE_LOCKED )
 		return false;
 	if( m_fPositionOffsetFromSelection != 0 )
 		return false;
@@ -912,7 +912,7 @@ void MusicWheel::UpdateSwitch()
 		break;
 
 	case STATE_FLYING_ON_AFTER_NEXT_SORT:
-		m_WheelState = STATE_SELECTING_MUSIC;	// now, wait for input
+		m_WheelState = STATE_SELECTING_GENERIC;	// now, wait for input
 		break;
 
 	case STATE_TWEENING_ON_SCREEN:
@@ -925,14 +925,14 @@ void MusicWheel::UpdateSwitch()
 		}
 		else
 		{
-			m_WheelState = STATE_SELECTING_MUSIC;
+			m_WheelState = STATE_SELECTING_GENERIC;
 		}
 		break;
 	case STATE_TWEENING_OFF_SCREEN:
 		m_WheelState = STATE_WAITING_OFF_SCREEN;
 		m_fTimeLeftInState = 0;
 		break;
-	case STATE_SELECTING_MUSIC:
+	case STATE_SELECTING_GENERIC:
 		m_fTimeLeftInState = 0;
 		break;
 	case STATE_ROULETTE_SPINNING:
@@ -1003,7 +1003,7 @@ bool MusicWheel::ChangeSort( SortOrder new_so )	// return true if change success
 
 	switch( m_WheelState )
 	{
-	case STATE_SELECTING_MUSIC:
+	case STATE_SELECTING_GENERIC:
 	case STATE_FLYING_ON_AFTER_NEXT_SORT:
 		break;	// fall through
 	default:
@@ -1249,7 +1249,7 @@ bool MusicWheel::MoveSpecific(int n)
 	 * Move(0). -Chris */
 	switch( m_WheelState )
 	{
-	case STATE_SELECTING_MUSIC:
+	case STATE_SELECTING_GENERIC:
 		break;
 	case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 	case STATE_FLYING_ON_AFTER_NEXT_SORT:
@@ -1354,7 +1354,7 @@ try_next:
 void MusicWheel::FinishChangingSorts()
 {
 	FinishTweening();
-	m_WheelState = STATE_SELECTING_MUSIC;
+	m_WheelState = STATE_SELECTING_GENERIC;
 	m_fTimeLeftInState = 0;
 }
 
