@@ -834,18 +834,6 @@ void MusicWheel::DrawItem( int i )
 	WheelBase::DrawItem(i, display, fThisBannerPositionOffsetFromSelection);
 }
 
-bool MusicWheel::IsSettled() const
-{
-	if( m_Moving )
-		return false;
-	if( m_WheelState != STATE_SELECTING && m_WheelState != STATE_LOCKED )
-		return false;
-	if( m_fPositionOffsetFromSelection != 0 )
-		return false;
-
-	return true;
-}
-
 void MusicWheel::UpdateItems(float fDeltaTime )
 {
 	for( unsigned i=0; i<unsigned(NUM_WHEEL_ITEMS); i++ )
@@ -974,18 +962,18 @@ void MusicWheel::UpdateSwitch()
 	}
 }
 
-void MusicWheel::ChangeMusic(int dist)
+void MusicWheel::ChangeMusic( int iDist )
 {
-	m_iSelection += dist;
+	m_iSelection += iDist;
 	wrap( m_iSelection, m_CurWheelItemData.size() );
 
-	RebuildMusicWheelItems( dist );
+	RebuildMusicWheelItems( iDist );
 
-	m_fPositionOffsetFromSelection += dist;
+	m_fPositionOffsetFromSelection += iDist;
 
 	SCREENMAN->PostMessageToTopScreen( SM_SongChanged, 0 );
 
-	/* If we're moving automatically, don't play this; it'll be called in Update.*/
+	/* If we're moving automatically, don't play this; it'll be called in Update. */
 	if(!IsMoving())
 		m_soundChangeMusic.Play();
 }

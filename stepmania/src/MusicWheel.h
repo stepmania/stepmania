@@ -37,8 +37,6 @@ public:
 	void StartRandom();
 	bool IsRouletting() const;
 
-	virtual bool IsSettled() const;
-
 	void NotesOrTrailChanged( PlayerNumber pn );	// update grade graphics and top score
 
 	virtual bool Select();	// return true if this selection ends the screen
