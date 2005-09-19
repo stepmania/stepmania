@@ -809,10 +809,10 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 					switch( input.MenuI.button )
 					{
 					case MENU_BUTTON_LEFT:
-						m_MusicWheel.ChangeMusic( -1 );
+						m_MusicWheel.ChangeMusicUnlessLocked( -1 );
 						break;
 					case MENU_BUTTON_RIGHT:
-						m_MusicWheel.ChangeMusic( +1 );
+						m_MusicWheel.ChangeMusicUnlessLocked( +1 );
 						break;
 					}
 				}

@@ -33,6 +33,7 @@ public:
 	void TweenOffScreen() { TweenOffScreen(false); }
 
 	void Move(int n);
+	void ChangeMusicUnlessLocked( int n ); /* +1 or -1 */
 	virtual void ChangeMusic(int dist); /* +1 or -1 */
 
 	/* Return true if we're moving fast automatically. */
