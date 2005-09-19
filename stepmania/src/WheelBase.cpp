@@ -640,7 +640,7 @@ void WheelBase::RebuildWheelItems( int iDist )
 
 	// iIndex is now the index of the lowest WheelItem to draw
 
-	if( iDist == -999999 )
+	if( iDist == INT_MAX )
 	{
 		// Refresh all
 		for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
@@ -648,9 +648,9 @@ void WheelBase::RebuildWheelItems( int iDist )
 			int iIndex = iFirstVisibleIndex + i;
 			wrap( iIndex, m_WheelBaseItemsData.size() );
 
-
 			WheelItemBaseData	*data   = m_WheelBaseItemsData[iIndex];
 			WheelItemBase	*display = m_WheelBaseItems[i];
+
 			display->LoadFromWheelItemBaseData( data );
 		}
 	}
