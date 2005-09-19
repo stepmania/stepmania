@@ -157,6 +157,10 @@ void WheelBase::DrawPrimitives()
 	ActorFrame::DrawPrimitives();
 }
 
+void WheelBase::DrawItem( int i )
+{
+	DrawItem( i, m_WheelBaseItems[i], i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection );
+}
 
 void WheelBase::DrawItem( int i, WheelItemBase *display, const float fThisBannerPositionOffsetFromSelection)
 {
@@ -627,7 +631,7 @@ void WheelBase::BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemD
 
 void WheelBase::RebuildWheelItems( int iDist )
 {
-	vector<WheelItemBaseData *> &data = m_WheelBaseItemsData;
+	const vector<WheelItemBaseData *> &data = m_WheelBaseItemsData;
 	vector<WheelItemBase *> &items = m_WheelBaseItems;
 
 	// rewind to first index that will be displayed;

@@ -24,8 +24,8 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+	virtual void DrawItem( int i );
 	virtual void DrawItem( int i, WheelItemBase *display, const float fThisBannerPositionOffsetFromSelection);
-	virtual void DrawItem( int i ) { DrawItem( i, m_WheelBaseItems[i], i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection ); }
 
 	void TweenOnScreen(bool changing_sort);
 	void TweenOffScreen(bool changing_sort);

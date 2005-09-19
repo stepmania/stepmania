@@ -739,7 +739,7 @@ void MusicWheel::RebuildAllMusicWheelItems()
 
 void MusicWheel::RebuildMusicWheelItems( int iDist )
 {
-	vector<WheelItemData *> &data = m_CurWheelItemData;
+	const vector<WheelItemData *> &data = m_CurWheelItemData;
 	vector<MusicWheelItem *> &items = m_MusicWheelItems;
 
 	// rewind to first index that will be displayed;
@@ -816,12 +816,11 @@ void MusicWheel::NotesOrTrailChanged( PlayerNumber pn )	// update grade graphics
 
 void MusicWheel::DrawItem( int i )
 {
-	MusicWheelItem *display = m_MusicWheelItems[i];
-
 	const float fThisBannerPositionOffsetFromSelection = i - NUM_WHEEL_ITEMS/2 + m_fPositionOffsetFromSelection;
 	if( fabsf(fThisBannerPositionOffsetFromSelection) > NUM_WHEEL_ITEMS_TO_DRAW/2 )
 		return;
 
+	MusicWheelItem *display = m_MusicWheelItems[i];
 	switch( m_WheelState )
 	{
 	case STATE_SELECTING:
