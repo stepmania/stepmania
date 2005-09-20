@@ -283,15 +283,14 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCPostBuildEventTool"/>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="archutils\win32\verinc
-cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
-"/>
+				CommandLine="cl /Zl /nologo /c verstub.cpp /Fo&quot;..\ReleaseXbox\\&quot;"
+				ExcludedFromBuild="TRUE"/>
 			<Tool
 				Name="VCPreLinkEventTool"/>
 			<Tool
 				Name="XboxDeploymentTool"
 				ExcludedFromBuild="FALSE"
-				RemotePath="xe:\$(SolutionName)\default-rls.xbe"
+				RemotePath="xe:\StepmaniaXbox\default-rls.xbe"
 				Progress="TRUE"
 				ForceCopy="FALSE"/>
 			<Tool
@@ -1446,10 +1445,10 @@ cl /Zl /nologo /c verstub.cpp /Fo$(IntDir)\
 					RelativePath="archutils\Win32\arch_setup.cpp">
 				</File>
 				<File
-					RelativePath=".\archutils\Xbox\arch_setup.h">
+					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 				<File
-					RelativePath="archutils\Win32\arch_setup.h">
+					RelativePath=".\archutils\Xbox\arch_setup.h">
 				</File>
 				<File
 					RelativePath="archutils\Xbox\custom_launch_params.cpp">
