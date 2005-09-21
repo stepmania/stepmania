@@ -32,8 +32,6 @@ void ScreenSelect::Init()
 {
 	ScreenWithMenuElements::Init();
 
-	m_bTimeToFinalizePlayers = false;
-
 	//
 	// Load messages to update on
 	//
@@ -87,6 +85,13 @@ void ScreenSelect::Init()
 
 	if( !m_aGameCommands.size() )
 		RageException::Throw( "Screen \"%s\" does not set any choices", m_sName.c_str() );
+}
+
+void ScreenSelect::BeginScreen()
+{
+	ScreenWithMenuElements::BeginScreen();
+
+	m_bTimeToFinalizePlayers = false;
 
 	// derived classes can override if they want
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );

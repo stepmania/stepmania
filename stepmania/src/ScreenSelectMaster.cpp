@@ -54,26 +54,6 @@ void ScreenSelectMaster::Init()
 {
 	ScreenSelect::Init();
 
-	// TODO: Move default choice to ScreenSelect
-	int iDefaultChoice = -1;
-	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
-	{
-		const GameCommand& mc = m_aGameCommands[c];
-		if( mc.m_sName == (CString) DEFAULT_CHOICE )
-		{
-			iDefaultChoice = c;
-			break;
-		}
-	}
-
-
-	FOREACH_PlayerNumber( p )
-	{
-		m_iChoice[p] = (iDefaultChoice!=-1) ? iDefaultChoice : 0;
-		m_bChosen[p] = false;
-	}
-
-
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
 	{
@@ -155,14 +135,6 @@ void ScreenSelectMaster::Init()
 		LUA->UnsetGlobal( "ThisGameCommand" );
 	}
 
-	// position scroller items so that the items' will start from their resting 
-	// position when they execute their OnCommand.
-	if( SHOW_SCROLLER )
-	{
-		FOREACH( PlayerNumber, vpns, p )
-		m_Scroller[*p].PositionItems();
-	}
-
 	for( int page=0; page<NUM_PAGES; page++ )
 	{
 		m_sprMore[page].Load( THEME->GetPathG(m_sName, ssprintf("more page%d",page+1)) );
@@ -177,12 +149,6 @@ void ScreenSelectMaster::Init()
 	}
 
 
-	FOREACH_PlayerNumber( p )
-	{
-		CLAMP( m_iChoice[p], 0, (int)m_aGameCommands.size()-1 );
-		m_bChosen[p] = false;
-	}
-	
 	m_soundChange.Load( THEME->GetPathS(m_sName,"change"), true );
 	m_soundDifficult.Load( ANNOUNCER->GetPathTo("select difficulty challenge") );
 	m_soundStart.Load( THEME->GetPathS(m_sName,"start") );
@@ -238,6 +204,50 @@ void ScreenSelectMaster::Init()
 			m_Next[dir][from] = to;
 		}
 	}
+}
+
+void ScreenSelectMaster::BeginScreen()
+{
+	ScreenSelect::BeginScreen();
+
+	// TODO: Move default choice to ScreenSelect
+	int iDefaultChoice = -1;
+	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
+	{
+		const GameCommand& mc = m_aGameCommands[c];
+		if( mc.m_sName == (CString) DEFAULT_CHOICE )
+		{
+			iDefaultChoice = c;
+			break;
+		}
+	}
+
+	FOREACH_PlayerNumber( p )
+	{
+		m_iChoice[p] = (iDefaultChoice!=-1) ? iDefaultChoice : 0;
+		CLAMP( m_iChoice[p], 0, (int)m_aGameCommands.size()-1 );
+		m_bChosen[p] = false;
+	}
+
+	vector<PlayerNumber> vpns;
+	if( SHARED_SELECTION )
+	{
+		vpns.push_back( (PlayerNumber)0 );
+	}
+	else
+	{
+		FOREACH_HumanPlayer( p )
+			vpns.push_back( p );
+	}
+
+	// position scroller items so that the items' will start from their resting 
+	// position when they execute their OnCommand.
+	if( SHOW_SCROLLER )
+	{
+		FOREACH( PlayerNumber, vpns, p )
+		m_Scroller[*p].PositionItems();
+	}
+
 
 	this->UpdateSelectableChoices();
 
