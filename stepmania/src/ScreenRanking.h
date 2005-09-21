@@ -106,7 +106,6 @@ protected:
 	// ranking screens that want to show different types and difficulties.
 	ThemeMetricStepsTypesToShow			STEPS_TYPES_TO_SHOW;
 	ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
-	ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
 
 	ThemeMetric<bool>			SHOW_CATEGORIES;
 	ThemeMetric<bool>			SHOW_STEPS_SCORES;
@@ -143,14 +142,8 @@ protected:
 	ThemeMetric<float>			DIFFICULTY_Y;
 	ThemeMetric<float>			COURSE_DIFFICULTY_START_X;
 	ThemeMetric<float>			COURSE_DIFFICULTY_Y;
-	ThemeMetric<float>			SONG_TITLE_OFFSET_X;
-	ThemeMetric<float>			SONG_TITLE_OFFSET_Y;
-	ThemeMetric<float>			SONG_FRAME_OFFSET_X;
-	ThemeMetric<float>			SONG_FRAME_OFFSET_Y;
-	ThemeMetric<float>			STEPS_SCORE_OFFSET_START_X;
-	ThemeMetric<float>			STEPS_SCORE_OFFSET_Y;
-	ThemeMetric<float>			COURSE_SCORE_OFFSET_START_X;
-	ThemeMetric<float>			COURSE_SCORE_OFFSET_Y;
+	ThemeMetric<float>			SCORE_OFFSET_START_X;
+	ThemeMetric<float>			SCORE_OFFSET_Y;
 };
 
 #endif

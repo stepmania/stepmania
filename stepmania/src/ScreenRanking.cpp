@@ -44,10 +44,9 @@ StringToX( PageType );
 #define TIME_X(row)					(TIME_START_X+ROW_SPACING_X*row)
 #define TIME_Y(row)					(TIME_START_Y+ROW_SPACING_Y*row)
 #define DIFFICULTY_X(col)			(DIFFICULTY_START_X+COL_SPACING_X*col)
-#define STEPS_SCORE_OFFSET_X(col)	(STEPS_SCORE_OFFSET_START_X+COL_SPACING_X*col)
+#define SCORE_OFFSET_X(col)			(SCORE_OFFSET_START_X+COL_SPACING_X*col)
 
 #define COURSE_DIFFICULTY_X(col)	(COURSE_DIFFICULTY_START_X+COL_SPACING_X*col)
-#define COURSE_SCORE_OFFSET_X(col)	(COURSE_SCORE_OFFSET_START_X+COL_SPACING_X*col)
 
 AutoScreenMessage( SM_ShowNextPage )
 AutoScreenMessage( SM_HidePage )
@@ -104,7 +103,6 @@ REGISTER_SCREEN_CLASS( ScreenRanking );
 ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName, false/*dont reset GAMESTATE*/ ),
 	STEPS_TYPES_TO_SHOW			(m_sName,"StepsTypesToHide"),
 	DIFFICULTIES_TO_SHOW		(m_sName,"DifficultiesToShow"),
-	COURSE_DIFFICULTIES_TO_SHOW	(m_sName,"CourseDifficultiesToShow"),
 
 	SHOW_ONLY_MOST_RECENT_SCORES	(m_sName,"ShowOnlyMostRecentScores"),
 	NUM_MOST_RECENT_SCORES_TO_SHOW	(m_sName,"NumMostRecentScoresToShow"),
@@ -136,14 +134,8 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName, 
 	DIFFICULTY_Y				(m_sName,"DifficultyY"),
 	COURSE_DIFFICULTY_START_X	(m_sName,"CourseDifficultyStartX"),
 	COURSE_DIFFICULTY_Y			(m_sName,"CourseDifficultyY"),
-	SONG_TITLE_OFFSET_X			(m_sName,"SongTitleOffsetX"),
-	SONG_TITLE_OFFSET_Y			(m_sName,"SongTitleOffsetY"),
-	SONG_FRAME_OFFSET_X			(m_sName,"SongFrameOffsetX"),
-	SONG_FRAME_OFFSET_Y			(m_sName,"SongFrameOffsetY"),
-	STEPS_SCORE_OFFSET_START_X	(m_sName,"StepsScoreOffsetStartX"),
-	STEPS_SCORE_OFFSET_Y		(m_sName,"StepsScoreOffsetY"),
-	COURSE_SCORE_OFFSET_START_X	(m_sName,"CourseListScoreOffsetStartX"),
-	COURSE_SCORE_OFFSET_Y		(m_sName,"CourseListScoreOffsetY")
+	SCORE_OFFSET_START_X		(m_sName,"ScoreOffsetStartX"),
+	SCORE_OFFSET_Y				(m_sName,"ScoreOffsetY")
 {
 }
 
@@ -278,16 +270,16 @@ void ScreenRanking::Init()
 			item.m_pSong = pSong;
 
 			item.m_sprFrame.Load( THEME->GetPathG(m_sName,"song frame") );
-			item.m_sprFrame->SetName( "SongFrame" );
+			item.m_sprFrame->SetName( "Frame" );
 			item.AddChild( item.m_sprFrame );
 
-			item.m_textTitle.SetName( "SongTitle" );
+			item.m_textTitle.SetName( "Title" );
 			item.m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"song title") );
 			item.AddChild( &item.m_textTitle );
 
 			for( int d=0; d<NUM_DIFFICULTIES; d++ )
 			{
-				item.m_textScore[d].SetName( "StepsScore" );
+				item.m_textScore[d].SetName( "Score" );
 				item.m_textScore[d].LoadFromFont( THEME->GetPathF(m_sName,"steps score") );
 				item.AddChild( &item.m_textScore[d] );
 			}
@@ -336,16 +328,16 @@ void ScreenRanking::Init()
 			item.m_pCourse = pCourse;
 
 			item.m_sprFrame.Load( THEME->GetPathG(m_sName,"course frame") );
-			item.m_sprFrame->SetName( "CourseListFrame" );
+			item.m_sprFrame->SetName( "Frame" );
 			item.AddChild( item.m_sprFrame );
 
-			item.m_textTitle.SetName( "CourseListTitle" );
+			item.m_textTitle.SetName( "Title" );
 			item.m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"course list title") );
 			item.AddChild( &item.m_textTitle );
 
-			FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
+			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), cd )
 			{
-				item.m_textScore[*cd].SetName( "CourseListScore" );
+				item.m_textScore[*cd].SetName( "Score" );
 				item.m_textScore[*cd].LoadFromFont( THEME->GetPathF(m_sName,"course list score") );
 				item.AddChild( &item.m_textScore[*cd] );
 			}
@@ -355,7 +347,7 @@ void ScreenRanking::Init()
 		this->AddChild( &m_ListScoreRowItems );
 		m_ListScoreRowItems.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 
-		FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
+		FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), cd )
 		{
 			m_sprCourseDifficulty[*cd].Load( THEME->GetPathG(m_sName,"CourseDifficulty "+CourseDifficultyToString(*cd)) );
 			m_sprCourseDifficulty[*cd]->SetName( "CourseDifficulty"+CourseDifficultyToString(*cd) );
@@ -510,6 +502,24 @@ float ScreenRanking::SetPage( PageToShow pts )
 		}
 	}
 
+	for( unsigned s=0; s<m_vScoreRowItem.size(); s++ )
+	{
+		ScoreRowItem &item = m_vScoreRowItem[s];
+		item.m_sprFrame->SetZTestMode( ZTEST_WRITE_ON_PASS );
+		ON_COMMAND( item.m_sprFrame );
+
+		item.m_textTitle.SetZTestMode( ZTEST_WRITE_ON_PASS );
+		ON_COMMAND( item.m_textTitle );
+
+		FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), cd )
+		{
+			item.m_textScore[*cd].SetXY( SCORE_OFFSET_X(*cd), SCORE_OFFSET_Y );
+			item.m_textScore[*cd].SetZTestMode( ZTEST_WRITE_ON_PASS );
+			item.m_textScore[*cd].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
+			ON_COMMAND( item.m_textScore[*cd] );
+		}
+	}
+
 	switch( m_PageType )
 	{
 	case PAGE_TYPE_NONSTOP_COURSES:
@@ -525,26 +535,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		if( (bool)MANUAL_SCROLLING )
 		{
 			m_ListScoreRowItems.SetCurrentAndDestinationItem( (SONG_SCORE_ROWS_TO_SHOW-1)/2.0f );
-		}
-
-		for( unsigned s=0; s<m_vScoreRowItem.size(); s++ )
-		{
-			ScoreRowItem &item = m_vScoreRowItem[s];
-			item.m_sprFrame->SetXY( SONG_FRAME_OFFSET_X, SONG_FRAME_OFFSET_Y );
-			item.m_sprFrame->SetZTestMode( ZTEST_WRITE_ON_PASS );
-			ON_COMMAND( item.m_sprFrame );
-
-			item.m_textTitle.SetXY( SONG_TITLE_OFFSET_X, SONG_TITLE_OFFSET_Y );
-			item.m_textTitle.SetZTestMode( ZTEST_WRITE_ON_PASS );
-			ON_COMMAND( item.m_textTitle );
-
-			FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
-			{
-				item.m_textScore[*cd].SetXY( COURSE_SCORE_OFFSET_X(*cd), COURSE_SCORE_OFFSET_Y );
-				item.m_textScore[*cd].SetZTestMode( ZTEST_WRITE_ON_PASS );
-				item.m_textScore[*cd].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-				ON_COMMAND( item.m_textScore[*cd] );
-			}
 		}
 	}
 	
@@ -662,26 +652,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 				m_ListScoreRowItems.SetCurrentAndDestinationItem( (SONG_SCORE_ROWS_TO_SHOW-1)/2.0f );
 			}
 
-			for( unsigned s=0; s<m_vScoreRowItem.size(); s++ )
-			{
-				ScoreRowItem &item = m_vScoreRowItem[s];
-				item.m_sprFrame->SetXY( SONG_FRAME_OFFSET_X, SONG_FRAME_OFFSET_Y );
-				item.m_sprFrame->SetZTestMode( ZTEST_WRITE_ON_PASS );
-				ON_COMMAND( item.m_sprFrame );
-
-				item.m_textTitle.SetXY( SONG_TITLE_OFFSET_X, SONG_TITLE_OFFSET_Y );
-				item.m_textTitle.SetZTestMode( ZTEST_WRITE_ON_PASS );
-				ON_COMMAND( item.m_textTitle );
-
-				FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), iter )
-				{
-					item.m_textScore[*iter].SetXY( STEPS_SCORE_OFFSET_X(*iter), STEPS_SCORE_OFFSET_Y );
-					item.m_textScore[*iter].SetZTestMode( ZTEST_WRITE_ON_PASS );
-					item.m_textScore[*iter].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-					ON_COMMAND( item.m_textScore[*iter] );
-				}
-			}
-
 			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
 
 			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), iter )
@@ -737,7 +707,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		{
 			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
 
-			FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
+			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), cd )
 			{
 				m_sprCourseDifficulty[*cd]->SetXY( COURSE_DIFFICULTY_X(*cd), COURSE_DIFFICULTY_Y );
 				ON_COMMAND( m_sprCourseDifficulty[*cd] );
@@ -751,7 +721,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 				item.m_textTitle.SetText( pCourse->GetDisplayFullTitle() );
 				item.m_textTitle.SetDiffuse( SONGMAN->GetCourseColor(pCourse) );
 
-				FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
+				FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), cd )
 				{
 					BitmapText* pTextStepsScore = &item.m_textScore[*cd];
 
@@ -811,7 +781,7 @@ void ScreenRanking::TweenPageOffScreen()
 		if( m_sprDifficulty[*iter].IsLoaded() )
 			OFF_COMMAND( m_sprDifficulty[*iter] );
 	}
-	FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
+	FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), cd )
 	{
 		if( m_sprCourseDifficulty[*cd].IsLoaded() )
 			OFF_COMMAND( m_sprCourseDifficulty[*cd] );
