@@ -37,6 +37,12 @@ function JudgmentTransformCommand( self, pn, mp, iEnabledPlayerIndex, iNumEnable
 	end
 end
 
+function GetCoursesToShowRanking()
+	local CoursesToShowRanking = PREFSMAN:GetPreference("CoursesToShowRanking")
+	if CoursesToShowRanking ~= "" then return CoursesToShowRanking end
+	return "Courses/Samples/Tournamix 4 Sample.crs,Courses/Samples/StaminaTester.crs,Courses/Samples/PlayersBest1-4.crs"
+end
+
 
 -- (c) 2005 Chris Danford
 -- All rights reserved.
