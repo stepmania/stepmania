@@ -292,7 +292,15 @@ void ActorUtil::SetXY( Actor& actor, const CString &sType )
 	if( !actor.HasCommand("On") )	// this actor hasn't loaded commands yet
 		LoadAllCommands( actor, sType );
 
-	actor.SetXY( THEME->GetMetricF(sType,actor.GetName()+"X"), THEME->GetMetricF(sType,actor.GetName()+"Y") );
+	/*
+	 * Hack: This is run after InitCommand, and InitCommand might set X/Y.  If
+	 * these are both 0, leave the actor where it is.  If InitCommand doesn't,
+	 * then 0,0 is the default, anyway.
+	 */
+	float fX = THEME->GetMetricF(sType,actor.GetName()+"X");
+	float fY = THEME->GetMetricF(sType,actor.GetName()+"Y");
+	if( fX != 0 || fY != 0 )
+		actor.SetXY( fX, fY );
 }
 
 void ActorUtil::LoadCommand( Actor& actor, const CString &sType, const CString &sCommandName )
