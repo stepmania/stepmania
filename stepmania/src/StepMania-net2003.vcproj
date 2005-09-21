@@ -2471,6 +2471,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ActorScroller.h">
 			</File>
 			<File
+				RelativePath=".\ActorSound.cpp">
+			</File>
+			<File
+				RelativePath=".\ActorSound.h">
+			</File>
+			<File
 				RelativePath="ActorUtil.cpp">
 			</File>
 			<File
