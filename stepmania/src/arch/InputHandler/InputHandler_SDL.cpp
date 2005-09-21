@@ -210,7 +210,7 @@ void InputHandler_SDL::Update(float fDeltaTime)
 		case SDL_JOYBUTTONUP:
 		{
 			InputDevice i = InputDevice(DEVICE_JOY1 + event.jbutton.which);
-			JoystickButton Button = JoystickButton(JOY_1 + event.jbutton.button);
+			JoystickButton Button = JoystickButton(JOY_BUTTON_1 + event.jbutton.button);
 			if(Button >= NUM_JOYSTICK_BUTTONS)
 			{
 				LOG->Warn("Ignored joystick event (button too high)");
