@@ -671,19 +671,19 @@ float ScreenRanking::SetPage( PageToShow pts )
 			ScoreRowItem &item = m_vScoreRowItem[s];
 			item.m_sprFrame->Reset();
 			item.m_sprFrame->SetXY( SONG_FRAME_OFFSET_X, SONG_FRAME_OFFSET_Y );
-			item.m_sprFrame->SetUseZBuffer( true );
+			item.m_sprFrame->SetZTestMode( ZTEST_WRITE_ON_PASS );
 			ON_COMMAND( item.m_sprFrame );
 
 			item.m_textTitle.Reset();
 			item.m_textTitle.SetXY( SONG_TITLE_OFFSET_X, SONG_TITLE_OFFSET_Y );
-			item.m_textTitle.SetUseZBuffer( true );
+			item.m_textTitle.SetZTestMode( ZTEST_WRITE_ON_PASS );
 			ON_COMMAND( item.m_textTitle );
 
 			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), iter )
 			{
 				item.m_textScore[*iter].Reset();
 				item.m_textScore[*iter].SetXY( STEPS_SCORE_OFFSET_X(*iter), STEPS_SCORE_OFFSET_Y );
-				item.m_textScore[*iter].SetUseZBuffer( true );
+				item.m_textScore[*iter].SetZTestMode( ZTEST_WRITE_ON_PASS );
 				item.m_textScore[*iter].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 				ON_COMMAND( item.m_textScore[*iter] );
 			}
@@ -720,19 +720,19 @@ float ScreenRanking::SetPage( PageToShow pts )
 			ScoreRowItem &item = m_vScoreRowItem[s];
 			item.m_sprFrame->Reset();
 			item.m_sprFrame->SetXY( SONG_FRAME_OFFSET_X, SONG_FRAME_OFFSET_Y );
-			item.m_sprFrame->SetUseZBuffer( true );
+			item.m_sprFrame->SetZTestMode( ZTEST_WRITE_ON_PASS );
 			ON_COMMAND( item.m_sprFrame );
 
 			item.m_textTitle.Reset();
 			item.m_textTitle.SetXY( SONG_TITLE_OFFSET_X, SONG_TITLE_OFFSET_Y );
-			item.m_textTitle.SetUseZBuffer( true );
+			item.m_textTitle.SetZTestMode( ZTEST_WRITE_ON_PASS );
 			ON_COMMAND( item.m_textTitle );
 
 			FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
 			{
 				item.m_textScore[*cd].Reset();
 				item.m_textScore[*cd].SetXY( COURSE_SCORE_OFFSET_X(*cd), COURSE_SCORE_OFFSET_Y );
-				item.m_textScore[*cd].SetUseZBuffer( true );
+				item.m_textScore[*cd].SetZTestMode( ZTEST_WRITE_ON_PASS );
 				item.m_textScore[*cd].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 				ON_COMMAND( item.m_textScore[*cd] );
 			}
