@@ -8,7 +8,6 @@
 #include "Course.h"
 #include "song.h"
 #include "Steps.h"
-#include "PrefsManager.h"
 #include "ActorUtil.h"
 #include "ProfileManager.h"
 #include "Profile.h"
@@ -29,9 +28,7 @@ XToString( PageType, NUM_PAGE_TYPES );
 StringToX( PageType );
 
 #define TYPE						THEME->GetMetric(m_sName,"Type")
-
-#define COURSES_TO_SHOW				PREFSMAN->m_sCoursesToShowRanking
-#define COURSES_TO_SHOW2			THEME->GetMetric(m_sName,"CoursesToShow")
+#define COURSES_TO_SHOW				THEME->GetMetric(m_sName,"CoursesToShow")
 
 #define BULLET_X(row)				(BULLET_START_X+ROW_SPACING_X*row)
 #define BULLET_Y(row)				(BULLET_START_Y+ROW_SPACING_Y*row)
@@ -208,10 +205,6 @@ void ScreenRanking::Init()
 				this->AddChild( &m_textTime[l] );
 			}
 		}
-
-		// TODO: Think of a better way to handle this
-		if( PREFSMAN->m_sCoursesToShowRanking.Get() == "" )
-			PREFSMAN->m_sCoursesToShowRanking.Set( COURSES_TO_SHOW2 );
 	}
 
 	//
