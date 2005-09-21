@@ -3,7 +3,6 @@
 
 #include "ScreenAttract.h"
 #include "GameConstantsAndTypes.h"	// for NUM_RANKING_LINES
-#include "Sprite.h"
 #include "BitmapText.h"
 #include "Banner.h"
 #include "ActorScroller.h"
@@ -71,20 +70,18 @@ protected:
 	PageType m_PageType;
 
 	Banner m_Banner;	// for course
-	Sprite m_sprBannerFrame;	// for course
 	BitmapText m_textCourseTitle; // for course
 	BitmapText m_textCategory;	// for category
 	BitmapText m_textStepsType;	// for category, course, all_steps
 	AutoActor  m_sprPageType;
 
-	Sprite	   m_sprBullets[NUM_RANKING_LINES];	// for category and course
+	AutoActor  m_sprBullets[NUM_RANKING_LINES];	// for category and course
 	BitmapText m_textNames[NUM_RANKING_LINES];	// for category and course
 	BitmapText m_textScores[NUM_RANKING_LINES];	// for category and course
 	BitmapText m_textPoints[NUM_RANKING_LINES];	// for course
 	BitmapText m_textTime[NUM_RANKING_LINES];	// for course
 	
 	AutoActor  m_sprDifficulty[NUM_DIFFICULTIES];	// for all_steps
-	AutoActor m_sprCourseDifficulty[NUM_DIFFICULTIES];	// for all_courses
 	struct ScoreRowItem : public ActorFrame		// for all_steps and all_courses
 	{
 		ScoreRowItem() { m_pSong = NULL; m_pCourse = NULL; }
@@ -138,8 +135,6 @@ protected:
 	ThemeMetric<float>			TIME_START_Y;
 	ThemeMetric<float>			DIFFICULTY_START_X;
 	ThemeMetric<float>			DIFFICULTY_Y;
-	ThemeMetric<float>			COURSE_DIFFICULTY_START_X;
-	ThemeMetric<float>			COURSE_DIFFICULTY_Y;
 	ThemeMetric<float>			SCORE_OFFSET_START_X;
 	ThemeMetric<float>			SCORE_OFFSET_Y;
 };
