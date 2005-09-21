@@ -295,11 +295,9 @@ void ScreenRanking::Init()
 
 			item.m_sprFrame.Load( THEME->GetPathG(m_sName,"song frame") );
 			item.m_sprFrame->SetName( "SongFrame" );
-			item.m_sprFrame->SetHidden( true );
 			item.AddChild( item.m_sprFrame );
 
 			item.m_textTitle.SetName( "SongTitle" );
-			item.m_textTitle.SetHidden( true );
 			item.m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"song title") );
 			item.AddChild( &item.m_textTitle );
 
@@ -307,7 +305,6 @@ void ScreenRanking::Init()
 			{
 				item.m_textScore[d].SetName( "StepsScore" );
 				item.m_textScore[d].LoadFromFont( THEME->GetPathF(m_sName,"steps score") );
-				item.m_textScore[d].SetHidden( true );
 				item.AddChild( &item.m_textScore[d] );
 			}
 		}
@@ -349,11 +346,9 @@ void ScreenRanking::Init()
 
 			item.m_sprFrame.Load( THEME->GetPathG(m_sName,"course frame") );
 			item.m_sprFrame->SetName( "CourseListFrame" );
-			item.m_sprFrame->SetHidden( true );
 			item.AddChild( item.m_sprFrame );
 
 			item.m_textTitle.SetName( "CourseListTitle" );
-			item.m_textTitle.SetHidden( true );
 			item.m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"course list title") );
 			item.AddChild( &item.m_textTitle );
 
@@ -361,7 +356,6 @@ void ScreenRanking::Init()
 			{
 				item.m_textScore[*cd].SetName( "CourseListScore" );
 				item.m_textScore[*cd].LoadFromFont( THEME->GetPathF(m_sName,"course list score") );
-				item.m_textScore[*cd].SetHidden( true );
 				item.AddChild( &item.m_textScore[*cd] );
 			}
 		}
@@ -531,39 +525,33 @@ float ScreenRanking::SetPage( PageToShow pts )
 	}
 
 
-	// Reset
 	m_Banner.SetHidden( !bBanner );
 	if( bBanner )
 	{
-		m_Banner.Reset();
 		SET_XY_AND_ON_COMMAND( m_Banner );
 	}
 
 	m_sprBannerFrame.SetHidden( !bBannerFrame );
 	if( bBannerFrame )
 	{
-		m_sprBannerFrame.Reset();
 		SET_XY_AND_ON_COMMAND( m_sprBannerFrame );
 	}
 
 	m_textCategory.SetHidden( !bShowCategory );
 	if( bShowCategory )
 	{
-		m_textCategory.Reset();
 		SET_XY_AND_ON_COMMAND( m_textCategory );
 	}
 
 	m_textCourseTitle.SetHidden( !bShowCourseTitle );
 	if( bShowCourseTitle )
 	{
-		m_textCourseTitle.Reset();
 		SET_XY_AND_ON_COMMAND( m_textCourseTitle );
 	}
 
 	m_textStepsType.SetHidden( !bShowStepsType );
 	if( bShowStepsType )
 	{
-		m_textStepsType.Reset();
 		SET_XY_AND_ON_COMMAND( m_textStepsType );
 	}
 
@@ -574,7 +562,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		m_sprBullets[l].SetHidden( !bShowBullets );
 		if( bShowBullets )
 		{
-			m_sprBullets[l].Reset();
 			m_sprBullets[l].StopAnimating();
 			m_sprBullets[l].SetState( l );
 			m_sprBullets[l].SetXY( BULLET_X(l), BULLET_Y(l) );
@@ -584,7 +571,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		m_textNames[l].SetHidden( !bShowNames );
 		if( bShowNames )
 		{
-			m_textNames[l].Reset();
 			m_textNames[l].SetXY( NAME_X(l), NAME_Y(l) );
 			m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 			ON_COMMAND( m_textNames[l] );
@@ -593,7 +579,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		m_textScores[l].SetHidden( !bShowScores );
 		if( bShowScores )
 		{
-			m_textScores[l].Reset();
 			m_textScores[l].SetXY( SCORE_X(l), SCORE_Y(l) );
 			m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 			ON_COMMAND( m_textScores[l] );
@@ -602,7 +587,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		m_textPoints[l].SetHidden( !bShowPoints );
 		if( bShowPoints )
 		{
-			m_textPoints[l].Reset();
 			m_textPoints[l].SetXY( POINTS_X(l), POINTS_Y(l) );
 			m_textPoints[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 			ON_COMMAND( m_textPoints[l] );
@@ -611,7 +595,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		m_textTime[l].SetHidden( !bShowTime );
 		if( bShowTime )
 		{
-			m_textTime[l].Reset();
 			m_textTime[l].SetXY( TIME_X(l), TIME_Y(l) );
 			m_textTime[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 			ON_COMMAND( m_textTime[l] );
@@ -634,7 +617,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 
 	if( bShowStepsScore )
 	{
-		m_ListScoreRowItems.Reset();
 		SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
 
 		m_ListScoreRowItems.RemoveAllChildren();
@@ -650,19 +632,16 @@ float ScreenRanking::SetPage( PageToShow pts )
 		for( unsigned s=0; s<m_vScoreRowItem.size(); s++ )
 		{
 			ScoreRowItem &item = m_vScoreRowItem[s];
-			item.m_sprFrame->Reset();
 			item.m_sprFrame->SetXY( SONG_FRAME_OFFSET_X, SONG_FRAME_OFFSET_Y );
 			item.m_sprFrame->SetZTestMode( ZTEST_WRITE_ON_PASS );
 			ON_COMMAND( item.m_sprFrame );
 
-			item.m_textTitle.Reset();
 			item.m_textTitle.SetXY( SONG_TITLE_OFFSET_X, SONG_TITLE_OFFSET_Y );
 			item.m_textTitle.SetZTestMode( ZTEST_WRITE_ON_PASS );
 			ON_COMMAND( item.m_textTitle );
 
 			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), iter )
 			{
-				item.m_textScore[*iter].Reset();
 				item.m_textScore[*iter].SetXY( STEPS_SCORE_OFFSET_X(*iter), STEPS_SCORE_OFFSET_Y );
 				item.m_textScore[*iter].SetZTestMode( ZTEST_WRITE_ON_PASS );
 				item.m_textScore[*iter].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
@@ -683,7 +662,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 
 	if( bShowCourseScore )
 	{
-		m_ListScoreRowItems.Reset();
 		SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
 
 		m_ListScoreRowItems.RemoveAllChildren();
@@ -699,19 +677,16 @@ float ScreenRanking::SetPage( PageToShow pts )
 		for( unsigned s=0; s<m_vScoreRowItem.size(); s++ )
 		{
 			ScoreRowItem &item = m_vScoreRowItem[s];
-			item.m_sprFrame->Reset();
 			item.m_sprFrame->SetXY( SONG_FRAME_OFFSET_X, SONG_FRAME_OFFSET_Y );
 			item.m_sprFrame->SetZTestMode( ZTEST_WRITE_ON_PASS );
 			ON_COMMAND( item.m_sprFrame );
 
-			item.m_textTitle.Reset();
 			item.m_textTitle.SetXY( SONG_TITLE_OFFSET_X, SONG_TITLE_OFFSET_Y );
 			item.m_textTitle.SetZTestMode( ZTEST_WRITE_ON_PASS );
 			ON_COMMAND( item.m_textTitle );
 
 			FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
 			{
-				item.m_textScore[*cd].Reset();
 				item.m_textScore[*cd].SetXY( COURSE_SCORE_OFFSET_X(*cd), COURSE_SCORE_OFFSET_Y );
 				item.m_textScore[*cd].SetZTestMode( ZTEST_WRITE_ON_PASS );
 				item.m_textScore[*cd].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
