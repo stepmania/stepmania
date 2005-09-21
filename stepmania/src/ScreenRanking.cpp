@@ -142,76 +142,25 @@ void ScreenRanking::Init()
 
 	m_PageType = StringToPageType( TYPE );
 
-	// init Actors for category and course
-	{
-		if( m_PageType == PAGE_TYPE_TRAIL )
-		{
-			m_Banner.SetName( "Banner" );
-			this->AddChild( &m_Banner );
+	m_textStepsType.SetName( "StepsType" );
+	m_textStepsType.LoadFromFont( THEME->GetPathF(m_sName,"steps type") );
+	m_textStepsType.SetShadowLength( 0 );
+	SET_XY_AND_ON_COMMAND( m_textStepsType );
+	this->AddChild( &m_textStepsType );
 
-			m_textCourseTitle.SetName( "CourseTitle" );
-			m_textCourseTitle.LoadFromFont( THEME->GetPathF(m_sName,"course title") );
-			m_textCourseTitle.SetShadowLength( 0 );
-			this->AddChild( &m_textCourseTitle );
-		}
+	m_sprPageType.Load( THEME->GetPathG(m_sName, "PageType "+PageTypeToString(m_PageType)) );
+	m_sprPageType->SetName( "PageType" );
+	SET_XY_AND_ON_COMMAND( m_sprPageType );
+	this->AddChild( m_sprPageType );
 
-		m_sprBannerFrame.SetName( "BannerFrame" );
-		this->AddChild( &m_sprBannerFrame );
-
-		if( m_PageType == PAGE_TYPE_CATEGORY )
-		{
-			m_textCategory.SetName( "Category" );
-			m_textCategory.LoadFromFont( THEME->GetPathF(m_sName,"category") );
-			m_textCategory.SetShadowLength( 0 );
-			this->AddChild( &m_textCategory );
-		}
-
-		m_textStepsType.SetName( "StepsType" );
-		m_textStepsType.LoadFromFont( THEME->GetPathF(m_sName,"steps type") );
-		m_textStepsType.SetShadowLength( 0 );
-		this->AddChild( &m_textStepsType );
-
-		m_sprPageType.Load( THEME->GetPathG(m_sName, "PageType "+PageTypeToString(m_PageType)) );
-		m_sprPageType->SetName( "PageType" );
-		this->AddChild( m_sprPageType );
-
-		switch( m_PageType )
-		{
-		case PAGE_TYPE_CATEGORY:
-		case PAGE_TYPE_TRAIL:
-			for( int l=0; l<NUM_RANKING_LINES; l++ )
-			{
-				m_sprBullets[l].SetName( ssprintf("Bullet%d",l+1) );
-				m_sprBullets[l].Load( THEME->GetPathG( m_sName, ssprintf("bullets 1x%d",NUM_RANKING_LINES) ) );
-				m_sprBullets[l].StopAnimating();
-				this->AddChild( &m_sprBullets[l] );
-
-				m_textNames[l].SetName( ssprintf("Name%d",l+1) );
-				m_textNames[l].LoadFromFont( THEME->GetPathF(m_sName,"name") );
-				this->AddChild( &m_textNames[l] );
-
-				m_textScores[l].SetName( ssprintf("Score%d",l+1) );
-				m_textScores[l].LoadFromFont( THEME->GetPathF(m_sName,"score") );
-				this->AddChild( &m_textScores[l] );
-
-				m_textPoints[l].SetName( ssprintf("Points%d",l+1) );
-				m_textPoints[l].LoadFromFont( THEME->GetPathF(m_sName,"points") );
-				m_textPoints[l].SetHidden( true );
-				this->AddChild( &m_textPoints[l] );
-				
-				m_textTime[l].SetName( ssprintf("Time%d",l+1) );
-				m_textTime[l].LoadFromFont( THEME->GetPathF(m_sName,"time") );
-				m_textTime[l].SetHidden( true );
-				this->AddChild( &m_textTime[l] );
-			}
-		}
-	}
-
-	//
-	// fill m_vPagesToShow
-	//
 	if( m_PageType == PAGE_TYPE_CATEGORY )
 	{
+		m_textCategory.SetName( "Category" );
+		m_textCategory.LoadFromFont( THEME->GetPathF(m_sName,"category") );
+		m_textCategory.SetShadowLength( 0 );
+		SET_XY_AND_ON_COMMAND( m_textCategory );
+		this->AddChild( &m_textCategory );
+
 		for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
 		{
 			for( int c=0; c<NUM_RANKING_CATEGORIES; c++ )
@@ -222,6 +171,54 @@ void ScreenRanking::Init()
 				pts.st = STEPS_TYPES_TO_SHOW.GetValue()[i];
 				m_vPagesToShow.push_back( pts );
 			}
+		}
+	}
+
+	if( m_PageType == PAGE_TYPE_TRAIL )
+	{
+		m_Banner.SetName( "Banner" );
+		SET_XY_AND_ON_COMMAND( m_Banner );
+		this->AddChild( &m_Banner );
+
+		m_sprBannerFrame.SetName( "BannerFrame" );
+		SET_XY_AND_ON_COMMAND( m_sprBannerFrame );
+		this->AddChild( &m_sprBannerFrame );
+
+		m_textCourseTitle.SetName( "CourseTitle" );
+		m_textCourseTitle.LoadFromFont( THEME->GetPathF(m_sName,"course title") );
+		m_textCourseTitle.SetShadowLength( 0 );
+		SET_XY_AND_ON_COMMAND( m_textCourseTitle );
+		this->AddChild( &m_textCourseTitle );
+	}
+
+	switch( m_PageType )
+	{
+	case PAGE_TYPE_CATEGORY:
+	case PAGE_TYPE_TRAIL:
+		for( int l=0; l<NUM_RANKING_LINES; l++ )
+		{
+			m_sprBullets[l].SetName( ssprintf("Bullet%d",l+1) );
+			m_sprBullets[l].Load( THEME->GetPathG( m_sName, ssprintf("bullets 1x%d",NUM_RANKING_LINES) ) );
+			m_sprBullets[l].StopAnimating();
+			this->AddChild( &m_sprBullets[l] );
+
+			m_textNames[l].SetName( ssprintf("Name%d",l+1) );
+			m_textNames[l].LoadFromFont( THEME->GetPathF(m_sName,"name") );
+			this->AddChild( &m_textNames[l] );
+
+			m_textScores[l].SetName( ssprintf("Score%d",l+1) );
+			m_textScores[l].LoadFromFont( THEME->GetPathF(m_sName,"score") );
+			this->AddChild( &m_textScores[l] );
+
+			m_textPoints[l].SetName( ssprintf("Points%d",l+1) );
+			m_textPoints[l].LoadFromFont( THEME->GetPathF(m_sName,"points") );
+			m_textPoints[l].SetHidden( true );
+			this->AddChild( &m_textPoints[l] );
+			
+			m_textTime[l].SetName( ssprintf("Time%d",l+1) );
+			m_textTime[l].LoadFromFont( THEME->GetPathF(m_sName,"time") );
+			m_textTime[l].SetHidden( true );
+			this->AddChild( &m_textTime[l] );
 		}
 	}
 
@@ -264,27 +261,33 @@ void ScreenRanking::Init()
 
 			item.m_sprFrame.Load( THEME->GetPathG(m_sName,"song frame") );
 			item.m_sprFrame->SetName( "Frame" );
+			ON_COMMAND( item.m_sprFrame );
 			item.AddChild( item.m_sprFrame );
 
 			item.m_textTitle.SetName( "Title" );
 			item.m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"song title") );
+			ON_COMMAND( item.m_textTitle );
 			item.AddChild( &item.m_textTitle );
 
 			for( int d=0; d<NUM_DIFFICULTIES; d++ )
 			{
 				item.m_textScore[d].SetName( "Score" );
 				item.m_textScore[d].LoadFromFont( THEME->GetPathF(m_sName,"steps score") );
+				ON_COMMAND( item.m_textScore[d] );
 				item.AddChild( &item.m_textScore[d] );
 			}
 		}
 
 		m_ListScoreRowItems.SetName( "ListScoreRowItems" );
+		SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
 		this->AddChild( &m_ListScoreRowItems );
 
 		FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
 		{
 			m_sprDifficulty[*d].Load( THEME->GetPathG(m_sName,"difficulty "+DifficultyToString(*d)) );
 			m_sprDifficulty[*d]->SetName( ssprintf("Difficulty%d",(*d)+1) );
+			m_sprDifficulty[*d]->SetXY( DIFFICULTY_X(*d), DIFFICULTY_Y );
+			ON_COMMAND( m_sprDifficulty[*d] );
 			this->AddChild( m_sprDifficulty[*d] );
 		}
 
@@ -322,28 +325,33 @@ void ScreenRanking::Init()
 
 			item.m_sprFrame.Load( THEME->GetPathG(m_sName,"course frame") );
 			item.m_sprFrame->SetName( "Frame" );
+			ON_COMMAND( item.m_sprFrame );
 			item.AddChild( item.m_sprFrame );
 
 			item.m_textTitle.SetName( "Title" );
 			item.m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"course list title") );
+			ON_COMMAND( item.m_textTitle );
 			item.AddChild( &item.m_textTitle );
 
 			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), cd )
 			{
 				item.m_textScore[*cd].SetName( "Score" );
 				item.m_textScore[*cd].LoadFromFont( THEME->GetPathF(m_sName,"course list score") );
+				ON_COMMAND( item.m_textScore[*cd] );
 				item.AddChild( &item.m_textScore[*cd] );
 			}
 		}
 
 		m_ListScoreRowItems.SetName( "ListScoreRowItems" );
+		SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
 		this->AddChild( &m_ListScoreRowItems );
-		m_ListScoreRowItems.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
 
 		FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), cd )
 		{
 			m_sprCourseDifficulty[*cd].Load( THEME->GetPathG(m_sName,"CourseDifficulty "+CourseDifficultyToString(*cd)) );
 			m_sprCourseDifficulty[*cd]->SetName( "CourseDifficulty"+CourseDifficultyToString(*cd) );
+			m_sprCourseDifficulty[*cd]->SetXY( COURSE_DIFFICULTY_X(*cd), COURSE_DIFFICULTY_Y );
+			ON_COMMAND( m_sprCourseDifficulty[*cd] );
 			this->AddChild( m_sprCourseDifficulty[*cd] );
 		}
 
@@ -424,7 +432,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_HidePage )
 	{
-		TweenPageOffScreen();
+		this->PlayCommand( "SwitchPage" );
 		this->PostScreenMessage( SM_ShowNextPage, PAGE_FADE_SECONDS );
 	}
 
@@ -436,9 +444,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 	// This is going to take a while to load.  Possibly longer than one frame.
 	// So, zero the next update so we don't skip.
 	SCREENMAN->ZeroNextUpdate();
-
-	SET_XY_AND_ON_COMMAND( m_textStepsType );
-	SET_XY_AND_ON_COMMAND( m_sprPageType );
 
 	switch( m_PageType )
 	{
@@ -499,17 +504,14 @@ float ScreenRanking::SetPage( PageToShow pts )
 	{
 		ScoreRowItem &item = m_vScoreRowItem[s];
 		item.m_sprFrame->SetZTestMode( ZTEST_WRITE_ON_PASS );
-		ON_COMMAND( item.m_sprFrame );
 
 		item.m_textTitle.SetZTestMode( ZTEST_WRITE_ON_PASS );
-		ON_COMMAND( item.m_textTitle );
 
 		FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), cd )
 		{
 			item.m_textScore[*cd].SetXY( SCORE_OFFSET_X(*cd), SCORE_OFFSET_Y );
 			item.m_textScore[*cd].SetZTestMode( ZTEST_WRITE_ON_PASS );
 			item.m_textScore[*cd].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-			ON_COMMAND( item.m_textScore[*cd] );
 		}
 	}
 
@@ -518,8 +520,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 	case PAGE_TYPE_NONSTOP_COURSES:
 	case PAGE_TYPE_ONI_COURSES:
 	case PAGE_TYPE_SURVIVAL_COURSES:
-		SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
-
 		m_ListScoreRowItems.RemoveAllChildren();
 		for( unsigned i=0; i<m_vScoreRowItem.size(); i++ )
 			m_ListScoreRowItems.AddChild( &m_vScoreRowItem[i] );
@@ -538,7 +538,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 	{
 	case PAGE_TYPE_CATEGORY:
 		{
-			SET_XY_AND_ON_COMMAND( m_textCategory );
 			m_textCategory.SetText( ssprintf("Type %c", 'A'+pts.category) );
 			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
 
@@ -579,11 +578,8 @@ float ScreenRanking::SetPage( PageToShow pts )
 	case PAGE_TYPE_TRAIL:
 		{
 			m_textCourseTitle.SetText( pts.pCourse->GetDisplayFullTitle() );
-			SET_XY_AND_ON_COMMAND( m_textCourseTitle );
 
 			m_Banner.LoadFromCourse( pts.pCourse );
-			SET_XY_AND_ON_COMMAND( m_Banner );
-			SET_XY_AND_ON_COMMAND( m_sprBannerFrame );
 			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
 
 			const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pts.pCourse, pts.pTrail );
@@ -633,8 +629,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		return SECONDS_PER_PAGE;
 	case PAGE_TYPE_ALL_STEPS:
 		{
-			SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
-
 			m_ListScoreRowItems.RemoveAllChildren();
 			for( unsigned i=0; i<m_vScoreRowItem.size(); i++ )
 				m_ListScoreRowItems.AddChild( &m_vScoreRowItem[i] );
@@ -646,12 +640,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 			}
 
 			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
-
-			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), iter )
-			{
-				m_sprDifficulty[*iter]->SetXY( DIFFICULTY_X(*iter), DIFFICULTY_Y );
-				ON_COMMAND( m_sprDifficulty[*iter] );
-			}
 
 			for( unsigned s=0; s<m_vScoreRowItem.size(); s++ )
 			{
@@ -700,12 +688,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		{
 			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
 
-			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), cd )
-			{
-				m_sprCourseDifficulty[*cd]->SetXY( COURSE_DIFFICULTY_X(*cd), COURSE_DIFFICULTY_Y );
-				ON_COMMAND( m_sprCourseDifficulty[*cd] );
-			}
-
 			for( unsigned c=0; c<m_vScoreRowItem.size(); c++ )
 			{
 				ScoreRowItem &item = m_vScoreRowItem[c];
@@ -750,38 +732,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		ASSERT(0);
 		return 0;
 	}
-}
-
-void ScreenRanking::TweenPageOffScreen()
-{
-	OFF_COMMAND( m_Banner );
-	OFF_COMMAND( m_sprBannerFrame );
-	OFF_COMMAND( m_textCourseTitle );
-	OFF_COMMAND( m_textCategory );
-	OFF_COMMAND( m_textStepsType );
-	OFF_COMMAND( m_sprPageType );
-
-	for( int l=0; l<NUM_RANKING_LINES; l++ )
-	{
-		OFF_COMMAND( m_sprBullets[l] );
-		OFF_COMMAND( m_textNames[l] );
-		OFF_COMMAND( m_textScores[l] );
-		OFF_COMMAND( m_textPoints[l] );
-		OFF_COMMAND( m_textTime[l] );
-	}
-	FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), iter )
-	{
-		if( m_sprDifficulty[*iter].IsLoaded() )
-			OFF_COMMAND( m_sprDifficulty[*iter] );
-	}
-	FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), cd )
-	{
-		if( m_sprCourseDifficulty[*cd].IsLoaded() )
-			OFF_COMMAND( m_sprCourseDifficulty[*cd] );
-	}
-
-	if( !m_ListScoreRowItems.GetHidden() )
-		OFF_COMMAND( m_ListScoreRowItems );
 }
 
 /*

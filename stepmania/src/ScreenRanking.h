@@ -67,8 +67,6 @@ protected:
 	};
 
 	float SetPage( PageToShow pts );
-	void TweenPageOnScreen();
-	void TweenPageOffScreen();
 
 	PageType m_PageType;
 
