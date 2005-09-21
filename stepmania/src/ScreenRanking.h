@@ -59,7 +59,6 @@ protected:
 			pTrail = NULL;
 		}
 
-		PageType		type;
 		int				colorIndex;
 		StepsType		st;
 		RankingCategory	category;

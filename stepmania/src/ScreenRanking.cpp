@@ -181,6 +181,9 @@ void ScreenRanking::Init()
 		m_textStepsType.SetHidden( true );
 		this->AddChild( &m_textStepsType );
 
+		m_sprPageType.Load( THEME->GetPathG(m_sName, "PageType "+PageTypeToString(m_PageType)) );
+		m_sprPageType->SetName( "PageType" );
+		this->AddChild( m_sprPageType );
 
 		for( int l=0; l<NUM_RANKING_LINES; l++ )
 		{
@@ -227,7 +230,6 @@ void ScreenRanking::Init()
 			for( int c=0; c<NUM_RANKING_CATEGORIES; c++ )
 			{
 				PageToShow pts;
-				pts.type = PAGE_TYPE_CATEGORY;
 				pts.colorIndex = i;
 				pts.category = (RankingCategory)c;
 				pts.st = STEPS_TYPES_TO_SHOW.GetValue()[i];
@@ -244,7 +246,6 @@ void ScreenRanking::Init()
 			for( unsigned c=0; c<asCoursePaths.size(); c++ )
 			{
 				PageToShow pts;
-				pts.type = PAGE_TYPE_TRAIL;
 				pts.colorIndex = i;
 				pts.st = STEPS_TYPES_TO_SHOW.GetValue()[i];
 				pts.pCourse = SONGMAN->GetCourseFromPath( asCoursePaths[c] );
@@ -320,7 +321,6 @@ void ScreenRanking::Init()
 			for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
 			{
 				PageToShow pts;
-				pts.type = PAGE_TYPE_ALL_STEPS;
 				pts.colorIndex = i;
 				pts.st = STEPS_TYPES_TO_SHOW.GetValue()[i];
 				m_vPagesToShow.push_back( pts );
@@ -376,13 +376,6 @@ void ScreenRanking::Init()
 			for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
 			{
 				PageToShow pts;
-				switch( ct )
-				{
-				case COURSE_TYPE_NONSTOP:	pts.type = PAGE_TYPE_NONSTOP_COURSES;	break;
-				case COURSE_TYPE_ONI:		pts.type = PAGE_TYPE_ONI_COURSES;		break;
-				case COURSE_TYPE_SURVIVAL:	pts.type = PAGE_TYPE_SURVIVAL_COURSES;	break;
-				default:	ASSERT(0);
-				}
 				pts.colorIndex = i;
 				pts.st = STEPS_TYPES_TO_SHOW.GetValue()[i];
 				m_vPagesToShow.push_back( pts );
@@ -482,7 +475,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 	bool bShowStepsScore = false;
 	bool bShowCourseDifficulty = false;
 	bool bShowCourseScore = false;
-	switch( pts.type )
+	switch( m_PageType )
 	{
 	case PAGE_TYPE_CATEGORY:
 		bBanner = false; 
@@ -574,13 +567,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		SET_XY_AND_ON_COMMAND( m_textStepsType );
 	}
 
-	// UGLY: We have to call AddChild every time we re-load an AutoActor
-	// because the internal Actor* changes.
-	if( (Actor*)m_sprPageType )
-		this->RemoveChild( m_sprPageType );
-	m_sprPageType.Load( THEME->GetPathG(m_sName, "PageType "+PageTypeToString(pts.type)) );
-	m_sprPageType->SetName( "PageType" );
-	this->AddChild( m_sprPageType );
 	SET_XY_AND_ON_COMMAND( m_sprPageType );
 
 	for( int l=0; l<NUM_RANKING_LINES; l++ )
@@ -740,7 +726,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 	//
 	// init page
 	//
-	switch( pts.type )
+	switch( m_PageType )
 	{
 	case PAGE_TYPE_CATEGORY:
 		{
