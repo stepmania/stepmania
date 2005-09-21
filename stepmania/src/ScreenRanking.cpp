@@ -155,12 +155,13 @@ void ScreenRanking::Init()
 
 	// init Actors for category and course
 	{
-		m_Banner.SetName( "Banner" );
-		m_Banner.SetHidden( true );
-		this->AddChild( &m_Banner );
+		if( m_PageType == PAGE_TYPE_TRAIL )
+		{
+			m_Banner.SetName( "Banner" );
+			this->AddChild( &m_Banner );
+		}
 
 		m_sprBannerFrame.SetName( "BannerFrame" );
-		m_sprBannerFrame.SetHidden( true );
 		this->AddChild( &m_sprBannerFrame );
 
 		m_textCategory.SetName( "Category" );
@@ -455,8 +456,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 	// So, zero the next update so we don't skip.
 	SCREENMAN->ZeroNextUpdate();
 
-	bool bBanner = false; 
-	bool bBannerFrame = false;
 	bool bShowCategory = false; 
 	bool bShowCourseTitle = false; 
 	bool bShowStepsType = false; 
@@ -472,23 +471,13 @@ float ScreenRanking::SetPage( PageToShow pts )
 	switch( m_PageType )
 	{
 	case PAGE_TYPE_CATEGORY:
-		bBanner = false; 
-		bBannerFrame = false;
 		bShowCategory = true;
-		bShowCourseTitle = false;
 		bShowStepsType = true;
 		bShowBullets = true;
 		bShowNames = true;
 		bShowScores = true;
-		bShowPoints = false;
-		bShowTime = false;
-		bShowDifficulty = false;
-		bShowStepsScore = false;
 		break;
 	case PAGE_TYPE_TRAIL:
-		bBanner = true; 
-		bBannerFrame = true;
-		bShowCategory = false;
 		bShowCourseTitle = true;
 		bShowStepsType = true;
 		bShowBullets = true;
@@ -496,20 +485,9 @@ float ScreenRanking::SetPage( PageToShow pts )
 		bShowScores = !pts.pCourse->IsOni();
 		bShowPoints = pts.pCourse->IsOni();
 		bShowTime = pts.pCourse->IsOni();
-		bShowDifficulty = false;
-		bShowStepsScore = false;
 		break;
 	case PAGE_TYPE_ALL_STEPS:
-		bBanner = false; 
-		bBannerFrame = false;
-		bShowCategory = false;
-		bShowCourseTitle = false;
 		bShowStepsType = true;
-		bShowBullets = false;
-		bShowNames = false;
-		bShowScores = false;
-		bShowPoints = false;
-		bShowTime = false;
 		bShowDifficulty = true;
 		bShowStepsScore = true;
 		break;
@@ -524,18 +502,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		ASSERT(0);
 	}
 
-
-	m_Banner.SetHidden( !bBanner );
-	if( bBanner )
-	{
-		SET_XY_AND_ON_COMMAND( m_Banner );
-	}
-
-	m_sprBannerFrame.SetHidden( !bBannerFrame );
-	if( bBannerFrame )
-	{
-		SET_XY_AND_ON_COMMAND( m_sprBannerFrame );
-	}
 
 	m_textCategory.SetHidden( !bShowCategory );
 	if( bShowCategory )
@@ -746,6 +712,8 @@ float ScreenRanking::SetPage( PageToShow pts )
 		{
 			m_textCourseTitle.SetText( pts.pCourse->GetDisplayFullTitle() );
 			m_Banner.LoadFromCourse( pts.pCourse );
+			SET_XY_AND_ON_COMMAND( m_Banner );
+			SET_XY_AND_ON_COMMAND( m_sprBannerFrame );
 			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
 
 			const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pts.pCourse, pts.pTrail );
