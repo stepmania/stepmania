@@ -141,12 +141,10 @@ void ScreenRanking::Init()
 	m_textStepsType.SetName( "StepsType" );
 	m_textStepsType.LoadFromFont( THEME->GetPathF(m_sName,"steps type") );
 	m_textStepsType.SetShadowLength( 0 );
-	SET_XY_AND_ON_COMMAND( m_textStepsType );
 	this->AddChild( &m_textStepsType );
 
 	m_sprPageType.Load( THEME->GetPathG(m_sName, "PageType "+PageTypeToString(m_PageType)) );
 	m_sprPageType->SetName( "PageType" );
-	SET_XY_AND_ON_COMMAND( m_sprPageType );
 	this->AddChild( m_sprPageType );
 
 	if( m_PageType == PAGE_TYPE_CATEGORY )
@@ -154,7 +152,6 @@ void ScreenRanking::Init()
 		m_textCategory.SetName( "Category" );
 		m_textCategory.LoadFromFont( THEME->GetPathF(m_sName,"category") );
 		m_textCategory.SetShadowLength( 0 );
-		SET_XY_AND_ON_COMMAND( m_textCategory );
 		this->AddChild( &m_textCategory );
 
 		for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
@@ -173,13 +170,11 @@ void ScreenRanking::Init()
 	if( m_PageType == PAGE_TYPE_TRAIL )
 	{
 		m_Banner.SetName( "Banner" );
-		SET_XY_AND_ON_COMMAND( m_Banner );
 		this->AddChild( &m_Banner );
 
 		m_textCourseTitle.SetName( "CourseTitle" );
 		m_textCourseTitle.LoadFromFont( THEME->GetPathF(m_sName,"course title") );
 		m_textCourseTitle.SetShadowLength( 0 );
-		SET_XY_AND_ON_COMMAND( m_textCourseTitle );
 		this->AddChild( &m_textCourseTitle );
 
 		vector<CString> asCoursePaths;
@@ -273,7 +268,6 @@ void ScreenRanking::Init()
 				m_sprDifficulty[*d].Load( THEME->GetPathG(m_sName,"CourseDifficulty "+CourseDifficultyToString(*d)) );
 			m_sprDifficulty[*d]->SetName( "Difficulty"+DifficultyToString(*d) );
 			m_sprDifficulty[*d]->SetXY( DIFFICULTY_X(*d), DIFFICULTY_Y );
-			ON_COMMAND( m_sprDifficulty[*d] );
 			this->AddChild( m_sprDifficulty[*d] );
 		}
 
@@ -283,25 +277,21 @@ void ScreenRanking::Init()
 
 			item.m_sprFrame.Load( THEME->GetPathG(m_sName,"list frame") );
 			item.m_sprFrame->SetName( "Frame" );
-			ON_COMMAND( item.m_sprFrame );
 			item.AddChild( item.m_sprFrame );
 
 			item.m_textTitle.SetName( "Title" );
 			item.m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"list title") );
-			ON_COMMAND( item.m_textTitle );
 			item.AddChild( &item.m_textTitle );
 
 			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
 			{
 				item.m_textScore[*d].SetName( "Score" );
 				item.m_textScore[*d].LoadFromFont( THEME->GetPathF(m_sName,"list score") );
-				ON_COMMAND( item.m_textScore[*d] );
 				item.AddChild( &item.m_textScore[*d] );
 			}
 		}
 
 		m_ListScoreRowItems.SetName( "ListScoreRowItems" );
-		SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
 		this->AddChild( &m_ListScoreRowItems );
 
 		for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
@@ -312,12 +302,55 @@ void ScreenRanking::Init()
 			m_vPagesToShow.push_back( pts );
 		}
 	}
-
-	this->HandleScreenMessage( SM_ShowNextPage );
 }
 
 ScreenRanking::~ScreenRanking()
 {
+}
+
+void ScreenRanking::BeginScreen()
+{
+	ScreenAttract::BeginScreen();
+
+	m_iNextPageToShow = 0;
+
+	SET_XY_AND_ON_COMMAND( m_textStepsType );
+	SET_XY_AND_ON_COMMAND( m_sprPageType );
+
+	if( m_PageType == PAGE_TYPE_CATEGORY )
+		SET_XY_AND_ON_COMMAND( m_textCategory );
+
+	if( m_PageType == PAGE_TYPE_TRAIL )
+	{
+		SET_XY_AND_ON_COMMAND( m_Banner );
+		SET_XY_AND_ON_COMMAND( m_textCourseTitle );
+	}
+
+	if( m_PageType == PAGE_TYPE_ALL_STEPS ||
+	    m_PageType == PAGE_TYPE_NONSTOP_COURSES ||
+		m_PageType == PAGE_TYPE_ONI_COURSES ||
+		m_PageType == PAGE_TYPE_SURVIVAL_COURSES )
+	{
+		FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
+			ON_COMMAND( m_sprDifficulty[*d] );
+
+		for( unsigned i=0; i<m_vScoreRowItem.size(); ++i )
+		{
+			ScoreRowItem &item = m_vScoreRowItem[i];
+
+			ON_COMMAND( item.m_sprFrame );
+			ON_COMMAND( item.m_textTitle );
+
+			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
+			{
+				ON_COMMAND( item.m_textScore[*d] );
+			}
+		}
+
+		SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
+	}
+
+	this->HandleScreenMessage( SM_ShowNextPage );
 }
 
 void ScreenRanking::Input( const InputEventPlus &input )
@@ -361,11 +394,11 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_ShowNextPage )
 	{
-		if( m_vPagesToShow.size() > 0 )
+		if( m_iNextPageToShow < m_vPagesToShow.size() )
 		{
-			float fSecsToShow = SetPage( m_vPagesToShow[0] );
+			float fSecsToShow = SetPage( m_vPagesToShow[m_iNextPageToShow] );
+			++m_iNextPageToShow;
 			this->SortByDrawOrder();
-			m_vPagesToShow.erase( m_vPagesToShow.begin() );
 			
 			// If manually scrolling, don't automatically change pages.
 			if( !(bool)MANUAL_SCROLLING )

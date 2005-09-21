@@ -35,6 +35,7 @@ class ScreenRanking : public ScreenAttract
 public:
 	ScreenRanking( CString sName );
 	virtual void Init();
+	virtual void BeginScreen();
 	~ScreenRanking();
 
 	virtual void Input( const InputEventPlus &input );
@@ -96,6 +97,7 @@ protected:
 	ActorScroller m_ListScoreRowItems;
 
 	vector<PageToShow>	m_vPagesToShow;
+	unsigned m_iNextPageToShow;
 
 	// Don't use the version in CommonMetrics because we may have multiple 
 	// ranking screens that want to show different types and difficulties.
