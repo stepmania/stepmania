@@ -29,6 +29,7 @@ enum PageType
 const CString& PageTypeToString( PageType pt );
 PageType StringToPageType( const CString& s );
 
+const int NUM_RANKING_LINES	= 5;
 
 class ScreenRanking : public ScreenAttract
 {

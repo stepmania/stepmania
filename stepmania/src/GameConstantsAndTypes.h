@@ -209,9 +209,6 @@ inline bool IsRankingToFillIn( const CString& sName ) { return !sName.empty() &&
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter );
 
-const int NUM_RANKING_LINES	= 5;
-
-
 //
 // Group stuff
 //
