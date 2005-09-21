@@ -26,7 +26,9 @@ static const CString PageTypeNames[] = {
 	"SurvivalCourses",
 };
 XToString( PageType, NUM_PAGE_TYPES );
+StringToX( PageType );
 
+#define TYPE						THEME->GetMetric(m_sName,"Type")
 
 #define COURSES_TO_SHOW				PREFSMAN->m_sCoursesToShowRanking
 #define COURSES_TO_SHOW2			THEME->GetMetric(m_sName,"CoursesToShow")
@@ -104,11 +106,6 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName, 
 	DIFFICULTIES_TO_SHOW		(m_sName,"DifficultiesToShow"),
 	COURSE_DIFFICULTIES_TO_SHOW	(m_sName,"CourseDifficultiesToShow"),
 
-	SHOW_CATEGORIES				(m_sName,"ShowCategories"),
-	SHOW_STEPS_SCORES			(m_sName,"ShowStepsScores"),
-	SHOW_NONSTOP_COURSE_SCORES	(m_sName,"ShowNonstopCourseScores"),
-	SHOW_ONI_COURSE_SCORES		(m_sName,"ShowOniCourseScores"),
-	SHOW_SURVIVAL_COURSE_SCORES	(m_sName,"ShowSurvivalCourseScores"),
 	SHOW_ONLY_MOST_RECENT_SCORES	(m_sName,"ShowOnlyMostRecentScores"),
 	NUM_MOST_RECENT_SCORES_TO_SHOW	(m_sName,"NumMostRecentScoresToShow"),
 	SECONDS_PER_PAGE			(m_sName,"SecondsPerPage"),
@@ -153,6 +150,8 @@ ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName, 
 void ScreenRanking::Init()
 {
 	ScreenAttract::Init();
+
+	m_PageType = StringToPageType( TYPE );
 
 	// init Actors for category and course
 	{
@@ -221,7 +220,7 @@ void ScreenRanking::Init()
 	//
 	// fill m_vPagesToShow
 	//
-	if( SHOW_CATEGORIES )
+	if( m_PageType == PAGE_TYPE_CATEGORY )
 	{
 		for( unsigned i=0; i<STEPS_TYPES_TO_SHOW.GetValue().size(); i++ )
 		{
@@ -280,15 +279,7 @@ void ScreenRanking::Init()
 	}
 
 
-	// Can only do one at a time
-	ASSERT(
-		!SHOW_STEPS_SCORES ||
-		!SHOW_NONSTOP_COURSE_SCORES || 
-		!SHOW_ONI_COURSE_SCORES || 
-		!SHOW_SURVIVAL_COURSE_SCORES );
-
-
-	if( SHOW_STEPS_SCORES )
+	if( m_PageType == PAGE_TYPE_ALL_STEPS )
 	{
 		m_vScoreRowItem.clear();
 		vector<Song*> vpSongs;
@@ -337,9 +328,13 @@ void ScreenRanking::Init()
 		}
 	}
 
-	if( (bool)SHOW_NONSTOP_COURSE_SCORES || (bool)SHOW_ONI_COURSE_SCORES || (bool)SHOW_SURVIVAL_COURSE_SCORES )
+	if( m_PageType == PAGE_TYPE_NONSTOP_COURSES ||
+		m_PageType == PAGE_TYPE_ONI_COURSES ||
+		m_PageType == PAGE_TYPE_SURVIVAL_COURSES )
 	{
-		CourseType ct = SHOW_NONSTOP_COURSE_SCORES ? COURSE_TYPE_NONSTOP : (SHOW_ONI_COURSE_SCORES ? COURSE_TYPE_ONI : COURSE_TYPE_SURVIVAL);
+		CourseType ct = m_PageType == PAGE_TYPE_NONSTOP_COURSES? COURSE_TYPE_NONSTOP :
+						m_PageType == PAGE_TYPE_ONI_COURSES? COURSE_TYPE_ONI :
+							COURSE_TYPE_SURVIVAL;
 		vector<Course*> vpCourses;
 		GetAllCoursesToShow( vpCourses, ct, SHOW_ONLY_MOST_RECENT_SCORES, NUM_MOST_RECENT_SCORES_TO_SHOW );
 		LOG->Trace("rankings: adding %u courses", unsigned(vpCourses.size()));

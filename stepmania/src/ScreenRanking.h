@@ -28,6 +28,7 @@ enum PageType
 };
 #define FOREACH_PageType( pt ) FOREACH_ENUM( PageType, NUM_PAGE_TYPES, pt )
 const CString& PageTypeToString( PageType pt );
+PageType StringToPageType( const CString& s );
 
 
 class ScreenRanking : public ScreenAttract
@@ -50,6 +51,8 @@ public:
 	void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
+	virtual bool GenericTweenOn() const { return true; }
+
 	struct PageToShow
 	{
 		PageToShow()
@@ -70,6 +73,7 @@ protected:
 	void TweenPageOnScreen();
 	void TweenPageOffScreen();
 
+	PageType m_PageType;
 
 	Banner m_Banner;	// for course
 	Sprite m_sprBannerFrame;	// for course
