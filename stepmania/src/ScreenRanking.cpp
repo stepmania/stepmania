@@ -345,19 +345,6 @@ void ScreenRanking::BeginScreen()
 		FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
 			ON_COMMAND( m_sprDifficulty[*d] );
 
-		for( unsigned i=0; i<m_vScoreRowItem.size(); ++i )
-		{
-			ScoreRowItem &item = m_vScoreRowItem[i];
-
-			ON_COMMAND( item.m_sprFrame );
-			ON_COMMAND( item.m_textTitle );
-
-			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
-			{
-				ON_COMMAND( item.m_textScore[*d] );
-			}
-		}
-
 		SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
 	}
 
