@@ -26,7 +26,7 @@ static Preference<float> g_fInputDebounceTime( "InputDebounceTime", 0 );
 
 InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our program
 
-static const float TIME_BEFORE_SLOW_REPEATS = 0.25f;
+static const float TIME_BEFORE_SLOW_REPEATS = 0.375f;
 static const float TIME_BEFORE_FAST_REPEATS = 1.5f;
 
 static const float REPEATS_PER_SEC = 8;
@@ -178,21 +178,41 @@ void InputFilter::Update(float fDeltaTime)
 			bs.m_fSecsHeld += fDeltaTime;
 			const float fNewHoldTime = bs.m_fSecsHeld;
 
+			float fTimeBeforeRepeats;
 			InputEventType iet;
 			if( fNewHoldTime > g_fTimeBeforeSlow )
 			{
 				if( fNewHoldTime > g_fTimeBeforeFast )
 				{
+					fTimeBeforeRepeats = g_fTimeBeforeFast;
 					iet = IET_FAST_REPEAT;
 				}
 				else
 				{
+					fTimeBeforeRepeats = g_fTimeBeforeSlow;
 					iet = IET_SLOW_REPEAT;
 				}
-				if( int(fOldHoldTime/g_fTimeBetweenRepeats) != int(fNewHoldTime/g_fTimeBetweenRepeats) )
+
+				float fRepeatTime;
+				if( fOldHoldTime < fTimeBeforeRepeats )
 				{
-					queue.push_back( InputEvent(di,iet) );
+					fRepeatTime = fTimeBeforeRepeats;
 				}
+				else
+				{
+					float fAdjustedOldHoldTime = fOldHoldTime - fTimeBeforeRepeats;
+					float fAdjustedNewHoldTime = fNewHoldTime - fTimeBeforeRepeats;
+					if( int(fAdjustedOldHoldTime/g_fTimeBetweenRepeats) == int(fAdjustedNewHoldTime/g_fTimeBetweenRepeats) )
+						continue;
+					fRepeatTime = ftruncf( fNewHoldTime, g_fTimeBetweenRepeats );
+				}
+
+				/* Set the timestamp to the exact time of the repeat.  This way,
+				 * as long as tab/` aren't being used, the timestamp will always
+				 * increase steadily during repeats. */
+				di.ts = bs.m_BeingHeldTime + fRepeatTime;
+
+				queue.push_back( InputEvent(di,iet) );
 			}
 		}
 	}
