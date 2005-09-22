@@ -10,6 +10,23 @@ void AutoActor::Unload()
 	m_pActor=NULL;
 }
 
+AutoActor::AutoActor( const AutoActor &cpy )
+{ 
+	if( cpy.m_pActor == NULL )
+		m_pActor = NULL;
+	else
+		m_pActor = cpy.m_pActor->Copy();
+}
+
+AutoActor &AutoActor::operator=( const AutoActor &cpy )
+{
+	if( cpy.m_pActor == NULL )
+		m_pActor = NULL;
+	else
+		m_pActor = cpy.m_pActor->Copy();
+	return *this;
+}
+
 void AutoActor::Load( const CString &sPath )
 {
 	Unload();

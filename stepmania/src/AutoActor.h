@@ -13,6 +13,8 @@ class AutoActor
 public:
 	AutoActor()						{ m_pActor = NULL; }
 	~AutoActor()					{ Unload(); }
+	AutoActor( const AutoActor &cpy );
+	AutoActor &operator =( const AutoActor &cpy );
 	operator const Actor* () const	{ return m_pActor; }
 	operator Actor* ()				{ return m_pActor; }
 	const Actor *operator->() const { return m_pActor; }
