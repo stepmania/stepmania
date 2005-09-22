@@ -324,12 +324,17 @@ static bool ChangeAppPri()
 	{
 		vector<InputDevice> vDevices;
 		vector<CString> vDescriptions;
-		INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
-		CString sInputDevices = join( ",", vDescriptions );
-		if( sInputDevices.Find("NTPAD") != -1 )
+
+		// This can get called before INPUTMAN is constructed.
+		if( INPUTMAN )
 		{
-			LOG->Trace( "Using NTPAD.  Don't boost priority." );
-			return false;
+			INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
+			CString sInputDevices = join( ",", vDescriptions );
+			if( sInputDevices.Find("NTPAD") != -1 )
+			{
+				LOG->Trace( "Using NTPAD.  Don't boost priority." );
+				return false;
+			}
 		}
 	}
 #endif
