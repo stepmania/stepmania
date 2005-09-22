@@ -29,10 +29,9 @@ InputFilter*	INPUTFILTER = NULL;	// global and accessable from anywhere in our p
 static const float TIME_BEFORE_SLOW_REPEATS = 0.25f;
 static const float TIME_BEFORE_FAST_REPEATS = 1.5f;
 
-static const float SLOW_REPEATS_PER_SEC = 8;
-static const float FAST_REPEATS_PER_SEC = 8;
+static const float REPEATS_PER_SEC = 8;
 
-static float g_fTimeBeforeSlow, g_fTimeBeforeFast, g_fTimeBetweenSlow, g_fTimeBetweenFast;
+static float g_fTimeBeforeSlow, g_fTimeBeforeFast, g_fTimeBetweenRepeats;
 
 
 InputFilter::InputFilter()
@@ -54,17 +53,16 @@ void InputFilter::Reset()
 		ResetDevice( InputDevice(i) );
 }
 
-void InputFilter::SetRepeatRate( float fSlowDelay, float fSlowRate, float fFastDelay, float fFastRate )
+void InputFilter::SetRepeatRate( float fSlowDelay, float fFastDelay, float fRepeatRate )
 {
 	g_fTimeBeforeSlow = fSlowDelay;
 	g_fTimeBeforeFast = fFastDelay;
-	g_fTimeBetweenSlow = 1/fSlowRate;
-	g_fTimeBetweenFast = 1/fFastRate;
+	g_fTimeBetweenRepeats = 1/fRepeatRate;
 }
 
 void InputFilter::ResetRepeatRate()
 {
-	SetRepeatRate( TIME_BEFORE_SLOW_REPEATS, SLOW_REPEATS_PER_SEC, TIME_BEFORE_FAST_REPEATS, FAST_REPEATS_PER_SEC );
+	SetRepeatRate( TIME_BEFORE_SLOW_REPEATS, TIME_BEFORE_FAST_REPEATS, REPEATS_PER_SEC );
 }
 
 InputFilter::ButtonState::ButtonState():
@@ -180,21 +178,18 @@ void InputFilter::Update(float fDeltaTime)
 			bs.m_fSecsHeld += fDeltaTime;
 			const float fNewHoldTime = bs.m_fSecsHeld;
 
-			float fTimeBetweenRepeats;
 			InputEventType iet;
 			if( fOldHoldTime > g_fTimeBeforeSlow )
 			{
 				if( fOldHoldTime > g_fTimeBeforeFast )
 				{
-					fTimeBetweenRepeats = g_fTimeBetweenFast;
 					iet = IET_FAST_REPEAT;
 				}
 				else
 				{
-					fTimeBetweenRepeats = g_fTimeBetweenSlow;
 					iet = IET_SLOW_REPEAT;
 				}
-				if( int(fOldHoldTime/fTimeBetweenRepeats) != int(fNewHoldTime/fTimeBetweenRepeats) )
+				if( int(fOldHoldTime/g_fTimeBetweenRepeats) != int(fNewHoldTime/g_fTimeBetweenRepeats) )
 				{
 					queue.push_back( InputEvent(di,iet) );
 				}

@@ -638,7 +638,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_GainFocus )
 	{
-		INPUTFILTER->SetRepeatRate( 0.25f, 12, 0.25f, 12 );
+		INPUTFILTER->SetRepeatRate( 0.25f, 0.25f, 12 );
 	}
 	else if( SM == SM_LoseFocus )
 	{

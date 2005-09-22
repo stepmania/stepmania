@@ -50,7 +50,7 @@ public:
 	void Reset();
 	void Update(float fDeltaTime);
 
-	void SetRepeatRate( float fSlowDelay, float fSlowRate, float fFastDelay, float fFastRate );
+	void SetRepeatRate( float fSlowDelay, float fFastDelay, float fRepeatRate );
 	void ResetRepeatRate();
 	void ResetKeyRepeat( DeviceInput di );
 
