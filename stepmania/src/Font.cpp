@@ -220,6 +220,7 @@ Font::Font()
 
 	m_iRefCount = 1;
 	m_pDefault = NULL;
+	m_bRightToLeft = false;
 }
 
 Font::~Font()

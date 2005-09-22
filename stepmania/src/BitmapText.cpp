@@ -11,6 +11,7 @@
 #include "Font.h"
 #include "ActorUtil.h"	// for BeginHandleArgs
 #include "LuaBinding.h"
+#include "Foreach.h"
 
 REGISTER_ACTOR_CLASS( BitmapText )
 
@@ -187,7 +188,9 @@ void BitmapText::BuildChars()
 	{
 		iY += m_pFont->GetHeight();
 
-		const wstring &szLine = m_wTextLines[i];
+		wstring &sLine = m_wTextLines[i];
+		if( m_pFont->IsRightToLeft() )
+			reverse( sLine.begin(), sLine.end() );
 		const int iLineWidth = m_iLineWidths[i];
 		
 		int iX;
@@ -198,13 +201,11 @@ void BitmapText::BuildChars()
 		case align_right:	iX = -iLineWidth;	break;
 		default:			ASSERT( false );	return;
 		}
-		if( m_pFont->IsRightToLeft() )
-			iX += iLineWidth;
 
-		for( unsigned j=0; j<szLine.size(); j++ )	// for each character in the line
+		FOREACH( wchar_t, sLine, c )
 		{
 			RageSpriteVertex v[4];
-			const glyph &g = m_pFont->GetGlyph(szLine[j]);
+			const glyph &g = m_pFont->GetGlyph(*c);
 
 			if( m_pFont->IsRightToLeft() )
 				iX -= g.m_iHadvance;
@@ -226,9 +227,6 @@ void BitmapText::BuildChars()
 
 			m_aVertices.insert( m_aVertices.end(), &v[0], &v[4] );
 			m_pTextures.push_back( g.GetTexture() );
-
-			if( m_pFont->IsRightToLeft() )
-				iX -= g.m_iHadvance;
 		}
 
 		/* The amount of padding a line needs: */
