@@ -41,6 +41,11 @@ protected:
 	virtual void StartPlayingMusic();
 	virtual void LoadHelpText();
 
+	/* If true, BeginScreen() will run OnCommand on the whole screen, and
+	 * TweenOnScreen will not be called.  (Eventually, all screens should
+	 * use this, and this will be removed.) */
+	virtual bool GenericTweenOn() const { return false; }
+
 	AutoActor			m_sprUnderlay;
 	AutoActor			m_autoHeader;
 	Sprite				m_sprStyleIcon;

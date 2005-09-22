@@ -140,7 +140,10 @@ void ScreenWithMenuElements::BeginScreen()
 	m_Out.Reset();
 	m_Cancel.Reset();
 
-	TweenOnScreen();
+	if( GenericTweenOn() )
+		this->PlayCommand( "On" );
+	else
+		TweenOnScreen(); // deprecated
 	m_In.StartTransitioning( SM_DoneFadingIn );
 
 	Screen::BeginScreen();
