@@ -42,6 +42,7 @@ public:
 	void SetCurrentAndDestinationItem( float fItemIndex )	{ m_fCurrentItem = m_fDestinationItem = fItemIndex; }
 	float GetCurrentItem()									{ return m_fCurrentItem; }
 	float GetDestinationItem()								{ return m_fDestinationItem; }
+	void ScrollThroughAllItems();
 	void SetPauseCountdownSeconds( float fSecs )			{ m_fPauseCountdownSeconds = fSecs; }
 
 	float	GetSecondsForCompleteScrollThrough();

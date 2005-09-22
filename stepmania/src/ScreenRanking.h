@@ -86,15 +86,20 @@ protected:
 	AutoActor  m_sprDifficulty[NUM_DIFFICULTIES];	// for all_steps
 	struct ScoreRowItem : public ActorFrame		// for all_steps and all_courses
 	{
-		ScoreRowItem() { m_pSong = NULL; m_pCourse = NULL; }
-
-		Song *m_pSong;
-		Course *m_pCourse;
 		AutoActor	m_sprFrame;
 		BitmapText	m_textTitle;
 		BitmapText m_textScore[NUM_DIFFICULTIES];
 	};
 	vector<ScoreRowItem> m_vScoreRowItem;	// for all_steps
+
+	struct ScoreRowItemData // for all_steps and all_courses
+	{
+		ScoreRowItemData() { m_pSong = NULL; m_pCourse = NULL; }
+
+		Song *m_pSong;
+		Course *m_pCourse;
+	};
+	vector<ScoreRowItemData> m_vScoreRowItemData;	// for all_steps
 	ActorScroller m_ListScoreRowItems;
 
 	vector<PageToShow>	m_vPagesToShow;
@@ -105,11 +110,6 @@ protected:
 	ThemeMetricStepsTypesToShow			STEPS_TYPES_TO_SHOW;
 	ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
 
-	ThemeMetric<bool>			SHOW_CATEGORIES;
-	ThemeMetric<bool>			SHOW_STEPS_SCORES;
-	ThemeMetric<bool>			SHOW_NONSTOP_COURSE_SCORES;
-	ThemeMetric<bool>			SHOW_ONI_COURSE_SCORES;
-	ThemeMetric<bool>			SHOW_SURVIVAL_COURSE_SCORES;
 	ThemeMetric<bool>			SHOW_ONLY_MOST_RECENT_SCORES;
 	ThemeMetric<int>			NUM_MOST_RECENT_SCORES_TO_SHOW;
 	ThemeMetric<float>			SECONDS_PER_PAGE;

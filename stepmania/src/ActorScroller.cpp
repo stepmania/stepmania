@@ -67,10 +67,10 @@ void ActorScroller::Load2(
 	m_bLoop = bLoop; 
 	m_fSecondsPerItem = fSecondsPerItem; 
 	m_fSecondsPauseBetweenItems = fSecondsPauseBetweenItems;
-	m_fCurrentItem = m_bLoop ? +m_fNumItemsToDraw/2 : -(m_fNumItemsToDraw/2)-1;
-	m_fDestinationItem = (float)(m_SubActors.size()+m_fNumItemsToDraw/2+1);
 	m_fPauseCountdownSeconds = 0;
 	m_fQuantizePixels = 0;
+
+	ScrollThroughAllItems();
 
 	m_bUseMask = true;
 	RectF rectBarSize(
@@ -104,6 +104,12 @@ void ActorScroller::Load3(
 	m_bUseMask = bUseMask;
 	m_bLoop = bLoop;
 	m_bLoaded = true;
+}
+
+void ActorScroller::ScrollThroughAllItems()
+{
+	m_fCurrentItem = m_bLoop ? +m_fNumItemsToDraw/2 : -(m_fNumItemsToDraw/2)-1;
+	m_fDestinationItem = (float)(m_SubActors.size()+m_fNumItemsToDraw/2+1);
 }
 
 float ActorScroller::GetSecondsForCompleteScrollThrough()
