@@ -198,11 +198,16 @@ void BitmapText::BuildChars()
 		case align_right:	iX = -iLineWidth;	break;
 		default:			ASSERT( false );	return;
 		}
+		if( m_pFont->IsRightToLeft() )
+			iX += iLineWidth;
 
 		for( unsigned j=0; j<szLine.size(); j++ )	// for each character in the line
 		{
 			RageSpriteVertex v[4];
 			const glyph &g = m_pFont->GetGlyph(szLine[j]);
+
+			if( m_pFont->IsRightToLeft() )
+				iX -= g.m_iHadvance;
 
 			/* set vertex positions */
 			v[0].p = RageVector3( iX+g.m_fHshift,				iY+g.m_pPage->m_fVshift,		  0 );	// top left
@@ -221,6 +226,9 @@ void BitmapText::BuildChars()
 
 			m_aVertices.insert( m_aVertices.end(), &v[0], &v[4] );
 			m_pTextures.push_back( g.GetTexture() );
+
+			if( m_pFont->IsRightToLeft() )
+				iX -= g.m_iHadvance;
 		}
 
 		/* The amount of padding a line needs: */

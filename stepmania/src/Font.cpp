@@ -691,6 +691,7 @@ void Font::Load( const CString &sIniPath, CString sChars )
 		ini.ReadFile( sIniPath );
 		ini.RenameKey("Char Widths", "main");
 		ini.GetValue( "main", "CapitalsOnly", bCapitalsOnly );
+		ini.GetValue( "main", "RightToLeft", m_bRightToLeft );
 	}
 
 	{

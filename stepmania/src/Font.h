@@ -136,6 +136,8 @@ public:
 
 	static const wchar_t DEFAULT_GLYPH;
 
+	bool IsRightToLeft() const { return m_bRightToLeft; };
+
 private:
 	/* List of pages and fonts that we use (and are responsible for freeing). */
 	vector<FontPage *> m_apPages;
@@ -147,6 +149,11 @@ private:
 	/* Map from characters to glyphs.  (Each glyph* is part of one of pages[].) */
 	map<longchar,glyph*> m_iCharToGlyph;
 	glyph *m_iCharToGlyphCache[128];
+
+	// True for Hebrew, Arabic, Urdu fonts.
+	// This will also change the way glyphs from the default FontPage are rendered. 
+	// There may be a better way to handle this.
+	bool m_bRightToLeft;
 
 	/* We keep this around only for reloading. */
 	CString m_sChars;
