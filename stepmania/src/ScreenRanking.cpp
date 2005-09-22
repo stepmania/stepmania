@@ -208,28 +208,34 @@ void ScreenRanking::Init()
 			m_sprBullets[l].Load( THEME->GetPathG( m_sName, ssprintf("bullets 1x%d",NUM_RANKING_LINES) ) );
 			m_sprBullets[l]->SetName( ssprintf("Bullet%d",l+1) );
 			m_sprBullets[l]->StopAnimating();
+			m_sprBullets[l]->SetState( l );
+			m_sprBullets[l]->SetXY( BULLET_X(l), BULLET_Y(l) );
 			ActorUtil::LoadAllCommands( *m_sprBullets[l], m_sName );
 			this->AddChild( m_sprBullets[l] );
 
 			m_textNames[l].SetName( ssprintf("Name%d",l+1) );
 			m_textNames[l].LoadFromFont( THEME->GetPathF(m_sName,"name") );
+			m_textNames[l].SetXY( NAME_X(l), NAME_Y(l) );
 			ActorUtil::LoadAllCommands( m_textNames[l], m_sName );
 			this->AddChild( &m_textNames[l] );
 
 			m_textScores[l].SetName( ssprintf("Score%d",l+1) );
 			m_textScores[l].LoadFromFont( THEME->GetPathF(m_sName,"score") );
+			m_textScores[l].SetXY( SCORE_X(l), SCORE_Y(l) );
 			ActorUtil::LoadAllCommands( m_textScores[l], m_sName );
 			this->AddChild( &m_textScores[l] );
 
 			m_textPoints[l].SetName( ssprintf("Points%d",l+1) );
 			m_textPoints[l].LoadFromFont( THEME->GetPathF(m_sName,"points") );
 			m_textPoints[l].SetHidden( true );
+			m_textPoints[l].SetXY( POINTS_X(l), POINTS_Y(l) );
 			ActorUtil::LoadAllCommands( m_textPoints[l], m_sName );
 			this->AddChild( &m_textPoints[l] );
 			
 			m_textTime[l].SetName( ssprintf("Time%d",l+1) );
 			m_textTime[l].LoadFromFont( THEME->GetPathF(m_sName,"time") );
 			m_textTime[l].SetHidden( true );
+			m_textTime[l].SetXY( TIME_X(l), TIME_Y(l) );
 			ActorUtil::LoadAllCommands( m_textTime[l], m_sName );
 			this->AddChild( &m_textTime[l] );
 		}
@@ -289,6 +295,7 @@ void ScreenRanking::Init()
 			{
 				ItemTemplate.m_textScore[*d].SetName( "Score" );
 				ItemTemplate.m_textScore[*d].LoadFromFont( THEME->GetPathF(m_sName,"list score") );
+				ItemTemplate.m_textScore[*d].SetXY( SCORE_OFFSET_X(*d), SCORE_OFFSET_Y );
 				ActorUtil::LoadAllCommands( ItemTemplate.m_textScore[*d], m_sName );
 			}
 		}
@@ -445,32 +452,16 @@ float ScreenRanking::SetPage( PageToShow pts )
 
 		for( int l=0; l<NUM_RANKING_LINES; l++ )
 		{
-			m_sprBullets[l]->SetState( l );
-			m_sprBullets[l]->SetXY( BULLET_X(l), BULLET_Y(l) );
-
-			m_textNames[l].SetXY( NAME_X(l), NAME_Y(l) );
 			m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 
 			m_textScores[l].SetHidden( !bShowScores );
-			if( bShowScores )
-			{
-				m_textScores[l].SetXY( SCORE_X(l), SCORE_Y(l) );
-				m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-			}
+			m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 			
 			m_textPoints[l].SetHidden( !bShowPoints );
-			if( bShowPoints )
-			{
-				m_textPoints[l].SetXY( POINTS_X(l), POINTS_Y(l) );
-				m_textPoints[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-			}
+			m_textPoints[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 			
 			m_textTime[l].SetHidden( !bShowTime );
-			if( bShowTime )
-			{
-				m_textTime[l].SetXY( TIME_X(l), TIME_Y(l) );
-				m_textTime[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-			}
+			m_textTime[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
 		}
 	}
 
@@ -479,10 +470,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 		ScoreRowItem &item = m_vScoreRowItem[s];
 
 		FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), cd )
-		{
-			item.m_textScore[*cd].SetXY( SCORE_OFFSET_X(*cd), SCORE_OFFSET_Y );
 			item.m_textScore[*cd].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-		}
 	}
 
 	switch( m_PageType )
@@ -500,12 +488,13 @@ float ScreenRanking::SetPage( PageToShow pts )
 	//
 	// init page
 	//
+	m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
+
 	switch( m_PageType )
 	{
 	case PAGE_TYPE_CATEGORY:
 		{
 			m_textCategory.SetText( ssprintf("Type %c", 'A'+pts.category) );
-			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
 
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
 			{
@@ -546,7 +535,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 			m_textCourseTitle.SetText( pts.pCourse->GetDisplayFullTitle() );
 
 			m_Banner.LoadFromCourse( pts.pCourse );
-			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
 
 			const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetCourseHighScoreList( pts.pCourse, pts.pTrail );
 			for( int l=0; l<NUM_RANKING_LINES; l++ )
@@ -595,8 +583,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 		return SECONDS_PER_PAGE;
 	case PAGE_TYPE_ALL_STEPS:
 		{
-			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
-
 			for( unsigned s=0; s<m_vScoreRowItem.size(); s++ )
 			{
 				const Song* pSong = m_vScoreRowItemData[s].m_pSong;
@@ -612,28 +598,28 @@ float ScreenRanking::SetPage( PageToShow pts )
 						pSteps = NULL;
 					BitmapText* pTextStepsScore = &item.m_textScore[*iter];
 					pTextStepsScore->SetHidden( pSteps == NULL );
+					if( pSteps == NULL )
+						continue;
 
-					if( pSteps != NULL )
+					const HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps);
+
+					HighScore hs = hsl.GetTopScore();
+					bool bRecentHighScore = false;
+					if( !hsl.vHighScores.empty() )
 					{
-						HighScoreList &hsl = PROFILEMAN->GetMachineProfile()->GetStepsHighScoreList(pSong,pSteps);
-						HighScore hs = hsl.GetTopScore();
-						bool bRecentHighScore = false;
-						if( !hsl.vHighScores.empty() )
-						{
-							hs = hsl.GetTopScore();
-							const CString *psName = hsl.GetTopScore().GetNameMutable();
-							bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
-						}
-						else
-						{
-							hs.SetName( NO_SCORE_NAME );				
-						}
-
-						CString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.GetPercentDP() );
-						if( SHOW_SURVIVAL_TIME )
-							s += "   " + SecondsToMSSMsMs(hs.GetSurvivalSeconds());
-						pTextStepsScore->SetText( s );
+						hs = hsl.GetTopScore();
+						const CString *psName = hsl.GetTopScore().GetNameMutable();
+						bRecentHighScore = find( GAMESTATE->m_vpsNamesThatWereFilled.begin(), GAMESTATE->m_vpsNamesThatWereFilled.end(), psName ) != GAMESTATE->m_vpsNamesThatWereFilled.end();
 					}
+					else
+					{
+						hs.SetName( NO_SCORE_NAME );				
+					}
+
+					CString s = hs.GetDisplayName() + "\n" + PercentageDisplay::FormatPercentScore( hs.GetPercentDP() );
+					if( SHOW_SURVIVAL_TIME )
+						s += "   " + SecondsToMSSMsMs(hs.GetSurvivalSeconds());
+					pTextStepsScore->SetText( s );
 				}
 			}
 		}
@@ -642,8 +628,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 	case PAGE_TYPE_ONI_COURSES:
 	case PAGE_TYPE_SURVIVAL_COURSES:
 		{
-			m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
-
 			for( unsigned c=0; c<m_vScoreRowItem.size(); c++ )
 			{
 				const Course* pCourse = m_vScoreRowItemData[c].m_pCourse;
@@ -656,7 +640,9 @@ float ScreenRanking::SetPage( PageToShow pts )
 				{
 					BitmapText* pTextStepsScore = &item.m_textScore[*cd];
 
-					Trail *pTrail = pCourse->GetTrail( pts.st, *cd );
+					const Trail *pTrail = pCourse->GetTrail( pts.st, *cd );
+					if( pTrail && UNLOCKMAN->CourseIsLocked(pCourse) )
+						pTrail = NULL;
 					pTextStepsScore->SetHidden( pTrail==NULL );
 					if( pTrail == NULL )
 						continue;
