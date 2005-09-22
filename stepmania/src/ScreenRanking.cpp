@@ -208,24 +208,29 @@ void ScreenRanking::Init()
 			m_sprBullets[l].Load( THEME->GetPathG( m_sName, ssprintf("bullets 1x%d",NUM_RANKING_LINES) ) );
 			m_sprBullets[l]->SetName( ssprintf("Bullet%d",l+1) );
 			m_sprBullets[l]->StopAnimating();
+			ActorUtil::LoadAllCommands( *m_sprBullets[l], m_sName );
 			this->AddChild( m_sprBullets[l] );
 
 			m_textNames[l].SetName( ssprintf("Name%d",l+1) );
 			m_textNames[l].LoadFromFont( THEME->GetPathF(m_sName,"name") );
+			ActorUtil::LoadAllCommands( m_textNames[l], m_sName );
 			this->AddChild( &m_textNames[l] );
 
 			m_textScores[l].SetName( ssprintf("Score%d",l+1) );
 			m_textScores[l].LoadFromFont( THEME->GetPathF(m_sName,"score") );
+			ActorUtil::LoadAllCommands( m_textScores[l], m_sName );
 			this->AddChild( &m_textScores[l] );
 
 			m_textPoints[l].SetName( ssprintf("Points%d",l+1) );
 			m_textPoints[l].LoadFromFont( THEME->GetPathF(m_sName,"points") );
 			m_textPoints[l].SetHidden( true );
+			ActorUtil::LoadAllCommands( m_textPoints[l], m_sName );
 			this->AddChild( &m_textPoints[l] );
 			
 			m_textTime[l].SetName( ssprintf("Time%d",l+1) );
 			m_textTime[l].LoadFromFont( THEME->GetPathF(m_sName,"time") );
 			m_textTime[l].SetHidden( true );
+			ActorUtil::LoadAllCommands( m_textTime[l], m_sName );
 			this->AddChild( &m_textTime[l] );
 		}
 	}
@@ -321,20 +326,18 @@ ScreenRanking::~ScreenRanking()
 
 void ScreenRanking::BeginScreen()
 {
-	ScreenAttract::BeginScreen();
+	SET_XY( m_textStepsType );
+	SET_XY( m_sprPageType );
 
 	m_iNextPageToShow = 0;
 
-	SET_XY_AND_ON_COMMAND( m_textStepsType );
-	SET_XY_AND_ON_COMMAND( m_sprPageType );
-
 	if( m_PageType == PAGE_TYPE_CATEGORY )
-		SET_XY_AND_ON_COMMAND( m_textCategory );
+		SET_XY( m_textCategory );
 
 	if( m_PageType == PAGE_TYPE_TRAIL )
 	{
-		SET_XY_AND_ON_COMMAND( m_Banner );
-		SET_XY_AND_ON_COMMAND( m_textCourseTitle );
+		SET_XY( m_Banner );
+		SET_XY( m_textCourseTitle );
 	}
 
 	if( m_PageType == PAGE_TYPE_ALL_STEPS ||
@@ -342,11 +345,10 @@ void ScreenRanking::BeginScreen()
 		m_PageType == PAGE_TYPE_ONI_COURSES ||
 		m_PageType == PAGE_TYPE_SURVIVAL_COURSES )
 	{
-		FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
-			ON_COMMAND( m_sprDifficulty[*d] );
-
-		SET_XY_AND_ON_COMMAND( m_ListScoreRowItems );
+		SET_XY( m_ListScoreRowItems );
 	}
+
+	ScreenAttract::BeginScreen();
 
 	this->HandleScreenMessage( SM_ShowNextPage );
 }
@@ -445,18 +447,15 @@ float ScreenRanking::SetPage( PageToShow pts )
 		{
 			m_sprBullets[l]->SetState( l );
 			m_sprBullets[l]->SetXY( BULLET_X(l), BULLET_Y(l) );
-			ON_COMMAND( m_sprBullets[l] );
 
 			m_textNames[l].SetXY( NAME_X(l), NAME_Y(l) );
 			m_textNames[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-			ON_COMMAND( m_textNames[l] );
 
 			m_textScores[l].SetHidden( !bShowScores );
 			if( bShowScores )
 			{
 				m_textScores[l].SetXY( SCORE_X(l), SCORE_Y(l) );
 				m_textScores[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-				ON_COMMAND( m_textScores[l] );
 			}
 			
 			m_textPoints[l].SetHidden( !bShowPoints );
@@ -464,7 +463,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 			{
 				m_textPoints[l].SetXY( POINTS_X(l), POINTS_Y(l) );
 				m_textPoints[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-				ON_COMMAND( m_textPoints[l] );
 			}
 			
 			m_textTime[l].SetHidden( !bShowTime );
@@ -472,7 +470,6 @@ float ScreenRanking::SetPage( PageToShow pts )
 			{
 				m_textTime[l].SetXY( TIME_X(l), TIME_Y(l) );
 				m_textTime[l].SetDiffuse( STEPS_TYPE_COLOR.GetValue(pts.colorIndex) );
-				ON_COMMAND( m_textTime[l] );
 			}
 		}
 	}

@@ -52,6 +52,8 @@ public:
 	void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
+	virtual bool GenericTweenOn() const { return true; }
+
 	struct PageToShow
 	{
 		PageToShow()
