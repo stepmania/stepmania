@@ -263,13 +263,12 @@ int PlayerStageStats::GetLessonScoreActual() const
 
 int PlayerStageStats::GetLessonScoreNeeded() const
 {
-	int iScore = 0;
+	float fScore = 0;
 
 	FOREACH_CONST( Steps*, vpPossibleSteps, steps )
-		iScore += (*steps)->GetRadarValues().m_Values.v.fNumTapsAndHolds;
+		fScore += (*steps)->GetRadarValues().m_Values.v.fNumTapsAndHolds;
 
-	iScore = (int)floorf( iScore * LESSON_PASS_THRESHOLD );
-	return iScore;
+	return lrintf( fScore * LESSON_PASS_THRESHOLD );
 }
 
 void PlayerStageStats::ResetScoreForLesson()
