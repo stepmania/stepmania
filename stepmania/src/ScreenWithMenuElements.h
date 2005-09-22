@@ -58,6 +58,8 @@ protected:
 	ThemeMetric<bool>			PLAY_MUSIC;
 	ThemeMetric<float>			TIMER_SECONDS;
 
+private:
+	CString m_sPathToMusic;
 };
 
 #endif

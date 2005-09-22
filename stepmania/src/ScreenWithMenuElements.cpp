@@ -128,6 +128,10 @@ void ScreenWithMenuElements::Init()
 	m_Cancel.Load( THEME->GetPathB(m_sName,"cancel") );
 	m_Cancel.SetDrawOrder( DRAW_ORDER_TRANSITIONS );
 	this->AddChild( &m_Cancel );
+
+	/* Grab the music path here; don't GetPath during BeginScreen. */
+	if( PLAY_MUSIC )
+		m_sPathToMusic = THEME->GetPathS( m_sName, "music" );
 }
 
 void ScreenWithMenuElements::BeginScreen()
@@ -199,7 +203,7 @@ void ScreenWithMenuElements::StartPlayingMusic()
 	/* Some screens should leave the music alone (eg. ScreenPlayerOptions music 
 	 * sample left over from ScreenSelectMusic). */
 	if( PLAY_MUSIC )
-		SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
+		SOUND->PlayMusic( m_sPathToMusic );
 }
 
 void ScreenWithMenuElements::Update( float fDeltaTime )
