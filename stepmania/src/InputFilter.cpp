@@ -179,9 +179,9 @@ void InputFilter::Update(float fDeltaTime)
 			const float fNewHoldTime = bs.m_fSecsHeld;
 
 			InputEventType iet;
-			if( fOldHoldTime > g_fTimeBeforeSlow )
+			if( fNewHoldTime > g_fTimeBeforeSlow )
 			{
-				if( fOldHoldTime > g_fTimeBeforeFast )
+				if( fNewHoldTime > g_fTimeBeforeFast )
 				{
 					iet = IET_FAST_REPEAT;
 				}
