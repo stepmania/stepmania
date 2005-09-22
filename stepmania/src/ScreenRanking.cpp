@@ -274,14 +274,17 @@ void ScreenRanking::Init()
 		{
 			ItemTemplate.m_sprFrame.Load( THEME->GetPathG(m_sName,"list frame") );
 			ItemTemplate.m_sprFrame->SetName( "Frame" );
+			ActorUtil::LoadAllCommands( *ItemTemplate.m_sprFrame, m_sName );
 
 			ItemTemplate.m_textTitle.SetName( "Title" );
 			ItemTemplate.m_textTitle.LoadFromFont( THEME->GetPathF(m_sName,"list title") );
+			ActorUtil::LoadAllCommands( ItemTemplate.m_textTitle, m_sName );
 
 			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
 			{
 				ItemTemplate.m_textScore[*d].SetName( "Score" );
 				ItemTemplate.m_textScore[*d].LoadFromFont( THEME->GetPathF(m_sName,"list score") );
+				ActorUtil::LoadAllCommands( ItemTemplate.m_textScore[*d], m_sName );
 			}
 		}
 
