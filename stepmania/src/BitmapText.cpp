@@ -202,10 +202,10 @@ void BitmapText::BuildChars()
 		default:			ASSERT( false );	return;
 		}
 
-		FOREACH( wchar_t, sLine, c )
+		for( unsigned i = 0; i < sLine.size(); ++i )
 		{
 			RageSpriteVertex v[4];
-			const glyph &g = m_pFont->GetGlyph(*c);
+			const glyph &g = m_pFont->GetGlyph( sLine[i] );
 
 			if( m_pFont->IsRightToLeft() )
 				iX -= g.m_iHadvance;
