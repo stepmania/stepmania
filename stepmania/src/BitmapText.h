@@ -15,7 +15,7 @@ public:
 	BitmapText( const BitmapText &cpy );
 	virtual ~BitmapText();
 
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	bool LoadFromFont( const CString& sFontName );
@@ -29,8 +29,8 @@ public:
 	virtual bool EarlyAbortDraw() const;
 	virtual void DrawPrimitives();
 
-	void TurnRainbowOn()	{ m_bRainbow = true; };
-	void TurnRainbowOff()	{ m_bRainbow = false; };
+	void TurnRainbowOn()	{ m_bRainbow = true; }
+	void TurnRainbowOff()	{ m_bRainbow = false; }
 
 	void SetHorizAlign( HorizAlign ha );
 	void SetVertAlign( VertAlign va );
@@ -39,7 +39,7 @@ public:
 
 	CString GetText() const { return m_sText; }
 	/* Return true if the string 's' will use an alternate string, if available. */
-	bool StringWillUseAlternate(const CString& sText, const CString& sAlternateText) const;
+	bool StringWillUseAlternate( const CString& sText, const CString& sAlternateText ) const;
 
 	//
 	// Commands
