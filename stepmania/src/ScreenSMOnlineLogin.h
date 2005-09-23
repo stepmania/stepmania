@@ -9,7 +9,7 @@ public:
 	ScreenSMOnlineLogin(CString sName);
 	virtual void Init();
 	virtual void HandleScreenMessage(const ScreenMessage SM);
-	virtual void MenuStart(PlayerNumber pn,const InputEventType type);
+	virtual void MenuStart( const InputEventPlus &input );
 	void SendLogin(CString sPassword);
 
 private:

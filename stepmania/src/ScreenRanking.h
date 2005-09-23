@@ -29,7 +29,7 @@ enum PageType
 const CString& PageTypeToString( PageType pt );
 PageType StringToPageType( const CString& s );
 
-const int NUM_RANKING_LINES	= 5;
+static const int NUM_RANKING_LINES = 5;
 
 class ScreenRanking : public ScreenAttract
 {
@@ -37,22 +37,20 @@ public:
 	ScreenRanking( CString sName );
 	virtual void Init();
 	virtual void BeginScreen();
-	~ScreenRanking();
 
 	virtual void Input( const InputEventPlus &input );
-	virtual void MenuLeft( PlayerNumber pn, const InputEventType type )		{ Scroll(-1); }
-	virtual void MenuRight( PlayerNumber pn, const InputEventType type )	{ Scroll(+1); }
-	virtual void MenuUp( PlayerNumber pn, const InputEventType type )		{ Scroll(-1); }
-	virtual void MenuDown( PlayerNumber pn, const InputEventType type )		{ Scroll(+1); }
-	virtual void Scroll( int iDir );
+	virtual void MenuLeft( const InputEventPlus &input )		{ Scroll(-1); }
+	virtual void MenuRight( const InputEventPlus &input )		{ Scroll(+1); }
+	virtual void MenuUp( const InputEventPlus &input )			{ Scroll(-1); }
+	virtual void MenuDown( const InputEventPlus &input )		{ Scroll(+1); }
 	virtual void MenuStart( PlayerNumber pn );
 	virtual void MenuBack( PlayerNumber pn );
 
-	
 	void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
 	virtual bool GenericTweenOn() const { return true; }
+	virtual void Scroll( int iDir );
 
 	struct PageToShow
 	{
@@ -147,7 +145,7 @@ protected:
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford, Ben Nordstrom
+ * (c) 2001-2005 Chris Danford, Ben Nordstrom, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -135,11 +135,20 @@ void Screen::Update( float fDeltaTime )
 	}
 }
 
-void Screen::MenuBack(	PlayerNumber pn, const InputEventType type )
+void Screen::MenuUp(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuUp(input.MenuI.player); }
+void Screen::MenuDown(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuDown(input.MenuI.player); }
+void Screen::MenuLeft(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuLeft(input.MenuI.player); }
+void Screen::MenuRight( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuRight(input.MenuI.player); }
+void Screen::MenuStart( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuStart(input.MenuI.player); }
+void Screen::MenuSelect( const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuSelect(input.MenuI.player); }
+
+void Screen::MenuBack( const InputEventPlus &input )
 {
-	if(!PREFSMAN->m_bDelayedBack || type==IET_SLOW_REPEAT || type==IET_FAST_REPEAT)
-		MenuBack(pn); 
+	if(!PREFSMAN->m_bDelayedBack || input.type==IET_SLOW_REPEAT || input.type==IET_FAST_REPEAT)
+		MenuBack( input.MenuI.player) ; 
 }
+
+void Screen::MenuCoin(	const InputEventPlus &input )	{ if(input.type==IET_FIRST_PRESS) MenuCoin(input.MenuI.player); }
 
 /* ScreenManager sends input here first.  Overlay screens can use it to get a first
  * pass at input.  Return true if the input was handled and should not be passed
@@ -176,14 +185,14 @@ void Screen::Input( const InputEventPlus &input )
 
 	switch( input.MenuI.button )
 	{
-	case MENU_BUTTON_UP:	this->MenuUp	( input.MenuI.player, input.type );	return;
-	case MENU_BUTTON_DOWN:	this->MenuDown	( input.MenuI.player, input.type );	return;
-	case MENU_BUTTON_LEFT:	this->MenuLeft	( input.MenuI.player, input.type );	return;
-	case MENU_BUTTON_RIGHT:	this->MenuRight	( input.MenuI.player, input.type );	return;
-	case MENU_BUTTON_BACK:	this->MenuBack	( input.MenuI.player, input.type );	return;
-	case MENU_BUTTON_START:	this->MenuStart	( input.MenuI.player, input.type );	return;
-	case MENU_BUTTON_SELECT:this->MenuSelect( input.MenuI.player, input.type );	return;
-	case MENU_BUTTON_COIN:	this->MenuCoin	( input.MenuI.player, input.type );	return;
+	case MENU_BUTTON_UP:	this->MenuUp	( input );	return;
+	case MENU_BUTTON_DOWN:	this->MenuDown	( input );	return;
+	case MENU_BUTTON_LEFT:	this->MenuLeft	( input );	return;
+	case MENU_BUTTON_RIGHT:	this->MenuRight	( input );	return;
+	case MENU_BUTTON_BACK:	this->MenuBack	( input );	return;
+	case MENU_BUTTON_START:	this->MenuStart	( input );	return;
+	case MENU_BUTTON_SELECT:this->MenuSelect( input );	return;
+	case MENU_BUTTON_COIN:	this->MenuCoin	( input );	return;
 	}
 }
 

@@ -21,8 +21,8 @@ public:
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void MenuStart( PlayerNumber pn );
-	virtual void MenuLeft( PlayerNumber pn, const InputEventType type );
-	virtual void MenuRight( PlayerNumber pn, const InputEventType type );
+	virtual void MenuLeft( const InputEventPlus &input );
+	virtual void MenuRight( const InputEventPlus &input );
 	virtual void MenuBack( PlayerNumber pn );
 
 protected:

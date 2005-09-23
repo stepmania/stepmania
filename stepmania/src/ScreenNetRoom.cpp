@@ -212,32 +212,32 @@ void ScreenNetRoom::MenuBack( PlayerNumber pn )
 	ScreenNetSelectBase::MenuBack( pn );
 }
 
-void ScreenNetRoom::MenuUp( PlayerNumber pn, const InputEventType type )
+void ScreenNetRoom::MenuUp( const InputEventPlus &input )
 {
-	ScreenNetSelectBase::MenuUp( pn );
+	ScreenNetSelectBase::MenuUp( input.MenuI.player );
 }
 
-void ScreenNetRoom::MenuDown( PlayerNumber pn, const InputEventType type )
+void ScreenNetRoom::MenuDown( const InputEventPlus &input )
 {
-	ScreenNetSelectBase::MenuDown( pn );
+	ScreenNetSelectBase::MenuDown( input.MenuI.player );
 }
 
-void ScreenNetRoom::MenuLeft( PlayerNumber pn, const InputEventType type )
+void ScreenNetRoom::MenuLeft( const InputEventPlus &input )
 {
-	if (type == IET_FIRST_PRESS)
+	if( input.type == IET_FIRST_PRESS )
 		m_RoomWheel.Move(-1);
 
-	ScreenNetSelectBase::MenuLeft( pn );
+	ScreenNetSelectBase::MenuLeft( input.MenuI.player );
 }
 
-void ScreenNetRoom::MenuRight( PlayerNumber pn, const InputEventType type )
+void ScreenNetRoom::MenuRight( const InputEventPlus &input )
 {
-	if (type == IET_FIRST_PRESS)
+	if( input.type == IET_FIRST_PRESS )
 	{
 		m_RoomWheel.Move(1);
 	}
 
-	ScreenNetSelectBase::MenuRight( pn );
+	ScreenNetSelectBase::MenuRight( input.MenuI.player );
 }
 
 void ScreenNetRoom::UpdateRoomsList()

@@ -393,7 +393,7 @@ void ScreenEz2SelectMusic::HandleScreenMessage( const ScreenMessage SM )
 }
 
 
-void ScreenEz2SelectMusic::MenuRight( PlayerNumber pn, const InputEventType type )
+void ScreenEz2SelectMusic::MenuRight( const InputEventPlus &input )
 {
 	m_MenuTimer->Stall();
 	m_MusicBannerWheel.BannersRight();
@@ -438,7 +438,7 @@ void ScreenEz2SelectMusic::TweenOffScreen()
 }
 
 
-void ScreenEz2SelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )
+void ScreenEz2SelectMusic::MenuLeft( const InputEventPlus &input )
 {
 	m_MenuTimer->Stall();
 	m_MusicBannerWheel.BannersLeft();

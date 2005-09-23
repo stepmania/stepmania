@@ -23,6 +23,7 @@
 #include "Style.h"
 #include "ScreenDimensions.h"
 #include "Command.h"
+#include "InputEventPlus.h"
 
 //
 // Defines specific to ScreenNameEntryTraditional
@@ -561,7 +562,7 @@ void ScreenNameEntryTraditional::HandleScreenMessage( const ScreenMessage SM )
 		{
 			FOREACH_PlayerNumber( p )
 				Finish( p );
-			MenuStart( PLAYER_INVALID, IET_FIRST_PRESS );
+			HandleStart( PLAYER_INVALID );
 		}
 	}
 	else if( SM == SM_ChangeDisplayedFeat )
@@ -610,7 +611,15 @@ void ScreenNameEntryTraditional::UpdateSelectionText( int pn )
 	m_textSelection[pn].SetText( WStringToCString(text) );
 }
 
-void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventType type )
+void ScreenNameEntryTraditional::MenuStart( const InputEventPlus &input )
+{
+	if( input.type != IET_FIRST_PRESS )
+		return;		// ignore
+
+	HandleStart( input.MenuI.player );
+}
+
+void ScreenNameEntryTraditional::HandleStart( PlayerNumber pn )
 {
 	/* The screen may have started out with nobody entering, in which case we're
 	 * just showing scores and the first Start press moves on. */
@@ -622,8 +631,6 @@ void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventTyp
 
 	if( !m_bStillEnteringName[pn] )
 		return;	// ignore
-	if( type != IET_FIRST_PRESS )
-		return;		// ignore
 
 	const int CurrentSelection = m_SelectedChar[pn];
 	const int SelectedLetter = m_AlphabetLetter[pn][CurrentSelection];
@@ -656,11 +663,13 @@ void ScreenNameEntryTraditional::MenuStart( PlayerNumber pn, const InputEventTyp
 	}
 }
 
-void ScreenNameEntryTraditional::MenuSelect( PlayerNumber pn, const InputEventType type )
+void ScreenNameEntryTraditional::MenuSelect( const InputEventPlus &input )
 {
+	PlayerNumber pn = input.MenuI.player;
+
 	if( !m_bStillEnteringName[pn] )
 		return;	// ignore
-	if( type != IET_FIRST_PRESS )
+	if( input.type != IET_FIRST_PRESS )
 		return;		// ignore
 
 	Backspace( pn );
@@ -693,8 +702,9 @@ void ScreenNameEntryTraditional::Backspace( PlayerNumber pn )
 	m_soundKey.Play();
 }
 
-void ScreenNameEntryTraditional::MenuLeft( PlayerNumber pn, const InputEventType type )
+void ScreenNameEntryTraditional::MenuLeft( const InputEventPlus &input )
 {
+	PlayerNumber pn = input.MenuI.player;
 	if( !m_bStillEnteringName[pn] || IsTransitioning()  )
 		return;
 
@@ -704,8 +714,9 @@ void ScreenNameEntryTraditional::MenuLeft( PlayerNumber pn, const InputEventType
 	m_soundChange.Play();
 }
 
-void ScreenNameEntryTraditional::MenuRight( PlayerNumber pn, const InputEventType type )
+void ScreenNameEntryTraditional::MenuRight( const InputEventPlus &input )
 {
+	PlayerNumber pn = input.MenuI.player;
 	if( !m_bStillEnteringName[pn] || IsTransitioning()  )
 		return;
 

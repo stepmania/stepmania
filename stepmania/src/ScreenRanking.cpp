@@ -95,7 +95,8 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, bool bSh
 CString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
 
 REGISTER_SCREEN_CLASS( ScreenRanking );
-ScreenRanking::ScreenRanking( CString sClassName ) : ScreenAttract( sClassName, false/*dont reset GAMESTATE*/ ),
+ScreenRanking::ScreenRanking( CString sClassName ):
+	ScreenAttract( sClassName, false /*dont reset GAMESTATE*/ ),
 	STEPS_TYPES_TO_SHOW			(m_sName,"StepsTypesToHide"),
 	DIFFICULTIES_TO_SHOW		(m_sName,"DifficultiesToShow"),
 
@@ -325,10 +326,6 @@ void ScreenRanking::Init()
 			m_vPagesToShow.push_back( pts );
 		}
 	}
-}
-
-ScreenRanking::~ScreenRanking()
-{
 }
 
 void ScreenRanking::BeginScreen()
@@ -641,7 +638,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 					BitmapText* pTextStepsScore = &item.m_textScore[*cd];
 
 					const Trail *pTrail = pCourse->GetTrail( pts.st, *cd );
-					if( pTrail && UNLOCKMAN->CourseIsLocked(pCourse) )
+					if( UNLOCKMAN->CourseIsLocked(pCourse) )
 						pTrail = NULL;
 					pTextStepsScore->SetHidden( pTrail==NULL );
 					if( pTrail == NULL )
@@ -677,7 +674,7 @@ float ScreenRanking::SetPage( PageToShow pts )
 }
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2001-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -854,20 +854,20 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	// Start as "move to the next screen" if it was just part of a code.
 	switch( input.MenuI.button )
 	{
-	case MENU_BUTTON_UP:	this->MenuUp( input.MenuI.player, input.type );		break;
-	case MENU_BUTTON_DOWN:	this->MenuDown( input.MenuI.player, input.type );	break;
-	case MENU_BUTTON_LEFT:	this->MenuLeft( input.MenuI.player, input.type );	break;
-	case MENU_BUTTON_RIGHT:	this->MenuRight( input.MenuI.player, input.type );	break;
+	case MENU_BUTTON_UP:	this->MenuUp( input );		break;
+	case MENU_BUTTON_DOWN:	this->MenuDown( input );	break;
+	case MENU_BUTTON_LEFT:	this->MenuLeft( input );	break;
+	case MENU_BUTTON_RIGHT:	this->MenuRight( input );	break;
 	case MENU_BUTTON_BACK:
 		/* Don't make the user hold the back button if they're pressing escape and escape is the back button. */
 		if( input.DeviceI.device == DEVICE_KEYBOARD  &&  input.DeviceI.button == KEY_ESC )
 			this->MenuBack( input.MenuI.player );
 		else
-			Screen::MenuBack( input.MenuI.player, input.type );
+			Screen::MenuBack( input );
 		break;
 	// Do the default handler for Start after detecting codes.
-//	case MENU_BUTTON_START:	this->MenuStart( MenuI.player, type );	break;
-	case MENU_BUTTON_COIN:	this->MenuCoin( input.MenuI.player, input.type );	break;
+//	case MENU_BUTTON_START:	this->MenuStart( input );	break;
+	case MENU_BUTTON_COIN:	this->MenuCoin( input );	break;
 	}
 
 
@@ -916,7 +916,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 
 	switch( input.MenuI.button )
 	{
-	case MENU_BUTTON_START:	Screen::MenuStart( input.MenuI.player, input.type );	break;
+	case MENU_BUTTON_START:	Screen::MenuStart( input ); break;
 	}
 }
 

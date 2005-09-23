@@ -171,7 +171,7 @@ void ScreenPackages::MenuStart( PlayerNumber pn )
 	ScreenWithMenuElements::MenuStart( pn );
 }
 
-void ScreenPackages::MenuUp( PlayerNumber pn, const InputEventType type )
+void ScreenPackages::MenuUp( const InputEventPlus &input )
 {
 	if ( m_bIsDownloading )
 		return;
@@ -191,10 +191,10 @@ void ScreenPackages::MenuUp( PlayerNumber pn, const InputEventType type )
 			UpdateLinksList();
 		}
 	}
-	ScreenWithMenuElements::MenuUp( pn, type );
+	ScreenWithMenuElements::MenuUp( input );
 }
 
-void ScreenPackages::MenuDown( PlayerNumber pn, const InputEventType type )
+void ScreenPackages::MenuDown( const InputEventPlus &input )
 {
 	if ( m_bIsDownloading )
 		return;
@@ -215,10 +215,10 @@ void ScreenPackages::MenuDown( PlayerNumber pn, const InputEventType type )
 			UpdateLinksList();
 		}
 	}
-	ScreenWithMenuElements::MenuDown( pn, type );
+	ScreenWithMenuElements::MenuDown( input );
 }
 
-void ScreenPackages::MenuLeft( PlayerNumber pn, const InputEventType type )
+void ScreenPackages::MenuLeft( const InputEventPlus &input )
 {
 	if ( m_bIsDownloading )
 		return;
@@ -240,15 +240,17 @@ void ScreenPackages::MenuLeft( PlayerNumber pn, const InputEventType type )
 		COMMAND( m_sprExistingBG, "Back" );
 		COMMAND( m_sprWebBG, "Away" );
 	}
-	ScreenWithMenuElements::MenuLeft( pn, type );
+	ScreenWithMenuElements::MenuLeft( input );
 }
 
-void ScreenPackages::MenuRight( PlayerNumber pn, const InputEventType type )
+void ScreenPackages::MenuRight( const InputEventPlus &input )
 {
 	if ( m_bIsDownloading )
 		return;
-	MenuLeft( pn, type );
-	ScreenWithMenuElements::MenuRight( pn, type );
+
+	/* Huh? */
+	MenuLeft( input );
+	ScreenWithMenuElements::MenuRight( input );
 }
 
 void ScreenPackages::MenuBack( PlayerNumber pn )

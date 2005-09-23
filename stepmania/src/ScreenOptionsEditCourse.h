@@ -20,7 +20,7 @@ protected:
 	
 	virtual void AfterChangeRow( PlayerNumber pn );
 	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );
-	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
+	virtual void ProcessMenuStart( const InputEventPlus &input );
 
 	int GetCourseEntryIndexWithFocus() const;
 

@@ -39,8 +39,8 @@ public:
 
 protected:
 	virtual void MenuStart( PlayerNumber pn );
-	virtual void MenuUp( PlayerNumber pn, const InputEventType type );
-	virtual void MenuDown( PlayerNumber pn, const InputEventType type );
+	virtual void MenuUp( const InputEventPlus &input );
+	virtual void MenuDown( const InputEventPlus &input );
 	virtual void MenuBack( PlayerNumber pn );
 
 	virtual void TweenOffScreen( );
@@ -48,8 +48,8 @@ protected:
 
 private:
 	void UpdateRoomsList();
-	void MenuLeft( PlayerNumber pn, const InputEventType type );
-	void MenuRight( PlayerNumber pn, const InputEventType type );
+	void MenuLeft( const InputEventPlus &input );
+	void MenuRight( const InputEventPlus &input );
 	void CreateNewRoom( const CString& rName,  const CString& rDesc );
 
 	void DeployInfoBox();

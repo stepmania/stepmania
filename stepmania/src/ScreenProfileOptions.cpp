@@ -186,7 +186,7 @@ void ScreenProfileOptions::HandleScreenMessage( const ScreenMessage SM )
 }
 
 
-void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type )
+void ScreenProfileOptions::MenuStart( const InputEventPlus &input )
 {
 	switch( GetCurrentRow() )
 	{
@@ -216,7 +216,7 @@ void ScreenProfileOptions::MenuStart( PlayerNumber pn, const InputEventType type
 		break;
 	}
 	default:
-		ScreenOptions::MenuStart( pn, type );
+		ScreenOptions::MenuStart( input );
 	}
 }
 

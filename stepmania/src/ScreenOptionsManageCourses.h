@@ -11,7 +11,7 @@ public:
 	ScreenOptionsEditCourseSubMenu( CString sName );
 
 protected:
-	virtual void MenuSelect( PlayerNumber pn, const InputEventType type );
+	virtual void MenuSelect( const InputEventPlus &input );
 };
 
 class ScreenOptionsManageCourses : public ScreenOptionsEditCourseSubMenu
@@ -29,7 +29,7 @@ protected:
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	
 	virtual void AfterChangeRow( PlayerNumber pn );
-	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
+	virtual void ProcessMenuStart( const InputEventPlus &input );
 
 	Course *GetCourseWithFocus() const;
 

@@ -238,7 +238,7 @@ void ScreenOptionsEditCourse::ExportOptions( int iRow, const vector<PlayerNumber
 	}
 }
 
-void ScreenOptionsEditCourse::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
+void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 {
 	int iCurRow = m_iCurrentRow[PLAYER_1];
 	Course *pCourse = GAMESTATE->m_pCurCourse;

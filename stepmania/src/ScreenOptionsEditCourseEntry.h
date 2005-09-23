@@ -21,7 +21,7 @@ protected:
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	
 	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );
-	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
+	virtual void ProcessMenuStart( const InputEventPlus &input );
 
 	vector<Song*>	m_vpDisplayedSongs;	// corresponds with the choices in the Song row
 

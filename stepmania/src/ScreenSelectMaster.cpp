@@ -13,6 +13,7 @@
 #include <set>
 #include "Foreach.h"
 #include "RageSoundManager.h"
+#include "InputEventPlus.h"
 
 AutoScreenMessage( SM_PlayPostSwitchPage )
 
@@ -406,13 +407,14 @@ try_again:
 	return ChangeSelection( pn, dir, iSwitchToIndex );
 }
 
-void ScreenSelectMaster::MenuLeft( PlayerNumber pn, const InputEventType type )
+void ScreenSelectMaster::MenuLeft( const InputEventPlus &input )
 {
+	PlayerNumber pn = input.MenuI.player;
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
-	if( type == IET_RELEASE )
+	if( input.type == IET_RELEASE )
 		return;
-	if( !ALLOW_REPEATING_INPUT && type != IET_FIRST_PRESS )
+	if( !ALLOW_REPEATING_INPUT && input.type != IET_FIRST_PRESS )
 		return;
 	if( Move(pn, MENU_DIR_LEFT) )
 	{
@@ -421,13 +423,14 @@ void ScreenSelectMaster::MenuLeft( PlayerNumber pn, const InputEventType type )
 	}
 }
 
-void ScreenSelectMaster::MenuRight( PlayerNumber pn, const InputEventType type )
+void ScreenSelectMaster::MenuRight( const InputEventPlus &input )
 {
+	PlayerNumber pn = input.MenuI.player;
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
-	if( type == IET_RELEASE )
+	if( input.type == IET_RELEASE )
 		return;
-	if( !ALLOW_REPEATING_INPUT && type != IET_FIRST_PRESS )
+	if( !ALLOW_REPEATING_INPUT && input.type != IET_FIRST_PRESS )
 		return;
 	if( Move(pn, MENU_DIR_RIGHT) )
 	{
@@ -436,13 +439,14 @@ void ScreenSelectMaster::MenuRight( PlayerNumber pn, const InputEventType type )
 	}
 }
 
-void ScreenSelectMaster::MenuUp( PlayerNumber pn, const InputEventType type )
+void ScreenSelectMaster::MenuUp( const InputEventPlus &input )
 {
+	PlayerNumber pn = input.MenuI.player;
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
-	if( type == IET_RELEASE )
+	if( input.type == IET_RELEASE )
 		return;
-	if( !ALLOW_REPEATING_INPUT && type != IET_FIRST_PRESS )
+	if( !ALLOW_REPEATING_INPUT && input.type != IET_FIRST_PRESS )
 		return;
 	if( Move(pn, MENU_DIR_UP) )
 	{
@@ -451,13 +455,14 @@ void ScreenSelectMaster::MenuUp( PlayerNumber pn, const InputEventType type )
 	}
 }
 
-void ScreenSelectMaster::MenuDown( PlayerNumber pn, const InputEventType type )
+void ScreenSelectMaster::MenuDown( const InputEventPlus &input )
 {
+	PlayerNumber pn = input.MenuI.player;
 	if( m_fLockInputSecs > 0 || m_bChosen[pn] )
 		return;
-	if( type == IET_RELEASE )
+	if( input.type == IET_RELEASE )
 		return;
-	if( !ALLOW_REPEATING_INPUT && type != IET_FIRST_PRESS )
+	if( !ALLOW_REPEATING_INPUT && input.type != IET_FIRST_PRESS )
 		return;
 	if( Move(pn, MENU_DIR_DOWN) )
 	{

@@ -11,7 +11,7 @@ public:
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
-	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
+	virtual void MenuStart( const InputEventPlus &input );
 
 private:
 	void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );

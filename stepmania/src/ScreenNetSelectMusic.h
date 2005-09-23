@@ -53,10 +53,10 @@ private:
 
 protected:
 	virtual void MenuStart( PlayerNumber pn );
-	virtual void MenuLeft( PlayerNumber pn, const InputEventType type );
-	virtual void MenuUp( PlayerNumber pn, const InputEventType type );
-	virtual void MenuDown( PlayerNumber pn, const InputEventType type );
-	virtual void MenuRight( PlayerNumber pn, const InputEventType type );
+	virtual void MenuLeft( const InputEventPlus &input );
+	virtual void MenuUp( const InputEventPlus &input );
+	virtual void MenuDown( const InputEventPlus &input );
+	virtual void MenuRight( const InputEventPlus &input );
 	virtual void MenuBack( PlayerNumber pn );
 
 	virtual void Update( float fDeltaTime );

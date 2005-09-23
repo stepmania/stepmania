@@ -88,12 +88,12 @@ void ScreenNetEvaluation::RedoUserTexts()
 	}
 }
 
-void ScreenNetEvaluation::MenuLeft( PlayerNumber pn, const InputEventType type )
+void ScreenNetEvaluation::MenuLeft( const InputEventPlus &input )
 {
-	MenuUp( pn, type );
+	MenuUp( input );
 }
 
-void ScreenNetEvaluation::MenuUp( PlayerNumber pn, const InputEventType type )
+void ScreenNetEvaluation::MenuUp( const InputEventPlus &input )
 {
 	if ( m_iActivePlayers == 0 )
 		return;
@@ -105,12 +105,12 @@ void ScreenNetEvaluation::MenuUp( PlayerNumber pn, const InputEventType type )
 	UpdateStats();
 }
 
-void ScreenNetEvaluation::MenuRight( PlayerNumber pn, const InputEventType type )
+void ScreenNetEvaluation::MenuRight( const InputEventPlus &input )
 {
-	MenuDown( pn, type );
+	MenuDown( input );
 }
 
-void ScreenNetEvaluation::MenuDown( PlayerNumber pn, const InputEventType type )
+void ScreenNetEvaluation::MenuDown( const InputEventPlus &input )
 {
 	if ( m_iActivePlayers == 0 )
 		return;

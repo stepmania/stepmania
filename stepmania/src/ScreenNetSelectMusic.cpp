@@ -310,45 +310,51 @@ done:
 	ScreenNetSelectBase::HandleScreenMessage( SM );
 }
 
-void ScreenNetSelectMusic::MenuLeft( PlayerNumber pn, const InputEventType type )
+void ScreenNetSelectMusic::MenuLeft( const InputEventPlus &input )
 {
-	bool bLeftPressed = INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_LEFT) );
-	bool bRightPressed = INPUTMAPPER->IsButtonDown( MenuInput(pn, MENU_BUTTON_RIGHT) );
+	bool bLeftPressed = INPUTMAPPER->IsButtonDown( MenuInput(input.MenuI.player, MENU_BUTTON_LEFT) );
+	bool bRightPressed = INPUTMAPPER->IsButtonDown( MenuInput(input.MenuI.player, MENU_BUTTON_RIGHT) );
 	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
 
-	if ( type == IET_FIRST_PRESS )
+	if( input.type == IET_FIRST_PRESS )
+	{
 		if ( bLeftAndRightPressed )
 			m_MusicWheel.ChangeSort( SORT_MODE_MENU );		
 		else
 			m_MusicWheel.Move( -1 );
+	}
 }
 
-void ScreenNetSelectMusic::MenuRight( PlayerNumber pn, const InputEventType type )
+void ScreenNetSelectMusic::MenuRight( const InputEventPlus &input )
 {
-	bool bLeftPressed = INPUTMAPPER->IsButtonDown( MenuInput ( pn, MENU_BUTTON_LEFT ) );
-	bool bRightPressed = INPUTMAPPER->IsButtonDown( MenuInput(  pn, MENU_BUTTON_RIGHT )) ;
+	bool bLeftPressed = INPUTMAPPER->IsButtonDown( MenuInput (input.MenuI.player, MENU_BUTTON_LEFT) );
+	bool bRightPressed = INPUTMAPPER->IsButtonDown( MenuInput(input.MenuI.player, MENU_BUTTON_RIGHT) ) ;
 	bool bLeftAndRightPressed = bLeftPressed && bRightPressed;
 
-	if ( type == IET_FIRST_PRESS )
+	if( input.type == IET_FIRST_PRESS )
+	{
 		if ( bLeftAndRightPressed )
 			m_MusicWheel.ChangeSort( SORT_MODE_MENU );		
 		else
 			m_MusicWheel.Move( +1 );
+	}
 }
 
-void ScreenNetSelectMusic::MenuUp( PlayerNumber pn, const InputEventType type )
+void ScreenNetSelectMusic::MenuUp( const InputEventPlus &input )
 {
 	NSMAN->ReportNSSOnOff(3);
 	GAMESTATE->m_EditMode = EDIT_MODE_FULL;
 	SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
 }
 
-void ScreenNetSelectMusic::MenuDown( PlayerNumber pn, const InputEventType type )
+void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 {
 	/*Tricky:  If we have a player on player 2, and there is only
 	  player 2, allow them to use player 1's controls to change 
 	  their difficulty. */
+	/* Why?  Nothing else allows that. */
 
+	PlayerNumber pn = input.MenuI.player;
 	if ( GAMESTATE->IsPlayerEnabled( PLAYER_2 ) && 
 		!GAMESTATE->IsPlayerEnabled( PLAYER_1 ) )
 		pn = PLAYER_2;

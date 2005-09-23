@@ -133,7 +133,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	{
 		GAMESTATE->GetRankingFeats( p, aFeats[p] );
 		GAMESTATE->JoinPlayer( p );
-		m_bStillEnteringName[p] = true;//aFeats[p].size()>0;
+		m_bStillEnteringName[p] = aFeats[p].size()>0;
 	}
 
 	if( !AnyStillEntering() )

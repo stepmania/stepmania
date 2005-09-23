@@ -23,7 +23,7 @@ private:
 	
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );
-	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
+	virtual void ProcessMenuStart( const InputEventPlus &input );
 
 	Profile	m_Original;	// restore this on revert
 };

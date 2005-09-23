@@ -118,7 +118,7 @@ void ScreenEditMenu::MenuDown( PlayerNumber pn )
 	}
 }
 
-void ScreenEditMenu::MenuLeft( PlayerNumber pn, const InputEventType type )
+void ScreenEditMenu::MenuLeft( const InputEventPlus &input )
 {
 	if( m_Selector.CanGoLeft() )
 	{
@@ -126,7 +126,7 @@ void ScreenEditMenu::MenuLeft( PlayerNumber pn, const InputEventType type )
 	}
 }
 
-void ScreenEditMenu::MenuRight( PlayerNumber pn, const InputEventType type )
+void ScreenEditMenu::MenuRight( const InputEventPlus &input )
 {
 	if( m_Selector.CanGoRight() )
 	{

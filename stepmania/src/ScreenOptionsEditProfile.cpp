@@ -129,7 +129,7 @@ void ScreenOptionsEditProfile::AfterChangeValueInRow( int iRow, PlayerNumber pn 
 	GAMESTATE->m_sEditLocalProfileID.Set( GAMESTATE->m_sEditLocalProfileID );
 }
 
-void ScreenOptionsEditProfile::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
+void ScreenOptionsEditProfile::ProcessMenuStart( const InputEventPlus &input )
 {
 	int iRow = GetCurrentRow();;
 	//OptionRow &row = *m_pRows[iRow];
@@ -141,7 +141,7 @@ void ScreenOptionsEditProfile::ProcessMenuStart( PlayerNumber pn, const InputEve
 		}
 		break;
 	default:
-		ScreenOptions::ProcessMenuStart( pn, type );
+		ScreenOptions::ProcessMenuStart( input );
 		break;
 	}
 }

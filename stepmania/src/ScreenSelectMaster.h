@@ -18,10 +18,10 @@ public:
 
 	virtual void Update( float fDelta );
 
-	virtual void MenuLeft( PlayerNumber pn, const InputEventType type );
-	virtual void MenuRight( PlayerNumber pn, const InputEventType type );
-	virtual void MenuUp( PlayerNumber pn, const InputEventType type );
-	virtual void MenuDown( PlayerNumber pn, const InputEventType type );
+	virtual void MenuLeft( const InputEventPlus &input );
+	virtual void MenuRight( const InputEventPlus &input );
+	virtual void MenuUp( const InputEventPlus &input );
+	virtual void MenuDown( const InputEventPlus &input );
 	virtual void MenuStart( PlayerNumber pn );
 	void TweenOursOnScreen();
 	void TweenOursOffScreen();

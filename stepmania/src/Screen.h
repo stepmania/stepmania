@@ -84,14 +84,14 @@ protected:
 public:
 
 	// let subclass override if they want
-	virtual void MenuUp(	PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuUp(pn); }
-	virtual void MenuDown(	PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuDown(pn); }
-	virtual void MenuLeft(	PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuLeft(pn); }
-	virtual void MenuRight( PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuRight(pn); }
-	virtual void MenuStart( PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuStart(pn); }
-	virtual void MenuSelect( PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuSelect(pn); }
-	virtual void MenuBack(	PlayerNumber pn, const InputEventType type );
-	virtual void MenuCoin(	PlayerNumber pn, const InputEventType type )	{ if(type==IET_FIRST_PRESS) MenuCoin(pn); }
+	virtual void MenuUp(	const InputEventPlus &input );
+	virtual void MenuDown(	const InputEventPlus &input );
+	virtual void MenuLeft(	const InputEventPlus &input );
+	virtual void MenuRight( const InputEventPlus &input );
+	virtual void MenuStart( const InputEventPlus &input );
+	virtual void MenuSelect( const InputEventPlus &input );
+	virtual void MenuBack(	const InputEventPlus &input );
+	virtual void MenuCoin(	const InputEventPlus &input );
 
 	virtual void MenuUp(	PlayerNumber pn )	{}
 	virtual void MenuDown(	PlayerNumber pn )	{}

@@ -117,7 +117,7 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 }
 
 
-void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type )
+void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 {
 #if defined( WITHOUT_NETWORKING )
 #else
@@ -159,7 +159,7 @@ void ScreenNetworkOptions::MenuStart( PlayerNumber pn, const InputEventType type
 			PREFSMAN->m_bEnableScoreboard.Set(false);
 		break;
 	default:
-		ScreenOptions::MenuStart( pn, type );
+		ScreenOptions::MenuStart( input );
 	}
 #endif
 }

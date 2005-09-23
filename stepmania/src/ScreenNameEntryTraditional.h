@@ -49,10 +49,10 @@ public:
 	void HandleScreenMessage( const ScreenMessage SM );
 	void Input( const InputEventPlus &input );
 
-	void MenuStart( PlayerNumber pn, const InputEventType type );
-	void MenuSelect( PlayerNumber pn, const InputEventType type );
-	void MenuLeft( PlayerNumber pn, const InputEventType type );
-	void MenuRight( PlayerNumber pn, const InputEventType type );
+	void MenuStart( const InputEventPlus &input );
+	void MenuSelect( const InputEventPlus &input );
+	void MenuLeft( const InputEventPlus &input );
+	void MenuRight( const InputEventPlus &input );
 
 private:
 	bool AnyStillEntering() const;
@@ -63,6 +63,7 @@ private:
 	void ChangeDisplayedFeat();
 	void SelectChar( PlayerNumber pn, int c );
 	void Backspace( PlayerNumber pn );
+	void HandleStart( PlayerNumber pn );
 
 	ThemeMetric<float> ALPHABET_GAP_X;
 	ThemeMetric<int> NUM_ALPHABET_DISPLAYED;

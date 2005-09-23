@@ -10,6 +10,7 @@
 #include "OptionRow.h"
 #include "OptionsCursor.h"
 #include "LuaExpressionTransform.h"
+#include "InputEventPlus.h"
 
 class OptionRowHandler;
 
@@ -62,8 +63,8 @@ protected:
 	void UpdateEnabledDisabled( int iRow );
 
 	virtual void MenuBack( PlayerNumber pn );
-	virtual void MenuStart( PlayerNumber pn, const InputEventType type );
-	virtual void ProcessMenuStart( PlayerNumber pn, const InputEventType type );
+	virtual void MenuStart( const InputEventPlus &input );
+	virtual void ProcessMenuStart( const InputEventPlus &input );
 
 	virtual void BeginFadingOut() { this->PostScreenMessage( SM_BeginFadingOut, 0 ); }
 
@@ -75,12 +76,12 @@ protected:
 	virtual void AfterChangeRow( PlayerNumber pn );	// override this to detect when the row has changed
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );
 
-	virtual void MenuLeft( PlayerNumber pn, const InputEventType type )		{ ChangeValueInRowRelative(m_iCurrentRow[pn],pn,-1,type != IET_FIRST_PRESS); }
-	virtual void MenuRight( PlayerNumber pn, const InputEventType type )	{ ChangeValueInRowRelative(m_iCurrentRow[pn],pn,+1,type != IET_FIRST_PRESS); }
-	virtual void MenuUp( PlayerNumber pn, const InputEventType type );
-	virtual void MenuDown( PlayerNumber pn, const InputEventType type );
-	virtual void MenuSelect( PlayerNumber pn, const InputEventType type );
-	virtual void MenuUpDown( PlayerNumber pn, const InputEventType type, int iDir );	// iDir == -1 or iDir == +1
+	virtual void MenuLeft( const InputEventPlus &input )		{ ChangeValueInRowRelative(m_iCurrentRow[input.MenuI.player],input.MenuI.player,-1, input.type != IET_FIRST_PRESS); }
+	virtual void MenuRight( const InputEventPlus &input )	{ ChangeValueInRowRelative(m_iCurrentRow[input.MenuI.player], input.MenuI.player,+1, input.type != IET_FIRST_PRESS); }
+	virtual void MenuUp( const InputEventPlus &input );
+	virtual void MenuDown( const InputEventPlus &input );
+	virtual void MenuSelect( const InputEventPlus &input );
+	virtual void MenuUpDown( const InputEventPlus &input, int iDir );	// iDir == -1 or iDir == +1
 
 	/* Returns -1 if on a row with no OptionRowDefinition (eg. EXIT). */
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;

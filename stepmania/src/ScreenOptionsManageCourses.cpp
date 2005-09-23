@@ -67,9 +67,9 @@ ScreenOptionsEditCourseSubMenu::ScreenOptionsEditCourseSubMenu( CString sName ) 
 
 }
 
-void ScreenOptionsEditCourseSubMenu::MenuSelect( PlayerNumber pn, const InputEventType type )
+void ScreenOptionsEditCourseSubMenu::MenuSelect( const InputEventPlus &input )
 {
-	if( type == IET_FIRST_PRESS )
+	if( input.type == IET_FIRST_PRESS )
 	{
 		SetNextCombination();
 
@@ -78,7 +78,7 @@ void ScreenOptionsEditCourseSubMenu::MenuSelect( PlayerNumber pn, const InputEve
 		return;
 	}
 
-	ScreenOptions::MenuSelect( pn, type );
+	ScreenOptions::MenuSelect( input );
 }
 
 
@@ -343,7 +343,7 @@ void ScreenOptionsManageCourses::AfterChangeRow( PlayerNumber pn )
 	ScreenOptions::AfterChangeRow( pn );
 }
 
-void ScreenOptionsManageCourses::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
+void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 

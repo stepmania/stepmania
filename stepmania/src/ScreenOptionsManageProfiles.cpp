@@ -344,7 +344,7 @@ void ScreenOptionsManageProfiles::AfterChangeRow( PlayerNumber pn )
 	ScreenOptions::AfterChangeRow( pn );
 }
 
-void ScreenOptionsManageProfiles::ProcessMenuStart( PlayerNumber pn, const InputEventType type )
+void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus &input )
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 	OptionRow &row = *m_pRows[iCurRow];
