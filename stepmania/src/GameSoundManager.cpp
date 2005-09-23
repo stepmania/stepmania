@@ -238,7 +238,7 @@ static void StartMusic( MusicToPlay &ToPlay )
 		p.m_StartSecond = ToPlay.start_sec;
 		p.m_LengthSeconds = ToPlay.length_sec;
 		p.m_FadeLength = ToPlay.fade_len;
-		p.StartTime = when;
+		p.m_StartTime = when;
 		if( ToPlay.force_loop )
 			p.StopMode = RageSoundParams::M_LOOP;
 		NewMusic->m_Music->SetParams( p );

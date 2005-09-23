@@ -45,7 +45,7 @@ const int internal_buffer_size = 1024*1;
 const unsigned read_block_size = 1024;
 
 RageSoundParams::RageSoundParams():
-	StartTime( RageZeroTimer )
+	m_StartTime( RageZeroTimer )
 {
 	m_StartSecond = 0;
 	m_LengthSeconds = -1;
@@ -53,7 +53,7 @@ RageSoundParams::RageSoundParams():
 	m_Volume = -1.0f; // use SOUNDMAN->GetMixVolume()
 	m_Balance = 0; // center
 	speed_input_samples = speed_output_samples = 1;
-	AccurateSync = false;
+	m_bAccurateSync = false;
 	StopMode = M_AUTO;
 }
 
@@ -580,11 +580,11 @@ void RageSound::StartPlaying()
 
 	ASSERT( !m_bPlaying );
 
-	/* If StartTime is in the past, then we probably set a start time but took too
+	/* If m_StartTime is in the past, then we probably set a start time but took too
 	 * long loading.  We don't want that; log it, since it can be unobvious. */
-	if( !m_Param.StartTime.IsZero() && m_Param.StartTime.Ago() > 0 )
+	if( !m_Param.m_StartTime.IsZero() && m_Param.m_StartTime.Ago() > 0 )
 		LOG->Trace("Sound \"%s\" has a start time %f seconds in the past",
-			GetLoadedFilePath().c_str(), m_Param.StartTime.Ago() );
+			GetLoadedFilePath().c_str(), m_Param.m_StartTime.Ago() );
 
 	/* Tell the sound manager to start mixing us. */
 //	LOG->Trace("set playing true for %p (StartPlaying) (%s)", this, this->GetLoadedFilePath().c_str());
@@ -842,7 +842,7 @@ bool RageSound::SetPositionFrames( int iFrames )
 	m_DataBuffer.clear();
 
 	int ret;
-	if( m_Param.AccurateSync )
+	if( m_Param.m_bAccurateSync )
 		ret = m_pSource->SetPosition_Accurate(ms);
 	else
 		ret = m_pSource->SetPosition_Fast(ms);
@@ -902,7 +902,7 @@ float RageSound::GetPlaybackRate() const
 
 RageTimer RageSound::GetStartTime() const
 {
-	return m_Param.StartTime;
+	return m_Param.m_StartTime;
 }
 
 void RageSound::SetParams( const RageSoundParams &p )

@@ -760,7 +760,7 @@ void ScreenEdit::PlayTicks()
 		fSecondsUntil /= m_soundMusic.GetPlaybackRate(); /* 2x music rate means the time until the tick is halved */
 
 		RageSoundParams p;
-		p.StartTime = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)TICK_EARLY_SECONDS);
+		p.m_StartTime = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)TICK_EARLY_SECONDS);
 		m_soundAssistTick.Play( &p );
 	}
 }
@@ -2077,7 +2077,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		RageSoundParams p;
 		p.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 		p.m_StartSecond = fStartSeconds;
-		p.AccurateSync = true;
+		p.m_bAccurateSync = true;
 		p.StopMode = RageSoundParams::M_CONTINUE;
 		m_soundMusic.Play( &p );
 		break;

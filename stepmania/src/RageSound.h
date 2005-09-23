@@ -52,22 +52,24 @@ struct RageSoundParams
 	int speed_input_samples, speed_output_samples;
 	void SetPlaybackRate( float fScale );
 
-	bool AccurateSync;
+	/* If enabled, file seeking will prefer accuracy over speed. */
+	bool m_bAccurateSync;
 
 	/* Optional driver feature: time to actually start playing sounds.  If zero, or if not
-	 * supported, it'll start immediately. */
-	RageTimer StartTime;
+	 * supported, the sound will start immediately. */
+	RageTimer m_StartTime;
 
 	/*
-	 * M_STOP (default) stops the sound at the end.
+	 * M_STOP stops the sound at the end.
 	 * M_LOOP restarts.
 	 * M_CONTINUE feeds silence, which is useful to continue timing longer than the actual sound.
+	 * M_AUTO (default) stops, obeying filename hints.
 	 */
 	enum StopMode_t {
-		M_STOP,     /* stop when finished */
-		M_LOOP,     /* loop */
-		M_CONTINUE, /* keep playing silence */
-		M_AUTO     /* obey filename hints */
+		M_STOP,
+		M_LOOP,
+		M_CONTINUE,
+		M_AUTO
 	} StopMode;
 };
 

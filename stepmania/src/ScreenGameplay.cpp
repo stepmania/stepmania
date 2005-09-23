@@ -1368,7 +1368,7 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	fStartSecond = min(fStartSecond, -MinTimeToMusic);
 	
 	RageSoundParams p;
-	p.AccurateSync = true;
+	p.m_bAccurateSync = true;
 	p.SetPlaybackRate( GAMESTATE->m_SongOptions.m_fMusicRate );
 	p.StopMode = RageSoundParams::M_CONTINUE;
 	p.m_StartSecond = fStartSecond;
@@ -1458,7 +1458,7 @@ void ScreenGameplay::PlayTicks()
 		fSecondsUntil /= GAMESTATE->m_SongOptions.m_fMusicRate; /* 2x music rate means the time until the tick is halved */
 
 		RageSoundParams p;
-		p.StartTime = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)TICK_EARLY_SECONDS);
+		p.m_StartTime = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)TICK_EARLY_SECONDS);
 		m_soundAssistTick.Play( &p );
 	}
 }
@@ -1538,7 +1538,7 @@ void ScreenGameplay::Update( float fDeltaTime )
 			NSMAN->StartRequest(1); 
 
 			RageSoundParams p;
-			p.AccurateSync = true;
+			p.m_bAccurateSync = true;
 			p.SetPlaybackRate( 1.0 );	//Force 1.0 playback speed
 			p.StopMode = RageSoundParams::M_CONTINUE;
 			p.m_StartSecond = startOffset;
