@@ -256,7 +256,7 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 	bool bDelayedDraw = m_bDrawByZPosition && !m_bLoop;
 	vector<Actor*> subs;
 
-	for( int iItem=(int)truncf(ceilf(fFirstItemToDraw)); iItem<=fLastItemToDraw; iItem++ )
+	for( int iItem=(int)ceilf(fFirstItemToDraw); iItem<=fLastItemToDraw; iItem++ )
 	{
 		float fPosition = iItem - m_fCurrentItem;
 		int iIndex = iItem;
