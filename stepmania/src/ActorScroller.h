@@ -40,12 +40,11 @@ public:
 	
 	void SetDestinationItem( float fItemIndex )				{ m_fDestinationItem = fItemIndex; }
 	void SetCurrentAndDestinationItem( float fItemIndex )	{ m_fCurrentItem = m_fDestinationItem = fItemIndex; }
-	float GetCurrentItem()									{ return m_fCurrentItem; }
-	float GetDestinationItem()								{ return m_fDestinationItem; }
+	float GetCurrentItem() const							{ return m_fCurrentItem; }
+	float GetDestinationItem() const						{ return m_fDestinationItem; }
 	void ScrollThroughAllItems();
 	void SetPauseCountdownSeconds( float fSecs )			{ m_fPauseCountdownSeconds = fSecs; }
-
-	float	GetSecondsForCompleteScrollThrough();
+	float	GetSecondsForCompleteScrollThrough() const;
 
 	//
 	// Commands
@@ -57,6 +56,7 @@ protected:
 
 	const Actor::TweenState &GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
 
+private:
 	bool	m_bLoaded;
 	float	m_fCurrentItem; // Item at top of list, usually between 0 and m_SubActors.size(), approaches destination
 	float	m_fDestinationItem;

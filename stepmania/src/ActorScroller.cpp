@@ -112,7 +112,7 @@ void ActorScroller::ScrollThroughAllItems()
 	m_fDestinationItem = (float)(m_SubActors.size()+m_fNumItemsToDraw/2+1);
 }
 
-float ActorScroller::GetSecondsForCompleteScrollThrough()
+float ActorScroller::GetSecondsForCompleteScrollThrough() const
 {
 	float fTotalItems = m_fNumItemsToDraw + m_SubActors.size();
 	return fTotalItems * (m_fSecondsPerItem + m_fSecondsPauseBetweenItems );
