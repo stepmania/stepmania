@@ -52,7 +52,7 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	void PositionItemsAndDrawPrimitives( bool bPosition, bool bDrawPrimitives );
+	void PositionItemsAndDrawPrimitives( bool bDrawPrimitives );
 
 private:
 	bool	m_bLoaded;

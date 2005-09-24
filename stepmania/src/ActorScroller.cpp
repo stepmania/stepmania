@@ -208,15 +208,15 @@ void ActorScroller::UpdateInternal( float fDeltaTime )
 
 void ActorScroller::DrawPrimitives()
 {
-	PositionItemsAndDrawPrimitives( true, true );
+	PositionItemsAndDrawPrimitives( true );
 }
 
 void ActorScroller::PositionItems()
 {
-	PositionItemsAndDrawPrimitives( true, false );
+	PositionItemsAndDrawPrimitives( false );
 }
 
-void ActorScroller::PositionItemsAndDrawPrimitives( bool bPosition, bool bDrawPrimitives )
+void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 {
 	// Optimization:  If we weren't loaded, then fall back to the ActorFrame logic
 	if( !m_bLoaded )
@@ -239,10 +239,10 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bPosition, bool bDrawPr
 		float fPositionFullyOffScreenTop = fPositionFullyOnScreenTop - 1;
 		float fPositionFullyOffScreenBottom = fPositionFullyOnScreenBottom + 1;
 
-		if( bPosition )			m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenTop, -1, m_SubActors.size() );
+		m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenTop, -1, m_SubActors.size() );
 		if( bDrawPrimitives )	m_quadMask.Draw();
 
-		if( bPosition )			m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenBottom, m_SubActors.size(), m_SubActors.size() );
+		m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenBottom, m_SubActors.size(), m_SubActors.size() );
 		if( bDrawPrimitives )	m_quadMask.Draw();
 
 		fFirstItemToDraw = fPositionFullyOffScreenTop + m_fCurrentItem;
@@ -269,8 +269,7 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bPosition, bool bDrawPr
 		else if( iIndex < 0 || iIndex >= (int)m_SubActors.size() )
 			continue;
 
-		if( bPosition )		
-			m_exprTransformFunction.PositionItem( m_SubActors[iIndex], fPosition, iIndex, m_SubActors.size() );
+		m_exprTransformFunction.PositionItem( m_SubActors[iIndex], fPosition, iIndex, m_SubActors.size() );
 		if( bDrawPrimitives )
 		{
 			if( bDelayedDraw )
