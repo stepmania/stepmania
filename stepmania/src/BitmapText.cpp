@@ -188,7 +188,7 @@ void BitmapText::BuildChars()
 	{
 		iY += m_pFont->GetHeight();
 
-		wstring &sLine = m_wTextLines[i];
+		wstring sLine = m_wTextLines[i];
 		if( m_pFont->IsRightToLeft() )
 			reverse( sLine.begin(), sLine.end() );
 		const int iLineWidth = m_iLineWidths[i];
