@@ -234,19 +234,17 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bPosition, bool bDrawPr
 	if( m_SubActors.empty() )
 		return;
 
-	// write to z buffer so that top and bottom are clipped
-	float fPositionFullyOnScreenTop = -(m_fNumItemsToDraw-1)/2.f;
-	float fPositionFullyOnScreenBottom = (m_fNumItemsToDraw-1)/2.f;
-	float fPositionFullyOffScreenTop = fPositionFullyOnScreenTop - 1;
-	float fPositionFullyOffScreenBottom = fPositionFullyOnScreenBottom + 1;
-	float fPositionOnEdgeOfScreenTop = -(m_fNumItemsToDraw)/2.f;
-	float fPositionOnEdgeOfScreenBottom = (m_fNumItemsToDraw)/2.f;
-	
 	float fFirstItemToDraw = 0;
 	float fLastItemToDraw = 0;
 
 	if( m_bUseMask )
 	{
+		// write to z buffer so that top and bottom are clipped
+		float fPositionFullyOnScreenTop = -(m_fNumItemsToDraw-1)/2.f;
+		float fPositionFullyOnScreenBottom = (m_fNumItemsToDraw-1)/2.f;
+		float fPositionFullyOffScreenTop = fPositionFullyOnScreenTop - 1;
+		float fPositionFullyOffScreenBottom = fPositionFullyOnScreenBottom + 1;
+
 		if( bPosition )			m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenTop, -1, m_SubActors.size() );
 		if( bDrawPrimitives )	m_quadMask.Draw();
 
@@ -258,6 +256,9 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bPosition, bool bDrawPr
 	}
 	else
 	{
+		float fPositionOnEdgeOfScreenTop = -(m_fNumItemsToDraw)/2.f;
+		float fPositionOnEdgeOfScreenBottom = (m_fNumItemsToDraw)/2.f;
+		
 		fFirstItemToDraw = fPositionOnEdgeOfScreenTop + m_fCurrentItem;
 		fLastItemToDraw = fPositionOnEdgeOfScreenBottom + m_fCurrentItem;
 	}
