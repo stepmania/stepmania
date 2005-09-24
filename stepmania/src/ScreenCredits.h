@@ -12,9 +12,6 @@ class ScreenCredits : public ScreenAttract
 public:
 	ScreenCredits( CString sName );
 	virtual void Init();
-	virtual ~ScreenCredits();
-
-	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 private:
 	ActorScroller			m_ScrollerBackgrounds;

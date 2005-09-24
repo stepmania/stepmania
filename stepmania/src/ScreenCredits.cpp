@@ -179,6 +179,7 @@ void ScreenCredits::Init()
 		(float)BACKGROUNDS_SPACING_X, 
 		(float)BACKGROUNDS_SPACING_Y );
 
+	m_ScrollerBackgrounds.DeleteChildrenWhenDone(true);
 	m_ScrollerBackgrounds.SetName( "Backgrounds" );
 	m_ScrollerBackgrounds.Load3(
 		BACKGROUNDS_SCROLL_SECONDS_PER_ITEM,
@@ -192,6 +193,7 @@ void ScreenCredits::Init()
 	this->AddChild( &m_ScrollerBackgrounds );
 
 	m_ScrollerFrames.SetName( "Backgrounds" );
+	m_ScrollerFrames.DeleteChildrenWhenDone(true);
 	m_ScrollerFrames.Load3(
 		BACKGROUNDS_SCROLL_SECONDS_PER_ITEM,
 		4,
@@ -244,6 +246,7 @@ void ScreenCredits::Init()
 		(float)TEXTS_SPACING_Y );
 
 	m_ScrollerTexts.SetName( "Texts" );
+	m_ScrollerTexts.DeleteChildrenWhenDone(true);
 	m_ScrollerTexts.Load3(
 		TEXTS_SCROLL_SECONDS_PER_ITEM,
 		40,
@@ -284,19 +287,6 @@ void ScreenCredits::Init()
 	this->ClearMessageQueue( SM_BeginFadingOut );	// ignore ScreenAttract's SecsToShow
 	this->PostScreenMessage( SM_BeginFadingOut, fTime );
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("credits") );
-}
-
-ScreenCredits::~ScreenCredits()
-{
-	m_ScrollerBackgrounds.DeleteAllChildren();
-	m_ScrollerFrames.DeleteAllChildren();
-	m_ScrollerTexts.DeleteAllChildren();
-}
-
-
-void ScreenCredits::HandleScreenMessage( const ScreenMessage SM )
-{
-	ScreenAttract::HandleScreenMessage( SM );
 }
 
 /*
