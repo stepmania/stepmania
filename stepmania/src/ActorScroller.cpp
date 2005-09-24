@@ -33,9 +33,6 @@ ActorScroller::ActorScroller()
 	m_fPauseCountdownSeconds = 0;
 	m_fQuantizePixels = 0;
 
-	m_bUseMask = false;
-	m_fMaskWidth = 1;
-	m_fMaskHeight = 1;
 	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );	// don't change color values
 	m_quadMask.SetUseZBuffer( true );	// we want to write to the Zbuffer
 	m_quadMask.SetHidden( true );
@@ -56,8 +53,6 @@ void ActorScroller::Load2(
 	CLAMP( fSecondsPauseBetweenItems, 0, 10000 );
 
 	m_fNumItemsToDraw = fNumItemsToDraw;
-	m_fMaskWidth = fItemWidth;
-	m_fMaskHeight = fItemHeight;
 
 	m_exprTransformFunction.SetFromExpression( 
 		ssprintf("function(self,offset,itemIndex,numItems) return self:y(%f*offset) end",fItemHeight),
@@ -72,12 +67,11 @@ void ActorScroller::Load2(
 
 	ScrollThroughAllItems();
 
-	m_bUseMask = true;
 	RectF rectBarSize(
-		-m_fMaskWidth/2,
-		-m_fMaskHeight/2,
-		m_fMaskWidth/2,
-		m_fMaskHeight/2 );
+		-fItemWidth/2,
+		-fItemHeight/2,
+		fItemWidth/2,
+		fItemHeight/2 );
 	m_quadMask.StretchTo( rectBarSize );
 	m_quadMask.SetZ( 1 );
 
@@ -101,7 +95,7 @@ void ActorScroller::Load3(
 	m_bFastCatchup = bFastCatchup;
 	m_exprTransformFunction.SetFromExpression( sTransformFunction, iSubdivisions );
 	m_fQuantizePixels = 0;
-	m_bUseMask = bUseMask;
+	m_quadMask.SetHidden( !bUseMask );
 	m_bLoop = bLoop;
 	m_bLoaded = true;
 }
@@ -149,18 +143,20 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 	pNode->GetAttrValue( "Subdivisions", iSubdivisions );
 #undef GET_VALUE
 
+	bool bUseMask = false;
+	pNode->GetAttrValue( "UseMask", bUseMask );
+
 	Load3( 
 		fSecondsPerItem,
 		fNumItemsToDraw,
 		false,
 		sTransformFunction,
 		iSubdivisions,
-		false,
+		bUseMask,
 		false );
 	SetCurrentAndDestinationItem( -fItemPaddingStart );
 	SetDestinationItem( m_SubActors.size()-1+fItemPaddingEnd );
 
-	pNode->GetAttrValue( "UseMask", m_bUseMask );
 	pNode->GetAttrValue( "QuantizePixels", m_fQuantizePixels );
 }
 
@@ -237,7 +233,7 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bPosition, bool bDrawPr
 	float fFirstItemToDraw = 0;
 	float fLastItemToDraw = 0;
 
-	if( m_bUseMask )
+	if( !m_quadMask.GetHidden() )
 	{
 		// write to z buffer so that top and bottom are clipped
 		float fPositionFullyOnScreenTop = -(m_fNumItemsToDraw-1)/2.f;

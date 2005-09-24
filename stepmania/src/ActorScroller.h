@@ -68,9 +68,6 @@ private:
 	float	m_fPauseCountdownSeconds;
 	float	m_fQuantizePixels;
 
-	bool	m_bUseMask;
-	float	m_fMaskWidth;
-	float	m_fMaskHeight;
 	Quad	m_quadMask;
 
 	LuaExpressionTransform m_exprTransformFunction;	// params: self,offset,itemIndex,numItems
