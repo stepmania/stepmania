@@ -67,12 +67,8 @@ void ActorScroller::Load2(
 
 	ScrollThroughAllItems();
 
-	RectF rectBarSize(
-		-fItemWidth/2,
-		-fItemHeight/2,
-		fItemWidth/2,
-		fItemHeight/2 );
-	m_quadMask.StretchTo( rectBarSize );
+	m_quadMask.SetWidth( fItemWidth );
+	m_quadMask.SetHeight( fItemHeight );
 	m_quadMask.SetHidden( false );
 
 	m_bLoaded = true;
