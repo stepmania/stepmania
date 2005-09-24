@@ -131,7 +131,7 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 	float fItemPaddingStart = 0;
 	float fItemPaddingEnd = 0;
 	CString sTransformFunction;
-	int iSubdivisions = 0;
+	int iSubdivisions = 1;
 
 	GET_VALUE( "SecondsPerItem", fSecondsPerItem );
 	GET_VALUE( "NumItemsToDraw", fNumItemsToDraw );

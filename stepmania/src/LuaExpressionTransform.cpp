@@ -11,6 +11,7 @@ LuaExpressionTransform::LuaExpressionTransform()
 
 void LuaExpressionTransform::SetFromExpression( const CString &sExpression, int iNumSubdivisions )
 {
+	ASSERT( iNumSubdivisions > 0 );
 	m_pexprTransformFunction->SetFromExpression( sExpression );
 	m_iNumSubdivisions = iNumSubdivisions;
 }
