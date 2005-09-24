@@ -1,4 +1,4 @@
-// Microsoft Visual C++ generated resource script.
+//Microsoft Developer Studio generated resource script.
 //
 #include "resource.h"
 
@@ -13,7 +13,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Anglais (États-Unis) resources
+// English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
 #ifdef _WIN32
@@ -27,18 +27,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE 
+1 TEXTINCLUDE MOVEABLE PURE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE 
+2 TEXTINCLUDE MOVEABLE PURE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE 
+3 TEXTINCLUDE MOVEABLE PURE 
 BEGIN
     "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
     "#define _AFX_NO_OLE_RESOURCES\r\n"
@@ -66,7 +66,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON                    "smpackage.ICO"
+IDR_MAINFRAME           ICON    DISCARDABLE     "smpackage.ICO"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -74,9 +74,9 @@ IDR_MAINFRAME           ICON                    "smpackage.ICO"
 //
 
 IDD_INSTALL DIALOGEX 0, 0, 332, 234
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
 CAPTION "Stepmania Package Manager"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
+FONT 8, "MS Sans Serif"
 BEGIN
     EDITTEXT        IDC_EDIT_MESSAGE1,7,42,320,45,ES_MULTILINE | 
                     ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT 
@@ -99,8 +99,8 @@ BEGIN
 END
 
 IDD_EXPORTER DIALOGEX 0, 0, 332, 234
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
-    WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+STYLE DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | 
+    WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Stepmania Package Manager"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -121,8 +121,8 @@ BEGIN
     PUSHBUTTON      "Open Program Folder",IDC_BUTTON_OPEN,83,215,79,15
 END
 
-IDD_DIALOG_NAME DIALOG  0, 0, 261, 58
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_DIALOG_NAME DIALOG DISCARDABLE  0, 0, 261, 58
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Name Your Package"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -135,8 +135,8 @@ BEGIN
                     18,38,179,12
 END
 
-IDD_EDIT_INSTALLATIONS DIALOG  0, 0, 233, 220
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_EDIT_INSTALLATIONS DIALOG DISCARDABLE  0, 0, 233, 220
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Edit Installations"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -155,12 +155,12 @@ BEGIN
                     IDC_STATIC,18,144,196,17
 END
 
-IDD_MENU DIALOG  0, 0, 332, 234
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_MENU DIALOG DISCARDABLE  0, 0, 332, 281
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "StepMania Tools Main Menu"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "Close",IDOK,275,213,50,14
+    DEFPUSHBUTTON   "Exit",IDOK,275,260,50,14
     CONTROL         140,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     PUSHBUTTON      "Export Packages",IDC_EXPORT_PACKAGES,20,120,70,15
     LTEXT           "Choose this option to create .smzip files that you can share with other StepMania and DWI users.  A .smzip package can contain songs, courses, themes, background animations, and more.",
@@ -174,10 +174,14 @@ BEGIN
     GROUPBOX        "Installations",IDC_STATIC,5,45,320,50
     LTEXT           "Using this feature, you can:\n - Catch redundant and misnamed theme elements\n - Convert a SM 3.0 theme for use in SM 4.0\n - Edit theme metrics using a user-friendly interface",
                     IDC_STATIC,103,168,215,35
+    GROUPBOX        "Game Settings",IDC_STATIC,6,215,320,40
+    PUSHBUTTON      "Change Settings",IDC_CHANGE_API,20,230,70,15
+    LTEXT           "Using this feature, you can:\n - Change the graphics API that StepMania will use.",
+                    IDC_STATIC,104,228,215,19
 END
 
-IDD_CONVERT_THEME DIALOG  0, 0, 332, 258
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_CONVERT_THEME DIALOG DISCARDABLE  0, 0, 332, 258
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Theme Elements"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -205,8 +209,8 @@ BEGIN
                     15,WS_DISABLED
 END
 
-IDD_EDIT_METRICS DIALOG  0, 0, 332, 234
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_EDIT_METRICS DIALOG DISCARDABLE  0, 0, 332, 234
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Edit Theme Metrics"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -229,9 +233,9 @@ BEGIN
 END
 
 IDD_ENTER_COMMENT DIALOGEX 0, 0, 312, 202
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Add A Comment"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
+FONT 8, "MS Sans Serif"
 BEGIN
     LTEXT           "This message will be displayed before a user installs your package.",
                     -1,7,7,219,12
@@ -243,9 +247,9 @@ BEGIN
 END
 
 IDD_SHOW_COMMENT DIALOGEX 0, 0, 246, 186
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Package Comment"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
+FONT 8, "MS Sans Serif"
 BEGIN
     EDITTEXT        IDC_EDIT,7,7,232,137,ES_MULTILINE | ES_AUTOHSCROLL | 
                     ES_READONLY
@@ -256,8 +260,7 @@ BEGIN
 END
 
 IDD_UNINSTALL_OLD_PACKAGES DIALOGEX 0, 0, 277, 161
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
-    WS_SYSMENU
+STYLE DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Uninstall Old Packages"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
@@ -271,7 +274,26 @@ BEGIN
     LTEXT           "Delete old packages?",IDC_STATIC,105,119,67,12
 END
 
+IDD_CHANGE_GAME_SETTINGS DIALOG DISCARDABLE  0, 0, 167, 146
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Change Game Settings"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,49,124,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,109,124,50,14
+    GROUPBOX        "Graphics API",IDC_STATIC,7,7,152,71
+    CONTROL         "Default (recommended)",IDC_RADIO_DEFAULT,"Button",
+                    BS_AUTORADIOBUTTON,25,24,105,12
+    CONTROL         "Force OpenGL",IDC_RADIO_OPENGL,"Button",
+                    BS_AUTORADIOBUTTON,25,40,105,12
+    CONTROL         "Force Direct3D",IDC_RADIO_DIRECT3D,"Button",
+                    BS_AUTORADIOBUTTON,25,56,105,12
+    LTEXT           "Tip: Change these only if you experience problems when using the default settings.",
+                    IDC_STATIC,7,88,152,27
+END
 
+
+#ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
@@ -294,13 +316,13 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "FileDescription", "smpackage MFC Application"
-            VALUE "FileVersion", "1, 0, 0, 1"
-            VALUE "InternalName", "smpackage"
-            VALUE "LegalCopyright", "Copyright (C) 2002"
-            VALUE "OriginalFilename", "smpackage.EXE"
-            VALUE "ProductName", "smpackage Application"
-            VALUE "ProductVersion", "1, 0, 0, 1"
+            VALUE "FileDescription", "smpackage MFC Application\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "smpackage\0"
+            VALUE "LegalCopyright", "Copyright (C) 2002\0"
+            VALUE "OriginalFilename", "smpackage.EXE\0"
+            VALUE "ProductName", "smpackage Application\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -309,6 +331,8 @@ BEGIN
     END
 END
 
+#endif    // !_MAC
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -316,7 +340,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO MOVEABLE PURE 
 BEGIN
     IDD_INSTALL, DIALOG
     BEGIN
@@ -355,7 +379,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 325
         TOPMARGIN, 7
-        BOTTOMMARGIN, 227
+        BOTTOMMARGIN, 274
     END
 
     IDD_CONVERT_THEME, DIALOG
@@ -397,6 +421,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 154
     END
+
+    IDD_CHANGE_GAME_SETTINGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 159
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 138
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -406,12 +438,12 @@ END
 // Bitmap
 //
 
-INSTALL                 BITMAP                  "install.bmp"
-MANAGE                  BITMAP                  "manage.bmp"
-MENU                    BITMAP                  "menu.bmp"
-CONVERTTHEME            BITMAP                  "converttheme.bmp"
-EDIT_METRICS            BITMAP                  "editmetrics.bmp"
-#endif    // Anglais (États-Unis) resources
+INSTALL                 BITMAP  MOVEABLE PURE   "install.bmp"
+MANAGE                  BITMAP  MOVEABLE PURE   "manage.bmp"
+MENU                    BITMAP  MOVEABLE PURE   "menu.bmp"
+CONVERTTHEME            BITMAP  MOVEABLE PURE   "converttheme.bmp"
+EDIT_METRICS            BITMAP  MOVEABLE PURE   "editmetrics.bmp"
+#endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

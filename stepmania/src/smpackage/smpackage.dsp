@@ -92,6 +92,14 @@ LINK32=link.exe
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=.\ChangeGameSettings.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ChangeGameSettings.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\EditInsallations.cpp
 # End Source File
 # Begin Source File

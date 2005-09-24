@@ -7,6 +7,7 @@
 #include "EditInsallations.h"
 #include "SmpackageExportDlg.h"
 #include "onvertThemeDlg.h"
+#include "ChangeGameSettings.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -41,6 +42,7 @@ BEGIN_MESSAGE_MAP(MainMenuDlg, CDialog)
 	ON_BN_CLICKED(IDC_EXPORT_PACKAGES, OnExportPackages)
 	ON_BN_CLICKED(IDC_EDIT_INSTALLATIONS, OnEditInstallations)
 	ON_BN_CLICKED(IDC_ANALYZE_ELEMENTS, OnAnalyzeElements)
+	ON_BN_CLICKED(IDC_CHANGE_API, OnChangeApi)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -66,5 +68,12 @@ void MainMenuDlg::OnAnalyzeElements()
 {
 	// TODO: Add your control notification handler code here
 	ConvertThemeDlg dlg;
+	int nResponse = dlg.DoModal();	
+}
+
+void MainMenuDlg::OnChangeApi() 
+{
+	// TODO: Add your control notification handler code here
+	ChangeGameSettings dlg;
 	int nResponse = dlg.DoModal();	
 }

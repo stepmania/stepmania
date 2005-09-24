@@ -39,6 +39,7 @@ protected:
 	afx_msg void OnExportPackages();
 	afx_msg void OnEditInstallations();
 	afx_msg void OnAnalyzeElements();
+	afx_msg void OnChangeApi();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };
