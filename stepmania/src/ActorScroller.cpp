@@ -110,11 +110,6 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 {
 	ActorFrame::LoadFromNode( sDir, pNode );
 
-	bool bUseScroller = false;
-	pNode->GetAttrValue( "UseScroller", bUseScroller );
-	if( !bUseScroller )
-		return;
-
 #define GET_VALUE( szName, valueOut ) \
 	if( !pNode->GetAttrValue( szName, valueOut ) ) { \
 		CString sError = ssprintf("Animation in '%s' is missing the value Scroller::%s", sDir.c_str(), szName); \
