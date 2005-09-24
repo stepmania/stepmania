@@ -56,7 +56,7 @@ protected:
 
 private:
 	bool	m_bLoaded;
-	float	m_fCurrentItem; // Item at top of list, usually between 0 and m_SubActors.size(), approaches destination
+	float	m_fCurrentItem; // Item at center of list, usually between 0 and m_SubActors.size(), approaches destination
 	float	m_fDestinationItem;
 	float	m_fSecondsPerItem;		// <= 0 means don't scroll
 	float	m_fSecondsPauseBetweenItems;
