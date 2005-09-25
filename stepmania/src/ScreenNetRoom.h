@@ -8,13 +8,6 @@
 #include <vector>
 #include "RoomWheel.h"
 
-enum RoomInfoState
-{
-	OPEN = 0,
-	CLOSED,
-	LOCKED
-};
-
 class RoomData {
 public:
 	void SetName( const CString& name ) { m_name = name; }
@@ -44,16 +37,13 @@ protected:
 	virtual void MenuBack( PlayerNumber pn );
 
 	virtual void TweenOffScreen( );
-	virtual void Update( float fDeltaTime );
+//	virtual void Update( float fDeltaTime );
 
 private:
 	void UpdateRoomsList();
 	void MenuLeft( const InputEventPlus &input );
 	void MenuRight( const InputEventPlus &input );
 	void CreateNewRoom( const CString& rName,  const CString& rDesc );
-
-	void DeployInfoBox();
-	void RetractInfoBox();
 		
 	RageSound m_soundChangeSel;
 	
@@ -67,13 +57,6 @@ private:
 	CString m_newRoomName, m_newRoomDesc;
 
 	RoomWheel m_RoomWheel;
-	
-	Quad m_roomInfo;
-
-	RageTimer m_deployDelay;
-	RageTimer m_retractDelay;
-
-	RoomInfoState m_RoomInfoState;
 };
 #endif
 

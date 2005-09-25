@@ -3,6 +3,7 @@
 #ifndef ROOMWHEEL_H
 #define ROOMWHEEL_H
 
+#include "Quad.h"
 #include "WheelBase.h"
 #include "WheelItemBase.h"
 #include "ThemeMetric.h"
@@ -36,14 +37,35 @@ private:
 class RoomWheel : public WheelBase {
 public:
 	virtual void Load( CString sType );
-	inline RoomWheelData* GetItem(unsigned int i) { return (RoomWheelData*)WheelBase::GetItem(i + m_offset); }
 	virtual void BuildWheelItemsData( vector<WheelItemBaseData*> &arrayWheelItemDatas );
-	virtual inline unsigned int GetNumItems() { return m_WheelBaseItemsData.size() - m_offset; }
-	virtual void RemoveItem( int index ) { WheelBase::RemoveItem(index + m_offset); }
-	void AddPerminateItem(RoomWheelData* itemdata);
+	virtual unsigned int GetNumItems() const;
+	virtual void RemoveItem( int index );
 	virtual bool Select();
+	virtual void Update( float fDeltaTime );
+	virtual void Move(int n);
+
+	inline RoomWheelData* GetItem(unsigned int i) { return (RoomWheelData*)WheelBase::GetItem(i + m_offset); }
+	void AddPerminateItem(RoomWheelData* itemdata);
+	int GetCurrentIndex() const { return m_iSelection; }
 private:
 	int m_offset;
+
+	enum RoomInfoState
+	{
+		OPEN = 0,
+		CLOSED,
+		LOCKED
+	};
+
+	Quad m_roomInfo;
+
+	RageTimer m_deployDelay;
+//	RageTimer m_retractDelay;
+
+	RoomInfoState m_RoomInfoState;
+
+	void DeployInfoBox();
+	void RetractInfoBox();
 };
 
 #endif

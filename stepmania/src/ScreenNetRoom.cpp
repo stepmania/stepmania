@@ -22,8 +22,6 @@
 #define ROOMSPACEY					THEME->GetMetricF(m_sName,"RoomsSpacingY")
 #define ROOMLOWERBOUND				THEME->GetMetricF(m_sName,"RoomsLowerBound")
 #define ROOMUPPERBOUND				THEME->GetMetricF(m_sName,"RoomsUpperBound")
-#define INFOBOXWIDTH				THEME->GetMetricF(m_sName,"InfoBoxWidth")
-#define INFOBOXHEIGHT				THEME->GetMetricF(m_sName,"InfoBoxHeight")
 
 AutoScreenMessage( SM_SMOnlinePack )
 AutoScreenMessage( SM_BackFromRoomName )
@@ -33,7 +31,6 @@ REGISTER_SCREEN_CLASS( ScreenNetRoom );
 ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sName )
 {
 	GAMESTATE->FinishStage();
-	m_RoomInfoState = LOCKED;
 }
 
 void ScreenNetRoom::Init()
@@ -67,35 +64,13 @@ void ScreenNetRoom::Init()
 	this->MoveToHead( &m_RoomWheel );
 	ON_COMMAND( m_RoomWheel );
 
-	m_roomInfo.SetName("InfoBox");
-	m_roomInfo.SetWidth( INFOBOXWIDTH );
-	m_roomInfo.SetHeight( INFOBOXHEIGHT );
-	SET_XY( m_roomInfo );
-	m_roomInfo.SetHidden( true );
-	OFF_COMMAND( m_roomInfo );
-	this->AddChild(&m_roomInfo);
-	m_roomInfo.SetDrawOrder(1);
-
 	NSMAN->ReportNSSOnOff(7);
 }
 
 void ScreenNetRoom::Input( const InputEventPlus &input )
 {
 	if (((input.MenuI.button == MENU_BUTTON_LEFT) || (input.MenuI.button == MENU_BUTTON_RIGHT)) && (input.type == IET_RELEASE))
-	{
 		m_RoomWheel.Move(0);
-		m_deployDelay.Touch();
-		m_RoomInfoState = CLOSED;
-	}
-
-	if (((input.MenuI.button == MENU_BUTTON_LEFT) || (input.MenuI.button == MENU_BUTTON_RIGHT)) && (input.type != IET_RELEASE))
-	{
-		if (m_roomInfo.GetHidden())
-			m_roomInfo.SetHidden(false);
-
-		RetractInfoBox();
-		m_RoomInfoState = LOCKED; //Force a lock so the info box does not deploy from a quick pause in scrolling
-	}
 		
 	ScreenNetSelectBase::Input( input );
 }
@@ -180,16 +155,12 @@ void ScreenNetRoom::TweenOffScreen()
 	NSMAN->ReportNSSOnOff(6);
 }
 
+/*
 void ScreenNetRoom::Update( float fDeltaTime )
 {
 	ScreenNetSelectBase::Update( fDeltaTime );
-
-	if (m_deployDelay.PeekDeltaTime() >= 1.5)
-		DeployInfoBox();
-
-	if (m_retractDelay.PeekDeltaTime() >= 5)
-		RetractInfoBox();
 }
+*/
 
 void ScreenNetRoom::MenuStart( PlayerNumber pn )
 {
@@ -299,25 +270,6 @@ void ScreenNetRoom::CreateNewRoom( const CString& rName,  const CString& rDesc )
 	NSMAN->m_SMOnlinePacket.WriteNT(rName);
 	NSMAN->m_SMOnlinePacket.WriteNT(rDesc);
 	NSMAN->SendSMOnline( );
-}
-
-void ScreenNetRoom::DeployInfoBox()
-{
-	if (m_RoomInfoState == CLOSED)
-	{
-		SET_XY_AND_ON_COMMAND( m_roomInfo );
-		m_retractDelay.Touch();
-		m_RoomInfoState = OPEN;
-	}
-}
-	
-void ScreenNetRoom::RetractInfoBox()
-{
-	if (m_RoomInfoState == OPEN)
-	{
-		OFF_COMMAND( m_roomInfo );
-		m_RoomInfoState = LOCKED;
-	}
 }
 
 #endif

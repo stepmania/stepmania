@@ -20,18 +20,24 @@ void RoomWheel::Load( CString sType )
 
 	m_WheelBaseItems.clear();
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
-	{
 		m_WheelBaseItems.push_back( new RoomWheelItem );
-	}
+
+	m_roomInfo.SetName("InfoBox");
+	m_roomInfo.SetWidth( THEME->GetMetricF(m_sName,"InfoBoxWidth") );
+	m_roomInfo.SetHeight( THEME->GetMetricF(m_sName,"InfoBoxHeight") );
+	SET_XY( m_roomInfo );
+	m_roomInfo.SetHidden( true );
+	OFF_COMMAND( m_roomInfo );
+	this->AddChild(&m_roomInfo);
 
 	m_WheelState = STATE_SELECTING;
+	m_RoomInfoState = LOCKED;
 
 	AddPerminateItem( new RoomWheelData(TYPE_GENERIC, "Create Room", "Create a new game room", THEME->GetMetricC( m_sName, "CreateRoomColor")) );
 
 	BuildWheelItemsData( m_WheelBaseItemsData );
 	RebuildWheelItems();
 }
-
 
 RoomWheelData::RoomWheelData( WheelItemType wit, CString sTitle, CString sDesc, RageColor color ):
 	WheelItemBaseData( wit, sTitle, color )
@@ -83,6 +89,7 @@ void RoomWheel::AddPerminateItem(RoomWheelData* itemdata)
 
 bool RoomWheel::Select()
 {
+	RetractInfoBox();
 	if( m_iSelection > 0 )
 		return WheelBase::Select();
 	else if( m_iSelection == 0 )
@@ -101,6 +108,59 @@ void RoomWheelItem::LoadFromWheelItemBaseData( WheelItemBaseData* pWID )
 	m_Desc.SetText( tmpdata->m_sDesc );
 	m_Desc.SetDiffuseColor( pWID->m_color );
 	m_text.SetDiffuseColor( pWID->m_color );
+}
+
+void RoomWheel::Update( float fDeltaTime )
+{
+	WheelBase::Update(fDeltaTime);
+
+	if ((m_deployDelay.PeekDeltaTime() >= 1.5) && (m_deployDelay.PeekDeltaTime() < (1.5 + 5)))
+		DeployInfoBox();
+	else if (m_deployDelay.PeekDeltaTime() >= 1.5 + 5)
+		RetractInfoBox();
+}
+
+void RoomWheel::Move(int n)
+{
+	if ((n == 0) && (m_iSelection >= m_offset))
+	{
+		m_RoomInfoState = CLOSED;
+		m_deployDelay.Touch();
+
+		if (m_roomInfo.GetHidden())
+			m_roomInfo.SetHidden(false);
+	}
+	else
+		RetractInfoBox();
+
+	WheelBase::Move(n);
+}
+
+unsigned int RoomWheel::GetNumItems() const
+{
+	return m_WheelBaseItemsData.size() - m_offset;
+}
+
+void RoomWheel::RemoveItem( int index )
+{
+	WheelBase::RemoveItem(index + m_offset);
+}
+
+void RoomWheel::DeployInfoBox()
+{
+	if (m_RoomInfoState == CLOSED)
+	{
+		SET_XY_AND_ON_COMMAND( m_roomInfo );
+		m_RoomInfoState = OPEN;
+	}
+}
+	
+void RoomWheel::RetractInfoBox()
+{
+	if (m_RoomInfoState == OPEN)
+		OFF_COMMAND( m_roomInfo );
+	
+	m_RoomInfoState = LOCKED;
 }
 
 /*
