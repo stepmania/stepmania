@@ -32,7 +32,7 @@ public:
 	void TweenOnScreen() { TweenOnScreen(false); }
 	void TweenOffScreen() { TweenOffScreen(false); }
 
-	void Move(int n);
+	virtual void Move(int n);
 	void ChangeMusicUnlessLocked( int n ); /* +1 or -1 */
 	virtual void ChangeMusic(int dist); /* +1 or -1 */
 
@@ -50,7 +50,7 @@ public:
 
 	void AddItem( WheelItemBaseData* itemdata );
 	virtual void RemoveItem( int index );
-	virtual inline unsigned int GetNumItems() { return m_WheelBaseItemsData.size(); }
+	virtual inline unsigned int GetNumItems() const { return m_WheelBaseItemsData.size(); }
 	inline bool IsEmpty() { return m_isEmpty; }
 	WheelItemBaseData* GetItem(unsigned int index);
 	WheelItemBaseData* LastSelected();
