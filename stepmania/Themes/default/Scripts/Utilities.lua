@@ -86,6 +86,17 @@ function tableshuffle( t )
 	return ret
 end
 
+function GetRandomSongBackground()
+	for i=0,50 do
+		local song = SONGMAN:GetRandomSong()
+		if song then
+			local path = song:GetBackgroundPath()
+			if path then return path end
+		end
+	end
+	return THEME:GetPathG("", "_blank")
+end
+
 -- (c) 2005 Glenn Maynard, Chris Danford
 -- All rights reserved.
 -- 
