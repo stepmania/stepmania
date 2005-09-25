@@ -54,14 +54,37 @@ BOOL ChangeGameSettings::OnInitDialog()
 	ini.ReadFile();
 
 	CString sValue;
-	ini.GetValue( "Options", "VideoRenderers", sValue );
-	
+
+
+	sValue = "";
+	ini.GetValue( "Options", "VideoRenderers", sValue );	
 	if( sValue.CompareNoCase("opengl")==0 )
 		CheckDlgButton( IDC_RADIO_OPENGL, BST_CHECKED );
 	else if( sValue.CompareNoCase("d3d")==0 )
 		CheckDlgButton( IDC_RADIO_DIRECT3D, BST_CHECKED );
 	else
 		CheckDlgButton( IDC_RADIO_DEFAULT, BST_CHECKED );
+
+
+	sValue = "";
+	ini.GetValue( "Options", "SoundDrivers", sValue );
+	if( sValue.CompareNoCase("null")==0 )
+		CheckDlgButton( IDC_RADIO_SOUND_NULL, BST_CHECKED );
+	else
+		CheckDlgButton( IDC_RADIO_SOUND_DEFAULT, BST_CHECKED );
+
+
+	bool bValue;
+
+
+	bValue = false;
+	ini.GetValue( "Options", "LogToDisk", bValue );
+	CheckDlgButton( IDC_CHECK_LOG_TO_DISK, bValue ? BST_CHECKED : BST_UNCHECKED );
+
+
+	bValue = false;
+	ini.GetValue( "Options", "ShowLogWindow", bValue );
+	CheckDlgButton( IDC_CHECK_SHOW_LOG_WINDOW, bValue ? BST_CHECKED : BST_UNCHECKED );
 
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -75,12 +98,24 @@ void ChangeGameSettings::OnOK()
 	ini.SetPath( "Data\\StepMania.ini" );
 	ini.ReadFile();
 	
+	
 	if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_OPENGL) )
 		ini.SetValue( "Options", "VideoRenderers", "opengl" );
 	else if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_DIRECT3D) )
 		ini.SetValue( "Options", "VideoRenderers", "d3d" );
 	else
 		ini.SetValue( "Options", "VideoRenderers", "" );
+
+
+	if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_SOUND_NULL) )
+		ini.SetValue( "Options", "SoundDrivers", "null" );
+	else
+		ini.SetValue( "Options", "SoundDrivers", "" );
+
+
+	ini.SetValue( "Options", "LogToDisk",		BST_CHECKED == IsDlgButtonChecked(IDC_CHECK_LOG_TO_DISK) );
+	ini.SetValue( "Options", "ShowLogWindow",	BST_CHECKED == IsDlgButtonChecked(IDC_CHECK_SHOW_LOG_WINDOW) );
+	
 
 	ini.WriteFile();
 	

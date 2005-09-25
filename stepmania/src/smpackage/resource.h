@@ -63,6 +63,10 @@
 #define IDC_RADIO_DEFAULT               1048
 #define IDC_RADIO_OPENGL                1049
 #define IDC_RADIO_DIRECT3D              1050
+#define IDC_RADIO_SOUND_DEFAULT         1051
+#define IDC_RADIO_SOUND_NULL            1052
+#define IDC_CHECK_LOG_TO_DISK           1053
+#define IDC_CHECK_SHOW_LOG_WINDOW       1054
 
 // Next default values for new objects
 // 
@@ -70,7 +74,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        149
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1049
+#define _APS_NEXT_CONTROL_VALUE         1054
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
