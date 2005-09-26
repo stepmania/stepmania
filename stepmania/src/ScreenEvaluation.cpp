@@ -129,21 +129,30 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElement
 	
 		FOREACH_PlayerNumber( p )
 		{
+			float fSeconds = GAMESTATE->m_pCurSong->GetStepsSeconds();
 			STATSMAN->m_CurStageStats.m_player[p].iActualDancePoints = rand()%3;
 			STATSMAN->m_CurStageStats.m_player[p].iPossibleDancePoints = 2;
-			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 0;
-			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0, false );
-			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 1;
-			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 1, false );
-			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 50;
-			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 25, false );
-			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 250;
-			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 100, false );
 			if( rand()%2 )
-			{
-				STATSMAN->m_CurStageStats.m_player[p].iCurCombo = rand()%11000;
-				STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 110, false );
-			}
+				STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 11000;
+			else
+				STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 0;
+			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0, true );
+
+			STATSMAN->m_CurStageStats.m_player[p].iCurCombo += 50;
+			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0.10f * fSeconds, false );
+
+			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 0;
+			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0.15f * fSeconds, false );
+			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 1;
+			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0.25f * fSeconds, false );
+			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 50;
+			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0.35f * fSeconds, false );
+			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 0;
+			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0.45f * fSeconds, false );
+			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 1;
+			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 0.50f * fSeconds, false );
+			STATSMAN->m_CurStageStats.m_player[p].iCurCombo = 100;
+			STATSMAN->m_CurStageStats.m_player[p].UpdateComboList( 1.00f * fSeconds, false );
 			if( rand()%5 == 0 )
 			{
 				STATSMAN->m_CurStageStats.m_player[p].bFailedEarlier = true;
