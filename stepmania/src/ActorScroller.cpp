@@ -207,14 +207,12 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 	if( m_SubActors.empty() )
 		return;
 
-	float fFirstItemToDraw = 0;
-	float fLastItemToDraw = 0;
-
+	float fNumItemsToDraw = m_fNumItemsToDraw;
 	if( !m_quadMask.GetHidden() )
 	{
 		// write to z buffer so that top and bottom are clipped
 		// Draw an extra item; this is the one that will be masked.
-		float fNumItemsToDraw = m_fNumItemsToDraw+1;
+		fNumItemsToDraw++;
 		float fPositionFullyOffScreenTop = -(fNumItemsToDraw)/2.f;
 		float fPositionFullyOffScreenBottom = (fNumItemsToDraw)/2.f;
 
@@ -223,15 +221,10 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 
 		m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenBottom, m_SubActors.size(), m_SubActors.size() );
 		if( bDrawPrimitives )	m_quadMask.Draw();
+	}
 
-		fFirstItemToDraw = m_fCurrentItem - fNumItemsToDraw/2.f;
-		fLastItemToDraw = m_fCurrentItem + fNumItemsToDraw/2.f;
-	}
-	else
-	{
-		fFirstItemToDraw = m_fCurrentItem - m_fNumItemsToDraw/2.f;
-		fLastItemToDraw = m_fCurrentItem + m_fNumItemsToDraw/2.f;
-	}
+	float fFirstItemToDraw = m_fCurrentItem - fNumItemsToDraw/2.f;
+	float fLastItemToDraw = m_fCurrentItem + fNumItemsToDraw/2.f;
 
 	bool bDelayedDraw = m_bDrawByZPosition && !m_bLoop;
 	vector<Actor*> subs;
