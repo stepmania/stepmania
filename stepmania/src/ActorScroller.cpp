@@ -229,11 +229,8 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 	}
 	else
 	{
-		float fPositionOnEdgeOfScreenTop = -(m_fNumItemsToDraw)/2.f;
-		float fPositionOnEdgeOfScreenBottom = (m_fNumItemsToDraw)/2.f;
-		
-		fFirstItemToDraw = fPositionOnEdgeOfScreenTop + m_fCurrentItem;
-		fLastItemToDraw = fPositionOnEdgeOfScreenBottom + m_fCurrentItem;
+		fFirstItemToDraw = m_fCurrentItem - (m_fNumItemsToDraw)/2.f;
+		fLastItemToDraw = m_fCurrentItem + (m_fNumItemsToDraw)/2.f;
 	}
 
 	bool bDelayedDraw = m_bDrawByZPosition && !m_bLoop;
