@@ -3,11 +3,11 @@
 #ifndef BGANIMATION_H
 #define BGANIMATION_H
 
-#include "ActorScroller.h"
+#include "ActorFrame.h"
 
 struct XNode;
 
-class BGAnimation : public ActorScrollerAutoDeleteChildren
+class BGAnimation : public ActorFrameAutoDeleteChildren
 {
 public:
 	BGAnimation();

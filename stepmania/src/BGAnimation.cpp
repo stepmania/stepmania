@@ -149,12 +149,7 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
 
 void BGAnimation::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
-	bool bUseScroller = false;
-	pNode->GetAttrValue( "UseScroller", bUseScroller );
-	if( bUseScroller )
-		ActorScrollerAutoDeleteChildren::LoadFromNode( sDir, pNode );
-	else
-		ActorFrame::LoadFromNode( sDir, pNode );
+	ActorFrame::LoadFromNode( sDir, pNode );
 
 	/* Backwards-compatibility: if a "LengthSeconds" value is present, create a dummy
 	 * actor that sleeps for the given length of time.  This will extend GetTweenTimeLeft. */
