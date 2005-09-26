@@ -21,7 +21,6 @@ Actor *ActorScroller::Copy() const { return new ActorScroller(*this); }
 
 ActorScroller::ActorScroller()
 {
-	m_bLoaded = false;
 	m_fCurrentItem = 0;
 	m_fDestinationItem = 0;
 	m_fSecondsPerItem = 1;
@@ -70,8 +69,6 @@ void ActorScroller::Load2(
 	m_quadMask.SetWidth( fItemWidth );
 	m_quadMask.SetHeight( fItemHeight );
 	m_quadMask.SetHidden( false );
-
-	m_bLoaded = true;
 }
 
 void ActorScroller::Load3(
@@ -91,7 +88,6 @@ void ActorScroller::Load3(
 	m_fQuantizePixels = 0;
 	m_quadMask.SetHidden( !bUseMask );
 	m_bLoop = bLoop;
-	m_bLoaded = true;
 }
 
 void ActorScroller::ScrollThroughAllItems()
@@ -209,13 +205,6 @@ void ActorScroller::PositionItems()
 
 void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 {
-	// Optimization:  If we weren't loaded, then fall back to the ActorFrame logic
-	if( !m_bLoaded )
-	{
-		ActorFrame::DrawPrimitives();
-		return;
-	}
-
 	if( m_SubActors.empty() )
 		return;
 
