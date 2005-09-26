@@ -215,13 +215,13 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 		// write to z buffer so that top and bottom are clipped
 		// Draw an extra item; this is the one that will be masked.
 		float fNumItemsToDraw = m_fNumItemsToDraw+1;
-		float fPositionFullyOnScreenTop = -(fNumItemsToDraw)/2.f;
-		float fPositionFullyOnScreenBottom = (fNumItemsToDraw)/2.f;
+		float fPositionFullyOffScreenTop = -(fNumItemsToDraw)/2.f;
+		float fPositionFullyOffScreenBottom = (fNumItemsToDraw)/2.f;
 
-		m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOnScreenTop, -1, m_SubActors.size() );
+		m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenTop, -1, m_SubActors.size() );
 		if( bDrawPrimitives )	m_quadMask.Draw();
 
-		m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOnScreenBottom, m_SubActors.size(), m_SubActors.size() );
+		m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenBottom, m_SubActors.size(), m_SubActors.size() );
 		if( bDrawPrimitives )	m_quadMask.Draw();
 
 		fFirstItemToDraw = m_fCurrentItem - fNumItemsToDraw/2.f;
