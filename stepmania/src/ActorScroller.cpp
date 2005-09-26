@@ -24,7 +24,6 @@ ActorScroller::ActorScroller()
 	m_fCurrentItem = 0;
 	m_fDestinationItem = 0;
 	m_fSecondsPerItem = 1;
-	m_fNumItemsToDraw = 7;
 	m_fSecondsPauseBetweenItems = 0;
 	m_fNumItemsToDraw = 7;
 	m_bLoop = false;

@@ -683,7 +683,7 @@ void WheelBase::RebuildWheelItems( int iDist )
 			for( int i=0; i < -iDist; i++ )
 			{
 				int iIndex = iFirstVisibleIndex + i;
-				wrap( iIndex, m_WheelBaseItemsData.size() );
+				wrap( iIndex, data.size() );
 
 				WheelItemBaseData *pData    = data[iIndex];
 				WheelItemBase     *pDisplay = items[i];
