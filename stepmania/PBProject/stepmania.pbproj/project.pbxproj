@@ -720,8 +720,6 @@
 		AA91587E067D2C2C00078E36 /* RageSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = AA91587A067D2C2C00078E36 /* RageSurface.h */; };
 		AA91ACB10878BB2C00FB2F8F /* RageTexturePreloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA91ACAF0878BB2C00FB2F8F /* RageTexturePreloader.cpp */; };
 		AA91ACB20878BB2C00FB2F8F /* RageTexturePreloader.h in Headers */ = {isa = PBXBuildFile; fileRef = AA91ACB00878BB2C00FB2F8F /* RageTexturePreloader.h */; };
-		AA91ACB50878BB4400FB2F8F /* CombinedLifeMeterEnemy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA91ACB30878BB4400FB2F8F /* CombinedLifeMeterEnemy.cpp */; };
-		AA91ACB60878BB4400FB2F8F /* CombinedLifeMeterEnemy.h in Headers */ = {isa = PBXBuildFile; fileRef = AA91ACB40878BB4400FB2F8F /* CombinedLifeMeterEnemy.h */; };
 		AA9A78AB06B5C72200B03E97 /* Game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA9A78A906B5C72200B03E97 /* Game.cpp */; };
 		AA9A78AC06B5C72200B03E97 /* Game.h in Headers */ = {isa = PBXBuildFile; fileRef = AA9A78AA06B5C72200B03E97 /* Game.h */; };
 		AA9D236D0561B6CF00FC7F14 /* CombinedLifeMeter.h in Headers */ = {isa = PBXBuildFile; fileRef = AA9D236C0561B6CE00FC7F14 /* CombinedLifeMeter.h */; };
@@ -808,6 +806,19 @@
 		AACA593307B5E23400763545 /* RageUtil_AutoPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */; };
 		AACA593407B5E23400763545 /* RageUtil_WorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592D07B5E23400763545 /* RageUtil_WorkerThread.cpp */; };
 		AACA593507B5E23400763545 /* RageUtil_WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */; };
+		AACFBE2808E7D793005087FC /* ActorSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE2608E7D793005087FC /* ActorSound.cpp */; };
+		AACFBE2908E7D793005087FC /* ActorSound.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE2708E7D793005087FC /* ActorSound.h */; };
+		AACFBE3A08E7D832005087FC /* InputEventPlus.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE3908E7D832005087FC /* InputEventPlus.h */; };
+		AACFBE4D08E7D893005087FC /* ScreenEvaluationMultiplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE4708E7D893005087FC /* ScreenEvaluationMultiplayer.cpp */; };
+		AACFBE4E08E7D893005087FC /* ScreenEvaluationMultiplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE4808E7D893005087FC /* ScreenEvaluationMultiplayer.h */; };
+		AACFBE4F08E7D893005087FC /* ScreenGameplayLesson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE4908E7D893005087FC /* ScreenGameplayLesson.cpp */; };
+		AACFBE5008E7D893005087FC /* ScreenGameplayLesson.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE4A08E7D893005087FC /* ScreenGameplayLesson.h */; };
+		AACFBE5108E7D893005087FC /* ScreenJoinMultiplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE4B08E7D893005087FC /* ScreenJoinMultiplayer.cpp */; };
+		AACFBE5208E7D893005087FC /* ScreenJoinMultiplayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE4C08E7D893005087FC /* ScreenJoinMultiplayer.h */; };
+		AACFBE5B08E7D8C6005087FC /* PlayerScoreList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE5908E7D8C6005087FC /* PlayerScoreList.cpp */; };
+		AACFBE5C08E7D8C6005087FC /* PlayerScoreList.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE5A08E7D8C6005087FC /* PlayerScoreList.h */; };
+		AACFBE6308E7DBA8005087FC /* LuaExpressionTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE6108E7DBA8005087FC /* LuaExpressionTransform.cpp */; };
+		AACFBE6408E7DBA8005087FC /* LuaExpressionTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE6208E7DBA8005087FC /* LuaExpressionTransform.h */; };
 		AAD36084062BB8AE00D0CED8 /* RageSoundPosMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD36082062BB8AE00D0CED8 /* RageSoundPosMap.cpp */; };
 		AAD36085062BB8AE00D0CED8 /* RageSoundPosMap.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD36083062BB8AE00D0CED8 /* RageSoundPosMap.h */; };
 		AAD3D5AC05B5AB4E00014FAC /* RageUtil_CircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD3D5AB05B5AB4E00014FAC /* RageUtil_CircularBuffer.h */; };
@@ -1621,8 +1632,6 @@
 		AA91587A067D2C2C00078E36 /* RageSurface.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageSurface.h; path = ../src/RageSurface.h; sourceTree = "<group>"; };
 		AA91ACAF0878BB2C00FB2F8F /* RageTexturePreloader.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageTexturePreloader.cpp; path = ../src/RageTexturePreloader.cpp; sourceTree = "<group>"; };
 		AA91ACB00878BB2C00FB2F8F /* RageTexturePreloader.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageTexturePreloader.h; path = ../src/RageTexturePreloader.h; sourceTree = "<group>"; };
-		AA91ACB30878BB4400FB2F8F /* CombinedLifeMeterEnemy.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = CombinedLifeMeterEnemy.cpp; path = ../src/CombinedLifeMeterEnemy.cpp; sourceTree = "<group>"; };
-		AA91ACB40878BB4400FB2F8F /* CombinedLifeMeterEnemy.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = CombinedLifeMeterEnemy.h; path = ../src/CombinedLifeMeterEnemy.h; sourceTree = "<group>"; };
 		AA9A78A906B5C72200B03E97 /* Game.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Game.cpp; path = ../src/Game.cpp; sourceTree = "<group>"; };
 		AA9A78AA06B5C72200B03E97 /* Game.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Game.h; path = ../src/Game.h; sourceTree = "<group>"; };
 		AA9D236C0561B6CE00FC7F14 /* CombinedLifeMeter.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = CombinedLifeMeter.h; path = ../src/CombinedLifeMeter.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
@@ -1760,6 +1769,19 @@
 		AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageUtil_AutoPtr.h; path = ../src/RageUtil_AutoPtr.h; sourceTree = "<group>"; };
 		AACA592D07B5E23400763545 /* RageUtil_WorkerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageUtil_WorkerThread.cpp; path = ../src/RageUtil_WorkerThread.cpp; sourceTree = "<group>"; };
 		AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageUtil_WorkerThread.h; path = ../src/RageUtil_WorkerThread.h; sourceTree = "<group>"; };
+		AACFBE2608E7D793005087FC /* ActorSound.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ActorSound.cpp; path = ../src/ActorSound.cpp; sourceTree = "<group>"; };
+		AACFBE2708E7D793005087FC /* ActorSound.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ActorSound.h; path = ../src/ActorSound.h; sourceTree = "<group>"; };
+		AACFBE3908E7D832005087FC /* InputEventPlus.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = InputEventPlus.h; path = ../src/InputEventPlus.h; sourceTree = "<group>"; };
+		AACFBE4708E7D893005087FC /* ScreenEvaluationMultiplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenEvaluationMultiplayer.cpp; path = ../src/ScreenEvaluationMultiplayer.cpp; sourceTree = "<group>"; };
+		AACFBE4808E7D893005087FC /* ScreenEvaluationMultiplayer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenEvaluationMultiplayer.h; path = ../src/ScreenEvaluationMultiplayer.h; sourceTree = "<group>"; };
+		AACFBE4908E7D893005087FC /* ScreenGameplayLesson.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenGameplayLesson.cpp; path = ../src/ScreenGameplayLesson.cpp; sourceTree = "<group>"; };
+		AACFBE4A08E7D893005087FC /* ScreenGameplayLesson.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenGameplayLesson.h; path = ../src/ScreenGameplayLesson.h; sourceTree = "<group>"; };
+		AACFBE4B08E7D893005087FC /* ScreenJoinMultiplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenJoinMultiplayer.cpp; path = ../src/ScreenJoinMultiplayer.cpp; sourceTree = "<group>"; };
+		AACFBE4C08E7D893005087FC /* ScreenJoinMultiplayer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenJoinMultiplayer.h; path = ../src/ScreenJoinMultiplayer.h; sourceTree = "<group>"; };
+		AACFBE5908E7D8C6005087FC /* PlayerScoreList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = PlayerScoreList.cpp; path = ../src/PlayerScoreList.cpp; sourceTree = "<group>"; };
+		AACFBE5A08E7D8C6005087FC /* PlayerScoreList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PlayerScoreList.h; path = ../src/PlayerScoreList.h; sourceTree = "<group>"; };
+		AACFBE6108E7DBA8005087FC /* LuaExpressionTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LuaExpressionTransform.cpp; path = ../src/LuaExpressionTransform.cpp; sourceTree = "<group>"; };
+		AACFBE6208E7DBA8005087FC /* LuaExpressionTransform.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = LuaExpressionTransform.h; path = ../src/LuaExpressionTransform.h; sourceTree = "<group>"; };
 		AAD36082062BB8AE00D0CED8 /* RageSoundPosMap.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = RageSoundPosMap.cpp; path = ../src/RageSoundPosMap.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		AAD36083062BB8AE00D0CED8 /* RageSoundPosMap.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = RageSoundPosMap.h; path = ../src/RageSoundPosMap.h; sourceTree = "<group>"; usesTabs = 1; };
 		AAD3D5AB05B5AB4E00014FAC /* RageUtil_CircularBuffer.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = RageUtil_CircularBuffer.h; path = ../src/RageUtil_CircularBuffer.h; sourceTree = "<group>"; usesTabs = 1; };
@@ -2135,6 +2157,8 @@
 				AABE321B05ACD8ED001A0E84 /* ScreenEnding.h */,
 				AA6E0021047711F3005F316C /* ScreenEvaluation.cpp */,
 				AA6E0022047711F3005F316C /* ScreenEvaluation.h */,
+				AACFBE4708E7D893005087FC /* ScreenEvaluationMultiplayer.cpp */,
+				AACFBE4808E7D893005087FC /* ScreenEvaluationMultiplayer.h */,
 				AAECF8BF05265DB600D02EE9 /* ScreenExit.cpp */,
 				AAECF8C005265DB600D02EE9 /* ScreenExit.h */,
 				AA6E0023047711F3005F316C /* ScreenEz2SelectMusic.cpp */,
@@ -2143,6 +2167,8 @@
 				AA6E0026047711F3005F316C /* ScreenEz2SelectPlayer.h */,
 				AA6E0029047711F3005F316C /* ScreenGameplay.cpp */,
 				AA6E002A047711F3005F316C /* ScreenGameplay.h */,
+				AACFBE4908E7D893005087FC /* ScreenGameplayLesson.cpp */,
+				AACFBE4A08E7D893005087FC /* ScreenGameplayLesson.h */,
 				AA07A5570843E72B00E33D21 /* ScreenGameplayMultiplayer.cpp */,
 				AA07A5580843E72B00E33D21 /* ScreenGameplayMultiplayer.h */,
 				1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */,
@@ -2151,6 +2177,8 @@
 				AA6E0030047711F3005F316C /* ScreenHowToPlay.h */,
 				AA6E0033047711F3005F316C /* ScreenInstructions.cpp */,
 				AA6E0034047711F3005F316C /* ScreenInstructions.h */,
+				AACFBE4B08E7D893005087FC /* ScreenJoinMultiplayer.cpp */,
+				AACFBE4C08E7D893005087FC /* ScreenJoinMultiplayer.h */,
 				AA6E0037047711F3005F316C /* ScreenJukebox.cpp */,
 				AA6E0038047711F3005F316C /* ScreenJukebox.h */,
 				AA6E0041047711F3005F316C /* ScreenMapControllers.cpp */,
@@ -2624,8 +2652,11 @@
 				AA6EFDE004770C79005F316C /* Grade.h */,
 				AABBD80605D8E9FC00B44FC2 /* HighScore.cpp */,
 				AABBD80705D8E9FC00B44FC2 /* HighScore.h */,
+				AACFBE3908E7D832005087FC /* InputEventPlus.h */,
 				AA6EFDE104770C79005F316C /* Inventory.cpp */,
 				AA6EFDE204770C79005F316C /* Inventory.h */,
+				AACFBE6108E7DBA8005087FC /* LuaExpressionTransform.cpp */,
+				AACFBE6208E7DBA8005087FC /* LuaExpressionTransform.h */,
 				AAEA090605E23DF900D38622 /* LuaFunctions.h */,
 				AA6EFDE304770C79005F316C /* LyricsLoader.cpp */,
 				AA6EFDE404770C79005F316C /* LyricsLoader.h */,
@@ -2840,8 +2871,6 @@
 				AA6EFF0304770F63005F316C /* BGAnimationLayer.cpp */,
 				AA6EFF0404770F63005F316C /* BGAnimationLayer.h */,
 				AA9D236C0561B6CE00FC7F14 /* CombinedLifeMeter.h */,
-				AA91ACB30878BB4400FB2F8F /* CombinedLifeMeterEnemy.cpp */,
-				AA91ACB40878BB4400FB2F8F /* CombinedLifeMeterEnemy.h */,
 				AAE443EB04B0F9F600D02EE9 /* CombinedLifeMeterTug.cpp */,
 				AAE443EC04B0F9F600D02EE9 /* CombinedLifeMeterTug.h */,
 				AA6EFF0504770F63005F316C /* Combo.cpp */,
@@ -2875,6 +2904,8 @@
 				AA6EFF2404770F63005F316C /* NoteField.h */,
 				AAD620A5052EC78B00D02EE9 /* PercentageDisplay.cpp */,
 				AAD620A6052EC78B00D02EE9 /* PercentageDisplay.h */,
+				AACFBE5908E7D8C6005087FC /* PlayerScoreList.cpp */,
+				AACFBE5A08E7D8C6005087FC /* PlayerScoreList.h */,
 				AA729C4E0599B58D00779F33 /* ReceptorArrow.cpp */,
 				AA729C4F0599B58D00779F33 /* ReceptorArrow.h */,
 				AA729C500599B58D00779F33 /* ReceptorArrowRow.cpp */,
@@ -2927,6 +2958,8 @@
 				AA6EFF7804770FFD005F316C /* ActorFrame.h */,
 				AA6EFF7904770FFD005F316C /* ActorScroller.cpp */,
 				AA6EFF7A04770FFD005F316C /* ActorScroller.h */,
+				AACFBE2608E7D793005087FC /* ActorSound.cpp */,
+				AACFBE2708E7D793005087FC /* ActorSound.h */,
 				AAA983CA04B9060A00D02EE9 /* ActorUtil.cpp */,
 				AA1DC47204A485E900D02EE9 /* ActorUtil.h */,
 				AA8BD2AF07C9395400EA04E1 /* AutoActor.cpp */,
@@ -3597,7 +3630,6 @@
 				AA7DA2F2085760EA0057F1EA /* BackgroundUtil.h in Headers */,
 				AAB6B478085761B700CEE7BA /* ScreenSplash.h in Headers */,
 				AA91ACB20878BB2C00FB2F8F /* RageTexturePreloader.h in Headers */,
-				AA91ACB60878BB4400FB2F8F /* CombinedLifeMeterEnemy.h in Headers */,
 				AAFAB5C20889098600767BF7 /* ScreenOptionsEditProfile.h in Headers */,
 				AAFAB5CE08890B5200767BF7 /* GameLoop.h in Headers */,
 				AA77E74808B64B1400FA24CA /* CharacterManager.h in Headers */,
@@ -3609,6 +3641,13 @@
 				AA77E76608B64B9A00FA24CA /* ScreenOptionsManageCourses.h in Headers */,
 				AA77E76808B64B9A00FA24CA /* ScreenOptionsManageProfiles.h in Headers */,
 				1215D7A308C6559A00B87D8B /* ScreenGameplayNormal.h in Headers */,
+				AACFBE2908E7D793005087FC /* ActorSound.h in Headers */,
+				AACFBE3A08E7D832005087FC /* InputEventPlus.h in Headers */,
+				AACFBE4E08E7D893005087FC /* ScreenEvaluationMultiplayer.h in Headers */,
+				AACFBE5008E7D893005087FC /* ScreenGameplayLesson.h in Headers */,
+				AACFBE5208E7D893005087FC /* ScreenJoinMultiplayer.h in Headers */,
+				AACFBE5C08E7D8C6005087FC /* PlayerScoreList.h in Headers */,
+				AACFBE6408E7DBA8005087FC /* LuaExpressionTransform.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4190,7 +4229,6 @@
 				AAB6B477085761B700CEE7BA /* ScreenSplash.cpp in Sources */,
 				AA8EE0760866E266002C51A7 /* LuaBinding.cpp in Sources */,
 				AA91ACB10878BB2C00FB2F8F /* RageTexturePreloader.cpp in Sources */,
-				AA91ACB50878BB4400FB2F8F /* CombinedLifeMeterEnemy.cpp in Sources */,
 				AAFAB5C10889098600767BF7 /* ScreenOptionsEditProfile.cpp in Sources */,
 				AAFAB5CD08890B5200767BF7 /* GameLoop.cpp in Sources */,
 				AA77E74708B64B1400FA24CA /* CharacterManager.cpp in Sources */,
@@ -4203,6 +4241,12 @@
 				AA77E76708B64B9A00FA24CA /* ScreenOptionsManageProfiles.cpp in Sources */,
 				AA77E8B808B6AC0000FA24CA /* wchar.cpp in Sources */,
 				1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */,
+				AACFBE2808E7D793005087FC /* ActorSound.cpp in Sources */,
+				AACFBE4D08E7D893005087FC /* ScreenEvaluationMultiplayer.cpp in Sources */,
+				AACFBE4F08E7D893005087FC /* ScreenGameplayLesson.cpp in Sources */,
+				AACFBE5108E7D893005087FC /* ScreenJoinMultiplayer.cpp in Sources */,
+				AACFBE5B08E7D8C6005087FC /* PlayerScoreList.cpp in Sources */,
+				AACFBE6308E7DBA8005087FC /* LuaExpressionTransform.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
