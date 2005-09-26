@@ -18,8 +18,6 @@ private:
 	void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 
 	void UpdateConnectStatus();
-
-	CString m_sClassName;
 };
 
 #endif

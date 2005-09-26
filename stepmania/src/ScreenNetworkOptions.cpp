@@ -45,8 +45,6 @@ REGISTER_SCREEN_CLASS( ScreenNetworkOptions );
 ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions( sClassName )
 {
 	LOG->Trace( "ScreenNetworkOptions::ScreenNetworkOptions()" );
-
-	m_sClassName = sClassName;
 }
 
 void ScreenNetworkOptions::Init()
@@ -169,7 +167,7 @@ void ScreenNetworkOptions::ExportOptions( int iRow, const vector<PlayerNumber> &
 
 void ScreenNetworkOptions::UpdateConnectStatus( )
 {
-	SCREENMAN->SetNewScreen( m_sClassName );
+	SCREENMAN->SetNewScreen( m_sName );
 }
 #endif
 
