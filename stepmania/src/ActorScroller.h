@@ -77,8 +77,9 @@ public:
 	ActorScrollerAutoDeleteChildren() { DeleteChildrenWhenDone(true); }
 	void LoadFromNode( const CString& sDir, const XNode* pNode )
 	{
-		// Load children before ActorScroller::LoadFromNode or
-		// else it won't SetDestinationItem correctly.
+		// Load children.  ActorScroller doesn't do this, because it
+		// can be a base class for other objects that don't want to load
+		// from <children>.
 		LoadChildrenFromNode( sDir, pNode );
 
 		ActorScroller::LoadFromNode( sDir, pNode );
