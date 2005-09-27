@@ -333,6 +333,7 @@ ActorScroller.cpp ActorScroller.h ActorUtil.cpp ActorUtil.h \
 ActorSound.cpp ActorSound.h \
 AutoActor.cpp AutoActor.h \
 BitmapText.cpp BitmapText.h Model.cpp Model.h \
+DynamicActorScroller.cpp DynamicActorScroller.h \
 ModelManager.cpp ModelManager.h ModelTypes.cpp ModelTypes.h \
 Quad.cpp Quad.h \
 RollingNumbers.cpp RollingNumbers.h Sprite.cpp Sprite.h
