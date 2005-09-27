@@ -9,7 +9,6 @@
 #include "GameState.h"
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
-#include "ScreenRanking.h"
 #include "Course.h"
 #include "ActorUtil.h"
 #include "FontCharAliases.h"

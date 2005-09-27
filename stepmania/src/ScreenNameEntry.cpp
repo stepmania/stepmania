@@ -9,7 +9,6 @@
 #include "GameState.h"
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
-#include "ScreenRanking.h"
 #include "Course.h"
 #include "AnnouncerManager.h"
 #include "ProfileManager.h"
