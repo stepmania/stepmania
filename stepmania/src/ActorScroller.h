@@ -43,6 +43,7 @@ public:
 	float GetCurrentItem() const							{ return m_fCurrentItem; }
 	float GetDestinationItem() const						{ return m_fDestinationItem; }
 	void ScrollThroughAllItems();
+	void ScrollWithPadding( float fItemPaddingStart, float fItemPaddingEnd );
 	void SetPauseCountdownSeconds( float fSecs )			{ m_fPauseCountdownSeconds = fSecs; }
 	float	GetSecondsForCompleteScrollThrough() const;
 

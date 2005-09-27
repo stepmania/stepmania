@@ -95,6 +95,12 @@ void ActorScroller::ScrollThroughAllItems()
 	m_fDestinationItem = (float)(m_SubActors.size()+m_fNumItemsToDraw/2+1);
 }
 
+void ActorScroller::ScrollWithPadding( float fItemPaddingStart, float fItemPaddingEnd )
+{
+	m_fCurrentItem = -fItemPaddingStart;
+	m_fDestinationItem = m_SubActors.size()-1+fItemPaddingEnd;
+}
+
 float ActorScroller::GetSecondsForCompleteScrollThrough() const
 {
 	float fTotalItems = m_fNumItemsToDraw + m_SubActors.size();
@@ -265,10 +271,14 @@ public:
 	LunaActorScroller() { LUA->Register( Register ); }
 
 	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
+	static int scrollthroughallitems( T* p, lua_State *L )	{ p->ScrollThroughAllItems(); return 0; }
+	static int scrollwithpadding( T* p, lua_State *L )	{ p->ScrollWithPadding(FArg(1),FArg(2)); return 0; }
 
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( SetCurrentAndDestinationItem );
+		ADD_METHOD( scrollthroughallitems );
+		ADD_METHOD( scrollwithpadding );
 		Luna<T>::Register( L );
 	}
 };
