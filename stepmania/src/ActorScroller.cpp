@@ -120,15 +120,11 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 
 	float fSecondsPerItem = 1;
 	float fNumItemsToDraw = 0;
-	float fItemPaddingStart = 0;
-	float fItemPaddingEnd = 0;
 	CString sTransformFunction;
 	int iSubdivisions = 1;
 
 	GET_VALUE( "SecondsPerItem", fSecondsPerItem );
 	GET_VALUE( "NumItemsToDraw", fNumItemsToDraw );
-	GET_VALUE( "ItemPaddingStart", fItemPaddingStart );
-	GET_VALUE( "ItemPaddingEnd", fItemPaddingEnd );
 	GET_VALUE( "TransformFunction", sTransformFunction );
 	pNode->GetAttrValue( "Subdivisions", iSubdivisions );
 #undef GET_VALUE
@@ -144,8 +140,6 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 		iSubdivisions,
 		bUseMask,
 		false );
-	SetCurrentAndDestinationItem( -fItemPaddingStart );
-	SetDestinationItem( m_SubActors.size()-1+fItemPaddingEnd );
 
 	pNode->GetAttrValue( "QuantizePixels", m_fQuantizePixels );
 }
