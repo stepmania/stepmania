@@ -54,13 +54,15 @@ public:
 
 protected:
 	void PositionItemsAndDrawPrimitives( bool bDrawPrimitives );
+	virtual void ShiftSubActors( int iDist );
 
-private:
+	int		m_iNumItems;
 	float	m_fCurrentItem; // Item at center of list, usually between 0 and m_SubActors.size(), approaches destination
 	float	m_fDestinationItem;
 	float	m_fSecondsPerItem;		// <= 0 means don't scroll
 	float	m_fSecondsPauseBetweenItems;
 	float	m_fNumItemsToDraw;
+	int		m_iFirstSubActorIndex;
 	bool	m_bLoop; 
 	bool	m_bFastCatchup; 
 	float	m_fPauseCountdownSeconds;

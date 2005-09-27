@@ -20,11 +20,13 @@ Actor *ActorScroller::Copy() const { return new ActorScroller(*this); }
 
 ActorScroller::ActorScroller()
 {
+	m_iNumItems = 0;
 	m_fCurrentItem = 0;
 	m_fDestinationItem = 0;
 	m_fSecondsPerItem = 1;
 	m_fSecondsPauseBetweenItems = 0;
 	m_fNumItemsToDraw = 7;
+	m_iFirstSubActorIndex = 0;
 	m_bLoop = false;
 	m_bFastCatchup = false;
 	m_fPauseCountdownSeconds = 0;
@@ -61,6 +63,7 @@ void ActorScroller::Load2(
 	m_fSecondsPauseBetweenItems = fSecondsPauseBetweenItems;
 	m_fPauseCountdownSeconds = 0;
 	m_fQuantizePixels = 0;
+	m_iNumItems = m_SubActors.size();
 
 	ScrollThroughAllItems();
 
@@ -86,23 +89,24 @@ void ActorScroller::Load3(
 	m_fQuantizePixels = 0;
 	m_quadMask.SetHidden( !bUseMask );
 	m_bLoop = bLoop;
+	m_iNumItems = m_SubActors.size();
 }
 
 void ActorScroller::ScrollThroughAllItems()
 {
-	m_fCurrentItem = m_bLoop ? +m_fNumItemsToDraw/2 : -(m_fNumItemsToDraw/2)-1;
-	m_fDestinationItem = (float)(m_SubActors.size()+m_fNumItemsToDraw/2+1);
+	m_fCurrentItem = m_bLoop ? +m_fNumItemsToDraw/2.0f : -(m_fNumItemsToDraw/2.0f)-1;
+	m_fDestinationItem = (float)(m_iNumItems+m_fNumItemsToDraw/2.0f+1);
 }
 
 void ActorScroller::ScrollWithPadding( float fItemPaddingStart, float fItemPaddingEnd )
 {
 	m_fCurrentItem = -fItemPaddingStart;
-	m_fDestinationItem = m_SubActors.size()-1+fItemPaddingEnd;
+	m_fDestinationItem = m_iNumItems-1+fItemPaddingEnd;
 }
 
 float ActorScroller::GetSecondsForCompleteScrollThrough() const
 {
-	float fTotalItems = m_fNumItemsToDraw + m_SubActors.size();
+	float fTotalItems = m_fNumItemsToDraw + m_iNumItems;
 	return fTotalItems * (m_fSecondsPerItem + m_fSecondsPauseBetweenItems );
 }
 
@@ -188,7 +192,7 @@ void ActorScroller::UpdateInternal( float fDeltaTime )
 		m_fPauseCountdownSeconds = m_fSecondsPauseBetweenItems;
 
 	if( m_bLoop )
-		m_fCurrentItem = fmodf( m_fCurrentItem, m_fNumItemsToDraw+1 );
+		m_fCurrentItem = fmodf( m_fCurrentItem, (float) m_iNumItems );
 }
 
 void ActorScroller::DrawPrimitives()
@@ -199,6 +203,16 @@ void ActorScroller::DrawPrimitives()
 void ActorScroller::PositionItems()
 {
 	PositionItemsAndDrawPrimitives( false );
+}
+
+/*
+ * Shift m_SubActors forward by iDist.  This will place item m_iFirstSubActorIndex
+ * in m_SubActors[0].
+ */
+void ActorScroller::ShiftSubActors( int iDist )
+{
+	if( iDist != INT_MAX )
+		CircularShift( m_SubActors, iDist );
 }
 
 void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
@@ -215,29 +229,46 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 		float fPositionFullyOffScreenTop = -(fNumItemsToDraw)/2.f;
 		float fPositionFullyOffScreenBottom = (fNumItemsToDraw)/2.f;
 
-		m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenTop, -1, m_SubActors.size() );
+		m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenTop, -1, m_iNumItems );
 		if( bDrawPrimitives )	m_quadMask.Draw();
 
-		m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenBottom, m_SubActors.size(), m_SubActors.size() );
+		m_exprTransformFunction.PositionItem( &m_quadMask, fPositionFullyOffScreenBottom, m_iNumItems, m_iNumItems );
 		if( bDrawPrimitives )	m_quadMask.Draw();
 	}
 
 	float fFirstItemToDraw = m_fCurrentItem - fNumItemsToDraw/2.f;
 	float fLastItemToDraw = m_fCurrentItem + fNumItemsToDraw/2.f;
+	int iFirstItemToDraw = (int) ceilf( fFirstItemToDraw );
+	int iLastItemToDraw = (int) ceilf( fLastItemToDraw );
+	if( !m_bLoop )
+	{
+		iFirstItemToDraw = clamp( iFirstItemToDraw, 0, m_iNumItems );
+		iLastItemToDraw = clamp( iLastItemToDraw, 0, m_iNumItems );
+	}
 
 	bool bDelayedDraw = m_bDrawByZPosition && !m_bLoop;
 	vector<Actor*> subs;
 
-	for( int iItem=(int)ceilf(fFirstItemToDraw); iItem<=fLastItemToDraw; iItem++ )
 	{
+		/* Shift m_SubActors so iFirstItemToDraw is at the beginning. */
+		int iNewFirstIndex = iFirstItemToDraw;
+		int iDist = iNewFirstIndex - m_iFirstSubActorIndex;
+		m_iFirstSubActorIndex = iNewFirstIndex;
+		ShiftSubActors( iDist );
+	}
+
+	int iNumToDraw = iLastItemToDraw - iFirstItemToDraw;
+	for( int i = 0; i < iNumToDraw; ++i )
+	{
+		int iItem = i + iFirstItemToDraw;
 		float fPosition = iItem - m_fCurrentItem;
-		int iIndex = iItem;
+		int iIndex = i; // index into m_SubActors
 		if( m_bLoop )
 			wrap( iIndex, m_SubActors.size() );
 		else if( iIndex < 0 || iIndex >= (int)m_SubActors.size() )
 			continue;
 
-		m_exprTransformFunction.PositionItem( m_SubActors[iIndex], fPosition, iIndex, m_SubActors.size() );
+		m_exprTransformFunction.PositionItem( m_SubActors[iIndex], fPosition, iItem, m_iNumItems );
 		if( bDrawPrimitives )
 		{
 			if( bDelayedDraw )
