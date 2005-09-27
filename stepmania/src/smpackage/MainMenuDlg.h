@@ -35,11 +35,12 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(MainMenuDlg)
-	afx_msg void OnConvertTheme();
 	afx_msg void OnExportPackages();
 	afx_msg void OnEditInstallations();
 	afx_msg void OnAnalyzeElements();
 	afx_msg void OnChangeApi();
+	afx_msg void OnCreateSong();
+	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

@@ -155,29 +155,37 @@ BEGIN
                     IDC_STATIC,18,144,196,17
 END
 
-IDD_MENU DIALOG DISCARDABLE  0, 0, 332, 293
+IDD_MENU DIALOGEX 0, 0, 332, 334
 STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "StepMania Tools Main Menu"
 FONT 8, "MS Sans Serif"
 BEGIN
-    DEFPUSHBUTTON   "Exit",IDOK,275,272,50,14
+    DEFPUSHBUTTON   "Exit",IDOK,275,313,50,14
     CONTROL         140,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    PUSHBUTTON      "Export Packages",IDC_EXPORT_PACKAGES,20,120,70,15
+    PUSHBUTTON      "Export Packages",IDC_EXPORT_PACKAGES,20,130,70,15
     LTEXT           "Choose this option to create .smzip files that you can share with other StepMania and DWI users.  A .smzip package can contain songs, courses, themes, background animations, and more.",
-                    IDC_STATIC,105,115,215,25
-    GROUPBOX        ".smzip Packages",IDC_STATIC,5,100,320,50
-    GROUPBOX        "Themes",IDC_STATIC,5,155,320,53
-    PUSHBUTTON      "Theme Tools",IDC_ANALYZE_ELEMENTS,20,176,70,15
-    PUSHBUTTON      "Edit Installations",IDC_EDIT_INSTALLATIONS,20,65,70,15
+                    IDC_STATIC,105,125,215,25
+    GROUPBOX        ".smzip Packages",IDC_STATIC,7,110,318,50
+    GROUPBOX        "Themes",IDC_STATIC,7,165,318,44
+    PUSHBUTTON      "Theme Tools",IDC_ANALYZE_ELEMENTS,20,183,70,15
+    PUSHBUTTON      "Edit Installations",IDC_EDIT_INSTALLATIONS,20,75,70,15
     LTEXT           "Choose this option to edit the list of locations where you have StepMania or DWI installed.  When you double-click on a .smzip file, you can choose to install the package to any of these locations.",
-                    IDC_STATIC,105,60,215,25
-    GROUPBOX        "Installations",IDC_STATIC,5,45,320,50
-    LTEXT           "Using this feature, you can:\n - Catch redundant and misnamed theme elements\n - Convert a SM 3.0 theme for use in SM 4.0\n - Edit theme metrics using a user-friendly interface",
-                    IDC_STATIC,103,168,215,35
-    GROUPBOX        "Game Settings",IDC_STATIC,6,215,320,49
-    PUSHBUTTON      "Change Settings",IDC_CHANGE_API,20,234,70,15
+                    IDC_STATIC,105,70,215,25
+    GROUPBOX        "Installations",IDC_STATIC,7,55,318,50
+    LTEXT           "Using this feature, you can:\n - Catch redundant and misnamed theme elements\n - Edit theme metrics using a user-friendly interface",
+                    IDC_STATIC,103,178,215,26
+    GROUPBOX        "Game Settings",IDC_STATIC,6,214,320,49
+    PUSHBUTTON      "Change Settings",IDC_CHANGE_API,20,233,70,15
     LTEXT           "Using this feature, you can:\n - Change the graphics API that StepMania will use.\n - Change the sound API that StepMania will use.",
-                    IDC_STATIC,104,228,215,29
+                    IDC_STATIC,104,227,215,29
+    GROUPBOX        "Songs",IDC_STATIC,6,267,320,38
+    PUSHBUTTON      "Create Song",IDC_CREATE_SONG,20,282,70,15
+    LTEXT           "Choose this option to create a new song in StepMania from your favorite mp3 or ogg music file.",
+                    IDC_STATIC,104,281,215,23
+    RTEXT           "Installation:",IDC_STATIC,37,42,63,9,0,
+                    WS_EX_TRANSPARENT
+    EDITTEXT        IDC_EDIT_INSTALLATION,105,40,220,12,ES_AUTOHSCROLL | 
+                    ES_READONLY
 END
 
 IDD_CONVERT_THEME DIALOG DISCARDABLE  0, 0, 332, 258
@@ -389,7 +397,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 325
         TOPMARGIN, 7
-        BOTTOMMARGIN, 286
+        BOTTOMMARGIN, 327
     END
 
     IDD_CONVERT_THEME, DIALOG

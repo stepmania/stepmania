@@ -129,7 +129,7 @@ void MainMenuDlg::OnCreateSong()
 
 	BOOL bSuccess;
 
-	CString sSongDirectory = "Songs\\MyCreations\\";
+	CString sSongDirectory = "Songs\\My Creations\\";
 	CreateDirectory( sSongDirectory, NULL );	// ok if this fails.  It will already exist if we've created another song.
 	DWORD dwError = ::GetLastError();
 	sSongDirectory += sFileNameNoExt;

@@ -20,6 +20,7 @@
 
 #define ZERO(x)					memset(&x, 0, sizeof(x))
 #define COPY(a,b)				{ ASSERT(sizeof(a)==sizeof(b)); memcpy(&a, &b, sizeof(a)); }
+#define ARRAYSIZE(a) (sizeof(a) / sizeof((a)[0]))
 
 #define RECTWIDTH(rect)   ((rect).right  - (rect).left)
 #define RECTHEIGHT(rect)  ((rect).bottom - (rect).top)

@@ -2,7 +2,7 @@
 
 [General Info]
 Version=1
-LastClass=ChangeGameSettings
+LastClass=MainMenuDlg
 LastTemplate=CDialog
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "smpackage.h"
@@ -16,25 +16,25 @@ Resource1=IDR_MAINFRAME
 Resource2=IDD_ENTER_STRING
 Class3=CSMPackageInstallDlg
 Class4=CSmpackageExportDlg
-Resource3=IDD_INSTALL
+Resource3=IDD_UNINSTALL_OLD_PACKAGES
 Class5=EnterName
-Resource4=IDD_ENTER_COMMENT
+Resource4=IDD_INSTALL
 Class6=EditInsallations
-Resource5=IDD_SHOW_COMMENT
+Resource5=IDD_EXPORTER
 Class7=MainMenuDlg
-Resource6=IDD_EDIT_INSTALLATIONS
+Resource6=IDD_EDIT_METRICS
 Class8=ConvertThemeDlg
-Resource7=IDD_CONVERT_THEME
+Resource7=IDD_CHANGE_GAME_SETTINGS
 Class9=EditMetricsDlg
-Resource8=IDD_EXPORTER
-Resource9=IDD_UNINSTALL_OLD_PACKAGES
+Resource8=IDD_DIALOG_NAME
+Resource9=IDD_SHOW_COMMENT
 Class10=EnterComment
-Resource10=IDD_MENU
+Resource10=IDD_CONVERT_THEME
 Class11=ShowComment
-Resource11=IDD_EDIT_METRICS
-Resource12=IDD_DIALOG_NAME
+Resource11=IDD_ENTER_COMMENT
+Resource12=IDD_EDIT_INSTALLATIONS
 Class12=ChangeGameSettings
-Resource13=IDD_CHANGE_GAME_SETTINGS
+Resource13=IDD_MENU
 
 [CLS:CSmpackageApp]
 Type=0
@@ -140,7 +140,7 @@ LastObject=EditInsallations
 [DLG:IDD_MENU]
 Type=1
 Class=MainMenuDlg
-ControlCount=14
+ControlCount=19
 Control1=IDOK,button,1342242817
 Control2=IDC_STATIC,static,1342177294
 Control3=IDC_EXPORT_PACKAGES,button,1342242816
@@ -155,6 +155,11 @@ Control11=IDC_STATIC,static,1342308352
 Control12=IDC_STATIC,button,1342177287
 Control13=IDC_CHANGE_API,button,1342242816
 Control14=IDC_STATIC,static,1342308352
+Control15=IDC_STATIC,button,1342177287
+Control16=IDC_CREATE_SONG,button,1342242816
+Control17=IDC_STATIC,static,1342308352
+Control18=IDC_STATIC,static,1342308354
+Control19=IDC_EDIT_INSTALLATION,edit,1350633600
 
 [CLS:MainMenuDlg]
 Type=0
@@ -163,7 +168,7 @@ ImplementationFile=MainMenuDlg.cpp
 BaseClass=CDialog
 Filter=D
 VirtualFilter=dWC
-LastObject=IDC_ANALYZE_ELEMENTS
+LastObject=MainMenuDlg
 
 [DLG:IDD_CONVERT_THEME]
 Type=1

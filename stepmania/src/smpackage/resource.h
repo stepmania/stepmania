@@ -47,6 +47,7 @@
 #define IDC_BUTTON_ANALYZE              1025
 #define IDC_CHANGE_API                  1025
 #define IDC_BUTTON_EDIT_METRICS         1026
+#define IDC_CREATE_SONG                 1026
 #define IDC_BUTTON_ANALYZE_METRICS      1027
 #define IDC_EDIT_VALUE                  1028
 #define IDC_EDIT_DEFAULT                1029
@@ -67,6 +68,7 @@
 #define IDC_RADIO_SOUND_NULL            1052
 #define IDC_CHECK_LOG_TO_DISK           1053
 #define IDC_CHECK_SHOW_LOG_WINDOW       1054
+#define IDC_EDIT_INSTALLATION           1054
 
 // Next default values for new objects
 // 
@@ -74,7 +76,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        149
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1054
+#define _APS_NEXT_CONTROL_VALUE         1055
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
