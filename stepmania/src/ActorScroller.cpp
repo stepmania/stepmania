@@ -1,13 +1,12 @@
 #include "global.h"
 #include "ActorScroller.h"
-#include "ActorCollision.h"
+#include "Foreach.h"
 #include "RageUtil.h"
 #include "RageDisplay.h"
 #include "XmlFile.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageLog.h"
 #include "ActorUtil.h"
-#include <sstream>
 
 /* Tricky: We need ActorFrames created in XML to auto delete their children.
  * We don't want classes that derive from ActorFrame to auto delete their 
