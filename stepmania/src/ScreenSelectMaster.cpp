@@ -82,24 +82,6 @@ void ScreenSelectMaster::Init()
 		}
 	}
 
-	// init scroll
-	if( SHOW_SCROLLER )
-	{
-		FOREACH( PlayerNumber, vpns, p )
-		{
-			m_Scroller[*p].Load3(
-				SCROLLER_SECONDS_PER_ITEM, 
-				SCROLLER_NUM_ITEMS_TO_DRAW,
-				SCROLLER_FAST_CATCHUP,
-				SCROLLER_TRANSFORM,
-				SCROLLER_SUBDIVISIONS,
-				false,
-				LOOP_SCROLLER );
-			m_Scroller[*p].SetName( "Scroller"+PLAYER_APPEND_NO_SPACE(*p) );
-			this->AddChild( &m_Scroller[*p] );
-		}
-	}
-
 	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
 	{
 		GameCommand& mc = m_aGameCommands[c];
@@ -134,6 +116,24 @@ void ScreenSelectMaster::Init()
 		}
 
 		LUA->UnsetGlobal( "ThisGameCommand" );
+	}
+
+	// init scroll
+	if( SHOW_SCROLLER )
+	{
+		FOREACH( PlayerNumber, vpns, p )
+		{
+			m_Scroller[*p].Load3(
+				SCROLLER_SECONDS_PER_ITEM, 
+				SCROLLER_NUM_ITEMS_TO_DRAW,
+				SCROLLER_FAST_CATCHUP,
+				SCROLLER_TRANSFORM,
+				SCROLLER_SUBDIVISIONS,
+				false,
+				LOOP_SCROLLER );
+			m_Scroller[*p].SetName( "Scroller"+PLAYER_APPEND_NO_SPACE(*p) );
+			this->AddChild( &m_Scroller[*p] );
+		}
 	}
 
 	for( int page=0; page<NUM_PAGES; page++ )
