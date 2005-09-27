@@ -64,6 +64,12 @@ BitmapText::~BitmapText()
 BitmapText::BitmapText( const BitmapText &cpy ):
 	Actor( cpy )
 {
+	m_pFont = NULL;
+	*this = cpy;
+}
+
+BitmapText &BitmapText::operator =( const BitmapText &cpy )
+{
 #define CPY(a) a = cpy.a
 	CPY( m_sText );
 	CPY( m_wTextLines );
@@ -76,10 +82,15 @@ BitmapText::BitmapText( const BitmapText &cpy ):
 	CPY( m_pTextures );
 #undef CPY
 
+	if( m_pFont )
+		FONT->UnloadFont( m_pFont );
+	
 	if( cpy.m_pFont != NULL )
 		m_pFont = FONT->CopyFont( cpy.m_pFont );
 	else
 		m_pFont = NULL;
+
+	return *this;
 }
 
 void BitmapText::LoadFromNode( const CString& sDir, const XNode* pNode )
