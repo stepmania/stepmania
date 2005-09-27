@@ -2475,6 +2475,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\BitmapText.h">
 			</File>
 			<File
+				RelativePath="DynamicActorScroller.cpp">
+			</File>
+			<File
+				RelativePath="DynamicActorScroller.h">
+			</File>
+			<File
 				RelativePath="Model.cpp">
 			</File>
 			<File
