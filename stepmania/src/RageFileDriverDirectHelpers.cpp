@@ -34,6 +34,13 @@ int DoStat( const CString &sPath, struct stat *st )
 	return stat( DoPathReplace(sPath), st );
 }
 
+int DoRename( const CString &sOldPath, const CString &sNewPath )
+{
+	CString TempPath = sPath;
+	TempPath.Replace( "/", "\\" );
+	return rename( sPath );
+}
+
 int DoRemove( const CString &sPath )
 {
 	return remove( DoPathReplace(sPath) );

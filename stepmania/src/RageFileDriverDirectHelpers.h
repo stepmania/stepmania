@@ -9,6 +9,7 @@
 int DoMkdir( const CString &sPath, int perm );
 int DoOpen( const CString &sPath, int flags, int perm );
 int DoStat( const CString &sPath, struct stat *st );
+int DoRename( const CString &sOldPath, const CString &sNewPath );
 int DoRemove( const CString &sPath );
 int DoRmdir( const CString &sPath );
 HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd );
@@ -17,6 +18,7 @@ HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd );
 #define DoStat stat
 #define DoMkdir mkdir
 #define DoFindFirstFile FindFirstFile
+#define DoRename rename
 #define DoRemove remove
 #define DoRmdir rmdir
 #endif

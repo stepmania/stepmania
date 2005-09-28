@@ -122,6 +122,31 @@ RageFileBasic *RageFileDriverDirect::Open( const CString &path, int mode, int &e
 	return MakeFileObjDirect( root + sPath, mode, err );
 }
 
+bool RageFileDriverDirect::MoveFile( const CString &sOldPath_, const CString &sNewPath_ )
+{
+	CString sOldPath = sOldPath_;
+	CString sNewPath = sNewPath_;
+	FDB->ResolvePath( sOldPath );
+	FDB->ResolvePath( sNewPath );
+
+	if( this->GetFileType(sOldPath) == RageFileManager::TYPE_NONE )
+		return false;
+
+        {
+		const CString dir = Dirname(sNewPath);
+		CreateDirectories( root + dir );
+	}
+
+	LOG->Trace("rename \"%s\" -> \"%s\"", (root + sOldPath).c_str(), (root + sNewPath).c_str() );
+	if( DoRename(root + sOldPath, root + sNewPath) == -1 )
+	{
+		LOG->Warn( "rename(%s,%s) failed: %s", (root + sOldPath).c_str(), (root + sNewPath).c_str(), strerror(errno) );
+		return false;
+	}
+
+	return true;
+}
+
 bool RageFileDriverDirect::Remove( const CString &path )
 {
 	CString sPath = path;
