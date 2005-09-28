@@ -41,6 +41,7 @@ protected:
 	afx_msg void OnChangeApi();
 	afx_msg void OnCreateSong();
 	virtual BOOL OnInitDialog();
+	afx_msg void OnOpenStepmaniaIni();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

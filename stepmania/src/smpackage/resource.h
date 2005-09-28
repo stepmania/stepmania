@@ -49,6 +49,7 @@
 #define IDC_BUTTON_EDIT_METRICS         1026
 #define IDC_CREATE_SONG                 1026
 #define IDC_BUTTON_ANALYZE_METRICS      1027
+#define IDC_OPEN_STEPMANIA_INI          1027
 #define IDC_EDIT_VALUE                  1028
 #define IDC_EDIT_DEFAULT                1029
 #define IDC_BUTTON_REFRESH              1035

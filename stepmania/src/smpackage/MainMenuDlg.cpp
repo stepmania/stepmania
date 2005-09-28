@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(MainMenuDlg, CDialog)
 	ON_BN_CLICKED(IDC_ANALYZE_ELEMENTS, OnAnalyzeElements)
 	ON_BN_CLICKED(IDC_CHANGE_API, OnChangeApi)
 	ON_BN_CLICKED(IDC_CREATE_SONG, OnCreateSong)
+	ON_BN_CLICKED(IDC_OPEN_STEPMANIA_INI, OnOpenStepmaniaIni)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -173,4 +174,10 @@ BOOL MainMenuDlg::OnInitDialog()
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
+}
+
+void MainMenuDlg::OnOpenStepmaniaIni() 
+{
+	// TODO: Add your control notification handler code here
+	::ShellExecute( this->m_hWnd, "open", "Data\\StepMania.ini", "", "", SW_SHOWNORMAL  );
 }
