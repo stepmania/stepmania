@@ -1315,6 +1315,7 @@ public:
 	static int zoomtowidth( T* p, lua_State *L )	{ p->ZoomToWidth(FArg(1)); return 0; }
 	static int zoomtoheight( T* p, lua_State *L )	{ p->ZoomToHeight(FArg(1)); return 0; }
 	static int setsize( T* p, lua_State *L )		{ p->SetWidth(FArg(1)); p->SetHeight(FArg(2)); return 0; }
+	static int basealpha( T* p, lua_State *L )		{ p->SetBaseAlpha(FArg(1)); return 0; }
 	static int basezoomx( T* p, lua_State *L )		{ p->SetBaseZoomX(FArg(1)); return 0; }
 	static int basezoomy( T* p, lua_State *L )		{ p->SetBaseZoomY(FArg(1)); return 0; }
 	static int stretchto( T* p, lua_State *L )		{ p->StretchTo( RectF(FArg(1),FArg(2),FArg(3),FArg(4)) ); return 0; }
@@ -1444,6 +1445,7 @@ public:
 		ADD_METHOD( zoomtowidth );
 		ADD_METHOD( zoomtoheight );
 		ADD_METHOD( setsize );
+		ADD_METHOD( basealpha );
 		ADD_METHOD( basezoomx );
 		ADD_METHOD( basezoomy );
 		ADD_METHOD( stretchto );
