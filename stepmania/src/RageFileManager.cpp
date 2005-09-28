@@ -401,6 +401,34 @@ void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bO
 	}
 }
 
+/* Files may only be moved within the same file driver. */
+bool RageFileManager::MoveFile( CString sOldPath, CString sNewPath )
+{
+	vector<LoadedDriver> aDriverList;
+	ReferenceAllDrivers( aDriverList );
+
+	NormalizePath( sOldPath );
+	NormalizePath( sNewPath );
+	
+	/* Multiple drivers may have the same file. */
+	bool Deleted = false;
+	for( unsigned i = 0; i < aDriverList.size(); ++i )
+	{
+		const CString sOldDriverPath = aDriverList[i].GetPath( sOldPath );
+		const CString sNewDriverPath = aDriverList[i].GetPath( sNewPath );
+		if( sOldDriverPath.size() == 0 || sNewDriverPath.size() == 0 )
+			continue;
+
+		bool ret = aDriverList[i].driver->MoveFile( sOldDriverPath, sNewDriverPath );
+		if( ret )
+			Deleted = true;
+	}
+
+	UnreferenceAllDrivers( aDriverList );
+
+	return Deleted;
+}
+
 bool RageFileManager::Remove( CString sPath )
 {
 	vector<LoadedDriver *> apDriverList;
