@@ -34,17 +34,17 @@ RageDisplay*		DISPLAY	= NULL;
 Preference<bool>  LOG_FPS( "LogFPS", true );
 Preference<bool>  g_fFrameLimitPercent( "FrameLimitPercent", 0.0f );
 
-CString RageDisplay::PixelFormatToString( PixelFormat pixfmt )
-{
-	const CString s[NUM_PIX_FORMATS] = {
-		"FMT_RGBA8",
-		"FMT_RGBA4",
-		"FMT_RGB5A1",
-		"FMT_RGB5",
-		"FMT_RGB8",
-		"FMT_PAL" };
-	return s[pixfmt];
+static const CString PixelFormatNames[] = {
+	"RGBA8",
+	"RGBA4",
+	"RGB5A1",
+	"RGB5",
+	"RGB8",
+	"PAL",
+	"BGR8",
+	"A1BGR5",
 };
+XToString( PixelFormat, NUM_PixelFormat );
 
 /* bNeedReloadTextures is set to true if the device was re-created and we need
  * to reload textures.  On failure, an error message is returned. 
@@ -548,12 +548,12 @@ RageSurface *RageDisplay::CreateSurfaceFromPixfmt( PixelFormat pixfmt,
 	return surf;
 }
 
-RageDisplay::PixelFormat RageDisplay::FindPixelFormat( 
+PixelFormat RageDisplay::FindPixelFormat( 
 	int bpp, int Rmask, int Gmask, int Bmask, int Amask, bool realtime )
 {
 	PixelFormatDesc tmp = { bpp, { Rmask, Gmask, Bmask, Amask } };
 
-	for(int pixfmt = 0; pixfmt < NUM_PIX_FORMATS; ++pixfmt)
+	for(int pixfmt = 0; pixfmt < NUM_PixelFormat; ++pixfmt)
 	{
 		const PixelFormatDesc *pf = GetPixelFormatDesc(PixelFormat(pixfmt));
 		if(!SupportsTextureFormat( PixelFormat(pixfmt), realtime ))
@@ -564,7 +564,7 @@ RageDisplay::PixelFormat RageDisplay::FindPixelFormat(
 		return PixelFormat(pixfmt);
 	}
 
-	return NUM_PIX_FORMATS;
+	return PixelFormat_INVALID;
 }
 	
 /* These convert to OpenGL's coordinate system: -1,-1 is the bottom-left, +1,+1 is the

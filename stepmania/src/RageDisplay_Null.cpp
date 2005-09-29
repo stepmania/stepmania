@@ -13,7 +13,7 @@
 #include "RageUtil.h"
 #include "RageSurface.h"
 
-static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[RageDisplay::NUM_PIX_FORMATS] = {
+static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 	{
 		/* R8G8B8A8 */
 		32,
@@ -80,7 +80,7 @@ RageDisplay_Null::RageDisplay_Null( VideoModeParams p )
 
 RageSurface* RageDisplay_Null::CreateScreenshot()
 {
-	const PixelFormatDesc &desc = PIXEL_FORMAT_DESC[FMT_RGB8];
+	const PixelFormatDesc &desc = PIXEL_FORMAT_DESC[PixelFormat_RGB8];
 	RageSurface *image = CreateSurface(
 		640, 480, desc.bpp,
 		desc.masks[0], desc.masks[1], desc.masks[2], desc.masks[3] );
@@ -92,7 +92,7 @@ RageSurface* RageDisplay_Null::CreateScreenshot()
 
 const RageDisplay::PixelFormatDesc *RageDisplay_Null::GetPixelFormatDesc(PixelFormat pf) const
 {
-	ASSERT( pf < NUM_PIX_FORMATS );
+	ASSERT( pf >= 0 && pf < NUM_PixelFormat );
 	return &PIXEL_FORMAT_DESC[pf];
 }
 

@@ -88,7 +88,7 @@ LowLevelWindow *wind;
 
 static void InvalidateAllGeometry();
 
-static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[RageDisplay::NUM_PIX_FORMATS] = {
+static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 	{
 		/* R8G8B8A8 */
 		32,
@@ -169,9 +169,9 @@ static CString GLToString( GLenum e )
 	return ssprintf( "%i", int(e) );
 }
 
-/* GL_PIXFMT_INFO is used for both texture formats and surface formats.  For example,
- * it's fine to ask for a FMT_RGB5 texture, but to supply a surface matching
- * FMT_RGB8.  OpenGL will simply discard the extra bits.
+/* g_GLPixFmtInfo is used for both texture formats and surface formats.  For example,
+ * it's fine to ask for a PixelFormat_RGB5 texture, but to supply a surface matching
+ * PixelFormat_RGB8.  OpenGL will simply discard the extra bits.
  *
  * It's possible for a format to be supported as a texture format but not as a
  * surface format.  For example, if packed pixels aren't supported, we can still
@@ -183,7 +183,7 @@ struct GLPixFmtInfo_t {
 	GLenum internalfmt; /* target format */
 	GLenum format; /* target format */
 	GLenum type; /* data format */
-} GL_PIXFMT_INFO[RageDisplay::NUM_PIX_FORMATS] = {
+} const g_GLPixFmtInfo[NUM_PixelFormat] = {
 	{
 		/* R8G8B8A8 */
 		GL_RGBA8,
@@ -236,13 +236,13 @@ static void FixLittleEndian()
 		return;
 	Initialized = true;
 
-	for( int i = 0; i < RageDisplay::NUM_PIX_FORMATS; ++i )
+	for( int i = 0; i < NUM_PixelFormat; ++i )
 	{
 		RageDisplay::PixelFormatDesc &pf = PIXEL_FORMAT_DESC[i];
 
 		/* OpenGL and RageSurface handle byte formats differently; we need
 		 * to flip non-paletted masks to make them line up. */
-		if( GL_PIXFMT_INFO[i].type != GL_UNSIGNED_BYTE || pf.bpp == 8 )
+		if( g_GLPixFmtInfo[i].type != GL_UNSIGNED_BYTE || pf.bpp == 8 )
 			continue;
 
 		for( int mask = 0; mask < 4; ++mask)
@@ -524,9 +524,9 @@ static void CheckPalettedTextures()
 		}
 
 		/* Check to see if paletted textures really work. */
-		GLenum glTexFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].internalfmt;
-		GLenum glImageFormat = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].format;
-		GLenum glImageType = GL_PIXFMT_INFO[RageDisplay::FMT_PAL].type;
+		GLenum glTexFormat		= g_GLPixFmtInfo[PixelFormat_PAL].internalfmt;
+		GLenum glImageFormat	= g_GLPixFmtInfo[PixelFormat_PAL].format;
+		GLenum glImageType		= g_GLPixFmtInfo[PixelFormat_PAL].type;
 
 		int bits = 8;
 
@@ -779,7 +779,7 @@ RageSurface* RageDisplay_OGL::CreateScreenshot()
 	int width = wind->GetVideoModeParams().width;
 	int height = wind->GetVideoModeParams().height;
 
-	const PixelFormatDesc &desc = PIXEL_FORMAT_DESC[FMT_RGBA8];
+	const PixelFormatDesc &desc = PIXEL_FORMAT_DESC[PixelFormat_RGBA8];
 	RageSurface *image = CreateSurface( width, height, desc.bpp,
 		desc.masks[0], desc.masks[1], desc.masks[2], 0 );
 
@@ -1599,7 +1599,7 @@ void RageDisplay_OGL::SetCullMode( CullMode mode )
 
 const RageDisplay::PixelFormatDesc *RageDisplay_OGL::GetPixelFormatDesc(PixelFormat pf) const
 {
-	ASSERT( pf < NUM_PIX_FORMATS );
+	ASSERT( pf < NUM_PixelFormat );
 	return &PIXEL_FORMAT_DESC[pf];
 }
 
@@ -1614,7 +1614,7 @@ void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
 }
 
 
-RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture )
+PixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture )
 {
 	PixelFormat pixfmt = FindPixelFormat( img->format->BitsPerPixel, img->format->Rmask, img->format->Gmask, img->format->Bmask, img->format->Amask );
 	
@@ -1624,7 +1624,7 @@ RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, 
 	if( !bPalettedTexture && img->fmt.BytesPerPixel == 1 && !g_bColorIndexTableWorks )
 		bSupported = false;
 
-	if( pixfmt == NUM_PIX_FORMATS || !SupportsSurfaceFormat(pixfmt) )
+	if( pixfmt == NUM_PixelFormat || !SupportsSurfaceFormat(pixfmt) )
 		bSupported = false;
 
 	if( !bSupported )
@@ -1633,7 +1633,7 @@ RageDisplay::PixelFormat RageDisplay_OGL::GetImgPixelFormat( RageSurface* &img, 
 		 * it ourself.  Just convert it to RGBA8, and let OpenGL convert it back
 		 * down to whatever the actual pixel format is.  This is a very slow code
 		 * path, which should almost never be used. */
-		pixfmt = FMT_RGBA8;
+		pixfmt = PixelFormat_RGBA8;
 		ASSERT( SupportsSurfaceFormat(pixfmt) );
 
 		const PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
@@ -1685,17 +1685,17 @@ unsigned RageDisplay_OGL::CreateTexture(
 	RageSurface* img,
 	bool bGenerateMipMaps )
 {
-	ASSERT( pixfmt < NUM_PIX_FORMATS );
+	ASSERT( pixfmt < NUM_PixelFormat );
 	ASSERT( img->w == power_of_two(img->w) && img->h == power_of_two(img->h) );
 
 
 	/* Find the pixel format of the image we've been given. */
 	bool FreeImg;
-	PixelFormat imgpixfmt = GetImgPixelFormat( img, FreeImg, img->w, img->h, pixfmt == FMT_PAL );
+	PixelFormat imgpixfmt = GetImgPixelFormat( img, FreeImg, img->w, img->h, pixfmt == PixelFormat_PAL );
 
-	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
-	GLenum glImageFormat = GL_PIXFMT_INFO[imgpixfmt].format;
-	GLenum glImageType = GL_PIXFMT_INFO[imgpixfmt].type;
+	GLenum glTexFormat = g_GLPixFmtInfo[pixfmt].internalfmt;
+	GLenum glImageFormat = g_GLPixFmtInfo[imgpixfmt].format;
+	GLenum glImageType = g_GLPixFmtInfo[imgpixfmt].type;
 
 	/* If the image is paletted, but we're not sending it to a paletted image,
 	 * set up glPixelMap. */
@@ -1709,10 +1709,10 @@ unsigned RageDisplay_OGL::CreateTexture(
 		switch( pixfmt )
 		{
 		// OpenGL 1.1 types
-		case FMT_RGBA8:
-		case FMT_RGB8:
-		case FMT_PAL:
-		case FMT_BGR8:
+		case PixelFormat_RGBA8:
+		case PixelFormat_RGB8:
+		case PixelFormat_PAL:
+		case PixelFormat_BGR8:
 			break;
 		// OpenGL 1.2 types
 		default:
@@ -1756,7 +1756,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 
 
-	if( pixfmt == FMT_PAL )
+	if( pixfmt == PixelFormat_PAL )
 	{
 		/* The texture is paletted; set the texture palette. */
 		GLubyte palette[256*4];
@@ -1818,7 +1818,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 
 
 	/* Sanity check: */
-	if( pixfmt == FMT_PAL )
+	if( pixfmt == PixelFormat_PAL )
 	{
 		GLint size = 0;
 		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GLenum(GL_TEXTURE_INDEX_SIZE_EXT), &size);
@@ -1848,9 +1848,9 @@ void RageDisplay_OGL::UpdateTexture(
 
 	glPixelStorei(GL_UNPACK_ROW_LENGTH, img->pitch / img->format->BytesPerPixel);
 
-//	GLenum glTexFormat = GL_PIXFMT_INFO[pixfmt].internalfmt;
-	GLenum glImageFormat = GL_PIXFMT_INFO[pixfmt].format;
-	GLenum glImageType = GL_PIXFMT_INFO[pixfmt].type;
+//	GLenum glTexFormat = g_GLPixFmtInfo[pixfmt].internalfmt;
+	GLenum glImageFormat = g_GLPixFmtInfo[pixfmt].format;
+	GLenum glImageType = g_GLPixFmtInfo[pixfmt].type;
 
 	glTexSubImage2D(GL_TEXTURE_2D, 0,
 		xoffset, yoffset,
@@ -1913,7 +1913,7 @@ void RageDisplay_OGL::SetAlphaTest( bool b )
  */
 bool RageDisplay_OGL::SupportsSurfaceFormat( PixelFormat pixfmt )
 {
-	switch( GL_PIXFMT_INFO[pixfmt].type )
+	switch( g_GLPixFmtInfo[pixfmt].type )
 	{
 	case GL_UNSIGNED_SHORT_1_5_5_5_REV:
 		return GLExt.m_bGL_EXT_bgra && g_bReversePackedPixelsWorks;
@@ -1931,7 +1931,7 @@ bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 	if( realtime && !SupportsSurfaceFormat( pixfmt ) )
 		return false;
 
-	switch( GL_PIXFMT_INFO[pixfmt].format )
+	switch( g_GLPixFmtInfo[pixfmt].format )
 	{
 	case GL_COLOR_INDEX:
 		return GLExt.glColorTableEXT && GLExt.glGetColorTableParameterivEXT;

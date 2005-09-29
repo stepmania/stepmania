@@ -112,7 +112,7 @@ static void FixLilEndian()
 #endif
 }
 
-static int FindCompatibleAVFormat( RageDisplay::PixelFormat &pixfmt, bool HighColor )
+static int FindCompatibleAVFormat( PixelFormat &pixfmt, bool HighColor )
 {
 	for( int i = 0; AVPixelFormats[i].bpp; ++i )
 	{
@@ -128,7 +128,7 @@ static int FindCompatibleAVFormat( RageDisplay::PixelFormat &pixfmt, bool HighCo
 				true /* realtime */
 				);
 
-		if( pixfmt == RageDisplay::NUM_PIX_FORMATS )
+		if( pixfmt == NUM_PixelFormat )
 			continue;
 
 		return i;
@@ -661,7 +661,7 @@ void MovieTexture_FFMpeg::CreateTexture()
 	m_iTextureHeight = power_of_two(m_iImageHeight);
 
 	/* Bogus assignment to shut gcc up. */
-    RageDisplay::PixelFormat pixfmt = RageDisplay::FMT_RGBA8;
+    PixelFormat pixfmt = PixelFormat_RGBA8;
 	bool PreferHighColor = (TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32);
 	m_AVTexfmt = FindCompatibleAVFormat( pixfmt, PreferHighColor );
 
@@ -682,22 +682,22 @@ void MovieTexture_FFMpeg::CreateTexture()
 		default:
 			ASSERT(0);
 		case 16:
-			if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGB5) )
-				pixfmt = RageDisplay::FMT_RGB5;
+			if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB5) )
+				pixfmt = PixelFormat_RGB5;
 			else
-				pixfmt = RageDisplay::FMT_RGBA4; // everything supports RGBA4
+				pixfmt = PixelFormat_RGBA4; // everything supports RGBA4
 
 			break;
 
 		case 32:
-			if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGB8) )
-				pixfmt = RageDisplay::FMT_RGB8;
-			else if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGBA8) )
-				pixfmt = RageDisplay::FMT_RGBA8;
-			else if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGB5) )
-				pixfmt = RageDisplay::FMT_RGB5;
+			if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB8) )
+				pixfmt = PixelFormat_RGB8;
+			else if( DISPLAY->SupportsTextureFormat(PixelFormat_RGBA8) )
+				pixfmt = PixelFormat_RGBA8;
+			else if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB5) )
+				pixfmt = PixelFormat_RGB5;
 			else
-				pixfmt = RageDisplay::FMT_RGBA4; // everything supports RGBA4
+				pixfmt = PixelFormat_RGBA4; // everything supports RGBA4
 			break;
 		}
 	}

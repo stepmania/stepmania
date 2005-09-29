@@ -442,26 +442,26 @@ void MovieTexture_DShow::CreateTexture()
 	if(m_uTexHandle)
 		return;
 
-	RageDisplay::PixelFormat pixfmt;
+	PixelFormat pixfmt;
 	switch( TEXTUREMAN->GetPrefs().m_iMovieColorDepth )
 	{
 	default:
 		ASSERT(0);
 	case 16:
-		if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGB5) )
-			pixfmt = RageDisplay::FMT_RGB5;
+		if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB5) )
+			pixfmt = PixelFormat_RGB5;
 		else
-			pixfmt = RageDisplay::FMT_RGBA4;	// everything supports RGBA4
+			pixfmt = PixelFormat_RGBA4;	// everything supports RGBA4
 		break;
 	case 32:
-		if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGB8) )
-			pixfmt = RageDisplay::FMT_RGB8;
-		else if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGBA8) )
-			pixfmt = RageDisplay::FMT_RGBA8;
-		else if( DISPLAY->SupportsTextureFormat(RageDisplay::FMT_RGB5) )
-			pixfmt = RageDisplay::FMT_RGB5;
+		if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB8) )
+			pixfmt = PixelFormat_RGB8;
+		else if( DISPLAY->SupportsTextureFormat(PixelFormat_RGBA8) )
+			pixfmt = PixelFormat_RGBA8;
+		else if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB5) )
+			pixfmt = PixelFormat_RGB5;
 		else
-			pixfmt = RageDisplay::FMT_RGBA4;	// everything supports RGBA4
+			pixfmt = PixelFormat_RGBA4;	// everything supports RGBA4
 		break;
 	}
 

@@ -153,7 +153,7 @@ void RageBitmapTexture::Create()
 	if( pImg->w != m_iImageWidth || pImg->h != m_iImageHeight ) 
 		RageSurfaceUtils::Zoom( pImg, m_iImageWidth, m_iImageHeight );
 
-	if( actualID.iGrayscaleBits != -1 && DISPLAY->SupportsTextureFormat(RageDisplay::FMT_PAL) )
+	if( actualID.iGrayscaleBits != -1 && DISPLAY->SupportsTextureFormat(PixelFormat_PAL) )
 	{
 		RageSurface *pGrayscale = RageSurfaceUtils::PalettizeToGrayscale( pImg, actualID.iGrayscaleBits, actualID.iAlphaBits );
 
@@ -162,12 +162,12 @@ void RageBitmapTexture::Create()
 	}
 
 	/* Figure out which texture format we want the renderer to use. */
-	RageDisplay::PixelFormat pixfmt;
+	PixelFormat pixfmt;
 
 	/* If the source is palleted, always load as paletted if supported. */
-	if( pImg->format->BitsPerPixel == 8 && DISPLAY->SupportsTextureFormat(RageDisplay::FMT_PAL) )
+	if( pImg->format->BitsPerPixel == 8 && DISPLAY->SupportsTextureFormat(PixelFormat_PAL) )
 	{
-		pixfmt = RageDisplay::FMT_PAL;
+		pixfmt = PixelFormat_PAL;
 	}
 	else
 	{
@@ -186,16 +186,16 @@ void RageBitmapTexture::Create()
 				{
 				case 0:
 				case 1:
-					pixfmt = RageDisplay::FMT_RGB5A1;
+					pixfmt = PixelFormat_RGB5A1;
 					break;
 				default:	
-					pixfmt = RageDisplay::FMT_RGBA4;
+					pixfmt = PixelFormat_RGBA4;
 					break;
 				}
 			}
 			break;
 		case 32:
-			pixfmt = RageDisplay::FMT_RGBA8;
+			pixfmt = PixelFormat_RGBA8;
 			break;
 		default:
 			RageException::Throw( "Invalid color depth: %d bits", actualID.iColorDepth );
@@ -205,9 +205,9 @@ void RageBitmapTexture::Create()
 	/* Make we're using a supported format. Every card supports either RGBA8 or RGBA4. */
 	if( !DISPLAY->SupportsTextureFormat(pixfmt) )
 	{
-		pixfmt = RageDisplay::FMT_RGBA8;
+		pixfmt = PixelFormat_RGBA8;
 		if( !DISPLAY->SupportsTextureFormat(pixfmt) )
-			pixfmt = RageDisplay::FMT_RGBA4;
+			pixfmt = PixelFormat_RGBA4;
 	}
 
 	/* Dither if appropriate. XXX: This is a special case: don't bother dithering to
@@ -215,7 +215,7 @@ void RageBitmapTexture::Create()
 	 * depth on at least one color channel than the source.  For example, it doesn't
 	 * make sense to do this when pixfmt is RGBA5551 if the image is only RGBA555. */
 	if( actualID.bDither && 
-		(pixfmt==RageDisplay::FMT_RGBA4 || pixfmt==RageDisplay::FMT_RGB5A1) )
+		(pixfmt==PixelFormat_RGBA4 || pixfmt==PixelFormat_RGB5A1) )
 	{
 		/* Dither down to the destination format. */
 		const RageDisplay::PixelFormatDesc *pfd = DISPLAY->GetPixelFormatDesc(pixfmt);
@@ -288,7 +288,7 @@ void RageBitmapTexture::Create()
 
 
 	CString sProperties;
-	sProperties += RageDisplay::PixelFormatToString( pixfmt ) + " ";
+	sProperties += PixelFormatToString( pixfmt ) + " ";
 	if( actualID.iAlphaBits == 0 ) sProperties += "opaque ";
 	if( actualID.iAlphaBits == 1 ) sProperties += "matte ";
 	if( actualID.bStretch ) sProperties += "stretch ";

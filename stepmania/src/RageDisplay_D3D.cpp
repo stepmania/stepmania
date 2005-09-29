@@ -127,7 +127,7 @@ static void SetPalette( unsigned TexResource )
 #define D3DFVF_RageModelVertex (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1)
 
 
-static const RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[RageDisplay::NUM_PIX_FORMATS] = {
+static const RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 	{
 		/* A8B8G8R8 */
 		32,
@@ -176,7 +176,7 @@ static const RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[RageDisplay::NUM_PIX
 	}
 };
 
-static D3DFORMAT D3DFORMATS[RageDisplay::NUM_PIX_FORMATS] = 
+static D3DFORMAT D3DFORMATS[NUM_PixelFormat] = 
 {
 	D3DFMT_A8R8G8B8,
 	D3DFMT_A4R4G4B4,
@@ -194,7 +194,7 @@ static D3DFORMAT D3DFORMATS[RageDisplay::NUM_PIX_FORMATS] =
 
 const RageDisplay::PixelFormatDesc *RageDisplay_D3D::GetPixelFormatDesc(PixelFormat pf) const
 {
-	ASSERT( pf < NUM_PIX_FORMATS );
+	ASSERT( pf < NUM_PixelFormat );
 	return &PIXEL_FORMAT_DESC[pf];
 }
 
@@ -686,7 +686,7 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 
 	// Some cards (Savage) don't support alpha in palettes.
 	// Don't allow paletted textures if this is the case.
-	if( pixfmt == FMT_PAL  &&  !(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) )
+	if( pixfmt == PixelFormat_PAL  &&  !(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) )
 		return false;
 
 	if(	D3DFORMATS[pixfmt] == D3DFMT_UNKNOWN )
@@ -744,7 +744,7 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 		pCopy->LockRect( &lr, &rect, D3DLOCK_READONLY );
 	}
 
-	RageSurface *surface = CreateSurfaceFromPixfmt( FMT_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
+	RageSurface *surface = CreateSurfaceFromPixfmt( PixelFormat_RGBA8, lr.pBits, desc.Width, desc.Height, lr.Pitch);
 	ASSERT( surface );
 
 	/* We need to make a copy, since lr.pBits will go away when we call UnlockRect(). */
@@ -1291,12 +1291,12 @@ unsigned RageDisplay_D3D::CreateTexture(
 #endif
 
 	if( FAILED(hr) )
-		RageException::Throw( "CreateTexture(%i,%i,pixfmt=%i) failed: %s", 
-		img->w, img->h, pixfmt, GetErrorString(hr).c_str() );
+		RageException::Throw( "CreateTexture(%i,%i,%s) failed: %s", 
+		img->w, img->h, PixelFormatToString(pixfmt).c_str(), GetErrorString(hr).c_str() );
 
 	unsigned uTexHandle = (unsigned)pTex;
 
-	if( pixfmt == FMT_PAL )
+	if( pixfmt == PixelFormat_PAL )
 	{
 		// Save palette
 		TexturePalette pal;
@@ -1357,9 +1357,9 @@ void RageDisplay_D3D::UpdateTexture(
 		img->format->BytesPerPixel ); //BytesPerPixel
 #else
 	int texpixfmt;
-	for(texpixfmt = 0; texpixfmt < NUM_PIX_FORMATS; ++texpixfmt)
+	for(texpixfmt = 0; texpixfmt < NUM_PixelFormat; ++texpixfmt)
 		if(D3DFORMATS[texpixfmt] == desc.Format) break;
-	ASSERT( texpixfmt != NUM_PIX_FORMATS );
+	ASSERT( texpixfmt != NUM_PixelFormat );
 
 	RageSurface *Texture = CreateSurfaceFromPixfmt(PixelFormat(texpixfmt), lr.pBits, width, height, lr.Pitch);
 	ASSERT( Texture );
