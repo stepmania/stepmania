@@ -190,8 +190,8 @@ public:
 	Preference<bool>	m_bAutogenGroupCourses;
 	Preference<bool>	m_bBreakComboToGetItem;
 	Preference<bool>	m_bLockCourseDifficulties;
-	enum CharacterOption { CO_OFF = 0, CO_RANDOM = 1, CO_SELECT = 2};
-	Preference<CharacterOption>		m_ShowDancingCharacters;
+	enum ShowDancingCharacters { SDC_Off = 0, SDC_Random = 1, SDC_Select = 2};
+	Preference<ShowDancingCharacters>		m_ShowDancingCharacters;
 	Preference<bool>	m_bUseUnlockSystem;
 	Preference<bool>	m_bAutoMapOnJoyChange;
 	Preference<float>	m_fGlobalOffsetSeconds;

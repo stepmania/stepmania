@@ -247,7 +247,7 @@ void GameState::Reset()
 
 	FOREACH_PlayerNumber(p)
 	{
-		if( PREFSMAN->m_ShowDancingCharacters == PrefsManager::CO_RANDOM )
+		if( PREFSMAN->m_ShowDancingCharacters == PrefsManager::SDC_Random )
 			m_pCurCharacters[p] = CHARMAN->GetRandomCharacter();
 		else
 			m_pCurCharacters[p] = CHARMAN->GetDefaultCharacter();
