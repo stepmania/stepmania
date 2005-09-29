@@ -61,7 +61,7 @@ enum ThreadRequest
 	REQ_COPY,
 	REQ_POPULATE_FILE_SET,
 	REQ_FLUSH_DIR_CACHE,
-	REQ_MOVE_FILE,
+	REQ_MOVE,
 	REQ_REMOVE,
 };
 
@@ -85,7 +85,7 @@ public:
 	RageFileBasic *Copy( RageFileBasic *&pFile, CString &sError );
 
 	bool FlushDirCache( const CString &sPath );
-	int MoveFile( const CString &sOldPath, const CString &sNewPath );
+	int Move( const CString &sOldPath, const CString &sNewPath );
 	int Remove( const CString &sPath );
 	bool PopulateFileSet( FileSet &fs, const CString &sPath );
 
@@ -102,10 +102,10 @@ private:
 	vector<RageFileBasic *> m_apDeletedFiles;
 	RageMutex m_DeletedFilesLock;
 
-	/* REQ_OPEN, REQ_POPULATE_FILE_SET, REQ_FLUSH_DIR_CACHE, REQ_REMOVE, REQ_MOVE_FILE: */
+	/* REQ_OPEN, REQ_POPULATE_FILE_SET, REQ_FLUSH_DIR_CACHE, REQ_REMOVE, REQ_MOVE: */
 	CString m_sRequestPath; /* in */
 
-	/* REQ_MOVE_FILE: */
+	/* REQ_MOVE: */
 	CString m_sRequestPath2; /* in */
 
 	/* REQ_OPEN, REQ_COPY: */
@@ -272,10 +272,10 @@ void ThreadedFileWorker::HandleRequest( int iRequest )
 		m_iResultRequest = m_pChildDriver->Remove( m_sRequestPath )? 0:-1;
 		break;
 
-	case REQ_MOVE_FILE:
+	case REQ_MOVE:
 		ASSERT( !m_sRequestPath.empty() );
 		ASSERT( !m_sRequestPath2.empty() );
-		m_iResultRequest = m_pChildDriver->MoveFile( m_sRequestPath, m_sRequestPath2 )? 0:-1;
+		m_iResultRequest = m_pChildDriver->Move( m_sRequestPath, m_sRequestPath2 )? 0:-1;
 		break;
 
 	default:
@@ -587,7 +587,7 @@ bool ThreadedFileWorker::PopulateFileSet( FileSet &fs, const CString &sPath )
 	return true;
 }
 
-int ThreadedFileWorker::MoveFile( const CString &sOldPath, const CString &sNewPath )
+int ThreadedFileWorker::Move( const CString &sOldPath, const CString &sNewPath )
 {
 	ASSERT( m_pChildDriver != NULL ); /* how did you get a file to begin with? */
 
@@ -598,7 +598,7 @@ int ThreadedFileWorker::MoveFile( const CString &sOldPath, const CString &sNewPa
 	m_sRequestPath = sOldPath;
 	m_sRequestPath2 = sNewPath;
 
-	if( !DoRequest(REQ_MOVE_FILE) )
+	if( !DoRequest(REQ_MOVE) )
 	{
 		/* If we time out, we can no longer access pFile. */
 		return -1;
@@ -846,12 +846,12 @@ void RageFileDriverTimeout::FlushDirCache( const CString &sPath )
 	m_pWorker->FlushDirCache( sPath );
 }
 
-bool RageFileDriverTimeout::MoveFile( const CString &sOldPath, const CString &sNewPath )
+bool RageFileDriverTimeout::Move( const CString &sOldPath, const CString &sNewPath )
 {
-	int iRet = m_pWorker->MoveFile( sOldPath, sNewPath );
+	int iRet = m_pWorker->Move( sOldPath, sNewPath );
 	if( iRet == -1 )
 	{
-		LOG->Warn( "RageFileDriverTimeout::MoveFile(%s,%s) failed", sOldPath.c_str(), sNewPath.c_str() );
+		LOG->Warn( "RageFileDriverTimeout::Move(%s,%s) failed", sOldPath.c_str(), sNewPath.c_str() );
 		return false;
 	}
 

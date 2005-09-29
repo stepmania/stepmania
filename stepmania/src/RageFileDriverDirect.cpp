@@ -122,7 +122,7 @@ RageFileBasic *RageFileDriverDirect::Open( const CString &path, int mode, int &e
 	return MakeFileObjDirect( root + sPath, mode, err );
 }
 
-bool RageFileDriverDirect::MoveFile( const CString &sOldPath_, const CString &sNewPath_ )
+bool RageFileDriverDirect::Move( const CString &sOldPath_, const CString &sNewPath_ )
 {
 	CString sOldPath = sOldPath_;
 	CString sNewPath = sNewPath_;

@@ -15,7 +15,7 @@ public:
 
 	RageFileBasic *Open( const CString &path, int mode, int &err );
 	void FlushDirCache( const CString &sPath );
-	bool MoveFile( const CString &sOldPath, const CString &sNewPath );
+	bool Move( const CString &sOldPath, const CString &sNewPath );
 	bool Remove( const CString &sPath );
 
 	static void SetTimeout( float fSeconds );

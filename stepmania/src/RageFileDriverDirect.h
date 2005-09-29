@@ -11,7 +11,7 @@ public:
 	RageFileDriverDirect( CString root );
 
 	RageFileBasic *Open( const CString &path, int mode, int &err );
-	bool MoveFile( const CString &sOldPath, const CString &sNewPath );
+	bool Move( const CString &sOldPath, const CString &sNewPath );
 	bool Remove( const CString &sPath );
 	bool Remount( const CString &sPath );
 

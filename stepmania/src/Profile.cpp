@@ -1926,10 +1926,10 @@ XNode* Profile::SaveCoinDataCreateNode() const
 
 void Profile::MoveBackupToDir( CString sFromDir, CString sToDir )
 {
-	FILEMAN->MoveFile( sFromDir+EDITABLE_INI,				sToDir+EDITABLE_INI );
-	FILEMAN->MoveFile( sFromDir+STATS_XML,					sToDir+STATS_XML );
-	FILEMAN->MoveFile( sFromDir+STATS_XML+SIGNATURE_APPEND,	sToDir+STATS_XML+SIGNATURE_APPEND );
-	FILEMAN->MoveFile( sFromDir+DONT_SHARE_SIG,				sToDir+DONT_SHARE_SIG );
+	FILEMAN->Move( sFromDir+EDITABLE_INI,				sToDir+EDITABLE_INI );
+	FILEMAN->Move( sFromDir+STATS_XML,					sToDir+STATS_XML );
+	FILEMAN->Move( sFromDir+STATS_XML+SIGNATURE_APPEND,	sToDir+STATS_XML+SIGNATURE_APPEND );
+	FILEMAN->Move( sFromDir+DONT_SHARE_SIG,				sToDir+DONT_SHARE_SIG );
 }
 
 // lua start

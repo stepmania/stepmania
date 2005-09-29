@@ -16,7 +16,7 @@ public:
 	void MountInitialFilesystems();
 
 	void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
-	bool MoveFile( CString sOldPath, CString sNewPath );
+	bool Move( CString sOldPath, CString sNewPath );
 	bool Remove( CString sPath );
 	void CreateDir( CString sDir );
 	

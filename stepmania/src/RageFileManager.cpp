@@ -402,7 +402,7 @@ void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bO
 }
 
 /* Files may only be moved within the same file driver. */
-bool RageFileManager::MoveFile( CString sOldPath, CString sNewPath )
+bool RageFileManager::Move( CString sOldPath, CString sNewPath )
 {
 	vector<LoadedDriver *> aDriverList;
 	ReferenceAllDrivers( aDriverList );
@@ -419,7 +419,7 @@ bool RageFileManager::MoveFile( CString sOldPath, CString sNewPath )
 		if( sOldDriverPath.size() == 0 || sNewDriverPath.size() == 0 )
 			continue;
 
-		bool ret = aDriverList[i]->m_pDriver->MoveFile( sOldDriverPath, sNewDriverPath );
+		bool ret = aDriverList[i]->m_pDriver->Move( sOldDriverPath, sNewDriverPath );
 		if( ret )
 			Deleted = true;
 	}
