@@ -185,7 +185,7 @@ void ScreenJoinMultiplayer::UpdatePlayerStatus( bool bFirstUpdate )
 		bool bWasConnected = idsOld == InputDeviceState_Connected;
 		
 		InputDeviceState idsNew = INPUTMAN->GetInputDeviceState(id);
-		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_LSHIFT)) )
+		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_RSHIFT)) )
 			idsNew = InputDeviceState_Disconnected;
 		bool bIsConnected = idsNew == InputDeviceState_Connected;
 
