@@ -332,7 +332,7 @@ public:
 	void SaveStatsWebPageToDir( CString sDir ) const;
 	void SaveMachinePublicKeyToDir( CString sDir ) const;
 
-	static void BackupToDir( CString sFromDir, CString sToDir );
+	static void MoveBackupToDir( CString sFromDir, CString sToDir );
 
 	// Lua
 	void PushSelf( lua_State *L );

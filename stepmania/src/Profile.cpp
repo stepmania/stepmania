@@ -1924,12 +1924,12 @@ XNode* Profile::SaveCoinDataCreateNode() const
 	return pNode;
 }
 
-void Profile::BackupToDir( CString sFromDir, CString sToDir )
+void Profile::MoveBackupToDir( CString sFromDir, CString sToDir )
 {
-	FileCopy( sFromDir+EDITABLE_INI,				sToDir+EDITABLE_INI );
-	FileCopy( sFromDir+STATS_XML,					sToDir+STATS_XML );
-	FileCopy( sFromDir+STATS_XML+SIGNATURE_APPEND,	sToDir+STATS_XML+SIGNATURE_APPEND );
-	FileCopy( sFromDir+DONT_SHARE_SIG,				sToDir+DONT_SHARE_SIG );
+	FILEMAN->MoveFile( sFromDir+EDITABLE_INI,				sToDir+EDITABLE_INI );
+	FILEMAN->MoveFile( sFromDir+STATS_XML,					sToDir+STATS_XML );
+	FILEMAN->MoveFile( sFromDir+STATS_XML+SIGNATURE_APPEND,	sToDir+STATS_XML+SIGNATURE_APPEND );
+	FILEMAN->MoveFile( sFromDir+DONT_SHARE_SIG,				sToDir+DONT_SHARE_SIG );
 }
 
 // lua start

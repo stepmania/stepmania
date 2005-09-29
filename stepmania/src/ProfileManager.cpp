@@ -75,6 +75,7 @@ void ProfileManager::Init()
 		m_bWasLoadedFromMemoryCard[p] = false;
 		m_bLastLoadWasTamperedOrCorrupt[p] = false;
 		m_bLastLoadWasFromLastGood[p] = false;
+		m_bNeedToBackUpLastLoad[p] = false;
 	}
 
 	LoadMachineProfile();
@@ -119,18 +120,17 @@ ProfileLoadResult ProfileManager::LoadProfile( PlayerNumber pn, CString sProfile
 	m_sProfileDir[pn] = sProfileDir;
 	m_bWasLoadedFromMemoryCard[pn] = bIsMemCard;
 	m_bLastLoadWasFromLastGood[pn] = false;
+	m_bNeedToBackUpLastLoad[pn] = false;
 
 	// Try to load the original, non-backup data.
 	ProfileLoadResult lr = GetProfile(pn)->LoadAllFromDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
 	
 	CString sBackupDir = m_sProfileDir[pn] + LAST_GOOD_SUBDIR;
 
-	// Save a backup of the non-backup profile now that we've loaded it and know 
-	// it's good. This should be reasonably fast because we're only saving Stats.xml 
-	// and signatures - not all of the files in the Profile.
 	if( lr == ProfileLoadResult_Success )
 	{
-		Profile::BackupToDir( m_sProfileDir[pn], sBackupDir );
+		/* Next time the profile is written, move this good profile into LastGood. */
+		m_bNeedToBackUpLastLoad[pn] = true;
 	}
 
 	m_bLastLoadWasTamperedOrCorrupt[pn] = lr == ProfileLoadResult_FailedTampered;
@@ -297,6 +297,20 @@ bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 	if( m_sProfileDir[pn].empty() )
 		return false;
 
+	/*
+	 * If the profile we're writing was loaded from the primary (non-backup)
+	 * data, then we've validated it and know it's good.  Before writing our
+	 * new data, move the old, good data to the backup.  (Only do this once;
+	 * if we save the profile more than once, we havn't re-validated the
+	 * newly written data.)
+	 */
+	if( m_bNeedToBackUpLastLoad[pn] )
+	{
+		m_bNeedToBackUpLastLoad[pn] = false;
+		CString sBackupDir = m_sProfileDir[pn] + LAST_GOOD_DIR;
+		Profile::MoveBackupToDir( m_sProfileDir[pn], sBackupDir );
+	}
+
 	bool b = GetProfile(pn)->SaveAllToDir( m_sProfileDir[pn], PREFSMAN->m_bSignProfileData );
 
 	return b;
@@ -318,6 +332,7 @@ void ProfileManager::UnloadProfile( PlayerNumber pn )
 	m_bWasLoadedFromMemoryCard[pn] = false;
 	m_bLastLoadWasTamperedOrCorrupt[pn] = false;
 	m_bLastLoadWasFromLastGood[pn] = false;
+	m_bNeedToBackUpLastLoad[pn] = false;
 	m_pMemoryCardProfile[pn]->InitAll();
 	SONGMAN->FreeAllLoadedFromProfile( (ProfileSlot) pn );
 }
