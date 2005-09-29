@@ -307,7 +307,7 @@ bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 	if( m_bNeedToBackUpLastLoad[pn] )
 	{
 		m_bNeedToBackUpLastLoad[pn] = false;
-		CString sBackupDir = m_sProfileDir[pn] + LAST_GOOD_DIR;
+		CString sBackupDir = m_sProfileDir[pn] + LAST_GOOD_SUBDIR;
 		Profile::MoveBackupToDir( m_sProfileDir[pn], sBackupDir );
 	}
 
