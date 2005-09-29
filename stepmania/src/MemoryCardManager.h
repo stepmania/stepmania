@@ -26,7 +26,7 @@ public:
 	void UnmountCard( PlayerNumber pn );
 
 	/* When paused, no changes in memory card state will be noticed until unpaused. */
-	void PauseMountingThread( int iTimeout = 10 );
+	void PauseMountingThread( int iTimeout = 20 );
 	void UnPauseMountingThread();
 	
 	void FlushAndReset();	// force all files to be flushed to mounted memory cards
