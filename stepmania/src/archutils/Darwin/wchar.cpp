@@ -1,34 +1,20 @@
-/*
- *  wchar.cpp
- *  stepmania
- *
- *  Created by Steve Checkoway on Tue Nov 25 2003.
- *  Copyright (c) 2003 Steve Checkoway. All rights reserved.
- *
- */
-
-#include <AvailabilityMacros.h>
-
-#if (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)
-
-#define	_BSD_WCHAR_T_DEFINED_
-#include <cstddef>
+#include <bits/c++config.h>
 #include <string>
-#include <cstring>
 
-extern "C" {
-#ifndef wcslen
+extern "C"
+{
+#if ! _GLIBCPP_HAVE_WCLEN
 size_t wcslen(const wchar_t *ws)
 {
-    size_t n = 0;
-    
-    while (*(ws++) != NULL)
-        ++n;
-    return n;
+		size_t n = 0;
+		
+		while (*(ws++) != L'\0')
+			++n;
+		return n;
 }
 #endif
 
-#ifndef wmemchr
+#if ! _GLIBCPP_HAVE_WMEMCHR
 wchar_t *wmemchr(const wchar_t *ws, wchar_t wc, size_t n)
 {
     for (unsigned i=0; i<n; ++i, ++ws)
@@ -38,7 +24,7 @@ wchar_t *wmemchr(const wchar_t *ws, wchar_t wc, size_t n)
 }
 #endif
 
-#ifndef wmemcmp
+#if ! _GLIBCPP_HAVE_WMEMCMP
 int wmemcmp(const wchar_t *ws1, const wchar_t *ws2, size_t n)
 {
     for (unsigned i=0; i<n; ++i, ++ws1, ++ws2)
@@ -48,21 +34,21 @@ int wmemcmp(const wchar_t *ws1, const wchar_t *ws2, size_t n)
 }
 #endif
 
-#ifndef wmemcpy
+#if ! _GLIBCPP_HAVE_WMEMCPY
 wchar_t *wmemcpy(wchar_t *ws1, const wchar_t *ws2, size_t n)
 {
     return (wchar_t *)memcpy(ws1, ws2, n * sizeof(wchar_t));
 }
 #endif
 
-#ifndef wmemmove
+#if ! _GLIBCPP_HAVE_WMEMMOVE
 wchar_t *wmemmove(wchar_t *ws1, const wchar_t *ws2, size_t n)
 {
     return (wchar_t *)memmove(ws1, ws2, n * sizeof(wchar_t));
 }
 #endif
 
-#ifndef wmemset
+#if ! _GLIBCPP_HAVE_WMEMSET
 wchar_t *wmemset(wchar_t *ws , wchar_t wc, size_t n)
 {
     wchar_t *temp = ws;
@@ -73,10 +59,7 @@ wchar_t *wmemset(wchar_t *ws , wchar_t wc, size_t n)
 #endif
 }
 
-#ifndef wstring
-template class std::basic_string<wchar_t, std::char_traits<wchar_t>,
-								 std::allocator<wchar_t> >;
-#endif
+#if 0
 /* This has nothing to do with this file, but I might as well put it here
  * rather than make a new file just for it.
  */
@@ -89,11 +72,10 @@ template basic_istream<char, char_traits<char> >&
 template streampos
 	basic_streambuf<char, char_traits<char> >::pubseekpos(fpos<__mbstate_t>,
 														  _Ios_Openmode);
-
 #endif
 
 /*
- * (c) 2003-2004 Steve Checkoway
+ * (c) 2003-2005 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
