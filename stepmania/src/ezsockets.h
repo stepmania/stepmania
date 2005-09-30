@@ -18,7 +18,6 @@
 #include <vector>
 #include <fcntl.h>
 #include <ctype.h>
-#include "global.h" // StepMania only includes
 
 #if defined(_XBOX)
 // Summary : WinsockX is bad, XTL is good.

@@ -5,7 +5,7 @@
 |   Modified by Charles Lohr for use with Windows-Based OSes.       |
 |   UDP/NON-TCP Support by Adam Lowman.                             |
 \*******************************************************************/
-
+#include "global.h"
 #include "ezsockets.h"
 
 #if defined(_XBOX)
@@ -107,7 +107,7 @@ bool EzSockets::listen()
 	return true;
 }
 
-#if defined(WIN32) || defined(DARWIN)// glibc already has socklen_t defined
+#if defined(WIN32)
 typedef int socklen_t;
 #endif
 
