@@ -805,9 +805,41 @@
 /* Begin PBXBuildRule section */
 		AA4B42D905736AB5005FB5DB /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc;
+			compilerSpec = com.apple.compilers.gcc.3_3;
 			filePatterns = .mm;
 			fileType = pattern.proxy;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		AAD426360870F6BB00EC2D9B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.3_3;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		AAD426370870F6CB00EC2D9B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc;
+			fileType = sourcecode.asm;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		AAD4263A0870F6F800EC2D9B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.3_3;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		AAD4263B0870F70A00EC2D9B /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.3_3;
+			fileType = sourcecode.asm;
 			isEditable = 1;
 			outputFiles = (
 			);
@@ -3367,6 +3399,8 @@
 				AA29CE3B0558741A00961A51 /* Frameworks */,
 			);
 			buildRules = (
+				AAD4263B0870F70A00EC2D9B /* PBXBuildRule */,
+				AAD4263A0870F6F800EC2D9B /* PBXBuildRule */,
 				AA4B42D905736AB5005FB5DB /* PBXBuildRule */,
 			);
 			buildSettings = {
@@ -3447,6 +3481,8 @@
 				AA67BFDD0558752500EF34A6 /* Rez */,
 			);
 			buildRules = (
+				AAD426370870F6CB00EC2D9B /* PBXBuildRule */,
+				AAD426360870F6BB00EC2D9B /* PBXBuildRule */,
 			);
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -4059,6 +4095,8 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.2.8.sdk;
 			};
 			name = .;
 		};
