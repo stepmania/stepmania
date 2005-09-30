@@ -1,14 +1,18 @@
+* 3.9 rc4
+Windows: Fixed DLL problem on older systems.
+Linux: Fix statically linked libavcodec.
+
 * 3.9 rc3
 Fixed change song speed menu codes starting with change difficulty menu codes.
-Fixed memory leak in BeginnerHelper.
-Fixed crashes due to high song meter values.
+Fixed memory leak when beginner helper is in use.
+Fixed crash due to high song meter values.
 Fixed reading UTF-8 lyrics.
-Fixed crashes related to BMS loading.
+Fixed crash related to BMS loading.
 Fixed memory leak reading ZIPs.
 Fixed handling corrupt banner cache.
-Fixed long/marathon StageStats::GetAverageMeter results.
+Fixed score classifications when playing long and marathon songs.
 Fixed crash selecting Random with no songs.
-Fixed songs with a non-zero initial #BPMS.
+Fixed songs with a non-zero initial BPM segments.
 Editor: Fixed laying hold notes with shift-0.
 Windows: Disabled parallel port lights driver due to GPL-incompatibility.
 Windows: Worked around Realtek AC97 audio driver bug.
