@@ -33,6 +33,9 @@ public:
 	vector<Song*>	vpPossibleSongs;
 	enum { STAGE_INVALID, STAGE_NORMAL, STAGE_EXTRA, STAGE_EXTRA2 } StageType;
 
+	bool	bGaveUp;	// exited gameplay by giving up
+	bool	bUsedAutoplay;	// used autoplay at any point during gameplay
+
 	// TODO: These are updated in ScreenGameplay::Update based on fDelta.  
 	// They should be made more accurate.
 	float	fGameplaySeconds;		// how many seconds before gameplay ended.  Updated by Gameplay, not scaled by music rate.

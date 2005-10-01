@@ -1831,9 +1831,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 	{
 		// Give up
 
+		STATSMAN->m_CurStageStats.bGaveUp = true;
 		FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 		{
-			pi->GetPlayerStageStats()->bGaveUp = true;
 			pi->GetPlayerStageStats()->bFailed |= GAMESTATE->AllHumanHaveComboOf30OrMoreMisses();
 		}
 

@@ -231,7 +231,7 @@ void ScreenEvaluation::Init()
 	STATSMAN->m_CurStageStats.CommitScores( SUMMARY );
 
 	FOREACH_HumanPlayer( p )
-		STATSMAN->m_CurStageStats.m_player[p].CalcAwards( p );
+		STATSMAN->m_CurStageStats.m_player[p].CalcAwards( p, STATSMAN->m_CurStageStats.bGaveUp, STATSMAN->m_CurStageStats.bUsedAutoplay );
 
 	// Run this here, so STATSMAN->m_CurStageStats is available to overlays.
 	ScreenWithMenuElements::Init();

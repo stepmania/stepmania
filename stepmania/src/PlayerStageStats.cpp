@@ -24,7 +24,6 @@ void PlayerStageStats::Init()
 	fAliveSeconds = 0;
 	bFailed = false;
 	bFailedEarlier = false;
-	bGaveUp = false;
 	iPossibleDancePoints = iCurPossibleDancePoints = iActualDancePoints = 0;
 	iPossibleGradePoints = 0;
 	iCurCombo = iMaxCombo = iCurMissCombo = iScore = iBonus = iMaxScore = iCurMaxScore = 0;
@@ -59,7 +58,6 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	fAliveSeconds += other.fAliveSeconds;
 	bFailed |= other.bFailed;
 	bFailedEarlier |= other.bFailedEarlier;
-	bGaveUp |= other.bGaveUp;
 	iPossibleDancePoints += other.iPossibleDancePoints;
 	iActualDancePoints += other.iActualDancePoints;
 	iCurPossibleDancePoints += other.iCurPossibleDancePoints;
@@ -511,9 +509,14 @@ float PlayerStageStats::GetPercentageOfTaps( TapNoteScore tns ) const
 	return iTapNoteScores[tns] / (float)iTotalTaps;
 }
 
-void PlayerStageStats::CalcAwards( PlayerNumber p )
+void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutoplay )
 {
 	LOG->Trace( "hand out awards" );
+	
+	m_pcaToShow = PEAK_COMBO_AWARD_INVALID;
+
+	if( bGaveUp || bUsedAutoplay )
+		return;
 	
 	deque<PerDifficultyAward> &vPdas = GAMESTATE->m_vLastPerDifficultyAwards[p];
 

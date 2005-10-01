@@ -214,7 +214,7 @@ void GraphDisplay::LoadFromStageStats( const StageStats &ss, const PlayerStageSt
 
 	UpdateVerts();
 
-	if( !pss.bFailed && !pss.bGaveUp )
+	if( !pss.bFailed )
 	{
 		//
 		// Search for the min life record to show "Just Barely!"

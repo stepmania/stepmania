@@ -1567,7 +1567,10 @@ void Player::CrossedRow( int iNoteRow )
 		{
 			TapNote tn = m_NoteData.GetTapNote(t, iNoteRow);
 			if( tn.type != TapNote::empty && tn.result.tns == TNS_NONE )
+			{
 				Step( t, now );
+				STATSMAN->m_CurStageStats.bUsedAutoplay = true;
+			}
 		}
 	}
 }

@@ -39,7 +39,6 @@ public:
 	/* This indicates whether the player bottomed out his bar/ran out of lives at some
 	 * point during the song.  It's set in all fail modes. */
 	bool	bFailedEarlier;
-	bool	bGaveUp;	// exited gameplay by giving up
 	int		iPossibleDancePoints;
 	int		iCurPossibleDancePoints;
 	int		iActualDancePoints;
@@ -106,7 +105,7 @@ public:
 	float GetSurvivalSeconds() { return fAliveSeconds + fLifeRemainingSeconds; }
 
 	// Final results:
-	void CalcAwards( PlayerNumber p );
+	void CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutoplay );
 	PerDifficultyAward m_pdaToShow;
 	PeakComboAward m_pcaToShow;
 
