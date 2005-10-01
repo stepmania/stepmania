@@ -710,8 +710,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			continue;
 
 		WheelItemData& WID = arrayWheelItemDatas[i];
-		WID.m_Flags.bHasBeginnerOr1Meter = pSong->IsEasy( STEPS_TYPE_DANCE_SINGLE );
-		WID.m_Flags.bEdits = pSong->HasEdits( STEPS_TYPE_DANCE_SINGLE );
+		WID.m_Flags.bHasBeginnerOr1Meter = pSong->IsEasy( GAMESTATE->GetCurrentStyle()->m_StepsType );
+		WID.m_Flags.bEdits = pSong->HasEdits( GAMESTATE->GetCurrentStyle()->m_StepsType );
 		WID.m_Flags.iStagesForSong = SongManager::GetNumStagesForSong( pSong );
 	}
 
