@@ -131,13 +131,26 @@ void MainMenuDlg::OnCreateSong()
 	BOOL bSuccess;
 
 	CString sSongDirectory = "Songs\\My Creations\\";
-	CreateDirectory( sSongDirectory, NULL );	// ok if this fails.  It will already exist if we've created another song.
-	DWORD dwError = ::GetLastError();
+	bSuccess = CreateDirectory( sSongDirectory, NULL );
+	if( !bSuccess )
+	{
+		DWORD dwError = ::GetLastError();
+		switch( dwError )
+		{
+		case ERROR_ALREADY_EXISTS:
+			// This failure is ok.  We probably created this directory already while importing another song.
+			break;
+		default:
+			MessageBox( "Failed to create directory '" + sSongDirectory + "': " + GetLastErrorString() );
+			return;
+		}
+	}
+
 	sSongDirectory += sFileNameNoExt;
 	bSuccess = CreateDirectory( sSongDirectory, NULL );	// CreateDirectory doesn't like a trailing slash
 	if( !bSuccess )
 	{
-		MessageBox( "Failed to song directory '" + sSongDirectory + "': " + GetLastErrorString() );
+		MessageBox( "Failed to create song directory '" + sSongDirectory + "': " + GetLastErrorString() );
 		return;
 	}
 	sSongDirectory += "\\";
