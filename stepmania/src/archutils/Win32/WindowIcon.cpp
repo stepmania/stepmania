@@ -22,7 +22,7 @@ HICON IconFromSurface( const RageSurface *pSrcImg )
 			0x00FF0000,
 			0x0000FF00,
 			0x000000FF,
-			0x80000000 );
+			0xFF000000 );
 		RageSurfaceUtils::Blit( pSrcImg, pImg );
 	}
 
