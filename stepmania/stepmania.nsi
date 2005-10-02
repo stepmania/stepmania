@@ -373,9 +373,9 @@ RMDir "$INSTDIR\Docs"
 ; Don't delete high scores.
 Delete "$INSTDIR\Data\Translation.dat"
 Delete "$INSTDIR\Data\AI.ini"
-Delete "$INSTDIR\Data\stepmania.ini"
-Delete "$INSTDIR\Data\Keymaps.ini"
-Delete "$INSTDIR\Data\GamePrefs.ini"
+;Delete "$INSTDIR\Data\stepmania.ini"
+;Delete "$INSTDIR\Data\Keymaps.ini"
+;Delete "$INSTDIR\Data\GamePrefs.ini"
 Delete "$INSTDIR\Data\splash.png"
 RMDir "$INSTDIR\Data"
 
