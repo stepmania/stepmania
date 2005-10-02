@@ -692,7 +692,8 @@ RageDisplay *CreateDisplay()
 	RageDisplay::VideoModeParams params(GetCurVideoModeParams());
 
 	CString error = "There was an error while initializing your video card.\n\n"
-		"   PLEASE DO NOT FILE THIS ERROR AS A BUG!\n\n"
+		"Please do not file this error as a bug!  Use the web page below to troubleshoot this problem.\n\n"
+		"http://www.stepmania.com/stepmania/mediawiki.php?title=Video_Driver_Troubleshooting\n\n"
 		"Video Driver: "+GetVideoDriverName()+"\n\n";
 
 	CStringArray asRenderers;
@@ -731,6 +732,8 @@ RageDisplay *CreateDisplay()
 			return new RageDisplay_Null( params );
 		else
 			RageException::Throw("Unknown video renderer value: %s", sRenderer.c_str() );
+
+		error += "\n\n\n";
 	}
 
 	RageException::Throw( error );
