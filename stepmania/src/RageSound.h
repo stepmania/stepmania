@@ -22,6 +22,7 @@ public:
 	virtual int GetSampleRate() const = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
 	virtual float GetVolume() const = 0;
+	virtual float GetAbsoluteVolume() const = 0;
 	virtual int GetID() const = 0;
 	virtual CString GetLoadedFilePath() const = 0;
 	virtual bool IsStreamingFromDisk() const = 0;
@@ -42,7 +43,7 @@ struct RageSoundParams
 
 	void SetNoFade() { m_FadeLength = 0; }
 
-	float m_Volume;
+	float m_Volume;	// multiplies with SOUNDMAN->GetMixVolume()
 
 	/* Pan: -1, left; 1, right */
 	float m_Balance;
@@ -138,6 +139,7 @@ public:
 	float GetPlaybackRate() const;
 	RageTimer GetStartTime() const;
 	float GetVolume() const;
+	float GetAbsoluteVolume() const;	// factors in SOUNDMAN->GetMixVolume()
 	int GetID() const { return m_iID; }
 	void SetParams( const RageSoundParams &p );
 	const RageSoundParams &GetParams() const { return m_Param; }

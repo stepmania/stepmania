@@ -181,7 +181,7 @@ void RageSound_Generic_Software::DecodeThread()
 		{
 			/* The volume can change while the sound is playing; update it. */
 			if( sounds[i].state == sound::PLAYING || sounds[i].state == sound::STOPPING )
-				sounds[i].volume = sounds[i].snd->GetVolume();
+				sounds[i].volume = sounds[i].snd->GetAbsoluteVolume();
 		}
 
 		/*
@@ -327,7 +327,7 @@ void RageSound_Generic_Software::StartMixing( RageSoundBase *snd )
 	s.snd = snd;
 	s.start_time = snd->GetStartTime();
 	s.sound_id = snd->GetID();
-	s.volume = snd->GetVolume();
+	s.volume = snd->GetAbsoluteVolume();
 	s.buffer.clear();
 
 	/* Initialize the sound buffer. */

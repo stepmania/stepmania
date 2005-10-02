@@ -130,7 +130,7 @@ bool RageSound_ALSA9::stream::GetData( bool &bEOF )
 		bytes_read += got;
 		bytes_left -= got;
 
-		RageSoundManager::AttenuateBuf( buf, got/sizeof(int16_t), snd->GetVolume() );
+		RageSoundManager::AttenuateBuf( buf, got/sizeof(int16_t), snd->GetAbsoluteVolume() );
 
 		if( bytes_left > 0 )
 		{

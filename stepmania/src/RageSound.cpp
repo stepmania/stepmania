@@ -50,7 +50,7 @@ RageSoundParams::RageSoundParams():
 	m_StartSecond = 0;
 	m_LengthSeconds = -1;
 	m_FadeLength = 0;
-	m_Volume = -1.0f; // use SOUNDMAN->GetMixVolume()
+	m_Volume = 1.0f;
 	m_Balance = 0; // center
 	speed_input_samples = speed_output_samples = 1;
 	m_bAccurateSync = false;
@@ -574,10 +574,6 @@ int RageSound::GetPCM( char *pBuffer, int iSize, int64_t iFrameno )
  * playing, Stop is called. */
 void RageSound::StartPlaying()
 {
-	// If no volume is set, use the default.
-	if( m_Param.m_Volume == -1 )
-		m_Param.m_Volume = SOUNDMAN->GetMixVolume();
-
 	ASSERT( !m_bPlaying );
 
 	/* If m_StartTime is in the past, then we probably set a start time but took too
@@ -883,6 +879,12 @@ void RageSoundParams::SetPlaybackRate( float fSpeed )
 float RageSound::GetVolume() const
 {
 	return m_Param.m_Volume;
+}
+
+float RageSound::GetAbsoluteVolume() const
+{
+	float f = m_Param.m_Volume * SOUNDMAN->GetMixVolume();
+	return f;
 }
 
 void RageSound::LockSound()

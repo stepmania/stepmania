@@ -149,7 +149,7 @@ bool RageSound_DSound::stream::GetData( bool init, bool &bEOF )
 	 * fill anything in FLUSHING; in that case, we just clear the audio buffer. */
 	if(state != FLUSHING)
 	{
-		pcm->SetVolume( snd->GetVolume() );
+		pcm->SetVolume( snd->GetAbsoluteVolume() );
 
 		int bytes_read = 0;
 		int bytes_left = len;
