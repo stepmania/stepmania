@@ -128,7 +128,7 @@ static int FindCompatibleAVFormat( PixelFormat &pixfmt, bool HighColor )
 				true /* realtime */
 				);
 
-		if( pixfmt == NUM_PixelFormat )
+		if( pixfmt == PixelFormat_INVALID )
 			continue;
 
 		return i;
