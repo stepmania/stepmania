@@ -1679,6 +1679,8 @@ bool GameState::DifficultiesLocked()
 		return true;
 	if( IsCourseMode() )
 		return PREFSMAN->m_bLockCourseDifficulties;
+ 	if( GAMESTATE->GetCurrentStyle()->m_bLockDifficulties )
+		return true;
 	return false;
 }
 

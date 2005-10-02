@@ -1042,6 +1042,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		true, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_DANCE_VERSUS
 		&g_Games[GAME_DANCE],				// m_Game
@@ -1076,6 +1077,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		true, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_DANCE_DOUBLE
 		&g_Games[GAME_DANCE],				// m_Game
@@ -1118,6 +1120,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_DANCE_COUPLE
 		&g_Games[GAME_DANCE],			// m_Game
@@ -1152,6 +1155,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		true, // m_bCanUseBeginnerHelper
+		true, // m_bLockDifficulties
 	},
 	{	// STYLE_DANCE_SOLO
 		&g_Games[GAME_DANCE],			// m_Game
@@ -1190,6 +1194,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_DANCE_EDIT_COUPLE
 		&g_Games[GAME_DANCE],				// m_Game
@@ -1232,6 +1237,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 /*	{	// STYLE_DANCE_SOLO_VERSUS 
 		"dance-solo-versus",				// m_szName
@@ -1265,6 +1271,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},	*/
 	{	// STYLE_PUMP_SINGLE
 		&g_Games[GAME_PUMP],					// m_Game
@@ -1301,6 +1308,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_PUMP_VERSUS
 		&g_Games[GAME_PUMP],					// m_Game
@@ -1337,6 +1345,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_PUMP_HALFDOUBLE
 		&g_Games[GAME_PUMP],					// m_Game
@@ -1375,6 +1384,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_PUMP_DOUBLE
 		&g_Games[GAME_PUMP],					// m_Game
@@ -1421,6 +1431,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_PUMP_COUPLE
 		&g_Games[GAME_PUMP],					// m_Game
@@ -1457,6 +1468,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		true, // m_bLockDifficulties
 	},
 	{	// STYLE_PUMP_EDIT_COUPLE
 		&g_Games[GAME_PUMP],					// m_Game
@@ -1498,6 +1510,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_EZ2_SINGLE
 		&g_Games[GAME_EZ2],					// m_Game
@@ -1534,6 +1547,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_EZ2_REAL
 		&g_Games[GAME_EZ2],					// m_Game
@@ -1574,6 +1588,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_EZ2_SINGLE_VERSUS
 		&g_Games[GAME_EZ2],					// m_Game
@@ -1610,6 +1625,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_EZ2_REAL_VERSUS
 		&g_Games[GAME_EZ2],					// m_Game
@@ -1650,6 +1666,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_EZ2_DOUBLE
 		&g_Games[GAME_EZ2],					// m_Game
@@ -1696,6 +1713,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_PARA_SINGLE
 		&g_Games[GAME_PARA],					// m_Game
@@ -1732,6 +1750,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_PARA_VERSUS
 		&g_Games[GAME_PARA],					// m_Game
@@ -1768,6 +1787,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_DS3DDX_SINGLE
 		&g_Games[GAME_DS3DDX],				// m_Game
@@ -1810,6 +1830,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_BM_SINGLE5
 		&g_Games[GAME_BM],					// m_Game
@@ -1848,6 +1869,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_BM_DOUBLE
 		&g_Games[GAME_BM],					// m_Game
@@ -1898,6 +1920,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_BM_SINGLE7
 		&g_Games[GAME_BM],					// m_Game
@@ -1940,6 +1963,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_BM_DOUBLE7
 		&g_Games[GAME_BM],					// m_Game
@@ -1998,6 +2022,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_MANIAX_SINGLE
 		&g_Games[GAME_MANIAX],				// m_Game
@@ -2032,6 +2057,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_MANIAX_VERSUS
 		&g_Games[GAME_MANIAX],				// m_Game
@@ -2066,6 +2092,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_MANIAX_DOUBLE
 		&g_Games[GAME_MANIAX],				// m_Game
@@ -2108,6 +2135,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_TECHNO_SINGLE4
 		&g_Games[GAME_TECHNO],				// m_Game
@@ -2142,6 +2170,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_TECHNO_SINGLE5
 		&g_Games[GAME_TECHNO],				// m_Game
@@ -2180,6 +2209,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_TECHNO_SINGLE8
 		&g_Games[GAME_TECHNO],				// m_Game
@@ -2222,6 +2252,7 @@ Style g_Styles[] =
 		},
 		true, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_TECHNO_VERSUS4
 		&g_Games[GAME_TECHNO],				// m_Game
@@ -2256,6 +2287,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_TECHNO_VERSUS5
 		&g_Games[GAME_TECHNO],				// m_Game
@@ -2294,6 +2326,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_TECHNO_VERSUS8
 		&g_Games[GAME_TECHNO],				// m_Game
@@ -2338,6 +2371,7 @@ Style g_Styles[] =
 		},
 		true, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_TECHNO_DOUBLE4
 		&g_Games[GAME_TECHNO],				// m_Game
@@ -2380,6 +2414,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_TECHNO_DOUBLE5
 		&g_Games[GAME_TECHNO],				// m_Game
@@ -2428,6 +2463,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_PNM_FIVE
 		&g_Games[GAME_PNM],					// m_Game
@@ -2464,6 +2500,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_PNM_NINE
 		&g_Games[GAME_PNM],					// m_Game
@@ -2508,6 +2545,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 	{	// STYLE_LIGHTS_CABINET
 		&g_Games[GAME_LIGHTS],				// m_Game
@@ -2550,6 +2588,7 @@ Style g_Styles[] =
 		},
 		false, // m_bNeedsZoomOutWith2Players
 		false, // m_bCanUseBeginnerHelper
+		false, // m_bLockDifficulties
 	},
 };
 

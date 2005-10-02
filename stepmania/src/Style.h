@@ -50,6 +50,7 @@ public:
 	int			m_iColumnDrawOrder[MAX_COLS_PER_PLAYER];
 	bool		m_bNeedsZoomOutWith2Players;
 	bool		m_bCanUseBeginnerHelper;
+	bool		m_bLockDifficulties;	// used in couple Styles
 
 	GameInput StyleInputToGameInput( const StyleInput& StyleI ) const;
 	StyleInput GameInputToStyleInput( const GameInput &GameI ) const;
