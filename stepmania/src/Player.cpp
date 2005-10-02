@@ -960,6 +960,74 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 
 	ASSERT_M( col >= 0  &&  col <= m_NoteData.GetNumTracks(), ssprintf("%i, %i", col, m_NoteData.GetNumTracks()) );
 
+
+	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
+	fPositionSeconds -= tm.Ago();
+	const float fSongBeat = GAMESTATE->m_pCurSong ? GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds ) : GAMESTATE->m_fSongBeat;
+
+
+
+	{
+		// Update roll life
+		// Let's not check the whole array every time.
+		// Instead, only check 1 beat back.  Even 1 is overkill.
+		// Just update the life here and let Update judge the roll.
+		const int iSongRow = BeatToNoteRow( fSongBeat );
+		const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
+		NoteData::iterator begin, end;
+		m_NoteData.GetTapNoteRangeInclusive( col, iStartCheckingAt, iSongRow+1, begin, end );
+		for( ; begin != end; ++begin )
+		{
+			TapNote &tn = begin->second;
+			if( tn.type != TapNote::hold_head )
+				continue;
+			int iRow = begin->first;
+
+			HoldNoteScore hns = tn.HoldResult.hns;
+			if( hns != HNS_NONE )	// if this HoldNote already has a result
+				continue;	// we don't need to update the logic for this one
+
+			// if they got a bad score or haven't stepped on the corresponding tap yet
+			const TapNoteScore tns = tn.result.tns;
+			const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this roll?
+
+			int iEndRow = iRow + tn.iDuration;
+
+			if( bSteppedOnTapNote && tn.HoldResult.fLife != 0 )
+			{
+				/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
+				 * Do this even if we're a little beyond the end of the hold note, to make sure
+				 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
+				tn.HoldResult.iLastHeldRow = min( iSongRow, iEndRow );
+			}
+
+			// If the song beat is in the range of this hold:
+			if( iRow <= iSongRow && iRow <= iEndRow )
+			{
+				switch( tn.subType )
+				{
+				case TapNote::hold_head_hold:
+					// this is handled in Update
+					break;
+				case TapNote::hold_head_roll:
+					{
+						// Increase life
+						tn.HoldResult.fLife = 1;
+
+						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
+						if( m_pNoteField )
+							m_pNoteField->DidHoldNote( col, HNS_OK, bBright );
+					}
+					break;
+				default:
+					ASSERT(0);
+				}
+			}
+		}
+	}
+
+
+
 	//
 	// Count calories for this step, unless we're being called because a button is
 	// held over a mine.
@@ -1001,10 +1069,6 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		}
 	}
 
-
-	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-	fPositionSeconds -= tm.Ago();
-	const float fSongBeat = GAMESTATE->m_pCurSong ? GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds ) : GAMESTATE->m_fSongBeat;
 
 
 
@@ -1083,7 +1147,10 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			// If the step is far away, don't judge it.
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY &&
 				fSecondsFromPerfect > ADJUSTED_WINDOW_TAP(TW_Boo) )
+			{
 				score = TNS_NONE;
+				break;
+			}
 
 			// TRICKY:  We're asking the AI to judge mines.  consider TNS_GOOD and below
 			// as "mine was hit" and everything else as "mine was avoided"
@@ -1268,67 +1335,6 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			TapNote tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
 			if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 				m_vKeysounds[tn.iKeysoundIndex].Play();
-		}
-	}
-
-	
-
-	{
-		// Update roll life
-		// Let's not check the whole array every time.
-		// Instead, only check 1 beat back.  Even 1 is overkill.
-		// Just update the life here and let Update judge the roll.
-		const int iSongRow = BeatToNoteRow(fSongBeat);
-		const int iStartCheckingAt = max( 0, iSongRow-BeatToNoteRow(1) );
-		NoteData::iterator begin, end;
-		m_NoteData.GetTapNoteRangeInclusive( col, iStartCheckingAt, iSongRow+1, begin, end );
-		for( ; begin != end; ++begin )
-		{
-			TapNote &tn = begin->second;
-			if( tn.type != TapNote::hold_head )
-				continue;
-			int iRow = begin->first;
-
-			HoldNoteScore hns = tn.HoldResult.hns;
-			if( hns != HNS_NONE )	// if this HoldNote already has a result
-				continue;	// we don't need to update the logic for this one
-
-			// if they got a bad score or haven't stepped on the corresponding tap yet
-			const TapNoteScore tns = tn.result.tns;
-			const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this roll?
-
-			int iEndRow = iRow + tn.iDuration;
-
-			if( bSteppedOnTapNote && tn.HoldResult.fLife != 0 )
-			{
-				/* This hold note is not judged and we stepped on its head.  Update iLastHeldRow.
-				 * Do this even if we're a little beyond the end of the hold note, to make sure
-				 * iLastHeldRow is clamped to iEndRow if the hold note is held all the way. */
-				tn.HoldResult.iLastHeldRow = min( iSongRow, iEndRow );
-			}
-
-			// If the song beat is in the range of this hold:
-			if( iRow <= iSongRow && iRow <= iEndRow )
-			{
-				switch( tn.subType )
-				{
-				case TapNote::hold_head_hold:
-					// this is handled in Update
-					break;
-				case TapNote::hold_head_roll:
-					{
-						// Increase life
-						tn.HoldResult.fLife = 1;
-
-						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
-						if( m_pNoteField )
-							m_pNoteField->DidHoldNote( col, HNS_OK, bBright );
-					}
-					break;
-				default:
-					ASSERT(0);
-				}
-			}
 		}
 	}
 }
