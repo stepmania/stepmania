@@ -105,7 +105,11 @@ void NoteField::Load(
 	m_fPercentFadeToFail = -1;
 	m_LastSeenBeatToNoteSkinRev = -1;
 
-	ASSERT( m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
+	//int i1 = m_pNoteData->GetNumTracks();
+	//int i2 = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
+
+	ASSERT_M( m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer, 
+		ssprintf("%d = %d",m_pNoteData->GetNumTracks(), GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer) );
 
 	RefreshBeatToNoteSkin();
 }
