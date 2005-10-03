@@ -278,6 +278,7 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 			UsbStorageDevice usbd;
 
 			CString sPath = sBlockDevicePath + sDevice + "/";
+			usbd.sSysPath = sPath;
 
 			/* Ignore non-removable devices. */
 			CString sBuf;

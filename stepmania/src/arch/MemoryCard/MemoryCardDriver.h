@@ -28,6 +28,7 @@ struct UsbStorageDevice
 	CString sSerial;
 	CString sDevice;
 	CString	sOsMountDir;	// WITHOUT trailing slash
+	CString sSysPath;   // Linux: /sys/block name
 	enum State
 	{
 		/* Empty device.  This is used only by MemoryCardManager. */
