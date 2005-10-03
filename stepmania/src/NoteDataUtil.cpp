@@ -621,7 +621,7 @@ float NoteDataUtil::GetVoltageRadarValue( const NoteData &in, float fSongSeconds
 	const float BEAT_WINDOW = 8;
 	const int BEAT_WINDOW_ROWS = BeatToNoteRow( BEAT_WINDOW );
 
-	for( int i=0; i<=int(fLastBeat); i+=BEAT_WINDOW_ROWS )
+	for( int i=0; i<=BeatToNoteRow(fLastBeat); i+=BEAT_WINDOW_ROWS )
 	{
 		int iNumNotesThisWindow = in.GetNumTapNotes( i, i+BEAT_WINDOW_ROWS ) + in.GetNumHoldNotes( i, i+BEAT_WINDOW_ROWS );
 		float fDensityThisWindow = iNumNotesThisWindow / BEAT_WINDOW;
