@@ -861,6 +861,8 @@
 		AAED6F2D0601C528002D2DEE /* Backtrace.h in Headers */ = {isa = PBXBuildFile; fileRef = AAED6F290601C528002D2DEE /* Backtrace.h */; };
 		AAED6F2E0601C528002D2DEE /* BacktraceNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAED6F2A0601C528002D2DEE /* BacktraceNames.cpp */; };
 		AAED6F2F0601C528002D2DEE /* BacktraceNames.h in Headers */ = {isa = PBXBuildFile; fileRef = AAED6F2B0601C528002D2DEE /* BacktraceNames.h */; };
+		AAF3442B08F1C36A0006EDB7 /* DynamicActorScroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */; };
+		AAF3442C08F1C36A0006EDB7 /* DynamicActorScroller.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */; };
 		AAF4206705D63FA700056441 /* ModelManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF4206505D63FA700056441 /* ModelManager.cpp */; };
 		AAF4206805D63FA700056441 /* ModelManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF4206605D63FA700056441 /* ModelManager.h */; };
 		AAF4206B05D6400800056441 /* RageModelGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF4206905D6400800056441 /* RageModelGeometry.cpp */; };
@@ -1865,6 +1867,8 @@
 		AAEF3D0D04B533CC00D02EE9 /* LoadingWindow_Cocoa.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; indentWidth = 4; path = LoadingWindow_Cocoa.m; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AAEF3D1004B53E2900D02EE9 /* LoadingWindow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; path = LoadingWindow.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AAF33F2A04FF213100F93C24 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DynamicActorScroller.cpp; path = ../src/DynamicActorScroller.cpp; sourceTree = "<group>"; };
+		AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DynamicActorScroller.h; path = ../src/DynamicActorScroller.h; sourceTree = "<group>"; };
 		AAF4206505D63FA700056441 /* ModelManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = ModelManager.cpp; path = ../src/ModelManager.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		AAF4206605D63FA700056441 /* ModelManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = ModelManager.h; path = ../src/ModelManager.h; sourceTree = "<group>"; usesTabs = 1; };
 		AAF4206905D6400800056441 /* RageModelGeometry.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = RageModelGeometry.cpp; path = ../src/RageModelGeometry.cpp; sourceTree = "<group>"; usesTabs = 1; };
@@ -2968,6 +2972,8 @@
 				AA6EFFBA04770FFD005F316C /* BitmapText.h */,
 				AA8F118204A04F9B00D02EE9 /* DifficultyDisplay.cpp */,
 				AA8F118304A04F9B00D02EE9 /* DifficultyDisplay.h */,
+				AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */,
+				AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */,
 				AA6EFFBD04770FFD005F316C /* Model.cpp */,
 				AA6EFFBE04770FFD005F316C /* Model.h */,
 				AA6EFFBF04770FFD005F316C /* ModelTypes.cpp */,
@@ -3648,6 +3654,7 @@
 				AACFBE5208E7D893005087FC /* ScreenJoinMultiplayer.h in Headers */,
 				AACFBE5C08E7D8C6005087FC /* PlayerScoreList.h in Headers */,
 				AACFBE6408E7DBA8005087FC /* LuaExpressionTransform.h in Headers */,
+				AAF3442C08F1C36A0006EDB7 /* DynamicActorScroller.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4247,6 +4254,7 @@
 				AACFBE5108E7D893005087FC /* ScreenJoinMultiplayer.cpp in Sources */,
 				AACFBE5B08E7D8C6005087FC /* PlayerScoreList.cpp in Sources */,
 				AACFBE6308E7DBA8005087FC /* LuaExpressionTransform.cpp in Sources */,
+				AAF3442B08F1C36A0006EDB7 /* DynamicActorScroller.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4377,7 +4385,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INPUT_FILETYPE = automatic;
-				GCC_MODEL_TUNING = G5;
+				GCC_MODEL_TUNING = G4;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
@@ -4463,6 +4471,176 @@
 			};
 			name = .;
 		};
+		AAF343C508F1B5BA0006EDB7 /* Universal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G4;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "HAVE_INTTYPES_H=1";
+				GCC_USE_GCC3_PFE_SUPPORT = NO;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = NO;
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_STYLE = Bundle;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOL_FLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = resample;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost";
+				ZERO_LINK = NO;
+			};
+			name = Universal;
+		};
+		AAF343C608F1B5BA0006EDB7 /* Universal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = NO;
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_STYLE = Bundle;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				PRODUCT_NAME = version;
+				ZERO_LINK = NO;
+			};
+			name = Universal;
+		};
+		AAF343C708F1B5BA0006EDB7 /* Universal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
+					Frameworks,
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
+				);
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INPUT_FILETYPE = automatic;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					PBBUILD,
+					"SM_PCH=TRUE",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_USE_GCC3_PFE_SUPPORT = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					/usr/include,
+					"$(SRCROOT)/../src",
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers",
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers",
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers",
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers",
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/png.framework/Headers",
+					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers",
+					"$(SRCROOT)/../src/archutils/Darwin/PublicUtility",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
+				);
+				INFOPLIST_FILE = "Info-StepMania.plist";
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = /usr/lib;
+				LIBRARY_STYLE = Bundle;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				OBJROOT = "$(SRCROOT)/build";
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = (
+					"-finline-limit=300",
+					"-fconstant-cfstrings",
+					"-falign-loops=32",
+				);
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-lstdc++",
+					"-bind_at_load",
+				);
+				PRODUCT_NAME = StepMania;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "$(SRCROOT)/..";
+				WARNING_CFLAGS = "";
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Universal;
+		};
+		AAF343C808F1B5BA0006EDB7 /* Universal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_VARIANTS = normal;
+				GCC_FAST_MATH = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_STRICT_ALIASING = YES;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.2.8.sdk;
+			};
+			name = Universal;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4470,6 +4648,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAC845090856A19700A9FEAB /* . */,
+				AAF343C508F1B5BA0006EDB7 /* Universal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = .;
@@ -4478,6 +4657,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAC8450D0856A19700A9FEAB /* . */,
+				AAF343C608F1B5BA0006EDB7 /* Universal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = .;
@@ -4486,6 +4666,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAC845110856A19700A9FEAB /* . */,
+				AAF343C708F1B5BA0006EDB7 /* Universal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = .;
@@ -4494,6 +4675,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAC845150856A19700A9FEAB /* . */,
+				AAF343C808F1B5BA0006EDB7 /* Universal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = .;
