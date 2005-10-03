@@ -70,6 +70,9 @@
 #define IDC_CHECK_LOG_TO_DISK           1053
 #define IDC_CHECK_SHOW_LOG_WINDOW       1054
 #define IDC_EDIT_INSTALLATION           1054
+#define IDC_RADIO_SOUND_DIRECTSOUND_SOFTWARE 1055
+#define IDC_RADIO_SOUND_DIRECTSOUND_HARDWARE 1056
+#define IDC_RADIO_SOUND_WAVE_OUT        1057
 
 // Next default values for new objects
 // 

@@ -68,7 +68,13 @@ BOOL ChangeGameSettings::OnInitDialog()
 
 	sValue = "";
 	ini.GetValue( "Options", "SoundDrivers", sValue );
-	if( sValue.CompareNoCase("null")==0 )
+	if( sValue.CompareNoCase("DirectSound")==0 )
+		CheckDlgButton( IDC_RADIO_SOUND_DIRECTSOUND_HARDWARE, BST_CHECKED );
+	else if( sValue.CompareNoCase("DirectSound-sw")==0 )
+		CheckDlgButton( IDC_RADIO_SOUND_DIRECTSOUND_SOFTWARE, BST_CHECKED );
+	else if( sValue.CompareNoCase("WaveOut")==0 )
+		CheckDlgButton( IDC_RADIO_SOUND_WAVE_OUT, BST_CHECKED );
+	else if( sValue.CompareNoCase("null")==0 )
 		CheckDlgButton( IDC_RADIO_SOUND_NULL, BST_CHECKED );
 	else
 		CheckDlgButton( IDC_RADIO_SOUND_DEFAULT, BST_CHECKED );
@@ -107,7 +113,13 @@ void ChangeGameSettings::OnOK()
 		ini.SetValue( "Options", "VideoRenderers", "" );
 
 
-	if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_SOUND_NULL) )
+	if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_SOUND_DIRECTSOUND_HARDWARE) )
+		ini.SetValue( "Options", "SoundDrivers", "DirectSound" );
+	else if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_SOUND_DIRECTSOUND_SOFTWARE) )
+		ini.SetValue( "Options", "SoundDrivers", "DirectSound-sw" );
+	else if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_SOUND_WAVE_OUT) )
+		ini.SetValue( "Options", "SoundDrivers", "WaveOut" );
+	else if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_SOUND_NULL) )
 		ini.SetValue( "Options", "SoundDrivers", "null" );
 	else
 		ini.SetValue( "Options", "SoundDrivers", "" );
