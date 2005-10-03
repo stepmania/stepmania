@@ -29,6 +29,7 @@ ActorScroller::ActorScroller()
 	m_iFirstSubActorIndex = 0;
 	m_bLoop = false;
 	m_bFastCatchup = false;
+	m_bUseItemNumber = false;
 	m_fPauseCountdownSeconds = 0;
 	m_fQuantizePixels = 0;
 
@@ -145,6 +146,11 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 		false );
 
 	pNode->GetAttrValue( "QuantizePixels", m_fQuantizePixels );
+
+	/* By default, don't use item numbers.  On scrollers with lots of items,
+	 * especially with Subdivisions > 1, m_exprTransformFunction uses too
+	 * much memory, and very few scrollers use this. */
+	pNode->GetAttrValue( "UseItemNumber", m_bUseItemNumber );
 }
 
 void ActorScroller::UpdateInternal( float fDeltaTime )
@@ -267,6 +273,9 @@ void ActorScroller::PositionItemsAndDrawPrimitives( bool bDrawPrimitives )
 			wrap( iIndex, m_SubActors.size() );
 		else if( iIndex < 0 || iIndex >= (int)m_SubActors.size() )
 			continue;
+
+		if( !m_bUseItemNumber )
+			iItem = 0;
 
 		m_exprTransformFunction.PositionItem( m_SubActors[iIndex], fPosition, iItem, m_iNumItems );
 		if( bDrawPrimitives )

@@ -65,6 +65,7 @@ protected:
 	int		m_iFirstSubActorIndex;
 	bool	m_bLoop; 
 	bool	m_bFastCatchup; 
+	bool	m_bUseItemNumber;
 	float	m_fPauseCountdownSeconds;
 	float	m_fQuantizePixels;
 
