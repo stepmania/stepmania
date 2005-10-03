@@ -97,12 +97,6 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 
 void ScreenAttract::StartPlayingMusic()
 {
-	if( !GAMESTATE->IsTimeToPlayAttractSounds() )
-	{
-		SOUND->StopMusic();
-		return;
-	}
-
 	ScreenWithMenuElements::StartPlayingMusic();
 }
 

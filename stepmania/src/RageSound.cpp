@@ -29,6 +29,7 @@
 #include "PrefsManager.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "RageSoundUtil.h"
+#include "GameState.h"
 
 #include "RageSoundReader_Preload.h"
 #include "RageSoundReader_Resample.h"
@@ -51,6 +52,10 @@ RageSoundParams::RageSoundParams():
 	m_LengthSeconds = -1;
 	m_FadeLength = 0;
 	m_Volume = 1.0f;
+
+	if( !GAMESTATE->IsTimeToPlaySounds() )
+		m_Volume = 0;
+
 	m_Balance = 0; // center
 	speed_input_samples = speed_output_samples = 1;
 	m_bAccurateSync = false;
@@ -883,7 +888,8 @@ float RageSound::GetVolume() const
 
 float RageSound::GetAbsoluteVolume() const
 {
-	float f = m_Param.m_Volume * SOUNDMAN->GetMixVolume();
+	float f = m_Param.m_Volume;
+	f *= SOUNDMAN->GetMixVolume();
 	return f;
 }
 
