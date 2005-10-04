@@ -812,7 +812,7 @@ void NoteDisplay::DrawHoldTail( const TapNote& tn, int iCol, int iRow, bool bIsB
 	{
 		DISPLAY->TexturePushMatrix();
 		NoteType nt = GetNoteType( iRow );
-		DISPLAY->TextureTranslate( cache->m_fNoteColorTextureCoordSpacing[NotePart_HoldTail]*nt );
+		DISPLAY->TextureTranslate( cache->m_fNoteColorTextureCoordSpacing[NotePart_HoldTail]*(float)nt );
 	}
 
 	if( bGlow )
@@ -880,7 +880,7 @@ void NoteDisplay::DrawHoldHead( const TapNote& tn, int iCol, int iRow, bool bIsB
 	{
 		DISPLAY->TexturePushMatrix();
 		NoteType nt = GetNoteType( iRow );
-		DISPLAY->TextureTranslate( cache->m_fNoteColorTextureCoordSpacing[NotePart_HoldHead]*nt );
+		DISPLAY->TextureTranslate( cache->m_fNoteColorTextureCoordSpacing[NotePart_HoldHead]*(float)nt );
 	}
 
 	if( bGlow )
@@ -1019,7 +1019,7 @@ void NoteDisplay::DrawActor( Actor* pActor, int iCol, float fBeat, float fPercen
 	{
 		DISPLAY->TexturePushMatrix();
 		NoteType nt = BeatToNoteType( fBeat );
-		DISPLAY->TextureTranslate( cache->m_fNoteColorTextureCoordSpacing[part]*nt );
+		DISPLAY->TextureTranslate( cache->m_fNoteColorTextureCoordSpacing[part]*(float)nt );
 	}
 
 	if( bUseLighting )
