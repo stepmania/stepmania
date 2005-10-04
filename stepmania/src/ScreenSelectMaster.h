@@ -8,8 +8,6 @@
 #include "ActorScroller.h"
 #include "MenuInput.h"
 
-#define MAX_CHOICES 30
-
 class ScreenSelectMaster : public ScreenSelect
 {
 public:
@@ -78,9 +76,9 @@ protected:
 	AutoActor	m_sprExplanation[NUM_PAGES];
 	AutoActor	m_sprMore[NUM_PAGES];
 	// icon is the shared, per-choice piece
-	AutoActor m_sprIcon[MAX_CHOICES];
+	vector<AutoActor> m_vsprIcon;
 	// preview is per-player, per-choice piece
-	AutoActor m_sprScroll[MAX_CHOICES][NUM_PLAYERS];
+	vector<AutoActor> m_vsprScroll[NUM_PLAYERS];
 	ActorScroller	m_Scroller[NUM_PLAYERS];
 	// cursor is the per-player, shared by all choices
 	AutoActor	m_sprCursor[NUM_PLAYERS];
