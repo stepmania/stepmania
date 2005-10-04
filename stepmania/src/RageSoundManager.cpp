@@ -32,6 +32,7 @@ RageSoundManager::RageSoundManager()
 {
 	pos_map_queue.reserve( 1024 );
 	m_fMixVolume = 1.0f;
+	m_bPlayOnlyCriticalSounds = false;
 }
 
 void RageSoundManager::Init( CString sDrivers )
@@ -328,11 +329,18 @@ void RageSoundManager::PlayOnce( CString sPath )
 	DeleteSoundWhenFinished( pSound );
 }
 
-void RageSoundManager::SetPrefs( float fMixVol )
+void RageSoundManager::SetMixVolume( float fMixVol )
 {
 	g_SoundManMutex.Lock(); /* lock for access to m_fMixVolume */
 	m_fMixVolume = fMixVol;
 	g_SoundManMutex.Unlock(); /* finished with m_fMixVolume */
+}
+
+void RageSoundManager::SetPlayOnlyCriticalSounds( bool bPlayOnlyCriticalSounds )
+{
+	g_SoundManMutex.Lock(); /* lock for access to m_bPlayOnlyCriticalSounds */
+	m_bPlayOnlyCriticalSounds = bPlayOnlyCriticalSounds;
+	g_SoundManMutex.Unlock(); /* finished with m_bPlayOnlyCriticalSounds */
 }
 
 /* Standalone helpers: */

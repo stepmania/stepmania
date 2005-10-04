@@ -86,13 +86,11 @@ void ScreenDemonstration::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_LoseFocus )
 	{
-		SOUNDMAN->SetPrefs( PREFSMAN->GetSoundVolume() );	// turn volume back on
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
 		if( m_pSoundMusic )
 			m_pSoundMusic->Stop();
-		SOUNDMAN->SetPrefs( PREFSMAN->GetSoundVolume() );	// turn volume back on
 	}
 
 	ScreenJukebox::HandleScreenMessage( SM );

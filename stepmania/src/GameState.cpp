@@ -1647,7 +1647,7 @@ bool GameState::OneIsHot() const
 	return false;
 }
 
-bool GameState::IsTimeToPlaySounds() const
+bool GameState::IsTimeToPlayAttractSounds() const
 {
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		return true;

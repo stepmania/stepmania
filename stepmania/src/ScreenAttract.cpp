@@ -14,6 +14,7 @@
 #include "GameSoundManager.h"
 #include "CommonMetrics.h"
 #include "InputEventPlus.h"
+#include "RageSoundManager.h"
 
 #define START_SCREEN(sScreenName)	THEME->GetMetric (sScreenName,"StartScreen")
 
@@ -26,6 +27,7 @@ ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : ScreenWith
 		GAMESTATE->Reset();
 
 	GAMESTATE->VisitAttractScreen( sName );
+	SOUNDMAN->SetPlayOnlyCriticalSounds( GAMESTATE->IsTimeToPlayAttractSounds() );	// mute attract sounds
 }
 
 
@@ -70,6 +72,7 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 					SCREENMAN->PlayCoinSound();
 				
 				pScreen->Cancel( SM_GoToStartScreen );
+				SOUNDMAN->SetPlayOnlyCriticalSounds( false );	// unmute attract sounds
 				break;
 			default:
 				ASSERT(0);

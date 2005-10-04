@@ -72,6 +72,8 @@ struct RageSoundParams
 		M_CONTINUE,
 		M_AUTO
 	} StopMode;
+
+	bool m_bIsCriticalSound;	// "is a sound that should be played even during attract"
 };
 
 class RageSound: public RageSoundBase

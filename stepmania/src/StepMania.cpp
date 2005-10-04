@@ -1098,7 +1098,7 @@ int main(int argc, char* argv[])
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead.Get() );
 	SOUNDMAN	= new RageSoundManager;
 	SOUNDMAN->Init( PREFSMAN->GetSoundDrivers() );
-	SOUNDMAN->SetPrefs( PREFSMAN->GetSoundVolume() );
+	SOUNDMAN->SetMixVolume( PREFSMAN->GetSoundVolume() );
 	SOUND		= new GameSoundManager;
 	BOOKKEEPER	= new Bookkeeper;
 	LIGHTSMAN	= new LightsManager( PREFSMAN->GetLightsDriver() );

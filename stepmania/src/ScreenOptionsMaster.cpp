@@ -215,7 +215,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 
 		if( m_iChangeMask & OPT_APPLY_SOUND )
 		{
-			SOUNDMAN->SetPrefs( PREFSMAN->GetSoundVolume() );
+			SOUNDMAN->SetMixVolume( PREFSMAN->GetSoundVolume() );
 		}
 		
 		if( m_iChangeMask & OPT_APPLY_SONG )

@@ -29,7 +29,9 @@ public:
 	void Init( CString sDrivers );
 
 	float GetMixVolume() const { return m_fMixVolume; }
-	void SetPrefs( float fMixVol );
+	void SetMixVolume( float fMixVol );
+	bool GetPlayOnlyCriticalSounds() const { return m_bPlayOnlyCriticalSounds; }
+	void SetPlayOnlyCriticalSounds( bool bPlayOnlyCriticalSounds );
 
 	void Update( float fDeltaTime );
 	void StartMixing( RageSoundBase *snd );	/* used by RageSound */
@@ -72,6 +74,8 @@ private:
 
 	/* Prefs: */
 	float m_fMixVolume;
+	bool m_bPlayOnlyCriticalSounds;
+
 	struct queued_pos_map_t
 	{
 		int ID, pos, got_frames;

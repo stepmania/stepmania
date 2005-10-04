@@ -812,6 +812,7 @@ void ScreenManager::PlayCoinSound()
 {
 	RageSoundParams p;
 	p.m_Volume = PREFSMAN->m_fSoundVolume;
+	p.m_bIsCriticalSound = true;
 	m_soundCoin.Play( &p );
 }
 
