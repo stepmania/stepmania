@@ -159,36 +159,14 @@ void ScreenSelectMaster::Init()
 	// init m_Next order info
 	FOREACH_MenuDir( dir )
 	{
-		/* Reasonable defaults: */
-		for( unsigned c = 0; c < m_aGameCommands.size(); ++c )
-		{
-			int add;
-			switch( dir )
-			{
-			case MENU_DIR_UP:
-			case MENU_DIR_LEFT:	add = -1; break;
-			default:			add = +1; break;
-			}
-
-			m_Next[dir][c] = c + add;
-			/* Always wrap around MENU_DIR_AUTO. */
-			if( dir == MENU_DIR_AUTO || (bool)WRAP_CURSOR )
-				wrap( m_Next[dir][c], m_aGameCommands.size() );
-			else
-				m_Next[dir][c] = clamp( m_Next[dir][c], 0, (int)m_aGameCommands.size()-1 );
-		}
-
 		const CString order = OPTION_ORDER.GetValue( dir );
 		vector<CString> parts;
 		split( order, ",", parts, true );
 
-		if( parts.size() == 0 )
-			continue;
-
 		for( unsigned part = 0; part < parts.size(); ++part )
 		{
 			unsigned from, to;
-			if( sscanf( parts[part], "%u:%u", &from, &to ) != 2 )
+			if( sscanf( parts[part], "%d:%d", &from, &to ) != 2 )
 			{
 				LOG->Warn( "%s::OptionOrder%s parse error", m_sName.c_str(), MenuDirToString(dir).c_str() );
 				continue;
@@ -197,14 +175,33 @@ void ScreenSelectMaster::Init()
 			--from;
 			--to;
 
-			if( from >= m_aGameCommands.size() ||
-				to >= m_aGameCommands.size() )
-			{
-				LOG->Warn( "%s::OptionOrder%s out of range", m_sName.c_str(), MenuDirToString(dir).c_str() );
-				continue;
-			}
+			m_mapCurrentChoiceToNextChoice[dir][from] = to;
+		}
 
-			m_Next[dir][from] = to;
+		if( m_mapCurrentChoiceToNextChoice[dir].empty() )	// Didn't specify any mappings
+		{
+			// Fill with reasonable defaults
+			for( unsigned c = 0; c < m_aGameCommands.size(); ++c )
+			{
+				int add;
+				switch( dir )
+				{
+				case MENU_DIR_UP:
+				case MENU_DIR_LEFT:
+					add = -1;
+					break;
+				default:
+					add = +1;
+					break;
+				}
+
+				m_mapCurrentChoiceToNextChoice[dir][c] = c + add;
+				/* Always wrap around MENU_DIR_AUTO. */
+				if( dir == MENU_DIR_AUTO || (bool)WRAP_CURSOR )
+					wrap( m_mapCurrentChoiceToNextChoice[dir][c], m_aGameCommands.size() );
+				else
+					m_mapCurrentChoiceToNextChoice[dir][c] = clamp( m_mapCurrentChoiceToNextChoice[dir][c], 0, (int)m_aGameCommands.size()-1 );
+			}
 		}
 	}
 }
@@ -396,8 +393,11 @@ bool ScreenSelectMaster::Move( PlayerNumber pn, MenuDir dir )
 	int iSwitchToIndex = m_iChoice[pn];
 	set<int> seen;
 try_again:
-	iSwitchToIndex = m_Next[dir][iSwitchToIndex];
-	if( iSwitchToIndex == -1 )
+	map<int,int>::const_iterator iter = m_mapCurrentChoiceToNextChoice[dir].find( iSwitchToIndex );
+	if( iter != m_mapCurrentChoiceToNextChoice[dir].end() )
+		iSwitchToIndex = iter->second;
+
+	if( iSwitchToIndex < 0 || iSwitchToIndex >= m_aGameCommands.size() ) // out of choice range
 		return false; // can't go that way
 	if( seen.find(iSwitchToIndex) != seen.end() )
 		return false; // went full circle and none found

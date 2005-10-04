@@ -60,7 +60,7 @@ protected:
 	ThemeMetric<int>		SCROLLER_SUBDIVISIONS;
 	ThemeMetric<CString>	DEFAULT_CHOICE;
 
-	int m_Next[NUM_MENU_DIRS][MAX_CHOICES];
+	map<int,int> m_mapCurrentChoiceToNextChoice[NUM_MENU_DIRS];
 
 	virtual int GetSelectionIndex( PlayerNumber pn );
 	virtual void UpdateSelectableChoices();
