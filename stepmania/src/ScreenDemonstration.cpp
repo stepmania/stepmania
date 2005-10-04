@@ -10,7 +10,6 @@
 #include "GameSoundManager.h"
 #include "GameManager.h"
 #include "Style.h"
-#include "PrefsManager.h"
 
 
 #define SECONDS_TO_SHOW			THEME->GetMetricF(m_sName,"SecondsToShow")
