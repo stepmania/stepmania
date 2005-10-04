@@ -21,6 +21,7 @@ ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName
 {
 	LOG->Trace( "ScreenDemonstration::ScreenDemonstration()" );
 	m_bDemonstration = true;
+	SOUNDMAN->SetPlayOnlyCriticalSounds( GAMESTATE->IsTimeToPlayAttractSounds() );  // mute attract sounds
 }
 
 void ScreenDemonstration::Init()
