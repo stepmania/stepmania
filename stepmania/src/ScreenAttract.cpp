@@ -27,7 +27,7 @@ ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : ScreenWith
 		GAMESTATE->Reset();
 
 	GAMESTATE->VisitAttractScreen( sName );
-	SOUNDMAN->SetPlayOnlyCriticalSounds( GAMESTATE->IsTimeToPlayAttractSounds() );	// mute attract sounds
+	SOUNDMAN->SetPlayOnlyCriticalSounds( !GAMESTATE->IsTimeToPlayAttractSounds() );	// mute attract sounds
 }
 
 
