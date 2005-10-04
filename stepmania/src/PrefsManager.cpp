@@ -296,7 +296,6 @@ PrefsManager::PrefsManager() :
 	m_bLogToDisk					( "LogToDisk",					true ),
 	m_bForceLogFlush				( "ForceLogFlush",				false ),
 	m_bShowLogOutput				( "ShowLogOutput",				false ),
-	m_bTimestamping					( "Timestamping",				false ),
 	m_bLogSkips						( "LogSkips",					false ),
 	m_bLogCheckpoints				( "LogCheckpoints",				false ),
 	m_bShowLoadingWindow			( "ShowLoadingWindow",			true ),
