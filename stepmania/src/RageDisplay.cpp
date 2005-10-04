@@ -445,9 +445,9 @@ void RageDisplay::TexturePopMatrix()
 	g_TextureStack.Pop();
 }
 
-void RageDisplay::TextureTranslate( float x, float y, float z )
+void RageDisplay::TextureTranslate( float x, float y )
 {
-	g_TextureStack.TranslateLocal(x, y, z);
+	g_TextureStack.TranslateLocal(x, y, 0);
 }
 
 

@@ -358,7 +358,7 @@ void Model::DrawPrimitives()
 				if( vTexTranslate.x != 0  ||  vTexTranslate.y != 0 )
 				{
 					DISPLAY->TexturePushMatrix();
-					DISPLAY->TextureTranslate( vTexTranslate.x, vTexTranslate.y, 0 );
+					DISPLAY->TextureTranslate( vTexTranslate.x, vTexTranslate.y );
 				}
 
 				/* There's some common code that could be folded out here, but it seems

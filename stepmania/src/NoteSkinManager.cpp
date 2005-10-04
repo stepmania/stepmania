@@ -162,8 +162,12 @@ CString NoteSkinManager::GetMetric( const CString &sButtonName, const CString &s
 	if( data.metrics.GetValue( sButtonName, sValue, sReturn ) )
 		return sReturn;
 	if( !data.metrics.GetValue( "NoteDisplay", sValue, sReturn ) )
-		RageException::Throw( "Could not read metric '[%s] %s' or '[NoteDisplay] %s' in '%s'",
+	{
+		CString sError = ssprintf(
+			"Could not read metric '[%s] %s' or '[NoteDisplay] %s' in '%s'",
 			sButtonName.c_str(), sValue.c_str(), sValue.c_str(), sNoteSkinName.c_str() );
+		RageException::Throw( sError );
+	}
 	return sReturn;
 }
 

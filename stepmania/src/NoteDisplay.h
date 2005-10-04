@@ -11,13 +11,26 @@ struct HoldNoteResult;
 struct NoteMetricCache_t;
 class PlayerState;
 
+enum NotePart
+{
+	NotePart_Tap,
+	NotePart_Addition,
+	NotePart_Mine,
+	NotePart_HoldHead,
+	NotePart_HoldTail,
+	NotePart_HoldTopCap,
+	NotePart_HoldBody,
+	NotePart_HoldBottomCap,
+	NUM_NotePart
+};
+
 #define NOTE_COLOR_IMAGES 8
 
 struct NoteColorActor
 {
 	NoteColorActor();
 	~NoteColorActor();
-	void Load( bool bIsNoteColor, const CString &sButton, const CString &sElement );
+	void Load( const CString &sButton, const CString &sElement );
 	Actor* Get( NoteType nt );
 private:
 	Actor* m_p[NOTE_COLOR_IMAGES];
@@ -28,7 +41,7 @@ struct NoteColorSprite
 {
 	NoteColorSprite();
 	~NoteColorSprite();
-	void Load( bool bIsNoteColor, const CString &sButton, const CString &sElement );
+	void Load( const CString &sButton, const CString &sElement );
 	Sprite* Get( NoteType nt );
 private:
 	Sprite*	m_p[NOTE_COLOR_IMAGES];
@@ -54,14 +67,14 @@ public:
 
 	static void Update( float fDeltaTime );
 
-	void DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting );
+	void DrawActor( Actor* pActor, int iCol, float fBeat, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels, bool bUseLighting, NotePart part );
 	void DrawTap( int iCol, float fBeat, bool bOnSameRowAsHoldStart, bool bIsAddition, bool bIsMine, float fPercentFadeToFail, float fLife, float fReverseOffsetPixels );
 	void DrawHold( const TapNote& tn, int iCol, int iRow, bool bIsBeingHeld, bool bIsActive, const HoldNoteResult &Result, float fPercentFadeToFail, bool bDrawGlowOnly, float fReverseOffsetPixels, float fYStartOffset, float fYEndOffset );
 	
 	bool DrawHoldHeadForTapsOnSameRow() const;
 
 protected:
-	void SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid, bool bNoteColor );
+	void SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAnimationLengthInBeats, bool bVivid );
 	Actor *GetTapNoteActor( float fNoteBeat );
 	Actor *GetTapAdditionActor( float fNoteBeat );
 	Actor *GetTapMineActor( float fNoteBeat );

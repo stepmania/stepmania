@@ -178,7 +178,6 @@ enum NoteType
 	// MD 11/02/03 - added finer divisions
 	NOTE_TYPE_48TH, // forty-eighth note
 	NOTE_TYPE_64TH,	// sixty-fourth note
-	// Not having this triggers asserts all over the place.  Go figure.
 	NOTE_TYPE_192ND,
 	NUM_NOTE_TYPES,
 	NOTE_TYPE_INVALID

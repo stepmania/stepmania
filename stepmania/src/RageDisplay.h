@@ -275,7 +275,8 @@ public:
 	/* Texture matrix functions */
 	void TexturePushMatrix();
 	void TexturePopMatrix();
-	void TextureTranslate( float x, float y, float z );
+	void TextureTranslate( float x, float y );
+	void TextureTranslate( const RageVector2 &v ) { this->TextureTranslate( v.x, v.y ); }	
 
 	/* Projection and View matrix stack functions. */
 	void CameraPushMatrix();
