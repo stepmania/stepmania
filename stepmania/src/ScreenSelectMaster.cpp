@@ -403,7 +403,7 @@ try_again:
 	if( iter != m_mapCurrentChoiceToNextChoice[dir].end() )
 		iSwitchToIndex = iter->second;
 
-	if( iSwitchToIndex < 0 || iSwitchToIndex >= m_aGameCommands.size() ) // out of choice range
+	if( iSwitchToIndex < 0 || iSwitchToIndex >= (int) m_aGameCommands.size() ) // out of choice range
 		return false; // can't go that way
 	if( seen.find(iSwitchToIndex) != seen.end() )
 		return false; // went full circle and none found
