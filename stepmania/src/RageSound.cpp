@@ -887,8 +887,6 @@ float RageSound::GetAbsoluteVolume() const
 {
 	float f = m_Param.m_Volume;
 	f *= SOUNDMAN->GetMixVolume();
-	if( SOUNDMAN->GetPlayOnlyCriticalSounds()  &&  !m_Param.m_bIsCriticalSound )
-		f *= 0;
 	return f;
 }
 
@@ -915,6 +913,8 @@ RageTimer RageSound::GetStartTime() const
 void RageSound::SetParams( const RageSoundParams &p )
 {
 	m_Param = p;
+	if( !m_Param.m_bIsCriticalSound && SOUNDMAN->GetPlayOnlyCriticalSounds() )
+		m_Param.m_Volume = 0;
 }
 
 RageSoundParams::StopMode_t RageSound::GetStopMode() const
