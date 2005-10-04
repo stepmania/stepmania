@@ -92,6 +92,7 @@ protected:
 	bool m_bChosen[NUM_PLAYERS];
 
 	float m_fLockInputSecs;
+	PlayerNumber m_TrackingRepeatingInputFromPlayer;
 };
 
 
