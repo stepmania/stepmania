@@ -55,7 +55,7 @@ void ScreenSelectMaster::Init()
 {
 	ScreenSelect::Init();
 
-	m_TrackingRepeatingInputFromPlayer = PLAYER_INVALID;
+	m_TrackingRepeatingInput.MakeInvalid();
 
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
@@ -416,13 +416,16 @@ void ScreenSelectMaster::MenuLeft( const InputEventPlus &input )
 		return;
 	if( input.type == IET_RELEASE )
 		return;
-	if( input.type != IET_FIRST_PRESS && !ALLOW_REPEATING_INPUT )
-		return;
-	if( input.type != IET_FIRST_PRESS && m_TrackingRepeatingInputFromPlayer != pn )
-		return;
+	if( input.type != IET_FIRST_PRESS )
+	{
+		if( !ALLOW_REPEATING_INPUT )
+			return;
+		if( m_TrackingRepeatingInput != input.MenuI )
+			return;
+	}
 	if( Move(pn, MENU_DIR_LEFT) )
 	{
-		m_TrackingRepeatingInputFromPlayer = pn;
+		m_TrackingRepeatingInput = input.MenuI;
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (Message)(Message_MenuLeftP1+pn) );
 	}
@@ -435,13 +438,16 @@ void ScreenSelectMaster::MenuRight( const InputEventPlus &input )
 		return;
 	if( input.type == IET_RELEASE )
 		return;
-	if( input.type != IET_FIRST_PRESS && !ALLOW_REPEATING_INPUT )
-		return;
-	if( input.type != IET_FIRST_PRESS && m_TrackingRepeatingInputFromPlayer != pn )
-		return;
+	if( input.type != IET_FIRST_PRESS )
+	{
+		if( !ALLOW_REPEATING_INPUT )
+			return;
+		if( m_TrackingRepeatingInput != input.MenuI )
+			return;
+	}
 	if( Move(pn, MENU_DIR_RIGHT) )
 	{
-		m_TrackingRepeatingInputFromPlayer = pn;
+		m_TrackingRepeatingInput = input.MenuI;
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (Message)(Message_MenuRightP1+pn) );
 	}
@@ -454,13 +460,16 @@ void ScreenSelectMaster::MenuUp( const InputEventPlus &input )
 		return;
 	if( input.type == IET_RELEASE )
 		return;
-	if( input.type != IET_FIRST_PRESS && !ALLOW_REPEATING_INPUT )
-		return;
-	if( input.type != IET_FIRST_PRESS && m_TrackingRepeatingInputFromPlayer != pn )
-		return;
+	if( input.type != IET_FIRST_PRESS )
+	{
+		if( !ALLOW_REPEATING_INPUT )
+			return;
+		if( m_TrackingRepeatingInput != input.MenuI )
+			return;
+	}
 	if( Move(pn, MENU_DIR_UP) )
 	{
-		m_TrackingRepeatingInputFromPlayer = pn;
+		m_TrackingRepeatingInput = input.MenuI;
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (Message)(Message_MenuUpP1+pn) );
 	}
@@ -473,13 +482,16 @@ void ScreenSelectMaster::MenuDown( const InputEventPlus &input )
 		return;
 	if( input.type == IET_RELEASE )
 		return;
-	if( input.type != IET_FIRST_PRESS && !ALLOW_REPEATING_INPUT )
-		return;
-	if( input.type != IET_FIRST_PRESS && m_TrackingRepeatingInputFromPlayer != pn )
-		return;
+	if( input.type != IET_FIRST_PRESS )
+	{
+		if( !ALLOW_REPEATING_INPUT )
+			return;
+		if( m_TrackingRepeatingInput != input.MenuI )
+			return;
+	}
 	if( Move(pn, MENU_DIR_DOWN) )
 	{
-		m_TrackingRepeatingInputFromPlayer = pn;
+		m_TrackingRepeatingInput = input.MenuI;
 		m_soundChange.Play();
 		MESSAGEMAN->Broadcast( (Message)(Message_MenuDownP1+pn) );
 	}

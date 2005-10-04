@@ -29,7 +29,8 @@ struct MenuInput
 	PlayerNumber	player;
 	MenuButton		button;
 
-//	bool operator==( const MenuInput &other ) { return player == other.player && button == other.button; };
+	bool operator==( const MenuInput &other ) { return player == other.player && button == other.button; };
+	bool operator!=( const MenuInput &other ) { return !operator==(other); };
 
 	inline bool IsValid() const { return player != PLAYER_INVALID; };
 	inline void MakeInvalid() { player = PLAYER_INVALID; button = MENU_BUTTON_INVALID; };

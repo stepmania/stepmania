@@ -6,6 +6,7 @@
 #include "RandomSample.h"
 #include "ActorUtil.h"
 #include "ActorScroller.h"
+#include "MenuInput.h"
 
 #define MAX_CHOICES 30
 
@@ -92,7 +93,7 @@ protected:
 	bool m_bChosen[NUM_PLAYERS];
 
 	float m_fLockInputSecs;
-	PlayerNumber m_TrackingRepeatingInputFromPlayer;
+	MenuInput m_TrackingRepeatingInput;
 };
 
 
