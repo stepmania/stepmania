@@ -71,8 +71,8 @@ void ScreenAttract::AttractInput( const InputEventPlus &input, ScreenWithMenuEle
 				if( input.MenuI.button != MENU_BUTTON_COIN )
 					SCREENMAN->PlayCoinSound();
 				
-				pScreen->Cancel( SM_GoToStartScreen );
 				SOUNDMAN->SetPlayOnlyCriticalSounds( false );	// unmute attract sounds
+				pScreen->Cancel( SM_GoToStartScreen );
 				break;
 			default:
 				ASSERT(0);
