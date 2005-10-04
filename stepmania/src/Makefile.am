@@ -60,6 +60,7 @@ ScreenPrompt.cpp ScreenPrompt.h ScreenRanking.cpp ScreenRanking.h \
 ScreenReloadSongs.cpp ScreenReloadSongs.h \
 ScreenSandbox.cpp ScreenSandbox.h \
 ScreenSaveSync.cpp ScreenSaveSync.h \
+ScreenStatsOverlay.cpp ScreenStatsOverlay.h \
 ScreenSelect.cpp ScreenSelect.h ScreenSelectCharacter.cpp ScreenSelectCharacter.h \
 ScreenSelectDifficulty.cpp ScreenSelectDifficulty.h ScreenSelectGroup.cpp ScreenSelectGroup.h \
 ScreenSelectMaster.cpp ScreenSelectMaster.h ScreenSelectMode.cpp ScreenSelectMode.h \

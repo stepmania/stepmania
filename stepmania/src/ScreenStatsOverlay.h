@@ -1,46 +1,32 @@
-/* ScreenSystemLayer - credits and statistics drawn on top of everything else. */
+/* ScreenStatsOverlay - credits and statistics drawn on top of everything else. */
 
-#ifndef ScreenSystemLayer_H
-#define ScreenSystemLayer_H
+#ifndef ScreenStatsOverlay_H
+#define ScreenStatsOverlay_H
 
 #include "Screen.h"
 #include "BitmapText.h"
 #include "Quad.h"
-#include "ThemeMetric.h"
-#include "AutoActor.h"
 
-class ScreenSystemLayer : public Screen
+const int NUM_SKIPS_TO_SHOW = 5;
+
+class ScreenStatsOverlay : public Screen
 {
 public:
-	ScreenSystemLayer( const CString &sName );
-	virtual ~ScreenSystemLayer();
+	ScreenStatsOverlay( const CString &sName );
+	virtual ~ScreenStatsOverlay();
 	virtual void Init();
-	void HandleMessage( const CString &sCommandName );
-
-	void ReloadCreditsText();
+	
 	void Update( float fDeltaTime );
 
 private:
-	AutoActor  m_sprMessageFrame;
-	BitmapText m_textMessage;
-	BitmapText m_textCredits[NUM_PLAYERS];
-	Quad m_quadBrightnessAdd;
+	void AddTimestampLine( const CString &txt, const RageColor &color );
+	void UpdateSkips();
 
-	CString GetCreditsMessage( PlayerNumber pn ) const;
-
-	ThemeMetric<CString> CREDITS_PRESS_START;
-	ThemeMetric<CString> CREDITS_INSERT_CARD;
-	ThemeMetric<CString> CREDITS_CARD_TOO_LATE;
-	ThemeMetric<CString> CREDITS_CARD_NO_NAME;
-	ThemeMetric<CString> CREDITS_CARD_READY;
-	ThemeMetric<CString> CREDITS_CARD_CHECKING;
-	ThemeMetric<CString> CREDITS_CARD_REMOVED;
-	ThemeMetric<CString> CREDITS_FREE_PLAY;
-	ThemeMetric<CString> CREDITS_CREDITS;
-	ThemeMetric<CString> CREDITS_NOT_PRESENT;
-	ThemeMetric<CString> CREDITS_LOAD_FAILED;
-	ThemeMetric<CString> CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
-	ThemeMetric<bool> CREDITS_JOIN_ONLY;
+	BitmapText m_textStats;
+	Quad m_quadSkipBackground;
+	BitmapText m_textSkips[NUM_SKIPS_TO_SHOW];
+	RageTimer m_timerSkip;
+	int m_LastSkip;
 };
 
 

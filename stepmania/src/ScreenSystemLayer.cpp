@@ -46,41 +46,8 @@ void ScreenSystemLayer::Init()
 	Screen::Init();
 
 	this->AddChild(&m_textMessage);
-	this->AddChild(&m_textStats);
-	this->AddChild(&m_textTime);
 	FOREACH_PlayerNumber( p )
 		this->AddChild(&m_textCredits[p]);
-
-
-	/* "Was that a skip?"  This displays a message when an update takes
-	 * abnormally long, to quantify skips more precisely, verify them
-	 * when they're subtle, and show the time it happened, so you can pinpoint
-	 * the time in the log.  Put a dim quad behind it to make it easier to
-	 * read. */
-	m_LastSkip = 0;
-	const float SKIP_LEFT = 320.0f, SKIP_TOP = 60.0f, 
-		SKIP_WIDTH = 160.0f, SKIP_Y_DIST = 16.0f;
-
-	m_quadSkipBackground.StretchTo(RectF(SKIP_LEFT-8, SKIP_TOP-8,
-						SKIP_LEFT+SKIP_WIDTH, SKIP_TOP+SKIP_Y_DIST*NUM_SKIPS_TO_SHOW));
-	m_quadSkipBackground.SetDiffuse( RageColor(0,0,0,0.4f) );
-	m_quadSkipBackground.SetHidden( !PREFSMAN->m_bTimestamping );
-	this->AddChild(&m_quadSkipBackground);
-
-	for( int i=0; i<NUM_SKIPS_TO_SHOW; i++ )
-	{
-		/* This is somewhat big.  Let's put it on the right side, where it'll
-		 * obscure the 2P side during gameplay; there's nowhere to put it that
-		 * doesn't obscure something, and it's just a diagnostic. */
-		m_textSkips[i].LoadFromFont( THEME->GetPathF("Common","normal") );
-		m_textSkips[i].SetXY( SKIP_LEFT, SKIP_TOP + SKIP_Y_DIST*i );
-		m_textSkips[i].SetHorizAlign( Actor::align_left );
-		m_textSkips[i].SetVertAlign( Actor::align_top );
-		m_textSkips[i].SetZoom( 0.5f );
-		m_textSkips[i].SetDiffuse( RageColor(1,1,1,0) );
-		m_textSkips[i].SetShadowLength( 0 );
-		this->AddChild(&m_textSkips[i]);
-	}
 
 	m_quadBrightnessAdd.StretchTo( RectF(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM) );
 	m_quadBrightnessAdd.SetDiffuse( RageColor(1,1,1,PREFSMAN->m_fBrightnessAdd) );
@@ -110,14 +77,6 @@ void ScreenSystemLayer::ReloadCreditsText()
 	SET_XY_AND_ON_COMMAND( m_textMessage );
 	m_textMessage.SetHidden( true );
 
- 	m_textStats.LoadFromFont( THEME->GetPathF(m_sName,"stats") );
-	m_textStats.SetName( "Stats" );
-	SET_XY_AND_ON_COMMAND( m_textStats ); 
-
-	m_textTime.LoadFromFont( THEME->GetPathF(m_sName,"time") );
-	m_textTime.SetName( "Time" );
-	m_textTime.SetHidden( !PREFSMAN->m_bTimestamping );
-	SET_XY_AND_ON_COMMAND( m_textTime ); 
 
 	FOREACH_PlayerNumber( p )
 	{
@@ -267,86 +226,9 @@ void ScreenSystemLayer::HandleMessage( const CString &sMessage )
 	Screen::HandleMessage( sMessage );
 }
 
-void ScreenSystemLayer::AddTimestampLine( const CString &txt, const RageColor &color )
-{
-	m_textSkips[m_LastSkip].SetText( txt );
-	m_textSkips[m_LastSkip].StopTweening();
-	m_textSkips[m_LastSkip].SetDiffuse( RageColor(1,1,1,1) );
-	m_textSkips[m_LastSkip].BeginTweening( 0.2f );
-	m_textSkips[m_LastSkip].SetDiffuse( color );
-	m_textSkips[m_LastSkip].BeginTweening( 3.0f );
-	m_textSkips[m_LastSkip].BeginTweening( 0.2f );
-	m_textSkips[m_LastSkip].SetDiffuse( RageColor(1,1,1,0) );
-
-	m_LastSkip++;
-	m_LastSkip %= NUM_SKIPS_TO_SHOW;
-}
-
-void ScreenSystemLayer::UpdateSkips()
-{
-	if( !PREFSMAN->m_bTimestamping && !PREFSMAN->m_bLogSkips )
-		return;
-
-	/* Use our own timer, so we ignore `/tab. */
-	const float UpdateTime = SkipTimer.GetDeltaTime();
-
-	/* FPS is 0 for a little while after we load a screen; don't report
-	 * during this time. Do clear the timer, though, so we don't report
-	 * a big "skip" after this period passes. */
-	if( !DISPLAY->GetFPS() )
-		return;
-
-	/* We want to display skips.  We expect to get updates of about 1.0/FPS ms. */
-	const float ExpectedUpdate = 1.0f / DISPLAY->GetFPS();
-	
-	/* These are thresholds for severity of skips.  The smallest
-	 * is slightly above expected, to tolerate normal jitter. */
-	const float Thresholds[] =
-	{
-		ExpectedUpdate * 2.0f, ExpectedUpdate * 4.0f, 0.1f, -1
-	};
-
-	int skip = 0;
-	while( Thresholds[skip] != -1 && UpdateTime > Thresholds[skip] )
-		skip++;
-
-	if( skip )
-	{
-		CString time(SecondsToMMSSMsMs(RageTimer::GetTimeSinceStartFast()));
-
-		static const RageColor colors[] =
-		{
-			RageColor(0,0,0,0),		  /* unused */
-			RageColor(0.2f,0.2f,1,1), /* light blue */
-			RageColor(1,1,0,1),		  /* yellow */
-			RageColor(1,0.2f,0.2f,1)  /* light red */
-		};
-
-		if( PREFSMAN->m_bTimestamping )
-			AddTimestampLine( ssprintf("%s: %.0fms (%.0f)", time.c_str(), 1000*UpdateTime, UpdateTime/ExpectedUpdate), colors[skip] );
-		if( PREFSMAN->m_bLogSkips )
-			LOG->Trace( "Frame skip: %.0fms (%.0f)", 1000*UpdateTime, UpdateTime/ExpectedUpdate );
-	}
-}
-
 void ScreenSystemLayer::Update( float fDeltaTime )
 {
 	Screen::Update(fDeltaTime);
-
-	if( PREFSMAN  &&  (bool)PREFSMAN->m_bShowStats )
-	{
-		m_textStats.SetDiffuse( RageColor(1,1,1,0.7f) );
-		m_textStats.SetText( DISPLAY->GetStats() );
-	}
-	else
-	{
-		m_textStats.SetDiffuse( RageColor(1,1,1,0) ); /* hide */
-	}
-
-	UpdateSkips();
-
-	if( PREFSMAN->m_bTimestamping )
-		m_textTime.SetText( SecondsToMMSSMsMs(RageTimer::GetTimeSinceStartFast()) );
 }
 
 /*
