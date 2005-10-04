@@ -1649,9 +1649,6 @@ bool GameState::OneIsHot() const
 
 bool GameState::IsTimeToPlayAttractSounds() const
 {
-	if( !GAMESTATE->m_bDemonstrationOrJukebox )
-		return true;
-
 	// m_iNumTimesThroughAttract will be -1 from the first attract screen after 
 	// the end of a game until the next time FIRST_ATTRACT_SCREEN is reached.
 	// Play attract sounds for this sort span of time regardless of 
