@@ -76,7 +76,7 @@ void ScreenStatsOverlay::Update( float fDeltaTime )
 		// from the span when stats were turned off.
 		m_timerSkip.Touch();
 	}
-	bShowStatsWasOn = PREFSMAN->m_bShowStats;
+	bShowStatsWasOn = PREFSMAN->m_bShowStats.Get();
 
 	this->SetVisible( PREFSMAN->m_bShowStats );
 	if( PREFSMAN->m_bShowStats )
