@@ -29,7 +29,6 @@ struct NoteColorActor
 	NoteColorActor();
 	~NoteColorActor();
 	void Load( const CString &sButton, const CString &sElement );
-	Actor* Get( NoteType nt );
 	Actor* Get() { return m_p; }
 private:
 	Actor* m_p;
