@@ -854,7 +854,7 @@ void Player::DrawPrimitives()
 	if( !(bool)TAP_JUDGMENTS_UNDER_FIELD )
 		DrawTapJudgments();
 
-	if( !(bool)TAP_JUDGMENTS_UNDER_FIELD )
+	if( !(bool)HOLD_JUDGMENTS_UNDER_FIELD )
 		DrawHoldJudgments();
 }
 
