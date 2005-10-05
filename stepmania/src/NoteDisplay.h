@@ -24,17 +24,15 @@ enum NotePart
 	NUM_NotePart
 };
 
-#define NOTE_COLOR_IMAGES 8
-
 struct NoteColorActor
 {
 	NoteColorActor();
 	~NoteColorActor();
 	void Load( const CString &sButton, const CString &sElement );
 	Actor* Get( NoteType nt );
+	Actor* Get() { return m_p; }
 private:
-	Actor* m_p[NOTE_COLOR_IMAGES];
-	bool m_bIsNoteColor;
+	Actor* m_p;
 };
 
 struct NoteColorSprite
@@ -42,17 +40,26 @@ struct NoteColorSprite
 	NoteColorSprite();
 	~NoteColorSprite();
 	void Load( const CString &sButton, const CString &sElement );
-	Sprite* Get( NoteType nt );
+	Sprite* Get() { return m_p; }
 private:
-	Sprite*	m_p[NOTE_COLOR_IMAGES];
-	bool m_bIsNoteColor;
+	Sprite*	m_p;
 };
 
-enum HoldType { hold, roll, NUM_HOLD_TYPES };
+enum HoldType 
+{
+	hold, 
+	roll, 
+	NUM_HOLD_TYPES 
+};
 #define FOREACH_HoldType( i ) FOREACH_ENUM( HoldType, NUM_HOLD_TYPES, i )
 const CString &HoldTypeToString( HoldType ht );
 
-enum ActiveType { active, inactive, NUM_ACTIVE_TYPES };
+enum ActiveType
+{
+	active,
+	inactive,
+	NUM_ACTIVE_TYPES
+};
 #define FOREACH_ActiveType( i ) FOREACH_ENUM( ActiveType, NUM_ACTIVE_TYPES, i )
 const CString &ActiveTypeToString( ActiveType at );
 

@@ -190,80 +190,35 @@ Sprite *MakeRefcountedSprite( const CString &sButton, const CString &sElement )
 
 NoteColorActor::NoteColorActor()
 {
-	for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-		m_p[i] = NULL;
+	m_p = NULL;
 }
 
 NoteColorActor::~NoteColorActor()
 {
-	for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-		if( m_p[i] )
-			DeleteNoteResource( m_p[i] );
-	m_bIsNoteColor = false;
+	if( m_p )
+		DeleteNoteResource( m_p );
 }
 
 void NoteColorActor::Load( const CString &sButton, const CString &sElement )
 {
-	m_bIsNoteColor = false;
-	if( m_bIsNoteColor )
-	{
-		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-			m_p[i] = MakeRefcountedActor( sButton, sElement );
-	}
-	else
-	{
-		m_p[0] = MakeRefcountedActor( sButton, sElement );
-	}
-}
-
-Actor* NoteColorActor::Get( NoteType nt )
-{
-	if( m_bIsNoteColor )
-		nt = min( nt, (NoteType) (NOTE_COLOR_IMAGES-1) );
-	else
-		nt = NoteType(0);
-
-	return m_p[ m_bIsNoteColor ? nt : 0 ];
+	m_p = MakeRefcountedActor( sButton, sElement );
 }
 
 
 NoteColorSprite::NoteColorSprite()
 {
-	for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-		m_p[i] = NULL;
-	m_bIsNoteColor = false;
+	m_p = NULL;
 }
 
 NoteColorSprite::~NoteColorSprite()
 {
-	for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-		if( m_p[i] )
-			DeleteNoteResource( m_p[i] );
-	m_bIsNoteColor = false;
+	if( m_p )
+		DeleteNoteResource( m_p );
 }
 
 void NoteColorSprite::Load( const CString &sButton, const CString &sElement )
 {
-	m_bIsNoteColor = false;
-	if( m_bIsNoteColor )
-	{
-		for( int i=0; i<NOTE_COLOR_IMAGES; i++ )
-			m_p[i] = MakeRefcountedSprite( sButton, sElement );
-	}
-	else
-	{
-		m_p[0] = MakeRefcountedSprite( sButton, sElement );
-	}
-}
-
-Sprite* NoteColorSprite::Get( NoteType nt )
-{
-	if( m_bIsNoteColor )
-		nt = min( nt, (NoteType) (NOTE_COLOR_IMAGES-1) );
-	else
-		nt = NoteType(0);
-
-	return m_p[ m_bIsNoteColor ? nt : 0 ];
+	m_p = MakeRefcountedSprite( sButton, sElement );
 }
 
 
@@ -368,8 +323,7 @@ void NoteDisplay::SetActiveFrame( float fNoteBeat, Actor &actorToSet, float fAni
 
 Actor * NoteDisplay::GetTapNoteActor( float fNoteBeat )
 {
-	NoteType nt = BeatToNoteType( fNoteBeat );
-	Actor *pActorOut = m_TapNote.Get( nt );
+	Actor *pActorOut = m_TapNote.Get();
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -382,8 +336,7 @@ Actor * NoteDisplay::GetTapNoteActor( float fNoteBeat )
 
 Actor * NoteDisplay::GetTapAdditionActor( float fNoteBeat )
 {
-	NoteType nt = BeatToNoteType( fNoteBeat );
-	Actor *pActorOut = m_TapAddition.Get( nt );
+	Actor *pActorOut = m_TapAddition.Get();
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -396,8 +349,7 @@ Actor * NoteDisplay::GetTapAdditionActor( float fNoteBeat )
 
 Actor * NoteDisplay::GetTapMineActor( float fNoteBeat )
 {
-	NoteType nt = BeatToNoteType( fNoteBeat );
-	Actor *pActorOut = m_TapMine.Get( nt );
+	Actor *pActorOut = m_TapMine.Get();
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -410,8 +362,7 @@ Actor * NoteDisplay::GetTapMineActor( float fNoteBeat )
 
 Sprite * NoteDisplay::GetHoldTopCapSprite( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
 {
-	NoteType nt = BeatToNoteType( fNoteBeat );
-	Sprite *pSpriteOut = m_HoldTopCap[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get( nt );
+	Sprite *pSpriteOut = m_HoldTopCap[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -424,8 +375,7 @@ Sprite * NoteDisplay::GetHoldTopCapSprite( float fNoteBeat, bool bIsRoll, bool b
 
 Sprite * NoteDisplay::GetHoldBottomCapSprite( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
 {
-	NoteType nt = BeatToNoteType( fNoteBeat );
-	Sprite *pSpriteOut = m_HoldBottomCap[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get( nt );
+	Sprite *pSpriteOut = m_HoldBottomCap[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -439,8 +389,7 @@ Sprite * NoteDisplay::GetHoldBottomCapSprite( float fNoteBeat, bool bIsRoll, boo
 
 Actor* NoteDisplay::GetHoldHeadActor( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
 {
-	NoteType nt = BeatToNoteType( fNoteBeat );
-	Actor *pActorOut = m_HoldHead[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get( nt );
+	Actor *pActorOut = m_HoldHead[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -453,8 +402,7 @@ Actor* NoteDisplay::GetHoldHeadActor( float fNoteBeat, bool bIsRoll, bool bIsBei
 
 Sprite *NoteDisplay::GetHoldBodySprite( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
 {
-	NoteType nt = BeatToNoteType( fNoteBeat );
-	Sprite *pSpriteOut = m_HoldBody[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get( nt );
+	Sprite *pSpriteOut = m_HoldBody[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
 
 	SetActiveFrame( 
 		fNoteBeat, 
@@ -467,8 +415,7 @@ Sprite *NoteDisplay::GetHoldBodySprite( float fNoteBeat, bool bIsRoll, bool bIsB
 
 Actor* NoteDisplay::GetHoldTailActor( float fNoteBeat, bool bIsRoll, bool bIsBeingHeld )
 {
-	NoteType nt = BeatToNoteType( fNoteBeat );
-	Actor *pActorOut = m_HoldTail[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get( nt );
+	Actor *pActorOut = m_HoldTail[bIsRoll ? roll:hold][bIsBeingHeld ? active:inactive].Get();
 
 	SetActiveFrame( 
 		fNoteBeat, 
