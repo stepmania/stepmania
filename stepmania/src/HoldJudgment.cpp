@@ -12,17 +12,17 @@ static ThemeMetric<apActorCommands>	NG_COMMAND	("HoldJudgment","NGCommand");
 HoldJudgment::HoldJudgment()
 {
 	m_sprJudgment.Load( THEME->GetPathG("HoldJudgment","label 1x2") );
-	m_sprJudgment.StopAnimating();
+	m_sprJudgment->StopAnimating();
 	ResetAnimation();
-	this->AddChild( &m_sprJudgment );
+	this->AddChild( m_sprJudgment );
 }
 
 void HoldJudgment::ResetAnimation()
 {
-	m_sprJudgment.SetDiffuse( RageColor(1,1,1,0) );
-	m_sprJudgment.SetXY( 0, 0 );
-	m_sprJudgment.StopTweening();
-	m_sprJudgment.StopEffect();
+	m_sprJudgment->SetDiffuse( RageColor(1,1,1,0) );
+	m_sprJudgment->SetXY( 0, 0 );
+	m_sprJudgment->StopTweening();
+	m_sprJudgment->StopEffect();
 }
 
 void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
@@ -36,12 +36,12 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 	case HNS_NONE:
 		ASSERT(0);
 	case HNS_OK:
-		m_sprJudgment.SetState( 0 );
-		m_sprJudgment.RunCommands( OK_COMMAND );
+		m_sprJudgment->SetState( 0 );
+		m_sprJudgment->RunCommands( OK_COMMAND );
 		break;
 	case HNS_NG:
-		m_sprJudgment.SetState( 1 );
-		m_sprJudgment.RunCommands( NG_COMMAND );
+		m_sprJudgment->SetState( 1 );
+		m_sprJudgment->RunCommands( NG_COMMAND );
 		break;
 	default:
 		ASSERT(0);

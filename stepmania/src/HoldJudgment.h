@@ -1,9 +1,9 @@
 #ifndef HOLD_JUDGMENT_H
 #define HOLD_JUDGMENT_H
 
-#include "Sprite.h"
 #include "ActorFrame.h"
 #include "GameConstantsAndTypes.h"
+#include "AutoActor.h"
 
 
 class HoldJudgment : public ActorFrame
@@ -11,11 +11,11 @@ class HoldJudgment : public ActorFrame
 public:
 	HoldJudgment();
 
-	void Reset();
 	void SetHoldJudgment( HoldNoteScore hns );
 
 protected:
-	Sprite		m_sprJudgment;
+	void ResetAnimation();
+	AutoActor		m_sprJudgment;
 };
 
 #endif
