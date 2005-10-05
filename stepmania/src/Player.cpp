@@ -147,6 +147,8 @@ Player::~Player()
 	SAFE_DELETE( m_pCombo );
 	SAFE_DELETE( m_pAttackDisplay );
 	SAFE_DELETE( m_pNoteField );
+	for( unsigned i = 0; i < m_vHoldJudgment.size(); ++i )
+		SAFE_DELETE( m_vHoldJudgment[i] );
 }
 
 /* Init() does the expensive stuff: load sounds and note skins.  Load() just loads a NoteData. */
@@ -314,6 +316,14 @@ void Player::Init(
 		ActorUtil::OnCommand( m_pJudgment, sType );
 	}
 
+	// Load HoldJudgments
+	for( int i = 0; i < GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer; ++i )
+	{
+		HoldJudgment *pJudgment = new HoldJudgment;
+		m_vHoldJudgment.push_back( pJudgment );
+		this->AddChild( m_vHoldJudgment[i] );
+	}
+
 	m_fNoteFieldHeight = GRAY_ARROWS_Y_REVERSE-GRAY_ARROWS_Y_STANDARD;
 	if( m_pNoteField )
 		m_pNoteField->Init( m_pPlayerState, m_fNoteFieldHeight );
@@ -423,14 +433,6 @@ void Player::Load( const NoteData& noteData )
 	// they change depending on PlayerOptions.
 
 
-	// Load HoldJudgments
-	FOREACH( HoldJudgment, m_vHoldJudgment, i )
-		this->RemoveChild( &*i );
-	m_vHoldJudgment.resize( GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer );
-	FOREACH( HoldJudgment, m_vHoldJudgment, i )
-		this->AddChild( &*i );
-
-
 	//
 	// Load keysounds.  If sounds are already loaded (as in the editor), don't reload them.
 	// XXX: the editor will load several duplicate copies (in each NoteField), and each
@@ -493,9 +495,9 @@ void Player::Update( float fDeltaTime )
 			const float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
 			const float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
 
-			m_vHoldJudgment[c].SetX( fX );
-			m_vHoldJudgment[c].SetY( fHoldJudgeYPos );
-			m_vHoldJudgment[c].SetZ( fZ );
+			m_vHoldJudgment[c]->SetX( fX );
+			m_vHoldJudgment[c]->SetY( fHoldJudgeYPos );
+			m_vHoldJudgment[c]->SetZ( fZ );
 		}
 	}
 
@@ -700,7 +702,7 @@ void Player::Update( float fDeltaTime )
 			{
 				/* this note has been judged */
 				HandleHoldScore( hns, tns );
-				m_vHoldJudgment[iTrack].SetHoldJudgment( hns );
+				m_vHoldJudgment[iTrack]->SetHoldJudgment( hns );
 
 				int ms_error = (hns == HNS_OK)? 0:MAX_PRO_TIMING_ERROR;
 
@@ -881,7 +883,7 @@ void Player::DrawHoldJudgments()
 	{
 		NoteFieldMode::BeginDrawTrack( pn, c );
 
-		m_vHoldJudgment[c].Draw();
+		m_vHoldJudgment[c]->Draw();
 
 		NoteFieldMode::EndDrawTrack(c);
 	}

@@ -88,7 +88,7 @@ protected:
 
 	NoteField		*m_pNoteField;
 
-	vector<HoldJudgment>	m_vHoldJudgment;
+	vector<HoldJudgment*>	m_vHoldJudgment;
 
 	Judgment		*m_pJudgment;
 	AutoActor		m_sprJudgmentFrame;
