@@ -299,10 +299,12 @@ public:
 	LunaNoteSkinManager() { LUA->Register( Register ); }
 
 	static int GetPath( T* p, lua_State *L )		{ lua_pushstring(L, p->GetPath(SArg(1),SArg(2)) ); return 1; }
+	static int GetMetricA( T* p, lua_State *L )		{ p->GetMetricA(SArg(1),SArg(2))->PushSelf(L); return 1; }
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetPath );
+		ADD_METHOD( GetMetricA );
 
 		Luna<T>::Register( L );
 

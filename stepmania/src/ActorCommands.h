@@ -18,7 +18,7 @@ private:
 	CString m_sLuaFunction;
 };
 
-typedef AutoPtrCopyOnWrite<ActorCommands> apActorCommands;
+typedef AutoPtrCopyOnWrite<LuaReference> apActorCommands;
 
 #endif
 

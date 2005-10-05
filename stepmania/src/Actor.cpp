@@ -1394,6 +1394,13 @@ public:
 	static int playcommand( T* p, lua_State *L )		{ p->PlayCommand(SArg(1),NULL); return 0; }
 	static int queuecommand( T* p, lua_State *L )		{ p->QueueCommand(SArg(1)); return 0; }
 	static int queuemessage( T* p, lua_State *L )		{ p->QueueMessage(SArg(1)); return 0; }
+	static int addcommand( T* p, lua_State *L )
+	{
+		LuaReference *pRef = new LuaReference;
+		pRef->SetFromStack( L );
+		p->AddCommand( SArg(1), apActorCommands(pRef) );
+		return 0;
+	}
 
 	static int GetX( T* p, lua_State *L )				{ lua_pushnumber( L, p->GetX() ); return 1; }
 	static int GetY( T* p, lua_State *L )				{ lua_pushnumber( L, p->GetY() ); return 1; }
@@ -1524,6 +1531,7 @@ public:
 		ADD_METHOD( playcommand );
 		ADD_METHOD( queuecommand );
 		ADD_METHOD( queuemessage );
+		ADD_METHOD( addcommand );
 
 		ADD_METHOD( GetX );
 		ADD_METHOD( GetY );
