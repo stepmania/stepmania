@@ -8,27 +8,27 @@
 ScrollBar::ScrollBar()
 {
 	m_sprBackground.Load( THEME->GetPathG("ScrollBar","parts 1x3") );
-	m_sprBackground.StopAnimating();
-	m_sprBackground.SetState( 1 );
-	this->AddChild( &m_sprBackground );
+	m_sprBackground->StopAnimating();
+	m_sprBackground->SetState( 1 );
+	this->AddChild( m_sprBackground );
 
 	m_sprScrollThumbPart1.Load( THEME->GetPathG("ScrollBar","thumb") );
-	m_sprScrollThumbPart1.StopAnimating();
-	this->AddChild( &m_sprScrollThumbPart1 );
+	m_sprScrollThumbPart1->StopAnimating();
+	this->AddChild( m_sprScrollThumbPart1 );
 
 	m_sprScrollThumbPart2.Load( THEME->GetPathG("ScrollBar","thumb") );
-	m_sprScrollThumbPart2.StopAnimating();
-	this->AddChild( &m_sprScrollThumbPart2 );
+	m_sprScrollThumbPart2->StopAnimating();
+	this->AddChild( m_sprScrollThumbPart2 );
 
 	m_sprTopButton.Load( THEME->GetPathG("ScrollBar","parts 1x3") );
-	m_sprTopButton.StopAnimating();
-	m_sprTopButton.SetState( 0 );
-	this->AddChild( &m_sprTopButton );
+	m_sprTopButton->StopAnimating();
+	m_sprTopButton->SetState( 0 );
+	this->AddChild( m_sprTopButton );
 
 	m_sprBottomButton.Load( THEME->GetPathG("ScrollBar","parts 1x3") );
-	m_sprBottomButton.StopAnimating();
-	m_sprBottomButton.SetState( 2 );
-	this->AddChild( &m_sprBottomButton );
+	m_sprBottomButton->StopAnimating();
+	m_sprBottomButton->SetState( 2 );
+	this->AddChild( m_sprBottomButton );
 
 	SetBarHeight( 100 );
 }
@@ -36,17 +36,17 @@ ScrollBar::ScrollBar()
 void ScrollBar::SetBarHeight( int iHeight )
 {
 	m_iBarHeight = iHeight;
-	m_sprBackground.SetZoomY( m_iBarHeight/m_sprBackground.GetUnzoomedHeight() );
-	m_sprTopButton.SetY( -m_iBarHeight/2.0f );
-	m_sprBottomButton.SetY( +m_iBarHeight/2.0f );
-	m_sprScrollThumbPart1.SetY( 0 );
-	m_sprScrollThumbPart2.SetY( 0 );
+	m_sprBackground->SetZoomY( m_iBarHeight/m_sprBackground->GetUnzoomedHeight() );
+	m_sprTopButton->SetY( -m_iBarHeight/2.0f );
+	m_sprBottomButton->SetY( +m_iBarHeight/2.0f );
+	m_sprScrollThumbPart1->SetY( 0 );
+	m_sprScrollThumbPart2->SetY( 0 );
 }
 
 void ScrollBar::SetPercentage( float fStartPercent, float fEndPercent )
 {
 	CHECKPOINT;
-	const int iBarContentHeight = m_iBarHeight - int( m_sprTopButton.GetUnzoomedHeight()/2 + m_sprBottomButton.GetUnzoomedHeight()/2 );
+	const int iBarContentHeight = m_iBarHeight - int( m_sprTopButton->GetUnzoomedHeight()/2 + m_sprBottomButton->GetUnzoomedHeight()/2 );
 	ASSERT( iBarContentHeight != 0 );
 	CHECKPOINT;
 
@@ -74,18 +74,18 @@ void ScrollBar::SetPercentage( float fStartPercent, float fEndPercent )
 
 	CHECKPOINT;
 		
-	m_sprScrollThumbPart1.StretchTo( RectF(
-		-m_sprScrollThumbPart1.GetUnzoomedWidth()/2,
+	m_sprScrollThumbPart1->StretchTo( RectF(
+		-m_sprScrollThumbPart1->GetUnzoomedWidth()/2,
 		fPart1TopY,
-		+m_sprScrollThumbPart1.GetUnzoomedWidth()/2,
+		+m_sprScrollThumbPart1->GetUnzoomedWidth()/2,
 		fPart1BottomY
 		) );
 
 	CHECKPOINT;
-	m_sprScrollThumbPart2.StretchTo( RectF(
-		-m_sprScrollThumbPart2.GetUnzoomedWidth()/2,
+	m_sprScrollThumbPart2->StretchTo( RectF(
+		-m_sprScrollThumbPart2->GetUnzoomedWidth()/2,
 		fPart2TopY,
-		+m_sprScrollThumbPart2.GetUnzoomedWidth()/2,
+		+m_sprScrollThumbPart2->GetUnzoomedWidth()/2,
 		fPart2BottomY
 		) );
 	CHECKPOINT;

@@ -1,10 +1,10 @@
 /* ScrollBar - A simple scrollbar. */
 
-#ifndef SCROLLBAR_H
-#define SCROLLBAR_H
+#ifndef SCROLL_BAR_H
+#define SCROLL_BAR_H
 
 #include "ActorFrame.h"
-#include "Sprite.h"
+#include "AutoActor.h"
 
 
 class ScrollBar : public ActorFrame
@@ -19,11 +19,11 @@ protected:
 
 	int		m_iBarHeight;
 
-	Sprite	m_sprTopButton;
-	Sprite	m_sprBottomButton;
-	Sprite	m_sprBackground;
-	Sprite	m_sprScrollThumbPart1;
-	Sprite	m_sprScrollThumbPart2;
+	AutoActor	m_sprTopButton;
+	AutoActor	m_sprBottomButton;
+	AutoActor	m_sprBackground;
+	AutoActor	m_sprScrollThumbPart1;
+	AutoActor	m_sprScrollThumbPart2;
 };
 
 #endif
