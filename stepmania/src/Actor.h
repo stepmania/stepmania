@@ -116,7 +116,6 @@ public:
 	virtual void Update( float fDeltaTime );		// this can short circuit UpdateInternal
 	virtual void UpdateInternal( float fDeltaTime );	// override this
 	void UpdateTweening( float fDeltaTime );
-	void CopyTweening( const Actor &from );
 
 	const CString &GetName() const		{ return m_sName; }
 	virtual void SetName( const CString &sName ) { m_sName = sName; }

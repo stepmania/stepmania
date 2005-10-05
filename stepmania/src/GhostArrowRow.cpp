@@ -138,17 +138,6 @@ void GhostArrowRow::SetHoldIsActive( int iCol )
 	m_HoldGhost[iCol]->SetHoldIsActive( true );
 }
 
-void GhostArrowRow::CopyTweening( const GhostArrowRow &from )
-{
-	for( int c=0; c<m_iNumCols; c++ ) 
-	{
-		m_GhostDim[c]->CopyTweening( *from.m_GhostDim[c] );
-		m_GhostBright[c]->CopyTweening( *from.m_GhostBright[c] );
-		m_HoldGhost[c]->CopyTweening( *from.m_HoldGhost[c] );
-	}
-	ActorFrame::CopyTweening( from );
-}
-
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

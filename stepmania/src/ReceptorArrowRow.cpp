@@ -83,13 +83,6 @@ void ReceptorArrowRow::SetPressed( int iCol )
 	m_ReceptorArrow[iCol].SetPressed();
 }
 
-void ReceptorArrowRow::CopyTweening( const ReceptorArrowRow &from )
-{
-	for( int c=0; c<m_iNumCols; c++ ) 
-		m_ReceptorArrow[c].CopyTweening( from.m_ReceptorArrow[c] );
-	ActorFrame::CopyTweening( from );
-}
-
 /*
  * (c) 2001-2003 Chris Danford
  * All rights reserved.

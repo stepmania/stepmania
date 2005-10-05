@@ -17,7 +17,6 @@ public:
 	virtual ~GhostArrowRow() { Unload(); }
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-	virtual void CopyTweening( const GhostArrowRow &from );
 
 	void Load( const PlayerState* pPlayerState, float fYReverseOffset );
 	void Unload();

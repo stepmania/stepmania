@@ -19,7 +19,6 @@ public:
 
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
-	virtual void CopyTweening( const ReceptorArrowRow &from );
 
 	void Step( int iCol, TapNoteScore score );
 	void SetPressed( int iCol );

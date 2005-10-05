@@ -1194,13 +1194,6 @@ void Actor::SetZTestModeString( const CString &s )
 	else	ASSERT(0);
 }
 
-void Actor::CopyTweening( const Actor &from )
-{
-	m_current = from.m_current;
-	m_start = from.m_start;
-	m_Tweens = from.m_Tweens;
-}
-
 void Actor::Sleep( float time )
 {
 	BeginTweening( time, TWEEN_LINEAR );

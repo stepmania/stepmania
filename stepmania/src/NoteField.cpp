@@ -162,17 +162,7 @@ void NoteField::Update( float fDeltaTime )
 	NoteDisplayCols *cur = SearchForSongBeat();
 
 	if( cur != LastDisplay )
-	{
-		/* The display has changed.  We might be in the middle of a step; copy any
-		 * tweens. */
-		if( LastDisplay )
-		{
-			cur->m_GhostArrowRow.CopyTweening( LastDisplay->m_GhostArrowRow );
-			cur->m_ReceptorArrowRow.CopyTweening( LastDisplay->m_ReceptorArrowRow );
-		}
-
 		LastDisplay = cur;
-	}
 
 	cur->m_ReceptorArrowRow.Update( fDeltaTime );
 	cur->m_GhostArrowRow.Update( fDeltaTime );
