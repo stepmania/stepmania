@@ -137,7 +137,7 @@ retry:
 		GetDirListing( sPath + "*", asElementPaths, false, true );
 		if( asElementPaths.size() == 0 )
 		{
-			CString sMessage = ssprintf( "A Sprite in '%s' points to a texture '%s' which doesn't exist.", sDir.c_str(), sPath.c_str() );
+			CString sMessage = ssprintf( "A xml Sprite in '%s' points to a texture '%s' which doesn't exist.", sDir.c_str(), sPath.c_str() );
 			switch( Dialog::AbortRetryIgnore(sMessage) )
 			{
 			case Dialog::abort:	
