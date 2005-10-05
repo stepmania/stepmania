@@ -13,11 +13,11 @@ HoldJudgment::HoldJudgment()
 {
 	m_sprJudgment.Load( THEME->GetPathG("HoldJudgment","label 1x2") );
 	m_sprJudgment.StopAnimating();
-	Reset();
+	ResetAnimation();
 	this->AddChild( &m_sprJudgment );
 }
 
-void HoldJudgment::Reset()
+void HoldJudgment::ResetAnimation()
 {
 	m_sprJudgment.SetDiffuse( RageColor(1,1,1,0) );
 	m_sprJudgment.SetXY( 0, 0 );
@@ -29,7 +29,7 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 {
 	//LOG->Trace( "Judgment::SetJudgment()" );
 
-	Reset();
+	ResetAnimation();
 
 	switch( hns )
 	{
