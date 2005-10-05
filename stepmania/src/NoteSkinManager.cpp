@@ -206,12 +206,12 @@ try_again:
 	CString sPath;	// fill this in below
 	FOREACHD_CONST( CString, data.vsDirSearchOrder, iter )
 	{
-		 if( *iter == GLOBAL_BASE_NOTESKIN_DIR )
-			 sPath = GetPathFromDirAndFile( *iter, "Fallback "+sElement );
-		 else
-			 sPath = GetPathFromDirAndFile( *iter, sButtonName+" "+sElement );
-		 if( !sPath.empty() )
-			 break;	// done searching
+		if( *iter == GLOBAL_BASE_NOTESKIN_DIR )
+			sPath = GetPathFromDirAndFile( *iter, "Fallback "+sElement );
+		else
+			sPath = GetPathFromDirAndFile( *iter, sButtonName+" "+sElement );
+		if( !sPath.empty() )
+			break;	// done searching
 	}
 
 	if( sPath.empty() )
