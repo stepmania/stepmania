@@ -4,7 +4,7 @@
 #define DUAL_SCROLLBAR_H
 
 #include "ActorFrame.h"
-#include "Sprite.h"
+#include "AutoActor.h"
 #include "PlayerNumber.h"
 
 class DualScrollBar: public ActorFrame
@@ -22,8 +22,8 @@ private:
 	float	m_fBarHeight;
 	float	m_fBarTime;
 
-	Sprite	m_sprScrollThumbOverHalf[NUM_PLAYERS];
-	Sprite	m_sprScrollThumbUnderHalf[NUM_PLAYERS];
+	AutoActor	m_sprScrollThumbOverHalf[NUM_PLAYERS];
+	AutoActor	m_sprScrollThumbUnderHalf[NUM_PLAYERS];
 };
 
 #endif

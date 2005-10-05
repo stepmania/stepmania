@@ -179,9 +179,9 @@ void ScreenOptions::Init()
 		m_ScrollBar.SetName( "ScrollBar" );
 		m_ScrollBar.SetBarHeight( SCROLL_BAR_HEIGHT );
 		m_ScrollBar.SetBarTime( SCROLL_BAR_TIME );
+		m_ScrollBar.Load( "DualScrollBar" );
 		FOREACH_PlayerNumber( p )
 			m_ScrollBar.EnablePlayer( p, GAMESTATE->IsHumanPlayer(p) );
-		m_ScrollBar.Load( "DualScrollBar" );
 		SET_XY( m_ScrollBar );
 		m_ScrollBar.SetDrawOrder( 2 );
 		m_framePage.AddChild( &m_ScrollBar );
