@@ -98,7 +98,7 @@ static void FileNameToClassAndElement( const CString &sFileName, CString &sClass
 }
 
 
-CString ClassAndElementToFileName( const CString &sClassName, const CString &sElement )
+static CString ClassAndElementToFileName( const CString &sClassName, const CString &sElement )
 {
 	if( sClassName.empty() )
 		return sElement;
@@ -791,15 +791,13 @@ void ThemeManager::GetMetric( const CString &sClassName, const CString &sValueNa
 	valueOut.SetFromExpression( "function(self) " + sValue + "end" );
 }
 
-void ThemeManager::GetMetricsThatBeginWith( const CString &_sClassName, const CString &sValueName, set<CString> &vsValueNamesOut )
+void ThemeManager::GetMetricsThatBeginWith( const CString &sClassName_, const CString &sValueName, set<CString> &vsValueNamesOut )
 {
-	CString sClassName = _sClassName;
+	CString sClassName( sClassName_ );
 	while( !sClassName.empty() )
 	{
 		// Iterate over themes in the chain.
-		for( deque<Theme>::const_iterator i = g_vThemes.begin();
-			i != g_vThemes.end();
-			++i )
+		FOREACHD_CONST( Theme, g_vThemes, i )
 		{
 			const XNode *cur = i->iniMetrics->GetChild( sClassName );
 			if( cur == NULL )
