@@ -8,11 +8,11 @@
 //
 enum Difficulty 
 {
-	DIFFICULTY_BEGINNER,	// corresponds to DDREX Beginner
-	DIFFICULTY_EASY,		// corresponds to Basic, Easy
-	DIFFICULTY_MEDIUM,		// corresponds to Trick, Another, Standard, Normal
-	DIFFICULTY_HARD,		// corresponds to Maniac, SSR, Heavy, Crazy
-	DIFFICULTY_CHALLENGE,	// corresponds to 5th SMANIAC, MAX2 Challenge, EX Challenge
+	DIFFICULTY_BEGINNER,
+	DIFFICULTY_EASY,
+	DIFFICULTY_MEDIUM,
+	DIFFICULTY_HARD,
+	DIFFICULTY_CHALLENGE,
 	DIFFICULTY_EDIT,
 	NUM_DIFFICULTIES,
 	DIFFICULTY_INVALID
