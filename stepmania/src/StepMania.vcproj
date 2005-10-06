@@ -1856,12 +1856,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Foreground.h">
 			</File>
 			<File
-				RelativePath=".\GhostArrow.cpp">
-			</File>
-			<File
-				RelativePath=".\GhostArrow.h">
-			</File>
-			<File
 				RelativePath="GhostArrowRow.cpp">
 			</File>
 			<File
