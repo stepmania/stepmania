@@ -11,7 +11,7 @@ HoldGhostArrow::HoldGhostArrow()
 
 void HoldGhostArrow::Load( const CString &sButton, const CString &sElement )
 {
-	m_sprGhost.Load( NOTESKIN->GetPath(sButton, sElement) );	// not optional
+	m_sprGhost.Load( NOTESKIN->GetPath(sButton, sElement) );
 	m_sprGhost->RunCommands( NOTESKIN->GetMetricA("HoldGhostArrow","OnCommand") );
 	this->AddChild( m_sprGhost );
 }
