@@ -5,26 +5,28 @@
 
 struct TitleFields
 {
-	void SaveToStrings( CString &sTitle, CString &sSubtitle, CString &sArtist,
+	void SaveToStrings( 
+		CString &sTitle, CString &sSubtitle, CString &sArtist,
 		CString &sTitleTranslit, CString &sSubtitleTranslit, CString &sArtistTranslit ) const
 	{
-			sTitle = Title;
-			sSubtitle = Subtitle;
-			sArtist = Artist;
-			sTitleTranslit = TitleTranslit;
-			sSubtitleTranslit = SubtitleTranslit;
-			sArtistTranslit = ArtistTranslit;
+		sTitle = Title;
+		sSubtitle = Subtitle;
+		sArtist = Artist;
+		sTitleTranslit = TitleTranslit;
+		sSubtitleTranslit = SubtitleTranslit;
+		sArtistTranslit = ArtistTranslit;
 	}
 
-	void LoadFromStrings( CString sTitle, CString sSubtitle, CString sArtist,
+	void LoadFromStrings( 
+		CString sTitle, CString sSubtitle, CString sArtist,
 		CString sTitleTranslit, CString sSubtitleTranslit, CString sArtistTranslit )
 	{
-			Title = sTitle;
-			Subtitle = sSubtitle;
-			Artist = sArtist;
-			TitleTranslit = sTitleTranslit;
-			SubtitleTranslit = sSubtitleTranslit;
-			ArtistTranslit = sArtistTranslit;
+		Title = sTitle;
+		Subtitle = sSubtitle;
+		Artist = sArtist;
+		TitleTranslit = sTitleTranslit;
+		SubtitleTranslit = sSubtitleTranslit;
+		ArtistTranslit = sArtistTranslit;
 	}
 	CString Title, Subtitle, Artist;
 	CString TitleTranslit, SubtitleTranslit, ArtistTranslit;
