@@ -18,8 +18,6 @@ GhostArrowRow::GhostArrowRow()
 
 void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset )
 {
-	Unload();
-
 	m_pPlayerState = pPlayerState;
 	m_fYReverseOffsetPixels = fYReverseOffset;
 
@@ -46,7 +44,7 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	}
 }
 
-void GhostArrowRow::Unload()
+void GhostArrowRow::~GhostArrowRow()
 {
 	for( int i = 0; i < m_iNumCols; ++i )
 	{
@@ -54,12 +52,6 @@ void GhostArrowRow::Unload()
 		delete m_GhostBright[i];
 		delete m_HoldGhost[i];
 	}
-
-	m_GhostDim.clear();
-	m_GhostBright.clear();
-	m_HoldGhost.clear();
-
-	m_iNumCols = 0;
 }
 
 
