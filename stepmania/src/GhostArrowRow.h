@@ -4,7 +4,6 @@
 #define GHOSTARROWROW_H
 
 #include "ActorFrame.h"
-#include "GhostArrow.h"
 #include "HoldGhostArrow.h"
 #include "GameConstantsAndTypes.h"
 
@@ -29,8 +28,7 @@ protected:
 	float m_fYReverseOffsetPixels;
 	const PlayerState* m_pPlayerState;
 
-	vector<GhostArrow *> 	m_GhostDim;
-	vector<GhostArrow *>	m_GhostBright;
+	vector<Actor *> 	m_Ghost;
 	vector<HoldGhostArrow *> m_HoldGhost;
 };
 
