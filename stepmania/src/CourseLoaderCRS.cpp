@@ -246,7 +246,7 @@ bool CourseLoaderCRS::LoadFromMsd( const CString &sPath, const MsdFile &msd, Cou
 			LOG->Warn( "Unexpected value named '%s'", sValueName.c_str() );
 		}
 	}
-	static TitleSubst tsub("courses");
+	static TitleSubst tsub("Courses");
 
 	TitleFields title;
 	title.Title = out.m_sMainTitle;

@@ -344,9 +344,11 @@ public:
 	Regex(const Regex &rhs);
 	Regex &operator=(const Regex &rhs);
 	~Regex();
+	bool IsSet() const { return !pattern.empty(); }
 	void Set(const CString &str);
 	bool Compare(const CString &str);
 	bool Compare(const CString &str, vector<CString> &matches);
+	bool Replace(const CString &replacement, const CString &subject, CString &out);
 };
 
 

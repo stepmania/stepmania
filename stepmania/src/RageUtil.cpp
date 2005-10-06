@@ -930,6 +930,27 @@ bool Regex::Compare(const CString &str, vector<CString> &matches)
 }
 #endif
 
+// Arguments and behavior are the same are similar to
+// http://us3.php.net/manual/en/function.preg-replace.php
+bool Regex::Replace(const CString &replacement, const CString &subject, CString &out)
+{
+    vector<CString> matches;
+	if( !Compare(subject,matches) )
+		return false;
+
+	out = replacement;
+
+	// TODO: optimize me by iterating only once over the string
+	for( int i=0; i<matches.size(); i++ )
+	{
+		CString sFrom = ssprintf( "\\${%d}", i );
+		CString sTo = matches[i];
+		out.Replace(sFrom, sTo);
+	}
+
+    return true;
+}
+
 
 
 

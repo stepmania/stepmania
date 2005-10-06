@@ -769,7 +769,7 @@ void Song::TidyUpData()
 
 void Song::TranslateTitles()
 {
-	static TitleSubst tsub("songs");
+	static TitleSubst tsub("Songs");
 
 	TitleFields title;
 	title.LoadFromStrings( m_sMainTitle, m_sSubTitle, m_sArtist, m_sMainTitleTranslit, m_sSubTitleTranslit, m_sArtistTranslit );

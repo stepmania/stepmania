@@ -33,6 +33,7 @@
 #include "BackgroundUtil.h"
 #include "Profile.h"
 #include "CourseLoaderCRS.h"
+#include "TitleSubstitution.h"
 
 SongManager*	SONGMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -475,32 +476,12 @@ int SongManager::GetNumEditCourses( ProfileSlot slot ) const
 
 CString SongManager::ShortenGroupName( CString sLongGroupName )
 {
-	sLongGroupName.Replace( "Dance Dance Revolution", "DDR" );
-	sLongGroupName.Replace( "dance dance revolution", "DDR" );
-	sLongGroupName.Replace( "DANCE DANCE REVOLUTION", "DDR" );
-	sLongGroupName.Replace( "Pump It Up", "PIU" );
-	sLongGroupName.Replace( "pump it up", "PIU" );
-	sLongGroupName.Replace( "PUMP IT UP", "PIU" );
-	sLongGroupName.Replace( "ParaParaParadise", "PPP" );
-	sLongGroupName.Replace( "paraparaparadise", "PPP" );
-	sLongGroupName.Replace( "PARAPARAPARADISE", "PPP" );
-	sLongGroupName.Replace( "Para Para Paradise", "PPP" );
-	sLongGroupName.Replace( "para para paradise", "PPP" );
-	sLongGroupName.Replace( "PARA PARA PARADISE", "PPP" );
-	sLongGroupName.Replace( "Dancing Stage", "DS" );
-	sLongGroupName.Replace( "dancing stage", "DS" );
-	sLongGroupName.Replace( "DANCING STAGE", "DS" );
-	sLongGroupName.Replace( "Ez2dancer", "EZ2" );
-	sLongGroupName.Replace( "Ez 2 Dancer", "EZ2");
-	sLongGroupName.Replace( "Technomotion", "TM");
-	sLongGroupName.Replace( "Techno Motion", "TM");
-	sLongGroupName.Replace( "Dance Station 3DDX", "3DDX");
-	sLongGroupName.Replace( "DS3DDX", "3DDX");
-	sLongGroupName.Replace( "BeatMania", "BM");
-	sLongGroupName.Replace( "Beatmania", "BM");
-	sLongGroupName.Replace( "BEATMANIA", "BM");
-	sLongGroupName.Replace( "beatmania", "BM");
-	return sLongGroupName;
+	static TitleSubst tsub("Groups");
+
+	TitleFields title;
+	title.Title = sLongGroupName;
+	tsub.Subst( title );
+	return title.Title;
 }
 
 int SongManager::GetNumStagesForSong( const Song* pSong )

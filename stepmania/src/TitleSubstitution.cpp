@@ -4,182 +4,155 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "FontCharAliases.h"
-
 #include "RageFile.h"
+#include "Foreach.h"
+#include "XmlFile.h"
 
-#define TRANSLATION_PATH "Data/Translation.dat"
+static const CString TRANSLATIONS_PATH = "Data/Translations.xml";
+static const CString ERASE_MARKER = "-erase-";
 
 struct TitleTrans
 {
 	Regex TitleFrom, SubFrom, ArtistFrom;
-	TitleFields Dest;
+	TitleFields Replacement;
 
 	/* If this is true, no translit fields will be generated automatically. */
 	bool translit;
 	TitleTrans() { translit = true; }
 
 	TitleTrans( const TitleFields &tf, bool translit_):
-		Dest(tf), translit(translit_) { }
+		Replacement(tf), translit(translit_) { }
 
-	bool Matches( const TitleFields &tf );
+	bool Matches( const TitleFields &tf, TitleFields &to );
+
+	void LoadFromNode( const XNode* pNode );
 };
 
 vector<TitleTrans> ttab;
 
-bool TitleTrans::Matches( const TitleFields &tf )
+bool TitleTrans::Matches( const TitleFields &from, TitleFields &to )
 {
-	if( !TitleFrom.Compare(tf.Title) )
+	if( !TitleFrom.Replace(Replacement.Title, from.Title, to.Title) )
 		return false; /* no match */
-	if( !SubFrom.Compare(tf.Subtitle) )
+	if( !SubFrom.Replace(Replacement.Subtitle, from.Subtitle, to.Subtitle) )
 		return false; /* no match */
-	if( !ArtistFrom.Compare(tf.Artist) )
+	if( !ArtistFrom.Replace(Replacement.Artist, from.Artist, to.Artist) )
 		return false; /* no match */
 
 	return true;
 }
 
+void TitleTrans::LoadFromNode( const XNode* pNode )
+{
+	ASSERT( pNode->m_sName == "Translation" );
+
+	FOREACH_CONST_Attr( pNode, attr )
+	{
+		/* Surround each regex with ^(...)$, to force all comparisons to default
+		 * to being a full-line match.  (Add ".*" manually if this isn't wanted.) */
+		if(		 attr->m_sName == "DontTransliterate" )	translit = false;
+		else if( attr->m_sName == "TitleFrom" )			TitleFrom					= "^(" + attr->m_sValue + ")$";
+		else if( attr->m_sName == "ArtistFrom" )		ArtistFrom					= "^(" + attr->m_sValue + ")$";
+		else if( attr->m_sName == "SubtitleFrom")		SubFrom						= "^(" + attr->m_sValue + ")$";
+		else if( attr->m_sName == "TitleTo")			Replacement.Title			= attr->m_sValue;
+		else if( attr->m_sName == "ArtistTo")			Replacement.Artist			= attr->m_sValue;
+		else if( attr->m_sName == "SubtitleTo")			Replacement.Subtitle		= attr->m_sValue;
+		else if( attr->m_sName == "TitleTransTo")		Replacement.TitleTranslit	= attr->m_sValue;
+		else if( attr->m_sName == "ArtistTransTo")		Replacement.ArtistTranslit	= attr->m_sValue;
+		else if( attr->m_sName == "SubtitleTransTo")	Replacement.SubtitleTranslit= attr->m_sValue;
+		else
+			LOG->Warn( "Unknown TitleSubst tag: \"%s\"", attr->m_sName.c_str() );
+	}
+}
+
 void TitleSubst::AddTrans(const TitleTrans &tr)
 {
+	ASSERT( tr.TitleFrom.IsSet() || tr.SubFrom.IsSet() || tr.ArtistFrom.IsSet() );
 	ttab.push_back(new TitleTrans(tr));
 }
 
 void TitleSubst::Subst( TitleFields &tf )
 {
-	for(unsigned i = 0; i < ttab.size(); ++i)
+	FOREACH_CONST( TitleTrans*, ttab, iter )
 	{
-		if(!ttab[i]->Matches(tf))
+		TitleTrans* tt = *iter;
+
+		TitleFields to;
+		if(!tt->Matches(tf,to))
 			continue;
 
 		/* The song matches.  Replace whichever strings aren't empty. */
-		if( !ttab[i]->Dest.Title.empty() && tf.Title != ttab[i]->Dest.Title )
+		if( !tt->Replacement.Title.empty() && tf.Title != tt->Replacement.Title )
 		{
-			if( ttab[i]->translit )
+			if( tt->translit )
 				tf.TitleTranslit = tf.Title;
-			tf.Title = (ttab[i]->Dest.Title != "-erase-")? ttab[i]->Dest.Title: CString("");
+			tf.Title = (tt->Replacement.Title != ERASE_MARKER)? to.Title : CString();
 			FontCharAliases::ReplaceMarkers( tf.Title );
 		}
-		if( !ttab[i]->Dest.Subtitle.empty() && tf.Subtitle != ttab[i]->Dest.Subtitle )
+		if( !tt->Replacement.Subtitle.empty() && tf.Subtitle != tt->Replacement.Subtitle )
 		{
-			if( ttab[i]->translit )
+			if( tt->translit )
 				tf.SubtitleTranslit = tf.Subtitle;
-			tf.Subtitle = (ttab[i]->Dest.Subtitle != "-erase-")? ttab[i]->Dest.Subtitle: CString("");
+			tf.Subtitle = (tt->Replacement.Subtitle != ERASE_MARKER)? to.Subtitle : CString();
 			FontCharAliases::ReplaceMarkers( tf.Subtitle );
 		}
-		if( !ttab[i]->Dest.Artist.empty() && tf.Artist != ttab[i]->Dest.Artist )
+		if( !tt->Replacement.Artist.empty() && tf.Artist != tt->Replacement.Artist )
 		{
-			if( ttab[i]->translit )
+			if( tt->translit )
 				tf.ArtistTranslit = tf.Artist;
-			tf.Artist = (ttab[i]->Dest.Artist != "-erase-")? ttab[i]->Dest.Artist: CString("");
+			tf.Artist = (tt->Replacement.Artist != ERASE_MARKER)? to.Artist : CString();
 			FontCharAliases::ReplaceMarkers( tf.Artist );
 		}
 
 		/* These are used when applying kanji to a field that doesn't have the
 		 * correct data.  Should be used sparingly. */
-		if( !ttab[i]->Dest.TitleTranslit.empty() )
+		if( !tt->Replacement.TitleTranslit.empty() )
 		{
-			tf.TitleTranslit = (ttab[i]->Dest.TitleTranslit != "-erase-")? ttab[i]->Dest.TitleTranslit: CString("");
+			tf.TitleTranslit = (tt->Replacement.TitleTranslit != ERASE_MARKER)? tt->Replacement.TitleTranslit : CString();
 			FontCharAliases::ReplaceMarkers( tf.TitleTranslit );
 		}
-		if( !ttab[i]->Dest.SubtitleTranslit.empty() )
+		if( !tt->Replacement.SubtitleTranslit.empty() )
 		{
-			tf.SubtitleTranslit = (ttab[i]->Dest.SubtitleTranslit != "-erase-")? ttab[i]->Dest.SubtitleTranslit: CString("");
+			tf.SubtitleTranslit = (tt->Replacement.SubtitleTranslit != ERASE_MARKER)? tt->Replacement.SubtitleTranslit : CString();
 			FontCharAliases::ReplaceMarkers( tf.SubtitleTranslit );
 		}
-		if( !ttab[i]->Dest.ArtistTranslit.empty() )
+		if( !tt->Replacement.ArtistTranslit.empty() )
 		{
-			tf.ArtistTranslit = (ttab[i]->Dest.ArtistTranslit != "-erase-")? ttab[i]->Dest.ArtistTranslit: CString("");
+			tf.ArtistTranslit = (tt->Replacement.ArtistTranslit != ERASE_MARKER)? tt->Replacement.ArtistTranslit : CString();
 			FontCharAliases::ReplaceMarkers( tf.ArtistTranslit );
 		}
+
+		break;	// Matched once.  Done.
 	}
 }
 
 
 TitleSubst::TitleSubst(const CString &section)
 {
-	Load( TRANSLATION_PATH, section);
+	Load( TRANSLATIONS_PATH, section);
 }
 
 void TitleSubst::Load(const CString &filename, const CString &section)
 {
-	RageFile f;
-	if( !f.Open(filename) )
+	XNode xml;
+	if( !xml.LoadFromFile(filename) )
 	{
-		LOG->Trace("Error opening %s: %s", filename.c_str(), f.GetError().c_str() );
+		// LoadFromFile will show its own error
+		//LOG->Trace("Error opening %s: %s", filename.c_str(), f.GetError().c_str() );
 		return;
 	}
-	
-	CString CurrentSection;
-	TitleTrans tr;
-	
-	while (!f.AtEOF())
+
+	XNode *pGroup = xml.GetChild( section );
+	if( pGroup == NULL )
+		return;
+	FOREACH_Child( pGroup, child )
 	{
-		CString line;
-		int ret = f.GetLine( line );
-		if( ret == 0 )
-			break;
-		if( ret == -1 )
-		{
-			LOG->Trace("Error reading %s: %s", filename.c_str(), f.GetError().c_str() );
-			break;
-		}
-
-		if(line.size() > 0 && utf8_get_char(line.c_str()) == 0xFEFF)
-		{
-			/* Annoying header that Windows puts on UTF-8 plaintext
-			 * files; remove it. */
-			line.erase(0, utf8_get_char_len(line[0]));
-		}
-
-		TrimLeft(line);
-		TrimRight(line);
-
-		if(line.size() == 0) continue; /* blank */
-		if(line[0] == '#') continue; /* comment */
-
-		if(!line.CompareNoCase("DontTransliterate"))
-		{
-			tr.translit = false;
+		if( child->m_sName != "Translation" )
 			continue;
-		}
 
-		size_t pos = line.find_first_of(':');
-		if(pos != string::npos)
-		{
-			/* x: y */
-			CString id = line.substr(0, pos);
-			CString txt = line.substr(pos+1);
-			TrimLeft(txt);
-
-			/* Surround each regex with ^(...)$, to force all comparisons to default
-			 * to being a full-line match.  (Add ".*" manually if this isn't wanted.) */
-			if(!id.CompareNoCase("TitleFrom")) tr.TitleFrom = "^(" + txt + ")$";
-			else if(!id.CompareNoCase("ArtistFrom")) tr.ArtistFrom = "^(" + txt + ")$";
-			else if(!id.CompareNoCase("SubtitleFrom")) tr.SubFrom = "^(" + txt + ")$";
-			else if(!id.CompareNoCase("TitleTo")) tr.Dest.Title = txt;
-			else if(!id.CompareNoCase("ArtistTo")) tr.Dest.Artist = txt;
-			else if(!id.CompareNoCase("SubtitleTo")) tr.Dest.Subtitle = txt;
-			else if(!id.CompareNoCase("TitleTransTo")) tr.Dest.TitleTranslit = txt;
-			else if(!id.CompareNoCase("ArtistTransTo")) tr.Dest.ArtistTranslit = txt;
-			else if(!id.CompareNoCase("SubtitleTransTo")) tr.Dest.SubtitleTranslit = txt;
-			else
-				LOG->Warn( "Unknown TitleSubst tag: \"%s\"", id.c_str() );
-		}
-
-		/* Add the translation if this is a terminator (*) or section
-		 * marker ([foo]). */
-		if(line[0] == '*' || line[0] == '[')
-		{
-			if(!CurrentSection.CompareNoCase(section))
-				AddTrans(tr);
-			
-			/* Reset. */
-			tr = TitleTrans();
-		}
-
-		if(line[0] == '[' && line[line.size()-1] == ']')
-		{
-			CurrentSection = line.substr(1, line.size()-2);
-		}
+		TitleTrans tr;
+		tr.LoadFromNode( child );
+		AddTrans(tr);
 	}
 }
 
