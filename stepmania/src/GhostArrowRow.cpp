@@ -44,7 +44,7 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 	}
 }
 
-void GhostArrowRow::~GhostArrowRow()
+GhostArrowRow::~GhostArrowRow()
 {
 	for( int i = 0; i < m_iNumCols; ++i )
 	{
