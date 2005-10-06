@@ -1,0 +1,421 @@
+﻿<!-- 
+# This file is UTF-8; to be readable, edit it in an editor capable
+# of UTF-8, such as Notepad in Windows 2000 and later.
+#
+# Six keywords: TitleFrom, ArtistFrom, SubtitleFrom, TitleTo,
+# ArtistTo, SubtitleTo.
+#
+# From lines are regular expressions.  If all From lines for a set
+# are matched, all To lines are replaced.
+#
+# All lines, by default, must match the entire line; for example,
+# "Foo" matches only "Foo", not "Foobar".  Matches are case-insensitive.
+#
+# Matches are checked in the order given in this file; more than one
+# set may match a single song.
+#
+# Courses are matched by title only.
+#
+# Note that changes to this file are only applied to songs when they are
+# first loaded.  Delete the files in the "Cache" directory after making
+# changes.
+-->
+<Translations>
+	<Songs>
+		<Translation TitleFrom="17 ?(Sai|Ages)?" TitleTo="17才" />
+		<Translation TitleFrom="Hypnotic Crisis" TitleTo="HYPNØTIC CRISIS" />
+		<Translation TitleFrom="((Matsuri )|(\{ ))Japan" TitleTo="祭 JAPAN" />
+		<!-- Matsuri Japan is often just "Japan".  There may be other songs by -->
+		<!-- that name, too, so match the artist, too. -->
+		<Translation TitleFrom="Japan" ArtistFrom=".*(Re-Venge)|(RevenG).*" TitleTo="祭 JAPAN" />
+		<Translation TitleFrom="(Dancing|Odoru) Po[mn]pokolin" TitleTo="おどるポンポコリン" />
+		<Translation TitleFrom="(God of Romance)|(Roman(su|ce) no Kamisama)" TitleTo="ロマンスの神様" />
+		<!-- People can't decide how they want to spell this, so cope with both l or r, and one or two l/r and t. -->
+		<Translation TitleFrom="Sana Mo((ll?)|(rr?))et(t?)e Ne Ente" TitleTo="サナ・モレッテ・ネ・エンテ" />
+		<!-- "Candy", "Candy star", or "Candy #". -->
+		<Translation TitleFrom="Candy(( star)?|#)" ArtistFrom="Luv.*" TitleTo="CANDY☆" />
+		<Translation TitleFrom="Flash in the Night" TitleTo="FLA♮H IN THE NIGHT" />
+		<Translation TitleFrom="Freckles( ?-? ?Sobakasu)?" TitleTo="そばかす" />
+		<Translation TitleFrom="Sobakasu( ?-? ?Freckles)?" TitleTo="そばかす" />
+		<Translation TitleFrom="Yozora no Muko" TitleTo="夜空ノムコウ" />
+		<Translation TitleFrom="Bre[a=]k ?Down!?" TitleTo="BRE∀K DOWN!" />
+		<!-- "Candy", "Candy heart", or "Candy $". -->
+		<Translation TitleFrom="Candy(( heart)?|\$)" ArtistFrom=".*(Riyu|りゆ).*" TitleTo="CANDY♡" />
+		<Translation TitleFrom="(Kakumei)|(\+\{)" TitleTo="革命" />
+		<!-- Matsuri Japan is often just "Japan".  There may be other songs by that name, too, so match the artist, too. -->
+		<Translation TitleFrom="Japan" ArtistFrom=".*(Re-Venge)|(RevenG).*" TitleTo="祭 JAPAN" />
+		<!-- Fix up hacked titles: -->
+		<Translation TitleFrom="} JAPAN" TitleTo="祭 JAPAN" />
+		<Translation TitleFrom="\+\{" TitleTo="革命" />
+		<Translation TitleFrom="Sweet Sweet (Love |\$ )?Magic" TitleTo="Sweet Sweet ♡ Magic" />
+		<!-- Special stuff is done.  Titles: -->
+		<Translation TitleFrom="Matsuri Japan" TitleTo="祭 JAPAN" />
+		<Translation TitleFrom="Kakumei" TitleTo="革命" />
+		<Translation TitleFrom="Bre[a=]k ?Down!?" TitleTo="BRE∀K DOWN!" />
+		<!-- People can't decide how they want to spell this, so cope with both l or r, and one or two l/r and t. -->
+		<Translation TitleFrom="Sana Mo((ll?)|(rr?))et(t?)e Ne Ente" TitleTo="サナ・モレッテ・ネ・エンテ" />
+		<Translation TitleFrom="Hypnotic Crisis" TitleTo="HYPNØTIC CRISIS" />
+		<Translation TitleFrom="Yozora no Muko" TitleTo="夜空ノムコウ" />
+		<!-- Handle a typo: -->
+		<Translation TitleFrom="(A(oi|io) Shoudou|Blue Impulse)" TitleTo="蒼い衝動" />
+		<Translation TitleFrom="Daikenkai" TitleTo="大見解" />
+		<Translation TitleFrom="Love (Love )?Shine" TitleTo="LOVE ♡ SHINE" />
+		<Translation TitleFrom="(God of Romance)|(Romansu no Kamisama)" TitleTo="ロマンスの神様" />
+		<Translation TitleFrom="(Dancing Pompokolin)|(Odoru Pompokolin)" TitleTo="おどるポンポコリン" />
+		<Translation TitleFrom="Aoi Shoudou\(for EXTREME\)" TitleTo="蒼い衝動(for EXTREME)" />
+		<Translation TitleFrom="Love Love Sugar" TitleTo="♡LOVE²シュガ→♡" />
+		<!-- Handle Door and Doors -->
+		<Translation TitleFrom="(Doors? of Magic)|(Mahou no Tobira)" TitleTo="魔法の扉" SubTitleTo="(スペース&planet;マコのテーマ)" />
+		<Translation TitleFrom="Mikeneko Rock" TitleTo="三毛猫ロック" />
+		<!-- Handle "Mobo Moga:Mobo * Moga"; spaces optional. -->
+		<Translation TitleFrom="Mobo ?\*? ?Moga" TitleTo="MOBO★MOGA" />
+		<Translation TitleFrom="Sakura" TitleTo="桜" />
+		<Translation TitleFrom="Waltz of the Flowers" TitleTo="花のワルツ" />
+		<Translation TitleFrom="Chotto Kiitena" TitleTo="ちょっときいてな" />
+		<!-- No need to write transliterations for these. -->
+		<Translation TitleFrom="L'amour et la liberte" TitleTo="L'amour et la liberté" DontTransliterate />
+		<Translation TitleFrom="La Senorita" TitleTo="La Señorita" DontTransliterate />
+		<Translation TitleFrom="La Senorita Virtual" TitleTo="La Señorita Virtual" DontTransliterate />
+		<Translation TitleFrom="Senorita" TitleTo="SEÑORITA" DontTransliterate />
+		<Translation TitleFrom="Senorita\(Speedy Mix\)" TitleTo="SEÑORITA" SubTitleTo="Speedy Mix" DontTransliterate />
+		<Translation TitleFrom="Chotto Kiitena" TitleTo="ちょっときいてな" />
+		<Translation TitleFrom="The Strong Jaeger" TitleTo="合体せよ！ストロングイェーガー！！" />
+		<!-- Subtitles: -->
+		<!-- (Title is Graduation.) -->
+		<Translation SubTitleFrom=".*(Each Tomorrow|sorezore no ashita).*" SubTitleTo="~それぞれの明日~" />
+		<!-- Some files are missing the space, so the subtitle isn't parsed. -->
+		<Translation TitleFrom="GRADUATION~(Each Tomorrow|sorezore no ashita)~" TitleTo="GRADUATION"
+			SubTitleTo="~それぞれの明日~" SubtitleTransTo="sorezore no ashita" DontTransliterate />
+		<!-- Artists: -->
+		<Translation TitleFrom="Max 300" ArtistFrom="%" ArtistTo="Ω" />
+		<Translation ArtistFrom="Omega" ArtistTo="Ω" />
+		<!-- I've seen both "Kosaku" and "Kosaka"; Kosaka is correct, but handle both. -->
+		<Translation ArtistFrom="(Riyu Kosak[au])|(Kosak[au] Riyu)" ArtistTo="小坂りゆ" />
+		<Translation ArtistFrom="ZZ" ArtistTo="&doublezeta;" />
+		<!-- Serious tropical ska bomb? ruh roh -->
+		<Translation ArtistFrom="Anettai Maji.*Ska (Bakudan|Bukuden)" ArtistTo="亜熱帯マジ-SKA爆弾" />
+		<Translation ArtistFrom="(Spanish Folk Music|Mexican Folk Song)" ArtistTo="メキシコ民謡" />
+		<Translation ArtistFrom="Sanae? Shintani" ArtistTo="新谷さなえ" />
+		<Translation TitleFrom="White Lovers" ArtistFrom="Sana" ArtistTo="新谷さなえ" />
+		<Translation ArtistFrom="YOMA KOMATSU" ArtistTo="ΨΦMA KΦMATSU" />
+		<Translation ArtistFrom="Bus Stop featuring Carl Douglas" ArtistTo="BUS★STOP featuring CARL DOUGLAS" />
+		<Translation TitleFrom="(Kick the Can|One Two|Na-Na|Swing It)" ArtistFrom="BUS STOP" ArtistTo="BUS★STOP" />
+		<Translation ArtistFrom="dj TAKA feat. ?Noria" ArtistTo="dj TAKA feat. のりあ" />
+		<Translation ArtistFrom="(Miyuki Kunitake)|(Kunitake Miyuki)" ArtistTo="くにたけみゆき" />
+		<!-- TM: -->
+		<Translation ArtistFrom="(Masahiro Andoh)|(Andoh Masahiro)" ArtistTo="安藤まさひろ" />
+		<Translation TitleFrom="Sakura Saku" TitleTo="桜咲く" />
+		<!-- Theme from Excel Saga: 愛(忠誠心) -->
+		<!-- http://www.jvcmusic.co.jp/m-serve/tv/excel/index.html -->
+		<Translation ArtistFrom="(Toshio Masuda)|(Masuda Toshio)" ArtistTo="舛田利雄" />
+		<!-- Theme from Trigun -->
+		<Translation ArtistFrom="(Tsuneo Imahori)|(Imahori Tsuneo)" ArtistTo="今堀恒雄" />
+		<!-- TM2: -->
+		<!-- http://www.web-konami.com/products/ps2/castlevania/ -->
+		<Translation ArtistFrom="(Michuri Yamane)|(Yamane Michuri)" ArtistTransTo="Michiru Yamane" ArtistTo="山根ミチル" />
+		<!-- TM3: -->
+		<Translation TitleFrom="Tsugaru Kaikyou no Onna" TitleTo="津軽海峡の女" ArtistTo="ソニン" />
+		<Translation TitleFrom="Kaniyuuutsu" TitleTo="甘いユウウツ" />
+		<Translation TitleFrom="Negai" TitleTo="願い" />
+		<!-- http://www.avexnet.or.jp/avexdb/morinaga/ -->
+		<Translation ArtistFrom="(Hatsumi Morinaga)|(Morinaga Hatsumi)" ArtistTo="守永初美" />
+		<!-- TM4: -->
+		<Translation TitleFrom="Akumajo Dracula MEDLEY" TitleTo="悪魔城ドラキュラMEDLEY" />
+		<Translation ArtistFrom="Kukeihakurabu" ArtistTo="矩形波倶楽部" />
+		<Translation ArtistFrom="Yuji Ueda & Yui Horie" ArtistTo="上田祐司＆堀江由衣" />
+		<Translation ArtistFrom="Atsuko Enomoto" ArtistTo="榎本温子" />
+		<Translation TitleFrom="Hareta Hi no Marine" TitleTo="晴れた日のマリーン" />
+		<Translation ArtistFrom="Gotou? Maki" ArtistTo="後藤真希" />
+		<Translation TitleFrom="La Duena del Swing" TitleTo="La Dueña del Swing" />
+		<Translation TitleFrom="Pokemon Trainer Theme" TitleTo="Pokémon Trainer Theme" />
+		<Translation ArtistFrom="Pokemon Jhoto" ArtistTo="Pokémon Jhoto" />
+		<Translation TitleFrom="Watashi No Tamagoyaki" TitleTo="私の卵焼き" />
+		<Translation TitleFrom="sora *mimi keek[ei]" TitleTo="空耳ケーキ" />
+		<Translation TitleFrom="The Peace!" TitleTo="The☆Peace!" />
+		<Translation TitleFrom="tentaikansoku" TitleTo="天体観測" ArtistTo="入尾信充" />
+		<Translation SubTitleFrom="\(e=mc2 mix\)" SubTitleTo="(e=mc² mix)" />
+		<Translation ArtistFrom="Taku Iwa[sz]aki" ArtistTransTo="Taku Iwasaki" ArtistTo="岩崎琢" />
+		<Translation ArtistFrom="Hideki Naganuma" ArtistTo="長沼英樹" />
+		<!-- Note that these are double-width parentheses. -->
+		<Translation TitleFrom="Under Star\(Hajime no Ippo Opening 2\)" TitleTo="Under Star" SubTitleTo="（はじめの一歩 Opening 2）"
+			SubtitleTransTo="(Hajime no Ippo Opening 2)" />
+		<!-- This song had the game title in the artist field, instead of the actual artist. -->
+		<Translation ArtistFrom="Seiken Densetsu 2 OST" TitleTo="Meridian Dance" SubTitleTo="聖剣伝説2OST"
+			SubtitleTransTo="Seiken Densetsu 2 OST" ArtistTo="菊田裕樹" ArtistTransTo="Hiroki Kikuta" />
+		<Translation ArtistFrom="Ayumi and Vincent de Moor" ArtistTo="あゆみ and Vincent de Moor" />
+		<Translation ArtistFrom="Toshio Sakurai" ArtistTo="桜井敏郎" />
+		<Translation ArtistFrom="Yasunori Mitsuda" ArtistTo="光田康典" />
+		<Translation ArtistFrom="Lee Jung Hyun" ArtistTo="이정현" />
+		<Translation ArtistFrom="Tamaki Nami" ArtistTo="玉置成実" />
+		<Translation ArtistFrom="Tomoe Shinohara" ArtistTo="篠原ともえ" />
+		<Translation ArtistFrom="Maaya Sakamoto" ArtistTo="坂本真綾" />
+		<Translation TitleFrom="Black Cat" TitleTo="검은고양이" />
+		<Translation TitleFrom="Dream Possession" TitleTo="夢有" TitleTransTo="Yume Ari" ArtistTo="Des-ROW·組"
+			ArtistTransTo="Des-ROW and KUMI" />
+		<Translation ArtistFrom="Aaron Kwok" ArtistTo="郭富城" />
+		<!-- LIGHTNING STAR (Sonic the Hedgehog) -->
+		<Translation ArtistFrom="(Yuzo Koshiro)|(Koshiro Yuzo)" ArtistTo="古代祐三" />
+		<!-- VLAD -->
+		<Translation ArtistFrom="Jaurim" ArtistTo="자우림" />
+		<!-- TM4+: -->
+		<Translation ArtistFrom="Gwashi" ArtistTo="グワシ" />
+		<Translation TitleFrom="Kuru Kuru Mirakuru" TitleTo="くるくるミラクル" />
+		<Translation TitleFrom="Nuh" TitleTo="너" />
+		<!-- Error fix: make sure we don't change the artist like this for the wrong song. -->
+		<Translation TitleFrom="PARTY☆NIGHT" SubTitleFrom="\(Hyper Para Para Version\)" ArtistFrom="林原めぐみ＆奥井雅美"
+			ArtistTo="真田アサミ＆沢城みゆき＆氷上恭子" ArtistTransTo="Sanada Asami, Sawashiro Miyuki and Hikami Kyouko" />
+		<Translation TitleFrom="Sakura Saku Mirai Koi Yume" TitleTo="サクラサクミライコイユメ" />
+		<Translation TitleFrom="Salariman Aboeji" TitleTo="샐러리맨 아버지" />
+		<Translation TitleFrom="This is Unmei" TitleTo="This is 運命" ArtistTo="メロン記念日" />
+		<Translation TitleFrom="Torinouta" TitleTo="鳥の歌" />
+		<Translation TitleFrom="Wonder Woman" TitleTo="神奇女侠" />
+		<Translation TitleFrom="Honeymoon" TitleTo="허니문" />
+		<Translation TitleFrom="Michyo" TitleTo="미쳐" />
+		<Translation TitleFrom="(Tell Me)|(Mal Hae)" TitleTo="마해" />
+		<Translation TitleFrom="Dal Ah Dal Ah" TitleTo="달아달아" />
+		<Translation TitleFrom="Hanabi" TitleTo="花火" />
+		<Translation TitleFrom="Hanabi\(Lange Remix\)" TitleTo="花火" TitleTransTo="Hanabi" SubTitleTo="Lange Remix" />
+		<Translation TitleFrom="Heaven of Hoodlums" TitleTo="깡패천국" />
+		<Translation TitleFrom="Haruka Kanata" TitleTo="遥か彼方" />
+		<Translation TitleFrom="hyakugojyuuichi" TitleTo="百五十一" />
+		<Translation TitleFrom="Midsummers Night Midsummers Dream" TitleTo="真夏の花・真夏の夢" TitleTransTo="Midsummer's Night Midsummer's Dream" />
+		<Translation TitleFrom="Deluxe" ArtistFrom="Key-a-Kiss" TitleTo="デラックス" />
+		<Translation ArtistFrom="Melon Kinenbi" ArtistTo="メロン記念日" />
+		<Translation ArtistFrom="(Sammi Cheng)|(Cheng Sammy)" ArtistTo="郑秀文" />
+		<Translation ArtistFrom="(Wong Faye)|(Faye Wong)" ArtistTo="王菲" />
+		<Translation ArtistFrom="(Namie Amuro)|(Amuro Namie)" ArtistTo="あむろなみえ" />
+		<Translation TitleFrom="This Is Unmei" TitleTo="This is 運命" />
+		<Translation TitleFrom="Michyo" TitleTo="미쳐" />
+		<Translation TitleFrom="Smile" ArtistFrom="Myco" SubTitleTo="(満月をさがして)" />
+		<Translation TitleFrom="Journey to the West" TitleTo="西遊記" />
+		<Translation ArtistFrom="Dicky Cheung" ArtistTo="張衛健" />
+		<Translation ArtistFrom="Yoo Seung Jun" ArtistTo="유승준" />
+		<Translation ArtistFrom="Leon Lai" ArtistTo="黎明" />
+		<Translation ArtistFrom="KOTOKO & Hiromi Sato" ArtistTo="KOTOKO＆佐藤裕美" />
+		<Translation ArtistFrom="M-FLO loves Crystal Kay" ArtistTo="M-FLO l♡ves Crystal Kay" />
+		<Translation TitleFrom="Syunikiss" ArtistFrom="Malice Mizer" SubTitleTo="~二度目の哀悼~" />
+		<Translation TitleFrom="kono omoi o tsutaetai" ArtistFrom="sakura" TitleTo="この思いを伝えたい" ArtistTo="さくら" />
+		<!-- TM5: -->
+		<Translation TitleFrom="OMEGA" ArtistFrom="MAX DRAGON" TitleTo="Ω" />
+		<Translation TitleFrom="Haruka Kanata" TitleTo="遥か彼方" />
+		<Translation TitleFrom="Honjitsu wa Seiten Nari" TitleTo="本日は晴天なり" />
+		<Translation TitleFrom="Strong Star Soldier" TitleTo="強いぞ星の戦士" />
+		<Translation TitleFrom="O M E G A" TitleTo="Ω" />
+		<!-- http://www.makusonia.com/discography/album/album_2.html -->
+		<Translation TitleFrom="(Majimena|Urajimena) *Kikkake" TitleTo="真面目なキッカケ" />
+		<Translation TitleFrom="Guri Guri" TitleTo="グリグリ" />
+		<!-- Don't translit all songs named "Sigma" to Σ; only the ones that are actually -->
+		<!-- intended to be written that way. -->
+		<Translation TitleFrom="Sigma" ArtistFrom="(Shiina Ringo|椎名林檎)" TitleTo="Σ" />
+		<!-- Gimmick for this artist only: -->
+		<Translation TitleFrom="Motto" ArtistFrom="(Ishisaka Kumiko)|(Kumiko Ishisaka)|(石坂久美子)" TitleTo="Mottö" />
+		<!-- http://www.hotei.com/ -->
+		<Translation ArtistFrom="(Hotei Tomoyasu)|(Tomoyasu Hotei)" ArtistTo="布袋寅泰" />
+		<!-- http://www.uyax.com/whats/index.html -->
+		<Translation ArtistFrom="(Yuuya Asaoka)|(Yuuya Asaoka)" ArtistTo="浅岡雄也" />
+		<!-- http://www5a.biglobe.ne.jp/~iwadare/main_fl_j.html -->
+		<Translation ArtistFrom="(Noriyuki Iwadare)|(Iwadare Noriyuki)" ArtistTo="岩垂徳行" />
+		<!-- http://www.avexnet.or.jp/shimatani/ -->
+		<Translation ArtistFrom="(Hitomi Shimatani)|(Shimatani Hitomi)" ArtistTo="島谷ひとみ" />
+		<!-- http://www.pokemon.co.jp/videodvdcd/others/01.html -->
+		<!-- http://www.amazon.co.jp/exec/obidos/ASIN/B00005F3KX/qid=1085712723/br=1-10/ref=br_lf_m_9/249-1818804-8449929 -->
+		<Translation TitleFrom="POKEMON ieru ka NEO" ArtistFrom="Imakuni" TitleTo="ポケモン言えるかneo？" ArtistTo="イマクニ？" />
+		<!-- http://www.toshiba-emi.co.jp/domestic/artists/ringo/ -->
+		<Translation ArtistFrom="(Shiina Ringo)|(Shiina Ringo)" ArtistTo="椎名林檎" />
+		<!-- http://sdb.noppo.com/kumiko_w.htm -->
+		<Translation ArtistFrom="KLONOA *\(kumiko watanabe\)" ArtistTo="KLONOA （渡辺久美子）" />
+		<Translation SubTitleFrom="- HOSHI NO UMI  KAZE NO YUME -" SubTitleTo="-星の海風の夢-" />
+		<!-- http://www.geneon-ent.co.jp/rondorobe/music/parapara/meca-max.html -->
+		<!-- http://system.emedia.co.jp/details/NMC-1070912-9976204.html -->
+		<Translation ArtistFrom="(Shinichi Ish?ihara)|(Ish?ihara Shinichi)" ArtistTo="石原慎一" />
+		<!-- http://www.geneon-ent.co.jp/rondorobe/music/parapara/meca-max.html -->
+		<!-- http://system.emedia.co.jp/details/NMC-1070912-9976204.html -->
+		<Translation ArtistFrom="(Norifumi Ono)|(Ono Norifumi)" ArtistTo="小野訓史" />
+		<!-- http://www.konamistyle.com/product/product_detail.aspx?pfid=KOLA-51 -->
+		<Translation ArtistFrom="(Kumiko Ishisaka)|(Ishisaka Kumiko)" ArtistTo="石坂久美子" />
+		<!-- http://www.smtown.com/smtown/shin/ -->
+		<Translation ArtistFrom="Shinhwa" ArtistTo="신화" />
+		<Translation ArtistFrom="(Hong Seok)|(Seok Hong)" ArtistTo="홍석" />
+		<!-- http://www.ampcast.com/music/14706/artist.php -->
+		<Translation ArtistFrom="KaW vs. Smiley vs. Inspector K" ArtistTo="KaW vs. ☺ vs. Inspector K" />
+		<!-- http://www.hicbc.com/tv/kirby/staff/ -->
+		<Translation ArtistFrom="Miyagawa Akira" ArtistTo="宮川彬良" />
+		<!-- OSC: -->
+		<Translation TitleFrom="Love Hina" SubTitleFrom="- main theme" ArtistFrom="Hayashibra Megumi\(Haruka Urashima\)"
+			TitleTo="桜咲く" TitleTransTo="Sakura Saku" SubTitleTo="-erase-" SubtitleTransTo="-erase-" ArtistTo="林原めぐみ"
+			ArtistTransTo="Hayashibara Megumi (Haruka Urashima)" />
+		<!-- OSC2: -->
+		<Translation TitleFrom="Dejiko to Gema" SubTitleFrom="no RAP DE DATE" TitleTo="でじことゲマの" SubTitleTo="ラップDEデート"
+			ArtistFrom="Assami Sanada \+ Yoshiko Kamei" ArtistTo="真田アサミ＆亀井芳子" ArtistTransTo="Asami Sanada + Yoshiko Kamei" />
+		<!-- OSC3: -->
+		<Translation ArtistFrom="E-Paksa" ArtistTo="이박사" />
+		<!-- http://www.sonicteam.com/sonicadv/snd/cd_1.html -->
+		<Translation ArtistFrom="(Naofumi Hataya)|(Hataya Naofumi)" ArtistTo="幡谷尚史" />
+		<!-- 
+# Note: while this name is Chinese, we're displaying it with a Japanese
+# font page.  We don't have any way to tag text language.  This isn't
+# really a problem: I think Japanese and Chinese people prefer seeing
+# characters in their own language's font, anyway, so let's just leave
+# it up to the theme to pick which font style to use.
+-->
+		<Translation TitleFrom="Red Sun" ArtistFrom="Alan Tam / Hacken Lee" TitleTo="紅日" ArtistTo="譚詠麟／李克勤" />
+		<Translation TitleFrom="Sabishii Kute Loneliness" ArtistFrom="wandasu" TitleTo="淋しくてLoneliness"
+			ArtistTo="ワンダース" />
+		<!-- Foonmix: "Yubikiri" has the artist translit in the subtitle translit; move it. -->
+		<Translation ArtistFrom="ねこみみ魔法使い feat.都築きせの" SubtitleTransTo="-erase-" ArtistTransTo="NekomimiMahouTsukai feat.KisenoTsuduki" />
+		<!-- DREAMS COME TRUE: -->
+		<Translation TitleFrom="Asa ga Mata Kuru" TitleTo="朝がまた来る" />
+		<Translation TitleFrom="Haretara Line" TitleTo="晴れたらいいね" />
+		<Translation TitleFrom="Kessenwa Kinyoubi" TitleTo="決戦は金曜日" />
+		<Translation TitleFrom="Nante Koi Shitandaro" TitleTo="なんて恋したんだろ" />
+		<Translation TitleFrom="Ureshii! Tanoshii! Daisuki!" TitleTo="うれしい！ たのしい！ 大好き！" />
+		<Translation TitleFrom="Mirai Yosouzu II" TitleTo="未来予想図II" />
+		<!-- OHA: -->
+		<Translation ArtistFrom="War[ui]jiennu" ArtistTo="わるじぇんぬ" />
+		<Translation ArtistFrom="Yama-?chan with Jimusasu ?Hikaru" ArtistTo="やまちゃん with ジムナスひかる" />
+		<Translation TitleFrom="OHA OHA Sutaataa" TitleTo="OHA OHA スターター" />
+		<Translation ArtistFrom="Yama-?chan (&|with) (Reimondo|Raymond)" ArtistTo="やまちゃん＆レイモンド" />
+		<Translation ArtistFrom="Oha Kids with Imakuni(\??)" ArtistTo="おはおはキッズ with イマクニ？" />
+		<Translation TitleFrom="Sayonara no Kawari Ni" TitleTo="サヨナラのかわりに" />
+		<Translation ArtistFrom="(Ohhagumi|Oha Gumi)" ArtistTo="おはぐみ" />
+		<Translation ArtistFrom="Morikubo Shoutarou" ArtistTo="怪人ゾナー" />
+		<Translation TitleFrom="Zonapara" TitleTo="ゾナパラ" />
+		<Translation SubTitleFrom=".*WHY! Parapara Remix.*" SubTitleTo="WHY! パラパラ・リミックス" />
+		<Translation ArtistFrom="Zobekka" ArtistTo="ゾベッカ" />
+		<Translation ArtistFrom="Omega Versus KTz" ArtistTo="Ω Versus KTz" />
+		<Translation ArtistFrom="DJ Demon Versus Omega" ArtistTo="DJ 鬼 Versus 鬼" />
+		<Translation ArtistFrom="NW 260, ZZ, and 290" ArtistTo="NW 260, &doublezeta;, and 290" />
+		<!-- Tokimeki Memorial Dancing Summer Vacation -->
+		<Translation TitleFrom="Anata ni Aete" TitleTo="あなたに会えて" />
+		<Translation ArtistFrom="Junko Noda" ArtistTo="野田 順子" />
+		<Translation TitleFrom="Futari no Toki" TitleTo="二人の時" />
+		<Translation TitleFrom="Haru-iro no Kaze no Naka de" TitleTo="春色の風の中で" />
+		<Translation ArtistFrom="Mami Kingetsu" ArtistTo="金月 真美" />
+		<Translation TitleFrom="Motto! Motto! Tokimeki" TitleTo="もっと！ モット！ TOKIMEKI" />
+		<Translation TitleFrom="Tokimeki no Organ" TitleTo="ときめきのオルゴール" />
+		<Translation TitleFrom="Yuuki no Kamisama" TitleTo="勇気の神様" />
+		<Translation ArtistFrom="Yuuko Asahina" ArtistTo="朝比奈 夕子" />
+		<!-- Handle some broken data. -->
+		<Translation TitleFrom="Kamisama" ArtistFrom="Unknown" TitleTo="勇気の神様" ArtistTo="野田 順子" />
+		<Translation TitleFrom="Haru" ArtistFrom="Unknown" TitleTo="春色の風の中で" ArtistTo="金月 真美" />
+		<Translation TitleFrom="Hero Club-MIX" ArtistFrom="Unknown" ArtistTo="朝比奈 夕子" />
+		<Translation TitleFrom="Olgore" ArtistFrom="Unkown" TitleTo="ときめきのオルゴール" ArtistTo="金月 真美" />
+		<Translation TitleFrom="Anata" ArtistFrom="Unknown" TitleTo="あなたに会えて" ArtistTo="野田 順子" />
+		<Translation TitleFrom="Futari" ArtistFrom="Unknown" TitleTo="二人の時" ArtistTo="金月 真美" />
+		<Translation TitleFrom="Mot! Mot! Tokimeki" ArtistFrom="Unknown" TitleTo="もっと！ モット！ TOKIMEKI"
+			ArtistTo="金月 真美" />
+		<!-- Disney Dancing Museum: -->
+		<Translation TitleFrom="Chip 'N' Dale's Vacation" TitleTo="チップとデールのバケーション" ArtistTo="チップ＆デール" />
+		<Translation TitleFrom="Disco Magic" ArtistFrom="Minnie" TitleTo="ディスコマジック" ArtistTo="ミニー" />
+		<Translation TitleFrom="Electrical Parade" ArtistFrom="Minnie" TitleTo="エレクトリカル・パレード" ArtistTo="ミニー" />
+		<Translation TitleFrom="Go Go Go" ArtistFrom="Donald" TitleTo="ゴー・ゴー・ゴー" ArtistTo="ドナルド" />
+		<Translation TitleFrom="Goofy's Rock 'N' Roll Show" TitleTo="グーフィーのロックンロールショー" ArtistTo="グーフィー" />
+		<Translation TitleFrom="Irish River" ArtistFrom="Goofy" TitleTo="アイリッシュリバー" ArtistTo="グーフィー" />
+		<Translation TitleFrom="It's A Small World" ArtistFrom="Huey, Dewey & Louie" TitleTo="イッツ・ア・スモール・ワールド"
+			ArtistTo="ヒューイ／デューイ／ルーイ" />
+		<Translation TitleFrom="Mickey Fever" TitleTo="ミッキー・フィーバー" ArtistTo="ミッキー" />
+		<Translation TitleFrom="Mickey Motion" TitleTo="ミッキー・モーション" ArtistTo="ミニー" />
+		<Translation TitleFrom="Mickey Mouse March" ArtistFrom="Mickey" TitleTo="ミッキーマウス・マーチ" ArtistTo="ミッキー" />
+		<Translation TitleFrom="Mickey Mouse Ondo" TitleTo="ミッキーマウス音頭" ArtistTo="ミッキー" />
+		<Translation TitleFrom="Minnie's Yoo Hoo!" TitleTo="ミニーのユーフー！" ArtistTo="ミニー" />
+		<Translation TitleFrom="Miwaku no Tango" ArtistFrom="Clarabell" TitleTo="魅惑のタンゴ" ArtistTo="クララベル" />
+		<Translation TitleFrom="Morty and Ferdy's Carnival" TitleTo="モーティとフェルディのカーニバル" ArtistTo="モーティ＆フェルディ" />
+		<Translation TitleFrom="Para-Para Venus" ArtistFrom="Daisy" TitleTo="パラパラヴィーナス" ArtistTo="デイジー" />
+		<Translation TitleFrom="Russian Dance" ArtistFrom="Scrooge" TitleTo="ロシアの踊り" ArtistTo="スクルーヅ" />
+		<Translation TitleFrom="Savanna No Mukou" ArtistFrom="Donald" TitleTo="サバンナのむこう" ArtistTo="ドナルド" />
+		<Translation TitleFrom="Taiyo No Rakuen" ArtistFrom="Horace" TitleTo="太陽の楽園" ArtistTo="ホーレス" />
+		<Translation TitleFrom="Tap! Tap! Tap!" ArtistFrom="Grandma Duck" TitleTo="タップ！タップ！タップ！" ArtistTo="グランアダックタ" />
+		<Translation TitleFrom="The Tiki Tiki Tiki Room" ArtistFrom="Goofy" TitleTo="魅惑のチキルーム" ArtistTo="グーフィー" />
+		<Translation TitleFrom="Turkey In The Straw" ArtistFrom="Pluto" TitleTo="藁の中の七面鳥" ArtistTo="プルート" />
+		<Translation TitleFrom="Waltz of the Flowers" ArtistFrom="Daisy" TitleTo="花のワルツ" ArtistTo="デイジー" />
+		<Translation TitleFrom="Pokemon" TitleTo="Pokémon" />
+		<!-- Korean: -->
+		<Translation TitleFrom="Ba Kkwo" TitleTo="바꿔" />
+		<Translation TitleFrom="Wa" TitleTo="와" />
+		<Translation TitleFrom="Bu Dam" TitleTo="부담" />
+		<Translation TitleFrom="Byul" TitleTo="별" />
+		<Translation ArtistFrom="(Gunchuri Kko Kko)|(Country Kko Kko)" ArtistTo="컨츄리꼬꼬" />
+		<Translation ArtistFrom="Back Ji Young" ArtistTo="백지영" />
+		<Translation ArtistFrom="Lee Jung Hyun" ArtistTo="이정현" />
+		<Translation TitleFrom="Hogisim" TitleTo="호기심" />
+		<Translation TitleFrom="Aromdaon 21C" TitleTo="아름다운21C" ArtistTo="2000 대한민국" />
+		<Translation TitleFrom="Gyoung Go" TitleTo="경고" />
+		<Translation TitleFrom="Sung Suk" TitleTo="성숙" />
+		<Translation TitleFrom="Gamyunwi Shigan" TitleTo="가면의 시간" />
+		<Translation TitleFrom="(Gaggai)|(Gagaai)" TitleTo="가까이" />
+		<Translation ArtistFrom="Tashannie" ArtistTo=" 타샤니" />
+		<Translation ArtistFrom="Hans Band" ArtistTo="한스밴드" />
+		<!-- In the Groove: -->
+		<Translation ArtistFrom="Smiley" ArtistTo="☺" />
+		<Translation ArtistFrom="KaW feat. Smiley" ArtistTo="KaW feat. ☺" />
+		<!-- Misc: -->
+		<Translation TitleFrom="Pokemon" TitleTo="Pokémon" DontTransliterate />
+		<Translation ArtistFrom="Omega Versus KTz" ArtistTo="Ω Versus KTz" />
+		<Translation ArtistFrom="DJ Demon Versus Omega" ArtistTo="DJ 鬼 Versus Ω" />
+		<Translation ArtistFrom="NW 260, ZZ, and 290" ArtistTo="NW 260, &doublezeta;, and 290" />
+		<!-- http://bemanistyle.com/sims/viewsim.php?id=1161 -->
+		<Translation TitleFrom="Renai Revolution 21" TitleTo="恋愛レボリューション21" />
+		<!-- http://bemanistyle.com/sims/viewsim.php?id=1160 -->
+		<Translation SubTitleFrom="~Ai no Big Band~" SubTitleTo="~愛のビッグバンドｰ~" />
+		<!-- CHOP CHOP, MASTER ONION'S RAP (PaRappa the Rapper) -->
+		<Translation ArtistFrom="(Masaya Matsuura)|(Matsuura Masaya)" ArtistTo="松浦雅也" />
+		<!-- Fanboy bonus: -->
+		<Translation ArtistFrom="(Megumi Hayashibara)|(Hayashibara Megumi)" ArtistTo="林原めぐみ" />
+		<Translation ArtistFrom="(Ayumi Hamasaki)|(Hamasaki Ayumi)" ArtistTo="浜崎あゆみ" />
+		<Translation ArtistFrom="(Hiroko Kasahara)|(Kasahara Hiroko)" ArtistTo="笠原弘子" />
+		<Translation ArtistFrom="(Mai Kuraki)|(Kuraki Mai)" ArtistTo="倉木麻衣" />
+		<Translation ArtistFrom="Miryokuteki" ArtistTo="魅力的" />
+		<Translation ArtistFrom="(Yuki Kimura)|(Kimura Yuki)" ArtistTo="木村由姫" />
+		<Translation ArtistFrom="(Takako Matsu)|(Matsu Takako)" ArtistTo="松たか子" />
+		<Translation ArtistFrom="(Suzuki Ami)|(Ami Suzuki)" ArtistTo="鈴木あみ" />
+		<Translation ArtistFrom="(Sakura Tange)|(Tange Sakura)" ArtistTo="丹下桜" />
+		<Translation ArtistFrom="(Hikaru Utada)|(Utada Hikaru)" ArtistTo="宇多田ひかる" />
+		<Translation ArtistFrom="(Masami Okui)|(Okui Masami)" ArtistTo="奥井雅美" />
+		<Translation ArtistFrom="Morning Musume" ArtistTo="Morning娘" />
+		<Translation ArtistFrom="(You?ko Ishida)|(Ishida You?ko)" ArtistTo="石田燿子" />
+		<Translation ArtistFrom="(You?ko Kanno)|(Kanno You?ko)" ArtistTo="菅野よう子" />
+		<Translation ArtistFrom="You?ko Kanno (and|&) the Seatbelts" ArtistTo="菅野よう子 and the Seatbelts" />
+		<Translation ArtistFrom="(Megumi Ogata)|(Ogata Megumi)" ArtistTo="緒方恵美" />
+		<Translation ArtistFrom="(You?ko Takahashi)|(Takahashi You?ko)" ArtistTo="高橋洋子" />
+		<Translation ArtistFrom="(Daichi Akitaroh)|(Akitaroh Daichi)" ArtistTo="大地丙太郎" />
+		<Translation ArtistFrom="(Yui Horie)|(Horie Yui)" ArtistTo="堀江由衣" />
+		<Translation ArtistFrom="(Nobuo Uematsu)|(Uematsu Nobuo)" ArtistTo="植松伸夫" />
+		<Translation ArtistFrom="Mitsuishi Kotono" ArtistTo="三石琴乃" />
+		<Translation ArtistFrom="(Kou?ji Kondou?|Kondou? Kou?ji)" ArtistTo="近藤浩治" />
+		<Translation ArtistFrom="(Yuki Matsuoka)|(Matsuoka Yuki)" ArtistTo="松岡由貴" />
+		<Translation ArtistFrom="Blue?mchen" ArtistTo="Blümchen" DontTransliterate />
+	</Songs>
+	<Courses>
+		<Translation TitleFrom="(Kidou)|(Demon Road)|(Road of Oni)|(Oni Michi)|(Kidou/Onimichi \(Demon Road\))"
+			TitleTo="鬼道" />
+		<Translation TitleFrom="(Kidou 2)|(Demon Road 2)|(Road of Oni 2)|(Oni Michi 2)|(Kidou 2/Onimichi 2 \(Demon Road 2\))"
+			TitleTo="鬼道 弐" />
+		<Translation TitleFrom="Love" TitleTo="Love ♡" />
+		<Translation TitleFrom="Love Love" TitleTo="Love ♡" />
+		<Translation TitleFrom="(2 ?MB)|(Road of 2 ?MB)" TitleTo="2MB道" />
+		<Translation TitleFrom="Dancemania( Oni)?" TitleTo="Dancemania 鬼" />
+		<Translation TitleFrom="(TaQ( Oni)?)|(Road of TaQ)" TitleTo="TaQ道" />
+		<Translation TitleFrom="(Legend(ary)? Road)|(Road of Legend)" TitleTo="伝説道" />
+		<Translation TitleFrom="(Slow Demon Road)|(Road of Slow)|(Demon's Slow Road)" TitleTo="鬼の遅道" />
+		<!-- "Road of True"?  Maybe "Truth"? -->
+		<Translation TitleFrom="(True Demon Road)|(Road of Tru.*)" TitleTo="真鬼道" />
+		<Translation TitleFrom="(DDR HOME VERSION)" TitleTo="家庭用DDRコース" />
+		<Translation TitleFrom="Four Seasons" TitleTo="春夏秋冬" />
+		<Translation TitleFrom="DanceMania Nonstop" TitleTo="DanceMania 連" />
+		<Translation TitleFrom="(Otome no Michi|Maiden Star Road)" TitleTo="乙女☆道" />
+		<Translation TitleFrom="(Oni no Ran)|(Rebellion of Demons)" TitleTo="鬼の乱" />
+	</Courses>
+	<Groups>
+		<Translation TitleFrom="((Dance Dance Revolution)|(dance dance revolution)|(DANCE DANCE REVOLUTION))(.*)"
+			TitleTo="DDR\${4}" />
+		<Translation TitleFrom="((Pump It Up)|(pump it up)|(PUMP IT UP))(.*)" TitleTo="PIU\${4}" />
+		<Translation TitleFrom="((ParaParaParadise)|(paraparaparadise)|(PARAPARAPARADISE)|(Para Para Paradise)|(para para paradise)|(PARA PARA PARADISE))(.*)"
+			TitleTo="PPP\${4}" />
+		<Translation TitleFrom="((Dancing Stage)|(dancing stage)|(DANCING STAGE))(.*)" TitleTo="DS\${4}" />
+		<Translation TitleFrom="((Ez2dancer)|(Ez 2 Dancer))(.*)" TitleTo="EZ2\${4}" />
+		<Translation TitleFrom="((Technomotion)|(Techno Motion))(.*)" TitleTo="TM\${4}" />
+		<Translation TitleFrom="((Dance Station 3DDX)|(DS3DDX))(.*)" TitleTo="3DDX\${4}" />
+		<Translation TitleFrom="((BeatMania)|(Beatmania)|(BEATMANIA)|(beatmania))(.*)" TitleTo="BM\${4}" />
+		<Translation TitleFrom="((In The Groove)|(In the Groove))(.*)" TitleTo="ITG\${4}" />
+	</Groups>
+</Translations>
