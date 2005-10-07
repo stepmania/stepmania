@@ -305,8 +305,7 @@ void DSoundBuf::SetSampleRate( int hz )
 
 void DSoundBuf::SetVolume( float fVolume )
 {
-	ASSERT( fVolume >= 0 );
-	ASSERT( fVolume <= 1 );
+	ASSERT_M( fVolume >= 0 && fVolume <= 1, ssprintf("%f",fVolume) );
 	
 	if( fVolume == 0 )
 		fVolume = 0.001f;		// fix log10f(0) == -INF

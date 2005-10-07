@@ -331,6 +331,8 @@ void RageSoundManager::PlayOnce( CString sPath )
 
 void RageSoundManager::SetMixVolume( float fMixVol )
 {
+	ASSERT_M( fMixVol >= 0 && fVolume <= 1, ssprintf("%f",fMixVol) );
+
 	g_SoundManMutex.Lock(); /* lock for access to m_fMixVolume */
 	m_fMixVolume = fMixVol;
 	g_SoundManMutex.Unlock(); /* finished with m_fMixVolume */
