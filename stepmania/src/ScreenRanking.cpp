@@ -89,23 +89,24 @@ REGISTER_SCREEN_CLASS( ScreenRankingScroller );
 REGISTER_SCREEN_CLASS( ScreenRankingLines );
 
 ScreenRanking::ScreenRanking( CString sClassName ):
-	ScreenAttract( sClassName, false /*dont reset GAMESTATE*/ ),
-	STEPS_TYPES_TO_SHOW			(m_sName,"StepsTypesToHide"),
-
-	ROW_SPACING_X				(m_sName,"RowSpacingX"),
-	ROW_SPACING_Y				(m_sName,"RowSpacingY"),
-
-	STEPS_TYPE_COLOR			(m_sName,STEPS_TYPE_COLOR_NAME,5),
-	SHOW_ONLY_MOST_RECENT_SCORES	(m_sName,"ShowOnlyMostRecentScores"),
-	SECONDS_PER_PAGE			(m_sName,"SecondsPerPage"),
-	PAGE_FADE_SECONDS			(m_sName,"PageFadeSeconds"),
-	NO_SCORE_NAME				(m_sName,"NoScoreName"),
-	MANUAL_SCROLLING			(m_sName,"ManualScroling")
+	ScreenAttract( sClassName, false /*dont reset GAMESTATE*/ )
 {
 }
 
 void ScreenRanking::Init()
 {
+	STEPS_TYPES_TO_SHOW.Load          ( m_sName,"StepsTypesToHide" );
+
+	ROW_SPACING_X.Load                ( m_sName,"RowSpacingX" );
+	ROW_SPACING_Y.Load                ( m_sName,"RowSpacingY" );
+
+	STEPS_TYPE_COLOR.Load             ( m_sName,STEPS_TYPE_COLOR_NAME,5 );
+	SHOW_ONLY_MOST_RECENT_SCORES.Load ( m_sName,"ShowOnlyMostRecentScores" );
+	SECONDS_PER_PAGE.Load             ( m_sName,"SecondsPerPage" );
+	PAGE_FADE_SECONDS.Load            ( m_sName,"PageFadeSeconds" );
+	NO_SCORE_NAME.Load                ( m_sName,"NoScoreName" );
+	MANUAL_SCROLLING.Load             ( m_sName, "ManualScroling" );
+
 	ScreenAttract::Init();
 
 	m_PageType = StringToPageType( TYPE );
