@@ -82,6 +82,8 @@ public:
 		}
 	}
 
+	const T& GetName() const { return m_sName; }
+	const T& GetGroup() const { return m_sGroup; }
 	const T& GetValue() const
 	{
 		ASSERT( m_sName != "" );
