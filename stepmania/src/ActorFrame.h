@@ -76,7 +76,7 @@ protected:
 	float m_fFOV;	// -1 = no change
 	float m_fVanishX;
 	float m_fVanishY;
-	bool m_bOverrideLighting;	// if true, set ligthing to m_bLighting
+	bool m_bOverrideLighting;	// if true, set lighting to m_bLighting
 	bool m_bLighting;
 };
 
