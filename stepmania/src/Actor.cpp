@@ -1145,6 +1145,24 @@ void Actor::TweenState::Init()
 	aux = 0;
 }
 
+bool Actor::TweenState::operator==( const TweenState &other ) const
+{
+#define COMPARE( x )	if( x != other.x ) return false;
+	COMPARE( pos );
+	COMPARE( rotation );
+	COMPARE( quat );
+	COMPARE( scale );
+	COMPARE( fSkewX );
+	COMPARE( crop );
+	COMPARE( fade );
+	for( unsigned i=0; i<ARRAYSIZE(diffuse); i++ )
+		COMPARE( diffuse[i] );
+	COMPARE( glow );
+	COMPARE( aux );
+#undef COMPARE
+	return true;
+}
+
 void Actor::TweenState::MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween )
 {
 	average_out.pos			= ts1.pos	   + (ts2.pos		- ts1.pos	  )*fPercentBetween;

@@ -12,7 +12,6 @@ struct lua_State;
 class LuaReference;
 class LuaClass;
 #include "MessageManager.h"
-#include "RageUtil.h"	// for ARRAYSIZE
 
 
 #define DRAW_ORDER_BEFORE_EVERYTHING	-200
@@ -56,23 +55,9 @@ public:
 
 	struct TweenState
 	{
-		bool operator==( const TweenState &other ) const
-		{
-#define COMPARE( x )	if( x != other.x ) return false;
-			COMPARE( pos );
-			COMPARE( rotation );
-			COMPARE( quat );
-			COMPARE( scale );
-			COMPARE( fSkewX );
-			COMPARE( crop );
-			COMPARE( fade );
-			for( unsigned i=0; i<ARRAYSIZE(diffuse); i++ )
-				COMPARE( diffuse[i] );
-			COMPARE( glow );
-			COMPARE( aux );
-#undef COMPARE
-			return true;
-		}
+		void Init();
+		static void MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween );
+		bool operator==( const TweenState &other ) const;
 		bool operator!=( const TweenState &other ) const { return !operator==(other); }
 
 		// start and end position for tweening
@@ -87,9 +72,6 @@ public:
 		RageColor   glow;
 		float		aux;
 		CString sCommandName;	// command to execute when this TweenState goes into effect
-
-		void Init();
-		static void MakeWeightedAverage( TweenState& average_out, const TweenState& ts1, const TweenState& ts2, float fPercentBetween );
 	};
 
 	enum EffectClock
