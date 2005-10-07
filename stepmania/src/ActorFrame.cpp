@@ -90,7 +90,7 @@ void ActorFrame::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 void ActorFrame::LoadChildrenFromNode( const CString& sDir, const XNode* pNode )
 {
-	// Shoudn't be calling this unless we're going to delete our children.
+	// Shouldn't be calling this unless we're going to delete our children.
 	ASSERT( m_bDeleteChildren );
 
 	//
