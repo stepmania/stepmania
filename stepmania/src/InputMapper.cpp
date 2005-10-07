@@ -296,6 +296,28 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
+		"dance",
+		"SmartJoy PLUS Adapter",
+		"SmartJoy PLUS Adapter",
+		{
+			{ 0, JOY_LEFT,		/* dpad L */	DANCE_BUTTON_LEFT,		false },
+			{ 0, JOY_RIGHT,		/* dpad R */	DANCE_BUTTON_RIGHT,		false },
+			{ 0, JOY_UP,		/* dpad U */	DANCE_BUTTON_UP,		false },
+			{ 0, JOY_DOWN,		/* dpad D */	DANCE_BUTTON_DOWN,		false },
+			{ 1, JOY_BUTTON_4,	/* Square */	DANCE_BUTTON_LEFT,		false },
+			{ 1, JOY_BUTTON_2,	/* Circle */	DANCE_BUTTON_RIGHT,		false },
+			{ 1, JOY_BUTTON_1,	/* Tri */		DANCE_BUTTON_UP,		false },
+			{ 1, JOY_BUTTON_3,	/* X */			DANCE_BUTTON_DOWN,		false },
+			{ 0, JOY_BUTTON_7,	/* L1 */		DANCE_BUTTON_UPLEFT,	false },
+			{ 0, JOY_BUTTON_8,	/* R1 */		DANCE_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_BUTTON_10,	/* Select */	DANCE_BUTTON_BACK,		false },
+			{ 0, JOY_BUTTON_9,	/* Start */		DANCE_BUTTON_START,		false },
+			{ 0, JOY_BUTTON_5,	/* R1 */		DANCE_BUTTON_SELECT,	false },
+			{ 0, JOY_BUTTON_6,	/* R2 */		DANCE_BUTTON_COIN,		false },
+			END_MARKER
+		}
+	},
+	{
 		"pump",
 		"Pump USB",
 		"Pump USB pad",
