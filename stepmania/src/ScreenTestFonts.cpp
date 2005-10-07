@@ -6,6 +6,7 @@
 #include "GameConstantsAndTypes.h"
 #include "ScreenDimensions.h"
 #include "InputEventPlus.h"
+#include "RageUtil.h"
 
 
 static const float LineWidth = 400;

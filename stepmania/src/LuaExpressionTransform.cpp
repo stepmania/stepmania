@@ -2,6 +2,7 @@
 #include "LuaExpressionTransform.h"
 #include "LuaReference.h"
 #include "LuaManager.h"
+#include "RageUtil.h"
 
 LuaExpressionTransform::LuaExpressionTransform()
 {

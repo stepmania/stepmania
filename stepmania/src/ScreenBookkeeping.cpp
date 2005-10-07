@@ -6,6 +6,7 @@
 #include "Bookkeeper.h"
 #include "ScreenDimensions.h"
 #include "InputEventPlus.h"
+#include "RageUtil.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenBookkeeping );
