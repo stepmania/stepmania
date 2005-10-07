@@ -217,7 +217,7 @@ File "Docs\ChangeLog.txt"
 
 CreateDirectory "$INSTDIR\Data"
 SetOutPath "$INSTDIR\Data"
-File "Data\Translation.dat"
+File "Data\Translations.xml"
 File "Data\AI.ini"
 File "Data\splash.png"
 
