@@ -130,7 +130,7 @@ DancingCharacters::DancingCharacters()
 		m_pCharacter[p]->LoadMilkshapeAsciiBones( "rest", pChar->GetRestAnimationPath() );
 		m_pCharacter[p]->LoadMilkshapeAsciiBones( "warmup", pChar->GetWarmUpAnimationPath() );
 		m_pCharacter[p]->LoadMilkshapeAsciiBones( "dance", pChar->GetDanceAnimationPath() );
-		m_pCharacter[p]->SetCullMode( CULL_NONE );	// many of the DDR PC character models have the vertex order flipped
+		m_pCharacter[p]->SetCullMode( CULL_NONE );	// many of the models floating around have the vertex order flipped
 	}
 }
 

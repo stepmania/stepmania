@@ -43,8 +43,8 @@ enum Animation
 
 static const CString anims[NUM_ANIMATIONS] =
 {
-	"DancePad-DDR.txt",
-	"DancePads-DDR.txt",
+	"DancePad.txt",
+	"DancePads.txt",
 	"BeginnerHelper_step-up.bones.txt",
 	"BeginnerHelper_step-down.bones.txt",
 	"BeginnerHelper_step-left.bones.txt",
@@ -116,7 +116,7 @@ void ScreenHowToPlay::Init()
 			m_pmCharacter->m_bRevertToDefaultAnimation = true;		// Stay bouncing after a step has finished animating.
 			
 			m_pmCharacter->SetRotationX( 40 );
-			m_pmCharacter->SetCullMode( CULL_NONE );	// many of the DDR PC character models have the vertex order flipped
+			m_pmCharacter->SetCullMode( CULL_NONE );	// many of the models floating around have the vertex order flipped
 			SET_XY_AND_ON_COMMAND( m_pmCharacter );
 		}
 	}

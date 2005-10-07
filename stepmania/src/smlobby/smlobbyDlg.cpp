@@ -349,14 +349,14 @@ bool CSmlobbyDlg::OnIrc_RPL_ENDOFMOTD(const CIrcMessage *pmsg)
 bool CSmlobbyDlg::OnIrc_DDR_GAME_START(const CIrcMessage *pmsg)
 {
 	//incoming::
-	// PRIVMSG <recipient> :<0x01>DDR START
+	// PRIVMSG <recipient> :<0x01>SM START
 
 	//Make sure we have a parameter
 	if ( pmsg->parameters.size() < 1 ) 
 		return false;
 
-	//Make sure it's a DDR start
-	if ( std::string::npos == pmsg->parameters[1].find("\001DDR START") ) 
+	//Make sure it's a SM start
+	if ( std::string::npos == pmsg->parameters[1].find("\001SM START") ) 
 		return false;
 
 	//Get the info for this chat room

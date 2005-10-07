@@ -570,9 +570,9 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	if( newPage == PAGE_2 )
 	{
 		// XXX: only play this once (I thought we already did that?)
-		// DDR plays it on every change to page 2.  -Chris
+		// Play it on every change to page 2.  -Chris
 		/* That sounds ugly if you go back and forth quickly. -g */
-		// DDR locks input while it's scrolling.  Should we do the same? -Chris
+		// Should we lock input while it's scrolling? -Chris
 		m_soundDifficult.Stop();
 		m_soundDifficult.PlayRandom();
 	}

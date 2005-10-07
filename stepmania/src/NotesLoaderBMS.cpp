@@ -32,22 +32,21 @@
 	only 4 notes are used.  If so, shift the Up+Right column back to the Up
 	column
 
-	Hey, folks, BMSes are used for things BESIDES DDR steps,
-	and so we're borking up BMSes that are for pnm/bm/etc.
+	BMSes are used for games besides dance and so we're borking up BMSes that are for popn/beat/etc.
 
-	pnm-nine:   11-15,22-25
-	pnm-five:   13-15,21-22
-	bm-single5: 11-16
-	bm-double5: 11-16,21-26
-	bm-single7: 11-16,18-19
-	bm-double7: 11-16,18-19,21-26,28-29
+	popn-nine:   11-15,22-25
+	popn-five:   13-15,21-22
+	beat-single5: 11-16
+	beat-double5: 11-16,21-26
+	beat-single7: 11-16,18-19
+	beat-double7: 11-16,18-19,21-26,28-29
 
 	So the magics for these are:
-	pnm-nine: nothing >5, with 12, 14, 22 and/or 24
-	pnm-five: nothing >5, with 14 and/or 22
-	bm-*: can't tell difference between bm-single and dance-solo
-		18/19 marks bm-single7, 28/29 marks bm-double7
-		bm-double uses 21-26. */
+	popn-nine: nothing >5, with 12, 14, 22 and/or 24
+	popn-five: nothing >5, with 14 and/or 22
+	beat-*: can't tell difference between beat-single and dance-solo
+		18/19 marks beat-single7, 28/29 marks beat-double7
+		beat-double uses 21-26. */
 
 enum BmsTrack
 {
@@ -162,37 +161,37 @@ static StepsType DetermineStepsType( int iPlayer, const NoteData &nd )
 	{
 	case 1:		// "1 player"		
 		/*	Track counts:
-			4 - DDR
-			5 - PNM 5-key
-			6 - DDR Solo, BM 5-key
-			8 - BM 7-key
-			9 - PNM 9-key */
+			4 - dance 4-panel
+			5 - pop 5-key
+			6 - dance 6-panel, beat 5-key
+			8 - beat 7-key
+			9 - popn 9-key */
 		switch( iNumNonEmptyTracks ) 
 		{
 		case 4:		return STEPS_TYPE_DANCE_SINGLE;
-		case 5:		return STEPS_TYPE_PNM_FIVE;
+		case 5:		return STEPS_TYPE_POPN_FIVE;
 		case 6:
 			// FIXME: There's no way to distinguish between these types.
-			// They use the same tracks.  Assume it's a BM type since they
+			// They use the same tracks.  Assume it's a Beat type since they
 			// are more common.
 			//return STEPS_TYPE_DANCE_SOLO;
-			return STEPS_TYPE_BM_SINGLE5;
-		case 8:		return STEPS_TYPE_BM_SINGLE7;
-		case 9:		return STEPS_TYPE_PNM_NINE;
+			return STEPS_TYPE_BEAT_SINGLE5;
+		case 8:		return STEPS_TYPE_BEAT_SINGLE7;
+		case 9:		return STEPS_TYPE_POPN_NINE;
 		default:	return STEPS_TYPE_INVALID;
 		}
 	case 2:		// couple/battle
 		return STEPS_TYPE_DANCE_COUPLE;
 	case 3:		// double
 	/*	Track counts:
-		8 - DDR Double
-		12 - BM Double 5-key
-		16 - BM Double 7-key */
+		8 - dance Double
+		12 - beat Double 5-key
+		16 - beat Double 7-key */
 		switch( iNumNonEmptyTracks ) 
 		{
-		case 8:		return STEPS_TYPE_BM_SINGLE7;
-		case 12:	return STEPS_TYPE_BM_DOUBLE5;
-		case 16:	return STEPS_TYPE_BM_DOUBLE7;
+		case 8:		return STEPS_TYPE_BEAT_SINGLE7;
+		case 12:	return STEPS_TYPE_BEAT_DOUBLE5;
+		case 16:	return STEPS_TYPE_BEAT_DOUBLE7;
 		default:	return STEPS_TYPE_INVALID;
 		}
 	default:
@@ -427,7 +426,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNa
 		iTransformNewToOld[7] = BMS_P2_TURN;
 		break;
 	case STEPS_TYPE_DANCE_SOLO:
-	case STEPS_TYPE_BM_SINGLE5:
+	case STEPS_TYPE_BEAT_SINGLE5:
 		// Hey! Why are these exactly the same? :-)
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
@@ -436,7 +435,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNa
 		iTransformNewToOld[4] = BMS_P1_KEY5;
 		iTransformNewToOld[5] = BMS_P1_TURN;
 		break;
-	case STEPS_TYPE_PNM_FIVE:
+	case STEPS_TYPE_POPN_FIVE:
 		iTransformNewToOld[0] = BMS_P1_KEY3;
 		iTransformNewToOld[1] = BMS_P1_KEY4;
 		iTransformNewToOld[2] = BMS_P1_KEY5;
@@ -444,7 +443,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNa
 		iTransformNewToOld[3] = BMS_P2_KEY2;
 		iTransformNewToOld[4] = BMS_P2_KEY3;
 		break;
-	case STEPS_TYPE_PNM_NINE:
+	case STEPS_TYPE_POPN_NINE:
 		iTransformNewToOld[0] = BMS_P1_KEY1; // lwhite
 		iTransformNewToOld[1] = BMS_P1_KEY2; // lyellow
 		iTransformNewToOld[2] = BMS_P1_KEY3; // lgreen
@@ -456,7 +455,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNa
 		iTransformNewToOld[7] = BMS_P2_KEY4; // ryellow
 		iTransformNewToOld[8] = BMS_P2_KEY5; // rwhite
 		break;
-	case STEPS_TYPE_BM_DOUBLE5:
+	case STEPS_TYPE_BEAT_DOUBLE5:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
 		iTransformNewToOld[2] = BMS_P1_KEY3;
@@ -470,7 +469,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNa
 		iTransformNewToOld[10] = BMS_P2_KEY5;
 		iTransformNewToOld[11] = BMS_P2_TURN;
 		break;
-	case STEPS_TYPE_BM_SINGLE7:
+	case STEPS_TYPE_BEAT_SINGLE7:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
 		iTransformNewToOld[2] = BMS_P1_KEY3;
@@ -480,7 +479,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNa
 		iTransformNewToOld[6] = BMS_P1_KEY7;
 		iTransformNewToOld[7] = BMS_P1_TURN;
 		break;
-	case STEPS_TYPE_BM_DOUBLE7:
+	case STEPS_TYPE_BEAT_DOUBLE7:
 		iTransformNewToOld[0] = BMS_P1_KEY1;
 		iTransformNewToOld[1] = BMS_P1_KEY2;
 		iTransformNewToOld[2] = BMS_P1_KEY3;
@@ -894,8 +893,6 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 		{
 			sTag = sTag.substr( commonSubstring.size(), sTag.size() - commonSubstring.size() );
 			sTag.ToLower();
-
-			// XXX: Someone find me some DDR BMS examples!
 
 			// XXX: We should do this with filenames too, I have plenty of examples.
 			//      however, filenames will be trickier, as stuffs at the beginning AND

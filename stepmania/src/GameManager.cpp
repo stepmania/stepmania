@@ -33,20 +33,20 @@ enum
 	TRACK_14,
 	TRACK_15,
 	TRACK_16,
-	// BMS reader needs 16 tracks for bm-double7
+	// BMS reader needs 16 tracks for beat-double7
 };
 
 enum
 {
-	GAME_DANCE,		// Dance Dance Revolution
-	GAME_PUMP,		// Pump It Up
-	GAME_EZ2,		// Ez2dancer
-	GAME_PARA,		// ParaPAraParadise
-	GAME_DS3DDX,	// Dance Station 3DDX.
-	GAME_BM,		// Beatmania IIDX
-	GAME_MANIAX,	// DanceManiax
-	GAME_TECHNO,	// TechnoMotion
-	GAME_PNM,		// pop n music
+	GAME_DANCE,
+	GAME_PUMP,
+	GAME_EZ2,
+	GAME_PARA,
+	GAME_DS3DDX,
+	GAME_BEAT,
+	GAME_MANIAX,
+	GAME_TECHNO,
+	GAME_POPN,
 	GAME_LIGHTS,	// cabinet lights (not really a game)
 	NUM_GAMES,		// leave this at the end
 	GAME_INVALID,
@@ -59,12 +59,12 @@ const int EZ2_COL_SPACING = 46;
 const int EZ2_REAL_COL_SPACING = 40;
 const int PARA_COL_SPACING = 54;
 const int DS3DDX_COL_SPACING = 46;
-const int BM_COL_SPACING = 34;
+const int BEAT_COL_SPACING = 34;
 const int MANIAX_COL_SPACING = 36;
 const int TECHNO_COL_SPACING = 56;
 const int TECHNO_VERSUS_COL_SPACING = 33;
-const int PNM5_COL_SPACING = 32; 
-const int PNM9_COL_SPACING = 32; 
+const int POPN5_COL_SPACING = 32; 
+const int POPN9_COL_SPACING = 32; 
 
 struct {
 	char *name;
@@ -84,10 +84,10 @@ struct {
 	{ "para-single",	5 },
 	{ "para-versus",	10 },
 	{ "ds3ddx-single",	8 },
-	{ "bm-single5",		6 },
-	{ "bm-double5",      12 },
-	{ "bm-single7",   8 },
-	{ "bm-double7",   16 },
+	{ "bm-single5",		6 },	// called "bm" for backward compat
+	{ "bm-double5",      12 },	// called "bm" for backward compat
+	{ "bm-single7",   8 },	// called "bm" for backward compat
+	{ "bm-double7",   16 },	// called "bm" for backward compat
 	{ "maniax-single",	4 },
 	{ "maniax-double",	8 },
 	{ "techno-single4", 4 },
@@ -95,8 +95,8 @@ struct {
 	{ "techno-single8", 8 },
 	{ "techno-double4", 8 },
 	{ "techno-double5", 10 },
-	{ "pnm-five",		5 },
-	{ "pnm-nine",		9 },
+	{ "pnm-five",		5 },	// called "pnm" for backward compat
+	{ "pnm-nine",		9 },	// called "pnm" for backward compat
 	{ "lights-cabinet",	NUM_CABINET_LIGHTS },
 };
 
@@ -107,7 +107,7 @@ Game g_Games[NUM_GAMES] =
 {
 	{	// GAME_DANCE
 		"dance",					// m_szName
-		"Dance Dance Revolution",	// m_szDescription
+		"4 foot panels or 6 foot panels",	// m_szDescription
 		2,							// m_iNumControllers
 		false,						// m_bCountNotesSeparately
 		NUM_DANCE_BUTTONS,			// m_iButtonsPerController
@@ -194,7 +194,7 @@ Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_PUMP
 		"pump",				// m_szName
-		"Pump It Up",		// m_szDescription
+		"5 foot panels",		// m_szDescription
 		2,					// m_iNumControllers
 		false,				// m_bCountNotesSeparately
 		NUM_PUMP_BUTTONS,	// m_iButtonsPerController
@@ -278,7 +278,7 @@ Game g_Games[NUM_GAMES] =
 	},
 	{
 		"ez2",						// m_szName
-		"Ez2Dancer",				// m_szDescription
+		"4 hand sensors + 3 foot panels",				// m_szDescription
 		2,							// m_iNumControllers
 		false,						// m_bCountNotesSeparately
 		NUM_EZ2_BUTTONS,			// m_iButtonsPerController
@@ -368,10 +368,10 @@ Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_PARA
 		"para",						// m_szName
-		"Para Para Paradise",		// m_szDescription
+		"5 hand sensors",		// m_szDescription
 		2,							// m_iNumControllers
 		false,						// m_bCountNotesSeparately
-		NUM_DANCE_BUTTONS,			// m_iButtonsPerController
+		NUM_PARA_BUTTONS,			// m_iButtonsPerController
 		{	// m_szButtonNames
 			"Left",
 			"UpLeft",
@@ -452,7 +452,7 @@ Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_DS3DDX
 		"ds3ddx",					// m_szName
-		"Dance Station 3DDX",		// m_szDescription
+		"4 hand sensors + 4 foot panels",		// m_szDescription
 		2,							// m_iNumControllers
 		false,						// m_bCountNotesSeparately
 		NUM_DS3DDX_BUTTONS,			// m_iButtonsPerController
@@ -543,12 +543,12 @@ Game g_Games[NUM_GAMES] =
 		TNS_GOOD,		// m_mapGoodTo
 		TNS_BOO,		// m_mapBooTo
 	},
-	{	// GAME_BM
-		"bm",				// m_szName
-		"BeatMania IIDX",	// m_szDescription
+	{	// GAME_BEAT
+		"beat",				// m_szName
+		"5 hand buttons or 7 hand buttons, + 1 scratch pad",	// m_szDescription
 		2,					// m_iNumControllers
 		true,				// m_bCountNotesSeparately
-		NUM_BM_BUTTONS,	// m_iButtonsPerController
+		NUM_BEAT_BUTTONS,	// m_iButtonsPerController
 		{	// m_szButtonNames
 			"Key1",
 			"Key2",
@@ -570,67 +570,67 @@ Game g_Games[NUM_GAMES] =
 			"Operator",
 		},
 		{	// m_DedicatedMenuButton
-			BM_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
-			BM_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
-			BM_BUTTON_MENUUP,		// MENU_BUTTON_UP
-			BM_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
-			BM_BUTTON_START,		// MENU_BUTTON_START
-			BM_BUTTON_SELECT,	// MENU_BUTTON_SELECT
-			BM_BUTTON_BACK,		// MENU_BUTTON_BACK
-			BM_BUTTON_COIN,		// MENU_BUTTON_COIN
-			BM_BUTTON_OPERATOR,	// MENU_BUTTON_OPERATOR
+			BEAT_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
+			BEAT_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
+			BEAT_BUTTON_MENUUP,		// MENU_BUTTON_UP
+			BEAT_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
+			BEAT_BUTTON_START,		// MENU_BUTTON_START
+			BEAT_BUTTON_SELECT,	// MENU_BUTTON_SELECT
+			BEAT_BUTTON_BACK,		// MENU_BUTTON_BACK
+			BEAT_BUTTON_COIN,		// MENU_BUTTON_COIN
+			BEAT_BUTTON_OPERATOR,	// MENU_BUTTON_OPERATOR
 		},
 		{	// m_SecondaryMenuButton
-			BM_BUTTON_KEY1,		// MENU_BUTTON_LEFT
-			BM_BUTTON_KEY3,		// MENU_BUTTON_RIGHT
-			BM_BUTTON_SCRATCHUP,	// MENU_BUTTON_UP
-			BM_BUTTON_SCRATCHDOWN,// MENU_BUTTON_DOWN
-			BM_BUTTON_START,		// MENU_BUTTON_START
-			BM_BUTTON_SELECT,	// MENU_BUTTON_SELECT
-			BM_BUTTON_BACK,		// MENU_BUTTON_BACK
-			BM_BUTTON_COIN,		// MENU_BUTTON_COIN
-			BM_BUTTON_OPERATOR,	// MENU_BUTTON_OPERATOR
+			BEAT_BUTTON_KEY1,		// MENU_BUTTON_LEFT
+			BEAT_BUTTON_KEY3,		// MENU_BUTTON_RIGHT
+			BEAT_BUTTON_SCRATCHUP,	// MENU_BUTTON_UP
+			BEAT_BUTTON_SCRATCHDOWN,// MENU_BUTTON_DOWN
+			BEAT_BUTTON_START,		// MENU_BUTTON_START
+			BEAT_BUTTON_SELECT,	// MENU_BUTTON_SELECT
+			BEAT_BUTTON_BACK,		// MENU_BUTTON_BACK
+			BEAT_BUTTON_COIN,		// MENU_BUTTON_COIN
+			BEAT_BUTTON_OPERATOR,	// MENU_BUTTON_OPERATOR
 		},
 		{	// m_iDefaultKeyboardKey
 			{	// PLAYER_1
-				KEY_Cm,				// BM_BUTTON_KEY1,
-				KEY_Ck,				// BM_BUTTON_KEY2,
-				KEY_COMMA,			// BM_BUTTON_KEY3,
-				KEY_Cl,				// BM_BUTTON_KEY4,
-				KEY_PERIOD,			// BM_BUTTON_KEY5,
-				KEY_SEMICOLON,		// BM_BUTTON_KEY6,
-				KEY_SLASH,			// BM_BUTTON_KEY7,
-				KEY_LSHIFT,			// BM_BUTTON_SCRATCHUP,
-				NO_DEFAULT_KEY,		// BM_BUTTON_SCRATCHDOWN,
-				KEY_ENTER,			// BM_BUTTON_START,
-				KEY_BACKSLASH,		// BM_BUTTON_SELECT,
-				KEY_ESC,			// BM_BUTTON_BACK,
-				KEY_LEFT,			// BM_BUTTON_MENULEFT
-				KEY_RIGHT,			// BM_BUTTON_MENURIGHT
-				KEY_UP,				// BM_BUTTON_MENUUP
-				KEY_DOWN,			// BM_BUTTON_MENUDOWN
-				KEY_F1,				// BM_BUTTON_COIN
-				KEY_SCRLLOCK		// BM_BUTTON_OPERATOR
+				KEY_Cm,				// BEAT_BUTTON_KEY1,
+				KEY_Ck,				// BEAT_BUTTON_KEY2,
+				KEY_COMMA,			// BEAT_BUTTON_KEY3,
+				KEY_Cl,				// BEAT_BUTTON_KEY4,
+				KEY_PERIOD,			// BEAT_BUTTON_KEY5,
+				KEY_SEMICOLON,		// BEAT_BUTTON_KEY6,
+				KEY_SLASH,			// BEAT_BUTTON_KEY7,
+				KEY_LSHIFT,			// BEAT_BUTTON_SCRATCHUP,
+				NO_DEFAULT_KEY,		// BEAT_BUTTON_SCRATCHDOWN,
+				KEY_ENTER,			// BEAT_BUTTON_START,
+				KEY_BACKSLASH,		// BEAT_BUTTON_SELECT,
+				KEY_ESC,			// BEAT_BUTTON_BACK,
+				KEY_LEFT,			// BEAT_BUTTON_MENULEFT
+				KEY_RIGHT,			// BEAT_BUTTON_MENURIGHT
+				KEY_UP,				// BEAT_BUTTON_MENUUP
+				KEY_DOWN,			// BEAT_BUTTON_MENUDOWN
+				KEY_F1,				// BEAT_BUTTON_COIN
+				KEY_SCRLLOCK		// BEAT_BUTTON_OPERATOR
 			},
 			{	// PLAYER_2
-				NO_DEFAULT_KEY,					// BM_BUTTON_KEY1,
-				NO_DEFAULT_KEY,					// BM_BUTTON_KEY2,
-				NO_DEFAULT_KEY,					// BM_BUTTON_KEY3,
-				NO_DEFAULT_KEY,					// BM_BUTTON_KEY4,
-				NO_DEFAULT_KEY,  				// BM_BUTTON_KEY5,
-				NO_DEFAULT_KEY,  				// BM_BUTTON_KEY6,
-				NO_DEFAULT_KEY,  				// BM_BUTTON_KEY7,
-				NO_DEFAULT_KEY,					// BM_BUTTON_SCRATCHUP,
-				NO_DEFAULT_KEY,					// BM_BUTTON_SCRATCHDOWN,
-				NO_DEFAULT_KEY,					// BM_BUTTON_START,
-				NO_DEFAULT_KEY,					// BM_BUTTON_SELECT,
-				NO_DEFAULT_KEY,					// BM_BUTTON_BACK,
-				NO_DEFAULT_KEY,					// BM_BUTTON_MENULEFT
-				NO_DEFAULT_KEY,					// BM_BUTTON_MENURIGHT
-				NO_DEFAULT_KEY,					// BM_BUTTON_MENUUP
-				NO_DEFAULT_KEY,					// BM_BUTTON_MENUDOWN
-				NO_DEFAULT_KEY,					// BM_BUTTON_COIN
-				NO_DEFAULT_KEY					// BM_BUTTON_OPERATOR
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_KEY1,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_KEY2,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_KEY3,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_KEY4,
+				NO_DEFAULT_KEY,  				// BEAT_BUTTON_KEY5,
+				NO_DEFAULT_KEY,  				// BEAT_BUTTON_KEY6,
+				NO_DEFAULT_KEY,  				// BEAT_BUTTON_KEY7,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_SCRATCHUP,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_SCRATCHDOWN,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_START,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_SELECT,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_BACK,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_MENULEFT
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_MENURIGHT
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_MENUUP
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_MENUDOWN
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_COIN
+				NO_DEFAULT_KEY					// BEAT_BUTTON_OPERATOR
 			},
 		},
 		TNS_MARVELOUS,	// m_mapMarvelousTo
@@ -641,7 +641,7 @@ Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_MANIAX
 		"maniax",					// m_szName
-		"Dance Maniax",				// m_szDescription
+		"4 hand sensors",				// m_szDescription
 		2,							// m_iNumControllers
 		false,						// m_bCountNotesSeparately
 		NUM_MANIAX_BUTTONS,			// m_iButtonsPerController
@@ -722,7 +722,7 @@ Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_TECHNO
 		"techno",					// m_szName
-		"TechnoMotion",				// m_szDescription
+		"4, 5, or 9 foot panels",				// m_szDescription
 		2,							// m_iNumControllers
 		false,						// m_bCountNotesSeparately
 		NUM_TECHNO_BUTTONS,			// m_iButtonsPerController
@@ -816,12 +816,12 @@ Game g_Games[NUM_GAMES] =
 		TNS_GOOD,		// m_mapGoodTo
 		TNS_BOO,		// m_mapBooTo
 	},
-	{	// GAME_PNM
-		"pnm",				// m_szName
-		"Pop'n Music",		// m_szDescription
+	{	// GAME_POPN
+		"popn",				// m_szName
+		"5 or 9 hand buttons",		// m_szDescription
 		1,					// m_iNumControllers
 		true,				// m_bCountNotesSeparately
-		NUM_PNM_BUTTONS,	// m_iButtonsPerController
+		NUM_POPN_BUTTONS,	// m_iButtonsPerController
 		{	// m_szButtonNames
 			"Left White",
 			"Left Yellow",
@@ -843,67 +843,67 @@ Game g_Games[NUM_GAMES] =
 			"Operator",
 		},
 		{	// m_DedicatedMenuButton
-			PNM_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
-			PNM_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
-			PNM_BUTTON_MENUUP,	// MENU_BUTTON_UP
-			PNM_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
-			PNM_BUTTON_START,		// MENU_BUTTON_START
-			PNM_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-			PNM_BUTTON_BACK,		// MENU_BUTTON_BACK
-			PNM_BUTTON_COIN,		// MENU_BUTTON_COIN
-			PNM_BUTTON_OPERATOR	// MENU_BUTTON_OPERATOR
+			POPN_BUTTON_MENULEFT,	// MENU_BUTTON_LEFT
+			POPN_BUTTON_MENURIGHT,	// MENU_BUTTON_RIGHT
+			POPN_BUTTON_MENUUP,	// MENU_BUTTON_UP
+			POPN_BUTTON_MENUDOWN,	// MENU_BUTTON_DOWN
+			POPN_BUTTON_START,		// MENU_BUTTON_START
+			POPN_BUTTON_SELECT,		// MENU_BUTTON_SELECT
+			POPN_BUTTON_BACK,		// MENU_BUTTON_BACK
+			POPN_BUTTON_COIN,		// MENU_BUTTON_COIN
+			POPN_BUTTON_OPERATOR	// MENU_BUTTON_OPERATOR
 		},
 		{	// m_SecondaryMenuButton
-			PNM_BUTTON_LEFT_BLUE,		
-			PNM_BUTTON_RIGHT_BLUE,		
-			PNM_BUTTON_LEFT_YELLOW,		
-			PNM_BUTTON_RIGHT_YELLOW,	
-			PNM_BUTTON_RED,	
-			PNM_BUTTON_SELECT,		// MENU_BUTTON_SELECT
-			PNM_BUTTON_BACK,	
-			PNM_BUTTON_COIN,			// MENU_BUTTON_COIN
-			PNM_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
+			POPN_BUTTON_LEFT_BLUE,		
+			POPN_BUTTON_RIGHT_BLUE,		
+			POPN_BUTTON_LEFT_YELLOW,		
+			POPN_BUTTON_RIGHT_YELLOW,	
+			POPN_BUTTON_RED,	
+			POPN_BUTTON_SELECT,		// MENU_BUTTON_SELECT
+			POPN_BUTTON_BACK,	
+			POPN_BUTTON_COIN,			// MENU_BUTTON_COIN
+			POPN_BUTTON_OPERATOR,		// MENU_BUTTON_OPERATOR
 		},
 		{	// m_iDefaultKeyboardKey
 			{	// PLAYER_1
-				KEY_Cz,					// PNM_BUTTON_LEFT_WHITE,
-				KEY_Cs,					// PNM_BUTTON_LEFT_YELLOW,
-				KEY_Cx,				// PNM_BUTTON_LEFT_GREEN,
-				KEY_Cd,					// PNM_BUTTON_LEFT_BLUE,
-				KEY_Cc,			// PNM_BUTTON_RED,
-				KEY_Cf,			// PNM_BUTTON_RIGHT_BLUE,
-				KEY_Cv,				// PNM_BUTTON_RIGHT_GREEN,
-				KEY_Cg,			// PNM_BUTTON_RIGHT_YELLOW,
-				KEY_Cb,						// PNM_BUTTON_RIGHT_WHITE,
-				KEY_ENTER,				// PNM_BUTTON_MENUSTART
-				KEY_BACKSLASH,			// PNM_BUTTON_SELECT,
-				KEY_ESC,				// PNM_BUTTON_MENUBACK		
-				KEY_LEFT,			// PNM_BUTTON_MENULEFT,
-				KEY_RIGHT,						// PNM_BUTTON_MENURIGHT,
-				KEY_UP,				// PNM_BUTTON_MENUUP
-				KEY_DOWN,				// PNM_BUTTON_MENUDOWN
-				KEY_F1,				// PNM_BUTTON_COIN
-				KEY_SCRLLOCK			// PNM_BUTTON_OPERATOR
+				KEY_Cz,					// POPN_BUTTON_LEFT_WHITE,
+				KEY_Cs,					// POPN_BUTTON_LEFT_YELLOW,
+				KEY_Cx,				// POPN_BUTTON_LEFT_GREEN,
+				KEY_Cd,					// POPN_BUTTON_LEFT_BLUE,
+				KEY_Cc,			// POPN_BUTTON_RED,
+				KEY_Cf,			// POPN_BUTTON_RIGHT_BLUE,
+				KEY_Cv,				// POPN_BUTTON_RIGHT_GREEN,
+				KEY_Cg,			// POPN_BUTTON_RIGHT_YELLOW,
+				KEY_Cb,						// POPN_BUTTON_RIGHT_WHITE,
+				KEY_ENTER,				// POPN_BUTTON_MENUSTART
+				KEY_BACKSLASH,			// POPN_BUTTON_SELECT,
+				KEY_ESC,				// POPN_BUTTON_MENUBACK		
+				KEY_LEFT,			// POPN_BUTTON_MENULEFT,
+				KEY_RIGHT,						// POPN_BUTTON_MENURIGHT,
+				KEY_UP,				// POPN_BUTTON_MENUUP
+				KEY_DOWN,				// POPN_BUTTON_MENUDOWN
+				KEY_F1,				// POPN_BUTTON_COIN
+				KEY_SCRLLOCK			// POPN_BUTTON_OPERATOR
 			},
 			{	// PLAYER_2
-				NO_DEFAULT_KEY,					// BM_BUTTON_KEY1,
-				NO_DEFAULT_KEY,					// BM_BUTTON_KEY2,
-				NO_DEFAULT_KEY,					// BM_BUTTON_KEY3,
-				NO_DEFAULT_KEY,					// BM_BUTTON_KEY4,
-				NO_DEFAULT_KEY,  				// BM_BUTTON_KEY5,
-				NO_DEFAULT_KEY,  				// BM_BUTTON_KEY6,
-				NO_DEFAULT_KEY,  				// BM_BUTTON_KEY7,
-				NO_DEFAULT_KEY,					// BM_BUTTON_SCRATCHUP,
-				NO_DEFAULT_KEY,					// BM_BUTTON_SCRATCHDOWN,
-				NO_DEFAULT_KEY,					// BM_BUTTON_START,
-				NO_DEFAULT_KEY,					// PNM_BUTTON_SELECT,
-				NO_DEFAULT_KEY,					// BM_BUTTON_BACK,
-				NO_DEFAULT_KEY,					// BM_BUTTON_MENULEFT
-				NO_DEFAULT_KEY,					// BM_BUTTON_MENURIGHT
-				NO_DEFAULT_KEY,					// BM_BUTTON_MENUUP
-				NO_DEFAULT_KEY,					// BM_BUTTON_MENUDOWN
-				NO_DEFAULT_KEY,					// BM_BUTTON_COIN
-				NO_DEFAULT_KEY					// BM_BUTTON_OPERATOR
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_KEY1,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_KEY2,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_KEY3,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_KEY4,
+				NO_DEFAULT_KEY,  				// BEAT_BUTTON_KEY5,
+				NO_DEFAULT_KEY,  				// BEAT_BUTTON_KEY6,
+				NO_DEFAULT_KEY,  				// BEAT_BUTTON_KEY7,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_SCRATCHUP,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_SCRATCHDOWN,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_START,
+				NO_DEFAULT_KEY,					// POPN_BUTTON_SELECT,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_BACK,
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_MENULEFT
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_MENURIGHT
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_MENUUP
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_MENUDOWN
+				NO_DEFAULT_KEY,					// BEAT_BUTTON_COIN
+				NO_DEFAULT_KEY					// BEAT_BUTTON_OPERATOR
 			},
 		},
 		TNS_PERFECT,	// m_mapMarvelousTo
@@ -914,7 +914,7 @@ Game g_Games[NUM_GAMES] =
 	},
 	{	// GAME_LIGHTS
 		"lights",					// m_szName
-		"Lights",					// m_szDescription
+		"8 lights",					// m_szDescription
 		1,							// m_iNumControllers
 		false,						// m_bCountNotesSeparately
 		NUM_LIGHTS_BUTTONS,			// m_iButtonsPerController
@@ -1832,32 +1832,32 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 		false, // m_bLockDifficulties
 	},
-	{	// STYLE_BM_SINGLE5
-		&g_Games[GAME_BM],					// m_Game
+	{	// STYLE_BEAT_SINGLE5
+		&g_Games[GAME_BEAT],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		true,									// m_bUsedForDemonstration
 		true,									// m_bUsedForHowToPlay
 		"single5",								// m_szName
-		STEPS_TYPE_BM_SINGLE5,					// m_StepsType
+		STEPS_TYPE_BEAT_SINGLE5,					// m_StepsType
 		ONE_PLAYER_ONE_SIDE,		// m_StyleType
 		6,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-BM_COL_SPACING*2.5f, NULL },
-				{ TRACK_2,	-BM_COL_SPACING*1.5f, NULL },
-				{ TRACK_3,	-BM_COL_SPACING*0.5f, NULL },
-				{ TRACK_4,	+BM_COL_SPACING*0.5f, NULL },
-				{ TRACK_5,	+BM_COL_SPACING*1.5f, NULL },
-				{ TRACK_6,	+BM_COL_SPACING*3.0f, "scratch" },
+				{ TRACK_1,	-BEAT_COL_SPACING*2.5f, NULL },
+				{ TRACK_2,	-BEAT_COL_SPACING*1.5f, NULL },
+				{ TRACK_3,	-BEAT_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+BEAT_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+BEAT_COL_SPACING*1.5f, NULL },
+				{ TRACK_6,	+BEAT_COL_SPACING*3.0f, "scratch" },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-BM_COL_SPACING*2.5f, NULL },
-				{ TRACK_2,	-BM_COL_SPACING*1.5f, NULL },
-				{ TRACK_3,	-BM_COL_SPACING*0.5f, NULL },
-				{ TRACK_4,	+BM_COL_SPACING*0.5f, NULL },
-				{ TRACK_5,	+BM_COL_SPACING*1.5f, NULL },
-				{ TRACK_6,	+BM_COL_SPACING*3.0f, "scratch" },
+				{ TRACK_1,	-BEAT_COL_SPACING*2.5f, NULL },
+				{ TRACK_2,	-BEAT_COL_SPACING*1.5f, NULL },
+				{ TRACK_3,	-BEAT_COL_SPACING*0.5f, NULL },
+				{ TRACK_4,	+BEAT_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+BEAT_COL_SPACING*1.5f, NULL },
+				{ TRACK_6,	+BEAT_COL_SPACING*3.0f, "scratch" },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1871,44 +1871,44 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 		false, // m_bLockDifficulties
 	},
-	{	// STYLE_BM_DOUBLE
-		&g_Games[GAME_BM],					// m_Game
+	{	// STYLE_BEAT_DOUBLE
+		&g_Games[GAME_BEAT],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
 		false,									// m_bUsedForHowToPlay
 		"double5",								// m_szName
-		STEPS_TYPE_BM_DOUBLE5,					// m_StepsType
+		STEPS_TYPE_BEAT_DOUBLE5,					// m_StepsType
 		ONE_PLAYER_TWO_SIDES,		// m_StyleType
 		12,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-BM_COL_SPACING*6.0f, NULL },
-				{ TRACK_2,	-BM_COL_SPACING*5.0f, NULL },
-				{ TRACK_3,	-BM_COL_SPACING*4.0f, NULL },
-				{ TRACK_4,	-BM_COL_SPACING*3.0f, NULL },
-				{ TRACK_5,	-BM_COL_SPACING*2.0f, NULL },
-				{ TRACK_6,	-BM_COL_SPACING*1.5f, "scratch" },
-				{ TRACK_7,	+BM_COL_SPACING*0.5f, NULL },
-				{ TRACK_8,	+BM_COL_SPACING*1.5f, NULL },
-				{ TRACK_9,	+BM_COL_SPACING*2.5f, NULL },
-				{ TRACK_10,	+BM_COL_SPACING*3.5f, NULL },
-				{ TRACK_11,	+BM_COL_SPACING*4.5f, NULL },
-				{ TRACK_12,	+BM_COL_SPACING*6.0f, "scratch" },
+				{ TRACK_1,	-BEAT_COL_SPACING*6.0f, NULL },
+				{ TRACK_2,	-BEAT_COL_SPACING*5.0f, NULL },
+				{ TRACK_3,	-BEAT_COL_SPACING*4.0f, NULL },
+				{ TRACK_4,	-BEAT_COL_SPACING*3.0f, NULL },
+				{ TRACK_5,	-BEAT_COL_SPACING*2.0f, NULL },
+				{ TRACK_6,	-BEAT_COL_SPACING*1.5f, "scratch" },
+				{ TRACK_7,	+BEAT_COL_SPACING*0.5f, NULL },
+				{ TRACK_8,	+BEAT_COL_SPACING*1.5f, NULL },
+				{ TRACK_9,	+BEAT_COL_SPACING*2.5f, NULL },
+				{ TRACK_10,	+BEAT_COL_SPACING*3.5f, NULL },
+				{ TRACK_11,	+BEAT_COL_SPACING*4.5f, NULL },
+				{ TRACK_12,	+BEAT_COL_SPACING*6.0f, "scratch" },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-BM_COL_SPACING*6.0f, NULL },
-				{ TRACK_2,	-BM_COL_SPACING*5.0f, NULL },
-				{ TRACK_3,	-BM_COL_SPACING*4.0f, NULL },
-				{ TRACK_4,	-BM_COL_SPACING*3.0f, NULL },
-				{ TRACK_5,	-BM_COL_SPACING*2.0f, NULL },
-				{ TRACK_6,	-BM_COL_SPACING*1.5f, "scratch" },
-				{ TRACK_7,	+BM_COL_SPACING*0.5f, NULL },
-				{ TRACK_8,	+BM_COL_SPACING*1.5f, NULL },
-				{ TRACK_9,	+BM_COL_SPACING*2.5f, NULL },
-				{ TRACK_10,	+BM_COL_SPACING*3.5f, NULL },
-				{ TRACK_11,	+BM_COL_SPACING*4.5f, NULL },
-				{ TRACK_12,	+BM_COL_SPACING*6.0f, "scratch" },
+				{ TRACK_1,	-BEAT_COL_SPACING*6.0f, NULL },
+				{ TRACK_2,	-BEAT_COL_SPACING*5.0f, NULL },
+				{ TRACK_3,	-BEAT_COL_SPACING*4.0f, NULL },
+				{ TRACK_4,	-BEAT_COL_SPACING*3.0f, NULL },
+				{ TRACK_5,	-BEAT_COL_SPACING*2.0f, NULL },
+				{ TRACK_6,	-BEAT_COL_SPACING*1.5f, "scratch" },
+				{ TRACK_7,	+BEAT_COL_SPACING*0.5f, NULL },
+				{ TRACK_8,	+BEAT_COL_SPACING*1.5f, NULL },
+				{ TRACK_9,	+BEAT_COL_SPACING*2.5f, NULL },
+				{ TRACK_10,	+BEAT_COL_SPACING*3.5f, NULL },
+				{ TRACK_11,	+BEAT_COL_SPACING*4.5f, NULL },
+				{ TRACK_12,	+BEAT_COL_SPACING*6.0f, "scratch" },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1922,36 +1922,36 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 		false, // m_bLockDifficulties
 	},
-	{	// STYLE_BM_SINGLE7
-		&g_Games[GAME_BM],					// m_Game
+	{	// STYLE_BEAT_SINGLE7
+		&g_Games[GAME_BEAT],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
 		false,									// m_bUsedForHowToPlay
 		"single7",								// m_szName
-		STEPS_TYPE_BM_SINGLE7,				// m_StepsType
+		STEPS_TYPE_BEAT_SINGLE7,				// m_StepsType
 		ONE_PLAYER_ONE_SIDE,		// m_StyleType
 		8,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_8,	-BM_COL_SPACING*3.5f, "scratch" },
-				{ TRACK_1,	-BM_COL_SPACING*2.0f, NULL },
-				{ TRACK_2,	-BM_COL_SPACING*1.0f, NULL },
-				{ TRACK_3,	-BM_COL_SPACING*0.0f, NULL },
-				{ TRACK_4,	+BM_COL_SPACING*1.0f, NULL },
-				{ TRACK_5,	+BM_COL_SPACING*2.0f, NULL },
-				{ TRACK_6,	+BM_COL_SPACING*3.0f, NULL },
-				{ TRACK_7,	+BM_COL_SPACING*4.0f, NULL },
+				{ TRACK_8,	-BEAT_COL_SPACING*3.5f, "scratch" },
+				{ TRACK_1,	-BEAT_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-BEAT_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	-BEAT_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+BEAT_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+BEAT_COL_SPACING*2.0f, NULL },
+				{ TRACK_6,	+BEAT_COL_SPACING*3.0f, NULL },
+				{ TRACK_7,	+BEAT_COL_SPACING*4.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-BM_COL_SPACING*3.5f, NULL },
-				{ TRACK_2,	-BM_COL_SPACING*2.5f, NULL },
-				{ TRACK_3,	-BM_COL_SPACING*1.5f, NULL },
-				{ TRACK_4,	-BM_COL_SPACING*0.5f, NULL },
-				{ TRACK_5,	+BM_COL_SPACING*0.5f, NULL },
-				{ TRACK_6,	+BM_COL_SPACING*1.5f, NULL },
-				{ TRACK_7,	+BM_COL_SPACING*2.5f, NULL },
-				{ TRACK_8,	+BM_COL_SPACING*4.0f, "scratch" },
+				{ TRACK_1,	-BEAT_COL_SPACING*3.5f, NULL },
+				{ TRACK_2,	-BEAT_COL_SPACING*2.5f, NULL },
+				{ TRACK_3,	-BEAT_COL_SPACING*1.5f, NULL },
+				{ TRACK_4,	-BEAT_COL_SPACING*0.5f, NULL },
+				{ TRACK_5,	+BEAT_COL_SPACING*0.5f, NULL },
+				{ TRACK_6,	+BEAT_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	+BEAT_COL_SPACING*2.5f, NULL },
+				{ TRACK_8,	+BEAT_COL_SPACING*4.0f, "scratch" },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -1965,52 +1965,52 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 		false, // m_bLockDifficulties
 	},
-	{	// STYLE_BM_DOUBLE7
-		&g_Games[GAME_BM],					// m_Game
+	{	// STYLE_BEAT_DOUBLE7
+		&g_Games[GAME_BEAT],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
 		false,									// m_bUsedForHowToPlay
 		"double7",								// m_szName
-		STEPS_TYPE_BM_DOUBLE7,				// m_StepsType
+		STEPS_TYPE_BEAT_DOUBLE7,				// m_StepsType
 		ONE_PLAYER_TWO_SIDES,		// m_StyleType
 		16,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_8,	-BM_COL_SPACING*8.0f, "scratch" },
-				{ TRACK_1,	-BM_COL_SPACING*6.5f, NULL },
-				{ TRACK_2,	-BM_COL_SPACING*5.5f, NULL },
-				{ TRACK_3,	-BM_COL_SPACING*4.5f, NULL },
-				{ TRACK_4,	-BM_COL_SPACING*3.5f, NULL },
-				{ TRACK_5,	-BM_COL_SPACING*2.5f, NULL },
-				{ TRACK_6,	-BM_COL_SPACING*1.5f, NULL },
-				{ TRACK_7,	-BM_COL_SPACING*0.5f, NULL },
-				{ TRACK_9,	+BM_COL_SPACING*0.5f, NULL },
-				{ TRACK_10,	+BM_COL_SPACING*1.5f, NULL },
-				{ TRACK_11,	+BM_COL_SPACING*2.5f, NULL },
-				{ TRACK_12,	+BM_COL_SPACING*3.5f, NULL },
-				{ TRACK_13,	+BM_COL_SPACING*4.5f, NULL },
-				{ TRACK_14,	+BM_COL_SPACING*5.5f, NULL },
-				{ TRACK_15,	+BM_COL_SPACING*6.5f, NULL },
-				{ TRACK_16,	+BM_COL_SPACING*8.0f, "scratch" },
+				{ TRACK_8,	-BEAT_COL_SPACING*8.0f, "scratch" },
+				{ TRACK_1,	-BEAT_COL_SPACING*6.5f, NULL },
+				{ TRACK_2,	-BEAT_COL_SPACING*5.5f, NULL },
+				{ TRACK_3,	-BEAT_COL_SPACING*4.5f, NULL },
+				{ TRACK_4,	-BEAT_COL_SPACING*3.5f, NULL },
+				{ TRACK_5,	-BEAT_COL_SPACING*2.5f, NULL },
+				{ TRACK_6,	-BEAT_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	-BEAT_COL_SPACING*0.5f, NULL },
+				{ TRACK_9,	+BEAT_COL_SPACING*0.5f, NULL },
+				{ TRACK_10,	+BEAT_COL_SPACING*1.5f, NULL },
+				{ TRACK_11,	+BEAT_COL_SPACING*2.5f, NULL },
+				{ TRACK_12,	+BEAT_COL_SPACING*3.5f, NULL },
+				{ TRACK_13,	+BEAT_COL_SPACING*4.5f, NULL },
+				{ TRACK_14,	+BEAT_COL_SPACING*5.5f, NULL },
+				{ TRACK_15,	+BEAT_COL_SPACING*6.5f, NULL },
+				{ TRACK_16,	+BEAT_COL_SPACING*8.0f, "scratch" },
 			},
 			{	// PLAYER_2
-				{ TRACK_8,	-BM_COL_SPACING*8.0f, "scratch" },
-				{ TRACK_1,	-BM_COL_SPACING*6.5f, NULL },
-				{ TRACK_2,	-BM_COL_SPACING*5.5f, NULL },
-				{ TRACK_3,	-BM_COL_SPACING*4.5f, NULL },
-				{ TRACK_4,	-BM_COL_SPACING*3.5f, NULL },
-				{ TRACK_5,	-BM_COL_SPACING*2.5f, NULL },
-				{ TRACK_6,	-BM_COL_SPACING*1.5f, NULL },
-				{ TRACK_7,	-BM_COL_SPACING*0.5f, NULL },
-				{ TRACK_9,	+BM_COL_SPACING*0.5f, NULL },
-				{ TRACK_10,	+BM_COL_SPACING*1.5f, NULL },
-				{ TRACK_11,	+BM_COL_SPACING*2.5f, NULL },
-				{ TRACK_12,	+BM_COL_SPACING*3.5f, NULL },
-				{ TRACK_13,	+BM_COL_SPACING*4.5f, NULL },
-				{ TRACK_14,	+BM_COL_SPACING*5.5f, NULL },
-				{ TRACK_15,	+BM_COL_SPACING*6.5f, NULL },
-				{ TRACK_16,	+BM_COL_SPACING*8.0f, "scratch" },
+				{ TRACK_8,	-BEAT_COL_SPACING*8.0f, "scratch" },
+				{ TRACK_1,	-BEAT_COL_SPACING*6.5f, NULL },
+				{ TRACK_2,	-BEAT_COL_SPACING*5.5f, NULL },
+				{ TRACK_3,	-BEAT_COL_SPACING*4.5f, NULL },
+				{ TRACK_4,	-BEAT_COL_SPACING*3.5f, NULL },
+				{ TRACK_5,	-BEAT_COL_SPACING*2.5f, NULL },
+				{ TRACK_6,	-BEAT_COL_SPACING*1.5f, NULL },
+				{ TRACK_7,	-BEAT_COL_SPACING*0.5f, NULL },
+				{ TRACK_9,	+BEAT_COL_SPACING*0.5f, NULL },
+				{ TRACK_10,	+BEAT_COL_SPACING*1.5f, NULL },
+				{ TRACK_11,	+BEAT_COL_SPACING*2.5f, NULL },
+				{ TRACK_12,	+BEAT_COL_SPACING*3.5f, NULL },
+				{ TRACK_13,	+BEAT_COL_SPACING*4.5f, NULL },
+				{ TRACK_14,	+BEAT_COL_SPACING*5.5f, NULL },
+				{ TRACK_15,	+BEAT_COL_SPACING*6.5f, NULL },
+				{ TRACK_16,	+BEAT_COL_SPACING*8.0f, "scratch" },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2465,30 +2465,30 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 		false, // m_bLockDifficulties
 	},
-	{	// STYLE_PNM_FIVE
-		&g_Games[GAME_PNM],					// m_Game
+	{	// STYLE_POPN_FIVE
+		&g_Games[GAME_POPN],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		false,									// m_bUsedForDemonstration
 		false,									// m_bUsedForHowToPlay
-		"pnm-five",								// m_szName
-		STEPS_TYPE_PNM_FIVE,				// m_StepsType
+		"popn-five",								// m_szName
+		STEPS_TYPE_POPN_FIVE,				// m_StepsType
 		ONE_PLAYER_ONE_SIDE,		// m_StyleType
 		5,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-PNM5_COL_SPACING*2.0f, NULL },
-				{ TRACK_2,	-PNM5_COL_SPACING*1.0f, NULL },
-				{ TRACK_3,	+PNM5_COL_SPACING*0.0f, NULL },
-				{ TRACK_4,	+PNM5_COL_SPACING*1.0f, NULL },
-				{ TRACK_5,	+PNM5_COL_SPACING*2.0f, NULL },
+				{ TRACK_1,	-POPN5_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-POPN5_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+POPN5_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+POPN5_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+POPN5_COL_SPACING*2.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-PNM5_COL_SPACING*2.0f, NULL },
-				{ TRACK_2,	-PNM5_COL_SPACING*1.0f, NULL },
-				{ TRACK_3,	+PNM5_COL_SPACING*0.0f, NULL },
-				{ TRACK_4,	+PNM5_COL_SPACING*1.0f, NULL },
-				{ TRACK_5,	+PNM5_COL_SPACING*2.0f, NULL },
+				{ TRACK_1,	-POPN5_COL_SPACING*2.0f, NULL },
+				{ TRACK_2,	-POPN5_COL_SPACING*1.0f, NULL },
+				{ TRACK_3,	+POPN5_COL_SPACING*0.0f, NULL },
+				{ TRACK_4,	+POPN5_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+POPN5_COL_SPACING*2.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]
@@ -2502,38 +2502,38 @@ Style g_Styles[] =
 		false, // m_bCanUseBeginnerHelper
 		false, // m_bLockDifficulties
 	},
-	{	// STYLE_PNM_NINE
-		&g_Games[GAME_PNM],					// m_Game
+	{	// STYLE_POPN_NINE
+		&g_Games[GAME_POPN],					// m_Game
 		true,									// m_bUsedForGameplay
 		true,									// m_bUsedForEdit
 		true,									// m_bUsedForDemonstration
 		true,									// m_bUsedForHowToPlay
-		"pnm-nine",								// m_szName
-		STEPS_TYPE_PNM_NINE,				// m_StepsType
+		"popn-nine",								// m_szName
+		STEPS_TYPE_POPN_NINE,				// m_StepsType
 		ONE_PLAYER_ONE_SIDE,		// m_StyleType
 		9,										// m_iColsPerPlayer
 		{	// m_ColumnInfo[NUM_PLAYERS][MAX_COLS_PER_PLAYER];
 			{	// PLAYER_1
-				{ TRACK_1,	-PNM9_COL_SPACING*4.0f, NULL },
-				{ TRACK_2,	-PNM9_COL_SPACING*3.0f, NULL },
-				{ TRACK_3,	-PNM9_COL_SPACING*2.0f, NULL },
-				{ TRACK_4,	-PNM9_COL_SPACING*1.0f, NULL },
-				{ TRACK_5,	+PNM9_COL_SPACING*0.0f, NULL },
-				{ TRACK_6,	+PNM9_COL_SPACING*1.0f, NULL },
-				{ TRACK_7,	+PNM9_COL_SPACING*2.0f, NULL },
-				{ TRACK_8,	+PNM9_COL_SPACING*3.0f, NULL },
-				{ TRACK_9,	+PNM9_COL_SPACING*4.0f, NULL },
+				{ TRACK_1,	-POPN9_COL_SPACING*4.0f, NULL },
+				{ TRACK_2,	-POPN9_COL_SPACING*3.0f, NULL },
+				{ TRACK_3,	-POPN9_COL_SPACING*2.0f, NULL },
+				{ TRACK_4,	-POPN9_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+POPN9_COL_SPACING*0.0f, NULL },
+				{ TRACK_6,	+POPN9_COL_SPACING*1.0f, NULL },
+				{ TRACK_7,	+POPN9_COL_SPACING*2.0f, NULL },
+				{ TRACK_8,	+POPN9_COL_SPACING*3.0f, NULL },
+				{ TRACK_9,	+POPN9_COL_SPACING*4.0f, NULL },
 			},
 			{	// PLAYER_2
-				{ TRACK_1,	-PNM9_COL_SPACING*4.0f, NULL },
-				{ TRACK_2,	-PNM9_COL_SPACING*3.0f, NULL },
-				{ TRACK_3,	-PNM9_COL_SPACING*2.0f, NULL },
-				{ TRACK_4,	-PNM9_COL_SPACING*1.0f, NULL },
-				{ TRACK_5,	+PNM9_COL_SPACING*0.0f, NULL },
-				{ TRACK_6,	+PNM9_COL_SPACING*1.0f, NULL },
-				{ TRACK_7,	+PNM9_COL_SPACING*2.0f, NULL },
-				{ TRACK_8,	+PNM9_COL_SPACING*3.0f, NULL },
-				{ TRACK_9,	+PNM9_COL_SPACING*4.0f, NULL },
+				{ TRACK_1,	-POPN9_COL_SPACING*4.0f, NULL },
+				{ TRACK_2,	-POPN9_COL_SPACING*3.0f, NULL },
+				{ TRACK_3,	-POPN9_COL_SPACING*2.0f, NULL },
+				{ TRACK_4,	-POPN9_COL_SPACING*1.0f, NULL },
+				{ TRACK_5,	+POPN9_COL_SPACING*0.0f, NULL },
+				{ TRACK_6,	+POPN9_COL_SPACING*1.0f, NULL },
+				{ TRACK_7,	+POPN9_COL_SPACING*2.0f, NULL },
+				{ TRACK_8,	+POPN9_COL_SPACING*3.0f, NULL },
+				{ TRACK_9,	+POPN9_COL_SPACING*4.0f, NULL },
 			},
 		},
 		{	// m_iInputColumn[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS]

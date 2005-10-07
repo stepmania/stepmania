@@ -21,12 +21,12 @@ const int MAX_STYLES_PER_GAME = 10;
 // corresponding MenuInput IF AND ONLY IF the GameButton corresponding to the pimary input 
 // is not mapped.
 //
-// Example 1:  A user is using a an arcade DDR machine as their controllre.  This machine has 
+// Example 1:  A user is using an arcade machine as their controller.  Most machines have
 // MenuLeft, MenuStart, and MenuRight buttons on the cabinet, so they should be used to navigate menus.
 // The user will map these DeviceInputs to the GameButtons "MenuLeft (optional)", "MenuStart", and 
 // "MenuRight (optional)".
 //
-// Example 2:  A user is using PlayStation DDR soft pads to play.  His controller doesn't have dedicated
+// Example 2:  A user is using PlayStation dance pads to play.  These controllers don't have dedicated
 // DeviceInputs for MenuLeft and MenuRight.  The user maps Up, Down, Left, and Right as normal.
 // Since the Left and Right GameButtons have the flag FLAG_SECONDARY_MENU_*, they will function as 
 // MenuLeft and MenuRight as long as "MenuLeft (optional)" and "MenuRight (optional)" are not mapped.

@@ -173,14 +173,14 @@ public:
 	Preference<Premium>		m_Premium;
 
 	Preference<bool>	m_bDelayedCreditsReconcile;
-	Preference<bool>	m_bPickExtraStage;	// DDR Extreme-style extra stage support.
+	Preference<bool>	m_bPickExtraStage;
 	Preference<bool>	m_bComboContinuesBetweenSongs;
 	Preference<float>	m_fLongVerSongSeconds;
 	Preference<float>	m_fMarathonVerSongSeconds;
 	enum Maybe { ASK = -1, NO = 0, YES = 1 };
 	Preference<Maybe>		m_ShowSongOptions;
 	Preference<bool>	m_bSoloSingle;
-	Preference<bool>	m_bDancePointsForOni;	//DDR-Extreme style dance points instead of max2 percent
+	Preference<bool>	m_bDancePointsForOni;
 	Preference<bool>	m_bPercentageScoring;
 	Preference<float>	m_fMinPercentageForMachineSongHighScore;
 	Preference<float>	m_fMinPercentageForMachineCourseHighScore;

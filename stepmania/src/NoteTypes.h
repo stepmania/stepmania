@@ -74,9 +74,9 @@ struct TapNote
 		addition,	// additional note added by a transform
 		removed,	// Removed taps, e.g. in Little - play keysounds here as if
 					// judged Perfect, but don't bother rendering or judging this
-					// step.  Also used for when we implement auto-scratch in BM,
+					// step.  Also used for when we implement auto-scratch,
 					// and for if/when we do a "reduce" modifier that cancels out
-					// all but N keys on a line [useful for BM->DDR autogen, too].
+					// all but N keys on a line [useful for beat->dance autogen, too].
 					// Removed hold body (...why?) - acts as follows:
 					// 1 - if we're using a sustained-sound gametype [Keyboardmania], and
 					//     we've already hit the start of the sound (?? we put Holds Off on?)

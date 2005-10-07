@@ -1425,11 +1425,10 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	
 	/* Find the minimum score of the row.  This will never be TNS_NONE, since this
 	 * function is only called when a row is completed. */
-	/* Instead, use the last tap score (ala DDR).  Using the minimum results in 
-	 * slightly more harsh scoring than DDR */
+	/* Instead, use the last tap score.
 	/* I'm not sure this is right, either.  Can you really jump a boo and a perfect
 	 * and get scored for a perfect?  (That's so loose, you can gallop jumps.) -glenn */
-	/* Instead of grading individual columns, DDR sets a "was pressed recently" 
+	/* Instead of grading individual columns, maybe set a "was pressed recently" 
 	 * countdown every time you step on a column.  When you step on the first note of 
 	 * the jump, it sets the first "was pressed recently" timer.  Then, when you do 
 	 * the 2nd step of the jump, it sets another column's timer then AND's the jump 
