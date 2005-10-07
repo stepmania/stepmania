@@ -104,15 +104,7 @@ void NoteData::ClearRangeForTrack( int rowBegin, int rowEnd, int iTrack )
 		GetTapNoteRangeInclusive( iTrack, rowBegin, rowEnd, begin, end );
 	}
 
-	while( begin != end )
-	{
-		iterator next = begin;
-		++next;
-
-		RemoveTapNote( iTrack, begin );
-
-		begin = next;
-	}
+	m_TapNotes[iTrack].erase( begin, end );
 }
 
 void NoteData::ClearRange( int rowBegin, int rowEnd )
