@@ -3,6 +3,7 @@
 #include "XmlFile.h"
 #include "LuaManager.h"
 #include "ActorUtil.h"
+#include "RageUtil.h"
 
 Actor *DynamicActorScroller::Copy() const { return new DynamicActorScroller(*this); }
 

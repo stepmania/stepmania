@@ -6,6 +6,7 @@
 #include "ThemeManager.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
+#include "RageUtil.h"
 #include "EnumHelper.h"
 #include "XmlFile.h"
 #include "LuaManager.h"

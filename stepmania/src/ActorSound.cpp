@@ -4,6 +4,7 @@
 #include "LuaManager.h"
 #include "XmlFile.h"
 #include "RageSoundManager.h"
+#include "RageUtil.h"
 
 REGISTER_ACTOR_CLASS_WITH_NAME( ActorSound, Sound )
 
