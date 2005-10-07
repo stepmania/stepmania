@@ -25,14 +25,14 @@ ThemeMetricStepsTypesToShow			STEPS_TYPES_TO_SHOW			("Common","StepsTypesToHide"
 ThemeMetricDifficultiesToShow::ThemeMetricDifficultiesToShow( const CString& sGroup, const CString& sName ) : 
 	ThemeMetric<CString>(sGroup,sName)
 {
-	ASSERT( sName.Right(6) == "ToShow" );
-
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
 	if( IsLoaded() )
 		Read();
 }
 void ThemeMetricDifficultiesToShow::Read()
 {
+	ASSERT( GetName().Right(6) == "ToShow" );
+
 	ThemeMetric<CString>::Read();
 
 	m_v.clear();
@@ -55,14 +55,14 @@ const vector<Difficulty>& ThemeMetricDifficultiesToShow::GetValue() { return m_v
 ThemeMetricCourseDifficultiesToShow::ThemeMetricCourseDifficultiesToShow( const CString& sGroup, const CString& sName ) : 
 	ThemeMetric<CString>(sGroup,sName)
 {
-	ASSERT( sName.Right(6) == "ToShow" );
-
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
 	if( IsLoaded() )
 		Read();
 }
 void ThemeMetricCourseDifficultiesToShow::Read()
 {
+	ASSERT( GetName().Right(6) == "ToShow" );
+
 	ThemeMetric<CString>::Read();
 
 	m_v.clear();
@@ -103,14 +103,14 @@ static void RemoveStepsTypes( vector<StepsType>& inout, CString sStepsTypesToRem
 ThemeMetricStepsTypesToShow::ThemeMetricStepsTypesToShow( const CString& sGroup, const CString& sName ) : 
 	ThemeMetric<CString>(sGroup,sName)
 {
-	ASSERT( sName.Right(6) == "ToHide" );
-
 	// re-read because ThemeMetric::ThemeMetric calls ThemeMetric::Read, not the derived one
 	if( IsLoaded() )
 		Read();
 }
 void ThemeMetricStepsTypesToShow::Read()
 {
+	ASSERT( GetName().Right(6) == "ToHide" );
+
 	ThemeMetric<CString>::Read();
 
 	m_v.clear();
