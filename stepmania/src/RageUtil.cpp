@@ -941,7 +941,7 @@ bool Regex::Replace(const CString &replacement, const CString &subject, CString 
 	out = replacement;
 
 	// TODO: optimize me by iterating only once over the string
-	for( int i=0; i<matches.size(); i++ )
+	for( unsigned i=0; i<matches.size(); i++ )
 	{
 		CString sFrom = ssprintf( "\\${%d}", i );
 		CString sTo = matches[i];
