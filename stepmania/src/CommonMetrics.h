@@ -12,27 +12,30 @@
 //
 // Types
 //
-class ThemeMetricDifficultiesToShow : ThemeMetric<CString>
+class ThemeMetricDifficultiesToShow : public ThemeMetric<CString>
 {
 public:
+	ThemeMetricDifficultiesToShow() { }
 	ThemeMetricDifficultiesToShow( const CString& sGroup, const CString& sName );
 	void Read();
 	const vector<Difficulty> &GetValue();
 private:
 	vector<Difficulty> m_v;
 };
-class ThemeMetricCourseDifficultiesToShow : ThemeMetric<CString>
+class ThemeMetricCourseDifficultiesToShow : public ThemeMetric<CString>
 {
 public:
+	ThemeMetricCourseDifficultiesToShow() { }
 	ThemeMetricCourseDifficultiesToShow( const CString& sGroup, const CString& sName );
 	void Read();
 	const vector<CourseDifficulty> &GetValue();
 private:
 	vector<CourseDifficulty> m_v;
 };
-class ThemeMetricStepsTypesToShow : ThemeMetric<CString>
+class ThemeMetricStepsTypesToShow : public ThemeMetric<CString>
 {
 public:
+	ThemeMetricStepsTypesToShow() { }
 	ThemeMetricStepsTypesToShow( const CString& sGroup, const CString& sName );
 	void Read();
 	const vector<StepsType> &GetValue();
