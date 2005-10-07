@@ -1373,10 +1373,6 @@ float ScreenGameplay::StartPlayingSong(float MinTimeToNotes, float MinTimeToMusi
 	p.StopMode = RageSoundParams::M_CONTINUE;
 	p.m_StartSecond = fStartSecond;
 
-	// Silence music if not playing attract sounds in demonstration.
-	if( !GAMESTATE->IsTimeToPlayAttractSounds() )
-		p.m_Volume = 0;
-	
 	ASSERT( !m_pSoundMusic->IsPlaying() );
 	m_pSoundMusic->Play( &p );
 	if( m_bPaused )
