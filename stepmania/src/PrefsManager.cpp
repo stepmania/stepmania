@@ -398,7 +398,7 @@ float PrefsManager::GetSoundVolume()
 	if ( m_fSoundVolume==-1 )
 		return DEFAULT_SOUND_VOLUME;
 	else
-		return clamp(m_fSoundVolume,0.0f,1.0f); 
+		return clamp(m_fSoundVolume.Get(),0.0f,1.0f); 
 }
 
 CString PrefsManager::GetInputDrivers()	{
