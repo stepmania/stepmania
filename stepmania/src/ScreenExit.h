@@ -6,12 +6,14 @@
 
 class ScreenExit: public Screen
 {
-	bool m_Exited;
-	RageTimer m_ShutdownTimer;
-
 public:
 	ScreenExit( CString sName );
+	void Init();
 	void Update( float fDelta );
+
+private:
+	bool m_Exited;
+	RageTimer m_ShutdownTimer;
 };
 
 #endif

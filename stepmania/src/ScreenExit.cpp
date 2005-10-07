@@ -14,6 +14,10 @@
 REGISTER_SCREEN_CLASS( ScreenExit );
 ScreenExit::ScreenExit( CString sName ): Screen( sName )
 {
+}
+
+void ScreenExit::Init()
+{
 	m_Exited = false;
 
 	ExitGame();
