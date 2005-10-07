@@ -23,15 +23,7 @@ class DynamicActorScrollerAutoDeleteChildren: public DynamicActorScroller
 {
 public:
 	DynamicActorScrollerAutoDeleteChildren() { DeleteChildrenWhenDone(true); }
-	void LoadFromNode( const CString& sDir, const XNode* pNode )
-	{
-		// Load children.  ActorScroller doesn't do this, because it
-		// can be a base class for other objects that don't want to load
-		// from <children>.
-		LoadChildrenFromNode( sDir, pNode );
-
-		DynamicActorScroller::LoadFromNode( sDir, pNode );
-	}
+	virtual bool AutoLoadChildren() const { return true; }
 	virtual Actor *Copy() const;
 };
 

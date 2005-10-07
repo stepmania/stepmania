@@ -69,6 +69,9 @@ ActorFrame::ActorFrame( const ActorFrame &cpy ):
 
 void ActorFrame::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
+	if( AutoLoadChildren() )
+		LoadChildrenFromNode( sDir, pNode );
+
 	Actor::LoadFromNode( sDir, pNode );
 
 	pNode->GetAttrValue( "UpdateRate", m_fUpdateRate );

@@ -13,7 +13,6 @@ public:
 	virtual ~ActorFrame();
 
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
-	void LoadChildrenFromNode( const CString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
 	virtual void AddChild( Actor* pActor );
@@ -27,6 +26,7 @@ public:
 	void SortByDrawOrder();
 	void SetDrawByZPosition( bool b );
 
+	virtual bool AutoLoadChildren() const { return false; } // derived classes override to automatically LoadChildrenFromNode
 	void DeleteChildrenWhenDone( bool bDelete=true ) { m_bDeleteChildren = bDelete; }
 	void DeleteAllChildren();
 
@@ -66,6 +66,8 @@ public:
 	void RunCommands( const apActorCommands& cmds, Actor *pParent = NULL ) { this->RunCommands( *cmds, pParent ); }	// convenience
 
 protected:
+	void LoadChildrenFromNode( const CString& sDir, const XNode* pNode );
+
 	vector<Actor*>	m_SubActors;
 	bool m_bPropagateCommands;
 	bool m_bDeleteChildren;
@@ -84,12 +86,7 @@ class ActorFrameAutoDeleteChildren : public ActorFrame
 {
 public:
 	ActorFrameAutoDeleteChildren() { DeleteChildrenWhenDone(true); }
-	void LoadFromNode( const CString& sDir, const XNode* pNode )
-	{
-		ActorFrame::LoadFromNode( sDir, pNode );
-
-		LoadChildrenFromNode( sDir, pNode );
-	}
+	virtual bool AutoLoadChildren() const { return true; }
 	virtual Actor *Copy() const;
 };
 
