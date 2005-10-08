@@ -138,7 +138,7 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 			ASSERT(0);
 		}
 		if( IsHot()  &&  score < TNS_Tier4 )
-			fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
+			fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
 		break;
 	case SongOptions::DRAIN_NO_RECOVER:
 		switch( score )
@@ -179,8 +179,8 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 {
 	/* The initial tap note score (which we happen to have in have in
 	 * tscore) has already been reported to the above function.  If the
-	 * hold end result was an NG, count it as a miss; if the end result
-	 * was an OK, count a perfect.  (Remember, this is just life meter
+	 * hold end result was an LetGo, count it as a miss; if the end result
+	 * was an OK, count a tier2.  (Remember, this is just life meter
 	 * computation, not scoring.) */
 	float fDeltaLife=0.f;
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
@@ -194,7 +194,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 			ASSERT(0);
 		}
 		if( IsHot()  &&  score == HNS_LetGo )
-			fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
+			fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
 		break;
 	case SongOptions::DRAIN_NO_RECOVER:
 		switch( score )
@@ -237,7 +237,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	else
 	{
 		fDeltaLife *= 1 + (float)m_iProgressiveLifebar/8 * m_iMissCombo;
-		// do this after; only successive boo/miss will
+		// do this after; only successive tier5/miss will
 		// increase the amount of life lost.
 		m_iMissCombo++;
 		/* Increase by m_iRegenComboAfterMiss; never push it beyond m_iMaxRegenComboAfterMiss
@@ -392,7 +392,7 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 	 * Life 16+: 200   %
 	 *
 	 * Note there is 200%, because boos take off 1/2 as much as
-	 * a miss, and a boo would suck up half of your lifebar.
+	 * a miss, and a tier5 would suck up half of your lifebar.
 	 *
 	 * Everything past 7 is intended mainly for nonstop mode.
      */

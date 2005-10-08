@@ -527,28 +527,28 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	if( !GAMESTATE->IsDisqualified(p) )
 	{
 		if( FullComboOfScore( TNS_Tier3 ) )
-			vPdas.push_back( AWARD_FULL_COMBO_GREATS );
+			vPdas.push_back( AWARD_FULL_COMBO_TIER3 );
 		if( SingleDigitsOfScore( TNS_Tier3 ) )
-			vPdas.push_back( AWARD_SINGLE_DIGIT_GREATS );
+			vPdas.push_back( AWARD_SINGLE_DIGIT_TIER3 );
 		if( FullComboOfScore( TNS_Tier2 ) )
-			vPdas.push_back( AWARD_FULL_COMBO_PERFECTS );
+			vPdas.push_back( AWARD_FULL_COMBO_TIER2 );
 		if( SingleDigitsOfScore( TNS_Tier2 ) )
-			vPdas.push_back( AWARD_SINGLE_DIGIT_PERFECTS );
+			vPdas.push_back( AWARD_SINGLE_DIGIT_TIER2 );
 		if( FullComboOfScore( TNS_Tier1 ) )
-			vPdas.push_back( AWARD_FULL_COMBO_MARVELOUSES );
+			vPdas.push_back( AWARD_FULL_COMBO_TIER1 );
 		
 		if( OneOfScore( TNS_Tier3 ) )
-			vPdas.push_back( AWARD_ONE_GREAT );
+			vPdas.push_back( AWARD_ONE_TIER3 );
 		if( OneOfScore( TNS_Tier2 ) )
-			vPdas.push_back( AWARD_ONE_PERFECT );
+			vPdas.push_back( AWARD_ONE_TIER2 );
 
 		float fPercentTier3s = GetPercentageOfTaps( TNS_Tier3 );
 		if( fPercentTier3s >= 0.8f )
-			vPdas.push_back( AWARD_GREATS_80_PERCENT );
+			vPdas.push_back( AWARD_PERCENT_80_TIER3 );
 		if( fPercentTier3s >= 0.9f )
-			vPdas.push_back( AWARD_GREATS_90_PERCENT );
+			vPdas.push_back( AWARD_PERCENT_90_TIER3 );
 		if( fPercentTier3s >= 1.f )
-			vPdas.push_back( AWARD_GREATS_100_PERCENT );
+			vPdas.push_back( AWARD_PERCENT_100_TIER3 );
 	}
 
 	// Max one PDA per stage

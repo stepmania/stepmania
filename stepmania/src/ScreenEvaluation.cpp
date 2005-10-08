@@ -500,11 +500,11 @@ void ScreenEvaluation::Init()
 				int iValue;
 				switch( l )
 				{
-				case marvelous:	iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier1];	break;
-				case perfect:	iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier2];	break;
-				case great:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier3];		break;
-				case good:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier4];		break;
-				case boo:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier5];		break;
+				case tier1:	iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier1];	break;
+				case tier2:	iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier2];	break;
+				case tier3:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier3];		break;
+				case tier4:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier4];		break;
+				case tier5:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier5];		break;
 				case miss:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Miss];		break;
 				case ok:		iValue = STATSMAN->m_CurStageStats.m_player[p].iHoldNoteScores[HNS_Held];		break;
 				case max_combo:	iValue = STATSMAN->m_CurStageStats.m_player[p].GetMaxCombo().cnt;				break;

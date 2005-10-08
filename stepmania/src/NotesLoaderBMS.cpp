@@ -954,8 +954,8 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	ReadGlobalTags( aBMSData[iMainDataIndex], out );
 	    
 	// Override what that global tag said about the title if we have a good substring.
-	// Prevents clobbering and catches "D2R (7keys)" / "D2R (Another) (7keys)"
-	// Also catches "D2R (7keys)" / "D2R (14keys)"
+	// Prevents clobbering and catches "MySong (7keys)" / "MySong (Another) (7keys)"
+	// Also catches "MySong (7keys)" / "MySong (14keys)"
 	if( commonSubstring != "" )
 		GetMainAndSubTitlesFromFullTitle( commonSubstring, out.m_sMainTitle, out.m_sSubTitle );
 

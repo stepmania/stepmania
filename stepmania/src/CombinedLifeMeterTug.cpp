@@ -64,8 +64,8 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, Tap
 {
 	/* The initial tap note score (which we happen to have in have in
 	 * tscore) has already been reported to the above function.  If the
-	 * hold end result was an NG, count it as a miss; if the end result
-	 * was an OK, count a perfect.  (Remember, this is just life meter
+	 * hold end result was an LetGo, count it as a miss; if the end result
+	 * was a Held, count a tier2.  (Remember, this is just life meter
 	 * computation, not scoring.) */
 	float fPercentToMove = 0;
 	switch( score )

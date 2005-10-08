@@ -268,9 +268,9 @@ static const CString PerDifficultyAwardNames[] = {
 	"SingleDigitTier2",
 	"OneTier2",
 	"FullComboTier1",
-	"Tier3s80Percent",
-	"Tier3s90Percent",
-	"Tier3s100Percent",
+	"Percent80Tier3",
+	"Percent90Tier3",
+	"Percent100Tier3",
 };
 XToString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );
 XToThemedString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );

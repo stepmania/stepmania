@@ -16,7 +16,7 @@
 #include "ThemeMetric.h"
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
-enum JudgeLine { marvelous, perfect, great, good, boo, miss, ok, max_combo, error, NUM_JUDGE_LINES };
+enum JudgeLine { tier1, tier2, tier3, tier4, tier5, miss, ok, max_combo, error, NUM_JUDGE_LINES };
 enum StatsLine { jumps, holds, mines, hands, rolls, NUM_STATS_LINES };
 
 class ScreenEvaluation : public ScreenWithMenuElements

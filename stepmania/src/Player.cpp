@@ -1396,7 +1396,7 @@ void Player::DisplayJudgedRow( int iIndexThatWasSteppedOn, TapNoteScore score, i
 {
 	TapNote tn = m_NoteData.GetTapNote(iTrack, iIndexThatWasSteppedOn);
 
-	// If the score is great or better, remove the note from the screen to 
+	// If the score is tier3 or better, remove the note from the screen to 
 	// indicate success.  (Or always if blind is on.)
 	if( score >= TNS_Tier3 || m_pPlayerState->m_PlayerOptions.m_fBlind )
 	{
@@ -1426,8 +1426,8 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	/* Find the minimum score of the row.  This will never be TNS_None, since this
 	 * function is only called when a row is completed. */
 	/* Instead, use the last tap score.
-	/* I'm not sure this is right, either.  Can you really jump a boo and a perfect
-	 * and get scored for a perfect?  (That's so loose, you can gallop jumps.) -glenn */
+	/* I'm not sure this is right, either.  Can you really jump a tier5 and a tier2
+	 * and get scored for a tier2?  (That's so loose, you can gallop jumps.) -glenn */
 	/* Instead of grading individual columns, maybe set a "was pressed recently" 
 	 * countdown every time you step on a column.  When you step on the first note of 
 	 * the jump, it sets the first "was pressed recently" timer.  Then, when you do 
