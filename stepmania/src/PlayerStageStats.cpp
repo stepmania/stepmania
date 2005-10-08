@@ -10,7 +10,7 @@
 #include "GameState.h"
 #include "Course.h"
 #include "Steps.h"
-#include "ScoreKeeperMAX2.h"
+#include "ScoreKeeperNormal.h"
 
 #define GRADE_PERCENT_TIER(i)			THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
 #define GRADE_TIER02_IS_ALL_PERFECTS	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllTier2s")
@@ -151,14 +151,14 @@ Grade PlayerStageStats::GetGrade() const
 
 	FOREACH_TapNoteScore( tns )
 	{
-		int iTapScoreValue = ScoreKeeperMAX2::TapNoteScoreToGradePoints( tns, bIsBeginner );
+		int iTapScoreValue = ScoreKeeperNormal::TapNoteScoreToGradePoints( tns, bIsBeginner );
 		fActual += iTapNoteScores[tns] * iTapScoreValue;
 		LOG->Trace( "GetGrade actual: %i * %i", iTapNoteScores[tns], iTapScoreValue );
 	}
 
 	FOREACH_HoldNoteScore( hns )
 	{
-		int iHoldScoreValue = ScoreKeeperMAX2::HoldNoteScoreToGradePoints( hns, bIsBeginner );
+		int iHoldScoreValue = ScoreKeeperNormal::HoldNoteScoreToGradePoints( hns, bIsBeginner );
 		fActual += iHoldNoteScores[hns] * iHoldScoreValue;
 		LOG->Trace( "GetGrade actual: %i * %i", iHoldNoteScores[hns], iHoldScoreValue );
 	}

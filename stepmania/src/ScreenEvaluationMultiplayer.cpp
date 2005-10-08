@@ -10,7 +10,7 @@
 #include "GameManager.h"
 #include "SongManager.h"
 #include "song.h"
-#include "ScoreKeeperMAX2.h"
+#include "ScoreKeeperNormal.h"
 #include "PercentageDisplay.h"
 
 
@@ -152,7 +152,7 @@ ScreenEvaluationMultiplayer::ScreenEvaluationMultiplayer( CString sClassName ) :
 			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_Tier1] = rand()%3;
 			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_Tier2] = rand()%3;
 			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_Tier3] = rand()%3;
-			STATSMAN->m_CurStageStats.m_multiPlayer[p].iPossibleGradePoints = 4*ScoreKeeperMAX2::TapNoteScoreToGradePoints(TNS_Tier1, false);
+			STATSMAN->m_CurStageStats.m_multiPlayer[p].iPossibleGradePoints = 4*ScoreKeeperNormal::TapNoteScoreToGradePoints(TNS_Tier1, false);
 			STATSMAN->m_CurStageStats.m_multiPlayer[p].fLifeRemainingSeconds = randomf( 90, 580 );
 		}
 

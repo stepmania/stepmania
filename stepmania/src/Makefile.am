@@ -115,7 +115,7 @@ PlayerStageStats.cpp PlayerStageStats.h \
 PlayerState.cpp PlayerState.h Preference.cpp Preference.h Profile.cpp Profile.h \
 RandomSample.cpp RandomSample.h RadarValues.cpp RadarValues.h \
 RoomWheel.cpp RoomWheel.h ScreenDimensions.h ScreenDimensions.cpp \
-ScoreKeeper.h ScoreKeeperMAX2.cpp ScoreKeeperMAX2.h \
+ScoreKeeper.h ScoreKeeperNormal.cpp ScoreKeeperNormal.h \
 ScoreKeeperRave.cpp ScoreKeeperRave.h Song.cpp song.h SongCacheIndex.cpp SongCacheIndex.h \
 SongOptions.cpp SongOptions.h SongUtil.cpp SongUtil.h StageStats.cpp StageStats.h Steps.cpp Steps.h \
 StepsUtil.cpp StepsUtil.h Style.cpp Style.h StyleUtil.cpp StyleUtil.h \

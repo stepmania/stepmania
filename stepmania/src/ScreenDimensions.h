@@ -1,4 +1,4 @@
-/* ScoreKeeperMAX2 - MAX2-style scorekeeping. */
+/* ScoreKeeperNormal - MAX2-style scorekeeping. */
 
 #ifndef SCREEN_DIMENSIONS_H
 #define SCREEN_DIMENSIONS_H

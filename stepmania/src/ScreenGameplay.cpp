@@ -23,7 +23,7 @@
 #include "NotesLoaderSM.h"
 #include "ThemeManager.h"
 #include "RageTimer.h"
-#include "ScoreKeeperMAX2.h"
+#include "ScoreKeeperNormal.h"
 #include "ScoreKeeperRave.h"
 #include "NoteFieldPositioning.h"
 #include "LyricsLoader.h"
@@ -164,7 +164,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 	default: ASSERT(0);
 	case PrefsManager::SCORING_MAX2:
 	case PrefsManager::SCORING_5TH:
-		m_pPrimaryScoreKeeper = new ScoreKeeperMAX2( 
+		m_pPrimaryScoreKeeper = new ScoreKeeperNormal( 
 			GetPlayerState(),
 			GetPlayerStageStats() );
 		break;

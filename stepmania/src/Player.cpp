@@ -9,7 +9,7 @@
 #include "InputMapper.h"
 #include "SongManager.h"
 #include "GameState.h"
-#include "ScoreKeeperMAX2.h"
+#include "ScoreKeeperNormal.h"
 #include "RageLog.h"
 #include "RageMath.h"
 #include "RageDisplay.h"
@@ -684,7 +684,7 @@ void Player::Update( float fDeltaTime )
 				}
 			}
 
-			/* check for NG.  If the head was missed completely, don't count an NG. */
+			/* check for LetGo.  If the head was missed completely, don't count an LetGo. */
 			if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
 				hns = HNS_LetGo;
 
