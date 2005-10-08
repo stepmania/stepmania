@@ -47,47 +47,31 @@ CString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides ){ return "AttackDisp
 /* Distance to search for a note in Step(), in seconds. */
 static const float StepSearchDistance = 1.0f;
 
-enum HoldWindow { HW_OK, HW_Roll };
-enum TapWindow { TW_Tier1, TW_Tier2, TW_Tier3, TW_Tier4, TW_Tier5, TW_Mine, TW_Attack };
-
-
-float AdjustedWindowTap( TapWindow tw, bool bIsPlayingBeginner )
+float AdjustedWindowSeconds( TimingWindow tw, bool bIsPlayingBeginner )
 {
 	float fSecs = 0;
 	switch( tw )
 	{
 	case TW_Tier1:	fSecs = PREFSMAN->m_fJudgeWindowSecondsTier1;	break;
-	case TW_Tier2:	fSecs = PREFSMAN->m_fJudgeWindowSecondsTier2;		break;
-	case TW_Tier3:		fSecs = PREFSMAN->m_fJudgeWindowSecondsTier3;		break;
-	case TW_Tier4:		fSecs = PREFSMAN->m_fJudgeWindowSecondsTier4;		break;
-	case TW_Tier5:		fSecs = PREFSMAN->m_fJudgeWindowSecondsTier5;			break;
-	case TW_Mine:		fSecs = PREFSMAN->m_fJudgeWindowSecondsMine;		break;
-	case TW_Attack:		fSecs = PREFSMAN->m_fJudgeWindowSecondsAttack;		break;
+	case TW_Tier2:	fSecs = PREFSMAN->m_fJudgeWindowSecondsTier2;	break;
+	case TW_Tier3:	fSecs = PREFSMAN->m_fJudgeWindowSecondsTier3;	break;
+	case TW_Tier4:	fSecs = PREFSMAN->m_fJudgeWindowSecondsTier4;	break;
+	case TW_Tier5:	fSecs = PREFSMAN->m_fJudgeWindowSecondsTier5;	break;
+	case TW_Mine:	fSecs = PREFSMAN->m_fJudgeWindowSecondsMine;	break;
+	case TW_Attack:	fSecs = PREFSMAN->m_fJudgeWindowSecondsAttack;	break;
+	case TW_Held:	fSecs = PREFSMAN->m_fJudgeWindowSecondsHeld;	break;
+	case TW_Roll:	fSecs = PREFSMAN->m_fJudgeWindowSecondsRoll;	break;
 	default:	ASSERT(0);
 	}
 	fSecs *= PREFSMAN->m_fJudgeWindowScale;
 	fSecs += PREFSMAN->m_fJudgeWindowAdd;
-	if( bIsPlayingBeginner && PREFSMAN->m_bMercifulBeginner && tw==TW_Tier5 )
+	if( tw==TW_Tier5 && bIsPlayingBeginner && PREFSMAN->m_bMercifulBeginner )
 		fSecs += 0.5f;
 	return fSecs;
 }
 
-float AdjustedWindowHold( HoldWindow hw, bool bIsPlayingBeginner )
-{
-	float fSecs = 0;
-	switch( hw )
-	{
-	case HW_OK:		fSecs = PREFSMAN->m_fJudgeWindowSecondsHeld;		break;
-	case HW_Roll:	fSecs = PREFSMAN->m_fJudgeWindowSecondsRoll;	break;
-	default:	ASSERT(0);
-	}
-	fSecs *= PREFSMAN->m_fJudgeWindowScale;
-	fSecs += PREFSMAN->m_fJudgeWindowAdd;
-	return fSecs;
-}
 
-#define ADJUSTED_WINDOW_TAP( tw )	AdjustedWindowTap( tw, IsPlayingBeginner() )
-#define ADJUSTED_WINDOW_HOLD( hw )	AdjustedWindowHold( hw, IsPlayingBeginner() )
+#define ADJUSTED_WINDOW_SECONDS( tw )	AdjustedWindowSeconds( tw, IsPlayingBeginner() )
 
 
 Player::Player( bool bShowNoteField, bool bShowJudgment )
@@ -665,7 +649,7 @@ void Player::Update( float fDeltaTime )
 					else
 					{
 						// Decrease life
-						fLife -= fDeltaTime/ADJUSTED_WINDOW_HOLD(HW_OK);
+						fLife -= fDeltaTime/ADJUSTED_WINDOW_SECONDS(TW_Held);
 						fLife = max( fLife, 0 );	// clamp
 					}
 					break;
@@ -676,7 +660,7 @@ void Player::Update( float fDeltaTime )
 					// give positive life in Step(), not here.
 
 					// Decrease life
-					fLife -= fDeltaTime/ADJUSTED_WINDOW_HOLD(HW_Roll);
+					fLife -= fDeltaTime/ADJUSTED_WINDOW_SECONDS(TW_Roll);
 					fLife = max( fLife, 0 );	// clamp
 					break;
 				default:
@@ -1122,20 +1106,20 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			{
 			case TapNote::mine:
 				// stepped too close to mine?
-				if( fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Mine) )
+				if( fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Mine) )
 					score = TNS_HitMine;
 				break;
 
 			case TapNote::attack:
-				if( fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Attack) && !tn.result.bHidden )
+				if( fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Attack) && !tn.result.bHidden )
 					score = TNS_Tier2; /* sentinel */
 				break;
 			default:
-				if(		 fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Tier1) )	score = TNS_Tier1;
-				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Tier2) )	score = TNS_Tier2;
-				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Tier3) )		score = TNS_Tier3;
-				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Tier4) )		score = TNS_Tier4;
-				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Tier5) )		score = TNS_Tier5;
+				if(		 fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Tier1) )	score = TNS_Tier1;
+				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Tier2) )	score = TNS_Tier2;
+				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Tier3) )		score = TNS_Tier3;
+				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Tier4) )		score = TNS_Tier4;
+				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Tier5) )		score = TNS_Tier5;
 				else	score = TNS_None;
 				break;
 			}
@@ -1148,7 +1132,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			// GetTapNoteScore always returns TNS_Tier1 in autoplay.
 			// If the step is far away, don't judge it.
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY &&
-				fSecondsFromTier2 > ADJUSTED_WINDOW_TAP(TW_Tier5) )
+				fSecondsFromTier2 > ADJUSTED_WINDOW_SECONDS(TW_Tier5) )
 			{
 				score = TNS_None;
 				break;
@@ -1836,7 +1820,7 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 
 float Player::GetMaxStepDistanceSeconds()
 {
-	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW_TAP(TW_Tier5);
+	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW_SECONDS(TW_Tier5);
 }
 
 void Player::FadeToFail()

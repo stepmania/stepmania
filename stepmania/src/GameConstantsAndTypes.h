@@ -160,6 +160,20 @@ const CString& HoldNoteScoreToThemedString( HoldNoteScore hns );
 HoldNoteScore StringToHoldNoteScore( const CString& str );
 
 
+enum TimingWindow
+{
+	TW_Tier1,
+	TW_Tier2,
+	TW_Tier3,
+	TW_Tier4,
+	TW_Tier5,
+	TW_Mine,
+	TW_Attack,
+	TW_Held,
+	TW_Roll
+};
+
+
 //
 // Profile and MemCard stuff
 //
