@@ -117,8 +117,6 @@ void ScoreKeeperNormal::Load(
 void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps, const NoteData* pNoteData )
 {
 /*
-  http://www.aaroninjapan.com/ddr2.html
-
   Note on NONSTOP Mode scoring
 
   Nonstop mode requires the player to play 4 songs in succession, with the total maximum possible score for the four song set being 100,000,000. This comes from the sum of the four stages' maximum possible scores, which, regardless of song or difficulty is: 
