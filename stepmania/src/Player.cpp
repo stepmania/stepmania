@@ -48,7 +48,7 @@ CString ATTACK_DISPLAY_X_NAME( size_t p, size_t both_sides ){ return "AttackDisp
 static const float StepSearchDistance = 1.0f;
 
 enum HoldWindow { HW_OK, HW_Roll };
-enum TapWindow { TW_Marvelous, TW_Perfect, TW_Great, TW_Good, TW_Boo, TW_Mine, TW_Attack };
+enum TapWindow { TW_Tier1, TW_Tier2, TW_Tier3, TW_Tier4, TW_Tier5, TW_Mine, TW_Attack };
 
 
 float AdjustedWindowTap( TapWindow tw, bool bIsPlayingBeginner )
@@ -56,18 +56,18 @@ float AdjustedWindowTap( TapWindow tw, bool bIsPlayingBeginner )
 	float fSecs = 0;
 	switch( tw )
 	{
-	case TW_Marvelous:	fSecs = PREFSMAN->m_fJudgeWindowSecondsMarvelous;	break;
-	case TW_Perfect:	fSecs = PREFSMAN->m_fJudgeWindowSecondsPerfect;		break;
-	case TW_Great:		fSecs = PREFSMAN->m_fJudgeWindowSecondsGreat;		break;
-	case TW_Good:		fSecs = PREFSMAN->m_fJudgeWindowSecondsGood;		break;
-	case TW_Boo:		fSecs = PREFSMAN->m_fJudgeWindowSecondsBoo;			break;
+	case TW_Tier1:	fSecs = PREFSMAN->m_fJudgeWindowSecondsTier1;	break;
+	case TW_Tier2:	fSecs = PREFSMAN->m_fJudgeWindowSecondsTier2;		break;
+	case TW_Tier3:		fSecs = PREFSMAN->m_fJudgeWindowSecondsTier3;		break;
+	case TW_Tier4:		fSecs = PREFSMAN->m_fJudgeWindowSecondsTier4;		break;
+	case TW_Tier5:		fSecs = PREFSMAN->m_fJudgeWindowSecondsTier5;			break;
 	case TW_Mine:		fSecs = PREFSMAN->m_fJudgeWindowSecondsMine;		break;
 	case TW_Attack:		fSecs = PREFSMAN->m_fJudgeWindowSecondsAttack;		break;
 	default:	ASSERT(0);
 	}
 	fSecs *= PREFSMAN->m_fJudgeWindowScale;
 	fSecs += PREFSMAN->m_fJudgeWindowAdd;
-	if( bIsPlayingBeginner && PREFSMAN->m_bMercifulBeginner && tw==TW_Boo )
+	if( bIsPlayingBeginner && PREFSMAN->m_bMercifulBeginner && tw==TW_Tier5 )
 		fSecs += 0.5f;
 	return fSecs;
 }
@@ -77,7 +77,7 @@ float AdjustedWindowHold( HoldWindow hw, bool bIsPlayingBeginner )
 	float fSecs = 0;
 	switch( hw )
 	{
-	case HW_OK:		fSecs = PREFSMAN->m_fJudgeWindowSecondsOK;		break;
+	case HW_OK:		fSecs = PREFSMAN->m_fJudgeWindowSecondsHeld;		break;
 	case HW_Roll:	fSecs = PREFSMAN->m_fJudgeWindowSecondsRoll;	break;
 	default:	ASSERT(0);
 	}
@@ -333,7 +333,7 @@ void Player::Load( const NoteData& noteData )
 {
 	m_bLoaded = true;
 
-	m_LastTapNoteScore = TNS_NONE;
+	m_LastTapNoteScore = TNS_None;
 
 	m_iRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
 	m_iMineRowLastCrossed = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat ) - 1;	// why this?
@@ -580,7 +580,7 @@ void Player::Update( float fDeltaTime )
 			const TapNote &tn = m_NoteData.GetTapNote( iTrack, iHeadRow );
 			if( tn.type != TapNote::hold_head || tn.subType != TapNote::hold_head_roll )
 				continue;
-			if( tn.HoldResult.hns != HNS_NONE )
+			if( tn.HoldResult.hns != HNS_None )
 				continue;
 			if( tn.HoldResult.fLife >= 0.5f )
 				continue;
@@ -613,7 +613,7 @@ void Player::Update( float fDeltaTime )
 			tn.HoldResult.bActive = false;
 
 			HoldNoteScore hns = tn.HoldResult.hns;
-			if( hns != HNS_NONE )	// if this HoldNote already has a result
+			if( hns != HNS_None )	// if this HoldNote already has a result
 				continue;	// we don't need to update the logic for this one
 
 			// TODO: Remove use of PlayerNumber.
@@ -621,7 +621,7 @@ void Player::Update( float fDeltaTime )
 
 			// if they got a bad score or haven't stepped on the corresponding tap yet
 			const TapNoteScore tns = tn.result.tns;
-			const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this hold?
+			const bool bSteppedOnTapNote = tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start of this hold?
 
 			bool bIsHoldingButton = false;
 			if( m_pPlayerState->m_PlayerController != PC_HUMAN )
@@ -686,25 +686,25 @@ void Player::Update( float fDeltaTime )
 
 			/* check for NG.  If the head was missed completely, don't count an NG. */
 			if( bSteppedOnTapNote && fLife == 0 )	// the player has not pressed the button for a long time!
-				hns = HNS_NG;
+				hns = HNS_LetGo;
 
 			// check for OK
 			if( iSongRow >= iEndRow && bSteppedOnTapNote && fLife > 0 )	// if this HoldNote is in the past
 			{
 				fLife = 1;
-				hns = HNS_OK;
+				hns = HNS_Held;
 				bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 				if( m_pNoteField )
-					m_pNoteField->DidHoldNote( iTrack, HNS_OK, bBright );	// bright ghost flash
+					m_pNoteField->DidHoldNote( iTrack, HNS_Held, bBright );	// bright ghost flash
 			}
 
-			if( hns != HNS_NONE )
+			if( hns != HNS_None )
 			{
 				/* this note has been judged */
 				HandleHoldScore( hns, tns );
 				m_vHoldJudgment[iTrack]->SetHoldJudgment( hns );
 
-				int ms_error = (hns == HNS_OK)? 0:MAX_PRO_TIMING_ERROR;
+				int ms_error = (hns == HNS_Held)? 0:MAX_PRO_TIMING_ERROR;
 
 				if( m_pPlayerStageStats )
 					m_pPlayerStageStats->iTotalError += ms_error;
@@ -907,7 +907,7 @@ int Player::GetClosestNoteDirectional( int col, int iStartRow, int iEndRow, bool
 			const TapNote &tn = begin->second;
 			if( tn.type == TapNote::empty )
 				break;
-			if( !bAllowGraded && tn.result.tns != TNS_NONE )
+			if( !bAllowGraded && tn.result.tns != TNS_None )
 				break;
 
 			return begin->first;
@@ -986,12 +986,12 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			int iRow = begin->first;
 
 			HoldNoteScore hns = tn.HoldResult.hns;
-			if( hns != HNS_NONE )	// if this HoldNote already has a result
+			if( hns != HNS_None )	// if this HoldNote already has a result
 				continue;	// we don't need to update the logic for this one
 
 			// if they got a bad score or haven't stepped on the corresponding tap yet
 			const TapNoteScore tns = tn.result.tns;
-			const bool bSteppedOnTapNote = tns != TNS_NONE  &&  tns != TNS_MISS;	// did they step on the start of this roll?
+			const bool bSteppedOnTapNote = tns != TNS_None  &&  tns != TNS_Miss;	// did they step on the start of this roll?
 
 			int iEndRow = iRow + tn.iDuration;
 
@@ -1018,7 +1018,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 
 						bool bBright = m_pPlayerStageStats && m_pPlayerStageStats->iCurCombo>(int)BRIGHT_GHOST_COMBO_THRESHOLD;
 						if( m_pNoteField )
-							m_pNoteField->DidHoldNote( col, HNS_OK, bBright );
+							m_pNoteField->DidHoldNote( col, HNS_Held, bBright );
 					}
 					break;
 				default:
@@ -1082,7 +1082,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 						   iStepSearchRows, iStepSearchRows, false );
 	
 	// calculate TapNoteScore
-	TapNoteScore score = TNS_NONE;
+	TapNoteScore score = TNS_None;
 
 	if( iIndexOverlappingNote != -1 )
 	{
@@ -1109,7 +1109,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 //				fStepSeconds, fMusicSeconds, fNoteOffset );
 		}
 
-		const float fSecondsFromPerfect = fabsf( fNoteOffset );
+		const float fSecondsFromTier2 = fabsf( fNoteOffset );
 
 
 		TapNote tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
@@ -1122,21 +1122,21 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			{
 			case TapNote::mine:
 				// stepped too close to mine?
-				if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Mine) )
-					score = TNS_HIT_MINE;
+				if( fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Mine) )
+					score = TNS_HitMine;
 				break;
 
 			case TapNote::attack:
-				if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Attack) && !tn.result.bHidden )
-					score = TNS_PERFECT; /* sentinel */
+				if( fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Attack) && !tn.result.bHidden )
+					score = TNS_Tier2; /* sentinel */
 				break;
 			default:
-				if(		 fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Marvelous) )	score = TNS_MARVELOUS;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Perfect) )	score = TNS_PERFECT;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Great) )		score = TNS_GREAT;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Good) )		score = TNS_GOOD;
-				else if( fSecondsFromPerfect <= ADJUSTED_WINDOW_TAP(TW_Boo) )		score = TNS_BOO;
-				else	score = TNS_NONE;
+				if(		 fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Tier1) )	score = TNS_Tier1;
+				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Tier2) )	score = TNS_Tier2;
+				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Tier3) )		score = TNS_Tier3;
+				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Tier4) )		score = TNS_Tier4;
+				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_TAP(TW_Tier5) )		score = TNS_Tier5;
+				else	score = TNS_None;
 				break;
 			}
 			break;
@@ -1145,16 +1145,16 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		case PC_AUTOPLAY:
 			score = PlayerAI::GetTapNoteScore( m_pPlayerState );
 
-			// GetTapNoteScore always returns TNS_MARVELOUS in autoplay.
+			// GetTapNoteScore always returns TNS_Tier1 in autoplay.
 			// If the step is far away, don't judge it.
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY &&
-				fSecondsFromPerfect > ADJUSTED_WINDOW_TAP(TW_Boo) )
+				fSecondsFromTier2 > ADJUSTED_WINDOW_TAP(TW_Tier5) )
 			{
-				score = TNS_NONE;
+				score = TNS_None;
 				break;
 			}
 
-			// TRICKY:  We're asking the AI to judge mines.  consider TNS_GOOD and below
+			// TRICKY:  We're asking the AI to judge mines.  consider TNS_Tier4 and below
 			// as "mine was hit" and everything else as "mine was avoided"
 			if( tn.type == TapNote::mine )
 			{
@@ -1170,22 +1170,22 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 				// The CPU hits a lot of mines.  Make it less likely to hit 
 				// mines that don't have a tap note on the same row.
 				bool bTapsOnRow = m_NoteData.IsThereATapOrHoldHeadAtRow( iIndexOverlappingNote );
-				TapNoteScore get_to_avoid = bTapsOnRow ? TNS_GREAT : TNS_GOOD;
+				TapNoteScore get_to_avoid = bTapsOnRow ? TNS_Tier3 : TNS_Tier4;
 
 				if( score >= get_to_avoid )
 					return;	// avoided
 				else
-					score = TNS_HIT_MINE;
+					score = TNS_HitMine;
 			}
 
-			if( tn.type == TapNote::attack && score > TNS_GOOD )
-				score = TNS_PERFECT; /* sentinel */
+			if( tn.type == TapNote::attack && score > TNS_Tier4 )
+				score = TNS_Tier2; /* sentinel */
 
 			/* AI will generate misses here.  Don't handle a miss like a regular note because
 			 * we want the judgment animation to appear delayed.  Instead, return early if
 			 * AI generated a miss, and let UpdateMissedTapNotesOlderThan() detect and handle the 
 			 * misses. */
-			if( score == TNS_MISS )
+			if( score == TNS_Miss )
 				return;
 
 			// Put some small, random amount in fNoteOffset so that demonstration 
@@ -1196,13 +1196,13 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 
 		default:
 			ASSERT(0);
-			score = TNS_NONE;
+			score = TNS_None;
 			break;
 		}
 
-		if( tn.type == TapNote::attack && score == TNS_PERFECT )
+		if( tn.type == TapNote::attack && score == TNS_Tier2 )
 		{
-			score = TNS_NONE;	// don't score this as anything
+			score = TNS_None;	// don't score this as anything
 
 			m_soundAttackLaunch.Play();
 
@@ -1233,7 +1233,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			}
 		}
 
-		if( score == TNS_HIT_MINE )
+		if( score == TNS_HitMine )
 		{
 			if( tn.bKeysound && tn.iKeysoundIndex < (int) m_vKeysounds.size() )
 				m_vKeysounds[tn.iKeysoundIndex].Play();
@@ -1257,16 +1257,16 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 				m_pNoteField->DidTapNote( col, score, false );
 		}
 
-		if( m_pPlayerState->m_PlayerController == PC_HUMAN && score >= TNS_GREAT ) 
+		if( m_pPlayerState->m_PlayerController == PC_HUMAN && score >= TNS_Tier3 ) 
 			HandleAutosync( fNoteOffset );
 
 		// Do game-specific and mode-specific score mapping.
 		score = GAMESTATE->GetCurrentGame()->MapTapNoteScore( score );
-		if( score == TNS_MARVELOUS && !GAMESTATE->ShowMarvelous() )
-			score = TNS_PERFECT;
+		if( score == TNS_Tier1 && !GAMESTATE->ShowTier1() )
+			score = TNS_Tier2;
 
 		bool bSteppedEarly = -fNoteOffset < 0;
-		if( IsPlayingBeginner() && PREFSMAN->m_bMercifulBeginner && score==TNS_BOO && bSteppedEarly )
+		if( IsPlayingBeginner() && PREFSMAN->m_bMercifulBeginner && score==TNS_Tier5 && bSteppedEarly )
 		{
 			if( m_pJudgment )
 				m_pJudgment->SetJudgment( score, bSteppedEarly );
@@ -1275,12 +1275,12 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		{
 			tn.result.tns = score;
 
-			if( score != TNS_NONE )
+			if( score != TNS_None )
 				tn.result.fTapNoteOffset = -fNoteOffset;
 
-			if( score != TNS_NONE && score != TNS_MISS )
+			if( score != TNS_None && score != TNS_Miss )
 			{
-				int ms_error = (int) roundf( fSecondsFromPerfect * 1000 );
+				int ms_error = (int) roundf( fSecondsFromTier2 * 1000 );
 				ms_error = min( ms_error, MAX_PRO_TIMING_ERROR.GetValue() );
 
 				if( m_pPlayerStageStats )
@@ -1289,7 +1289,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 
 			//LOG->Trace("XXX: %i col %i, at %f, music at %f, step was at %f, off by %f",
 			//	score, col, fStepSeconds, fCurrentMusicSeconds, fMusicSeconds, fNoteOffset );
-	//		LOG->Trace("Note offset: %f (fSecondsFromPerfect = %f), Score: %i", fNoteOffset, fSecondsFromPerfect, score);
+	//		LOG->Trace("Note offset: %f (fSecondsFromTier2 = %f), Score: %i", fNoteOffset, fSecondsFromTier2, score);
 			
 			m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 
@@ -1323,7 +1323,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 	if( m_pNoteField )
 		m_pNoteField->Step( col, score );
 
-	bool bSteppedOnATap = score != TNS_NONE;
+	bool bSteppedOnATap = score != TNS_None;
 
 	if( bSteppedOnATap )
 	{
@@ -1398,7 +1398,7 @@ void Player::DisplayJudgedRow( int iIndexThatWasSteppedOn, TapNoteScore score, i
 
 	// If the score is great or better, remove the note from the screen to 
 	// indicate success.  (Or always if blind is on.)
-	if( score >= TNS_GREAT || m_pPlayerState->m_PlayerOptions.m_fBlind )
+	if( score >= TNS_Tier3 || m_pPlayerState->m_PlayerOptions.m_fBlind )
 	{
 		tn.result.bHidden = true;
 		m_NoteData.SetTapNote( iTrack, iIndexThatWasSteppedOn, tn );
@@ -1409,7 +1409,7 @@ void Player::DisplayJudgedRow( int iIndexThatWasSteppedOn, TapNoteScore score, i
 	if (m_pPlayerState->m_PlayerOptions.m_fBlind)
 	{
 		if( m_pNoteField )
-			m_pNoteField->DidTapNote( iTrack, TNS_MARVELOUS, bBright );
+			m_pNoteField->DidTapNote( iTrack, TNS_Tier1, bBright );
 	}
 	else
 	{
@@ -1423,7 +1423,7 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 {
 //	LOG->Trace( "Player::OnRowCompletelyJudged" );
 	
-	/* Find the minimum score of the row.  This will never be TNS_NONE, since this
+	/* Find the minimum score of the row.  This will never be TNS_None, since this
 	 * function is only called when a row is completed. */
 	/* Instead, use the last tap score.
 	/* I'm not sure this is right, either.  Can you really jump a boo and a perfect
@@ -1441,9 +1441,9 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 		TapNoteResult tnr = NoteDataWithScoring::LastTapNoteResult( m_NoteData, iIndexThatWasSteppedOn );
 		TapNoteScore score = tnr.tns;
 
-		ASSERT(score != TNS_NONE);
-		ASSERT(score != TNS_HIT_MINE);
-		ASSERT(score != TNS_AVOIDED_MINE);
+		ASSERT(score != TNS_None);
+		ASSERT(score != TNS_HitMine);
+		ASSERT(score != TNS_AvoidMine);
 
 		/* If the whole row was hit with perfects or greats, remove the row
 		 * from the NoteField, so it disappears. */
@@ -1526,18 +1526,18 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 			case TapNote::attack:
 				continue; /* no note here */
 			}
-			if( tn.result.tns != TNS_NONE ) /* note here is already hit */
+			if( tn.result.tns != TNS_None ) /* note here is already hit */
 				continue; 
 
 			if( tn.type == TapNote::mine )
 			{
-				tn.result.tns =	TNS_AVOIDED_MINE;
+				tn.result.tns =	TNS_AvoidMine;
 			}
 			else
 			{
 				// A normal note.  Penalize for not stepping on it.
 				MissedNoteOnThisRow = true;
-				tn.result.tns =	TNS_MISS;
+				tn.result.tns =	TNS_Miss;
 				if( m_pPlayerStageStats )
 					m_pPlayerStageStats->iTotalError += MAX_PRO_TIMING_ERROR;
 			}
@@ -1555,7 +1555,7 @@ void Player::UpdateTapNotesMissedOlderThan( float fMissIfOlderThanSeconds )
 	if( iNumMissesFound > 0 )
 	{
 		if( m_pJudgment )
-			m_pJudgment->SetJudgment( TNS_MISS, false );
+			m_pJudgment->SetJudgment( TNS_Miss, false );
 	}
 }
 
@@ -1573,7 +1573,7 @@ void Player::CrossedRow( int iNoteRow )
 		for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
 		{
 			TapNote tn = m_NoteData.GetTapNote(t, iNoteRow);
-			if( tn.type != TapNote::empty && tn.result.tns == TNS_NONE )
+			if( tn.type != TapNote::empty && tn.result.tns == TNS_None )
 			{
 				Step( t, now );
 				STATSMAN->m_CurStageStats.bUsedAutoplay = true;
@@ -1668,19 +1668,19 @@ void Player::HandleTapRowScore( unsigned row )
 	int &iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurMissCombo : iDummy;
 	switch( scoreOfLastTap )
 	{
-	case TNS_MARVELOUS:
-	case TNS_PERFECT:
-	case TNS_GREAT:
+	case TNS_Tier1:
+	case TNS_Tier2:
+	case TNS_Tier3:
 		iCurMissCombo = 0;
 		SCREENMAN->PostMessageToTopScreen( SM_MissComboAborted, 0 );
 		break;
 
-	case TNS_MISS:
+	case TNS_Miss:
 		++iCurMissCombo;
-		m_LastTapNoteScore = TNS_MISS;
+		m_LastTapNoteScore = TNS_Miss;
 
-	case TNS_GOOD:
-	case TNS_BOO:
+	case TNS_Tier4:
+	case TNS_Tier5:
 		if( iCurCombo > 50 )
 			SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 		iCurCombo = 0;
@@ -1836,7 +1836,7 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 
 float Player::GetMaxStepDistanceSeconds()
 {
-	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW_TAP(TW_Boo);
+	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW_TAP(TW_Tier5);
 }
 
 void Player::FadeToFail()

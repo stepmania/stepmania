@@ -13,7 +13,7 @@
 #include "ScoreKeeperMAX2.h"
 
 #define GRADE_PERCENT_TIER(i)			THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
-#define GRADE_TIER02_IS_ALL_PERFECTS	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllPerfects")
+#define GRADE_TIER02_IS_ALL_PERFECTS	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllTier2s")
 
 const float LESSON_PASS_THRESHOLD = 0.8f;
 
@@ -63,9 +63,9 @@ void PlayerStageStats::AddStats( const PlayerStageStats& other )
 	iCurPossibleDancePoints += other.iCurPossibleDancePoints;
 	iPossibleGradePoints += other.iPossibleGradePoints;
 	
-	for( int t=0; t<NUM_TAP_NOTE_SCORES; t++ )
+	for( int t=0; t<NUM_TapNoteScore; t++ )
 		iTapNoteScores[t] += other.iTapNoteScores[t];
-	for( int h=0; h<NUM_HOLD_NOTE_SCORES; h++ )
+	for( int h=0; h<NUM_HoldNoteScore; h++ )
 		iHoldNoteScores[h] += other.iHoldNoteScores[h];
 	iCurCombo += other.iCurCombo;
 	iMaxCombo += other.iMaxCombo;
@@ -173,23 +173,23 @@ Grade PlayerStageStats::GetGrade() const
 	LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER02_IS_ALL_PERFECTS );
 	if( GRADE_TIER02_IS_ALL_PERFECTS )
 	{
-		if(	iTapNoteScores[TNS_MARVELOUS] > 0 &&
-			iTapNoteScores[TNS_PERFECT] == 0 &&
-			iTapNoteScores[TNS_GREAT] == 0 &&
-			iTapNoteScores[TNS_GOOD] == 0 &&
-			iTapNoteScores[TNS_BOO] == 0 &&
-			iTapNoteScores[TNS_MISS] == 0 &&
-			iTapNoteScores[TNS_HIT_MINE] == 0 &&
-			iHoldNoteScores[HNS_NG] == 0 )
+		if(	iTapNoteScores[TNS_Tier1] > 0 &&
+			iTapNoteScores[TNS_Tier2] == 0 &&
+			iTapNoteScores[TNS_Tier3] == 0 &&
+			iTapNoteScores[TNS_Tier4] == 0 &&
+			iTapNoteScores[TNS_Tier5] == 0 &&
+			iTapNoteScores[TNS_Miss] == 0 &&
+			iTapNoteScores[TNS_HitMine] == 0 &&
+			iHoldNoteScores[HNS_LetGo] == 0 )
 			return Grade_Tier01;
 
-		if( iTapNoteScores[TNS_PERFECT] > 0 &&
-			iTapNoteScores[TNS_GREAT] == 0 &&
-			iTapNoteScores[TNS_GOOD] == 0 &&
-			iTapNoteScores[TNS_BOO] == 0 &&
-			iTapNoteScores[TNS_MISS] == 0 &&
-			iTapNoteScores[TNS_HIT_MINE] == 0 &&
-			iHoldNoteScores[HNS_NG] == 0 )
+		if( iTapNoteScores[TNS_Tier2] > 0 &&
+			iTapNoteScores[TNS_Tier3] == 0 &&
+			iTapNoteScores[TNS_Tier4] == 0 &&
+			iTapNoteScores[TNS_Tier5] == 0 &&
+			iTapNoteScores[TNS_Miss] == 0 &&
+			iTapNoteScores[TNS_HitMine] == 0 &&
+			iHoldNoteScores[HNS_LetGo] == 0 )
 			return Grade_Tier02;
 
 		return max( grade, Grade_Tier03 );
@@ -235,12 +235,12 @@ int PlayerStageStats::GetLessonScoreActual() const
 	{
 		switch( tns )
 		{
-		case TNS_AVOIDED_MINE:
-		case TNS_BOO:
-		case TNS_GOOD:
-		case TNS_GREAT:
-		case TNS_PERFECT:
-		case TNS_MARVELOUS:
+		case TNS_AvoidMine:
+		case TNS_Tier5:
+		case TNS_Tier4:
+		case TNS_Tier3:
+		case TNS_Tier2:
+		case TNS_Tier1:
 			iScore += iTapNoteScores[tns];
 			break;
 		}
@@ -250,7 +250,7 @@ int PlayerStageStats::GetLessonScoreActual() const
 	{
 		switch( hns )
 		{
-		case HNS_OK:
+		case HNS_Held:
 			iScore += iHoldNoteScores[hns];
 			break;
 		}
@@ -453,22 +453,22 @@ int	PlayerStageStats::GetComboAtStartOfStage() const
 
 bool PlayerStageStats::FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) const
 {
-	ASSERT( tnsAllGreaterOrEqual >= TNS_GREAT );
-	ASSERT( tnsAllGreaterOrEqual <= TNS_MARVELOUS );
+	ASSERT( tnsAllGreaterOrEqual >= TNS_Tier3 );
+	ASSERT( tnsAllGreaterOrEqual <= TNS_Tier1 );
 
 	// If missed any holds, then it's not a full combo
-	if( iHoldNoteScores[HNS_NG] > 0 )
+	if( iHoldNoteScores[HNS_LetGo] > 0 )
 		return false;
 
 	// If has any of the judgments below, then not a full combo
-	for( int i=TNS_MISS; i<tnsAllGreaterOrEqual; i++ )
+	for( int i=TNS_Miss; i<tnsAllGreaterOrEqual; i++ )
 	{
 		if( iTapNoteScores[i] > 0 )
 			return false;
 	}
 
 	// If has at least one of the judgments equal to or above, then is a full combo.
-	for( int i=tnsAllGreaterOrEqual; i<NUM_TAP_NOTE_SCORES; i++ )
+	for( int i=tnsAllGreaterOrEqual; i<NUM_TapNoteScore; i++ )
 	{
 		if( iTapNoteScores[i] > 0 )
 			return true;
@@ -492,7 +492,7 @@ bool PlayerStageStats::OneOfScore( TapNoteScore tnsAllGreaterOrEqual ) const
 int PlayerStageStats::GetTotalTaps() const
 {
 	int iTotalTaps = 0;
-	for( int i=TNS_MISS; i<NUM_TAP_NOTE_SCORES; i++ )
+	for( int i=TNS_Miss; i<NUM_TapNoteScore; i++ )
 	{
 		iTotalTaps += iTapNoteScores[i];
 	}
@@ -502,7 +502,7 @@ int PlayerStageStats::GetTotalTaps() const
 float PlayerStageStats::GetPercentageOfTaps( TapNoteScore tns ) const
 {
 	int iTotalTaps = 0;
-	for( int i=TNS_MISS; i<NUM_TAP_NOTE_SCORES; i++ )
+	for( int i=TNS_Miss; i<NUM_TapNoteScore; i++ )
 	{
 		iTotalTaps += iTapNoteScores[i];
 	}
@@ -526,28 +526,28 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	// don't give per-difficutly awards if using easy mods
 	if( !GAMESTATE->IsDisqualified(p) )
 	{
-		if( FullComboOfScore( TNS_GREAT ) )
+		if( FullComboOfScore( TNS_Tier3 ) )
 			vPdas.push_back( AWARD_FULL_COMBO_GREATS );
-		if( SingleDigitsOfScore( TNS_GREAT ) )
+		if( SingleDigitsOfScore( TNS_Tier3 ) )
 			vPdas.push_back( AWARD_SINGLE_DIGIT_GREATS );
-		if( FullComboOfScore( TNS_PERFECT ) )
+		if( FullComboOfScore( TNS_Tier2 ) )
 			vPdas.push_back( AWARD_FULL_COMBO_PERFECTS );
-		if( SingleDigitsOfScore( TNS_PERFECT ) )
+		if( SingleDigitsOfScore( TNS_Tier2 ) )
 			vPdas.push_back( AWARD_SINGLE_DIGIT_PERFECTS );
-		if( FullComboOfScore( TNS_MARVELOUS ) )
+		if( FullComboOfScore( TNS_Tier1 ) )
 			vPdas.push_back( AWARD_FULL_COMBO_MARVELOUSES );
 		
-		if( OneOfScore( TNS_GREAT ) )
+		if( OneOfScore( TNS_Tier3 ) )
 			vPdas.push_back( AWARD_ONE_GREAT );
-		if( OneOfScore( TNS_PERFECT ) )
+		if( OneOfScore( TNS_Tier2 ) )
 			vPdas.push_back( AWARD_ONE_PERFECT );
 
-		float fPercentGreats = GetPercentageOfTaps( TNS_GREAT );
-		if( fPercentGreats >= 0.8f )
+		float fPercentTier3s = GetPercentageOfTaps( TNS_Tier3 );
+		if( fPercentTier3s >= 0.8f )
 			vPdas.push_back( AWARD_GREATS_80_PERCENT );
-		if( fPercentGreats >= 0.9f )
+		if( fPercentTier3s >= 0.9f )
 			vPdas.push_back( AWARD_GREATS_90_PERCENT );
-		if( fPercentGreats >= 1.f )
+		if( fPercentTier3s >= 1.f )
 			vPdas.push_back( AWARD_GREATS_100_PERCENT );
 	}
 

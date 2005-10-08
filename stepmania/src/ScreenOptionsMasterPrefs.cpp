@@ -308,10 +308,10 @@ MOVE( AllowExtraStage,		PREFSMAN->m_bAllowExtraStage );
 MOVE( PickExtraStage,		PREFSMAN->m_bPickExtraStage );
 MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
 
-static void MarvelousTiming( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void Tier1Timing( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const PrefsManager::MarvelousTiming mapping[] = { PrefsManager::MARVELOUS_NEVER, PrefsManager::MARVELOUS_COURSES_ONLY, PrefsManager::MARVELOUS_EVERYWHERE };
-	MoveMap( sel, PREFSMAN->m_MarvelousTiming, ToSel, mapping, ARRAYSIZE(mapping) );
+	const PrefsManager::Tier1Timing mapping[] = { PrefsManager::TIER1_NEVER, PrefsManager::TIER1_COURSES_ONLY, PrefsManager::TIER1_EVERYWHERE };
+	MoveMap( sel, PREFSMAN->m_Tier1Timing, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void CoinModeM( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -570,7 +570,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "SoloSingles",					SoloSingles,		"OFF","ON" ) );
 	ADD( ConfOption( "HiddenSongs",					MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "EasterEggs",					EasterEggs,			"OFF","ON" ) );
-	ADD( ConfOption( "MarvelousTiming",				MarvelousTiming,	"NEVER","COURSES ONLY","ALWAYS" ) );
+	ADD( ConfOption( "Tier1Timing",				Tier1Timing,	"NEVER","COURSES ONLY","ALWAYS" ) );
 	ADD( ConfOption( "AllowExtraStage",				AllowExtraStage,	"OFF","ON" ) );
 	ADD( ConfOption( "PickExtraStage",				PickExtraStage,		"OFF","ON" ) );
 	ADD( ConfOption( "UnlockSystem",				UnlockSystem,		"OFF","ON" ) );

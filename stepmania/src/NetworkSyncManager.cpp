@@ -302,7 +302,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 	m_packet.ClearPacket();
 
 	m_packet.Write1( NSCGSU );
-	uint8_t ctr = (uint8_t) (playerID * 16 + step - ( TNS_MISS - 1 ) );
+	uint8_t ctr = (uint8_t) (playerID * 16 + step - ( TNS_Miss - 1 ) );
 	m_packet.Write1(ctr);
 
 	ctr = uint8_t( STATSMAN->m_CurStageStats.m_player[playerID].GetGrade()*16 );
@@ -331,7 +331,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 		iOffset=1;
 
 	//Report 0 if hold, or miss (don't forget mines should report)
-	if (((step<TNS_BOO)||(step>TNS_MARVELOUS))&&(step!=TNS_HIT_MINE))
+	if (((step<TNS_Tier5)||(step>TNS_Tier1))&&(step!=TNS_HitMine))
 		iOffset = 0;
 
 	m_packet.Write2((uint16_t) iOffset);

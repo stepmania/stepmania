@@ -175,15 +175,36 @@ static const CString TapNoteScoreNames[] = {
 	"HitMine",
 	"AvoidMine",
 	"Miss",
-	"Boo",
-	"Good",
-	"Great",
-	"Perfect",
-	"Marvelous",
+	"Tier5",
+	"Tier4",
+	"Tier3",
+	"Tier2",
+	"Tier1",
 };
-XToString( TapNoteScore, NUM_TAP_NOTE_SCORES );
-StringToX( TapNoteScore );
-XToThemedString( TapNoteScore, NUM_TAP_NOTE_SCORES );
+XToString( TapNoteScore, NUM_TapNoteScore );
+TapNoteScore StringToTapNoteScore( const CString &s )
+{
+	// for backward compatibility
+	if	   ( s == "Boo" )		return TNS_Tier5;
+	else if( s == "Good" )		return TNS_Tier4;
+	else if( s == "Great" )		return TNS_Tier3;
+	else if( s == "Perfect" )	return TNS_Tier2;
+	else if( s == "Marvelous" )	return TNS_Tier1;
+
+	// new style
+	else if( s == "None" )		return TNS_None;
+	else if( s == "HitMine" )	return TNS_HitMine;
+	else if( s == "AvoidMine" )	return TNS_AvoidMine;
+	else if( s == "Miss" )		return TNS_Miss;
+	else if( s == "Tier5" )		return TNS_Tier5;
+	else if( s == "Tier4" )		return TNS_Tier4;
+	else if( s == "Tier3" )		return TNS_Tier3;
+	else if( s == "Tier2" )		return TNS_Tier2;
+	else if( s == "Tier1" )		return TNS_Tier1;
+
+	return TNS_INVALID;
+}
+XToThemedString( TapNoteScore, NUM_TapNoteScore );
 static void LuaTapNoteScores( lua_State* L )
 {
 	FOREACH_TapNoteScore( i )
@@ -198,12 +219,24 @@ REGISTER_WITH_LUA_FUNCTION( LuaTapNoteScores );
 
 static const CString HoldNoteScoreNames[] = {
 	"None",
-	"NG",
-	"OK",
+	"LetGo",
+	"Held",
 };
-XToString( HoldNoteScore, NUM_HOLD_NOTE_SCORES );
-StringToX( HoldNoteScore );
-XToThemedString( HoldNoteScore, NUM_HOLD_NOTE_SCORES );
+XToString( HoldNoteScore, NUM_HoldNoteScore );
+HoldNoteScore StringToHoldNoteScore( const CString &s )
+{
+	// for backward compatibility
+	if	   ( s == "NG" )	return HNS_LetGo;
+	else if( s == "OK" )	return HNS_Held;
+
+	// new style
+	else if( s == "None" )	return HNS_None;
+	else if( s == "LetGo" )	return HNS_LetGo;
+	else if( s == "Held" )	return HNS_Held;
+
+	return HNS_INVALID;
+}
+XToThemedString( HoldNoteScore, NUM_HoldNoteScore );
 static void LuaHoldNoteScores( lua_State* L )
 {
 	FOREACH_HoldNoteScore( i )
@@ -228,16 +261,16 @@ XToString( MemoryCardState, NUM_MEMORY_CARD_STATES );
 
 
 static const CString PerDifficultyAwardNames[] = {
-	"FullComboGreats",
-	"SingleDigitGreats",
-	"OneGreat",
-	"FullComboPerfects",
-	"SingleDigitPerfects",
-	"OnePerfect",
-	"FullComboMarvelouses",
-	"Greats80Percent",
-	"Greats90Percent",
-	"Greats100Percent",
+	"FullComboTier3",
+	"SingleDigitTier3",
+	"OneTier3",
+	"FullComboTier2",
+	"SingleDigitTier2",
+	"OneTier2",
+	"FullComboTier1",
+	"Tier3s80Percent",
+	"Tier3s90Percent",
+	"Tier3s100Percent",
 };
 XToString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );
 XToThemedString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );

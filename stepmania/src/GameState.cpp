@@ -1282,13 +1282,13 @@ SongOptions::FailType GameState::GetPlayerFailType( const PlayerState *pPlayerSt
 	return ft;
 }
 
-bool GameState::ShowMarvelous() const
+bool GameState::ShowTier1() const
 {
-	switch( PREFSMAN->m_MarvelousTiming )
+	switch( PREFSMAN->m_Tier1Timing )
 	{
-	case PrefsManager::MARVELOUS_NEVER:			return false;
-	case PrefsManager::MARVELOUS_COURSES_ONLY:	return IsCourseMode();
-	case PrefsManager::MARVELOUS_EVERYWHERE:	return true;
+	case PrefsManager::TIER1_NEVER:			return false;
+	case PrefsManager::TIER1_COURSES_ONLY:	return IsCourseMode();
+	case PrefsManager::TIER1_EVERYWHERE:	return true;
 	default:	ASSERT(0);
 	}
 }

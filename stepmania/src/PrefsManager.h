@@ -61,37 +61,37 @@ public:
 
 	Preference<float>	m_fJudgeWindowScale;
 	Preference<float>	m_fJudgeWindowAdd;		// this is useful for compensating for changes in sampling rate between devices
-	Preference<float>	m_fJudgeWindowSecondsMarvelous;
-	Preference<float>	m_fJudgeWindowSecondsPerfect;
-	Preference<float>	m_fJudgeWindowSecondsGreat;
-	Preference<float>	m_fJudgeWindowSecondsGood;
-	Preference<float>	m_fJudgeWindowSecondsBoo;
-	Preference<float>	m_fJudgeWindowSecondsOK;
+	Preference<float>	m_fJudgeWindowSecondsTier1;
+	Preference<float>	m_fJudgeWindowSecondsTier2;
+	Preference<float>	m_fJudgeWindowSecondsTier3;
+	Preference<float>	m_fJudgeWindowSecondsTier4;
+	Preference<float>	m_fJudgeWindowSecondsTier5;
+	Preference<float>	m_fJudgeWindowSecondsHeld;
 	Preference<float>	m_fJudgeWindowSecondsRoll;
 	Preference<float>	m_fJudgeWindowSecondsMine;
 	Preference<float>	m_fJudgeWindowSecondsAttack;
 
 	Preference<float>	m_fLifeDifficultyScale;
-	Preference<float>	m_fLifeDeltaPercentChangeMarvelous;
-	Preference<float>	m_fLifeDeltaPercentChangePerfect;
-	Preference<float>	m_fLifeDeltaPercentChangeGreat;
-	Preference<float>	m_fLifeDeltaPercentChangeGood;
-	Preference<float>	m_fLifeDeltaPercentChangeBoo;
+	Preference<float>	m_fLifeDeltaPercentChangeTier1;
+	Preference<float>	m_fLifeDeltaPercentChangeTier2;
+	Preference<float>	m_fLifeDeltaPercentChangeTier3;
+	Preference<float>	m_fLifeDeltaPercentChangeTier4;
+	Preference<float>	m_fLifeDeltaPercentChangeTier5;
 	Preference<float>	m_fLifeDeltaPercentChangeMiss;
 	Preference<float>	m_fLifeDeltaPercentChangeHitMine;
-	Preference<float>	m_fLifeDeltaPercentChangeOK;
-	Preference<float>	m_fLifeDeltaPercentChangeNG;
+	Preference<float>	m_fLifeDeltaPercentChangeHeld;
+	Preference<float>	m_fLifeDeltaPercentChangeLetGo;
 
 	// tug meter used in rave
-	Preference<float>	m_fTugMeterPercentChangeMarvelous;
-	Preference<float>	m_fTugMeterPercentChangePerfect;
-	Preference<float>	m_fTugMeterPercentChangeGreat;
-	Preference<float>	m_fTugMeterPercentChangeGood;
-	Preference<float>	m_fTugMeterPercentChangeBoo;
+	Preference<float>	m_fTugMeterPercentChangeTier1;
+	Preference<float>	m_fTugMeterPercentChangeTier2;
+	Preference<float>	m_fTugMeterPercentChangeTier3;
+	Preference<float>	m_fTugMeterPercentChangeTier4;
+	Preference<float>	m_fTugMeterPercentChangeTier5;
 	Preference<float>	m_fTugMeterPercentChangeMiss;
 	Preference<float>	m_fTugMeterPercentChangeHitMine;
-	Preference<float>	m_fTugMeterPercentChangeOK;
-	Preference<float>	m_fTugMeterPercentChangeNG;
+	Preference<float>	m_fTugMeterPercentChangeHeld;
+	Preference<float>	m_fTugMeterPercentChangeLetGo;
 	
 	// Whoever added these: Please add a comment saying what they do. -Chris
 	Preference<int>		m_iRegenComboAfterFail;
@@ -106,49 +106,49 @@ public:
 	Preference<bool>	m_bMercifulBeginner;	// don't subtract from percent score or grade DP, larger boo window
 
 	// percent score (the number that is shown on the screen and saved to memory card)
-	Preference<int>		m_iPercentScoreWeightMarvelous;
-	Preference<int>		m_iPercentScoreWeightPerfect;
-	Preference<int>		m_iPercentScoreWeightGreat;
-	Preference<int>		m_iPercentScoreWeightGood;
-	Preference<int>		m_iPercentScoreWeightBoo;
+	Preference<int>		m_iPercentScoreWeightTier1;
+	Preference<int>		m_iPercentScoreWeightTier2;
+	Preference<int>		m_iPercentScoreWeightTier3;
+	Preference<int>		m_iPercentScoreWeightTier4;
+	Preference<int>		m_iPercentScoreWeightTier5;
 	Preference<int>		m_iPercentScoreWeightMiss;
 	Preference<int>		m_iPercentScoreWeightHitMine;
-	Preference<int>		m_iPercentScoreWeightOK;
-	Preference<int>		m_iPercentScoreWeightNG;
+	Preference<int>		m_iPercentScoreWeightHeld;
+	Preference<int>		m_iPercentScoreWeightLetGo;
 
 	// grades are calculated based on a percentage, but might have different weights than the percent score
-	Preference<int>		m_iGradeWeightMarvelous;
-	Preference<int>		m_iGradeWeightPerfect;
-	Preference<int>		m_iGradeWeightGreat;
-	Preference<int>		m_iGradeWeightGood;
-	Preference<int>		m_iGradeWeightBoo;
+	Preference<int>		m_iGradeWeightTier1;
+	Preference<int>		m_iGradeWeightTier2;
+	Preference<int>		m_iGradeWeightTier3;
+	Preference<int>		m_iGradeWeightTier4;
+	Preference<int>		m_iGradeWeightTier5;
 	Preference<int>		m_iGradeWeightMiss;
 	Preference<int>		m_iGradeWeightHitMine;
-	Preference<int>		m_iGradeWeightOK;
-	Preference<int>		m_iGradeWeightNG;
+	Preference<int>		m_iGradeWeightHeld;
+	Preference<int>		m_iGradeWeightLetGo;
 
 	// super meter used in rave
-	Preference<float>	m_fSuperMeterPercentChangeMarvelous;
-	Preference<float>	m_fSuperMeterPercentChangePerfect;
-	Preference<float>	m_fSuperMeterPercentChangeGreat;
-	Preference<float>	m_fSuperMeterPercentChangeGood;
-	Preference<float>	m_fSuperMeterPercentChangeBoo;
+	Preference<float>	m_fSuperMeterPercentChangeTier1;
+	Preference<float>	m_fSuperMeterPercentChangeTier2;
+	Preference<float>	m_fSuperMeterPercentChangeTier3;
+	Preference<float>	m_fSuperMeterPercentChangeTier4;
+	Preference<float>	m_fSuperMeterPercentChangeTier5;
 	Preference<float>	m_fSuperMeterPercentChangeMiss;
 	Preference<float>	m_fSuperMeterPercentChangeHitMine;
-	Preference<float>	m_fSuperMeterPercentChangeOK;
-	Preference<float>	m_fSuperMeterPercentChangeNG;
+	Preference<float>	m_fSuperMeterPercentChangeHeld;
+	Preference<float>	m_fSuperMeterPercentChangeLetGo;
 	Preference<float>	m_bMercifulSuperMeter;	// negative super deltas are scaled by the players life percentage
 
 	// time meter used in survival
-	Preference<float>	m_fTimeMeterSecondsChangeMarvelous;
-	Preference<float>	m_fTimeMeterSecondsChangePerfect;
-	Preference<float>	m_fTimeMeterSecondsChangeGreat;
-	Preference<float>	m_fTimeMeterSecondsChangeGood;
-	Preference<float>	m_fTimeMeterSecondsChangeBoo;
+	Preference<float>	m_fTimeMeterSecondsChangeTier1;
+	Preference<float>	m_fTimeMeterSecondsChangeTier2;
+	Preference<float>	m_fTimeMeterSecondsChangeTier3;
+	Preference<float>	m_fTimeMeterSecondsChangeTier4;
+	Preference<float>	m_fTimeMeterSecondsChangeTier5;
 	Preference<float>	m_fTimeMeterSecondsChangeMiss;
 	Preference<float>	m_fTimeMeterSecondsChangeHitMine;
-	Preference<float>	m_fTimeMeterSecondsChangeOK;
-	Preference<float>	m_fTimeMeterSecondsChangeNG;
+	Preference<float>	m_fTimeMeterSecondsChangeHeld;
+	Preference<float>	m_fTimeMeterSecondsChangeLetGo;
 
 	Preference<PlayerController> m_AutoPlay;
 	Preference<bool>	m_bDelayedBack;
@@ -161,8 +161,8 @@ public:
 	Preference<MusicWheelUsesSections>		m_MusicWheelUsesSections;
 	Preference<int>		m_iMusicWheelSwitchSpeed;
 	Preference<bool>	m_bEasterEggs;
-	enum MarvelousTiming { MARVELOUS_NEVER, MARVELOUS_COURSES_ONLY, MARVELOUS_EVERYWHERE };
-	Preference<MarvelousTiming>		m_MarvelousTiming;
+	enum Tier1Timing { TIER1_NEVER, TIER1_COURSES_ONLY, TIER1_EVERYWHERE };
+	Preference<Tier1Timing>		m_Tier1Timing;
 	Preference<bool>	m_bEventMode;
 	Preference<int>		m_iCoinsPerCredit;
 	Preference<int>		m_iSongsPerPlay;

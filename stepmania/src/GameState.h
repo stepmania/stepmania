@@ -100,7 +100,7 @@ public:
 	bool IsCourseMode() const;
 	bool IsBattleMode() const; /* not Rave */
 
-	bool ShowMarvelous() const;
+	bool ShowTier1() const;
 
 	CString			m_sLoadingMessage;	// used in loading screen
 	BroadcastOnChange<CString>	m_sPreferredSongGroup;	// GROUP_ALL denotes no preferred group

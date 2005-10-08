@@ -680,7 +680,7 @@ void NoteField::DrawPrimitives()
 					continue;	// skip
 
 				const HoldNoteResult &Result = tn.HoldResult;
-				if( Result.hns == HNS_OK )	// if this HoldNote was completed
+				if( Result.hns == HNS_Held )	// if this HoldNote was completed
 					continue;	// don't draw anything
 
 				int iStartRow = begin->first;

@@ -15,11 +15,11 @@
 
 
 static const CString JudgeLineNames[] = {
-	"Marvelous",
-	"Perfect",
-	"Great",
-	"Good",
-	"Boo",
+	"Tier1",
+	"Tier2",
+	"Tier3",
+	"Tier4",
+	"Tier5",
 	"Miss",
 	"Ok",
 };
@@ -76,13 +76,13 @@ public:
 			switch( i )
 			{
 			default:	ASSERT(0);
-			case JudgeLine_Marvelous:	iVal = pPlayerStageStats->iTapNoteScores[TNS_MARVELOUS];break;
-			case JudgeLine_Perfect:		iVal = pPlayerStageStats->iTapNoteScores[TNS_PERFECT];	break;
-			case JudgeLine_Great:		iVal = pPlayerStageStats->iTapNoteScores[TNS_GREAT];	break;
-			case JudgeLine_Good:		iVal = pPlayerStageStats->iTapNoteScores[TNS_GOOD];		break;
-			case JudgeLine_Boo:			iVal = pPlayerStageStats->iTapNoteScores[TNS_BOO];		break;
-			case JudgeLine_Miss:		iVal = pPlayerStageStats->iTapNoteScores[TNS_MISS];		break;
-			case JudgeLine_Ok:			iVal = pPlayerStageStats->iHoldNoteScores[HNS_OK];		break;
+			case JudgeLine_Tier1:	iVal = pPlayerStageStats->iTapNoteScores[TNS_Tier1];break;
+			case JudgeLine_Tier2:		iVal = pPlayerStageStats->iTapNoteScores[TNS_Tier2];	break;
+			case JudgeLine_Tier3:		iVal = pPlayerStageStats->iTapNoteScores[TNS_Tier3];	break;
+			case JudgeLine_Tier4:		iVal = pPlayerStageStats->iTapNoteScores[TNS_Tier4];		break;
+			case JudgeLine_Tier5:			iVal = pPlayerStageStats->iTapNoteScores[TNS_Tier5];		break;
+			case JudgeLine_Miss:		iVal = pPlayerStageStats->iTapNoteScores[TNS_Miss];		break;
+			case JudgeLine_Ok:			iVal = pPlayerStageStats->iHoldNoteScores[HNS_Held];		break;
 			}
 			
 			CString s = ssprintf( "%3d", iVal );
@@ -149,10 +149,10 @@ ScreenEvaluationMultiplayer::ScreenEvaluationMultiplayer( CString sClassName ) :
 			{
 				STATSMAN->m_CurStageStats.m_multiPlayer[p].bFailedEarlier = true;
 			}
-			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_MARVELOUS] = rand()%3;
-			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_PERFECT] = rand()%3;
-			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_GREAT] = rand()%3;
-			STATSMAN->m_CurStageStats.m_multiPlayer[p].iPossibleGradePoints = 4*ScoreKeeperMAX2::TapNoteScoreToGradePoints(TNS_MARVELOUS, false);
+			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_Tier1] = rand()%3;
+			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_Tier2] = rand()%3;
+			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_Tier3] = rand()%3;
+			STATSMAN->m_CurStageStats.m_multiPlayer[p].iPossibleGradePoints = 4*ScoreKeeperMAX2::TapNoteScoreToGradePoints(TNS_Tier1, false);
 			STATSMAN->m_CurStageStats.m_multiPlayer[p].fLifeRemainingSeconds = randomf( 90, 580 );
 		}
 

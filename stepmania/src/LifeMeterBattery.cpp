@@ -87,14 +87,14 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 
 	switch( score )
 	{
-	case TNS_MARVELOUS:
-	case TNS_PERFECT:
-	case TNS_GREAT:
+	case TNS_Tier1:
+	case TNS_Tier2:
+	case TNS_Tier3:
 		break;
-	case TNS_GOOD:
-	case TNS_BOO:
-	case TNS_MISS:
-	case TNS_HIT_MINE:
+	case TNS_Tier4:
+	case TNS_Tier5:
+	case TNS_Miss:
+	case TNS_HitMine:
 		m_iTrailingLivesLeft = m_iLivesLeft;
 		m_iLivesLeft--;
 		m_soundLoseLife.Play();
@@ -117,10 +117,10 @@ void LifeMeterBattery::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 {
 	switch( score )
 	{
-	case HNS_OK:
+	case HNS_Held:
 		break;
-	case HNS_NG:
-		ChangeLife( TNS_MISS );		// NG is the same as a miss
+	case HNS_LetGo:
+		ChangeLife( TNS_Miss );		// LetGo is the same as a miss
 		break;
 	default:
 		ASSERT(0);

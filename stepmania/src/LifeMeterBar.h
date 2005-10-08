@@ -32,7 +32,7 @@ public:
 	virtual void ForceFail();
 
 	void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty);
-	void FillForHowToPlay(int NumPerfects, int NumMisses);
+	void FillForHowToPlay(int NumTier2s, int NumMisses);
 	// this function is solely for HowToPlay
 
 private:

@@ -95,13 +95,13 @@ void ScoreDisplayLifeTime::OnJudgment( TapNoteScore tns )
 	float fMeterChange = 0;
 	switch( tns )
 	{
-	case TNS_MARVELOUS:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeMarvelous;	break;
-	case TNS_PERFECT:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangePerfect;		break;
-	case TNS_GREAT:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeGreat;		break;
-	case TNS_GOOD:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeGood;			break;
-	case TNS_BOO:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeBoo;			break;
-	case TNS_MISS:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeMiss;			break;
-	case TNS_HIT_MINE:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeHitMine;		break;
+	case TNS_Tier1:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeTier1;	break;
+	case TNS_Tier2:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeTier2;		break;
+	case TNS_Tier3:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeTier3;		break;
+	case TNS_Tier4:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeTier4;			break;
+	case TNS_Tier5:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeTier5;			break;
+	case TNS_Miss:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeMiss;			break;
+	case TNS_HitMine:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeHitMine;		break;
 	default:	ASSERT(0);
 	}
 
@@ -116,8 +116,8 @@ void ScoreDisplayLifeTime::OnJudgment( HoldNoteScore hns, TapNoteScore tns )
 	float fMeterChange = 0;
 	switch( hns )
 	{
-	case HNS_OK:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeOK;	break;
-	case HNS_NG:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeNG;	break;
+	case HNS_Held:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeHeld;	break;
+	case HNS_LetGo:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeLetGo;	break;
 	default:	ASSERT(0);
 	}
 

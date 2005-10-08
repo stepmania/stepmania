@@ -127,19 +127,19 @@ inline bool IsSongSort( SortOrder so ) { return so >= SORT_PREFERRED && so <= SO
 //
 
 enum TapNoteScore { 
-	TNS_NONE, 
-	TNS_HIT_MINE,
-	TNS_AVOIDED_MINE,
-	TNS_MISS,
-	TNS_BOO,
-	TNS_GOOD,
-	TNS_GREAT,
-	TNS_PERFECT,
-	TNS_MARVELOUS,
-	NUM_TAP_NOTE_SCORES,
+	TNS_None, 
+	TNS_HitMine,
+	TNS_AvoidMine,
+	TNS_Miss,
+	TNS_Tier5,
+	TNS_Tier4,
+	TNS_Tier3,
+	TNS_Tier2,
+	TNS_Tier1,
+	NUM_TapNoteScore,
 	TNS_INVALID,
 };
-#define FOREACH_TapNoteScore( tns ) FOREACH_ENUM( TapNoteScore, NUM_TAP_NOTE_SCORES, tns )
+#define FOREACH_TapNoteScore( tns ) FOREACH_ENUM( TapNoteScore, NUM_TapNoteScore, tns )
 const CString& TapNoteScoreToString( TapNoteScore tns );
 const CString& TapNoteScoreToThemedString( TapNoteScore tns );
 TapNoteScore StringToTapNoteScore( const CString& str );
@@ -147,12 +147,13 @@ TapNoteScore StringToTapNoteScore( const CString& str );
 
 enum HoldNoteScore 
 { 
-	HNS_NONE,	// this HoldNote has not been scored yet
-	HNS_NG,		// the HoldNote has passed and they missed it
-	HNS_OK,		// the HoldNote has passed and was successfully held all the way through
-	NUM_HOLD_NOTE_SCORES
+	HNS_None,	// this HoldNote has not been scored yet
+	HNS_LetGo,		// the HoldNote has passed and they missed it
+	HNS_Held,		// the HoldNote has passed and was successfully held all the way through
+	NUM_HoldNoteScore,
+	HNS_INVALID,
 };
-#define FOREACH_HoldNoteScore( hns ) FOREACH_ENUM( HoldNoteScore, NUM_HOLD_NOTE_SCORES, hns )
+#define FOREACH_HoldNoteScore( hns ) FOREACH_ENUM( HoldNoteScore, NUM_HoldNoteScore, hns )
 const CString& HoldNoteScoreToString( HoldNoteScore hns );
 const CString& HoldNoteScoreToThemedString( HoldNoteScore hns );
 

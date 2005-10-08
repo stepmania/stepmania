@@ -41,7 +41,7 @@ const int NUM_SCORE_DIGITS	=	9;
 #define BANNER_HEIGHT						THEME->GetMetricF(m_sName,"BannerHeight")
 const char* JUDGE_STRING[NUM_JUDGE_LINES] =
 {
-	"Marvelous", "Perfect", "Great", "Good", "Boo", "Miss", "OK", "MaxCombo", "TotalError"
+	"Tier1", "Tier2", "Tier3", "Tier4", "Tier5", "Miss", "OK", "MaxCombo", "TotalError"
 };
 const char* STATS_STRING[NUM_STATS_LINES] =
 {
@@ -157,10 +157,10 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElement
 			{
 				STATSMAN->m_CurStageStats.m_player[p].bFailedEarlier = true;
 			}
-			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_MARVELOUS] = rand()%3;
-			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_PERFECT] = rand()%3;
-			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_GREAT] = rand()%3;
-			STATSMAN->m_CurStageStats.m_player[p].iPossibleGradePoints = 4*ScoreKeeperMAX2::TapNoteScoreToGradePoints(TNS_MARVELOUS, false);
+			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier1] = rand()%3;
+			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier2] = rand()%3;
+			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier3] = rand()%3;
+			STATSMAN->m_CurStageStats.m_player[p].iPossibleGradePoints = 4*ScoreKeeperMAX2::TapNoteScoreToGradePoints(TNS_Tier1, false);
 			STATSMAN->m_CurStageStats.m_player[p].fLifeRemainingSeconds = randomf( 90, 580 );
 		}
 
@@ -473,7 +473,7 @@ void ScreenEvaluation::Init()
 	//
 	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
 	{
-		if( l == 0  && !GAMESTATE->ShowMarvelous() )
+		if( l == 0  && !GAMESTATE->ShowTier1() )
 			continue;	// skip
 
 		if( SHOW_JUDGMENT(l) )
@@ -500,13 +500,13 @@ void ScreenEvaluation::Init()
 				int iValue;
 				switch( l )
 				{
-				case marvelous:	iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_MARVELOUS];	break;
-				case perfect:	iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_PERFECT];	break;
-				case great:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_GREAT];		break;
-				case good:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_GOOD];		break;
-				case boo:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_BOO];		break;
-				case miss:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_MISS];		break;
-				case ok:		iValue = STATSMAN->m_CurStageStats.m_player[p].iHoldNoteScores[HNS_OK];		break;
+				case marvelous:	iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier1];	break;
+				case perfect:	iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier2];	break;
+				case great:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier3];		break;
+				case good:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier4];		break;
+				case boo:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier5];		break;
+				case miss:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Miss];		break;
+				case ok:		iValue = STATSMAN->m_CurStageStats.m_player[p].iHoldNoteScores[HNS_Held];		break;
 				case max_combo:	iValue = STATSMAN->m_CurStageStats.m_player[p].GetMaxCombo().cnt;				break;
 				case error:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTotalError;					break;
 				default:	iValue = 0;	ASSERT(0);

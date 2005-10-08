@@ -34,7 +34,6 @@ const CString PUBLIC_KEY_FILE      = "public.key";
 const CString SCREENSHOTS_SUBDIR   = "Screenshots/";
 const CString EDIT_STEPS_SUBDIR    = "Edits/";
 const CString EDIT_COURSES_SUBDIR  = "EditCourses/";
-const CString LASTGOOD_SUBDIR      = "LastGood/";
 
 #define GUID_SIZE_BYTES 8
 

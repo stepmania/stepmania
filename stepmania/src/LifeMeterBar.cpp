@@ -127,29 +127,29 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case SongOptions::DRAIN_NORMAL:
 		switch( score )
 		{
-		case TNS_MARVELOUS:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeMarvelous;	break;
-		case TNS_PERFECT:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangePerfect;	break;
-		case TNS_GREAT:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeGreat;		break;
-		case TNS_GOOD:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeGood;		break;
-		case TNS_BOO:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeBoo;		break;
-		case TNS_MISS:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeMiss;		break;
-		case TNS_HIT_MINE:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeHitMine;	break;
+		case TNS_Tier1:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeTier1;	break;
+		case TNS_Tier2:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeTier2;	break;
+		case TNS_Tier3:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeTier3;		break;
+		case TNS_Tier4:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeTier4;		break;
+		case TNS_Tier5:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeTier5;		break;
+		case TNS_Miss:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeMiss;		break;
+		case TNS_HitMine:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeHitMine;	break;
 		default:
 			ASSERT(0);
 		}
-		if( IsHot()  &&  score < TNS_GOOD )
+		if( IsHot()  &&  score < TNS_Tier4 )
 			fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
 		break;
 	case SongOptions::DRAIN_NO_RECOVER:
 		switch( score )
 		{
-		case TNS_MARVELOUS:	fDeltaLife = +0.000f;	break;
-		case TNS_PERFECT:	fDeltaLife = +0.000f;	break;
-		case TNS_GREAT:		fDeltaLife = +0.000f;	break;
-		case TNS_GOOD:		fDeltaLife = +0.000f;	break;
-		case TNS_BOO:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeBoo;	break;
-		case TNS_MISS:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeMiss;	break;
-		case TNS_HIT_MINE:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeHitMine;	break;
+		case TNS_Tier1:	fDeltaLife = +0.000f;	break;
+		case TNS_Tier2:	fDeltaLife = +0.000f;	break;
+		case TNS_Tier3:		fDeltaLife = +0.000f;	break;
+		case TNS_Tier4:		fDeltaLife = +0.000f;	break;
+		case TNS_Tier5:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeTier5;	break;
+		case TNS_Miss:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeMiss;	break;
+		case TNS_HitMine:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeHitMine;	break;
 		default:
 			ASSERT(0);
 		}
@@ -157,13 +157,13 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	case SongOptions::DRAIN_SUDDEN_DEATH:
 		switch( score )
 		{
-		case TNS_MARVELOUS:	fDeltaLife = +0;	break;
-		case TNS_PERFECT:	fDeltaLife = +0;	break;
-		case TNS_GREAT:		fDeltaLife = +0;	break;
-		case TNS_GOOD:		fDeltaLife = -1.0;	break;
-		case TNS_BOO:		fDeltaLife = -1.0;	break;
-		case TNS_MISS:		fDeltaLife = -1.0;	break;
-		case TNS_HIT_MINE:	fDeltaLife = -1.0;	break;
+		case TNS_Tier1:	fDeltaLife = +0;	break;
+		case TNS_Tier2:	fDeltaLife = +0;	break;
+		case TNS_Tier3:		fDeltaLife = +0;	break;
+		case TNS_Tier4:		fDeltaLife = -1.0;	break;
+		case TNS_Tier5:		fDeltaLife = -1.0;	break;
+		case TNS_Miss:		fDeltaLife = -1.0;	break;
+		case TNS_HitMine:	fDeltaLife = -1.0;	break;
 		default:
 			ASSERT(0);
 		}
@@ -188,19 +188,19 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 	case SongOptions::DRAIN_NORMAL:
 		switch( score )
 		{
-		case HNS_OK:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeOK;	break;
-		case HNS_NG:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeNG;	break;
+		case HNS_Held:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeHeld;	break;
+		case HNS_LetGo:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeLetGo;	break;
 		default:
 			ASSERT(0);
 		}
-		if( IsHot()  &&  score == HNS_NG )
+		if( IsHot()  &&  score == HNS_LetGo )
 			fDeltaLife = -0.10f;		// make it take a while to get back to "doing great"
 		break;
 	case SongOptions::DRAIN_NO_RECOVER:
 		switch( score )
 		{
-		case HNS_OK:	fDeltaLife = +0.000f;	break;
-		case HNS_NG:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeNG;	break;
+		case HNS_Held:	fDeltaLife = +0.000f;	break;
+		case HNS_LetGo:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeLetGo;	break;
 		default:
 			ASSERT(0);
 		}
@@ -208,8 +208,8 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 	case SongOptions::DRAIN_SUDDEN_DEATH:
 		switch( score )
 		{
-		case HNS_OK:		fDeltaLife = +0;	break;
-		case HNS_NG:		fDeltaLife = -1.0;	break;
+		case HNS_Held:		fDeltaLife = +0;	break;
+		case HNS_LetGo:		fDeltaLife = -1.0;	break;
 		default:
 			ASSERT(0);
 		}
@@ -419,14 +419,14 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 	return;
 }
 
-void LifeMeterBar::FillForHowToPlay(int NumPerfects, int NumMisses)
+void LifeMeterBar::FillForHowToPlay(int NumTier2s, int NumMisses)
 {
 	m_iProgressiveLifebar = 0;  // disable progressive lifebar
 
-	float AmountForPerfect	= NumPerfects * m_fLifeDifficulty * 0.008f;
+	float AmountForTier2	= NumTier2s * m_fLifeDifficulty * 0.008f;
 	float AmountForMiss		= NumMisses / m_fLifeDifficulty * 0.08f;
 
-	m_fLifePercentage = AmountForMiss - AmountForPerfect;
+	m_fLifePercentage = AmountForMiss - AmountForTier2;
 	CLAMP( m_fLifePercentage, 0.0f, 1.0f );
 	AfterLifeChanged();
 }

@@ -10,20 +10,20 @@
 
 struct TapScoreDistribution
 {
-	float fPercent[NUM_TAP_NOTE_SCORES];
+	float fPercent[NUM_TapNoteScore];
 
 	TapNoteScore GetTapNoteScore()
 	{
 		float fRand = randomf(0,1);
 		float fCumulativePercent = 0;
-		for( int i=0; i<=TNS_MARVELOUS; i++ )
+		for( int i=0; i<=TNS_Tier1; i++ )
 		{
 			fCumulativePercent += fPercent[i];
 			if( fRand <= fCumulativePercent+1e-4 ) /* rounding error */
 				return (TapNoteScore)i;
 		}
 		ASSERT(0);	// the fCumulativePercents must sum to 1.0, so we should never get here!
-		return TNS_MARVELOUS;
+		return TNS_Tier1;
 	}
 
 };
@@ -44,18 +44,18 @@ void PlayerAI::InitFromDisk()
 			RageException::Throw( "AI.ini: '%s' doesn't exist.", sKey.c_str() );
 
 		TapScoreDistribution& dist = g_Distributions[i];
-		dist.fPercent[TNS_NONE] = 0;
-		pNode->GetAttrValue( "MissWeight", dist.fPercent[TNS_MISS] );
-		pNode->GetAttrValue( "BooWeight", dist.fPercent[TNS_BOO] );
-		pNode->GetAttrValue( "GoodWeight", dist.fPercent[TNS_GOOD] );
-		pNode->GetAttrValue( "GreatWeight", dist.fPercent[TNS_GREAT] );
-		pNode->GetAttrValue( "PerfectWeight", dist.fPercent[TNS_PERFECT] );
-		pNode->GetAttrValue( "MarvelousWeight", dist.fPercent[TNS_MARVELOUS] );
+		dist.fPercent[TNS_None] = 0;
+		pNode->GetAttrValue( "MissWeight", dist.fPercent[TNS_Miss] );
+		pNode->GetAttrValue( "Tier5Weight", dist.fPercent[TNS_Tier5] );
+		pNode->GetAttrValue( "Tier4Weight", dist.fPercent[TNS_Tier4] );
+		pNode->GetAttrValue( "Tier3Weight", dist.fPercent[TNS_Tier3] );
+		pNode->GetAttrValue( "Tier2Weight", dist.fPercent[TNS_Tier2] );
+		pNode->GetAttrValue( "Tier1Weight", dist.fPercent[TNS_Tier1] );
 		
 		float fSum = 0;
-		for( int j=0; j<NUM_TAP_NOTE_SCORES; j++ )
+		for( int j=0; j<NUM_TapNoteScore; j++ )
 			fSum += dist.fPercent[j];
-		for( int j=0; j<NUM_TAP_NOTE_SCORES; j++ )
+		for( int j=0; j<NUM_TapNoteScore; j++ )
 			dist.fPercent[j] /= fSum;
 	}
 }
@@ -64,7 +64,7 @@ void PlayerAI::InitFromDisk()
 TapNoteScore PlayerAI::GetTapNoteScore( const PlayerState* pPlayerState )
 {
 	if( pPlayerState->m_PlayerController == PC_AUTOPLAY )
-		return TNS_MARVELOUS;
+		return TNS_Tier1;
 
 	int iCpuSkill = pPlayerState->m_iCpuSkill;
 

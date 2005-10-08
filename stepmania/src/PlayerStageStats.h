@@ -43,8 +43,8 @@ public:
 	int		iCurPossibleDancePoints;
 	int		iActualDancePoints;
 	int		iPossibleGradePoints;
-	int		iTapNoteScores[NUM_TAP_NOTE_SCORES];
-	int		iHoldNoteScores[NUM_HOLD_NOTE_SCORES];
+	int		iTapNoteScores[NUM_TapNoteScore];
+	int		iHoldNoteScores[NUM_HoldNoteScore];
 	int		iCurCombo;
 	int		iMaxCombo;
 	int		iCurMissCombo;
@@ -94,7 +94,7 @@ public:
 
 	int		GetComboAtStartOfStage() const;
 	bool	FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
-	bool	FullCombo() const { return FullComboOfScore(TNS_GREAT); }
+	bool	FullCombo() const { return FullComboOfScore(TNS_Tier3); }
 	bool	SingleDigitsOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
 	bool	OneOfScore( TapNoteScore tnsAllGreaterOrEqual ) const;
 	int		GetTotalTaps() const;

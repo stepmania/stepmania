@@ -1744,12 +1744,12 @@ void ScreenGameplay::Update( float fDeltaTime )
 
 				switch( tns )
 				{
-				case TNS_GOOD:
-				case TNS_GREAT:
+				case TNS_Tier4:
+				case TNS_Tier3:
 					state = AS2D_GOOD;
 					break;
-				case TNS_PERFECT:
-				case TNS_MARVELOUS:
+				case TNS_Tier2:
+				case TNS_Tier1:
 					state = AS2D_GREAT;
 					break;
 				default:

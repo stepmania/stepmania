@@ -33,7 +33,7 @@ class ScoreKeeperMAX2: public ScoreKeeper
 	/* Configuration: */
 	/* Score after each tap will be rounded to the nearest m_iRoundTo; 1 to do nothing. */
 	int		m_iRoundTo;
-	int		m_ComboBonusFactor[NUM_TAP_NOTE_SCORES];
+	int		m_ComboBonusFactor[NUM_TapNoteScore];
 
 public:
 	ScoreKeeperMAX2( 

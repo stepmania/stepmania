@@ -21,8 +21,8 @@ struct HighScoreImpl
 	CString sPlayerGuid;	// who made this high score
 	CString sMachineGuid;	// where this high score was made
 	int iProductID;
-	int iTapNoteScores[NUM_TAP_NOTE_SCORES];
-	int iHoldNoteScores[NUM_HOLD_NOTE_SCORES];
+	int iTapNoteScores[NUM_TapNoteScore];
+	int iHoldNoteScores[NUM_HoldNoteScore];
 	RadarValues radarValues;
 	float fLifeRemainingSeconds;
 
@@ -94,11 +94,11 @@ XNode *HighScoreImpl::CreateNode() const
 	pNode->AppendChild( "ProductID",		iProductID );
 	XNode* pTapNoteScores = pNode->AppendChild( "TapNoteScores" );
 	FOREACH_TapNoteScore( tns )
-		if( tns != TNS_NONE )	// HACK: don't save meaningless "none" count
+		if( tns != TNS_None )	// HACK: don't save meaningless "none" count
 			pTapNoteScores->AppendChild( TapNoteScoreToString(tns), iTapNoteScores[tns] );
 	XNode* pHoldNoteScores = pNode->AppendChild( "HoldNoteScores" );
 	FOREACH_HoldNoteScore( hns )
-		if( hns != HNS_NONE )	// HACK: don't save meaningless "none" count
+		if( hns != HNS_None )	// HACK: don't save meaningless "none" count
 			pHoldNoteScores->AppendChild( HoldNoteScoreToString(hns), iHoldNoteScores[hns] );
 	pNode->AppendChild( radarValues.CreateNode() );
 	pNode->AppendChild( "LifeRemainingSeconds",		fLifeRemainingSeconds );

@@ -26,8 +26,8 @@ protected:
 	Player*			m_pPlayer;
 	Model*			m_pmCharacter;
 	Model*			m_pmDancePad;
-	int				m_iPerfects;
-	int				m_iNumPerfects;
+	int				m_iTier2s;
+	int				m_iNumTier2s;
 
 	Song			m_Song;
 	NoteData		m_NoteData;

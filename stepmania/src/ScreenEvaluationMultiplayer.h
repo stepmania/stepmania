@@ -7,11 +7,11 @@ class MultiplayerEvalScoreRow;
 
 enum JudgeLine
 {
-	JudgeLine_Marvelous,
-	JudgeLine_Perfect,
-	JudgeLine_Great,
-	JudgeLine_Good,
-	JudgeLine_Boo,
+	JudgeLine_Tier1,
+	JudgeLine_Tier2,
+	JudgeLine_Tier3,
+	JudgeLine_Tier4,
+	JudgeLine_Tier5,
 	JudgeLine_Miss,
 	JudgeLine_Ok,
 	NUM_JudgeLine,

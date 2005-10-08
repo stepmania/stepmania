@@ -1775,7 +1775,7 @@ void ScreenEdit::InputRecord( const InputEventPlus &input, EditButton EditB )
 				tn = TAP_ORIGINAL_MINE;
 
 			m_NoteDataRecord.SetTapNote( iCol, iRow, tn );
-			m_NoteFieldRecord.Step( iCol, TNS_MARVELOUS );
+			m_NoteFieldRecord.Step( iCol, TNS_Tier1 );
 		}
 		break;
 	case IET_SLOW_REPEAT:

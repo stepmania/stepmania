@@ -6,12 +6,12 @@
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
 
-static ThemeMetric<apActorCommands>	MARVELOUS_COMMAND		("Judgment","MarvelousCommand");
-static ThemeMetric<apActorCommands>	PERFECT_COMMAND			("Judgment","PerfectCommand");
-static ThemeMetric<apActorCommands>	GREAT_COMMAND			("Judgment","GreatCommand");
-static ThemeMetric<apActorCommands>	GOOD_COMMAND			("Judgment","GoodCommand");
-static ThemeMetric<apActorCommands>	BOO_COMMAND				("Judgment","BooCommand");
-static ThemeMetric<apActorCommands>	MISS_COMMAND			("Judgment","MissCommand");
+static ThemeMetric<apActorCommands>	TIER1_COMMAND		("Judgment","Tier1Command");
+static ThemeMetric<apActorCommands>	TIER2_COMMAND		("Judgment","Tier2Command");
+static ThemeMetric<apActorCommands>	TIER3_COMMAND		("Judgment","Tier3Command");
+static ThemeMetric<apActorCommands>	TIER4_COMMAND		("Judgment","Tier4Command");
+static ThemeMetric<apActorCommands>	TIER5_COMMAND		("Judgment","Tier5Command");
+static ThemeMetric<apActorCommands>	MISS_COMMAND		("Judgment","MissCommand");
 
 Judgment::Judgment()
 {
@@ -48,27 +48,27 @@ void Judgment::SetJudgment( TapNoteScore score, bool bEarly )
 
 	switch( score )
 	{
-	case TNS_MARVELOUS:
+	case TNS_Tier1:
 		m_sprJudgment.SetState( 0 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( MARVELOUS_COMMAND );
+		m_sprJudgment.RunCommands( TIER1_COMMAND );
 		break;
-	case TNS_PERFECT:
+	case TNS_Tier2:
 		m_sprJudgment.SetState( 1 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( PERFECT_COMMAND );
+		m_sprJudgment.RunCommands( TIER2_COMMAND );
 		break;
-	case TNS_GREAT:
+	case TNS_Tier3:
 		m_sprJudgment.SetState( 2 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( GREAT_COMMAND );
+		m_sprJudgment.RunCommands( TIER3_COMMAND );
 		break;
-	case TNS_GOOD:
+	case TNS_Tier4:
 		m_sprJudgment.SetState( 3 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( GOOD_COMMAND );
+		m_sprJudgment.RunCommands( TIER4_COMMAND );
 		break;
-	case TNS_BOO:
+	case TNS_Tier5:
 		m_sprJudgment.SetState( 4 * iStateMult + iStateAdd );
-		m_sprJudgment.RunCommands( BOO_COMMAND );
+		m_sprJudgment.RunCommands( TIER5_COMMAND );
 		break;
-	case TNS_MISS:
+	case TNS_Miss:
 		m_sprJudgment.SetState( 5 * iStateMult + iStateAdd );
 		m_sprJudgment.RunCommands( MISS_COMMAND );
 		break;

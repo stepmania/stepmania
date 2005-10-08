@@ -33,13 +33,13 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 
 	switch( hns )
 	{
-	case HNS_NONE:
+	case HNS_None:
 		ASSERT(0);
-	case HNS_OK:
+	case HNS_Held:
 		m_sprJudgment->SetState( 0 );
 		m_sprJudgment->RunCommands( OK_COMMAND );
 		break;
-	case HNS_NG:
+	case HNS_LetGo:
 		m_sprJudgment->SetState( 1 );
 		m_sprJudgment->RunCommands( NG_COMMAND );
 		break;

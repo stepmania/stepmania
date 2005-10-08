@@ -47,13 +47,13 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 	float fPercentToMove = 0;
 	switch( score )
 	{
-	case TNS_MARVELOUS:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeMarvelous;	break;
-	case TNS_PERFECT:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChangePerfect;	break;
-	case TNS_GREAT:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeGreat;		break;
-	case TNS_GOOD:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeGood;		break;
-	case TNS_BOO:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeBoo;		break;
-	case TNS_MISS:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeMiss;		break;
-	case TNS_HIT_MINE:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeHitMine; break;
+	case TNS_Tier1:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeTier1;	break;
+	case TNS_Tier2:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeTier2;	break;
+	case TNS_Tier3:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeTier3;		break;
+	case TNS_Tier4:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeTier4;		break;
+	case TNS_Tier5:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeTier5;		break;
+	case TNS_Miss:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeMiss;		break;
+	case TNS_HitMine:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeHitMine; break;
 	default:	ASSERT(0);	break;
 	}
 
@@ -70,8 +70,8 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, Tap
 	float fPercentToMove = 0;
 	switch( score )
 	{
-	case HNS_OK:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeOK;	break;
-	case HNS_NG:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeNG;	break;
+	case HNS_Held:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeHeld;	break;
+	case HNS_LetGo:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeLetGo;	break;
 	default:	ASSERT(0);	break;
 	}
 
