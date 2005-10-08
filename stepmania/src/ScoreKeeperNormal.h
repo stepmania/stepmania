@@ -1,7 +1,7 @@
-/* ScoreKeeperNormal - MAX2-style scorekeeping. */
+/* ScoreKeeperNormal -  */
 
-#ifndef SCORE_KEEPER_MAX2_H
-#define SCORE_KEEPER_MAX2_H
+#ifndef ScoreKeeperNormal_H
+#define ScoreKeeperNormal_H
 
 #include "ScoreKeeper.h"
 #include "Attack.h"

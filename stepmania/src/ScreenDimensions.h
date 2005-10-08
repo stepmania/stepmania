@@ -1,4 +1,4 @@
-/* ScoreKeeperNormal - MAX2-style scorekeeping. */
+/* ScreenDimensions - defines for screen resolutions. */
 
 #ifndef SCREEN_DIMENSIONS_H
 #define SCREEN_DIMENSIONS_H

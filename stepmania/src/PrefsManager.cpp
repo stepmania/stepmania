@@ -261,7 +261,7 @@ PrefsManager::PrefsManager() :
 	m_bMoveRandomToEnd				( "MoveRandomToEnd",			false ),
 	m_bSubSortByNumSteps			( "SubSortByNumSteps",			false ),
 	m_GetRankingName				( "GetRankingName",				RANKING_ON ),
-	m_ScoringType					( "ScoringType",				SCORING_MAX2 ),
+	m_ScoringType					( "ScoringType",				SCORING_NEW ),
 	m_BoostAppPriority				( "BoostAppPriority",			BOOST_AUTO ),
 	m_sAdditionalSongFolders		( "AdditionalSongFolders",		"" ),
 	m_sAdditionalFolders			( "AdditionalFolders",			"" ),

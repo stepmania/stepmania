@@ -153,7 +153,7 @@ void ScreenUnlock::Init()
 			text->SetXY( ScrollingTextX, ScrollingTextStartY );
 
 			if (UNLOCK_TEXT_SCROLL == 3 && UNLOCK_TEXT_SCROLL_ROWS + i > NumUnlocks)
-			{   // special command for last unlocks when extreme-style scrolling is in effect
+			{   // special command for last unlocks when scrolling is in effect
 				float TargetRow = -0.5f + i + UNLOCK_TEXT_SCROLL_ROWS - NumUnlocks;
 				float StopOffPoint = ScrollingTextEndY - TargetRow / UNLOCK_TEXT_SCROLL_ROWS * (ScrollingTextEndY - ScrollingTextStartY);
 				float FirstCycleTime = (UNLOCK_TEXT_SCROLL_ROWS - TargetRow) * SECS_PER_CYCLE;

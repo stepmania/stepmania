@@ -162,8 +162,8 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
     switch( PREFSMAN->m_ScoringType )
 	{
 	default: ASSERT(0);
-	case PrefsManager::SCORING_MAX2:
-	case PrefsManager::SCORING_5TH:
+	case PrefsManager::SCORING_NEW:
+	case PrefsManager::SCORING_OLD:
 		m_pPrimaryScoreKeeper = new ScoreKeeperNormal( 
 			GetPlayerState(),
 			GetPlayerStageStats() );

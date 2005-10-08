@@ -582,7 +582,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "SongsPerPlay",				SongsPerPlay,		"1","2","3","4","5" ) );
 	ADD( ConfOption( "SongsPerPlayOrEvent",			SongsPerPlayOrEventMode, "1","2","3","4","5","EVENT" ) );
 	ADD( ConfOption( "EventMode",					MovePref,			"OFF","ON" ) );
-	ADD( ConfOption( "ScoringType",					ScoringType,		"MAX2","5TH" ) );
+	ADD( ConfOption( "ScoringType",					ScoringType,		"NEW","OLD" ) );
 	ADD( ConfOption( "JudgeDifficulty",				JudgeDifficulty,	"1","2","3","4","5","6","7","8","JUSTICE" ) );
 	ADD( ConfOption( "LifeDifficulty",				LifeDifficulty,		"1","2","3","4","5","6","7" ) );
 	ADD( ConfOption( "ProgressiveLifebar",			ProgressiveLifebar,	"OFF","1","2","3","4","5","6","7","8") );

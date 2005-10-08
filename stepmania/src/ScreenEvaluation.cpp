@@ -210,7 +210,7 @@ void ScreenEvaluation::Init()
 	}
 */
 
-	if( PREFSMAN->m_ScoringType == PrefsManager::SCORING_5TH )
+	if( PREFSMAN->m_ScoringType == PrefsManager::SCORING_OLD )
 	{
 		FOREACH_PlayerNumber( p )
 		{

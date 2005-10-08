@@ -267,9 +267,8 @@ public:
 	enum GetRankingName { RANKING_OFF, RANKING_ON, RANKING_LIST };
 	Preference<GetRankingName>	m_GetRankingName;
 
-	// scoring type; SCORING_MAX2 should always be first
-	enum ScoringTypes { SCORING_MAX2, SCORING_5TH };
-	Preference<ScoringTypes>	m_ScoringType;
+	enum ScoringType { SCORING_NEW, SCORING_OLD };
+	Preference<ScoringType>	m_ScoringType;
 
 	enum BoostAppPriority { BOOST_NO, BOOST_YES, BOOST_AUTO };	/* auto = do whatever is appropriate for the arch. */
 	Preference<BoostAppPriority>	m_BoostAppPriority;
