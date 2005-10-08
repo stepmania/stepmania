@@ -11,8 +11,8 @@
 
 enum BANNER_PREFS_TYPES
 {
-	BANNERPREFS_DDRFLAT=0,
-	BANNERPREFS_DDRROT,
+	BANNERPREFS_FLAT=0,
+	BANNERPREFS_ROT,
 	BANNERPREFS_EZ2,
 	BANNERPREFS_PUMP,
 	BANNERPREFS_PARA
@@ -31,7 +31,7 @@ enum BANNER_PREFS_TYPES
 
 #define SPRITE_TYPE_SPRITE 0
 #define SPRITE_TYPE_CROPPEDSPRITE 1
-#define DDRROT_ROTATION 315
+#define ROT_ROTATION 315
 
 const int DEFAULT_VISIBLE_ELEMENTS = 9;
 const int DEFAULT_SPACING = 300;
@@ -398,7 +398,7 @@ void ScrollingList::Replace(CString sGraphicPath, int ElementNumber)
 	{
 		Sprite* pNewCSprite = new Sprite;
 		pNewCSprite->Load( sGraphicPath );
-		if(m_iBannerPrefs == BANNERPREFS_DDRFLAT)
+		if(m_iBannerPrefs == BANNERPREFS_FLAT)
 		{
 			// ScaleToClipped should detect rotated banner files and correct
 			// accordingly.  If there's a case I didn't think about, feel free
@@ -414,10 +414,10 @@ void ScrollingList::Replace(CString sGraphicPath, int ElementNumber)
 		
 			pNewCSprite->ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
 		}
-		else if(m_iBannerPrefs == BANNERPREFS_DDRROT)
+		else if(m_iBannerPrefs == BANNERPREFS_ROT)
 		{
 			pNewCSprite->ScaleToClipped( BANNER_WIDTH, BANNER_HEIGHT );
-			pNewCSprite->SetRotationZ( DDRROT_ROTATION );
+			pNewCSprite->SetRotationZ( ROT_ROTATION );
 		}
 		else if(m_iBannerPrefs == BANNERPREFS_EZ2)
 		{

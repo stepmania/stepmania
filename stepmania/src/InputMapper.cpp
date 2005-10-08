@@ -282,7 +282,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 	{
 		"dance",
 		"Dance ", //Notice extra space at end
-		"LevelSix USB Pad (DDR638)",
+		"LevelSix USB Pad (DDR638)",	// "DDR638" is the model number of the pad
 		{
 			{ 0, JOY_BUTTON_1,			DANCE_BUTTON_UP,		false },
 			{ 0, JOY_BUTTON_2,			DANCE_BUTTON_DOWN,		false },
@@ -339,7 +339,7 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 	{
 		"techno",
 		"Dance ", //Notice the extra space at end
-		"LevelSix USB Pad (DDR638)",
+		"LevelSix USB Pad (DDR638)",	// "DDR638" is the model number of the pad
 		{
 			{ 0, JOY_BUTTON_1,			TECHNO_BUTTON_UP,		false },
 			{ 0, JOY_BUTTON_2,			TECHNO_BUTTON_DOWN,		false },
