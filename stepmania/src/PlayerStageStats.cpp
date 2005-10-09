@@ -170,8 +170,8 @@ Grade PlayerStageStats::GetGrade() const
 
 	Grade grade = GetGradeFromPercent( fPercent );
 
-	LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER02_IS_ALL_PERFECTS );
-	if( GRADE_TIER02_IS_ALL_PERFECTS )
+	LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER02_IS_ALL_W2S );
+	if( GRADE_TIER02_IS_ALL_W2S )
 	{
 		if(	iTapNoteScores[TNS_W1] > 0 &&
 			iTapNoteScores[TNS_W2] == 0 &&
