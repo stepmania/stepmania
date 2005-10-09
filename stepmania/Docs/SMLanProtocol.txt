@@ -93,13 +93,13 @@ CLIENT to SERVER protocol:
     MSN		Player #
     LSN		StepID 
 		1: Miss
-		2: Boo
-		3: Good
-		4: Great
-		5: Perfect
-		6: Marvelous
-		7: NG
-		8: OK
+		2: W5
+		3: W4
+		4: W3
+		5: W2
+		6: W1
+		7: LetGo
+		8: Held
 
     MSN		Projected Grade (StepMania enum int)
     LSN		Reserved
