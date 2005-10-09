@@ -823,8 +823,17 @@ void ThemeManager::GetMetricsThatBeginWith( const CString &sClassName_, const CS
 	}
 }
 
-void ThemeManager::LoadPreferencesFromSection( const CString &sClassName )
+CString ThemeManager::GetPreferencesSection() const
 {
+	CString sSection = "Preferences";
+	GetCommandlineArgument( "Type", &sSection );
+	return sSection;
+}
+
+void ThemeManager::LoadPreferencesFromMetrics()
+{
+	CString sClassName = GetPreferencesSection();
+
 	set<CString> asNames;
 
 	GetMetricsThatBeginWith( sClassName, "", asNames );

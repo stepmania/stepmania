@@ -1081,11 +1081,7 @@ int main(int argc, char* argv[])
 	/* Set up the theme and announcer, and switch to the last game type. */
 	ReadGamePrefsFromDisk( true );
 
-	{
-		CString sSection = "Preferences";
-		GetCommandlineArgument( "Type", &sSection );
-		THEME->LoadPreferencesFromSection( sSection );
-	}
+	THEME->LoadPreferencesFromMetrics();
 
 	{
 		/* Now that THEME is loaded, load the icon for the current theme into the

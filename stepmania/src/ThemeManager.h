@@ -82,7 +82,8 @@ public:
 	void	GetMetric( const CString &sClassName, const CString &sValueName, apActorCommands &valueOut );
 
 	void GetMetricsThatBeginWith( const CString &sClassName, const CString &sValueName, set<CString> &vsValueNamesOut );
-	void LoadPreferencesFromSection( const CString &sClassName );
+	CString GetPreferencesSection() const;
+	void LoadPreferencesFromMetrics();
 
 	static CString GetBlankGraphicPath();
 
