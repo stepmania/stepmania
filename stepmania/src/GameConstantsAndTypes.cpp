@@ -210,7 +210,6 @@ static void LuaTapNoteScores( lua_State* L )
 	FOREACH_TapNoteScore( i )
 	{
 		CString s = TapNoteScoreNames[i];
-		s.MakeUpper();
 		LUA->SetGlobal( "TNS_"+s, i );
 	}
 }
@@ -242,7 +241,6 @@ static void LuaHoldNoteScores( lua_State* L )
 	FOREACH_HoldNoteScore( i )
 	{
 		CString s = HoldNoteScoreNames[i];
-		s.MakeUpper();
 		LUA->SetGlobal( "HNS_"+s, i );
 	}
 }

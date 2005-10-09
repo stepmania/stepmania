@@ -5,8 +5,8 @@
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
 
-static ThemeMetric<apActorCommands>	OK_COMMAND	("HoldJudgment","OKCommand");
-static ThemeMetric<apActorCommands>	NG_COMMAND	("HoldJudgment","NGCommand");
+static ThemeMetric<apActorCommands>	HELD_COMMAND	("HoldJudgment","HeldCommand");
+static ThemeMetric<apActorCommands>	LET_GO_COMMAND	("HoldJudgment","LetGoCommand");
 
 
 HoldJudgment::HoldJudgment()
@@ -37,11 +37,11 @@ void HoldJudgment::SetHoldJudgment( HoldNoteScore hns )
 		ASSERT(0);
 	case HNS_Held:
 		m_sprJudgment->SetState( 0 );
-		m_sprJudgment->RunCommands( OK_COMMAND );
+		m_sprJudgment->RunCommands( HELD_COMMAND );
 		break;
 	case HNS_LetGo:
 		m_sprJudgment->SetState( 1 );
-		m_sprJudgment->RunCommands( NG_COMMAND );
+		m_sprJudgment->RunCommands( LET_GO_COMMAND );
 		break;
 	default:
 		ASSERT(0);
