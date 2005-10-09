@@ -122,54 +122,35 @@ void LifeMeterBar::Load( const PlayerState *pPlayerState, PlayerStageStats *pPla
 void LifeMeterBar::ChangeLife( TapNoteScore score )
 {
 	float fDeltaLife=0.f;
+	switch( score )
+	{
+	default:	ASSERT(0);
+	case TNS_W1:			fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_W1);			break;
+	case TNS_W2:			fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_W2);			break;
+	case TNS_W3:			fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_W3);			break;
+	case TNS_W4:			fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_W4);			break;
+	case TNS_W5:			fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_W5);			break;
+	case TNS_Miss:		fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_Miss);		break;
+	case TNS_HitMine:	fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_HitMine);	break;
+	}
+	if( IsHot()  &&  score < TNS_W4 )
+		fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
+
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
 	{
-	case SongOptions::DRAIN_NORMAL:
-		switch( score )
-		{
-		case TNS_Tier1:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeTier1;	break;
-		case TNS_Tier2:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeTier2;	break;
-		case TNS_Tier3:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeTier3;		break;
-		case TNS_Tier4:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeTier4;		break;
-		case TNS_Tier5:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeTier5;		break;
-		case TNS_Miss:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeMiss;		break;
-		case TNS_HitMine:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeHitMine;	break;
-		default:
-			ASSERT(0);
-		}
-		if( IsHot()  &&  score < TNS_Tier4 )
-			fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
-		break;
-	case SongOptions::DRAIN_NO_RECOVER:
-		switch( score )
-		{
-		case TNS_Tier1:	fDeltaLife = +0.000f;	break;
-		case TNS_Tier2:	fDeltaLife = +0.000f;	break;
-		case TNS_Tier3:		fDeltaLife = +0.000f;	break;
-		case TNS_Tier4:		fDeltaLife = +0.000f;	break;
-		case TNS_Tier5:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeTier5;	break;
-		case TNS_Miss:		fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeMiss;	break;
-		case TNS_HitMine:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeHitMine;	break;
-		default:
-			ASSERT(0);
-		}
-		break;
-	case SongOptions::DRAIN_SUDDEN_DEATH:
-		switch( score )
-		{
-		case TNS_Tier1:	fDeltaLife = +0;	break;
-		case TNS_Tier2:	fDeltaLife = +0;	break;
-		case TNS_Tier3:		fDeltaLife = +0;	break;
-		case TNS_Tier4:		fDeltaLife = -1.0;	break;
-		case TNS_Tier5:		fDeltaLife = -1.0;	break;
-		case TNS_Miss:		fDeltaLife = -1.0;	break;
-		case TNS_HitMine:	fDeltaLife = -1.0;	break;
-		default:
-			ASSERT(0);
-		}
-		break;
 	default:
 		ASSERT(0);
+	case SongOptions::DRAIN_NORMAL:
+		break;
+	case SongOptions::DRAIN_NO_RECOVER:
+		fDeltaLife = min( fDeltaLife, 0 );
+		break;
+	case SongOptions::DRAIN_SUDDEN_DEATH:
+		if( fDeltaLife < 0 )
+			fDeltaLife = -1.0f;
+		else
+			fDeltaLife = 0;
+		break;
 	}
 
 	ChangeLife( fDeltaLife );
@@ -177,19 +158,14 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 
 void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 {
-	/* The initial tap note score (which we happen to have in have in
-	 * tscore) has already been reported to the above function.  If the
-	 * hold end result was an LetGo, count it as a miss; if the end result
-	 * was an OK, count a tier2.  (Remember, this is just life meter
-	 * computation, not scoring.) */
 	float fDeltaLife=0.f;
 	switch( GAMESTATE->m_SongOptions.m_DrainType )
 	{
 	case SongOptions::DRAIN_NORMAL:
 		switch( score )
 		{
-		case HNS_Held:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeHeld;	break;
-		case HNS_LetGo:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeLetGo;	break;
+		case HNS_Held:	fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_Held);	break;
+		case HNS_LetGo:	fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_LetGo);	break;
 		default:
 			ASSERT(0);
 		}
@@ -200,7 +176,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		switch( score )
 		{
 		case HNS_Held:	fDeltaLife = +0.000f;	break;
-		case HNS_LetGo:	fDeltaLife = PREFSMAN->m_fLifeDeltaPercentChangeLetGo;	break;
+		case HNS_LetGo:	fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_LetGo);	break;
 		default:
 			ASSERT(0);
 		}
@@ -237,7 +213,7 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 	else
 	{
 		fDeltaLife *= 1 + (float)m_iProgressiveLifebar/8 * m_iMissCombo;
-		// do this after; only successive tier5/miss will
+		// do this after; only successive W5/miss will
 		// increase the amount of life lost.
 		m_iMissCombo++;
 		/* Increase by m_iRegenComboAfterMiss; never push it beyond m_iMaxRegenComboAfterMiss
@@ -392,7 +368,7 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 	 * Life 16+: 200   %
 	 *
 	 * Note there is 200%, because boos take off 1/2 as much as
-	 * a miss, and a tier5 would suck up half of your lifebar.
+	 * a miss, and a W5 would suck up half of your lifebar.
 	 *
 	 * Everything past 7 is intended mainly for nonstop mode.
      */
@@ -419,14 +395,14 @@ void LifeMeterBar::UpdateNonstopLifebar(const int cleared,
 	return;
 }
 
-void LifeMeterBar::FillForHowToPlay(int NumTier2s, int NumMisses)
+void LifeMeterBar::FillForHowToPlay(int NumW2s, int NumMisses)
 {
 	m_iProgressiveLifebar = 0;  // disable progressive lifebar
 
-	float AmountForTier2	= NumTier2s * m_fLifeDifficulty * 0.008f;
-	float AmountForMiss		= NumMisses / m_fLifeDifficulty * 0.08f;
+	float AmountForW2	= NumW2s * m_fLifeDifficulty * 0.008f;
+	float AmountForMiss	= NumMisses / m_fLifeDifficulty * 0.08f;
 
-	m_fLifePercentage = AmountForMiss - AmountForTier2;
+	m_fLifePercentage = AmountForMiss - AmountForW2;
 	CLAMP( m_fLifePercentage, 0.0f, 1.0f );
 	AfterLifeChanged();
 }

@@ -56,6 +56,133 @@ bool g_bAutoRestart = false;
 # define TRUE_IF_DEBUG false
 #endif
 
+void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, CString &sNameOut, float &defaultValueOut )
+{
+	sNameOut = "TimingWindowSeconds" + TimingWindowToString( (TimingWindow)i );
+	switch( i )
+	{
+	default:	ASSERT(0);
+	case TW_W1:		defaultValueOut = 0.0225f;	break;
+	case TW_W2:		defaultValueOut = 0.045f;	break;
+	case TW_W3:		defaultValueOut = 0.090f;	break;
+	case TW_W4:		defaultValueOut = 0.135f;	break;
+	case TW_W5:		defaultValueOut = 0.180f;	break;
+	case TW_Mine:	defaultValueOut = 0.090f;	break;	// same as great
+	case TW_Hold:	defaultValueOut = 0.250f;	break;	// allow enough time to take foot off and put back on
+	case TW_Roll:	defaultValueOut = 0.350f;	break;
+	case TW_Attack:	defaultValueOut = 0.135f;	break;
+	}
+}
+
+void LifePercentChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, float &defaultValueOut )
+{
+	sNameOut = "LifePercentChange" + ScoreEventToString( (ScoreEvent)i );
+	switch( i )
+	{
+	default:	ASSERT(0);
+	case SE_W1:			defaultValueOut = +0.008f;	break;
+	case SE_W2:			defaultValueOut = +0.008f;	break;
+	case SE_W3:			defaultValueOut = +0.004f;	break;
+	case SE_W4:			defaultValueOut = +0.000f;	break;
+	case SE_W5:			defaultValueOut = -0.040f;	break;
+	case SE_Miss:		defaultValueOut = -0.080f;	break;
+	case SE_HitMine:	defaultValueOut = -0.160f;	break;
+	case SE_Held:		defaultValueOut = +0.008f;	break;
+	case SE_LetGo:		defaultValueOut = -0.080f;	break;
+	}
+}
+
+void TugMeterPercentChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, float &defaultValueOut )
+{
+	sNameOut = "TugMeterPercentChange" + ScoreEventToString( (ScoreEvent)i );
+	switch( i )
+	{
+	default:	ASSERT(0);
+	case SE_W1:			defaultValueOut = +0.010f;	break;
+	case SE_W2:			defaultValueOut = +0.008f;	break;
+	case SE_W3:			defaultValueOut = +0.004f;	break;
+	case SE_W4:			defaultValueOut = +0.000f;	break;
+	case SE_W5:			defaultValueOut = -0.010f;	break;
+	case SE_Miss:		defaultValueOut = -0.020f;	break;
+	case SE_HitMine:	defaultValueOut = -0.040f;	break;
+	case SE_Held:		defaultValueOut = +0.008f;	break;
+	case SE_LetGo:		defaultValueOut = -0.020f;	break;
+	}
+}
+
+void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, CString &sNameOut, int &defaultValueOut )
+{
+	sNameOut = "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i );
+	switch( i )
+	{
+	default:	ASSERT(0);
+	case SE_W1:			defaultValueOut = 3;	break;
+	case SE_W2:			defaultValueOut = 2;	break;
+	case SE_W3:			defaultValueOut = 1;	break;
+	case SE_W4:			defaultValueOut = 0;	break;
+	case SE_W5:			defaultValueOut = 0;	break;
+	case SE_Miss:		defaultValueOut = 0;	break;
+	case SE_HitMine:	defaultValueOut = -2;	break;
+	case SE_Held:		defaultValueOut = 3;	break;
+	case SE_LetGo:		defaultValueOut = 0;	break;
+	}
+}
+
+void GradeWeightInit( size_t /*ScoreEvent*/ i, CString &sNameOut, int &defaultValueOut )
+{
+	sNameOut = "GradeWeight" + ScoreEventToString( (ScoreEvent)i );
+	switch( i )
+	{
+	default:	ASSERT(0);
+	case SE_W1:			defaultValueOut = 2;	break;
+	case SE_W2:			defaultValueOut = 2;	break;
+	case SE_W3:			defaultValueOut = 1;	break;
+	case SE_W4:			defaultValueOut = 0;	break;
+	case SE_W5:			defaultValueOut = -4;	break;
+	case SE_Miss:		defaultValueOut = -8;	break;
+	case SE_HitMine:	defaultValueOut = -8;	break;
+	case SE_Held:		defaultValueOut = 6;	break;
+	case SE_LetGo:		defaultValueOut = 0;	break;
+	}
+}
+
+void SuperMeterPercentChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, float &defaultValueOut )
+{
+	sNameOut = "SuperMeterPercentChange" + ScoreEventToString( (ScoreEvent)i );
+	switch( i )
+	{
+	default:	ASSERT(0);
+	case SE_W1:			defaultValueOut = +0.05f;	break;
+	case SE_W2:			defaultValueOut = +0.04f;	break;
+	case SE_W3:			defaultValueOut = +0.02f;	break;
+	case SE_W4:			defaultValueOut = +0.00f;	break;
+	case SE_W5:			defaultValueOut = -0.00f;	break;
+	case SE_Miss:		defaultValueOut = -0.20f;	break;
+	case SE_HitMine:	defaultValueOut = -0.40f;	break;
+	case SE_Held:		defaultValueOut = +0.04f;	break;
+	case SE_LetGo:		defaultValueOut = -0.20f;	break;
+	}
+}
+
+void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, float &defaultValueOut )
+{
+	sNameOut = "TimeMeterSecondsChange" + ScoreEventToString( (ScoreEvent)i );
+	switch( i )
+	{
+	default:	ASSERT(0);
+	case SE_W1:			defaultValueOut = +0.1f;	break;
+	case SE_W2:			defaultValueOut = +0.0f;	break;
+	case SE_W3:			defaultValueOut = -0.5f;	break;
+	case SE_W4:			defaultValueOut = -1.0f;	break;
+	case SE_W5:			defaultValueOut = -2.0f;	break;
+	case SE_Miss:		defaultValueOut = -4.0f;	break;
+	case SE_HitMine:	defaultValueOut = -2.0f;	break;
+	case SE_Held:		defaultValueOut = -0.0f;	break;
+	case SE_LetGo:		defaultValueOut = -4.0f;	break;
+	}
+}
+
+
 PrefsManager::PrefsManager() :
 	m_bWindowed				( "Windowed",				TRUE_IF_DEBUG),
 	m_iDisplayWidth			( "DisplayWidth",			640 ),
@@ -89,38 +216,14 @@ PrefsManager::PrefsManager() :
 	m_bMenuTimer				( "MenuTimer",					true ),
 	m_bShowDanger				( "ShowDanger",					true ),
 
-	m_fJudgeWindowScale				( "JudgeWindowScale",				1.0f ),
-	m_fJudgeWindowAdd				( "JudgeWindowAdd",					0 ),
-	m_fJudgeWindowSecondsTier1	( "JudgeWindowSecondsTier1",	0.0225f ),
-	m_fJudgeWindowSecondsTier2	( "JudgeWindowSecondsTier2",		0.045f ),
-	m_fJudgeWindowSecondsTier3		( "JudgeWindowSecondsTier3",		0.090f ),
-	m_fJudgeWindowSecondsTier4		( "JudgeWindowSecondsTier4",			0.135f ),
-	m_fJudgeWindowSecondsTier5		( "JudgeWindowSecondsTier5",			0.180f ),
-	m_fJudgeWindowSecondsHeld			( "JudgeWindowSecondsHeld",			0.250f ),	// allow enough time to take foot off and put back on
-	m_fJudgeWindowSecondsRoll		( "JudgeWindowSecondsRoll",			0.350f ),
-	m_fJudgeWindowSecondsMine		( "JudgeWindowSecondsMine",			0.090f ),	// same as great
-	m_fJudgeWindowSecondsAttack		( "JudgeWindowSecondsAttack",		0.135f ),
+	m_fTimingWindowScale				( "TimingWindowScale",				1.0f ),
+	m_fTimingWindowAdd				( "TimingWindowAdd",					0 ),
+	m_fTimingWindowSeconds(	TimingWindowSecondsInit, NUM_TimingWindow ),
 
 	m_fLifeDifficultyScale				( "LifeDifficultyScale",				1.0f ),
-	m_fLifeDeltaPercentChangeTier1	( "LifeDeltaPercentChangeTier1",	+0.008f ),
-	m_fLifeDeltaPercentChangeTier2	( "LifeDeltaPercentChangeTier2",		+0.008f ),
-	m_fLifeDeltaPercentChangeTier3		( "LifeDeltaPercentChangeTier3",		+0.004f ),
-	m_fLifeDeltaPercentChangeTier4		( "LifeDeltaPercentChangeTier4",			+0.000f ),
-	m_fLifeDeltaPercentChangeTier5		( "LifeDeltaPercentChangeTier5",			-0.040f ),
-	m_fLifeDeltaPercentChangeMiss		( "LifeDeltaPercentChangeMiss",			-0.080f ),
-	m_fLifeDeltaPercentChangeHitMine	( "LifeDeltaPercentChangeHitMine",		-0.160f ),
-	m_fLifeDeltaPercentChangeHeld			( "LifeDeltaPercentChangeHeld",			+0.008f ),
-	m_fLifeDeltaPercentChangeLetGo			( "LifeDeltaPercentChangeLetGo",			-0.080f ),
+	m_fLifePercentChange( LifePercentChangeInit, NUM_ScoreEvent ),
+	m_fTugMeterPercentChange( TugMeterPercentChangeInit, NUM_ScoreEvent ),
 
-	m_fTugMeterPercentChangeTier1	( "TugMeterPercentChangeTier1",		+0.010f ),
-	m_fTugMeterPercentChangeTier2		( "TugMeterPercentChangeTier2",		+0.008f ),
-	m_fTugMeterPercentChangeTier3		( "TugMeterPercentChangeTier3",			+0.004f ),
-	m_fTugMeterPercentChangeTier4		( "TugMeterPercentChangeTier4",			+0.000f ),
-	m_fTugMeterPercentChangeTier5			( "TugMeterPercentChangeTier5",			-0.010f ),
-	m_fTugMeterPercentChangeMiss		( "TugMeterPercentChangeMiss",			-0.020f ),
-	m_fTugMeterPercentChangeHitMine		( "TugMeterPercentChangeHitMine",		-0.040f ),
-	m_fTugMeterPercentChangeHeld			( "TugMeterPercentChangeHeld",			+0.008f ),
-	m_fTugMeterPercentChangeLetGo			( "TugMeterPercentChangeLetGo",			-0.020f ),
 
 	m_iRegenComboAfterFail			( "RegenComboAfterFail",			10 ),
 	m_iRegenComboAfterMiss			( "RegenComboAfterMiss",			5 ),
@@ -133,46 +236,14 @@ PrefsManager::PrefsManager() :
 	m_bFailOffForFirstStageEasy		( "FailOffForFirstStageEasy",		false ),
 	m_bMercifulBeginner				( "MercifulBeginner",				false ),
 
-	m_iPercentScoreWeightTier1	( "PercentScoreWeightTier1",	3 ),
-	m_iPercentScoreWeightTier2	( "PercentScoreWeightTier2",		2 ),
-	m_iPercentScoreWeightTier3		( "PercentScoreWeightTier3",		1 ),
-	m_iPercentScoreWeightTier4		( "PercentScoreWeightTier4",			0 ),
-	m_iPercentScoreWeightTier5		( "PercentScoreWeightTier5",			0 ),
-	m_iPercentScoreWeightMiss		( "PercentScoreWeightMiss",			0 ),
-	m_iPercentScoreWeightHitMine	( "PercentScoreWeightHitMine",		-2 ),
-	m_iPercentScoreWeightHeld			( "PercentScoreWeightHeld",			3 ),
-	m_iPercentScoreWeightLetGo			( "PercentScoreWeightLetGo",			0 ),
+	m_iPercentScoreWeight	( PercentScoreWeightInit,	NUM_ScoreEvent ),
 	
-	m_iGradeWeightTier1		( "GradeWeightTier1",	2 ),
-	m_iGradeWeightTier2		( "GradeWeightTier2",		2 ),
-	m_iGradeWeightTier3			( "GradeWeightTier3",		1 ),
-	m_iGradeWeightTier4			( "GradeWeightTier4",		0 ),
-	m_iGradeWeightTier5			( "GradeWeightTier5",			-4 ),
-	m_iGradeWeightMiss			( "GradeWeightMiss",		-8 ),
-	m_iGradeWeightHitMine		( "GradeWeightHitMine",		-8 ),
-	m_iGradeWeightHeld			( "GradeWeightHeld",			6 ),
-	m_iGradeWeightLetGo			( "GradeWeightLetGo",			0 ),
+	m_iGradeWeight			( GradeWeightInit,			NUM_ScoreEvent ),
 
-	m_fSuperMeterPercentChangeTier1	( "SuperMeterPercentChangeTier1",	+0.05f ),
-	m_fSuperMeterPercentChangeTier2	( "SuperMeterPercentChangeTier2",		+0.04f ),
-	m_fSuperMeterPercentChangeTier3		( "SuperMeterPercentChangeTier3",		+0.02f ),
-	m_fSuperMeterPercentChangeTier4		( "SuperMeterPercentChangeTier4",		+0.00f ),
-	m_fSuperMeterPercentChangeTier5		( "SuperMeterPercentChangeTier5",			-0.00f ),
-	m_fSuperMeterPercentChangeMiss		( "SuperMeterPercentChangeMiss",		-0.20f ),
-	m_fSuperMeterPercentChangeHitMine	( "SuperMeterPercentChangeHitMine",		-0.40f ),
-	m_fSuperMeterPercentChangeHeld		( "SuperMeterPercentChangeHeld",			+0.04f ),
-	m_fSuperMeterPercentChangeLetGo		( "SuperMeterPercentChangeLetGo",			-0.20f ),
+	m_fSuperMeterPercentChange	( SuperMeterPercentChangeInit,	NUM_ScoreEvent ),
 	m_bMercifulSuperMeter				( "MercifulSuperMeter",					true ),
 	
-	m_fTimeMeterSecondsChangeTier1	( "TimeMeterSecondsChangeTier1",	+0.1f ),
-	m_fTimeMeterSecondsChangeTier2	( "TimeMeterSecondsChangeTier2",		 0.0f ),
-	m_fTimeMeterSecondsChangeTier3		( "TimeMeterSecondsChangeTier3",		-0.5f ),
-	m_fTimeMeterSecondsChangeTier4		( "TimeMeterSecondsChangeTier4",			-1.0f ),
-	m_fTimeMeterSecondsChangeTier5		( "TimeMeterSecondsChangeTier5",			-2.0f ),
-	m_fTimeMeterSecondsChangeMiss		( "TimeMeterSecondsChangeMiss",			-4.0f ),
-	m_fTimeMeterSecondsChangeHitMine	( "TimeMeterSecondsChangeHitMine",		-2.0f ),
-	m_fTimeMeterSecondsChangeHeld			( "TimeMeterSecondsChangeHeld",			-0.0f ),
-	m_fTimeMeterSecondsChangeLetGo			( "TimeMeterSecondsChangeLetGo",			-4.0f ),
+	m_fTimeMeterSecondsChange	( TimeMeterSecondsChangeInit, NUM_ScoreEvent ),
 
 	m_AutoPlay					( "AutoPlay",					PC_HUMAN ),
 	m_bDelayedBack				( "DelayedBack",				true ),
@@ -184,7 +255,7 @@ PrefsManager::PrefsManager() :
 	m_MusicWheelUsesSections	( "MusicWheelUsesSections",		ALWAYS ),
 	m_iMusicWheelSwitchSpeed	( "MusicWheelSwitchSpeed",		10 ),
 	m_bEasterEggs				( "EasterEggs",					true ),
-	m_Tier1Timing			( "Tier1Timing",			TIER1_EVERYWHERE ),
+	m_AllowW1			( "AllowW1",			ALLOW_W1_EVERYWHERE ),
 	m_bEventMode				( "EventMode",					false ),
 	m_iCoinsPerCredit			( "CoinsPerCredit",				1 ),
 	m_iSongsPerPlay				( "SongsPerPlay",				3 ),

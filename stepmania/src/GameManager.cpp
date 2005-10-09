@@ -186,11 +186,11 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY			// DANCE_BUTTON_OPERATOR
 			},
 		},
-		TNS_Tier1,	// m_mapTier1To
-		TNS_Tier2,	// m_mapTier2To
-		TNS_Tier3,		// m_mapTier3To
-		TNS_Tier4,		// m_mapTier4To
-		TNS_Tier5,		// m_mapTier5To
+		TNS_W1,	// m_mapW1To
+		TNS_W2,	// m_mapW2To
+		TNS_W3,		// m_mapW3To
+		TNS_W4,		// m_mapW4To
+		TNS_W5,		// m_mapW5To
 	},
 	{	// GAME_PUMP
 		"pump",				// m_szName
@@ -270,11 +270,11 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY						// PUMP_BUTTON_OPERATOR
 			},
 		},
-		TNS_Tier1,	// m_mapTier1To
-		TNS_Tier2,	// m_mapTier2To
-		TNS_Tier3,		// m_mapTier3To
-		TNS_Tier4,		// m_mapTier4To
-		TNS_Tier5,		// m_mapTier5To
+		TNS_W1,	// m_mapW1To
+		TNS_W2,	// m_mapW2To
+		TNS_W3,		// m_mapW3To
+		TNS_W4,		// m_mapW4To
+		TNS_W5,		// m_mapW5To
 	},
 	{
 		"ez2",						// m_szName
@@ -360,11 +360,11 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY						// EZ2_BUTTON_OPERATOR
 			},
 		},
-		TNS_Tier2,	// m_mapTier1To
-		TNS_Tier2,	// m_mapTier2To
-		TNS_Tier2,	// m_mapTier3To
-		TNS_Tier4,		// m_mapTier4To
-		TNS_Miss,		// m_mapTier5To
+		TNS_W2,	// m_mapW1To
+		TNS_W2,	// m_mapW2To
+		TNS_W2,	// m_mapW3To
+		TNS_W4,		// m_mapW4To
+		TNS_Miss,		// m_mapW5To
 	},
 	{	// GAME_PARA
 		"para",						// m_szName
@@ -444,11 +444,11 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY						// PARA_BUTTON_OPERATOR
 			},
 		},
-		TNS_Tier1,	// m_mapTier1To
-		TNS_Tier2,	// m_mapTier2To
-		TNS_Tier3,		// m_mapTier3To
-		TNS_Tier4,		// m_mapTier4To
-		TNS_Tier5,		// m_mapTier5To
+		TNS_W1,	// m_mapW1To
+		TNS_W2,	// m_mapW2To
+		TNS_W3,		// m_mapW3To
+		TNS_W4,		// m_mapW4To
+		TNS_W5,		// m_mapW5To
 	},
 	{	// GAME_DS3DDX
 		"ds3ddx",					// m_szName
@@ -537,11 +537,11 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY						// DS3DDX_BUTTON_OPERATOR
 			},
 		},
-		TNS_Tier1,	// m_mapTier1To
-		TNS_Tier2,	// m_mapTier2To
-		TNS_Tier3,		// m_mapTier3To
-		TNS_Tier4,		// m_mapTier4To
-		TNS_Tier5,		// m_mapTier5To
+		TNS_W1,	// m_mapW1To
+		TNS_W2,	// m_mapW2To
+		TNS_W3,		// m_mapW3To
+		TNS_W4,		// m_mapW4To
+		TNS_W5,		// m_mapW5To
 	},
 	{	// GAME_BEAT
 		"beat",				// m_szName
@@ -633,11 +633,11 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY					// BEAT_BUTTON_OPERATOR
 			},
 		},
-		TNS_Tier1,	// m_mapTier1To
-		TNS_Tier2,	// m_mapTier2To
-		TNS_Tier3,		// m_mapTier3To
-		TNS_Tier4,		// m_mapTier4To
-		TNS_Tier5,		// m_mapTier5To
+		TNS_W1,	// m_mapW1To
+		TNS_W2,	// m_mapW2To
+		TNS_W3,		// m_mapW3To
+		TNS_W4,		// m_mapW4To
+		TNS_W5,		// m_mapW5To
 	},
 	{	// GAME_MANIAX
 		"maniax",					// m_szName
@@ -714,11 +714,11 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY					// MANIAX_BUTTON_OPERATOR
 			},
 		},
-		TNS_Tier1,	// m_mapTier1To
-		TNS_Tier2,	// m_mapTier2To
-		TNS_Tier3,		// m_mapTier3To
-		TNS_Tier4,		// m_mapTier4To
-		TNS_Tier5,		// m_mapTier5To
+		TNS_W1,	// m_mapW1To
+		TNS_W2,	// m_mapW2To
+		TNS_W3,		// m_mapW3To
+		TNS_W4,		// m_mapW4To
+		TNS_W5,		// m_mapW5To
 	},
 	{	// GAME_TECHNO
 		"techno",					// m_szName
@@ -810,11 +810,11 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY					// TECHNO_BUTTON_OPERATOR
 			},
 		},
-		TNS_Tier1,	// m_mapTier1To
-		TNS_Tier2,	// m_mapTier2To
-		TNS_Tier3,		// m_mapTier3To
-		TNS_Tier4,		// m_mapTier4To
-		TNS_Tier5,		// m_mapTier5To
+		TNS_W1,	// m_mapW1To
+		TNS_W2,	// m_mapW2To
+		TNS_W3,		// m_mapW3To
+		TNS_W4,		// m_mapW4To
+		TNS_W5,		// m_mapW5To
 	},
 	{	// GAME_POPN
 		"popn",				// m_szName
@@ -906,11 +906,11 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY					// BEAT_BUTTON_OPERATOR
 			},
 		},
-		TNS_Tier2,	// m_mapTier1To
-		TNS_Tier2,	// m_mapTier2To
-		TNS_Tier3,		// m_mapTier3To
-		TNS_Tier3,		// m_mapTier4To
-		TNS_Miss,		// m_mapTier5To
+		TNS_W2,	// m_mapW1To
+		TNS_W2,	// m_mapW2To
+		TNS_W3,		// m_mapW3To
+		TNS_W3,		// m_mapW4To
+		TNS_Miss,		// m_mapW5To
 	},
 	{	// GAME_LIGHTS
 		"lights",					// m_szName
@@ -999,11 +999,11 @@ Game g_Games[NUM_GAMES] =
 				NO_DEFAULT_KEY		// LIGHTS_BUTTON_OPERATOR
 			},
 		},
-		TNS_Tier1,	// m_mapTier1To
-		TNS_Tier2,	// m_mapTier2To
-		TNS_Tier3,		// m_mapTier3To
-		TNS_Tier4,		// m_mapTier4To
-		TNS_Tier5,		// m_mapTier5To
+		TNS_W1,	// m_mapW1To
+		TNS_W2,	// m_mapW2To
+		TNS_W3,		// m_mapW3To
+		TNS_W4,		// m_mapW4To
+		TNS_W5,		// m_mapW5To
 	},
 };
 

@@ -331,7 +331,7 @@ void NetworkSyncManager::ReportScore(int playerID, int step, int score, int comb
 		iOffset=1;
 
 	//Report 0 if hold, or miss (don't forget mines should report)
-	if (((step<TNS_Tier5)||(step>TNS_Tier1))&&(step!=TNS_HitMine))
+	if (((step<TNS_W5)||(step>TNS_W1))&&(step!=TNS_HitMine))
 		iOffset = 0;
 
 	m_packet.Write2((uint16_t) iOffset);

@@ -95,13 +95,13 @@ void ScoreDisplayLifeTime::OnJudgment( TapNoteScore tns )
 	float fMeterChange = 0;
 	switch( tns )
 	{
-	case TNS_Tier1:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeTier1;	break;
-	case TNS_Tier2:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeTier2;		break;
-	case TNS_Tier3:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeTier3;		break;
-	case TNS_Tier4:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeTier4;			break;
-	case TNS_Tier5:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeTier5;			break;
-	case TNS_Miss:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeMiss;			break;
-	case TNS_HitMine:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeHitMine;		break;
+	case TNS_W1:			fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_W1);		break;
+	case TNS_W2:			fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_W2);		break;
+	case TNS_W3:			fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_W3);		break;
+	case TNS_W4:			fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_W4);		break;
+	case TNS_W5:			fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_W5);		break;
+	case TNS_Miss:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_Miss);	break;
+	case TNS_HitMine:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_HitMine);	break;
 	default:	ASSERT(0);
 	}
 
@@ -116,8 +116,8 @@ void ScoreDisplayLifeTime::OnJudgment( HoldNoteScore hns, TapNoteScore tns )
 	float fMeterChange = 0;
 	switch( hns )
 	{
-	case HNS_Held:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeHeld;	break;
-	case HNS_LetGo:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChangeLetGo;	break;
+	case HNS_Held:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_Held);	break;
+	case HNS_LetGo:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_LetGo);	break;
 	default:	ASSERT(0);
 	}
 

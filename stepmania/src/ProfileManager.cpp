@@ -129,7 +129,7 @@ ProfileLoadResult ProfileManager::LoadProfile( PlayerNumber pn, CString sProfile
 
 	if( lr == ProfileLoadResult_Success )
 	{
-		/* Next time the profile is written, move this tier4 profile into LastGood. */
+		/* Next time the profile is written, move this good profile into LastGood. */
 		m_bNeedToBackUpLastLoad[pn] = true;
 	}
 
@@ -299,8 +299,8 @@ bool ProfileManager::SaveProfile( PlayerNumber pn ) const
 
 	/*
 	 * If the profile we're writing was loaded from the primary (non-backup)
-	 * data, then we've validated it and know it's tier4.  Before writing our
-	 * new data, move the old, tier4 data to the backup.  (Only do this once;
+	 * data, then we've validated it and know it's good.  Before writing our
+	 * new data, move the old, good data to the backup.  (Only do this once;
 	 * if we save the profile more than once, we havn't re-validated the
 	 * newly written data.)
 	 */

@@ -32,7 +32,7 @@ public:
 	virtual void ForceFail();
 
 	void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty);
-	void FillForHowToPlay(int NumTier2s, int NumMisses);
+	void FillForHowToPlay(int NumT2s, int NumMisses);
 	// this function is solely for HowToPlay
 
 private:
@@ -51,7 +51,7 @@ private:
 	float		m_fLifeDifficulty;		// essentially same as pref
 
 	int			m_iProgressiveLifebar;	// cached from prefs
-	int			m_iMissCombo;			// current number of progressive tier5/miss
+	int			m_iMissCombo;			// current number of progressive W5/miss
 
 	int			m_iComboToRegainLife;	// combo needed before lifebar starts filling up after fail
 };

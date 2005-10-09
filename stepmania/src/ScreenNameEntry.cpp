@@ -358,7 +358,7 @@ void ScreenNameEntry::Input( const InputEventPlus &input )
 		int iStringIndex = m_ColToStringIndex[input.StyleI.player][input.StyleI.col];
 		if( iStringIndex != -1 )
 		{
-			m_ReceptorArrowRow[input.StyleI.player].Step( input.StyleI.col, TNS_Tier1 );
+			m_ReceptorArrowRow[input.StyleI.player].Step( input.StyleI.col, TNS_W1 );
 			m_soundStep.Play();
 			char c = NAME_CHARS[GetClosestCharIndex(m_fFakeBeat)];
 			m_textSelectedChars[input.StyleI.player][input.StyleI.col].SetText( ssprintf("%c",c) );

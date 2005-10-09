@@ -175,32 +175,32 @@ static const CString TapNoteScoreNames[] = {
 	"HitMine",
 	"AvoidMine",
 	"Miss",
-	"Tier5",
-	"Tier4",
-	"Tier3",
-	"Tier2",
-	"Tier1",
+	"W5",
+	"W4",
+	"W3",
+	"W2",
+	"W1",
 };
 XToString( TapNoteScore, NUM_TapNoteScore );
 TapNoteScore StringToTapNoteScore( const CString &s )
 {
-	// for backward compatibility
-	if	   ( s == "Boo" )		return TNS_Tier5;
-	else if( s == "Good" )		return TNS_Tier4;
-	else if( s == "Great" )		return TNS_Tier3;
-	else if( s == "Perfect" )	return TNS_Tier2;
-	else if( s == "Marvelous" )	return TNS_Tier1;
-
 	// new style
-	else if( s == "None" )		return TNS_None;
+	if	   ( s == "None" )		return TNS_None;
 	else if( s == "HitMine" )	return TNS_HitMine;
 	else if( s == "AvoidMine" )	return TNS_AvoidMine;
 	else if( s == "Miss" )		return TNS_Miss;
-	else if( s == "Tier5" )		return TNS_Tier5;
-	else if( s == "Tier4" )		return TNS_Tier4;
-	else if( s == "Tier3" )		return TNS_Tier3;
-	else if( s == "Tier2" )		return TNS_Tier2;
-	else if( s == "Tier1" )		return TNS_Tier1;
+	else if( s == "W5" )		return TNS_W5;
+	else if( s == "W4" )		return TNS_W4;
+	else if( s == "W3" )		return TNS_W3;
+	else if( s == "W2" )		return TNS_W2;
+	else if( s == "W1" )		return TNS_W1;
+
+	// for backward compatibility
+	else if( s == "Boo" )		return TNS_W5;
+	else if( s == "Good" )		return TNS_W4;
+	else if( s == "Great" )		return TNS_W3;
+	else if( s == "Perfect" )	return TNS_W2;
+	else if( s == "Marvelous" )	return TNS_W1;
 
 	return TNS_INVALID;
 }
@@ -226,7 +226,7 @@ XToString( HoldNoteScore, NUM_HoldNoteScore );
 HoldNoteScore StringToHoldNoteScore( const CString &s )
 {
 	// for backward compatibility
-	if	   ( s == "LetGo" )	return HNS_LetGo;
+	if	   ( s == "NG" )	return HNS_LetGo;
 	else if( s == "OK" )	return HNS_Held;
 
 	// new style
@@ -249,6 +249,34 @@ static void LuaHoldNoteScores( lua_State* L )
 REGISTER_WITH_LUA_FUNCTION( LuaHoldNoteScores );
 
 
+static const CString TimingWindowNames[] = {
+	"W1",
+	"W2",
+	"W3",
+	"W4",
+	"W5",
+	"Mine",
+	"Attack",
+	"Hold",
+	"Roll",
+};
+XToString( TimingWindow, NUM_TimingWindow );
+
+
+static const CString ScoreEventNames[] = {
+	"W1",
+	"W2",
+	"W3",
+	"W4",
+	"W5",
+	"Miss",
+	"HitMine",
+	"Held",
+	"LetGo",
+};
+XToString( ScoreEvent, NUM_ScoreEvent );
+
+
 static const CString MemoryCardStateNames[] = {
 	"ready",
 	"checking",
@@ -261,16 +289,16 @@ XToString( MemoryCardState, NUM_MEMORY_CARD_STATES );
 
 
 static const CString PerDifficultyAwardNames[] = {
-	"FullComboTier3",
-	"SingleDigitTier3",
-	"OneTier3",
-	"FullComboTier2",
-	"SingleDigitTier2",
-	"OneTier2",
-	"FullComboTier1",
-	"Percent80Tier3",
-	"Percent90Tier3",
-	"Percent100Tier3",
+	"FullComboW3",
+	"SingleDigitW3",
+	"OneW3",
+	"FullComboW2",
+	"SingleDigitW2",
+	"OneW2",
+	"FullComboW1",
+	"Percent80W3",
+	"Percent90W3",
+	"Percent100W3",
 };
 XToString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );
 XToThemedString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );

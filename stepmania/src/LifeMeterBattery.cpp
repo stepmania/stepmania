@@ -87,12 +87,12 @@ void LifeMeterBattery::ChangeLife( TapNoteScore score )
 
 	switch( score )
 	{
-	case TNS_Tier1:
-	case TNS_Tier2:
-	case TNS_Tier3:
+	case TNS_W1:
+	case TNS_W2:
+	case TNS_W3:
 		break;
-	case TNS_Tier4:
-	case TNS_Tier5:
+	case TNS_W4:
+	case TNS_W5:
 	case TNS_Miss:
 	case TNS_HitMine:
 		m_iTrailingLivesLeft = m_iLivesLeft;

@@ -103,9 +103,9 @@ void ScoreKeeperNormal::Load(
 		m_iRoundTo = 5;
 		if (!GAMESTATE->IsCourseMode())
 		{
-			m_ComboBonusFactor[TNS_Tier1] = 55;
-			m_ComboBonusFactor[TNS_Tier2] = 55;
-			m_ComboBonusFactor[TNS_Tier3] = 33;
+			m_ComboBonusFactor[TNS_W1] = 55;
+			m_ComboBonusFactor[TNS_W2] = 55;
+			m_ComboBonusFactor[TNS_W3] = 33;
 		}
 		break;
 	default:
@@ -195,28 +195,28 @@ void ScoreKeeperNormal::OnNextSong( int iSongInCourseIndex, const Steps* pSteps,
 	m_iTapNotesHit = 0;
 }
 
-static int GetScore(int p, int B, int S, int n)
+static int GetScore(int p, int Z, int S, int n)
 {
-	/* There's a problem with the scoring system described below.  B/S is truncated
+	/* There's a problem with the scoring system described below.  Z/S is truncated
 	 * to an int.  However, in some cases we can end up with very small base scores.
 	 * Each song in a 50-song nonstop course will be worth 2mil, which is a base of
-	 * 200k; B/S will end up being zero.
+	 * 200k; Z/S will end up being zero.
 	 *
-	 * If we rearrange the equation to (p*B*n) / S, this problem goes away.
+	 * If we rearrange the equation to (p*Z*n) / S, this problem goes away.
 	 * (To do that, we need to either use 64-bit ints or rearrange it a little
-	 * more and use floats, since p*B*n won't fit a 32-bit int.)  However, this
+	 * more and use floats, since p*Z*n won't fit a 32-bit int.)  However, this
 	 * changes the scoring rules slightly.
 	 */
 
 #if 0
 	/* This is the actual method described below. */
-	return p * (B / S) * n;
+	return p * (Z / S) * n;
 #elif 1
-	/* This doesn't round down B/S. */
-	return int(int64_t(p) * n * B / S);
+	/* This doesn't round down Z/S. */
+	return int(int64_t(p) * n * Z / S);
 #else
-	/* This also doesn't round down B/S. Use this if you don't have 64-bit ints. */
-	return int(p * n * (float(B) / S));
+	/* This also doesn't round down Z/S. Use this if you don't have 64-bit ints. */
+	return int(p * n * (float(Z) / S));
 #endif
 
 }
@@ -228,18 +228,18 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
 /*
   Regular scoring:
 
-  Let p = score multiplier (Tier2 = 10, Tier3 = 5, other = 0)
+  Let p = score multiplier (W1 = W2 = 10, W3 = 5, other = 0)
   
   Note on NONSTOP Mode scoring
 
-  Let p = score multiplier (Tier1 = 10, Tier2 = 9, Tier3 = 5, other = 0)
+  Let p = score multiplier (W1 = 10, W2 = 9, W3 = 5, other = 0)
 
   N = total number of steps and freeze steps
   S = The sum of all integers from 1 to N (the total number of steps/freeze steps) 
   n = number of the current step or freeze step (varies from 1 to N)
-  B = Base value of the song (1,000,000 X the number of feet difficulty) - All edit data is rated as 5 feet
+  Z = Base value of the song (1,000,000 X the number of feet difficulty) - All edit data is rated as 5 feet
   So, the score for one step is: 
-  one_step_score = p * (B/S) * n 
+  one_step_score = p * (Z/S) * n 
   
   *IMPORTANT* : Double steps (U+L, D+R, etc.) count as two steps instead of one *for your combo count only*, 
   so if you get a double L+R on the 112th step of a song, you score is calculated for only one step, not two, 
@@ -248,13 +248,13 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
   Now, through simple algebraic manipulation:
   S = 1+...+N = (1+N)*N/2 (1 through N added together) 
 
-  Okay, time for an example.  Suppose we wanted to calculate the step score of a "Tier3" on the 57th step of 
+  Okay, time for an example.  Suppose we wanted to calculate the step score of a W3 on the 57th step of 
   a 441 step, 8-foot difficulty song (I'm just making this one up): 
   
   S = (1 + 441)*441 / 2
   = 194,222 / 2
   = 97,461
-  StepScore = p * (B/S) * n
+  StepScore = p * (Z/S) * n
   = 5 * (8,000,000 / 97,461) * 57
   = 5 * (82) * 57 (The 82 is rounded down from 82.08411...)
   = 23,370
@@ -262,16 +262,16 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
   Remember this is just the score for the step, not the cumulative score up to the 57th step. Also, please note that 
   I am currently checking into rounding errors with the system and if there are any, how they are resolved in the system. 
   
-  Note: if you got all Tier2 on this song, you would get (p=10)*B, which is 80,000,000. In fact, the maximum possible 
+  Note: if you got all W2s on this song, you would get (p=10)*Z, which is 80,000,000. In fact, the maximum possible 
   score for any song is the number of feet difficulty X 10,000,000. 
 */
 	int p = 0;	// score multiplier 
 
 	switch( score )
 	{
-	case TNS_Tier1:	p = 10;		break;
-	case TNS_Tier2:	p = GAMESTATE->ShowTier1()? 9:10; break;
-	case TNS_Tier3:		p = 5;		break;
+	case TNS_W1:	p = 10;		break;
+	case TNS_W2:	p = GAMESTATE->ShowW1()? 9:10; break;
+	case TNS_W3:		p = 5;		break;
 	default:			p = 0;		break;
 	}
 
@@ -279,7 +279,7 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
 
 	const int N = m_iNumTapsAndHolds;
 	const int sum = (N * (N + 1)) / 2;
-	const int B = m_iMaxPossiblePoints/10;
+	const int Z = m_iMaxPossiblePoints/10;
 
 	// Don't use a multiplier if the player has failed
 	if( m_pPlayerStageStats->bFailedEarlier )
@@ -294,17 +294,17 @@ void ScoreKeeperNormal::AddScore( TapNoteScore score )
 	}
 	else
 	{
-		iScore += GetScore(p, B, sum, m_iTapNotesHit);
+		iScore += GetScore(p, Z, sum, m_iTapNotesHit);
 		const int &iCurrentCombo = m_pPlayerStageStats->iCurCombo;
 		m_pPlayerStageStats->iBonus += m_ComboBonusFactor[score] * iCurrentCombo;
 	}
 
 	/* Subtract the maximum this step could have been worth from the bonus. */
-	m_iPointBonus -= GetScore(10, B, sum, m_iTapNotesHit);
+	m_iPointBonus -= GetScore(10, Z, sum, m_iTapNotesHit);
 	/* And add the maximum this step could have been worth to the max score up to now. */
-	iCurMaxScore += GetScore(10, B, sum, m_iTapNotesHit);
+	iCurMaxScore += GetScore(10, Z, sum, m_iTapNotesHit);
 
-	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_Tier2 )
+	if ( m_iTapNotesHit == m_iNumTapsAndHolds && score >= TNS_W2 )
 	{
 		if (!m_pPlayerStageStats->bFailedEarlier)
 			iScore += m_iPointBonus;
@@ -349,13 +349,13 @@ void ScoreKeeperNormal::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNum
 	// Update dance points.
 	if( !m_pPlayerStageStats->bFailed )
 		m_pPlayerStageStats->iActualDancePoints += TapNoteScoreToDancePoints( scoreOfLastTap );
-	m_pPlayerStageStats->iCurPossibleDancePoints += TapNoteScoreToDancePoints( TNS_Tier1 );
+	m_pPlayerStageStats->iCurPossibleDancePoints += TapNoteScoreToDancePoints( TNS_W1 );
 	// update judged row totals
 	m_pPlayerStageStats->iTapNoteScores[scoreOfLastTap] += 1;
 
 	// increment the current total possible dance score
 
-	m_pPlayerStageStats->iCurPossibleDancePoints += TapNoteScoreToDancePoints( TNS_Tier1 );
+	m_pPlayerStageStats->iCurPossibleDancePoints += TapNoteScoreToDancePoints( TNS_W1 );
 
 	//
 	// Regular combo
@@ -385,8 +385,8 @@ void ScoreKeeperNormal::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNum
 	//
 	switch( scoreOfLastTap )
 	{
-	case TNS_Tier1:
-	case TNS_Tier2:
+	case TNS_W1:
+	case TNS_W2:
 		m_iCurToastyCombo += iNumTapsInRow;
 
 		if( m_iCurToastyCombo >= 250 &&
@@ -426,15 +426,15 @@ void ScoreKeeperNormal::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore t
 	m_pPlayerStageStats->iCurPossibleDancePoints += HoldNoteScoreToDancePoints( HNS_Held );
 
 	if( holdScore == HNS_Held )
-		AddScore( TNS_Tier1 );
+		AddScore( TNS_W1 );
 	else if ( holdScore == HNS_LetGo )
-		AddScore( TNS_Tier4 ); // required for subtractive score display to work properly
+		AddScore( TNS_W4 ); // required for subtractive score display to work properly
 
 	// TODO: Remove indexing with PlayerNumber
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 	NSMAN->ReportScore(
 		pn, 
-		holdScore+TNS_Tier1, 
+		holdScore+TNS_W1, 
         m_pPlayerStageStats->iScore,
         m_pPlayerStageStats->iCurCombo );
 }
@@ -442,14 +442,14 @@ void ScoreKeeperNormal::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore t
 
 int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& radars )
 {
-	/* Note that, if Tier1 timing is disabled or not active (not course mode),
-	 * PERFECT will be used instead. */
+	/* Note that, if W1 timing is disabled or not active (not course mode),
+	 * W2 will be used instead. */
 
 	int NumTaps = int(radars[RADAR_NUM_TAPS_AND_HOLDS]);
 	int NumHolds = int(radars[RADAR_NUM_HOLDS]); 
 	int NumRolls = int(radars[RADAR_NUM_ROLLS]); 
 	return 
-		NumTaps*TapNoteScoreToDancePoints(TNS_Tier1, false)+
+		NumTaps*TapNoteScoreToDancePoints(TNS_W1, false)+
 		NumHolds*HoldNoteScoreToDancePoints(HNS_Held, false) +
 		NumRolls*HoldNoteScoreToDancePoints(HNS_Held, false);
 }
@@ -467,14 +467,14 @@ int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& fOriginalRadar
 
 int ScoreKeeperNormal::GetPossibleGradePoints( const RadarValues& radars )
 {
-	/* Note that, if Tier1 timing is disabled or not active (not course mode),
-	 * PERFECT will be used instead. */
+	/* Note that, if W1 timing is disabled or not active (not course mode),
+	 * W2 will be used instead. */
 
 	int NumTaps = int(radars[RADAR_NUM_TAPS_AND_HOLDS]);
 	int NumHolds = int(radars[RADAR_NUM_HOLDS]); 
 	int NumRolls = int(radars[RADAR_NUM_ROLLS]); 
 	return 
-		NumTaps*TapNoteScoreToGradePoints(TNS_Tier1, false)+
+		NumTaps*TapNoteScoreToGradePoints(TNS_W1, false)+
 		NumHolds*HoldNoteScoreToGradePoints(HNS_Held, false) +
 		NumRolls*HoldNoteScoreToGradePoints(HNS_Held, false);
 }
@@ -511,23 +511,23 @@ int ScoreKeeperNormal::HoldNoteScoreToGradePoints( HoldNoteScore hns ) const
 
 int ScoreKeeperNormal::TapNoteScoreToDancePoints( TapNoteScore tns, bool bBeginner )
 {
-	if( !GAMESTATE->ShowTier1() && tns == TNS_Tier1 )
-		tns = TNS_Tier2;
+	if( !GAMESTATE->ShowW1() && tns == TNS_W1 )
+		tns = TNS_W2;
 
 	/* This is used for Oni percentage displays.  Grading values are currently in
 	 * StageStats::GetGrade. */
 	int iWeight = 0;
 	switch( tns )
 	{
-	case TNS_None:		iWeight = 0;
-	case TNS_HitMine:	iWeight = PREFSMAN->m_iPercentScoreWeightHitMine;	break;
-	case TNS_Miss:		iWeight = PREFSMAN->m_iPercentScoreWeightMiss;		break;
-	case TNS_Tier5:		iWeight = PREFSMAN->m_iPercentScoreWeightTier5;		break;
-	case TNS_Tier4:		iWeight = PREFSMAN->m_iPercentScoreWeightTier4;		break;
-	case TNS_Tier3:		iWeight = PREFSMAN->m_iPercentScoreWeightTier3;		break;
-	case TNS_Tier2:	iWeight = PREFSMAN->m_iPercentScoreWeightTier2;	break;
-	case TNS_Tier1:	iWeight = PREFSMAN->m_iPercentScoreWeightTier1;	break;
 	default: FAIL_M( ssprintf("%i", tns) );
+	case TNS_None:		iWeight = 0;												break;
+	case TNS_HitMine:	iWeight = PREFSMAN->m_iPercentScoreWeight.Get(SE_HitMine);	break;
+	case TNS_Miss:		iWeight = PREFSMAN->m_iPercentScoreWeight.Get(SE_Miss);		break;
+	case TNS_W5:			iWeight = PREFSMAN->m_iPercentScoreWeight.Get(SE_W5);		break;
+	case TNS_W4:			iWeight = PREFSMAN->m_iPercentScoreWeight.Get(SE_W4);		break;
+	case TNS_W3:			iWeight = PREFSMAN->m_iPercentScoreWeight.Get(SE_W3);		break;
+	case TNS_W2:			iWeight = PREFSMAN->m_iPercentScoreWeight.Get(SE_W2);		break;
+	case TNS_W1:			iWeight = PREFSMAN->m_iPercentScoreWeight.Get(SE_W1);		break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
@@ -539,10 +539,10 @@ int ScoreKeeperNormal::HoldNoteScoreToDancePoints( HoldNoteScore hns, bool bBegi
 	int iWeight = 0;
 	switch( hns )
 	{
-	case HNS_None:	iWeight = 0;									break;
-	case HNS_LetGo:	iWeight = PREFSMAN->m_iPercentScoreWeightLetGo;	break;
-	case HNS_Held:	iWeight = PREFSMAN->m_iPercentScoreWeightHeld;	break;
 	default: FAIL_M( ssprintf("%i", hns) );
+	case HNS_None:	iWeight = 0;												break;
+	case HNS_LetGo:	iWeight = PREFSMAN->m_iPercentScoreWeight.Get(SE_LetGo);	break;
+	case HNS_Held:	iWeight = PREFSMAN->m_iPercentScoreWeight.Get(SE_Held);		break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
@@ -551,24 +551,24 @@ int ScoreKeeperNormal::HoldNoteScoreToDancePoints( HoldNoteScore hns, bool bBegi
 
 int ScoreKeeperNormal::TapNoteScoreToGradePoints( TapNoteScore tns, bool bBeginner )
 {
-	if( !GAMESTATE->ShowTier1() && tns == TNS_Tier1 )
-		tns = TNS_Tier2;
+	if( !GAMESTATE->ShowW1() && tns == TNS_W1 )
+		tns = TNS_W2;
 
 	/* This is used for Oni percentage displays.  Grading values are currently in
 	 * StageStats::GetGrade. */
 	int iWeight = 0;
 	switch( tns )
 	{
-	case TNS_None:			iWeight = 0;
-	case TNS_AvoidMine:	iWeight = 0;
-	case TNS_HitMine:		iWeight = PREFSMAN->m_iGradeWeightHitMine;	break;
-	case TNS_Miss:			iWeight = PREFSMAN->m_iGradeWeightMiss;		break;
-	case TNS_Tier5:			iWeight = PREFSMAN->m_iGradeWeightTier5;		break;
-	case TNS_Tier4:			iWeight = PREFSMAN->m_iGradeWeightTier4;		break;
-	case TNS_Tier3:			iWeight = PREFSMAN->m_iGradeWeightTier3;	break;
-	case TNS_Tier2:		iWeight = PREFSMAN->m_iGradeWeightTier2;	break;
-	case TNS_Tier1:		iWeight = PREFSMAN->m_iGradeWeightTier1;break;
 	default: FAIL_M( ssprintf("%i", tns) );
+	case TNS_None:		iWeight = 0;										break;
+	case TNS_AvoidMine:	iWeight = 0;										break;
+	case TNS_HitMine:	iWeight = PREFSMAN->m_iGradeWeight.Get(SE_HitMine);	break;
+	case TNS_Miss:		iWeight = PREFSMAN->m_iGradeWeight.Get(SE_Miss);	break;
+	case TNS_W5:			iWeight = PREFSMAN->m_iGradeWeight.Get(SE_W5);		break;
+	case TNS_W4:			iWeight = PREFSMAN->m_iGradeWeight.Get(SE_W4);		break;
+	case TNS_W3:			iWeight = PREFSMAN->m_iGradeWeight.Get(SE_W3);		break;
+	case TNS_W2:			iWeight = PREFSMAN->m_iGradeWeight.Get(SE_W2);		break;
+	case TNS_W1:			iWeight = PREFSMAN->m_iGradeWeight.Get(SE_W1);		break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );
@@ -580,10 +580,10 @@ int ScoreKeeperNormal::HoldNoteScoreToGradePoints( HoldNoteScore hns, bool bBegi
 	int iWeight = 0;
 	switch( hns )
 	{
-	case HNS_None:	iWeight = 0;							break;
-	case HNS_LetGo:	iWeight = PREFSMAN->m_iGradeWeightLetGo;	break;
-	case HNS_Held:	iWeight = PREFSMAN->m_iGradeWeightHeld;	break;
 	default: FAIL_M( ssprintf("%i", hns) );
+	case HNS_None:	iWeight = 0;										break;
+	case HNS_LetGo:	iWeight = PREFSMAN->m_iGradeWeight.Get(SE_LetGo);	break;
+	case HNS_Held:	iWeight = PREFSMAN->m_iGradeWeight.Get(SE_Held);	break;
 	}
 	if( bBeginner && PREFSMAN->m_bMercifulBeginner )
 		iWeight = max( 0, iWeight );

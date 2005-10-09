@@ -33,9 +33,9 @@ protected:
 	ThemeMetric<float>				NUMBER_MAX_ZOOM_AT;
 	ThemeMetric<apActorCommands>	PULSE_COMMAND;
 	ThemeMetric<float>				TWEEN_SECONDS;
-	ThemeMetric<apActorCommands>	FULL_COMBO_TIER3_COMMAND;
-	ThemeMetric<apActorCommands>	FULL_COMBO_TIER2_COMMAND;
-	ThemeMetric<apActorCommands>	FULL_COMBO_TIER1_COMMAND;
+	ThemeMetric<apActorCommands>	FULL_COMBO_W3_COMMAND;
+	ThemeMetric<apActorCommands>	FULL_COMBO_W2_COMMAND;
+	ThemeMetric<apActorCommands>	FULL_COMBO_W1_COMMAND;
 	ThemeMetric<apActorCommands>	FULL_COMBO_BROKEN_COMMAND;
 	ThemeMetric<bool>				SHOW_MISS_COMBO;
 

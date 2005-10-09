@@ -93,7 +93,8 @@ PlayMode StringToPlayMode( const CString& s );
 
 
 
-enum SortOrder {
+enum SortOrder 
+{
 	SORT_PREFERRED,
 	SORT_GROUP, 
 	SORT_TITLE, 
@@ -131,11 +132,11 @@ enum TapNoteScore {
 	TNS_HitMine,
 	TNS_AvoidMine,
 	TNS_Miss,
-	TNS_Tier5,
-	TNS_Tier4,
-	TNS_Tier3,
-	TNS_Tier2,
-	TNS_Tier1,
+	TNS_W5,
+	TNS_W4,
+	TNS_W3,
+	TNS_W2,
+	TNS_W1,
 	NUM_TapNoteScore,
 	TNS_INVALID,
 };
@@ -156,22 +157,39 @@ enum HoldNoteScore
 #define FOREACH_HoldNoteScore( hns ) FOREACH_ENUM( HoldNoteScore, NUM_HoldNoteScore, hns )
 const CString& HoldNoteScoreToString( HoldNoteScore hns );
 const CString& HoldNoteScoreToThemedString( HoldNoteScore hns );
-
 HoldNoteScore StringToHoldNoteScore( const CString& str );
 
 
 enum TimingWindow
 {
-	TW_Tier1,
-	TW_Tier2,
-	TW_Tier3,
-	TW_Tier4,
-	TW_Tier5,
+	TW_W1,
+	TW_W2,
+	TW_W3,
+	TW_W4,
+	TW_W5,
 	TW_Mine,
 	TW_Attack,
-	TW_Held,
-	TW_Roll
+	TW_Hold,
+	TW_Roll,
+	NUM_TimingWindow
 };
+const CString& TimingWindowToString( TimingWindow i );
+
+
+enum ScoreEvent
+{
+	SE_W1,
+	SE_W2,
+	SE_W3,
+	SE_W4,
+	SE_W5,
+	SE_Miss,
+	SE_HitMine,
+	SE_Held,
+	SE_LetGo,
+	NUM_ScoreEvent
+};
+const CString& ScoreEventToString( ScoreEvent i );
 
 
 //
@@ -307,16 +325,16 @@ const CString& PremiumToString( Premium p );
 
 enum PerDifficultyAward
 {
-	AWARD_FULL_COMBO_TIER3,
-	AWARD_SINGLE_DIGIT_TIER3,
-	AWARD_ONE_TIER3,
-	AWARD_FULL_COMBO_TIER2,
-	AWARD_SINGLE_DIGIT_TIER2,
-	AWARD_ONE_TIER2,
-	AWARD_FULL_COMBO_TIER1,
-	AWARD_PERCENT_80_TIER3,
-	AWARD_PERCENT_90_TIER3,
-	AWARD_PERCENT_100_TIER3,
+	AWARD_FULL_COMBO_W3,
+	AWARD_SINGLE_DIGIT_W3,
+	AWARD_ONE_W3,
+	AWARD_FULL_COMBO_W2,
+	AWARD_SINGLE_DIGIT_W2,
+	AWARD_ONE_W2,
+	AWARD_FULL_COMBO_W1,
+	AWARD_PERCENT_80_W3,
+	AWARD_PERCENT_90_W3,
+	AWARD_PERCENT_100_W3,
 	NUM_PER_DIFFICULTY_AWARDS,
 	PER_DIFFICULTY_AWARD_INVALID,
 };

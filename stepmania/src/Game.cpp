@@ -105,11 +105,11 @@ TapNoteScore Game::MapTapNoteScore( TapNoteScore tns ) const
 {
 	switch( tns )
 	{
-	case TNS_Tier1: return m_mapTier1To;
-	case TNS_Tier2: return m_mapTier2To;
-	case TNS_Tier3: return m_mapTier3To;
-	case TNS_Tier4: return m_mapTier4To;
-	case TNS_Tier5: return m_mapTier5To;
+	case TNS_W1: return m_mapW1To;
+	case TNS_W2: return m_mapW2To;
+	case TNS_W3: return m_mapW3To;
+	case TNS_W4: return m_mapW4To;
+	case TNS_W5: return m_mapW5To;
 	default: return tns;
 	}
 }

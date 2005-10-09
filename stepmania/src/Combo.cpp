@@ -34,9 +34,9 @@ void Combo::Load( PlayerState *pPlayerState, PlayerStageStats *pPlayerStageStats
 	NUMBER_MAX_ZOOM		.Load(m_sName,"NumberMaxZoom");
 	NUMBER_MAX_ZOOM_AT	.Load(m_sName,"NumberMaxZoomAt");
 	PULSE_COMMAND		.Load(m_sName,"PulseCommand");
-	FULL_COMBO_TIER3_COMMAND	.Load(m_sName,"FullComboTier3Command");
-	FULL_COMBO_TIER2_COMMAND	.Load(m_sName,"FullComboTier2Command");
-	FULL_COMBO_TIER1_COMMAND	.Load(m_sName,"FullComboTier1Command");
+	FULL_COMBO_W3_COMMAND	.Load(m_sName,"FullComboW3Command");
+	FULL_COMBO_W2_COMMAND	.Load(m_sName,"FullComboW2Command");
+	FULL_COMBO_W1_COMMAND	.Load(m_sName,"FullComboW1Command");
 	FULL_COMBO_BROKEN_COMMAND	.Load(m_sName,"FullComboBrokenCommand");
 	SHOW_MISS_COMBO				.Load(m_sName,"ShowMissCombo");
 	
@@ -126,20 +126,20 @@ void Combo::SetCombo( int iCombo, int iMisses )
 
 	if( bPastMidpoint )
 	{
-		if( m_pPlayerStageStats->FullComboOfScore(TNS_Tier1) )
+		if( m_pPlayerStageStats->FullComboOfScore(TNS_W1) )
 		{
-			sprLabel->RunCommands( FULL_COMBO_TIER1_COMMAND );
-			m_textNumber.RunCommands( FULL_COMBO_TIER1_COMMAND );
+			sprLabel->RunCommands( FULL_COMBO_W1_COMMAND );
+			m_textNumber.RunCommands( FULL_COMBO_W1_COMMAND );
 		}
-		else if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_Tier2) )
+		else if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W2) )
 		{
-			sprLabel->RunCommands( FULL_COMBO_TIER2_COMMAND );
-			m_textNumber.RunCommands( FULL_COMBO_TIER2_COMMAND );
+			sprLabel->RunCommands( FULL_COMBO_W2_COMMAND );
+			m_textNumber.RunCommands( FULL_COMBO_W2_COMMAND );
 		}
-		else if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_Tier3) )
+		else if( bPastMidpoint && m_pPlayerStageStats->FullComboOfScore(TNS_W3) )
 		{
-			sprLabel->RunCommands( FULL_COMBO_TIER3_COMMAND );
-			m_textNumber.RunCommands( FULL_COMBO_TIER3_COMMAND );
+			sprLabel->RunCommands( FULL_COMBO_W3_COMMAND );
+			m_textNumber.RunCommands( FULL_COMBO_W3_COMMAND );
 		}
 		else
 		{

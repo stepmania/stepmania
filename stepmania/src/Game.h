@@ -57,11 +57,11 @@ public:
 	CString ColToButtonName( int col ) const;	// looks up current style.  Yuck.
 
 	TapNoteScore MapTapNoteScore( TapNoteScore tns ) const;
-	TapNoteScore m_mapTier1To;
-	TapNoteScore m_mapTier2To;
-	TapNoteScore m_mapTier3To;
-	TapNoteScore m_mapTier4To;
-	TapNoteScore m_mapTier5To;
+	TapNoteScore m_mapW1To;
+	TapNoteScore m_mapW2To;
+	TapNoteScore m_mapW3To;
+	TapNoteScore m_mapW4To;
+	TapNoteScore m_mapW5To;
 
 	//
 	// Lua

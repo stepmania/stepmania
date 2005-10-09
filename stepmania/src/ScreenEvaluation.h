@@ -16,8 +16,28 @@
 #include "ThemeMetric.h"
 
 const int MAX_SONGS_TO_SHOW = 5;	// In summary, we show last 3 stages, plus extra stages if passed
-enum JudgeLine { tier1, tier2, tier3, tier4, tier5, miss, ok, max_combo, error, NUM_JUDGE_LINES };
-enum StatsLine { jumps, holds, mines, hands, rolls, NUM_STATS_LINES };
+enum JudgeLine
+{
+	JudgeLine_W1, 
+	JudgeLine_W2, 
+	JudgeLine_W3, 
+	JudgeLine_W4, 
+	JudgeLine_W5, 
+	JudgeLine_Miss, 
+	JudgeLine_Held, 
+	JudgeLine_MaxCombo, 
+	JudgeLine_Error, 
+	NUM_JudgeLine
+};
+enum StatLine
+{
+	StatLine_Jumps, 
+	StatLine_Holds, 
+	StatLine_Mines, 
+	StatLine_Hands, 
+	StatLine_Rolls, 
+	NUM_StatLine 
+};
 
 class ScreenEvaluation : public ScreenWithMenuElements
 {
@@ -69,12 +89,12 @@ protected:
 	Sprite				m_sprWin[NUM_PLAYERS];
 
 	// judgment area
-	Sprite				m_sprJudgeLabels[NUM_JUDGE_LINES];
-	BitmapText			m_textJudgeNumbers[NUM_JUDGE_LINES][NUM_PLAYERS];
+	Sprite				m_sprJudgeLabels[NUM_JudgeLine];
+	BitmapText			m_textJudgeNumbers[NUM_JudgeLine][NUM_PLAYERS];
 
 	// stats area
-	AutoActor			m_sprStatsLabel[NUM_STATS_LINES];
-	BitmapText			m_textStatsText[NUM_STATS_LINES][NUM_PLAYERS];
+	AutoActor			m_sprStatsLabel[NUM_StatLine];
+	BitmapText			m_textStatsText[NUM_StatLine][NUM_PLAYERS];
 
 	// score area
 	AutoActor			m_sprScoreLabel;

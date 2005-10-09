@@ -14,16 +14,17 @@
 #include "PercentageDisplay.h"
 
 
-static const CString JudgeLineNames[] = {
-	"Tier1",
-	"Tier2",
-	"Tier3",
-	"Tier4",
-	"Tier5",
+static const CString MultiplayerJudgeLineNames[] = {
+	"W1",
+	"W2",
+	"W3",
+	"W4",
+	"W5",
 	"Miss",
-	"Ok",
+	"Held",
 };
-XToString( JudgeLine, NUM_JudgeLine );
+XToString( MultiplayerJudgeLine, NUM_MultiplayerJudgeLine );
+#define FOREACH_MultiplayerJudgeLine( i ) FOREACH_ENUM( MultiplayerJudgeLine, NUM_MultiplayerJudgeLine, i )
 
 static void PositionItem( LuaExpression &expr, Actor *pSelf, int iItemIndex, int iNumItems )
 {
@@ -42,7 +43,7 @@ class MultiplayerEvalScoreRow : public ActorFrame
 protected:
 	AutoActor m_sprFrame;
 	PercentageDisplay	m_score;
-	BitmapText	m_textJudgmentNumber[NUM_JudgeLine];
+	BitmapText	m_textJudgmentNumber[NUM_MultiplayerJudgeLine];
 
 public:
 	MultiplayerEvalScoreRow( MultiPlayer mp, int iRankIndex )
@@ -66,7 +67,7 @@ public:
 		LuaExpression expr;
 		expr.SetFromExpression( THEME->GetMetric("MultiplayerEvalScoreRow","NumberOnCommandFunction") );
 
-		for( int i=0; i<NUM_JudgeLine; i++ )
+		FOREACH_MultiplayerJudgeLine( i )
 		{
 			BitmapText &text = m_textJudgmentNumber[i];
 			text.LoadFromFont( THEME->GetPathF("MultiplayerEvalScoreRow","JudgmentNumber") );
@@ -76,19 +77,19 @@ public:
 			switch( i )
 			{
 			default:	ASSERT(0);
-			case JudgeLine_Tier1:	iVal = pPlayerStageStats->iTapNoteScores[TNS_Tier1];break;
-			case JudgeLine_Tier2:		iVal = pPlayerStageStats->iTapNoteScores[TNS_Tier2];	break;
-			case JudgeLine_Tier3:		iVal = pPlayerStageStats->iTapNoteScores[TNS_Tier3];	break;
-			case JudgeLine_Tier4:		iVal = pPlayerStageStats->iTapNoteScores[TNS_Tier4];		break;
-			case JudgeLine_Tier5:			iVal = pPlayerStageStats->iTapNoteScores[TNS_Tier5];		break;
-			case JudgeLine_Miss:		iVal = pPlayerStageStats->iTapNoteScores[TNS_Miss];		break;
-			case JudgeLine_Ok:			iVal = pPlayerStageStats->iHoldNoteScores[HNS_Held];		break;
+			case MultiplayerJudgeLine_W1:		iVal = pPlayerStageStats->iTapNoteScores[TNS_W1];	break;
+			case MultiplayerJudgeLine_W2:		iVal = pPlayerStageStats->iTapNoteScores[TNS_W2];	break;
+			case MultiplayerJudgeLine_W3:		iVal = pPlayerStageStats->iTapNoteScores[TNS_W3];	break;
+			case MultiplayerJudgeLine_W4:		iVal = pPlayerStageStats->iTapNoteScores[TNS_W4];	break;
+			case MultiplayerJudgeLine_W5:		iVal = pPlayerStageStats->iTapNoteScores[TNS_W5];	break;
+			case MultiplayerJudgeLine_Miss:		iVal = pPlayerStageStats->iTapNoteScores[TNS_Miss];	break;
+			case MultiplayerJudgeLine_Held:		iVal = pPlayerStageStats->iHoldNoteScores[HNS_Held];break;
 			}
 			
 			CString s = ssprintf( "%3d", iVal );
 			text.SetText( s );
 
-			PositionItem( expr, &text, i, NUM_JudgeLine );
+			PositionItem( expr, &text, i, NUM_MultiplayerJudgeLine );
 		}
 	}
 };
@@ -149,10 +150,10 @@ ScreenEvaluationMultiplayer::ScreenEvaluationMultiplayer( CString sClassName ) :
 			{
 				STATSMAN->m_CurStageStats.m_multiPlayer[p].bFailedEarlier = true;
 			}
-			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_Tier1] = rand()%3;
-			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_Tier2] = rand()%3;
-			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_Tier3] = rand()%3;
-			STATSMAN->m_CurStageStats.m_multiPlayer[p].iPossibleGradePoints = 4*ScoreKeeperNormal::TapNoteScoreToGradePoints(TNS_Tier1, false);
+			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_W1] = rand()%3;
+			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_W2] = rand()%3;
+			STATSMAN->m_CurStageStats.m_multiPlayer[p].iTapNoteScores[TNS_W3] = rand()%3;
+			STATSMAN->m_CurStageStats.m_multiPlayer[p].iPossibleGradePoints = 4*ScoreKeeperNormal::TapNoteScoreToGradePoints(TNS_W1, false);
 			STATSMAN->m_CurStageStats.m_multiPlayer[p].fLifeRemainingSeconds = randomf( 90, 580 );
 		}
 
@@ -199,13 +200,13 @@ void ScreenEvaluationMultiplayer::Init()
 		LuaExpression expr;
 		expr.SetFromExpression( THEME->GetMetric("ScreenEvaluationMultiplayer","LabelOnCommandFunction") );
 
-		FOREACH_JudgeLine( i )
+		FOREACH_MultiplayerJudgeLine( i )
 		{
 			AutoActor &a = m_sprJudgmentLabel[i];
-			a.Load( THEME->GetPathG("ScreenEvaluationMultiplayer","JudgmentLabel"+JudgeLineToString(i)) );
+			a.Load( THEME->GetPathG("ScreenEvaluationMultiplayer","JudgmentLabel"+MultiplayerJudgeLineToString(i)) );
 			m_frameLabels.AddChild( m_sprJudgmentLabel[i] );
 
-			PositionItem( expr, a, i, NUM_JudgeLine );
+			PositionItem( expr, a, i, NUM_MultiplayerJudgeLine );
 		}
 	}
 

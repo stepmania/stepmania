@@ -40,8 +40,14 @@ Grade StringToGrade( const CString &sGrade )
 	CString s = sGrade;
 	s.MakeUpper();
 
+	// new style
+	int iTier;
+	if( sscanf(sGrade.c_str(),"Tier%02d",&iTier) == 1 )		return (Grade)(iTier-1);
+	else if( s == "FAILED" )	return Grade_Failed;
+	else if( s == "NODATA" )	return Grade_NoData;
+
 	// for backward compatibility
-	if	   ( s == "AAAA" )		return Grade_Tier01;
+	else if( s == "AAAA" )		return Grade_Tier01;
 	else if( s == "AAA" )		return Grade_Tier02;
 	else if( s == "AA" )		return Grade_Tier03;
 	else if( s == "A" )			return Grade_Tier04;
@@ -50,15 +56,6 @@ Grade StringToGrade( const CString &sGrade )
 	else if( s == "D" )			return Grade_Tier07;
 	else if( s == "E" )			return Grade_Failed;
 	else if( s == "N" )			return Grade_NoData;
-
-
-	// new style
-	if	   ( s == "FAILED" )	return Grade_Failed;
-	else if( s == "NODATA" )	return Grade_NoData;
-
-	int iTier;
-	if( sscanf(sGrade.c_str(),"Tier%02d",&iTier) == 1 )
-		return (Grade)(iTier-1);
 
 	LOG->Warn( "Invalid grade: %s", sGrade.c_str() );
 	return Grade_NoData;

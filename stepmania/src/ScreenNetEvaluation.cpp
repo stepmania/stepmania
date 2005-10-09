@@ -199,7 +199,7 @@ void ScreenNetEvaluation::UpdateStats()
 
 	for (int j=0; j<NETNUMTAPSCORES; ++j)
 	{
-		int iNumDigits = (j==max_combo) ? MAX_COMBO_NUM_DIGITS : 4;
+		int iNumDigits = (j==JudgeLine_MaxCombo) ? MAX_COMBO_NUM_DIGITS : 4;
 		if (m_textJudgeNumbers[j][m_pActivePlayer].m_pFont != NULL)
 			m_textJudgeNumbers[j][m_pActivePlayer].SetText( ssprintf( "%*d", iNumDigits, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].tapScores[j] ) );
 	}

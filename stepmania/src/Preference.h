@@ -76,6 +76,34 @@ public:
 	}
 };
 
+template <class T>
+class Preference1D
+{
+	typedef Preference<T> PreferenceT;
+	vector<PreferenceT*> m_v;
+
+public:
+	Preference1D( void (pfn)(size_t i, CString &sNameOut, T &defaultValueOut ), size_t N )
+	{
+		for( unsigned i=0; i<N; i++ )
+		{
+			CString sName;
+			T defaultValue;
+			pfn( i, sName, defaultValue );
+			m_v.push_back( new Preference<T>(sName,defaultValue) );
+		}
+	}
+	~Preference1D()
+	{
+		for( unsigned i=0; i<m_v.size(); i++ )
+			SAFE_DELETE( m_v[i] );
+	}
+	const Preference<T>& Get( size_t i ) const
+	{
+		return *m_v[i];
+	}
+};
+
 #endif
 
 /*

@@ -5,20 +5,18 @@
 
 class MultiplayerEvalScoreRow;
 
-enum JudgeLine
+enum MultiplayerJudgeLine
 {
-	JudgeLine_Tier1,
-	JudgeLine_Tier2,
-	JudgeLine_Tier3,
-	JudgeLine_Tier4,
-	JudgeLine_Tier5,
-	JudgeLine_Miss,
-	JudgeLine_Ok,
-	NUM_JudgeLine,
-	JudgeLine_INVALID
+	MultiplayerJudgeLine_W1,
+	MultiplayerJudgeLine_W2,
+	MultiplayerJudgeLine_W3,
+	MultiplayerJudgeLine_W4,
+	MultiplayerJudgeLine_W5,
+	MultiplayerJudgeLine_Miss,
+	MultiplayerJudgeLine_Held,
+	NUM_MultiplayerJudgeLine,
+	MultiplayerJudgeLine_INVALID
 };
-#define FOREACH_JudgeLine( i ) FOREACH_ENUM( JudgeLine, NUM_JudgeLine, i )
-const CString& JudgeLineToString( JudgeLine i );
 
 class ScreenEvaluationMultiplayer : public ScreenWithMenuElements
 {
@@ -37,7 +35,7 @@ protected:
 	void MenuStart( PlayerNumber pn );
 
 	ActorFrame m_frameLabels;
-	AutoActor m_sprJudgmentLabel[NUM_JudgeLine];
+	AutoActor m_sprJudgmentLabel[NUM_MultiplayerJudgeLine];
 
 	vector<AutoActor>		m_vsprBullet;
 	vector<MultiplayerEvalScoreRow*>	m_vpMultiplayerEvalScoreRow;

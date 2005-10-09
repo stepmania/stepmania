@@ -39,14 +39,19 @@ const int NUM_SCORE_DIGITS	=	9;
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH						THEME->GetMetricF(m_sName,"BannerWidth")
 #define BANNER_HEIGHT						THEME->GetMetricF(m_sName,"BannerHeight")
-const char* JUDGE_STRING[NUM_JUDGE_LINES] =
+static const CString JudgeLineNames[] =
 {
-	"Tier1", "Tier2", "Tier3", "Tier4", "Tier5", "Miss", "OK", "MaxCombo", "TotalError"
+	"W1", "W2", "W3", "W4", "W5", "Miss", "OK", "MaxCombo", "TotalError"
 };
-const char* STATS_STRING[NUM_STATS_LINES] =
+XToString( JudgeLine, NUM_JudgeLine );
+#define FOREACH_JudgeLine( rc ) FOREACH_ENUM( JudgeLine, NUM_JudgeLine, rc )
+
+static const CString StatLineNames[NUM_StatLine] =
 {
 	"Jumps", "Holds", "Mines", "Hands", "Rolls",
 };
+XToString( StatLine, NUM_StatLine );
+#define FOREACH_StatLine( rc ) FOREACH_ENUM( StatLine, NUM_StatLine, rc )
 
 #define SPIN_GRADES							THEME->GetMetricB(m_sName,"SpinGrades")
 #define CHEER_DELAY_SECONDS					THEME->GetMetricF(m_sName,"CheerDelaySeconds")
@@ -60,10 +65,10 @@ const char* STATS_STRING[NUM_STATS_LINES] =
 #define SHOW_SURVIVED_AREA					THEME->GetMetricB(m_sName,"ShowSurvivedArea")
 #define SHOW_WIN_AREA						THEME->GetMetricB(m_sName,"ShowWinArea")
 #define SHOW_JUDGMENT_LABELS				THEME->GetMetricB(m_sName,"ShowJudgmentLabels")
-#define SHOW_JUDGMENT( l )					THEME->GetMetricB(m_sName,ssprintf("Show%s",JUDGE_STRING[l]))
+#define SHOW_JUDGMENT( l )					THEME->GetMetricB(m_sName,"Show"+JudgeLineToString(l))
 #define SHOW_STATS_LABELS					THEME->GetMetricB(m_sName,"ShowStatsLabels")
 
-#define SHOW_STAT( s )						THEME->GetMetricB(m_sName,ssprintf("Show%s",STATS_STRING[l]))
+#define SHOW_STAT( s )						THEME->GetMetricB(m_sName,"Show"+StatLineToString(l))
 #define SHOW_SCORE_AREA						THEME->GetMetricB(m_sName,"ShowScoreArea")
 #define SHOW_TOTAL_SCORE_AREA				THEME->GetMetricB(m_sName,"ShowTotalScoreArea")
 #define SHOW_TIME_AREA						THEME->GetMetricB(m_sName,"ShowTimeArea")
@@ -157,10 +162,10 @@ ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElement
 			{
 				STATSMAN->m_CurStageStats.m_player[p].bFailedEarlier = true;
 			}
-			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier1] = rand()%3;
-			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier2] = rand()%3;
-			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier3] = rand()%3;
-			STATSMAN->m_CurStageStats.m_player[p].iPossibleGradePoints = 4*ScoreKeeperNormal::TapNoteScoreToGradePoints(TNS_Tier1, false);
+			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W1] = rand()%3;
+			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W2] = rand()%3;
+			STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W3] = rand()%3;
+			STATSMAN->m_CurStageStats.m_player[p].iPossibleGradePoints = 4*ScoreKeeperNormal::TapNoteScoreToGradePoints(TNS_W1, false);
 			STATSMAN->m_CurStageStats.m_player[p].fLifeRemainingSeconds = randomf( 90, 580 );
 		}
 
@@ -471,9 +476,9 @@ void ScreenEvaluation::Init()
 	//
 	// init judgment area
 	//
-	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
+	FOREACH_JudgeLine( l )
 	{
-		if( l == 0  && !GAMESTATE->ShowTier1() )
+		if( l == 0  && !GAMESTATE->ShowW1() )
 			continue;	// skip
 
 		if( SHOW_JUDGMENT(l) )
@@ -483,7 +488,7 @@ void ScreenEvaluation::Init()
 				m_sprJudgeLabels[l].Load( THEME->GetPathG(m_sName,"judge labels") );
 				m_sprJudgeLabels[l].StopAnimating();
 				m_sprJudgeLabels[l].SetState( l );
-				m_sprJudgeLabels[l].SetName( ssprintf("%sLabel",JUDGE_STRING[l]) );
+				m_sprJudgeLabels[l].SetName( JudgeLineToString(l)+"Label" );
 				SET_XY_AND_ON_COMMAND( m_sprJudgeLabels[l] );
 				this->AddChild( &m_sprJudgeLabels[l] );
 			}
@@ -493,42 +498,42 @@ void ScreenEvaluation::Init()
 				m_textJudgeNumbers[l][p].LoadFromFont( THEME->GetPathF(m_sName, "judge") );
 				m_textJudgeNumbers[l][p].SetShadowLength( 0 );
 				m_textJudgeNumbers[l][p].RunCommands( PLAYER_COLOR.GetValue(p) );
-				m_textJudgeNumbers[l][p].SetName( ssprintf("%sNumberP%d",JUDGE_STRING[l],p+1) );
+				m_textJudgeNumbers[l][p].SetName( JudgeLineToString(l)+ssprintf("NumberP%d",p+1) );
 				SET_XY_AND_ON_COMMAND( m_textJudgeNumbers[l][p] );
 				this->AddChild( &m_textJudgeNumbers[l][p] );
 
 				int iValue;
 				switch( l )
 				{
-				case tier1:	iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier1];	break;
-				case tier2:	iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier2];	break;
-				case tier3:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier3];		break;
-				case tier4:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier4];		break;
-				case tier5:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Tier5];		break;
-				case miss:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Miss];		break;
-				case ok:		iValue = STATSMAN->m_CurStageStats.m_player[p].iHoldNoteScores[HNS_Held];		break;
-				case max_combo:	iValue = STATSMAN->m_CurStageStats.m_player[p].GetMaxCombo().cnt;				break;
-				case error:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTotalError;					break;
+				case JudgeLine_W1:			iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W1];		break;
+				case JudgeLine_W2:			iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W2];		break;
+				case JudgeLine_W3:			iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W3];		break;
+				case JudgeLine_W4:			iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W4];		break;
+				case JudgeLine_W5:			iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_W5];		break;
+				case JudgeLine_Miss:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTapNoteScores[TNS_Miss];	break;
+				case JudgeLine_Held:		iValue = STATSMAN->m_CurStageStats.m_player[p].iHoldNoteScores[HNS_Held];	break;
+				case JudgeLine_MaxCombo:	iValue = STATSMAN->m_CurStageStats.m_player[p].GetMaxCombo().cnt;			break;
+				case JudgeLine_Error:		iValue = STATSMAN->m_CurStageStats.m_player[p].iTotalError;					break;
 				default:	iValue = 0;	ASSERT(0);
 				}
 
 				// UGLY... generalize this
-				int iNumDigits = (l==max_combo) ? MAX_COMBO_NUM_DIGITS : 4;
+				int iNumDigits = (l==JudgeLine_MaxCombo) ? MAX_COMBO_NUM_DIGITS : 4;
 				m_textJudgeNumbers[l][p].SetText( ssprintf("%*d",iNumDigits,iValue) );
 			}
 		}
 	}
 
-	for( int l=0; l<NUM_STATS_LINES; l++ ) 
+	FOREACH_StatLine( l )
 	{
 		if( !SHOW_STAT(l) )
 			continue;
 
 		if( SHOW_STATS_LABELS )
 		{
-			m_sprStatsLabel[l].Load( THEME->GetPathG(m_sName,ssprintf("label %s", STATS_STRING[l])) );
+			m_sprStatsLabel[l].Load( THEME->GetPathG(m_sName,"label "+StatLineToString(l)) );
 			m_sprStatsLabel[l]->StopAnimating();
-			m_sprStatsLabel[l]->SetName( ssprintf("%sLabel",STATS_STRING[l]) );
+			m_sprStatsLabel[l]->SetName( StatLineToString(l)+"Label" );
 			SET_XY_AND_ON_COMMAND( m_sprStatsLabel[l] );
 			this->AddChild( m_sprStatsLabel[l] );
 		}
@@ -537,11 +542,11 @@ void ScreenEvaluation::Init()
 		{
 			m_textStatsText[l][p].LoadFromFont( THEME->GetPathF(m_sName,"stats") );
 			m_textStatsText[l][p].RunCommands( PLAYER_COLOR.GetValue(p) );
-			m_textStatsText[l][p].SetName( ssprintf("%sTextP%d",STATS_STRING[l],p+1) );
+			m_textStatsText[l][p].SetName( StatLineToString(l)+ssprintf("TextP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_textStatsText[l][p] );
 			this->AddChild( &m_textStatsText[l][p] );
 
-			const int indeces[NUM_STATS_LINES] =
+			static const int indeces[NUM_StatLine] =
 			{
 				RADAR_NUM_JUMPS, RADAR_NUM_HOLDS, RADAR_NUM_MINES, RADAR_NUM_HANDS, RADAR_NUM_ROLLS
 			};
@@ -789,7 +794,7 @@ void ScreenEvaluation::TweenOursOffScreen()
 	}
 
 	// judgement area
-	for( int l=0; l<NUM_JUDGE_LINES; l++ ) 
+	FOREACH_JudgeLine( l ) 
 	{
 		if( !SHOW_JUDGMENT(l) )
 			continue;
@@ -801,7 +806,7 @@ void ScreenEvaluation::TweenOursOffScreen()
 	}
 
 	// stats area
-	for( int l=0; l<NUM_STATS_LINES; l++ ) 
+	FOREACH_StatLine( l ) 
 	{
 		if( !SHOW_STAT(l) )
 			continue;

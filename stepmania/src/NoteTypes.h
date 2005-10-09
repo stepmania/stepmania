@@ -16,7 +16,7 @@ struct TapNoteResult
 
 	/* Offset, in seconds, for a tap grade.  Negative numbers mean the note
 	 * was hit early; positive numbers mean it was hit late.  These values are
-	 * only meaningful for graded taps (tns >= TNS_Tier5). */
+	 * only meaningful for graded taps (tns >= TNS_W5). */
 	float fTapNoteOffset;
 
 	/* If the whole row has been judged, all taps on the row will be set to hidden. */
@@ -73,7 +73,7 @@ struct TapNote
 		original,	// part of the original NoteData
 		addition,	// additional note added by a transform
 		removed,	// Removed taps, e.g. in Little - play keysounds here as if
-					// judged Tier2, but don't bother rendering or judging this
+					// judged W2, but don't bother rendering or judging this
 					// step.  Also used for when we implement auto-scratch,
 					// and for if/when we do a "reduce" modifier that cancels out
 					// all but N keys on a line [useful for beat->dance autogen, too].

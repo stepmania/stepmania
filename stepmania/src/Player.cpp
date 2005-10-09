@@ -49,23 +49,10 @@ static const float StepSearchDistance = 1.0f;
 
 float AdjustedWindowSeconds( TimingWindow tw, bool bIsPlayingBeginner )
 {
-	float fSecs = 0;
-	switch( tw )
-	{
-	case TW_Tier1:	fSecs = PREFSMAN->m_fJudgeWindowSecondsTier1;	break;
-	case TW_Tier2:	fSecs = PREFSMAN->m_fJudgeWindowSecondsTier2;	break;
-	case TW_Tier3:	fSecs = PREFSMAN->m_fJudgeWindowSecondsTier3;	break;
-	case TW_Tier4:	fSecs = PREFSMAN->m_fJudgeWindowSecondsTier4;	break;
-	case TW_Tier5:	fSecs = PREFSMAN->m_fJudgeWindowSecondsTier5;	break;
-	case TW_Mine:	fSecs = PREFSMAN->m_fJudgeWindowSecondsMine;	break;
-	case TW_Attack:	fSecs = PREFSMAN->m_fJudgeWindowSecondsAttack;	break;
-	case TW_Held:	fSecs = PREFSMAN->m_fJudgeWindowSecondsHeld;	break;
-	case TW_Roll:	fSecs = PREFSMAN->m_fJudgeWindowSecondsRoll;	break;
-	default:	ASSERT(0);
-	}
-	fSecs *= PREFSMAN->m_fJudgeWindowScale;
-	fSecs += PREFSMAN->m_fJudgeWindowAdd;
-	if( tw==TW_Tier5 && bIsPlayingBeginner && PREFSMAN->m_bMercifulBeginner )
+	float fSecs = PREFSMAN->m_fTimingWindowSeconds.Get( tw );
+	fSecs *= PREFSMAN->m_fTimingWindowScale;
+	fSecs += PREFSMAN->m_fTimingWindowAdd;
+	if( tw==TW_W5 && bIsPlayingBeginner && PREFSMAN->m_bMercifulBeginner )
 		fSecs += 0.5f;
 	return fSecs;
 }
@@ -649,7 +636,7 @@ void Player::Update( float fDeltaTime )
 					else
 					{
 						// Decrease life
-						fLife -= fDeltaTime/ADJUSTED_WINDOW_SECONDS(TW_Held);
+						fLife -= fDeltaTime/ADJUSTED_WINDOW_SECONDS(TW_Hold);
 						fLife = max( fLife, 0 );	// clamp
 					}
 					break;
@@ -1093,7 +1080,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 //				fStepSeconds, fMusicSeconds, fNoteOffset );
 		}
 
-		const float fSecondsFromTier2 = fabsf( fNoteOffset );
+		const float fSecondsFromExact = fabsf( fNoteOffset );
 
 
 		TapNote tn = m_NoteData.GetTapNote( col, iIndexOverlappingNote );
@@ -1106,20 +1093,20 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			{
 			case TapNote::mine:
 				// stepped too close to mine?
-				if( fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Mine) )
+				if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Mine) )
 					score = TNS_HitMine;
 				break;
 
 			case TapNote::attack:
-				if( fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Attack) && !tn.result.bHidden )
-					score = TNS_Tier2; /* sentinel */
+				if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_Attack) && !tn.result.bHidden )
+					score = TNS_W2; /* sentinel */
 				break;
 			default:
-				if(		 fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Tier1) )	score = TNS_Tier1;
-				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Tier2) )	score = TNS_Tier2;
-				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Tier3) )		score = TNS_Tier3;
-				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Tier4) )		score = TNS_Tier4;
-				else if( fSecondsFromTier2 <= ADJUSTED_WINDOW_SECONDS(TW_Tier5) )		score = TNS_Tier5;
+				if(		 fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W1) )	score = TNS_W1;
+				else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W2) )	score = TNS_W2;
+				else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W3) )	score = TNS_W3;
+				else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W4) )	score = TNS_W4;
+				else if( fSecondsFromExact <= ADJUSTED_WINDOW_SECONDS(TW_W5) )	score = TNS_W5;
 				else	score = TNS_None;
 				break;
 			}
@@ -1129,16 +1116,16 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 		case PC_AUTOPLAY:
 			score = PlayerAI::GetTapNoteScore( m_pPlayerState );
 
-			// GetTapNoteScore always returns TNS_Tier1 in autoplay.
+			// GetTapNoteScore always returns TNS_W1 in autoplay.
 			// If the step is far away, don't judge it.
 			if( m_pPlayerState->m_PlayerController == PC_AUTOPLAY &&
-				fSecondsFromTier2 > ADJUSTED_WINDOW_SECONDS(TW_Tier5) )
+				fSecondsFromExact > ADJUSTED_WINDOW_SECONDS(TW_W5) )
 			{
 				score = TNS_None;
 				break;
 			}
 
-			// TRICKY:  We're asking the AI to judge mines.  consider TNS_Tier4 and below
+			// TRICKY:  We're asking the AI to judge mines.  consider TNS_W4 and below
 			// as "mine was hit" and everything else as "mine was avoided"
 			if( tn.type == TapNote::mine )
 			{
@@ -1154,7 +1141,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 				// The CPU hits a lot of mines.  Make it less likely to hit 
 				// mines that don't have a tap note on the same row.
 				bool bTapsOnRow = m_NoteData.IsThereATapOrHoldHeadAtRow( iIndexOverlappingNote );
-				TapNoteScore get_to_avoid = bTapsOnRow ? TNS_Tier3 : TNS_Tier4;
+				TapNoteScore get_to_avoid = bTapsOnRow ? TNS_W3 : TNS_W4;
 
 				if( score >= get_to_avoid )
 					return;	// avoided
@@ -1162,8 +1149,8 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 					score = TNS_HitMine;
 			}
 
-			if( tn.type == TapNote::attack && score > TNS_Tier4 )
-				score = TNS_Tier2; /* sentinel */
+			if( tn.type == TapNote::attack && score > TNS_W4 )
+				score = TNS_W2; /* sentinel */
 
 			/* AI will generate misses here.  Don't handle a miss like a regular note because
 			 * we want the judgment animation to appear delayed.  Instead, return early if
@@ -1184,7 +1171,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 			break;
 		}
 
-		if( tn.type == TapNote::attack && score == TNS_Tier2 )
+		if( tn.type == TapNote::attack && score == TNS_W2 )
 		{
 			score = TNS_None;	// don't score this as anything
 
@@ -1241,16 +1228,16 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 				m_pNoteField->DidTapNote( col, score, false );
 		}
 
-		if( m_pPlayerState->m_PlayerController == PC_HUMAN && score >= TNS_Tier3 ) 
+		if( m_pPlayerState->m_PlayerController == PC_HUMAN && score >= TNS_W3 ) 
 			HandleAutosync( fNoteOffset );
 
 		// Do game-specific and mode-specific score mapping.
 		score = GAMESTATE->GetCurrentGame()->MapTapNoteScore( score );
-		if( score == TNS_Tier1 && !GAMESTATE->ShowTier1() )
-			score = TNS_Tier2;
+		if( score == TNS_W1 && !GAMESTATE->ShowW1() )
+			score = TNS_W2;
 
 		bool bSteppedEarly = -fNoteOffset < 0;
-		if( IsPlayingBeginner() && PREFSMAN->m_bMercifulBeginner && score==TNS_Tier5 && bSteppedEarly )
+		if( IsPlayingBeginner() && PREFSMAN->m_bMercifulBeginner && score==TNS_W5 && bSteppedEarly )
 		{
 			if( m_pJudgment )
 				m_pJudgment->SetJudgment( score, bSteppedEarly );
@@ -1264,7 +1251,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 
 			if( score != TNS_None && score != TNS_Miss )
 			{
-				int ms_error = (int) roundf( fSecondsFromTier2 * 1000 );
+				int ms_error = (int) roundf( fSecondsFromExact * 1000 );
 				ms_error = min( ms_error, MAX_PRO_TIMING_ERROR.GetValue() );
 
 				if( m_pPlayerStageStats )
@@ -1273,7 +1260,7 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 
 			//LOG->Trace("XXX: %i col %i, at %f, music at %f, step was at %f, off by %f",
 			//	score, col, fStepSeconds, fCurrentMusicSeconds, fMusicSeconds, fNoteOffset );
-	//		LOG->Trace("Note offset: %f (fSecondsFromTier2 = %f), Score: %i", fNoteOffset, fSecondsFromTier2, score);
+	//		LOG->Trace("Note offset: %f (fSecondsFromExact = %f), Score: %i", fNoteOffset, fSecondsFromExact, score);
 			
 			m_NoteData.SetTapNote( col, iIndexOverlappingNote, tn );
 
@@ -1380,9 +1367,9 @@ void Player::DisplayJudgedRow( int iIndexThatWasSteppedOn, TapNoteScore score, i
 {
 	TapNote tn = m_NoteData.GetTapNote(iTrack, iIndexThatWasSteppedOn);
 
-	// If the score is tier3 or better, remove the note from the screen to 
+	// If the score is W3 or better, remove the note from the screen to 
 	// indicate success.  (Or always if blind is on.)
-	if( score >= TNS_Tier3 || m_pPlayerState->m_PlayerOptions.m_fBlind )
+	if( score >= TNS_W3 || m_pPlayerState->m_PlayerOptions.m_fBlind )
 	{
 		tn.result.bHidden = true;
 		m_NoteData.SetTapNote( iTrack, iIndexThatWasSteppedOn, tn );
@@ -1393,7 +1380,7 @@ void Player::DisplayJudgedRow( int iIndexThatWasSteppedOn, TapNoteScore score, i
 	if (m_pPlayerState->m_PlayerOptions.m_fBlind)
 	{
 		if( m_pNoteField )
-			m_pNoteField->DidTapNote( iTrack, TNS_Tier1, bBright );
+			m_pNoteField->DidTapNote( iTrack, TNS_W1, bBright );
 	}
 	else
 	{
@@ -1410,8 +1397,8 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	/* Find the minimum score of the row.  This will never be TNS_None, since this
 	 * function is only called when a row is completed. */
 	/* Instead, use the last tap score.
-	/* I'm not sure this is right, either.  Can you really jump a tier5 and a tier2
-	 * and get scored for a tier2?  (That's so loose, you can gallop jumps.) -glenn */
+	/* I'm not sure this is right, either.  Can you really jump a W5 and a W1
+	 * and get scored for an W1?  (That's so loose, you can gallop jumps.) -glenn */
 	/* Instead of grading individual columns, maybe set a "was pressed recently" 
 	 * countdown every time you step on a column.  When you step on the first note of 
 	 * the jump, it sets the first "was pressed recently" timer.  Then, when you do 
@@ -1652,9 +1639,9 @@ void Player::HandleTapRowScore( unsigned row )
 	int &iCurMissCombo = m_pPlayerStageStats ? m_pPlayerStageStats->iCurMissCombo : iDummy;
 	switch( scoreOfLastTap )
 	{
-	case TNS_Tier1:
-	case TNS_Tier2:
-	case TNS_Tier3:
+	case TNS_W1:
+	case TNS_W2:
+	case TNS_W3:
 		iCurMissCombo = 0;
 		SCREENMAN->PostMessageToTopScreen( SM_MissComboAborted, 0 );
 		break;
@@ -1663,8 +1650,8 @@ void Player::HandleTapRowScore( unsigned row )
 		++iCurMissCombo;
 		m_LastTapNoteScore = TNS_Miss;
 
-	case TNS_Tier4:
-	case TNS_Tier5:
+	case TNS_W4:
+	case TNS_W5:
 		if( iCurCombo > 50 )
 			SCREENMAN->PostMessageToTopScreen( SM_ComboStopped, 0 );
 		iCurCombo = 0;
@@ -1820,7 +1807,7 @@ void Player::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tapScore )
 
 float Player::GetMaxStepDistanceSeconds()
 {
-	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW_SECONDS(TW_Tier5);
+	return GAMESTATE->m_SongOptions.m_fMusicRate * ADJUSTED_WINDOW_SECONDS(TW_W5);
 }
 
 void Player::FadeToFail()

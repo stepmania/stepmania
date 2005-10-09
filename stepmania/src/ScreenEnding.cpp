@@ -171,12 +171,12 @@ ScreenEnding::ScreenEnding( CString sClassName ) : ScreenAttract( sClassName, fa
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iCurCombo = 250;
 		STATSMAN->m_CurStageStats.m_player[PLAYER_1].UpdateComboList( 100, false );
 
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_Tier1] = rand()%2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_Tier2] = rand()%2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_Tier3] = rand()%2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_Tier1] = rand()%2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_Tier2] = rand()%2;
-		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_Tier3] = rand()%2;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_W1] = rand()%2;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_W2] = rand()%2;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_1].iTapNoteScores[TNS_W3] = rand()%2;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_W1] = rand()%2;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_W2] = rand()%2;
+		STATSMAN->m_CurStageStats.m_player[PLAYER_2].iTapNoteScores[TNS_W3] = rand()%2;
 
 		STATSMAN->m_vPlayedStageStats.clear();
 	}

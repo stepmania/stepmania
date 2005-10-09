@@ -21,13 +21,13 @@
 #include "CharacterManager.h"
 #include "StatsManager.h"
 
-static const ThemeMetric<CString>		STEPFILE			("ScreenHowToPlay","Stepfile");
-static const ThemeMetric<int>			NUM_TIER2S			("ScreenHowToPlay","NumTier2s");
-static const ThemeMetric<int>			NUM_MISSES			("ScreenHowToPlay","NumMisses");
-static const ThemeMetric<bool>			USELIFEBAR			("ScreenHowToPlay","UseLifeMeterBar");
-static const ThemeMetric<bool>			USECHARACTER		("ScreenHowToPlay","UseCharacter");
-static const ThemeMetric<bool>			USEPAD				("ScreenHowToPlay","UsePad");
-static const ThemeMetric<bool>			USEPLAYER			("ScreenHowToPlay","UseNotefield");
+static const ThemeMetric<CString>	STEPFILE		("ScreenHowToPlay","Stepfile");
+static const ThemeMetric<int>		NUM_W2S			("ScreenHowToPlay","NumW2s");
+static const ThemeMetric<int>		NUM_MISSES		("ScreenHowToPlay","NumMisses");
+static const ThemeMetric<bool>		USELIFEBAR		("ScreenHowToPlay","UseLifeMeterBar");
+static const ThemeMetric<bool>		USECHARACTER	("ScreenHowToPlay","UseCharacter");
+static const ThemeMetric<bool>		USEPAD			("ScreenHowToPlay","UsePad");
+static const ThemeMetric<bool>		USEPLAYER		("ScreenHowToPlay","UseNotefield");
 
 enum Animation
 {
@@ -69,8 +69,8 @@ static bool HaveAllCharAnimations()
 REGISTER_SCREEN_CLASS( ScreenHowToPlay );
 ScreenHowToPlay::ScreenHowToPlay( CString sName ) : ScreenAttract( sName )
 {
-	m_iTier2s = 0;
-	m_iNumTier2s = NUM_TIER2S;
+	m_iW2s = 0;
+	m_iNumW2s = NUM_W2S;
 
 	// initialize these because they might not be used.
 	m_pPlayer = NULL;
@@ -128,7 +128,7 @@ void ScreenHowToPlay::Init()
 		m_pLifeMeterBar->SetName("LifeMeterBar");
 		m_pLifeMeterBar->Load( GAMESTATE->m_pPlayerState[PLAYER_1], &STATSMAN->m_CurStageStats.m_player[PLAYER_1] );
 		SET_XY_AND_ON_COMMAND( m_pLifeMeterBar );
-		m_pLifeMeterBar->FillForHowToPlay( NUM_TIER2S, NUM_MISSES );
+		m_pLifeMeterBar->FillForHowToPlay( NUM_W2S, NUM_MISSES );
 	}
 
 	GAMESTATE->m_pCurStyle.Set( GAMEMAN->GetHowToPlayStyleForGame(GAMESTATE->m_pCurGame) );
@@ -205,7 +205,7 @@ void ScreenHowToPlay::Step()
 	int iStep = 0;
 	const int iNoteRow = BeatToNoteRowNotRounded( GAMESTATE->m_fSongBeat + 0.6f );
 	// if we want to miss from here on out, don't process steps.
-	if( m_iTier2s < m_iNumTier2s && m_NoteData.IsThereATapAtRow( iNoteRow ) )
+	if( m_iW2s < m_iNumW2s && m_NoteData.IsThereATapAtRow( iNoteRow ) )
 	{
 		const int iNumTracks = m_NoteData.GetNumTracks();
 		for( int k=0; k<iNumTracks; k++ )
@@ -248,19 +248,19 @@ void ScreenHowToPlay::Update( float fDelta )
 		{
 			if( m_pLifeMeterBar && !m_pPlayer )
 			{
-				if ( m_iTier2s < m_iNumTier2s )
-					m_pLifeMeterBar->ChangeLife(TNS_Tier2);
+				if ( m_iW2s < m_iNumW2s )
+					m_pLifeMeterBar->ChangeLife(TNS_W2);
 				else
 					m_pLifeMeterBar->ChangeLife(TNS_Miss);
 			}
-			m_iTier2s++;
+			m_iW2s++;
 			iLastNoteRowCounted = iCurNoteRow;
 		}
 
 		// once we hit the number of perfects we want, we want to fail.
 		// switch the controller to HUMAN. since we aren't taking input,
 		// the steps will always be misses.
-		if(m_iTier2s > m_iNumTier2s)
+		if(m_iW2s > m_iNumW2s)
 			GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PC_HUMAN;
 
 		if ( m_pmCharacter )

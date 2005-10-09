@@ -97,7 +97,7 @@ int GetSuccessfulHands( const NoteData &in, int iStartIndex = 0, int iEndIndex =
 				continue;
 			if( tn.type == TapNote::mine ) // mines don't count
 				continue;
-			if( tn.result.tns <= TNS_Tier5 )
+			if( tn.result.tns <= TNS_W5 )
 				Missed = true;
 		}
 
@@ -172,7 +172,7 @@ TapNoteResult NoteDataWithScoring::LastTapNoteResult( const NoteData &in, unsign
  * taps have been hit), return TNS_None or TNS_Miss. */
 TapNoteScore NoteDataWithScoring::MinTapNoteScore( const NoteData &in, unsigned row )
 {
-	TapNoteScore score = TNS_Tier1;
+	TapNoteScore score = TNS_W1;
 	for( int t=0; t<in.GetNumTracks(); t++ )
 	{
 		/* Ignore mines, or the score will always be TNS_None. */
@@ -192,15 +192,15 @@ bool NoteDataWithScoring::IsRowCompletelyJudged( const NoteData &in, unsigned ro
 
 namespace
 {
-/* Return the ratio of actual to possible Tier2s. */
+/* Return the ratio of actual to possible Bs. */
 float GetActualStreamRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
 	int iTotalSteps = in.GetNumTapNotes();
 	if( iTotalSteps == 0 )
 		return 1.0f;
 
-	const int Tier2s = GetNumTapNotesWithScore( in, TNS_Tier2 );
-	return clamp( float(Tier2s)/iTotalSteps, 0.0f, 1.0f );
+	const int iW2s = GetNumTapNotesWithScore( in, TNS_W2 );
+	return clamp( float(iW2s)/iTotalSteps, 0.0f, 1.0f );
 }
 
 /* Return the ratio of actual combo to max combo. */
@@ -215,7 +215,7 @@ float GetActualVoltageRadarValue( const NoteData &in, float fSongSeconds, Player
 	return clamp( fComboPercent, 0.0f, 1.0f );
 }
 
-/* Return the ratio of actual to possible Tier2s on jumps. */
+/* Return the ratio of actual to possible W2s on jumps. */
 float GetActualAirRadarValue( const NoteData &in, float fSongSeconds, PlayerNumber pn )
 {
 	const int iTotalDoubles = in.GetNumJumps();
@@ -223,7 +223,7 @@ float GetActualAirRadarValue( const NoteData &in, float fSongSeconds, PlayerNumb
 		return 1.0f;  // no jumps in song
 
 	// number of doubles
-	const int iNumDoubles = GetNumNWithScore( in, TNS_Tier2, 2 );
+	const int iNumDoubles = GetNumNWithScore( in, TNS_W2, 2 );
 	return clamp( (float)iNumDoubles / iTotalDoubles, 0.0f, 1.0f );
 }
 
@@ -268,8 +268,8 @@ void NoteDataWithScoring::GetActualRadarValues( const NoteData &in, PlayerNumber
 		case RADAR_AIR:					out[rc] = GetActualAirRadarValue( in, fSongSeconds, pn );		break;
 		case RADAR_FREEZE:				out[rc] = GetActualFreezeRadarValue( in, fSongSeconds, pn );	break;
 		case RADAR_CHAOS:				out[rc] = GetActualChaosRadarValue( in, fSongSeconds, pn );		break;
-		case RADAR_NUM_TAPS_AND_HOLDS:	out[rc] = (float) GetNumNWithScore( in, TNS_Tier4, 1 );			break;
-		case RADAR_NUM_JUMPS:			out[rc] = (float) GetNumNWithScore( in, TNS_Tier4, 2 );			break;
+		case RADAR_NUM_TAPS_AND_HOLDS:	out[rc] = (float) GetNumNWithScore( in, TNS_W4, 1 );			break;
+		case RADAR_NUM_JUMPS:			out[rc] = (float) GetNumNWithScore( in, TNS_W4, 2 );			break;
 		case RADAR_NUM_HOLDS:			out[rc] = (float) GetNumHoldNotesWithScore( in, TapNote::hold_head_hold, HNS_Held );	break;
 		case RADAR_NUM_MINES:			out[rc] = (float) GetSuccessfulMines( in );						break;
 		case RADAR_NUM_HANDS:			out[rc] = (float) GetSuccessfulHands( in );						break;

@@ -308,10 +308,10 @@ MOVE( AllowExtraStage,		PREFSMAN->m_bAllowExtraStage );
 MOVE( PickExtraStage,		PREFSMAN->m_bPickExtraStage );
 MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
 
-static void Tier1Timing( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void AllowW1( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	const PrefsManager::Tier1Timing mapping[] = { PrefsManager::TIER1_NEVER, PrefsManager::TIER1_COURSES_ONLY, PrefsManager::TIER1_EVERYWHERE };
-	MoveMap( sel, PREFSMAN->m_Tier1Timing, ToSel, mapping, ARRAYSIZE(mapping) );
+	const PrefsManager::AllowW1 mapping[] = { PrefsManager::ALLOW_W1_NEVER, PrefsManager::ALLOW_W1_COURSES_ONLY, PrefsManager::ALLOW_W1_EVERYWHERE };
+	MoveMap( sel, PREFSMAN->m_AllowW1, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void CoinModeM( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -361,7 +361,7 @@ MOVE( ScoringType,			PREFSMAN->m_ScoringType );
 static void JudgeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 1.50f,1.33f,1.16f,1.00f,0.84f,0.66f,0.50f,0.33f,0.20f };
-	MoveMap( sel, PREFSMAN->m_fJudgeWindowScale, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, PREFSMAN->m_fTimingWindowScale, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -570,7 +570,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "SoloSingles",					SoloSingles,		"OFF","ON" ) );
 	ADD( ConfOption( "HiddenSongs",					MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "EasterEggs",					EasterEggs,			"OFF","ON" ) );
-	ADD( ConfOption( "Tier1Timing",				Tier1Timing,	"NEVER","COURSES ONLY","ALWAYS" ) );
+	ADD( ConfOption( "AllowW1",				AllowW1,	"NEVER","COURSES ONLY","ALWAYS" ) );
 	ADD( ConfOption( "AllowExtraStage",				AllowExtraStage,	"OFF","ON" ) );
 	ADD( ConfOption( "PickExtraStage",				PickExtraStage,		"OFF","ON" ) );
 	ADD( ConfOption( "UnlockSystem",				UnlockSystem,		"OFF","ON" ) );

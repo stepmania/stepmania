@@ -12,8 +12,8 @@
 #include "Steps.h"
 #include "ScoreKeeperNormal.h"
 
-#define GRADE_PERCENT_TIER(i)			THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
-#define GRADE_TIER02_IS_ALL_PERFECTS	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllTier2s")
+#define GRADE_PERCENT_TIER(i)	THEME->GetMetricF("PlayerStageStats",ssprintf("GradePercent%s",GradeToString((Grade)i).c_str()))
+#define GRADE_TIER02_IS_ALL_W2S	THEME->GetMetricB("PlayerStageStats","GradeTier02IsAllW2s")
 
 const float LESSON_PASS_THRESHOLD = 0.8f;
 
@@ -173,20 +173,20 @@ Grade PlayerStageStats::GetGrade() const
 	LOG->Trace( "GetGrade: Grade: %s, %i", GradeToString(grade).c_str(), GRADE_TIER02_IS_ALL_PERFECTS );
 	if( GRADE_TIER02_IS_ALL_PERFECTS )
 	{
-		if(	iTapNoteScores[TNS_Tier1] > 0 &&
-			iTapNoteScores[TNS_Tier2] == 0 &&
-			iTapNoteScores[TNS_Tier3] == 0 &&
-			iTapNoteScores[TNS_Tier4] == 0 &&
-			iTapNoteScores[TNS_Tier5] == 0 &&
+		if(	iTapNoteScores[TNS_W1] > 0 &&
+			iTapNoteScores[TNS_W2] == 0 &&
+			iTapNoteScores[TNS_W3] == 0 &&
+			iTapNoteScores[TNS_W4] == 0 &&
+			iTapNoteScores[TNS_W5] == 0 &&
 			iTapNoteScores[TNS_Miss] == 0 &&
 			iTapNoteScores[TNS_HitMine] == 0 &&
 			iHoldNoteScores[HNS_LetGo] == 0 )
 			return Grade_Tier01;
 
-		if( iTapNoteScores[TNS_Tier2] > 0 &&
-			iTapNoteScores[TNS_Tier3] == 0 &&
-			iTapNoteScores[TNS_Tier4] == 0 &&
-			iTapNoteScores[TNS_Tier5] == 0 &&
+		if( iTapNoteScores[TNS_W2] > 0 &&
+			iTapNoteScores[TNS_W3] == 0 &&
+			iTapNoteScores[TNS_W4] == 0 &&
+			iTapNoteScores[TNS_W5] == 0 &&
 			iTapNoteScores[TNS_Miss] == 0 &&
 			iTapNoteScores[TNS_HitMine] == 0 &&
 			iHoldNoteScores[HNS_LetGo] == 0 )
@@ -236,11 +236,11 @@ int PlayerStageStats::GetLessonScoreActual() const
 		switch( tns )
 		{
 		case TNS_AvoidMine:
-		case TNS_Tier5:
-		case TNS_Tier4:
-		case TNS_Tier3:
-		case TNS_Tier2:
-		case TNS_Tier1:
+		case TNS_W5:
+		case TNS_W4:
+		case TNS_W3:
+		case TNS_W2:
+		case TNS_W1:
 			iScore += iTapNoteScores[tns];
 			break;
 		}
@@ -453,8 +453,8 @@ int	PlayerStageStats::GetComboAtStartOfStage() const
 
 bool PlayerStageStats::FullComboOfScore( TapNoteScore tnsAllGreaterOrEqual ) const
 {
-	ASSERT( tnsAllGreaterOrEqual >= TNS_Tier3 );
-	ASSERT( tnsAllGreaterOrEqual <= TNS_Tier1 );
+	ASSERT( tnsAllGreaterOrEqual >= TNS_W3 );
+	ASSERT( tnsAllGreaterOrEqual <= TNS_W1 );
 
 	// If missed any holds, then it's not a full combo
 	if( iHoldNoteScores[HNS_LetGo] > 0 )
@@ -526,29 +526,29 @@ void PlayerStageStats::CalcAwards( PlayerNumber p, bool bGaveUp, bool bUsedAutop
 	// don't give per-difficutly awards if using easy mods
 	if( !GAMESTATE->IsDisqualified(p) )
 	{
-		if( FullComboOfScore( TNS_Tier3 ) )
-			vPdas.push_back( AWARD_FULL_COMBO_TIER3 );
-		if( SingleDigitsOfScore( TNS_Tier3 ) )
-			vPdas.push_back( AWARD_SINGLE_DIGIT_TIER3 );
-		if( FullComboOfScore( TNS_Tier2 ) )
-			vPdas.push_back( AWARD_FULL_COMBO_TIER2 );
-		if( SingleDigitsOfScore( TNS_Tier2 ) )
-			vPdas.push_back( AWARD_SINGLE_DIGIT_TIER2 );
-		if( FullComboOfScore( TNS_Tier1 ) )
-			vPdas.push_back( AWARD_FULL_COMBO_TIER1 );
+		if( FullComboOfScore( TNS_W3 ) )
+			vPdas.push_back( AWARD_FULL_COMBO_W3 );
+		if( SingleDigitsOfScore( TNS_W3 ) )
+			vPdas.push_back( AWARD_SINGLE_DIGIT_W3 );
+		if( FullComboOfScore( TNS_W2 ) )
+			vPdas.push_back( AWARD_FULL_COMBO_W2 );
+		if( SingleDigitsOfScore( TNS_W2 ) )
+			vPdas.push_back( AWARD_SINGLE_DIGIT_W2 );
+		if( FullComboOfScore( TNS_W1 ) )
+			vPdas.push_back( AWARD_FULL_COMBO_W1 );
 		
-		if( OneOfScore( TNS_Tier3 ) )
-			vPdas.push_back( AWARD_ONE_TIER3 );
-		if( OneOfScore( TNS_Tier2 ) )
-			vPdas.push_back( AWARD_ONE_TIER2 );
+		if( OneOfScore( TNS_W3 ) )
+			vPdas.push_back( AWARD_ONE_W3 );
+		if( OneOfScore( TNS_W2 ) )
+			vPdas.push_back( AWARD_ONE_W2 );
 
-		float fPercentTier3s = GetPercentageOfTaps( TNS_Tier3 );
-		if( fPercentTier3s >= 0.8f )
-			vPdas.push_back( AWARD_PERCENT_80_TIER3 );
-		if( fPercentTier3s >= 0.9f )
-			vPdas.push_back( AWARD_PERCENT_90_TIER3 );
-		if( fPercentTier3s >= 1.f )
-			vPdas.push_back( AWARD_PERCENT_100_TIER3 );
+		float fPercentW3s = GetPercentageOfTaps( TNS_W3 );
+		if( fPercentW3s >= 0.8f )
+			vPdas.push_back( AWARD_PERCENT_80_W3 );
+		if( fPercentW3s >= 0.9f )
+			vPdas.push_back( AWARD_PERCENT_90_W3 );
+		if( fPercentW3s >= 1.f )
+			vPdas.push_back( AWARD_PERCENT_100_W3 );
 	}
 
 	// Max one PDA per stage

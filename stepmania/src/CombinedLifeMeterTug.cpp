@@ -47,13 +47,13 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 	float fPercentToMove = 0;
 	switch( score )
 	{
-	case TNS_Tier1:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeTier1;	break;
-	case TNS_Tier2:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeTier2;	break;
-	case TNS_Tier3:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeTier3;		break;
-	case TNS_Tier4:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeTier4;		break;
-	case TNS_Tier5:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeTier5;		break;
-	case TNS_Miss:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeMiss;		break;
-	case TNS_HitMine:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeHitMine; break;
+	case TNS_W1:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_W1);		break;
+	case TNS_W2:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_W2);		break;
+	case TNS_W3:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_W3);		break;
+	case TNS_W4:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_W4);		break;
+	case TNS_W5:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_W5);		break;
+	case TNS_Miss:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_Miss);	break;
+	case TNS_HitMine:	fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_HitMine); break;
 	default:	ASSERT(0);	break;
 	}
 
@@ -62,16 +62,11 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 
 void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, TapNoteScore tscore )
 {
-	/* The initial tap note score (which we happen to have in have in
-	 * tscore) has already been reported to the above function.  If the
-	 * hold end result was an LetGo, count it as a miss; if the end result
-	 * was a Held, count a tier2.  (Remember, this is just life meter
-	 * computation, not scoring.) */
 	float fPercentToMove = 0;
 	switch( score )
 	{
-	case HNS_Held:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeHeld;	break;
-	case HNS_LetGo:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChangeLetGo;	break;
+	case HNS_Held:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_Held);	break;
+	case HNS_LetGo:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_LetGo);	break;
 	default:	ASSERT(0);	break;
 	}
 

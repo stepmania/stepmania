@@ -16,14 +16,14 @@ struct TapScoreDistribution
 	{
 		float fRand = randomf(0,1);
 		float fCumulativePercent = 0;
-		for( int i=0; i<=TNS_Tier1; i++ )
+		for( int i=0; i<=TNS_W1; i++ )
 		{
 			fCumulativePercent += fPercent[i];
 			if( fRand <= fCumulativePercent+1e-4 ) /* rounding error */
 				return (TapNoteScore)i;
 		}
 		ASSERT(0);	// the fCumulativePercents must sum to 1.0, so we should never get here!
-		return TNS_Tier1;
+		return TNS_W1;
 	}
 
 };
@@ -45,12 +45,12 @@ void PlayerAI::InitFromDisk()
 
 		TapScoreDistribution& dist = g_Distributions[i];
 		dist.fPercent[TNS_None] = 0;
-		pNode->GetAttrValue( "MissWeight", dist.fPercent[TNS_Miss] );
-		pNode->GetAttrValue( "Tier5Weight", dist.fPercent[TNS_Tier5] );
-		pNode->GetAttrValue( "Tier4Weight", dist.fPercent[TNS_Tier4] );
-		pNode->GetAttrValue( "Tier3Weight", dist.fPercent[TNS_Tier3] );
-		pNode->GetAttrValue( "Tier2Weight", dist.fPercent[TNS_Tier2] );
-		pNode->GetAttrValue( "Tier1Weight", dist.fPercent[TNS_Tier1] );
+		pNode->GetAttrValue( "WeightMiss", dist.fPercent[TNS_Miss] );
+		pNode->GetAttrValue( "WeightW5", dist.fPercent[TNS_W5] );
+		pNode->GetAttrValue( "WeightW4", dist.fPercent[TNS_W4] );
+		pNode->GetAttrValue( "WeightW3", dist.fPercent[TNS_W3] );
+		pNode->GetAttrValue( "WeightW2", dist.fPercent[TNS_W2] );
+		pNode->GetAttrValue( "WeightW1", dist.fPercent[TNS_W1] );
 		
 		float fSum = 0;
 		for( int j=0; j<NUM_TapNoteScore; j++ )
@@ -64,7 +64,7 @@ void PlayerAI::InitFromDisk()
 TapNoteScore PlayerAI::GetTapNoteScore( const PlayerState* pPlayerState )
 {
 	if( pPlayerState->m_PlayerController == PC_AUTOPLAY )
-		return TNS_Tier1;
+		return TNS_W1;
 
 	int iCpuSkill = pPlayerState->m_iCpuSkill;
 
