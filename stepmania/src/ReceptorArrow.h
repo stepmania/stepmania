@@ -14,7 +14,7 @@ class ReceptorArrow : public ActorFrame
 {
 public:
 	ReceptorArrow();
-	bool Load( const PlayerState* pPlayerState, int iColNo );
+	void Load( const PlayerState* pPlayerState, int iColNo );
 
 	virtual void DrawPrimitives();
 	virtual void Update( float fDeltaTime );

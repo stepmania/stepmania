@@ -19,7 +19,7 @@ ReceptorArrow::ReceptorArrow()
 	StopAnimating();
 }
 
-bool ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
+void ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
 {
 	m_pPlayerState = pPlayerState;
 	m_iColNo = iColNo;
@@ -45,8 +45,6 @@ bool ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
 	this->AddChild( m_pPressBlock );
 	this->AddChild( m_pReceptorWaiting );
 	this->AddChild( m_pReceptorGo );
-	
-	return true;
 }
 
 void ReceptorArrow::Update( float fDeltaTime )
