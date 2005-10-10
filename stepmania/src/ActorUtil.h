@@ -67,7 +67,7 @@ namespace ActorUtil
 
 	// Return a Sprite, BitmapText, or Model depending on the file type
 	Actor* LoadFromActorFile( const CString& sAniDir, const XNode* pNode );
-	Actor* MakeActor( const RageTextureID &ID );
+	Actor* MakeActor( const CString &sPath );
 
 	void ResolvePath( CString &sPath, const CString &sName );
 

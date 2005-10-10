@@ -235,25 +235,25 @@ all_done:
 	return pReturn;
 }
 
-Actor* ActorUtil::MakeActor( const RageTextureID &ID )
+Actor* ActorUtil::MakeActor( const CString &sPath )
 {
-	FileType ft = GetFileType(ID.filename);
+	FileType ft = GetFileType( sPath );
 	switch( ft )
 	{
 	case FT_Xml:
 		{
 			XNode xml;
-			if( !xml.LoadFromFile(ID.filename) )
+			if( !xml.LoadFromFile(sPath) )
 			{
 				// XNode will warn about the error
 				return new Actor;
 			}
-			CString sDir = Dirname( ID.filename );
+			CString sDir = Dirname( sPath );
 			return LoadFromActorFile( sDir, &xml );
 		}
 	case FT_Directory:
 		{
-			CString sDir = ID.filename;
+			CString sDir = sPath;
 			if( sDir.Right(1) != "/" )
 				sDir += '/';
 
@@ -279,18 +279,18 @@ Actor* ActorUtil::MakeActor( const RageTextureID &ID )
 	case FT_Movie:
 		{
 			Sprite* pSprite = new Sprite;
-			pSprite->Load( ID );
+			pSprite->Load( sPath );
 			return pSprite;
 		}
 	case FT_Model:
 		{
 			Model* pModel = new Model;
-			pModel->Load( ID.filename );
+			pModel->Load( sPath );
 			return pModel;
 		}
 	default:
 		RageException::Throw("File \"%s\" has unknown type, \"%s\"",
-			ID.filename.c_str(), FileTypeToString(ft).c_str() );
+			sPath.c_str(), FileTypeToString(ft).c_str() );
 	}
 }
 
