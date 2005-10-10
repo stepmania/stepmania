@@ -190,6 +190,15 @@ void NoteField::Update( float fDeltaTime )
 		NoteDisplay::Update( fDeltaTime );
 }
 
+void NoteField::ProcessMessages( float fDeltaTime )
+{
+	ActorFrame::ProcessMessages( fDeltaTime );
+
+	NoteDisplayCols *pCur = SearchForSongBeat();
+	pCur->m_ReceptorArrowRow.ProcessMessages( fDeltaTime );
+	pCur->m_GhostArrowRow.ProcessMessages( fDeltaTime );
+}
+
 float NoteField::GetWidth()
 {
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();

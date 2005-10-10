@@ -20,6 +20,7 @@ public:
 	NoteField();
 	~NoteField();
 	virtual void Update( float fDeltaTime );
+	virtual void ProcessMessages( float fDeltaTime );
 	virtual void DrawPrimitives();
 	
 	virtual void Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels );
