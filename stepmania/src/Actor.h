@@ -31,7 +31,7 @@ public:
 	virtual Actor *Copy() const;
 	void UnsubcribeAndClearCommands();
 	virtual void Reset();
-	void LoadFromNode( const CString& sDir, const XNode* pNode );
+	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
 
 	static void SetBGMTime( float fTime, float fBeat );
 	static void SetBGMLight( int iLightNumber, float fCabinetLights );

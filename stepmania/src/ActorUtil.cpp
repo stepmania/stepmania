@@ -197,7 +197,20 @@ Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
 		pReturn = ActorUtil::MakeActor( sNewPath );
 		if( pReturn == NULL )
 			goto all_done;
-	 	pReturn->LoadFromNode( sDir, pNode );
+
+		/*
+		 * Hack: take attributes from the file loading the new actor,
+		 * and load them on top of the new file.  This way, you can do
+		 * eg:
+		 *
+		 * file1.xml:   <Layer File="file2" OnCommand="x,10" />
+		 * file2.xml:   <Layer File="image" OffCommand="y,10" />
+		 *
+		 * Be sure to only run the low-level load, to pull in commands;
+		 * don't reload the high-level actor, and don't rerun Init (which
+		 * has already been run).
+		 */
+		pReturn->Actor::LoadFromNode( sDir, pNode );
 	}
 
 all_done:
