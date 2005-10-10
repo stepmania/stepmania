@@ -2315,7 +2315,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			SOUND->PlayOnceFromAnnouncer( "gameplay here we go normal" );
 
 		m_Go.StartTransitioning( SM_None );
-		GAMESTATE->m_bPastHereWeGo = true;
+		GAMESTATE->m_bPastHereWeGo.Set( true );
 		m_DancingState = STATE_DANCING;		// STATE CHANGE!  Now the user is allowed to press Back
 	}
 	else if( SM == SM_NotesEnded )	// received while STATE_DANCING
@@ -2492,7 +2492,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		COMMAND( m_sprCourseSongNumber, "ChangeOut" );
 
 		LoadNextSong();
-		GAMESTATE->m_bPastHereWeGo = true;
+		GAMESTATE->m_bPastHereWeGo.Set( true );
 
 		m_NextSong.Reset();
 		m_NextSong.PlayCommand( "Finish" );

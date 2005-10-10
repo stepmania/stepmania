@@ -154,7 +154,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 	}
 
 
-	GAMESTATE->m_bPastHereWeGo = true;	// enable the gray arrows
+	GAMESTATE->m_bPastHereWeGo.Set( true );	// enable the gray arrows
 
 	FOREACH_PlayerNumber( p )
 	{

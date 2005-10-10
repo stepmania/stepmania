@@ -24,7 +24,7 @@ void ScreenGameplayLesson::Init()
 
 	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that animate "ready", "here we go", etc.
 
-	GAMESTATE->m_bPastHereWeGo = true;
+	GAMESTATE->m_bPastHereWeGo.Set( true );
 
 	m_DancingState = STATE_DANCING;
 

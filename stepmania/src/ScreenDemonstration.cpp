@@ -66,7 +66,7 @@ void ScreenDemonstration::Init()
 
 	ClearMessageQueue();	// remove all of the messages set in ScreenGameplay that drive "ready", "go", etc.
 
-	GAMESTATE->m_bPastHereWeGo = true;
+	GAMESTATE->m_bPastHereWeGo.Set( true );
 
 	m_DancingState = STATE_DANCING;
 	this->PostScreenMessage( SM_BeginFadingOut, SECONDS_TO_SHOW );	

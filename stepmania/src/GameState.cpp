@@ -73,6 +73,7 @@ GameState::GameState() :
 	m_pCurSteps(			Message_CurrentStepsP1Changed ),
     m_pCurCourse(			Message_CurrentCourseChanged ),
 	m_pCurTrail(			Message_CurrentTrailP1Changed ),
+	m_bPastHereWeGo(		Message_HereWeGoChanged ),
 	m_stEdit(				Message_EditStepsTypeChanged ),
     m_pEditSourceSteps(		Message_EditSourceStepsChanged ),
 	m_stEditSource(			Message_EditSourceStepsTypeChanged ),
@@ -582,7 +583,7 @@ void GameState::ResetMusicStatistics()
 	m_fSongBeat = 0;
 	m_fCurBPS = 10;
 	m_bFreeze = false;
-	m_bPastHereWeGo = false;
+	m_bPastHereWeGo.Set( false );
 	Actor::SetBGMTime( 0, 0 );
 }
 
