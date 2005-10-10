@@ -11,10 +11,10 @@ class ComboGraph: public ActorFrame
 {
 public:
 	ComboGraph();
-	~ComboGraph();
 	void Load( const StageStats &s, const PlayerStageStats &pss );
 	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
+	virtual bool AutoLoadChildren() const { return true; }
 
 	//
 	// Commands
@@ -24,7 +24,7 @@ public:
 private:
 	Actor *m_pNormalCombo;
 	Actor *m_pMaxCombo;
-	BitmapText m_MaxComboText;
+	BitmapText *m_pMaxComboText;
 };
 
 #endif

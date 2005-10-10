@@ -12,41 +12,34 @@ REGISTER_ACTOR_CLASS( ComboGraph )
 
 ComboGraph::ComboGraph()
 {
+	DeleteChildrenWhenDone( true );
+
 	m_pNormalCombo = NULL;
 	m_pMaxCombo = NULL;
-}
-
-ComboGraph::~ComboGraph()
-{
-	delete m_pNormalCombo;
-	delete m_pMaxCombo;
-	this->DeleteAllChildren();
+	m_pMaxComboText = NULL;
 }
 
 void ComboGraph::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
 	ActorFrame::LoadFromNode( sDir, pNode );
 
-	const XNode *pChild = pNode->GetChild( "MaxComboText" );
-	if( pChild == NULL )
-		RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"MaxComboText\"", sDir.c_str()) );
-	m_MaxComboText.LoadFromNode( sDir, pChild );
+	m_pMaxComboText = (BitmapText *) this->GetChild( "MaxComboText" );
+	if( m_pMaxComboText == NULL )
+		RageException::Throw( ssprintf("ComboGraph in \"%s\" must have a child named \"MaxComboText\"", sDir.c_str()) );
+	if( !m_pMaxComboText->IsType("BitmapText") )
+		RageException::Throw( ssprintf("ComboGraph in \"%s\" has a child named \"MaxComboText\" that is not a BitmapText", sDir.c_str()) );
 
-	pChild = pNode->GetChild( "NormalCombo" );
-	if( pChild == NULL )
-		RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"NormalCombo\"", sDir.c_str()) );
-	m_pNormalCombo = ActorUtil::LoadFromActorFile( sDir, pChild );
+	m_pNormalCombo = this->GetChild( "NormalCombo" );
+	if( m_pNormalCombo == NULL )
+		RageException::Throw( ssprintf("ComboGraph in \"%s\" must have a child named \"NormalCombo\"", sDir.c_str()) );
 
-	pChild = pNode->GetChild( "MaxCombo" );
-	if( pChild == NULL )
-		RageException::Throw( ssprintf("ComboGraph in \"%s\" is missing the node \"MaxCombo\"", sDir.c_str()) );
-	m_pMaxCombo = ActorUtil::LoadFromActorFile( sDir, pChild );
+	m_pMaxCombo = this->GetChild( "MaxCombo" );
+	if( m_pMaxCombo == NULL )
+		RageException::Throw( ssprintf("ComboGraph in \"%s\" must have a child named \"MaxCombo\"", sDir.c_str()) );
 }
 
 void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 {
-	ASSERT( m_SubActors.size() == 0 );
-
 	const float fFirstSecond = 0;
 	const float fLastSecond = s.GetTotalPossibleStepsSeconds();
 
@@ -90,7 +83,7 @@ void ComboGraph::Load( const StageStats &s, const PlayerStageStats &pss )
 		if( !bIsMax )
 			continue;
 
-		BitmapText *pText = (BitmapText *) m_MaxComboText.Copy(); // XXX Copy should be covariant
+		BitmapText *pText = (BitmapText *) m_pMaxComboText->Copy(); // XXX Copy should be covariant
 
 		const float fStart = SCALE( combo.fStartSecond, fFirstSecond, fLastSecond, 0.0f, 1.0f );
 		const float fSize = SCALE( combo.fSizeSeconds, 0, fLastSecond-fFirstSecond, 0.0f, 1.0f );
