@@ -60,8 +60,8 @@ void ReceptorArrow::Update( float fDeltaTime )
 	m_pPressBlock->SetVertAlign( bReverse ? Actor::align_bottom : Actor::align_top );
 
 
-	m_pReceptorGo->SetHidden( !GAMESTATE->m_bPastHereWeGo );
-	m_pReceptorWaiting->SetHidden( GAMESTATE->m_bPastHereWeGo );
+	m_pReceptorGo->SetHidden( GAMESTATE->m_bGameplayLeadIn );
+	m_pReceptorWaiting->SetHidden( !GAMESTATE->m_bGameplayLeadIn );
 
 	m_pPressBlock->SetHidden( !m_bIsPressed );
 }
