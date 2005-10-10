@@ -725,6 +725,14 @@ void Player::Update( float fDeltaTime )
 	ApplyWaitingTransforms();
 }
 
+void Player::ProcessMessages( float fDeltaTime )
+{
+	ActorFrame::ProcessMessages( fDeltaTime );
+
+	if( m_pNoteField )
+		m_pNoteField->ProcessMessages( fDeltaTime );
+}
+
 void Player::ApplyWaitingTransforms()
 {
 	for( unsigned j=0; j<m_pPlayerState->m_ModsToApply.size(); j++ )
