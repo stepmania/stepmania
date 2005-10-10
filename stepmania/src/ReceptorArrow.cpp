@@ -84,8 +84,6 @@ void ReceptorArrow::Step( TapNoteScore score )
 {
 	m_bIsPressed = true;
 
-	m_pReceptorGo->FinishTweening();
-	m_pReceptorWaiting->FinishTweening();
 	m_pReceptorGo->RunCommands( *m_sScoreCommand[score] );
 	m_pReceptorWaiting->RunCommands( *m_sScoreCommand[score] );
 
