@@ -862,6 +862,8 @@ void ScreenGameplay::Init()
 			pi->m_pSecondaryScoreKeeper->Load( m_apSongsQueue, pi->m_vpStepsQueue, pi->m_asModifiersQueue );
 	}
 
+	GAMESTATE->m_bGameplayLeadIn.Set( true );
+
 	/* LoadNextSong first, since that positions some elements which need to be
 	 * positioned before we TweenOnScreen. */
 	LoadNextSong();
@@ -1060,8 +1062,6 @@ void ScreenGameplay::ReloadCurrentSong()
 void ScreenGameplay::LoadNextSong()
 {
 	GAMESTATE->ResetMusicStatistics();
-
-	GAMESTATE->m_bGameplayLeadIn.Set( true );
 
 	FOREACH_EnabledPlayerInfoNotDummy( m_vPlayerInfo, pi )
 	{
@@ -2494,7 +2494,6 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		COMMAND( m_sprCourseSongNumber, "ChangeOut" );
 
 		LoadNextSong();
-		GAMESTATE->m_bGameplayLeadIn.Set( false );
 
 		m_NextSong.Reset();
 		m_NextSong.PlayCommand( "Finish" );
