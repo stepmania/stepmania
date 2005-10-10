@@ -167,8 +167,6 @@ void NoteField::Update( float fDeltaTime )
 	cur->m_ReceptorArrowRow.Update( fDeltaTime );
 	cur->m_GhostArrowRow.Update( fDeltaTime );
 
-	cur->m_ReceptorArrowRow.Update( fDeltaTime );
-
 	if( m_fPercentFadeToFail >= 0 )
 		m_fPercentFadeToFail = min( m_fPercentFadeToFail + fDeltaTime/1.5f, 1 );	// take 1.5 seconds to totally fade
 
