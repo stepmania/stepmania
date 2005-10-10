@@ -269,6 +269,19 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 	PlayCommand( "Init" );
 }
 
+/* Like RTTI: return true if this actor is an sType (or derived from sType).
+ * This uses the Lua binding check, so only works on bound types. */
+bool Actor::IsType( const CString &sType )
+{
+	Lua *L = LUA->Get();
+	this->PushSelf( L );
+	bool bRet = CheckLuaObjectType( L, -1, sType, false );
+	lua_pop( L, 1 );
+	LUA->Release( L );
+
+	return bRet;
+}
+
 void Actor::Draw()
 {
 	if( !m_bVisible )

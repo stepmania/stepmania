@@ -32,6 +32,7 @@ public:
 	void UnsubcribeAndClearCommands();
 	virtual void Reset();
 	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
+	bool IsType( const CString &sType );
 
 	static void SetBGMTime( float fTime, float fBeat );
 	static void SetBGMLight( int iLightNumber, float fCabinetLights );
