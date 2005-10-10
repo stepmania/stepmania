@@ -73,7 +73,7 @@ GameState::GameState() :
 	m_pCurSteps(			Message_CurrentStepsP1Changed ),
     m_pCurCourse(			Message_CurrentCourseChanged ),
 	m_pCurTrail(			Message_CurrentTrailP1Changed ),
-	m_bPastHereWeGo(		Message_HereWeGoChanged ),
+	m_bGameplayLeadIn(		Message_GameplayLeadInChanged ),
 	m_stEdit(				Message_EditStepsTypeChanged ),
     m_pEditSourceSteps(		Message_EditSourceStepsChanged ),
 	m_stEditSource(			Message_EditSourceStepsTypeChanged ),
@@ -583,7 +583,7 @@ void GameState::ResetMusicStatistics()
 	m_fSongBeat = 0;
 	m_fCurBPS = 10;
 	m_bFreeze = false;
-	m_bPastHereWeGo.Set( false );
+	m_bGameplayLeadIn.Set( false );
 	Actor::SetBGMTime( 0, 0 );
 }
 
@@ -2007,6 +2007,7 @@ public:
 	static int IsEventMode( T* p, lua_State *L )			{ lua_pushboolean(L, p->IsEventMode() ); return 1; }
 	static int GetNumPlayersEnabled( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetNumPlayersEnabled() ); return 1; }
 	static int GetSongBeat( T* p, lua_State *L )			{ lua_pushnumber(L, p->m_fSongBeat ); return 1; }
+	static int GetGameplayStarting( T* p, lua_State *L )	{ lua_pushnumber(L, p->m_bGameplayLeadIn ); return 1; }
 	static int PlayerUsingBothSides( T* p, lua_State *L )	{ lua_pushboolean(L, p->PlayerUsingBothSides() ); return 1; }
 	static int GetCoins( T* p, lua_State *L )				{ lua_pushnumber(L, p->m_iCoins ); return 1; }
 	static int IsSideJoined( T* p, lua_State *L )			{ lua_pushboolean(L, p->m_bSideIsJoined[(PlayerNumber)IArg(1)] ); return 1; }
@@ -2087,6 +2088,7 @@ public:
 		ADD_METHOD( IsEventMode );
 		ADD_METHOD( GetNumPlayersEnabled );
 		ADD_METHOD( GetSongBeat );
+		ADD_METHOD( GetGameplayStarting );
 		ADD_METHOD( PlayerUsingBothSides );
 		ADD_METHOD( GetCoins );
 		ADD_METHOD( IsSideJoined );

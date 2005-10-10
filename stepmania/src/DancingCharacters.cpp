@@ -188,15 +188,15 @@ void DancingCharacters::Update( float fDelta )
 		}
 	}
 
-	static bool bWasHereWeGo = false;
-	bool bIsHereWeGo = GAMESTATE->m_bPastHereWeGo;
-	if( !bWasHereWeGo && bIsHereWeGo )
+	static bool bWasGameplayStarting = false;
+	bool bGameplayStarting = GAMESTATE->m_bGameplayLeadIn;
+	if( !bWasGameplayStarting && bGameplayStarting )
 	{
 		FOREACH_PlayerNumber( p )
 			if( GAMESTATE->IsPlayerEnabled(p) )
 				m_pCharacter[p]->PlayAnimation( "warmup" );
 	}
-	bWasHereWeGo = bIsHereWeGo;
+	bWasGameplayStarting = bGameplayStarting;
 
 
 	static float fLastBeat = GAMESTATE->m_fSongBeat;

@@ -20,6 +20,7 @@ static const CString MessageNames[] = {
 	"CurrentCourseChanged",
 	"CurrentTrailP1Changed",
 	"CurrentTrailP2Changed",
+	"GameplayLeadInChanged",
 	"EditStepsTypeChanged",
 	"EditSourceStepsChanged",
 	"EditSourceStepsTypeChanged",

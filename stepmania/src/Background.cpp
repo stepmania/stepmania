@@ -969,7 +969,7 @@ void BrightnessOverlay::Update( float fDeltaTime )
 	ActorFrame::Update( fDeltaTime );
 	/* If we're actually playing, then we're past fades, etc; update the background
 	 * brightness to follow Cover. */
-	if( GAMESTATE->m_bPastHereWeGo )
+	if( !GAMESTATE->m_bGameplayLeadIn )
 		SetActualBrightness();
 }
 

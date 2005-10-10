@@ -35,7 +35,7 @@ enum Message
 	Message_CurrentCourseChanged,
 	Message_CurrentTrailP1Changed,
 	Message_CurrentTrailP2Changed,
-	Message_HereWeGoChanged,
+	Message_GameplayLeadInChanged,
 	Message_EditStepsTypeChanged,
 	Message_EditSourceStepsChanged,
 	Message_EditSourceStepsTypeChanged,

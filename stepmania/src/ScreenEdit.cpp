@@ -602,7 +602,7 @@ void ScreenEdit::Init()
 	m_fBeatToReturnTo = 0;
 
 
-	GAMESTATE->m_bPastHereWeGo.Set( false );
+	GAMESTATE->m_bGameplayLeadIn.Set( true );
 	GAMESTATE->m_EditMode = EDIT_MODE.GetValue();
 	GAMESTATE->m_fSongBeat = 0;
 	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
@@ -1927,7 +1927,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	SOUND->StopMusic();
 	m_soundMusic.StopPlaying();
 	m_soundAssistTick.StopPlaying();
-	GAMESTATE->m_bPastHereWeGo.Set( false );
+	GAMESTATE->m_bGameplayLeadIn.Set( true );
 
 	switch( old )
 	{
@@ -1988,7 +1988,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		float fSeconds = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_iStartPlayingAt) ) - 1;
 		GAMESTATE->UpdateSongPosition( fSeconds, m_pSong->m_Timing );
 
-		GAMESTATE->m_bPastHereWeGo.Set( true );
+		GAMESTATE->m_bGameplayLeadIn.Set( false );
 
 		/* Reset the note skin, in case preferences have changed. */
 		GAMESTATE->ResetNoteSkins();

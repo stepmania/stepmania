@@ -160,7 +160,7 @@ public:
 	float		m_fLightSongBeat; // g_fLightsFalloffSeconds ahead
 	bool		m_bFreeze;	// in the middle of a freeze
 	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
-	BroadcastOnChange<bool> m_bPastHereWeGo;
+	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
 	int			m_BeatToNoteSkinRev; /* hack: incremented whenever m_BeatToNoteSkin changes */
 	void ResetNoteSkins();
