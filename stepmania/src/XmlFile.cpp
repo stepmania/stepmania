@@ -631,7 +631,9 @@ bool XNode::RemoveAttr( const CString &sName )
 
 void XNode::AppendAttr( const CString &sName, const CString &sValue )
 {
-	m_attrs.insert( m_attrs.end(), make_pair(sName,sValue) );
+	pair<XAttrs::iterator,bool> ret = m_attrs.insert( make_pair(sName,sValue) );
+	if( !ret.second )
+		ret.first->second = sValue; // already existed
 }
 
 void XNode::AppendAttr( const CString &sName, float value ){ AppendAttr(sName,ssprintf("%f",value)); }
