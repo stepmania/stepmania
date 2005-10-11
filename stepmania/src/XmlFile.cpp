@@ -1,3 +1,10 @@
+// Adapted from http://www.codeproject.com/cpp/xmlite.asp.
+// On 2004-02-09 Cho, Kyung-Min gave us permission to use and modify this 
+// library.
+//
+// XmlFile : XML Lite Parser Library
+// by Cho, Kyung Min: bro@shinbiro.com 2002-10-30
+
 #include "global.h"
 #include "XmlFile.h"
 #include "RageFile.h"

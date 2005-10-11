@@ -1,23 +1,7 @@
+/* XmlFile - Simple XML reading and writing. */
+
 #ifndef XmlFile_H
 #define XmlFile_H
-// XmlFile.h: interface for the XmlFile class.
-//
-// Adapted from http://www.codeproject.com/cpp/xmlite.asp.
-// On 2004-02-09 Cho, Kyung-Min gave us permission to use and modify this 
-// library.
-//
-// XmlFile : XML Lite Parser Library
-// by bro ( Cho,Kyung Min: bro@shinbiro.com ) 2002-10-30
-// History.
-// 2002-10-29 : First Coded. Parsing XMLElelement and Attributes.
-//              get xml parsed string ( looks good )
-// 2002-10-30 : Get Node Functions, error handling ( not completed )
-// 2002-12-06 : Helper Funtion string to long
-// 2002-12-12 : Entity Helper Support
-// 2003-04-08 : Close, 
-// 2003-07=23 : add property escape_value. (now no escape on default)
-//              fix escape functions
-//////////////////////////////////////////////////////////////////////
 
 #include <map>
 struct DateTime;
