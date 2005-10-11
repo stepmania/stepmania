@@ -105,7 +105,7 @@ retry:
 }
 
 
-Actor* ActorUtil::LoadFromActorFile( const CString& sDir, const XNode* pNode )
+Actor* ActorUtil::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
 	ASSERT( pNode );
 
@@ -266,7 +266,7 @@ Actor* ActorUtil::MakeActor( const CString &sPath_ )
 				return new Actor;
 			}
 			CString sDir = Dirname( sPath );
-			return LoadFromActorFile( sDir, &xml );
+			return ActorUtil::LoadFromNode( sDir, &xml );
 		}
 	case FT_Bitmap:
 	case FT_Movie:

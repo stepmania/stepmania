@@ -104,7 +104,7 @@ void ActorFrame::LoadChildrenFromNode( const CString& sDir, const XNode* pNode )
 	{
 		FOREACH_CONST_Child( pChildren, pChild )
 		{
-			Actor* pChildActor = ActorUtil::LoadFromActorFile( sDir, pChild );
+			Actor* pChildActor = ActorUtil::LoadFromNode( sDir, pChild );
 			if( pChildActor )
 				AddChild( pChildActor );
 		}

@@ -198,7 +198,7 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 	{
         if( pChild->m_sName == "Input" )
         {
-			/* Parameters are set as globals by ActorUtil::LoadFromActorFile.
+			/* Parameters are set as globals by ActorUtil::LoadFromNode.
 			 * If parameters are specified here, save them to the actor.  Accessing
 			 * parameters as globals directly is deprecated. */
 			CString sName;

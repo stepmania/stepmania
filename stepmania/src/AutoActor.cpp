@@ -41,7 +41,7 @@ void AutoActor::LoadFromNode( const CString &sDir, const XNode* pNode )
 {
 	Unload();
 
-	m_pActor = ActorUtil::LoadFromActorFile( sDir, pNode );
+	m_pActor = ActorUtil::LoadFromNode( sDir, pNode );
 }
 
 void AutoActor::LoadAndSetName( const CString &sScreenName, const CString &sActorName )
