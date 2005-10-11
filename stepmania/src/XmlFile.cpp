@@ -94,12 +94,11 @@ static void SetString( const CString &s, int iStart, int iEnd, CString* ps, bool
 
 XNode::XNode( const XNode &cpy ):
 	m_sName( cpy.m_sName ),
-	m_sValue( cpy.m_sValue )
+	m_sValue( cpy.m_sValue ),
+	m_attrs( cpy.m_attrs )
 {
 	FOREACH_CONST_Child( &cpy, c )
 		this->AppendChild( new XNode(*c) );
-	FOREACH_CONST_Attr( &cpy, a )
-		this->AppendAttr( a->first, a->second );
 }
 
 XNode::~XNode()
