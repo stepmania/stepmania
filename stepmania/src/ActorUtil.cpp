@@ -247,22 +247,20 @@ Actor* ActorUtil::MakeActor( const CString &sPath )
 				sDir += '/';
 
 			CString sXml = sDir + "default.xml";
-			if( DoesFileExist(sXml) )
-			{
-				XNode xml;
-				if( !xml.LoadFromFile(sXml) )
-				{
-					// XNode will warn about the error
-					return new Actor;
-				}
-				return LoadFromActorFile( sDir, &xml );
-			}
-			else
+			if( !DoesFileExist(sXml) )
 			{
 				BGAnimation *pBGA = new BGAnimation;
 				pBGA->LoadFromAniDir( sDir );
 				return pBGA;
 			}
+
+			XNode xml;
+			if( !xml.LoadFromFile(sXml) )
+			{
+				// XNode will warn about the error
+				return new Actor;
+			}
+			return LoadFromActorFile( sDir, &xml );
 		}
 	case FT_Xml:
 		{
