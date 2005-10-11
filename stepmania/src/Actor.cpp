@@ -222,20 +222,20 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 	FOREACH_CONST_Attr( pNode, pAttr )
 	{
 		// Load Name, if any.
-		if( pAttr->m_sName == "Name" )
+		const CString &sKeyName = pAttr->m_sName;
+		const CString &sValue = pAttr->m_sValue;
+		if( sKeyName == "Name" )
 		{
-			m_sName = pAttr->m_sValue;
+			m_sName = sValue;
 		}
-		else if( pAttr->m_sName == "BaseRotationXDegrees" )	SetBaseRotationX( strtof( pAttr->m_sValue, NULL ) );
-		else if( pAttr->m_sName == "BaseRotationYDegrees" )	SetBaseRotationY( strtof( pAttr->m_sValue, NULL ) );
-		else if( pAttr->m_sName == "BaseRotationZDegrees" )	SetBaseRotationZ( strtof( pAttr->m_sValue, NULL ) );
-		else if( pAttr->m_sName == "BaseZoomX" )			SetBaseZoomX( strtof( pAttr->m_sValue, NULL ) );
-		else if( pAttr->m_sName == "BaseZoomY" )			SetBaseZoomY( strtof( pAttr->m_sValue, NULL ) );
-		else if( pAttr->m_sName == "BaseZoomZ" )			SetBaseZoomZ( strtof( pAttr->m_sValue, NULL ) );
-		else if( EndsWith(pAttr->m_sName,"Command") )
+		else if( sKeyName == "BaseRotationXDegrees" )	SetBaseRotationX( strtof( sValue, NULL ) );
+		else if( sKeyName == "BaseRotationYDegrees" )	SetBaseRotationY( strtof( sValue, NULL ) );
+		else if( sKeyName == "BaseRotationZDegrees" )	SetBaseRotationZ( strtof( sValue, NULL ) );
+		else if( sKeyName == "BaseZoomX" )			SetBaseZoomX( strtof( sValue, NULL ) );
+		else if( sKeyName == "BaseZoomY" )			SetBaseZoomY( strtof( sValue, NULL ) );
+		else if( sKeyName == "BaseZoomZ" )			SetBaseZoomZ( strtof( sValue, NULL ) );
+		else if( EndsWith(sKeyName,"Command") )
 		{
-			const CString &sKeyName = pAttr->m_sName; /* "OnCommand" */
-			const CString &sValue = pAttr->m_sValue;
 			apActorCommands apac( new ActorCommands( sValue ) );
 
 			CString sCmdName = sKeyName.Left( sKeyName.size()-7 );

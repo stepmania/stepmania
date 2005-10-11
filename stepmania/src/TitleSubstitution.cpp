@@ -50,18 +50,20 @@ void TitleTrans::LoadFromNode( const XNode* pNode )
 	{
 		/* Surround each regex with ^(...)$, to force all comparisons to default
 		 * to being a full-line match.  (Add ".*" manually if this isn't wanted.) */
-		if(		 attr->m_sName == "DontTransliterate" )	translit = false;
-		else if( attr->m_sName == "TitleFrom" )			TitleFrom					= "^(" + attr->m_sValue + ")$";
-		else if( attr->m_sName == "ArtistFrom" )		ArtistFrom					= "^(" + attr->m_sValue + ")$";
-		else if( attr->m_sName == "SubtitleFrom")		SubFrom						= "^(" + attr->m_sValue + ")$";
-		else if( attr->m_sName == "TitleTo")			Replacement.Title			= attr->m_sValue;
-		else if( attr->m_sName == "ArtistTo")			Replacement.Artist			= attr->m_sValue;
-		else if( attr->m_sName == "SubtitleTo")			Replacement.Subtitle		= attr->m_sValue;
-		else if( attr->m_sName == "TitleTransTo")		Replacement.TitleTranslit	= attr->m_sValue;
-		else if( attr->m_sName == "ArtistTransTo")		Replacement.ArtistTranslit	= attr->m_sValue;
-		else if( attr->m_sName == "SubtitleTransTo")	Replacement.SubtitleTranslit= attr->m_sValue;
+		const CString &sKeyName = attr->m_sName;
+		const CString &sValue = attr->m_sValue;
+		if(		 sKeyName == "DontTransliterate" )	translit = false;
+		else if( sKeyName == "TitleFrom" )			TitleFrom					= "^(" + sValue + ")$";
+		else if( sKeyName == "ArtistFrom" )			ArtistFrom					= "^(" + sValue + ")$";
+		else if( sKeyName == "SubtitleFrom")		SubFrom						= "^(" + sValue + ")$";
+		else if( sKeyName == "TitleTo")				Replacement.Title			= sValue;
+		else if( sKeyName == "ArtistTo")			Replacement.Artist			= sValue;
+		else if( sKeyName == "SubtitleTo")			Replacement.Subtitle		= sValue;
+		else if( sKeyName == "TitleTransTo")		Replacement.TitleTranslit	= sValue;
+		else if( sKeyName == "ArtistTransTo")		Replacement.ArtistTranslit	= sValue;
+		else if( sKeyName == "SubtitleTransTo")		Replacement.SubtitleTranslit= sValue;
 		else
-			LOG->Warn( "Unknown TitleSubst tag: \"%s\"", attr->m_sName.c_str() );
+			LOG->Warn( "Unknown TitleSubst tag: \"%s\"", sKeyName.c_str() );
 	}
 }
 
