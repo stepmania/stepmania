@@ -232,7 +232,7 @@ void Sprite::EnableAnimation( bool bEnable )
 	}
 }
 
-bool Sprite::LoadFromTexture( RageTextureID ID )
+void Sprite::LoadFromTexture( RageTextureID ID )
 {
 	LOG->Trace( "Sprite::LoadFromTexture( %s )", ID.filename.c_str() );
 
@@ -269,8 +269,6 @@ bool Sprite::LoadFromTexture( RageTextureID ID )
 	// apply clipping (if any)
 	if( m_fRememberedClipWidth != -1 && m_fRememberedClipHeight != -1 )
 		ScaleToClipped( m_fRememberedClipWidth, m_fRememberedClipHeight );
-
-	return true;
 }
 
 void Sprite::UpdateAnimationState()

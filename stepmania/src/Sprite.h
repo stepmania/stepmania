@@ -73,7 +73,7 @@ public:
 	virtual void PushSelf( lua_State *L );
 
 protected:
-	virtual bool LoadFromTexture( RageTextureID ID );
+	void LoadFromTexture( RageTextureID ID );
 
 	void DrawTexture( const TweenState *state );
 
