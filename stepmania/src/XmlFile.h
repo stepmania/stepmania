@@ -24,7 +24,7 @@ struct DateTime;
 class RageFileBasic;
 
 struct XAttr;
-typedef multimap<CString,XAttr*> XAttrs;
+typedef map<CString,XAttr*> XAttrs;
 struct XNode;
 typedef multimap<CString,XNode*> XNodes;
 
@@ -188,6 +188,7 @@ struct XNode
 	void SetAttrValue( const CString &sName, const CString &sValue );
 
 	XNode() { }
+	XNode( const XNode &cpy );
 	~XNode();
 
 	void Clear();

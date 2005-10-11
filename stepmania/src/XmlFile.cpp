@@ -85,6 +85,16 @@ static void SetString( const CString &s, int iStart, int iEnd, CString* ps, bool
 	ps->assign( s, iStart, len );
 }
 
+XNode::XNode( const XNode &cpy ):
+	m_sName( cpy.m_sName ),
+	m_sValue( cpy.m_sValue )
+{
+	FOREACH_CONST_Child( &cpy, c )
+		this->AppendChild( new XNode(*c) );
+	FOREACH_CONST_Attr( &cpy, a )
+		this->AppendAttr( new XAttr(*a) );
+}
+
 XNode::~XNode()
 {
 	Clear();
@@ -541,7 +551,7 @@ void XNode::SetValue( const DateTime &v )	{ m_sValue = v.GetString(); }
 
 const XAttr *XNode::GetAttr( const CString &attrname ) const
 {
-	multimap<CString, XAttr*>::const_iterator it = m_attrs.find( attrname );
+	map<CString, XAttr*>::const_iterator it = m_attrs.find( attrname );
 	if( it != m_attrs.end() )
 	{
 		DEBUG_ASSERT( attrname == it->second->m_sName );
@@ -552,7 +562,7 @@ const XAttr *XNode::GetAttr( const CString &attrname ) const
 
 XAttr *XNode::GetAttr( const CString &attrname )
 {
-	multimap<CString, XAttr*>::iterator it = m_attrs.find( attrname );
+	map<CString, XAttr*>::iterator it = m_attrs.find( attrname );
 	if( it != m_attrs.end() )
 	{
 		DEBUG_ASSERT( attrname == it->second->m_sName );
@@ -594,7 +604,9 @@ XNode *XNode::AppendChild( const CString &sName, const DateTime &value )	{ XNode
 XNode *XNode::AppendChild( XNode *node )
 {
 	DEBUG_ASSERT( node->m_sName.size() );
-	m_childs.insert( pair<CString,XNode*>(node->m_sName,node) );
+
+	/* Hinted insert: optimize for alphabetical inserts, for the copy ctor. */
+	m_childs.insert( m_childs.end(), pair<CString,XNode*>(node->m_sName,node) );
 	return node;
 }
 
@@ -618,14 +630,16 @@ bool XNode::RemoveChild( XNode *node )
 XAttr *XNode::AppendAttr( XAttr *attr )
 {
 	DEBUG_ASSERT( attr->m_sName.size() );
-	m_attrs.insert( make_pair(attr->m_sName,attr) );
+
+	/* Hinted insert: optimize for alphabetical inserts, for the copy ctor. */
+	m_attrs.insert( m_attrs.end(), make_pair(attr->m_sName,attr) );
 	return attr;
 }
 
 // detach attribute and delete object
 bool XNode::RemoveAttr( XAttr *attr )
 {
-	FOREACHMM( CString, XAttr*, m_attrs, p )
+	FOREACHM( CString, XAttr*, m_attrs, p )
 	{
 		if( p->second == attr )
 		{
