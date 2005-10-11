@@ -110,13 +110,10 @@ bool Sprite::LoadBG( RageTextureID ID )
 
 bool Sprite::Load( RageTextureID ID )
 {
-	bool result;
-	if( ID.filename == "" ) 
-		result = true;
+	if( ID.filename.empty() ) 
+		return true;
 	else 
-		result = LoadFromTexture( ID );
-
-	return result;
+		return LoadFromTexture( ID );
 };
 
 void Sprite::LoadFromNode( const CString& sDir, const XNode* pNode )
