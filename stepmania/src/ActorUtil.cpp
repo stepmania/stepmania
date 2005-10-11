@@ -235,8 +235,9 @@ all_done:
 	return pReturn;
 }
 
-Actor* ActorUtil::MakeActor( const CString &sPath )
+Actor* ActorUtil::MakeActor( const CString &sPath_ )
 {
+	CString sPath( sPath_ );
 	FileType ft = GetFileType( sPath );
 	switch( ft )
 	{
@@ -246,21 +247,15 @@ Actor* ActorUtil::MakeActor( const CString &sPath )
 			if( sDir.Right(1) != "/" )
 				sDir += '/';
 
-			CString sXml = sDir + "default.xml";
-			if( !DoesFileExist(sXml) )
+			sPath = sDir + "default.xml";
+			if( !DoesFileExist(sPath) )
 			{
 				BGAnimation *pBGA = new BGAnimation;
 				pBGA->LoadFromAniDir( sDir );
 				return pBGA;
 			}
 
-			XNode xml;
-			if( !xml.LoadFromFile(sXml) )
-			{
-				// XNode will warn about the error
-				return new Actor;
-			}
-			return LoadFromActorFile( sDir, &xml );
+			/* fall through */
 		}
 	case FT_Xml:
 		{
