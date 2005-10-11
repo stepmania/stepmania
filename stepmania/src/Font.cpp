@@ -406,8 +406,8 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const CStr
 	{
 		FOREACH_CONST_Attr( pNode, pAttr )
 		{
-			CString sName = pAttr->m_sName;
-			const CString &sValue = pAttr->m_sValue;
+			CString sName = pAttr->first;
+			const CString &sValue = pAttr->second;
 
 			sName.MakeUpper();
 

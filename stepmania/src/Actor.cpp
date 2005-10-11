@@ -222,8 +222,8 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 	FOREACH_CONST_Attr( pNode, pAttr )
 	{
 		// Load Name, if any.
-		const CString &sKeyName = pAttr->m_sName;
-		const CString &sValue = pAttr->m_sValue;
+		const CString &sKeyName = pAttr->first;
+		const CString &sValue = pAttr->second;
 		if( sKeyName == "Name" )
 		{
 			m_sName = sValue;

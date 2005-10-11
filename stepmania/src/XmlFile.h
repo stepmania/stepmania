@@ -7,24 +7,22 @@
 struct DateTime;
 class RageFileBasic;
 
-struct XAttr;
-typedef map<CString,XAttr*> XAttrs;
+typedef map<CString,CString> XAttrs;
 struct XNode;
 typedef multimap<CString,XNode*> XNodes;
 
 #define FOREACH_Attr( pNode, Var ) \
-	XAttrs::iterator Var##Iter; \
-	XAttr *Var = NULL; \
-	for( Var##Iter = (pNode)->m_attrs.begin(), Var = Var##Iter->second; \
-		Var##Iter != (pNode)->m_attrs.end(); \
-		++Var##Iter, Var = Var##Iter->second )
+	XAttrs::iterator Var; \
+	CString &Var = NULL; \
+	for( Var = (pNode)->m_attrs.begin(); \
+		Var != (pNode)->m_attrs.end(); \
+		++Var )
 
 #define FOREACH_CONST_Attr( pNode, Var ) \
-	XAttrs::const_iterator Var##Iter; \
-	const XAttr *Var = NULL; \
-	for( Var##Iter = (pNode)->m_attrs.begin(), Var = Var##Iter->second; \
-		Var##Iter != (pNode)->m_attrs.end(); \
-		++Var##Iter, Var = Var##Iter->second )
+	XAttrs::const_iterator Var; \
+	for( Var = (pNode)->m_attrs.begin(); \
+		Var != (pNode)->m_attrs.end(); \
+		++Var )
 
 #define FOREACH_Child( pNode, Var ) \
 	XNodes::iterator Var##Iter; \
@@ -85,21 +83,6 @@ struct DISP_OPT
 	}
 };
 
-// XAttr : Attribute Implementation
-struct XAttr
-{
-	CString m_sName;	// a duplicate of the m_sName in the parent's map
-	CString	m_sValue;
-	void GetValue( CString &out ) const;
-	void GetValue( int &out ) const;
-	void GetValue( float &out ) const;
-	void GetValue( bool &out ) const;
-	void GetValue( unsigned &out ) const;
-	void GetValue( DateTime &out ) const;
-	
-	bool GetXML( RageFileBasic &f, DISP_OPT *opt ) const;
-};
-
 // XMLNode structure
 struct XNode
 {
@@ -124,6 +107,7 @@ struct XNode
 	unsigned Load( const CString &sXml, PARSEINFO *pi, unsigned iOffset = 0 );
 	unsigned LoadAttributes( const CString &sAttrs, PARSEINFO *pi, unsigned iOffset );
 	bool GetXML( RageFileBasic &f, DISP_OPT *opt ) const;
+	bool GetAttrXML( RageFileBasic &f, DISP_OPT *opt, const CString &sName, const CString &sValue ) const;
 	CString GetXML() const;
 
 	bool LoadFromFile( const CString &sFile );
@@ -132,14 +116,14 @@ struct XNode
 	bool SaveToFile( RageFileBasic &f, DISP_OPT *opt ) const;
 
 	// in own attribute list
-	const XAttr *GetAttr( const CString &sAttrName ) const; 
-	XAttr *GetAttr( const CString &sAttrName ); 
-	bool GetAttrValue( const CString &sName, CString &out ) const  { const XAttr* pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	bool GetAttrValue( const CString &sName, int &out ) const      { const XAttr* pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	bool GetAttrValue( const CString &sName, float &out ) const    { const XAttr* pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	bool GetAttrValue( const CString &sName, bool &out ) const     { const XAttr* pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	bool GetAttrValue( const CString &sName, unsigned &out ) const { const XAttr* pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
-	bool GetAttrValue( const CString &sName, DateTime &out ) const { const XAttr* pAttr=GetAttr(sName); if(pAttr==NULL) return false; pAttr->GetValue(out); return true; }
+	const CString *GetAttr( const CString &sAttrName ) const; 
+	CString *GetAttr( const CString &sAttrName ); 
+	bool GetAttrValue( const CString &sName, CString &out ) const;
+	bool GetAttrValue( const CString &sName, int &out ) const;
+	bool GetAttrValue( const CString &sName, float &out ) const;
+	bool GetAttrValue( const CString &sName, bool &out ) const;
+	bool GetAttrValue( const CString &sName, unsigned &out ) const;
+	bool GetAttrValue( const CString &sName, DateTime &out ) const;
 
 	// in one level child nodes
 	const XNode *GetChild( const CString &sName ) const; 
@@ -160,16 +144,12 @@ struct XNode
 	XNode *AppendChild( XNode *node );
 	bool RemoveChild( XNode *node );
 
-	XAttr *AppendAttr( const CString &sName = CString(), const CString &sValue = CString() );
-	XAttr *AppendAttr( const CString &sName, float value );
-	XAttr *AppendAttr( const CString &sName, int value );
-	XAttr *AppendAttr( const CString &sName, unsigned value );
-	XAttr *AppendAttr( const CString &sName, const DateTime &value );
-	XAttr *AppendAttr( XAttr *pAttr );
-	bool RemoveAttr( XAttr *pAttr );
-
-	// creates the attribute if it doesn't already exist
-	void SetAttrValue( const CString &sName, const CString &sValue );
+	void AppendAttr( const CString &sName = CString(), const CString &sValue = CString() );
+	void AppendAttr( const CString &sName, float value );
+	void AppendAttr( const CString &sName, int value );
+	void AppendAttr( const CString &sName, unsigned value );
+	void AppendAttr( const CString &sName, const DateTime &value );
+	bool RemoveAttr( const CString &sName );
 
 	XNode() { }
 	XNode( const XNode &cpy );

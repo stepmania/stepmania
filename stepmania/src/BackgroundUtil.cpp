@@ -232,7 +232,7 @@ static void GetFilterToFileNames( const CString sBaseDir, const Song *pSong, set
 	}
 
 	FOREACH_CONST_Attr( pSection, p )
-		vsPossibleFileNamesOut.insert( p->m_sName );
+		vsPossibleFileNamesOut.insert( p->first );
 }
 
 void BackgroundUtil::GetGlobalBGAnimations( const Song *pSong, const CString &sMatch, vector<CString> &vsPathsOut, vector<CString> &vsNamesOut )

@@ -95,7 +95,7 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 
 		FOREACH_CONST_Attr( pKey, pAttr )
 		{
-			if( f.PutLine( ssprintf("%s=%s", pAttr->m_sName.c_str(), pAttr->m_sValue.c_str()) ) == -1 )
+			if( f.PutLine( ssprintf("%s=%s", pAttr->first.c_str(), pAttr->second.c_str()) ) == -1 )
 			{
 				m_sError = f.GetError();
 				return false;
@@ -124,7 +124,7 @@ void IniFile::SetValue( const CString &keyname, const CString &valuename, const 
 	XNode* pNode = GetChild( keyname );
 	if( pNode == NULL )
 		pNode = AppendChild( keyname );
-	pNode->SetAttrValue( valuename, value );
+	pNode->AppendAttr( valuename, value );
 }
 
 bool IniFile::DeleteValue(const CString &keyname, const CString &valuename)
@@ -132,10 +132,7 @@ bool IniFile::DeleteValue(const CString &keyname, const CString &valuename)
 	XNode* pNode = GetChild( keyname );
 	if( pNode == NULL )
 		return false;
-	XAttr* pAttr = pNode->GetAttr( valuename );
-	if( pAttr == NULL )
-		return false;
-	return pNode->RemoveAttr( pAttr );
+	return pNode->RemoveAttr( valuename );
 }
 
 

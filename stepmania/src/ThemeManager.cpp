@@ -775,7 +775,7 @@ void ThemeManager::GetModifierNames( vector<CString>& AddTo )
 		if( cur )
 		{
 			FOREACH_CONST_Attr( cur, p )
-				AddTo.push_back( p->m_sName );
+				AddTo.push_back( p->first );
 		}
 	}
 }
