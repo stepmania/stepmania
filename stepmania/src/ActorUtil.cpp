@@ -240,17 +240,6 @@ Actor* ActorUtil::MakeActor( const CString &sPath )
 	FileType ft = GetFileType( sPath );
 	switch( ft )
 	{
-	case FT_Xml:
-		{
-			XNode xml;
-			if( !xml.LoadFromFile(sPath) )
-			{
-				// XNode will warn about the error
-				return new Actor;
-			}
-			CString sDir = Dirname( sPath );
-			return LoadFromActorFile( sDir, &xml );
-		}
 	case FT_Directory:
 		{
 			CString sDir = sPath;
@@ -274,6 +263,17 @@ Actor* ActorUtil::MakeActor( const CString &sPath )
 				pBGA->LoadFromAniDir( sDir );
 				return pBGA;
 			}
+		}
+	case FT_Xml:
+		{
+			XNode xml;
+			if( !xml.LoadFromFile(sPath) )
+			{
+				// XNode will warn about the error
+				return new Actor;
+			}
+			CString sDir = Dirname( sPath );
+			return LoadFromActorFile( sDir, &xml );
 		}
 	case FT_Bitmap:
 	case FT_Movie:
