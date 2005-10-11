@@ -194,23 +194,9 @@ Actor* ActorUtil::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 		ActorUtil::ResolvePath( sNewPath, sDir );
 
-		pReturn = ActorUtil::MakeActor( sNewPath );
+		pReturn = ActorUtil::MakeActor( sNewPath, pNode );
 		if( pReturn == NULL )
 			goto all_done;
-
-		/*
-		 * Hack: take attributes from the file loading the new actor,
-		 * and load them on top of the new file.  This way, you can do
-		 * eg:
-		 *
-		 * file1.xml:   <Layer File="file2" OnCommand="x,10" />
-		 * file2.xml:   <Layer File="image" OffCommand="y,10" />
-		 *
-		 * Be sure to only run the low-level load, to pull in commands;
-		 * don't reload the high-level actor, and don't rerun Init (which
-		 * has already been run).
-		 */
-		pReturn->Actor::LoadFromNode( sDir, pNode );
 	}
 
 all_done:
@@ -235,20 +221,69 @@ all_done:
 	return pReturn;
 }
 
-Actor* ActorUtil::MakeActor( const CString &sPath_ )
+/*
+ * Merge a parent and child XML.  For example,
+ *
+ * parent.xml: <Layer File="child" OnCommand="x,10" />
+ * child.xml:  <Layer1 File="image" OffCommand="y,10" />
+ *
+ * results in:
+ *
+ * <Layer1 File="image" OnCommand="x,10" OffCommand="y,10" />
+ *
+ * The result is a copy of the child, with attributes and children
+ * from the parent merged, excluding the attribute "File".  Warn
+ * about duplicate attributes.
+ */
+static void MergeActorXML( XNode *pChild, const XNode *pParent )
 {
+	FOREACH_CONST_Child( pParent, p )
+		pChild->AppendChild( new XNode(*p) );
+
+	FOREACH_CONST_Attr( pParent, p )
+	{
+		if( p->first == "File" )
+			continue;
+
+		CString sOld;
+		if( pChild->GetChildValue(p->first, sOld) )
+		{
+			CString sWarning = 
+					ssprintf( "Overriding \"%s\" (\"%s\") in XML node \"%s\" with \"%s\" in XML node \"%s\"",
+				p->first.c_str(),
+				p->second.c_str(),
+				pChild->m_sName.c_str(),
+				sOld.c_str(),
+				pParent->m_sName.c_str() );
+			Dialog::OK( sWarning, "XML_ATTRIB_OVERRIDE" );
+		}
+		pChild->AppendAttr( p->first, p->second );
+	}
+}
+
+/*
+ * If pParent is non-NULL, it's the parent node when nesting XML, which is
+ * used only by ActorUtil::LoadFromNode.
+ */
+Actor* ActorUtil::MakeActor( const CString &sPath_, const XNode *pParent )
+{
+	static const XNode dummy;
+	if( pParent == NULL )
+		pParent = &dummy;
+
 	CString sPath( sPath_ );
 
 	/* If @ expressions are allowed through this path, we've already
 	 * evaluated them.  Make sure we don't allow double-evaluation. */
 	ASSERT_M( sPath.empty() || sPath[0] != '@', sPath );
 
+	CString sDir = Dirname( sPath );
 	FileType ft = GetFileType( sPath );
 	switch( ft )
 	{
 	case FT_Directory:
 		{
-			CString sDir = sPath;
+			sDir = sPath;
 			if( sDir.Right(1) != "/" )
 				sDir += '/';
 
@@ -270,21 +305,26 @@ Actor* ActorUtil::MakeActor( const CString &sPath_ )
 				// XNode will warn about the error
 				return new Actor;
 			}
-			CString sDir = Dirname( sPath );
+
+			MergeActorXML( &xml, pParent );
 			return ActorUtil::LoadFromNode( sDir, &xml );
 		}
 	case FT_Bitmap:
 	case FT_Movie:
 		{
-			Sprite* pSprite = new Sprite;
-			pSprite->Load( sPath );
-			return pSprite;
+			XNode xml( *pParent );
+			xml.AppendAttr( "Texture", sPath );
+
+			return ActorUtil::Create( "Sprite", sDir, &xml );
 		}
 	case FT_Model:
 		{
-			Model* pModel = new Model;
-			pModel->Load( sPath );
-			return pModel;
+			XNode xml( *pParent );
+			xml.AppendAttr( "Meshes", sPath );
+			xml.AppendAttr( "Materials", sPath );
+			xml.AppendAttr( "Bones", sPath );
+
+			return ActorUtil::Create( "Model", sDir, &xml );
 		}
 	default:
 		RageException::Throw("File \"%s\" has unknown type, \"%s\"",

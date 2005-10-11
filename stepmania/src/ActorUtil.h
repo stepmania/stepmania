@@ -67,7 +67,7 @@ namespace ActorUtil
 
 	// Return a Sprite, BitmapText, or Model depending on the file type
 	Actor* LoadFromNode( const CString& sAniDir, const XNode* pNode );
-	Actor* MakeActor( const CString &sPath );
+	Actor* MakeActor( const CString &sPath, const XNode *pParent = NULL );
 
 	void ResolvePath( CString &sPath, const CString &sName );
 
