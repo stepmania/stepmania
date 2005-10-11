@@ -17,7 +17,7 @@ public:
 
 	/* If you previously loaded a cached banner, and are now loading the full-
 	 * resolution banner, set bLowResToHighRes to true. */
-	bool Load( RageTextureID ID, bool bLowResToHighRes=false );
+	void Load( RageTextureID ID, bool bLowResToHighRes=false );
 	void LoadFromSong( const Song* pSong );		// NULL means no song
 	void LoadAllMusic();
 	void LoadMode();

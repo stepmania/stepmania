@@ -16,7 +16,7 @@ public:
 	virtual ~Banner() { }
 	virtual Actor *Copy() const;
 
-	virtual bool Load( RageTextureID ID, bool bIsBanner=true );
+	virtual void Load( RageTextureID ID, bool bIsBanner=true );
 
 	virtual void Update( float fDeltaTime );
 

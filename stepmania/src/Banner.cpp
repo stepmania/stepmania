@@ -22,12 +22,12 @@ Banner::Banner()
 }
 
 /* Ugly: if sIsBanner is false, we're actually loading something other than a banner. */
-bool Banner::Load( RageTextureID ID, bool bIsBanner )
+void Banner::Load( RageTextureID ID, bool bIsBanner )
 {
 	if( ID.filename == "" )
 	{
 		LoadFallback();
-		return true;
+		return;
 	}
 
 	if( bIsBanner )
@@ -38,10 +38,8 @@ bool Banner::Load( RageTextureID ID, bool bIsBanner )
 
 	TEXTUREMAN->DisableOddDimensionWarning();
 	TEXTUREMAN->VolatileTexture( ID );
-	bool ret = Sprite::Load( ID );
+	Sprite::Load( ID );
 	TEXTUREMAN->EnableOddDimensionWarning();
-
-	return ret;
 };
 
 void Banner::Update( float fDeltaTime )

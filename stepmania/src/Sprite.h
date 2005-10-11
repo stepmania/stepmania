@@ -32,8 +32,8 @@ public:
 
 	/* Just a convenience function; load an image that'll be used in the
 	 * background. */
-	virtual bool LoadBG( RageTextureID ID );
-	virtual bool Load( RageTextureID ID );
+	virtual void LoadBG( RageTextureID ID );
+	virtual void Load( RageTextureID ID );
 
 	void UnloadTexture();
 	RageTexture* GetTexture() { return m_pTexture; };

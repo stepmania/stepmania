@@ -69,11 +69,10 @@ void FadingBanner::DrawPrimitives()
 	}
 }
 
-bool FadingBanner::Load( RageTextureID ID, bool bLowResToHighRes )
+void FadingBanner::Load( RageTextureID ID, bool bLowResToHighRes )
 {
 	BeforeChange( bLowResToHighRes );
-	bool bRet = m_Banner[m_iIndexLatest].Load(ID);
-	return bRet;
+	m_Banner[m_iIndexLatest].Load(ID);
 }
 
 /* If bLowResToHighRes is true, we're fading from a low-res banner to the

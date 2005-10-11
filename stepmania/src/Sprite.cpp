@@ -103,17 +103,15 @@ RageTextureID Sprite::SongBannerTexture( RageTextureID ID )
 }
 
 /* deprecated */
-bool Sprite::LoadBG( RageTextureID ID )
+void Sprite::LoadBG( RageTextureID ID )
 {
-	return Load( SongBGTexture(ID) );
+	Load( SongBGTexture(ID) );
 }
 
-bool Sprite::Load( RageTextureID ID )
+void Sprite::Load( RageTextureID ID )
 {
-	if( ID.filename.empty() ) 
-		return true;
-	else 
-		return LoadFromTexture( ID );
+	if( !ID.filename.empty() ) 
+		LoadFromTexture( ID );
 };
 
 void Sprite::LoadFromNode( const CString& sDir, const XNode* pNode )
@@ -937,19 +935,19 @@ public:
 	static int Load( T* p, lua_State *L )
 	{
 		RageTextureID ID( SArg(1) );
-		lua_pushboolean( L, p->Load(ID) );
-		return 1;
+		p->Load( ID );
+		return 0;
 	}
 	static int LoadBackground( T* p, lua_State *L )
 	{
 		RageTextureID ID( SArg(1) );
-		lua_pushboolean( L, p->Load(Sprite::SongBGTexture(ID)) );
+		p->Load( Sprite::SongBGTexture(ID) );
 		return 1;
 	}
 	static int LoadBanner( T* p, lua_State *L )
 	{
 		RageTextureID ID( SArg(1) );
-		lua_pushboolean( L, p->Load(Sprite::SongBannerTexture(ID)) );
+		p->Load( Sprite::SongBannerTexture(ID) );
 		return 1;
 	}
 

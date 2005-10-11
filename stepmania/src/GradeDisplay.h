@@ -12,7 +12,7 @@ class GradeDisplay : public Sprite
 {
 public:
 	GradeDisplay();
-	virtual bool Load( RageTextureID ID );
+	virtual void Load( RageTextureID ID );
 
 	virtual void Update( float fDeltaTime );
 

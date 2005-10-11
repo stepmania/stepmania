@@ -23,7 +23,7 @@ GradeDisplay::GradeDisplay()
 	SetGrade( PLAYER_1, Grade_NoData );
 }
 
-bool GradeDisplay::Load( RageTextureID ID )
+void GradeDisplay::Load( RageTextureID ID )
 {
 	ID.bStretch = true;
 	Sprite::Load( ID );
@@ -38,7 +38,6 @@ bool GradeDisplay::Load( RageTextureID ID )
 		LOG->Warn( sError );
 		Dialog::OK( sError );
 	}
-	return true;
 }
 
 void GradeDisplay::Update( float fDeltaTime )
