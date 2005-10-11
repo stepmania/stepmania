@@ -194,9 +194,14 @@ void NoteField::ProcessMessages( float fDeltaTime )
 {
 	ActorFrame::ProcessMessages( fDeltaTime );
 
-	NoteDisplayCols *pCur = SearchForSongBeat();
-	pCur->m_ReceptorArrowRow.ProcessMessages( fDeltaTime );
-	pCur->m_GhostArrowRow.ProcessMessages( fDeltaTime );
+	/* If m_BeatToNoteDisplays isn't filled yet, we're receiving a message
+	 * before Load() was called. */
+	if( !m_BeatToNoteDisplays.empty() )
+	{
+		NoteDisplayCols *pCur = SearchForSongBeat();
+		pCur->m_ReceptorArrowRow.ProcessMessages( fDeltaTime );
+		pCur->m_GhostArrowRow.ProcessMessages( fDeltaTime );
+	}
 }
 
 float NoteField::GetWidth()
