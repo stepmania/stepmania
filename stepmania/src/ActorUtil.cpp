@@ -238,6 +238,11 @@ all_done:
 Actor* ActorUtil::MakeActor( const CString &sPath_ )
 {
 	CString sPath( sPath_ );
+
+	/* If @ expressions are allowed through this path, we've already
+	 * evaluated them.  Make sure we don't allow double-evaluation. */
+	ASSERT_M( sPath.empty() || sPath[0] != '@', sPath );
+
 	FileType ft = GetFileType( sPath );
 	switch( ft )
 	{
