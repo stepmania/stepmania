@@ -439,8 +439,8 @@ void InputMapper::ReadMappingsFromDisk()
 	{
 		FOREACH_CONST_Attr( Key, i )
 		{
-			const CString &name = i->m_sName;
-			const CString &value = i->m_sValue;
+			const CString &name = i->first;
+			const CString &value = i->second;
 
 			GameInput GameI;
 			GameI.fromString( pGame, name );
