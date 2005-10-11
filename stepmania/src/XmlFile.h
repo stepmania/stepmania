@@ -12,15 +12,12 @@ struct XNode;
 typedef multimap<CString,XNode*> XNodes;
 
 #define FOREACH_Attr( pNode, Var ) \
-	XAttrs::iterator Var; \
-	CString &Var = NULL; \
-	for( Var = (pNode)->m_attrs.begin(); \
+	for( XAttrs::iterator Var = (pNode)->m_attrs.begin(); \
 		Var != (pNode)->m_attrs.end(); \
 		++Var )
 
 #define FOREACH_CONST_Attr( pNode, Var ) \
-	XAttrs::const_iterator Var; \
-	for( Var = (pNode)->m_attrs.begin(); \
+	for( XAttrs::const_iterator Var = (pNode)->m_attrs.begin(); \
 		Var != (pNode)->m_attrs.end(); \
 		++Var )
 
@@ -37,7 +34,6 @@ typedef multimap<CString,XNode*> XNodes;
 	for( Var##Iter = (pNode)->m_childs.begin(), Var = Var##Iter->second; \
 		Var##Iter != (pNode)->m_childs.end(); \
 		++Var##Iter, Var = Var##Iter->second )
-
 
 enum PCODE
 {
