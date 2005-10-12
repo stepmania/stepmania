@@ -164,8 +164,6 @@ Actor* ActorUtil::LoadFromNode( const CString& sDir, const XNode* pNode )
 	}
 
 	Actor *pReturn = NULL;
-	LOG->Trace( "ActorUtil::LoadFromNode: dir %s, class %s",
-		sDir.c_str(), sClass.c_str() );
 
 	if( IsRegistered(sClass) )
 	{
@@ -193,12 +191,8 @@ Actor* ActorUtil::LoadFromNode( const CString& sDir, const XNode* pNode )
 		}
 
 		CString sNewPath = bIsAbsolutePath ? sFile : sDir+sFile;
-	LOG->Trace( "ActorUtil::LoadFromNode: path %s, sNewPath %s",
-		sFile.c_str(), sNewPath.c_str() );
 
 		ActorUtil::ResolvePath( sNewPath, sDir );
-	LOG->Trace( "ActorUtil::LoadFromNode: resolved to %s",
-		sNewPath.c_str() );
 
 		pReturn = ActorUtil::MakeActor( sNewPath, pNode );
 		if( pReturn == NULL )
@@ -285,9 +279,6 @@ Actor* ActorUtil::MakeActor( const CString &sPath_, const XNode *pParent )
 
 	CString sDir = Dirname( sPath );
 	FileType ft = GetFileType( sPath );
-	LOG->Trace( "ActorUtil::MakeActor(%s): load from \"%s\"",
-		sPath.c_str(), sDir.c_str() );
-
 	switch( ft )
 	{
 	case FT_Directory:
