@@ -27,9 +27,9 @@ private:
 
 	AutoActor m_pReceptor;
 	
-	AutoActor m_pPressBlock;
 	bool m_bIsPressed;
 	bool m_bWasPressed;	// set in Update
+	bool m_bWasReverse;
 };
 
 #endif 

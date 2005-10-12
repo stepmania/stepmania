@@ -8,7 +8,6 @@
 #include "Game.h"
 #include "PlayerState.h"
 
-// eventually, these will replace the pressblocks
 const CString PRESS_COMMAND_NAME = "Press";
 const CString LIFT_COMMAND_NAME = "Lift";
 
@@ -16,6 +15,7 @@ ReceptorArrow::ReceptorArrow()
 {
 	m_bIsPressed = false;
 	m_bWasPressed = false;
+	m_bWasReverse = false;
 }
 
 void ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
@@ -24,27 +24,24 @@ void ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
 	m_iColNo = iColNo;
 
 	CString sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNo );
-
 	m_pReceptor.Load( NOTESKIN->GetPath(sButton,"receptor") );
-
-	m_pPressBlock.Load( NOTESKIN->GetPath(sButton,"KeypressBlock") );
-
-	m_pPressBlock->SetEffectClock( Actor::CLOCK_BGM_BEAT );
-
-	// draw pressblock before receptors
-	this->AddChild( m_pPressBlock );
 	this->AddChild( m_pReceptor );
+
+	bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(m_iColNo) > 0.5f;
+	m_pReceptor->PlayCommand( bReverse? "ReverseOn":"ReverseOff" );
+	m_bWasReverse = bReverse;
 }
 
 void ReceptorArrow::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	// update pressblock alignment based on scroll direction
 	bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(m_iColNo) > 0.5f;
-	m_pPressBlock->SetVertAlign( bReverse ? Actor::align_bottom : Actor::align_top );
-
-	m_pPressBlock->SetHidden( !m_bIsPressed );
+	if( bReverse != m_bWasReverse )
+	{
+		m_pReceptor->PlayCommand( bReverse? "ReverseOn":"ReverseOff" );
+		m_bWasReverse = bReverse;
+	}
 }
 
 void ReceptorArrow::DrawPrimitives()
