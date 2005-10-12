@@ -407,15 +407,15 @@
 	</Courses>
 	<Groups>
 		<Translation TitleFrom="((Dance Dance Revolution)|(dance dance revolution)|(DANCE DANCE REVOLUTION))(.*)"
-			TitleTo="DDR\${4}" />
-		<Translation TitleFrom="((Pump It Up)|(pump it up)|(PUMP IT UP))(.*)" TitleTo="PIU\${4}" />
+			TitleTo="DDR\${5}" />
+		<Translation TitleFrom="((Pump It Up)|(pump it up)|(PUMP IT UP))(.*)" TitleTo="PIU\${5}" />
 		<Translation TitleFrom="((ParaParaParadise)|(paraparaparadise)|(PARAPARAPARADISE)|(Para Para Paradise)|(para para paradise)|(PARA PARA PARADISE))(.*)"
-			TitleTo="PPP\${4}" />
-		<Translation TitleFrom="((Dancing Stage)|(dancing stage)|(DANCING STAGE))(.*)" TitleTo="DS\${4}" />
+			TitleTo="PPP\${8}" />
+		<Translation TitleFrom="((Dancing Stage)|(dancing stage)|(DANCING STAGE))(.*)" TitleTo="DS\${5}" />
 		<Translation TitleFrom="((Ez2dancer)|(Ez 2 Dancer))(.*)" TitleTo="EZ2\${4}" />
 		<Translation TitleFrom="((Technomotion)|(Techno Motion))(.*)" TitleTo="TM\${4}" />
 		<Translation TitleFrom="((Dance Station 3DDX)|(DS3DDX))(.*)" TitleTo="3DDX\${4}" />
-		<Translation TitleFrom="((BeatMania)|(Beatmania)|(BEATMANIA)|(beatmania))(.*)" TitleTo="BM\${4}" />
+		<Translation TitleFrom="((BeatMania)|(Beatmania)|(BEATMANIA)|(beatmania))(.*)" TitleTo="BM\${6}" />
 		<Translation TitleFrom="((In The Groove)|(In the Groove))(.*)" TitleTo="ITG\${4}" />
 	</Groups>
 </Translations>
