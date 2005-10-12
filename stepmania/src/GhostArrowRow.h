@@ -29,6 +29,8 @@ protected:
 
 	vector<Actor *> 	m_Ghost;
 	vector<HoldGhostArrow *> m_HoldGhost;
+	vector<bool> m_bHoldIsActive;
+	vector<bool> m_bHoldWasActive;
 };
 
 

@@ -32,6 +32,9 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 		m_HoldGhost[c]->SetName( "HoldGhostArrow" );
 		m_HoldGhost[c]->Load( sButton, "hold explosion" );
 		
+		m_bHoldIsActive.push_back( false );
+		m_bHoldWasActive.push_back( false );
+
 		m_Ghost.push_back( ActorUtil::MakeActor( NOTESKIN->GetPath(sButton, "tap explosion") ) );
 		m_Ghost[c]->SetName( "GhostArrow" );
 	}
@@ -70,6 +73,16 @@ void GhostArrowRow::Update( float fDeltaTime )
 		const float fZoom = ArrowEffects::GetZoom( m_pPlayerState );
 		m_Ghost[c]->SetZoom( fZoom );
 		m_HoldGhost[c]->SetZoom( fZoom );
+	}
+
+	for( unsigned i = 0; i < m_bHoldIsActive.size(); ++i )
+	{
+		if( !m_bHoldWasActive[i] && m_bHoldIsActive[i] )
+			m_Ghost[i]->PlayCommand( "HoldingOn" );
+		else if( m_bHoldWasActive[i] && !m_bHoldIsActive[i] )
+			m_Ghost[i]->PlayCommand( "HoldingOff" );
+		m_bHoldWasActive[i] = m_bHoldIsActive[i];
+		m_bHoldIsActive[i] = false;
 	}
 }
 
@@ -118,7 +131,9 @@ void GhostArrowRow::DidHoldNote( int iCol, HoldNoteScore hns, bool bBright )
 void GhostArrowRow::SetHoldIsActive( int iCol )
 {
 	ASSERT( iCol >= 0  &&  iCol < (int) m_Ghost.size() );
+
 	m_HoldGhost[iCol]->SetHoldIsActive( true );
+	m_bHoldIsActive[iCol] = true;
 }
 
 /*
