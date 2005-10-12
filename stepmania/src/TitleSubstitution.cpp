@@ -55,13 +55,13 @@ void TitleTrans::LoadFromNode( const XNode* pNode )
 		if(		 sKeyName == "DontTransliterate" )	translit = false;
 		else if( sKeyName == "TitleFrom" )			TitleFrom					= "^(" + sValue + ")$";
 		else if( sKeyName == "ArtistFrom" )			ArtistFrom					= "^(" + sValue + ")$";
-		else if( sKeyName == "SubtitleFrom")		SubFrom						= "^(" + sValue + ")$";
+		else if( sKeyName == "SubTitleFrom")		SubFrom						= "^(" + sValue + ")$";
 		else if( sKeyName == "TitleTo")				Replacement.Title			= sValue;
 		else if( sKeyName == "ArtistTo")			Replacement.Artist			= sValue;
-		else if( sKeyName == "SubtitleTo")			Replacement.Subtitle		= sValue;
+		else if( sKeyName == "SubTitleTo")			Replacement.Subtitle		= sValue;
 		else if( sKeyName == "TitleTransTo")		Replacement.TitleTranslit	= sValue;
 		else if( sKeyName == "ArtistTransTo")		Replacement.ArtistTranslit	= sValue;
-		else if( sKeyName == "SubtitleTransTo")		Replacement.SubtitleTranslit= sValue;
+		else if( sKeyName == "SubTitleTransTo")		Replacement.SubtitleTranslit= sValue;
 		else
 			LOG->Warn( "Unknown TitleSubst tag: \"%s\"", sKeyName.c_str() );
 	}

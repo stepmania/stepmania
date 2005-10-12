@@ -85,7 +85,7 @@
 		<Translation SubTitleFrom=".*(Each Tomorrow|sorezore no ashita).*" SubTitleTo="~それぞれの明日~" />
 		<!-- Some files are missing the space, so the subtitle isn't parsed. -->
 		<Translation TitleFrom="GRADUATION~(Each Tomorrow|sorezore no ashita)~" TitleTo="GRADUATION"
-			SubTitleTo="~それぞれの明日~" SubtitleTransTo="sorezore no ashita" DontTransliterate />
+			SubTitleTo="~それぞれの明日~" SubTitleTransTo="sorezore no ashita" DontTransliterate />
 		<!-- Artists: -->
 		<Translation TitleFrom="Max 300" ArtistFrom="%" ArtistTo="Ω" />
 		<Translation ArtistFrom="Omega" ArtistTo="Ω" />
@@ -138,10 +138,10 @@
 		<Translation ArtistFrom="Hideki Naganuma" ArtistTo="長沼英樹" />
 		<!-- Note that these are double-width parentheses. -->
 		<Translation TitleFrom="Under Star\(Hajime no Ippo Opening 2\)" TitleTo="Under Star" SubTitleTo="（はじめの一歩 Opening 2）"
-			SubtitleTransTo="(Hajime no Ippo Opening 2)" />
+			SubTitleTransTo="(Hajime no Ippo Opening 2)" />
 		<!-- This song had the game title in the artist field, instead of the actual artist. -->
 		<Translation ArtistFrom="Seiken Densetsu 2 OST" TitleTo="Meridian Dance" SubTitleTo="聖剣伝説2OST"
-			SubtitleTransTo="Seiken Densetsu 2 OST" ArtistTo="菊田裕樹" ArtistTransTo="Hiroki Kikuta" />
+			SubTitleTransTo="Seiken Densetsu 2 OST" ArtistTo="菊田裕樹" ArtistTransTo="Hiroki Kikuta" />
 		<Translation ArtistFrom="Ayumi and Vincent de Moor" ArtistTo="あゆみ and Vincent de Moor" />
 		<Translation ArtistFrom="Toshio Sakurai" ArtistTo="桜井敏郎" />
 		<Translation ArtistFrom="Yasunori Mitsuda" ArtistTo="光田康典" />
@@ -242,7 +242,7 @@
 		<Translation ArtistFrom="Miyagawa Akira" ArtistTo="宮川彬良" />
 		<!-- OSC: -->
 		<Translation TitleFrom="Love Hina" SubTitleFrom="- main theme" ArtistFrom="Hayashibra Megumi\(Haruka Urashima\)"
-			TitleTo="桜咲く" TitleTransTo="Sakura Saku" SubTitleTo="-erase-" SubtitleTransTo="-erase-" ArtistTo="林原めぐみ"
+			TitleTo="桜咲く" TitleTransTo="Sakura Saku" SubTitleTo="-erase-" SubTitleTransTo="-erase-" ArtistTo="林原めぐみ"
 			ArtistTransTo="Hayashibara Megumi (Haruka Urashima)" />
 		<!-- OSC2: -->
 		<Translation TitleFrom="Dejiko to Gema" SubTitleFrom="no RAP DE DATE" TitleTo="でじことゲマの" SubTitleTo="ラップDEデート"
@@ -262,7 +262,7 @@
 		<Translation TitleFrom="Sabishii Kute Loneliness" ArtistFrom="wandasu" TitleTo="淋しくてLoneliness"
 			ArtistTo="ワンダース" />
 		<!-- Foonmix: "Yubikiri" has the artist translit in the subtitle translit; move it. -->
-		<Translation ArtistFrom="ねこみみ魔法使い feat.都築きせの" SubtitleTransTo="-erase-" ArtistTransTo="NekomimiMahouTsukai feat.KisenoTsuduki" />
+		<Translation ArtistFrom="ねこみみ魔法使い feat.都築きせの" SubTitleTransTo="-erase-" ArtistTransTo="NekomimiMahouTsukai feat.KisenoTsuduki" />
 		<!-- DREAMS COME TRUE: -->
 		<Translation TitleFrom="Asa ga Mata Kuru" TitleTo="朝がまた来る" />
 		<Translation TitleFrom="Haretara Line" TitleTo="晴れたらいいね" />
