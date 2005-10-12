@@ -16,7 +16,6 @@ ReceptorArrow::ReceptorArrow()
 {
 	m_bIsPressed = false;
 	m_bWasPressed = false;
-	StopAnimating();
 }
 
 void ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
@@ -26,25 +25,15 @@ void ReceptorArrow::Load( const PlayerState* pPlayerState, int iColNo )
 
 	CString sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( iColNo );
 
-	m_pReceptorWaiting.Load( NOTESKIN->GetPath(sButton,"receptor waiting") );
-	m_pReceptorGo.Load( NOTESKIN->GetPath(sButton,"receptor go") );
-	FOREACH_TapNoteScore( i )
-	{
-		CString sJudge = TapNoteScoreToString( i );
-		CString sCommand = Capitalize(sJudge)+"Command";
-		m_sScoreCommand[i] = NOTESKIN->GetMetricA(m_sName,sCommand);
-	}
+	m_pReceptor.Load( NOTESKIN->GetPath(sButton,"receptor") );
 
 	m_pPressBlock.Load( NOTESKIN->GetPath(sButton,"KeypressBlock") );
 
-	m_pReceptorWaiting->SetEffectClock( Actor::CLOCK_BGM_BEAT );
-	m_pReceptorGo->SetEffectClock( Actor::CLOCK_BGM_BEAT );
 	m_pPressBlock->SetEffectClock( Actor::CLOCK_BGM_BEAT );
 
 	// draw pressblock before receptors
 	this->AddChild( m_pPressBlock );
-	this->AddChild( m_pReceptorWaiting );
-	this->AddChild( m_pReceptorGo );
+	this->AddChild( m_pReceptor );
 }
 
 void ReceptorArrow::Update( float fDeltaTime )
@@ -55,10 +44,6 @@ void ReceptorArrow::Update( float fDeltaTime )
 	bool bReverse = m_pPlayerState->m_PlayerOptions.GetReversePercentForColumn(m_iColNo) > 0.5f;
 	m_pPressBlock->SetVertAlign( bReverse ? Actor::align_bottom : Actor::align_top );
 
-
-	m_pReceptorGo->SetHidden( GAMESTATE->m_bGameplayLeadIn );
-	m_pReceptorWaiting->SetHidden( !GAMESTATE->m_bGameplayLeadIn );
-
 	m_pPressBlock->SetHidden( !m_bIsPressed );
 }
 
@@ -66,8 +51,7 @@ void ReceptorArrow::DrawPrimitives()
 {
 	if( m_bWasPressed  &&  !m_bIsPressed )
 	{
-		m_pReceptorGo->PlayCommand( LIFT_COMMAND_NAME );
-		m_pReceptorWaiting->PlayCommand( LIFT_COMMAND_NAME );	
+		m_pReceptor->PlayCommand( LIFT_COMMAND_NAME );
 	}
 
 	m_bWasPressed = m_bIsPressed;
@@ -80,11 +64,10 @@ void ReceptorArrow::Step( TapNoteScore score )
 {
 	m_bIsPressed = true;
 
-	m_pReceptorGo->RunCommands( *m_sScoreCommand[score] );
-	m_pReceptorWaiting->RunCommands( *m_sScoreCommand[score] );
+	CString sJudge = TapNoteScoreToString( score );
+	m_pReceptor->PlayCommand( Capitalize(sJudge) );
 
-	m_pReceptorGo->PlayCommand( PRESS_COMMAND_NAME );
-	m_pReceptorWaiting->PlayCommand( PRESS_COMMAND_NAME );	
+	m_pReceptor->PlayCommand( PRESS_COMMAND_NAME );
 }
 
 /*

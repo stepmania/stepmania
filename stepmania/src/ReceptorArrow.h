@@ -25,9 +25,7 @@ private:
 	const PlayerState* m_pPlayerState;
 	int m_iColNo;
 
-	AutoActor m_pReceptorWaiting;
-	AutoActor m_pReceptorGo;
-	apActorCommands m_sScoreCommand[NUM_TapNoteScore];
+	AutoActor m_pReceptor;
 	
 	AutoActor m_pPressBlock;
 	bool m_bIsPressed;
