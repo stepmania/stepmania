@@ -14,7 +14,6 @@
 
 GhostArrowRow::GhostArrowRow()
 {
-	m_iNumCols = 0;
 }
 
 void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset )
@@ -24,10 +23,8 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
-	m_iNumCols = pStyle->m_iColsPerPlayer;
-
 	// init arrows
-	for( int c=0; c<m_iNumCols; c++ ) 
+	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ ) 
 	{
 		const CString &sButton = GAMESTATE->GetCurrentGame()->ColToButtonName( c );
 
@@ -42,7 +39,7 @@ void GhostArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOffset
 
 GhostArrowRow::~GhostArrowRow()
 {
-	for( int i = 0; i < m_iNumCols; ++i )
+	for( unsigned i = 0; i < m_Ghost.size(); ++i )
 	{
 		delete m_Ghost[i];
 		delete m_HoldGhost[i];
@@ -52,7 +49,7 @@ GhostArrowRow::~GhostArrowRow()
 
 void GhostArrowRow::Update( float fDeltaTime )
 {
-	for( int c=0; c<m_iNumCols; c++ )
+	for( unsigned c=0; c<m_Ghost.size(); c++ )
 	{
 		m_Ghost[c]->Update( fDeltaTime );
 		m_HoldGhost[c]->Update( fDeltaTime );
@@ -78,7 +75,7 @@ void GhostArrowRow::Update( float fDeltaTime )
 
 void GhostArrowRow::DrawPrimitives()
 {
-	for( int c=0; c<m_iNumCols; c++ )
+	for( unsigned c=0; c<m_Ghost.size(); c++ )
 	{
 		// TODO: Remove indexing by PlayerNumber.
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
@@ -95,7 +92,7 @@ void GhostArrowRow::DrawPrimitives()
 
 void GhostArrowRow::DidTapNote( int iCol, TapNoteScore tns, bool bBright )
 {
-	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
+	ASSERT( iCol >= 0  &&  iCol < (int) m_Ghost.size() );
 
 	m_Ghost[iCol]->PlayCommand( "Judgment" );
 	if( bBright )
@@ -108,7 +105,7 @@ void GhostArrowRow::DidTapNote( int iCol, TapNoteScore tns, bool bBright )
 
 void GhostArrowRow::DidHoldNote( int iCol, HoldNoteScore hns, bool bBright )
 {
-	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
+	ASSERT( iCol >= 0  &&  iCol < (int) m_Ghost.size() );
 	m_Ghost[iCol]->PlayCommand( "Judgment" );
 	if( bBright )
 		m_Ghost[iCol]->PlayCommand( "Bright" );
@@ -120,7 +117,7 @@ void GhostArrowRow::DidHoldNote( int iCol, HoldNoteScore hns, bool bBright )
 
 void GhostArrowRow::SetHoldIsActive( int iCol )
 {
-	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
+	ASSERT( iCol >= 0  &&  iCol < (int) m_Ghost.size() );
 	m_HoldGhost[iCol]->SetHoldIsActive( true );
 }
 

@@ -24,7 +24,6 @@ public:
 	void SetHoldIsActive( int iCol );
 	
 protected:
-	int m_iNumCols;
 	float m_fYReverseOffsetPixels;
 	const PlayerState* m_pPlayerState;
 
