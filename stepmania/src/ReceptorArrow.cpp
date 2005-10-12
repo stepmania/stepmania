@@ -8,9 +8,6 @@
 #include "Game.h"
 #include "PlayerState.h"
 
-const CString PRESS_COMMAND_NAME = "Press";
-const CString LIFT_COMMAND_NAME = "Lift";
-
 ReceptorArrow::ReceptorArrow()
 {
 	m_bIsPressed = false;
@@ -48,7 +45,7 @@ void ReceptorArrow::DrawPrimitives()
 {
 	if( m_bWasPressed  &&  !m_bIsPressed )
 	{
-		m_pReceptor->PlayCommand( LIFT_COMMAND_NAME );
+		m_pReceptor->PlayCommand( "Lift" );
 	}
 
 	m_bWasPressed = m_bIsPressed;
@@ -64,7 +61,7 @@ void ReceptorArrow::Step( TapNoteScore score )
 	CString sJudge = TapNoteScoreToString( score );
 	m_pReceptor->PlayCommand( Capitalize(sJudge) );
 
-	m_pReceptor->PlayCommand( PRESS_COMMAND_NAME );
+	m_pReceptor->PlayCommand( "Press" );
 }
 
 /*
