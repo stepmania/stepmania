@@ -154,7 +154,7 @@ unsigned XNode::LoadAttributes( const CString &xml, PARSEINFO *pi, unsigned iOff
 		
 		// add new attribute
 		DEBUG_ASSERT( sName.size() );
-		pair<XAttrs::iterator,bool> it = m_attrs.insert( make_pair(sName, "") );
+		pair<XAttrs::iterator,bool> it = m_attrs.insert( make_pair(sName, CString()) );
 		CString &sValue = it.first->second;
 		iOffset = iEnd;
 		
