@@ -4,7 +4,6 @@
 #define GHOSTARROWROW_H
 
 #include "ActorFrame.h"
-#include "HoldGhostArrow.h"
 #include "GameConstantsAndTypes.h"
 
 class PlayerState;
@@ -28,7 +27,6 @@ protected:
 	const PlayerState* m_pPlayerState;
 
 	vector<Actor *> 	m_Ghost;
-	vector<HoldGhostArrow *> m_HoldGhost;
 	vector<bool> m_bHoldIsActive;
 	vector<bool> m_bHoldWasActive;
 };
