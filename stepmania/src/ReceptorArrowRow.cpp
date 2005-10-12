@@ -11,7 +11,6 @@
 
 ReceptorArrowRow::ReceptorArrowRow()
 {
-	m_iNumCols = 0;
 	m_pPlayerState = NULL;
 	m_fYReverseOffsetPixels = 0;
 	m_fFadeToFailPercent = 0;
@@ -24,37 +23,42 @@ void ReceptorArrowRow::Load( const PlayerState* pPlayerState, float fYReverseOff
 
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 
-	m_iNumCols = pStyle->m_iColsPerPlayer;
-
-	for( int c=0; c<m_iNumCols; c++ ) 
+	for( int c=0; c<pStyle->m_iColsPerPlayer; c++ ) 
 	{
-		m_ReceptorArrow[c].SetName( "ReceptorArrow" );
-		m_ReceptorArrow[c].Load( m_pPlayerState, c );
-		this->AddChild( &m_ReceptorArrow[c] );
+		m_ReceptorArrow.push_back( new ReceptorArrow );
+		m_ReceptorArrow[c]->SetName( "ReceptorArrow" );
+		m_ReceptorArrow[c]->Load( m_pPlayerState, c );
+		this->AddChild( m_ReceptorArrow[c] );
 	}
+}
+
+ReceptorArrowRow::~ReceptorArrowRow()
+{
+	for( unsigned i = 0; i < m_ReceptorArrow.size(); ++i )
+		delete m_ReceptorArrow[i];
 }
 
 void ReceptorArrowRow::Update( float fDeltaTime )
 {
 	ActorFrame::Update( fDeltaTime );
 
-	for( int c=0; c<m_iNumCols; c++ )
+	for( unsigned c=0; c<m_ReceptorArrow.size(); c++ )
 	{
 		// m_fDark==1 or m_fFadeToFailPercent==1 should make fBaseAlpha==0
 		float fBaseAlpha = (1 - m_pPlayerState->m_CurrentPlayerOptions.m_fDark) * (1 - m_fFadeToFailPercent);
 		CLAMP( fBaseAlpha, 0.0f, 1.0f );
-		m_ReceptorArrow[c].SetBaseAlpha( fBaseAlpha );
+		m_ReceptorArrow[c]->SetBaseAlpha( fBaseAlpha );
 
 		// set arrow XYZ
 		const float fX = ArrowEffects::GetXPos( m_pPlayerState, c, 0 );
 		const float fY = ArrowEffects::GetYPos( m_pPlayerState, c, 0, m_fYReverseOffsetPixels );
 		const float fZ = ArrowEffects::GetZPos( m_pPlayerState, c, 0 );
-		m_ReceptorArrow[c].SetX( fX );
-		m_ReceptorArrow[c].SetY( fY );
-		m_ReceptorArrow[c].SetZ( fZ );
+		m_ReceptorArrow[c]->SetX( fX );
+		m_ReceptorArrow[c]->SetY( fY );
+		m_ReceptorArrow[c]->SetZ( fZ );
 
 		const float fZoom = ArrowEffects::GetZoom( m_pPlayerState );
-		m_ReceptorArrow[c].SetZoom( fZoom );
+		m_ReceptorArrow[c]->SetZoom( fZoom );
 	}
 }
 
@@ -63,24 +67,24 @@ void ReceptorArrowRow::DrawPrimitives()
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	for( int c=0; c<m_iNumCols; c++ ) 
+	for( unsigned c=0; c<m_ReceptorArrow.size(); c++ ) 
 	{
 		NoteFieldMode::BeginDrawTrack( pn, c );
-		m_ReceptorArrow[c].Draw();
+		m_ReceptorArrow[c]->Draw();
 		NoteFieldMode::EndDrawTrack(c);
 	}
 }
 
 void ReceptorArrowRow::Step( int iCol, TapNoteScore score )
 {
-	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
-	m_ReceptorArrow[iCol].Step( score );
+	ASSERT( iCol >= 0  &&  iCol < (int) m_ReceptorArrow.size() );
+	m_ReceptorArrow[iCol]->Step( score );
 }
 
 void ReceptorArrowRow::SetPressed( int iCol )
 {
-	ASSERT( iCol >= 0  &&  iCol < m_iNumCols );
-	m_ReceptorArrow[iCol].SetPressed();
+	ASSERT( iCol >= 0  &&  iCol < (int) m_ReceptorArrow.size() );
+	m_ReceptorArrow[iCol]->SetPressed();
 }
 
 /*

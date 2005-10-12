@@ -14,11 +14,11 @@ class ReceptorArrowRow : public ActorFrame
 {
 public:
 	ReceptorArrowRow();
-
-	void Load( const PlayerState* pPlayerState, float fYReverseOffset );
-
+	virtual ~ReceptorArrowRow();
 	virtual void Update( float fDeltaTime );
 	virtual void DrawPrimitives();
+
+	void Load( const PlayerState* pPlayerState, float fYReverseOffset );
 
 	void Step( int iCol, TapNoteScore score );
 	void SetPressed( int iCol );
@@ -26,12 +26,11 @@ public:
 	void SetFadeToFailPercent( float fFadeToFailPercent ) { m_fFadeToFailPercent = fFadeToFailPercent; }
 
 protected:
-	int m_iNumCols;
 	const PlayerState* m_pPlayerState;
 	float m_fYReverseOffsetPixels;
 	float m_fFadeToFailPercent;
 
-	ReceptorArrow	m_ReceptorArrow[MAX_NOTE_TRACKS];
+	vector<ReceptorArrow *> 	m_ReceptorArrow;
 };
 
 #endif
