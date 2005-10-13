@@ -131,7 +131,7 @@ protected:
 	ThemeMetric<CString> FORCED_MODIFIERS_IN_BEGINNER;
 
 	void TweenOursOnScreen();
-	void TweenOursOffScreen();
+	void TweenOffScreen();
 
 	bool IsLastSong();
 	void SetupSong( int iSongIndex );

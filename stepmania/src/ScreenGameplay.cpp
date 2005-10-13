@@ -2425,7 +2425,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 			return;
 		}
 
-		TweenOursOffScreen();
+		TweenOffScreen();
 
 		// do they deserve an extra stage?
 		if( GAMESTATE->HasEarnedExtraStage() )
@@ -2574,7 +2574,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		AbortGiveUp( false );
 		m_pSoundMusic->StopPlaying();
 		m_soundAssistTick.StopPlaying(); /* Stop any queued assist ticks. */
-		TweenOursOffScreen();
+		TweenOffScreen();
 		m_Failed.StartTransitioning( SM_GoToNextScreen );
 
 		// show the survive time if extra stage
@@ -2654,7 +2654,7 @@ void ScreenGameplay::TweenOursOnScreen()
 			ON_COMMAND( m_Scoreboard[sc] );
 }
 
-void ScreenGameplay::TweenOursOffScreen()
+void ScreenGameplay::TweenOffScreen()
 {
 	ScreenWithMenuElements::TweenOffScreen();
 
