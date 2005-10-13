@@ -956,19 +956,6 @@ void ScreenEvaluation::EndScreen()
 	FOREACH_PlayerNumber( p )
 		m_Grades[p].SettleImmediately();
 
-	if( !GAMESTATE->IsEventMode() )
-	{
-		if( !SUMMARY && !GAMESTATE->IsCourseMode() )
-		{
-			if( !m_bTryExtraStage && (GAMESTATE->IsFinalStage() || GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2()) )
-			{
-				/* Tween the screen out, but leave the MenuElements where they are.
-				 * Play the "swoosh" sound manually (would normally be played by the ME
-				 * tween out). */
-				TweenOursOffScreen();
-			}
-		}
-	}
 	StartTransitioningScreen( SM_GoToNextScreen );
 }
 
