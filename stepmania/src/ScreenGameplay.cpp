@@ -912,6 +912,11 @@ void ScreenGameplay::InitSongQueues()
 				ASSERT( e->pSteps );
 				pi->m_vpStepsQueue.push_back( e->pSteps );
 				AttackArray a;
+				
+				// In a survuval course, override stored mods
+				if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
+					a.push_back( Attack(ATTACK_LEVEL_1, 0, 0, "clearall,"+DEFAULT_MODIFIERS.GetValue(), false, true, false) );	// don't show in AttackList
+
 				e->GetAttackArray( a );
 				pi->m_asModifiersQueue.push_back( a );
 			}
