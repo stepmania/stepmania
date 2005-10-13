@@ -74,8 +74,8 @@ protected:
 
 	ThemeMetric<bool>	ALLOW_OPERATOR_MENU_BUTTON;
 
-	virtual CString GetNextScreen() const;
-	virtual CString GetPrevScreen() const;
+	CString GetNextScreen() const;
+	CString GetPrevScreen() const;
 
 	// If these are left blank, the NextScreen and PrevScreen metrics will be used.
 	CString m_sNextScreen, m_sPrevScreen;
