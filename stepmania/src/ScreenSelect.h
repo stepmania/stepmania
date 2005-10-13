@@ -26,7 +26,6 @@ public:
 	virtual void HandleMessage( const CString &sMessage );
 	
 	virtual void MenuBack( PlayerNumber pn );
-	virtual CString GetNextScreen() const { return m_sNextScreen; }
 
 protected:
 	virtual int GetSelectionIndex( PlayerNumber pn ) = 0;
@@ -46,7 +45,6 @@ protected:
 	ThemeMetric<bool> ALLOW_DISABLED_PLAYER_INPUT;
 
 private:
-	CString			m_sNextScreen;
 	bool			m_bTimeToFinalizePlayers;
 };
 
