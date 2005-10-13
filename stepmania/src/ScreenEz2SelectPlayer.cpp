@@ -138,7 +138,6 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 			MenuStart(PLAYER_1);
 		}
 
-		TweenOursOffScreen();
 		StartTransitioningScreen( SM_GoToNextScreen );
 		break;
 	}
@@ -201,7 +200,6 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 
 	if( bBothSidesJoined )
 	{
-		TweenOursOffScreen();
 		StartTransitioningScreen( SM_GoToNextScreen );
 	}
 	else
@@ -233,8 +231,10 @@ void ScreenEz2SelectPlayer::TweenOursOnScreen()
 	}
 }
 
-void ScreenEz2SelectPlayer::TweenOursOffScreen()
+void ScreenEz2SelectPlayer::TweenOffScreen()
 {
+	ScreenWithMenuElements::TweenOffScreen();
+
 	FOREACH_PlayerNumber( p )
 	{
 		float fOffScreenOffset = float( (p==PLAYER_1) ? -SCREEN_WIDTH : +SCREEN_WIDTH );
