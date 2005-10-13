@@ -169,7 +169,6 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 	case SM_BeginFadingOut:
 		TweenOursOffScreen();
 		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, SLEEP_AFTER_TWEEN_OFF_SECONDS );	// nofify parent that we're finished
-		StopTimer();
 		break;
 	}
 }

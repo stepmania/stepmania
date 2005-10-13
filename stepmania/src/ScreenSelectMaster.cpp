@@ -338,7 +338,6 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 		fSecs = max( fSecs, 0 );
 
 		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, fSecs );	// notify parent that we're finished
-		StopTimer();
 	}
 }
 

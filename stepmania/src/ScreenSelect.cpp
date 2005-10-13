@@ -222,6 +222,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 
+		StopTimer();
 
 		SCREENMAN->RefreshCreditsMessages();
 
