@@ -26,7 +26,7 @@ public:
 	virtual void MenuDown( PlayerNumber pn ) {};
 	virtual void MenuStart( PlayerNumber pn );
 //	virtual void MenuBack( PlayerNumber pn );
-	virtual void TweenOursOffScreen();
+	virtual void TweenOffScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 

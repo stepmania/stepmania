@@ -15,7 +15,6 @@
 #define NUM_CHOICES_ON_PAGE_1				THEME->GetMetricI(m_sName,"NumChoicesOnPage1")
 #define LOCK_INPUT_SECONDS					THEME->GetMetricF(m_sName,"LockInputSeconds")
 #define SLEEP_AFTER_CHOICE_SECONDS			THEME->GetMetricF(m_sName,"SleepAfterChoiceSeconds")
-#define SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF(m_sName,"SleepAfterTweenOffSeconds")
 #define CURSOR_CHOOSE_COMMAND				THEME->GetMetricA(m_sName,"CursorChooseCommand")
 #define CURSOR_OFFSET_X_FROM_PICTURE( p )	THEME->GetMetricF(m_sName,ssprintf("CursorP%dOffsetXFromPicture",p+1))
 #define CURSOR_OFFSET_Y_FROM_PICTURE( p )	THEME->GetMetricF(m_sName,ssprintf("CursorP%dOffsetYFromPicture",p+1))
@@ -167,8 +166,7 @@ void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_BeginFadingOut:
-		TweenOursOffScreen();
-		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, SLEEP_AFTER_TWEEN_OFF_SECONDS );	// nofify parent that we're finished
+		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );	// notify parent that we're finished
 		break;
 	}
 }
@@ -522,8 +520,10 @@ void ScreenSelectDifficulty::MenuStart( PlayerNumber pn )
 	this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_CHOICE_SECONDS );	// tell our owner it's time to move on
 }
 
-void ScreenSelectDifficulty::TweenOursOffScreen()
+void ScreenSelectDifficulty::TweenOffScreen()
 {	
+	ScreenSelect::TweenOffScreen();
+
 	const int page = m_CurrentPage;
 
 	OFF_COMMAND( m_sprExplanation[page] );
