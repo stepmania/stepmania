@@ -505,7 +505,7 @@ void ScreenEz2SelectMusic::Update( float fDeltaTime )
 	if(m_bMadeChoice && RageTimer::GetTimeSinceStartFast() > m_fRemainingWaitTime + 2 && !m_bTransitioning)
 	{
 		m_bTransitioning = true;
-		StartTransitioning( SM_GoToNextScreen );
+		StartTransitioningScreen( SM_GoToNextScreen );
 	}
 
 	Screen::Update( fDeltaTime );

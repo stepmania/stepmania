@@ -147,13 +147,13 @@ void ScreenRanking::Input( const InputEventPlus &input )
 void ScreenRanking::MenuStart( PlayerNumber pn )
 {
 	if( !IsTransitioning() )
-		StartTransitioning( SM_GoToNextScreen );
+		StartTransitioningScreen( SM_GoToNextScreen );
 }
 
 void ScreenRanking::MenuBack( PlayerNumber pn )
 {
 	if( !IsTransitioning() )
-		StartTransitioning( SM_GoToNextScreen );
+		StartTransitioningScreen( SM_GoToNextScreen );
 }
 
 void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
@@ -172,7 +172,7 @@ void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
 		}
 		else
 		{
-			StartTransitioning(SM_GoToNextScreen);
+			StartTransitioningScreen(SM_GoToNextScreen);
 		}
 	}
 	else if( SM == SM_HidePage )

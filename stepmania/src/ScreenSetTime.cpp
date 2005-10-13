@@ -222,7 +222,7 @@ void ScreenSetTime::MenuStart( PlayerNumber pn )
 		}
 
 		SOUND->PlayOnce( THEME->GetPathS("Common","start") );
-		StartTransitioning( SM_GoToNextScreen );
+		StartTransitioningScreen( SM_GoToNextScreen );
 	}
 	else
 		ChangeSelection( +1 );
@@ -235,7 +235,7 @@ void ScreenSetTime::MenuSelect( PlayerNumber pn )
 
 void ScreenSetTime::MenuBack( PlayerNumber pn )
 {
-	StartTransitioning( SM_GoToPrevScreen );
+	StartTransitioningScreen( SM_GoToPrevScreen );
 }
 
 /*

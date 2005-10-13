@@ -147,7 +147,7 @@ void ScreenTestInput::MenuBack( PlayerNumber pn )
 	if(!IsTransitioning())
 	{
 		SCREENMAN->PlayStartSound();
-		StartTransitioning( SM_GoToPrevScreen );		
+		StartTransitioningScreen( SM_GoToPrevScreen );		
 	}
 }
 

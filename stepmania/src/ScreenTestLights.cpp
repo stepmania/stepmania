@@ -138,7 +138,7 @@ void ScreenTestLights::MenuBack( PlayerNumber pn )
 	{
 		SCREENMAN->PlayStartSound();
 		OFF_COMMAND( m_textInputs );
-		StartTransitioning( SM_GoToPrevScreen );		
+		StartTransitioningScreen( SM_GoToPrevScreen );		
 	}
 }
 

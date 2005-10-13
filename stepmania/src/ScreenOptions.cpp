@@ -630,7 +630,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if(IsTransitioning())
 			return; /* already transitioning */
-		StartTransitioning( SM_ExportOptions );
+		StartTransitioningScreen( SM_ExportOptions );
 
 		SCREENMAN->PlayStartSound();
 

@@ -299,7 +299,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 
 				INPUTMAPPER->SaveMappingsToDisk();	// save changes
 
-				StartTransitioning( SM_GoToNextScreen );		
+				StartTransitioningScreen( SM_GoToNextScreen );		
 				for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
 					m_Line[b].RunCommands( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );
 			}

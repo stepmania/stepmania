@@ -286,7 +286,7 @@ void ScreenEvaluationMultiplayer::MenuBack( PlayerNumber pn )
 void ScreenEvaluationMultiplayer::MenuStart( PlayerNumber pn )
 {
 	
-	this->StartTransitioning( SM_GoToNextScreen );
+	this->StartTransitioningScreen( SM_GoToNextScreen );
 }
 
 

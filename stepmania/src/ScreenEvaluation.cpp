@@ -969,7 +969,7 @@ void ScreenEvaluation::EndScreen()
 			}
 		}
 	}
-	StartTransitioning( SM_GoToNextScreen );
+	StartTransitioningScreen( SM_GoToNextScreen );
 }
 
 /*

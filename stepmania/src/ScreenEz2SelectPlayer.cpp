@@ -139,7 +139,7 @@ void ScreenEz2SelectPlayer::HandleScreenMessage( const ScreenMessage SM )
 		}
 
 		TweenOursOffScreen();
-		StartTransitioning( SM_GoToNextScreen );
+		StartTransitioningScreen( SM_GoToNextScreen );
 		break;
 	}
 
@@ -202,7 +202,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 	if( bBothSidesJoined )
 	{
 		TweenOursOffScreen();
-		StartTransitioning( SM_GoToNextScreen );
+		StartTransitioningScreen( SM_GoToNextScreen );
 	}
 	else
 	{

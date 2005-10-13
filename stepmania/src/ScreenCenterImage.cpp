@@ -70,11 +70,11 @@ void ScreenCenterImage::Input( const InputEventPlus &input )
 		{
 		case MENU_BUTTON_START:
 			SCREENMAN->PlayStartSound();
-			StartTransitioning( SM_GoToNextScreen );		
+			StartTransitioningScreen( SM_GoToNextScreen );		
 			return;
 
 		case MENU_BUTTON_BACK:
-			StartTransitioning( SM_GoToPrevScreen );		
+			StartTransitioningScreen( SM_GoToPrevScreen );		
 			return;
 		}
 	}

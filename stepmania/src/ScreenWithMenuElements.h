@@ -22,7 +22,7 @@ public:
 	virtual ~ScreenWithMenuElements();
 
 	void Update( float fDeltaTime );
-	void StartTransitioning( ScreenMessage smSendWhenDone );
+	void StartTransitioningScreen( ScreenMessage smSendWhenDone );
 	virtual void Cancel( ScreenMessage smSendWhenDone );
 	bool IsTransitioning();
 

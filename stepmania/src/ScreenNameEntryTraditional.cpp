@@ -727,7 +727,7 @@ void ScreenNameEntryTraditional::MenuRight( const InputEventPlus &input )
 
 void ScreenNameEntryTraditional::AllFinished()
 {
-	StartTransitioning( SM_GoToNextScreen );
+	StartTransitioningScreen( SM_GoToNextScreen );
 
 	FOREACH_HumanPlayer( pn )
 	{

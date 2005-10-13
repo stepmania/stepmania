@@ -243,7 +243,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_AllDoneChoosing ) 	/* It's our turn to tween out. */
 	{
 		if( !IsTransitioning() )
-			StartTransitioning( SM_GoToNextScreen );
+			StartTransitioningScreen( SM_GoToNextScreen );
 	}
 	else if( SM == SM_GoToNextScreen )
 	{

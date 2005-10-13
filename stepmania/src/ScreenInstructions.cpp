@@ -30,7 +30,7 @@ void ScreenInstructions::MenuBack( PlayerNumber pn )
 
 void ScreenInstructions::MenuStart( PlayerNumber pn )
 {
-	StartTransitioning( SM_GoToNextScreen );
+	StartTransitioningScreen( SM_GoToNextScreen );
 }
 
 /*

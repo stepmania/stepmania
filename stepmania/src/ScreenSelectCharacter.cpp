@@ -182,7 +182,7 @@ void ScreenSelectCharacter::HandleScreenMessage( const ScreenMessage SM )
 	switch( SM )
 	{
 	case SM_BeginFadingOut:
-		StartTransitioning( SM_GoToNextScreen );
+		StartTransitioningScreen( SM_GoToNextScreen );
 		return;
 	case SM_MenuTimer:
 		MenuStart(PLAYER_1);

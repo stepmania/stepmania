@@ -478,7 +478,7 @@ void ScreenNetSelectMusic::StartSelectedSong()
 	GAMESTATE->m_pPreferredSong = pSong;
 	
 	TweenOffScreen();
-	StartTransitioning( SM_GoToNextScreen );
+	StartTransitioningScreen( SM_GoToNextScreen );
 }
 
 void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )

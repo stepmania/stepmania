@@ -230,7 +230,7 @@ void ScreenWithMenuElements::ResetTimer()
 	}
 }
 
-void ScreenWithMenuElements::StartTransitioning( ScreenMessage smSendWhenDone )
+void ScreenWithMenuElements::StartTransitioningScreen( ScreenMessage smSendWhenDone )
 {
 	TweenOffScreen();
 

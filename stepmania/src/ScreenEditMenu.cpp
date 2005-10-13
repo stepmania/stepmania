@@ -91,7 +91,7 @@ void ScreenEditMenu::HandleScreenMessage( const ScreenMessage SM )
 		if( !ScreenTextEntry::s_bCancelledLast )
 		{
 			SOUND->StopMusic();
-			StartTransitioning( SM_GoToNextScreen );
+			StartTransitioningScreen( SM_GoToNextScreen );
 		}
 	}
 
@@ -281,7 +281,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			{
 				SOUND->StopMusic();
 				SCREENMAN->PlayStartSound();
-				StartTransitioning( SM_GoToNextScreen );
+				StartTransitioningScreen( SM_GoToNextScreen );
 			}
 		}
 		break;

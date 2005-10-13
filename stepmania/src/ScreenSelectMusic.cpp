@@ -1245,12 +1245,12 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 
 		if( OPTIONS_MENU_AVAILABLE )
 		{
-			StartTransitioning( SM_None );
+			StartTransitioningScreen( SM_None );
 			this->PostScreenMessage( SM_TweenOffOptionsMessage, SHOW_OPTIONS_MESSAGE_SECONDS );
 		}
 		else
 		{
-			StartTransitioning( SM_BeginFadingOut );
+			StartTransitioningScreen( SM_BeginFadingOut );
 		}
 	}
 }

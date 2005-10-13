@@ -253,7 +253,7 @@ void ScreenJoinMultiplayer::MenuStart( PlayerNumber pn )
 		return;
 	}
 	
-	this->StartTransitioning( SM_GoToNextScreen );
+	this->StartTransitioningScreen( SM_GoToNextScreen );
 }
 
 

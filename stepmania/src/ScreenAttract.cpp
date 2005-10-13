@@ -109,7 +109,7 @@ void ScreenAttract::HandleScreenMessage( const ScreenMessage SM )
 		SM == SM_BeginFadingOut )
 	{
 		if( !IsTransitioning() )
-			StartTransitioning( SM_GoToNextScreen );
+			StartTransitioningScreen( SM_GoToNextScreen );
 	}
 	else if( SM == SM_GoToStartScreen )
 	{
