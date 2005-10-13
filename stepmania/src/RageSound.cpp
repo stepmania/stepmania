@@ -591,6 +591,9 @@ void RageSound::StartPlaying()
 
 	SOUNDMAN->StartMixing( this );
 
+	if( !m_Param.m_bIsCriticalSound && SOUNDMAN->GetPlayOnlyCriticalSounds() )
+		m_Param.m_Volume = 0;
+
 //	LOG->Trace("StartPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());
 }
 
@@ -871,7 +874,9 @@ void RageSoundParams::SetPlaybackRate( float fSpeed )
 	{
 		speed_input_samples = 1;
 		speed_output_samples = 1;
-	} else {
+	}
+	else
+	{
 		/* Approximate it to the nearest tenth. */
 		speed_input_samples = int( roundf(fSpeed * 10) );
 		speed_output_samples = 10;
@@ -913,8 +918,6 @@ RageTimer RageSound::GetStartTime() const
 void RageSound::SetParams( const RageSoundParams &p )
 {
 	m_Param = p;
-	if( !m_Param.m_bIsCriticalSound && SOUNDMAN->GetPlayOnlyCriticalSounds() )
-		m_Param.m_Volume = 0;
 }
 
 RageSoundParams::StopMode_t RageSound::GetStopMode() const

@@ -807,7 +807,9 @@ void ScreenManager::ZeroNextUpdate()
 
 void ScreenManager::PlayInvalidSound()
 {
-	m_soundInvalid.Play();
+	RageSoundParams p;
+	p.m_bIsCriticalSound = true;
+	m_soundInvalid.Play( &p );
 }
 
 /* Always play these sounds, even if we're in a silent attract loop. */
