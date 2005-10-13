@@ -616,11 +616,13 @@ void ScreenManager::LoadDelayedScreen()
 	ScreenMessage SM = PopTopScreenInternal();
 
 	/* We have a screen to display.  Delete the current screens and load it.
-	 * If DelayedScreenLoad is true, delete old screens first; this lowers
-	 * memory requirements, but results in redundant loads as we unload common
-	 * data. */
+	 * If DelayedScreenLoad is true and the screen isn't already loaded, delete
+	 * old screens first; this lowers memory requirements, but results in
+	 * redundant loads as we unload common data.  (If the screen is already
+	 * loaded, then do this cleanup later; otherwise we'll delete the prepared
+	 * screen.) */
 	bool bTimeToDeleteScreens = (g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end());
-	if( bTimeToDeleteScreens && PREFSMAN->m_bDelayedScreenLoad )
+	if( bTimeToDeleteScreens && PREFSMAN->m_bDelayedScreenLoad && !ScreenIsPrepped(sScreenName) )
 	{
 		bTimeToDeleteScreens = false;
 		DeletePreparedScreens();
