@@ -589,10 +589,10 @@ void RageSound::StartPlaying()
 
 	m_bPlaying = true;
 
-	SOUNDMAN->StartMixing( this );
-
 	if( !m_Param.m_bIsCriticalSound && SOUNDMAN->GetPlayOnlyCriticalSounds() )
 		m_Param.m_Volume = 0;
+
+	SOUNDMAN->StartMixing( this );
 
 //	LOG->Trace("StartPlaying %p finished (%s)", this, this->GetLoadedFilePath().c_str());
 }
