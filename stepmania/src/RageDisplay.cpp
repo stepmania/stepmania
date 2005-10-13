@@ -32,7 +32,7 @@ static RageTimer g_LastFrameEndedAt( RageZeroTimer );
 RageDisplay*		DISPLAY	= NULL;
 
 Preference<bool>  LOG_FPS( "LogFPS", true );
-Preference<bool>  g_fFrameLimitPercent( "FrameLimitPercent", 0.0f );
+Preference<float> g_fFrameLimitPercent( "FrameLimitPercent", 0.0f );
 
 static const CString PixelFormatNames[] = {
 	"RGBA8",
