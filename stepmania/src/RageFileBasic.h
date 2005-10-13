@@ -117,8 +117,7 @@ private:
 	 *  - GetLine() is called (which requires buffering to efficiently search for newlines);
 	 *  - or EnableBuffering() is called
 	 *
-	 * Currently, once buffering is enabled, it stays enabled for the life of the
-	 * object.
+	 * Once buffering is enabled, it stays enabled for the life of the object.
 	 *
 	 * If buffering is not enabled, this buffer will not be allocated, keeping the
 	 * size overhead of each file down.  Layered RageFileBasic implementations, which
