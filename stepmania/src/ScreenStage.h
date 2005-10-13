@@ -23,8 +23,6 @@ private:
 
 	Transition		m_In, m_Out, m_Cancel;
 	AutoActor		m_sprOverlay;
-
-	bool			m_bZeroDeltaOnNextUpdate;
 };
 
 #endif

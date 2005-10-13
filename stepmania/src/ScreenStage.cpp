@@ -26,8 +26,6 @@ void ScreenStage::Init()
 
 	ALLOW_BACK.Load( m_sName, "AllowBack" );
 
-	m_bZeroDeltaOnNextUpdate = false;
-
 	SOUND->StopMusic();
 
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_STAGE );
@@ -101,12 +99,6 @@ void ScreenStage::Update( float fDeltaTime )
 		}
 	}
 
-	if( m_bZeroDeltaOnNextUpdate )
-	{
-		m_bZeroDeltaOnNextUpdate = false;
-		fDeltaTime = 0;
-	}
-
 	Screen::Update( fDeltaTime );
 }
 
@@ -125,7 +117,7 @@ void ScreenStage::MenuBack( PlayerNumber pn )
 	 * get it right after the prep finishes.  However, the next update will contain
 	 * the time spent prepping the screen.  Zero the next delta, so the update is
 	 * seen. */
-	m_bZeroDeltaOnNextUpdate = true;
+	SCREENMAN->ZeroNextUpdate();
 }
 
 /*
