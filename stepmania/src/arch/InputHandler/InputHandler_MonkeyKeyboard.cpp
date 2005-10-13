@@ -59,13 +59,20 @@ int GetRandomKeyboadKey()
 
 void InputHandler_MonkeyKeyboard::Update(float fDeltaTime)
 {
+	static bool wasRunning = false;
 	if( !PREFSMAN->m_bMonkeyInput )
 	{
-		// End the previous key
-		ButtonPressed(m_diLast, false);
+		if( wasRunning )
+		{
+			// End the previous key
+			ButtonPressed(m_diLast, false);
+			wasRunning = false;
+		}
 		InputHandler::UpdateTimer();
 		return;
 	}
+	
+	wasRunning = true;
 
 	float fSecsAgo = m_timerPressButton.Ago();
 
