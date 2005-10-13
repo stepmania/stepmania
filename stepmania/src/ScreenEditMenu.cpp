@@ -54,8 +54,6 @@ void ScreenEditMenu::Init()
 	this->AddChild( &m_textNumStepsLoadedFromProfile );
 
 	this->SortByDrawOrder();
-
-	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
 }
 
 
