@@ -527,8 +527,7 @@ void Player::Update( float fDeltaTime )
 
 		CHECKPOINT_M( ssprintf("%i %i", col, iNumCols) );
 		const StyleInput StyleI( pn, col );
-		const GameInput GameI = GAMESTATE->GetCurrentStyle()->StyleInputToGameInput( StyleI );
-		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( GameI );
+		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( StyleI );
 		// TODO: Make this work for non-human-controlled players
 		if( bIsHoldingButton && !GAMESTATE->m_bDemonstrationOrJukebox && m_pPlayerState->m_PlayerController==PC_HUMAN )
 			if( m_pNoteField )
