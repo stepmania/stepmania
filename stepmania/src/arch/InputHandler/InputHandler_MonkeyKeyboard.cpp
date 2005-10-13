@@ -4,8 +4,7 @@
 #include "PrefsManager.h"
 
 
-InputHandler_MonkeyKeyboard::InputHandler_MonkeyKeyboard() :
-	m_diLast(DEVICE_KEYBOARD,KEY_SPACE)
+InputHandler_MonkeyKeyboard::InputHandler_MonkeyKeyboard()
 {
 }
 
@@ -59,21 +58,18 @@ int GetRandomKeyboadKey()
 
 void InputHandler_MonkeyKeyboard::Update(float fDeltaTime)
 {
-	static bool wasRunning = false;
 	if( !PREFSMAN->m_bMonkeyInput )
 	{
-		if( wasRunning )
+		if( m_diLast.IsValid() )
 		{
 			// End the previous key
 			ButtonPressed(m_diLast, false);
-			wasRunning = false;
+			m_diLast.MakeInvalid();
 		}
 		InputHandler::UpdateTimer();
 		return;
 	}
 	
-	wasRunning = true;
-
 	float fSecsAgo = m_timerPressButton.Ago();
 
 	if( fSecsAgo > 0.5 )
