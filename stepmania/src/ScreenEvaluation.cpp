@@ -719,8 +719,10 @@ void ScreenEvaluation::Init()
 }
 
 
-void ScreenEvaluation::TweenOursOffScreen()
+void ScreenEvaluation::TweenOffScreen()
 {
+	ScreenWithMenuElements::TweenOffScreen();
+
 	// large banner area
 	OFF_COMMAND( m_LargeBanner );
 	OFF_COMMAND( m_sprLargeBannerFrame );
@@ -951,8 +953,6 @@ void ScreenEvaluation::MenuStart( PlayerNumber pn )
 
 void ScreenEvaluation::EndScreen()
 {
-	TweenOursOffScreen();
-
 	FOREACH_PlayerNumber( p )
 		m_Grades[p].SettleImmediately();
 
