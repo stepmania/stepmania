@@ -41,7 +41,7 @@ const int NUM_SCORE_DIGITS	=	9;
 #define BANNER_HEIGHT						THEME->GetMetricF(m_sName,"BannerHeight")
 static const CString JudgeLineNames[] =
 {
-	"W1", "W2", "W3", "W4", "W5", "Miss", "OK", "MaxCombo", "TotalError"
+	"W1", "W2", "W3", "W4", "W5", "Miss", "Held", "MaxCombo", "TotalError"
 };
 XToString( JudgeLine, NUM_JudgeLine );
 #define FOREACH_JudgeLine( rc ) FOREACH_ENUM( JudgeLine, NUM_JudgeLine, rc )
