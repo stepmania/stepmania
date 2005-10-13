@@ -205,12 +205,15 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 			if( !pChild->GetAttrValue( "Name", sName ) )
 				RageException::Throw( ssprintf("Input node in '%s' is missing the attribute 'Name'", sDir.c_str()) );
 
+			bool bOptional = false;
+			pChild->GetAttrValue( "Optional", bOptional );
+
             Lua *L = LUA->Get();
             this->PushSelf( L );
             LuaHelpers::Push( sName, L );
 			lua_getglobal( L, sName );
 
-			if( lua_isnil(L, -1) )
+			if( lua_isnil(L, -1) && !bOptional )
 				RageException::Throw( "Actor in \"%s\" requires parameter \"%s\" that is not set", sDir.c_str(), sName.c_str() );
 
 			lua_settable( L, -3 );
