@@ -621,7 +621,10 @@ void ScreenManager::LoadDelayedScreen()
 	 * data. */
 	bool bTimeToDeleteScreens = (g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end());
 	if( bTimeToDeleteScreens && PREFSMAN->m_bDelayedScreenLoad )
+	{
+		bTimeToDeleteScreens = false;
 		DeletePreparedScreens();
+	}
 
 	// Load the screen, if it's not already prepared.
 	PrepareScreen( sScreenName );
@@ -681,7 +684,7 @@ void ScreenManager::LoadDelayedScreen()
 	if( bWasOnSystemMenu && !bIsOnSystemMenu )
 		PREFSMAN->SaveGlobalPrefsToDisk();
 
-	if( bTimeToDeleteScreens && !PREFSMAN->m_bDelayedScreenLoad )
+	if( bTimeToDeleteScreens )
 		DeletePreparedScreens();
 
 	LOG->Trace("... PushScreen");
