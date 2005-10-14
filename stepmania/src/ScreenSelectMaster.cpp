@@ -35,8 +35,6 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	LOCK_INPUT_SECONDS(m_sName,"LockInputSeconds"),
 	PRE_SWITCH_PAGE_SECONDS(m_sName,"PreSwitchPageSeconds"),
 	POST_SWITCH_PAGE_SECONDS(m_sName,"PostSwitchPageSeconds"),
-	OVERRIDE_SLEEP_AFTER_TWEEN_OFF_SECONDS(m_sName,"OverrideSleepAfterTweenOffSeconds"),
-	SLEEP_AFTER_TWEEN_OFF_SECONDS(m_sName,"SleepAfterTweenOffSeconds"),
 	OPTION_ORDER(m_sName,OPTION_ORDER_NAME,NUM_MENU_DIRS),
 	WRAP_CURSOR(m_sName,"WrapCursor"),
 	WRAP_SCROLLER(m_sName,"WrapScroller"),
@@ -312,32 +310,10 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BeginFadingOut )
 	{
-		TweenOursOffScreen();
-		/*
-			* We start our own tween-out (TweenOursOffScreen), wait some amount of time, then
-			* start the base tween (ScreenWithMenuElements, called from SM_AllDoneChoosing);
-			* we move on when that finishes.  This is a pain to tweak, especially now
-			* that elements essentially owned by the derived class are starting to tween
-			* in the ScreenWithMenuElements tween (underlay, overlay); we have to tweak the
-			* duration of the "out" transition to determine how long to wait after fSecs
-			* before moving on.
-			*
-			* Send a command to all children, so we can run overlay and underlay tweens at the
-			* same time as the elements controlled by TweenOursOffScreen.  Run this here, so
-			* it affects the result of GetTweenTimeLeft().
-			*/
+		/* Backwards compatibility (deprecated). */
 		this->PlayCommand( "TweenOff" );
 
-		float fSecs = 0;
-		/* This can be used to allow overlap between the main tween-off and the MenuElements
-			* tweenoff. */
-		if( OVERRIDE_SLEEP_AFTER_TWEEN_OFF_SECONDS )
-			fSecs = SLEEP_AFTER_TWEEN_OFF_SECONDS;
-		else
-			fSecs = GetTweenTimeLeft();
-		fSecs = max( fSecs, 0 );
-
-		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, fSecs );	// notify parent that we're finished
+		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );	// notify parent that we're finished
 	}
 }
 
@@ -861,8 +837,10 @@ void ScreenSelectMaster::TweenOursOnScreen()
 	this->SortByDrawOrder();
 }
 
-void ScreenSelectMaster::TweenOursOffScreen()
+void ScreenSelectMaster::TweenOffScreen()
 {
+	ScreenSelect::TweenOffScreen();
+
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
 	{

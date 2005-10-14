@@ -23,7 +23,7 @@ public:
 	virtual void MenuDown( const InputEventPlus &input );
 	virtual void MenuStart( PlayerNumber pn );
 	void TweenOursOnScreen();
-	void TweenOursOffScreen();
+	virtual void TweenOffScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
@@ -44,8 +44,6 @@ protected:
 	ThemeMetric<float>		LOCK_INPUT_SECONDS;
 	ThemeMetric<float>		PRE_SWITCH_PAGE_SECONDS;
 	ThemeMetric<float>		POST_SWITCH_PAGE_SECONDS;
-	ThemeMetric<bool>		OVERRIDE_SLEEP_AFTER_TWEEN_OFF_SECONDS;
-	ThemeMetric<float>		SLEEP_AFTER_TWEEN_OFF_SECONDS;
 	ThemeMetric1D<CString>	OPTION_ORDER;
 	ThemeMetric<bool>		WRAP_CURSOR;
 	ThemeMetric<bool>		WRAP_SCROLLER;
