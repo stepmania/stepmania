@@ -84,8 +84,6 @@ void ScreenEz2SelectPlayer::Init()
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select player intro") );
 
 	SOUND->PlayMusic( THEME->GetPathS("ScreenSelectPlayer","music") );
-
-	TweenOursOnScreen();
 }
 
 /************************************
@@ -211,7 +209,7 @@ void ScreenEz2SelectPlayer::MenuStart( PlayerNumber pn )
 	}
 }
 
-void ScreenEz2SelectPlayer::TweenOursOnScreen()
+void ScreenEz2SelectPlayer::TweenOnScreen()
 {
 	FOREACH_PlayerNumber( p )
 	{
@@ -229,6 +227,8 @@ void ScreenEz2SelectPlayer::TweenOursOnScreen()
 		m_sprJoinFrame[p].BeginTweening( 0.5f, Actor::TWEEN_BOUNCE_END );
 		m_sprJoinFrame[p].SetX( fOriginalX );
 	}
+
+	ScreenWithMenuElements::TweenOnScreen();
 }
 
 void ScreenEz2SelectPlayer::TweenOffScreen()

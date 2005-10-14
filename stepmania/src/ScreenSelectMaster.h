@@ -22,7 +22,7 @@ public:
 	virtual void MenuUp( const InputEventPlus &input );
 	virtual void MenuDown( const InputEventPlus &input );
 	virtual void MenuStart( PlayerNumber pn );
-	void TweenOursOnScreen();
+	virtual void TweenOnScreen();
 	virtual void TweenOffScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );

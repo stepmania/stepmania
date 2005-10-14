@@ -129,7 +129,6 @@ void ScreenSelectGroup::Init()
 	SOUND->PlayMusic( THEME->GetPathS("ScreenSelectGroup","music") );
 
 	AfterChange();
-	TweenOursOnScreen();
 	m_GroupList.SetSelection(0);
 
 	this->SortByDrawOrder();
@@ -248,7 +247,7 @@ void ScreenSelectGroup::TweenOffScreen()
 	m_GroupList.TweenOffScreen();
 }
 
-void ScreenSelectGroup::TweenOursOnScreen() 
+void ScreenSelectGroup::TweenOnScreen() 
 {
 	SET_XY_AND_ON_COMMAND( m_sprExplanation );
 	SET_XY_AND_ON_COMMAND( m_sprFrame );
@@ -259,6 +258,8 @@ void ScreenSelectGroup::TweenOursOnScreen()
 	SET_XY_AND_ON_COMMAND( m_GroupList );
 	m_MusicList.TweenOnScreen();
 	m_GroupList.TweenOnScreen();
+
+	ScreenWithMenuElements::TweenOnScreen();
 }
 
 /*

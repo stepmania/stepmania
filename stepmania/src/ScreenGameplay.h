@@ -130,7 +130,7 @@ protected:
 	ThemeMetric<bool> USE_FORCED_MODIFIERS_IN_BEGINNER;
 	ThemeMetric<CString> FORCED_MODIFIERS_IN_BEGINNER;
 
-	void TweenOursOnScreen();
+	void TweenOnScreen();
 	void TweenOffScreen();
 
 	bool IsLastSong();

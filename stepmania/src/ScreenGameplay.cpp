@@ -868,8 +868,6 @@ void ScreenGameplay::Init()
 	 * positioned before we TweenOnScreen. */
 	LoadNextSong();
 
-	TweenOursOnScreen();
-
 	this->SortByDrawOrder();
 
 	m_GiveUpTimer.SetZero();
@@ -2616,7 +2614,7 @@ void ScreenGameplay::Cancel( ScreenMessage smSendWhenDone )
 	ScreenWithMenuElements::Cancel( smSendWhenDone );
 }
 
-void ScreenGameplay::TweenOursOnScreen()
+void ScreenGameplay::TweenOnScreen()
 {
 	ON_COMMAND( m_sprLifeFrame );
 	ON_COMMAND( m_sprCourseSongNumber );
@@ -2652,6 +2650,8 @@ void ScreenGameplay::TweenOursOnScreen()
 	if( m_bShowScoreboard )
 		FOREACH_NSScoreBoardColumn( sc )
 			ON_COMMAND( m_Scoreboard[sc] );
+
+	ScreenWithMenuElements::TweenOnScreen();
 }
 
 void ScreenGameplay::TweenOffScreen()

@@ -212,8 +212,6 @@ void ScreenSelectMaster::Init()
 
 void ScreenSelectMaster::BeginScreen()
 {
-	ScreenSelect::BeginScreen();
-
 	// TODO: Move default choice to ScreenSelect
 	int iDefaultChoice = -1;
 	for( unsigned c=0; c<m_aGameCommands.size(); c++ )
@@ -255,7 +253,7 @@ void ScreenSelectMaster::BeginScreen()
 
 	this->UpdateSelectableChoices();
 
-	TweenOursOnScreen();
+	ScreenSelect::BeginScreen();
 
 	m_fLockInputSecs = (bool)OVERRIDE_LOCK_INPUT_SECONDS ? LOCK_INPUT_SECONDS : this->GetTweenTimeLeft();
 	if( m_fLockInputSecs == 0 )
@@ -764,8 +762,10 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
  * This means that the focus command should be position neutral; eg. only use "addx",
  * not "x".
  */
-void ScreenSelectMaster::TweenOursOnScreen() 
+void ScreenSelectMaster::TweenOnScreen()
 {
+	ScreenSelect::TweenOnScreen();
+
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
 	{
