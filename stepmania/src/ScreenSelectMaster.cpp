@@ -764,8 +764,6 @@ void ScreenSelectMaster::MenuStart( PlayerNumber pn )
  */
 void ScreenSelectMaster::TweenOnScreen()
 {
-	ScreenSelect::TweenOnScreen();
-
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
 	{
@@ -827,7 +825,7 @@ void ScreenSelectMaster::TweenOnScreen()
 	SET_XY_AND_ON_COMMAND( m_sprExplanation[GetCurrentPage()] );
 	SET_XY_AND_ON_COMMAND( m_sprMore[GetCurrentPage()] );
 
-	this->SortByDrawOrder();
+	ScreenSelect::TweenOnScreen();
 }
 
 void ScreenSelectMaster::TweenOffScreen()
