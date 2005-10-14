@@ -8,9 +8,6 @@
 #include "CodeDetector.h"
 #include "ThemeMetric.h"
 
-// Derived classes must send this when done
-AutoScreenMessage( SM_AllDoneChoosing )
-
 class ScreenSelect : public ScreenWithMenuElements
 {
 public:

@@ -159,18 +159,6 @@ void ScreenSelectDifficulty::Update( float fDelta )
 	m_fLockInputTime = max( 0, m_fLockInputTime-fDelta );
 }
 
-void ScreenSelectDifficulty::HandleScreenMessage( const ScreenMessage SM )
-{
-	ScreenSelect::HandleScreenMessage( SM );
-
-	switch( SM )
-	{
-	case SM_BeginFadingOut:
-		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );	// notify parent that we're finished
-		break;
-	}
-}
-
 int ScreenSelectDifficulty::GetSelectionIndex( PlayerNumber pn )
 {
 	int index = 0;

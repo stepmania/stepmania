@@ -312,8 +312,6 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 	{
 		/* Backwards compatibility (deprecated). */
 		this->PlayCommand( "TweenOff" );
-
-		SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );	// notify parent that we're finished
 	}
 }
 

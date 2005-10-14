@@ -312,7 +312,7 @@ void ScreenSelectMode::MenuStart( PlayerNumber pn )
 	for(int i=0; i<NUM_PLAYERS; i++)
 		OFF_COMMAND( m_CurChar[i] );
 
-	SCREENMAN->PostMessageToTopScreen( SM_AllDoneChoosing, 0 );
+	SCREENMAN->PostMessageToTopScreen( SM_BeginFadingOut, 0 );
 }
 
 int ScreenSelectMode::GetSelectionIndex( PlayerNumber pn )

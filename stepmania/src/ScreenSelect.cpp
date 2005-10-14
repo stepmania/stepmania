@@ -239,12 +239,10 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 
-		SCREENMAN->ConcurrentlyPrepareScreen( m_sNextScreen );
-	}
-	else if( SM == SM_AllDoneChoosing ) 	/* It's our turn to tween out. */
-	{
 		if( !IsTransitioning() )
 			StartTransitioningScreen( SM_GoToNextScreen );
+
+		SCREENMAN->ConcurrentlyPrepareScreen( m_sNextScreen );
 	}
 	else if( SM == SM_GoToNextScreen )
 	{

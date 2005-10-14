@@ -28,8 +28,6 @@ public:
 //	virtual void MenuBack( PlayerNumber pn );
 	virtual void TweenOffScreen();
 
-	virtual void HandleScreenMessage( const ScreenMessage SM );
-
 protected:
 	enum Page { PAGE_1, PAGE_2, NUM_PAGES };
 
