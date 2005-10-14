@@ -175,9 +175,6 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThem
 	depth++;
 	ASSERT_M( depth < 20, "Circular theme fallback references detected." );
 
-	if( !sThemeName.CompareNoCase(BASE_THEME_NAME) )
-		loaded_base = true;
-
 	Theme t;
 	t.iniMetrics = new IniFile;
 	t.sThemeName = sThemeName;
@@ -185,6 +182,11 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThem
 	t.iniMetrics->ReadFile( GetLanguageIniPath(sThemeName,BASE_LANGUAGE) );
 	if( m_sCurLanguage.CompareNoCase(BASE_LANGUAGE) )
 		t.iniMetrics->ReadFile( GetLanguageIniPath(sThemeName,m_sCurLanguage) );
+
+	bool bIsBaseTheme = !sThemeName.CompareNoCase(BASE_THEME_NAME);
+	t.iniMetrics->GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
+	if( bIsBaseTheme )
+		loaded_base = true;
 
 	/* Read the fallback theme.  If no fallback theme is specified, and we havn't
 	 * already loaded it, fall back on BASE_THEME_NAME.  That way, default theme
@@ -200,7 +202,7 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThem
 
 	g_vThemes.push_front( t );
 
-	if( !sThemeName.CompareNoCase(sThemeName) )
+	if( bIsBaseTheme )
 		loaded_base = false;
 
 	depth--;
