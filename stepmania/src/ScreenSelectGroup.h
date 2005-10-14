@@ -30,7 +30,7 @@ public:
 	void MenuBack( PlayerNumber pn );
 
 	void TweenOursOnScreen();
-	void TweenOursOffScreen();
+	void TweenOffScreen();
 
 private:
 

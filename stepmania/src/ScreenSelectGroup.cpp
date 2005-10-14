@@ -19,7 +19,6 @@
 
 #define BANNER_WIDTH					THEME->GetMetricF("ScreenSelectGroup","BannerWidth")
 #define BANNER_HEIGHT					THEME->GetMetricF("ScreenSelectGroup","BannerHeight")
-#define SLEEP_AFTER_TWEEN_OFF_SECONDS	THEME->GetMetricF("ScreenSelectGroup","SleepAfterTweenOffSeconds")
 
 
 REGISTER_SCREEN_CLASS( ScreenSelectGroup );
@@ -226,9 +225,7 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 	else
         SOUND->PlayOnceFromAnnouncer( "select group comment general" );
 
-
-	TweenOursOffScreen();
-	this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_TWEEN_OFF_SECONDS );
+	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 }
 
 void ScreenSelectGroup::MenuBack( PlayerNumber pn )
@@ -236,8 +233,10 @@ void ScreenSelectGroup::MenuBack( PlayerNumber pn )
 	Cancel( SM_GoToPrevScreen );
 }
 
-void ScreenSelectGroup::TweenOursOffScreen()
+void ScreenSelectGroup::TweenOffScreen()
 {
+	ScreenWithMenuElements::TweenOffScreen();
+
 	OFF_COMMAND( m_sprExplanation );
 	OFF_COMMAND( m_sprFrame );
 	OFF_COMMAND( m_Banner );

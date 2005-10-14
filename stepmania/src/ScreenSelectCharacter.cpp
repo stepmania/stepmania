@@ -34,7 +34,6 @@
 #define ATTACK_ICONS_OFF_COMMAND( p )		THEME->GetMetricA("ScreenSelectCharacter",ssprintf("AttackIconsP%dOffCommand",p+1))
 #define HELP_TEXT							THEME->GetMetric ("ScreenSelectCharacter","HelpText")
 #define TIMER_SECONDS						THEME->GetMetricI("ScreenSelectCharacter","TimerSeconds")
-#define SLEEP_AFTER_TWEEN_OFF_SECONDS		THEME->GetMetricF("ScreenSelectCharacter","SleepAfterTweenOffSeconds")
 #define ICON_WIDTH							THEME->GetMetricF("ScreenSelectCharacter","IconWidth")
 #define ICON_HEIGHT							THEME->GetMetricF("ScreenSelectCharacter","IconHeight")
 #define ICONS_ON_COMMAND( p )				THEME->GetMetricA("ScreenSelectCharacter",ssprintf("IconsP%dOnCommand",p+1))
@@ -357,8 +356,7 @@ void ScreenSelectCharacter::MenuStart( PlayerNumber pn )
 		}
 
 		StopTimer();
-		TweenOursOffScreen();
-		this->PostScreenMessage( SM_BeginFadingOut, SLEEP_AFTER_TWEEN_OFF_SECONDS );
+		this->PostScreenMessage( SM_BeginFadingOut, 0 );
 	}
 }
 
@@ -367,8 +365,10 @@ void ScreenSelectCharacter::MenuBack( PlayerNumber pn )
 	Cancel( SM_GoToPrevScreen );
 }
 
-void ScreenSelectCharacter::TweenOursOffScreen()
+void ScreenSelectCharacter::TweenOffScreen()
 {
+	ScreenWithMenuElements::TweenOffScreen();
+
 	FOREACH_PlayerNumber( p )
 	{
 		m_sprCard[p].RunCommands( CARD_OFF_COMMAND(p) );

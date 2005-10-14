@@ -30,7 +30,7 @@ public:
 	void MenuStart( PlayerNumber pn );
 	void MenuBack( PlayerNumber pn );
 
-	void TweenOursOffScreen();
+	void TweenOffScreen();
 
 private:
 	// These functions take the PlayerNumber of the player making the selections,
