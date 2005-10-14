@@ -308,11 +308,6 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 
 		m_fLockInputSecs = POST_SWITCH_PAGE_SECONDS;
 	}
-	else if( SM == SM_BeginFadingOut )
-	{
-		/* Backwards compatibility (deprecated). */
-		this->PlayCommand( "TweenOff" );
-	}
 }
 
 int ScreenSelectMaster::GetSelectionIndex( PlayerNumber pn )
