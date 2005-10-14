@@ -72,7 +72,6 @@ public:
 		RageColor   diffuse[4];
 		RageColor   glow;
 		float		aux;
-		CString sCommandName;	// command to execute when this TweenState goes into effect
 	};
 
 	enum EffectClock
@@ -382,6 +381,7 @@ protected:
 		TweenType	m_TweenType;
 		float		m_fTimeLeftInTween;	// how far into the tween are we?
 		float		m_fTweenTime;		// seconds between Start and End positions/zooms
+		CString		m_sCommandName;		// command to execute when this TweenState goes into effect
 	};
 
 

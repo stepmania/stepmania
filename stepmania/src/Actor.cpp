@@ -595,12 +595,12 @@ void Actor::UpdateTweening( float fDeltaTime )
 			m_start = m_current;		// set the start position
 
 			// Execute the command in this tween (if any).
-			if( TS.sCommandName.size() )
+			if( !TI.m_sCommandName.empty() )
 			{
-				if( TS.sCommandName.Left(1) == "!" )
-					MESSAGEMAN->Broadcast( TS.sCommandName.substr(1) );
+				if( TI.m_sCommandName.Left(1) == "!" )
+					MESSAGEMAN->Broadcast( TI.m_sCommandName.substr(1) );
 				else
-					this->PlayCommand( TS.sCommandName );
+					this->PlayCommand( TI.m_sCommandName );
 			}
 		}
 
@@ -612,10 +612,6 @@ void Actor::UpdateTweening( float fDeltaTime )
 		{
 			m_current = TS;
 
-			// don't inherit the queued state's command.  We keep having to do this.
-			// Does sCommandName belong in TweenInfo, instead of TweenState?
-			m_current.sCommandName = "";
-			
 			// delete the head tween
 			delete m_Tweens.front();
 			m_Tweens.erase( m_Tweens.begin() );
@@ -764,9 +760,6 @@ void Actor::BeginTweening( float time, TweenType tt )
 	{
 		// initialize the new TS from the last TS in the list
 		TS = m_Tweens[m_Tweens.size()-2]->state;
-
-		// don't inherit the queued state's command
-		TS.sCommandName = "";
 	}
 	else
 	{
@@ -1239,7 +1232,8 @@ void Actor::Sleep( float time )
 void Actor::QueueCommand( const CString& sCommandName )
 {
 	BeginTweening( 0, TWEEN_LINEAR );
-	DestTweenState().sCommandName = sCommandName;
+	TweenInfo  &TI = m_Tweens.back()->info;
+	TI.m_sCommandName = sCommandName;
 }
 
 void Actor::QueueMessage( const CString& sMessageName )
@@ -1248,7 +1242,8 @@ void Actor::QueueMessage( const CString& sMessageName )
 	// command, so we don't have to add yet another element to every tween
 	// state for this rarely-used command.
 	BeginTweening( 0, TWEEN_LINEAR );
-	DestTweenState().sCommandName = "!" + sMessageName;
+	TweenInfo  &TI = m_Tweens.back()->info;
+	TI.m_sCommandName = "!" + sMessageName;
 }
 
 void Actor::AddCommand( const CString &sCmdName, apActorCommands apac )
