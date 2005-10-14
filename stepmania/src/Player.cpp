@@ -519,7 +519,7 @@ void Player::Update( float fDeltaTime )
 	// update pressed flag
 	//
 	const int iNumCols = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
-	ASSERT_M( iNumCols < MAX_COLS_PER_PLAYER, ssprintf("%i >= %i", iNumCols, MAX_COLS_PER_PLAYER) );
+	ASSERT_M( iNumCols <= MAX_COLS_PER_PLAYER, ssprintf("%i > %i", iNumCols, MAX_COLS_PER_PLAYER) );
 	for( int col=0; col < iNumCols; ++col )
 	{
 		// TODO: Remove use of PlayerNumber.
