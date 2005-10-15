@@ -360,8 +360,18 @@ try_element_again:
 			for( int i = 0; asset_masks[i]; ++i )
 			{
 				/* No extension means directories. */
-				if( asset_masks[i][0] == 0 && !IsADirectory(asPaths[p]) )
-					continue;
+				if( asset_masks[i][0] == 0 )
+				{
+					if( !IsADirectory(asPaths[p]) )
+						continue;
+					
+					vector<CString> vs;
+					GetDirListing( asPaths[p]+"/*", vs, false, false );
+					StripCvs( vs );
+					bool bDirIsEmpty = vs.empty();
+					if( bDirIsEmpty )
+						continue;
+				}
 
 				if( ext == asset_masks[i] || !strcmp(asset_masks[i], "*") )
 				{
