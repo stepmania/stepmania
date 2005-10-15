@@ -23,7 +23,7 @@ void ActorSound::LoadFromNode( const CString& sDir, const XNode* pNode )
 	Actor::LoadFromNode( sDir, pNode );
 
 	CString sFile;
-	if( pNode->GetAttrValue("Path", sFile) )
+	if( pNode->GetAttrValue("File", sFile) || pNode->GetAttrValue("Path", sFile) ) /* Path deprecated */
 	{
 		LuaHelpers::RunAtExpressionS( sFile );
 		FixSlashesInPlace( sFile );
