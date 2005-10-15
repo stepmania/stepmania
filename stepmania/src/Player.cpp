@@ -522,10 +522,12 @@ void Player::Update( float fDeltaTime )
 	ASSERT_M( iNumCols <= MAX_COLS_PER_PLAYER, ssprintf("%i > %i", iNumCols, MAX_COLS_PER_PLAYER) );
 	for( int col=0; col < iNumCols; ++col )
 	{
+		ASSERT( m_pPlayerState );
+
 		// TODO: Remove use of PlayerNumber.
 		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-		CHECKPOINT_M( ssprintf("%i %i", col, iNumCols) );
+		CHECKPOINT_M( ssprintf("P%i, %i %i", pn, col, iNumCols) );
 		const StyleInput StyleI( pn, col );
 		bool bIsHoldingButton = INPUTMAPPER->IsButtonDown( StyleI );
 		// TODO: Make this work for non-human-controlled players
