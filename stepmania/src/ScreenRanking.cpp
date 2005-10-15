@@ -223,7 +223,7 @@ void ScoreScroller::Scroll( int iDir )
 	float fDest = GetDestinationItem();
 	float fOldDest = fDest;
 	fDest += iDir;
-	CLAMP( fDest, (SONG_SCORE_ROWS_TO_SHOW-1)/2.0f, m_vScoreRowItemData.size()-(SONG_SCORE_ROWS_TO_SHOW-1)/2.0f-1 );
+	CLAMP( fDest, (m_metricSongScoreRowsToDraw-1)/2.0f, m_vScoreRowItemData.size()-(m_metricSongScoreRowsToDraw-1)/2.0f-1 );
 	if( fOldDest != fDest )
 	{
 		// TODO: play sound
@@ -234,7 +234,7 @@ void ScoreScroller::Scroll( int iDir )
 
 void ScoreScroller::ScrollTop()
 {
-	SetCurrentAndDestinationItem( (SONG_SCORE_ROWS_TO_SHOW-1)/2.0f );
+	SetCurrentAndDestinationItem( (m_metricSongScoreRowsToDraw-1)/2.0f );
 }
 
 void ScoreScroller::ConfigureActor( Actor *pActor, int iItem )
@@ -333,7 +333,7 @@ void ScoreScroller::Load(
 	NO_SCORE_NAME.Load              (sClassName, "NoScoreName");
 	COL_SPACING_X.Load              (sClassName, "ColSpacingX");
 	SONG_SCORE_SECONDS_PER_ROW.Load (sClassName, "SongScoreSecondsPerRow");
-	SONG_SCORE_ROWS_TO_SHOW.Load    (sClassName, "SongScoreRowsToShow");
+	m_metricSongScoreRowsToDraw.Load(sClassName, "SongScoreRowsToDraw");
 
 	m_DifficultiesToShow = DifficultiesToShow;
 
@@ -357,10 +357,11 @@ void ScoreScroller::Load(
 		}
 	}
 
-	for( int i=0; i<SONG_SCORE_ROWS_TO_SHOW; ++i )
+	int iNumCopies = m_metricSongScoreRowsToDraw+1;
+	for( int i=0; i<iNumCopies; ++i )
 		this->AddChild( new ScoreRowItem(ItemTemplate) );
 
-	DynamicActorScroller::Load2( (float) SONG_SCORE_ROWS_TO_SHOW, SCREEN_WIDTH, fItemHeight, false, SONG_SCORE_SECONDS_PER_ROW, 0 );
+	DynamicActorScroller::Load2( (float) m_metricSongScoreRowsToDraw, SCREEN_WIDTH, fItemHeight, false, SONG_SCORE_SECONDS_PER_ROW, 0 );
 
 	m_iNumItems = m_vScoreRowItemData.size();
 }

@@ -131,7 +131,7 @@ protected:
 	ThemeMetric<CString>		NO_SCORE_NAME;
 	ThemeMetric<float>			COL_SPACING_X;
 	ThemeMetric<float>			SONG_SCORE_SECONDS_PER_ROW;
-	ThemeMetric<int>			SONG_SCORE_ROWS_TO_SHOW;
+	ThemeMetric<int>			m_metricSongScoreRowsToDraw;
 };
 
 class ScreenRankingScroller: public ScreenRanking 
