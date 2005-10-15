@@ -495,7 +495,7 @@ void InputMapper::SaveMappingsToDisk()
 }
 
 
-void InputMapper::SetInputMap( DeviceInput DeviceI, GameInput GameI, int iSlotIndex )
+void InputMapper::SetInputMap( const DeviceInput &DeviceI, const GameInput &GameI, int iSlotIndex )
 {
 	// remove the old input
 	ClearFromInputMap( DeviceI );
@@ -507,7 +507,7 @@ void InputMapper::SetInputMap( DeviceInput DeviceI, GameInput GameI, int iSlotIn
 	UpdateTempDItoGI();
 }
 
-void InputMapper::ClearFromInputMap( DeviceInput DeviceI )
+void InputMapper::ClearFromInputMap( const DeviceInput &DeviceI )
 {
 	// search for where this DeviceI maps to
 
@@ -526,7 +526,7 @@ void InputMapper::ClearFromInputMap( DeviceInput DeviceI )
 	UpdateTempDItoGI();
 }
 
-void InputMapper::ClearFromInputMap( GameInput GameI, int iSlotIndex )
+void InputMapper::ClearFromInputMap( const GameInput &GameI, int iSlotIndex )
 {
 	if( !GameI.IsValid() )
 		return;
@@ -536,12 +536,12 @@ void InputMapper::ClearFromInputMap( GameInput GameI, int iSlotIndex )
 	UpdateTempDItoGI();
 }
 
-bool InputMapper::IsMapped( DeviceInput DeviceI )
+bool InputMapper::IsMapped( const DeviceInput &DeviceI )
 {
 	return m_tempDItoGI[DeviceI.device][DeviceI.button].IsValid();
 }
 
-bool InputMapper::IsMapped( GameInput GameI )
+bool InputMapper::IsMapped( const GameInput &GameI )
 {
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 		if( m_GItoDI[GameI.controller][GameI.button][i].IsValid() )
@@ -580,19 +580,19 @@ void InputMapper::UpdateTempDItoGI()
 	}
 }
 
-bool InputMapper::DeviceToGame( DeviceInput DeviceI, GameInput& GameI ) // return true if there is a mapping from device to pad
+bool InputMapper::DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI ) // return true if there is a mapping from device to pad
 {
 	GameI = m_tempDItoGI[DeviceI.device][DeviceI.button];
 	return GameI.controller != GAME_CONTROLLER_INVALID;
 }
 
-bool InputMapper::GameToDevice( GameInput GameI, int iSoltNum, DeviceInput& DeviceI )	// return true if there is a mapping from pad to device
+bool InputMapper::GameToDevice( const GameInput &GameI, int iSoltNum, DeviceInput& DeviceI )	// return true if there is a mapping from pad to device
 {
 	DeviceI = m_GItoDI[GameI.controller][GameI.button][iSoltNum];
 	return DeviceI.device != DEVICE_NONE;
 }
 
-void InputMapper::GameToStyle( GameInput GameI, StyleInput &StyleI )
+void InputMapper::GameToStyle( const GameInput &GameI, StyleInput &StyleI )
 {
 	if( GAMESTATE->m_pCurStyle == NULL )
 	{
@@ -603,27 +603,27 @@ void InputMapper::GameToStyle( GameInput GameI, StyleInput &StyleI )
 	StyleI = GAMESTATE->m_pCurStyle->GameInputToStyleInput( GameI );
 }
 
-void InputMapper::GameToMenu( GameInput GameI, MenuInput &MenuI )
+void InputMapper::GameToMenu( const GameInput &GameI, MenuInput &MenuI )
 {
 	const Game* pGame = GAMESTATE->GetCurrentGame();
 	MenuI = pGame->GameInputToMenuInput( GameI );
 }
 
-void InputMapper::StyleToGame( StyleInput StyleI, GameInput &GameI )
+void InputMapper::StyleToGame( const StyleInput &StyleI, GameInput &GameI )
 {
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	GameI = pStyle->StyleInputToGameInput( StyleI );
 }
 
 
-void InputMapper::MenuToGame( MenuInput MenuI, GameInput GameIout[4] )
+void InputMapper::MenuToGame( const MenuInput &MenuI, GameInput GameIout[4] )
 {
 	const Game* pGame = GAMESTATE->GetCurrentGame();
 	pGame->MenuInputToGameInput( MenuI, GameIout );
 }
 
 
-bool InputMapper::IsButtonDown( GameInput GameI )
+bool InputMapper::IsButtonDown( const GameInput &GameI )
 {
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 	{
@@ -637,7 +637,7 @@ bool InputMapper::IsButtonDown( GameInput GameI )
 	return false;
 }
 
-bool InputMapper::IsButtonDown( MenuInput MenuI )
+bool InputMapper::IsButtonDown( const MenuInput &MenuI )
 {
 	GameInput GameI[4];
 	MenuToGame( MenuI, GameI );
@@ -648,7 +648,7 @@ bool InputMapper::IsButtonDown( MenuInput MenuI )
 	return false;
 }
 
-bool InputMapper::IsButtonDown( StyleInput StyleI )
+bool InputMapper::IsButtonDown( const StyleInput &StyleI )
 {
 	GameInput GameI;
 	StyleToGame( StyleI, GameI );
@@ -656,7 +656,7 @@ bool InputMapper::IsButtonDown( StyleInput StyleI )
 }
 
 
-float InputMapper::GetSecsHeld( GameInput GameI )
+float InputMapper::GetSecsHeld( const GameInput &GameI )
 {
 	float fMaxSecsHeld = 0;
 
@@ -671,7 +671,7 @@ float InputMapper::GetSecsHeld( GameInput GameI )
 	return fMaxSecsHeld;
 }
 
-float InputMapper::GetSecsHeld( MenuInput MenuI )
+float InputMapper::GetSecsHeld( const MenuInput &MenuI )
 {
 	float fMaxSecsHeld = 0;
 
@@ -684,14 +684,14 @@ float InputMapper::GetSecsHeld( MenuInput MenuI )
 	return fMaxSecsHeld;
 }
 
-float InputMapper::GetSecsHeld( StyleInput StyleI )
+float InputMapper::GetSecsHeld( const StyleInput &StyleI )
 {
 	GameInput GameI;
 	StyleToGame( StyleI, GameI );
 	return GetSecsHeld( GameI );
 }
 
-void InputMapper::ResetKeyRepeat( GameInput GameI )
+void InputMapper::ResetKeyRepeat( const GameInput &GameI )
 {
 	for( int i=0; i<NUM_GAME_TO_DEVICE_SLOTS; i++ )
 	{
@@ -701,7 +701,7 @@ void InputMapper::ResetKeyRepeat( GameInput GameI )
 	}
 }
 
-void InputMapper::ResetKeyRepeat( MenuInput MenuI )
+void InputMapper::ResetKeyRepeat( const MenuInput &MenuI )
 {
 	GameInput GameI[4];
 	MenuToGame( MenuI, GameI );
@@ -710,7 +710,7 @@ void InputMapper::ResetKeyRepeat( MenuInput MenuI )
 			ResetKeyRepeat( GameI[i] );
 }
 
-void InputMapper::ResetKeyRepeat( StyleInput StyleI )
+void InputMapper::ResetKeyRepeat( const StyleInput &StyleI )
 {
 	GameInput GameI;
 	StyleToGame( StyleI, GameI );

@@ -41,8 +41,8 @@ class RageMutex;
 class InputFilter
 {
 public:
-	void ButtonPressed( DeviceInput di, bool Down );
-	void SetButtonComment( DeviceInput di, const CString &sComment = "" );
+	void ButtonPressed( const DeviceInput &di, bool Down );
+	void SetButtonComment( const DeviceInput &di, const CString &sComment = "" );
 	void ResetDevice( InputDevice dev );
 
 	InputFilter();
@@ -52,11 +52,11 @@ public:
 
 	void SetRepeatRate( float fSlowDelay, float fFastDelay, float fRepeatRate );
 	void ResetRepeatRate();
-	void ResetKeyRepeat( DeviceInput di );
+	void ResetKeyRepeat( const DeviceInput &di );
 
-	bool IsBeingPressed( DeviceInput di );
-	float GetSecsHeld( DeviceInput di );
-	CString GetButtonComment( DeviceInput di ) const;
+	bool IsBeingPressed( const DeviceInput &di );
+	float GetSecsHeld( const DeviceInput &di );
+	CString GetButtonComment( const DeviceInput &di ) const;
 	
 	void GetInputEvents( InputEventArray &array );
 

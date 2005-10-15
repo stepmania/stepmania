@@ -74,7 +74,7 @@ InputFilter::ButtonState::ButtonState():
 	m_fSecsHeld = m_Level = m_LastLevel = 0;
 }
 
-void InputFilter::ButtonPressed( DeviceInput di, bool Down )
+void InputFilter::ButtonPressed( const DeviceInput &di, bool Down )
 {
 	LockMut(*queuemutex);
 
@@ -103,7 +103,7 @@ void InputFilter::ButtonPressed( DeviceInput di, bool Down )
 	}
 }
 
-void InputFilter::SetButtonComment( DeviceInput di, const CString &sComment )
+void InputFilter::SetButtonComment( const DeviceInput &di, const CString &sComment )
 {
 	LockMut(*queuemutex);
 	ButtonState &bs = m_ButtonState[di.device][di.button];
@@ -219,23 +219,23 @@ void InputFilter::Update(float fDeltaTime)
 
 }
 
-bool InputFilter::IsBeingPressed( DeviceInput di )
+bool InputFilter::IsBeingPressed( const DeviceInput &di )
 {
 	return m_ButtonState[di.device][di.button].m_bLastReportedHeld;
 }
 
-float InputFilter::GetSecsHeld( DeviceInput di )
+float InputFilter::GetSecsHeld( const DeviceInput &di )
 {
 	return m_ButtonState[di.device][di.button].m_fSecsHeld;
 }
 
-CString InputFilter::GetButtonComment( DeviceInput di ) const
+CString InputFilter::GetButtonComment( const DeviceInput &di ) const
 {
 	LockMut(*queuemutex);
 	return m_ButtonState[di.device][di.button].m_sComment;
 }
 
-void InputFilter::ResetKeyRepeat( DeviceInput di )
+void InputFilter::ResetKeyRepeat( const DeviceInput &di )
 {
 	m_ButtonState[di.device][di.button].m_fSecsHeld = 0;
 }

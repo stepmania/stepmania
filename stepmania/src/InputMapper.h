@@ -25,36 +25,36 @@ public:
 
 	void ClearAllMappings();
 
-	void SetInputMap( DeviceInput DeviceI, GameInput GameI, int iSlotIndex );
-	void ClearFromInputMap( DeviceInput DeviceI );
-	void ClearFromInputMap( GameInput GameI, int iSlotIndex );
+	void SetInputMap( const DeviceInput &DeviceI, const GameInput &GameI, int iSlotIndex );
+	void ClearFromInputMap( const DeviceInput &DeviceI );
+	void ClearFromInputMap( const GameInput &GameI, int iSlotIndex );
 
 	void AddDefaultMappingsForCurrentGameIfUnmapped();
 	void AutoMapJoysticksForCurrentGame();
 
-	bool IsMapped( DeviceInput DeviceI );
-	bool IsMapped( GameInput GameI );
+	bool IsMapped( const DeviceInput &DeviceI );
+	bool IsMapped( const GameInput &GameI );
 	
-	bool DeviceToGame( DeviceInput DeviceI, GameInput& GameI );	// return true if there is a mapping from device to pad
-	bool GameToDevice( GameInput GameI, int iSoltNum, DeviceInput& DeviceI );	// return true if there is a mapping from pad to device
+	bool DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI );	// return true if there is a mapping from device to pad
+	bool GameToDevice( const GameInput &GameI, int iSoltNum, DeviceInput& DeviceI );	// return true if there is a mapping from pad to device
 
-	void GameToStyle( GameInput GameI, StyleInput &StyleI );
-	void StyleToGame( StyleInput StyleI, GameInput &GameI );
+	void GameToStyle( const GameInput &GameI, StyleInput &StyleI );
+	void StyleToGame( const StyleInput &StyleI, GameInput &GameI );
 
-	void GameToMenu( GameInput GameI, MenuInput &MenuI );
-	void MenuToGame( MenuInput MenuI, GameInput GameIout[4] );
+	void GameToMenu( const GameInput &GameI, MenuInput &MenuI );
+	void MenuToGame( const MenuInput &MenuI, GameInput GameIout[4] );
 
-	float GetSecsHeld( GameInput GameI );
-	float GetSecsHeld( MenuInput MenuI );
-	float GetSecsHeld( StyleInput StyleI );
+	float GetSecsHeld( const GameInput &GameI );
+	float GetSecsHeld( const MenuInput &MenuI );
+	float GetSecsHeld( const StyleInput &StyleI );
 
-	bool IsButtonDown( GameInput GameI );
-	bool IsButtonDown( MenuInput MenuI );
-	bool IsButtonDown( StyleInput StyleI );
+	bool IsButtonDown( const GameInput &GameI );
+	bool IsButtonDown( const MenuInput &MenuI );
+	bool IsButtonDown( const StyleInput &StyleI );
 
-	void ResetKeyRepeat( GameInput GameI );
-	void ResetKeyRepeat( MenuInput MenuI );
-	void ResetKeyRepeat( StyleInput StyleI );
+	void ResetKeyRepeat( const GameInput &GameI );
+	void ResetKeyRepeat( const MenuInput &MenuI );
+	void ResetKeyRepeat( const StyleInput &StyleI );
 
 	struct Mapping {
 		bool IsEndMarker() const { return iSlotIndex==-1; }
