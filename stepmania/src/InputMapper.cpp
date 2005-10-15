@@ -611,6 +611,7 @@ void InputMapper::GameToMenu( const GameInput &GameI, MenuInput &MenuI )
 
 void InputMapper::StyleToGame( const StyleInput &StyleI, GameInput &GameI )
 {
+	CHECKPOINT_M( ssprintf("%i %i", StyleI.player, StyleI.col) );
 	const Style* pStyle = GAMESTATE->GetCurrentStyle();
 	GameI = pStyle->StyleInputToGameInput( StyleI );
 }
@@ -650,6 +651,7 @@ bool InputMapper::IsButtonDown( const MenuInput &MenuI )
 
 bool InputMapper::IsButtonDown( const StyleInput &StyleI )
 {
+	CHECKPOINT_M( ssprintf("%i %i", StyleI.player, StyleI.col) );
 	GameInput GameI;
 	StyleToGame( StyleI, GameI );
 	return IsButtonDown( GameI );

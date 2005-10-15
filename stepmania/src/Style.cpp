@@ -40,8 +40,8 @@ void Style::GetTransformedNoteDataForStyle( PlayerNumber pn, const NoteData& ori
 
 GameInput Style::StyleInputToGameInput( const StyleInput& StyleI ) const
 {
-	ASSERT_M( StyleI.player < NUM_PLAYERS, ssprintf("P%i", StyleI.player) );
-	ASSERT_M( StyleI.col < MAX_COLS_PER_PLAYER, ssprintf("C%i", StyleI.col) );
+	ASSERT_M( StyleI.player < NUM_PLAYERS  &&  StyleI.col < MAX_COLS_PER_PLAYER,
+		ssprintf("P%i C%i", StyleI.player, StyleI.col) );
 
 	FOREACH_GameController(gc)
 	{
