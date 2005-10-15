@@ -1047,6 +1047,9 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 	if( !PREFSMAN->m_bDisqualification )
 		return false;
 
+	if( !GAMESTATE->IsHumanPlayer(pn) )
+		return false;
+
 	if( GAMESTATE->IsCourseMode() )
 	{
 		return GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.IsEasierForCourseAndTrail( 
