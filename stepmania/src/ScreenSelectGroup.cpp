@@ -31,12 +31,7 @@ void ScreenSelectGroup::Init()
 {
 	ScreenWithMenuElements::Init();
 
-	if( !PREFSMAN->m_bShowSelectGroup )
-	{
-		GAMESTATE->m_sPreferredSongGroup.Set( GROUP_ALL );
-		PostScreenMessage( SM_GoToNextScreen, 0 );
-		return;
-	}
+	ASSERT( PREFSMAN->m_bShowSelectGroup );
 
 	vector<Song*> aAllSongs;
 	SONGMAN->GetSongs( aAllSongs );

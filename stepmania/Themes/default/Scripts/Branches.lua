@@ -14,6 +14,11 @@ function ScreenCautionBranch()
 	return "ScreenSelectStyle"
 end
 
+function ScreenSelectGroupBranch()
+	if PREFSMAN:GetPreference("ShowSelectGroup") then return "ScreenSelectGroup" end
+	return GetScreenInstructions()
+end
+
 function SongSelectionScreen()
 	local pm = GAMESTATE:GetPlayMode()
 	if pm==PLAY_MODE_NONSTOP	then return "ScreenSelectCourseNonstop" end
