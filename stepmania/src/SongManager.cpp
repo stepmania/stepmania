@@ -1435,30 +1435,6 @@ LUA_REGISTER_CLASS( SongManager )
 
 #include "LuaFunctions.h"
 
-CString GetCurrentSongDisplayTitle()
-{
-	const Song* pSong = GAMESTATE->m_pCurSong;
-	if( pSong == NULL )
-		return CString();
-	return pSong->GetDisplayFullTitle();
-}
-
-CString GetCurrentSongDisplayArtist()
-{
-	const Song* pSong = GAMESTATE->m_pCurSong;
-	if( pSong == NULL )
-		return CString();
-	return pSong->GetDisplayArtist();
-}
-
-CString GetCurrentSongCredit()
-{
-	const Song* pSong = GAMESTATE->m_pCurSong;
-	if( pSong == NULL )
-		return CString();
-	return pSong->m_sCredit;
-}
-
 CString GetCurrentStepsCredits()
 {
 	const Song* pSong = GAMESTATE->m_pCurSong;
