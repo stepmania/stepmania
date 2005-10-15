@@ -184,6 +184,19 @@ unsigned XNode::LoadAttributes( const CString &xml, PARSEINFO *pi, unsigned iOff
 				iEnd = xml.find_first_of( " >", iOffset );
 			}
 
+			if( iEnd == xml.npos ) 
+			{
+				// error
+				if( !pi->error_occur ) 
+				{
+					pi->error_occur = true;
+					pi->error_pointer = xml;
+					pi->error_code = PIE_ATTR_NO_VALUE;
+					pi->error_string = ssprintf( "<%s> attribute text: couldn't find matching quote", sName.c_str() );
+				}
+				return string::npos;
+			}
+
 			bool trim = pi->trim_value;
 			SetString( xml, iOffset, iEnd, &sValue, trim );
 			iOffset = iEnd;
