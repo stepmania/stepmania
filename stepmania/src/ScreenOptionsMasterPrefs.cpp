@@ -513,6 +513,15 @@ static void SoundVolume( int &sel, bool ToSel, const ConfOption *pConfOption )
 	MoveMap( sel, PREFSMAN->m_fSoundVolume, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
+static void GlobalOffsetSeconds( int &sel, bool ToSel, const ConfOption *pConfOption )
+{
+	float mapping[41];
+	for( int i = 0; i < 41; ++i )
+		mapping[i] = SCALE( i, 0.0f, 40.0f, -0.1f, +0.1f );
+	
+	MoveMap( sel, PREFSMAN->m_fGlobalOffsetSeconds, ToSel, mapping, ARRAYSIZE(mapping) );
+}
+
 static vector<ConfOption> g_ConfOptions;
 static void InitializeConfOptions()
 {
@@ -626,6 +635,12 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "AttractSoundFrequency",		AttractSoundFrequency,	"NEVER","ALWAYS","2 TIMES","3 TIMES","4 TIMES","5 TIMES" ) );
 	ADD( ConfOption( "SoundVolume",					SoundVolume,		"SILENT","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_SOUND;
+	{
+		ConfOption c( "GlobalOffsetSeconds",		GlobalOffsetSeconds );
+		for( int i = -100; i <= +100; i += 5 )
+			c.AddOption( ssprintf("%+i ms", i) );
+		ADD( c );
+	}
 
 	/* Editor options */
 	ADD( ConfOption( "EditorShowBGChangesPlay",		MovePref,			"HIDE","SHOW") );
