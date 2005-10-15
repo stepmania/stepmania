@@ -2048,6 +2048,42 @@ public:
 		return 1;
 	}
 
+	static int GetCurrentStepsCredits( T* p, lua_State *L )
+	{
+		const Song* pSong = p->m_pCurSong;
+		if( pSong == NULL )
+			return 0;
+
+		// use a vector and not a set so that ordering is maintained
+		vector<Steps*> vpStepsToShow;
+		FOREACH_HumanPlayer( p )
+		{
+			Steps* pSteps = GAMESTATE->m_pCurSteps[p];
+			bool bAlreadyAdded = find( vpStepsToShow.begin(), vpStepsToShow.end(), pSteps ) != vpStepsToShow.end();
+			if( !bAlreadyAdded )
+				vpStepsToShow.push_back( pSteps );
+		}
+
+		CString s;
+		for( unsigned i=0; i<vpStepsToShow.size(); i++ )
+		{
+			const Steps* pSteps = vpStepsToShow[i];
+			CString sDifficulty = DifficultyToThemedString( pSteps->GetDifficulty() );
+			
+			// HACK: reset capitalization
+			sDifficulty.MakeLower();
+			sDifficulty = Capitalize( sDifficulty );
+			
+			if( i )
+				s += "\n";
+			s += sDifficulty + " steps: " + pSteps->GetDescription();
+		}
+
+		lua_pushstring( L, s );
+		return 1;
+	}
+
+
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( IsPlayerEnabled );
@@ -2109,6 +2145,7 @@ public:
 		ADD_METHOD( GetEditCourseEntryIndex );
 		ADD_METHOD( GetEditLocalProfileID );
 		ADD_METHOD( GetEditLocalProfile );
+		ADD_METHOD( GetCurrentStepsCredits );
 
 		Luna<T>::Register( L );
 

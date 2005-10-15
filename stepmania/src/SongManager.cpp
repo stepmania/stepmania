@@ -1429,50 +1429,6 @@ public:
 LUA_REGISTER_CLASS( SongManager )
 // lua end
 
-
-
-
-
-#include "LuaFunctions.h"
-
-CString GetCurrentStepsCredits()
-{
-	const Song* pSong = GAMESTATE->m_pCurSong;
-	if( pSong == NULL )
-		return CString();
-
-	CString s;
-
-	// use a vector and not a set so that ordering is maintained
-	vector<Steps*> vpStepsToShow;
-	FOREACH_PlayerNumber( p )
-	{
-		if( !GAMESTATE->IsHumanPlayer(p) )
-			continue;	// skip
-		
-		Steps* pSteps = GAMESTATE->m_pCurSteps[p];
-		bool bAlreadyAdded = find( vpStepsToShow.begin(), vpStepsToShow.end(), pSteps ) != vpStepsToShow.end();
-		if( !bAlreadyAdded )
-			vpStepsToShow.push_back( pSteps );
-	}
-	for( unsigned i=0; i<vpStepsToShow.size(); i++ )
-	{
-		Steps* pSteps = vpStepsToShow[i];
-		CString sDifficulty = DifficultyToThemedString( pSteps->GetDifficulty() );
-		
-		// HACK: reset capitalization
-		sDifficulty.MakeLower();
-		sDifficulty = Capitalize( sDifficulty );
-		
-		s += sDifficulty + " steps: " + pSteps->GetDescription();
-		s += "\n";
-	}
-
-	// erase the last newline
-	s.erase( s.end()-1 );
-	return s;
-}
-
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
