@@ -136,7 +136,7 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case CourseEntryAction_InsertEntry:
 				{
-					if( pCourse->m_vEntries.size() >= MAX_ENTRIES_PER_COURSE )
+					if( pCourse->m_vEntries.size() >= size_t(MAX_ENTRIES_PER_COURSE) )
 					{
 						CString sError = "The maximum number of entries per course is %d.  This course already has %d entries.";
 						ScreenPrompt::Prompt( SM_None, sError );
@@ -249,7 +249,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 	}
 	else if( iCurRow == (int)m_pRows.size()-2 )	// "create entry"
 	{
-		if( pCourse->m_vEntries.size() >= MAX_ENTRIES_PER_COURSE )
+		if( pCourse->m_vEntries.size() >= size_t(MAX_ENTRIES_PER_COURSE) )
 		{
 			CString sError = "The maximum number of entries per course is %d.  This course already has %d entries.";
 			ScreenPrompt::Prompt( SM_None, sError );
