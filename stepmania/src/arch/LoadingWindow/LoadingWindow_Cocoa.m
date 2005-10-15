@@ -6,6 +6,7 @@ static NSTextView *text;
 
 void MakeNewCocoaWindow()
 {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSImage *image = [NSImage imageNamed:@"splash"];
 	NSImageView *iView;
 	NSView *view;
@@ -46,19 +47,26 @@ void MakeNewCocoaWindow()
 	[text display];
 	
 	[window makeKeyAndOrderFront:nil];
+	[pool release];
 }
 
 void DisposeOfCocoaWindow()
 {
+	// Just in case
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	
 	[window close]; /* Released by setReleasedWhenClosed */
+	[pool release];
 }
 
 void SetCocoaWindowText(const char *s)
 {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSString *str = [NSString stringWithUTF8String:s];
 	
 	[text setString:(str ? str : @"" )];
 	[text display];
+	[pool release];
 }
 
 /*
