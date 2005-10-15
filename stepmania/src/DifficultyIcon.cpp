@@ -82,6 +82,55 @@ void DifficultyIcon::SetFromDifficulty( PlayerNumber pn, Difficulty dc )
 	}	
 }
 
+// lua start
+#include "LuaBinding.h"
+
+class LunaDifficultyIcon: public Luna<DifficultyIcon>
+{
+public:
+	LunaDifficultyIcon() { LUA->Register( Register ); }
+
+	static int SetFromSteps( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) )
+		{
+			p->SetFromSteps( PLAYER_1, NULL );
+		}
+		else
+		{
+			Steps *pS = Luna<Steps>::check(L,1);
+			p->SetFromSteps( PLAYER_1, pS );
+		}
+		return 0;
+	}
+	static int SetFromTrail( T* p, lua_State *L )
+	{ 
+		if( lua_isnil(L,1) )
+		{
+			p->SetFromTrail( PLAYER_1, NULL );
+		}
+		else
+		{
+			Trail *pT = Luna<Trail>::check(L,1);
+			p->SetFromTrail( PLAYER_1, pT );
+		}
+		return 0;
+	}
+	static int SetFromDifficulty( T* p, lua_State *L )		{ p->SetFromDifficulty( PLAYER_1, (Difficulty)IArg(1) ); return 0; }
+
+	static void Register(lua_State *L) 
+	{
+		ADD_METHOD( SetFromSteps );
+		ADD_METHOD( SetFromTrail );
+		ADD_METHOD( SetFromDifficulty );
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( DifficultyIcon, Sprite )
+// lua end
+
 /*
  * (c) 2001-2004 Chris Danford
  * All rights reserved.

@@ -25,6 +25,9 @@ public:
 	void SetFromTrail( PlayerNumber pn, const Trail* pTrail );
 	void SetFromDifficulty( PlayerNumber pn, Difficulty dc );
 
+	// Lua
+	void PushSelf( lua_State *L );
+
 protected:
 	bool m_bBlank;
 };
