@@ -30,7 +30,6 @@ public:
 	virtual ~Actor();
 	virtual Actor *Copy() const;
 	void UnsubcribeAndClearCommands();
-	virtual void Reset();
 	virtual void LoadFromNode( const CString& sDir, const XNode* pNode );
 	bool IsType( const CString &sType );
 
@@ -464,6 +463,8 @@ protected:
 	static float g_fCurrentBGMTime, g_fCurrentBGMBeat;
 
 private:
+	void InitDefaults();
+
 	//
 	// commands
 	//

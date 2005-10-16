@@ -46,9 +46,7 @@ void Actor::SetBGMLight( int iLightNumber, float fCabinetLights )
 	g_fCabinetLights[iLightNumber] = fCabinetLights;
 }
 
-/* This is Reset instead of Init since many derived classes have Init() functions
- * that shouldn't change the position of the actor. */
-void Actor::Reset()
+void Actor::InitDefaults()
 {
 	StopTweening();
 
@@ -118,7 +116,7 @@ Actor::Actor()
 {
 	m_pLuaInstance = new LuaClass;
 	m_size = RageVector2( 1, 1 );
-	Reset();
+	InitDefaults();
 	m_bFirstUpdate = true;
 }
 
