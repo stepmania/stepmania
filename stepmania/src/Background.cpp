@@ -315,8 +315,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		if( sToResolve.empty() )
 		{
 			if( i == 0 )
-		return false;
-
+				return false;
 			else
 				continue;
 		}
