@@ -688,12 +688,10 @@ CString GameCommand::GetAndClearScreen()
 	CString sRet;
 	FOREACH( Command, m_Commands.v, cmd )
 	{
-		GameCommand gc;
-		gc.m_bInvalid = false;
-		gc.LoadOne( *cmd );
-		if( gc.m_sScreen != "" )
+		CString sName = cmd->GetName();
+		if( sName == "screen" )
 		{
-			sRet = gc.m_sScreen;
+			sRet = cmd->GetArg(1);
 			m_Commands.v.erase( cmd );
 			break;
 		}
