@@ -804,7 +804,6 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 			}
 		}
 
-		m_pCurrentBGA->Reset();
 		m_pCurrentBGA->SetUpdateRate( change.m_fRate );
 
 		// Set Lua color globals before calling Init and On
