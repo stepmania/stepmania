@@ -10,11 +10,7 @@ typedef struct OpaqueEventRef *EventRef;
 typedef struct OpaqueEventHandlerRef *EventHandlerRef;
 typedef struct OpaqueEventTargetRef *EventTargetRef;
 typedef long int OSStatus;
-typedef OSStatus (*EventHandlerProcPtr) (
-   EventHandlerCallRef inHandlerCallRef,
-   EventRef inEvent,
-   void *inUserData
-);
+typedef OSStatus (*EventHandlerProcPtr) ( EventHandlerCallRef, EventRef, void * );
 typedef EventHandlerProcPtr EventHandlerUPP;
 
 class JoystickDevice;
@@ -31,13 +27,11 @@ public:
 	InputHandler_Carbon();
 	~InputHandler_Carbon();
 
-	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut,
-								   vector<CString>& vDescriptionsOut);
+	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut,
+									vector<CString>& vDescriptionsOut );
 
-	static void QueueCallBack(void *target, int result,
-							  void *refcon, void *sender);
-	static OSStatus EventHandler(EventHandlerCallRef callRef, EventRef event,
-								 void *data);
+	static void QueueCallBack( void *target, int result, void *refcon, void *sender );
+	static OSStatus EventHandler( EventHandlerCallRef callRef, EventRef event, void *data );
 };
 #define USE_INPUT_HANDLER_CARBON
 
