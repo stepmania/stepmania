@@ -292,7 +292,6 @@ void ActorFrame::ProcessMessages( float fDeltaTime )
 			m_SubActors[i]->cmd( f );	\
 	}
 
-PropagateActorFrameCommand( Reset )
 PropagateActorFrameCommand( FinishTweening )
 PropagateActorFrameCommand1Param( SetDiffuse,		RageColor )
 PropagateActorFrameCommand1Param( SetZTestMode,		ZTestMode )

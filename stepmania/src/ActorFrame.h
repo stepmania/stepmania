@@ -43,7 +43,6 @@ public:
 	virtual void DrawPrimitives();
 
 	// propagated commands
-	virtual void Reset();
 	virtual void SetDiffuse( RageColor c );
 	virtual void SetDiffuseAlpha( float f );
 	virtual void SetBaseAlpha( float f );
