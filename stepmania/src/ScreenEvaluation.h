@@ -68,7 +68,6 @@ protected:
 	// grade area
 	AutoActor			m_sprGradeFrame[NUM_PLAYERS];
 	GradeDisplay		m_Grades[NUM_PLAYERS];
-	AutoActor			m_sprGrade[NUM_PLAYERS];
 
 	// points area
 	bool				m_bNewSongsUnlocked;

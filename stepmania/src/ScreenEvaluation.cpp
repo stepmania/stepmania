@@ -358,11 +358,6 @@ void ScreenEvaluation::Init()
 			m_Grades[p].SetName( ssprintf("GradeP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_Grades[p] );
 			this->AddChild( &m_Grades[p] );
-
-			m_sprGrade[p].Load( THEME->GetPathG(m_sName,"grade "+GradeToString(grade[p])) );
-			m_sprGrade[p]->SetName( ssprintf("GradeP%d",p+1) );
-			SET_XY_AND_ON_COMMAND( m_sprGrade[p] );
-			this->AddChild( m_sprGrade[p] );
 		}
 	}
 
@@ -744,7 +739,6 @@ void ScreenEvaluation::TweenOffScreen()
 		{
 			OFF_COMMAND( m_sprGradeFrame[p] );
 			OFF_COMMAND( m_Grades[p] );
-			OFF_COMMAND( m_sprGrade[p] );
 		}
 	}
 
