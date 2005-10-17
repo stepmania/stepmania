@@ -46,17 +46,6 @@ Grade StringToGrade( const CString &sGrade )
 	else if( s == "FAILED" )	return Grade_Failed;
 	else if( s == "NODATA" )	return Grade_NoData;
 
-	// for backward compatibility
-	else if( s == "AAAA" )		return Grade_Tier01;
-	else if( s == "AAA" )		return Grade_Tier02;
-	else if( s == "AA" )		return Grade_Tier03;
-	else if( s == "A" )			return Grade_Tier04;
-	else if( s == "B" )			return Grade_Tier05;
-	else if( s == "C" )			return Grade_Tier06;
-	else if( s == "D" )			return Grade_Tier07;
-	else if( s == "E" )			return Grade_Failed;
-	else if( s == "N" )			return Grade_NoData;
-
 	LOG->Warn( "Invalid grade: %s", sGrade.c_str() );
 	return Grade_NoData;
 };
