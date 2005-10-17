@@ -135,7 +135,6 @@ void ScreenSelectMaster::Init()
 				SCROLLER_FAST_CATCHUP,
 				SCROLLER_TRANSFORM,
 				SCROLLER_SUBDIVISIONS,
-				false,
 				LOOP_SCROLLER );
 			m_Scroller[*p].SetName( "Scroller"+PLAYER_APPEND_NO_SPACE(*p) );
 			this->AddChild( &m_Scroller[*p] );

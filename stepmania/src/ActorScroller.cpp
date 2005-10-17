@@ -77,7 +77,6 @@ void ActorScroller::Load3(
 	bool bFastCatchup,
 	const CString &sTransformFunction,
 	int iSubdivisions,
-	bool bUseMask,
 	bool bLoop
 	)
 {
@@ -86,7 +85,6 @@ void ActorScroller::Load3(
 	m_bFastCatchup = bFastCatchup;
 	m_exprTransformFunction.SetFromExpression( sTransformFunction, iSubdivisions );
 	m_fQuantizePixels = 0;
-	m_quadMask.SetHidden( !bUseMask );
 	m_bLoop = bLoop;
 	m_iNumItems = m_SubActors.size();
 }
@@ -152,8 +150,10 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 		false,
 		sTransformFunction,
 		iSubdivisions,
-		bUseMask,
 		false );
+
+	if( bUseMask )
+		EnableMask( 10, 10 ); // XXX
 
 	pNode->GetAttrValue( "QuantizePixels", m_fQuantizePixels );
 

@@ -27,7 +27,6 @@ public:
 		bool bFastCatchup,
 		const CString &sTransformFunction,
 		int iSubdivisions,
-		bool bUseMask,
 		bool bLoop );
 
 	void EnableMask( float fWidth, float fHeight );

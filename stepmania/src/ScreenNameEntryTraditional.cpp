@@ -121,7 +121,6 @@ void HighScoreWheel::Load( const HighScoreList& hsl, int iIndexToFocus )
 		false,
 		sTransformFunction,
 		1,
-		false,
 		false );
 	Scroll();
 }
