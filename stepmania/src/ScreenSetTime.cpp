@@ -81,8 +81,6 @@ void ScreenSetTime::Init()
 	m_Selection = (SetTimeSelection)0;
 	ChangeSelection( 0 );
 
-	SOUND->PlayMusic( THEME->GetPathS(m_sName,"music") );
-
 	this->SortByDrawOrder();
 }
 

@@ -121,8 +121,6 @@ void ScreenSelectGroup::Init()
 
 	SOUND->PlayOnceFromAnnouncer( "select group intro" );
 
-	SOUND->PlayMusic( THEME->GetPathS("ScreenSelectGroup","music") );
-
 	AfterChange();
 	m_GroupList.SetSelection(0);
 

@@ -262,8 +262,6 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 
 	m_soundStep.Load( THEME->GetPathS("ScreenNameEntry","step") );
 
-	SOUND->PlayMusic( THEME->GetPathS("ScreenNameEntry","music") );
-
 	m_fFakeBeat = 0;
 }
 

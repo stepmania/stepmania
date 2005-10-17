@@ -76,8 +76,6 @@ void ScreenNetworkOptions::Init()
 	InitMenu( vDefs, vHands );
 
 	m_pRows[PO_SCOREBOARD]->SetOneSharedSelection(PREFSMAN->m_bEnableScoreboard);
-
-	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions","music") );
 }
 
 

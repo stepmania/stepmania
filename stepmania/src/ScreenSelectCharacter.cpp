@@ -141,8 +141,6 @@ void ScreenSelectCharacter::Init()
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select group intro") );
 
-	SOUND->PlayMusic( THEME->GetPathS("ScreenSelectCharacter","music") );
-
 	FOREACH_PlayerNumber( p )
 	{
 		if( GAMESTATE->IsHumanPlayer(p) )

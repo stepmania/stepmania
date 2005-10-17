@@ -82,8 +82,6 @@ void ScreenEz2SelectPlayer::Init()
 	}
 
 	SOUND->PlayOnceFromDir( ANNOUNCER->GetPathTo("select player intro") );
-
-	SOUND->PlayMusic( THEME->GetPathS("ScreenSelectPlayer","music") );
 }
 
 /************************************
