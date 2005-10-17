@@ -1,7 +1,6 @@
 #include "global.h"
 #include "ScreenMiniMenu.h"
 #include "ScreenManager.h"
-#include "GameSoundManager.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "Foreach.h"

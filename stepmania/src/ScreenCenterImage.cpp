@@ -4,7 +4,6 @@
 #include "ScreenManager.h"
 #include "RageLog.h"
 #include "GameManager.h"
-#include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "RageDisplay.h"
 #include "HelpDisplay.h"

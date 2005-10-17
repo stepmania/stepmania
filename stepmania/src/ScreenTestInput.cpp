@@ -4,7 +4,6 @@
 #include "RageLog.h"
 #include "InputMapper.h"
 #include "GameState.h"
-#include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "Game.h"
 #include "ScreenDimensions.h"

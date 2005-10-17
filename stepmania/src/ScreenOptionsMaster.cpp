@@ -9,7 +9,6 @@
 #include "ScreenManager.h"
 #include "SongManager.h"
 #include "PrefsManager.h"
-#include "GameSoundManager.h"
 #include "StepMania.h"
 #include "RageSoundManager.h"
 #include "Foreach.h"

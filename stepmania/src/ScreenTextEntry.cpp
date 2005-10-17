@@ -3,7 +3,6 @@
 #include "RageUtil.h"
 #include "Preference.h"
 #include "ScreenManager.h"
-#include "GameSoundManager.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeManager.h"
 #include "FontCharAliases.h"

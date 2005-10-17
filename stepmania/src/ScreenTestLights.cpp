@@ -4,7 +4,6 @@
 #include "GameConstantsAndTypes.h"
 #include "RageLog.h"
 #include "GameState.h"
-#include "GameSoundManager.h"
 #include "ThemeManager.h"
 #include "LightsManager.h"
 #include "Game.h"
