@@ -79,7 +79,7 @@ public:
 	JoystickDevice();
 	~JoystickDevice();
 
-	bool Open( io_object_t device, int foo, void *bar );
+	bool Open( io_object_t device );
 	// returns the number of IDs assigned starting from startID
 	int AssignJoystickIDs( int startID );
 	void StartQueue(CFRunLoopRef loopRef, int num, InputHandler_Carbon *handler);
@@ -92,7 +92,7 @@ JoystickDevice::JoystickDevice() : mInterface(NULL), mQueue(NULL), mRunning(fals
 {
 }
 
-bool JoystickDevice::Open( io_object_t device, int foo, void *bar )
+bool JoystickDevice::Open( io_object_t device )
 {
 	IOReturn ret;
 	CFMutableDictionaryRef properties;
@@ -602,7 +602,7 @@ InputHandler_Carbon::InputHandler_Carbon() : mSem("Input thread started")
 	{
 		JoystickDevice *jd = new JoystickDevice;
 		
-		if( jd->Open(device, 0, this) )
+		if( jd->Open(device) )
 		{
 			id += jd->AssignJoystickIDs( id );
 			mDevices.push_back( jd );
