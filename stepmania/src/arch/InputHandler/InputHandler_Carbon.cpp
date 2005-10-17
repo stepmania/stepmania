@@ -32,11 +32,6 @@ static inline void PrintIOErr( IOReturn err, const char *s )
 	LOG->Warn( "%s - %s(%x,%d)", s, mach_error_string(err), err, err & 0xFFFFFF );
 }
 
-static inline CFTypeRef DictValue( CFDictionaryRef d, const char *k )
-{
-	return CFDictionaryGetValue( d, k );
-}
-
 static inline int IntValue( const void *o, int *n )
 {
 	return CFNumberGetValue( CFNumberRef(o), kCFNumberIntType, n );
@@ -84,9 +79,10 @@ public:
 	JoystickDevice();
 	~JoystickDevice();
 
-	bool Open( io_object_t device, int num, InputHandler_Carbon *handler );
+	bool Open( io_object_t device, int foo, void *bar );
 	// returns the number of IDs assigned starting from startID
 	int AssignJoystickIDs( int startID );
+	void StartQueue(CFRunLoopRef loopRef, int num, InputHandler_Carbon *handler);
 	inline int NumberOfSticks() const { return mSticks.size(); }
 	inline const Joystick& GetStick( int index ) const { return mSticks[index]; }
 	inline const CString& GetDescription() const { return mDescription; }
@@ -96,7 +92,7 @@ JoystickDevice::JoystickDevice() : mInterface(NULL), mQueue(NULL), mRunning(fals
 {
 }
 
-bool JoystickDevice::Open( io_object_t device, int num, InputHandler_Carbon *handler )
+bool JoystickDevice::Open( io_object_t device, int foo, void *bar )
 {
 	IOReturn ret;
 	CFMutableDictionaryRef properties;
@@ -114,7 +110,7 @@ bool JoystickDevice::Open( io_object_t device, int num, InputHandler_Carbon *han
 
 	CFArrayRef sticks;
 
-	if ( !(sticks = (CFArrayRef)DictValue(properties, kIOHIDElementKey)) )
+	if ( !(sticks = (CFArrayRef)CFDictionaryGetValue(properties, CFSTR(kIOHIDElementKey))) )
 	{
 		CFRelease( properties );
 		return false;
@@ -191,44 +187,9 @@ bool JoystickDevice::Open( io_object_t device, int num, InputHandler_Carbon *han
 		if( js.z_axis )
 			CALL( mQueue, addElement, IOHIDElementCookie(js.z_axis), 0 );
 
-		for( hash_map<int, int>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j)
+		for( hash_map<int,int>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
 			CALL( mQueue, addElement, IOHIDElementCookie(j->first), 0 );
 	}
-	// add the callback
-	CFRunLoopSourceRef runLoopSource;
-
-	ret = CALL( mQueue, createAsyncEventSource, &runLoopSource );
-
-	if( ret != kIOReturnSuccess )
-	{
-		PrintIOErr( ret, "Failed to create async event source." );
-		return false;
-	}
-
-	CFRunLoopRef runLoop;
-
-	runLoop = CFRunLoopRef( GetCFRunLoopFromEventLoop(GetMainEventLoop()) );
-
-	if( !CFRunLoopContainsSource(runLoop, runLoopSource, kCFRunLoopDefaultMode) )
-		CFRunLoopAddSource( runLoop, runLoopSource, kCFRunLoopDefaultMode );
-
-	CALL( mQueue, setEventCallout, InputHandler_Carbon::QueueCallBack, handler, (void *)num );
-
-	if( ret != kIOReturnSuccess )
-	{
-		PrintIOErr( ret, "Failed to set the call back." );
-		return false;
-	}
-
-	// start the queue
-	ret = CALL( mQueue, start );
-
-	if( ret != kIOReturnSuccess )
-	{
-		PrintIOErr( ret, "Failed to start the queue." );
-		return false;
-	}
-	mRunning = true;
 	return true;
 }
 
@@ -274,19 +235,19 @@ void JoystickDevice::AddJoystick( const void *value, void *context )
 	CFTypeID numID = CFNumberGetTypeID();
 
 	// Get usage page
-	object = DictValue( dict, kIOHIDElementUsagePageKey );
+	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsagePageKey) );
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usagePage) )
 		return;
 
 	// Get usage
-	object = DictValue( dict, kIOHIDElementUsageKey );
+	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsageKey) );
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usage) )
 		return;
 
 	if( usagePage != kHIDPage_GenericDesktop || usage != kHIDUsage_GD_Joystick )
 		return;
 
-	if( !(elements = (CFArrayRef)DictValue(dict, kIOHIDElementKey)) )
+	if( !(elements = (CFArrayRef)CFDictionaryGetValue(dict, CFSTR(kIOHIDElementKey))) )
 		return;
 	
 	Joystick js;
@@ -304,6 +265,43 @@ int JoystickDevice::AssignJoystickIDs( int startID )
 	return mSticks.size();
 }
 
+void JoystickDevice::StartQueue( CFRunLoopRef loopRef, int num, InputHandler_Carbon *handler )
+{
+	CFRunLoopSourceRef runLoopSource;
+	IOReturn ret = CALL( mQueue, createAsyncEventSource, &runLoopSource );
+	
+	if( ret != kIOReturnSuccess )
+	{
+		PrintIOErr( ret, "Failed to create async event source." );
+		return;
+	}
+	
+	CFRunLoopRef runLoop;
+	
+	runLoop = CFRunLoopRef( GetCFRunLoopFromEventLoop(GetMainEventLoop()) );
+	
+	if( !CFRunLoopContainsSource(runLoop, runLoopSource, kCFRunLoopDefaultMode) )
+		CFRunLoopAddSource( runLoop, runLoopSource, kCFRunLoopDefaultMode );
+	
+	CALL( mQueue, setEventCallout, InputHandler_Carbon::QueueCallBack, handler, (void *)num );
+	
+	if( ret != kIOReturnSuccess )
+	{
+		PrintIOErr( ret, "Failed to set the call back." );
+		return;
+	}
+	
+	// start the queue
+	ret = CALL( mQueue, start );
+	
+	if( ret != kIOReturnSuccess )
+	{
+		PrintIOErr( ret, "Failed to start the queue." );
+		return;
+	}
+	mRunning = true;
+}
+
 // Callback
 static void AddElement( const void *value, void *context )
 {
@@ -318,7 +316,7 @@ static void AddElement( const void *value, void *context )
 	CFArrayRef elements;
 
 	// Recursively add elements
-	if( (elements = (CFArrayRef)DictValue(dict, kIOHIDElementKey)) )
+	if( (elements = (CFArrayRef)CFDictionaryGetValue(dict, CFSTR(kIOHIDElementKey))) )
 	{
 		CFRange r = { 0, CFArrayGetCount(elements) };
 
@@ -326,18 +324,18 @@ static void AddElement( const void *value, void *context )
 	}
 
 	// Get usage page
-	object = DictValue( dict, kIOHIDElementUsagePageKey );
+	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsagePageKey) );
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usagePage) )
 		return;
 
 	// Get usage
-	object = DictValue( dict, kIOHIDElementUsageKey );
+	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsageKey) );
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usage) )
 		return;
 
 
 	// Get cookie
-	object = DictValue( dict, kIOHIDElementCookieKey );
+	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementCookieKey) );
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &cookie) )
 		return;
 
@@ -348,11 +346,11 @@ static void AddElement( const void *value, void *context )
 		int min = 0;
 		int max = 0;
 
-		object = DictValue( dict, kIOHIDElementMinKey );
+		object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementMinKey) );
 		if( object && CFGetTypeID(object) == numID )
 			IntValue( object, &min );
 
-		object = DictValue( dict, kIOHIDElementMaxKey );
+		object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementMaxKey) );
 		if( object && CFGetTypeID(object) == numID )
 			IntValue( object, &max );
 
@@ -496,8 +494,38 @@ OSStatus InputHandler_Carbon::EventHandler( EventHandlerCallRef callRef, EventRe
 	return 0;
 }
 
+static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *sem )
+{
+	CFRelease(o); // we don't need this any longer
+	((RageSemaphore *)sem)->Post();
+}
+
+int InputHandler_Carbon::Run(void *data)
+{
+	InputHandler_Carbon *This = (InputHandler_Carbon *)data;
+	CFRunLoopRef loopRef = CFRunLoopGetCurrent();
+	int n = 0;
+	
+	CFRetain(loopRef);
+	FOREACH( JoystickDevice *, This->mDevices, i )
+		(*i)->StartQueue( loopRef, n++, This );
+	This->mLoopRef = loopRef;
+	
+	/* The function copies the information out of the structure, so the memory pointed
+	 * to by context does not need to persist beyond the function call.
+	 */
+	CFRunLoopObserverContext context = { 0, &This->mSem, NULL, NULL, NULL };
+	CFRunLoopObserverRef o = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
+													  false, 0, RunLoopStarted, &context);
+	CFRunLoopAddObserver( loopRef, o, kCFRunLoopDefaultMode );
+	CFRunLoopRun();
+	return 0;
+}
+
 InputHandler_Carbon::~InputHandler_Carbon()
 {
+	CFRunLoopStop( CFRunLoopRef(mLoopRef) );
+	mInputThread.Wait();
 	FOREACH( JoystickDevice *, mDevices, i )
 		delete *i;
 	if( mMasterPort )
@@ -506,7 +534,7 @@ InputHandler_Carbon::~InputHandler_Carbon()
 	DisposeEventHandlerUPP( mEventHandlerUPP );
 }
 
-InputHandler_Carbon::InputHandler_Carbon()
+InputHandler_Carbon::InputHandler_Carbon() : mSem("Input thread started")
 {
 	// Install a Carbon Event handler
 	mEventHandlerUPP = NewEventHandlerUPP( EventHandler );
@@ -574,7 +602,7 @@ InputHandler_Carbon::InputHandler_Carbon()
 	{
 		JoystickDevice *jd = new JoystickDevice;
 		
-		if( jd->Open(device, mDevices.size(), this) )
+		if( jd->Open(device, 0, this) )
 		{
 			id += jd->AssignJoystickIDs( id );
 			mDevices.push_back( jd );
@@ -589,6 +617,11 @@ InputHandler_Carbon::InputHandler_Carbon()
 
 	}
 	IOObjectRelease( iter );
+	
+	mInputThread.SetName( "Input thread." );
+	mInputThread.Create(InputHandler_Carbon::Run, this);
+	// Wait for the run loop to start before returning.
+	mSem.Wait();
 }
 
 void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<CString>& desc )
