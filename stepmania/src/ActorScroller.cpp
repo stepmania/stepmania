@@ -35,7 +35,7 @@ ActorScroller::ActorScroller()
 
 	m_quadMask.SetBlendMode( BLEND_NO_EFFECT );	// don't change color values
 	m_quadMask.SetUseZBuffer( true );	// we want to write to the Zbuffer
-	m_quadMask.SetHidden( true );
+	DisableMask();
 }
 
 void ActorScroller::Load2(
@@ -98,7 +98,7 @@ void ActorScroller::EnableMask( float fWidth, float fHeight )
 	m_quadMask.SetHeight( fHeight );
 }
 
-void ActorScroller::DisableMask( float fWidth, float fHeight )
+void ActorScroller::DisableMask()
 {
 	m_quadMask.SetHidden( true );
 }

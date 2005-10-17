@@ -31,7 +31,7 @@ public:
 		bool bLoop );
 
 	void EnableMask( float fWidth, float fHeight );
-	void DisableMask( float fWidth, float fHeight );
+	void DisableMask();
 
 	virtual void UpdateInternal( float fDelta );
 	virtual void DrawPrimitives();	// handles drawing and doesn't call ActorFrame::DrawPrimitives
