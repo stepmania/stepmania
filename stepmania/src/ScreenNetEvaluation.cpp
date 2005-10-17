@@ -188,8 +188,6 @@ void ScreenNetEvaluation::UpdateStats()
 		return;
 
 	m_Grades[m_pActivePlayer].SetGrade( m_pActivePlayer, (Grade)NSMAN->m_EvalPlayerData[m_iCurrentPlayer].grade );
-	m_Grades[m_pActivePlayer].Spin();
-	m_Grades[m_pActivePlayer].SettleImmediately();
 
 	m_textScore[m_pActivePlayer].SetText( ssprintf("%*.0i", NUM_SCORE_DIGITS, NSMAN->m_EvalPlayerData[m_iCurrentPlayer].score) );
 
