@@ -98,21 +98,6 @@ fi
 
 SM_X_WITH_OPENGL
 
-AC_ARG_ENABLE(sdl, AC_HELP_STRING([--enable-sdl], [Enable SDL support]), enable_sdl=$enableval, enable_sdl=no)
-if test "$enable_sdl" = "yes"; then
-	AM_PATH_SDL(1.2.6,have_sdl=yes,have_sdl=no)
-fi
-AM_CONDITIONAL(HAVE_SDL, test "$have_sdl" = "yes")
-if test "$have_sdl" = "yes"; then
-	AC_DEFINE(HAVE_SDL, 1, [SDL is available])
-fi
-
-# sdl-config puts -L/usr/lib in the library search path, which reorders things
-# in a way that breaks some configurations.
-# Does this still need to be in?
-# not sure
-# SDL_LIBS="`echo $SDL_LIBS | sed 's_-L/usr/lib/\?[[ $]]__'`"
-
 have_libpng=yes
 AC_CHECK_LIB(png, png_create_read_struct, [x=y], have_libpng=no, [-lz -lm]) # x=y to stop autoconf from messing with LIBS
 AC_CHECK_HEADER(png.h, , have_libpng=no)

@@ -184,16 +184,6 @@ Dialog = arch/Dialog/Dialog.cpp arch/Dialog/Dialog.h arch/Dialog/DialogDriver.h
 
 Threads = arch/Threads/Threads.h
 
-if HAVE_SDL
-LoadingWindow += arch/LoadingWindow/LoadingWindow_SDL.cpp arch/LoadingWindow/LoadingWindow_SDL.h
-StepMania += SDL_utils.cpp SDL_utils.h
-if !HAVE_X11
-#InputHandler_SDL depends on LowLevelWindow_SDL
-InputHandler += arch/InputHandler/InputHandler_SDL.cpp arch/InputHandler/InputHandler_SDL.h
-LowLevelWindow += arch/LowLevelWindow/LowLevelWindow_SDL.cpp arch/LowLevelWindow/LowLevelWindow_SDL.h
-endif
-endif
-
 if HAVE_X11
 # InputHandler_X11 depends on LowLevelWindow_X11
 InputHandler += arch/InputHandler/InputHandler_X11.cpp arch/InputHandler/InputHandler_X11.h
@@ -401,7 +391,6 @@ main_SOURCES = $(Screens) \
 
 main_LDADD = \
 		  $(AUDIO_LIBS) \
-		  $(SDL_LIBS) \
 		  $(XLIBS) \
 		  $(srcdir)/libresample/libresample.a
 
@@ -492,4 +481,4 @@ test_threads_SOURCES = \
 		$(all_test_SOURCES) \
 		tests/test_threads.cpp
 
-INCLUDES = $(LUA_CFLAGS) $(SDL_CFLAGS)
+INCLUDES = $(LUA_CFLAGS)
