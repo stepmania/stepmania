@@ -24,7 +24,7 @@ void StatsManager::Reset()
 	CalcAccumStageStats();
 }
 
-StageStats AccumStageStats( const vector<StageStats>& vss )
+static StageStats AccumStageStats( const vector<StageStats>& vss )
 {
 	StageStats ssreturn;
 
