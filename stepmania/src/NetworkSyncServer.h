@@ -128,9 +128,8 @@ private:
 	void Disconnect(const unsigned int clientNum);
 	void ClientsSongSelectStart();
 	void ResetLastSongInfo();
-};
-
 #endif
+};
 
 #endif
 
