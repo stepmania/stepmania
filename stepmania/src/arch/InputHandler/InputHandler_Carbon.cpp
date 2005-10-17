@@ -164,10 +164,10 @@ bool JoystickDevice::Open( io_object_t device, int num, InputHandler_Carbon *han
 	}
 
 	// alloc/create queue
-	mQueue = CALL(mInterface, allocQueue);
+	mQueue = CALL( mInterface, allocQueue );
 	if( !mQueue )
 	{
-		LOG->Warn("Couldn't allocate a queue.");
+		LOG->Warn( "Couldn't allocate a queue." );
 		return false;
 	}
 
@@ -180,7 +180,7 @@ bool JoystickDevice::Open( io_object_t device, int num, InputHandler_Carbon *han
 	}
 
 	// Add elements to the queue for each Joystick
-	for( vector<Joystick>::const_iterator i = mSticks.begin(); i != mSticks.end(); ++i )
+	FOREACH_CONST( Joystick, mSticks, i )
 	{
 		const Joystick& js = *i;
 
@@ -430,7 +430,6 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 			{
 				float level = SCALE( value, js.x_min, js.x_max, -1.0f, 1.0f );
 				
-				LOG->Trace( "(%d) x-axis: %f\n", int(js.id), level );
 				This->ButtonPressed( DeviceInput(js.id, JOY_LEFT, max(-level, 0.0f), now), level < -0.5f );
 				This->ButtonPressed( DeviceInput(js.id, JOY_RIGHT, max(level, 0.0f), now), level > 0.5f );
 				break;
@@ -439,7 +438,6 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 			{
 				float level = SCALE( value, js.y_min, js.y_max, -1.0f, 1.0f );
 				
-				LOG->Trace( "(%d) y-axis: %f\n", int(js.id), level );
 				This->ButtonPressed( DeviceInput(js.id, JOY_UP, max(-level, 0.0f), now), level < -0.5f );
 				This->ButtonPressed( DeviceInput(js.id, JOY_DOWN, max(level, 0.0f), now), level > 0.5f );
 				break;
@@ -448,7 +446,6 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 			{
 				float level = SCALE( value, js.z_min, js.z_max, -1.0f, 1.0f );
 				
-				LOG->Trace( "(%d) z-axis: %f\n", int(js.id), level );
 				This->ButtonPressed( DeviceInput(js.id, JOY_Z_UP, max(-level, 0.0f), now), level < -0.5f );
 				This->ButtonPressed( DeviceInput(js.id, JOY_Z_DOWN, max(level, 0.0f), now), level > 0.5f );
 				break;
@@ -461,7 +458,6 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 				iter = js.mapping.find( cookie );
 				if( iter != js.mapping.end() )
 				{
-					LOG->Trace( "(%d) Button %d: %s\n", int(js.id), iter->second, (value ? "down" : "up") );
 					This->ButtonPressed( DeviceInput(js.id, iter->second, value, now), value );
 					break;
 				}
@@ -502,7 +498,7 @@ OSStatus InputHandler_Carbon::EventHandler( EventHandlerCallRef callRef, EventRe
 
 InputHandler_Carbon::~InputHandler_Carbon()
 {
-	for( vector<JoystickDevice *>::iterator i = mDevices.begin(); i != mDevices.end(); ++i)
+	FOREACH( JoystickDevice *, mDevices, i )
 		delete *i;
 	if( mMasterPort )
 		mach_port_deallocate( mach_task_self(), mMasterPort );
@@ -541,7 +537,7 @@ InputHandler_Carbon::InputHandler_Carbon()
 	if( (dict = IOServiceMatching(kIOHIDDeviceKey)) == NULL )
 	{
 		LOG->Warn( "Couldn't create a matching dictionary." );
-		mach_port_deallocate(mach_task_self(), masterPort);
+		mach_port_deallocate( mach_task_self(), masterPort );
 		return;
 	}
 	// Refine the search by only looking for joysticks
@@ -597,7 +593,7 @@ InputHandler_Carbon::InputHandler_Carbon()
 
 void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<CString>& desc )
 {
-	for( vector<JoystickDevice *>::const_iterator i = mDevices.begin(); i != mDevices.end(); ++i )
+	FOREACH_CONST( JoystickDevice *, mDevices, i )
 	{
 		const JoystickDevice *jd = *i;
 		
