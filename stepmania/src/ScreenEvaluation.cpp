@@ -53,7 +53,6 @@ static const CString StatLineNames[NUM_StatLine] =
 XToString( StatLine, NUM_StatLine );
 #define FOREACH_StatLine( rc ) FOREACH_ENUM( StatLine, NUM_StatLine, rc )
 
-#define SPIN_GRADES							THEME->GetMetricB(m_sName,"SpinGrades")
 #define CHEER_DELAY_SECONDS					THEME->GetMetricF(m_sName,"CheerDelaySeconds")
 #define BAR_ACTUAL_MAX_COMMAND				THEME->GetMetricA(m_sName,"BarActualMaxCommand")
 
@@ -358,8 +357,6 @@ void ScreenEvaluation::Init()
 			m_Grades[p].SetGrade( p, grade[p] );
 			m_Grades[p].SetName( ssprintf("GradeP%d",p+1) );
 			SET_XY_AND_ON_COMMAND( m_Grades[p] );
-			if( SPIN_GRADES )
-				m_Grades[p].Spin();
 			this->AddChild( &m_Grades[p] );
 
 			m_sprGrade[p].Load( THEME->GetPathG(m_sName,"grade "+GradeToString(grade[p])) );
