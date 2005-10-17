@@ -125,7 +125,7 @@ void GradeDisplay::SetGrade( PlayerNumber pn, Grade g )
 	}
 }
 
-void GradeDisplay::Spin()
+void GradeDisplay::Scroll()
 {
 	m_bDoScrolling = true;
 
@@ -170,6 +170,25 @@ void GradeDisplay::SettleQuickly()
 	m_bDoScrolling = 2;
 	m_fTimeLeftInScroll = QUICK_SCROLL_TIME;
 }
+
+// lua start
+#include "LuaBinding.h"
+
+class LunaGradeDisplay: public Luna<GradeDisplay>
+{
+public:
+	LunaGradeDisplay() { LUA->Register( Register ); }
+
+	static int scroll( T* p, lua_State *L ) { p->Scroll(); return 0; }
+	static void Register(lua_State *L) {
+		ADD_METHOD( scroll );
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( GradeDisplay, Sprite )
+// lua end
 
 /*
  * (c) 2001-2002 Chris Danford
