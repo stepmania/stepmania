@@ -691,7 +691,7 @@ CString GameCommand::GetAndClearScreen()
 		CString sName = cmd->GetName();
 		if( sName == "screen" )
 		{
-			sRet = cmd->GetArg(1);
+			sRet = CString( cmd->GetArg(1) );
 			m_Commands.v.erase( cmd );
 			break;
 		}
