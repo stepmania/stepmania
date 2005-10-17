@@ -42,6 +42,10 @@ void GetStepManiaInstallDirs( CStringArray& asInstallDirsOut )
 		if( sPath == "" )	// read failed
 			continue;	// skip
 
+		CString sProgramDir = sPath+"\\Program";
+		if( !DoesFileExist(sProgramDir) )
+			continue;	// skip
+
 		asInstallDirsOut.push_back( sPath );
 	} 
 
@@ -70,6 +74,17 @@ void AddStepManiaInstallDir( CString sNewInstallDir )
 	WriteStepManiaInstallDirs( asInstallDirs );
 }
 
+void SetDefaultInstallDir( int iInstallDirIndex )
+{
+	// move the specified index to the top of the list
+	CStringArray asInstallDirs;
+	GetStepManiaInstallDirs( asInstallDirs );
+	ASSERT( iInstallDirIndex > 0  &&  iInstallDirIndex < asInstallDirs.size() );
+	CString sDefaultInstallDir = asInstallDirs[iInstallDirIndex];
+	asInstallDirs.erase( asInstallDirs.begin()+iInstallDirIndex );
+	asInstallDirs.insert( asInstallDirs.begin(), sDefaultInstallDir );
+	WriteStepManiaInstallDirs( asInstallDirs );
+}
 
 bool GetPref( CString name, bool &val )
 {
