@@ -30,6 +30,9 @@ public:
 		bool bUseMask,
 		bool bLoop );
 
+	void EnableMask( float fWidth, float fHeight );
+	void DisableMask( float fWidth, float fHeight );
+
 	virtual void UpdateInternal( float fDelta );
 	virtual void DrawPrimitives();	// handles drawing and doesn't call ActorFrame::DrawPrimitives
 

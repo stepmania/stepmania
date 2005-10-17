@@ -68,9 +68,7 @@ void ActorScroller::Load2(
 
 	ScrollThroughAllItems();
 
-	m_quadMask.SetWidth( fItemWidth );
-	m_quadMask.SetHeight( fItemHeight );
-	m_quadMask.SetHidden( false );
+	EnableMask( fItemWidth, fItemHeight );
 }
 
 void ActorScroller::Load3(
@@ -91,6 +89,18 @@ void ActorScroller::Load3(
 	m_quadMask.SetHidden( !bUseMask );
 	m_bLoop = bLoop;
 	m_iNumItems = m_SubActors.size();
+}
+
+void ActorScroller::EnableMask( float fWidth, float fHeight )
+{
+	m_quadMask.SetHidden( false );
+	m_quadMask.SetWidth( fWidth );
+	m_quadMask.SetHeight( fHeight );
+}
+
+void ActorScroller::DisableMask( float fWidth, float fHeight )
+{
+	m_quadMask.SetHidden( true );
 }
 
 void ActorScroller::ScrollThroughAllItems()
