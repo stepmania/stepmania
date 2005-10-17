@@ -95,7 +95,7 @@ ScreenRanking::ScreenRanking( CString sClassName ):
 
 void ScreenRanking::Init()
 {
-	STEPS_TYPES_TO_SHOW.Load          ( m_sName,"StepsTypesToHide" );
+	STEPS_TYPES_TO_SHOW.Load          ( m_sName,"StepsTypesToShow" );
 
 	ROW_SPACING_X.Load                ( m_sName,"RowSpacingX" );
 	ROW_SPACING_Y.Load                ( m_sName,"RowSpacingY" );
