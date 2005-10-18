@@ -97,6 +97,7 @@ void ProfileManager::Init()
 			bool b = CreateLocalProfile( pCharacter->GetDisplayName(), sProfileID );
 			ASSERT( b );
 			Profile* pProfile = GetLocalProfile( sProfileID );
+			ASSERT_M( pProfile, sProfileID );
 			pProfile->m_sCharacterID = sCharacterID;
 			SaveLocalProfile( sProfileID );
 		}
