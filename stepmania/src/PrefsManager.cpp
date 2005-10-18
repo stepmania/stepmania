@@ -18,7 +18,6 @@
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
-const float DEFAULT_SOUND_VOLUME = 1.00f;
 const CString DEFAULT_LIGHTS_DRIVER = "Null";
 
 //
@@ -343,7 +342,7 @@ PrefsManager::PrefsManager() :
 	m_sVideoRenderers				( "VideoRenderers",				"" ),	// StepMania.cpp sets these on first run:
 	m_bSmoothLines					( "SmoothLines",				false ),
 	m_sSoundDrivers					( "SoundDrivers",				"" ),
-	m_fSoundVolume					( "SoundVolume",				-1 ),	// default
+	m_fSoundVolume					( "SoundVolume",				1.0f ),
 	m_iSoundWriteAhead				( "SoundWriteAhead",			0 ),
 	m_iSoundDevice					( "SoundDevice",				"" ),
 	m_SoundResampleQuality			( "SoundResampleQuality",		RageSoundReader_Resample::RESAMP_NORMAL ),
@@ -465,10 +464,8 @@ CString PrefsManager::GetSoundDrivers()
 
 float PrefsManager::GetSoundVolume()
 {
-	if ( m_fSoundVolume==-1 )
-		return DEFAULT_SOUND_VOLUME;
-	else
-		return clamp(m_fSoundVolume.Get(),0.0f,1.0f); 
+	// return a resonable volume to that users of this method don't have to handle invalid values
+	return clamp(m_fSoundVolume.Get(),0.0f,1.0f);
 }
 
 CString PrefsManager::GetInputDrivers()	{
