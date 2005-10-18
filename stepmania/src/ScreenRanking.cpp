@@ -149,12 +149,14 @@ void ScreenRanking::MenuStart( PlayerNumber pn )
 {
 	if( !IsTransitioning() )
 		StartTransitioningScreen( SM_GoToNextScreen );
+	SCREENMAN->PlayStartSound();
 }
 
 void ScreenRanking::MenuBack( PlayerNumber pn )
 {
 	if( !IsTransitioning() )
 		StartTransitioningScreen( SM_GoToNextScreen );
+	SCREENMAN->PlayStartSound();
 }
 
 void ScreenRanking::HandleScreenMessage( const ScreenMessage SM )
