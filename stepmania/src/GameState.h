@@ -59,7 +59,6 @@ public:
 	int									m_iCoins;			// not "credits"
 	PlayerNumber						m_MasterPlayerNumber;	// used in Styles where one player controls both sides
 	bool								m_bMultiplayer;
-	BroadcastOnChange1D<CourseDifficulty,NUM_PLAYERS>	m_PreferredCourseDifficulty;// used in nonstop
 	bool DifficultiesLocked();
 	bool ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc );
 	bool ChangePreferredDifficulty( PlayerNumber pn, int dir );
@@ -107,6 +106,7 @@ public:
 	BroadcastOnChange<CString>	m_sPreferredCourseGroup;	// GROUP_ALL denotes no preferred group
 	bool			m_bChangedFailTypeOnScreenSongOptions;	// true if FailType was changed in the song options screen
 	BroadcastOnChange1D<Difficulty,NUM_PLAYERS>	m_PreferredDifficulty;
+	BroadcastOnChange1D<CourseDifficulty,NUM_PLAYERS>	m_PreferredCourseDifficulty;// used in nonstop
 	BroadcastOnChange<SortOrder> m_SortOrder;			// set by MusicWheel
 	SortOrder		m_PreferredSortOrder;			// used by MusicWheel
 	EditMode		m_EditMode;
