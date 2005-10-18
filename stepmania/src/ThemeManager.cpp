@@ -347,7 +347,7 @@ try_element_again:
 		for( unsigned p = 0; p < asPaths.size(); ++p )
 		{
 			static const char *masks[NUM_ElementCategory][14] = {
-				{ "redir", "", "xml", NULL },
+				{ "redir", "xml", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
 				{ "redir", "ini", NULL },
 				{ "redir", "xml", "png", "jpg", "bmp", "gif","avi", "mpg", "mpeg", "txt", "", NULL},
 				{ "redir", "mp3", "ogg", "wav", NULL },
