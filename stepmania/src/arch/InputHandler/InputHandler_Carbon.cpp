@@ -464,36 +464,6 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 	}
 }
 
-OSStatus InputHandler_Carbon::EventHandler( EventHandlerCallRef callRef, EventRef event, void *data )
-{
-	InputHandler_Carbon *This = (InputHandler_Carbon *)data;
-	UInt32 kind = GetEventKind(event);
-	UInt32 keyCode;
-	char charCode;
-
-	GetEventParameter( event, kEventParamKeyCode, typeUInt32, NULL, sizeof(keyCode), NULL, &keyCode );
-	GetEventParameter( event, kEventParamKeyMacCharCodes, typeChar, NULL, sizeof(charCode), NULL, &charCode );
-
-	const char *type;
-
-	switch( kind )
-	{
-	case kEventRawKeyDown:
-		type = "down";
-		break;
-	case kEventRawKeyRepeat:
-		type = "repeat";
-		break;
-	case kEventRawKeyUp:
-		type = "up";
-	default:
-		type = "unknown";
-	}
-
-	LOG->Trace( "(0) %u %c: %s\n", unsigned(keyCode), charCode, type );
-	return 0;
-}
-
 static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *sem )
 {
 	CFRelease(o); // we don't need this any longer
@@ -530,23 +500,10 @@ InputHandler_Carbon::~InputHandler_Carbon()
 		delete *i;
 	if( mMasterPort )
 		mach_port_deallocate( mach_task_self(), mMasterPort );
-	RemoveEventHandler( mEventHandlerRef );
-	DisposeEventHandlerUPP( mEventHandlerUPP );
 }
 
 InputHandler_Carbon::InputHandler_Carbon() : mSem("Input thread started")
 {
-	// Install a Carbon Event handler
-	mEventHandlerUPP = NewEventHandlerUPP( EventHandler );
-	EventTypeSpec typeList[] = {
-		{ kEventClassKeyboard, kEventRawKeyDown   },
-		{ kEventClassKeyboard, kEventRawKeyRepeat },
-		{ kEventClassKeyboard, kEventRawKeyUp     } };
-
-
-	if( InstallEventHandler(GetApplicationEventTarget(), mEventHandlerUPP, 3, typeList, this, &mEventHandlerRef) )
-		LOG->Warn("Failed to install the Event Handler.");
-
 	// Get a Mach port to initiate communication with I/O Kit.
 	mach_port_t masterPort;
 

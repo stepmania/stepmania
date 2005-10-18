@@ -3,15 +3,7 @@
 
 #include <vector>
 #include "InputHandler.h"
-
-// Avoid pulling the <Carbon/Carbon.h> header in here
-typedef struct OpaqueEventHandlerCallRef *EventHandlerCallRef;
-typedef struct OpaqueEventRef *EventRef;
-typedef struct OpaqueEventHandlerRef *EventHandlerRef;
-typedef struct OpaqueEventTargetRef *EventTargetRef;
-typedef long int OSStatus;
-typedef OSStatus (*EventHandlerProcPtr) ( EventHandlerCallRef, EventRef, void * );
-typedef EventHandlerProcPtr EventHandlerUPP;
+#include "RageThreads.h"
 
 class JoystickDevice;
 
@@ -20,8 +12,11 @@ class InputHandler_Carbon : public InputHandler
 private:
 	int mMasterPort;
 	std::vector<JoystickDevice *> mDevices;
-	EventHandlerUPP mEventHandlerUPP;
-	EventHandlerRef mEventHandlerRef;
+	RageThread mInputThread;
+	RageSemaphore mSem;
+	void *mLoopRef;
+	
+	static int Run(void *data);
 
 public:
 	InputHandler_Carbon();
@@ -31,7 +26,6 @@ public:
 									vector<CString>& vDescriptionsOut );
 
 	static void QueueCallBack( void *target, int result, void *refcon, void *sender );
-	static OSStatus EventHandler( EventHandlerCallRef callRef, EventRef event, void *data );
 };
 #define USE_INPUT_HANDLER_CARBON
 
