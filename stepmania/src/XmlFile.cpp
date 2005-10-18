@@ -440,7 +440,7 @@ unsigned XNode::Load( const CString &xml, PARSEINFO *pi, unsigned iOffset )
 // Return : converted plain string
 bool XNode::GetAttrXML( RageFileBasic &f, DISP_OPT *opt, const CString &sName, const CString &sValue ) const
 {
-	CString s(sName);
+	CString s(sValue);
 	if( opt && opt->reference_value )
 		ReplaceEntityText( s, g_mapCharsToEntities );
 	return f.Write(sName + "='" + s + "' ") != -1;
@@ -470,7 +470,7 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 		if( f.Write(" ") == -1 )
 			return false;
 	FOREACH_CONST_Attr( this, p )
-		if( GetAttrXML(f, opt, p->first, p->second) )
+		if( !GetAttrXML(f, opt, p->first, p->second) )
 			return false;
 	
 	if( m_childs.empty() && m_sValue.empty() )

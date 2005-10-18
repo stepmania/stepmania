@@ -94,7 +94,8 @@ void ProfileManager::Init()
 			Character *pCharacter = CHARMAN->GetCharacterFromID( sCharacterID );
 			ASSERT_M( pCharacter, sCharacterID );
 			CString sProfileID;
-			CreateLocalProfile( pCharacter->GetDisplayName(), sProfileID );
+			bool b = CreateLocalProfile( pCharacter->GetDisplayName(), sProfileID );
+			ASSERT( b );
 			Profile* pProfile = GetLocalProfile( sProfileID );
 			pProfile->m_sCharacterID = sCharacterID;
 			SaveLocalProfile( sProfileID );
