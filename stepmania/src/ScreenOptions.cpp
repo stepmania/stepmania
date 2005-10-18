@@ -633,8 +633,6 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		StartTransitioningScreen( SM_ExportOptions );
 
 		SCREENMAN->PlayStartSound();
-
-		TweenOffScreen();
 	}
 	else if( SM == SM_GainFocus )
 	{
