@@ -251,17 +251,17 @@ void ScreenWithMenuElements::TweenOffScreen()
 	{
 		m_MenuTimer->SetSeconds( 0 );
 		m_MenuTimer->Stop();
-		ActorUtil::OffCommand( m_MenuTimer, m_sName );
+		OFF_COMMAND( m_MenuTimer );
 	}
 
-	ActorUtil::OffCommand( m_autoHeader, m_sName );
-	ActorUtil::OffCommand( m_sprStyleIcon, m_sName );
+	OFF_COMMAND( m_autoHeader );
+	OFF_COMMAND( m_sprStyleIcon );
 	OFF_COMMAND( m_sprStage );
 	FOREACH_PlayerNumber( p )
 		if( m_MemoryCardDisplay[p] )
-			ActorUtil::OffCommand( m_MemoryCardDisplay[p], m_sName );
-	ActorUtil::OffCommand( m_autoFooter, m_sName );
-	ActorUtil::OffCommand( m_textHelp, m_sName );
+			OFF_COMMAND( m_MemoryCardDisplay[p] );
+	OFF_COMMAND( m_autoFooter );
+	OFF_COMMAND( m_textHelp );
 	OFF_COMMAND( m_sprUnderlay );
 	OFF_COMMAND( m_sprOverlay );
 
