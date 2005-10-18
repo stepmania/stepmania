@@ -19,8 +19,6 @@
 using namespace std;
 using __gnu_cxx::hash_map;
 
-static void AddElement( const void *value, void *context );
-
 // Simple helper, still need to release it
 static inline CFNumberRef CFInt( int n )
 {
@@ -64,154 +62,56 @@ Joystick::Joystick() : id( DEVICE_NONE ),
 {
 }
 
-class JoystickDevice
+class Device
 {
 private:
-	vector<Joystick> mSticks;
 	IOHIDDeviceInterface **mInterface;
 	IOHIDQueueInterface **mQueue;
 	bool mRunning;
 	CString mDescription;
+	
+	static void AddLogicalDevice( const void *value, void *context );
+	static void AddElement( const void *value, void *context );
 
-	static void AddJoystick( const void *value, void *context );
-
+protected:
+	virtual bool AddLogicalDevice( int usagePage, int usage ) = 0;
+	virtual void AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef dict ) = 0;
+	virtual void Open() = 0;
+	
+	inline void AddElementToQueue( int cookie )
+	{ CALL( mQueue, addElement, IOHIDElementCookie(cookie), 0 ); }
 public:
-	JoystickDevice();
-	~JoystickDevice();
-
+	Device();
+	virtual ~Device();
+	
 	bool Open( io_object_t device );
-	// returns the number of IDs assigned starting from startID
-	int AssignJoystickIDs( int startID );
-	void StartQueue(CFRunLoopRef loopRef, int num, InputHandler_Carbon *handler);
-	inline int NumberOfSticks() const { return mSticks.size(); }
-	inline const Joystick& GetStick( int index ) const { return mSticks[index]; }
+	void StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback, void *target, int refCon );
 	inline const CString& GetDescription() const { return mDescription; }
 };
 
-JoystickDevice::JoystickDevice() : mInterface(NULL), mQueue(NULL), mRunning(false)
+Device::Device() : mInterface( NULL ), mQueue( NULL ), mRunning( false )
 {
 }
 
-bool JoystickDevice::Open( io_object_t device )
-{
-	IOReturn ret;
-	CFMutableDictionaryRef properties;
-	kern_return_t result;
-
-	result = IORegistryEntryCreateCFProperties( device, &properties, kCFAllocatorDefault, kNilOptions );
-	if ( result != KERN_SUCCESS || !properties )
-	{
-		LOG->Warn( "Couldn't get properties." );
-		return false;
-	}
-
-	// XXX Get Device Info
-	mDescription = "XXX Device Info";
-
-	CFArrayRef sticks;
-
-	if ( !(sticks = (CFArrayRef)CFDictionaryGetValue(properties, CFSTR(kIOHIDElementKey))) )
-	{
-		CFRelease( properties );
-		return false;
-	}
-	size_t count = CFArrayGetCount( sticks );
-	CFRange r = { 0, count };
-
-	mSticks.reserve( count );
-	CFArrayApplyFunction( sticks, r, JoystickDevice::AddJoystick, this );
-
-	CFRelease( properties );
-
-	// Create the interface
-	IOCFPlugInInterface **plugInInterface;
-	HRESULT hresult;
-	SInt32 score;
-
-	ret = IOCreatePlugInInterfaceForService( device, kIOHIDDeviceUserClientTypeID,
-											 kIOCFPlugInInterfaceID, &plugInInterface, &score );
-	if( ret != kIOReturnSuccess )
-	{
-		PrintIOErr( ret, "Failed to create plugin interface." );
-		return false;
-	}
-
-	// Call a method of the plugin to create the device interface
-	CFUUIDBytes bytes = CFUUIDGetUUIDBytes( kIOHIDDeviceInterfaceID );
-
-	hresult = CALL( plugInInterface, QueryInterface, bytes, (void **)&mInterface );
-
-	CALL( plugInInterface, Release );
-
-	if( hresult != S_OK )
-	{
-		LOG->Warn( "Couldn't get device interface from plugin interface." );
-		mInterface = NULL;
-		return false;
-	}
-		
-	// open the interface
-	if( (ret = CALL(mInterface, open, 0)) != kIOReturnSuccess )
-	{
-		PrintIOErr(ret, "Failed to open the interface.");
-		CALL(mInterface, Release);
-		mInterface = NULL;
-		return false;
-	}
-
-	// alloc/create queue
-	mQueue = CALL( mInterface, allocQueue );
-	if( !mQueue )
-	{
-		LOG->Warn( "Couldn't allocate a queue." );
-		return false;
-	}
-
-	if( (ret = CALL(mQueue, create, 0, 32)) != kIOReturnSuccess )
-	{
-		PrintIOErr(ret, "Failed to create the queue.");
-		CALL(mQueue, Release);
-		mQueue = NULL;
-		return false;
-	}
-
-	// Add elements to the queue for each Joystick
-	FOREACH_CONST( Joystick, mSticks, i )
-	{
-		const Joystick& js = *i;
-
-		if( js.x_axis )
-			CALL( mQueue, addElement, IOHIDElementCookie(js.x_axis), 0 );
-		if( js.y_axis )
-			CALL( mQueue, addElement, IOHIDElementCookie(js.y_axis), 0 );
-		if( js.z_axis )
-			CALL( mQueue, addElement, IOHIDElementCookie(js.z_axis), 0 );
-
-		for( hash_map<int,int>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
-			CALL( mQueue, addElement, IOHIDElementCookie(j->first), 0 );
-	}
-	return true;
-}
-
-JoystickDevice::~JoystickDevice()
+Device::~Device()
 {
 	if( mQueue )
 	{
 		CFRunLoopSourceRef runLoopSource;
-
+		
 		if( mRunning )
 			CALL( mQueue, stop );
 		if( (runLoopSource = CALL(mQueue, getAsyncEventSource)) )
 		{
 			CFRunLoopRef ref;
-
+			
 			ref = CFRunLoopRef( GetCFRunLoopFromEventLoop(GetMainEventLoop()) );
-
+			
 			if( CFRunLoopContainsSource(ref, runLoopSource, kCFRunLoopDefaultMode) )
 				CFRunLoopRemoveSource( ref, runLoopSource, kCFRunLoopDefaultMode );
 			CFRelease( runLoopSource );
 		}
-
+		
 		CALL( mQueue, dispose );
 		CALL( mQueue, Release );
 	}
@@ -222,50 +122,92 @@ JoystickDevice::~JoystickDevice()
 	}
 }
 
-void JoystickDevice::AddJoystick( const void *value, void *context )
+bool Device::Open( io_object_t device )
 {
-	if( CFGetTypeID(CFTypeRef(value)) != CFDictionaryGetTypeID() )
-		return;
-
-	CFDictionaryRef dict = CFDictionaryRef( value );
-	JoystickDevice *This = (JoystickDevice *)context;
-	CFArrayRef elements;
-	CFTypeRef object;
-	int usage, usagePage;
-	CFTypeID numID = CFNumberGetTypeID();
-
-	// Get usage page
-	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsagePageKey) );
-	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usagePage) )
-		return;
-
-	// Get usage
-	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsageKey) );
-	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usage) )
-		return;
-
-	if( usagePage != kHIDPage_GenericDesktop || usage != kHIDUsage_GD_Joystick )
-		return;
-
-	if( !(elements = (CFArrayRef)CFDictionaryGetValue(dict, CFSTR(kIOHIDElementKey))) )
-		return;
+	IOReturn ret;
+	CFMutableDictionaryRef properties;
+	kern_return_t result;
 	
-	Joystick js;
-	CFRange r = { 0, CFArrayGetCount(elements) };
-
-	CFArrayApplyFunction( elements, r, AddElement, &js );
-	This->mSticks.push_back( js );
+	result = IORegistryEntryCreateCFProperties( device, &properties, kCFAllocatorDefault, kNilOptions );
+	if ( result != KERN_SUCCESS || !properties )
+	{
+		LOG->Warn( "Couldn't get properties." );
+		return false;
+	}
+	
+	// XXX Get Device Info
+	mDescription = "XXX Device Info";
+	
+	CFArrayRef logicalDevices;
+	
+	if ( !(logicalDevices = (CFArrayRef)CFDictionaryGetValue(properties, CFSTR(kIOHIDElementKey))) )
+	{
+		CFRelease( properties );
+		return false;
+	}
+	CFRange r = { 0, CFArrayGetCount(logicalDevices) };
+	
+	CFArrayApplyFunction( logicalDevices, r, Device::AddLogicalDevice, this );
+	
+	CFRelease( properties );
+	
+	// Create the interface
+	IOCFPlugInInterface **plugInInterface;
+	HRESULT hresult;
+	SInt32 score;
+	
+	ret = IOCreatePlugInInterfaceForService( device, kIOHIDDeviceUserClientTypeID,
+											 kIOCFPlugInInterfaceID, &plugInInterface, &score );
+	if( ret != kIOReturnSuccess )
+	{
+		PrintIOErr( ret, "Failed to create plugin interface." );
+		return false;
+	}
+	
+	// Call a method of the plugin to create the device interface
+	CFUUIDBytes bytes = CFUUIDGetUUIDBytes( kIOHIDDeviceInterfaceID );
+	
+	hresult = CALL( plugInInterface, QueryInterface, bytes, (void **)&mInterface );
+	
+	CALL( plugInInterface, Release );
+	
+	if( hresult != S_OK )
+	{
+		LOG->Warn( "Couldn't get device interface from plugin interface." );
+		mInterface = NULL;
+		return false;
+	}
+	
+	// open the interface
+	if( (ret = CALL(mInterface, open, 0)) != kIOReturnSuccess )
+	{
+		PrintIOErr(ret, "Failed to open the interface.");
+		CALL(mInterface, Release);
+		mInterface = NULL;
+		return false;
+	}
+	
+	// alloc/create queue
+	mQueue = CALL( mInterface, allocQueue );
+	if( !mQueue )
+	{
+		LOG->Warn( "Couldn't allocate a queue." );
+		return false;
+	}
+	
+	if( (ret = CALL(mQueue, create, 0, 32)) != kIOReturnSuccess )
+	{
+		PrintIOErr(ret, "Failed to create the queue.");
+		CALL(mQueue, Release);
+		mQueue = NULL;
+		return false;
+	}
+	
+	Open();
+	return true;
 }
 
-
-int JoystickDevice::AssignJoystickIDs( int startID )
-{
-	for( vector<Joystick>::iterator i = mSticks.begin(); i != mSticks.end(); ++i )
-		i->id = InputDevice( startID++ );
-	return mSticks.size();
-}
-
-void JoystickDevice::StartQueue( CFRunLoopRef loopRef, int num, InputHandler_Carbon *handler )
+void Device::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback, void *target, int refCon )
 {
 	CFRunLoopSourceRef runLoopSource;
 	IOReturn ret = CALL( mQueue, createAsyncEventSource, &runLoopSource );
@@ -283,7 +225,7 @@ void JoystickDevice::StartQueue( CFRunLoopRef loopRef, int num, InputHandler_Car
 	if( !CFRunLoopContainsSource(runLoop, runLoopSource, kCFRunLoopDefaultMode) )
 		CFRunLoopAddSource( runLoop, runLoopSource, kCFRunLoopDefaultMode );
 	
-	CALL( mQueue, setEventCallout, InputHandler_Carbon::QueueCallBack, handler, (void *)num );
+	CALL( mQueue, setEventCallout, callback, target, (void *)refCon );
 	
 	if( ret != kIOReturnSuccess )
 	{
@@ -302,58 +244,124 @@ void JoystickDevice::StartQueue( CFRunLoopRef loopRef, int num, InputHandler_Car
 	mRunning = true;
 }
 
-// Callback
-static void AddElement( const void *value, void *context )
+void Device::AddLogicalDevice( const void *value, void *context )
 {
 	if( CFGetTypeID(CFTypeRef(value)) != CFDictionaryGetTypeID() )
 		return;
-
+	
 	CFDictionaryRef dict = CFDictionaryRef( value );
-	Joystick& js = *(Joystick *)context;
-	CFTypeRef object;
-	CFTypeID numID = CFNumberGetTypeID();
-	int cookie, usage, usagePage;
+	Device *This = (Device *)context;
 	CFArrayRef elements;
-
-	// Recursively add elements
-	if( (elements = (CFArrayRef)CFDictionaryGetValue(dict, CFSTR(kIOHIDElementKey))) )
-	{
-		CFRange r = { 0, CFArrayGetCount(elements) };
-
-		CFArrayApplyFunction( elements, r, AddElement, context );
-	}
-
+	CFTypeRef object;
+	int usage, usagePage;
+	CFTypeID numID = CFNumberGetTypeID();
+	
 	// Get usage page
 	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsagePageKey) );
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usagePage) )
 		return;
-
+	
 	// Get usage
 	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsageKey) );
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usage) )
 		return;
+	
+	if( !(elements = (CFArrayRef)CFDictionaryGetValue( dict, CFSTR(kIOHIDElementKey))) )
+		return;
+	
+	if( !This->AddLogicalDevice(usagePage, usage) )
+		return;
+	
+	CFRange r = { 0, CFArrayGetCount(elements) };
+		
+	CFArrayApplyFunction( elements, r, Device::AddElement, This );
+}
 
-
+void Device::AddElement( const void *value, void *context )
+{
+	if( CFGetTypeID(CFTypeRef(value)) != CFDictionaryGetTypeID() )
+		return;
+	
+	CFDictionaryRef dict = CFDictionaryRef( value );
+	Device *This = (Device *)context;
+	CFTypeRef object;
+	CFTypeID numID = CFNumberGetTypeID();
+	int cookie, usage, usagePage;
+	CFArrayRef elements;
+	
+	// Recursively add elements
+	if( (elements = (CFArrayRef)CFDictionaryGetValue(dict, CFSTR(kIOHIDElementKey))) )
+	{
+		CFRange r = { 0, CFArrayGetCount(elements) };
+		
+		CFArrayApplyFunction( elements, r, AddElement, context );
+	}
+	
+	// Get usage page
+	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsagePageKey) );
+	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usagePage) )
+		return;
+	
+	// Get usage
+	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementUsageKey) );
+	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &usage) )
+		return;
+	
+	
 	// Get cookie
 	object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementCookieKey) );
 	if( !object || CFGetTypeID(object) != numID || !IntValue(object, &cookie) )
 		return;
+	This->AddElement( usagePage, usage, cookie, dict );
+}
 
+class JoystickDevice : public Device
+{
+private:
+	vector<Joystick> mSticks;
+	
+protected:
+	bool AddLogicalDevice( int usagePage, int usage );
+	void AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef dict );
+	void Open();
+	
+public:
+	// returns the number of IDs assigned starting from startID
+	int AssignJoystickIDs( int startID );
+	inline int NumberOfSticks() const { return mSticks.size(); }
+	inline const Joystick& GetStick( int index ) const { return mSticks[index]; }
+};
+
+bool JoystickDevice::AddLogicalDevice( int usagePage, int usage )
+{
+	if( usagePage != kHIDPage_GenericDesktop || usage != kHIDUsage_GD_Joystick )
+		return false;
+	mSticks.push_back( Joystick() );
+	return true;
+}
+
+void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef dict )
+{
+	CFTypeRef object;
+	CFTypeID numID = CFNumberGetTypeID();
+	
+	Joystick& js = mSticks.back();
+	
 	switch( usagePage )
 	{
 	case kHIDPage_GenericDesktop:
 	{
 		int min = 0;
 		int max = 0;
-
+		
 		object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementMinKey) );
 		if( object && CFGetTypeID(object) == numID )
 			IntValue( object, &min );
-
+		
 		object = CFDictionaryGetValue( dict, CFSTR(kIOHIDElementMaxKey) );
 		if( object && CFGetTypeID(object) == numID )
 			IntValue( object, &max );
-
+		
 		switch( usage )
 		{
 		case kHIDUsage_GD_X:
@@ -393,7 +401,7 @@ static void AddElement( const void *value, void *context )
 		// button n has usage = n, subtract 1 to ensure 
 		// button 1 = JOY_BUTTON_1
 		const int buttonID = usage + JOY_BUTTON_1 - 1;
-
+		
 		if( buttonID < NUM_JOYSTICK_BUTTONS )
 			js.mapping[cookie] = buttonID;
 		break;
@@ -401,6 +409,32 @@ static void AddElement( const void *value, void *context )
 	default:
 		return;
 	} // end switch (usagePage)
+}
+
+void JoystickDevice::Open()
+{
+	// Add elements to the queue for each Joystick
+	FOREACH_CONST( Joystick, mSticks, i )
+	{
+		const Joystick& js = *i;
+
+		if( js.x_axis )
+			AddElementToQueue( js.x_axis );
+		if( js.y_axis )
+			AddElementToQueue( js.y_axis );
+		if( js.z_axis )
+			AddElementToQueue( js.z_axis );
+
+		for( hash_map<int,int>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
+			AddElementToQueue( j->first );
+	}
+}
+
+int JoystickDevice::AssignJoystickIDs( int startID )
+{
+	for( vector<Joystick>::iterator i = mSticks.begin(); i != mSticks.end(); ++i )
+		i->id = InputDevice( startID++ );
+	return mSticks.size();
 }
 
 void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon, void *sender )
@@ -478,7 +512,7 @@ int InputHandler_Carbon::Run(void *data)
 	
 	CFRetain(loopRef);
 	FOREACH( JoystickDevice *, This->mDevices, i )
-		(*i)->StartQueue( loopRef, n++, This );
+		(*i)->StartQueue( loopRef, InputHandler_Carbon::QueueCallBack, This, n++ );
 	This->mLoopRef = loopRef;
 	
 	/* The function copies the information out of the structure, so the memory pointed
@@ -559,7 +593,7 @@ InputHandler_Carbon::InputHandler_Carbon() : mSem("Input thread started")
 	{
 		JoystickDevice *jd = new JoystickDevice;
 		
-		if( jd->Open(device) )
+		if( static_cast<Device *>(jd)->Open(device) )
 		{
 			id += jd->AssignJoystickIDs( id );
 			mDevices.push_back( jd );
