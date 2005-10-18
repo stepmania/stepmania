@@ -16,6 +16,7 @@ public:
 	void Load( CString sBGAniDir );
 
 	virtual void UpdateInternal( float fDeltaTime );
+	virtual void PlayCommand( const CString &sCommandName, Actor *pParent = NULL );
 
 	virtual void StartTransitioning( ScreenMessage send_when_done = SM_None );
 	virtual bool EarlyAbortDraw() const;
