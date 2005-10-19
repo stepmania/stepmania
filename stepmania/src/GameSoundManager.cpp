@@ -456,7 +456,7 @@ void GameSoundManager::Update( float fDeltaTime )
 		/* Duration of the fade-in and fade-out: */
 		static float fFadeInSpeed = 1.5f;
 		static float fFadeOutSpeed = 0.3f;
-		float fVolume = g_Playing->m_Music->GetVolume();
+		float fVolume = g_Playing->m_Music->GetParams().m_Volume;
 		switch( g_FadeState )
 		{
 		case FADE_NONE: break;
@@ -664,8 +664,8 @@ void GameSoundManager::DimMusic( float fVolume, float fDurationSeconds )
 	LockMut( *g_Mutex );
 
 	if( g_FadeState == FADE_NONE )
-		g_fOriginalVolume = g_Playing->m_Music->GetVolume();
-	// otherwise, g_fOriginalVolume is already set and GetVolume will return the
+		g_fOriginalVolume = g_Playing->m_Music->GetParams().m_Volume;
+	// otherwise, g_fOriginalVolume is already set and m_Volume will be the
 	// current state, not the original state
 
 	g_fDimDurationRemaining = fDurationSeconds;
