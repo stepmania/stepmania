@@ -37,7 +37,7 @@ public:
 	static void RegisterProtocols();
 
 private:
-	FFMpeg_Helper *decoder;
+	FFMpeg_Helper *m_pDecoder;
 
 	/* The time the movie is actually at: */
 	float m_Rate;
@@ -65,7 +65,7 @@ private:
 
 	unsigned m_uTexHandle;
 
-	RageSurface *m_img;
+	RageSurface *m_pSurface;
 	int m_AVTexfmt; /* AVPixelFormat_t of m_img */
 
 	RageSemaphore m_BufferFinished;
