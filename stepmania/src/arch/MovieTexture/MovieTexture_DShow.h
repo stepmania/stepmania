@@ -1,5 +1,5 @@
-#ifndef RAGEMOVIETEXTURE_DSHOW_H
-#define RAGEMOVIETEXTURE_DSHOW_H
+#ifndef RAGE_MOVIE_TEXTURE_DSHOW_H
+#define RAGE_MOVIE_TEXTURE_DSHOW_H
 
 #include "MovieTexture.h"
 
@@ -48,9 +48,9 @@ public:
 	virtual void SetPosition( float fSeconds );
 	virtual void SetPlaybackRate( float fRate );
 
-	void SetLooping(bool looping=true) { m_bLoop = looping; }
+	void SetLooping( bool bLooping=true ) { m_bLoop = looping; }
 
-	void NewData(const char *buffer);
+	void NewData( const char *pBuffer );
 
 private:
 	const char *buffer;
