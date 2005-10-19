@@ -24,14 +24,14 @@ public:
 
 	/* only called by RageTextureManager::InvalidateTextures */
 	void Invalidate() { m_uTexHandle = 0; }
-	void Update(float fDeltaTime);
+	void Update( float fDeltaTime );
 
 	virtual void Reload();
 
 	virtual void SetPosition( float fSeconds );
 	virtual void DecodeSeconds( float fSeconds );
 	virtual void SetPlaybackRate( float fRate ) { m_Rate=fRate; }
-	void SetLooping(bool looping=true) { m_bLoop = looping; }
+	void SetLooping( bool bLooping=true ) { m_bLoop = bLooping; }
 	unsigned GetTexHandle() const { return m_uTexHandle; }
 
 	static void RegisterProtocols();
