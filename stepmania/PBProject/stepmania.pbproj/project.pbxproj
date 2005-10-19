@@ -190,9 +190,7 @@
 		AA29CC870558741A00961A51 /* BGAnimationLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0404770F63005F316C /* BGAnimationLayer.h */; };
 		AA29CC880558741A00961A51 /* Combo.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0604770F63005F316C /* Combo.h */; };
 		AA29CC890558741A00961A51 /* DancingCharacters.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0804770F63005F316C /* DancingCharacters.h */; };
-		AA29CC8A0558741A00961A51 /* GhostArrow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0A04770F63005F316C /* GhostArrow.h */; };
 		AA29CC8B0558741A00961A51 /* GhostArrowRow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF0E04770F63005F316C /* GhostArrowRow.h */; };
-		AA29CC8E0558741A00961A51 /* HoldGhostArrow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1404770F63005F316C /* HoldGhostArrow.h */; };
 		AA29CC8F0558741A00961A51 /* HoldJudgment.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1604770F63005F316C /* HoldJudgment.h */; };
 		AA29CC900558741A00961A51 /* Judgment.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1804770F63005F316C /* Judgment.h */; };
 		AA29CC910558741A00961A51 /* LifeMeter.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF1A04770F63005F316C /* LifeMeter.h */; };
@@ -207,7 +205,6 @@
 		AA29CC9A0558741A00961A51 /* ScoreDisplayOni.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF2C04770F63005F316C /* ScoreDisplayOni.h */; };
 		AA29CC9B0558741A00961A51 /* ScoreDisplayRave.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF2E04770F63005F316C /* ScoreDisplayRave.h */; };
 		AA29CC9C0558741A00961A51 /* ScoreKeeper.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF3004770F63005F316C /* ScoreKeeper.h */; };
-		AA29CC9D0558741A00961A51 /* ScoreKeeperMAX2.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF3204770F63005F316C /* ScoreKeeperMAX2.h */; };
 		AA29CC9F0558741A00961A51 /* Transition.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF7104770F86005F316C /* Transition.h */; };
 		AA29CCA00558741A00961A51 /* Actor.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF7604770FFD005F316C /* Actor.h */; };
 		AA29CCA10558741A00961A51 /* ActorFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFF7804770FFD005F316C /* ActorFrame.h */; };
@@ -423,9 +420,7 @@
 		AA29CD9B0558741A00961A51 /* BGAnimationLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0304770F63005F316C /* BGAnimationLayer.cpp */; };
 		AA29CD9C0558741A00961A51 /* Combo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0504770F63005F316C /* Combo.cpp */; };
 		AA29CD9D0558741A00961A51 /* DancingCharacters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0704770F63005F316C /* DancingCharacters.cpp */; };
-		AA29CD9E0558741A00961A51 /* GhostArrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0904770F63005F316C /* GhostArrow.cpp */; };
 		AA29CD9F0558741A00961A51 /* GhostArrowRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF0D04770F63005F316C /* GhostArrowRow.cpp */; };
-		AA29CDA20558741A00961A51 /* HoldGhostArrow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1304770F63005F316C /* HoldGhostArrow.cpp */; };
 		AA29CDA30558741A00961A51 /* HoldJudgment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1504770F63005F316C /* HoldJudgment.cpp */; };
 		AA29CDA40558741A00961A51 /* Judgment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1704770F63005F316C /* Judgment.cpp */; };
 		AA29CDA50558741A00961A51 /* LifeMeterBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF1B04770F63005F316C /* LifeMeterBar.cpp */; };
@@ -438,7 +433,6 @@
 		AA29CDAC0558741A00961A51 /* ScoreDisplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF2904770F63005F316C /* ScoreDisplayNormal.cpp */; };
 		AA29CDAD0558741A00961A51 /* ScoreDisplayOni.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF2B04770F63005F316C /* ScoreDisplayOni.cpp */; };
 		AA29CDAE0558741A00961A51 /* ScoreDisplayRave.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF2D04770F63005F316C /* ScoreDisplayRave.cpp */; };
-		AA29CDAF0558741A00961A51 /* ScoreKeeperMAX2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF3104770F63005F316C /* ScoreKeeperMAX2.cpp */; };
 		AA29CDB10558741A00961A51 /* Transition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF7004770F86005F316C /* Transition.cpp */; };
 		AA29CDB20558741A00961A51 /* Actor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF7504770FFD005F316C /* Actor.cpp */; };
 		AA29CDB30558741A00961A51 /* ActorFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFF7704770FFD005F316C /* ActorFrame.cpp */; };
@@ -863,6 +857,12 @@
 		AAED6F2F0601C528002D2DEE /* BacktraceNames.h in Headers */ = {isa = PBXBuildFile; fileRef = AAED6F2B0601C528002D2DEE /* BacktraceNames.h */; };
 		AAF3442B08F1C36A0006EDB7 /* DynamicActorScroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */; };
 		AAF3442C08F1C36A0006EDB7 /* DynamicActorScroller.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */; };
+		AAF34ADE0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34ADC0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp */; };
+		AAF34ADF0900AEBD0006EDB7 /* ScoreKeeperNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF34ADD0900AEBD0006EDB7 /* ScoreKeeperNormal.h */; };
+		AAF34AED0900B00C0006EDB7 /* ScreenStatsOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34AEB0900B00C0006EDB7 /* ScreenStatsOverlay.cpp */; };
+		AAF34AEE0900B00C0006EDB7 /* ScreenStatsOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF34AEC0900B00C0006EDB7 /* ScreenStatsOverlay.h */; };
+		AAF34B190900D1A20006EDB7 /* InputHandler_Carbon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA69675106840991007802A5 /* InputHandler_Carbon.cpp */; };
+		AAF34B1A0900D1AA0006EDB7 /* InputHandler_Carbon.h in Headers */ = {isa = PBXBuildFile; fileRef = AA69675006840991007802A5 /* InputHandler_Carbon.h */; };
 		AAF4206705D63FA700056441 /* ModelManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF4206505D63FA700056441 /* ModelManager.cpp */; };
 		AAF4206805D63FA700056441 /* ModelManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF4206605D63FA700056441 /* ModelManager.h */; };
 		AAF4206B05D6400800056441 /* RageModelGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF4206905D6400800056441 /* RageModelGeometry.cpp */; };
@@ -1156,7 +1156,7 @@
 		AA4B425B05733D71005FB5DB /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = Frameworks/Vorbis.framework; sourceTree = SOURCE_ROOT; };
 		AA4B4737057396D3005FB5DB /* ffmpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ffmpeg.framework; path = Frameworks/ffmpeg.framework; sourceTree = SOURCE_ROOT; };
 		AA4B4784057396F8005FB5DB /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = Frameworks/SDL.framework; sourceTree = SOURCE_ROOT; };
-		AA4B59EE0573AA5B005FB5DB /* SDLMain.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = SDLMain.m; path = ../PBProject/SDLMain.m; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
+		AA4B59EE0573AA5B005FB5DB /* SDLMain.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 30; name = SDLMain.m; path = ../PBProject/SDLMain.m; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA4B5CC40573AD81005FB5DB /* wchar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 4; path = wchar.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA4F38C004E2D0B700D02EE9 /* NoteDataUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = NoteDataUtil.cpp; path = ../src/NoteDataUtil.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA4F38C104E2D0B700D02EE9 /* NoteDataUtil.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = NoteDataUtil.h; path = ../src/NoteDataUtil.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
@@ -1477,12 +1477,8 @@
 		AA6EFF0604770F63005F316C /* Combo.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = Combo.h; path = ../src/Combo.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFF0704770F63005F316C /* DancingCharacters.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = DancingCharacters.cpp; path = ../src/DancingCharacters.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFF0804770F63005F316C /* DancingCharacters.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = DancingCharacters.h; path = ../src/DancingCharacters.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
-		AA6EFF0904770F63005F316C /* GhostArrow.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = GhostArrow.cpp; path = ../src/GhostArrow.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
-		AA6EFF0A04770F63005F316C /* GhostArrow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = GhostArrow.h; path = ../src/GhostArrow.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFF0D04770F63005F316C /* GhostArrowRow.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = GhostArrowRow.cpp; path = ../src/GhostArrowRow.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFF0E04770F63005F316C /* GhostArrowRow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = GhostArrowRow.h; path = ../src/GhostArrowRow.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
-		AA6EFF1304770F63005F316C /* HoldGhostArrow.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = HoldGhostArrow.cpp; path = ../src/HoldGhostArrow.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
-		AA6EFF1404770F63005F316C /* HoldGhostArrow.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = HoldGhostArrow.h; path = ../src/HoldGhostArrow.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFF1504770F63005F316C /* HoldJudgment.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = HoldJudgment.cpp; path = ../src/HoldJudgment.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFF1604770F63005F316C /* HoldJudgment.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = HoldJudgment.h; path = ../src/HoldJudgment.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFF1704770F63005F316C /* Judgment.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = Judgment.cpp; path = ../src/Judgment.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
@@ -1509,8 +1505,6 @@
 		AA6EFF2D04770F63005F316C /* ScoreDisplayRave.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = ScoreDisplayRave.cpp; path = ../src/ScoreDisplayRave.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFF2E04770F63005F316C /* ScoreDisplayRave.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = ScoreDisplayRave.h; path = ../src/ScoreDisplayRave.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFF3004770F63005F316C /* ScoreKeeper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = ScoreKeeper.h; path = ../src/ScoreKeeper.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
-		AA6EFF3104770F63005F316C /* ScoreKeeperMAX2.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = ScoreKeeperMAX2.cpp; path = ../src/ScoreKeeperMAX2.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
-		AA6EFF3204770F63005F316C /* ScoreKeeperMAX2.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = ScoreKeeperMAX2.h; path = ../src/ScoreKeeperMAX2.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFF7004770F86005F316C /* Transition.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = Transition.cpp; path = ../src/Transition.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFF7104770F86005F316C /* Transition.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = Transition.h; path = ../src/Transition.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA6EFF7504770FFD005F316C /* Actor.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = Actor.cpp; path = ../src/Actor.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
@@ -1869,6 +1863,10 @@
 		AAF33F2A04FF213100F93C24 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DynamicActorScroller.cpp; path = ../src/DynamicActorScroller.cpp; sourceTree = "<group>"; };
 		AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DynamicActorScroller.h; path = ../src/DynamicActorScroller.h; sourceTree = "<group>"; };
+		AAF34ADC0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScoreKeeperNormal.cpp; path = ../src/ScoreKeeperNormal.cpp; sourceTree = "<group>"; };
+		AAF34ADD0900AEBD0006EDB7 /* ScoreKeeperNormal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScoreKeeperNormal.h; path = ../src/ScoreKeeperNormal.h; sourceTree = "<group>"; };
+		AAF34AEB0900B00C0006EDB7 /* ScreenStatsOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenStatsOverlay.cpp; path = ../src/ScreenStatsOverlay.cpp; sourceTree = "<group>"; };
+		AAF34AEC0900B00C0006EDB7 /* ScreenStatsOverlay.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenStatsOverlay.h; path = ../src/ScreenStatsOverlay.h; sourceTree = "<group>"; };
 		AAF4206505D63FA700056441 /* ModelManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = ModelManager.cpp; path = ../src/ModelManager.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		AAF4206605D63FA700056441 /* ModelManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = ModelManager.h; path = ../src/ModelManager.h; sourceTree = "<group>"; usesTabs = 1; };
 		AAF4206905D6400800056441 /* RageModelGeometry.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = RageModelGeometry.cpp; path = ../src/RageModelGeometry.cpp; sourceTree = "<group>"; usesTabs = 1; };
@@ -2265,6 +2263,8 @@
 				AAB6B476085761B700CEE7BA /* ScreenSplash.h */,
 				AA6E0073047711F3005F316C /* ScreenStage.cpp */,
 				AA6E0074047711F3005F316C /* ScreenStage.h */,
+				AAF34AEB0900B00C0006EDB7 /* ScreenStatsOverlay.cpp */,
+				AAF34AEC0900B00C0006EDB7 /* ScreenStatsOverlay.h */,
 				AA07A55D0843E72B00E33D21 /* ScreenSyncOverlay.cpp */,
 				AA07A55E0843E72B00E33D21 /* ScreenSyncOverlay.h */,
 				AA1145DB075DFADF0050A3D1 /* ScreenSystemLayer.cpp */,
@@ -2883,12 +2883,8 @@
 				AA6EFF0804770F63005F316C /* DancingCharacters.h */,
 				AABE321E05ACD931001A0E84 /* Foreground.cpp */,
 				AABE321F05ACD931001A0E84 /* Foreground.h */,
-				AA6EFF0904770F63005F316C /* GhostArrow.cpp */,
-				AA6EFF0A04770F63005F316C /* GhostArrow.h */,
 				AA6EFF0D04770F63005F316C /* GhostArrowRow.cpp */,
 				AA6EFF0E04770F63005F316C /* GhostArrowRow.h */,
-				AA6EFF1304770F63005F316C /* HoldGhostArrow.cpp */,
-				AA6EFF1404770F63005F316C /* HoldGhostArrow.h */,
 				AA6EFF1504770F63005F316C /* HoldJudgment.cpp */,
 				AA6EFF1604770F63005F316C /* HoldJudgment.h */,
 				AA6EFF1704770F63005F316C /* Judgment.cpp */,
@@ -2929,8 +2925,8 @@
 				AA6EFF2D04770F63005F316C /* ScoreDisplayRave.cpp */,
 				AA6EFF2E04770F63005F316C /* ScoreDisplayRave.h */,
 				AA6EFF3004770F63005F316C /* ScoreKeeper.h */,
-				AA6EFF3104770F63005F316C /* ScoreKeeperMAX2.cpp */,
-				AA6EFF3204770F63005F316C /* ScoreKeeperMAX2.h */,
+				AAF34ADC0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp */,
+				AAF34ADD0900AEBD0006EDB7 /* ScoreKeeperNormal.h */,
 				AAE443F304B0FEB700D02EE9 /* ScoreKeeperRave.cpp */,
 				AAE443F404B0FEB700D02EE9 /* ScoreKeeperRave.h */,
 				AA3D5E8F082152B6002AA665 /* StreamDisplay.cpp */,
@@ -3302,9 +3298,7 @@
 				AA29CC870558741A00961A51 /* BGAnimationLayer.h in Headers */,
 				AA29CC880558741A00961A51 /* Combo.h in Headers */,
 				AA29CC890558741A00961A51 /* DancingCharacters.h in Headers */,
-				AA29CC8A0558741A00961A51 /* GhostArrow.h in Headers */,
 				AA29CC8B0558741A00961A51 /* GhostArrowRow.h in Headers */,
-				AA29CC8E0558741A00961A51 /* HoldGhostArrow.h in Headers */,
 				AA29CC8F0558741A00961A51 /* HoldJudgment.h in Headers */,
 				AA29CC900558741A00961A51 /* Judgment.h in Headers */,
 				AA29CC910558741A00961A51 /* LifeMeter.h in Headers */,
@@ -3319,7 +3313,6 @@
 				AA29CC9A0558741A00961A51 /* ScoreDisplayOni.h in Headers */,
 				AA29CC9B0558741A00961A51 /* ScoreDisplayRave.h in Headers */,
 				AA29CC9C0558741A00961A51 /* ScoreKeeper.h in Headers */,
-				AA29CC9D0558741A00961A51 /* ScoreKeeperMAX2.h in Headers */,
 				AA29CC9F0558741A00961A51 /* Transition.h in Headers */,
 				AA29CCA00558741A00961A51 /* Actor.h in Headers */,
 				AA29CCA10558741A00961A51 /* ActorFrame.h in Headers */,
@@ -3655,6 +3648,9 @@
 				AACFBE5C08E7D8C6005087FC /* PlayerScoreList.h in Headers */,
 				AACFBE6408E7DBA8005087FC /* LuaExpressionTransform.h in Headers */,
 				AAF3442C08F1C36A0006EDB7 /* DynamicActorScroller.h in Headers */,
+				AAF34ADF0900AEBD0006EDB7 /* ScoreKeeperNormal.h in Headers */,
+				AAF34AEE0900B00C0006EDB7 /* ScreenStatsOverlay.h in Headers */,
+				AAF34B1A0900D1AA0006EDB7 /* InputHandler_Carbon.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3950,9 +3946,7 @@
 				AA29CD9B0558741A00961A51 /* BGAnimationLayer.cpp in Sources */,
 				AA29CD9C0558741A00961A51 /* Combo.cpp in Sources */,
 				AA29CD9D0558741A00961A51 /* DancingCharacters.cpp in Sources */,
-				AA29CD9E0558741A00961A51 /* GhostArrow.cpp in Sources */,
 				AA29CD9F0558741A00961A51 /* GhostArrowRow.cpp in Sources */,
-				AA29CDA20558741A00961A51 /* HoldGhostArrow.cpp in Sources */,
 				AA29CDA30558741A00961A51 /* HoldJudgment.cpp in Sources */,
 				AA29CDA40558741A00961A51 /* Judgment.cpp in Sources */,
 				AA29CDA50558741A00961A51 /* LifeMeterBar.cpp in Sources */,
@@ -3965,7 +3959,6 @@
 				AA29CDAC0558741A00961A51 /* ScoreDisplayNormal.cpp in Sources */,
 				AA29CDAD0558741A00961A51 /* ScoreDisplayOni.cpp in Sources */,
 				AA29CDAE0558741A00961A51 /* ScoreDisplayRave.cpp in Sources */,
-				AA29CDAF0558741A00961A51 /* ScoreKeeperMAX2.cpp in Sources */,
 				AA29CDB10558741A00961A51 /* Transition.cpp in Sources */,
 				AA29CDB20558741A00961A51 /* Actor.cpp in Sources */,
 				AA29CDB30558741A00961A51 /* ActorFrame.cpp in Sources */,
@@ -4255,6 +4248,9 @@
 				AACFBE5B08E7D8C6005087FC /* PlayerScoreList.cpp in Sources */,
 				AACFBE6308E7DBA8005087FC /* LuaExpressionTransform.cpp in Sources */,
 				AAF3442B08F1C36A0006EDB7 /* DynamicActorScroller.cpp in Sources */,
+				AAF34ADE0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp in Sources */,
+				AAF34AED0900B00C0006EDB7 /* ScreenStatsOverlay.cpp in Sources */,
+				AAF34B190900D1A20006EDB7 /* InputHandler_Carbon.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
