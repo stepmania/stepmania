@@ -23,7 +23,7 @@ my @filelist = qw(Announcers/instructions.txt
 				  Songs/instructions.txt
 				  Themes/instructions.txt
 				  Themes/default
-				  Data/Translation.dat
+				  Data/Translations.xml
 				  Data/AI.ini
 				  Data/splash.png
 				  README-FIRST.html
