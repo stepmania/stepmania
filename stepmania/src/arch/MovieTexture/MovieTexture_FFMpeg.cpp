@@ -144,20 +144,26 @@ public:
 	~FFMpeg_Helper();
 	int GetFrame();
 	void Init();
-	float GetTimestamp() const;
 
 	CString Open( CString sFile );
 	void Close();
 
+	/* Get the timestamp, in seconds, when the current frame should be
+	 * displayed.  The first frame will always be 0. */
+	float GetTimestamp() const;
+
+	/* Get the duration, in seconds, to display the current frame. */
+	float GetFrameDuration() const;
+
 	avcodec::AVStream *m_stream;
-	float m_fLastFrameDelay;
-	float m_fPTS;
 	avcodec::AVFrame frame;
 
 private:
+	float m_fPTS;
 	avcodec::AVFormatContext *m_fctx;
 	bool m_bGetNextTimestamp;
 	float m_fCurrentTimestamp;
+	float m_fLastFrameDelay;
 	int m_iFrameNumber;
 
 	avcodec::AVPacket pkt;
@@ -256,6 +262,11 @@ float FFMpeg_Helper::GetTimestamp() const
 		return 0;
 
 	return m_fCurrentTimestamp - m_fTimestampOffset;
+}
+
+float FFMpeg_Helper::GetFrameDuration() const
+{
+	return m_fLastFrameDelay;
 }
 
 /* Read a packet.  Return -1 on error, 0 on EOF, 1 on OK. */
@@ -754,7 +765,7 @@ bool MovieTexture_FFMpeg::DecodeFrame()
 
 		/* When resetting the clock, set it back by the length of the last frame,
 		 * so it has a proper delay. */
-		float fDelay = m_pDecoder->m_fLastFrameDelay;
+		float fDelay = m_pDecoder->GetFrameDuration();
 
 		/* Restart. */
 		DestroyDecoder();
