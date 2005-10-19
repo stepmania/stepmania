@@ -263,7 +263,6 @@
 		AA29CCE00558741A00961A51 /* SongManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01100477128A005F316C /* SongManager.h */; };
 		AA29CCE10558741A00961A51 /* ThemeManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01130477128A005F316C /* ThemeManager.h */; };
 		AA29CCE30558741A00961A51 /* RageSoundDriver_Null.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E012F047712BE005F316C /* RageSoundDriver_Null.h */; };
-		AA29CCE40558741A00961A51 /* InputHandler_SDL.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01570477136A005F316C /* InputHandler_SDL.h */; };
 		AA29CCE50558741A00961A51 /* LowLevelWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01630477136A005F316C /* LowLevelWindow.h */; };
 		AA29CCE60558741A00961A51 /* LowLevelWindow_SDL.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01650477136A005F316C /* LowLevelWindow_SDL.h */; };
 		AA29CCE70558741A00961A51 /* SongCacheIndex.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6E01DF04772005005F316C /* SongCacheIndex.h */; };
@@ -489,7 +488,6 @@
 		AA29CDEF0558741A00961A51 /* ThemeManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E01120477128A005F316C /* ThemeManager.cpp */; };
 		AA29CDF10558741A00961A51 /* RageSoundDriver_Null.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E012E047712BE005F316C /* RageSoundDriver_Null.cpp */; };
 		AA29CDF20558741A00961A51 /* arch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E01410477136A005F316C /* arch.cpp */; };
-		AA29CDF30558741A00961A51 /* InputHandler_SDL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E01560477136A005F316C /* InputHandler_SDL.cpp */; };
 		AA29CDF40558741A00961A51 /* LowLevelWindow_SDL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E01640477136A005F316C /* LowLevelWindow_SDL.cpp */; };
 		AA29CDF50558741A00961A51 /* MovieTexture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E01DB04771F11005F316C /* MovieTexture.cpp */; };
 		AA29CDF60558741A00961A51 /* SongCacheIndex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E01DE04772005005F316C /* SongCacheIndex.cpp */; };
@@ -3371,7 +3369,6 @@
 				AA29CCE00558741A00961A51 /* SongManager.h in Headers */,
 				AA29CCE10558741A00961A51 /* ThemeManager.h in Headers */,
 				AA29CCE30558741A00961A51 /* RageSoundDriver_Null.h in Headers */,
-				AA29CCE40558741A00961A51 /* InputHandler_SDL.h in Headers */,
 				AA29CCE50558741A00961A51 /* LowLevelWindow.h in Headers */,
 				AA29CCE60558741A00961A51 /* LowLevelWindow_SDL.h in Headers */,
 				AA29CCE70558741A00961A51 /* SongCacheIndex.h in Headers */,
@@ -4015,7 +4012,6 @@
 				AA29CDEF0558741A00961A51 /* ThemeManager.cpp in Sources */,
 				AA29CDF10558741A00961A51 /* RageSoundDriver_Null.cpp in Sources */,
 				AA29CDF20558741A00961A51 /* arch.cpp in Sources */,
-				AA29CDF30558741A00961A51 /* InputHandler_SDL.cpp in Sources */,
 				AA29CDF40558741A00961A51 /* LowLevelWindow_SDL.cpp in Sources */,
 				AA29CDF50558741A00961A51 /* MovieTexture.cpp in Sources */,
 				AA29CDF60558741A00961A51 /* SongCacheIndex.cpp in Sources */,
