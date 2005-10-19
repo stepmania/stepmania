@@ -895,16 +895,6 @@ float RageSound::GetAbsoluteVolume() const
 	return f;
 }
 
-void RageSound::LockSound()
-{
-	m_Mutex.Lock();
-}
-
-void RageSound::UnlockSound()
-{
-	m_Mutex.Unlock();
-}
-
 float RageSound::GetPlaybackRate() const
 {
 	return float(m_Param.speed_input_samples) / m_Param.speed_output_samples;

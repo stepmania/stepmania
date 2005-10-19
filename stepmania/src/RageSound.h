@@ -134,10 +134,6 @@ public:
 	CString GetLoadedFilePath() const { return m_sFilePath; }
 	bool IsPlaying() const { return m_bPlaying; }
 
-	/* Lock and unlock this sound. */
-	void LockSound();
-	void UnlockSound();
-
 	float GetPlaybackRate() const;
 	RageTimer GetStartTime() const;
 	float GetVolume() const;
