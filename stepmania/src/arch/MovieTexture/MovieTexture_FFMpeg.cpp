@@ -146,22 +146,23 @@ public:
 	void Init();
 	float GetTimestamp() const;
 
-	avcodec::AVFormatContext *m_fctx;
+	CString Open( CString sFile );
+	void Close();
+
 	avcodec::AVStream *m_stream;
+	float m_fLastFrameDelay;
+	float m_fPTS;
+	avcodec::AVFrame frame;
+
+private:
+	avcodec::AVFormatContext *m_fctx;
 	bool m_bGetNextTimestamp;
 	float m_fCurrentTimestamp;
 	int m_iFrameNumber;
 
-	float m_fLastFrameDelay;
-
-	float m_fPTS;
-
 	avcodec::AVPacket pkt;
 	int m_iCurrentPacketOffset;
 
-	avcodec::AVFrame frame;
-
-private:
 	/* 0 = no EOF
 	 * 1 = EOF from ReadPacket
 	 * 2 = EOF from ReadPacket and DecodePacket */
@@ -556,67 +557,72 @@ static avcodec::URLProtocol RageProtocol =
 	NULL
 };
 
-void MovieTexture_FFMpeg::RegisterProtocols()
+CString FFMpeg_Helper::Open( CString sFile )
 {
-	static bool Done = false;
-	if( Done )
-		return;
-	Done = true;
+	static bool bDone = false;
+	if( !bDone )
+	{
+		avcodec::av_register_all();
+		avcodec::register_protocol( &RageProtocol );
+		bDone = true;
+	}
 
-	avcodec::av_register_all();
-	avcodec::register_protocol( &RageProtocol );
-}
-
-CString MovieTexture_FFMpeg::CreateDecoder()
-{
-	RegisterProtocols();
-
-	int ret = avcodec::av_open_input_file( &m_pDecoder->m_fctx, "rage://" + GetID().filename, NULL, 0, NULL );
+	int ret = avcodec::av_open_input_file( &m_fctx, "rage://" + sFile, NULL, 0, NULL );
 	if( ret < 0 )
-		return ssprintf( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", GetID().filename.c_str()) );
+		return ssprintf( averr_ssprintf(ret, "AVCodec: Couldn't open \"%s\"", sFile.c_str()) );
 
-	ret = avcodec::av_find_stream_info( m_pDecoder->m_fctx );
-	if ( ret < 0 )
-		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", GetID().filename.c_str()) );
+	ret = avcodec::av_find_stream_info( m_fctx );
+	if( ret < 0 )
+		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't find codec parameters", sFile.c_str()) );
 
-	avcodec::AVStream *stream = FindVideoStream( m_pDecoder->m_fctx );
+	avcodec::AVStream *stream = FindVideoStream( m_fctx );
 	if ( stream == NULL )
-		return ssprintf( "AVCodec (%s): Couldn't find any video streams", GetID().filename.c_str() );
+		return ssprintf( "AVCodec (%s): Couldn't find any video streams", sFile.c_str() );
 
 	if( stream->codec.codec_id == avcodec::CODEC_ID_NONE )
-		return ssprintf( "AVCodec (%s): Unsupported codec %08x", GetID().filename.c_str(), stream->codec.codec_tag );
+		return ssprintf( "AVCodec (%s): Unsupported codec %08x", sFile.c_str(), stream->codec.codec_tag );
 
 	avcodec::AVCodec *codec = avcodec::avcodec_find_decoder( stream->codec.codec_id );
 	if( codec == NULL )
-		return ssprintf( "AVCodec (%s): Couldn't find decoder %i", GetID().filename.c_str(), stream->codec.codec_id );
+		return ssprintf( "AVCodec (%s): Couldn't find decoder %i", sFile.c_str(), stream->codec.codec_id );
 
 	LOG->Trace("Opening codec %s", codec->name );
 	ret = avcodec::avcodec_open( &stream->codec, codec );
 	if ( ret < 0 )
-		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't open codec \"%s\"", GetID().filename.c_str(), codec->name) );
+		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't open codec \"%s\"", sFile.c_str(), codec->name) );
 
 	/* Don't set this until we successfully open stream->codec, so we don't try to close it
 	 * on an exception unless it was really opened. */
-	m_pDecoder->m_stream = stream;
+	m_stream = stream;
 
 	return CString();
+}
+
+void FFMpeg_Helper::Close()
+{
+	if( m_stream )
+	{
+		avcodec::avcodec_close( &m_stream->codec );
+		m_stream = NULL;
+	}
+
+	if( m_fctx )
+	{
+		avcodec::av_close_input_file( m_fctx );
+		m_fctx = NULL;
+	}
+}
+
+CString MovieTexture_FFMpeg::CreateDecoder()
+{
+	return m_pDecoder->Open( GetID().filename );
 }
 
 
 /* Delete the decoder.  The decoding thread must be stopped. */
 void MovieTexture_FFMpeg::DestroyDecoder()
 {
-	if( m_pDecoder->m_stream )
-	{
-		avcodec::avcodec_close( &m_pDecoder->m_stream->codec );
-		m_pDecoder->m_stream = NULL;
-	}
-
-	if( m_pDecoder->m_fctx )
-	{
-		avcodec::av_close_input_file( m_pDecoder->m_fctx );
-		m_pDecoder->m_fctx = NULL;
-	}
+	m_pDecoder->Close();
 }
 
 /* Delete the surface and texture.  The decoding thread must be stopped, and this
