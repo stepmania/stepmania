@@ -1926,12 +1926,12 @@ bool RageDisplay_OGL::SupportsSurfaceFormat( PixelFormat pixfmt )
 }
 
 
-bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
+bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt, bool bRealtime )
 {
 	/* If we support a pixfmt for texture formats but not for surface formats, then
 	 * we'll have to convert the texture to a supported surface format before uploading.
 	 * This is too slow for dynamic textures. */
-	if( realtime && !SupportsSurfaceFormat( pixfmt ) )
+	if( bRealtime && !SupportsSurfaceFormat(pixfmt) )
 		return false;
 
 	switch( g_GLPixFmtInfo[pixfmt].format )

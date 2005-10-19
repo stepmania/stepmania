@@ -34,8 +34,8 @@ struct AVPixelFormat_t
 	int bpp;
 	int masks[4];
 	avcodec::PixelFormat pf;
-	bool HighColor;
-	bool ByteSwapOnLittleEndian;
+	bool bHighColor;
+	bool bByteSwapOnLittleEndian;
 } AVPixelFormats[] = {
 	{ 
 		/* This format is really ARGB, and is affected by endianness, unlike PIX_FMT_RGB24
@@ -94,7 +94,7 @@ static void FixLilEndian()
 	{
 		AVPixelFormat_t &pf = AVPixelFormats[i];
 
-		if( !pf.ByteSwapOnLittleEndian )
+		if( !pf.bByteSwapOnLittleEndian )
 			continue;
 
 		for( int mask = 0; mask < 4; ++mask)
@@ -112,12 +112,12 @@ static void FixLilEndian()
 #endif
 }
 
-static int FindCompatibleAVFormat( PixelFormat &pixfmt, bool HighColor )
+static int FindCompatibleAVFormat( PixelFormat &pixfmt, bool bHighColor )
 {
 	for( int i = 0; AVPixelFormats[i].bpp; ++i )
 	{
 		AVPixelFormat_t &fmt = AVPixelFormats[i];
-		if( fmt.HighColor != HighColor )
+		if( fmt.bHighColor != bHighColor )
 			continue;
 
 		pixfmt = DISPLAY->FindPixelFormat( fmt.bpp,
@@ -688,7 +688,7 @@ void MovieTexture_FFMpeg::CreateTexture()
 		/* No dice.  Use the first avcodec format of the preferred bit depth,
 		 * and let the display system convert. */
 		for( m_AVTexfmt = 0; AVPixelFormats[m_AVTexfmt].bpp; ++m_AVTexfmt )
-			if( AVPixelFormats[m_AVTexfmt].HighColor == bPreferHighColor )
+			if( AVPixelFormats[m_AVTexfmt].bHighColor == bPreferHighColor )
 				break;
 		ASSERT( AVPixelFormats[m_AVTexfmt].bpp );
 
