@@ -6,7 +6,6 @@
 #include "RageDisplay.h"
 #include "RageTexture.h"
 #include "RageThreads.h"
-#include "RageTimer.h"
 
 /* Fix a compile problem in gcc 3.2: */
 #if defined(HAVE_INTTYPES_H)
@@ -30,7 +29,7 @@ public:
 
 	virtual void SetPosition( float fSeconds );
 	virtual void DecodeSeconds( float fSeconds );
-	virtual void SetPlaybackRate( float fRate ) { m_Rate=fRate; }
+	virtual void SetPlaybackRate( float fRate ) { m_fRate = fRate; }
 	void SetLooping( bool bLooping=true ) { m_bLoop = bLooping; }
 	unsigned GetTexHandle() const { return m_uTexHandle; }
 
@@ -39,8 +38,7 @@ public:
 private:
 	FFMpeg_Helper *m_pDecoder;
 
-	/* The time the movie is actually at: */
-	float m_Rate;
+	float m_fRate;
 	enum {
 		FRAME_NONE, /* no frame available; call GetFrame to get one */
 		FRAME_DECODED, /* frame decoded; call ConvertFrame */
@@ -70,9 +68,9 @@ private:
 
 	RageSemaphore m_BufferFinished;
 
-	RageTimer m_Timer;
-	float m_Clock;
-	bool m_FrameSkipMode;
+	/* The time the movie is actually at: */
+	float m_fClock;
+	bool m_bFrameSkipMode;
 
 	static int DecoderThread_start(void *p) { ((MovieTexture_FFMpeg *)(p))->DecoderThread(); return 0; }
 	void DecoderThread();

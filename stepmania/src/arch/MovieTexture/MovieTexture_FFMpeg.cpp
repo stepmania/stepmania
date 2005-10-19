@@ -410,10 +410,10 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
     m_State = DECODER_QUIT; /* it's quit until we call StartThread */
 	m_pSurface = NULL;
 	m_ImageWaiting = FRAME_NONE;
-	m_Rate = 1;
+	m_fRate = 1;
 	m_bWantRewind = false;
-	m_Clock = 0;
-	m_FrameSkipMode = false;
+	m_fClock = 0;
+	m_bFrameSkipMode = false;
 	m_bThreaded = PREFSMAN->m_bThreadedMovieDecode.Get();
 }
 
@@ -757,7 +757,7 @@ bool MovieTexture_FFMpeg::DecodeFrame()
 			RageException::Throw( "Error rewinding stream %s: %s", GetID().filename.c_str(), sError.c_str() );
 
 		m_pDecoder->Init();
-		m_Clock = -fDelay;
+		m_fClock = -fDelay;
 		return false;
 	}
 
@@ -778,21 +778,21 @@ float MovieTexture_FFMpeg::CheckFrameTime()
 {
 	ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting) );
 
-	if( m_Rate == 0 )
+	if( m_fRate == 0 )
 		return 1;	// "a long time until the next frame"
 
-	const float Offset = (m_pDecoder->GetTimestamp() - m_Clock) / m_Rate;
+	const float fOffset = (m_pDecoder->GetTimestamp() - m_fClock) / m_fRate;
 
 	/* If we're ahead, we're decoding too fast; delay. */
-	if( Offset > 0.00001f )
+	if( fOffset > 0.00001f )
 	{
-		if( m_FrameSkipMode )
+		if( m_bFrameSkipMode )
 		{
 			/* We're caught up; stop skipping frames. */
 			LOG->Trace( "stopped skipping frames" );
-			m_FrameSkipMode = false;
+			m_bFrameSkipMode = false;
 		}
-		return Offset;
+		return fOffset;
 	}
 
 	/*
@@ -814,14 +814,14 @@ float MovieTexture_FFMpeg::CheckFrameTime()
 	 */
 	const float FrameSkipThreshold = 0.5f;
 
-	if( -Offset >= FrameSkipThreshold && !m_FrameSkipMode )
+	if( -fOffset >= FrameSkipThreshold && !m_bFrameSkipMode )
 	{
 		LOG->Trace( "(%s) Time is %f, and the movie is at %f.  Entering frame skip mode.",
-			GetID().filename.c_str(), m_Clock, m_pDecoder->GetTimestamp());
-		m_FrameSkipMode = true;
+			GetID().filename.c_str(), m_fClock, m_pDecoder->GetTimestamp());
+		m_bFrameSkipMode = true;
 	}
 
-	if( m_FrameSkipMode && m_pDecoder->m_stream->codec.frame_number % 2 )
+	if( m_bFrameSkipMode && m_pDecoder->m_stream->codec.frame_number % 2 )
 		return -1; /* skip */
 	
 	return 0;
@@ -865,7 +865,7 @@ void MovieTexture_FFMpeg::DecoderThread()
 		else if( fTime > 0 )		// not time to decode a new frame yet
 		{
 			/* This needs to be relatively short so that we wake up quickly 
-			 * from being paused or for changes in m_Rate. */
+			 * from being paused or for changes in m_fRate. */
 			usleep( 10000 );
 		}
 		else // fTime == 0
@@ -1011,7 +1011,7 @@ void MovieTexture_FFMpeg::SetPosition( float fSeconds )
 /* This is used to decode data. */
 void MovieTexture_FFMpeg::DecodeSeconds( float fSeconds )
 {
-	m_Clock += fSeconds * m_Rate;
+	m_fClock += fSeconds * m_fRate;
 
 	/* If we're not threaded, we want to be sure to decode any new frames now,
 	 * and not on the next frame.  Update() may have already been called for this
