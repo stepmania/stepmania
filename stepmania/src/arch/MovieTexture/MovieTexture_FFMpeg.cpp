@@ -672,23 +672,23 @@ void MovieTexture_FFMpeg::CreateTexture()
 	m_iImageHeight = min( m_iSourceHeight, actualID.iMaxSize );
 
 	/* Texture dimensions need to be a power of two; jump to the next. */
-	m_iTextureWidth = power_of_two(m_iImageWidth);
-	m_iTextureHeight = power_of_two(m_iImageHeight);
+	m_iTextureWidth = power_of_two( m_iImageWidth );
+	m_iTextureHeight = power_of_two( m_iImageHeight );
 
 	/* Bogus assignment to shut gcc up. */
     PixelFormat pixfmt = PixelFormat_RGBA8;
-	bool PreferHighColor = (TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32);
-	m_AVTexfmt = FindCompatibleAVFormat( pixfmt, PreferHighColor );
+	bool bPreferHighColor = (TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32);
+	m_AVTexfmt = FindCompatibleAVFormat( pixfmt, bPreferHighColor );
 
 	if( m_AVTexfmt == -1 )
-		m_AVTexfmt = FindCompatibleAVFormat( pixfmt, !PreferHighColor );
+		m_AVTexfmt = FindCompatibleAVFormat( pixfmt, !bPreferHighColor );
 
 	if( m_AVTexfmt == -1 )
 	{
 		/* No dice.  Use the first avcodec format of the preferred bit depth,
 		 * and let the display system convert. */
 		for( m_AVTexfmt = 0; AVPixelFormats[m_AVTexfmt].bpp; ++m_AVTexfmt )
-			if( AVPixelFormats[m_AVTexfmt].HighColor == PreferHighColor )
+			if( AVPixelFormats[m_AVTexfmt].HighColor == bPreferHighColor )
 				break;
 		ASSERT( AVPixelFormats[m_AVTexfmt].bpp );
 
