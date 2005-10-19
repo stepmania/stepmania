@@ -31,29 +31,32 @@ void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
 		if(!s->CompareNoCase("Joystick") )		ret = new InputHandler_Linux_Joystick;
 #endif
 #ifdef USE_INPUT_HANDLER_LINUX_TTY
-		if(!s->CompareNoCase("tty") )		ret = new InputHandler_Linux_tty;
+		if(!s->CompareNoCase("tty") )			ret = new InputHandler_Linux_tty;
 #endif
 #ifdef USE_INPUT_HANDLER_SDL
-		if(!s->CompareNoCase("SDL") )		ret = new InputHandler_SDL;
+		if(!s->CompareNoCase("SDL") )			ret = new InputHandler_SDL;
 #endif
 #ifdef USE_INPUT_HANDLER_WIN32_PARA
-		if(!s->CompareNoCase("Para") )		ret = new InputHandler_Win32_Para;
+		if(!s->CompareNoCase("Para") )			ret = new InputHandler_Win32_Para;
 #endif
 #ifdef USE_INPUT_HANDLER_WIN32_PUMP
-		if(!s->CompareNoCase("Pump") )		ret = new InputHandler_Win32_Pump;
+		if(!s->CompareNoCase("Pump") )			ret = new InputHandler_Win32_Pump;
 #endif
 #ifdef USE_INPUT_HANDLER_WIN32_MIDI
-		if(!s->CompareNoCase("MIDI") )	ret = new InputHandler_Win32_MIDI;
+		if(!s->CompareNoCase("MIDI") )			ret = new InputHandler_Win32_MIDI;
 #endif
 #ifdef USE_INPUT_HANDLER_X11
-		if(!s->CompareNoCase("X11") )		ret = new InputHandler_X11;
+		if(!s->CompareNoCase("X11") )			ret = new InputHandler_X11;
 #endif
 #ifdef USE_INPUT_HANDLER_XBOX
-		if(!s->CompareNoCase("Xbox") )		ret = new InputHandler_Xbox;
+		if(!s->CompareNoCase("Xbox") )			ret = new InputHandler_Xbox;
+#endif
+#ifdef USE_INPUT_HANDLER_CARBON
+		if(!s->CompareNoCase("Carbon") )		ret = new InputHandler_Carbon;
 #endif
 
 		if( ret == NULL )
-			LOG->Warn( "Unknown lights driver name: %s", s->c_str() );
+			LOG->Warn( "Unknown Input Handler name: %s", s->c_str() );
 		else
 			Add.push_back( ret );
 	}
@@ -267,7 +270,7 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 
 		if( ret == NULL )
 		{
-			LOG->Warn( "Unknown sound driver name: %s", DriversToTry[i].c_str() );
+			LOG->Trace( "Unknown sound driver name: %s", DriversToTry[i].c_str() );
 			continue;
 		}
 

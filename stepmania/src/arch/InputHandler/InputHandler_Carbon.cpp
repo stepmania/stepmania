@@ -616,7 +616,7 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 	KeyboardDevice *kd = dynamic_cast<KeyboardDevice *>(dev);
 	JoystickDevice *jd = dynamic_cast<JoystickDevice *>(dev);
 	
-	ASSERT(kd || jd );
+	ASSERT( kd || jd );
 	
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
 	{
@@ -714,7 +714,43 @@ InputHandler_Carbon::~InputHandler_Carbon()
 		mach_port_deallocate( mach_task_self(), mMasterPort );
 }
 
-InputHandler_Carbon::InputHandler_Carbon() : mSem("Input thread started")
+static io_iterator_t GetDeviceIterator( mach_port_t mp, int usagePage, int usage )
+{
+	// Build the matching dictionary.
+	CFMutableDictionaryRef dict;
+	
+	if( (dict = IOServiceMatching(kIOHIDDeviceKey)) == NULL )
+	{
+		LOG->Warn( "Couldn't create a matching dictionary." );
+		return NULL;
+	}
+	// Refine the search by only looking for joysticks
+	CFNumberRef usagePageRef = CFInt( usagePage );
+	CFNumberRef usageRef = CFInt( usage );
+	
+	CFDictionarySetValue( dict, CFSTR(kIOHIDPrimaryUsagePageKey), usagePageRef );
+	CFDictionarySetValue( dict, CFSTR(kIOHIDPrimaryUsageKey), usageRef );
+	
+	// Cleanup after ourselves
+	CFRelease( usagePageRef );
+	CFRelease( usageRef );
+	
+	// Find the HID devices.
+	io_iterator_t iter;
+	
+	/* Get an iterator to the matching devies
+	 * This consumes a reference to the dictionary so we should retain it
+	 * have to Release() later.
+	 */
+	if( IOServiceGetMatchingServices(mp, dict, &iter) != kIOReturnSuccess )
+	{
+		LOG->Warn( "Couldn't get matching services" );
+		return NULL;
+	}
+	return iter;
+}
+
+InputHandler_Carbon::InputHandler_Carbon() : mMasterPort(0), mSem("Input thread started")
 {
 	// Get a Mach port to initiate communication with I/O Kit.
 	mach_port_t masterPort;
@@ -728,66 +764,54 @@ InputHandler_Carbon::InputHandler_Carbon() : mSem("Input thread started")
 	}
 	mMasterPort = masterPort;
 
-	// Build the matching dictionary.
-	CFMutableDictionaryRef dict;
-
-	if( (dict = IOServiceMatching(kIOHIDDeviceKey)) == NULL )
+	// Find the joysticks
+	io_iterator_t iter = GetDeviceIterator(masterPort, kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick );
+	
+	if( iter )
 	{
-		LOG->Warn( "Couldn't create a matching dictionary." );
-		mach_port_deallocate( mach_task_self(), masterPort );
-		return;
-	}
-	// Refine the search by only looking for joysticks
-	CFNumberRef usagePage = CFInt( kHIDPage_GenericDesktop );
-	CFNumberRef usage = CFInt( kHIDUsage_GD_Joystick );
+		// Iterate over the devices and add them
+		io_object_t device;
+		int id = DEVICE_JOY1;
+		
+		while( (device = IOIteratorNext(iter)) )
+		{
+			JoystickDevice *jd = new JoystickDevice;
 			
-	CFDictionarySetValue( dict, CFSTR(kIOHIDPrimaryUsagePageKey), usagePage );
-	CFDictionarySetValue( dict, CFSTR(kIOHIDPrimaryUsageKey), usage);
-	
-	// Cleanup after ourselves
-	CFRelease(usagePage);
-	CFRelease(usage);
-
-	// Find the HID devices.
-	io_iterator_t iter;
-
-	/* Get an iterator to the matching devies
-	 * This consumes a reference to the dictionary so we don't
-	 * have to Release() later.
-	 */
-	ret = IOServiceGetMatchingServices( masterPort, dict, &iter );
-	if( (ret != kIOReturnSuccess) || !iter )
-	{
-		mach_port_deallocate( mach_task_self(), masterPort );
-		masterPort = 0;
-		return;
-	}
-
-	// Iterate over the devices and add them
-	io_object_t device;
-	int id = DEVICE_JOY1;
-	
-	while( (device = IOIteratorNext(iter)) )
-	{
-		JoystickDevice *jd = new JoystickDevice;
-		
-		if( static_cast<Device *>(jd)->Open(device) )
-		{
-			id += jd->AssignJoystickIDs( id );
-			mDevices.push_back( jd );
-			puts( "Added device." );
+			if( static_cast<Device *>(jd)->Open(device) )
+			{
+				id += jd->AssignJoystickIDs( id );
+				mDevices.push_back( jd );
+			}
+			else
+			{
+				delete jd;
+			}
+			
+			IOObjectRelease( device );
+			
 		}
-		else
-		{
-			delete jd;
-		}
-		
-		IOObjectRelease( device );
-
+		IOObjectRelease( iter );
 	}
-	IOObjectRelease( iter );
+	// Now find the keyboards
+	iter = GetDeviceIterator( masterPort, kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard );
 	
-	// XXX now find the keyboards
+	if( iter )
+	{
+		io_object_t device;
+		
+		while( (device = IOIteratorNext(iter)) )
+		{
+			Device *kd = new KeyboardDevice;
+			
+			if( kd->Open(device) )
+				mDevices.push_back( kd );
+			else
+				delete kd;
+			
+			IOObjectRelease( device );
+		}
+		IOObjectRelease( iter );
+	}
 	
 	mInputThread.SetName( "Input thread." );
 	mInputThread.Create(InputHandler_Carbon::Run, this);
@@ -797,10 +821,9 @@ InputHandler_Carbon::InputHandler_Carbon() : mSem("Input thread started")
 
 void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<CString>& desc )
 {
-#if 0 // not yet
 	dev.push_back(DEVICE_KEYBOARD);
 	desc.push_back("Keyboard");
-#endif
+
 	FOREACH_CONST( Device *, mDevices, i )
 	{
 		const JoystickDevice *jd = dynamic_cast<const JoystickDevice *>(*i);

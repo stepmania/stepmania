@@ -10,6 +10,7 @@
 #define HAVE_MACOSX
 #define HAVE_COCOA
 #define HAVE_COREAUDIO
+#define HAVE_CARBON
 #define HAVE_SDL
 #define HAVE_CRYPTOPP
 #endif
