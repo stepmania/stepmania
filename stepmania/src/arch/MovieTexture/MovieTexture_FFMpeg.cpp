@@ -700,7 +700,7 @@ void MovieTexture_FFMpeg::CreateTexture()
 			if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB5) )
 				pixfmt = PixelFormat_RGB5;
 			else
-				pixfmt = PixelFormat_RGBA4; // everything supports RGBA4
+				pixfmt = PixelFormat_RGBA4;
 
 			break;
 
@@ -712,7 +712,7 @@ void MovieTexture_FFMpeg::CreateTexture()
 			else if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB5) )
 				pixfmt = PixelFormat_RGB5;
 			else
-				pixfmt = PixelFormat_RGBA4; // everything supports RGBA4
+				pixfmt = PixelFormat_RGBA4;
 			break;
 		}
 	}
