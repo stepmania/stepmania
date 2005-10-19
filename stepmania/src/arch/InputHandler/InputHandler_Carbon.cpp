@@ -629,7 +629,7 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 			
 			if( iter != kd->mMapping.end() )
 				This->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, iter->second, value, now), value );
-			return;
+			continue;
 		}
 
 		for( int i = 0; i < jd->NumberOfSticks(); ++i )
