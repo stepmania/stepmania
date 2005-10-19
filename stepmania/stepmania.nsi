@@ -31,7 +31,7 @@ AutoCloseWindow true ; (can be true for the window go away automatically at end)
 ; ShowInstDetails hide ; (can be show to have them shown, or nevershow to disable)
 SetDateSave on ; (can be on to have files restored to their orginal date)
 InstallDir "$PROGRAMFILES\${PRODUCT_ID}"
-InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}" ""
+InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_NAME}\${PRODUCT_ID}" ""
 ; DirShow show ; (make this hide to not let the user change it)
 DirText "${PRODUCT_NAME_VER}"
 InstallColors /windows
@@ -67,7 +67,7 @@ StrCpy $R2 "_?="
 IfFileExists "$R1" prompt_uninstall_nsis old_nsis_not_installed
 
 prompt_uninstall_nsis:
-MessageBox MB_YESNO|MB_ICONINFORMATION "The previous version of StepMania must be uninstalled before continuing.$\nDo you wish to continue?" IDYES do_uninstall_nsis
+MessageBox MB_YESNO|MB_ICONINFORMATION "The previous version of ${PRODUCT_ID} must be uninstalled before continuing.$\nDo you wish to continue?" IDYES do_uninstall_nsis
 Abort
 
 do_uninstall_nsis:
@@ -123,7 +123,7 @@ SetOverwrite on
 WriteUninstaller "$INSTDIR\uninstall.exe"
 
 ; add registry entries
-WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}" "" "$INSTDIR"
+WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_NAME}\${PRODUCT_ID}" "" "$INSTDIR"
 WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "${PRODUCT_ID} (remove only)"
 WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninstall.exe"'
 
@@ -222,7 +222,7 @@ File "Data\AI.ini"
 File "Data\splash.png"
 
 SetOutPath "$INSTDIR\Program"
-File "Program\stepmania.exe"
+File "Program\${PRODUCT_NAME}.exe"
 File "Program\stepmania.vdi"
 File "Program\smpackage.exe"
 File "Program\msvcr70.dll"
@@ -257,21 +257,21 @@ File "NEWS"
 ; This is a silly check, because we force an uninstall and the installer 
 ; removes stepmania.ini.  -Chris
 
-;IfFileExists "$INSTDIR\stepmania.ini" stepmania_ini_present 
-;IfFileExists "$INSTDIR\Data\stepmania.ini" stepmania_ini_present 
+;IfFileExists "$INSTDIR\${PRODUCT_NAME}.ini" stepmania_ini_present 
+;IfFileExists "$INSTDIR\Data\${PRODUCT_NAME}.ini" stepmania_ini_present 
 ;Goto stepmania_ini_not_present
 ;stepmania_ini_present:
 ;MessageBox MB_YESNO|MB_ICONQUESTION "Your settings from the previous installation of StepMania were found.$\nWould you like to keep these settings?" IDNO stepmania_ini_not_present
-;Delete "$INSTDIR\Data\stepmania.ini"
+;Delete "$INSTDIR\Data\${PRODUCT_NAME}.ini"
 ;stepmania_ini_not_present:
 ;; Move ini into Data\
-;Rename "$INSTDIR\Data\stepmania.ini" "$INSTDIR\stepmania.ini"
+;Rename "$INSTDIR\Data\${PRODUCT_NAME}.ini" "$INSTDIR\${PRODUCT_NAME}.ini"
 
 ; Create Start Menu icons
 SetShellVarContext current  # 	'all' doesn't work on Win9x
 CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
-CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\stepmania.exe"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\stepmania.exe"
+CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open StepMania Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Machine Statistics.lnk" "$INSTDIR\Data\MachineProfile\Stats.xml"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\StepMania Tools and Package Exporter.lnk" "$INSTDIR\Program\smpackage.exe"
@@ -279,7 +279,7 @@ CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README-FIRST.lnk" "$INSTDIR\README-FIR
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninstall.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go To StepMania web site.lnk" "http://www.stepmania.com"
 
-CreateShortCut "$INSTDIR\StepMania.lnk" "$INSTDIR\Program\stepmania.exe"
+CreateShortCut "$INSTDIR\${PRODUCT_NAME}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 
 # We want to delete a few old desktop icons, since they weren't being
 # uninstalled correctly during alpha 2 and 3.  They were installed in
@@ -373,13 +373,14 @@ RMDir "$INSTDIR\Docs"
 ; Don't delete high scores.
 Delete "$INSTDIR\Data\Translation.dat"
 Delete "$INSTDIR\Data\AI.ini"
-;Delete "$INSTDIR\Data\stepmania.ini"
+; Don't delete setting files so that they remain after an upgrade.
+;Delete "$INSTDIR\Data\${PRODUCT_NAME}.ini"
 ;Delete "$INSTDIR\Data\Keymaps.ini"
 ;Delete "$INSTDIR\Data\GamePrefs.ini"
 Delete "$INSTDIR\Data\splash.png"
 RMDir "$INSTDIR\Data"
 
-Delete "$INSTDIR\Program\stepmania.exe"
+Delete "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 Delete "$INSTDIR\Program\smpackage.exe"
 Delete "$INSTDIR\Program\StepMania.vdi"
 Delete "$INSTDIR\Program\msvcr70.dll"
@@ -404,7 +405,7 @@ Delete "$INSTDIR\NEWS"
 Delete "$INSTDIR\log.txt"
 Delete "$INSTDIR\info.txt"
 Delete "$INSTDIR\crashinfo.txt"
-Delete "$INSTDIR\StepMania.lnk"
+Delete "$INSTDIR\${PRODUCT_NAME}.lnk"
 
 RMDir "$INSTDIR"	; will delete only if empty
 
