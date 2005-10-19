@@ -5,13 +5,13 @@
 #include "InputHandler.h"
 #include "RageThreads.h"
 
-class JoystickDevice;
+class Device;
 
 class InputHandler_Carbon : public InputHandler
 {
 private:
 	int mMasterPort;
-	std::vector<JoystickDevice *> mDevices;
+	std::vector<Device *> mDevices;
 	RageThread mInputThread;
 	RageSemaphore mSem;
 	void *mLoopRef;

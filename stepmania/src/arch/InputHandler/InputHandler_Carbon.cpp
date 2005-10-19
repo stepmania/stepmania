@@ -437,22 +437,200 @@ int JoystickDevice::AssignJoystickIDs( int startID )
 	return mSticks.size();
 }
 
+class KeyboardDevice : public Device
+{
+private:
+	hash_map<int, int> mMapping;
+	
+protected:
+	bool AddLogicalDevice( int usagePage, int usage );
+	void AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef dict );
+	void Open();
+	
+	friend void InputHandler_Carbon::QueueCallBack(void *, int, void *, void *);
+};
+
+bool KeyboardDevice::AddLogicalDevice( int usagePage, int usage )
+{
+	return usagePage == kHIDPage_GenericDesktop && usage == kHIDUsage_GD_Keyboard;
+}
+
+void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFDictionaryRef dict )
+{
+	if( usagePage != kHIDPage_KeyboardOrKeypad )
+		return;
+	
+	if( usage < kHIDUsage_KeyboardA )
+		return;
+
+	if( usage <= kHIDUsage_KeyboardZ )
+	{
+		mMapping[cookie] = usage - kHIDUsage_KeyboardA + KEY_Ca;
+		return;
+	}
+	
+	// KEY_C0 = KEY_C1 - 1, kHIDUsage_Keyboard0 = kHIDUsage_Keyboard9 + 1
+	if( usage <= kHIDUsage_Keyboard9 )
+	{
+		mMapping[cookie] = usage - kHIDUsage_Keyboard1 + KEY_C1;
+		return;
+	}
+	
+	if( usage >= kHIDUsage_KeyboardF1 && usage <= kHIDUsage_KeyboardF12 )
+	{
+		mMapping[cookie] = usage - kHIDUsage_KeyboardF1 + KEY_F1;
+		return;
+	}
+	
+	if( usage >= kHIDUsage_KeyboardF13 && usage <= kHIDUsage_KeyboardF16 )
+	{
+		mMapping[cookie] = usage - kHIDUsage_KeyboardF13 + KEY_F13;
+		return;
+	}
+	
+	// keypad 0 is again backward
+	if( usage >= kHIDUsage_Keypad1 && usage <= kHIDUsage_Keypad9 )
+	{
+		mMapping[cookie] = usage - kHIDUsage_Keypad1 + KEY_KP_C1;
+		return;
+	}
+	
+#define OTHER(n) (KEY_OTHER_0 + (n))
+	
+	// [0, 8]
+	if( usage >= kHIDUsage_KeyboardF17 && usage <= kHIDUsage_KeyboardExecute )
+	{
+		mMapping[cookie] = usage - kHIDUsage_KeyboardF17 + OTHER(0);
+		return;
+	}
+	
+	// [9, 19]
+	if( usage >= kHIDUsage_KeyboardSelect && usage <= kHIDUsage_KeyboardVolumeDown )
+	{
+		mMapping[cookie] = usage - kHIDUsage_KeyboardSelect + OTHER(9);
+		return;
+	}
+	
+	// [10, 31]
+	if( usage >= kHIDUsage_KeypadEqualSignAS400 && usage <= kHIDUsage_KeyboardCancel )
+	{
+		mMapping[cookie] = usage - kHIDUsage_KeypadEqualSignAS400 + OTHER(10);
+		return;
+	}
+
+	// [32, 37] 
+	// XXX kHIDUsage_KeyboardClearOrAgain
+	if( usage >= kHIDUsage_KeyboardSeparator && usage <= kHIDUsage_KeyboardExSel )
+	{
+		mMapping[cookie] = usage - kHIDUsage_KeyboardSeparator + OTHER(32);
+		return;
+	}
+	
+#define X(x,y) case x: mMapping[cookie] = y; return
+	
+	// Time for the special cases
+	switch( usage )
+	{
+		X( kHIDUsage_Keyboard0, KEY_C0 );
+		X( kHIDUsage_Keypad0, KEY_KP_C0 );
+		X( kHIDUsage_KeyboardReturnOrEnter, KEY_ENTER );
+		X( kHIDUsage_KeyboardEscape, KEY_ESC );
+		X( kHIDUsage_KeyboardDeleteOrBackspace, KEY_BACK );
+		X( kHIDUsage_KeyboardTab, KEY_TAB );
+		X( kHIDUsage_KeyboardSpacebar, KEY_SPACE );
+		X( kHIDUsage_KeyboardHyphen, KEY_HYPHEN );
+		X( kHIDUsage_KeyboardEqualSign, KEY_EQUAL );
+		X( kHIDUsage_KeyboardOpenBracket, KEY_LBRACKET );
+		X( kHIDUsage_KeyboardCloseBracket, KEY_RBRACKET );
+		X( kHIDUsage_KeyboardBackslash, KEY_BACKSLASH );
+		X( kHIDUsage_KeyboardNonUSPound, KEY_HASH );
+		X( kHIDUsage_KeyboardSemicolon, KEY_SEMICOLON );
+		X( kHIDUsage_KeyboardQuote, KEY_SQUOTE );
+		X( kHIDUsage_KeyboardGraveAccentAndTilde, KEY_ACCENT );
+		X( kHIDUsage_KeyboardComma, KEY_COMMA );
+		X( kHIDUsage_KeyboardPeriod, KEY_PERIOD );
+		X( kHIDUsage_KeyboardSlash, KEY_SLASH );
+		X( kHIDUsage_KeyboardCapsLock, KEY_CAPSLOCK );
+		X( kHIDUsage_KeyboardPrintScreen, KEY_PRTSC );
+		X( kHIDUsage_KeyboardScrollLock, KEY_SCRLLOCK );
+		X( kHIDUsage_KeyboardPause, OTHER(0) );
+		X( kHIDUsage_KeyboardInsert, KEY_INSERT );
+		X( kHIDUsage_KeyboardHome, KEY_HOME );
+		X( kHIDUsage_KeyboardPageUp, KEY_PGUP );
+		X( kHIDUsage_KeyboardDeleteForward, KEY_DEL );
+		X( kHIDUsage_KeyboardEnd, KEY_END );
+		X( kHIDUsage_KeyboardPageDown, KEY_PGDN );
+		X( kHIDUsage_KeyboardRightArrow, KEY_RIGHT );
+		X( kHIDUsage_KeyboardLeftArrow, KEY_LEFT );
+		X( kHIDUsage_KeyboardDownArrow, KEY_DOWN );
+		X( kHIDUsage_KeyboardUpArrow, KEY_UP );
+		X( kHIDUsage_KeypadNumLock, KEY_NUMLOCK );
+		X( kHIDUsage_KeypadSlash, KEY_KP_SLASH );
+		X( kHIDUsage_KeypadEqualSign, KEY_KP_EQUAL );
+		X( kHIDUsage_KeypadAsterisk, KEY_KP_ASTERISK );
+		X( kHIDUsage_KeypadHyphen, KEY_KP_HYPHEN );
+		X( kHIDUsage_KeypadPlus, KEY_KP_PLUS );
+		X( kHIDUsage_KeypadEnter, KEY_KP_ENTER );
+		X( kHIDUsage_KeypadPeriod, KEY_KP_PERIOD );
+		X( kHIDUsage_KeyboardNonUSBackslash, OTHER(38) );
+		X( kHIDUsage_KeyboardApplication, OTHER(39) );
+		X( kHIDUsage_KeyboardClear, KEY_NUMLOCK ); // XXX
+		X( kHIDUsage_KeyboardHelp, KEY_INSERT );
+		X( kHIDUsage_KeyboardMenu, KEY_MENU );
+		// XXX kHIDUsage_KeyboardLockingCapsLock
+		// XXX kHIDUsage_KeyboardLockingNumLock
+		// XXX kHIDUsage_KeyboardLockingScrollLock
+		X( kHIDUsage_KeypadComma, KEY_KP_PERIOD ); // XXX
+		X( kHIDUsage_KeyboardReturn, KEY_ENTER );
+		X( kHIDUsage_KeyboardPrior, OTHER(40) );
+		X( kHIDUsage_KeyboardLeftControl, KEY_LCTRL );
+		X( kHIDUsage_KeyboardLeftShift, KEY_LSHIFT );
+		X( kHIDUsage_KeyboardLeftAlt, KEY_LALT );
+		X( kHIDUsage_KeyboardLeftGUI, KEY_LMETA ); // XXX GUI??
+		X( kHIDUsage_KeyboardRightControl, KEY_RCTRL );
+		X( kHIDUsage_KeyboardRightShift, KEY_RSHIFT );
+		X( kHIDUsage_KeyboardRightAlt, KEY_RALT );
+		X( kHIDUsage_KeyboardRightGUI, KEY_RMETA ); // XXX
+	}
+#undef X
+#undef OTHER
+}
+
+void KeyboardDevice::Open()
+{
+	for (hash_map<int, int>::const_iterator i = mMapping.begin(); i != mMapping.end(); ++i)
+		AddElementToQueue( i->first );
+}
+
 void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon, void *sender )
 {
 	// The result seems useless as you can't actually return anything...
-	// refcon is the JoystickDevice number
+	// refcon is the Device number
 
 	RageTimer now;
 	InputHandler_Carbon *This = (InputHandler_Carbon *)target;
 	IOHIDQueueInterface **queue = (IOHIDQueueInterface **)sender;
 	IOHIDEventStruct event;
 	AbsoluteTime zeroTime = { 0, 0 };
-	JoystickDevice *jd = This->mDevices[int( refcon )];
-
+	Device *dev = This->mDevices[int( refcon )];
+	KeyboardDevice *kd = dynamic_cast<KeyboardDevice *>(dev);
+	JoystickDevice *jd = dynamic_cast<JoystickDevice *>(dev);
+	
+	ASSERT(kd || jd );
+	
 	while( (result = CALL(queue, getNextEvent, &event, zeroTime, 0)) == kIOReturnSuccess )
 	{
 		int cookie = int( event.elementCookie );
 		int value = event.value;
+		
+		if( kd )
+		{
+			hash_map<int, int>::const_iterator iter = kd->mMapping.find( cookie );
+			
+			if( iter != kd->mMapping.end() )
+				This->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, iter->second, value, now), value );
+			return;
+		}
 
 		for( int i = 0; i < jd->NumberOfSticks(); ++i )
 		{
@@ -511,7 +689,7 @@ int InputHandler_Carbon::Run(void *data)
 	int n = 0;
 	
 	CFRetain(loopRef);
-	FOREACH( JoystickDevice *, This->mDevices, i )
+	FOREACH( Device *, This->mDevices, i )
 		(*i)->StartQueue( loopRef, InputHandler_Carbon::QueueCallBack, This, n++ );
 	This->mLoopRef = loopRef;
 	
@@ -530,7 +708,7 @@ InputHandler_Carbon::~InputHandler_Carbon()
 {
 	CFRunLoopStop( CFRunLoopRef(mLoopRef) );
 	mInputThread.Wait();
-	FOREACH( JoystickDevice *, mDevices, i )
+	FOREACH( Device *, mDevices, i )
 		delete *i;
 	if( mMasterPort )
 		mach_port_deallocate( mach_task_self(), mMasterPort );
@@ -609,6 +787,8 @@ InputHandler_Carbon::InputHandler_Carbon() : mSem("Input thread started")
 	}
 	IOObjectRelease( iter );
 	
+	// XXX now find the keyboards
+	
 	mInputThread.SetName( "Input thread." );
 	mInputThread.Create(InputHandler_Carbon::Run, this);
 	// Wait for the run loop to start before returning.
@@ -617,9 +797,19 @@ InputHandler_Carbon::InputHandler_Carbon() : mSem("Input thread started")
 
 void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<CString>& desc )
 {
-	FOREACH_CONST( JoystickDevice *, mDevices, i )
+#if 0 // not yet
+	dev.push_back(DEVICE_KEYBOARD);
+	desc.push_back("Keyboard");
+#endif
+	FOREACH_CONST( Device *, mDevices, i )
 	{
-		const JoystickDevice *jd = *i;
+		const JoystickDevice *jd = dynamic_cast<const JoystickDevice *>(*i);
+		
+		/* This could be break since right now KeyboardDevices follow
+		 * the JoystickDevices, but that is brittle.
+		 */
+		if (!jd)
+			continue;
 		
 		for( int j = 0; j < jd->NumberOfSticks(); ++j )
 		{
