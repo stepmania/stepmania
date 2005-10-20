@@ -180,7 +180,7 @@ CString MovieDecoder_Theora::Open( CString sFile )
 		sOutput += ", Format: YUV422";
 		break;
 	case OC_PF_444:
-		m_InputPixFmt = avcodec::PIX_FMT_YUV422P;
+		m_InputPixFmt = avcodec::PIX_FMT_YUV444P;
 		sOutput += ", Format: YUV444";
 		break;
 	default:
