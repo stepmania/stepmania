@@ -169,6 +169,10 @@ MovieTexture = arch/MovieTexture/MovieTexture.cpp arch/MovieTexture/MovieTexture
 		arch/MovieTexture/MovieTexture_Generic.cpp arch/MovieTexture/MovieTexture_Generic.h \
 		arch/MovieTexture/MovieTexture_Null.cpp arch/MovieTexture/MovieTexture_Null.h
 
+if HAVE_THEORA
+MovieTexture += arch/MovieTexture/MovieTexture_Theora.cpp arch/MovieTexture/MovieTexture_Theora.h
+endif
+
 if HAVE_FFMPEG
 MovieTexture += arch/MovieTexture/MovieTexture_FFMpeg.cpp arch/MovieTexture/MovieTexture_FFMpeg.h
 endif

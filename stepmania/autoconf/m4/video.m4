@@ -34,4 +34,29 @@ if test "$have_libavformat" = "yes" -a "$have_libavcodec" = "yes"; then
 fi
 AM_CONDITIONAL(HAVE_FFMPEG, test "$have_ffmpeg" = "yes")
 
+
+
+AC_ARG_WITH(theora, AC_HELP_STRING([--without-theora], [Disable Theora support]), with_theora=$enableval, with_theora=yes)
+
+have_vorbis=no
+if test "$with_theora" = "yes"; then
+	AC_CHECK_LIB(ogg, ogg_stream_init, have_libogg=yes, have_libogg=no)
+	AC_CHECK_LIB(theora, theora_decode_init, have_libtheora=yes, have_libtheora=no, [-logg])
+	if test "$have_libtheora" = "yes" -a "$have_libogg" = "yes" -a "$have_ffmpeg" = "yes"; then
+		have_theora=yes
+		LIBS="$LIBS -ltheora -logg"
+		AC_DEFINE(HAVE_THEORA, 1, [Theora support available])
+	else
+		echo Not all theora libraries found.
+
+		# Special note for unintuitive requirement (for color space conversion).
+		if test "$have_libtheora" = "yes" -a "$have_libogg" = "yes"; then
+			echo Ogg Theora support requires ffmpeg.
+		fi
+	fi
+
+fi
+
+AM_CONDITIONAL(HAVE_THEORA, test "$have_theora" = "yes" )
+
 ])
