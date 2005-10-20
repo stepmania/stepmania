@@ -12,11 +12,7 @@
 
 namespace avcodec
 {
-#if defined(WIN32)
-#include "ffmpeg/include/ffmpeg/avformat.h"
-#else
 #include <ffmpeg/avformat.h>
-#endif
 };
 
 #if defined(_MSC_VER) && !defined(XBOX)
