@@ -194,6 +194,9 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 	{
 		Driver = DriversToTry[i];
 		LOG->Trace("Initializing driver: %s", Driver.c_str());
+#ifdef USE_MOVIE_TEXTURE_THEORA
+		if( !Driver.CompareNoCase("Theora") ) ret = new MovieTexture_Theora(ID);
+#endif
 #ifdef USE_MOVIE_TEXTURE_DSHOW
 		if( !Driver.CompareNoCase("DShow") ) ret = new MovieTexture_DShow(ID);
 #endif

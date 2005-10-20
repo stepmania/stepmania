@@ -26,7 +26,7 @@
 #endif
 
 /* MovieTexture drivers */
-#define DEFAULT_MOVIE_DRIVER_LIST "FFMpeg,DShow,Null"
+#define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,DShow,Null"
 
 /* RageSoundDrivers */
 #define DEFAULT_SOUND_DRIVER_LIST "ALSA,DirectSound,ALSA-sw,DirectSound-sw,CoreAudio,OSS,QT1,WaveOut,Null"
