@@ -3,6 +3,7 @@
 
 #if !defined(XBOX)
 #define HAVE_FFMPEG
+#define HAVE_CRYPTOPP
 #endif
 
 #if defined(__MINGW32__)
@@ -135,13 +136,21 @@ inline int lrintf( float f )
 
 /* We implement the crash handler interface (though that interface isn't completely
  * uniform across platforms yet). */
-#if defined(_XBOX)
-	// no crash handler on Xbox
-#else
-#  define CRASH_HANDLER
+#if !defined(_XBOX)
+#define CRASH_HANDLER
 #endif
 
 #define ENDIAN_LITTLE
+
+#if defined(_XBOX)
+#if defined(_DEBUG)
+#define XIPH_LIB_DIR "vorbis/xbox/debug/"
+#else
+#define XIPH_LIB_DIR "vorbis/xbox/release/"
+#endif
+#else
+#define XIPH_LIB_DIR "vorbis/win32/"
+#endif
 
 #if defined(XBOX)
 #include "ArchUtils/Xbox/arch_setup.h"
