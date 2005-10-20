@@ -26,7 +26,6 @@
 #if defined(LINUX)
 #define HAVE_UNIX	// Here just to be explicit.
 #define HAVE_LINUXKERNEL
-#define HAVE_CRYPTOPP
 #endif
 
 #endif
