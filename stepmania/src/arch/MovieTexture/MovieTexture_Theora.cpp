@@ -169,6 +169,9 @@ CString MovieDecoder_Theora::Open( CString sFile )
 	CString sOutput = ssprintf( "MovieDecoder_Theora: Opened \"%s\".  Serial: 0x%08lx, FPS: %.02f",
 		m_File.GetPath().c_str(), m_OggStream.serialno, GetFrameDuration() );
 
+#if 1
+	m_InputPixFmt = avcodec::PIX_FMT_YUV420P;
+#else
 	switch( m_TheoraInfo.pixelformat )
 	{
 	case OC_PF_420:
@@ -186,6 +189,7 @@ CString MovieDecoder_Theora::Open( CString sFile )
 	default:
 		return ssprintf( "error opening %s: unsupported pixel format %i", m_File.GetPath().c_str(), m_TheoraInfo.pixelformat );
 	}
+#endif
 	LOG->Trace( "%s", sOutput.c_str() );
 
 	return CString();
