@@ -24,7 +24,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0\include&quot;"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0\include&quot;;ffmpeg\include"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="3"
@@ -99,7 +99,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				FavorSizeOrSpeed="2"
 				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0\include&quot;"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0\include&quot;;ffmpeg\include"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,WINDOWS,RELEASE"
 				StringPooling="TRUE"
 				MinimalRebuild="FALSE"
@@ -171,7 +171,7 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/EHa"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0\include&quot;"
+				AdditionalIncludeDirectories=".;vorbis;libjpeg;&quot;lua-5.0\include&quot;;ffmpeg\include"
 				PreprocessorDefinitions="WIN32,_DEBUG,_WINDOWS,WINDOWS,DEBUG"
 				ExceptionHandling="FALSE"
 				BasicRuntimeChecks="0"
@@ -1336,6 +1336,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_FFMpeg.h">
+					</File>
+					<File
+						RelativePath="arch\MovieTexture\MovieTexture_Generic.cpp">
+					</File>
+					<File
+						RelativePath="arch\MovieTexture\MovieTexture_Generic.h">
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_Null.cpp">
