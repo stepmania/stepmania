@@ -20,14 +20,14 @@ namespace avcodec
 	#pragma comment(lib, "ffmpeg/lib/avformat.lib")
 #endif
 
-struct AVPixelFormat_t
+static struct AVPixelFormat_t
 {
 	int bpp;
 	int masks[4];
 	avcodec::PixelFormat pf;
 	bool bHighColor;
 	bool bByteSwapOnLittleEndian;
-} static AVPixelFormats[] = {
+} AVPixelFormats[] = {
 	{ 
 		/* This format is really ARGB, and is affected by endianness, unlike PIX_FMT_RGB24
 		 * and PIX_FMT_BGR24. */
