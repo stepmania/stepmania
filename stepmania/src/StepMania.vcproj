@@ -1349,6 +1349,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_Null.h">
 					</File>
+					<File
+						RelativePath="arch\MovieTexture\MovieTexture_Theora.cpp">
+					</File>
+					<File
+						RelativePath="arch\MovieTexture\MovieTexture_Theora.h">
+					</File>
 				</Filter>
 				<Filter
 					Name="LowLevelWindow"
