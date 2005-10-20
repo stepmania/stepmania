@@ -916,6 +916,31 @@ public:
 		glEnableClientState(GL_NORMAL_ARRAY);
 		glNormalPointer(GL_FLOAT, 0, &m_vNormal[0]);
 
+		if( meshInfo.m_bNeedsTextureMatrixScale )
+		{
+			// Kill the texture translation.
+			// XXX: Change me to scale the translation by the TextureTranslationScale of the first vertex.
+			RageMatrix mat;
+			glGetFloatv( GL_TEXTURE_MATRIX , (float*)mat );
+
+			/*
+			for( int i=0; i<4; i++ )
+			{
+				CString s;
+				for( int j=0; j<4; j++ )
+					s += ssprintf( "%f ", mat.m[i][j] );
+				LOG->Trace( s );
+			}
+			*/
+
+			mat.m[3][0] = 0;
+			mat.m[3][1] = 0;
+			mat.m[3][2] = 0;
+
+			glMatrixMode( GL_TEXTURE );
+			glLoadMatrixf( (const float*)mat );
+		}
+
 		glDrawElements( 
 			GL_TRIANGLES, 
 			meshInfo.iTriangleCount*3, 
@@ -1173,7 +1198,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 
 	if( meshInfo.m_bNeedsTextureMatrixScale )
 	{
-		if( g_bTextureMatrixShader != 0 )
+		if( false )	//g_bTextureMatrixShader != 0 )
 		{
 			/* If we're using texture matrix scales, set up that buffer, too, and enable the
 			 * vertex shader.  This shader doesn't support all OpenGL state, so only enable it
