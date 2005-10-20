@@ -167,7 +167,7 @@ CString MovieDecoder_Theora::Open( CString sFile )
 	theora_decode_init( &m_TheoraState, &m_TheoraInfo );
 
 	CString sOutput = ssprintf( "MovieDecoder_Theora: Opened \"%s\".  Serial: 0x%08lx, FPS: %.02f",
-		m_File.GetPath().c_str(), m_OggStream.serialno, GetFrameDuration() );
+		m_File.GetPath().c_str(), m_OggStream.serialno, 1/GetFrameDuration() );
 
 #if 1
 	m_InputPixFmt = avcodec::PIX_FMT_YUV420P;
