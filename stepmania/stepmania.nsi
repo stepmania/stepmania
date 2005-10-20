@@ -223,11 +223,10 @@ File "Data\splash.png"
 
 SetOutPath "$INSTDIR\Program"
 File "Program\${PRODUCT_NAME}.exe"
-File "Program\stepmania.vdi"
+File "Program\${PRODUCT_NAME}.vdi"
 File "Program\smpackage.exe"
 File "Program\msvcr70.dll"
 File "Program\msvcp70.dll"
-File "Program\msvcp71.dll"
 File "Program\jpeg.dll"
 File "Program\avcodec.dll"
 File "Program\avformat.dll"
@@ -371,7 +370,7 @@ Delete "$INSTDIR\Docs\ChangeLog.txt"
 RMDir "$INSTDIR\Docs"
 
 ; Don't delete high scores.
-Delete "$INSTDIR\Data\Translation.dat"
+Delete "$INSTDIR\Data\Translations.xml"
 Delete "$INSTDIR\Data\AI.ini"
 ; Don't delete setting files so that they remain after an upgrade.
 ;Delete "$INSTDIR\Data\${PRODUCT_NAME}.ini"
