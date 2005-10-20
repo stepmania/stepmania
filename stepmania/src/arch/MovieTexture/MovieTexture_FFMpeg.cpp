@@ -291,10 +291,6 @@ int MovieDecoder_FFMpeg::GetFrame()
 
 float MovieDecoder_FFMpeg::GetTimestamp() const
 {
-	/* The first frame always has a timestamp of 0. */
-	if( m_iFrameNumber == 0 )
-		return 0;
-
 	return m_fTimestamp - m_fTimestampOffset;
 }
 
