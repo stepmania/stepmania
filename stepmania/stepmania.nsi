@@ -261,7 +261,7 @@ File "NEWS"
 ;IfFileExists "$INSTDIR\Data\${PRODUCT_NAME}.ini" stepmania_ini_present 
 ;Goto stepmania_ini_not_present
 ;stepmania_ini_present:
-;MessageBox MB_YESNO|MB_ICONQUESTION "Your settings from the previous installation of StepMania were found.$\nWould you like to keep these settings?" IDNO stepmania_ini_not_present
+;MessageBox MB_YESNO|MB_ICONQUESTION "Your settings from the previous installation of ${PRODUCT_ID} were found.$\nWould you like to keep these settings?" IDNO stepmania_ini_not_present
 ;Delete "$INSTDIR\Data\${PRODUCT_NAME}.ini"
 ;stepmania_ini_not_present:
 ;; Move ini into Data\
@@ -272,12 +272,12 @@ SetShellVarContext current  # 	'all' doesn't work on Win9x
 CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
 CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open StepMania Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open ${PRODUCT_NAME} Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Machine Statistics.lnk" "$INSTDIR\Data\MachineProfile\Stats.xml"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\StepMania Tools and Package Exporter.lnk" "$INSTDIR\Program\smpackage.exe"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Tools and Package Exporter.lnk" "$INSTDIR\Program\smpackage.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README-FIRST.lnk" "$INSTDIR\README-FIRST.html"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninstall.exe"
-CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go To StepMania web site.lnk" "http://www.stepmania.com"
+CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go To ${PRODUCT_NAME} web site.lnk" "${PRODUCT_URL}"
 
 CreateShortCut "$INSTDIR\${PRODUCT_NAME}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 
@@ -300,13 +300,13 @@ SectionEnd ; end of default section
 ;
 ; begin uninstall settings/section
 ;
-UninstallText "This will uninstall StepMania from your system.$\nAny add-on packs or songs you have installed will not be deleted."
+UninstallText "This will uninstall ${PRODUCT_ID} from your system.$\nAny add-on packs or songs you have installed will not be deleted."
 
 Section Uninstall
 
 ; add delete commands to delete whatever files/registry keys/etc you installed here.
 Delete "$INSTDIR\uninstall.exe"
-DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\StepMania\${PRODUCT_ID}"
+DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_NAME}\${PRODUCT_ID}"
 DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}"
 
 DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command"
@@ -382,7 +382,7 @@ RMDir "$INSTDIR\Data"
 
 Delete "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 Delete "$INSTDIR\Program\smpackage.exe"
-Delete "$INSTDIR\Program\StepMania.vdi"
+Delete "$INSTDIR\Program\${PRODUCT_NAME}.vdi"
 Delete "$INSTDIR\Program\msvcr70.dll"
 Delete "$INSTDIR\Program\msvcp70.dll"
 Delete "$INSTDIR\Program\jpeg.dll"
