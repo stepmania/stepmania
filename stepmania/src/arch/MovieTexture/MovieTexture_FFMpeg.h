@@ -8,10 +8,14 @@
 #include <inttypes.h>
 #endif
 
+namespace avcodec { enum PixelFormat; }
+
 class MovieTexture_FFMpeg: public MovieTexture_Generic
 {
 public:
 	MovieTexture_FFMpeg( RageTextureID ID );
+
+	static RageSurface *AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, avcodec::PixelFormat &iAVTexfmt );
 };
 #define USE_MOVIE_TEXTURE_FFMPEG
 

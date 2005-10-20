@@ -132,6 +132,36 @@ static int FindCompatibleAVFormat( bool bHighColor )
 	return -1;
 }
 
+RageSurface *MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, avcodec::PixelFormat &iAVTexfmt )
+{
+	FixLilEndian();
+
+	bool bPreferHighColor = (TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32);
+	int iAVTexfmtIndex = FindCompatibleAVFormat( bPreferHighColor );
+
+	if( iAVTexfmtIndex == -1 )
+		iAVTexfmtIndex = FindCompatibleAVFormat( !bPreferHighColor );
+
+	if( iAVTexfmtIndex == -1 )
+	{
+		/* No dice.  Use the first avcodec format of the preferred bit depth,
+		 * and let the display system convert. */
+		for( iAVTexfmtIndex = 0; AVPixelFormats[iAVTexfmtIndex].bpp; ++iAVTexfmtIndex )
+			if( AVPixelFormats[iAVTexfmtIndex].bHighColor == bPreferHighColor )
+				break;
+		ASSERT( AVPixelFormats[iAVTexfmtIndex].bpp );
+	}
+	
+	const AVPixelFormat_t *pfd = &AVPixelFormats[iAVTexfmtIndex];
+	iAVTexfmt = pfd->pf;
+
+	LOG->Trace( "Texture pixel format: %i (%ibpp, %08x %08x %08x %08x)", iAVTexfmt,
+		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
+
+	return CreateSurface( iTextureWidth, iTextureHeight, pfd->bpp,
+		pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
+}
+
 class MovieDecoder_FFMpeg: public MovieDecoder
 {
 public:
@@ -162,7 +192,7 @@ private:
 
 	avcodec::AVStream *m_pStream;
 	avcodec::AVFrame m_Frame;
-	int m_AVTexfmt; /* AVPixelFormat_t of m_img */
+	avcodec::PixelFormat m_AVTexfmt; /* PixelFormat of output surface */
 
 	float m_fPTS;
 	avcodec::AVFormatContext *m_fctx;
@@ -391,7 +421,7 @@ void MovieDecoder_FFMpeg::ConvertToSurface( RageSurface *pSurface ) const
 	pict.data[0] = (unsigned char *) pSurface->pixels;
 	pict.linesize[0] = pSurface->pitch;
 
-	avcodec::img_convert( &pict, AVPixelFormats[m_AVTexfmt].pf,
+	avcodec::img_convert( &pict, m_AVTexfmt,
 			(avcodec::AVPicture *) &m_Frame, m_pStream->codec.pix_fmt, 
 			m_pStream->codec.width, m_pStream->codec.height );
 }
@@ -559,29 +589,7 @@ void MovieDecoder_FFMpeg::Close()
 
 RageSurface *MovieDecoder_FFMpeg::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight )
 {
-	bool bPreferHighColor = (TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32);
-	m_AVTexfmt = FindCompatibleAVFormat( bPreferHighColor );
-
-	if( m_AVTexfmt == -1 )
-		m_AVTexfmt = FindCompatibleAVFormat( !bPreferHighColor );
-
-	if( m_AVTexfmt == -1 )
-	{
-		/* No dice.  Use the first avcodec format of the preferred bit depth,
-		 * and let the display system convert. */
-		for( m_AVTexfmt = 0; AVPixelFormats[m_AVTexfmt].bpp; ++m_AVTexfmt )
-			if( AVPixelFormats[m_AVTexfmt].bHighColor == bPreferHighColor )
-				break;
-		ASSERT( AVPixelFormats[m_AVTexfmt].bpp );
-	}
-	
-	const AVPixelFormat_t *pfd = &AVPixelFormats[m_AVTexfmt];
-
-	LOG->Trace( "Texture pixel format: %i (%ibpp, %08x %08x %08x %08x)", m_AVTexfmt,
-		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
-
-	return CreateSurface( iTextureWidth, iTextureHeight, pfd->bpp,
-		pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
+	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, m_AVTexfmt );
 }
 
 MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
