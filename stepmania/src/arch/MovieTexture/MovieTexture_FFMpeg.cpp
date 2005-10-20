@@ -128,7 +128,7 @@ static int FindCompatibleAVFormat( bool bHighColor )
 	return -1;
 }
 
-RageSurface *MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, avcodec::PixelFormat &iAVTexfmt )
+RageSurface *MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, int &iAVTexfmt )
 {
 	FixLilEndian();
 
@@ -581,7 +581,7 @@ void MovieDecoder_FFMpeg::Close()
 
 RageSurface *MovieDecoder_FFMpeg::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight )
 {
-	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, m_AVTexfmt );
+	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, (int&) m_AVTexfmt );
 }
 
 MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):

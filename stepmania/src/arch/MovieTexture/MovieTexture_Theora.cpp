@@ -220,7 +220,7 @@ int MovieDecoder_Theora::GetFrame()
 
 RageSurface *MovieDecoder_Theora::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight )
 {
-	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, m_OutputPixFmt );
+	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, (int&) m_OutputPixFmt );
 }
 
 void MovieDecoder_Theora::ConvertToSurface( RageSurface *pSurface ) const
