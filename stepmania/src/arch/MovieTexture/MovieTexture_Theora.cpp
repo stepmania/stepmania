@@ -231,9 +231,9 @@ void MovieDecoder_Theora::ConvertToSurface( RageSurface *pSurface ) const
 	/* XXX: non-zero offset untested */
 	int iUVOffsetX = m_TheoraInfo.offset_x;
 	int iUVOffsetY = m_TheoraInfo.offset_y;
-	if( m_InputPixFmt == OC_PF_420 || m_InputPixFmt == OC_PF_422 )
+	if( m_InputPixFmt == avcodec::PIX_FMT_YUV420P || avcodec::PIX_FMT_YUV422P )
 		iUVOffsetX /= 2;
-	if( m_InputPixFmt == OC_PF_420 )
+	if( m_InputPixFmt == avcodec::PIX_FMT_YUV420P )
 		iUVOffsetY /= 2;
 
 	avcodec::AVPicture YUVIn;
