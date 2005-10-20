@@ -1474,6 +1474,14 @@ SOURCE=.\arch\MovieTexture\MovieTexture_FFMpeg.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\arch\MovieTexture\MovieTexture_Generic.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\MovieTexture\MovieTexture_Generic.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\arch\MovieTexture\MovieTexture_Null.cpp
 # End Source File
 # Begin Source File
