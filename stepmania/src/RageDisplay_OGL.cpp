@@ -1059,7 +1059,7 @@ void RageCompiledGeometryHWOGL::UploadData()
 //		AssertNoGLError();
 
 
-	if( m_bNeedsTextureMatrixScale )
+	if( m_bAnyNeedsTextureMatrixScale )
 	{
 		GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
 		GLExt.glBufferDataARB( 
@@ -1171,19 +1171,28 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		glDisableClientState(GL_NORMAL_ARRAY);
 	}
 
-	if( m_bNeedsTextureMatrixScale && g_bTextureMatrixShader != 0 )
+	if( meshInfo.m_bNeedsTextureMatrixScale )
 	{
-		/* If we're using texture matrix scales, set up that buffer, too, and enable the
-		 * vertex shader.  This shader doesn't support all OpenGL state, so only enable it
-		 * if we're using it. */
-		GLExt.glEnableVertexAttribArrayARB( ATTRIB_TEXTURE_MATRIX_SCALE );
-		AssertNoGLError();
-		GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
-		AssertNoGLError();
-		GLExt.glVertexAttribPointerARB( ATTRIB_TEXTURE_MATRIX_SCALE, 2, GL_FLOAT, false, 0, NULL );
-		AssertNoGLError();
+		if( false ) //g_bTextureMatrixShader != 0 )
+		{
+			/* If we're using texture matrix scales, set up that buffer, too, and enable the
+			 * vertex shader.  This shader doesn't support all OpenGL state, so only enable it
+			 * if we're using it. */
+			GLExt.glEnableVertexAttribArrayARB( ATTRIB_TEXTURE_MATRIX_SCALE );
+			AssertNoGLError();
+			GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
+			AssertNoGLError();
+			GLExt.glVertexAttribPointerARB( ATTRIB_TEXTURE_MATRIX_SCALE, 2, GL_FLOAT, false, 0, NULL );
+			AssertNoGLError();
 
-		GLExt.glUseProgramObjectARB( g_bTextureMatrixShader );
+			GLExt.glUseProgramObjectARB( g_bTextureMatrixShader );
+		}
+		else
+		{
+			// Approximate by applying the texture scale of the first vertex to the whole mesh.
+			glMatrixMode( GL_TEXTURE );
+			glScalef( 0, 0, 0 );
+		}
 	}
 
 	GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
@@ -1202,7 +1211,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		BUFFER_OFFSET(meshInfo.iTriangleStart*sizeof(msTriangle)) );
 	AssertNoGLError();
 
-	if( m_bNeedsTextureMatrixScale && g_bTextureMatrixShader != 0 )
+	if( meshInfo.m_bNeedsTextureMatrixScale && g_bTextureMatrixShader != 0 )
 	{
 		GLExt.glDisableVertexAttribArrayARB( ATTRIB_TEXTURE_MATRIX_SCALE );
 		GLExt.glUseProgramObjectARB( 0 );

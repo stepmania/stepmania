@@ -33,10 +33,11 @@ protected:
 		int iVertexCount;
 		int iTriangleStart;
 		int iTriangleCount;
+		bool m_bNeedsTextureMatrixScale;
 	};
 	vector<MeshInfo>	m_vMeshInfo;
 	bool m_bNeedsNormals;
-	bool m_bNeedsTextureMatrixScale;
+	bool m_bAnyNeedsTextureMatrixScale;
 };
 
 enum PixelFormat

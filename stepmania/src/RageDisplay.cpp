@@ -784,9 +784,10 @@ void RageCompiledGeometry::Set( const vector<msMesh> &vMeshes, bool bNeedsNormal
 {
 	m_bNeedsNormals = bNeedsNormals;
 
-	m_bNeedsTextureMatrixScale = false;
 	size_t totalVerts = 0;
 	size_t totalTriangles = 0;
+
+	m_bAnyNeedsTextureMatrixScale = false;
 
 	m_vMeshInfo.resize( vMeshes.size() );
 	for( unsigned i=0; i<vMeshes.size(); i++ )
@@ -796,6 +797,7 @@ void RageCompiledGeometry::Set( const vector<msMesh> &vMeshes, bool bNeedsNormal
 		const vector<msTriangle> &Triangles = mesh.Triangles;
 
 		MeshInfo& meshInfo = m_vMeshInfo[i];
+		meshInfo.m_bNeedsTextureMatrixScale = false;
 
 		meshInfo.iVertexStart = totalVerts;
 		meshInfo.iVertexCount = Vertices.size();
@@ -806,8 +808,13 @@ void RageCompiledGeometry::Set( const vector<msMesh> &vMeshes, bool bNeedsNormal
 		totalTriangles += Triangles.size();
 
 		for( unsigned j = 0; j < Vertices.size(); ++j )
+		{
 			if( Vertices[j].TextureMatrixScale.x != 1.0f || Vertices[j].TextureMatrixScale.y != 1.0f )
-				m_bNeedsTextureMatrixScale = true;
+			{
+				meshInfo.m_bNeedsTextureMatrixScale = true;
+				m_bAnyNeedsTextureMatrixScale = true;
+			}
+		}
 	}
 
 	this->Allocate( vMeshes );
