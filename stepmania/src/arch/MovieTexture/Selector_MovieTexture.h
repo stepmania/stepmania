@@ -8,6 +8,10 @@
 #include "MovieTexture_DShow.h"
 #endif
 
+#ifdef HAVE_THEORA
+#include "MovieTexture_Theora.h"
+#endif
+
 #ifdef HAVE_FFMPEG
 #include "MovieTexture_FFMpeg.h"
 #endif
