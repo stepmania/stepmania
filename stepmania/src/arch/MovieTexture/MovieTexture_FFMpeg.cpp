@@ -112,7 +112,7 @@ static void FixLilEndian()
 #endif
 }
 
-static int FindCompatibleAVFormat( PixelFormat &pixfmt, bool bHighColor )
+static int FindCompatibleAVFormat( bool bHighColor )
 {
 	for( int i = 0; AVPixelFormats[i].bpp; ++i )
 	{
@@ -120,7 +120,7 @@ static int FindCompatibleAVFormat( PixelFormat &pixfmt, bool bHighColor )
 		if( fmt.bHighColor != bHighColor )
 			continue;
 
-		pixfmt = DISPLAY->FindPixelFormat( fmt.bpp,
+		PixelFormat pixfmt = DISPLAY->FindPixelFormat( fmt.bpp,
 				fmt.masks[0],
 				fmt.masks[1],
 				fmt.masks[2],
@@ -142,11 +142,27 @@ class FFMpeg_Helper
 public:
 	FFMpeg_Helper();
 	~FFMpeg_Helper();
-	int GetFrame();
-	void Init();
 
 	CString Open( CString sFile );
 	void Close();
+
+	/* Decode a frame internally. */
+	int GetFrame();
+
+	/* Convert the current frame to an RGB surface.  This may be skipped
+	 * in frame skip mode. */
+	void ConvertToSurface( RageSurface *pSurface ) const;
+
+	int GetWidth() const { return m_stream->codec.width; }
+	int GetHeight() const { return m_stream->codec.height; }
+
+	/* Create a surface.  This must be compatible with ConvertToSurface,
+	 * should be a surface which is realtime-compatible with DISPLAY, and
+	 * should attempt to obey TEXTUREMAN->GetPrefs().m_iMovieColorDepth.
+	 * The given size will usually be the next power of two higher than
+	 * GetWidth/GetHeight, but on systems with limited texture resolution,
+	 * may be smaller. */
+	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight );
 
 	/* Get the timestamp, in seconds, when the current frame should be
 	 * displayed.  The first frame will always be 0. */
@@ -155,10 +171,13 @@ public:
 	/* Get the duration, in seconds, to display the current frame. */
 	float GetFrameDuration() const;
 
-	avcodec::AVStream *m_stream;
-	avcodec::AVFrame frame;
+	bool SkippableFrame() const { return (m_stream->codec.frame_number % 2) == 0; }
 
 private:
+	avcodec::AVStream *m_stream;
+	avcodec::AVFrame frame;
+	int m_AVTexfmt; /* AVPixelFormat_t of m_img */
+
 	float m_fPTS;
 	avcodec::AVFormatContext *m_fctx;
 	bool m_bGetNextTimestamp;
@@ -174,6 +193,7 @@ private:
 	 * 2 = EOF from ReadPacket and DecodePacket */
 	int m_iEOF;
 
+	void Init();
 	int ReadPacket();
 	int DecodePacket();
 	float m_fTimestampOffset;
@@ -381,19 +401,26 @@ int FFMpeg_Helper::DecodePacket()
 	return 0; /* packet done */
 }
 
+/* Convert the frame from the native (typically YUV) internal format to
+ * our RGB RageSurface. */
 void MovieTexture_FFMpeg::ConvertFrame()
 {
 	ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting ) );
 
-	avcodec::AVPicture pict;
-	pict.data[0] = (unsigned char *) m_pSurface->pixels;
-	pict.linesize[0] = m_pSurface->pitch;
-
-	avcodec::img_convert( &pict, AVPixelFormats[m_AVTexfmt].pf,
-			(avcodec::AVPicture *) &m_pDecoder->frame, m_pDecoder->m_stream->codec.pix_fmt, 
-			m_pDecoder->m_stream->codec.width, m_pDecoder->m_stream->codec.height );
+	m_pDecoder->ConvertToSurface( m_pSurface );
 
 	m_ImageWaiting = FRAME_WAITING;
+}
+
+void FFMpeg_Helper::ConvertToSurface( RageSurface *pSurface ) const
+{
+	avcodec::AVPicture pict;
+	pict.data[0] = (unsigned char *) pSurface->pixels;
+	pict.linesize[0] = pSurface->pitch;
+
+	avcodec::img_convert( &pict, AVPixelFormats[m_AVTexfmt].pf,
+			(avcodec::AVPicture *) &frame, m_stream->codec.pix_fmt, 
+			m_stream->codec.width, m_stream->codec.height );
 }
 
 static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
@@ -431,12 +458,9 @@ MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
 
 CString MovieTexture_FFMpeg::Init()
 {
-	CString sError = CreateDecoder();
+	CString sError = m_pDecoder->Open( GetID().filename );
 	if( sError != "" )
 		return sError;
-
-	LOG->Trace( "Bitrate: %i", m_pDecoder->m_stream->codec.bit_rate );
-	LOG->Trace( "Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(m_pDecoder->m_stream->codec.pix_fmt) );
 
 	/* Decode one frame, to guarantee that the texture is drawn when this function returns. */
 	int ret = m_pDecoder->GetFrame();
@@ -454,7 +478,6 @@ CString MovieTexture_FFMpeg::Init()
 	LOG->Trace( "Resolution: %ix%i (%ix%i, %ix%i)",
 			m_iSourceWidth, m_iSourceHeight,
 			m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight );
-	LOG->Trace( "Texture pixel format: %i", m_AVTexfmt );
 
 	CreateFrameRects();
 
@@ -471,7 +494,8 @@ CString MovieTexture_FFMpeg::Init()
 MovieTexture_FFMpeg::~MovieTexture_FFMpeg()
 {
 	StopThread();
-	DestroyDecoder();
+	if( m_pDecoder )
+		m_pDecoder->Close();
 	DestroyTexture();
 
 	delete m_pDecoder;
@@ -601,10 +625,10 @@ CString FFMpeg_Helper::Open( CString sFile )
 	ret = avcodec::avcodec_open( &stream->codec, codec );
 	if ( ret < 0 )
 		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't open codec \"%s\"", sFile.c_str(), codec->name) );
-
-	/* Don't set this until we successfully open stream->codec, so we don't try to close it
-	 * on an exception unless it was really opened. */
 	m_stream = stream;
+
+	LOG->Trace( "Bitrate: %i", m_stream->codec.bit_rate );
+	LOG->Trace( "Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(m_stream->codec.pix_fmt) );
 
 	return CString();
 }
@@ -622,18 +646,8 @@ void FFMpeg_Helper::Close()
 		avcodec::av_close_input_file( m_fctx );
 		m_fctx = NULL;
 	}
-}
 
-CString MovieTexture_FFMpeg::CreateDecoder()
-{
-	return m_pDecoder->Open( GetID().filename );
-}
-
-
-/* Delete the decoder.  The decoding thread must be stopped. */
-void MovieTexture_FFMpeg::DestroyDecoder()
-{
-	m_pDecoder->Close();
+	Init();
 }
 
 /* Delete the surface and texture.  The decoding thread must be stopped, and this
@@ -658,40 +672,31 @@ void MovieTexture_FFMpeg::CreateTexture()
 
 	CHECKPOINT;
 
-	RageTextureID actualID = GetID();
-	actualID.iAlphaBits = 0;
+	m_iSourceWidth  = m_pDecoder->GetWidth();
+	m_iSourceHeight = m_pDecoder->GetHeight();
 
 	/* Cap the max texture size to the hardware max. */
-	actualID.iMaxSize = min( actualID.iMaxSize, DISPLAY->GetMaxTextureSize() );
-
-	m_iSourceWidth  = m_pDecoder->m_stream->codec.width;
-	m_iSourceHeight = m_pDecoder->m_stream->codec.height;
-
-	/* image size cannot exceed max size */
-	m_iImageWidth = min( m_iSourceWidth, actualID.iMaxSize );
-	m_iImageHeight = min( m_iSourceHeight, actualID.iMaxSize );
+	int iMaxSize = min( GetID().iMaxSize, DISPLAY->GetMaxTextureSize() );
+	m_iImageWidth = min( m_iSourceWidth, iMaxSize );
+	m_iImageHeight = min( m_iSourceHeight, iMaxSize );
 
 	/* Texture dimensions need to be a power of two; jump to the next. */
 	m_iTextureWidth = power_of_two( m_iImageWidth );
 	m_iTextureHeight = power_of_two( m_iImageHeight );
 
-	/* Bogus assignment to shut gcc up. */
-    PixelFormat pixfmt = PixelFormat_RGBA8;
-	bool bPreferHighColor = (TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32);
-	m_AVTexfmt = FindCompatibleAVFormat( pixfmt, bPreferHighColor );
+	if( m_pSurface == NULL )
+		m_pSurface = m_pDecoder->CreateCompatibleSurface( m_iTextureWidth, m_iTextureHeight );
 
-	if( m_AVTexfmt == -1 )
-		m_AVTexfmt = FindCompatibleAVFormat( pixfmt, !bPreferHighColor );
+	PixelFormat pixfmt = DISPLAY->FindPixelFormat( m_pSurface->format->BitsPerPixel,
+			m_pSurface->format->Mask[0],
+			m_pSurface->format->Mask[1],
+			m_pSurface->format->Mask[2],
+			m_pSurface->format->Mask[3] );
 
-	if( m_AVTexfmt == -1 )
+	if( pixfmt == PixelFormat_INVALID )
 	{
-		/* No dice.  Use the first avcodec format of the preferred bit depth,
-		 * and let the display system convert. */
-		for( m_AVTexfmt = 0; AVPixelFormats[m_AVTexfmt].bpp; ++m_AVTexfmt )
-			if( AVPixelFormats[m_AVTexfmt].bHighColor == bPreferHighColor )
-				break;
-		ASSERT( AVPixelFormats[m_AVTexfmt].bpp );
-
+		/* We weren't given a natively-supported pixel format.  Pick a supported
+		 * one.  This is a fallback case, and implies a second conversion. */
 		switch( TEXTUREMAN->GetPrefs().m_iMovieColorDepth )
 		{
 		default:
@@ -716,20 +721,37 @@ void MovieTexture_FFMpeg::CreateTexture()
 			break;
 		}
 	}
-	
-	if( m_pSurface == NULL )
-	{
-		const AVPixelFormat_t *pfd = &AVPixelFormats[m_AVTexfmt];
-
-		LOG->Trace("format %i, %08x %08x %08x %08x",
-			pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3]);
-
-		m_pSurface = CreateSurface( m_iTextureWidth, m_iTextureHeight, pfd->bpp,
-			pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
-	}
 
     m_uTexHandle = DISPLAY->CreateTexture( pixfmt, m_pSurface, false );
 }
+
+RageSurface *FFMpeg_Helper::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight )
+{
+	bool bPreferHighColor = (TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32);
+	m_AVTexfmt = FindCompatibleAVFormat( bPreferHighColor );
+
+	if( m_AVTexfmt == -1 )
+		m_AVTexfmt = FindCompatibleAVFormat( !bPreferHighColor );
+
+	if( m_AVTexfmt == -1 )
+	{
+		/* No dice.  Use the first avcodec format of the preferred bit depth,
+		 * and let the display system convert. */
+		for( m_AVTexfmt = 0; AVPixelFormats[m_AVTexfmt].bpp; ++m_AVTexfmt )
+			if( AVPixelFormats[m_AVTexfmt].bHighColor == bPreferHighColor )
+				break;
+		ASSERT( AVPixelFormats[m_AVTexfmt].bpp );
+	}
+	
+	const AVPixelFormat_t *pfd = &AVPixelFormats[m_AVTexfmt];
+
+	LOG->Trace( "Texture pixel format: %i (%ibpp, %08x %08x %08x %08x)", m_AVTexfmt,
+		pfd->bpp, pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
+
+	return CreateSurface( iTextureWidth, iTextureHeight, pfd->bpp,
+		pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
+}
+
 
 /* Handle decoding for a frame.  Return true if a frame was decoded, false if not
  * (due to pause, EOF, etc).  If true is returned, we'll be in FRAME_DECODED. */
@@ -768,12 +790,11 @@ bool MovieTexture_FFMpeg::DecodeFrame()
 		float fDelay = m_pDecoder->GetFrameDuration();
 
 		/* Restart. */
-		DestroyDecoder();
-		CString sError = CreateDecoder();
+		m_pDecoder->Close();
+		CString sError = m_pDecoder->Open( GetID().filename );
 		if( sError != "" )
 			RageException::Throw( "Error rewinding stream %s: %s", GetID().filename.c_str(), sError.c_str() );
 
-		m_pDecoder->Init();
 		m_fClock = -fDelay;
 		return false;
 	}
@@ -838,7 +859,7 @@ float MovieTexture_FFMpeg::CheckFrameTime()
 		m_bFrameSkipMode = true;
 	}
 
-	if( m_bFrameSkipMode && m_pDecoder->m_stream->codec.frame_number % 2 )
+	if( m_bFrameSkipMode && m_pDecoder->SkippableFrame() )
 		return -1; /* skip */
 	
 	return 0;

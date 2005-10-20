@@ -62,7 +62,6 @@ private:
 	unsigned m_uTexHandle;
 
 	RageSurface *m_pSurface;
-	int m_AVTexfmt; /* AVPixelFormat_t of m_img */
 
 	RageSemaphore m_BufferFinished;
 
@@ -77,9 +76,7 @@ private:
 	void ConvertFrame();
 	void UpdateFrame();
 
-	CString CreateDecoder();
 	void CreateTexture();
-	void DestroyDecoder();
 	void DestroyTexture();
 	void StartThread();
 	void StopThread();
