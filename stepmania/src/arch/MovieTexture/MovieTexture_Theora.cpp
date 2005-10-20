@@ -271,7 +271,7 @@ float MovieDecoder_Theora::GetTimestamp() const
 
 float MovieDecoder_Theora::GetFrameDuration() const
 {
-	return (float) m_TheoraInfo.fps_numerator / m_TheoraInfo.fps_denominator;
+	return (float) m_TheoraInfo.fps_denominator / m_TheoraInfo.fps_numerator;
 }
 
 bool MovieDecoder_Theora::SkippableFrame() const
