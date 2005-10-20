@@ -18,7 +18,6 @@
 #define HAVE_DIRECTX
 #define HAVE_FFMPEG
 #define HAVE_WIN32 // XXX: Better name for this API?
-#define HAVE_CRYPTOPP
 #endif
 #if defined(_XBOX)
 #define HAVE_DIRECTX
