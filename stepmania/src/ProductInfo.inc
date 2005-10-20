@@ -9,3 +9,5 @@
 ; String used for the install directory and registry locations
 ; Official releases = "StepMania"; intermediate releases = "StepMania CVS".
 !define PRODUCT_ID "StepMania CVS"
+
+!define PRODUCT_URL "http://www.stepmania.com"
