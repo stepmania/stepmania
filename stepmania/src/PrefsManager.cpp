@@ -13,7 +13,7 @@
 #include "RageLog.h"
 
 #define DEFAULTS_INI_PATH	"Data/Defaults.ini"		// these can be overridden
-#define STEPMANIA_INI_PATH	"Data/StepMania.ini"	// overlay on Defaults.ini, contains the user's choices
+#define STEPMANIA_INI_PATH	"Data/" PRODUCT_NAME ".ini"	// overlay on Defaults.ini, contains the user's choices
 #define STATIC_INI_PATH		"Data/Static.ini"		// overlay on the 2 above, can't be overridden
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
