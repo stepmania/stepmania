@@ -11,8 +11,8 @@
 #include <theora/theora.h>
 
 #if defined(_MSC_VER)
-#pragma comment(lib, XIPH_LIB_DIR "vorbis_static.lib")
-#pragma comment(lib, XIPH_LIB_DIR "theora_static.lib")
+#pragma comment(lib, OGG_LIB_DIR "vorbis_static.lib")
+#pragma comment(lib, OGG_LIB_DIR "theora_static.lib")
 #endif
 
 namespace avcodec
