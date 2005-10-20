@@ -1,19 +1,14 @@
 #include "global.h"
 #include "MovieTexture_FFMpeg.h"
 
+#include "RageDisplay.h"
 #include "RageLog.h"
 #include "RageTextureManager.h"
 #include "RageUtil.h"
-#include "RageTimer.h"
 #include "RageFile.h"
 #include "RageSurface.h"
-#include "PrefsManager.h"
 
 #include <cerrno>
-
-#if defined(WIN32) && !defined(XBOX)
-#include <windows.h>
-#endif
 
 namespace avcodec
 {
@@ -36,7 +31,7 @@ struct AVPixelFormat_t
 	avcodec::PixelFormat pf;
 	bool bHighColor;
 	bool bByteSwapOnLittleEndian;
-} AVPixelFormats[] = {
+} static AVPixelFormats[] = {
 	{ 
 		/* This format is really ARGB, and is affected by endianness, unlike PIX_FMT_RGB24
 		 * and PIX_FMT_BGR24. */
@@ -137,90 +132,79 @@ static int FindCompatibleAVFormat( bool bHighColor )
 	return -1;
 }
 
-class FFMpeg_Helper
+class MovieDecoder_FFMpeg: public MovieDecoder
 {
 public:
-	FFMpeg_Helper();
-	~FFMpeg_Helper();
+	MovieDecoder_FFMpeg();
+	~MovieDecoder_FFMpeg();
 
 	CString Open( CString sFile );
 	void Close();
 
-	/* Decode a frame internally. */
 	int GetFrame();
 
-	/* Convert the current frame to an RGB surface.  This may be skipped
-	 * in frame skip mode. */
 	void ConvertToSurface( RageSurface *pSurface ) const;
 
-	int GetWidth() const { return m_stream->codec.width; }
-	int GetHeight() const { return m_stream->codec.height; }
+	int GetWidth() const { return m_pStream->codec.width; }
+	int GetHeight() const { return m_pStream->codec.height; }
 
-	/* Create a surface.  This must be compatible with ConvertToSurface,
-	 * should be a surface which is realtime-compatible with DISPLAY, and
-	 * should attempt to obey TEXTUREMAN->GetPrefs().m_iMovieColorDepth.
-	 * The given size will usually be the next power of two higher than
-	 * GetWidth/GetHeight, but on systems with limited texture resolution,
-	 * may be smaller. */
 	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight );
 
-	/* Get the timestamp, in seconds, when the current frame should be
-	 * displayed.  The first frame will always be 0. */
 	float GetTimestamp() const;
-
-	/* Get the duration, in seconds, to display the current frame. */
 	float GetFrameDuration() const;
 
-	bool SkippableFrame() const { return (m_stream->codec.frame_number % 2) == 0; }
+	bool SkippableFrame() const { return (m_pStream->codec.frame_number % 2) == 0; }
 
 private:
-	avcodec::AVStream *m_stream;
-	avcodec::AVFrame frame;
+	void Init();
+	int ReadPacket();
+	int DecodePacket();
+
+	avcodec::AVStream *m_pStream;
+	avcodec::AVFrame m_Frame;
 	int m_AVTexfmt; /* AVPixelFormat_t of m_img */
 
 	float m_fPTS;
 	avcodec::AVFormatContext *m_fctx;
 	bool m_bGetNextTimestamp;
-	float m_fCurrentTimestamp;
+	float m_fTimestamp;
+	float m_fTimestampOffset;
 	float m_fLastFrameDelay;
 	int m_iFrameNumber;
 
-	avcodec::AVPacket pkt;
+	avcodec::AVPacket m_Packet;
 	int m_iCurrentPacketOffset;
 
 	/* 0 = no EOF
 	 * 1 = EOF from ReadPacket
 	 * 2 = EOF from ReadPacket and DecodePacket */
 	int m_iEOF;
-
-	void Init();
-	int ReadPacket();
-	int DecodePacket();
-	float m_fTimestampOffset;
 };
 
-FFMpeg_Helper::FFMpeg_Helper()
+MovieDecoder_FFMpeg::MovieDecoder_FFMpeg()
 {
+	FixLilEndian();
+
 	m_fctx = NULL;
-	m_stream = NULL;
+	m_pStream = NULL;
 	m_iCurrentPacketOffset = -1;
 	Init();
 }
 
-FFMpeg_Helper::~FFMpeg_Helper()
+MovieDecoder_FFMpeg::~MovieDecoder_FFMpeg()
 {
 	if( m_iCurrentPacketOffset != -1 )
 	{
-		avcodec::av_free_packet( &pkt );
+		avcodec::av_free_packet( &m_Packet );
 		m_iCurrentPacketOffset = -1;
 	}
 }
 
-void FFMpeg_Helper::Init()
+void MovieDecoder_FFMpeg::Init()
 {
 	m_iEOF = 0;
 	m_bGetNextTimestamp = true;
-	m_fCurrentTimestamp = 0;
+	m_fTimestamp = 0;
 	m_fLastFrameDelay = 0;
 	m_fPTS = -1;
 	m_iFrameNumber = -1; /* decode one frame and you're on the 0th */
@@ -228,13 +212,13 @@ void FFMpeg_Helper::Init()
 
 	if( m_iCurrentPacketOffset != -1 )
 	{
-		avcodec::av_free_packet( &pkt );
+		avcodec::av_free_packet( &m_Packet );
 		m_iCurrentPacketOffset = -1;
 	}
 }
 
 /* Read until we get a frame, EOF or error.  Return -1 on error, 0 on EOF, 1 if we have a frame. */
-int FFMpeg_Helper::GetFrame()
+int MovieDecoder_FFMpeg::GetFrame()
 {
 	while( 1 )
 	{
@@ -264,7 +248,7 @@ int FFMpeg_Helper::GetFrame()
 		 * I-frame with the timestamp of the next P-frame, not its own timestamp, and we
 		 * want to ignore that and look at the next B-frame.) */
 		const float expect = m_fLastFrameDelay;
-		const float actual = m_fCurrentTimestamp;
+		const float actual = m_fTimestamp;
 		if( actual - expect > 0 )
 		{
 			LOG->Trace("Expect %f, got %f -> %f", expect, actual, actual - expect );
@@ -275,22 +259,22 @@ int FFMpeg_Helper::GetFrame()
 	return 1;
 }
 
-float FFMpeg_Helper::GetTimestamp() const
+float MovieDecoder_FFMpeg::GetTimestamp() const
 {
 	/* The first frame always has a timestamp of 0. */
 	if( m_iFrameNumber == 0 )
 		return 0;
 
-	return m_fCurrentTimestamp - m_fTimestampOffset;
+	return m_fTimestamp - m_fTimestampOffset;
 }
 
-float FFMpeg_Helper::GetFrameDuration() const
+float MovieDecoder_FFMpeg::GetFrameDuration() const
 {
 	return m_fLastFrameDelay;
 }
 
 /* Read a packet.  Return -1 on error, 0 on EOF, 1 on OK. */
-int FFMpeg_Helper::ReadPacket()
+int MovieDecoder_FFMpeg::ReadPacket()
 {
 	if( m_iEOF > 0 )
 		return 0;
@@ -301,45 +285,45 @@ int FFMpeg_Helper::ReadPacket()
 		if( m_iCurrentPacketOffset != -1 )
 		{
 			m_iCurrentPacketOffset = -1;
-			avcodec::av_free_packet( &pkt );
+			avcodec::av_free_packet( &m_Packet );
 		}
 
-		int ret = avcodec::av_read_frame( m_fctx, &pkt );
+		int ret = avcodec::av_read_frame( m_fctx, &m_Packet );
 		/* XXX: why is avformat returning AVERROR_NOMEM on EOF? */
 		if( ret < 0 )
 		{
 			/* EOF. */
 			m_iEOF = 1;
-			pkt.size = 0;
+			m_Packet.size = 0;
 			
 			return 0;
 		}
 
-		if( pkt.stream_index == m_stream->index )
+		if( m_Packet.stream_index == m_pStream->index )
 		{
 			m_iCurrentPacketOffset = 0;
 			return 1;
 		}
 
 		/* It's not for the video stream; ignore it. */
-		avcodec::av_free_packet( &pkt );
+		avcodec::av_free_packet( &m_Packet );
 	}
 }
 
 
 /* Decode data from the current packet.  Return -1 on error, 0 if the packet is finished,
  * and 1 if we have a frame (we may have more data in the packet). */
-int FFMpeg_Helper::DecodePacket()
+int MovieDecoder_FFMpeg::DecodePacket()
 {
 	if( m_iEOF == 0 && m_iCurrentPacketOffset == -1 )
 		return 0; /* no packet */
 
-	while( m_iEOF == 1 || (m_iEOF == 0 && m_iCurrentPacketOffset < pkt.size) )
+	while( m_iEOF == 1 || (m_iEOF == 0 && m_iCurrentPacketOffset < m_Packet.size) )
 	{
 		if( m_bGetNextTimestamp )
 		{
-			if (pkt.dts != int64_t(AV_NOPTS_VALUE))
-				m_fPTS = (float)pkt.dts / AV_TIME_BASE;
+			if (m_Packet.dts != int64_t(AV_NOPTS_VALUE))
+				m_fPTS = (float)m_Packet.dts / AV_TIME_BASE;
 			else
 				m_fPTS = -1;
 			m_bGetNextTimestamp = false;
@@ -349,18 +333,18 @@ int FFMpeg_Helper::DecodePacket()
 		 * to avcodec_decode_video in this case is crashing it.  However, passing an empty
 		 * packet is normal with B-frames, to flush.  This may be unnecessary in newer
 		 * versions of avcodec, but I'm waiting until a new stable release to upgrade. */
-		if( pkt.size == 0 && m_iFrameNumber == -1 )
+		if( m_Packet.size == 0 && m_iFrameNumber == -1 )
 			return 0; /* eof */
 
-		int got_frame;
+		int iGotFrame;
 		CHECKPOINT;
 		/* Hack: we need to send size = 0 to flush frames at the end, but we have
 		 * to give it a buffer to read from since it tries to read anyway. */
 		static uint8_t dummy[FF_INPUT_BUFFER_PADDING_SIZE] = { 0 };
 		int len = avcodec::avcodec_decode_video(
-				&m_stream->codec, 
-				&frame, &got_frame,
-				pkt.size? pkt.data:dummy, pkt.size );
+				&m_pStream->codec, 
+				&m_Frame, &iGotFrame,
+				m_Packet.size? m_Packet.data:dummy, m_Packet.size );
 		CHECKPOINT;
 
 		if( len < 0 )
@@ -371,7 +355,7 @@ int FFMpeg_Helper::DecodePacket()
 
 		m_iCurrentPacketOffset += len;
 
-		if( !got_frame )
+		if( !iGotFrame )
 		{
 			if( m_iEOF == 1 )
 				m_iEOF = 2;
@@ -382,18 +366,18 @@ int FFMpeg_Helper::DecodePacket()
 
 		if( m_fPTS != -1 )
 		{
-			m_fCurrentTimestamp = m_fPTS;
+			m_fTimestamp = m_fPTS;
 		}
 		else
 		{
 			/* If the timestamp is zero, this frame is to be played at the
 			 * time of the last frame plus the length of the last frame. */
-			m_fCurrentTimestamp += m_fLastFrameDelay;
+			m_fTimestamp += m_fLastFrameDelay;
 		}
 
 		/* Length of this frame: */
-		m_fLastFrameDelay = (float)m_stream->codec.frame_rate_base / m_stream->codec.frame_rate;
-		m_fLastFrameDelay += frame.repeat_pict * (m_fLastFrameDelay * 0.5f);
+		m_fLastFrameDelay = (float)m_pStream->codec.frame_rate_base / m_pStream->codec.frame_rate;
+		m_fLastFrameDelay += m_Frame.repeat_pict * (m_fLastFrameDelay * 0.5f);
 
 		return 1;
 	}
@@ -401,26 +385,15 @@ int FFMpeg_Helper::DecodePacket()
 	return 0; /* packet done */
 }
 
-/* Convert the frame from the native (typically YUV) internal format to
- * our RGB RageSurface. */
-void MovieTexture_FFMpeg::ConvertFrame()
-{
-	ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting ) );
-
-	m_pDecoder->ConvertToSurface( m_pSurface );
-
-	m_ImageWaiting = FRAME_WAITING;
-}
-
-void FFMpeg_Helper::ConvertToSurface( RageSurface *pSurface ) const
+void MovieDecoder_FFMpeg::ConvertToSurface( RageSurface *pSurface ) const
 {
 	avcodec::AVPicture pict;
 	pict.data[0] = (unsigned char *) pSurface->pixels;
 	pict.linesize[0] = pSurface->pitch;
 
 	avcodec::img_convert( &pict, AVPixelFormats[m_AVTexfmt].pf,
-			(avcodec::AVPicture *) &frame, m_stream->codec.pix_fmt, 
-			m_stream->codec.width, m_stream->codec.height );
+			(avcodec::AVPicture *) &m_Frame, m_pStream->codec.pix_fmt, 
+			m_pStream->codec.width, m_pStream->codec.height );
 }
 
 static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
@@ -432,73 +405,6 @@ static avcodec::AVStream *FindVideoStream( avcodec::AVFormatContext *m_fctx )
 			return enc;
 	}
 	return NULL;
-}
-
-MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
-	RageMovieTexture( ID ),
-	m_BufferFinished( "BufferFinished", 0 )
-{
-	LOG->Trace( "MovieTexture_FFMpeg::MovieTexture_FFMpeg(%s)", ID.filename.c_str() );
-
-	FixLilEndian();
-
-	m_pDecoder = new FFMpeg_Helper;
-
-	m_uTexHandle = 0;
-	m_bLoop = true;
-    m_State = DECODER_QUIT; /* it's quit until we call StartThread */
-	m_pSurface = NULL;
-	m_ImageWaiting = FRAME_NONE;
-	m_fRate = 1;
-	m_bWantRewind = false;
-	m_fClock = 0;
-	m_bFrameSkipMode = false;
-	m_bThreaded = PREFSMAN->m_bThreadedMovieDecode.Get();
-}
-
-CString MovieTexture_FFMpeg::Init()
-{
-	CString sError = m_pDecoder->Open( GetID().filename );
-	if( sError != "" )
-		return sError;
-
-	/* Decode one frame, to guarantee that the texture is drawn when this function returns. */
-	int ret = m_pDecoder->GetFrame();
-	if( ret == -1 )
-		return ssprintf( "%s: error getting first frame", GetID().filename.c_str() );
-	if( ret == 0 )
-	{
-		/* There's nothing there. */
-		return ssprintf( "%s: EOF getting first frame", GetID().filename.c_str() );
-	}
-
-	m_ImageWaiting = FRAME_DECODED;
-
-	CreateTexture();
-	LOG->Trace( "Resolution: %ix%i (%ix%i, %ix%i)",
-			m_iSourceWidth, m_iSourceHeight,
-			m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight );
-
-	CreateFrameRects();
-
-	ConvertFrame();
-	UpdateFrame();
-
-	CHECKPOINT;
-
-	StartThread();
-
-	return CString();
-}
-
-MovieTexture_FFMpeg::~MovieTexture_FFMpeg()
-{
-	StopThread();
-	if( m_pDecoder )
-		m_pDecoder->Close();
-	DestroyTexture();
-
-	delete m_pDecoder;
 }
 
 
@@ -592,7 +498,7 @@ static avcodec::URLProtocol RageProtocol =
 	NULL
 };
 
-CString FFMpeg_Helper::Open( CString sFile )
+CString MovieDecoder_FFMpeg::Open( CString sFile )
 {
 	static bool bDone = false;
 	if( !bDone )
@@ -625,20 +531,20 @@ CString FFMpeg_Helper::Open( CString sFile )
 	ret = avcodec::avcodec_open( &stream->codec, codec );
 	if ( ret < 0 )
 		return ssprintf( averr_ssprintf(ret, "AVCodec (%s): Couldn't open codec \"%s\"", sFile.c_str(), codec->name) );
-	m_stream = stream;
+	m_pStream = stream;
 
-	LOG->Trace( "Bitrate: %i", m_stream->codec.bit_rate );
-	LOG->Trace( "Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(m_stream->codec.pix_fmt) );
+	LOG->Trace( "Bitrate: %i", m_pStream->codec.bit_rate );
+	LOG->Trace( "Codec pixel format: %s", avcodec::avcodec_get_pix_fmt_name(m_pStream->codec.pix_fmt) );
 
 	return CString();
 }
 
-void FFMpeg_Helper::Close()
+void MovieDecoder_FFMpeg::Close()
 {
-	if( m_stream )
+	if( m_pStream )
 	{
-		avcodec::avcodec_close( &m_stream->codec );
-		m_stream = NULL;
+		avcodec::avcodec_close( &m_pStream->codec );
+		m_pStream = NULL;
 	}
 
 	if( m_fctx )
@@ -650,82 +556,8 @@ void FFMpeg_Helper::Close()
 	Init();
 }
 
-/* Delete the surface and texture.  The decoding thread must be stopped, and this
- * is normally done after destroying the decoder. */
-void MovieTexture_FFMpeg::DestroyTexture()
-{
-	delete m_pSurface;
-	m_pSurface = NULL;
 
-	if( m_uTexHandle )
-	{
-		DISPLAY->DeleteTexture( m_uTexHandle );
-		m_uTexHandle = 0;
-	}
-}
-
-
-void MovieTexture_FFMpeg::CreateTexture()
-{
-    if( m_uTexHandle )
-        return;
-
-	CHECKPOINT;
-
-	m_iSourceWidth  = m_pDecoder->GetWidth();
-	m_iSourceHeight = m_pDecoder->GetHeight();
-
-	/* Cap the max texture size to the hardware max. */
-	int iMaxSize = min( GetID().iMaxSize, DISPLAY->GetMaxTextureSize() );
-	m_iImageWidth = min( m_iSourceWidth, iMaxSize );
-	m_iImageHeight = min( m_iSourceHeight, iMaxSize );
-
-	/* Texture dimensions need to be a power of two; jump to the next. */
-	m_iTextureWidth = power_of_two( m_iImageWidth );
-	m_iTextureHeight = power_of_two( m_iImageHeight );
-
-	if( m_pSurface == NULL )
-		m_pSurface = m_pDecoder->CreateCompatibleSurface( m_iTextureWidth, m_iTextureHeight );
-
-	PixelFormat pixfmt = DISPLAY->FindPixelFormat( m_pSurface->format->BitsPerPixel,
-			m_pSurface->format->Mask[0],
-			m_pSurface->format->Mask[1],
-			m_pSurface->format->Mask[2],
-			m_pSurface->format->Mask[3] );
-
-	if( pixfmt == PixelFormat_INVALID )
-	{
-		/* We weren't given a natively-supported pixel format.  Pick a supported
-		 * one.  This is a fallback case, and implies a second conversion. */
-		switch( TEXTUREMAN->GetPrefs().m_iMovieColorDepth )
-		{
-		default:
-			ASSERT(0);
-		case 16:
-			if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB5) )
-				pixfmt = PixelFormat_RGB5;
-			else
-				pixfmt = PixelFormat_RGBA4;
-
-			break;
-
-		case 32:
-			if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB8) )
-				pixfmt = PixelFormat_RGB8;
-			else if( DISPLAY->SupportsTextureFormat(PixelFormat_RGBA8) )
-				pixfmt = PixelFormat_RGBA8;
-			else if( DISPLAY->SupportsTextureFormat(PixelFormat_RGB5) )
-				pixfmt = PixelFormat_RGB5;
-			else
-				pixfmt = PixelFormat_RGBA4;
-			break;
-		}
-	}
-
-    m_uTexHandle = DISPLAY->CreateTexture( pixfmt, m_pSurface, false );
-}
-
-RageSurface *FFMpeg_Helper::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight )
+RageSurface *MovieDecoder_FFMpeg::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight )
 {
 	bool bPreferHighColor = (TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32);
 	m_AVTexfmt = FindCompatibleAVFormat( bPreferHighColor );
@@ -752,313 +584,13 @@ RageSurface *FFMpeg_Helper::CreateCompatibleSurface( int iTextureWidth, int iTex
 		pfd->masks[0], pfd->masks[1], pfd->masks[2], pfd->masks[3] );
 }
 
-
-/* Handle decoding for a frame.  Return true if a frame was decoded, false if not
- * (due to pause, EOF, etc).  If true is returned, we'll be in FRAME_DECODED. */
-bool MovieTexture_FFMpeg::DecodeFrame()
+MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
+	MovieTexture_Generic( ID, new MovieDecoder_FFMpeg )
 {
-	ASSERT_M( m_ImageWaiting == FRAME_NONE, ssprintf("%i", m_ImageWaiting) );
-
-	if( m_State == DECODER_QUIT )
-		return false;
-	CHECKPOINT;
-
-	/* Read a frame. */
-	int ret = m_pDecoder->GetFrame();
-	if( ret == -1 )
-		return false;
-
-	if( m_bWantRewind && m_pDecoder->GetTimestamp() == 0 )
-		m_bWantRewind = false; /* ignore */
-
-	if( ret == 0 )
-	{
-		/* EOF. */
-		if( !m_bLoop )
-			return false;
-
-		LOG->Trace( "File \"%s\" looping", GetID().filename.c_str() );
-		m_bWantRewind = true;
-	}
-
-	if( m_bWantRewind )
-	{
-		m_bWantRewind = false;
-
-		/* When resetting the clock, set it back by the length of the last frame,
-		 * so it has a proper delay. */
-		float fDelay = m_pDecoder->GetFrameDuration();
-
-		/* Restart. */
-		m_pDecoder->Close();
-		CString sError = m_pDecoder->Open( GetID().filename );
-		if( sError != "" )
-			RageException::Throw( "Error rewinding stream %s: %s", GetID().filename.c_str(), sError.c_str() );
-
-		m_fClock = -fDelay;
-		return false;
-	}
-
-	/* We got a frame. */
-	m_ImageWaiting = FRAME_DECODED;
-
-	return true;
 }
 
 /*
- * Call when m_ImageWaiting == FRAME_DECODED.
- * Returns:
- *  == 0 if the currently decoded frame is ready to be displayed
- *   > 0 (seconds) if it's not yet time to display;
- *  == -1 if we're behind and the frame should be skipped
- */
-float MovieTexture_FFMpeg::CheckFrameTime()
-{
-	ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting) );
-
-	if( m_fRate == 0 )
-		return 1;	// "a long time until the next frame"
-
-	const float fOffset = (m_pDecoder->GetTimestamp() - m_fClock) / m_fRate;
-
-	/* If we're ahead, we're decoding too fast; delay. */
-	if( fOffset > 0.00001f )
-	{
-		if( m_bFrameSkipMode )
-		{
-			/* We're caught up; stop skipping frames. */
-			LOG->Trace( "stopped skipping frames" );
-			m_bFrameSkipMode = false;
-		}
-		return fOffset;
-	}
-
-	/*
-	 * We're behind by -Offset seconds.  
-	 *
-	 * If we're just slightly behind, don't worry about it; we'll simply
-	 * not sleep, so we'll move as fast as we can to catch up.
-	 *
-	 * If we're far behind, we're short on CPU.  Skip texture updates; this
-	 * is a big bottleneck on many systems.
-	 *
-	 * If we hit a threshold, start skipping frames via #1.  If we do that,
-	 * don't stop once we hit the threshold; keep doing it until we're fully
-	 * caught up.
-	 *
-	 * We should try to notice if we simply don't have enough CPU for the video;
-	 * it's better to just stay in frame skip mode than to enter and exit it
-	 * constantly, but we don't want to do that due to a single timing glitch.
-	 */
-	const float FrameSkipThreshold = 0.5f;
-
-	if( -fOffset >= FrameSkipThreshold && !m_bFrameSkipMode )
-	{
-		LOG->Trace( "(%s) Time is %f, and the movie is at %f.  Entering frame skip mode.",
-			GetID().filename.c_str(), m_fClock, m_pDecoder->GetTimestamp());
-		m_bFrameSkipMode = true;
-	}
-
-	if( m_bFrameSkipMode && m_pDecoder->SkippableFrame() )
-		return -1; /* skip */
-	
-	return 0;
-}
-
-void MovieTexture_FFMpeg::DiscardFrame()
-{
-	ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting) );
-	m_ImageWaiting = FRAME_NONE;
-}
-
-void MovieTexture_FFMpeg::DecoderThread()
-{
-#if defined(_WINDOWS)
-	/* Windows likes to boost priority when processes come out of a wait state.  We don't
-	 * want that, since it'll result in us having a small priority boost after each movie
-	 * frame, resulting in skips in the gameplay thread. */
-	if( !SetThreadPriorityBoost(GetCurrentThread(), TRUE) && GetLastError() != ERROR_CALL_NOT_IMPLEMENTED )
-		LOG->Warn( werr_ssprintf(GetLastError(), "SetThreadPriorityBoost failed") );
-#endif
-
-	CHECKPOINT;
-
-	while( m_State != DECODER_QUIT )
-	{
-		if( m_ImageWaiting == FRAME_NONE )
-			DecodeFrame();
-
-		/* If we still have no frame, we're at EOF and we didn't loop. */
-		if( m_ImageWaiting != FRAME_DECODED )
-		{
-			usleep( 10000 );
-			continue;
-		}
-
-		const float fTime = CheckFrameTime();
-		if( fTime == -1 )	// skip frame
-		{
-			DiscardFrame();
-		}
-		else if( fTime > 0 )		// not time to decode a new frame yet
-		{
-			/* This needs to be relatively short so that we wake up quickly 
-			 * from being paused or for changes in m_fRate. */
-			usleep( 10000 );
-		}
-		else // fTime == 0
-		{
-			{
-				/* The only reason m_BufferFinished might be non-zero right now (before
-				 * ConvertFrame()) is if we're quitting. */
-				int n = m_BufferFinished.GetValue();
-				ASSERT_M( n == 0 || m_State == DECODER_QUIT, ssprintf("%i, %i", n, m_State) );
-			}
-			ConvertFrame();
-
-			/* We just went into FRAME_WAITING.  Don't actually check; the main thread
-			 * will change us back to FRAME_NONE without locking, and poke m_BufferFinished.
-			 * Don't time out on this; if a new screen has started loading, this might not
-			 * return for a while. */
-			m_BufferFinished.Wait( false );
-
-			/* If the frame wasn't used, then we must be shutting down. */
-			ASSERT_M( m_ImageWaiting == FRAME_NONE || m_State == DECODER_QUIT, ssprintf("%i, %i", m_ImageWaiting, m_State) );
-		}
-	}
-	CHECKPOINT;
-}
-
-void MovieTexture_FFMpeg::Update(float fDeltaTime)
-{
-	/* We might need to decode more than one frame per update.  However, there
-	 * have been bugs in ffmpeg that cause it to not handle EOF properly, which
-	 * could make this never return, so let's play it safe. */
-	int iMax = 4;
-	while( --iMax )
-	{
-		if( !m_bThreaded )
-		{
-			/* If we don't have a frame decoded, decode one. */
-			if( m_ImageWaiting == FRAME_NONE )
-				DecodeFrame();
-
-			/* If we have a frame decoded, see if it's time to display it. */
-			if( m_ImageWaiting == FRAME_DECODED )
-			{
-				float fTime = CheckFrameTime();
-				if( fTime > 0 )
-					return;
-				else if( fTime == -1 )
-					DiscardFrame();
-				else
-					ConvertFrame();
-			}
-		}
-
-		/* Note that if there's an image waiting, we *must* signal m_BufferFinished, or
-		* the decoder thread may sit around waiting for it, even though Pause and Play
-		* calls, causing the clock to keep running. */
-		if( m_ImageWaiting != FRAME_WAITING )
-			return;
-		CHECKPOINT;
-
-		UpdateFrame();
-		
-		if( m_bThreaded )
-			m_BufferFinished.Post();
-	}
-
-	LOG->MapLog( "ffmpeg_looping", "MovieTexture_FFMpeg::Update looping" );
-}
-
-/* Call from the main thread when m_ImageWaiting == FRAME_WAITING to update the
- * texture.  Sets FRAME_NONE.  Does not signal m_BufferFinished. */
-void MovieTexture_FFMpeg::UpdateFrame()
-{
-	ASSERT_M( m_ImageWaiting == FRAME_WAITING, ssprintf("%i", m_ImageWaiting) );
-
-    /* Just in case we were invalidated: */
-    CreateTexture();
-
-	CHECKPOINT;
-	DISPLAY->UpdateTexture(
-        m_uTexHandle,
-        m_pSurface,
-        0, 0,
-        m_iImageWidth, m_iImageHeight );
-    CHECKPOINT;
-
-	m_ImageWaiting = FRAME_NONE;
-}
-
-void MovieTexture_FFMpeg::Reload()
-{
-}
-
-void MovieTexture_FFMpeg::StartThread()
-{
-	ASSERT( m_State == DECODER_QUIT );
-	m_State = DECODER_RUNNING;
-	m_DecoderThread.SetName( ssprintf("MovieTexture_FFMpeg(%s)", GetID().filename.c_str()) );
-	
-	if( m_bThreaded )
-		m_DecoderThread.Create( DecoderThread_start, this );
-}
-
-void MovieTexture_FFMpeg::StopThread()
-{
-	if( !m_DecoderThread.IsCreated() )
-		return;
-
-	LOG->Trace("Shutting down decoder thread ...");
-
-	m_State = DECODER_QUIT;
-
-	/* Make sure we don't deadlock waiting for m_BufferFinished. */
-	m_BufferFinished.Post();
-	CHECKPOINT;
-	m_DecoderThread.Wait();
-	CHECKPOINT;
-	
-	m_ImageWaiting = FRAME_NONE;
-
-	/* Clear the above post, if the thread didn't. */
-	m_BufferFinished.TryWait();
-
-	LOG->Trace("Decoder thread shut down.");
-}
-
-void MovieTexture_FFMpeg::SetPosition( float fSeconds )
-{
-    ASSERT( m_State != DECODER_QUIT );
-
-	/* We can reset to 0, but I don't think this API supports fast seeking
-	 * yet.  I don't think we ever actually seek except to 0 right now,
-	 * anyway. XXX */
-	if( fSeconds != 0 )
-	{
-		LOG->Warn( "MovieTexture_FFMpeg::SetPosition(%f): non-0 seeking unsupported; ignored", fSeconds );
-		return;
-	}
-
-	LOG->Trace( "Seek to %f", fSeconds );
-	m_bWantRewind = true;
-}
-
-/* This is used to decode data. */
-void MovieTexture_FFMpeg::DecodeSeconds( float fSeconds )
-{
-	m_fClock += fSeconds * m_fRate;
-
-	/* If we're not threaded, we want to be sure to decode any new frames now,
-	 * and not on the next frame.  Update() may have already been called for this
-	 * frame; call it again to be sure. */
-	Update(0);
-}
-
-/*
- * (c) 2003-2004 Glenn Maynard
+ * (c) 2003-2005 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

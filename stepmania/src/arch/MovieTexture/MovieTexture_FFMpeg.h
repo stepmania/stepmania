@@ -1,96 +1,24 @@
 #ifndef RAGEMOVIETEXTURE_FFMPEG_H
 #define RAGEMOVIETEXTURE_FFMPEG_H
 
-#include "MovieTexture.h"
-
-#include "RageDisplay.h"
-#include "RageTexture.h"
-#include "RageThreads.h"
+#include "MovieTexture_Generic.h"
 
 /* Fix a compile problem in gcc 3.2: */
 #if defined(HAVE_INTTYPES_H)
 #include <inttypes.h>
 #endif
 
-class FFMpeg_Helper;
-
-class MovieTexture_FFMpeg: public RageMovieTexture
+class MovieTexture_FFMpeg: public MovieTexture_Generic
 {
 public:
 	MovieTexture_FFMpeg( RageTextureID ID );
-	virtual ~MovieTexture_FFMpeg();
-	CString Init();
-
-	/* only called by RageTextureManager::InvalidateTextures */
-	void Invalidate() { m_uTexHandle = 0; }
-	void Update( float fDeltaTime );
-
-	virtual void Reload();
-
-	virtual void SetPosition( float fSeconds );
-	virtual void DecodeSeconds( float fSeconds );
-	virtual void SetPlaybackRate( float fRate ) { m_fRate = fRate; }
-	void SetLooping( bool bLooping=true ) { m_bLoop = bLooping; }
-	unsigned GetTexHandle() const { return m_uTexHandle; }
-
-private:
-	FFMpeg_Helper *m_pDecoder;
-
-	float m_fRate;
-	enum {
-		FRAME_NONE, /* no frame available; call GetFrame to get one */
-		FRAME_DECODED, /* frame decoded; call ConvertFrame */
-		FRAME_WAITING /* frame converted and waiting to be uploaded */
-	} m_ImageWaiting;
-	bool m_bLoop;
-	bool m_bWantRewind;
-	bool m_bThreaded;
-
-	/*
-	 * Only the main thread can change m_State.
-	 *
-	 * DECODER_QUIT: The decoder thread is not running.  We should only
-	 * be in this state internally; when we return after a call, we should
-	 * never be in this state.  Start the thread before returning.
-	 *
-	 * PAUSE_DECODER: The decoder thread is idle.
-	 *
-	 * PLAYING: The decoder thread is running.
-	 */
-	enum State { DECODER_QUIT, DECODER_RUNNING } m_State;
-
-	unsigned m_uTexHandle;
-
-	RageSurface *m_pSurface;
-
-	RageSemaphore m_BufferFinished;
-
-	/* The time the movie is actually at: */
-	float m_fClock;
-	bool m_bFrameSkipMode;
-
-	static int DecoderThread_start(void *p) { ((MovieTexture_FFMpeg *)(p))->DecoderThread(); return 0; }
-	void DecoderThread();
-	RageThread m_DecoderThread;
-
-	void ConvertFrame();
-	void UpdateFrame();
-
-	void CreateTexture();
-	void DestroyTexture();
-	void StartThread();
-	void StopThread();
-
-	bool DecodeFrame();
-	float CheckFrameTime();
-	void DiscardFrame();
 };
 #define USE_MOVIE_TEXTURE_FFMPEG
 
 #endif
 
 /*
- * (c) 2003-2004 Glenn Maynard
+ * (c) 2003-2005 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
