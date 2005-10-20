@@ -1189,9 +1189,27 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		}
 		else
 		{
-			// Approximate by applying the texture scale of the first vertex to the whole mesh.
+			// Kill the texture translation.
+			// XXX: Change me to scale the translation by the TextureTranslationScale of the first vertex.
+			RageMatrix mat;
+			glGetFloatv( GL_TEXTURE_MATRIX , (float*)mat );
+
+			/*
+			for( int i=0; i<4; i++ )
+			{
+				CString s;
+				for( int j=0; j<4; j++ )
+					s += ssprintf( "%f ", mat.m[i][j] );
+				LOG->Trace( s );
+			}
+			*/
+
+			mat.m[3][0] = 0;
+			mat.m[3][1] = 0;
+			mat.m[3][2] = 0;
+
 			glMatrixMode( GL_TEXTURE );
-			glScalef( 0, 0, 0 );
+			glLoadMatrixf( (const float*)mat );
 		}
 	}
 
