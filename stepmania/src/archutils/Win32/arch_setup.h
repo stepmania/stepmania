@@ -3,6 +3,7 @@
 
 #if !defined(XBOX)
 #define HAVE_FFMPEG
+#define HAVE_THEORA
 #define HAVE_CRYPTOPP
 #endif
 
@@ -144,12 +145,12 @@ inline int lrintf( float f )
 
 #if defined(_XBOX)
 #if defined(_DEBUG)
-#define XIPH_LIB_DIR "vorbis/xbox/debug/"
+#define OGG_LIB_DIR "vorbis/xbox/debug/"
 #else
-#define XIPH_LIB_DIR "vorbis/xbox/release/"
+#define OGG_LIB_DIR "vorbis/xbox/release/"
 #endif
 #else
-#define XIPH_LIB_DIR "vorbis/win32/"
+#define OGG_LIB_DIR "vorbis/win32/"
 #endif
 
 #if defined(XBOX)
