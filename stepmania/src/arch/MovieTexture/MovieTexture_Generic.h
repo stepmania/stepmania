@@ -1,5 +1,5 @@
-#ifndef RAGE_MOVIETEXTURE_GENERIC_H
-#define RAGE_MOVIETEXTURE_GENERIC_H
+#ifndef RAGE_MOVIE_TEXTURE_GENERIC_H
+#define RAGE_MOVIE_TEXTURE_GENERIC_H
 
 #include "MovieTexture.h"
 #include "RageThreads.h"
@@ -22,8 +22,12 @@ public:
 	 * in frame skip mode. */
 	virtual void ConvertToSurface( RageSurface *pSurface ) const = 0;
 
+	/* Return the dimensions of the image, in pixels (before aspect ratio
+	 * adjustments). */
 	virtual int GetWidth() const  = 0;
 	virtual int GetHeight() const  = 0;
+
+	/* Return the aspect ratio of a pixel in the image.  Usually 1. */
 	virtual float GetSourceAspectRatio() const { return 1.0f; }
 
 	/* Create a surface.  This must be compatible with ConvertToSurface,
@@ -34,6 +38,10 @@ public:
 	 * may be smaller. */
 	virtual RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight ) = 0;
 
+	/* The following functions return information about the current frame,
+	 * decoded by the last successful call to GetFrame, and will never be
+	 * called before that. */
+
 	/* Get the timestamp, in seconds, when the current frame should be
 	 * displayed.  The first frame will always be 0. */
 	virtual float GetTimestamp() const = 0;
@@ -41,6 +49,9 @@ public:
 	/* Get the duration, in seconds, to display the current frame. */
 	virtual float GetFrameDuration() const = 0;
 
+	/* Ugly: return true if, when in frame skip mode, this frame should be skipped.
+	 * Typically returns true on even frames, false on odd frames.  (Frame skip mode
+	 * should be smarter, and skip to a keyframe.) */
 	virtual bool SkippableFrame() const = 0;
 };
 

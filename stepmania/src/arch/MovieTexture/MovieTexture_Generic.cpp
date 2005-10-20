@@ -262,7 +262,7 @@ float MovieTexture_Generic::CheckFrameTime()
 	if( -fOffset >= FrameSkipThreshold && !m_bFrameSkipMode )
 	{
 		LOG->Trace( "(%s) Time is %f, and the movie is at %f.  Entering frame skip mode.",
-			GetID().filename.c_str(), m_fClock, m_pDecoder->GetTimestamp());
+			GetID().filename.c_str(), m_fClock, m_pDecoder->GetTimestamp() );
 		m_bFrameSkipMode = true;
 	}
 
