@@ -11,21 +11,9 @@
 #endif
 
 #if defined(_MSC_VER)
-#if defined(_XBOX)
-#ifdef _DEBUG
-#pragma comment(lib, "vorbis/xbox/ogg_static_d.lib")
-#pragma comment(lib, "vorbis/xbox/vorbis_static_d.lib")
-#pragma comment(lib, "vorbis/xbox/vorbisfile_static_d.lib")
-#else
-#pragma comment(lib, "vorbis/xbox/ogg_static.lib")
-#pragma comment(lib, "vorbis/xbox/vorbis_static.lib")
-#pragma comment(lib, "vorbis/xbox/vorbisfile_static.lib")
-#endif // _DEBUG
-#else
-#pragma comment(lib, "vorbis/win32/ogg_static.lib")
-#pragma comment(lib, "vorbis/win32/vorbis_static.lib")
-#pragma comment(lib, "vorbis/win32/vorbisfile_static.lib")
-#endif // _XBOX
+#pragma comment(lib, XIPH_LIB_DIR "ogg_static.lib")
+#pragma comment(lib, XIPH_LIB_DIR "vorbis_static.lib")
+#pragma comment(lib, XIPH_LIB_DIR "vorbisfile_static.lib")
 #endif // _MSC_VER
 
 #include <cstring>
