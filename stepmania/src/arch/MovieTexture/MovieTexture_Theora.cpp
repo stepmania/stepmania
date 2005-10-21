@@ -7,17 +7,17 @@
 #include "RageUtil.h"
 #include "MovieTexture_FFMpeg.h" /* for AVCodecCreateCompatibleSurface */
 
+namespace avcodec
+{
+#include <ffmpeg/avcodec.h> /* for avcodec::img_convert */
+};
+
 #include <theora/theora.h>
 
 #if defined(_MSC_VER)
 #pragma comment(lib, OGG_LIB_DIR "ogg_static.lib")
 #pragma comment(lib, OGG_LIB_DIR "theora_static.lib")
 #endif
-
-namespace avcodec
-{
-#include <ffmpeg/avcodec.h> /* for avcodec::img_convert */
-};
 
 class MovieDecoder_Theora: public MovieDecoder
 {
