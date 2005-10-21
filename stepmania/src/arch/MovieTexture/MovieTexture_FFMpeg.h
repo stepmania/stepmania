@@ -1,5 +1,7 @@
-#ifndef RAGEMOVIETEXTURE_FFMPEG_H
-#define RAGEMOVIETEXTURE_FFMPEG_H
+/* MovieTexture_FFMpeg - FFMpeg movie renderer. */
+
+#ifndef RAGE_MOVIE_TEXTURE_FFMPEG_H
+#define RAGE_MOVIE_TEXTURE_FFMPEG_H
 
 #include "MovieTexture_Generic.h"
 

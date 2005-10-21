@@ -36,7 +36,6 @@ protected:
 	char *output;
 
 	MovieTexture_DShow*	m_pTexture;	// the video surface we will copy new frames to
-//	D3DFORMAT			m_TextureFormat; // Texture format
 };
 
 #endif
