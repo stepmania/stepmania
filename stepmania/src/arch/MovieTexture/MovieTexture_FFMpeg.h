@@ -5,11 +5,6 @@
 
 #include "MovieTexture_Generic.h"
 
-/* Fix a compile problem in gcc 3.2: */
-#if defined(HAVE_INTTYPES_H)
-#include <inttypes.h>
-#endif
-
 class MovieTexture_FFMpeg: public MovieTexture_Generic
 {
 public:
