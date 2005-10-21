@@ -161,53 +161,64 @@ void MovieTexture_Generic::CreateTexture()
 
 
 /* Handle decoding for a frame.  Return true if a frame was decoded, false if not
- * (due to pause, EOF, etc).  If true is returned, we'll be in FRAME_DECODED. */
+ * (due to quit, error, EOF, etc).  If true is returned, we'll be in FRAME_DECODED. */
 bool MovieTexture_Generic::DecodeFrame()
 {
 	ASSERT_M( m_ImageWaiting == FRAME_NONE, ssprintf("%i", m_ImageWaiting) );
 
-	if( m_State == DECODER_QUIT )
-		return false;
-	CHECKPOINT;
-
-	/* Read a frame. */
-	int ret = m_pDecoder->GetFrame();
-	if( ret == -1 )
-		return false;
-
-	if( m_bWantRewind && m_pDecoder->GetTimestamp() == 0 )
-		m_bWantRewind = false; /* ignore */
-
-	if( ret == 0 )
+	bool bTriedRewind = false;
+	do
 	{
-		/* EOF. */
-		if( !m_bLoop )
+		if( m_State == DECODER_QUIT )
 			return false;
 
-		LOG->Trace( "File \"%s\" looping", GetID().filename.c_str() );
-		m_bWantRewind = true;
-	}
+		if( m_bWantRewind )
+		{
+			if( bTriedRewind )
+			{
+				LOG->Trace( "File \"%s\" looped more than once in one frame", GetID().filename.c_str() );
+				return false;
+			}
+			m_bWantRewind = false;
+			bTriedRewind = true;
 
-	if( m_bWantRewind )
-	{
-		m_bWantRewind = false;
+			/* When resetting the clock, set it back by the length of the last frame,
+			 * so it has a proper delay. */
+			float fDelay = m_pDecoder->GetFrameDuration();
 
-		/* When resetting the clock, set it back by the length of the last frame,
-		 * so it has a proper delay. */
-		float fDelay = m_pDecoder->GetFrameDuration();
+			/* Restart. */
+			m_pDecoder->Close();
+			CString sError = m_pDecoder->Open( GetID().filename );
+			if( sError != "" )
+				RageException::Throw( "Error rewinding stream %s: %s", GetID().filename.c_str(), sError.c_str() );
 
-		/* Restart. */
-		m_pDecoder->Close();
-		CString sError = m_pDecoder->Open( GetID().filename );
-		if( sError != "" )
-			RageException::Throw( "Error rewinding stream %s: %s", GetID().filename.c_str(), sError.c_str() );
+			m_fClock = -fDelay;
+		}
 
-		m_fClock = -fDelay;
-		return false;
-	}
+		CHECKPOINT;
 
-	/* We got a frame. */
-	m_ImageWaiting = FRAME_DECODED;
+		/* Read a frame. */
+		int ret = m_pDecoder->GetFrame();
+		if( ret == -1 )
+			return false;
+
+		if( m_bWantRewind && m_pDecoder->GetTimestamp() == 0 )
+			m_bWantRewind = false; /* ignore */
+
+		if( ret == 0 )
+		{
+			/* EOF. */
+			if( !m_bLoop )
+				return false;
+
+			LOG->Trace( "File \"%s\" looping", GetID().filename.c_str() );
+			m_bWantRewind = true;
+			continue;
+		}
+
+		/* We got a frame. */
+		m_ImageWaiting = FRAME_DECODED;
+	} while( m_bWantRewind );
 
 	return true;
 }
