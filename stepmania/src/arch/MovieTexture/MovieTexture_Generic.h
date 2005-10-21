@@ -15,12 +15,17 @@ public:
 	virtual CString Open( CString sFile ) = 0;
 	virtual void Close() = 0;
 
-	/* Decode a frame internally. */
-	virtual int GetFrame() = 0;
-
-	/* Convert the current frame to an RGB surface.  This may be skipped
-	 * in frame skip mode. */
-	virtual void ConvertToSurface( RageSurface *pSurface ) const = 0;
+	/*
+	 * Decode a frame.  Return 1 on success, 0 on EOF, -1 on fatal error.
+	 *
+	 * If we're lagging behind the video, fTargetTime will be the target
+	 * timestamp.  The decoder may skip frames to catch up.  On return,
+	 * the current timestamp must be <= fTargetTime.
+	 *
+	 * Otherwise, fTargetTime will be -1, and the next frame should be
+	 * decoded; skip frames only if necessary to recover from errors.
+	 */
+	virtual int GetFrame( RageSurface *pOut, float fTargetTime ) = 0;
 
 	/* Return the dimensions of the image, in pixels (before aspect ratio
 	 * adjustments). */
@@ -30,12 +35,11 @@ public:
 	/* Return the aspect ratio of a pixel in the image.  Usually 1. */
 	virtual float GetSourceAspectRatio() const { return 1.0f; }
 
-	/* Create a surface.  This must be compatible with ConvertToSurface,
-	 * should be a surface which is realtime-compatible with DISPLAY, and
-	 * should attempt to obey TEXTUREMAN->GetPrefs().m_iMovieColorDepth.
-	 * The given size will usually be the next power of two higher than
-	 * GetWidth/GetHeight, but on systems with limited texture resolution,
-	 * may be smaller. */
+	/* Create a surface acceptable to pass to GetFrame.  This should be
+	 * a surface which is realtime-compatible with DISPLAY, and should
+	 * attempt to obey bPreferHighColor.  The given size will usually be
+	 * the next power of two higher than GetWidth/GetHeight, but on systems
+	 * with limited texture resolution, may be smaller. */
 	virtual RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor ) = 0;
 
 	/* The following functions return information about the current frame,
@@ -48,11 +52,6 @@ public:
 
 	/* Get the duration, in seconds, to display the current frame. */
 	virtual float GetFrameDuration() const = 0;
-
-	/* Ugly: return true if, when in frame skip mode, this frame should be skipped.
-	 * Typically returns true on even frames, false on odd frames.  (Frame skip mode
-	 * should be smarter, and skip to a keyframe.) */
-	virtual bool SkippableFrame() const = 0;
 };
 
 
@@ -81,8 +80,8 @@ private:
 	float m_fRate;
 	enum {
 		FRAME_NONE, /* no frame available; call GetFrame to get one */
-		FRAME_DECODED, /* frame decoded; call ConvertFrame */
-		FRAME_WAITING /* frame converted and waiting to be uploaded */
+		FRAME_DECODED, /* frame decoded; waiting until it's time to display it */
+		FRAME_WAITING /* frame waiting to be uploaded */
 	} m_ImageWaiting;
 	bool m_bLoop;
 	bool m_bWantRewind;
@@ -115,7 +114,6 @@ private:
 	void DecoderThread();
 	RageThread m_DecoderThread;
 
-	void ConvertFrame();
 	void UpdateFrame();
 
 	void CreateTexture();

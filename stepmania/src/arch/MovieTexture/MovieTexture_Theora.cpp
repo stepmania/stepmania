@@ -28,9 +28,8 @@ public:
 	CString Open( CString sFile );
 	void Close();
 
-	int GetFrame();
+	int GetFrame( RageSurface *pOut, float fTargetTime );
 	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor );
-	void ConvertToSurface( RageSurface *pSurface ) const;
 
 	int GetWidth() const { return m_TheoraInfo.frame_width; }
 	int GetHeight() const { return m_TheoraInfo.frame_height; }
@@ -38,12 +37,12 @@ public:
 
 	float GetTimestamp() const;
 	float GetFrameDuration() const;
-	bool SkippableFrame() const;
 
 private:
 	void Init();
 	CString ProcessHeaders();
 	int ReadPage( ogg_page *pOggPage );
+	void ConvertToSurface( RageSurface *pSurface ) const;
 
 	RageFile m_File;
 
@@ -215,7 +214,7 @@ CString MovieDecoder_Theora::Open( CString sFile )
 	return CString();
 }
 
-int MovieDecoder_Theora::GetFrame()
+int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
 {
 	while(1)
 	{
@@ -223,6 +222,16 @@ int MovieDecoder_Theora::GetFrame()
 		if( ogg_stream_packetout(&m_OggStream, &op) != 0 )
 		{
 			theora_decode_packetin( &m_TheoraState, &op );
+
+			if( fTargetTime != -1 &&
+				GetTimestamp() + GetFrameDuration() <= fTargetTime )
+			{
+				ogg_int64_t iFrame = theora_granule_frame( (theora_state *) &m_TheoraState, m_iGranulepos );
+				if( (iFrame % 2) == 0 )
+					continue;
+			}
+
+			ConvertToSurface( pOut );
 			m_iGranulepos = m_TheoraState.granulepos;
 			return 1;
 		}
@@ -293,13 +302,6 @@ float MovieDecoder_Theora::GetFrameDuration() const
 {
 	return (float) m_TheoraInfo.fps_denominator / m_TheoraInfo.fps_numerator;
 }
-
-bool MovieDecoder_Theora::SkippableFrame() const
-{
-	ogg_int64_t iFrame = theora_granule_frame( (theora_state *) &m_TheoraState, m_iGranulepos );
-	return (iFrame % 2) == 0;
-}
-
 
 void MovieDecoder_Theora::Close()
 {

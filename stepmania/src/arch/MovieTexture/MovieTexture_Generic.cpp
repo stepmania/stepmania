@@ -38,8 +38,11 @@ CString MovieTexture_Generic::Init()
 	if( sError != "" )
 		return sError;
 
+	CreateTexture();
+	CreateFrameRects();
+
 	/* Decode one frame, to guarantee that the texture is drawn when this function returns. */
-	int ret = m_pDecoder->GetFrame();
+	int ret = m_pDecoder->GetFrame( m_pSurface, -1 );
 	if( ret == -1 )
 		return ssprintf( "%s: error getting first frame", GetID().filename.c_str() );
 	if( ret == 0 )
@@ -48,16 +51,12 @@ CString MovieTexture_Generic::Init()
 		return ssprintf( "%s: EOF getting first frame", GetID().filename.c_str() );
 	}
 
-	m_ImageWaiting = FRAME_DECODED;
+	m_ImageWaiting = FRAME_WAITING;
 
-	CreateTexture();
 	LOG->Trace( "Resolution: %ix%i (%ix%i, %ix%i)",
 			m_iSourceWidth, m_iSourceHeight,
 			m_iImageWidth, m_iImageHeight, m_iTextureWidth, m_iTextureHeight );
 
-	CreateFrameRects();
-
-	ConvertFrame();
 	UpdateFrame();
 
 	CHECKPOINT;
@@ -198,7 +197,11 @@ bool MovieTexture_Generic::DecodeFrame()
 		CHECKPOINT;
 
 		/* Read a frame. */
-		int ret = m_pDecoder->GetFrame();
+		float fTargetTime = -1;
+		if( m_bFrameSkipMode && m_fClock > m_pDecoder->GetTimestamp() )
+			fTargetTime = m_fClock;
+
+		int ret = m_pDecoder->GetFrame( m_pSurface, fTargetTime );
 		if( ret == -1 )
 			return false;
 
@@ -228,7 +231,6 @@ bool MovieTexture_Generic::DecodeFrame()
  * Returns:
  *  == 0 if the currently decoded frame is ready to be displayed
  *   > 0 (seconds) if it's not yet time to display;
- *  == -1 if we're behind and the frame should be skipped
  */
 float MovieTexture_Generic::CheckFrameTime()
 {
@@ -277,9 +279,6 @@ float MovieTexture_Generic::CheckFrameTime()
 		m_bFrameSkipMode = true;
 	}
 
-	if( m_bFrameSkipMode && m_pDecoder->SkippableFrame() )
-		return -1; /* skip */
-	
 	return 0;
 }
 
@@ -314,11 +313,7 @@ void MovieTexture_Generic::DecoderThread()
 		}
 
 		const float fTime = CheckFrameTime();
-		if( fTime == -1 )	// skip frame
-		{
-			DiscardFrame();
-		}
-		else if( fTime > 0 )		// not time to decode a new frame yet
+		if( fTime > 0 )		// not time to decode a new frame yet
 		{
 			/* This needs to be relatively short so that we wake up quickly 
 			 * from being paused or for changes in m_fRate. */
@@ -332,7 +327,8 @@ void MovieTexture_Generic::DecoderThread()
 				int n = m_BufferFinished.GetValue();
 				ASSERT_M( n == 0 || m_State == DECODER_QUIT, ssprintf("%i, %i", n, m_State) );
 			}
-			ConvertFrame();
+
+			m_ImageWaiting = FRAME_WAITING;
 
 			/* We just went into FRAME_WAITING.  Don't actually check; the main thread
 			 * will change us back to FRAME_NONE without locking, and poke m_BufferFinished.
@@ -367,10 +363,8 @@ void MovieTexture_Generic::Update(float fDeltaTime)
 				float fTime = CheckFrameTime();
 				if( fTime > 0 )
 					return;
-				else if( fTime == -1 )
-					DiscardFrame();
 				else
-					ConvertFrame();
+					m_ImageWaiting = FRAME_WAITING;
 			}
 		}
 
@@ -388,17 +382,6 @@ void MovieTexture_Generic::Update(float fDeltaTime)
 	}
 
 	LOG->MapLog( "movie_looping", "MovieTexture_Generic::Update looping" );
-}
-
-/* Convert the frame from the native (typically YUV) internal format to
- * our RGB RageSurface. */
-void MovieTexture_Generic::ConvertFrame()
-{
-	ASSERT_M( m_ImageWaiting == FRAME_DECODED, ssprintf("%i", m_ImageWaiting ) );
-
-	m_pDecoder->ConvertToSurface( m_pSurface );
-
-	m_ImageWaiting = FRAME_WAITING;
 }
 
 /* Call from the main thread when m_ImageWaiting == FRAME_WAITING to update the

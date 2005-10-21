@@ -164,9 +164,7 @@ public:
 	CString Open( CString sFile );
 	void Close();
 
-	int GetFrame();
-
-	void ConvertToSurface( RageSurface *pSurface ) const;
+	int GetFrame( RageSurface *pOut, float fTargetTime );
 
 	int GetWidth() const { return m_pStream->codec.width; }
 	int GetHeight() const { return m_pStream->codec.height; }
@@ -176,12 +174,11 @@ public:
 	float GetTimestamp() const;
 	float GetFrameDuration() const;
 
-	bool SkippableFrame() const { return (m_pStream->codec.frame_number % 2) == 0; }
-
 private:
 	void Init();
 	int ReadPacket();
 	int DecodePacket();
+	void ConvertToSurface( RageSurface *pSurface ) const;
 
 	avcodec::AVStream *m_pStream;
 	avcodec::AVFrame m_Frame;
@@ -241,8 +238,9 @@ void MovieDecoder_FFMpeg::Init()
 }
 
 /* Read until we get a frame, EOF or error.  Return -1 on error, 0 on EOF, 1 if we have a frame. */
-int MovieDecoder_FFMpeg::GetFrame()
+int MovieDecoder_FFMpeg::GetFrame( RageSurface *pOut, float fTargetTime )
 {
+restart:
 	while( 1 )
 	{
 		int ret = DecodePacket();
@@ -278,6 +276,13 @@ int MovieDecoder_FFMpeg::GetFrame()
 			m_fTimestampOffset = actual - expect;
 		}
 	}
+
+	if( fTargetTime != -1 &&
+		GetTimestamp() + GetFrameDuration() <= fTargetTime &&
+		(m_pStream->codec.frame_number % 2) == 0 )
+		goto restart;
+
+	ConvertToSurface( pOut );
 
 	return 1;
 }
