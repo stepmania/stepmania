@@ -61,12 +61,12 @@ void RageModelGeometry::MergeMeshes( int iFromIndex, int iToIndex )
 	msMesh& meshTo = m_Meshes[ iToIndex ];
 
 	int iShiftTriangleVertexIndicesBy = meshTo.Vertices.size();
-	int iStartShiftingTriangleAtIndex = meshTo.Triangles.size();
+	int iStartShiftingAtTriangleIndex = meshTo.Triangles.size();
 
-	meshTo.Vertices.insert( meshTo.Vertices.end(), meshFrom.Vertices.end(), meshFrom.Vertices.end() );
-	meshTo.Triangles.insert( meshTo.Triangles.end(), meshFrom.Triangles.end(), meshFrom.Triangles.end() );
+	meshTo.Vertices.insert( meshTo.Vertices.end(), meshFrom.Vertices.begin(), meshFrom.Vertices.end() );
+	meshTo.Triangles.insert( meshTo.Triangles.end(), meshFrom.Triangles.begin(), meshFrom.Triangles.end() );
 
-	for( unsigned i=iStartShiftingTriangleAtIndex; i<meshTo.Triangles.size(); i++ )
+	for( unsigned i=iStartShiftingAtTriangleIndex; i<meshTo.Triangles.size(); i++ )
 	{
 		for( int j=0; j<3; j++ )
 			meshTo.Triangles[i].nVertexIndices[j] += iShiftTriangleVertexIndicesBy;
@@ -261,6 +261,14 @@ void RageModelGeometry::LoadMilkshapeAscii( const CString& _sPath, bool bNeedsNo
 	}
 
 	OptimizeBones();
+
+	if( DISPLAY->SupportsPerVertexMatrixScale() )
+	{
+		if( m_Meshes.size() == 2  &&  m_Meshes[0].sName == m_Meshes[1].sName )
+		{
+			MergeMeshes( 1, 0 );
+		}
+	}
 
 	// send the finalized vertices to the graphics card
 	m_pCompiledGeometry->Set( m_Meshes, bNeedsNormals );

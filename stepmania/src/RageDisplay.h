@@ -145,6 +145,7 @@ public:
 
 	virtual bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false ) = 0;
 	virtual bool SupportsThreadedRendering() { return false; }
+	virtual bool SupportsPerVertexMatrixScale() = 0;
 
 	/* return 0 if failed or internal texture resource handle 
 	 * (unsigned in OpenGL, texture pointer in D3D) */

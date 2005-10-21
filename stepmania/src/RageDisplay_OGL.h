@@ -19,6 +19,7 @@ public:
 	VideoModeParams GetVideoModeParams() const;
 	void SetBlendMode( BlendMode mode );
 	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false );
+	bool SupportsPerVertexMatrixScale();
 	unsigned CreateTexture( 
 		PixelFormat pixfmt, 
 		RageSurface* img,

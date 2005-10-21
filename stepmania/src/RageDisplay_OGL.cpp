@@ -1198,7 +1198,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 
 	if( meshInfo.m_bNeedsTextureMatrixScale )
 	{
-		if( false )	//g_bTextureMatrixShader != 0 )
+		if( g_bTextureMatrixShader != 0 )
 		{
 			/* If we're using texture matrix scales, set up that buffer, too, and enable the
 			 * vertex shader.  This shader doesn't support all OpenGL state, so only enable it
@@ -1996,6 +1996,11 @@ bool RageDisplay_OGL::SupportsTextureFormat( PixelFormat pixfmt, bool bRealtime 
 	default:
 		return true;
 	}
+}
+
+bool RageDisplay_OGL::SupportsPerVertexMatrixScale()
+{
+	return g_bTextureMatrixShader != 0;
 }
 
 void RageDisplay_OGL::SetSphereEnvironmentMapping( bool b )

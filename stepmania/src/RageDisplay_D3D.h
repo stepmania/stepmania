@@ -19,6 +19,7 @@ public:
 	void SetBlendMode( BlendMode mode );
 	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false );
 	bool SupportsThreadedRendering();
+	bool SupportsPerVertexMatrixScale() { return false; }
 	unsigned CreateTexture( 
 		PixelFormat pixfmt, 
 		RageSurface* img, 
