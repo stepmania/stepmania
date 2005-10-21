@@ -87,7 +87,7 @@ void Model::LoadPieces( CString sMeshesPath, CString sMaterialsPath, CString sBo
 		
 		if( pMesh->nMaterialIndex >= (int) m_Materials.size() )
 			RageException::Throw( "Model \"%s\" mesh \"%s\" references material index %i, but there are only %i materials",
-				sMeshesPath.c_str(), pMesh->szName, pMesh->nMaterialIndex, m_Materials.size() );
+				sMeshesPath.c_str(), pMesh->sName.c_str(), pMesh->nMaterialIndex, m_Materials.size() );
 	}
 
 	if( LoadMilkshapeAsciiBones( DEFAULT_ANIMATION_NAME, sBonesPath ) )
@@ -531,7 +531,7 @@ void Model::PlayAnimation( CString sAniName, float fPlayRate )
 		m_vpBones[i].mRelative.m[3][1] = pBone->Position[1];
 		m_vpBones[i].mRelative.m[3][2] = pBone->Position[2];
 		
-		int nParentBone = m_pCurAnimation->FindBoneByName( pBone->szParentName );
+		int nParentBone = m_pCurAnimation->FindBoneByName( pBone->sParentName );
 		if( nParentBone != -1 )
 		{
 			RageMatrixMultiply( &m_vpBones[i].mAbsolute, &m_vpBones[nParentBone].mAbsolute, &m_vpBones[i].mRelative );
@@ -690,7 +690,7 @@ void Model::SetBones( const msAnimation* pAnimation, float fFrame, vector<myBone
 
 			RageMatrixMultiply( &vpBones[i].mRelativeFinal, &vpBones[i].mRelative, &m );
 
-			int nParentBone = pAnimation->FindBoneByName( pBone->szParentName );
+			int nParentBone = pAnimation->FindBoneByName( pBone->sParentName );
 			if( nParentBone == -1 )
 				vpBones[i].mFinal = vpBones[i].mRelativeFinal;
 			else

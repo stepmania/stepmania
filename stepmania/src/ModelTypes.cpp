@@ -10,6 +10,8 @@
 #include "RageDisplay.h"
 #include "Foreach.h"
 
+#define MS_MAX_NAME	32
+
 AnimatedTexture::AnimatedTexture()
 {
 	m_iCurState = 0;
@@ -204,7 +206,6 @@ RageVector2 AnimatedTexture::GetTextureTranslate()
 
 msMesh::msMesh()
 {
-	ZERO( szName );
 }
 
 msMesh::~msMesh()
@@ -255,7 +256,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
 				THROW;
             if (sscanf (sLine, "\"%[^\"]\"", szName) != 1)
 				THROW;
-            strcpy( Bone.szName, szName );
+            Bone.sName = szName;
 
             // parent
 			if( f.GetLine( sLine ) <= 0 )
@@ -263,7 +264,7 @@ bool msAnimation::LoadMilkshapeAsciiBones( CString sAniName, CString sPath )
             strcpy (szName, "");
             sscanf (sLine, "\"%[^\"]\"", szName);
 
-            strcpy( Bone.szParentName, szName );
+            Bone.sParentName = szName;
 
             // flags, position, rotation
             RageVector3 Position, Rotation;

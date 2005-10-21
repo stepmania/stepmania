@@ -6,6 +6,8 @@
 #include "RageDisplay.h"
 #include "IniFile.h"
 
+#define MS_MAX_NAME	32
+
 RageModelGeometry::RageModelGeometry ()
 {
 	m_iRefCount = 1;
@@ -50,6 +52,24 @@ void RageModelGeometry::OptimizeBones()
 				mesh.Vertices[j].bone = -1;
 			}
 		}
+	}
+}
+
+void RageModelGeometry::MergeMeshes( int iFromIndex, int iToIndex )
+{
+	msMesh& meshFrom = m_Meshes[ iFromIndex ];
+	msMesh& meshTo = m_Meshes[ iToIndex ];
+
+	int iShiftTriangleVertexIndicesBy = meshTo.Vertices.size();
+	int iStartShiftingTriangleAtIndex = meshTo.Triangles.size();
+
+	meshTo.Vertices.insert( meshTo.Vertices.end(), meshFrom.Vertices.end(), meshFrom.Vertices.end() );
+	meshTo.Triangles.insert( meshTo.Triangles.end(), meshFrom.Triangles.end(), meshFrom.Triangles.end() );
+
+	for( unsigned i=iStartShiftingTriangleAtIndex; i<meshTo.Triangles.size(); i++ )
+	{
+		for( int j=0; j<3; j++ )
+			meshTo.Triangles[i].nVertexIndices[j] += iShiftTriangleVertexIndicesBy;
 	}
 }
 
@@ -123,7 +143,7 @@ void RageModelGeometry::LoadMilkshapeAscii( const CString& _sPath, bool bNeedsNo
 				if( sscanf (sLine, "\"%[^\"]\" %d %d",szName, &nFlags, &nIndex) != 3 )
 					THROW;
 
-				strcpy( mesh.szName, szName );
+				mesh.sName = szName;
 				// mesh.nFlags = nFlags;
 				mesh.nMaterialIndex = (uint8_t) nIndex;
 

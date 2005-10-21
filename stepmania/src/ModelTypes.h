@@ -3,8 +3,6 @@
 #ifndef MODEL_TYPES_H
 #define MODEL_TYPES_H
 
-#define MS_MAX_NAME             32
-
 #include "RageTypes.h"
 
 struct msTriangle
@@ -18,8 +16,8 @@ struct msMesh
 	msMesh();
 	~msMesh();
 
-    char        szName[MS_MAX_NAME];
-    char        nMaterialIndex;
+    CString		sName;
+    char		nMaterialIndex;
 
 	vector<RageModelVertex>   Vertices;
 
@@ -116,37 +114,37 @@ struct msRotationKey
 
 struct msBone
 {
-    int             nFlags;
-    char            szName[MS_MAX_NAME];
-    char            szParentName[MS_MAX_NAME];
-    RageVector3          Position;
-    RageVector3          Rotation;
+    int			nFlags;
+    CString		sName;
+    CString		sParentName;
+    RageVector3	Position;
+    RageVector3	Rotation;
 
-    vector<msPositionKey>  PositionKeys;
+    vector<msPositionKey>	PositionKeys;
 
-    int             nNumRotationKeys;
-    int             nNumAllocedRotationKeys;
-    vector<msRotationKey>  RotationKeys;
+    int		nNumRotationKeys;
+    int		nNumAllocedRotationKeys;
+    vector<msRotationKey>	RotationKeys;
 };
 
 struct msAnimation
 {
     vector<msBone>     Bones;
 
-	int FindBoneByName( const char* szName ) const
+	int FindBoneByName( const CString &sName ) const
 	{
 		for( unsigned i=0; i<Bones.size(); i++ )
-			if( strcmp(Bones[i].szName, szName)==0 )
+			if( Bones[i].sName == sName )
 				return i;
 		return -1;
 	}
 
 	bool LoadMilkshapeAsciiBones( CString sAniName, CString sPath );
 
-    int         nTotalFrames;
+    int		nTotalFrames;
 
-    RageVector3      Position;
-    RageVector3      Rotation;
+    RageVector3	Position;
+    RageVector3	Rotation;
 };
 
 struct myBone_t
