@@ -10,7 +10,7 @@
 #include <theora/theora.h>
 
 #if defined(_MSC_VER)
-#pragma comment(lib, OGG_LIB_DIR "vorbis_static.lib")
+#pragma comment(lib, OGG_LIB_DIR "ogg_static.lib")
 #pragma comment(lib, OGG_LIB_DIR "theora_static.lib")
 #endif
 
@@ -42,6 +42,7 @@ public:
 
 private:
 	void Init();
+	CString ProcessHeaders();
 	int ReadPage( ogg_page *pOggPage );
 
 	RageFile m_File;
@@ -107,15 +108,10 @@ int MovieDecoder_Theora::ReadPage( ogg_page *pOggPage )
 	}
 }
 
-CString MovieDecoder_Theora::Open( CString sFile )
+CString MovieDecoder_Theora::ProcessHeaders()
 {
-	if( !m_File.Open(sFile) )
-		return ssprintf( "error opening %s: %s", sFile.c_str(), m_File.GetError().c_str() );
-
-	Init();
-
 	int iTheoraPacketsProcessed = 0;
-	while( iTheoraPacketsProcessed < 3 )
+	while(1)
 	{
 		ogg_page OggPage;
 		int ret = ReadPage( &OggPage );
@@ -136,7 +132,7 @@ CString MovieDecoder_Theora::Open( CString sFile )
 			ogg_packet op;
 			ogg_stream_packetout( &m_OggStream, &op );
 
-			if( theora_decode_header(&m_TheoraInfo, &m_TheoraComment, &op) != 0 )
+			if( theora_decode_header(&m_TheoraInfo, &m_TheoraComment, &op) < 0 )
 			{
 				ogg_stream_clear( &m_OggStream );
 				continue;
@@ -149,19 +145,44 @@ CString MovieDecoder_Theora::Open( CString sFile )
 			ogg_stream_pagein( &m_OggStream, &OggPage );
 
 		/* Look for more headers in this page. */
-		while( iTheoraPacketsProcessed < 3 )
+		while(1)
 		{
 			ogg_packet op;
-			int ret = ogg_stream_packetout( &m_OggStream, &op );
+			int ret = ogg_stream_packetpeek( &m_OggStream, &op );
 			if( ret == 0 )
 				break;
 			if( ret < 0 )
 				return ssprintf( "error opening %s: error parsing Theora stream headers", m_File.GetPath().c_str() );
-			if( theora_decode_header(&m_TheoraInfo, &m_TheoraComment, &op) < 0 )
+
+			if( !theora_packet_isheader(&op) )
+			{
+				/* This is a body packet, not a header packet, so we're done processing
+				 * headers.  We must have at least three header packets. */
+				if( iTheoraPacketsProcessed < 3 )
+					return ssprintf( "error opening %s: error parsing Theora stream headers", m_File.GetPath().c_str() );
+				return CString();
+			}
+
+			ret = theora_decode_header( &m_TheoraInfo, &m_TheoraComment, &op);
+			if( ret < 0 && ret != OC_NEWPACKET )
 				return ssprintf( "error opening %s: error parsing Theora stream headers", m_File.GetPath().c_str() );
+
+			ogg_stream_packetout( &m_OggStream, NULL );
 			iTheoraPacketsProcessed++;
 		}
 	}
+}
+
+CString MovieDecoder_Theora::Open( CString sFile )
+{
+	if( !m_File.Open(sFile) )
+		return ssprintf( "error opening %s: %s", sFile.c_str(), m_File.GetError().c_str() );
+
+	Init();
+
+	CString sError = ProcessHeaders();
+	if( !sError.empty() )
+		return sError;
 
 	theora_decode_init( &m_TheoraState, &m_TheoraInfo );
 
