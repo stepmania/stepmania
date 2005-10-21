@@ -86,6 +86,22 @@ void SetDefaultInstallDir( int iInstallDirIndex )
 	WriteStepManiaInstallDirs( asInstallDirs );
 }
 
+void SetDefaultInstallDir( CString sInstallDir )
+{
+	CStringArray asInstallDirs;
+	GetStepManiaInstallDirs( asInstallDirs );
+
+	bool bAlreadyInList = false;
+	for( unsigned i=0; i<asInstallDirs.size(); i++ )
+	{
+		if( asInstallDirs[i].CompareNoCase(sInstallDir) == 0 )
+		{
+			SetDefaultInstallDir( i );
+			break;
+		}
+	}
+}
+
 bool GetPref( CString name, bool &val )
 {
 	CRegistry Reg;

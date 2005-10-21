@@ -9,6 +9,7 @@
 #include "onvertThemeDlg.h"
 #include "ChangeGameSettings.h"
 #include "RageUtil.h"
+#include "SMPackageUtil.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -184,7 +185,9 @@ BOOL MainMenuDlg::OnInitDialog()
 	TCHAR szCurDir[MAX_PATH];
 	GetCurrentDirectory( ARRAYSIZE(szCurDir), szCurDir );
 	GetDlgItem( IDC_EDIT_INSTALLATION )->SetWindowText( szCurDir );
-	
+	AddStepManiaInstallDir( szCurDir );
+	SetDefaultInstallDir( szCurDir );
+
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }

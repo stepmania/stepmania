@@ -146,8 +146,8 @@ BEGIN
                     WS_TABSTOP
     EDITTEXT        IDC_EDIT,19,168,136,13,ES_AUTOHSCROLL
     PUSHBUTTON      "Add",IDC_BUTTON_ADD,165,168,50,14
-    PUSHBUTTON      "Remove",IDC_BUTTON_REMOVE,164,42,50,15
-    PUSHBUTTON      "Make Default",IDC_BUTTON_MAKE_DEFAULT,164,72,50,15
+    PUSHBUTTON      "Remove",IDC_BUTTON_REMOVE,164,44,50,15
+    PUSHBUTTON      "Make Default",IDC_BUTTON_MAKE_DEFAULT,164,24,50,15
     GROUPBOX        "Add New Installation",IDC_STATIC,7,130,218,59
     GROUPBOX        "Current Installations (the top installation is the default)",
                     IDC_STATIC,7,7,218,114
