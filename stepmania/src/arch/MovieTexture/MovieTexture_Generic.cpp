@@ -119,7 +119,7 @@ void MovieTexture_Generic::CreateTexture()
 	m_iTextureHeight = power_of_two( m_iImageHeight );
 
 	if( m_pSurface == NULL )
-		m_pSurface = m_pDecoder->CreateCompatibleSurface( m_iTextureWidth, m_iTextureHeight );
+		m_pSurface = m_pDecoder->CreateCompatibleSurface( m_iTextureWidth, m_iTextureHeight, TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32 );
 
 	PixelFormat pixfmt = DISPLAY->FindPixelFormat( m_pSurface->format->BitsPerPixel,
 			m_pSurface->format->Mask[0],

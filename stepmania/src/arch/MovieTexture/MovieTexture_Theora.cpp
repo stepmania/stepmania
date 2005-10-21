@@ -4,7 +4,6 @@
 #include "RageFile.h"
 #include "RageLog.h"
 #include "RageSurface.h"
-#include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "MovieTexture_FFMpeg.h" /* for AVCodecCreateCompatibleSurface */
 
@@ -30,7 +29,7 @@ public:
 	void Close();
 
 	int GetFrame();
-	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight );
+	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor );
 	void ConvertToSurface( RageSurface *pSurface ) const;
 
 	int GetWidth() const { return m_TheoraInfo.frame_width; }
@@ -222,9 +221,9 @@ int MovieDecoder_Theora::GetFrame()
 	}
 }
 
-RageSurface *MovieDecoder_Theora::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight )
+RageSurface *MovieDecoder_Theora::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor )
 {
-	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, (int&) m_OutputPixFmt );
+	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, (int&) m_OutputPixFmt );
 }
 
 void MovieDecoder_Theora::ConvertToSurface( RageSurface *pSurface ) const

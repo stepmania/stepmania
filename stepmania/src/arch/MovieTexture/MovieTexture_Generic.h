@@ -36,7 +36,7 @@ public:
 	 * The given size will usually be the next power of two higher than
 	 * GetWidth/GetHeight, but on systems with limited texture resolution,
 	 * may be smaller. */
-	virtual RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight ) = 0;
+	virtual RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor ) = 0;
 
 	/* The following functions return information about the current frame,
 	 * decoded by the last successful call to GetFrame, and will never be

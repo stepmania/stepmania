@@ -3,7 +3,6 @@
 
 #include "RageDisplay.h"
 #include "RageLog.h"
-#include "RageTextureManager.h"
 #include "RageUtil.h"
 #include "RageFile.h"
 #include "RageSurface.h"
@@ -128,13 +127,11 @@ static int FindCompatibleAVFormat( bool bHighColor )
 	return -1;
 }
 
-RageSurface *MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, int &iAVTexfmt )
+RageSurface *MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt )
 {
 	FixLilEndian();
 
-	bool bPreferHighColor = (TEXTUREMAN->GetPrefs().m_iMovieColorDepth == 32);
 	int iAVTexfmtIndex = FindCompatibleAVFormat( bPreferHighColor );
-
 	if( iAVTexfmtIndex == -1 )
 		iAVTexfmtIndex = FindCompatibleAVFormat( !bPreferHighColor );
 
@@ -174,7 +171,7 @@ public:
 	int GetWidth() const { return m_pStream->codec.width; }
 	int GetHeight() const { return m_pStream->codec.height; }
 
-	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight );
+	RageSurface *CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor );
 
 	float GetTimestamp() const;
 	float GetFrameDuration() const;
@@ -579,9 +576,9 @@ void MovieDecoder_FFMpeg::Close()
 }
 
 
-RageSurface *MovieDecoder_FFMpeg::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight )
+RageSurface *MovieDecoder_FFMpeg::CreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor )
 {
-	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, (int&) m_AVTexfmt );
+	return MovieTexture_FFMpeg::AVCodecCreateCompatibleSurface( iTextureWidth, iTextureHeight, bPreferHighColor, (int&) m_AVTexfmt );
 }
 
 MovieTexture_FFMpeg::MovieTexture_FFMpeg( RageTextureID ID ):
