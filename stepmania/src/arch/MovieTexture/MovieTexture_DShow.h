@@ -1,3 +1,5 @@
+/* MovieTexture_DShow - DirectShow movie renderer. */
+
 #ifndef RAGE_MOVIE_TEXTURE_DSHOW_H
 #define RAGE_MOVIE_TEXTURE_DSHOW_H
 
@@ -27,9 +29,6 @@ typedef char TCHAR, *PTCHAR;
 #include "RageTexture.h"
 #include "RageThreads.h"
 
-//-----------------------------------------------------------------------------
-// RageMovieTexture Class Declarations
-//-----------------------------------------------------------------------------
 class MovieTexture_DShow : public RageMovieTexture
 {
 public:
