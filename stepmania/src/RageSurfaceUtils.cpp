@@ -653,12 +653,12 @@ static bool blit_generic( const RageSurface *src_surf, const RageSurface *dst_su
 /* Blit src onto dst. */
 void RageSurfaceUtils::Blit( const RageSurface *src, RageSurface *dst, int width, int height )
 {
-	if(width == -1)
+	if( width == -1 )
 		width = src->w;
-	if(height == -1)
+	if( height == -1 )
 		height = src->h;
-	width = min(src->w, dst->w);
-	height = min(src->h, dst->h);
+	width = min( src->w, dst->w );
+	height = min( src->h, dst->h );
 
 	/* Try each blit until we find one that works; run them in order of efficiency,
 	 * so we use the fastest blit possible. */
