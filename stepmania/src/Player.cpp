@@ -496,7 +496,7 @@ void Player::Update( float fDeltaTime )
 
 
 	float fMiniPercent = m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
-	float fJudgmentZoom = 1 - fMiniPercent*0.25f;
+	float fJudgmentZoom = min( powf(0.25f, fMiniPercent), 1.0f );
 	if( m_pJudgment )
 		m_pJudgment->SetZoom( m_pJudgment->GetZoom() * fJudgmentZoom );
 	if( m_sprJudgmentFrame.IsLoaded() )

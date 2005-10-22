@@ -519,8 +519,11 @@ float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
 		fZoom *= 0.6f;
 
 	float fMiniPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
-	fZoom *= SCALE( fMiniPercent, 0, 1, 1, 0.5f );
-
+	if( fMiniPercent != 0 )
+	{
+		fMiniPercent = powf( 0.5f, fMiniPercent );
+		fZoom *= fMiniPercent;
+	}
 	return fZoom;
 }
 
