@@ -124,14 +124,17 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] != 0 )
 	{
-		static float g_fExpandSeconds = 0;
+		static float fExpandSeconds = 0;
 		static float fLastTime = 0;
 		float fTime = RageTimer::GetTimeSinceStartFast();
 		if( !GAMESTATE->m_bFreeze )
-			g_fExpandSeconds += fTime - fLastTime;
+		{
+			fExpandSeconds += fTime - fLastTime;
+			fExpandSeconds = fmodf( fExpandSeconds, PI*2 );
+		}
 		fLastTime = fTime;
 
-		float fExpandMultiplier = SCALE( RageFastCos(g_fExpandSeconds*3), -1, 1, 0.75f, 1.75f );
+		float fExpandMultiplier = SCALE( RageFastCos(fExpandSeconds*3), -1, 1, 0.75f, 1.75f );
 		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 0.f, 1.f, 1.f, fExpandMultiplier );
 	}
 
