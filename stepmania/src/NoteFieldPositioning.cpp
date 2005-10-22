@@ -5,8 +5,9 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "Style.h"
+#include "PlayerState.h"
 
-void NoteFieldMode::BeginDrawTrack( PlayerNumber pn, int iTrack )
+void NoteFieldMode::BeginDrawTrack( const PlayerState* pPlayerState, int iTrack )
 {
 	DISPLAY->CameraPushMatrix();
 
@@ -15,7 +16,8 @@ void NoteFieldMode::BeginDrawTrack( PlayerNumber pn, int iTrack )
 	DISPLAY->PushMatrix();
 
 	const Style *s = GAMESTATE->GetCurrentStyle();
-	const float fPixelXOffsetFromCenter = s->m_ColumnInfo[pn][iTrack].fXOffset;
+	// TODO: Remove indexing by PlayerNumber.
+	float fPixelXOffsetFromCenter = s->m_ColumnInfo[pPlayerState->m_PlayerNumber][iTrack].fXOffset;
 	DISPLAY->Translate( fPixelXOffsetFromCenter, 0, 0 );
 }
 

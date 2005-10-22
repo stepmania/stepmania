@@ -3,9 +3,10 @@
 
 #include "PlayerNumber.h"
 
+class PlayerState;
 namespace NoteFieldMode
 {
-	void BeginDrawTrack( PlayerNumber pn, int iTrack );
+	void BeginDrawTrack( const PlayerState* pPlayerState, int iTrack );
 	void EndDrawTrack( int iTrack );
 };
 

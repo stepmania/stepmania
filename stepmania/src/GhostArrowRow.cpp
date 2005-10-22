@@ -76,10 +76,7 @@ void GhostArrowRow::DrawPrimitives()
 {
 	for( unsigned c=0; c<m_Ghost.size(); c++ )
 	{
-		// TODO: Remove indexing by PlayerNumber.
-		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-		NoteFieldMode::BeginDrawTrack( pn, c );
+		NoteFieldMode::BeginDrawTrack( m_pPlayerState, c );
 		m_Ghost[c]->Draw();
 		NoteFieldMode::EndDrawTrack( c );
 	}

@@ -670,9 +670,7 @@ void NoteField::DrawPrimitives()
 
 	for( int c=0; c<m_pNoteData->GetNumTracks(); c++ )	// for each arrow column
 	{
-		// TODO: Remove use of PlayerNumber.
-		PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-		NoteFieldMode::BeginDrawTrack( pn, c );
+		NoteFieldMode::BeginDrawTrack( m_pPlayerState, c );
 
 		//
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)

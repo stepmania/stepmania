@@ -857,12 +857,9 @@ void Player::DrawHoldJudgments()
 	if( m_pPlayerState->m_PlayerOptions.m_fBlind > 0 )
 		return;
 
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
 	for( int c=0; c<m_NoteData.GetNumTracks(); c++ )
 	{
-		NoteFieldMode::BeginDrawTrack( pn, c );
+		NoteFieldMode::BeginDrawTrack( m_pPlayerState, c );
 
 		m_vHoldJudgment[c]->Draw();
 
