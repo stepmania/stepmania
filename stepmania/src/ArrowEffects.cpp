@@ -16,8 +16,6 @@
 
 const float ARROW_SPACING	= ARROW_SIZE;// + 2;
 
-float		g_fExpandSeconds = 0;
-
 static float GetNoteFieldHeight( const PlayerState* pPlayerState )
 {
 	return SCREEN_HEIGHT + fabsf(pPlayerState->m_CurrentPlayerOptions.m_fPerspectiveTilt)*200;
@@ -126,12 +124,13 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 	if( fAccels[PlayerOptions::ACCEL_EXPAND] != 0 )
 	{
-		/* Timers can't be global, since they'll be initialized before SDL. */
-		static RageTimer timerExpand;
+		static float g_fExpandSeconds = 0;
+		static float fLastTime = 0;
+		float fTime = RageTimer::GetTimeSinceStartFast();
 		if( !GAMESTATE->m_bFreeze )
-			g_fExpandSeconds += timerExpand.GetDeltaTime();
-		else
-			timerExpand.GetDeltaTime();	// throw away
+			g_fExpandSeconds += fTime - fLastTime;
+		fLastTime = fTime;
+
 		float fExpandMultiplier = SCALE( RageFastCos(g_fExpandSeconds*3), -1, 1, 0.75f, 1.75f );
 		fScrollSpeed *=	SCALE( fAccels[PlayerOptions::ACCEL_EXPAND], 0.f, 1.f, 1.f, fExpandMultiplier );
 	}
