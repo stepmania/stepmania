@@ -18,6 +18,10 @@ void NoteFieldMode::BeginDrawTrack( const PlayerState* pPlayerState, int iTrack 
 	const Style *s = GAMESTATE->GetCurrentStyle();
 	// TODO: Remove indexing by PlayerNumber.
 	float fPixelXOffsetFromCenter = s->m_ColumnInfo[pPlayerState->m_PlayerNumber][iTrack].fXOffset;
+
+	const float* fEffects = pPlayerState->m_CurrentPlayerOptions.m_fEffects;
+	fPixelXOffsetFromCenter *= SCALE( fEffects[PlayerOptions::EFFECT_MINI], 0, 1, 1, 0.5f );
+
 	DISPLAY->Translate( fPixelXOffsetFromCenter, 0, 0 );
 }
 

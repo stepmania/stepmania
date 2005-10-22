@@ -146,16 +146,8 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 
 void ArrowGetReverseShiftAndScale( const PlayerState* pPlayerState, int iCol, float fYReverseOffsetPixels, float &fShiftOut, float &fScaleOut )
 {
-	/* XXX: Hack: we need to scale the reverse shift by the zoom. */
-	float fMiniPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
-	float fZoom = 1 - fMiniPercent*0.5f;
-	
-	// don't divide by 0
-	if( fabsf(fZoom) < 0.01 )
-		fZoom = 0.01f;
-
 	float fPercentReverse = pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(iCol);
-	fShiftOut = SCALE( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/fZoom/2, fYReverseOffsetPixels/fZoom/2 );
+	fShiftOut = SCALE( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/2, fYReverseOffsetPixels/2 );
 	float fPercentCentered = pPlayerState->m_CurrentPlayerOptions.m_fScrolls[PlayerOptions::SCROLL_CENTERED];
 	fShiftOut = SCALE( fPercentCentered, 0.f, 1.f, fShiftOut, 0.5f );
 
@@ -367,11 +359,7 @@ float ArrowEffects::GetRotation( const PlayerState* pPlayerState, float fNoteBea
 
 static float GetCenterLine( const PlayerState* pPlayerState )
 {
-	/* Another mini hack: if EFFECT_MINI is on, then our center line is at eg. 320, 
-	 * not 160. */
-	const float fMiniPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
-	const float fZoom = 1 - fMiniPercent*0.5f;
-	return CENTER_LINE_Y / fZoom;
+	return CENTER_LINE_Y;
 }
 
 static float GetHiddenSudden( const PlayerState* pPlayerState ) 
@@ -524,11 +512,16 @@ bool ArrowEffects::NeedZBuffer( const PlayerState* pPlayerState )
 
 float ArrowEffects::GetZoom( const PlayerState* pPlayerState )
 {
+	float fZoom = 1.0f;
 	// FIXME: Move the zoom values into Style
 	if( GAMESTATE->m_pCurStyle->m_bNeedsZoomOutWith2Players &&
 		(GAMESTATE->GetNumSidesJoined()==2 || GAMESTATE->AnyPlayersAreCpu()) )
-		return 0.6f;
-	return 1.0f;
+		fZoom *= 0.6f;
+
+	float fMiniPercent = pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
+	fZoom *= SCALE( fMiniPercent, 0, 1, 1, 0.5f );
+
+	return fZoom;
 }
 
 /*

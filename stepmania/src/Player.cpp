@@ -496,10 +496,7 @@ void Player::Update( float fDeltaTime )
 
 
 	float fMiniPercent = m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI];
-	float fNoteFieldZoom = 1 - fMiniPercent*0.5f;
 	float fJudgmentZoom = 1 - fMiniPercent*0.25f;
-	if( m_pNoteField )
-		m_pNoteField->SetZoom( fNoteFieldZoom );
 	if( m_pJudgment )
 		m_pJudgment->SetZoom( m_pJudgment->GetZoom() * fJudgmentZoom );
 	if( m_sprJudgmentFrame.IsLoaded() )
@@ -809,13 +806,6 @@ void Player::DrawPrimitives()
 
 		float fTiltDegrees = SCALE(fTilt,-1.f,+1.f,+30,-30) * (bReverse?-1:1);
 
-
-		float fZoom = SCALE( m_pPlayerState->m_CurrentPlayerOptions.m_fEffects[PlayerOptions::EFFECT_MINI], 0.f, 1.f, 1.f, 0.5f );
-		if( fTilt > 0 )
-			fZoom *= SCALE( fTilt, 0.f, 1.f, 1.f, 0.9f );
-		else
-			fZoom *= SCALE( fTilt, 0.f, -1.f, 1.f, 0.9f );
-
 		float fYOffset;
 		if( fTilt > 0 )
 			fYOffset = SCALE( fTilt, 0.f, 1.f, 0.f, -45.f ) * (bReverse?-1:1);
@@ -823,7 +813,6 @@ void Player::DrawPrimitives()
 			fYOffset = SCALE( fTilt, 0.f, -1.f, 0.f, -20.f ) * (bReverse?-1:1);
 
 		m_pNoteField->SetY( fOriginalY + fYOffset );
-		m_pNoteField->SetZoom( fZoom );
 		m_pNoteField->SetRotationX( fTiltDegrees );
 		m_pNoteField->Draw();
 
