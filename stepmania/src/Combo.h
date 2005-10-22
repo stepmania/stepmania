@@ -37,7 +37,7 @@ protected:
 	ThemeMetric<apActorCommands>	FULL_COMBO_W2_COMMAND;
 	ThemeMetric<apActorCommands>	FULL_COMBO_W1_COMMAND;
 	ThemeMetric<apActorCommands>	FULL_COMBO_BROKEN_COMMAND;
-	ThemeMetric<bool>				SHOW_MISS_COMBO;
+	ThemeMetric<apActorCommands>	MISS_COMBO_COMMAND;
 
 	PlayerState *m_pPlayerState;
 	PlayerStageStats *m_pPlayerStageStats;
