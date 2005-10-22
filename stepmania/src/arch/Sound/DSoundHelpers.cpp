@@ -103,6 +103,7 @@ DSound::DSound()
 	HRESULT hr;
 	if( FAILED( hr = CoInitialize(NULL) ) )
 		RageException::Throw( hr_ssprintf(hr, "CoInitialize") );
+	m_pDS = NULL;
 }
 
 CString DSound::Init()
@@ -143,7 +144,8 @@ CString DSound::Init()
 
 DSound::~DSound()
 {
-	m_pDS->Release();
+	if( m_pDS != NULL )
+		m_pDS->Release();
 	CoUninitialize();
 }
 
