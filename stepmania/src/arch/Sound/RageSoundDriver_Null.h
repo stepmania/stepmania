@@ -5,16 +5,14 @@
 
 class RageSound_Null: public RageSound_Generic_Software
 {
-private:
-	int64_t last_cursor_pos;
-
-protected:
+public:
+	RageSound_Null();
 	int64_t GetPosition( const RageSoundBase *snd ) const;
 	float GetPlayLatency() const;
 	void Update( float fDeltaTime );
 
-public:
-    RageSound_Null();
+private:
+	int64_t m_iLastCursorPos;
 };
 #define USE_RAGE_SOUND_NULL
 
