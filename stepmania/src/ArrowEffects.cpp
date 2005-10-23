@@ -28,7 +28,7 @@ namespace
 	{
 		float m_fMinTornadoX[MAX_COLS_PER_PLAYER];
 		float m_fMaxTornadoX[MAX_COLS_PER_PLAYER];
-		float m_fInvertDistance;
+		float m_fInvertDistance[MAX_COLS_PER_PLAYER];
 		float m_fBeatFactor;
 	};
 	PerPlayerData g_EffectData[NUM_PLAYERS];
@@ -82,6 +82,7 @@ void ArrowEffects::Update()
 		//
 		// Update Invert
 		//
+		for( int iColNum = 0; iColNum < MAX_COLS_PER_PLAYER; ++iColNum )
 		{
 			const int iNumCols = pStyle->m_iColsPerPlayer;
 			const int iNumSides = pStyle->m_StyleType==ONE_PLAYER_TWO_SIDES ? 2 : 1;
@@ -116,7 +117,7 @@ void ArrowEffects::Update()
 
 			const float fOldPixelOffset = pCols[iColNum].fXOffset;
 			const float fNewPixelOffset = pCols[iNewCol].fXOffset;
-			data.m_fInvertDistance = fNewPixelOffset - fOldPixelOffset;
+			data.m_fInvertDistance[iColNum] = fNewPixelOffset - fOldPixelOffset;
 		}
 
 		//
@@ -362,7 +363,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		fPixelOffsetFromCenter += fDistance * fEffects[PlayerOptions::EFFECT_FLIP];
 	}
 	if( fEffects[PlayerOptions::EFFECT_INVERT] != 0 )
-		fPixelOffsetFromCenter += data.m_fInvertDistance * fEffects[PlayerOptions::EFFECT_INVERT];
+		fPixelOffsetFromCenter += data.m_fInvertDistance[iColNum] * fEffects[PlayerOptions::EFFECT_INVERT];
 
 	if( fEffects[PlayerOptions::EFFECT_BEAT] != 0 )
 	do {
