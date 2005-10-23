@@ -15,6 +15,7 @@ typedef unsigned long long UInt64;
 #define HAVE_FFMPEG
 #define HAVE_SDL
 #define CRASH_HANDLER
+#define HAVE_THEORA
 // Looking ahead to "Universal binaries."
 #ifdef __BIG_ENDIAN__
 # define ENDIAN_BIG
@@ -92,8 +93,8 @@ typedef int socklen_t;
                       __isnan  ( x ) )
 #endif
 
-#include <string>
 #if ! _GLIBCPP_USE_WCHAR_T
+#include <string>
 
 extern "C"
 {
