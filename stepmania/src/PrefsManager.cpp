@@ -345,6 +345,7 @@ PrefsManager::PrefsManager() :
 	m_fSoundVolume					( "SoundVolume",				1.0f ),
 	m_iSoundWriteAhead				( "SoundWriteAhead",			0 ),
 	m_iSoundDevice					( "SoundDevice",				"" ),
+	m_iSoundPreferredSampleRate		( "SoundPreferredSampleRate",	-1 ),
 	m_SoundResampleQuality			( "SoundResampleQuality",		RageSoundReader_Resample::RESAMP_NORMAL ),
 	m_sInputDrivers					( "InputDrivers",				"" ),
 	m_sLightsDriver					( "LightsDriver",				"" ),

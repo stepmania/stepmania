@@ -233,6 +233,7 @@ public:
 	Preference<float>	m_fSoundVolume;
 	Preference<int>		m_iSoundWriteAhead;
 	Preference<CString>	m_iSoundDevice;	
+	Preference<int>		m_iSoundPreferredSampleRate;
 	Preference<RageSoundReader_Resample::ResampleQuality>	m_SoundResampleQuality;
 private:
 	Preference<CString>	m_sInputDrivers;	// "" == default
