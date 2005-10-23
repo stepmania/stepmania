@@ -64,12 +64,9 @@ void ReceptorArrowRow::Update( float fDeltaTime )
 
 void ReceptorArrowRow::DrawPrimitives()
 {
-	// TODO: Remove use of PlayerNumber.
-	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
 	for( unsigned c=0; c<m_ReceptorArrow.size(); c++ ) 
 	{
-		NoteFieldMode::BeginDrawTrack( pn, c );
+		NoteFieldMode::BeginDrawTrack( m_pPlayerState, c );
 		m_ReceptorArrow[c]->Draw();
 		NoteFieldMode::EndDrawTrack(c);
 	}
