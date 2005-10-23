@@ -196,7 +196,7 @@ void PrefsManager::Init()
 	m_bAutogenGroupCourses = true;
 	m_bBreakComboToGetItem = false;
 	m_bLockCourseDifficulties = true;
-	m_ShowDancingCharacters = CO_OFF;
+	m_ShowDancingCharacters = CO_RANDOM;
 	m_bUseUnlockSystem = false;
 	m_bFirstRun = true;
 	m_bAutoMapOnJoyChange = true;
