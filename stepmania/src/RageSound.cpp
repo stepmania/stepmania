@@ -838,29 +838,29 @@ bool RageSound::SetPositionFrames( int iFrames )
 	/* The position we're going to seek the input stream to.  We have
 	 * to do this in floating point to avoid overflow. */
 	int ms = int( float(iFrames) * 1000.f / samplerate() );
-	ms = max(ms, 0);
+	ms = max( ms, 0 );
 
 	m_DataBuffer.clear();
 
-	int ret;
+	int iRet;
 	if( m_Param.m_bAccurateSync )
-		ret = m_pSource->SetPosition_Accurate(ms);
+		iRet = m_pSource->SetPosition_Accurate(ms);
 	else
-		ret = m_pSource->SetPosition_Fast(ms);
+		iRet = m_pSource->SetPosition_Fast(ms);
 
-	if(ret == -1)
+	if( iRet == -1 )
 	{
 		/* XXX untested */
 		Fail( m_pSource->GetError() );
 		return false; /* failed */
 	}
 
-	if(ret == 0 && ms != 0)
+	if( iRet == 0 && ms != 0 )
 	{
 		/* We were told to seek somewhere, and we got 0 instead, which means
 		 * we passed EOF.  This could be a truncated file or invalid data. */
-		LOG->Warn("SetPositionFrames: %i ms is beyond EOF in %s",
-			ms, GetLoadedFilePath().c_str());
+		LOG->Warn( "SetPositionFrames: %i ms is beyond EOF in %s",
+			ms, GetLoadedFilePath().c_str() );
 
 		return false; /* failed */
 	}
