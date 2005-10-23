@@ -149,7 +149,7 @@ void ArrowGetReverseShiftAndScale( const PlayerState* pPlayerState, int iCol, fl
 	float fPercentReverse = pPlayerState->m_CurrentPlayerOptions.GetReversePercentForColumn(iCol);
 	fShiftOut = SCALE( fPercentReverse, 0.f, 1.f, -fYReverseOffsetPixels/2, fYReverseOffsetPixels/2 );
 	float fPercentCentered = pPlayerState->m_CurrentPlayerOptions.m_fScrolls[PlayerOptions::SCROLL_CENTERED];
-	fShiftOut = SCALE( fPercentCentered, 0.f, 1.f, fShiftOut, 0.5f );
+	fShiftOut = SCALE( fPercentCentered, 0.f, 1.f, fShiftOut, 0.0f );
 
 	fScaleOut = SCALE( fPercentReverse, 0.f, 1.f, 1.f, -1.f);
 }
