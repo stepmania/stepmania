@@ -460,6 +460,8 @@ void NoteField::DrawPrimitives()
 	/* This should be filled in on the first update. */
 	ASSERT( !m_BeatToNoteDisplays.empty() );
 
+	ArrowEffects::Update();
+
 	NoteDisplayCols *cur = SearchForSongBeat();
 	cur->m_ReceptorArrowRow.Draw();
 
