@@ -10,6 +10,7 @@
 #include "ShowComment.h"
 #include "IniFile.h"	
 #include "UninstallOld.h"	
+#include <algorithm>	
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -55,6 +56,11 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CSMPackageInstallDlg message handlers
 
+static bool CompareStringNoCase( const CString &s1, const CString &s2 )
+{
+	return s1.CompareNoCase( s2 ) < 0;
+}
+
 BOOL CSMPackageInstallDlg::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
@@ -86,7 +92,6 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	//
 	// Set the text of the second Edit box
 	//
-	CString sMessage2;
 	try
 	{	
 		m_zip.Open( m_sPackagePath, CZipArchive::zipOpenReadOnly );
@@ -98,20 +103,26 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 		exit( 1 );
 	}
 
-	for( i=0; i<m_zip.GetCount(); i++ )
 	{
-		CZipFileHeader fh;
-		m_zip.GetFileInfo(fh, (WORD)i);
+		vector<CString> vs;
+		for( i=0; i<m_zip.GetCount(); i++ )
+		{
+			CZipFileHeader fh;
+			m_zip.GetFileInfo(fh, (WORD)i);
 
-		if( fh.IsDirectory() )
-			continue;
-		if( !fh.GetFileName().CompareNoCase( "smzip.ctl" ) )
-			continue;
+			if( fh.IsDirectory() )
+				continue;
+			if( !fh.GetFileName().CompareNoCase( "smzip.ctl" ) )
+				continue;
+			vs.push_back( fh.GetFileName() );
+		}
 
-		sMessage2 += ssprintf( "\t%s\r\n", fh.GetFileName() );
+		sort( vs.begin(), vs.end(), CompareStringNoCase );
+
+		CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE2);
+		CString sText = "\t" + join( "\r\n\t", vs );
+		pEdit2->SetWindowText( sText );
 	}
-	CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE2);
-	pEdit2->SetWindowText( sMessage2 );
 
 
 	//
