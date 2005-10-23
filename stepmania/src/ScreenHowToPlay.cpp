@@ -110,6 +110,8 @@ void ScreenHowToPlay::Init()
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-UP", GetAnimPath( ANIM_UP ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-RIGHT", GetAnimPath( ANIM_RIGHT ) );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "Step-JUMPLR", GetAnimPath( ANIM_JUMPLR ) );
+			CString sRestFile = rndchar->GetRestAnimationPath();
+			ASSERT( !sRestFile.empty() );
 			m_pmCharacter->LoadMilkshapeAsciiBones( "rest",rndchar->GetRestAnimationPath() );
 			m_pmCharacter->SetDefaultAnimation( "rest" );
 			m_pmCharacter->PlayAnimation( "rest" );
