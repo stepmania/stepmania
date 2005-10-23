@@ -69,7 +69,10 @@ void RageModelGeometry::MergeMeshes( int iFromIndex, int iToIndex )
 	for( unsigned i=iStartShiftingAtTriangleIndex; i<meshTo.Triangles.size(); i++ )
 	{
 		for( int j=0; j<3; j++ )
-			meshTo.Triangles[i].nVertexIndices[j] += iShiftTriangleVertexIndicesBy;
+		{
+			uint16_t &iIndex = meshTo.Triangles[i].nVertexIndices[j];
+			iIndex = uint16_t(iIndex + iShiftTriangleVertexIndicesBy);
+		}
 	}
 }
 
