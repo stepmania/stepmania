@@ -4,7 +4,6 @@
 #define RAGE_SOUND_READER_RESAMPLE
 
 #include "RageSoundReader.h"
-#include "RageSoundResampler.h"
 
 class RageSoundReader_Resample: public SoundReader
 {
