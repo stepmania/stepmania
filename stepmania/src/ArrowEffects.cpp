@@ -300,10 +300,10 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 
 		const bool bEvenBeat = ( int(fBeat) % 2 ) != 0;
 
-		/* -100.2 -> -0.2 -> 0.2 */
 		if( fBeat < 0 )
 			break;
 
+		/* -100.2 -> -0.2 -> 0.2 */
 		fBeat -= truncf( fBeat );
 		fBeat += 1;
 		fBeat -= truncf( fBeat );
