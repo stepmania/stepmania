@@ -209,7 +209,7 @@ bool CSMPackageInstallDlg::CheckPackages()
 
 	{
 		UninstallOld UninstallOldDlg;
-		UninstallOldDlg.m_sPackages = join("\n", Directories);
+		UninstallOldDlg.m_sPackages = join("\r\n", Directories);
 		int nResponse = UninstallOldDlg.DoModal();
 		if( nResponse == IDCANCEL )
 			return false;	// cancelled
