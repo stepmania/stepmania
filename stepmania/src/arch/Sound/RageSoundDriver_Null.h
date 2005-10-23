@@ -9,6 +9,7 @@ public:
 	RageSound_Null();
 	int64_t GetPosition( const RageSoundBase *snd ) const;
 	float GetPlayLatency() const;
+	int GetSampleRate( int iRate ) const;
 	void Update( float fDeltaTime );
 
 private:

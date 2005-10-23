@@ -36,6 +36,11 @@ float RageSound_Null::GetPlayLatency() const
 	return 0;  /* silence is fast! */
 }
 
+int RageSound_Null::GetSampleRate( int iRate ) const
+{
+	return samplerate;
+}
+
 /*
  * (c) 2002-2004 Glenn Maynard, Aaron VonderHaar
  * All rights reserved.
