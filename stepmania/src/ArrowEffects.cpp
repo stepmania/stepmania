@@ -237,9 +237,8 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		fPixelOffsetFromCenter += fEffects[PlayerOptions::EFFECT_DRUNK] * ( RageFastCos( RageTimer::GetTimeSinceStartFast() + iColNum*0.2f + fYOffset*10/SCREEN_HEIGHT) * ARROW_SIZE*0.5f );
 	if( fEffects[PlayerOptions::EFFECT_FLIP] != 0 )
 	{
-		const int iNumCols = pStyle->m_iColsPerPlayer;
-		int iFirstCol = 0;
-		int iLastCol = iNumCols-1;
+		const int iFirstCol = 0;
+		const int iLastCol = pStyle->m_iColsPerPlayer-1;
 		const int iNewCol = SCALE( iColNum, iFirstCol, iLastCol, iLastCol, iFirstCol );
 		const float fOldPixelOffset = pCols[iColNum].fXOffset;
 		const float fNewPixelOffset = pCols[iNewCol].fXOffset;
@@ -255,7 +254,7 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 		const int iColOnSide = iColNum % iNumColsPerSide;
 
 		const int iColLeftOfMiddle = (iNumColsPerSide-1)/2;
-		const int iColRightOfMidde = (iNumColsPerSide+1)/2;
+		const int iColRightOfMiddle = (iNumColsPerSide+1)/2;
 
 		int iFirstColOnSide = -1;
 		int iLastColOnSide = -1;
@@ -264,9 +263,9 @@ float ArrowEffects::GetXPos( const PlayerState* pPlayerState, int iColNum, float
 			iFirstColOnSide = 0;
 			iLastColOnSide = iColLeftOfMiddle;
 		}
-		else if( iColOnSide >= iColRightOfMidde )
+		else if( iColOnSide >= iColRightOfMiddle )
 		{
-			iFirstColOnSide = iColRightOfMidde;
+			iFirstColOnSide = iColRightOfMiddle;
 			iLastColOnSide = iNumColsPerSide-1;
 		}
 		else
