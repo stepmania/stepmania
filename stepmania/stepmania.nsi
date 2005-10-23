@@ -269,7 +269,7 @@ File "NEWS"
 ; Create Start Menu icons
 SetShellVarContext current  # 	'all' doesn't work on Win9x
 CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
-CreateShortCut "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
+CreateShortCut "$DESKTOP\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open ${PRODUCT_NAME} Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Machine Statistics.lnk" "$INSTDIR\Data\MachineProfile\Stats.xml"
@@ -410,7 +410,7 @@ RMDir "$INSTDIR"	; will delete only if empty
 
 SetShellVarContext current
 Delete "$DESKTOP\Play StepMania CVS.lnk"
-Delete "$DESKTOP\Play ${PRODUCT_NAME_VER}.lnk"
+Delete "$DESKTOP\${PRODUCT_NAME_VER}.lnk"
 ; I'm being paranoid here:
 Delete "$SMPROGRAMS\${PRODUCT_ID}\*.*"
 RMDir "$SMPROGRAMS\${PRODUCT_ID}"
