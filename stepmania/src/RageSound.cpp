@@ -883,11 +883,6 @@ void RageSoundParams::SetPlaybackRate( float fSpeed )
 	}
 }
 
-float RageSound::GetVolume() const
-{
-	return m_Param.m_Volume;
-}
-
 float RageSound::GetAbsoluteVolume() const
 {
 	float f = m_Param.m_Volume;

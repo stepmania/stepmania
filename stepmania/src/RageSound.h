@@ -21,7 +21,6 @@ public:
 	virtual int GetPCM( char *buffer, int size, int64_t frameno ) = 0;
 	virtual int GetSampleRate() const = 0;
 	virtual RageTimer GetStartTime() const { return RageZeroTimer; }
-	virtual float GetVolume() const = 0;
 	virtual float GetAbsoluteVolume() const = 0;
 	virtual int GetID() const = 0;
 	virtual CString GetLoadedFilePath() const = 0;
@@ -136,7 +135,6 @@ public:
 
 	float GetPlaybackRate() const;
 	RageTimer GetStartTime() const;
-	float GetVolume() const;
 	float GetAbsoluteVolume() const;	// factors in SOUNDMAN->GetMixVolume()
 	int GetID() const { return m_iID; }
 	void SetParams( const RageSoundParams &p );
