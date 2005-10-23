@@ -245,7 +245,9 @@ public:
 #endif
 	CString			m_sVideoRenderers;
 	bool			m_bSmoothLines;
+private:
 	CString			m_sSoundDrivers;
+public:
 	int				m_iSoundWriteAhead;
 	CString				m_iSoundDevice;
 	float			m_fSoundVolume;
@@ -275,6 +277,11 @@ public:
 
 	/* Game-specific prefs: */
 	CString			m_sDefaultModifiers;
+
+
+	// wrappers
+	CString GetSoundDrivers();
+
 
 	void ReadGlobalPrefsFromDisk();
 	void SaveGlobalPrefsToDisk() const;

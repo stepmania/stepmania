@@ -261,7 +261,7 @@ void PrefsManager::Init()
 	m_bInterlaced = false;
 #endif
 
-	m_sSoundDrivers = DEFAULT_SOUND_DRIVER_LIST;
+	m_sSoundDrivers = "";	// default
 	/* Number of frames to write ahead; usually 44100 frames per second.
 	 * (Number of millisec would be more flexible, but it's more useful to
 	 * specify numbers directly.) This is purely a troubleshooting option
@@ -825,6 +825,14 @@ void PrefsManager::SaveGlobalPrefsToDisk() const
 	FOREACH_CONST( IPreference*, *g_pvpSubscribers, p ) (*p)->WriteTo( ini );
 
 	ini.WriteFile( STEPMANIA_INI_PATH );
+}
+
+CString PrefsManager::GetSoundDrivers()
+{
+	if( m_sSoundDrivers.empty() )
+		return (CString)DEFAULT_SOUND_DRIVER_LIST;
+	else
+		return m_sSoundDrivers;
 }
 
 int PrefsManager::GetCoinMode()
