@@ -1012,6 +1012,13 @@ public:
 	static int HasMods( T* p, lua_State *L )				{ lua_pushboolean(L, p->HasMods() ); return 1; }
 	static int GetCourseType( T* p, lua_State *L )			{ lua_pushnumber(L, p->GetCourseType() ); return 1; }
 	static int GetCourseEntry( T* p, lua_State *L )			{ CourseEntry &ce = p->m_vEntries[IArg(1)]; ce.PushSelf(L); return 1; }
+	static int GetAllTrails( T* p, lua_State *L )
+	{
+		vector<Trail*> v;
+		p->GetAllTrails( v );
+		LuaHelpers::CreateTableFromArray<Trail*>( v, L );
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -1021,6 +1028,7 @@ public:
 		ADD_METHOD( HasMods );
 		ADD_METHOD( GetCourseType );
 		ADD_METHOD( GetCourseEntry );
+		ADD_METHOD( GetAllTrails );
 
 		Luna<T>::Register( L );
 	}
