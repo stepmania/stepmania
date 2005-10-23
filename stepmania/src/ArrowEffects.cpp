@@ -151,7 +151,7 @@ void ArrowGetReverseShiftAndScale( const PlayerState* pPlayerState, int iCol, fl
 	float fPercentCentered = pPlayerState->m_CurrentPlayerOptions.m_fScrolls[PlayerOptions::SCROLL_CENTERED];
 	fShiftOut = SCALE( fPercentCentered, 0.f, 1.f, fShiftOut, 0.0f );
 
-	fScaleOut = SCALE( fPercentReverse, 0.f, 1.f, 1.f, -1.f);
+	fScaleOut = SCALE( fPercentReverse, 0.f, 1.f, 1.f, -1.f );
 }
 
 float ArrowEffects::GetYPos( const PlayerState* pPlayerState, int iCol, float fYOffset, float fYReverseOffsetPixels, bool WithReverse )
