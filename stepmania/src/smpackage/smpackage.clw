@@ -2,37 +2,39 @@
 
 [General Info]
 Version=1
-LastClass=ShowComment
+LastClass=MainMenuDlg
 LastTemplate=CDialog
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "smpackage.h"
 
-ClassCount=11
+ClassCount=12
 Class1=CSmpackageApp
 Class2=CSmpackageDlg
 
-ResourceCount=12
+ResourceCount=13
 Resource1=IDR_MAINFRAME
 Resource2=IDD_ENTER_STRING
 Class3=CSMPackageInstallDlg
 Class4=CSmpackageExportDlg
-Resource3=IDD_MENU
+Resource3=IDD_UNINSTALL_OLD_PACKAGES
 Class5=EnterName
-Resource4=IDD_EDIT_INSTALLATIONS
+Resource4=IDD_CONVERT_THEME
 Class6=EditInsallations
-Resource5=IDD_EDIT_METRICS
+Resource5=IDD_MENU
 Class7=MainMenuDlg
 Resource6=IDD_DIALOG_NAME
 Class8=ConvertThemeDlg
 Resource7=IDD_SHOW_COMMENT
 Class9=EditMetricsDlg
-Resource8=IDD_CONVERT_THEME
-Resource9=IDD_ENTER_COMMENT
+Resource8=IDD_ENTER_COMMENT
+Resource9=IDD_EXPORTER
 Class10=EnterComment
-Resource10=IDD_EXPORTER
+Resource10=IDD_INSTALL
 Class11=ShowComment
-Resource11=IDD_INSTALL
-Resource12=IDD_UNINSTALL_OLD_PACKAGES
+Resource11=IDD_EDIT_METRICS
+Resource12=IDD_EDIT_INSTALLATIONS
+Class12=ChangeGameSettings
+Resource13=IDD_CHANGE_GAME_SETTINGS
 
 [CLS:CSmpackageApp]
 Type=0
@@ -138,18 +140,27 @@ LastObject=EditInsallations
 [DLG:IDD_MENU]
 Type=1
 Class=MainMenuDlg
-ControlCount=11
+ControlCount=20
 Control1=IDOK,button,1342242817
 Control2=IDC_STATIC,static,1342177294
-Control3=IDC_EXPORT_PACKAGES,button,1342242816
-Control4=IDC_STATIC,static,1342308352
+Control3=IDC_STATIC,static,1342308354
+Control4=IDC_EDIT_INSTALLATION,edit,1350633600
 Control5=IDC_STATIC,button,1342177287
-Control6=IDC_STATIC,button,1342177287
-Control7=IDC_ANALYZE_ELEMENTS,button,1342242816
-Control8=IDC_EDIT_INSTALLATIONS,button,1342242816
-Control9=IDC_STATIC,static,1342308352
-Control10=IDC_STATIC,button,1342177287
-Control11=IDC_STATIC,static,1342308352
+Control6=IDC_EDIT_INSTALLATIONS,button,1342242816
+Control7=IDC_STATIC,static,1342308352
+Control8=IDC_STATIC,button,1342177287
+Control9=IDC_EXPORT_PACKAGES,button,1342242816
+Control10=IDC_STATIC,static,1342308352
+Control11=IDC_STATIC,button,1342177287
+Control12=IDC_ANALYZE_ELEMENTS,button,1342242816
+Control13=IDC_STATIC,static,1342308352
+Control14=IDC_STATIC,button,1342177287
+Control15=IDC_CHANGE_API,button,1342242816
+Control16=IDC_OPEN_STEPMANIA_INI,button,1342242816
+Control17=IDC_STATIC,static,1342308352
+Control18=IDC_STATIC,button,1342177287
+Control19=IDC_CREATE_SONG,button,1342242816
+Control20=IDC_STATIC,static,1342308352
 
 [CLS:MainMenuDlg]
 Type=0
@@ -158,7 +169,7 @@ ImplementationFile=MainMenuDlg.cpp
 BaseClass=CDialog
 Filter=D
 VirtualFilter=dWC
-LastObject=IDC_CONVERT_THEME
+LastObject=MainMenuDlg
 
 [DLG:IDD_CONVERT_THEME]
 Type=1
@@ -266,10 +277,11 @@ ImplementationFile=ShowComment.cpp
 BaseClass=CDialog
 Filter=D
 VirtualFilter=dWC
-LastObject=ShowComment
+LastObject=IDC_DONTSHOW
 
 [DLG:IDD_UNINSTALL_OLD_PACKAGES]
 Type=1
+Class=?
 ControlCount=6
 Control1=IDOK,button,1342242817
 Control2=IDCANCEL,button,1342242816
@@ -277,4 +289,34 @@ Control3=IDC_STATIC,static,1342308352
 Control4=IDC_PACKAGES,edit,1342244992
 Control5=IDC_BUTTON1,button,1342242816
 Control6=IDC_STATIC,static,1342308352
+
+[DLG:IDD_CHANGE_GAME_SETTINGS]
+Type=1
+Class=ChangeGameSettings
+ControlCount=16
+Control1=IDOK,button,1342242817
+Control2=IDCANCEL,button,1342242816
+Control3=IDC_STATIC,button,1342177287
+Control4=IDC_RADIO_DEFAULT,button,1342308361
+Control5=IDC_RADIO_OPENGL,button,1342177289
+Control6=IDC_RADIO_DIRECT3D,button,1342177289
+Control7=IDC_STATIC,button,1342177287
+Control8=IDC_RADIO_SOUND_DEFAULT,button,1342308361
+Control9=IDC_RADIO_SOUND_DIRECTSOUND_HARDWARE,button,1342177289
+Control10=IDC_RADIO_SOUND_DIRECTSOUND_SOFTWARE,button,1342177289
+Control11=IDC_RADIO_SOUND_WAVE_OUT,button,1342177289
+Control12=IDC_RADIO_SOUND_NULL,button,1342177289
+Control13=IDC_STATIC,button,1342177287
+Control14=IDC_CHECK_LOG_TO_DISK,button,1342242819
+Control15=IDC_CHECK_SHOW_LOG_WINDOW,button,1342242819
+Control16=IDC_STATIC,static,1342308352
+
+[CLS:ChangeGameSettings]
+Type=0
+HeaderFile=ChangeGameSettings.h
+ImplementationFile=ChangeGameSettings.cpp
+BaseClass=CDialog
+Filter=D
+LastObject=IDCANCEL
+VirtualFilter=dWC
 

@@ -6,6 +6,8 @@
 void WriteStepManiaInstallDirs( const CStringArray& asInstallDirsToWrite );
 void GetStepManiaInstallDirs( CStringArray& asInstallDirsOut );
 void AddStepManiaInstallDir( CString sNewInstallDir );
+void SetDefaultInstallDir( int iInstallDirIndex );
+void SetDefaultInstallDir( CString sInstallDir );
 
 bool GetPref( CString name, bool &val );
 bool SetPref( CString name, bool val );

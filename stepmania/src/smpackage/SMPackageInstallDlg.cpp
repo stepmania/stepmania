@@ -259,6 +259,14 @@ void CSMPackageInstallDlg::OnOK()
 	CString sInstallDir;
 	m_comboDir.GetWindowText( sInstallDir );
 	
+	int iSelectedInstallDirIndex = m_comboDir.GetCurSel();
+	if( iSelectedInstallDirIndex == -1 )
+	{
+		MessageBox( "No Installations", "Error", MB_OK|MB_ICONEXCLAMATION );
+		return;
+	}
+
+	SetDefaultInstallDir( iSelectedInstallDirIndex );
 
 	// Show comment (if any)
 	CString sComment = m_zip.GetGlobalComment();

@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="smpackage" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 6.00
+# Microsoft Developer Studio Generated Build File, Format Version 60000
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -90,6 +90,14 @@ LINK32=link.exe
 # Begin Group "Source"
 
 # PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=.\ChangeGameSettings.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ChangeGameSettings.h
+# End Source File
 # Begin Source File
 
 SOURCE=.\EditInsallations.cpp

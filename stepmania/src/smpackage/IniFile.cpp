@@ -51,12 +51,13 @@ void IniFile::ReadBuf( const CString &buf )
 			line.Delete(0, 3);
 		}
 
-		if (line == "")
-			continue;
-
 		StripCrnl(line);
 
-		if ((line.GetLength() >= 2 && line[0] == '/' && line[1] == '/') || line[0] == '#')
+		if( line.IsEmpty() )
+			continue;
+		if ((line.GetLength() >= 2 && line[0] == '/' && line[1] == '/') )
+			continue; /* comment */
+		if( line[0] == '#')
 			continue; /* comment */
 
 		if (line[0] == '[' && line[line.GetLength()-1] == ']') //if a section heading

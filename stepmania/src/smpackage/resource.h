@@ -1,5 +1,5 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
+// Microsoft Developer Studio generated include file.
 // Used by smpackage.rc
 //
 #define IDD_SMPACKAGE_DIALOG            102
@@ -20,6 +20,7 @@
 #define IDD_ENTER_COMMENT               146
 #define IDD_SHOW_COMMENT                147
 #define IDD_UNINSTALL_OLD_PACKAGES      148
+#define IDD_CHANGE_GAME_SETTINGS        149
 #define IDC_LIST_SONGS                  1000
 #define IDC_LIST                        1000
 #define IDC_BUTTON_PLAY                 1001
@@ -44,8 +45,11 @@
 #define IDC_EDIT_INSTALLATIONS          1024
 #define IDC_BUTTON_CONVERT              1024
 #define IDC_BUTTON_ANALYZE              1025
+#define IDC_CHANGE_API                  1025
 #define IDC_BUTTON_EDIT_METRICS         1026
+#define IDC_CREATE_SONG                 1026
 #define IDC_BUTTON_ANALYZE_METRICS      1027
+#define IDC_OPEN_STEPMANIA_INI          1027
 #define IDC_EDIT_VALUE                  1028
 #define IDC_EDIT_DEFAULT                1029
 #define IDC_BUTTON_REFRESH              1035
@@ -58,6 +62,17 @@
 #define IDC_PACKAGES                    1044
 #define IDC_BUTTON1                     1045
 #define IDC_PROGRESS1                   1047
+#define IDC_RADIO_DEFAULT               1048
+#define IDC_RADIO_OPENGL                1049
+#define IDC_RADIO_DIRECT3D              1050
+#define IDC_RADIO_SOUND_DEFAULT         1051
+#define IDC_RADIO_SOUND_NULL            1052
+#define IDC_CHECK_LOG_TO_DISK           1053
+#define IDC_CHECK_SHOW_LOG_WINDOW       1054
+#define IDC_EDIT_INSTALLATION           1054
+#define IDC_RADIO_SOUND_DIRECTSOUND_SOFTWARE 1055
+#define IDC_RADIO_SOUND_DIRECTSOUND_HARDWARE 1056
+#define IDC_RADIO_SOUND_WAVE_OUT        1057
 
 // Next default values for new objects
 // 
@@ -65,7 +80,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        149
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1048
+#define _APS_NEXT_CONTROL_VALUE         1055
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
