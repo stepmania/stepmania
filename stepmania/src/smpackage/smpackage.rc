@@ -268,19 +268,19 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,149,145,11
 END
 
-IDD_UNINSTALL_OLD_PACKAGES DIALOGEX 0, 0, 277, 161
+IDD_UNINSTALL_OLD_PACKAGES DIALOG DISCARDABLE  0, 0, 277, 161
 STYLE DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Uninstall Old Packages"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
+FONT 8, "MS Shell Dlg"
 BEGIN
     DEFPUSHBUTTON   "&Yes",IDOK,55,132,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,171,132,50,14
     LTEXT           "The following packages are already installed.  It is strongly recommended that they be deleted before installing this package.",
                     IDC_STATIC,32,11,214,19
-    EDITTEXT        IDC_PACKAGES,56,47,165,67,ES_AUTOHSCROLL | ES_READONLY | 
-                    NOT WS_BORDER
+    EDITTEXT        IDC_PACKAGES,56,37,165,77,ES_MULTILINE | ES_AUTOHSCROLL | 
+                    ES_READONLY | WS_VSCROLL
     PUSHBUTTON      "&No",IDC_BUTTON1,111,132,49,14
-    LTEXT           "Delete old packages?",IDC_STATIC,105,119,67,12
+    CTEXT           "Delete old packages?",IDC_STATIC,55,119,166,12
 END
 
 IDD_CHANGE_GAME_SETTINGS DIALOG DISCARDABLE  0, 0, 162, 285
