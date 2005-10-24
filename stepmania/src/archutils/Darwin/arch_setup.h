@@ -1,21 +1,27 @@
 #ifndef ARCH_SETUP_DARWIN_H
 #define ARCH_SETUP_DARWIN_H
 
-typedef unsigned char 	   UInt8;
-typedef unsigned short 	   UInt16;
-typedef unsigned long 	   UInt32;
+typedef unsigned char      UInt8;
+typedef signed char        SInt8;
+typedef unsigned short     UInt16;
+typedef signed short       SInt16;
+typedef unsigned long      UInt32;
+typedef signed long        SInt32;
+typedef signed long long   SInt64;
 typedef unsigned long long UInt64;
-#define __TYPES__
+
+#define __MACTYPES__
 #include <libkern/OSByteOrder.h>
-#undef __TYPES__
+#undef __MACTYPES__
 #define BACKTRACE_LOOKUP_METHOD_DARWIN_DYLD
 #define BACKTRACE_METHOD_POWERPC_DARWIN
 #define HAVE_VERSION_INFO
 #define HAVE_CXA_DEMANGLE
+#define HAVE_CRYPTOPP
+#define HAVE_THEORA
 #define HAVE_FFMPEG
 #define HAVE_SDL
 #define CRASH_HANDLER
-#define HAVE_THEORA
 // Looking ahead to "Universal binaries."
 #ifdef __BIG_ENDIAN__
 # define ENDIAN_BIG

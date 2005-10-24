@@ -9,7 +9,7 @@
 #include "RageSoundDriver_ALSA9_Software.h"
 #endif
 
-#ifdef HAVE_COREAUDIO
+#if defined(__MACOSX__)
 #include "RageSoundDriver_CA.h"
 #endif
 

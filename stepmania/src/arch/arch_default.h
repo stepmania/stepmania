@@ -15,8 +15,8 @@
  #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
 #elif defined(HAVE_X11) // Prefer X11 over SDL
  #define DEFAULT_INPUT_DRIVER_LIST "X11,Joystick"
-#elif defined(HAVE_CARBON)
-# define DEFAULT_INPUT_DRIVER_LIST "Carbon"
+#elif defined(__MACOSX__)
+# define DEFAULT_INPUT_DRIVER_LIST "Carbon,SDL"
 #elif defined(HAVE_SDL)
  #define DEFAULT_INPUT_DRIVER_LIST "SDL"
 #elif defined(LINUX)

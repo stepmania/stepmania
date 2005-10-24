@@ -17,7 +17,7 @@
 // NOTE: If X11 is available, we don't use LLW_SDL, which IH_SDL depends on.
 #if defined(HAVE_X11)
 #include "InputHandler_X11.h"
-#elif defined(HAVE_CARBON)
+#elif defined(__MACOSX__)
 #include "InputHandler_Carbon.h"
 #elif defined(HAVE_SDL)
 #include "InputHandler_SDL.h"

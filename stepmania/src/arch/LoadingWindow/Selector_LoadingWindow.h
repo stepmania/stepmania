@@ -6,7 +6,7 @@
 /* LoadingWindow driver selector. */
 #include "LoadingWindow_Null.h"
 
-#if defined(HAVE_COCOA)
+#if defined(__MACOSX__)
 #include "LoadingWindow_Cocoa.h"
 
 #elif defined(HAVE_GTK)
