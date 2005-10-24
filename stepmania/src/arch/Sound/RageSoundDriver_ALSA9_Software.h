@@ -10,16 +10,16 @@
 class RageSound_ALSA9_Software: public RageSound_Generic_Software
 {
 public:
-	/* virtuals: */
-	int64_t GetPosition( const RageSoundBase *pSound ) const;
-	float GetPlayLatency() const;
-        int GetSampleRate( int iRate ) const;
-
-	void SetupDecodingThread();
-		
 	RageSound_ALSA9_Software();
 	~RageSound_ALSA9_Software();
 	CString Init();
+
+	/* virtuals: */
+	int64_t GetPosition( const RageSoundBase *pSound ) const;
+	float GetPlayLatency() const;
+	int GetSampleRate( int iRate ) const { return m_iSampleRate; }
+
+	void SetupDecodingThread();
 
 private:
 	static int MixerThread_start( void *p );
@@ -27,6 +27,7 @@ private:
 	bool GetData();
 
 	bool m_bShutdown;
+	int m_iSampleRate;
 	Alsa9Buf *m_pPCM;
 	RageThread m_MixingThread;
 };

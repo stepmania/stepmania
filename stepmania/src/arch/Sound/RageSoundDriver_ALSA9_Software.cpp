@@ -15,8 +15,6 @@
 #include <sys/resource.h>
 
 static const int channels = 2;
-int samplerate = 44100;
-
 static const int samples_per_frame = channels;
 static const int bytes_per_frame = sizeof(int16_t) * samples_per_frame;
 
@@ -106,9 +104,9 @@ CString RageSound_ALSA9_Software::Init()
 	if( sError != "" )
 		return sError;
 
-	samplerate = m_pPCM->FindSampleRate( samplerate );
-	m_pPCM->SetSampleRate( samplerate );
-	LOG->Info( "ALSA: Software mixing at %ihz", samplerate );
+	m_iSampleRate = m_pPCM->FindSampleRate( m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate );
+	m_pPCM->SetSampleRate( m_iSampleRate );
+	LOG->Info( "ALSA: Software mixing at %ihz", m_iSampleRate );
 	
 	m_pPCM->SetWriteahead( g_iMaxWriteahead );
 	m_pPCM->SetChunksize( g_iMaxWriteahead / num_chunks );
@@ -140,14 +138,9 @@ RageSound_ALSA9_Software::~RageSound_ALSA9_Software()
 
 float RageSound_ALSA9_Software::GetPlayLatency() const
 {
-	return float(g_iMaxWriteahead)/samplerate;
+	return float(g_iMaxWriteahead) / m_iSampleRate;
 }
 
-int RageSound_ALSA9_Software::GetSampleRate( int iRate ) const
-{
-	return samplerate;
-}
-		
 /*
  * (c) 2002-2004 Glenn Maynard, Aaron VonderHaar
  * All rights reserved.
