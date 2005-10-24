@@ -22,9 +22,6 @@
 #define HAVE_DIRECTX
 #define HAVE_XDK
 #endif
-#if defined(LINUX)
-#define HAVE_UNIX	// Here just to be explicit.
-#endif
 
 #endif
 
