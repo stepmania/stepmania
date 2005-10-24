@@ -149,18 +149,10 @@ bool Device::Open( io_object_t device )
 		int vid, pid;
 		
 		if( vidRef && !IntValue(vidRef, &vid) )
-			vidRef = NULL;
+			vid = 0;
 		if( pidRef && !IntValue(pidRef, &pid) )
-			pidRef = NULL;
-		
-		if( vidRef && pidRef )
-			mDescription = ssprintf( "%04x:%04x", vid, pid );
-		else if( vidRef )
-			mDescription = ssprintf( "%04x", vid );
-		else if( pidRef )
-			mDescription = ssprintf( "%04x", pid );
-		else
-			mDescription = "(unknown)";
+			pid = 0;
+		mDescription = ssprintf( "%04x:%04x", vid, pid );
 	}
 	
 	CFArrayRef logicalDevices;
