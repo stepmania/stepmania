@@ -19,7 +19,7 @@
 #include "CrashHandler.h"
 #include "CrashHandlerInternal.h"
 
-#if defined(__MACOSX__)
+#if defined(MACOSX)
 # include "../Darwin/DarwinThreadHelpers.h"
 #endif
 

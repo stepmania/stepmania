@@ -154,7 +154,10 @@ CString RageSound_CA::Init()
 RageSound_CA::~RageSound_CA()
 {
 	if( mOutputDevice != NULL )
+	{
 		mOutputDevice->StopIOProc( GetData );
+		mOutputDevice->RemoveIOProc( GetData );
+	}
 	delete mOutputDevice;
 
 	if( mConverter != NULL )
@@ -163,10 +166,21 @@ RageSound_CA::~RageSound_CA()
 
 int64_t RageSound_CA::GetPosition( const RageSoundBase *sound ) const
 {
-	AudioTimeStamp time;
+#if 0
+	AudioTimeStamp inTime;
+	AudioTimeStamp outTime;
     
+	inTime.mHostTime = AudioGetCurrentHostTime();
+	inTime.mFlags = kAudioTimeStampHostTimeValid;
+	outTime.mFlags = kAudioTimeStampSampleTimeValid;
+	mOutputDevice->TranslateTime(inTime, outTime);
+	return int64_t(outTime.mSampleTime);
+#else
+	AudioTimeStamp time;
+	
 	mOutputDevice->GetCurrentTime( time );
 	return int64_t( time.mSampleTime );
+#endif
 }
 
 OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
@@ -185,7 +199,7 @@ OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
 	int64_t now = int64_t( inNow->mSampleTime );
 	
 	RageTimer tm2;
-	int16_t buffer[ dataPackets * (kBytesPerPacket >> 1) ];
+	int16_t buffer[dataPackets * (kBytesPerPacket >> 1)];
 		
 	This->Mix( buffer, dataPackets, decodePos, now) ;
 	g_fLastMixTimes[g_iLastMixTimePos] = tm2.GetDeltaTime();

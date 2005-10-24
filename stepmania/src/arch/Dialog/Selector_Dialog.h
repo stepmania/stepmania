@@ -7,7 +7,7 @@
 #if defined(WIN32)
 #include "DialogDriver_Win32.h"
 
-#elif defined(__MACOSX__)
+#elif defined(MACOSX)
 #include "DialogDriver_Cocoa.h"
 #endif
 

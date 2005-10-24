@@ -1330,7 +1330,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 
-#ifndef __MACOSX__
+#ifndef MACOSX
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F4) )
 	{
 		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
@@ -1355,7 +1355,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 #endif
 
 	bool bDoScreenshot = 
-#if defined(__MACOSX__)
+#if defined(MACOSX)
 	/* Pressing F13 on an Apple keyboard sends KEY_PRINT.
 	 * However, notebooks don't have F13. Use cmd-F12 then*/
 		input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) && 

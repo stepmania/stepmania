@@ -30,6 +30,9 @@ typedef unsigned long long UInt64;
 #endif
 #define ENDIAN_BIG
 
+#ifndef MACOSX
+# define MACOSX
+#endif
 #ifndef __MACOSX__
 # define __MACOSX__
 #endif

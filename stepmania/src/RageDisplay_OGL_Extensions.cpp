@@ -8,7 +8,7 @@
 
 #include <set>
 
-#if !defined(__MACOSX__)
+#if !defined(MACOSX)
 # include <GL/gl.h>
 # include <GL/glu.h>
 #else
@@ -88,7 +88,7 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 #if defined(WIN32)
 	if( HasExtension("WGL_EXT_swap_control") )
 		wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) pWind->GetProcAddress("wglSwapIntervalEXT");
-#elif defined(__MACOSX__)
+#elif defined(MACOSX)
 	wglSwapIntervalEXT = wglSwapIntervalEXT;
 #endif
 

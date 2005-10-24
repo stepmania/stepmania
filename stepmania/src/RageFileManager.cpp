@@ -220,7 +220,7 @@ static void ChangeToDirOfExecutable( CString argv0 )
 	 * written through RageFile.  See also RageFileManager::RageFileManager. */
 #if defined(_WINDOWS)
 	chdir( DirOfExecutable + "/.." );
-#elif defined(__MACOSX__)
+#elif defined(MACOSX)
 	chdir( DirOfExecutable + "/../../.." );
 #endif
 }
@@ -297,7 +297,7 @@ void RageFileManager::MountInitialFilesystems()
 	ASSERT_M( parts.size() > 1, ssprintf("Strange DirOfExecutable: %s", DirOfExecutable.c_str()) );
 	CString Dir = join( "/", parts.begin(), parts.end()-1 );
 	RageFileManager::Mount( "dir", Dir, "/" );
-#elif defined(__MACOSX__)
+#elif defined(MACOSX)
 	CHECKPOINT_M( ssprintf("DOE \"%s\"", DirOfExecutable.c_str()) );
 	CStringArray parts;
 	split( DirOfExecutable, "/", parts );

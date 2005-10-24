@@ -4,7 +4,7 @@
 #include "arch/arch_platform.h"
 
 /* ArchHooks driver selector. */
-#if defined(__MACOSX__)
+#if defined(MACOSX)
 #include "ArchHooks_darwin.h"
 
 #elif defined(UNIX)

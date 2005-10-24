@@ -10,7 +10,7 @@
 #if defined(_MSC_VER)
         #pragma comment(lib, "zlib/zdll.lib")
 #endif
-#elif defined(__MACOSX__)
+#elif defined(MACOSX)
     /* Since crypto++ was added to the repository, <zlib.h> includes the zlib.h
      * in there rather than the correct system one. I don't know why it would do
      * this since crypto51 is not being listed as one of the include directories.

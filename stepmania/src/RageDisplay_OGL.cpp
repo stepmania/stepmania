@@ -7,7 +7,7 @@
 #include <windows.h>
 #endif
 
-#if !defined(__MACOSX__)
+#if !defined(MACOSX)
 # include <GL/gl.h>
 # include <GL/glu.h>
 #else
@@ -30,7 +30,7 @@
 #include <set>
 #include <sstream>
 
-#if defined(__MACOSX__)
+#if defined(MACOSX)
 #include "archutils/Darwin/Vsync.h"
 #endif
 

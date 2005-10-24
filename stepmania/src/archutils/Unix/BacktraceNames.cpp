@@ -12,7 +12,7 @@
 
 #include "RageUtil.h"
 
-#if defined(__MACOSX__)
+#if defined(MACOSX)
 #include "archutils/Darwin/Crash.h"
 #endif
 

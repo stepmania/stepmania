@@ -13,7 +13,7 @@
 #include "arch/Dialog/Dialog.h"
 #include <float.h>
 
-#if defined(__MACOSX__)
+#if defined(MACOSX)
 // Work around global namespace pollution.
 namespace vblas
 {
@@ -90,7 +90,7 @@ void RageVec3TransformNormal( RageVector3* pOut, const RageVector3* pV, const Ra
 
 void RageVec4TransformCoord( RageVector4* pOut, const RageVector4* pV, const RageMatrix* pM )
 {
-#if defined(__MACOSX__)
+#if defined(MACOSX)
 	// (M^t * v)^t = v^t * M 
 	cblas_sgemv(CblasRowMajor, CblasTrans, 4, 4, 1, &pM->m00, 4, &pV->x, 1,
 				0, &pOut->x, 1);
@@ -135,7 +135,7 @@ RageMatrix RageMatrix::GetTranspose() const
 
 void RageMatrixMultiply( RageMatrix* pOut, const RageMatrix* pA, const RageMatrix* pB )
 {
-#if defined(__MACOSX__)
+#if defined(MACOSX)
 	cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 4, 4, 4, 1,
 				&pB->m00, 4, &pA->m00, 4, 0, &pOut->m00, 4);
 #else

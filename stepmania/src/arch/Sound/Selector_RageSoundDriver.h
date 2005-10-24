@@ -9,7 +9,7 @@
 #include "RageSoundDriver_ALSA9_Software.h"
 #endif
 
-#if defined(__MACOSX__)
+#if defined(MACOSX)
 #include "RageSoundDriver_CA.h"
 #endif
 
