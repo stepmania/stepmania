@@ -78,7 +78,8 @@ void DSound::SetPrimaryBufferMode()
 	else if( waveformat.nSamplesPerSec != 44100 )
 		LOG->Warn( "Primary buffer set to %i instead of 44100", waveformat.nSamplesPerSec );
 
-	/* MS docs:
+	/*
+	 * MS docs:
 	 *
 	 * When there are no sounds playing, DirectSound stops the mixer engine and halts DMA 
 	 * (direct memory access) activity. If your application has frequent short intervals of
