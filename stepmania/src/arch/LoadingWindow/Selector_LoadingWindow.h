@@ -15,7 +15,7 @@
 #elif defined(HAVE_SDL)
 #include "LoadingWindow_SDL.h"
 
-#elif defined(HAVE_WIN32)
+#elif defined(WINDOWS)
 #include "LoadingWindow_Win32.h"
 
 #elif defined(HAVE_XDK)

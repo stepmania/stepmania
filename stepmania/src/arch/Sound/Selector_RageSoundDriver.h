@@ -24,7 +24,7 @@
 #include "RageSoundDriver_OSS.h"
 #endif
 
-#ifdef HAVE_WIN32
+#if defined(WIN32)
 #include "RageSoundDriver_WaveOut.h"
 #endif
 

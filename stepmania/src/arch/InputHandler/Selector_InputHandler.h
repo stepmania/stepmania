@@ -8,7 +8,7 @@
 #include "InputHandler_DirectInput.h"
 #endif
 
-#ifdef HAVE_LINUXKERNEL
+#if defined(LINUX)
 #include "InputHandler_Linux_Joystick.h"
 #endif
 
@@ -23,7 +23,7 @@
 #include "InputHandler_SDL.h"
 #endif
 
-#ifdef HAVE_WIN32
+#if defined(WINDOWS)
 #include "InputHandler_Win32_Pump.h"
 #include "InputHandler_Win32_Para.h"
 #include "InputHandler_Win32_MIDI.h"

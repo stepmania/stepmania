@@ -4,9 +4,9 @@
 #include "arch/arch_platform.h"
 
 /* MemoryCardDriver selector. */
-#if defined(HAVE_LINUXKERNEL)
+#if defined(LINUX)
 #include "MemoryCardDriverThreaded_Linux.h"
-#elif defined(HAVE_WIN32)
+#elif defined(WINDOWS)
 #include "MemoryCardDriverThreaded_Windows.h"
 #endif
 

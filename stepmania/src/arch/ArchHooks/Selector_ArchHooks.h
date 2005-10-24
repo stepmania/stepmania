@@ -10,7 +10,7 @@
 #elif defined(HAVE_UNIX)
 #include "ArchHooks_Unix.h"
 
-#elif defined(HAVE_WIN32) // XXX: Better name for this API?
+#elif defined(WINDOWS)
 #include "ArchHooks_Win32.h"
 
 #elif defined(HAVE_XDK)

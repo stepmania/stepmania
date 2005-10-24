@@ -2,9 +2,9 @@
 #define SELECTOR_LOW_LEVEL_WINDOW_H
 
 /* LowLevelWindow selector. */
-#if defined(HAVE_WIN32)
+#if defined(WINDOWS)
 #include "LowLevelWindow_Win32.h"
-#elif defined(HAVE_X11) // Prefer LLW_X11 over LLW_SDL
+#elif defined(HAVE_X11)
 #include "LowLevelWindow_X11.h"
 #elif defined(HAVE_SDL)
 #include "LowLevelWindow_SDL.h"
