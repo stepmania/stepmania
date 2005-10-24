@@ -3,7 +3,6 @@
 #ifndef PlayerNumber_H
 #define PlayerNumber_H
 
-//#include "RageTypes.h"	// for RageColor
 #include "EnumHelper.h"
 
 
