@@ -3575,6 +3575,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = AAC8450F0856A19700A9FEAB /* Build configuration list for PBXNativeTarget "stepmania" */;
 			buildPhases = (
+				AAA74CCF090CE268003F9A36 /* ShellScript */,
 				AA29CC270558741A00961A51 /* Headers */,
 				AA29CD3C0558741A00961A51 /* Resources */,
 				AA4B428C05733DF2005FB5DB /* CopyFiles */,
@@ -3688,6 +3689,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		AAA74CCF090CE268003F9A36 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			comments = "Work around stupid linker thinking archives are out of date if they've been moved.";
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "ranlib Libraries/*.a";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		AA29CD410558741A00961A51 /* Sources */ = {
@@ -4152,7 +4170,6 @@
 					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
-					"$(SRCROOT)/../../../stepmania/PBProject/Frameworks",
 				);
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
