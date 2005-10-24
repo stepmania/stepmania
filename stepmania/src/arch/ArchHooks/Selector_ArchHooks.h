@@ -7,7 +7,7 @@
 #if defined(HAVE_MACOSX)
 #include "ArchHooks_darwin.h"
 
-#elif defined(HAVE_UNIX)
+#elif defined(UNIX)
 #include "ArchHooks_Unix.h"
 
 #elif defined(WINDOWS)
