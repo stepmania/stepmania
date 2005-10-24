@@ -24,7 +24,6 @@
 #endif
 #if defined(LINUX)
 #define HAVE_UNIX	// Here just to be explicit.
-#define HAVE_LINUXKERNEL
 #endif
 
 #endif
