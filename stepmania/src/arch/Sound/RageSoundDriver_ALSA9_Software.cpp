@@ -22,12 +22,12 @@ static const int bytes_per_frame = sizeof(int16_t) * samples_per_frame;
 
 /* Linux 2.6 has a fine-grained scheduler.  We can almost always use a smaller buffer
  * size than in 2.4.  XXX: Some cards can handle smaller buffer sizes than others. */
-static const unsigned max_writeahead_linux_26 = 512;
+static const unsigned g_iMaxWriteahead_linux_26 = 512;
 static const unsigned safe_writeahead = 1024*4;
-static unsigned max_writeahead;
+static unsigned g_iMaxWriteahead;
 const int num_chunks = 8;
 
-int RageSound_ALSA9_Software::MixerThread_start(void *p)
+int RageSound_ALSA9_Software::MixerThread_start( void *p )
 {
 	((RageSound_ALSA9_Software *) p)->MixerThread();
 	return 0;
@@ -55,7 +55,7 @@ bool RageSound_ALSA9_Software::GetData()
 
 	static int16_t *buf = NULL;
 	if (!buf)
-		buf = new int16_t[max_writeahead*samples_per_frame];
+		buf = new int16_t[g_iMaxWriteahead*samples_per_frame];
 
 	const int64_t play_pos = m_pPCM->GetPlayPos();
 	const int64_t cur_play_pos = m_pPCM->GetPosition();
@@ -67,7 +67,7 @@ bool RageSound_ALSA9_Software::GetData()
 }
 
 
-int64_t RageSound_ALSA9_Software::GetPosition(const RageSoundBase *snd) const
+int64_t RageSound_ALSA9_Software::GetPosition( const RageSoundBase *pSound ) const
 {
 	return m_pPCM->GetPosition();
 }       
@@ -90,16 +90,16 @@ CString RageSound_ALSA9_Software::Init()
 	if( sError != "" )
 		return ssprintf( "Driver unusable: %s", sError.c_str() );
 
-	max_writeahead = safe_writeahead;
+	g_iMaxWriteahead = safe_writeahead;
 	CString sys;
 	int vers;
 	GetKernel( sys, vers );
 	LOG->Trace( "OS: %s ver %06i", sys.c_str(), vers );
 	if( sys == "Linux" && vers >= 20600 )
-		max_writeahead = max_writeahead_linux_26;
+		g_iMaxWriteahead = g_iMaxWriteahead_linux_26;
 
 	if( PREFSMAN->m_iSoundWriteAhead )
-		max_writeahead = PREFSMAN->m_iSoundWriteAhead;
+		g_iMaxWriteahead = PREFSMAN->m_iSoundWriteAhead;
 
 	m_pPCM = new Alsa9Buf();
 	sError = m_pPCM->Init( Alsa9Buf::HW_DONT_CARE, channels );
@@ -110,8 +110,8 @@ CString RageSound_ALSA9_Software::Init()
 	m_pPCM->SetSampleRate( samplerate );
 	LOG->Info( "ALSA: Software mixing at %ihz", samplerate );
 	
-	m_pPCM->SetWriteahead( max_writeahead );
-	m_pPCM->SetChunksize( max_writeahead / num_chunks );
+	m_pPCM->SetWriteahead( g_iMaxWriteahead );
+	m_pPCM->SetChunksize( g_iMaxWriteahead / num_chunks );
 	m_pPCM->LogParams();
 	
 	StartDecodeThread();
@@ -140,10 +140,10 @@ RageSound_ALSA9_Software::~RageSound_ALSA9_Software()
 
 float RageSound_ALSA9_Software::GetPlayLatency() const
 {
-	return float(max_writeahead)/samplerate;
+	return float(g_iMaxWriteahead)/samplerate;
 }
 
-int RageSound_ALSA9_Software::GetSampleRate( int rate ) const
+int RageSound_ALSA9_Software::GetSampleRate( int iRate ) const
 {
 	return samplerate;
 }
