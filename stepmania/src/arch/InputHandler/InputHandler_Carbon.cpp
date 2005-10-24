@@ -31,7 +31,7 @@ static inline void PrintIOErr( IOReturn err, const char *s )
 	LOG->Warn( "%s - %s(%x,%d)", s, mach_error_string(err), err, err & 0xFFFFFF );
 }
 
-static inline int IntValue( const void *o, int *n )
+static inline Boolean IntValue( const void *o, int *n )
 {
 	return CFNumberGetValue( CFNumberRef(o), kCFNumberIntType, n );
 }
@@ -136,8 +136,32 @@ bool Device::Open( io_object_t device )
 		return false;
 	}
 	
-	// XXX Get Device Info
-	mDescription = "XXX Device Info";
+	CFStringRef productRef = (CFStringRef)CFDictionaryGetValue( properties, CFSTR(kIOHIDProductKey) );
+	
+	if( productRef )
+	{
+		mDescription = CFStringGetCStringPtr( productRef, CFStringGetSystemEncoding() );
+	}
+	else
+	{
+		CFTypeRef vidRef = (CFTypeRef)CFDictionaryGetValue( properties, CFSTR(kIOHIDVendorIDKey) );
+		CFTypeRef pidRef = (CFTypeRef)CFDictionaryGetValue( properties, CFSTR(kIOHIDProductIDKey) );
+		int vid, pid;
+		
+		if( vidRef && !IntValue(vidRef, &vid) )
+			vidRef = NULL;
+		if( pidRef && !IntValue(pidRef, &pid) )
+			pidRef = NULL;
+		
+		if( vidRef && pidRef )
+			mDescription = ssprintf( "%04x:%04x", vid, pid );
+		else if( vidRef )
+			mDescription = ssprintf( "%04x", vid );
+		else if( pidRef )
+			mDescription = ssprintf( "%04x", pid );
+		else
+			mDescription = "(unknown)";
+	}
 	
 	CFArrayRef logicalDevices;
 	
