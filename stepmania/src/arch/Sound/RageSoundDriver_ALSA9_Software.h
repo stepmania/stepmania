@@ -9,17 +9,6 @@
 
 class RageSound_ALSA9_Software: public RageSound_Generic_Software
 {
-private:
-	bool shutdown;
-
-	Alsa9Buf *pcm;
-
-	static int MixerThread_start(void *p);
-	void MixerThread();
-	RageThread MixingThread;
-
-	bool GetData();
-
 public:
 	/* virtuals: */
 	int64_t GetPosition( const RageSoundBase *snd ) const;
@@ -32,6 +21,17 @@ public:
 	RageSound_ALSA9_Software();
 	CString Init();
 	~RageSound_ALSA9_Software();
+
+private:
+	bool shutdown;
+
+	Alsa9Buf *pcm;
+
+	static int MixerThread_start(void *p);
+	void MixerThread();
+	RageThread MixingThread;
+
+	bool GetData();
 };
 #define USE_RAGE_SOUND_ALSA9_SOFTWARE
 

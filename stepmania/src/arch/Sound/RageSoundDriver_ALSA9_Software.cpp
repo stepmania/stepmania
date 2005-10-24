@@ -37,19 +37,19 @@ void RageSound_ALSA9_Software::MixerThread()
 {
 	setpriority( PRIO_PROCESS, 0, -15 );
 
-	while(!shutdown)
+	while( !m_bShutdown )
 	{
-		while( !shutdown && GetData() )
+		while( !m_bShutdown && GetData() )
 			;
 
-		pcm->WaitUntilFramesCanBeFilled( 100 );
+		m_pPCM->WaitUntilFramesCanBeFilled( 100 );
 	}
 }
 
 /* Returns the number of frames processed */
 bool RageSound_ALSA9_Software::GetData()
 {
-	const int frames_to_fill = pcm->GetNumFramesToFill();
+	const int frames_to_fill = m_pPCM->GetNumFramesToFill();
 	if( frames_to_fill <= 0 )
 		return false;
 
@@ -57,11 +57,11 @@ bool RageSound_ALSA9_Software::GetData()
 	if (!buf)
 		buf = new int16_t[max_writeahead*samples_per_frame];
 
-	const int64_t play_pos = pcm->GetPlayPos();
-	const int64_t cur_play_pos = pcm->GetPosition();
+	const int64_t play_pos = m_pPCM->GetPlayPos();
+	const int64_t cur_play_pos = m_pPCM->GetPosition();
 
 	this->Mix( buf, frames_to_fill, play_pos, cur_play_pos );
-	pcm->Write( buf, frames_to_fill );
+	m_pPCM->Write( buf, frames_to_fill );
 
 	return true;
 }
@@ -69,7 +69,7 @@ bool RageSound_ALSA9_Software::GetData()
 
 int64_t RageSound_ALSA9_Software::GetPosition(const RageSoundBase *snd) const
 {
-	return pcm->GetPosition();
+	return m_pPCM->GetPosition();
 }       
 
 void RageSound_ALSA9_Software::SetupDecodingThread()
@@ -80,8 +80,8 @@ void RageSound_ALSA9_Software::SetupDecodingThread()
 
 RageSound_ALSA9_Software::RageSound_ALSA9_Software()
 {
-	pcm = NULL;
-	shutdown = false;
+	m_pPCM = NULL;
+	m_bShutdown = false;
 }
 
 CString RageSound_ALSA9_Software::Init()
@@ -101,39 +101,39 @@ CString RageSound_ALSA9_Software::Init()
 	if( PREFSMAN->m_iSoundWriteAhead )
 		max_writeahead = PREFSMAN->m_iSoundWriteAhead;
 
-	pcm = new Alsa9Buf();
-	sError = pcm->Init( Alsa9Buf::HW_DONT_CARE, channels );
+	m_pPCM = new Alsa9Buf();
+	sError = m_pPCM->Init( Alsa9Buf::HW_DONT_CARE, channels );
 	if( sError != "" )
 		return sError;
 
-	samplerate = pcm->FindSampleRate( samplerate );
-	pcm->SetSampleRate( samplerate );
+	samplerate = m_pPCM->FindSampleRate( samplerate );
+	m_pPCM->SetSampleRate( samplerate );
 	LOG->Info( "ALSA: Software mixing at %ihz", samplerate );
 	
-	pcm->SetWriteahead( max_writeahead );
-	pcm->SetChunksize( max_writeahead / num_chunks );
-	pcm->LogParams();
+	m_pPCM->SetWriteahead( max_writeahead );
+	m_pPCM->SetChunksize( max_writeahead / num_chunks );
+	m_pPCM->LogParams();
 	
 	StartDecodeThread();
 	
-	MixingThread.SetName( "RageSound_ALSA9_Software" );
-	MixingThread.Create( MixerThread_start, this );
+	m_MixingThread.SetName( "RageSound_ALSA9_Software" );
+	m_MixingThread.Create( MixerThread_start, this );
 
 	return "";
 }
 
 RageSound_ALSA9_Software::~RageSound_ALSA9_Software()
 {
-	if( MixingThread.IsCreated() )
+	if( m_MixingThread.IsCreated() )
 	{
 		/* Signal the mixing thread to quit. */
-		shutdown = true;
+		m_bShutdown = true;
 		LOG->Trace("Shutting down mixer thread ...");
-		MixingThread.Wait();
+		m_MixingThread.Wait();
 		LOG->Trace("Mixer thread shut down.");
 	}
  
-	delete pcm;
+	delete m_pPCM;
 
 	UnloadALSA();
 }
