@@ -5,24 +5,13 @@
 
 class RageSoundResampler
 {
-	int InputRate, OutputRate, Channels;
-
-	enum { MAX_CHANNELS = 15 };
-	int16_t prev[MAX_CHANNELS];
-
-	vector<int16_t> outbuf;
-	bool at_eof;
-	int ipos;
-
-	float t[MAX_CHANNELS];
-
 public:
 	RageSoundResampler();
 
 	/* Configuration: */
-	void SetChannels( int c ) { ASSERT( c < MAX_CHANNELS ); Channels = c; }
-	void SetInputSampleRate(int hz) { InputRate = hz; }
-	void SetOutputSampleRate(int hz) { OutputRate = hz; }
+	void SetChannels( int c ) { ASSERT( c < MAX_CHANNELS ); m_iChannels = c; }
+	void SetInputSampleRate(int hz) { m_iInputRate = hz; }
+	void SetOutputSampleRate(int hz) { m_iOutputRate = hz; }
 
 	/* Write data to be converted. */
 	void write(const void *data, int bytes);
@@ -33,18 +22,28 @@ public:
 	void reset();
 
 	/* Return the number of bytes currently readable. */
-	unsigned avail() const { return outbuf.size() / 2; }
+	unsigned avail() const { return m_OutBuf.size() / 2; }
 
 	/* Read converted data.  Returns the number of bytes filled.
 	 * If eof() has been called and the output is completely
 	 * flushed, returns -1. */
 	int read(void *data, unsigned bytes);
+
+private:
+	int m_iInputRate, m_iOutputRate, m_iChannels;
+
+	enum { MAX_CHANNELS = 15 };
+	int16_t m_iPrevSample[MAX_CHANNELS];
+
+	vector<int16_t> m_OutBuf;
+	bool m_bAtEof;
+	int m_iPos;
 };
 
 #endif
 
 /*
- * Copyright (c) 2003 Glenn Maynard
+ * Copyright (c) 2003-2005 Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

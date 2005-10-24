@@ -17,100 +17,98 @@ RageSoundResampler::RageSoundResampler()
 
 void RageSoundResampler::reset()
 {
-	at_eof = false;
-	memset(prev, 0, sizeof(prev));
-	memset(t, 0, sizeof(t));
-	outbuf.clear();
-	ipos = 0;
-	Channels = 2;
+	m_bAtEof = false;
+	memset( m_iPrevSample, 0, sizeof(m_iPrevSample) );
+	m_iPos = 0;
+	m_OutBuf.clear();
+	m_iChannels = 2;
 }
 
 
 /* Write data to be converted. */
 void RageSoundResampler::write(const void *data_, int bytes)
 {
-	ASSERT(!at_eof);
+	ASSERT(!m_bAtEof);
 
 	const int16_t *data = (const int16_t *) data_;
 
 	const unsigned samples = bytes / sizeof(int16_t);
-	const unsigned frames = samples / Channels;
+	const unsigned frames = samples / m_iChannels;
 
-	if(InputRate == OutputRate)
+	if(m_iInputRate == m_iOutputRate)
 	{
 		/* Optimization. */
-		outbuf.insert(outbuf.end(), data, data+samples);
+		m_OutBuf.insert(m_OutBuf.end(), data, data+samples);
 		return;
 	}
 
-#if 0
-	/* Much higher quality for 44100->48000 resampling, but way too slow. */
-	const int upsamp = 8;
-	const float div = float(InputRate*upsamp) / OutputRate;
-	for(unsigned f = 0; f < frames; ++f)
-	{
-		for(int u = 0; u < upsamp; ++u)
-		{
-			int ipos_begin = (int) roundf(ipos / div);
-			int ipos_end = (int) roundf((ipos+1) / div);
-
-			for(int c = 0; c < Channels; ++c)
-			{
-				const float f = 0.5f;
-				prev[c] = int16_t(prev[c] * (f) + data[c] * (1-f));
-				for(int i = ipos_begin; i < ipos_end; ++i)
-					outbuf.push_back(prev[c]);
-			}
-			ipos++;
-		}
-		data += Channels;
-	}
-#else
 	/* Lerp. */
-	const float div = float(InputRate) / OutputRate;
-	for(unsigned f = 0; f < frames; ++f)
+	const int FIXED_SHIFT = 14;
+	const int FIXED_ONE = 1<<FIXED_SHIFT;
+	int iInputSamplesPerOutputSample =
+		(m_iInputRate<<FIXED_SHIFT) / m_iOutputRate;
+
+	m_OutBuf.resize( (frames*m_iChannels*m_iOutputRate)/m_iInputRate + 10 );
+	int iSize = 0;
+	
+	for( int c = 0; c < m_iChannels; ++c )
 	{
-		for(int c = 0; c < Channels; ++c)
+		int iPos = m_iPos;
+		const int16_t *pInBuf = &data[c];
+		int16_t *pOutBuf = &m_OutBuf[c];
+		int iSamplesInput = 0;
+		int iSamplesOutput = 0;
+		int16_t iPrevSample = m_iPrevSample[c];
+		for( unsigned f = 0; f < frames; ++f )
 		{
-			while(t[c] < 1.0f)
+			while( iPos < FIXED_ONE )
 			{
-				int16_t s = int16_t(prev[c]*(1-t[c]) + data[c]*t[c]);
-				outbuf.push_back(s);
-				t[c] += div;
+				int iSamp = iPrevSample * (FIXED_ONE-iPos) +
+					pInBuf[iSamplesInput] * iPos;
+				pOutBuf[iSamplesOutput] = int16_t(iSamp >> FIXED_SHIFT);
+				iSamplesOutput += m_iChannels;
+				iPos += iInputSamplesPerOutputSample;
 			}
 
-			t[c] -= 1;
-			prev[c] = data[c];
-		}
+			iPos -= FIXED_ONE;
 
-		ipos++;
-		data += Channels;
+			iPrevSample = pInBuf[iSamplesInput];
+			iSamplesInput += m_iChannels;
+		}
+		m_iPrevSample[c] = iPrevSample;
+
+		if( c == m_iChannels-1 )
+		{
+			iSize = iSamplesOutput;
+			m_iPos = iPos;
+		}
 	}
-#endif
+
+	m_OutBuf.erase( m_OutBuf.begin()+iSize, m_OutBuf.end() );
 }
 
 
 void RageSoundResampler::eof()
 {
-	ASSERT(!at_eof);
+	ASSERT(!m_bAtEof);
 
 	/* Write some silence to flush out the real data.  If we don't have any sound,
 	 * don't do this, so seeking past end of file doesn't write silence. */
 	bool bNeedsFlush = false;
-	for( int c = 0; c < Channels; ++c )
-		if( prev[c] != 0 ) 
+	for( int c = 0; c < m_iChannels; ++c )
+		if( m_iPrevSample[c] != 0 ) 
 			bNeedsFlush = true;
 
 	if( bNeedsFlush )
 	{
-		const int size = Channels*16;
+		const int size = m_iChannels*16;
 		int16_t *data = new int16_t[size];
 		memset(data, 0, size * sizeof(int16_t));
 		write(data, size * sizeof(int16_t));
 		delete [] data;
 	}
 
-	at_eof = true;
+	m_bAtEof = true;
 }
 
 
@@ -119,19 +117,19 @@ int RageSoundResampler::read(void *data, unsigned bytes)
 	/* Don't be silly. */
 	ASSERT( (bytes % sizeof(int16_t)) == 0);
 
-	/* If no data is available, and we're at_eof, return -1. */
-	if(outbuf.size() == 0 && at_eof)
+	/* If no data is available, and we're m_bAtEof, return -1. */
+	if(m_OutBuf.size() == 0 && m_bAtEof)
 		return -1;
 
 	/* Fill as much as we have. */
-	int Avail = min(outbuf.size()*sizeof(int16_t), bytes);
-	memcpy(data, &outbuf[0], Avail);
-	outbuf.erase(outbuf.begin(), outbuf.begin() + Avail/sizeof(int16_t));
+	int Avail = min(m_OutBuf.size()*sizeof(int16_t), bytes);
+	memcpy(data, &m_OutBuf[0], Avail);
+	m_OutBuf.erase(m_OutBuf.begin(), m_OutBuf.begin() + Avail/sizeof(int16_t));
 	return Avail;
 }
 
 /*
- * Copyright (c) 2003 Glenn Maynard
+ * Copyright (c) 2003-2005 Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
