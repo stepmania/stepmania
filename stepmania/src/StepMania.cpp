@@ -1356,10 +1356,13 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 
 	bool bDoScreenshot = 
 #if defined(MACOSX)
-	/* Pressing F13 on an Apple keyboard sends KEY_PRINT.
-	 * However, notebooks don't have F13. Use cmd-F12 then*/
-		input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) && 
-		( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA)) || INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA)) );
+	/* Notebooks don't have F13. Use cmd-F12 as well. */
+		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_PRTSC ) ||
+		input.DeviceI == DeviceInput( DEVICE_KEYBOARD, KEY_F13 ) ||
+		( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F12) && 
+		  (INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA)) ||
+		   INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA))) );
+
 #else
 	/* The default Windows message handler will capture the desktop window upon
 	 * pressing PrntScrn, or will capture the foregroud with focus upon pressing
