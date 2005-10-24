@@ -5,7 +5,23 @@
 #include "RageUtil.h"
 #include "RageThreads.h"
 #include "Preference.h"
+#include "Foreach.h"
 
+#include <set>
+namespace
+{
+	/* Maintain a set of all interesting buttons: buttons which are being held
+	 * down, or which were held down and need a RELEASE event.  We use this to
+	 * optimize InputFilter::Update, so we don't have to process every button
+	 * we know about when most of them aren't in use.  This set is protected
+	 * by queuemutex. */
+	typedef pair<InputDevice,DeviceButton> Button;
+	set<Button> g_ButtonsToProcess;
+	void ActivateButton( const DeviceInput &di )
+	{
+		g_ButtonsToProcess.insert( make_pair(di.device, di.button) );
+	}
+}
 /*
  * Some input devices require debouncing.  Do this on both press and release.  After
  * reporting a change in state, don't report another for the debounce period.  If a
@@ -101,6 +117,8 @@ void InputFilter::ButtonPressed( const DeviceInput &di, bool Down )
 		bs.m_BeingHeld = Down;
 		bs.m_BeingHeldTime = di.ts;
 	}
+
+	ActivateButton( di );
 }
 
 void InputFilter::SetButtonComment( const DeviceInput &di, const CString &sComment )
@@ -120,6 +138,7 @@ void InputFilter::ResetDevice( InputDevice device )
 
 void InputFilter::Update(float fDeltaTime)
 {
+RageTimer foo;
 	RageTimer now;
 
 	// Constructing the DeviceInput inside the nested loops caues terrible 
@@ -138,85 +157,82 @@ void InputFilter::Update(float fDeltaTime)
 	 * things like "key pressed, key release, key repeat". */
 	LockMut(*queuemutex);
 
-	// Don't reconstruct "di" inside the loop.  This line alone is 
-	// taking 4% of the CPU on a P3-666.
 	DeviceInput di( (InputDevice)0,0,1.0f,now);
 
-	FOREACH_InputDevice( d )
+	set<Button> Buttons( g_ButtonsToProcess );
+	FOREACHS( Button, Buttons, b )
 	{
-		di.device = d;
+		di.device = b->first;
+		di.button = b->second;
+		ButtonState &bs = m_ButtonState[di.device][di.button];
+		di.level = bs.m_Level;
 
-		for( int b=0; b < GetNumDeviceButtons(d); b++ )	// foreach button
+		/* Generate IET_FIRST_PRESS and IET_RELEASE events. */
+		if( now - bs.m_LastReportTime >= g_fInputDebounceTime && bs.m_BeingHeld != bs.m_bLastReportedHeld )
 		{
-			ButtonState &bs = m_ButtonState[d][b];
-			di.button = b;
-			di.level = bs.m_Level;
+			bs.m_LastReportTime = now;
+			bs.m_bLastReportedHeld = bs.m_BeingHeld;
+			bs.m_fSecsHeld = 0;
 
-			/* Generate IET_FIRST_PRESS and IET_RELEASE events. */
-			if( now - bs.m_LastReportTime >= g_fInputDebounceTime && bs.m_BeingHeld != bs.m_bLastReportedHeld )
+			di.ts = bs.m_BeingHeldTime;
+			queue.push_back( InputEvent(di,bs.m_bLastReportedHeld? IET_FIRST_PRESS:IET_RELEASE) );
+		}
+
+		/* Generate IET_LEVEL_CHANGED events. */
+		if( bs.m_LastLevel != bs.m_Level && bs.m_Level != -1 )
+		{
+			queue.push_back( InputEvent(di,IET_LEVEL_CHANGED) );
+			bs.m_LastLevel = bs.m_Level;
+		}
+
+		/* Generate IET_FAST_REPEAT and IET_SLOW_REPEAT events. */
+		if( !bs.m_bLastReportedHeld )
+		{
+			g_ButtonsToProcess.erase( make_pair(di.device, di.button) );
+			continue;
+		}
+
+		const float fOldHoldTime = bs.m_fSecsHeld;
+		bs.m_fSecsHeld += fDeltaTime;
+		const float fNewHoldTime = bs.m_fSecsHeld;
+
+		float fTimeBeforeRepeats;
+		InputEventType iet;
+		if( fNewHoldTime > g_fTimeBeforeSlow )
+		{
+			if( fNewHoldTime > g_fTimeBeforeFast )
 			{
-				bs.m_LastReportTime = now;
-				bs.m_bLastReportedHeld = bs.m_BeingHeld;
-				bs.m_fSecsHeld = 0;
-
-				di.ts = bs.m_BeingHeldTime;
-				queue.push_back( InputEvent(di,bs.m_bLastReportedHeld? IET_FIRST_PRESS:IET_RELEASE) );
+				fTimeBeforeRepeats = g_fTimeBeforeFast;
+				iet = IET_FAST_REPEAT;
+			}
+			else
+			{
+				fTimeBeforeRepeats = g_fTimeBeforeSlow;
+				iet = IET_SLOW_REPEAT;
 			}
 
-			/* Generate IET_LEVEL_CHANGED events. */
-			if( bs.m_LastLevel != bs.m_Level && bs.m_Level != -1 )
+			float fRepeatTime;
+			if( fOldHoldTime < fTimeBeforeRepeats )
 			{
-				queue.push_back( InputEvent(di,IET_LEVEL_CHANGED) );
-				bs.m_LastLevel = bs.m_Level;
+				fRepeatTime = fTimeBeforeRepeats;
+			}
+			else
+			{
+				float fAdjustedOldHoldTime = fOldHoldTime - fTimeBeforeRepeats;
+				float fAdjustedNewHoldTime = fNewHoldTime - fTimeBeforeRepeats;
+				if( int(fAdjustedOldHoldTime/g_fTimeBetweenRepeats) == int(fAdjustedNewHoldTime/g_fTimeBetweenRepeats) )
+					continue;
+				fRepeatTime = ftruncf( fNewHoldTime, g_fTimeBetweenRepeats );
 			}
 
-			/* Generate IET_FAST_REPEAT and IET_SLOW_REPEAT events. */
-			if( !bs.m_bLastReportedHeld )
-				continue;
+			/* Set the timestamp to the exact time of the repeat.  This way,
+			 * as long as tab/` aren't being used, the timestamp will always
+			 * increase steadily during repeats. */
+			di.ts = bs.m_BeingHeldTime + fRepeatTime;
 
-			const float fOldHoldTime = bs.m_fSecsHeld;
-			bs.m_fSecsHeld += fDeltaTime;
-			const float fNewHoldTime = bs.m_fSecsHeld;
-
-			float fTimeBeforeRepeats;
-			InputEventType iet;
-			if( fNewHoldTime > g_fTimeBeforeSlow )
-			{
-				if( fNewHoldTime > g_fTimeBeforeFast )
-				{
-					fTimeBeforeRepeats = g_fTimeBeforeFast;
-					iet = IET_FAST_REPEAT;
-				}
-				else
-				{
-					fTimeBeforeRepeats = g_fTimeBeforeSlow;
-					iet = IET_SLOW_REPEAT;
-				}
-
-				float fRepeatTime;
-				if( fOldHoldTime < fTimeBeforeRepeats )
-				{
-					fRepeatTime = fTimeBeforeRepeats;
-				}
-				else
-				{
-					float fAdjustedOldHoldTime = fOldHoldTime - fTimeBeforeRepeats;
-					float fAdjustedNewHoldTime = fNewHoldTime - fTimeBeforeRepeats;
-					if( int(fAdjustedOldHoldTime/g_fTimeBetweenRepeats) == int(fAdjustedNewHoldTime/g_fTimeBetweenRepeats) )
-						continue;
-					fRepeatTime = ftruncf( fNewHoldTime, g_fTimeBetweenRepeats );
-				}
-
-				/* Set the timestamp to the exact time of the repeat.  This way,
-				 * as long as tab/` aren't being used, the timestamp will always
-				 * increase steadily during repeats. */
-				di.ts = bs.m_BeingHeldTime + fRepeatTime;
-
-				queue.push_back( InputEvent(di,iet) );
-			}
+			queue.push_back( InputEvent(di,iet) );
 		}
 	}
-
 }
 
 bool InputFilter::IsBeingPressed( const DeviceInput &di )
