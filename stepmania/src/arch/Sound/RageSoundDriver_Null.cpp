@@ -2,9 +2,9 @@
 #include "RageSoundDriver_Null.h"
 #include "RageLog.h"
 #include "RageUtil.h"
+#include "PrefsManager.h"
 
 const int channels = 2;
-const int samplerate = 44100;
 
 void RageSound_Null::Update( float fDeltaTime )
 {
@@ -21,13 +21,15 @@ void RageSound_Null::Update( float fDeltaTime )
 
 int64_t RageSound_Null::GetPosition( const RageSoundBase *snd ) const
 {
-	return int64_t( RageTimer::GetTimeSinceStart() * samplerate );
+	return int64_t( RageTimer::GetTimeSinceStart() * m_iSampleRate );
 }
 
 RageSound_Null::RageSound_Null()
 {
 	m_iLastCursorPos = GetPosition( NULL );
-
+	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
+	if( m_iSampleRate == -1 )
+		m_iSampleRate = 44100;
 	StartDecodeThread();
 }
 
@@ -38,7 +40,7 @@ float RageSound_Null::GetPlayLatency() const
 
 int RageSound_Null::GetSampleRate( int iRate ) const
 {
-	return samplerate;
+	return m_iSampleRate;
 }
 
 /*

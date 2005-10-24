@@ -14,6 +14,7 @@ public:
 
 private:
 	int64_t m_iLastCursorPos;
+	int m_iSampleRate;
 };
 #define USE_RAGE_SOUND_NULL
 
