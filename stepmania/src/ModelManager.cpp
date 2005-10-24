@@ -31,7 +31,7 @@ RageModelGeometry* ModelManager::LoadMilkshapeAscii( const CString& sFile, bool 
 	std::map<CString, RageModelGeometry*>::iterator p = m_mapFileToModel.find(sFile);
 	if(p != m_mapFileToModel.end())
 	{
-		/* Found the texture.  Just increase the refcount and return it. */
+		/* Found the geometry.  Just increase the refcount and return it. */
 		RageModelGeometry* pModel = p->second;
 		pModel->m_iRefCount++;
 		return pModel;
