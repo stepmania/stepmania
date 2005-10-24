@@ -44,9 +44,9 @@ CString RageSound_CA::Init()
 	try
 	{
 		AudioDeviceID dID = CAAudioHardwareSystem::GetDefaultDevice( false, false );
-		mOutputDevice = new CAAudioHardwareDevice(dID);
+		mOutputDevice = new CAAudioHardwareDevice( dID );
 	}
-	catch (const CAException& e)
+	catch( const CAException& e )
 	{
 		return "Couldn't create default output device.";
 	}
@@ -57,44 +57,43 @@ CString RageSound_CA::Init()
 	{
 		mOutputDevice->SetNominalSampleRate(nominalSampleRate);
 	}
-	catch (const CAException& e)
+	catch( const CAException& e )
 	{
-		LOG->Warn("Couldn't set the nominal sample rate.");
+		LOG->Warn( "Couldn't set the nominal sample rate." );
 		nominalSampleRate = mOutputDevice->GetNominalSampleRate();
-		LOG->Warn("Device's nominal sample rate is %f", nominalSampleRate);
+		LOG->Warn( "Device's nominal sample rate is %f", nominalSampleRate );
 	}
 	AudioStreamID sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
 	CAAudioHardwareStream stream( sID );
 
 	try
 	{
-		mOutputDevice->AddPropertyListener(kAudioPropertyWildcardChannel,
-				   kAudioPropertyWildcardSection, kAudioDeviceProcessorOverload, OverloadListener, this);
+		mOutputDevice->AddPropertyListener( kAudioPropertyWildcardChannel, kAudioPropertyWildcardSection,
+											kAudioDeviceProcessorOverload, OverloadListener, this );
 	}
-	catch (const CAException& e)
+	catch( const CAException& e )
 	{
 		LOG->Warn("Could not install the overload listener.");
 	}
 
 	// The canonical format
 	// XXX should this be nominalSampleRate or not?
-	Desc IOProcFormat(nominalSampleRate, kAudioFormatLinearPCM, 8, 1, 8, 2, 32,
-					  kAudioFormatFlagsNativeFloatPacked);
-	const Desc SMFormat(44100.0, kAudioFormatLinearPCM, kBytesPerPacket,
-                        kFramesPerPacket, kBytesPerFrame, kChannelsPerFrame,
-                        kBitsPerChannel, kFormatFlags);
+	Desc IOProcFormat( nominalSampleRate, kAudioFormatLinearPCM, 8, 1, 8, 2, 32,
+					   kAudioFormatFlagsNativeFloatPacked);
+	const Desc SMFormat( 44100.0, kAudioFormatLinearPCM, kBytesPerPacket, kFramesPerPacket, kBytesPerFrame,
+						 kChannelsPerFrame, kBitsPerChannel, kFormatFlags );
 	
 	try
 	{
-		stream.SetCurrentIOProcFormat(IOProcFormat);
+		stream.SetCurrentIOProcFormat( IOProcFormat );
 	}
-	catch (const CAException& e)
+	catch( const CAException& e )
 	{
-		LOG->Warn("Could not set the IOProc format to the canonical format.");
-		stream.GetCurrentIOProcFormat(IOProcFormat);
+		LOG->Warn( "Could not set the IOProc format to the canonical format." );
+		stream.GetCurrentIOProcFormat( IOProcFormat );
 	}
 	
-	if (AudioConverterNew(&SMFormat, &IOProcFormat, &mConverter))
+	if( A udioConverterNew(&SMFormat, &IOProcFormat, &mConverter) )
 		return "Couldn't create the audio converter";
 	
 	try
@@ -102,7 +101,7 @@ CString RageSound_CA::Init()
 		UInt32 bufferSize = mOutputDevice->GetIOBufferSize();
 		LOG->Info("I/O Buffer size: %lu", bufferSize);
 	}
-	catch (const CAException& e)
+	catch( const CAException& e )
 	{
 		LOG->Warn("Could not determine buffer size.");
 	}    
@@ -110,21 +109,23 @@ CString RageSound_CA::Init()
 	try
 	{
 		UInt32 frames = mOutputDevice->GetLatency(kAudioDeviceSectionOutput);
-		if (stream.HasProperty(0, kAudioDevicePropertyLatency))
+		if( stream.HasProperty(0, kAudioDevicePropertyLatency) )
 		{
 			UInt32 t, size = 4;
             
-			stream.GetPropertyData(0, kAudioDevicePropertyLatency, size, &t);
+			stream.GetPropertyData( 0, kAudioDevicePropertyLatency, size, &t );
 			frames += t;
-			LOG->Info("Frames of stream latency: %lu", t);
+			LOG->Info( "Frames of stream latency: %lu", t );
 		}
 		else
-			LOG->Warn("Stream reports no latency.");
+		{
+			LOG->Warn( "Stream reports no latency." );
+		}
 		mLatency = frames / 44100.0;
-		LOG->Info("Frames of latency:        %lu\n"
-				  "Seconds of latency:       %f", frames, mLatency);
+		LOG->Info( "Frames of latency:        %lu\n"
+				   "Seconds of latency:       %f", frames, mLatency );
 	}
-	catch (const CAException& e)
+	catch( const CAException& e )
 	{
 		return "Couldn't get latency.";
 	}
@@ -133,10 +134,10 @@ CString RageSound_CA::Init()
     
 	try
 	{
-		mOutputDevice->AddIOProc(GetData, this);
-		mOutputDevice->StartIOProc(GetData);
+		mOutputDevice->AddIOProc( GetData, this );
+		mOutputDevice->StartIOProc( GetData );
 	}
-	catch(const CAException& e)
+	catch( const CAException& e )
 	{
 		return "Couldn't start the IOProc.";
 	}
@@ -153,39 +154,39 @@ RageSound_CA::~RageSound_CA()
 		AudioConverterDispose( mConverter );
 }
 
-int64_t RageSound_CA::GetPosition(const RageSoundBase *sound) const
+int64_t RageSound_CA::GetPosition( const RageSoundBase *sound ) const
 {
 	AudioTimeStamp time;
     
-	mOutputDevice->GetCurrentTime(time);
-	return int64_t(time.mSampleTime);
+	mOutputDevice->GetCurrentTime( time );
+	return int64_t( time.mSampleTime );
 }
 
-OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
-							   const AudioTimeStamp *inNow,
-							   const AudioBufferList *inInputData,
-							   const AudioTimeStamp *inInputTime,
-							   AudioBufferList *outOutputData,
-							   const AudioTimeStamp *inOutputTime,
-							   void *inClientData)
+OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
+								const AudioTimeStamp *inNow,
+								const AudioBufferList *inInputData,
+								const AudioTimeStamp *inInputTime,
+								AudioBufferList *outOutputData,
+								const AudioTimeStamp *inOutputTime,
+								void *inClientData )
 {
 	RageTimer tm;
 	RageSound_CA *This = (RageSound_CA *)inClientData;
 	AudioBuffer& buf = outOutputData->mBuffers[0];
 	UInt32 dataPackets = buf.mDataByteSize >> 3; // 8 byes per packet
-	int64_t decodePos = int64_t(inOutputTime->mSampleTime);
-	int64_t now = int64_t(inNow->mSampleTime);
+	int64_t decodePos = int64_t( inOutputTime->mSampleTime );
+	int64_t now = int64_t( inNow->mSampleTime );
 	
 	RageTimer tm2;
-	int16_t buffer[dataPackets * (kBytesPerPacket >> 1)];
+	int16_t buffer[ dataPackets * (kBytesPerPacket >> 1) ];
 		
-	This->Mix(buffer, dataPackets, decodePos, now);
-	g_fLastMixTimes[g_iLastMixTimePos] = tm2.GetDeltaTime();
+	This->Mix( buffer, dataPackets, decodePos, now) ;
+	g_fLastMixTimes[ g_iLastMixTimePos ] = tm2.GetDeltaTime();
 	++g_iLastMixTimePos;
-	wrap(g_iLastMixTimePos, NUM_MIX_TIMES);
+	wrap( g_iLastMixTimePos, NUM_MIX_TIMES );
 		
-	AudioConverterConvertBuffer(This->mConverter, dataPackets * kBytesPerPacket,
-								buffer, &buf.mDataByteSize, buf.mData);
+	AudioConverterConvertBuffer( This->mConverter, dataPackets * kBytesPerPacket,
+								 buffer, &buf.mDataByteSize, buf.mData );
 		
 	g_fLastIOProcTime = tm.GetDeltaTime();
 	++g_iNumIOProcCalls;
@@ -194,11 +195,11 @@ OSStatus RageSound_CA::GetData(AudioDeviceID inDevice,
 }
 		
 
-OSStatus RageSound_CA::OverloadListener(AudioDeviceID inDevice,
-										UInt32 inChannel,
-										Boolean isInput,
-										AudioDevicePropertyID inPropertyID,
-										void *inData)
+OSStatus RageSound_CA::OverloadListener( AudioDeviceID inDevice,
+										 UInt32 inChannel,
+										 Boolean isInput,
+										 AudioDevicePropertyID inPropertyID,
+										 void *inData )
 {
 	CString Output;
 	for( int i = NUM_MIX_TIMES-1; i >= 0; --i )
@@ -224,8 +225,7 @@ void RageSound_CA::SetupDecodingThread()
 							 THREAD_PRECEDENCE_POLICY, (int *)&po,
 							 THREAD_PRECEDENCE_POLICY_COUNT );
 	if( ret != KERN_SUCCESS )
-		LOG->Warn("thread_policy_set(THREAD_PRECEDENCE_POLICY) failed: %s",
-				  mach_error_string(ret));
+		LOG->Warn( "thread_policy_set(THREAD_PRECEDENCE_POLICY) failed: %s", mach_error_string(ret) );
 }
 
 /*

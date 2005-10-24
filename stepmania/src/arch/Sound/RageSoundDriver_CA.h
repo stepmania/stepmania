@@ -23,26 +23,26 @@ private:
     CAAudioHardwareDevice *mOutputDevice;
 	AudioConverterRef mConverter;
 	
-	static OSStatus GetData(AudioDeviceID inDevice,
-							const AudioTimeStamp *inNow,
-							const AudioBufferList *inInputData,
-							const AudioTimeStamp *inInputTime,
-							AudioBufferList *outOutputData,
-							const AudioTimeStamp *inOutputTime,
-							void *inClientData);	
+	static OSStatus GetData( AudioDeviceID inDevice,
+							 const AudioTimeStamp *inNow,
+							 const AudioBufferList *inInputData,
+							 const AudioTimeStamp *inInputTime,
+							 AudioBufferList *outOutputData,
+							 const AudioTimeStamp *inOutputTime,
+							 void *inClientData);	
     
-    static OSStatus OverloadListener(AudioDeviceID inDevice,
-                                     UInt32 inChannel,
-                                     Boolean isInput,
-                                     AudioDevicePropertyID inPropertyID,
-                                     void *inData);
+    static OSStatus OverloadListener( AudioDeviceID inDevice,
+									  UInt32 inChannel,
+									  Boolean isInput,
+									  AudioDevicePropertyID inPropertyID,
+									  void *inData);
                               
 public:
     RageSound_CA();
     CString Init();
     ~RageSound_CA();
     float GetPlayLatency() const { return mLatency; }
-    int64_t GetPosition(const RageSoundBase *sound) const;
+    int64_t GetPosition( const RageSoundBase *sound ) const;
     void SetupDecodingThread();
 };
 #define USE_RAGE_SOUND_CA
