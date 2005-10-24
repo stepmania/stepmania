@@ -41,7 +41,7 @@ public:
 private:
 	void Init();
 	CString ProcessHeaders();
-	int ReadPage( ogg_page *pOggPage );
+	int ReadPage( ogg_page *pOggPage, CString &sError, bool bInitializing );
 	void ConvertToSurface( RageSurface *pSurface ) const;
 
 	RageFile m_File;
@@ -80,7 +80,7 @@ void MovieDecoder_Theora::Init()
 	ogg_sync_init( &m_OggSync );
 }
 
-int MovieDecoder_Theora::ReadPage( ogg_page *pOggPage )
+int MovieDecoder_Theora::ReadPage( ogg_page *pOggPage, CString &sError, bool bInitializing )
 {
 	while(1)
 	{
@@ -89,6 +89,12 @@ int MovieDecoder_Theora::ReadPage( ogg_page *pOggPage )
 			return iRet;
 		if( iRet < 0 )
 		{
+			if( bInitializing )
+			{
+				sError = "not an Ogg file";
+				return -1;
+			}
+
 			LOG->Trace( "%s: hole in stream", m_File.GetPath().c_str() );
 			continue;
 		}
@@ -100,7 +106,10 @@ int MovieDecoder_Theora::ReadPage( ogg_page *pOggPage )
 			if( iBytes == 0 )
 				return 0;
 			if( iBytes == -1 )
+			{
+				sError = ssprintf( "error reading: %s", m_File.GetError().c_str() );
 				return -1;
+			}
 
 			ogg_sync_wrote( &m_OggSync, iBytes );
 		}
@@ -113,11 +122,12 @@ CString MovieDecoder_Theora::ProcessHeaders()
 	while(1)
 	{
 		ogg_page OggPage;
-		int ret = ReadPage( &OggPage );
+		CString sError;
+		int ret = ReadPage( &OggPage, sError, true );
 		if( ret == 0 )
 			return ssprintf( "error opening %s: EOF while searching for codec headers", m_File.GetPath().c_str() );
 		if( ret<0 )
-			return ssprintf( "error reading %s: %s", m_File.GetPath().c_str(), m_File.GetError().c_str() );
+			return ssprintf( "error reading %s: %s", m_File.GetPath().c_str(), sError.c_str() );
 
 		if( m_OggStream.body_data == NULL )
 		{
@@ -238,12 +248,13 @@ int MovieDecoder_Theora::GetFrame( RageSurface *pOut, float fTargetTime )
 
 		/* Read more data. */
 		ogg_page OggPage;
-		int ret = ReadPage( &OggPage );
+		CString sError;
+		int ret = ReadPage( &OggPage, sError, false );
 		if( ret == 0 )
 			return 0;
-		if( ret < 0 )
+		if( ret == -1 )
 		{
-			LOG->Warn( "error reading %s: %s", m_File.GetPath().c_str(), m_File.GetError().c_str() );
+			LOG->Warn( "error reading %s: %s", m_File.GetPath().c_str(), sError.c_str() );
 			return -1;
 		}
 		if( ret > 0 )
