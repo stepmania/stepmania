@@ -41,7 +41,7 @@ public:
 
 protected:
 
-	std::map<CString, RageModelGeometry*> m_mapFileToModel;
+	std::map<CString, RageModelGeometry*> m_mapFileToGeometry;
 
 	ModelManagerPrefs m_Prefs;
 };

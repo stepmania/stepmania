@@ -15,33 +15,33 @@ ModelManager::ModelManager()
 
 ModelManager::~ModelManager()
 {
-	for( std::map<CString, RageModelGeometry*>::iterator i = m_mapFileToModel.begin();
-		i != m_mapFileToModel.end(); 
+	for( std::map<CString, RageModelGeometry*>::iterator i = m_mapFileToGeometry.begin();
+		i != m_mapFileToGeometry.end(); 
 		++i )
 	{
-		RageModelGeometry* pModel = i->second;
-		if( pModel->m_iRefCount )
-			LOG->Trace( "TEXTUREMAN LEAK: '%s', RefCount = %d.", i->first.c_str(), pModel->m_iRefCount );
-		SAFE_DELETE( pModel );
+		RageModelGeometry* pGeom = i->second;
+		if( pGeom->m_iRefCount )
+			LOG->Trace( "MODELMAN LEAK: '%s', RefCount = %d.", i->first.c_str(), pGeom->m_iRefCount );
+		SAFE_DELETE( pGeom );
 	}
 }
 
 RageModelGeometry* ModelManager::LoadMilkshapeAscii( const CString& sFile, bool bNeedNormals )
 {
-	std::map<CString, RageModelGeometry*>::iterator p = m_mapFileToModel.find(sFile);
-	if(p != m_mapFileToModel.end())
+	std::map<CString, RageModelGeometry*>::iterator p = m_mapFileToGeometry.find( sFile );
+	if( p != m_mapFileToGeometry.end() )
 	{
 		/* Found the geometry.  Just increase the refcount and return it. */
-		RageModelGeometry* pModel = p->second;
-		pModel->m_iRefCount++;
-		return pModel;
+		RageModelGeometry* pGeom = p->second;
+		++pGeom->m_iRefCount;
+		return pGeom;
 	}
 
-	RageModelGeometry* pModel = new RageModelGeometry;
-	pModel->LoadMilkshapeAscii( sFile, bNeedNormals );
+	RageModelGeometry* pGeom = new RageModelGeometry;
+	pGeom->LoadMilkshapeAscii( sFile, bNeedNormals );
 
-	m_mapFileToModel[sFile] = pModel;
-	return pModel;
+	m_mapFileToGeometry[sFile] = pGeom;
+	return pGeom;
 }
 
 void ModelManager::UnloadModel( RageModelGeometry *m )
@@ -50,22 +50,22 @@ void ModelManager::UnloadModel( RageModelGeometry *m )
 	ASSERT( m->m_iRefCount >= 0 );
 
 	if( m->m_iRefCount )
-		return; /* Can't unload textures that are still referenced. */
+		return; /* Can't unload models that are still referenced. */
 
-	for( std::map<CString, RageModelGeometry*>::iterator i = m_mapFileToModel.begin();
-		i != m_mapFileToModel.end(); 
-		i++ )
+	for( std::map<CString, RageModelGeometry*>::iterator i = m_mapFileToGeometry.begin();
+		i != m_mapFileToGeometry.end(); 
+		++i )
 	{
 		if( i->second == m )
 		{
 			if( m_Prefs.m_bDelayedUnload )
 			{
-				// leave this Model loaded
+				// leave this geometry loaded
 				return;
 			}
 			else
 			{
-				m_mapFileToModel.erase( i );	// remove map entry
+				m_mapFileToGeometry.erase( i );	// remove map entry
 				SAFE_DELETE( m );	// free the texture
 				return;
 			}
