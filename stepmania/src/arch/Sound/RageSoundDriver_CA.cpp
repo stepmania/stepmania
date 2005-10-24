@@ -11,10 +11,8 @@
 #include "CAAudioHardwareStream.h"
 #include "CAStreamBasicDescription.h"
 #include "CAException.h"
-#include "archutils/Unix/CrashHandler.h"
-#include <mach/thread_act.h>
-#include <mach/mach_init.h>
-#include <mach/mach_error.h>
+//#include "archutils/Unix/CrashHandler.h"
+#include "archutils/Darwin/DarwinThreadHelpers.h"
 
 static const UInt32 kFramesPerPacket = 1;
 static const UInt32 kChannelsPerFrame = 2;
@@ -238,15 +236,7 @@ OSStatus RageSound_CA::OverloadListener( AudioDeviceID inDevice,
 void RageSound_CA::SetupDecodingThread()
 {
 	/* Increase the scheduling precedence of the decoder thread. */
-	thread_precedence_policy po;
-	po.importance = 32;
-	kern_return_t ret;
-
-	ret = thread_policy_set( mach_thread_self(),
-							 THREAD_PRECEDENCE_POLICY, (int *)&po,
-							 THREAD_PRECEDENCE_POLICY_COUNT );
-	if( ret != KERN_SUCCESS )
-		LOG->Warn( "thread_policy_set(THREAD_PRECEDENCE_POLICY) failed: %s", mach_error_string(ret) );
+	SetThreadPrecedence( 32 );
 }
 
 /*
