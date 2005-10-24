@@ -3,14 +3,15 @@
 #ifndef PlayerNumber_H
 #define PlayerNumber_H
 
-#include "RageTypes.h"	// for RageColor
+//#include "RageTypes.h"	// for RageColor
 #include "EnumHelper.h"
 
 
 //
 // Player number stuff
 //
-enum PlayerNumber {
+enum PlayerNumber
+{
 	PLAYER_1 = 0,
 	PLAYER_2,
 	NUM_PLAYERS,	// leave this at the end
@@ -32,7 +33,8 @@ PlayerNumber GetNextPotentialCpuPlayer( PlayerNumber pn );
 const PlayerNumber	OPPOSITE_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
 
-enum MultiPlayer {
+enum MultiPlayer
+{
 	MultiPlayer_1 = 0,
 	MultiPlayer_2,
 	MultiPlayer_3,

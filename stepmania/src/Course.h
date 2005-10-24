@@ -10,6 +10,7 @@
 #include "Trail.h"
 #include <set>
 #include "EnumHelper.h"
+#include "RageTypes.h"
 
 struct PlayerOptions;
 struct SongOptions;

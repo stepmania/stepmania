@@ -7,6 +7,7 @@
 #include "Difficulty.h"
 #include "EnumHelper.h"
 #include "RageUtil_AutoPtr.h"
+#include "RageTypes.h"
 
 class Steps;
 class Style;
