@@ -10,8 +10,6 @@
 
 #ifdef HAVE_LINUXKERNEL
 #include "InputHandler_Linux_Joystick.h"
-// XXX: Useless! Depends on SDL, which we'd use for input if it was available!
-// #include "InputHandler_Linux_tty.h"
 #endif
 
 #include "InputHandler_MonkeyKeyboard.h"
