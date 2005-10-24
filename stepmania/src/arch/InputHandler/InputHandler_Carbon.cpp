@@ -694,7 +694,7 @@ int InputHandler_Carbon::Run(void *data)
 		(*i)->StartQueue( loopRef, InputHandler_Carbon::QueueCallBack, This, n++ );
 	This->mLoopRef = loopRef;
 	
-	SetThreadPrecedence( 30 ); // Somewhat arbitrary but less than the sound decoding thread
+	SetThreadPrecedence( 100 );
 
 	/*
 	 * The function copies the information out of the structure, so the memory pointed

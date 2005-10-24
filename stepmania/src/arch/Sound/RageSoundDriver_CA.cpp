@@ -236,7 +236,7 @@ OSStatus RageSound_CA::OverloadListener( AudioDeviceID inDevice,
 void RageSound_CA::SetupDecodingThread()
 {
 	/* Increase the scheduling precedence of the decoder thread. */
-	SetThreadPrecedence( 32 );
+	SetThreadPrecedence( 50 );
 }
 
 /*
