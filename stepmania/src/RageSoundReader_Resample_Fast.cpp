@@ -3,103 +3,106 @@
 
 RageSoundReader_Resample_Fast::RageSoundReader_Resample_Fast()
 {
-	source = NULL;
-	samplerate = -1;
+	m_pSource = NULL;
+	m_iOutputSampleRate = -1;
 }
 
-void RageSoundReader_Resample_Fast::Open(SoundReader *source_)
+void RageSoundReader_Resample_Fast::Open( SoundReader *pSource )
 {
-	source = source_;
-	ASSERT(source);
+	m_pSource = pSource;
+	ASSERT(m_pSource);
 
-	samplerate = source->GetSampleRate();
-	resamp.SetInputSampleRate(samplerate);
-	resamp.SetChannels( source->GetNumChannels() );
+	m_iOutputSampleRate = m_pSource->GetSampleRate();
+	m_Resamp.SetInputSampleRate( m_iOutputSampleRate );
+	m_Resamp.SetChannels( m_pSource->GetNumChannels() );
 }
 
 
 RageSoundReader_Resample_Fast::~RageSoundReader_Resample_Fast()
 {
-	delete source;
+	delete m_pSource;
 }
 
-void RageSoundReader_Resample_Fast::SetSampleRate(int hz)
+void RageSoundReader_Resample_Fast::SetSampleRate( int hz )
 {
-	samplerate = hz;
-	resamp.SetOutputSampleRate(samplerate);
+	m_iOutputSampleRate = hz;
+	m_Resamp.SetOutputSampleRate( m_iOutputSampleRate );
 }
 
 int RageSoundReader_Resample_Fast::GetLength() const
 {
-	resamp.reset();
-	return source->GetLength();
+	m_Resamp.reset();
+	return m_pSource->GetLength();
 }
 
 int RageSoundReader_Resample_Fast::GetLength_Fast() const
 {
-	resamp.reset();
-	return source->GetLength_Fast();
+	m_Resamp.reset();
+	return m_pSource->GetLength_Fast();
 }
 
-int RageSoundReader_Resample_Fast::SetPosition_Accurate(int ms)
+int RageSoundReader_Resample_Fast::SetPosition_Accurate( int ms )
 {
-	resamp.reset();
-	return source->SetPosition_Accurate(ms);
+	m_Resamp.reset();
+	return m_pSource->SetPosition_Accurate(ms);
 }
 
-int RageSoundReader_Resample_Fast::SetPosition_Fast(int ms)
+int RageSoundReader_Resample_Fast::SetPosition_Fast( int ms )
 {
-	resamp.reset();
-	return source->SetPosition_Fast(ms);
+	m_Resamp.reset();
+	return m_pSource->SetPosition_Fast(ms);
 }
 static const int BUFSIZE = 1024*16;
 
-int RageSoundReader_Resample_Fast::Read(char *buf, unsigned len)
+int RageSoundReader_Resample_Fast::Read( char *pBuf, unsigned iSize )
 {
-	int bytes_read = 0;
-	while(len)
+	int iBytesRead = 0;
+	while( iSize )
 	{
-		int size = resamp.read(buf, len);
+		{
+			int iGot = m_Resamp.read( pBuf, iSize );
 
-		if(size == -1)
-			break;
+			if( iGot == -1 )
+				break;
 
-		buf += size;
-		len -= size;
-		bytes_read += size;
+			pBuf += iGot;
+			iSize -= iGot;
+			iBytesRead += iGot;
 
-		if(size == 0)
+			if( iGot )
+				continue;
+		}
+
 		{
 			static char buf[BUFSIZE];
+			int iGot = m_pSource->Read(buf, sizeof(buf));
 
-			int cnt = source->Read(buf, sizeof(buf));
-
-			if(cnt == -1)
+			if( iGot == -1 )
 			{
-				SetError(source->GetError());
+				SetError( m_pSource->GetError() );
 				return -1;
 			}
-			if(cnt == 0)
-				resamp.eof();
+			if( iGot == 0 )
+				m_Resamp.eof();
 			else
-				resamp.write(buf, cnt);
+				m_Resamp.write( buf, iGot );
 		}
 	}
 
-	return bytes_read;
+	return iBytesRead;
 }
 
 SoundReader *RageSoundReader_Resample_Fast::Copy() const
 {
-	SoundReader *new_source = source->Copy();
-	RageSoundReader_Resample_Fast *ret = new RageSoundReader_Resample_Fast;
-	ret->Open(new_source);
-	ret->SetSampleRate(samplerate);
-	return ret;
+	SoundReader *pNewSource = m_pSource->Copy();
+	RageSoundReader_Resample_Fast *pRet = new RageSoundReader_Resample_Fast;
+	pRet->Open( pNewSource );
+	pRet->SetSampleRate( m_iOutputSampleRate );
+	return pRet;
 }
 
 /*
- * Copyright (c) 2003 Glenn Maynard
+ * Copyright (c) 2003-2005 Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
