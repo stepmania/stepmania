@@ -264,7 +264,7 @@ CString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 
 	HRESULT hr = ds.GetDS()->CreateSoundBuffer( &format, &m_pBuffer, NULL );
 	if( FAILED(hr) )
-		return hr_ssprintf( hr, "CreateSoundBuffer failed" );
+		return hr_ssprintf( hr, "CreateSoundBuffer failed (%i hz)", m_iSampleBits );
 
 #ifndef _XBOX
 	/* I'm not sure this should ever be needed, but ... */

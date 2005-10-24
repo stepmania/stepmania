@@ -22,13 +22,13 @@ protected:
 private:
 	DSound ds;
 	DSoundBuf *m_pPCM;
+	int m_iSampleRate;
 
 	bool m_bShutdownMixerThread;
 
 	static int MixerThread_start(void *p);
 	void MixerThread();
 	RageThread m_MixingThread;
-
 };
 #define USE_RAGE_SOUND_DSOUND_SOFTWARE
 

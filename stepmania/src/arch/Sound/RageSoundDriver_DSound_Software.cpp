@@ -9,7 +9,6 @@
 
 static const int channels = 2;
 static const int bytes_per_frame = channels*2; /* 16-bit */
-static const int samplerate = 44100;
 static const int safe_writeahead = 1024*4; /* in frames */
 static int g_iMaxWriteahead;
 
@@ -31,7 +30,7 @@ void RageSound_DSound_Software::MixerThread()
 
 		if( !m_pPCM->get_output_buf(&pLockedBuf, &iLen, chunksize()) )
 		{
-			Sleep( chunksize()*1000 / samplerate );
+			Sleep( chunksize()*1000 / m_iSampleRate );
 			continue;
 		}
 
@@ -79,9 +78,12 @@ CString RageSound_DSound_Software::Init()
 
 	/* Create a DirectSound stream, but don't force it into hardware. */
 	m_pPCM = new DSoundBuf;
-	sError = m_pPCM->Init( ds, DSoundBuf::HW_DONT_CARE, channels, samplerate, 16, g_iMaxWriteahead );
+	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
+	sError = m_pPCM->Init( ds, DSoundBuf::HW_DONT_CARE, channels, m_iSampleRate, 16, g_iMaxWriteahead );
 	if( sError != "" )
 		return sError;
+
+	LOG->Info( "Software mixing at %i hz", m_iSampleRate );
 
 	/* Fill a buffer before we start playing, so we don't play whatever junk is
 	 * in the buffer. */
@@ -128,12 +130,12 @@ void RageSound_DSound_Software::SetupDecodingThread()
 
 float RageSound_DSound_Software::GetPlayLatency() const
 {
-	return (1.0f / samplerate) * g_iMaxWriteahead;
+	return (1.0f / m_iSampleRate) * g_iMaxWriteahead;
 }
 
 int RageSound_DSound_Software::GetSampleRate( int rate ) const
 {
-	return samplerate;
+	return m_iSampleRate;
 }
 
 /*
