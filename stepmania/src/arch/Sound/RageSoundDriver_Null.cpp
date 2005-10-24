@@ -31,11 +31,6 @@ RageSound_Null::RageSound_Null()
 	StartDecodeThread();
 }
 
-float RageSound_Null::GetPlayLatency() const
-{
-	return 0;  /* silence is fast! */
-}
-
 int RageSound_Null::GetSampleRate( int iRate ) const
 {
 	return m_iSampleRate;
