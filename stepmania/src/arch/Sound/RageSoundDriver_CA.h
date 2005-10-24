@@ -22,6 +22,7 @@ private:
     float mLatency;
     CAAudioHardwareDevice *mOutputDevice;
 	AudioConverterRef mConverter;
+	int mSampleRate;
 	
 	static OSStatus GetData( AudioDeviceID inDevice,
 							 const AudioTimeStamp *inNow,
@@ -42,6 +43,7 @@ public:
     CString Init();
     ~RageSound_CA();
     float GetPlayLatency() const { return mLatency; }
+	int GetSampleRate( int rate ) const { return mSampleRate; }
     int64_t GetPosition( const RageSoundBase *sound ) const;
     void SetupDecodingThread();
 };
@@ -50,7 +52,7 @@ public:
 #endif
 
 /*
- * (c) 2004 Steve Checkoway
+ * (c) 2004, 2005 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
