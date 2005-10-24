@@ -138,7 +138,6 @@ void InputFilter::ResetDevice( InputDevice device )
 
 void InputFilter::Update(float fDeltaTime)
 {
-RageTimer foo;
 	RageTimer now;
 
 	// Constructing the DeviceInput inside the nested loops caues terrible 
