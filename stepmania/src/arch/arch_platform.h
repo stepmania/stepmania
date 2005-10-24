@@ -17,7 +17,6 @@
 #if defined(_WINDOWS)
 #define HAVE_DIRECTX
 #define HAVE_FFMPEG
-#define HAVE_WIN32 // XXX: Better name for this API?
 #endif
 #if defined(_XBOX)
 #define HAVE_DIRECTX
