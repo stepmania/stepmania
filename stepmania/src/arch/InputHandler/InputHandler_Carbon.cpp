@@ -15,6 +15,7 @@
 #include "InputHandler_Carbon.h"
 #include "ForEach.h"
 #include "RageUtil.h"
+#include "archutils/Darwin/DarwinThreadHelpers.h"
 
 using namespace std;
 using __gnu_cxx::hash_map;
@@ -693,7 +694,10 @@ int InputHandler_Carbon::Run(void *data)
 		(*i)->StartQueue( loopRef, InputHandler_Carbon::QueueCallBack, This, n++ );
 	This->mLoopRef = loopRef;
 	
-	/* The function copies the information out of the structure, so the memory pointed
+	SetThreadPrecedence( 30 ); // Somewhat arbitrary but less than the sound decoding thread
+
+	/*
+	 * The function copies the information out of the structure, so the memory pointed
 	 * to by context does not need to persist beyond the function call.
 	 */
 	CFRunLoopObserverContext context = { 0, &This->mSem, NULL, NULL, NULL };
