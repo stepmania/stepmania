@@ -7,26 +7,28 @@
 
 class RageSound_DSound_Software: public RageSound_Generic_Software
 {
-	DSound ds;
-	DSoundBuf *pcm;
-
-	bool shutdown_mixer_thread;
-
-	static int MixerThread_start(void *p);
-	void MixerThread();
-	RageThread MixingThread;
-
-protected:
-	void SetupDecodingThread();
-
 public:
-	int64_t GetPosition( const RageSoundBase *snd ) const;
-	float GetPlayLatency() const;
-	int GetSampleRate( int rate ) const;
-	
 	RageSound_DSound_Software();
 	virtual ~RageSound_DSound_Software();
 	CString Init();
+
+	int64_t GetPosition( const RageSoundBase *pSound ) const;
+	float GetPlayLatency() const;
+	int GetSampleRate( int rate ) const;
+	
+protected:
+	void SetupDecodingThread();
+
+private:
+	DSound ds;
+	DSoundBuf *m_pPCM;
+
+	bool m_bShutdownMixerThread;
+
+	static int MixerThread_start(void *p);
+	void MixerThread();
+	RageThread m_MixingThread;
+
 };
 #define USE_RAGE_SOUND_DSOUND_SOFTWARE
 
