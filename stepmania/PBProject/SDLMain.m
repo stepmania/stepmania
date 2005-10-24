@@ -10,40 +10,14 @@
 #import <sys/param.h> /* for MAXPATHLEN */
 #import <unistd.h>
 
-/* Use this flag to determine whether we use SDLMain.nib or not */
-#define		SDL_USE_NIB_FILE	0
-
-/* Use this flag to determine whether we use CPS (docking) or not */
-//#define		SDL_USE_CPS		1
-#ifdef SDL_USE_CPS
-/* Portions of CPS.h */
-typedef struct CPSProcessSerNum
-{
-	UInt32		lo;
-	UInt32		hi;
-} CPSProcessSerNum;
-
-extern OSErr	CPSGetCurrentProcess( CPSProcessSerNum *psn);
-extern OSErr 	CPSEnableForegroundOperation( CPSProcessSerNum *psn, UInt32 _arg2, UInt32 _arg3, UInt32 _arg4, UInt32 _arg5);
-extern OSErr	CPSSetFrontProcess( CPSProcessSerNum *psn);
-
-#endif /* SDL_USE_CPS */
-
 static int    gArgc;
 static char  **gArgv;
 static BOOL   gFinderLaunch;
 
-#if SDL_USE_NIB_FILE
-/* A helper category for NSString */
-@interface NSString (ReplaceSubString)
-- (NSString *)stringByReplacingRange:(NSRange)aRange with:(NSString *)aString;
-@end
-#else
 /* An internal Apple class used to setup Apple menus */
-@interface NSAppleMenuController:NSObject {}
+@interface NSAppleMenuController : NSObject {}
 - (void)controlMenu:(NSMenu *)aMenu;
 @end
-#endif
 
 @interface SDLApplication : NSApplication
 @end
@@ -59,14 +33,25 @@ static BOOL   gFinderLaunch;
 }
 @end
 
+@interface HelperWindow : NSWindow
+@end
+
+@implementation HelperWindow
+/* Override NSWindow's keyDown to keep it from beeping. */
+- (void) keyDown:(NSEvent *)event
+{
+}
+@end
 
 /* The main class of the application, the application's delegate */
 @implementation SDLMain
 
 - (void) startGame:(id)obj
 {
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	/* Hand off to main application code */
     exit(SDL_main (gArgc, gArgv));
+	[pool release]; // not really needed, but shuts gcc up.
 }
 
 /* Set the working directory to the .app's parent directory */
@@ -94,32 +79,6 @@ static BOOL   gFinderLaunch;
     }
 }
 
-#if SDL_USE_NIB_FILE
-
-/* Fix menu to contain the real app name instead of "SDL App" */
-- (void)fixMenu:(NSMenu *)aMenu withAppName:(NSString *)appName
-{
-    NSRange aRange;
-    NSEnumerator *enumerator;
-    NSMenuItem *menuItem;
-
-    aRange = [[aMenu title] rangeOfString:@"SDL App"];
-    if (aRange.length != 0)
-        [aMenu setTitle: [[aMenu title] stringByReplacingRange:aRange with:appName]];
-
-    enumerator = [[aMenu itemArray] objectEnumerator];
-    while ((menuItem = [enumerator nextObject]))
-    {
-        aRange = [[menuItem title] rangeOfString:@"SDL App"];
-        if (aRange.length != 0)
-            [menuItem setTitle: [[menuItem title] stringByReplacingRange:aRange with:appName]];
-        if ([menuItem hasSubmenu])
-            [self fixMenu:[menuItem submenu] withAppName:appName];
-    }
-    [ aMenu sizeToFit ];
-}
-
-#else
 
 void setupAppleMenu(void)
 {
@@ -183,17 +142,6 @@ void CustomApplicationMain (int argc, char **argv)
     /* Ensure the application object is initialised */
     [SDLApplication sharedApplication];
     
-#ifdef SDL_USE_CPS
-    {
-        CPSProcessSerNum PSN;
-        /* Tell the dock about us */
-        if (!CPSGetCurrentProcess(&PSN))
-            if (!CPSEnableForegroundOperation(&PSN,0x03,0x3C,0x2C,0x1103))
-                if (!CPSSetFrontProcess(&PSN))
-                    [SDLApplication sharedApplication];
-    }
-#endif /* SDL_USE_CPS */
-
     /* Set up the menubar */
     [NSApp setMainMenu:[[NSMenu alloc] init]];
     setupAppleMenu();
@@ -210,18 +158,12 @@ void CustomApplicationMain (int argc, char **argv)
     [pool release];
 }
 
-#endif
 
 /* Called when the internal event loop has just started running */
 - (void) applicationDidFinishLaunching: (NSNotification *) note
 {
     /* Set the working directory to the .app's parent directory */
     [self setupWorkingDirectory:gFinderLaunch];
-
-#if SDL_USE_NIB_FILE
-    /* Set the main menu to contain the real app name instead of "SDL App" */
-    [self fixMenu:[NSApp mainMenu] withAppName:[[NSProcessInfo processInfo] processName]];
-#endif
 
 #if 1
 	[NSThread detachNewThreadSelector:@selector(startGame:) toTarget:self withObject:nil];
@@ -302,11 +244,8 @@ int main (int argc, char **argv)
         gArgv[i] = argv[i];
     gArgv[i] = NULL;
 
-#if SDL_USE_NIB_FILE
+	[HelperWindow poseAsClass:[NSWindow class]];
     [SDLApplication poseAsClass:[NSApplication class]];
-    NSApplicationMain (argc, argv);
-#else
     CustomApplicationMain (argc, argv);
-#endif
     return 0;
 }
