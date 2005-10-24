@@ -7,5 +7,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface SDLMain : NSObject
+@interface SDLMain : NSObject {}
+- (void) startGame:(id)obj;
 @end

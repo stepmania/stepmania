@@ -63,6 +63,12 @@ static BOOL   gFinderLaunch;
 /* The main class of the application, the application's delegate */
 @implementation SDLMain
 
+- (void) startGame:(id)obj
+{
+	/* Hand off to main application code */
+    exit(SDL_main (gArgc, gArgv));
+}
+
 /* Set the working directory to the .app's parent directory */
 - (void) setupWorkingDirectory:(BOOL)shouldChdir
 {
@@ -209,8 +215,6 @@ void CustomApplicationMain (int argc, char **argv)
 /* Called when the internal event loop has just started running */
 - (void) applicationDidFinishLaunching: (NSNotification *) note
 {
-    int status;
-
     /* Set the working directory to the .app's parent directory */
     [self setupWorkingDirectory:gFinderLaunch];
 
@@ -219,11 +223,11 @@ void CustomApplicationMain (int argc, char **argv)
     [self fixMenu:[NSApp mainMenu] withAppName:[[NSProcessInfo processInfo] processName]];
 #endif
 
-    /* Hand off to main application code */
-    status = SDL_main (gArgc, gArgv);
-
-    /* We're done, thank you for playing */
-    exit(status);
+#if 1
+	[NSThread detachNewThreadSelector:@selector(startGame:) toTarget:self withObject:nil];
+#else
+	[self startGame:nil];
+#endif
 }
 @end
 
