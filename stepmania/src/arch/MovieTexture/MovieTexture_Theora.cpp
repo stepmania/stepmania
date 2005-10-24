@@ -84,7 +84,7 @@ int MovieDecoder_Theora::ReadPage( ogg_page *pOggPage )
 {
 	while(1)
 	{
-		int iRet = ogg_sync_pageout(&m_OggSync, pOggPage) > 0;
+		int iRet = ogg_sync_pageout( &m_OggSync, pOggPage );
 		if( iRet > 0 )
 			return iRet;
 		if( iRet < 0 )
