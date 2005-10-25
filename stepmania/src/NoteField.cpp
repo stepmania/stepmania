@@ -400,10 +400,25 @@ float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iFirstPixelTo
 {
 	float fFirstBeatToDraw = GAMESTATE->m_fSongBeat-4;	// Adjust to balance off performance and showing enough notes.
 
+	/* In Boomerang, we'll usually have two sections of notes: before and after
+	 * the peak.  We always start drawing before the peak, and end after it, or
+	 * we may falsely detect the off-screen portion as the end (or beginning)
+	 * of the stream. */
+	bool bBoomerang;
+	{
+		const float* fAccels = pPlayerState->m_CurrentPlayerOptions.m_fAccels;
+		bBoomerang = (fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0);
+	}
+
 	while( fFirstBeatToDraw < GAMESTATE->m_fSongBeat )
 	{
-		float fYOffset = ArrowEffects::GetYOffset( pPlayerState, 0, fFirstBeatToDraw, true );
-		if( fYOffset < iFirstPixelToDraw )	// off screen
+		bool bIsPastPeakYOffset;
+		float fPeakYOffset;
+		float fYOffset = ArrowEffects::GetYOffset( pPlayerState, 0, fFirstBeatToDraw, fPeakYOffset, bIsPastPeakYOffset, true );
+
+		if( bBoomerang && bIsPastPeakYOffset )
+			break;	// stop probing
+		else if( fYOffset < iFirstPixelToDraw )	// off screen
 			fFirstBeatToDraw += 0.1f;	// move toward fSongBeat
 		else	// on screen
 			break;	// stop probing
@@ -424,11 +439,21 @@ float FindLastDisplayedBeat( const PlayerState* pPlayerState, int iLastPixelToDr
 
 	const int NUM_ITERATIONS = 20;
 
+	bool bBoomerang;
+	{
+		const float* fAccels = pPlayerState->m_CurrentPlayerOptions.m_fAccels;
+		bBoomerang = (fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0);
+	}
+
 	for( int i=0; i<NUM_ITERATIONS; i++ )
 	{
-		float fYOffset = ArrowEffects::GetYOffset( pPlayerState, 0, fLastBeatToDraw, true );
+		bool bIsPastPeakYOffset;
+		float fPeakYOffset;
+		float fYOffset = ArrowEffects::GetYOffset( pPlayerState, 0, fLastBeatToDraw, fPeakYOffset, bIsPastPeakYOffset, true );
 
-		if( fYOffset > iLastPixelToDraw )	// off screen
+		if( bBoomerang && !bIsPastPeakYOffset )
+			fLastBeatToDraw += fSearchDistance;
+		else if( fYOffset > iLastPixelToDraw )	// off screen
 			fLastBeatToDraw -= fSearchDistance;
 		else	// on screen
 			fLastBeatToDraw += fSearchDistance;
