@@ -237,12 +237,11 @@ float ArrowEffects::GetYOffset( const PlayerState* pPlayerState, int iCol, float
 	//
 	if( fAccels[PlayerOptions::ACCEL_BOOMERANG] != 0 )
 	{
-		float fOriginalYOffset = fYOffset;
-
-		fYOffset = (-1*fOriginalYOffset*fOriginalYOffset/SCREEN_HEIGHT) + 1.5f*fOriginalYOffset;
-		float fPeakAtYOffset = SCREEN_HEIGHT * 0.75f;	// zero point of function above
+		float fPeakAtYOffset = SCREEN_HEIGHT * 0.75f;	// zero point of boomerang function
 		fPeakYOffsetOut = (-1*fPeakAtYOffset*fPeakAtYOffset/SCREEN_HEIGHT) + 1.5f*fPeakAtYOffset;
-		bIsPastPeakOut = fOriginalYOffset < fPeakAtYOffset;
+		bIsPastPeakOut = fYOffset < fPeakAtYOffset;
+
+		fYOffset = (-1*fYOffset*fYOffset/SCREEN_HEIGHT) + 1.5f*fYOffset;
 	}
 
 	//
