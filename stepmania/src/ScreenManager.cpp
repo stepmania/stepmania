@@ -674,8 +674,12 @@ void ScreenManager::LoadDelayedScreen()
 		}
 		ASSERT( pNewBGA != NULL );
 
-		/* Move the background back to the prepared list. */
-		g_vPreparedBackgrounds.push_back( g_pSharedBGA );
+		/* Move the old background back to the prepared list, or delete it if
+		 * it's a blank actor. */
+		if( g_pSharedBGA->GetName() == "" )
+			delete g_pSharedBGA;
+		else
+			g_vPreparedBackgrounds.push_back( g_pSharedBGA );
 		g_pSharedBGA = pNewBGA;
 		g_pSharedBGA->PlayCommand( "On" );
 	}
