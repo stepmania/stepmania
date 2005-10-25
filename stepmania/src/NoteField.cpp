@@ -769,7 +769,7 @@ void NoteField::DrawPrimitives()
 
 			ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastIndexToDraw, iFirstIndexToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
 			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(i) );
-			NoteDisplayCols *nd = CurDisplay->second;
+			const NoteDisplayCols *nd = CurDisplay->second;
 
 			// See if there is a hold step that begins on this index.  Only do this
 			// if the note skin cares.
