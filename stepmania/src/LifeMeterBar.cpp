@@ -125,13 +125,13 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	switch( score )
 	{
 	default:	ASSERT(0);
-	case TNS_W1:			fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_W1);			break;
-	case TNS_W2:			fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_W2);			break;
-	case TNS_W3:			fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_W3);			break;
-	case TNS_W4:			fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_W4);			break;
-	case TNS_W5:			fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_W5);			break;
-	case TNS_Miss:		fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_Miss);		break;
-	case TNS_HitMine:	fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_HitMine);	break;
+	case TNS_W1:		fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_W1];			break;
+	case TNS_W2:		fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_W2];			break;
+	case TNS_W3:		fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_W3];			break;
+	case TNS_W4:		fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_W4];			break;
+	case TNS_W5:		fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_W5];			break;
+	case TNS_Miss:		fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_Miss];		break;
+	case TNS_HitMine:	fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_HitMine];	break;
 	}
 	if( IsHot()  &&  score < TNS_W4 )
 		fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
@@ -164,8 +164,8 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 	case SongOptions::DRAIN_NORMAL:
 		switch( score )
 		{
-		case HNS_Held:	fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_Held);	break;
-		case HNS_LetGo:	fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_LetGo);	break;
+		case HNS_Held:	fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_Held];	break;
+		case HNS_LetGo:	fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_LetGo];	break;
 		default:
 			ASSERT(0);
 		}
@@ -176,7 +176,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		switch( score )
 		{
 		case HNS_Held:	fDeltaLife = +0.000f;	break;
-		case HNS_LetGo:	fDeltaLife = PREFSMAN->m_fLifePercentChange.Get(SE_LetGo);	break;
+		case HNS_LetGo:	fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_LetGo];	break;
 		default:
 			ASSERT(0);
 		}

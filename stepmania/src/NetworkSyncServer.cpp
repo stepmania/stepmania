@@ -977,19 +977,19 @@ void StepManiaLanServer::CheckLowerJudge(const unsigned int clientNum)
 		if (Client[clientNum]->IsPlaying(x))
 		{
 			if ((Client[clientNum]->Player[x].currstep == 2)&&
-				(PREFSMAN->m_fTimingWindowSeconds.Get(SE_W5) < Client[clientNum]->Player[x].offset))
+				(PREFSMAN->m_fTimingWindowSeconds[SE_W5] < Client[clientNum]->Player[x].offset))
 				Client[clientNum]->lowerJudge = true;
 			if ((Client[clientNum]->Player[x].currstep == 3)&&
-				(PREFSMAN->m_fTimingWindowSeconds.Get(SE_W4) < Client[clientNum]->Player[x].offset))
+				(PREFSMAN->m_fTimingWindowSeconds[SE_W4] < Client[clientNum]->Player[x].offset))
 				Client[clientNum]->lowerJudge = true;
 			if ((Client[clientNum]->Player[x].currstep == 4)&&
-				(PREFSMAN->m_fTimingWindowSeconds.Get(SE_W3) < Client[clientNum]->Player[x].offset))
+				(PREFSMAN->m_fTimingWindowSeconds[SE_W3] < Client[clientNum]->Player[x].offset))
 				Client[clientNum]->lowerJudge = true;
 			if ((Client[clientNum]->Player[x].currstep == 5)&&
-				(PREFSMAN->m_fTimingWindowSeconds.Get(SE_W2) < Client[clientNum]->Player[x].offset))
+				(PREFSMAN->m_fTimingWindowSeconds[SE_W2] < Client[clientNum]->Player[x].offset))
 				Client[clientNum]->lowerJudge = true;
 			if ((Client[clientNum]->Player[x].currstep == 6)&&
-				(PREFSMAN->m_fTimingWindowSeconds.Get(SE_W1) < Client[clientNum]->Player[x].offset))
+				(PREFSMAN->m_fTimingWindowSeconds[SE_W1] < Client[clientNum]->Player[x].offset))
 				Client[clientNum]->lowerJudge = true;
 		}
 }

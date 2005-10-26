@@ -98,7 +98,11 @@ public:
 		for( unsigned i=0; i<m_v.size(); i++ )
 			SAFE_DELETE( m_v[i] );
 	}
-	const Preference<T>& Get( size_t i ) const
+	const Preference<T>& operator[]( size_t i ) const
+	{
+		return *m_v[i];
+	}
+	Preference<T>& operator[]( size_t i )
 	{
 		return *m_v[i];
 	}

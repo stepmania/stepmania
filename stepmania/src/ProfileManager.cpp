@@ -162,7 +162,7 @@ ProfileLoadResult ProfileManager::LoadProfile( PlayerNumber pn, CString sProfile
 
 bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 {
-	CString sProfileID = PREFSMAN->GetDefaultLocalProfileID(pn);
+	CString sProfileID = PREFSMAN->m_sDefaultLocalProfileID[pn];
 	if( sProfileID.empty() )
 	{
 		m_sProfileDir[pn] = "";

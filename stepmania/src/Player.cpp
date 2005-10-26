@@ -49,7 +49,7 @@ static const float StepSearchDistance = 1.0f;
 
 float AdjustedWindowSeconds( TimingWindow tw, bool bIsPlayingBeginner )
 {
-	float fSecs = PREFSMAN->m_fTimingWindowSeconds.Get( tw );
+	float fSecs = PREFSMAN->m_fTimingWindowSeconds[tw];
 	fSecs *= PREFSMAN->m_fTimingWindowScale;
 	fSecs += PREFSMAN->m_fTimingWindowAdd;
 	if( tw==TW_W5 && bIsPlayingBeginner && PREFSMAN->m_bMercifulBeginner )

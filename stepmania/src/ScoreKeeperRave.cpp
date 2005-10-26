@@ -28,7 +28,7 @@ void ScoreKeeperRave::HandleTapScore( TapNoteScore score )
 	float fPercentToMove = 0;
 	switch( score )
 	{
-	case TNS_HitMine:		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange.Get(SE_HitMine);	break;
+	case TNS_HitMine:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_HitMine];	break;
 	}
 
 	AddSuperMeterDelta( fPercentToMove );
@@ -42,12 +42,12 @@ void ScoreKeeperRave::HandleTapRowScore( TapNoteScore scoreOfLastTap, int iNumTa
 	switch( scoreOfLastTap )
 	{
 	default:	ASSERT(0);
-	case TNS_W1:		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange.Get(SE_W1);	break;
-	case TNS_W2:		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange.Get(SE_W2);	break;
-	case TNS_W3:		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange.Get(SE_W3);	break;
-	case TNS_W4:		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange.Get(SE_W4);	break;
-	case TNS_W5:		fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange.Get(SE_W5);	break;
-	case TNS_Miss:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange.Get(SE_Miss);	break;
+	case TNS_W1:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_W1];	break;
+	case TNS_W2:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_W2];	break;
+	case TNS_W3:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_W3];	break;
+	case TNS_W4:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_W4];	break;
+	case TNS_W5:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_W5];	break;
+	case TNS_Miss:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_Miss];	break;
 	}
 	AddSuperMeterDelta( fPercentToMove );
 }
@@ -57,7 +57,7 @@ void ScoreKeeperRave::HandleHoldScore( HoldNoteScore holdScore, TapNoteScore tap
 	float fPercentToMove = 0;
 	switch( tapScore )
 	{
-	case TNS_HitMine:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange.Get(SE_HitMine);	break;
+	case TNS_HitMine:	fPercentToMove = PREFSMAN->m_fSuperMeterPercentChange[SE_HitMine];	break;
 	}
 	AddSuperMeterDelta( fPercentToMove );
 }

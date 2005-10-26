@@ -209,6 +209,36 @@ void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, flo
 	}
 }
 
+void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, CString &sNameOut, CString &defaultValueOut )
+{
+	sNameOut = "DefaultLocalProfileID" + PlayerNumberToString( (PlayerNumber)i );
+	defaultValueOut = "";
+}
+
+void MemoryCardOsMountPointInit( size_t /*PlayerNumber*/ i, CString &sNameOut, CString &defaultValueOut )
+{
+	sNameOut = "MemoryCardOsMountPoint" + PlayerNumberToString( (PlayerNumber)i );
+	defaultValueOut = "";
+}
+
+void MemoryCardUsbBusInit( size_t /*PlayerNumber*/ i, CString &sNameOut, int &defaultValueOut )
+{
+	sNameOut = "MemoryCardUsbBus" + PlayerNumberToString( (PlayerNumber)i );
+	defaultValueOut = -1;
+}
+
+void MemoryCardUsbPortInit( size_t /*PlayerNumber*/ i, CString &sNameOut, int &defaultValueOut )
+{
+	sNameOut = "MemoryCardUsbPort" + PlayerNumberToString( (PlayerNumber)i );
+	defaultValueOut = -1;
+}
+
+void MemoryCardUsbLevelInit( size_t /*PlayerNumber*/ i, CString &sNameOut, int &defaultValueOut )
+{
+	sNameOut = "MemoryCardUsbLevel" + PlayerNumberToString( (PlayerNumber)i );
+	defaultValueOut = -1;
+}
+
 
 PrefsManager::PrefsManager() :
 	m_bWindowed				( "Windowed",				TRUE_IF_DEBUG),
@@ -318,18 +348,13 @@ PrefsManager::PrefsManager() :
 	m_bDisableScreenSaver			( "DisableScreenSaver",			true ),
 	m_sLanguage						( "Language",					"" ),	// ThemeManager will deal with this invalid language
 	m_sMemoryCardProfileSubdir		( "MemoryCardProfileSubdir",	PRODUCT_NAME ),
-	m_iProductID					( "ProductID",					1 ),	
-	m_sDefaultLocalProfileIDP1		( "DefaultLocalProfileIDP1",	"" ),
-	m_sDefaultLocalProfileIDP2		( "DefaultLocalProfileIDP2",	"" ),
+	m_iProductID					( "ProductID",					1 ),
+	m_sDefaultLocalProfileID		( DefaultLocalProfileIDInit, NUM_PLAYERS ),
 	m_bMemoryCards					( "MemoryCards",				false ),
-	m_sMemoryCardOsMountPointP1		( "MemoryCardOsMountPointP1",	"" ),
-	m_sMemoryCardOsMountPointP2		( "MemoryCardOsMountPointP2",	"" ),
-	m_iMemoryCardUsbBusP1			( "MemoryCardUsbBusP1",			-1 ),
-	m_iMemoryCardUsbBusP2			( "MemoryCardUsbBusP2",			-1 ),
-	m_iMemoryCardUsbPortP1			( "MemoryCardUsbPortP1",		-1 ),
-	m_iMemoryCardUsbPortP2			( "MemoryCardUsbPortP2",		-1 ),
-	m_iMemoryCardUsbLevelP1			( "MemoryCardUsbLevelP1",		-1 ),
-	m_iMemoryCardUsbLevelP2			( "MemoryCardUsbLevelP2",		-1 ),
+	m_sMemoryCardOsMountPoint		( MemoryCardOsMountPointInit, NUM_PLAYERS ),
+	m_iMemoryCardUsbBus				( MemoryCardUsbBusInit,		NUM_PLAYERS ),
+	m_iMemoryCardUsbPort			( MemoryCardUsbPortInit,	NUM_PLAYERS ),
+	m_iMemoryCardUsbLevel			( MemoryCardUsbLevelInit,	NUM_PLAYERS ),
 	m_iCenterImageTranslateX		( "CenterImageTranslateX",		0 ),
 	m_iCenterImageTranslateY		( "CenterImageTranslateY",		0 ),
 	m_fCenterImageAddWidth			( "CenterImageAddWidth",		0 ),
@@ -465,7 +490,7 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	// validate
 	m_iSongsPerPlay.Set( clamp(m_iSongsPerPlay.Get(),0,MAX_SONGS_PER_PLAY) );
 	FOREACH_PlayerNumber( pn )
-		GetMemoryCardOsMountPoint(pn).Set( FixSlashes(GetMemoryCardOsMountPoint(pn)) );
+		m_sMemoryCardOsMountPoint[pn].Set( FixSlashes(m_sMemoryCardOsMountPoint[pn]) );
 	m_BackgroundMode.Set( (BackgroundMode)clamp((int)m_BackgroundMode.Get(),0,(int)NUM_BackgroundMode-1) );
 }
 

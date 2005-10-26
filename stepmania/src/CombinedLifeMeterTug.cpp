@@ -47,13 +47,13 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 	float fPercentToMove = 0;
 	switch( score )
 	{
-	case TNS_W1:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_W1);		break;
-	case TNS_W2:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_W2);		break;
-	case TNS_W3:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_W3);		break;
-	case TNS_W4:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_W4);		break;
-	case TNS_W5:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_W5);		break;
-	case TNS_Miss:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_Miss);	break;
-	case TNS_HitMine:	fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_HitMine); break;
+	case TNS_W1:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_W1];		break;
+	case TNS_W2:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_W2];		break;
+	case TNS_W3:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_W3];		break;
+	case TNS_W4:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_W4];		break;
+	case TNS_W5:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_W5];		break;
+	case TNS_Miss:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_Miss];	break;
+	case TNS_HitMine:	fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_HitMine]; break;
 	default:	ASSERT(0);	break;
 	}
 
@@ -65,8 +65,8 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, Tap
 	float fPercentToMove = 0;
 	switch( score )
 	{
-	case HNS_Held:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_Held);	break;
-	case HNS_LetGo:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange.Get(SE_LetGo);	break;
+	case HNS_Held:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_Held];	break;
+	case HNS_LetGo:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_LetGo];	break;
 	default:	ASSERT(0);	break;
 	}
 

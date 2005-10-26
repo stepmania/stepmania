@@ -276,26 +276,18 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			default:
 				ASSERT(0);
 			case ProfileAction_SetDefaultP1:
-				{
-					PREFSMAN->m_sDefaultLocalProfileIDP1.Set( GetLocalProfileIDWithFocus() );
-					if( PREFSMAN->m_sDefaultLocalProfileIDP1.Get() == PREFSMAN->m_sDefaultLocalProfileIDP2.Get() )
-					{
-						int iIndex = GetLocalProfileIndexWithFocus();
-						iIndex++;
-						wrap( iIndex, m_vsLocalProfileID.size() );
-						PREFSMAN->m_sDefaultLocalProfileIDP2.Set( m_vsLocalProfileID[iIndex] );
-					}
-				}
-				break;
 			case ProfileAction_SetDefaultP2:
 				{
-					PREFSMAN->m_sDefaultLocalProfileIDP2.Set( GetLocalProfileIDWithFocus() );
-					if( PREFSMAN->m_sDefaultLocalProfileIDP1.Get() == PREFSMAN->m_sDefaultLocalProfileIDP2.Get() )
+					PlayerNumber pn = (PlayerNumber)(ScreenMiniMenu::s_iLastRowCode - ProfileAction_SetDefaultP1);
+					PlayerNumber pnOpposite = OPPOSITE_PLAYER[ pn ];
+
+					PREFSMAN->m_sDefaultLocalProfileID[pn].Set( GetLocalProfileIDWithFocus() );
+					if( PREFSMAN->m_sDefaultLocalProfileID[pn].Get() == PREFSMAN->m_sDefaultLocalProfileID[pnOpposite].Get() )
 					{
 						int iIndex = GetLocalProfileIndexWithFocus();
 						iIndex++;
 						wrap( iIndex, m_vsLocalProfileID.size() );
-						PREFSMAN->m_sDefaultLocalProfileIDP1.Set( m_vsLocalProfileID[iIndex] );
+						PREFSMAN->m_sDefaultLocalProfileID[pnOpposite].Set( m_vsLocalProfileID[iIndex] );
 					}
 				}
 				break;

@@ -92,13 +92,13 @@ void LifeMeterTime::ChangeLife( TapNoteScore tns )
 	switch( tns )
 	{
 	default:	ASSERT(0);
-	case TNS_W1:			fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_W1);		break;
-	case TNS_W2:			fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_W2);		break;
-	case TNS_W3:			fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_W3);		break;
-	case TNS_W4:			fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_W4);		break;
-	case TNS_W5:			fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_W5);		break;
-	case TNS_Miss:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_Miss);	break;
-	case TNS_HitMine:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_HitMine);	break;
+	case TNS_W1:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W1];		break;
+	case TNS_W2:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W2];		break;
+	case TNS_W3:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W3];		break;
+	case TNS_W4:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W4];		break;
+	case TNS_W5:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_W5];		break;
+	case TNS_Miss:		fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_Miss];	break;
+	case TNS_HitMine:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_HitMine];	break;
 	}
 
 	m_fLifeTotalLostSeconds -= fMeterChange;
@@ -116,8 +116,8 @@ void LifeMeterTime::ChangeLife( HoldNoteScore hns, TapNoteScore tns )
 	switch( hns )
 	{
 	default:	ASSERT(0);
-	case HNS_Held:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_Held);	break;
-	case HNS_LetGo:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange.Get(SE_LetGo);	break;
+	case HNS_Held:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_Held];	break;
+	case HNS_LetGo:	fMeterChange = PREFSMAN->m_fTimeMeterSecondsChange[SE_LetGo];	break;
 	}
 
 	m_fLifeTotalLostSeconds -= fMeterChange;
