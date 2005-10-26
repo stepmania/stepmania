@@ -20,6 +20,34 @@ PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our pro
 
 const CString DEFAULT_LIGHTS_DRIVER = "Null";
 
+static const CString TimingWindowNames[] = {
+	"W1",
+	"W2",
+	"W3",
+	"W4",
+	"W5",
+	"Mine",
+	"Attack",
+	"Hold",
+	"Roll",
+};
+XToString( TimingWindow, NUM_TimingWindow );
+
+
+static const CString ScoreEventNames[] = {
+	"W1",
+	"W2",
+	"W3",
+	"W4",
+	"W5",
+	"Miss",
+	"HitMine",
+	"Held",
+	"LetGo",
+};
+XToString( ScoreEvent, NUM_ScoreEvent );
+
+
 //
 // For self-registering prefs
 //

@@ -173,7 +173,6 @@ enum TimingWindow
 	TW_Roll,
 	NUM_TimingWindow
 };
-const CString& TimingWindowToString( TimingWindow i );
 
 
 enum ScoreEvent
@@ -189,7 +188,6 @@ enum ScoreEvent
 	SE_LetGo,
 	NUM_ScoreEvent
 };
-const CString& ScoreEventToString( ScoreEvent i );
 
 
 //

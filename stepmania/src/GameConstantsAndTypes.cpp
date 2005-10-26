@@ -247,34 +247,6 @@ static void LuaHoldNoteScores( lua_State* L )
 REGISTER_WITH_LUA_FUNCTION( LuaHoldNoteScores );
 
 
-static const CString TimingWindowNames[] = {
-	"W1",
-	"W2",
-	"W3",
-	"W4",
-	"W5",
-	"Mine",
-	"Attack",
-	"Hold",
-	"Roll",
-};
-XToString( TimingWindow, NUM_TimingWindow );
-
-
-static const CString ScoreEventNames[] = {
-	"W1",
-	"W2",
-	"W3",
-	"W4",
-	"W5",
-	"Miss",
-	"HitMine",
-	"Held",
-	"LetGo",
-};
-XToString( ScoreEvent, NUM_ScoreEvent );
-
-
 static const CString MemoryCardStateNames[] = {
 	"ready",
 	"checking",
