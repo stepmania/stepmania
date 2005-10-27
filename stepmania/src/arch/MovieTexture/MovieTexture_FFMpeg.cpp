@@ -177,7 +177,7 @@ public:
 private:
 	void Init();
 	int ReadPacket();
-	int DecodePacket();
+	int DecodePacket( RageSurface *pOut, float fTargetTime );
 	void ConvertToSurface( RageSurface *pSurface ) const;
 
 	avcodec::AVStream *m_pStream;
@@ -240,12 +240,11 @@ void MovieDecoder_FFMpeg::Init()
 /* Read until we get a frame, EOF or error.  Return -1 on error, 0 on EOF, 1 if we have a frame. */
 int MovieDecoder_FFMpeg::GetFrame( RageSurface *pOut, float fTargetTime )
 {
-restart:
 	while( 1 )
 	{
-		int ret = DecodePacket();
+		int ret = DecodePacket( pOut, fTargetTime );
 		if( ret == 1 )
-			break;
+			return 1;
 		if( ret == -1 )
 			return -1;
 		if( ret == 0 && m_iEOF > 0 )
@@ -256,35 +255,6 @@ restart:
 		if( ret < 0 )
 			return ret; /* error */
 	}
-
-	++m_iFrameNumber;
-
-	if( m_iFrameNumber == 1 )
-	{
-		/* Some videos start with a timestamp other than 0.  I think this is used
-		 * when audio starts before the video.  We don't want to honor that, since
-		 * the DShow renderer doesn't and we don't want to break sync compatibility.
-		 *
-		 * Look at the second frame.  (If we have B-frames, the first frame will be an
-		 * I-frame with the timestamp of the next P-frame, not its own timestamp, and we
-		 * want to ignore that and look at the next B-frame.) */
-		const float expect = m_fLastFrameDelay;
-		const float actual = m_fTimestamp;
-		if( actual - expect > 0 )
-		{
-			LOG->Trace("Expect %f, got %f -> %f", expect, actual, actual - expect );
-			m_fTimestampOffset = actual - expect;
-		}
-	}
-
-	if( fTargetTime != -1 &&
-		GetTimestamp() + GetFrameDuration() <= fTargetTime &&
-		(m_pStream->codec.frame_number % 2) == 0 )
-		goto restart;
-
-	ConvertToSurface( pOut );
-
-	return 1;
 }
 
 float MovieDecoder_FFMpeg::GetTimestamp() const
@@ -337,7 +307,7 @@ int MovieDecoder_FFMpeg::ReadPacket()
 
 /* Decode data from the current packet.  Return -1 on error, 0 if the packet is finished,
  * and 1 if we have a frame (we may have more data in the packet). */
-int MovieDecoder_FFMpeg::DecodePacket()
+int MovieDecoder_FFMpeg::DecodePacket( RageSurface *pOut, float fTargetTime )
 {
 	if( m_iEOF == 0 && m_iCurrentPacketOffset == -1 )
 		return 0; /* no packet */
@@ -359,6 +329,11 @@ int MovieDecoder_FFMpeg::DecodePacket()
 		 * versions of avcodec, but I'm waiting until a new stable release to upgrade. */
 		if( m_Packet.size == 0 && m_iFrameNumber == -1 )
 			return 0; /* eof */
+
+		bool bSkipThisFrame = 
+			fTargetTime != -1 &&
+			GetTimestamp() + GetFrameDuration() <= fTargetTime &&
+			(m_pStream->codec.frame_number % 2) == 0;
 
 		int iGotFrame;
 		CHECKPOINT;
@@ -402,6 +377,31 @@ int MovieDecoder_FFMpeg::DecodePacket()
 		/* Length of this frame: */
 		m_fLastFrameDelay = (float)m_pStream->codec.frame_rate_base / m_pStream->codec.frame_rate;
 		m_fLastFrameDelay += m_Frame.repeat_pict * (m_fLastFrameDelay * 0.5f);
+
+		++m_iFrameNumber;
+
+		if( m_iFrameNumber == 1 )
+		{
+			/* Some videos start with a timestamp other than 0.  I think this is used
+			 * when audio starts before the video.  We don't want to honor that, since
+			 * the DShow renderer doesn't and we don't want to break sync compatibility.
+			 *
+			 * Look at the second frame.  (If we have B-frames, the first frame will be an
+			 * I-frame with the timestamp of the next P-frame, not its own timestamp, and we
+			 * want to ignore that and look at the next B-frame.) */
+			const float expect = m_fLastFrameDelay;
+			const float actual = m_fTimestamp;
+			if( actual - expect > 0 )
+			{
+				LOG->Trace("Expect %f, got %f -> %f", expect, actual, actual - expect );
+				m_fTimestampOffset = actual - expect;
+			}
+		}
+
+		if( bSkipThisFrame )
+			continue;
+
+		ConvertToSurface( pOut );
 
 		return 1;
 	}
