@@ -76,11 +76,11 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 		break;
 
 	case WM_SYSCOMMAND:
-		switch( wParam )
+		switch( wParam&0xFFF0 )
 		{
 		case SC_MONITORPOWER:
 		case SC_SCREENSAVE:
-			return 1;
+			return 0;
 		}
 		break;
 
