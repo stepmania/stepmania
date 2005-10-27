@@ -618,7 +618,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	if( mainlayer.m_aBGChanges.empty() || mainlayer.m_aBGChanges.front().m_fStartBeat >= 0 )
 	{
 		BackgroundChange change;
-		(BackgroundDef&)change = STATIC_BACKGROUND_DEF;
+		change.m_def = STATIC_BACKGROUND_DEF;
 		change.m_fStartBeat = -10000;
 		mainlayer.m_aBGChanges.insert( mainlayer.m_aBGChanges.begin(), change );
 	}
