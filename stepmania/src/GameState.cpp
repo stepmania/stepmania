@@ -232,7 +232,7 @@ void GameState::Reset()
 
 	STATSMAN->Reset();
 
-	m_SongOptions.Init();
+	GAMESTATE->GetDefaultSongOptions( m_SongOptions );
 	
 	FOREACH_PlayerNumber(p)
 	{
@@ -243,8 +243,8 @@ void GameState::Reset()
 		// The theme setting is for eg. BM being reverse by default.  (This
 		// could be done in the title menu GameCommand, but then it wouldn't
 		// affect demo, and other non-gameplay things ...) -glenn
-		ApplyModifiers( p, CommonMetrics::DEFAULT_MODIFIERS );
-		ApplyModifiers( p, PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
+		
+		GAMESTATE->GetDefaultPlayerOptions( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions );
 	}
 
 	FOREACH_PlayerNumber(p)
@@ -1005,6 +1005,20 @@ StageResult GameState::GetStageResult( PlayerNumber pn ) const
 
 
 
+void GameState::GetDefaultPlayerOptions( PlayerOptions &po )
+{
+	po.Init();
+	po.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
+	po.FromString( CommonMetrics::DEFAULT_MODIFIERS );
+}
+
+void GameState::GetDefaultSongOptions( SongOptions &so )
+{
+	so.Init();
+	so.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
+	so.FromString( CommonMetrics::DEFAULT_MODIFIERS );
+}
+
 void GameState::ApplyModifiers( PlayerNumber pn, CString sModifiers )
 {
 	m_pPlayerState[pn]->m_PlayerOptions.FromString( sModifiers );
@@ -1034,12 +1048,8 @@ void GameState::RestoreSelectedOptions()
 void GameState::ResetCurrentOptions()
 {
 	FOREACH_PlayerNumber( p )
-	{
-		m_pPlayerState[p]->m_PlayerOptions.Init();
-		m_pPlayerState[p]->m_PlayerOptions.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
-	}
-	m_SongOptions.Init();
-	m_SongOptions.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
+		GetDefaultPlayerOptions( m_pPlayerState[p]->m_PlayerOptions );
+	GetDefaultSongOptions( m_SongOptions );
 }
 
 bool GameState::IsDisqualified( PlayerNumber pn )

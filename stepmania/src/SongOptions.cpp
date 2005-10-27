@@ -1,7 +1,7 @@
 #include "global.h"
 #include "SongOptions.h"
 #include "RageUtil.h"
-#include "PrefsManager.h"
+#include "GameState.h"
 
 void SongOptions::Init() 
 {
@@ -124,8 +124,7 @@ void SongOptions::FromString( CString sOptions )
 		else if( sBit == "faildefault" )
 		{
 			SongOptions so;
-			// TODO: Fix this so that SongOptions don't depend on PrefsManager
-			so.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
+			GAMESTATE->GetDefaultSongOptions( so );
 			m_FailType = so.m_FailType;
 		}
 

@@ -16,13 +16,13 @@
 #include "Foreach.h"
 #include "GameConstantsAndTypes.h"
 
-static void GetDefaultModifiers( PlayerOptions &po, SongOptions &so )
+static void GetPrefsDefaultModifiers( PlayerOptions &po, SongOptions &so )
 {
 	po.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
 	so.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
 }
 
-static void SetDefaultModifiers( const PlayerOptions &po, const SongOptions &so )
+static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions &so )
 {
 	CStringArray as;
 	if( po.GetString() != "" )
@@ -246,9 +246,9 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 	} else {
 		PlayerOptions po;
 		SongOptions so;
-		GetDefaultModifiers( po, so );
+		GetPrefsDefaultModifiers( po, so );
 		po.m_sNoteSkin = choices[sel];
-		SetDefaultModifiers( po, so );
+		SetPrefsDefaultModifiers( po, so );
 	}
 }
 
@@ -404,7 +404,7 @@ static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption
 	{
 		PlayerOptions po;
 		SongOptions so;
-		GetDefaultModifiers( po, so );
+		GetPrefsDefaultModifiers( po, so );
 
 		switch( sel )
 		{
@@ -415,7 +415,7 @@ static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption
 			ASSERT(0);
 		}
 
-		SetDefaultModifiers( po, so );
+		SetPrefsDefaultModifiers( po, so );
 	}
 }
 

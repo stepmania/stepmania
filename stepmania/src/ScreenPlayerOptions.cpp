@@ -98,8 +98,7 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 			m_CancelAll.Play();
 		
 		// apply the game default mods, but not the Profile saved mods
-		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.Init();
-		GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
+		GAMESTATE->GetDefaultPlayerOptions( GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions );
 		
 		MESSAGEMAN->Broadcast( ssprintf("CancelAllP%i", pn+1) );
 

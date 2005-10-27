@@ -9,7 +9,6 @@
 #include "Game.h"
 #include "Style.h"
 #include "RageUtil.h"
-#include "PrefsManager.h"
 #include "PlayerState.h"
 
 const CString CodeNames[] = {
@@ -243,22 +242,19 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 			case CODE_SUPER_SHUFFLE:			po.ToggleOneTurn( PlayerOptions::TURN_SUPER_SHUFFLE );	break;
 			case CODE_NEXT_TRANSFORM:			po.NextTransform();									break;
 			case CODE_NEXT_SCROLL_SPEED:		INCREMENT_SCROLL_SPEED( po.m_fScrollSpeed );		break;
-			case CODE_PREVIOUS_SCROLL_SPEED:	DECREMENT_SCROLL_SPEED( po.m_fScrollSpeed );	break;
+			case CODE_PREVIOUS_SCROLL_SPEED:	DECREMENT_SCROLL_SPEED( po.m_fScrollSpeed );		break;
 			case CODE_NEXT_ACCEL:				po.NextAccel();										break;
 			case CODE_NEXT_EFFECT:				po.NextEffect();									break;
 			case CODE_NEXT_APPEARANCE:			po.NextAppearance();								break;
 			case CODE_NEXT_TURN:				po.NextTurn();										break;
 			case CODE_REVERSE:					po.NextScroll();									break;
-			case CODE_HOLDS:					TOGGLE( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS], true, false );				break;
-			case CODE_MINES:					TOGGLE( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES], true, false );					break;
+			case CODE_HOLDS:					TOGGLE( po.m_bTransforms[PlayerOptions::TRANSFORM_NOHOLDS], true, false );	break;
+			case CODE_MINES:					TOGGLE( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES], true, false );	break;
 			case CODE_DARK:						FLOAT_TOGGLE( po.m_fDark );							break;
-			case CODE_CANCEL_ALL:				po.Init();
-												po.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );		break;
-			case CODE_HIDDEN:					TOGGLE_HIDDEN; break;
-			case CODE_RANDOMVANISH:				TOGGLE_RANDOMVANISH; break;
-				
-				// po.SetOneAppearance(po.GetFirstAppearance()); break;
-			default: ;
+			case CODE_CANCEL_ALL:				GAMESTATE->GetDefaultPlayerOptions( po );			break;
+			case CODE_HIDDEN:					TOGGLE_HIDDEN;										break;
+			case CODE_RANDOMVANISH:				TOGGLE_RANDOMVANISH;								break;
+			default:	break;
 			}
 			return true;	// don't check any more
 		}

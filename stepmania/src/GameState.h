@@ -29,6 +29,7 @@ class PlayerState;
 struct lua_State;
 class LuaTable;
 class Profile;
+struct PlayerOptions;
 
 class GameState
 {
@@ -215,6 +216,8 @@ public:
 	SongOptions		m_SongOptions;
 	SongOptions		m_StoredSongOptions;
 
+	void GetDefaultPlayerOptions( PlayerOptions &po );
+	void GetDefaultSongOptions( SongOptions &so );
 	void ApplyModifiers( PlayerNumber pn, CString sModifiers );
 	void StoreSelectedOptions();
 	void RestoreSelectedOptions();
