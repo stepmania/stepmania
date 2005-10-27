@@ -36,12 +36,12 @@ static void InitEntities()
 	if( !g_mapEntitiesToChars.empty() )
 		return;
 
-	struct Entity
+	static struct Entity
 	{
 		char c;
 		const char *pEntity;
 	}
-	static const EntityTable[] =
+	const EntityTable[] =
 	{
 		{ '&',  "amp", },
 		{ '\"', "quot", },
@@ -58,10 +58,10 @@ static void InitEntities()
 	}
 }
 
-struct RunInitEntities
+static struct RunInitEntities
 {
 	RunInitEntities() { InitEntities(); }
-} static g_RunInitEntities;
+} g_RunInitEntities;
 
 // skip spaces
 static void tcsskip( const CString &s, unsigned &i )
