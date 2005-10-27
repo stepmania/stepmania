@@ -1,5 +1,5 @@
-#include "../../global.h"
-#include "../../RageUtil.h"
+#include "global.h"
+#include "RageUtil.h"
 
 #include "LoadingWindow_Win32.h"
 #include "RageFileManager.h"
@@ -113,10 +113,10 @@ void LoadingWindow_Win32::Paint()
 	}
 }
 
-void LoadingWindow_Win32::SetText(CString str)
+void LoadingWindow_Win32::SetText( CString sText )
 {
 	CStringArray asMessageLines;
-	split( str, "\n", asMessageLines, false );
+	split( sText, "\n", asMessageLines, false );
 	while( asMessageLines.size() < 3 )
 		asMessageLines.push_back( "" );
 	
