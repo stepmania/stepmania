@@ -259,7 +259,6 @@ MOVE( SongGroup,			PREFSMAN->m_bShowSelectGroup );
 
 static void WheelSections( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	// XXX: NEVER, ALWAYS, etc. seem kinda ambiguous...
 	const PrefsManager::MusicWheelUsesSections mapping[] = { PrefsManager::NEVER, PrefsManager::ALWAYS, PrefsManager::ABC_ONLY };
 	MoveMap( sel, PREFSMAN->m_MusicWheelUsesSections, ToSel, mapping, ARRAYSIZE(mapping) );
 }
