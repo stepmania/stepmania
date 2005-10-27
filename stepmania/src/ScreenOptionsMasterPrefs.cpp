@@ -101,34 +101,23 @@ static void MoveMap( int &sel, const ConfOption *pConfOption, bool ToSel, const 
 	MoveMap( sel, *pPref, ToSel, mapping, cnt );
 }
 
-/* "sel" is the selection in the menu. */
-static void MoveData( int &sel, IPreference &opt, bool ToSel )
-{
-	if( ToSel )
-	{
-		CString sOpt = opt.ToString();
-		FromString( sOpt, sel );
-	}
-	else
-	{
-		CString sOpt = ToString( sel );
-		opt.FromString( sOpt );
-	}
-}
-
+/* "iSel" is the selection in the menu. */
 static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 {
 	IPreference *pPref = PREFSMAN->GetPreferenceByName( pConfOption->name );
 	ASSERT_M( pPref != NULL, pConfOption->name );
 
-	MoveData( iSel, *pPref, bToSel );
-}
-
-#define MOVE( name, opt ) \
-	static void name( int &sel, bool ToSel, const ConfOption *pConfOption ) \
-	{ \
-		MoveData( sel, opt, ToSel ); \
+	if( bToSel )
+	{
+		CString sOpt = pPref->ToString();
+		FromString( sOpt, iSel );
 	}
+	else
+	{
+		CString sOpt = ToString( iSel );
+		pPref->FromString( sOpt );
+	}
+}
 
 static void GameChoices( CStringArray &out )
 {
