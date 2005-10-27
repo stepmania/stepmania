@@ -545,7 +545,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "SoloSingle",					MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "HiddenSongs",					MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "EasterEggs",					MovePref,			"OFF","ON" ) );
-	ADD( ConfOption( "AllowW1",				AllowW1,	"NEVER","COURSES ONLY","ALWAYS" ) );
+	ADD( ConfOption( "AllowW1",						AllowW1,	"NEVER","COURSES ONLY","ALWAYS" ) );
 	ADD( ConfOption( "AllowExtraStage",				MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "PickExtraStage",				MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "UseUnlockSystem",				MovePref,		"OFF","ON" ) );

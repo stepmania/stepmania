@@ -128,7 +128,7 @@ protected:
 
 	BrightnessOverlay m_Brightness;
 
-	BackgroundDef STATIC_BACKGROUND_DEF;
+	BackgroundDef m_StaticBackgroundDef;
 };
 
 
@@ -169,7 +169,7 @@ void BackgroundImpl::Init()
 	if( m_bInitted )
 		return;
 	m_bInitted = true;
-	STATIC_BACKGROUND_DEF = BackgroundDef();
+	m_StaticBackgroundDef = BackgroundDef();
 	
 	// load transitions
 	{
@@ -500,7 +500,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	Init();
 	Unload();
 	m_pSong = pSong;
-	STATIC_BACKGROUND_DEF.m_sFile1 = SONG_BACKGROUND_FILE;
+	m_StaticBackgroundDef.m_sFile1 = SONG_BACKGROUND_FILE;
 
 	if( PREFSMAN->m_fBGBrightness == 0.0f )
 		return;
@@ -578,7 +578,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 							// The background was not found.  Try to use a random one instead.
 							bd = layer.CreateRandomBGA( pSong, "", m_RandomBGAnimations );
 							if( bd.IsEmpty() )
-								bd = STATIC_BACKGROUND_DEF;
+								bd = m_StaticBackgroundDef;
 						}
 					}
 				}
@@ -596,7 +596,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 		// end showing the static song background
 		BackgroundChange change;
-		change.m_def = STATIC_BACKGROUND_DEF;
+		change.m_def = m_StaticBackgroundDef;
 		change.m_fStartBeat = pSong->m_fLastBeat;
 		layer.m_aBGChanges.push_back( change );
 	}
@@ -618,7 +618,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	if( mainlayer.m_aBGChanges.empty() || mainlayer.m_aBGChanges.front().m_fStartBeat >= 0 )
 	{
 		BackgroundChange change;
-		change.m_def = STATIC_BACKGROUND_DEF;
+		change.m_def = m_StaticBackgroundDef;
 		change.m_fStartBeat = -10000;
 		mainlayer.m_aBGChanges.insert( mainlayer.m_aBGChanges.begin(), change );
 	}
@@ -631,7 +631,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		FOREACH_CONST( BackgroundChange, layer.m_aBGChanges, bgc )
 		{
 			const BackgroundDef &bd = bgc->m_def;
-			if( bd == STATIC_BACKGROUND_DEF )
+			if( bd == m_StaticBackgroundDef )
 			{
 				bStaticBackgroundUsed = true;
 				break;
@@ -643,10 +643,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 	if( bStaticBackgroundUsed )
 	{
-		bool bIsAlreadyLoaded = mainlayer.m_BGAnimations.find(STATIC_BACKGROUND_DEF) != mainlayer.m_BGAnimations.end();
+		bool bIsAlreadyLoaded = mainlayer.m_BGAnimations.find(m_StaticBackgroundDef) != mainlayer.m_BGAnimations.end();
 		if( !bIsAlreadyLoaded )
 		{
-			bool bSuccess = mainlayer.CreateBackground( m_pSong, STATIC_BACKGROUND_DEF );
+			bool bSuccess = mainlayer.CreateBackground( m_pSong, m_StaticBackgroundDef );
 			ASSERT( bSuccess );
 		}
 	}
