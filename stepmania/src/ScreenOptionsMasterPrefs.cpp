@@ -544,7 +544,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ShowCaution",					MovePref,			"SKIP","SHOW") );
 	ADD( ConfOption( "OniScoreDisplay",				OniScoreDisplay,	"PERCENT","DANCE POINTS") );
 	ADD( ConfOption( "SongGroup",					SongGroup,			"ALL MUSIC","CHOOSE") );
-	ADD( ConfOption( "WheelSections",				WheelSections,		"NEVER","ALWAYS", "ABC ONLY") );
+	ADD( ConfOption( "MusicWheelUsesSections",			WheelSections,		"NEVER","ALWAYS", "ABC ONLY") );
 	ADD( ConfOption( "CourseSort",					CourseSort,			"# SONGS","AVG FEET","TOTAL FEET","RANKING") );
 	ADD( ConfOption( "RandomAtEnd",					RandomAtEnd,		"NO","YES") );
 	ADD( ConfOption( "Translations",				Translations,		"ROMANIZATION","NATIVE LANGUAGE") );
