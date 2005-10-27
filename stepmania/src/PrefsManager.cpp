@@ -424,15 +424,6 @@ PrefsManager::PrefsManager() :
 	m_bLogCheckpoints				( "LogCheckpoints",				false ),
 	m_bShowLoadingWindow			( "ShowLoadingWindow",			true )
 
-#if defined(XBOX)
-	,
-	m_bEnableVirtualMemory		( "EnableVirtualMemory",			true ),
-	m_iPageFileSize				( "PageFileSize",					384 ),
-	m_iPageSize					( "PageSize",						16 ),
-	m_iPageThreshold			( "PageThreshold",					8 ),
-	m_bLogVirtualMemory 		( "LogVirtualMemory",				false )
-#endif
-
 #if !defined(WITHOUT_NETWORKING)
 	,
 	m_bEnableScoreboard			( "EnableScoreboard",				true )

@@ -978,15 +978,7 @@ int main(int argc, char* argv[])
 	ApplyLogPreferences();
 
 #if defined(XBOX)
-	if(PREFSMAN->m_bEnableVirtualMemory)
-	{
-		if(!vmem_Manager.Init(1024 * 1024 * PREFSMAN->m_iPageFileSize, 1024 * PREFSMAN->m_iPageSize, 1024 * PREFSMAN->m_iPageThreshold))
-			return;
-	}
-
-	/* Logging the virtual memory manager seems to crash on exit, so it should be enabled only
-	 * for debugging. */
-	vmem_Manager.SetLogging(PREFSMAN->m_bLogVirtualMemory);
+	vmem_Manager.Init();
 #endif
 
 	WriteLogHeader();
