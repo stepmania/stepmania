@@ -596,7 +596,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 		// end showing the static song background
 		BackgroundChange change;
-		(BackgroundDef&)change = STATIC_BACKGROUND_DEF;
+		change.m_def = STATIC_BACKGROUND_DEF;
 		change.m_fStartBeat = pSong->m_fLastBeat;
 		layer.m_aBGChanges.push_back( change );
 	}
