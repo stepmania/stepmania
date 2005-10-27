@@ -443,12 +443,6 @@ void ScreenGameplay::Init()
 		this->AddChild( &m_BeginnerHelper );
 	}
 	
-	m_sprStaticBackground.SetName( "StaticBG" );
-	m_sprStaticBackground.Load( THEME->GetPathG(m_sName,"Static Background") );
-	SET_XY( m_sprStaticBackground );
-	m_sprStaticBackground.SetDrawOrder( DRAW_ORDER_BEFORE_EVERYTHING );	// behind everything else
-	this->AddChild(&m_sprStaticBackground);
-
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
 		m_Toasty.Load( THEME->GetPathB(m_sName,"toasty") );

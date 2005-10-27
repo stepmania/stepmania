@@ -175,7 +175,6 @@ protected:
 	Transition	m_NextSong;	// shows between songs in a course
 	Transition	m_SongFinished;	// shows after each song, course or not
 
-	Sprite				m_sprStaticBackground;
 	AutoActor			m_sprLifeFrame;
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
 	Sprite				m_sprCourseSongNumber;
