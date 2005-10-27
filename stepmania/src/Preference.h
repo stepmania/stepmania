@@ -4,6 +4,7 @@
 #define PREFERENCE_H
 
 #include "EnumHelper.h"
+#include "RageUtil.h"
 class IniFile;
 
 struct lua_State;
