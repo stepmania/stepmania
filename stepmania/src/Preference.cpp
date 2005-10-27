@@ -33,44 +33,28 @@ void IPreference::SetFromStack( lua_State *L )
 
 	lua_pop( L, 1 );
 }
-
-#define READFROM_AND_WRITETO( type, cast ) \
-	template<> void Preference<type>::FromString( const CString &s ) \
+#define READFROM_AND_WRITETO( type ) \
+	template<> CString PrefToString( const type &v ) \
 	{ \
-		::FromString( s, (cast)m_currentValue ); \
+		return ::ToString( v ); \
 	} \
-	template<> CString Preference<type>::ToString() const \
+	template<> void PrefFromString( const CString &s, type &v ) \
 	{ \
-		return ::ToString( (cast)m_currentValue ); \
+		::FromString( s, v ); \
 	} \
-	template<> void Preference<type>::PushValue( lua_State *L ) const \
+	template<> void PrefSetFromStack( lua_State *L, type &v ) \
 	{ \
-		LuaHelpers::PushStack( (cast)m_currentValue, L ); \
+		LuaHelpers::PopStack( v, L ); \
 	} \
-	template<> void Preference<type>::SetFromStack( lua_State *L ) \
+	template<> void PrefPushValue( lua_State *L, const type &v ) \
 	{ \
-		LuaHelpers::PopStack( (cast)m_currentValue, L ); \
+		LuaHelpers::PushStack( v, L ); \
 	}
 
-READFROM_AND_WRITETO( int, int& )
-READFROM_AND_WRITETO( float, float& )
-READFROM_AND_WRITETO( bool, bool& )
-READFROM_AND_WRITETO( CString, CString& )
-READFROM_AND_WRITETO( PrefsManager::BackgroundMode, int& )
-READFROM_AND_WRITETO( PrefsManager::BannerCache, int& )
-READFROM_AND_WRITETO( PrefsManager::MusicWheelUsesSections, int& )
-READFROM_AND_WRITETO( PrefsManager::AllowW1, int& )
-READFROM_AND_WRITETO( CoinMode, int& )
-READFROM_AND_WRITETO( Premium, int& )
-READFROM_AND_WRITETO( PrefsManager::Maybe, int& )
-READFROM_AND_WRITETO( PrefsManager::ShowDancingCharacters, int& )
-READFROM_AND_WRITETO( PrefsManager::CourseSortOrders, int& )
-READFROM_AND_WRITETO( PrefsManager::GetRankingName, int& )
-READFROM_AND_WRITETO( PrefsManager::ScoringType, int& )
-READFROM_AND_WRITETO( PrefsManager::BoostAppPriority, int& )
-READFROM_AND_WRITETO( PrefsManager::AttractSoundFrequency, int& )
-READFROM_AND_WRITETO( PlayerController, int& )
-READFROM_AND_WRITETO( RageSoundReader_Resample::ResampleQuality, int& )
+READFROM_AND_WRITETO( int )
+READFROM_AND_WRITETO( float )
+READFROM_AND_WRITETO( bool )
+READFROM_AND_WRITETO( CString )
 
 void IPreference::ReadFrom( const IniFile &ini )
 {

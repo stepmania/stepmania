@@ -31,15 +31,14 @@ protected:
 
 void BroadcastPreferenceChanged( const CString& sPreferenceName );
 
-template <class T>
+template <class BasicType> CString PrefToString( const BasicType &v );
+template <class BasicType> void PrefFromString( const CString &s, BasicType &v );
+template <class BasicType> void PrefSetFromStack( lua_State *L, BasicType &v );
+template <class BasicType> void PrefPushValue( lua_State *L, const BasicType &v );
+
+template <class T, class BasicType=T>
 class Preference : public IPreference
 {
-private:
-	// Make currentValue first in the list so that we can pass this object
-	// as an argument in a var_arg function as in printf.
-	T			m_currentValue;
-	T			m_defaultValue;
-	
 public:
 	Preference( const CString& sName, const T& defaultValue ):
 		IPreference( sName ),
@@ -49,10 +48,10 @@ public:
 		LoadDefault();
 	}
 
-	CString ToString() const;
-	void FromString( const CString &s );
-	void SetFromStack( lua_State *L );
-	void PushValue( lua_State *L ) const;
+	CString ToString() const { return PrefToString( (const BasicType &) m_currentValue ); }
+	void FromString( const CString &s ) { PrefFromString( s, (BasicType &)m_currentValue ); }
+	void SetFromStack( lua_State *L ) { PrefSetFromStack( L, (BasicType &)m_currentValue ); }
+	void PushValue( lua_State *L ) const { PrefPushValue( L, (BasicType &)m_currentValue ); }
 
 	void LoadDefault()
 	{
@@ -74,6 +73,10 @@ public:
 		m_currentValue = other;
 		BroadcastPreferenceChanged( m_sName );
 	}
+
+private:
+	T m_currentValue;
+	T m_defaultValue;
 };
 
 template <class T>

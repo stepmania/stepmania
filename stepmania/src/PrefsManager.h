@@ -35,7 +35,7 @@ public:
 	Preference<bool>	m_bShowBanners;
 
 	enum BackgroundMode { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_RANDOMMOVIES, NUM_BackgroundMode };
-	Preference<BackgroundMode>		m_BackgroundMode;
+	Preference<BackgroundMode,int>		m_BackgroundMode;
 	Preference<int>		m_iNumBackgrounds;
 	Preference<float>	m_fBGBrightness;
 	Preference<bool>	m_bHiddenSongs;
@@ -50,7 +50,7 @@ public:
 		BNCACHE_LOW_RES_PRELOAD, // preload low-res on start
 		BNCACHE_LOW_RES_LOAD_ON_DEMAND, // preload low-res on screen load
 		BNCACHE_FULL };
-	Preference<BannerCache>		m_BannerCache;
+	Preference<BannerCache,int>		m_BannerCache;
 	Preference<bool>	m_bPalettedBannerCache;
 	Preference<bool>	m_bFastLoad;
 
@@ -94,7 +94,7 @@ public:
 	// time meter used in survival
 	Preference1D<float>	m_fTimeMeterSecondsChange;
 
-	Preference<PlayerController> m_AutoPlay;
+	Preference<PlayerController,int> m_AutoPlay;
 	Preference<bool>	m_bDelayedBack;
 	Preference<bool>	m_bShowInstructions;
 	Preference<bool>	m_bShowSelectGroup;
@@ -102,19 +102,19 @@ public:
 	Preference<bool>	m_bShowNativeLanguage;
 	Preference<bool>	m_bArcadeOptionsNavigation;
 	enum MusicWheelUsesSections { NEVER, ALWAYS, ABC_ONLY };
-	Preference<MusicWheelUsesSections>		m_MusicWheelUsesSections;
+	Preference<MusicWheelUsesSections,int>		m_MusicWheelUsesSections;
 	Preference<int>		m_iMusicWheelSwitchSpeed;
 	Preference<bool>	m_bEasterEggs;
 	enum AllowW1 { ALLOW_W1_NEVER, ALLOW_W1_COURSES_ONLY, ALLOW_W1_EVERYWHERE };
-	Preference<AllowW1>		m_AllowW1;
+	Preference<AllowW1,int>		m_AllowW1;
 	Preference<bool>	m_bEventMode;
 	Preference<int>		m_iCoinsPerCredit;
 	Preference<int>		m_iSongsPerPlay;
 
 	// These options have weird interactions depending on m_bEventMode, 
 	// so wrap them in GameState.
-	Preference<CoinMode>	m_CoinMode;
-	Preference<Premium>		m_Premium;
+	Preference<CoinMode,int>	m_CoinMode;
+	Preference<Premium,int>		m_Premium;
 
 	Preference<bool>	m_bDelayedCreditsReconcile;
 	Preference<bool>	m_bPickExtraStage;
@@ -122,7 +122,7 @@ public:
 	Preference<float>	m_fLongVerSongSeconds;
 	Preference<float>	m_fMarathonVerSongSeconds;
 	enum Maybe { ASK = -1, NO = 0, YES = 1 };
-	Preference<Maybe>		m_ShowSongOptions;
+	Preference<Maybe,int>		m_ShowSongOptions;
 	Preference<bool>	m_bSoloSingle;
 	Preference<bool>	m_bDancePointsForOni;
 	Preference<bool>	m_bPercentageScoring;
@@ -135,7 +135,7 @@ public:
 	Preference<bool>	m_bBreakComboToGetItem;
 	Preference<bool>	m_bLockCourseDifficulties;
 	enum ShowDancingCharacters { SDC_Off = 0, SDC_Random = 1, SDC_Select = 2};
-	Preference<ShowDancingCharacters>		m_ShowDancingCharacters;
+	Preference<ShowDancingCharacters,int>		m_ShowDancingCharacters;
 	Preference<bool>	m_bUseUnlockSystem;
 	Preference<bool>	m_bAutoMapOnJoyChange;
 	Preference<float>	m_fGlobalOffsetSeconds;
@@ -159,7 +159,7 @@ public:
 	Preference<int>		m_fCenterImageAddHeight;
 	Preference<float>	m_fBrightnessAdd;
 	enum AttractSoundFrequency { ASF_NEVER, ASF_EVERY_TIME, ASF_EVERY_2_TIMES, ASF_EVERY_3_TIMES, ASF_EVERY_4_TIMES, ASF_EVERY_5_TIMES };
-	Preference<AttractSoundFrequency>	m_AttractSoundFrequency;
+	Preference<AttractSoundFrequency,int>	m_AttractSoundFrequency;
 	Preference<bool>	m_bAllowExtraStage;
 	Preference<bool>	m_bHideDefaultNoteSkin;
 	Preference<int>		m_iMaxHighScoresPerListForMachine;
@@ -195,17 +195,17 @@ public:
 
 	// course ranking
 	enum CourseSortOrders { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK };
-	Preference<CourseSortOrders>	m_CourseSortOrder;
+	Preference<CourseSortOrders,int>	m_CourseSortOrder;
 	Preference<bool>	m_bMoveRandomToEnd;
 	Preference<bool>	m_bSubSortByNumSteps;	
 	enum GetRankingName { RANKING_OFF, RANKING_ON, RANKING_LIST };
-	Preference<GetRankingName>	m_GetRankingName;
+	Preference<GetRankingName,int>	m_GetRankingName;
 
 	enum ScoringType { SCORING_NEW, SCORING_OLD };
-	Preference<ScoringType>	m_ScoringType;
+	Preference<ScoringType,int>	m_ScoringType;
 
 	enum BoostAppPriority { BOOST_NO, BOOST_YES, BOOST_AUTO };	/* auto = do whatever is appropriate for the arch. */
-	Preference<BoostAppPriority>	m_BoostAppPriority;
+	Preference<BoostAppPriority,int>	m_BoostAppPriority;
 
 	Preference<CString>	m_sAdditionalSongFolders;
 	Preference<CString>	m_sAdditionalFolders;
@@ -224,7 +224,7 @@ public:
 	Preference<int>		m_iSoundWriteAhead;
 	Preference<CString>	m_iSoundDevice;	
 	Preference<int>		m_iSoundPreferredSampleRate;
-	Preference<RageSoundReader_Resample::ResampleQuality>	m_SoundResampleQuality;
+	Preference<RageSoundReader_Resample::ResampleQuality,int>	m_SoundResampleQuality;
 private:
 	Preference<CString>	m_sInputDrivers;	// "" == default
 	Preference<CString>	m_sLightsDriver;	// "" == default
