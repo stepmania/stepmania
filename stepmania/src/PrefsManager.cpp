@@ -478,8 +478,6 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini )
 
 	// validate
 	m_iSongsPerPlay.Set( clamp(m_iSongsPerPlay.Get(),0,MAX_SONGS_PER_PLAY) );
-	FOREACH_PlayerNumber( pn )
-		m_sMemoryCardOsMountPoint[pn].Set( FixSlashes(m_sMemoryCardOsMountPoint[pn]) );
 	m_BackgroundMode.Set( (BackgroundMode)clamp((int)m_BackgroundMode.Get(),0,(int)NUM_BackgroundMode-1) );
 
 

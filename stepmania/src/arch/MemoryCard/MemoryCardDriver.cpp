@@ -22,7 +22,6 @@ bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 void UsbStorageDevice::SetOsMountDir( const CString &s )
 {
 	sOsMountDir = s;
-	FixSlashesInPlace( sOsMountDir );
 }
 
 /*
