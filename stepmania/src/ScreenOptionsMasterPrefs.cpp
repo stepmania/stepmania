@@ -262,9 +262,6 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 }
 
 /* Appearance options */
-MOVE( Instructions,			PREFSMAN->m_bShowInstructions );
-MOVE( OniScoreDisplay,		PREFSMAN->m_bDancePointsForOni );
-MOVE( SongGroup,			PREFSMAN->m_bShowSelectGroup );
 
 static void WheelSections( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
@@ -272,14 +269,7 @@ static void WheelSections( int &sel, bool ToSel, const ConfOption *pConfOption )
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-MOVE( CourseSort,			PREFSMAN->m_CourseSortOrder );
-MOVE( RandomAtEnd,			PREFSMAN->m_bMoveRandomToEnd );
-MOVE( Translations,			PREFSMAN->m_bShowNativeLanguage );
-MOVE( Lyrics,				PREFSMAN->m_bShowLyrics );
-
 /* Background options */
-MOVE( DancingCharacters,	PREFSMAN->m_ShowDancingCharacters );
-MOVE( BeginnerHelper,		PREFSMAN->m_bShowBeginnerHelper );
 
 static void BGBrightness( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
@@ -294,9 +284,6 @@ static void NumBackgrounds( int &sel, bool ToSel, const ConfOption *pConfOption 
 }
 
 /* Input options */
-MOVE( BackDelayed,			PREFSMAN->m_bDelayedBack );
-MOVE( OptionsNavigation,	PREFSMAN->m_bArcadeOptionsNavigation );
-
 static void WheelSpeed( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 5, 10, 15, 25 };
@@ -304,9 +291,6 @@ static void WheelSpeed( int &sel, bool ToSel, const ConfOption *pConfOption )
 }
 
 /* Gameplay options */
-MOVE( SoloSingles,			PREFSMAN->m_bSoloSingle );
-MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
-
 static void AllowW1( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const PrefsManager::AllowW1 mapping[] = { PrefsManager::ALLOW_W1_NEVER, PrefsManager::ALLOW_W1_COURSES_ONLY, PrefsManager::ALLOW_W1_EVERYWHERE };
@@ -535,15 +519,15 @@ static void InitializeConfOptions()
 
 	ADD( ConfOption( "Announcer",					Announcer, AnnouncerChoices ) );
 	ADD( ConfOption( "DefaultNoteSkin",				DefaultNoteSkin, DefaultNoteSkinChoices ) );
-	ADD( ConfOption( "Instructions",				Instructions,		"SKIP","SHOW") );
+	ADD( ConfOption( "ShowInstructions",			MovePref,			"SKIP","SHOW") );
 	ADD( ConfOption( "ShowCaution",					MovePref,			"SKIP","SHOW") );
-	ADD( ConfOption( "OniScoreDisplay",				OniScoreDisplay,	"PERCENT","DANCE POINTS") );
-	ADD( ConfOption( "SongGroup",					SongGroup,			"ALL MUSIC","CHOOSE") );
+	ADD( ConfOption( "DancePointsForOni",			MovePref,			"PERCENT","DANCE POINTS") );
+	ADD( ConfOption( "ShowSelectGroup",				MovePref,			"ALL MUSIC","CHOOSE") );
 	ADD( ConfOption( "MusicWheelUsesSections",		WheelSections,		"NEVER","ALWAYS", "ABC ONLY") );
-	ADD( ConfOption( "CourseSort",					CourseSort,			"# SONGS","AVG FEET","TOTAL FEET","RANKING") );
-	ADD( ConfOption( "RandomAtEnd",					RandomAtEnd,		"NO","YES") );
-	ADD( ConfOption( "Translations",				Translations,		"ROMANIZATION","NATIVE LANGUAGE") );
-	ADD( ConfOption( "Lyrics",						Lyrics,				"HIDE","SHOW") );
+	ADD( ConfOption( "CourseSortOrder",				MovePref,			"# SONGS","AVG FEET","TOTAL FEET","RANKING") );
+	ADD( ConfOption( "MoveRandomToEnd",				MovePref,			"NO","YES") );
+	ADD( ConfOption( "ShowNativeLanguage",			MovePref,			"ROMANIZATION","NATIVE LANGUAGE") );
+	ADD( ConfOption( "ShowLyrics",					MovePref,			"HIDE","SHOW") );
 
 	/* Misc options */
 	ADD( ConfOption( "AutogenSteps",				MovePref,			 "OFF","ON" ) );
@@ -556,26 +540,26 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "BackgroundMode",				MovePref,			"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ) );
 	ADD( ConfOption( "Brightness",					BGBrightness,		"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ) );
 	ADD( ConfOption( "ShowDanger",					MovePref,			"HIDE","SHOW" ) );
-	ADD( ConfOption( "DancingCharacters",			DancingCharacters,	"DEFAULT TO OFF","DEFAULT TO RANDOM","SELECT" ) );
-	ADD( ConfOption( "BeginnerHelper",				BeginnerHelper,		"OFF","ON" ) );
+	ADD( ConfOption( "ShowDancingCharacters",		MovePref,			"DEFAULT TO OFF","DEFAULT TO RANDOM","SELECT" ) );
+	ADD( ConfOption( "ShowBeginnerHelper",			MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "RandomBackgrounds",			NumBackgrounds,		"5","10","15","20" ) );
 
 	/* Input options */
 	ADD( ConfOption( "AutoMapOnJoyChange",			MovePref,			"OFF","ON (recommended)" ) );
 	ADD( ConfOption( "OnlyDedicatedMenuButtons",	MovePref,			"USE GAMEPLAY BUTTONS","ONLY DEDICATED BUTTONS" ) );
 	ADD( ConfOption( "AutoPlay",					MovePref,			"OFF","ON","CPU-Controlled" ) );
-	ADD( ConfOption( "BackDelayed",					BackDelayed,		"INSTANT","HOLD" ) );
-	ADD( ConfOption( "OptionsNavigation",			OptionsNavigation,	"SM STYLE","ARCADE STYLE" ) );
+	ADD( ConfOption( "DelayedBack",					MovePref,			"INSTANT","HOLD" ) );
+	ADD( ConfOption( "ArcadeOptionsNavigation",		MovePref,			"SM STYLE","ARCADE STYLE" ) );
 	ADD( ConfOption( "WheelSpeed",					WheelSpeed,			"SLOW","NORMAL","FAST","REALLY FAST" ) );
 
 	/* Gameplay options */
-	ADD( ConfOption( "SoloSingles",					SoloSingles,		"OFF","ON" ) );
+	ADD( ConfOption( "SoloSingle",					MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "HiddenSongs",					MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "EasterEggs",					MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "AllowW1",				AllowW1,	"NEVER","COURSES ONLY","ALWAYS" ) );
 	ADD( ConfOption( "AllowExtraStage",				MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "PickExtraStage",				MovePref,			"OFF","ON" ) );
-	ADD( ConfOption( "UnlockSystem",				UnlockSystem,		"OFF","ON" ) );
+	ADD( ConfOption( "UseUnlockSystem",				MovePref,		"OFF","ON" ) );
 
 	/* Machine options */
 	ADD( ConfOption( "MenuTimer",					MovePref,			"OFF","ON" ) );
