@@ -4,6 +4,7 @@
 #include "global.h"
 #include "VirtualMemory.h"
 #include "RageLog.h"
+#include "Preference.h"
 #include <new>
 
 #if defined(WINDOWS)
@@ -13,6 +14,16 @@
 #endif
 
 VirtualMemoryManager vmem_Manager;
+
+static Preference<bool>		g_bEnableVirtualMemory( "EnableVirtualMemory", true );
+// page file size in megabytes
+static Preference<int>		g_iPageFileSize( "PageFileSize", 384 );
+// page size in kilobytes
+static Preference<int>		g_iPageSize( "PageSize", 16 );
+// threshold in kilobytes where virtual memory will be used
+static Preference<int>		g_iPageThreshold( "PageThreshold", 8 );
+// (under debug) log the virtual memory allocation, etc.
+static Preference<bool>		g_bLogVirtualMemory( "LogVirtualMemory", false );
 
 struct vm_page
 {
@@ -39,8 +50,14 @@ VirtualMemoryManager::~VirtualMemoryManager()
 	Destroy();	
 }
 
-bool VirtualMemoryManager::Init(unsigned long totalPageSize, unsigned long sizePerPage, unsigned long thold)
+bool VirtualMemoryManager::Init()
 {
+	if( !g_bEnableVirtualMemory )
+		return true;
+	unsigned long totalPageSize = 1024 * 1024 * g_iPageFileSize;
+	unsigned long sizePerPage = 1024 * g_iPageSize;
+	unsigned long thold = 1024 * g_iPageThreshold;
+
 	threshold = thold;
 
 	totalPages = totalPageSize / sizePerPage;
@@ -92,6 +109,8 @@ bool VirtualMemoryManager::Init(unsigned long totalPageSize, unsigned long sizeP
 		pages[i].pageFaults = 0;
 		pages[i].locked = false;
 	}
+
+	SetLogging( g_bLogVirtualMemory );
 
 	inited = true;
 	return true;

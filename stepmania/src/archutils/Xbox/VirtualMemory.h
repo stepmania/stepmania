@@ -17,7 +17,7 @@ public:
 	VirtualMemoryManager();
 	~VirtualMemoryManager();
 
-	bool Init(unsigned long totalPageSize, unsigned long sizePerPage, unsigned long thold);
+	bool Init();
 	void Destroy();
 	void* Allocate(size_t size);
 	bool Free(void *ptr);
