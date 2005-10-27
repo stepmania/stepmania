@@ -664,19 +664,15 @@ void StripCrnl(CString &s)
 bool BeginsWith( const CString &sTestThis, const CString &sBeginning )
 {
 	ASSERT( !sBeginning.empty() );
-
-	if( sTestThis.size() < sBeginning.size() )
-		return false;
-	return sTestThis.Left( sBeginning.size() ) == sBeginning;
+	return sTestThis.compare( 0, sBeginning.length(), sBeginning ) == 0;
 }
 
 bool EndsWith( const CString &sTestThis, const CString &sEnding )
 {
 	ASSERT( !sEnding.empty() );
-
 	if( sTestThis.size() < sEnding.size() )
 		return false;
-	return sTestThis.Right( sEnding.size() ) == sEnding;
+	return sTestThis.compare( sTestThis.length()-sEnding.length(), sEnding.length(), sEnding ) == 0;
 }
 
 void StripCvs( vector<CString> &vs )
