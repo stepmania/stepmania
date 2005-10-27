@@ -7,7 +7,6 @@
 #include "GameConstantsAndTypes.h"
 #include "Grade.h"	// for NUM_GRADE_TIERS
 #include "Preference.h"
-#include "RageSoundReader_Resample.h"	// for ResampleQuality
 class IniFile;
 
 const int MAX_SONGS_PER_PLAY = 7;
@@ -224,7 +223,6 @@ public:
 	Preference<int>		m_iSoundWriteAhead;
 	Preference<CString>	m_iSoundDevice;	
 	Preference<int>		m_iSoundPreferredSampleRate;
-	Preference<RageSoundReader_Resample::ResampleQuality,int>	m_SoundResampleQuality;
 private:
 	Preference<CString>	m_sInputDrivers;	// "" == default
 	Preference<CString>	m_sLightsDriver;	// "" == default

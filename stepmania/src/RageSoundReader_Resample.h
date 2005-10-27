@@ -8,14 +8,22 @@
 class RageSoundReader_Resample: public SoundReader
 {
 public:
+	enum ResampleQuality
+	{
+		RESAMP_FAST,
+		RESAMP_NORMAL,
+		RESAMP_HIGHQUALITY,
+		RESAMP_INVALID
+	};
+
 	/* We own source. */
 	virtual void Open( SoundReader *pSource ) = 0;
 
 	/* Change the actual sample rate of a sound. */
 	virtual void SetSampleRate( int iRate ) = 0;
 
-	enum ResampleQuality { RESAMP_FAST, RESAMP_NORMAL, RESAMP_HIGHQUALITY };
-	static RageSoundReader_Resample *MakeResampler( ResampleQuality q );
+	/* If q = RESAMP_INVALID, the preferred resampler will be used. */
+	static RageSoundReader_Resample *MakeResampler( ResampleQuality q = RESAMP_INVALID );
 };
 
 #endif

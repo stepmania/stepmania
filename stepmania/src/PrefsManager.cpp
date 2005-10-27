@@ -5,7 +5,6 @@
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "arch/arch_default.h"
-#include "RageSoundReader_Resample.h" /* for ResampleQuality */
 #include "RageFile.h"
 #include "ProductInfo.h"
 #include "Foreach.h"
@@ -400,7 +399,6 @@ PrefsManager::PrefsManager() :
 	m_iSoundWriteAhead				( "SoundWriteAhead",			0 ),
 	m_iSoundDevice					( "SoundDevice",				"" ),
 	m_iSoundPreferredSampleRate		( "SoundPreferredSampleRate",	44100 ),
-	m_SoundResampleQuality			( "SoundResampleQuality",		RageSoundReader_Resample::RESAMP_NORMAL ),
 	m_sInputDrivers					( "InputDrivers",				"" ),
 	m_sLightsDriver					( "LightsDriver",				"" ),
 	m_sMovieDrivers					( "MovieDrivers",				"" ),

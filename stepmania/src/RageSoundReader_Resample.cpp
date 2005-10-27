@@ -2,9 +2,16 @@
 #include "RageSoundReader_Resample.h"
 #include "RageSoundReader_Resample_Fast.h"
 #include "RageSoundReader_Resample_Good.h"
+#include "Preference.h"
+
+static Preference<RageSoundReader_Resample::ResampleQuality,int>
+	g_SoundResampleQuality( "SoundResampleQuality", RageSoundReader_Resample::RESAMP_NORMAL );
 
 RageSoundReader_Resample *RageSoundReader_Resample::MakeResampler( ResampleQuality q )
 {
+	if( q == RESAMP_INVALID )
+		q = g_SoundResampleQuality;
+
 	switch( q )
 	{
 	case RESAMP_FAST:
