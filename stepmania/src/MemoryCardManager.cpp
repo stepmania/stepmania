@@ -18,6 +18,37 @@
 
 MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in our program
 
+static void MemoryCardOsMountPointInit( size_t /*PlayerNumber*/ i, CString &sNameOut, CString &defaultValueOut )
+{
+	sNameOut = "MemoryCardOsMountPoint" + PlayerNumberToString( (PlayerNumber)i );
+	defaultValueOut = "";
+}
+
+static void MemoryCardUsbBusInit( size_t /*PlayerNumber*/ i, CString &sNameOut, int &defaultValueOut )
+{
+	sNameOut = "MemoryCardUsbBus" + PlayerNumberToString( (PlayerNumber)i );
+	defaultValueOut = -1;
+}
+
+static void MemoryCardUsbPortInit( size_t /*PlayerNumber*/ i, CString &sNameOut, int &defaultValueOut )
+{
+	sNameOut = "MemoryCardUsbPort" + PlayerNumberToString( (PlayerNumber)i );
+	defaultValueOut = -1;
+}
+
+static void MemoryCardUsbLevelInit( size_t /*PlayerNumber*/ i, CString &sNameOut, int &defaultValueOut )
+{
+	sNameOut = "MemoryCardUsbLevel" + PlayerNumberToString( (PlayerNumber)i );
+	defaultValueOut = -1;
+}
+
+// if set, always use the device that mounts to this point
+Preference1D<CString>	MemoryCardManager::m_sMemoryCardOsMountPoint( MemoryCardOsMountPointInit, NUM_PLAYERS );
+// Look for this level, bus, port when assigning cards.  -1 = match any
+Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbBus( MemoryCardUsbBusInit,		NUM_PLAYERS );
+Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbPort( MemoryCardUsbPortInit,	NUM_PLAYERS );
+Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbLevel( MemoryCardUsbLevelInit,	NUM_PLAYERS );
+
 const CString MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =
 {
 	/* @ is importast; see RageFileManager LoadedDriver::GetPath */
@@ -386,21 +417,21 @@ void MemoryCardManager::Update( float fDelta )
 		FOREACH( UsbStorageDevice, vUnassignedDevices, d )
 		{
 			// search for card dir match
-			if( !PREFSMAN->m_sMemoryCardOsMountPoint[p].Get().empty() &&
-				d->sOsMountDir.CompareNoCase(PREFSMAN->m_sMemoryCardOsMountPoint[p].Get()) )
+			if( !m_sMemoryCardOsMountPoint[p].Get().empty() &&
+				d->sOsMountDir.CompareNoCase(m_sMemoryCardOsMountPoint[p].Get()) )
 				continue;      // not a match
 			
 			// search for USB bus match
-			if( PREFSMAN->m_iMemoryCardUsbBus[p] != -1 &&
-				PREFSMAN->m_iMemoryCardUsbBus[p] != d->iBus )
+			if( m_iMemoryCardUsbBus[p] != -1 &&
+				m_iMemoryCardUsbBus[p] != d->iBus )
 				continue;       // not a match
 			
-			if( PREFSMAN->m_iMemoryCardUsbPort[p] != -1 &&
-				PREFSMAN->m_iMemoryCardUsbPort[p] != d->iPort )
+			if( m_iMemoryCardUsbPort[p] != -1 &&
+				m_iMemoryCardUsbPort[p] != d->iPort )
 				continue;       // not a match
 			
-			if( PREFSMAN->m_iMemoryCardUsbLevel[p] != -1 &&
-				PREFSMAN->m_iMemoryCardUsbLevel[p] != d->iLevel )
+			if( m_iMemoryCardUsbLevel[p] != -1 &&
+				m_iMemoryCardUsbLevel[p] != d->iLevel )
 				continue;       // not a match
 			
 			LOG->Trace( "Player %i: matched %s", p+1, d->sDevice.c_str() );

@@ -10,6 +10,7 @@
 #include "ScreenPrompt.h"
 #include "GameState.h"
 #include "Profile.h"
+#include "MemoryCardManager.h"
 
 
 enum {
@@ -63,15 +64,15 @@ void ScreenProfileOptions::Init()
 	g_ProfileOptionsLines[PO_RENAME_].m_vsChoices.push_back( "-NONE-" );
 	PROFILEMAN->GetLocalProfileDisplayNames( g_ProfileOptionsLines[PO_RENAME_].m_vsChoices );
 
-	if( PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_1].Get().empty() )
+	if( MemoryCardManager::m_sMemoryCardOsMountPoint[PLAYER_1].Get().empty() )
 		g_ProfileOptionsLines[PO_OS_MOUNT_1].m_vsChoices[0] = "-NOT SET IN INI-";
 	else
-		g_ProfileOptionsLines[PO_OS_MOUNT_1].m_vsChoices[0] = PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_1].Get();
+		g_ProfileOptionsLines[PO_OS_MOUNT_1].m_vsChoices[0] = MemoryCardManager::m_sMemoryCardOsMountPoint[PLAYER_1].Get();
 
-	if( PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_2].Get().empty() )
+	if( MemoryCardManager::m_sMemoryCardOsMountPoint[PLAYER_2].Get().empty() )
 		g_ProfileOptionsLines[PO_OS_MOUNT_2].m_vsChoices[0] = "-NOT SET IN INI-";
 	else
-		g_ProfileOptionsLines[PO_OS_MOUNT_2].m_vsChoices[0] = PREFSMAN->m_sMemoryCardOsMountPoint[PLAYER_2].Get();
+		g_ProfileOptionsLines[PO_OS_MOUNT_2].m_vsChoices[0] = MemoryCardManager::m_sMemoryCardOsMountPoint[PLAYER_2].Get();
 
 	//Enable all lines for all players
 	for ( unsigned int i = 0; i < NUM_PROFILE_OPTIONS_LINES; i++ )
@@ -97,7 +98,7 @@ void ScreenProfileOptions::ImportOptions( int iRow, const vector<PlayerNumber> &
 			CStringArray::iterator iter = find( 
 				vsProfiles.begin(),
 				vsProfiles.end(),
-				PREFSMAN->m_sMemoryCardOsMountPoint[pn].Get() );
+				MemoryCardManager::m_sMemoryCardOsMountPoint[pn].Get() );
 			if( iter != vsProfiles.end() )
 				m_pRows[iRow]->SetOneSharedSelection( iter - vsProfiles.begin() + 1 );
 		}
@@ -117,9 +118,9 @@ void ScreenProfileOptions::ExportOptions( int iRow, const vector<PlayerNumber> &
 			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
 			if( m_pRows[iRow]->GetOneSharedSelection() > 0 )
-				PREFSMAN->m_sMemoryCardOsMountPoint[pn].Set( vsProfiles[m_pRows[iRow]->GetOneSharedSelection()-1] );
+				MemoryCardManager::m_sMemoryCardOsMountPoint[pn].Set( vsProfiles[m_pRows[iRow]->GetOneSharedSelection()-1] );
 			else
-				PREFSMAN->m_sMemoryCardOsMountPoint[pn].Set( "" );
+				MemoryCardManager::m_sMemoryCardOsMountPoint[pn].Set( "" );
 		}
 		break;
 	}

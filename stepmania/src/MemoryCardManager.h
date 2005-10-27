@@ -5,6 +5,7 @@
 #include "PlayerNumber.h"
 #include "RageSound.h"
 #include "arch/MemoryCard/MemoryCardDriver.h"
+#include "Preference.h"
 
 
 extern const CString MEM_CARD_MOUNT_POINT[NUM_PLAYERS];
@@ -37,6 +38,11 @@ public:
 
 	bool IsNameAvailable( PlayerNumber pn ) const;
 	CString GetName( PlayerNumber pn ) const;
+
+	static Preference1D<CString>	m_sMemoryCardOsMountPoint;
+	static Preference1D<int>		m_iMemoryCardUsbBus;
+	static Preference1D<int>		m_iMemoryCardUsbPort;
+	static Preference1D<int>		m_iMemoryCardUsbLevel;
 
 protected:
 	void CheckStateChanges();

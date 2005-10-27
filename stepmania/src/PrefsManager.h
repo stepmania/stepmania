@@ -148,10 +148,6 @@ public:
 	Preference<int>		m_iProductID;		// Saved in HighScore to track what software version a score came from.
 	Preference1D<CString>	m_sDefaultLocalProfileID;
 	Preference<bool>	m_bMemoryCards;
-	Preference1D<CString>	m_sMemoryCardOsMountPoint;	// if set, always use the device that mounts to this point
-	Preference1D<int>	m_iMemoryCardUsbBus;	// look for this bus when assigning cards.  -1 = match any
-	Preference1D<int>	m_iMemoryCardUsbPort;	// look for this port when assigning cards.  -1 = match any
-	Preference1D<int>	m_iMemoryCardUsbLevel;	// look for this level when assigning cards.  -1 = match any
 	Preference<int>		m_iCenterImageTranslateX;
 	Preference<int>		m_iCenterImageTranslateY;
 	Preference<int>		m_fCenterImageAddWidth;

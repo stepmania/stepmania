@@ -214,30 +214,6 @@ void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, CString &sNameOut, CS
 	defaultValueOut = "";
 }
 
-void MemoryCardOsMountPointInit( size_t /*PlayerNumber*/ i, CString &sNameOut, CString &defaultValueOut )
-{
-	sNameOut = "MemoryCardOsMountPoint" + PlayerNumberToString( (PlayerNumber)i );
-	defaultValueOut = "";
-}
-
-void MemoryCardUsbBusInit( size_t /*PlayerNumber*/ i, CString &sNameOut, int &defaultValueOut )
-{
-	sNameOut = "MemoryCardUsbBus" + PlayerNumberToString( (PlayerNumber)i );
-	defaultValueOut = -1;
-}
-
-void MemoryCardUsbPortInit( size_t /*PlayerNumber*/ i, CString &sNameOut, int &defaultValueOut )
-{
-	sNameOut = "MemoryCardUsbPort" + PlayerNumberToString( (PlayerNumber)i );
-	defaultValueOut = -1;
-}
-
-void MemoryCardUsbLevelInit( size_t /*PlayerNumber*/ i, CString &sNameOut, int &defaultValueOut )
-{
-	sNameOut = "MemoryCardUsbLevel" + PlayerNumberToString( (PlayerNumber)i );
-	defaultValueOut = -1;
-}
-
 
 PrefsManager::PrefsManager() :
 	m_sCurrentGame			( "CurrentGame",			"" ),
@@ -351,10 +327,6 @@ PrefsManager::PrefsManager() :
 	m_iProductID					( "ProductID",					1 ),
 	m_sDefaultLocalProfileID		( DefaultLocalProfileIDInit, NUM_PLAYERS ),
 	m_bMemoryCards					( "MemoryCards",				false ),
-	m_sMemoryCardOsMountPoint		( MemoryCardOsMountPointInit, NUM_PLAYERS ),
-	m_iMemoryCardUsbBus				( MemoryCardUsbBusInit,		NUM_PLAYERS ),
-	m_iMemoryCardUsbPort			( MemoryCardUsbPortInit,	NUM_PLAYERS ),
-	m_iMemoryCardUsbLevel			( MemoryCardUsbLevelInit,	NUM_PLAYERS ),
 	m_iCenterImageTranslateX		( "CenterImageTranslateX",		0 ),
 	m_iCenterImageTranslateY		( "CenterImageTranslateY",		0 ),
 	m_fCenterImageAddWidth			( "CenterImageAddWidth",		0 ),
