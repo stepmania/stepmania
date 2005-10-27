@@ -10,7 +10,6 @@
 #include "RageUtil.h"
 #include "GameManager.h"
 #include "GameState.h"
-#include "InputMapper.h"
 #include "StepMania.h"
 #include "Game.h"
 #include "Foreach.h"
@@ -519,10 +518,10 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ShowLyrics",					MovePref,			"HIDE","SHOW") );
 
 	/* Misc options */
-	ADD( ConfOption( "AutogenSteps",				MovePref,			 "OFF","ON" ) );
+	ADD( ConfOption( "AutogenSteps",				MovePref,			"OFF","ON" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_SONG;
 
-	ADD( ConfOption( "AutogenGroupCourses",			MovePref,			 "OFF","ON" ) );
+	ADD( ConfOption( "AutogenGroupCourses",			MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "FastLoad",					MovePref,			"OFF","ON" ) );
 
 	/* Background options */
@@ -545,10 +544,10 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "SoloSingle",					MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "HiddenSongs",					MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "EasterEggs",					MovePref,			"OFF","ON" ) );
-	ADD( ConfOption( "AllowW1",						AllowW1,	"NEVER","COURSES ONLY","ALWAYS" ) );
+	ADD( ConfOption( "AllowW1",						AllowW1,			"NEVER","COURSES ONLY","ALWAYS" ) );
 	ADD( ConfOption( "AllowExtraStage",				MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "PickExtraStage",				MovePref,			"OFF","ON" ) );
-	ADD( ConfOption( "UseUnlockSystem",				MovePref,		"OFF","ON" ) );
+	ADD( ConfOption( "UseUnlockSystem",				MovePref,			"OFF","ON" ) );
 
 	/* Machine options */
 	ADD( ConfOption( "MenuTimer",					MovePref,			"OFF","ON" ) );
