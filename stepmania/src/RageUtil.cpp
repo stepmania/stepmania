@@ -661,6 +661,15 @@ void StripCrnl(CString &s)
 		s.erase(s.size()-1);
 }
 
+bool BeginsWith( const CString &sTestThis, const CString &sBeginning )
+{
+	ASSERT( !sBeginning.empty() );
+
+	if( sTestThis.size() < sBeginning.size() )
+		return false;
+	return sTestThis.Left( sBeginning.size() ) == sBeginning;
+}
+
 bool EndsWith( const CString &sTestThis, const CString &sEnding )
 {
 	ASSERT( !sEnding.empty() );
