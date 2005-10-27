@@ -9,10 +9,10 @@ class RageSoundReader_Resample: public SoundReader
 {
 public:
 	/* We own source. */
-	virtual void Open(SoundReader *source) = 0;
+	virtual void Open( SoundReader *pSource ) = 0;
 
 	/* Change the actual sample rate of a sound. */
-	virtual void SetSampleRate(int hz) = 0;
+	virtual void SetSampleRate( int iRate ) = 0;
 
 	enum ResampleQuality { RESAMP_FAST, RESAMP_NORMAL, RESAMP_HIGHQUALITY };
 	static RageSoundReader_Resample *MakeResampler( ResampleQuality q );
