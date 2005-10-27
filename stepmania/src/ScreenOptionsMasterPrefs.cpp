@@ -504,7 +504,6 @@ static void AspectRatio( int &sel, bool ToSel, const ConfOption *pConfOption )
 }
 
 /* Sound options */
-MOVE( ResamplingQuality,	PREFSMAN->m_SoundResampleQuality );
 MOVE( AttractSoundFrequency,PREFSMAN->m_AttractSoundFrequency );
 
 static void SoundVolume( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -631,7 +630,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "ShowBanners",					MovePref,			"OFF","ON" ) );
 
 	/* Sound options */
-	ADD( ConfOption( "ResamplingQuality",			ResamplingQuality,	"FAST","NORMAL","HIGH QUALITY" ) );
+	ADD( ConfOption( "SoundResampleQuality",		MovePref,			"FAST","NORMAL","HIGH QUALITY" ) );
 	ADD( ConfOption( "AttractSoundFrequency",		AttractSoundFrequency,	"NEVER","ALWAYS","2 TIMES","3 TIMES","4 TIMES","5 TIMES" ) );
 	ADD( ConfOption( "SoundVolume",					SoundVolume,		"SILENT","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_SOUND;
