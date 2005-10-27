@@ -8,9 +8,7 @@
 #include "SongManager.h"
 #include "Steps.h"
 #include "RageLog.h"
-#include "LifeMeterBar.h"
-#include "LifeMeterBattery.h"
-#include "LifeMeterTime.h"
+#include "LifeMeter.h"
 #include "GameState.h"
 #include "ScoreDisplayNormal.h"
 #include "ScoreDisplayPercentage.h"
@@ -562,21 +560,7 @@ void ScreenGameplay::Init()
 			if( !GAMESTATE->IsPlayerEnabled(pi->m_pn) && !SHOW_LIFE_METER_FOR_DISABLED_PLAYERS )
 				continue;	// skip
 
-			switch( GAMESTATE->m_SongOptions.m_LifeType )
-			{
-			case SongOptions::LIFE_BAR:
-				pi->m_pLifeMeter = new LifeMeterBar;
-				break;
-			case SongOptions::LIFE_BATTERY:
-				pi->m_pLifeMeter = new LifeMeterBattery;
-				break;
-			case SongOptions::LIFE_TIME:
-				pi->m_pLifeMeter = new LifeMeterTime;
-				break;
-			default:
-				ASSERT(0);
-			}
-
+			pi->m_pLifeMeter = LifeMeter::MakeLifeMeter( GAMESTATE->m_SongOptions.m_LifeType );
 			pi->m_pLifeMeter->Load( pi->GetPlayerState(), pi->GetPlayerStageStats() );
 			pi->m_pLifeMeter->SetName( ssprintf("Life%s",pi->GetName().c_str()) );
 			SET_XY( pi->m_pLifeMeter );

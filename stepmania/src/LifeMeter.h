@@ -4,6 +4,7 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "ActorFrame.h"
+#include "SongOptions.h"
 
 class PlayerState;
 class PlayerStageStats;
@@ -34,6 +35,8 @@ public:
 	virtual float GetLife() const { return 0; } // for cosmetic use only
 	virtual void UpdateNonstopLifebar(int cleared, int total, int ProgressiveLifebarDifficulty) = 0;
 	virtual void ForceFail() = 0;
+
+	static LifeMeter *MakeLifeMeter( SongOptions::LifeType t );
 
 protected:
 	const PlayerState *m_pPlayerState;
