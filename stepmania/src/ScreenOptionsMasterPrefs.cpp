@@ -33,17 +33,21 @@ static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions
 	PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers = join( ", ",as );
 }
 
-template<class T>
-int FindClosestEntry( T value, const T *mapping, unsigned cnt )
+/* Ugly: the input values may be a different type than the mapping.  For example,
+ * the mapping may be an enum, and value an int.  This is because we don't
+ * have FromString/ToString for every enum type.  Assume that the distance between
+ * T and U can be represented as a float. */
+template<class T,class U>
+int FindClosestEntry( T value, const U *mapping, unsigned cnt )
 {
 	int iBestIndex = 0;
-	T best_dist = T();
+	float best_dist = 0;
 	bool have_best = false;
 
 	for( unsigned i = 0; i < cnt; ++i )
 	{
-		const T val = mapping[i];
-		T dist = value < val? (T)(val-value):(T)(value-val);
+		const U val = mapping[i];
+		float dist = value < val? (float)(val-value):(float)(value-val);
 		if( have_best && best_dist < dist )
 			continue;
 
@@ -72,14 +76,43 @@ static void MoveMap( int &sel, T &opt, bool ToSel, const T *mapping, unsigned cn
 }
 
 template <class T>
-static void MoveMap( int &sel, Preference<T> &opt, bool ToSel, const T *mapping, unsigned cnt )
+static void MoveMap( int &sel, IPreference &opt, bool ToSel, const T *mapping, unsigned cnt )
 {
 	if( ToSel )
 	{
-		sel = FindClosestEntry( opt.Get(), mapping, cnt );
+		CString sOpt = opt.ToString();
+		/* This should really be T, but we can't FromString an enum. */
+		float val;
+		FromString( sOpt, val );
+		sel = FindClosestEntry( val, mapping, cnt );
 	} else {
 		/* sel -> opt */
-		opt.Set( mapping[sel] );
+		CString sOpt = ToString( mapping[sel] );
+		opt.FromString( sOpt );
+	}
+}
+
+template <class T>
+static void MoveMap( int &sel, const ConfOption *pConfOption, bool ToSel, const T *mapping, unsigned cnt )
+{
+	IPreference *pPref = PREFSMAN->GetPreferenceByName( pConfOption->name );
+	ASSERT_M( pPref != NULL, pConfOption->name );
+
+	MoveMap( sel, *pPref, ToSel, mapping, cnt );
+}
+
+/* "sel" is the selection in the menu. */
+static void MoveData( int &sel, IPreference &opt, bool ToSel )
+{
+	if( ToSel )
+	{
+		CString sOpt = opt.ToString();
+		FromString( sOpt, sel );
+	}
+	else
+	{
+		CString sOpt = ToString( sel );
+		opt.FromString( sOpt );
 	}
 }
 
@@ -88,30 +121,7 @@ static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 	IPreference *pPref = PREFSMAN->GetPreferenceByName( pConfOption->name );
 	ASSERT_M( pPref != NULL, pConfOption->name );
 
-	if( bToSel )
-	{
-		const CString sVal = pPref->ToString();
-		iSel = atoi( sVal );
-	}
-	else
-	{
-		const CString sVal = ToString(iSel);
-		pPref->FromString( sVal );
-	}
-}
-
-/* "sel" is the selection in the menu. */
-template<class T>
-static void MoveData( int &sel, Preference<T> &opt, bool ToSel )
-{
-	if( ToSel )	sel = opt;
-	else		opt.Set( (T)sel );
-}
-
-static void MoveData( int &sel, Preference<bool> &opt, bool ToSel )
-{
-	if( ToSel )	sel = opt;
-	else		opt.Set( !!sel );
+	MoveData( iSel, *pPref, bToSel );
 }
 
 #define MOVE( name, opt ) \
@@ -119,7 +129,6 @@ static void MoveData( int &sel, Preference<bool> &opt, bool ToSel )
 	{ \
 		MoveData( sel, opt, ToSel ); \
 	}
-
 
 static void GameChoices( CStringArray &out )
 {
@@ -260,7 +269,7 @@ MOVE( SongGroup,			PREFSMAN->m_bShowSelectGroup );
 static void WheelSections( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const PrefsManager::MusicWheelUsesSections mapping[] = { PrefsManager::NEVER, PrefsManager::ALWAYS, PrefsManager::ABC_ONLY };
-	MoveMap( sel, PREFSMAN->m_MusicWheelUsesSections, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 MOVE( CourseSort,			PREFSMAN->m_CourseSortOrder );
@@ -310,7 +319,7 @@ MOVE( UnlockSystem,			PREFSMAN->m_bUseUnlockSystem );
 static void AllowW1( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const PrefsManager::AllowW1 mapping[] = { PrefsManager::ALLOW_W1_NEVER, PrefsManager::ALLOW_W1_COURSES_ONLY, PrefsManager::ALLOW_W1_EVERYWHERE };
-	MoveMap( sel, PREFSMAN->m_AllowW1, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void CoinModeM( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -328,7 +337,7 @@ static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption 
 static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16 };
-	MoveMap( sel, PREFSMAN->m_iCoinsPerCredit, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void PremiumM( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -382,7 +391,7 @@ LuaFunction( GetLifeDifficulty, GetLifeDifficulty() );
 static void ShowSongOptions( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const PrefsManager::Maybe mapping[] = { PrefsManager::NO,PrefsManager::YES,PrefsManager::ASK };
-	MoveMap( sel, PREFSMAN->m_ShowSongOptions, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void ShowNameEntry( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -442,6 +451,9 @@ struct res_t
 			return w < rhs.w;
 		return h < rhs.h;
 	}
+
+	/* Ugly: allow convert to a float for FindClosestEntry. */
+	operator float() const { return w * 5000.0f + h; }
 };
 
 static void DisplayResolution( int &sel, bool ToSel, const ConfOption *pConfOption )
