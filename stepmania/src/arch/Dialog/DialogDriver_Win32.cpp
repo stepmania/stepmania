@@ -142,7 +142,7 @@ void DialogDriver_Win32::Error( CString sError, CString sID )
 
 Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString ID )
 {
-	CString sWindowTitle = WINDOW_TITLE.IsLoaded() ? WINDOW_TITLE.GetValue() : "";
+	CString sWindowTitle = CommonMetrics::WINDOW_TITLE.IsLoaded() ? CommonMetrics::WINDOW_TITLE.GetValue() : "";
 
 	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, sWindowTitle, MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
 	{
@@ -155,7 +155,7 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString I
 
 Dialog::Result DialogDriver_Win32::AbortRetry( CString sMessage, CString sID )
 {
-	CString sWindowTitle = WINDOW_TITLE.IsLoaded() ? WINDOW_TITLE.GetValue() : "";
+	CString sWindowTitle = CommonMetrics::WINDOW_TITLE.IsLoaded() ? CommonMetrics::WINDOW_TITLE.GetValue() : "";
 
 	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, sWindowTitle, MB_RETRYCANCEL) )
 	{

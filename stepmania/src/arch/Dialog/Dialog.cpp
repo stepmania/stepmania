@@ -108,7 +108,7 @@ void Dialog::IgnoreMessage( CString sID )
 	split( PREFSMAN->m_sIgnoredMessageWindows, ",", asList );
 	asList.push_back( sID );
 	PREFSMAN->m_sIgnoredMessageWindows.Set( join(",",asList) );
-	PREFSMAN->SaveGlobalPrefsToDisk();
+	PREFSMAN->SavePrefsToDisk();
 }
 
 void Dialog::Error( CString sMessage, CString sID )
