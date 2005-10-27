@@ -258,7 +258,7 @@ void DifficultyList::SetFromGameState()
 			// it really should round to the nearest difficulty that's in 
 			// DIFFICULTIES_TO_SHOW.
 			unsigned i=0;
-			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
+			FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), d )
 			{
 				m_Rows.resize( m_Rows.size()+1 );
 

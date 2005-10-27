@@ -50,7 +50,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 	XNode xml;
 	xml.m_sName = "Catalog";
 
-	const vector<StepsType> &vStepsTypesToShow = STEPS_TYPES_TO_SHOW.GetValue();
+	const vector<StepsType> &vStepsTypesToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
 	
 	{
 		XNode* pNode = xml.AppendChild( "Totals" );
@@ -88,7 +88,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 					iTotalSongs++;
 					iNumSongsInGroup++;
 
-					FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), dc )
+					FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
 					{
 						Steps* pSteps = pSong->GetStepsByDifficulty( *st, *dc, false );	// no autogen
 						if( pSteps == NULL )
@@ -169,7 +169,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 
 			FOREACH_CONST( StepsType, vStepsTypesToShow, st )
 			{
-				FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), dc )
+				FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
 				{
 					Steps* pSteps = pSong->GetStepsByDifficulty( *st, *dc, false );	// no autogen
 					if( pSteps == NULL )
@@ -218,7 +218,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 			pCourseNode->AppendChild( "SubTitle", pCourse->GetDisplaySubTitle() );
 			pCourseNode->AppendChild( "HasMods", pCourse->HasMods() );
 
-			const vector<CourseDifficulty> &vDiffs = COURSE_DIFFICULTIES_TO_SHOW.GetValue();
+			const vector<CourseDifficulty> &vDiffs = CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue();
 
 			FOREACH_CONST( StepsType, vStepsTypesToShow, st )
 			{
@@ -248,7 +248,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 
 		{
 			XNode* pNode2 = pNode->AppendChild( "Difficulty" );
-			FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), iter )
+			FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), iter )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "Difficulty", DifficultyToString(*iter) );
 				pNode3->AppendAttr( "DisplayAs", DifficultyToThemedString(*iter) );
@@ -257,7 +257,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 
 		{
 			XNode* pNode2 = pNode->AppendChild( "CourseDifficulty" );
-			FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), iter )
+			FOREACH_CONST( CourseDifficulty, CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue(), iter )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "CourseDifficulty", CourseDifficultyToString(*iter) );
 				pNode3->AppendAttr( "DisplayAs", CourseDifficultyToThemedString(*iter) );

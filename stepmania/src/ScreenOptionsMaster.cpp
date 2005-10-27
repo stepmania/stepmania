@@ -207,7 +207,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		if( m_iChangeMask & OPT_RESET_GAME )
 		{
 			ResetGame();
-			SCREENMAN->SetNewScreen( INITIAL_SCREEN );
+			SCREENMAN->SetNewScreen( CommonMetrics::INITIAL_SCREEN );
 			m_bExportWillSetANewScreen = false;
 		}
 

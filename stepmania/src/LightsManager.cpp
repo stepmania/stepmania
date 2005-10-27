@@ -56,7 +56,7 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, vStyles );
 	FOREACH( const Style*, vStyles, style )
 	{
-		bool bFound = find( STEPS_TYPES_TO_SHOW.GetValue().begin(), STEPS_TYPES_TO_SHOW.GetValue().end(), (*style)->m_StepsType ) != STEPS_TYPES_TO_SHOW.GetValue().end();
+		bool bFound = find( CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().begin(), CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().end(), (*style)->m_StepsType ) != CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue().end();
 		if( !bFound )
 			continue;
 		FOREACH_PlayerNumber( pn )

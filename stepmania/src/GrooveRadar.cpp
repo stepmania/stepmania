@@ -30,7 +30,7 @@ GrooveRadar::GrooveRadar()
 	{
 		m_GrooveRadarValueMap[p].SetRadius( m_sprRadarBase.GetZoomedWidth() );
 		m_Frame.AddChild( &m_GrooveRadarValueMap[p] );
-		m_GrooveRadarValueMap[p].RunCommands( PLAYER_COLOR.GetValue(p) );
+		m_GrooveRadarValueMap[p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
 	}
 
 	this->AddChild( &m_Frame );

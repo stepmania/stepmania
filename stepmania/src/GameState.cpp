@@ -243,7 +243,7 @@ void GameState::Reset()
 		// The theme setting is for eg. BM being reverse by default.  (This
 		// could be done in the title menu GameCommand, but then it wouldn't
 		// affect demo, and other non-gameplay things ...) -glenn
-		ApplyModifiers( p, DEFAULT_MODIFIERS );
+		ApplyModifiers( p, CommonMetrics::DEFAULT_MODIFIERS );
 		ApplyModifiers( p, PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
 	}
 
@@ -382,7 +382,7 @@ void GameState::PlayersFinalized()
 	}
 
 	FOREACH_PotentialCpuPlayer( pn )
-		ApplyModifiers( pn, DEFAULT_CPU_MODIFIERS );
+		ApplyModifiers( pn, CommonMetrics::DEFAULT_CPU_MODIFIERS );
 }
 
 void GameState::EndGame()
@@ -1673,7 +1673,7 @@ bool GameState::IsTimeToPlayAttractSounds() const
 
 void GameState::VisitAttractScreen( const CString sScreenName )
 {
-	if( sScreenName == FIRST_ATTRACT_SCREEN.GetValue() )
+	if( sScreenName == CommonMetrics::FIRST_ATTRACT_SCREEN.GetValue() )
 		m_iNumTimesThroughAttract++;
 }
 
@@ -1701,7 +1701,7 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, Difficulty dc )
 
 bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 {
-	const vector<Difficulty> &v = DIFFICULTIES_TO_SHOW.GetValue();
+	const vector<Difficulty> &v = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue();
 
 	Difficulty d = m_PreferredDifficulty[pn];
 	while( 1 )
@@ -1733,7 +1733,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 	/* If we have a course selected, only choose among difficulties available in the course. */
 	const Course *pCourse = this->m_pCurCourse;
 
-	const vector<CourseDifficulty> &v = COURSE_DIFFICULTIES_TO_SHOW.GetValue();
+	const vector<CourseDifficulty> &v = CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue();
 
 	CourseDifficulty cd = m_PreferredCourseDifficulty[pn];
 	while( 1 )
@@ -1752,7 +1752,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 
 bool GameState::IsCourseDifficultyShown( CourseDifficulty cd )
 {
-	const vector<CourseDifficulty> &v = COURSE_DIFFICULTIES_TO_SHOW.GetValue();
+	const vector<CourseDifficulty> &v = CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue();
 	return find(v.begin(), v.end(), cd) != v.end();
 }
 

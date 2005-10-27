@@ -460,7 +460,7 @@ public:
 			ListEntries.push_back( mc );
 		}
 
-		FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
+		FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), d )
 		{
 			CString s = DifficultyToThemedString( *d );
 
@@ -932,7 +932,7 @@ public:
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		// calculate which StepsTypes to show
-		m_vStepsTypesToShow = STEPS_TYPES_TO_SHOW.GetValue();
+		m_vStepsTypesToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
 
 		FOREACH_CONST( StepsType, m_vStepsTypesToShow, st )
 		{

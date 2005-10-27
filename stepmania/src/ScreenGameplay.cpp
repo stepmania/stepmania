@@ -913,7 +913,7 @@ void ScreenGameplay::InitSongQueues()
 				
 				// In a survuval course, override stored mods
 				if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
-					a.push_back( Attack(ATTACK_LEVEL_1, 0, 0, "clearall,"+DEFAULT_MODIFIERS.GetValue(), false, true, false) );	// don't show in AttackList
+					a.push_back( Attack(ATTACK_LEVEL_1, 0, 0, "clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue(), false, true, false) );	// don't show in AttackList
 
 				e->GetAttackArray( a );
 				pi->m_asModifiersQueue.push_back( a );
@@ -1434,7 +1434,7 @@ void ScreenGameplay::PlayTicks()
 	 * ahead.  This is just to make sure that we request the sound early enough for it to
 	 * come out on time; the actual precise timing is handled by SetStartTime. */
 	float fPositionSeconds = GAMESTATE->m_fMusicSeconds;
-	fPositionSeconds += SOUND->GetPlayLatency() + (float)TICK_EARLY_SECONDS + 0.250f;
+	fPositionSeconds += SOUND->GetPlayLatency() + (float)CommonMetrics::TICK_EARLY_SECONDS + 0.250f;
 	const float fSongBeat = GAMESTATE->m_pCurSong->GetBeatFromElapsedTime( fPositionSeconds );
 
 	const int iSongRow = max( 0, BeatToNoteRowNotRounded( fSongBeat ) );
@@ -1459,7 +1459,7 @@ void ScreenGameplay::PlayTicks()
 		fSecondsUntil /= GAMESTATE->m_SongOptions.m_fMusicRate; /* 2x music rate means the time until the tick is halved */
 
 		RageSoundParams p;
-		p.m_StartTime = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)TICK_EARLY_SECONDS);
+		p.m_StartTime = GAMESTATE->m_LastBeatUpdate + (fSecondsUntil - (float)CommonMetrics::TICK_EARLY_SECONDS);
 		m_soundAssistTick.Play( &p );
 	}
 }

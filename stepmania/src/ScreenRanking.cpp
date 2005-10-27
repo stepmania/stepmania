@@ -214,7 +214,7 @@ void ScoreScroller::SetStepsType( StepsType st, RageColor color )
 	{
 		ScoreRowItem *pItem = (ScoreRowItem *) m_SubActors[s];
 
-		FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), cd )
+		FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), cd )
 			pItem->m_textScore[*cd].SetDiffuse( color );
 	}
 

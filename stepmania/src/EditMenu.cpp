@@ -182,7 +182,7 @@ void EditMenu::Load( const CString &sType )
 	// fill in data structures
 	//
 	GetGroupsToShow( m_sGroups );
-	m_StepsTypes = STEPS_TYPES_TO_SHOW.GetValue();
+	m_StepsTypes = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
 
 
 	RefreshAll();

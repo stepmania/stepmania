@@ -100,7 +100,7 @@ static RageDisplay::VideoModeParams GetCurVideoModeParams()
 			PREFSMAN->m_bSmoothLines,
 			PREFSMAN->m_bTrilinearFiltering,
 			PREFSMAN->m_bAnisotropicFiltering,
-			WINDOW_TITLE,
+			CommonMetrics::WINDOW_TITLE,
 			THEME->GetPathG("Common","window icon"),
 			PREFSMAN->m_bPAL,
 			PREFSMAN->m_fDisplayAspectRatio
@@ -1131,7 +1131,7 @@ int main(int argc, char* argv[])
 	/* Now that GAMESTATE is reset, tell SCREENMAN to update the theme (load
 	 * overlay screens and global sounds), and load the initial screen. */
 	SCREENMAN->ThemeChanged();
-	SCREENMAN->SetNewScreen( INITIAL_SCREEN );
+	SCREENMAN->SetNewScreen( CommonMetrics::INITIAL_SCREEN );
 
 	CodeDetector::RefreshCacheItems();
 

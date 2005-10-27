@@ -90,7 +90,7 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	def.m_sName = "Base Difficulty";
 	def.m_vsChoices.clear();
 	def.m_vsChoices.push_back( "(any)" );
-	FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), dc )
+	FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
 		def.m_vsChoices.push_back( DifficultyToThemedString(*dc) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
@@ -268,10 +268,10 @@ void ScreenOptionsEditCourseEntry::ImportOptions( int iRow, const vector<PlayerN
 		break;
 	case ROW_BASE_DIFFICULTY:
 		{
-			vector<Difficulty>::const_iterator iter = find( DIFFICULTIES_TO_SHOW.GetValue().begin(), DIFFICULTIES_TO_SHOW.GetValue().end(), ce.baseDifficulty );
+			vector<Difficulty>::const_iterator iter = find( CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().begin(), CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().end(), ce.baseDifficulty );
 			int iChoice = 0;
-			if( iter != DIFFICULTIES_TO_SHOW.GetValue().end() )
-				iChoice = iter - DIFFICULTIES_TO_SHOW.GetValue().begin() + 1;
+			if( iter != CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().end() )
+				iChoice = iter - CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue().begin() + 1;
 			OptionRow &row = *m_pRows[ROW_BASE_DIFFICULTY];
 			row.SetOneSharedSelection( iChoice );
 		}
@@ -346,7 +346,7 @@ void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerN
 			}
 			else
 			{
-				Difficulty d = DIFFICULTIES_TO_SHOW.GetValue()[iChoice-1];
+				Difficulty d = CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue()[iChoice-1];
 				ce.baseDifficulty = d;
 			}
 		}

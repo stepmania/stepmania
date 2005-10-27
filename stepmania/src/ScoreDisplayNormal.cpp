@@ -31,7 +31,7 @@ void ScoreDisplayNormal::Init( const PlayerState* pPlayerState, const PlayerStag
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = pPlayerState->m_PlayerNumber;
 	
-	m_text.RunCommands( PLAYER_COLOR.GetValue(pn) );
+	m_text.RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(pn) );
 }
 
 void ScoreDisplayNormal::SetScore( int iNewScore ) 

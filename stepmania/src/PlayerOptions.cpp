@@ -639,7 +639,7 @@ void PlayerOptions::GetThemedMods( vector<CString> &AddTo ) const
 
 		/* Theme the mod name (the last string).  Allow this to not exist, since
 		 * characters might use modifiers that don't exist in the theme. */
-		asTokens.back() = THEME_OPTION_ITEM( asTokens.back(), true );
+		asTokens.back() = CommonMetrics::ThemeOptionItem( asTokens.back(), true );
 
 		CString sThemedMod = join( " ", asTokens );
 

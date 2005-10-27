@@ -261,7 +261,7 @@ void ScreenSelectMusic::Init()
 		m_textHighScore[p].SetName( ssprintf("ScoreP%d",p+1) );
 		m_textHighScore[p].LoadFromFont( THEME->GetPathF(m_sName,"score") );
 		m_textHighScore[p].SetShadowLength( 0 );
-		m_textHighScore[p].RunCommands( PLAYER_COLOR.GetValue(p) );
+		m_textHighScore[p].RunCommands( CommonMetrics::PLAYER_COLOR.GetValue(p) );
 		SET_XY( m_textHighScore[p] );
 		this->AddChild( &m_textHighScore[p] );
 	}	
@@ -1670,7 +1670,7 @@ void ScreenSelectMusic::AfterMusicChange()
 		if( g_sBannerPath.empty() )
 			m_Banner.LoadFallback();
 
-		if( (int)pTrail->m_vEntries.size() > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
+		if( (int)pTrail->m_vEntries.size() > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
 			m_BPMDisplay.SetVarious();
 		else
 			m_BPMDisplay.SetBpmFromCourse( pCourse );
@@ -1762,7 +1762,7 @@ void ScreenSelectMusic::AfterMusicChange()
 
 	g_StartedLoadingAt.Touch();
 
-	if( (int) m_Artists.size() > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
+	if( (int) m_Artists.size() > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
 	{
 		m_Artists.clear();
 		m_AltArtists.clear();

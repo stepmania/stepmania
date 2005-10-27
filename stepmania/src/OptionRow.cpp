@@ -41,7 +41,7 @@ void OptionRow::PrepareItemText( CString &s ) const
 	if( m_pParentType->THEME_ITEMS && m_RowDef.m_bAllowThemeItems )	bTheme = true;
 
 	if( bTheme ) 
-		s = THEME_OPTION_ITEM( s, false ); 
+		s = CommonMetrics::ThemeOptionItem( s, false ); 
 	if( m_pParentType->CAPITALIZE_ALL_OPTION_NAMES )
 		s.MakeUpper(); 
 }
@@ -195,7 +195,7 @@ CString OptionRow::GetRowTitle() const
 			Trail* pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
 			ASSERT( pTrail != NULL );
 			const int iNumCourseEntries = pTrail->m_vEntries.size();
-			if( iNumCourseEntries > MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
+			if( iNumCourseEntries > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
 				bShowBpmInSpeedTitle = false;
 		}
 

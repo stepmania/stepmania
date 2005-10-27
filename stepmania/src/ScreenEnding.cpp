@@ -78,7 +78,7 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 
 			if( GAMESTATE->IsCourseMode() )
 			{
-				FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), iter )
+				FOREACH_CONST( CourseDifficulty, CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue(), iter )
 				{
 					fActual += pProfile->GetCoursesActual(st,*iter);
 					fPossible += pProfile->GetCoursesPossible(st,*iter);
@@ -86,7 +86,7 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 			}
 			else
 			{
-				FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), iter )
+				FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), iter )
 				{
 					fActual += pProfile->GetSongsActual(st,*iter);
 					fPossible += pProfile->GetSongsPossible(st,*iter);

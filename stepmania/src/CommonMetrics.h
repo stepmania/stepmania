@@ -47,20 +47,22 @@ private:
 //
 // Metrics
 //
-extern ThemeMetric<CString>		INITIAL_SCREEN;
-extern ThemeMetric<CString>		FIRST_ATTRACT_SCREEN;
-extern ThemeMetric<CString>		DEFAULT_MODIFIERS;
-extern ThemeMetric<CString>		DEFAULT_CPU_MODIFIERS;
-extern ThemeMetric1D<apActorCommands> PLAYER_COLOR;
-extern ThemeMetric<CString>		WINDOW_TITLE;
-extern ThemeMetric<int>			MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
-extern ThemeMetric<float>		TICK_EARLY_SECONDS;
-extern ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
-extern ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
-extern ThemeMetricStepsTypesToShow			STEPS_TYPES_TO_SHOW;
+namespace CommonMetrics
+{
+	extern ThemeMetric<CString>					INITIAL_SCREEN;
+	extern ThemeMetric<CString>					FIRST_ATTRACT_SCREEN;
+	extern ThemeMetric<CString>					DEFAULT_MODIFIERS;
+	extern ThemeMetric<CString>					DEFAULT_CPU_MODIFIERS;
+	extern ThemeMetric1D<apActorCommands>		PLAYER_COLOR;
+	extern ThemeMetric<CString>					WINDOW_TITLE;
+	extern ThemeMetric<int>						MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
+	extern ThemeMetric<float>					TICK_EARLY_SECONDS;
+	extern ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
+	extern ThemeMetricCourseDifficultiesToShow	COURSE_DIFFICULTIES_TO_SHOW;
+	extern ThemeMetricStepsTypesToShow			STEPS_TYPES_TO_SHOW;
 
-CString THEME_OPTION_ITEM( CString s, bool bOptional );
-
+	CString ThemeOptionItem( CString s, bool bOptional );
+};
 
 #endif
 

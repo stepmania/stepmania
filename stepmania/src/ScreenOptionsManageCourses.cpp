@@ -33,9 +33,9 @@ static void SetNextCombination()
 {
 	vector<StepsTypeAndDifficulty> v;
 	{
-		FOREACH_CONST( StepsType, STEPS_TYPES_TO_SHOW.GetValue(), st )
+		FOREACH_CONST( StepsType, CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue(), st )
 		{
-			FOREACH_CONST( CourseDifficulty, COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
+			FOREACH_CONST( CourseDifficulty, CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue(), cd )
 			{
 				StepsTypeAndDifficulty stad = { *st, *cd };
 				v.push_back( stad );

@@ -62,7 +62,7 @@ void ScreenTest::Input( const InputEventPlus &input )
 		if( input.DeviceI.button == KEY_ESC )
 		{
 			if( input.type != IET_FIRST_PRESS ) return;
-			SCREENMAN->SetNewScreen( INITIAL_SCREEN );
+			SCREENMAN->SetNewScreen( CommonMetrics::INITIAL_SCREEN );
 			return;
 		}
 	}
