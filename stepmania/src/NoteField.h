@@ -6,8 +6,6 @@
 #include "Sprite.h"
 #include "ActorFrame.h"
 #include "BitmapText.h"
-#include "PrefsManager.h"
-#include "BitmapText.h"
 #include "Quad.h"
 #include "NoteData.h"
 #include "NoteDisplay.h"
