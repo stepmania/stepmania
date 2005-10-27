@@ -201,8 +201,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		{
 			/* Save preferences. */
 			LOG->Trace("ROW_CONFIG used; saving ...");
-			PREFSMAN->SaveGlobalPrefsToDisk();
-			SaveGamePrefsToDisk();
+			PREFSMAN->SavePrefsToDisk();
 		}
 
 		if( m_iChangeMask & OPT_RESET_GAME )

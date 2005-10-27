@@ -131,7 +131,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 		for( unsigned r=0; r<m_pRows.size(); r++ )
 			ExportOptions( r, v );
 
-		PREFSMAN->SaveGlobalPrefsToDisk();
+		PREFSMAN->SavePrefsToDisk();
 		FOREACH_EnabledPlayer(pn)
 		{
 			PROFILEMAN->LoadLocalProfileFromMachine((PlayerNumber) pn);

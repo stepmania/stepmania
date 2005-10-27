@@ -13,7 +13,6 @@ void ApplyGraphicOptions();
 void NORETURN HandleException( CString error );
 void ExitGame();
 void ResetGame();
-void SaveGamePrefsToDisk();
 void ChangeCurrentGame( const Game* g );
 void FocusChanged( bool bHasFocus );
 bool AppHasFocus();

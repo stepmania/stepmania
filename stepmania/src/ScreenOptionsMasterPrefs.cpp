@@ -18,8 +18,8 @@
 
 static void GetDefaultModifiers( PlayerOptions &po, SongOptions &so )
 {
-	po.FromString( PREFSMAN->m_sDefaultModifiers );
-	so.FromString( PREFSMAN->m_sDefaultModifiers );
+	po.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
+	so.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
 }
 
 static void SetDefaultModifiers( const PlayerOptions &po, const SongOptions &so )
@@ -30,7 +30,7 @@ static void SetDefaultModifiers( const PlayerOptions &po, const SongOptions &so 
 	if( so.GetString() != "" )
 		as.push_back( so.GetString() );
 
-	PREFSMAN->m_sDefaultModifiers.Set( join(", ",as) );
+	PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers = join( ", ",as );
 }
 
 template<class T>
@@ -238,7 +238,7 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 	if( ToSel )
 	{
 		PlayerOptions po;
-		po.FromString( PREFSMAN->m_sDefaultModifiers );
+		po.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
 		sel = 0;
 		for( unsigned i=0; i < choices.size(); i++ )
 			if( !stricmp(choices[i], po.m_sNoteSkin) )
@@ -397,7 +397,7 @@ static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption
 	if( ToSel )
 	{
 		SongOptions so;
-		so.FromString( PREFSMAN->m_sDefaultModifiers );
+		so.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
 		sel = so.m_FailType;
 	}
 	else

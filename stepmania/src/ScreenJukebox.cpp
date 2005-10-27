@@ -214,13 +214,13 @@ void ScreenJukebox::Init()
 		if( GAMESTATE->m_bJukeboxUsesModifiers )
 		{
 			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.Init();
-			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.FromString( PREFSMAN->m_sDefaultModifiers );
+			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
 			GAMESTATE->m_pPlayerState[p]->m_PlayerOptions.ChooseRandomModifiers();
 		}
 	}
 
 	GAMESTATE->m_SongOptions.Init();
-	GAMESTATE->m_SongOptions.FromString( PREFSMAN->m_sDefaultModifiers );
+	GAMESTATE->m_SongOptions.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
 
 	GAMESTATE->m_SongOptions.m_FailType = SongOptions::FAIL_OFF;
 

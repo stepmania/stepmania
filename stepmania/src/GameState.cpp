@@ -244,7 +244,7 @@ void GameState::Reset()
 		// could be done in the title menu GameCommand, but then it wouldn't
 		// affect demo, and other non-gameplay things ...) -glenn
 		ApplyModifiers( p, DEFAULT_MODIFIERS );
-		ApplyModifiers( p, PREFSMAN->m_sDefaultModifiers );
+		ApplyModifiers( p, PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
 	}
 
 	FOREACH_PlayerNumber(p)
@@ -1036,10 +1036,10 @@ void GameState::ResetCurrentOptions()
 	FOREACH_PlayerNumber( p )
 	{
 		m_pPlayerState[p]->m_PlayerOptions.Init();
-		m_pPlayerState[p]->m_PlayerOptions.FromString( PREFSMAN->m_sDefaultModifiers );
+		m_pPlayerState[p]->m_PlayerOptions.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
 	}
 	m_SongOptions.Init();
-	m_SongOptions.FromString( PREFSMAN->m_sDefaultModifiers );
+	m_SongOptions.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
 }
 
 bool GameState::IsDisqualified( PlayerNumber pn )
@@ -1887,7 +1887,7 @@ bool GameState::IsSyncDataChanged()
 void GameState::SaveSyncChanges()
 {
 	GAMESTATE->m_pCurSong->Save();
-	PREFSMAN->SaveGlobalPrefsToDisk();
+	PREFSMAN->SavePrefsToDisk();
 	ResetOriginalSyncData();
 }
 

@@ -286,8 +286,6 @@ void ResetGame()
 			THEME->SwitchThemeAndLanguage( "default", THEME->GetCurLanguage() );
 		TEXTUREMAN->DoDelayedDelete();
 	}
-	SaveGamePrefsToDisk();
-
 
 	//
 	// update last seen joysticks
@@ -310,6 +308,8 @@ void ResetGame()
 
 		PREFSMAN->m_sLastSeenInputDevices.Set( sInputDevices );
 	}
+
+	PREFSMAN->SavePrefsToDisk();
 }
 
 
@@ -382,7 +382,7 @@ static void CheckSettings()
 	 * systems. */
 	PREFSMAN->m_BannerCache.Set( LowMemory ? PrefsManager::BNCACHE_OFF:PrefsManager::BNCACHE_LOW_RES_PRELOAD );
 
-	PREFSMAN->SaveGlobalPrefsToDisk();
+	PREFSMAN->SavePrefsToDisk();
 #endif
 }
 
@@ -739,24 +739,22 @@ RageDisplay *CreateDisplay()
 	RageException::Throw( error );
 }
 
-#define GAMEPREFS_INI_PATH "Data/GamePrefs.ini"
 #define STATIC_INI_PATH "Data/Static.ini"
 
 void ChangeCurrentGame( const Game* g )
 {
 	ASSERT( g );
 
-	SaveGamePrefsToDisk();
 	INPUTMAPPER->SaveMappingsToDisk();	// save mappings before switching the game
 
 	GAMESTATE->m_pCurGame = g;
 
 	/* Load this game's preferences.  If we just set an unavailable game type, this
 	 * will change it back to the default. */
-	ReadGamePrefsFromDisk( false );
+	PREFSMAN->m_sCurrentGame.Set( g->m_szName );
 
 	/* Save the newly-selected game. */
-	SaveGamePrefsToDisk();
+	PREFSMAN->SavePrefsToDisk();
 
 	/* Load keymaps for the new game. */
 	INPUTMAPPER->ReadMappingsFromDisk();
@@ -769,17 +767,13 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 	ASSERT( THEME );
 	ASSERT( GAMESTATE );
 
-	IniFile ini;
-	ini.ReadFile( GAMEPREFS_INI_PATH );	// it's OK if this fails
-	ini.ReadFile( STATIC_INI_PATH );	// it's OK if this fails, too
-
 	if( bSwitchToLastPlayedGame )
 	{
 		ASSERT( GAMEMAN != NULL );
 		CString sGame;
 		GAMESTATE->m_pCurGame = NULL;
-		if( ini.GetValue("Options", "Game", sGame) )
-			GAMESTATE->m_pCurGame = GAMEMAN->StringToGameType( sGame );
+		if( !PREFSMAN->m_sCurrentGame.Get().empty() )
+			GAMESTATE->m_pCurGame = GAMEMAN->StringToGameType( PREFSMAN->m_sCurrentGame );
 	}
 
 	/* If the active game type isn't actually available, revert to the default. */
@@ -805,39 +799,18 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 	CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
 	CString sAnnouncer = sGameName;
 	CString sTheme = sGameName;
-	CString sNoteSkin = sGameName;
-	CString sDefaultModifiers;
 
 	// if these calls fail, the three strings will keep the initial values set above.
-	ini.GetValue( sGameName, "Announcer",			sAnnouncer );
-	ini.GetValue( sGameName, "Theme",				sTheme );
-	ini.GetValue( sGameName, "DefaultModifiers",	sDefaultModifiers );
-	PREFSMAN->m_sDefaultModifiers.Set( sDefaultModifiers );
+	if( !PREFSMAN->GetCurrentGamePrefs().m_sAnnouncer.empty() )
+		sAnnouncer = PREFSMAN->GetCurrentGamePrefs().m_sAnnouncer;
+	if( !PREFSMAN->GetCurrentGamePrefs().m_sTheme.empty() )
+		sTheme = PREFSMAN->GetCurrentGamePrefs().m_sTheme;
 
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
 	THEME->SwitchThemeAndLanguage( sTheme, PREFSMAN->m_sLanguage );
-
-//	NOTESKIN->SwitchNoteSkin( sNoteSkin );
 }
 
-
-void SaveGamePrefsToDisk()
-{
-	if( !GAMESTATE )
-		return;
-
-	CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
-	IniFile ini;
-	ini.ReadFile( GAMEPREFS_INI_PATH );	// it's OK if this fails
-
-	ini.SetValue( sGameName, "Announcer",			ANNOUNCER->GetCurAnnouncerName() );
-	ini.SetValue( sGameName, "Theme",				THEME->GetCurThemeName() );
-	ini.SetValue( sGameName, "DefaultModifiers",	PREFSMAN->m_sDefaultModifiers );
-	ini.SetValue( "Options", "Game",				(CString)GAMESTATE->GetCurrentGame()->m_szName );
-
-	ini.WriteFile( GAMEPREFS_INI_PATH );
-}
 
 static void MountTreeOfZips( const CString &dir )
 {
@@ -1037,7 +1010,7 @@ int main(int argc, char* argv[])
 
 	/* One of the above filesystems might contain files that affect preferences, eg Data/Static.ini.
 	 * Re-read preferences. */
-	PREFSMAN->ReadGlobalPrefsFromDisk();
+	PREFSMAN->ReadPrefsFromDisk();
 	ApplyLogPreferences();
 	
 #if defined(HAVE_SDL)
@@ -1174,8 +1147,7 @@ int main(int argc, char* argv[])
 	/* If we ended mid-game, finish up. */
 	GAMESTATE->EndGame();
 
-	PREFSMAN->SaveGlobalPrefsToDisk();
-	SaveGamePrefsToDisk();
+	PREFSMAN->SavePrefsToDisk();
 
 	ShutdownGame();
 

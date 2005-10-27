@@ -633,7 +633,7 @@ class DebugLineWritePreferences : public IDebugLine
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( CString &sMessageOut )
 	{
-		PREFSMAN->SaveGlobalPrefsToDisk();
+		PREFSMAN->SavePrefsToDisk();
 		IDebugLine::Do( sMessageOut );
 	}
 };

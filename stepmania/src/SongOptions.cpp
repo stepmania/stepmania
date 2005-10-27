@@ -125,7 +125,7 @@ void SongOptions::FromString( CString sOptions )
 		{
 			SongOptions so;
 			// TODO: Fix this so that SongOptions don't depend on PrefsManager
-			so.FromString( PREFSMAN->m_sDefaultModifiers );
+			so.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
 			m_FailType = so.m_FailType;
 		}
 

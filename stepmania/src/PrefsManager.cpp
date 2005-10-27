@@ -12,9 +12,9 @@
 #include "Preference.h"
 #include "RageLog.h"
 
-#define DEFAULTS_INI_PATH	"Data/Defaults.ini"		// these can be overridden
-#define STEPMANIA_INI_PATH	"Data/" PRODUCT_NAME ".ini"	// overlay on Defaults.ini, contains the user's choices
-#define STATIC_INI_PATH		"Data/Static.ini"		// overlay on the 2 above, can't be overridden
+const CString DEFAULTS_INI_PATH		= "Data/Defaults.ini";		// these can be overridden
+const CString STEPMANIA_INI_PATH	= "Data/" PRODUCT_NAME ".ini";	// overlay on Defaults.ini, contains the user's choices
+const CString STATIC_INI_PATH		= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -241,7 +241,8 @@ void MemoryCardUsbLevelInit( size_t /*PlayerNumber*/ i, CString &sNameOut, int &
 
 
 PrefsManager::PrefsManager() :
-	m_bWindowed				( "Windowed",				TRUE_IF_DEBUG),
+	m_sCurrentGame			( "CurrentGame",			"" ),
+	m_bWindowed				( "Windowed",				TRUE_IF_DEBUG ),
 	m_iDisplayWidth			( "DisplayWidth",			640 ),
 	m_iDisplayHeight		( "DisplayHeight",			480 ),
 	m_iDisplayColorDepth	( "DisplayColorDepth",		16 ),
@@ -421,10 +422,7 @@ PrefsManager::PrefsManager() :
 	m_bShowLogOutput				( "ShowLogOutput",				false ),
 	m_bLogSkips						( "LogSkips",					false ),
 	m_bLogCheckpoints				( "LogCheckpoints",				false ),
-	m_bShowLoadingWindow			( "ShowLoadingWindow",			true ),
-
-	/* Game-specific prefs: */
-	m_sDefaultModifiers				( "DefaultModifiers",			"" )
+	m_bShowLoadingWindow			( "ShowLoadingWindow",			true )
 
 #if defined(XBOX)
 	,
@@ -442,7 +440,7 @@ PrefsManager::PrefsManager() :
 
 {
 	Init();
-	ReadGlobalPrefsFromDisk();
+	ReadPrefsFromDisk();
 }
 #undef TRUE_IF_DEBUG
 
@@ -456,7 +454,7 @@ PrefsManager::~PrefsManager()
 {
 }
 
-void PrefsManager::ReadGlobalPrefsFromDisk()
+void PrefsManager::ReadPrefsFromDisk()
 {
 	ReadPrefsFromFile( DEFAULTS_INI_PATH );
 	ReadPrefsFromFile( STEPMANIA_INI_PATH );
@@ -470,7 +468,7 @@ void PrefsManager::ResetToFactoryDefaults()
 	ReadPrefsFromFile( DEFAULTS_INI_PATH );
 	ReadPrefsFromFile( STATIC_INI_PATH );
 	
-	SaveGlobalPrefsToDisk();
+	SavePrefsToDisk();
 }
 
 void PrefsManager::ReadPrefsFromFile( CString sIni )
@@ -479,10 +477,12 @@ void PrefsManager::ReadPrefsFromFile( CString sIni )
 	if( !ini.ReadFile(sIni) )
 		return;
 
-	ReadGlobalPrefsFromIni( ini );
+	ReadPrefsFromIni( ini );
 }
 
-void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
+static const CString GAME_SECTION_PREFIX = "Game-";
+
+void PrefsManager::ReadPrefsFromIni( const IniFile &ini )
 {
 	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
 		(*p)->ReadFrom( ini );
@@ -492,19 +492,42 @@ void PrefsManager::ReadGlobalPrefsFromIni( const IniFile &ini )
 	FOREACH_PlayerNumber( pn )
 		m_sMemoryCardOsMountPoint[pn].Set( FixSlashes(m_sMemoryCardOsMountPoint[pn]) );
 	m_BackgroundMode.Set( (BackgroundMode)clamp((int)m_BackgroundMode.Get(),0,(int)NUM_BackgroundMode-1) );
+
+
+	FOREACH_CONST_Child( &ini, section )
+	{
+		if( !BeginsWith(section->m_sName, GAME_SECTION_PREFIX) )
+			continue;
+
+		CString sGame = section->m_sName.Right( section->m_sName.length() - GAME_SECTION_PREFIX.length() );
+		GamePrefs &gp = m_mapGameNameToGamePrefs[ sGame ];
+
+		ini.GetValue( section->m_sName, "Announcer",		gp.m_sAnnouncer );
+		ini.GetValue( section->m_sName, "Theme",			gp.m_sTheme );
+		ini.GetValue( section->m_sName, "DefaultModifiers",	gp.m_sDefaultModifiers );
+	}
 }
 
-void PrefsManager::SaveGlobalPrefsToDisk() const
+void PrefsManager::SavePrefsToDisk() const
 {
 	IniFile ini;
-	SaveGlobalPrefsToIni( ini );
+	SavePrefsToIni( ini );
 	ini.WriteFile( STEPMANIA_INI_PATH );
 }
 
-void PrefsManager::SaveGlobalPrefsToIni( IniFile &ini ) const
+void PrefsManager::SavePrefsToIni( IniFile &ini ) const
 {
 	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
 		(*p)->WriteTo( ini );
+
+	FOREACHM_CONST( CString, GamePrefs, m_mapGameNameToGamePrefs, iter )
+	{
+		CString sSection = "Game-" + CString( iter->first );
+
+		ini.SetValue( sSection, "Announcer",		iter->second.m_sAnnouncer );
+		ini.SetValue( sSection, "Theme",			iter->second.m_sTheme );
+		ini.SetValue( sSection, "DefaultModifiers",	iter->second.m_sDefaultModifiers );
+	}
 }
 
 // wrappers

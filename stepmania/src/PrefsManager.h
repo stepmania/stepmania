@@ -21,6 +21,7 @@ public:
 
 	void Init();
 
+	Preference<CString>	m_sCurrentGame;
 	Preference<bool>	m_bWindowed;
 	Preference<int>		m_iDisplayWidth;
 	Preference<int>		m_iDisplayHeight;
@@ -249,9 +250,6 @@ public:
 	Preference<bool>	m_bLogCheckpoints;
 	Preference<bool>	m_bShowLoadingWindow;
 
-	/* Game-specific prefs: */
-	Preference<CString>	m_sDefaultModifiers;
-
 #if defined(XBOX)
 	// Virtual memory preferences
 	Preference<bool>	m_bEnableVirtualMemory;
@@ -275,11 +273,11 @@ public:
 	CString GetLightsDriver();
 
 
-	void ReadGlobalPrefsFromIni( const IniFile &ini );
-	void SaveGlobalPrefsToIni( IniFile &ini ) const;
+	void ReadPrefsFromIni( const IniFile &ini );
+	void SavePrefsToIni( IniFile &ini ) const;
 
-	void ReadGlobalPrefsFromDisk();
-	void SaveGlobalPrefsToDisk() const;
+	void ReadPrefsFromDisk();
+	void SavePrefsToDisk() const;
 
 	void ResetToFactoryDefaults();
 
@@ -288,6 +286,24 @@ public:
 	//
 	static void Subscribe( IPreference *p );
 	static void Unsubscribe( IPreference *p );
+
+
+	//
+	// Non-self-registering prefs
+	//
+	struct GamePrefs
+	{
+		CString	m_sAnnouncer;
+		CString m_sTheme;
+		CString	m_sDefaultModifiers;
+	};
+	map<CString, GamePrefs> m_mapGameNameToGamePrefs;
+
+	GamePrefs &GetCurrentGamePrefs() { return m_mapGameNameToGamePrefs[m_sCurrentGame]; }	// inserts if not already present
+
+	void SaveGamePrefsToDisk();
+	void ReadGamePrefsFromDisk();
+
 
 	// Lua
 	void PushSelf( lua_State *L );

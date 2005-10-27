@@ -253,7 +253,7 @@ bool CodeDetector::DetectAndAdjustMusicOptions( GameController controller )
 			case CODE_MINES:					TOGGLE( po.m_bTransforms[PlayerOptions::TRANSFORM_NOMINES], true, false );					break;
 			case CODE_DARK:						FLOAT_TOGGLE( po.m_fDark );							break;
 			case CODE_CANCEL_ALL:				po.Init();
-												po.FromString( PREFSMAN->m_sDefaultModifiers );		break;
+												po.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );		break;
 			case CODE_HIDDEN:					TOGGLE_HIDDEN; break;
 			case CODE_RANDOMVANISH:				TOGGLE_RANDOMVANISH; break;
 				

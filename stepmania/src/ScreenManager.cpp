@@ -688,7 +688,7 @@ void ScreenManager::LoadDelayedScreen()
 	
 	// If we're exiting a system menu, persist settings in case we don't exit normally
 	if( bWasOnSystemMenu && !bIsOnSystemMenu )
-		PREFSMAN->SaveGlobalPrefsToDisk();
+		PREFSMAN->SavePrefsToDisk();
 
 	if( bTimeToDeleteScreens )
 		DeletePreparedScreens();
