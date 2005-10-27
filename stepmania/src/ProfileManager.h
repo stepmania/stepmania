@@ -6,6 +6,7 @@
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
 #include "Difficulty.h"
+#include "Preference.h"
 
 class Profile;
 class Song;
@@ -110,6 +111,8 @@ public:
 
 	// Lua
 	void PushSelf( lua_State *L );
+
+	static Preference1D<CString> m_sDefaultLocalProfileID;
 
 private:
 	ProfileLoadResult LoadProfile( PlayerNumber pn, CString sProfileDir, bool bIsMemCard );

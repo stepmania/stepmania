@@ -146,7 +146,6 @@ public:
 	Preference<CString>	m_sLanguage;
 	Preference<CString>	m_sMemoryCardProfileSubdir;	// the directory on a memory card to look in for a profile
 	Preference<int>		m_iProductID;		// Saved in HighScore to track what software version a score came from.
-	Preference1D<CString>	m_sDefaultLocalProfileID;
 	Preference<bool>	m_bMemoryCards;
 	Preference<int>		m_iCenterImageTranslateX;
 	Preference<int>		m_iCenterImageTranslateY;

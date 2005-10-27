@@ -139,7 +139,7 @@ bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 		return false;
 	if( m_GoalType != GOAL_INVALID && PROFILEMAN->GetProfile(pn)->m_GoalType != m_GoalType )
 		return false;
-	if( !m_sProfileID.empty() && PREFSMAN->m_sDefaultLocalProfileID[pn].Get() != m_sProfileID )
+	if( !m_sProfileID.empty() && ProfileManager::m_sDefaultLocalProfileID[pn].Get() != m_sProfileID )
 		return false;
 
 	return true;
@@ -834,7 +834,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 			PROFILEMAN->GetProfile(*pn)->m_GoalType = m_GoalType;
 	if( !m_sProfileID.empty() )
 		FOREACH_CONST( PlayerNumber, vpns, pn )
-			PREFSMAN->m_sDefaultLocalProfileID[*pn].Set( m_sProfileID );
+			ProfileManager::m_sDefaultLocalProfileID[*pn].Set( m_sProfileID );
 
 	/* If we're going to stop music, do so before preparing new screens, so we don't
 	 * stop music between preparing screens and loading screens. */

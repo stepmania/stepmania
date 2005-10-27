@@ -281,13 +281,13 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 					PlayerNumber pn = (PlayerNumber)(ScreenMiniMenu::s_iLastRowCode - ProfileAction_SetDefaultP1);
 					PlayerNumber pnOpposite = OPPOSITE_PLAYER[ pn ];
 
-					PREFSMAN->m_sDefaultLocalProfileID[pn].Set( GetLocalProfileIDWithFocus() );
-					if( PREFSMAN->m_sDefaultLocalProfileID[pn].Get() == PREFSMAN->m_sDefaultLocalProfileID[pnOpposite].Get() )
+					ProfileManager::m_sDefaultLocalProfileID[pn].Set( GetLocalProfileIDWithFocus() );
+					if( ProfileManager::m_sDefaultLocalProfileID[pn].Get() == ProfileManager::m_sDefaultLocalProfileID[pnOpposite].Get() )
 					{
 						int iIndex = GetLocalProfileIndexWithFocus();
 						iIndex++;
 						wrap( iIndex, m_vsLocalProfileID.size() );
-						PREFSMAN->m_sDefaultLocalProfileID[pnOpposite].Set( m_vsLocalProfileID[iIndex] );
+						ProfileManager::m_sDefaultLocalProfileID[pnOpposite].Set( m_vsLocalProfileID[iIndex] );
 					}
 				}
 				break;

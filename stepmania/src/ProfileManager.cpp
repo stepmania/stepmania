@@ -28,6 +28,14 @@
 
 ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our program
 
+static void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, CString &sNameOut, CString &defaultValueOut )
+{
+	sNameOut = "DefaultLocalProfileID" + PlayerNumberToString( (PlayerNumber)i );
+	defaultValueOut = "";
+}
+
+Preference1D<CString> ProfileManager::m_sDefaultLocalProfileID( DefaultLocalProfileIDInit, NUM_PLAYERS );
+
 #define NEW_MEM_CARD_NAME		""
 #define USER_PROFILES_DIR		"/Data/LocalProfiles/"
 #define MACHINE_PROFILE_DIR		"/Data/MachineProfile/"
@@ -162,7 +170,7 @@ ProfileLoadResult ProfileManager::LoadProfile( PlayerNumber pn, CString sProfile
 
 bool ProfileManager::LoadLocalProfileFromMachine( PlayerNumber pn )
 {
-	CString sProfileID = PREFSMAN->m_sDefaultLocalProfileID[pn];
+	CString sProfileID = m_sDefaultLocalProfileID[pn];
 	if( sProfileID.empty() )
 	{
 		m_sProfileDir[pn] = "";

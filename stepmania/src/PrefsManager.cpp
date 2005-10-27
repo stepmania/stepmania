@@ -208,12 +208,6 @@ void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, flo
 	}
 }
 
-void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, CString &sNameOut, CString &defaultValueOut )
-{
-	sNameOut = "DefaultLocalProfileID" + PlayerNumberToString( (PlayerNumber)i );
-	defaultValueOut = "";
-}
-
 
 PrefsManager::PrefsManager() :
 	m_sCurrentGame			( "CurrentGame",			"" ),
@@ -325,7 +319,6 @@ PrefsManager::PrefsManager() :
 	m_sLanguage						( "Language",					"" ),	// ThemeManager will deal with this invalid language
 	m_sMemoryCardProfileSubdir		( "MemoryCardProfileSubdir",	PRODUCT_NAME ),
 	m_iProductID					( "ProductID",					1 ),
-	m_sDefaultLocalProfileID		( DefaultLocalProfileIDInit, NUM_PLAYERS ),
 	m_bMemoryCards					( "MemoryCards",				false ),
 	m_iCenterImageTranslateX		( "CenterImageTranslateX",		0 ),
 	m_iCenterImageTranslateY		( "CenterImageTranslateY",		0 ),
