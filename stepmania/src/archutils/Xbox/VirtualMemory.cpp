@@ -1,9 +1,30 @@
+/* This handles manual paging.  It's primarily intended for the Xbox, but works
+ * in Windows as well; it can be enabled for debugging. */
+
 #include "global.h"
 #include "VirtualMemory.h"
 #include "RageLog.h"
 #include <new>
 
+#if defined(WINDOWS)
+#define PAGE_FILE_PATH "StepMania pagefile.dat"
+#else
+#define PAGE_FILE_PATH "Z:\\xxpagefile.sys"
+#endif
+
 VirtualMemoryManager vmem_Manager;
+
+struct vm_page
+{
+	DWORD startAddress; // start address for this page
+	unsigned long headPage; // 0 if not allocated. Otherwise, the index of the first page 
+							// of this segment.
+	bool committed; // true if this page is committed to RAM (is otherwise in the page file)
+	bool locked; // true if this page should not be decommitted
+	int pageFaults; // number of times this page has been accessed when it wasn't committed
+	unsigned long sizeInPages; // size of the data segment in pages.
+	size_t sizeInBytes; // size of the data segment in bytes.
+};
 
 VirtualMemoryManager::VirtualMemoryManager():
 	vmemMutex("VirtualMemory")
@@ -36,7 +57,7 @@ bool VirtualMemoryManager::Init(unsigned long totalPageSize, unsigned long sizeP
 		return false;
 
 	// create the page file on Z drive
-	vmemFile = CreateFile( "Z:\\xxpagefile.sys", GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL ) ;
+	vmemFile = CreateFile( PAGE_FILE_PATH, GENERIC_READ|GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL );
 
 	if(vmemFile == INVALID_HANDLE_VALUE)
 		return false;

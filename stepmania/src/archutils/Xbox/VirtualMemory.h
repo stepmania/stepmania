@@ -1,23 +1,15 @@
+#ifndef VIRTUAL_MEMORY_H
+#define VIRTUAL_MEMORY_H
+
+#if defined(XBOX)
 #include <xtl.h>
-
-#if !defined(VIRTUALMEMORY_H)
-#define VIRTUALMEMORY_H
-
-#pragma once
+#else
+#include <windows.h>
+#endif
 
 #include "RageThreads.h"
 
-struct vm_page
-{
-	DWORD startAddress; // start address for this page
-	unsigned long headPage; // 0 if not allocated. Otherwise, the index of the first page 
-							// of this segment.
-	bool committed; // true if this page is committed to RAM (is otherwise in the page file)
-	bool locked; // true if this page should not be decommitted
-	int pageFaults; // number of times this page has been accessed when it wasn't committed
-	unsigned long sizeInPages; // size of the data segment in pages.
-	size_t sizeInBytes; // size of the data segment in bytes.
-};
+struct vm_page;
 
 class VirtualMemoryManager
 {
