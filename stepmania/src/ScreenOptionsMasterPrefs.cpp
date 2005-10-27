@@ -263,20 +263,20 @@ static void WheelSections( int &sel, bool ToSel, const ConfOption *pConfOption )
 static void BGBrightness( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 0.0f,0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
-	MoveMap( sel, PREFSMAN->m_fBGBrightness, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void NumBackgrounds( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 5,10,15,20 };
-	MoveMap( sel, PREFSMAN->m_iNumBackgrounds, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Input options */
-static void WheelSpeed( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void MusicWheelSwitchSpeed( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 5, 10, 15, 25 };
-	MoveMap( sel, PREFSMAN->m_iMusicWheelSwitchSpeed, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Gameplay options */
@@ -289,7 +289,7 @@ static void AllowW1( int &sel, bool ToSel, const ConfOption *pConfOption )
 static void CoinModeM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const CoinMode mapping[] = { COIN_MODE_HOME, COIN_MODE_PAY, COIN_MODE_FREE };
-	MoveMap( sel, PREFSMAN->m_CoinMode, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void CoinModeNoHome( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -307,13 +307,13 @@ static void CoinsPerCredit( int &sel, bool ToSel, const ConfOption *pConfOption 
 static void PremiumM( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const Premium mapping[] = { PREMIUM_NONE, PREMIUM_DOUBLE, PREMIUM_JOINT };
-	MoveMap( sel, PREFSMAN->m_Premium, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void SongsPerPlay( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 1,2,3,4,5 };
-	MoveMap( sel, PREFSMAN->m_iSongsPerPlay, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -329,10 +329,10 @@ static void SongsPerPlayOrEventMode( int &sel, bool ToSel, const ConfOption *pCo
 
 /* Machine options */
 
-static void JudgeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void TimingWindowScale( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 1.50f,1.33f,1.16f,1.00f,0.84f,0.66f,0.50f,0.33f,0.20f };
-	MoveMap( sel, PREFSMAN->m_fTimingWindowScale, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void LifeDifficulty( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -357,10 +357,10 @@ static void ShowSongOptions( int &sel, bool ToSel, const ConfOption *pConfOption
 	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void ShowNameEntry( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void GetRankingName( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const PrefsManager::GetRankingName mapping[] = { PrefsManager::RANKING_OFF, PrefsManager::RANKING_ON, PrefsManager::RANKING_LIST };
-	MoveMap( sel, PREFSMAN->m_GetRankingName, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -435,40 +435,40 @@ static void DisplayResolution( int &sel, bool ToSel, const ConfOption *pConfOpti
 	}
 }
 
-static void DisplayColor( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void DisplayColorDepth( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
-	MoveMap( sel, PREFSMAN->m_iDisplayColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void TextureResolution( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void MaxTextureResolution( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 256,512,1024,2048 };
-	MoveMap( sel, PREFSMAN->m_iMaxTextureResolution, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void TextureColor( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void TextureColorDepth( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
-	MoveMap( sel, PREFSMAN->m_iTextureColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void MovieColor( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void MovieColorDepth( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { 16,32 };
-	MoveMap( sel, PREFSMAN->m_iMovieColorDepth, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void RefreshRate( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const int mapping[] = { (int) REFRESH_DEFAULT,60,70,72,75,80,85,90,100,120,150 };
-	MoveMap( sel, PREFSMAN->m_iRefreshRate, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void DisplayAspectRatio( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 3/4.f,1,4/3.0f,16/10.0f,16/9.f, 8/3.f };
-	MoveMap( sel, PREFSMAN->m_fDisplayAspectRatio, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 /* Sound options */
@@ -476,7 +476,7 @@ static void DisplayAspectRatio( int &sel, bool ToSel, const ConfOption *pConfOpt
 static void SoundVolume( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 0.0f,0.1f,0.2f,0.3f,0.4f,0.5f,0.6f,0.7f,0.8f,0.9f,1.0f };
-	MoveMap( sel, PREFSMAN->m_fSoundVolume, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static void GlobalOffsetSeconds( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -485,7 +485,7 @@ static void GlobalOffsetSeconds( int &sel, bool ToSel, const ConfOption *pConfOp
 	for( int i = 0; i < 41; ++i )
 		mapping[i] = SCALE( i, 0.0f, 40.0f, -0.1f, +0.1f );
 	
-	MoveMap( sel, PREFSMAN->m_fGlobalOffsetSeconds, ToSel, mapping, ARRAYSIZE(mapping) );
+	MoveMap( sel, pConfOption, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
 static vector<ConfOption> g_ConfOptions;
@@ -527,11 +527,11 @@ static void InitializeConfOptions()
 
 	/* Background options */
 	ADD( ConfOption( "BackgroundMode",				MovePref,			"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ) );
-	ADD( ConfOption( "Brightness",					BGBrightness,		"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ) );
+	ADD( ConfOption( "BGBrightness",				BGBrightness,		"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ) );
 	ADD( ConfOption( "ShowDanger",					MovePref,			"HIDE","SHOW" ) );
 	ADD( ConfOption( "ShowDancingCharacters",		MovePref,			"DEFAULT TO OFF","DEFAULT TO RANDOM","SELECT" ) );
 	ADD( ConfOption( "ShowBeginnerHelper",			MovePref,			"OFF","ON" ) );
-	ADD( ConfOption( "RandomBackgrounds",			NumBackgrounds,		"5","10","15","20" ) );
+	ADD( ConfOption( "NumBackgrounds",				NumBackgrounds,		"5","10","15","20" ) );
 
 	/* Input options */
 	ADD( ConfOption( "AutoMapOnJoyChange",			MovePref,			"OFF","ON (recommended)" ) );
@@ -539,7 +539,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "AutoPlay",					MovePref,			"OFF","ON","CPU-Controlled" ) );
 	ADD( ConfOption( "DelayedBack",					MovePref,			"INSTANT","HOLD" ) );
 	ADD( ConfOption( "ArcadeOptionsNavigation",		MovePref,			"SM STYLE","ARCADE STYLE" ) );
-	ADD( ConfOption( "WheelSpeed",					WheelSpeed,			"SLOW","NORMAL","FAST","REALLY FAST" ) );
+	ADD( ConfOption( "MusicWheelSwitchSpeed",		MusicWheelSwitchSpeed, "SLOW","NORMAL","FAST","REALLY FAST" ) );
 
 	/* Gameplay options */
 	ADD( ConfOption( "SoloSingle",					MovePref,			"OFF","ON" ) );
@@ -558,7 +558,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "SongsPerPlayOrEvent",			SongsPerPlayOrEventMode, "1","2","3","4","5","EVENT" ) );
 	ADD( ConfOption( "EventMode",					MovePref,			"OFF","ON" ) );
 	ADD( ConfOption( "ScoringType",					MovePref,			"NEW","OLD" ) );
-	ADD( ConfOption( "JudgeDifficulty",				JudgeDifficulty,	"1","2","3","4","5","6","7","8","JUSTICE" ) );
+	ADD( ConfOption( "TimingWindowScale",			TimingWindowScale,	"1","2","3","4","5","6","7","8","JUSTICE" ) );
 	ADD( ConfOption( "LifeDifficulty",				LifeDifficulty,		"1","2","3","4","5","6","7" ) );
 	ADD( ConfOption( "ProgressiveLifebar",			MovePref,			"OFF","1","2","3","4","5","6","7","8") );
 	ADD( ConfOption( "ProgressiveStageLifebar",		MovePref,			"OFF","1","2","3","4","5","6","7","8","INSANITY") );
@@ -568,20 +568,20 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "CoinsPerCredit",				CoinsPerCredit,		"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16" ) );
 	ADD( ConfOption( "Premium",						PremiumM,			"OFF","DOUBLE FOR 1 CREDIT","JOINT PREMIUM" ) );
 	ADD( ConfOption( "ShowSongOptions",				ShowSongOptions,	"HIDE","SHOW","ASK" ) );
-	ADD( ConfOption( "ShowNameEntry",				ShowNameEntry,		"OFF", "ON", "RANKING SONGS" ) );
+	ADD( ConfOption( "GetRankingName",				GetRankingName,		"OFF", "ON", "RANKING SONGS" ) );
 
 	/* Graphic options */
 	ADD( ConfOption( "Windowed",					MovePref,			"FULLSCREEN", "WINDOWED" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "DisplayResolution",			DisplayResolution,	"320","400","512","640","800","1024","1280x960","1280x1024" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "DisplayColor",				DisplayColor,		"16BIT","32BIT" ) );
+	ADD( ConfOption( "DisplayColorDepth",			DisplayColorDepth,	"16BIT","32BIT" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "TextureResolution",			TextureResolution,	"256","512","1024","2048" ) );
+	ADD( ConfOption( "MaxTextureResolution",		MaxTextureResolution,"256","512","1024","2048" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "TextureColor",				TextureColor,		"16BIT","32BIT" ) );
+	ADD( ConfOption( "TextureColorDepth",			TextureColorDepth,	"16BIT","32BIT" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "MovieColor",					MovieColor,			"16BIT","32BIT" ) );
+	ADD( ConfOption( "MovieColorDepth",				MovieColorDepth,	"16BIT","32BIT" ) );
 	ADD( ConfOption( "DelayedTextureDelete",		MovePref,			"OFF","ON" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "CelShadeModels",				MovePref,			"OFF","ON" ) );
