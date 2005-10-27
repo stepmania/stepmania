@@ -496,7 +496,7 @@ static void RefreshRate( int &sel, bool ToSel, const ConfOption *pConfOption )
 	MoveMap( sel, PREFSMAN->m_iRefreshRate, ToSel, mapping, ARRAYSIZE(mapping) );
 }
 
-static void AspectRatio( int &sel, bool ToSel, const ConfOption *pConfOption )
+static void DisplayAspectRatio( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
 	const float mapping[] = { 3/4.f,1,4/3.0f,16/10.0f,16/9.f, 8/3.f };
 	MoveMap( sel, PREFSMAN->m_fDisplayAspectRatio, ToSel, mapping, ARRAYSIZE(mapping) );
@@ -621,7 +621,7 @@ static void InitializeConfOptions()
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
 	ADD( ConfOption( "RefreshRate",					RefreshRate,		"DEFAULT","60","70","72","75","80","85","90","100","120","150" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
-	ADD( ConfOption( "AspectRatio",					AspectRatio,		"3:4","1:1","4:3","16:10","16:9","8:3" ) );
+	ADD( ConfOption( "DisplayAspectRatio",			DisplayAspectRatio,	"3:4","1:1","4:3","16:10","16:9","8:3" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_ASPECT_RATIO;
 	ADD( ConfOption( "Vsync",						MovePref,			"NO", "YES" ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_GRAPHICS;
