@@ -424,7 +424,8 @@ all_test_SOURCES = \
 		PrefsManager.cpp PrefsManager.h \
 		Preference.cpp Preference.h \
 		LuaBinding.cpp LuaBinding.h \
-		LuaFunctions.h LuaHelpers.cpp LuaHelpers.h \
+		LuaFunctions.h \
+		LuaManager.cpp LuaManager.h \
 		LuaReference.cpp LuaReference.h \
 		RageException.cpp \
 		RageLog.cpp \
@@ -432,7 +433,9 @@ all_test_SOURCES = \
 		RageTimer.cpp RageTimer.h \
 		RageUtil.cpp \
 		RageUtil_FileDB.cpp RageUtil_FileDB.h \
-		global.cpp global.h
+		global.cpp global.h \
+		RageUtil_WorkerThread.cpp RageUtil_WorkerThread.h \
+		MessageManager.cpp MessageManager.h
 
 TESTS += test_audio_readers
 test_audio_readers_SOURCES = \
