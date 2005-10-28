@@ -208,22 +208,22 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThem
 	depth--;
 }
 
-void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName, const CString &sLanguage )
+void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName_, const CString &sLanguage_ )
 {
-	CString sTheme = sThemeName;
-	CString sLang = sLanguage;
-	if( !DoesThemeExist(sTheme) )
-		sTheme = BASE_THEME_NAME;
-	if( !DoesLanguageExist(sLang) )
-		sLang = BASE_LANGUAGE;
+	CString sThemeName = sThemeName_;
+	CString sLanguage = sLanguage_;
+	if( !DoesThemeExist(sThemeName) )
+		sThemeName = BASE_THEME_NAME;
+	if( !DoesLanguageExist(sLanguage) )
+		sLanguage = BASE_LANGUAGE;
 	LOG->Trace("ThemeManager::SwitchThemeAndLanguage: \"%s\", \"%s\"",
-		sTheme.c_str(), sLang.c_str() );
+		sThemeName.c_str(), sLanguage.c_str() );
 
-	if( sTheme == m_sCurThemeName && sLang == m_sCurLanguage )
+	if( sThemeName == m_sCurThemeName && sLanguage == m_sCurLanguage )
 		return;
 
-	m_sCurThemeName = sTheme;
-	m_sCurLanguage = sLang;
+	m_sCurThemeName = sThemeName;
+	m_sCurLanguage = sLanguage;
 
 	// clear theme path cache
 	for( int i = 0; i < NUM_ElementCategory; ++i )
@@ -250,8 +250,8 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName, const CStr
 		g_vThemes.front().iniMetrics->SetValue( sBits[0], sBits[1], sBits[2] );
 	}
 	
-	LOG->MapLog("theme", "Theme: %s", sTheme.c_str());
-	LOG->MapLog("language", "Language: %s", sLang.c_str());
+	LOG->MapLog( "theme", "Theme: %s", sThemeName.c_str() );
+	LOG->MapLog( "language", "Language: %s", sLanguage.c_str() );
 
 	// reload common sounds
 	if ( SCREENMAN != NULL )
