@@ -230,6 +230,21 @@ void ArchHooks_darwin::DumpDebugInfo()
     LOG->Info("Memory: %ld MB total, %ld MB swap", ram, vRam);
 }
 
+// In archutils/darwin/PreferredLanguage.m
+extern "C"
+{
+	extern char *GetPreferredLanguage();
+}
+
+CString ArchHooks_darwin::GetPreferredLanguage()
+{
+	char *lang = ::GetPreferredLanguage();
+	CString ret = lang;
+	
+	free(lang);
+	return ret.ToUpper();
+}
+
 void ArchHooks_darwin::EnterTimeCriticalSection()
 {
 #if 0
@@ -295,7 +310,7 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 }
 
 /*
- * (c) 2003-2004 Steve Checkoway
+ * (c) 2003-2005 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
