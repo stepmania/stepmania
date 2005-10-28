@@ -169,44 +169,43 @@ bool ThemeManager::DoesLanguageExist( const CString &sLanguage )
 	return false;
 }
 
-void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThemeName )
+void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThemeName_ )
 {
-	static int depth = 0;
-	static bool loaded_base = false;
-	depth++;
-	ASSERT_M( depth < 20, "Circular theme fallback references detected." );
+	CString sThemeName(sThemeName_);
 
-	Theme t;
-	t.iniMetrics = new IniFile;
-	t.sThemeName = sThemeName;
-	t.iniMetrics->ReadFile( GetMetricsIniPath(sThemeName) );
-	t.iniMetrics->ReadFile( GetLanguageIniPath(sThemeName,BASE_LANGUAGE) );
-	if( m_sCurLanguage.CompareNoCase(BASE_LANGUAGE) )
-		t.iniMetrics->ReadFile( GetLanguageIniPath(sThemeName,m_sCurLanguage) );
-
-	bool bIsBaseTheme = !sThemeName.CompareNoCase(BASE_THEME_NAME);
-	t.iniMetrics->GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
-	if( bIsBaseTheme )
-		loaded_base = true;
-
-	/* Read the fallback theme.  If no fallback theme is specified, and we havn't
-	 * already loaded it, fall back on BASE_THEME_NAME.  That way, default theme
-	 * fallbacks can be disabled with "FallbackTheme=". */
-	CString sFallback;
-	if( !t.iniMetrics->GetValue("Global","FallbackTheme",sFallback) )
+	bool bLoadedBase = false;
+	while(1)
 	{
-		if( sThemeName.CompareNoCase( BASE_THEME_NAME ) && !loaded_base )
-			sFallback = BASE_THEME_NAME;
+		ASSERT_M( theme.size() < 20, "Circular theme fallback references detected." );
+
+		g_vThemes.push_back( Theme() );
+		Theme &t = g_vThemes.back();
+		t.iniMetrics = new IniFile;
+		t.sThemeName = sThemeName;
+		t.iniMetrics->ReadFile( GetMetricsIniPath(sThemeName) );
+		t.iniMetrics->ReadFile( GetLanguageIniPath(sThemeName,BASE_LANGUAGE) );
+		if( m_sCurLanguage.CompareNoCase(BASE_LANGUAGE) )
+			t.iniMetrics->ReadFile( GetLanguageIniPath(sThemeName,m_sCurLanguage) );
+
+		bool bIsBaseTheme = !sThemeName.CompareNoCase(BASE_THEME_NAME);
+		t.iniMetrics->GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
+		if( bIsBaseTheme )
+			bLoadedBase = true;
+
+		/* Read the fallback theme.  If no fallback theme is specified, and we havn't
+		 * already loaded it, fall back on BASE_THEME_NAME.  That way, default theme
+		 * fallbacks can be disabled with "FallbackTheme=". */
+		CString sFallback;
+		if( !t.iniMetrics->GetValue("Global","FallbackTheme",sFallback) )
+		{
+			if( sThemeName.CompareNoCase( BASE_THEME_NAME ) && !bLoadedBase )
+				sFallback = BASE_THEME_NAME;
+		}
+
+		if( sFallback.empty() )
+			return;
+		sThemeName = sFallback;
 	}
-	if( !sFallback.empty() )
-		LoadThemeRecursive( theme, sFallback );
-
-	g_vThemes.push_front( t );
-
-	if( bIsBaseTheme )
-		loaded_base = false;
-
-	depth--;
 }
 
 CString ThemeManager::GetDefaultLanguage()
