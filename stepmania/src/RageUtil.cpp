@@ -299,6 +299,164 @@ CString ConvertUTF8ToACP( CString s )
 
 #endif
 
+static map<CString,CString> g_mapLangToName2Letter;
+void InitLanguages()
+{
+	if( !g_mapLangToName2Letter.empty() )
+		return;
+
+	{
+		map<CString,CString> &m = g_mapLangToName2Letter;
+		m["AA"] = "Afar";
+		m["AB"] = "Abkhazian";
+		m["AF"] = "Afrikaans";
+		m["AM"] = "Amharic";
+		m["AR"] = "Arabic";
+		m["AS"] = "Assamese";
+		m["AY"] = "Aymara";
+		m["AZ"] = "Azerbaijani";
+		m["BA"] = "Bashkir";
+		m["BE"] = "Byelorussian";
+		m["BG"] = "Bulgarian";
+		m["BH"] = "Bihari";
+		m["BI"] = "Bislama";
+		m["BN"] = "Bengali";
+		m["BO"] = "Tibetan";
+		m["BR"] = "Breton";
+		m["CA"] = "Catalan";
+		m["CO"] = "Corsican";
+		m["CS"] = "Czech";
+		m["CY"] = "Welsh";
+		m["DA"] = "Danish";
+		m["DE"] = "German";
+		m["DZ"] = "Bhutani";
+		m["EL"] = "Greek";
+		m["EN"] = "English";
+		m["EO"] = "Esperanto";
+		m["ES"] = "Spanish";
+		m["ET"] = "Estonian";
+		m["EU"] = "Basque";
+		m["FA"] = "Persian";
+		m["FI"] = "Finnish";
+		m["FJ"] = "Fiji";
+		m["FO"] = "Faeroese";
+		m["FR"] = "French";
+		m["FY"] = "Frisian";
+		m["GA"] = "Irish";
+		m["GD"] = "Gaelic";
+		m["GL"] = "Galician";
+		m["GN"] = "Guarani";
+		m["GU"] = "Gujarati";
+		m["HA"] = "Hausa";
+		m["HI"] = "Hindi";
+		m["HR"] = "Croatian";
+		m["HU"] = "Hungarian";
+		m["HY"] = "Armenian";
+		m["IA"] = "Interlingua";
+		m["IE"] = "Interlingue";
+		m["IK"] = "Inupiak";
+		m["IN"] = "Indonesian";
+		m["IS"] = "Icelandic";
+		m["IT"] = "Italian";
+		m["IW"] = "Hebrew";
+		m["JA"] = "Japanese";
+		m["JI"] = "Yiddish";
+		m["JW"] = "Javanese";
+		m["KA"] = "Georgian";
+		m["KK"] = "Kazakh";
+		m["KL"] = "Greenlandic";
+		m["KM"] = "Cambodian";
+		m["KN"] = "Kannada";
+		m["KO"] = "Korean";
+		m["KS"] = "Kashmiri";
+		m["KU"] = "Kurdish";
+		m["KY"] = "Kirghiz";
+		m["LA"] = "Latin";
+		m["LN"] = "Lingala";
+		m["LO"] = "Laothian";
+		m["LT"] = "Lithuanian";
+		m["LV"] = "Latvian";
+		m["MG"] = "Malagasy";
+		m["MI"] = "Maori";
+		m["MK"] = "Macedonian";
+		m["ML"] = "Malayalam";
+		m["MN"] = "Mongolian";
+		m["MO"] = "Moldavian";
+		m["MR"] = "Marathi";
+		m["MS"] = "Malay";
+		m["MT"] = "Maltese";
+		m["MY"] = "Burmese";
+		m["NA"] = "Nauru";
+		m["NE"] = "Nepali";
+		m["NL"] = "Dutch";
+		m["NO"] = "Norwegian";
+		m["OC"] = "Occitan";
+		m["OM"] = "Oromo";
+		m["OR"] = "Oriya";
+		m["PA"] = "Punjabi";
+		m["PL"] = "Polish";
+		m["PS"] = "Pashto";
+		m["PT"] = "Portuguese";
+		m["QU"] = "Quechua";
+		m["RM"] = "Rhaeto-Romance";
+		m["RN"] = "Kirundi";
+		m["RO"] = "Romanian";
+		m["RU"] = "Russian";
+		m["RW"] = "Kinyarwanda";
+		m["SA"] = "Sanskrit";
+		m["SD"] = "Sindhi";
+		m["SG"] = "Sangro";
+		m["SH"] = "Serbo-Croatian";
+		m["SI"] = "Singhalese";
+		m["SK"] = "Slovak";
+		m["SL"] = "Slovenian";
+		m["SM"] = "Samoan";
+		m["SN"] = "Shona";
+		m["SO"] = "Somali";
+		m["SQ"] = "Albanian";
+		m["SR"] = "Serbian";
+		m["SS"] = "Siswati";
+		m["ST"] = "Sesotho";
+		m["SU"] = "Sudanese";
+		m["SV"] = "Swedish";
+		m["SW"] = "Swahili";
+		m["TA"] = "Tamil";
+		m["TE"] = "Tegulu";
+		m["TG"] = "Tajik";
+		m["TH"] = "Thai";
+		m["TI"] = "Tigrinya";
+		m["TK"] = "Turkmen";
+		m["TL"] = "Tagalog";
+		m["TN"] = "Setswana";
+		m["TO"] = "Tonga";
+		m["TR"] = "Turkish";
+		m["TS"] = "Tsonga";
+		m["TT"] = "Tatar";
+		m["TW"] = "Twi";
+		m["UK"] = "Ukrainian";
+		m["UR"] = "Urdu";
+		m["UZ"] = "Uzbek";
+		m["VI"] = "Vietnamese";
+		m["VO"] = "Volapuk";
+		m["WO"] = "Wolof";
+		m["XH"] = "Xhosa";
+		m["YO"] = "Yoruba";
+		m["ZH"] = "Chinese";
+		m["ZU"] = "Zulu";
+	}
+}
+
+/* We don't use 3-letter codes, so we don't bother supporting them. */
+CString GetLanguageNameFromISO639Code( CString sName )
+{
+	InitLanguages();
+
+	map<CString,CString>::const_iterator it = g_mapLangToName2Letter.find(sName);
+	if( it != g_mapLangToName2Letter.end() )
+		return it->second;
+	return "";
+}
+
 CString join( const CString &Deliminator, const CStringArray& Source)
 {
 	if( Source.empty() )

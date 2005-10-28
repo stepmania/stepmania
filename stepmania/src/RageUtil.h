@@ -14,14 +14,14 @@
 
 /* Common harmless mismatches.  All min(T,T) and max(T,T) cases are handled
  * by the generic template we get from <algorithm>. */
-inline float min(float a, int b) { return a < b? a:b; }
-inline float min(int a, float b) { return a < b? a:b; }
-inline float max(float a, int b) { return a > b? a:b; }
-inline float max(int a, float b) { return a > b? a:b; }
-inline unsigned long min(unsigned int a, unsigned long b) { return a < b? a:b; }
-inline unsigned long min(unsigned long a, unsigned int b) { return a < b? a:b; }
-inline unsigned long max(unsigned int a, unsigned long b) { return a > b? a:b; }
-inline unsigned long max(unsigned long a, unsigned int b) { return a > b? a:b; }
+inline float min( float a, int b ) { return a < b? a:b; }
+inline float min( int a, float b ) { return a < b? a:b; }
+inline float max( float a, int b ) { return a > b? a:b; }
+inline float max( int a, float b ) { return a > b? a:b; }
+inline unsigned long min( unsigned int a, unsigned long b ) { return a < b? a:b; }
+inline unsigned long min( unsigned long a, unsigned int b ) { return a < b? a:b; }
+inline unsigned long max( unsigned int a, unsigned long b ) { return a > b? a:b; }
+inline unsigned long max( unsigned long a, unsigned int b ) { return a > b? a:b; }
 
 /* Traditional defines.  Only use this if you absolutely need
  * a constant value. */
@@ -39,36 +39,36 @@ inline unsigned long max(unsigned long a, unsigned int b) { return a > b? a:b; }
 // Do the multiply before the divide to that integer scales have more precision.
 #define SCALE(x, l1, h1, l2, h2)	(((x) - (l1)) * ((h2) - (l2)) / ((h1) - (l1)) + (l2))
 
-inline bool CLAMP(int &x, int l, int h)
+inline bool CLAMP( int &x, int l, int h )
 {
 	if (x > h)		{ x = h; return true; }
 	else if (x < l) { x = l; return true; }
 	return false;
 }
-inline bool CLAMP(unsigned &x, unsigned l, unsigned h)
+inline bool CLAMP( unsigned &x, unsigned l, unsigned h )
 {
 	if (x > h)		{ x = h; return true; }
 	else if (x < l) { x = l; return true; }
 	return false;
 }
-inline bool CLAMP(float &x, float l, float h)
+inline bool CLAMP( float &x, float l, float h )
 {
 	if (x > h)		{ x = h; return true; }
 	else if (x < l) { x = l; return true; }
 	return false;
 }
 
-inline void wrap(int &x, int n)
+inline void wrap( int &x, int n )
 {
 	if (x<0)
 		x += ((-x/n)+1)*n;
 	x %= n;
 }
-inline void wrap(unsigned &x, unsigned n)
+inline void wrap( unsigned &x, unsigned n )
 {
 	x %= n;
 }
-inline void wrap(float &x, float n)
+inline void wrap( float &x, float n )
 {
 	if (x<0)
 		x += truncf(((-x/n)+1))*n;
@@ -153,13 +153,13 @@ inline float RandomFloat()
 }
 
 // Returns a float between dLow and dHigh inclusive
-inline float RandomFloat(float fLow, float fHigh)
+inline float RandomFloat( float fLow, float fHigh )
 {
 	return SCALE( RandomFloat(), 0.0f, 1.0f, fLow, fHigh );
 }
 
 // Returns an integer between nLow and nHigh inclusive
-inline int RandomInt(int nLow, int nHigh)
+inline int RandomInt( int nLow, int nHigh )
 {
 	return int( RandomFloat() * (nHigh - nLow + 1) + nLow );
 }
@@ -224,9 +224,9 @@ inline float QuantizeDown( float i, float iInterval )
 void fapproach( float& val, float other_val, float to_move );
 
 /* Return a positive x mod y. */
-float fmodfp(float x, float y);
+float fmodfp( float x, float y );
 
-int power_of_two(int input);
+int power_of_two( int input );
 bool IsAnInt( const CString &s );
 bool IsHexVal( const CString &s );
 float HHMMSSToSeconds( const CString &sHMS );
@@ -272,25 +272,27 @@ wchar_t utf8_get_char( const CString &s );
 bool utf8_is_valid( const CString &s );
 void utf8_remove_bom( CString &s );
 
-CString WStringToCString(const wstring &str);
+CString WStringToCString( const wstring &sString );
 CString WcharToUTF8( wchar_t c );
-wstring CStringToWstring(const CString &str);
+wstring CStringToWstring( const CString &sString );
+
+CString GetLanguageNameFromISO639Code( CString sName );
 
 // Splits a CString into an CStringArray according the Delimitor.
-void split( const CString &Source, const CString &Delimitor, CStringArray& AddIt, const bool bIgnoreEmpty = true );
-void split( const wstring &Source, const wstring &Delimitor, vector<wstring> &AddIt, const bool bIgnoreEmpty = true );
+void split( const CString &sSource, const CString &sDelimitor, CStringArray& asAddIt, const bool bIgnoreEmpty = true );
+void split( const wstring &sSource, const wstring &sDelimitor, vector<wstring> &asAddIt, const bool bIgnoreEmpty = true );
 
 /* In-place split. */
-void split( const CString &Source, const CString &Delimitor, int &begin, int &size, const bool bIgnoreEmpty = true );
-void split( const wstring &Source, const wstring &Delimitor, int &begin, int &size, const bool bIgnoreEmpty = true );
+void split( const CString &sSource, const CString &sDelimitor, int &iBegin, int &iSize, const bool bIgnoreEmpty = true );
+void split( const wstring &sSource, const wstring &sDelimitor, int &iBegin, int &iSize, const bool bIgnoreEmpty = true );
 
 /* In-place split of partial string. */
-void split( const CString &Source, const CString &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty ); /* no default to avoid ambiguity */
-void split( const wstring &Source, const wstring &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty );
+void split( const CString &sSource, const CString &sDelimitor, int &iBegin, int &iSize, int iLen, const bool bIgnoreEmpty ); /* no default to avoid ambiguity */
+void split( const wstring &sSource, const wstring &sDelimitor, int &iBegin, int &iSize, int iLen, const bool bIgnoreEmpty );
 
 // Joins a CStringArray to create a CString according the Deliminator.
-CString join( const CString &Delimitor, const CStringArray& Source );
-CString join( const CString &Delimitor, CStringArray::const_iterator begin, CStringArray::const_iterator end );
+CString join( const CString &sDelimitor, const CStringArray& sSource );
+CString join( const CString &sDelimitor, CStringArray::const_iterator begin, CStringArray::const_iterator end );
 
 CString GetCwd();
 
@@ -298,15 +300,15 @@ void CRC32( unsigned int &iCRC, const void *pBuffer, size_t iSize );
 unsigned int GetHashForString( const CString &s );
 unsigned int GetHashForFile( const CString &sPath );
 unsigned int GetHashForDirectory( const CString &sDir );	// a hash value that remains the same as long as nothing in the directory has changed
-bool DirectoryIsEmpty( const CString &dir );
+bool DirectoryIsEmpty( const CString &sPath );
 
-bool CompareCStringsAsc(const CString &str1, const CString &str2);
-bool CompareCStringsDesc(const CString &str1, const CString &str2);
-void SortCStringArray( CStringArray &AddTo, const bool bSortAscending = true );
+bool CompareCStringsAsc( const CString &sStr1, const CString &sStr2 );
+bool CompareCStringsDesc( const CString &sStr1, const CString &sStr2 );
+void SortCStringArray( CStringArray &asAddTo, const bool bSortAscending = true );
 
 /* Find the mean and standard deviation of all numbers in [start,end). */
-float calc_mean(const float *start, const float *end);
-float calc_stddev(const float *start, const float *end);
+float calc_mean( const float *pStart, const float *pEnd );
+float calc_stddev( const float *pStart, const float *pEnd );
 
 template<class T1, class T2>
 int FindIndex( T1 begin, T1 end, const T2 *p )
@@ -323,9 +325,9 @@ inline T Increment( T a ) { ++a; return a; }
 template<class T>
 inline T Decrement( T a ) { --a; return a; }
 
-void TrimLeft(CString &str, const char *s = "\r\n\t ");
-void TrimRight(CString &str, const char *s = "\r\n\t ");
-void StripCrnl(CString &s);
+void TrimLeft( CString &sStr, const char *szTrim = "\r\n\t " );
+void TrimRight( CString &sStr, const char *szTrim = "\r\n\t " );
+void StripCrnl( CString &sStr );
 bool BeginsWith( const CString &sTestThis, const CString &sBeginning );
 bool EndsWith( const CString &sTestThis, const CString &sEnding );
 
@@ -334,29 +336,32 @@ void StripCvs( vector<CString> &vs );	// remove all items that end in "cvs"
 CString DerefRedir( const CString &sPath );
 bool GetFileContents( const CString &sPath, CString &sOut, bool bOneLine = false );
 
-class Regex {
+class Regex
+{
+public:
+	Regex( const CString &sPat = "" );
+	Regex( const Regex &rhs );
+	Regex &operator=( const Regex &rhs );
+	~Regex();
+	bool IsSet() const { return !pattern.empty(); }
+	void Set( const CString &str );
+	bool Compare( const CString &sStr );
+	bool Compare( const CString &sStr, vector<CString> &asMatches );
+	bool Replace( const CString &sReplacement, const CString &sSubject, CString &sOut );
+
+private:
 	void *reg;
 	unsigned backrefs;
     CString pattern;
     void Compile();
     void Release();
-public:
-	Regex(const CString &pat = "");
-	Regex(const Regex &rhs);
-	Regex &operator=(const Regex &rhs);
-	~Regex();
-	bool IsSet() const { return !pattern.empty(); }
-	void Set(const CString &str);
-	bool Compare(const CString &str);
-	bool Compare(const CString &str, vector<CString> &matches);
-	bool Replace(const CString &replacement, const CString &subject, CString &out);
 };
 
 
 void ReplaceEntityText( CString &sText, const map<CString,CString> &m );
 void ReplaceEntityText( CString &sText, const map<char,CString> &m );
 void Replace_Unicode_Markers( CString &Text );
-CString WcharDisplayText(wchar_t c);
+CString WcharDisplayText( wchar_t c );
 
 CString Basename( const CString &dir );
 CString Dirname( const CString &dir );
@@ -443,14 +448,14 @@ inline CString ToString( const CString &value ) { return value; }
 // Helper function for reading/writing scores
 //
 class RageFileBasic;
-bool FileRead(RageFileBasic& f, CString& sOut);
-bool FileRead(RageFileBasic& f, int& iOut);
-bool FileRead(RageFileBasic& f, unsigned& uOut);
-bool FileRead(RageFileBasic& f, float& fOut);
-void FileWrite(RageFileBasic& f, const CString& sWrite);
-void FileWrite(RageFileBasic& f, int iWrite);
-void FileWrite(RageFileBasic& f, size_t uWrite);
-void FileWrite(RageFileBasic& f, float fWrite);
+bool FileRead( RageFileBasic& f, CString& sOut );
+bool FileRead( RageFileBasic& f, int& iOut );
+bool FileRead( RageFileBasic& f, unsigned& uOut );
+bool FileRead( RageFileBasic& f, float& fOut );
+void FileWrite( RageFileBasic& f, const CString& sWrite );
+void FileWrite( RageFileBasic& f, int iWrite );
+void FileWrite( RageFileBasic& f, size_t uWrite );
+void FileWrite( RageFileBasic& f, float fWrite );
 
 bool FileCopy( CString sSrcFile, CString sDstFile );
 bool FileCopy( RageFileBasic &in, RageFileBasic &out, CString &sError, bool *bReadError = NULL );
