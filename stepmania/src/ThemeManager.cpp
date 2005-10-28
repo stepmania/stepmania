@@ -8,6 +8,7 @@
 #include "IniFile.h"
 #include "RageTimer.h"
 #include "FontCharAliases.h"
+#include "arch/ArchHooks/ArchHooks.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageFile.h"
 #include "ScreenManager.h"
@@ -208,6 +209,18 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThem
 	depth--;
 }
 
+CString ThemeManager::GetDefaultLanguage()
+{
+	CString sLangCode = HOOKS->GetPreferredLanguage();
+	CString sLangName = GetLanguageNameFromISO639Code( sLangCode );
+
+	if( DoesLanguageExist(sLangName) )
+		return sLangName;
+
+	LOG->Trace( "No language \"%s\"; defaulting to %s", sLangName.c_str(), BASE_LANGUAGE.c_str() );
+	return BASE_LANGUAGE;
+}
+
 void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName_, const CString &sLanguage_ )
 {
 	CString sThemeName = sThemeName_;
@@ -215,7 +228,7 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName_, const CSt
 	if( !DoesThemeExist(sThemeName) )
 		sThemeName = BASE_THEME_NAME;
 	if( !DoesLanguageExist(sLanguage) )
-		sLanguage = BASE_LANGUAGE;
+		sLanguage = GetDefaultLanguage();
 	LOG->Trace("ThemeManager::SwitchThemeAndLanguage: \"%s\", \"%s\"",
 		sThemeName.c_str(), sLanguage.c_str() );
 

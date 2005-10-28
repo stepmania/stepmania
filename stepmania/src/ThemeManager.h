@@ -107,6 +107,7 @@ protected:
 	static CString GetMetricsIniPath( const CString &sThemeName );
 	static void GetLanguagesForTheme( const CString &sThemeName, CStringArray& asLanguagesOut );
 	static CString GetLanguageIniPath( const CString &sThemeName, const CString &sLanguage );
+	CString GetDefaultLanguage();
 
 	CString m_sCurThemeName;
 	CString m_sCurLanguage;
