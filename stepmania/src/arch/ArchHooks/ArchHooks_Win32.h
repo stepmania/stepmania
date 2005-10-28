@@ -11,6 +11,7 @@ public:
     ~ArchHooks_Win32();
     void DumpDebugInfo();
 	void RestartProgram();
+	CString GetPreferredLanguage();
 
 	int OldThreadPriority;
 	RageMutex *TimeCritMutex;

@@ -15,6 +15,12 @@ public:
 	/* Re-exec the game.  If this is implemented, it doesn't return. */
 	virtual void RestartProgram() { }
 
+	/*
+	 * Get the 2-letter RFC-639 code of the user's preferred language
+	 * for localized messages, in uppercase.
+	 */
+	virtual CString GetPreferredLanguage() { return "EN"; }
+
 	/* Call this to temporarily enter a high-priority or realtime scheduling (depending
 	 * on the implementation) mode.  This is used to improve timestamp accuracy.  Do as
 	 * little as possible in this mode; hanging in it might hang the system entirely. */
