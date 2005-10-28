@@ -31,16 +31,13 @@ static BOOL   gFinderLaunch;
     event.type = SDL_QUIT;
     SDL_PushEvent(&event);
 }
-@end
 
-@interface HelperWindow : NSWindow
-@end
-
-@implementation HelperWindow
-/* Override NSWindow's keyDown to keep it from beeping. */
-- (void) keyDown:(NSEvent *)event
+- (void)sendEvent:(NSEvent *)event
 {
+	if( [event type] != NSKeyDown )
+		[super sendEvent:event];
 }
+
 @end
 
 /* The main class of the application, the application's delegate */
@@ -244,7 +241,6 @@ int main (int argc, char **argv)
         gArgv[i] = argv[i];
     gArgv[i] = NULL;
 
-	[HelperWindow poseAsClass:[NSWindow class]];
     [SDLApplication poseAsClass:[NSApplication class]];
     CustomApplicationMain (argc, argv);
     return 0;
