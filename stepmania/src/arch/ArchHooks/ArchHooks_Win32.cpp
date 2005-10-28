@@ -219,8 +219,9 @@ static CString LangIdToString( LANGID l )
 	case LANG_KANNADA: return "KN";
 	case LANG_MARATHI: return "MR";
 	case LANG_SANSKRIT: return "SA";
-	case LANG_MONGOLIAN: return "MN";
-	case LANG_GALICIAN: return "GL";
+	// These aren't present in the VC6 headers. We'll never have translations to these languages anyway. -C
+	//case LANG_MONGOLIAN: return "MN";
+	//case LANG_GALICIAN: return "GL";
 	default:
 	case LANG_ENGLISH: return "EN";
 	}
