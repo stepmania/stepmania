@@ -359,7 +359,7 @@ static void child_process()
             "\n"
             "Please report a bug at:\n"
             "\n"
-            "    http://sourceforge.net/tracker/?func=add&group_id=37892&atid=421366\n"
+            "    " REPORT_BUG_URL "\n"
             "\n"
             );
 #endif
