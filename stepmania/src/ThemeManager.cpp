@@ -597,6 +597,7 @@ void ThemeManager::ReloadMetrics()
 
 bool ThemeManager::GetMetricRawRecursive( const CString &sClassName_, const CString &sValueName, CString &sOut )
 {
+	ASSERT( sValueName != "" );
 	CString sClassName( sClassName_ );
 
 	int n = 100;
@@ -902,6 +903,7 @@ public:
 	static int GetPathG( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathG(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
+	static int GetPreferencesSection( T* p, lua_State *L ) { lua_pushstring(L, p->GetPreferencesSection() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -909,6 +911,7 @@ public:
 		ADD_METHOD( GetPathG );
 		ADD_METHOD( GetPathB );
 		ADD_METHOD( GetPathS );
+		ADD_METHOD( GetPreferencesSection );
 
 		Luna<T>::Register( L );
 
