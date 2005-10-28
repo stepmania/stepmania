@@ -52,7 +52,8 @@ public:
 	//
 	// Main state info
 	//
-	const Game*		m_pCurGame;
+	void SetCurGame( const Game *pGame );	// Call this instead of m_pCurGame.Set to make sure PREFSMAN->m_sCurrentGame stays in sync
+	BroadcastOnChangePtr<const Game>	m_pCurGame;
 	BroadcastOnChangePtr<const Style>	m_pCurStyle;
 	bool								m_bSideIsJoined[NUM_PLAYERS];	// left side, right side
 	bool								m_bIsMultiPlayerJoined[NUM_MultiPlayer];

@@ -104,7 +104,7 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 			if( iter == vGames.end() )
 				iter = vGames.begin();
 
-			GAMESTATE->m_pCurGame = *iter;
+			GAMESTATE->SetCurGame( *iter );
 
 			/* Reload the theme if it's changed, but don't back to the initial screen. */
 			ResetGame();

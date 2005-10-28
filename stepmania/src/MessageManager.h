@@ -27,6 +27,7 @@ struct lua_State;
 
 enum Message
 {
+	Message_CurrentGameChanged,
 	Message_CurrentStyleChanged,
 	Message_PlayModeChanged,
 	Message_CurrentSongChanged,

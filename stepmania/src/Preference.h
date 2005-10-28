@@ -59,7 +59,7 @@ public:
 		m_currentValue = m_defaultValue;
 	}
 
-	T Get() const
+	const T &Get() const
 	{
 		return m_currentValue;
 	}

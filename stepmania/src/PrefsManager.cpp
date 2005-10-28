@@ -425,7 +425,7 @@ void PrefsManager::ResetToFactoryDefaults()
 	SavePrefsToDisk();
 }
 
-void PrefsManager::ReadPrefsFromFile( CString sIni )
+void PrefsManager::ReadPrefsFromFile( const CString &sIni )
 {
 	IniFile ini;
 	if( !ini.ReadFile(sIni) )
@@ -512,13 +512,19 @@ CString PrefsManager::GetMovieDrivers()
 		return m_sMovieDrivers; 
 }
 
-CString PrefsManager::GetLightsDriver()	{ 
+CString PrefsManager::GetLightsDriver()	
+{ 
 	if ( m_sLightsDriver.Get().empty() )
 		return (CString)DEFAULT_LIGHTS_DRIVER;
 	else
 		return m_sLightsDriver;
 }
 
+PrefsManager::GamePrefs &PrefsManager::GetCurrentGamePrefs()
+{
+	ASSERT( !m_sCurrentGame.Get().empty() );
+	return m_mapGameNameToGamePrefs[m_sCurrentGame];
+}
 
 // lua start
 #include "LuaBinding.h"

@@ -12,6 +12,7 @@ MessageManager*	MESSAGEMAN = NULL;	// global and accessable from anywhere in our
 
 
 static const CString MessageNames[] = {
+	"CurrentGameChanged",
 	"CurrentStyleChanged",
 	"PlayModeChanged",
 	"CurrentSongChanged",

@@ -85,7 +85,7 @@ bool GameCommand::DescribesCurrentModeForAllPlayers() const
 
 bool GameCommand::DescribesCurrentMode( PlayerNumber pn ) const
 {
-	if( m_pGame != NULL && m_pGame != GAMESTATE->m_pCurGame )
+	if( m_pGame != NULL && m_pGame != GAMESTATE->m_pCurGame.Get() )
 		return false;
 	if( m_pm != PLAY_MODE_INVALID && GAMESTATE->m_PlayMode != m_pm )
 		return false;
@@ -728,7 +728,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	const PlayMode OldPlayMode = GAMESTATE->m_PlayMode;
 
 	if( m_pGame != NULL )
-		GAMESTATE->m_pCurGame = m_pGame;
+		GAMESTATE->SetCurGame( m_pGame );
 	if( m_pm != PLAY_MODE_INVALID )
 		GAMESTATE->m_PlayMode.Set( m_pm );
 

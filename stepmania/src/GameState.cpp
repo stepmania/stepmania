@@ -36,6 +36,7 @@
 #include "LuaReference.h"
 #include "CommonMetrics.h"
 #include "CharacterManager.h"
+#include "Game.h"
 
 #include <ctime>
 #include <set>
@@ -62,6 +63,7 @@ Song* GameState::GetDefaultSong() const
 
 
 GameState::GameState() :
+    m_pCurGame(				Message_CurrentGameChanged ),
     m_pCurStyle(			Message_CurrentStyleChanged ),
     m_PlayMode(				Message_PlayModeChanged ),
 	m_sPreferredSongGroup(	Message_PreferredSongGroupChanged ),
@@ -82,7 +84,7 @@ GameState::GameState() :
 {
 	m_pCurStyle.Set( NULL );
 
-	m_pCurGame = NULL;
+	m_pCurGame.Set( NULL );
 	m_iCoins = 0;
 	m_timeGameStarted.SetZero();
 	m_bDemonstrationOrJukebox = false;
@@ -574,6 +576,13 @@ void GameState::Update( float fDelta )
 			MESSAGEMAN->Broadcast( (Message)(Message_GoalCompleteP1+p) );
 		}
 	}
+}
+
+void GameState::SetCurGame( const Game *pGame )
+{
+	m_pCurGame.Set( pGame );
+	CString sGame = pGame ? CString(pGame->m_szName) : CString();
+	PREFSMAN->m_sCurrentGame.Set( sGame );
 }
 
 const float GameState::MUSIC_SECONDS_INVALID = -5000.0f;

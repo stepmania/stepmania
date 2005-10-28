@@ -747,11 +747,7 @@ void ChangeCurrentGame( const Game* g )
 
 	INPUTMAPPER->SaveMappingsToDisk();	// save mappings before switching the game
 
-	GAMESTATE->m_pCurGame = g;
-
-	/* Load this game's preferences.  If we just set an unavailable game type, this
-	 * will change it back to the default. */
-	PREFSMAN->m_sCurrentGame.Set( g->m_szName );
+	GAMESTATE->SetCurGame( g );
 
 	/* Save the newly-selected game. */
 	PREFSMAN->SavePrefsToDisk();
@@ -771,21 +767,21 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 	{
 		ASSERT( GAMEMAN != NULL );
 		CString sGame;
-		GAMESTATE->m_pCurGame = NULL;
+		GAMESTATE->SetCurGame( NULL );
 		if( !PREFSMAN->m_sCurrentGame.Get().empty() )
-			GAMESTATE->m_pCurGame = GAMEMAN->StringToGameType( PREFSMAN->m_sCurrentGame );
+			GAMESTATE->SetCurGame( GAMEMAN->StringToGameType(PREFSMAN->m_sCurrentGame) );
 	}
 
 	/* If the active game type isn't actually available, revert to the default. */
 	if( GAMESTATE->m_pCurGame == NULL )
 	{
-		GAMESTATE->m_pCurGame = GAMEMAN->GetDefaultGame();
+		GAMESTATE->SetCurGame( GAMEMAN->GetDefaultGame() );
 	}
 	else if( !GAMEMAN->IsGameEnabled( GAMESTATE->m_pCurGame )  &&  GAMESTATE->m_pCurGame != GAMEMAN->GetDefaultGame() )
 	{
 		LOG->Warn( "Default NoteSkin for \"%s\" missing, reverting to \"%s\"",
 			GAMESTATE->m_pCurGame->m_szName, GAMEMAN->GetDefaultGame()->m_szName );
-		GAMESTATE->m_pCurGame = GAMEMAN->GetDefaultGame();
+		GAMESTATE->SetCurGame( GAMEMAN->GetDefaultGame() );
 	}
 
 	/* Load keymaps for the new game. */

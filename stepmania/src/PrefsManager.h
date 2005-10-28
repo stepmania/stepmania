@@ -283,7 +283,7 @@ public:
 	};
 	map<CString, GamePrefs> m_mapGameNameToGamePrefs;
 
-	GamePrefs &GetCurrentGamePrefs() { return m_mapGameNameToGamePrefs[m_sCurrentGame]; }	// inserts if not already present
+	GamePrefs &GetCurrentGamePrefs();
 
 	void SaveGamePrefsToDisk();
 	void ReadGamePrefsFromDisk();
@@ -293,7 +293,7 @@ public:
 	void PushSelf( lua_State *L );
 
 protected:
-	void ReadPrefsFromFile( CString sIni );
+	void ReadPrefsFromFile( const CString &sIni );
 
 };
 

@@ -684,7 +684,7 @@ void NetworkSyncManager::ProcessInput()
 				GameName = m_packet.ReadNT();
 				StyleName = m_packet.ReadNT();
 
-				GAMESTATE->m_pCurGame = GAMEMAN->StringToGameType( GameName );
+				GAMESTATE->SetCurGame( GAMEMAN->StringToGameType(GameName) );
 				GAMESTATE->m_pCurStyle.Set( GAMEMAN->GameAndStringToStyle(GAMESTATE->m_pCurGame,StyleName) );
 
 				SCREENMAN->SetNewScreen( "ScreenNetSelectMusic" ); //Should this be metric'd out?
