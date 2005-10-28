@@ -17,6 +17,32 @@
 #define PERSIST_SCREENS				THEME->GetMetric (m_sName,"PersistScreens")
 #define GROUPED_SCREENS				THEME->GetMetric (m_sName,"GroupedScreens")
 
+void Screen::InitScreen( Screen *pScreen )
+{
+	/* Set the name of the loading screen, so Actor::LoadFromNode can
+	 * access it. */
+	LuaReference Old;
+	{
+		Lua *L = LUA->Get();
+		lua_getglobal( L, "LoadingScreen" );
+		Old.SetFromStack( L );
+
+		LuaHelpers::Push( pScreen->GetName(), L );
+		lua_setglobal( L, "LoadingScreen" );
+		LUA->Release( L );
+	}
+
+	pScreen->Init();
+
+	/* Restore the old value. */
+	{
+		Lua *L = LUA->Get();
+		Old.PushSelf( L );
+		lua_setglobal( L, "LoadingScreen" );
+		LUA->Release( L );
+	}
+}
+
 Screen::Screen( CString sName )
 {
 	SetName( sName );

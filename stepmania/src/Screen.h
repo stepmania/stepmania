@@ -17,7 +17,7 @@ void RegisterScreenClass( const CString& sClassName, CreateScreenFn pfn );
 
 // Each Screen class should have a REGISTER_SCREEN_CLASS in its CPP file.
 #define REGISTER_SCREEN_CLASS( className ) \
-	static Screen* Create##className( const CString &sName ) { Screen *pRet = new className( sName ); pRet->Init(); return pRet; } \
+	static Screen* Create##className( const CString &sName ) { Screen *pRet = new className( sName ); Screen::InitScreen( pRet ); return pRet; } \
 	struct Register##className { \
 		Register##className() { RegisterScreenClass( #className,Create##className); } \
 	}; \
@@ -34,6 +34,8 @@ enum ScreenType
 class Screen : public ActorFrame
 {
 public:
+	static void InitScreen( Screen *pScreen );
+
 	Screen( CString sName );	// enforce that all screens have m_sName filled in
 	virtual ~Screen();
 

@@ -196,9 +196,14 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 	{
         if( pChild->m_sName == "Input" )
         {
-			/* Parameters are set as globals by ActorUtil::LoadFromNode.
+			/*
+			 * Parameters are set as globals by ActorUtil::LoadFromNode and
+			 * Screen::InitScreen.
 			 * If parameters are specified here, save them to the actor.  Accessing
-			 * parameters as globals directly is deprecated. */
+			 * parameters as globals directly is deprecated.  (However, it's still
+			 * the only way to access them when self isn't available, such as from
+			 * RunAtExpressionS.)
+			 */
 			CString sName;
 			if( !pChild->GetAttrValue( "Name", sName ) )
 				RageException::Throw( ssprintf("Input node in '%s' is missing the attribute 'Name'", sDir.c_str()) );
