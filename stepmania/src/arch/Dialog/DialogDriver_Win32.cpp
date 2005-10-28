@@ -3,6 +3,7 @@
 #include "RageUtil.h"
 #include "CommonMetrics.h"	// for WINDOW_TITLE
 #include "ThemeManager.h"
+#include "ProductInfo.h"
 
 #include "archutils/win32/AppInstance.h"
 #include "archutils/win32/GotoURL.h"
@@ -113,7 +114,7 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 			}
 			break;
 		case IDC_BUTTON_REPORT:
-			GotoURL( "http://sourceforge.net/tracker/?func=add&group_id=37892&atid=421366" );
+			GotoURL( REPORT_BUG_URL );
 			break;
 		case IDC_BUTTON_RESTART:
 			Win32RestartProgram();

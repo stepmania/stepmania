@@ -931,7 +931,7 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 			EndDialog( hDlg, FALSE );
 			break;
 		case IDC_BUTTON_REPORT:
-			GotoURL( "http://sourceforge.net/tracker/?func=add&group_id=37892&atid=421366" );
+			GotoURL( REPORT_BUG_URL );
 			break;
 		}
 		break;

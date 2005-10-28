@@ -46,6 +46,7 @@
 #include "RageMath.h"
 #include "RageTypes.h"
 #include "RageUtil.h"
+#include "ProductInfo.h"
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
@@ -456,7 +457,7 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 	 * too using Direct3D directly.  (If we can't, it's a bug that we can work
 	 * around--if GLDirect can do it, so can we!) */
 	if( !strncmp( (const char *) glGetString(GL_RENDERER), "GLDirect", 8 ) )
-		return "GLDirect was detected.  GLDirect is not compatible with StepMania, and should be disabled.\n";
+		return "GLDirect was detected.  GLDirect is not compatible with " PRODUCT_NAME ", and should be disabled.\n";
 #endif
 
 #if defined(UNIX)

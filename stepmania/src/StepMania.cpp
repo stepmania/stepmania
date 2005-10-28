@@ -693,7 +693,7 @@ RageDisplay *CreateDisplay()
 
 	CString error = "There was an error while initializing your video card.\n\n"
 		"Please do not file this error as a bug!  Use the web page below to troubleshoot this problem.\n\n"
-		"http://www.stepmania.com/stepmania/mediawiki.php?title=Video_Driver_Troubleshooting\n\n"
+		VIDEO_TROUBLESHOOTING_URL "\n\n"
 		"Video Driver: "+GetVideoDriverName()+"\n\n";
 
 	CStringArray asRenderers;

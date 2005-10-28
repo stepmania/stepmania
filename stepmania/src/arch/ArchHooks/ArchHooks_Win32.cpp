@@ -132,7 +132,7 @@ void ArchHooks_Win32::CheckVideoDriver()
 		if( info.sDescription != sPrimaryDeviceName )
 			continue;
 
-		/* "IntelR 810 Chipset Graphics Driver PV 2.1".  I get a lot of crash reports
+		/* "IntelR 810 Chipset Graphics Driver PV 2.1".  There are a lot of crash reports
 		 * with people using this version. */
 		if( Regex( "Intel.* 810 Chipset Graphics Driver PV 2.1").Compare( info.sDescription ) )
 		{
