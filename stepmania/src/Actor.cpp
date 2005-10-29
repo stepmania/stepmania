@@ -196,14 +196,7 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 	{
         if( pChild->m_sName == "Input" )
         {
-			/*
-			 * Parameters are set as globals by ActorUtil::LoadFromNode and
-			 * Screen::InitScreen.
-			 * If parameters are specified here, save them to the actor.  Accessing
-			 * parameters as globals directly is deprecated.  (However, it's still
-			 * the only way to access them when self isn't available, such as from
-			 * RunAtExpressionS.)
-			 */
+			/* If parameters are specified here, save their values to the actor. */
 			CString sName;
 			if( !pChild->GetAttrValue( "Name", sName ) )
 				RageException::Throw( ssprintf("Input node in '%s' is missing the attribute 'Name'", sDir.c_str()) );
@@ -214,7 +207,7 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
             Lua *L = LUA->Get();
             this->PushSelf( L );
             LuaHelpers::Push( sName, L );
-			lua_getglobal( L, sName );
+			ActorUtil::GetParam( L, sName );
 
 			if( lua_isnil(L, -1) && !bOptional )
 				RageException::Throw( "Actor in \"%s\" requires parameter \"%s\" that is not set", sDir.c_str(), sName.c_str() );

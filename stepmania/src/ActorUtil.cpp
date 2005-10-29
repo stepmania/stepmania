@@ -104,6 +104,70 @@ retry:
 	sPath = DerefRedir( sPath );
 }
 
+static void PushParamsTable( Lua *L )
+{
+	lua_pushstring( L, "Params" );
+	lua_rawget( L, LUA_GLOBALSINDEX );
+	if( lua_isnil(L, -1) )
+	{
+		lua_pop( L, 1 );
+		lua_newtable( L );
+		lua_pushstring( L, "Params" );
+		lua_pushvalue( L, -2 );
+		lua_rawset( L, LUA_GLOBALSINDEX );
+	}
+}
+
+/* Set an input parameter to the first value on the stack.  If pOld is non-NULL,
+ * set it to the old value.  The value used on the stack will be removed. */
+void ActorUtil::SetParamFromStack( Lua *L, CString sName, LuaReference *pOld )
+{
+	int iValue = lua_gettop(L);
+
+	PushParamsTable( L );
+	int iParams = lua_gettop(L);
+
+	LuaHelpers::Push( sName, L );
+	int iName = lua_gettop(L);
+
+	/* Save the old value. */
+	if( pOld != NULL )
+	{
+		lua_pushvalue( L, iName );
+		lua_rawget( L, iParams );
+		pOld->SetFromStack( L );
+	}
+
+	/* Backwards-compatibility: set the value as a global.  This is strongly
+	 * deprecated. */
+	lua_pushvalue( L, iName );
+	lua_pushvalue( L, iValue );
+	lua_rawset( L, LUA_GLOBALSINDEX );
+
+	/* Set the value in the table. */
+	lua_pushvalue( L, iName );
+	lua_pushvalue( L, iValue );
+	lua_rawset( L, iParams );
+
+	lua_settop( L, iValue-1 );
+}
+
+/* Look up a param set with SetParamFromStack, and push it on the stack. */
+void ActorUtil::GetParam( Lua *L, const CString &sName )
+{
+	/* Search the params table. */
+	PushParamsTable( L );
+	LuaHelpers::Push( sName, L );
+	lua_rawget( L, -2 );
+	lua_remove( L, -2 );
+
+	if( lua_isnil(L, -1) )
+	{
+		/* Deprecated: search globals. */
+		lua_pop( L, 1 );
+		lua_getglobal( L, sName );
+	}
+}
 
 Actor* ActorUtil::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
@@ -136,8 +200,15 @@ Actor* ActorUtil::LoadFromNode( const CString& sDir, const XNode* pNode )
 				CString s;
 				if( pChild->GetAttrValue( "Value", s ) )
 				{
+					/* XXX: don't RunAtExpressionS here; probably don't replace ::, either
+					 * (use regular Lua escapes). */
 					THEME->EvaluateString( s );
-					LUA->SetGlobalFromExpression( sName, s );
+
+					Lua *L = LUA->Get();
+					LuaHelpers::RunScript( L, "return " + s, "", 1 );
+
+					SetParamFromStack( L, sName, NULL );
+					LUA->Release(L);
 				}
 				else
 				{

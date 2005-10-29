@@ -19,16 +19,12 @@
 
 void Screen::InitScreen( Screen *pScreen )
 {
-	/* Set the name of the loading screen, so Actor::LoadFromNode can
-	 * access it. */
+	/* Set the name of the loading screen. */
 	LuaReference Old;
 	{
 		Lua *L = LUA->Get();
-		lua_getglobal( L, "LoadingScreen" );
-		Old.SetFromStack( L );
-
 		LuaHelpers::Push( pScreen->GetName(), L );
-		lua_setglobal( L, "LoadingScreen" );
+		ActorUtil::SetParamFromStack( L, "LoadingScreen", &Old );
 		LUA->Release( L );
 	}
 
@@ -38,7 +34,7 @@ void Screen::InitScreen( Screen *pScreen )
 	{
 		Lua *L = LUA->Get();
 		Old.PushSelf( L );
-		lua_setglobal( L, "LoadingScreen" );
+		ActorUtil::SetParamFromStack( L, "LoadingScreen" );
 		LUA->Release( L );
 	}
 }
