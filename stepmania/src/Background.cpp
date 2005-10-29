@@ -112,7 +112,6 @@ protected:
 		int				m_iCurBGChangeIndex;
 		Actor *m_pCurrentBGA;
 		Actor *m_pFadingBGA;
-		float m_fSecsLeftInFade;
 	};
 	Layer m_Layer[NUM_BackgroundLayer];
 
@@ -161,7 +160,6 @@ BackgroundImpl::Layer::Layer()
 	m_iCurBGChangeIndex = -1;
 	m_pCurrentBGA = NULL;
 	m_pFadingBGA = NULL;
-	m_fSecsLeftInFade = 0;
 }
 
 void BackgroundImpl::Init()
@@ -261,7 +259,6 @@ void BackgroundImpl::Layer::Unload()
 
 	m_pCurrentBGA = NULL;
 	m_pFadingBGA = NULL;
-	m_fSecsLeftInFade = 0;
 	m_iCurBGChangeIndex = -1;
 }
 
@@ -785,7 +782,6 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		{
 			m_pFadingBGA = NULL;
 			LOG->Trace( "bg didn't actually change.  Ignoring." );
-			m_fSecsLeftInFade = 0;
 		}
 		else
 		{
@@ -817,8 +813,6 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 		LUA->UnsetGlobal( "Color1" );
 		LUA->UnsetGlobal( "Color2" );
 
-		m_fSecsLeftInFade = m_pFadingBGA ? m_pFadingBGA->GetTweenTimeLeft() / oldChange.m_fRate : 0;
-
 		/* How much time of this BGA have we skipped?  (This happens with SetSeconds.) */
 		const float fStartSecond = pSong->m_Timing.GetElapsedTimeFromBeat( change.m_fStartBeat );
 
@@ -828,12 +822,8 @@ void BackgroundImpl::Layer::UpdateCurBGChange( const Song *pSong, float fLastMus
 
 	if( m_pFadingBGA )
 	{
-		m_fSecsLeftInFade -= fDeltaTime;
-		if( m_fSecsLeftInFade < 0 )
-		{
-			m_fSecsLeftInFade = 0;
+		if( m_pFadingBGA->GetTweenTimeLeft() == 0 )
 			m_pFadingBGA = NULL;
-		}
 	}
 
 	/* This is affected by the music rate. */
