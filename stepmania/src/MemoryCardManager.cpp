@@ -20,25 +20,25 @@ MemoryCardManager*	MEMCARDMAN = NULL;	// global and accessable from anywhere in 
 
 static void MemoryCardOsMountPointInit( size_t /*PlayerNumber*/ i, CString &sNameOut, CString &defaultValueOut )
 {
-	sNameOut = "MemoryCardOsMountPoint" + PlayerNumberToString( (PlayerNumber)i );
+	sNameOut = ssprintf( "MemoryCardOsMountPointP%d", i+1 );
 	defaultValueOut = "";
 }
 
 static void MemoryCardUsbBusInit( size_t /*PlayerNumber*/ i, CString &sNameOut, int &defaultValueOut )
 {
-	sNameOut = "MemoryCardUsbBus" + PlayerNumberToString( (PlayerNumber)i );
+	sNameOut = ssprintf( "MemoryCardUsbBusP%d", i+1 );
 	defaultValueOut = -1;
 }
 
 static void MemoryCardUsbPortInit( size_t /*PlayerNumber*/ i, CString &sNameOut, int &defaultValueOut )
 {
-	sNameOut = "MemoryCardUsbPort" + PlayerNumberToString( (PlayerNumber)i );
+	sNameOut = ssprintf( "MemoryCardUsbPortP%d", i+1 );
 	defaultValueOut = -1;
 }
 
 static void MemoryCardUsbLevelInit( size_t /*PlayerNumber*/ i, CString &sNameOut, int &defaultValueOut )
 {
-	sNameOut = "MemoryCardUsbLevel" + PlayerNumberToString( (PlayerNumber)i );
+	sNameOut = ssprintf( "MemoryCardUsbLevelP%d", i+1 );
 	defaultValueOut = -1;
 }
 
