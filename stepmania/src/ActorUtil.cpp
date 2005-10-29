@@ -106,13 +106,13 @@ retry:
 
 static void PushParamsTable( Lua *L )
 {
-	lua_pushstring( L, "Params" );
+	lua_pushstring( L, "P" );
 	lua_rawget( L, LUA_GLOBALSINDEX );
 	if( lua_isnil(L, -1) )
 	{
 		lua_pop( L, 1 );
 		lua_newtable( L );
-		lua_pushstring( L, "Params" );
+		lua_pushstring( L, "P" );
 		lua_pushvalue( L, -2 );
 		lua_rawset( L, LUA_GLOBALSINDEX );
 	}
