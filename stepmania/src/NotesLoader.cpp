@@ -12,7 +12,7 @@ bool NotesLoader::Loadable( CString sPath )
 
 void NotesLoader::GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CString &sMainTitleOut, CString &sSubTitleOut )
 {
-	const CString sLeftSeps[]  = { " -", " ~", " (", " [" };
+	const CString sLeftSeps[]  = { " -", " ~", " (", " [", "\t" };
 
 	for( unsigned i=0; i<ARRAYSIZE(sLeftSeps); i++ )
 	{
