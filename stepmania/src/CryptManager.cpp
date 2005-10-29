@@ -7,8 +7,6 @@
 #include "RageFileManager.h"
 #include "crypto/CryptMD5.h"
 
-#include "arch/arch_platform.h" // hack: HAVE_ stuff should not be defined by arch
-
 CryptManager*	CRYPTMAN	= NULL;	// global and accessable from anywhere in our program
 
 static const CString PRIVATE_KEY_PATH = "Data/private.rsa";
