@@ -525,7 +525,7 @@ static void InitializeConfOptions()
 	ADD( ConfOption( "FastLoad",					MovePref,			"OFF","ON" ) );
 
 	/* Background options */
-	ADD( ConfOption( "BackgroundMode",				MovePref,			"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ) );
+	ADD( ConfOption( "RandomBackgroundMode",		MovePref,			"OFF","ANIMATIONS","VISUALIZATIONS","RANDOM MOVIES" ) );
 	ADD( ConfOption( "BGBrightness",				BGBrightness,		"0%","10%","20%","30%","40%","50%","60%","70%","80%","90%","100%" ) );
 	ADD( ConfOption( "ShowDanger",					MovePref,			"HIDE","SHOW" ) );
 	ADD( ConfOption( "ShowDancingCharacters",		MovePref,			"DEFAULT TO OFF","DEFAULT TO RANDOM","SELECT" ) );

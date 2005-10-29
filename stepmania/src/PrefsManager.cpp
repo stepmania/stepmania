@@ -223,7 +223,7 @@ PrefsManager::PrefsManager() :
 	m_bShowStats			( "ShowStats",				TRUE_IF_DEBUG),
 	m_bShowBanners			( "ShowBanners",			true ),
 
-	m_BackgroundMode		( "BackgroundMode",			BGMODE_ANIMATIONS ),
+	m_RandomBackgroundMode	( "RandomBackgroundMode",	BGMODE_ANIMATIONS ),
 	m_iNumBackgrounds		( "NumBackgrounds",			8 ),
 	m_fBGBrightness			( "BGBrightness",			0.8f ),
 	/* I'd rather get occasional people asking for support for this even though
@@ -443,7 +443,7 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini )
 
 	// validate
 	m_iSongsPerPlay.Set( clamp(m_iSongsPerPlay.Get(),0,MAX_SONGS_PER_PLAY) );
-	m_BackgroundMode.Set( (BackgroundMode)clamp((int)m_BackgroundMode.Get(),0,(int)NUM_BackgroundMode-1) );
+	m_RandomBackgroundMode.Set( (RandomBackgroundMode)clamp((int)m_RandomBackgroundMode.Get(),0,(int)NUM_RandomBackgroundMode-1) );
 
 
 	FOREACH_CONST_Child( &ini, section )

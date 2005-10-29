@@ -424,7 +424,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 
 BackgroundDef BackgroundImpl::Layer::CreateRandomBGA( const Song *pSong, const CString &sEffect, deque<BackgroundDef> &RandomBGAnimations )
 {
-	if( PREFSMAN->m_BackgroundMode == PrefsManager::BGMODE_OFF )
+	if( PREFSMAN->m_RandomBackgroundMode == PrefsManager::BGMODE_OFF )
 		return BackgroundDef();
 
 	if( RandomBGAnimations.empty() )
@@ -510,10 +510,10 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	//
 	{
 		CStringArray vsThrowAway, vsNames;
-		switch( PREFSMAN->m_BackgroundMode )
+		switch( PREFSMAN->m_RandomBackgroundMode )
 		{
 		default:
-			ASSERT_M( 0, ssprintf("Invalid BackgroundMode: %i", (PrefsManager::BackgroundMode)PREFSMAN->m_BackgroundMode) );
+			ASSERT_M( 0, ssprintf("Invalid RandomBackgroundMode: %i", PREFSMAN->m_RandomBackgroundMode) );
 			break;
 		case PrefsManager::BGMODE_OFF:
 			break;
