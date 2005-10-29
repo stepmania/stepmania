@@ -37,7 +37,6 @@ static HBITMAP LoadWin32Surface( RageSurface *s )
 	SelectObject( BitmapDC, NULL );
 	DeleteObject( BitmapDC );
 
-	delete s;
 	return bitmap;
 }
 
