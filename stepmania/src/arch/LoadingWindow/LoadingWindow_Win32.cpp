@@ -10,6 +10,7 @@
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 
+#include "RageSurfaceUtils_Zoom.h"
 static HBITMAP g_hBitmap = NULL;
 
 /* Load a RageSurface into a GDI surface. */
@@ -40,12 +41,25 @@ static HBITMAP LoadWin32Surface( RageSurface *&s )
 	return bitmap;
 }
 
-static HBITMAP LoadWin32Surface( CString sFile )
+static HBITMAP LoadWin32Surface( CString sFile, HWND hWnd )
 {
 	CString error;
 	RageSurface *pSurface = RageSurfaceUtils::LoadFile( sFile, error );
 	if( pSurface == NULL )
 		return NULL;
+
+	/* Resize the splash image to fit the dialog.  Stretch to fit horizontally,
+	 * maintaining aspect ratio. */
+	{
+		RECT r;
+		GetClientRect( hWnd, &r );
+
+		int iWidth = r.right;
+		float fRatio = (float) iWidth / pSurface->w;
+		int iHeight = lrintf( pSurface->h * fRatio );
+
+		RageSurfaceUtils::Zoom( pSurface, iWidth, iHeight );
+	}
 
 	HBITMAP ret = LoadWin32Surface( pSurface );
 	delete pSurface;
@@ -57,9 +71,9 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 	switch( msg )
 	{
 	case WM_INITDIALOG:
-		g_hBitmap = LoadWin32Surface( "Data/splash.png" );
+		g_hBitmap = LoadWin32Surface( "Data/splash.png", hWnd );
 		if( g_hBitmap == NULL )
-			g_hBitmap = LoadWin32Surface( "Data/splash.bmp" );
+			g_hBitmap = LoadWin32Surface( "Data/splash.bmp", hWnd );
 		SendMessage( 
 			GetDlgItem(hWnd,IDC_SPLASH), 
 			STM_SETIMAGE, 
