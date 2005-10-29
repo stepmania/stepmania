@@ -1,8 +1,6 @@
 #include "global.h"
 #include "PlayerNumber.h"
-#include "ThemeManager.h"
 #include "GameState.h"
-#include "CommonMetrics.h"
 #include "LuaManager.h"
 
 static const CString PlayerNumberNames[] = {
