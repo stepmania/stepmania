@@ -223,6 +223,7 @@ PrefsManager::PrefsManager() :
 	m_bShowStats			( "ShowStats",				TRUE_IF_DEBUG),
 	m_bShowBanners			( "ShowBanners",			true ),
 
+	m_bSongBackgrounds		( "SongBackgrounds",		true ),
 	m_RandomBackgroundMode	( "RandomBackgroundMode",	BGMODE_ANIMATIONS ),
 	m_iNumBackgrounds		( "NumBackgrounds",			8 ),
 	m_fBGBrightness			( "BGBrightness",			0.8f ),

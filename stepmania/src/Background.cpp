@@ -548,7 +548,15 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 
 
 
-	if( pSong->HasBGChanges() )
+	if( !PREFSMAN->m_bSongBackgrounds )
+	{
+		/* Backgrounds are disabled; just display the song background. */
+		BackgroundChange change;
+		change.m_def = m_StaticBackgroundDef;
+		change.m_fStartBeat = 0;
+		m_Layer[0].m_aBGChanges.push_back( change );
+	}
+	else if( pSong->HasBGChanges() )
 	{
 		FOREACH_BackgroundLayer( i )
 		{

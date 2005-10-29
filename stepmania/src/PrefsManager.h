@@ -33,6 +33,7 @@ public:
 	Preference<bool>	m_bShowStats;
 	Preference<bool>	m_bShowBanners;
 
+	Preference<bool>	m_bSongBackgrounds;
 	enum RandomBackgroundMode { BGMODE_OFF, BGMODE_ANIMATIONS, BGMODE_RANDOMMOVIES, NUM_RandomBackgroundMode };
 	Preference<RandomBackgroundMode,int>		m_RandomBackgroundMode;
 	Preference<int>		m_iNumBackgrounds;
