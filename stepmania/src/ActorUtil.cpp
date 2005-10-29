@@ -200,10 +200,6 @@ Actor* ActorUtil::LoadFromNode( const CString& sDir, const XNode* pNode )
 				CString s;
 				if( pChild->GetAttrValue( "Value", s ) )
 				{
-					/* XXX: don't RunAtExpressionS here; probably don't replace ::, either
-					 * (use regular Lua escapes). */
-					THEME->EvaluateString( s );
-
 					Lua *L = LUA->Get();
 					LuaHelpers::RunScript( L, "return " + s, "", 1 );
 
