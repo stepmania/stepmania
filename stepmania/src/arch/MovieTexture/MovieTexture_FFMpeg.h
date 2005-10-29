@@ -10,6 +10,7 @@ class MovieTexture_FFMpeg: public MovieTexture_Generic
 public:
 	MovieTexture_FFMpeg( RageTextureID ID );
 
+	static void RegisterProtocols();
 	static RageSurface *AVCodecCreateCompatibleSurface( int iTextureWidth, int iTextureHeight, bool bPreferHighColor, int &iAVTexfmt );
 };
 #define USE_MOVIE_TEXTURE_FFMPEG

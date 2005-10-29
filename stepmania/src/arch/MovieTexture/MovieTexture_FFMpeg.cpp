@@ -522,15 +522,20 @@ static avcodec::URLProtocol RageProtocol =
 	NULL
 };
 
+void MovieTexture_FFMpeg::RegisterProtocols()
+{
+	static bool Done = false;
+	if( Done )
+		return;
+	Done = true;
+
+	avcodec::av_register_all();
+	avcodec::register_protocol( &RageProtocol );
+}
+
 CString MovieDecoder_FFMpeg::Open( CString sFile )
 {
-	static bool bDone = false;
-	if( !bDone )
-	{
-		avcodec::av_register_all();
-		avcodec::register_protocol( &RageProtocol );
-		bDone = true;
-	}
+	MovieTexture_FFMpeg::RegisterProtocols();
 
 	int ret = avcodec::av_open_input_file( &m_fctx, "rage://" + sFile, NULL, 0, NULL );
 	if( ret < 0 )
