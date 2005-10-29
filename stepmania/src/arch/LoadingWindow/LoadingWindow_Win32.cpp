@@ -12,16 +12,10 @@
 
 static HBITMAP g_hBitmap = NULL;
 
-/* Load a file into a GDI surface. */
-HBITMAP LoadWin32Surface( CString fn )
+/* Load a RageSurface into a GDI surface. */
+static HBITMAP LoadWin32Surface( RageSurface *s )
 {
-	CString error;
-	RageSurface *s = RageSurfaceUtils::LoadFile( fn, error );
-	if( s == NULL )
-		return NULL;
-
 	RageSurfaceUtils::ConvertSurface( s, s->w, s->h, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0 );
-
 	HBITMAP bitmap = CreateCompatibleBitmap( GetDC(NULL), s->w, s->h );
 	ASSERT( bitmap );
 
@@ -45,6 +39,18 @@ HBITMAP LoadWin32Surface( CString fn )
 
 	delete s;
 	return bitmap;
+}
+
+static HBITMAP LoadWin32Surface( CString sFile )
+{
+	CString error;
+	RageSurface *pSurface = RageSurfaceUtils::LoadFile( sFile, error );
+	if( pSurface == NULL )
+		return NULL;
+
+	HBITMAP ret = LoadWin32Surface( pSurface );
+	delete pSurface;
+	return ret;
 }
 
 BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
