@@ -111,7 +111,7 @@ protected:
 	AutoActor		m_sprPage;
 
 	OptionsCursorPlus	m_Cursor[NUM_PLAYERS];
-	Sprite			m_sprLineHighlight[NUM_PLAYERS];
+	AutoActor		m_sprLineHighlight[NUM_PLAYERS];
 
 	BitmapText		m_textPlayerName[NUM_PLAYERS];
 	BitmapText		m_textExplanation[NUM_PLAYERS];

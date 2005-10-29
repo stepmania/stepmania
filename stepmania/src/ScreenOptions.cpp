@@ -135,9 +135,9 @@ void ScreenOptions::Init()
 	FOREACH_PlayerNumber( p )
 	{
 		m_sprLineHighlight[p].Load( THEME->GetPathG(m_sName,"line highlight") );
-		m_sprLineHighlight[p].SetName( "LineHighlight" );
-		m_sprLineHighlight[p].SetX( LINE_HIGHLIGHT_X );
-		m_framePage.AddChild( &m_sprLineHighlight[p] );
+		m_sprLineHighlight[p]->SetName( "LineHighlight" );
+		m_sprLineHighlight[p]->SetX( LINE_HIGHLIGHT_X );
+		m_framePage.AddChild( m_sprLineHighlight[p] );
 	}
 
 	// init cursors
@@ -315,13 +315,13 @@ void ScreenOptions::BeginScreen()
 
 	FOREACH_PlayerNumber( p )
 	{
-		m_sprLineHighlight[p].SetHidden( !GAMESTATE->IsHumanPlayer(p) );
+		m_sprLineHighlight[p]->SetHidden( !GAMESTATE->IsHumanPlayer(p) );
 		m_Cursor[p].SetHidden( !GAMESTATE->IsHumanPlayer(p) );
 	}
 
 	// Hide highlight if no rows are enabled.
 	FOREACH_HumanPlayer( p )
-		m_sprLineHighlight[p].SetHidden( m_iCurrentRow[p] == -1 );
+		m_sprLineHighlight[p]->SetHidden( m_iCurrentRow[p] == -1 );
 
 
 	CHECKPOINT;
@@ -538,7 +538,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 		COMMAND( m_sprLineHighlight[pn], "Change" );
 		if( row.GetRowType() == OptionRow::ROW_EXIT )
 			COMMAND( m_sprLineHighlight[pn], "ChangeToExit" );
-		m_sprLineHighlight[pn].SetY( (float)iY );
+		m_sprLineHighlight[pn]->SetY( (float)iY );
 	}
 }
 
