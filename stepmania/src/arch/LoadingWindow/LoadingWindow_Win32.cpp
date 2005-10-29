@@ -13,7 +13,7 @@
 static HBITMAP g_hBitmap = NULL;
 
 /* Load a RageSurface into a GDI surface. */
-static HBITMAP LoadWin32Surface( RageSurface *s )
+static HBITMAP LoadWin32Surface( RageSurface *&s )
 {
 	RageSurfaceUtils::ConvertSurface( s, s->w, s->h, 32, 0xFF000000, 0x00FF0000, 0x0000FF00, 0 );
 	HBITMAP bitmap = CreateCompatibleBitmap( GetDC(NULL), s->w, s->h );
