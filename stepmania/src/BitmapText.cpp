@@ -787,7 +787,6 @@ void ColorBitmapText::DrawPrimitives( )
 			m_aVertices[i].c = m_pTempState->glow;
 		DrawChars();
 	}
-	Actor::DrawPrimitives();
 }
 
 void ColorBitmapText::SetMaxLines( int iNumLines, int iDirection )
