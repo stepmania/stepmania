@@ -10,6 +10,7 @@
 #include "DifficultyRating.h"
 #include "ModeSwitcher.h"
 #include "RageTexturePreloader.h"
+#include "RageSound.h"
 
 class ScreenEz2SelectMusic : public ScreenWithMenuElements
 {

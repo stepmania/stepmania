@@ -13,6 +13,7 @@
 #include "GameCommand.h"
 #include "BitmapText.h"
 #include "Character.h"
+#include "RageSound.h"
 
 /* Class Definition */
 

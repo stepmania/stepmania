@@ -2,6 +2,7 @@
 #define ScreenJoinMultiplayer_H
 
 #include "ScreenWithMenuElements.h"
+#include "RageSound.h"
 
 enum MultiPlayerStatus
 {

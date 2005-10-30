@@ -4,6 +4,7 @@
 #define SCREEN_MINI_MENU_H
 
 #include "ScreenOptions.h"
+#include "GameConstantsAndTypes.h"
 
 typedef bool (*MenuRowUpdateEnabled)();
 

@@ -2,6 +2,7 @@
 #define ScreenOptionsManageCourses_H
 
 #include "ScreenOptions.h"
+#include "GameConstantsAndTypes.h"
 
 class Course;
 

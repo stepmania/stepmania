@@ -2,6 +2,8 @@
 #define SCREENPLAYEROPTIONS_H
 
 #include "ScreenOptionsMaster.h"
+#include "RageSound.h"
+
 struct lua_State;
 
 class ScreenPlayerOptions : public ScreenOptionsMaster

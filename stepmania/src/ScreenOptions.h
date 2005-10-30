@@ -11,6 +11,7 @@
 #include "OptionsCursor.h"
 #include "LuaExpressionTransform.h"
 #include "InputEventPlus.h"
+#include "RageSound.h"
 
 class OptionRowHandler;
 

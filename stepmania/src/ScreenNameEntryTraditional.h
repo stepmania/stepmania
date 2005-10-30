@@ -13,6 +13,7 @@
 #include "ActorScroller.h"
 #include "ThemeMetric.h"
 #include "DifficultyMeter.h"
+#include "RageSound.h"
 
 
 class HighScoreWheelItem : public ActorFrame

@@ -5,6 +5,7 @@
 
 #include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
+#include "RageSound.h"
 
 enum PromptType
 {
