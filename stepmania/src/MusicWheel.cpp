@@ -852,11 +852,11 @@ void MusicWheel::UpdateSwitch()
 	{
 	case STATE_FLYING_OFF_BEFORE_NEXT_SORT:
 		{
-			Song* pPrevSelectedSong = m_CurWheelItemData[m_iSelection]->m_pSong;
+			const Song* pPrevSelectedSong = m_CurWheelItemData[m_iSelection]->m_pSong;
 
 			SCREENMAN->PostMessageToTopScreen( SM_SortOrderChanged, 0 );
 			
-			SetOpenGroup(SongUtil::GetSectionNameFromSongAndSort( pPrevSelectedSong, GAMESTATE->m_SortOrder ));
+			SetOpenGroup( SongUtil::GetSectionNameFromSongAndSort(pPrevSelectedSong, GAMESTATE->m_SortOrder) );
 
 			m_iSelection = 0;
 
