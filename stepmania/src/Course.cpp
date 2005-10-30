@@ -512,6 +512,33 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	/* Set to true if CourseDifficulty is able to change something. */
 	bool bCourseDifficultyIsSignificant = (cd == DIFFICULTY_MEDIUM);
 
+	// get a list of all songs that are 1 stage long
+	vector<Song*> vpAllPossibleSongs;
+	SONGMAN->GetSongs(vpAllPossibleSongs, 1);
+
+	// remove locked and tutorial songs from the list
+	FOREACH( Song*, vpAllPossibleSongs, song )
+	{
+		// Ignore locked songs when choosing randomly
+		// TODO: Move Course initialization after UNLOCKMAN is created
+		if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(*song) )
+		{
+			vector<Song*>::iterator eraseme = song;
+			song--;
+			vpAllPossibleSongs.erase( eraseme );
+			continue;
+		}
+
+		// Ignore boring tutorial songs
+		if( (*song)->IsTutorial() )
+		{
+			vector<Song*>::iterator eraseme = song;
+			song--;
+			vpAllPossibleSongs.erase( eraseme );
+			continue;
+		}
+	}
+
 	// Resolve each entry to a Song and Steps.
 	FOREACH_CONST( CourseEntry, entries, e )
 	{
@@ -524,111 +551,81 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 
 		// Start with all songs
 		vector<Song*> vpPossibleSongs;
-		
+		vector<Steps*> vpPossibleSteps;
+
 		if( e->pSong )
 		{
-			// Choose an exact song
-			vpPossibleSongs.push_back( e->pSong );
+			// Choose an exact song, if we have matching steps and all
+			e->pSong->GetSteps( vpPossibleSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
+			if( ( !e->sSongGroup.empty() && (*song)->m_sGroupName == e->sSongGroup ) && !vpPossibleSteps.empty() )
+			{
+				pResolvedSong = e->pSong;
+			}
+			else
+			{
+				continue;
+			}
 		}
 		else
 		{
-			vpPossibleSongs = SONGMAN->GetAllSongs();
-
-			FOREACH( Song*, vpPossibleSongs, song )
+			// copy over any songs that match our group filter, if one is set, and match our
+			// steps filter.
+			FOREACH( Song*, vpAllPossibleSongs, song )
 			{
-				// Ignore locked songs when choosing randomly
-				// TODO: Move Course initialization after UNLOCKMAN is created
-				if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(*song) )
-				{
-					vector<Song*>::iterator eraseme = song;
-					song--;
-					vpPossibleSongs.erase( eraseme );
+				if( !e->sSongGroup.empty() && (*song)->m_sGroupName != e->sSongGroup )
 					continue;
-				}
 
-				// Ignore boring tutorial songs
-				if( (*song)->IsTutorial() )
-				{
-					vector<Song*>::iterator eraseme = song;
-					song--;
-					vpPossibleSongs.erase( eraseme );
+				vector<Steps*> vpMatchingSteps;
+				(*song)->GetSteps( vpMatchingSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
+				if( vpMatchingSteps.empty() )
 					continue;
-				}
 
-				// Don't allow long songs
-				if( SONGMAN->GetNumStagesForSong(*song) > 1 )
-				{
-					vector<Song*>::iterator eraseme = song;
-					song--;
-					vpPossibleSongs.erase( eraseme );
-					continue;
-				}
+				vpPossibleSongs.push_back( *song );
 			}
-		}
 
+			// if there are no songs to choose from, abort now
+			if( vpPossibleSongs.empty() )
+				continue;
 
-		// Filter out all songs that don't have matching steps
-		// At the same time, create a list of matching song/steps.
-		typedef vector<Steps*> StepsVector;
-		map<Song*,StepsVector> mapSongToSteps;
-		FOREACH( Song*, vpPossibleSongs, song )
-		{
-			// Apply song group filter
-			if( !e->sSongGroup.empty()  &&  (*song)->m_sGroupName != e->sSongGroup )
+			// TODO: Move Course initialization after PROFILEMAN is created
+			switch( e->songSort )
 			{
-				vector<Song*>::iterator eraseme = song;
-				song--;
-				vpPossibleSongs.erase( eraseme );
+			default:
+				ASSERT(0);
+			case SongSort_Randomize:
+				random_shuffle( vpPossibleSongs.begin(), vpPossibleSongs.end(), rnd );
+				break;
+			case SongSort_MostPlays:
+				if( PROFILEMAN )
+					SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), true );	// descending
+				break;
+			case SongSort_FewestPlays:
+				if( PROFILEMAN )
+					SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), false );	// ascending
+				break;
+			case SongSort_TopGrades:
+				SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, true );	// descending
+				break;
+			case SongSort_LowestGrades:
+				SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, false );	// ascending
+				break;
+			}
+
+			if( e->iChooseIndex < int(vpPossibleSongs.size()) )
+			{
+				pResolvedSong = vpPossibleSongs[e->iChooseIndex];
+				pResolvedSong->GetSteps( vpPossibleSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
+			}
+			else
+			{
 				continue;
 			}
-
-			vector<Steps*> vpMatchingSteps;
-			(*song)->GetSteps( vpMatchingSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
-			if( vpMatchingSteps.empty() )
-			{
-				vector<Song*>::iterator eraseme = song;
-				song--;
-				vpPossibleSongs.erase( eraseme );
-				continue;
-			}
-
-			mapSongToSteps[*song] = vpMatchingSteps;
 		}
 
-
-		// TODO: Move Course initialization after PROFILEMAN is created
-		switch( e->songSort )
-		{
-		default:
-			ASSERT(0);
-		case SongSort_Randomize:
-			random_shuffle( vpPossibleSongs.begin(), vpPossibleSongs.end(), rnd );
-			break;
-		case SongSort_MostPlays:
-			if( PROFILEMAN )
-				SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), true );	// descending
-			break;
-		case SongSort_FewestPlays:
-			if( PROFILEMAN )
-				SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), false );	// ascending
-			break;
-		case SongSort_TopGrades:
-			SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, true );	// descending
-			break;
-		case SongSort_LowestGrades:
-			SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, false );	// ascending
-			break;
-		}
-
-		if( e->iChooseIndex < int(vpPossibleSongs.size()) )
-		{
-			pResolvedSong = vpPossibleSongs[e->iChooseIndex];
-			vector<Steps*> &vpPossibleSteps = mapSongToSteps[pResolvedSong];
-			ASSERT( !vpPossibleSteps.empty() );	// if no steps are playable, this shouldn't be a possible song
+		ASSERT( !vpPossibleSteps.empty() );	// if no steps are playable, this shouldn't be a possible song
+		if( vpPossibleSteps.size() > 1 )	// no reason to randomize if there's only one set of possible steps
 			random_shuffle( vpPossibleSteps.begin(), vpPossibleSteps.end(), rnd );
-			pResolvedSteps = vpPossibleSteps[0];
-		}
-
+		pResolvedSteps = vpPossibleSteps[0];
 
 		if( pResolvedSong == NULL || pResolvedSteps == NULL )
 			continue;	// this song entry isn't playable.  Skip.
