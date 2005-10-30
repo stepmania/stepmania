@@ -129,15 +129,11 @@ protected:
 
 	bool				m_bMadeChoice;
 	bool				m_bGoToOptions;
-	Sprite				m_sprOptionsMessage;
 	CString				m_sSampleMusicToPlay;
 	TimingData			*m_pSampleMusicTimingData;
 	float				m_fSampleStartSeconds, m_fSampleLengthSeconds;
 	bool				m_bAllowOptionsMenu, m_bAllowOptionsMenuRepeat;
 	bool				m_bSelectIsDown;
-
-	Transition			m_bgOptionsOut;
-	Transition			m_bgNoOptionsOut;
 
 	RageSound			m_soundDifficultyEasier;
 	RageSound			m_soundDifficultyHarder;

@@ -37,13 +37,11 @@ const int NUM_SCORE_DIGITS	=	9;
 #define SCORE_FRAME_SORT_CHANGE_COMMAND(i)	THEME->GetMetricA(m_sName,ssprintf("ScoreFrameP%iSortChangeCommand", i+1))
 #define METER_TYPE							THEME->GetMetric (m_sName,"MeterType")
 #define SHOW_OPTIONS_MESSAGE_SECONDS		THEME->GetMetricF(m_sName,"ShowOptionsMessageSeconds")
-#define TWEEN_OFF_OPTIONS_MESSAGE_IMMEDIATELY	THEME->GetMetricB(m_sName,"TweenOptionsMessageOffImmediately")
 
 AutoScreenMessage( SM_AllowOptionsMenuRepeat )
 AutoScreenMessage( SM_SongChanged )
 AutoScreenMessage( SM_SortOrderChanging )
 AutoScreenMessage( SM_SortOrderChanged )
-AutoScreenMessage( SM_TweenOffOptionsMessage )
 
 static CString g_sCDTitlePath;
 static bool g_bWantFallbackCdTitle;
@@ -280,22 +278,6 @@ void ScreenSelectMusic::Init()
 	SET_XY( m_sprCourseHasMods );
 	this->AddChild( m_sprCourseHasMods );
 
-	m_sprOptionsMessage.SetName( "OptionsMessage" );
-	m_sprOptionsMessage.Load( THEME->GetPathG(m_sName,"options message 1x2") );
-	m_sprOptionsMessage.StopAnimating();
-	m_sprOptionsMessage.SetHidden( true );
-	m_sprOptionsMessage.SetDrawOrder( DRAW_ORDER_TRANSITIONS+1 );
-	SET_XY( m_sprOptionsMessage );
-	this->AddChild( &m_sprOptionsMessage );
-
-	m_bgOptionsOut.Load( THEME->GetPathB(m_sName,"options out") );
-	m_bgOptionsOut.SetDrawOrder( DRAW_ORDER_TRANSITIONS+2 );
-	this->AddChild( &m_bgOptionsOut );
-
-	m_bgNoOptionsOut.Load( THEME->GetPathB(m_sName,"no options out") );
-	m_bgNoOptionsOut.SetDrawOrder( DRAW_ORDER_TRANSITIONS+2 );
-	this->AddChild( &m_bgNoOptionsOut );
-
 	m_soundDifficultyEasier.Load( THEME->GetPathS(m_sName,"difficulty easier") );
 	m_soundDifficultyHarder.Load( THEME->GetPathS(m_sName,"difficulty harder") );
 	m_soundOptionsChange.Load( THEME->GetPathS(m_sName,"options") );
@@ -315,9 +297,6 @@ void ScreenSelectMusic::BeginScreen()
 	ZERO( m_iSelection );
 
 	AfterMusicChange();
-
-	m_bgOptionsOut.Reset();
-	m_bgNoOptionsOut.Reset();
 
 	FOREACH_HumanPlayer( p )
 	{
@@ -345,7 +324,6 @@ void ScreenSelectMusic::BeginScreen()
 		break;
 	}
 
-	m_sprOptionsMessage.SetState( 0 );
 	ON_COMMAND( m_sprBannerMask );
 	ON_COMMAND( m_Banner );
 	ON_COMMAND( m_sprBannerFrame );
@@ -721,18 +699,14 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 			return; /* not allowed yet */
 		
 		m_bGoToOptions = true;
-		m_sprOptionsMessage.SetState( 1 );
 		SCREENMAN->PlayStartSound();
+		this->PlayCommand( "ShowEnteringOptions" );
 
-		if( TWEEN_OFF_OPTIONS_MESSAGE_IMMEDIATELY )
-		{
-			// Send SM_TweenOffOptionsMessage faster.  Don't tween off the 
-			// options message until the wheel has finished tweening off though.
-			this->ClearMessageQueue( SM_TweenOffOptionsMessage );
-			float fOffCommandLengthSeconds = Actor::GetCommandsLengthSeconds( m_sprOptionsMessage.GetCommand("Off") );
-			float fSecondsToDelay = max( this->GetTweenTimeLeft() - fOffCommandLengthSeconds, 0 );
-			this->PostScreenMessage( SM_TweenOffOptionsMessage, fSecondsToDelay );
-		}
+		// Re-queue SM_BeginFadingOut, since ShowEnteringOptions may have
+		// short-circuited animations.
+		this->ClearMessageQueue( SM_BeginFadingOut );
+		this->PostScreenMessage( SM_BeginFadingOut, this->GetTweenTimeLeft() );
+
 		return;
 	}
 
@@ -1047,11 +1021,6 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	{
 		m_bAllowOptionsMenuRepeat = true;
 	}
-	else if( SM == SM_TweenOffOptionsMessage )
-	{
-		OFF_COMMAND( m_sprOptionsMessage );
-		this->HandleScreenMessage( SM_BeginFadingOut );
-	}
 	else if( SM == SM_MenuTimer )
 	{
 		if( m_MusicWheel.IsRouletting() )
@@ -1102,11 +1071,11 @@ void ScreenSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BeginFadingOut )
 	{
-		/* XXX: yuck.  Later on, maybe this can be done in one BGA with lua ... */
-		if( m_bGoToOptions )
-			m_bgOptionsOut.StartTransitioning( SM_GoToNextScreen );
-		else
-			m_bgNoOptionsOut.StartTransitioning( SM_GoToNextScreen );
+		m_bAllowOptionsMenu = false;
+		if( OPTIONS_MENU_AVAILABLE && !m_bGoToOptions )
+			this->PlayCommand( "HidePressStartForOptions" );
+
+		this->PostScreenMessage( SM_GoToNextScreen, this->GetTweenTimeLeft() );
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
@@ -1225,8 +1194,7 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		if( OPTIONS_MENU_AVAILABLE )
 		{
 			// show "hold START for options"
-			m_sprOptionsMessage.SetHidden( false );
-			ON_COMMAND( m_sprOptionsMessage );
+			this->PlayCommand( "ShowPressStartForOptions" );
 
 			m_bAllowOptionsMenu = true;
 			/* Don't accept a held START for a little while, so it's not
@@ -1246,7 +1214,8 @@ void ScreenSelectMusic::MenuStart( PlayerNumber pn )
 		if( OPTIONS_MENU_AVAILABLE )
 		{
 			StartTransitioningScreen( SM_None );
-			this->PostScreenMessage( SM_TweenOffOptionsMessage, SHOW_OPTIONS_MESSAGE_SECONDS );
+			float fTime = max( SHOW_OPTIONS_MESSAGE_SECONDS, this->GetTweenTimeLeft() );
+			this->PostScreenMessage( SM_BeginFadingOut, fTime );
 		}
 		else
 		{
