@@ -510,7 +510,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 		switch( PREFSMAN->m_RandomBackgroundMode )
 		{
 		default:
-			ASSERT_M( 0, ssprintf("Invalid RandomBackgroundMode: %i", PREFSMAN->m_RandomBackgroundMode) );
+			ASSERT_M( 0, ssprintf("Invalid RandomBackgroundMode: %i", int(PREFSMAN->m_RandomBackgroundMode)) );
 			break;
 		case PrefsManager::BGMODE_OFF:
 			break;
