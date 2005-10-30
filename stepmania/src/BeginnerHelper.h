@@ -42,7 +42,7 @@ protected:
 #endif
 
 /*
- * (c) 2003 Kevin Slaughter
+ * (c) 2003 Kevin Slaughter, Thad Ward
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

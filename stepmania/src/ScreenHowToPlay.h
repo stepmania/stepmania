@@ -37,7 +37,7 @@ protected:
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2001-2004 Chris Danford, Thad Ward
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
