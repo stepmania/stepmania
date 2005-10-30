@@ -10,6 +10,15 @@
 
 extern Display *g_X11Display;
 #endif
+#if defined(MACOSX)
+extern "C"
+{
+	extern void SetupWindow();
+	extern void SM_ShowCursor( bool b );
+}
+// SDL_ShowCursor doesn't seem to work on OS X any longer
+#define SDL_ShowCursor(x) SM_ShowCursor( (x) == SDL_ENABLE )
+#endif
 
 LowLevelWindow_SDL::LowLevelWindow_SDL()
 {
@@ -41,6 +50,8 @@ void *LowLevelWindow_SDL::GetProcAddress(CString s)
 
 CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut )
 {
+	bool wasWindowed = CurrentParams.windowed;
+	
 	CurrentParams = p;
 
 	/* We need to preserve the event mask and all events, since they're lost by
@@ -89,7 +100,8 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 	/* Set SDL window title, icon and cursor -before- creating the window */
 	SDL_WM_SetCaption( p.sWindowTitle, "");
 	mySDL_WM_SetIcon( p.sIconFile );
-
+	SDL_ShowCursor( p.windowed ? SDL_ENABLE : SDL_DISABLE );
+	
 	int flags = SDL_RESIZABLE | SDL_OPENGL;
 	if( !p.windowed )
 		flags |= SDL_FULLSCREEN;
@@ -123,15 +135,14 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 	putenv( buf );
 #endif
 
-	SDL_Surface *screen = SDL_SetVideoMode(p.width, p.height, p.bpp, flags);
-	if(!screen)
+	SDL_Surface *screen = SDL_SetVideoMode( p.width, p.height, p.bpp, flags );
+	if( !screen )
 	{
 		LOG->Trace( "SDL_SetVideoMode failed: %s", mySDL_GetError().c_str() );
+		SDL_ShowCursor( wasWindowed ? SDL_ENABLE : SDL_DISABLE );
 		return mySDL_GetError();	// failed to set mode
 	}
 	
-	SDL_ShowCursor( p.windowed );
-
 	bNewDeviceOut = true;	// always a new context because we're resetting SDL_Video
 
 	static bool bLogged = false;
@@ -153,6 +164,10 @@ CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &
 		else
 			g_X11Display = info.info.x11.display;
 	}
+#endif
+#if defined(MACOSX)
+	if (p.windowed)
+		SetupWindow();
 #endif
 
 	{
