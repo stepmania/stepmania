@@ -30,7 +30,7 @@ ProfileManager*	PROFILEMAN = NULL;	// global and accessable from anywhere in our
 
 static void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, CString &sNameOut, CString &defaultValueOut )
 {
-	sNameOut = ssprintf( "DefaultLocalProfileIDP%d", i+1 );
+	sNameOut = ssprintf( "DefaultLocalProfileIDP%d", int(i+1) );
 	defaultValueOut = "";
 }
 
