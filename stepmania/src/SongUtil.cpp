@@ -317,7 +317,7 @@ void SongUtil::SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, S
 		CString val = GetSectionNameFromSongAndSort( vpSongsInOut[i], so );
 
 		/* Make sure NUM comes first and OTHER comes last. */
-		if( val == "NUM" )			val = "0";
+		if( val == "0-9" )			val = "0";
 		else if( val == "OTHER" )	val = "2";
 		else						val = "1" + MakeSortString(val);
 
