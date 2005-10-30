@@ -186,6 +186,11 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 {
 	SAFE_DELETE( m_MenuTimer );
 	SAFE_DELETE( m_textHelp );
+	FOREACH_PlayerNumber( p )
+	{
+		if( m_MemoryCardDisplay[p] != NULL )
+			SAFE_DELETE( m_MemoryCardDisplay[p] );
+	}
 }
 
 void ScreenWithMenuElements::LoadHelpText()
