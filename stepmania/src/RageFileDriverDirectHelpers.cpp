@@ -308,7 +308,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 		if( !BeginsWith( iter->lname, IGNORE_MARKER_BEGINNING ) )
 			break;
 		CString sFileLNameToIgnore = iter->lname.Right( iter->lname.length() - IGNORE_MARKER_BEGINNING.length() );
-		iter = fs.files.erase( iter );
+		vsFilesToRemove.push_back( iter->name );
 		vsFilesToRemove.push_back( sFileLNameToIgnore );
 	}
 	
