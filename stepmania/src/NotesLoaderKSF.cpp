@@ -248,7 +248,7 @@ void KSFLoader::LoadTags( const CString &str, Song &out )
 		artist = asBits[0];
 		title = asBits[1];
 	}
-	else
+	else if( asBits.size() == 1 )
 	{
 		title = asBits[0];
 	}
