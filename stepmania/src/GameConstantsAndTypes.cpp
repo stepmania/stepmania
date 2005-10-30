@@ -59,6 +59,7 @@ XToString( PlayMode, NUM_PLAY_MODES );
 XToThemedString( PlayMode, NUM_PLAY_MODES );
 StringToX( PlayMode );
 LuaXToString( PlayMode );
+LuaFunction( PlayModeToThemedString, PlayModeToThemedString((PlayMode) IArg(1)) );
 LuaXType( PlayMode, NUM_PLAY_MODES, "PLAY_MODE_" )
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
