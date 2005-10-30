@@ -1,6 +1,7 @@
 #include "global.h"
 #include "GraphicsWindow.h"
 #include "StepMania.h"
+#include "GameLoop.h"
 #include "ProductInfo.h"
 #include "RageLog.h"
 #include "RageUtil.h"
