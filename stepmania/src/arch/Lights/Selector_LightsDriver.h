@@ -7,8 +7,8 @@
 #if defined(WINDOWS)
 #include "LightsDriver_Win32Parallel.h"
 #endif
-#ifndef __PPC__
 #if defined(LINUX)
+#ifndef __PPC__
 #include "LightsDriver_LinuxParallel.h"
 #endif
 #include "LightsDriver_LinuxWeedTech.h"
