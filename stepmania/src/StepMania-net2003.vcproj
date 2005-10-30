@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="StepMania"
+	RootNamespace="StepMania"
 	SccProjectName=""
 	SccLocalPath=""
 	Keyword="MFCProj">
@@ -1359,15 +1360,63 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_FFMpeg.cpp">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalIncludeDirectories="&quot;$(ProjectDir)ffmpeg\include&quot;"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalIncludeDirectories="&quot;$(ProjectDir)ffmpeg\include&quot;"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="FastDebug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalIncludeDirectories="&quot;$(ProjectDir)ffmpeg\include&quot;"/>
+						</FileConfiguration>
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_FFMpeg.h">
+					</File>
+					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_Generic.cpp">
+					</File>
+					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_Generic.h">
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_Null.cpp">
 					</File>
 					<File
 						RelativePath="arch\MovieTexture\MovieTexture_Null.h">
+					</File>
+					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_Theora.cpp">
+						<FileConfiguration
+							Name="Debug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalIncludeDirectories="&quot;$(ProjectDir)ffmpeg\include&quot;"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalIncludeDirectories="&quot;$(ProjectDir)ffmpeg\include&quot;"/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="FastDebug|Win32">
+							<Tool
+								Name="VCCLCompilerTool"
+								AdditionalIncludeDirectories="&quot;$(ProjectDir)ffmpeg\include&quot;"/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\arch\MovieTexture\MovieTexture_Theora.h">
 					</File>
 				</Filter>
 				<Filter
@@ -1882,12 +1931,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="GhostArrowRow.h">
 			</File>
 			<File
-				RelativePath=".\HoldGhostArrow.cpp">
-			</File>
-			<File
-				RelativePath=".\HoldGhostArrow.h">
-			</File>
-			<File
 				RelativePath="HoldJudgment.cpp">
 			</File>
 			<File
@@ -1898,6 +1941,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="Judgment.h">
+			</File>
+			<File
+				RelativePath=".\LifeMeter.cpp">
 			</File>
 			<File
 				RelativePath="LifeMeter.h">
