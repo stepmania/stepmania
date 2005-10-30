@@ -65,6 +65,7 @@ void PaneDisplay::Load( const CString &sType, PlayerNumber pn )
 	this->AddChild( m_sprPaneUnder );
 
 	EMPTY_MACHINE_HIGH_SCORE_NAME.Load( sType, "EmptyMachineHighScoreName" );
+	NOT_AVAILABLE.Load( sType, "NotAvailable" );
 
 
 	for( int p = 0; p < NUM_PANE_CONTENTS; ++p )
@@ -117,7 +118,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		goto done;
 	if( (g_Contents[c].req&NEED_PROFILE) && !pProfile )
 	{
-		str = "N/A";
+		str = NOT_AVAILABLE;
 		goto done;
 	}
 
@@ -196,7 +197,7 @@ void PaneDisplay::SetContent( PaneContents c )
 		case SONG_MACHINE_HIGH_SCORE:
 			// Don't show or save machine high scores for edits loaded from a player profile.
 			if( bIsPlayerEdit )
-				str = "N/A";
+				str = NOT_AVAILABLE;
 			else
 				str = PercentageDisplay::FormatPercentScore( val );
 			break;

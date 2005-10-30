@@ -73,6 +73,7 @@ private:
 	PlayerNumber	m_PlayerNumber;
 
 	ThemeMetric<CString> EMPTY_MACHINE_HIGH_SCORE_NAME;
+	ThemeMetric<CString> NOT_AVAILABLE;
 };
 
 #endif
