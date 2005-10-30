@@ -11,7 +11,10 @@
 #include "XmlFile.h"
 #include "Foreach.h"
 #include "UnlockManager.h"
+#include "ThemeMetric.h"
 
+static ThemeMetric<CString> SORT_NOT_AVAILABLE( "Sort", "NotAvailable" );
+static ThemeMetric<CString> SORT_OTHER        ( "Sort", "Other" );
 
 /////////////////////////////////////
 // Sorting
@@ -242,14 +245,14 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			else if( s[0] >= '0' && s[0] <= '9' )
 				return "0-9";
 			else if( s[0] < 'A' || s[0] > 'Z')
-				return "OTHER";
+				return SORT_OTHER.GetValue();
 			else
 				return s.Left(1);
 		}
 	case SORT_GENRE:
 		if( !pSong->m_sGenre.empty() )
 			return pSong->m_sGenre;
-		return "N/A";
+		return SORT_NOT_AVAILABLE.GetValue();
 	case SORT_BPM:
 		{
 			const int iBPMGroupSize = 20;
@@ -279,28 +282,28 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_EASY);
 			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
-			return "N/A";
+			return SORT_NOT_AVAILABLE.GetValue();
 		}
 	case SORT_MEDIUM_METER:
 		{
 			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_MEDIUM);
 			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
-			return "N/A";
+			return SORT_NOT_AVAILABLE.GetValue();
 		}
 	case SORT_HARD_METER:
 		{
 			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_HARD);
 			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
-			return "N/A";
+			return SORT_NOT_AVAILABLE.GetValue();
 		}
 	case SORT_CHALLENGE_METER:
 		{
 			Steps* pSteps = pSong->GetStepsByDifficulty(GAMESTATE->GetCurrentStyle()->m_StepsType,DIFFICULTY_CHALLENGE);
 			if( pSteps && !UNLOCKMAN->StepsIsLocked(pSong,pSteps) )	
 				return ssprintf("%02d", pSteps->GetMeter() );
-			return "N/A";
+			return SORT_NOT_AVAILABLE.GetValue();
 		}
 	case SORT_MODE_MENU:
 		return CString();
@@ -316,13 +319,14 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 
 void SongUtil::SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, SortOrder so )
 {
+	CString sOther = SORT_OTHER.GetValue();
 	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 	{
 		CString val = GetSectionNameFromSongAndSort( vpSongsInOut[i], so );
 
 		/* Make sure 0-9 comes first and OTHER comes last. */
 		if( val == "0-9" )			val = "0";
-		else if( val == "OTHER" )	val = "2";
+		else if( val == sOther )    val = "2";
 		else						val = "1" + MakeSortString(val);
 
 		g_mapSongSortVal[vpSongsInOut[i]] = val;
