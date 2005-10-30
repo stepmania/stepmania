@@ -64,8 +64,8 @@ void SetCocoaWindowText(const char *s)
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSString *str = [NSString stringWithUTF8String:s];
 	
-	[text setString:(str ? str : @"" )];
-	[text display];
+	[text setString:( str ? str : @"" )];
+	[text setNeedsDisplay:YES];
 	[pool release];
 }
 
