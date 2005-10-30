@@ -274,6 +274,7 @@ static const CString PerDifficultyAwardNames[] = {
 XToString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );
 XToThemedString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );
 StringToX( PerDifficultyAward );
+LuaFunction( PerDifficultyAwardToThemedString, PerDifficultyAwardToThemedString((PerDifficultyAward) IArg(1)) );
 static void LuaPerDifficultyAward( lua_State* L )
 {
 	FOREACH_PerDifficultyAward( i )
@@ -300,6 +301,7 @@ static const CString PeakComboAwardNames[] = {
 XToString( PeakComboAward, NUM_PEAK_COMBO_AWARDS );
 XToThemedString( PeakComboAward, NUM_PEAK_COMBO_AWARDS );
 StringToX( PeakComboAward );
+LuaFunction( PeakComboAwardToThemedString, PeakComboAwardToThemedString((PeakComboAward) IArg(1)) );
 static void LuaPeakComboAward( lua_State* L )
 {
 	FOREACH_PeakComboAward( i )
