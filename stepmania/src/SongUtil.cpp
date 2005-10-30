@@ -236,7 +236,7 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			if( s.empty() )
 				return CString();
 			else if( s[0] >= '0' && s[0] <= '9' )
-				return "NUM";
+				return "0-9";
 			else if( s[0] < 'A' || s[0] > 'Z')
 				return "OTHER";
 			else
