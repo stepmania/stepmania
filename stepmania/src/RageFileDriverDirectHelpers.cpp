@@ -298,19 +298,25 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 	 * performance-critical situations.  To avoid incurring some of the overheard 
 	 * due to ignore markers, delete the file instead instead of using an ignore marker.
 	 */
-	static const CString IGNORE_MARKER_ENDING = ".ignore";
-	FOREACHS( File, fs.files, iter )
+	static const CString IGNORE_MARKER_BEGINNING = "ignore-";
+
+	vector<CString> vsFilesToRemove;
+	for( set<File>::iterator iter = fs.files.lower_bound(IGNORE_MARKER_BEGINNING); 
+		 iter != fs.files.end(); 
+		 iter++ )
 	{
-		bool bIsIgnoreMarker = EndsWith( iter->lname, IGNORE_MARKER_ENDING );
-		if( !bIsIgnoreMarker )
-			continue;
-
-		CString sFileLNameToIgnore = iter->lname.Left( iter->lname.length() - IGNORE_MARKER_ENDING.length() );
+		if( !BeginsWith( iter->lname, IGNORE_MARKER_BEGINNING ) )
+			break;
+		CString sFileLNameToIgnore = iter->lname.Right( iter->lname.length() - IGNORE_MARKER_BEGINNING.length() );
 		iter = fs.files.erase( iter );
-
+		vsFilesToRemove.push_back( sFileLNameToIgnore );
+	}
+	
+	FOREACH_CONST( CString, vsFilesToRemove, iter )
+	{
 		// Erase the file corresponding to the ignore marker
 		File fileToDelete;
-		fileToDelete.SetName( sFileLNameToIgnore );
+		fileToDelete.SetName( *iter );
 		set<File>::iterator iter2 = fs.files.find( fileToDelete );
 		if( iter2 != fs.files.end() )
 			fs.files.erase( iter2 );
