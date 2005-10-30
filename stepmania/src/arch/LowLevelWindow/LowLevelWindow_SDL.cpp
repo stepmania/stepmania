@@ -4,6 +4,7 @@
 #include "RageLog.h"
 #include "RageDisplay.h" // for REFRESH_DEFAULT
 #include "StepMania.h"
+#include "GameLoop.h"
 
 #if defined(UNIX)
 #include <X11/Xlib.h>

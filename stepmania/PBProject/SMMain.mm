@@ -1,8 +1,8 @@
 #import <Cocoa/Cocoa.h>
 #include "ProductInfo.h"
+#include "GameLoop.h"
 
 // XXX remove these
-extern void ExitGame();
 extern "C"
 {
 	extern int SDL_main(int, char **);

@@ -5,7 +5,7 @@
 #include "GameSoundManager.h"
 #include "RageSound.h"
 #include "RageLog.h"
-#include "StepMania.h"
+#include "GameLoop.h"
 
 /* This screen used to wait for sounds to stop.  However, implementing GetPlayingSounds()
  * is annoying, because sounds might be deleted at any time; they aren't ours to have

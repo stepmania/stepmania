@@ -8,6 +8,7 @@
 #include "archutils/Unix/CrashHandler.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "StepMania.h"
+#include "GameLoop.h"
 #define Random Random_ // work around namespace pollution
 #include <Carbon/Carbon.h>
 #undef Random_

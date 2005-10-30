@@ -3,6 +3,7 @@
 #include "RageThreads.h"
 #include "ArchHooks_Unix.h"
 #include "StepMania.h"
+#include "GameLoop.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "archutils/Unix/GetSysInfo.h"
 #include "archutils/Unix/LinuxThreadHelpers.h"
