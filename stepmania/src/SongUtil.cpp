@@ -21,12 +21,12 @@
  * it.  (This could be generalized with a template.) */
 map<const Song*, CString> song_sort_val;
 
-bool CompareSongPointersBySortValueAscending(const Song *pSong1, const Song *pSong2)
+static bool CompareSongPointersBySortValueAscending( const Song *pSong1, const Song *pSong2 )
 {
 	return song_sort_val[pSong1] < song_sort_val[pSong2];
 }
 
-bool CompareSongPointersBySortValueDescending(const Song *pSong1, const Song *pSong2)
+static bool CompareSongPointersBySortValueDescending( const Song *pSong1, const Song *pSong2 )
 {
 	return song_sort_val[pSong1] > song_sort_val[pSong2];
 }
@@ -48,7 +48,7 @@ CString SongUtil::MakeSortString( CString s )
 	return s;
 }
 
-bool CompareSongPointersByTitle(const Song *pSong1, const Song *pSong2)
+static bool CompareSongPointersByTitle( const Song *pSong1, const Song *pSong2 )
 {
 	// Prefer transliterations to full titles
 	CString s1 = pSong1->GetTranslitMainTitle();
@@ -76,7 +76,7 @@ void SongUtil::SortSongPointerArrayByTitle( vector<Song*> &vpSongsInOut )
 	sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersByTitle );
 }
 
-bool CompareSongPointersByBPM(const Song *pSong1, const Song *pSong2)
+static bool CompareSongPointersByBPM( const Song *pSong1, const Song *pSong2 )
 {
 	DisplayBpms bpms1, bpms2;
 	pSong1->GetDisplayBpms( bpms1 );
@@ -105,10 +105,14 @@ void AppendOctal( int n, int digits, CString &out )
 	}
 }
 
-bool CompDescending( const pair<Song *, CString> &a, const pair<Song *, CString> &b )
-{ return a.second > b.second; }
-bool CompAscending( const pair<Song *, CString> &a, const pair<Song *, CString> &b )
-{ return a.second < b.second; }
+static bool CompDescending( const pair<Song *, CString> &a, const pair<Song *, CString> &b )
+{
+	return a.second > b.second;
+}
+static bool CompAscending( const pair<Song *, CString> &a, const pair<Song *, CString> &b )
+{
+	return a.second < b.second;
+}
 
 void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool bDescending )
 {
@@ -173,7 +177,7 @@ int SongUtil::CompareSongPointersByGroup(const Song *pSong1, const Song *pSong2)
 	return pSong1->m_sGroupName < pSong2->m_sGroupName;
 }
 
-int CompareSongPointersByGroupAndTitle(const Song *pSong1, const Song *pSong2)
+static int CompareSongPointersByGroupAndTitle( const Song *pSong1, const Song *pSong2 )
 {
 	const CString &sGroup1 = pSong1->m_sGroupName;
 	const CString &sGroup2 = pSong2->m_sGroupName;
@@ -316,7 +320,7 @@ void SongUtil::SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, S
 	{
 		CString val = GetSectionNameFromSongAndSort( vpSongsInOut[i], so );
 
-		/* Make sure NUM comes first and OTHER comes last. */
+		/* Make sure 0-9 comes first and OTHER comes last. */
 		if( val == "0-9" )			val = "0";
 		else if( val == "OTHER" )	val = "2";
 		else						val = "1" + MakeSortString(val);
