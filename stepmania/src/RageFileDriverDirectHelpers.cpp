@@ -2,6 +2,7 @@
 #include "RageFileDriverDirectHelpers.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "Foreach.h"
 
 #include <cerrno>
 #include <sys/types.h>
@@ -287,6 +288,33 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 	       
 	closedir( pDir );
 #endif
+
+	/*
+	 * Check for any ".ignore" markers.  If a marker exists, hide the marker and its 
+	 * corresponding file.
+	 * For example, if "file.xml.ignore" exists, hide both it and "file.xml" by 
+	 * removing them from the file set.
+	 * Ignore markers are used for convenience during build staging and are not used in 
+	 * performance-critical situations.  To avoid incurring some of the overheard 
+	 * due to ignore markers, delete the file instead instead of using an ignore marker.
+	 */
+	static const CString IGNORE_MARKER_ENDING = ".ignore";
+	FOREACHS( File, fs.files, iter )
+	{
+		bool bIsIgnoreMarker = EndsWith( iter->lname, IGNORE_MARKER_ENDING );
+		if( !bIsIgnoreMarker )
+			continue;
+
+		CString sFileLNameToIgnore = iter->lname.Left( iter->lname.length() - IGNORE_MARKER_ENDING.length() );
+		iter = fs.files.erase( iter );
+
+		// Erase the file corresponding to the ignore marker
+		File fileToDelete;
+		fileToDelete.SetName( sFileLNameToIgnore );
+		set<File>::iterator iter2 = fs.files.find( fileToDelete );
+		if( iter2 != fs.files.end() )
+			fs.files.erase( iter2 );
+	}
 }
 
 /*
