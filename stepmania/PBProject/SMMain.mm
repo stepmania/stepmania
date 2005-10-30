@@ -58,11 +58,7 @@ extern "C"
 /* Called when the internal event loop has just started running */
 - (void) applicationDidFinishLaunching: (NSNotification *) note
 {
-#if 1
 	[NSThread detachNewThreadSelector:@selector(startGame:) toTarget:self withObject:nil];
-#else
-	[self startGame:nil];
-#endif
 }
 @end
 
