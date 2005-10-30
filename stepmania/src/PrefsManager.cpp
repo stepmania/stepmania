@@ -12,7 +12,7 @@
 #include "RageLog.h"
 
 const CString DEFAULTS_INI_PATH		= "Data/Defaults.ini";		// these can be overridden
-const CString STEPMANIA_INI_PATH	= "Data/" PRODUCT_NAME ".ini";	// overlay on Defaults.ini, contains the user's choices
+const CString STEPMANIA_INI_PATH	= "Save/" PRODUCT_NAME ".ini";	// overlay on Defaults.ini, contains the user's choices
 const CString STATIC_INI_PATH		= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program

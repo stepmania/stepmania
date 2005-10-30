@@ -285,8 +285,6 @@ const int NUM_ATTACKS_PER_LEVEL	= 3;
 const int ITEM_NONE = -1;
 
 
-#define DATA_DIR			CString("Data/")
-
 
 //
 // Coin stuff

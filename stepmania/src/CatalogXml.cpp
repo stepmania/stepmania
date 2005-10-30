@@ -33,7 +33,7 @@
 
 const CString CATALOG_XML       = "Catalog.xml";
 const CString CATALOG_XSL       = "Catalog.xsl";
-const CString CATALOG_XML_FILE  = DATA_DIR + "Catalog.xml";
+const CString CATALOG_XML_FILE  = "Save/" + CATALOG_XML;
 
 void SaveCatalogXml( LoadingWindow *loading_window )
 {

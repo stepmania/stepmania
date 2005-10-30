@@ -258,7 +258,7 @@ void RageFileManager::MountInitialFilesystems()
 	
 	/* We can almost do this, to have machine profiles be system-global to eg. share
 	 * scores.  It would need to handle permissions properly. */
-/*	RageFileManager::Mount( "dir", "/var/lib/games/stepmania", "/Data/Profiles" ); */
+/*	RageFileManager::Mount( "dir", "/var/lib/games/stepmania", "/Save/Profiles" ); */
 	
 	// CString Home = getenv( "HOME" ) + "/" + PRODUCT_NAME;
 
@@ -738,7 +738,7 @@ static bool PathUsesSlowFlush( const CString &sPath )
 {
 	static const char *FlushPaths[] =
 	{
-		"Data/"
+		"Save/"
 	};
 
 	for( unsigned i = 0; i < ARRAYSIZE(FlushPaths); ++i )

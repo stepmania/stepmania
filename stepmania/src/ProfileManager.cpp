@@ -37,8 +37,8 @@ static void DefaultLocalProfileIDInit( size_t /*PlayerNumber*/ i, CString &sName
 Preference1D<CString> ProfileManager::m_sDefaultLocalProfileID( DefaultLocalProfileIDInit, NUM_PLAYERS );
 
 #define NEW_MEM_CARD_NAME		""
-#define USER_PROFILES_DIR		"/Data/LocalProfiles/"
-#define MACHINE_PROFILE_DIR		"/Data/MachineProfile/"
+#define USER_PROFILES_DIR		"/Save/LocalProfiles/"
+#define MACHINE_PROFILE_DIR		"/Save/MachineProfile/"
 const CString LAST_GOOD_SUBDIR	=	"LastGood/";
 
 

@@ -13,7 +13,7 @@
 
 Bookkeeper*	BOOKKEEPER = NULL;	// global and accessable from anywhere in our program
 
-static const CString COINS_DAT = "Data/Coins.xml";
+static const CString COINS_DAT = "Save/Coins.xml";
 
 Bookkeeper::Bookkeeper()
 {

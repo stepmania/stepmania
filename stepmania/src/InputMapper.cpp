@@ -14,7 +14,7 @@
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
 
-#define KEYMAPS_PATH "Data/Keymaps.ini"
+#define KEYMAPS_PATH "Save/Keymaps.ini"
 
 InputMapper::InputMapper()
 {

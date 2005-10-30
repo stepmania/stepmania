@@ -739,7 +739,7 @@ RageDisplay *CreateDisplay()
 	RageException::Throw( error );
 }
 
-#define STATIC_INI_PATH "Data/Static.ini"
+extern const CString STATIC_INI_PATH;
 
 void ChangeCurrentGame( const Game* g )
 {
