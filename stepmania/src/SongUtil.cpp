@@ -19,16 +19,16 @@
 
 /* Just calculating GetNumTimesPlayed within the sort is pretty slow, so let's precompute
  * it.  (This could be generalized with a template.) */
-map<const Song*, CString> song_sort_val;
+static map<const Song*, CString> g_mapSongSortVal;
 
 static bool CompareSongPointersBySortValueAscending( const Song *pSong1, const Song *pSong2 )
 {
-	return song_sort_val[pSong1] < song_sort_val[pSong2];
+	return g_mapSongSortVal[pSong1] < g_mapSongSortVal[pSong2];
 }
 
 static bool CompareSongPointersBySortValueDescending( const Song *pSong1, const Song *pSong2 )
 {
-	return song_sort_val[pSong1] > song_sort_val[pSong2];
+	return g_mapSongSortVal[pSong1] > g_mapSongSortVal[pSong2];
 }
 
 
@@ -149,7 +149,7 @@ void SongUtil::SortSongPointerArrayByGrades( vector<Song*> &vpSongsInOut, bool b
 void SongUtil::SortSongPointerArrayByArtist( vector<Song*> &vpSongsInOut )
 {
 	for( unsigned i = 0; i < vpSongsInOut.size(); ++i )
-		song_sort_val[vpSongsInOut[i]] = MakeSortString( vpSongsInOut[i]->GetTranslitArtist() );
+		g_mapSongSortVal[vpSongsInOut[i]] = MakeSortString( vpSongsInOut[i]->GetTranslitArtist() );
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
 }
 
@@ -158,7 +158,7 @@ void SongUtil::SortSongPointerArrayByArtist( vector<Song*> &vpSongsInOut )
 void SongUtil::SortSongPointerArrayByDisplayArtist( vector<Song*> &vpSongsInOut )
 {
 	for( unsigned i = 0; i < vpSongsInOut.size(); ++i )
-		song_sort_val[vpSongsInOut[i]] = MakeSortString( vpSongsInOut[i]->GetDisplayArtist() );
+		g_mapSongSortVal[vpSongsInOut[i]] = MakeSortString( vpSongsInOut[i]->GetDisplayArtist() );
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
 }
 
@@ -208,9 +208,9 @@ void SongUtil::SortSongPointerArrayByNumPlays( vector<Song*> &vpSongsInOut, cons
 {
 	ASSERT( pProfile );
 	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
-		song_sort_val[vpSongsInOut[i]] = ssprintf("%9i", pProfile->GetSongNumTimesPlayed(vpSongsInOut[i]));
+		g_mapSongSortVal[vpSongsInOut[i]] = ssprintf("%9i", pProfile->GetSongNumTimesPlayed(vpSongsInOut[i]));
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), bDescending ? CompareSongPointersBySortValueDescending : CompareSongPointersBySortValueAscending );
-	song_sort_val.clear();
+	g_mapSongSortVal.clear();
 }
 
 CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so )
@@ -325,21 +325,21 @@ void SongUtil::SortSongPointerArrayBySectionName( vector<Song*> &vpSongsInOut, S
 		else if( val == "OTHER" )	val = "2";
 		else						val = "1" + MakeSortString(val);
 
-		song_sort_val[vpSongsInOut[i]] = val;
+		g_mapSongSortVal[vpSongsInOut[i]] = val;
 	}
 
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueAscending );
-	song_sort_val.clear();
+	g_mapSongSortVal.clear();
 }
 
 void SongUtil::SortSongPointerArrayByMeter( vector<Song*> &vpSongsInOut, Difficulty dc )
 {
-	song_sort_val.clear();
+	g_mapSongSortVal.clear();
 	for(unsigned i = 0; i < vpSongsInOut.size(); ++i)
 	{
 		/* Ignore locked steps. */
 		const Steps* pSteps = vpSongsInOut[i]->GetClosestNotes( GAMESTATE->GetCurrentStyle()->m_StepsType, dc, true );
-		CString &s = song_sort_val[vpSongsInOut[i]];
+		CString &s = g_mapSongSortVal[vpSongsInOut[i]];
 		s = ssprintf("%03d", pSteps ? pSteps->GetMeter() : 0);
 
 		/* Hack: always put tutorial songs first. */
@@ -371,11 +371,11 @@ void SongUtil::SortByMostRecentlyPlayedForMachine( vector<Song*> &vpSongsInOut )
 	{
 		int iNumTimesPlayed = pProfile->GetSongNumTimesPlayed( *s );
 		CString val = iNumTimesPlayed ? pProfile->GetSongLastPlayedDateTime(*s).GetString() : "0";
-		song_sort_val[*s] = val;
+		g_mapSongSortVal[*s] = val;
 	}
 
 	stable_sort( vpSongsInOut.begin(), vpSongsInOut.end(), CompareSongPointersBySortValueDescending );
-	song_sort_val.clear();
+	g_mapSongSortVal.clear();
 }
 
 //////////////////////////////////
