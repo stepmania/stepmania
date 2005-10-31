@@ -1983,6 +1983,14 @@ public:
 		else		 { lua_pushnil(L); }
 		return 1;
 	}
+	static int SetCurrentTrail( T* p, lua_State *L )
+	{ 
+		PlayerNumber pn = (PlayerNumber)IArg(1);
+		if( lua_isnil(L,2) )	{ p->m_pCurTrail[pn].Set( NULL ); }
+		else					{ Trail *pS = Luna<Trail>::check(L,2); p->m_pCurTrail[pn].Set( pS ); }
+		MESSAGEMAN->Broadcast( (Message)(Message_CurrentTrailP1Changed+pn) );
+		return 0;
+	}
 	static int GetPreferredSong( T* p, lua_State *L )		{ if(p->m_pPreferredSong) p->m_pPreferredSong->PushSelf(L); else lua_pushnil(L); return 1; }
 	static int SetPreferredSong( T* p, lua_State *L )
 	{
@@ -2116,6 +2124,7 @@ public:
 		ADD_METHOD( GetCurrentCourse );
 		ADD_METHOD( SetCurrentCourse );
 		ADD_METHOD( GetCurrentTrail );
+		ADD_METHOD( SetCurrentTrail );
 		ADD_METHOD( SetPreferredSong );
 		ADD_METHOD( GetPreferredSong );
 		ADD_METHOD( SetTemporaryEventMode );
