@@ -202,36 +202,37 @@ public:
 	}
 };
 
-
-template <class T>
-class Rect
+namespace SM
 {
-public:
-	Rect()						{};
-	Rect(T l, T t, T r, T b)	{ left = l, top = t, right = r, bottom = b; };
-
-	T GetWidth() const		{ return right-left; };
-	T GetHeight() const		{ return bottom-top;  };
-	T GetCenterX() const	{ return (left+right)/2; };
-	T GetCenterY() const	{ return (top+bottom)/2; };
-
-	bool operator==( const Rect &other ) const
+template <class T>
+	class Rect
 	{
+public:
+		Rect()						{};
+		Rect(T l, T t, T r, T b)	{ left = l, top = t, right = r, bottom = b; };
+		
+		T GetWidth() const		{ return right-left; };
+		T GetHeight() const		{ return bottom-top;  };
+		T GetCenterX() const	{ return (left+right)/2; };
+		T GetCenterY() const	{ return (top+bottom)/2; };
+		
+		bool operator==( const Rect &other ) const
+		{
 #define COMPARE( x )	if( x != other.x ) return false;
-		COMPARE( left );
-		COMPARE( top );
-		COMPARE( right );
-		COMPARE( bottom );
+			COMPARE( left );
+			COMPARE( top );
+			COMPARE( right );
+			COMPARE( bottom );
 #undef COMPARE
-		return true;
-	}
-	bool operator!=( const Rect &other ) const { return !operator==(other); }
-
-    T    left, top, right, bottom;
-};
-
-typedef Rect<int> RectI;
-typedef Rect<float> RectF;
+			return true;
+		}
+		bool operator!=( const Rect &other ) const { return !operator==(other); }
+		
+		T    left, top, right, bottom;
+	};
+}
+typedef SM::Rect<int> RectI;
+typedef SM::Rect<float> RectF;
 
 /* Structure for our custom vertex type.  Note that these data structes 
  * have the same layout that D3D expects. */
