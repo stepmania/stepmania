@@ -473,6 +473,33 @@ bool Course::GetTrailSorted( StepsType st, CourseDifficulty cd, Trail &trail ) c
 	return true;
 }
 
+// TODO: Move Course initialization after PROFILEMAN is created
+static void CourseSortSongs( SongSort sort, vector<Song*> &vpPossibleSongs, RandomGen &rnd )
+{
+	switch( sort )
+	{
+	default:
+		ASSERT(0);
+	case SongSort_Randomize:
+		random_shuffle( vpPossibleSongs.begin(), vpPossibleSongs.end(), rnd );
+		break;
+	case SongSort_MostPlays:
+		if( PROFILEMAN )
+			SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), true );	// descending
+		break;
+	case SongSort_FewestPlays:
+		if( PROFILEMAN )
+			SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), false );	// ascending
+		break;
+	case SongSort_TopGrades:
+		SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, true );	// descending
+		break;
+	case SongSort_LowestGrades:
+		SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, false );	// ascending
+		break;
+	}
+}
+
 bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
 {
 	trail.Init();
@@ -580,29 +607,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			if( vpPossibleSongs.empty() )
 				continue;
 
-			// TODO: Move Course initialization after PROFILEMAN is created
-			switch( e->songSort )
-			{
-			default:
-				ASSERT(0);
-			case SongSort_Randomize:
-				random_shuffle( vpPossibleSongs.begin(), vpPossibleSongs.end(), rnd );
-				break;
-			case SongSort_MostPlays:
-				if( PROFILEMAN )
-					SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), true );	// descending
-				break;
-			case SongSort_FewestPlays:
-				if( PROFILEMAN )
-					SongUtil::SortSongPointerArrayByNumPlays( vpPossibleSongs, PROFILEMAN->GetMachineProfile(), false );	// ascending
-				break;
-			case SongSort_TopGrades:
-				SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, true );	// descending
-				break;
-			case SongSort_LowestGrades:
-				SongUtil::SortSongPointerArrayByGrades( vpPossibleSongs, false );	// ascending
-				break;
-			}
+			CourseSortSongs( e->songSort, vpPossibleSongs, rnd );
 
 			if( e->iChooseIndex < int(vpPossibleSongs.size()) )
 			{
