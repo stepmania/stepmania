@@ -2074,16 +2074,15 @@ public:
 			return 0;
 
 		// use a vector and not a set so that ordering is maintained
-		vector<Steps*> vpStepsToShow;
+		vector<const Steps*> vpStepsToShow;
 		FOREACH_HumanPlayer( p )
 		{
-			Steps* pSteps = GAMESTATE->m_pCurSteps[p];
+			const Steps* pSteps = GAMESTATE->m_pCurSteps[p];
 			bool bAlreadyAdded = find( vpStepsToShow.begin(), vpStepsToShow.end(), pSteps ) != vpStepsToShow.end();
 			if( !bAlreadyAdded )
 				vpStepsToShow.push_back( pSteps );
 		}
 
-		CString s;
 		for( unsigned i=0; i<vpStepsToShow.size(); i++ )
 		{
 			const Steps* pSteps = vpStepsToShow[i];
@@ -2093,13 +2092,11 @@ public:
 			sDifficulty.MakeLower();
 			sDifficulty = Capitalize( sDifficulty );
 			
-			if( i )
-				s += "\n";
-			s += sDifficulty + " steps: " + pSteps->GetDescription();
+			lua_pushstring( L, sDifficulty );
+			lua_pushstring( L, pSteps->GetDescription() );
 		}
 
-		lua_pushstring( L, s );
-		return 1;
+		return vpStepsToShow.size()*2;
 	}
 
 
