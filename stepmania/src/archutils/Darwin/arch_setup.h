@@ -75,7 +75,7 @@ typedef unsigned long long UInt64;
 #if _GLIBCPP_USE_C99
 # define NEED_CSTDLIB_WORKAROUND
 #else
-inline int64_t llabs(int64_t x) { return x < 0LL ? -x : x; }
+inline int64_t llabs( int64_t x ) { return x < 0LL ? -x : x; }
 
 /* This is not correct. It's possible that _GLIBCPP_USE_C99 could be false
  * and yet have socklen_t defined. In the BSD world, this seems to come from
@@ -107,12 +107,12 @@ typedef int socklen_t;
 
 extern "C"
 {
-	extern size_t wcslen(const wchar_t *ws);
-	extern wchar_t *wmemchr(const wchar_t *ws, wchar_t wc, size_t n);
-	extern int wmemcmp(const wchar_t *ws1, const wchar_t *ws2, size_t n);
-	extern wchar_t *wmemcpy(wchar_t *ws1, const wchar_t *ws2, size_t n);
-	extern wchar_t *wmemmove(wchar_t *ws1, const wchar_t *ws2, size_t n);
-	extern wchar_t *wmemset(wchar_t *ws , wchar_t wc, size_t n);
+	extern size_t wcslen( const wchar_t *ws );
+	extern wchar_t *wmemchr( const wchar_t *ws, wchar_t wc, size_t n );
+	extern int wmemcmp( const wchar_t *ws1, const wchar_t *ws2, size_t n );
+	extern wchar_t *wmemcpy( wchar_t *ws1, const wchar_t *ws2, size_t n );
+	extern wchar_t *wmemmove( wchar_t *ws1, const wchar_t *ws2, size_t n );
+	extern wchar_t *wmemset( wchar_t *ws , wchar_t wc, size_t n );
 }
 // C++ defines the wchar_t type even if glibc++ doesn't have the functions
 namespace std
@@ -125,48 +125,47 @@ namespace std
 	{
 		typedef wchar_t    char_type;
 		typedef wchar_t    int_type; // it's big enough
-		/* streampos and wstreampos are both required to be typedefs for
-			* fpos<mbstate_t> as per clause 27.2--whatever that is.
-			*/
+		/*
+		 * streampos and wstreampos are both required to be typedefs for
+		 * fpos<mbstate_t> as per clause 27.2--whatever that is.
+		 */
 		typedef streampos  pos_type;
 		typedef streamoff  off_type;
 		typedef mbstate_t  state_type;
 		
-		static void assign(char_type& c1, const char_type c2)
+		static void assign( char_type& c1, const char_type c2 )
 		{
 			c1 = c2;
 		}
 		
-		static void assign(char_type *s, size_t n, char_type c)
+		static void assign( char_type *s, size_t n, char_type c )
 		{
-			wmemset(s, c, n);
+			wmemset( s, c, n );
 		}
 		
-		static int compare(const char_type *s1, const char_type *s2,
-						   size_t n)
+		static int compare( const char_type *s1, const char_type *s2, size_t n )
 		{
-			return wmemcmp(s1, s2, n);
+			return wmemcmp( s1, s2, n );
 		}
 		
-		static char_type *copy(char_type *s1, const char_type *s2, size_t n)
+		static char_type *copy( char_type *s1, const char_type *s2, size_t n )
 		{
-			return wmemcpy(s1, s2, n);
+			return wmemcpy( s1, s2, n );
 		}
 		
-		static const char_type *find(const char_type *s, size_t n,
-									 const char_type& c)
+		static const char_type *find( const char_type *s, size_t n, const char_type& c )
 		{
-			return wmemchr(s, c, n);
+			return wmemchr( s, c, n );
 		}
 		
-		static size_t length(const char_type *s)
+		static size_t length( const char_type *s )
 		{
-			return wcslen(s);
+			return wcslen( s );
 		}
 		
-		static char_type *move(char_type *s1, const char_type *s2, size_t n)
+		static char_type *move( char_type *s1, const char_type *s2, size_t n )
 		{
-			return wmemmove(s1, s2, n);
+			return wmemmove( s1, s2, n );
 		}
 	};
 	

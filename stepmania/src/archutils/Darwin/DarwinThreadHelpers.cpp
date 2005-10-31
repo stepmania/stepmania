@@ -23,7 +23,7 @@ uint64_t GetCurrentThreadId()
 bool GetThreadBacktraceContext( uint64_t iID, BacktraceContext *ctx )
 {
 	/* Can't GetThreadBacktraceContext the current thread. */
-	ASSERT(iID != GetCurrentThreadId());
+	ASSERT( iID != GetCurrentThreadId() );
 
 	SuspendThread( iID );
 

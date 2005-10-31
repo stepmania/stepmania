@@ -1,13 +1,9 @@
-#import <Cocoa/Cocoa.h>
-
 void InformUserOfCrash( const char *sPath )
 {
-	int ret = NSRunAlertPanel(@"StepMania has crashed",
-							  @"StepMania has crashed. Debugging information "
-							  @"has been output to\n\n%s\n\nPlease file a bug "
-							  @"report at\n\nhttp://sf.net/tracker/?func=add&"
-							  @"group_id=37892&atid=421366",
-							  @"Open crashinfo.txt", @"Quit", nil, sPath);
+	NSString *s = @"StepMania has crashed. Debugging information has been output to\n\n%s\n\n"
+	@"Please file a bug report at\n\nhttp://sf.net/tracker/?func=add&group_id=37892&atid=421366";
+	
+	int ret = NSRunAlertPanel( @"StepMania has crashed", s, @"Open crashinfo.txt", @"Quit", nil, sPath );
 	
 	if( ret == NSAlertDefaultReturn )
 	{

@@ -1,5 +1,3 @@
-#import "Cocoa/Cocoa.h"
-
 char *GetPreferredLanguage()
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -8,7 +6,7 @@ char *GetPreferredLanguage()
 	const char *lang = [[languages objectAtIndex:0] UTF8String];
 	char *ret = (char *)malloc( strlen(lang) + 1 );
 
-	strcpy(ret, lang);
+	strcpy( ret, lang );
     [pool release];
 	return ret;
 }

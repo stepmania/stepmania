@@ -1,6 +1,3 @@
-#import <Cocoa/Cocoa.h>
-#import <assert.h>
-
 void SM_ShowCursor( bool b )
 {
 	if( b )

@@ -4,55 +4,55 @@
 extern "C"
 {
 #if ! _GLIBCPP_HAVE_WCLEN
-size_t wcslen(const wchar_t *ws)
+size_t wcslen( const wchar_t *ws )
 {
 		size_t n = 0;
 		
-		while (*(ws++) != L'\0')
+		while( *(ws++) != L'\0' )
 			++n;
 		return n;
 }
 #endif
 
 #if ! _GLIBCPP_HAVE_WMEMCHR
-wchar_t *wmemchr(const wchar_t *ws, wchar_t wc, size_t n)
+wchar_t *wmemchr( const wchar_t *ws, wchar_t wc, size_t n )
 {
-    for (unsigned i=0; i<n; ++i, ++ws)
-        if (*ws == wc)
+    for( unsigned i=0; i<n; ++i, ++ws )
+        if( *ws == wc )
             return (wchar_t *)ws;
     return NULL;
 }
 #endif
 
 #if ! _GLIBCPP_HAVE_WMEMCMP
-int wmemcmp(const wchar_t *ws1, const wchar_t *ws2, size_t n)
+int wmemcmp( const wchar_t *ws1, const wchar_t *ws2, size_t n )
 {
-    for (unsigned i=0; i<n; ++i, ++ws1, ++ws2)
-        if (*ws1 != *ws2)
+    for( unsigned i=0; i<n; ++i, ++ws1, ++ws2 )
+        if( *ws1 != *ws2 )
             return *ws1 - *ws2;
     return 0;
 }
 #endif
 
 #if ! _GLIBCPP_HAVE_WMEMCPY
-wchar_t *wmemcpy(wchar_t *ws1, const wchar_t *ws2, size_t n)
+wchar_t *wmemcpy( wchar_t *ws1, const wchar_t *ws2, size_t n )
 {
-    return (wchar_t *)memcpy(ws1, ws2, n * sizeof(wchar_t));
+    return (wchar_t *)memcpy( ws1, ws2, n * sizeof(wchar_t) );
 }
 #endif
 
 #if ! _GLIBCPP_HAVE_WMEMMOVE
-wchar_t *wmemmove(wchar_t *ws1, const wchar_t *ws2, size_t n)
+wchar_t *wmemmove( wchar_t *ws1, const wchar_t *ws2, size_t n )
 {
-    return (wchar_t *)memmove(ws1, ws2, n * sizeof(wchar_t));
+    return (wchar_t *)memmove( ws1, ws2, n * sizeof(wchar_t) );
 }
 #endif
 
 #if ! _GLIBCPP_HAVE_WMEMSET
-wchar_t *wmemset(wchar_t *ws , wchar_t wc, size_t n)
+wchar_t *wmemset( wchar_t *ws , wchar_t wc, size_t n )
 {
     wchar_t *temp = ws;
-    for (unsigned i=0; i<n; ++i, ++temp)
+    for( unsigned i=0; i<n; ++i, ++temp )
         *temp = wc;
     return ws;
 }
