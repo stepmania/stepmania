@@ -147,6 +147,14 @@ Section "Main Section" SecMain
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "${PRODUCT_ID} (remove only)"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninstall.exe"'
 
+!ifdef INSTALL_TYPE_PCKS
+
+	CreateDirectory $INSTDIR\pcks
+	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\Resources\*.idx" $INSTDIR\pcks 1
+	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\Resources\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
+
+!else
+
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command" "" '"$INSTDIR\Program\smpackage.exe" "%1"'
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile" "" "SMZIP package"
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\Program\smpackage.exe,0"
@@ -240,19 +248,8 @@ Section "Main Section" SecMain
 	File "Data\Translations.xml"
 	File "Data\AI.ini"
 	File "Data\splash.png"
-
-	SetOutPath "$INSTDIR\Program"
-	File "Program\${PRODUCT_NAME}.exe"
-	File "Program\${PRODUCT_NAME}.vdi"
-	File "Program\smpackage.exe"
-	File "Program\msvcr70.dll"
-	File "Program\msvcp70.dll"
-	File "Program\jpeg.dll"
-	File "Program\avcodec.dll"
-	File "Program\avformat.dll"
-	File "Program\resample.dll"
-	File "Program\dbghelp.dll"
-	File "Program\zlib1.dll"
+	
+!endif
 
 	SetOverwrite off
 	SetOutPath "$INSTDIR\Save\MachineProfile"
@@ -263,6 +260,19 @@ Section "Main Section" SecMain
 	File "Docs\Copying.txt"
 	File "README-FIRST.html"
 	File "NEWS"
+
+	SetOutPath "$INSTDIR\Program"
+	File "Program\${PRODUCT_NAME}.exe"
+	File "Program\${PRODUCT_NAME}.vdi"
+	File "Program\smpackage.exe"
+	File "Program\msvcr71.dll"
+	File "Program\msvcp71.dll"
+	File "Program\jpeg.dll"
+	File "Program\avcodec.dll"
+	File "Program\avformat.dll"
+	File "Program\resample.dll"
+	File "Program\dbghelp.dll"
+	File "Program\zlib1.dll"
 
 	; What to do here?  Better to just delete an existing INI than to
 	; drop the local one in ... -glenn
@@ -401,9 +411,14 @@ FunctionEnd
 Section "Uninstall"
 
 	; add delete commands to delete whatever files/registry keys/etc you installed here.
-	Delete "$INSTDIR\uninstall.exe"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_NAME}\${PRODUCT_ID}"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}"
+
+!ifdef INSTALL_TYPE_PCKS
+
+	RMDir /r "$INSTDIR\pcks"
+
+!else
 
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile"
@@ -466,17 +481,18 @@ Section "Uninstall"
 	Delete "$INSTDIR\Docs\ChangeLog.txt"
 	RMDir "$INSTDIR\Docs"
 
-	; Don't delete high scores.
 	Delete "$INSTDIR\Data\Translations.xml"
 	Delete "$INSTDIR\Data\AI.ini"
 	Delete "$INSTDIR\Data\splash.png"
 	RMDir "$INSTDIR\Data"
 
+!endif
+
 	Delete "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 	Delete "$INSTDIR\Program\smpackage.exe"
 	Delete "$INSTDIR\Program\${PRODUCT_NAME}.vdi"
-	Delete "$INSTDIR\Program\msvcr70.dll"
-	Delete "$INSTDIR\Program\msvcp70.dll"
+	Delete "$INSTDIR\Program\msvcr71.dll"
+	Delete "$INSTDIR\Program\msvcp71.dll"
 	Delete "$INSTDIR\Program\jpeg.dll"
 	Delete "$INSTDIR\Program\avcodec.dll"
 	Delete "$INSTDIR\Program\avformat.dll"
