@@ -2,7 +2,7 @@
 #include "ProductInfo.h"
 #include "GameLoop.h"
 
-// XXX remove these
+// XXX remove this
 extern "C"
 {
 	extern int SDL_main(int, char **);
@@ -35,7 +35,6 @@ extern "C"
 	else
 		[super sendEvent:event];
 }
-
 @end
 
 /* The main class of the application, the application's delegate */
@@ -87,7 +86,7 @@ static void setupMenus( void )
 	[appMenu addItem:MenuItem( "Show All", @selector(unhideAllApplications:), @"" )];
 	[appMenu addItem:MenuItem( "Quit " PRODUCT_NAME, @selector(terminate:), @"q" )];
 	
-	[windowMenu addItem:MenuItem( "Minimize", @selector(performMiniturize:), @"m" )];
+	[windowMenu addItem:MenuItem( "Minimize", @selector(performMiniaturize:), @"m" )];
 	[windowMenu addItem:[NSMenuItem separatorItem]];
 	[windowMenu addItem:MenuItem( "Full Screen", @selector(fullscreen:), @"" )];
 
