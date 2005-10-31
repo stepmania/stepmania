@@ -38,6 +38,9 @@ void MakeNewCocoaWindow()
 	[window useOptimizedDrawing:YES];
 	[window setViewsNeedDisplay:YES];
 	[window setTitle:[NSString stringWithUTF8String:PRODUCT_NAME_VER]];
+	
+	// There's only one window ever so don't display in the menu
+	[window setExcludedFromWindowsMenu:YES];
 
 	view = [window contentView];
 	[view addSubview:text]; /* This retains text */
