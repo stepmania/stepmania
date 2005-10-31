@@ -1,6 +1,7 @@
 /* Override the -DSM_PCH=TRUE temporarily. */
 #undef SM_PCH
 #define SM_PCH FALSE
+
 // Only do this for c++ files.
 #ifdef __cplusplus
 # include "global.h"
