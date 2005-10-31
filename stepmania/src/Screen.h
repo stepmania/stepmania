@@ -39,8 +39,8 @@ public:
 	Screen( CString sName );	// enforce that all screens have m_sName filled in
 	virtual ~Screen();
 
-	/* This is called immediately after construction, to allow initializing after all derived classes
-	 * exist. */
+	/* This is called immediately after construction, to allow initializing after all
+	 * derived classes exist.  (Don't call it directly; use InitScreen.) */
 	virtual void Init();
 
 	/* This is called immediately before the screen is used. */
