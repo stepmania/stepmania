@@ -500,6 +500,29 @@ static void CourseSortSongs( SongSort sort, vector<Song*> &vpPossibleSongs, Rand
 	}
 }
 
+static void GetSongsValidForRandom( vector<Song*> &vpSongsOut )
+{
+	const vector<Song*> &vpAllSongs = SONGMAN->GetAllSongs();
+
+	FOREACH_CONST( Song*, vpAllSongs, song )
+	{
+		// Ignore locked songs when choosing randomly
+		// TODO: Move Course initialization after UNLOCKMAN is created
+		if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(*song) )
+			continue;
+
+		// Ignore boring tutorial songs
+		if( (*song)->IsTutorial() )
+			continue;
+
+		// Don't allow long songs
+		if( SONGMAN->GetNumStagesForSong(*song) > 1 )
+			continue;
+
+		vpSongsOut.push_back( *song );
+	}
+}
+
 bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail ) const
 {
 	trail.Init();
@@ -540,27 +563,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	bool bCourseDifficultyIsSignificant = (cd == DIFFICULTY_MEDIUM);
 
 	vector<Song*> vpAllPossibleSongs;
-	{
-		const vector<Song*> &vpAllSongs = SONGMAN->GetAllSongs();
-
-		FOREACH_CONST( Song*, vpAllSongs, song )
-		{
-			// Ignore locked songs when choosing randomly
-			// TODO: Move Course initialization after UNLOCKMAN is created
-			if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(*song) )
-				continue;
-
-			// Ignore boring tutorial songs
-			if( (*song)->IsTutorial() )
-				continue;
-
-			// Don't allow long songs
-			if( SONGMAN->GetNumStagesForSong(*song) > 1 )
-				continue;
-
-			vpAllPossibleSongs.push_back( *song );
-		}
-	}
+	GetSongsValidForRandom( vpAllPossibleSongs );
 
 	// Resolve each entry to a Song and Steps.
 	FOREACH_CONST( CourseEntry, entries, e )
