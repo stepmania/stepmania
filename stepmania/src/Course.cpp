@@ -539,28 +539,27 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	/* Set to true if CourseDifficulty is able to change something. */
 	bool bCourseDifficultyIsSignificant = (cd == DIFFICULTY_MEDIUM);
 
-	// get a list of all songs that are 1 stage long
 	vector<Song*> vpAllPossibleSongs;
-	SONGMAN->GetSongs(vpAllPossibleSongs, 1);
-
-	// remove locked and tutorial songs from the list
-	for( vector<Song *>::iterator song = vpAllPossibleSongs.begin(); song != vpAllPossibleSongs.end(); )
 	{
-		// Ignore locked songs when choosing randomly
-		// TODO: Move Course initialization after UNLOCKMAN is created
-		if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(*song) )
-		{
-			song = vpAllPossibleSongs.erase( song );
-			continue;
-		}
+		const vector<Song*> &vpAllSongs = SONGMAN->GetAllSongs();
 
-		// Ignore boring tutorial songs
-		if( (*song)->IsTutorial() )
+		FOREACH_CONST( Song*, vpAllSongs, song )
 		{
-			song = vpAllPossibleSongs.erase( song );
-			continue;
+			// Ignore locked songs when choosing randomly
+			// TODO: Move Course initialization after UNLOCKMAN is created
+			if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(*song) )
+				continue;
+
+			// Ignore boring tutorial songs
+			if( (*song)->IsTutorial() )
+				continue;
+
+			// Don't allow long songs
+			if( SONGMAN->GetNumStagesForSong(*song) > 1 )
+				continue;
+
+			vpAllPossibleSongs.push_back( *song );
 		}
-		++song;
 	}
 
 	// Resolve each entry to a Song and Steps.
@@ -574,7 +573,6 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		//
 
 		// Start with all songs
-		vector<Song*> vpPossibleSongs;
 		vector<Steps*> vpPossibleSteps;
 
 		if( e->pSong )
@@ -590,6 +588,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		{
 			// copy over any songs that match our group filter, if one is set, and match our
 			// steps filter.
+			vector<Song*> vpPossibleSongs;
 			FOREACH( Song*, vpAllPossibleSongs, song )
 			{
 				if( !e->sSongGroup.empty() && (*song)->m_sGroupName != e->sSongGroup )
