@@ -557,7 +557,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		{
 			// Choose an exact song, if we have matching steps and all
 			e->pSong->GetSteps( vpPossibleSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
-			if( ( !e->sSongGroup.empty() && (*song)->m_sGroupName == e->sSongGroup ) && !vpPossibleSteps.empty() )
+			if( !vpPossibleSteps.empty() )
 			{
 				pResolvedSong = e->pSong;
 			}
@@ -623,8 +623,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		}
 
 		ASSERT( !vpPossibleSteps.empty() );	// if no steps are playable, this shouldn't be a possible song
-		if( vpPossibleSteps.size() > 1 )	// no reason to randomize if there's only one set of possible steps
-			random_shuffle( vpPossibleSteps.begin(), vpPossibleSteps.end(), rnd );
+		random_shuffle( vpPossibleSteps.begin(), vpPossibleSteps.end(), rnd );
 		pResolvedSteps = vpPossibleSteps[0];
 
 		if( pResolvedSong == NULL || pResolvedSteps == NULL )
