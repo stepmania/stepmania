@@ -9,9 +9,7 @@
 #include "archutils/Unix/SignalHandler.h"
 #include "StepMania.h"
 #include "GameLoop.h"
-#define Random Random_ // work around namespace pollution
 #include <Carbon/Carbon.h>
-#undef Random_
 #include <mach/thread_act.h>
 #include <mach/mach.h>
 #include <mach/host_info.h>
