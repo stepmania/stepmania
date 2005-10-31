@@ -244,7 +244,7 @@ static LANGID GetLanguageID()
 		FreeLibrary( hDLL );
 	}
 
-	return GetSystemDefaultLangID();
+	return GetUserDefaultLangID();
 }
 
 CString ArchHooks_Win32::GetPreferredLanguage()
