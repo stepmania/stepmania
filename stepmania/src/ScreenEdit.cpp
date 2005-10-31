@@ -447,7 +447,7 @@ static MenuDef g_StepsInformation(
 	MenuRowDef( ScreenEdit::difficulty,	"Difficulty",		true, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( ScreenEdit::meter,			"Meter",			true, EDIT_MODE_PRACTICE, 0, "1","2","3","4","5","6","7","8","9","10","11","12","13" ),
 	MenuRowDef( ScreenEdit::description,	"Description",		true, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRowDef( ScreenEdit::predict_meter,	"Predicted Meter",	false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( ScreenEdit::predict_meter,	"Predicted Meter",	false, EDIT_MODE_FULL, 0, NULL ),
 	MenuRowDef( ScreenEdit::tap_notes,		"Tap Steps",		false, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( ScreenEdit::jumps,			"Jumps",			false, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( ScreenEdit::hands,			"Hands",			false, EDIT_MODE_PRACTICE, 0, NULL ),
