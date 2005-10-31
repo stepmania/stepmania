@@ -192,13 +192,6 @@ int Font::GetLineWidthInSourcePixels( const wstring &szLine ) const
 	for( unsigned i=0; i<szLine.size(); i++ )
 		iLineWidth += GetGlyph(szLine[i]).m_iHadvance;
 
-	if( szLine.size() > 0 )
-	{
-		/* Add overdraw. */
-		iLineWidth += GetGlyph(szLine[0]).m_pPage->m_iDrawExtraPixelsLeft;
-		iLineWidth += GetGlyph(szLine[szLine.size()-1]).m_pPage->m_iDrawExtraPixelsRight;
-	}
-
 	return iLineWidth;
 }
 
