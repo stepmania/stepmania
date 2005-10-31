@@ -17,7 +17,7 @@ namespace SignalHandler
 {
 	typedef void (*handler)( int, siginfo_t *si, const ucontext_t *uc );
 
-	void OnClose(handler);
+	void OnClose( handler );
 	void ResetSignalHandlers();
 };
 
