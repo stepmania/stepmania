@@ -1290,24 +1290,13 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 
-#ifndef MACOSX
+#if !defined(MACOSX)
 	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_F4) )
 	{
 		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
 			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
 		{
 			// pressed Alt+F4
-			ExitGame();
-			return true;
-		}
-	}
-#else
-	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_Cq) )
-	{
-		if(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RMETA)) ||
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LMETA)))
-		{
-			// pressed CMD-Q
 			ExitGame();
 			return true;
 		}
