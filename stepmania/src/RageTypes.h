@@ -204,7 +204,7 @@ public:
 
 namespace SM
 {
-template <class T>
+	template <class T>
 	class Rect
 	{
 public:
