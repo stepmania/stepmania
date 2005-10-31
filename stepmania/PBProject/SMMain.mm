@@ -84,6 +84,7 @@ static void setupMenus( void )
 	[appMenu addItem:MenuItem( "Hide " PRODUCT_NAME, @selector(hide:), @"h" )];
 	[appMenu addItem:hideOthers];
 	[appMenu addItem:MenuItem( "Show All", @selector(unhideAllApplications:), @"" )];
+	[appMenu addItem:[NSMenuItem separatorItem]];
 	[appMenu addItem:MenuItem( "Quit " PRODUCT_NAME, @selector(terminate:), @"q" )];
 	
 	[windowMenu addItem:MenuItem( "Minimize", @selector(performMiniaturize:), @"m" )];
