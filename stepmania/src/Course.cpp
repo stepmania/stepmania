@@ -563,7 +563,7 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	bool bCourseDifficultyIsSignificant = (cd == DIFFICULTY_MEDIUM);
 
 	vector<Song*> vpAllPossibleSongs;
-	GetSongsValidForRandom( vpAllPossibleSongs );
+	bool bHaveAllSongs = false; // true if vpAllPossibleSongs has been generated
 
 	// Resolve each entry to a Song and Steps.
 	FOREACH_CONST( CourseEntry, entries, e )
@@ -589,6 +589,13 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 		}
 		else
 		{
+			/* Generate vpAllPossibleSongs, if we havn't yet. */
+			if( !bHaveAllSongs )
+			{
+				GetSongsValidForRandom( vpAllPossibleSongs );
+				bHaveAllSongs = true;
+			}
+
 			// copy over any songs that match our group filter, if one is set, and match our
 			// steps filter.
 			vector<Song*> vpPossibleSongs;
