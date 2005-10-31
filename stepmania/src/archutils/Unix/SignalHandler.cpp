@@ -8,16 +8,23 @@
 #include "archutils/Unix/LinuxThreadHelpers.h"
 #endif
 
-#include <signal.h>
-#include <cstdlib>
 #include <unistd.h>
 #include <sys/mman.h>
 #include <cerrno>
 
 #if defined(MACOSX)
-extern "C" int sigaltstack( const struct sigaltstack *ss, struct sigaltstack *oss );
-#define MAP_ANONYMOUS MAP_ANON
+extern "C" int sigaltstack(const stack_t * __restrict, stack_t * __restrict);
+# define MAP_ANONYMOUS MAP_ANON
 #endif
+
+#if defined(__GNUC__)
+# define NOINLINE __attribute__((noinline))
+#else
+# define NOINLINE
+#endif
+
+static int find_stack_direction2( char *p ) NOINLINE;
+static int find_stack_direction() NOINLINE;
 
 static vector<SignalHandler::handler> handlers;
 SaveSignals *saved_sigs;
@@ -42,34 +49,34 @@ static int signals[] =
 SaveSignals::SaveSignals()
 {
 	/* Store the old signal handlers. */
-	for(int i = 0; signals[i] != -1; ++i)
+	for( int i = 0; signals[i] != -1; ++i )
 	{
 		struct sigaction sa;
-		sigaction(signals[i], NULL, &sa);
-		old_handlers.push_back(sa);
+		sigaction( signals[i], NULL, &sa );
+		old_handlers.push_back( sa );
 	}
 }
 
 SaveSignals::~SaveSignals()
 {
 	/* Restore the old signal handlers. */
-	for(unsigned i = 0; i < old_handlers.size(); ++i)
-		sigaction(signals[i], &old_handlers[i], NULL);
+	for( unsigned i = 0; i < old_handlers.size(); ++i )
+		sigaction( signals[i], &old_handlers[i], NULL );
 }
 
 static void SigHandler( int signal, siginfo_t *si, void *ucp )
 {
-	for(unsigned i = 0; i < handlers.size(); ++i)
-		handlers[i]( signal, si, (const ucontext_t *) ucp );
+	for( unsigned i = 0; i < handlers.size(); ++i )
+		handlers[i]( signal, si, (const ucontext_t *)ucp );
 }
 
-static int find_stack_direction2( char *p )
+int find_stack_direction2( char *p )
 {
 	char c;
 	return (&c > p) ? +1:-1;
 }
 
-static int find_stack_direction()
+int find_stack_direction()
 {
 	char c;
 	return find_stack_direction2( &c );
@@ -112,9 +119,9 @@ static void *CreateStack( int size )
 }
 
 /* Hook up events to fatal signals, so we can clean up if we're killed. */
-void SignalHandler::OnClose(handler h)
+void SignalHandler::OnClose( handler h )
 {
-	if(saved_sigs == NULL)
+	if( saved_sigs == NULL )
 	{
 		saved_sigs = new SaveSignals;
 
@@ -157,8 +164,8 @@ void SignalHandler::OnClose(handler h)
 
 		/* Set up our signal handlers. */
 		sa.sa_sigaction = SigHandler;
-		for(int i = 0; signals[i] != -1; ++i)
-			sigaction(signals[i], &sa, NULL);
+		for( int i = 0; signals[i] != -1; ++i )
+			sigaction( signals[i], &sa, NULL );
 
 		/* Block SIGPIPE, so we get EPIPE. */
 		sa.sa_handler = SIG_IGN;
@@ -172,7 +179,7 @@ void SignalHandler::ResetSignalHandlers()
 {
 	struct sigaction sa;
 	sa.sa_flags = 0;
-	sigemptyset(&sa.sa_mask);
+	sigemptyset( &sa.sa_mask );
 
 	/* Set up the default signal handler. */
 	sa.sa_handler = SIG_DFL;
