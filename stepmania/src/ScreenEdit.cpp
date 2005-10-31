@@ -796,7 +796,7 @@ ScreenMiniMenu *ScreenEdit::LoadEditMiniMenu( const MenuDef* pDef )
 	MakeFilteredMenuDef( pDef, menu );
 
 	ScreenMiniMenu *pScreen = new ScreenMiniMenu( pDef->sClassName );
-	pScreen->Init();
+	Screen::InitScreen( pScreen );
 	pScreen->LoadMenu( &menu );
 	return pScreen;
 }
