@@ -45,10 +45,10 @@
 ;Interface Settings
 
 	!define MUI_HEADERIMAGE
-	!define MUI_HEADERIMAGE_BITMAP "installer-header.bmp"
+	!define MUI_HEADERIMAGE_BITMAP "Installer\header.bmp"
 	!define MUI_ABORTWARNING
-	!define MUI_ICON "${NSISDIR}\Contrib\Graphics\Icons\win-install.ico"
-	!define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\win-uninstall.ico"
+	!define MUI_ICON "Installer\install.ico"
+	!define MUI_UNICON "Installer\uninstall.ico"
 
 ;--------------------------------
 ;Language Selection Dialog Settings
@@ -387,12 +387,12 @@ FunctionEnd
 ;--------------------------------
 ;Descriptions
 
-  ;USE A LANGUAGE STRING IF YOU WANT YOUR DESCRIPTIONS TO BE LANGAUGE SPECIFIC
+	;USE A LANGUAGE STRING IF YOU WANT YOUR DESCRIPTIONS TO BE LANGAUGE SPECIFIC
 
-  ;Assign descriptions to sections
-  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${SecMain} "A test section."
-  !insertmacro MUI_FUNCTION_DESCRIPTION_END
+	;Assign descriptions to sections
+	!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+		!insertmacro MUI_DESCRIPTION_TEXT ${SecMain} "A test section."
+	!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
  
 ;--------------------------------
