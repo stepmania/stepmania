@@ -439,7 +439,7 @@
 		AA29CDBB0558741A00961A51 /* ScreenAttract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0010047711F3005F316C /* ScreenAttract.cpp */; };
 		AA29CDBD0558741A00961A51 /* ScreenCredits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0019047711F3005F316C /* ScreenCredits.cpp */; };
 		AA29CDBE0558741A00961A51 /* ScreenDemonstration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001B047711F3005F316C /* ScreenDemonstration.cpp */; };
-		AA29CDBF0558741A00961A51 /* ScreenEdit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001D047711F3005F316C /* ScreenEdit.cpp */; };
+		AA29CDBF0558741A00961A51 /* ScreenEdit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001D047711F3005F316C /* ScreenEdit.cpp */; settings = {COMPILER_FLAGS = "-finline-limit=300"; }; };
 		AA29CDC00558741A00961A51 /* ScreenEditMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E001F047711F3005F316C /* ScreenEditMenu.cpp */; };
 		AA29CDC10558741A00961A51 /* ScreenEvaluation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0021047711F3005F316C /* ScreenEvaluation.cpp */; };
 		AA29CDC20558741A00961A51 /* ScreenEz2SelectMusic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E0023047711F3005F316C /* ScreenEz2SelectMusic.cpp */; };
