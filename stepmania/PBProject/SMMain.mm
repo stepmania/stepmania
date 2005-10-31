@@ -30,7 +30,9 @@ extern "C"
 
 - (void)sendEvent:(NSEvent *)event
 {
-	if( [event type] != NSKeyDown )
+	if( [event type] == NSKeyDown )
+		[[self mainMenu] performKeyEquivalent:event];
+	else
 		[super sendEvent:event];
 }
 
