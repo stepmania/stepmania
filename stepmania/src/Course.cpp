@@ -517,26 +517,23 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 	SONGMAN->GetSongs(vpAllPossibleSongs, 1);
 
 	// remove locked and tutorial songs from the list
-	FOREACH( Song*, vpAllPossibleSongs, song )
+	for( vector<Song *>::iterator song = vpAllPossibleSongs.begin(); song != vpAllPossibleSongs.end(); )
 	{
 		// Ignore locked songs when choosing randomly
 		// TODO: Move Course initialization after UNLOCKMAN is created
 		if( UNLOCKMAN  &&  UNLOCKMAN->SongIsLocked(*song) )
 		{
-			vector<Song*>::iterator eraseme = song;
-			song--;
-			vpAllPossibleSongs.erase( eraseme );
+			song = vpAllPossibleSongs.erase( song );
 			continue;
 		}
 
 		// Ignore boring tutorial songs
 		if( (*song)->IsTutorial() )
 		{
-			vector<Song*>::iterator eraseme = song;
-			song--;
-			vpAllPossibleSongs.erase( eraseme );
+			song = vpAllPossibleSongs.erase( song );
 			continue;
 		}
+		++song;
 	}
 
 	// Resolve each entry to a Song and Steps.
@@ -558,13 +555,9 @@ bool Course::GetTrailUnsorted( StepsType st, CourseDifficulty cd, Trail &trail )
 			// Choose an exact song, if we have matching steps and all
 			e->pSong->GetSteps( vpPossibleSteps, st, e->baseDifficulty, e->iLowMeter, e->iHighMeter );
 			if( !vpPossibleSteps.empty() )
-			{
 				pResolvedSong = e->pSong;
-			}
 			else
-			{
 				continue;
-			}
 		}
 		else
 		{
