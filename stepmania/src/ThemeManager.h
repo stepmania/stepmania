@@ -98,7 +98,7 @@ public:
 
 protected:
 	void RunLuaScripts( const CString &sMask );
-	void LoadThemeRecursive( deque<Theme> &theme, const CString &sThemeName );
+	void LoadThemeMetrics( deque<Theme> &theme, const CString &sThemeName, const CString &sLanguage_ );
 	bool GetMetricRawRecursive( const CString &sClassName, const CString &sValueName, CString &sRet );
 	CString GetPathToAndFallback( ElementCategory category, const CString &sClassName, const CString &sFile );
 	CString GetPathToRaw( const CString &sThemeName, ElementCategory category, const CString &sClassName, const CString &sFile );

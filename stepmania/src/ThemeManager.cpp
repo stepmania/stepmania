@@ -166,13 +166,17 @@ bool ThemeManager::DoesLanguageExist( const CString &sLanguage )
 	return false;
 }
 
-void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThemeName_ )
+void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const CString &sThemeName_, const CString &sLanguage_ )
 {
 	for( unsigned i = 0; i < g_vThemes.size(); ++i )
 		delete g_vThemes[i].iniMetrics;
 	g_vThemes.clear();
 
 	CString sThemeName(sThemeName_);
+	CString sLanguage(sLanguage_);
+
+	m_sCurThemeName = sThemeName;
+	m_sCurLanguage = sLanguage;
 
 	bool bLoadedBase = false;
 	while(1)
@@ -185,8 +189,8 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThem
 		t.sThemeName = sThemeName;
 		t.iniMetrics->ReadFile( GetMetricsIniPath(sThemeName) );
 		t.iniMetrics->ReadFile( GetLanguageIniPath(sThemeName,BASE_LANGUAGE) );
-		if( m_sCurLanguage.CompareNoCase(BASE_LANGUAGE) )
-			t.iniMetrics->ReadFile( GetLanguageIniPath(sThemeName,m_sCurLanguage) );
+		if( sLanguage.CompareNoCase(BASE_LANGUAGE) )
+			t.iniMetrics->ReadFile( GetLanguageIniPath(sThemeName,sLanguage) );
 
 		bool bIsBaseTheme = !sThemeName.CompareNoCase(BASE_THEME_NAME);
 		t.iniMetrics->GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
@@ -250,15 +254,12 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName_, const CSt
 	if( sThemeName == m_sCurThemeName && sLanguage == m_sCurLanguage )
 		return;
 
-	m_sCurThemeName = sThemeName;
-	m_sCurLanguage = sLanguage;
-
 	// clear theme path cache
 	for( int i = 0; i < NUM_ElementCategory; ++i )
 		g_ThemePathCache[i].clear();
 
 	// load current theme
-	LoadThemeRecursive( g_vThemes, m_sCurThemeName );
+	LoadThemeMetrics( g_vThemes, sThemeName, sLanguage );
 
 	LOG->MapLog( "theme", "Theme: %s", sThemeName.c_str() );
 	LOG->MapLog( "language", "Language: %s", sLanguage.c_str() );
