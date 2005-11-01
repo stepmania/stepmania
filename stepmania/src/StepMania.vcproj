@@ -1886,6 +1886,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Judgment.h">
 			</File>
 			<File
+				RelativePath="LifeMeter.cpp">
+			</File>
+			<File
 				RelativePath="LifeMeter.h">
 			</File>
 			<File
