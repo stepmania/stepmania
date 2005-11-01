@@ -132,8 +132,8 @@ void ScreenEdit::InitEditMappings()
 		m_EditMappings.button   [EDIT_BUTTON_SCROLL_SPEED_DOWN][0] = DeviceInput(DEVICE_KEYBOARD, KEY_LEFT);
 		m_EditMappings.button   [EDIT_BUTTON_SCROLL_SPEED_UP][0]   = DeviceInput(DEVICE_KEYBOARD, KEY_RIGHT);
 
-		// X = Play current beat to end
-		// O = Play selection
+		// Enter = Play selection
+		// P = Play current beat to end
 		m_EditMappings.button   [EDIT_BUTTON_PLAY_SELECTION][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
 		m_EditMappings.button   [EDIT_BUTTON_PLAY_FROM_CURSOR][0]  = DeviceInput(DEVICE_KEYBOARD, KEY_Cp);
 
