@@ -653,18 +653,16 @@ void Font::Load( const CString &sIniPath, CString sChars )
 	ASSERT_M( !GetExtension(sIniPath).CompareNoCase("ini"), sIniPath );
 
 	/* Check for recursion (recursive imports). */
+	for( unsigned i = 0; i < LoadStack.size(); ++i )
 	{
-		for(unsigned i = 0; i < LoadStack.size(); ++i)
+		if( LoadStack[i] == sIniPath )
 		{
-			if( LoadStack[i] == sIniPath )
-			{
-				CString str = join("\n", LoadStack);
-				str += "\n" + sIniPath;
-				RageException::Throw("Font import recursion detected\n%s", str.c_str());
-			}
+			CString str = join("\n", LoadStack);
+			str += "\n" + sIniPath;
+			RageException::Throw("Font import recursion detected\n%s", str.c_str());
 		}
-		LoadStack.push_back( sIniPath );
 	}
+	LoadStack.push_back( sIniPath );
 
 	/* The font is not already loaded.  Figure out what we have. */
 	CHECKPOINT_M( ssprintf("Font::Load(\"%s\",\"%s\").", sIniPath.c_str(), m_sChars.c_str()) );
@@ -716,7 +714,7 @@ void Font::Load( const CString &sIniPath, CString sChars )
 	}
 
 	/* Load each font page. */
-	for(unsigned i = 0; i < asTexturePaths.size(); ++i)
+	for( unsigned i = 0; i < asTexturePaths.size(); ++i )
 	{
 		const CString &sTexturePath = asTexturePaths[i];
 
