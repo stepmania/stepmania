@@ -433,14 +433,13 @@ static MenuDef g_EditHelp(
 
 static MenuDef g_PracticeHelp(
 	"ScreenMiniMenuPracticeHelp",
-	MenuRowDef( -1, "R + Select: Record",							false, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( -1, "Up, Down: Move cursor",						false, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( -1, "PgUp, PgDn: Jump measure",						false, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( -1, "Home, End: Jump to first/last beat",			false, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( -1, "Hold Shift: Select region",					false, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( -1, "Left, Right: Zoom",							false, EDIT_MODE_PRACTICE, 0, NULL ),
 	MenuRowDef( -1, "Enter: Play selection",						false, EDIT_MODE_PRACTICE, 0, NULL ),
-	MenuRowDef( -1, "P: Play from cursor",							false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "P: Play from cursor",							false, EDIT_MODE_PRACTICE, 0, NULL )
 );
 
 static MenuDef g_MainMenu(
@@ -993,7 +992,7 @@ void ScreenEdit::UpdateTextInfo()
 		break;
 	case EDIT_MODE_FULL:
 		sText += ssprintf( "Difficulty:\n  %s\n",		DifficultyToString( m_pSteps->GetDifficulty() ).c_str() );
-		sText += ssprintf( "Description:\n  %s\n",		GAMESTATE->m_pCurSteps[PLAYER_1] ? GAMESTATE->m_pCurSteps[PLAYER_1]->GetDescription().c_str() : "no description" );
+		sText += ssprintf( "Description:\n  %s\n",		m_pSteps->GetDescription().c_str() );
 		sText += ssprintf( "Main title:\n  %s\n", m_pSong->m_sMainTitle.c_str() );
 		sText += ssprintf( "Sub title:\n  %s\n", m_pSong->m_sSubTitle.c_str() );
 		break;
