@@ -517,8 +517,6 @@ static void InitializeConfOptions()
 
 	/* Appearance options */
 	ADD( ConfOption( "Language",					Language, LanguageChoices ) );
-	g_ConfOptions.back().m_iEffects = OPT_APPLY_THEME;
-
 	ADD( ConfOption( "Theme",						Theme, ThemeChoices ) );
 	g_ConfOptions.back().m_iEffects = OPT_APPLY_THEME;
 
