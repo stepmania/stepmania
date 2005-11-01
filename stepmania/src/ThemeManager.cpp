@@ -227,8 +227,8 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const CString &sThemeN
 		g_vThemes.front().iniMetrics->SetValue( sBits[0], sBits[1], sBits[2] );
 	}
 
-	LOG->MapLog( "theme", "Theme: %s", sThemeName.c_str() );
-	LOG->MapLog( "language", "Language: %s", sLanguage.c_str() );
+	LOG->MapLog( "theme", "Theme: %s", m_sCurThemeName.c_str() );
+	LOG->MapLog( "language", "Language: %s", m_sCurLanguage.c_str() );
 }
 
 CString ThemeManager::GetDefaultLanguage()
