@@ -168,6 +168,10 @@ bool ThemeManager::DoesLanguageExist( const CString &sLanguage )
 
 void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThemeName_ )
 {
+	for( unsigned i = 0; i < g_vThemes.size(); ++i )
+		delete g_vThemes[i].iniMetrics;
+	g_vThemes.clear();
+
 	CString sThemeName(sThemeName_);
 
 	bool bLoadedBase = false;
@@ -237,10 +241,6 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName_, const CSt
 	// clear theme path cache
 	for( int i = 0; i < NUM_ElementCategory; ++i )
 		g_ThemePathCache[i].clear();
-
-	for( unsigned i = 0; i < g_vThemes.size(); ++i )
-		delete g_vThemes[i].iniMetrics;
-	g_vThemes.clear();
 
 	// load current theme
 	LoadThemeRecursive( g_vThemes, m_sCurThemeName );
