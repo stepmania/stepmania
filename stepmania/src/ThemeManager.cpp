@@ -204,8 +204,23 @@ void ThemeManager::LoadThemeRecursive( deque<Theme> &theme, const CString &sThem
 		}
 
 		if( sFallback.empty() )
-			return;
+			break;
 		sThemeName = sFallback;
+	}
+
+	/* Overlay metrics from the command line. */
+	CString sMetric;
+	for( int i = 0; GetCommandlineArgument( "metric", &sMetric, i ); ++i )
+	{
+		/* sMetric must be "foo::bar=baz".  "foo" and "bar" never contain "=", so in
+		 * "foo::bar=1+1=2", "baz" is always "1+1=2".  Neither foo nor bar may be
+		 * empty, but baz may be. */
+		Regex re( "^([^=]+)::([^=]+)=(.*)$" );
+		vector<CString> sBits;
+		if( !re.Compare( sMetric, sBits ) )
+			RageException::Throw( "Invalid argument \"--metric=%s\"", sMetric.c_str() );
+
+		g_vThemes.front().iniMetrics->SetValue( sBits[0], sBits[1], sBits[2] );
 	}
 }
 
@@ -245,20 +260,6 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName_, const CSt
 	// load current theme
 	LoadThemeRecursive( g_vThemes, m_sCurThemeName );
 
-	CString sMetric;
-	for( int i = 0; GetCommandlineArgument( "metric", &sMetric, i ); ++i )
-	{
-		/* sMetric must be "foo::bar=baz".  "foo" and "bar" never contain "=", so in
-		 * "foo::bar=1+1=2", "baz" is always "1+1=2".  Neither foo nor bar may be
-		 * empty, but baz may be. */
-		Regex re( "^([^=]+)::([^=]+)=(.*)$" );
-		vector<CString> sBits;
-		if( !re.Compare( sMetric, sBits ) )
-			RageException::Throw( "Invalid argument \"--metric=%s\"", sMetric.c_str() );
-
-		g_vThemes.front().iniMetrics->SetValue( sBits[0], sBits[1], sBits[2] );
-	}
-	
 	LOG->MapLog( "theme", "Theme: %s", sThemeName.c_str() );
 	LOG->MapLog( "language", "Language: %s", sLanguage.c_str() );
 
