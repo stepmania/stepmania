@@ -40,7 +40,6 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(ConvertThemeDlg)
 	virtual BOOL OnInitDialog();
-	afx_msg void OnButtonConvert();
 	afx_msg void OnSelchangeListThemes();
 	afx_msg void OnButtonAnalyze();
 	afx_msg void OnButtonEditMetrics();

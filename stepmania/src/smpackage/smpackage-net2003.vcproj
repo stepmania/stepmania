@@ -606,5 +606,8 @@
 		</File>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="smpackage.rc"/>
 	</Globals>
 </VisualStudioProject>

@@ -1,5 +1,5 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
+// Microsoft Visual C++ generated include file.
 // Used by smpackage.rc
 //
 #define IDD_SMPACKAGE_DIALOG            102
@@ -14,13 +14,13 @@
 #define IDD_MENU                        139
 #define MENU                            140
 #define IDD_CONVERT_THEME               142
-#define CONVERTTHEME                    144
 #define IDD_EDIT_METRICS                145
 #define EDIT_METRICS                    146
 #define IDD_ENTER_COMMENT               146
 #define IDD_SHOW_COMMENT                147
 #define IDD_UNINSTALL_OLD_PACKAGES      148
 #define IDD_CHANGE_GAME_SETTINGS        149
+#define CONVERTTHEME                    149
 #define IDC_LIST_SONGS                  1000
 #define IDC_LIST                        1000
 #define IDC_BUTTON_PLAY                 1001
@@ -77,7 +77,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        149
+#define _APS_NEXT_RESOURCE_VALUE        150
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1055
 #define _APS_NEXT_SYMED_VALUE           104

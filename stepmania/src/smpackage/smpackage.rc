@@ -1,4 +1,4 @@
-//Microsoft Developer Studio generated resource script.
+// Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
 
@@ -27,18 +27,18 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE MOVEABLE PURE 
+1 TEXTINCLUDE 
 BEGIN
     "resource.h\0"
 END
 
-2 TEXTINCLUDE MOVEABLE PURE 
+2 TEXTINCLUDE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE MOVEABLE PURE 
+3 TEXTINCLUDE 
 BEGIN
     "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
     "#define _AFX_NO_OLE_RESOURCES\r\n"
@@ -66,7 +66,7 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDR_MAINFRAME           ICON    DISCARDABLE     "smpackage.ICO"
+IDR_MAINFRAME           ICON                    "smpackage.ICO"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -74,7 +74,7 @@ IDR_MAINFRAME           ICON    DISCARDABLE     "smpackage.ICO"
 //
 
 IDD_INSTALL DIALOGEX 0, 0, 332, 234
-STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
 CAPTION "Stepmania Package Manager"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
@@ -99,8 +99,8 @@ BEGIN
 END
 
 IDD_EXPORTER DIALOGEX 0, 0, 332, 234
-STYLE DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_VISIBLE | 
-    WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
+    WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
 CAPTION "Stepmania Package Manager"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
@@ -121,8 +121,8 @@ BEGIN
     PUSHBUTTON      "Open Program Folder",IDC_BUTTON_OPEN,83,215,79,15
 END
 
-IDD_DIALOG_NAME DIALOG DISCARDABLE  0, 0, 261, 58
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_DIALOG_NAME DIALOG  0, 0, 261, 58
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Name Your Package"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -135,8 +135,8 @@ BEGIN
                     18,38,179,12
 END
 
-IDD_EDIT_INSTALLATIONS DIALOG DISCARDABLE  0, 0, 233, 220
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_EDIT_INSTALLATIONS DIALOG  0, 0, 233, 220
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Edit Installations"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -156,7 +156,7 @@ BEGIN
 END
 
 IDD_MENU DIALOGEX 0, 0, 332, 317
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "StepMania Tools Main Menu"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
@@ -189,37 +189,32 @@ BEGIN
                     IDC_STATIC,103,266,215,23
 END
 
-IDD_CONVERT_THEME DIALOG DISCARDABLE  0, 0, 332, 258
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_CONVERT_THEME DIALOGEX 0, 0, 332, 258
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Theme Elements"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,275,237,50,14
-    CONTROL         144,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
+    CONTROL         149,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     LISTBOX         IDC_LIST_THEMES,7,44,88,186,LBS_SORT | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Convert from 3.0 to 4.0",IDC_BUTTON_CONVERT,164,51,95,
-                    15,WS_DISABLED
-    LTEXT           "This will convert the element names in a SM 3.0 theme to the SM 4.0 theme names.  A converted theme will no longer be compatible with StepMania 3.0, so make a backup.  This tool does not convert theme metrics.",
-                    IDC_STATIC,110,71,210,33
-    GROUPBOX        "Elements",IDC_STATIC,105,41,220,100
+    GROUPBOX        "Tools",IDC_STATIC,105,41,220,189
     LTEXT           "Check for redundant or possibly midnamed theme elements.",
-                    IDC_STATIC,110,127,210,11
-    PUSHBUTTON      "Analyze Elements",IDC_BUTTON_ANALYZE,165,107,95,15,
+                    IDC_STATIC,110,75,210,11
+    PUSHBUTTON      "Analyze Elements",IDC_BUTTON_ANALYZE,165,55,95,15,
                     WS_DISABLED
-    GROUPBOX        "Metrics",IDC_STATIC,105,149,220,81
     LTEXT           "Edit theme metrics with a user-friendly interface.",
-                    IDC_STATIC,110,179,210,10
-    PUSHBUTTON      "Edit Metrics",IDC_BUTTON_EDIT_METRICS,165,159,95,15,
+                    IDC_STATIC,110,116,210,10
+    PUSHBUTTON      "Edit Metrics",IDC_BUTTON_EDIT_METRICS,165,96,95,15,
                     WS_DISABLED
     LTEXT           "Check for redundant or possibly midnamed theme metrics.",
-                    IDC_STATIC,109,217,210,10
-    PUSHBUTTON      "Analyze Metrics",IDC_BUTTON_ANALYZE_METRICS,165,197,95,
+                    IDC_STATIC,109,158,210,10
+    PUSHBUTTON      "Analyze Metrics",IDC_BUTTON_ANALYZE_METRICS,165,138,95,
                     15,WS_DISABLED
 END
 
-IDD_EDIT_METRICS DIALOG DISCARDABLE  0, 0, 332, 234
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_EDIT_METRICS DIALOG  0, 0, 332, 234
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Edit Theme Metrics"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -242,7 +237,7 @@ BEGIN
 END
 
 IDD_ENTER_COMMENT DIALOGEX 0, 0, 312, 202
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Add A Comment"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
@@ -256,7 +251,7 @@ BEGIN
 END
 
 IDD_SHOW_COMMENT DIALOGEX 0, 0, 246, 186
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Package Comment"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
@@ -268,8 +263,9 @@ BEGIN
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,10,149,145,11
 END
 
-IDD_UNINSTALL_OLD_PACKAGES DIALOG DISCARDABLE  0, 0, 277, 161
-STYLE DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_UNINSTALL_OLD_PACKAGES DIALOG  0, 0, 277, 161
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 CAPTION "Uninstall Old Packages"
 FONT 8, "MS Shell Dlg"
 BEGIN
@@ -283,8 +279,8 @@ BEGIN
     CTEXT           "Delete old packages?",IDC_STATIC,55,119,166,12
 END
 
-IDD_CHANGE_GAME_SETTINGS DIALOG DISCARDABLE  0, 0, 162, 285
-STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+IDD_CHANGE_GAME_SETTINGS DIALOG  0, 0, 162, 285
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Change Game Settings"
 FONT 8, "MS Sans Serif"
 BEGIN
@@ -318,7 +314,6 @@ BEGIN
 END
 
 
-#ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
@@ -341,13 +336,13 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "FileDescription", "smpackage MFC Application\0"
-            VALUE "FileVersion", "1, 0, 0, 1\0"
-            VALUE "InternalName", "smpackage\0"
-            VALUE "LegalCopyright", "Copyright (C) 2002\0"
-            VALUE "OriginalFilename", "smpackage.EXE\0"
-            VALUE "ProductName", "smpackage Application\0"
-            VALUE "ProductVersion", "1, 0, 0, 1\0"
+            VALUE "FileDescription", "smpackage MFC Application"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "smpackage"
+            VALUE "LegalCopyright", "Copyright (C) 2002"
+            VALUE "OriginalFilename", "smpackage.EXE"
+            VALUE "ProductName", "smpackage Application"
+            VALUE "ProductVersion", "1, 0, 0, 1"
         END
     END
     BLOCK "VarFileInfo"
@@ -356,8 +351,6 @@ BEGIN
     END
 END
 
-#endif    // !_MAC
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -365,7 +358,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO MOVEABLE PURE 
+GUIDELINES DESIGNINFO 
 BEGIN
     IDD_INSTALL, DIALOG
     BEGIN
@@ -463,11 +456,11 @@ END
 // Bitmap
 //
 
-INSTALL                 BITMAP  MOVEABLE PURE   "install.bmp"
-MANAGE                  BITMAP  MOVEABLE PURE   "manage.bmp"
-MENU                    BITMAP  MOVEABLE PURE   "menu.bmp"
-CONVERTTHEME            BITMAP  MOVEABLE PURE   "converttheme.bmp"
-EDIT_METRICS            BITMAP  MOVEABLE PURE   "editmetrics.bmp"
+INSTALL                 BITMAP                  "install.bmp"
+MANAGE                  BITMAP                  "manage.bmp"
+MENU                    BITMAP                  "menu.bmp"
+EDIT_METRICS            BITMAP                  "editmetrics.bmp"
+CONVERTTHEME            BITMAP                  "converttheme.bmp"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
