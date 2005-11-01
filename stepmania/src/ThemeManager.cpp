@@ -254,21 +254,26 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName_, const CSt
 	if( sThemeName == m_sCurThemeName && sLanguage == m_sCurLanguage )
 		return;
 
-	// clear theme path cache
-	for( int i = 0; i < NUM_ElementCategory; ++i )
-		g_ThemePathCache[i].clear();
-
-	// load current theme
+	// Load theme metrics.  If only the language is changing, this is all
+	// we need to reload.
+	bool bThemeChanging = (sThemeName != m_sCurThemeName);
 	LoadThemeMetrics( g_vThemes, sThemeName, sLanguage );
 
-	// reload common sounds
-	if ( SCREENMAN != NULL )
-		SCREENMAN->ThemeChanged();
+	if( bThemeChanging )
+	{
+		// clear theme path cache
+		for( int i = 0; i < NUM_ElementCategory; ++i )
+			g_ThemePathCache[i].clear();
 
-	/* Lua globals can use metrics which are cached, and vice versa.  Update Lua
-	 * globals first; it's Lua's job to explicitly update cached metrics that it
-	 * uses. */
-	UpdateLuaGlobals();
+		// reload common sounds
+		if( SCREENMAN != NULL )
+			SCREENMAN->ThemeChanged();
+
+		/* Lua globals can use metrics which are cached, and vice versa.  Update Lua
+		 * globals first; it's Lua's job to explicitly update cached metrics that it
+		 * uses. */
+		UpdateLuaGlobals();
+	}
 
 	// reload subscribers
 	FOREACHS_CONST( IThemeMetric*, *SubscriptionManager<IThemeMetric>::s_pSubscribers, p )
