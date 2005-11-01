@@ -146,8 +146,6 @@ void ScreenEdit::InitEditMappings()
 		// Escape, Enter = exit play/record
 		m_PlayMappings.button   [EDIT_BUTTON_RETURN_TO_EDIT][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
 		m_PlayMappings.button   [EDIT_BUTTON_RETURN_TO_EDIT][1]    = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
-		m_RecordMappings.button [EDIT_BUTTON_RETURN_TO_EDIT][0]    = DeviceInput(DEVICE_KEYBOARD, KEY_ENTER);
-		m_RecordMappings.button [EDIT_BUTTON_RETURN_TO_EDIT][1]    = DeviceInput(DEVICE_KEYBOARD, KEY_ESC);
 		return;
 	}
 
@@ -433,6 +431,18 @@ static MenuDef g_EditHelp(
 #endif
 );
 
+static MenuDef g_PracticeHelp(
+	"ScreenMiniMenuPracticeHelp",
+	MenuRowDef( -1, "R + Select: Record",							false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Up, Down: Move cursor",						false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "PgUp, PgDn: Jump measure",						false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Home, End: Jump to first/last beat",			false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Hold Shift: Select region",					false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Left, Right: Zoom",							false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "Enter: Play selection",						false, EDIT_MODE_PRACTICE, 0, NULL ),
+	MenuRowDef( -1, "P: Play from cursor",							false, EDIT_MODE_PRACTICE, 0, NULL ),
+);
+
 static MenuDef g_MainMenu(
 	"ScreenMiniMenuMainMenu",
 	MenuRowDef( ScreenEdit::edit_steps_information,	"Edit Steps Information",		true, EDIT_MODE_PRACTICE, 0, NULL ),
@@ -716,7 +726,10 @@ void ScreenEdit::Init()
 	m_soundSwitch.Load(		THEME->GetPathS("ScreenEdit","switch") );
 	m_soundSave.Load(		THEME->GetPathS("ScreenEdit","save") );
 
-	m_pHelpMenu = LoadEditMiniMenu( &g_EditHelp );
+	if( EDIT_MODE.GetValue() == EDIT_MODE_PRACTICE )
+		m_pHelpMenu = LoadEditMiniMenu( &g_PracticeHelp );
+	else
+		m_pHelpMenu = LoadEditMiniMenu( &g_EditHelp );
 	m_pMainMenu = LoadEditMiniMenu( &g_MainMenu );
 	m_pAreaMenu = LoadEditMiniMenu( &g_AreaMenu );
 	m_pStepsInformation = LoadEditMiniMenu( &g_StepsInformation );
