@@ -956,12 +956,6 @@ void ScreenEdit::UpdateTextInfo()
 
 	m_bTextInfoNeedsUpdate = false;
 
-	int iNumTaps = m_NoteDataEdit.GetNumTapNotes();
-	int iNumJumps = m_NoteDataEdit.GetNumJumps();
-	int iNumHands = m_NoteDataEdit.GetNumHands();
-	int iNumHolds = m_NoteDataEdit.GetNumHoldNotes();
-	int iNumMines = m_NoteDataEdit.GetNumMines();
-
 	CString sNoteType = NoteTypeToString(m_SnapDisplay.GetNoteType()) + " notes";
 
 	CString sText;
@@ -993,11 +987,11 @@ void ScreenEdit::UpdateTextInfo()
 	default:
 		ASSERT(0);
 	}
-	sText += ssprintf( "Tap steps:\n  %d\n", iNumTaps );
-	sText += ssprintf( "Jumps:\n  %d\n", iNumJumps );
-	sText += ssprintf( "Hands:\n  %d\n", iNumHands );
-	sText += ssprintf( "Holds:\n  %d\n", iNumHolds );
-	sText += ssprintf( "Mines:\n  %d\n", iNumMines );
+	sText += ssprintf( "Tap steps:\n  %d\n", m_NoteDataEdit.GetNumTapNotes() );
+	sText += ssprintf( "Jumps:\n  %d\n", m_NoteDataEdit.GetNumJumps() );
+	sText += ssprintf( "Hands:\n  %d\n", m_NoteDataEdit.GetNumHands() );
+	sText += ssprintf( "Holds:\n  %d\n", m_NoteDataEdit.GetNumHoldNotes() );
+	sText += ssprintf( "Mines:\n  %d\n", m_NoteDataEdit.GetNumMines() );
 	switch( EDIT_MODE.GetValue() )
 	{
 	case EDIT_MODE_PRACTICE:
