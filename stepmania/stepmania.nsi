@@ -61,6 +61,10 @@
 ;--------------------------------
 ;Pages
 
+!ifdef SHOW_AUTORUN
+	Page custom ShowCustom LeaveCustom
+!endif
+
 	;!insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Docs\Modern UI\License.txt"
 	;!insertmacro MUI_PAGE_COMPONENTS
 	!insertmacro MUI_PAGE_DIRECTORY
@@ -329,9 +333,80 @@ SectionEnd
 ;--------------------------------
 ;Installer Functions
 
-Function .onInit
+LangString TEXT_IO_TITLE ${LANG_ENGLISH} "InstallOptions page"
+LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "This is a page created using the InstallOptions plug-in."
 
-	!insertmacro MUI_LANGDLL_DISPLAY
+Var hwnd ; Window handle of the custom page
+
+Function ShowCustom
+
+	!insertmacro MUI_HEADER_TEXT "$(TEXT_IO_TITLE)" "$(TEXT_IO_SUBTITLE)"
+	
+	InstallOptions::initDialog /NOUNLOAD "$PLUGINSDIR\custom.ini"
+	; In this mode InstallOptions returns the window handle so we can use it
+	Pop $hwnd
+	
+	GetDlgItem $1 $HWNDPARENT 1 ; Next button
+	ShowWindow $1 0
+	
+	
+	StrCpy $R1 "$INSTDIR\uninst.exe"
+	StrCpy $R2 "_="
+	IfFileExists "$R1" uninstall_available
+	StrCpy $R1 "$INSTDIR\uninstall.exe"
+	StrCpy $R2 "_?="
+	IfFileExists "$R1" uninstall_available
+
+	GetDlgItem $1 $hwnd 1201 ; Second cutom control
+	ShowWindow $1 0
+	GetDlgItem $1 $hwnd 1202 ; Third cutom control
+	ShowWindow $1 0
+	Goto uninstall_done
+
+	uninstall_available:
+	GetDlgItem $1 $hwnd 1200 ; First cutom control
+	ShowWindow $1 0
+
+	uninstall_done:
+
+	; Now show the dialog and wait for it to finish
+	InstallOptions::show
+	
+	; Finally fetch the InstallOptions status value (we don't care what it is though)
+	Pop $0
+
+FunctionEnd
+
+Function LeaveCustom
+
+	; At this point the user has either pressed Next or one of our custom buttons
+	; We find out which by reading from the INI file
+	ReadINIStr $0 "$PLUGINSDIR\custom.ini" "Settings" "State"
+	StrCmp $0 1 install
+	StrCmp $0 2 play
+	StrCmp $0 3 install
+	Goto proceed
+
+	install:
+	Call PreInstall
+	GoTo proceed
+	
+	play:
+	Exec "$INSTDIR\Program\${PRODUCT_NAME}.exe"
+	IfErrors play_error
+	quit
+
+	play_error:
+	MessageBox MB_ICONEXCLAMATION "Could not execute $INSTDIR\Program\${PRODUCT_NAME}.exe"
+	abort
+	
+	proceed:
+	GetDlgItem $1 $HWNDPARENT 1 ; Next button
+	ShowWindow $1 1
+
+FunctionEnd
+
+Function PreInstall
 
 	; force uninstall of previous version using NSIS
 	; We need to wait until the uninstaller finishes before continuing, since it's possible
@@ -391,6 +466,28 @@ Function .onInit
 	Abort
 
 	ok:
+
+FunctionEnd
+
+Function .onInit
+
+	; Show language selection for debugging
+	;!insertmacro MUI_LANGDLL_DISPLAY
+
+!ifdef SHOW_AUTORUN
+	;
+	; Extract files for the InstallOptions page
+	;
+	!insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "Installer\custom.ini" "custom.ini"
+	;$PLUGINSDIR will automatically be removed when the installer closes
+	InitPluginsDir
+	WriteINIStr $PLUGINSDIR\custom.ini "Field 4" "Text" "${PRODUCT_URL}"
+	WriteINIStr $PLUGINSDIR\custom.ini "Field 4" "State" "${PRODUCT_URL}"
+	File /oname=$PLUGINSDIR\image.bmp "Installer\custom.bmp"
+	WriteINIStr $PLUGINSDIR\custom.ini "Field 5" "Text" $PLUGINSDIR\image.bmp	
+!else
+	call PreInstall
+!endif
 
 FunctionEnd
 

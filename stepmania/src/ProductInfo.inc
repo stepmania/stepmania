@@ -13,3 +13,4 @@
 !define PRODUCT_URL "http://www.stepmania.com"
 
 ;!define INSTALL_TYPE_PCKS
+;!define SHOW_AUTORUN
