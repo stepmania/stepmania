@@ -249,7 +249,10 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName_, const CSt
 	CString sLanguage = sLanguage_;
 	if( !DoesThemeExist(sThemeName) )
 		sThemeName = BASE_THEME_NAME;
-	if( !DoesLanguageExist(sLanguage) )
+
+	/* We havn't actually loaded the theme yet, so we can't check whether sLanguage
+	 * exists.  Just check for empty. */
+	if( sLanguage.empty() )
 		sLanguage = GetDefaultLanguage();
 	LOG->Trace("ThemeManager::SwitchThemeAndLanguage: \"%s\", \"%s\"",
 		sThemeName.c_str(), sLanguage.c_str() );
