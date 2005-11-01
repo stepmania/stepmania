@@ -234,13 +234,7 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const CString &sThemeN
 CString ThemeManager::GetDefaultLanguage()
 {
 	CString sLangCode = HOOKS->GetPreferredLanguage();
-	CString sLangName = GetLanguageNameFromISO639Code( sLangCode );
-
-	if( DoesLanguageExist(sLangName) )
-		return sLangName;
-
-	LOG->Trace( "No language \"%s\"; defaulting to %s", sLangName.c_str(), BASE_LANGUAGE.c_str() );
-	return BASE_LANGUAGE;
+	return GetLanguageNameFromISO639Code( sLangCode );
 }
 
 void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName_, const CString &sLanguage_ )
