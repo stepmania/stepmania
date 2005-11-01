@@ -145,12 +145,9 @@ bool ThemeManager::DoesThemeExist( const CString &sThemeName )
 void ThemeManager::GetLanguages( CStringArray& AddTo )
 {
 	AddTo.clear();
-	CStringArray asTemp;
 
-	/* XXX: this should use FallbackTheme */
-	GetLanguagesForTheme( m_sCurThemeName, AddTo );
-	GetLanguagesForTheme( BASE_THEME_NAME, asTemp );
-	AddTo.insert( AddTo.begin(), asTemp.begin(), asTemp.end() );
+	for( unsigned i = 0; i < g_vThemes.size(); ++i )
+		GetLanguagesForTheme( g_vThemes[i].sThemeName, AddTo );
 
 	// remove dupes
 	sort( AddTo.begin(), AddTo.end() );
@@ -786,7 +783,7 @@ void ThemeManager::GetLanguagesForTheme( const CString &sThemeName, CStringArray
 		as[i] = as[i].Left( as[i].size()-4 );
 	}
 
-	asLanguagesOut = as;
+	asLanguagesOut.insert( asLanguagesOut.end(), as.begin(), as.end() );
 }
 
 CString ThemeManager::GetLanguageIniPath( const CString &sThemeName, const CString &sLanguage )
