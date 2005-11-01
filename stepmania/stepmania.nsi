@@ -19,7 +19,7 @@
 ;General
 
 	!system "echo This may take a moment ..." ignore
-	!system "utils\upx Program\*.exe Program\*.dll" ignore
+	; upx isn't working with VC++2003 executables.  Disable temporarily.  ;!system "utils\upx Program\*.exe Program\*.dll" ignore
 
 	Name "${PRODUCT_NAME_VER}"
 	OutFile "${PRODUCT_NAME_VER}.exe"
