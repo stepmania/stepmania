@@ -226,6 +226,9 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const CString &sThemeN
 
 		g_vThemes.front().iniMetrics->SetValue( sBits[0], sBits[1], sBits[2] );
 	}
+
+	LOG->MapLog( "theme", "Theme: %s", sThemeName.c_str() );
+	LOG->MapLog( "language", "Language: %s", sLanguage.c_str() );
 }
 
 CString ThemeManager::GetDefaultLanguage()
@@ -260,9 +263,6 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName_, const CSt
 
 	// load current theme
 	LoadThemeMetrics( g_vThemes, sThemeName, sLanguage );
-
-	LOG->MapLog( "theme", "Theme: %s", sThemeName.c_str() );
-	LOG->MapLog( "language", "Language: %s", sLanguage.c_str() );
 
 	// reload common sounds
 	if ( SCREENMAN != NULL )
