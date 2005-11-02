@@ -5,9 +5,17 @@
 
 // Don't forget to also change ProductInfo.inc!
 
-#define PRODUCT_NAME "StepMania"
-#define PRODUCT_VER "4.0 CVS"
-//#define PRODUCT_VER "4.0 alpha 1"
+// Change these two
+#define PRODUCT_NAME_BARE StepMania
+#define PRODUCT_VER_BARE 4.0 CVS
+//#define PRODUCT_VER_BARE 4.0 alpha 1
+
+// These cannot be #undef'd so make them unlikely to conflict with anything
+#define PRODUCT_STRINGIFY(x) #x
+#define PRODUCT_XSTRINGIFY(x) PRODUCT_STRINGIFY(x)
+
+#define PRODUCT_NAME PRODUCT_XSTRINGIFY(PRODUCT_NAME_BARE)
+#define PRODUCT_VER PRODUCT_XSTRINGIFY(PRODUCT_VER_BARE)
 #define PRODUCT_NAME_VER PRODUCT_NAME " " PRODUCT_VER
 
 #define VIDEO_TROUBLESHOOTING_URL "http://www.stepmania.com/stepmania/mediawiki.php?title=Video_Driver_Troubleshooting"

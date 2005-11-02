@@ -4235,6 +4235,8 @@
 					"$(SDKROOT)/usr/include",
 				);
 				INFOPLIST_FILE = "Info-StepMania.plist";
+				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/lib",
@@ -4376,6 +4378,8 @@
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
 				);
 				INFOPLIST_FILE = "Info-StepMania.plist";
+				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
+				INFOPLIST_PREPROCESS = YES;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					/usr/lib,

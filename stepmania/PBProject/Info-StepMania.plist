@@ -7,23 +7,23 @@
 	<key>CFBundleExecutable</key>
 	<string>StepMania</string>
 	<key>CFBundleGetInfoString</key>
-	<string>StepMania 4.0 CVS</string>
+	<string>PRODUCT_NAME_BARE PRODUCT_VER_BARE</string>
 	<key>CFBundleIconFile</key>
 	<string>smicon.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>StepMania</string>
+	<string>PRODUCT_NAME_BARE</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>StepMania</string>
+	<string>PRODUCT_NAME_BARE</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>4.0 CVS</string>
+	<string>PRODUCT_VER</string>
 	<key>CFBundleSignature</key>
 	<string>Step</string>
 	<key>CFBundleVersion</key>
-	<string>4.0</string>
+	<string>PRODUCT_VER_BARE</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>10.2.8</string>
 	<key>NSHumanReadableCopyright</key>
