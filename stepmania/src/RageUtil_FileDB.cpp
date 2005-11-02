@@ -234,30 +234,27 @@ void FilenameDB::GetFilesEqualTo( const CString &sDir, const CString &sFile, vec
 void FilenameDB::GetFilesSimpleMatch( const CString &sDir, const CString &sMask, vector<CString> &asOut, bool bOnlyDirs )
 {
 	/* Does this contain a wildcard? */
-	size_t first_pos = sMask.find_first_of('*');
+	size_t first_pos = sMask.find_first_of( '*' );
 	if( first_pos == sMask.npos )
 	{
 		/* No; just do a regular search. */
 		GetFilesEqualTo( sDir, sMask, asOut, bOnlyDirs );
+		return;
 	}
-	else
+	size_t second_pos = sMask.find_first_of( '*', first_pos+1 );
+	if( second_pos == sMask.npos )
 	{
-		size_t second_pos = sMask.find_first_of('*', first_pos+1);
-		if( second_pos == sMask.npos )
-		{
-			/* Only one *: "A*B". */
-			/* XXX: "_blank.png*.png" shouldn't match the file "_blank.png". */
-			GetFilesMatching( sDir, sMask.substr(0, first_pos), "", sMask.substr(first_pos+1), asOut, bOnlyDirs );
-		}
-		else
-		{
-			/* Two *s: "A*B*C". */
-			GetFilesMatching( sDir, 
-				sMask.substr(0, first_pos),
-				sMask.substr(first_pos+1, second_pos-first_pos-1),
-				sMask.substr(second_pos+1), asOut, bOnlyDirs );
-		}
+		/* Only one *: "A*B". */
+		/* XXX: "_blank.png*.png" shouldn't match the file "_blank.png". */
+		GetFilesMatching( sDir, sMask.substr(0, first_pos), "", sMask.substr(first_pos+1), asOut, bOnlyDirs );
+		return;
 	}
+
+	/* Two *s: "A*B*C". */
+	GetFilesMatching( sDir, 
+		sMask.substr(0, first_pos),
+		sMask.substr(first_pos+1, second_pos-first_pos-1),
+		sMask.substr(second_pos+1), asOut, bOnlyDirs );
 }
 
 /*
