@@ -80,11 +80,11 @@
 	!insertmacro MUI_LANGUAGE "French"
 	!insertmacro MUI_LANGUAGE "German"
 	!insertmacro MUI_LANGUAGE "Spanish"
+	!insertmacro MUI_LANGUAGE "Italian"
 	;!insertmacro MUI_LANGUAGE "SimpChinese"
 	;!insertmacro MUI_LANGUAGE "TradChinese"
 	;!insertmacro MUI_LANGUAGE "Japanese"
 	;!insertmacro MUI_LANGUAGE "Korean"
-	!insertmacro MUI_LANGUAGE "Italian"
 	;!insertmacro MUI_LANGUAGE "Dutch"
 	;!insertmacro MUI_LANGUAGE "Danish"
 	;!insertmacro MUI_LANGUAGE "Swedish"
@@ -307,9 +307,9 @@ Section "Main Section" SecMain
 	CreateShortCut "$DESKTOP\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open ${PRODUCT_NAME} Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Machine Statistics.lnk" "$INSTDIR\Save\MachineProfile\Stats.xml"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Statistics.lnk" "$INSTDIR\Save\MachineProfile\Stats.xml"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Tools and Package Exporter.lnk" "$INSTDIR\Program\smpackage.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\README-FIRST.lnk" "$INSTDIR\README-FIRST.html"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Documentation.lnk" "$INSTDIR\README-FIRST.html"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninstall.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go To the ${PRODUCT_NAME} web site.lnk" "${PRODUCT_URL}"
 
@@ -333,8 +333,31 @@ SectionEnd
 ;--------------------------------
 ;Installer Functions
 
-LangString TEXT_IO_TITLE ${LANG_ENGLISH} "InstallOptions page"
-LangString TEXT_IO_SUBTITLE ${LANG_ENGLISH} "This is a page created using the InstallOptions plug-in."
+LangString TEXT_IO_TITLE		${LANG_ENGLISH} "${PRODUCT_NAME_VER}"
+LangString TEXT_IO_SUBTITLE		${LANG_ENGLISH} ""
+LangString TEXT_IO_INSTALL		${LANG_ENGLISH} "Install"
+LangString TEXT_IO_PLAY			${LANG_ENGLISH} "Play"
+LangString TEXT_IO_REINSTALL	${LANG_ENGLISH} "Reinstall"
+LangString TEXT_IO_TITLE		${LANG_FRENCH} "${PRODUCT_NAME_VER}"
+LangString TEXT_IO_SUBTITLE		${LANG_FRENCH} ""
+LangString TEXT_IO_INSTALL		${LANG_FRENCH} "Install (S)"
+LangString TEXT_IO_PLAY			${LANG_FRENCH} "Play (S)"
+LangString TEXT_IO_REINSTALL	${LANG_FRENCH} "Reinstall (S)"
+LangString TEXT_IO_TITLE		${LANG_GERMAN} "${PRODUCT_NAME_VER}"
+LangString TEXT_IO_SUBTITLE		${LANG_GERMAN} ""
+LangString TEXT_IO_INSTALL		${LANG_GERMAN} "Install (G)"
+LangString TEXT_IO_PLAY			${LANG_GERMAN} "Play (G)"
+LangString TEXT_IO_REINSTALL	${LANG_GERMAN} "Reinstall (G)"
+LangString TEXT_IO_TITLE		${LANG_SPANISH} "${PRODUCT_NAME_VER}"
+LangString TEXT_IO_SUBTITLE		${LANG_SPANISH} ""
+LangString TEXT_IO_INSTALL		${LANG_SPANISH} "Install (S)"
+LangString TEXT_IO_PLAY			${LANG_SPANISH} "Play (S)"
+LangString TEXT_IO_REINSTALL	${LANG_SPANISH} "Reinstall (S)"
+LangString TEXT_IO_TITLE		${LANG_ITALIAN} "${PRODUCT_NAME_VER}"
+LangString TEXT_IO_SUBTITLE		${LANG_ITALIAN} ""
+LangString TEXT_IO_INSTALL		${LANG_ITALIAN} "Install (I)"
+LangString TEXT_IO_PLAY			${LANG_ITALIAN} "Play (I)"
+LangString TEXT_IO_REINSTALL	${LANG_ITALIAN} "Reinstall (I)"
 
 Var hwnd ; Window handle of the custom page
 
@@ -471,8 +494,9 @@ FunctionEnd
 
 Function .onInit
 
-	; Show language selection for debugging
-	;!insertmacro MUI_LANGDLL_DISPLAY
+	; Force show language selection for debugging
+	;!define MUI_LANGDLL_ALWAYSSHOW
+	!insertmacro MUI_LANGDLL_DISPLAY
 
 !ifdef SHOW_AUTORUN
 	;
@@ -481,6 +505,11 @@ Function .onInit
 	!insertmacro MUI_INSTALLOPTIONS_EXTRACT_AS "Installer\custom.ini" "custom.ini"
 	;$PLUGINSDIR will automatically be removed when the installer closes
 	InitPluginsDir
+	
+	WriteINIStr $PLUGINSDIR\custom.ini "Field 1" "Text" "$(TEXT_IO_INSTALL)"
+	WriteINIStr $PLUGINSDIR\custom.ini "Field 2" "Text" "$(TEXT_IO_PLAY)"
+	WriteINIStr $PLUGINSDIR\custom.ini "Field 3" "Text" "$(TEXT_IO_REINSTALL)"
+
 	WriteINIStr $PLUGINSDIR\custom.ini "Field 4" "Text" "${PRODUCT_URL}"
 	WriteINIStr $PLUGINSDIR\custom.ini "Field 4" "State" "${PRODUCT_URL}"
 	File /oname=$PLUGINSDIR\image.bmp "Installer\custom.bmp"
