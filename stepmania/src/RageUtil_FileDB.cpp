@@ -246,7 +246,7 @@ void FilenameDB::GetFilesSimpleMatch( const CString &sDir, const CString &sMask,
 	{
 		/* Only one *: "A*B". */
 		/* XXX: "_blank.png*.png" shouldn't match the file "_blank.png". */
-		GetFilesMatching( sDir, sMask.substr(0, first_pos), "", sMask.substr(first_pos+1), asOut, bOnlyDirs );
+		GetFilesMatching( sDir, sMask.substr(0, first_pos), CString(), sMask.substr(first_pos+1), asOut, bOnlyDirs );
 		return;
 	}
 
