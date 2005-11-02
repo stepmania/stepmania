@@ -190,6 +190,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 	{
 		GetPlayerState()->m_CurrentPlayerOptions	= GAMESTATE->m_pPlayerState[PLAYER_1]->m_CurrentPlayerOptions;
 		GetPlayerState()->m_PlayerOptions			= GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions;
+		GetPlayerState()->m_StagePlayerOptions		= GAMESTATE->m_pPlayerState[PLAYER_1]->m_StagePlayerOptions;
 		GetPlayerState()->m_StoredPlayerOptions		= GAMESTATE->m_pPlayerState[PLAYER_1]->m_StoredPlayerOptions;
 	}
 }
@@ -855,6 +856,7 @@ void ScreenGameplay::Init()
 void ScreenGameplay::InitSongQueues()
 {
 	LOG->Trace("InitSongQueues");
+
 	if( GAMESTATE->IsCourseMode() )
 	{
 		Course* pCourse = GAMESTATE->m_pCurCourse;
@@ -882,13 +884,15 @@ void ScreenGameplay::InitSongQueues()
 				ASSERT( e->pSteps );
 				pi->m_vpStepsQueue.push_back( e->pSteps );
 				AttackArray a;
-				
-				// In a survuval course, override stored mods
-				if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
-					a.push_back( Attack(ATTACK_LEVEL_1, 0, 0, "clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue(), false, true, false) );	// don't show in AttackList
-
 				e->GetAttackArray( a );
 				pi->m_asModifiersQueue.push_back( a );
+			}
+
+			// In a survuval course, override stored mods
+			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
+			{
+				pi->GetPlayerState()->m_StagePlayerOptions.FromString( "clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue(), true );
+				pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
 			}
 		}
 	}
@@ -901,10 +905,13 @@ void ScreenGameplay::InitSongQueues()
 			pi->m_vpStepsQueue.push_back( pSteps );
 
 			AttackArray aa;
-			if( pSteps->GetDifficulty() == DIFFICULTY_BEGINNER && (bool)USE_FORCED_MODIFIERS_IN_BEGINNER )
-				aa.push_back( Attack(ATTACK_LEVEL_1, 0, 0, FORCED_MODIFIERS_IN_BEGINNER, false, true, false) );	// don't show in AttackList
-
 			pi->m_asModifiersQueue.push_back( aa );
+			
+			if( pSteps->GetDifficulty() == DIFFICULTY_BEGINNER && (bool)USE_FORCED_MODIFIERS_IN_BEGINNER )
+			{
+				pi->GetPlayerState()->m_StagePlayerOptions.FromString( FORCED_MODIFIERS_IN_BEGINNER, true );
+				pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
+			}
 		}
 	}
 
@@ -1055,8 +1062,7 @@ void ScreenGameplay::LoadNextSong()
 	// No need to do this here.  We do it in SongFinished().
 	//GAMESTATE->RemoveAllActiveAttacks();
 
-	// Restore the player's originally selected options.
-	GAMESTATE->RestoreSelectedOptions();
+	GAMESTATE->RestoreStageOptions();
 
 	/* If we're in battery mode, force FailImmediate.  We assume in PlayerMinus::Step that
 	 * failed players can't step. */
@@ -2271,7 +2277,7 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 		STATSMAN->m_vPlayedStageStats.push_back( STATSMAN->m_CurStageStats );
 
 	/* Reset options. */
-	GAMESTATE->RestoreSelectedOptions();
+	GAMESTATE->RestoreStageOptions();
 }
 
 void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )

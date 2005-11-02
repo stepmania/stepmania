@@ -57,7 +57,7 @@ void PlayerState::Update( float fDelta )
 void PlayerState::RebuildPlayerOptionsFromActiveAttacks()
 {
 	// rebuild player options
-	PlayerOptions po = m_StoredPlayerOptions;
+	PlayerOptions po = m_StagePlayerOptions;
 	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
 	{
 		if( !m_ActiveAttacks[s].bOn )

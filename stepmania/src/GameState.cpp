@@ -519,6 +519,8 @@ void GameState::FinishStage()
 	if( !m_bMultiplayer )	// no saved stats in multiplayer
 		CommitStageStats();
 
+	RestoreSelectedOptions();
+
 	m_bStatsCommitted = false;
 
 	// Increment the stage counter.
@@ -1039,7 +1041,10 @@ void GameState::ApplyModifiers( PlayerNumber pn, CString sModifiers )
 void GameState::StoreSelectedOptions()
 {
 	FOREACH_PlayerNumber( pn )
+	{
 		m_pPlayerState[pn]->m_StoredPlayerOptions = m_pPlayerState[pn]->m_PlayerOptions;
+		m_pPlayerState[pn]->m_StagePlayerOptions = m_pPlayerState[pn]->m_PlayerOptions;
+	}
 	m_StoredSongOptions = m_SongOptions;
 }
 
@@ -1051,6 +1056,13 @@ void GameState::RestoreSelectedOptions()
 {
 	FOREACH_PlayerNumber( pn )
 		m_pPlayerState[pn]->m_PlayerOptions = m_pPlayerState[pn]->m_StoredPlayerOptions;
+	m_SongOptions = m_StoredSongOptions;
+}
+
+void GameState::RestoreStageOptions()
+{
+	FOREACH_PlayerNumber( pn )
+		m_pPlayerState[pn]->m_PlayerOptions = m_pPlayerState[pn]->m_StagePlayerOptions;
 	m_SongOptions = m_StoredSongOptions;
 }
 
@@ -1191,7 +1203,7 @@ void GameState::SetNoteSkinForBeatRange( PlayerState* pPlayerState, const CStrin
 	BeatToNoteSkin[StartBeat] = sNoteSkin;
 
 	/* Return to the default note skin after the duration. */
-	BeatToNoteSkin[EndBeat] = pPlayerState->m_StoredPlayerOptions.m_sNoteSkin;
+	BeatToNoteSkin[EndBeat] = pPlayerState->m_StagePlayerOptions.m_sNoteSkin;
 
 	++m_BeatToNoteSkinRev;
 }

@@ -22,6 +22,7 @@ public:
 	{
 		m_CurrentPlayerOptions.Init();
 		m_PlayerOptions.Init();
+		m_StagePlayerOptions.Init();
 		m_StoredPlayerOptions.Init();
 
 		m_BeatToNoteSkin.clear();
@@ -59,6 +60,7 @@ public:
 
 	PlayerOptions	m_CurrentPlayerOptions;    // current approaches destination
 	PlayerOptions	m_PlayerOptions;			// change this, and current will move gradually toward it
+	PlayerOptions	m_StagePlayerOptions;	// options that are in effect for this stage.  May be different from m_StoredPlayerOptions if using forced beginner or forced Survial mods
 	PlayerOptions	m_StoredPlayerOptions;	// user's choices on the PlayerOptions screen
 
 	//
