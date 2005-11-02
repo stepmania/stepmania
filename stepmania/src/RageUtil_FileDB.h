@@ -81,25 +81,6 @@ struct FileSet
 
 class FilenameDB
 {
-protected:
-	RageEvent m_Mutex;
-
-	FileSet *GetFileSet( CString sDir, bool create=true );
-
-	/* Directories we have cached: */
-	map<CString, FileSet *> dirs;
-
-	int ExpireSeconds;
-
-	void GetFilesEqualTo( const CString &sDir, const CString &sName, vector<CString> &asOut, bool bOnlyDirs );
-	void GetFilesMatching( const CString &sDir,
-		const CString &sBeginning, const CString &sContaining, const CString &sEnding, 
-		vector<CString> &asOut, bool bOnlyDirs );
-	void DelFileSet( map<CString, FileSet *>::iterator dir );
-
-	/* The given path wasn't cached.  Cache it. */
-	virtual void PopulateFileSet( FileSet &fs, const CString &sPath ) { }
-
 public:
 	FilenameDB::FilenameDB():
 		m_Mutex("FilenameDB"), ExpireSeconds( -1 ) { }
@@ -127,6 +108,25 @@ public:
 	void FlushDirCache();
 
 	void GetFileSetCopy( CString dir, FileSet &out );
+
+protected:
+	RageEvent m_Mutex;
+
+	FileSet *GetFileSet( CString sDir, bool create=true );
+
+	/* Directories we have cached: */
+	map<CString, FileSet *> dirs;
+
+	int ExpireSeconds;
+
+	void GetFilesEqualTo( const CString &sDir, const CString &sName, vector<CString> &asOut, bool bOnlyDirs );
+	void GetFilesMatching( const CString &sDir,
+		const CString &sBeginning, const CString &sContaining, const CString &sEnding, 
+		vector<CString> &asOut, bool bOnlyDirs );
+	void DelFileSet( map<CString, FileSet *>::iterator dir );
+
+	/* The given path wasn't cached.  Cache it. */
+	virtual void PopulateFileSet( FileSet &fs, const CString &sPath ) { }
 };
 
 /* This FilenameDB must be populated in advance. */
