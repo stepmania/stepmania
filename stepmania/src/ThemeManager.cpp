@@ -370,6 +370,25 @@ CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
 	return THEMES_DIR + sThemeName + "/";
 }
 
+struct CompareLanguageTag
+{
+	CString m_sLanguageString;
+	CompareLanguageTag( const CString &sLang )
+	{
+		m_sLanguageString = CString("(lang ") + sLang + ")";
+		LOG->Trace( "try \"%s\"", sLang.c_str() );
+		m_sLanguageString.ToLower();
+	}
+
+	bool operator()( const CString &sFile ) const
+	{
+		CString sLower( sFile );
+		sLower.ToLower();
+		size_t iPos = sLower.find( m_sLanguageString );
+		return iPos != CString::npos;
+	}
+};
+
 CString ThemeManager::GetPathToRaw( const CString &sThemeName_, ElementCategory category, const CString &sClassName_, const CString &sElement_ ) 
 {
 	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
@@ -443,6 +462,36 @@ try_element_again:
 
 	if( asElementPaths.size() == 0 )
 		return NULL;	// This isn't fatal.
+
+	/*
+	 * If there's more than one result, check for language tags.  For example,
+	 *
+	 * ScreenCompany graphic (lang English).png
+	 * ScreenCompany graphic (lang French).png
+	 *
+	 * We still want to warn for ambiguous results.  Use std::unique to filter
+	 * files with the current language tag to the top.
+	 */
+	if( asElementPaths.size() > 1 )
+	{
+		vector<CString>::iterator it =
+			partition( asElementPaths.begin(), asElementPaths.end(), CompareLanguageTag(m_sCurLanguage) );
+
+		int iDist = distance( asElementPaths.begin(), it );
+		if( iDist == 0 )
+		{
+			/* We didn't find any for the current language.  Try BASE_LANGUAGE. */
+			it = partition( asElementPaths.begin(), asElementPaths.end(), CompareLanguageTag(BASE_LANGUAGE) );
+			iDist = distance( asElementPaths.begin(), it );
+		}
+
+		/* If there's more than one match (or no language matches), warn about it below.
+		 * If "ignore" is picked, then it'll default to the first entry, so it'll still
+		 * use a preferred language match if there were any (since partition() put them
+		 * at the top). */
+		if( iDist == 1 )
+			asElementPaths.erase( it, asElementPaths.end() );
+	}
 
 	if( asElementPaths.size() > 1 )
 	{
