@@ -43,10 +43,10 @@ const CString METRICS_FILE = "metrics.ini";
 struct Theme
 {
 	CString sThemeName;
-	IniFile *iniMetrics;	// pointer because the copy constructor isn't a deep copy
 };
 // When looking for a metric or an element, search these from head to tail.
 static deque<Theme> g_vThemes;
+static IniFile *g_pIniMetrics;
 
 
 //
@@ -120,8 +120,8 @@ ThemeManager::ThemeManager()
 
 ThemeManager::~ThemeManager()
 {
-	for( unsigned i = 0; i < g_vThemes.size(); ++i )
-		delete g_vThemes[i].iniMetrics;
+	g_vThemes.clear();
+	SAFE_DELETE( g_pIniMetrics );
 }
 
 void ThemeManager::GetThemeNames( CStringArray& AddTo )
@@ -166,10 +166,43 @@ bool ThemeManager::DoesLanguageExist( const CString &sLanguage )
 	return false;
 }
 
+/* Move nodes from pFrom into pTo which don't already exist in pTo.  For
+ * efficiency, nodes will be moved, not copied, so pFrom will be modified.
+ * On return, the contents of pFrom will be undefined and should be deleted. */
+static void MergeIniUnder( XNode *pFrom, XNode *pTo )
+{
+	/* Iterate over each section in pFrom. */
+	XNodes::iterator it = pFrom->m_childs.begin();
+	while( it != pFrom->m_childs.end() )
+	{
+		XNodes::iterator next = it;
+		++next;
+
+		/* If this node doesn't exist in pTo, just move the whole node. */
+		XNode *pChildNode = pTo->GetChild( it->first );
+		if( pChildNode == NULL )
+		{
+			/* We're moving the XNode without copying it, so don't use RemoveChild--it'll
+			 * delete it. */
+			pTo->AppendChild( it->second );
+			pFrom->m_childs.erase( it );
+		}
+		else
+		{
+			/* map::insert will not overwrite existing nodes. */
+			XNode *pFrom = it->second;
+			FOREACHM( CString, CString, pFrom->m_attrs, it )
+				pChildNode->m_attrs.insert( *it );
+		}
+
+		it = next;
+	}
+}
+
 void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const CString &sThemeName_, const CString &sLanguage_ )
 {
-	for( unsigned i = 0; i < g_vThemes.size(); ++i )
-		delete g_vThemes[i].iniMetrics;
+	delete g_pIniMetrics;
+	g_pIniMetrics = new IniFile;
 	g_vThemes.clear();
 
 	CString sThemeName(sThemeName_);
@@ -185,15 +218,16 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const CString &sThemeN
 
 		g_vThemes.push_back( Theme() );
 		Theme &t = g_vThemes.back();
-		t.iniMetrics = new IniFile;
 		t.sThemeName = sThemeName;
-		t.iniMetrics->ReadFile( GetMetricsIniPath(sThemeName) );
-		t.iniMetrics->ReadFile( GetLanguageIniPath(sThemeName,BASE_LANGUAGE) );
+
+		IniFile ini;
+		ini.ReadFile( GetMetricsIniPath(sThemeName) );
+		ini.ReadFile( GetLanguageIniPath(sThemeName,BASE_LANGUAGE) );
 		if( sLanguage.CompareNoCase(BASE_LANGUAGE) )
-			t.iniMetrics->ReadFile( GetLanguageIniPath(sThemeName,sLanguage) );
+			ini.ReadFile( GetLanguageIniPath(sThemeName,sLanguage) );
 
 		bool bIsBaseTheme = !sThemeName.CompareNoCase(BASE_THEME_NAME);
-		t.iniMetrics->GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
+		ini.GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
 		if( bIsBaseTheme )
 			bLoadedBase = true;
 
@@ -201,11 +235,18 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const CString &sThemeN
 		 * already loaded it, fall back on BASE_THEME_NAME.  That way, default theme
 		 * fallbacks can be disabled with "FallbackTheme=". */
 		CString sFallback;
-		if( !t.iniMetrics->GetValue("Global","FallbackTheme",sFallback) )
+		if( !ini.GetValue("Global","FallbackTheme",sFallback) )
 		{
 			if( sThemeName.CompareNoCase( BASE_THEME_NAME ) && !bLoadedBase )
 				sFallback = BASE_THEME_NAME;
 		}
+
+		/* We actually want to load themes bottom-to-top, loading fallback themes
+		 * first, so derived themes overwrite metrics in fallback themes. But, we
+		 * need to load the derived theme first, to find out the name of the fallback
+		 * theme.  Avoid having to load IniFile twice, merging the fallback theme
+		 * into the derived theme that we've already loaded. */
+		MergeIniUnder( &ini, g_pIniMetrics );
 
 		if( sFallback.empty() )
 			break;
@@ -224,7 +265,7 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const CString &sThemeN
 		if( !re.Compare( sMetric, sBits ) )
 			RageException::Throw( "Invalid argument \"--metric=%s\"", sMetric.c_str() );
 
-		g_vThemes.front().iniMetrics->SetValue( sBits[0], sBits[1], sBits[2] );
+		g_pIniMetrics->SetValue( sBits[0], sBits[1], sBits[2] );
 	}
 
 	LOG->MapLog( "theme", "Theme: %s", m_sCurThemeName.c_str() );
@@ -616,11 +657,8 @@ bool ThemeManager::GetMetricRawRecursive( const CString &sClassName_, const CStr
 	int n = 100;
 	while( n-- )
 	{
-		FOREACHD_CONST( Theme, g_vThemes, iter )
-		{
-			if( iter->iniMetrics->GetValue(sClassName,sValueName,sOut) )
-				return true;
-		}
+		if( g_pIniMetrics->GetValue(sClassName,sValueName,sOut) )
+			return true;
 
 		if( !sValueName.compare("Fallback") )
 			return false;
@@ -797,16 +835,11 @@ CString ThemeManager::GetLanguageIniPath( const CString &sThemeName, const CStri
 
 void ThemeManager::GetModifierNames( vector<CString>& AddTo )
 {
-	for( deque<Theme>::const_iterator iter = g_vThemes.begin();
-		iter != g_vThemes.end();
-		++iter )
+	const XNode *cur = g_pIniMetrics->GetChild( "OptionNames" );
+	if( cur )
 	{
-		const XNode *cur = iter->iniMetrics->GetChild( "OptionNames" );
-		if( cur )
-		{
-			FOREACH_CONST_Attr( cur, p )
-				AddTo.push_back( p->first );
-		}
+		FOREACH_CONST_Attr( cur, p )
+			AddTo.push_back( p->first );
 	}
 }
 
@@ -826,13 +859,9 @@ void ThemeManager::GetMetricsThatBeginWith( const CString &sClassName_, const CS
 	CString sClassName( sClassName_ );
 	while( !sClassName.empty() )
 	{
-		// Iterate over themes in the chain.
-		FOREACHD_CONST( Theme, g_vThemes, i )
+		const XNode *cur = g_pIniMetrics->GetChild( sClassName );
+		if( cur != NULL )
 		{
-			const XNode *cur = i->iniMetrics->GetChild( sClassName );
-			if( cur == NULL )
-				continue;
-
 			// Iterate over all metrics that match.
 			for( XAttrs::const_iterator j = cur->m_attrs.lower_bound( sValueName ); j != cur->m_attrs.end(); ++j )
 			{
