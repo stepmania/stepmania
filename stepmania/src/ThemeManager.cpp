@@ -681,12 +681,8 @@ bool ThemeManager::HasMetric( const CString &sClassName, const CString &sValueNa
 void ThemeManager::ReloadMetrics()
 {
 	// force a reload of the metrics cache
-	const CString sThemeName = m_sCurThemeName;
-	const CString sCurLanguage = m_sCurLanguage;
-	m_sCurThemeName = "";
-	m_sCurLanguage = "";
+	LoadThemeMetrics( g_vThemes, m_sCurThemeName, m_sCurLanguage );
 
-	SwitchThemeAndLanguage( sThemeName, sCurLanguage );
 	if( SCREENMAN )
 		SCREENMAN->SystemMessage( "Reloaded metrics" );
 
