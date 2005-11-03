@@ -10,11 +10,6 @@ class RageFileBasic;
 
 class IniFile : public XNode
 {
-private:
-	CString m_sPath;
-
-	mutable CString m_sError;
-
 public:
 	IniFile();
 
@@ -46,6 +41,11 @@ public:
 	 * reading an INI where [foo] is an alias to [main].  If to already
 	 * exists, nothing happens. */
 	bool RenameKey( const CString &from, const CString &to );
+
+private:
+	CString m_sPath;
+
+	mutable CString m_sError;
 };
 
 #endif
