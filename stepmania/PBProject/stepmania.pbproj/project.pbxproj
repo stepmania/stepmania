@@ -843,8 +843,6 @@
 		AAED6F2D0601C528002D2DEE /* Backtrace.h in Headers */ = {isa = PBXBuildFile; fileRef = AAED6F290601C528002D2DEE /* Backtrace.h */; };
 		AAED6F2E0601C528002D2DEE /* BacktraceNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAED6F2A0601C528002D2DEE /* BacktraceNames.cpp */; };
 		AAED6F2F0601C528002D2DEE /* BacktraceNames.h in Headers */ = {isa = PBXBuildFile; fileRef = AAED6F2B0601C528002D2DEE /* BacktraceNames.h */; };
-		AAEF7D23090DD45900A1CAFC /* LowLevelWindow_Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = AAEF7D21090DD45900A1CAFC /* LowLevelWindow_Cocoa.h */; };
-		AAEF7D24090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAEF7D22090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm */; };
 		AAF3442B08F1C36A0006EDB7 /* DynamicActorScroller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF3442908F1C36A0006EDB7 /* DynamicActorScroller.cpp */; };
 		AAF3442C08F1C36A0006EDB7 /* DynamicActorScroller.h in Headers */ = {isa = PBXBuildFile; fileRef = AAF3442A08F1C36A0006EDB7 /* DynamicActorScroller.h */; };
 		AAF34ADE0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAF34ADC0900AEBD0006EDB7 /* ScoreKeeperNormal.cpp */; };
@@ -3557,7 +3555,6 @@
 				AAF34B1A0900D1AA0006EDB7 /* InputHandler_Carbon.h in Headers */,
 				AAA372D50909934500141131 /* MovieTexture_Generic.h in Headers */,
 				AAA372D70909934500141131 /* MovieTexture_Theora.h in Headers */,
-				AAEF7D23090DD45900A1CAFC /* LowLevelWindow_Cocoa.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4114,7 +4111,6 @@
 				AAF34B190900D1A20006EDB7 /* InputHandler_Carbon.cpp in Sources */,
 				AAA372D40909934500141131 /* MovieTexture_Generic.cpp in Sources */,
 				AAA372D60909934500141131 /* MovieTexture_Theora.cpp in Sources */,
-				AAEF7D24090DD45900A1CAFC /* LowLevelWindow_Cocoa.mm in Sources */,
 				AA2FB62A09120FC5000FD574 /* PreferredLanguage.m in Sources */,
 				AA2FB639091212B0000FD574 /* LifeMeter.cpp in Sources */,
 				AAA130C70914ACB600497146 /* WindowHelper.m in Sources */,
@@ -4227,7 +4223,7 @@
 					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers",
 					"$(SRCROOT)/../src/lua-5.0/include",
 					"$(SRCROOT)/../src/vorbis",
-					"$(SRCROOT)/../src/libjpeg/include",
+					"$(SRCROOT)/../src/libjpeg",
 					"$(SRCROOT)/../src/libpng/include",
 					"$(BUILT_PRODUCTS_DIR)/StepMania.app/ContentsFrameworks/resample.framework/Headers",
 					"$(SRCROOT)/../src/archutils/Darwin/PublicUtility",
