@@ -28,7 +28,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 IDD_ERROR_DIALOG DIALOGEX 0, 0, 332, 234
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
-CAPTION "StepMania Error"
+CAPTION "Error"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,265,215,60,15
@@ -36,9 +36,9 @@ BEGIN
                     WS_VSCROLL | NOT WS_TABSTOP
     PUSHBUTTON      "View Log",IDC_BUTTON_VIEW_LOG,8,215,74,15
     PUSHBUTTON      "Report the Error",IDC_BUTTON_REPORT,90,215,76,15
-    PUSHBUTTON      "Restart StepMania",IDC_BUTTON_RESTART,175,215,80,15
+    PUSHBUTTON      "Restart Game",IDC_BUTTON_RESTART,175,215,80,15
     CONTROL         129,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    LTEXT           "Sorry!  An error has occurred while running StepMania.\r\n\r\nSpecific details about the error may be shown in the box below:",
+    LTEXT           "Sorry!  A fatal error has occurred.\r\n\r\nSpecific details about the error may be shown in the box below:",
                     IDC_STATIC,7,46,298,28
 END
 
@@ -57,7 +57,7 @@ END
 
 IDD_DISASM_CRASH DIALOGEX 0, 0, 399, 151
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION
-CAPTION "StepMania Error"
+CAPTION "Error"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     PUSHBUTTON      "&View crash dump",IDC_CRASH_SAVE,1,135,70,15
@@ -70,7 +70,7 @@ BEGIN
     LTEXT           "crash reason: programmer needs good whack on head",
                     IDC_STATIC_BOMBREASON,8,120,219,8
     CONTROL         121,IDC_STATIC,"Static",SS_BITMAP,1,2,396,36
-    LTEXT           "StepMania has crashed due to a program error.  Diagnostic information has been saved to a file called ""crashinfo.txt"" in the StepMania program directory.  Hit ""View crash dump"" to view it. Please include this file in all bug reports.",
+    LTEXT           "A fatal error has occurred.  Diagnostic information has been saved to a file called ""crashinfo.txt"" in the game program directory.  Hit ""View crash dump"" to view it.  Please include this file in all bug reports.",
                     IDC_STATIC,8,41,382,19
     LTEXT           "Estimated call stack",IDC_STATIC,7,64,64,8
 END
@@ -78,7 +78,7 @@ END
 IDD_OK DIALOG  0, 0, 318, 87
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | 
     WS_CAPTION
-CAPTION "StepMania"
+CAPTION "Prompt"
 FONT 8, "MS Shell Dlg"
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,131,66,50,14

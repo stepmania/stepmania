@@ -7,7 +7,7 @@ void Win32RestartProgram()
 	TCHAR szFullAppPath[MAX_PATH];
 	GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
 
-	// Launch StepMania
+	// Relaunch
 	PROCESS_INFORMATION pi;
 	STARTUPINFO	si;
 	ZeroMemory( &si, sizeof(si) );

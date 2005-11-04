@@ -267,7 +267,7 @@ int main(int argc, char **argv) {
 
 		// dump data
 
-		static const char header[64]="StepMania symbolic debug information\r\n\x1A";
+		static const char header[64]= PRODUCT_NAME " symbolic debug information\r\n\x1A";
 
 		fwrite(header, 64, 1, fo);
 

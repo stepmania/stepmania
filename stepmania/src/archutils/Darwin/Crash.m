@@ -1,9 +1,11 @@
+#include "ProductInfo.h"
+
 void InformUserOfCrash( const char *sPath )
 {
-	NSString *s = @"StepMania has crashed. Debugging information has been output to\n\n%s\n\n"
-	@"Please file a bug report at\n\nhttp://sf.net/tracker/?func=add&group_id=37892&atid=421366";
+	NSString *s = @PRODUCT_NAME " has crashed. Debugging information has been output to\n\n%s\n\n"
+	@"Please file a bug report at\n\n" REPORT_BUG_URL;
 	
-	int ret = NSRunAlertPanel( @"StepMania has crashed", s, @"Open crashinfo.txt", @"Quit", nil, sPath );
+	int ret = NSRunAlertPanel( @PRODUCT_NAME " has crashed", s, @"Open crashinfo.txt", @"Quit", nil, sPath );
 	
 	if( ret == NSAlertDefaultReturn )
 	{

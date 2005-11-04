@@ -445,7 +445,7 @@ bool VDDebugInfoInitFromMemory(VDDebugInfoContext *pctx, const void *_src) {
 
 	pctx->pRVAHeap = NULL;
 
-	if (memcmp((char *)src, "StepMania symbolic debug information", 36))
+	if (memcmp((char *)src, PRODUCT_NAME " symbolic debug information", 36))
 		return false;
 
 	// Extract fields
