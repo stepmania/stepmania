@@ -13,4 +13,7 @@
 !define PRODUCT_URL "http://www.stepmania.com"
 
 ;!define INSTALL_TYPE_PCKS
+!define INSTALL_SMPACKAGE
 ;!define SHOW_AUTORUN
+!define MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
+;!define DIRECTX_81_REDIST_PRESENT

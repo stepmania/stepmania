@@ -156,14 +156,21 @@ Section "Main Section" SecMain
 	CreateDirectory $INSTDIR\pcks
 	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\Resources\*.idx" $INSTDIR\pcks 1
 	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\Resources\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
+	IfErrors do_error do_no_error
+	do_error:
+	MessageBox MB_OK|MB_ICONSTOP "Fatal error copying pck files."
+	Quit
+	do_no_error:
 
 !else
 
+!ifdef INSTALL_SMPACKAGE
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command" "" '"$INSTDIR\Program\smpackage.exe" "%1"'
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile" "" "SMZIP package"
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\Program\smpackage.exe,0"
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\Program\smpackage.exe" "%1"'
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
+!endif
 
 	; Begin copying files
 	CreateDirectory "$INSTDIR\Announcers"
@@ -253,6 +260,11 @@ Section "Main Section" SecMain
 	File "Data\AI.ini"
 	File "Data\splash.png"
 	
+	SetOutPath "$INSTDIR"
+	File "Docs\Copying.txt"
+	File "README-FIRST.html"
+	File "NEWS"
+
 !endif
 
 	SetOverwrite off
@@ -260,15 +272,12 @@ Section "Main Section" SecMain
 	File "Docs\Stats.xml"
 	SetOverwrite on
 
-	SetOutPath "$INSTDIR"
-	File "Docs\Copying.txt"
-	File "README-FIRST.html"
-	File "NEWS"
-
 	SetOutPath "$INSTDIR\Program"
 	File "Program\${PRODUCT_NAME}.exe"
 	File "Program\${PRODUCT_NAME}.vdi"
+!ifdef INSTALL_SMPACKAGE
 	File "Program\smpackage.exe"
+!endif
 	File "Program\msvcr71.dll"
 	File "Program\msvcp71.dll"
 	File "Program\jpeg.dll"
@@ -306,12 +315,16 @@ Section "Main Section" SecMain
 	CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
 	CreateShortCut "$DESKTOP\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME_VER}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
+!ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open ${PRODUCT_NAME} Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
+!endif
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Statistics.lnk" "$INSTDIR\Save\MachineProfile\Stats.xml"
+!ifdef INSTALL_SMPACKAGE
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Tools and Package Exporter.lnk" "$INSTDIR\Program\smpackage.exe"
+!endif
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Documentation.lnk" "$INSTDIR\README-FIRST.html"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninstall.exe"
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go To the ${PRODUCT_NAME} web site.lnk" "${PRODUCT_URL}"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go to the ${PRODUCT_NAME} web site.lnk" "${PRODUCT_URL}"
 
 	CreateShortCut "$INSTDIR\${PRODUCT_NAME}.lnk" "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 
@@ -484,11 +497,17 @@ Function PreInstall
 
 	; We can function without it (using WaveOut), so don't *require* this.
 	old_dx:
+!ifdef DIRECTX_81_REDIST_PRESENT
+	MessageBox MB_YESNO|MB_ICONINFORMATION "The latest version of DirectX (8.1 or higher) is required.$\n Do you wish to install DirectX 8.1 now?" IDNO ok
+	Exec "DirectX81\dxsetup.exe"
+	quit
+	ok:
+!else
 	MessageBox MB_YESNO|MB_ICONINFORMATION "The latest version of DirectX (8.1 or higher) is strongly recommended.$\n Do you wish to visit Microsoft's site now?" IDNO ok
 	ExecShell "" "http://www.microsoft.com/directx/"
 	Abort
-
 	ok:
+!endif
 
 FunctionEnd
 
@@ -546,9 +565,11 @@ Section "Uninstall"
 
 !else
 
+!ifdef INSTALL_SMPACKAGE
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip"
+!endif
 
 	Delete "$INSTDIR\Announcers\instructions.txt"
 	RMDir "$INSTDIR\Announcers"
@@ -615,7 +636,9 @@ Section "Uninstall"
 !endif
 
 	Delete "$INSTDIR\Program\${PRODUCT_NAME}.exe"
+!ifdef INSTALL_SMPACKAGE
 	Delete "$INSTDIR\Program\smpackage.exe"
+!endif
 	Delete "$INSTDIR\Program\${PRODUCT_NAME}.vdi"
 	Delete "$INSTDIR\Program\msvcr71.dll"
 	Delete "$INSTDIR\Program\msvcp71.dll"
