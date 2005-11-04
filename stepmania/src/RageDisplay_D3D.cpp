@@ -61,6 +61,7 @@ D3DPRESENT_PARAMETERS	g_d3dpp;
 int						g_ModelMatrixCnt=0;
 int						g_iCurrentTextureIndex = 0;
 static int				g_iActualRefreshRateInHz = 60;
+static float			g_fZBias = 0;
 
 /* Direct3D doesn't associate a palette with textures.
  * Instead, we load a palette into a slot.  We need to keep track
@@ -626,6 +627,9 @@ void RageDisplay_D3D::SetViewport(int shift_left, int shift_down)
 	shift_down = int( shift_down * float(p.height) / SCREEN_HEIGHT );
 
 	D3DVIEWPORT8 viewData = { shift_left, -shift_down, p.width, p.height, 0.f, 1.f };
+	viewData.MinZ = SCALE( g_fZBias, 0.0f, 1.0f, 0.05f, 0.0f );
+	viewData.MaxZ = SCALE( g_fZBias, 0.0f, 1.0f, 1.0f, 0.95f );
+
 	g_pd3dDevice->SetViewport( &viewData );
 }
 
@@ -1112,7 +1116,8 @@ bool RageDisplay_D3D::IsZWriteEnabled() const
 
 void RageDisplay_D3D::SetZBias( float f )
 {
-	g_pd3dDevice->SetRenderState( D3DRS_ZBIAS, (int) SCALE( f, 0.0f, 1.0f, 0, 30 ) );
+	g_fZBias = f;
+	SetViewport( 0, 0 );
 }
 
 
