@@ -782,7 +782,25 @@ void RageDisplay_D3D::SendCurrentMatrices()
 	RageMatrixTranslation( &m, -0.5f, -0.5f, 0 );
 	RageMatrixMultiply( &m, &m, GetWorldTop() );
 	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)&m );
-	g_pd3dDevice->SetTransform( D3DTS_TEXTURE0, (D3DMATRIX*)GetTextureTop() );
+	
+	/*
+	 * Direct3D is expecting a 3x3 matrix loaded into the 4x4 in order to transform
+	 * the 2-component texture coordinates.  We currently only use translate and scale,
+	 * and ignore the z component entirely, so convert the texture matrix from
+	 * 4x4 to 3x3 by dropping z.
+	 */
+
+	const RageMatrix &tex1 = *GetTextureTop();
+	const RageMatrix tex2 = RageMatrix
+	(
+		tex1.m[0][0], tex1.m[0][1],  tex1.m[0][3],	0,
+		tex1.m[1][0], tex1.m[1][1],  tex1.m[1][3],	0,
+		tex1.m[3][0], tex1.m[3][1],  tex1.m[3][3],	0,
+		0,				0,			0,		0
+	);
+	g_pd3dDevice->SetTransform( D3DTS_TEXTURE0, (D3DMATRIX*)&tex2 );
+	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
+	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_PASSTHRU );    
 }
 
 class RageCompiledGeometrySWD3D : public RageCompiledGeometry
@@ -813,6 +831,19 @@ public:
 	void Draw( int iMeshIndex ) const
 	{
 		const MeshInfo& meshInfo = m_vMeshInfo[iMeshIndex];
+
+		if( meshInfo.m_bNeedsTextureMatrixScale )
+		{
+			// Kill the texture translation.
+			// XXX: Change me to scale the translation by the TextureTranslationScale of the first vertex.
+			RageMatrix m;
+			g_pd3dDevice->GetTransform( D3DTS_TEXTURE0, (D3DMATRIX*)&m );
+
+			m.m[2][0] = 0;
+			m.m[2][1] = 0;
+
+			g_pd3dDevice->SetTransform( D3DTS_TEXTURE0, (D3DMATRIX*)&m );
+		}
 
 		g_pd3dDevice->SetVertexShader( D3DFVF_RageModelVertex );
 		g_pd3dDevice->DrawIndexedPrimitiveUP(
@@ -1407,7 +1438,7 @@ void RageDisplay_D3D::SetSphereEnvironmentMapping( bool b )
 
 	if( b )
 	{
-		RageMatrix tex = RageMatrix
+		static const RageMatrix tex = RageMatrix
 		(
 			0.40f,  0.0f,  0.0f, 0.0f,
 			0.0f,  -0.40f, 0.0f, 0.0f,
@@ -1420,7 +1451,6 @@ void RageDisplay_D3D::SetSphereEnvironmentMapping( bool b )
     // Tell D3D to use transformed reflection vectors as texture co-ordinate 0
     // and then transform this coordinate by the specified texture matrix, also
     // tell D3D that only the first two coordinates of the output are valid.
-    g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_TEXTURETRANSFORMFLAGS, b ? D3DTTFF_COUNT2 : D3DTTFF_DISABLE );    
     g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_TEXCOORDINDEX, b ? D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR : D3DTSS_TCI_PASSTHRU );    
 }
 /*
