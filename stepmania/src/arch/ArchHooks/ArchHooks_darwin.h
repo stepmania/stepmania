@@ -15,7 +15,7 @@ public:
 	void ExitTimeCriticalSection();
 
 protected:
-	RageMutex *TimeCritMutex;
+	//RageMutex *TimeCritMutex;
 };
 
 #ifdef ARCH_HOOKS
