@@ -198,6 +198,7 @@ void RageDisplay::SetDefaultRenderStates()
 	SetAlphaTest( true );
 	SetBlendMode( BLEND_NORMAL );
 	SetTextureFiltering( true );
+	SetZBias( 0 );
 	LoadMenuPerspective(0, SCREEN_CENTER_X, SCREEN_CENTER_Y);	// 0 FOV = ortho
 	ChangeCentering(0,0,0,0);
 }
