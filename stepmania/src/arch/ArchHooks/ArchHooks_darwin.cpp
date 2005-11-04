@@ -9,6 +9,7 @@
 #include "archutils/Unix/SignalHandler.h"
 #include "StepMania.h"
 #include "GameLoop.h"
+#include "ProductInfo.h"
 #include <Carbon/Carbon.h>
 #include <mach/thread_act.h>
 #include <mach/mach.h>
@@ -61,12 +62,61 @@ ArchHooks_darwin::ArchHooks_darwin()
     SignalHandler::OnClose( DoCleanShutdown );
 
     SignalHandler::OnClose( DoCrashSignalHandler );
-    TimeCritMutex = new RageMutex("TimeCritMutex");
+    //TimeCritMutex = new RageMutex("TimeCritMutex");
+	
+	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
+	CFStringRef key = CFSTR( "ApplicationBundlePath" );
+	CFStringRef appID = CFSTR( "com." PRODUCT_NAME );
+	CFStringRef version = CFSTR( PRODUCT_VER );
+	
+	CFURLRef path = CFBundleCopyBundleURL( CFBundleGetMainBundle() );
+	CFPropertyListRef value = CFURLCopyPath( path );
+	CFPropertyListRef old = CFPreferencesCopyAppValue( key, appID );
+	CFMutableDictionaryRef newDict = NULL;
+	bool changed = false;
+	
+	if( old && CFGetTypeID(old) != CFDictionaryGetTypeID() )
+	{
+		CFRelease( old );
+		old = NULL;
+	}
+	
+	if( !old )
+	{
+		newDict = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,
+											 &kCFTypeDictionaryValueCallBacks );
+		CFDictionaryAddValue( newDict, version, value );
+		changed = true;
+	}
+	else
+	{
+		CFTypeRef oldValue;
+		CFDictionaryRef dict = CFDictionaryRef( old );
+		
+		if( !CFDictionaryGetValueIfPresent(dict, version, &oldValue) || !CFEqual(oldValue, value) )
+		{
+			// The value is either not present or it is but it is different
+			newDict = CFDictionaryCreateMutableCopy( kCFAllocatorDefault, 0, dict );
+			CFDictionaryAddValue( newDict, version, value );
+			changed = true;
+		}
+		CFRelease( old );
+	}
+	
+	if( changed )
+	{
+		CFPreferencesSetAppValue( key, newDict, appID );
+		if( !CFPreferencesAppSynchronize(appID) )
+			LOG->Warn( "Failed to record the run path." );
+		CFRelease( newDict );
+	}
+	CFRelease( value );
+	CFRelease( path );
 }
 
 ArchHooks_darwin::~ArchHooks_darwin()
 {
-	delete TimeCritMutex;
+	//delete TimeCritMutex;
 }
 
 void ArchHooks_darwin::DumpDebugInfo()
