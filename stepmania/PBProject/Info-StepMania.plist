@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>StepMania</string>
+	<string>PRODUCT_NAME_BARE</string>
 	<key>CFBundleGetInfoString</key>
 	<string>PRODUCT_NAME_BARE PRODUCT_VER_BARE</string>
 	<key>CFBundleIconFile</key>
