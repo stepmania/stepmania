@@ -1141,7 +1141,7 @@ void RageDisplay_D3D::SetTextureModeAdd()
 	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_ADD );
 	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
 	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAOP,   D3DTOP_ADD );
 }
 
 void RageDisplay_D3D::SetTextureFiltering( bool b )
