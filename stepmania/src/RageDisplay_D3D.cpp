@@ -830,9 +830,9 @@ void RageDisplay_D3D::SendCurrentMatrices()
 				tex1.m[3][0], tex1.m[3][1],  tex1.m[3][3],	0,
 				0,				0,			0,		0
 			);
-			g_pd3dDevice->SetTransform( D3DTS_TEXTURE0, (D3DMATRIX*)&tex2 );
+			g_pd3dDevice->SetTransform( D3DTRANSFORMSTATETYPE(D3DTS_TEXTURE0+tu), (D3DMATRIX*)&tex2 );
 
-			g_pd3dDevice->SetTextureStageState( 0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_PASSTHRU );
+			g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_PASSTHRU );
 		}
 	}
 }
@@ -1138,7 +1138,7 @@ void RageDisplay_D3D::SetTextureModeAdd()
 	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_ADD );
 	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
 	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAOP,   D3DTOP_ADD );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 }
 
 void RageDisplay_D3D::SetTextureFiltering( bool b )
