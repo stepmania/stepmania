@@ -495,16 +495,19 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 
 	ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
 
-	g_d3dpp.BackBufferWidth			=	p.width;
-	g_d3dpp.BackBufferHeight		=	p.height;
-	g_d3dpp.BackBufferFormat		=	FindBackBufferType( p.windowed, p.bpp );
-	g_d3dpp.BackBufferCount			=	1;
-	g_d3dpp.MultiSampleType			=	D3DMULTISAMPLE_NONE;
-	g_d3dpp.SwapEffect				=	D3DSWAPEFFECT_DISCARD;
+	g_d3dpp.BackBufferWidth		=	p.width;
+	g_d3dpp.BackBufferHeight	=	p.height;
+	g_d3dpp.BackBufferFormat	=	FindBackBufferType( p.windowed, p.bpp );
+	g_d3dpp.BackBufferCount		=	1;
+	g_d3dpp.MultiSampleType		=	D3DMULTISAMPLE_NONE;
+	if(p.windowed)
+		g_d3dpp.SwapEffect		=	p.vsync ? D3DSWAPEFFECT_COPY_VSYNC : D3DSWAPEFFECT_DISCARD;
+	else
+		g_d3dpp.SwapEffect		=	D3DSWAPEFFECT_DISCARD;
 #if !defined(XBOX)
-	g_d3dpp.hDeviceWindow			=	GraphicsWindow::GetHwnd();
+	g_d3dpp.hDeviceWindow		=	GraphicsWindow::GetHwnd();
 #else
-	g_d3dpp.hDeviceWindow			=	NULL;
+	g_d3dpp.hDeviceWindow		=	NULL;
 #endif
 	g_d3dpp.Windowed				=	p.windowed;
 	g_d3dpp.EnableAutoDepthStencil	=	TRUE;
