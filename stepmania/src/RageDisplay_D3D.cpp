@@ -685,10 +685,10 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 {
 #if defined(XBOX)
 	// Lazy...  Xbox handles paletted textures completely differently
-	// than D3D and I don't want to add a bunch of code for it.  Also, 
-	// paletted textures result in worse cache efficiency (see "Xbox 
-	// Palettized Texture Performance" in XDK).  So, we'll force 32bit
-	// ARGB textures.  -Chris
+	// than regular D3D.  It's not worth writing a bunch of code to handle it.
+	// Paletted textures result in worse cache efficiency anyway (see "Xbox 
+	// Palettized Texture Performance" in XDK).  
+	// So, just force 32bit ARGB textures.  -Chris
 	// This is also needed for XGSwizzleRect().
 	return pixfmt == FMT_RGBA8;
 #endif
