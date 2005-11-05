@@ -795,10 +795,11 @@ void RageDisplay_D3D::SendCurrentMatrices()
 		g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
 		
 		// If no texture is set for this texture unit, don't bother setting it up.
-		IDirect3DBaseTexture8* ppTexture = NULL;
-		g_pd3dDevice->GetTexture( g_currentTextureUnit, &ppTexture );
-		if( ppTexture == NULL )
+		IDirect3DBaseTexture8* pTexture = NULL;
+		g_pd3dDevice->GetTexture( g_currentTextureUnit, &pTexture );
+		if( pTexture == NULL )
 			 continue;
+		pTexture->Release();
 
 
 		if( g_bSphereMapping[tu] )
