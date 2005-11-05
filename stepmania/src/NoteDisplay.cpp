@@ -476,7 +476,7 @@ void NoteDisplay::DrawHoldTopCap( const TapNote& tn, int iCol, int iRow, bool bI
 	RageTexture* pTexture = pSprTopCap->GetTexture();
 	const RectF *pRect = pSprTopCap->GetCurrentTextureCoordRect();
 	DISPLAY->ClearAllTextures();
-	DISPLAY->SetTexture( 0, pTexture );
+	DISPLAY->SetTexture( TextureUnit_1, pTexture );
 	DISPLAY->SetBlendMode( BLEND_NORMAL );
 	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping(false);
@@ -565,7 +565,7 @@ void NoteDisplay::DrawHoldBody( const TapNote& tn, int iCol, int iRow, bool bIsB
 	RageTexture* pTexture = pSprBody->GetTexture();
 	const RectF *pRect = pSprBody->GetCurrentTextureCoordRect();
 	DISPLAY->ClearAllTextures();
-	DISPLAY->SetTexture( 0, pTexture );
+	DISPLAY->SetTexture( TextureUnit_1, pTexture );
 	DISPLAY->SetBlendMode( BLEND_NORMAL );
 	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping( true );
@@ -663,7 +663,7 @@ void NoteDisplay::DrawHoldBottomCap( const TapNote& tn, int iCol, int iRow, bool
 	RageTexture* pTexture = pBottomCap->GetTexture();
 	const RectF *pRect = pBottomCap->GetCurrentTextureCoordRect();
 	DISPLAY->ClearAllTextures();
-	DISPLAY->SetTexture( 0, pTexture );
+	DISPLAY->SetTexture( TextureUnit_1, pTexture );
 	DISPLAY->SetBlendMode( BLEND_NORMAL );
 	DISPLAY->SetCullMode( CULL_NONE );
 	DISPLAY->SetTextureWrapping(false);

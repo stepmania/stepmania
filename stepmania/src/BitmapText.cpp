@@ -325,7 +325,7 @@ void BitmapText::DrawChars()
 		while( end < iEndGlyph && m_pTextures[end] == m_pTextures[start] )
 			end++;
 		DISPLAY->ClearAllTextures();
-		DISPLAY->SetTexture( 0, m_pTextures[start] );
+		DISPLAY->SetTexture( TextureUnit_1, m_pTextures[start] );
 		// don't bother setting texture render states for text.  We never go outside of 0..1.
 		//Actor::SetTextureRenderStates();
 		RageSpriteVertex &start_vertex = m_aVertices[start*4];

@@ -366,7 +366,7 @@ void Model::DrawPrimitives()
 				if( DISPLAY->GetNumTextureUnits() < 2 )
 				{
 					// render the diffuse texture
-					DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
+					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() );
 					Actor::SetTextureRenderStates();	// set Actor-specified render states
 					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
 					DrawMesh( i );
@@ -374,7 +374,7 @@ void Model::DrawPrimitives()
 					// render the additive texture
 					if( mat.alpha.GetCurrentTexture() )
 					{
-						DISPLAY->SetTexture( 0, mat.alpha.GetCurrentTexture() );
+						DISPLAY->SetTexture( TextureUnit_1, mat.alpha.GetCurrentTexture() );
 						Actor::SetTextureRenderStates();	// set Actor-specified render states
 
 						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
@@ -387,14 +387,14 @@ void Model::DrawPrimitives()
 				else
 				{
 					// render the diffuse texture with texture unit 1
-					DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
+					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() );
 					Actor::SetTextureRenderStates();	// set Actor-specified render states
 					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
 					
 					// render the additive texture with texture unit 2
 					if( mat.alpha.GetCurrentTexture() )
 					{
-						DISPLAY->SetTexture( 1, mat.alpha.GetCurrentTexture() );
+						DISPLAY->SetTexture( TextureUnit_2, mat.alpha.GetCurrentTexture() );
 						Actor::SetTextureRenderStates();	// set Actor-specified render states
 						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
 						DISPLAY->SetTextureModeAdd();
@@ -402,18 +402,18 @@ void Model::DrawPrimitives()
 					}
 					else
 					{
-						DISPLAY->SetTexture( 1, NULL );
+						DISPLAY->SetTexture( TextureUnit_2, NULL );
 
 						// set current texture back to 0 or else texture transform applied above 
 						// isn't used.  Why?!?
-						DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
+						DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() );
 					}
 
 					/* go */
 					DrawMesh( i );
 
 					// Turn off Environment mapping on tex unit 0.  Is there a better way to reset?
-					DISPLAY->SetTexture( 0, NULL );
+					DISPLAY->SetTexture( TextureUnit_1, NULL );
 					DISPLAY->SetSphereEnvironmentMapping( 0 );
 				}
 
@@ -462,7 +462,7 @@ void Model::DrawPrimitives()
 			if( pMesh->nMaterialIndex != -1 )
 			{
 				msMaterial& mat = m_Materials[ pMesh->nMaterialIndex ];
-				DISPLAY->SetTexture( 0, mat.diffuse.GetCurrentTexture() );
+				DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() );
 				Actor::SetTextureRenderStates();	// set Actor-specified render states
 			}
 			else

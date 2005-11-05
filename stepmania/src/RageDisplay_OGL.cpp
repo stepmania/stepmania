@@ -1401,7 +1401,7 @@ void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNu
 
 void RageDisplay_OGL::ClearAllTextures()
 {
-	for( int i=0; i<MAX_TEXTURE_UNITS; i++ )
+	FOREACH_ENUM2( TextureUnit, i )
 		SetTexture( i, NULL );
 
 	// HACK:  Reset the active texture to 0.
@@ -1418,17 +1418,17 @@ int RageDisplay_OGL::GetNumTextureUnits()
 		return g_iMaxTextureUnits;
 }
 
-void RageDisplay_OGL::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
+void RageDisplay_OGL::SetTexture( TextureUnit tu, RageTexture* pTexture )
 {
 	if( GLExt.glActiveTextureARB == NULL )
 	{
 		// multitexture isn't supported.  Ignore all textures except for 0.
-		if( iTextureUnitIndex != 0 )
+		if( tu != 0 )
 			return;
 	}
 	else
 	{
-		switch( iTextureUnitIndex )
+		switch( tu )
 		{
 		case 0:
 			GLExt.glActiveTextureARB(GL_TEXTURE0_ARB);

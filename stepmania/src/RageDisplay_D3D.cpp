@@ -18,6 +18,7 @@
 #include "PrefsManager.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include "EnumHelper.h"
 
 #if !defined(XBOX)
 #include "archutils/Win32/GraphicsWindow.h"
@@ -59,8 +60,9 @@ D3DCAPS8				g_DeviceCaps;
 D3DDISPLAYMODE			g_DesktopMode;
 D3DPRESENT_PARAMETERS	g_d3dpp;
 int						g_ModelMatrixCnt=0;
-int						g_iCurrentTextureIndex = 0;
+TextureUnit				g_currentTextureUnit = TextureUnit_1;
 static int				g_iActualRefreshRateInHz = 60;
+static bool				g_bSphereMapping[NUM_TextureUnit] = { false, false };
 static float			g_fZBias = 0;
 
 /* Direct3D doesn't associate a palette with textures.
@@ -783,24 +785,56 @@ void RageDisplay_D3D::SendCurrentMatrices()
 	RageMatrixMultiply( &m, &m, GetWorldTop() );
 	g_pd3dDevice->SetTransform( D3DTS_WORLD, (D3DMATRIX*)&m );
 	
-	/*
-	 * Direct3D is expecting a 3x3 matrix loaded into the 4x4 in order to transform
-	 * the 2-component texture coordinates.  We currently only use translate and scale,
-	 * and ignore the z component entirely, so convert the texture matrix from
-	 * 4x4 to 3x3 by dropping z.
-	 */
 
-	const RageMatrix &tex1 = *GetTextureTop();
-	const RageMatrix tex2 = RageMatrix
-	(
-		tex1.m[0][0], tex1.m[0][1],  tex1.m[0][3],	0,
-		tex1.m[1][0], tex1.m[1][1],  tex1.m[1][3],	0,
-		tex1.m[3][0], tex1.m[3][1],  tex1.m[3][3],	0,
-		0,				0,			0,		0
-	);
-	g_pd3dDevice->SetTransform( D3DTS_TEXTURE0, (D3DMATRIX*)&tex2 );
-	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
-	g_pd3dDevice->SetTextureStageState( 0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_PASSTHRU );    
+	FOREACH_ENUM2( TextureUnit, tu )
+	{
+		// Optimization opportunity: Turn off texture transform if not using texture coords.
+		g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXTURETRANSFORMFLAGS, D3DTTFF_COUNT2 );
+		
+		// If no texture is set for this texture unit, don't bother setting it up.
+		IDirect3DBaseTexture8* ppTexture = NULL;
+		g_pd3dDevice->GetTexture( g_currentTextureUnit, &ppTexture );
+		if( ppTexture == NULL )
+			 continue;
+
+
+		if( g_bSphereMapping[tu] )
+		{
+			static const RageMatrix tex = RageMatrix
+			(
+				0.50f,  0.0f,  0.0f, 0.0f,
+				0.0f,  -0.50f, 0.0f, 0.0f,
+				0.0f,   0.0f,  0.0f, 0.0f,
+				0.50,  -0.50,  0.0f, 1.0f
+			);
+			g_pd3dDevice->SetTransform( (D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0+tu), (D3DMATRIX*)&tex );
+
+			// Tell D3D to use transformed reflection vectors as texture co-ordinate 0
+			// and then transform this coordinate by the specified texture matrix.
+			g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACENORMAL );    
+		}
+		else
+		{
+			/*
+			 * Direct3D is expecting a 3x3 matrix loaded into the 4x4 in order to transform
+			 * the 2-component texture coordinates.  We currently only use translate and scale,
+			 * and ignore the z component entirely, so convert the texture matrix from
+			 * 4x4 to 3x3 by dropping z.
+			 */
+
+			const RageMatrix &tex1 = *GetTextureTop();
+			const RageMatrix tex2 = RageMatrix
+			(
+				tex1.m[0][0], tex1.m[0][1],  tex1.m[0][3],	0,
+				tex1.m[1][0], tex1.m[1][1],  tex1.m[1][3],	0,
+				tex1.m[3][0], tex1.m[3][1],  tex1.m[3][3],	0,
+				0,				0,			0,		0
+			);
+			g_pd3dDevice->SetTransform( D3DTS_TEXTURE0, (D3DMATRIX*)&tex2 );
+
+			g_pd3dDevice->SetTextureStageState( 0, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_PASSTHRU );
+		}
+	}
 }
 
 class RageCompiledGeometrySWD3D : public RageCompiledGeometry
@@ -1030,9 +1064,9 @@ void RageDisplay_D3D::DrawLineStrip( const RageSpriteVertex v[], int iNumVerts, 
 
 void RageDisplay_D3D::ClearAllTextures()
 {
-	for( int i=0; i<MAX_TEXTURE_UNITS; i++ )
+	FOREACH_ENUM2( TextureUnit, i )
 		SetTexture( i, NULL );
-	g_iCurrentTextureIndex = 0;
+	g_currentTextureUnit = TextureUnit_1;
 }
 
 int RageDisplay_D3D::GetNumTextureUnits()
@@ -1040,26 +1074,26 @@ int RageDisplay_D3D::GetNumTextureUnits()
 	return g_DeviceCaps.MaxSimultaneousTextures;
 }
 
-void RageDisplay_D3D::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
+void RageDisplay_D3D::SetTexture( TextureUnit tu, RageTexture* pTexture )
 {
-	g_iCurrentTextureIndex = iTextureUnitIndex;
+	g_currentTextureUnit = tu;
 
 //	g_DeviceCaps.MaxSimultaneousTextures = 1;
-	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( g_currentTextureUnit >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
 	if( pTexture == NULL )
 	{
-		g_pd3dDevice->SetTexture( g_iCurrentTextureIndex, NULL );
-		g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLOROP,   D3DTOP_DISABLE );
+		g_pd3dDevice->SetTexture( g_currentTextureUnit, NULL );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_DISABLE );
 	}
 	else
 	{
 		unsigned uTexHandle = pTexture->GetTexHandle();
 		IDirect3DTexture8* pTex = (IDirect3DTexture8*)uTexHandle;
-		g_pd3dDevice->SetTexture( g_iCurrentTextureIndex, pTex );
+		g_pd3dDevice->SetTexture( g_currentTextureUnit, pTex );
 		
-		g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLOROP,   D3DTOP_MODULATE );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_MODULATE );
 
 		// Set palette (if any)
 		SetPalette(uTexHandle);
@@ -1067,53 +1101,53 @@ void RageDisplay_D3D::SetTexture( int iTextureUnitIndex, RageTexture* pTexture )
 }
 void RageDisplay_D3D::SetTextureModeModulate()
 {
-	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( g_currentTextureUnit >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
 	// Use D3DTA_CURRENT instead of diffuse so that multitexturing works 
 	// properly.  For stage 0, D3DTA_CURRENT is the diffuse color.
 
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLOROP,   D3DTOP_MODULATE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG2, D3DTA_CURRENT );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_MODULATE );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 }
 
 void RageDisplay_D3D::SetTextureModeGlow()
 {
-	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( g_currentTextureUnit >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG2, D3DTA_CURRENT );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_SELECTARG2 );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAOP,   D3DTOP_MODULATE );
 }
 
 void RageDisplay_D3D::SetTextureModeAdd()
 {
-	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( g_currentTextureUnit >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLORARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_COLOROP,   D3DTOP_ADD );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ALPHAOP,   D3DTOP_ADD );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG1, D3DTA_TEXTURE );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLORARG2, D3DTA_CURRENT );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_ADD );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG1, D3DTA_TEXTURE );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAARG2, D3DTA_CURRENT );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ALPHAOP,   D3DTOP_ADD );
 }
 
 void RageDisplay_D3D::SetTextureFiltering( bool b )
 {
-	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( g_currentTextureUnit >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_MINFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
-	g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_MAGFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_MINFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_MAGFILTER, b ? D3DTEXF_LINEAR : D3DTEXF_POINT );
 }
 
 void RageDisplay_D3D::SetBlendMode( BlendMode mode )
@@ -1185,12 +1219,12 @@ void RageDisplay_D3D::ClearZBuffer()
 
 void RageDisplay_D3D::SetTextureWrapping( bool b )
 {
-	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
+	if( g_currentTextureUnit >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
 		return;
 
 	int mode = b ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP;
-    g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ADDRESSU, mode );
-    g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_ADDRESSV, mode );
+    g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ADDRESSU, mode );
+    g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ADDRESSV, mode );
 }
 
 void RageDisplay_D3D::SetMaterial( 
@@ -1431,28 +1465,9 @@ RageMatrix RageDisplay_D3D::GetOrthoMatrix( float l, float r, float b, float t, 
 
 void RageDisplay_D3D::SetSphereEnvironmentMapping( bool b )
 {
-	if( g_iCurrentTextureIndex >= (int) g_DeviceCaps.MaxSimultaneousTextures )	// not supported
-		return;
-
-	// http://www.gamasutra.com/features/20000811/wyatt_03.htm
-
-	if( b )
-	{
-		static const RageMatrix tex = RageMatrix
-		(
-			0.40f,  0.0f,  0.0f, 0.0f,
-			0.0f,  -0.40f, 0.0f, 0.0f,
-			0.0f,   0.0f,  0.0f, 0.0f,
-			0.50,  -0.50,  0.0f, 1.0f
-		);
-		g_pd3dDevice->SetTransform((D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0+g_iCurrentTextureIndex), (D3DMATRIX*)&tex);
-	}
-
-    // Tell D3D to use transformed reflection vectors as texture co-ordinate 0
-    // and then transform this coordinate by the specified texture matrix, also
-    // tell D3D that only the first two coordinates of the output are valid.
-    g_pd3dDevice->SetTextureStageState( g_iCurrentTextureIndex, D3DTSS_TEXCOORDINDEX, b ? D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR : D3DTSS_TCI_PASSTHRU );    
+	g_bSphereMapping[g_currentTextureUnit] = b;
 }
+
 /*
  * Copyright (c) 2001-2004 Chris Danford, Glenn Maynard
  * All rights reserved.

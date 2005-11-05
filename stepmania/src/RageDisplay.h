@@ -8,7 +8,12 @@
 
 const int REFRESH_DEFAULT = 0;
 struct RageSurface;
-const int MAX_TEXTURE_UNITS = 2;
+enum TextureUnit 
+{
+	TextureUnit_1,
+	TextureUnit_2,
+	NUM_TextureUnit
+};
 
 // RageCompiledGeometry holds vertex data in a format that is most efficient 
 // for the graphics API.
@@ -162,7 +167,7 @@ public:
 	virtual void DeleteTexture( unsigned uTexHandle ) = 0;
 	virtual void ClearAllTextures() = 0;
 	virtual int GetNumTextureUnits() = 0;
-	virtual void SetTexture( int iTextureUnitIndex, RageTexture* pTexture ) = 0;
+	virtual void SetTexture( TextureUnit tu, RageTexture* pTexture ) = 0;
 	virtual void SetTextureModeModulate() = 0;
 	virtual void SetTextureModeGlow() = 0;
 	virtual void SetTextureModeAdd() = 0;

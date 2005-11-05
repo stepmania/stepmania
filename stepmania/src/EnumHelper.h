@@ -33,6 +33,7 @@ static inline void enum_add( T &val, int iAmt )
 }
 
 #define FOREACH_ENUM( e, max, var )	for( e var=(e)0; var<max; enum_add<e>( var, +1 ) )
+#define FOREACH_ENUM2( e, var )	for( e var=(e)0; var<NUM_##e; enum_add<e>( var, +1 ) )
 
 
 static const CString EMPTY_STRING;
