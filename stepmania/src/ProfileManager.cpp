@@ -6,7 +6,6 @@
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageFileManager.h"
-#include "IniFile.h"
 #include "GameConstantsAndTypes.h"
 #include "SongManager.h"
 #include "GameState.h"

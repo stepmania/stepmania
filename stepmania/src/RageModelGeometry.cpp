@@ -4,7 +4,6 @@
 #include "RageFile.h"
 #include "RageMath.h"
 #include "RageDisplay.h"
-#include "IniFile.h"
 
 #define MS_MAX_NAME	32
 

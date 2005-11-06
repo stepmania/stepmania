@@ -3,7 +3,7 @@
 
 #include "Sprite.h"
 #include "RageTextureManager.h"
-#include "IniFile.h"
+#include "XmlFile.h"
 #include "RageLog.h"
 #include "RageException.h"
 #include "PrefsManager.h"

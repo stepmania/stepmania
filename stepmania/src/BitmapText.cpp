@@ -1,6 +1,6 @@
 #include "global.h"
 #include "BitmapText.h"
-#include "IniFile.h"
+#include "XmlFile.h"
 #include "FontManager.h"
 #include "RageLog.h"
 #include "RageException.h"
