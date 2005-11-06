@@ -162,7 +162,7 @@ void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const Rage
 	queue.push_back( InputEvent(di,bs.m_bLastReportedHeld? IET_FIRST_PRESS:IET_RELEASE) );
 }
 
-void InputFilter::Update(float fDeltaTime)
+void InputFilter::Update( float fDeltaTime )
 {
 	RageTimer now;
 
