@@ -63,7 +63,6 @@ int						g_ModelMatrixCnt=0;
 TextureUnit				g_currentTextureUnit = TextureUnit_1;
 static int				g_iActualRefreshRateInHz = 60;
 static bool				g_bSphereMapping[NUM_TextureUnit] = { false, false };
-static float			g_fZBias = 0;
 
 /* Direct3D doesn't associate a palette with textures.
  * Instead, we load a palette into a slot.  We need to keep track
@@ -1185,12 +1184,10 @@ bool RageDisplay_D3D::IsZWriteEnabled() const
 
 void RageDisplay_D3D::SetZBias( float f )
 {
-	g_fZBias = f;
-
 	D3DVIEWPORT8 viewData;
 	g_pd3dDevice->GetViewport( &viewData );
-	viewData.MinZ = SCALE( g_fZBias, 0.0f, 1.0f, 0.05f, 0.0f );
-	viewData.MaxZ = SCALE( g_fZBias, 0.0f, 1.0f, 1.0f, 0.95f );
+	viewData.MinZ = SCALE( f, 0.0f, 1.0f, 0.05f, 0.0f );
+	viewData.MaxZ = SCALE( f, 0.0f, 1.0f, 1.0f, 0.95f );
 	g_pd3dDevice->SetViewport( &viewData );
 }
 
