@@ -114,8 +114,15 @@ void InputFilter::ButtonPressed( const DeviceInput &di, bool Down )
 
 	if( bs.m_BeingHeld != Down )
 	{
+		/* Flush any delayed input, like Update() (in case Update() isn't being called). */
+		RageTimer now;
+		CheckButtonChange( bs, di, now );
+
 		bs.m_BeingHeld = Down;
 		bs.m_BeingHeldTime = di.ts;
+
+		/* Try to report presses immediately. */
+		CheckButtonChange( bs, di, now );
 	}
 
 	ActivateButton( di );
@@ -134,6 +141,25 @@ void InputFilter::ResetDevice( InputDevice device )
 	RageTimer now;
 	for( int button = 0; button < GetNumDeviceButtons(device); ++button )
 		ButtonPressed( DeviceInput(device, button, -1, now), false );
+}
+
+/* Check for reportable presses. */
+void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const RageTimer &now )
+{
+	if( bs.m_BeingHeld == bs.m_bLastReportedHeld )
+		return;
+
+	/* If the last IET_FIRST_PRESS or IET_RELEASE event was sent too recently,
+	* wait a while before sending it. */
+	if( now - bs.m_LastReportTime < g_fInputDebounceTime )
+		return;
+
+	bs.m_LastReportTime = now;
+	bs.m_bLastReportedHeld = bs.m_BeingHeld;
+	bs.m_fSecsHeld = 0;
+
+	di.ts = bs.m_BeingHeldTime;
+	queue.push_back( InputEvent(di,bs.m_bLastReportedHeld? IET_FIRST_PRESS:IET_RELEASE) );
 }
 
 void InputFilter::Update(float fDeltaTime)
@@ -156,16 +182,8 @@ void InputFilter::Update(float fDeltaTime)
 		ButtonState &bs = m_ButtonState[di.device][di.button];
 		di.level = bs.m_Level;
 
-		/* Generate IET_FIRST_PRESS and IET_RELEASE events. */
-		if( now - bs.m_LastReportTime >= g_fInputDebounceTime && bs.m_BeingHeld != bs.m_bLastReportedHeld )
-		{
-			bs.m_LastReportTime = now;
-			bs.m_bLastReportedHeld = bs.m_BeingHeld;
-			bs.m_fSecsHeld = 0;
-
-			di.ts = bs.m_BeingHeldTime;
-			queue.push_back( InputEvent(di,bs.m_bLastReportedHeld? IET_FIRST_PRESS:IET_RELEASE) );
-		}
+		/* Generate IET_FIRST_PRESS and IET_RELEASE events that were delayed. */
+		CheckButtonChange( bs, di, now );
 
 		/* Generate IET_LEVEL_CHANGED events. */
 		if( bs.m_LastLevel != bs.m_Level && bs.m_Level != -1 )

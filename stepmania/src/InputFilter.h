@@ -70,13 +70,14 @@ private:
 		float m_fSecsHeld;
 		float m_Level, m_LastLevel;
 
-		// Timestamp of the last real event that came in: the time m_BeingHeld changed.
+		// Timestamp of m_BeingHeld changing.
 		RageTimer m_BeingHeldTime;
 
 		// The time that we actually reported the last event (used for debouncing).
 		RageTimer m_LastReportTime;
 	};
 	ButtonState m_ButtonState[NUM_INPUT_DEVICES][MAX_DEVICE_BUTTONS];
+	void CheckButtonChange( ButtonState &bs, DeviceInput di, const RageTimer &now );
 
 	InputEventArray queue;
 	RageMutex *queuemutex;
