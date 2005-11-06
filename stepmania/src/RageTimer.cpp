@@ -73,20 +73,19 @@ float RageTimer::GetDeltaTime()
 	return diff;
 }
 
-/* Get a timer representing half of the time ago as this one.  This is
+/*
+ * Get a timer representing half of the time ago as this one.  This is
  * useful for averaging time.  For example,
  * 
  * RageTimer tm;
  * ... do stuff ...
  * RageTimer AverageTime = tm.Half();
- * printf("Something happened between now and tm; the average time is %f.\n", tm.Ago());
- * tm.Touch();
+ * printf( "Something happened approximately %f seconds ago.\n", tm.Ago() );
  */
 RageTimer RageTimer::Half() const
 {
-	const RageTimer now;
-	const float ProbableDelay = -(now - *this) / 2;
-	return *this + ProbableDelay;
+	const float fProbableDelay = Ago() / 2;
+	return *this + fProbableDelay;
 }
 
 
