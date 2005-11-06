@@ -22,6 +22,7 @@ namespace
 		g_ButtonsToProcess.insert( make_pair(di.device, di.button) );
 	}
 }
+
 /*
  * Some input devices require debouncing.  Do this on both press and release.  After
  * reporting a change in state, don't report another for the debounce period.  If a
@@ -150,7 +151,7 @@ void InputFilter::CheckButtonChange( ButtonState &bs, DeviceInput di, const Rage
 		return;
 
 	/* If the last IET_FIRST_PRESS or IET_RELEASE event was sent too recently,
-	* wait a while before sending it. */
+	 * wait a while before sending it. */
 	if( now - bs.m_LastReportTime < g_fInputDebounceTime )
 		return;
 
