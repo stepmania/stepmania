@@ -249,25 +249,40 @@ bool Song::LoadFromSongDir( CString sDir )
 		//
 		
 		NotesLoader *ld = MakeLoader( sDir );
-		if(!ld)
+		if( ld )
 		{
-			LOG->Warn( "Couldn't find any SM, DWI, BMS, or KSF files in '%s'.  This is not a valid song directory.", sDir.c_str() );
-			return false;
-		}
+			bool success = ld->LoadFromDir( sDir, *this );
+			BlacklistedImages = ld->GetBlacklistedImages();
 
-		bool success = ld->LoadFromDir( sDir, *this );
-		BlacklistedImages = ld->GetBlacklistedImages();
+			if(!success)
+			{
+				delete ld;
+				return false;
+			}
 
-		if(!success)
-		{
+			TidyUpData();
+			ld->TidyUpData( *this, false );
+
 			delete ld;
-			return false;
 		}
+		else
+		{
+			LOG->Warn( "Couldn't find any SM, DWI, BMS, or KSF files in '%s'.", sDir.c_str() );
 
-		TidyUpData();
-		ld->TidyUpData( *this, false );
+			vector<CString> vs;
+			GetDirListing( sDir + "*.mp3", vs, false, false ); 
+			GetDirListing( sDir + "*.ogg", vs, false, false ); 
+			bool bHasMusic = !vs.empty();
 
-		delete ld;
+			if( !bHasMusic )
+			{
+				LOG->Warn( "No music file in this directory either.  Ignoring this song directory." );
+				return false;
+			}
+
+			// Continue on with a blank Song so that people can make adjustments using the editor.
+			TidyUpData();
+		}
 
 		// save a cache file so we don't have to parse it all over again next time
 		SaveToCacheFile();
