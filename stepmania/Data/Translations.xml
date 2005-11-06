@@ -66,7 +66,7 @@
 		<Translation TitleFrom="Aoi Shoudou\(for EXTREME\)" TitleTo="蒼い衝動(for EXTREME)" />
 		<Translation TitleFrom="Love Love Sugar" TitleTo="♡LOVE²シュガ→♡" />
 		<!-- Handle Door and Doors -->
-		<Translation TitleFrom="(Doors? of Magic)|(Mahou no Tobira)" TitleTo="魔法の扉" SubTitleTo="(スペース&planet;マコのテーマ)" />
+		<Translation TitleFrom="(Doors? of Magic)|(Mahou no Tobira)" TitleTo="魔法の扉" SubtitleTo="(スペース&planet;マコのテーマ)" />
 		<Translation TitleFrom="Mikeneko Rock" TitleTo="三毛猫ロック" />
 		<!-- Handle "Mobo Moga:Mobo * Moga"; spaces optional. -->
 		<Translation TitleFrom="Mobo ?\*? ?Moga" TitleTo="MOBO★MOGA" />
@@ -78,15 +78,15 @@
 		<Translation TitleFrom="La Senorita" TitleTo="La Señorita" DontTransliterate />
 		<Translation TitleFrom="La Senorita Virtual" TitleTo="La Señorita Virtual" DontTransliterate />
 		<Translation TitleFrom="Senorita" TitleTo="SEÑORITA" DontTransliterate />
-		<Translation TitleFrom="Senorita\(Speedy Mix\)" TitleTo="SEÑORITA" SubTitleTo="Speedy Mix" DontTransliterate />
+		<Translation TitleFrom="Senorita\(Speedy Mix\)" TitleTo="SEÑORITA" SubtitleTo="Speedy Mix" DontTransliterate />
 		<Translation TitleFrom="Chotto Kiitena" TitleTo="ちょっときいてな" />
 		<Translation TitleFrom="The Strong Jaeger" TitleTo="合体せよ！ストロングイェーガー！！" />
 		<!-- Subtitles: -->
 		<!-- (Title is Graduation.) -->
-		<Translation SubTitleFrom=".*(Each Tomorrow|sorezore no ashita).*" SubTitleTo="~それぞれの明日~" />
+		<Translation SubtitleFrom=".*(Each Tomorrow|sorezore no ashita).*" SubtitleTo="~それぞれの明日~" />
 		<!-- Some files are missing the space, so the subtitle isn't parsed. -->
 		<Translation TitleFrom="GRADUATION~(Each Tomorrow|sorezore no ashita)~" TitleTo="GRADUATION"
-			SubTitleTo="~それぞれの明日~" SubTitleTransTo="sorezore no ashita" DontTransliterate />
+			SubtitleTo="~それぞれの明日~" SubtitleTransTo="sorezore no ashita" DontTransliterate />
 		<!-- Artists: -->
 		<Translation TitleFrom="Max 300" ArtistFrom="%" ArtistTo="Ω" />
 		<Translation ArtistFrom="Omega" ArtistTo="Ω" />
@@ -134,15 +134,15 @@
 		<Translation TitleFrom="sora *mimi keek[ei]" TitleTo="空耳ケーキ" />
 		<Translation TitleFrom="The Peace!" TitleTo="The☆Peace!" />
 		<Translation TitleFrom="tentaikansoku" TitleTo="天体観測" ArtistTo="入尾信充" />
-		<Translation SubTitleFrom="\(e=mc2 mix\)" SubTitleTo="(e=mc² mix)" />
+		<Translation SubtitleFrom="\(e=mc2 mix\)" SubtitleTo="(e=mc² mix)" />
 		<Translation ArtistFrom="Taku Iwa[sz]aki" ArtistTransTo="Taku Iwasaki" ArtistTo="岩崎琢" />
 		<Translation ArtistFrom="Hideki Naganuma" ArtistTo="長沼英樹" />
 		<!-- Note that these are double-width parentheses. -->
-		<Translation TitleFrom="Under Star\(Hajime no Ippo Opening 2\)" TitleTo="Under Star" SubTitleTo="（はじめの一歩 Opening 2）"
-			SubTitleTransTo="(Hajime no Ippo Opening 2)" />
+		<Translation TitleFrom="Under Star\(Hajime no Ippo Opening 2\)" TitleTo="Under Star" SubtitleTo="（はじめの一歩 Opening 2）"
+			SubtitleTransTo="(Hajime no Ippo Opening 2)" />
 		<!-- This song had the game title in the artist field, instead of the actual artist. -->
-		<Translation ArtistFrom="Seiken Densetsu 2 OST" TitleTo="Meridian Dance" SubTitleTo="聖剣伝説2OST"
-			SubTitleTransTo="Seiken Densetsu 2 OST" ArtistTo="菊田裕樹" ArtistTransTo="Hiroki Kikuta" />
+		<Translation ArtistFrom="Seiken Densetsu 2 OST" TitleTo="Meridian Dance" SubtitleTo="聖剣伝説2OST"
+			SubtitleTransTo="Seiken Densetsu 2 OST" ArtistTo="菊田裕樹" ArtistTransTo="Hiroki Kikuta" />
 		<Translation ArtistFrom="Ayumi and Vincent de Moor" ArtistTo="あゆみ and Vincent de Moor" />
 		<Translation ArtistFrom="Toshio Sakurai" ArtistTo="桜井敏郎" />
 		<Translation ArtistFrom="Yasunori Mitsuda" ArtistTo="光田康典" />
@@ -163,7 +163,7 @@
 		<Translation TitleFrom="Kuru Kuru Mirakuru" TitleTo="くるくるミラクル" />
 		<Translation TitleFrom="Nuh" TitleTo="너" />
 		<!-- Error fix: make sure we don't change the artist like this for the wrong song. -->
-		<Translation TitleFrom="PARTY☆NIGHT" SubTitleFrom="\(Hyper Para Para Version\)" ArtistFrom="林原めぐみ＆奥井雅美"
+		<Translation TitleFrom="PARTY☆NIGHT" SubtitleFrom="\(Hyper Para Para Version\)" ArtistFrom="林原めぐみ＆奥井雅美"
 			ArtistTo="真田アサミ＆沢城みゆき＆氷上恭子" ArtistTransTo="Sanada Asami, Sawashiro Miyuki and Hikami Kyouko" />
 		<Translation TitleFrom="Sakura Saku Mirai Koi Yume" TitleTo="サクラサクミライコイユメ" />
 		<Translation TitleFrom="Salariman Aboeji" TitleTo="샐러리맨 아버지" />
@@ -175,7 +175,7 @@
 		<Translation TitleFrom="(Tell Me)|(Mal Hae)" TitleTo="마해" />
 		<Translation TitleFrom="Dal Ah Dal Ah" TitleTo="달아달아" />
 		<Translation TitleFrom="Hanabi" TitleTo="花火" />
-		<Translation TitleFrom="Hanabi\(Lange Remix\)" TitleTo="花火" TitleTransTo="Hanabi" SubTitleTo="Lange Remix" />
+		<Translation TitleFrom="Hanabi\(Lange Remix\)" TitleTo="花火" TitleTransTo="Hanabi" SubtitleTo="Lange Remix" />
 		<Translation TitleFrom="Heaven of Hoodlums" TitleTo="깡패천국" />
 		<Translation TitleFrom="Haruka Kanata" TitleTo="遥か彼方" />
 		<Translation TitleFrom="hyakugojyuuichi" TitleTo="百五十一" />
@@ -187,14 +187,14 @@
 		<Translation ArtistFrom="(Namie Amuro)|(Amuro Namie)" ArtistTo="あむろなみえ" />
 		<Translation TitleFrom="This Is Unmei" TitleTo="This is 運命" />
 		<Translation TitleFrom="Michyo" TitleTo="미쳐" />
-		<Translation TitleFrom="Smile" ArtistFrom="Myco" SubTitleTo="(満月をさがして)" />
+		<Translation TitleFrom="Smile" ArtistFrom="Myco" SubtitleTo="(満月をさがして)" />
 		<Translation TitleFrom="Journey to the West" TitleTo="西遊記" />
 		<Translation ArtistFrom="Dicky Cheung" ArtistTo="張衛健" />
 		<Translation ArtistFrom="Yoo Seung Jun" ArtistTo="유승준" />
 		<Translation ArtistFrom="Leon Lai" ArtistTo="黎明" />
 		<Translation ArtistFrom="KOTOKO & Hiromi Sato" ArtistTo="KOTOKO＆佐藤裕美" />
 		<Translation ArtistFrom="M-FLO loves Crystal Kay" ArtistTo="M-FLO l♡ves Crystal Kay" />
-		<Translation TitleFrom="Syunikiss" ArtistFrom="Malice Mizer" SubTitleTo="~二度目の哀悼~" />
+		<Translation TitleFrom="Syunikiss" ArtistFrom="Malice Mizer" SubtitleTo="~二度目の哀悼~" />
 		<Translation TitleFrom="kono omoi o tsutaetai" ArtistFrom="sakura" TitleTo="この思いを伝えたい" ArtistTo="さくら" />
 		<!-- TM5: -->
 		<Translation TitleFrom="OMEGA" ArtistFrom="MAX DRAGON" TitleTo="Ω" />
@@ -225,7 +225,7 @@
 		<Translation ArtistFrom="(Shiina Ringo)|(Shiina Ringo)" ArtistTo="椎名林檎" />
 		<!-- http://sdb.noppo.com/kumiko_w.htm -->
 		<Translation ArtistFrom="KLONOA *\(kumiko watanabe\)" ArtistTo="KLONOA （渡辺久美子）" />
-		<Translation SubTitleFrom="- HOSHI NO UMI  KAZE NO YUME -" SubTitleTo="-星の海風の夢-" />
+		<Translation SubtitleFrom="- HOSHI NO UMI  KAZE NO YUME -" SubtitleTo="-星の海風の夢-" />
 		<!-- http://www.geneon-ent.co.jp/rondorobe/music/parapara/meca-max.html -->
 		<!-- http://system.emedia.co.jp/details/NMC-1070912-9976204.html -->
 		<Translation ArtistFrom="(Shinichi Ish?ihara)|(Ish?ihara Shinichi)" ArtistTo="石原慎一" />
@@ -242,11 +242,11 @@
 		<!-- http://www.hicbc.com/tv/kirby/staff/ -->
 		<Translation ArtistFrom="Miyagawa Akira" ArtistTo="宮川彬良" />
 		<!-- OSC: -->
-		<Translation TitleFrom="Love Hina" SubTitleFrom="- main theme" ArtistFrom="Hayashibra Megumi\(Haruka Urashima\)"
-			TitleTo="桜咲く" TitleTransTo="Sakura Saku" SubTitleTo="-erase-" SubTitleTransTo="-erase-" ArtistTo="林原めぐみ"
+		<Translation TitleFrom="Love Hina" SubtitleFrom="- main theme" ArtistFrom="Hayashibra Megumi\(Haruka Urashima\)"
+			TitleTo="桜咲く" TitleTransTo="Sakura Saku" SubtitleTo="-erase-" SubtitleTransTo="-erase-" ArtistTo="林原めぐみ"
 			ArtistTransTo="Hayashibara Megumi (Haruka Urashima)" />
 		<!-- OSC2: -->
-		<Translation TitleFrom="Dejiko to Gema" SubTitleFrom="no RAP DE DATE" TitleTo="でじことゲマの" SubTitleTo="ラップDEデート"
+		<Translation TitleFrom="Dejiko to Gema" SubtitleFrom="no RAP DE DATE" TitleTo="でじことゲマの" SubtitleTo="ラップDEデート"
 			ArtistFrom="Assami Sanada \+ Yoshiko Kamei" ArtistTo="真田アサミ＆亀井芳子" ArtistTransTo="Asami Sanada + Yoshiko Kamei" />
 		<!-- OSC3: -->
 		<Translation ArtistFrom="E-Paksa" ArtistTo="이박사" />
@@ -263,7 +263,7 @@
 		<Translation TitleFrom="Sabishii Kute Loneliness" ArtistFrom="wandasu" TitleTo="淋しくてLoneliness"
 			ArtistTo="ワンダース" />
 		<!-- Foonmix: "Yubikiri" has the artist translit in the subtitle translit; move it. -->
-		<Translation ArtistFrom="ねこみみ魔法使い feat.都築きせの" SubTitleTransTo="-erase-" ArtistTransTo="NekomimiMahouTsukai feat.KisenoTsuduki" />
+		<Translation ArtistFrom="ねこみみ魔法使い feat.都築きせの" SubtitleTransTo="-erase-" ArtistTransTo="NekomimiMahouTsukai feat.KisenoTsuduki" />
 		<!-- DREAMS COME TRUE: -->
 		<Translation TitleFrom="Asa ga Mata Kuru" TitleTo="朝がまた来る" />
 		<Translation TitleFrom="Haretara Line" TitleTo="晴れたらいいね" />
@@ -281,7 +281,7 @@
 		<Translation ArtistFrom="(Ohhagumi|Oha Gumi)" ArtistTo="おはぐみ" />
 		<Translation ArtistFrom="Morikubo Shoutarou" ArtistTo="怪人ゾナー" />
 		<Translation TitleFrom="Zonapara" TitleTo="ゾナパラ" />
-		<Translation SubTitleFrom=".*WHY! Parapara Remix.*" SubTitleTo="WHY! パラパラ・リミックス" />
+		<Translation SubtitleFrom=".*WHY! Parapara Remix.*" SubtitleTo="WHY! パラパラ・リミックス" />
 		<Translation ArtistFrom="Zobekka" ArtistTo="ゾベッカ" />
 		<Translation ArtistFrom="Omega Versus KTz" ArtistTo="Ω Versus KTz" />
 		<Translation ArtistFrom="DJ Demon Versus Omega" ArtistTo="DJ 鬼 Versus 鬼" />
@@ -357,7 +357,7 @@
 		<!-- http://bemanistyle.com/sims/viewsim.php?id=1161 -->
 		<Translation TitleFrom="Renai Revolution 21" TitleTo="恋愛レボリューション21" />
 		<!-- http://bemanistyle.com/sims/viewsim.php?id=1160 -->
-		<Translation SubTitleFrom="~Ai no Big Band~" SubTitleTo="~愛のビッグバンドｰ~" />
+		<Translation SubtitleFrom="~Ai no Big Band~" SubtitleTo="~愛のビッグバンドｰ~" />
 		<!-- CHOP CHOP, MASTER ONION'S RAP (PaRappa the Rapper) -->
 		<Translation ArtistFrom="(Masaya Matsuura)|(Matsuura Masaya)" ArtistTo="松浦雅也" />
 		<!-- Fanboy bonus: -->
