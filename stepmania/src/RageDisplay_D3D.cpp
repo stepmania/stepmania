@@ -631,10 +631,10 @@ void RageDisplay_D3D::SetViewport(int shift_left, int shift_down)
 	shift_left = int( shift_left * float(p.width) / SCREEN_WIDTH );
 	shift_down = int( shift_down * float(p.height) / SCREEN_HEIGHT );
 
-	D3DVIEWPORT8 viewData = { shift_left, -shift_down, p.width, p.height, 0.f, 1.f };
-	viewData.MinZ = SCALE( g_fZBias, 0.0f, 1.0f, 0.05f, 0.0f );
-	viewData.MaxZ = SCALE( g_fZBias, 0.0f, 1.0f, 1.0f, 0.95f );
-
+	D3DVIEWPORT8 viewData;
+	g_pd3dDevice->GetViewport( &viewData );
+	viewData.X = shift_left;
+	viewData.Y = -shift_down;
 	g_pd3dDevice->SetViewport( &viewData );
 }
 
@@ -1186,7 +1186,12 @@ bool RageDisplay_D3D::IsZWriteEnabled() const
 void RageDisplay_D3D::SetZBias( float f )
 {
 	g_fZBias = f;
-	SetViewport( 0, 0 );
+
+	D3DVIEWPORT8 viewData;
+	g_pd3dDevice->GetViewport( &viewData );
+	viewData.MinZ = SCALE( g_fZBias, 0.0f, 1.0f, 0.05f, 0.0f );
+	viewData.MaxZ = SCALE( g_fZBias, 0.0f, 1.0f, 1.0f, 0.95f );
+	g_pd3dDevice->SetViewport( &viewData );
 }
 
 
