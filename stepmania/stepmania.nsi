@@ -350,31 +350,32 @@ SectionEnd
 ;Installer Functions
 
 LangString TEXT_IO_TITLE		${LANG_ENGLISH} "${PRODUCT_NAME_VER}"
-LangString TEXT_IO_SUBTITLE		${LANG_ENGLISH} ""
+LangString TEXT_IO_SUBTITLE		${LANG_ENGLISH} " "
 LangString TEXT_IO_INSTALL		${LANG_ENGLISH} "Install"
 LangString TEXT_IO_PLAY			${LANG_ENGLISH} "Play"
 LangString TEXT_IO_REINSTALL	${LANG_ENGLISH} "Reinstall"
 LangString TEXT_IO_TITLE		${LANG_FRENCH} "${PRODUCT_NAME_VER}"
-LangString TEXT_IO_SUBTITLE		${LANG_FRENCH} ""
+LangString TEXT_IO_SUBTITLE		${LANG_FRENCH} " "
 LangString TEXT_IO_INSTALL		${LANG_FRENCH} "Install (S)"
 LangString TEXT_IO_PLAY			${LANG_FRENCH} "Play (S)"
 LangString TEXT_IO_REINSTALL	${LANG_FRENCH} "Reinstall (S)"
 LangString TEXT_IO_TITLE		${LANG_GERMAN} "${PRODUCT_NAME_VER}"
-LangString TEXT_IO_SUBTITLE		${LANG_GERMAN} ""
+LangString TEXT_IO_SUBTITLE		${LANG_GERMAN} " "
 LangString TEXT_IO_INSTALL		${LANG_GERMAN} "Install (G)"
 LangString TEXT_IO_PLAY			${LANG_GERMAN} "Play (G)"
 LangString TEXT_IO_REINSTALL	${LANG_GERMAN} "Reinstall (G)"
 LangString TEXT_IO_TITLE		${LANG_SPANISH} "${PRODUCT_NAME_VER}"
-LangString TEXT_IO_SUBTITLE		${LANG_SPANISH} ""
+LangString TEXT_IO_SUBTITLE		${LANG_SPANISH} " "
 LangString TEXT_IO_INSTALL		${LANG_SPANISH} "Install (S)"
 LangString TEXT_IO_PLAY			${LANG_SPANISH} "Play (S)"
 LangString TEXT_IO_REINSTALL	${LANG_SPANISH} "Reinstall (S)"
 LangString TEXT_IO_TITLE		${LANG_ITALIAN} "${PRODUCT_NAME_VER}"
-LangString TEXT_IO_SUBTITLE		${LANG_ITALIAN} ""
+LangString TEXT_IO_SUBTITLE		${LANG_ITALIAN} " "
 LangString TEXT_IO_INSTALL		${LANG_ITALIAN} "Install (I)"
 LangString TEXT_IO_PLAY			${LANG_ITALIAN} "Play (I)"
 LangString TEXT_IO_REINSTALL	${LANG_ITALIAN} "Reinstall (I)"
 
+!ifdef SHOW_AUTORUN
 Var hwnd ; Window handle of the custom page
 
 Function ShowCustom
@@ -444,6 +445,7 @@ Function LeaveCustom
 	ShowWindow $1 1
 
 FunctionEnd
+!endif
 
 Function PreInstall
 
@@ -541,17 +543,6 @@ Function .onInit
 !endif
 
 FunctionEnd
-
-;--------------------------------
-;Descriptions
-
-	;USE A LANGUAGE STRING IF YOU WANT YOUR DESCRIPTIONS TO BE LANGAUGE SPECIFIC
-
-	;Assign descriptions to sections
-	!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-		!insertmacro MUI_DESCRIPTION_TEXT ${SecMain} "A test section."
-	!insertmacro MUI_FUNCTION_DESCRIPTION_END
-
  
 ;--------------------------------
 ;Uninstaller Section
