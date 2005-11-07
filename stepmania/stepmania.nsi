@@ -151,8 +151,9 @@ Section "Main Section" SecMain
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "DisplayName" "${PRODUCT_ID} (remove only)"
 	WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}" "UninstallString" '"$INSTDIR\uninstall.exe"'
 
-!ifdef INSTALL_TYPE_PCKS
-
+!ifdef INSTALL_TYPE_EXTERNAL_PCKS
+	; Do this copy before anything else.  It's the most likely to fail.  
+	; Possible failure reasons are: scratched CD, user tried to copy the installer but forgot the pcks.
 	CreateDirectory $INSTDIR\pcks
 	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\Resources\*.idx" $INSTDIR\pcks 1
 	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\Resources\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
@@ -161,8 +162,7 @@ Section "Main Section" SecMain
 	MessageBox MB_OK|MB_ICONSTOP "Fatal error copying pck files."
 	Quit
 	do_no_error:
-
-!else
+!endif
 
 !ifdef INSTALL_SMPACKAGE
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command" "" '"$INSTDIR\Program\smpackage.exe" "%1"'
@@ -172,7 +172,7 @@ Section "Main Section" SecMain
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
 !endif
 
-	; Begin copying files
+!ifdef INSTALL_TYPE_NON_PCK_DATA
 	CreateDirectory "$INSTDIR\Announcers"
 	SetOutPath "$INSTDIR\Announcers"
 	File "Announcers\instructions.txt"
@@ -256,15 +256,18 @@ Section "Main Section" SecMain
 
 	CreateDirectory "$INSTDIR\Data"
 	SetOutPath "$INSTDIR\Data"
-	File "Data\Translations.xml"
-	File "Data\AI.ini"
-	File "Data\splash.png"
+	File "Data\*.*"
 	
 	SetOutPath "$INSTDIR"
 	File "Docs\Copying.txt"
 	File "README-FIRST.html"
 	File "NEWS"
+!endif
 
+!ifdef INSTALL_TYPE_INTERNAL_PCKS
+	CreateDirectory "$INSTDIR\pcks"
+	SetOutPath "$INSTDIR\pcks"
+	File "pcks\*.*"
 !endif
 
 	SetOverwrite off
@@ -559,11 +562,9 @@ Section "Uninstall"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\${PRODUCT_NAME}\${PRODUCT_ID}"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_ID}"
 
-!ifdef INSTALL_TYPE_PCKS
-
+!ifdef INSTALL_TYPE_EXTERNAL_PCKS | INSTALL_TYPE_INTERNAL_PCKS
 	RMDir /r "$INSTDIR\pcks"
-
-!else
+!endif
 
 !ifdef INSTALL_SMPACKAGE
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command"
@@ -571,14 +572,14 @@ Section "Uninstall"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip"
 !endif
 
+!ifdef INSTALL_TYPE_NON_PCK_DATA
 	Delete "$INSTDIR\Announcers\instructions.txt"
 	RMDir "$INSTDIR\Announcers"
 
 	Delete "$INSTDIR\BGAnimations\instructions.txt"
 	RMDir "$INSTDIR\BGAnimations"
 
-	Delete "$INSTDIR\Cache\instructions.txt"
-	RMDir "$INSTDIR\Cache"
+	RMDir /r "$INSTDIR\Cache"
 
 	Delete "$INSTDIR\CDTitles\Instructions.txt"
 	RMDir "$INSTDIR\CDTitles"
@@ -625,14 +626,11 @@ Section "Uninstall"
 	Delete "$INSTDIR\Visualizations\instructions.txt"
 	RMDir "$INSTDIR\Visualizations"
 
-	Delete "$INSTDIR\Docs\ChangeLog.txt"
+	Delete "$INSTDIR\Docs\*.*"
 	RMDir "$INSTDIR\Docs"
 
-	Delete "$INSTDIR\Data\Translations.xml"
-	Delete "$INSTDIR\Data\AI.ini"
-	Delete "$INSTDIR\Data\splash.png"
+	Delete "$INSTDIR\Data\*.*"
 	RMDir "$INSTDIR\Data"
-
 !endif
 
 	Delete "$INSTDIR\Program\${PRODUCT_NAME}.exe"
