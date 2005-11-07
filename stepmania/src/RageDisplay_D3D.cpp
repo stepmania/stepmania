@@ -811,7 +811,7 @@ void RageDisplay_D3D::SendCurrentMatrices()
 
 			// Tell D3D to use transformed reflection vectors as texture co-ordinate 0
 			// and then transform this coordinate by the specified texture matrix.
-			g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACENORMAL );    
+			g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR );    
 		}
 		else
 		{
