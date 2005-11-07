@@ -121,29 +121,31 @@ void ScreenDebugOverlay::Init()
 		g_Mappings.holdForDebug1 = DeviceInput(DEVICE_KEYBOARD, KEY_F3);
 		g_Mappings.holdForDebug2.MakeInvalid();
 
-		g_Mappings.gameplayButton[0]	= DeviceInput(DEVICE_KEYBOARD, KEY_F8);
-		g_Mappings.gameplayButton[1]	= DeviceInput(DEVICE_KEYBOARD, KEY_F7);
-		g_Mappings.gameplayButton[2]	= DeviceInput(DEVICE_KEYBOARD, KEY_F6);
-		g_Mappings.debugButton[3]  = DeviceInput(DEVICE_KEYBOARD, KEY_C1);
-		g_Mappings.debugButton[4]  = DeviceInput(DEVICE_KEYBOARD, KEY_C2);
-		g_Mappings.debugButton[5]  = DeviceInput(DEVICE_KEYBOARD, KEY_C3);
-		g_Mappings.debugButton[6]  = DeviceInput(DEVICE_KEYBOARD, KEY_C4);
-		g_Mappings.debugButton[7]  = DeviceInput(DEVICE_KEYBOARD, KEY_C5);
-		g_Mappings.debugButton[8]  = DeviceInput(DEVICE_KEYBOARD, KEY_C6);
-		g_Mappings.debugButton[9]  = DeviceInput(DEVICE_KEYBOARD, KEY_C7);
-		g_Mappings.debugButton[10] = DeviceInput(DEVICE_KEYBOARD, KEY_C8);
-		g_Mappings.debugButton[11] = DeviceInput(DEVICE_KEYBOARD, KEY_C9);
-		g_Mappings.debugButton[12] = DeviceInput(DEVICE_KEYBOARD, KEY_C0);
-		g_Mappings.debugButton[13] = DeviceInput(DEVICE_KEYBOARD, KEY_Cq);
-		g_Mappings.debugButton[14] = DeviceInput(DEVICE_KEYBOARD, KEY_Cw);
-		g_Mappings.debugButton[15] = DeviceInput(DEVICE_KEYBOARD, KEY_Ce);
-		g_Mappings.debugButton[16] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
-		g_Mappings.debugButton[17] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
-		g_Mappings.debugButton[18] = DeviceInput(DEVICE_KEYBOARD, KEY_Cy);
-		g_Mappings.debugButton[19] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
-		g_Mappings.debugButton[20] = DeviceInput(DEVICE_KEYBOARD, KEY_Ci);
-		g_Mappings.debugButton[21] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
-		g_Mappings.debugButton[22] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
+		int i=0;
+		g_Mappings.gameplayButton[i++]	= DeviceInput(DEVICE_KEYBOARD, KEY_F8);
+		g_Mappings.gameplayButton[i++]	= DeviceInput(DEVICE_KEYBOARD, KEY_F7);
+		g_Mappings.gameplayButton[i++]	= DeviceInput(DEVICE_KEYBOARD, KEY_F6);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C1);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C2);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C3);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C4);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C5);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C6);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C7);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C8);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C9);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_C0);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cq);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cw);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Ce);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cr);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Ct);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cy);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Cu);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Ci);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_Co);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_UP);
+		g_Mappings.debugButton[i++] = DeviceInput(DEVICE_KEYBOARD, KEY_DOWN);
 
 	}
 
@@ -341,6 +343,8 @@ void ChangeVolume( float fDelta )
 //
 // DebugLines
 //
+#define DECLARE_ONE( x ) static x g_##x
+
 class DebugLineAutoplay : public IDebugLine
 {
 	virtual CString GetDescription() { return "AutoPlay"; }
@@ -367,7 +371,7 @@ class DebugLineAutoplay : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineAutoplay g_DebugLineAutoplay;
+DECLARE_ONE( DebugLineAutoplay );
 
 class DebugLineAssistTick : public IDebugLine
 {
@@ -383,7 +387,7 @@ class DebugLineAssistTick : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineAssistTick g_DebugLineAssistTick;
+DECLARE_ONE( DebugLineAssistTick );
 
 class DebugLineAutosync : public IDebugLine
 {
@@ -408,7 +412,7 @@ class DebugLineAutosync : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineAutosync g_DebugLineAutosync;
+DECLARE_ONE( DebugLineAutosync );
 
 class DebugLineCoinMode : public IDebugLine
 {
@@ -424,7 +428,7 @@ class DebugLineCoinMode : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineCoinMode g_DebugLineCoinMode;
+DECLARE_ONE( DebugLineCoinMode );
 
 class DebugLineSlow : public IDebugLine
 {
@@ -438,7 +442,7 @@ class DebugLineSlow : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineSlow g_DebugLineSlow;
+DECLARE_ONE( DebugLineSlow );
 
 class DebugLineHalt : public IDebugLine
 {
@@ -453,7 +457,7 @@ class DebugLineHalt : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineHalt g_DebugLineHalt;
+DECLARE_ONE( DebugLineHalt );
 
 class DebugLineLightsDebug : public IDebugLine
 {
@@ -466,7 +470,7 @@ class DebugLineLightsDebug : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineLightsDebug g_DebugLineLightsDebug;
+DECLARE_ONE( DebugLineLightsDebug );
 
 class DebugLineMonkeyInput : public IDebugLine
 {
@@ -479,7 +483,7 @@ class DebugLineMonkeyInput : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineMonkeyInput g_DebugLineMonkeyInput;
+DECLARE_ONE( DebugLineMonkeyInput );
 
 class DebugLineStats : public IDebugLine
 {
@@ -492,7 +496,7 @@ class DebugLineStats : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineStats g_DebugLineStats;
+DECLARE_ONE( DebugLineStats );
 
 class DebugLineVsync : public IDebugLine
 {
@@ -506,7 +510,20 @@ class DebugLineVsync : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineVsync g_DebugLineVsync;
+DECLARE_ONE( DebugLineVsync );
+
+class DebugLineAllowMultitexture : public IDebugLine
+{
+	virtual CString GetDescription() { return "Multitexture"; }
+	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
+	virtual bool IsEnabled() { return PREFSMAN->m_bAllowMultitexture.Get(); }
+	virtual void Do( CString &sMessageOut )
+	{
+		PREFSMAN->m_bAllowMultitexture.Set( !PREFSMAN->m_bAllowMultitexture );
+		IDebugLine::Do( sMessageOut );
+	}
+};
+DECLARE_ONE( DebugLineAllowMultitexture );
 
 class DebugLineScreenTestMode : public IDebugLine
 {
@@ -519,7 +536,7 @@ class DebugLineScreenTestMode : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineScreenTestMode g_DebugLineScreenTestMode;
+DECLARE_ONE( DebugLineScreenTestMode );
 
 class DebugLineClearMachineStats : public IDebugLine
 {
@@ -534,7 +551,7 @@ class DebugLineClearMachineStats : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineClearMachineStats g_DebugClearMachineStats;
+DECLARE_ONE( DebugLineClearMachineStats );
 
 class DebugLineFillMachineStats : public IDebugLine
 {
@@ -549,7 +566,7 @@ class DebugLineFillMachineStats : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineFillMachineStats g_DebugLineFillMachineStats;
+DECLARE_ONE( DebugLineFillMachineStats );
 
 class DebugLineSendNotesEnded : public IDebugLine
 {
@@ -562,7 +579,7 @@ class DebugLineSendNotesEnded : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineSendNotesEnded g_DebugLineSendNotesEnded;
+DECLARE_ONE( DebugLineSendNotesEnded );
 
 class DebugLineReloadCurrentScreen : public IDebugLine
 {
@@ -578,7 +595,7 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 		sMessageOut = "";
 	}
 };
-static DebugLineReloadCurrentScreen g_DebugLineReloadCurrentScreen;
+DECLARE_ONE( DebugLineReloadCurrentScreen );
 
 class DebugLineReloadTheme : public IDebugLine
 {
@@ -596,7 +613,7 @@ class DebugLineReloadTheme : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineReloadTheme g_DebugLineReloadTheme;
+DECLARE_ONE( DebugLineReloadTheme );
 
 class DebugLineWriteProfiles : public IDebugLine
 {
@@ -624,7 +641,7 @@ class DebugLineWriteProfiles : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineWriteProfiles g_DebugLineWriteProfiles;
+DECLARE_ONE( DebugLineWriteProfiles );
 
 class DebugLineWritePreferences : public IDebugLine
 {
@@ -637,7 +654,7 @@ class DebugLineWritePreferences : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineStats g_DebugLineWritePreferences;
+DECLARE_ONE( DebugLineWritePreferences );
 
 class DebugLineMenuTimer : public IDebugLine
 {
@@ -650,7 +667,7 @@ class DebugLineMenuTimer : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineMenuTimer g_DebugLineMenuTimer;
+DECLARE_ONE( DebugLineMenuTimer );
 
 class DebugLineFlushLog : public IDebugLine
 {
@@ -663,7 +680,7 @@ class DebugLineFlushLog : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineFlushLog g_DebugLineFlushLog;
+DECLARE_ONE( DebugLineFlushLog );
 
 class DebugLinePullBackCamera : public IDebugLine
 {
@@ -679,7 +696,7 @@ class DebugLinePullBackCamera : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLinePullBackCamera g_DebugLinePullBackCamera;
+DECLARE_ONE( DebugLinePullBackCamera );
 
 class DebugLineVolumeUp : public IDebugLine
 {
@@ -692,7 +709,7 @@ class DebugLineVolumeUp : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineVolumeUp g_DebugLineVolumeUp;
+DECLARE_ONE( DebugLineVolumeUp );
 
 class DebugLineVolumeDown : public IDebugLine
 {
@@ -705,7 +722,7 @@ class DebugLineVolumeDown : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-static DebugLineVolumeDown g_DebugLineVolumeDown;
+DECLARE_ONE( DebugLineVolumeDown );
 
 class DebugLineUptime : public IDebugLine
 {
@@ -714,7 +731,7 @@ class DebugLineUptime : public IDebugLine
 	virtual bool IsEnabled() { return false; }
 	virtual void Do( CString &sMessageOut ) {}
 };
-static DebugLineUptime g_DebugLineUptime;
+DECLARE_ONE( DebugLineUptime );
 
 
 /*

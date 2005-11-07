@@ -12,11 +12,12 @@
 #include "ModelManager.h"
 #include "Foreach.h"
 #include "LuaBinding.h"
+#include "PrefsManager.h"
 
 REGISTER_ACTOR_CLASS( Model )
 
-const float FRAMES_PER_SECOND = 30;
-const CString DEFAULT_ANIMATION_NAME = "default";
+static const float FRAMES_PER_SECOND = 30;
+static const CString DEFAULT_ANIMATION_NAME = "default";
 
 Model::Model()
 {
@@ -363,28 +364,8 @@ void Model::DrawPrimitives()
 
 				/* There's some common code that could be folded out here, but it seems
 				 * clearer to keep it separate. */
-				if( DISPLAY->GetNumTextureUnits() < 2 )
-				{
-					// render the diffuse texture
-					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() );
-					Actor::SetTextureRenderStates();	// set Actor-specified render states
-					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
-					DrawMesh( i );
-				
-					// render the additive texture
-					if( mat.alpha.GetCurrentTexture() )
-					{
-						DISPLAY->SetTexture( TextureUnit_1, mat.alpha.GetCurrentTexture() );
-						Actor::SetTextureRenderStates();	// set Actor-specified render states
-
-						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
-						// UGLY:  This overrides the Actor's BlendMode
-						DISPLAY->SetBlendMode( BLEND_ADD );
-						DISPLAY->SetTextureFiltering( true );
-						DrawMesh( i );
-					}
-				}
-				else
+				bool bUseMultitexture = PREFSMAN->m_bAllowMultitexture  &&  DISPLAY->GetNumTextureUnits() >= 2;
+				if( bUseMultitexture )
 				{
 					// render the diffuse texture with texture unit 1
 					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() );
@@ -415,6 +396,27 @@ void Model::DrawPrimitives()
 					// Turn off Environment mapping on tex unit 0.  Is there a better way to reset?
 					DISPLAY->SetTexture( TextureUnit_1, NULL );
 					DISPLAY->SetSphereEnvironmentMapping( 0 );
+				}
+				else
+				{
+					// render the diffuse texture
+					DISPLAY->SetTexture( TextureUnit_1, mat.diffuse.GetCurrentTexture() );
+					Actor::SetTextureRenderStates();	// set Actor-specified render states
+					DISPLAY->SetSphereEnvironmentMapping( mat.diffuse.m_bSphereMapped );
+					DrawMesh( i );
+				
+					// render the additive texture
+					if( mat.alpha.GetCurrentTexture() )
+					{
+						DISPLAY->SetTexture( TextureUnit_1, mat.alpha.GetCurrentTexture() );
+						Actor::SetTextureRenderStates();	// set Actor-specified render states
+
+						DISPLAY->SetSphereEnvironmentMapping( mat.alpha.m_bSphereMapped );
+						// UGLY:  This overrides the Actor's BlendMode
+						DISPLAY->SetBlendMode( BLEND_ADD );
+						DISPLAY->SetTextureFiltering( true );
+						DrawMesh( i );
+					}
 				}
 
 				if( vTexTranslate.x != 0  ||  vTexTranslate.y != 0 )

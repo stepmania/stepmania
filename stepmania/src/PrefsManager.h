@@ -30,6 +30,7 @@ public:
 	Preference<int>		m_iMaxTextureResolution;
 	Preference<int>		m_iRefreshRate;
 	Preference<float>	m_fDisplayAspectRatio;
+	Preference<bool>	m_bAllowMultitexture;
 	Preference<bool>	m_bShowStats;
 	Preference<bool>	m_bShowBanners;
 
