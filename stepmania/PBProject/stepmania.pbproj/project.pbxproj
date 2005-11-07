@@ -661,6 +661,7 @@
 		AA8A3EC906EDDAE4002F25AB /* DarwinThreadHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8A3EC806EDDAE4002F25AB /* DarwinThreadHelpers.h */; };
 		AA8A405106EEFF72002F25AB /* RageUtil_BackgroundLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8A404F06EEFF72002F25AB /* RageUtil_BackgroundLoader.cpp */; };
 		AA8A405206EEFF72002F25AB /* RageUtil_BackgroundLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8A405006EEFF72002F25AB /* RageUtil_BackgroundLoader.h */; };
+		AA8B8C4A091F48C000D14C5F /* product.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = AA8B8C49091F48C000D14C5F /* product.xcconfig */; };
 		AA8BD2A807C9391B00EA04E1 /* LuaReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8BD2A107C9391B00EA04E1 /* LuaReference.cpp */; };
 		AA8BD2A907C9391B00EA04E1 /* LuaReference.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8BD2A207C9391B00EA04E1 /* LuaReference.h */; };
 		AA8BD2AA07C9391B00EA04E1 /* MessageManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8BD2A307C9391B00EA04E1 /* MessageManager.cpp */; };
@@ -1089,7 +1090,7 @@
 		AA28B47A058F2F5D0097C109 /* MemoryCardManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = MemoryCardManager.cpp; path = ../src/MemoryCardManager.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		AA28B47B058F2F5D0097C109 /* MemoryCardManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = MemoryCardManager.h; path = ../src/MemoryCardManager.h; sourceTree = "<group>"; usesTabs = 1; };
 		AA29CE570558741A00961A51 /* Info-StepMania.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Info-StepMania.plist"; sourceTree = "<group>"; };
-		AA29CE580558741A00961A51 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA29CE580558741A00961A51 /* In The Groove.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "In The Groove.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA2FB62909120FC5000FD574 /* PreferredLanguage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferredLanguage.m; sourceTree = "<group>"; };
 		AA2FB638091212AF000FD574 /* LifeMeter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LifeMeter.cpp; path = ../src/LifeMeter.cpp; sourceTree = "<group>"; };
 		AA34ED1F0611FB83003E5955 /* CAConditionalMacros.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; path = CAConditionalMacros.h; sourceTree = "<group>"; usesTabs = 1; };
@@ -1551,6 +1552,7 @@
 		AA8B6C7D04AFD87300D02EE9 /* pcre.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; path = pcre.c; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA8B6C7E04AFD87300D02EE9 /* pcre.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; path = pcre.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA8B6C7F04AFD87300D02EE9 /* study.c */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; path = study.c; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
+		AA8B8C49091F48C000D14C5F /* product.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = product.xcconfig; sourceTree = SOURCE_ROOT; };
 		AA8BD2A107C9391B00EA04E1 /* LuaReference.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LuaReference.cpp; path = ../src/LuaReference.cpp; sourceTree = "<group>"; };
 		AA8BD2A207C9391B00EA04E1 /* LuaReference.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = LuaReference.h; path = ../src/LuaReference.h; sourceTree = "<group>"; };
 		AA8BD2A307C9391B00EA04E1 /* MessageManager.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MessageManager.cpp; path = ../src/MessageManager.cpp; sourceTree = "<group>"; };
@@ -1942,7 +1944,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA29CE580558741A00961A51 /* StepMania.app */,
+				AA29CE580558741A00961A51 /* In The Groove.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1969,6 +1971,7 @@
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
+				AA8B8C49091F48C000D14C5F /* product.xcconfig */,
 			);
 			name = "SDL App";
 			sourceTree = "<group>";
@@ -3598,7 +3601,7 @@
 			);
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks",
+					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
 					Frameworks,
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
@@ -3625,12 +3628,12 @@
 				HEADER_SEARCH_PATHS = (
 					/usr/include,
 					../src,
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/png.framework/Headers",
-					"$(BUILD_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers",
+					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/SDL.framework/Headers",
+					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/jpeg62.framework/Headers",
+					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/lua.framework/Headers",
+					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/ffmpeg.framework/Headers",
+					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/png.framework/Headers",
+					"$(BUILD_DIR)/$(FULL_NAME)/Contents/Frameworks/mad.framework/Headers",
 					../src/archutils/Darwin/PublicUtility,
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
 				);
@@ -3661,7 +3664,7 @@
 			name = stepmania;
 			productInstallPath = "$(HOME)/Applications";
 			productName = "SDL App";
-			productReference = AA29CE580558741A00961A51 /* StepMania.app */;
+			productReference = AA29CE580558741A00961A51 /* In The Groove.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -3694,6 +3697,7 @@
 				AA29CD3D0558741A00961A51 /* InfoPlist.strings in Resources */,
 				AA29CD3E0558741A00961A51 /* smicon.icns in Resources */,
 				AA817DF80622889500EA44DB /* splash.png in Resources */,
+				AA8B8C4A091F48C000D14C5F /* product.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4175,14 +4179,16 @@
 		};
 		AAC845110856A19700A9FEAB /* . */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks",
+					"$(SRCROOT)/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
 				);
+				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
@@ -4218,14 +4224,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../src",
-					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers",
-					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers",
-					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers",
+					"$(SRCROOT)/Frameworks/SDL.framework/Headers",
+					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
+					"$(SRCROOT)/Frameworks/mad.framework/Headers",
+					"$(SRCROOT)/Frameworks/resample.framework/Headers",
 					"$(SRCROOT)/../src/lua-5.0/include",
 					"$(SRCROOT)/../src/vorbis",
 					"$(SRCROOT)/../src/libjpeg",
 					"$(SRCROOT)/../src/libpng/include",
-					"$(BUILT_PRODUCTS_DIR)/StepMania.app/ContentsFrameworks/resample.framework/Headers",
 					"$(SRCROOT)/../src/archutils/Darwin/PublicUtility",
 					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
 					"$(SDKROOT)/usr/include",
@@ -4233,12 +4239,11 @@
 				INFOPLIST_FILE = "Info-StepMania.plist";
 				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
 				INFOPLIST_PREPROCESS = YES;
+				INFOPLIST_PREPROCESSOR_DEFINITIONS = "EXECUTABLE_NAME=\"$(PRODUCT_NAME)\"";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SDKROOT)/usr/lib",
 					"$(SRCROOT)/../src/libresample",
-					"$(SRCROOT)/../src/libresample/xboxresample/Debug",
-					"$(SRCROOT)/../src/libresample/xboxresample/Release",
 					"$(SRCROOT)/Libraries",
 				);
 				LIBRARY_STYLE = Bundle;
@@ -4260,7 +4265,7 @@
 					"-bind_at_load",
 					"-L$(SRCROOT)/Libraries",
 				);
-				PRODUCT_NAME = StepMania;
+				PRODUCT_NAME = "$(value)";
 				SECTORDER_FLAGS = "";
 				SYMROOT = "$(SRCROOT)/..";
 				WARNING_CFLAGS = "";
@@ -4288,151 +4293,6 @@
 			};
 			name = .;
 		};
-		AAF343C608F1B5BA0006EDB7 /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEAD_CODE_STRIPPING = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_SHADOW = NO;
-				GCC_WARN_SIGN_COMPARE = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNKNOWN_PRAGMAS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_LABEL = NO;
-				GCC_WARN_UNUSED_PARAMETER = NO;
-				GCC_WARN_UNUSED_VALUE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_STYLE = Bundle;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				PRODUCT_NAME = version;
-				ZERO_LINK = NO;
-			};
-			name = Universal;
-		};
-		AAF343C708F1B5BA0006EDB7 /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEAD_CODE_STRIPPING = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
-					Frameworks,
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
-					"$(SRCROOT)/Libraries/build",
-					"$(SRCROOT)/Frameworks",
-					"$(SRCROOT)/../../../stepmania/PBProject/Frameworks",
-				);
-				GCC_ENABLE_CPP_RTTI = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INPUT_FILETYPE = automatic;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					PBBUILD,
-					"SM_PCH=TRUE",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_USE_GCC3_PFE_SUPPORT = NO;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
-				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
-				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_MISSING_PARENTHESES = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_SHADOW = NO;
-				GCC_WARN_SIGN_COMPARE = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNKNOWN_PRAGMAS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_LABEL = YES;
-				GCC_WARN_UNUSED_PARAMETER = NO;
-				GCC_WARN_UNUSED_VALUE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					/usr/include,
-					"$(SRCROOT)/../src",
-					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/SDL.framework/Headers",
-					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/jpeg62.framework/Headers",
-					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/lua.framework/Headers",
-					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/ffmpeg.framework/Headers",
-					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/png.framework/Headers",
-					"$(BUILT_PRODUCTS_DIR)/StepMania.app/Contents/Frameworks/mad.framework/Headers",
-					"$(SRCROOT)/../src/archutils/Darwin/PublicUtility",
-					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
-				);
-				INFOPLIST_FILE = "Info-StepMania.plist";
-				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
-				INFOPLIST_PREPROCESS = YES;
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = (
-					/usr/lib,
-					"$(SRCROOT)/Libraries/ffmpeg-0.4.9-pre1/libavcodec",
-					"$(SRCROOT)/Libraries/ffmpeg-0.4.9-pre1/libavformat",
-					"$(SRCROOT)/Libraries",
-					"$(SRCROOT)/Libraries/libresample",
-					"$(SRCROOT)/Libraries/libresample/xboxresample/Debug",
-					"$(SRCROOT)/Libraries/libresample/xboxresample/Release",
-					"$(SRCROOT)/../src/libresample",
-					"$(SRCROOT)/../src/libresample/xboxresample/Debug",
-					"$(SRCROOT)/../src/libresample/xboxresample/Release",
-				);
-				LIBRARY_STYLE = Bundle;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				OBJROOT = "$(SRCROOT)/build";
-				OTHER_CFLAGS = "";
-				OTHER_CPLUSPLUSFLAGS = (
-					"-finline-limit=300",
-					"-fconstant-cfstrings",
-					"-falign-loops=32",
-				);
-				OTHER_LDFLAGS = (
-					"-lz",
-					"-lstdc++",
-					"-bind_at_load",
-				);
-				PRODUCT_NAME = StepMania;
-				SECTORDER_FLAGS = "";
-				SYMROOT = "$(SRCROOT)/..";
-				WARNING_CFLAGS = "";
-				WRAPPER_EXTENSION = app;
-				ZERO_LINK = NO;
-			};
-			name = Universal;
-		};
-		AAF343C808F1B5BA0006EDB7 /* Universal */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_VARIANTS = normal;
-				GCC_FAST_MATH = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 3;
-				GCC_STRICT_ALIASING = YES;
-				GCC_UNROLL_LOOPS = YES;
-				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
-				GCC_WARN_SIGN_COMPARE = YES;
-				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
-				SDKROOT = /Developer/SDKs/MacOSX10.2.8.sdk;
-			};
-			name = Universal;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -4440,7 +4300,6 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAC8450D0856A19700A9FEAB /* . */,
-				AAF343C608F1B5BA0006EDB7 /* Universal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = .;
@@ -4449,7 +4308,6 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAC845110856A19700A9FEAB /* . */,
-				AAF343C708F1B5BA0006EDB7 /* Universal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = .;
@@ -4458,7 +4316,6 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAC845150856A19700A9FEAB /* . */,
-				AAF343C808F1B5BA0006EDB7 /* Universal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = .;
