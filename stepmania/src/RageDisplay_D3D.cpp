@@ -499,10 +499,7 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	g_d3dpp.BackBufferFormat	=	FindBackBufferType( p.windowed, p.bpp );
 	g_d3dpp.BackBufferCount		=	1;
 	g_d3dpp.MultiSampleType		=	D3DMULTISAMPLE_NONE;
-	if(p.windowed)
-		g_d3dpp.SwapEffect		=	p.vsync ? D3DSWAPEFFECT_COPY_VSYNC : D3DSWAPEFFECT_DISCARD;
-	else
-		g_d3dpp.SwapEffect		=	D3DSWAPEFFECT_DISCARD;
+	g_d3dpp.SwapEffect			=	D3DSWAPEFFECT_DISCARD;
 #if !defined(XBOX)
 	g_d3dpp.hDeviceWindow		=	GraphicsWindow::GetHwnd();
 #else
