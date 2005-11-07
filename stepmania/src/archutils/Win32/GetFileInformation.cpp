@@ -58,25 +58,28 @@ bool GetFileVersion( CString fn, CString &out )
 	return true;
 }
 
-CString FindSystemFile( CString fn )
+CString FindSystemFile( CString sFile )
 {
-	char path[MAX_PATH];
-	GetSystemDirectory( path, MAX_PATH );
+	char szWindowsPath[MAX_PATH];
+	GetWindowsDirectory( szWindowsPath, MAX_PATH );
 
-	CString sPath = ssprintf( "%s\\%s", path, fn.c_str() );
-	struct stat buf;
-	if( !stat( sPath, &buf ) )
-		return sPath;
+	const char *szPaths[] =
+	{
+		"/system32/",
+		"/system32/drivers/",
+		"/system/",
+		"/system/drivers/",
+		"/",
+		NULL
+	};
 
-	sPath = ssprintf( "%s\\drivers\\%s", path, fn.c_str() );
-	if( !stat( sPath, &buf ) )
-		return sPath;
-
-	GetWindowsDirectory( path, MAX_PATH );
-
-	sPath = ssprintf( "%s\\%s", path, fn.c_str() );
-	if( !stat( sPath, &buf ) )
-		return sPath;
+	for( int i = 0; szPaths[i]; ++i )
+	{
+		CString sPath = ssprintf( "%s%s%s", szWindowsPath, szPaths[i], sFile.c_str() );
+		struct stat buf;
+		if( !stat(sPath, &buf) )
+			return sPath;
+	}
 
 	return CString();
 }
