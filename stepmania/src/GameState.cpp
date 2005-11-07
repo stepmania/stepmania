@@ -44,7 +44,7 @@
 
 GameState*	GAMESTATE = NULL;	// global and accessable from anywhere in our program
 
-#define NAME_BLACKLIST_FILE "/Data/NamesBlacklist.dat"
+#define NAME_BLACKLIST_FILE "/Data/NamesBlacklist.txt"
 
 ThemeMetric<bool> USE_NAME_BLACKLIST("GameState","UseNameBlacklist");
 

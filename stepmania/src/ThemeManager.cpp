@@ -38,7 +38,7 @@ const CString LANGUAGES_SUBDIR = "Languages/";
 const CString BASE_LANGUAGE = "english";
 const CString THEMES_DIR  = "Themes/";
 const CString METRICS_FILE = "metrics.ini";
-const CString TYPE_DAT_FILE = "Data/Type.dat";
+const CString TYPE_TXT_FILE = "Data/Type.txt";
 
 
 struct Theme
@@ -933,7 +933,7 @@ CString ThemeManager::GetPreferencesSection() const
 	CString sSection = "Preferences";
 
 	// OK if this fails
-	GetFileContents( TYPE_DAT_FILE, sSection, true );
+	GetFileContents( TYPE_TXT_FILE, sSection, true );
 	
 	// OK if this fails
 	GetCommandlineArgument( "Type", &sSection );
