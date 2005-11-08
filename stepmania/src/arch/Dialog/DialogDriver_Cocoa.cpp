@@ -1,61 +1,52 @@
 #include "global.h"
 #include "DialogDriver_Cocoa.h"
 #include "RageThreads.h"
-#define Random Random_ // work around namespace pollution
+#include "ProductInfo.h"
 #include <Carbon/Carbon.h>
-#undef Random_
 
-static SInt16 ShowAlert( int type, CFStringRef message, CFStringRef OK, CFStringRef cancel = NULL )
+static CFOptionFlags ShowAlert( CFOptionFlags flags, CFStringRef message,
+								CFStringRef OK, CFStringRef cancel = NULL )
 {
-	struct AlertStdCFStringAlertParamRec params =
-	{
-		kStdCFStringAlertVersionOne, true, false, OK, cancel, NULL,
-		kAlertStdAlertOKButton, kAlertStdAlertCancelButton, kWindowAlertPositionParentWindowScreen, 0
-	};
-	DialogRef dialog;
-	CreateStandardAlert( type, message, NULL, &params, &dialog );
-
-	OSErr err = AutoSizeDialog( dialog );
-	ASSERT( err == noErr );
-
-	SInt16 iResult;
-	RunStandardAlert( dialog, NULL, &iResult );
-
-	return iResult;
+	CFOptionFlags result;
+	
+	CFUserNotificationDisplayAlert( 0.0, flags, NULL, NULL, NULL, CFSTR(PRODUCT_NAME_VER),
+									message, OK, cancel, NULL, &result );
+	return result;
 }
 
 void DialogDriver_Cocoa::OK( CString sMessage, CString sID )
 {
 	CFStringRef message = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingASCII );
-	SInt16 iResult = ShowAlert( kAlertNoteAlert, message, CFSTR("OK"), CFSTR("Don't show again") );
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, message,
+									  CFSTR("OK"), CFSTR("Don't show again") );
 
 	CFRelease( message );
-	if( iResult == kAlertStdAlertCancelButton )
+	if( result == kCFUserNotificationAlternateResponse )
 		Dialog::IgnoreMessage( sID );
 }
 
 void DialogDriver_Cocoa::Error( CString sError, CString sID )
 {
 	CFStringRef error = CFStringCreateWithCString( NULL, sError, kCFStringEncodingASCII );
-	ShowAlert( kAlertStopAlert, error, CFSTR("OK") );
+	ShowAlert( kCFUserNotificationStopAlertLevel, error, CFSTR("OK") );
 
 	CFRelease( error );
 }
 
-// XXX: should show three options, not two
 Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( CString sMessage, CString sID )
 {
 	CFStringRef error = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingASCII );
-	SInt16 iResult = ShowAlert( kAlertNoteAlert, error, CFSTR("Retry"), CFSTR("Ignore") );
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, error, CFSTR("Retry"), CFSTR("Ignore") );
 	Dialog::Result ret;
 
 	CFRelease( error );
-	switch( iResult )
+	switch( result )
 	{
-	case kAlertStdAlertOKButton:
+	case kCFUserNotificationDefaultResponse:
 		ret = Dialog::retry;
 		break;
-	case kAlertStdAlertCancelButton:
+	case kCFUserNotificationAlternateResponse:
+	case kCFUserNotificationCancelResponse:
 		ret = Dialog::ignore;
 		break;
 	default:
@@ -67,7 +58,7 @@ Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( CString sMessage, CString s
 }
 
 /*
- * (c) 2003-2004 Steve Checkoway
+ * (c) 2003-2005 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
