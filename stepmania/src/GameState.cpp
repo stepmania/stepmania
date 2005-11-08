@@ -494,6 +494,9 @@ void GameState::BeginStage()
 void GameState::CancelStage()
 {
 	m_iNumStagesOfThisSong = 0;
+
+	// If they back out of gameplay, revert any sync changes.
+	RevertSyncChanges();
 }
 
 void GameState::CommitStageStats()
