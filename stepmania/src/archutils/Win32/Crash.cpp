@@ -80,6 +80,7 @@ struct VDDebugInfoContext
 	const unsigned long (*pSegments)[2];
 	int		nSegments;
 	char	sFilename[1024];
+	char	szError[1024];
 };
 
 
@@ -445,8 +446,12 @@ bool VDDebugInfoInitFromMemory(VDDebugInfoContext *pctx, const void *_src) {
 
 	pctx->pRVAHeap = NULL;
 
-	if (memcmp((char *)src, PRODUCT_NAME " symbolic debug information", 36))
+	static const char *header = "symbolic debug information";
+	if (memcmp((char *)src, header, strlen(header)))
+	{
+		strcpy( pctx->szError, "header doesn't match" );
 		return false;
+	}
 
 	// Extract fields
 
@@ -474,15 +479,18 @@ bool VDDebugInfoInitFromFile( VDDebugInfoContext *pctx )
 	if( pctx->Loaded() )
 		return true;
 
-	GetVDIPath( pctx->sFilename, sizeof(pctx->sFilename) );
-
 	pctx->pRawBlock = NULL;
 	pctx->pRVAHeap = NULL;
+	GetVDIPath( pctx->sFilename, ARRAYSIZE(pctx->sFilename) );
+	pctx->szError[0] = 0;
 
 	HANDLE h = CreateFile(pctx->sFilename, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
 	if (INVALID_HANDLE_VALUE == h)
+	{
+		strcpy( pctx->szError, "CreateFile failed" );
 		return false;
+	}
 
 	do {
 		DWORD dwFileSize = GetFileSize(h, NULL);
@@ -751,7 +759,7 @@ static bool ReportCallStack( HWND hwnd, HANDLE hFile, const void **Backtrace )
 	VDDebugInfoInitFromFile( &g_debugInfo );
 	if( !g_debugInfo.Loaded() )
 	{
-		Report( hwnd, hFile, "Could not open debug resource file (%s).", g_debugInfo.sFilename );
+		Report( hwnd, hFile, "debug resource file '%s': %s.", g_debugInfo.sFilename, g_debugInfo.szError );
 		return false;
 	}
 
