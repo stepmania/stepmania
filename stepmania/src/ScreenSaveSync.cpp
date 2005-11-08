@@ -91,7 +91,7 @@ static CString GetPromptText()
 	}
 
 	s +="\n\n"
-		"Would you like to save these changes to the song file?\n"
+		"Would you like to save these changes?\n"
 		"Choosing NO will discard your changes.";
 
 	return s;
@@ -107,7 +107,19 @@ static void RevertSyncChanges( void* pThrowAway )
 	GAMESTATE->RevertSyncChanges();
 }
 
-void ScreenSaveSync::SaveSync()
+REGISTER_SCREEN_CLASS( ScreenSaveSync );
+ScreenSaveSync::ScreenSaveSync( CString sClassName ) : ScreenPrompt( sClassName )
+{
+	ScreenPrompt::SetPromptSettings(
+		GetPromptText(), 
+		PROMPT_YES_NO, 
+		ANSWER_YES, 
+		SaveSyncChanges, 
+		RevertSyncChanges, 
+		NULL );
+}
+
+void ScreenSaveSync::PromptSaveSync()
 {
 	ScreenPrompt::Prompt(
 		SM_None,

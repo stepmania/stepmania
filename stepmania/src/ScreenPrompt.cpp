@@ -26,7 +26,7 @@ namespace
 	void *g_pCallbackData;
 };
 
-void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const CString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
+void ScreenPrompt::SetPromptSettings( const CString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
 {
 	g_sText = sText;
 	g_PromptType = type;
@@ -34,9 +34,15 @@ void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const CString &sText, Prom
 	g_pOnYes = OnYes;
 	g_pOnNo = OnNo;
 	g_pCallbackData = pCallbackData;
+}
 
+void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const CString &sText, PromptType type, PromptAnswer defaultAnswer, void(*OnYes)(void*), void(*OnNo)(void*), void* pCallbackData )
+{
+	SetPromptSettings( sText, type, defaultAnswer, OnYes, OnNo, pCallbackData );
+	
 	SCREENMAN->AddNewScreenToTop( "ScreenPrompt", smSendOnPop );
 }
+
 
 
 REGISTER_SCREEN_CLASS( ScreenPrompt );

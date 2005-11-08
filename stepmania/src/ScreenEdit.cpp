@@ -1974,7 +1974,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 
 	case STATE_PLAYING:
 		if( GAMESTATE->IsSyncDataChanged() )
-			ScreenSaveSync::SaveSync();
+			ScreenSaveSync::PromptSaveSync();
 		break;
 
 	case STATE_RECORDING:
