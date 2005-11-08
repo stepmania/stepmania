@@ -280,6 +280,7 @@ Section "Main Section" SecMain
 	File "Program\${PRODUCT_NAME}.vdi"
 !ifdef INSTALL_SMPACKAGE
 	File "Program\smpackage.exe"
+	File "Program\mfc71.dll"
 !endif
 	File "Program\msvcr71.dll"
 	File "Program\msvcp71.dll"
@@ -627,6 +628,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\Program\${PRODUCT_NAME}.exe"
 !ifdef INSTALL_SMPACKAGE
 	Delete "$INSTDIR\Program\smpackage.exe"
+	Delete "$INSTDIR\Program\mfc71.dll"
 !endif
 	Delete "$INSTDIR\Program\${PRODUCT_NAME}.vdi"
 	Delete "$INSTDIR\Program\msvcr71.dll"
