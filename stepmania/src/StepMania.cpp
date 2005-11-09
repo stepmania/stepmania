@@ -445,7 +445,7 @@ struct VideoCardDefaults
 		true	// accelerated
 	},
 	{
-		"GeForce|Radeon|Wonder 9",
+		"GeForce|Radeon|Wonder 9|Quadro",
 		"opengl,d3d",
 		640,480,
 		32,32,32,	// 32 bit textures are faster to load
