@@ -105,7 +105,7 @@ void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 LoadingWindow_Win32::LoadingWindow_Win32()
 {
 	m_hIcon = NULL;
-	hwnd = CreateDialog(handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc);
+	hwnd = CreateDialog( handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc );
 	for( unsigned i = 0; i < 3; ++i )
 		text[i] = "ABC"; /* always set on first call */
 	SetText( "Initializing hardware..." );
