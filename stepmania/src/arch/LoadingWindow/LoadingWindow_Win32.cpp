@@ -108,7 +108,7 @@ LoadingWindow_Win32::LoadingWindow_Win32()
 	hwnd = CreateDialog(handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc);
 	for( unsigned i = 0; i < 3; ++i )
 		text[i] = "ABC"; /* always set on first call */
-	SetText("Initializing hardware...");
+	SetText( "Initializing hardware..." );
 	Paint();
 }
 
@@ -148,8 +148,7 @@ void LoadingWindow_Win32::SetText( CString sText )
 			continue;
 		text[i] = asMessageLines[i];
 
-		SendDlgItemMessage( hwnd, msgs[i], WM_SETTEXT, 0, 
-			(LPARAM)asMessageLines[i].c_str());
+		SendDlgItemMessage( hwnd, msgs[i], WM_SETTEXT, 0, (LPARAM)asMessageLines[i].c_str());
 	}
 }
 
