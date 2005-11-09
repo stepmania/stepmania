@@ -188,7 +188,6 @@ Section "Main Section" SecMain
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\Program\smpackage.exe,0"
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\Program\smpackage.exe" "%1"'
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
-	Call RefreshShellIcons
 !endif
 
 !ifdef INSTALL_TYPE_NON_PCK_DATA
@@ -300,6 +299,7 @@ Section "Main Section" SecMain
 !ifdef INSTALL_SMPACKAGE
 	File "Program\smpackage.exe"
 	File "Program\mfc71.dll"
+	Call RefreshShellIcons
 !endif
 	File "Program\msvcr71.dll"
 	File "Program\msvcp71.dll"
@@ -581,7 +581,6 @@ Section "Uninstall"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip"
-	Call un.RefreshShellIcons
 !endif
 
 !ifdef INSTALL_TYPE_NON_PCK_DATA
@@ -649,6 +648,7 @@ Section "Uninstall"
 !ifdef INSTALL_SMPACKAGE
 	Delete "$INSTDIR\Program\smpackage.exe"
 	Delete "$INSTDIR\Program\mfc71.dll"
+	Call un.RefreshShellIcons
 !endif
 	Delete "$INSTDIR\Program\${PRODUCT_NAME}.vdi"
 	Delete "$INSTDIR\Program\msvcr71.dll"
