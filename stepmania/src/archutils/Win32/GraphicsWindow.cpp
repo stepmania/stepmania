@@ -23,7 +23,7 @@ static bool g_bLastHasFocus = true;
 static HICON g_hIcon = NULL;
 static bool m_bWideWindowClass;
 
-CString GetNewWindow()
+static CString GetNewWindow()
 {
 	HWND h = GetForegroundWindow();
 	if( h == NULL )
