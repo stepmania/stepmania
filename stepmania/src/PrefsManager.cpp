@@ -10,10 +10,12 @@
 #include "Foreach.h"
 #include "Preference.h"
 #include "RageLog.h"
+#include "StepMania.h"
 
 const CString DEFAULTS_INI_PATH		= "Data/Defaults.ini";		// these can be overridden
 const CString STEPMANIA_INI_PATH	= "Save/" PRODUCT_NAME ".ini";	// overlay on Defaults.ini, contains the user's choices
 const CString STATIC_INI_PATH		= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
+const CString TYPE_TXT_FILE			= "Data/Type.txt";
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
@@ -211,6 +213,11 @@ void TimeMeterSecondsChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, flo
 
 PrefsManager::PrefsManager() :
 	m_sCurrentGame			( "CurrentGame",			"" ),
+
+	m_sAnnouncer			( "Announcer",				"" ),
+	m_sTheme				( "Theme",					"" ),
+	m_sDefaultModifiers		( "DefaultModifiers",		"" ),
+
 	m_bWindowed				( "Windowed",				TRUE_IF_DEBUG ),
 	m_iDisplayWidth			( "DisplayWidth",			640 ),
 	m_iDisplayHeight		( "DisplayHeight",			480 ),
@@ -404,49 +411,119 @@ void PrefsManager::Init()
 {
 	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
 		(*p)->LoadDefault();
+
+	m_mapGameNameToGamePrefs.clear();
 }
 
 PrefsManager::~PrefsManager()
 {
 }
 
+void PrefsManager::SetCurrentGame( const CString &sGame )
+{
+	if( m_sCurrentGame.Get() == sGame )
+		return;	// redundant
+
+	if( !m_sCurrentGame.Get().empty() )
+		StoreGamePrefs();
+
+	m_sCurrentGame.Set( sGame );
+
+	RestoreGamePrefs();
+}
+
+void PrefsManager::StoreGamePrefs()
+{	
+	ASSERT( !m_sCurrentGame.Get().empty() )
+
+	// save off old values
+	GamePrefs &gp = m_mapGameNameToGamePrefs[m_sCurrentGame];
+	gp.m_sAnnouncer			= m_sAnnouncer;
+	gp.m_sTheme				= m_sTheme;
+	gp.m_sDefaultModifiers	= m_sDefaultModifiers;
+}
+
+void PrefsManager::RestoreGamePrefs()
+{
+	ASSERT( !m_sCurrentGame.Get().empty() )
+
+	// save off old values
+	map<CString, GamePrefs>::const_iterator iter = m_mapGameNameToGamePrefs.find( m_sCurrentGame );
+	if( iter == m_mapGameNameToGamePrefs.end() )
+		return;
+
+	const GamePrefs &gp = iter->second;
+	m_sAnnouncer		.Set( gp.m_sAnnouncer );
+	m_sTheme			.Set( gp.m_sTheme );
+	m_sDefaultModifiers	.Set( gp.m_sDefaultModifiers );
+
+	// give Static.ini a chance to clobber the saved game prefs
+	ReadPrefsFromFile( STATIC_INI_PATH, GetPreferencesSection() );
+}
+
 void PrefsManager::ReadPrefsFromDisk()
 {
-	ReadPrefsFromFile( DEFAULTS_INI_PATH );
-	ReadPrefsFromFile( STEPMANIA_INI_PATH );
-	ReadPrefsFromFile( STATIC_INI_PATH );
+	ReadPrefsFromFile( DEFAULTS_INI_PATH, GetPreferencesSection() );
+	ReadPrefsFromFile( STEPMANIA_INI_PATH, "Options" );
+	ReadGamePrefsFromIni( STEPMANIA_INI_PATH );
+	ReadPrefsFromFile( STATIC_INI_PATH, GetPreferencesSection() );
+
+	if( !m_sCurrentGame.Get().empty() )
+		RestoreGamePrefs();
 }
 
 void PrefsManager::ResetToFactoryDefaults()
 {
 	// clobber the users prefs by initing then applying defaults
 	Init();
-	ReadPrefsFromFile( DEFAULTS_INI_PATH );
-	ReadPrefsFromFile( STATIC_INI_PATH );
+	ReadPrefsFromFile( DEFAULTS_INI_PATH, GetPreferencesSection() );
+	ReadPrefsFromFile( STATIC_INI_PATH, GetPreferencesSection() );
 	
 	SavePrefsToDisk();
 }
 
-void PrefsManager::ReadPrefsFromFile( const CString &sIni )
+void PrefsManager::ReadPrefsFromFile( const CString &sIni, const CString &sSection )
 {
 	IniFile ini;
 	if( !ini.ReadFile(sIni) )
 		return;
 
-	ReadPrefsFromIni( ini );
+	ReadPrefsFromIni( ini, sSection );
 }
 
 static const CString GAME_SECTION_PREFIX = "Game-";
 
-void PrefsManager::ReadPrefsFromIni( const IniFile &ini )
+void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const CString &sSection )
 {
+	// Apply our fallback (if any) before applying ourself.
+	// TODO: detect circular?
+	CString sFallback;
+	if( ini.GetValue(sSection,"Fallback",sFallback) )
+	{
+		ReadPrefsFromIni( ini, sFallback );
+	}
+
+	//IPreference *pPref = PREFSMAN->GetPreferenceByName( *sName );
+	//	if( pPref == NULL )
+	//	{
+	//		LOG->Warn( "Unknown preference in [%s]: %s", sClassName.c_str(), sName->c_str() );
+	//		continue;
+	//	}
+	//	pPref->FromString( sVal );
+
 	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
-		(*p)->ReadFrom( ini );
+		(*p)->ReadFrom( ini, sSection );
 
 	// validate
 	m_iSongsPerPlay.Set( clamp(m_iSongsPerPlay.Get(),0,MAX_SONGS_PER_PLAY) );
 	m_RandomBackgroundMode.Set( (RandomBackgroundMode)clamp((int)m_RandomBackgroundMode.Get(),0,(int)NUM_RandomBackgroundMode-1) );
+}
 
+void PrefsManager::ReadGamePrefsFromIni( const CString &sIni )
+{
+	IniFile ini;
+	if( !ini.ReadFile(sIni) )
+		return;
 
 	FOREACH_CONST_Child( &ini, section )
 	{
@@ -462,15 +539,18 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini )
 	}
 }
 
-void PrefsManager::SavePrefsToDisk() const
+void PrefsManager::SavePrefsToDisk()
 {
 	IniFile ini;
 	SavePrefsToIni( ini );
 	ini.WriteFile( STEPMANIA_INI_PATH );
 }
 
-void PrefsManager::SavePrefsToIni( IniFile &ini ) const
+void PrefsManager::SavePrefsToIni( IniFile &ini )
 {
+	if( !m_sCurrentGame.Get().empty() )
+		StoreGamePrefs();
+
 	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
 		(*p)->WriteTo( ini );
 
@@ -483,6 +563,21 @@ void PrefsManager::SavePrefsToIni( IniFile &ini ) const
 		ini.SetValue( sSection, "DefaultModifiers",	iter->second.m_sDefaultModifiers );
 	}
 }
+
+
+CString PrefsManager::GetPreferencesSection() const
+{
+	CString sSection = "Preferences";
+
+	// OK if this fails
+	GetFileContents( TYPE_TXT_FILE, sSection, true );
+	
+	// OK if this fails
+	GetCommandlineArgument( "Type", &sSection );
+
+	return sSection;
+}
+
 
 // wrappers
 CString PrefsManager::GetSoundDrivers()	
@@ -522,11 +617,6 @@ CString PrefsManager::GetLightsDriver()
 		return m_sLightsDriver;
 }
 
-PrefsManager::GamePrefs &PrefsManager::GetCurrentGamePrefs()
-{
-	ASSERT( !m_sCurrentGame.Get().empty() );
-	return m_mapGameNameToGamePrefs[m_sCurrentGame];
-}
 
 // lua start
 #include "LuaBinding.h"

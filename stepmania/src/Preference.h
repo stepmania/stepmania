@@ -15,7 +15,7 @@ public:
 	virtual ~IPreference();
 
 	virtual void LoadDefault() = 0;
-	virtual void ReadFrom( const IniFile &ini );
+	virtual void ReadFrom( const IniFile &ini, const CString &sSection );
 	virtual void WriteTo( IniFile &ini ) const;
 
 	virtual CString ToString() const = 0;

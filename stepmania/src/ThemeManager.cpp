@@ -38,7 +38,6 @@ const CString LANGUAGES_SUBDIR = "Languages/";
 const CString BASE_LANGUAGE = "english";
 const CString THEMES_DIR  = "Themes/";
 const CString METRICS_FILE = "metrics.ini";
-const CString TYPE_TXT_FILE = "Data/Type.txt";
 
 
 struct Theme
@@ -928,57 +927,6 @@ void ThemeManager::GetMetricsThatBeginWith( const CString &sClassName_, const CS
 	}
 }
 
-CString ThemeManager::GetPreferencesSection() const
-{
-	CString sSection = "Preferences";
-
-	// OK if this fails
-	GetFileContents( TYPE_TXT_FILE, sSection, true );
-	
-	// OK if this fails
-	GetCommandlineArgument( "Type", &sSection );
-
-	return sSection;
-}
-
-void ThemeManager::LoadPreferencesFromMetrics()
-{
-	CString sClassName = GetPreferencesSection();
-
-	set<CString> asNames;
-
-	GetMetricsThatBeginWith( sClassName, "", asNames );
-
-	/* If "Theme" isn't set, we're not changing the theme.  Break out and
-		* load other preferences. */
-	if( asNames.find("Theme") != asNames.end() )
-	{
-		/* Change the theme.  Only do this once. */
-		CString sTheme;
-		GetMetric( sClassName, "Theme", sTheme );
-		THEME->SwitchThemeAndLanguage( sTheme, PREFSMAN->m_sLanguage );
-
-		asNames.erase( "Theme" );
-	}
-
-	FOREACHS( CString, asNames, sName )
-	{
-		if( !sName->CompareNoCase("Fallback") )
-			continue;
-
-		IPreference *pPref = PREFSMAN->GetPreferenceByName( *sName );
-		if( pPref == NULL )
-		{
-			LOG->Warn( "Unknown preference in [%s]: %s", sClassName.c_str(), sName->c_str() );
-			continue;
-		}
-
-		CString sVal;
-		GetMetric( sClassName, *sName, sVal );
-
-		pPref->FromString( sVal );
-	}
-}
 
 CString ThemeManager::GetBlankGraphicPath()
 {
@@ -997,7 +945,6 @@ public:
 	static int GetPathG( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathG(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
-	static int GetPreferencesSection( T* p, lua_State *L ) { lua_pushstring(L, p->GetPreferencesSection() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -1005,7 +952,6 @@ public:
 		ADD_METHOD( GetPathG );
 		ADD_METHOD( GetPathB );
 		ADD_METHOD( GetPathS );
-		ADD_METHOD( GetPreferencesSection );
 
 		Luna<T>::Register( L );
 

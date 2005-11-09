@@ -56,10 +56,10 @@ READFROM_AND_WRITETO( float )
 READFROM_AND_WRITETO( bool )
 READFROM_AND_WRITETO( CString )
 
-void IPreference::ReadFrom( const IniFile &ini )
+void IPreference::ReadFrom( const IniFile &ini, const CString &sSection )
 {
 	CString sVal;
-	if( ini.GetValue( "Options", m_sName, sVal ) )
+	if( ini.GetValue( sSection, m_sName, sVal ) )
 		FromString( sVal );
 }
 

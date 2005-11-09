@@ -20,7 +20,28 @@ public:
 
 	void Init();
 
+	void SetCurrentGame( const CString &sGame );
+	CString	GetCurrentGame() { return m_sCurrentGame; }
+protected:
 	Preference<CString>	m_sCurrentGame;
+
+public:
+	// Game-specific prefs.  Copy these off and save them every time the game changes
+	Preference<CString>	m_sAnnouncer;
+	Preference<CString>	m_sTheme;
+	Preference<CString>	m_sDefaultModifiers;
+protected:
+	void StoreGamePrefs();
+	void RestoreGamePrefs();
+	struct GamePrefs
+	{
+		CString	m_sAnnouncer;
+		CString m_sTheme;
+		CString	m_sDefaultModifiers;
+	};
+	map<CString, GamePrefs> m_mapGameNameToGamePrefs;
+
+public:
 	Preference<bool>	m_bWindowed;
 	Preference<int>		m_iDisplayWidth;
 	Preference<int>		m_iDisplayHeight;
@@ -259,13 +280,16 @@ public:
 	CString GetLightsDriver();
 
 
-	void ReadPrefsFromIni( const IniFile &ini );
-	void SavePrefsToIni( IniFile &ini ) const;
+	void ReadPrefsFromIni( const IniFile &ini, const CString &sSection );
+	void ReadGamePrefsFromIni( const CString &sIni );
+	void SavePrefsToIni( IniFile &ini );
 
 	void ReadPrefsFromDisk();
-	void SavePrefsToDisk() const;
+	void SavePrefsToDisk();
 
 	void ResetToFactoryDefaults();
+
+	CString GetPreferencesSection() const;
 
 	//
 	// For self-registering prefs
@@ -274,28 +298,11 @@ public:
 	static void Unsubscribe( IPreference *p );
 
 
-	//
-	// Non-self-registering prefs
-	//
-	struct GamePrefs
-	{
-		CString	m_sAnnouncer;
-		CString m_sTheme;
-		CString	m_sDefaultModifiers;
-	};
-	map<CString, GamePrefs> m_mapGameNameToGamePrefs;
-
-	GamePrefs &GetCurrentGamePrefs();
-
-	void SaveGamePrefsToDisk();
-	void ReadGamePrefsFromDisk();
-
-
 	// Lua
 	void PushSelf( lua_State *L );
 
 protected:
-	void ReadPrefsFromFile( const CString &sIni );
+	void ReadPrefsFromFile( const CString &sIni, const CString &sSection );
 
 };
 

@@ -17,8 +17,8 @@
 
 static void GetPrefsDefaultModifiers( PlayerOptions &po, SongOptions &so )
 {
-	po.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
-	so.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
+	po.FromString( PREFSMAN->m_sDefaultModifiers );
+	so.FromString( PREFSMAN->m_sDefaultModifiers );
 }
 
 static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions &so )
@@ -29,7 +29,7 @@ static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions
 	if( so.GetString() != "" )
 		as.push_back( so.GetString() );
 
-	PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers = join( ", ",as );
+	PREFSMAN->m_sDefaultModifiers.Set( join(", ",as) );
 }
 
 /* Ugly: the input values may be a different type than the mapping.  For example,
@@ -235,7 +235,7 @@ static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption
 	if( ToSel )
 	{
 		PlayerOptions po;
-		po.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
+		po.FromString( PREFSMAN->m_sDefaultModifiers );
 		sel = 0;
 		for( unsigned i=0; i < choices.size(); i++ )
 			if( !stricmp(choices[i], po.m_sNoteSkin) )
@@ -384,7 +384,7 @@ static void DefaultFailType( int &sel, bool ToSel, const ConfOption *pConfOption
 	if( ToSel )
 	{
 		SongOptions so;
-		so.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
+		so.FromString( PREFSMAN->m_sDefaultModifiers );
 		sel = so.m_FailType;
 	}
 	else

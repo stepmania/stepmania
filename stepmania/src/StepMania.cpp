@@ -766,10 +766,12 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 	if( bSwitchToLastPlayedGame )
 	{
 		ASSERT( GAMEMAN != NULL );
-		CString sGame;
-		GAMESTATE->SetCurGame( NULL );
-		if( !PREFSMAN->m_sCurrentGame.Get().empty() )
-			GAMESTATE->SetCurGame( GAMEMAN->StringToGameType(PREFSMAN->m_sCurrentGame) );
+		CString sGame = PREFSMAN->GetCurrentGame();
+		if( !sGame.empty() )
+		{
+			const Game *pGame = GAMEMAN->StringToGameType(sGame);
+			GAMESTATE->SetCurGame( pGame );
+		}
 	}
 
 	/* If the active game type isn't actually available, revert to the default. */
@@ -797,10 +799,10 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 	CString sTheme = sGameName;
 
 	// if these calls fail, the three strings will keep the initial values set above.
-	if( !PREFSMAN->GetCurrentGamePrefs().m_sAnnouncer.empty() )
-		sAnnouncer = PREFSMAN->GetCurrentGamePrefs().m_sAnnouncer;
-	if( !PREFSMAN->GetCurrentGamePrefs().m_sTheme.empty() )
-		sTheme = PREFSMAN->GetCurrentGamePrefs().m_sTheme;
+	if( !PREFSMAN->m_sAnnouncer.Get().empty() )
+		sAnnouncer = PREFSMAN->m_sAnnouncer;
+	if( !PREFSMAN->m_sTheme.Get().empty() )
+		sTheme = PREFSMAN->m_sTheme;
 
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
@@ -1041,8 +1043,6 @@ int main(int argc, char* argv[])
 
 	/* Set up the theme and announcer, and switch to the last game type. */
 	ReadGamePrefsFromDisk( true );
-
-	THEME->LoadPreferencesFromMetrics();
 
 	{
 		/* Now that THEME is loaded, load the icon for the current theme into the

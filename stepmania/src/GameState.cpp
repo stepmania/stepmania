@@ -587,7 +587,7 @@ void GameState::SetCurGame( const Game *pGame )
 {
 	m_pCurGame.Set( pGame );
 	CString sGame = pGame ? CString(pGame->m_szName) : CString();
-	PREFSMAN->m_sCurrentGame.Set( sGame );
+	PREFSMAN->SetCurrentGame( sGame );
 }
 
 const float GameState::MUSIC_SECONDS_INVALID = -5000.0f;
@@ -1022,14 +1022,14 @@ StageResult GameState::GetStageResult( PlayerNumber pn ) const
 void GameState::GetDefaultPlayerOptions( PlayerOptions &po )
 {
 	po.Init();
-	po.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
+	po.FromString( PREFSMAN->m_sDefaultModifiers );
 	po.FromString( CommonMetrics::DEFAULT_MODIFIERS );
 }
 
 void GameState::GetDefaultSongOptions( SongOptions &so )
 {
 	so.Init();
-	so.FromString( PREFSMAN->GetCurrentGamePrefs().m_sDefaultModifiers );
+	so.FromString( PREFSMAN->m_sDefaultModifiers );
 	so.FromString( CommonMetrics::DEFAULT_MODIFIERS );
 }
 
