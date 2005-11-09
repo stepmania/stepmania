@@ -641,6 +641,8 @@ int RageDisplay_D3D::GetMaxTextureSize() const
 
 bool RageDisplay_D3D::BeginFrame()
 {
+	GraphicsWindow::Update();
+
 #if !defined(XBOX)
 	switch( g_pd3dDevice->TestCooperativeLevel() )
 	{
@@ -671,8 +673,6 @@ void RageDisplay_D3D::EndFrame()
 	FrameLimitBeforeVsync( g_iActualRefreshRateInHz );
 	g_pd3dDevice->Present( 0, 0, 0, 0 );
 	FrameLimitAfterVsync();
-
-	GraphicsWindow::Update();
 
 	RageDisplay::EndFrame();
 }
