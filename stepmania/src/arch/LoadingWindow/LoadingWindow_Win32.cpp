@@ -9,6 +9,7 @@
 #include "RageSurface_Load.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
+#include "ProductInfo.h"
 
 #include "RageSurfaceUtils_Zoom.h"
 static HBITMAP g_hBitmap = NULL;
@@ -79,6 +80,7 @@ BOOL CALLBACK LoadingWindow_Win32::WndProc( HWND hWnd, UINT msg, WPARAM wParam, 
 			STM_SETIMAGE, 
 			(WPARAM) IMAGE_BITMAP, 
 			(LPARAM) (HANDLE) g_hBitmap );
+		SetWindowTextA( hWnd, PRODUCT_NAME );
 		break;
 
 	case WM_DESTROY:
