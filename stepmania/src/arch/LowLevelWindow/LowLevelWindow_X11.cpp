@@ -39,7 +39,7 @@ void *LowLevelWindow_X11::GetProcAddress( CString s )
 	return (void*) glXGetProcAddressARB( (const GLubyte*) s.c_str() );
 }
 
-CString LowLevelWindow_X11::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut )
+CString LowLevelWindow_X11::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
 #if defined(LINUX)
 	/* nVidia cards:

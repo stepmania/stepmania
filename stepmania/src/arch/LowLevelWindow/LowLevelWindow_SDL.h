@@ -9,14 +9,14 @@ public:
 	LowLevelWindow_SDL();
 	~LowLevelWindow_SDL();
 	void *GetProcAddress(CString s);
-	CString TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut );
+	CString TryVideoMode( VideoModeParams p, bool &bNewDeviceOut );
 	void SwapBuffers();
 	void Update();
 
-	RageDisplay::VideoModeParams GetVideoModeParams() const { return CurrentParams; }
+	VideoModeParams GetVideoModeParams() const { return CurrentParams; }
 
 private:
-	RageDisplay::VideoModeParams CurrentParams;
+	VideoModeParams CurrentParams;
 };
 
 #ifdef ARCH_LOW_LEVEL_WINDOW

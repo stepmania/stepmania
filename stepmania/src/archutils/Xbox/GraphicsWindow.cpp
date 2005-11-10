@@ -7,18 +7,18 @@
 
 static const CString g_sClassName = CString(PRODUCT_NAME) + " LowLevelWindow_Win32";
 
-static RageDisplay::VideoModeParams g_CurrentParams;
+static VideoModeParams g_CurrentParams;
 static bool g_bResolutionChanged = false;
 static bool g_bHasFocus = true;
 static bool g_bLastHasFocus = true;
 static bool m_bWideWindowClass;
 
-void GraphicsWindow::SetVideoModeParams( const RageDisplay::VideoModeParams &p )
+void GraphicsWindow::SetVideoModeParams( const VideoModeParams &p )
 {
 	g_CurrentParams = p;
 }
 
-RageDisplay::VideoModeParams GraphicsWindow::GetParams()
+VideoModeParams GraphicsWindow::GetParams()
 {
 	return g_CurrentParams;
 }
@@ -35,11 +35,11 @@ void GraphicsWindow::Update()
 
 void GraphicsWindow::Initialize() { }
 void GraphicsWindow::Shutdown() { }
-CString GraphicsWindow::SetScreenMode( const RageDisplay::VideoModeParams &p ) { return ""; }
-void GraphicsWindow::CreateGraphicsWindow( const RageDisplay::VideoModeParams &p ) { }
-void GraphicsWindow::RecreateGraphicsWindow( const RageDisplay::VideoModeParams &p ) { }
+CString GraphicsWindow::SetScreenMode( const VideoModeParams &p ) { return ""; }
+void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p ) { }
+void GraphicsWindow::RecreateGraphicsWindow( const VideoModeParams &p ) { }
 void GraphicsWindow::DestroyGraphicsWindow() { }
-void GraphicsWindow::ConfigureGraphicsWindow( const RageDisplay::VideoModeParams &p ) { }
+void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p ) { }
 
 /*
  * (c) 2004 Glenn Maynard

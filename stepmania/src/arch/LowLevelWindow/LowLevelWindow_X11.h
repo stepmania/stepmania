@@ -12,14 +12,14 @@ public:
 	~LowLevelWindow_X11();
 
 	void *GetProcAddress(CString s);
-	CString TryVideoMode(RageDisplay::VideoModeParams p, bool &bNewDeviceOut);
+	CString TryVideoMode(VideoModeParams p, bool &bNewDeviceOut);
 	void SwapBuffers();
 
-	RageDisplay::VideoModeParams GetVideoModeParams() const { return CurrentParams; }
+	VideoModeParams GetVideoModeParams() const { return CurrentParams; }
 
 private:
 	bool m_bWindowIsOpen;
-	RageDisplay::VideoModeParams CurrentParams;
+	VideoModeParams CurrentParams;
 };
 
 #ifdef ARCH_LOW_LEVEL_WINDOW

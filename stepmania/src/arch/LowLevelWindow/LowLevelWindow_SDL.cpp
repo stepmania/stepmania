@@ -49,7 +49,7 @@ void *LowLevelWindow_SDL::GetProcAddress(CString s)
 	return SDL_GL_GetProcAddress(s);
 }
 
-CString LowLevelWindow_SDL::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut )
+CString LowLevelWindow_SDL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
 	bool wasWindowed = CurrentParams.windowed;
 	
