@@ -544,15 +544,14 @@ bool DSoundBuf::get_output_buf( char **pBuffer, unsigned *pBufferSize, int iChun
 	CheckUnderrun( iCursorStart, iCursorEnd );
 
 	/* If we already have enough bytes written ahead, stop. */
-	if( m_iBufferBytesFilled > m_iWriteAhead )
+	if( m_iBufferBytesFilled >= m_iWriteAhead )
+		return false;
+
+	/* If we don't have enough free space in the buffer to fill a whole chunk, stop. */
+	if( m_iBufferSize - m_iBufferBytesFilled < iChunksize )
 		return false;
 
 	int iNumBytesEmpty = m_iWriteAhead - m_iBufferBytesFilled;
-
-	/* num_bytes_empty is the amount of free buffer space.  If it's
-	 * too small, come back later. */
-	if( iNumBytesEmpty < iChunksize )
-		return false;
 
 //	LOG->Trace("gave %i at %i (%i, %i) %i filled", iNumBytesEmpty, m_iWriteCursor, cursor, write, m_iBufferBytesFilled);
 
