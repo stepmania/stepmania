@@ -9,7 +9,7 @@ static CFOptionFlags ShowAlert( CFOptionFlags flags, CFStringRef message,
 {
 	CFOptionFlags result;
 	
-	CFUserNotificationDisplayAlert( 0.0, flags, NULL, NULL, NULL, CFSTR(PRODUCT_NAME_VER),
+	CFUserNotificationDisplayAlert( 0.0, flags, NULL, NULL, NULL, CFSTR(PRODUCT_NAME),
 									message, OK, cancel, NULL, &result );
 	return result;
 }
