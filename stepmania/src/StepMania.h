@@ -27,7 +27,7 @@ extern char **g_argv;
 bool GetCommandlineArgument( const CString &option, CString *argument=NULL, int iIndex=0 );
 
 struct VideoModeParams;
-void GetCurVideoModeParams( VideoModeParams &paramsOut );
+void GetPreferredVideoModeParams( VideoModeParams &paramsOut );
 
 #endif
 

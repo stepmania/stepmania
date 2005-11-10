@@ -669,16 +669,16 @@ bool RageDisplay_D3D::BeginFrame()
 	case D3DERR_DEVICELOST:
 		return false;
 	case D3DERR_DEVICENOTRESET:
-	{
-		bool bIgnore = false;
-		VideoModeParams params;
-		GraphicsWindow::GetParams( params );
+		{
+			bool bIgnore = false;
+			VideoModeParams params;
+			GetPreferredVideoModeParams( params );
 
-		CString sError = SetVideoMode( params, bIgnore );
-		if( sError != "" )
-			RageException::Throw( sError );
-		break;
-	}
+			CString sError = SetVideoMode( params, bIgnore );
+			if( sError != "" )
+				RageException::Throw( sError );
+			break;
+		}
 	}
 #endif
 
