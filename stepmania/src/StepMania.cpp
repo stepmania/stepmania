@@ -404,8 +404,8 @@ static void CheckSettings()
 
 struct VideoCardDefaults
 {
-	const char *szDriverRegex;
-	const char *szVideoRenderers;
+	CString sDriverRegex;
+	CString sVideoRenderers;
 	int iWidth;
 	int iHeight;
 	int iDisplayColor;
@@ -413,65 +413,89 @@ struct VideoCardDefaults
 	int iMovieColor;
 	int iTextureSize;
 	bool bSmoothLines;
+
+	VideoCardDefaults() {}
+	VideoCardDefaults(
+		CString sDriverRegex_,
+		CString sVideoRenderers_,
+		int iWidth_,
+		int iHeight_,
+		int iDisplayColor_,
+		int iTextureColor_,
+		int iMovieColor_,
+		int iTextureSize_,
+		bool bSmoothLines_
+		)
+	{
+		sDriverRegex = sDriverRegex_;
+		sVideoRenderers = sVideoRenderers_;
+		iWidth = iWidth_;
+		iHeight = iHeight_;
+		iDisplayColor = iDisplayColor_;
+		iTextureColor = iTextureColor_;
+		iMovieColor = iMovieColor_;
+		iTextureSize = iTextureSize_;
+		bSmoothLines = bSmoothLines_;
+	}
 } const g_VideoCardDefaults[] = 
 {
-	{
+	VideoCardDefaults(
 		"Xbox",
 		"d3d,opengl",
 		600,400,
 		32,32,32,
 		2048,
 		true
-	},
-	{
+	),
+	VideoCardDefaults(
 		"Voodoo *5",
 		"d3d,opengl",	// received 3 reports of opengl crashing. -Chris
 		640,480,
 		32,32,32,
 		2048,
 		true	// accelerated
-	},
-	{
+	),
+	VideoCardDefaults(
 		"Voodoo|3dfx", /* all other Voodoos: some drivers don't identify which one */
 		"d3d,opengl",
 		640,480,
 		16,16,16,
 		256,
 		false	// broken, causes black screen
-	},
-	{
+	),
+	VideoCardDefaults(
 		"Radeon.* 7|Wonder 7500|ArcadeVGA",	// Radeon 7xxx, RADEON Mobility 7500
 		"d3d,opengl",	// movie texture performance is terrible in OpenGL, but fine in D3D.
 		640,480,
 		16,16,16,
 		2048,
 		true	// accelerated
-	},
-	{
+	),
+	VideoCardDefaults(
 		"GeForce|Radeon|Wonder 9|Quadro",
 		"opengl,d3d",
 		640,480,
 		32,32,32,	// 32 bit textures are faster to load
 		2048,
 		true	// hardware accelerated
-	},
-	{
+	),
+	VideoCardDefaults(
 		"TNT|Vanta|M64",
 		"opengl,d3d",
 		640,480,
 		16,16,16,	// Athlon 1.2+TNT demonstration w/ movies: 70fps w/ 32bit textures, 86fps w/ 16bit textures
 		2048,
 		true	// hardware accelerated
-	},
-	{
+	),
+	VideoCardDefaults(
 		"G200|G250|G400",
 		"d3d,opengl",
 		640,480,
 		16,16,16,
 		2048,
 		false	// broken, causes black screen
-	},
-	{
+	),
+	VideoCardDefaults(
 		"Savage",
 		"d3d",
 			// OpenGL is unusable on my Savage IV with even the latest drivers.  
@@ -481,8 +505,8 @@ struct VideoCardDefaults
 		16,16,16,
 		2048,
 		false
-	},
-	{
+	),
+	VideoCardDefaults(
 		"XPERT@PLAY|IIC|RAGE PRO|RAGE LT PRO",	// Rage Pro chip, Rage IIC chip
 		"d3d",
 			// OpenGL is not hardware accelerated, despite the fact that the 
@@ -493,25 +517,25 @@ struct VideoCardDefaults
 		16,16,16,
 		256,
 		false
-	},
-	{
+	),
+	VideoCardDefaults(
 		"RAGE MOBILITY-M1",
 		"d3d,opengl",	// Vertex alpha is broken in OpenGL, but not D3D. -Chris
 		400,300,	// lower resolution for 60fps
 		16,16,16,
 		256,
 		false
-	},
-	{
+	),
+	VideoCardDefaults(
 		"Mobility M3",	// ATI Rage Mobility 128 (AKA "M3")
 		"d3d,opengl",	// bad movie texture performance in opengl
 		640,480,
 		16,16,16,
 		1024,
 		false
-	},
+	),
 #if 0
-	{
+	VideoCardDefaults(
 		/* success report:
 		 * Video driver: IntelR 82845G/GL/GE/PE/GV Graphics Controller [Intel Corporation]
 		 * 6.14.10.3865, 7-1-2004 [pci\ven_8086&dev_2562] */
@@ -522,33 +546,33 @@ struct VideoCardDefaults
 		16,16,16,
 		1024,
 		true
-	},
+	),
 #endif
-	{
+	VideoCardDefaults(
 		"Intel.*82810|Intel.*82815",
 		"opengl,d3d",// OpenGL is 50%+ faster than D3D w/ latest Intel drivers.  -Chris
 		512,384,	// lower resolution for 60fps
 		16,16,16,
 		512,
 		false
-	},
-	{
+	),
+	VideoCardDefaults(
 		"Intel*Extreme Graphics",
 		"d3d",	// OpenGL blue screens w/ XP drivers from 6-21-2002
 		640,480,
 		16,16,16,	// slow at 32bpp
 		1024,
 		false
-	},
-	{
+	),
+	VideoCardDefaults(
 		"Intel.*", /* fallback: all unknown Intel cards to D3D, since Intel is notoriously bad at OpenGL */
 		"d3d,opengl",
 		640,480,
 		16,16,16,
 		1024,
 		false
-	},
-	{
+	),
+	VideoCardDefaults(
 		// Cards that have problems with OpenGL:
 		// ASSERT fail somewhere in RageDisplay_OpenGL "Trident Video Accelerator CyberBlade"
 		// bug 764499: ASSERT fail after glDeleteTextures for "SiS 650_651_740"
@@ -560,8 +584,8 @@ struct VideoCardDefaults
 		16,16,16,
 		2048,
 		false
-	},
-	{
+	),
+	VideoCardDefaults(
 		/* Unconfirmed texture problems on this; let's try D3D, since it's a VIA/S3
 		 * chipset. */
 		"VIA/S3G KM400/KN400",
@@ -570,16 +594,16 @@ struct VideoCardDefaults
 		16,16,16,
 		2048,
 		false
-	},
-	{
+	),
+	VideoCardDefaults(
 		"OpenGL",	// This matches all drivers in Mac and Linux. -Chris
 		"opengl",
 		640,480,
 		16,16,16,
 		2048,
 		true		// Right now, they've got to have NVidia or ATi Cards anyway..
-	},
-	{
+	),
+	VideoCardDefaults(
 		// Default graphics settings used for all cards that don't match above.
 		// This must be the very last entry!
 		"",
@@ -588,7 +612,7 @@ struct VideoCardDefaults
 		16,16,16,
 		2048,
 		false  // AA is slow on some cards, so let's selectively enable HW accelerated cards.
-	},
+	),
 };
 
 
@@ -610,24 +634,23 @@ static void CheckVideoDefaultSettings()
 	
 	LOG->Trace( "Last seen video driver: " + PREFSMAN->m_sLastSeenVideoDriver.Get() );
 
-	const VideoCardDefaults* pDefaults = NULL;
+	VideoCardDefaults defaults;
 	
 	for( unsigned i=0; i<ARRAYSIZE(g_VideoCardDefaults); i++ )
 	{
-		pDefaults = &g_VideoCardDefaults[i];
+		defaults = g_VideoCardDefaults[i];
 
-		CString sDriverRegex = pDefaults->szDriverRegex;
+		CString sDriverRegex = defaults.sDriverRegex;
 		Regex regex( sDriverRegex );
 		if( regex.Compare(sVideoDriver) )
 		{
 			LOG->Trace( "Card matches '%s'.", sDriverRegex.size()? sDriverRegex.c_str():"(unknown card)" );
-			break;
+			goto found_defaults;
 		}
 	}
+	ASSERT( 0 );	// we must have matched at least one above
 
-	ASSERT( pDefaults );	// we must have matched at least one
-
-	CString sVideoRenderers = pDefaults->szVideoRenderers;
+found_defaults:
 
 	bool SetDefaultVideoParams=false;
 	if( PREFSMAN->m_sVideoRenderers.Get() == "" )
@@ -643,22 +666,22 @@ static void CheckVideoDefaultSettings()
 		
 	if( SetDefaultVideoParams )
 	{
-		PREFSMAN->m_sVideoRenderers.Set( sVideoRenderers );
-		PREFSMAN->m_iDisplayWidth.Set( pDefaults->iWidth );
-		PREFSMAN->m_iDisplayHeight.Set( pDefaults->iHeight );
-		PREFSMAN->m_iDisplayColorDepth.Set( pDefaults->iDisplayColor );
-		PREFSMAN->m_iTextureColorDepth.Set( pDefaults->iTextureColor );
-		PREFSMAN->m_iMovieColorDepth.Set( pDefaults->iMovieColor );
-		PREFSMAN->m_iMaxTextureResolution.Set( pDefaults->iTextureSize );
-		PREFSMAN->m_bSmoothLines.Set( pDefaults->bSmoothLines );
+		PREFSMAN->m_sVideoRenderers.Set( defaults.sVideoRenderers );
+		PREFSMAN->m_iDisplayWidth.Set( defaults.iWidth );
+		PREFSMAN->m_iDisplayHeight.Set( defaults.iHeight );
+		PREFSMAN->m_iDisplayColorDepth.Set( defaults.iDisplayColor );
+		PREFSMAN->m_iTextureColorDepth.Set( defaults.iTextureColor );
+		PREFSMAN->m_iMovieColorDepth.Set( defaults.iMovieColor );
+		PREFSMAN->m_iMaxTextureResolution.Set( defaults.iTextureSize );
+		PREFSMAN->m_bSmoothLines.Set( defaults.bSmoothLines );
 
 		// Update last seen video card
 		PREFSMAN->m_sLastSeenVideoDriver.Set( GetVideoDriverName() );
 	}
-	else if( PREFSMAN->m_sVideoRenderers.Get().CompareNoCase(sVideoRenderers) )
+	else if( PREFSMAN->m_sVideoRenderers.Get().CompareNoCase(defaults.sVideoRenderers) )
 	{
 		LOG->Warn("Video renderer list has been changed from '%s' to '%s'",
-				sVideoRenderers.c_str(), PREFSMAN->m_sVideoRenderers.Get().c_str() );
+				defaults.sVideoRenderers.c_str(), PREFSMAN->m_sVideoRenderers.Get().c_str() );
 		return;
 	}
 
