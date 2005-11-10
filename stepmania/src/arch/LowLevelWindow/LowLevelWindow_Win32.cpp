@@ -45,7 +45,7 @@ LowLevelWindow_Win32::~LowLevelWindow_Win32()
 }
 
 
-int ChooseWindowPixelFormat( RageDisplay::VideoModeParams p, PIXELFORMATDESCRIPTOR *PixelFormat )
+int ChooseWindowPixelFormat( VideoModeParams p, PIXELFORMATDESCRIPTOR *PixelFormat )
 {
 	ASSERT( GraphicsWindow::GetHwnd() != NULL );
 	ASSERT( GraphicsWindow::GetHDC() != NULL );
@@ -94,7 +94,7 @@ void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 /* This function does not reset the video mode if it fails, because we might be trying
  * yet another video mode, so we'd just thrash the display.  On fatal error,
  * LowLevelWindow_Win32::~LowLevelWindow_Win32 will call Shutdown(). */
-CString LowLevelWindow_Win32::TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut )
+CString LowLevelWindow_Win32::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
 	ASSERT_M( p.bpp == 16 || p.bpp == 32, ssprintf("%i", p.bpp) );
 
@@ -221,9 +221,11 @@ void LowLevelWindow_Win32::Update()
 	GraphicsWindow::Update();
 }
 
-RageDisplay::VideoModeParams LowLevelWindow_Win32::GetVideoModeParams() const
+VideoModeParams LowLevelWindow_Win32::GetVideoModeParams() const
 {
-	return GraphicsWindow::GetParams();
+	VideoModeParams p;
+	GraphicsWindow::GetParams( p );
+	return p;
 }
 
 /*

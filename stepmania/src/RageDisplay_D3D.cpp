@@ -642,7 +642,8 @@ void RageDisplay_D3D::SetViewport(int shift_left, int shift_down)
 {
 	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
 	 * Scale them to the actual viewport range. */
-	RageDisplay::VideoModeParams p = GraphicsWindow::GetParams();
+	VideoModeParams p;
+	GraphicsWindow::GetParams( p );
 	shift_left = int( shift_left * float(p.width) / SCREEN_WIDTH );
 	shift_down = int( shift_down * float(p.height) / SCREEN_HEIGHT );
 
@@ -670,7 +671,10 @@ bool RageDisplay_D3D::BeginFrame()
 	case D3DERR_DEVICENOTRESET:
 	{
 		bool bIgnore = false;
-		CString sError = SetVideoMode( GraphicsWindow::GetParams(), bIgnore );
+		VideoModeParams params;
+		GraphicsWindow::GetParams( params );
+
+		CString sError = SetVideoMode( params, bIgnore );
 		if( sError != "" )
 			RageException::Throw( sError );
 		break;
@@ -787,7 +791,12 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 #endif
 }
 
-RageDisplay::VideoModeParams RageDisplay_D3D::GetVideoModeParams() const { return GraphicsWindow::GetParams(); }
+VideoModeParams RageDisplay_D3D::GetVideoModeParams() const 
+{
+	VideoModeParams p; 
+	GraphicsWindow::GetParams( p ); 
+	return p; 
+}
 
 void RageDisplay_D3D::SendCurrentMatrices()
 {

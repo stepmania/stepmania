@@ -3,7 +3,7 @@
 #define GRAPHICS_WINDOW_H
 
 #include <windows.h>
-#include "RageDisplay.h" // for RageDisplay::VideoModeParams
+struct VideoModeParams; // for VideoModeParams
 
 namespace GraphicsWindow
 {
@@ -13,16 +13,16 @@ namespace GraphicsWindow
 	/* Shut down completely. */
 	void Shutdown();
 
-	void SetVideoModeParams( const RageDisplay::VideoModeParams &p );
-	CString SetScreenMode( const RageDisplay::VideoModeParams &p );
-	void CreateGraphicsWindow( const RageDisplay::VideoModeParams &p );
-	void RecreateGraphicsWindow( const RageDisplay::VideoModeParams &p );
+	void SetVideoModeParams( const VideoModeParams &p );
+	CString SetScreenMode( const VideoModeParams &p );
+	void CreateGraphicsWindow( const VideoModeParams &p );
+	void RecreateGraphicsWindow( const VideoModeParams &p );
 	void DestroyGraphicsWindow();
-	void ConfigureGraphicsWindow( const RageDisplay::VideoModeParams &p );
+	void ConfigureGraphicsWindow( const VideoModeParams &p );
 
 	LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 
-	RageDisplay::VideoModeParams GetParams();
+	void GetParams( VideoModeParams &paramsOut );
 	HDC GetHDC();
 	void Update();
 

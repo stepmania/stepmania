@@ -63,6 +63,60 @@ enum PixelFormat
 };
 const CString& PixelFormatToString( PixelFormat i );
 
+struct VideoModeParams
+{
+	// Initialize with a constructor so to guarantee all paramters
+	// are filled (in case new params are added).
+	VideoModeParams( 
+		bool windowed_,
+		int width_,
+		int height_,
+		int bpp_,
+		int rate_,
+		bool vsync_,
+		bool interlaced_,
+		bool bSmoothLines_,
+		bool bTrilinearFiltering_,
+		bool bAnisotropicFiltering_,
+		CString sWindowTitle_,
+		CString sIconFile_,
+		bool PAL_,
+		float fDisplayAspectRatio_
+	)
+	{
+		windowed = windowed_;
+		width = width_;
+		height = height_;
+		bpp = bpp_;
+		rate = rate_;
+		vsync = vsync_;
+		interlaced = interlaced_;
+		bSmoothLines = bSmoothLines_;
+		bTrilinearFiltering = bTrilinearFiltering_;
+		bAnisotropicFiltering = bAnisotropicFiltering_;
+		sWindowTitle = sWindowTitle_;
+		sIconFile = sIconFile_;
+		PAL = PAL_;
+		fDisplayAspectRatio = fDisplayAspectRatio_;
+	}
+	VideoModeParams() {}
+
+	bool windowed;
+	int width;
+	int height;
+	int bpp;
+	int rate;
+	bool vsync;
+	bool bSmoothLines;
+	bool bTrilinearFiltering;
+	bool bAnisotropicFiltering;
+	bool interlaced;
+	bool PAL;
+	float fDisplayAspectRatio;
+	CString sWindowTitle;
+	CString sIconFile;
+};
+
 class RageDisplay
 {
 	friend class RageTexture;
@@ -75,60 +129,6 @@ public:
 	};
 
 	virtual const PixelFormatDesc *GetPixelFormatDesc( PixelFormat pf ) const = 0;
-
-	struct VideoModeParams
-	{
-		// Initialize with a constructor so to guarantee all paramters
-		// are filled (in case new params are added).
-		VideoModeParams( 
-			bool windowed_,
-			int width_,
-			int height_,
-			int bpp_,
-			int rate_,
-			bool vsync_,
-			bool interlaced_,
-			bool bSmoothLines_,
-			bool bTrilinearFiltering_,
-			bool bAnisotropicFiltering_,
-			CString sWindowTitle_,
-			CString sIconFile_,
-			bool PAL_,
-			float fDisplayAspectRatio_
-		)
-		{
-			windowed = windowed_;
-			width = width_;
-			height = height_;
-			bpp = bpp_;
-			rate = rate_;
-			vsync = vsync_;
-			interlaced = interlaced_;
-			bSmoothLines = bSmoothLines_;
-			bTrilinearFiltering = bTrilinearFiltering_;
-			bAnisotropicFiltering = bAnisotropicFiltering_;
-			sWindowTitle = sWindowTitle_;
-			sIconFile = sIconFile_;
-			PAL = PAL_;
-			fDisplayAspectRatio = fDisplayAspectRatio_;
-		}
-		VideoModeParams() {}
-
-		bool windowed;
-		int width;
-		int height;
-		int bpp;
-		int rate;
-		bool vsync;
-		bool bSmoothLines;
-		bool bTrilinearFiltering;
-		bool bAnisotropicFiltering;
-		bool interlaced;
-		bool PAL;
-		float fDisplayAspectRatio;
-		CString sWindowTitle;
-		CString sIconFile;
-	};
 
 	/* This is needed or the overridden classes' dtors will not be called. */
 	virtual ~RageDisplay() { }

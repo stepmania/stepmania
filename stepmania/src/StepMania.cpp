@@ -87,9 +87,10 @@ static bool g_bHasFocus = true;
 
 void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame );
 
-static RageDisplay::VideoModeParams GetCurVideoModeParams()
+
+void GetCurVideoModeParams( VideoModeParams &paramsOut )
 {
-	return RageDisplay::VideoModeParams(
+	paramsOut = VideoModeParams(
 			PREFSMAN->m_bWindowed,
 			PREFSMAN->m_iDisplayWidth,
 			PREFSMAN->m_iDisplayHeight,
@@ -172,7 +173,9 @@ void ApplyGraphicOptions()
 { 
 	bool bNeedReload = false;
 
-	CString sError = DISPLAY->SetVideoMode( GetCurVideoModeParams(), bNeedReload );
+	VideoModeParams params;
+	GetCurVideoModeParams( params );
+	CString sError = DISPLAY->SetVideoMode( params, bNeedReload );
 	if( sError != "" )
 		RageException::Throw( sError );
 
@@ -689,7 +692,8 @@ RageDisplay *CreateDisplay()
 
 	CheckVideoDefaultSettings();
 
-	RageDisplay::VideoModeParams params(GetCurVideoModeParams());
+	VideoModeParams params;
+	GetCurVideoModeParams( params );
 
 	CString error = "There was an error while initializing your video card.\n\n"
 		"Please do not file this error as a bug!  Use the web page below to troubleshoot this problem.\n\n"

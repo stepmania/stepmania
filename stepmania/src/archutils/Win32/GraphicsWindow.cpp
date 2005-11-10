@@ -5,7 +5,7 @@
 #include "ProductInfo.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-
+#include "RageDisplay.h"
 #include "archutils/Win32/AppInstance.h"
 #include "archutils/Win32/WindowIcon.h"
 #include "archutils/Win32/GetFileInformation.h"
@@ -16,7 +16,7 @@ static const CString g_sClassName = CString(PRODUCT_NAME) + " LowLevelWindow_Win
 
 static HWND g_hWndMain;
 static HDC g_HDC;
-static RageDisplay::VideoModeParams g_CurrentParams;
+static VideoModeParams g_CurrentParams;
 static bool g_bResolutionChanged = false;
 static bool g_bHasFocus = true;
 static bool g_bLastHasFocus = true;
@@ -128,12 +128,12 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 		return DefWindowProcA( hWnd, msg, wParam, lParam );
 }
 
-void GraphicsWindow::SetVideoModeParams( const RageDisplay::VideoModeParams &p )
+void GraphicsWindow::SetVideoModeParams( const VideoModeParams &p )
 {
 	g_CurrentParams = p;
 }
 
-CString GraphicsWindow::SetScreenMode( const RageDisplay::VideoModeParams &p )
+CString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 {
 	if( p.windowed )
 	{
@@ -173,7 +173,7 @@ CString GraphicsWindow::SetScreenMode( const RageDisplay::VideoModeParams &p )
 	return CString();
 }
 
-static int GetWindowStyle( const RageDisplay::VideoModeParams &p )
+static int GetWindowStyle( const VideoModeParams &p )
 {
 	if( p.windowed )
 		return WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
@@ -181,7 +181,7 @@ static int GetWindowStyle( const RageDisplay::VideoModeParams &p )
 		return WS_POPUP;
 }
 
-void GraphicsWindow::CreateGraphicsWindow( const RageDisplay::VideoModeParams &p )
+void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p )
 {
 	ASSERT( g_hWndMain == NULL );
 
@@ -198,7 +198,7 @@ void GraphicsWindow::CreateGraphicsWindow( const RageDisplay::VideoModeParams &p
 	g_HDC = GetDC( g_hWndMain );
 }
 
-void GraphicsWindow::RecreateGraphicsWindow( const RageDisplay::VideoModeParams &p )
+void GraphicsWindow::RecreateGraphicsWindow( const VideoModeParams &p )
 {
 	ASSERT( g_hWndMain != NULL );
 
@@ -220,7 +220,7 @@ void GraphicsWindow::RecreateGraphicsWindow( const RageDisplay::VideoModeParams 
 
 /* Set the final window size, set the window text and icon, and then unhide the
  * window. */
-void GraphicsWindow::ConfigureGraphicsWindow( const RageDisplay::VideoModeParams &p )
+void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p )
 {
 	ASSERT( g_hWndMain );
 
@@ -385,9 +385,9 @@ HDC GraphicsWindow::GetHDC()
 	return g_HDC;
 }
 
-RageDisplay::VideoModeParams GraphicsWindow::GetParams()
+void GraphicsWindow::GetParams( VideoModeParams &paramsOut )
 {
-	return g_CurrentParams;
+	paramsOut = g_CurrentParams;
 }
 
 void GraphicsWindow::Update()

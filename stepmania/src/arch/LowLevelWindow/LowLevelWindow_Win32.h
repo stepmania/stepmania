@@ -9,11 +9,11 @@ public:
 	LowLevelWindow_Win32();
 	~LowLevelWindow_Win32();
 	void *GetProcAddress( CString s );
-	CString TryVideoMode( RageDisplay::VideoModeParams p, bool &bNewDeviceOut );
+	CString TryVideoMode( VideoModeParams p, bool &bNewDeviceOut );
 	void SwapBuffers();
 	void Update();
 
-	RageDisplay::VideoModeParams GetVideoModeParams() const;
+	VideoModeParams GetVideoModeParams() const;
 };
 
 #ifdef ARCH_LOW_LEVEL_WINDOW
