@@ -643,7 +643,7 @@ static void CheckVideoDefaultSettings()
 		
 	if( SetDefaultVideoParams )
 	{
-		PREFSMAN->m_sVideoRenderers.Set( pDefaults->szVideoRenderers );
+		PREFSMAN->m_sVideoRenderers.Set( sVideoRenderers );
 		PREFSMAN->m_iDisplayWidth.Set( pDefaults->iWidth );
 		PREFSMAN->m_iDisplayHeight.Set( pDefaults->iHeight );
 		PREFSMAN->m_iDisplayColorDepth.Set( pDefaults->iDisplayColor );
