@@ -195,5 +195,5 @@ BOOL MainMenuDlg::OnInitDialog()
 void MainMenuDlg::OnOpenStepmaniaIni() 
 {
 	// TODO: Add your control notification handler code here
-	::ShellExecute( this->m_hWnd, "open", "Data\\" PRODUCT_NAME, "", "", SW_SHOWNORMAL  );
+	::ShellExecute( this->m_hWnd, "open", STEPMANIA_INI, "", "", SW_SHOWNORMAL  );
 }

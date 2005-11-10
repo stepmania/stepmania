@@ -2,6 +2,9 @@
 #define SMPACKAGE_UTIL_H
 
 #include "RageUtil.h"
+#include "../ProductInfo.h"
+
+static const CString STEPMANIA_INI = "Save\\" + CString(PRODUCT_NAME) + ".ini";
 
 void WriteStepManiaInstallDirs( const CStringArray& asInstallDirsToWrite );
 void GetStepManiaInstallDirs( CStringArray& asInstallDirsOut );
