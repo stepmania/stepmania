@@ -582,7 +582,26 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 		dm.dmSize = sizeof(dm);
 		if( EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm) )
 		{
-			g_iActualRefreshRateInHz = dm.dmDisplayFrequency;
+			/*
+			 * On a nForce 2 IGP on Windows 98, dm.dmDisplayFrequency sometimes 
+			 * (but not always) is 0.
+			 *
+			 * MSDN: When you call the EnumDisplaySettings function, the 
+			 * dmDisplayFrequency member may return with the value 0 or 1. 
+			 * These values represent the display hardware's default refresh rate. 
+			 * This default rate is typically set by switches on a display card or 
+			 * computer motherboard, or by a configuration program that does not 
+			 * use Win32 display functions such as ChangeDisplaySettings.
+			 */
+			if( dm.dmDisplayFrequency == 0 || dm.dmDisplayFrequency == 1 )
+			{
+				g_iActualRefreshRateInHz = 60;
+				LOG->Warn( "EnumDisplaySettings doesn't know what the refresh rate is. %d %d %d", dm.dmPelsWidth, dm.dmPelsHeight, dm.dmBitsPerPel );
+			}
+			else
+			{
+				g_iActualRefreshRateInHz = dm.dmDisplayFrequency;
+			}
 		}
 		else
 		{
