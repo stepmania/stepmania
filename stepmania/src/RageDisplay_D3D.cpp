@@ -791,7 +791,7 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 #endif
 }
 
-VideoModeParams RageDisplay_D3D::GetVideoModeParams() const 
+VideoModeParams RageDisplay_D3D::GetActualVideoModeParams() const 
 {
 	VideoModeParams p; 
 	GraphicsWindow::GetParams( p ); 
@@ -830,8 +830,8 @@ void RageDisplay_D3D::SendCurrentMatrices()
 		{
 			static const RageMatrix tex = RageMatrix
 			(
-				0.50f,  0.0f,  0.0f, 0.0f,
-				0.0f,  -0.50f, 0.0f, 0.0f,
+				0.8f,   0.0f,  0.0f, 0.0f,
+				0.0f,  -0.8f,  0.0f, 0.0f,
 				0.0f,   0.0f,  0.0f, 0.0f,
 				0.50,  -0.50,  0.0f, 1.0f
 			);
