@@ -21,6 +21,12 @@ public:
 	 */
 	virtual CString GetPreferredLanguage() { return "EN"; }
 
+	/*
+	 * If this is a second instance, return true.  Optionally, give focus to the existing
+	 * window.
+	 */
+	virtual bool CheckForMultipleInstances() { return false; }
+
 	/* Call this to temporarily enter a high-priority or realtime scheduling (depending
 	 * on the implementation) mode.  This is used to improve timestamp accuracy.  Do as
 	 * little as possible in this mode; hanging in it might hang the system entirely. */

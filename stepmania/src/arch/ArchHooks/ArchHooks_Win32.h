@@ -12,6 +12,7 @@ public:
     void DumpDebugInfo();
 	void RestartProgram();
 	CString GetPreferredLanguage();
+	bool CheckForMultipleInstances();
 
 	int OldThreadPriority;
 	RageMutex *TimeCritMutex;

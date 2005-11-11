@@ -19,6 +19,10 @@
 #pragma comment(lib, "winmm.lib") // for timeGetTime
 #endif
 
+static HANDLE g_hInstanceMutex;
+static bool g_bIsMultipleInstance = false;
+
+
 ArchHooks_Win32::ArchHooks_Win32()
 {
 	SetUnhandledExceptionFilter(CrashHandler);
@@ -31,10 +35,17 @@ ArchHooks_Win32::ArchHooks_Win32()
 	/* Windows boosts priority on keyboard input, among other things.  Disable that for
 	 * the main thread. */
 	SetThreadPriorityBoost( GetCurrentThread(), TRUE );
+
+	g_hInstanceMutex = CreateMutex( NULL, TRUE, PRODUCT_NAME );
+
+	g_bIsMultipleInstance = false;
+	if( GetLastError() == ERROR_ALREADY_EXISTS )
+		g_bIsMultipleInstance = true;
 }
 
 ArchHooks_Win32::~ArchHooks_Win32()
 {
+	CloseHandle( g_hInstanceMutex );
 	delete TimeCritMutex;
 }
 
@@ -45,6 +56,57 @@ void ArchHooks_Win32::DumpDebugInfo()
 	SearchForDebugInfo();
 
 	CheckVideoDriver();
+}
+
+struct CallbackData
+{
+	HWND hParent;
+	HWND hResult;
+};
+
+// Like GW_ENABLEDPOPUP:
+static BOOL CALLBACK GetEnabledPopup( HWND hWnd, LPARAM lParam )
+{
+	CallbackData *pData = (CallbackData *) lParam;
+	if( GetParent(hWnd) != pData->hParent )
+		return TRUE;
+	if( (GetWindowLong(hWnd, GWL_STYLE) & WS_POPUP) != WS_POPUP )
+		return TRUE;
+	if( !IsWindowEnabled(hWnd) )
+		return TRUE;
+
+	pData->hResult = hWnd;
+	return FALSE;
+}
+
+bool ArchHooks_Win32::CheckForMultipleInstances()
+{
+	if( !g_bIsMultipleInstance )
+		return false;
+
+	/* Search for the existing window.  Prefer to use the class name, which is less likely to
+	 * have a false match, and will match the gameplay window.  If that fails, try the window
+	 * name, which should match the loading window. */
+	HWND hWnd = FindWindow( PRODUCT_NAME, NULL );
+	if( hWnd == NULL )
+		hWnd = FindWindow( NULL, PRODUCT_NAME );
+
+	if( hWnd != NULL )
+	{
+		/* If the application has a model dialog box open, we want to be sure to give focus to it,
+		 * not the main window. */
+		CallbackData data;
+		data.hParent = hWnd;
+		data.hResult = NULL;
+		EnumWindows( GetEnabledPopup, (LPARAM) &data );
+
+		if( data.hResult != NULL )
+			SetForegroundWindow( data.hResult );
+		else
+			SetForegroundWindow( hWnd );
+	}
+
+	return true;
 }
 
 static CString g_sDriverVersion, g_sURL;
