@@ -8,7 +8,7 @@ struct VideoModeParams; // for VideoModeParams
 namespace GraphicsWindow
 {
 	/* Set up, and create a hidden window.  This only needs to be called once. */
-	void Initialize();
+	void Initialize( bool bD3D );
 
 	/* Shut down completely. */
 	void Shutdown();

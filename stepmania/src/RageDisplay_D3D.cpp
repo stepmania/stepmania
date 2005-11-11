@@ -213,7 +213,7 @@ RageDisplay_D3D::RageDisplay_D3D()
 
 CString RageDisplay_D3D::Init( VideoModeParams p )
 {
-	GraphicsWindow::Initialize();
+	GraphicsWindow::Initialize( true );
 
 	LOG->Trace( "RageDisplay_D3D::RageDisplay_D3D()" );
 	LOG->MapLog("renderer", "Current renderer: Direct3D");

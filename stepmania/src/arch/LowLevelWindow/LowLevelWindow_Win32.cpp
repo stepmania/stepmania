@@ -35,7 +35,7 @@ LowLevelWindow_Win32::LowLevelWindow_Win32()
 {
 	ASSERT( g_HGLRC == NULL );
 
-	GraphicsWindow::Initialize();
+	GraphicsWindow::Initialize( false );
 }
 
 LowLevelWindow_Win32::~LowLevelWindow_Win32()

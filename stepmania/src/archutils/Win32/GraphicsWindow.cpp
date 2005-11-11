@@ -22,6 +22,10 @@ static bool g_bHasFocus = true;
 static bool g_bLastHasFocus = true;
 static HICON g_hIcon = NULL;
 static bool m_bWideWindowClass;
+static bool g_bD3D = false;
+
+/* If we're fullscreen, this is the mode we set. */
+static DEVMODE g_FullScreenDevMode;
 
 static CString GetNewWindow()
 {
@@ -48,6 +52,7 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 	{
 		const bool bInactive = (LOWORD(wParam) == WA_INACTIVE);
 		const bool bMinimized = (HIWORD(wParam) != 0);
+		const bool bHadFocus = g_bHasFocus;
 		LOG->Trace("WM_ACTIVATE (%i, %i)",
 			bInactive, bMinimized );
 		g_bHasFocus = !bInactive && !bMinimized;
@@ -62,8 +67,29 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 
 			LOG->MapLog( "LOST_FOCUS", "Lost focus to: %s", sStr.c_str() );
 		}
+
+		if( !g_bD3D && !g_CurrentParams.windowed )
+		{
+			/* In OpenGL (not D3D), it's our job to unset and reset the full-screen video mode
+			 * when we focus changes, and to hide and show the window.  Hiding is done in WM_KILLFOCUS,
+			 * because that's where most other apps seem to do it. */
+			if( g_bHasFocus && !bHadFocus )
+			{
+				ChangeDisplaySettings( &g_FullScreenDevMode, CDS_FULLSCREEN );
+				ShowWindow( g_hWndMain, SW_SHOWNORMAL );
+			}
+			else if( !g_bHasFocus && bHadFocus )
+			{
+				ChangeDisplaySettings( NULL, 0 );
+			}
+		}
+
 		return 0;
 	}
+	case WM_KILLFOCUS:
+		if( !g_bD3D && !g_CurrentParams.windowed )
+			ShowWindow( g_hWndMain, SW_SHOWMINNOACTIVE );
+		break;
 
 	/* Is there any reason we should care what size the user resizes the window to? */
 //	case WM_GETMINMAXINFO:
@@ -170,6 +196,7 @@ CString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 	if( ret != DISP_CHANGE_SUCCESSFUL )
 		return "Couldn't set screen mode";
 
+	g_FullScreenDevMode = DevMode;
 	return CString();
 }
 
@@ -318,8 +345,11 @@ void GraphicsWindow::DestroyGraphicsWindow()
 
 }
 
-void GraphicsWindow::Initialize()
+void GraphicsWindow::Initialize( bool bD3D )
 {
+	/* A few things need to be handled differently for D3D. */
+	g_bD3D = bD3D;
+
 	AppInstance inst;
 	do
 	{
