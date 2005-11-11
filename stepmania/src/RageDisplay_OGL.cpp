@@ -675,6 +675,10 @@ CString RageDisplay_OGL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	if( err != "" )
 		return err;	// failed to set video mode
 
+	/* Now that we've initialized, we can search for extensions.  Do this before InvalidateAllGeometry,
+	 * since AllocateBuffers needs it. */
+	SetupExtensions();
+
 	if( bNewDeviceOut )
 	{
 		/* We have a new OpenGL context, so we have to tell our textures that
@@ -687,10 +691,6 @@ CString RageDisplay_OGL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 	}
 
 	this->SetDefaultRenderStates();
-
-	/* Now that we've initialized, we can search for extensions (some of which
-	 * we may need to set up the video mode). */
-	SetupExtensions();
 
 	/* Set vsync the Windows way, if we can.  (What other extensions are there
 	 * to do this, for other archs?) */
@@ -985,8 +985,7 @@ public:
 static set<RageCompiledGeometryHWOGL *> g_GeometryList;
 static void InvalidateAllGeometry()
 {
-	set<RageCompiledGeometryHWOGL *>::iterator it;
-	for( it = g_GeometryList.begin(); it != g_GeometryList.end(); ++it )
+	FOREACHS( RageCompiledGeometryHWOGL*, g_GeometryList, it )
 		(*it)->Invalidate();
 }
 
