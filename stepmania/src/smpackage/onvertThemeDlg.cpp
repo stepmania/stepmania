@@ -35,7 +35,6 @@ void ConvertThemeDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_ANALYZE_METRICS, m_buttonAnalyzeMetrics);
 	DDX_Control(pDX, IDC_BUTTON_EDIT_METRICS, m_buttonEditMetrics);
 	DDX_Control(pDX, IDC_BUTTON_ANALYZE, m_buttonAnalyze);
-	DDX_Control(pDX, IDC_BUTTON_CONVERT, m_buttonConvert);
 	DDX_Control(pDX, IDC_LIST_THEMES, m_listThemes);
 	//}}AFX_DATA_MAP
 }
@@ -98,7 +97,6 @@ void ConvertThemeDlg::OnSelchangeListThemes()
 {
 	// TODO: Add your control notification handler code here
 	BOOL bSomethingSelected = m_listThemes.GetCurSel() != LB_ERR;
-	m_buttonConvert.EnableWindow( bSomethingSelected );
 	m_buttonAnalyze.EnableWindow( bSomethingSelected );
 	m_buttonEditMetrics.EnableWindow( bSomethingSelected );
 	m_buttonAnalyzeMetrics.EnableWindow( bSomethingSelected );

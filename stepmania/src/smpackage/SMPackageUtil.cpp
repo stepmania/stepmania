@@ -79,7 +79,7 @@ void SetDefaultInstallDir( int iInstallDirIndex )
 	// move the specified index to the top of the list
 	CStringArray asInstallDirs;
 	GetStepManiaInstallDirs( asInstallDirs );
-	ASSERT( iInstallDirIndex > 0  &&  iInstallDirIndex < asInstallDirs.size() );
+	ASSERT( iInstallDirIndex >= 0  &&  iInstallDirIndex < asInstallDirs.size() );
 	CString sDefaultInstallDir = asInstallDirs[iInstallDirIndex];
 	asInstallDirs.erase( asInstallDirs.begin()+iInstallDirIndex );
 	asInstallDirs.insert( asInstallDirs.begin(), sDefaultInstallDir );

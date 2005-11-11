@@ -22,7 +22,6 @@ public:
 	CButton	m_buttonAnalyzeMetrics;
 	CButton	m_buttonEditMetrics;
 	CButton	m_buttonAnalyze;
-	CButton	m_buttonConvert;
 	CListBox	m_listThemes;
 	//}}AFX_DATA
 
