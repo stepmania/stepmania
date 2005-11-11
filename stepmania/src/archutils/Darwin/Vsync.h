@@ -1,7 +1,7 @@
 #ifndef VSYNC_H
 #define VSYNC_H
 
-bool wglSwapIntervalEXT( int swapInterval );
+bool OSXSwapIntervalEXT( int swapInterval );
 
 #endif
 

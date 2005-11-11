@@ -89,7 +89,7 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 	if( HasExtension("WGL_EXT_swap_control") )
 		wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) pWind->GetProcAddress("wglSwapIntervalEXT");
 #elif defined(MACOSX)
-	wglSwapIntervalEXT = wglSwapIntervalEXT;
+	wglSwapIntervalEXT = OSXSwapIntervalEXT;
 #endif
 
 	if( HasExtension("GL_EXT_paletted_texture") )

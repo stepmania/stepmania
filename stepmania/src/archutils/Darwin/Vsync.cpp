@@ -2,7 +2,7 @@
 #include <OpenGl/OpenGl.h>
 
 
-bool wglSwapIntervalEXT( int swapInterval )
+bool OSXSwapIntervalEXT( int swapInterval )
 {
     return !CGLSetParameter( CGLGetCurrentContext(), kCGLCPSwapInterval, (long*)(&swapInterval) );
 }
