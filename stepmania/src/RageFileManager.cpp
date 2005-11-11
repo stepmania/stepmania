@@ -397,7 +397,7 @@ void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bO
 		/* More than one driver returned files.  Remove duplicates (case-insensitively). */
 		sort( AddTo.begin()+iOldSize, AddTo.end(), ilt );
 		CStringArray::iterator it = unique( AddTo.begin()+iOldSize, AddTo.end(), ieq );
-		AddTo.erase(it, AddTo.end());
+		AddTo.erase( it, AddTo.end() );
 	}
 }
 
