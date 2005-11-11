@@ -84,6 +84,7 @@ int g_argc = 0;
 char **g_argv = NULL;
 
 static bool g_bHasFocus = true;
+static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", false );
 
 void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame );
 
@@ -999,6 +1000,16 @@ int main(int argc, char* argv[])
 	// load preferences and mount any alternative trees.
 	//
 	PREFSMAN	= new PrefsManager;
+
+	/* Allow HOOKS to check for multiple instances.  We need to do this after PREFS is initialized,
+	 * so ArchHooks can use a preference to turn this off.  We want to do this before ApplyLogPreferences,
+	 * so if we exit because of another instance, we don't try to clobber its log.  We also want to
+	 * do this before opening the loading window, so if we give focus away, we don't flash the window. */
+	if( !g_bAllowMultipleInstances.Get() && HOOKS->CheckForMultipleInstances() )
+	{
+		ShutdownGame();
+		return 0;
+	}
 
 	ApplyLogPreferences();
 
