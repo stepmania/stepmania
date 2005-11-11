@@ -250,10 +250,7 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 	 
 	DIR *pDir = opendir(root+sPath);
 	if( pDir == NULL )
-	{
-		LOG->MapLog("opendir " + root+sPath, "Couldn't opendir(%s%s): %s", root.c_str(), sPath.c_str(), strerror(errno) );
 		return;
-	}
 
 	while( struct dirent *pEnt = readdir(pDir) )
 	{
