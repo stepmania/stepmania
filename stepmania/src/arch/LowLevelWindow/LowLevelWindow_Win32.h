@@ -13,7 +13,7 @@ public:
 	void SwapBuffers();
 	void Update();
 
-	VideoModeParams GetVideoModeParams() const;
+	VideoModeParams GetActualVideoModeParams() const;
 };
 
 #ifdef ARCH_LOW_LEVEL_WINDOW

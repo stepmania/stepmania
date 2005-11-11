@@ -13,7 +13,7 @@ public:
 	void SwapBuffers();
 	void Update();
 
-	VideoModeParams GetVideoModeParams() const { return CurrentParams; }
+	VideoModeParams GetActualVideoModeParams() const { return CurrentParams; }
 
 private:
 	VideoModeParams CurrentParams;

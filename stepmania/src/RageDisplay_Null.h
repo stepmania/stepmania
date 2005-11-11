@@ -8,12 +8,13 @@ class RageDisplay_Null: public RageDisplay
 public:
 	RageDisplay_Null( VideoModeParams p );
 
+	virtual CString GetApiDescription() { return "Null"; }
 	void ResolutionChanged() { }
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
 	bool BeginFrame() { return true; }
 	void EndFrame();
-	VideoModeParams GetVideoModeParams() const { return m_Params; }
+	VideoModeParams GetActualVideoModeParams() const { return m_Params; }
 	void SetBlendMode( BlendMode mode ) { }
 	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false ) { return true; }
 	bool SupportsPerVertexMatrixScale() { return false; }

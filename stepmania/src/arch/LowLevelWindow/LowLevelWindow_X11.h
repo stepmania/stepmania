@@ -15,7 +15,7 @@ public:
 	CString TryVideoMode(VideoModeParams p, bool &bNewDeviceOut);
 	void SwapBuffers();
 
-	VideoModeParams GetVideoModeParams() const { return CurrentParams; }
+	VideoModeParams GetActualVideoModeParams() const { return CurrentParams; }
 
 private:
 	bool m_bWindowIsOpen;

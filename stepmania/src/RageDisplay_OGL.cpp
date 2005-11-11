@@ -706,10 +706,10 @@ void RageDisplay_OGL::SetViewport(int shift_left, int shift_down)
 {
 	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
 	 * Scale them to the actual viewport range. */
-	shift_left = int( shift_left * float(wind->GetVideoModeParams().width) / SCREEN_WIDTH );
-	shift_down = int( shift_down * float(wind->GetVideoModeParams().height) / SCREEN_HEIGHT );
+	shift_left = int( shift_left * float(wind->GetActualVideoModeParams().width) / SCREEN_WIDTH );
+	shift_down = int( shift_down * float(wind->GetActualVideoModeParams().height) / SCREEN_HEIGHT );
 
-	glViewport(shift_left, -shift_down, wind->GetVideoModeParams().width, wind->GetVideoModeParams().height);
+	glViewport(shift_left, -shift_down, wind->GetActualVideoModeParams().width, wind->GetActualVideoModeParams().height);
 }
 
 int RageDisplay_OGL::GetMaxTextureSize() const
@@ -777,8 +777,8 @@ void RageDisplay_OGL::EndFrame()
 
 RageSurface* RageDisplay_OGL::CreateScreenshot()
 {
-	int width = wind->GetVideoModeParams().width;
-	int height = wind->GetVideoModeParams().height;
+	int width = wind->GetActualVideoModeParams().width;
+	int height = wind->GetActualVideoModeParams().height;
 
 	const PixelFormatDesc &desc = PIXEL_FORMAT_DESC[PixelFormat_RGBA8];
 	RageSurface *image = CreateSurface( width, height, desc.bpp,
@@ -789,7 +789,7 @@ RageSurface* RageDisplay_OGL::CreateScreenshot()
 	glReadBuffer( GL_FRONT );
 	AssertNoGLError();
 	
-	glReadPixels(0, 0, wind->GetVideoModeParams().width, wind->GetVideoModeParams().height, GL_RGBA,
+	glReadPixels(0, 0, wind->GetActualVideoModeParams().width, wind->GetActualVideoModeParams().height, GL_RGBA,
 	             GL_UNSIGNED_BYTE, image->pixels);
 	AssertNoGLError();
 
@@ -798,7 +798,10 @@ RageSurface* RageDisplay_OGL::CreateScreenshot()
 	return image;
 }
 
-VideoModeParams RageDisplay_OGL::GetVideoModeParams() const { return wind->GetVideoModeParams(); }
+VideoModeParams RageDisplay_OGL::GetActualVideoModeParams() const 
+{
+	return wind->GetActualVideoModeParams();
+}
 
 static void SetupVertices( const RageSpriteVertex v[], int iNumVerts )
 {
@@ -1334,7 +1337,7 @@ void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNu
 {
 	TurnOffHardwareVBO();
 
-	if( !GetVideoModeParams().bSmoothLines )
+	if( !GetActualVideoModeParams().bSmoothLines )
 	{
 		/* Fall back on the generic polygon-based line strip. */
 		RageDisplay::DrawLineStripInternal(v, iNumVerts, LineWidth );
@@ -1351,8 +1354,8 @@ void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNu
 	/* Our line width is wrt the regular internal SCREEN_WIDTHxSCREEN_HEIGHT screen,
 	 * but these width functions actually want raster sizes (that is, actual pixels).
 	 * Scale the line width and point size by the average ratio of the scale. */
-	float WidthVal = float(wind->GetVideoModeParams().width) / SCREEN_WIDTH;
-	float HeightVal = float(wind->GetVideoModeParams().height) / SCREEN_HEIGHT;
+	float WidthVal = float(wind->GetActualVideoModeParams().width) / SCREEN_WIDTH;
+	float HeightVal = float(wind->GetActualVideoModeParams().height) / SCREEN_HEIGHT;
 	LineWidth *= (WidthVal + HeightVal) / 2;
 
 	/* Clamp the width to the hardware max for both lines and points (whichever
@@ -1787,7 +1790,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 	GLint minFilter;
 	if( bGenerateMipMaps )
 	{
-		if( wind->GetVideoModeParams().bTrilinearFiltering )
+		if( wind->GetActualVideoModeParams().bTrilinearFiltering )
 			minFilter = GL_LINEAR_MIPMAP_LINEAR;
 		else
 			minFilter = GL_LINEAR_MIPMAP_NEAREST;
@@ -1798,7 +1801,7 @@ unsigned RageDisplay_OGL::CreateTexture(
 	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
 
-	if( wind->GetVideoModeParams().bAnisotropicFiltering &&
+	if( wind->GetActualVideoModeParams().bAnisotropicFiltering &&
 		GLExt.HasExtension("GL_EXT_texture_filter_anisotropic") )
 	{
 		GLfloat largest_supported_anisotropy;

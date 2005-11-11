@@ -10,13 +10,14 @@ public:
 	virtual ~RageDisplay_OGL();
 	CString Init( VideoModeParams p, bool bAllowUnacceleratedRenderer );
 
+	virtual CString GetApiDescription() { return "OpenGL"; }
 	bool IsSoftwareRenderer();
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
 	bool BeginFrame();	
 	void EndFrame();
-	VideoModeParams GetVideoModeParams() const;
+	VideoModeParams GetActualVideoModeParams() const;
 	void SetBlendMode( BlendMode mode );
 	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false );
 	bool SupportsPerVertexMatrixScale();

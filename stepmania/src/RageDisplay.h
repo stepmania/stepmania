@@ -133,6 +133,8 @@ public:
 	/* This is needed or the overridden classes' dtors will not be called. */
 	virtual ~RageDisplay() { }
 
+	virtual CString GetApiDescription() = 0;
+
 	// Don't override this.  Override TryVideoMode() instead.
 	// This will set the video mode to be as close as possible to params.
 	// Return true if device was re-created and we need to reload textures.
@@ -143,8 +145,8 @@ public:
 
 	virtual bool BeginFrame() = 0;	
 	virtual void EndFrame();
-	virtual VideoModeParams GetVideoModeParams() const = 0;
-	bool IsWindowed() const { return this->GetVideoModeParams().windowed; }
+	virtual VideoModeParams GetActualVideoModeParams() const = 0;
+	bool IsWindowed() const { return this->GetActualVideoModeParams().windowed; }
 	
 	virtual void SetBlendMode( BlendMode mode ) = 0;
 

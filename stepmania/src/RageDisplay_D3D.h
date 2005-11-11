@@ -10,12 +10,13 @@ public:
 	~RageDisplay_D3D();
 	CString Init( VideoModeParams p );
 
+	virtual CString GetApiDescription() { return "D3D"; }
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
 	bool BeginFrame();	
 	void EndFrame();
-	VideoModeParams GetVideoModeParams() const;
+	VideoModeParams GetActualVideoModeParams() const;
 	void SetBlendMode( BlendMode mode );
 	bool SupportsTextureFormat( PixelFormat pixfmt, bool realtime=false );
 	bool SupportsThreadedRendering();

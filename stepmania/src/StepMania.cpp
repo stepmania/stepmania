@@ -112,14 +112,15 @@ void GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 static void StoreActualGraphicOptions( bool initial )
 {
 	// find out what we actually have
-	PREFSMAN->m_bWindowed.Set( DISPLAY->GetVideoModeParams().windowed );
-	PREFSMAN->m_iDisplayWidth.Set( DISPLAY->GetVideoModeParams().width );
-	PREFSMAN->m_iDisplayHeight.Set( DISPLAY->GetVideoModeParams().height );
-	PREFSMAN->m_iDisplayColorDepth.Set( DISPLAY->GetVideoModeParams().bpp );
-	PREFSMAN->m_iRefreshRate.Set( DISPLAY->GetVideoModeParams().rate );
-	PREFSMAN->m_bVsync.Set( DISPLAY->GetVideoModeParams().vsync );
+	PREFSMAN->m_bWindowed			.Set( DISPLAY->GetActualVideoModeParams().windowed );
+	PREFSMAN->m_iDisplayWidth		.Set( DISPLAY->GetActualVideoModeParams().width );
+	PREFSMAN->m_iDisplayHeight		.Set( DISPLAY->GetActualVideoModeParams().height );
+	PREFSMAN->m_iDisplayColorDepth	.Set( DISPLAY->GetActualVideoModeParams().bpp );
+	PREFSMAN->m_iRefreshRate		.Set( DISPLAY->GetActualVideoModeParams().rate );
+	PREFSMAN->m_bVsync				.Set( DISPLAY->GetActualVideoModeParams().vsync );
 
-	CString log = ssprintf("%s %dx%d %d color %d texture %dHz %s %s",
+	CString log = ssprintf("%s %s %dx%d %d color %d texture %dHz %s %s",
+		DISPLAY->GetApiDescription().c_str(),
 		PREFSMAN->m_bWindowed ? "Windowed" : "Fullscreen",
 		(int)PREFSMAN->m_iDisplayWidth, 
 		(int)PREFSMAN->m_iDisplayHeight, 
@@ -133,7 +134,7 @@ static void StoreActualGraphicOptions( bool initial )
 	else
 		SCREENMAN->SystemMessage( log );
 
-	Dialog::SetWindowed( DISPLAY->GetVideoModeParams().windowed );
+	Dialog::SetWindowed( DISPLAY->GetActualVideoModeParams().windowed );
 }
 
 RageDisplay *CreateDisplay();

@@ -20,7 +20,7 @@ public:
 	virtual void SwapBuffers() = 0;
 	virtual void Update() { }
 
-	virtual VideoModeParams GetVideoModeParams() const = 0;
+	virtual VideoModeParams GetActualVideoModeParams() const = 0;
 };
 
 #endif

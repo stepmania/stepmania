@@ -217,7 +217,7 @@ void LowLevelWindow_SDL::Update()
 				break;
 
 			if( event.active.gain  &&		// app regaining focus
-				!DISPLAY->GetVideoModeParams().windowed )	// full screen
+				!DISPLAY->GetActualVideoModeParams().windowed )	// full screen
 			{
 				// need to reacquire an OGL context
 				/* This hasn't been done in a long time, since HandleSDLEvents was
@@ -225,7 +225,7 @@ void LowLevelWindow_SDL::Update()
 				 * it resulted in input not being regained and textures being erased,
 				 * so I left it disabled; but this might be needed on some cards (with
 				 * the above fixed) ... */
-				// DISPLAY->SetVideoMode( DISPLAY->GetVideoModeParams() );
+				// DISPLAY->SetVideoMode( DISPLAY->GetActualVideoModeParams() );
 			}
 
 			{
