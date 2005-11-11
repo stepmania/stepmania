@@ -12,7 +12,7 @@
 
 #include <set>
 
-static const CString g_sClassName = CString(PRODUCT_NAME) + " LowLevelWindow_Win32";
+static const CString g_sClassName = PRODUCT_NAME;
 
 static HWND g_hWndMain;
 static HDC g_HDC;
