@@ -173,8 +173,8 @@ Section "Main Section" SecMain
 	; Do this copy before anything else.  It's the most likely to fail.  
 	; Possible failure reasons are: scratched CD, user tried to copy the installer but forgot the pcks.
 	CreateDirectory $INSTDIR\pcks
-	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\Resources\*.idx" $INSTDIR\pcks 1
-	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\Resources\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
+	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\pcks\*.idx" $INSTDIR\pcks 1
+	CopyFiles /SILENT "$EXEDIR\${PRODUCT_NAME}.app\Contents\pcks\*.pck" $INSTDIR\pcks 650000	; assume a CD full of data
 	IfErrors do_error do_no_error
 	do_error:
 	MessageBox MB_OK|MB_ICONSTOP "Fatal error copying pck files."
