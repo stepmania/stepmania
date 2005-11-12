@@ -14,6 +14,7 @@
 #else
 # include <OpenGL/gl.h>
 # include <OpenGL/glu.h>
+# include "VSync.h"
 #endif
 
 #undef __glext_h_
