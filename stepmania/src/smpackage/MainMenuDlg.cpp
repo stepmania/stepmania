@@ -10,6 +10,7 @@
 #include "ChangeGameSettings.h"
 #include "RageUtil.h"
 #include "SMPackageUtil.h"
+#include ".\mainmenudlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -44,9 +45,11 @@ BEGIN_MESSAGE_MAP(MainMenuDlg, CDialog)
 	ON_BN_CLICKED(IDC_EXPORT_PACKAGES, OnExportPackages)
 	ON_BN_CLICKED(IDC_EDIT_INSTALLATIONS, OnEditInstallations)
 	ON_BN_CLICKED(IDC_ANALYZE_ELEMENTS, OnAnalyzeElements)
-	ON_BN_CLICKED(IDC_CHANGE_API, OnChangeApi)
 	ON_BN_CLICKED(IDC_CREATE_SONG, OnCreateSong)
-	ON_BN_CLICKED(IDC_OPEN_STEPMANIA_INI, OnOpenStepmaniaIni)
+	ON_BN_CLICKED(IDC_CLEAR_KEYMAPS, OnBnClickedClearKeymaps)
+	ON_BN_CLICKED(IDC_CHANGE_PREFERENCES, OnBnClickedChangePreferences)
+	ON_BN_CLICKED(IDC_OPEN_PREFERENCES, OnBnClickedOpenPreferences)
+	ON_BN_CLICKED(IDC_CLEAR_PREFERENCES, OnBnClickedClearPreferences)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -72,13 +75,6 @@ void MainMenuDlg::OnAnalyzeElements()
 {
 	// TODO: Add your control notification handler code here
 	ConvertThemeDlg dlg;
-	int nResponse = dlg.DoModal();	
-}
-
-void MainMenuDlg::OnChangeApi() 
-{
-	// TODO: Add your control notification handler code here
-	ChangeGameSettings dlg;
 	int nResponse = dlg.DoModal();	
 }
 
@@ -192,8 +188,52 @@ BOOL MainMenuDlg::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void MainMenuDlg::OnOpenStepmaniaIni() 
+void MainMenuDlg::OnBnClickedClearKeymaps()
 {
 	// TODO: Add your control notification handler code here
-	::ShellExecute( this->m_hWnd, "open", STEPMANIA_INI, "", "", SW_SHOWNORMAL  );
+	
+	if( !DoesFileExist( KEYMAPS_INI ) )
+	{
+		MessageBox( KEYMAPS_INI + " is already cleared." );
+	}
+	else
+	{
+		if( !DeleteFile( KEYMAPS_INI ) )
+			MessageBox( "Failed to delete file " + KEYMAPS_INI + "." );
+	}
+}
+
+void MainMenuDlg::OnBnClickedChangePreferences()
+{
+	// TODO: Add your control notification handler code here
+	ChangeGameSettings dlg;
+	int nResponse = dlg.DoModal();	
+}
+
+void MainMenuDlg::OnBnClickedOpenPreferences()
+{
+	// TODO: Add your control notification handler code here
+	if( !DoesFileExist( PREFERENCES_INI ) )
+	{
+		MessageBox( PREFERENCES_INI + " doesn't exist.  It will be created next time you start the game." );
+	}
+	else
+	{
+		if( NULL == ::ShellExecute( this->m_hWnd, "open", PREFERENCES_INI, "", "", SW_SHOWNORMAL ) )
+			MessageBox( "Failed to open " + PREFERENCES_INI + ": " + GetLastErrorString() );
+	}
+}
+
+void MainMenuDlg::OnBnClickedClearPreferences()
+{
+	// TODO: Add your control notification handler code here
+	if( !DoesFileExist( PREFERENCES_INI ) )
+	{
+		MessageBox( PREFERENCES_INI + " is already cleared." );
+	}
+	else
+	{
+		if( !DeleteFile( PREFERENCES_INI ) )
+			MessageBox( "Failed to delete file " + PREFERENCES_INI + "." );
+	}
 }

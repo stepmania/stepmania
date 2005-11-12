@@ -331,7 +331,7 @@ Section "Main Section" SecMain
 	;Delete "$INSTDIR\Save\${PRODUCT_NAME}.ini"
 	;stepmania_ini_not_present:
 	;; Move ini into Save\
-	;Rename "$INSTDIR\Save\${PRODUCT_NAME}.ini" "$INSTDIR\${PRODUCT_NAME}.ini"
+	;Rename "$INSTDIR\${PRODUCT_NAME}.ini" "$INSTDIR\Save\Preferences.ini"
 
 	; Create Start Menu icons
 	SetShellVarContext current  # 	'all' doesn't work on Win9x

@@ -46,12 +46,17 @@
 #define IDC_BUTTON_CONVERT              1024
 #define IDC_BUTTON_ANALYZE              1025
 #define IDC_CHANGE_API                  1025
+#define IDC_CHANGE_PREFERENCES          1025
 #define IDC_BUTTON_EDIT_METRICS         1026
 #define IDC_CREATE_SONG                 1026
 #define IDC_BUTTON_ANALYZE_METRICS      1027
 #define IDC_OPEN_STEPMANIA_INI          1027
+#define IDC_OPEN_PREFERENCES            1027
 #define IDC_EDIT_VALUE                  1028
+#define IDC_CLEAR_SETTINGS              1028
+#define IDC_CLEAR_PREFERENCES           1028
 #define IDC_EDIT_DEFAULT                1029
+#define IDC_CLEAR_KEYMAPS               1029
 #define IDC_BUTTON_REFRESH              1035
 #define IDC_BUTTON_SAVE                 1036
 #define IDC_BUTTON_OVERRIDE             1037

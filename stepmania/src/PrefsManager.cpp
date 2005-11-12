@@ -13,7 +13,7 @@
 #include "StepMania.h"
 
 const CString DEFAULTS_INI_PATH		= "Data/Defaults.ini";		// these can be overridden
-const CString STEPMANIA_INI_PATH	= "Save/" PRODUCT_NAME ".ini";	// overlay on Defaults.ini, contains the user's choices
+const CString PREFERENCES_INI_PATH	= "Save/Preferences.ini";	// overlay on Defaults.ini, contains the user's choices
 const CString STATIC_INI_PATH		= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
 const CString TYPE_TXT_FILE			= "Data/Type.txt";
 
@@ -464,8 +464,8 @@ void PrefsManager::RestoreGamePrefs()
 void PrefsManager::ReadPrefsFromDisk()
 {
 	ReadPrefsFromFile( DEFAULTS_INI_PATH, GetPreferencesSection() );
-	ReadPrefsFromFile( STEPMANIA_INI_PATH, "Options" );
-	ReadGamePrefsFromIni( STEPMANIA_INI_PATH );
+	ReadPrefsFromFile( PREFERENCES_INI_PATH, "Options" );
+	ReadGamePrefsFromIni( PREFERENCES_INI_PATH );
 	ReadPrefsFromFile( STATIC_INI_PATH, GetPreferencesSection() );
 
 	if( !m_sCurrentGame.Get().empty() )
@@ -543,7 +543,7 @@ void PrefsManager::SavePrefsToDisk()
 {
 	IniFile ini;
 	SavePrefsToIni( ini );
-	ini.WriteFile( STEPMANIA_INI_PATH );
+	ini.WriteFile( PREFERENCES_INI_PATH );
 }
 
 void PrefsManager::SavePrefsToIni( IniFile &ini )

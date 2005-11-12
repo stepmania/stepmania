@@ -4,7 +4,8 @@
 #include "RageUtil.h"
 #include "../ProductInfo.h"
 
-static const CString STEPMANIA_INI = "Save\\" + CString(PRODUCT_NAME) + ".ini";
+static const CString PREFERENCES_INI = "Save\\Preferences.ini";
+static const CString KEYMAPS_INI = "Save\\Keymaps.ini";
 
 void WriteStepManiaInstallDirs( const CStringArray& asInstallDirsToWrite );
 void GetStepManiaInstallDirs( CStringArray& asInstallDirsOut );

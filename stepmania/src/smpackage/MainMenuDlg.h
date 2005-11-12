@@ -42,8 +42,13 @@ protected:
 	afx_msg void OnCreateSong();
 	virtual BOOL OnInitDialog();
 	afx_msg void OnOpenStepmaniaIni();
+	afx_msg void OnBnClickedClearKeymaps();
+	afx_msg void OnBnClickedChangePreferences();
+	afx_msg void OnBnClickedOpenPreferences();
+	afx_msg void OnBnClickedClearPreferences();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
 };
 
 //{{AFX_INSERT_LOCATION}}

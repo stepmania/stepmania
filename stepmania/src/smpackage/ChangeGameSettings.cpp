@@ -51,7 +51,7 @@ BOOL ChangeGameSettings::OnInitDialog()
 	// Fill the radio buttons
 	//
 	IniFile ini;
-	ini.SetPath( STEPMANIA_INI );
+	ini.SetPath( PREFERENCES_INI );
 	ini.ReadFile();
 
 	CString sValue;
@@ -100,7 +100,7 @@ void ChangeGameSettings::OnOK()
 {
 	// TODO: Add extra validation here
 	IniFile ini;
-	ini.SetPath( STEPMANIA_INI );
+	ini.SetPath( PREFERENCES_INI );
 	ini.ReadFile();
 	
 	
