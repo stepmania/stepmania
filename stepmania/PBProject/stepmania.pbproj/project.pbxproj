@@ -661,7 +661,6 @@
 		AA8A3EC906EDDAE4002F25AB /* DarwinThreadHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8A3EC806EDDAE4002F25AB /* DarwinThreadHelpers.h */; };
 		AA8A405106EEFF72002F25AB /* RageUtil_BackgroundLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8A404F06EEFF72002F25AB /* RageUtil_BackgroundLoader.cpp */; };
 		AA8A405206EEFF72002F25AB /* RageUtil_BackgroundLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8A405006EEFF72002F25AB /* RageUtil_BackgroundLoader.h */; };
-		AA8B8C4A091F48C000D14C5F /* product.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = AA8B8C49091F48C000D14C5F /* product.xcconfig */; };
 		AA8BD2A807C9391B00EA04E1 /* LuaReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8BD2A107C9391B00EA04E1 /* LuaReference.cpp */; };
 		AA8BD2A907C9391B00EA04E1 /* LuaReference.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8BD2A207C9391B00EA04E1 /* LuaReference.h */; };
 		AA8BD2AA07C9391B00EA04E1 /* MessageManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8BD2A307C9391B00EA04E1 /* MessageManager.cpp */; };
@@ -1090,7 +1089,7 @@
 		AA28B47A058F2F5D0097C109 /* MemoryCardManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = MemoryCardManager.cpp; path = ../src/MemoryCardManager.cpp; sourceTree = "<group>"; usesTabs = 1; };
 		AA28B47B058F2F5D0097C109 /* MemoryCardManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = MemoryCardManager.h; path = ../src/MemoryCardManager.h; sourceTree = "<group>"; usesTabs = 1; };
 		AA29CE570558741A00961A51 /* Info-StepMania.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Info-StepMania.plist"; sourceTree = "<group>"; };
-		AA29CE580558741A00961A51 /* In The Groove.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "In The Groove.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA29CE580558741A00961A51 /* StepMania.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StepMania.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA2FB62909120FC5000FD574 /* PreferredLanguage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferredLanguage.m; sourceTree = "<group>"; };
 		AA2FB638091212AF000FD574 /* LifeMeter.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LifeMeter.cpp; path = ../src/LifeMeter.cpp; sourceTree = "<group>"; };
 		AA34ED1F0611FB83003E5955 /* CAConditionalMacros.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; path = CAConditionalMacros.h; sourceTree = "<group>"; usesTabs = 1; };
@@ -1944,7 +1943,7 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				AA29CE580558741A00961A51 /* In The Groove.app */,
+				AA29CE580558741A00961A51 /* StepMania.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3664,7 +3663,7 @@
 			name = stepmania;
 			productInstallPath = "$(HOME)/Applications";
 			productName = "SDL App";
-			productReference = AA29CE580558741A00961A51 /* In The Groove.app */;
+			productReference = AA29CE580558741A00961A51 /* StepMania.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -3697,7 +3696,6 @@
 				AA29CD3D0558741A00961A51 /* InfoPlist.strings in Resources */,
 				AA29CD3E0558741A00961A51 /* smicon.icns in Resources */,
 				AA817DF80622889500EA44DB /* splash.png in Resources */,
-				AA8B8C4A091F48C000D14C5F /* product.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4191,7 +4189,8 @@
 				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_FAST_OBJC_DISPATCH = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_MODEL_TUNING = G4;
 				GCC_OPTIMIZATION_LEVEL = 3;
