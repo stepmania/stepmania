@@ -137,7 +137,7 @@
 
 ;--------------------------------
 ;Utility Functions
-!ifdef INSTALL_SMPACKAGE
+!ifdef ASSOCIATE_SMZIP
 !define SHCNE_ASSOCCHANGED 0x08000000
 !define SHCNF_IDLIST 0
  
@@ -182,11 +182,11 @@ Section "Main Section" SecMain
 	do_no_error:
 !endif
 
-!ifdef INSTALL_SMPACKAGE
-	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command" "" '"$INSTDIR\Program\smpackage.exe" "%1"'
+!ifdef ASSOCIATE_SMZIP
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\tools.exe\shell\open\command" "" '"$INSTDIR\Program\tools.exe" "%1"'
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile" "" "SMZIP package"
-	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\Program\smpackage.exe,0"
-	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\Program\smpackage.exe" "%1"'
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\DefaultIcon" "" "$INSTDIR\Program\tools.exe,0"
+	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile\shell\open\command" "" '"$INSTDIR\Program\tools.exe" "%1"'
 	WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip" "" "smzipfile"
 !endif
 
@@ -296,9 +296,9 @@ Section "Main Section" SecMain
 	SetOutPath "$INSTDIR\Program"
 	File "Program\${PRODUCT_NAME}.exe"
 	File "Program\${PRODUCT_NAME}.vdi"
-!ifdef INSTALL_SMPACKAGE
-	File "Program\smpackage.exe"
+	File "Program\tools.exe"
 	File "Program\mfc71.dll"
+!ifdef ASSOCIATE_SMZIP
 	Call RefreshShellIcons
 !endif
 	File "Program\msvcr71.dll"
@@ -342,9 +342,7 @@ Section "Main Section" SecMain
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open ${PRODUCT_NAME} Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 !endif
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Statistics.lnk" "$INSTDIR\Save\MachineProfile\Stats.xml"
-!ifdef INSTALL_SMPACKAGE
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Tools and Package Exporter.lnk" "$INSTDIR\Program\smpackage.exe"
-!endif
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Tools.lnk" "$INSTDIR\Program\tools.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Documentation.lnk" "$INSTDIR\README-FIRST.html"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninstall.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Go to the ${PRODUCT_NAME} web site.lnk" "${PRODUCT_URL}"
@@ -577,8 +575,8 @@ Section "Uninstall"
 	RMDir /r "$INSTDIR\pcks"
 !endif
 
-!ifdef INSTALL_SMPACKAGE
-	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\smpackage.exe\shell\open\command"
+!ifdef ASSOCIATE_SMZIP
+	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\Applications\tools.exe\shell\open\command"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\smzipfile"
 	DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Classes\.smzip"
 !endif
@@ -645,9 +643,9 @@ Section "Uninstall"
 !endif
 
 	Delete "$INSTDIR\Program\${PRODUCT_NAME}.exe"
-!ifdef INSTALL_SMPACKAGE
-	Delete "$INSTDIR\Program\smpackage.exe"
+	Delete "$INSTDIR\Program\tools.exe"
 	Delete "$INSTDIR\Program\mfc71.dll"
+!ifdef ASSOCIATE_SMZIP
 	Call un.RefreshShellIcons
 !endif
 	Delete "$INSTDIR\Program\${PRODUCT_NAME}.vdi"
