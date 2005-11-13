@@ -27,20 +27,20 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 	}
 	g_X11Display = X11Helper::Dpy;
 
-	const int iScreen = DefaultScreen( g_X11Display );
+	const int iScreen = DefaultScreen( X11Helper::Dpy );
 
-	LOG->Info( "Display: %s (screen %i)", DisplayString(g_X11Display), iScreen );
-	LOG->Info( "Direct rendering: %s", glXIsDirect( g_X11Display, glXGetCurrentContext() )? "yes":"no" );
+	LOG->Info( "Display: %s (screen %i)", DisplayString(X11Helper::Dpy), iScreen );
+	LOG->Info( "Direct rendering: %s", glXIsDirect( X11Helper::Dpy, glXGetCurrentContext() )? "yes":"no" );
 
-	int iXServerVersion = XVendorRelease( g_X11Display ); /* eg. 40201001 */
+	int iXServerVersion = XVendorRelease( X11Helper::Dpy ); /* eg. 40201001 */
 	int iMajor = iXServerVersion / 10000000; iXServerVersion %= 10000000;
 	int iMinor = iXServerVersion / 100000;   iXServerVersion %= 100000;
 	int iRevision = iXServerVersion / 1000;  iXServerVersion %= 1000;
 	int iPatch = iXServerVersion;
 
-	LOG->Info( "X server vendor: %s [%i.%i.%i.%i]", XServerVendor( g_X11Display ), iMajor, iMinor, iRevision, iPatch );
-	LOG->Info( "Server GLX vendor: %s [%s]", glXQueryServerString( g_X11Display, iScreen, GLX_VENDOR ), glXQueryServerString( g_X11Display, iScreen, GLX_VERSION ) );
-	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( g_X11Display, GLX_VENDOR ), glXGetClientString( g_X11Display, GLX_VERSION ) );
+	LOG->Info( "X server vendor: %s [%i.%i.%i.%i]", XServerVendor( X11Helper::Dpy ), iMajor, iMinor, iRevision, iPatch );
+	LOG->Info( "Server GLX vendor: %s [%s]", glXQueryServerString( X11Helper::Dpy, iScreen, GLX_VENDOR ), glXQueryServerString( X11Helper::Dpy, iScreen, GLX_VERSION ) );
+	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( X11Helper::Dpy, GLX_VENDOR ), glXGetClientString( X11Helper::Dpy, GLX_VERSION ) );
 }
 
 LowLevelWindow_X11::~LowLevelWindow_X11()
@@ -123,7 +123,7 @@ CString LowLevelWindow_X11::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut
 		m_bWindowIsOpen = true;
 
 		char *szWindowTitle = const_cast<char *>( p.sWindowTitle.c_str() );
-		XChangeProperty( g_X11Display, X11Helper::Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
+		XChangeProperty( X11Helper::Dpy, X11Helper::Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
 				reinterpret_cast<unsigned char*>(szWindowTitle), strlen(szWindowTitle) );
 
 		GLXContext ctxt = glXCreateContext(X11Helper::Dpy, xvi, NULL, True);
@@ -185,7 +185,7 @@ CString LowLevelWindow_X11::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut
 
 bool LowLevelWindow_X11::IsSoftwareRenderer( CString &sError )
 {
-	if( glXIsDirect( g_X11Display, glXGetCurrentContext() ) )
+	if( glXIsDirect( X11Helper::Dpy, glXGetCurrentContext() ) )
 		return false;
 
 	sError = "Direct rendering is not available.";
