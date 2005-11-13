@@ -5,6 +5,8 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
+#include <GL/gl.h>
+
 static PIXELFORMATDESCRIPTOR g_CurrentPixelFormat;
 static HGLRC g_HGLRC = NULL;
 
@@ -209,6 +211,16 @@ CString LowLevelWindow_Win32::TryVideoMode( VideoModeParams p, bool &bNewDeviceO
 		}
 	}
 	return CString();	// we set the video mode successfully
+}
+
+bool LowLevelWindow_Win32::IsSoftwareRenderer( CString &sError )
+{
+	if( strcmp((const char*)glGetString(GL_VENDOR),"Microsoft Corporation") &&
+		strcmp((const char*)glGetString(GL_RENDERER),"GDI Generic") )
+		return false;
+
+	sError = "OpenGL hardware acceleration is not available.";
+	return true;
 }
 
 void LowLevelWindow_Win32::SwapBuffers()
