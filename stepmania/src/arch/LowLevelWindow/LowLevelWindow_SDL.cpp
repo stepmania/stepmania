@@ -6,11 +6,6 @@
 #include "StepMania.h"
 #include "GameLoop.h"
 
-#if defined(UNIX)
-#include <X11/Xlib.h>
-
-extern Display *g_X11Display;
-#endif
 #if defined(MACOSX)
 extern "C"
 {
@@ -154,18 +149,6 @@ CString LowLevelWindow_SDL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut
 		LOG->Info( "SDL version: %i.%i.%i", ver->major, ver->minor, ver->patch );
 	}
 
-#if defined(unix)
-	{
-		SDL_SysWMinfo info;
-		SDL_VERSION(&info.version);
-
-		g_X11Display = NULL;
-		if ( SDL_GetWMInfo(&info) < 0 )
-			LOG->Warn("SDL_GetWMInfo failed: %s", SDL_GetError());
-		else
-			g_X11Display = info.info.x11.display;
-	}
-#endif
 #if defined(MACOSX)
 	if (p.windowed)
 		SetupWindow();

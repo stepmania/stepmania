@@ -15,17 +15,11 @@
 #include <X11/extensions/XTest.h>
 #endif
 
-extern Display *g_X11Display;
-
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
 	m_bWindowIsOpen = false;
-	g_X11Display = NULL;
 	if( !X11Helper::Go() )
-	{
 		RageException::Throw( "Failed to establish a connection with the X server." );
-	}
-	g_X11Display = X11Helper::Dpy;
 
 	const int iScreen = DefaultScreen( X11Helper::Dpy );
 

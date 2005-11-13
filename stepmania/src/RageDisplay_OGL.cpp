@@ -286,16 +286,6 @@ static void TurnOffHardwareVBO()
 	}
 }
 
-#if defined(UNIX)
-#define Font X11___Font
-#define Screen X11___Screen
-#include "GL/glx.h"
-#undef Font
-#undef Screen
-
-Display *g_X11Display = NULL;
-#endif
-
 RageDisplay_OGL::RageDisplay_OGL()
 {
 	LOG->Trace( "RageDisplay_OGL::RageDisplay_OGL()" );
