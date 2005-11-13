@@ -178,6 +178,15 @@ CString LowLevelWindow_X11::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut
 	return ""; // Success
 }
 
+bool LowLevelWindow_X11::IsSoftwareRenderer( CString &sError )
+{
+	if( glXIsDirect( g_X11Display, glXGetCurrentContext() ) )
+		return false;
+
+	sError = "Direct rendering is not available.";
+	return true;
+}
+
 void LowLevelWindow_X11::SwapBuffers()
 {
 	glXSwapBuffers( X11Helper::Dpy, X11Helper::Win );

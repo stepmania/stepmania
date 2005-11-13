@@ -13,6 +13,7 @@ public:
 
 	void *GetProcAddress(CString s);
 	CString TryVideoMode(VideoModeParams p, bool &bNewDeviceOut);
+	bool IsSoftwareRenderer( CString &sError );
 	void SwapBuffers();
 
 	VideoModeParams GetActualVideoModeParams() const { return CurrentParams; }
