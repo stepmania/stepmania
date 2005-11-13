@@ -3,12 +3,17 @@
 #include "RageLog.h"
 #include "RageException.h"
 #include "archutils/Unix/X11Helper.h"
+#include "PrefsManager.h" // XXX
 
 #include <stack>
 #include <math.h>	// ceil()
 #define GLX_GLXEXT_PROTOTYPES
 #include <GL/glx.h>	// All sorts of stuff...
 #include <X11/Xatom.h>
+
+#if defined(HAVE_LIBXTST)
+#include <X11/extensions/XTest.h>
+#endif
 
 extern Display *g_X11Display;
 
@@ -190,6 +195,38 @@ bool LowLevelWindow_X11::IsSoftwareRenderer( CString &sError )
 void LowLevelWindow_X11::SwapBuffers()
 {
 	glXSwapBuffers( X11Helper::Dpy, X11Helper::Win );
+
+	if( PREFSMAN->m_bDisableScreenSaver )
+	{
+		/* Disable the screensaver. */
+#if defined(HAVE_LIBXTST)
+		/* This causes flicker. */
+		// XForceScreenSaver( X11Helper::Dpy, ScreenSaverReset );
+		
+		/*
+		 * Instead, send a null relative mouse motion, to trick X into thinking there has been
+		 * user activity. 
+		 *
+		 * This also handles XScreenSaver; XForceScreenSaver only handles the internal X11
+		 * screen blanker.
+		 *
+		 * This will delay the X blanker, DPMS and XScreenSaver from activating, and will
+		 * disable the blanker and XScreenSaver if they're already active (unless XSS is
+		 * locked).  For some reason, it doesn't un-blank DPMS if it's already active.
+		 */
+
+		XLockDisplay( X11Helper::Dpy );
+
+		int event_base, error_base, major, minor;
+		if( XTestQueryExtension( X11Helper::Dpy, &event_base, &error_base, &major, &minor ) )
+		{
+			XTestFakeRelativeMotionEvent( X11Helper::Dpy, 0, 0, 0 );
+			XSync( X11Helper::Dpy, False );
+		}
+
+		XUnlockDisplay( X11Helper::Dpy );
+#endif
+	}
 }
 
 /*
