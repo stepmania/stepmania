@@ -17,6 +17,8 @@ public:
 	// need to be reloaded.
 	virtual CString TryVideoMode( VideoModeParams p, bool &bNewDeviceOut ) = 0;
 
+	virtual bool IsSoftwareRenderer( CString &sError ) { return false; }
+
 	virtual void SwapBuffers() = 0;
 	virtual void Update() { }
 
