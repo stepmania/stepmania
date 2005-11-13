@@ -678,7 +678,7 @@ bool RageDisplay_OGL::BeginFrame()
 {
 	glClearColor( 0,0,0,1 );
 	SetZWrite( true );
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	return true;
 }
 
