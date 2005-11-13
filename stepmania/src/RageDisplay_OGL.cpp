@@ -296,28 +296,6 @@ static void TurnOffHardwareVBO()
 Display *g_X11Display = NULL;
 #endif
 
-static void LogGLXDebugInformation()
-{
-#if defined(UNIX)
-	ASSERT( g_X11Display );
-
-	const int scr = DefaultScreen( g_X11Display );
-
-	LOG->Info( "Display: %s (screen %i)", DisplayString(g_X11Display), scr );
-	LOG->Info( "Direct rendering: %s", glXIsDirect( g_X11Display, glXGetCurrentContext() )? "yes":"no" );
-
-	int XServerVersion = XVendorRelease( g_X11Display ); /* eg. 40201001 */
-	int major = XServerVersion / 10000000; XServerVersion %= 10000000;
-	int minor = XServerVersion / 100000;   XServerVersion %= 100000;
-	int revision = XServerVersion / 1000;  XServerVersion %= 1000;
-	int patch = XServerVersion;
-
-	LOG->Info( "X server vendor: %s [%i.%i.%i.%i]", XServerVendor( g_X11Display ), major, minor, revision, patch );
-	LOG->Info( "Server GLX vendor: %s [%s]", glXQueryServerString( g_X11Display, scr, GLX_VENDOR ), glXQueryServerString( g_X11Display, scr, GLX_VERSION ) );
-	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( g_X11Display, GLX_VENDOR ), glXGetClientString( g_X11Display, GLX_VERSION ) );
-#endif
-}
-
 RageDisplay_OGL::RageDisplay_OGL()
 {
 	LOG->Trace( "RageDisplay_OGL::RageDisplay_OGL()" );
@@ -439,8 +417,6 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 	LOG->Info( "OGL Texture units: %i", g_iMaxTextureUnits );
 	LOG->Info( "OGL Extensions: %s", glGetString(GL_EXTENSIONS) );
 	LOG->Info( "GLU Version: %s", gluGetString(GLU_VERSION) );
-
-	LogGLXDebugInformation();
 
 	if( IsSoftwareRenderer() )
 	{

@@ -21,6 +21,21 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 		RageException::Throw( "Failed to establish a connection with the X server." );
 	}
 	g_X11Display = X11Helper::Dpy;
+
+	const int iScreen = DefaultScreen( g_X11Display );
+
+	LOG->Info( "Display: %s (screen %i)", DisplayString(g_X11Display), iScreen );
+	LOG->Info( "Direct rendering: %s", glXIsDirect( g_X11Display, glXGetCurrentContext() )? "yes":"no" );
+
+	int iXServerVersion = XVendorRelease( g_X11Display ); /* eg. 40201001 */
+	int iMajor = iXServerVersion / 10000000; iXServerVersion %= 10000000;
+	int iMinor = iXServerVersion / 100000;   iXServerVersion %= 100000;
+	int iRevision = iXServerVersion / 1000;  iXServerVersion %= 1000;
+	int iPatch = iXServerVersion;
+
+	LOG->Info( "X server vendor: %s [%i.%i.%i.%i]", XServerVendor( g_X11Display ), iMajor, iMinor, iRevision, iPatch );
+	LOG->Info( "Server GLX vendor: %s [%s]", glXQueryServerString( g_X11Display, iScreen, GLX_VENDOR ), glXQueryServerString( g_X11Display, iScreen, GLX_VERSION ) );
+	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( g_X11Display, GLX_VENDOR ), glXGetClientString( g_X11Display, GLX_VERSION ) );
 }
 
 LowLevelWindow_X11::~LowLevelWindow_X11()
