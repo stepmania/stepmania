@@ -418,13 +418,11 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 	LOG->Info( "OGL Extensions: %s", glGetString(GL_EXTENSIONS) );
 	LOG->Info( "GLU Version: %s", gluGetString(GLU_VERSION) );
 
-	if( IsSoftwareRenderer() )
+	if( g_pWind->IsSoftwareRenderer(sError) )
 	{
 		if( !bAllowUnacceleratedRenderer )
-			return
-				"Your system is reporting that OpenGL hardware acceleration is not available.  "
-				"Please obtain an updated driver from your video card manufacturer.\n\n";
-		LOG->Warn("This is a software renderer!");
+			return sError + "  Please obtain an updated driver from your video card manufacturer.\n\n";
+		LOG->Warn( "Low-performance OpenGL renderer: " + sError );
 	}
 
 #if defined(_WINDOWS)
