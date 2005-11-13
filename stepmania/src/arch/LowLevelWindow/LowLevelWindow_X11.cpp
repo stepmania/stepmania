@@ -10,9 +10,6 @@
 #include <GL/glx.h>	// All sorts of stuff...
 #include <X11/Xatom.h>
 
-// XXX HACK: RageDisplay_OGL is expecting us to set this for it so it can do
-// GLX-specific queries and whatnot. It's one ugly hackish mess, but hey,
-// LLW_SDL is in on it, and I'm feeling lazy.
 extern Display *g_X11Display;
 
 LowLevelWindow_X11::LowLevelWindow_X11()
