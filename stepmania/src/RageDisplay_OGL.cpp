@@ -434,17 +434,6 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 		return "GLDirect was detected.  GLDirect is not compatible with " PRODUCT_NAME ", and should be disabled.\n";
 #endif
 
-#if defined(UNIX)
-	if( !glXIsDirect( g_X11Display, glXGetCurrentContext() ) )
-	{
-		if( !bAllowUnacceleratedRenderer )
-			return "Your system is reporting that direct rendering is not available.  "
-				"Please obtain an updated driver from your video card manufacturer.";
-
-		LOG->Warn("Direct rendering is not enabled!");
-	}
-#endif
-
 	/* Log this, so if people complain that the radar looks bad on their
 	 * system we can compare them: */
 	glGetFloatv( GL_LINE_WIDTH_RANGE, g_line_range );
@@ -458,17 +447,6 @@ CString RageDisplay_OGL::Init( VideoModeParams p, bool bAllowUnacceleratedRender
 #if defined(UNIX) && defined(HAVE_LIBXTST)
 #include <X11/extensions/XTest.h>
 #endif
-
-bool RageDisplay_OGL::IsSoftwareRenderer()
-{
-#if defined(WIN32)
-	return 
-		( strcmp((const char*)glGetString(GL_VENDOR),"Microsoft Corporation")==0 ) &&
-		( strcmp((const char*)glGetString(GL_RENDERER),"GDI Generic")==0 );
-#else
-	return false;
-#endif
-}
 
 RageDisplay_OGL::~RageDisplay_OGL()
 {

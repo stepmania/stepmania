@@ -11,7 +11,6 @@ public:
 	CString Init( VideoModeParams p, bool bAllowUnacceleratedRenderer );
 
 	virtual CString GetApiDescription() { return "OpenGL"; }
-	bool IsSoftwareRenderer();
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
