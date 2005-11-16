@@ -1009,7 +1009,9 @@ int main(int argc, char* argv[])
 	if( !g_bAllowMultipleInstances.Get() && HOOKS->CheckForMultipleInstances() )
 	{
 		ShutdownGame();
+#if !defined(XBOX)
 		return 0;
+#endif
 	}
 
 	ApplyLogPreferences();
