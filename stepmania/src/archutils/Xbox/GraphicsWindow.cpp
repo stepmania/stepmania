@@ -13,14 +13,14 @@ static bool g_bHasFocus = true;
 static bool g_bLastHasFocus = true;
 static bool m_bWideWindowClass;
 
-void GraphicsWindow::SetVideoModeParams( const VideoModeParams &p )
+void GraphicsWindow::SetVideoModeParams( const VideoModeParams &params )
 {
-	g_CurrentParams = p;
+	g_CurrentParams = params;
 }
 
-VideoModeParams GraphicsWindow::GetParams()
+void GraphicsWindow::GetParams( VideoModeParams &paramsOut )
 {
-	return g_CurrentParams;
+	paramsOut = g_CurrentParams;
 }
 
 void GraphicsWindow::Update()
@@ -33,7 +33,7 @@ void GraphicsWindow::Update()
 	}
 }
 
-void GraphicsWindow::Initialize() { }
+void GraphicsWindow::Initialize( bool bD3D ) { }
 void GraphicsWindow::Shutdown() { }
 CString GraphicsWindow::SetScreenMode( const VideoModeParams &p ) { return ""; }
 void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p ) { }
