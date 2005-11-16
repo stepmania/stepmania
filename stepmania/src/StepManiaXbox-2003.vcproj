@@ -703,6 +703,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenStage.h">
 			</File>
 			<File
+				RelativePath=".\ScreenStatsOverlay.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenStatsOverlay.h">
+			</File>
+			<File
 				RelativePath="ScreenSyncOverlay.cpp">
 			</File>
 			<File
@@ -1109,10 +1115,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScoreKeeper.h">
 			</File>
 			<File
-				RelativePath="ScoreKeeperMAX2.cpp">
+				RelativePath=".\ScoreKeeperNormal.cpp">
 			</File>
 			<File
-				RelativePath="ScoreKeeperMAX2.h">
+				RelativePath=".\ScoreKeeperNormal.h">
 			</File>
 			<File
 				RelativePath="ScoreKeeperRave.cpp">
@@ -1423,6 +1429,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					<File
 						RelativePath="arch\Dialog\DialogDriver.h">
 					</File>
+					<File
+						RelativePath=".\arch\Dialog\Selector_Dialog.h">
+					</File>
 				</Filter>
 				<Filter
 					Name="Threads"
@@ -1445,10 +1454,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath="archutils\Win32\arch_setup.cpp">
 				</File>
 				<File
-					RelativePath="archutils\Win32\arch_setup.h">
+					RelativePath=".\archutils\Xbox\arch_setup.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Xbox\arch_setup.h">
+					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 				<File
 					RelativePath="archutils\Xbox\custom_launch_params.cpp">
@@ -1809,22 +1818,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Foreground.h">
 			</File>
 			<File
-				RelativePath=".\GhostArrow.cpp">
-			</File>
-			<File
-				RelativePath=".\GhostArrow.h">
-			</File>
-			<File
 				RelativePath="GhostArrowRow.cpp">
 			</File>
 			<File
 				RelativePath="GhostArrowRow.h">
-			</File>
-			<File
-				RelativePath=".\HoldGhostArrow.cpp">
-			</File>
-			<File
-				RelativePath=".\HoldGhostArrow.h">
 			</File>
 			<File
 				RelativePath="HoldJudgment.cpp">
@@ -1837,6 +1834,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="Judgment.h">
+			</File>
+			<File
+				RelativePath=".\LifeMeter.cpp">
 			</File>
 			<File
 				RelativePath="LifeMeter.h">
@@ -2408,6 +2408,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath=".\BitmapText.h">
+			</File>
+			<File
+				RelativePath=".\DynamicActorScroller.cpp">
+			</File>
+			<File
+				RelativePath=".\DynamicActorScroller.h">
 			</File>
 			<File
 				RelativePath="Model.cpp">
