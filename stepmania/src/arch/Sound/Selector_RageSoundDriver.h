@@ -24,7 +24,7 @@
 #include "RageSoundDriver_OSS.h"
 #endif
 
-#if defined(WIN32)
+#if defined(WIN32) && !defined(_XBOX)
 #include "RageSoundDriver_WaveOut.h"
 #endif
 
