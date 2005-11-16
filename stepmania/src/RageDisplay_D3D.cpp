@@ -709,7 +709,7 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 	// Palettized Texture Performance" in XDK).  
 	// So, just force 32bit ARGB textures.  -Chris
 	// This is also needed for XGSwizzleRect().
-	return pixfmt == FMT_RGBA8;
+	return pixfmt == PixelFormat_RGBA8;
 #endif
 
 	// Some cards (Savage) don't support alpha in palettes.
