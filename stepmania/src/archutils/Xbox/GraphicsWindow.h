@@ -4,11 +4,11 @@
 
 #pragma once
 
-struct "RageDisplay.h"
+#include "RageDisplay.h"
 
 namespace GraphicsWindow
 {
-	void Initialize();
+	void Initialize( bool bD3D );
 	void Shutdown();
 	void SetVideoModeParams( const VideoModeParams &p );
 	CString SetScreenMode( const VideoModeParams &p );
@@ -16,7 +16,7 @@ namespace GraphicsWindow
 	void RecreateGraphicsWindow( const VideoModeParams &p );
 	void DestroyGraphicsWindow();
 	void ConfigureGraphicsWindow( const VideoModeParams &p );
-	VideoModeParams GetParams();
+	void GetParams( VideoModeParams &paramsOut );
 	void Update();
 };
 
