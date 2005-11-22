@@ -252,9 +252,11 @@ CString ConvertWstringToACP( wstring s );
 CString ConvertUTF8ToACP( CString s );
 #endif
 
-// Splits a Path into 4 parts (Directory, Drive, Filename, Extention).  Supports UNC path names.
-/* If Path is a directory (eg. c:\games\stepmania"), append a slash so the last
- * element will end up in Dir, not FName: "c:\games\stepmania\". */
+/*
+ * Splits a Path into 4 parts (Directory, Drive, Filename, Extention).  Supports UNC path names.
+ * If Path is a directory (eg. c:\games\stepmania"), append a slash so the last
+ * element will end up in Dir, not FName: "c:\games\stepmania\".
+ * */
 void splitpath( const CString &Path, CString &Dir, CString &Filename, CString &Ext );
 
 CString SetExtension( const CString &path, const CString &ext );
@@ -374,7 +376,7 @@ CString Capitalize( const CString &s );
 /* ASCII-only case insensitivity. */
 struct char_traits_char_nocase: public char_traits<char>
 {
-    static char uptab[256];
+	static char uptab[256];
 
 	static inline bool eq( char c1, char c2 )
 	{ return uptab[(unsigned char)c1] == uptab[(unsigned char)c2]; }
@@ -385,7 +387,7 @@ struct char_traits_char_nocase: public char_traits<char>
 	static inline bool lt( char c1, char c2 )
 	{ return uptab[(unsigned char)c1] < uptab[(unsigned char)c2]; }
 
-    static int compare( const char* s1, const char* s2, size_t n )
+	static int compare( const char* s1, const char* s2, size_t n )
 	{
 		int ret = 0;
 		while( n-- )
@@ -395,14 +397,14 @@ struct char_traits_char_nocase: public char_traits<char>
 				break;
 		}
 		return ret;
-    }
+	}
 
 	static inline char fasttoupper(char a)
 	{
 		return uptab[(unsigned char)a];
 	}
 	
-    static const char *find( const char* s, int n, char a )
+	static const char *find( const char* s, int n, char a )
 	{
 		a = fasttoupper(a);
 		while( n-- > 0 && fasttoupper(*s) != a )
@@ -411,7 +413,7 @@ struct char_traits_char_nocase: public char_traits<char>
 		if(fasttoupper(*s) == a)
 			return s;
 		return NULL;
-    }
+	}
 };
 typedef basic_string<char,char_traits_char_nocase> istring;
 
@@ -444,9 +446,6 @@ CString ToString( bool value );
 inline CString ToString( const CString &value ) { return value; }
 
 // helper file functions used by Bookkeeper and ProfileManager
-//
-// Helper function for reading/writing scores
-//
 class RageFileBasic;
 bool FileRead( RageFileBasic& f, CString& sOut );
 bool FileRead( RageFileBasic& f, int& iOut );
@@ -463,7 +462,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, CString &sError, bool *bRe
 #endif
 
 /*
- * Copyright (c) 2001-2004 Chris Danford, Glenn Maynard
+ * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
