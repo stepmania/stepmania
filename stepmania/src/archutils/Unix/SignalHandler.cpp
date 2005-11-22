@@ -18,7 +18,7 @@ extern "C" int sigaltstack(const stack_t * __restrict, stack_t * __restrict);
 #endif
 
 #if defined(__GNUC__)
-# define NOINLINE __attribute__((noinline))
+# define NOINLINE __attribute__((__noinline__))
 #else
 # define NOINLINE
 #endif
