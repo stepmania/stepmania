@@ -301,6 +301,7 @@ Section "Main Section" SecMain
 !ifdef ASSOCIATE_SMZIP
 	Call RefreshShellIcons
 !endif
+	File "Program\msvcp70.dll"
 	File "Program\msvcr71.dll"
 	File "Program\msvcp71.dll"
 	File "Program\jpeg.dll"
