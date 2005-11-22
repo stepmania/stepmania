@@ -959,7 +959,7 @@ bool Profile::SaveStatsXmlToDir( CString sDir, bool bSignData ) const
 	DISP_OPT opts;
 	opts.stylesheet = STATS_XSL;
 	opts.write_tabs = false;
-	bool bSaved = xml->SaveToFile(fn, &opts);
+	bool bSaved = xml->SaveToFile( fn, opts );
 
 	SAFE_DELETE( xml );
 	

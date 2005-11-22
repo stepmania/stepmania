@@ -373,7 +373,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 	DISP_OPT opts;
 	opts.stylesheet = CATALOG_XSL;
 	opts.write_tabs = false;
-	xml.SaveToFile(fn, &opts);
+	xml.SaveToFile(fn, opts);
 
 	LOG->Trace( "Done." );
 }

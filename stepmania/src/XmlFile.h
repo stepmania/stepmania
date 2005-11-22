@@ -102,14 +102,14 @@ struct XNode
 	// Load/Save XML
 	unsigned Load( const CString &sXml, PARSEINFO *pi, unsigned iOffset = 0 );
 	unsigned LoadAttributes( const CString &sAttrs, PARSEINFO *pi, unsigned iOffset );
-	bool GetXML( RageFileBasic &f, DISP_OPT *opt ) const;
-	bool GetAttrXML( RageFileBasic &f, DISP_OPT *opt, const CString &sName, const CString &sValue ) const;
+	bool GetXML( RageFileBasic &f, DISP_OPT &opt ) const;
+	bool GetAttrXML( RageFileBasic &f, DISP_OPT &opt, const CString &sName, const CString &sValue ) const;
 	CString GetXML() const;
 
 	bool LoadFromFile( const CString &sFile );
 	bool LoadFromFile( RageFileBasic &f );
-	bool SaveToFile( const CString &sFile, DISP_OPT *opt ) const;
-	bool SaveToFile( RageFileBasic &f, DISP_OPT *opt ) const;
+	bool SaveToFile( const CString &sFile, DISP_OPT &opt ) const;
+	bool SaveToFile( RageFileBasic &f, DISP_OPT &opt ) const;
 
 	// in own attribute list
 	const CString *GetAttr( const CString &sAttrName ) const; 

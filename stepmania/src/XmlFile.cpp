@@ -438,25 +438,25 @@ unsigned XNode::Load( const CString &xml, PARSEINFO *pi, unsigned iOffset )
 
 // Desc   : convert plain xml text from parsed xml attirbute
 // Return : converted plain string
-bool XNode::GetAttrXML( RageFileBasic &f, DISP_OPT *opt, const CString &sName, const CString &sValue ) const
+bool XNode::GetAttrXML( RageFileBasic &f, DISP_OPT &opt, const CString &sName, const CString &sValue ) const
 {
 	CString s(sValue);
-	if( opt && opt->reference_value )
+	if( opt.reference_value )
 		ReplaceEntityText( s, g_mapCharsToEntities );
 	return f.Write(sName + "='" + s + "' ") != -1;
 }
 
 // Desc   : convert plain xml text from parsed xml node
 // Return : converted plain string
-bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
+bool XNode::GetXML( RageFileBasic &f, DISP_OPT &opt ) const
 {
 	// tab
-	if( opt && opt->newline )
+	if( opt.newline )
 	{
 		if( f.Write("\r\n") == -1 )
 			return false;
-		if( opt->write_tabs )
-			for( int i = 0 ; i < opt->tab_base ; i++)
+		if( opt.write_tabs )
+			for( int i = 0 ; i < opt.tab_base ; i++)
 				if( f.Write("\t") == -1 )
 					return false;
 	}
@@ -485,9 +485,9 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 		if( f.Write(">") == -1 )
 			return false;
 			
-		if( opt && opt->newline && !m_childs.empty() )
+		if( opt.newline && !m_childs.empty() )
 		{
-			opt->tab_base++;
+			opt.tab_base++;
 		}
 
 		FOREACH_CONST_Child( this, p )
@@ -497,40 +497,40 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 		// Text Value
 		if( !m_sValue.empty() )
 		{
-			if( opt && opt->newline && !m_childs.empty() )
+			if( opt.newline && !m_childs.empty() )
 			{
-				if( opt && opt->newline )
+				if( opt.newline )
 					if( f.Write("\r\n") == -1 )
 						return false;
-				if( opt->write_tabs )
-					for( int i = 0 ; i < opt->tab_base ; i++)
+				if( opt.write_tabs )
+					for( int i = 0 ; i < opt.tab_base ; i++)
 						if( f.Write("\t") == -1 )
 							return false;
 			}
 			CString s( m_sValue );
-			if( opt && opt->reference_value )
+			if( opt.reference_value )
 					ReplaceEntityText( s, g_mapCharsToEntities );
 			if( f.Write(s) == -1 )
 				return false;
 		}
 
 		// </TAG> CloseTag
-		if( opt && opt->newline && !m_childs.empty() )
+		if( opt.newline && !m_childs.empty() )
 		{
 			if( f.Write("\r\n") == -1 )
 				return false;
-			if( opt->write_tabs )
-				for( int i = 0 ; i < opt->tab_base-1 ; i++)
+			if( opt.write_tabs )
+				for( int i = 0 ; i < opt.tab_base-1 ; i++)
 					if( f.Write("\t") == -1 )
 						return false;
 		}
 		if( f.Write("</" + m_sName + ">") == -1 )
 			return false;
 
-		if( opt && opt->newline )
+		if( opt.newline )
 		{
 			if( !m_childs.empty() )
-				opt->tab_base--;
+				opt.tab_base--;
 		}
 	}
 	return true;
@@ -541,7 +541,8 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT *opt ) const
 CString XNode::GetXML() const
 {
 	RageFileObjMem f;
-	GetXML( f, NULL );
+	DISP_OPT opt;
+	GetXML( f, opt );
 	return f.GetString();
 }
 
@@ -697,11 +698,11 @@ error:
 	return false;
 }
 
-bool XNode::SaveToFile( RageFileBasic &f, DISP_OPT *opt ) const
+bool XNode::SaveToFile( RageFileBasic &f, DISP_OPT &opt ) const
 {
 	f.PutLine( "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>" );
-	if( !opt->stylesheet.empty() )
-		f.PutLine( "<?xml-stylesheet type=\"text/xsl\" href=\"" + opt->stylesheet + "\"?>" );
+	if( !opt.stylesheet.empty() )
+		f.PutLine( "<?xml-stylesheet type=\"text/xsl\" href=\"" + opt.stylesheet + "\"?>" );
 	if( !this->GetXML(f, opt) )
 		return false;
 	if( f.Flush() == -1 )
@@ -709,7 +710,7 @@ bool XNode::SaveToFile( RageFileBasic &f, DISP_OPT *opt ) const
 	return true;
 }
 
-bool XNode::SaveToFile( const CString &sFile, DISP_OPT *opt ) const
+bool XNode::SaveToFile( const CString &sFile, DISP_OPT &opt ) const
 {
 	RageFile f;
 	if( !f.Open(sFile, RageFile::WRITE) )
