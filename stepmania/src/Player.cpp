@@ -1613,7 +1613,7 @@ void Player::HandleTapRowScore( unsigned row )
 {
 	TapNoteScore scoreOfLastTap = NoteDataWithScoring::LastTapNoteResult( m_NoteData, row ).tns;
 	int iNumTapsInRow = m_NoteData.GetNumTracksWithTapOrHoldHead(row);
-	ASSERT(iNumTapsInRow > 0);
+	ASSERT_M( iNumTapsInRow > 0, ssprintf("%d, %u",iNumTapsInRow,row) );
 
 	bool NoCheating = true;
 #ifdef DEBUG
