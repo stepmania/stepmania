@@ -798,9 +798,9 @@ static void DoSave()
 		return;
 
 	Report(NULL, hFile,
-			"%s crash report (build %d)\r\n"
+			"%s crash report (build %d, %s)\r\n"
 			"--------------------------------------"
-			"\r\n", PRODUCT_NAME_VER, version_num);
+			"\r\n", PRODUCT_NAME_VER, version_num, version_time);
 
 	ReportReason( NULL, hFile, &g_CrashInfo );
 	Report(NULL, hFile, "");
