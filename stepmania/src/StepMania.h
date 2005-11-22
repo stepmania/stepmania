@@ -22,10 +22,6 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature,
 void InsertCoin( int iNum = 1, const RageTimer *pTime = NULL );
 void InsertCredit();
 
-extern int g_argc;
-extern char **g_argv;
-bool GetCommandlineArgument( const CString &option, CString *argument=NULL, int iIndex=0 );
-
 struct VideoModeParams;
 void GetPreferredVideoModeParams( VideoModeParams &paramsOut );
 

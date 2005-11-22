@@ -298,6 +298,11 @@ CString join( const CString &sDelimitor, CStringArray::const_iterator begin, CSt
 
 CString GetCwd();
 
+void SetCommandlineArguments( int argc, char **argv );
+bool GetCommandlineArgument( const CString &option, CString *argument=NULL, int iIndex=0 );
+extern int g_argc;
+extern char **g_argv;
+
 void CRC32( unsigned int &iCRC, const void *pBuffer, size_t iSize );
 unsigned int GetHashForString( const CString &s );
 unsigned int GetHashForFile( const CString &sPath );

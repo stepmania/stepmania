@@ -80,9 +80,6 @@
 
 #define ZIPS_DIR "Packages/"
 
-int g_argc = 0;
-char **g_argv = NULL;
-
 static bool g_bHasFocus = true;
 static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", false );
 
@@ -919,45 +916,6 @@ static void ApplyLogPreferences()
 	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
 }
 
-/* Search for the commandline argument given; eg. "test" searches for
- * the option "--test".  All commandline arguments are getopt_long style:
- * --foo; short arguments (-x) are not supported.  (As commandline arguments
- * are not intended for common, general use, having short options isn't
- * needed.)  If argument is non-NULL, accept an argument. */
-bool GetCommandlineArgument( const CString &option, CString *argument, int iIndex )
-{
-	const CString optstr = "--" + option;
-	
-	for( int arg = 1; arg < g_argc; ++arg )
-	{
-		const CString CurArgument = g_argv[arg];
-
-		const size_t i = CurArgument.find( "=" );
-		CString CurOption = CurArgument.substr(0,i);
-		if( CurOption.CompareNoCase(optstr) )
-			continue; /* no match */
-
-		/* Found it. */
-		if( iIndex )
-		{
-			--iIndex;
-			continue;
-		}
-
-		if( argument )
-		{
-			if( i != CString::npos )
-				*argument = CurArgument.substr( i+1 );
-			else
-				*argument = "";
-		}
-		
-		return true;
-	}
-
-	return false;
-}
-
 #ifdef _XBOX
 void __cdecl main()
 #else
@@ -969,8 +927,7 @@ int main(int argc, char* argv[])
 	char *argv[] = {"default.xbe"};
 #endif
 	
-	g_argc = argc;
-	g_argv = argv;
+	SetCommandlineArguments( argc, argv );
 
 	/* Set up arch hooks first.  This may set up crash handling. */
 	HOOKS = MakeArchHooks();

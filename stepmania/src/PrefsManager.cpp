@@ -10,7 +10,6 @@
 #include "Foreach.h"
 #include "Preference.h"
 #include "RageLog.h"
-#include "StepMania.h"
 
 const CString DEFAULTS_INI_PATH		= "Data/Defaults.ini";		// these can be overridden
 const CString PREFERENCES_INI_PATH	= "Save/Preferences.ini";	// overlay on Defaults.ini, contains the user's choices

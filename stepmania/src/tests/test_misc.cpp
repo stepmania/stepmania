@@ -3,6 +3,7 @@
 
 #include "RageFileManager.h"
 #include "RageLog.h"
+#include "RageUtil.h"
 #include "arch/arch.h"
 #include "arch/ArchHooks/ArchHooks.h"
 void ExitGame() { }
@@ -10,8 +11,6 @@ void ExitGame() { }
 CString g_Driver = "dir", g_Root = ".";
 
 CString argv0;
-int g_argc = 0;
-char **g_argv = NULL;
 
 void HandleException( CString sErr )
 {
@@ -20,8 +19,7 @@ void HandleException( CString sErr )
 
 void test_handle_args( int argc, char *argv[] )
 {
-	g_argc = argc;
-	g_argv = argv;
+	SetCommandlineArguments( argc, argv );
 	argv0 = argv[0];
 
 	while( 1 )

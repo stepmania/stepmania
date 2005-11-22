@@ -687,6 +687,56 @@ CString GetFileNameWithoutExtension( const CString &sPath )
 	return sFName;
 }
 
+int g_argc = 0;
+char **g_argv = NULL;
+
+void SetCommandlineArguments( int argc, char **argv )
+{
+	g_argc = argc;
+	g_argv = argv;
+}
+
+/*
+ * Search for the commandline argument given; eg. "test" searches for the
+ * option "--test".  All commandline arguments are getopt_long style: --foo;
+ * short arguments (-x) are not supported.  (These are not intended for
+ * common, general use, so having short options isn't currently needed.)
+ * If argument is non-NULL, accept an argument.
+ */
+bool GetCommandlineArgument( const CString &option, CString *argument, int iIndex )
+{
+	const CString optstr = "--" + option;
+	
+	for( int arg = 1; arg < g_argc; ++arg )
+	{
+		const CString CurArgument = g_argv[arg];
+
+		const size_t i = CurArgument.find( "=" );
+		CString CurOption = CurArgument.substr(0,i);
+		if( CurOption.CompareNoCase(optstr) )
+			continue; /* no match */
+
+		/* Found it. */
+		if( iIndex )
+		{
+			--iIndex;
+			continue;
+		}
+
+		if( argument )
+		{
+			if( i != CString::npos )
+				*argument = CurArgument.substr( i+1 );
+			else
+				*argument = "";
+		}
+		
+		return true;
+	}
+
+	return false;
+}
+
 CString GetCwd()
 {
 #ifdef _XBOX
@@ -1878,7 +1928,7 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, CString &sError, bool *bRe
 }
 
 /*
- * Copyright (c) 2001-2004 Chris Danford, Glenn Maynard
+ * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a

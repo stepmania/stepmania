@@ -31,7 +31,6 @@ int NetworkSyncManager::GetSMOnlineSalt() { return 0; }
 #include "ezsockets.h"
 #include "ProfileManager.h"
 #include "RageLog.h"
-#include "StepMania.h"
 #include "ScreenManager.h"
 #include "song.h"
 #include "Course.h"
