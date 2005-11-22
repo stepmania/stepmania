@@ -326,6 +326,73 @@ void TestSeek( bool relative )
 
 
 
+#include "RageFileDriverMemory.h"
+#include "RageFileDriverDeflate.h"
+void CheckDeflate( RageFileObjMem &data, int iSize, unsigned iInputCRC, int iBlockSize )
+{
+	data.Seek(0);
+
+	CString foo2;
+
+	RageFileObjInflate infl( &data, iSize );
+	infl.EnableCRC32();
+	int iGot = 0;
+	while( iGot < iSize )
+	{
+		int iRet = infl.Read( foo2, iBlockSize );
+		if( iRet == 0 )
+		{
+			LOG->Warn( "Premature EOF (iSize %i, iBlockSize %i)", iSize, iBlockSize );
+			return;
+		}
+			
+		iGot += iRet;
+	}
+
+	unsigned iOutputCRC;
+	if( !infl.GetCRC32(&iOutputCRC) )
+	{
+		LOG->Warn( "Inflate GetCRC32 failed" );
+		return;
+	}
+	if( iInputCRC != iOutputCRC )
+	{
+		LOG->Warn( "Expected CRC %08x, got %08x", iInputCRC, iOutputCRC );
+		return;
+	}
+
+	if( iSize != iGot )
+	{
+		LOG->Warn( "Expected %i, got %i", iSize, iGot );
+		return;
+	}
+}
+
+void TestDeflate()
+{
+	RageFileObjMem data;
+	RageFileObjDeflate defl( &data );
+	defl.EnableCRC32();
+
+	int iSize = 0;
+	while( iSize < 1024*512 )
+		iSize += defl.Write("test foo bar fah");
+	defl.Flush();
+
+	unsigned iOutputCRC;
+	if( !defl.GetCRC32(&iOutputCRC) )
+	{
+		LOG->Warn( "Deflate GetCRC32 failed" );
+		return;
+	}
+
+	CheckDeflate( data, iSize, iOutputCRC, 1 );
+	CheckDeflate( data, iSize, iOutputCRC, 1024 );
+	CheckDeflate( data, iSize, iOutputCRC, 1024*4 );
+	CheckDeflate( data, iSize, iOutputCRC, iSize-1 );
+	CheckDeflate( data, iSize, iOutputCRC, iSize );
+}
+
 int main( int argc, char *argv[] )
 {
 	test_handle_args( argc, argv );
@@ -348,6 +415,13 @@ int main( int argc, char *argv[] )
 
 	test_init();
 
+	if( GetCommandlineArgument("zlib") )
+	{
+		TestDeflate();
+		test_deinit();
+		return 0;
+	}
+			
 	if( CreateTestFiles )
 		CreateBinaryTestFile( "test.binary", 4096 );
 	else
