@@ -105,8 +105,6 @@ int RageFileObjInflate::ReadInternal( void *buf, size_t bytes )
 				SetError( m_pFile->GetError() );
 				return -1;
 			}
-			if( got == 0 )
-				break;
 
 			decomp_buf_avail = got;
 		}
@@ -125,6 +123,9 @@ int RageFileObjInflate::ReadInternal( void *buf, size_t bytes )
 			return -1;
 		case Z_MEM_ERROR:
 			SetError( "out of memory" );
+			return -1;
+		case Z_BUF_ERROR:
+			SetError( "file truncated" );
 			return -1;
 		case Z_STREAM_END:
 			done = true;
