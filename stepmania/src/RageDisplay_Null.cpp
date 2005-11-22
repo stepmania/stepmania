@@ -9,7 +9,6 @@
 #include "RageTextureManager.h"
 #include "RageMath.h"
 #include "RageTypes.h"
-#include "StepMania.h"
 #include "RageUtil.h"
 #include "RageSurface.h"
 

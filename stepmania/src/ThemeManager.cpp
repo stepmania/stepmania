@@ -12,7 +12,6 @@
 #include "arch/Dialog/Dialog.h"
 #include "RageFile.h"
 #include "ScreenManager.h"
-#include "StepMania.h"
 #include "Foreach.h"
 #include "ThemeMetric.h"
 #include "LuaManager.h"
