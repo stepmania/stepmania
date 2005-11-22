@@ -3,6 +3,7 @@
 #include "RageUtil.h"
 #include "LuaManager.h"
 #include "LuaFunctions.h"
+#include "XmlFile.h"
 
 TapNote TAP_EMPTY					( TapNote::empty,		TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
 TapNote TAP_ORIGINAL_TAP			( TapNote::tap,			TapNote::SubType_invalid,	TapNote::original, "", 0, false, 0 );
@@ -73,6 +74,52 @@ NoteType BeatToNoteType( float fBeat )
 bool IsNoteOfType( int row, NoteType t )
 { 
 	return GetNoteType(row) == t;
+}
+
+
+XNode* TapNoteResult::CreateNode() const
+{
+	XNode *p = new XNode;
+	p->m_sName = "TapNoteResult";
+
+	p->AppendAttr( "TapNoteScore", TapNoteScoreToString(tns) );
+	p->AppendAttr( "TapNoteOffset", fTapNoteOffset );
+
+	return p;
+}
+
+void TapNoteResult::LoadFromNode( const XNode* pNode )
+{
+	ASSERT(0);
+}
+
+XNode* HoldNoteResult::CreateNode() const
+{
+	XNode *p = new XNode;
+	p->m_sName = "HoldNoteResult";
+
+	return p;
+}
+
+void HoldNoteResult::LoadFromNode( const XNode* pNode )
+{
+	ASSERT(0);
+}
+
+XNode* TapNote::CreateNode() const
+{
+	XNode *p = new XNode;
+	p->m_sName = "TapNote";
+
+	p->AppendChild( result.CreateNode() );
+	p->AppendChild( HoldResult.CreateNode() );
+
+	return p;
+}
+
+void TapNote::LoadFromNode( const XNode* pNode )
+{
+	ASSERT(0);
 }
 
 float HoldNoteResult::GetLastHeldBeat() const

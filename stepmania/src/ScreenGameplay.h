@@ -151,6 +151,7 @@ protected:
 	void UpdateLyrics( float fDeltaTime );
 	void SongFinished();
 	void StageFinished( bool bBackedOut );
+	void SaveRecordedResults();
 
 	virtual void InitSongQueues();
 

@@ -50,6 +50,7 @@
 #include "DifficultyMeter.h"
 #include "PlayerScoreList.h"
 #include "InputEventPlus.h"
+#include "XmlFile.h"
 
 //
 // Defines
@@ -2533,6 +2534,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	{
 		SongFinished();
 		StageFinished( false );
+		//SaveRecordedResults();
 	}
 	else if( SM == SM_GainFocus )
 	{
@@ -2685,6 +2687,22 @@ Song *ScreenGameplay::GetNextCourseSong() const
 
 	return m_apSongsQueue[iPlaySongIndex];
 }
+
+void ScreenGameplay::SaveRecordedResults()
+{
+	FOREACH_HumanPlayer( pn )
+	{
+		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+		{
+			XNode *p = pi->m_pPlayer->m_NoteData.CreateNode();
+			DISP_OPT opt;
+			p->SaveToFile( "Save/LastSongRecording.xml", opt );
+			SAFE_DELETE( p );
+			return;
+		}
+	}
+}
+
 
 // lua start
 #include "LuaBinding.h"

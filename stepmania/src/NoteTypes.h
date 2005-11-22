@@ -4,6 +4,7 @@
 #define NOTE_TYPES_H
 
 #include "GameConstantsAndTypes.h"
+struct XNode;
 
 struct TapNoteResult
 {
@@ -21,6 +22,10 @@ struct TapNoteResult
 
 	/* If the whole row has been judged, all taps on the row will be set to hidden. */
 	bool bHidden;
+
+	// XML
+	XNode* CreateNode() const;
+	void LoadFromNode( const XNode* pNode );
 };
 
 struct HoldNoteResult
@@ -49,6 +54,10 @@ struct HoldNoteResult
 
 	bool bHeld;
 	bool bActive;
+
+	// XML
+	XNode* CreateNode() const;
+	void LoadFromNode( const XNode* pNode );
 };
 
 
@@ -101,6 +110,11 @@ struct TapNote
 
 	/* hold_head only: */
 	HoldNoteResult HoldResult;
+
+
+	// XML
+	XNode* CreateNode() const;
+	void LoadFromNode( const XNode* pNode );
 
 	
 	TapNote() {}

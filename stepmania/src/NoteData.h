@@ -150,6 +150,10 @@ public:
 
 	// Transformations
 	void LoadTransformed( const NoteData& original, int iNewNumTracks, const int iOriginalTrackToTakeFrom[] );	// -1 for iOriginalTracksToTakeFrom means no track
+
+	// XML
+	XNode* CreateNode() const;
+	void LoadFromNode( const XNode* pNode );
 };
 
 

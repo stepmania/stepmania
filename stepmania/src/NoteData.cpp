@@ -8,6 +8,8 @@
 #include "NoteData.h"
 #include "RageUtil.h"
 #include "RageLog.h"
+#include "XmlFile.h"
+#include "Foreach.h"
 
 #include "RageUtil_AutoPtr.h"
 REGISTER_CLASS_TRAITS( NoteData, new NoteData(*pCopy) )
@@ -876,6 +878,34 @@ bool NoteData::GetPrevTapNoteRowForAllTracks( int &rowInOut ) const
 		return false;
 	}
 }
+
+XNode* NoteData::CreateNode() const
+{
+	XNode *p = new XNode;
+	p->m_sName = "NoteData";
+
+	FOREACH_NONEMPTY_ROW_ALL_TRACKS( *this, row )
+	{
+		set<int> s;
+		GetTapNonEmptyTracks( row, s );
+		FOREACHS_CONST( int, s, t )
+		{
+			TapNote tn = this->GetTapNote(*t, row);
+			XNode *p2 = tn.CreateNode();
+			p2->AppendAttr( "Track", *t );
+			p2->AppendAttr( "Row", row );
+			p->AppendChild( p2 );
+		}
+	}
+
+	return p;
+}
+
+void NoteData::LoadFromNode( const XNode* pNode )
+{
+	ASSERT(0);
+}
+
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard
