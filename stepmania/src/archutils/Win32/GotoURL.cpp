@@ -1,63 +1,63 @@
 #include "global.h"
 #include "GotoURL.h"
-#include "windows.h"
-#include "shellapi.h"
+#include <windows.h>
+#include <shellapi.h>
 
 /* This is called from the crash handler; don't use RegistryAccess, since it's
  * not crash-conditions safe. */
-static LONG GetRegKey(HKEY key, CString subkey, LPTSTR retdata)
+static LONG GetRegKey( HKEY key, CString subkey, LPTSTR retdata )
 {
-	HKEY hkey;
-    LONG retval = RegOpenKeyEx(key, subkey, 0, KEY_QUERY_VALUE, &hkey);
+	HKEY hKey;
+    LONG iRet = RegOpenKeyEx( key, subkey, 0, KEY_QUERY_VALUE, &hKey );
 
-    if (retval != ERROR_SUCCESS)
-		return retval;
+    if( iRet != ERROR_SUCCESS )
+		return iRet;
 
-	long datasize = MAX_PATH;
-	TCHAR data[MAX_PATH];
-	RegQueryValue(hkey, "emulation", data, &datasize);
-	strcpy(retdata,data);
-	RegCloseKey(hkey);
+	long iDataSize = MAX_PATH;
+	char data[MAX_PATH];
+	RegQueryValue( hKey, "emulation", data, &iDataSize );
+	strcpy( retdata, data );
+	RegCloseKey( hKey );
 
     return ERROR_SUCCESS;
 }
 
 
-bool GotoURL(CString url)
+bool GotoURL( CString sUrl )
 {
 	// First try ShellExecute()
-	int result = (int) ShellExecute(NULL, "open", url, NULL,NULL, SW_SHOWDEFAULT);
+	int iRet = (int) ShellExecute( NULL, "open", sUrl, NULL, NULL, SW_SHOWDEFAULT );
 
 	// If it failed, get the .htm regkey and lookup the program
-	if (result > 32)
+	if( iRet > 32 )
 		return true;
 
 	char key[2*MAX_PATH];
-	if (GetRegKey(HKEY_CLASSES_ROOT, ".htm", key) != ERROR_SUCCESS)
+	if( GetRegKey(HKEY_CLASSES_ROOT, ".htm", key) != ERROR_SUCCESS )
 		return false;
 
-	strcpy(key, "\\shell\\open\\command");
+	strcpy( key, "\\shell\\open\\command" );
 
-	if (GetRegKey(HKEY_CLASSES_ROOT,key,key) != ERROR_SUCCESS)
+	if( GetRegKey(HKEY_CLASSES_ROOT, key, key) != ERROR_SUCCESS )
 		return false;
 
-	char *pos = strstr( key, "\"%1\"" );
-	if (pos == NULL)
+	char *szPos = strstr( key, "\"%1\"" );
+	if( szPos == NULL )
 	{
 		// No quotes found.  Check for %1 without quotes
-		pos = strstr( key, "%1" );
-		if (pos == NULL)                   
-			pos = key+lstrlen(key)-1; // No parameter.
+		szPos = strstr( key, "%1" );
+		if( szPos == NULL )                   
+			szPos = key+lstrlen(key)-1; // No parameter.
 		else
-			*pos = '\0';                 // Remove the parameter
+			*szPos = '\0';                 // Remove the parameter
 	}
 	else
-		*pos = '\0';                       // Remove the parameter
+		*szPos = '\0';                       // Remove the parameter
 
-	strcat(pos, " ");
-	strcat(pos, url);
+	strcat( szPos, " " );
+	strcat( szPos, sUrl );
 
-	return WinExec(key,SW_SHOWDEFAULT) > 32;
+	return WinExec( key, SW_SHOWDEFAULT ) > 32;
 }
 
 /*

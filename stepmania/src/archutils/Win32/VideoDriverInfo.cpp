@@ -2,17 +2,17 @@
 #include "VideoDriverInfo.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "windows.h"
 #include "RegistryAccess.h"
+#include <windows.h>
 
-// this will not work on 95 and NT b/c of EnumDisplayDevices
+// this will not work on 95 and NT because of EnumDisplayDevices
 CString GetPrimaryVideoName()
 {
     typedef BOOL (WINAPI* pfnEnumDisplayDevices)(PVOID,DWORD,PDISPLAY_DEVICE,DWORD);
 	pfnEnumDisplayDevices EnumDisplayDevices;
-    HINSTANCE  hInstUser32;
+    HINSTANCE hInstUser32;
     
-    hInstUser32 = LoadLibrary("User32.DLL");
+    hInstUser32 = LoadLibrary( "User32.DLL" );
     if( !hInstUser32 ) 
 		return CString();  
 
@@ -25,7 +25,7 @@ CString GetPrimaryVideoName()
     }
 	
 	CString sPrimaryDeviceName;
-	for( DWORD i=0; true; i++ )
+	for( int i=0; true; ++i )
 	{
 		DISPLAY_DEVICE dd;
 		ZERO( dd );
@@ -39,7 +39,7 @@ CString GetPrimaryVideoName()
 		}
 	}
 
-    FreeLibrary(hInstUser32);
+    FreeLibrary( hInstUser32 );
 	return sPrimaryDeviceName;
 }
 
@@ -59,26 +59,26 @@ CString GetPrimaryVideoDriverName()
 }
 
 /* Get info for the given card number.  Return false if that card doesn't exist. */
-bool GetVideoDriverInfo(int cardno, VideoDriverInfo &info)
+bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
 {
 	OSVERSIONINFO version;
-	version.dwOSVersionInfoSize=sizeof(version);
+	version.dwOSVersionInfoSize = sizeof(version);
 	GetVersionEx(&version);
 	const bool bIsWin9x = version.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS;
 
-	static bool Initialized=false;
+	static bool bInitialized=false;
 	static vector<CString> lst;
-	if( !Initialized )
+	if( !bInitialized )
 	{
-		Initialized = true;
+		bInitialized = true;
 
-		const CString TopKey = bIsWin9x?
+		const CString sTopKey = bIsWin9x?
 			"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Class\\Display":
 			"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E968-E325-11CE-BFC1-08002BE10318}";
 
-		GetRegSubKeys( TopKey, lst, ".*", false );
+		GetRegSubKeys( sTopKey, lst, ".*", false );
 
-		for( int i = lst.size()-1; i >= 0; --i )
+		for( int i=lst.size()-1; i >= 0; --i )
 		{
 			/* Remove all keys that aren't four characters long ("Properties"). */
 			if( lst[i].size() != 4 )
@@ -87,24 +87,24 @@ bool GetVideoDriverInfo(int cardno, VideoDriverInfo &info)
 				continue;
 			}
 
-			lst[i] = TopKey + "\\" + lst[i];
+			lst[i] = sTopKey + "\\" + lst[i];
 		}
 
-		if ( lst.size() == 0 )
+		if( lst.size() == 0 )
 		{
 			LOG->Warn("GetVideoDriverInfo error: no cards found!");
 			return false;
 		}
 	}
 
-	while( cardno < (int)lst.size() )
+	while( iCardno < (int)lst.size() )
 	{
-		const CString sKey = lst[cardno];
+		const CString sKey = lst[iCardno];
 
 		if( !GetRegValue( sKey, "DriverDesc", info.sDescription ) )
 		{
 			/* Remove this one from the list and ignore it, */
-			lst.erase( lst.begin()+cardno );
+			lst.erase( lst.begin()+iCardno );
 			continue;
 		}
 

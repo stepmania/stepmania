@@ -10,16 +10,16 @@
 #pragma comment(lib, "version.lib")
 #endif
 
-bool GetFileVersion( CString fn, CString &out )
+bool GetFileVersion( CString sFile, CString &sOut )
 {
 	do {
 		DWORD ignore;
-		DWORD iSize = GetFileVersionInfoSize( (char *) fn.c_str(), &ignore );
+		DWORD iSize = GetFileVersionInfoSize( sFile, &ignore );
 		if( !iSize )
 			break;
 
 		CString VersionBuffer( iSize, ' ' );
-		if( !GetFileVersionInfo( (char *) fn.c_str(), NULL, iSize, (char *) VersionBuffer.c_str() ) )
+		if( !GetFileVersionInfo( sFile, NULL, iSize, VersionBuffer.GetBuf() ) )
 			break;
 
 		WORD *iTrans;
@@ -41,18 +41,18 @@ bool GetFileVersion( CString fn, CString &out )
 				(void **) &str,  &len ) || len < 1)
 			break;
 
-		out = CString( str, len-1 );
+		sOut = CString( str, len-1 );
 	} while(0);
 
 	/* Get the size and date. */
 	struct stat st;
-	if( stat( fn, &st ) != -1 )
+	if( stat( sFile, &st ) != -1 )
 	{
 		struct tm t;
 		gmtime_r( &st.st_mtime, &t );
-		if( !out.empty() )
-			out += " ";
-		out += ssprintf( "[%ib, %02i-%02i-%04i]", st.st_size, t.tm_mon+1, t.tm_mday, t.tm_year+1900 );
+		if( !sOut.empty() )
+			sOut += " ";
+		sOut += ssprintf( "[%ib, %02i-%02i-%04i]", st.st_size, t.tm_mon+1, t.tm_mday, t.tm_year+1900 );
 	}
 
 	return true;

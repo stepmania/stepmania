@@ -13,7 +13,7 @@ struct VideoDriverInfo
 };
 
 CString GetPrimaryVideoName();
-bool GetVideoDriverInfo(int cardno, VideoDriverInfo &info);
+bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info );
 CString GetPrimaryVideoDriverName();
 
 #endif
