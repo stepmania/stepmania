@@ -145,7 +145,7 @@ private:
 
 	SoundReader *m_pSource;
 	CircBuf<char> m_DataBuffer;
-	int FillBuf( int iBytes );
+	bool FillBuf( int iFrames );
 
 	/* We keep track of sound blocks we've sent out recently through GetDataToPlay. */
 	pos_map_queue m_PositionMapping;
