@@ -300,8 +300,8 @@ void RageSound::RateChange( char *pBuffer, int &iCount, int iInputSpeed, int iOu
 }
 
 /* Fill the buffer by about iFrames worth of data.  (We might go a little
- * over, and we won't overflow our buffer.)  Return the number of bytes
- * actually read; 0 = EOF.  Convert mono input to stereo. */
+ * over, and we won't overflow our buffer.)  Return true if data was read;
+ * false on EOF.  Convert mono input to stereo. */
 bool RageSound::FillBuf( int iFrames )
 {
 	ASSERT( m_pSource );
