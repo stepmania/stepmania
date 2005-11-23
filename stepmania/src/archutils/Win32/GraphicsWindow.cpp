@@ -220,7 +220,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p )
 	if( g_hWndMain == NULL )
 		RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
 
-//	SetForegroundWindow( g_hWndMain );
+	//SetForegroundWindow( g_hWndMain );
 
 	g_HDC = GetDC( g_hWndMain );
 }
@@ -251,6 +251,29 @@ void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p )
 {
 	ASSERT( g_hWndMain );
 
+	/* Update the window title. */
+	do
+	{
+		if( m_bWideWindowClass )
+		{
+			if( SetWindowTextW( g_hWndMain, CStringToWstring(p.sWindowTitle).c_str() ) )
+				break;
+		}
+
+		SetWindowTextA( g_hWndMain, ConvertUTF8ToACP(p.sWindowTitle) );
+	} while(0);
+
+	/* Update the window icon. */
+	if( g_hIcon != NULL )
+	{
+		SetClassLong( g_hWndMain, GCL_HICON, (LONG) NULL );
+		DestroyIcon( g_hIcon );
+		g_hIcon = NULL;
+	}
+	g_hIcon = IconFromFile( p.sIconFile );
+	if( g_hIcon != NULL )
+		SetClassLong( g_hWndMain, GCL_HICON, (LONG) g_hIcon );
+
 	/* The window style may change as a result of switching to or from fullscreen;
 	 * apply it.  Don't change the WS_VISIBLE bit. */
 	int iWindowStyle = GetWindowStyle(p);
@@ -275,32 +298,8 @@ void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p )
 
 	/* Move and resize the window.  SWP_FRAMECHANGED causes the above SetWindowLong
 	 * to take effect. */
-	SetWindowPos( g_hWndMain, HWND_NOTOPMOST, x, y, iWidth, iHeight, SWP_FRAMECHANGED );
-
-	/* Update the window title. */
-	do
-	{
-		if( m_bWideWindowClass )
-		{
-			if( SetWindowTextW( g_hWndMain, CStringToWstring(p.sWindowTitle).c_str() ) )
-				break;
-		}
-
-		SetWindowTextA( g_hWndMain, ConvertUTF8ToACP(p.sWindowTitle) );
-	} while(0);
-
-	/* Update the window icon. */
-	if( g_hIcon != NULL )
-	{
-		SetClassLong( g_hWndMain, GCL_HICON, (LONG) NULL );
-		DestroyIcon( g_hIcon );
-		g_hIcon = NULL;
-	}
-	g_hIcon = IconFromFile( p.sIconFile );
-	if( g_hIcon != NULL )
-		SetClassLong( g_hWndMain, GCL_HICON, (LONG) g_hIcon );
-
-	ShowWindow( g_hWndMain, SW_SHOW );
+	if( !SetWindowPos( g_hWndMain, HWND_NOTOPMOST, x, y, iWidth, iHeight, SWP_FRAMECHANGED|SWP_SHOWWINDOW ) )
+		LOG->Warn( "%s", werr_ssprintf( GetLastError(), "SetWindowPos" ).c_str() );
 
 	SetForegroundWindow( g_hWndMain );
 
