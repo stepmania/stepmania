@@ -323,8 +323,8 @@ bool RageSound::FillBuf( int iFrames )
 
 			/* Read in blocks that are a multiple of a sample, the number of
 			 * channels and the number of input samples. */
-			int block_size = sizeof(int16_t) * channels * m_Param.speed_input_samples;
-			iReadSize = (iReadSize / block_size) * block_size;
+			int iBlockSize = sizeof(int16_t) * channels * m_Param.speed_input_samples;
+			iReadSize = (iReadSize / iBlockSize) * iBlockSize;
 			ASSERT(iReadSize < sizeof(inbuf));
 		}
 
@@ -438,14 +438,14 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iSize, int &iSoundFrame, in
 		 * silence for m_LengthSeconds. */
 		if( !iGotFrames && m_Param.m_LengthSeconds != -1 )
 		{
-			const float LastSecond = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
-			int LastFrame = int(LastSecond*samplerate());
-			int FramesOfSilence = LastFrame - m_iDecodePosition;
-			FramesOfSilence = clamp( FramesOfSilence, 0, iSize );
-			if( FramesOfSilence > 0 )
+			const float fLastSecond = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
+			int iLastFrame = int(fLastSecond*samplerate());
+			int iFramesOfSilence = iLastFrame - m_iDecodePosition;
+			iFramesOfSilence = clamp( iFramesOfSilence, 0, iSize );
+			if( iFramesOfSilence > 0 )
 			{
-				memset( pBuffer, 0, FramesOfSilence * framesize );
-				iGotFrames = FramesOfSilence;
+				memset( pBuffer, 0, iFramesOfSilence * framesize );
+				iGotFrames = iFramesOfSilence;
 			}
 		}
 
