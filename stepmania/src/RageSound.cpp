@@ -572,8 +572,7 @@ int RageSound::GetPCM( char *pBuffer, int iSize, int64_t iFrameno )
 	return iBytesStored;
 }
 
-/* Start playing from the current position.  If the sound is already
- * playing, Stop is called. */
+/* Start playing from the current position. */
 void RageSound::StartPlaying()
 {
 	ASSERT( !m_bPlaying );
