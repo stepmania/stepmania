@@ -301,7 +301,10 @@ Section "Main Section" SecMain
 !ifdef ASSOCIATE_SMZIP
 	Call RefreshShellIcons
 !endif
-	File "Program\msvcp70.dll"
+	; Do not include Dlls from versions other than MSVC 7.1 in public releases.
+	; If you want to do a private release for some reason and don't have MSVC 7.1,
+	; then you can uncomment the line below in your local copy.
+	;File "Program\msvcp70.dll"
 	File "Program\msvcr71.dll"
 	File "Program\msvcp71.dll"
 	File "Program\jpeg.dll"
