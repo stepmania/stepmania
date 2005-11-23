@@ -69,7 +69,7 @@ bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum )
 		}
 		CloseHandle( h );
 
-        if( (iVID != -1 && attr.VendorID != iVID) &&
+        if( (iVID != -1 && attr.VendorID != iVID) ||
             (iPID != -1 && attr.ProductID != iPID) )
 			continue; /* This isn't it. */
 
@@ -166,7 +166,7 @@ int WindowsFileIO::finish_read( void *p )
 	    return -1;
     }
 
-	memcpy( p, m_pBuffer, cnt );
+	memcpy( p, m_pBuffer, iCnt );
 	return cnt;
 }
 
