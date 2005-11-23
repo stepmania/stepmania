@@ -10,7 +10,7 @@ public:
 	virtual ~RageDisplay_OGL();
 	CString Init( VideoModeParams p, bool bAllowUnacceleratedRenderer );
 
-	virtual CString GetApiDescription() { return "OpenGL"; }
+	virtual CString GetApiDescription() const { return "OpenGL"; }
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 

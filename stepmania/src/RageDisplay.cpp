@@ -105,11 +105,16 @@ void RageDisplay::ResetStats()
 
 CString RageDisplay::GetStats() const
 {
+	CString s;
 	/* If FPS == 0, we don't have stats yet. */
 	if( !GetFPS() )
-		return "-- FPS\n-- av FPS\n-- VPF";
+		s = "-- FPS\n-- av FPS\n-- VPF";
 
-	return ssprintf( "%i FPS\n%i av FPS\n%i VPF", GetFPS(), GetCumFPS(), GetVPF() );
+	s = ssprintf( "%i FPS\n%i av FPS\n%i VPF", GetFPS(), GetCumFPS(), GetVPF() );
+	
+	s += "\n"+this->GetApiDescription();
+	
+	return s;
 }
 
 void RageDisplay::EndFrame()

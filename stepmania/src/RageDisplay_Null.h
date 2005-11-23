@@ -8,7 +8,7 @@ class RageDisplay_Null: public RageDisplay
 public:
 	RageDisplay_Null( VideoModeParams p );
 
-	virtual CString GetApiDescription() { return "Null"; }
+	virtual CString GetApiDescription() const { return "Null"; }
 	void ResolutionChanged() { }
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 

@@ -133,7 +133,7 @@ public:
 	/* This is needed or the overridden classes' dtors will not be called. */
 	virtual ~RageDisplay() { }
 
-	virtual CString GetApiDescription() = 0;
+	virtual CString GetApiDescription() const = 0;
 
 	// Don't override this.  Override TryVideoMode() instead.
 	// This will set the video mode to be as close as possible to params.

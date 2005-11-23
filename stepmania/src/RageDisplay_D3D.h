@@ -10,7 +10,7 @@ public:
 	~RageDisplay_D3D();
 	CString Init( VideoModeParams p );
 
-	virtual CString GetApiDescription() { return "D3D"; }
+	virtual CString GetApiDescription() const { return "D3D"; }
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
