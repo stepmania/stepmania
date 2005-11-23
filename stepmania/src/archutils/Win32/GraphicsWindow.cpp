@@ -266,7 +266,7 @@ void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p )
 	/* Update the window icon. */
 	if( g_hIcon != NULL )
 	{
-		SetClassLong( g_hWndMain, GCL_HICON, (LONG) NULL );
+		SetClassLong( g_hWndMain, GCL_HICON, (LONG) LoadIcon(NULL,IDI_APPLICATION) );
 		DestroyIcon( g_hIcon );
 		g_hIcon = NULL;
 	}
