@@ -84,8 +84,8 @@ void InputHandler_Win32_Para::InputThreadMain()
 		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set Para thread priority"));
 
 	vector<WindowsFileIO *> sources;
-	if( dev->io.IsOpen() )
-		sources.push_back( &dev->io );
+	if( dev->m_IO.IsOpen() )
+		sources.push_back( &dev->m_IO );
 
 	while(!shutdown)
 	{
@@ -118,7 +118,6 @@ void InputHandler_Win32_Para::Update(float fDeltaTime)
 }
 
 /*
- * (c) 2003-2004 Glenn Maynard
  * (c) 2002-2004 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 

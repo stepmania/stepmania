@@ -96,8 +96,8 @@ void InputHandler_Win32_Pump::InputThreadMain()
 	vector<WindowsFileIO *> apSources;
 	for( int i = 0; i < NUM_PUMPS; ++i )
 	{
-		if( m_pDevice[i].io.IsOpen() )
-			apSources.push_back( &m_pDevice[i].io );
+		if( m_pDevice[i].m_IO.IsOpen() )
+			apSources.push_back( &m_pDevice[i].m_IO );
 	}
 
 	while( !m_bShutdown )
