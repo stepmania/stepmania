@@ -7,7 +7,7 @@ class RageDisplay_D3D: public RageDisplay
 {
 public:
 	RageDisplay_D3D();
-	~RageDisplay_D3D();
+	virtual ~RageDisplay_D3D();
 	CString Init( VideoModeParams p );
 
 	virtual CString GetApiDescription() const { return "D3D"; }

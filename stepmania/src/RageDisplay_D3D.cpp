@@ -393,6 +393,8 @@ CString SetD3DParams( bool &bNewDeviceOut )
 		}
 	}
 
+	g_pd3dDevice->SetRenderState( D3DRS_NORMALIZENORMALS, TRUE );	
+
 	return CString();
 }
 
@@ -830,10 +832,10 @@ void RageDisplay_D3D::SendCurrentMatrices()
 		{
 			static const RageMatrix tex = RageMatrix
 			(
-				0.8f,   0.0f,  0.0f, 0.0f,
-				0.0f,  -0.8f,  0.0f, 0.0f,
+				0.5f,   0.0f,  0.0f, 0.0f,
+				0.0f,  -0.5f,  0.0f, 0.0f,
 				0.0f,   0.0f,  0.0f, 0.0f,
-				0.50,  -0.50,  0.0f, 1.0f
+				0.5f,  -0.5f,  0.0f, 1.0f
 			);
 			g_pd3dDevice->SetTransform( (D3DTRANSFORMSTATETYPE)(D3DTS_TEXTURE0+tu), (D3DMATRIX*)&tex );
 
