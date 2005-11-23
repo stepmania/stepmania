@@ -175,9 +175,8 @@ bool RageSound::Load( CString sSoundFilePath, bool bPrecache )
 {
 	LOG->Trace( "RageSound::LoadSound( '%s', %d )", sSoundFilePath.c_str(), bPrecache );
 
-	/* If this sound is already preloaded and held by SOUNDMAN, just make a
-	 * copy of that.  Since RageSoundReader_Preload is reference counted, this
-	 * is cheap. */
+	/* If this sound is already preloaded and held by SOUNDMAN, just make a copy
+	 * of that.  Since RageSoundReader_Preload is refcounted, this is cheap. */
 	SoundReader *pSound = SOUNDMAN->GetLoadedSound( sSoundFilePath );
 	if( pSound == NULL )
 	{
@@ -315,28 +314,28 @@ int RageSound::FillBuf( int iFrames )
 			break; /* full */
 
 		char inbuf[10240];
-		unsigned read_size = read_block_size;
+		unsigned iReadSize = read_block_size;
 
 		if( m_Param.speed_input_samples != m_Param.speed_output_samples )
 		{
 			/* Read enough data to produce read_block_size. */
-			read_size = read_size * m_Param.speed_input_samples / m_Param.speed_output_samples;
+			iReadSize = iReadSize * m_Param.speed_input_samples / m_Param.speed_output_samples;
 
 			/* Read in blocks that are a multiple of a sample, the number of
 			 * channels and the number of input samples. */
 			int block_size = sizeof(int16_t) * channels * m_Param.speed_input_samples;
-			read_size = (read_size / block_size) * block_size;
-			ASSERT(read_size < sizeof(inbuf));
+			iReadSize = (iReadSize / block_size) * block_size;
+			ASSERT(iReadSize < sizeof(inbuf));
 		}
 
 		/* channels == 2; we want stereo.  If the input data is mono, read half as many
 		 * samples. */
 		if( m_pSource->GetNumChannels() == 1 )
-			read_size /= 2;
+			iReadSize /= 2;
 
-		ASSERT( read_size < sizeof(inbuf) );
+		ASSERT( iReadSize < sizeof(inbuf) );
 
-		int iCount = m_pSource->Read( inbuf, read_size );
+		int iCount = m_pSource->Read( inbuf, iReadSize );
 		if( iCount == 0 )
 			return bGotSomething; /* EOF */
 
@@ -372,12 +371,12 @@ int RageSound::GetData( char *pBuffer, int iFrames )
 	if( m_Param.m_LengthSeconds != -1 )
 	{
 		/* We have a length; only read up to the end. */
-		const float LastSecond = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
-		int FramesToRead = int(LastSecond*samplerate()) - m_iDecodePosition;
+		const float fLastSecond = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
+		int iFramesToRead = int(fLastSecond*samplerate()) - m_iDecodePosition;
 
 		/* If it's negative, we're past the end, so cap it at 0. Don't read
 		 * more than size. */
-		iFrames = clamp( FramesToRead, 0, iFrames );
+		iFrames = clamp( iFramesToRead, 0, iFrames );
 	}
 
 	int iGot;
@@ -692,8 +691,7 @@ float RageSound::GetLengthSeconds()
 
 	if( iLength < 0 )
 	{
-		LOG->Warn("GetLengthSeconds failed on %s: %s",
-			GetLoadedFilePath().c_str(), m_pSource->GetError().c_str() );
+		LOG->Warn( "GetLengthSeconds failed on %s: %s", GetLoadedFilePath().c_str(), m_pSource->GetError().c_str() );
 		return -1;
 	}
 
