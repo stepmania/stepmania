@@ -218,10 +218,9 @@ void LifeMeterBar::ChangeLife( float fDeltaLife )
 		m_iMissCombo++;
 		/* Increase by m_iRegenComboAfterMiss; never push it beyond m_iMaxRegenComboAfterMiss
 		 * but don't reduce it if it's already past. */
-		const int NewComboToRegainLife = min( 
-			(int)PREFSMAN->m_iMaxRegenComboAfterMiss,
-			m_iComboToRegainLife + PREFSMAN->m_iRegenComboAfterMiss );
-		m_iComboToRegainLife = max( m_iComboToRegainLife, NewComboToRegainLife );
+		int iNewComboToRegainLife = m_iComboToRegainLife + PREFSMAN->m_iRegenComboAfterMiss;
+		iNewComboToRegainLife = min( (int)PREFSMAN->m_iMaxRegenComboAfterMiss, iNewComboToRegainLife );
+		m_iComboToRegainLife = max( m_iComboToRegainLife, iNewComboToRegainLife );
 	}
 
 	/* If we've already failed, there's no point in letting them fill up the bar again.  */
