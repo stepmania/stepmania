@@ -12,9 +12,6 @@
 #elif defined(HAVE_GTK)
 #include "LoadingWindow_Gtk.h"
 
-#elif defined(HAVE_SDL)
-#include "LoadingWindow_SDL.h"
-
 #elif defined(WINDOWS)
 #include "LoadingWindow_Win32.h"
 
