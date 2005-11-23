@@ -99,7 +99,7 @@ LoadingWindow *MakeLoadingWindow()
 
 	/* Don't load NULL by default.  On most systems, if we can't load the SDL
 	 * loading window, we won't be able to init OpenGL, either, so don't bother. */
-	CString drivers = "xbox,win32,cocoa,gtk,sdl";
+	CString drivers = "xbox,win32,cocoa,gtk";
 	CStringArray DriversToTry;
 	split(drivers, ",", DriversToTry, true);
 
@@ -120,9 +120,6 @@ LoadingWindow *MakeLoadingWindow()
 #endif
 #ifdef USE_LOADING_WINDOW_NULL
 		if(!DriversToTry[i].CompareNoCase("Null") )	ret = new LoadingWindow_Null;
-#endif
-#ifdef USE_LOADING_WINDOW_SDL
-		if(!DriversToTry[i].CompareNoCase("SDL") )	ret = new LoadingWindow_SDL;
 #endif
 #ifdef USE_LOADING_WINDOW_WIN32
 		if(!DriversToTry[i].CompareNoCase("Win32") )	ret = new LoadingWindow_Win32;
