@@ -4,30 +4,29 @@
 #define WIN32_USB_H
 
 #include <vector>
-#include "windows.h"
+#include <windows.h>
 
-/* The API for Windows device I/O is obscenely horrible, so encapsulate it. */
 class WindowsFileIO
 {
 public:
 	WindowsFileIO();
 	~WindowsFileIO();
-	bool Open(CString path, int blocksize);
+	bool Open( CString sPath, int iBlockSize );
 	bool IsOpen() const;
 
 	/* Nonblocking read.  size must always be the same.  Returns the number of bytes
 	 * read, or 0. */
-	int read(void *p);
-	static int read_several(const vector<WindowsFileIO *> &sources, void *p, int &actual, float timeout);
+	int read( void *p );
+	static int read_several( const vector<WindowsFileIO *> &sources, void *p, int &actual, float timeout );
 
 private:
-	HANDLE h;
-	OVERLAPPED ov;
-	char *buf;
-	int blocksize;
-	
 	void queue_read();
-	int finish_read(void *p);
+	int finish_read( void *p );
+
+	HANDLE m_Handle;
+	OVERLAPPED m_Overlapped;
+	char *m_pBuffer;
+	int m_iBlockSize;
 };
 
 /* WindowsFileIO - Windows USB I/O */
@@ -35,16 +34,16 @@ class USBDevice
 {
 public:
 	int GetPadEvent();
-	bool Open(int VID, int PID, int blocksize, int num);
+	bool Open( int VID, int PID, int blocksize, int num );
 	bool IsOpen() const;
 
-	WindowsFileIO io;
+	WindowsFileIO m_IO;
 };
 
 #endif
 
 /*
- * (c) 2002-2003 Glenn Maynard
+ * (c) 2002-2005 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
