@@ -541,14 +541,6 @@ int RageSound::GetPCM( char *pBuffer, int iSize, int64_t iFrameno )
 {
 	ASSERT( m_bPlaying );
 
-	/*
-	 * "frameno" is the audio driver's conception of time.  "position"
-	 * is ours. Keep track of frameno->position mappings.
-	 *
-	 * This way, when we query the time later on, we can derive position
-	 * values from the frameno values returned from GetPosition.
-	 */
-
 	/* Now actually put data from the correct buffer into the output. */
 	int iBytesStored = 0;
 	while( iBytesStored < iSize )
