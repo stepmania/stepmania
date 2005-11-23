@@ -167,7 +167,7 @@ int WindowsFileIO::finish_read( void *p )
     }
 
 	memcpy( p, m_pBuffer, iCnt );
-	return cnt;
+	return iCnt;
 }
 
 int WindowsFileIO::read( void *p )
