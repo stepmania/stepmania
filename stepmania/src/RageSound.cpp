@@ -399,20 +399,18 @@ int RageSound::GetData( char *pBuffer, int iFrames )
 	return iGot;
 }
 
-/* RageSound::GetDataToPlay and RageSound::FillBuf are the main threaded API.  These
+/*
+ * Retrieve audio data, for mixing.  At the time of this call, the frameno at which the
+ * sound will be played doesn't have to be known.  Once committed, and the frameno
+ * is known, call CommitPCMData.
+ *
+ * RageSound::GetDataToPlay and RageSound::FillBuf are the main threaded API.  These
  * need to execute without blocking other threads from calling eg. GetPositionSeconds,
  * since they may take some time to run.
- */
-/* Retrieve audio data, for mixing.  At the time of this call, the frameno at which the
- * sound will be played doesn't have to be known.  Once committed, and the frameno
- * is known, call CommitPCMData.  size is in bytes.
  *
- * If the data returned is at the end of the stream, return false.
- *
- * size is in frames
- * iSoundFrame is in frames (abstract)
+ * If no data is returned (we're at the end of the stream), return false.
  */
-bool RageSound::GetDataToPlay( int16_t *pBuffer, int iSize, int &iSoundFrame, int &iFramesStored )
+bool RageSound::GetDataToPlay( int16_t *pBuffer, int iFrames, int &iSoundFrame, int &iFramesStored )
 {
 	int iNumRewindsThisCall = 0;
 
@@ -429,10 +427,10 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iSize, int &iSoundFrame, in
 		/* If we don't have any data left buffered, fill the buffer by
 		 * up to as much as we need. */
 		if( !Bytes_Available() )
-			FillBuf( iSize );
+			FillBuf( iFrames );
 
 		/* Get a block of data. */
-		int iGotFrames = GetData( (char *) pBuffer, iSize );
+		int iGotFrames = GetData( (char *) pBuffer, iFrames );
 
 		/* If we didn't get any data, see if we need to pad the end of the file with
 		 * silence for m_LengthSeconds. */
@@ -441,7 +439,7 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iSize, int &iSoundFrame, in
 			const float fLastSecond = m_Param.m_StartSecond + m_Param.m_LengthSeconds;
 			int iLastFrame = int(fLastSecond*samplerate());
 			int iFramesOfSilence = iLastFrame - m_iDecodePosition;
-			iFramesOfSilence = clamp( iFramesOfSilence, 0, iSize );
+			iFramesOfSilence = clamp( iFramesOfSilence, 0, iFrames );
 			if( iFramesOfSilence > 0 )
 			{
 				memset( pBuffer, 0, iFramesOfSilence * framesize );
@@ -480,8 +478,8 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iSize, int &iSoundFrame, in
 				/* Make sure we can get some data.  If we can't, then we'll have
 				 * nothing to send and we'll just end up coming back here. */
 				if( !Bytes_Available() )
-					FillBuf( iSize );
-				if( GetData(NULL, iSize) == 0 )
+					FillBuf( iFrames );
+				if( GetData(NULL, iFrames) == 0 )
 				{
 					LOG->Warn( "Can't loop data in %s; no data available at start point %f",
 						GetLoadedFilePath().c_str(), m_Param.m_StartSecond );
@@ -493,8 +491,8 @@ bool RageSound::GetDataToPlay( int16_t *pBuffer, int iSize, int &iSoundFrame, in
 
 			case RageSoundParams::M_CONTINUE:
 				/* Keep playing silence. */
-				memset( pBuffer, 0, iSize*framesize );
-				iGotFrames = iSize;
+				memset( pBuffer, 0, iFrames*framesize );
+				iGotFrames = iFrames;
 				break;
 
 			default:
