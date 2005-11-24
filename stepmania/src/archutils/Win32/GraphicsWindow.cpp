@@ -141,6 +141,11 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 
 	case WM_WINDOWPOSCHANGED:
 	{
+		/* If we're fullscreen and don't have focus, our window is hidden, so GetClientRect
+		 * isn't meaningful. */
+		if( !g_CurrentParams.windowed && !g_bHasFocus )
+			break;
+
 		RECT rect;
 		GetClientRect( hWnd, &rect );
 
