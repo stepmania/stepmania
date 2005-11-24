@@ -230,10 +230,14 @@ void MainMenuDlg::OnBnClickedClearPreferences()
 	if( !DoesFileExist( PREFERENCES_INI ) )
 	{
 		MessageBox( PREFERENCES_INI + " is already cleared." );
+		return;
 	}
-	else
+
+	if( !DeleteFile( PREFERENCES_INI ) )
 	{
-		if( !DeleteFile( PREFERENCES_INI ) )
-			MessageBox( "Failed to delete file " + PREFERENCES_INI + "." );
+		MessageBox( "Failed to delete file " + PREFERENCES_INI + "." );
+		return;
 	}
+
+	MessageBox( PREFERENCES_INI + " cleared." );
 }
