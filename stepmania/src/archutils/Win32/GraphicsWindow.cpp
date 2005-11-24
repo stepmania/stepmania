@@ -75,7 +75,15 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 			 * because that's where most other apps seem to do it. */
 			if( g_bHasFocus && !bHadFocus )
 			{
-				ChangeDisplaySettings( &g_FullScreenDevMode, CDS_FULLSCREEN );
+				// Set the video mode through DISPLAY instead of ChangeDisplaySettings 
+				// so that the viewport is correctly reset.
+
+				//ChangeDisplaySettings( &g_FullScreenDevMode, CDS_FULLSCREEN );
+				bool bNewDevice;
+				VideoModeParams p;
+				GetPreferredVideoModeParams( p );
+				DISPLAY->SetVideoMode( p, bNewDevice );
+
 				ShowWindow( g_hWndMain, SW_SHOWNORMAL );
 			}
 			else if( !g_bHasFocus && bHadFocus )
@@ -156,6 +164,8 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 
 void GraphicsWindow::SetVideoModeParams( const VideoModeParams &p )
 {
+	//LOG->Warn( "GraphicsWindow::SetVideoModeParams %d %d", p.width, p.height );
+
 	g_CurrentParams = p;
 }
 
@@ -284,6 +294,8 @@ void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p )
 	RECT WindowRect;
 	SetRect( &WindowRect, 0, 0, p.width, p.height );
 	AdjustWindowRect( &WindowRect, iWindowStyle, FALSE );
+
+	//LOG->Warn( "w = %d, h = %d", p.width, p.height );
 
 	const int iWidth = WindowRect.right - WindowRect.left;
 	const int iHeight = WindowRect.bottom - WindowRect.top;
@@ -436,6 +448,8 @@ void GraphicsWindow::Update()
 
 	if( g_bResolutionChanged && DISPLAY != NULL )
 	{
+		//LOG->Warn( "Changing resolution" );
+
 		/* Let DISPLAY know that our resolution has changed.  (Note that
 		 * ResolutionChanged() can come back here, so reset g_bResolutionChanged
 		 * first.) */

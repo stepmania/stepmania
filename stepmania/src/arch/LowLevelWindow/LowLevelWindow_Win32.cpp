@@ -74,7 +74,9 @@ void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 		else { str += "software "; bInvalidFormat = true; }
 	}
 	else
+	{
 		str += "ICD ";
+	}
 
 	if( pfd.iPixelType != PFD_TYPE_RGBA ) { str += "indexed "; bInvalidFormat = true; }
 	if( !(pfd.dwFlags & PFD_SUPPORT_OPENGL) ) { str += "!OPENGL "; bInvalidFormat = true; }
@@ -98,6 +100,8 @@ void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
  * LowLevelWindow_Win32::~LowLevelWindow_Win32 will call Shutdown(). */
 CString LowLevelWindow_Win32::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
+	//LOG->Warn( "LowLevelWindow_Win32::TryVideoMode" );
+	
 	ASSERT_M( p.bpp == 16 || p.bpp == 32, ssprintf("%i", p.bpp) );
 
 	bNewDeviceOut = false;

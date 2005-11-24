@@ -598,6 +598,8 @@ void SetupExtensions()
 
 void RageDisplay_OGL::ResolutionChanged()
 {
+	//LOG->Warn( "RageDisplay_OGL::ResolutionChanged" );
+
  	SetViewport(0,0);
 
 	/* Clear any junk that's in the framebuffer. */
@@ -610,7 +612,8 @@ void RageDisplay_OGL::ResolutionChanged()
 // need to be reloaded.
 CString RageDisplay_OGL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
-//	LOG->Trace( "RageDisplay_OGL::SetVideoMode( %d, %d, %d, %d, %d, %d )", windowed, width, height, bpp, rate, vsync );
+	//LOG->Warn( "RageDisplay_OGL::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
+
 	CString err;
 	err = g_pWind->TryVideoMode( p, bNewDeviceOut );
 	if( err != "" )
@@ -645,12 +648,17 @@ CString RageDisplay_OGL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 
 void RageDisplay_OGL::SetViewport(int shift_left, int shift_down)
 {
+	int width = g_pWind->GetActualVideoModeParams().width;
+	int height = g_pWind->GetActualVideoModeParams().height;
+
+	//LOG->Warn( "RageDisplay_OGL::SetViewport( %d, %d )", width, height );
+
 	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
 	 * Scale them to the actual viewport range. */
-	shift_left = int( shift_left * float(g_pWind->GetActualVideoModeParams().width) / SCREEN_WIDTH );
-	shift_down = int( shift_down * float(g_pWind->GetActualVideoModeParams().height) / SCREEN_HEIGHT );
+	shift_left = int( shift_left * float(width) / SCREEN_WIDTH );
+	shift_down = int( shift_down * float(height) / SCREEN_HEIGHT );
 
-	glViewport( shift_left, -shift_down, g_pWind->GetActualVideoModeParams().width, g_pWind->GetActualVideoModeParams().height );
+	glViewport( shift_left, -shift_down, width, height );
 }
 
 int RageDisplay_OGL::GetMaxTextureSize() const

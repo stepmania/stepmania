@@ -385,6 +385,7 @@ CString SetD3DParams( bool &bNewDeviceOut )
 	else
 	{
 		bNewDeviceOut = false;
+		//LOG->Warn( "Resetting D3D device" );
 		HRESULT hr = g_pd3dDevice->Reset( &g_d3dpp );
 		if( FAILED(hr) )
 		{
@@ -479,6 +480,8 @@ bool D3DReduceParams( D3DPRESENT_PARAMETERS	*pp )
 /* Set the video mode. */
 CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 {
+	//LOG->Warn( "RageDisplay_D3D::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
+
 	if( FindBackBufferType( p.windowed, p.bpp ) == D3DFMT_UNKNOWN )	// no possible back buffer formats
 		return ssprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
 
@@ -632,6 +635,8 @@ CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
 
 void RageDisplay_D3D::ResolutionChanged()
 {
+	//LOG->Warn( "RageDisplay_D3D::ResolutionChanged" );
+
 #if defined(XBOX)
 	D3DVIEWPORT8 viewData = { 0,0,640,480, 0.f, 1.f };
 	g_pd3dDevice->SetViewport( &viewData );
@@ -642,10 +647,13 @@ void RageDisplay_D3D::ResolutionChanged()
 
 void RageDisplay_D3D::SetViewport(int shift_left, int shift_down)
 {
-	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
-	 * Scale them to the actual viewport range. */
 	VideoModeParams p;
 	GraphicsWindow::GetParams( p );
+
+	//LOG->Warn( "RageDisplay_D3D::SetViewport %d %d", p.width, p.height );
+
+	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
+	 * Scale them to the actual viewport range. */
 	shift_left = int( shift_left * float(p.width) / SCREEN_WIDTH );
 	shift_down = int( shift_down * float(p.height) / SCREEN_HEIGHT );
 
