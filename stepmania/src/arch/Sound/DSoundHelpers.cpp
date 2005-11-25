@@ -49,7 +49,6 @@ void DSound::SetPrimaryBufferMode()
 
 	IDirectSoundBuffer *pBuffer;
 	HRESULT hr = this->GetDS()->CreateSoundBuffer( &format, &pBuffer, NULL );
-	/* hr */
 	if( FAILED(hr) )
 	{
 		LOG->Warn(hr_ssprintf(hr, "Couldn't create primary buffer"));
@@ -349,13 +348,6 @@ DSoundBuf::~DSoundBuf()
 	if( m_pBuffer != NULL )
 		m_pBuffer->Release();
 	delete [] m_pTempBuffer;
-}
-
-void round_up( int &i, int to )
-{
-	i += (to-1);
-	i /= to;
-	i *= to;
 }
 
 /* Check to make sure that, given the current writeahead and chunksize, we're
