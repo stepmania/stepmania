@@ -13,8 +13,9 @@
 bool GetFileVersion( CString sFile, CString &sOut )
 {
 	do {
+		/* Cast away const to work around header bug in VC6. */
 		DWORD ignore;
-		DWORD iSize = GetFileVersionInfoSize( sFile, &ignore );
+		DWORD iSize = GetFileVersionInfoSize( const_cast<char *>(sFile.c_str()), &ignore );
 		if( !iSize )
 			break;
 
