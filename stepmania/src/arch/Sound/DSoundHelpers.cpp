@@ -201,11 +201,11 @@ CString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 	waveformat.cbSize = 0;
 	waveformat.wFormatTag = WAVE_FORMAT_PCM;
 
-	bool NeedCtrlFrequency = false;
+	bool bNeedCtrlFrequency = false;
 	if( m_iSampleRate == DYNAMIC_SAMPLERATE )
 	{
 		m_iSampleRate = 44100;
-		NeedCtrlFrequency = true;
+		bNeedCtrlFrequency = true;
 	}
 
 	int bytes = m_iSampleBits / 8;
@@ -234,7 +234,7 @@ CString DSoundBuf::Init( DSound &ds, DSoundBuf::hw hardware,
 		format.dwFlags |= DSBCAPS_LOCSOFTWARE;
 #endif
 
-	if( NeedCtrlFrequency )
+	if( bNeedCtrlFrequency )
 		format.dwFlags |= DSBCAPS_CTRLFREQUENCY;
 
 	format.dwBufferBytes = m_iBufferSize;
