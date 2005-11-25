@@ -344,8 +344,6 @@ Client SMOnline packets:
   Note: The client is not permitted to use method (1) for authentication
 	if the salt it received from the server is 0
 
-
-
 001: User asks to enter room
  Size:
     1		Enter/Exit?
@@ -403,3 +401,8 @@ Server SMOnline packets:
     1		Room2 Status
 	...
     1		RoomN Status	
+
+002:  Request general information from server.
+    <no args>
+    This will send back to the user basic information in no particular established format
+    containing a minimum of the number of users connected and who they are.
