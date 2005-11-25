@@ -20,7 +20,8 @@ bool GetFileVersion( CString sFile, CString &sOut )
 			break;
 
 		CString VersionBuffer( iSize, ' ' );
-		if( !GetFileVersionInfo( sFile, NULL, iSize, VersionBuffer.GetBuf() ) )
+		/* Also VC6: */
+		if( !GetFileVersionInfo( const_cast<char *>(sFile.c_str()), NULL, iSize, VersionBuffer.GetBuf() ) )
 			break;
 
 		WORD *iTrans;
