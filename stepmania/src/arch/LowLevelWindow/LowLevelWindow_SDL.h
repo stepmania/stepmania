@@ -9,7 +9,7 @@ public:
 	LowLevelWindow_SDL();
 	~LowLevelWindow_SDL();
 	void *GetProcAddress(CString s);
-	CString TryVideoMode( VideoModeParams p, bool &bNewDeviceOut );
+	CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	void SwapBuffers();
 	void Update();
 

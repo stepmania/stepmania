@@ -9,6 +9,7 @@ public:
 	RageDisplay_Null( VideoModeParams p );
 
 	virtual CString GetApiDescription() const { return "Null"; }
+	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
 	void ResolutionChanged() { }
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
@@ -76,7 +77,7 @@ protected:
 	void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth ) { }
 
 	VideoModeParams m_Params;
-	CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut ) { m_Params = params; return CString(); }
+	CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) { m_Params = p; return CString(); }
 	RageSurface* CreateScreenshot();
 	void SetViewport(int shift_left, int shift_down) { }
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 

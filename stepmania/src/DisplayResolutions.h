@@ -1,36 +1,36 @@
-#ifndef STEPMANIA_H
-#define STEPMANIA_H
+#ifndef DisplayResolutions_H
+#define DisplayResolutions_H
 
-class Game;
-class RageTimer;
+#include <set>
 
-#ifdef _XBOX
-void __cdecl main();
-#else
-int main( int argc, char* argv[] );
-#endif
-void ApplyGraphicOptions();
-void NORETURN HandleException( CString error );
-void ResetGame();
-void ChangeCurrentGame( const Game* g );
-void FocusChanged( bool bHasFocus );
-bool AppHasFocus();
+class DisplayResolution
+{
+public:
+	int iWidth;
+	int iHeight;
 
-// If successful, return filename of screenshot in sDir, else return ""
-CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex = -1 );
+	bool operator<( const DisplayResolution &other ) const
+	{
+#define COMPARE(x) if( x < other.x ) return true; else if( x > other.x ) return false;
+		COMPARE( iWidth );
+		COMPARE( iHeight );
+#undef COMPARE
+		return false;
+	}
+};
 
-void InsertCoin( int iNum = 1, const RageTimer *pTime = NULL );
-void InsertCredit();
-
-class VideoModeParams;
-void GetPreferredVideoModeParams( VideoModeParams &paramsOut );
+class DisplayResolutions
+{
+public:
+	set<DisplayResolution> s;
+};
 
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2001-2005 Chris Danford
  * All rights reserved.
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -40,7 +40,7 @@ void GetPreferredVideoModeParams( VideoModeParams &paramsOut );
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF

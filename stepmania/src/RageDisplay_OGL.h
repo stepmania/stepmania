@@ -11,6 +11,7 @@ public:
 	CString Init( VideoModeParams p, bool bAllowUnacceleratedRenderer );
 
 	virtual CString GetApiDescription() const { return "OpenGL"; }
+	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
@@ -83,7 +84,7 @@ protected:
 	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex );
 	void DrawLineStripInternal( const RageSpriteVertex v[], int iNumVerts, float LineWidth );
 
-	CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut );
+	CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	RageSurface* CreateScreenshot();
 	void SetViewport(int shift_left, int shift_down);
 	PixelFormat GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture );

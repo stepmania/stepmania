@@ -19,6 +19,7 @@
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "EnumHelper.h"
+#include "DisplayResolutions.h"
 
 #if !defined(XBOX)
 #include "archutils/Win32/GraphicsWindow.h"
@@ -302,6 +303,21 @@ RageDisplay_D3D::~RageDisplay_D3D()
 	GraphicsWindow::Shutdown();
 }
 
+void RageDisplay_D3D::GetDisplayResolutions( DisplayResolutions &out ) const
+{
+	out.s.clear();
+	int iCnt = g_pd3d->GetAdapterModeCount( D3DADAPTER_DEFAULT );
+
+	for( int i = 0; i < iCnt; ++i )
+	{
+		D3DDISPLAYMODE mode;
+		g_pd3d->EnumAdapterModes( D3DADAPTER_DEFAULT, i, &mode );
+
+		DisplayResolution res = { mode.Width, mode.Height };
+		out.s.insert( res );
+	}
+}
+
 D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 {
 	HRESULT hr;
@@ -478,8 +494,10 @@ bool D3DReduceParams( D3DPRESENT_PARAMETERS	*pp )
 
 
 /* Set the video mode. */
-CString RageDisplay_D3D::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
+CString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDeviceOut )
 {
+	VideoModeParams p = _p;
+
 	//LOG->Warn( "RageDisplay_D3D::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
 
 	if( FindBackBufferType( p.windowed, p.bpp ) == D3DFMT_UNKNOWN )	// no possible back buffer formats

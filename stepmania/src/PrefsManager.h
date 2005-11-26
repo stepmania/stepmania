@@ -10,6 +10,7 @@
 class IniFile;
 
 const int MAX_SONGS_PER_PLAY = 7;
+#define ASPECT_AUTO -1
 
 class PrefsManager
 {
@@ -50,7 +51,7 @@ public:
 	Preference<int>		m_iMovieColorDepth;
 	Preference<int>		m_iMaxTextureResolution;
 	Preference<int>		m_iRefreshRate;
-	Preference<float>	m_fDisplayAspectRatio;
+	Preference<float>	m_fDisplayAspectRatio;	// -1 == auto
 	Preference<bool>	m_bAllowMultitexture;
 	Preference<bool>	m_bShowStats;
 	Preference<bool>	m_bShowBanners;

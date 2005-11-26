@@ -6,6 +6,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageDisplay.h"
+#include "DisplayResolutions.h"
 #include "archutils/Win32/AppInstance.h"
 #include "archutils/Win32/WindowIcon.h"
 #include "archutils/Win32/GetFileInformation.h"
@@ -467,6 +468,23 @@ HWND GraphicsWindow::GetHwnd()
 {
 	return g_hWndMain;
 }
+
+void GraphicsWindow::GetDisplayResolutions( DisplayResolutions &out )
+{
+	DEVMODE dm;
+	ZERO( dm );
+	dm.dmSize = sizeof(dm);
+	int i=0;
+	while(EnumDisplaySettings(NULL, i++, &dm))
+	{
+		if(ChangeDisplaySettings(&dm, CDS_TEST)==DISP_CHANGE_SUCCESSFUL)
+		{
+			DisplayResolution res = { dm.dmPelsWidth, dm.dmPelsHeight };
+			out.s.insert( res );
+		}
+	}
+}
+
 
 /*
  * (c) 2004 Glenn Maynard

@@ -3,7 +3,8 @@
 #define GRAPHICS_WINDOW_H
 
 #include <windows.h>
-struct VideoModeParams; // for VideoModeParams
+class VideoModeParams;
+class DisplayResolutions;
 
 namespace GraphicsWindow
 {
@@ -19,6 +20,8 @@ namespace GraphicsWindow
 	void RecreateGraphicsWindow( const VideoModeParams &p );
 	void DestroyGraphicsWindow();
 	void ConfigureGraphicsWindow( const VideoModeParams &p );
+
+	void GetDisplayResolutions( DisplayResolutions &out );
 
 	LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 

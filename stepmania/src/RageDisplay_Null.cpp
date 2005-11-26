@@ -11,6 +11,7 @@
 #include "RageTypes.h"
 #include "RageUtil.h"
 #include "RageSurface.h"
+#include "DisplayResolutions.h"
 
 static RageDisplay::PixelFormatDesc PIXEL_FORMAT_DESC[NUM_PixelFormat] = {
 	{
@@ -75,6 +76,13 @@ RageDisplay_Null::RageDisplay_Null( VideoModeParams p )
 	LOG->MapLog("renderer", "Current renderer: null");
 	bool bIgnore = false;
 	SetVideoMode( p, bIgnore );
+}
+
+void RageDisplay_Null::GetDisplayResolutions( DisplayResolutions &out ) const
+{
+	out.s.clear();
+	DisplayResolution res = { 640, 480 };
+	out.s.insert( res );
 }
 
 RageSurface* RageDisplay_Null::CreateScreenshot()

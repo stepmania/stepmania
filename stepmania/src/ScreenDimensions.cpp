@@ -2,7 +2,6 @@
 #include "ScreenDimensions.h"
 #include "PrefsManager.h"
 
-
 ThemeMetric<float> THEME_SCREEN_WIDTH("Common","ScreenWidth");
 ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
 
@@ -20,20 +19,30 @@ ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
  */
 #define ASPECT_4_TO_3 (4/3.0f)
 
+static float GetAspect()
+{
+	float fAspect = PREFSMAN->m_fDisplayAspectRatio;
+	if( fAspect == ASPECT_AUTO )
+		fAspect = PREFSMAN->m_iDisplayWidth / (float)PREFSMAN->m_iDisplayHeight;
+	return fAspect;
+}
+
 float ScreenWidth()
 {
+	float fAspect = GetAspect();
 	float fScale = 1;
-	if( PREFSMAN->m_fDisplayAspectRatio > ASPECT_4_TO_3 )
-		fScale = PREFSMAN->m_fDisplayAspectRatio / ASPECT_4_TO_3;
+	if( fAspect > ASPECT_4_TO_3 )
+		fScale = fAspect / ASPECT_4_TO_3;
 	ASSERT( fScale >= 1 );
 	return THEME_SCREEN_WIDTH * fScale;
 }
 
 float ScreenHeight()
 {
+	float fAspect = GetAspect();
 	float fScale = 1;
-	if( PREFSMAN->m_fDisplayAspectRatio < ASPECT_4_TO_3 )
-		fScale = ASPECT_4_TO_3 / PREFSMAN->m_fDisplayAspectRatio;
+	if( fAspect < ASPECT_4_TO_3 )
+		fScale = ASPECT_4_TO_3 / fAspect;
 	ASSERT( fScale >= 1 );
 	return THEME_SCREEN_HEIGHT * fScale;
 }

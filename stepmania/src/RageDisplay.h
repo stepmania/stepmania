@@ -5,6 +5,7 @@
 
 #include "RageTypes.h"
 #include "ModelTypes.h"
+class DisplayResolutions;
 
 const int REFRESH_DEFAULT = 0;
 struct RageSurface;
@@ -63,8 +64,9 @@ enum PixelFormat
 };
 const CString& PixelFormatToString( PixelFormat i );
 
-struct VideoModeParams
+class VideoModeParams
 {
+public:
 	// Initialize with a constructor so to guarantee all paramters
 	// are filled (in case new params are added).
 	VideoModeParams( 
@@ -134,6 +136,7 @@ public:
 	virtual ~RageDisplay() { }
 
 	virtual CString GetApiDescription() const = 0;
+	virtual void GetDisplayResolutions( DisplayResolutions &out ) const = 0;
 
 	// Don't override this.  Override TryVideoMode() instead.
 	// This will set the video mode to be as close as possible to params.
@@ -249,7 +252,7 @@ protected:
 	// return CString() if mode change was successful, an error message otherwise.
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
-	virtual CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut ) = 0;
+	virtual CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) = 0;
 
 	void DrawPolyLine( const RageSpriteVertex &p1, const RageSpriteVertex &p2, float LineWidth );
 

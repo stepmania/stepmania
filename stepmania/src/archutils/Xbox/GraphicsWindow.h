@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "RageDisplay.h"
+class VideoModeParams;
 
 namespace GraphicsWindow
 {

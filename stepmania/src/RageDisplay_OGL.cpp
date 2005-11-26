@@ -47,6 +47,7 @@
 #include "RageUtil.h"
 #include "EnumHelper.h"
 #include "ProductInfo.h"
+#include "DisplayResolutions.h"
 
 #include "arch/LowLevelWindow/LowLevelWindow.h"
 
@@ -439,6 +440,12 @@ RageDisplay_OGL::~RageDisplay_OGL()
 	delete g_pWind;
 }
 
+void RageDisplay_OGL::GetDisplayResolutions( DisplayResolutions &out ) const
+{
+	out.s.clear();
+	g_pWind->GetDisplayResolutions( out );
+}
+
 static void CheckPalettedTextures()
 {
 	CString sError;
@@ -610,7 +617,7 @@ void RageDisplay_OGL::ResolutionChanged()
 // Return true if mode change was successful.
 // bNewDeviceOut is set true if a new device was created and textures
 // need to be reloaded.
-CString RageDisplay_OGL::TryVideoMode( VideoModeParams p, bool &bNewDeviceOut )
+CString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
 	//LOG->Warn( "RageDisplay_OGL::TryVideoMode( %d, %d, %d, %d, %d, %d )", p.windowed, p.width, p.height, p.bpp, p.rate, p.vsync );
 

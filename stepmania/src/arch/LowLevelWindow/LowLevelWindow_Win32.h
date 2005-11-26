@@ -9,7 +9,8 @@ public:
 	LowLevelWindow_Win32();
 	~LowLevelWindow_Win32();
 	void *GetProcAddress( CString s );
-	CString TryVideoMode( VideoModeParams p, bool &bNewDeviceOut );
+	CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
+	void GetDisplayResolutions( DisplayResolutions &out ) const;
 	bool IsSoftwareRenderer( CString &sError );
 	void SwapBuffers();
 	void Update();

@@ -11,6 +11,7 @@ public:
 	CString Init( VideoModeParams p );
 
 	virtual CString GetApiDescription() const { return "D3D"; }
+	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
@@ -77,7 +78,7 @@ protected:
 	void DrawTrianglesInternal( const RageSpriteVertex v[], int iNumVerts );
 	void DrawCompiledGeometryInternal( const RageCompiledGeometry *p, int iMeshIndex );
 
-	CString TryVideoMode( VideoModeParams params, bool &bNewDeviceOut );
+	CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	RageSurface* CreateScreenshot();
 	void SetViewport(int shift_left, int shift_down);
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 

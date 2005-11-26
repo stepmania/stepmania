@@ -3,7 +3,8 @@
 
 /* This handles low-level operations that OGL 1.x doesn't give us. */
 
-#include "RageDisplay.h" // for VideoModeParams
+class DisplayResolutions;
+class VideoModeParams;
 
 class LowLevelWindow
 {
@@ -15,7 +16,8 @@ public:
 	// Return "" if mode change was successful, otherwise an error message.
 	// bNewDeviceOut is set true if a new device was created and textures
 	// need to be reloaded.
-	virtual CString TryVideoMode( VideoModeParams p, bool &bNewDeviceOut ) = 0;
+	virtual CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) = 0;
+	virtual void GetDisplayResolutions( DisplayResolutions &out ) const = 0;
 
 	virtual bool IsSoftwareRenderer( CString &sError ) { return false; }
 
