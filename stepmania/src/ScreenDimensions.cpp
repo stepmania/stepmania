@@ -12,12 +12,12 @@ ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
 //
 
 /* 
- * XXX: The theme resolution isn't necessarily 4:3; a natively widescreen
+ * The theme resolution isn't necessarily 4:3; a natively widescreen
  * theme would have eg. 16:9 or 16:10.
  *
  * Note that "aspect ratio" here always means DAR; we don't care about the SAR.
  */
-#define ASPECT_4_TO_3 (4/3.0f)
+#define THEME_NATIVE_ASPECT (THEME_SCREEN_WIDTH/THEME_SCREEN_HEIGHT)
 
 static float GetAspect()
 {
@@ -31,8 +31,8 @@ float ScreenWidth()
 {
 	float fAspect = GetAspect();
 	float fScale = 1;
-	if( fAspect > ASPECT_4_TO_3 )
-		fScale = fAspect / ASPECT_4_TO_3;
+	if( fAspect > THEME_NATIVE_ASPECT )
+		fScale = fAspect / THEME_NATIVE_ASPECT;
 	ASSERT( fScale >= 1 );
 	return THEME_SCREEN_WIDTH * fScale;
 }
@@ -41,8 +41,8 @@ float ScreenHeight()
 {
 	float fAspect = GetAspect();
 	float fScale = 1;
-	if( fAspect < ASPECT_4_TO_3 )
-		fScale = ASPECT_4_TO_3 / fAspect;
+	if( fAspect < THEME_NATIVE_ASPECT )
+		fScale = THEME_NATIVE_ASPECT / fAspect;
 	ASSERT( fScale >= 1 );
 	return THEME_SCREEN_HEIGHT * fScale;
 }
