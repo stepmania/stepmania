@@ -43,9 +43,9 @@ struct OptionRowDefinition
 	vector<CString> m_vsChoices;
 	set<PlayerNumber> m_vEnabledForPlayers;	// only players in this set may change focus to this row
 	bool	m_bExportOnChange;
-	bool	m_bAllowThemeItems;	// if false, ignores ScreenOptions::THEME_ITEMS
-	bool	m_bAllowThemeTitles;	// if false, ignores ScreenOptions::THEME_TITLES
-	bool	m_bAllowExplanation;	// if false, ignores ScreenOptions::SHOW_EXPLANATIONS
+	bool	m_bAllowThemeItems;	// if false, ignores ScreenOptions::THEME_ITEMS.  Should be true for dynamic strings.
+	bool	m_bAllowThemeTitles;	// if false, ignores ScreenOptions::THEME_TITLES.  Should be true for dynamic strings.
+	bool	m_bAllowExplanation;	// if false, ignores ScreenOptions::SHOW_EXPLANATIONS.  Should be true for dynamic strings.
 	bool	m_bShowChoicesListOnSelect;
 
 	bool IsEnabledForPlayer( PlayerNumber pn ) const 

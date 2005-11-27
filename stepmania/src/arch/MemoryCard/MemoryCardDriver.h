@@ -21,6 +21,7 @@ struct UsbStorageDevice
 		idProduct = 0;
 		sVendor = "";
 		sProduct = "";
+		sVolumeLabel = "";
 	};
 	int iBus;
 	int iPort;
@@ -58,6 +59,7 @@ struct UsbStorageDevice
 	int idProduct;
 	CString sVendor;
 	CString sProduct;
+	CString sVolumeLabel;
 
 	bool IsBlank() const { return m_State == STATE_NONE; }
 	void SetOsMountDir( const CString &s );

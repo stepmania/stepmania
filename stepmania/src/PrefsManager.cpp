@@ -327,7 +327,7 @@ PrefsManager::PrefsManager() :
 	m_sLanguage						( "Language",					"" ),	// ThemeManager will deal with this invalid language
 	m_sMemoryCardProfileSubdir		( "MemoryCardProfileSubdir",	PRODUCT_NAME ),
 	m_iProductID					( "ProductID",					1 ),
-	m_bMemoryCards					( "MemoryCards",				false ),
+	m_bMemoryCards					( "MemoryCards",				true ),
 	m_iCenterImageTranslateX		( "CenterImageTranslateX",		0 ),
 	m_iCenterImageTranslateY		( "CenterImageTranslateY",		0 ),
 	m_fCenterImageAddWidth			( "CenterImageAddWidth",		0 ),

@@ -19,7 +19,7 @@ MemoryCardDriverThreaded_Windows::~MemoryCardDriverThreaded_Windows()
 {
 }
 
-static bool TestReady( const CString &sDrive )
+static bool TestReady( const CString &sDrive, CString &sVolumeLabelOut )
 {
 	TCHAR szVolumeNameBuffer[MAX_PATH];
 	DWORD dwVolumeSerialNumber;
@@ -27,7 +27,7 @@ static bool TestReady( const CString &sDrive )
 	DWORD lpFileSystemFlags;
 	TCHAR szFileSystemNameBuffer[MAX_PATH];
 
-	return !!GetVolumeInformation( 
+	bool bRet = !!GetVolumeInformation( 
 		sDrive,
 		szVolumeNameBuffer,
 		sizeof(szVolumeNameBuffer),
@@ -36,6 +36,8 @@ static bool TestReady( const CString &sDrive )
 		&lpFileSystemFlags,
 		szFileSystemNameBuffer,
 		sizeof(szFileSystemNameBuffer) );
+	sVolumeLabelOut = szVolumeNameBuffer;
+	return bRet;
 }
 
 static bool TestWrite( const CString &sDrive )
@@ -87,11 +89,13 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 			if( GetDriveType(sDrive) != DRIVE_REMOVABLE )	// is a removable drive
 				continue;
 
-			if( !TestReady(sDrive) )
+			CString sVolumeLabel;
+			if( !TestReady(sDrive, sVolumeLabel) )
 				continue;
 
 			UsbStorageDevice usbd;
 			usbd.SetOsMountDir( sDrive );
+			usbd.sVolumeLabel = sVolumeLabel;
 			if( TestWrite(sDrive) )
 				usbd.m_State = UsbStorageDevice::STATE_READY;
 			else

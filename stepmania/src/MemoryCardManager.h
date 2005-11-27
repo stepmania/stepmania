@@ -16,7 +16,7 @@ public:
 	MemoryCardManager();
 	~MemoryCardManager();
 
-	void Update( float fDelta );
+	void Update( float fDelta, bool bForceUpdate = false );
 
 	MemoryCardState GetCardState( PlayerNumber pn ) const { return m_State[pn]; }
 	CString GetCardError( PlayerNumber pn ) const { return m_sError[pn]; }
@@ -39,16 +39,20 @@ public:
 	bool IsNameAvailable( PlayerNumber pn ) const;
 	CString GetName( PlayerNumber pn ) const;
 
+	const vector<UsbStorageDevice> &GetStorageDevices() { return m_vStorageDevices; }
+
 	static Preference1D<CString>	m_sMemoryCardOsMountPoint;
 	static Preference1D<int>		m_iMemoryCardUsbBus;
 	static Preference1D<int>		m_iMemoryCardUsbPort;
 	static Preference1D<int>		m_iMemoryCardUsbLevel;
 
+	static Preference<CString>		m_sMemoryCardOsMountPointBlacklist;
+	bool IsBlacklisted( const UsbStorageDevice &dev ) const;
+
 protected:
 	void CheckStateChanges();
 
 	vector<UsbStorageDevice> m_vStorageDevices;	// all currently connected
-
 
 	bool	m_bCardsLocked;
 	bool	m_bMounted[NUM_PLAYERS];	// card is currently mounted

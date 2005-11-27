@@ -49,6 +49,9 @@ Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbBus( MemoryCardUsbBusInit,
 Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbPort( MemoryCardUsbPortInit,	NUM_PLAYERS );
 Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbLevel( MemoryCardUsbLevelInit,	NUM_PLAYERS );
 
+Preference<CString>		MemoryCardManager::m_sMemoryCardOsMountPointBlacklist( "MemoryCardOsMountPointBlacklist", "" );
+
+
 const CString MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =
 {
 	/* @ is importast; see RageFileManager LoadedDriver::GetPath */
@@ -324,50 +327,33 @@ MemoryCardManager::~MemoryCardManager()
 	}
 }
 
-void MemoryCardManager::Update( float fDelta )
+bool MemoryCardManager::IsBlacklisted( const UsbStorageDevice &dev ) const
 {
-	const vector<UsbStorageDevice> vOld = m_vStorageDevices;	// copy
-	if( !g_pWorker->StorageDevicesChanged( m_vStorageDevices ) )
-		return;
-/*	const vector<UsbStorageDevice> &vNew = m_vStorageDevices;
+	vector<CString> vsMemoryCardOsMountPointBlacklist;
+	split( m_sMemoryCardOsMountPointBlacklist, ",", vsMemoryCardOsMountPointBlacklist );
 
-	vector<UsbStorageDevice> vConnects;	// fill these in below
-	vector<UsbStorageDevice> vDisconnects;	// fill these in below
+	bool bBlacklisted = find( vsMemoryCardOsMountPointBlacklist.begin(), vsMemoryCardOsMountPointBlacklist.end(), dev.sOsMountDir ) != vsMemoryCardOsMountPointBlacklist.end();
+	return bBlacklisted;
+}
+
+void MemoryCardManager::Update( float fDelta, bool bForceUpdate )
+{
+	vector<UsbStorageDevice> vOld;
 	
-	// check for disconnects
-	FOREACH_CONST( UsbStorageDevice, vOld, old )
+	if( bForceUpdate )
 	{
-		vector<UsbStorageDevice>::const_iterator iter = find( vNew.begin(), vNew.end(), *old );
-		if( iter == vNew.end() )	// card no longer present
-		{
-			LOG->Trace( "Disconnected bus %d port %d device %d path %s", old->iBus, old->iPort, old->iLevel, old->sOsMountDir.c_str() );
-			vDisconnects.push_back( *old );
-		}
+		// force a redetect on the next update
+		FOREACH_PlayerNumber( p )
+			m_Device[p].MakeBlank();
+		// leave vOld empty
 	}
-	
-	// check for connects
-	FOREACH_CONST( UsbStorageDevice, vNew, newd )
+	else
 	{
-		vector<UsbStorageDevice>::const_iterator iter = find( vOld.begin(), vOld.end(), *newd );
-		if( iter == vOld.end() )	// card wasn't present last update
-		{
-			LOG->Trace( "Connected bus %d port %d device %d path %s", newd->iBus, newd->iPort, newd->iLevel, newd->sOsMountDir.c_str() );
-			vConnects.push_back( *newd );
-		}
+		vOld = m_vStorageDevices;	// copy
+		if( !g_pWorker->StorageDevicesChanged( m_vStorageDevices ) )
+			return;
 	}
-	
-	// unassign cards that were disconnected
-	FOREACH_PlayerNumber( p )
-	{
-		UsbStorageDevice &assigned_device = m_Device[p];
-		if( assigned_device.IsBlank() )	// not assigned a card
-			continue;
-		
-		vector<UsbStorageDevice>::iterator iter = find( vDisconnects.begin(), vDisconnects.end(), assigned_device );
-		if( iter != vDisconnects.end() )
-			assigned_device.MakeBlank();
-	}
-*/
+
 	// make a list of unassigned
 	vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices;        // copy
 	
@@ -421,6 +407,9 @@ void MemoryCardManager::Update( float fDelta )
 				d->sOsMountDir.CompareNoCase(m_sMemoryCardOsMountPoint[p].Get()) )
 				continue;      // not a match
 			
+			if( IsBlacklisted(*d) )
+				continue;
+
 			// search for USB bus match
 			if( m_iMemoryCardUsbBus[p] != -1 &&
 				m_iMemoryCardUsbBus[p] != d->iBus )
