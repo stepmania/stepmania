@@ -461,11 +461,11 @@ void Sprite::DrawTexture( const TweenState *state )
 
 				float fTopX = SCALE( pVert->p.x, quadVerticies.left, quadVerticies.right, texCoords[0].x, texCoords[3].x );
 				float fBottomX = SCALE( pVert->p.x, quadVerticies.left, quadVerticies.right, texCoords[1].x, texCoords[2].x );
-				pVert->t.x = SCALE( pVert->p.x, quadVerticies.top, quadVerticies.bottom, fTopX, fBottomX );
+				pVert->t.x = SCALE( pVert->p.y, quadVerticies.top, quadVerticies.bottom, fTopX, fBottomX );
 
 				float fLeftY = SCALE( pVert->p.y, quadVerticies.top, quadVerticies.bottom, texCoords[0].y, texCoords[1].y );
 				float fRightY = SCALE( pVert->p.y, quadVerticies.top, quadVerticies.bottom, texCoords[3].y, texCoords[2].y );
-				pVert->t.y = SCALE( pVert->p.y, quadVerticies.left, quadVerticies.right, fLeftY, fRightY );
+				pVert->t.y = SCALE( pVert->p.x, quadVerticies.left, quadVerticies.right, fLeftY, fRightY );
 			}
 		}
 		else
