@@ -360,6 +360,10 @@ Client SMOnline packets:
     NT		Room Title
     NT		Room Description
 
+003: Requests Room Info
+ Size:
+    NT	Room Name
+
 
 Server SMOnline packets:
 000:  Login Responce
@@ -380,6 +384,9 @@ Server SMOnline packets:
     1		Type of room:
 		0: Chat room
 		1: Game room
+    1		Allows creation of sub room.
+		0: Does not allow creation of subrooms
+		1: Allows creation of subrooms
 	
 	If Room List Update:
     1		Number of rooms
@@ -391,18 +398,26 @@ Server SMOnline packets:
     NT		RoomN Title
     NT		RoomN Description
 
-    Room Status appended for reverse compatibility
-    1		Room1 Status
+	    Room Status appended for reverse compatibility
+	    1		Room1 Status
 		0: Normal Room
 		1: Passworded Room
 		2: Room in game
 		3: First stage of song selection has been done
 		4: Second stage of song selection has been done
-    1		Room2 Status
-	...
-    1		RoomN Status	
+	    1		Room2 Status
+		...
+	    1		RoomN Status	
 
 002:  Request general information from server.
     <no args>
     This will send back to the user basic information in no particular established format
     containing a minimum of the number of users connected and who they are.
+
+003:  Room Info
+  Size:
+    NT	Last Song
+    1		Num Players
+    1		Max Players
+    NT	Player1 Name
+	...
