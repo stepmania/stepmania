@@ -544,6 +544,7 @@ bool DSoundBuf::get_output_buf( char **pBuffer, unsigned *pBufferSize, int iChun
 		return false;
 
 	int iNumBytesEmpty = m_iWriteAhead - m_iBufferBytesFilled;
+	iNumBytesEmpty = QuantizeUp( iNumBytesEmpty, iChunksize );
 
 //	LOG->Trace("gave %i at %i (%i, %i) %i filled", iNumBytesEmpty, m_iWriteCursor, cursor, write, m_iBufferBytesFilled);
 
