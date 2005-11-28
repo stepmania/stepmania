@@ -371,14 +371,6 @@ void Sprite::Update( float fDelta )
 	}
 }
 
-static void TexCoordsFromArray( RageSpriteVertex *v, const float *f )
-{
-	v[0].t = RageVector2( f[0], f[1] );	// top left
-	v[1].t = RageVector2( f[2],	f[3] );	// bottom left
-	v[2].t = RageVector2( f[4],	f[5] );	// bottom right
-	v[3].t = RageVector2( f[6],	f[7] );	// top right
-}
-
 void TexCoordArrayFromRect( float fImageCoords[8], const RectF &rect )
 {
 	fImageCoords[0] = rect.left;	fImageCoords[1] = rect.top;		// top left
@@ -453,36 +445,32 @@ void Sprite::DrawTexture( const TweenState *state )
 	{
 		float f[8];
 		GetActiveTextureCoords( f );
-		TexCoordsFromArray( v, f );
 
+		if( state->crop.left || state->crop.right || state->crop.top || state->crop.bottom )
+		{
+			RageVector2 texCoords[4] = {
+				RageVector2( f[0], f[1] ),	// top left
+				RageVector2( f[2], f[3] ),	// bottom left
+				RageVector2( f[4], f[5] ),	// bottom right
+				RageVector2( f[6], f[7] ) 	// top right
+			};
 
-		RageVector2 texCoords[4] = {
-			RageVector2( f[0], f[1] ),	// top left
-			RageVector2( f[2],	f[3] ),	// bottom left
-			RageVector2( f[4],	f[5] ),	// bottom right
-			RageVector2( f[6],	f[7] ) 	// top right
-		};
-	
+			v[0].t.x = SCALE( v[0].p.x, quadVerticies.left, quadVerticies.right, texCoords[0].x, texCoords[3].x );
+			v[1].t.x = SCALE( v[1].p.x, quadVerticies.left, quadVerticies.right, texCoords[1].x, texCoords[2].x );
+			v[2].t.x = SCALE( v[2].p.x, quadVerticies.left, quadVerticies.right, texCoords[1].x, texCoords[2].x );
+			v[3].t.x = SCALE( v[3].p.x, quadVerticies.left, quadVerticies.right, texCoords[0].x, texCoords[3].x );
 
-		if( crop.left!=0 )
-		{
-			v[0].t.x = SCALE( crop.left, 0.f, 1.f, texCoords[0].x, texCoords[3].x );
-			v[1].t.x = SCALE( crop.left, 0.f, 1.f, texCoords[1].x, texCoords[2].x );
+			v[0].t.y = SCALE( v[0].p.y, quadVerticies.top, quadVerticies.bottom, texCoords[0].y, texCoords[1].y );
+			v[1].t.y = SCALE( v[1].p.y, quadVerticies.top, quadVerticies.bottom, texCoords[0].y, texCoords[1].y );
+			v[2].t.y = SCALE( v[2].p.y, quadVerticies.top, quadVerticies.bottom, texCoords[3].y, texCoords[2].y );
+			v[3].t.y = SCALE( v[3].p.y, quadVerticies.top, quadVerticies.bottom, texCoords[3].y, texCoords[2].y );
 		}
-		if( crop.right!=0 )
+		else
 		{
-			v[2].t.x = SCALE( crop.right, 0.f, 1.f, texCoords[2].x, texCoords[1].x );
-			v[3].t.x = SCALE( crop.right, 0.f, 1.f, texCoords[3].x, texCoords[0].x );
-		}
-		if( crop.top!=0 )
-		{
-			v[0].t.y = SCALE( crop.top, 0.f, 1.f, texCoords[0].y, texCoords[1].y );
-			v[3].t.y = SCALE( crop.top, 0.f, 1.f, texCoords[3].y, texCoords[2].y );
-		}
-		if( crop.bottom!=0 )
-		{
-			v[1].t.y = SCALE( crop.bottom, 0.f, 1.f, texCoords[1].y, texCoords[0].y );
-			v[2].t.y = SCALE( crop.bottom, 0.f, 1.f, texCoords[2].y, texCoords[3].y );
+			v[0].t = RageVector2( f[0], f[1] );	// top left
+			v[1].t = RageVector2( f[2],	f[3] );	// bottom left
+			v[2].t = RageVector2( f[4],	f[5] );	// bottom right
+			v[3].t = RageVector2( f[6],	f[7] );	// top right
 		}
 	}
 	else
