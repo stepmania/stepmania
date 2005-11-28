@@ -919,7 +919,11 @@ static void InvalidateAllGeometry()
 RageCompiledGeometryHWOGL::RageCompiledGeometryHWOGL()
 {
 	g_GeometryList.insert( this );
-	m_nPositions = m_nTextureCoords = m_nNormals = m_nTriangles = m_nTextureMatrixScale = 0;
+	m_nPositions = 0;
+	m_nTextureCoords = 0;
+	m_nNormals = 0;
+	m_nTriangles = 0;
+	m_nTextureMatrixScale = 0;
 
 	AllocateBuffers();
 }
@@ -979,53 +983,63 @@ void RageCompiledGeometryHWOGL::AllocateBuffers()
 void RageCompiledGeometryHWOGL::UploadData()
 {
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
+	AssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector3), 
 		&m_vPosition[0], 
 		GL_STATIC_DRAW_ARB );
-//		AssertNoGLError();
+	AssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
+	AssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector2), 
 		&m_vTexture[0], 
 		GL_STATIC_DRAW_ARB );
-//		AssertNoGLError();
+	AssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
+	AssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector3), 
 		&m_vNormal[0], 
 		GL_STATIC_DRAW_ARB );
-//		AssertNoGLError();
+	AssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
+	AssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ELEMENT_ARRAY_BUFFER_ARB, 
 		GetTotalTriangles()*sizeof(msTriangle), 
 		&m_vTriangles[0], 
 		GL_STATIC_DRAW_ARB );
-//		AssertNoGLError();
+	AssertNoGLError();
 
 
 	if( m_bAnyNeedsTextureMatrixScale )
 	{
 		GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
+		AssertNoGLError();
 		GLExt.glBufferDataARB( 
 			GL_ARRAY_BUFFER_ARB, 
 			GetTotalVertices()*sizeof(RageVector2),
 			&m_vTexMatrixScale[0],
 			GL_STATIC_DRAW_ARB );
+		AssertNoGLError();
 	}
 }
 
 void RageCompiledGeometryHWOGL::Invalidate()
 {
 	/* Our vertex buffers no longer exist.  Reallocate and reupload. */
-	m_nPositions = m_nTextureCoords = m_nNormals = m_nTriangles = m_nTextureMatrixScale = 0;
+	m_nPositions = 0;
+	m_nTextureCoords = 0;
+	m_nNormals = 0;
+	m_nTriangles = 0;
+	m_nTextureMatrixScale = 0;
 	AllocateBuffers();
 	UploadData();
 }
@@ -1034,6 +1048,7 @@ void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 {
 	RageCompiledGeometrySWOGL::Allocate( vMeshes );
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
+	AssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector3), 
@@ -1042,6 +1057,7 @@ void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 	AssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
+	AssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector2), 
@@ -1050,6 +1066,7 @@ void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 	AssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
+	AssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector3), 
@@ -1058,6 +1075,7 @@ void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 	AssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ELEMENT_ARRAY_BUFFER_ARB, m_nTriangles );
+	AssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ELEMENT_ARRAY_BUFFER_ARB, 
 		GetTotalTriangles()*sizeof(msTriangle), 
@@ -1066,6 +1084,7 @@ void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 	AssertNoGLError();
 
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureMatrixScale );
+	AssertNoGLError();
 	GLExt.glBufferDataARB( 
 		GL_ARRAY_BUFFER_ARB, 
 		GetTotalVertices()*sizeof(RageVector2), 
@@ -1089,14 +1108,17 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 		return;
 
 	glEnableClientState(GL_VERTEX_ARRAY);
+	AssertNoGLError();
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
 	AssertNoGLError();
 	glVertexPointer(3, GL_FLOAT, 0, NULL );
 	AssertNoGLError();
 
 	glDisableClientState(GL_COLOR_ARRAY);
+	AssertNoGLError();
 
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	AssertNoGLError();
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nTextureCoords );
 	AssertNoGLError();
 	glTexCoordPointer(2, GL_FLOAT, 0, NULL);
@@ -1113,6 +1135,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	if( bLighting || bTextureGenS || bTextureGenT )
 	{
 		glEnableClientState(GL_NORMAL_ARRAY);
+		AssertNoGLError();
 		GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nNormals );
 		AssertNoGLError();
 		glNormalPointer(GL_FLOAT, 0, NULL);
@@ -1121,6 +1144,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 	else
 	{
 		glDisableClientState(GL_NORMAL_ARRAY);
+		AssertNoGLError();
 	}
 
 	if( meshInfo.m_bNeedsTextureMatrixScale )
@@ -1138,6 +1162,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 			AssertNoGLError();
 
 			GLExt.glUseProgramObjectARB( g_bTextureMatrixShader );
+			AssertNoGLError();
 		}
 		else
 		{
@@ -1162,6 +1187,7 @@ void RageCompiledGeometryHWOGL::Draw( int iMeshIndex ) const
 
 			glMatrixMode( GL_TEXTURE );
 			glLoadMatrixf( (const float*)mat );
+			AssertNoGLError();
 		}
 	}
 
@@ -1590,7 +1616,6 @@ void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
 
 	FlushGLErrors();
 	glDeleteTextures(1,reinterpret_cast<GLuint*>(&uTexID));
-
 	AssertNoGLError();
 }
 
