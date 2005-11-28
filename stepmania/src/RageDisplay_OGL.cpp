@@ -639,6 +639,8 @@ CString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDevic
 
 		/* Recreate all vertex buffers. */
 		InvalidateAllGeometry();
+
+		InitScalingScript();
 	}
 
 	this->SetDefaultRenderStates();
