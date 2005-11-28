@@ -455,15 +455,18 @@ void Sprite::DrawTexture( const TweenState *state )
 				RageVector2( f[6], f[7] ) 	// top right
 			};
 
-			v[0].t.x = SCALE( v[0].p.x, quadVerticies.left, quadVerticies.right, texCoords[0].x, texCoords[3].x );
-			v[1].t.x = SCALE( v[1].p.x, quadVerticies.left, quadVerticies.right, texCoords[1].x, texCoords[2].x );
-			v[2].t.x = SCALE( v[2].p.x, quadVerticies.left, quadVerticies.right, texCoords[1].x, texCoords[2].x );
-			v[3].t.x = SCALE( v[3].p.x, quadVerticies.left, quadVerticies.right, texCoords[0].x, texCoords[3].x );
+			for( int i = 0; i < 4; ++i )
+			{
+				RageSpriteVertex *pVert = &v[i];
 
-			v[0].t.y = SCALE( v[0].p.y, quadVerticies.top, quadVerticies.bottom, texCoords[0].y, texCoords[1].y );
-			v[1].t.y = SCALE( v[1].p.y, quadVerticies.top, quadVerticies.bottom, texCoords[0].y, texCoords[1].y );
-			v[2].t.y = SCALE( v[2].p.y, quadVerticies.top, quadVerticies.bottom, texCoords[3].y, texCoords[2].y );
-			v[3].t.y = SCALE( v[3].p.y, quadVerticies.top, quadVerticies.bottom, texCoords[3].y, texCoords[2].y );
+				float fTopX = SCALE( pVert->p.x, quadVerticies.left, quadVerticies.right, texCoords[0].x, texCoords[3].x );
+				float fBottomX = SCALE( pVert->p.x, quadVerticies.left, quadVerticies.right, texCoords[1].x, texCoords[2].x );
+				pVert->t.x = SCALE( pVert->p.x, quadVerticies.top, quadVerticies.bottom, fTopX, fBottomX );
+
+				float fLeftY = SCALE( pVert->p.y, quadVerticies.top, quadVerticies.bottom, texCoords[0].y, texCoords[1].y );
+				float fRightY = SCALE( pVert->p.y, quadVerticies.top, quadVerticies.bottom, texCoords[3].y, texCoords[2].y );
+				pVert->t.y = SCALE( pVert->p.y, quadVerticies.left, quadVerticies.right, fLeftY, fRightY );
+			}
 		}
 		else
 		{
