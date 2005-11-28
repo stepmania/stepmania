@@ -982,6 +982,8 @@ void RageCompiledGeometryHWOGL::AllocateBuffers()
 
 void RageCompiledGeometryHWOGL::UploadData()
 {
+	FlushGLErrors();
+
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
 	AssertNoGLError();
 	GLExt.glBufferDataARB( 
@@ -1046,6 +1048,8 @@ void RageCompiledGeometryHWOGL::Invalidate()
 
 void RageCompiledGeometryHWOGL::Allocate( const vector<msMesh> &vMeshes )
 {
+	FlushGLErrors();
+
 	RageCompiledGeometrySWOGL::Allocate( vMeshes );
 	GLExt.glBindBufferARB( GL_ARRAY_BUFFER_ARB, m_nPositions );
 	AssertNoGLError();
