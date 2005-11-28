@@ -106,7 +106,7 @@ CAPTION "Stepmania Package Manager"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,255,215,69,14
-    PUSHBUTTON      "Play Stepmania",IDC_BUTTON_PLAY,5,215,70,15
+    PUSHBUTTON      "Launch Game",IDC_BUTTON_PLAY,5,215,70,15
     PUSHBUTTON      "Export As One",IDC_BUTTON_EXPORT_AS_ONE,255,104,69,15
     CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     PUSHBUTTON      "Export As Individual",IDC_BUTTON_EXPORT_AS_INDIVIDUAL,
@@ -192,6 +192,7 @@ BEGIN
     GROUPBOX        "Keyboard / Joystick Mappings",IDC_STATIC,7,123,318,39
     LTEXT           "Erase all of your keyboard and joystick mappings if you've made a mistake mapping keys in the game and can't get back to change them.",
                     IDC_STATIC,104,133,214,25
+    PUSHBUTTON      "Launch Game",IDC_BUTTON_LAUNCH_GAME,189,324,70,14
 END
 
 IDD_CONVERT_THEME DIALOGEX 0, 0, 332, 258

@@ -51,6 +51,7 @@ BEGIN_MESSAGE_MAP(MainMenuDlg, CDialog)
 	ON_BN_CLICKED(IDC_OPEN_PREFERENCES, OnBnClickedOpenPreferences)
 	ON_BN_CLICKED(IDC_CLEAR_PREFERENCES, OnBnClickedClearPreferences)
 	//}}AFX_MSG_MAP
+	ON_BN_CLICKED(IDC_BUTTON_LAUNCH_GAME, OnBnClickedButtonLaunchGame)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -240,4 +241,11 @@ void MainMenuDlg::OnBnClickedClearPreferences()
 	}
 
 	MessageBox( PREFERENCES_INI + " cleared." );
+}
+
+void MainMenuDlg::OnBnClickedButtonLaunchGame()
+{
+	// TODO: Add your control notification handler code here
+	LaunchGame();
+	exit(0);
 }

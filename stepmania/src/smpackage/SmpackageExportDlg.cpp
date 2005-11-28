@@ -349,24 +349,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 void CSmpackageExportDlg::OnButtonPlay() 
 {
 	// TODO: Add your control notification handler code here
-
-	PROCESS_INFORMATION pi;
-	STARTUPINFO	si;
-	ZeroMemory( &si, sizeof(si) );
-
-	CreateProcess(
-		NULL,		// pointer to name of executable module
-		"stepmania.exe",		// pointer to command line string
-		NULL,  // process security attributes
-		NULL,   // thread security attributes
-		false,  // handle inheritance flag
-		0, // creation flags
-		NULL,  // pointer to new environment block
-		NULL,   // pointer to current directory name
-		&si,  // pointer to STARTUPINFO
-		&pi  // pointer to PROCESS_INFORMATION
-	);
-
+	LaunchGame();
 	exit(0);
 }
 

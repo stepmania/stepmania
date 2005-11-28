@@ -19,4 +19,6 @@ bool SetPref( CString name, bool val );
 CString GetPackageDirectory(CString path);
 bool IsValidPackageDirectory(CString path);
 
+void LaunchGame();
+
 #endif
