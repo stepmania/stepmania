@@ -284,38 +284,40 @@ BEGIN
     CTEXT           "Delete old packages?",IDC_STATIC,55,119,166,12
 END
 
-IDD_CHANGE_GAME_SETTINGS DIALOG  0, 0, 162, 285
+IDD_CHANGE_GAME_SETTINGS DIALOGEX 0, 0, 162, 282
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Change Game Settings"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,49,265,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,104,265,50,14
-    GROUPBOX        "Graphics API",IDC_STATIC,7,7,147,71
+    DEFPUSHBUTTON   "OK",IDOK,49,260,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,104,260,50,14
+    GROUPBOX        "Graphics API",IDC_STATIC,7,7,147,66
     CONTROL         "Default (recommended)",IDC_RADIO_DEFAULT,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP,25,24,105,12
+                    BS_AUTORADIOBUTTON | WS_GROUP,25,22,105,12
     CONTROL         "OpenGL",IDC_RADIO_OPENGL,"Button",BS_AUTORADIOBUTTON,25,
-                    40,105,12
+                    38,105,12
     CONTROL         "Direct3D",IDC_RADIO_DIRECT3D,"Button",
-                    BS_AUTORADIOBUTTON,25,56,105,12
-    GROUPBOX        "Sound API",IDC_STATIC,7,83,147,84
+                    BS_AUTORADIOBUTTON,25,54,105,12
+    GROUPBOX        "Sound API",IDC_STATIC,7,77,147,100
     CONTROL         "Default (recommended)",IDC_RADIO_SOUND_DEFAULT,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP,25,99,105,12
+                    BS_AUTORADIOBUTTON | WS_GROUP,25,92,105,12
     CONTROL         "DirectSound Hardware",
                     IDC_RADIO_SOUND_DIRECTSOUND_HARDWARE,"Button",
-                    BS_AUTORADIOBUTTON,25,115,105,12
+                    BS_AUTORADIOBUTTON,25,108,105,12
     CONTROL         "DirectSound Software",
                     IDC_RADIO_SOUND_DIRECTSOUND_SOFTWARE,"Button",
-                    BS_AUTORADIOBUTTON,25,131,105,12
+                    BS_AUTORADIOBUTTON,25,124,105,12
+    CONTROL         "WaveOut",IDC_RADIO_SOUND_WAVEOUT,"Button",
+                    BS_AUTORADIOBUTTON,25,140,105,12
     CONTROL         "Null (no sound)",IDC_RADIO_SOUND_NULL,"Button",
-                    BS_AUTORADIOBUTTON,25,147,105,12
-    GROUPBOX        "Logging",IDC_STATIC,7,175,147,53
+                    BS_AUTORADIOBUTTON,25,156,105,12
+    GROUPBOX        "Logging",IDC_STATIC,7,181,147,50
     CONTROL         "Log to Disk",IDC_CHECK_LOG_TO_DISK,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,26,192,106,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,26,197,106,10
     CONTROL         "Show Log Window",IDC_CHECK_SHOW_LOG_WINDOW,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,26,208,106,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,26,213,106,10
     LTEXT           "Tip: Change these only if you experience problems when using the default settings.",
-                    IDC_STATIC,7,234,147,27
+                    IDC_STATIC,7,234,147,26
 END
 
 
@@ -450,7 +452,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 154
         TOPMARGIN, 7
-        BOTTOMMARGIN, 277
+        BOTTOMMARGIN, 274
     END
 END
 #endif    // APSTUDIO_INVOKED

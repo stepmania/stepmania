@@ -73,6 +73,8 @@ BOOL ChangeGameSettings::OnInitDialog()
 		CheckDlgButton( IDC_RADIO_SOUND_DIRECTSOUND_HARDWARE, BST_CHECKED );
 	else if( sValue.CompareNoCase("DirectSound-sw")==0 )
 		CheckDlgButton( IDC_RADIO_SOUND_DIRECTSOUND_SOFTWARE, BST_CHECKED );
+	else if( sValue.CompareNoCase("WaveOut")==0 )
+		CheckDlgButton( IDC_RADIO_SOUND_WAVEOUT, BST_CHECKED );
 	else if( sValue.CompareNoCase("null")==0 )
 		CheckDlgButton( IDC_RADIO_SOUND_NULL, BST_CHECKED );
 	else
@@ -116,6 +118,8 @@ void ChangeGameSettings::OnOK()
 		ini.SetValue( "Options", "SoundDrivers", "DirectSound" );
 	else if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_SOUND_DIRECTSOUND_SOFTWARE) )
 		ini.SetValue( "Options", "SoundDrivers", "DirectSound-sw" );
+	else if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_SOUND_WAVEOUT) )
+		ini.SetValue( "Options", "SoundDrivers", "WaveOut" );
 	else if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_SOUND_NULL) )
 		ini.SetValue( "Options", "SoundDrivers", "null" );
 	else

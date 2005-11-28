@@ -53,7 +53,6 @@
 #define IDC_OPEN_STEPMANIA_INI          1027
 #define IDC_OPEN_PREFERENCES            1027
 #define IDC_EDIT_VALUE                  1028
-#define IDC_CLEAR_SETTINGS              1028
 #define IDC_CLEAR_PREFERENCES           1028
 #define IDC_EDIT_DEFAULT                1029
 #define IDC_CLEAR_KEYMAPS               1029
@@ -77,6 +76,7 @@
 #define IDC_EDIT_INSTALLATION           1054
 #define IDC_RADIO_SOUND_DIRECTSOUND_SOFTWARE 1055
 #define IDC_RADIO_SOUND_DIRECTSOUND_HARDWARE 1056
+#define IDC_RADIO_SOUND_WAVEOUT         1057
 
 // Next default values for new objects
 // 
