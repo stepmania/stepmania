@@ -5,6 +5,7 @@
 #include "RageDisplay.h" // for REFRESH_DEFAULT
 #include "StepMania.h"
 #include "GameLoop.h"
+#include "DisplayResolutions.h"
 
 #if defined(MACOSX)
 extern "C"
@@ -222,6 +223,18 @@ void LowLevelWindow_SDL::Update()
 			ExitGame();
 			break;
 		}
+	}
+}
+
+void LowLevelWindow_SDL::GetDisplayResolutions( DisplayResolutions &out ) const
+{
+	SDL_Rect **modes = SDL_ListModes(NULL, SDL_RESIZABLE | SDL_OPENGL | SDL_FULLSCREEN );
+	ASSERT_M( modes, "No modes available" );
+	
+	for(int i=0; modes[i]; ++i )
+	{
+		DisplayResolution res = { modes[i]->w, modes[i]->h };
+		out.s.insert( res );
 	}
 }
 

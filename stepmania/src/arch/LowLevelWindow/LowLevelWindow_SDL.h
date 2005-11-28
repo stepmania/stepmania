@@ -2,6 +2,7 @@
 #define LOW_LEVEL_WINDOW_SDL_H
 
 #include "LowLevelWindow.h"
+#include "RageDisplay.h"
 
 class LowLevelWindow_SDL: public LowLevelWindow
 {
@@ -10,6 +11,8 @@ public:
 	~LowLevelWindow_SDL();
 	void *GetProcAddress(CString s);
 	CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
+	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
+
 	void SwapBuffers();
 	void Update();
 
