@@ -292,7 +292,7 @@ void Sprite::UpdateAnimationState()
 }
 
 /*
- * We treat .sprite/frame animation and movie animation slightly differently.
+ * We treat frame animation and movie animation slightly differently.
  *
  * Sprite animation is always tied directly to the effect timer.  If you pause
  * animation, wait a while and restart it, sprite animations will snap back to the
@@ -352,7 +352,7 @@ void Sprite::Update( float fDelta )
 
 		/* When wrapping, avoid gradual loss of precision and sending unreasonably large
 		 * texture coordinates to the renderer by pushing texture coordinates back to 0.
-		 * As long as we adjust all four coordinates by the same amount,this won't be visible. */
+		 * As long as we adjust all four coordinates by the same amount, this won't be visible. */
 		if( m_bTextureWrapping )
 		{
 			const float fXAdjust = floorf( fTexCoords[0] );
@@ -384,7 +384,7 @@ void Sprite::DrawTexture( const TweenState *state )
 	Actor::SetGlobalRenderStates();	// set Actor-specified render states
 
 	// bail if cropped all the way 
-    if( state->crop.left + state->crop.right >= 1  || 
+	if( state->crop.left + state->crop.right >= 1  || 
 		state->crop.top + state->crop.bottom >= 1 ) 
 		return; 
 
