@@ -14,8 +14,6 @@ class BGAnimationLayer : public ActorFrame
 public:
 	BGAnimationLayer();
 	~BGAnimationLayer();
-	void Init();
-	void Unload();
 
 	void LoadFromAniLayerFile( const CString& sPath );
 	void LoadFromNode( const CString& sDir, const XNode* pNode );

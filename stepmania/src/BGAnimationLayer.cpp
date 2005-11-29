@@ -26,23 +26,6 @@ const float SPIRAL_MIN_ZOOM = 0.3f;
 
 BGAnimationLayer::BGAnimationLayer()
 {
-	Init();
-}
-
-BGAnimationLayer::~BGAnimationLayer()
-{
-	Unload();
-}
-
-void BGAnimationLayer::Unload()
-{
-	ActorFrame::DeleteAllChildren();
-}
-
-void BGAnimationLayer::Init()
-{
-	Unload();
-
 	m_fUpdateRate = 1;
 	m_fFOV = -1;	// no change
 	m_bLighting = false;
@@ -62,6 +45,11 @@ void BGAnimationLayer::Init()
 	m_fTilesSpacingY = -1;
 	m_fTileVelocityX = 0;
 	m_fTileVelocityY = 0;
+}
+
+BGAnimationLayer::~BGAnimationLayer()
+{
+	ActorFrame::DeleteAllChildren();
 }
 
 void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
