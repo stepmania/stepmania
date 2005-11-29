@@ -6,6 +6,7 @@
 #include "ActorUtil.h"
 #include "XmlFile.h"
 #include "RageLog.h"
+#include "LuaManager.h"
 
 REGISTER_ACTOR_CLASS(MeterDisplay)
 REGISTER_ACTOR_CLASS(SongMeterDisplay)
@@ -32,8 +33,10 @@ void MeterDisplay::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
 	LOG->Trace( "MeterDisplay::LoadFromNode(%s,node)", sDir.c_str() );
 
-	if( !pNode->GetAttrValue( "StreamWidth", m_fStreamWidth ) )
+	CString sExpr;
+	if( !pNode->GetAttrValue( "StreamWidth", sExpr ) )
 		RageException::Throw( "MeterDisplay in " + sDir + " missing StreamWidth attribute" );
+	m_fStreamWidth = LuaHelpers::RunExpressionF( sExpr );
 
 	{
 		CString sStreamPath;
