@@ -32,6 +32,7 @@ public:
 	void ResetState();
 
 	void SetGlobal( const CString &sName, int val );
+	void SetGlobal( const CString &sName, float val );
 	void SetGlobal( const CString &sName, bool val );
 	void SetGlobal( const CString &sName, const CString &val );
 	void SetGlobalFromExpression( const CString &sName, const CString &expr );
