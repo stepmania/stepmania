@@ -8,6 +8,7 @@ class ScreenOptionsMemoryCard : public ScreenOptions
 public:
 	ScreenOptionsMemoryCard( CString sName );
 	virtual void Init();
+	void BeginScreen();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 

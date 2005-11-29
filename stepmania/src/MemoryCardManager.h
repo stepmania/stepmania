@@ -46,6 +46,8 @@ public:
 	static Preference1D<int>		m_iMemoryCardUsbPort;
 	static Preference1D<int>		m_iMemoryCardUsbLevel;
 
+	static Preference<CString>	m_sEditorMemoryCardOsMountPoint;	
+
 protected:
 	void CheckStateChanges();
 

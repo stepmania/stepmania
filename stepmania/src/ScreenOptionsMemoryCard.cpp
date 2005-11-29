@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "arch/MemoryCard/MemoryCardDriver.h"
 #include "MemoryCardManager.h"
+#include "GameState.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenOptionsMemoryCard );
@@ -35,6 +36,25 @@ void ScreenOptionsMemoryCard::Init()
 	InitMenu( m_vDefs, vHands );
 }
 
+void ScreenOptionsMemoryCard::BeginScreen()
+{
+	ScreenOptions::BeginScreen();
+
+	// select the last chosen memory card (if present)
+	if( !MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Get().empty() )
+	{
+		const vector<UsbStorageDevice> v = MEMCARDMAN->GetStorageDevices();
+		for( unsigned i=0; i<v.size(); i++ )	
+		{
+			if( v[i].sOsMountDir == MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Get() )
+			{
+				this->MoveRowAbsolute( PLAYER_1, i, false );
+				break;
+			}
+		}
+	}
+}
+
 void ScreenOptionsMemoryCard::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToNextScreen )
@@ -52,32 +72,21 @@ void ScreenOptionsMemoryCard::MenuStart( const InputEventPlus &input )
 
 void ScreenOptionsMemoryCard::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-	OptionRow &row = *m_pRows[iRow];
-	if( row.GetRowType() == OptionRow::ROW_EXIT )
-		return;
-	const vector<UsbStorageDevice> v = MEMCARDMAN->GetStorageDevices();
-	const UsbStorageDevice &dev = v[iRow];
-//	row.SetOneSharedSelection( MEMCARDMAN->IsBlacklisted(dev) ? 1:0 );
+
 }
 
 void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
-//	if( iRow == 0 )
-//		MEMCARDMAN->m_sMemoryCardOsMountPointBlacklist.Set( "" );
 	OptionRow &row = *m_pRows[iRow];
 	if( row.GetRowType() == OptionRow::ROW_EXIT )
 		return;
-	const vector<UsbStorageDevice> v = MEMCARDMAN->GetStorageDevices();
-	const UsbStorageDevice &dev = v[iRow];
-	int iSel = row.GetOneSharedSelection();
-	if( iSel == 1 )
+
+	PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
+	if( m_iCurrentRow[pn] == iRow )
 	{
-//		CString s = MEMCARDMAN->m_sMemoryCardOsMountPointBlacklist;
-//		if( s.empty() )
-//			s = dev.sOsMountDir;
-//		else
-//			s += ","+dev.sOsMountDir;
-//		MEMCARDMAN->m_sMemoryCardOsMountPointBlacklist.Set( s );
+		const vector<UsbStorageDevice> v = MEMCARDMAN->GetStorageDevices();
+		const UsbStorageDevice &dev = v[iRow];
+		MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Set( dev.sOsMountDir );
 	}
 }
 
