@@ -46,9 +46,6 @@ public:
 	static Preference1D<int>		m_iMemoryCardUsbPort;
 	static Preference1D<int>		m_iMemoryCardUsbLevel;
 
-	static Preference<CString>		m_sMemoryCardOsMountPointBlacklist;
-	bool IsBlacklisted( const UsbStorageDevice &dev ) const;
-
 protected:
 	void CheckStateChanges();
 

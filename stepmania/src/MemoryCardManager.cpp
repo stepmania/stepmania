@@ -49,8 +49,6 @@ Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbBus( MemoryCardUsbBusInit,
 Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbPort( MemoryCardUsbPortInit,	NUM_PLAYERS );
 Preference1D<int>		MemoryCardManager::m_iMemoryCardUsbLevel( MemoryCardUsbLevelInit,	NUM_PLAYERS );
 
-Preference<CString>		MemoryCardManager::m_sMemoryCardOsMountPointBlacklist( "MemoryCardOsMountPointBlacklist", "" );
-
 
 const CString MEM_CARD_MOUNT_POINT[NUM_PLAYERS] =
 {
@@ -327,15 +325,6 @@ MemoryCardManager::~MemoryCardManager()
 	}
 }
 
-bool MemoryCardManager::IsBlacklisted( const UsbStorageDevice &dev ) const
-{
-	vector<CString> vsMemoryCardOsMountPointBlacklist;
-	split( m_sMemoryCardOsMountPointBlacklist, ",", vsMemoryCardOsMountPointBlacklist );
-
-	bool bBlacklisted = find( vsMemoryCardOsMountPointBlacklist.begin(), vsMemoryCardOsMountPointBlacklist.end(), dev.sOsMountDir ) != vsMemoryCardOsMountPointBlacklist.end();
-	return bBlacklisted;
-}
-
 void MemoryCardManager::Update( float fDelta, bool bForceUpdate )
 {
 	vector<UsbStorageDevice> vOld;
@@ -407,9 +396,6 @@ void MemoryCardManager::Update( float fDelta, bool bForceUpdate )
 				d->sOsMountDir.CompareNoCase(m_sMemoryCardOsMountPoint[p].Get()) )
 				continue;      // not a match
 			
-			if( IsBlacklisted(*d) )
-				continue;
-
 			// search for USB bus match
 			if( m_iMemoryCardUsbBus[p] != -1 &&
 				m_iMemoryCardUsbBus[p] != d->iBus )
