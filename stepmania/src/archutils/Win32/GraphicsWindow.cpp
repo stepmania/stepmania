@@ -27,6 +27,7 @@ static bool g_bD3D = false;
 
 /* If we're fullscreen, this is the mode we set. */
 static DEVMODE g_FullScreenDevMode;
+static bool g_bRecreatingVideoMode = false;
 
 static CString GetNewWindow()
 {
@@ -69,7 +70,7 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 			LOG->MapLog( "LOST_FOCUS", "Lost focus to: %s", sStr.c_str() );
 		}
 
-		if( !g_bD3D && !g_CurrentParams.windowed )
+		if( !g_bD3D && !g_CurrentParams.windowed && !g_bRecreatingVideoMode )
 		{
 			/* In OpenGL (not D3D), it's our job to unset and reset the full-screen video mode
 			 * when we focus changes, and to hide and show the window.  Hiding is done in WM_KILLFOCUS,
@@ -96,7 +97,7 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 		return 0;
 	}
 	case WM_KILLFOCUS:
-		if( !g_bD3D && !g_CurrentParams.windowed )
+		if( !g_bD3D && !g_CurrentParams.windowed && !g_bRecreatingVideoMode )
 			ShowWindow( g_hWndMain, SW_SHOWMINNOACTIVE );
 		break;
 
@@ -253,7 +254,10 @@ void GraphicsWindow::RecreateGraphicsWindow( const VideoModeParams &p )
 	if( hWnd == NULL )
 		RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
 
+	/* While we change to the new window, don't do ChangeDisplaySettings in WM_ACTIVATE. */
+	g_bRecreatingVideoMode = true;
 	SetForegroundWindow( hWnd );
+	g_bRecreatingVideoMode = false;
 
 	DestroyGraphicsWindow();
 
