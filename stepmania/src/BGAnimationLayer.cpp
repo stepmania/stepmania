@@ -26,10 +26,6 @@ const float SPIRAL_MIN_ZOOM = 0.3f;
 
 BGAnimationLayer::BGAnimationLayer()
 {
-	m_fUpdateRate = 1;
-	m_fFOV = -1;	// no change
-	m_bLighting = false;
-
 	m_vParticleVelocity.clear();
 
 	m_Type = TYPE_SPRITE;
