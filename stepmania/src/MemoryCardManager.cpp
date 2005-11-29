@@ -326,23 +326,15 @@ MemoryCardManager::~MemoryCardManager()
 	}
 }
 
-void MemoryCardManager::Update( float fDelta, bool bForceUpdate )
+void MemoryCardManager::Update( float fDelta )
 {
 	vector<UsbStorageDevice> vOld;
 	
-	if( bForceUpdate )
-	{
-		// force a redetect on the next update
-		FOREACH_PlayerNumber( p )
-			m_Device[p].MakeBlank();
-		// leave vOld empty
-	}
-	else
-	{
-		vOld = m_vStorageDevices;	// copy
-		if( !g_pWorker->StorageDevicesChanged( m_vStorageDevices ) )
-			return;
-	}
+	vOld = m_vStorageDevices;	// copy
+	if( !g_pWorker->StorageDevicesChanged( m_vStorageDevices ) )
+		return;
+
+	MESSAGEMAN->Broadcast( Message_StorageDevicesChanged );
 
 	// make a list of unassigned
 	vector<UsbStorageDevice> vUnassignedDevices = m_vStorageDevices;        // copy
