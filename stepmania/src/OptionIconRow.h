@@ -6,7 +6,7 @@
 
 #include "ActorFrame.h"
 #include "OptionIcon.h"
-struct PlayerOptions;
+class PlayerOptions;
 struct lua_State;
 
 const unsigned NUM_OPTION_COLS = 8;

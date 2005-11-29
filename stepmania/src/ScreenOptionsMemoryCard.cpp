@@ -4,6 +4,7 @@
 #include "arch/MemoryCard/MemoryCardDriver.h"
 #include "MemoryCardManager.h"
 #include "GameState.h"
+#include "ScreenManager.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenOptionsMemoryCard );
@@ -25,7 +26,7 @@ void ScreenOptionsMemoryCard::Init()
 		if( sVolumeLabel.empty() )
 			sVolumeLabel = "(no label)";
 		CString sDescription = ssprintf( "%s %s", sOsMountDir.c_str(), sVolumeLabel.c_str() );
-		OptionRowDefinition def( sDescription, true, "Enable", "Disable" );
+		OptionRowDefinition def( sDescription, true, "" );
 		def.m_bAllowThemeTitles = false;
 		def.m_bAllowExplanation = false;
 		m_vDefs.push_back( def );	
@@ -57,13 +58,16 @@ void ScreenOptionsMemoryCard::BeginScreen()
 
 void ScreenOptionsMemoryCard::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SM == SM_GoToNextScreen )
-	{
-		MEMCARDMAN->Update(0, true);
-	}
 	ScreenOptions::HandleScreenMessage( SM );
 }
 
+void ScreenOptionsMemoryCard::HandleMessage( const CString& sMessage )
+{
+	if( sMessage == MessageToString(Message_StorageDevicesChanged) )
+	{
+		SCREENMAN->SetNewScreen( this->m_sName );	// reload
+	}
+}
 
 void ScreenOptionsMemoryCard::MenuStart( const InputEventPlus &input )
 {

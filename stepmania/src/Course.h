@@ -12,8 +12,8 @@
 #include "EnumHelper.h"
 #include "RageTypes.h"
 
-struct PlayerOptions;
-struct SongOptions;
+class PlayerOptions;
+class SongOptions;
 class Song;
 class Steps;
 class Profile;

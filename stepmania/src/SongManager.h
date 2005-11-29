@@ -7,7 +7,7 @@ class LoadingWindow;
 class Song;
 class Style;
 class Steps;
-struct PlayerOptions;
+class PlayerOptions;
 struct lua_State;
 
 #include "RageTypes.h"

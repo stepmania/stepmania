@@ -611,6 +611,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenSelectStyle.h">
 			</File>
 			<File
+				RelativePath=".\ScreenServiceAction.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenServiceAction.h">
+			</File>
+			<File
 				RelativePath="ScreenSetTime.cpp">
 			</File>
 			<File

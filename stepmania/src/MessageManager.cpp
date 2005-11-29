@@ -64,6 +64,7 @@ static const CString MessageNames[] = {
 	"LessonTry3",
 	"LessonCleared",
 	"LessonFailed",
+	"StorageDevicesChanged",
 };
 XToString( Message, NUM_Message );
 

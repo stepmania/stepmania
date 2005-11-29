@@ -10,8 +10,9 @@ class Trail;
 
 #include "GameConstantsAndTypes.h"
 
-struct PlayerOptions
+class PlayerOptions
 {
+public:
 	PlayerOptions() { Init(); };
 	void Init();
 	void Approach( const PlayerOptions& other, float fDeltaSeconds );

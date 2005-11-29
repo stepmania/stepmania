@@ -18,6 +18,8 @@ private:
 	void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 
+	void HandleMessage( const CString& sMessage );
+
 	vector<OptionRowDefinition> m_vDefs;
 };
 

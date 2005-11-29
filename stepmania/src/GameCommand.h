@@ -76,18 +76,8 @@ public:
 	GoalType	m_GoalType;
 	CString		m_sProfileID;
 
-	bool m_bClearBookkeepingData;
-	bool m_bClearMachineStats;
-	bool m_bClearMachineEdits;
-	bool m_bFillMachineStats;	// for testing
-	bool m_bTransferStatsFromMachine;
-	bool m_bTransferStatsToMachine;
-	bool m_bCopyEditsFromMachine;
-	bool m_bCopyEditsToMachine;
 	bool m_bInsertCredit;
-	bool m_bResetToFactoryDefaults;
 	bool m_bStopMusic;
-	bool m_bApplyDefaultOptions;
 
 	// Lua
 	void PushSelf( lua_State *L );

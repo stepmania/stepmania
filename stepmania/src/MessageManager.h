@@ -79,6 +79,7 @@ enum Message
 	Message_LessonTry3,
 	Message_LessonCleared,
 	Message_LessonFailed,
+	Message_StorageDevicesChanged,
 	NUM_Message,	// leave this at the end
 	Message_Invalud
 };

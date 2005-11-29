@@ -7,7 +7,7 @@
 #include "NoteTypes.h"
 #include "NoteData.h"
 
-struct PlayerOptions;
+class PlayerOptions;
 struct RadarValues;
 
 /* Utils for NoteData.  Things should go in here if they can be (cleanly and

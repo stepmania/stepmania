@@ -29,7 +29,7 @@ class PlayerState;
 struct lua_State;
 class LuaTable;
 class Profile;
-struct PlayerOptions;
+class PlayerOptions;
 
 class GameState
 {

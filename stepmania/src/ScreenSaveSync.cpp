@@ -3,7 +3,6 @@
 #include "GameState.h"
 #include "song.h"
 #include "PrefsManager.h"
-#include "ScreenPrompt.h"
 
 
 static CString GetPromptText()

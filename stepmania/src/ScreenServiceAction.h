@@ -1,56 +1,21 @@
-/* SongOptions - Options that apply to an entire song (not per-player). */
+/* ScreenServiceAction -  */
 
-#ifndef SONG_OPTIONS_H
-#define SONG_OPTIONS_H
+#ifndef ScreenServiceAction_H
+#define ScreenServiceAction_H
 
-class SongOptions
+#include "ScreenPrompt.h"
+
+class ScreenServiceAction : public ScreenPrompt
 {
 public:
-	enum LifeType
-	{
-		LIFE_BAR=0,
-		LIFE_BATTERY,
-		LIFE_TIME,
-		NUM_LIFE_TYPES
-	};
-	LifeType m_LifeType;
-	enum DrainType
-	{
-		DRAIN_NORMAL,
-		DRAIN_NO_RECOVER,
-		DRAIN_SUDDEN_DEATH
-	};
-	DrainType m_DrainType;	// only used with LifeBar
-	int m_iBatteryLives;
-	enum FailType { 
-		FAIL_IMMEDIATE=0,			// fail when life touches 0
-		FAIL_END_OF_SONG,			// fail on end of song if life touched 0
-		FAIL_OFF };					// never fail
-	FailType m_FailType;
-	float m_fMusicRate;
-	bool m_bAssistTick;
-	enum AutosyncType { 
-		AUTOSYNC_OFF,
-		AUTOSYNC_SONG,
-		AUTOSYNC_MACHINE,
-		NUM_AUTOSYNC_TYPES
-	};
-	AutosyncType m_AutosyncType;
-	bool m_bSaveScore;
-
-	SongOptions() { Init(); };
-	void Init();
-	CString GetString() const;
-	void FromString( CString sOptions );
-
-	bool operator==( const SongOptions &other ) const;
-	bool operator!=( const SongOptions &other ) const { return !operator==(other); }
+	ScreenServiceAction( CString sName );
 };
+
 
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+ * (c) 2001-2005 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

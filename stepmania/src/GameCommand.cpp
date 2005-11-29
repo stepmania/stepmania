@@ -4,29 +4,22 @@
 #include "RageLog.h"
 #include "GameManager.h"
 #include "GameState.h"
-#include "RageDisplay.h"
 #include "AnnouncerManager.h"
+#include "PlayerOptions.h"
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "StepMania.h"
 #include "ScreenManager.h"
-#include "SongManager.h"
 #include "PrefsManager.h"
-#include "arch/ArchHooks/ArchHooks.h"
-#include "MemoryCardManager.h"
-#include "song.h"
 #include "Game.h"
 #include "Style.h"
 #include "Foreach.h"
-#include "Command.h"
 #include "arch/Dialog/Dialog.h"
-#include "Bookkeeper.h"
-#include "UnlockManager.h"
 #include "GameSoundManager.h"
-#include "ThemeManager.h"
 #include "PlayerState.h"
-#include "Course.h"
-#include "RageFileManager.h"
+#include "SongManager.h"
+#include "song.h"
+#include "UnlockManager.h"
 
 void GameCommand::Init()
 {
@@ -58,20 +51,11 @@ void GameCommand::Init()
 	m_GoalType = GOAL_INVALID;
 	m_sProfileID = "";
 
-	m_bClearBookkeepingData = false;
-	m_bClearMachineStats = false;
-	m_bClearMachineEdits = false;
-	m_bFillMachineStats = false;
-	m_bTransferStatsFromMachine = false;
-	m_bTransferStatsToMachine = false;
-	m_bCopyEditsFromMachine = false;
-	m_bCopyEditsToMachine = false;
 	m_bInsertCredit = false;
-	m_bResetToFactoryDefaults = false;
 	m_bStopMusic = false;
-	m_bApplyDefaultOptions = false;
 }
 
+class SongOptions;
 bool CompareSongOptions( const SongOptions &so1, const SongOptions &so2 );
 
 bool GameCommand::DescribesCurrentModeForAllPlayers() const
@@ -363,53 +347,14 @@ void GameCommand::LoadOne( const Command& cmd )
 		m_vsScreensToPrepare.push_back( sValue );
 	}
 	
-	else if( sName == "clearbookkeepingdata" )
-	{
-		m_bClearBookkeepingData = true;
-	}
-	else if( sName == "clearmachinestats" )
-	{
-		m_bClearMachineStats = true;
-	}
-	else if( sName == "clearmachineedits" )
-	{
-		m_bClearMachineEdits = true;
-	}
-	else if( sName == "fillmachinestats" )
-	{
-		m_bFillMachineStats = true;
-	}
-	else if( sName == "transferstatsfrommachine" )
-	{
-		m_bTransferStatsFromMachine = true;
-	}
-	else if( sName == "copyeditstomachine" )
-	{
-		m_bCopyEditsToMachine = true;
-	}
-	else if( sName == "copyeditsfrommachine" )
-	{
-		m_bCopyEditsFromMachine = true;
-	}
-	else if( sName == "transferstatstomachine" )
-	{
-		m_bTransferStatsToMachine = true;
-	}
 	else if( sName == "insertcredit" )
 	{
 		m_bInsertCredit = true;
 	}
-	else if( sName == "resettofactorydefaults" )
-	{
-		m_bResetToFactoryDefaults = true;
-	}
+
 	else if( sName == "stopmusic" )
 	{
 		m_bStopMusic = true;
-	}
-	else if( sName == "applydefaultoptions" )
-	{
-		m_bApplyDefaultOptions = true;
 	}
 
 	else
@@ -609,77 +554,6 @@ void GameCommand::Apply( PlayerNumber pn ) const
 	Apply( vpns );
 }
 
-static HighScore MakeRandomHighScore( float fPercentDP )
-{
-	HighScore hs;
-	hs.SetName( "FAKE" );
-	hs.SetGrade( (Grade)SCALE( rand()%5, 0, 4, Grade_Tier01, Grade_Tier05 ) );
-	hs.SetScore( rand()%100*1000 );
-	hs.SetPercentDP( fPercentDP );
-	hs.SetSurviveSeconds( randomf(30.0f, 100.0f) );
-	PlayerOptions po;
-	po.ChooseRandomModifiers();
-	hs.SetModifiers( po.GetString() );
-	hs.SetDateTime( DateTime::GetNowDateTime() );
-	hs.SetPlayerGuid( Profile::MakeGuid() );
-	hs.SetMachineGuid( Profile::MakeGuid() );
-	hs.SetProductID( rand()%10 );
-	FOREACH_TapNoteScore( tns )
-		hs.SetTapNoteScore( tns, rand() % 100 );
-	FOREACH_HoldNoteScore( hns )
-		hs.SetHoldNoteScore( hns, rand() % 100 );
-	RadarValues rv;
-	FOREACH_RadarCategory( rc )
-		rv.m_Values.f[rc] = randomf( 0, 1 );
-	hs.SetRadarValues( rv );
-
-	return hs;
-}
-
-static void FillProfile( Profile *pProfile )
-{
-	// Choose a percent for all scores.  This is useful for testing unlocks
-	// where some elements are unlocked at a certain percent complete
-	float fPercentDP = randomf( 0.6f, 1.2f );
-	CLAMP( fPercentDP, 0.0f, 1.0f );
-
-	int iCount = pProfile->IsMachine()? 
-		PREFSMAN->m_iMaxHighScoresPerListForMachine.Get():
-		PREFSMAN->m_iMaxHighScoresPerListForPlayer.Get();
-
-	vector<Song*> vpAllSongs = SONGMAN->GetAllSongs();
-	FOREACH( Song*, vpAllSongs, pSong )
-	{
-		vector<Steps*> vpAllSteps = (*pSong)->GetAllSteps();
-		FOREACH( Steps*, vpAllSteps, pSteps )
-		{
-			pProfile->IncrementStepsPlayCount( *pSong, *pSteps );
-			for( int i=0; i<iCount; i++ )
-			{
-				int iIndex = 0;
-				pProfile->AddStepsHighScore( *pSong, *pSteps, MakeRandomHighScore(fPercentDP), iIndex );
-			}
-		}
-	}
-	
-	vector<Course*> vpAllCourses;
-	SONGMAN->GetAllCourses( vpAllCourses, true );
-	FOREACH( Course*, vpAllCourses, pCourse )
-	{
-		vector<Trail*> vpAllTrails;
-		(*pCourse)->GetAllTrails( vpAllTrails );
-		FOREACH( Trail*, vpAllTrails, pTrail )
-		{
-			pProfile->IncrementCoursePlayCount( *pCourse, *pTrail );
-			for( int i=0; i<iCount; i++ )
-			{
-				int iIndex = 0;
-				pProfile->AddCourseHighScore( *pCourse, *pTrail, MakeRandomHighScore(fPercentDP), iIndex );
-			}
-		}
-	}
-}
-
 
 /* Hack: if this GameCommand would set the screen, clear the setting and return
  * the screen that would have been set. */
@@ -844,267 +718,9 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	FOREACH_CONST( CString, m_vsScreensToPrepare, s )
 		SCREENMAN->PrepareScreen( *s );
 
-	if( m_bClearBookkeepingData )
-	{
-		BOOKKEEPER->ClearAll();
-		BOOKKEEPER->WriteToDisk();
-		SCREENMAN->SystemMessage( "Bookkeeping data cleared." );
-	}
-	if( m_bClearMachineStats )
-	{
-		Profile* pProfile = PROFILEMAN->GetMachineProfile();
-		// don't reset the Guid
-		CString sGuid = pProfile->m_sGuid;
-		pProfile->InitAll();
-		pProfile->m_sGuid = sGuid;
-		PROFILEMAN->SaveMachineProfile();
-		SCREENMAN->SystemMessage( "Machine stats cleared." );
-	}
-	if( m_bClearMachineEdits )
-	{
-		int iNumAttempted = 0;
-		int iNumSuccessful = 0;
-		
-		vector<CString> vsEditFiles;
-		GetDirListing( PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE)+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
-		GetDirListing( PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE)+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
-		FOREACH_CONST( CString, vsEditFiles, i )
-		{
-			iNumAttempted++;
-			bool bSuccess = FILEMAN->Remove( *i );
-			if( bSuccess )
-				iNumSuccessful++;
-		}
-
-		// reload the machine profile
-		PROFILEMAN->SaveMachineProfile();
-		PROFILEMAN->LoadMachineProfile();
-		
-		SCREENMAN->SystemMessage( ssprintf("%d edits cleared, %d errors.",iNumSuccessful,iNumAttempted-iNumSuccessful) );
-	}
-	if( m_bFillMachineStats )
-	{
-		Profile* pProfile = PROFILEMAN->GetMachineProfile();
-		FillProfile( pProfile );
-
-		PROFILEMAN->SaveMachineProfile();
-		SCREENMAN->SystemMessage( "Machine stats filled." );
-	}
-	if( m_bTransferStatsFromMachine )
-	{
-		bool bTriedToSave = false;
-		FOREACH_PlayerNumber( pn )
-		{
-			if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
-				continue;	// skip
-
-			MEMCARDMAN->MountCard(pn);
-
-			bTriedToSave = true;
-
-			CString sDir = MEM_CARD_MOUNT_POINT[pn];
-			sDir += "MachineProfile/";
-
-			bool bSaved = PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
-
-			MEMCARDMAN->UnmountCard(pn);
-
-			if( bSaved )
-				SCREENMAN->SystemMessage( ssprintf("Machine stats saved to P%d card.",pn+1) );
-			else
-				SCREENMAN->SystemMessage( ssprintf("Error saving machine stats to P%d card.",pn+1) );
-			break;
-		}
-
-		if( !bTriedToSave )
-			SCREENMAN->SystemMessage( "Stats not saved - No memory cards ready." );
-
-		MEMCARDMAN->FlushAndReset();
-	}
-	if( m_bTransferStatsToMachine )
-	{
-		bool bTriedToLoad = false;
-		FOREACH_PlayerNumber( pn )
-		{
-			if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
-				continue;	// skip
-
-			MEMCARDMAN->MountCard(pn);
-
-			bTriedToLoad = true;
-
-			CString sDir = MEM_CARD_MOUNT_POINT[pn];
-			sDir += "MachineProfile/";
-
-			Profile backup = *PROFILEMAN->GetMachineProfile();
-
-			ProfileLoadResult lr = PROFILEMAN->GetMachineProfile()->LoadAllFromDir( sDir, PREFSMAN->m_bSignProfileData );
-			switch( lr )
-			{
-			case ProfileLoadResult_Success:
-				SCREENMAN->SystemMessage( ssprintf("Machine stats loaded from P%d card.",pn+1) );
-				break;
-			case ProfileLoadResult_FailedNoProfile:
-				SCREENMAN->SystemMessage( ssprintf("There is no machine profile on P%d card.",pn+1) );
-				*PROFILEMAN->GetMachineProfile() = backup;
-				break;
-			case ProfileLoadResult_FailedTampered:
-				SCREENMAN->SystemMessage( ssprintf("The profile on P%d card contains corrupt or tampered data.",pn+1) );
-				*PROFILEMAN->GetMachineProfile() = backup;
-				break;
-			default:
-				ASSERT(0);
-			}
-
-			MEMCARDMAN->UnmountCard(pn);
-			break;
-		}
-
-		if( !bTriedToLoad )
-			SCREENMAN->SystemMessage( "Stats not loaded - No memory cards ready." );
-
-		MEMCARDMAN->FlushAndReset();
-	}
-	if( m_bCopyEditsFromMachine )
-	{
-		bool bTriedToCopy = false;
-		FOREACH_PlayerNumber( pn )
-		{
-			if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
-				continue;	// skip
-
-			MEMCARDMAN->MountCard(pn);
-
-			bTriedToCopy = true;
-
-			int iNumAttempted = 0;
-			int iNumSuccessful = 0;
-			int iNumOverwritten = 0;
-			
-			{
-				CString sFromDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_STEPS_SUBDIR;
-				CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_STEPS_SUBDIR;
-
-				vector<CString> vsFiles;
-				GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
-				FOREACH_CONST( CString, vsFiles, i )
-				{
-					iNumAttempted++;
-					if( DoesFileExist(sToDir+*i) )
-						iNumOverwritten++;
-					bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
-					if( bSuccess )
-						iNumSuccessful++;
-				}
-			}
-			
-			{
-				CString sFromDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_COURSES_SUBDIR;
-				CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_COURSES_SUBDIR;
-
-				vector<CString> vsFiles;
-				GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
-				FOREACH_CONST( CString, vsFiles, i )
-				{
-					iNumAttempted++;
-					if( DoesFileExist(sToDir+*i) )
-						iNumOverwritten++;
-					bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
-					if( bSuccess )
-						iNumSuccessful++;
-				}
-			}
-			
-			MEMCARDMAN->UnmountCard(pn);
-
-			SCREENMAN->SystemMessage( ssprintf("Copied to P%d card: %d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten) );
-			break;
-		}
-
-		if( !bTriedToCopy )
-			SCREENMAN->SystemMessage( "Edits not copied - No memory cards ready." );
-
-		MEMCARDMAN->FlushAndReset();
-	}
-	if( m_bCopyEditsToMachine )
-	{
-		bool bTriedToCopy = false;
-		FOREACH_PlayerNumber( pn )
-		{
-			if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
-				continue;	// skip
-
-			MEMCARDMAN->MountCard(pn);
-
-			bTriedToCopy = true;
-
-			int iNumAttempted = 0;
-			int iNumSuccessful = 0;
-			int iNumOverwritten = 0;
-			
-			{
-				CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_STEPS_SUBDIR;
-				CString sToDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_STEPS_SUBDIR;
-
-				vector<CString> vsFiles;
-				GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
-				FOREACH_CONST( CString, vsFiles, i )
-				{
-					iNumAttempted++;
-					if( DoesFileExist(sToDir+*i) )
-						iNumOverwritten++;
-					bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
-					if( bSuccess )
-						iNumSuccessful++;
-				}
-			}
-			
-			{
-				CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_COURSES_SUBDIR;
-				CString sToDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_COURSES_SUBDIR;
-
-				vector<CString> vsFiles;
-				GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
-				FOREACH_CONST( CString, vsFiles, i )
-				{
-					iNumAttempted++;
-					if( DoesFileExist(sToDir+*i) )
-						iNumOverwritten++;
-					bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
-					if( bSuccess )
-						iNumSuccessful++;
-				}
-			}
-			
-			MEMCARDMAN->UnmountCard(pn);
-
-			// reload the machine profile
-			PROFILEMAN->SaveMachineProfile();
-			PROFILEMAN->LoadMachineProfile();
-
-			SCREENMAN->SystemMessage( ssprintf("Copied from P%d card: %d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten) );
-			break;
-		}
-
-		if( !bTriedToCopy )
-			SCREENMAN->SystemMessage( "Edits not copied - No memory cards ready." );
-
-		MEMCARDMAN->FlushAndReset();
-	}
 	if( m_bInsertCredit )
 	{
 		InsertCredit();
-	}
-	if( m_bResetToFactoryDefaults )
-	{
-		PREFSMAN->ResetToFactoryDefaults();
-		SCREENMAN->SystemMessage( "All options reset to factory defaults." );
-	}
-	if( m_bApplyDefaultOptions )
-	{
-		FOREACH_PlayerNumber( p )
-			GAMESTATE->GetDefaultPlayerOptions( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions );
-		GAMESTATE->GetDefaultSongOptions( GAMESTATE->m_SongOptions );
 	}
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.
