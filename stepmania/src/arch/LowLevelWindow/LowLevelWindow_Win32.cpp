@@ -125,7 +125,6 @@ CString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 	} else {
 		/* We already have a window.  Assume that it's pixel format has already been
 		 * set. */
-		LOG->Trace("Setting new window, can't reuse old");
 		bCanSetPixelFormat = false;
 	}
 	
