@@ -1,4 +1,4 @@
-/* RageSoundMixBuffer - Simple audio mixing */
+/* RageSoundMixBuffer - Simple audio mixing. */
 
 #ifndef RAGE_SOUND_MIX_BUFFER_H
 #define RAGE_SOUND_MIX_BUFFER_H
@@ -6,6 +6,9 @@
 class RageSoundMixBuffer
 {
 public:
+	RageSoundMixBuffer();
+	~RageSoundMixBuffer();
+
 	/* Mix the given buffer of samples. */
 	void write( const int16_t *buf, unsigned size );
 
@@ -17,9 +20,6 @@ public:
 	unsigned size() const { return m_iBufUsed; }
 	void SetVolume( float f );
 	void SetWriteOffset( int iOffset );
-
-	RageSoundMixBuffer();
-	~RageSoundMixBuffer();
 
 private:
 	int32_t *m_pMixbuf;
