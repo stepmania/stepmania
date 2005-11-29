@@ -7,13 +7,14 @@
 #include "RageThreads.h"
 #include <ctime>
 #if defined(_WINDOWS)
-#include "windows.h"
+#include <windows.h>
 #endif
 #include <map>
 
 RageLog* LOG;		// global and accessable from anywhere in the program
 
-/* We have a couple log types and a couple logs.
+/*
+ * We have a couple log types and a couple logs.
  *
  * Traces are for very verbose debug information.  Use them as much as you want.
  *
@@ -30,7 +31,6 @@ RageLog* LOG;		// global and accessable from anywhere in the program
  * info.txt receives warnings and infos.  This file should be fairly small; small
  * enough to be mailed without having to be edited or zipped, and small enough
  * to be very easily read.
- *
  */
 
 /* Map data names to logged data.
@@ -51,7 +51,7 @@ RageLog* LOG;		// global and accessable from anywhere in the program
  *
  * The identifier is never displayed, so we can use a simple local object to
  * map/unmap, using any mechanism to generate unique IDs. */
-map<CString, CString> LogMaps;
+static map<CString, CString> LogMaps;
 
 #define LOG_PATH	"log.txt"
 #define INFO_PATH	"info.txt"
@@ -60,7 +60,7 @@ static RageFile *g_fileLog, *g_fileInfo;
 
 /* Mutex writes to the files.  Writing to files is not thread-aware, and this is the
  * only place we write to the same file from multiple threads. */
-RageMutex *g_Mutex;
+static RageMutex *g_Mutex;
 
 /* staticlog gets info.txt
  * crashlog gets log.txt */
