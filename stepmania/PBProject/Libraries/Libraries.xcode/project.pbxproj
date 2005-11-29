@@ -477,14 +477,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AAA3730D090994F500141131 /* mad */;
+			remoteGlobalIDString = AAA3730D090994F500141131;
 			remoteInfo = mad;
 		};
 		AAA373B10909996E00141131 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = AAA37353090998C400141131 /* resample */;
+			remoteGlobalIDString = AAA37353090998C400141131;
 			remoteInfo = resample;
 		};
 /* End PBXContainerItemProxy section */
@@ -2403,7 +2403,7 @@
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
 				INFOPLIST_FILE = "mad-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OPTIMIZATION_CFLAGS = "";
+				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
@@ -2438,7 +2438,7 @@
 					"$(SRCROOT)/libresample/xboxresample/Debug",
 					"$(SRCROOT)/libresample/xboxresample/Release",
 				);
-				OPTIMIZATION_CFLAGS = "";
+				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-seg1addr",
@@ -2602,6 +2602,8 @@
 			buildSettings = {
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_STYLE = DYNAMIC;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.2.8.sdk;
 			};
 			name = .;
 		};
