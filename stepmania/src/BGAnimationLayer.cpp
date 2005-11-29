@@ -338,6 +338,8 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 
 void BGAnimationLayer::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
+	ActorFrame::LoadFromNode( sDir, pNode );
+
 	CString sAniDir = sDir;
 
 	if( sAniDir.Right(1) != "/" )
@@ -400,8 +402,6 @@ void BGAnimationLayer::LoadFromNode( const CString& sDir, const XNode* pNode )
 		}
 	}
 
-	pNode->GetAttrValue( "FOV", m_fFOV );
-	pNode->GetAttrValue( "Lighting", m_bLighting );
 	pNode->GetAttrValue( "TexCoordVelocityX", m_fTexCoordVelocityX );
 	pNode->GetAttrValue( "TexCoordVelocityY", m_fTexCoordVelocityY );
 	pNode->GetAttrValue( "DrawCond", m_sDrawCond );
