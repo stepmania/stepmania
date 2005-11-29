@@ -68,7 +68,6 @@ void BGAnimationLayer::LoadFromAniLayerFile( const CString& sPath )
 {
 	/* Generic BGAs are new.  Animation directories with no INI are old and obsolete. 
 	 * Don't combine them. */
-	Init();
 	CString lcPath = sPath;
 	lcPath.MakeLower();
 
@@ -357,7 +356,6 @@ void BGAnimationLayer::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
 	CString sAniDir = sDir;
 
-	Init();
 	if( sAniDir.Right(1) != "/" )
 		sAniDir += "/";
 
