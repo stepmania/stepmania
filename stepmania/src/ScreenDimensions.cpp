@@ -15,21 +15,31 @@ ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
  * The theme resolution isn't necessarily 4:3; a natively widescreen
  * theme would have eg. 16:9 or 16:10.
  *
- * Note that "aspect ratio" here always means DAR; we don't care about the SAR.
+ * Note that "aspect ratio" here always means DAR (display aspect ratio: the
+ * aspect ratio of the physical display); we don't care about the PAR (pixel
+ * aspect ratio: the aspect ratio of a pixel).
  */
 #define THEME_NATIVE_ASPECT (THEME_SCREEN_WIDTH/THEME_SCREEN_HEIGHT)
 
-static float GetAspect()
+static float ScreenAspectRatio()
 {
 	float fAspect = PREFSMAN->m_fDisplayAspectRatio;
 	if( fAspect == ASPECT_AUTO )
-		fAspect = PREFSMAN->m_iDisplayWidth / (float)PREFSMAN->m_iDisplayHeight;
+	{
+		/* Most PC monitor resolutions have square pixels (PAR 1:1), so the DAR
+		 * is simply width:height.  1280x1024 is an exception; treat it as 4:3,
+		 * not 5:4. */
+		if( PREFSMAN->m_iDisplayWidth == 1280 && PREFSMAN->m_iDisplayHeight == 1024 )
+			fAspect = 4.0f/3.0f;
+		else
+			fAspect = PREFSMAN->m_iDisplayWidth / (float)PREFSMAN->m_iDisplayHeight;
+	}
 	return fAspect;
 }
 
 float ScreenWidth()
 {
-	float fAspect = GetAspect();
+	float fAspect = ScreenAspectRatio();
 	float fScale = 1;
 	if( fAspect > THEME_NATIVE_ASPECT )
 		fScale = fAspect / THEME_NATIVE_ASPECT;
@@ -39,7 +49,7 @@ float ScreenWidth()
 
 float ScreenHeight()
 {
-	float fAspect = GetAspect();
+	float fAspect = ScreenAspectRatio();
 	float fScale = 1;
 	if( fAspect < THEME_NATIVE_ASPECT )
 		fScale = THEME_NATIVE_ASPECT / fAspect;
