@@ -251,14 +251,13 @@ void LuaManager::ResetState()
 
 void LuaHelpers::PrepareExpression( CString &sInOut )
 {
-	// HACK: Many metrics have "//" comments that Lua fails to parse.
+	// HACK: Many metrics have "// foo" and "# foo" comments that Lua fails to parse.
 	// Replace them with Lua-style comments.
+	// XXX: "Foo=Func('#AABBCC')" and "Text=Adjust('// subtitle') aren't comments.
 	sInOut.Replace( "//", "--" );
-	
-	// comment out HTML style color values
 	sInOut.Replace( "#", "--" );
 	
-	// Remove leading +, eg. "+50"; Lua doesn't handle that.
+	// Remove unary +, eg. "+50"; Lua doesn't support that.
 	if( sInOut.size() >= 1 && sInOut[0] == '+' )
 		sInOut.erase( 0, 1 );
 }
