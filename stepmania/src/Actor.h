@@ -145,8 +145,8 @@ public:
 	void  SetZoomY( float zoom )	{ DestTweenState().scale.y = zoom; }
 	void  SetZoomZ( float zoom )	{ DestTweenState().scale.z = zoom; }
 	void  ZoomTo( float fX, float fY )	{ ZoomToWidth(fX); ZoomToHeight(fY); }
-	void  ZoomToWidth( float zoom );
-	void  ZoomToHeight( float zoom );
+	void  ZoomToWidth( float zoom )	{ SetZoomX( zoom / GetUnzoomedWidth() ); }
+	void  ZoomToHeight( float zoom ){ SetZoomY( zoom / GetUnzoomedHeight() ); }
 
 	float GetRotationX()			{ return DestTweenState().rotation.x; }
 	float GetRotationY()			{ return DestTweenState().rotation.y; }
@@ -224,7 +224,6 @@ public:
 	void ScaleToCover( const RectF &rect )		{ ScaleTo( rect, cover ); }
 	void ScaleToFitInside( const RectF &rect )	{ ScaleTo( rect, fit_inside); };
 	void ScaleTo( const RectF &rect, StretchType st );
-	void CropToAspectRatio( float fAspect );
 
 	void StretchTo( const RectF &rect );
 
