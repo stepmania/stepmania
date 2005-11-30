@@ -93,6 +93,7 @@ private:
 	PacketFunctions Reply;
 	vector<GameClient*> Client; 
 	EzSockets server;
+	EzSockets broadcast;
 	int ClientHost;
 	vector<LanPlayer*> playersPtr;
 	time_t statsTime;
@@ -136,6 +137,7 @@ private:
 	void Disconnect(const unsigned int clientNum);
 	void ClientsSongSelectStart();
 	void ResetLastSongInfo();
+	void BroadcastInfo();
 #endif
 };
 

@@ -47,6 +47,8 @@ bool StepManiaLanServer::ServerStart()
 		if (server.bind(8765))
 			if (server.listen())
 			{
+				broadcast.create( IPPROTO_UDP );
+				broadcast.connect( "255.255.255.255", 8765 );
 				stop = false;
 				statsTime = time(NULL);
 				return true;
@@ -84,6 +86,7 @@ void StepManiaLanServer::ServerUpdate()
 		UpdateClients();
 		if (time(NULL) > statsTime)
 		{
+			BroadcastInfo();
 			SendStatsToClients();
 			statsTime = time(NULL);
 		}
@@ -993,10 +996,22 @@ void StepManiaLanServer::CheckLowerJudge(const unsigned int clientNum)
 				Client[clientNum]->lowerJudge = true;
 		}
 }
+
+void StepManiaLanServer::BroadcastInfo()
+{
+	PacketFunctions Binfo;
+	Binfo.ClearPacket();
+	Binfo.WriteNT( servername );
+	Binfo.Write2( 8765 );
+	Binfo.Write2( Client.size() );
+	
+	broadcast.SendPack( (char*)&Binfo.Data, Binfo.Position );
+}
+
 #endif
 
 /*
- * (c) 2003-2004 Joshua Allen
+ * (c) 2003-2005 Joshua Allen, Charles Lohr
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
