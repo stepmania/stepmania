@@ -624,6 +624,12 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 	return true;
 }
 
+bool MemoryCardManager::MountCard( PlayerNumber pn, const UsbStorageDevice &d )
+{
+	m_Device[pn] = d;
+	return MountCard( pn );
+}
+
 /* Called in EndGame just after writing the profile.  Called by PlayersFinalized just after
  * reading the profile.  Should never block; use FlushAndReset to block until writes complete. */
 void MemoryCardManager::UnmountCard( PlayerNumber pn )

@@ -5,6 +5,7 @@
 #include "MemoryCardManager.h"
 #include "GameState.h"
 #include "ScreenManager.h"
+#include "ScreenPrompt.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenOptionsMemoryCard );
@@ -91,6 +92,32 @@ void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber
 		const vector<UsbStorageDevice> v = MEMCARDMAN->GetStorageDevices();
 		const UsbStorageDevice &dev = v[iRow];
 		MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Set( dev.sOsMountDir );
+	}
+}
+
+void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus &input )
+{
+	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
+
+	if( iCurRow == (int)m_pRows.size()-1 )	// "exit"
+	{
+		MenuBack( GAMESTATE->m_MasterPlayerNumber );
+	}
+	else	// a card
+	{
+		const vector<UsbStorageDevice> v = MEMCARDMAN->GetStorageDevices();
+		const UsbStorageDevice &dev = v[iCurRow];
+		MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Set( dev.sOsMountDir );
+		bool bSuccess = MEMCARDMAN->MountCard( PLAYER_1, dev );
+		if( bSuccess )
+		{
+			this->BeginFadingOut();
+		}
+		else
+		{
+			CString s = ssprintf("error mounting card: %s", MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
+			ScreenPrompt::Prompt( SM_None, s );
+		}
 	}
 }
 

@@ -66,7 +66,8 @@ static CString ClearMemoryCardEdits()
 		if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
 			continue;	// skip
 
-		MEMCARDMAN->MountCard(pn);
+		if( !MEMCARDMAN->IsMounted(pn) )
+			MEMCARDMAN->MountCard(pn);
 
 		bTriedToLoad = true;
 
@@ -183,7 +184,8 @@ static CString TransferStatsMachineToMemoryCard()
 		if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
 			continue;	// skip
 
-		MEMCARDMAN->MountCard(pn);
+		if( !MEMCARDMAN->IsMounted(pn) )
+			MEMCARDMAN->MountCard(pn);
 
 		bTriedToSave = true;
 
@@ -217,7 +219,8 @@ static CString TransferStatsMemoryCardToMachine()
 		if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
 			continue;	// skip
 
-		MEMCARDMAN->MountCard(pn);
+		if( !MEMCARDMAN->IsMounted(pn) )
+			MEMCARDMAN->MountCard(pn);
 
 		bTriedToLoad = true;
 
@@ -264,7 +267,8 @@ static CString CopyEditsMachineToMemoryCard()
 		if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
 			continue;	// skip
 
-		MEMCARDMAN->MountCard(pn);
+		if( !MEMCARDMAN->IsMounted(pn) )
+			MEMCARDMAN->MountCard(pn);
 
 		bTriedToCopy = true;
 
@@ -328,7 +332,8 @@ static CString CopyEditsMemoryCardToMachine()
 		if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
 			continue;	// skip
 
-		MEMCARDMAN->MountCard(pn);
+		if( !MEMCARDMAN->IsMounted(pn) )
+			MEMCARDMAN->MountCard(pn);
 
 		bTriedToCopy = true;
 

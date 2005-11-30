@@ -24,7 +24,10 @@ public:
 	void LockCards();	// prevent removing or changing of memory cards
 	void UnlockCards();
 	bool MountCard( PlayerNumber pn, int iTimeout = 10 );
+	bool MountCard( PlayerNumber pn, const UsbStorageDevice &d );
 	void UnmountCard( PlayerNumber pn );
+
+	bool IsMounted( PlayerNumber pn ) const { return m_bMounted[pn]; }
 
 	/* When paused, no changes in memory card state will be noticed until unpaused. */
 	void PauseMountingThread( int iTimeout = 20 );
