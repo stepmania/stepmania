@@ -170,6 +170,9 @@ CLIENT to SERVER protocol:
     1		SMOnline command	//This used to say 2, but it looks like 1 in all cases
  <VARIABLE>	SMOnline data
 
+
+013:	Reserved
+
 SERVER to CLIENT protocol: (begins at 128)
 
 NOTE: Server responces always add 128, thus a server responce for no operation
@@ -318,16 +321,14 @@ NOTE: Server responces always add 128, thus a server responce for no operation
  <VARIABLE>	SMOnline data
 
 
-
-
-
-
-
-
-
-
-
-
+013:(141)Formatted information packet
+ Desc:		Send formatted information regarding the server back to the player.
+		NOTE: The purpose of this function is alternatively to be a broadcast
+		packet.  (You can expect it via UDP broadcast)
+ Size:
+    NT		Server Name
+    2		Port the server is listening on
+    2		Number of players connected
 
 
 ----------------------------------------------------------------
@@ -410,9 +411,8 @@ Server SMOnline packets:
 	    1		RoomN Status	
 
 002:  Request general information from server.
-    <no args>
-    This will send back to the user basic information in no particular established format
-    containing a minimum of the number of users connected and who they are.
+    1		Format for stats
+	0: Normal unformatted stats
 
 003:  Room Info
   Size:
