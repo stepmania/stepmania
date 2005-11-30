@@ -8,6 +8,8 @@
 
 #define SCREEN_WIDTH ScreenWidth()
 #define SCREEN_HEIGHT ScreenHeight()
+float ScreenAspectRatio();
+float ThemeAspectRatio();
 float ScreenWidth();
 float ScreenHeight();
 

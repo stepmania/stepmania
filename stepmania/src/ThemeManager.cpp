@@ -944,6 +944,8 @@ public:
 	static int GetPathG( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathG(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
+	static int GetScreenAspectRatio( T* p, lua_State *L ) { lua_pushnumber( L, ScreenAspectRatio() ); return 1; }
+	static int GetThemeAspectRatio( T* p, lua_State *L ) { lua_pushnumber( L, ThemeAspectRatio() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -951,6 +953,8 @@ public:
 		ADD_METHOD( GetPathG );
 		ADD_METHOD( GetPathB );
 		ADD_METHOD( GetPathS );
+		ADD_METHOD( GetScreenAspectRatio );
+		ADD_METHOD( GetThemeAspectRatio );
 
 		Luna<T>::Register( L );
 

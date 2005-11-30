@@ -21,7 +21,7 @@ ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
  */
 #define THEME_NATIVE_ASPECT (THEME_SCREEN_WIDTH/THEME_SCREEN_HEIGHT)
 
-static float ScreenAspectRatio()
+float ScreenAspectRatio()
 {
 	float fAspect = PREFSMAN->m_fDisplayAspectRatio;
 	if( fAspect == ASPECT_AUTO )
@@ -35,6 +35,11 @@ static float ScreenAspectRatio()
 			fAspect = PREFSMAN->m_iDisplayWidth / (float)PREFSMAN->m_iDisplayHeight;
 	}
 	return fAspect;
+}
+
+float ThemeAspectRatio()
+{
+	return THEME_NATIVE_ASPECT;
 }
 
 float ScreenWidth()
