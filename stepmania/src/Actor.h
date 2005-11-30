@@ -224,6 +224,7 @@ public:
 	void ScaleToCover( const RectF &rect )		{ ScaleTo( rect, cover ); }
 	void ScaleToFitInside( const RectF &rect )	{ ScaleTo( rect, fit_inside); };
 	void ScaleTo( const RectF &rect, StretchType st );
+	void CropToAspectRatio( float fAspect );
 
 	void StretchTo( const RectF &rect );
 

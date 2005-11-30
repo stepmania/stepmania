@@ -823,6 +823,29 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 	SetZoom( fNewZoom );
 }
 
+/* Crop the actor to fit the specified aspect ratio. */
+void Actor::CropToAspectRatio( float fAspect )
+{
+	float fActualAspect = GetUnzoomedWidth() / GetUnzoomedHeight();
+	if( fActualAspect > fAspect )
+	{
+		/* The actual aspect ratio is wider than fAspect. */
+		float fCropTo = fAspect / fActualAspect; /* .75 = crop to 75% size */
+		float fCropBy = 1-fCropTo;
+		SetCropLeft( fCropBy/2 );
+		SetCropRight( fCropBy/2 );
+	}
+	else
+	{
+		/* The actual aspect ratio is taller than fAspect. */
+		float fCropTo = fActualAspect / fAspect;
+		float fCropBy = 1-fCropTo;
+		SetCropTop( fCropBy/2 );
+		SetCropBottom( fCropBy/2 );
+	}
+}
+
+
 void Actor::SetHorizAlignString( const CString &s )
 {
 	if     (s.CompareNoCase("left")==0)		this->SetHorizAlign( align_left ); /* call derived */
@@ -1343,6 +1366,7 @@ public:
 	static int croptop( T* p, lua_State *L )		{ p->SetCropTop(FArg(1)); return 0; }
 	static int cropright( T* p, lua_State *L )		{ p->SetCropRight(FArg(1)); return 0; }
 	static int cropbottom( T* p, lua_State *L )		{ p->SetCropBottom(FArg(1)); return 0; }
+	static int croptoaspectratio( T* p, lua_State *L )	{ p->CropToAspectRatio(FArg(1)); return 0; }
 	static int fadeleft( T* p, lua_State *L )		{ p->SetFadeLeft(FArg(1)); return 0; }
 	static int fadetop( T* p, lua_State *L )		{ p->SetFadeTop(FArg(1)); return 0; }
 	static int faderight( T* p, lua_State *L )		{ p->SetFadeRight(FArg(1)); return 0; }
@@ -1480,6 +1504,7 @@ public:
 		ADD_METHOD( croptop );
 		ADD_METHOD( cropright );
 		ADD_METHOD( cropbottom );
+		ADD_METHOD( croptoaspectratio );
 		ADD_METHOD( fadeleft );
 		ADD_METHOD( fadetop );
 		ADD_METHOD( faderight );
