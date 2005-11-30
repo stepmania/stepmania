@@ -224,6 +224,7 @@ public:
 
 	void FreeAllLoadedFromProfile( ProfileSlot slot = PROFILE_SLOT_INVALID );
 	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
+	void GetStepsLoadedFromProfile( ProfileSlot slot, vector<Steps*> &vpStepsOut ) const;
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;
 

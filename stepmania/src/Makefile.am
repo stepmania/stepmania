@@ -51,6 +51,7 @@ ScreenOptionsEditCourse.cpp ScreenOptionsEditCourse.h \
 ScreenOptionsEditCourseEntry.cpp ScreenOptionsEditCourseEntry.h \
 ScreenOptionsEditProfile.cpp ScreenOptionsEditProfile.h \
 ScreenOptionsManageCourses.cpp ScreenOptionsManageCourses.h \
+ScreenOptionsManageEditSteps.cpp ScreenOptionsManageEditSteps.h \
 ScreenOptionsManageProfiles.cpp ScreenOptionsManageProfiles.h \
 ScreenOptionsMaster.cpp ScreenOptionsMaster.h \
 ScreenOptionsMasterPrefs.cpp ScreenOptionsMasterPrefs.h ScreenPackages.cpp ScreenPackages.h \

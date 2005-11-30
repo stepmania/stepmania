@@ -1422,6 +1422,16 @@ void Song::FreeAllLoadedFromProfile( ProfileSlot slot )
 		this->DeleteSteps( apToRemove[i] );
 }
 
+void Song::GetStepsLoadedFromProfile( ProfileSlot slot, vector<Steps*> &vpStepsOut ) const
+{
+	for( unsigned s=0; s<m_vpSteps.size(); s++ )
+	{
+		Steps* pSteps = m_vpSteps[s];
+		if( pSteps->GetLoadedFromProfileSlot() == slot )
+			vpStepsOut.push_back( pSteps );
+	}
+}
+
 int Song::GetNumStepsLoadedFromProfile( ProfileSlot slot ) const
 {
 	int iCount = 0;

@@ -90,6 +90,9 @@ public:
 	Song* GetRandomSong();
 	Course* GetRandomCourse();
 
+	void GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot );
+	Song *GetSongFromSteps( Steps *pSteps );
+	void DeleteSteps( Steps *pSteps );	// transfers ownership of pSteps
 
 	void GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen );
 	void GetCourses( CourseType ct, vector<Course*> &AddTo, bool bIncludeAutogen );

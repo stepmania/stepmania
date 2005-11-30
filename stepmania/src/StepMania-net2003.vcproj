@@ -497,6 +497,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\ScreenOptionsManageCourses.h">
 			</File>
 			<File
+				RelativePath=".\ScreenOptionsManageEditSteps.cpp">
+			</File>
+			<File
+				RelativePath=".\ScreenOptionsManageEditSteps.h">
+			</File>
+			<File
 				RelativePath=".\ScreenOptionsManageProfiles.cpp">
 			</File>
 			<File

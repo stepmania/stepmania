@@ -865,6 +865,41 @@ void SongManager::SetPreferences()
 	}
 }
 
+void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot slot )
+{
+	const vector<Song*> &vSongs = SONGMAN->GetAllSongs();
+	FOREACH_CONST( Song*, vSongs, song )
+	{
+		(*song)->GetStepsLoadedFromProfile( slot, AddTo );
+	}
+}
+
+Song *SongManager::GetSongFromSteps( Steps *pSteps )
+{
+	const vector<Song*> &vSongs = SONGMAN->GetAllSongs();
+	FOREACH_CONST( Song*, vSongs, song )
+	{
+		vector<Steps*> vSteps;
+		(*song)->GetSteps( vSteps );
+
+		FOREACH_CONST( Steps*, vSteps, steps )
+		{
+			if( *steps == pSteps )
+			{
+				return *song;
+			}
+		}
+	}
+	ASSERT(0);
+	return NULL;
+}
+
+void SongManager::DeleteSteps( Steps *pSteps )
+{
+	Song *pSong = GetSongFromSteps( pSteps );
+	pSong->DeleteSteps( pSteps );
+}
+
 void SongManager::GetAllCourses( vector<Course*> &AddTo, bool bIncludeAutogen )
 {
 	for( unsigned i=0; i<m_pCourses.size(); i++ )
