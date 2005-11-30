@@ -845,6 +845,21 @@ void Actor::CropToAspectRatio( float fAspect )
 	}
 }
 
+/* Zoom the uncropped region to the given size. */
+void Actor::ZoomToWidth( float zoom )
+{
+	float fWidth = GetUnzoomedWidth();
+	fWidth *= 1-(GetCropLeft()+GetCropRight());
+	SetZoomX( zoom / fWidth );
+}
+
+void Actor::ZoomToHeight( float zoom )
+{
+	float fHeight = GetUnzoomedHeight();
+	fHeight *= 1-(GetCropTop()+GetCropBottom());
+	SetZoomY( zoom / fHeight );
+}
+
 
 void Actor::SetHorizAlignString( const CString &s )
 {

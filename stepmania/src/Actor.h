@@ -145,8 +145,8 @@ public:
 	void  SetZoomY( float zoom )	{ DestTweenState().scale.y = zoom; }
 	void  SetZoomZ( float zoom )	{ DestTweenState().scale.z = zoom; }
 	void  ZoomTo( float fX, float fY )	{ ZoomToWidth(fX); ZoomToHeight(fY); }
-	void  ZoomToWidth( float zoom )	{ SetZoomX( zoom / GetUnzoomedWidth() ); }
-	void  ZoomToHeight( float zoom ){ SetZoomY( zoom / GetUnzoomedHeight() ); }
+	void  ZoomToWidth( float zoom );
+	void  ZoomToHeight( float zoom );
 
 	float GetRotationX()			{ return DestTweenState().rotation.x; }
 	float GetRotationY()			{ return DestTweenState().rotation.y; }
