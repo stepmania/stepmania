@@ -39,7 +39,7 @@ OptionRowDefinition g_NetworkOptionsLines[NUM_NETWORK_OPTIONS_LINES] = {
 AutoScreenMessage( SM_DoneConnecting )
 AutoScreenMessage( SM_ServerNameEnter )
 
-static Preference<CString> g_sLastServer( "LastConnectedServer",	"" );
+Preference<CString> g_sLastServer( "LastConnectedServer",	"" );
 
 REGISTER_SCREEN_CLASS( ScreenNetworkOptions );
 ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions( sClassName )
@@ -137,7 +137,7 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 		case NO_START_SERVER:
 			if (!NSMAN->isLanServer)
 			{
-				ScreenTextEntry::TextEntry( SM_ServerNameEnter, "Enter a server name...", "", 0);
+				ScreenTextEntry::TextEntry( SM_ServerNameEnter, "Enter a server name...", "", 128);
 			}
 			break;
 		case NO_STOP_SERVER:
