@@ -52,6 +52,12 @@ enum NSScoreBoardColumn
 };
 #define FOREACH_NSScoreBoardColumn( sc ) FOREACH_ENUM( NSScoreBoardColumn, NUM_NSSB_CATEGORIES, sc )
 
+struct NetServerInfo
+{
+	CString Name;
+	CString Address;
+};
+
 class EzSockets;
 class StepManiaLanServer;
 
@@ -147,6 +153,8 @@ public:
 	int GetSMOnlineSalt();
 
 	CString MD5Hex( const CString &sInput );
+
+	void GetListOfLANServers( vector< NetServerInfo > & AllServers );
 private:
 #if !defined(WITHOUT_NETWORKING)
 
@@ -170,6 +178,9 @@ private:
 	CString m_ServerName;
  
     EzSockets *NetPlayerClient;
+	EzSockets *BroadcastReception;
+
+	vector< NetServerInfo > m_vAllLANServers;
 
 	int m_ServerVersion; //ServerVersion
 

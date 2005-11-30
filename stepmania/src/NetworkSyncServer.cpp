@@ -1001,6 +1001,7 @@ void StepManiaLanServer::BroadcastInfo()
 {
 	PacketFunctions Binfo;
 	Binfo.ClearPacket();
+	Binfo.Write1( 141 );	//Code 13 + 128
 	Binfo.WriteNT( servername );
 	Binfo.Write2( 8765 );
 	Binfo.Write2( Client.size() );

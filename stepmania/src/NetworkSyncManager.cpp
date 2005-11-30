@@ -27,6 +27,7 @@ void NetworkSyncManager::SendChat(const CString& message) { }
 void NetworkSyncManager::SelectUserSong() { }
 CString NetworkSyncManager::MD5Hex( const CString &sInput ) { return CString(); }
 int NetworkSyncManager::GetSMOnlineSalt() { return 0; }
+void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) { } 
 #else
 #include "ezsockets.h"
 #include "ProfileManager.h"
@@ -58,6 +59,7 @@ int NetworkSyncManager::GetSMOnlineSalt()
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {
 	LANserver = NULL;	//So we know if it has been created yet
+	BroadcastReception = NULL;
 
 	if( GetCommandlineArgument( "runserver" ))
 	{
@@ -91,7 +93,13 @@ NetworkSyncManager::~NetworkSyncManager ()
 	//Close Connection to server nicely.
     if (useSMserver)
         NetPlayerClient->close();
-	delete NetPlayerClient;
+	SAFE_DELETE( NetPlayerClient );
+
+	if ( BroadcastReception ) 
+	{
+		BroadcastReception->close();
+		SAFE_DELETE( BroadcastReception );
+	}
 
 	if( isLanServer )
 	{
@@ -236,6 +244,10 @@ void NetworkSyncManager::StartUp()
 	else if( GetCommandlineArgument( "listen" ) )
 		PostStartUp("LISTEN");
 
+	BroadcastReception = new EzSockets;
+	BroadcastReception->create( IPPROTO_UDP );
+	BroadcastReception->bind( 8765 );
+	BroadcastReception->blocking = false;
 }
 
 
@@ -517,6 +529,41 @@ void NetworkSyncManager::Update(float fDeltaTime)
 
 	if (useSMserver)
 		ProcessInput();
+
+	PacketFunctions BroadIn;
+	if ( BroadcastReception->ReadPack( (char*)&BroadIn.Data, 1020 ) )
+	{
+		NetServerInfo ThisServer;
+		BroadIn.Position = 0;
+		if ( BroadIn.Read1() == 141 )
+		{
+			ThisServer.Name = BroadIn.ReadNT();
+			int port = BroadIn.Read2();
+			BroadIn.Read2();	//Num players connected.
+			unsigned long addy = ntohl(BroadcastReception->fromAddr.sin_addr.S_un.S_addr);
+			ThisServer.Address = ssprintf( "%d.%d.%d.%d:%d", 
+				(addy<<0)>>24, (addy<<8)>>24, (addy<<16)>>24, (addy<<24)>>24, port );
+
+			//It's fairly safe to assume that users will not be on networks with more than
+			//30 or 40 servers.  Until this point, maps would be slower than vectors. 
+			//So I am going to use a vector to store all of the servers.  
+			//
+			//In this situation, I will traverse the vector to find the element that 
+			//contains the corresponding server.
+
+			unsigned int i;
+			for ( i = 0; i < m_vAllLANServers.size(); i++ )
+			{
+				if ( m_vAllLANServers[i].Address == ThisServer.Address )
+				{
+					m_vAllLANServers[i].Name = ThisServer.Name;
+					break;
+				}
+			}
+			if ( i >= m_vAllLANServers.size() )
+				m_vAllLANServers.push_back( ThisServer );
+		}
+	}
 }
 
 void NetworkSyncManager::ProcessInput()
@@ -864,6 +911,11 @@ CString NetworkSyncManager::MD5Hex( const CString &sInput )
 				HashedName += PreHashedName.c_str()[i];
 
 	return HashedName;
+}
+
+void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers ) 
+{
+	AllServers = m_vAllLANServers;
 }
 
 static bool ConnectToServer( const CString &t ) 

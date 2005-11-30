@@ -16,6 +16,7 @@ enum {
 	PO_CONNECTION,
 	PO_SERVER,
 	PO_SCOREBOARD,
+	PO_SERVERS,
 	NUM_NETWORK_OPTIONS_LINES
 };
 
@@ -33,7 +34,8 @@ enum
 OptionRowDefinition g_NetworkOptionsLines[NUM_NETWORK_OPTIONS_LINES] = {
 	OptionRowDefinition( "Connection",	true, "PRESS START" ),
 	OptionRowDefinition( "Server",		true, "PRESS START" ),
-	OptionRowDefinition( "Scoreboard",		true, "PRESS START" )
+	OptionRowDefinition( "Scoreboard",	true, "PRESS START" ),
+	OptionRowDefinition( "Servers",		true, "PRESS START" )
 };
 
 AutoScreenMessage( SM_DoneConnecting )
@@ -65,6 +67,17 @@ void ScreenNetworkOptions::Init()
 	g_NetworkOptionsLines[PO_SCOREBOARD].m_vsChoices.push_back("Off");
 	g_NetworkOptionsLines[PO_SCOREBOARD].m_vsChoices.push_back("On");
 	
+	//Get info on all received servers from NSMAN.
+	g_NetworkOptionsLines[PO_SERVERS].m_vsChoices.clear();
+	g_NetworkOptionsLines[PO_SERVERS].m_bAllowThemeItems = false;
+
+	NSMAN->GetListOfLANServers( AllServers );
+	if ( AllServers.size() == 0 )
+		g_NetworkOptionsLines[PO_SERVERS].m_vsChoices.push_back( "-none-" );
+
+	for ( unsigned int j = 0; j < AllServers.size(); j++ )
+		g_NetworkOptionsLines[PO_SERVERS].m_vsChoices.push_back( AllServers[j].Name );
+
 	//Enable all lines for all players
 	for ( unsigned int i = 0; i < NUM_NETWORK_OPTIONS_LINES; i++ )
 		FOREACH_PlayerNumber( pn )
@@ -153,6 +166,15 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 			PREFSMAN->m_bEnableScoreboard.Set(true);
 		else
 			PREFSMAN->m_bEnableScoreboard.Set(false);
+		break;
+	case PO_SERVERS:
+		if ( AllServers.size() != 0 )
+		{
+			string sNewName = AllServers[m_pRows[GetCurrentRow()]->GetOneSharedSelection()].Address;
+			NSMAN->PostStartUp(sNewName);
+			NSMAN->DisplayStartupStatus();
+			UpdateConnectStatus( );
+		}
 		break;
 	default:
 		ScreenOptions::MenuStart( input );
