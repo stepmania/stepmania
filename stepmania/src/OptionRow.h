@@ -120,8 +120,6 @@ private:
 	ThemeMetric<RageColor>			COLOR_DISABLED;
 	ThemeMetric<bool>				CAPITALIZE_ALL_OPTION_NAMES;
 	ThemeMetric<float>				TWEEN_SECONDS;
-	ThemeMetric<bool>				THEME_ITEMS;
-	ThemeMetric<bool>				THEME_TITLES;
 	ThemeMetric<bool>				SHOW_BPM_IN_SPEED_TITLE;
 	ThemeMetric<bool>				SHOW_OPTION_ICONS;
 	ThemeMetric<bool>				SHOW_UNDERLINES;

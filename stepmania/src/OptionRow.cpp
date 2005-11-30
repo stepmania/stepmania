@@ -36,9 +36,9 @@ void OptionRow::PrepareItemText( CString &s ) const
 	bool bTheme = false;
 	
 	// HACK: Always theme the NEXT_ROW and EXIT items, even if metrics says not to theme.
-	if( s == NEXT_ROW_NAME )							bTheme = true;
-	if( s == EXIT_NAME )								bTheme = true;
-	if( m_pParentType->THEME_ITEMS && m_RowDef.m_bAllowThemeItems )	bTheme = true;
+	if( s == NEXT_ROW_NAME )			bTheme = true;
+	if( s == EXIT_NAME )				bTheme = true;
+	if( m_RowDef.m_bAllowThemeItems )	bTheme = true;
 
 	if( bTheme ) 
 		s = CommonMetrics::ThemeOptionItem( s, false ); 
@@ -51,7 +51,8 @@ CString OptionRow::OptionTitle( CString s ) const
 	bool bTheme = false;
 	
 	// HACK: Always theme the NEXT_ROW and EXIT items, even if metrics says not to theme.
-	if( m_pParentType->THEME_TITLES && m_RowDef.m_bAllowThemeTitles )	bTheme = true;
+	if( m_RowDef.m_bAllowThemeTitles )
+		bTheme = true;
 
 	return bTheme ? THEME->GetMetric("OptionTitles",s) : s;
 }
@@ -132,8 +133,6 @@ void OptionRowType::Load( const CString &sType )
 	COLOR_DISABLED					.Load(sType,"ColorDisabled");
 	CAPITALIZE_ALL_OPTION_NAMES		.Load(sType,"CapitalizeAllOptionNames");
 	TWEEN_SECONDS					.Load(sType,"TweenSeconds");
-	THEME_ITEMS						.Load(sType,"ThemeItems");
-	THEME_TITLES					.Load(sType,"ThemeTitles");
 	SHOW_BPM_IN_SPEED_TITLE			.Load(sType,"ShowBpmInSpeedTitle");
 	SHOW_OPTION_ICONS				.Load(sType,"ShowOptionIcons");
 	SHOW_UNDERLINES					.Load(sType,"ShowUnderlines");
