@@ -53,13 +53,13 @@ void ScreenNetworkOptions::Init()
 
 	g_NetworkOptionsLines[PO_CONNECTION].m_vsChoices.clear();
 	if ( NSMAN->useSMserver )
-		g_NetworkOptionsLines[PO_CONNECTION].m_vsChoices.push_back("Disconnect from "+NSMAN->GetServerName());
+		g_NetworkOptionsLines[PO_CONNECTION].m_vsChoices.push_back("Disconnect");
 	else
-		g_NetworkOptionsLines[PO_CONNECTION].m_vsChoices.push_back("Connect...");
+		g_NetworkOptionsLines[PO_CONNECTION].m_vsChoices.push_back("Connect");
 
 	g_NetworkOptionsLines[PO_SERVER].m_vsChoices.clear();
 	g_NetworkOptionsLines[PO_SERVER].m_vsChoices.push_back("Stop");
-	g_NetworkOptionsLines[PO_SERVER].m_vsChoices.push_back("Start...");
+	g_NetworkOptionsLines[PO_SERVER].m_vsChoices.push_back("Start");
 
 	g_NetworkOptionsLines[PO_SCOREBOARD].m_vsChoices.clear();
 	g_NetworkOptionsLines[PO_SCOREBOARD].m_vsChoices.push_back("Off");
