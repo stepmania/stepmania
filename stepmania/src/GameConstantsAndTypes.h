@@ -411,9 +411,9 @@ GoalType StringToGoalType( const CString& s );
 
 enum EditMode
 {
-	EDIT_MODE_PRACTICE,	// subset of EDIT_MODE_HOME
-	EDIT_MODE_HOME,		// subset of EDIT_MODE_FULL
-	EDIT_MODE_FULL,		// complete
+	EDIT_MODE_PRACTICE,
+	EDIT_MODE_HOME,
+	EDIT_MODE_FULL,
 	NUM_EDIT_MODES,
 	EDIT_MODE_INVALID,
 };

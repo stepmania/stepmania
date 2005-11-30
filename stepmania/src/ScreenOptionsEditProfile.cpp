@@ -39,7 +39,7 @@ void ScreenOptionsEditProfile::BeginScreen()
 	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	def.m_bOneChoiceForAllPlayers = true;
 	def.m_bAllowThemeItems = false;
-	def.m_bAllowThemeTitles = false;
+	def.m_bAllowThemeTitle = false;
 	def.m_bAllowExplanation = false;
 	def.m_bExportOnChange = true;
 	

@@ -51,7 +51,7 @@ CString OptionRow::OptionTitle( CString s ) const
 	bool bTheme = false;
 	
 	// HACK: Always theme the NEXT_ROW and EXIT items, even if metrics says not to theme.
-	if( m_RowDef.m_bAllowThemeTitles )
+	if( m_RowDef.m_bAllowThemeTitle )
 		bTheme = true;
 
 	return bTheme ? THEME->GetMetric("OptionTitles",s) : s;
