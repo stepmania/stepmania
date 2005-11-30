@@ -53,6 +53,7 @@ void GameCommand::Init()
 
 	m_bInsertCredit = false;
 	m_bStopMusic = false;
+	m_bApplyDefaultOptions = false;
 }
 
 class SongOptions;
@@ -355,6 +356,11 @@ void GameCommand::LoadOne( const Command& cmd )
 	else if( sName == "stopmusic" )
 	{
 		m_bStopMusic = true;
+	}
+
+	else if( sName == "applydefaultoptions" )
+	{
+		m_bApplyDefaultOptions = true;
 	}
 
 	else
@@ -721,6 +727,12 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 	if( m_bInsertCredit )
 	{
 		InsertCredit();
+	}
+	if( m_bApplyDefaultOptions )
+	{
+		FOREACH_PlayerNumber( p )
+			GAMESTATE->GetDefaultPlayerOptions( GAMESTATE->m_pPlayerState[p]->m_PlayerOptions );
+		GAMESTATE->GetDefaultSongOptions( GAMESTATE->m_SongOptions );
 	}
 	// HACK:  Set life type to BATTERY just once here so it happens once and 
 	// we don't override the user's changes if they back out.

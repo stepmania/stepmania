@@ -78,6 +78,7 @@ public:
 
 	bool m_bInsertCredit;
 	bool m_bStopMusic;
+	bool m_bApplyDefaultOptions;
 
 	// Lua
 	void PushSelf( lua_State *L );
