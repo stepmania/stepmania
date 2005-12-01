@@ -25,15 +25,15 @@
 #include "song.h"
 #include "AutoActor.h"
 
-ThemeMetric<float> LEFT_EDGE					("Background","LeftEdge");
-ThemeMetric<float> TOP_EDGE						("Background","TopEdge");
-ThemeMetric<float> RIGHT_EDGE					("Background","RightEdge");
-ThemeMetric<float> BOTTOM_EDGE					("Background","BottomEdge");
+static ThemeMetric<float> LEFT_EDGE					("Background","LeftEdge");
+static ThemeMetric<float> TOP_EDGE						("Background","TopEdge");
+static ThemeMetric<float> RIGHT_EDGE					("Background","RightEdge");
+static ThemeMetric<float> BOTTOM_EDGE					("Background","BottomEdge");
 #define RECT_BACKGROUND RectF					(LEFT_EDGE,TOP_EDGE,RIGHT_EDGE,BOTTOM_EDGE)
-ThemeMetric<bool> BLINK_DANGER_ALL				("Background","BlinkDangerAll");
-ThemeMetric<bool> DANGER_ALL_IS_OPAQUE			("Background","DangerAllIsOpaque");
-ThemeMetric<apActorCommands> BRIGHTNESS_FADE_COMMAND	("Background","BrightnessFadeCommand");
-ThemeMetric<float> CLAMP_OUTPUT_PERCENT			("Background","ClampOutputPercent");
+static ThemeMetric<bool> BLINK_DANGER_ALL				("Background","BlinkDangerAll");
+static ThemeMetric<bool> DANGER_ALL_IS_OPAQUE			("Background","DangerAllIsOpaque");
+static ThemeMetric<apActorCommands> BRIGHTNESS_FADE_COMMAND	("Background","BrightnessFadeCommand");
+static ThemeMetric<float> CLAMP_OUTPUT_PERCENT			("Background","ClampOutputPercent");
 
 static float g_fBackgroundCenterWidth = 40;	// What is this for? -Chris
 
