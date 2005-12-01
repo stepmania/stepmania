@@ -540,7 +540,7 @@ void NetworkSyncManager::Update(float fDeltaTime)
 			ThisServer.Name = BroadIn.ReadNT();
 			int port = BroadIn.Read2();
 			BroadIn.Read2();	//Num players connected.
-			unsigned long addy = ntohl(BroadcastReception->fromAddr.sin_addr.S_un.S_addr);
+			unsigned long addy = EzSockets::LongFromAddrIn(BroadcastReception->fromAddr);
 			ThisServer.Address = ssprintf( "%d.%d.%d.%d:%d", 
 				(addy<<0)>>24, (addy<<8)>>24, (addy<<16)>>24, (addy<<24)>>24, port );
 

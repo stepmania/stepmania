@@ -265,6 +265,15 @@ void EzSockets::update()
 		pUpdateWrite();
 }
 
+unsigned long EzSockets::LongFromAddrIn( const sockaddr_in & s )
+{
+#if defined(_XBOX) || defined(_WINDOWS)
+	return ntohl(s.sin_addr.S_un.S_addr);
+#else
+	return ntohl(s.sin_addr.s_addr);
+#endif
+}
+
 
 /*********************\
 |   Raw Data System   |

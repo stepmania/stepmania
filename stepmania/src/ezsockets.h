@@ -109,8 +109,10 @@ public:
 		skCONNECTED, 
 		skERROR 
 	};
+
     struct sockaddr_in fromAddr;
 	unsigned long fromAddr_len;
+	static unsigned long LongFromAddrIn( const sockaddr_in & s );
 
 	//The following possibly should be private.
 	string inBuffer;
