@@ -844,6 +844,8 @@ public:
 		opt = pConfOption;
 		opt->MakeOptionsList( defOut.m_vsChoices );
 
+		defOut.m_bAllowThemeItems = opt->m_bAllowThemeItems;
+
 		defOut.m_sName = opt->name;
 	}
 	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const

@@ -35,10 +35,19 @@ void OptionRow::PrepareItemText( CString &s ) const
 		return;
 	bool bTheme = false;
 	
-	// HACK: Always theme the NEXT_ROW and EXIT items, even if metrics says not to theme.
+	// HACK: Always theme the NEXT_ROW and EXIT items.
 	if( s == NEXT_ROW_NAME )			bTheme = true;
 	if( s == EXIT_NAME )				bTheme = true;
 	if( m_RowDef.m_bAllowThemeItems )	bTheme = true;
+
+	// Items beginning with a pipe mean "don't theme".
+	// This allows us to disable theming on a per-choice basis for choice names that are just a number
+	// and don't need to be localized.
+	if( s[0] == '|' )
+	{
+		s.erase( s.begin() );
+		bTheme = false;
+	}
 
 	if( bTheme ) 
 		s = CommonMetrics::ThemeOptionItem( s, false ); 
