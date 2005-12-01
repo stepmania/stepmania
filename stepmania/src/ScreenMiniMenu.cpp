@@ -64,6 +64,7 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 		def.m_bExportOnChange = false;
 			
 		def.m_vsChoices = mr.choices;
+		def.m_bAllowThemeItems = mr.bThemeItems;
 
 		FOREACH( CString, def.m_vsChoices, c )
 			FontCharAliases::ReplaceMarkers( *c );	// Allow special characters

@@ -32,10 +32,10 @@ enum
 };
 
 OptionRowDefinition g_NetworkOptionsLines[NUM_NETWORK_OPTIONS_LINES] = {
-	OptionRowDefinition( "Connection",	true, "PRESS START" ),
-	OptionRowDefinition( "Server",		true, "PRESS START" ),
-	OptionRowDefinition( "Scoreboard",	true, "PRESS START" ),
-	OptionRowDefinition( "Servers",		true, "PRESS START" )
+	OptionRowDefinition( "Connection",	true, "Press Start" ),
+	OptionRowDefinition( "Server",		true, "Press Start" ),
+	OptionRowDefinition( "Scoreboard",	true, "Press Start" ),
+	OptionRowDefinition( "Servers",		true, "Press Start" )
 };
 
 AutoScreenMessage( SM_DoneConnecting )

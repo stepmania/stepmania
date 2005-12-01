@@ -27,7 +27,7 @@ enum {
 OptionRowDefinition g_ProfileOptionsLines[NUM_PROFILE_OPTIONS_LINES] = {
 	OptionRowDefinition( "Player1Profile",	true ),
 	OptionRowDefinition( "Player2Profile",	true ),
-	OptionRowDefinition( "CreateNew",		true, "PRESS START" ),
+	OptionRowDefinition( "CreateNew",		true, "Press Start" ),
 	OptionRowDefinition( "Delete",			true ),
 	OptionRowDefinition( "Rename",			true ),
 	OptionRowDefinition( "OsMountPlayer1",	true, "" ),

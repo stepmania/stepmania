@@ -251,7 +251,7 @@ void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus &input
 		g_TempMenu.rows.clear();
 		FOREACH_StepsEditAction( i )
 		{
-			MenuRowDef mrd( i, StepsEditActionToString(i), true, EDIT_MODE_HOME, 0, "" );
+			MenuRowDef mrd( i, StepsEditActionToString(i), true, EDIT_MODE_HOME, true, 0, "" );
 			g_TempMenu.rows.push_back( mrd );
 		}
 

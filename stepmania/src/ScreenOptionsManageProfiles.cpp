@@ -370,7 +370,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus &input 
 		g_TempMenu.rows.clear();
 
 #define ADD_ACTION( i )	\
-		g_TempMenu.rows.push_back( MenuRowDef( i, ProfileActionToThemedString(i), true, EDIT_MODE_HOME, 0, "" ) );
+		g_TempMenu.rows.push_back( MenuRowDef( i, ProfileActionToThemedString(i), true, EDIT_MODE_HOME, true, 0, "" ) );
 
 		ADD_ACTION( ProfileAction_SetDefaultP1 );
 		ADD_ACTION( ProfileAction_SetDefaultP2 );
