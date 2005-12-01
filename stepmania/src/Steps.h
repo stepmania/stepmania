@@ -32,8 +32,8 @@ public:
 
 	// Use a special value of difficulty
 	bool IsAnEdit() const { return m_Difficulty == DIFFICULTY_EDIT; }
-	bool IsAPlayerEdit() const { return m_Difficulty == DIFFICULTY_EDIT && GetLoadedFromProfileSlot() < PROFILE_SLOT_MACHINE; }
-	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
+	bool IsAPlayerEdit() const { return m_Difficulty == DIFFICULTY_EDIT && GetLoadedFromProfileSlot() < ProfileSlot_Machine; }
+	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != ProfileSlot_INVALID; }
 	ProfileSlot GetLoadedFromProfileSlot() const { return m_LoadedFromProfile; }
 	unsigned GetHash() const { return Real()->m_uHash; }
 	CString GetDescription() const { return Real()->m_sDescription; }
@@ -86,7 +86,7 @@ protected:
 	bool				m_bSavedToDisk;	// true if this was loaded from disk or has been saved to disk.
 
 	/* These values are pulled from the autogen source first, if there is one. */
-	ProfileSlot		m_LoadedFromProfile;	// PROFILE_SLOT_INVALID if wasn't loaded from a profile
+	ProfileSlot		m_LoadedFromProfile;	// ProfileSlot_INVALID if wasn't loaded from a profile
 	unsigned		m_uHash;			// only used if m_Difficulty == DIFFICULTY_EDIT
 	CString			m_sDescription;		// Step author, edit name, or something meaningful
 	Difficulty		m_Difficulty;		// difficulty classification

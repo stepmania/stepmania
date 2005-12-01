@@ -63,7 +63,7 @@ protected:
 	UsbStorageDevice m_FinalDevice[NUM_PLAYERS];	// device in the memory card slot when we finalized, blank if none
 
 	MemoryCardState m_State[NUM_PLAYERS];
-	CString m_sError[NUM_PLAYERS]; // if MEMORY_CARD_STATE_ERROR
+	CString m_sError[NUM_PLAYERS]; // if MemoryCardState_Error
 
 	RageSound m_soundReady;
 	RageSound m_soundError;

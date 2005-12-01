@@ -219,8 +219,8 @@ void ScreenEnding::Init()
 		m_sprRemoveMemoryCard[p].Load( THEME->GetPathG("ScreenEnding",ssprintf("remove card P%d",p+1)) );
 		switch( MEMCARDMAN->GetCardState(p) )
 		{
-		case MEMORY_CARD_STATE_REMOVED:
-		case MEMORY_CARD_STATE_NO_CARD:
+		case MemoryCardState_Removed:
+		case MemoryCardState_NoCard:
 			m_sprRemoveMemoryCard[p].SetHidden( true );
 			break;
 		}

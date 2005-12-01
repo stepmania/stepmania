@@ -43,7 +43,7 @@ static bool ValidateEditStepsName( const CString &sAnswer, CString &sErrorOut )
 
 	// Steps name must be unique
 	vector<Steps*> v;
-	SONGMAN->GetStepsLoadedFromProfile( v, PROFILE_SLOT_MACHINE );
+	SONGMAN->GetStepsLoadedFromProfile( v, ProfileSlot_Machine );
 	FOREACH_CONST( Steps*, v, s )
 	{
 		if( GAMESTATE->m_pCurSteps[PLAYER_1].Get() == *s )
@@ -90,7 +90,7 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 		iIndex++;
 	}
 
-	SONGMAN->GetStepsLoadedFromProfile( m_vpSteps, PROFILE_SLOT_MACHINE );
+	SONGMAN->GetStepsLoadedFromProfile( m_vpSteps, ProfileSlot_Machine );
 
 	FOREACH_CONST( Steps*, m_vpSteps, s )
 	{
@@ -138,9 +138,20 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_GoToNextScreen )
 	{
 		int iCurRow = m_iCurrentRow[PLAYER_1];
-		if( iCurRow == (int)m_pRows.size() - 1 )
+
+		if( iCurRow == 0 )	// "create new"
+		{
+			SCREENMAN->SetNewScreen( "ScreenEditMenuNew" );
+			return;	// don't call base
+		}
+		else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
 		{
 			this->HandleScreenMessage( SM_GoToPrevScreen );
+			return;	// don't call base
+		}
+		else	// a Steps
+		{
+			SCREENMAN->SetNewScreen( "ScreenEdit" );
 			return;	// don't call base
 		}
 	}
@@ -219,7 +230,7 @@ void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus &input
 	if( iCurRow == 0 )	// "create new"
 	{
 		vector<Steps*> v;
-		SONGMAN->GetStepsLoadedFromProfile( v, PROFILE_SLOT_MACHINE );
+		SONGMAN->GetStepsLoadedFromProfile( v, ProfileSlot_Machine );
 		if( v.size() >= MAX_EDIT_STEPS_PER_PROFILE )
 		{
 			CString s = ssprintf( 
@@ -229,6 +240,7 @@ void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus &input
 			ScreenPrompt::Prompt( SM_None, s );
 			return;
 		}
+		this->BeginFadingOut();
 	}
 	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
 	{

@@ -31,13 +31,13 @@ const CString& EditMenuRowToThemedString( EditMenuRow r );
 
 enum EditMenuAction
 {
-	EDIT_MENU_ACTION_EDIT,
-	EDIT_MENU_ACTION_DELETE,
-	EDIT_MENU_ACTION_CREATE,
-	EDIT_MENU_ACTION_PRACTICE,
-	NUM_EDIT_MENU_ACTIONS
+	EditMenuAction_Edit,
+	EditMenuAction_Delete,
+	EditMenuAction_Create,
+	EditMenuAction_Practice,
+	NUM_EditMenuAction
 };
-#define FOREACH_EditMenuAction( ema ) FOREACH_ENUM( EditMenuAction, NUM_EDIT_MENU_ACTIONS, ema )
+#define FOREACH_EditMenuAction( ema ) FOREACH_ENUM( EditMenuAction, NUM_EditMenuAction, ema )
 const CString& EditMenuActionToString( EditMenuAction ema );
 const CString& EditMenuActionToThemedString( EditMenuAction ema );
 

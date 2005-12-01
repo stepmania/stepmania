@@ -290,7 +290,7 @@ void MusicWheelItem::RefreshGrades()
 		if( PROFILEMAN->IsPersistentProfile(p) )
 			PROFILEMAN->GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle(), (ProfileSlot)p, dc, hs );
 		else
-			PROFILEMAN->GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle(), PROFILE_SLOT_MACHINE, dc, hs );
+			PROFILEMAN->GetHighScoreForDifficulty( data->m_pSong, GAMESTATE->GetCurrentStyle(), ProfileSlot_Machine, dc, hs );
 
 		m_pGradeDisplay[p]->SetGrade( p, hs.GetGrade() );
 	}

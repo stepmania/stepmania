@@ -268,7 +268,7 @@ static const CString MemoryCardStateNames[] = {
 	"removed",
 	"none",
 };
-XToString( MemoryCardState, NUM_MEMORY_CARD_STATES );
+XToString( MemoryCardState, NUM_MemoryCardState );
 
 
 static const CString PerDifficultyAwardNames[] = {

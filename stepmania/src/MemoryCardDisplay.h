@@ -19,7 +19,7 @@ public:
 protected:
 	PlayerNumber m_PlayerNumber;
 	MemoryCardState	m_LastSeenState;
-	Sprite m_spr[NUM_MEMORY_CARD_STATES];
+	Sprite m_spr[NUM_MemoryCardState];
 };
 
 #endif

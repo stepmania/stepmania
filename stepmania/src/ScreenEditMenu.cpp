@@ -212,14 +212,14 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	//
 	switch( action )
 	{
-	case EDIT_MENU_ACTION_EDIT:
-	case EDIT_MENU_ACTION_PRACTICE:
+	case EditMenuAction_Edit:
+	case EditMenuAction_Practice:
 		break;
-	case EDIT_MENU_ACTION_DELETE:
+	case EditMenuAction_Delete:
 		ASSERT( pSteps );
 		ScreenPrompt::Prompt( SM_None, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
 		break;
-	case EDIT_MENU_ACTION_CREATE:
+	case EditMenuAction_Create:
 		ASSERT( !pSteps );
 		{
 			// Yuck.  Doing the memory allocation doesn't seem right since
@@ -259,13 +259,13 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 	//
 	switch( action )
 	{
-	case EDIT_MENU_ACTION_EDIT:
-	case EDIT_MENU_ACTION_CREATE:
-	case EDIT_MENU_ACTION_PRACTICE:
+	case EditMenuAction_Edit:
+	case EditMenuAction_Create:
+	case EditMenuAction_Practice:
 		{
 			// Prepare prepare for ScreenEdit
 			ASSERT( pSteps );
-			bool bPromptToNameSteps = (action == EDIT_MENU_ACTION_CREATE && dc == DIFFICULTY_EDIT);
+			bool bPromptToNameSteps = (action == EditMenuAction_Create && dc == DIFFICULTY_EDIT);
 			if( bPromptToNameSteps )
 			{
 				ScreenTextEntry::TextEntry( 
@@ -285,7 +285,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			}
 		}
 		break;
-	case EDIT_MENU_ACTION_DELETE:
+	case EditMenuAction_Delete:
 		break;
 	default:
 		ASSERT(0);

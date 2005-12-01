@@ -263,7 +263,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 			// create
 			Course *pCourse = new Course;
 			pCourse->m_sMainTitle = ScreenTextEntry::s_sLastAnswer;
-			pCourse->SetLoadedFromProfile( PROFILE_SLOT_MACHINE );
+			pCourse->SetLoadedFromProfile( ProfileSlot_Machine );
 			CourseEntry ce;
 			CourseUtil::MakeDefaultEditCourseEntry( ce );
 			pCourse->m_vEntries.push_back( ce );
@@ -349,7 +349,7 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 
 	if( iCurRow == 0 )	// "create new"
 	{
-		if( SONGMAN->GetNumEditCourses(PROFILE_SLOT_MACHINE) >= MAX_EDIT_COURSES_PER_PROFILE )
+		if( SONGMAN->GetNumEditCourses(ProfileSlot_Machine) >= MAX_EDIT_COURSES_PER_PROFILE )
 		{
 			CString s = ssprintf( 
 				"You have %d course edits, the maximum number allowed.\n\n"

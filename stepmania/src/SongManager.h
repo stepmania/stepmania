@@ -41,7 +41,7 @@ public:
 
 	void LoadAllFromProfileDir( const CString &sProfileDir, ProfileSlot slot );
 	int GetNumStepsLoadedFromProfile();
-	void FreeAllLoadedFromProfile( ProfileSlot slot = PROFILE_SLOT_INVALID );
+	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_INVALID );
 
 	void LoadGroupSymLinks( CString sDir, CString sGroupFolder );
 
@@ -74,9 +74,9 @@ public:
 
 	// Lookup
 	const vector<Song*> &GetAllSongs() const { return m_pSongs; }
-	void GetBestSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = INT_MAX, ProfileSlot slot=PROFILE_SLOT_MACHINE ) const;
-	const vector<Song*> &GetBestSongs( ProfileSlot slot=PROFILE_SLOT_MACHINE ) const { return m_pBestSongs[slot]; }
-	const vector<Course*> &GetBestCourses( CourseType ct, ProfileSlot slot=PROFILE_SLOT_MACHINE ) const { return m_pBestCourses[slot][ct]; }
+	void GetBestSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = INT_MAX, ProfileSlot slot=ProfileSlot_Machine ) const;
+	const vector<Song*> &GetBestSongs( ProfileSlot slot=ProfileSlot_Machine ) const { return m_pBestSongs[slot]; }
+	const vector<Course*> &GetBestCourses( CourseType ct, ProfileSlot slot=ProfileSlot_Machine ) const { return m_pBestCourses[slot][ct]; }
 	void GetSongs( vector<Song*> &AddTo, CString sGroupName, int iMaxStages = INT_MAX ) const;
 	void GetSongs( vector<Song*> &AddTo, int iMaxStages ) const { GetSongs(AddTo,GROUP_ALL,iMaxStages); }
 	void GetSongs( vector<Song*> &AddTo ) const { GetSongs(AddTo,GROUP_ALL,INT_MAX); }
@@ -127,13 +127,13 @@ protected:
 	Song *FindSong( CString sGroup, CString sSong );
 
 	vector<Song*>		m_pSongs;	// all songs that can be played
-	vector<Song*>		m_pBestSongs[NUM_PROFILE_SLOTS];
+	vector<Song*>		m_pBestSongs[NUM_ProfileSlot];
 	vector<Song*>		m_pShuffledSongs;	// used by GetRandomSong
 	CStringArray		m_sSongGroupNames;
 	CStringArray		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
 
 	vector<Course*>		m_pCourses;
-	vector<Course*>		m_pBestCourses[NUM_PROFILE_SLOTS][NUM_CourseType];
+	vector<Course*>		m_pBestCourses[NUM_ProfileSlot][NUM_CourseType];
 	vector<Course*>		m_pShuffledCourses;	// used by GetRandomCourse
 	struct CourseGroupInfo
 	{

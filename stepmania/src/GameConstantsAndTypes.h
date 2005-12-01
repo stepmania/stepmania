@@ -195,25 +195,25 @@ enum ScoreEvent
 //
 enum ProfileSlot
 {
-	PROFILE_SLOT_PLAYER_1,
-	PROFILE_SLOT_PLAYER_2,
-	PROFILE_SLOT_MACHINE,
-	NUM_PROFILE_SLOTS,
-	PROFILE_SLOT_INVALID
+	ProfileSlot_Player1,
+	ProfileSlot_Player2,
+	ProfileSlot_Machine,
+	NUM_ProfileSlot,
+	ProfileSlot_INVALID
 };
-#define FOREACH_ProfileSlot( slot ) FOREACH_ENUM( ProfileSlot, NUM_PROFILE_SLOTS, slot )
+#define FOREACH_ProfileSlot( slot ) FOREACH_ENUM( ProfileSlot, NUM_ProfileSlot, slot )
 
 
 enum MemoryCardState
 { 
-	MEMORY_CARD_STATE_READY, 
-	MEMORY_CARD_STATE_CHECKING, 
-	MEMORY_CARD_STATE_TOO_LATE, 
-	MEMORY_CARD_STATE_ERROR, 
-	MEMORY_CARD_STATE_REMOVED,
-	MEMORY_CARD_STATE_NO_CARD,
-	NUM_MEMORY_CARD_STATES,
-	MEMORY_CARD_STATE_INVALID,
+	MemoryCardState_Ready, 
+	MemoryCardState_Checking, 
+	MemoryCardState_TooLate, 
+	MemoryCardState_Error, 
+	MemoryCardState_Removed,
+	MemoryCardState_NoCard,
+	NUM_MemoryCardState,
+	MemoryCardState_INVALID,
 };
 
 const CString& MemoryCardStateToString( MemoryCardState mcs );

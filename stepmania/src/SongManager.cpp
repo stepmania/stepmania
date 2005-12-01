@@ -303,7 +303,7 @@ void SongManager::FreeSongs()
 
 	m_sSongGroupBannerPaths.clear();
 
-	for( int i = 0; i < NUM_PROFILE_SLOTS; ++i )
+	for( int i = 0; i < NUM_ProfileSlot; ++i )
 		m_pBestSongs[i].clear();
 	m_pShuffledSongs.clear();
 }
@@ -644,7 +644,7 @@ void SongManager::FreeCourses()
 		delete m_pCourses[i];
 	m_pCourses.clear();
 
-	for( int i = 0; i < NUM_PROFILE_SLOTS; ++i )
+	for( int i = 0; i < NUM_ProfileSlot; ++i )
 		FOREACH_CourseType( ct )
 			m_pBestCourses[i][ct].clear();
 	m_pShuffledCourses.clear();
@@ -1371,10 +1371,10 @@ void SongManager::FreeAllLoadedFromProfile( ProfileSlot slot )
 	FOREACH( Course*, m_pCourses, c )
 	{
 		Course *pCourse = *c;
-		if( pCourse->GetLoadedFromProfileSlot() == PROFILE_SLOT_INVALID )
+		if( pCourse->GetLoadedFromProfileSlot() == ProfileSlot_INVALID )
 			continue;
 		
-		if( slot == PROFILE_SLOT_INVALID || pCourse->GetLoadedFromProfileSlot() == slot )
+		if( slot == ProfileSlot_INVALID || pCourse->GetLoadedFromProfileSlot() == slot )
 			apToDelete.push_back( *c );
 	}
 
@@ -1395,7 +1395,7 @@ int SongManager::GetNumStepsLoadedFromProfile()
 
 		FOREACH( Steps*, vpAllSteps, ss )
 		{
-			if( (*ss)->GetLoadedFromProfileSlot() != PROFILE_SLOT_INVALID )
+			if( (*ss)->GetLoadedFromProfileSlot() != ProfileSlot_INVALID )
 				iCount++;
 		}
 	}	

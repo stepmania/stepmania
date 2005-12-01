@@ -38,8 +38,8 @@ static CString ClearMachineEdits()
 	int iNumSuccessful = 0;
 	
 	vector<CString> vsEditFiles;
-	GetDirListing( PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE)+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
-	GetDirListing( PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE)+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
+	GetDirListing( PROFILEMAN->GetProfileDir(ProfileSlot_Machine)+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
+	GetDirListing( PROFILEMAN->GetProfileDir(ProfileSlot_Machine)+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
 	FOREACH_CONST( CString, vsEditFiles, i )
 	{
 		iNumAttempted++;
@@ -63,7 +63,7 @@ static CString ClearMemoryCardEdits()
 	bool bTriedToLoad = false;
 	FOREACH_PlayerNumber( pn )
 	{
-		if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
+		if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
 			continue;	// skip
 
 		if( !MEMCARDMAN->IsMounted(pn) )
@@ -181,7 +181,7 @@ static CString TransferStatsMachineToMemoryCard()
 	bool bTriedToSave = false;
 	FOREACH_PlayerNumber( pn )
 	{
-		if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
+		if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
 			continue;	// skip
 
 		if( !MEMCARDMAN->IsMounted(pn) )
@@ -216,7 +216,7 @@ static CString TransferStatsMemoryCardToMachine()
 	bool bTriedToLoad = false;
 	FOREACH_PlayerNumber( pn )
 	{
-		if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
+		if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
 			continue;	// skip
 
 		if( !MEMCARDMAN->IsMounted(pn) )
@@ -264,7 +264,7 @@ static CString CopyEditsMachineToMemoryCard()
 	bool bTriedToCopy = false;
 	FOREACH_PlayerNumber( pn )
 	{
-		if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
+		if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
 			continue;	// skip
 
 		if( !MEMCARDMAN->IsMounted(pn) )
@@ -277,7 +277,7 @@ static CString CopyEditsMachineToMemoryCard()
 		int iNumOverwritten = 0;
 		
 		{
-			CString sFromDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_STEPS_SUBDIR;
+			CString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_STEPS_SUBDIR;
 			CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_STEPS_SUBDIR;
 
 			vector<CString> vsFiles;
@@ -294,7 +294,7 @@ static CString CopyEditsMachineToMemoryCard()
 		}
 		
 		{
-			CString sFromDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_COURSES_SUBDIR;
+			CString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_COURSES_SUBDIR;
 			CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_COURSES_SUBDIR;
 
 			vector<CString> vsFiles;
@@ -329,7 +329,7 @@ static CString CopyEditsMemoryCardToMachine()
 	bool bTriedToCopy = false;
 	FOREACH_PlayerNumber( pn )
 	{
-		if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
+		if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
 			continue;	// skip
 
 		if( !MEMCARDMAN->IsMounted(pn) )
@@ -343,7 +343,7 @@ static CString CopyEditsMemoryCardToMachine()
 		
 		{
 			CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_STEPS_SUBDIR;
-			CString sToDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_STEPS_SUBDIR;
+			CString sToDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_STEPS_SUBDIR;
 
 			vector<CString> vsFiles;
 			GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
@@ -360,7 +360,7 @@ static CString CopyEditsMemoryCardToMachine()
 		
 		{
 			CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_COURSES_SUBDIR;
-			CString sToDir = PROFILEMAN->GetProfileDir(PROFILE_SLOT_MACHINE) + EDIT_COURSES_SUBDIR;
+			CString sToDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_COURSES_SUBDIR;
 
 			vector<CString> vsFiles;
 			GetDirListing( sFromDir+"*.crs", vsFiles, false, false );

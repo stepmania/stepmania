@@ -53,7 +53,7 @@ Song::Song()
 	m_ForegroundChanges = AutoPtrCopyOnWrite<VBackgroundChange>(new VBackgroundChange);
 	
 
-	m_LoadedFromProfile = PROFILE_SLOT_INVALID;
+	m_LoadedFromProfile = ProfileSlot_INVALID;
 	m_fMusicSampleStartSeconds = -1;
 	m_fMusicSampleLengthSeconds = DEFAULT_MUSIC_SAMPLE_LENGTH;
 	m_fMusicLengthSeconds = 0;
@@ -1414,7 +1414,7 @@ void Song::FreeAllLoadedFromProfile( ProfileSlot slot )
 		Steps* pSteps = m_vpSteps[s];
 		if( !pSteps->WasLoadedFromProfile() )
 			continue;
-		if( slot == PROFILE_SLOT_INVALID || pSteps->GetLoadedFromProfileSlot() == slot )
+		if( slot == ProfileSlot_INVALID || pSteps->GetLoadedFromProfileSlot() == slot )
 			apToRemove.push_back( pSteps );
 	}
 

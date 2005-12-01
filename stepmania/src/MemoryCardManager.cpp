@@ -295,7 +295,7 @@ MemoryCardManager::MemoryCardManager()
 	FOREACH_PlayerNumber( p )
 	{
 		m_bMounted[p] = false;
-		m_State[p] = MEMORY_CARD_STATE_NO_CARD;
+		m_State[p] = MemoryCardState_NoCard;
 	}
 	
 	/* These can play at any time.  Preload them, so we don't cause a skip in gameplay. */
@@ -420,7 +420,7 @@ void MemoryCardManager::CheckStateChanges()
 	{
 		UsbStorageDevice &new_device = m_Device[p];		    
 
-		MemoryCardState state = MEMORY_CARD_STATE_INVALID;
+		MemoryCardState state = MemoryCardState_INVALID;
 		CString sError;
 
 		if( m_bCardsLocked )
@@ -430,21 +430,21 @@ void MemoryCardManager::CheckStateChanges()
 				/* We didn't have a card when we finalized, so we won't accept anything.
 				 * If anything is inserted (even if it's still checking), say TOO LATE. */
 				if( new_device.m_State == UsbStorageDevice::STATE_NONE )
-					state = MEMORY_CARD_STATE_NO_CARD;
+					state = MemoryCardState_NoCard;
 				else
-					state = MEMORY_CARD_STATE_TOO_LATE;
+					state = MemoryCardState_TooLate;
 			}
 			else
 			{
 				/* We had a card inserted when we finalized. */
 				if( new_device.m_State == UsbStorageDevice::STATE_NONE )
-					state = MEMORY_CARD_STATE_REMOVED;
+					state = MemoryCardState_Removed;
 				if( new_device.m_State == UsbStorageDevice::STATE_READY )
 				{
 					if( m_FinalDevice[p].sSerial != new_device.sSerial )
 					{
 						/* A different card is inserted than we had when we finalized. */
-						state = MEMORY_CARD_STATE_ERROR;
+						state = MemoryCardState_Error;
 						sError = "Changed";
 					}
 				}
@@ -453,25 +453,25 @@ void MemoryCardManager::CheckStateChanges()
 			}
 		}
 
-		if( state == MEMORY_CARD_STATE_INVALID )
+		if( state == MemoryCardState_INVALID )
 		{
 			switch( new_device.m_State )
 			{
 			case UsbStorageDevice::STATE_NONE:
-				state = MEMORY_CARD_STATE_NO_CARD;
+				state = MemoryCardState_NoCard;
 				break;
 
 			case UsbStorageDevice::STATE_CHECKING:
-				state = MEMORY_CARD_STATE_CHECKING;
+				state = MemoryCardState_Checking;
 				break;
 
 			case UsbStorageDevice::STATE_ERROR:
-				state = MEMORY_CARD_STATE_ERROR;
+				state = MemoryCardState_Error;
 				sError = new_device.m_sError;
 				break;
 
 			case UsbStorageDevice::STATE_READY:
-				state = MEMORY_CARD_STATE_READY;
+				state = MemoryCardState_Ready;
 				break;
 			}
 		}
@@ -482,21 +482,21 @@ void MemoryCardManager::CheckStateChanges()
 			// play sound
 			switch( state )
 			{
-			case MEMORY_CARD_STATE_NO_CARD:
-			case MEMORY_CARD_STATE_REMOVED:
-				if( LastState == MEMORY_CARD_STATE_READY )
+			case MemoryCardState_NoCard:
+			case MemoryCardState_Removed:
+				if( LastState == MemoryCardState_Ready )
 				{
 					m_soundDisconnect.Play();
 					MESSAGEMAN->Broadcast( (Message)(Message_CardRemovedP1+p) );
 				}
 				break;
-			case MEMORY_CARD_STATE_READY:
+			case MemoryCardState_Ready:
 				m_soundReady.Play();
 				break;
-			case MEMORY_CARD_STATE_TOO_LATE:
+			case MemoryCardState_TooLate:
 				m_soundTooLate.Play();
 				break;
-			case MEMORY_CARD_STATE_ERROR:
+			case MemoryCardState_Error:
 				m_soundError.Play();
 				break;
 			}
@@ -579,7 +579,7 @@ void MemoryCardManager::UnlockCards()
 bool MemoryCardManager::MountCard( PlayerNumber pn, int iTimeout )
 {
 	LOG->Trace( "MemoryCardManager::MountCard(%i)", pn );
-	if( GetCardState(pn) != MEMORY_CARD_STATE_READY )
+	if( GetCardState(pn) != MemoryCardState_Ready )
 		return false;
 	ASSERT( !m_Device[pn].IsBlank() );
 
@@ -724,7 +724,7 @@ bool IsAnyPlayerUsingMemoryCard()
 {
 	FOREACH_HumanPlayer( pn )
 	{
-		if( MEMCARDMAN->GetCardState(pn) == MEMORY_CARD_STATE_READY )
+		if( MEMCARDMAN->GetCardState(pn) == MemoryCardState_Ready )
 			return true;
 	}
 	return false;

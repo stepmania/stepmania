@@ -107,7 +107,7 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 		const Profile* pProfile = PROFILEMAN->GetProfile( pn );
 		switch( mcs )
 		{
-		case MEMORY_CARD_STATE_NO_CARD:
+		case MemoryCardState_NoCard:
 			// this is a local machine profile
 			if( PROFILEMAN->LastLoadWasFromLastGood(pn) )
 				return pProfile->GetDisplayNameOrHighScoreName() + CREDITS_LOADED_FROM_LAST_GOOD_APPEND.GetValue();
@@ -121,11 +121,11 @@ CString ScreenSystemLayer::GetCreditsMessage( PlayerNumber pn ) const
 			else
 				return CString();
 
-		case MEMORY_CARD_STATE_ERROR: 		return THEME->GetMetric( m_sName, "CreditsCard" + MEMCARDMAN->GetCardError(pn) );
-		case MEMORY_CARD_STATE_TOO_LATE:	return CREDITS_CARD_TOO_LATE.GetValue();
-		case MEMORY_CARD_STATE_CHECKING:	return CREDITS_CARD_CHECKING.GetValue();
-		case MEMORY_CARD_STATE_REMOVED:		return CREDITS_CARD_REMOVED.GetValue();
-		case MEMORY_CARD_STATE_READY:
+		case MemoryCardState_Error: 		return THEME->GetMetric( m_sName, "CreditsCard" + MEMCARDMAN->GetCardError(pn) );
+		case MemoryCardState_TooLate:	return CREDITS_CARD_TOO_LATE.GetValue();
+		case MemoryCardState_Checking:	return CREDITS_CARD_CHECKING.GetValue();
+		case MemoryCardState_Removed:		return CREDITS_CARD_REMOVED.GetValue();
+		case MemoryCardState_Ready:
 			{
 				// If the profile failed to load and there was no usable backup...
 				if( PROFILEMAN->LastLoadWasTamperedOrCorrupt(pn) && !PROFILEMAN->LastLoadWasFromLastGood(pn) )

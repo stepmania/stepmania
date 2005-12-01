@@ -214,7 +214,7 @@ void Course::Init()
 	m_sSubTitleTranslit = "";
 	m_sBannerPath = "";
 	m_sCDTitlePath = "";
-	m_LoadedFromProfile = PROFILE_SLOT_INVALID;
+	m_LoadedFromProfile = ProfileSlot_INVALID;
 	m_iTrailCacheSeed = 0;
 }
 

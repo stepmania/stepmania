@@ -203,7 +203,7 @@ bool ProfileManager::LoadProfileFromMemoryCard( PlayerNumber pn )
 	UnloadProfile( pn );
 
 	// mount slot
-	if( MEMCARDMAN->GetCardState(pn) != MEMORY_CARD_STATE_READY )
+	if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
 		return false;
 
 	vector<CString> asDirsToTry;
@@ -521,8 +521,8 @@ void ProfileManager::LoadMachineProfile()
 	// If the machine name has changed, make sure we use the new name
 	m_pMachineProfile->m_sDisplayName = PREFSMAN->m_sMachineName;
 
-	SONGMAN->FreeAllLoadedFromProfile( PROFILE_SLOT_MACHINE );
-	SONGMAN->LoadAllFromProfileDir( MACHINE_PROFILE_DIR, PROFILE_SLOT_MACHINE );
+	SONGMAN->FreeAllLoadedFromProfile( ProfileSlot_Machine );
+	SONGMAN->LoadAllFromProfileDir( MACHINE_PROFILE_DIR, ProfileSlot_Machine );
 }
 
 bool ProfileManager::ProfileWasLoadedFromMemoryCard( PlayerNumber pn ) const
@@ -544,10 +544,10 @@ CString ProfileManager::GetProfileDir( ProfileSlot slot ) const
 {
 	switch( slot )
 	{
-	case PROFILE_SLOT_PLAYER_1:
-	case PROFILE_SLOT_PLAYER_2:
+	case ProfileSlot_Player1:
+	case ProfileSlot_Player2:
 		return m_sProfileDir[slot];
-	case PROFILE_SLOT_MACHINE:
+	case ProfileSlot_Machine:
 		return MACHINE_PROFILE_DIR;
 	default:
 		ASSERT(0);
@@ -558,10 +558,10 @@ CString ProfileManager::GetProfileDirImportedFrom( ProfileSlot slot ) const
 {
 	switch( slot )
 	{
-	case PROFILE_SLOT_PLAYER_1:
-	case PROFILE_SLOT_PLAYER_2:
+	case ProfileSlot_Player1:
+	case ProfileSlot_Player2:
 		return m_sProfileDirImportedFrom[slot];
-	case PROFILE_SLOT_MACHINE:
+	case ProfileSlot_Machine:
 		return NULL;
 	default:
 		ASSERT(0);
@@ -572,10 +572,10 @@ const Profile* ProfileManager::GetProfile( ProfileSlot slot ) const
 {
 	switch( slot )
 	{
-	case PROFILE_SLOT_PLAYER_1:
-	case PROFILE_SLOT_PLAYER_2:
+	case ProfileSlot_Player1:
+	case ProfileSlot_Player2:
 		return GetProfile( (PlayerNumber)slot );
-	case PROFILE_SLOT_MACHINE:
+	case ProfileSlot_Machine:
 		return m_pMachineProfile;
 	default:
 		ASSERT(0);
@@ -749,10 +749,10 @@ bool ProfileManager::IsPersistentProfile( ProfileSlot slot ) const
 {
 	switch( slot )
 	{
-	case PROFILE_SLOT_PLAYER_1:
-	case PROFILE_SLOT_PLAYER_2:
+	case ProfileSlot_Player1:
+	case ProfileSlot_Player2:
 		return GAMESTATE->IsHumanPlayer((PlayerNumber)slot) && !m_sProfileDir[slot].empty(); 
-	case PROFILE_SLOT_MACHINE:
+	case ProfileSlot_Machine:
 		return true;
 	default:
 		ASSERT(0);

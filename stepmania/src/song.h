@@ -19,7 +19,7 @@ struct lua_State;
 struct BackgroundChange;
 
 const int MAX_EDITS_PER_SONG_PER_PROFILE	= 5;
-const int MAX_EDITS_PER_SONG				= 5*NUM_PROFILE_SLOTS;
+const int MAX_EDITS_PER_SONG				= 5*NUM_ProfileSlot;
 
 extern const int FILE_CACHE_VERSION;
 
@@ -88,7 +88,7 @@ public:
 
 	CString m_sGroupName;
 
-	ProfileSlot	m_LoadedFromProfile;	// PROFILE_SLOT_INVALID if wasn't loaded from a profile
+	ProfileSlot	m_LoadedFromProfile;	// ProfileSlot_INVALID if wasn't loaded from a profile
 	bool	m_bIsSymLink;
 
 	CString	m_sMainTitle, m_sSubTitle, m_sArtist;
@@ -222,8 +222,8 @@ public:
 	void AddSteps( Steps* pSteps );		// we are responsible for deleting the memory pointed to by pSteps!
 	void DeleteSteps( const Steps* pSteps );
 
-	void FreeAllLoadedFromProfile( ProfileSlot slot = PROFILE_SLOT_INVALID );
-	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != PROFILE_SLOT_INVALID; }
+	void FreeAllLoadedFromProfile( ProfileSlot slot = ProfileSlot_INVALID );
+	bool WasLoadedFromProfile() const { return m_LoadedFromProfile != ProfileSlot_INVALID; }
 	void GetStepsLoadedFromProfile( ProfileSlot slot, vector<Steps*> &vpStepsOut ) const;
 	int GetNumStepsLoadedFromProfile( ProfileSlot slot ) const;
 	bool IsEditAlreadyLoaded( Steps* pSteps ) const;

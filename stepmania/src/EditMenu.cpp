@@ -33,8 +33,8 @@ static const CString EditMenuActionNames[] = {
 	"Create",
 	"Practice",
 };
-XToString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
-XToThemedString( EditMenuAction, NUM_EDIT_MENU_ACTIONS );
+XToString( EditMenuAction, NUM_EditMenuAction );
+XToThemedString( EditMenuAction, NUM_EditMenuAction );
 StringToX( EditMenuAction );
 
 static CString ARROWS_X_NAME( size_t i )	{ return ssprintf("Arrows%dX",int(i+1)); }
@@ -252,13 +252,13 @@ int EditMenu::GetRowSize( EditMenuRow er ) const
 {
 	switch( er )
 	{
-	case ROW_GROUP: return m_sGroups.size();
-	case ROW_SONG: return m_pSongs.size();
-	case ROW_STEPS_TYPE: return m_StepsTypes.size();
-	case ROW_STEPS: return m_vpSteps.size();
+	case ROW_GROUP:				return m_sGroups.size();
+	case ROW_SONG:				return m_pSongs.size();
+	case ROW_STEPS_TYPE:		return m_StepsTypes.size();
+	case ROW_STEPS:				return m_vpSteps.size();
 	case ROW_SOURCE_STEPS_TYPE: return m_StepsTypes.size();
-	case ROW_SOURCE_STEPS: return m_vpSourceSteps.size();
-	case ROW_ACTION: return m_Actions.size();
+	case ROW_SOURCE_STEPS:		return m_vpSourceSteps.size();
+	case ROW_ACTION:			return m_Actions.size();
 	default: FAIL_M( ssprintf("%i", er) );
 	}
 }
@@ -367,11 +367,24 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		{
 			if( dc == DIFFICULTY_EDIT )
 			{
-				vector<Steps*> v;
-				GetSelectedSong()->GetSteps( v, GetSelectedStepsType(), DIFFICULTY_EDIT );
-				StepsUtil::SortStepsByDescription( v );
-				FOREACH_CONST( Steps*, v, p )
-					m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
+				switch( EDIT_MODE.GetValue() )
+				{
+				case EDIT_MODE_FULL:
+				case EDIT_MODE_PRACTICE:
+					{
+						vector<Steps*> v;
+						GetSelectedSong()->GetSteps( v, GetSelectedStepsType(), DIFFICULTY_EDIT );
+						StepsUtil::SortStepsByDescription( v );
+						FOREACH_CONST( Steps*, v, p )
+						m_vpSteps.push_back( StepsAndDifficulty(*p,dc) );
+					}
+					break;
+				case EDIT_MODE_HOME:
+					// have only "New Edit"
+					break;
+				default:
+					ASSERT(0);
+				}
 
 				switch( EDIT_MODE.GetValue() )
 				{
@@ -508,12 +521,12 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				switch( EDIT_MODE.GetValue() )
 				{
 				case EDIT_MODE_PRACTICE:
-					m_Actions.push_back( EDIT_MENU_ACTION_PRACTICE );
+					m_Actions.push_back( EditMenuAction_Practice );
 					break;
 				case EDIT_MODE_HOME:
 				case EDIT_MODE_FULL:
-					m_Actions.push_back( EDIT_MENU_ACTION_EDIT );
-					m_Actions.push_back( EDIT_MENU_ACTION_DELETE );
+					m_Actions.push_back( EditMenuAction_Edit );
+					m_Actions.push_back( EditMenuAction_Delete );
 					break;
 				default:
 					ASSERT(0);
@@ -521,7 +534,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 			}
 			else
 			{
-				m_Actions.push_back( EDIT_MENU_ACTION_CREATE );
+				m_Actions.push_back( EditMenuAction_Create );
 			}
 			m_iSelection[ROW_ACTION] = 0;
 		}
