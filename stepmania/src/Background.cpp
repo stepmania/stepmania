@@ -343,7 +343,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		}
 		else
 		{
-			// If the main background file is missing.  We failed.
+			// If the main background file is missing, we failed.
 			if( i == 0 )
 				return false;
 			else
