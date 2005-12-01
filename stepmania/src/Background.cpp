@@ -35,7 +35,8 @@ static ThemeMetric<bool> DANGER_ALL_IS_OPAQUE			("Background","DangerAllIsOpaque
 static ThemeMetric<apActorCommands> BRIGHTNESS_FADE_COMMAND	("Background","BrightnessFadeCommand");
 static ThemeMetric<float> CLAMP_OUTPUT_PERCENT			("Background","ClampOutputPercent");
 
-static float g_fBackgroundCenterWidth = 40;	// What is this for? -Chris
+// Width of the region separating the left and right brightness areas:
+static float g_fBackgroundCenterWidth = 40;
 
 
 
