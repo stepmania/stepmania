@@ -2696,7 +2696,34 @@ void ScreenGameplay::SaveRecordedResults()
 		{
 			XNode *p = pi->m_pPlayer->m_NoteData.CreateNode();
 			DISP_OPT opt;
-			p->SaveToFile( "Save/LastSongRecording.xml", opt );
+
+			//
+			// Find a file name for the screenshot
+			//
+			FlushDirCache();
+
+			vector<CString> files;
+			GetDirListing( "Save/recording*", files, false, false );
+			sort( files.begin(), files.end() );
+
+			/* Files should be of the form "recording######.xxx". */
+			int iIndex = 0;
+
+			for( int i = files.size()-1; i >= 0; --i )
+			{
+				static Regex re( "^recording([0-9]{5})\\....$" );
+				vector<CString> matches;
+				if( !re.Compare( files[i], matches ) )
+					continue;
+
+				ASSERT( matches.size() == 1 );
+				iIndex = atoi( matches[0] )+1;
+				break;
+			}
+
+			CString sFileName = ssprintf( "recording%05d.xml", iIndex );
+
+			p->SaveToFile( "Save/"+sFileName, opt );
 			SAFE_DELETE( p );
 			return;
 		}
