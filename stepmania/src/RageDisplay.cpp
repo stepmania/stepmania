@@ -604,10 +604,10 @@ RageMatrix RageDisplay::GetFrustumMatrix( float l, float r, float b, float t, fl
 void RageDisplay::ChangeCentering( int trans_x, int trans_y, int add_width, int add_height )
 {
 	// in screen space, left edge = -1, right edge = 1, bottom edge = -1. top edge = 1
-	float fPercentShiftX = 2*trans_x/640.f;
-	float fPercentShiftY = -2*trans_y/480.f;
-	float fPercentScaleX = (640.f+add_width)/640.f;
-	float fPercentScaleY = (480.f+add_height)/480.f;
+	float fPercentShiftX = 2*trans_x/SCREEN_WIDTH;
+	float fPercentShiftY = -2*trans_y/SCREEN_HEIGHT;
+	float fPercentScaleX = (SCREEN_WIDTH+add_width)/SCREEN_WIDTH;
+	float fPercentScaleY = (SCREEN_HEIGHT+add_height)/SCREEN_HEIGHT;
 
 	RageMatrix m1;
 	RageMatrix m2;
