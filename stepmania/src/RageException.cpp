@@ -42,7 +42,7 @@ void RageException::Throw(const char *fmt, ...)
 		DebugBreak();
 #endif
 
-	HandleException( error );
+	StepMania::HandleException( error );
 }
 
 /*

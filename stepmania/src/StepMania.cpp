@@ -86,7 +86,7 @@ static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", fal
 void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame );
 
 
-void GetPreferredVideoModeParams( VideoModeParams &paramsOut )
+void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 {
 	paramsOut = VideoModeParams(
 			PREFSMAN->m_bWindowed,
@@ -168,7 +168,7 @@ static void StartDisplay()
 		);
 }
 
-void ApplyGraphicOptions()
+void StepMania::ApplyGraphicOptions()
 { 
 	bool bNeedReload = false;
 
@@ -261,7 +261,7 @@ void ShutdownGame()
 
 /* Cleanly shut down, show a dialog and exit the game.  We don't go back
  * up the call stack, to avoid having to use exceptions. */
-void HandleException( CString error )
+void StepMania::HandleException( CString error )
 {
 	if( g_bAutoRestart )
 		HOOKS->RestartProgram();
@@ -275,7 +275,7 @@ void HandleException( CString error )
 	exit(1);
 }
 	
-void ResetGame()
+void StepMania::ResetGame()
 {
 	GAMESTATE->Reset();
 	
@@ -715,7 +715,7 @@ RageDisplay *CreateDisplay()
 	CheckVideoDefaultSettings();
 
 	VideoModeParams params;
-	GetPreferredVideoModeParams( params );
+	StepMania::GetPreferredVideoModeParams( params );
 
 	CString error = "There was an error while initializing your video card.\n\n"
 		"Please do not file this error as a bug!  Use the web page below to troubleshoot this problem.\n\n"
@@ -767,7 +767,7 @@ RageDisplay *CreateDisplay()
 
 extern const CString STATIC_INI_PATH;
 
-void ChangeCurrentGame( const Game* g )
+void StepMania::ChangeCurrentGame( const Game* g )
 {
 	ASSERT( g );
 
@@ -1112,7 +1112,7 @@ int main(int argc, char* argv[])
 	if( ChangeAppPri() )
 		HOOKS->BoostPriority();
 
-	ResetGame();
+	StepMania::ResetGame();
 
 	/* Now that GAMESTATE is reset, tell SCREENMAN to update the theme (load
 	 * overlay screens and global sounds), and load the initial screen. */
@@ -1151,7 +1151,7 @@ int main(int argc, char* argv[])
 #endif
 }
 
-CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex )
+CString StepMania::SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex )
 {
 	//
 	// Find a file name for the screenshot
@@ -1220,7 +1220,7 @@ CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature,
 
 static Preference<float> g_iCoinSettleTime( "CoinSettleTime", 0.03f );
 
-void InsertCoin( int iNum, const RageTimer *pTime )
+void StepMania::InsertCoin( int iNum, const RageTimer *pTime )
 {
 	if( pTime != NULL )
 	{
@@ -1248,7 +1248,7 @@ void InsertCoin( int iNum, const RageTimer *pTime )
 	MESSAGEMAN->Broadcast( Message_CoinInserted );
 }
 
-void InsertCredit()
+void StepMania::InsertCredit()
 {
 	InsertCoin( PREFSMAN->m_iCoinsPerCredit );
 }
@@ -1284,7 +1284,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			LOG->Trace( "Ignored coin insertion (editing)" );
 			break;
 		}
-		InsertCoin( 1, &input.DeviceI.ts );
+		StepMania::InsertCoin( 1, &input.DeviceI.ts );
 		return false;	// Attract need to know because they go to TitleMenu on > 1 credit
 	}
 
@@ -1324,7 +1324,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	{
 		// If holding LShift save uncompressed, else save compressed
 		bool bSaveCompressed = !INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT) );
-		SaveScreenshot( "Screenshots/", bSaveCompressed, false );
+		StepMania::SaveScreenshot( "Screenshots/", bSaveCompressed, false );
 		return true;	// handled
 	}
 
@@ -1335,7 +1335,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		{
 			/* alt-enter */
 			PREFSMAN->m_bWindowed.Set( !PREFSMAN->m_bWindowed );
-			ApplyGraphicOptions();
+			StepMania::ApplyGraphicOptions();
 			return true;
 		}
 	}
@@ -1427,7 +1427,7 @@ void HandleInputEvents(float fDeltaTime)
 	}
 }
 
-void FocusChanged( bool bHasFocus )
+void StepMania::FocusChanged( bool bHasFocus )
 {
 	if( g_bHasFocus == bHasFocus )
 		return;
@@ -1448,7 +1448,7 @@ void FocusChanged( bool bHasFocus )
 	}
 }
 
-bool AppHasFocus()
+bool StepMania::AppHasFocus()
 {
 	return g_bHasFocus;
 }

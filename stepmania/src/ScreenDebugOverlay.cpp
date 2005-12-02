@@ -506,7 +506,7 @@ class DebugLineVsync : public IDebugLine
 	virtual void Do( CString &sMessageOut )
 	{
 		PREFSMAN->m_bVsync.Set( !PREFSMAN->m_bVsync );
-		ApplyGraphicOptions();
+		StepMania::ApplyGraphicOptions();
 		IDebugLine::Do( sMessageOut );
 	}
 };
@@ -589,7 +589,7 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 	virtual void Do( CString &sMessageOut )
 	{
 		SOUND->StopMusic();
-		ResetGame();
+		StepMania::ResetGame();
 		SCREENMAN->SetNewScreen( SCREENMAN->GetTopScreen()->GetName() );
 		IDebugLine::Do( sMessageOut );
 		sMessageOut = "";

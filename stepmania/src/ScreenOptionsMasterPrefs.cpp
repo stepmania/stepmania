@@ -147,7 +147,7 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 	} else {
 		vector<const Game*> aGames;
 		GAMEMAN->GetEnabledGames( aGames );
-		ChangeCurrentGame( aGames[sel] );
+		StepMania::ChangeCurrentGame( aGames[sel] );
 	}
 }
 

@@ -195,7 +195,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		if( (m_iChangeMask & OPT_APPLY_THEME) || 
 			(m_iChangeMask & OPT_APPLY_GRAPHICS) ||
 			(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) )
-			ApplyGraphicOptions();
+			StepMania::ApplyGraphicOptions();
 
 		if( m_iChangeMask & OPT_SAVE_PREFERENCES )
 		{
@@ -206,7 +206,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 
 		if( m_iChangeMask & OPT_RESET_GAME )
 		{
-			ResetGame();
+			StepMania::ResetGame();
 			SCREENMAN->SetNewScreen( CommonMetrics::INITIAL_SCREEN );
 			m_bExportWillSetANewScreen = false;
 		}

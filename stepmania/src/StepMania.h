@@ -3,27 +3,31 @@
 
 class Game;
 class RageTimer;
+class VideoModeParams;
 
 #ifdef _XBOX
 void __cdecl main();
 #else
 int main( int argc, char* argv[] );
 #endif
-void ApplyGraphicOptions();
-void NORETURN HandleException( CString error );
-void ResetGame();
-void ChangeCurrentGame( const Game* g );
-void FocusChanged( bool bHasFocus );
-bool AppHasFocus();
 
-// If successful, return filename of screenshot in sDir, else return ""
-CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex = -1 );
+namespace StepMania
+{
+	void ApplyGraphicOptions();
+	void NORETURN HandleException( CString error );
+	void ResetGame();
+	void ChangeCurrentGame( const Game* g );
+	void FocusChanged( bool bHasFocus );
+	bool AppHasFocus();
 
-void InsertCoin( int iNum = 1, const RageTimer *pTime = NULL );
-void InsertCredit();
+	// If successful, return filename of screenshot in sDir, else return ""
+	CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex = -1 );
 
-class VideoModeParams;
-void GetPreferredVideoModeParams( VideoModeParams &paramsOut );
+	void InsertCoin( int iNum = 1, const RageTimer *pTime = NULL );
+	void InsertCredit();
+
+	void GetPreferredVideoModeParams( VideoModeParams &paramsOut );
+}
 
 #endif
 

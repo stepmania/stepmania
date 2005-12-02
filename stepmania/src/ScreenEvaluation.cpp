@@ -866,7 +866,7 @@ void ScreenEvaluation::Input( const InputEventPlus &input )
 				Profile* pProfile = PROFILEMAN->GetProfile(pn);
 				CString sDir = PROFILEMAN->GetProfileDir((ProfileSlot)pn) + "Screenshots/";
 				int iScreenshotIndex = pProfile->GetNextScreenshotIndex();
-				CString sFileName = SaveScreenshot( sDir, true, true, iScreenshotIndex );
+				CString sFileName = StepMania::SaveScreenshot( sDir, true, true, iScreenshotIndex );
 				CString sPath = sDir+sFileName;
 				
 				if( !sFileName.empty() )

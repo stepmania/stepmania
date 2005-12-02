@@ -726,7 +726,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 
 	if( m_bInsertCredit )
 	{
-		InsertCredit();
+		StepMania::InsertCredit();
 	}
 	if( m_bApplyDefaultOptions )
 	{

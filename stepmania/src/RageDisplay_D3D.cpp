@@ -700,7 +700,7 @@ bool RageDisplay_D3D::BeginFrame()
 		{
 			bool bIgnore = false;
 			VideoModeParams params;
-			GetPreferredVideoModeParams( params );
+			StepMania::GetPreferredVideoModeParams( params );
 
 			CString sError = SetVideoMode( params, bIgnore );
 			if( sError != "" )

@@ -75,7 +75,7 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_THEME2) )
 		{
 			THEME->NextTheme();
-			ApplyGraphicOptions();	// update window title and icon
+			StepMania::ApplyGraphicOptions();	// update window title and icon
 			SCREENMAN->SystemMessage( "Theme: "+THEME->GetCurThemeName() );
 			SCREENMAN->SetNewScreen( m_sName );
 			TEXTUREMAN->DoDelayedDelete();
@@ -107,7 +107,7 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 			GAMESTATE->SetCurGame( *iter );
 
 			/* Reload the theme if it's changed, but don't back to the initial screen. */
-			ResetGame();
+			StepMania::ResetGame();
 
 			SCREENMAN->SystemMessage( CString("Game: ") + GAMESTATE->GetCurrentGame()->m_szName );
 			SCREENMAN->SetNewScreen( m_sName );
