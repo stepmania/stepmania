@@ -31,6 +31,25 @@ AC_DEFUN([SM_X_WITH_OPENGL],
 	    [$XLIBS])
 	AC_DEFINE(HAVE_X11, 1, [X11 libraries present])
     fi
+
+	# Check for Xrandr
+	# Can someone fix this for me? This is producing bizarre warnings from
+	# configure... I have no clue what I'm doing -Ben
+	AC_CHECK_LIB(Xrandr, XRRSizes, have_xrandr=yes, have_xrandr=no)
+	AC_CHECK_HEADER(X11/extensions/Xrandr.h, have_xrandr_header=yes, have_xrandr_header=no)
+
+	if test "$have_xrandr_header" = "no"; then
+		have_xrandr=no
+	fi
+
+	if test "$have_xrandr" = "no"; then
+		echo "*** Direct X11 support needs Xrandr libraries and headers."
+		echo "*** Couldn't find needed headers. Continuing without X11 backend."
+		$no_x = yes
+	else
+		LIBS="$LIBS -lXrandr"
+	fi
+
 	AM_CONDITIONAL(HAVE_X11, test "$no_x" != "yes")
 
     AC_SUBST(XCFLAGS)

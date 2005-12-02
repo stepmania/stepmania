@@ -1,7 +1,7 @@
 #include "global.h"
 #include "X11Helper.h"
 
-#include <X11/Xlib.h>		// Display, Window
+#include <X11/Xlib.h>
 
 #include "RageLog.h"
 #include "RageDisplay.h"
@@ -86,7 +86,7 @@ static bool pApplyMasks()
 	return true;
 }
 
-bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width, int height )
+bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width, int height, bool overrideRedirect )
 {
 	vector<long>::iterator i;
 	
@@ -116,9 +116,20 @@ bool X11Helper::MakeWindow( int screenNum, int depth, Visual *visual, int width,
 
 	winAttribs.colormap = XCreateColormap( Dpy, RootWindow(Dpy, screenNum), visual, AllocNone );
 
-	Win = XCreateWindow( Dpy, RootWindow(Dpy, screenNum), 0, 0, width,
-		height, 0, depth, InputOutput, visual,
-		CWBorderPixel | CWColormap | CWEventMask, &winAttribs );
+	if( overrideRedirect )
+	{
+		winAttribs.override_redirect = True;
+		Win = XCreateWindow( Dpy, RootWindow(Dpy, screenNum), 0, 0, width,
+			height, 0, depth, InputOutput, visual,
+			CWBorderPixel | CWColormap | CWEventMask | CWOverrideRedirect, &winAttribs );
+	}
+	else
+	{
+		Win = XCreateWindow( Dpy, RootWindow(Dpy, screenNum), 0, 0, width,
+			height, 0, depth, InputOutput, visual,
+			CWBorderPixel | CWColormap | CWEventMask, &winAttribs );
+	}
+			
 
 	g_bHaveWin = true;
 

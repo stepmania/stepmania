@@ -18,9 +18,12 @@ public:
 	void SwapBuffers();
 
 	VideoModeParams GetActualVideoModeParams() const { return CurrentParams; }
+	
+	void GetDisplayResolutions( DisplayResolutions &out ) const;
 
 private:
 	bool m_bWindowIsOpen;
+	bool m_bWasWindowed;
 	VideoModeParams CurrentParams;
 };
 

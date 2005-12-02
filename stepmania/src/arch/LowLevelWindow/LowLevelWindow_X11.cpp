@@ -5,12 +5,15 @@
 #include "archutils/Unix/X11Helper.h"
 #include "PrefsManager.h" // XXX
 #include "RageDisplay.h" // VideoModeParams
+#include "DisplayResolutions.h"
 
 #include <stack>
 #include <math.h>	// ceil()
 #define GLX_GLXEXT_PROTOTYPES
 #include <GL/glx.h>	// All sorts of stuff...
+#include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <X11/extensions/Xrandr.h>
 
 #if defined(HAVE_LIBXTST)
 #include <X11/extensions/XTest.h>
@@ -36,10 +39,21 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 	LOG->Info( "X server vendor: %s [%i.%i.%i.%i]", XServerVendor( X11Helper::Dpy ), iMajor, iMinor, iRevision, iPatch );
 	LOG->Info( "Server GLX vendor: %s [%s]", glXQueryServerString( X11Helper::Dpy, iScreen, GLX_VENDOR ), glXQueryServerString( X11Helper::Dpy, iScreen, GLX_VERSION ) );
 	LOG->Info( "Client GLX vendor: %s [%s]", glXGetClientString( X11Helper::Dpy, GLX_VENDOR ), glXGetClientString( X11Helper::Dpy, GLX_VERSION ) );
+	
+	m_bWasWindowed = true;
 }
 
 LowLevelWindow_X11::~LowLevelWindow_X11()
 {
+	// Reset the display
+	if( !m_bWasWindowed )
+	{
+		XRRScreenConfiguration *screenConfig = XRRGetScreenInfo( X11Helper::Dpy, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ) );
+		XRRSetScreenConfig( X11Helper::Dpy, screenConfig, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ), 0, 1, CurrentTime );
+		XRRFreeScreenConfigInfo( screenConfig );
+		
+		XUngrabKeyboard( X11Helper::Dpy, CurrentTime );
+	}
 	X11Helper::Stop();	// Xlib cleans up the window for us
 }
 
@@ -74,7 +88,7 @@ CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	hints.min_width = hints.max_width = hints.base_width = p.width;
 	hints.min_height = hints.max_height = hints.base_height = p.height;
 
-	if( !m_bWindowIsOpen || p.bpp != CurrentParams.bpp )
+	if( !m_bWindowIsOpen || p.bpp != CurrentParams.bpp || ( m_bWasWindowed != p.windowed ) )
 	{
 		// Different depth, or we didn't make a window before. New context.
 		bNewDeviceOut = true;
@@ -111,7 +125,9 @@ CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		/* Enable StructureNotifyMask, so we receive a MapNotify for the following XMapWindow. */
 		X11Helper::OpenMask( StructureNotifyMask );
 
-		if( !X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual, p.width, p.height) )
+		// I get strange behavior if I add override redirect after creating the window.
+		// So, let's recreate the window when changing that state.
+		if( !X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed) )
 		{
 			return "Failed to create the window.";
 		}
@@ -157,6 +173,58 @@ CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		bNewDeviceOut = false;
 		
 	}
+	
+	XRRScreenConfiguration *screenConfig = XRRGetScreenInfo( X11Helper::Dpy, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ) );
+	
+	if( !p.windowed )
+	{
+		// Find a matching mode.
+		int sizesXct;
+		XRRScreenSize *sizesX = XRRSizes( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ), &sizesXct );
+		ASSERT_M( sizesXct != 0, "Couldn't get resolution list from X server" );
+	
+		int sizeMatch = -1;
+		int i = 0;
+		while(i < sizesXct)
+		{
+			if(sizesX[i].width == p.width && sizesX[i].height == p.height)
+			{
+				sizeMatch = i;
+				break;
+			}
+			i++;
+		}
+		// Set this mode.
+		// XXX: This doesn't handle if the config has changed since we queried it (see man Xrandr)
+		XRRSetScreenConfig( X11Helper::Dpy, screenConfig, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ), sizeMatch, 1, CurrentTime );
+		
+		// Move the window to the corner that the screen focuses in on.
+		XMoveWindow( X11Helper::Dpy, X11Helper::Win, 0, 0 );
+		
+		
+		XRaiseWindow( X11Helper::Dpy, X11Helper::Win );
+		
+		if( m_bWasWindowed )
+		{
+			// We want to prevent the WM from catching anything that comes from the keyboard.
+			XGrabKeyboard( X11Helper::Dpy, X11Helper::Win, True,
+				GrabModeAsync, GrabModeAsync, CurrentTime );
+			m_bWasWindowed = false;
+		}
+	}
+	else
+	{
+		if( !m_bWasWindowed )
+		{
+			XRRSetScreenConfig( X11Helper::Dpy, screenConfig, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ), 0, 1, CurrentTime );
+			// In windowed mode, we actually want the WM to function normally.
+			// Release any previous grab.
+			XUngrabKeyboard( X11Helper::Dpy, CurrentTime );
+			m_bWasWindowed = true;
+		}
+	}
+
+	XRRFreeScreenConfigInfo( screenConfig );
 
 	// Do this before resizing the window so that pane-style WMs (Ion,
 	// ratpoison) don't resize us back inappropriately.
@@ -165,13 +233,6 @@ CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	// Do this even if we just created the window -- works around Ion2 not
 	// catching WM normal hints changes in mapped windows.
 	XResizeWindow( X11Helper::Dpy, X11Helper::Win, p.width, p.height );
-
-	// Center the window in the display.
-	int w = DisplayWidth( X11Helper::Dpy, DefaultScreen(X11Helper::Dpy) );
-	int h = DisplayHeight( X11Helper::Dpy, DefaultScreen(X11Helper::Dpy) );
-	int x = (w - p.width)/2;
-	int y = (h - p.height)/2;
-	XMoveWindow( X11Helper::Dpy, X11Helper::Win, x, y );
 
 	CurrentParams = p;
 
@@ -221,6 +282,23 @@ void LowLevelWindow_X11::SwapBuffers()
 
 		XUnlockDisplay( X11Helper::Dpy );
 #endif
+	}
+}
+
+void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
+{
+	// This _NEEDS_ Xrandr to be present, but feck, who doesn't have it?
+	
+	int sizesXct;
+	XRRScreenSize *sizesX = XRRSizes( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ), &sizesXct );
+	ASSERT_M( sizesXct != 0, "Couldn't get resolution list from X server" );
+	
+	int i = 0;
+	while(i < sizesXct)
+	{
+		DisplayResolution res = { sizesX[i].width, sizesX[i].height };
+		out.s.insert( res );
+		i++;
 	}
 }
 
