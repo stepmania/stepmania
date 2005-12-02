@@ -4,6 +4,7 @@
 #include "RageException.h"
 #include "archutils/Unix/X11Helper.h"
 #include "PrefsManager.h" // XXX
+#include "RageDisplay.h" // VideoModeParams
 
 #include <stack>
 #include <math.h>	// ceil()
