@@ -37,6 +37,7 @@ LayoutType StringToLayoutType( const CString& s );
 struct OptionRowDefinition
 {
 	CString m_sName;
+	CString m_sExplanationName;
 	bool m_bOneChoiceForAllPlayers;
 	SelectType m_selectType;
 	LayoutType m_layoutType;
@@ -57,6 +58,7 @@ struct OptionRowDefinition
 	void Init()
 	{
 		m_sName = "";
+		m_sExplanationName = "";
 		m_bOneChoiceForAllPlayers = false;
 		m_selectType = SELECT_ONE;
 		m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;

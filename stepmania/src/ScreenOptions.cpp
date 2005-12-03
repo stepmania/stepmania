@@ -389,10 +389,12 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 	if( !bShowExplanations )
 		return CString();
 
-	CString sLineName = row.GetRowDef().m_sName;
-	ASSERT( !sLineName.empty() );
+	CString sExplanationName = row.GetRowDef().m_sExplanationName;
+	if( sExplanationName.empty() )
+		sExplanationName = row.GetRowDef().m_sName;
+	ASSERT( !sExplanationName.empty() );
 
-	return OPTION_EXPLANATION(sLineName);
+	return OPTION_EXPLANATION(sExplanationName);
 }
 
 BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow )

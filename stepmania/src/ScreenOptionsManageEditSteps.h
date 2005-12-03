@@ -26,8 +26,6 @@ protected:
 	Steps *GetStepsWithFocus() const;
 
 	vector<Steps*> m_vpSteps;
-
-	ThemeMetricEnum<EditMode> EDIT_MODE;
 };
 
 #endif
