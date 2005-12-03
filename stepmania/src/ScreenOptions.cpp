@@ -88,7 +88,6 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	SCROLL_BAR_HEIGHT				(m_sName,"ScrollBarHeight"),
 	SCROLL_BAR_TIME					(m_sName,"ScrollBarTime"),
 	LINE_HIGHLIGHT_X				(m_sName,"LineHighlightX"),
-	EXPLANATION_ZOOM				(m_sName,"ExplanationZoom"),
 	SHOW_EXIT_ROW					(m_sName,"ShowExitRow"),
 	SEPARATE_EXIT_ROW				(m_sName,"SeparateExitRow"),
 	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
@@ -153,7 +152,6 @@ void ScreenOptions::Init()
 	FOREACH_PlayerNumber( p )
 	{
 		m_textExplanation[p].LoadFromFont( THEME->GetPathF(m_sName,"explanation") );
-		m_textExplanation[p].SetZoom( EXPLANATION_ZOOM );
 		m_textExplanation[p].SetShadowLength( 0 );
 		m_textExplanation[p].SetDrawOrder( 2 );
 		m_framePage.AddChild( &m_textExplanation[p] );
