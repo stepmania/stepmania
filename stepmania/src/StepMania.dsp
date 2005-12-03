@@ -2896,6 +2896,14 @@ SOURCE=.\ScreenOptionsMasterPrefs.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\ScreenOptionsMemoryCard.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenOptionsMemoryCard.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\ScreenPackages.cpp
 # End Source File
 # Begin Source File
