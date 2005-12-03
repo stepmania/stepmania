@@ -83,7 +83,7 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 				//ChangeDisplaySettings( &g_FullScreenDevMode, CDS_FULLSCREEN );
 				bool bNewDevice;
 				VideoModeParams p;
-				GetPreferredVideoModeParams( p );
+				StepMania::GetPreferredVideoModeParams( p );
 				DISPLAY->SetVideoMode( p, bNewDevice );
 
 				ShowWindow( g_hWndMain, SW_SHOWNORMAL );
@@ -452,7 +452,7 @@ void GraphicsWindow::Update()
 
 	if( g_bHasFocus != g_bLastHasFocus )
 	{
-		FocusChanged( g_bHasFocus );
+		StepMania::FocusChanged( g_bHasFocus );
 		g_bLastHasFocus = g_bHasFocus;
 	}
 
