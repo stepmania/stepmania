@@ -61,7 +61,7 @@ public:
 	void SetPlaybackRate( float f );
 
 
-	void SetTexCoordVelocity(float fVelX, float fVelY) { m_fTexCoordVelocityX = fVelX; m_fTexCoordVelocityY = fVelY; }	
+	void SetTexCoordVelocity(float fVelX, float fVelY);
 	// Scale the Sprite maintaining the aspect ratio so that it fits 
 	// within (fWidth,fHeight) and is clipped to (fWidth,fHeight).
 	void ScaleToClipped( float fWidth, float fHeight );

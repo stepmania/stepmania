@@ -798,6 +798,11 @@ void Sprite::StopUsingCustomCoords()
 	m_bUsingCustomTexCoords = false;
 }
 
+void Sprite::SetTexCoordVelocity(float fVelX, float fVelY)
+{
+	m_fTexCoordVelocityX = fVelX;
+	m_fTexCoordVelocityY = fVelY;
+}
 
 void Sprite::ScaleToClipped( float fWidth, float fHeight )
 {
