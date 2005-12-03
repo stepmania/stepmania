@@ -28,7 +28,7 @@ void ScreenOptionsMemoryCard::Init()
 			sVolumeLabel = "(no label)";
 		CString sDescription = ssprintf( "%s %s", sOsMountDir.c_str(), sVolumeLabel.c_str() );
 		OptionRowDefinition def( sDescription, true, "" );
-		def.m_bAllowThemeTitles = false;
+		def.m_bAllowThemeTitle = false;
 		def.m_bAllowExplanation = false;
 		m_vDefs.push_back( def );	
 	}
