@@ -32,6 +32,7 @@
 #include <utility>
 #include <float.h>
 #include "InputEventPlus.h"
+#include "NotesWriterSM.h"
 
 static Preference<float> g_iDefaultRecordLength( "DefaultRecordLength", 4 );
 
@@ -2546,6 +2547,18 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				{
 				case EDIT_MODE_HOME:
 					{
+						ASSERT( pSteps->IsAnEdit() );
+
+						pSteps->SetSavedToDisk( true );
+						CopyToLastSave();
+
+						NotesWriterSM w;
+						w.WriteEditFileToMachine( pSong, pSteps );
+
+						SCREENMAN->ZeroNextUpdate();
+
+						/* FIXME
+
 						CString s;
 						switch( c )
 						{
@@ -2554,6 +2567,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						default:		ASSERT(0);
 						}
 						SCREENMAN->AddNewScreenToTop( s );
+						*/
 					}
 					break;
 				case EDIT_MODE_FULL: 
@@ -2561,7 +2575,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						pSteps->SetSavedToDisk( true );
 						CopyToLastSave();
 
-						GAMESTATE->m_pCurSong->Save();
+						pSong->Save();
 						SCREENMAN->ZeroNextUpdate();
 
 						// we shouldn't say we're saving a DWI if we're on any game besides

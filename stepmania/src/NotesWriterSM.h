@@ -13,7 +13,9 @@ class NotesWriterSM
 
 public:
 	bool Write( CString sPath, const Song &out, bool bSavingCache );
-	static void GetEditFile( const Song *pSong, const Steps *pSteps, CString &sOut );
+	static void GetEditFileContents( const Song *pSong, const Steps *pSteps, CString &sOut );
+	CString GetEditFileName( const Song *pSong, const Steps *pSteps );
+	bool WriteEditFileToMachine( const Song *pSong, Steps *pSteps );
 };
 
 #endif

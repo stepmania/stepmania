@@ -292,7 +292,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	
 	FOREACH( Steps*, m_vpSteps, s )
 	{
-		(*s)->SetFile( GetCacheFilePath() );
+		(*s)->SetFilename( GetCacheFilePath() );
 
 		/* Compress all Steps.  During initial caching, this will remove cached NoteData;
 		 * during cached loads, this will just remove cached SMData. */

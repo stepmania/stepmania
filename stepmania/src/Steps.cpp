@@ -321,11 +321,6 @@ bool Steps::IsAutogen() const
 	return parent != NULL;
 }
 
-void Steps::SetFile( CString fn )
-{
-	m_sFilename = fn;
-}
-
 void Steps::SetDifficultyAndDescription( Difficulty dc, CString sDescription )
 {
 	DeAutogen();

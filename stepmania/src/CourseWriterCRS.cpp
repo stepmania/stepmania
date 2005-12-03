@@ -20,7 +20,7 @@ bool CourseWriterCRS::Write( const Course &course, const CString &sPath, bool bS
 	return CourseWriterCRS::Write( course, f, bSavingCache );
 }
 
-void CourseWriterCRS::GetEditFile( const Course *pCourse, CString &sOut )
+void CourseWriterCRS::GetEditFileContents( const Course *pCourse, CString &sOut )
 {
 	RageFileObjMem mem;
 	CourseWriterCRS::Write( *pCourse, mem, true );

@@ -12,6 +12,8 @@
 #include <cerrno>
 #include "Foreach.h"
 #include "BackgroundUtil.h"
+#include "ProfileManager.h"
+#include "Profile.h"
 
 static CString BackgroundChangeToString( const BackgroundChange &bgc )
 {
@@ -222,9 +224,9 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 	// Save all Steps for this file
 	//
 	const vector<Steps*>& vpSteps = out.GetAllSteps();
-	for( unsigned i=0; i<vpSteps.size(); i++ ) 
+	FOREACH_CONST( Steps*, vpSteps, s ) 
 	{
-		const Steps* pSteps = vpSteps[i];
+		const Steps* pSteps = *s;
 		if( pSteps->IsAutogen() )
 			continue; /* don't write autogen notes */
 
@@ -239,7 +241,7 @@ bool NotesWriterSM::Write(CString sPath, const Song &out, bool bSavingCache)
 	return true;
 }
 
-void NotesWriterSM::GetEditFile( const Song *pSong, const Steps *pSteps, CString &sOut )
+void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps, CString &sOut )
 {
 	sOut = "";
 	CString sDir = pSong->GetSongDir();
@@ -251,6 +253,49 @@ void NotesWriterSM::GetEditFile( const Song *pSong, const Steps *pSteps, CString
 		sDir = join( "/", asParts.begin()+1, asParts.end() );
 	sOut += ssprintf( "#SONG:%s;\n", sDir.c_str() );
 	sOut += GetSMNotesTag( *pSong, *pSteps, false );
+}
+
+CString NotesWriterSM::GetEditFileName( const Song *pSong, const Steps *pSteps )
+{
+	// guaranteed to be a unique name
+	return pSong->GetTranslitFullTitle() + " - " + pSteps->GetDescription();
+}
+
+bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
+{
+	ASSERT( pSteps->WasLoadedFromProfile() );
+
+	CString sDir = PROFILEMAN->GetProfileDir( ProfileSlot_Machine ) + EDIT_STEPS_SUBDIR;
+
+	/* If the file name of the edit has changed since the last save, then delete the old
+	 * file before saving the new one.
+	 */
+	bool bFileNameChanged = 
+		pSteps->GetSavedToDisk()  && 
+		pSteps->GetFilename() != GetEditFileName(pSong,pSteps);
+	if( bFileNameChanged )
+		FILEMAN->Remove( pSteps->GetFilename() );
+
+	CString sPath = sDir + GetEditFileName(pSong,pSteps);
+	pSteps->SetFilename( sPath );
+
+	/* Flush dir cache when writing steps, so the old size isn't cached. */
+	FILEMAN->FlushDirCache( Dirname(sPath) );
+
+	int flags = RageFile::WRITE | RageFile::SLOW_FLUSH;
+
+	RageFile f;
+	if( !f.Open( sPath, flags ) )
+	{
+		LOG->Warn( "Error opening song file '%s' for writing: %s", sPath.c_str(), f.GetError().c_str() );
+		return false;
+	}
+
+	CString sTag;
+	GetEditFileContents( pSong, pSteps, sTag );
+	f.PutLine( sTag );
+
+	return true;
 }
 
 /*

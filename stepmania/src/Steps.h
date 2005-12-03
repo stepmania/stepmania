@@ -41,9 +41,10 @@ public:
 	int GetMeter() const { return Real()->m_iMeter; }
 	const RadarValues& GetRadarValues() const { return Real()->m_CachedRadarValues; }
 
-	void SetFile( CString fn );
+	void SetFilename( CString fn ) { m_sFilename = fn; }
+	CString GetFilename() const { return m_sFilename; }
 	void SetSavedToDisk( bool b ) { m_bSavedToDisk = b; }
-	bool GetSavedToDisk() { return m_bSavedToDisk; }
+	bool GetSavedToDisk() const { return m_bSavedToDisk; }
 	void SetDifficultyAndDescription( Difficulty dc, CString sDescription );
 	void SetDifficulty( Difficulty dc ) { SetDifficultyAndDescription( dc, this->GetDescription() ); }
 	void SetDescription( CString sDescription ) { SetDifficultyAndDescription( this->GetDifficulty(), sDescription ); }
@@ -83,7 +84,7 @@ protected:
 	const Steps *Real() const;
 
 	CString			m_sFilename;
-	bool				m_bSavedToDisk;	// true if this was loaded from disk or has been saved to disk.
+	bool			m_bSavedToDisk;	// true if this was loaded from disk or has been saved to disk.
 
 	/* These values are pulled from the autogen source first, if there is one. */
 	ProfileSlot		m_LoadedFromProfile;	// ProfileSlot_INVALID if wasn't loaded from a profile
