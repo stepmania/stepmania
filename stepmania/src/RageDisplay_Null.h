@@ -79,7 +79,6 @@ protected:
 	VideoModeParams m_Params;
 	CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut ) { m_Params = p; return CString(); }
 	RageSurface* CreateScreenshot();
-	void SetViewport(int shift_left, int shift_down) { }
 	RageMatrix GetOrthoMatrix( float l, float r, float b, float t, float zn, float zf ); 
 	bool SupportsSurfaceFormat( PixelFormat pixfmt ) { return true; }
 };

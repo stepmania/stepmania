@@ -663,25 +663,6 @@ void RageDisplay_D3D::ResolutionChanged()
 #endif
 }
 
-void RageDisplay_D3D::SetViewport(int shift_left, int shift_down)
-{
-	VideoModeParams p;
-	GraphicsWindow::GetParams( p );
-
-	//LOG->Warn( "RageDisplay_D3D::SetViewport %d %d", p.width, p.height );
-
-	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
-	 * Scale them to the actual viewport range. */
-	shift_left = int( shift_left * float(p.width) / SCREEN_WIDTH );
-	shift_down = int( shift_down * float(p.height) / SCREEN_HEIGHT );
-
-	D3DVIEWPORT8 viewData;
-	g_pd3dDevice->GetViewport( &viewData );
-	viewData.X = shift_left;
-	viewData.Y = -shift_down;
-	g_pd3dDevice->SetViewport( &viewData );
-}
-
 int RageDisplay_D3D::GetMaxTextureSize() const
 {
 	return g_DeviceCaps.MaxTextureWidth;
