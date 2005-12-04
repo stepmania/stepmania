@@ -520,14 +520,15 @@ void RageDisplay::CameraPopMatrix()
 
 /* gluLookAt.  The result is pre-multiplied to the matrix (M = L * M) instead of
  * post-multiplied. */
-void RageDisplay::LoadLookAt(float fov, const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up)
+void RageDisplay::LoadLookAt( float fFOV, const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up )
 {
-	float aspect = SCREEN_WIDTH/(float)SCREEN_HEIGHT;
-	g_ProjectionStack.LoadMatrix( GetPerspectiveMatrix(fov, aspect, 1, 1000) );
-	/* Flip the Y coordinate, so positive numbers go down. */
-	g_ProjectionStack.Scale(1, -1, 1);
+	float fAspect = SCREEN_WIDTH/(float)SCREEN_HEIGHT;
+	g_ProjectionStack.LoadMatrix( GetPerspectiveMatrix(fFOV, fAspect, 1, 1000) );
 
-	g_ViewStack.LoadMatrix(RageLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z));
+	/* Flip the Y coordinate, so positive numbers go down. */
+	g_ProjectionStack.Scale( 1, -1, 1 );
+
+	g_ViewStack.LoadMatrix( RageLookAt(Eye.x, Eye.y, Eye.z, At.x, At.y, At.z, Up.x, Up.y, Up.z) );
 }
 
 
