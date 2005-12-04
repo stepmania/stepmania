@@ -28,8 +28,6 @@
 #include "archutils/Xbox/VirtualMemory.h"
 #endif
 
-#include "ScreenDimensions.h"
-
 // Static libraries
 // load Windows D3D8 dynamically
 #if defined(_MSC_VER) && !defined(_XBOX)
