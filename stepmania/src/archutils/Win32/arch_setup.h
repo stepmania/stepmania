@@ -17,6 +17,10 @@
 /* Fix VC breakage. */
 #define PATH_MAX _MAX_PATH
 
+/* Disable false deprecation warnings in VC2005. */
+#define _CRT_SECURE_NO_DEPRECATE
+#define _SCL_SECURE_NO_DEPRECATE 
+
 #if _MSC_VER < 1300 /* VC6, not VC7 */
 template<class T>
 inline const T& max(const T &a, const T &b)			{ return a < b? b:a; }
