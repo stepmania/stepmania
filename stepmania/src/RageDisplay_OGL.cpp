@@ -607,7 +607,10 @@ void RageDisplay_OGL::ResolutionChanged()
 {
 	//LOG->Warn( "RageDisplay_OGL::ResolutionChanged" );
 
- 	SetViewport(0,0);
+	int fWidth = g_pWind->GetActualVideoModeParams().width;
+	int fHeight = g_pWind->GetActualVideoModeParams().height;
+
+	glViewport( 0, 0, fWidth, fHeight );
 
 	/* Clear any junk that's in the framebuffer. */
 	if( BeginFrame() )
@@ -653,21 +656,6 @@ CString RageDisplay_OGL::TryVideoMode( const VideoModeParams &p, bool &bNewDevic
 	ResolutionChanged();
 
 	return CString();	// successfully set mode
-}
-
-void RageDisplay_OGL::SetViewport(int shift_left, int shift_down)
-{
-	int width = g_pWind->GetActualVideoModeParams().width;
-	int height = g_pWind->GetActualVideoModeParams().height;
-
-	//LOG->Warn( "RageDisplay_OGL::SetViewport( %d, %d )", width, height );
-
-	/* left and down are on a 0..SCREEN_WIDTH, 0..SCREEN_HEIGHT scale.
-	 * Scale them to the actual viewport range. */
-	shift_left = int( shift_left * float(width) / SCREEN_WIDTH );
-	shift_down = int( shift_down * float(height) / SCREEN_HEIGHT );
-
-	glViewport( shift_left, -shift_down, width, height );
 }
 
 int RageDisplay_OGL::GetMaxTextureSize() const
@@ -1305,7 +1293,7 @@ void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNu
 	 * It's worth it for the AA, though. */
 	glEnable( GL_LINE_SMOOTH );
 
-	/* Our line width is wrt the regular internal SCREEN_WIDTHxSCREEN_HEIGHT screen,
+	/* fLineWidth is wrt the regular internal SCREEN_WIDTHxSCREEN_HEIGHT screen,
 	 * but these width functions actually want raster sizes (that is, actual pixels).
 	 * Scale the line width and point size by the average ratio of the scale. */
 	float fWidthVal = float(g_pWind->GetActualVideoModeParams().width) / SCREEN_WIDTH;

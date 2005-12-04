@@ -86,7 +86,6 @@ protected:
 
 	CString TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut );
 	RageSurface* CreateScreenshot();
-	void SetViewport(int shift_left, int shift_down);
 	PixelFormat GetImgPixelFormat( RageSurface* &img, bool &FreeImg, int width, int height, bool bPalettedTexture );
 	bool SupportsSurfaceFormat( PixelFormat pixfmt );
 	
