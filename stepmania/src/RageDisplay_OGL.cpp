@@ -20,7 +20,6 @@
 
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
-#include "ScreenDimensions.h" // XXX
 
 /* Windows's broken gl.h defines GL_EXT_paletted_texture incompletely: */
 #ifndef GL_TEXTURE_INDEX_SIZE_EXT
@@ -46,6 +45,7 @@
 #include "RageTypes.h"
 #include "RageUtil.h"
 #include "EnumHelper.h"
+#include "Foreach.h"
 #include "ProductInfo.h"
 #include "DisplayResolutions.h"
 
@@ -1293,12 +1293,18 @@ void RageDisplay_OGL::DrawLineStripInternal( const RageSpriteVertex v[], int iNu
 	 * It's worth it for the AA, though. */
 	glEnable( GL_LINE_SMOOTH );
 
-	/* fLineWidth is wrt the regular internal SCREEN_WIDTHxSCREEN_HEIGHT screen,
-	 * but these width functions actually want raster sizes (that is, actual pixels).
-	 * Scale the line width and point size by the average ratio of the scale. */
-	float fWidthVal = float(g_pWind->GetActualVideoModeParams().width) / SCREEN_WIDTH;
-	float fHeightVal = float(g_pWind->GetActualVideoModeParams().height) / SCREEN_HEIGHT;
-	fLineWidth *= (fWidthVal + fHeightVal) / 2;
+	/* fLineWidth is in units relative to object space, but OpenGL line and point sizes
+	 * are in raster units (actual pixels).  Scale the line width by the average ratio;
+	 * if object space is 640x480, and we have a 1280x960 window, we'll double the
+	 * width. */
+	{
+		const RageMatrix* pMat = GetProjectionTop();
+		float fW = 2 / pMat->m[0][0];
+		float fH = -2 / pMat->m[1][1];
+		float fWidthVal = float(g_pWind->GetActualVideoModeParams().width) / fW;
+		float fHeightVal = float(g_pWind->GetActualVideoModeParams().height) / fH;
+		fLineWidth *= (fWidthVal + fHeightVal) / 2;
+	}
 
 	/* Clamp the width to the hardware max for both lines and points (whichever
 	 * is more restrictive). */
