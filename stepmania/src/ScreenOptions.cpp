@@ -661,7 +661,7 @@ void ScreenOptions::PositionRows()
 	vector<OptionRow*> Rows( m_pRows );
 	OptionRow *ExitRow = NULL;
 
-	if( (bool)SEPARATE_EXIT_ROW && Rows.back()->GetRowType() == OptionRow::ROW_EXIT )
+	if( (bool)SEPARATE_EXIT_ROW && !Rows.empty() && Rows.back()->GetRowType() == OptionRow::ROW_EXIT )
 	{
 		ExitRow = &*Rows.back();
 
