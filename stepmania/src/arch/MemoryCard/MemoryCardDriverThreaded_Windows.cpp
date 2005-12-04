@@ -101,6 +101,21 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 			else
 				usbd.SetError( "MountFailed" );
 
+			// find volume size
+			DWORD dwSectorsPerCluster;
+			DWORD dwBytesPerSector;
+			DWORD dwNumberOfFreeClusters;
+			DWORD dwTotalNumberOfClusters;
+			if( GetDiskFreeSpace(
+					sDrive,
+					&dwSectorsPerCluster,
+					&dwBytesPerSector,
+					&dwNumberOfFreeClusters,
+					&dwTotalNumberOfClusters ) )
+			{
+				usbd.iVolumeSizeMB = (int)roundf( dwTotalNumberOfClusters * (float)dwSectorsPerCluster * dwBytesPerSector / (1024*1024) );
+			}
+
 			// read name
 			this->Mount( &usbd );
 			FILEMAN->Mount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
