@@ -79,11 +79,11 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 	int iIndex = 0;
 	
 	{
-		def.m_sName = "";
+		def.m_sName = "Create New Edit Steps";
 		def.m_bAllowThemeTitle = false;
 		def.m_sExplanationName = "Create New Edit Steps";
 		def.m_vsChoices.clear();
-		def.m_vsChoices.push_back( "Create New Edit Steps" );
+		def.m_vsChoices.push_back( "" );
 		vDefs.push_back( def );
 		vHands.push_back( NULL );
 		iIndex++;
@@ -94,11 +94,11 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 	FOREACH_CONST( Steps*, m_vpSteps, s )
 	{
 		CString sType = GAMEMAN->StepsTypeToThemedString( (*s)->m_StepsType );
-		def.m_sName = sType;
+		def.m_sName = (*s)->GetDescription();
 		def.m_sExplanationName = "Edit Steps";
 		def.m_bAllowThemeItems = false;
 		def.m_vsChoices.clear();
-		def.m_vsChoices.push_back( (*s)->GetDescription() );
+		def.m_vsChoices.push_back( sType );
 		vDefs.push_back( def );
 		vHands.push_back( NULL );
 		iIndex++;

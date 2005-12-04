@@ -20,16 +20,32 @@ void ScreenOptionsMemoryCard::Init()
 
 	FOREACH_CONST( UsbStorageDevice, MEMCARDMAN->GetStorageDevices(), iter )
 	{
-		CString sOsMountDir = iter->sOsMountDir;
-		if( sOsMountDir.empty() )
-			sOsMountDir = "(not mounted)";
-		CString sVolumeLabel = iter->sVolumeLabel;
-		if( sVolumeLabel.empty() )
-			sVolumeLabel = "(no label)";
-		CString sDescription = ssprintf( "%s %s", sOsMountDir.c_str(), sVolumeLabel.c_str() );
+		// TODO: Make these string themable
+
+		vector<CString> vs;
+		if( iter->sOsMountDir.empty() )
+			vs.push_back( "(no mount dir)" );
+		else
+			vs.push_back( iter->sOsMountDir );
+		if( iter->sVolumeLabel.empty() )
+			vs.push_back( "(no label)" );
+		else
+			vs.push_back( iter->sVolumeLabel );
+		if( iter->iVolumeSizeMB == 0 )
+			vs.push_back( "size ???" );
+		else
+			vs.push_back( ssprintf("%dMB",iter->iVolumeSizeMB) );
+
+		CString sDescription = join(", ", vs);
 		OptionRowDefinition def( sDescription, true, "" );
+		def.m_sExplanationName = "Memory Card";
 		def.m_bAllowThemeTitle = false;
-		def.m_bAllowExplanation = false;
+		m_vDefs.push_back( def );	
+	}
+
+	if( MEMCARDMAN->GetStorageDevices().empty() )
+	{
+		OptionRowDefinition def( "No memory cards detected", true, "" );
 		m_vDefs.push_back( def );	
 	}
 	
@@ -45,7 +61,7 @@ void ScreenOptionsMemoryCard::BeginScreen()
 	// select the last chosen memory card (if present)
 	if( !MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Get().empty() )
 	{
-		const vector<UsbStorageDevice> v = MEMCARDMAN->GetStorageDevices();
+		const vector<UsbStorageDevice> &v = MEMCARDMAN->GetStorageDevices();
 		for( unsigned i=0; i<v.size(); i++ )	
 		{
 			if( v[i].sOsMountDir == MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Get() )
@@ -55,6 +71,8 @@ void ScreenOptionsMemoryCard::BeginScreen()
 			}
 		}
 	}
+
+	this->SubscribeToMessage( Message_StorageDevicesChanged );
 }
 
 void ScreenOptionsMemoryCard::HandleScreenMessage( const ScreenMessage SM )
@@ -66,7 +84,8 @@ void ScreenOptionsMemoryCard::HandleMessage( const CString& sMessage )
 {
 	if( sMessage == MessageToString(Message_StorageDevicesChanged) )
 	{
-		SCREENMAN->SetNewScreen( this->m_sName );	// reload
+		if( !m_Out.IsTransitioning() )
+			SCREENMAN->SetNewScreen( this->m_sName );	// reload
 	}
 }
 
@@ -89,9 +108,12 @@ void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber
 	PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
 	if( m_iCurrentRow[pn] == iRow )
 	{
-		const vector<UsbStorageDevice> v = MEMCARDMAN->GetStorageDevices();
-		const UsbStorageDevice &dev = v[iRow];
-		MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Set( dev.sOsMountDir );
+		const vector<UsbStorageDevice> &v = MEMCARDMAN->GetStorageDevices();
+		if( iRow < v.size() )
+		{
+			const UsbStorageDevice &dev = v[iRow];
+			MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Set( dev.sOsMountDir );
+		}
 	}
 }
 
@@ -99,11 +121,8 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus &input )
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 
-	if( iCurRow == (int)m_pRows.size()-1 )	// "exit"
-	{
-		MenuBack( GAMESTATE->m_MasterPlayerNumber );
-	}
-	else	// a card
+	const vector<UsbStorageDevice> &v = MEMCARDMAN->GetStorageDevices();
+	if( iCurRow < v.size() )	// a card
 	{
 		const vector<UsbStorageDevice> v = MEMCARDMAN->GetStorageDevices();
 		const UsbStorageDevice &dev = v[iCurRow];
@@ -118,6 +137,10 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus &input )
 			CString s = ssprintf("error mounting card: %s", MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
 			ScreenPrompt::Prompt( SM_None, s );
 		}
+	}
+	else
+	{
+		SCREENMAN->PlayInvalidSound();
 	}
 }
 

@@ -312,7 +312,8 @@ static CString CopyEditsMachineToMemoryCard()
 		
 		MEMCARDMAN->UnmountCard(pn);
 
-		return ssprintf("Copied to P%d card: %d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
+		// TODO: Make string themable
+		return ssprintf("Copied to P%d card:\n%d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
 		break;
 	}
 
@@ -381,7 +382,8 @@ static CString CopyEditsMemoryCardToMachine()
 		PROFILEMAN->SaveMachineProfile();
 		PROFILEMAN->LoadMachineProfile();
 
-		return ssprintf("Copied from P%d card: %d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
+		// TODO: Make themeable
+		return ssprintf("Copied from P%d card:\n%d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
 		break;
 	}
 
