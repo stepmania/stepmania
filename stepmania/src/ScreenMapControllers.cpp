@@ -43,20 +43,28 @@ void ScreenMapControllers::Init()
 
 	for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
 	{
-		CString sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[b];
-		CString sSecondary = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), b );
+		KeyToMap k;
+		k.m_sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[b];
+		k.m_sSecondary = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), b );
+		k.m_GameButton = (GameButton) b;
+		m_KeysToMap.push_back( k );
+	}
+
+	for( unsigned b=0; b<m_KeysToMap.size(); b++ )
+	{
+		const KeyToMap *pKey = &m_KeysToMap[b];
 
 		m_textName[b].SetName( "Title" );
 		m_textName[b].LoadFromFont( THEME->GetPathF("Common","title") );
 		m_textName[b].SetXY( SCREEN_CENTER_X, -6 );
-		m_textName[b].SetText( sName );
+		m_textName[b].SetText( pKey->m_sName );
 		ON_COMMAND( m_textName[b] );
 		m_Line[b].AddChild( &m_textName[b] );
 
 		m_textName2[b].SetName( "Secondary" );
 		m_textName2[b].LoadFromFont( THEME->GetPathF("Common","title") );
 		m_textName2[b].SetXY( SCREEN_CENTER_X, +6 );
-		m_textName2[b].SetText( sSecondary );
+		m_textName2[b].SetText( pKey->m_sSecondary );
 		ON_COMMAND( m_textName2[b] );
 		m_Line[b].AddChild( &m_textName2[b] );
 
@@ -98,8 +106,9 @@ void ScreenMapControllers::Update( float fDeltaTime )
 		if( m_iWaitingForPress )
 			return; /* keep waiting */
 
-		GameInput curGameI( (GameController)m_iCurController,
-							(GameButton)m_iCurButton );
+		const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
+		
+		GameInput curGameI( (GameController)m_iCurController, pKey->m_GameButton );
 
 		INPUTMAPPER->SetInputMap( m_DeviceIToMap, curGameI, m_iCurSlot );
 		INPUTMAPPER->AddDefaultMappingsForCurrentGameIfUnmapped();
@@ -223,7 +232,8 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 		case KEY_BACK: /* Clear the selected input mapping. */
 #endif
 			{
-				GameInput curGameI( (GameController)m_iCurController, (GameButton)m_iCurButton );
+				const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
+				GameInput curGameI( (GameController)m_iCurController, pKey->m_GameButton );
 				INPUTMAPPER->ClearFromInputMap( curGameI, m_iCurSlot );
 				INPUTMAPPER->AddDefaultMappingsForCurrentGameIfUnmapped();
 		
@@ -258,7 +268,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			m_iCurButton--;
 			break;
 		case KEY_DOWN: /* Move the selection down. */
-			if( m_iCurButton == GAMESTATE->GetCurrentGame()->m_iButtonsPerController-1 )
+			if( m_iCurButton == (int) m_KeysToMap.size()-1 )
 				break;	// can't go down any more
 			m_iCurButton++;
 			break;
@@ -289,7 +299,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 
 void ScreenMapControllers::TweenOffScreen()
 {
-	for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
+	for( unsigned b=0; b<m_KeysToMap.size(); b++ )
 		m_Line[b].RunCommands( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );
 }
 
@@ -297,11 +307,11 @@ void ScreenMapControllers::Refresh()
 {
 	for( int p=0; p<MAX_GAME_CONTROLLERS; p++ ) 
 	{			
-		for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ ) 
+		for( unsigned b=0; b<m_KeysToMap.size(); b++ )
 		{
 			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
-				bool bSelected = p == m_iCurController  &&  b == m_iCurButton  &&  s == m_iCurSlot; 
+				bool bSelected = p == m_iCurController  &&  (int) b == m_iCurButton  &&  s == m_iCurSlot; 
 
 				BitmapText *pText = &m_textMappedTo[b][p][s];
 				GameInput cur_gi( (GameController)p, (GameButton)b );
