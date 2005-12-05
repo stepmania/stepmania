@@ -17,15 +17,15 @@ static const ThemeMetric<apActorCommands> EVEN_LINE_OUT	("ScreenMapControllers",
 static const ThemeMetric<apActorCommands> ODD_LINE_IN		("ScreenMapControllers","OddLineIn");
 static const ThemeMetric<apActorCommands> ODD_LINE_OUT	("ScreenMapControllers","OddLineOut");
 
-const int FramesToWaitForInput = 2;
+static const int FramesToWaitForInput = 2;
 
 // reserve the 3rd slot for hard-coded keys
-const int NUM_CHANGABLE_SLOTS = NUM_SHOWN_GAME_TO_DEVICE_SLOTS-1;
+static const int NUM_CHANGABLE_SLOTS = NUM_SHOWN_GAME_TO_DEVICE_SLOTS-1;
 
 
-const float LINE_START_Y	=	64;
-const float LINE_GAP_Y		=	28;
-const float BUTTON_COLUMN_X[NUM_SHOWN_GAME_TO_DEVICE_SLOTS*MAX_GAME_CONTROLLERS] =
+static const float LINE_START_Y	=	64;
+static const float LINE_GAP_Y		=	28;
+static const float BUTTON_COLUMN_X[NUM_SHOWN_GAME_TO_DEVICE_SLOTS*MAX_GAME_CONTROLLERS] =
 {
 	50, 125, 200, 440, 515, 590 
 };
