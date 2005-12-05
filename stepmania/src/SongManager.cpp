@@ -876,6 +876,8 @@ void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot 
 
 Song *SongManager::GetSongFromSteps( Steps *pSteps )
 {
+	if( pSteps == NULL )
+		return NULL;
 	const vector<Song*> &vSongs = SONGMAN->GetAllSongs();
 	FOREACH_CONST( Song*, vSongs, song )
 	{
@@ -1433,6 +1435,15 @@ public:
 	static int GetNumSongGroups( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumSongGroups() ); return 1; }
 	static int GetNumCourses( T* p, lua_State *L )  { lua_pushnumber( L, p->GetNumCourses() ); return 1; }
 	static int GetNumCourseGroups( T* p, lua_State *L ) { lua_pushnumber( L, p->GetNumCourseGroups() ); return 1; }
+	static int GetSongFromSteps( T* p, lua_State *L )
+	{
+		Song *pSong = NULL;
+		if( lua_isnil(L,1) ) { pSong = p->GetSongFromSteps( NULL ); }
+		else { Steps *pSteps = Luna<Steps>::check(L,1); pSong = p->GetSongFromSteps( pSteps ); }
+		if(pSong) pSong->PushSelf(L);
+		else lua_pushnil(L);
+		return 1;
+	}
 
 	static void Register(lua_State *L)
 	{
@@ -1446,6 +1457,7 @@ public:
 		ADD_METHOD( GetNumSongGroups );
 		ADD_METHOD( GetNumCourses );
 		ADD_METHOD( GetNumCourseGroups );
+		ADD_METHOD( GetSongFromSteps );
 
 		Luna<T>::Register( L );
 
