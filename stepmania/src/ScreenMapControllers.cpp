@@ -44,13 +44,6 @@ void ScreenMapControllers::Init()
 {
 	ScreenWithMenuElements::Init();
 
-#ifdef _XBOX
-	CStringArray strArray;
-	CString text("Use joypad to navigate, START to assign, A, B, X or Y to clear, BACK when done.");
-	strArray.push_back(text);
-	m_textHelp->SetTips(strArray);
-#endif
-
 	for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
 	{
 		CString sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[b];
