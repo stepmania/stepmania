@@ -166,7 +166,7 @@ void EditMenu::Load( const CString &sType )
 	this->AddChild( &m_SongTextBanner );
 	
 	m_Meter.SetName( "Meter" );
-	m_Meter.Load( "EditDifficultyMeter" );
+	m_Meter.Load( "DifficultyMeterEdit" );
 	ActorUtil::SetXY( m_Meter, sType );
 	this->AddChild( &m_Meter );
 	
