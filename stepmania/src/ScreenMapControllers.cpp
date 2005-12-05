@@ -288,8 +288,6 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 				INPUTMAPPER->SaveMappingsToDisk();	// save changes
 
 				StartTransitioningScreen( SM_GoToNextScreen );		
-				for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
-					m_Line[b].RunCommands( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );
 			}
 			break;
 		case KEY_ENTER: /* Change the selection. */
@@ -305,6 +303,12 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 	LOG->Trace( "m_iCurSlot: %d m_iCurController: %d m_iCurButton: %d", m_iCurSlot, m_iCurController, m_iCurButton );
 
 	Refresh();
+}
+
+void ScreenMapControllers::TweenOffScreen()
+{
+	for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
+		m_Line[b].RunCommands( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );
 }
 
 void ScreenMapControllers::Refresh()

@@ -19,6 +19,8 @@ public:
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const InputEventPlus &input );
 
+	virtual void TweenOffScreen();
+
 private:
 	void KeyLeft();
 	void KeyRight();
