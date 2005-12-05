@@ -102,7 +102,7 @@ ScreenMapControllers::~ScreenMapControllers()
 
 void ScreenMapControllers::Update( float fDeltaTime )
 {
-	Screen::Update( fDeltaTime );
+	ScreenWithMenuElements::Update( fDeltaTime );
 
 	
 	if( m_iWaitingForPress  &&  m_DeviceIToMap.IsValid() )	// we're going to map an input
@@ -298,7 +298,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 		}
 	}
 
-//	Screen::Input( input );	// default handler
+//	ScreenWithMenuElements::Input( input );	// default handler
 
 	LOG->Trace( "m_iCurSlot: %d m_iCurController: %d m_iCurButton: %d", m_iCurSlot, m_iCurController, m_iCurButton );
 
