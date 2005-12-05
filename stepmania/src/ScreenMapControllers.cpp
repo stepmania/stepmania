@@ -64,11 +64,11 @@ void ScreenMapControllers::Init()
 		{			
 			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
-				m_textMappedTo[p][b][s].SetName( "MappedTo" );
-				m_textMappedTo[p][b][s].LoadFromFont( THEME->GetPathF("ScreenMapControllers","entry") );
-				m_textMappedTo[p][b][s].SetXY( BUTTON_COLUMN_X[p*NUM_SHOWN_GAME_TO_DEVICE_SLOTS+s], 0 );
-				ON_COMMAND( m_textMappedTo[p][b][s] );
-				m_Line[b].AddChild( &m_textMappedTo[p][b][s] );
+				m_textMappedTo[b][p][s].SetName( "MappedTo" );
+				m_textMappedTo[b][p][s].LoadFromFont( THEME->GetPathF("ScreenMapControllers","entry") );
+				m_textMappedTo[b][p][s].SetXY( BUTTON_COLUMN_X[p*NUM_SHOWN_GAME_TO_DEVICE_SLOTS+s], 0 );
+				ON_COMMAND( m_textMappedTo[b][p][s] );
+				m_Line[b].AddChild( &m_textMappedTo[b][p][s] );
 			}
 		}
 		m_Line[b].SetY( LINE_START_Y + b*LINE_GAP_Y );
@@ -303,7 +303,7 @@ void ScreenMapControllers::Refresh()
 			{
 				bool bSelected = p == m_iCurController  &&  b == m_iCurButton  &&  s == m_iCurSlot; 
 
-				BitmapText *pText = &m_textMappedTo[p][b][s];
+				BitmapText *pText = &m_textMappedTo[b][p][s];
 				GameInput cur_gi( (GameController)p, (GameButton)b );
 				DeviceInput di;
 				if( INPUTMAPPER->GameToDevice( cur_gi, s, di ) )
