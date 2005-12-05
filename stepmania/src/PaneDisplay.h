@@ -10,6 +10,7 @@
 #include "AutoActor.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeMetric.h"
+struct XNode;
 
 enum PaneTypes
 {
@@ -51,8 +52,10 @@ public:
 	PaneDisplay();
 	virtual Actor *Copy() const;
 
-	void Load( const CString &sClass, PlayerNumber pn );
+	void Load( const CString &sMetricsGroup, PlayerNumber pn );
 	void SetFromGameState( SortOrder so );
+
+	void LoadFromNode( const CString &sDir, const XNode *pNode );
 
 	// Lua
 	void PushSelf( lua_State *L );
