@@ -217,6 +217,7 @@ Actor* ActorUtil::LoadFromNode( const CString& sDir, const XNode* pNode )
 
 	// Element name is the type in XML.
 	// Type= is the name in INI.
+	// TODO: Remove the backward compat fallback
 	CString sClass = pNode->m_sName;
 	bool bHasClass = pNode->GetAttrValue( "Class", sClass );
 	if( !bHasClass )
@@ -236,7 +237,7 @@ Actor* ActorUtil::LoadFromNode( const CString& sDir, const XNode* pNode )
 	{
 		pReturn = ActorUtil::Create( sClass, sDir, pNode );
 	}
-	else // sClass is empty or garbage (e.g. "1" // 0==Sprite")
+	else // sClass is empty or garbage (e.g. "1" or "0 // 0==Sprite")
 	{
 		// automatically figure out the type
 		CString sFile;
