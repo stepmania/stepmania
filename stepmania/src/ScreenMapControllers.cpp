@@ -140,7 +140,7 @@ static bool IsAxis( const DeviceInput& DeviceI )
 
 void ScreenMapControllers::Input( const InputEventPlus &input )
 {
-	if( input.type != IET_FIRST_PRESS && input.type != IET_SLOW_REPEAT )
+	if( input.type != IET_FIRST_PRESS && input.type != IET_SLOW_REPEAT && input.type != IET_FAST_REPEAT )
 		return;	// ignore
 
 	LOG->Trace( "ScreenMapControllers::Input():  device: %d, button: %d", 
