@@ -22,15 +22,7 @@ public:
 	virtual void TweenOffScreen();
 
 private:
-	void KeyLeft();
-	void KeyRight();
-	void KeyUp();
-	void KeyDown();
-	void KeyBack();
-	void KeyStart();
-
 	void Refresh();
-
 	
 	int m_iCurController;
 	int m_iCurButton;
