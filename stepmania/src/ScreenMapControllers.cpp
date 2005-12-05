@@ -77,12 +77,6 @@ void ScreenMapControllers::Init()
 		m_Line[b].RunCommands( (b%2)? ODD_LINE_IN : EVEN_LINE_IN );
 	}	
 
-	m_textError.SetName( "Error" );
-	m_textError.LoadFromFont( THEME->GetPathF("Common","normal") );
-	SET_XY_AND_ON_COMMAND( m_textError );
-	this->AddChild( &m_textError );
-
-
 	m_iCurController = 0;
 	m_iCurButton = 0;
 	m_iCurSlot = 0;
@@ -197,13 +191,8 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 		/* Don't allow function keys to be mapped. */
 		if( input.DeviceI.device == DEVICE_KEYBOARD && (input.DeviceI.button >= KEY_F1 && input.DeviceI.button <= KEY_F12) )
 		{
-			m_textError.SetText( "That key can not be mapped." );
+			SCREENMAN->SystemMessage( "That key can not be mapped." );
 			SCREENMAN->PlayInvalidSound();
-			m_textError.StopTweening();
-			m_textError.SetDiffuse( RageColor(0,1,0,1) );
-			m_textError.BeginTweening( 3 );
-			m_textError.BeginTweening( 1 );
-			m_textError.SetDiffuse( RageColor(0,1,0,0) );
 		}
 		else
 		{
