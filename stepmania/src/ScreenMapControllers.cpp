@@ -87,13 +87,6 @@ void ScreenMapControllers::Init()
 }
 
 
-
-ScreenMapControllers::~ScreenMapControllers()
-{
-	LOG->Trace( "ScreenMapControllers::~ScreenMapControllers()" );
-}
-
-
 void ScreenMapControllers::Update( float fDeltaTime )
 {
 	ScreenWithMenuElements::Update( fDeltaTime );

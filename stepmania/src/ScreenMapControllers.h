@@ -14,7 +14,6 @@ class ScreenMapControllers : public ScreenWithMenuElements
 public:
 	ScreenMapControllers( CString sName );
 	virtual void Init();
-	virtual ~ScreenMapControllers();
 
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const InputEventPlus &input );
