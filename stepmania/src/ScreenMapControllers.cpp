@@ -11,9 +11,6 @@
 #include "ScreenDimensions.h"
 #include "Command.h"
 #include "InputEventPlus.h"
-#if defined(XBOX)
-#include "HelpDisplay.h" //We still need this for Xbox controller mapping.
-#endif
 
 static const ThemeMetric<apActorCommands> EVEN_LINE_IN	("ScreenMapControllers","EvenLineIn");
 static const ThemeMetric<apActorCommands> EVEN_LINE_OUT	("ScreenMapControllers","EvenLineOut");
@@ -80,11 +77,9 @@ void ScreenMapControllers::Init()
 		m_Line[b].RunCommands( (b%2)? ODD_LINE_IN : EVEN_LINE_IN );
 	}	
 
+	m_textError.SetName( "Error" );
 	m_textError.LoadFromFont( THEME->GetPathF("Common","normal") );
-	m_textError.SetText( "" );
-	m_textError.SetXY( SCREEN_CENTER_X, SCREEN_CENTER_Y );
-	m_textError.SetDiffuse( RageColor(0,1,0,0) );
-	m_textError.SetZoom( 0.8f );
+	SET_XY_AND_ON_COMMAND( m_textError );
 	this->AddChild( &m_textError );
 
 
