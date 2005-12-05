@@ -171,7 +171,7 @@ void EditMenu::Load( const CString &sType )
 	this->AddChild( &m_Meter );
 	
 	m_SourceMeter.SetName( "SourceMeter" );
-	m_SourceMeter.Load( "EditDifficultyMeter" );
+	m_SourceMeter.Load( "DifficultyMeterEdit" );
 	ActorUtil::SetXY( m_SourceMeter, sType );
 	this->AddChild( &m_SourceMeter );
 
