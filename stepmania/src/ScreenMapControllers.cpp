@@ -46,28 +46,28 @@ void ScreenMapControllers::Init()
 		CString sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[b];
 		CString sSecondary = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), b );
 
+		m_textName[b].SetName( "Title" );
 		m_textName[b].LoadFromFont( THEME->GetPathF("Common","title") );
 		m_textName[b].SetXY( SCREEN_CENTER_X, -6 );
 		m_textName[b].SetText( sName );
-		m_textName[b].SetZoom( 0.7f );
-		m_textName[b].SetShadowLength( 2 );
+		ON_COMMAND( m_textName[b] );
 		m_Line[b].AddChild( &m_textName[b] );
 
+		m_textName2[b].SetName( "Secondary" );
 		m_textName2[b].LoadFromFont( THEME->GetPathF("Common","title") );
 		m_textName2[b].SetXY( SCREEN_CENTER_X, +6 );
 		m_textName2[b].SetText( sSecondary );
-		m_textName2[b].SetZoom( 0.5f );
-		m_textName2[b].SetShadowLength( 2 );
+		ON_COMMAND( m_textName2[b] );
 		m_Line[b].AddChild( &m_textName2[b] );
 
 		for( int p=0; p<MAX_GAME_CONTROLLERS; p++ ) 
 		{			
 			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
+				m_textMappedTo[p][b][s].SetName( "MappedTo" );
 				m_textMappedTo[p][b][s].LoadFromFont( THEME->GetPathF("ScreenMapControllers","entry") );
 				m_textMappedTo[p][b][s].SetXY( BUTTON_COLUMN_X[p*NUM_SHOWN_GAME_TO_DEVICE_SLOTS+s], 0 );
-				m_textMappedTo[p][b][s].SetZoom( 0.5f );
-				m_textMappedTo[p][b][s].SetShadowLength( 0 );
+				ON_COMMAND( m_textMappedTo[p][b][s] );
 				m_Line[b].AddChild( &m_textMappedTo[p][b][s] );
 			}
 		}
@@ -318,32 +318,15 @@ void ScreenMapControllers::Refresh()
 				else
 					pText->SetText( "-----------" );
 				
-				// highlight the currently selected pad button
-				RageColor color;
-				bool bPulse;
 				if( bSelected ) 
 				{
 					if( m_iWaitingForPress )
-					{
-						color = RageColor(1,0.5,0.5,1);	// red
-						bPulse = true;
-					}
+						pText->PlayCommand( "Waiting" );
 					else
-					{
-						color = RageColor(1,1,1,1);		// white
-						bPulse = false;
-					}
+						pText->PlayCommand( "Selected" );
 				} 
 				else 
-				{
-					color = RageColor(0.5,0.5,0.5,1);	// gray
-					bPulse = false;
-				}
-				pText->SetDiffuse( color );
-				if( bPulse )
-					pText->SetEffectPulse( .5f, .5f, .6f );
-				else
-					pText->StopEffect();
+					pText->PlayCommand( "Unselected" );
 			}
 		}
 	}
