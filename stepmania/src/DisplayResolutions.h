@@ -11,7 +11,7 @@ public:
 
 	bool operator<( const DisplayResolution &other ) const
 	{
-#define COMPARE(x) if( x < other.x ) return true; else if( x > other.x ) return false;
+#define COMPARE(x) if( x != other.x ) return x < other.x;
 		COMPARE( iWidth );
 		COMPARE( iHeight );
 #undef COMPARE

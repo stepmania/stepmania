@@ -55,7 +55,7 @@ void ActorScroller::Load2(
 	m_fNumItemsToDraw = fNumItemsToDraw;
 
 	m_exprTransformFunction.SetFromExpression( 
-		ssprintf("function(self,offset,itemIndex,numItems) return self:y(%f*offset) end",fItemHeight),
+		ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight),
 		1
 		);
 
