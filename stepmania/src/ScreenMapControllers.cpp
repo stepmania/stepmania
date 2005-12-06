@@ -19,7 +19,7 @@ static const ThemeMetric<apActorCommands> EVEN_LINE_OUT	("ScreenMapControllers",
 static const ThemeMetric<apActorCommands> ODD_LINE_IN		("ScreenMapControllers","OddLineIn");
 static const ThemeMetric<apActorCommands> ODD_LINE_OUT	("ScreenMapControllers","OddLineOut");
 
-static const int FramesToWaitForInput = 2;
+static const float g_fSecondsToWaitForInput = 0.05f;
 
 // reserve the 3rd slot for hard-coded keys
 static const int NUM_CHANGABLE_SLOTS = NUM_SHOWN_GAME_TO_DEVICE_SLOTS-1;
@@ -110,7 +110,7 @@ void ScreenMapControllers::Init()
 	m_iCurButton = 0;
 	m_iCurSlot = 0;
 
-	m_iWaitingForPress = 0;
+	m_WaitingForPress.SetZero();
 
 	Refresh();
 }
@@ -121,11 +121,11 @@ void ScreenMapControllers::Update( float fDeltaTime )
 	ScreenWithMenuElements::Update( fDeltaTime );
 
 	
-	if( m_iWaitingForPress  &&  m_DeviceIToMap.IsValid() )	// we're going to map an input
+	if( !m_WaitingForPress.IsZero() && m_DeviceIToMap.IsValid() ) // we're going to map an input
 	{	
-		--m_iWaitingForPress;
-		if( m_iWaitingForPress )
+		if( m_WaitingForPress.PeekDeltaTime() < g_fSecondsToWaitForInput )
 			return; /* keep waiting */
+		m_WaitingForPress.SetZero();
 
 		const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
 		
@@ -179,7 +179,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 	int button = input.DeviceI.button;
 
 #ifdef _XBOX
-	if( !m_iWaitingForPress && input.DeviceI.device == DEVICE_JOY1 )
+	if( m_WaitingForPress.IsZero() && input.DeviceI.device == DEVICE_JOY1 )
 	{
 		// map the xbox controller buttons to the keyboard equivalents
 		if( input.DeviceI.button == JOY_HAT_LEFT )
@@ -209,7 +209,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 	// that we get a chance to see all input events the user's press of a panel.
 	// Prefer non-axis events over axis events. 
 	//
-	if( m_iWaitingForPress )
+	if( !m_WaitingForPress.IsZero() )
 	{
 		/* Don't allow function keys to be mapped. */
 		if( input.DeviceI.device == DEVICE_KEYBOARD && (input.DeviceI.button >= KEY_F1 && input.DeviceI.button <= KEY_F12) )
@@ -305,7 +305,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			break;
 		case KEY_ENTER: /* Change the selection. */
 		case KEY_KP_ENTER:
-			m_iWaitingForPress = FramesToWaitForInput;
+			m_WaitingForPress.Touch();
 			m_DeviceIToMap.MakeInvalid();
 			break;
 		}
@@ -345,7 +345,7 @@ void ScreenMapControllers::Refresh()
 				
 				if( bSelected ) 
 				{
-					if( m_iWaitingForPress )
+					if( !m_WaitingForPress.IsZero() )
 						pText->PlayCommand( "Waiting" );
 					else
 						pText->PlayCommand( "Selected" );

@@ -27,7 +27,7 @@ private:
 	int m_iCurButton;
 	int m_iCurSlot;
 
-	int m_iWaitingForPress;
+	RageTimer m_WaitingForPress;
 	DeviceInput m_DeviceIToMap;
 
 	struct KeyToMap
