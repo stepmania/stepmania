@@ -244,7 +244,7 @@ void ScreenSelectMaster::BeginScreen()
 	if( SHOW_SCROLLER )
 	{
 		FOREACH( PlayerNumber, vpns, p )
-		m_Scroller[*p].PositionItems();
+			m_Scroller[*p].PositionItems();
 	}
 
 
