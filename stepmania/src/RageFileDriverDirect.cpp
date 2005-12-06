@@ -273,10 +273,11 @@ RageFileObjDirect::~RageFileObjDirect()
 		}
 	}
 
+	if( !(m_iMode & RageFile::WRITE) || (m_iMode & RageFile::STREAMED) )
+		return;
+
 	/* If we failed to flush the file properly, something's amiss--don't touch the original file! */
-	if( !failed &&
-		 (m_iMode & RageFile::WRITE) &&
-		!(m_iMode & RageFile::STREAMED) )
+	if( !failed )
 	{
 		/*
 		 * We now have path written to MakeTempFilename(m_sPath).  Rename the temporary
