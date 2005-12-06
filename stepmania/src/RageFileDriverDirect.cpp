@@ -49,6 +49,14 @@ private:
 	int m_iMode;
 	CString m_sPath; /* for Copy */
 	CString m_sWriteBuf;
+	
+	/*
+	 * When not streaming to disk, we write to a temporary file, and rename to the
+	 * real file on completion.  If any write, this is aborted.  When streaming to
+	 * disk, allow recovering from errors.
+	 */
+	bool m_bWriteFailed;
+	bool WriteFailed() const { return !(m_iMode & RageFile::STREAMED) && m_bWriteFailed; }
 };
 
 
@@ -205,6 +213,7 @@ RageFileObjDirect::RageFileObjDirect( const CString &sPath, int iFD, int iMode )
 {
 	m_sPath = sPath;
 	m_iFD = iFD;
+	m_bWriteFailed = false;
 	m_iMode = iMode;
 	ASSERT( m_iFD != -1 );
 
@@ -279,7 +288,7 @@ RageFileObjDirect::~RageFileObjDirect()
 
 	do
 	{
-		if( failed )
+		if( failed || WriteFailed() )
 			break;
 
 		/*
@@ -349,6 +358,12 @@ static int retried_write( int iFD, const void *pBuf, size_t iCount )
 
 int RageFileObjDirect::FlushInternal()
 {
+	if( WriteFailed() )
+	{
+		SetError( "previous write failed" );
+		return -1;
+	}
+
 	if( !m_sWriteBuf.size() )
 		return 0;
 
@@ -357,6 +372,7 @@ int RageFileObjDirect::FlushInternal()
 	{
 		LOG->Warn("Error writing %s: %s", this->m_sPath.c_str(), strerror(errno) );
 		SetError( strerror(errno) );
+		m_bWriteFailed = true;
 		return -1;
 	}
 
@@ -367,6 +383,12 @@ int RageFileObjDirect::FlushInternal()
 
 int RageFileObjDirect::WriteInternal( const void *pBuf, size_t iBytes )
 {
+	if( WriteFailed() )
+	{
+		SetError( "previous write failed" );
+		return -1;
+	}
+
 	if( m_sWriteBuf.size()+iBytes > BUFSIZE )
 	{
 		if( Flush() == -1 )
@@ -382,6 +404,7 @@ int RageFileObjDirect::WriteInternal( const void *pBuf, size_t iBytes )
 			{
 				LOG->Warn("Error writing %s: %s", this->m_sPath.c_str(), strerror(errno) );
 				SetError( strerror(errno) );
+				m_bWriteFailed = true;
 				return -1;
 			}
 			return iBytes;
