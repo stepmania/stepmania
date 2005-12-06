@@ -288,13 +288,6 @@ RageFileObjDirect::~RageFileObjDirect()
 		 * filesystem.  That is, there should be no intermediate state a JFS might restore
 		 * the file we're writing (in the case of a crash/powerdown) to an empty or partial
 		 * file.
-		 *
-		 * If we want to keep a backup, we can move the old file to "path.old" and then
-		 * the new file to "path".  However, this leaves an intermediate state between
-		 * the renames where no "path" exists, so if we're restored to that, then we
-		 * won't be able to find the file.  The data is still there--as path.old, provided
-		 * it's not overwritten again--but the user will have to recover it on his own.
-		 * A safer (but much slower) way to do this is to simply CopyFile a backup first.
 		 */
 
 		CString sOldPath = MakeTempFilename(m_sPath);
