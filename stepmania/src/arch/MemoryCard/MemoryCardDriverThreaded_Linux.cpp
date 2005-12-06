@@ -30,10 +30,10 @@ bool VectorsAreEqual( const T &a, const T &b )
 		return false;
 	
 	for( unsigned i=0; i<a.size(); i++ )
-    {
+	{
 		if( a[i] != b[i] )
 			return false;
-    }
+	}
 	
 	return true;
 }
