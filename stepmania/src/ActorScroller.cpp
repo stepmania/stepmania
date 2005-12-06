@@ -52,18 +52,15 @@ void ActorScroller::Load2(
 	CLAMP( fSecondsPerItem, 0.01f, 10000 );
 	CLAMP( fSecondsPauseBetweenItems, 0, 10000 );
 
-	m_fNumItemsToDraw = fNumItemsToDraw;
-
 	m_exprTransformFunction.SetFromExpression( 
 		ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight),
 		1
 		);
 
-	m_bLoop = bLoop; 
 	m_fSecondsPerItem = fSecondsPerItem; 
+	m_fNumItemsToDraw = fNumItemsToDraw;
 	m_fSecondsPauseBetweenItems = fSecondsPauseBetweenItems;
-	m_fPauseCountdownSeconds = 0;
-	m_fQuantizePixels = 0;
+	m_bLoop = bLoop; 
 	m_iNumItems = m_SubActors.size();
 
 	ScrollThroughAllItems();
@@ -84,7 +81,6 @@ void ActorScroller::Load3(
 	m_fNumItemsToDraw = fNumItemsToDraw;
 	m_bFastCatchup = bFastCatchup;
 	m_exprTransformFunction.SetFromExpression( sTransformFunction, iSubdivisions );
-	m_fQuantizePixels = 0;
 	m_bLoop = bLoop;
 	m_iNumItems = m_SubActors.size();
 }
