@@ -263,8 +263,6 @@ CString NotesWriterSM::GetEditFileName( const Song *pSong, const Steps *pSteps )
 
 bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
 {
-	ASSERT( pSteps->WasLoadedFromProfile() );
-
 	CString sDir = PROFILEMAN->GetProfileDir( ProfileSlot_Machine ) + EDIT_STEPS_SUBDIR;
 
 	/* If the file name of the edit has changed since the last save, then delete the old
