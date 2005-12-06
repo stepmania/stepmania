@@ -13,6 +13,7 @@
 #include "InputEventPlus.h"
 
 #define BUTTONS_TO_MAP THEME->GetMetric( m_sName, "ButtonsToMap" )
+#define INVALID_BUTTON THEME->GetMetric( m_sName, "InvalidButton" )
 
 static const ThemeMetric<apActorCommands> EVEN_LINE_IN	("ScreenMapControllers","EvenLineIn");
 static const ThemeMetric<apActorCommands> EVEN_LINE_OUT	("ScreenMapControllers","EvenLineOut");
@@ -214,7 +215,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 		/* Don't allow function keys to be mapped. */
 		if( input.DeviceI.device == DEVICE_KEYBOARD && (input.DeviceI.button >= KEY_F1 && input.DeviceI.button <= KEY_F12) )
 		{
-			SCREENMAN->SystemMessage( "That key can not be mapped." );
+			SCREENMAN->SystemMessage( INVALID_BUTTON );
 			SCREENMAN->PlayInvalidSound();
 		}
 		else
