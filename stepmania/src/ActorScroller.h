@@ -45,6 +45,7 @@ public:
 	void ScrollThroughAllItems();
 	void ScrollWithPadding( float fItemPaddingStart, float fItemPaddingEnd );
 	void SetPauseCountdownSeconds( float fSecs )			{ m_fPauseCountdownSeconds = fSecs; }
+	void SetFastCatchup( bool bOn ) { m_bFastCatchup = bOn; }
 	void SetSecondsPauseBetweenItems( float fSeconds ) { m_fSecondsPauseBetweenItems = fSeconds; }
 	float	GetSecondsForCompleteScrollThrough() const;
 

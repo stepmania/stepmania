@@ -291,12 +291,14 @@ public:
 	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
 	static int scrollthroughallitems( T* p, lua_State *L )	{ p->ScrollThroughAllItems(); return 0; }
 	static int scrollwithpadding( T* p, lua_State *L )	{ p->ScrollWithPadding(FArg(1),FArg(2)); return 0; }
+	static int setfastcatchup( T* p, lua_State *L )	{ p->SetFastCatchup(BArg(1)); return 0; }
 
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( SetCurrentAndDestinationItem );
 		ADD_METHOD( scrollthroughallitems );
 		ADD_METHOD( scrollwithpadding );
+		ADD_METHOD( setfastcatchup );
 		Luna<T>::Register( L );
 	}
 };
