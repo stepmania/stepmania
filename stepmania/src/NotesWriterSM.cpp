@@ -295,7 +295,11 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
 
 	CString sTag;
 	GetEditFileContents( pSong, pSteps, sTag );
-	f.PutLine( sTag );
+	if( f.PutLine(sTag) == -1 || f.Flush() == -1 )
+	{
+		LOG->Warn( "Error writing song file '%s': %s", sPath.c_str(), f.GetError().c_str() );
+		return false;
+	}
 
 	return true;
 }
