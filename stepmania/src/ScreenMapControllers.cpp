@@ -14,6 +14,7 @@
 
 #define BUTTONS_TO_MAP THEME->GetMetric( m_sName, "ButtonsToMap" )
 #define INVALID_BUTTON THEME->GetMetric( m_sName, "InvalidButton" )
+#define MAPPED_TO_X(gc,slot) THEME->GetMetricF( m_sName, ssprintf("MappedToP%iS%iX", gc+1, slot+1) )
 
 static const ThemeMetric<apActorCommands> EVEN_LINE_IN	("ScreenMapControllers","EvenLineIn");
 static const ThemeMetric<apActorCommands> EVEN_LINE_OUT	("ScreenMapControllers","EvenLineOut");
@@ -28,10 +29,6 @@ static const int NUM_CHANGABLE_SLOTS = NUM_SHOWN_GAME_TO_DEVICE_SLOTS-1;
 
 static const float LINE_START_Y	=	64;
 static const float LINE_GAP_Y		=	28;
-static const float BUTTON_COLUMN_X[NUM_SHOWN_GAME_TO_DEVICE_SLOTS*MAX_GAME_CONTROLLERS] =
-{
-	50, 125, 200, 440, 515, 590 
-};
 
 REGISTER_SCREEN_CLASS( ScreenMapControllers );
 ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMenuElements( sClassName )
@@ -75,15 +72,15 @@ void ScreenMapControllers::Init()
 		pName->SetName( "Title" );
 		pName->LoadFromFont( THEME->GetPathF("Common","title") );
 		pName->SetText( GAMESTATE->GetCurrentGame()->m_szButtonNames[pKey->m_GameButton] );
-		ON_COMMAND( pName );
+		ActorUtil::LoadAllCommands( *pName, m_sName );
 		m_Line[b].AddChild( pName );
 
 		BitmapText *pSecondary = new BitmapText;
 		pSecondary->SetName( "Secondary" );
 		pSecondary->LoadFromFont( THEME->GetPathF("Common","title") );
 		CString sText = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
+		ActorUtil::LoadAllCommands( *pSecondary, m_sName );
 		pSecondary->SetText( sText );
-		ON_COMMAND( pSecondary );
 		m_Line[b].AddChild( pSecondary );
 
 		for( int p=0; p<MAX_GAME_CONTROLLERS; p++ ) 
@@ -93,22 +90,30 @@ void ScreenMapControllers::Init()
 				pKey->m_textMappedTo[p][s] = new BitmapText;
 				pKey->m_textMappedTo[p][s]->SetName( "MappedTo" );
 				pKey->m_textMappedTo[p][s]->LoadFromFont( THEME->GetPathF("ScreenMapControllers","entry") );
-				pKey->m_textMappedTo[p][s]->SetXY( BUTTON_COLUMN_X[p*NUM_SHOWN_GAME_TO_DEVICE_SLOTS+s], 0 );
-				ON_COMMAND( pKey->m_textMappedTo[p][s] );
+				pKey->m_textMappedTo[p][s]->SetX( MAPPED_TO_X(p,s) );
+				ActorUtil::LoadAllCommands( *pKey->m_textMappedTo[p][s], m_sName );
 				m_Line[b].AddChild( pKey->m_textMappedTo[p][s] );
 			}
 		}
 		m_Line[b].DeleteChildrenWhenDone();
 		m_Line[b].SetY( LINE_START_Y + b*LINE_GAP_Y );
 		this->AddChild( &m_Line[b] );
-
-		m_Line[b].RunCommands( (b%2)? ODD_LINE_IN : EVEN_LINE_IN );
 	}	
+}
 
+void ScreenMapControllers::BeginScreen()
+{
 	m_iCurController = 0;
 	m_iCurButton = 0;
 	m_iCurSlot = 0;
 
+	ScreenWithMenuElements::BeginScreen();
+
+	for( unsigned b=0; b<m_KeysToMap.size(); b++ )
+	{
+		m_Line[b].PlayCommand( "On" );
+		m_Line[b].RunCommands( (b%2)? ODD_LINE_IN : EVEN_LINE_IN );
+	}
 	m_WaitingForPress.SetZero();
 
 	Refresh();
