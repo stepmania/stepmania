@@ -141,9 +141,6 @@ protected:
 	ThemeMetric<apActorCommands>	ROW_ON_COMMAND;
 	ThemeMetric<apActorCommands>	ROW_OFF_COMMAND;
 	LuaExpressionTransform m_exprRowPositionTransformFunction;		// params: self,positionIndex,itemIndex,numItems
-	LuaExpressionTransform m_exprRowOffScreenTopTransformFunction;	// params: self,positionIndex,itemIndex,numItems
-	LuaExpressionTransform m_exprRowOffScreenCenterTransformFunction;	// params: self,positionIndex,itemIndex,numItems
-	LuaExpressionTransform m_exprRowOffScreenBottomTransformFunction;	// params: self,positionIndex,itemIndex,numItems
 	ThemeMetric1D<float>			EXPLANATION_X;
 	ThemeMetric1D<float>			EXPLANATION_Y;
 	ThemeMetric1D<apActorCommands>	EXPLANATION_ON_COMMAND;

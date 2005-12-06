@@ -105,9 +105,6 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	m_InputMode = INPUTMODE_SHARE_CURSOR;
 
 	m_exprRowPositionTransformFunction			.SetFromExpression( THEME->GetMetric(m_sName,"RowPositionTransformFunction"), 1 );
-	m_exprRowOffScreenTopTransformFunction		.SetFromExpression( THEME->GetMetric(m_sName,"RowOffScreenTopTransformFunction"), 1 );
-	m_exprRowOffScreenCenterTransformFunction	.SetFromExpression( THEME->GetMetric(m_sName,"RowOffScreenCenterTransformFunction"), 1 );
-	m_exprRowOffScreenBottomTransformFunction	.SetFromExpression( THEME->GetMetric(m_sName,"RowOffScreenBottomTransformFunction"), 1 );
 }
 
 
@@ -729,15 +726,18 @@ void ScreenOptions::PositionRows()
 	{
 		OptionRow &row = *Rows[i];
 
+		float fPos = pos;
 
 		LuaExpressionTransform *pExpr = NULL;
-		if( i < first_start )		pExpr = &m_exprRowOffScreenTopTransformFunction;
-		else if( i < first_end )	pExpr = &m_exprRowPositionTransformFunction; 
-		else if( i < second_start )	pExpr = &m_exprRowOffScreenCenterTransformFunction;
-		else if( i < second_end )	pExpr = &m_exprRowPositionTransformFunction; 
-		else						pExpr = &m_exprRowOffScreenBottomTransformFunction;
+		pExpr = &m_exprRowPositionTransformFunction;
 
-		row.m_tsDestination = pExpr->GetPosition( (float) pos, i, min( (int)Rows.size(), (int)NUM_ROWS_SHOWN ) );
+		if( i < first_start )		fPos = -0.5f;
+		else if( i < first_end )	; 
+		else if( i < second_start )	fPos = ((int)NUM_ROWS_SHOWN)/2-0.5f;
+		else if( i < second_end )	; 
+		else						fPos = ((int)NUM_ROWS_SHOWN)-0.5f;
+
+		row.m_tsDestination = m_exprRowPositionTransformFunction.GetPosition( (float) fPos, i, min( (int)Rows.size(), (int)NUM_ROWS_SHOWN ) );
 
 		bool bHidden = 
 			i < first_start ||
