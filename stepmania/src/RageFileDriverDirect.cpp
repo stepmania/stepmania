@@ -352,6 +352,7 @@ int RageFileObjDirect::FlushInternal()
 	{
 		LOG->Warn("Error writing %s: %s", this->m_sPath.c_str(), strerror(errno) );
 		SetError( strerror(errno) );
+		return -1;
 	}
 
 	m_sWriteBuf.erase();
