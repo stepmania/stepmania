@@ -2551,13 +2551,16 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 					{
 						ASSERT( pSteps->IsAnEdit() );
 
-						pSteps->SetSavedToDisk( true );
 						pSteps->SetLoadedFromProfile( ProfileSlot_Machine );
+
+						// XXX show error
+						NotesWriterSM w;
+						if( !w.WriteEditFileToMachine(pSong, pSteps) )
+							break;
+
+						pSteps->SetSavedToDisk( true );
 						CopyToLastSave();
 						ClearUndo();
-
-						NotesWriterSM w;
-						w.WriteEditFileToMachine( pSong, pSteps );
 
 						SCREENMAN->ZeroNextUpdate();
 
