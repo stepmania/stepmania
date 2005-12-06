@@ -876,8 +876,7 @@ void SongManager::GetStepsLoadedFromProfile( vector<Steps*> &AddTo, ProfileSlot 
 
 Song *SongManager::GetSongFromSteps( Steps *pSteps )
 {
-	if( pSteps == NULL )
-		return NULL;
+	ASSERT( pSteps );
 	const vector<Song*> &vSongs = SONGMAN->GetAllSongs();
 	FOREACH_CONST( Song*, vSongs, song )
 	{
