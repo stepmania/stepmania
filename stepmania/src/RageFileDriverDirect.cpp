@@ -331,14 +331,14 @@ int RageFileObjDirect::ReadInternal( void *pBuf, size_t iBytes )
 /* write(), but retry a couple times on EINTR. */
 static int retried_write( int iFD, const void *pBuf, size_t iCount )
 {
-        int tries = 3, ret;
-        do
-        {
-                ret = write( iFD, pBuf, iCount );
-        }
-        while( ret == -1 && errno == EINTR && tries-- );
+	int tries = 3, ret;
+	do
+	{
+		ret = write( iFD, pBuf, iCount );
+	}
+	while( ret == -1 && errno == EINTR && tries-- );
 
-        return ret;
+	return ret;
 }
 
 
