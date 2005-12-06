@@ -276,9 +276,14 @@ RageFileObjDirect::~RageFileObjDirect()
 	if( !(m_iMode & RageFile::WRITE) || (m_iMode & RageFile::STREAMED) )
 		return;
 
-	/* If we failed to flush the file properly, something's amiss--don't touch the original file! */
-	if( !failed )
+	/* We now have path written to MakeTempFilename(m_sPath).  Rename the temporary
+	 * file over the real path. */
+
+	do
 	{
+		if( failed )
+			break;
+
 		/*
 		 * We now have path written to MakeTempFilename(m_sPath).  Rename the temporary
 		 * file over the real path.  This should be an atomic operation with a journalling
@@ -306,15 +311,23 @@ RageFileObjDirect::~RageFileObjDirect()
 		const CString error = werr_ssprintf( err, "Error renaming \"%s\" to \"%s\"", sOldPath.c_str(), sNewPath.c_str() );
 		LOG->Warn( "%s", error.c_str() );
 		SetError( error );
+		break;
 #else
 		if( rename( sOldPath, sNewPath ) == -1 )
 		{
 			LOG->Warn( "Error renaming \"%s\" to \"%s\": %s", 
 				sOldPath.c_str(), sNewPath.c_str(), strerror(errno) );
 			SetError( strerror(errno) );
+			break;
 		}
 #endif
-	}
+
+		/* Success. */
+		return;
+	} while(0);
+
+	/* The write or the rename failed.  Delete the incomplete temporary file. */
+	DoRemove( MakeTempFilename(m_sPath) );
 }
 
 int RageFileObjDirect::ReadInternal( void *pBuf, size_t iBytes )
