@@ -39,21 +39,13 @@ ActorScroller::ActorScroller()
 }
 
 void ActorScroller::Load2(
+	float fSecondsPerItem,
 	float fNumItemsToDraw, 
-	float fItemWidth, 
 	float fItemHeight, 
-	bool bLoop, 
-	float fSecondsPerItem, 
-	float fSecondsPauseBetweenItems )
+	bool bLoop )
 {
 	Load3( fSecondsPerItem, fNumItemsToDraw, false, 
 		ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight), 1, bLoop );
-
-	m_fSecondsPauseBetweenItems = fSecondsPauseBetweenItems;
-
-	ScrollThroughAllItems();
-
-	EnableMask( fItemWidth, fItemHeight );
 }
 
 void ActorScroller::Load3(

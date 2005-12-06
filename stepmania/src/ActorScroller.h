@@ -14,12 +14,10 @@ public:
 	ActorScroller();
 
 	void Load2(
+		float fSecondsPerItem,
 		float fNumItemsToDraw, 
-		float fItemWidth, 
 		float fItemHeight, 
-		bool bLoop, 
-		float fSecondsPerItem, 
-		float fSecondsPauseBetweenItems );
+		bool bLoop );
 
 	void Load3(
 		float fSecondsPerItem, 
@@ -47,6 +45,7 @@ public:
 	void ScrollThroughAllItems();
 	void ScrollWithPadding( float fItemPaddingStart, float fItemPaddingEnd );
 	void SetPauseCountdownSeconds( float fSecs )			{ m_fPauseCountdownSeconds = fSecs; }
+	void SetSecondsPauseBetweenItems( float fSeconds ) { m_fSecondsPauseBetweenItems = fSeconds; }
 	float	GetSecondsForCompleteScrollThrough() const;
 
 	//
