@@ -46,22 +46,10 @@ void ActorScroller::Load2(
 	float fSecondsPerItem, 
 	float fSecondsPauseBetweenItems )
 {
-	CLAMP( fNumItemsToDraw, 1, 10000 );
-	CLAMP( fItemWidth, 1, 10000 );
-	CLAMP( fItemHeight, 1, 10000 );
-	CLAMP( fSecondsPerItem, 0.01f, 10000 );
-	CLAMP( fSecondsPauseBetweenItems, 0, 10000 );
+	Load3( fSecondsPerItem, fNumItemsToDraw, false, 
+		ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight), 1, bLoop );
 
-	m_exprTransformFunction.SetFromExpression( 
-		ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight),
-		1
-		);
-
-	m_fSecondsPerItem = fSecondsPerItem; 
-	m_fNumItemsToDraw = fNumItemsToDraw;
 	m_fSecondsPauseBetweenItems = fSecondsPauseBetweenItems;
-	m_bLoop = bLoop; 
-	m_iNumItems = m_SubActors.size();
 
 	ScrollThroughAllItems();
 
