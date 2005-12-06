@@ -74,7 +74,6 @@ void ScreenMapControllers::Init()
 		BitmapText *pName = new BitmapText;
 		pName->SetName( "Title" );
 		pName->LoadFromFont( THEME->GetPathF("Common","title") );
-		pName->SetXY( SCREEN_CENTER_X, -6 );
 		pName->SetText( GAMESTATE->GetCurrentGame()->m_szButtonNames[pKey->m_GameButton] );
 		ON_COMMAND( pName );
 		m_Line[b].AddChild( pName );
@@ -82,7 +81,6 @@ void ScreenMapControllers::Init()
 		BitmapText *pSecondary = new BitmapText;
 		pSecondary->SetName( "Secondary" );
 		pSecondary->LoadFromFont( THEME->GetPathF("Common","title") );
-		pSecondary->SetXY( SCREEN_CENTER_X, +6 );
 		CString sText = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
 		pSecondary->SetText( sText );
 		ON_COMMAND( pSecondary );
