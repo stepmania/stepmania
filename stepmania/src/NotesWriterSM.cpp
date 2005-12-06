@@ -258,7 +258,7 @@ void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps,
 CString NotesWriterSM::GetEditFileName( const Song *pSong, const Steps *pSteps )
 {
 	// guaranteed to be a unique name
-	return pSong->GetTranslitFullTitle() + " - " + pSteps->GetDescription();
+	return pSong->GetTranslitFullTitle() + " - " + pSteps->GetDescription() + ".edit";
 }
 
 bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
@@ -283,6 +283,8 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
 	FILEMAN->FlushDirCache( Dirname(sPath) );
 
 	int flags = RageFile::WRITE | RageFile::SLOW_FLUSH;
+
+	// TODO: Check to make sure that we're not clobering an existing file before opening.
 
 	RageFile f;
 	if( !f.Open( sPath, flags ) )

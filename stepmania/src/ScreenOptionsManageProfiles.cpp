@@ -172,7 +172,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 	{
 		int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 		OptionRow &row = *m_pRows[iCurRow];
-		if( row.GetRowType() == OptionRow::ROW_EXIT )
+		if( row.GetRowType() == OptionRow::RowType_Exit )
 		{
 			this->HandleScreenMessage( SM_GoToPrevScreen );
 			return;	// don't call base
@@ -330,7 +330,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus &input 
 			PROFILE_MAX_DISPLAY_NAME_LENGTH, 
 			ValidateLocalProfileName );
 	}
-	else if( row.GetRowType() == OptionRow::ROW_EXIT )
+	else if( row.GetRowType() == OptionRow::RowType_Exit )
 	{
 		this->BeginFadingOut();
 	}
@@ -383,7 +383,7 @@ int ScreenOptionsManageProfiles::GetLocalProfileIndexWithFocus() const
 
 	if( SHOW_CREATE_NEW && iCurRow == 0 )	// "create new"
 		return -1;
-	else if( row.GetRowType() == OptionRow::ROW_EXIT )
+	else if( row.GetRowType() == OptionRow::RowType_Exit )
 		return -1;
 	
 	// a profile

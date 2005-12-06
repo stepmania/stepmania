@@ -433,7 +433,7 @@ void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 {
 	OptionRow &row = *m_pRows[iRow];
 	
-	if( row.GetRowType() == OptionRow::ROW_EXIT )
+	if( row.GetRowType() == OptionRow::RowType_Exit )
 		return;	// skip
 
 	const OptionRowDefinition &def = row.GetRowDef();
@@ -533,7 +533,7 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	if( GAMESTATE->IsHumanPlayer(pn) )  
 	{
 		COMMAND( m_sprLineHighlight[pn], "Change" );
-		if( row.GetRowType() == OptionRow::ROW_EXIT )
+		if( row.GetRowType() == OptionRow::RowType_Exit )
 			COMMAND( m_sprLineHighlight[pn], "ChangeToExit" );
 		m_sprLineHighlight[pn]->SetY( (float)iY );
 	}
@@ -658,7 +658,7 @@ void ScreenOptions::PositionRows()
 	vector<OptionRow*> Rows( m_pRows );
 	OptionRow *ExitRow = NULL;
 
-	if( (bool)SEPARATE_EXIT_ROW && !Rows.empty() && Rows.back()->GetRowType() == OptionRow::ROW_EXIT )
+	if( (bool)SEPARATE_EXIT_ROW && !Rows.empty() && Rows.back()->GetRowType() == OptionRow::RowType_Exit )
 	{
 		ExitRow = &*Rows.back();
 
@@ -785,7 +785,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 
 
 	/* If the last row is EXIT, and is hidden, then show MORE. */
-	const bool ShowMore = m_pRows.back()->GetRowType() == OptionRow::ROW_EXIT && m_pRows.back()->GetRowHidden();
+	const bool ShowMore = m_pRows.back()->GetRowType() == OptionRow::RowType_Exit && m_pRows.back()->GetRowHidden();
 	if( m_bMoreShown != ShowMore )
 	{
 		m_bMoreShown = ShowMore;
@@ -800,7 +800,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 
 		int iCurrentRow = m_iCurrentRow[pn];
 		OptionRow &row = *m_pRows[iCurrentRow];
-		const bool ExitSelected = row.GetRowType() == OptionRow::ROW_EXIT;
+		const bool ExitSelected = row.GetRowType() == OptionRow::RowType_Exit;
 		if( p == pn || GAMESTATE->GetNumHumanPlayers() == 1 )
 		{
 			if( m_bWasOnExit[p] != ExitSelected )

@@ -136,7 +136,7 @@ void ScreenOptionsMaster::BeginFadingOut()
 	ASSERT( iCurRow >= 0 && iCurRow < (int)m_pRows.size() );
 	OptionRow &row = *m_pRows[iCurRow];
 
-	if( row.GetRowType() != OptionRow::ROW_EXIT )
+	if( row.GetRowType() != OptionRow::RowType_Exit )
 	{
 		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
 		if( row.GetFirstItemGoesDown() )

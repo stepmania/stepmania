@@ -4,16 +4,16 @@
 #include "RageLog.h"
 #include "GameState.h"
 #include "SongManager.h"
-//#include "CommonMetrics.h"
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
-//#include "ScreenMiniMenu.h"
 #include "GameManager.h"
 #include "Steps.h"
 #include "ScreenMiniMenu.h"
 #include "RageUtil.h"
+#include "RageFileManager.h"
 
 AutoScreenMessage( SM_BackFromRename )
+AutoScreenMessage( SM_BackFromDelete )
 AutoScreenMessage( SM_BackFromContextMenu )
 
 enum StepsEditAction
@@ -36,10 +36,13 @@ static MenuDef g_TempMenu(
 );
 
 
-static bool ValidateEditStepsName( const CString &sAnswer, CString &sErrorOut )
+static bool ValidateEditStepsDescription( const CString &sAnswer, CString &sErrorOut )
 {
 	if( sAnswer.empty() )
+	{
+		sErrorOut = "Description cannot be blank";
 		return false;
+	}
 
 	// Steps name must be unique
 	vector<Steps*> v;
@@ -50,7 +53,10 @@ static bool ValidateEditStepsName( const CString &sAnswer, CString &sErrorOut )
 			continue;	// don't comepare name against ourself
 
 		if( (*s)->GetDescription() == sAnswer )
+		{
+			sErrorOut = "There is already another edit steps with this description.  Each description must be unique.";
 			return false;
+		}
 	}
 
 	return true;
@@ -75,12 +81,12 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 
 	OptionRowDefinition def;
 	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	def.m_bOneChoiceForAllPlayers = true;
 
 	int iIndex = 0;
 	
 	{
 		def.m_sName = "Create New Edit Steps";
-		def.m_bAllowThemeTitle = false;
 		def.m_sExplanationName = "Create New Edit Steps";
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( "" );
@@ -93,12 +99,13 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 
 	FOREACH_CONST( Steps*, m_vpSteps, s )
 	{
-		CString sType = GAMEMAN->StepsTypeToThemedString( (*s)->m_StepsType );
 		def.m_sName = (*s)->GetDescription();
+		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Edit Steps";
-		def.m_bAllowThemeItems = false;
 		def.m_vsChoices.clear();
+		CString sType = GAMEMAN->StepsTypeToThemedString( (*s)->m_StepsType );
 		def.m_vsChoices.push_back( sType );
+		def.m_bAllowThemeItems = false;	// already themed
 		vDefs.push_back( def );
 		vHands.push_back( NULL );
 		iIndex++;
@@ -124,33 +131,25 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 
 void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 {
-	if( SM == SM_Success )
-	{
-		LOG->Trace( "Delete successful; deleting Steps from memory" );
-
-		SONGMAN->DeleteSteps( GetStepsWithFocus() );
-		SCREENMAN->SetNewScreen( this->m_sName ); // reload
-	}
-	else if( SM == SM_Failure )
-	{
-		LOG->Trace( "Delete failed; not deleting Steps" );
-	}
-	else if( SM == SM_GoToNextScreen )
+	if( SM == SM_GoToNextScreen )
 	{
 		int iCurRow = m_iCurrentRow[PLAYER_1];
 
 		if( iCurRow == 0 )	// "create new"
 		{
-			SCREENMAN->SetNewScreen( "ScreenEditMenuNew" );
-			return;	// don't call base
+			// do base behavior
 		}
-		else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
+		else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
 		{
 			this->HandleScreenMessage( SM_GoToPrevScreen );
 			return;	// don't call base
 		}
 		else	// a Steps
 		{
+			Steps *pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
+			ASSERT( pSteps );
+			const Style *pStyle = GAMEMAN->GetEditorStyleForStepsType( pSteps->m_StepsType );
+			GAMESTATE->m_pCurStyle.Set( pStyle );
 			SCREENMAN->SetNewScreen( "ScreenEdit" );
 			return;	// don't call base
 		}
@@ -163,6 +162,19 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 		
 			GAMESTATE->m_pCurSteps[PLAYER_1]->SetDescription( ScreenTextEntry::s_sLastAnswer );
 
+			SCREENMAN->SetNewScreen( this->m_sName ); // reload
+		}
+	}
+	else if( SM == SM_BackFromDelete )
+	{
+		if( !ScreenTextEntry::s_bCancelledLast )
+		{
+			LOG->Trace( "Delete successful; deleting Steps from memory" );
+
+			Steps *pSteps = GetStepsWithFocus();
+			FILEMAN->Remove( pSteps->GetFilename() );
+			SONGMAN->DeleteSteps( pSteps );
+			GAMESTATE->m_pCurSteps[PLAYER_1].Set( NULL );
 			SCREENMAN->SetNewScreen( this->m_sName ); // reload
 		}
 	}
@@ -189,12 +201,12 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 						"Enter a name for the Steps.", 
 						GAMESTATE->m_pCurSteps[PLAYER_1]->GetDescription(), 
 						MAX_EDIT_STEPS_DESCRIPTION_LENGTH, 
-						ValidateEditStepsName );
+						ValidateEditStepsDescription );
 				}
 				break;
 			case StepsEditAction_Delete:
 				{
-					ScreenPrompt::Prompt( SM_None, "This Steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
+					ScreenPrompt::Prompt( SM_BackFromDelete, "This Steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
 				}
 				break;
 			}
@@ -242,7 +254,7 @@ void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus &input
 		}
 		this->BeginFadingOut();
 	}
-	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
+	else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
 	{
 		this->BeginFadingOut();
 	}
@@ -276,7 +288,7 @@ Steps *ScreenOptionsManageEditSteps::GetStepsWithFocus() const
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 	if( iCurRow == 0 )
 		return NULL;
-	else if( iCurRow == (int)m_pRows.size()-1 )	// "done"
+	else if( m_pRows[iCurRow]->GetRowType() == OptionRow::RowType_Exit )
 		return NULL;
 	
 	// a Steps

@@ -161,7 +161,7 @@ void OptionRowType::Load( const CString &sType )
 void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown )
 {
 	m_RowDef = def;
-	m_RowType = OptionRow::ROW_NORMAL;
+	m_RowType = OptionRow::RowType_Normal;
 	m_pHand = pHand;
 	m_bFirstItemGoesDown = bFirstItemGoesDown;
 
@@ -261,7 +261,7 @@ void OptionRow::InitText()
 	{
 		switch( m_RowType )
 		{
-		case ROW_NORMAL:
+		case RowType_Normal:
 			FOREACH_PlayerNumber( p )
 			{
 				m_OptionIcons[p] = new OptionIcon( m_pParentType->m_OptionIcon );
@@ -274,7 +274,7 @@ void OptionRow::InitText()
 				SetOptionIcon( p, "", gc );
 			}
 			break;
-		case ROW_EXIT:
+		case RowType_Exit:
 			break;
 		}
 	}
@@ -344,7 +344,7 @@ void OptionRow::InitText()
 				GetWidthXY( p, 0, iWidth, iX, iY );
 				ul->SetX( float(iX) );
 				ul->SetWidth( float(iWidth) );
-				if( GetRowType() == OptionRow::ROW_EXIT )
+				if( GetRowType() == OptionRow::RowType_Exit )
 					ul->SetHidden( true );
 			}
 		}
@@ -400,7 +400,7 @@ void OptionRow::InitText()
 
 	switch( GetRowType() )
 	{
-	case OptionRow::ROW_NORMAL:
+	case OptionRow::RowType_Normal:
 		m_textTitle->SetText( GetRowTitle() );
 		m_textTitle->SetX( m_pParentType->TITLE_X );
 		m_textTitle->RunCommands( m_pParentType->TITLE_ON_COMMAND );
@@ -408,7 +408,7 @@ void OptionRow::InitText()
 		m_sprBullet->SetX( m_pParentType->BULLET_X );
 		m_sprBullet->RunCommands( m_pParentType->BULLET_ON_COMMAND );
 		break;
-	case OptionRow::ROW_EXIT:
+	case OptionRow::RowType_Exit:
 		m_textTitle->SetHidden( true );
 		m_sprBullet->SetHidden( true );
 		break;
@@ -429,7 +429,7 @@ void OptionRow::AfterImportOptions()
 			!m_RowDef.m_bOneChoiceForAllPlayers )
 			m_textItems[p]->SetHidden( !GAMESTATE->IsHumanPlayer(p) );
 
-		if( m_RowType != OptionRow::ROW_EXIT )
+		if( m_RowType != OptionRow::RowType_Exit )
 		{
 			for( unsigned c=0; c<m_Underline[p].size(); c++ )
 				m_Underline[p][c]->SetHidden( !GAMESTATE->IsHumanPlayer(p) );
@@ -490,7 +490,7 @@ void OptionRow::AfterImportOptions()
 
 void OptionRow::LoadExit()
 {
-	m_RowType = OptionRow::ROW_EXIT;
+	m_RowType = OptionRow::RowType_Exit;
 	m_RowDef.m_sName = EXIT_NAME;
 	m_RowDef.m_vsChoices.push_back( "Exit" );
 	m_RowDef.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
@@ -506,7 +506,7 @@ void OptionRow::LoadExit()
 
 void OptionRow::PositionUnderlines( PlayerNumber pn )
 {
-	if( m_RowType == ROW_EXIT )
+	if( m_RowType == RowType_Exit )
 		return;
 
 	vector<OptionsCursor*> &vpUnderlines = m_Underline[pn];
@@ -543,7 +543,7 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 
 void OptionRow::PositionIcons()
 {
-	if( m_RowType == OptionRow::ROW_EXIT )
+	if( m_RowType == OptionRow::RowType_Exit )
 		return;
 
 	FOREACH_HumanPlayer( p )	// foreach player
@@ -708,7 +708,7 @@ void OptionRow::UpdateEnabledDisabled()
 		ASSERT(0);
 	}
 
-	if( m_RowType == OptionRow::ROW_EXIT )
+	if( m_RowType == OptionRow::RowType_Exit )
 	{
 		if( bThisRowHasFocusByAll )
 			m_textItems[0]->SetEffectDiffuseShift( 1.0f, m_pParentType->COLOR_SELECTED, m_pParentType->COLOR_NOT_SELECTED );
@@ -748,7 +748,7 @@ void OptionRow::SetOptionIcon( PlayerNumber pn, const CString &sText, GameComman
 
 BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow )
 {
-	if( m_RowType == OptionRow::ROW_EXIT )
+	if( m_RowType == OptionRow::RowType_Exit )
 		return *m_textItems[0];
 
 	bool bOneChoice = m_RowDef.m_bOneChoiceForAllPlayers;
@@ -869,7 +869,7 @@ void OptionRow::Reload( const OptionRowDefinition &def )
 {
 	switch( GetRowType() )
 	{
-	case OptionRow::ROW_NORMAL:
+	case OptionRow::RowType_Normal:
 		{
 			vector<PlayerNumber> vpns;
 			FOREACH_HumanPlayer( p )
@@ -930,7 +930,7 @@ void OptionRow::Reload( const OptionRowDefinition &def )
 				PositionUnderlines( p );
 		}
 		break;
-	case OptionRow::ROW_EXIT:
+	case OptionRow::RowType_Exit:
 		// nothing to do
 		break;
 	default:

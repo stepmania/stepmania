@@ -548,7 +548,7 @@ bool SMLoader::LoadEditFromMsd( const MsdFile &msd, CString sEditFilePath, Profi
 
 			pNewNotes->SetLoadedFromProfile( slot );
 			pNewNotes->SetDifficulty( DIFFICULTY_EDIT );
-
+			pNewNotes->SetFilename( sEditFilePath );
 
 			if( pSong->IsEditAlreadyLoaded(pNewNotes) )
 			{

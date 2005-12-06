@@ -180,8 +180,8 @@ public:
 
 	enum RowType
 	{
-		ROW_NORMAL,
-		ROW_EXIT
+		RowType_Normal,
+		RowType_Exit
 	};
 	const OptionRowDefinition &GetRowDef() const { return m_RowDef; }
 	OptionRowDefinition &GetRowDef() { return m_RowDef; }
