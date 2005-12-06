@@ -40,15 +40,7 @@ bool VectorsAreEqual( const T &a, const T &b )
 
 static bool TestWrite( CCStringRef sDir )
 {
-	// Try to write a file.
-	// TODO: Can we use RageFile for this?
-	CString sFile = sDir + "/temp";
-	FILE* fp = fopen( sFile, "w" );
-	if( fp == NULL )
-		return false;
-	fclose( fp );
-	remove( sFile );
-	return true;
+	return access(sDir, W_OK) == 0;
 }
 
 static bool ExecuteCommand( CCStringRef sCommand )
