@@ -32,16 +32,12 @@ private:
 
 	struct KeyToMap
 	{
-		CString m_sName;
-		CString m_sSecondary;
 		GameButton m_GameButton;
 
+		// owned by m_Line
+		BitmapText	*m_textMappedTo[MAX_GAME_CONTROLLERS][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
 	};
 	vector<KeyToMap> m_KeysToMap;
-
-	BitmapText	m_textName[MAX_GAME_BUTTONS];
-	BitmapText	m_textName2[MAX_GAME_BUTTONS];
-	BitmapText	m_textMappedTo[MAX_GAME_BUTTONS][MAX_GAME_CONTROLLERS][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
 
 	ActorFrame	m_Line[MAX_GAME_BUTTONS];
 };

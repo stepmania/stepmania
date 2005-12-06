@@ -12,6 +12,8 @@
 #include "Command.h"
 #include "InputEventPlus.h"
 
+#define BUTTONS_TO_MAP THEME->GetMetric( m_sName, "ButtonsToMap" )
+
 static const ThemeMetric<apActorCommands> EVEN_LINE_IN	("ScreenMapControllers","EvenLineIn");
 static const ThemeMetric<apActorCommands> EVEN_LINE_OUT	("ScreenMapControllers","EvenLineOut");
 static const ThemeMetric<apActorCommands> ODD_LINE_IN		("ScreenMapControllers","OddLineIn");
@@ -30,7 +32,6 @@ static const float BUTTON_COLUMN_X[NUM_SHOWN_GAME_TO_DEVICE_SLOTS*MAX_GAME_CONTR
 	50, 125, 200, 440, 515, 590 
 };
 
-
 REGISTER_SCREEN_CLASS( ScreenMapControllers );
 ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
@@ -41,44 +42,64 @@ void ScreenMapControllers::Init()
 {
 	ScreenWithMenuElements::Init();
 
-	for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
+	CString sButtons = BUTTONS_TO_MAP;
+	if( sButtons.empty() )
 	{
-		KeyToMap k;
-		k.m_sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[b];
-		k.m_sSecondary = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), b );
-		k.m_GameButton = (GameButton) b;
-		m_KeysToMap.push_back( k );
+		/* Map all buttons for this game. */
+		for( int b=0; b<GAMESTATE->GetCurrentGame()->m_iButtonsPerController; b++ )
+		{
+			KeyToMap k;
+			k.m_GameButton = (GameButton) b;
+			m_KeysToMap.push_back( k );
+		}
+	}
+	else
+	{
+		/* Map the specified buttons. */
+		vector<CString> asBits;
+		split( sButtons, ",", asBits );
+		for( unsigned i=0; i<asBits.size(); ++i )
+		{
+			KeyToMap k;
+			k.m_GameButton = StringToGameButton( GAMESTATE->GetCurrentGame(), asBits[i] );
+			m_KeysToMap.push_back( k );
+		}
 	}
 
 	for( unsigned b=0; b<m_KeysToMap.size(); b++ )
 	{
-		const KeyToMap *pKey = &m_KeysToMap[b];
+		KeyToMap *pKey = &m_KeysToMap[b];
 
-		m_textName[b].SetName( "Title" );
-		m_textName[b].LoadFromFont( THEME->GetPathF("Common","title") );
-		m_textName[b].SetXY( SCREEN_CENTER_X, -6 );
-		m_textName[b].SetText( pKey->m_sName );
-		ON_COMMAND( m_textName[b] );
-		m_Line[b].AddChild( &m_textName[b] );
+		BitmapText *pName = new BitmapText;
+		pName->SetName( "Title" );
+		pName->LoadFromFont( THEME->GetPathF("Common","title") );
+		pName->SetXY( SCREEN_CENTER_X, -6 );
+		pName->SetText( GAMESTATE->GetCurrentGame()->m_szButtonNames[pKey->m_GameButton] );
+		ON_COMMAND( pName );
+		m_Line[b].AddChild( pName );
 
-		m_textName2[b].SetName( "Secondary" );
-		m_textName2[b].LoadFromFont( THEME->GetPathF("Common","title") );
-		m_textName2[b].SetXY( SCREEN_CENTER_X, +6 );
-		m_textName2[b].SetText( pKey->m_sSecondary );
-		ON_COMMAND( m_textName2[b] );
-		m_Line[b].AddChild( &m_textName2[b] );
+		BitmapText *pSecondary = new BitmapText;
+		pSecondary->SetName( "Secondary" );
+		pSecondary->LoadFromFont( THEME->GetPathF("Common","title") );
+		pSecondary->SetXY( SCREEN_CENTER_X, +6 );
+		CString sText = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
+		pSecondary->SetText( sText );
+		ON_COMMAND( pSecondary );
+		m_Line[b].AddChild( pSecondary );
 
 		for( int p=0; p<MAX_GAME_CONTROLLERS; p++ ) 
 		{			
 			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
-				m_textMappedTo[b][p][s].SetName( "MappedTo" );
-				m_textMappedTo[b][p][s].LoadFromFont( THEME->GetPathF("ScreenMapControllers","entry") );
-				m_textMappedTo[b][p][s].SetXY( BUTTON_COLUMN_X[p*NUM_SHOWN_GAME_TO_DEVICE_SLOTS+s], 0 );
-				ON_COMMAND( m_textMappedTo[b][p][s] );
-				m_Line[b].AddChild( &m_textMappedTo[b][p][s] );
+				pKey->m_textMappedTo[p][s] = new BitmapText;
+				pKey->m_textMappedTo[p][s]->SetName( "MappedTo" );
+				pKey->m_textMappedTo[p][s]->LoadFromFont( THEME->GetPathF("ScreenMapControllers","entry") );
+				pKey->m_textMappedTo[p][s]->SetXY( BUTTON_COLUMN_X[p*NUM_SHOWN_GAME_TO_DEVICE_SLOTS+s], 0 );
+				ON_COMMAND( pKey->m_textMappedTo[p][s] );
+				m_Line[b].AddChild( pKey->m_textMappedTo[p][s] );
 			}
 		}
+		m_Line[b].DeleteChildrenWhenDone();
 		m_Line[b].SetY( LINE_START_Y + b*LINE_GAP_Y );
 		this->AddChild( &m_Line[b] );
 
@@ -305,16 +326,17 @@ void ScreenMapControllers::TweenOffScreen()
 
 void ScreenMapControllers::Refresh()
 {
-	for( int p=0; p<MAX_GAME_CONTROLLERS; p++ ) 
+	FOREACH_GameController( p )
 	{			
 		for( unsigned b=0; b<m_KeysToMap.size(); b++ )
 		{
+			const KeyToMap *pKey = &m_KeysToMap[b];
 			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
 				bool bSelected = p == m_iCurController  &&  (int) b == m_iCurButton  &&  s == m_iCurSlot; 
 
-				BitmapText *pText = &m_textMappedTo[b][p][s];
-				GameInput cur_gi( (GameController)p, (GameButton)b );
+				BitmapText *pText = pKey->m_textMappedTo[p][s];
+				GameInput cur_gi( p, pKey->m_GameButton );
 				DeviceInput di;
 				if( INPUTMAPPER->GameToDevice( cur_gi, s, di ) )
 					pText->SetText( di.toString() );
