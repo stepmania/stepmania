@@ -621,7 +621,6 @@ ScreenEdit::ScreenEdit( CString sName ) : ScreenWithMenuElements( sName )
 void ScreenEdit::Init()
 {
 	EDIT_MODE.Load(m_sName,"EditMode");
-
 	ScreenWithMenuElements::Init();
 
 	InitEditMappings();
@@ -1371,11 +1370,14 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 			m_pSteps = pSteps;
 			pSteps->GetNoteData( m_NoteDataEdit );
-			SCREENMAN->SystemMessage( ssprintf(
-				"Switched to %s %s '%s'",
+			CString s = ssprintf(
+				"Switched to %s %s '%s' (%d of %d)",
 				GAMEMAN->StepsTypeToString( pSteps->m_StepsType ).c_str(),
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
-				pSteps->GetDescription().c_str() ) );
+				pSteps->GetDescription().c_str(),
+				it - vSteps.begin(),
+				vSteps.size() );
+			SCREENMAN->SystemMessage( s );
 			m_soundSwitch.Play();
 		}
 		break;
@@ -2551,14 +2553,18 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 
 						pSteps->SetSavedToDisk( true );
 						CopyToLastSave();
+						ClearUndo();
 
 						NotesWriterSM w;
 						w.WriteEditFileToMachine( pSong, pSteps );
 
 						SCREENMAN->ZeroNextUpdate();
 
-						/* FIXME
+						// TODO: make localizable
+						CString s = ssprintf( "Saved  \"%s\"", Basename(pSteps->GetFilename()).c_str() );
+						ScreenPrompt::Prompt( SM_None, s );
 
+						/* FIXME
 						CString s;
 						switch( c )
 						{
@@ -2670,10 +2676,17 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			{
 			case EDIT_MODE_FULL:
 			case EDIT_MODE_HOME:
-				ScreenPrompt::Prompt(
-					SM_DoSaveAndExit,
-					"Do you want to save changes before exiting?",
-					PROMPT_YES_NO_CANCEL, ANSWER_CANCEL );
+				if( m_bHasUndo )
+				{
+					ScreenPrompt::Prompt(
+						SM_DoSaveAndExit,
+						"Do you want to save changes before exiting?",
+						PROMPT_YES_NO_CANCEL, ANSWER_CANCEL );
+				}
+				else
+				{
+					SCREENMAN->SendMessageToTopScreen( SM_DoExit );
+				}
 				break;
 			case EDIT_MODE_PRACTICE:
 				SCREENMAN->SendMessageToTopScreen( SM_DoExit );
@@ -3234,9 +3247,11 @@ void ScreenEdit::Undo()
 {
 	if( m_bHasUndo )
 	{
+		// swap
 		NoteData temp( m_NoteDataEdit );
 		m_NoteDataEdit.CopyAll( m_Undo );
 		m_Undo.CopyAll( temp );
+
 		SCREENMAN->SystemMessage( "Undo" );
 	}
 	else
@@ -3244,6 +3259,11 @@ void ScreenEdit::Undo()
 		SCREENMAN->SystemMessage( "Can't undo - no undo data." );
 		SCREENMAN->PlayInvalidSound();
 	}
+}
+
+void ScreenEdit::ClearUndo()
+{
+	m_bHasUndo = false;
 }
 
 void ScreenEdit::CheckNumberOfNotesAndUndo()

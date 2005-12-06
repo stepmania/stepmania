@@ -172,6 +172,7 @@ protected:
 	void SaveUndo();
 	// Revert m_NoteDataEdit using m_Undo.
 	void Undo();
+	void ClearUndo();
 	// Call this after modifying m_NoteDataEdit.  It will Undo() if 
 	// MAX_NOTES_PER_MEASURE was exceeded.
 	void CheckNumberOfNotesAndUndo();
