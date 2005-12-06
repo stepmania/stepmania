@@ -2552,6 +2552,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						ASSERT( pSteps->IsAnEdit() );
 
 						pSteps->SetSavedToDisk( true );
+						pSteps->SetLoadedFromProfile( ProfileSlot_Machine );
 						CopyToLastSave();
 						ClearUndo();
 
