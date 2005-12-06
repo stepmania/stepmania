@@ -40,6 +40,7 @@ void ScreenOptionsMemoryCard::Init()
 		OptionRowDefinition def( sDescription, true, "" );
 		def.m_sExplanationName = "Memory Card";
 		def.m_bAllowThemeTitle = false;
+		def.m_bOneChoiceForAllPlayers = true;
 		m_vDefs.push_back( def );	
 	}
 
@@ -102,7 +103,7 @@ void ScreenOptionsMemoryCard::ImportOptions( int iRow, const vector<PlayerNumber
 void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 	OptionRow &row = *m_pRows[iRow];
-	if( row.GetRowType() == OptionRow::ROW_EXIT )
+	if( row.GetRowType() == OptionRow::RowType_Exit )
 		return;
 
 	PlayerNumber pn = GAMESTATE->m_MasterPlayerNumber;
