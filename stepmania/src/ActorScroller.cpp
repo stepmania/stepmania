@@ -2,7 +2,6 @@
 #include "ActorScroller.h"
 #include "Foreach.h"
 #include "RageUtil.h"
-#include "RageDisplay.h"
 #include "XmlFile.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageLog.h"
