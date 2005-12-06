@@ -71,8 +71,7 @@ static CString ClearMemoryCardEdits()
 
 		bTriedToLoad = true;
 
-		CString sDir = MEM_CARD_MOUNT_POINT[pn];
-
+		CString sDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
 		vector<CString> vsEditFiles;
 		GetDirListing( sDir+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
 		GetDirListing( sDir+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
