@@ -43,14 +43,12 @@ public:
 	virtual int GetFileSize() const;
 
 private:
-	int m_iFD;
-	CString m_sPath; /* for Copy */
-
-	CString m_sWriteBuf;
-	
 	bool FinalFlush();
 
+	int m_iFD;
 	int m_iMode;
+	CString m_sPath; /* for Copy */
+	CString m_sWriteBuf;
 };
 
 
