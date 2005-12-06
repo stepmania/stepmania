@@ -726,7 +726,7 @@ void ScreenOptions::PositionRows()
 	{
 		OptionRow &row = *Rows[i];
 
-		float fPos = pos;
+		float fPos = (float) pos;
 
 		LuaExpressionTransform *pExpr = NULL;
 		pExpr = &m_exprRowPositionTransformFunction;
