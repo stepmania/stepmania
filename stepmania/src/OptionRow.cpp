@@ -63,6 +63,9 @@ CString OptionRow::OptionTitle( CString s ) const
 	if( m_RowDef.m_bAllowThemeTitle )
 		bTheme = true;
 
+	if( s.empty() )
+		return s;
+
 	return bTheme ? THEME->GetMetric("OptionTitles",s) : s;
 }
 
@@ -123,10 +126,10 @@ void OptionRowType::Load( const CString &sType )
 
 	BULLET_X   						.Load(sType,"BulletX");
 	BULLET_ON_COMMAND   			.Load(sType,"BulletOnCommand");
-	LABELS_X						.Load(sType,"LabelsX");
-	LABELS_ON_COMMAND				.Load(sType,"LabelsOnCommand");
-	LABEL_GAIN_FOCUS_COMMAND		.Load(sType,"LabelGainFocusCommand");
-	LABEL_LOSE_FOCUS_COMMAND		.Load(sType,"LabelLoseFocusCommand");
+	TITLE_X							.Load(sType,"TitleX");
+	TITLE_ON_COMMAND				.Load(sType,"TitleOnCommand");
+	TITLE_GAIN_FOCUS_COMMAND		.Load(sType,"TitleGainFocusCommand");
+	TITLE_LOSE_FOCUS_COMMAND		.Load(sType,"TitleLoseFocusCommand");
 	ITEMS_START_X					.Load(sType,"ItemsStartX");
 	ITEMS_END_X						.Load(sType,"ItemsEndX");
 	ITEMS_GAP_X						.Load(sType,"ItemsGapX");
@@ -399,8 +402,8 @@ void OptionRow::InitText()
 	{
 	case OptionRow::ROW_NORMAL:
 		m_textTitle->SetText( GetRowTitle() );
-		m_textTitle->SetX( m_pParentType->LABELS_X );
-		m_textTitle->RunCommands( m_pParentType->LABELS_ON_COMMAND );
+		m_textTitle->SetX( m_pParentType->TITLE_X );
+		m_textTitle->RunCommands( m_pParentType->TITLE_ON_COMMAND );
 
 		m_sprBullet->SetX( m_pParentType->BULLET_X );
 		m_sprBullet->RunCommands( m_pParentType->BULLET_ON_COMMAND );
@@ -608,9 +611,9 @@ void OptionRow::UpdateEnabledDisabled()
 	}
 
 	if( bThisRowHasFocusByAny )
-		m_textTitle->RunCommands( m_pParentType->LABEL_GAIN_FOCUS_COMMAND );
+		m_textTitle->RunCommands( m_pParentType->TITLE_GAIN_FOCUS_COMMAND );
 	else
-		m_textTitle->RunCommands( m_pParentType->LABEL_LOSE_FOCUS_COMMAND );
+		m_textTitle->RunCommands( m_pParentType->TITLE_LOSE_FOCUS_COMMAND );
 
 	/* Don't tween selection colors at all. */
 	RageColor color;

@@ -103,10 +103,10 @@ private:
 	// metrics
 	ThemeMetric<float>				BULLET_X;
 	ThemeMetric<apActorCommands>	BULLET_ON_COMMAND;
-	ThemeMetric<float>				LABELS_X;
-	ThemeMetric<apActorCommands>	LABELS_ON_COMMAND;
-	ThemeMetric<apActorCommands>	LABEL_GAIN_FOCUS_COMMAND;
-	ThemeMetric<apActorCommands>	LABEL_LOSE_FOCUS_COMMAND;
+	ThemeMetric<float>				TITLE_X;
+	ThemeMetric<apActorCommands>	TITLE_ON_COMMAND;
+	ThemeMetric<apActorCommands>	TITLE_GAIN_FOCUS_COMMAND;
+	ThemeMetric<apActorCommands>	TITLE_LOSE_FOCUS_COMMAND;
 	ThemeMetric<float>				ITEMS_START_X;
 	ThemeMetric<float>				ITEMS_END_X;
 	ThemeMetric<float>				ITEMS_GAP_X;
