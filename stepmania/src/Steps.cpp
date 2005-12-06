@@ -365,6 +365,7 @@ public:
 	static int GetDifficulty( T* p, lua_State *L )	{ lua_pushnumber(L, p->GetDifficulty() ); return 1; }
 	static int GetDescription( T* p, lua_State *L )	{ lua_pushstring(L, p->GetDescription() ); return 1; }
 	static int GetMeter( T* p, lua_State *L )		{ lua_pushnumber(L, p->GetMeter() ); return 1; }
+	static int GetFilename( T* p, lua_State *L )	{ lua_pushstring(L, p->GetFilename() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -372,6 +373,7 @@ public:
 		ADD_METHOD( GetDifficulty );
 		ADD_METHOD( GetDescription );
 		ADD_METHOD( GetMeter );
+		ADD_METHOD( GetFilename );
 
 		Luna<T>::Register( L );
 	}

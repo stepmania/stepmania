@@ -1596,6 +1596,8 @@ CString Basename( const CString &dir )
 	return dir.substr( start, end-start+1 );
 }
 
+LuaFunction( Basename, Basename( SArg(1) ) )
+
 /* Return all but the last named component of dir:
  * a/b/c -> a/b/
  * a/b/c/ -> a/b/
