@@ -39,7 +39,6 @@ ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sCl
 	WRAP_CURSOR(m_sName,"WrapCursor"),
 	WRAP_SCROLLER(m_sName,"WrapScroller"),
 	LOOP_SCROLLER(m_sName,"LoopScroller"),
-	SCROLLER_FAST_CATCHUP(m_sName,"ScrollerFastCatchup"),
 	ALLOW_REPEATING_INPUT(m_sName,"AllowRepeatingInput"),
 	SCROLLER_SECONDS_PER_ITEM(m_sName,"ScrollerSecondsPerItem"),
 	SCROLLER_NUM_ITEMS_TO_DRAW(m_sName,"ScrollerNumItemsToDraw"),
@@ -132,7 +131,6 @@ void ScreenSelectMaster::Init()
 			m_Scroller[*p].Load3(
 				SCROLLER_SECONDS_PER_ITEM, 
 				SCROLLER_NUM_ITEMS_TO_DRAW,
-				SCROLLER_FAST_CATCHUP,
 				SCROLLER_TRANSFORM,
 				SCROLLER_SUBDIVISIONS,
 				LOOP_SCROLLER );

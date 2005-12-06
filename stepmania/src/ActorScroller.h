@@ -22,7 +22,6 @@ public:
 	void Load3(
 		float fSecondsPerItem, 
 		float fNumItemsToDraw, 
-		bool bFastCatchup,
 		const CString &sTransformFunction,
 		int iSubdivisions,
 		bool bLoop );
