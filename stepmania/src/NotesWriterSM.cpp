@@ -265,17 +265,7 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
 {
 	CString sDir = PROFILEMAN->GetProfileDir( ProfileSlot_Machine ) + EDIT_STEPS_SUBDIR;
 
-	/* If the file name of the edit has changed since the last save, then delete the old
-	 * file before saving the new one.
-	 */
-	bool bFileNameChanged = 
-		pSteps->GetSavedToDisk()  && 
-		pSteps->GetFilename() != GetEditFileName(pSong,pSteps);
-	if( bFileNameChanged )
-		FILEMAN->Remove( pSteps->GetFilename() );
-
 	CString sPath = sDir + GetEditFileName(pSong,pSteps);
-	pSteps->SetFilename( sPath );
 
 	/* Flush dir cache when writing steps, so the old size isn't cached. */
 	FILEMAN->FlushDirCache( Dirname(sPath) );
@@ -298,6 +288,16 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
 		LOG->Warn( "Error writing song file '%s': %s", sPath.c_str(), f.GetError().c_str() );
 		return false;
 	}
+
+	/* If the file name of the edit has changed since the last save, then delete the old
+	 * file after saving the new one.  If we delete it first, then we'll lose data on error. */
+	bool bFileNameChanged = 
+		pSteps->GetSavedToDisk()  && 
+		pSteps->GetFilename() != sPath;
+
+	if( bFileNameChanged )
+		FILEMAN->Remove( pSteps->GetFilename() );
+	pSteps->SetFilename( sPath );
 
 	return true;
 }
