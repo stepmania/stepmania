@@ -33,6 +33,8 @@ class Commands
 {
 public:
 	vector<Command> v;
+
+	CString GetOriginalCommandString() const;	// used when reporting an error in number of args
 };
 
 // Take a command list string and return pointers to each of the tokens in the 

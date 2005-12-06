@@ -13,18 +13,23 @@ struct ConfOption;
 class OptionRowHandler
 {
 public:
-	CString m_sName;
+	Commands m_cmds;
 	vector<CString> m_vsReloadRowMessages;	// refresh this row on on these messages
 	
 	OptionRowHandler::OptionRowHandler() { Init(); }
 	virtual ~OptionRowHandler() { }
 	virtual void Init()
 	{
-		m_sName = "";
+		m_cmds.v.clear();
 		m_vsReloadRowMessages.clear();
 	}
-	virtual void Load( OptionRowDefinition &defOut, CString sParam ) = 0;
-	virtual void Reload( OptionRowDefinition &defOut ) { this->Load(defOut,m_sName); }
+	virtual void Load( OptionRowDefinition &defOut, const Commands &cmds )
+	{
+		m_cmds = cmds;
+		this->LoadInternal( defOut, cmds );
+	}
+	virtual void LoadInternal( OptionRowDefinition &defOut, const Commands &cmds ) = 0;
+	virtual void Reload( OptionRowDefinition &defOut ) { this->Load(defOut,m_cmds); }
 	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const = 0;
 	/* Returns an OPT mask. */
 	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const = 0;
@@ -35,7 +40,7 @@ public:
 
 namespace OptionRowHandlerUtil
 {
-	OptionRowHandler* Make( const Command &cmd, OptionRowDefinition &defOut );
+	OptionRowHandler* Make( const Commands &cmds, OptionRowDefinition &defOut );
 }
 
 inline void VerifySelected( SelectType st, const vector<bool> &vbSelected, const CString &sName )

@@ -4,6 +4,7 @@
 #include "RageLog.h"
 #include "arch/Dialog/Dialog.h"
 #include "LuaManager.h"
+#include "Foreach.h"
 
 
 void IncorrectNumberArgsWarning( const Command &command, int iMaxIndexAccessed )
@@ -113,6 +114,14 @@ static void SplitWithQuotes( const CString sSource, const char Delimitor, vector
 
 		startpos = pos+1;
 	} while( startpos <= sSource.size() );
+}
+
+CString Commands::GetOriginalCommandString() const
+{
+	CString s;
+	FOREACH_CONST( Command, v, c )
+		s += c->GetOriginalCommandString();
+	return s;
 }
 
 void ParseCommands( const CString &sCommands, Commands &vCommandsOut )

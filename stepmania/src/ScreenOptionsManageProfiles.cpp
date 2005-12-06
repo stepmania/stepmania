@@ -72,34 +72,6 @@ static bool ValidateLocalProfileName( const CString &sAnswer, CString &sErrorOut
 	return true;
 }
 
-
-class OptionRowHandlerSimple : public OptionRowHandler
-{
-public:
-	GameCommand m_gc;
-
-	virtual void Load( OptionRowDefinition &defOut, CString sParam )
-	{
-
-	}
-	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
-	{
-
-	}
-	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
-	{
-		if( vbSelected[PLAYER_1][0] )
-			m_gc.ApplyToAllPlayers();
-		return 0;
-	}
-	virtual void GetIconTextAndGameCommand( const OptionRowDefinition &def, int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const
-	{
-		sIconTextOut = "";
-		gcOut = m_gc;
-	}
-};
-
-
 REGISTER_SCREEN_CLASS( ScreenOptionsManageProfiles );
 ScreenOptionsManageProfiles::ScreenOptionsManageProfiles( CString sName ) : ScreenOptions( sName )
 {
@@ -144,15 +116,13 @@ void ScreenOptionsManageProfiles::BeginScreen()
 
 	if( SHOW_CREATE_NEW )
 	{
-		def.m_vsChoices.clear();
-		def.m_vsChoices.push_back( "Create New" );
+		OptionRowDefinition def;
+		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands("gamecommand;screen,ScreenOptionsEditProfile;name,Create New"), def );
 		vDefs.push_back( def );
-		
-		OptionRowHandlerSimple *pHand = new OptionRowHandlerSimple;
 		m_OptionRowHandlers.push_back( pHand );
-		GameCommand &gc = pHand->m_gc;
-		CString sCommand = "screen,ScreenOptionsEditProfile";
-		gc.Load( iIndex++, ParseCommands(sCommand) );
+
+		// FIXME
+		// gc.Load( iIndex++,  );
 	}
 
 	PROFILEMAN->GetLocalProfileIDs( m_vsLocalProfileID );
@@ -162,16 +132,15 @@ void ScreenOptionsManageProfiles::BeginScreen()
 		Profile *pProfile = PROFILEMAN->GetLocalProfile( *s );
 		ASSERT( pProfile );
 
+		OptionRowDefinition def;
+		CString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsEditProfile;profileid,%s;name,%s", s->c_str(), pProfile->m_sDisplayName.c_str() );
+		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand), def );
 		def.m_sName = ssprintf( "%d", iIndex );
-		def.m_vsChoices.clear();
-		def.m_vsChoices.push_back( pProfile->m_sDisplayName );
 		vDefs.push_back( def );
-
-		OptionRowHandlerSimple *pHand = new OptionRowHandlerSimple;
 		m_OptionRowHandlers.push_back( pHand );
-		GameCommand &gc = pHand->m_gc;
-		CString sCommand = "screen,ScreenOptionsEditProfile;profileid,"+*s;
-		gc.Load( iIndex++, ParseCommands(sCommand) );
+
+		// FIXME
+		// gc.Load( iIndex++,  );
 	}
 
 	ScreenOptions::InitMenu( vDefs, m_OptionRowHandlers );
