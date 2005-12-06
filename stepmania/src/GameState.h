@@ -112,7 +112,7 @@ public:
 	BroadcastOnChange<SortOrder> m_SortOrder;			// set by MusicWheel
 	SortOrder		m_PreferredSortOrder;			// used by MusicWheel
 	EditMode		m_EditMode;
-	bool			IsEditing() const { return m_EditMode != EDIT_MODE_INVALID; }
+	bool			IsEditing() const { return m_EditMode != EditMode_INVALID; }
 	bool			m_bDemonstrationOrJukebox;	// ScreenGameplay does special stuff when this is true
 	bool			m_bJukeboxUsesModifiers;
 	int				m_iNumStagesOfThisSong;

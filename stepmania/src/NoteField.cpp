@@ -596,10 +596,10 @@ void NoteField::DrawPrimitives()
 		//
 		switch( GAMESTATE->m_EditMode )
 		{
-		case EDIT_MODE_HOME:
-		case EDIT_MODE_PRACTICE:
+		case EditMode_Home:
+		case EditMode_Practice:
 			break;
-		case EDIT_MODE_FULL:
+		case EditMode_Full:
 			{
 				vector<BackgroundChange>::iterator iter[NUM_BackgroundLayer];
 				FOREACH_BackgroundLayer( i )

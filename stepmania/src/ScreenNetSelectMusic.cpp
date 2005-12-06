@@ -269,7 +269,7 @@ void ScreenNetSelectMusic::HandleScreenMessage( const ScreenMessage SM )
 	{
 		//XXX: HACK: This will causes ScreenSelectOptions to go back here.
 		NSMAN->ReportNSSOnOff(1);
-		GAMESTATE->m_EditMode = EDIT_MODE_INVALID;
+		GAMESTATE->m_EditMode = EditMode_INVALID;
 		NSMAN->ReportPlayerOptions();
 
 		//Update changes
@@ -343,7 +343,7 @@ void ScreenNetSelectMusic::MenuRight( const InputEventPlus &input )
 void ScreenNetSelectMusic::MenuUp( const InputEventPlus &input )
 {
 	NSMAN->ReportNSSOnOff(3);
-	GAMESTATE->m_EditMode = EDIT_MODE_FULL;
+	GAMESTATE->m_EditMode = EditMode_Full;
 	SCREENMAN->AddNewScreenToTop( "ScreenPlayerOptions", SM_BackFromPlayerOptions );
 }
 

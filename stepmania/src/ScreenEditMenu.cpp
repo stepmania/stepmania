@@ -225,6 +225,21 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			// Yuck.  Doing the memory allocation doesn't seem right since
 			// Song allocates all of the other Steps.
 			pSteps = new Steps;
+			
+			switch( m_Selector.EDIT_MODE )
+			{
+			default:
+				ASSERT(0);
+			case EditMode_Full:
+				break;
+			case EditMode_Home:
+				pSteps->SetLoadedFromProfile( ProfileSlot_Machine );
+				break;
+			case EditMode_Practice:
+				ASSERT(0);
+				break;
+			}
+
 			CString sEditName;
 			if( pSourceSteps )
 			{

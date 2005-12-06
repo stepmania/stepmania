@@ -270,7 +270,7 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 		g_TempMenu.rows.clear();
 		FOREACH_CourseEntryAction( i )
 		{
-			MenuRowDef mrd( i, CourseEntryActionToString(i), true, EDIT_MODE_HOME, true, 0, "" );
+			MenuRowDef mrd( i, CourseEntryActionToString(i), true, EditMode_Home, true, 0, "" );
 			g_TempMenu.rows.push_back( mrd );
 		}
 

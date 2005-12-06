@@ -172,8 +172,8 @@ void ScreenOptionsManageCourses::BeginScreen()
 	{
 	default:
 		ASSERT(0);
-	case EDIT_MODE_PRACTICE:
-	case EDIT_MODE_HOME:
+	case EditMode_Practice:
+	case EditMode_Home:
 		// strip out non-edits
 		for( int i=m_vpCourses.size()-1; i>=0; i-- )
 		{
@@ -181,7 +181,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 				m_vpCourses.erase( m_vpCourses.begin()+i );
 		}
 		break;
-	case EDIT_MODE_FULL:
+	case EditMode_Full:
 		break;
 	}
 
@@ -191,11 +191,11 @@ void ScreenOptionsManageCourses::BeginScreen()
 		{
 		default:
 			ASSERT(0);
-		case EDIT_MODE_PRACTICE:
-		case EDIT_MODE_HOME:
+		case EditMode_Practice:
+		case EditMode_Home:
 			def.m_sName = CourseTypeToThemedString( (*c)->GetCourseType() );
 			break;
-		case EDIT_MODE_FULL:
+		case EditMode_Full:
 			if( (*c)->IsAnEdit() )
 				def.m_sName = "Edit";
 			else
@@ -383,7 +383,7 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 		g_TempMenu.rows.clear();
 		FOREACH_CourseAction( i )
 		{
-			MenuRowDef mrd( i, CourseActionToString(i), true, EDIT_MODE_HOME, true, 0, "" );
+			MenuRowDef mrd( i, CourseActionToString(i), true, EditMode_Home, true, 0, "" );
 			g_TempMenu.rows.push_back( mrd );
 		}
 

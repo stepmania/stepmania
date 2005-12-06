@@ -128,6 +128,7 @@ private:
 	ThemeMetric1D<float> ROW_VALUE_X;
 	ThemeMetric<apActorCommands> ROW_VALUE_ON_COMMAND;
 	ThemeMetric1D<float> ROW_Y;
+public:
 	ThemeMetricEnum<EditMode> EDIT_MODE;
 };
 

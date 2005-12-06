@@ -191,7 +191,7 @@ void GameState::Reset()
 	m_SortOrder.Set( SORT_INVALID );
 	m_PreferredSortOrder = GetDefaultSort();
 	m_PlayMode.Set( PLAY_MODE_INVALID );
-	m_EditMode = EDIT_MODE_INVALID;
+	m_EditMode = EditMode_INVALID;
 	m_bDemonstrationOrJukebox = false;
 	m_bJukeboxUsesModifiers = false;
 	m_iCurrentStageIndex = 0;

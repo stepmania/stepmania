@@ -411,11 +411,11 @@ GoalType StringToGoalType( const CString& s );
 
 enum EditMode
 {
-	EDIT_MODE_PRACTICE,
-	EDIT_MODE_HOME,
-	EDIT_MODE_FULL,
-	NUM_EDIT_MODES,
-	EDIT_MODE_INVALID,
+	EditMode_Practice,
+	EditMode_Home,
+	EditMode_Full,
+	NUM_EditMode,
+	EditMode_INVALID,
 };
 
 
