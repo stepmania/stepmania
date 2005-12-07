@@ -45,7 +45,8 @@ public:
 	void SetFastCatchup( bool bOn ) { m_bFastCatchup = bOn; }
 	void SetSecondsPerItem( float fSeconds ) { m_fSecondsPerItem = fSeconds; }
 	void SetSecondsPauseBetweenItems( float fSeconds ) { m_fSecondsPauseBetweenItems = fSeconds; }
-	float	GetSecondsForCompleteScrollThrough() const;
+	void SetNumSubdivisions( int iNumSubdivisions ) { m_exprTransformFunction.SetNumSubdivisions( iNumSubdivisions ); }
+	float GetSecondsForCompleteScrollThrough() const;
 
 	//
 	// Commands
