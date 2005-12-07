@@ -2551,8 +2551,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 					{
 						ASSERT( pSteps->IsAnEdit() );
 
-						pSteps->SetLoadedFromProfile( ProfileSlot_Machine );
-
 						// XXX show error
 						NotesWriterSM w;
 						if( !w.WriteEditFileToMachine(pSong, pSteps) )
