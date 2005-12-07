@@ -281,6 +281,7 @@ class LunaActorScroller: public Luna<ActorScroller>
 public:
 	LunaActorScroller() { LUA->Register( Register ); }
 
+	static int PositionItems( T* p, lua_State *L )	{ p->PositionItems(); return 0; }
 	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
 	static int setsecondsperitem( T* p, lua_State *L )	{ p->SetSecondsPerItem(FArg(1)); return 0; }
 	static int setnumsubdivisions( T* p, lua_State *L )	{ p->SetNumSubdivisions(IArg(1)); return 0; }
@@ -290,6 +291,7 @@ public:
 
 	static void Register(lua_State *L) 
 	{
+		ADD_METHOD( PositionItems );
 		ADD_METHOD( SetCurrentAndDestinationItem );
 		ADD_METHOD( setsecondsperitem );
 		ADD_METHOD( setnumsubdivisions );
