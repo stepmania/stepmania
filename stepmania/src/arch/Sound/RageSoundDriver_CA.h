@@ -17,6 +17,15 @@ class RageSoundBase;
 
 class RageSound_CA : public RageSound_Generic_Software
 {
+public:
+    RageSound_CA();
+    CString Init();
+    ~RageSound_CA();
+    float GetPlayLatency() const { return mLatency; }
+	int GetSampleRate( int rate ) const { return mSampleRate; }
+    int64_t GetPosition( const RageSoundBase *sound ) const;
+    void SetupDecodingThread();
+
 private:
     int64_t mDecodePos;
     float mLatency;
@@ -37,15 +46,6 @@ private:
 									  Boolean isInput,
 									  AudioDevicePropertyID inPropertyID,
 									  void *inData);
-                              
-public:
-    RageSound_CA();
-    CString Init();
-    ~RageSound_CA();
-    float GetPlayLatency() const { return mLatency; }
-	int GetSampleRate( int rate ) const { return mSampleRate; }
-    int64_t GetPosition( const RageSoundBase *sound ) const;
-    void SetupDecodingThread();
 };
 #define USE_RAGE_SOUND_CA
 
