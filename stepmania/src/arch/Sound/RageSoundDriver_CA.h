@@ -27,7 +27,6 @@ public:
     void SetupDecodingThread();
 
 private:
-    int64_t mDecodePos;
     float mLatency;
     CAAudioHardwareDevice *mOutputDevice;
 	AudioConverterRef mConverter;
