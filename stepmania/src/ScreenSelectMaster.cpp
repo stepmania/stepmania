@@ -792,7 +792,6 @@ void ScreenSelectMaster::TweenOnScreen()
 			{
 				m_vsprScroll[*p][c]->PlayCommand( int(c) == m_iChoice[*p]? "GainFocus":"LoseFocus" );
 				m_vsprScroll[*p][c]->FinishTweening();
-				ON_COMMAND( m_vsprScroll[*p][c] );
 			}
 
 			m_Scroller[*p].SetCurrentAndDestinationItem( (float)m_iChoice[*p] );
