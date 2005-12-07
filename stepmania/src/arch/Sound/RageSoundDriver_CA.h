@@ -18,19 +18,19 @@ class RageSoundBase;
 class RageSound_CA : public RageSound_Generic_Software
 {
 public:
-    RageSound_CA();
-    CString Init();
-    ~RageSound_CA();
-    float GetPlayLatency() const { return mLatency; }
-	int GetSampleRate( int rate ) const { return mSampleRate; }
-    int64_t GetPosition( const RageSoundBase *sound ) const;
-    void SetupDecodingThread();
+	RageSound_CA();
+	CString Init();
+	~RageSound_CA();
+	float GetPlayLatency() const { return m_fLatency; }
+	int GetSampleRate( int rate ) const { return m_iSampleRate; }
+	int64_t GetPosition( const RageSoundBase *sound ) const;
+	void SetupDecodingThread();
 
 private:
-    float mLatency;
-    CAAudioHardwareDevice *mOutputDevice;
-	AudioConverterRef mConverter;
-	int mSampleRate;
+	float m_fLatency;
+	CAAudioHardwareDevice *m_pOutputDevice;
+	AudioConverterRef m_Converter;
+	int m_iSampleRate;
 	
 	static OSStatus GetData( AudioDeviceID inDevice,
 							 const AudioTimeStamp *inNow,

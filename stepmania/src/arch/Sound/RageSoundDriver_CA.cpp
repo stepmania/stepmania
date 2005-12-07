@@ -33,8 +33,8 @@ static int g_iNumIOProcCalls = 0;
 
 RageSound_CA::RageSound_CA()
 {
-	mOutputDevice = NULL;
-	mConverter = NULL;
+	m_pOutputDevice = NULL;
+	m_Converter = NULL;
 }
 
 CString RageSound_CA::Init()
@@ -42,34 +42,34 @@ CString RageSound_CA::Init()
 	try
 	{
 		AudioDeviceID dID = CAAudioHardwareSystem::GetDefaultDevice( false, false );
-		mOutputDevice = new CAAudioHardwareDevice( dID );
+		m_pOutputDevice = new CAAudioHardwareDevice( dID );
 	}
 	catch( const CAException& e )
 	{
 		return "Couldn't create default output device.";
 	}
 	
-	mSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
-	Float64 nominalSampleRate =  mSampleRate;
+	m_iSampleRate = PREFSMAN->m_iSoundPreferredSampleRate;
+	Float64 nominalSampleRate =  m_iSampleRate;
     
 	try
 	{
-		mOutputDevice->SetNominalSampleRate(nominalSampleRate);
+		m_pOutputDevice->SetNominalSampleRate(nominalSampleRate);
 		LOG->Info( "Set the nominal sample rate to %f.", nominalSampleRate );
 	}
 	catch( const CAException& e )
 	{
 		LOG->Warn( "Couldn't set the nominal sample rate." );
-		nominalSampleRate = mOutputDevice->GetNominalSampleRate();
+		nominalSampleRate = m_pOutputDevice->GetNominalSampleRate();
 		LOG->Warn( "Device's nominal sample rate is %f", nominalSampleRate );
-		mSampleRate = int( nominalSampleRate );
+		m_iSampleRate = int( nominalSampleRate );
 	}
-	AudioStreamID sID = mOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
+	AudioStreamID sID = m_pOutputDevice->GetStreamByIndex( kAudioDeviceSectionOutput, 0 );
 	CAAudioHardwareStream stream( sID );
 
 	try
 	{
-		mOutputDevice->AddPropertyListener( kAudioPropertyWildcardChannel, kAudioPropertyWildcardSection,
+		m_pOutputDevice->AddPropertyListener( kAudioPropertyWildcardChannel, kAudioPropertyWildcardSection,
 											kAudioDeviceProcessorOverload, OverloadListener, this );
 	}
 	catch( const CAException& e )
@@ -93,14 +93,14 @@ CString RageSound_CA::Init()
 		stream.GetCurrentIOProcFormat( IOProcFormat );
 	}
 	
-	if( AudioConverterNew(&SMFormat, &IOProcFormat, &mConverter) )
+	if( AudioConverterNew(&SMFormat, &IOProcFormat, &m_Converter) )
 		return "Couldn't create the audio converter";
 
 	UInt32 bufferSize;
 	
 	try
 	{
-		bufferSize = mOutputDevice->GetIOBufferSize();
+		bufferSize = m_pOutputDevice->GetIOBufferSize();
 		LOG->Info("I/O Buffer size: %lu frames", bufferSize);
 	}
 	catch( const CAException& e )
@@ -111,7 +111,7 @@ CString RageSound_CA::Init()
     
 	try
 	{
-		UInt32 frames = mOutputDevice->GetLatency( kAudioDeviceSectionOutput );
+		UInt32 frames = m_pOutputDevice->GetLatency( kAudioDeviceSectionOutput );
 		if( stream.HasProperty(0, kAudioDevicePropertyLatency) )
 		{
 			UInt32 t, size = 4;
@@ -124,11 +124,11 @@ CString RageSound_CA::Init()
 		{
 			LOG->Warn( "Stream does not report latency." );
 		}
-		frames += mOutputDevice->GetSafetyOffset( kAudioDeviceSectionOutput );
+		frames += m_pOutputDevice->GetSafetyOffset( kAudioDeviceSectionOutput );
 		frames += bufferSize;
-		mLatency = frames / nominalSampleRate;
+		m_fLatency = frames / nominalSampleRate;
 		LOG->Info( "Frames of latency:        %lu\n"
-				   "Seconds of latency:       %f", frames, mLatency );
+				   "Seconds of latency:       %f", frames, m_fLatency );
 	}
 	catch( const CAException& e )
 	{
@@ -139,8 +139,8 @@ CString RageSound_CA::Init()
     
 	try
 	{
-		mOutputDevice->AddIOProc( GetData, this );
-		mOutputDevice->StartIOProc( GetData );
+		m_pOutputDevice->AddIOProc( GetData, this );
+		m_pOutputDevice->StartIOProc( GetData );
 	}
 	catch( const CAException& e )
 	{
@@ -151,15 +151,15 @@ CString RageSound_CA::Init()
 
 RageSound_CA::~RageSound_CA()
 {
-	if( mOutputDevice != NULL )
+	if( m_pOutputDevice != NULL )
 	{
-		mOutputDevice->StopIOProc( GetData );
-		mOutputDevice->RemoveIOProc( GetData );
+		m_pOutputDevice->StopIOProc( GetData );
+		m_pOutputDevice->RemoveIOProc( GetData );
 	}
-	delete mOutputDevice;
+	delete m_pOutputDevice;
 
-	if( mConverter != NULL )
-		AudioConverterDispose( mConverter );
+	if( m_Converter != NULL )
+		AudioConverterDispose( m_Converter );
 }
 
 int64_t RageSound_CA::GetPosition( const RageSoundBase *sound ) const
@@ -171,12 +171,12 @@ int64_t RageSound_CA::GetPosition( const RageSoundBase *sound ) const
 	inTime.mHostTime = AudioGetCurrentHostTime();
 	inTime.mFlags = kAudioTimeStampHostTimeValid;
 	outTime.mFlags = kAudioTimeStampSampleTimeValid;
-	mOutputDevice->TranslateTime(inTime, outTime);
+	m_pOutputDevice->TranslateTime(inTime, outTime);
 	return int64_t(outTime.mSampleTime);
 #else
 	AudioTimeStamp time;
 	
-	mOutputDevice->GetCurrentTime( time );
+	m_pOutputDevice->GetCurrentTime( time );
 	return int64_t( time.mSampleTime );
 #endif
 }
@@ -204,7 +204,7 @@ OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
 	++g_iLastMixTimePos;
 	wrap( g_iLastMixTimePos, NUM_MIX_TIMES );
 		
-	AudioConverterConvertBuffer( This->mConverter, dataPackets * kBytesPerPacket,
+	AudioConverterConvertBuffer( This->m_Converter, dataPackets * kBytesPerPacket,
 								 buffer, &buf.mDataByteSize, buf.mData );
 		
 	g_fLastIOProcTime = tm.GetDeltaTime();
