@@ -1004,7 +1004,7 @@ void StepManiaLanServer::BroadcastInfo()
 	Binfo.Write1( 141 );	//Code 13 + 128
 	Binfo.WriteNT( servername );
 	Binfo.Write2( 8765 );
-	Binfo.Write2( Client.size() );
+	Binfo.Write2( (uint16_t) Client.size() );
 	
 	broadcast.SendPack( (char*)&Binfo.Data, Binfo.Position );
 }
