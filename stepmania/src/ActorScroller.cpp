@@ -38,12 +38,11 @@ ActorScroller::ActorScroller()
 }
 
 void ActorScroller::Load2(
-	float fSecondsPerItem,
 	float fNumItemsToDraw, 
 	float fItemHeight, 
 	bool bLoop )
 {
-	Load3( fSecondsPerItem, fNumItemsToDraw,
+	Load3( 0, fNumItemsToDraw,
 		ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight), 1, bLoop );
 }
 

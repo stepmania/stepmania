@@ -14,7 +14,6 @@ public:
 	ActorScroller();
 
 	void Load2(
-		float fSecondsPerItem,
 		float fNumItemsToDraw, 
 		float fItemHeight, 
 		bool bLoop );

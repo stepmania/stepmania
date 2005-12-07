@@ -78,10 +78,10 @@ void CourseContentsList::SetFromGameState()
 	bool bLoop = pMasterTrail->m_vEntries.size() > uNumEntriesToShow;
 
 	this->Load2( 
-		0.7f,
 		(float)MAX_VISIBLE_ITEMS,
 		m_vpDisplay[0]->GetUnzoomedHeight(),
 		bLoop );
+	this->SetSecondsPerItem( 0.7f );
 	this->EnableMask( m_vpDisplay[0]->GetUnzoomedWidth(), m_vpDisplay[0]->GetUnzoomedHeight() );
 	this->SetSecondsPauseBetweenItems( 0.7f );
 	this->ScrollThroughAllItems();
