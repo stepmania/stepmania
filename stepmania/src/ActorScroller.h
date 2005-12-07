@@ -13,14 +13,11 @@ class ActorScroller : public ActorFrame
 public:
 	ActorScroller();
 
+	void SetTransformFromExpression( const CString &sTransformFunction );
+	void SetTransformFromHeight( float fItemHeight );
+
 	void Load2(
 		float fNumItemsToDraw, 
-		float fItemHeight, 
-		bool bLoop );
-
-	void Load3(
-		float fNumItemsToDraw, 
-		const CString &sTransformFunction,
 		bool bLoop );
 
 	void EnableMask( float fWidth, float fHeight );

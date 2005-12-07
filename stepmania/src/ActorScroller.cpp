@@ -39,23 +39,22 @@ ActorScroller::ActorScroller()
 
 void ActorScroller::Load2(
 	float fNumItemsToDraw, 
-	float fItemHeight, 
-	bool bLoop )
-{
-	Load3( fNumItemsToDraw,
-		ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight), bLoop );
-}
-
-void ActorScroller::Load3(
-	float fNumItemsToDraw, 
-	const CString &sTransformFunction,
 	bool bLoop
 	)
 {
 	m_fNumItemsToDraw = fNumItemsToDraw;
-	m_exprTransformFunction.SetFromExpression( sTransformFunction );
 	m_bLoop = bLoop;
 	m_iNumItems = m_SubActors.size();
+}
+
+void ActorScroller::SetTransformFromExpression( const CString &sTransformFunction )
+{
+	m_exprTransformFunction.SetFromExpression( sTransformFunction );
+}
+
+void ActorScroller::SetTransformFromHeight( float fItemHeight )
+{
+	SetTransformFromExpression( ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight) );
 }
 
 void ActorScroller::EnableMask( float fWidth, float fHeight )
@@ -113,10 +112,10 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 	bool bUseMask = false;
 	pNode->GetAttrValue( "UseMask", bUseMask );
 
-	Load3( 
+	Load2( 
 		fNumItemsToDraw,
-		sTransformFunction,
 		false );
+	ActorScroller::SetTransformFromExpression( sTransformFunction );
 	ActorScroller::SetSecondsPerItem( fSecondsPerItem );
 	ActorScroller::SetNumSubdivisions( iSubdivisions );
 

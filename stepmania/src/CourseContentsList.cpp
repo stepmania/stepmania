@@ -79,8 +79,8 @@ void CourseContentsList::SetFromGameState()
 
 	this->Load2( 
 		(float)MAX_VISIBLE_ITEMS,
-		m_vpDisplay[0]->GetUnzoomedHeight(),
 		bLoop );
+	this->SetTransformFromHeight( m_vpDisplay[0]->GetUnzoomedHeight() );
 	this->SetSecondsPerItem( 0.7f );
 	this->EnableMask( m_vpDisplay[0]->GetUnzoomedWidth(), m_vpDisplay[0]->GetUnzoomedHeight() );
 	this->SetSecondsPauseBetweenItems( 0.7f );

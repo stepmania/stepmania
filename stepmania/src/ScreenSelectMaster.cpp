@@ -128,10 +128,10 @@ void ScreenSelectMaster::Init()
 	{
 		FOREACH( PlayerNumber, vpns, p )
 		{
-			m_Scroller[*p].Load3(
+			m_Scroller[*p].Load2(
 				SCROLLER_NUM_ITEMS_TO_DRAW,
-				SCROLLER_TRANSFORM,
 				LOOP_SCROLLER );
+			m_Scroller[*p].SetTransformFromExpression( SCROLLER_TRANSFORM );
 			m_Scroller[*p].SetSecondsPerItem( SCROLLER_SECONDS_PER_ITEM );
 			m_Scroller[*p].SetNumSubdivisions( SCROLLER_SUBDIVISIONS );
 			m_Scroller[*p].SetName( "Scroller"+PLAYER_APPEND_NO_SPACE(*p) );
