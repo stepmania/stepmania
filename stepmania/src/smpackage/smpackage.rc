@@ -342,14 +342,14 @@ VS_VERSION_INFO VERSIONINFO
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "040904B0"
+        BLOCK "040904b0"
         BEGIN
-            VALUE "FileDescription", "smpackage MFC Application"
+            VALUE "FileDescription", "StepMania Tools"
             VALUE "FileVersion", "1, 0, 0, 1"
             VALUE "InternalName", "smpackage"
-            VALUE "LegalCopyright", "Copyright (C) 2002"
-            VALUE "OriginalFilename", "smpackage.EXE"
-            VALUE "ProductName", "smpackage Application"
+            VALUE "LegalCopyright", "Copyright (C) StepMania team"
+            VALUE "OriginalFilename", "tools.exe"
+            VALUE "ProductName", "StepMania Tools"
             VALUE "ProductVersion", "1, 0, 0, 1"
         END
     END
