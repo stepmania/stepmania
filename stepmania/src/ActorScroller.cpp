@@ -281,6 +281,8 @@ public:
 	LunaActorScroller() { LUA->Register( Register ); }
 
 	static int PositionItems( T* p, lua_State *L )	{ p->PositionItems(); return 0; }
+	static int SetTransformFromExpression( T* p, lua_State *L )	{ p->SetTransformFromExpression(SArg(1)); return 0; }
+	static int SetTransformFromHeight( T* p, lua_State *L )	{ p->SetTransformFromHeight(FArg(1)); return 0; }
 	static int SetCurrentAndDestinationItem( T* p, lua_State *L )	{ p->SetCurrentAndDestinationItem( FArg(1) ); return 0; }
 	static int setsecondsperitem( T* p, lua_State *L )	{ p->SetSecondsPerItem(FArg(1)); return 0; }
 	static int setnumsubdivisions( T* p, lua_State *L )	{ p->SetNumSubdivisions(IArg(1)); return 0; }
@@ -291,6 +293,8 @@ public:
 	static void Register(lua_State *L) 
 	{
 		ADD_METHOD( PositionItems );
+		ADD_METHOD( SetTransformFromExpression );
+		ADD_METHOD( SetTransformFromHeight );
 		ADD_METHOD( SetCurrentAndDestinationItem );
 		ADD_METHOD( setsecondsperitem );
 		ADD_METHOD( setnumsubdivisions );
