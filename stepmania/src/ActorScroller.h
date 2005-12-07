@@ -19,7 +19,6 @@ public:
 		bool bLoop );
 
 	void Load3(
-		float fSecondsPerItem, 
 		float fNumItemsToDraw, 
 		const CString &sTransformFunction,
 		int iSubdivisions,

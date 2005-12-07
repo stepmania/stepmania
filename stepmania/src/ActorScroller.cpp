@@ -42,19 +42,17 @@ void ActorScroller::Load2(
 	float fItemHeight, 
 	bool bLoop )
 {
-	Load3( 0, fNumItemsToDraw,
+	Load3( fNumItemsToDraw,
 		ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight), 1, bLoop );
 }
 
 void ActorScroller::Load3(
-	float fSecondsPerItem, 
 	float fNumItemsToDraw, 
 	const CString &sTransformFunction,
 	int iSubdivisions,
 	bool bLoop
 	)
 {
-	m_fSecondsPerItem = fSecondsPerItem;
 	m_fNumItemsToDraw = fNumItemsToDraw;
 	m_exprTransformFunction.SetFromExpression( sTransformFunction, iSubdivisions );
 	m_bLoop = bLoop;
@@ -102,7 +100,7 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 		Dialog::OK( sError ); \
 	}
 
-	float fSecondsPerItem = 1;
+	float fSecondsPerItem = 0;
 	float fNumItemsToDraw = 0;
 	CString sTransformFunction;
 	int iSubdivisions = 1;
@@ -117,11 +115,11 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 	pNode->GetAttrValue( "UseMask", bUseMask );
 
 	Load3( 
-		fSecondsPerItem,
 		fNumItemsToDraw,
 		sTransformFunction,
 		iSubdivisions,
 		false );
+	ActorScroller::SetSecondsPerItem( fSecondsPerItem );
 
 	if( bUseMask )
 		EnableMask( 10, 10 ); // XXX
