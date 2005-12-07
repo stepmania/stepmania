@@ -6,6 +6,7 @@
 #include "ScreenWithMenuElements.h"
 #include "BitmapText.h"
 #include "InputMapper.h"
+#include "ActorScroller.h"
 
 enum { NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3 };
 
@@ -41,6 +42,7 @@ private:
 	vector<KeyToMap> m_KeysToMap;
 
 	ActorFrame	m_Line[MAX_GAME_BUTTONS];
+	ActorScroller m_LineScroller;
 };
 
 #endif

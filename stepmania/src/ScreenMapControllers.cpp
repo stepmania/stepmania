@@ -26,10 +26,6 @@ static const float g_fSecondsToWaitForInput = 0.05f;
 // reserve the 3rd slot for hard-coded keys
 static const int NUM_CHANGABLE_SLOTS = NUM_SHOWN_GAME_TO_DEVICE_SLOTS-1;
 
-
-static const float LINE_START_Y	=	64;
-static const float LINE_GAP_Y		=	28;
-
 REGISTER_SCREEN_CLASS( ScreenMapControllers );
 ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
@@ -96,9 +92,15 @@ void ScreenMapControllers::Init()
 			}
 		}
 		m_Line[b].DeleteChildrenWhenDone();
-		m_Line[b].SetY( LINE_START_Y + b*LINE_GAP_Y );
-		this->AddChild( &m_Line[b] );
+		m_Line[b].SetName( "Line" );
+		ActorUtil::LoadAllCommands( m_Line[b], m_sName );
+		m_LineScroller.AddChild( &m_Line[b] );
 	}	
+
+	m_LineScroller.SetName( "LineScroller" );
+	ActorUtil::LoadAllCommands( m_LineScroller, m_sName );
+	m_LineScroller.Load2( (float) m_KeysToMap.size()*2, false );
+	this->AddChild( &m_LineScroller );
 }
 
 void ScreenMapControllers::BeginScreen()
@@ -110,10 +112,8 @@ void ScreenMapControllers::BeginScreen()
 	ScreenWithMenuElements::BeginScreen();
 
 	for( unsigned b=0; b<m_KeysToMap.size(); b++ )
-	{
-		m_Line[b].PlayCommand( "On" );
 		m_Line[b].RunCommands( (b%2)? ODD_LINE_IN : EVEN_LINE_IN );
-	}
+	m_LineScroller.PlayCommand( "On" );
 	m_WaitingForPress.SetZero();
 
 	Refresh();
@@ -324,6 +324,8 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 
 void ScreenMapControllers::TweenOffScreen()
 {
+	ScreenWithMenuElements::TweenOffScreen();
+
 	for( unsigned b=0; b<m_KeysToMap.size(); b++ )
 		m_Line[b].RunCommands( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );
 }
@@ -359,10 +361,12 @@ void ScreenMapControllers::Refresh()
 			}
 		}
 	}
+
+	m_LineScroller.SetDestinationItem( (float) m_iCurButton );
 }
 
 /*
- * (c) 2001-2004 Chris Danford
+ * (c) 2001-2005 Chris Danford, Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
