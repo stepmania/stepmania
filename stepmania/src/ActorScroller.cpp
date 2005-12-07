@@ -43,19 +43,17 @@ void ActorScroller::Load2(
 	bool bLoop )
 {
 	Load3( fNumItemsToDraw,
-		ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight), 1, bLoop );
+		ssprintf("function(self,offset,itemIndex,numItems) self:y(%f*offset) end",fItemHeight), bLoop );
 }
 
 void ActorScroller::Load3(
 	float fNumItemsToDraw, 
 	const CString &sTransformFunction,
-	int iSubdivisions,
 	bool bLoop
 	)
 {
 	m_fNumItemsToDraw = fNumItemsToDraw;
 	m_exprTransformFunction.SetFromExpression( sTransformFunction );
-	m_exprTransformFunction.SetNumSubdivisions( iSubdivisions );
 	m_bLoop = bLoop;
 	m_iNumItems = m_SubActors.size();
 }
@@ -118,9 +116,9 @@ void ActorScroller::LoadFromNode( const CString &sDir, const XNode *pNode )
 	Load3( 
 		fNumItemsToDraw,
 		sTransformFunction,
-		iSubdivisions,
 		false );
 	ActorScroller::SetSecondsPerItem( fSecondsPerItem );
+	ActorScroller::SetNumSubdivisions( iSubdivisions );
 
 	if( bUseMask )
 		EnableMask( 10, 10 ); // XXX

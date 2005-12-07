@@ -21,7 +21,6 @@ public:
 	void Load3(
 		float fNumItemsToDraw, 
 		const CString &sTransformFunction,
-		int iSubdivisions,
 		bool bLoop );
 
 	void EnableMask( float fWidth, float fHeight );
