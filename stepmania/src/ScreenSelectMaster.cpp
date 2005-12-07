@@ -239,15 +239,6 @@ void ScreenSelectMaster::BeginScreen()
 			vpns.push_back( p );
 	}
 
-	// position scroller items so that the items will start from their resting 
-	// position when they execute their OnCommand.
-	if( SHOW_SCROLLER )
-	{
-		FOREACH( PlayerNumber, vpns, p )
-			m_Scroller[*p].PositionItems();
-	}
-
-
 	this->UpdateSelectableChoices();
 
 	ScreenSelect::BeginScreen();
@@ -255,7 +246,6 @@ void ScreenSelectMaster::BeginScreen()
 	m_fLockInputSecs = (bool)OVERRIDE_LOCK_INPUT_SECONDS ? LOCK_INPUT_SECONDS : this->GetTweenTimeLeft();
 	if( m_fLockInputSecs == 0 )
 		m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
-
 }
 
 void ScreenSelectMaster::Update( float fDelta )
