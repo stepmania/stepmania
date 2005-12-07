@@ -176,9 +176,20 @@ void LaunchGame()
 	STARTUPINFO	si;
 	ZeroMemory( &si, sizeof(si) );
 
+	CString sFile = PRODUCT_NAME ".exe";
+	if( !DoesFileExist(sFile) )
+	{
+		sFile = "Program\\" + sFile;
+		if( !DoesFileExist(sFile) )
+		{
+			MessageBox( NULL, "Error", "Could not find " PRODUCT_NAME ".exe", MB_ICONEXCLAMATION );
+			return;
+		}
+	}
+
 	CreateProcess(
-		NULL,		// pointer to name of executable module
-		PRODUCT_NAME ".exe",		// pointer to command line string
+		sFile,	// pointer to name of executable module
+		NULL,	// pointer to command line string
 		NULL,  // process security attributes
 		NULL,   // thread security attributes
 		false,  // handle inheritance flag
