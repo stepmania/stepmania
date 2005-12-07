@@ -239,7 +239,7 @@ void ScreenSelectMaster::BeginScreen()
 			vpns.push_back( p );
 	}
 
-	// position scroller items so that the items' will start from their resting 
+	// position scroller items so that the items will start from their resting 
 	// position when they execute their OnCommand.
 	if( SHOW_SCROLLER )
 	{
