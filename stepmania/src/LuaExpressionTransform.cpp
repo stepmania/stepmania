@@ -10,11 +10,9 @@ LuaExpressionTransform::LuaExpressionTransform()
 	m_iNumSubdivisions = 1;
 }
 
-void LuaExpressionTransform::SetFromExpression( const CString &sExpression, int iNumSubdivisions )
+void LuaExpressionTransform::SetFromExpression( const CString &sExpression )
 {
-	ASSERT( iNumSubdivisions > 0 );
 	m_pexprTransformFunction->SetFromExpression( sExpression );
-	m_iNumSubdivisions = iNumSubdivisions;
 }
 
 const Actor::TweenState &LuaExpressionTransform::GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const

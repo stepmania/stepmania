@@ -54,7 +54,8 @@ void ActorScroller::Load3(
 	)
 {
 	m_fNumItemsToDraw = fNumItemsToDraw;
-	m_exprTransformFunction.SetFromExpression( sTransformFunction, iSubdivisions );
+	m_exprTransformFunction.SetFromExpression( sTransformFunction );
+	m_exprTransformFunction.SetNumSubdivisions( iSubdivisions );
 	m_bLoop = bLoop;
 	m_iNumItems = m_SubActors.size();
 }

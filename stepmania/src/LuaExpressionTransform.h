@@ -12,7 +12,8 @@ class LuaExpressionTransform
 public:
 	LuaExpressionTransform();
 
-	void SetFromExpression( const CString &sExpression, int iNumSubdivisions );
+	void SetFromExpression( const CString &sExpression );
+	void SetNumSubdivisions( int iNumSubdivisions ) { ASSERT( iNumSubdivisions > 0 ); m_iNumSubdivisions = iNumSubdivisions; }
 
 	void PositionItem( Actor *pActor, float fPositionOffsetFromCenter, int iItemIndex, int iNumItems );
 	const Actor::TweenState &GetPosition( float fPositionOffsetFromCenter, int iItemIndex, int iNumItems ) const;

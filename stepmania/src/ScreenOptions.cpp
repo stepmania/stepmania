@@ -104,7 +104,7 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
 	m_InputMode = INPUTMODE_SHARE_CURSOR;
 
-	m_exprRowPositionTransformFunction			.SetFromExpression( THEME->GetMetric(m_sName,"RowPositionTransformFunction"), 1 );
+	m_exprRowPositionTransformFunction.SetFromExpression( THEME->GetMetric(m_sName,"RowPositionTransformFunction") );
 }
 
 
