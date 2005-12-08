@@ -76,7 +76,7 @@ bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
 			"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\Class\\Display":
 			"HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Class\\{4D36E968-E325-11CE-BFC1-08002BE10318}";
 
-		GetRegSubKeys( sTopKey, lst, ".*", false );
+		RegistryAccess::GetRegSubKeys( sTopKey, lst, ".*", false );
 
 		for( int i=lst.size()-1; i >= 0; --i )
 		{
@@ -101,17 +101,17 @@ bool GetVideoDriverInfo( int iCardno, VideoDriverInfo &info )
 	{
 		const CString sKey = lst[iCardno];
 
-		if( !GetRegValue( sKey, "DriverDesc", info.sDescription ) )
+		if( !RegistryAccess::GetRegValue( sKey, "DriverDesc", info.sDescription ) )
 		{
 			/* Remove this one from the list and ignore it, */
 			lst.erase( lst.begin()+iCardno );
 			continue;
 		}
 
-		GetRegValue( sKey, "DriverDate", info.sDate );
-		GetRegValue( sKey, "MatchingDeviceId", info.sDeviceID );
-		GetRegValue( sKey, "ProviderName", info.sProvider );
-		GetRegValue( sKey, bIsWin9x? "Ver":"DriverVersion", info.sVersion );
+		RegistryAccess::GetRegValue( sKey, "DriverDate", info.sDate );
+		RegistryAccess::GetRegValue( sKey, "MatchingDeviceId", info.sDeviceID );
+		RegistryAccess::GetRegValue( sKey, "ProviderName", info.sProvider );
+		RegistryAccess::GetRegValue( sKey, bIsWin9x? "Ver":"DriverVersion", info.sVersion );
 
 		return true;
 	}

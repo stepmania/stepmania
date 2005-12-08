@@ -91,24 +91,24 @@ static void GetDriveDebugInfo9x()
 	 *    DeviceDesc        "GENERIC IDE  DISK TYPE01"
 	 */
 	vector<CString> Drives;
-	if( !GetRegSubKeys( "HKEY_LOCAL_MACHINE\\Enum\\ESDI", Drives ) )
+	if( !RegistryAccess::GetRegSubKeys( "HKEY_LOCAL_MACHINE\\Enum\\ESDI", Drives ) )
 		return;
 
 	for( unsigned drive = 0; drive < Drives.size(); ++drive )
 	{
 		vector<CString> IDs;
-		if( !GetRegSubKeys( Drives[drive], IDs ) )
+		if( !RegistryAccess::GetRegSubKeys( Drives[drive], IDs ) )
 			continue;
 
 		for( unsigned id = 0; id < IDs.size(); ++id )
 		{
 			CString DeviceDesc;
 
-			GetRegValue( IDs[id], "DeviceDesc", DeviceDesc );
+			RegistryAccess::GetRegValue( IDs[id], "DeviceDesc", DeviceDesc );
 			TrimRight( DeviceDesc );
 
 			int DMACurrentlyUsed = -1;
-			GetRegValue( IDs[id], "DMACurrentlyUsed", DMACurrentlyUsed );
+			RegistryAccess::GetRegValue( IDs[id], "DMACurrentlyUsed", DMACurrentlyUsed );
 
 			LOG->Info( "Drive: \"%s\" DMA: %s",
 				DeviceDesc.c_str(), DMACurrentlyUsed? "yes":"NO" );
@@ -130,37 +130,37 @@ static void GetDriveDebugInfoNT()
 	 *			 Type        "DiskPeripheral"
 	 */
 	vector<CString> Ports;
-	if( !GetRegSubKeys( "HKEY_LOCAL_MACHINE\\HARDWARE\\DEVICEMAP\\Scsi", Ports ) )
+	if( !RegistryAccess::GetRegSubKeys( "HKEY_LOCAL_MACHINE\\HARDWARE\\DEVICEMAP\\Scsi", Ports ) )
 		return;
 
 	for( unsigned i = 0; i < Ports.size(); ++i )
 	{
 		int DMAEnabled = -1;
-		GetRegValue( Ports[i], "DMAEnabled", DMAEnabled );
+		RegistryAccess::GetRegValue( Ports[i], "DMAEnabled", DMAEnabled );
 
 		CString Driver;
-		GetRegValue( Ports[i], "Driver", Driver );
+		RegistryAccess::GetRegValue( Ports[i], "Driver", Driver );
 
 		vector<CString> Busses;
-		if( !GetRegSubKeys( Ports[i], Busses, "Scsi Bus .*" ) )
+		if( !RegistryAccess::GetRegSubKeys( Ports[i], Busses, "Scsi Bus .*" ) )
 			continue;
 
 		for( unsigned bus = 0; bus < Busses.size(); ++bus )
 		{
 			vector<CString> TargetIDs;
-			if( !GetRegSubKeys( Busses[bus], TargetIDs, "Target Id .*" ) )
+			if( !RegistryAccess::GetRegSubKeys( Busses[bus], TargetIDs, "Target Id .*" ) )
 				continue;
 
 			for( unsigned tid = 0; tid < TargetIDs.size(); ++tid )
 			{
 				vector<CString> LUIDs;
-				if( !GetRegSubKeys( TargetIDs[tid], LUIDs, "Logical Unit Id .*" ) )
+				if( !RegistryAccess::GetRegSubKeys( TargetIDs[tid], LUIDs, "Logical Unit Id .*" ) )
 					continue;
 
 				for( unsigned luid = 0; luid < LUIDs.size(); ++luid )
 				{
 					CString Identifier;
-					GetRegValue( LUIDs[luid], "Identifier", Identifier );
+					RegistryAccess::GetRegValue( LUIDs[luid], "Identifier", Identifier );
 					TrimRight( Identifier );
 					LOG->Info( "Drive: \"%s\" Driver: %s DMA: %s",
 						Identifier.c_str(), Driver.c_str(), DMAEnabled == 1? "yes":DMAEnabled == -1? "N/A":"NO" );

@@ -52,7 +52,7 @@ static HKEY OpenRegKey( const CString &sKey )
 	return hRetKey;
 }
 
-bool GetRegValue( const CString &sKey, const CString &sName, CString &sVal )
+bool RegistryAccess::GetRegValue( const CString &sKey, const CString &sName, CString &sVal )
 {
 	HKEY hKey = OpenRegKey( sKey );
 	if( hKey == NULL )
@@ -78,7 +78,7 @@ bool GetRegValue( const CString &sKey, const CString &sName, CString &sVal )
 	return true;
 }
 
-bool GetRegValue( const CString &sKey, CString sName, int &iVal )
+bool RegistryAccess::GetRegValue( const CString &sKey, CString sName, int &iVal )
 {
 	HKEY hKey = OpenRegKey( sKey );
 	if( hKey == NULL )
@@ -99,7 +99,7 @@ bool GetRegValue( const CString &sKey, CString sName, int &iVal )
 	return true;
 }
 
-bool GetRegSubKeys( const CString &sKey, vector<CString> &lst, const CString &regex, bool bReturnPathToo )
+bool RegistryAccess::GetRegSubKeys( const CString &sKey, vector<CString> &lst, const CString &regex, bool bReturnPathToo )
 {
 	HKEY hKey = OpenRegKey( sKey );
 	if( hKey == NULL )
