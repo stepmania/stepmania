@@ -16,7 +16,7 @@ AM_CXXFLAGS += -finline-limit=300
 AM_CXXFLAGS += $(XCFLAGS)
 
 LIBS += $(LUA_LIBS)
-LIBS += -lpthread
+LIBS += -lpthread -lrt
 
 $(srcdir)/libresample/libresample.a:
 	cd $(srcdir)/libresample && autoconf && sh ./configure && make
