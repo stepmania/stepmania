@@ -16,11 +16,6 @@
 #define INVALID_BUTTON THEME->GetMetric( m_sName, "InvalidButton" )
 #define MAPPED_TO_X(gc,slot) THEME->GetMetricF( m_sName, ssprintf("MappedToP%iS%iX", gc+1, slot+1) )
 
-static const ThemeMetric<apActorCommands> EVEN_LINE_IN	("ScreenMapControllers","EvenLineIn");
-static const ThemeMetric<apActorCommands> EVEN_LINE_OUT	("ScreenMapControllers","EvenLineOut");
-static const ThemeMetric<apActorCommands> ODD_LINE_IN		("ScreenMapControllers","OddLineIn");
-static const ThemeMetric<apActorCommands> ODD_LINE_OUT	("ScreenMapControllers","OddLineOut");
-
 static const float g_fSecondsToWaitForInput = 0.05f;
 
 // reserve the 3rd slot for hard-coded keys
@@ -111,9 +106,6 @@ void ScreenMapControllers::BeginScreen()
 
 	ScreenWithMenuElements::BeginScreen();
 
-	for( unsigned b=0; b<m_KeysToMap.size(); b++ )
-		m_Line[b].RunCommands( (b%2)? ODD_LINE_IN : EVEN_LINE_IN );
-	m_LineScroller.PlayCommand( "On" );
 	m_WaitingForPress.SetZero();
 
 	Refresh();
@@ -326,8 +318,7 @@ void ScreenMapControllers::TweenOffScreen()
 {
 	ScreenWithMenuElements::TweenOffScreen();
 
-	for( unsigned b=0; b<m_KeysToMap.size(); b++ )
-		m_Line[b].RunCommands( (b%2)? ODD_LINE_OUT:EVEN_LINE_OUT );
+	OFF_COMMAND( m_LineScroller );
 }
 
 void ScreenMapControllers::Refresh()

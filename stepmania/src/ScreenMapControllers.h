@@ -23,6 +23,7 @@ public:
 	virtual void TweenOffScreen();
 
 private:
+	virtual bool GenericTweenOn() const { return true; }
 	void Refresh();
 	
 	int m_iCurController;
