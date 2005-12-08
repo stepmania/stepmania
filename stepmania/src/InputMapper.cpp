@@ -337,19 +337,36 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		}
 	},
 	{
+		"para",
+		"ParaParaParadise Controller",
+		"ParaParaParadise Controller",
+		{
+			{ 0, JOY_BUTTON_5,	PARA_BUTTON_LEFT,		false },
+			{ 0, JOY_BUTTON_4,	PARA_BUTTON_UPLEFT,		false },
+			{ 0, JOY_BUTTON_3,	PARA_BUTTON_UP,			false },
+			{ 0, JOY_BUTTON_2,	PARA_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_BUTTON_1,	PARA_BUTTON_RIGHT,		false },
+			{ 0, JOY_BUTTON_10,	PARA_BUTTON_START,		false },
+			{ 0, JOY_BUTTON_11,	PARA_BUTTON_BACK,		false },
+			{ 0, JOY_BUTTON_12,	PARA_BUTTON_MENULEFT,	false },
+			{ 0, JOY_BUTTON_9,	PARA_BUTTON_MENURIGHT,	false },
+			END_MARKER
+		}
+	},
+	{
 		"techno",
 		"Dance ", //Notice the extra space at end
 		"LevelSix USB Pad (DDR638)",	// "DDR638" is the model number of the pad
 		{
-			{ 0, JOY_BUTTON_1,			TECHNO_BUTTON_UP,		false },
-			{ 0, JOY_BUTTON_2,			TECHNO_BUTTON_DOWN,		false },
-			{ 0, JOY_BUTTON_3,			TECHNO_BUTTON_LEFT,		false },
-			{ 0, JOY_BUTTON_4,			TECHNO_BUTTON_RIGHT,	false },
-			{ 0, JOY_BUTTON_5,			TECHNO_BUTTON_DOWNRIGHT,false },
-			{ 0, JOY_BUTTON_6,			TECHNO_BUTTON_DOWNLEFT,	false },
-			{ 0, JOY_BUTTON_7,			TECHNO_BUTTON_UPRIGHT,	false },
-			{ 0, JOY_BUTTON_8,			TECHNO_BUTTON_UPLEFT,	false },
-			{ 0, JOY_BUTTON_9,			TECHNO_BUTTON_BACK,		false },
+			{ 0, JOY_BUTTON_1,		TECHNO_BUTTON_UP,		false },
+			{ 0, JOY_BUTTON_2,		TECHNO_BUTTON_DOWN,		false },
+			{ 0, JOY_BUTTON_3,		TECHNO_BUTTON_LEFT,		false },
+			{ 0, JOY_BUTTON_4,		TECHNO_BUTTON_RIGHT,	false },
+			{ 0, JOY_BUTTON_5,		TECHNO_BUTTON_DOWNRIGHT,false },
+			{ 0, JOY_BUTTON_6,		TECHNO_BUTTON_DOWNLEFT,	false },
+			{ 0, JOY_BUTTON_7,		TECHNO_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_BUTTON_8,		TECHNO_BUTTON_UPLEFT,	false },
+			{ 0, JOY_BUTTON_9,		TECHNO_BUTTON_BACK,		false },
 			{ 0, JOY_BUTTON_10,		TECHNO_BUTTON_START,	false },
 			END_MARKER
 		}
@@ -481,10 +498,12 @@ void InputMapper::SaveMappingsToDisk()
 			CString sNameString = GameI.toString( pGame );
 			
 			vector<CString> asValues;
-			for( int button = 0; button < NUM_GAME_TO_DEVICE_SLOTS; ++button )
-				asValues.push_back( m_GItoDI[i][j][button].toString() );
+			for( int slot = 0; slot < NUM_GAME_TO_DEVICE_SLOTS; ++slot )
+				asValues.push_back( m_GItoDI[i][j][slot].toString() );
+		
 			while( asValues.size() && asValues.back() == "" )
 				asValues.erase( asValues.begin()+asValues.size()-1 );
+			
 			CString sValueString = join( ",", asValues );
 
 			ini.SetValue( pGame->m_szName, sNameString, sValueString );
