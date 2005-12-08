@@ -235,8 +235,12 @@ try_again:
 		RageException::Throw( message ); 
 	}
 
+	int iLevel = 0;
 	while( GetExtension(sPath) == "redir" )
 	{
+		iLevel++;
+		ASSERT_M( iLevel < 100, ssprintf("Infinite recursion while looking up %s - %s", sButtonName.c_str(), sElement.c_str()) );
+			
 		CString sNewFileName;
 		GetFileContents( sPath, sNewFileName, true );
 		CString sRealPath;
