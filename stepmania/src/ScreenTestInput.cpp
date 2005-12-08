@@ -34,7 +34,7 @@ void ScreenTestInput::Init()
 		vector<CString> vs;
 		INPUTMAN->GetDevicesAndDescriptions( vDevices, vDescriptions );
 		ASSERT( vDevices.size() == vDescriptions.size() );
-		for( int i=0; i<vDevices.size(); ++i )
+		for( unsigned i=0; i<vDevices.size(); ++i )
 		{
 			const CString sDescription = vDescriptions[i];
 			InputDevice device = vDevices[i];
