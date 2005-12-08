@@ -7,7 +7,6 @@
 
 const int NUM_JOYSTICKS = 16;
 const int NUM_PUMPS = 2;
-const int NUM_PARAS = 2;
 
 enum InputDevice
 {
@@ -31,7 +30,6 @@ enum InputDevice
 	DEVICE_PUMP1,
 	DEVICE_PUMP2,
 	DEVICE_MIDI,
-	DEVICE_PARA1,
 	NUM_INPUT_DEVICES,	// leave this at the end
 	DEVICE_NONE			// means this is NULL
 };
@@ -292,24 +290,6 @@ const CString& PumpPadButtonToString( PumpPadButton i );
 PumpPadButton StringToPumpPadButton( const CString& s );
 
 #define NUM_MIDI_CHANNELS		100
-
-enum ParaPadButton
-{
-	PARA_L,
-	PARA_UL,
-	PARA_U,
-	PARA_UR,
-	PARA_R,
-	PARA_SELECT,
-	PARA_START,
-	PARA_MENU_LEFT,
-	PARA_MENU_RIGHT,
-
-	NUM_PARA_PAD_BUTTONS,
-	PARA_PAD_BUTTON_INVALID
-};
-const CString& ParaPadButtonToString( ParaPadButton i );
-ParaPadButton StringToParaPadButton( const CString& s );
 
 
 typedef int DeviceButton;

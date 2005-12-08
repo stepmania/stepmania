@@ -133,7 +133,6 @@ static const CString InputDeviceNames[] = {
 	"Pump1",
 	"Pump2",
 	"Midi",
-	"Para1",
 };
 XToString( InputDevice, NUM_INPUT_DEVICES );
 StringToX( InputDevice );
@@ -218,21 +217,6 @@ XToString( PumpPadButton, NUM_PUMP_PAD_BUTTONS );
 StringToX( PumpPadButton );
 
 
-static const CString ParaPadButtonNames[] = {
-	"L",
-	"UL",
-	"U",
-	"UR",
-	"R",
-	"SELECT",
-	"START",
-	"MENU_LEFT",
-	"MENU_RIGHT",
-};
-XToString( ParaPadButton, NUM_PARA_PAD_BUTTONS );
-StringToX( ParaPadButton );
-
-
 CString MidiButtonToString( DeviceButton i )
 {
 	return ssprintf( "Midi %d", i );
@@ -269,7 +253,6 @@ CString DeviceButtonToString( InputDevice device, DeviceButton i )
 	case DEVICE_PUMP1:
 	case DEVICE_PUMP2:		return PumpPadButtonToString( (PumpPadButton)i );
 	case DEVICE_MIDI:		return MidiButtonToString( i );
-	case DEVICE_PARA1:		return ParaPadButtonToString( (ParaPadButton)i );
 	case DEVICE_NONE:		return CString();
 	default:	ASSERT(0);	return CString();
 	}
@@ -299,7 +282,6 @@ DeviceButton StringToDeviceButton( InputDevice device, const CString& s )
 	case DEVICE_PUMP1:
 	case DEVICE_PUMP2:		return (DeviceButton)StringToPumpPadButton( s );
 	case DEVICE_MIDI:		return (DeviceButton)StringToMidiButton( s );
-	case DEVICE_PARA1:		return (DeviceButton)StringToParaPadButton( s );
 	case DEVICE_NONE:		return DEVICE_BUTTON_INVALID;
 	default:	ASSERT(0);	return DEVICE_BUTTON_INVALID;
 	}
@@ -329,7 +311,6 @@ int GetNumDeviceButtons( InputDevice device )
 	case DEVICE_PUMP1:
 	case DEVICE_PUMP2:	return NUM_PUMP_PAD_BUTTONS;
 	case DEVICE_MIDI:	return NUM_MIDI_CHANNELS;
-	case DEVICE_PARA1:	return NUM_PARA_PAD_BUTTONS;
 	default:	ASSERT_M(0,ssprintf("%d",device));	return 0;
 	}
 };
