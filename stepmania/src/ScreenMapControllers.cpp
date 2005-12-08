@@ -85,7 +85,7 @@ void ScreenMapControllers::Init()
 			{
 				pKey->m_textMappedTo[p][s] = new BitmapText;
 				pKey->m_textMappedTo[p][s]->SetName( "MappedTo" );
-				pKey->m_textMappedTo[p][s]->LoadFromFont( THEME->GetPathF("ScreenMapControllers","entry") );
+				pKey->m_textMappedTo[p][s]->LoadFromFont( THEME->GetPathF(m_sName,"entry") );
 				pKey->m_textMappedTo[p][s]->SetX( MAPPED_TO_X(p,s) );
 				ActorUtil::LoadAllCommands( *pKey->m_textMappedTo[p][s], m_sName );
 				m_Line[b].AddChild( pKey->m_textMappedTo[p][s] );
