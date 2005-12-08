@@ -6,6 +6,7 @@
 #include "arch/Dialog/Dialog.h"
 #include "RageLog.h"
 #include "ActorUtil.h"
+#include "LuaBinding.h"
 
 /* Tricky: We need ActorFrames created in XML to auto delete their children.
  * We don't want classes that derive from ActorFrame to auto delete their 
@@ -45,6 +46,14 @@ void ActorScroller::Load2(
 	m_fNumItemsToDraw = fNumItemsToDraw;
 	m_bLoop = bLoop;
 	m_iNumItems = m_SubActors.size();
+
+	Lua *L = LUA->Get();
+	for( unsigned i = 0; i < m_SubActors.size(); ++i )
+	{
+		lua_pushnumber( L, i );
+		this->m_SubActors[i]->m_pLuaInstance->Set( L, "ItemIndex" );
+	}
+	LUA->Release( L );
 }
 
 void ActorScroller::SetTransformFromExpression( const CString &sTransformFunction )

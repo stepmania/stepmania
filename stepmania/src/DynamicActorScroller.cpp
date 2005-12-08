@@ -4,6 +4,7 @@
 #include "LuaManager.h"
 #include "ActorUtil.h"
 #include "RageUtil.h"
+#include "LuaBinding.h"
 
 Actor *DynamicActorScroller::Copy() const { return new DynamicActorScroller(*this); }
 
@@ -97,6 +98,13 @@ void DynamicActorScroller::ShiftSubActors( int iDist )
 		}
 		else if( iIndex < 0 || iIndex >= m_iNumItems || iItem < 0 || iItem >= m_iNumItems )
 			continue;
+
+		{
+			Lua *L = LUA->Get();
+			lua_pushnumber( L, i );
+			m_SubActors[iIndex]->m_pLuaInstance->Set( L, "ItemIndex" );
+			LUA->Release(L);
+		}
 
 		ConfigureActor( m_SubActors[iIndex], iItem );
 	}
