@@ -183,6 +183,58 @@ void ArchHooks_Unix::SetTime( tm newtime )
 	system( "hwclock --systohc" );
 }
 
+#inlcude "RageFileManager.h"
+
+void ArchHooks_Unix::MountInitialFilesystems( const CString &sDirOfExecutable )
+{
+#if defined(LINUX)
+	HOOKS->MountInitialFilesystems( sDirOfExecutable );
+	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
+	 * This is /rootfs, not /root, to avoid confusion with root's home directory. */
+	RageFileManager::Mount( "dir", "/", "/rootfs" );
+
+	/* Mount /proc, so Alsa9Buf::GetSoundCardDebugInfo() and others can access it.
+	 * (Deprecated; use rootfs.) */
+	RageFileManager::Mount( "dir", "/proc", "/proc" );
+	
+	/* We can almost do this, to have machine profiles be system-global to eg. share
+	 * scores.  It would need to handle permissions properly. */
+/*	RageFileManager::Mount( "dir", "/var/lib/games/stepmania", "/Save/Profiles" ); */
+	
+	// CString Home = getenv( "HOME" ) + "/" + PRODUCT_NAME;
+
+	/*
+	 * Next: path to write general mutable user data.  If the above path fails (eg.
+	 * wrong permissions, doesn't exist), machine memcard data will also go in here. 
+	 * XXX: It seems silly to have two ~ directories.  If we're going to create a
+	 * directory on our own, it seems like it should be a dot directory, but it
+	 * seems wrong to put lots of data (eg. music) in one.  Hmm. 
+	 */
+	/* XXX: create */
+/*	RageFileManager::Mount( "dir", Home + "." PRODUCT_NAME, "/Data" ); */
+
+	/* Next, search ~/StepMania.  This is where users can put music, themes, etc. */
+	/* RageFileManager::Mount( "dir", Home + PRODUCT_NAME, "/" ); */
+
+	/* Search for a directory with "Songs" in it.  Be careful: the CWD is likely to
+	 * be ~, and it's possible that some users will have a ~/Songs/ directory that
+	 * has nothing to do with us, so check the initial directory last. */
+	CString Root = "";
+	struct stat st;
+	if( Root == "" && !stat( sDirOfExecutable + "/Songs", &st ) && st.st_mode&S_IFDIR )
+		Root = sDirOfExecutable;
+	if( Root == "" && !stat( InitialWorkingDirectory + "/Songs", &st ) && st.st_mode&S_IFDIR )
+		Root = InitialWorkingDirectory;
+	if( Root == "" )
+		RageException::Throw( "Couldn't find \"Songs\"" );
+			
+	RageFileManager::Mount( "dir", Root, "/" );
+#else
+	/* Paths relative to the CWD: */
+	RageFileManager::Mount( "dir", ".", "/" );
+#endif
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.

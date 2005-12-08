@@ -10,6 +10,8 @@ public:
 
 	void SetTime( tm newtime );
 	int64_t GetMicrosecondsSinceStart();
+
+	void MountInitialFilesystems( const CString &sDirOfExecutable );
 };
 
 #ifdef ARCH_HOOKS

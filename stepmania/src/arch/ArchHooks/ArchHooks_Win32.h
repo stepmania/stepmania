@@ -23,6 +23,7 @@ public:
 	void BoostPriority();
 	void UnBoostPriority();
 	void SetupConcurrentRenderingThread();
+	void MountInitialFilesystems( const CString &sDirOfExecutable );
 
 private:
 	void CheckVideoDriver();

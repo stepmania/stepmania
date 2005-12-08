@@ -133,6 +133,13 @@ ArchHooks_Xbox::~ArchHooks_Xbox()
 	XLaunchNewImage( NULL, NULL );
 }
 
+#inlcude "RageFileManager.h"
+
+void ArchHooks_Xbox::MountInitialFilesystems( const CString &sDirOfExecutable )
+{
+	FILEMAN->Mount( "dir", "D:\\", "/" );
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.

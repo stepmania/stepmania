@@ -70,6 +70,11 @@ public:
 	 */
 	static int64_t GetMicrosecondsSinceStart( bool bAccurate );
 
+	/* 
+	 * Add file search paths, higher priority first. 
+	 */
+	virtual void MountInitialFilesystems( const CString &sDirOfExecutable ) = 0;
+
 private:
 	/* This are helpers for GetMicrosecondsSinceStart on systems with a timer
 	 * that may loop or move backwards. */

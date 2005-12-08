@@ -3,8 +3,12 @@
 #ifndef RAGE_FILE_MANAGER_H
 #define RAGE_FILE_MANAGER_H
 
-extern CString InitialWorkingDirectory;
-extern CString DirOfExecutable;
+namespace RageFileManagerUtil
+{
+	extern CString sInitialWorkingDirectory;
+	extern CString sDirOfExecutable;
+}
+
 class RageFileDriver;
 class RageFileBasic;
 
