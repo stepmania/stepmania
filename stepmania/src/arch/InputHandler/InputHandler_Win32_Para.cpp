@@ -7,114 +7,40 @@
 #include "RageInputDevice.h"
 #include "archutils/Win32/USB.h"
 
+// TODO: Abstract this windows-specific stuff into USBDevice.
+extern "C" {
+#include "archutils/Win32/ddk/setupapi.h"
+/* Quiet header warning: */
+#include "archutils/Win32/ddk/hidsdi.h"
+}
+
+static void InitHack( HANDLE h )
+{
+	UCHAR hack[] = {0, 1};
+
+	if( HidD_SetFeature(h, (PVOID) hack, 2) == TRUE )
+		LOG->Info( "Para controller powered on successfully" );
+	else
+		LOG->Warn( "Para controller power-on failed" );
+}
+
 InputHandler_Win32_Para::InputHandler_Win32_Para()
 {
-	shutdown = false;
-	const int para_usb_vid = 0x0507, para_usb_pid = 0x0409;
+	const int para_usb_vid = 0x0507;
+	const int para_usb_pid = 0x0011;
 
-	dev = new USBDevice;
+	USBDevice *dev = new USBDevice;
 
-	bool FoundOnePad = false;
-	if( dev->Open(para_usb_vid, para_usb_pid, sizeof(long), 0) )
+	if( dev->Open(para_usb_vid, para_usb_pid, sizeof(long), 0, InitHack) )
 	{
-		FoundOnePad = true;
-		LOG->Info("Found Para controller");
+		LOG->Info("Para controller initialized");
 	}
-
-	/* Don't start a thread if we have no pads. */
-	if( FoundOnePad && PREFSMAN->m_bThreadedInput )
-	{
-		InputThread.SetName("Para thread");
-		InputThread.Create( InputThread_Start, this );
-	}
-}
-
-InputHandler_Win32_Para::~InputHandler_Win32_Para()
-{
-	if( InputThread.IsCreated() )
-	{
-		shutdown = true;
-		LOG->Trace("Shutting down Para thread ...");
-		InputThread.Wait();
-		LOG->Trace("Para thread shut down.");
-	}
-
-	delete dev;
-}
-
-void InputHandler_Win32_Para::HandleInput( int devno, int event )
-{
-	static const int bits[NUM_PARA_PAD_BUTTONS] = {
-	/* sensors */	(1<<9), (1<<12), (1<<13), (1<<11), (1<<10),
-	/* buttons */	(1<<16),(1<<17), (1<<20), (1<<21),
-	};
-
-	InputDevice id = DEVICE_PARA1;
-
-	for (int butno = 0 ; butno < NUM_PARA_PAD_BUTTONS ; butno++)
-	{
-		DeviceInput di(id, butno);
-		
-		/* If we're in a thread, our timestamp is accurate. */
-		if( InputThread.IsCreated() )
-			di.ts.Touch();
-
-		ButtonPressed(di, !(event & bits[butno]));
-	}
+	SAFE_DELETE( dev );
 }
 
 void InputHandler_Win32_Para::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)
 {
-	if( dev->IsOpen() )
-	{
-		vDevicesOut.push_back( DEVICE_PARA1 );
-		vDescriptionsOut.push_back( "Para USB" );
-	}
-}
-
-int InputHandler_Win32_Para::InputThread_Start( void *p )
-{
-	((InputHandler_Win32_Para *) p)->InputThreadMain();
-	return 0;
-}
-
-void InputHandler_Win32_Para::InputThreadMain()
-{
-	if(!SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST))
-		LOG->Warn(werr_ssprintf(GetLastError(), "Failed to set Para thread priority"));
-
-	vector<WindowsFileIO *> sources;
-	if( dev->m_IO.IsOpen() )
-		sources.push_back( &dev->m_IO );
-
-	while(!shutdown)
-	{
-		CHECKPOINT;
-		int actual = 0, val = 0;
-		int ret = WindowsFileIO::read_several(sources, &val, actual, 0.100f);
-
-		CHECKPOINT;
-		if(ret <= 0) 
-			continue; /* no event */
-
-		HandleInput( actual, val );
-		InputHandler::UpdateTimer();
-	}
-	CHECKPOINT;
-}
-
-void InputHandler_Win32_Para::Update(float fDeltaTime)
-{
-	if( !InputThread.IsCreated() )
-	{
-		int ret = dev->GetPadEvent();
-
-		if(ret == -1) 
-			return;
-
-		HandleInput( 0, ret );
-		InputHandler::UpdateTimer();
-	}
+	// The device appears as a HID joystick
 }
 
 /*

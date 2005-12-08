@@ -47,8 +47,7 @@ static CString GetUSBDevicePath( int iNum )
     return sRet;
 }
 
-
-bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum )
+bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum, void (*pfnInit)(HANDLE) )
 {
     DWORD iIndex = 0;
 
@@ -67,15 +66,24 @@ bool USBDevice::Open( int iVID, int iPID, int iBlockSize, int iNum )
 			CloseHandle( h );
 			continue;
 		}
-		CloseHandle( h );
 
         if( (iVID != -1 && attr.VendorID != iVID) ||
             (iPID != -1 && attr.ProductID != iPID) )
+		{
+			CloseHandle( h );
 			continue; /* This isn't it. */
+		}
 
 		/* The VID and PID match. */
 		if( iNum-- > 0 )
+		{
+			CloseHandle( h );
 			continue;
+		}
+
+		if( pfnInit )
+			pfnInit( h );
+		CloseHandle(h);
 
 		m_IO.Open( path, iBlockSize );
         return true;

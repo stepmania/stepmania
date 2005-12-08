@@ -34,7 +34,7 @@ class USBDevice
 {
 public:
 	int GetPadEvent();
-	bool Open( int VID, int PID, int blocksize, int num );
+	bool Open( int iVID, int iPID, int iBlockSize, int iNum, void (*pfnInit)(HANDLE) );
 	bool IsOpen() const;
 
 	WindowsFileIO m_IO;
