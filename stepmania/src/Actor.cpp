@@ -800,10 +800,6 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 	if( rect_width < 0 )	SetRotationY( 180 );
 	if( rect_height < 0 )	SetRotationX( 180 );
 
-	// center of the rectangle
-	float rect_cx = rect.left + rect_width/2;
-	float rect_cy = rect.top  + rect_height/2;
-
 	// zoom fActor needed to scale the Actor to fill the rectangle
 	float fNewZoomX = fabsf(rect_width  / m_size.x);
 	float fNewZoomY = fabsf(rect_height / m_size.y);
@@ -819,7 +815,20 @@ void Actor::ScaleTo( const RectF &rect, StretchType st )
 		break;
 	}
 
-	SetXY( rect_cx, rect_cy );
+	switch( m_HorizAlign )
+	{
+	case align_left: SetX( rect.left ); break;
+	case align_center: SetX( rect.left + rect_width/2 ); break;
+	case align_right: SetX( rect.left + rect_width ); break;
+	}
+
+	switch( m_VertAlign )
+	{
+	case align_top: SetY( rect.top ); break;
+	case align_middle: SetY( rect.top + rect_height/2 ); break;
+	case align_bottom: SetY( rect.top + rect_height ); break;
+	}
+
 	SetZoom( fNewZoom );
 }
 
