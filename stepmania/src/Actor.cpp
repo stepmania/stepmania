@@ -227,9 +227,15 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 		{
 			m_sName = sValue;
 		}
+		
+		// TODO: Remove these
 		else if( sKeyName == "BaseRotationXDegrees" )	SetBaseRotationX( strtof( sValue, NULL ) );
 		else if( sKeyName == "BaseRotationYDegrees" )	SetBaseRotationY( strtof( sValue, NULL ) );
 		else if( sKeyName == "BaseRotationZDegrees" )	SetBaseRotationZ( strtof( sValue, NULL ) );
+		
+		else if( sKeyName == "BaseRotationX" )		SetBaseRotationX( strtof( sValue, NULL ) );
+		else if( sKeyName == "BaseRotationY" )		SetBaseRotationY( strtof( sValue, NULL ) );
+		else if( sKeyName == "BaseRotationZ" )		SetBaseRotationZ( strtof( sValue, NULL ) );
 		else if( sKeyName == "BaseZoomX" )			SetBaseZoomX( strtof( sValue, NULL ) );
 		else if( sKeyName == "BaseZoomY" )			SetBaseZoomY( strtof( sValue, NULL ) );
 		else if( sKeyName == "BaseZoomZ" )			SetBaseZoomZ( strtof( sValue, NULL ) );
