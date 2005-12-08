@@ -31,16 +31,18 @@ void ScreenTestInput::Init()
 	{
 		vector<InputDevice> vDevices;
 		vector<CString> vDescriptions;
+		vector<CString> vs;
 		INPUTMAN->GetDevicesAndDescriptions( vDevices, vDescriptions );
-		FOREACH( CString, vDescriptions, s )
+		ASSERT( vDevices.size() == vDescriptions.size() );
+		for( int i=0; i<vDevices.size(); ++i )
 		{
-			if( *s == "MonkeyKeyboard" )
-			{
-				vDescriptions.erase( s );
-				break;
-			}
+			const CString sDescription = vDescriptions[i];
+			InputDevice device = vDevices[i];
+			if( sDescription == "MonkeyKeyboard" )
+				continue;	// hide this
+			vs.push_back( ssprintf("%s (%s)", sDescription.c_str(), InputDeviceToString(device).c_str()) );
 		}
-		m_textDevices.SetText( join("\n",vDescriptions) );
+		m_textDevices.SetText( join("\n",vs) );
 	}
 	this->AddChild( &m_textDevices );
 
