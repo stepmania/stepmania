@@ -406,6 +406,46 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 	return ret;
 }
 
+#include "archutils/Win32/RegistryAccess.h"
+#include "ProductInfo.h"
+#include "RageFileManager.h"
+#include <shlobj.h>
+
+void ArchHooks_Win32::MountInitialFilesystems( const CString &sDirOfExecutable )
+{
+	/* All Windows data goes in the directory one level above the executable. */
+	CHECKPOINT_M( ssprintf( "DOE \"%s\"", sDirOfExecutable.c_str()) );
+	CStringArray parts;
+	split( sDirOfExecutable, "/", parts );
+	CHECKPOINT_M( ssprintf( "... %i parts", parts.size()) );
+	ASSERT_M( parts.size() > 1, ssprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );
+	CString Dir = join( "/", parts.begin(), parts.end()-1 );
+	FILEMAN->Mount( "dir", Dir, "/" );
+
+	CString sMyDocumentsDir;
+	{
+		bool bSuccess = RegistryAccess::GetRegValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders", "Personal", sMyDocumentsDir );
+		ASSERT( bSuccess );
+		sMyDocumentsDir.Replace( '\\', '/' );
+		sMyDocumentsDir += "/";
+	}
+
+	CString sProgramFilesDir;
+	{
+		bool bSuccess = RegistryAccess::GetRegValue( "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion", "ProgramFilesDir", sProgramFilesDir );
+		ASSERT( bSuccess );
+		sProgramFilesDir.Replace( '\\', '/' );
+		sProgramFilesDir += "/";
+	}
+
+	bool bInstalledToProgramFiles = BeginsWith( sDirOfExecutable, sProgramFilesDir );
+	if( bInstalledToProgramFiles )
+	{
+		CString sPersonalDir = sMyDocumentsDir + PRODUCT_ID + "/";
+		FILEMAN->Mount( "dir", sPersonalDir + "Save", "/Save" );
+	}
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard, Chris Danford
  * All rights reserved.
