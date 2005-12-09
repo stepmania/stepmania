@@ -1301,6 +1301,26 @@ int ScreenOptions::GetCurrentRow( PlayerNumber pn ) const
 	return r;
 }
 
+// lua start
+#include "LuaBinding.h"
+
+class LunaScreenOptions: public Luna<ScreenOptions>
+{
+public:
+	LunaScreenOptions() { LUA->Register( Register ); }
+
+	static int GetCurrentRow( T* p, lua_State *L ) { lua_pushnumber( L, p->GetCurrentRow((PlayerNumber) IArg(1)) ); return 1; }
+	static void Register( Lua *L )
+	{
+  		ADD_METHOD( GetCurrentRow );
+
+		Luna<T>::Register( L );
+	}
+};
+
+LUA_REGISTER_DERIVED_CLASS( ScreenOptions, ScreenWithMenuElements )
+// lua end
+
 
 /*
  * (c) 2001-2004 Chris Danford, Glenn Maynard

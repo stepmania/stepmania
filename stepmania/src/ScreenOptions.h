@@ -89,6 +89,13 @@ protected:
 	bool IsOnLastRow( PlayerNumber pn ) const;
 	bool AllAreOnLastRow() const;
 
+public:
+	//
+	// Lua
+	//
+	virtual void PushSelf( lua_State *L );
+	friend class LunaScreenOptions;
+
 protected:	// derived classes need access to these
 	void SetOptionIcon( PlayerNumber pn, int iRow, CString sText, GameCommand &gc );
 
