@@ -35,6 +35,9 @@ void ScreenMapControllers::Init()
 {
 	ScreenWithMenuElements::Init();
 
+	m_soundChange.Load( THEME->GetPathS(m_sName,"change"), true );
+	m_soundDelete.Load( THEME->GetPathS(m_sName,"delete"), true );
+
 	CString sButtons = BUTTONS_TO_MAP;
 	if( sButtons.empty() )
 	{
@@ -147,6 +150,7 @@ void ScreenMapControllers::Update( float fDeltaTime )
 
 		BitmapText *pText = pKey->m_textMappedTo[m_iCurController][m_iCurSlot];
 		pText->PlayCommand( "MappedInput" );
+		SCREENMAN->PlayStartSound();
 	}
 }
 
@@ -264,9 +268,13 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			{
 				const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
 				GameInput curGameI( (GameController)m_iCurController, pKey->m_GameButton );
-				INPUTMAPPER->ClearFromInputMap( curGameI, m_iCurSlot );
+				if( !INPUTMAPPER->ClearFromInputMap(curGameI, m_iCurSlot) )
+					break;
+
 				INPUTMAPPER->AddDefaultMappingsForCurrentGameIfUnmapped();
-		
+
+				m_soundDelete.Play();
+
 				// commit to disk after each change
 				INPUTMAPPER->SaveMappingsToDisk();
 			}
@@ -282,6 +290,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 				m_iCurController--;
 			}
 			AfterChangeFocus();
+			m_soundChange.Play();
 			break;
 		case KEY_RIGHT:	/* Move the selection right, wrapping down. */
 			if( m_iCurSlot == NUM_CHANGABLE_SLOTS-1 && m_iCurController == MAX_GAME_CONTROLLERS-1 )
@@ -294,6 +303,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 				m_iCurController++;
 			}
 			AfterChangeFocus();
+			m_soundChange.Play();
 			break;
 		case KEY_UP: /* Move the selection up. */
 			if( m_iCurButton == 0 )
@@ -301,6 +311,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			BeforeChangeFocus();
 			m_iCurButton--;
 			AfterChangeFocus();
+			m_soundChange.Play();
 			break;
 		case KEY_DOWN: /* Move the selection down. */
 			if( m_iCurButton == (int) m_KeysToMap.size()-1 )
@@ -308,6 +319,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			BeforeChangeFocus();
 			m_iCurButton++;
 			AfterChangeFocus();
+			m_soundChange.Play();
 			break;
 		case KEY_ESC: /* Quit the screen. */
 			if( !IsTransitioning() )
@@ -328,6 +340,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			}
 			m_WaitingForPress.Touch();
 			m_DeviceIToMap.MakeInvalid();
+			SCREENMAN->PlayStartSound();
 			break;
 		}
 	}

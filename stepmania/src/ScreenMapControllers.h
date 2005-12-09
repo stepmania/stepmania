@@ -7,6 +7,7 @@
 #include "BitmapText.h"
 #include "InputMapper.h"
 #include "ActorScroller.h"
+#include "RageSound.h"
 
 enum { NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3 };
 
@@ -46,6 +47,9 @@ private:
 
 	ActorFrame	m_Line[MAX_GAME_BUTTONS];
 	ActorScroller m_LineScroller;
+
+	RageSound m_soundChange;
+	RageSound m_soundDelete;
 };
 
 #endif
