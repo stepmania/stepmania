@@ -15,7 +15,7 @@
 
 #define BUTTONS_TO_MAP THEME->GetMetric( m_sName, "ButtonsToMap" )
 #define INVALID_BUTTON THEME->GetMetric( m_sName, "InvalidButton" )
-#define MAPPED_TO_X(gc,slot)  THEME->GetMetricF( m_sName, ssprintf("MappedToP%iS%iX", gc+1, slot+1) )
+#define MAPPED_TO_COMMAND(gc,slot)  THEME->GetMetricA( m_sName, ssprintf("MappedToP%iS%iCommand", gc+1, slot+1) )
 #define THEME_BUTTON_NAMES    THEME->GetMetricB( m_sName, "ThemeButtonNames" )
 #define THEME_SECONDARY_NAMES THEME->GetMetricB( m_sName, "ThemeSecondaryNames" )
 #define BUTTON_NAME(s)        THEME->GetMetric ( m_sName, ssprintf("Button%s",s) )
@@ -93,7 +93,7 @@ void ScreenMapControllers::Init()
 				pKey->m_textMappedTo[p][s] = new BitmapText;
 				pKey->m_textMappedTo[p][s]->SetName( "MappedTo" );
 				pKey->m_textMappedTo[p][s]->LoadFromFont( THEME->GetPathF(m_sName,"entry") );
-				pKey->m_textMappedTo[p][s]->SetX( MAPPED_TO_X(p,s) );
+				pKey->m_textMappedTo[p][s]->RunCommands( MAPPED_TO_COMMAND(p,s) );
 				ActorUtil::LoadAllCommands( *pKey->m_textMappedTo[p][s], m_sName );
 				m_Line[b].AddChild( pKey->m_textMappedTo[p][s] );
 			}
