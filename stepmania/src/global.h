@@ -134,8 +134,7 @@ void ShowWarning( const char *file, int line, const char *message ); // don't pu
 
 /* Use CStdString: */
 #include "StdString.h"
-
-typedef const CString& CCStringRef;
+using namespace StdString;
 
 /* Include this here to make sure our assertion handler is always
  * used.  (This file is a dependency of most everything anyway,

@@ -305,6 +305,8 @@ typedef char*			PSTR;
 // the more portable, standard way of doing things, while the other is the
 // non-standard, but often significantly faster Visual C++ way.
 // =============================================================================
+namespace StdString
+{
 
 // -----------------------------------------------------------------------------
 // sslen: strlen/wcslen wrappers
@@ -1302,6 +1304,8 @@ struct StdStringEqualsNoCaseA
 //		s1.swap(s2);
 //	}
 //}
+
+}	// namespace StdString
 
 #if defined(_MSC_VER) && (_MSC_VER > 1100)
 	#pragma warning (pop)
