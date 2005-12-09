@@ -117,7 +117,7 @@ void ScreenTestInput::Update( float fDeltaTime )
 
 void ScreenTestInput::Input( const InputEventPlus &input )
 {
-	CString sMessage = input.DeviceI.toString();
+	CString sMessage = input.DeviceI.ToString();
 	switch( input.type )
 	{
 	case IET_FIRST_PRESS:

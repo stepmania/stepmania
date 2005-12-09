@@ -344,7 +344,7 @@ void ScreenMapControllers::Refresh()
 				GameInput cur_gi( p, pKey->m_GameButton );
 				DeviceInput di;
 				if( INPUTMAPPER->GameToDevice( cur_gi, s, di ) )
-					pText->SetText( di.toString() );
+					pText->SetText( di.ToString() );
 				else
 					pText->SetText( "-----------" );
 				

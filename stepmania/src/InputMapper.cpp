@@ -468,7 +468,7 @@ void InputMapper::ReadMappingsFromDisk()
 			for( unsigned i=0; i<sDeviceInputStrings.size() && i<unsigned(NUM_GAME_TO_DEVICE_SLOTS); i++ )
 			{
 				DeviceInput DeviceI;
-				DeviceI.fromString( sDeviceInputStrings[i] );
+				DeviceI.FromString( sDeviceInputStrings[i] );
 				if( DeviceI.IsValid() )
 					SetInputMap( DeviceI, GameI, i );
 			}
@@ -499,7 +499,7 @@ void InputMapper::SaveMappingsToDisk()
 			
 			vector<CString> asValues;
 			for( int slot = 0; slot < NUM_GAME_TO_DEVICE_SLOTS; ++slot )
-				asValues.push_back( m_GItoDI[i][j][slot].toString() );
+				asValues.push_back( m_GItoDI[i][j][slot].ToString() );
 		
 			while( asValues.size() && asValues.back() == "" )
 				asValues.erase( asValues.begin()+asValues.size()-1 );

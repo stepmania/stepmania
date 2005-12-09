@@ -65,7 +65,7 @@ CString RageInput::GetDeviceSpecificInputString( const DeviceInput &di )
 			return (*i)->GetDeviceSpecificInputString(di);
 	}
 
-	return di.toString();
+	return di.ToString();
 }
 
 InputDeviceState RageInput::GetInputDeviceState( InputDevice id )

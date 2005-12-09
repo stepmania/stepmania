@@ -315,7 +315,7 @@ int GetNumDeviceButtons( InputDevice device )
 	}
 };
 
-CString DeviceInput::toString() const
+CString DeviceInput::ToString() const
 {
 	if( device == DEVICE_NONE )
 		return CString();
@@ -324,7 +324,7 @@ CString DeviceInput::toString() const
 	return s;
 }
 
-bool DeviceInput::fromString( const CString &s )
+bool DeviceInput::FromString( const CString &s )
 {
 	char szDevice[32] = "";
 	char szButton[32] = "";

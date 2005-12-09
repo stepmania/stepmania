@@ -329,8 +329,8 @@ public:
 		return ! operator==( other );
 	}
 	
-	CString toString() const;
-	bool fromString( const CString &s );
+	CString ToString() const;
+	bool FromString( const CString &s );
 
 	bool IsValid() const { return device != DEVICE_NONE; };
 	void MakeInvalid() { device = DEVICE_NONE; };

@@ -31,7 +31,7 @@ public:
 	virtual void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut ) = 0;
 	
 	// Override to return a pretty string that's specific to the controller type.
-	virtual CString GetDeviceSpecificInputString( const DeviceInput &di ) { return di.toString(); }
+	virtual CString GetDeviceSpecificInputString( const DeviceInput &di ) { return di.ToString(); }
 
 	// Override to find out whether the controller is currently plugged in.
 	// Not all InputHandlers will support this.  Not applicable to all InputHandlers.
