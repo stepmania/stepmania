@@ -371,7 +371,6 @@ class DebugLineAutoplay : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineAutoplay );
 
 class DebugLineAssistTick : public IDebugLine
 {
@@ -387,7 +386,6 @@ class DebugLineAssistTick : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineAssistTick );
 
 class DebugLineAutosync : public IDebugLine
 {
@@ -412,7 +410,6 @@ class DebugLineAutosync : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineAutosync );
 
 class DebugLineCoinMode : public IDebugLine
 {
@@ -428,7 +425,6 @@ class DebugLineCoinMode : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineCoinMode );
 
 class DebugLineSlow : public IDebugLine
 {
@@ -442,7 +438,6 @@ class DebugLineSlow : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineSlow );
 
 class DebugLineHalt : public IDebugLine
 {
@@ -457,7 +452,6 @@ class DebugLineHalt : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineHalt );
 
 class DebugLineLightsDebug : public IDebugLine
 {
@@ -470,7 +464,6 @@ class DebugLineLightsDebug : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineLightsDebug );
 
 class DebugLineMonkeyInput : public IDebugLine
 {
@@ -483,7 +476,6 @@ class DebugLineMonkeyInput : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineMonkeyInput );
 
 class DebugLineStats : public IDebugLine
 {
@@ -496,7 +488,6 @@ class DebugLineStats : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineStats );
 
 class DebugLineVsync : public IDebugLine
 {
@@ -510,7 +501,6 @@ class DebugLineVsync : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineVsync );
 
 class DebugLineAllowMultitexture : public IDebugLine
 {
@@ -523,7 +513,6 @@ class DebugLineAllowMultitexture : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineAllowMultitexture );
 
 class DebugLineScreenTestMode : public IDebugLine
 {
@@ -536,7 +525,6 @@ class DebugLineScreenTestMode : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineScreenTestMode );
 
 class DebugLineClearMachineStats : public IDebugLine
 {
@@ -551,7 +539,6 @@ class DebugLineClearMachineStats : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineClearMachineStats );
 
 class DebugLineFillMachineStats : public IDebugLine
 {
@@ -566,7 +553,6 @@ class DebugLineFillMachineStats : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineFillMachineStats );
 
 class DebugLineSendNotesEnded : public IDebugLine
 {
@@ -579,7 +565,6 @@ class DebugLineSendNotesEnded : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineSendNotesEnded );
 
 class DebugLineReloadCurrentScreen : public IDebugLine
 {
@@ -595,7 +580,6 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 		sMessageOut = "";
 	}
 };
-DECLARE_ONE( DebugLineReloadCurrentScreen );
 
 class DebugLineReloadTheme : public IDebugLine
 {
@@ -613,7 +597,6 @@ class DebugLineReloadTheme : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineReloadTheme );
 
 class DebugLineWriteProfiles : public IDebugLine
 {
@@ -641,7 +624,6 @@ class DebugLineWriteProfiles : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineWriteProfiles );
 
 class DebugLineWritePreferences : public IDebugLine
 {
@@ -654,7 +636,6 @@ class DebugLineWritePreferences : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineWritePreferences );
 
 class DebugLineMenuTimer : public IDebugLine
 {
@@ -667,7 +648,6 @@ class DebugLineMenuTimer : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineMenuTimer );
 
 class DebugLineFlushLog : public IDebugLine
 {
@@ -680,7 +660,6 @@ class DebugLineFlushLog : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineFlushLog );
 
 class DebugLinePullBackCamera : public IDebugLine
 {
@@ -696,7 +675,6 @@ class DebugLinePullBackCamera : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLinePullBackCamera );
 
 class DebugLineVolumeUp : public IDebugLine
 {
@@ -709,7 +687,6 @@ class DebugLineVolumeUp : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineVolumeUp );
 
 class DebugLineVolumeDown : public IDebugLine
 {
@@ -722,7 +699,6 @@ class DebugLineVolumeDown : public IDebugLine
 		IDebugLine::Do( sMessageOut );
 	}
 };
-DECLARE_ONE( DebugLineVolumeDown );
 
 class DebugLineUptime : public IDebugLine
 {
@@ -731,6 +707,36 @@ class DebugLineUptime : public IDebugLine
 	virtual bool IsEnabled() { return false; }
 	virtual void Do( CString &sMessageOut ) {}
 };
+
+/* #ifdef out the lines below if you don't want them to appear on certain
+ * platforms.  This is easier than #ifdefing the whole DebugLine definitions
+ * that can span pages.
+ */
+
+DECLARE_ONE( DebugLineAutoplay );
+DECLARE_ONE( DebugLineAssistTick );
+DECLARE_ONE( DebugLineAutosync );
+DECLARE_ONE( DebugLineCoinMode );
+DECLARE_ONE( DebugLineSlow );
+DECLARE_ONE( DebugLineHalt );
+DECLARE_ONE( DebugLineLightsDebug );
+DECLARE_ONE( DebugLineMonkeyInput );
+DECLARE_ONE( DebugLineStats );
+DECLARE_ONE( DebugLineVsync );
+DECLARE_ONE( DebugLineAllowMultitexture );
+DECLARE_ONE( DebugLineScreenTestMode );
+DECLARE_ONE( DebugLineClearMachineStats );
+DECLARE_ONE( DebugLineFillMachineStats );
+DECLARE_ONE( DebugLineSendNotesEnded );
+DECLARE_ONE( DebugLineReloadCurrentScreen );
+DECLARE_ONE( DebugLineReloadTheme );
+DECLARE_ONE( DebugLineWriteProfiles );
+DECLARE_ONE( DebugLineWritePreferences );
+DECLARE_ONE( DebugLineMenuTimer );
+DECLARE_ONE( DebugLineFlushLog );
+DECLARE_ONE( DebugLinePullBackCamera );
+DECLARE_ONE( DebugLineVolumeUp );
+DECLARE_ONE( DebugLineVolumeDown );
 DECLARE_ONE( DebugLineUptime );
 
 
