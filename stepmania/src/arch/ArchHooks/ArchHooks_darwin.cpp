@@ -298,7 +298,7 @@ void ArchHooks_darwin::MountInitialFilesystems( const CString &sDirOfExecutable 
 	ASSERT( parts.size() > 3 );
 	CString Dir = '/' + join( "/", parts.begin(), parts.end()-3 );
 	RageFileManager::Mount( "dir", Dir, "/" );
-else
+#else
 	/* Paths relative to the CWD: */
 	FILEMAN->Mount( "dir", ".", "/" );
 #endif

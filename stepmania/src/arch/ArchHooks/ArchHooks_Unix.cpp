@@ -223,7 +223,6 @@ void ArchHooks_Unix::SetTime( tm newtime )
 void ArchHooks_Unix::MountInitialFilesystems( const CString &sDirOfExecutable )
 {
 #if defined(LINUX)
-	HOOKS->MountInitialFilesystems( sDirOfExecutable );
 	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
 	 * This is /rootfs, not /root, to avoid confusion with root's home directory. */
 	RageFileManager::Mount( "dir", "/", "/rootfs" );
