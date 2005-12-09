@@ -293,8 +293,8 @@ PumpPadButton StringToPumpPadButton( const CString& s );
 
 
 typedef int DeviceButton;
-//CString DeviceButtonToString( InputDevice device, DeviceButton i );
-//DeviceButton StringToDeviceButton( InputDevice device, const CString& s );
+CString DeviceButtonToString( InputDevice device, DeviceButton i );
+DeviceButton StringToDeviceButton( InputDevice device, const CString& s );
 
 int GetNumDeviceButtons( InputDevice device );
 
