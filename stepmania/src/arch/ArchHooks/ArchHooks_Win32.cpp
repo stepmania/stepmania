@@ -430,11 +430,19 @@ void ArchHooks_Win32::MountInitialFilesystems( const CString &sDirOfExecutable )
 		sMyDocumentsDir += "/";
 	}
 
+	CString sApplicationDataDir;
+	{
+		TCHAR szDir[MAX_PATH] = "";
+		BOOL bResult = SHGetSpecialFolderPath( NULL, szDir, CSIDL_APPDATA, FALSE );
+		ASSERT( bResult );
+		sApplicationDataDir = szDir;
+		sApplicationDataDir += "/";
+	}	
+
 	// Mount everything game-writable (not counting the editor) to the user's directory.
-	CString sPersonalDir = sMyDocumentsDir + PRODUCT_ID + "/";
-	FILEMAN->Mount( "dir", sPersonalDir + "Cache", "/Cache" );
-	FILEMAN->Mount( "dir", sPersonalDir + "Save", "/Save" );
-	FILEMAN->Mount( "dir", sPersonalDir + "Screenshots", "/Screenshots" );
+	FILEMAN->Mount( "dir", sApplicationDataDir + PRODUCT_ID + "/Cache", "/Cache" );
+	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Save", "/Save" );
+	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Screenshots", "/Screenshots" );
 }
 
 /*
