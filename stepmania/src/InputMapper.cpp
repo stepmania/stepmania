@@ -545,14 +545,18 @@ void InputMapper::ClearFromInputMap( const DeviceInput &DeviceI )
 	UpdateTempDItoGI();
 }
 
-void InputMapper::ClearFromInputMap( const GameInput &GameI, int iSlotIndex )
+bool InputMapper::ClearFromInputMap( const GameInput &GameI, int iSlotIndex )
 {
 	if( !GameI.IsValid() )
-		return;
+		return false;
 
-	m_GItoDI[GameI.controller][GameI.button][iSlotIndex].MakeInvalid();
+	DeviceInput &di = m_GItoDI[GameI.controller][GameI.button][iSlotIndex];
+	if( !di.IsValid() )
+		return false;
+	di.MakeInvalid();
 
 	UpdateTempDItoGI();
+	return true;
 }
 
 bool InputMapper::IsMapped( const DeviceInput &DeviceI )

@@ -27,7 +27,7 @@ public:
 
 	void SetInputMap( const DeviceInput &DeviceI, const GameInput &GameI, int iSlotIndex );
 	void ClearFromInputMap( const DeviceInput &DeviceI );
-	void ClearFromInputMap( const GameInput &GameI, int iSlotIndex );
+	bool ClearFromInputMap( const GameInput &GameI, int iSlotIndex );
 
 	void AddDefaultMappingsForCurrentGameIfUnmapped();
 	void AutoMapJoysticksForCurrentGame();
