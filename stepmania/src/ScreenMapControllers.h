@@ -23,6 +23,8 @@ public:
 	virtual void TweenOffScreen();
 
 private:
+	void BeforeChangeFocus();
+	void AfterChangeFocus();
 	virtual bool GenericTweenOn() const { return true; }
 	void Refresh();
 	

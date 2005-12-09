@@ -118,6 +118,7 @@ void ScreenMapControllers::BeginScreen()
 	m_WaitingForPress.SetZero();
 
 	Refresh();
+	AfterChangeFocus();
 }
 
 
@@ -143,6 +144,9 @@ void ScreenMapControllers::Update( float fDeltaTime )
 		INPUTMAPPER->SaveMappingsToDisk();
 
 		Refresh();
+
+		BitmapText *pText = pKey->m_textMappedTo[m_iCurController][m_iCurSlot];
+		pText->PlayCommand( "MappedInput" );
 	}
 }
 
@@ -270,33 +274,40 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 		case KEY_LEFT: /* Move the selection left, wrapping up. */
 			if( m_iCurSlot == 0 && m_iCurController == 0 )
 				break;	// can't go left any more
+			BeforeChangeFocus();
 			m_iCurSlot--;
 			if( m_iCurSlot < 0 )
 			{
 				m_iCurSlot = NUM_CHANGABLE_SLOTS-1;
 				m_iCurController--;
 			}
-
+			AfterChangeFocus();
 			break;
 		case KEY_RIGHT:	/* Move the selection right, wrapping down. */
 			if( m_iCurSlot == NUM_CHANGABLE_SLOTS-1 && m_iCurController == MAX_GAME_CONTROLLERS-1 )
 				break;	// can't go right any more
+			BeforeChangeFocus();
 			m_iCurSlot++;
 			if( m_iCurSlot > NUM_CHANGABLE_SLOTS-1 )
 			{
 				m_iCurSlot = 0;
 				m_iCurController++;
 			}
+			AfterChangeFocus();
 			break;
 		case KEY_UP: /* Move the selection up. */
 			if( m_iCurButton == 0 )
 				break;	// can't go up any more
+			BeforeChangeFocus();
 			m_iCurButton--;
+			AfterChangeFocus();
 			break;
 		case KEY_DOWN: /* Move the selection down. */
 			if( m_iCurButton == (int) m_KeysToMap.size()-1 )
 				break;	// can't go down any more
+			BeforeChangeFocus();
 			m_iCurButton++;
+			AfterChangeFocus();
 			break;
 		case KEY_ESC: /* Quit the screen. */
 			if( !IsTransitioning() )
@@ -310,6 +321,11 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			break;
 		case KEY_ENTER: /* Change the selection. */
 		case KEY_KP_ENTER:
+			{
+				const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
+				BitmapText *pText = pKey->m_textMappedTo[m_iCurController][m_iCurSlot];
+				pText->PlayCommand( "Waiting" );
+			}
 			m_WaitingForPress.Touch();
 			m_DeviceIToMap.MakeInvalid();
 			break;
@@ -330,6 +346,20 @@ void ScreenMapControllers::TweenOffScreen()
 	OFF_COMMAND( m_LineScroller );
 }
 
+void ScreenMapControllers::BeforeChangeFocus()
+{
+	const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
+	BitmapText *pText = pKey->m_textMappedTo[m_iCurController][m_iCurSlot];
+	pText->PlayCommand( "LoseFocus" );
+}
+
+void ScreenMapControllers::AfterChangeFocus()
+{
+	const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
+	BitmapText *pText = pKey->m_textMappedTo[m_iCurController][m_iCurSlot];
+	pText->PlayCommand( "GainFocus" );
+}
+
 void ScreenMapControllers::Refresh()
 {
 	FOREACH_GameController( p )
@@ -339,8 +369,6 @@ void ScreenMapControllers::Refresh()
 			const KeyToMap *pKey = &m_KeysToMap[b];
 			for( int s=0; s<NUM_SHOWN_GAME_TO_DEVICE_SLOTS; s++ ) 
 			{
-				bool bSelected = p == m_iCurController  &&  (int) b == m_iCurButton  &&  s == m_iCurSlot; 
-
 				BitmapText *pText = pKey->m_textMappedTo[p][s];
 				GameInput cur_gi( p, pKey->m_GameButton );
 				DeviceInput di;
@@ -348,16 +376,6 @@ void ScreenMapControllers::Refresh()
 				if( INPUTMAPPER->GameToDevice( cur_gi, s, di ) )
 					sText = INPUTMAN->GetDeviceSpecificInputString( di );
 				pText->SetText( sText );
-				
-				if( bSelected ) 
-				{
-					if( !m_WaitingForPress.IsZero() )
-						pText->PlayCommand( "Waiting" );
-					else
-						pText->PlayCommand( "Selected" );
-				} 
-				else 
-					pText->PlayCommand( "Unselected" );
 			}
 		}
 	}
