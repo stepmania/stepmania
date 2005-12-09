@@ -1,26 +1,31 @@
-/* RegistryAccess - Windows registry helpers */
-#ifndef REGISTRY_ACCESS_H
-#define REGISTRY_ACCESS_H
+#include "global.h"
+#include "SpecialDirs.h"
+#include "RegistryAccess.h"
+#include <shlobj.h>
 
-#include <windows.h>
-
-namespace RegistryAccess
+CString GetMyDocumentsDir()
 {
-	bool GetRegValue( const CString &key, const CString &sName, CString &val );
-	bool GetRegValue( const CString &key, const CString &sName, int &val );
-	bool GetRegValue( const CString &key, const CString &sName, bool &val );
-
-	bool SetRegValue( const CString &key, const CString &sName, const CString &val );
-	bool SetRegValue( const CString &key, const CString &sName, int val );
-	bool SetRegValue( const CString &key, const CString &sName, bool val );
-
-	bool GetRegSubKeys( const CString &key, vector<CString> &lst, const CString &regex = ".*", bool bReturnPathToo = true );
+	CString sMyDocumentsDir;
+	bool bSuccess = RegistryAccess::GetRegValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders", "Personal", sMyDocumentsDir );
+	ASSERT( bSuccess );
+	sMyDocumentsDir.Replace( '\\', '/' );
+	sMyDocumentsDir += "/";
+	return sMyDocumentsDir;
 }
 
-#endif
+CString GetApplicationDataDir()
+{
+	CString sApplicationDataDir;
+	TCHAR szDir[MAX_PATH] = "";
+	BOOL bResult = SHGetSpecialFolderPath( NULL, szDir, CSIDL_APPDATA, FALSE );
+	ASSERT( bResult );
+	sApplicationDataDir = szDir;
+	sApplicationDataDir += "/";
+	return sApplicationDataDir;
+}
 
 /*
- * (c) 2004 Glenn Maynard
+ * (c) 2002-2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

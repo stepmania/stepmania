@@ -1,26 +1,13 @@
-/* RegistryAccess - Windows registry helpers */
-#ifndef REGISTRY_ACCESS_H
-#define REGISTRY_ACCESS_H
+#ifndef SpecialDirs_H
+#define SpecialDirs_H
 
-#include <windows.h>
-
-namespace RegistryAccess
-{
-	bool GetRegValue( const CString &key, const CString &sName, CString &val );
-	bool GetRegValue( const CString &key, const CString &sName, int &val );
-	bool GetRegValue( const CString &key, const CString &sName, bool &val );
-
-	bool SetRegValue( const CString &key, const CString &sName, const CString &val );
-	bool SetRegValue( const CString &key, const CString &sName, int val );
-	bool SetRegValue( const CString &key, const CString &sName, bool val );
-
-	bool GetRegSubKeys( const CString &key, vector<CString> &lst, const CString &regex = ".*", bool bReturnPathToo = true );
-}
+CString GetMyDocumentsDir();
+CString GetApplicationDataDir();
 
 #endif
 
 /*
- * (c) 2004 Glenn Maynard
+ * (c) 2002-2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
