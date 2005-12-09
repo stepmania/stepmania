@@ -3,6 +3,7 @@
 #include "GameConstantsAndTypes.h"
 #include "ScreenManager.h"
 #include "RageLog.h"
+#include "RageInput.h"
 #include "InputMapper.h"
 #include "GameManager.h"
 #include "GameState.h"
@@ -343,10 +344,10 @@ void ScreenMapControllers::Refresh()
 				BitmapText *pText = pKey->m_textMappedTo[p][s];
 				GameInput cur_gi( p, pKey->m_GameButton );
 				DeviceInput di;
+				CString sText = "-----------";
 				if( INPUTMAPPER->GameToDevice( cur_gi, s, di ) )
-					pText->SetText( di.ToString() );
-				else
-					pText->SetText( "-----------" );
+					sText = INPUTMAN->GetDeviceSpecificInputString( di );
+				pText->SetText( sText );
 				
 				if( bSelected ) 
 				{
