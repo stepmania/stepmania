@@ -14,7 +14,7 @@ CharacterManager::CharacterManager()
 		SAFE_DELETE( m_pCharacters[i] );
 	m_pCharacters.clear();
 
-	CStringArray as;
+	vector<CString> as;
 	GetDirListing( CHARACTERS_DIR "*", as, true, true );
 	StripCvs( as );
 

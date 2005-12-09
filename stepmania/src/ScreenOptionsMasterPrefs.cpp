@@ -24,7 +24,7 @@ static void GetPrefsDefaultModifiers( PlayerOptions &po, SongOptions &so )
 
 static void SetPrefsDefaultModifiers( const PlayerOptions &po, const SongOptions &so )
 {
-	CStringArray as;
+	vector<CString> as;
 	if( po.GetString() != "" )
 		as.push_back( po.GetString() );
 	if( so.GetString() != "" )
@@ -119,7 +119,7 @@ static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 	}
 }
 
-static void GameChoices( CStringArray &out )
+static void GameChoices( vector<CString> &out )
 {
 	vector<const Game*> aGames;
 	GAMEMAN->GetEnabledGames( aGames );
@@ -133,7 +133,7 @@ static void GameChoices( CStringArray &out )
 
 static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	CStringArray choices;
+	vector<CString> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -151,14 +151,14 @@ static void GameSel( int &sel, bool ToSel, const ConfOption *pConfOption )
 	}
 }
 
-static void LanguageChoices( CStringArray &out )
+static void LanguageChoices( vector<CString> &out )
 {
 	THEME->GetLanguages( out );
 }
 
 static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	CStringArray choices;
+	vector<CString> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -175,12 +175,12 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 	}
 }
 
-static void ThemeChoices( CStringArray &out )
+static void ThemeChoices( vector<CString> &out )
 {
 	THEME->GetThemeNames( out );
 }
 
-static void DisplayResolutionChoices( CStringArray &out )
+static void DisplayResolutionChoices( vector<CString> &out )
 {
 	DisplayResolutions d;
 	DISPLAY->GetDisplayResolutions( d );
@@ -194,7 +194,7 @@ static void DisplayResolutionChoices( CStringArray &out )
 
 static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	CStringArray choices;
+	vector<CString> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -210,7 +210,7 @@ static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 	}
 }
 
-static void AnnouncerChoices( CStringArray &out )
+static void AnnouncerChoices( vector<CString> &out )
 {
 	ANNOUNCER->GetAnnouncerNames( out );
 	out.insert( out.begin(), "Off" );
@@ -218,7 +218,7 @@ static void AnnouncerChoices( CStringArray &out )
 
 static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	CStringArray choices;
+	vector<CString> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -233,7 +233,7 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 	}
 }
 
-static void DefaultNoteSkinChoices( CStringArray &out )
+static void DefaultNoteSkinChoices( vector<CString> &out )
 {
 	NOTESKIN->GetNoteSkinNames( out );
 	for( unsigned i = 0; i < out.size(); ++i )
@@ -242,7 +242,7 @@ static void DefaultNoteSkinChoices( CStringArray &out )
 
 static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption )
 {
-	CStringArray choices;
+	vector<CString> choices;
 	pConfOption->MakeOptionsList( choices );
 
 	if( ToSel )
@@ -670,7 +670,7 @@ void ConfOption::UpdateAvailableOptions()
 	}
 }
 
-void ConfOption::MakeOptionsList( CStringArray &out ) const
+void ConfOption::MakeOptionsList( vector<CString> &out ) const
 {
 	out = names;
 }

@@ -33,7 +33,7 @@ public:
 		return LoadFromSMFile( sPath, out );
 	}
 
-	void GetApplicableFiles( CString sPath, CStringArray &out );
+	void GetApplicableFiles( CString sPath, vector<CString> &out );
 	bool LoadFromDir( CString sPath, Song &out );
 	void TidyUpData( Song &song, bool cache );
 	static bool LoadTimingFromFile( const CString &fn, TimingData &out );

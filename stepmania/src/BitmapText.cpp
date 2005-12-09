@@ -372,12 +372,12 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 		/* It doesn't.  I can add Japanese wrapping, at least.  We could handle hyphens
 		 * and soft hyphens and pretty easily, too. -glenn */
 		// TODO: Move this wrapping logic into Font
-		CStringArray asLines;
+		vector<CString> asLines;
 		split( m_sText, "\n", asLines, false );
 
 		for( unsigned line = 0; line < asLines.size(); ++line )
 		{
-			CStringArray asWords;
+			vector<CString> asWords;
 			split( asLines[line], " ", asWords );
 
 			CString sCurLine;

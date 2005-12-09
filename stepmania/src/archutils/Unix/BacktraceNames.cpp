@@ -397,7 +397,7 @@ void BacktraceNames::FromAddr( const void *p )
         fprintf(stderr, "FromAddr read() failed: %s\n", strerror(errno));
         return;
     }
-    CStringArray mangledAndFile;
+    vector<CString> mangledAndFile;
 
     split(f, " ", mangledAndFile, true);
     if (mangledAndFile.size() == 0)

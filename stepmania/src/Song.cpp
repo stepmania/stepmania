@@ -218,7 +218,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	m_sSongDir = sDir;
 
 	// save group name
-	CStringArray sDirectoryParts;
+	vector<CString> sDirectoryParts;
 	split( m_sSongDir, "/", sDirectoryParts, false );
 	ASSERT( sDirectoryParts.size() >= 4 ); /* e.g. "/Songs/Slow/Taps/" */
 	m_sGroupName = sDirectoryParts[sDirectoryParts.size()-3];	// second from last item
@@ -315,7 +315,7 @@ bool Song::LoadFromSongDir( CString sDir )
 	return true;	// do load this song
 }
 
-static void GetImageDirListing( CString sPath, CStringArray &AddTo, bool bReturnPathToo=false )
+static void GetImageDirListing( CString sPath, vector<CString> &AddTo, bool bReturnPathToo=false )
 {
 	GetDirListing( sPath + ".png", AddTo, false, bReturnPathToo ); 
 	GetDirListing( sPath + ".jpg", AddTo, false, bReturnPathToo ); 
@@ -460,7 +460,7 @@ void Song::TidyUpData()
 
 	if( !HasMusic() )
 	{
-		CStringArray arrayPossibleMusic;
+		vector<CString> arrayPossibleMusic;
 		GetDirListing( m_sSongDir + CString("*.mp3"), arrayPossibleMusic );
 		GetDirListing( m_sSongDir + CString("*.ogg"), arrayPossibleMusic );
 		GetDirListing( m_sSongDir + CString("*.wav"), arrayPossibleMusic );
@@ -592,7 +592,7 @@ void Song::TidyUpData()
 //		m_sBannerFile = "";
 
 		// find an image with "banner" in the file name
-		CStringArray arrayPossibleBanners;
+		vector<CString> arrayPossibleBanners;
 		GetImageDirListing( m_sSongDir + "*banner*", arrayPossibleBanners );
 
 		/* Some people do things differently for the sake of being different.  Don't
@@ -608,7 +608,7 @@ void Song::TidyUpData()
 //		m_sBackgroundFile = "";
 
 		// find an image with "bg" or "background" in the file name
-		CStringArray arrayPossibleBGs;
+		vector<CString> arrayPossibleBGs;
 		GetImageDirListing( m_sSongDir + "*bg*", arrayPossibleBGs );
 		GetImageDirListing( m_sSongDir + "*background*", arrayPossibleBGs );
 		if( !arrayPossibleBGs.empty() )
@@ -618,7 +618,7 @@ void Song::TidyUpData()
 	if( !HasCDTitle() )
 	{
 		// find an image with "cdtitle" in the file name
-		CStringArray arrayPossibleCDTitles;
+		vector<CString> arrayPossibleCDTitles;
 		GetImageDirListing( m_sSongDir + "*cdtitle*", arrayPossibleCDTitles );
 		if( !arrayPossibleCDTitles.empty() )
 			m_sCDTitleFile = arrayPossibleCDTitles[0];
@@ -627,7 +627,7 @@ void Song::TidyUpData()
 	if( !HasLyrics() )
 	{
 		// Check if there is a lyric file in here
-		CStringArray arrayLyricFiles;
+		vector<CString> arrayLyricFiles;
 		GetDirListing(m_sSongDir + CString("*.lrc"), arrayLyricFiles );
 		if(	!arrayLyricFiles.empty() )
 			m_sLyricsFile = arrayLyricFiles[0];
@@ -636,7 +636,7 @@ void Song::TidyUpData()
 	//
 	// Now, For the images we still haven't found, look at the image dimensions of the remaining unclassified images.
 	//
-	CStringArray arrayImages;
+	vector<CString> arrayImages;
 	GetImageDirListing( m_sSongDir + "*", arrayImages );
 
 	for( unsigned i=0; i<arrayImages.size(); i++ )	// foreach image
@@ -727,7 +727,7 @@ void Song::TidyUpData()
 	// they are DWI style where the movie begins at beat 0.
 	if( !HasBGChanges() )
 	{
-		CStringArray arrayPossibleMovies;
+		vector<CString> arrayPossibleMovies;
 		GetDirListing( m_sSongDir + CString("*.avi"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + CString("*.mpg"), arrayPossibleMovies );
 		GetDirListing( m_sSongDir + CString("*.mpeg"), arrayPossibleMovies );
@@ -766,7 +766,7 @@ void Song::TidyUpData()
 		 *    filename, and should always be the title of the song (unlike KSFs).
 		 */
 		m_sSongFileName = m_sSongDir;
-		CStringArray asFileNames;
+		vector<CString> asFileNames;
 		GetDirListing( m_sSongDir+"*.sm", asFileNames );
 		if( !asFileNames.empty() )
 			m_sSongFileName += asFileNames[0];
@@ -1003,7 +1003,7 @@ void Song::Save()
 
 	/* We've safely written our files and created backups.  Rename non-SM and non-DWI
 	 * files to avoid confusion. */
-	CStringArray arrayOldFileNames;
+	vector<CString> arrayOldFileNames;
 	GetDirListing( m_sSongDir + "*.bms", arrayOldFileNames );
 	GetDirListing( m_sSongDir + "*.ksf", arrayOldFileNames );
 	
@@ -1390,7 +1390,7 @@ bool Song::Matches(CString sGroup, CString sSong) const
 
 	CString sDir = this->GetSongDir();
 	sDir.Replace("\\","/");
-	CStringArray bits;
+	vector<CString> bits;
 	split( sDir, "/", bits );
 	ASSERT(bits.size() >= 2); /* should always have at least two parts */
 	const CString &sLastBit = bits[bits.size()-1];

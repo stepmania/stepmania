@@ -40,7 +40,7 @@ void NoteSkinManager::RefreshNoteSkinData( const Game* pGame )
 	g_PathCache.clear();
 
 	CString sBaseSkinFolder = NOTESKINS_DIR + pGame->m_szName + "/";
-	CStringArray asNoteSkinNames;
+	vector<CString> asNoteSkinNames;
 	GetDirListing( sBaseSkinFolder + "*", asNoteSkinNames, true );
 
 	StripCvs( asNoteSkinNames );
@@ -96,12 +96,12 @@ void NoteSkinManager::LoadNoteSkinDataRecursive( const CString &sNoteSkinName, N
 }
 
 
-void NoteSkinManager::GetNoteSkinNames( CStringArray &AddTo )
+void NoteSkinManager::GetNoteSkinNames( vector<CString> &AddTo )
 {
 	GetNoteSkinNames( GAMESTATE->m_pCurGame, AddTo );
 }
 
-void NoteSkinManager::GetNoteSkinNames( const Game* pGame, CStringArray &AddTo, bool bFilterDefault )
+void NoteSkinManager::GetNoteSkinNames( const Game* pGame, vector<CString> &AddTo, bool bFilterDefault )
 {
 	if( pGame == m_pCurGame )
 	{
@@ -121,7 +121,7 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, CStringArray &AddTo, 
 
 	/* Move "default" to the front if it exists. */
 	{
-		CStringArray::iterator iter = find( AddTo.begin(), AddTo.end(), "default" );
+		vector<CString>::iterator iter = find( AddTo.begin(), AddTo.end(), "default" );
 		if( iter != AddTo.end() )
 		{
 			AddTo.erase( iter );
@@ -134,7 +134,7 @@ void NoteSkinManager::GetNoteSkinNames( const Game* pGame, CStringArray &AddTo, 
 
 bool NoteSkinManager::DoesNoteSkinExist( const CString &sSkinName )
 {
-	CStringArray asSkinNames;	
+	vector<CString> asSkinNames;	
 	GetNoteSkinNames( asSkinNames );
 	for( unsigned i=0; i<asSkinNames.size(); i++ )
 		if( 0==stricmp(sSkinName, asSkinNames[i]) )
@@ -278,7 +278,7 @@ try_again:
 
 CString NoteSkinManager::GetPathFromDirAndFile( const CString &sDir, const CString &sFileName )
 {
-	CStringArray matches;		// fill this with the possible files
+	vector<CString> matches;		// fill this with the possible files
 
 	GetDirListing( sDir+sFileName+"*",		matches, false, true );
 

@@ -44,7 +44,7 @@ protected:
 	RageSound			m_soundModeChange;
 	RageSound			m_soundConfirm;
 	RageSound			m_soundStart;
-	CStringArray arrayLocations;
+	vector<CString> arrayLocations;
 	ScrollingList m_ScrollingList;
 	Sprite m_ChoiceListFrame;
 	Sprite m_ChoiceListHighlight;

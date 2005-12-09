@@ -25,7 +25,7 @@ void ScreenCenterImage::Init()
 	ScreenWithMenuElements::Init();
 
 #if defined(XBOX)
-	CStringArray strArray;
+	vector<CString> strArray;
 	CString text("Use the left analog stick to translate the screen and right right analog stick to scale");
 	strArray.push_back(text);
 	m_textHelp->SetTips(strArray);

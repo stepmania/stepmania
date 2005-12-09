@@ -19,7 +19,7 @@ public:
 	~RageFileManager();
 	void MountInitialFilesystems();
 
-	void GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	void GetDirListing( CString sPath, vector<CString> &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 	bool Move( CString sOldPath, CString sNewPath );
 	bool Remove( CString sPath );
 	void CreateDir( CString sDir );

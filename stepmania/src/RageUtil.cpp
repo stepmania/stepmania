@@ -108,7 +108,7 @@ bool IsHexVal( const CString &s )
 
 float HHMMSSToSeconds( const CString &sHHMMSS )
 {
-	CStringArray arrayBits;
+	vector<CString> arrayBits;
 	split( sHHMMSS, ":", arrayBits, false );
 
 	while( arrayBits.size() < 3 )
@@ -457,7 +457,7 @@ CString GetLanguageNameFromISO639Code( CString sName )
 	return "";
 }
 
-CString join( const CString &Deliminator, const CStringArray& Source)
+CString join( const CString &Deliminator, const vector<CString>& Source)
 {
 	if( Source.empty() )
 		return CString();
@@ -473,7 +473,7 @@ CString join( const CString &Deliminator, const CStringArray& Source)
 	return csTmp;
 }
 
-CString join( const CString &Delimitor, CStringArray::const_iterator begin, CStringArray::const_iterator end )
+CString join( const CString &Delimitor, vector<CString>::const_iterator begin, vector<CString>::const_iterator end )
 {
 	if( begin == end )
 		return CString();
@@ -540,7 +540,7 @@ void do_split( const S &Source, const C Delimitor, vector<S> &AddIt, const bool 
 }
 
 
-void split( const CString &Source, const CString &Delimitor, CStringArray &AddIt, const bool bIgnoreEmpty )
+void split( const CString &Source, const CString &Delimitor, vector<CString> &AddIt, const bool bIgnoreEmpty )
 {
 	if( Delimitor.size() == 1 )
 		do_split( Source, Delimitor[0], AddIt, bIgnoreEmpty );
@@ -634,7 +634,7 @@ void splitpath( const CString &Path, CString& Dir, CString& Filename, CString& E
 {
 	Dir = Filename = Ext = "";
 
-	CStringArray mat;
+	vector<CString> mat;
 
 	/* One level of escapes for the regex, one for C. Ew. 
 	 * This is really:
@@ -802,7 +802,7 @@ bool DirectoryIsEmpty( const CString &dir )
 	if(!DoesFileExist(dir))
 		return true;
 
-	CStringArray asFileNames;
+	vector<CString> asFileNames;
 	GetDirListing( dir, asFileNames );
 	return asFileNames.empty();
 }
@@ -817,7 +817,7 @@ bool CompareCStringsDesc(const CString &str1, const CString &str2)
 	return str1.CompareNoCase( str2 ) > 0;
 }
 
-void SortCStringArray( CStringArray &arrayCStrings, const bool bSortAscending )
+void SortCStringArray( vector<CString> &arrayCStrings, const bool bSortAscending )
 {
 	sort( arrayCStrings.begin(), arrayCStrings.end(),
 			bSortAscending?CompareCStringsAsc:CompareCStringsDesc);

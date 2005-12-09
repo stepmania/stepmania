@@ -386,8 +386,8 @@ void FilenameDB::AddFile( const CString &sPath_, int iSize, int iHash, void *pPr
 	vector<CString> asParts;
 	split( sPath, "/", asParts, false );
 
-	CStringArray::const_iterator begin = asParts.begin();
-	CStringArray::const_iterator end = asParts.end();
+	vector<CString>::const_iterator begin = asParts.begin();
+	vector<CString>::const_iterator end = asParts.end();
 
 	bool IsDir = true;
 	if( sPath[sPath.size()-1] != '/' )
@@ -545,7 +545,7 @@ const void *FilenameDB::GetFilePriv( const CString &path )
 
 
 
-void FilenameDB::GetDirListing( CString sPath, CStringArray &asAddTo, bool bOnlyDirs, bool bReturnPathToo )
+void FilenameDB::GetDirListing( CString sPath, vector<CString> &asAddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 //	LOG->Trace( "GetDirListing( %s )", sPath.c_str() );
 

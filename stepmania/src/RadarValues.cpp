@@ -66,7 +66,7 @@ CString RadarValues::ToString( int iMaxValues ) const
 		iMaxValues = NUM_RADAR_CATEGORIES;
 	iMaxValues = min( iMaxValues, (int)NUM_RADAR_CATEGORIES );
 
-	CStringArray asRadarValues;
+	vector<CString> asRadarValues;
 	for( int r=0; r < iMaxValues; r++ )
 		asRadarValues.push_back( ssprintf("%.3f", m_Values.f[r]) );
 
@@ -75,7 +75,7 @@ CString RadarValues::ToString( int iMaxValues ) const
 
 void RadarValues::FromString( CString sRadarValues )
 {
-	CStringArray saValues;
+	vector<CString> saValues;
 	split( sRadarValues, ",", saValues, true );
 
 	if( saValues.size() != NUM_RADAR_CATEGORIES )

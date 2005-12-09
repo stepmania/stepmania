@@ -32,13 +32,13 @@ ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 
 void ScreenOptionsMaster::Init()
 {
-	CStringArray asLineNames;
+	vector<CString> asLineNames;
 	split( LINE_NAMES, ",", asLineNames );
 	if( asLineNames.empty() )
 		RageException::Throw( "%s::LineNames is empty.", m_sName.c_str() );
 
 
-	CStringArray Flags;
+	vector<CString> Flags;
 	split( OPTION_MENU_FLAGS, ";", Flags, true );
 	InputMode im = INPUTMODE_INDIVIDUAL;
 	bool Explanations = false;

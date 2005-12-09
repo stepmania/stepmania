@@ -159,7 +159,7 @@ private:
 	CString m_sChars;
 
 	void LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const CString &sTexturePath, const CString &PageName, CString sChars );
-	static void GetFontPaths( const CString &sFontOrTextureFilePath, CStringArray &sTexturePaths );
+	static void GetFontPaths( const CString &sFontOrTextureFilePath, vector<CString> &sTexturePaths );
 	CString GetPageNameFromFileName( const CString &sFilename );
 };
 

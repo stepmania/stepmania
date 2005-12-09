@@ -68,7 +68,7 @@ void ScreenTestInput::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
 
-	CStringArray asInputs;
+	vector<CString> asInputs;
 
 	DeviceInput di;
 

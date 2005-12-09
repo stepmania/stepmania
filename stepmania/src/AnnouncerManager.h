@@ -6,7 +6,7 @@ class AnnouncerManager
 public:
 	AnnouncerManager();
 
-	void GetAnnouncerNames( CStringArray& AddTo );
+	void GetAnnouncerNames( vector<CString>& AddTo );
 	bool DoesAnnouncerExist( CString sAnnouncerName );
 	void SwitchAnnouncer( CString sNewAnnouncerName );
 	CString GetCurAnnouncerName() { return m_sCurAnnouncerName; };

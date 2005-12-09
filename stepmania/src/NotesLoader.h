@@ -11,7 +11,7 @@ class Song;
 class NotesLoader
 {
 protected:
-	virtual void GetApplicableFiles( CString sPath, CStringArray &out )=0;
+	virtual void GetApplicableFiles( CString sPath, vector<CString> &out )=0;
 
 	set<istring> BlacklistedImages;
 

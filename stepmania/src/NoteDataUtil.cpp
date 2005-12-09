@@ -68,7 +68,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 			sSMNoteData.erase( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
 	}
 
-	CStringArray asMeasures;
+	vector<CString> asMeasures;
 	split( sSMNoteData, ",", asMeasures, true );	// ignore empty is important
 	for( unsigned m=0; m<asMeasures.size(); m++ )	// foreach measure
 	{
@@ -76,7 +76,7 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 		TrimLeft(sMeasureString);
 		TrimRight(sMeasureString);
 
-		CStringArray asMeasureLines;
+		vector<CString> asMeasureLines;
 		split( sMeasureString, "\n", asMeasureLines, true );	// ignore empty is important
 
 		for( unsigned l=0; l<asMeasureLines.size(); l++ )

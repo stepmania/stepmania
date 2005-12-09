@@ -17,7 +17,7 @@ class KSFLoader: public NotesLoader
 	void LoadTags( const CString &str, Song &out );
 
 public:
-	void GetApplicableFiles( CString sPath, CStringArray &out );
+	void GetApplicableFiles( CString sPath, vector<CString> &out );
 	bool LoadFromDir( CString sDir, Song &out );
 
 };

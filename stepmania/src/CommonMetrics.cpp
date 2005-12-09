@@ -37,7 +37,7 @@ void ThemeMetricDifficultiesToShow::Read()
 
 	m_v.clear();
 
-	CStringArray v;
+	vector<CString> v;
 	split( ThemeMetric<CString>::GetValue(), ",", v );
 	ASSERT( v.size() > 0 );
 
@@ -67,7 +67,7 @@ void ThemeMetricCourseDifficultiesToShow::Read()
 
 	m_v.clear();
 
-	CStringArray v;
+	vector<CString> v;
 	split( ThemeMetric<CString>::GetValue(), ",", v );
 	ASSERT( v.size() > 0 );
 
@@ -84,7 +84,7 @@ const vector<CourseDifficulty>& ThemeMetricCourseDifficultiesToShow::GetValue() 
 
 static void RemoveStepsTypes( vector<StepsType>& inout, CString sStepsTypesToRemove )
 {
-	CStringArray v;
+	vector<CString> v;
 	split( sStepsTypesToRemove, ",", v );
 	ASSERT( v.size() > 0 );
 

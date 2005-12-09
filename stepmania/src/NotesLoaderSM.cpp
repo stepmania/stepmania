@@ -47,7 +47,7 @@ void SMLoader::LoadFromSMTokens(
 		out.SetDifficulty( DIFFICULTY_CHALLENGE );
 
 	out.SetMeter(atoi(sMeter));
-	CStringArray saValues;
+	vector<CString> saValues;
 	split( sRadarValues, ",", saValues, true );
 	if( saValues.size() == NUM_RADAR_CATEGORIES )
 	{
@@ -62,7 +62,7 @@ void SMLoader::LoadFromSMTokens(
 	out.TidyUpData();
 }
 
-void SMLoader::GetApplicableFiles( CString sPath, CStringArray &out )
+void SMLoader::GetApplicableFiles( CString sPath, vector<CString> &out )
 {
 	GetDirListing( sPath + CString("*.sm"), out );
 }
@@ -99,12 +99,12 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 		}
 		else if( sValueName=="STOPS" || sValueName=="FREEZES" )
 		{
-			CStringArray arrayFreezeExpressions;
+			vector<CString> arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
 
 			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
 			{
-				CStringArray arrayFreezeValues;
+				vector<CString> arrayFreezeValues;
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
 				/* XXX: Once we have a way to display warnings that the user actually
 				 * cares about (unlike most warnings), this should be one of them. */
@@ -130,12 +130,12 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 
 		else if( sValueName=="BPMS" )
 		{
-			CStringArray arrayBPMChangeExpressions;
+			vector<CString> arrayBPMChangeExpressions;
 			split( sParams[1], ",", arrayBPMChangeExpressions );
 
 			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
 			{
-				CStringArray arrayBPMChangeValues;
+				vector<CString> arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				/* XXX: Once we have a way to display warnings that the user actually
 				 * cares about (unlike most warnings), this should be one of them. */
@@ -161,7 +161,7 @@ void SMLoader::LoadTimingFromSMFile( const MsdFile &msd, TimingData &out )
 
 bool LoadFromBGChangesString( BackgroundChange &change, const CString &sBGChangeExpression )
 {
-	CStringArray aBGChangeValues;
+	vector<CString> aBGChangeValues;
 	split( sBGChangeExpression, "=", aBGChangeValues, false );
 
 	aBGChangeValues.resize( min((int)aBGChangeValues.size(),11) );
@@ -377,7 +377,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 			}
 			else
 			{
-				CStringArray aBGChangeExpressions;
+				vector<CString> aBGChangeExpressions;
 				split( sParams[1], ",", aBGChangeExpressions );
 
 				for( unsigned b=0; b<aBGChangeExpressions.size(); b++ )
@@ -391,7 +391,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 		else if( sValueName=="FGCHANGES" )
 		{
-			CStringArray aFGChangeExpressions;
+			vector<CString> aFGChangeExpressions;
 			split( sParams[1], ",", aFGChangeExpressions );
 
 			for( unsigned b=0; b<aFGChangeExpressions.size(); b++ )
@@ -404,7 +404,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 		else if( sValueName=="KEYSOUNDS" )
 		{
-			CStringArray aKeysoundFiles;
+			vector<CString> aKeysoundFiles;
 			split( sParams[1], ",", aKeysoundFiles );
 
 			for( unsigned k=0; k<aKeysoundFiles.size(); k++ )
@@ -446,7 +446,7 @@ bool SMLoader::LoadFromSMFile( CString sPath, Song &out )
 
 bool SMLoader::LoadFromDir( CString sPath, Song &out )
 {
-	CStringArray aFileNames;
+	vector<CString> aFileNames;
 	GetApplicableFiles( sPath, aFileNames );
 
 	if( aFileNames.size() > 1 )

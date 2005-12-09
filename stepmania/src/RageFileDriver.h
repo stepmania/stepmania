@@ -13,7 +13,7 @@ public:
 	RageFileDriver( FilenameDB *db ) { FDB = db; }
 	virtual ~RageFileDriver();
 	virtual RageFileBasic *Open( const CString &path, int mode, int &err ) = 0;
-	virtual void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	virtual void GetDirListing( const CString &sPath, vector<CString> &AddTo, bool bOnlyDirs, bool bReturnPathToo );
 	virtual RageFileManager::FileType GetFileType( const CString &sPath );
 	virtual int GetFileSizeInBytes( const CString &sFilePath );
 	virtual int GetFileHash( const CString &sPath );

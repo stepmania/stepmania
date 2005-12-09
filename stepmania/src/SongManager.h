@@ -57,13 +57,13 @@ public:
 	void PreloadSongImages();
 
 	CString GetSongGroupBannerPath( CString sSongGroup );
-	void GetSongGroupNames( CStringArray &AddTo );
+	void GetSongGroupNames( vector<CString> &AddTo );
 	bool DoesSongGroupExist( CString sSongGroup );
 	RageColor GetSongGroupColor( const CString &sSongGroupName );
 	RageColor GetSongColor( const Song* pSong );
 
 	CString GetCourseGroupBannerPath( const CString &sCourseGroup );
-	void GetCourseGroupNames( CStringArray &AddTo );
+	void GetCourseGroupNames( vector<CString> &AddTo );
 	bool DoesCourseGroupExist( const CString &sCourseGroup );
 	RageColor GetCourseGroupColor( const CString &sCourseGroupName );
 	RageColor GetCourseColor( const Course* pCourse );
@@ -129,8 +129,8 @@ protected:
 	vector<Song*>		m_pSongs;	// all songs that can be played
 	vector<Song*>		m_pBestSongs[NUM_ProfileSlot];
 	vector<Song*>		m_pShuffledSongs;	// used by GetRandomSong
-	CStringArray		m_sSongGroupNames;
-	CStringArray		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
+	vector<CString>		m_sSongGroupNames;
+	vector<CString>		m_sSongGroupBannerPaths; // each song group may have a banner associated with it
 
 	vector<Course*>		m_pCourses;
 	vector<Course*>		m_pBestCourses[NUM_ProfileSlot][NUM_CourseType];

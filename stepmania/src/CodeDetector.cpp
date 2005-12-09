@@ -96,7 +96,7 @@ bool CodeItem::Load( CString sButtonsNames )
 	buttons.clear();
 
 	const Game* pGame = GAMESTATE->GetCurrentGame();
-	CStringArray asButtonNames;
+	vector<CString> asButtonNames;
 
 	bool bHasAPlus = sButtonsNames.Find( '+' ) != -1;
 	bool bHasADash = sButtonsNames.Find( '-' ) != -1;

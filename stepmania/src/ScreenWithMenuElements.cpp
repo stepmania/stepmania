@@ -195,7 +195,7 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 
 void ScreenWithMenuElements::LoadHelpText()
 {
-	CStringArray vs;
+	vector<CString> vs;
 	CString s = THEME->GetMetric(m_sName,"HelpText");
 	split( s, "\n", vs );
 

@@ -34,7 +34,7 @@ public:
 	CString GetSelectionName() const { return m_asLabels[m_iSelection]; }
 	void Up();
 	void Down();
-	void Load( const CStringArray& asGroupNames );
+	void Load( const vector<CString>& asGroupNames );
 	void TweenOffScreen();
 	void TweenOnScreen();
 };

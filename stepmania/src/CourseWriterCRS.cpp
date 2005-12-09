@@ -58,7 +58,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 			StepsType st = entry.first;
 			CourseDifficulty cd = entry.second;
 
-			CStringArray asRadarValues;
+			vector<CString> asRadarValues;
 			const RadarValues &rv = it->second;
 			for( int r=0; r < NUM_RADAR_CATEGORIES; r++ )
 				asRadarValues.push_back( ssprintf("%.3f", rv[r]) );
@@ -103,7 +103,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 		else if( entry.pSong )
 		{
 			// strip off everything but the group name and song dir
-			CStringArray as;
+			vector<CString> as;
 			ASSERT( entry.pSong != NULL );
 			split( entry.pSong->GetSongDir(), "/", as );
 			ASSERT( as.size() >= 2 );

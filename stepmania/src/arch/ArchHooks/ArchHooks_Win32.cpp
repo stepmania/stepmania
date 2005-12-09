@@ -415,7 +415,7 @@ void ArchHooks_Win32::MountInitialFilesystems( const CString &sDirOfExecutable )
 {
 	/* All Windows data goes in the directory one level above the executable. */
 	CHECKPOINT_M( ssprintf( "DOE \"%s\"", sDirOfExecutable.c_str()) );
-	CStringArray parts;
+	vector<CString> parts;
 	split( sDirOfExecutable, "/", parts );
 	CHECKPOINT_M( ssprintf( "... %i parts", parts.size()) );
 	ASSERT_M( parts.size() > 1, ssprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );

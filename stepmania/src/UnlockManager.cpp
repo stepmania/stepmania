@@ -295,7 +295,7 @@ void UnlockManager::Load()
 {
 	LOG->Trace( "UnlockManager::Load()" );
 
-	CStringArray asUnlockNames;
+	vector<CString> asUnlockNames;
 	split( UNLOCK_NAMES, ",", asUnlockNames );
 	if( asUnlockNames.empty() )
 		return;

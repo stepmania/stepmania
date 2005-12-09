@@ -15,7 +15,7 @@ AnnouncerManager::AnnouncerManager()
 	LOG->Trace("AnnouncerManager::AnnouncerManager()");
 }
 
-void AnnouncerManager::GetAnnouncerNames( CStringArray& AddTo )
+void AnnouncerManager::GetAnnouncerNames( vector<CString>& AddTo )
 {
 	GetDirListing( ANNOUNCERS_DIR+"*", AddTo, true );
 	
@@ -32,7 +32,7 @@ bool AnnouncerManager::DoesAnnouncerExist( CString sAnnouncerName )
 	if( sAnnouncerName == "" )
 		return true;
 
-	CStringArray asAnnouncerNames;
+	vector<CString> asAnnouncerNames;
 	GetAnnouncerNames( asAnnouncerNames );
 	for( unsigned i=0; i<asAnnouncerNames.size(); i++ )
 		if( 0==stricmp(sAnnouncerName, asAnnouncerNames[i]) )
@@ -127,7 +127,7 @@ bool AnnouncerManager::HasSoundsFor( CString sFolderName )
 
 void AnnouncerManager::NextAnnouncer()
 {
-	CStringArray as;
+	vector<CString> as;
 	GetAnnouncerNames( as );
 	if( as.size()==0 )
 		return;

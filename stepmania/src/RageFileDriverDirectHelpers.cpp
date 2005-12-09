@@ -119,7 +119,7 @@ bool WinMoveFile( CString sOldPath, CString sNewPath )
 bool CreateDirectories( CString Path )
 {
 	/* XXX: handle "//foo/bar" paths in Windows */
-	CStringArray parts;
+	vector<CString> parts;
 	CString curpath;
 
 	/* If Path is absolute, add the initial slash ("ignore empty" will remove it). */

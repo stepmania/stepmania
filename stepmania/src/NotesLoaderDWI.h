@@ -26,7 +26,7 @@ class DWILoader: public NotesLoader
 	CString m_sLoadingFile;
 
 public:
-	void GetApplicableFiles( CString sPath, CStringArray &out );
+	void GetApplicableFiles( CString sPath, vector<CString> &out );
 	bool Loadable( CString sPath );
 	bool LoadFromDir( CString sPath, Song &out );
 };

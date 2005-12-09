@@ -28,7 +28,7 @@ struct ConfOption
 
 	/* Return the list of available selections; Get() and Put() use indexes into this
 	 * array.  UpdateAvailableOptions() should be called before using this. */
-	void MakeOptionsList( CStringArray &out ) const;
+	void MakeOptionsList( vector<CString> &out ) const;
 
 	inline int Get() const { int sel; MoveData( sel, true, this ); return sel; }
 	inline void Put( int sel ) const { MoveData( sel, false, this ); }
@@ -49,7 +49,7 @@ struct ConfOption
 #undef PUSH
 
 	ConfOption( const char *n, MoveData_t m,
-			void (*lst)( CStringArray &out ) )
+			void (*lst)( vector<CString> &out ) )
 	{
 		name = n;
 		MoveData = m;
@@ -61,7 +61,7 @@ struct ConfOption
 
 // private:
 	vector<CString> names;
-	void (*MakeOptionsListCB)( CStringArray &out );
+	void (*MakeOptionsListCB)( vector<CString> &out );
 };
 
 #endif

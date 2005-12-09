@@ -280,8 +280,8 @@ wstring CStringToWstring( const CString &sString );
 
 CString GetLanguageNameFromISO639Code( CString sName );
 
-// Splits a CString into an CStringArray according the Delimitor.
-void split( const CString &sSource, const CString &sDelimitor, CStringArray& asAddIt, const bool bIgnoreEmpty = true );
+// Splits a CString into an vector<CString> according the Delimitor.
+void split( const CString &sSource, const CString &sDelimitor, vector<CString>& asAddIt, const bool bIgnoreEmpty = true );
 void split( const wstring &sSource, const wstring &sDelimitor, vector<wstring> &asAddIt, const bool bIgnoreEmpty = true );
 
 /* In-place split. */
@@ -292,9 +292,9 @@ void split( const wstring &sSource, const wstring &sDelimitor, int &iBegin, int 
 void split( const CString &sSource, const CString &sDelimitor, int &iBegin, int &iSize, int iLen, const bool bIgnoreEmpty ); /* no default to avoid ambiguity */
 void split( const wstring &sSource, const wstring &sDelimitor, int &iBegin, int &iSize, int iLen, const bool bIgnoreEmpty );
 
-// Joins a CStringArray to create a CString according the Deliminator.
-CString join( const CString &sDelimitor, const CStringArray& sSource );
-CString join( const CString &sDelimitor, CStringArray::const_iterator begin, CStringArray::const_iterator end );
+// Joins a vector<CString> to create a CString according the Deliminator.
+CString join( const CString &sDelimitor, const vector<CString>& sSource );
+CString join( const CString &sDelimitor, vector<CString>::const_iterator begin, vector<CString>::const_iterator end );
 
 CString GetCwd();
 
@@ -311,7 +311,7 @@ bool DirectoryIsEmpty( const CString &sPath );
 
 bool CompareCStringsAsc( const CString &sStr1, const CString &sStr2 );
 bool CompareCStringsDesc( const CString &sStr1, const CString &sStr2 );
-void SortCStringArray( CStringArray &asAddTo, const bool bSortAscending = true );
+void SortCStringArray( vector<CString> &asAddTo, const bool bSortAscending = true );
 
 /* Find the mean and standard deviation of all numbers in [start,end). */
 float calc_mean( const float *pStart, const float *pEnd );
@@ -424,8 +424,8 @@ typedef basic_string<char,char_traits_char_nocase> istring;
 
 /* Compatibility/convenience shortcuts.  These are actually defined in RageFileManager.h, but
  * declared here since they're used in many places. */
-void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
-void GetDirListingRecursive( const CString &sDir, const CString &sMatch, CStringArray &AddTo );	/* returns path too */
+void GetDirListing( const CString &sPath, vector<CString> &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
+void GetDirListingRecursive( const CString &sDir, const CString &sMatch, vector<CString> &AddTo );	/* returns path too */
 bool DeleteRecursive( const CString &sDir );	/* delete the dir and all files/subdirs inside it */
 bool DoesFileExist( const CString &sPath );
 bool IsAFile( const CString &sPath );

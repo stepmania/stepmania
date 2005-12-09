@@ -68,7 +68,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 		RageException::Throw( "Error opening file '%s'.", sPath.c_str() );
 
 	int iTickCount = -1;	// this is the value we read for TICKCOUNT
-	CStringArray asRows;
+	vector<CString> asRows;
 
 	for( unsigned i=0; i<msd.GetNumValues(); i++ )
 	{
@@ -220,7 +220,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 	return true;
 }
 
-void KSFLoader::GetApplicableFiles( CString sPath, CStringArray &out )
+void KSFLoader::GetApplicableFiles( CString sPath, vector<CString> &out )
 {
 	GetDirListing( sPath + CString("*.ksf"), out );
 }
@@ -229,7 +229,7 @@ void KSFLoader::LoadTags( const CString &str, Song &out )
 {
 	/* str is either a #TITLE or a directory component.  Fill in missing information.
 	 * str is either "title", "artist - title", or "artist - title - difficulty". */
-	CStringArray asBits;
+	vector<CString> asBits;
 	split( str, " - ", asBits, false );
 	/* Ignore the difficulty, since we get that elsewhere. */
 	if( asBits.size() == 3 &&
@@ -323,7 +323,7 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 
 	/* Try to fill in missing bits of information from the pathname. */
 	{
-		CStringArray asBits;
+		vector<CString> asBits;
 		split( sPath, "/", asBits, true);
 
 		ASSERT(asBits.size() > 1);
@@ -331,7 +331,7 @@ bool KSFLoader::LoadGlobalData( const CString &sPath, Song &out )
 	}
 
 	// search for music with song in the file name
-	CStringArray arrayPossibleMusic;
+	vector<CString> arrayPossibleMusic;
 	GetDirListing( out.GetSongDir() + CString("song.mp3"), arrayPossibleMusic );
 	GetDirListing( out.GetSongDir() + CString("song.ogg"), arrayPossibleMusic );
 	GetDirListing( out.GetSongDir() + CString("song.wav"), arrayPossibleMusic );
@@ -346,7 +346,7 @@ bool KSFLoader::LoadFromDir( CString sDir, Song &out )
 {
 	LOG->Trace( "Song::LoadFromKSFDir(%s)", sDir.c_str() );
 
-	CStringArray arrayKSFFileNames;
+	vector<CString> arrayKSFFileNames;
 	GetDirListing( sDir + CString("*.ksf"), arrayKSFFileNames );
 
 	/* We shouldn't have been called to begin with if there were no KSFs. */

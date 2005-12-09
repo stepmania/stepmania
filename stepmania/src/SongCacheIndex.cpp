@@ -50,7 +50,7 @@ static void EmptyDir( CString dir )
 {
 	ASSERT(dir[dir.size()-1] == '/');
 
-	CStringArray asCacheFileNames;
+	vector<CString> asCacheFileNames;
 	GetDirListing( dir, asCacheFileNames );
 	for( unsigned i=0; i<asCacheFileNames.size(); i++ )
 	{

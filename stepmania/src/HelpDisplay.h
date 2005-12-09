@@ -18,9 +18,9 @@ public:
 	void LoadFromNode( const CString& sDir, const XNode* pNode );
 	virtual Actor *Copy() const;
 
-	void SetTips( const CStringArray &arrayTips ) { SetTips( arrayTips, arrayTips ); }
-	void SetTips( const CStringArray &arrayTips, const CStringArray &arrayTipsAlt );
-	void GetTips( CStringArray &arrayTipsOut, CStringArray &arrayTipsAltOut ) const { arrayTipsOut = m_arrayTips; arrayTipsAltOut = m_arrayTipsAlt; }
+	void SetTips( const vector<CString> &arrayTips ) { SetTips( arrayTips, arrayTips ); }
+	void SetTips( const vector<CString> &arrayTips, const vector<CString> &arrayTipsAlt );
+	void GetTips( vector<CString> &arrayTipsOut, vector<CString> &arrayTipsAltOut ) const { arrayTipsOut = m_arrayTips; arrayTipsAltOut = m_arrayTipsAlt; }
 
 	virtual void Update( float fDeltaTime );
 	virtual void SetName( const CString &sName );
@@ -31,7 +31,7 @@ public:
 protected:
 	ThemeMetric<float> TIP_SHOW_TIME;
 
-	CStringArray m_arrayTips, m_arrayTipsAlt;
+	vector<CString> m_arrayTips, m_arrayTipsAlt;
 	int m_iCurTipIndex;
 	
 	float m_fSecsUntilSwitch;

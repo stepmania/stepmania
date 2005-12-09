@@ -103,7 +103,7 @@ void OptionIconRow::SetFromGameState( PlayerNumber pn )
 	// init
 
 	CString sOptions = GAMESTATE->m_pPlayerState[pn]->m_PlayerOptions.GetString();
-	CStringArray asOptions;
+	vector<CString> asOptions;
 	split( sOptions, ", ", asOptions, true );
 
 

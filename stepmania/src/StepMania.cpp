@@ -722,7 +722,7 @@ RageDisplay *CreateDisplay()
 		VIDEO_TROUBLESHOOTING_URL "\n\n"
 		"Video Driver: "+GetVideoDriverName()+"\n\n";
 
-	CStringArray asRenderers;
+	vector<CString> asRenderers;
 	split( PREFSMAN->m_sVideoRenderers, ",", asRenderers, true );
 
 	if( asRenderers.empty() )
@@ -982,14 +982,14 @@ int main(int argc, char* argv[])
 	/* Set up alternative filesystem trees. */
 	if( PREFSMAN->m_sAdditionalFolders.Get() != "" )
 	{
-		CStringArray dirs;
+		vector<CString> dirs;
 		split( PREFSMAN->m_sAdditionalFolders, ",", dirs, true );
 		for( unsigned i=0; i < dirs.size(); i++)
 			FILEMAN->Mount( "dir", dirs[i], "/" );
 	}
 	if( PREFSMAN->m_sAdditionalSongFolders.Get() != "" )
 	{
-		CStringArray dirs;
+		vector<CString> dirs;
 		split( PREFSMAN->m_sAdditionalSongFolders, ",", dirs, true );
 		for( unsigned i=0; i < dirs.size(); i++)
 			FILEMAN->Mount( "dir", dirs[i], "/Songs" );

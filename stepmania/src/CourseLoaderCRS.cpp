@@ -27,7 +27,7 @@ bool CourseLoaderCRS::LoadFromMsd( const CString &sPath, const MsdFile &msd, Cou
 {
 	const CString sFName = SetExtension( out.m_sPath, "" );
 
-	CStringArray arrayPossibleBanners;
+	vector<CString> arrayPossibleBanners;
 	GetDirListing( sFName + "*.png", arrayPossibleBanners, false, true );
 	GetDirListing( sFName + "*.jpg", arrayPossibleBanners, false, true );
 	GetDirListing( sFName + "*.bmp", arrayPossibleBanners, false, true );
@@ -86,7 +86,7 @@ bool CourseLoaderCRS::LoadFromMsd( const CString &sPath, const MsdFile &msd, Cou
 			float end = -9999;
 			for( unsigned j = 1; j < sParams.params.size(); ++j )
 			{
-				CStringArray sBits;
+				vector<CString> sBits;
 				split( sParams[j], "=", sBits, false );
 				if( sBits.size() < 2 )
 					continue;
@@ -149,7 +149,7 @@ bool CourseLoaderCRS::LoadFromMsd( const CString &sPath, const MsdFile &msd, Cou
 				new_entry.bSecret = true;
 				CString sSong = sParams[1];
 				sSong.Replace( "\\", "/" );
-				CStringArray bits;
+				vector<CString> bits;
 				split( sSong, "/", bits );
 				if( bits.size() == 2 )
 				{
@@ -206,7 +206,7 @@ bool CourseLoaderCRS::LoadFromMsd( const CString &sPath, const MsdFile &msd, Cou
 			{
 				/* If "showcourse" or "noshowcourse" is in the list, force new_entry.secret 
 				 * on or off. */
-				CStringArray mods;
+				vector<CString> mods;
 				split( sParams[3], ",", mods, true );
 				for( int j = (int) mods.size()-1; j >= 0 ; --j )
 				{
@@ -278,7 +278,7 @@ bool CourseLoaderCRS::LoadFromCRSFile( const CString &_sPath, Course &out )
 
 	// save group name
 	{
-		CStringArray parts;
+		vector<CString> parts;
 		split( sPath, "/", parts, false );
 		if( parts.size() >= 4 )		// e.g. "/Courses/blah/fun.cvs"
 			out.m_sGroupName = parts[parts.size()-2];

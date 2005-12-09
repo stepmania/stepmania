@@ -78,7 +78,7 @@ bool RegistryAccess::GetRegValue( const CString &sKey, const CString &sName, CSt
 	return true;
 }
 
-bool RegistryAccess::GetRegValue( const CString &sKey, CString sName, int &iVal )
+bool RegistryAccess::GetRegValue( const CString &sKey, const CString &sName, int &iVal )
 {
 	HKEY hKey = OpenRegKey( sKey );
 	if( hKey == NULL )

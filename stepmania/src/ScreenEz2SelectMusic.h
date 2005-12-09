@@ -36,7 +36,7 @@ protected:
 	void UpdateOptions( PlayerNumber pn, int nosound );
 
 	CString sOptions;
-	CStringArray asOptions;
+	vector<CString> asOptions;
 
 	void TweenOffScreen();
 

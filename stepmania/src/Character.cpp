@@ -25,7 +25,7 @@ bool Character::Load( CString sCharDir )
 	}
 
 	{
-		CStringArray as;
+		vector<CString> as;
 		GetDirListing( m_sCharDir+"card.png", as, false, true );
 		GetDirListing( m_sCharDir+"card.jpg", as, false, true );
 		GetDirListing( m_sCharDir+"card.gif", as, false, true );
@@ -37,7 +37,7 @@ bool Character::Load( CString sCharDir )
 	}
 
 	{
-		CStringArray as;
+		vector<CString> as;
 		GetDirListing( m_sCharDir+"icon.png", as, false, true );
 		GetDirListing( m_sCharDir+"icon.jpg", as, false, true );
 		GetDirListing( m_sCharDir+"icon.gif", as, false, true );
@@ -67,7 +67,7 @@ bool Character::Load( CString sCharDir )
 
 CString GetRandomFileInDir( CString sDir )
 {
-	CStringArray asFiles;
+	vector<CString> asFiles;
 	GetDirListing( sDir, asFiles, false, true );
 	if( asFiles.empty() )
 		return CString();
@@ -90,7 +90,7 @@ CString Character::GetWarmUpAnimationPath() const { return DerefRedir(GetRandomF
 CString Character::GetDanceAnimationPath() const { return DerefRedir(GetRandomFileInDir(m_sCharDir + "Dance/")); }
 CString Character::GetTakingABreakPath() const
 {
-	CStringArray as;
+	vector<CString> as;
 	GetDirListing( m_sCharDir+"break.png", as, false, true );
 	GetDirListing( m_sCharDir+"break.jpg", as, false, true );
 	GetDirListing( m_sCharDir+"break.gif", as, false, true );
@@ -103,7 +103,7 @@ CString Character::GetTakingABreakPath() const
 
 CString Character::GetSongSelectIconPath() const
 {
-	CStringArray as;
+	vector<CString> as;
 	// first try and find an icon specific to the select music screen
 	// so you can have different icons for music select / char select
 	GetDirListing( m_sCharDir+"selectmusicicon.png", as, false, true );
@@ -129,7 +129,7 @@ CString Character::GetSongSelectIconPath() const
 
 CString Character::GetStageIconPath() const
 {
-	CStringArray as;
+	vector<CString> as;
 	// first try and find an icon specific to the select music screen
 	// so you can have different icons for music select / char select
 	GetDirListing( m_sCharDir+"stageicon.png", as, false, true );

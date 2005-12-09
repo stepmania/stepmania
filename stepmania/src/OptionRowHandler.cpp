@@ -277,7 +277,7 @@ public:
 		defOut.m_bOneChoiceForAllPlayers = false;
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
-		CStringArray arraySkinNames;
+		vector<CString> arraySkinNames;
 		NOTESKIN->GetNoteSkinNames( arraySkinNames );
 		for( unsigned skin=0; skin<arraySkinNames.size(); skin++ )
 		{

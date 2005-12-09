@@ -5,7 +5,7 @@
 
 bool NotesLoader::Loadable( CString sPath )
 {
-	CStringArray list;
+	vector<CString> list;
 	GetApplicableFiles( sPath, list );
 	return !list.empty();
 }

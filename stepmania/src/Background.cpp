@@ -324,7 +324,7 @@ bool BackgroundImpl::Layer::CreateBackground( const Song *pSong, const Backgroun
 		//  - song's dir
 		//  - RandomMovies dir
 		//  - BGAnimations dir.
-		CStringArray vsPaths, vsThrowAway;
+		vector<CString> vsPaths, vsThrowAway;
 
 		// Look for BGAnims in the song dir
 		if( sToResolve == SONG_BACKGROUND_FILE )
@@ -507,7 +507,7 @@ void BackgroundImpl::LoadFromSong( const Song* pSong )
 	// Choose a bunch of background that we'll use for the random file marker
 	//
 	{
-		CStringArray vsThrowAway, vsNames;
+		vector<CString> vsThrowAway, vsNames;
 		switch( PREFSMAN->m_RandomBackgroundMode )
 		{
 		default:

@@ -188,7 +188,7 @@ void ScreenSelectMode::MenuRight( PlayerNumber pn )
 
 void ScreenSelectMode::UpdateSelectableChoices()
 {
-	CStringArray GraphicPaths;
+	vector<CString> GraphicPaths;
 	m_iNumChoices = 0;
 	unsigned i=0;
 	unsigned j=0;

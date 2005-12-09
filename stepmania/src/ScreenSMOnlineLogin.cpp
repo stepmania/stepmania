@@ -66,7 +66,7 @@ void ScreenSMOnlineLogin::ImportOptions( int iRow, const vector<PlayerNumber> &v
 
 			FOREACH_PlayerNumber( pn )
 			{
-				CStringArray::iterator iter = find(vsProfiles.begin(), vsProfiles.end(), ProfileManager::m_sDefaultLocalProfileID[pn].Get() );
+				vector<CString>::iterator iter = find(vsProfiles.begin(), vsProfiles.end(), ProfileManager::m_sDefaultLocalProfileID[pn].Get() );
 				if( iter != vsProfiles.end() )
 					m_pRows[0]->SetOneSelection((PlayerNumber) pn, iter - vsProfiles.begin());
 			}

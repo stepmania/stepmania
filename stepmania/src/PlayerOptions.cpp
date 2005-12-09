@@ -205,7 +205,7 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 	ASSERT( NOTESKIN );
 //	Init();
 	sOptions.MakeLower();
-	CStringArray asBits;
+	vector<CString> asBits;
 	split( sOptions, ",", asBits, true );
 
 	FOREACH( CString, asBits, bit )
@@ -221,7 +221,7 @@ void PlayerOptions::FromString( CString sOptions, bool bWarnOnInvalid )
 
 		float level = 1;
 		float speed = 1;
-		CStringArray asParts;
+		vector<CString> asParts;
 		split( sBit, " ", asParts, true );
 
 		FOREACH_CONST( CString, asParts, s )
@@ -624,7 +624,7 @@ void PlayerOptions::GetThemedMods( vector<CString> &AddTo ) const
 
 		ASSERT( !sOneMod.empty() );
 
-		CStringArray asTokens;
+		vector<CString> asTokens;
 		split( sOneMod, " ", asTokens );
 
 		if( asTokens.empty() )

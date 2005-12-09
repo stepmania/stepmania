@@ -51,7 +51,7 @@ bool RandomSample::LoadSoundDir( CString sDir, int iMaxToLoad )
 		sDir += "/";
 #endif
 
-	CStringArray arraySoundFiles;
+	vector<CString> arraySoundFiles;
 	GetDirListing( sDir + "*.mp3", arraySoundFiles );
 	GetDirListing( sDir + "*.ogg", arraySoundFiles );
 	GetDirListing( sDir + "*.wav", arraySoundFiles );

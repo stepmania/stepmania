@@ -11,7 +11,7 @@
 DialogDriver *MakeDialogDriver()
 {
 	CString sDrivers = "win32,cocoa,null";
-	CStringArray asDriversToTry;
+	vector<CString> asDriversToTry;
 	split( sDrivers, ",", asDriversToTry, true );
 
 	ASSERT( asDriversToTry.size() != 0 );

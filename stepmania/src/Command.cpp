@@ -126,7 +126,7 @@ CString Commands::GetOriginalCommandString() const
 
 void ParseCommands( const CString &sCommands, Commands &vCommandsOut )
 {
-	CStringArray vsCommands;
+	vector<CString> vsCommands;
 	SplitWithQuotes( sCommands, ';', vsCommands, true );	// do ignore empty
 	vCommandsOut.v.resize( vsCommands.size() );
 

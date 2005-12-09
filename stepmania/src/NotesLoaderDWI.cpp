@@ -442,12 +442,12 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 
 		else if( 0==stricmp(sValueName,"FREEZE") )
 		{
-			CStringArray arrayFreezeExpressions;
+			vector<CString> arrayFreezeExpressions;
 			split( sParams[1], ",", arrayFreezeExpressions );
 
 			for( unsigned f=0; f<arrayFreezeExpressions.size(); f++ )
 			{
-				CStringArray arrayFreezeValues;
+				vector<CString> arrayFreezeValues;
 				split( arrayFreezeExpressions[f], "=", arrayFreezeValues );
 				if( arrayFreezeValues.size() != 2 )
 				{
@@ -464,12 +464,12 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 
 		else if( 0==stricmp(sValueName,"CHANGEBPM")  || 0==stricmp(sValueName,"BPMCHANGE") )
 		{
-			CStringArray arrayBPMChangeExpressions;
+			vector<CString> arrayBPMChangeExpressions;
 			split( sParams[1], ",", arrayBPMChangeExpressions );
 
 			for( unsigned b=0; b<arrayBPMChangeExpressions.size(); b++ )
 			{
-				CStringArray arrayBPMChangeValues;
+				vector<CString> arrayBPMChangeValues;
 				split( arrayBPMChangeExpressions[b], "=", arrayBPMChangeValues );
 				if( arrayBPMChangeValues.size() != 2 )
 				{
@@ -536,14 +536,14 @@ bool DWILoader::LoadFromDWIFile( CString sPath, Song &out )
 	return true;
 }
 
-void DWILoader::GetApplicableFiles( CString sPath, CStringArray &out )
+void DWILoader::GetApplicableFiles( CString sPath, vector<CString> &out )
 {
 	GetDirListing( sPath + CString("*.dwi"), out );
 }
 
 bool DWILoader::LoadFromDir( CString sPath, Song &out )
 {
-	CStringArray aFileNames;
+	vector<CString> aFileNames;
 	GetApplicableFiles( sPath, aFileNames );
 
 	if( aFileNames.size() > 1 )

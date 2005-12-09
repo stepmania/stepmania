@@ -101,7 +101,7 @@ static bool AttemptJapaneseConversion( CString &txt ) { return false; }
 
 bool ConvertString(CString &str, const CString &encodings)
 {
-	CStringArray lst;
+	vector<CString> lst;
 	split(encodings, ",", lst);
 
 	for(unsigned i = 0; i < lst.size(); ++i)

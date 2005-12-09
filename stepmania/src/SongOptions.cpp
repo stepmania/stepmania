@@ -74,7 +74,7 @@ void SongOptions::FromString( CString sOptions )
 {
 //	Init();
 	sOptions.MakeLower();
-	CStringArray asBits;
+	vector<CString> asBits;
 	split( sOptions, ",", asBits, true );
 
 	for( unsigned i=0; i<asBits.size(); i++ )
@@ -100,7 +100,7 @@ void SongOptions::FromString( CString sOptions )
 			ASSERT( ret == 1 );
 		}
 
-		CStringArray asParts;
+		vector<CString> asParts;
 		split( sBit, " ", asParts, true );
 		bool on = true;
 		if( asParts.size() > 1 )

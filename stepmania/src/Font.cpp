@@ -333,10 +333,10 @@ void Font::SetDefaultGlyph( FontPage *pPage )
 
 
 /* Given the INI for a font, find all of the texture pages for the font. */
-void Font::GetFontPaths( const CString &sFontIniPath, CStringArray &asTexturePathsOut )
+void Font::GetFontPaths( const CString &sFontIniPath, vector<CString> &asTexturePathsOut )
 {
 	CString sPrefix = SetExtension( sFontIniPath, "" );
-	CStringArray asFiles;
+	vector<CString> asFiles;
 	GetDirListing( sPrefix + "*", asFiles, false, true );
 
 	for( unsigned i = 0; i < asFiles.size(); ++i )
@@ -628,7 +628,7 @@ CString FontPageSettings::MapRange( CString sMapping, int iMapOffset, int iGlyph
 	return CString();
 }
 
-static CStringArray LoadStack;
+static vector<CString> LoadStack;
 
 /*
  * A font set is a set of files, eg:
@@ -671,7 +671,7 @@ void Font::Load( const CString &sIniPath, CString sChars )
 	m_sChars = sChars;
 
 	/* Get the filenames associated with this font. */
-	CStringArray asTexturePaths;
+	vector<CString> asTexturePaths;
 	GetFontPaths( sIniPath, asTexturePaths );
 
 	bool bCapitalsOnly = false;
@@ -688,7 +688,7 @@ void Font::Load( const CString &sIniPath, CString sChars )
 
 	{
 		/* If this is a top-level font (not a subfont), load the default font first. */
-		CStringArray ImportList;
+		vector<CString> ImportList;
 		if( LoadStack.size() == 1 )
 			ImportList.push_back("Common default");
 

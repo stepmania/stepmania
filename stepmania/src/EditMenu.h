@@ -102,7 +102,7 @@ private:
 		Difficulty dc;
 	};
 
-	CStringArray				m_sGroups;
+	vector<CString>				m_sGroups;
 	vector<Song*>				m_pSongs;
 	vector<StepsType>			m_StepsTypes;
 	vector<StepsAndDifficulty>	m_vpSteps;

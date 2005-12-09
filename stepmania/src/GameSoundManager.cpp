@@ -261,7 +261,7 @@ static void DoPlayOnceFromDir( CString sPath )
 	if( sPath.Right(1) != "/" )
 		sPath += "/";
 
-	CStringArray arraySoundFiles;
+	vector<CString> arraySoundFiles;
 	GetDirListing( sPath + "*.mp3", arraySoundFiles );
 	GetDirListing( sPath + "*.wav", arraySoundFiles );
 	GetDirListing( sPath + "*.ogg", arraySoundFiles );

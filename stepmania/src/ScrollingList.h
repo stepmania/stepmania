@@ -13,7 +13,7 @@ public:
 	ScrollingList();
 	~ScrollingList();
 
-	void Load( const CStringArray& asGraphicPaths );
+	void Load( const vector<CString>& asGraphicPaths );
 	void Unload();	// delete all items.  Called automatically on Load()
 
 	virtual void Update( float fDeltaTime );

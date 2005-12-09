@@ -1311,9 +1311,6 @@ struct StdStringEqualsNoCaseA
 	#pragma warning (pop)
 #endif
 
-#define CString CStdString
-#define CStringArray vector<CString>
-
 #endif	// #ifndef STDSTRING_H
 
 /*

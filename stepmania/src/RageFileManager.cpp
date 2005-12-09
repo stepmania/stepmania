@@ -294,7 +294,7 @@ static void NormalizePath( CString &sPath )
 
 bool ilt( const CString &a, const CString &b ) { return a.CompareNoCase(b) < 0; }
 bool ieq( const CString &a, const CString &b ) { return a.CompareNoCase(b) == 0; }
-void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+void RageFileManager::GetDirListing( CString sPath, vector<CString> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	NormalizePath( sPath );
 
@@ -334,7 +334,7 @@ void RageFileManager::GetDirListing( CString sPath, CStringArray &AddTo, bool bO
 	{
 		/* More than one driver returned files.  Remove duplicates (case-insensitively). */
 		sort( AddTo.begin()+iOldSize, AddTo.end(), ilt );
-		CStringArray::iterator it = unique( AddTo.begin()+iOldSize, AddTo.end(), ieq );
+		vector<CString>::iterator it = unique( AddTo.begin()+iOldSize, AddTo.end(), ieq );
 		AddTo.erase( it, AddTo.end() );
 	}
 }
@@ -827,12 +827,12 @@ unsigned GetFileSizeInBytes( const CString &sPath )
 	return FILEMAN->GetFileSizeInBytes( sPath );
 }
 
-void GetDirListing( const CString &sPath, CStringArray &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+void GetDirListing( const CString &sPath, vector<CString> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	FILEMAN->GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
 }
 
-void GetDirListingRecursive( const CString &sDir, const CString &sMatch, CStringArray &AddTo )
+void GetDirListingRecursive( const CString &sDir, const CString &sMatch, vector<CString> &AddTo )
 {
 	ASSERT( sDir.Right(1) == "/" );
 	GetDirListing( sDir+sMatch, AddTo, false, true );
@@ -883,7 +883,7 @@ unsigned int GetHashForDirectory( const CString &sDir )
 
 	hash += GetHashForString( sDir );
 
-	CStringArray arrayFiles;
+	vector<CString> arrayFiles;
 	GetDirListing( sDir+"*", arrayFiles, false );
 	for( unsigned i=0; i<arrayFiles.size(); i++ )
 	{

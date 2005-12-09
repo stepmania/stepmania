@@ -293,7 +293,7 @@ void ArchHooks_darwin::MountInitialFilesystems( const CString &sDirOfExecutable 
 {
 #if defined(MACOSX)
 	CHECKPOINT_M( ssprintf("DOE \"%s\"", sDirOfExecutable.c_str()) );
-	CStringArray parts;
+	vector<CString> parts;
 	split( sDirOfExecutable, "/", parts );
 	ASSERT( parts.size() > 3 );
 	CString Dir = '/' + join( "/", parts.begin(), parts.end()-3 );

@@ -136,7 +136,7 @@ void LoadingWindow_Win32::Paint()
 
 void LoadingWindow_Win32::SetText( CString sText )
 {
-	CStringArray asMessageLines;
+	vector<CString> asMessageLines;
 	split( sText, "\n", asMessageLines, false );
 	while( asMessageLines.size() < 3 )
 		asMessageLines.push_back( "" );

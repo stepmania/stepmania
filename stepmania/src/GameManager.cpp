@@ -2713,7 +2713,7 @@ const Game* GameManager::GetGameFromIndex( int index ) const
 
 bool GameManager::IsGameEnabled( const Game *pGame ) const
 {
-	CStringArray asNoteSkins;
+	vector<CString> asNoteSkins;
 	NOTESKIN->GetNoteSkinNames( pGame, asNoteSkins, false ); /* don't omit default */
 	return asNoteSkins.size() > 0;
 }

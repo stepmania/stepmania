@@ -113,7 +113,7 @@ ThemeManager::ThemeManager()
 	/* We don't have any theme loaded until SwitchThemeAndLanguage is called. */
 	m_sCurThemeName = "";
 	
-	CStringArray arrayThemeNames;
+	vector<CString> arrayThemeNames;
 	GetThemeNames( arrayThemeNames );
 }
 
@@ -123,7 +123,7 @@ ThemeManager::~ThemeManager()
 	SAFE_DELETE( g_pIniMetrics );
 }
 
-void ThemeManager::GetThemeNames( CStringArray& AddTo )
+void ThemeManager::GetThemeNames( vector<CString>& AddTo )
 {
 	GetDirListing( THEMES_DIR + "*", AddTo, true );
 	StripCvs( AddTo );
@@ -131,7 +131,7 @@ void ThemeManager::GetThemeNames( CStringArray& AddTo )
 
 bool ThemeManager::DoesThemeExist( const CString &sThemeName )
 {
-	CStringArray asThemeNames;	
+	vector<CString> asThemeNames;	
 	GetThemeNames( asThemeNames );
 	for( unsigned i=0; i<asThemeNames.size(); i++ )
 	{
@@ -141,7 +141,7 @@ bool ThemeManager::DoesThemeExist( const CString &sThemeName )
 	return false;
 }
 
-void ThemeManager::GetLanguages( CStringArray& AddTo )
+void ThemeManager::GetLanguages( vector<CString>& AddTo )
 {
 	AddTo.clear();
 
@@ -150,13 +150,13 @@ void ThemeManager::GetLanguages( CStringArray& AddTo )
 
 	// remove dupes
 	sort( AddTo.begin(), AddTo.end() );
-	CStringArray::iterator it = unique( AddTo.begin(), AddTo.end() );
+	vector<CString>::iterator it = unique( AddTo.begin(), AddTo.end() );
 	AddTo.erase(it, AddTo.end());
 }
 
 bool ThemeManager::DoesLanguageExist( const CString &sLanguage )
 {
-	CStringArray asLanguages;
+	vector<CString> asLanguages;
 	GetLanguages( asLanguages );
 
 	for( unsigned i=0; i<asLanguages.size(); i++ )
@@ -329,7 +329,7 @@ void ThemeManager::RunLuaScripts( const CString &sMask )
 	{
 		--iter;
 		const CString &sThemeDir = GetThemeDirFromName( iter->sThemeName );
-		CStringArray asElementPaths;
+		vector<CString> asElementPaths;
 		GetDirListing( sThemeDir + "Scripts/" + sMask, asElementPaths, false, true );
 		for( unsigned i = 0; i < asElementPaths.size(); ++i )
 		{
@@ -401,7 +401,7 @@ try_element_again:
 	const CString sThemeDir = GetThemeDirFromName( sThemeName );
 	const CString &sCategory = ElementCategoryToString(category);
 
-	CStringArray asElementPaths;
+	vector<CString> asElementPaths;
 
 	// If sFileName already has an extension, we're looking for a specific file
 	bool bLookingForSpecificFile = sElement.find_last_of('.') != sElement.npos;
@@ -412,7 +412,7 @@ try_element_again:
 	}
 	else	// look for all files starting with sFileName that have types we can use
 	{
-		CStringArray asPaths;
+		vector<CString> asPaths;
 		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + "*",
 						asPaths, false, true );
 
@@ -844,7 +844,7 @@ apActorCommands ThemeManager::GetMetricA( const CString &sClassName, const CStri
 
 void ThemeManager::NextTheme()
 {
-	CStringArray as;
+	vector<CString> as;
 	GetThemeNames( as );
 	unsigned i;
 	for( i=0; i<as.size(); i++ )
@@ -854,10 +854,10 @@ void ThemeManager::NextTheme()
 	SwitchThemeAndLanguage( as[iNewIndex], m_sCurLanguage );
 }
 
-void ThemeManager::GetLanguagesForTheme( const CString &sThemeName, CStringArray& asLanguagesOut )
+void ThemeManager::GetLanguagesForTheme( const CString &sThemeName, vector<CString>& asLanguagesOut )
 {
 	CString sLanguageDir = GetThemeDirFromName(sThemeName) + LANGUAGES_SUBDIR;
-	CStringArray as;
+	vector<CString> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
 	
 	// stip out metrics.ini

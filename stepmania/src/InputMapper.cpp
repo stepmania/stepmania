@@ -462,7 +462,7 @@ void InputMapper::ReadMappingsFromDisk()
 			GameInput GameI;
 			GameI.fromString( pGame, name );
 
-			CStringArray sDeviceInputStrings;
+			vector<CString> sDeviceInputStrings;
 			split( value, ",", sDeviceInputStrings, false );
 
 			for( unsigned i=0; i<sDeviceInputStrings.size() && i<unsigned(NUM_GAME_TO_DEVICE_SLOTS); i++ )

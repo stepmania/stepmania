@@ -47,7 +47,7 @@ void ScreenSelect::Init()
 		// element in the list is a choice name.  This level of indirection 
 		// makes it easier to add or remove items without having to change a bunch
 		// of indices.
-		CStringArray asChoiceNames;
+		vector<CString> asChoiceNames;
 		split( CHOICE_NAMES, ",", asChoiceNames, true );
 
 		for( unsigned c=0; c<asChoiceNames.size(); c++ )
@@ -65,7 +65,7 @@ void ScreenSelect::Init()
 	// Load codes
 	//
 	{
-		CStringArray vsCodeNames;
+		vector<CString> vsCodeNames;
 		split( CODE_NAMES, ",", vsCodeNames, true );
 
 		for( unsigned c=0; c<vsCodeNames.size(); c++ )

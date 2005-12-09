@@ -46,7 +46,7 @@ private:
 	BitmapText	m_textPackages;
 	BitmapText	m_textWeb;
 
-	CStringArray		m_Packages;
+	vector<CString>		m_Packages;
 
 	vector <CString>	m_Links;
 	vector <CString>	m_LinkTitles;

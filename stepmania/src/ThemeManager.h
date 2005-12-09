@@ -34,9 +34,9 @@ public:
 	ThemeManager();
 	~ThemeManager();
 
-	void GetThemeNames( CStringArray& AddTo );
+	void GetThemeNames( vector<CString>& AddTo );
 	bool DoesThemeExist( const CString &sThemeName );
-	void GetLanguages( CStringArray& AddTo );
+	void GetLanguages( vector<CString>& AddTo );
 	bool DoesLanguageExist( const CString &sLanguage );
 	void SwitchThemeAndLanguage( const CString &sThemeName, const CString &sLanguage );
 	void UpdateLuaGlobals();
@@ -103,7 +103,7 @@ protected:
 	static CString GetThemeDirFromName( const CString &sThemeName );
 	CString GetElementDir( const CString &sThemeName );
 	static CString GetMetricsIniPath( const CString &sThemeName );
-	static void GetLanguagesForTheme( const CString &sThemeName, CStringArray& asLanguagesOut );
+	static void GetLanguagesForTheme( const CString &sThemeName, vector<CString>& asLanguagesOut );
 	static CString GetLanguageIniPath( const CString &sThemeName, const CString &sLanguage );
 	CString GetDefaultLanguage();
 

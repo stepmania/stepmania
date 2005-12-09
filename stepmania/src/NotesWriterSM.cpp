@@ -170,7 +170,7 @@ CString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bS
 	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
 	
 	int MaxRadar = bSavingCache? NUM_RADAR_CATEGORIES:5;
-	CStringArray asRadarValues;
+	vector<CString> asRadarValues;
 	for( int r=0; r < MaxRadar; r++ )
 		asRadarValues.push_back( ssprintf("%.3f", in.GetRadarValues()[r]) );
 	/* Don't append a newline here; it's added in NoteDataUtil::GetSMNoteDataString.

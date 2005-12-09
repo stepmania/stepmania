@@ -512,7 +512,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNa
 	return true;
 }
 
-void BMSLoader::GetApplicableFiles( CString sPath, CStringArray &out )
+void BMSLoader::GetApplicableFiles( CString sPath, vector<CString> &out )
 {
 	GetDirListing( sPath + CString("*.bms"), out );
 	GetDirListing( sPath + CString("*.bme"), out );
@@ -852,7 +852,7 @@ bool BMSLoader::LoadFromDir( CString sDir, Song &out )
 	ASSERT( out.m_vsKeysoundFile.empty() );
 
 	m_sDir = sDir;
-	CStringArray arrayBMSFileNames;
+	vector<CString> arrayBMSFileNames;
 	GetApplicableFiles( sDir, arrayBMSFileNames );
 
 	/* We should have at least one; if we had none, we shouldn't have been

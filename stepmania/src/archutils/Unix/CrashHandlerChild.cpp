@@ -232,7 +232,7 @@ static void child_process()
     if( !child_read(3, temp, size) )
 	return;
 
-    CStringArray Checkpoints;
+    vector<CString> Checkpoints;
     split(temp, "$$", Checkpoints);
     delete [] temp;
 

@@ -35,7 +35,7 @@ void HelpDisplay::SetName( const CString &sName )
 	BitmapText::SetName( sName );
 }
 
-void HelpDisplay::SetTips( const CStringArray &arrayTips, const CStringArray &arrayTipsAlt )
+void HelpDisplay::SetTips( const vector<CString> &arrayTips, const vector<CString> &arrayTipsAlt )
 { 
 	ASSERT( arrayTips.size() == arrayTipsAlt.size() );
 
@@ -117,7 +117,7 @@ public:
 
 	static int gettips( T* p, lua_State *L )
 	{
-		CStringArray arrayTips, arrayTipsAlt;
+		vector<CString> arrayTips, arrayTipsAlt;
 		p->GetTips( arrayTips, arrayTipsAlt );
 
 		LuaHelpers::CreateTableFromArray( arrayTips, L );

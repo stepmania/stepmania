@@ -13,7 +13,7 @@
 #include "InputHandler/Selector_InputHandler.h"
 void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
 {
-	CStringArray DriversToTry;
+	vector<CString> DriversToTry;
 	split(drivers, ",", DriversToTry, true);
 
 	ASSERT( DriversToTry.size() != 0 );
@@ -100,7 +100,7 @@ LoadingWindow *MakeLoadingWindow()
 	/* Don't load NULL by default.  On most systems, if we can't load the SDL
 	 * loading window, we won't be able to init OpenGL, either, so don't bother. */
 	CString drivers = "xbox,win32,cocoa,gtk";
-	CStringArray DriversToTry;
+	vector<CString> DriversToTry;
 	split(drivers, ",", DriversToTry, true);
 
 	ASSERT( DriversToTry.size() != 0 );
@@ -180,7 +180,7 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 {
 	DumpAVIDebugInfo( ID.filename );
 
-	CStringArray DriversToTry;
+	vector<CString> DriversToTry;
 	split(PREFSMAN->GetMovieDrivers(), ",", DriversToTry, true);
 	ASSERT(DriversToTry.size() != 0);
 
@@ -227,7 +227,7 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 #include "Sound/Selector_RageSoundDriver.h"
 RageSoundDriver *MakeRageSoundDriver(CString drivers)
 {
-	CStringArray DriversToTry;
+	vector<CString> DriversToTry;
 	split(drivers, ",", DriversToTry, true);
 
 	ASSERT( DriversToTry.size() != 0 );

@@ -935,7 +935,7 @@ void Course::UpdateCourseStats( StepsType st )
 
 bool Course::IsRanking() const
 {
-	CStringArray rankingsongs;
+	vector<CString> rankingsongs;
 	
 	split(THEME->GetMetric("ScreenRanking", "CoursesToShow"), ",", rankingsongs);
 

@@ -103,7 +103,7 @@ public:
 	RageFileManager::FileType GetFileType( const CString &sPath );
 	int GetFileSize( const CString &sPath );
 	int GetFileHash( const CString &sFilePath );
-	void GetDirListing( CString sPath, CStringArray &asAddTo, bool bOnlyDirs, bool bReturnPathToo );
+	void GetDirListing( CString sPath, vector<CString> &asAddTo, bool bOnlyDirs, bool bReturnPathToo );
 
 	void FlushDirCache();
 

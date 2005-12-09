@@ -123,7 +123,7 @@ void BGAnimation::LoadFromAniDir( const CString &_sAniDir )
 		// This is an old style BGAnimation (not using .ini)
 
 		// loading a directory of layers
-		CStringArray asImagePaths;
+		vector<CString> asImagePaths;
 		ASSERT( sAniDir != "" );
 
 		GetDirListing( sAniDir+"*.png", asImagePaths, false, true );

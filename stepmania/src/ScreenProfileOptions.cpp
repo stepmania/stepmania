@@ -95,7 +95,7 @@ void ScreenProfileOptions::ImportOptions( int iRow, const vector<PlayerNumber> &
 			vector<CString> vsProfiles;
 			PROFILEMAN->GetLocalProfileIDs( vsProfiles );
 
-			CStringArray::iterator iter = find( 
+			vector<CString>::iterator iter = find( 
 				vsProfiles.begin(),
 				vsProfiles.end(),
 				MemoryCardManager::m_sMemoryCardOsMountPoint[pn].Get() );

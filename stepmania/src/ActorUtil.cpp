@@ -56,7 +56,7 @@ retry:
 	RageFileManager::FileType ft = FILEMAN->GetFileType( sPath );
 	if( ft != RageFileManager::TYPE_FILE && ft != RageFileManager::TYPE_DIR )
 	{
-		CStringArray asPaths;
+		vector<CString> asPaths;
 		GetDirListing( sPath + "*", asPaths, false, true );	// return path too
 
 		if( asPaths.empty() )

@@ -215,7 +215,7 @@ and once only.
 void MusicBannerWheel::LoadSongData()
 {
 	Song* pSong = NULL;
-	CStringArray asGraphicPaths;
+	vector<CString> asGraphicPaths;
 
 	if(MAXSONGSINBUFFER >= arraySongs.size() && SingleLoad != 1)  // less than the MAXSONGSINBUFFER means we can get away with loading the lot in one go
 	{
