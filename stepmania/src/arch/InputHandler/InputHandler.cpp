@@ -38,6 +38,19 @@ void InputHandler::ButtonPressed( DeviceInput di, bool Down )
 	}
 }
 
+CString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
+{
+	if( di.device == DEVICE_KEYBOARD )
+	{
+		char c = di.ToChar();
+		if( c )
+			return ssprintf( "Key %c", c );
+		return ssprintf( "Key %s", DeviceButtonToString(di.device, di.button).c_str() );
+	}
+
+	return di.ToString();
+}
+
 /*
  * (c) 2003-2004 Glenn Maynard
  * All rights reserved.
