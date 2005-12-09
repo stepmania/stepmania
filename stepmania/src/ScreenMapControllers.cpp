@@ -104,9 +104,19 @@ void ScreenMapControllers::Init()
 		m_LineScroller.AddChild( &m_Line[b] );
 	}	
 
+	{
+		m_pExit = ActorUtil::MakeActor( THEME->GetPathG(m_sName,"exit") );
+		m_pExit->SetName( "Exit" );
+		ActorUtil::LoadAllCommands( *m_pExit, m_sName );
+
+		unsigned b = m_KeysToMap.size();
+		m_Line[b].AddChild( m_pExit );
+		m_LineScroller.AddChild( &m_Line[b] );
+	}
+
 	m_LineScroller.SetName( "LineScroller" );
 	ActorUtil::LoadAllCommands( m_LineScroller, m_sName );
-	m_LineScroller.Load2( (float) m_KeysToMap.size()*2, false );
+	m_LineScroller.Load2( (float) m_LineScroller.GetNumChildren()*2, false );
 	this->AddChild( &m_LineScroller );
 }
 
@@ -136,6 +146,7 @@ void ScreenMapControllers::Update( float fDeltaTime )
 			return; /* keep waiting */
 		m_WaitingForPress.SetZero();
 
+		ASSERT( m_iCurButton < (int) m_KeysToMap.size() );
 		const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
 		
 		GameInput curGameI( (GameController)m_iCurController, pKey->m_GameButton );
@@ -268,6 +279,9 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 		case KEY_SPACE:
 		case KEY_BACK: /* Clear the selected input mapping. */
 #endif
+			if( m_iCurButton == (int) m_KeysToMap.size() )
+				break; // on exit
+
 			{
 				const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
 				GameInput curGameI( (GameController)m_iCurController, pKey->m_GameButton );
@@ -283,6 +297,8 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			}
 			break;
 		case KEY_LEFT: /* Move the selection left, wrapping up. */
+			if( m_iCurButton == (int) m_KeysToMap.size() )
+				break; // on exit
 			if( m_iCurSlot == 0 && m_iCurController == 0 )
 				break;	// can't go left any more
 			BeforeChangeFocus();
@@ -296,6 +312,8 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			m_soundChange.Play();
 			break;
 		case KEY_RIGHT:	/* Move the selection right, wrapping down. */
+			if( m_iCurButton == (int) m_KeysToMap.size() )
+				break; // on exit
 			if( m_iCurSlot == NUM_CHANGABLE_SLOTS-1 && m_iCurController == MAX_GAME_CONTROLLERS-1 )
 				break;	// can't go right any more
 			BeforeChangeFocus();
@@ -317,7 +335,7 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			m_soundChange.Play();
 			break;
 		case KEY_DOWN: /* Move the selection down. */
-			if( m_iCurButton == (int) m_KeysToMap.size()-1 )
+			if( m_iCurButton == (int) m_KeysToMap.size() )
 				break;	// can't go down any more
 			BeforeChangeFocus();
 			m_iCurButton++;
@@ -336,6 +354,13 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			break;
 		case KEY_ENTER: /* Change the selection. */
 		case KEY_KP_ENTER:
+			if( m_iCurButton == (int) m_KeysToMap.size() )
+			{
+				SCREENMAN->PlayStartSound();
+				StartTransitioningScreen( SM_GoToNextScreen );		
+				break;
+			}
+
 			{
 				const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
 				BitmapText *pText = pKey->m_textMappedTo[m_iCurController][m_iCurSlot];
@@ -362,18 +387,25 @@ void ScreenMapControllers::TweenOffScreen()
 	OFF_COMMAND( m_LineScroller );
 }
 
+Actor *ScreenMapControllers::GetActorWithFocus()
+{
+	if( m_iCurButton == (int) m_KeysToMap.size() )
+		return m_pExit;
+
+	const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
+	return pKey->m_textMappedTo[m_iCurController][m_iCurSlot];
+}
+
 void ScreenMapControllers::BeforeChangeFocus()
 {
-	const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
-	BitmapText *pText = pKey->m_textMappedTo[m_iCurController][m_iCurSlot];
-	pText->PlayCommand( "LoseFocus" );
+	Actor *pActor = GetActorWithFocus();
+	pActor->PlayCommand( "LoseFocus" );
 }
 
 void ScreenMapControllers::AfterChangeFocus()
 {
-	const KeyToMap *pKey = &m_KeysToMap[m_iCurButton];
-	BitmapText *pText = pKey->m_textMappedTo[m_iCurController][m_iCurSlot];
-	pText->PlayCommand( "GainFocus" );
+	Actor *pActor = GetActorWithFocus();
+	pActor->PlayCommand( "GainFocus" );
 }
 
 void ScreenMapControllers::Refresh()

@@ -24,6 +24,7 @@ public:
 	virtual void TweenOffScreen();
 
 private:
+	Actor *GetActorWithFocus();
 	void BeforeChangeFocus();
 	void AfterChangeFocus();
 	virtual bool GenericTweenOn() const { return true; }
@@ -44,8 +45,10 @@ private:
 		BitmapText	*m_textMappedTo[MAX_GAME_CONTROLLERS][NUM_SHOWN_GAME_TO_DEVICE_SLOTS];
 	};
 	vector<KeyToMap> m_KeysToMap;
+	// owned by m_Line
+	Actor *m_pExit;
 
-	ActorFrame	m_Line[MAX_GAME_BUTTONS];
+	ActorFrame	m_Line[MAX_GAME_BUTTONS+1];
 	ActorScroller m_LineScroller;
 
 	RageSound m_soundChange;
