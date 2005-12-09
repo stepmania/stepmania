@@ -13,12 +13,12 @@
 #include "Command.h"
 #include "InputEventPlus.h"
 
-#define BUTTONS_TO_MAP THEME->GetMetric( m_sName, "ButtonsToMap" )
-#define INVALID_BUTTON THEME->GetMetric( m_sName, "InvalidButton" )
+#define BUTTONS_TO_MAP              THEME->GetMetric( m_sName, "ButtonsToMap" )
+#define INVALID_BUTTON              THEME->GetMetric( m_sName, "InvalidButton" )
 #define MAPPED_TO_COMMAND(gc,slot)  THEME->GetMetricA( m_sName, ssprintf("MappedToP%iS%iCommand", gc+1, slot+1) )
-#define THEME_BUTTON_NAMES    THEME->GetMetricB( m_sName, "ThemeButtonNames" )
-#define THEME_SECONDARY_NAMES THEME->GetMetricB( m_sName, "ThemeSecondaryNames" )
-#define BUTTON_NAME(s)        THEME->GetMetric ( m_sName, ssprintf("Button%s",s) )
+#define THEME_BUTTON_NAMES          THEME->GetMetricB( m_sName, "ThemeButtonNames" )
+#define THEME_SECONDARY_NAMES       THEME->GetMetricB( m_sName, "ThemeSecondaryNames" )
+#define BUTTON_NAME(s)              THEME->GetMetric ( m_sName, ssprintf("Button%s",s) )
 
 static const float g_fSecondsToWaitForInput = 0.05f;
 
