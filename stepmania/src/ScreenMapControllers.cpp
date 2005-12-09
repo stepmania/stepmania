@@ -224,6 +224,9 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 	//
 	if( !m_WaitingForPress.IsZero() )
 	{
+		if( input.type != IET_FIRST_PRESS )
+			return;
+
 		/* Don't allow function keys to be mapped. */
 		if( input.DeviceI.device == DEVICE_KEYBOARD && (input.DeviceI.button >= KEY_F1 && input.DeviceI.button <= KEY_F12) )
 		{
