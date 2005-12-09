@@ -430,20 +430,8 @@ void ArchHooks_Win32::MountInitialFilesystems( const CString &sDirOfExecutable )
 		sMyDocumentsDir += "/";
 	}
 
-	CString sProgramFilesDir;
-	{
-		bool bSuccess = RegistryAccess::GetRegValue( "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows\\CurrentVersion", "ProgramFilesDir", sProgramFilesDir );
-		ASSERT( bSuccess );
-		sProgramFilesDir.Replace( '\\', '/' );
-		sProgramFilesDir += "/";
-	}
-
-	bool bInstalledToProgramFiles = BeginsWith( sDirOfExecutable, sProgramFilesDir );
-	if( bInstalledToProgramFiles )
-	{
-		CString sPersonalDir = sMyDocumentsDir + PRODUCT_ID + "/";
-		FILEMAN->Mount( "dir", sPersonalDir + "Save", "/Save" );
-	}
+	CString sPersonalDir = sMyDocumentsDir + PRODUCT_ID + "/";
+	FILEMAN->Mount( "dir", sPersonalDir + "Save", "/Save" );
 }
 
 /*
