@@ -21,7 +21,7 @@
 
 const CString TEMP_MOUNT_POINT = "/@mctemp/";
 
-void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut );
+void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut );
 
 template<class T>
 bool VectorsAreEqual( const T &a, const T &b )
@@ -166,7 +166,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 		return false;
 
 	vector<UsbStorageDevice> vOld = m_vDevicesLastSeen; // copy
-	GetNewStorageDevices( vStorageDevicesOut );
+	GetUSBStorageDevices( vStorageDevicesOut );
 	vector<UsbStorageDevice> &vNew = vStorageDevicesOut;
 	
 	// check for connects
@@ -250,9 +250,9 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 	return true;
 }
 
-void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
+void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
-	LOG->Trace( "GetNewStorageDevices" );
+	LOG->Trace( "GetUSBStorageDevices" );
 	
 	vDevicesOut.clear();
 
@@ -429,7 +429,7 @@ void GetNewStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 		}
 	}
 	
-	LOG->Trace( "Done with GetNewStorageDevices" );
+	LOG->Trace( "Done with GetUSBStorageDevices" );
 }
 
 
