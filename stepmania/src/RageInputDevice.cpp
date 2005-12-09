@@ -346,7 +346,7 @@ char DeviceInput::ToChar() const
 	switch( device )
 	{
 	case DEVICE_KEYBOARD:
-		if( button < 128 )
+		if( button < 127 )
 			return (char) button;
 
 		if( button >= KEY_KP_C0 && button <= KEY_KP_C9 )
