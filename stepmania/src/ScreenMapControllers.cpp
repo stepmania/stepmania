@@ -347,8 +347,6 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			{
 				SCREENMAN->PlayStartSound();
 
-				INPUTMAPPER->SaveMappingsToDisk();	// save changes
-
 				StartTransitioningScreen( SM_GoToNextScreen );		
 			}
 			break;
