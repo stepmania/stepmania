@@ -14,7 +14,10 @@
 
 #define BUTTONS_TO_MAP THEME->GetMetric( m_sName, "ButtonsToMap" )
 #define INVALID_BUTTON THEME->GetMetric( m_sName, "InvalidButton" )
-#define MAPPED_TO_X(gc,slot) THEME->GetMetricF( m_sName, ssprintf("MappedToP%iS%iX", gc+1, slot+1) )
+#define MAPPED_TO_X(gc,slot)  THEME->GetMetricF( m_sName, ssprintf("MappedToP%iS%iX", gc+1, slot+1) )
+#define THEME_BUTTON_NAMES    THEME->GetMetricB( m_sName, "ThemeButtonNames" )
+#define THEME_SECONDARY_NAMES THEME->GetMetricB( m_sName, "ThemeSecondaryNames" )
+#define BUTTON_NAME(s)        THEME->GetMetric ( m_sName, ssprintf("Button%s",s) )
 
 static const float g_fSecondsToWaitForInput = 0.05f;
 
@@ -62,14 +65,19 @@ void ScreenMapControllers::Init()
 		BitmapText *pName = new BitmapText;
 		pName->SetName( "Title" );
 		pName->LoadFromFont( THEME->GetPathF("Common","title") );
-		pName->SetText( GAMESTATE->GetCurrentGame()->m_szButtonNames[pKey->m_GameButton] );
+		CString sText = GAMESTATE->GetCurrentGame()->m_szButtonNames[pKey->m_GameButton];
+		if( THEME_BUTTON_NAMES )
+			sText  = BUTTON_NAME(sText.c_str());
+		pName->SetText( sText );
 		ActorUtil::LoadAllCommands( *pName, m_sName );
 		m_Line[b].AddChild( pName );
 
 		BitmapText *pSecondary = new BitmapText;
 		pSecondary->SetName( "Secondary" );
 		pSecondary->LoadFromFont( THEME->GetPathF("Common","title") );
-		CString sText = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
+		sText = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
+		if( THEME_SECONDARY_NAMES )
+			sText  = BUTTON_NAME(sText.c_str());
 		ActorUtil::LoadAllCommands( *pSecondary, m_sName );
 		pSecondary->SetText( sText );
 		m_Line[b].AddChild( pSecondary );
