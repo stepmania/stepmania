@@ -420,6 +420,7 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 			for( unsigned i=0; i<vsNames.size(); ++i )
 			{
 				WheelItemData wid( TYPE_SORT, NULL, "", NULL, SORT_MENU_COLOR );
+				wid.m_Action.m_sName = vsNames[i];
 				wid.m_Action.Load( i, ParseCommands(CHOICE.GetValue(vsNames[i])) );
 				wid.m_sLabel = WHEEL_TEXT(vsNames[i]);
 
