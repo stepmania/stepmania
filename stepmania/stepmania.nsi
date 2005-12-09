@@ -314,29 +314,6 @@ Section "Main Section" SecMain
 	File "Program\dbghelp.dll"
 	File "Program\zlib1.dll"
 
-	; What to do here?  Better to just delete an existing INI than to
-	; drop the local one in ... -glenn
-	; Agreed. - Chris
-	; But we shouldn't delete, either, since that'll wipe peoples' prefs.
-	; Better to address upgrade problems than to make people nuke INI's.
-	; Maybe we should remove this for snapshot releases; that way we can
-	; track down problems with INI upgrades (and then possibly restore it
-	; for the release if we're not confident we've fixed most problems) -glenn
-	; Added message box to ask user. -Chris
-	; This is a silly check, because we force an uninstall and the installer 
-	; removes stepmania.ini.  -Chris
-
-	;IfFileExists "$INSTDIR\${PRODUCT_NAME}.ini" stepmania_ini_present 
-	;IfFileExists "$INSTDIR\Data\${PRODUCT_NAME}.ini" stepmania_ini_present 
-	;IfFileExists "$INSTDIR\Save\${PRODUCT_NAME}.ini" stepmania_ini_present 
-	;Goto stepmania_ini_not_present
-	;stepmania_ini_present:
-	;MessageBox MB_YESNO|MB_ICONQUESTION "Your settings from the previous installation of ${PRODUCT_ID} were found.$\nWould you like to keep these settings?" IDNO stepmania_ini_not_present
-	;Delete "$INSTDIR\Save\${PRODUCT_NAME}.ini"
-	;stepmania_ini_not_present:
-	;; Move ini into Save\
-	;Rename "$INSTDIR\${PRODUCT_NAME}.ini" "$INSTDIR\Save\Preferences.ini"
-
 	; Create Start Menu icons
 	SetShellVarContext current  # 	'all' doesn't work on Win9x
 	CreateDirectory "$SMPROGRAMS\${PRODUCT_ID}\"
