@@ -196,6 +196,8 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 {
 	if( input.type != IET_FIRST_PRESS && input.type != IET_SLOW_REPEAT && input.type != IET_FAST_REPEAT )
 		return;	// ignore
+	if( IsTransitioning() )
+		return;	// ignore
 
 	LOG->Trace( "ScreenMapControllers::Input():  device: %d, button: %d", 
 		input.DeviceI.device, input.DeviceI.button );
@@ -343,12 +345,8 @@ void ScreenMapControllers::Input( const InputEventPlus &input )
 			m_soundChange.Play();
 			break;
 		case KEY_ESC: /* Quit the screen. */
-			if( !IsTransitioning() )
-			{
-				SCREENMAN->PlayStartSound();
-
-				StartTransitioningScreen( SM_GoToNextScreen );		
-			}
+			SCREENMAN->PlayStartSound();
+			StartTransitioningScreen( SM_GoToNextScreen );		
 			break;
 		case KEY_ENTER: /* Change the selection. */
 		case KEY_KP_ENTER:

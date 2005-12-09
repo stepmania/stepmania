@@ -48,7 +48,7 @@ private:
 	// owned by m_Line
 	Actor *m_pExit;
 
-	ActorFrame	m_Line[MAX_GAME_BUTTONS+1];
+	ActorFrame	m_Line[MAX_GAME_BUTTONS+1]; // XXX
 	ActorScroller m_LineScroller;
 
 	RageSound m_soundChange;
