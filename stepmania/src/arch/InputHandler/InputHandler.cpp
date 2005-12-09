@@ -45,7 +45,7 @@ CString InputHandler::GetDeviceSpecificInputString( const DeviceInput &di )
 		char c = di.ToChar();
 		if( c )
 			return ssprintf( "Key %c", c );
-		return ssprintf( "Key %s", DeviceButtonToString(di.device, di.button).c_str() );
+		return DeviceButtonToString( di.device, di.button );
 	}
 
 	return di.ToString();
