@@ -544,13 +544,16 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 				/* We're using sections, so use the section name as the top-level sort. */
 				if( so != SORT_TOP_GRADES && so != SORT_BPM )
 					SongUtil::SortSongPointerArrayBySectionName(arraySongs, so);
+			}
 
-				// make WheelItemDatas with sections
-				CString sLastSection = "";
-				int iSectionColorIndex = 0;
-				for( unsigned i=0; i< arraySongs.size(); i++ )
+			// make WheelItemDatas with sections
+			CString sLastSection = "";
+			int iSectionColorIndex = 0;
+			for( unsigned i=0; i< arraySongs.size(); i++ )
+			{
+				Song* pSong = arraySongs[i];
+				if( bUseSections )
 				{
-					Song* pSong = arraySongs[i];
 					CString sThisSection = SongUtil::GetSectionNameFromSongAndSort( pSong, so );
 
 					if( sThisSection != sLastSection )
@@ -561,17 +564,8 @@ void MusicWheel::BuildWheelItemDatas( vector<WheelItemData> &arrayWheelItemDatas
 						arrayWheelItemDatas.push_back( WheelItemData(TYPE_SECTION, NULL, sThisSection, NULL, colorSection) );
 						sLastSection = sThisSection;
 					}
-
-					arrayWheelItemDatas.push_back( WheelItemData( TYPE_SONG, pSong, sThisSection, NULL, SONGMAN->GetSongColor(pSong)) );
 				}
-			}
-			else
-			{
-				for( unsigned i=0; i<arraySongs.size(); i++ )
-				{
-					Song* pSong = arraySongs[i];
-					arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, "", NULL, SONGMAN->GetSongColor(pSong)) );
-				}
+				arrayWheelItemDatas.push_back( WheelItemData(TYPE_SONG, pSong, sLastSection, NULL, SONGMAN->GetSongColor(pSong)) );
 			}
 
 			if( so != SORT_ROULETTE )
