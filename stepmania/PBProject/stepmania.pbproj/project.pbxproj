@@ -789,6 +789,11 @@
 		AACA593307B5E23400763545 /* RageUtil_AutoPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */; };
 		AACA593407B5E23400763545 /* RageUtil_WorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592D07B5E23400763545 /* RageUtil_WorkerThread.cpp */; };
 		AACA593507B5E23400763545 /* RageUtil_WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */; };
+		AACF47B20949A24F0011B9F3 /* Selector_MemoryCardDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47B10949A24F0011B9F3 /* Selector_MemoryCardDriver.h */; };
+		AACF47B9094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47B7094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h */; };
+		AACF47BA094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */; };
+		AACF47EF094A6E290011B9F3 /* DarwinMCHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47ED094A6E290011B9F3 /* DarwinMCHelpers.h */; };
+		AACF47F0094A6E290011B9F3 /* DarwinMCHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = AACF47EE094A6E290011B9F3 /* DarwinMCHelpers.mm */; };
 		AACFBE2808E7D793005087FC /* ActorSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE2608E7D793005087FC /* ActorSound.cpp */; };
 		AACFBE2908E7D793005087FC /* ActorSound.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE2708E7D793005087FC /* ActorSound.h */; };
 		AACFBE3A08E7D832005087FC /* InputEventPlus.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE3908E7D832005087FC /* InputEventPlus.h */; };
@@ -1728,6 +1733,13 @@
 		AACA592C07B5E23400763545 /* RageUtil_AutoPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageUtil_AutoPtr.h; path = ../src/RageUtil_AutoPtr.h; sourceTree = "<group>"; };
 		AACA592D07B5E23400763545 /* RageUtil_WorkerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageUtil_WorkerThread.cpp; path = ../src/RageUtil_WorkerThread.cpp; sourceTree = "<group>"; };
 		AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = RageUtil_WorkerThread.h; path = ../src/RageUtil_WorkerThread.h; sourceTree = "<group>"; };
+		AACF47910949978E0011B9F3 /* MemoryCardDriverThreaded_Windows.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryCardDriverThreaded_Windows.cpp; sourceTree = "<group>"; };
+		AACF4793094998870011B9F3 /* MemoryCardDriverThreaded_Linux.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryCardDriverThreaded_Linux.cpp; sourceTree = "<group>"; };
+		AACF47B10949A24F0011B9F3 /* Selector_MemoryCardDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Selector_MemoryCardDriver.h; sourceTree = "<group>"; };
+		AACF47B7094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryCardDriverThreaded_OSX.h; sourceTree = "<group>"; };
+		AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryCardDriverThreaded_OSX.cpp; sourceTree = "<group>"; };
+		AACF47ED094A6E290011B9F3 /* DarwinMCHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DarwinMCHelpers.h; sourceTree = "<group>"; };
+		AACF47EE094A6E290011B9F3 /* DarwinMCHelpers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DarwinMCHelpers.mm; sourceTree = "<group>"; };
 		AACFBE2608E7D793005087FC /* ActorSound.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ActorSound.cpp; path = ../src/ActorSound.cpp; sourceTree = "<group>"; };
 		AACFBE2708E7D793005087FC /* ActorSound.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ActorSound.h; path = ../src/ActorSound.h; sourceTree = "<group>"; };
 		AACFBE3908E7D832005087FC /* InputEventPlus.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = InputEventPlus.h; path = ../src/InputEventPlus.h; sourceTree = "<group>"; };
@@ -2987,6 +2999,11 @@
 				AAC9F332069E22CF00D53E2C /* MemoryCardDriver.cpp */,
 				AAC9F333069E22CF00D53E2C /* MemoryCardDriver.h */,
 				AABE78760591287100E8BF50 /* MemoryCardDriver_Null.h */,
+				AACF4793094998870011B9F3 /* MemoryCardDriverThreaded_Linux.cpp */,
+				AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */,
+				AACF47B7094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h */,
+				AACF47910949978E0011B9F3 /* MemoryCardDriverThreaded_Windows.cpp */,
+				AACF47B10949A24F0011B9F3 /* Selector_MemoryCardDriver.h */,
 			);
 			path = MemoryCard;
 			sourceTree = "<group>";
@@ -3064,6 +3081,8 @@
 				AA4B5CC40573AD81005FB5DB /* wchar.cpp */,
 				AA2FB62909120FC5000FD574 /* PreferredLanguage.m */,
 				AAA130C60914ACB600497146 /* WindowHelper.m */,
+				AACF47ED094A6E290011B9F3 /* DarwinMCHelpers.h */,
+				AACF47EE094A6E290011B9F3 /* DarwinMCHelpers.mm */,
 			);
 			path = Darwin;
 			sourceTree = "<group>";
@@ -3557,6 +3576,9 @@
 				AAF34B1A0900D1AA0006EDB7 /* InputHandler_Carbon.h in Headers */,
 				AAA372D50909934500141131 /* MovieTexture_Generic.h in Headers */,
 				AAA372D70909934500141131 /* MovieTexture_Theora.h in Headers */,
+				AACF47B20949A24F0011B9F3 /* Selector_MemoryCardDriver.h in Headers */,
+				AACF47B9094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h in Headers */,
+				AACF47EF094A6E290011B9F3 /* DarwinMCHelpers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4116,6 +4138,8 @@
 				AA2FB62A09120FC5000FD574 /* PreferredLanguage.m in Sources */,
 				AA2FB639091212B0000FD574 /* LifeMeter.cpp in Sources */,
 				AAA130C70914ACB600497146 /* WindowHelper.m in Sources */,
+				AACF47BA094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp in Sources */,
+				AACF47F0094A6E290011B9F3 /* DarwinMCHelpers.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
