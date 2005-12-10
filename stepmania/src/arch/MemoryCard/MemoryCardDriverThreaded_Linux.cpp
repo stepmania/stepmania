@@ -169,7 +169,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 	GetUSBStorageDevices( vStorageDevicesOut );
 
 	// log connects
-	FOREACH( UsbStorageDevice, vNew, newd )
+	FOREACH( UsbStorageDevice, vStorageDevicesOut, newd )
 	{
 		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), *newd );
 		if( iter == vOld.end() )    // didn't find
