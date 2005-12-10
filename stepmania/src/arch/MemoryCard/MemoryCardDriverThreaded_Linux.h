@@ -19,8 +19,6 @@ protected:
 	void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut );
 	bool USBStorageDevicesChanged();
 	bool TestWrite( UsbStorageDevice* pDevice );
-
-	vector<UsbStorageDevice> m_vDevicesLastSeen;
 };
 
 #ifdef ARCH_MEMORY_CARD_DRIVER

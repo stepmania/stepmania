@@ -2,22 +2,11 @@
 #include "MemoryCardDriverThreaded_Linux.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "RageFileManager.h"
-#include "ProfileManager.h"
-#include "PrefsManager.h"
-#include "Foreach.h"
 #include "RageFile.h"
 
-#include <cstdio>
-#include <cstring>
 #include <cerrno>
-#include <unistd.h>
 #include <fcntl.h>
-#include <fstream>
 #include <dirent.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <sys/poll.h>
 
 template<class T>
 bool VectorsAreEqual( const T &a, const T &b )
