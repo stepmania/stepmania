@@ -287,7 +287,7 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 	return ret;
 }
 
-#inlcude "RageFileManager.h"
+#include "RageFileManager.h"
 
 void ArchHooks_darwin::MountInitialFilesystems( const CString &sDirOfExecutable )
 {
@@ -297,7 +297,7 @@ void ArchHooks_darwin::MountInitialFilesystems( const CString &sDirOfExecutable 
 	split( sDirOfExecutable, "/", parts );
 	ASSERT( parts.size() > 3 );
 	CString Dir = '/' + join( "/", parts.begin(), parts.end()-3 );
-	RageFileManager::Mount( "dir", Dir, "/" );
+	FILEMAN->Mount( "dir", Dir, "/" );
 #else
 	/* Paths relative to the CWD: */
 	FILEMAN->Mount( "dir", ".", "/" );
