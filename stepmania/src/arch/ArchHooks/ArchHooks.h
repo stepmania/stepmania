@@ -4,11 +4,12 @@
 class ArchHooks
 {
 public:
-	/* This is called as soon as SDL is set up, the loading window is shown
-	 * and we can safely log and throw. */
+	virtual ~ArchHooks() { }
+
+	/* This is called as soon as the loading window is shown, and we can
+	 * safely log. */
 	virtual void DumpDebugInfo() { }
 
-	virtual ~ArchHooks() { }
 	/* This is called once each time through the game loop */
 	virtual void Update(float delta) { }
 
@@ -27,9 +28,11 @@ public:
 	 */
 	virtual bool CheckForMultipleInstances() { return false; }
 
-	/* Call this to temporarily enter a high-priority or realtime scheduling (depending
+	/*
+	 * Call this to temporarily enter a high-priority or realtime scheduling (depending
 	 * on the implementation) mode.  This is used to improve timestamp accuracy.  Do as
-	 * little as possible in this mode; hanging in it might hang the system entirely. */
+	 * little as possible in this mode; hanging in it might hang the system entirely.
+	 */
 	virtual void EnterTimeCriticalSection() { }
 	virtual void ExitTimeCriticalSection() { }
 
