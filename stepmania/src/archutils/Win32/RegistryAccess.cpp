@@ -5,7 +5,7 @@
 
 /* Given "HKEY_LOCAL_MACHINE\hardware\foo", return "hardware\foo", and place
  * the HKEY_LOCAL_MACHINE constant in key. */
-static bool GetRegKeyType( const CString &sIn, CString &sOut, HKEY &key )
+static bool GetRegKeyType( const RString &sIn, RString &sOut, HKEY &key )
 {
 	size_t iBackslash = sIn.find( '\\' );
 	if( iBackslash == sIn.npos )
@@ -14,7 +14,7 @@ static bool GetRegKeyType( const CString &sIn, CString &sOut, HKEY &key )
 		return false;
 	}
 
-	CString sType = sIn.substr( 0, iBackslash );
+	RString sType = sIn.substr( 0, iBackslash );
 
 	if( !sType.CompareNoCase( "HKEY_CLASSES_ROOT" ) )		key = HKEY_CLASSES_ROOT;
 	else if( !sType.CompareNoCase( "HKEY_CURRENT_CONFIG" ) )	key = HKEY_CURRENT_CONFIG;
@@ -34,9 +34,9 @@ static bool GetRegKeyType( const CString &sIn, CString &sOut, HKEY &key )
 
 /* Given a full key, eg. "HKEY_LOCAL_MACHINE\hardware\foo", open it and return it.
  * On error, return NULL. */
-static HKEY OpenRegKey( const CString &sKey )
+static HKEY OpenRegKey( const RString &sKey )
 {
-	CString sSubkey;
+	RString sSubkey;
 	HKEY hType;
 	if( !GetRegKeyType(sKey, sSubkey, hType) )
 		return NULL;
@@ -52,7 +52,7 @@ static HKEY OpenRegKey( const CString &sKey )
 	return hRetKey;
 }
 
-bool RegistryAccess::GetRegValue( const CString &sKey, const CString &sName, CString &sVal )
+bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, RString &sVal )
 {
 	HKEY hKey = OpenRegKey( sKey );
 	if( hKey == NULL )
@@ -74,11 +74,11 @@ bool RegistryAccess::GetRegValue( const CString &sKey, const CString &sName, CSt
 	if( iSize && (iType == REG_SZ || iType == REG_MULTI_SZ || iType == REG_EXPAND_SZ) )
 		--iSize; /* remove nul terminator */
 
-	sVal = CString( sBuffer, iSize );
+	sVal = RString( sBuffer, iSize );
 	return true;
 }
 
-bool RegistryAccess::GetRegValue( const CString &sKey, const CString &sName, int &iVal )
+bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, int &iVal )
 {
 	HKEY hKey = OpenRegKey( sKey );
 	if( hKey == NULL )
@@ -99,7 +99,15 @@ bool RegistryAccess::GetRegValue( const CString &sKey, const CString &sName, int
 	return true;
 }
 
-bool RegistryAccess::GetRegSubKeys( const CString &sKey, vector<CString> &lst, const CString &regex, bool bReturnPathToo )
+bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, bool &bVal )
+{
+	int iVal;
+	bool b = GetRegValue( sKey, sName, iVal );
+	bVal = !!iVal;
+	return b;
+}
+
+bool RegistryAccess::GetRegSubKeys( const RString &sKey, vector<RString> &lst, const RString &regex, bool bReturnPathToo )
 {
 	HKEY hKey = OpenRegKey( sKey );
 	if( hKey == NULL )
@@ -124,7 +132,7 @@ bool RegistryAccess::GetRegSubKeys( const CString &sKey, vector<CString> &lst, c
 			break;
 		}
 
-		CString sStr( szBuffer, iSize );
+		RString sStr( szBuffer, iSize );
 
 		if( re.Compare(sStr) )
 		{
@@ -137,6 +145,45 @@ bool RegistryAccess::GetRegSubKeys( const CString &sKey, vector<CString> &lst, c
 	RegCloseKey( hKey );
 
 	return !bError;
+}
+
+bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, const RString &sVal )
+{
+	HKEY hKey = OpenRegKey( sKey );
+	if( hKey == NULL )
+		return false;
+
+	bool bSuccess = true;
+	TCHAR sz[255];
+	
+	if (sVal.GetLength() > 254) return FALSE;
+
+	strcpy( sz, sVal.c_str() );
+	
+	if (::RegSetValueEx(hKey, LPCTSTR(sName), 0,
+		REG_SZ, (LPBYTE)sz, strlen(sz) + 1)
+		 != ERROR_SUCCESS) 
+		 bSuccess = false;
+
+	::RegCloseKey(hKey);
+	return bSuccess;
+}
+
+bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, bool bVal )
+{
+	HKEY hKey = OpenRegKey( sKey );
+	if( hKey == NULL )
+		return false;
+
+	bool bSuccess = true;
+	
+	if (::RegSetValueEx(hKey, LPCTSTR(sName), 0,
+		REG_BINARY, (LPBYTE)&bVal, sizeof(bVal))
+		 != ERROR_SUCCESS) 
+		 bSuccess = false;
+
+	::RegCloseKey(hKey);
+	return bSuccess;
 }
 
 /*

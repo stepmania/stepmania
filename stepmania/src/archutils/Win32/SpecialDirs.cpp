@@ -3,7 +3,7 @@
 #include "RegistryAccess.h"
 #include <shlobj.h>
 
-CString GetMyDocumentsDir()
+RString GetMyDocumentsDir()
 {
 	CString sMyDocumentsDir;
 	bool bSuccess = RegistryAccess::GetRegValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders", "Personal", sMyDocumentsDir );
@@ -13,7 +13,7 @@ CString GetMyDocumentsDir()
 	return sMyDocumentsDir;
 }
 
-CString GetApplicationDataDir()
+RString GetApplicationDataDir()
 {
 	CString sApplicationDataDir;
 	TCHAR szDir[MAX_PATH] = "";

@@ -1,8 +1,8 @@
 #ifndef SpecialDirs_H
 #define SpecialDirs_H
 
-CString GetMyDocumentsDir();
-CString GetApplicationDataDir();
+RString GetMyDocumentsDir();
+RString GetApplicationDataDir();
 
 #endif
 

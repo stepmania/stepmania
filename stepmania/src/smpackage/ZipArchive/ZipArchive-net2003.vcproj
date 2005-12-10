@@ -3,6 +3,7 @@
 	ProjectType="Visual C++"
 	Version="7.10"
 	Name="ZipArchive"
+	ProjectGUID="{F8FE2773-87CB-402F-8DC8-A80837C3E24C}"
 	SccProjectName="&quot;$/ZipArchive&quot;, LDAAAAAA"
 	SccLocalPath="."
 	Keyword="MFCProj">

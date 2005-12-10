@@ -6,15 +6,15 @@
 
 namespace RegistryAccess
 {
-	bool GetRegValue( const CString &key, const CString &sName, CString &val );
-	bool GetRegValue( const CString &key, const CString &sName, int &val );
-	bool GetRegValue( const CString &key, const CString &sName, bool &val );
+	bool GetRegValue( const RString &key, const RString &sName, RString &val );
+	bool GetRegValue( const RString &key, const RString &sName, int &val );
+	bool GetRegValue( const RString &key, const RString &sName, bool &val );
 
-	bool SetRegValue( const CString &key, const CString &sName, const CString &val );
-	bool SetRegValue( const CString &key, const CString &sName, int val );
-	bool SetRegValue( const CString &key, const CString &sName, bool val );
+	bool GetRegSubKeys( const RString &key, vector<RString> &lst, const RString &regex = ".*", bool bReturnPathToo = true );
 
-	bool GetRegSubKeys( const CString &key, vector<CString> &lst, const CString &regex = ".*", bool bReturnPathToo = true );
+	bool SetRegValue( const RString &key, const RString &sName, const RString &val );
+	bool SetRegValue( const RString &key, const RString &sName, int val );
+	bool SetRegValue( const RString &key, const RString &sName, bool val );
 }
 
 #endif
