@@ -111,7 +111,8 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 			if( !TestReady(sDrive, sVolumeLabel) )
 				continue;
 
-			UsbStorageDevice usbd;
+			vNewStorageDevices.push_back( UsbStorageDevice() );
+			UsbStorageDevice &usbd = vNewStorageDevices.back();
 			usbd.SetOsMountDir( sDrive );
 			usbd.sVolumeLabel = sVolumeLabel;
 			if( TestWrite(sDrive) )
@@ -143,8 +144,6 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 
 			FILEMAN->Unmount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
 			FILEMAN->Unmount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
-
-			vNewStorageDevices.push_back( usbd );
 		}
 
 		CHECKPOINT;
