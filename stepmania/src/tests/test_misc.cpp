@@ -6,7 +6,6 @@
 #include "RageUtil.h"
 #include "arch/arch.h"
 #include "arch/ArchHooks/ArchHooks.h"
-void ExitGame() { }
 
 CString g_Driver = "dir", g_Root = ".";
 
