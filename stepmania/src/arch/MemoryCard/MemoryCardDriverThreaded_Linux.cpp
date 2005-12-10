@@ -210,7 +210,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 				continue;
 			}
 
-			if( !ExecuteCommand("mount " + d.sDevice) )
+			if( !this->Mount(&d) )
 			{
 				d.SetError( "MountFailed" );
 				continue;
@@ -232,7 +232,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 				FILEMAN->Unmount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
 			}
 
-			ExecuteCommand( "sync; umount -l \"" + d.sOsMountDir + "\"" );
+			this->Unmount( &d );
 
 			LOG->Trace( "WriteTest: %s, Name: %s", d.m_State == UsbStorageDevice::STATE_ERROR? "failed":"succeeded", d.sName.c_str() );
 		}
