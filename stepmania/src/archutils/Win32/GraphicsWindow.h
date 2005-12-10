@@ -1,4 +1,5 @@
-/* Win32 helper - set up a window for OpenGL/D3D */
+/* GraphicsWindow - Sets up a window for OpenGL/D3D. */
+
 #ifndef GRAPHICS_WINDOW_H
 #define GRAPHICS_WINDOW_H
 
