@@ -170,15 +170,11 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 	vector<UsbStorageDevice> &vNew = vStorageDevicesOut;
 	
 	// check for connects
-	vector<UsbStorageDevice> vConnects;
 	FOREACH( UsbStorageDevice, vNew, newd )
 	{
 		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), *newd );
 		if( iter == vOld.end() )    // didn't find
-		{
 			LOG->Trace( "New device connected: %s", newd->sDevice.c_str() );
-			vConnects.push_back( *newd );
-		}
 	}
 	
 	/* When we first see a device, regardless of bMount, just return it as CHECKING,
