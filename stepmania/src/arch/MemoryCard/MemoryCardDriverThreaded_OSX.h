@@ -5,12 +5,15 @@
 
 class MemoryCardDriverThreaded_OSX : public MemoryCardDriver
 {
-public:	
+public:
+	MemoryCardDriverThreaded_OSX();
+	~MemoryCardDriverThreaded_OSX();
 	bool Mount( UsbStorageDevice *pDevice ) { return true; }
 	void Unmount( UsbStorageDevice *pDevice ) { }
 	void Flush( UsbStorageDevice *pDevice );
 	
 protected:
+	bool USBStorageDevicesChanged();
 	void GetUSBStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut );
 	bool TestWrite( UsbStorageDevice *pDevice );
 };

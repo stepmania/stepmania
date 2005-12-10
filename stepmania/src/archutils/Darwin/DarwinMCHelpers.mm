@@ -1,19 +1,72 @@
 #include "global.h"
 #include "DarwinMCHelpers.h"
+#include "RageThreads.h"
 
 #import <Cocoa/Cocoa.h>
 
-void DarwinMCHelpers::GetRemovableDevicePaths( vector<CString> vDevicePaths )
+static bool g_bChange;
+static RageMutex g_Lock( "USB devices changed lock" );
+
+@interface MemoryCardHelper : NSObject
+- (void) devicesChanged:(NSNotification *)notification;
+@end
+@implementation MemoryCardHelper
+- (void) devicesChanged:(NSNotification *)notification
 {
+	LockMut(g_Lock);
+	g_bChange = true;
+}
+@end
+
+static MemoryCardHelper *g_MCH = nil;
+
+void DarwinMCHelpers::Start()
+{
+	ASSERT( g_MCH == nil );
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	NSNotificationCenter *nc = [[NSWorkspace sharedWorkspace] notificationCenter];
+	
+	g_bChange = true;
+	g_MCH = [[MemoryCardHelper alloc] init];
+	[nc addObserver:g_MCH selector:@selector(devicesChanged:)
+			   name:@"NSWorkspaceDidMountNotification" object:nil];
+	[nc addObserver:g_MCH selector:@selector(devicesChanged:)
+			   name:@"NSWorkspaceDidUnmountNotification" object:nil];
+	
+	[pool release];
+}
+
+void DarwinMCHelpers::Stop()
+{
+	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+	NSNotificationCenter *nc = [[NSWorkspace sharedWorkspace] notificationCenter];
+
+	[nc removeObserver:g_MCH];
+	[g_MCH release];
+	
+	[pool release];
+}
+
+bool DarwinMCHelpers::DevicesChanged()
+{
+	LockMut( g_Lock );
+	return g_bChange;
+}
+
+void DarwinMCHelpers::GetRemovableDevicePaths( vector<CString>& vDevicePaths )
+{
+	LockMut( g_Lock );
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSWorkspace *ws = [NSWorkspace sharedWorkspace];
 	NSArray *paths = [ws mountedRemovableMedia];
 	NSEnumerator *i = [paths objectEnumerator];
 	NSString *path;
 	
+	vDevicePaths.clear();
 	while( (path = [i nextObject]) )
 		vDevicePaths.push_back( [path UTF8String] );
 	[pool release];
+	g_bChange = false;
 }
 
 /*

@@ -3,7 +3,10 @@
 
 namespace DarwinMCHelpers
 {
-	void GetRemovableDevicePaths( vector<CString> vDevicePaths );
+	void Start();
+	void Stop();
+	bool DevicesChanged();
+	void GetRemovableDevicePaths( vector<CString>& vDevicePaths );
 }
 
 #endif

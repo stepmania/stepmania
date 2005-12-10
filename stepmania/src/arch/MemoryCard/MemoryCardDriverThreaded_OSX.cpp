@@ -8,6 +8,16 @@
 #include <unistd.h>
 #include <Carbon/Carbon.h>
 
+MemoryCardDriverThreaded_OSX::MemoryCardDriverThreaded_OSX()
+{
+	DarwinMCHelpers::Start();
+}
+
+MemoryCardDriverThreaded_OSX::~MemoryCardDriverThreaded_OSX()
+{
+	DarwinMCHelpers::Stop();
+}
+
 void MemoryCardDriverThreaded_OSX::Flush( UsbStorageDevice *pDevice )
 {
 	if( pDevice->iRefNum == -1 )
@@ -21,6 +31,11 @@ void MemoryCardDriverThreaded_OSX::Flush( UsbStorageDevice *pDevice )
 	
 	if( PBFlushVolSync(&pb) != noErr )
 		LOG->Warn( "Failed to flush the memory card." );
+}
+
+bool MemoryCardDriverThreaded_OSX::USBStorageDevicesChanged()
+{
+	return DarwinMCHelpers::DevicesChanged();
 }
 
 void MemoryCardDriverThreaded_OSX::GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
