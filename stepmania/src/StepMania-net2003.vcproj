@@ -1205,6 +1205,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ProductInfo.h">
 			</File>
 			<File
+				RelativePath=".\SpecialFiles.cpp">
+			</File>
+			<File
+				RelativePath=".\SpecialFiles.h">
+			</File>
+			<File
 				RelativePath="StdString.h">
 			</File>
 			<File
@@ -2464,6 +2470,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="RageUtil_WorkerThread.h">
+			</File>
+			<File
+				RelativePath=".\RageUtilLua.cpp">
 			</File>
 			<Filter
 				Name="Helpers"
