@@ -74,8 +74,8 @@ struct UsbStorageDevice
 class MemoryCardDriver
 {
 public:
-	MemoryCardDriver() {};
-	virtual ~MemoryCardDriver() {};
+	MemoryCardDriver() {}
+	virtual ~MemoryCardDriver() {}
 
 	/* Make a device accessible via its pDevice->sOsMountDir.  This will be called
 	 * before any access to the device, and before TestWrite. */
