@@ -103,7 +103,6 @@ static void GetFileList( const CString &sPath, vector<CString> &out )
 
 bool MemoryCardDriverThreaded_Linux::USBStorageDevicesChanged()
 {
-	static CString sLastDevices = "";
 	CString sThisDevices;
 
 	/* If a device is removed and reinserted, the inode of the /sys/block entry
@@ -122,8 +121,8 @@ bool MemoryCardDriverThreaded_Linux::USBStorageDevicesChanged()
 		sThisDevices += ssprintf( "%i,", (int) buf.st_ino );
 	}
 	       
-	bool bChanged = sThisDevices != sLastDevices;
-	sLastDevices = sThisDevices;
+	bool bChanged = sThisDevices != m_sLastDevices;
+	m_sLastDevices = sThisDevices;
 	if( bChanged )
 		LOG->Trace( "Change in USB storage devices detected." );
 	return bChanged;
