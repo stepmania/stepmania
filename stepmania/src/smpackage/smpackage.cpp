@@ -1,6 +1,8 @@
 // smpackage.cpp : Defines the class behaviors for the application.
 //
 
+#define CO_EXIST_WITH_MFC
+#include "global.h"
 #include "stdafx.h"
 #include "smpackage.h"
 #include "smpackageExportDlg.h"
@@ -8,6 +10,7 @@
 #include "RageUtil.h"
 #include "smpackageUtil.h"
 #include "MainMenuDlg.h"
+#include "RageFileManager.h"
 
 
 #ifdef _DEBUG
@@ -66,32 +69,32 @@ BOOL CSmpackageApp::InitInstance()
 		// make sure it's in the list of install directories
 		TCHAR szCurrentDirectory[MAX_PATH];
 		GetCurrentDirectory( MAX_PATH, szCurrentDirectory );
-		AddStepManiaInstallDir( szCurrentDirectory );
+		SMPackageUtil::AddStepManiaInstallDir( szCurrentDirectory );
 	}
 	
 
 	// check if there's a .smzip command line argument
-	CStringArray arrayCommandLineBits;
+	vector<RString> arrayCommandLineBits;
 	split( ::GetCommandLine(), "\"", arrayCommandLineBits );
 	for( unsigned i=0; i<arrayCommandLineBits.size(); i++ )
 	{
-		CString sPath = arrayCommandLineBits[i];
-		sPath.TrimLeft();
-		sPath.TrimRight();
-		CString sPathLower = sPath;
+		RString sPath = arrayCommandLineBits[i];
+		TrimLeft( sPath );
+		TrimRight( sPath );
+		RString sPathLower = sPath;
 		sPathLower.MakeLower();
 
 		// test to see if this is a smzip file
 		if( sPathLower.Right(3) == "zip" )
 		{
-			if( !DoesFileExist(sPath) )
+			if( !FILEMAN->DoesFileExist(sPath) )
 			{
 				AfxMessageBox( ssprintf("The file '%s' does not exist.  Aborting installation.",sPath), MB_ICONERROR );
 				exit(0);
 			}
 
 			// We found a zip package.  Prompt the user to install it!
-			CSMPackageInstallDlg dlg( sPath );
+			CSMPackageInstallDlg dlg( CString(sPath.c_str()) );
 			int nResponse = dlg.DoModal();
 			if( nResponse == IDOK )
 			{
@@ -109,11 +112,16 @@ BOOL CSmpackageApp::InitInstance()
 		}
 	}
 
+	FILEMAN = new RageFileManager( "" );
+
 
 	// Show the Manager Dialog
 	MainMenuDlg dlg;
 	int nResponse = dlg.DoModal();
 //	if (nResponse == IDOK)
+
+
+	SAFE_DELETE( FILEMAN );
 
 
 	// Since the dialog has been closed, return FALSE so that we exit the

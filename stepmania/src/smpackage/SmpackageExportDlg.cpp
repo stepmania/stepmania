@@ -1,6 +1,8 @@
 // SmpackageExportDlg.cpp : implementation file
 //
 
+#define CO_EXIST_WITH_MFC
+#include "global.h"
 #include "stdafx.h"
 #include "smpackage.h"
 #include "SmpackageExportDlg.h"
@@ -11,6 +13,7 @@
 #include "smpackageUtil.h"	
 #include "EditInsallations.h"	
 #include "IniFile.h"	
+#include "RageFileDriverMemory.h"
 
 #include <vector>
 #include <algorithm>
@@ -76,9 +79,9 @@ BOOL CSmpackageExportDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-CString ReplaceInvalidFileNameChars( CString sOldFileName )
+RString ReplaceInvalidFileNameChars( RString sOldFileName )
 {
-	CString sNewFileName = sOldFileName;
+	RString sNewFileName = sOldFileName;
 	const char charsToReplace[] = { 
 		' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', 
 		'+', '=', '[', ']', '{', '}', '|', ':', '\"', '\\',
@@ -89,38 +92,7 @@ CString ReplaceInvalidFileNameChars( CString sOldFileName )
 	return sNewFileName;
 }
 
-void GetFilePaths( CString sDirOrFile, 	vector<CString> &asPathToFilesOut )
-{
-	vector<CString> asDirectoriesToExplore;
-
-	// HACK:
-	// Must use backslashes in the path, or else WinZip and WinRAR don't see the files.
-	// Not sure if this is ZipArchive's fault.
-
-	if( IsADirectory(sDirOrFile) && sDirOrFile.Right(1) != "\\" )
-	{
-		sDirOrFile += "\\";
-		sDirOrFile += "*.*";
-	}
-	
-	if( IsAFile(sDirOrFile) )
-	{
-		asPathToFilesOut.push_back( sDirOrFile );
-		return;
-	}
-
-
-	GetDirListing( sDirOrFile, asPathToFilesOut, false, true );
-	GetDirListing( sDirOrFile, asDirectoriesToExplore, true, true );
-	while( asDirectoriesToExplore.size() > 0 )
-	{
-		GetDirListing( asDirectoriesToExplore[0] + "\\*.*", asPathToFilesOut, false, true );
-		GetDirListing( asDirectoriesToExplore[0] + "\\*.*", asDirectoriesToExplore, true, true );
-		asDirectoriesToExplore.erase( asDirectoriesToExplore.begin() );
-	}
-}
-
-CString GetDesktopPath()
+RString GetDesktopPath()
 {
     static TCHAR strNull[2] = _T("");
     static TCHAR strPath[MAX_PATH];
@@ -145,14 +117,14 @@ CString GetDesktopPath()
     return strPath;
 }
 
-bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExport, CString sComment )	
+static bool ExportPackage( RString sPackageName, const vector<RString>& asDirectoriesToExport, RString sComment )	
 {
 	CZipArchive zip;
 	
 	//
 	// Create the package zip file
 	//
-	const CString sPackagePath = GetDesktopPath() + "\\" + sPackageName;
+	const RString sPackagePath = GetDesktopPath() + "\\" + sPackageName;
 	try
 	{
 		zip.Open( sPackagePath, CZipArchive::zipCreate );
@@ -169,31 +141,35 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 	zip.SetGlobalComment( sComment );
 
 	/* Find files to add to zip. */
-	unsigned i;
-	vector<CString> asFilePaths;
-	for( i=0; i<asDirectoriesToExport.size(); i++ )
-		GetFilePaths( asDirectoriesToExport[i], asFilePaths );
+	vector<RString> asFilePaths;
+	for( unsigned i=0; i<asDirectoriesToExport.size(); i++ )
+		GetDirListingRecursive( asDirectoriesToExport[i], "*.*", asFilePaths );
+
+	// Must use backslashes in the path, or else WinZip and WinRAR don't see the files.
+	// Not sure if this is ZipArchive's fault.
+	//;XXX
 
 	{
 		IniFile ini;
-		ini.SetValueI( "SMZIP", "Version", 1 );
+		ini.SetValue( "SMZIP", "Version", 1 );
 
-		set<CString> Directories;
+		set<RString> Directories;
 		for( i=0; i<asFilePaths.size(); i++ )
 		{
-			const CString name = GetPackageDirectory( asFilePaths[i] );
+			const RString name = SMPackageUtil::GetPackageDirectory( asFilePaths[i] );
 			if( name != "" )
 				Directories.insert( name );
 		}
 
-		set<CString>::const_iterator it;
+		set<RString>::const_iterator it;
 		int num = 0;
 		for( it = Directories.begin(); it != Directories.end(); ++it )
 			ini.SetValue( "Packages", ssprintf("%i", num++), *it );
-		ini.SetValueI( "Packages", "NumPackages", num );
+		ini.SetValue( "Packages", "NumPackages", num );
 
-		CString buf;
-		ini.WriteBuf(buf);
+		RageFileObjMem f;
+		ini.WriteFile( f );
+		RString buf = f.GetString();
 
 		CZipMemFile control;
 		control.Write( buf.GetBuffer(0), buf.GetLength() );
@@ -207,7 +183,7 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 	//
 	for( unsigned j=0; j<asFilePaths.size(); j++ )
 	{
-		CString sFilePath = asFilePaths[j];
+		RString sFilePath = asFilePaths[j];
 		
 		// don't export "thumbs.db" files or "CVS" folders
 		if( sFilePath.Find("CVS")!=-1 )
@@ -215,12 +191,12 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 		if( sFilePath.Find("Thumbs.db")!=-1 )
 			continue;	// skip
 
-		CString sDir, sFName, sExt;
-		splitrelpath( sFilePath, sDir, sFName, sExt );
+		RString sExt = GetExtension( sFilePath );
 		bool bUseCompression = true;
 		if( sExt.CompareNoCase("avi")==0 ||
 			sExt.CompareNoCase("mpeg")==0 ||
 			sExt.CompareNoCase("mpg")==0 ||
+			sExt.CompareNoCase("mp3")==0 ||
 			sExt.CompareNoCase("ogg")==0 ||
 			sExt.CompareNoCase("gif")==0 ||
 			sExt.CompareNoCase("jpg")==0 ||
@@ -244,10 +220,10 @@ bool ExportPackage( CString sPackageName, const CStringArray& asDirectoriesToExp
 	return true;
 }
 
-bool CSmpackageExportDlg::MakeComment( CString &comment )
+bool CSmpackageExportDlg::MakeComment( RString &comment )
 {
 	bool DontAskForComment;
-	if( GetPref("DontAskForComment", DontAskForComment) && DontAskForComment )
+	if( SMPackageUtil::GetPref("DontAskForComment", DontAskForComment) && DontAskForComment )
 	{
 		comment = "";
 		return true;
@@ -260,14 +236,14 @@ bool CSmpackageExportDlg::MakeComment( CString &comment )
 
 	comment = commentDlg.m_sEnteredComment;
 	if( commentDlg.m_bDontAsk )
-		SetPref( "DontAskForComment", true );
+		SMPackageUtil::SetPref( "DontAskForComment", true );
 
 	return true;
 }
 
 void CSmpackageExportDlg::OnButtonExportAsOne() 
 {
-	CStringArray asPaths;
+	vector<RString> asPaths;
 	GetCheckedPaths( asPaths );
 
 	if( asPaths.size() == 0 )
@@ -282,7 +258,7 @@ void CSmpackageExportDlg::OnButtonExportAsOne()
 	}
 
 	// Generate a package name
-	CString sPackageName;
+	RString sPackageName;
 	EnterName nameDlg;
 	int nResponse = nameDlg.DoModal();
 	if( nResponse != IDOK )
@@ -291,7 +267,7 @@ void CSmpackageExportDlg::OnButtonExportAsOne()
 	sPackageName = ReplaceInvalidFileNameChars( sPackageName+".smzip" );
 
 	// Generate a comment
-	CString sComment;
+	RString sComment;
 	if( !MakeComment(sComment) )
 		return;		// cancelled
 
@@ -301,7 +277,7 @@ void CSmpackageExportDlg::OnButtonExportAsOne()
 
 void CSmpackageExportDlg::OnButtonExportAsIndividual() 
 {
-	CStringArray asPaths;
+	vector<RString> asPaths;
 	GetCheckedPaths( asPaths );
 
 	if( asPaths.size() == 0 )
@@ -311,25 +287,24 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 	}
 	
 	// Generate a comment
-	CString sComment;
+	RString sComment;
 	if( !MakeComment(sComment) )
 		return;		// cancelled
 
-	bool bAllSucceeded = true;
-	CStringArray asExportedPackages;
-	CStringArray asFailedPackages;
+	vector<RString> asExportedPackages;
+	vector<RString> asFailedPackages;
 	for( unsigned i=0; i<asPaths.size(); i++ )
 	{		
 		// Generate a package name for every path
-		CString sPath = asPaths[i];
+		RString sPath = asPaths[i];
 
-		CString sPackageName;
-		CStringArray asPathBits;
+		RString sPackageName;
+		vector<RString> asPathBits;
 		split( sPath, "\\", asPathBits, true );
 		sPackageName = asPathBits[ asPathBits.size()-1 ] + ".smzip";
 		sPackageName = ReplaceInvalidFileNameChars( sPackageName );
 
-		CStringArray asPathsToExport;
+		vector<RString> asPathsToExport;
 		asPathsToExport.push_back( sPath );
 		
 		if( ExportPackage( sPackageName, asPathsToExport, sComment ) )
@@ -338,7 +313,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 			asFailedPackages.push_back( sPackageName );
 	}
 
-	CString sMessage;
+	RString sMessage;
 	if( asFailedPackages.size() == 0 )
 		sMessage = ssprintf("Successfully exported the package%s '%s' to your Desktop.", asFailedPackages.size()>1?"s":"", join("', '",asExportedPackages) );
 	else
@@ -349,7 +324,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 void CSmpackageExportDlg::OnButtonPlay() 
 {
 	// TODO: Add your control notification handler code here
-	LaunchGame();
+	SMPackageUtil::LaunchGame();
 	exit(0);
 }
 
@@ -390,7 +365,7 @@ void CSmpackageExportDlg::GetCheckedTreeItems( CArray<HTREEITEM,HTREEITEM>& aChe
 			aCheckedItemsOut.Add( aItems[i] );
 }
 
-void CSmpackageExportDlg::GetCheckedPaths( CStringArray& aPathsOut )
+void CSmpackageExportDlg::GetCheckedPaths( vector<RString>& aPathsOut )
 {
 	CArray<HTREEITEM,HTREEITEM> aItems;	
 
@@ -399,15 +374,15 @@ void CSmpackageExportDlg::GetCheckedPaths( CStringArray& aPathsOut )
 	{
 		HTREEITEM item = aItems[i];
 
-		CString sPath;
+		RString sPath;
 		
 		while( item )
 		{
-			sPath = m_tree.GetItemText(item) + '\\' + sPath;
+			sPath = (LPCTSTR)m_tree.GetItemText(item) + '\\' + sPath;
 			item = m_tree.GetParentItem(item);
 		}
 
-		sPath.TrimRight('\\');	// strip off last slash
+		TrimRight( sPath, "\\" );	// strip off last slash
 
 		aPathsOut.push_back( sPath );
 	}
@@ -421,7 +396,7 @@ void CSmpackageExportDlg::OnButtonEdit()
 	int nResponse = dlg.DoModal();
 	if( nResponse == IDOK )
 	{
-		WriteStepManiaInstallDirs( dlg.m_asReturnedInstallDirs );
+		SMPackageUtil::WriteStepManiaInstallDirs( dlg.m_vsReturnedInstallDirs );
 		RefreshInstallationList();
 		RefreshTree();
 	}
@@ -431,8 +406,8 @@ void CSmpackageExportDlg::RefreshInstallationList()
 {
 	m_comboDir.ResetContent();
 
-	CStringArray asInstallDirs;
-	GetStepManiaInstallDirs( asInstallDirs );
+	vector<RString> asInstallDirs;
+	SMPackageUtil::GetStepManiaInstallDirs( asInstallDirs );
 	for( unsigned i=0; i<asInstallDirs.size(); i++ )
 	{
 		m_comboDir.AddString( asInstallDirs[i] );
@@ -450,14 +425,18 @@ void CSmpackageExportDlg::RefreshTree()
 {
 	m_tree.DeleteAllItems();
 
-	CString sDir;
-	m_comboDir.GetWindowText( sDir );
+	RString sDir;
+	{
+		CString s;
+		m_comboDir.GetWindowText( s );
+		sDir = s;
+	}
 
 	SetCurrentDirectory( sDir );
 
 	// Add announcers
 	{
-		CStringArray as1;
+		vector<RString> as1;
 		HTREEITEM item1 = m_tree.InsertItem( "Announcers" );
 		GetDirListing( "Announcers\\*.*", as1, true, false );
 		for( unsigned i=0; i<as1.size(); i++ )
@@ -466,7 +445,7 @@ void CSmpackageExportDlg::RefreshTree()
 
 	// Add characters
 	{
-		CStringArray as1;
+		vector<RString> as1;
 		HTREEITEM item1 = m_tree.InsertItem( "Characters" );
 		GetDirListing( "Characters\\*.*", as1, true, false );
 		for( unsigned i=0; i<as1.size(); i++ )
@@ -475,7 +454,7 @@ void CSmpackageExportDlg::RefreshTree()
 
 	// Add themes
 	{
-		CStringArray as1;
+		vector<RString> as1;
 		HTREEITEM item1 = m_tree.InsertItem( "Themes" );
 		GetDirListing( "Themes\\*.*", as1, true, false );
 		for( unsigned i=0; i<as1.size(); i++ )
@@ -484,7 +463,7 @@ void CSmpackageExportDlg::RefreshTree()
 
 	// Add BGAnimations
 	{
-		CStringArray as1;
+		vector<RString> as1;
 		HTREEITEM item1 = m_tree.InsertItem( "BGAnimations" );
 		GetDirListing( "BGAnimations\\*.*", as1, true, false );
 		for( unsigned i=0; i<as1.size(); i++ )
@@ -493,7 +472,7 @@ void CSmpackageExportDlg::RefreshTree()
 
 	// Add RandomMovies
 	{
-		CStringArray as1;
+		vector<RString> as1;
 		HTREEITEM item1 = m_tree.InsertItem( "RandomMovies" );
 		GetDirListing( "RandomMovies\\*.avi", as1, false, false );
 		GetDirListing( "RandomMovies\\*.mpg", as1, false, false );
@@ -504,7 +483,7 @@ void CSmpackageExportDlg::RefreshTree()
 
 	// Add visualizations
 	{
-		CStringArray as1;
+		vector<RString> as1;
 		HTREEITEM item1 = m_tree.InsertItem( "Visualizations" );
 		GetDirListing( "Visualizations\\*.avi", as1, false, false );
 		GetDirListing( "Visualizations\\*.mpg", as1, false, false );
@@ -515,7 +494,7 @@ void CSmpackageExportDlg::RefreshTree()
 
 	// Add courses
 	{
-		CStringArray as1;
+		vector<RString> as1;
 		HTREEITEM item1 = m_tree.InsertItem( "Courses" );
 		GetDirListing( "Courses\\*.crs", as1, false, false );
 		for( unsigned i=0; i<as1.size(); i++ )
@@ -530,12 +509,12 @@ void CSmpackageExportDlg::RefreshTree()
 	// Add NoteSkins
 	//
 	{
-		CStringArray as1;
+		vector<RString> as1;
 		HTREEITEM item1 = m_tree.InsertItem( "NoteSkins" );
 		GetDirListing( "NoteSkins\\*.*", as1, true, false );
 		for( unsigned i=0; i<as1.size(); i++ )
 		{
-			CStringArray as2;
+			vector<RString> as2;
 			HTREEITEM item2 = m_tree.InsertItem( as1[i], item1 );
 			GetDirListing( "NoteSkins\\" + as1[i] + "\\*.*", as2, true, false );
 			for( unsigned j=0; j<as2.size(); j++ )
@@ -547,12 +526,12 @@ void CSmpackageExportDlg::RefreshTree()
 	// Add Songs
 	//
 	{
-		CStringArray as1;
+		vector<RString> as1;
 		HTREEITEM item1 = m_tree.InsertItem( "Songs" );
 		GetDirListing( "Songs\\*.*", as1, true, false );
 		for( unsigned i=0; i<as1.size(); i++ )
 		{
-			CStringArray as2;
+			vector<RString> as2;
 			HTREEITEM item2 = m_tree.InsertItem( as1[i], item1 );
 			GetDirListing( "Songs\\" + as1[i] + "\\*.*", as2, true, false );
 			for( unsigned j=0; j<as2.size(); j++ )

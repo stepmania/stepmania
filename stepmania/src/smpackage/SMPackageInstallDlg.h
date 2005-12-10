@@ -10,9 +10,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // CSMPackageInstallDlg dialog
 
-#include "ZipArchive\ZipArchive.h"	
-
-
 class CSMPackageInstallDlg : public CDialog
 {
 // Construction
@@ -40,8 +37,7 @@ protected:
 	bool CheckPackages();
 
 	HICON m_hIcon;
-	CString m_sPackagePath;
-	CZipArchive m_zip;
+	RString m_sPackagePath;
 
 	// Generated message map functions
 	//{{AFX_MSG(CSMPackageInstallDlg)

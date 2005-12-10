@@ -1,6 +1,8 @@
 // SMPackageInstallDlg.cpp : implementation file
 //
 
+#define CO_EXIST_WITH_MFC
+#include "global.h"
 #include "stdafx.h"
 #include "smpackage.h"
 #include "SMPackageInstallDlg.h"
@@ -11,12 +13,16 @@
 #include "IniFile.h"	
 #include "UninstallOld.h"	
 #include <algorithm>	
+#include "RageFileManager.h"	
+#include "RageFileDriverZip.h"	
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+static const RString TEMP_MOUNT_POINT = "/@package/";
 
 /////////////////////////////////////////////////////////////////////////////
 // CSMPackageInstallDlg dialog
@@ -56,7 +62,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CSMPackageInstallDlg message handlers
 
-static bool CompareStringNoCase( const CString &s1, const CString &s2 )
+static bool CompareStringNoCase( const RString &s1, const RString &s2 )
 {
 	return s1.CompareNoCase( s2 ) < 0;
 }
@@ -72,12 +78,17 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 
-	int i;
+	// mount the zip
+	if( !FILEMAN->Mount( "zip", m_sPackagePath, TEMP_MOUNT_POINT ) )
+	{
+		AfxMessageBox( ssprintf("'%s' is not a valid zip archive.", m_sPackagePath), MB_ICONSTOP );
+		exit( 1 );
+	}
 
 	//
 	// Set the text of the first Edit box
 	//
-	CString sMessage1 = ssprintf(
+	RString sMessage1 = ssprintf(
 		"You have chosen to install the Stepmania package:\r\n"
 		"\r\n"
 		"\t%s\r\n"
@@ -92,35 +103,11 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	//
 	// Set the text of the second Edit box
 	//
-	try
-	{	
-		m_zip.Open( m_sPackagePath, CZipArchive::zipOpenReadOnly );
-	}
-	catch (CException* e)
 	{
-		AfxMessageBox( ssprintf("'%s' is not a valid zip archive.", m_sPackagePath), MB_ICONSTOP );
-		e->Delete();
-		exit( 1 );
-	}
-
-	{
-		vector<CString> vs;
-		for( i=0; i<m_zip.GetCount(); i++ )
-		{
-			CZipFileHeader fh;
-			m_zip.GetFileInfo(fh, (WORD)i);
-
-			if( fh.IsDirectory() )
-				continue;
-			if( !fh.GetFileName().CompareNoCase( "smzip.ctl" ) )
-				continue;
-			vs.push_back( fh.GetFileName() );
-		}
-
-		sort( vs.begin(), vs.end(), CompareStringNoCase );
-
+		vector<RString> vs;
+		GetDirListingRecursive( TEMP_MOUNT_POINT, "*.*", vs );
 		CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE2);
-		CString sText = "\t" + join( "\r\n\t", vs );
+		RString sText = "\t" + join( "\r\n\t", vs );
 		pEdit2->SetWindowText( sText );
 	}
 
@@ -128,7 +115,7 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	//
 	// Set the text of the third Edit box
 	//
-	CString sMessage3 = "The package will be installed in the following Stepmania program folder:\r\n";
+	RString sMessage3 = "The package will be installed in the following Stepmania program folder:\r\n";
 
 	// Set the message
 	CEdit* pEdit3 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE3);
@@ -174,42 +161,30 @@ void CSMPackageInstallDlg::OnPaint()
 
 bool CSMPackageInstallDlg::CheckPackages()
 {
-	CZipWordArray ar;
-	m_zip.FindMatches("smzip.ctl", ar);
-	if( ar.GetSize() != 1 )
+	IniFile ini;
+	if( !ini.ReadFile(TEMP_MOUNT_POINT + "smzip.ctl") )
 		return true;
 
-	CZipMemFile control;
-	m_zip.ExtractFile( ar[0], control );
-
-	char *buf = new char[control.GetLength()];
-	control.Seek( 0, CZipAbstractFile::begin );
-	control.Read(buf, control.GetLength());
-	IniFile ini;
-	ini.ReadBuf( CString(buf, control.GetLength()) );
-	delete[] buf;
-
 	int version = 0;
-	ini.GetValueI( "SMZIP", "Version", version );
+	ini.GetValue( "SMZIP", "Version", version );
 	if( version != 1 )
 		return true;
 
 	int cnt = 0;
-	ini.GetValueI( "Packages", "NumPackages", cnt );
+	ini.GetValue( "Packages", "NumPackages", cnt );
 
-	int i;
-	CStringArray Directories;
-	for( i = 0; i < cnt; ++i )
+	vector<RString> Directories;
+	for( int i = 0; i < cnt; ++i )
 	{
-		CString path;
+		RString path;
 		if( !ini.GetValue( "Packages", ssprintf("%i", i), path) )
 			continue;
 
 		/* Does this directory exist? */
-		if( !IsADirectory(path) )
+		if( !FILEMAN->IsADirectory(path) )
 			continue;
 
-		if( !IsValidPackageDirectory(path) )
+		if( !SMPackageUtil::IsValidPackageDirectory(path) )
 			continue;
 		
 		Directories.push_back(path);
@@ -230,13 +205,13 @@ bool CSMPackageInstallDlg::CheckPackages()
 
 	char cwd_[MAX_PATH];
 	_getcwd(cwd_, MAX_PATH);
-	CString cwd(cwd_);
+	RString cwd(cwd_);
 	if( cwd[cwd.GetLength()-1] != '\\' )
 		cwd += "\\";
 
 	for( i = 0; i < (int) Directories.size(); ++i )
 	{
-		CString path = cwd+Directories[i];
+		RString path = cwd+Directories[i];
 		char buf[1024];
 		memcpy(buf, path, path.GetLength()+1);
 		buf[path.GetLength()+1] = 0;
@@ -267,8 +242,12 @@ void CSMPackageInstallDlg::OnOK()
 	m_comboDir.EnableWindow( FALSE );
 	m_buttonEdit.EnableWindow( FALSE );
 
-	CString sInstallDir;
-	m_comboDir.GetWindowText( sInstallDir );
+	RString sInstallDir;
+	{
+		CString s;
+		m_comboDir.GetWindowText( s );
+		sInstallDir = s;
+	}
 	
 	int iSelectedInstallDirIndex = m_comboDir.GetCurSel();
 	if( iSelectedInstallDirIndex == -1 )
@@ -277,20 +256,24 @@ void CSMPackageInstallDlg::OnOK()
 		return;
 	}
 
-	SetDefaultInstallDir( iSelectedInstallDirIndex );
+	SMPackageUtil::SetDefaultInstallDir( iSelectedInstallDirIndex );
 
 	// Show comment (if any)
-	CString sComment = m_zip.GetGlobalComment();
-	bool DontShowComment;
-	if( sComment != "" && (!GetPref("DontShowComment", DontShowComment) || !DontShowComment) )
 	{
-		ShowComment commentDlg;
-		commentDlg.m_sComment = sComment;
-		int nResponse = commentDlg.DoModal();
-		if( nResponse != IDOK )
-			return;	// cancelled
-		if( commentDlg.m_bDontShow )
-			SetPref( "DontShowComment", true );
+		RageFileDriverZip zip;
+		zip.Load( m_sPackagePath );
+		RString sComment = zip.GetGlobalComment();
+		bool DontShowComment;
+		if( sComment != "" && (!SMPackageUtil::GetPref("DontShowComment", DontShowComment) || !DontShowComment) )
+		{
+			ShowComment commentDlg;
+			commentDlg.m_sComment = sComment;
+			int nResponse = commentDlg.DoModal();
+			if( nResponse != IDOK )
+				return;	// cancelled
+			if( commentDlg.m_bDontShow )
+				SMPackageUtil::SetPref( "DontShowComment", true );
+		}
 	}
 
 	/* Check for installed packages that should be deleted before installing. */
@@ -299,7 +282,9 @@ void CSMPackageInstallDlg::OnOK()
 
 
 	// Unzip the SMzip package into the Stepmania installation folder
-	for( int i=0; i<m_zip.GetCount(); i++ )
+	vector<RString> vs;
+	GetDirListingRecursive( TEMP_MOUNT_POINT, "*.*", vs );
+	for( unsigned i=0; i<vs.size(); i++ )
 	{
 		// Throw some text up so the user has something to look at during the long pause.
 		CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE1);
@@ -312,12 +297,12 @@ void CSMPackageInstallDlg::OnOK()
 		//Show the hided progress bar
 	    if(!pProgress1->IsWindowVisible())
         {
-          pProgress1->ShowWindow(SW_SHOWNORMAL);
+			pProgress1->ShowWindow(SW_SHOWNORMAL);
         }
 		//Initialize the progress bar and update the window 1 time (it's enough)
         if(!ProgressInit)
 		{
-			pProgress1->SetRange( 0, m_zip.GetCount());
+			pProgress1->SetRange( 0, vs.size() );
             pProgress1->SetStep(1);
 			pProgress1->SetPos(0);
 			SendMessage( WM_PAINT );
@@ -328,28 +313,18 @@ void CSMPackageInstallDlg::OnOK()
 retry_unzip:
 
 		// Extract the files
-		try
-		{	
-			// skip extracting "thumbs.db" files
-			CZipFileHeader fhInfo;
-			if( m_zip.GetFileInfo(fhInfo, (WORD)i) )
-			{
-				CString sFileName = fhInfo.GetFileName();
-				sFileName.MakeLower();
-				if( sFileName.Find("thumbs.db") != -1 )
-					continue;	// skip to next file
-			}
+		const RString sFile = vs[i];
+		// skip extracting "thumbs.db" files
+		if( Basename(sFile).CompareNoCase("thumbs.db") == 0 )
+			continue;
 
-			m_zip.ExtractFile( (WORD)i, sInstallDir, true );	// extract file to current directory
-			pProgress1->StepIt(); //increase the progress bar of 1 step
-		}
-		catch (CException* e)
+		RString sBareFile = sFile;
+		sBareFile.erase( sBareFile.begin(), sBareFile.begin()+TEMP_MOUNT_POINT.length() );
+		RString sTo = sInstallDir + sTo;
+		if( !FileCopy( sFile, sTo ) )
 		{
-			char szError[4096];
-			e->GetErrorMessage( szError, sizeof(szError) );
-			e->Delete();
-
-			switch( MessageBox( szError, "Error Extracting File", MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION ) )
+			RString sError = ssprintf( "Error copying file '%s'", sBareFile.c_str() );
+			switch( MessageBox( sError, "Error Extracting File", MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION ) )
 			{
 			case IDABORT:
 				exit(1);
@@ -362,6 +337,8 @@ retry_unzip:
 				break;
 			}
 		}
+
+		pProgress1->StepIt(); //increase the progress bar of 1 step
 	}
 
 	AfxMessageBox( "Package installed successfully!" );
@@ -378,7 +355,7 @@ void CSMPackageInstallDlg::OnButtonEdit()
 	int nResponse = dlg.DoModal();
 	if( nResponse == IDOK )
 	{
-		WriteStepManiaInstallDirs( dlg.m_asReturnedInstallDirs );
+		SMPackageUtil::WriteStepManiaInstallDirs( dlg.m_vsReturnedInstallDirs );
 		RefreshInstallationList();
 	}
 }
@@ -388,8 +365,8 @@ void CSMPackageInstallDlg::RefreshInstallationList()
 {
 	m_comboDir.ResetContent();
 
-	CStringArray asInstallDirs;
-	GetStepManiaInstallDirs( asInstallDirs );
+	vector<RString> asInstallDirs;
+	SMPackageUtil::GetStepManiaInstallDirs( asInstallDirs );
 	for( unsigned i=0; i<asInstallDirs.size(); i++ )
 		m_comboDir.AddString( asInstallDirs[i] );
 	m_comboDir.SetCurSel( 0 );	// guaranteed to be at least one item

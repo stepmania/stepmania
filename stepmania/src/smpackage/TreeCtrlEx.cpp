@@ -7,6 +7,8 @@
 //	http	 :	www.ittiger.net
 //
 //////////////////////////////////////////////////////////////
+#define CO_EXIST_WITH_MFC
+#include "global.h"
 #include "stdafx.h"
 #include "TreeCtrlEx.h"
 

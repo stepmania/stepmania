@@ -1,24 +1,21 @@
-#ifndef SMPACKAGE_UTIL_H
-#define SMPACKAGE_UTIL_H
+#ifndef SMPackageUtil_H
+#define SMPackageUtil_H
 
-#include "RageUtil.h"
-#include "../ProductInfo.h"
+namespace SMPackageUtil
+{
+	void WriteStepManiaInstallDirs( const vector<RString>& asInstallDirsToWrite );
+	void GetStepManiaInstallDirs( vector<RString>& asInstallDirsOut );
+	void AddStepManiaInstallDir( RString sNewInstallDir );
+	void SetDefaultInstallDir( int iInstallDirIndex );
+	void SetDefaultInstallDir( RString sInstallDir );
 
-static const CString PREFERENCES_INI = "Save\\Preferences.ini";
-static const CString KEYMAPS_INI = "Save\\Keymaps.ini";
+	bool GetPref( RString name, bool &val );
+	bool SetPref( RString name, bool val );
 
-void WriteStepManiaInstallDirs( const CStringArray& asInstallDirsToWrite );
-void GetStepManiaInstallDirs( CStringArray& asInstallDirsOut );
-void AddStepManiaInstallDir( CString sNewInstallDir );
-void SetDefaultInstallDir( int iInstallDirIndex );
-void SetDefaultInstallDir( CString sInstallDir );
+	RString GetPackageDirectory(RString path);
+	bool IsValidPackageDirectory(RString path);
 
-bool GetPref( CString name, bool &val );
-bool SetPref( CString name, bool val );
-
-CString GetPackageDirectory(CString path);
-bool IsValidPackageDirectory(CString path);
-
-void LaunchGame();
+	void LaunchGame();
+}
 
 #endif

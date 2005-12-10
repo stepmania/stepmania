@@ -16,7 +16,7 @@ class EditInsallations : public CDialog
 public:
 	EditInsallations(CWnd* pParent = NULL);   // standard constructor
 
-	CStringArray	m_asReturnedInstallDirs;
+	vector<RString>	m_vsReturnedInstallDirs;
 
 // Dialog Data
 	//{{AFX_DATA(EditInsallations)

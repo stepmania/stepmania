@@ -1,49 +1,50 @@
+#define CO_EXIST_WITH_MFC
+#include "global.h"
 #include "stdafx.h"
 #include "SMPackageUtil.h"
-#include "Registry.h"
-#include "../ProductInfo.h"	
+#include "archutils/Win32/RegistryAccess.h"
+#include "ProductInfo.h"	
+#include "RageUtil.h"	
 
-void WriteStepManiaInstallDirs( const CStringArray& asInstallDirsToWrite )
+void SMPackageUtil::WriteStepManiaInstallDirs( const vector<RString>& asInstallDirsToWrite )
 {
-	CRegistry Reg;
-	Reg.SetRootKey(HKEY_LOCAL_MACHINE);
-	Reg.SetKey("Software\\StepMania\\smpackage\\Installations", TRUE);	// create if not already present
+	RString sKey = "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage\\Installations";
 
 	unsigned i;
 
 	for( i=0; i<100; i++ )
 	{
-		CString sName = ssprintf("%d",i);
+		RString sName = ssprintf("%d",i);
 //		Reg.DeleteKey( sName );	// delete key is broken in this library, so just write over it with ""
-		Reg.WriteString( sName, "" );
+		RegistryAccess::SetRegValue( sKey, sName, RString() );
 	}
 
 	for( i=0; i<asInstallDirsToWrite.size(); i++ )
 	{
-		CString sName = ssprintf("%d",i);
-		Reg.WriteString( sName, asInstallDirsToWrite[i] );
+		RString sName = ssprintf("%d",i);
+		RegistryAccess::SetRegValue( sKey, sName, asInstallDirsToWrite[i] );
 	}
 
 }
 
-void GetStepManiaInstallDirs( CStringArray& asInstallDirsOut )
+void SMPackageUtil::GetStepManiaInstallDirs( vector<RString>& asInstallDirsOut )
 {
 	asInstallDirsOut.clear();
 
-	CRegistry Reg;
-	Reg.SetRootKey(HKEY_LOCAL_MACHINE);
-	Reg.SetKey("Software\\StepMania\\smpackage\\Installations", TRUE);	// create if not already present
+	RString sKey = "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage\\Installations";
 
 	for( int i=0; i<100; i++ )
 	{
-		CString sName = ssprintf("%d",i);
+		RString sName = ssprintf("%d",i);
 
-		CString sPath = Reg.ReadString( sName, "" );
+		RString sPath;
+		if( !RegistryAccess::GetRegValue(sKey, sName, sPath) )
+			continue;
 
 		if( sPath == "" )	// read failed
 			continue;	// skip
 
-		CString sProgramDir = sPath+"\\Program";
+		RString sProgramDir = sPath+"\\Program";
 		if( !DoesFileExist(sProgramDir) )
 			continue;	// skip
 
@@ -54,9 +55,9 @@ void GetStepManiaInstallDirs( CStringArray& asInstallDirsOut )
 	WriteStepManiaInstallDirs( asInstallDirsOut );
 }
 
-void AddStepManiaInstallDir( CString sNewInstallDir )
+void SMPackageUtil::AddStepManiaInstallDir( RString sNewInstallDir )
 {
-	CStringArray asInstallDirs;
+	vector<RString> asInstallDirs;
 	GetStepManiaInstallDirs( asInstallDirs );
 
 	bool bAlreadyInList = false;
@@ -75,24 +76,23 @@ void AddStepManiaInstallDir( CString sNewInstallDir )
 	WriteStepManiaInstallDirs( asInstallDirs );
 }
 
-void SetDefaultInstallDir( int iInstallDirIndex )
+void SMPackageUtil::SetDefaultInstallDir( int iInstallDirIndex )
 {
 	// move the specified index to the top of the list
-	CStringArray asInstallDirs;
+	vector<RString> asInstallDirs;
 	GetStepManiaInstallDirs( asInstallDirs );
-	ASSERT( iInstallDirIndex >= 0  &&  iInstallDirIndex < asInstallDirs.size() );
-	CString sDefaultInstallDir = asInstallDirs[iInstallDirIndex];
+	ASSERT( iInstallDirIndex >= 0  &&  iInstallDirIndex < (int)asInstallDirs.size() );
+	RString sDefaultInstallDir = asInstallDirs[iInstallDirIndex];
 	asInstallDirs.erase( asInstallDirs.begin()+iInstallDirIndex );
 	asInstallDirs.insert( asInstallDirs.begin(), sDefaultInstallDir );
 	WriteStepManiaInstallDirs( asInstallDirs );
 }
 
-void SetDefaultInstallDir( CString sInstallDir )
+void SMPackageUtil::SetDefaultInstallDir( RString sInstallDir )
 {
-	CStringArray asInstallDirs;
+	vector<RString> asInstallDirs;
 	GetStepManiaInstallDirs( asInstallDirs );
 
-	bool bAlreadyInList = false;
 	for( unsigned i=0; i<asInstallDirs.size(); i++ )
 	{
 		if( asInstallDirs[i].CompareNoCase(sInstallDir) == 0 )
@@ -103,32 +103,24 @@ void SetDefaultInstallDir( CString sInstallDir )
 	}
 }
 
-bool GetPref( CString name, bool &val )
+bool SMPackageUtil::GetPref( RString name, bool &val )
 {
-	CRegistry Reg;
-	Reg.SetRootKey(HKEY_LOCAL_MACHINE);
-	Reg.SetKey("Software\\StepMania\\smpackage", FALSE);	// don't create if not already present
-	return Reg.Read( name, val );
+	return RegistryAccess::GetRegValue( "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage", name, val );
 }
 
-bool SetPref( CString name, bool val )
+bool SMPackageUtil::SetPref( RString name, bool val )
 {
-	CRegistry Reg;
-	Reg.SetRootKey(HKEY_LOCAL_MACHINE);
-	Reg.SetKey("Software\\StepMania\\smpackage", TRUE);	// don't create if not already present
-	Reg.WriteBool( name, val );
-	return false;
-
+	return RegistryAccess::SetRegValue( "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage", name, val );
 }
 
 /* Get a package directory.  For most paths, this is the first two components.  For
  * songs and note skins, this is the first three. */
-CString GetPackageDirectory(CString path)
+RString SMPackageUtil::GetPackageDirectory(RString path)
 {
 	if( path.Find("CVS") != -1 )
 		return "";	// skip
 
-	CStringArray Parts;
+	vector<RString> Parts;
 	split( path, "\\", Parts );
 
 	unsigned NumParts = 2;
@@ -139,18 +131,17 @@ CString GetPackageDirectory(CString path)
 
 	Parts.erase(Parts.begin() + NumParts, Parts.end());
 
-	CString ret = join( "\\", Parts );
+	RString ret = join( "\\", Parts );
 	if( !IsADirectory(ret) )
 		return "";
 	return ret;
 }
 
-
-bool IsValidPackageDirectory(CString path)
+bool SMPackageUtil::IsValidPackageDirectory( RString path )
 {
 	/* Make sure the path contains only second-level directories, and doesn't
 	 * contain any ".", "..", "...", etc. dirs. */
-	CStringArray Parts;
+	vector<RString> Parts;
 	split( path, "\\", Parts, true );
 	if( Parts.size() == 0 )
 		return false;
@@ -170,13 +161,13 @@ bool IsValidPackageDirectory(CString path)
 	return true;
 }
 
-void LaunchGame()
+void SMPackageUtil::LaunchGame()
 {
 	PROCESS_INFORMATION pi;
 	STARTUPINFO	si;
 	ZeroMemory( &si, sizeof(si) );
 
-	CString sFile = PRODUCT_NAME ".exe";
+	RString sFile = PRODUCT_NAME ".exe";
 	if( !DoesFileExist(sFile) )
 	{
 		sFile = "Program\\" + sFile;

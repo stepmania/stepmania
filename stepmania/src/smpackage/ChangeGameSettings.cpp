@@ -1,11 +1,14 @@
 // ChangeGameSettings.cpp : implementation file
 //
 
+#define CO_EXIST_WITH_MFC
+#include "global.h"
 #include "stdafx.h"
 #include "smpackage.h"
 #include "ChangeGameSettings.h"
 #include "IniFile.h"
 #include "SMPackageUtil.h"
+#include "SpecialFiles.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -51,10 +54,9 @@ BOOL ChangeGameSettings::OnInitDialog()
 	// Fill the radio buttons
 	//
 	IniFile ini;
-	ini.SetPath( PREFERENCES_INI );
-	ini.ReadFile();
+	ini.ReadFile( SpecialFiles::PREFERENCES_INI_PATH );
 
-	CString sValue;
+	RString sValue;
 
 
 	sValue = "";
@@ -102,35 +104,34 @@ void ChangeGameSettings::OnOK()
 {
 	// TODO: Add extra validation here
 	IniFile ini;
-	ini.SetPath( PREFERENCES_INI );
-	ini.ReadFile();
-	
+	ini.ReadFile( SpecialFiles::PREFERENCES_INI_PATH );
+
 	
 	if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_OPENGL) )
-		ini.SetValue( "Options", "VideoRenderers", "opengl" );
+		ini.SetValue( "Options", "VideoRenderers", (RString)"opengl" );
 	else if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_DIRECT3D) )
-		ini.SetValue( "Options", "VideoRenderers", "d3d" );
+		ini.SetValue( "Options", "VideoRenderers", (RString)"d3d" );
 	else
-		ini.SetValue( "Options", "VideoRenderers", "" );
+		ini.SetValue( "Options", "VideoRenderers", RString() );
 
 
 	if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_SOUND_DIRECTSOUND_HARDWARE) )
-		ini.SetValue( "Options", "SoundDrivers", "DirectSound" );
+		ini.SetValue( "Options", "SoundDrivers", (RString)"DirectSound" );
 	else if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_SOUND_DIRECTSOUND_SOFTWARE) )
-		ini.SetValue( "Options", "SoundDrivers", "DirectSound-sw" );
+		ini.SetValue( "Options", "SoundDrivers", (RString)"DirectSound-sw" );
 	else if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_SOUND_WAVEOUT) )
-		ini.SetValue( "Options", "SoundDrivers", "WaveOut" );
+		ini.SetValue( "Options", "SoundDrivers", (RString)"WaveOut" );
 	else if( BST_CHECKED == IsDlgButtonChecked(IDC_RADIO_SOUND_NULL) )
-		ini.SetValue( "Options", "SoundDrivers", "null" );
+		ini.SetValue( "Options", "SoundDrivers", (RString)"null" );
 	else
-		ini.SetValue( "Options", "SoundDrivers", "" );
+		ini.SetValue( "Options", "SoundDrivers", RString() );
 
 
 	ini.SetValue( "Options", "LogToDisk",		BST_CHECKED == IsDlgButtonChecked(IDC_CHECK_LOG_TO_DISK) );
 	ini.SetValue( "Options", "ShowLogWindow",	BST_CHECKED == IsDlgButtonChecked(IDC_CHECK_SHOW_LOG_WINDOW) );
 	
 
-	ini.WriteFile();
+	ini.WriteFile( SpecialFiles::PREFERENCES_INI_PATH );
 	
 	CDialog::OnOK();
 }

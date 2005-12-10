@@ -13,14 +13,10 @@
 #define IDD_EDIT_INSTALLATIONS          138
 #define IDD_MENU                        139
 #define MENU                            140
-#define IDD_CONVERT_THEME               142
-#define IDD_EDIT_METRICS                145
-#define EDIT_METRICS                    146
 #define IDD_ENTER_COMMENT               146
 #define IDD_SHOW_COMMENT                147
 #define IDD_UNINSTALL_OLD_PACKAGES      148
 #define IDD_CHANGE_GAME_SETTINGS        149
-#define CONVERTTHEME                    149
 #define IDC_LIST_SONGS                  1000
 #define IDC_LIST                        1000
 #define IDC_BUTTON_PLAY                 1001
@@ -41,7 +37,6 @@
 #define IDC_BUTTON_MAKE_DEFAULT         1020
 #define IDC_EXPORT_PACKAGES             1022
 #define IDC_LIST_THEMES                 1023
-#define IDC_ANALYZE_ELEMENTS            1023
 #define IDC_EDIT_INSTALLATIONS          1024
 #define IDC_BUTTON_CONVERT              1024
 #define IDC_BUTTON_ANALYZE              1025
@@ -56,6 +51,7 @@
 #define IDC_CLEAR_PREFERENCES           1028
 #define IDC_EDIT_DEFAULT                1029
 #define IDC_CLEAR_KEYMAPS               1029
+#define IDC_VIEW_STATISTICS             1030
 #define IDC_BUTTON_REFRESH              1035
 #define IDC_BUTTON_SAVE                 1036
 #define IDC_BUTTON_OVERRIDE             1037

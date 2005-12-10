@@ -1,16 +1,20 @@
 // MainMenuDlg.cpp : implementation file
 //
 
+#define CO_EXIST_WITH_MFC
+#include "global.h"
 #include "stdafx.h"
 #include "smpackage.h"
 #include "MainMenuDlg.h"
 #include "EditInsallations.h"
 #include "SmpackageExportDlg.h"
-#include "onvertThemeDlg.h"
 #include "ChangeGameSettings.h"
 #include "RageUtil.h"
 #include "SMPackageUtil.h"
-#include ".\mainmenudlg.h"
+#include "mainmenudlg.h"
+#include "archutils/Win32/SpecialDirs.h"
+#include "SpecialFiles.h"
+#include "ProductInfo.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -44,7 +48,6 @@ BEGIN_MESSAGE_MAP(MainMenuDlg, CDialog)
 	//{{AFX_MSG_MAP(MainMenuDlg)
 	ON_BN_CLICKED(IDC_EXPORT_PACKAGES, OnExportPackages)
 	ON_BN_CLICKED(IDC_EDIT_INSTALLATIONS, OnEditInstallations)
-	ON_BN_CLICKED(IDC_ANALYZE_ELEMENTS, OnAnalyzeElements)
 	ON_BN_CLICKED(IDC_CREATE_SONG, OnCreateSong)
 	ON_BN_CLICKED(IDC_CLEAR_KEYMAPS, OnBnClickedClearKeymaps)
 	ON_BN_CLICKED(IDC_CHANGE_PREFERENCES, OnBnClickedChangePreferences)
@@ -52,6 +55,7 @@ BEGIN_MESSAGE_MAP(MainMenuDlg, CDialog)
 	ON_BN_CLICKED(IDC_CLEAR_PREFERENCES, OnBnClickedClearPreferences)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BUTTON_LAUNCH_GAME, OnBnClickedButtonLaunchGame)
+	ON_BN_CLICKED(IDC_VIEW_STATISTICS, OnBnClickedViewStatistics)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -72,14 +76,7 @@ void MainMenuDlg::OnEditInstallations()
 	int nResponse = dlg.DoModal();	
 }
 
-void MainMenuDlg::OnAnalyzeElements() 
-{
-	// TODO: Add your control notification handler code here
-	ConvertThemeDlg dlg;
-	int nResponse = dlg.DoModal();	
-}
-
-CString GetLastErrorString()
+RString GetLastErrorString()
 {
 	LPVOID lpMsgBuf;
 	FormatMessage( 
@@ -96,7 +93,7 @@ CString GetLastErrorString()
 	// Process any inserts in lpMsgBuf.
 	// ...
 	// Display the string.
-	CString s = (LPCTSTR)lpMsgBuf;
+	RString s = (LPCTSTR)lpMsgBuf;
 	// Free the buffer.
 	LocalFree( lpMsgBuf );
 
@@ -114,21 +111,13 @@ void MainMenuDlg::OnCreateSong()
 		"Music file (*.mp3;*.ogg)|*.mp3;*.ogg|||"
 		);
 	int iRet = dialog.DoModal();
-	CString sMusicFile = dialog.GetPathName();
+	RString sMusicFile = dialog.GetPathName();
 	if( iRet != IDOK )
 		return;
 
-	CString sFileNameNoExt, sExt, sThrowAway;
-	splitrelpath( 
-		sMusicFile, 
-		sThrowAway, 
-		sFileNameNoExt, 
-		sExt
-		);
-
 	BOOL bSuccess;
 
-	CString sSongDirectory = "Songs\\My Creations\\";
+	RString sSongDirectory = "Songs\\My Creations\\";
 	bSuccess = CreateDirectory( sSongDirectory, NULL );
 	if( !bSuccess )
 	{
@@ -144,7 +133,7 @@ void MainMenuDlg::OnCreateSong()
 		}
 	}
 
-	sSongDirectory += sFileNameNoExt;
+	sSongDirectory += Basename( sMusicFile );
 	bSuccess = CreateDirectory( sSongDirectory, NULL );	// CreateDirectory doesn't like a trailing slash
 	if( !bSuccess )
 	{
@@ -153,7 +142,7 @@ void MainMenuDlg::OnCreateSong()
 	}
 	sSongDirectory += "\\";
 
-	CString sNewMusicFile = sSongDirectory + sFileNameNoExt + "." + sExt;
+	RString sNewMusicFile = sSongDirectory + Basename(sMusicFile);
 	bSuccess = CopyFile( sMusicFile, sNewMusicFile, TRUE );
 	if( !bSuccess )
 	{
@@ -162,7 +151,8 @@ void MainMenuDlg::OnCreateSong()
 	}
 
 	// create a blank .sm file
-	CString sNewSongFile = sSongDirectory + sFileNameNoExt + ".sm";
+	RString sNewSongFile = sMusicFile;
+	SetExtension( sNewSongFile, "sm" );
 	FILE *fp = fopen( sNewSongFile, "w" );
 	if( fp == NULL )
 	{
@@ -182,8 +172,8 @@ BOOL MainMenuDlg::OnInitDialog()
 	TCHAR szCurDir[MAX_PATH];
 	GetCurrentDirectory( ARRAYSIZE(szCurDir), szCurDir );
 	GetDlgItem( IDC_EDIT_INSTALLATION )->SetWindowText( szCurDir );
-	AddStepManiaInstallDir( szCurDir );
-	SetDefaultInstallDir( szCurDir );
+	SMPackageUtil::AddStepManiaInstallDir( szCurDir );
+	SMPackageUtil::SetDefaultInstallDir( szCurDir );
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -193,14 +183,14 @@ void MainMenuDlg::OnBnClickedClearKeymaps()
 {
 	// TODO: Add your control notification handler code here
 	
-	if( !DoesFileExist( KEYMAPS_INI ) )
+	if( !DoesFileExist( SpecialFiles::KEYMAPS_PATH ) )
 	{
-		MessageBox( KEYMAPS_INI + " is already cleared." );
+		MessageBox( SpecialFiles::KEYMAPS_PATH + " is already cleared." );
 	}
 	else
 	{
-		if( !DeleteFile( KEYMAPS_INI ) )
-			MessageBox( "Failed to delete file " + KEYMAPS_INI + "." );
+		if( !DeleteFile( SpecialFiles::KEYMAPS_PATH ) )
+			MessageBox( "Failed to delete file " + SpecialFiles::KEYMAPS_PATH + "." );
 	}
 }
 
@@ -214,38 +204,47 @@ void MainMenuDlg::OnBnClickedChangePreferences()
 void MainMenuDlg::OnBnClickedOpenPreferences()
 {
 	// TODO: Add your control notification handler code here
-	if( !DoesFileExist( PREFERENCES_INI ) )
+	if( !DoesFileExist( SpecialFiles::PREFERENCES_INI_PATH ) )
 	{
-		MessageBox( PREFERENCES_INI + " doesn't exist.  It will be created next time you start the game." );
+		MessageBox( SpecialFiles::PREFERENCES_INI_PATH + " doesn't exist.  It will be created next time you start the game." );
 	}
 	else
 	{
-		if( NULL == ::ShellExecute( this->m_hWnd, "open", PREFERENCES_INI, "", "", SW_SHOWNORMAL ) )
-			MessageBox( "Failed to open " + PREFERENCES_INI + ": " + GetLastErrorString() );
+		if( NULL == ::ShellExecute( this->m_hWnd, "open", SpecialFiles::PREFERENCES_INI_PATH, "", "", SW_SHOWNORMAL ) )
+			MessageBox( "Failed to open " + SpecialFiles::PREFERENCES_INI_PATH + ": " + GetLastErrorString() );
 	}
 }
 
 void MainMenuDlg::OnBnClickedClearPreferences()
 {
 	// TODO: Add your control notification handler code here
-	if( !DoesFileExist( PREFERENCES_INI ) )
+	if( !DoesFileExist( SpecialFiles::PREFERENCES_INI_PATH ) )
 	{
-		MessageBox( PREFERENCES_INI + " is already cleared." );
+		MessageBox( SpecialFiles::PREFERENCES_INI_PATH + " is already cleared." );
 		return;
 	}
 
-	if( !DeleteFile( PREFERENCES_INI ) )
+	if( !DeleteFile( SpecialFiles::PREFERENCES_INI_PATH ) )
 	{
-		MessageBox( "Failed to delete file " + PREFERENCES_INI + "." );
+		MessageBox( "Failed to delete file " + SpecialFiles::PREFERENCES_INI_PATH + "." );
 		return;
 	}
 
-	MessageBox( PREFERENCES_INI + " cleared." );
+	MessageBox( SpecialFiles::PREFERENCES_INI_PATH + " cleared." );
 }
 
 void MainMenuDlg::OnBnClickedButtonLaunchGame()
 {
 	// TODO: Add your control notification handler code here
-	LaunchGame();
+	SMPackageUtil::LaunchGame();
 	exit(0);
+}
+
+void MainMenuDlg::OnBnClickedViewStatistics()
+{
+	// TODO: Add your control notification handler code here
+	RString sPersonalDir = GetMyDocumentsDir();
+	RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
+	if( NULL == ::ShellExecute( this->m_hWnd, "open", sFile, "", "", SW_SHOWNORMAL ) )
+		MessageBox( "Failed to open '" + sFile + "': " + GetLastErrorString() );
 }

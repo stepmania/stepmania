@@ -155,91 +155,38 @@ BEGIN
                     IDC_STATIC,18,144,196,17
 END
 
-IDD_MENU DIALOGEX 0, 0, 332, 345
+IDD_MENU DIALOGEX 0, 0, 332, 310
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "StepMania Tools Main Menu"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Exit",IDOK,275,324,50,14
+    DEFPUSHBUTTON   "Exit",IDOK,275,289,50,14
     CONTROL         140,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    GROUPBOX        "Installations",IDC_STATIC,7,163,318,39
-    PUSHBUTTON      "Edit Installations",IDC_EDIT_INSTALLATIONS,16,178,75,15
-    LTEXT           "Choose this option to edit the list of locations where you have StepMania or DWI installed.  When you double-click on a .smzip file, you can choose to install the package to any of these locations.",
-                    IDC_STATIC,104,173,215,25
-    GROUPBOX        ".smzip Packages",IDC_STATIC,7,203,318,40
-    PUSHBUTTON      "Export Packages",IDC_EXPORT_PACKAGES,15,218,75,15
-    LTEXT           "Choose this option to create .smzip files that you can share with other users.  A .smzip package can contain songs, courses, themes, background animations, and more.",
-                    IDC_STATIC,104,213,215,25
-    GROUPBOX        "Themes",IDC_STATIC,7,245,318,40
-    PUSHBUTTON      "Theme Tools",IDC_ANALYZE_ELEMENTS,15,260,75,15
-    LTEXT           "Using this feature, you can:\n - Catch redundant and misnamed theme elements\n - Edit theme metrics using a user-friendly interface",
-                    IDC_STATIC,102,255,215,26
-    GROUPBOX        "Songs",IDC_STATIC,7,287,318,34
-    PUSHBUTTON      "Create Song",IDC_CREATE_SONG,16,299,75,15
+    GROUPBOX        "Installation",IDC_STATIC,7,41,318,28
+    PUSHBUTTON      "Edit Installations",IDC_EDIT_INSTALLATIONS,241,49,75,15
+    GROUPBOX        "Create and Share",IDC_STATIC,7,198,318,86
+    PUSHBUTTON      "Export Packages",IDC_EXPORT_PACKAGES,15,213,75,15
+    LTEXT           "Create .smzip package files to share with other users.  Packages can contain songs, courses, themes, backgrounds, and more.",
+                    IDC_STATIC,104,212,215,18
+    PUSHBUTTON      "Create Song",IDC_CREATE_SONG,15,260,75,15
     LTEXT           "Choose this option to create a new song in StepMania from your favorite mp3 or ogg music file.",
-                    IDC_STATIC,103,298,215,20
-    GROUPBOX        "Preferences",IDC_STATIC,7,53,318,69
-    PUSHBUTTON      "Change Preferences",IDC_CHANGE_PREFERENCES,16,65,75,15
-    PUSHBUTTON      "Open Preferences",IDC_OPEN_PREFERENCES,16,101,75,15
+                    IDC_STATIC,103,259,215,20
+    GROUPBOX        "Game Settings",IDC_STATIC,7,109,318,87
+    PUSHBUTTON      "Change Preferences",IDC_CHANGE_PREFERENCES,16,120,75,15
+    PUSHBUTTON      "Open Preferences",IDC_OPEN_PREFERENCES,16,152,75,15
     LTEXT           "Using this feature, you can:\n - Change the graphics API that the game will use.\n - Change the sound API that the game will use.\n - Clear all preferences if the game won't start.\n - Open the preferences file to make changes by hand.",
-                    IDC_STATIC,104,67,215,45
-    PUSHBUTTON      "Clear Preferences",IDC_CLEAR_PREFERENCES,16,83,75,15
-    PUSHBUTTON      "Clear Mappings",IDC_CLEAR_KEYMAPS,16,138,75,15
-    RTEXT           "Installation:",IDC_STATIC,37,42,63,9,0,
-                    WS_EX_TRANSPARENT
-    EDITTEXT        IDC_EDIT_INSTALLATION,105,40,220,12,ES_AUTOHSCROLL | 
+                    IDC_STATIC,104,123,215,45
+    PUSHBUTTON      "Clear Preferences",IDC_CLEAR_PREFERENCES,16,136,75,15
+    PUSHBUTTON      "Clear Mappings",IDC_CLEAR_KEYMAPS,16,175,75,15
+    EDITTEXT        IDC_EDIT_INSTALLATION,16,51,219,12,ES_AUTOHSCROLL | 
                     ES_READONLY
-    GROUPBOX        "Keyboard / Joystick Mappings",IDC_STATIC,7,123,318,39
-    LTEXT           "Erase all of your keyboard and joystick mappings if you've made a mistake mapping keys in the game and can't get back to change them.",
-                    IDC_STATIC,104,133,214,25
-    PUSHBUTTON      "Launch Game",IDC_BUTTON_LAUNCH_GAME,189,324,70,14
-END
-
-IDD_CONVERT_THEME DIALOGEX 0, 0, 332, 258
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Theme Elements"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
-BEGIN
-    DEFPUSHBUTTON   "Close",IDOK,275,237,50,14
-    CONTROL         149,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    LISTBOX         IDC_LIST_THEMES,7,44,88,186,LBS_SORT | 
-                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Tools",IDC_STATIC,105,41,220,189
-    LTEXT           "Check for redundant or possibly midnamed theme elements.",
-                    IDC_STATIC,110,75,210,11
-    PUSHBUTTON      "Analyze Elements",IDC_BUTTON_ANALYZE,165,55,95,15,
-                    WS_DISABLED
-    LTEXT           "Edit theme metrics with a user-friendly interface.",
-                    IDC_STATIC,110,116,210,10
-    PUSHBUTTON      "Edit Metrics",IDC_BUTTON_EDIT_METRICS,165,96,95,15,
-                    WS_DISABLED
-    LTEXT           "Check for redundant or possibly midnamed theme metrics.",
-                    IDC_STATIC,109,158,210,10
-    PUSHBUTTON      "Analyze Metrics",IDC_BUTTON_ANALYZE_METRICS,165,138,95,
-                    15,WS_DISABLED
-END
-
-IDD_EDIT_METRICS DIALOG  0, 0, 332, 234
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Edit Theme Metrics"
-FONT 8, "MS Sans Serif"
-BEGIN
-    PUSHBUTTON      "Close",IDC_BUTTON_CLOSE,275,213,50,14
-    CONTROL         146,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    EDITTEXT        IDC_EDIT_VALUE,217,95,108,50,ES_MULTILINE | 
-                    ES_AUTOVSCROLL | WS_DISABLED
-    LTEXT           "Value",IDC_STATIC,218,83,88,9
-    EDITTEXT        IDC_EDIT_DEFAULT,217,161,108,48,ES_MULTILINE | 
-                    ES_AUTOVSCROLL | ES_READONLY
-    LTEXT           "Default Value",IDC_STATIC,218,148,88,9
-    PUSHBUTTON      "Override",IDC_BUTTON_OVERRIDE,217,45,60,14,WS_DISABLED
-    PUSHBUTTON      "Remove Override",IDC_BUTTON_REMOVE,217,64,60,14,
-                    WS_DISABLED
-    CONTROL         "Tree1",IDC_TREE,"SysTreeView32",TVS_HASBUTTONS | 
-                    TVS_LINESATROOT | TVS_SHOWSELALWAYS | WS_BORDER | 
-                    WS_TABSTOP,7,44,203,165
-    PUSHBUTTON      "Save",IDC_BUTTON_SAVE,203,213,56,14
-    PUSHBUTTON      "Explanation",IDC_BUTTON_HELP,65,214,71,13
+    LTEXT           "Erase all of your keyboard and joystick mappings if you've made a mistake.",
+                    IDC_STATIC,104,174,214,18
+    PUSHBUTTON      "Launch Game",IDC_BUTTON_LAUNCH_GAME,189,289,70,14
+    PUSHBUTTON      "View Statistics",IDC_VIEW_STATISTICS,16,85,75,15
+    LTEXT           "View high scores and usage statistics and other saved from your play.",
+                    IDC_STATIC,103,84,215,20
+    GROUPBOX        "Statistics",IDC_STATIC,7,72,318,35
 END
 
 IDD_ENTER_COMMENT DIALOGEX 0, 0, 312, 202
@@ -405,23 +352,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 325
         TOPMARGIN, 7
-        BOTTOMMARGIN, 338
-    END
-
-    IDD_CONVERT_THEME, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 325
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 251
-    END
-
-    IDD_EDIT_METRICS, DIALOG
-    BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 325
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 227
+        BOTTOMMARGIN, 303
     END
 
     IDD_ENTER_COMMENT, DIALOG
@@ -467,8 +398,6 @@ END
 INSTALL                 BITMAP                  "install.bmp"
 MANAGE                  BITMAP                  "manage.bmp"
 MENU                    BITMAP                  "menu.bmp"
-EDIT_METRICS            BITMAP                  "editmetrics.bmp"
-CONVERTTHEME            BITMAP                  "converttheme.bmp"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

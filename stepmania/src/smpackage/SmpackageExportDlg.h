@@ -42,8 +42,8 @@ protected:
 	void RefreshTree();
 	void GetTreeItems( CArray<HTREEITEM,HTREEITEM>& aItemsOut );
 	void GetCheckedTreeItems( CArray<HTREEITEM,HTREEITEM>& aCheckedItemsOut );
-	void GetCheckedPaths( CStringArray& aCheckedItemsOut );
-	bool MakeComment( CString &comment );
+	void GetCheckedPaths( vector<RString>& aCheckedItemsOut );
+	bool MakeComment( RString &comment );
 
 	// Generated message map functions
 	//{{AFX_MSG(CSmpackageExportDlg)

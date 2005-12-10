@@ -1,6 +1,8 @@
 // EditInsallations.cpp : implementation file
 //
 
+#define CO_EXIST_WITH_MFC
+#include "global.h"
 #include "stdafx.h"
 #include "smpackage.h"
 #include "EditInsallations.h"
@@ -53,10 +55,10 @@ BOOL EditInsallations::OnInitDialog()
 	// TODO: Add extra initialization here
 	
 
-	CStringArray asInstallDirs;
-	GetStepManiaInstallDirs( asInstallDirs );
-	for( unsigned i=0; i<asInstallDirs.size(); i++ )
-		m_list.AddString( asInstallDirs[i] );
+	vector<RString> vs;
+	SMPackageUtil::GetStepManiaInstallDirs( vs );
+	for( unsigned i=0; i<vs.size(); i++ )
+		m_list.AddString( vs[i] );
 
 
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -114,13 +116,14 @@ void EditInsallations::OnButtonAdd()
 
 void EditInsallations::OnOK() 
 {
-	m_asReturnedInstallDirs.clear();
+	m_vsReturnedInstallDirs.clear();
 
 	for( int i=0; i<m_list.GetCount(); i++ )
 	{
 		CString sDir;
 		m_list.GetText( i, sDir );
-		m_asReturnedInstallDirs.push_back( sDir );
+		RString s = sDir;
+		m_vsReturnedInstallDirs.push_back( s );
 	}
 
 	CDialog::OnOK();
