@@ -84,9 +84,14 @@ public:
 	virtual bool DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut );
 
 protected:
+	/* This may be called before GetUSBStorageDevices; return false if the results of
+	 * GetUSBStorageDevices have not changed.  (This is an optimization.) */
+	virtual bool USBStorageDevicesChanged() { return true; }
 	virtual void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut ) { }
-	virtual bool USBStorageDevicesChanged() { return false; }
-	bool TestWrite( UsbStorageDevice* pDevice ) { return true; }
+
+	/* Mount(pDevice) will has been called successfully.  Test the device.  On
+	 * failure, call pDevice->SetError() appropriately, and return false. */
+	virtual bool TestWrite( UsbStorageDevice* pDevice ) { return true; }
 
 private:
 	vector<UsbStorageDevice> m_vDevicesLastSeen;
