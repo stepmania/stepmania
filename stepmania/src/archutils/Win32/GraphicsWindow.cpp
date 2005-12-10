@@ -1,12 +1,12 @@
 #include "global.h"
 #include "GraphicsWindow.h"
 #include "StepMania.h"
-#include "GameLoop.h"
 #include "ProductInfo.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageDisplay.h"
 #include "DisplayResolutions.h"
+#include "arch/ArchHooks/ArchHooks_Win32.h"
 #include "archutils/Win32/AppInstance.h"
 #include "archutils/Win32/WindowIcon.h"
 #include "archutils/Win32/GetFileInformation.h"
@@ -138,7 +138,7 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 
 	case WM_CLOSE:
 		LOG->Trace("WM_CLOSE: shutting down");
-		ExitGame();
+		ArchHooks_Win32::SetUserQuit();
 		return 0;
 
 	case WM_WINDOWPOSCHANGED:
