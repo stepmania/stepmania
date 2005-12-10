@@ -10,9 +10,6 @@
 #include "arch/ArchHooks/ArchHooks.h"
 
 #include <cerrno>
-#if defined(LINUX)
-#include <sys/stat.h>
-#endif
 
 #if defined(WIN32) && !defined(XBOX)
 #include <windows.h>
