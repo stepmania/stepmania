@@ -74,7 +74,10 @@ class MemoryCardDriver
 public:
 	MemoryCardDriver() {};
 	virtual ~MemoryCardDriver() {};
-	virtual bool Mount( UsbStorageDevice* pDevice ) = 0;	// return false if mount or write fails
+
+	/* Make a device accessible via its pDevice->sOsMountDir.  This will be called
+	 * before any access to the device, and before TestWrite. */
+	virtual bool Mount( UsbStorageDevice* pDevice ) = 0;
 	virtual void Unmount( UsbStorageDevice* pDevice ) = 0;
 	virtual void Flush( UsbStorageDevice* pDevice ) = 0;
 	virtual void Reset() { }
@@ -89,8 +92,7 @@ protected:
 	virtual bool USBStorageDevicesChanged() { return true; }
 	virtual void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut ) { }
 
-	/* Mount(pDevice) will has been called successfully.  Test the device.  On
-	 * failure, call pDevice->SetError() appropriately, and return false. */
+	/* Test the device.  On failure, call pDevice->SetError() appropriately, and return false. */
 	virtual bool TestWrite( UsbStorageDevice* pDevice ) { return true; }
 
 private:
