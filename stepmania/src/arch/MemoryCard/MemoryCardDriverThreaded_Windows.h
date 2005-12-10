@@ -18,8 +18,10 @@ public:
 
 private:
 	void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut );
+	bool NeedUpdate( bool bMount );
 
 	DWORD m_dwLastLogicalDrives;
+	vector<UsbStorageDevice> m_vDevicesLastSeen;
 };
 
 #ifdef ARCH_MEMORY_CARD_DRIVER
