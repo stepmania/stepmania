@@ -16,7 +16,9 @@ public:
 	virtual void Reset();
 
 protected:
-	bool NeedUpdate( bool bMount ) const;
+	void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut );
+	bool USBStorageDevicesChanged();
+	bool TestWrite( UsbStorageDevice* pDevice );
 
 	vector<UsbStorageDevice> m_vDevicesLastSeen;
 };
