@@ -222,7 +222,7 @@ static void ChangeToDirOfExecutable( CString argv0 )
 #if defined(_WINDOWS)
 	chdir( RageFileManagerUtil::sDirOfExecutable + "/.." );
 #elif defined(MACOSX)
-	chdir( sDirOfExecutable + "/../../.." );
+	chdir( RageFileManagerUtil::sDirOfExecutable + "/../../.." );
 #endif
 }
 
