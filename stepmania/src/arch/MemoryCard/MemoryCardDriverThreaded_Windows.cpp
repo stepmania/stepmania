@@ -100,13 +100,12 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 				continue;
 
 			CString sDrive = ssprintf( "%c:\\", 'a'+i%26 );
+			if( GetDriveType(sDrive) != DRIVE_REMOVABLE )	// is a removable drive
+				continue;
 
 			if( !sDrives.empty() )
 				sDrives += ", ";
 			sDrives += sDrive;
-
-			if( GetDriveType(sDrive) != DRIVE_REMOVABLE )	// is a removable drive
-				continue;
 
 			CString sVolumeLabel;
 			if( !TestReady(sDrive, sVolumeLabel) )
