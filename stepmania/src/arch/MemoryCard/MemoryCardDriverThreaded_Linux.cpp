@@ -44,10 +44,6 @@ static bool ExecuteCommand( CCStringRef sCommand )
 	return ret == 0;
 }
 
-void MemoryCardDriverThreaded_Linux::Reset()
-{
-}
-
 static bool ReadFile( const CString &sPath, CString &sBuf )
 {
 	sBuf.clear();

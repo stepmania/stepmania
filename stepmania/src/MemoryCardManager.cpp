@@ -84,7 +84,6 @@ public:
 	bool Mount( const UsbStorageDevice *pDevice );
 	bool Unmount( const UsbStorageDevice *pDevice );
 	bool Flush( const UsbStorageDevice *pDevice );
-	void Reset();
 
 	/* This function will not time out. */
 	bool StorageDevicesChanged( vector<UsbStorageDevice> &aOut );
@@ -116,7 +115,6 @@ private:
 		REQ_MOUNT,
 		REQ_UNMOUNT,
 		REQ_FLUSH,
-		REQ_RESET
 	};
 };
 
@@ -190,9 +188,6 @@ void ThreadedMemoryCardWorker::HandleRequest( int iRequest )
 
 	case REQ_FLUSH:
 		m_pDriver->Flush( &m_RequestDevice );
-		break;
-	case REQ_RESET:
-		m_pDriver->Reset();
 		break;
 	}
 }
@@ -270,17 +265,6 @@ bool ThreadedMemoryCardWorker::Flush( const UsbStorageDevice *pDevice )
 		return false;
 
 	return true;
-}
-
-void ThreadedMemoryCardWorker::Reset()
-{
-	ASSERT( TimeoutEnabled() );
-
-	/* If we're currently in a timed-out state, fail. */
-	if( IsTimedOut() )
-		return;
-
-	DoRequest( REQ_RESET );
 }
 
 static ThreadedMemoryCardWorker *g_pWorker = NULL;
@@ -675,8 +659,6 @@ void MemoryCardManager::FlushAndReset()
 			continue;	// skip
 		g_pWorker->Flush( &m_Device[p] );
 	}
-	
-	g_pWorker->Reset();	// forces cards to be re-detected
 	*/
 }
 

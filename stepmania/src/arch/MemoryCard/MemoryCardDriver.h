@@ -80,7 +80,6 @@ public:
 	virtual bool Mount( UsbStorageDevice* pDevice ) = 0;
 	virtual void Unmount( UsbStorageDevice* pDevice ) = 0;
 	virtual void Flush( UsbStorageDevice* pDevice ) = 0;
-	virtual void Reset() { }
 
 	/* Poll for memory card changes.  If anything has changed, fill in vStorageDevicesOut
 	 * and return true. */

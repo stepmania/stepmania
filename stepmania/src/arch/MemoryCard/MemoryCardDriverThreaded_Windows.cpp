@@ -49,11 +49,6 @@ bool MemoryCardDriverThreaded_Windows::TestWrite( UsbStorageDevice* pDevice )
 	return true;
 }
 
-void MemoryCardDriverThreaded_Windows::Reset()
-{
-	m_dwLastLogicalDrives = 0;
-}
-
 static bool IsFloppyDrive( char c )
 {
 	char szBuf[1024];
