@@ -460,9 +460,8 @@ void GraphicsWindow::Update()
 	{
 		//LOG->Warn( "Changing resolution" );
 
-		/* Let DISPLAY know that our resolution has changed.  (Note that
-		 * ResolutionChanged() can come back here, so reset g_bResolutionChanged
-		 * first.) */
+		/* Let DISPLAY know that our resolution has changed.  (Note that ResolutionChanged()
+		 * can come back here, so reset g_bResolutionChanged first.) */
 		g_bResolutionChanged = false;
 		DISPLAY->ResolutionChanged();
 	}

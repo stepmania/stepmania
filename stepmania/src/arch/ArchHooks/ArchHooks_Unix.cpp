@@ -1,14 +1,14 @@
 #include "global.h"
-#include "RageLog.h"
-#include "RageThreads.h"
 #include "ArchHooks_Unix.h"
+#include "RageLog.h"
+#include "RageUtil.h"
+#include "RageThreads.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "archutils/Unix/GetSysInfo.h"
 #include "archutils/Unix/LinuxThreadHelpers.h"
 #include "archutils/Unix/EmergencyShutdown.h"
 #include "archutils/Unix/AssertionHandler.h"
 #include <unistd.h>
-#include "RageUtil.h"
 #include <sys/time.h>
 
 #if defined(CRASH_HANDLER)
