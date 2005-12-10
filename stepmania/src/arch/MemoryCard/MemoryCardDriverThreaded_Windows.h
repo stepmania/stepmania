@@ -17,6 +17,8 @@ public:
     virtual void Reset();
 
 private:
+	void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut );
+
 	DWORD m_dwLastLogicalDrives;
 };
 

@@ -75,6 +75,68 @@ static bool IsFloppyDrive( char c )
 	return false;
 }
 
+void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
+{
+	const int MAX_DRIVES = 26;
+	CString sDrives;
+	for( int i=0; i<MAX_DRIVES; ++i )
+	{
+		DWORD mask = (1 << i);
+		if( !(m_dwLastLogicalDrives & mask) )
+			continue; // drive letter is invalid
+		if( IsFloppyDrive(i+'a') )
+			continue;
+
+		CString sDrive = ssprintf( "%c:\\", 'a'+i%26 );
+		if( GetDriveType(sDrive) != DRIVE_REMOVABLE )	// is a removable drive
+			continue;
+
+		if( !sDrives.empty() )
+			sDrives += ", ";
+		sDrives += sDrive;
+
+		CString sVolumeLabel;
+		if( !TestReady(sDrive, sVolumeLabel) )
+			continue;
+
+		vDevicesOut.push_back( UsbStorageDevice() );
+		UsbStorageDevice &usbd = vDevicesOut.back();
+		usbd.SetOsMountDir( sDrive );
+		usbd.sVolumeLabel = sVolumeLabel;
+		if( TestWrite(sDrive) )
+			usbd.m_State = UsbStorageDevice::STATE_READY;
+		else
+			usbd.SetError( "MountFailed" );
+
+		// find volume size
+		DWORD dwSectorsPerCluster;
+		DWORD dwBytesPerSector;
+		DWORD dwNumberOfFreeClusters;
+		DWORD dwTotalNumberOfClusters;
+		if( GetDiskFreeSpace(
+				sDrive,
+				&dwSectorsPerCluster,
+				&dwBytesPerSector,
+				&dwNumberOfFreeClusters,
+				&dwTotalNumberOfClusters ) )
+		{
+			usbd.iVolumeSizeMB = (int)roundf( dwTotalNumberOfClusters * (float)dwSectorsPerCluster * dwBytesPerSector / (1024*1024) );
+		}
+
+		// read name
+		this->Mount( &usbd );
+		FILEMAN->Mount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
+		FILEMAN->Mount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
+
+		usbd.bIsNameAvailable = PROFILEMAN->FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT, usbd.sName );
+
+		FILEMAN->Unmount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
+		FILEMAN->Unmount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
+	}
+
+	LOG->Trace( "Found drives: %s", sDrives.c_str() );
+}
+
 bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut )
 {
 	DWORD dwNewLogicalDrives = ::GetLogicalDrives();
@@ -86,73 +148,8 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 
 	m_dwLastLogicalDrives = dwNewLogicalDrives;
 
-	{
-		vector<UsbStorageDevice> vNewStorageDevices;
+	GetUSBStorageDevices( vStorageDevicesOut );
 
-		const int MAX_DRIVES = 26;
-		CString sDrives;
-		for( int i=0; i<MAX_DRIVES; ++i )
-		{
-			DWORD mask = (1 << i);
-			if( !(dwNewLogicalDrives & mask) )
-				continue; // drive letter is invalid
-			if( IsFloppyDrive(i+'a') )
-				continue;
-
-			CString sDrive = ssprintf( "%c:\\", 'a'+i%26 );
-			if( GetDriveType(sDrive) != DRIVE_REMOVABLE )	// is a removable drive
-				continue;
-
-			if( !sDrives.empty() )
-				sDrives += ", ";
-			sDrives += sDrive;
-
-			CString sVolumeLabel;
-			if( !TestReady(sDrive, sVolumeLabel) )
-				continue;
-
-			vNewStorageDevices.push_back( UsbStorageDevice() );
-			UsbStorageDevice &usbd = vNewStorageDevices.back();
-			usbd.SetOsMountDir( sDrive );
-			usbd.sVolumeLabel = sVolumeLabel;
-			if( TestWrite(sDrive) )
-				usbd.m_State = UsbStorageDevice::STATE_READY;
-			else
-				usbd.SetError( "MountFailed" );
-
-			// find volume size
-			DWORD dwSectorsPerCluster;
-			DWORD dwBytesPerSector;
-			DWORD dwNumberOfFreeClusters;
-			DWORD dwTotalNumberOfClusters;
-			if( GetDiskFreeSpace(
-					sDrive,
-					&dwSectorsPerCluster,
-					&dwBytesPerSector,
-					&dwNumberOfFreeClusters,
-					&dwTotalNumberOfClusters ) )
-			{
-				usbd.iVolumeSizeMB = (int)roundf( dwTotalNumberOfClusters * (float)dwSectorsPerCluster * dwBytesPerSector / (1024*1024) );
-			}
-
-			// read name
-			this->Mount( &usbd );
-			FILEMAN->Mount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
-			FILEMAN->Mount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
-
-			usbd.bIsNameAvailable = PROFILEMAN->FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT, usbd.sName );
-
-			FILEMAN->Unmount( "timeout", TEMP_MOUNT_POINT_INTERNAL, TEMP_MOUNT_POINT );
-			FILEMAN->Unmount( "dir", usbd.sOsMountDir, TEMP_MOUNT_POINT_INTERNAL );
-		}
-
-		CHECKPOINT;
-
-		vStorageDevicesOut = vNewStorageDevices;
-
-		CHECKPOINT;
-		LOG->Trace( "Found drives: %s", sDrives.c_str() );
-	}
 	return true;
 }
 
