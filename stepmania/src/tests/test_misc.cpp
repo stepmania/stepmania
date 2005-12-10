@@ -12,9 +12,9 @@ CString g_Driver = "dir", g_Root = ".";
 
 CString argv0;
 
-void HandleException( CString sErr )
+namespace StepMania
 {
-
+	void HandleException( CString sErr ) { }
 }
 
 void test_handle_args( int argc, char *argv[] )

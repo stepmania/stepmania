@@ -433,6 +433,7 @@ all_test_SOURCES = \
 		LuaFunctions.h \
 		LuaManager.cpp LuaManager.h \
 		LuaReference.cpp LuaReference.h \
+		SpecialFiles.cpp SpecialFiles.h \
 		RageException.cpp \
 		RageLog.cpp \
 		RageThreads.cpp \
