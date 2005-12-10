@@ -2,7 +2,6 @@
 #include "RageLog.h"
 #include "RageThreads.h"
 #include "ArchHooks_Unix.h"
-#include "GameLoop.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "archutils/Unix/GetSysInfo.h"
 #include "archutils/Unix/LinuxThreadHelpers.h"
@@ -16,6 +15,12 @@
 #include "archutils/Unix/CrashHandler.h"
 #endif
 
+static bool g_bExitingGame = false;
+
+bool ArchHooks_Unix::UserQuit()
+{
+	return g_bExitingGame;
+}
 
 static bool IsFatalSignal( int signal )
 {
@@ -36,7 +41,7 @@ static void DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 		return;
 
 	/* ^C. */
-	ExitGame();
+	g_bExitingGame = true;
 }
 
 #if defined(CRASH_HANDLER)
