@@ -73,6 +73,9 @@ static bool IsFloppyDrive( char c )
 
 void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
+	DWORD dwLogicalDrives = ::GetLogicalDrives();
+	m_dwLastLogicalDrives = dwLogicalDrives;
+
 	const int MAX_DRIVES = 26;
 	for( int i=0; i<MAX_DRIVES; ++i )
 	{
@@ -115,17 +118,7 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 
 bool MemoryCardDriverThreaded_Windows::USBStorageDevicesChanged()
 {
-	/* Nothing needs a write test (or we can't do it right now).  If no devices
-	 * have changed, either, we have nothing to do. */
-	DWORD dwLogicalDrives = ::GetLogicalDrives();
-	if( dwLogicalDrives != m_dwLastLogicalDrives )
-	{
-		m_dwLastLogicalDrives = dwLogicalDrives;
-		return true;
-	}
-
-	/* Nothing to do. */
-	return false;
+	return ::GetLogicalDrives() != m_dwLastLogicalDrives;
 }
 
 bool MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice )
