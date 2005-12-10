@@ -167,16 +167,15 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 
 	vector<UsbStorageDevice> vOld = m_vDevicesLastSeen; // copy
 	GetUSBStorageDevices( vStorageDevicesOut );
-	vector<UsbStorageDevice> &vNew = vStorageDevicesOut;
-	
-	// check for connects
+
+	// log connects
 	FOREACH( UsbStorageDevice, vNew, newd )
 	{
 		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), *newd );
 		if( iter == vOld.end() )    // didn't find
 			LOG->Trace( "New device connected: %s", newd->sDevice.c_str() );
 	}
-	
+
 	/* When we first see a device, regardless of bMount, just return it as CHECKING,
 	 * so the main thread knows about the device.  On the next call where bMount is
 	 * true, check it. */
@@ -206,8 +205,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 		{
 			if( !bMount )
 			{
-				/* We can't check it now.  Keep the checking state and check it when
-				 * we can. */
+				/* We can't check it now.  Keep STATE_CHECKING, and check it when we can. */
 				d.m_State = UsbStorageDevice::STATE_CHECKING;
 				continue;
 			}
@@ -239,9 +237,9 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 			LOG->Trace( "WriteTest: %s, Name: %s", d.m_State == UsbStorageDevice::STATE_ERROR? "failed":"succeeded", d.sName.c_str() );
 		}
 	}
-	
-	m_vDevicesLastSeen = vNew;
-	
+
+	m_vDevicesLastSeen = vStorageDevicesOut;
+
 	return true;
 }
 
