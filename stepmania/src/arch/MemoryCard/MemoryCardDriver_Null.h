@@ -1,5 +1,5 @@
 #ifndef MEMORY_CARD_ENUMERATOR_NULL_H
-#define MEMORY_CARD_ENUMERATOR_NULL_H 1
+#define MEMORY_CARD_ENUMERATOR_NULL_H
 
 #include "MemoryCardDriver.h"
 
@@ -7,7 +7,8 @@ class MemoryCardDriver_Null : public MemoryCardDriver
 {
 public:
 	MemoryCardDriver_Null() {}
-	virtual bool DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut ) { return false; }
+	virtual bool USBStorageDevicesChanged() { return false; }
+	virtual void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut ) { }
 	virtual bool Mount( UsbStorageDevice* pDevice ) { return false; }
 	virtual void Unmount( UsbStorageDevice* pDevice ) {}
 	virtual void Flush( UsbStorageDevice* pDevice ) {}
