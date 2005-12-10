@@ -21,6 +21,7 @@
 
 static HANDLE g_hInstanceMutex;
 static bool g_bIsMultipleInstance = false;
+bool g_bQuitting = false;
 
 
 ArchHooks_Win32::ArchHooks_Win32()
@@ -41,6 +42,8 @@ ArchHooks_Win32::ArchHooks_Win32()
 	g_bIsMultipleInstance = false;
 	if( GetLastError() == ERROR_ALREADY_EXISTS )
 		g_bIsMultipleInstance = true;
+
+	g_bQuitting = false;
 }
 
 ArchHooks_Win32::~ArchHooks_Win32()
@@ -443,6 +446,16 @@ void ArchHooks_Win32::MountInitialFilesystems( const CString &sDirOfExecutable )
 	FILEMAN->Mount( "dir", sApplicationDataDir + PRODUCT_ID + "/Cache", "/Cache" );
 	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Save", "/Save" );
 	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Screenshots", "/Screenshots" );
+}
+
+void ArchHooks_Win32::SetUserQuit()
+{
+	g_bQuitting = true;
+}
+
+bool ArchHooks_Win32::UserQuit()
+{
+	return g_bQuitting;
 }
 
 /*
