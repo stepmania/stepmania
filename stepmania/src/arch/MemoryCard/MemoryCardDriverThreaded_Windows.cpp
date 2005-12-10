@@ -58,6 +58,23 @@ void MemoryCardDriverThreaded_Windows::Reset()
 	m_dwLastLogicalDrives = 0;
 }
 
+static bool IsFloppyDrive( char c )
+{
+	char szBuf[1024];
+
+	QueryDosDevice( ssprintf("%c:", c), szBuf, 1024 );
+
+	char *p = szBuf;
+	while( *p )
+	{
+		if( BeginsWith(p, "\\Device\\Floppy") )
+			return true;
+
+		p += strlen(p)+1;
+	}
+	return false;
+}
+
 bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut )
 {
 	DWORD dwNewLogicalDrives = ::GetLogicalDrives();
@@ -74,11 +91,13 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 
 		const int MAX_DRIVES = 26;
 		CString sDrives;
-		for( int i=2; i<MAX_DRIVES; i++ )	// skip 'a:" and "b:"
+		for( int i=0; i<MAX_DRIVES; ++i )
 		{
 			DWORD mask = (1 << i);
 			if( !(dwNewLogicalDrives & mask) )
 				continue; // drive letter is invalid
+			if( IsFloppyDrive(i+'a') )
+				continue;
 
 			CString sDrive = ssprintf( "%c:\\", 'a'+i%26 );
 
