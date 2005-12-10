@@ -44,14 +44,6 @@ static bool ExecuteCommand( CCStringRef sCommand )
 	return ret == 0;
 }
 
-MemoryCardDriverThreaded_Linux::MemoryCardDriverThreaded_Linux()
-{
-}
-
-MemoryCardDriverThreaded_Linux::~MemoryCardDriverThreaded_Linux()
-{
-}
-
 void MemoryCardDriverThreaded_Linux::Reset()
 {
 }

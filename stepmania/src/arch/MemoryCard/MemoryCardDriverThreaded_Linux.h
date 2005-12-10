@@ -6,9 +6,6 @@
 class MemoryCardDriverThreaded_Linux : public MemoryCardDriver
 {
 public:
-	MemoryCardDriverThreaded_Linux();
-	virtual ~MemoryCardDriverThreaded_Linux();
-
 	virtual bool DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut );
 	virtual bool Mount( UsbStorageDevice* pDevice );
 	virtual void Unmount( UsbStorageDevice* pDevice );
