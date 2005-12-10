@@ -2,7 +2,6 @@
 #include "RageLog.h"
 #include "RageThreads.h"
 #include "ArchHooks_Unix.h"
-#include "StepMania.h"
 #include "GameLoop.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "archutils/Unix/GetSysInfo.h"
@@ -218,18 +217,19 @@ void ArchHooks_Unix::SetTime( tm newtime )
 	system( "hwclock --systohc" );
 }
 
-#inlcude "RageFileManager.h"
+#include "RageFileManager.h"
+#include <sys/stat.h>
 
 void ArchHooks_Unix::MountInitialFilesystems( const CString &sDirOfExecutable )
 {
 #if defined(LINUX)
 	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
 	 * This is /rootfs, not /root, to avoid confusion with root's home directory. */
-	RageFileManager::Mount( "dir", "/", "/rootfs" );
+	FILEMAN->Mount( "dir", "/", "/rootfs" );
 
 	/* Mount /proc, so Alsa9Buf::GetSoundCardDebugInfo() and others can access it.
 	 * (Deprecated; use rootfs.) */
-	RageFileManager::Mount( "dir", "/proc", "/proc" );
+	FILEMAN->Mount( "dir", "/proc", "/proc" );
 	
 	/* We can almost do this, to have machine profiles be system-global to eg. share
 	 * scores.  It would need to handle permissions properly. */
@@ -257,15 +257,15 @@ void ArchHooks_Unix::MountInitialFilesystems( const CString &sDirOfExecutable )
 	struct stat st;
 	if( Root == "" && !stat( sDirOfExecutable + "/Songs", &st ) && st.st_mode&S_IFDIR )
 		Root = sDirOfExecutable;
-	if( Root == "" && !stat( InitialWorkingDirectory + "/Songs", &st ) && st.st_mode&S_IFDIR )
-		Root = InitialWorkingDirectory;
+	if( Root == "" && !stat( RageFileManagerUtil::sInitialWorkingDirectory + "/Songs", &st ) && st.st_mode&S_IFDIR )
+		Root = RageFileManagerUtil::sInitialWorkingDirectory;
 	if( Root == "" )
 		RageException::Throw( "Couldn't find \"Songs\"" );
 			
-	RageFileManager::Mount( "dir", Root, "/" );
+	FILEMAN->Mount( "dir", Root, "/" );
 #else
 	/* Paths relative to the CWD: */
-	RageFileManager::Mount( "dir", ".", "/" );
+	FILEMAN->Mount( "dir", ".", "/" );
 #endif
 }
 

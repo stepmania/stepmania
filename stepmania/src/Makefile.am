@@ -134,7 +134,7 @@ StepMania = StdString.h \
 		StepMania.cpp StepMania.h \
 		GameLoop.cpp GameLoop.h \
 		global.cpp global.h \
-		SpecialFiles.cpp SpecialFiles.h \
+		SpecialFiles.cpp SpecialFiles.h
 
 LoadingWindow = arch/LoadingWindow/LoadingWindow.h \
 		arch/LoadingWindow/LoadingWindow_Null.h
