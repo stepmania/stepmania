@@ -190,7 +190,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), d );
 		if( iter == vOld.end() )    // didn't find
 		{
-			LOG->Trace("New device entering CHECKING: %s", d.sDevice.c_str() );
+			LOG->Trace( "New device entering CHECKING: %s", d.sDevice.c_str() );
 			d.m_State = UsbStorageDevice::STATE_CHECKING;
 			continue;
 		}
@@ -200,7 +200,7 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 		d.bIsNameAvailable = iter->bIsNameAvailable;
 		d.sName = iter->sName;
 
-		/* The device was here last time.  If CHECKING, check the device now if
+		/* The device was here last time.  If CHECKING, check the device now, if
 		 * we're allowed to. */
 		if( d.m_State == UsbStorageDevice::STATE_CHECKING )
 		{
@@ -242,7 +242,6 @@ bool MemoryCardDriverThreaded_Linux::DoOneUpdate( bool bMount, vector<UsbStorage
 	
 	m_vDevicesLastSeen = vNew;
 	
-	CHECKPOINT;
 	return true;
 }
 
