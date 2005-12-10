@@ -30,6 +30,11 @@ void ExitGame()
 	g_bQuitting = true;
 }
 
+static bool UserQuit()
+{
+	return g_bQuitting || HOOKS->UserQuit();
+}
+
 void HandleInputEvents( float fDeltaTime );
 
 
@@ -59,7 +64,7 @@ static void CheckGameLoopTimerSkips( float fDeltaTime )
 
 void GameLoop()
 {
-	while( !g_bQuitting )
+	while( !UserQuit() )
 	{
 		/*
 		 * Update
