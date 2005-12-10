@@ -78,6 +78,11 @@ public:
 	 */
 	virtual void MountInitialFilesystems( const CString &sDirOfExecutable ) = 0;
 
+	/*
+	 * Returns true if the user wants to quit (eg. ^C, or clicked a "close window" button).
+	 */
+	virtual bool UserQuit() { return false; }
+
 private:
 	/* This are helpers for GetMicrosecondsSinceStart on systems with a timer
 	 * that may loop or move backwards. */
