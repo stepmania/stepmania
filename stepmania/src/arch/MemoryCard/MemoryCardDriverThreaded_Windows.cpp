@@ -117,10 +117,10 @@ bool MemoryCardDriverThreaded_Windows::USBStorageDevicesChanged()
 {
 	/* Nothing needs a write test (or we can't do it right now).  If no devices
 	 * have changed, either, we have nothing to do. */
-	DWORD dwNewLogicalDrives = ::GetLogicalDrives();
-	if( dwNewLogicalDrives != m_dwLastLogicalDrives )
+	DWORD dwLogicalDrives = ::GetLogicalDrives();
+	if( dwLogicalDrives != m_dwLastLogicalDrives )
 	{
-		m_dwLastLogicalDrives = dwNewLogicalDrives;
+		m_dwLastLogicalDrives = dwLogicalDrives;
 		return true;
 	}
 
