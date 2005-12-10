@@ -41,6 +41,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="smpackage\ZipArchive\Release\ZipArchive.lib"
 				OutputFile="../../Program/tools-debug.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -107,7 +108,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="ZipArchive\Release\ZipArchive.lib"
+				AdditionalDependencies="smpackage\ZipArchive\Release\ZipArchive.lib"
 				OutputFile=".\../../Program/tools.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -163,12 +164,6 @@
 				RelativePath=".\smpackage\EditInsallations.h">
 			</File>
 			<File
-				RelativePath=".\smpackage\EditMetricsDlg.cpp">
-			</File>
-			<File
-				RelativePath=".\smpackage\EditMetricsDlg.h">
-			</File>
-			<File
 				RelativePath=".\smpackage\EnterComment.cpp">
 			</File>
 			<File
@@ -185,12 +180,6 @@
 			</File>
 			<File
 				RelativePath=".\smpackage\MainMenuDlg.h">
-			</File>
-			<File
-				RelativePath=".\smpackage\onvertThemeDlg.cpp">
-			</File>
-			<File
-				RelativePath=".\smpackage\onvertThemeDlg.h">
 			</File>
 			<File
 				RelativePath=".\smpackage\resource.h">
@@ -263,16 +252,13 @@
 				RelativePath="menu.bmp">
 			</File>
 			<File
-				RelativePath="res\smpackage.ico">
-			</File>
-			<File
 				RelativePath="smpackage.ICO">
 			</File>
 			<File
-				RelativePath="smpackage.rc">
+				RelativePath="res\smpackage.ico">
 			</File>
 			<File
-				RelativePath="res\smpackage.rc2">
+				RelativePath=".\smpackage\smpackage.rc">
 			</File>
 			<File
 				RelativePath="res\StepMania.ICO">
@@ -289,6 +275,15 @@
 			</File>
 			<File
 				RelativePath=".\ProductInfo.h">
+			</File>
+			<File
+				RelativePath=".\SpecialFiles.cpp">
+			</File>
+			<File
+				RelativePath=".\SpecialFiles.h">
+			</File>
+			<File
+				RelativePath=".\StdString.h">
 			</File>
 			<Filter
 				Name="system">
@@ -310,15 +305,52 @@
 			Name="Rage"
 			Filter="">
 			<File
+				RelativePath=".\RageFileDriverMemory.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverMemory.h">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverZip.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverZip.h">
+			</File>
+			<File
+				RelativePath=".\RageFileManager.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFileManager.h">
+			</File>
+			<File
 				RelativePath=".\RageLog.cpp">
 			</File>
 			<File
 				RelativePath=".\RageLog.h">
 			</File>
+			<File
+				RelativePath=".\RageUtil.cpp">
+			</File>
+			<File
+				RelativePath=".\RageUtil.h">
+			</File>
 		</Filter>
-		<File
-			RelativePath="..\zlib\zdll.lib">
-		</File>
+		<Filter
+			Name="File Types"
+			Filter="">
+			<File
+				RelativePath=".\IniFile.cpp">
+			</File>
+			<File
+				RelativePath=".\IniFile.h">
+			</File>
+			<File
+				RelativePath=".\XmlFile.cpp">
+			</File>
+			<File
+				RelativePath=".\XmlFile.h">
+			</File>
+		</Filter>
 	</Files>
 	<Globals>
 		<Global
