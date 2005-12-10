@@ -1,15 +1,7 @@
 #include "global.h"
 #include "MemoryCardDriverThreaded_Windows.h"
 #include "RageUtil.h"
-#include "RageFileManager.h"
 #include "RageLog.h"
-#include "ProfileManager.h"
-#include "PrefsManager.h"
-#include "Foreach.h"
-
-const CString TEMP_MOUNT_POINT_INTERNAL = "/@mctemp/";
-const CString TEMP_MOUNT_POINT = "/@mctemptimeout/";
-
 
 MemoryCardDriverThreaded_Windows::MemoryCardDriverThreaded_Windows()
 {
@@ -41,13 +33,16 @@ static bool TestReady( const CString &sDrive, CString &sVolumeLabelOut )
 	return bRet;
 }
 
-static bool TestWrite( const CString &sDrive )
+bool MemoryCardDriverThreaded_Windows::TestWrite( UsbStorageDevice* pDevice )
 {
 	// Try to write a file.
-	CString sFile = sDrive + "temp";
+	CString sFile = pDevice->sOsMountDir + "temp";
 	FILE* fp = fopen( sFile, "w" );
 	if( fp == NULL )
+	{
+		pDevice->SetError( "TestFailed" );
 		return false;
+	}
 	fclose( fp );
 	remove( sFile );
 
@@ -118,19 +113,8 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 	}
 }
 
-bool MemoryCardDriverThreaded_Windows::NeedUpdate( bool bMount )
+bool MemoryCardDriverThreaded_Windows::USBStorageDevicesChanged()
 {
-	if( bMount )
-	{
-		/* Check if any devices need a write test. */
-		for( unsigned i=0; i<m_vDevicesLastSeen.size(); i++ )
-		{
-			const UsbStorageDevice &d = m_vDevicesLastSeen[i];
-			if( d.m_State == UsbStorageDevice::STATE_CHECKING )
-				return true;
-		}
-	}
-
 	/* Nothing needs a write test (or we can't do it right now).  If no devices
 	 * have changed, either, we have nothing to do. */
 	DWORD dwNewLogicalDrives = ::GetLogicalDrives();
@@ -142,89 +126,6 @@ bool MemoryCardDriverThreaded_Windows::NeedUpdate( bool bMount )
 
 	/* Nothing to do. */
 	return false;
-}
-
-bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut )
-{
-	if( !NeedUpdate(bMount) )
-		return false;
-
-	vector<UsbStorageDevice> vOld = m_vDevicesLastSeen; // copy
-	GetUSBStorageDevices( vStorageDevicesOut );
-
-	// log connects
-	FOREACH( UsbStorageDevice, vStorageDevicesOut, newd )
-	{
-		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), *newd );
-		if( iter == vOld.end() )    // didn't find
-			LOG->Trace( "New device connected: %s", newd->sDevice.c_str() );
-	}
-
-	/* When we first see a device, regardless of bMount, just return it as CHECKING,
-	 * so the main thread knows about the device.  On the next call where bMount is
-	 * true, check it. */
-	for( unsigned i=0; i<vStorageDevicesOut.size(); i++ )
-	{
-		UsbStorageDevice &d = vStorageDevicesOut[i];
-
-		/* If this device was just connected (it wasn't here last time), set it to
-		 * CHECKING and return it, to let the main thread know about the device before
-		 * we start checking. */
-		vector<UsbStorageDevice>::iterator iter = find( vOld.begin(), vOld.end(), d );
-		if( iter == vOld.end() )    // didn't find
-		{
-			LOG->Trace( "New device entering CHECKING: %s", d.sDevice.c_str() );
-			d.m_State = UsbStorageDevice::STATE_CHECKING;
-			continue;
-		}
-
-		/* Preserve the state of the device, and any data loaded from previous checks. */
-		d.m_State = iter->m_State;
-		d.bIsNameAvailable = iter->bIsNameAvailable;
-		d.sName = iter->sName;
-
-		/* The device was here last time.  If CHECKING, check the device now, if
-		 * we're allowed to. */
-		if( d.m_State == UsbStorageDevice::STATE_CHECKING )
-		{
-			if( !bMount )
-			{
-				/* We can't check it now.  Keep STATE_CHECKING, and check it when we can. */
-				d.m_State = UsbStorageDevice::STATE_CHECKING;
-				continue;
-			}
-
-			if( !this->Mount(&d) )
-			{
-				d.SetError( "MountFailed" );
-				continue;
-			}
-
-			if( !TestWrite(d.sOsMountDir) )
-			{
-				d.SetError( "TestFailed" );
-			}
-			else
-			{
-				/* We've successfully mounted and tested the device.  Read the
-				 * profile name (by mounting a temporary, private mountpoint),
-				 * and then unmount it until Mount() is called. */
-				d.m_State = UsbStorageDevice::STATE_READY;
-			
-				FILEMAN->Mount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
-				d.bIsNameAvailable = PROFILEMAN->FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT, d.sName );
-				FILEMAN->Unmount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
-			}
-
-			this->Unmount( &d );
-
-			LOG->Trace( "WriteTest: %s, Name: %s", d.m_State == UsbStorageDevice::STATE_ERROR? "failed":"succeeded", d.sName.c_str() );
-		}
-	}
-
-	m_vDevicesLastSeen = vStorageDevicesOut;
-
-	return true;
 }
 
 bool MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice )

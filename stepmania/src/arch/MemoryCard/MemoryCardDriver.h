@@ -81,7 +81,16 @@ public:
 
 	/* Poll for memory card changes.  If anything has changed, fill in vStorageDevicesOut
 	 * and return true. */
-	virtual bool DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut ) = 0;
+	virtual bool DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut );
+
+protected:
+	virtual void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut ) { }
+	virtual bool USBStorageDevicesChanged() { return false; }
+	bool TestWrite( UsbStorageDevice* pDevice ) { return true; }
+
+private:
+	vector<UsbStorageDevice> m_vDevicesLastSeen;
+	bool NeedUpdate( bool bMount );
 };
 
 #endif
