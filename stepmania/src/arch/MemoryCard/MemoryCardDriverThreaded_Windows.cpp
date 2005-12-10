@@ -194,6 +194,12 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 				continue;
 			}
 
+			if( !this->Mount(&d) )
+			{
+				d.SetError( "MountFailed" );
+				continue;
+			}
+
 			if( !TestWrite(d.sOsMountDir) )
 			{
 				d.SetError( "TestFailed" );
@@ -209,6 +215,8 @@ bool MemoryCardDriverThreaded_Windows::DoOneUpdate( bool bMount, vector<UsbStora
 				d.bIsNameAvailable = PROFILEMAN->FastLoadProfileNameFromMemoryCard( TEMP_MOUNT_POINT, d.sName );
 				FILEMAN->Unmount( "dir", d.sOsMountDir, TEMP_MOUNT_POINT );
 			}
+
+			this->Unmount( &d );
 
 			LOG->Trace( "WriteTest: %s, Name: %s", d.m_State == UsbStorageDevice::STATE_ERROR? "failed":"succeeded", d.sName.c_str() );
 		}
