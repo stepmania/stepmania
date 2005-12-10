@@ -20,7 +20,6 @@ static HDC g_HDC;
 static VideoModeParams g_CurrentParams;
 static bool g_bResolutionChanged = false;
 static bool g_bHasFocus = true;
-static bool g_bLastHasFocus = true;
 static HICON g_hIcon = NULL;
 static bool m_bWideWindowClass;
 static bool g_bD3D = false;
@@ -450,11 +449,7 @@ void GraphicsWindow::Update()
 		DispatchMessage( &msg );
 	}
 
-	if( g_bHasFocus != g_bLastHasFocus )
-	{
-		StepMania::FocusChanged( g_bHasFocus );
-		g_bLastHasFocus = g_bHasFocus;
-	}
+	StepMania::FocusChanged( g_bHasFocus );
 
 	if( g_bResolutionChanged && DISPLAY != NULL )
 	{
