@@ -14,38 +14,38 @@ public:
 	IniFile();
 
 	/* Retrieve the filename of the last file loaded. */
-	CString GetPath() const { return m_sPath; }
-	const CString &GetError() const { return m_sError; }
+	RString GetPath() const { return m_sPath; }
+	const RString &GetError() const { return m_sError; }
 
-	bool ReadFile( const CString &sPath );
+	bool ReadFile( const RString &sPath );
 	bool ReadFile( RageFileBasic &sFile );
-	bool WriteFile( const CString &sPath ) const;
+	bool WriteFile( const RString &sPath ) const;
 	bool WriteFile( RageFileBasic &sFile ) const;
 
-	bool GetValue( const CString &key, const CString &valuename, CString& value ) const;
-	bool GetValue( const CString &key, const CString &valuename, int& value ) const;
-	bool GetValue( const CString &key, const CString &valuename, unsigned& value ) const;
-	bool GetValue( const CString &key, const CString &valuename, float& value ) const;
-	bool GetValue( const CString &key, const CString &valuename, bool& value ) const;
+	bool GetValue( const RString &key, const RString &valuename, RString& value ) const;
+	bool GetValue( const RString &key, const RString &valuename, int& value ) const;
+	bool GetValue( const RString &key, const RString &valuename, unsigned& value ) const;
+	bool GetValue( const RString &key, const RString &valuename, float& value ) const;
+	bool GetValue( const RString &key, const RString &valuename, bool& value ) const;
 
-	void SetValue( const CString &key, const CString &valuename, const CString &value );
-	void SetValue( const CString &key, const CString &valuename, int value );
-	void SetValue( const CString &key, const CString &valuename, unsigned value );
-	void SetValue( const CString &key, const CString &valuename, float value );
-	void SetValue( const CString &key, const CString &valuename, bool value );
+	void SetValue( const RString &key, const RString &valuename, const RString &value );
+	void SetValue( const RString &key, const RString &valuename, int value );
+	void SetValue( const RString &key, const RString &valuename, unsigned value );
+	void SetValue( const RString &key, const RString &valuename, float value );
+	void SetValue( const RString &key, const RString &valuename, bool value );
 
-	bool DeleteKey( const CString &keyname );
-	bool DeleteValue( const CString &keyname, const CString &valuename );
+	bool DeleteKey( const RString &keyname );
+	bool DeleteValue( const RString &keyname, const RString &valuename );
 
 	/* Rename a key. For example, call RenameKey("foo", "main") after
 	 * reading an INI where [foo] is an alias to [main].  If to already
 	 * exists, nothing happens. */
-	bool RenameKey( const CString &from, const CString &to );
+	bool RenameKey( const RString &from, const RString &to );
 
 private:
-	CString m_sPath;
+	RString m_sPath;
 
-	mutable CString m_sError;
+	mutable RString m_sError;
 };
 
 #endif

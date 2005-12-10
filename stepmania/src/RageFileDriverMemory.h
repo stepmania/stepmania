@@ -1,4 +1,4 @@
-/* RageFileDriverMem: Simple memory-based "filesystem". */
+/* RageFileDriverMemory: Simple memory-based "filesystem". */
 
 #ifndef RAGE_FILE_DRIVER_MEMORY_H
 #define RAGE_FILE_DRIVER_MEMORY_H
@@ -22,8 +22,8 @@ public:
 	RageFileBasic *Copy() const;
 
 	/* Retrieve the contents of this file. */
-	const CString &GetString() const;
-	void PutString( const CString &sBuf );
+	const RString &GetString() const;
+	void PutString( const RString &sBuf );
 
 private:
 	RageFileObjMemFile *m_pFile;
@@ -36,10 +36,10 @@ public:
 	RageFileDriverMem();
 	~RageFileDriverMem();
 
-	RageFileBasic *Open( const CString &sPath, int mode, int &err );
-	void FlushDirCache( const CString &sPath ) { }
+	RageFileBasic *Open( const RString &sPath, int mode, int &err );
+	void FlushDirCache( const RString &sPath ) { }
 
-	bool Remove( const CString &sPath );
+	bool Remove( const RString &sPath );
 
 private:
 	RageMutex m_Mutex;

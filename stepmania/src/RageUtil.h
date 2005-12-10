@@ -227,29 +227,29 @@ void fapproach( float& val, float other_val, float to_move );
 float fmodfp( float x, float y );
 
 int power_of_two( int input );
-bool IsAnInt( const CString &s );
-bool IsHexVal( const CString &s );
-float HHMMSSToSeconds( const CString &sHMS );
-CString SecondsToHHMMSS( float fSecs );
-CString SecondsToMSSMsMs( float fSecs );
-CString SecondsToMMSSMsMs( float fSecs );
-CString SecondsToMMSSMsMsMs( float fSecs );
-CString PrettyPercent( float fNumerator, float fDenominator );
-inline CString PrettyPercent( int fNumerator, int fDenominator ) { return PrettyPercent( float(fNumerator), float(fDenominator) ); }
-CString Commify( int iNum );
-CString FormatNumberAndSuffix( int i );
+bool IsAnInt( const RString &s );
+bool IsHexVal( const RString &s );
+float HHMMSSToSeconds( const RString &sHMS );
+RString SecondsToHHMMSS( float fSecs );
+RString SecondsToMSSMsMs( float fSecs );
+RString SecondsToMMSSMsMs( float fSecs );
+RString SecondsToMMSSMsMsMs( float fSecs );
+RString PrettyPercent( float fNumerator, float fDenominator );
+inline RString PrettyPercent( int fNumerator, int fDenominator ) { return PrettyPercent( float(fNumerator), float(fDenominator) ); }
+RString Commify( int iNum );
+RString FormatNumberAndSuffix( int i );
 
 
 struct tm GetLocalTime();
 
-CString ssprintf( const char *fmt, ...) PRINTF(1,2);
-CString vssprintf( const char *fmt, va_list argList );
+RString ssprintf( const char *fmt, ...) PRINTF(1,2);
+RString vssprintf( const char *fmt, va_list argList );
 
 #ifdef WIN32
-CString hr_ssprintf( int hr, const char *fmt, ...);
-CString werr_ssprintf( int err, const char *fmt, ...);
-CString ConvertWstringToACP( wstring s );
-CString ConvertUTF8ToACP( CString s );
+RString hr_ssprintf( int hr, const char *fmt, ...);
+RString werr_ssprintf( int err, const char *fmt, ...);
+RString ConvertWstringToACP( wstring s );
+RString ConvertUTF8ToACP( RString s );
 #endif
 
 /*
@@ -257,61 +257,61 @@ CString ConvertUTF8ToACP( CString s );
  * If Path is a directory (eg. c:\games\stepmania"), append a slash so the last
  * element will end up in Dir, not FName: "c:\games\stepmania\".
  * */
-void splitpath( const CString &Path, CString &Dir, CString &Filename, CString &Ext );
+void splitpath( const RString &Path, RString &Dir, RString &Filename, RString &Ext );
 
-CString SetExtension( const CString &path, const CString &ext );
-CString GetExtension( const CString &sPath );
-CString GetFileNameWithoutExtension( const CString &sPath );
+RString SetExtension( const RString &path, const RString &ext );
+RString GetExtension( const RString &sPath );
+RString GetFileNameWithoutExtension( const RString &sPath );
 
 typedef int longchar;
 extern const wchar_t INVALID_CHAR;
 
 int utf8_get_char_len( char p );
-bool utf8_to_wchar( const CString &s, unsigned &start, wchar_t &ch );
-bool utf8_to_wchar_ec( const CString &s, unsigned &start, wchar_t &ch );
-void wchar_to_utf8( wchar_t ch, CString &out );
-wchar_t utf8_get_char( const CString &s );
-bool utf8_is_valid( const CString &s );
-void utf8_remove_bom( CString &s );
+bool utf8_to_wchar( const RString &s, unsigned &start, wchar_t &ch );
+bool utf8_to_wchar_ec( const RString &s, unsigned &start, wchar_t &ch );
+void wchar_to_utf8( wchar_t ch, RString &out );
+wchar_t utf8_get_char( const RString &s );
+bool utf8_is_valid( const RString &s );
+void utf8_remove_bom( RString &s );
 
-CString WStringToCString( const wstring &sString );
-CString WcharToUTF8( wchar_t c );
-wstring CStringToWstring( const CString &sString );
+RString WStringToCString( const wstring &sString );
+RString WcharToUTF8( wchar_t c );
+wstring CStringToWstring( const RString &sString );
 
-CString GetLanguageNameFromISO639Code( CString sName );
+RString GetLanguageNameFromISO639Code( RString sName );
 
-// Splits a CString into an vector<CString> according the Delimitor.
-void split( const CString &sSource, const CString &sDelimitor, vector<CString>& asAddIt, const bool bIgnoreEmpty = true );
+// Splits a RString into an vector<RString> according the Delimitor.
+void split( const RString &sSource, const RString &sDelimitor, vector<RString>& asAddIt, const bool bIgnoreEmpty = true );
 void split( const wstring &sSource, const wstring &sDelimitor, vector<wstring> &asAddIt, const bool bIgnoreEmpty = true );
 
 /* In-place split. */
-void split( const CString &sSource, const CString &sDelimitor, int &iBegin, int &iSize, const bool bIgnoreEmpty = true );
+void split( const RString &sSource, const RString &sDelimitor, int &iBegin, int &iSize, const bool bIgnoreEmpty = true );
 void split( const wstring &sSource, const wstring &sDelimitor, int &iBegin, int &iSize, const bool bIgnoreEmpty = true );
 
 /* In-place split of partial string. */
-void split( const CString &sSource, const CString &sDelimitor, int &iBegin, int &iSize, int iLen, const bool bIgnoreEmpty ); /* no default to avoid ambiguity */
+void split( const RString &sSource, const RString &sDelimitor, int &iBegin, int &iSize, int iLen, const bool bIgnoreEmpty ); /* no default to avoid ambiguity */
 void split( const wstring &sSource, const wstring &sDelimitor, int &iBegin, int &iSize, int iLen, const bool bIgnoreEmpty );
 
-// Joins a vector<CString> to create a CString according the Deliminator.
-CString join( const CString &sDelimitor, const vector<CString>& sSource );
-CString join( const CString &sDelimitor, vector<CString>::const_iterator begin, vector<CString>::const_iterator end );
+// Joins a vector<RString> to create a RString according the Deliminator.
+RString join( const RString &sDelimitor, const vector<RString>& sSource );
+RString join( const RString &sDelimitor, vector<RString>::const_iterator begin, vector<RString>::const_iterator end );
 
-CString GetCwd();
+RString GetCwd();
 
 void SetCommandlineArguments( int argc, char **argv );
-bool GetCommandlineArgument( const CString &option, CString *argument=NULL, int iIndex=0 );
+bool GetCommandlineArgument( const RString &option, RString *argument=NULL, int iIndex=0 );
 extern int g_argc;
 extern char **g_argv;
 
 void CRC32( unsigned int &iCRC, const void *pBuffer, size_t iSize );
-unsigned int GetHashForString( const CString &s );
-unsigned int GetHashForFile( const CString &sPath );
-unsigned int GetHashForDirectory( const CString &sDir );	// a hash value that remains the same as long as nothing in the directory has changed
-bool DirectoryIsEmpty( const CString &sPath );
+unsigned int GetHashForString( const RString &s );
+unsigned int GetHashForFile( const RString &sPath );
+unsigned int GetHashForDirectory( const RString &sDir );	// a hash value that remains the same as long as nothing in the directory has changed
+bool DirectoryIsEmpty( const RString &sPath );
 
-bool CompareCStringsAsc( const CString &sStr1, const CString &sStr2 );
-bool CompareCStringsDesc( const CString &sStr1, const CString &sStr2 );
-void SortCStringArray( vector<CString> &asAddTo, const bool bSortAscending = true );
+bool CompareCStringsAsc( const RString &sStr1, const RString &sStr2 );
+bool CompareCStringsDesc( const RString &sStr1, const RString &sStr2 );
+void SortCStringArray( vector<RString> &asAddTo, const bool bSortAscending = true );
 
 /* Find the mean and standard deviation of all numbers in [start,end). */
 float calc_mean( const float *pStart, const float *pEnd );
@@ -332,47 +332,47 @@ inline T Increment( T a ) { ++a; return a; }
 template<class T>
 inline T Decrement( T a ) { --a; return a; }
 
-void TrimLeft( CString &sStr, const char *szTrim = "\r\n\t " );
-void TrimRight( CString &sStr, const char *szTrim = "\r\n\t " );
-void StripCrnl( CString &sStr );
-bool BeginsWith( const CString &sTestThis, const CString &sBeginning );
-bool EndsWith( const CString &sTestThis, const CString &sEnding );
+void TrimLeft( RString &sStr, const char *szTrim = "\r\n\t " );
+void TrimRight( RString &sStr, const char *szTrim = "\r\n\t " );
+void StripCrnl( RString &sStr );
+bool BeginsWith( const RString &sTestThis, const RString &sBeginning );
+bool EndsWith( const RString &sTestThis, const RString &sEnding );
 
-void StripCvs( vector<CString> &vs );	// remove all items that end in "cvs"
+void StripCvs( vector<RString> &vs );	// remove all items that end in "cvs"
 
-CString DerefRedir( const CString &sPath );
-bool GetFileContents( const CString &sPath, CString &sOut, bool bOneLine = false );
+RString DerefRedir( const RString &sPath );
+bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine = false );
 
 class Regex
 {
 public:
-	Regex( const CString &sPat = "" );
+	Regex( const RString &sPat = "" );
 	Regex( const Regex &rhs );
 	Regex &operator=( const Regex &rhs );
 	~Regex();
 	bool IsSet() const { return !pattern.empty(); }
-	void Set( const CString &str );
-	bool Compare( const CString &sStr );
-	bool Compare( const CString &sStr, vector<CString> &asMatches );
-	bool Replace( const CString &sReplacement, const CString &sSubject, CString &sOut );
+	void Set( const RString &str );
+	bool Compare( const RString &sStr );
+	bool Compare( const RString &sStr, vector<RString> &asMatches );
+	bool Replace( const RString &sReplacement, const RString &sSubject, RString &sOut );
 
 private:
 	void *reg;
 	unsigned backrefs;
-    CString pattern;
+    RString pattern;
     void Compile();
     void Release();
 };
 
 
-void ReplaceEntityText( CString &sText, const map<CString,CString> &m );
-void ReplaceEntityText( CString &sText, const map<char,CString> &m );
-void Replace_Unicode_Markers( CString &Text );
-CString WcharDisplayText( wchar_t c );
+void ReplaceEntityText( RString &sText, const map<RString,RString> &m );
+void ReplaceEntityText( RString &sText, const map<char,RString> &m );
+void Replace_Unicode_Markers( RString &Text );
+RString WcharDisplayText( wchar_t c );
 
-CString Basename( const CString &dir );
-CString Dirname( const CString &dir );
-CString Capitalize( const CString &s );
+RString Basename( const RString &dir );
+RString Dirname( const RString &dir );
+RString Capitalize( const RString &s );
 
 #ifndef WIN32
 #include <unistd.h> /* correct place with correct definitions */
@@ -424,45 +424,45 @@ typedef basic_string<char,char_traits_char_nocase> istring;
 
 /* Compatibility/convenience shortcuts.  These are actually defined in RageFileManager.h, but
  * declared here since they're used in many places. */
-void GetDirListing( const CString &sPath, vector<CString> &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
-void GetDirListingRecursive( const CString &sDir, const CString &sMatch, vector<CString> &AddTo );	/* returns path too */
-bool DeleteRecursive( const CString &sDir );	/* delete the dir and all files/subdirs inside it */
-bool DoesFileExist( const CString &sPath );
-bool IsAFile( const CString &sPath );
-bool IsADirectory( const CString &sPath );
-unsigned GetFileSizeInBytes( const CString &sFilePath );
+void GetDirListing( const RString &sPath, vector<RString> &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
+void GetDirListingRecursive( const RString &sDir, const RString &sMatch, vector<RString> &AddTo );	/* returns path too */
+bool DeleteRecursive( const RString &sDir );	/* delete the dir and all files/subdirs inside it */
+bool DoesFileExist( const RString &sPath );
+bool IsAFile( const RString &sPath );
+bool IsADirectory( const RString &sPath );
+unsigned GetFileSizeInBytes( const RString &sFilePath );
 void FlushDirCache();
 
 // call FixSlashes on any path that came from the user
-void FixSlashesInPlace( CString &sPath );
-CString FixSlashes( CString sPath );
-void CollapsePath( CString &sPath, bool bRemoveLeadingDot=false );
+void FixSlashesInPlace( RString &sPath );
+RString FixSlashes( RString sPath );
+void CollapsePath( RString &sPath, bool bRemoveLeadingDot=false );
 
-bool FromString( const CString &sValue, int &out );
-bool FromString( const CString &sValue, unsigned  &out );
-bool FromString( const CString &sValue, float &out );
-bool FromString( const CString &sValue, bool &out );
-inline bool FromString( const CString &sValue, CString &out ) { out = sValue; return true; }
+bool FromString( const RString &sValue, int &out );
+bool FromString( const RString &sValue, unsigned  &out );
+bool FromString( const RString &sValue, float &out );
+bool FromString( const RString &sValue, bool &out );
+inline bool FromString( const RString &sValue, RString &out ) { out = sValue; return true; }
 
-CString ToString( int value );
-CString ToString( unsigned value );
-CString ToString( float value );
-CString ToString( bool value );
-inline CString ToString( const CString &value ) { return value; }
+RString ToString( int value );
+RString ToString( unsigned value );
+RString ToString( float value );
+RString ToString( bool value );
+inline RString ToString( const RString &value ) { return value; }
 
 // helper file functions used by Bookkeeper and ProfileManager
 class RageFileBasic;
-bool FileRead( RageFileBasic& f, CString& sOut );
+bool FileRead( RageFileBasic& f, RString& sOut );
 bool FileRead( RageFileBasic& f, int& iOut );
 bool FileRead( RageFileBasic& f, unsigned& uOut );
 bool FileRead( RageFileBasic& f, float& fOut );
-void FileWrite( RageFileBasic& f, const CString& sWrite );
+void FileWrite( RageFileBasic& f, const RString& sWrite );
 void FileWrite( RageFileBasic& f, int iWrite );
 void FileWrite( RageFileBasic& f, size_t uWrite );
 void FileWrite( RageFileBasic& f, float fWrite );
 
-bool FileCopy( CString sSrcFile, CString sDstFile );
-bool FileCopy( RageFileBasic &in, RageFileBasic &out, CString &sError, bool *bReadError = NULL );
+bool FileCopy( RString sSrcFile, RString sDstFile );
+bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bReadError = NULL );
 
 #endif
 

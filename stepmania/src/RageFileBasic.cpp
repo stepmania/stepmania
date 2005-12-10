@@ -134,7 +134,7 @@ int RageFileObj::Read( void *pBuffer, size_t iBytes )
 	return ret;
 }
 
-int RageFileObj::Read( CString &sBuffer, int iBytes )
+int RageFileObj::Read( RString &sBuffer, int iBytes )
 {
 	sBuffer.reserve( iBytes != -1? iBytes: this->GetFileSize() );
 
@@ -232,7 +232,7 @@ bool RageFileObj::GetCRC32( uint32_t *iRet )
 
 /* Read up to the next \n, and return it in out.  Strip the \n.  If the \n is
  * preceded by a \r (DOS newline), strip that, too. */
-int RageFileObj::GetLine( CString &out )
+int RageFileObj::GetLine( RString &out )
 {
 	out = "";
 
@@ -324,11 +324,11 @@ int RageFileObj::GetLine( CString &out )
 //#define NEWLINE "\n"
 //#endif
 
-int RageFileObj::PutLine( const CString &str )
+int RageFileObj::PutLine( const RString &str )
 {
 	if( Write(str) == -1 )
 		return -1;
-	return Write( CString(NEWLINE) );
+	return Write( RString(NEWLINE) );
 }
 
 /* Fill the internal buffer.  This never marks EOF, since this is an internal, hidden

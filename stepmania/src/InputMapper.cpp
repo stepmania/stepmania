@@ -11,10 +11,9 @@
 #include "Game.h"
 #include "Style.h"
 
+const RString KEYMAPS_PATH = "Save/Keymaps.ini";
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
-
-#define KEYMAPS_PATH "Save/Keymaps.ini"
 
 InputMapper::InputMapper()
 {

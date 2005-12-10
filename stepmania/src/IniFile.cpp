@@ -10,7 +10,7 @@ IniFile::IniFile()
 	m_sName = "IniFile";
 }
 
-bool IniFile::ReadFile( const CString &sPath )
+bool IniFile::ReadFile( const RString &sPath )
 {
 	m_sPath = sPath;
 	CHECKPOINT_M( ssprintf("Reading '%s'",m_sPath.c_str()) );
@@ -28,10 +28,10 @@ bool IniFile::ReadFile( const CString &sPath )
 
 bool IniFile::ReadFile( RageFileBasic &f )
 {
-	CString keyname;
+	RString keyname;
 	while( 1 )
 	{
-		CString line;
+		RString line;
 		switch( f.GetLine(line) )
 		{
 		case -1:
@@ -61,8 +61,8 @@ bool IniFile::ReadFile( RageFileBasic &f )
 			int iEqualIndex = line.Find("=");
 			if( iEqualIndex != -1 )
 			{
-				CString valuename = line.Left(iEqualIndex);
-				CString value = line.Right(line.GetLength()-valuename.GetLength()-1);
+				RString valuename = line.Left(iEqualIndex);
+				RString value = line.Right(line.GetLength()-valuename.GetLength()-1);
 				if( keyname.size() && valuename.size() )
 					SetValue(keyname,valuename,value);
 			}
@@ -70,7 +70,7 @@ bool IniFile::ReadFile( RageFileBasic &f )
 	}
 }
 
-bool IniFile::WriteFile( const CString &sPath ) const
+bool IniFile::WriteFile( const RString &sPath ) const
 {
 	RageFile f;
 	if( !f.Open( sPath, RageFile::WRITE ) )
@@ -111,7 +111,7 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 	return true;
 }
 
-bool IniFile::GetValue( const CString &keyname, const CString &valuename, CString& value ) const
+bool IniFile::GetValue( const RString &keyname, const RString &valuename, RString& value ) const
 {
 	const XNode* pNode = GetChild( keyname );
 	if( pNode == NULL )
@@ -119,7 +119,7 @@ bool IniFile::GetValue( const CString &keyname, const CString &valuename, CStrin
 	return pNode->GetAttrValue( valuename, value );
 }
 
-void IniFile::SetValue( const CString &keyname, const CString &valuename, const CString &value )
+void IniFile::SetValue( const RString &keyname, const RString &valuename, const RString &value )
 {
 	XNode* pNode = GetChild( keyname );
 	if( pNode == NULL )
@@ -127,7 +127,7 @@ void IniFile::SetValue( const CString &keyname, const CString &valuename, const 
 	pNode->AppendAttr( valuename, value );
 }
 
-bool IniFile::DeleteValue(const CString &keyname, const CString &valuename)
+bool IniFile::DeleteValue(const RString &keyname, const RString &valuename)
 {
 	XNode* pNode = GetChild( keyname );
 	if( pNode == NULL )
@@ -137,14 +137,14 @@ bool IniFile::DeleteValue(const CString &keyname, const CString &valuename)
 
 
 #define TYPE(T) \
-	bool IniFile::GetValue( const CString &keyname, const CString &valuename, T &value ) const \
+	bool IniFile::GetValue( const RString &keyname, const RString &valuename, T &value ) const \
 	{ \
-		CString sValue; \
+		RString sValue; \
 		if( !GetValue(keyname,valuename,sValue) ) \
 			return false; \
 		return FromString( sValue, value ); \
 	} \
-	void IniFile::SetValue( const CString &keyname, const CString &valuename, T value ) \
+	void IniFile::SetValue( const RString &keyname, const RString &valuename, T value ) \
 	{ \
 		SetValue( keyname, valuename, ToString(value) ); \
 	}
@@ -155,7 +155,7 @@ TYPE(float);
 TYPE(bool);
 
 
-bool IniFile::DeleteKey(const CString &keyname)
+bool IniFile::DeleteKey(const RString &keyname)
 {
 	XNode* pNode = GetChild( keyname );
 	if( pNode == NULL )
@@ -163,14 +163,14 @@ bool IniFile::DeleteKey(const CString &keyname)
 	return RemoveChild( pNode );
 }
 
-bool IniFile::RenameKey(const CString &from, const CString &to)
+bool IniFile::RenameKey(const RString &from, const RString &to)
 {
 	/* If to already exists, do nothing. */
 	XNode* pTo = GetChild( to );
 	if( pTo )
 		return false;
 
-	multimap<CString, XNode*>::iterator it = m_childs.find( from );
+	multimap<RString, XNode*>::iterator it = m_childs.find( from );
 	if( it == m_childs.end() )
 		return false;
 

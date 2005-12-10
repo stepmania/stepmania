@@ -8,12 +8,12 @@ RageFileDriver::~RageFileDriver()
 	delete FDB;
 }
 
-int RageFileDriver::GetPathValue( const CString &path )
+int RageFileDriver::GetPathValue( const RString &path )
 {
-	vector<CString> parts;
+	vector<RString> parts;
 	split( path, "/", parts, true );
 
-	CString PartialPath;
+	RString PartialPath;
 
 	for( unsigned i = 0; i < parts.size(); ++i )
 	{
@@ -42,27 +42,27 @@ int RageFileDriver::GetPathValue( const CString &path )
 	return 0;
 }
 
-void RageFileDriver::GetDirListing( const CString &sPath, vector<CString> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
+void RageFileDriver::GetDirListing( const RString &sPath, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo )
 {
 	FDB->GetDirListing( sPath, AddTo, bOnlyDirs, bReturnPathToo );
 }
 
-RageFileManager::FileType RageFileDriver::GetFileType( const CString &sPath )
+RageFileManager::FileType RageFileDriver::GetFileType( const RString &sPath )
 {
 	return FDB->GetFileType( sPath );
 }
 
-int RageFileDriver::GetFileSizeInBytes( const CString &sPath )
+int RageFileDriver::GetFileSizeInBytes( const RString &sPath )
 {
 	return FDB->GetFileSize( sPath );
 }
 
-int RageFileDriver::GetFileHash( const CString &sPath )
+int RageFileDriver::GetFileHash( const RString &sPath )
 {
 	return FDB->GetFileHash( sPath );
 }
 
-void RageFileDriver::FlushDirCache( const CString &sPath )
+void RageFileDriver::FlushDirCache( const RString &sPath )
 {
 	FDB->FlushDirCache();
 }
@@ -70,7 +70,7 @@ void RageFileDriver::FlushDirCache( const CString &sPath )
 
 const struct FileDriverEntry *g_FileDriverList = NULL;
 
-FileDriverEntry::FileDriverEntry( CString Type )
+FileDriverEntry::FileDriverEntry( RString Type )
 {
 	m_Link = g_FileDriverList;
 	g_FileDriverList = this;
@@ -82,7 +82,7 @@ FileDriverEntry::~FileDriverEntry()
 	g_FileDriverList = NULL; /* invalidate */
 }
 
-RageFileDriver *MakeFileDriver( CString Type, CString Root )
+RageFileDriver *MakeFileDriver( RString Type, RString Root )
 {
 	for( const FileDriverEntry *p = g_FileDriverList; p; p = p->m_Link )
 		if( !p->m_Type.CompareNoCase(Type) )

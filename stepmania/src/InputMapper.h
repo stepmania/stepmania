@@ -9,10 +9,7 @@
 #include "StyleInput.h"
 #include "GameConstantsAndTypes.h"
 
-
-
 const int NUM_GAME_TO_DEVICE_SLOTS	= 5;	// five device inputs may map to one game input
-
 
 class InputMapper
 {

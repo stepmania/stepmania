@@ -7,7 +7,7 @@
 #include <map>
 
 /* Map from "&foo;" to a UTF-8 string. */
-typedef map<CString, wchar_t, StdStringLessNoCase> aliasmap;
+typedef map<CString, wchar_t, StdString::StdStringLessNoCase> aliasmap;
 static aliasmap CharAliases;
 static map<CString,CString> CharAliasRepl;
 

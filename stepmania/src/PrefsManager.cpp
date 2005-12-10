@@ -12,7 +12,8 @@
 #include "RageLog.h"
 
 const CString DEFAULTS_INI_PATH		= "Data/Defaults.ini";		// these can be overridden
-const CString PREFERENCES_INI_PATH	= "Save/Preferences.ini";	// overlay on Defaults.ini, contains the user's choices
+//PREFERENCES_INI_PATH	// overlay on Defaults.ini, contains the user's choices
+#include "SpecialFiles.h"
 const CString STATIC_INI_PATH		= "Data/Static.ini";		// overlay on the 2 above, can't be overridden
 const CString TYPE_TXT_FILE			= "Data/Type.txt";
 
@@ -463,8 +464,8 @@ void PrefsManager::RestoreGamePrefs()
 void PrefsManager::ReadPrefsFromDisk()
 {
 	ReadPrefsFromFile( DEFAULTS_INI_PATH, GetPreferencesSection() );
-	ReadPrefsFromFile( PREFERENCES_INI_PATH, "Options" );
-	ReadGamePrefsFromIni( PREFERENCES_INI_PATH );
+	ReadPrefsFromFile( SpecialFiles::PREFERENCES_INI_PATH, "Options" );
+	ReadGamePrefsFromIni( SpecialFiles::PREFERENCES_INI_PATH );
 	ReadPrefsFromFile( STATIC_INI_PATH, GetPreferencesSection() );
 
 	if( !m_sCurrentGame.Get().empty() )
@@ -542,7 +543,7 @@ void PrefsManager::SavePrefsToDisk()
 {
 	IniFile ini;
 	SavePrefsToIni( ini );
-	ini.WriteFile( PREFERENCES_INI_PATH );
+	ini.WriteFile( SpecialFiles::PREFERENCES_INI_PATH );
 }
 
 void PrefsManager::SavePrefsToIni( IniFile &ini )

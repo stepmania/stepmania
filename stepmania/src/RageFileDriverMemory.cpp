@@ -10,7 +10,7 @@ struct RageFileObjMemFile
 	RageFileObjMemFile():
 		m_iRefs(0),
 		m_Mutex("RageFileObjMemFile") { }
-	CString m_sBuf;
+	RString m_sBuf;
 	int m_iRefs;
 	RageMutex m_Mutex;
 
@@ -98,12 +98,12 @@ RageFileBasic *RageFileObjMem::Copy() const
 	return pRet;
 }
 
-const CString &RageFileObjMem::GetString() const
+const RString &RageFileObjMem::GetString() const
 {
 	return m_pFile->m_sBuf;
 }
 
-void RageFileObjMem::PutString( const CString &sBuf )
+void RageFileObjMem::PutString( const RString &sBuf )
 {
 	m_pFile->m_Mutex.Lock();
 	m_pFile->m_sBuf = sBuf;
@@ -125,7 +125,7 @@ RageFileDriverMem::~RageFileDriverMem()
 	}
 }
 
-RageFileBasic *RageFileDriverMem::Open( const CString &sPath, int mode, int &err )
+RageFileBasic *RageFileDriverMem::Open( const RString &sPath, int mode, int &err )
 {
 	LockMut(m_Mutex);
 
@@ -155,7 +155,7 @@ RageFileBasic *RageFileDriverMem::Open( const CString &sPath, int mode, int &err
 	return new RageFileObjMem( pFile );
 }
 
-bool RageFileDriverMem::Remove( const CString &sPath )
+bool RageFileDriverMem::Remove( const RString &sPath )
 {
 	LockMut(m_Mutex);
 
@@ -177,7 +177,7 @@ bool RageFileDriverMem::Remove( const CString &sPath )
 static struct FileDriverEntry_MEM: public FileDriverEntry
 {
 	FileDriverEntry_MEM(): FileDriverEntry( "MEM" ) { }
-	RageFileDriver *Create( CString Root ) const { return new RageFileDriverMem(); }
+	RageFileDriver *Create( RString Root ) const { return new RageFileDriverMem(); }
 } const g_RegisterDriver;
 
 /*

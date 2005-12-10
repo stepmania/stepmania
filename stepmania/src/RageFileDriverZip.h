@@ -11,15 +11,15 @@ class RageFileDriverZip: public RageFileDriver
 {
 public:
 	RageFileDriverZip();
-	RageFileDriverZip( CString sPath );
+	RageFileDriverZip( RString sPath );
 	RageFileDriverZip( RageFileBasic *pFile );
-	bool Load( const CString &sPath );
+	bool Load( const RString &sPath );
 	bool Load( RageFileBasic *pFile );
 
 	virtual ~RageFileDriverZip();
 
-	RageFileBasic *Open( const CString &sPath, int iMode, int &iErr );
-	void FlushDirCache( const CString &sPath );
+	RageFileBasic *Open( const RString &sPath, int iMode, int &iErr );
+	void FlushDirCache( const RString &sPath );
 
 	void DeleteFileWhenFinished() { m_bFileOwned = true; }
 
@@ -27,7 +27,7 @@ public:
 	enum ZipCompressionMethod { STORED = 0, DEFLATED = 8 };
 	struct FileInfo
 	{
-		CString m_sName;
+		RString m_sName;
 		int m_iOffset;
 		int m_iDataOffset;
 
@@ -38,7 +38,9 @@ public:
 		/* If 0, unknown. */
 		int m_iFilePermissions;
 	};
-	const FileInfo *GetFileInfo( const CString &sPath ) const;
+	const FileInfo *GetFileInfo( const RString &sPath ) const;
+
+	RString GetGlobalComment() const;
 
 private:
 	bool m_bFileOwned;
@@ -46,7 +48,7 @@ private:
 	RageFileBasic *m_pZip;
 	vector<FileInfo *> m_pFiles;
 
-	CString m_sPath;
+	RString m_sPath;
 
 	/* Open() must be threadsafe.  Mutex access to "zip", since we seek
 	 * around in it when reading files. */

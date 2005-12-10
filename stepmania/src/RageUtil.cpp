@@ -148,10 +148,6 @@ CString SecondsToMSSMsMs( float fSecs )
 	return sReturn;
 }
 
-#include "LuaFunctions.h"
-#include "LuaManager.h"
-LuaFunction( SecondsToMSSMsMs, SecondsToMSSMsMs( FArg(1) ) )
-
 CString SecondsToMMSSMsMsMs( float fSecs )
 {
 	const int iMinsDisplay = (int)fSecs/60;
@@ -179,8 +175,6 @@ CString Commify( int iNum )
 	}
 	return sReturn;
 }
-
-LuaFunction( FormatNumberAndSuffix, FormatNumberAndSuffix( IArg(1) ) )
 
 CString FormatNumberAndSuffix( int i )
 {
@@ -1595,8 +1589,6 @@ CString Basename( const CString &dir )
 
 	return dir.substr( start, end-start+1 );
 }
-
-LuaFunction( Basename, Basename( SArg(1) ) )
 
 /* Return all but the last named component of dir:
  * a/b/c -> a/b/

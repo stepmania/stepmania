@@ -101,7 +101,9 @@ void NORETURN sm_crash( const char *reason = "Internal error" );
  * we do expect, such as DSound init failure.) */
 #define FAIL_M(MESSAGE) { CHECKPOINT_M(MESSAGE); sm_crash(MESSAGE); }
 #define ASSERT_M(COND, MESSAGE) { if(unlikely(!(COND))) { FAIL_M(MESSAGE); } }
+#if !defined(CO_EXIST_WITH_MFC)
 #define ASSERT(COND) ASSERT_M((COND), "Assertion '" #COND "' failed")
+#endif
 
 void ShowWarning( const char *file, int line, const char *message ); // don't pull in LOG here
 #define WARN(MESSAGE) (ShowWarning(__FILE__, __LINE__, MESSAGE))
@@ -134,9 +136,10 @@ void ShowWarning( const char *file, int line, const char *message ); // don't pu
 
 /* Use CStdString: */
 #include "StdString.h"
-using namespace StdString;
-//#define CString CStdString
+typedef StdString::CStdString RString;
+#if !defined(CO_EXIST_WITH_MFC)
 typedef StdString::CStdString CString;
+#endif
 
 /* Include this here to make sure our assertion handler is always
  * used.  (This file is a dependency of most everything anyway,
