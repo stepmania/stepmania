@@ -43,7 +43,7 @@ void DarwinMCHelpers::Stop()
 
 	[nc removeObserver:g_MCH];
 	[g_MCH release];
-	
+	g_MCH = nil;
 	[pool release];
 }
 
@@ -62,7 +62,6 @@ void DarwinMCHelpers::GetRemovableDevicePaths( vector<CString>& vDevicePaths )
 	NSEnumerator *i = [paths objectEnumerator];
 	NSString *path;
 	
-	vDevicePaths.clear();
 	while( (path = [i nextObject]) )
 		vDevicePaths.push_back( [path UTF8String] );
 	[pool release];
