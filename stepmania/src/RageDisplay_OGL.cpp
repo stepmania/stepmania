@@ -68,20 +68,20 @@ static bool g_bColorIndexTableWorks = true;
 /* OpenGL system information that generally doesn't change at runtime. */
 
 /* Range and granularity of points and lines: */
-float g_line_range[2];
-float g_point_range[2];
+static float g_line_range[2];
+static float g_point_range[2];
 
 /* OpenGL version * 10: */
-int g_glVersion;
+static int g_glVersion;
 
 /* GLU version * 10: */
-int g_gluVersion;
+static int g_gluVersion;
 
 static int g_iMaxTextureUnits = 0;
 
 /* We don't actually use normals (we don't turn on lighting), there's just
  * no GL_T2F_C4F_V3F. */
-const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
+static const GLenum RageSpriteVertexFormat = GL_T2F_C4F_N3F_V3F;
 
 /* If we support texture matrix scaling, a handle to the vertex program: */
 static GLhandleARB g_bTextureMatrixShader = 0;
