@@ -1,10 +1,11 @@
 #include "global.h"
-#include "arch/ArchHooks/ArchHooks.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageTimer.h"
 #include "RageFile.h"
 #include "RageThreads.h"
+#include "arch/ArchHooks/ArchHooks.h"
+
 #include <ctime>
 #if defined(_WINDOWS)
 #include <windows.h>
