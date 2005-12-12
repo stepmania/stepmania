@@ -445,7 +445,7 @@ void InputMapper::ReadMappingsFromDisk()
 
 	IniFile ini;
 	if( !ini.ReadFile( KEYMAPS_PATH ) )
-		LOG->Trace( "Couldn't open mapping file \"%s\": %s.", KEYMAPS_PATH, ini.GetError().c_str() );
+		LOG->Trace( "Couldn't open mapping file \"%s\": %s.", KEYMAPS_PATH.c_str(), ini.GetError().c_str() );
 
 	const Game *pGame = GAMESTATE->GetCurrentGame();
 
