@@ -4,11 +4,15 @@
 static NSWindow *window;
 static NSTextView *text;
 
-void MakeNewCocoaWindow()
+void MakeNewCocoaWindow( const void *data, unsigned length )
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	NSImage *image = [NSImage imageNamed:@"splash"];
-	NSImageView *iView;
+	NSData *d = [NSData dataWithBytes:data length:length];
+	NSImage *image = [[[NSImage alloc] initWithData:d] autorelease];
+	
+	if( !image )
+		image = [NSImage imageNamed:@"splash.png"];
+	
 	NSView *view;
 	NSSize size = [image size];
 	NSRect textRect, viewRect, windowRect;
@@ -23,7 +27,7 @@ void MakeNewCocoaWindow()
 	[text setAlignment:NSCenterTextAlignment];
 
 	viewRect = NSMakeRect(0, height, size.width, height);
-	iView = [[[NSImageView alloc] initWithFrame:viewRect] autorelease];
+	NSImageView *iView = [[[NSImageView alloc] initWithFrame:viewRect] autorelease];
 	[iView setImage:image];
 	[iView setImageFrameStyle:NSImageFrameNone];
 
