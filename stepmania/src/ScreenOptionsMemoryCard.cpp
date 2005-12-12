@@ -110,7 +110,7 @@ void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber
 	if( m_iCurrentRow[pn] == iRow )
 	{
 		const vector<UsbStorageDevice> &v = MEMCARDMAN->GetStorageDevices();
-		if( iRow < v.size() )
+		if( iRow < int(v.size()) )
 		{
 			const UsbStorageDevice &dev = v[iRow];
 			MEMCARDMAN->m_sEditorMemoryCardOsMountPoint.Set( dev.sOsMountDir );
@@ -123,7 +123,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus &input )
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
 
 	const vector<UsbStorageDevice> &v = MEMCARDMAN->GetStorageDevices();
-	if( iCurRow < v.size() )	// a card
+	if( iCurRow < int(v.size()) )	// a card
 	{
 		const vector<UsbStorageDevice> v = MEMCARDMAN->GetStorageDevices();
 		const UsbStorageDevice &dev = v[iCurRow];

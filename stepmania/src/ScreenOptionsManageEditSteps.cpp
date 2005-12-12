@@ -243,7 +243,7 @@ void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus &input
 	{
 		vector<Steps*> v;
 		SONGMAN->GetStepsLoadedFromProfile( v, ProfileSlot_Machine );
-		if( v.size() >= MAX_EDIT_STEPS_PER_PROFILE )
+		if( v.size() >= size_t(MAX_EDIT_STEPS_PER_PROFILE) )
 		{
 			CString s = ssprintf( 
 				"You have %d Steps edits, the maximum number allowed.\n\n"
