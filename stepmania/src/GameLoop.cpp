@@ -76,7 +76,8 @@ void GameLoop()
 		
 		CheckGameLoopTimerSkips( fDeltaTime );
 
-		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_TAB) ) ) {
+		if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_TAB) ) )
+		{
 			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_ACCENT) ) )
 				fDeltaTime = 0; /* both; stop time */
 			else
