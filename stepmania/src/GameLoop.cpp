@@ -105,8 +105,6 @@ void GameLoop()
 
 		LIGHTSMAN->Update( fDeltaTime );
 
-		HOOKS->Update( fDeltaTime );
-
 		/*
 		 * Render
 		 */
