@@ -10,8 +10,7 @@
 #include "RageInput.h"
 #include "Game.h"
 #include "Style.h"
-
-const RString KEYMAPS_PATH = "Save/Keymaps.ini";
+#include "SpecialFiles.h"
 
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
 
@@ -444,8 +443,9 @@ void InputMapper::ReadMappingsFromDisk()
 	ClearAllMappings();
 
 	IniFile ini;
-	if( !ini.ReadFile( KEYMAPS_PATH ) )
-		LOG->Trace( "Couldn't open mapping file \"%s\": %s.", KEYMAPS_PATH.c_str(), ini.GetError().c_str() );
+	if( !ini.ReadFile( SpecialFiles::KEYMAPS_PATH ) )
+		LOG->Trace( "Couldn't open mapping file \"%s\": %s.",
+					SpecialFiles::KEYMAPS_PATH.c_str(), ini.GetError().c_str() );
 
 	const Game *pGame = GAMESTATE->GetCurrentGame();
 
@@ -481,7 +481,7 @@ void InputMapper::ReadMappingsFromDisk()
 void InputMapper::SaveMappingsToDisk()
 {
 	IniFile ini;
-	ini.ReadFile( KEYMAPS_PATH );
+	ini.ReadFile( SpecialFiles::KEYMAPS_PATH );
 	
 	const Game* pGame = GAMESTATE->GetCurrentGame();
 
@@ -509,7 +509,7 @@ void InputMapper::SaveMappingsToDisk()
 		}
 	}
 
-	ini.WriteFile( KEYMAPS_PATH );
+	ini.WriteFile( SpecialFiles::KEYMAPS_PATH );
 }
 
 
