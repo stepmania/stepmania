@@ -97,7 +97,7 @@
 		AA25200E0587225500027ACB /* Style.h in Headers */ = {isa = PBXBuildFile; fileRef = AA25200D0587225500027ACB /* Style.h */; };
 		AA2828B2062FC0B7006F61EC /* SignalHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = AADB4E8C04D50FB900D02EE9 /* SignalHandler.h */; };
 		AA2828B3062FC0B8006F61EC /* SignalHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADB4E8B04D50FB900D02EE9 /* SignalHandler.cpp */; };
-		AA28B47C058F2F5E0097C109 /* MemoryCardManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA28B47A058F2F5D0097C109 /* MemoryCardManager.cpp */; };
+		AA28B47C058F2F5E0097C109 /* MemoryCardManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA28B47A058F2F5D0097C109 /* MemoryCardManager.cpp */; settings = {COMPILER_FLAGS = "-g"; }; };
 		AA28B47D058F2F5E0097C109 /* MemoryCardManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AA28B47B058F2F5D0097C109 /* MemoryCardManager.h */; };
 		AA29CC280558741A00961A51 /* RageBitmapTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD6E04770A7C005F316C /* RageBitmapTexture.h */; };
 		AA29CC290558741A00961A51 /* RageDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD7004770A7C005F316C /* RageDisplay.h */; };
@@ -777,7 +777,7 @@
 		AAC6DDE90569C80900B5D56F /* DifficultyList.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC6DDE70569C80900B5D56F /* DifficultyList.h */; };
 		AAC9F330069E22BB00D53E2C /* GameSoundManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC9F32E069E22BB00D53E2C /* GameSoundManager.cpp */; };
 		AAC9F331069E22BB00D53E2C /* GameSoundManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC9F32F069E22BB00D53E2C /* GameSoundManager.h */; };
-		AAC9F334069E22CF00D53E2C /* MemoryCardDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC9F332069E22CF00D53E2C /* MemoryCardDriver.cpp */; };
+		AAC9F334069E22CF00D53E2C /* MemoryCardDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC9F332069E22CF00D53E2C /* MemoryCardDriver.cpp */; settings = {COMPILER_FLAGS = "-g"; }; };
 		AAC9F335069E22CF00D53E2C /* MemoryCardDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC9F333069E22CF00D53E2C /* MemoryCardDriver.h */; };
 		AACA591807B5DB1700763545 /* Crash.m in Sources */ = {isa = PBXBuildFile; fileRef = AACA591707B5DB1700763545 /* Crash.m */; };
 		AACA592607B5E1E500763545 /* ActorCommands.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592407B5E1E500763545 /* ActorCommands.cpp */; };
@@ -791,7 +791,7 @@
 		AACA593507B5E23400763545 /* RageUtil_WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */; };
 		AACF47B20949A24F0011B9F3 /* Selector_MemoryCardDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47B10949A24F0011B9F3 /* Selector_MemoryCardDriver.h */; };
 		AACF47B9094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47B7094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h */; };
-		AACF47BA094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */; };
+		AACF47BA094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */; settings = {COMPILER_FLAGS = "-g"; }; };
 		AACF47EF094A6E290011B9F3 /* DarwinMCHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47ED094A6E290011B9F3 /* DarwinMCHelpers.h */; };
 		AACF47F0094A6E290011B9F3 /* DarwinMCHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = AACF47EE094A6E290011B9F3 /* DarwinMCHelpers.mm */; };
 		AACFBE2808E7D793005087FC /* ActorSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE2608E7D793005087FC /* ActorSound.cpp */; };
@@ -872,6 +872,15 @@
 		AAFAB5C20889098600767BF7 /* ScreenOptionsEditProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFAB5BC0889098600767BF7 /* ScreenOptionsEditProfile.h */; };
 		AAFAB5CD08890B5200767BF7 /* GameLoop.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFAB5CB08890B5200767BF7 /* GameLoop.cpp */; };
 		AAFAB5CE08890B5200767BF7 /* GameLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFAB5CC08890B5200767BF7 /* GameLoop.h */; };
+		AAFBEED1094D7FCB000029DE /* SpecialFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEECF094D7FCB000029DE /* SpecialFiles.cpp */; };
+		AAFBEED2094D7FCB000029DE /* SpecialFiles.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEED0094D7FCB000029DE /* SpecialFiles.h */; };
+		AAFBEEE2094D8042000029DE /* RageUtilLua.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE1094D8042000029DE /* RageUtilLua.cpp */; };
+		AAFBEEEB094D807E000029DE /* ScreenOptionsManageEditSteps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE5094D807E000029DE /* ScreenOptionsManageEditSteps.cpp */; };
+		AAFBEEEC094D807E000029DE /* ScreenOptionsManageEditSteps.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEEE6094D807E000029DE /* ScreenOptionsManageEditSteps.h */; };
+		AAFBEEED094D807E000029DE /* ScreenOptionsMemoryCard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE7094D807E000029DE /* ScreenOptionsMemoryCard.cpp */; };
+		AAFBEEEE094D807E000029DE /* ScreenOptionsMemoryCard.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEEE8094D807E000029DE /* ScreenOptionsMemoryCard.h */; };
+		AAFBEEEF094D807E000029DE /* ScreenServiceAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE9094D807E000029DE /* ScreenServiceAction.cpp */; };
+		AAFBEEF0094D807E000029DE /* ScreenServiceAction.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEEEA094D807E000029DE /* ScreenServiceAction.h */; };
 		AAFC6CF1072A30440053AAD3 /* InputHandler_MonkeyKeyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFC6CEF072A30440053AAD3 /* InputHandler_MonkeyKeyboard.cpp */; };
 		AAFC6CF2072A30440053AAD3 /* InputHandler_MonkeyKeyboard.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFC6CF0072A30440053AAD3 /* InputHandler_MonkeyKeyboard.h */; };
 /* End PBXBuildFile section */
@@ -1050,7 +1059,7 @@
 		AA1145DA075DFADF0050A3D1 /* ScreenPackages.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenPackages.h; path = ../src/ScreenPackages.h; sourceTree = "<group>"; };
 		AA1145DB075DFADF0050A3D1 /* ScreenSystemLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenSystemLayer.cpp; path = ../src/ScreenSystemLayer.cpp; sourceTree = "<group>"; };
 		AA1145DC075DFADF0050A3D1 /* ScreenSystemLayer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenSystemLayer.h; path = ../src/ScreenSystemLayer.h; sourceTree = "<group>"; };
-		AA139C4606923EBE00C1F6ED /* Style.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Style.cpp; sourceTree = "<group>"; };
+		AA139C4606923EBE00C1F6ED /* Style.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Style.cpp; path = ../src/Style.cpp; sourceTree = "<group>"; };
 		AA14ED0F0509F40000E3FAD7 /* MovieTexture_FFMpeg.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = MovieTexture_FFMpeg.cpp; path = MovieTexture/MovieTexture_FFMpeg.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA14ED100509F40000E3FAD7 /* MovieTexture_FFMpeg.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = MovieTexture_FFMpeg.h; path = MovieTexture/MovieTexture_FFMpeg.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA1B08370762532800835464 /* Command.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Command.cpp; path = ../src/Command.cpp; sourceTree = "<group>"; };
@@ -1084,7 +1093,7 @@
 		AA230ECF06043EFD002672F3 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = /System/Library/Frameworks/CoreServices.framework; sourceTree = "<absolute>"; };
 		AA251B7505841FCE00027ACB /* RageFileDriverZip.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = RageFileDriverZip.cpp; path = ../src/RageFileDriverZip.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA251B7605841FCE00027ACB /* RageFileDriverZip.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = RageFileDriverZip.h; path = ../src/RageFileDriverZip.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
-		AA25200D0587225500027ACB /* Style.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; path = Style.h; sourceTree = "<group>"; usesTabs = 1; };
+		AA25200D0587225500027ACB /* Style.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = Style.h; path = ../src/Style.h; sourceTree = "<group>"; usesTabs = 1; };
 		AA272BF704C7B37A00D02EE9 /* InputHandler_DirectInput.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; path = InputHandler_DirectInput.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA272BF804C7B37A00D02EE9 /* InputHandler_DirectInput.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; path = InputHandler_DirectInput.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA272BF904C7B37A00D02EE9 /* InputHandler_DirectInputHelper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; path = InputHandler_DirectInputHelper.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
@@ -1874,6 +1883,15 @@
 		AAFAB5BC0889098600767BF7 /* ScreenOptionsEditProfile.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsEditProfile.h; path = ../src/ScreenOptionsEditProfile.h; sourceTree = "<group>"; };
 		AAFAB5CB08890B5200767BF7 /* GameLoop.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = GameLoop.cpp; sourceTree = "<group>"; };
 		AAFAB5CC08890B5200767BF7 /* GameLoop.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GameLoop.h; sourceTree = "<group>"; };
+		AAFBEECF094D7FCB000029DE /* SpecialFiles.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SpecialFiles.cpp; sourceTree = "<group>"; };
+		AAFBEED0094D7FCB000029DE /* SpecialFiles.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SpecialFiles.h; sourceTree = "<group>"; };
+		AAFBEEE1094D8042000029DE /* RageUtilLua.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageUtilLua.cpp; path = ../src/RageUtilLua.cpp; sourceTree = "<group>"; };
+		AAFBEEE5094D807E000029DE /* ScreenOptionsManageEditSteps.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenOptionsManageEditSteps.cpp; path = ../src/ScreenOptionsManageEditSteps.cpp; sourceTree = "<group>"; };
+		AAFBEEE6094D807E000029DE /* ScreenOptionsManageEditSteps.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsManageEditSteps.h; path = ../src/ScreenOptionsManageEditSteps.h; sourceTree = "<group>"; };
+		AAFBEEE7094D807E000029DE /* ScreenOptionsMemoryCard.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenOptionsMemoryCard.cpp; path = ../src/ScreenOptionsMemoryCard.cpp; sourceTree = "<group>"; };
+		AAFBEEE8094D807E000029DE /* ScreenOptionsMemoryCard.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsMemoryCard.h; path = ../src/ScreenOptionsMemoryCard.h; sourceTree = "<group>"; };
+		AAFBEEE9094D807E000029DE /* ScreenServiceAction.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenServiceAction.cpp; path = ../src/ScreenServiceAction.cpp; sourceTree = "<group>"; };
+		AAFBEEEA094D807E000029DE /* ScreenServiceAction.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenServiceAction.h; path = ../src/ScreenServiceAction.h; sourceTree = "<group>"; };
 		AAFC6CEF072A30440053AAD3 /* InputHandler_MonkeyKeyboard.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = InputHandler_MonkeyKeyboard.cpp; sourceTree = "<group>"; };
 		AAFC6CF0072A30440053AAD3 /* InputHandler_MonkeyKeyboard.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = InputHandler_MonkeyKeyboard.h; sourceTree = "<group>"; };
 		AAFC7FF00513A67700D02EE9 /* RageSoundReader_FileReader.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = RageSoundReader_FileReader.cpp; path = ../src/RageSoundReader_FileReader.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
@@ -2175,12 +2193,16 @@
 				AAFAB5BC0889098600767BF7 /* ScreenOptionsEditProfile.h */,
 				AA77E75B08B64B9A00FA24CA /* ScreenOptionsManageCourses.cpp */,
 				AA77E75C08B64B9A00FA24CA /* ScreenOptionsManageCourses.h */,
+				AAFBEEE5094D807E000029DE /* ScreenOptionsManageEditSteps.cpp */,
+				AAFBEEE6094D807E000029DE /* ScreenOptionsManageEditSteps.h */,
 				AA77E75D08B64B9A00FA24CA /* ScreenOptionsManageProfiles.cpp */,
 				AA77E75E08B64B9A00FA24CA /* ScreenOptionsManageProfiles.h */,
 				AA53D28405277DAF00D02EE9 /* ScreenOptionsMaster.cpp */,
 				AA53D28505277DAF00D02EE9 /* ScreenOptionsMaster.h */,
 				AA53D28605277DAF00D02EE9 /* ScreenOptionsMasterPrefs.cpp */,
 				AA53D28705277DAF00D02EE9 /* ScreenOptionsMasterPrefs.h */,
+				AAFBEEE7094D807E000029DE /* ScreenOptionsMemoryCard.cpp */,
+				AAFBEEE8094D807E000029DE /* ScreenOptionsMemoryCard.h */,
 				AA1145D9075DFADF0050A3D1 /* ScreenPackages.cpp */,
 				AA1145DA075DFADF0050A3D1 /* ScreenPackages.h */,
 				AA6E004F047711F3005F316C /* ScreenPlayerOptions.cpp */,
@@ -2213,6 +2235,8 @@
 				AA6E006A047711F3005F316C /* ScreenSelectMusic.h */,
 				AA6E006B047711F3005F316C /* ScreenSelectStyle.cpp */,
 				AA6E006C047711F3005F316C /* ScreenSelectStyle.h */,
+				AAFBEEE9094D807E000029DE /* ScreenServiceAction.cpp */,
+				AAFBEEEA094D807E000029DE /* ScreenServiceAction.h */,
 				AA0A3DE6060513A00044E6B1 /* ScreenSetTime.cpp */,
 				AA0A3DE7060513A00044E6B1 /* ScreenSetTime.h */,
 				AA07A55B0843E72B00E33D21 /* ScreenSMOnlineLogin.cpp */,
@@ -2559,6 +2583,7 @@
 				AAF580A804B3E2DC00D02EE9 /* RageUtil_FileDB.h */,
 				AACA592D07B5E23400763545 /* RageUtil_WorkerThread.cpp */,
 				AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */,
+				AAFBEEE1094D8042000029DE /* RageUtilLua.cpp */,
 				AA6EFDC004770AEA005F316C /* SDL_utils.cpp */,
 				AA6EFDC104770AEA005F316C /* SDL_utils.h */,
 			);
@@ -2696,6 +2721,8 @@
 				AAF430FE04DC98BC00D02EE9 /* Steps.h */,
 				AA5C73FB0637A5F000AFB891 /* StepsUtil.cpp */,
 				AA5C73FC0637A5F000AFB891 /* StepsUtil.h */,
+				AA139C4606923EBE00C1F6ED /* Style.cpp */,
+				AA25200D0587225500027ACB /* Style.h */,
 				AA6EFE0D04770C79005F316C /* StyleInput.h */,
 				AA3A706006AA1645006F755E /* StyleUtil.cpp */,
 				AA3A706106AA1645006F755E /* StyleUtil.h */,
@@ -2734,11 +2761,11 @@
 				AA6EFE6004770CF7005F316C /* global.h */,
 				AAADA4AE04E5F3DE00D02EE9 /* ProductInfo.h */,
 				AA4B59EE0573AA5B005FB5DB /* SMMain.mm */,
+				AAFBEECF094D7FCB000029DE /* SpecialFiles.cpp */,
+				AAFBEED0094D7FCB000029DE /* SpecialFiles.h */,
 				AA6EFE6204770CF7005F316C /* StdString.h */,
 				AA6EFE6304770CF7005F316C /* StepMania.cpp */,
 				AA6EFE6404770CF7005F316C /* StepMania.h */,
-				AA139C4606923EBE00C1F6ED /* Style.cpp */,
-				AA25200D0587225500027ACB /* Style.h */,
 			);
 			name = StepMania;
 			path = ../src;
@@ -3579,6 +3606,10 @@
 				AACF47B20949A24F0011B9F3 /* Selector_MemoryCardDriver.h in Headers */,
 				AACF47B9094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h in Headers */,
 				AACF47EF094A6E290011B9F3 /* DarwinMCHelpers.h in Headers */,
+				AAFBEED2094D7FCB000029DE /* SpecialFiles.h in Headers */,
+				AAFBEEEC094D807E000029DE /* ScreenOptionsManageEditSteps.h in Headers */,
+				AAFBEEEE094D807E000029DE /* ScreenOptionsMemoryCard.h in Headers */,
+				AAFBEEF0094D807E000029DE /* ScreenServiceAction.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4140,6 +4171,11 @@
 				AAA130C70914ACB600497146 /* WindowHelper.m in Sources */,
 				AACF47BA094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp in Sources */,
 				AACF47F0094A6E290011B9F3 /* DarwinMCHelpers.mm in Sources */,
+				AAFBEED1094D7FCB000029DE /* SpecialFiles.cpp in Sources */,
+				AAFBEEE2094D8042000029DE /* RageUtilLua.cpp in Sources */,
+				AAFBEEEB094D807E000029DE /* ScreenOptionsManageEditSteps.cpp in Sources */,
+				AAFBEEED094D807E000029DE /* ScreenOptionsMemoryCard.cpp in Sources */,
+				AAFBEEEF094D807E000029DE /* ScreenServiceAction.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
