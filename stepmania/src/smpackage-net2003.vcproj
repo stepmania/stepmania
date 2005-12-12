@@ -288,6 +288,12 @@
 			<Filter
 				Name="system">
 				<File
+					RelativePath=".\archutils\Win32\Crash.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\Crash.h">
+				</File>
+				<File
 					RelativePath=".\archutils\Win32\RegistryAccess.cpp">
 				</File>
 				<File
@@ -305,10 +311,40 @@
 			Name="Rage"
 			Filter="">
 			<File
+				RelativePath=".\RageFile.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFile.h">
+			</File>
+			<File
+				RelativePath=".\RageFileBasic.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFileBasic.h">
+			</File>
+			<File
+				RelativePath=".\RageFileDriver.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFileDriver.h">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverDeflate.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverDeflate.h">
+			</File>
+			<File
 				RelativePath=".\RageFileDriverMemory.cpp">
 			</File>
 			<File
 				RelativePath=".\RageFileDriverMemory.h">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverSlice.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverSlice.h">
 			</File>
 			<File
 				RelativePath=".\RageFileDriverZip.cpp">
@@ -329,10 +365,28 @@
 				RelativePath=".\RageLog.h">
 			</File>
 			<File
+				RelativePath=".\RageThreads.cpp">
+			</File>
+			<File
+				RelativePath=".\RageThreads.h">
+			</File>
+			<File
+				RelativePath=".\RageTimer.cpp">
+			</File>
+			<File
+				RelativePath=".\RageTimer.h">
+			</File>
+			<File
 				RelativePath=".\RageUtil.cpp">
 			</File>
 			<File
 				RelativePath=".\RageUtil.h">
+			</File>
+			<File
+				RelativePath=".\RageUtil_FileDB.cpp">
+			</File>
+			<File
+				RelativePath=".\RageUtil_FileDB.h">
 			</File>
 		</Filter>
 		<Filter
@@ -351,6 +405,21 @@
 				RelativePath=".\XmlFile.h">
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\smpackage\install.bmp">
+		</File>
+		<File
+			RelativePath=".\smpackage\manage.bmp">
+		</File>
+		<File
+			RelativePath=".\smpackage\menu.bmp">
+		</File>
+		<File
+			RelativePath=".\smpackage\smpackage.ICO">
+		</File>
+		<File
+			RelativePath=".\smpackage\ZipArchive\Release\ZipArchive.lib">
+		</File>
 	</Files>
 	<Globals>
 		<Global
