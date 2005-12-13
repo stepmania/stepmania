@@ -40,7 +40,6 @@ void MakeNewCocoaWindow( const void *data, unsigned length )
 	[window setReleasedWhenClosed:YES];
 	[window center];
 	[window useOptimizedDrawing:YES];
-	[window setViewsNeedDisplay:YES];
 	[window setTitle:[NSString stringWithUTF8String:PRODUCT_NAME_VER]];
 	
 	// There's only one window ever so don't display in the menu
@@ -51,7 +50,6 @@ void MakeNewCocoaWindow( const void *data, unsigned length )
 	[view addSubview:iView]; /* This retains iView */
 	[text setFont:[NSFont systemFontOfSize:12]];
 	[text setString:@"Initializing Hardware..."];
-	[text display];
 	
 	[window makeKeyAndOrderFront:nil];
 	[pool release];
