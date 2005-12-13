@@ -8,15 +8,15 @@
 class RageFileDriverDirect: public RageFileDriver
 {
 public:
-	RageFileDriverDirect( CString root );
+	RageFileDriverDirect( CString sRoot );
 
-	RageFileBasic *Open( const CString &path, int mode, int &err );
+	RageFileBasic *Open( const CString &sPath, int iMode, int &iError );
 	bool Move( const CString &sOldPath, const CString &sNewPath );
 	bool Remove( const CString &sPath );
 	bool Remount( const CString &sPath );
 
 private:
-	CString root;
+	CString m_sRoot;
 };
 
 #endif
