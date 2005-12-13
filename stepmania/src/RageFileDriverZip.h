@@ -6,7 +6,6 @@
 #include "RageFileDriver.h"
 #include "RageThreads.h"
 
-struct end_central_dir_record;
 class RageFileDriverZip: public RageFileDriver
 {
 public:
@@ -40,7 +39,7 @@ public:
 	};
 	const FileInfo *GetFileInfo( const RString &sPath ) const;
 
-	RString GetGlobalComment() const;
+	RString GetGlobalComment() const { return m_sComment; }
 
 private:
 	bool m_bFileOwned;
@@ -49,6 +48,7 @@ private:
 	vector<FileInfo *> m_pFiles;
 
 	RString m_sPath;
+	RString m_sComment;
 
 	/* Open() must be threadsafe.  Mutex access to "zip", since we seek
 	 * around in it when reading files. */

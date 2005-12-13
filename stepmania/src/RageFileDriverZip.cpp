@@ -90,7 +90,8 @@ bool RageFileDriverZip::ReadEndCentralRecord( int &iTotalEntries, int &iCentralD
 	iTotalEntries = FileReading::read_16_le( *m_pZip, sError );
 	FileReading::read_32_le( *m_pZip, sError ); /* skip size of the central directory */
 	iCentralDirectoryOffset = FileReading::read_32_le( *m_pZip, sError );
-	FileReading::read_16_le( *m_pZip, sError ); /* skip zipfile comment length */
+	int iCommentLength = FileReading::read_16_le( *m_pZip, sError );
+	m_sComment = FileReading::ReadString( *m_pZip, iCommentLength, sError );
 
 	if( sError != "" )
 	{
@@ -355,11 +356,6 @@ RageFileBasic *RageFileDriverZip::Open( const RString &sPath, int iMode, int &iE
 void RageFileDriverZip::FlushDirCache( const RString &sPath )
 {
 
-}
-
-RString RageFileDriverZip::GetGlobalComment() const
-{
-	ASSERT(0);
 }
 
 /*
