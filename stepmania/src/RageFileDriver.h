@@ -10,14 +10,14 @@ class FilenameDB;
 class RageFileDriver
 {
 public:
-	RageFileDriver( FilenameDB *db ) { FDB = db; }
+	RageFileDriver( FilenameDB *pDB ) { FDB = pDB; }
 	virtual ~RageFileDriver();
-	virtual RageFileBasic *Open( const RString &path, int mode, int &err ) = 0;
-	virtual void GetDirListing( const RString &sPath, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	virtual RageFileBasic *Open( const RString &sPath, int iMode, int &iError ) = 0;
+	virtual void GetDirListing( const RString &sPath, vector<RString> &asAddTo, bool bOnlyDirs, bool bReturnPathToo );
 	virtual RageFileManager::FileType GetFileType( const RString &sPath );
 	virtual int GetFileSizeInBytes( const RString &sFilePath );
 	virtual int GetFileHash( const RString &sPath );
-	virtual int GetPathValue( const RString &path );
+	virtual int GetPathValue( const RString &sPath );
 	virtual void FlushDirCache( const RString &sPath );
 	virtual bool Move( const RString &sOldPath, const RString &sNewPath ) { return false; }
 	virtual bool Remove( const RString &sPath ) { return false; }
@@ -34,12 +34,12 @@ public:
 /* This is used to register the driver, so RageFileManager can see it. */
 struct FileDriverEntry
 {
-	FileDriverEntry( RString Type );
+	FileDriverEntry( RString sType );
 	virtual ~FileDriverEntry();
-	virtual RageFileDriver *Create( RString Root ) const = 0;
+	virtual RageFileDriver *Create( RString sRoot ) const = 0;
 
-	RString m_Type;
-	const FileDriverEntry *m_Link;
+	RString m_sType;
+	const FileDriverEntry *m_pLink;
 };
 RageFileDriver *MakeFileDriver( RString Type, RString Root );
 
