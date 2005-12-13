@@ -1,3 +1,6 @@
+#include "global.h"
+#include "RageUtil.h"
+
 #import <Cocoa/Cocoa.h>
 #include "ProductInfo.h"
 #include "GameLoop.h"
@@ -22,7 +25,7 @@ extern "C"
 
 
 @implementation SMApplication
-/* Invoked from the Quit menu item */
+// Invoked from the Quit menu item.
 - (void)terminate:(id)sender
 {
     ExitGame();
@@ -37,7 +40,7 @@ extern "C"
 }
 @end
 
-/* The main class of the application, the application's delegate */
+// The main class of the application, the application's delegate.
 @implementation SMMain
 
 - (id) initWithArgc:(int)argc argv:(char **)argv
@@ -51,21 +54,26 @@ extern "C"
 - (void) startGame:(id)sender
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	/* Hand off to main application code */
+	// Hand off to main application code.
     exit( SDL_main(mArgc, mArgv) );
 	[pool release]; // not really needed, but shuts gcc up.
 }
 
-/* Called when the internal event loop has just started running */
+// Called when the internal event loop has just started running.
 - (void) applicationDidFinishLaunching: (NSNotification *) note
 {
 	[NSThread detachNewThreadSelector:@selector(startGame:) toTarget:self withObject:nil];
 }
 @end
 
+static void HandleNSException( NSException *exception )
+{
+	FAIL_M( ssprintf("%s raised: %s", [[exception name] UTF8String], [[exception reason] UTF8String]) );
+}
+
 static NSMenuItem *MenuItem( const char *title, SEL action, NSString *code )
 {
-	// autorelease these because they'll be retained by the NSMenu
+	// Autorelease these because they'll be retained by the NSMenu.
 	return [[[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:title]
 									   action:action keyEquivalent:code] autorelease];
 }
@@ -95,7 +103,7 @@ static void setupMenus( void )
     [[mainMenu addItemWithTitle:[windowMenu title] action:NULL keyEquivalent:@""] setSubmenu:windowMenu];
 	
 	[NSApp setMainMenu:mainMenu];
-	[NSApp setAppleMenu:appMenu]; // this isn't the apple menu, but it doesn't work without this
+	[NSApp setAppleMenu:appMenu]; // This isn't the apple menu, but it doesn't work without this.
     [NSApp setWindowsMenu:windowMenu];
 }
 
@@ -106,18 +114,21 @@ int main( int argc, char **argv )
     NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
     SMMain				*sm;
 	
-    /* Ensure the application object is initialised, this sets NSApp */
+    // Ensure the application object is initialised, this sets NSApp.
     [SMApplication sharedApplication];
 	
-    /* Set up the menubar */
+	// Set up NSException handler.
+	NSSetUncaughtExceptionHandler( HandleNSException );
+	
+    // Set up the menubar.
     setupMenus();
     
-    /* Create SDLMain and make it the app delegate */
+    // Create SDLMain and make it the app delegate.
     sm = [[SMMain alloc] initWithArgc:argc argv:argv];
     [NSApp setDelegate:sm];
     
     [pool release];
-    /* Start the main event loop */
+    // Start the main event loop.
     [NSApp run];
 	[sm release];
     return 0;
