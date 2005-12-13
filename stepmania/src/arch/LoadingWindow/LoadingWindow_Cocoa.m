@@ -42,12 +42,12 @@ void MakeNewCocoaWindow( const void *data, unsigned length )
 	[window useOptimizedDrawing:YES];
 	[window setTitle:[NSString stringWithUTF8String:PRODUCT_NAME_VER]];
 	
-	// There's only one window ever so don't display in the menu
+	// There's only one window ever so don't display in the menu.
 	[window setExcludedFromWindowsMenu:YES];
 
 	view = [window contentView];
-	[view addSubview:text]; /* This retains text */
-	[view addSubview:iView]; /* This retains iView */
+	[view addSubview:text]; // This retains text.
+	[view addSubview:iView]; // This retains iView.
 	[text setFont:[NSFont systemFontOfSize:12]];
 	[text setString:@"Initializing Hardware..."];
 	
@@ -57,10 +57,10 @@ void MakeNewCocoaWindow( const void *data, unsigned length )
 
 void DisposeOfCocoaWindow()
 {
-	// Just in case
+	// Just in case [window close] needs an autorelease pool.
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	
-	[window close]; /* Released by setReleasedWhenClosed */
+	[window close]; // Released when closed as controlled by setReleasedWhenClosed.
 	[pool release];
 }
 
