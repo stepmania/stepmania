@@ -109,7 +109,7 @@ MutexImpl_Pthreads::~MutexImpl_Pthreads()
 }
 
 
-#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) || defined(MACOSX)
+#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) || defined(HAVE_PTHREAD_COND_TIMEDWAIT)
 static bool UseTimedlock()
 {
 #if defined(LINUX)
@@ -336,7 +336,7 @@ void SemaImpl_Pthreads::Post()
 
 bool SemaImpl_Pthreads::Wait()
 {
-#if defined(HAVE_PTHREAD_MUTEX_TIMEDLOCK) || defined(MACOSX)
+#if defined(HAVE_PTHREAD_COND_TIMEDWAIT)
 	if( UseTimedlock() )
 	{
 		timeval tv;
