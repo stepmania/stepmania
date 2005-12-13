@@ -21,6 +21,7 @@ typedef unsigned long long UInt64;
 #define HAVE_THEORA
 #define HAVE_FFMPEG
 #define HAVE_SDL
+#define HAVE_PTHREAD_COND_TIMEDWAIT
 #define CRASH_HANDLER
 // Looking ahead to "Universal binaries."
 #ifdef __BIG_ENDIAN__
