@@ -235,8 +235,6 @@ PrefsManager::PrefsManager() :
 	m_RandomBackgroundMode	( "RandomBackgroundMode",	BGMODE_ANIMATIONS ),
 	m_iNumBackgrounds		( "NumBackgrounds",			8 ),
 	m_fBGBrightness			( "BGBrightness",			0.8f ),
-	/* I'd rather get occasional people asking for support for this even though
-     * it's already here than lots of people asking why songs aren't being displayed. */
 	m_bHiddenSongs			( "HiddenSongs",			false ),
 	m_bVsync				( "Vsync",					true ),
 	m_bInterlaced			( "Interlaced",				false ),
