@@ -97,7 +97,7 @@
 		AA25200E0587225500027ACB /* Style.h in Headers */ = {isa = PBXBuildFile; fileRef = AA25200D0587225500027ACB /* Style.h */; };
 		AA2828B2062FC0B7006F61EC /* SignalHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = AADB4E8C04D50FB900D02EE9 /* SignalHandler.h */; };
 		AA2828B3062FC0B8006F61EC /* SignalHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADB4E8B04D50FB900D02EE9 /* SignalHandler.cpp */; };
-		AA28B47C058F2F5E0097C109 /* MemoryCardManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA28B47A058F2F5D0097C109 /* MemoryCardManager.cpp */; settings = {COMPILER_FLAGS = "-g"; }; };
+		AA28B47C058F2F5E0097C109 /* MemoryCardManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA28B47A058F2F5D0097C109 /* MemoryCardManager.cpp */; };
 		AA28B47D058F2F5E0097C109 /* MemoryCardManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AA28B47B058F2F5D0097C109 /* MemoryCardManager.h */; };
 		AA29CC280558741A00961A51 /* RageBitmapTexture.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD6E04770A7C005F316C /* RageBitmapTexture.h */; };
 		AA29CC290558741A00961A51 /* RageDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD7004770A7C005F316C /* RageDisplay.h */; };
@@ -777,7 +777,7 @@
 		AAC6DDE90569C80900B5D56F /* DifficultyList.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC6DDE70569C80900B5D56F /* DifficultyList.h */; };
 		AAC9F330069E22BB00D53E2C /* GameSoundManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC9F32E069E22BB00D53E2C /* GameSoundManager.cpp */; };
 		AAC9F331069E22BB00D53E2C /* GameSoundManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC9F32F069E22BB00D53E2C /* GameSoundManager.h */; };
-		AAC9F334069E22CF00D53E2C /* MemoryCardDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC9F332069E22CF00D53E2C /* MemoryCardDriver.cpp */; settings = {COMPILER_FLAGS = "-g"; }; };
+		AAC9F334069E22CF00D53E2C /* MemoryCardDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC9F332069E22CF00D53E2C /* MemoryCardDriver.cpp */; };
 		AAC9F335069E22CF00D53E2C /* MemoryCardDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC9F333069E22CF00D53E2C /* MemoryCardDriver.h */; };
 		AACA591807B5DB1700763545 /* Crash.m in Sources */ = {isa = PBXBuildFile; fileRef = AACA591707B5DB1700763545 /* Crash.m */; };
 		AACA592607B5E1E500763545 /* ActorCommands.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACA592407B5E1E500763545 /* ActorCommands.cpp */; };
@@ -791,7 +791,7 @@
 		AACA593507B5E23400763545 /* RageUtil_WorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */; };
 		AACF47B20949A24F0011B9F3 /* Selector_MemoryCardDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47B10949A24F0011B9F3 /* Selector_MemoryCardDriver.h */; };
 		AACF47B9094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47B7094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h */; };
-		AACF47BA094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */; settings = {COMPILER_FLAGS = "-g"; }; };
+		AACF47BA094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */; };
 		AACF47EF094A6E290011B9F3 /* DarwinMCHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47ED094A6E290011B9F3 /* DarwinMCHelpers.h */; };
 		AACF47F0094A6E290011B9F3 /* DarwinMCHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = AACF47EE094A6E290011B9F3 /* DarwinMCHelpers.mm */; };
 		AACFBE2808E7D793005087FC /* ActorSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE2608E7D793005087FC /* ActorSound.cpp */; };
