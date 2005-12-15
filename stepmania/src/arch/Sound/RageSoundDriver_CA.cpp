@@ -11,7 +11,6 @@
 #include "CAAudioHardwareStream.h"
 #include "CAStreamBasicDescription.h"
 #include "CAException.h"
-//#include "archutils/Unix/CrashHandler.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 
 static const UInt32 kFramesPerPacket = 1;
@@ -21,6 +20,8 @@ static const UInt32 kBytesPerPacket = kChannelsPerFrame * kBitsPerChannel / 8;
 static const UInt32 kBytesPerFrame = kBytesPerPacket;
 static const UInt32 kFormatFlags = kAudioFormatFlagsNativeEndian |
 kAudioFormatFlagIsSignedInteger;
+
+static int64_t g_iLastSampleTime = 0;
 
 typedef CAStreamBasicDescription Desc;
 
@@ -164,21 +165,25 @@ RageSound_CA::~RageSound_CA()
 
 int64_t RageSound_CA::GetPosition( const RageSoundBase *sound ) const
 {
-#if 0
-	AudioTimeStamp inTime;
-	AudioTimeStamp outTime;
-    
-	inTime.mHostTime = AudioGetCurrentHostTime();
-	inTime.mFlags = kAudioTimeStampHostTimeValid;
-	outTime.mFlags = kAudioTimeStampSampleTimeValid;
-	m_pOutputDevice->TranslateTime(inTime, outTime);
-	return int64_t(outTime.mSampleTime);
-#else
 	AudioTimeStamp time;
 	
-	m_pOutputDevice->GetCurrentTime( time );
-	return int64_t( time.mSampleTime );
-#endif
+	try
+	{
+		m_pOutputDevice->GetCurrentTime( time );
+		g_iLastSampleTime = int64_t( time.mSampleTime );
+		return g_iLastSampleTime;
+	}
+	catch( const CAException& e )
+	{
+		if( e.GetError() == 'stop' )
+			return g_iLastSampleTime;
+		
+		char error[5];
+		
+		*(int32_t*)error = e.GetError();
+		error[4] = '\0';
+		FAIL_M( ssprintf("GetCurrentTime() returned error '%s'.", error) );
+	}
 }
 
 OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
@@ -196,6 +201,7 @@ OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
 	int64_t decodePos = int64_t( inOutputTime->mSampleTime );
 	int64_t now = int64_t( inNow->mSampleTime );
 	
+	g_iLastSampleTime = now;
 	RageTimer tm2;
 	int16_t buffer[dataPackets * (kBytesPerPacket >> 1)];
 		
