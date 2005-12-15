@@ -928,7 +928,7 @@ int main(int argc, char* argv[])
 #endif
 	RageThread mainThread;
 	
-	mainThread.SetName( "MainThread" );
+	mainThread.SetName( "Main thread" );
 	mainThread.CreateThisThread();
 	
 	SetCommandlineArguments( argc, argv );
