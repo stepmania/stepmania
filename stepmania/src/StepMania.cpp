@@ -926,6 +926,10 @@ int main(int argc, char* argv[])
 	int argc = 1;
 	char *argv[] = {"default.xbe"};
 #endif
+	RageThread mainThread;
+	
+	mainThread.SetName( "MainThread" );
+	mainThread.CreateThisThread();
 	
 	SetCommandlineArguments( argc, argv );
 

@@ -19,6 +19,7 @@ public:
 	void SetName( const CString &n ) { name = n; }
 	CString GetName() const { return name; }
 	void Create( int (*fn)(void *), void *data );
+	void CreateThisThread();
 
 	/* For crash handlers: kill or suspend all threads (except for
 	 * the running one) immediately. */ 

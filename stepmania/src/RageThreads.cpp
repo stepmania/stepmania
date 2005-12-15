@@ -244,21 +244,35 @@ void RageThread::Create( int (*fn)(void *), void *data )
 	m_pSlot->pImpl = MakeThread( fn, data, &m_pSlot->id );
 }
 
-/* On startup, register the main thread's slot.  We do this in a static constructor,
- * and not InitThreads(), to guarantee it happens in the main thread. */
-static struct SetupMainThread
+void RageThread::CreateThisThread()
 {
-	SetupMainThread()
+	ASSERT( m_pSlot == NULL );
+	
+	InitThreads();
+	
+	LockMut( g_ThreadSlotsLock );
+	
+	int slotno = FindEmptyThreadSlot();
+	
+	m_pSlot = &g_ThreadSlots[slotno];
+	
+	if( name == "" )
 	{
-		LockMut(g_ThreadSlotsLock);
-		int slot = FindEmptyThreadSlot();
-		strcpy( g_ThreadSlots[slot].name, "MainThread" );
-		sprintf( g_ThreadSlots[slot].ThreadFormattedOutput, "Thread: %s", g_ThreadSlots[slot].name );
-		g_ThreadSlots[slot].id = RageThread::GetCurrentThreadID();
-		g_ThreadSlots[slot].pImpl = MakeThisThread();
+		if( LOG )
+			LOG->Warn( "Created a thread without naming it first." );
+		
+		/* If you don't name it, I will: */
+		strcpy( m_pSlot->name, "Jon" );
 	}
-} SetupMainThreadObj;
+	else
+	{
+		strcpy( m_pSlot->name, name.c_str() );
+	}
+	sprintf( m_pSlot->ThreadFormattedOutput, "Thread: %s", name.c_str() );
 
+	m_pSlot->id = GetThisThreadId();
+	m_pSlot->pImpl = MakeThisThread();
+}
 
 const char *RageThread::GetCurThreadName()
 {
@@ -294,7 +308,12 @@ int RageThread::Wait()
 {
 	ASSERT( m_pSlot != NULL );
 	ASSERT( m_pSlot->pImpl != NULL );
-	int ret = m_pSlot->pImpl->Wait();
+	int ret;
+	
+	if( m_pSlot->id == GetThisThreadId() )
+		ret = 0;
+	else
+		ret = m_pSlot->pImpl->Wait();
 
 	LockMut(g_ThreadSlotsLock);
 

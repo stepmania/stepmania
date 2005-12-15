@@ -1,5 +1,6 @@
 #include "global.h"
 #include "RageUtil.h"
+#include "RageThreads.h"
 
 #import <Cocoa/Cocoa.h>
 #include "ProductInfo.h"
@@ -109,6 +110,11 @@ static void setupMenus( void )
 
 int main( int argc, char **argv )
 {
+	RageThread guiThread;
+	
+	guiThread.SetName( "GUIThread" );
+	guiThread.CreateThisThread();
+	
     [SMApplication poseAsClass:[NSApplication class]];
 	
     NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
