@@ -68,10 +68,7 @@ void SetCocoaWindowText(const char *s)
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	NSString *str = [NSString stringWithUTF8String:s];
-	
-	[text setString:( str ? str : @"" )];
-	[text performSelectorOnMainThread:@selector(setNeedsDisplay:) withObject:[NSNumber numberWithBool:YES]
-			waitUntilDone:NO];
+	[text performSelectorOnMainThread:@selector(setString:) withObject:(str ? str : @"") waitUntilDone:NO];
 	[pool release];
 }
 
