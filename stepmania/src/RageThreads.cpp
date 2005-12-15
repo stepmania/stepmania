@@ -79,13 +79,12 @@ struct ThreadSlot
 };
 
 
-void ThreadSlot::ThreadCheckpoint::Set(const char *File_, int Line_, const char *Message_)
+void ThreadSlot::ThreadCheckpoint::Set( const char *File_, int Line_, const char *Message_ )
 {
 	File=File_;
 	Line=Line_;
 	Message=Message_;
-	sprintf( FormattedBuf, "        %s:%i %s",
-		File, Line, Message? Message:"" );
+	sprintf( FormattedBuf, "        %s:%i %s", File, Line, Message? Message:"" );
 }
 
 const char *ThreadSlot::ThreadCheckpoint::GetFormattedCheckpoint()
@@ -118,11 +117,11 @@ struct ThreadSlot *g_pUnknownThreadSlot = NULL;
 
 /* Lock this mutex before using or modifying pImpl.  Other values are just identifiers,
  * so possibly racing over them is harmless (simply using a stale thread ID, etc). */
-static RageMutex g_ThreadSlotsLock("ThreadSlots");
+static RageMutex g_ThreadSlotsLock( "ThreadSlots" );
 
 static int FindEmptyThreadSlot()
 {
-	LockMut(g_ThreadSlotsLock);
+	LockMut( g_ThreadSlotsLock );
 	for( int entry = 0; entry < MAX_THREADS; ++entry )
 	{
 		if( g_ThreadSlots[entry].used )
@@ -132,7 +131,7 @@ static int FindEmptyThreadSlot()
 		return entry;
 	}
 			
-	RageException::Throw("Out of thread slots!");
+	RageException::Throw( "Out of thread slots!" );
 }
 
 static void InitThreads()
@@ -205,7 +204,7 @@ const char *ThreadSlot::GetThreadName() const
 {
 	/* This function may be called in crash conditions, so guarantee the string
 	 * is null-terminated. */
-	name[ sizeof(name)-1] = 0;
+	name[sizeof(name)-1] = 0;
 
 	return name;
 }
@@ -226,11 +225,13 @@ void RageThread::Create( int (*fn)(void *), void *data )
 	if( name == "" )
 	{
 		if( LOG )
-			LOG->Warn("Created a thread without naming it first.");
+			LOG->Warn( "Created a thread without naming it first." );
 
 		/* If you don't name it, I will: */
 		strcpy( m_pSlot->name, "Joe" );
-	} else {
+	}
+	else
+	{
 		strcpy( m_pSlot->name, name.c_str() );
 	}
 
@@ -315,7 +316,7 @@ int RageThread::Wait()
 	else
 		ret = m_pSlot->pImpl->Wait();
 
-	LockMut(g_ThreadSlotsLock);
+	LockMut( g_ThreadSlotsLock );
 
 	delete m_pSlot->pImpl;
 	m_pSlot->pImpl = NULL;
@@ -393,7 +394,7 @@ static const char *GetCheckpointLog( int slotno, int lineno )
 		return NULL;
 
 	/* Only show the "Unknown thread" entry if it has at least one checkpoint. */
-	if( &slot == g_pUnknownThreadSlot && slot.GetFormattedCheckpoint( 0 ) == NULL )
+	if( &slot == g_pUnknownThreadSlot && slot.GetFormattedCheckpoint(0) == NULL )
 		return NULL;
 
 	if( lineno != 0 )
@@ -416,7 +417,7 @@ void Checkpoints::GetLogs( char *pBuf, int iSize, const char *delim )
 		strcat( pBuf, buf );
 		strcat( pBuf, delim );
 		
-		for( int line = 1; (buf = GetCheckpointLog( slotno, line )) != NULL; ++line )
+		for( int line = 1; (buf = GetCheckpointLog(slotno, line)) != NULL; ++line )
 		{
 			strcat( pBuf, buf );
 			strcat( pBuf, delim );
@@ -569,7 +570,7 @@ RageMutex::~RageMutex()
 
 void RageMutex::Lock()
 {
-	uint64_t iThisThreadId = (uint64_t) GetThisThreadId();
+	uint64_t iThisThreadId = GetThisThreadId();
 	if( m_LockedBy == iThisThreadId )
 	{
 		++m_LockCnt;
@@ -612,7 +613,7 @@ void RageMutex::Lock()
 
 bool RageMutex::TryLock()
 {
-	if( m_LockedBy == (uint64_t) GetThisThreadId() )
+	if( m_LockedBy == GetThisThreadId() )
 	{
 		++m_LockCnt;
 		return true;
@@ -644,11 +645,11 @@ bool RageMutex::IsLockedByThisThread() const
 	return m_LockedBy == GetThisThreadId();
 }
 
-LockMutex::LockMutex(RageMutex &pMutex, const char *file_, int line_): 
-	mutex(pMutex),
-	file(file_),
-	line(line_),
-	locked_at(RageTimer::GetTimeSinceStart())
+LockMutex::LockMutex( RageMutex &pMutex, const char *file_, int line_ ):
+	mutex( pMutex ),
+	file( file_ ),
+	line( line_ ),
+	locked_at( RageTimer::GetTimeSinceStart() )
 {
 	mutex.Lock();
 	locked = true;
@@ -656,7 +657,7 @@ LockMutex::LockMutex(RageMutex &pMutex, const char *file_, int line_):
 
 LockMutex::~LockMutex()
 {
-	if(locked)
+	if( locked )
 		mutex.Unlock();
 }
 
@@ -676,7 +677,7 @@ void LockMutex::Unlock()
 }
 
 RageEvent::RageEvent( CString name ):
-	RageMutex(name)
+	RageMutex( name )
 {
 	m_pEvent = MakeEvent( m_pMutex );
 }
