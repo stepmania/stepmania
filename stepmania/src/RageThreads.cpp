@@ -252,7 +252,7 @@ static struct SetupMainThread
 	{
 		LockMut(g_ThreadSlotsLock);
 		int slot = FindEmptyThreadSlot();
-		strcpy( g_ThreadSlots[slot].name, "Main thread" );
+		strcpy( g_ThreadSlots[slot].name, "MainThread" );
 		sprintf( g_ThreadSlots[slot].ThreadFormattedOutput, "Thread: %s", g_ThreadSlots[slot].name );
 		g_ThreadSlots[slot].id = RageThread::GetCurrentThreadID();
 		g_ThreadSlots[slot].pImpl = MakeThisThread();

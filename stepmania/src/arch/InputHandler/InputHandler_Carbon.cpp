@@ -833,7 +833,7 @@ InputHandler_Carbon::InputHandler_Carbon() : mMasterPort(0), mSem("Input thread 
 		IOObjectRelease( iter );
 	}
 	
-	mInputThread.SetName( "Input thread." );
+	mInputThread.SetName( "InputThread" );
 	mInputThread.Create(InputHandler_Carbon::Run, this);
 	// Wait for the run loop to start before returning.
 	mSem.Wait();
