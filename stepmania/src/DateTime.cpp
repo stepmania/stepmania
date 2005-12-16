@@ -1,7 +1,6 @@
 #include "global.h"
 #include "DateTime.h"
 #include "RageUtil.h"
-#include "LuaFunctions.h"
 
 
 DateTime::DateTime()
@@ -200,7 +199,6 @@ CString MonthToString( int iMonthIndex )
 		return CString();
 	return MONTH_TO_NAME[iMonthIndex];
 }
-LuaFunction( MonthToString, MonthToString( IArg(1) ) );
 
 CString LastWeekToString( int iLastWeekIndex )
 {
@@ -307,15 +305,6 @@ tm GetDayInYearAndYear( int iDayInYearIndex, int iYear )
 	localtime_r( &then, &when );
 	return when;
 }
-
-LuaFunction( MonthOfYear, GetLocalTime().tm_mon );
-LuaFunction( DayOfMonth, GetLocalTime().tm_mday );
-LuaFunction( Hour, GetLocalTime().tm_hour );
-LuaFunction( Minute, GetLocalTime().tm_min );
-LuaFunction( Second, GetLocalTime().tm_sec );
-LuaFunction( Year, GetLocalTime().tm_year+1900 );
-LuaFunction( Weekday, GetLocalTime().tm_wday );
-LuaFunction( DayOfYear, GetLocalTime().tm_yday );
 
 /*
  * (c) 2001-2004 Chris Danford

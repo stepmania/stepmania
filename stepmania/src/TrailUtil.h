@@ -7,7 +7,7 @@
 class Song;
 class Trail;
 class Course;
-struct XNode;
+class XNode;
 
 class TrailID
 {

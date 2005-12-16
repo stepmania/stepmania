@@ -8,7 +8,7 @@
 
 class Song;
 class Profile;
-struct XNode;
+class XNode;
 
 namespace SongUtil
 {

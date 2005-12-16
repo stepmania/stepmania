@@ -23,7 +23,6 @@ public:
 	void BoostPriority();
 	void UnBoostPriority();
 	void SetupConcurrentRenderingThread();
-	void MountInitialFilesystems( const CString &sDirOfExecutable );
 	bool UserQuit();
 
 	// Called by ArchHooks:

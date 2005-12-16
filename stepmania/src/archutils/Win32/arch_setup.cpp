@@ -1,34 +1,9 @@
 #include "global.h"
 #include "arch_setup.h"
-#include "RageThreads.h"
-#include <time.h>
 #ifdef _WINDOWS
 #  include <windows.h>
 #endif
 #include "StepMania.h"
-
-struct tm *my_localtime_r( const time_t *timep, struct tm *result )
-{
-	static RageMutex mut("my_localtime_r");
-	LockMut(mut);
-
-	*result = *localtime( timep );
-	return result;
-}
-
-struct tm *my_gmtime_r( const time_t *timep, struct tm *result )
-{
-	static RageMutex mut("my_gmtime_r");
-	LockMut(mut);
-
-	*result = *gmtime( timep );
-	return result;
-}
-
-void my_usleep( unsigned long usec )
-{
-	Sleep( usec/1000 );
-}
 
 #if defined(WINDOWS)
 /* Ugh.  Windows doesn't give us the argv[] parser; all it gives is CommandLineToArgvW,

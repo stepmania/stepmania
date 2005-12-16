@@ -6,7 +6,7 @@
 #include "Actor.h"
 #include "RageTexture.h"
 
-struct XNode;
+class XNode;
 
 typedef Actor* (*CreateActorFn)(const CString& sDir, const XNode* pNode);
 

@@ -7,7 +7,7 @@
 #include "ActorFrame.h"
 #include <map>
 
-struct XNode;
+class XNode;
 
 class BGAnimationLayer : public ActorFrame
 {

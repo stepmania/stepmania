@@ -7,6 +7,7 @@
 #include "RageFile.h"
 #include "Foreach.h"
 #include "XmlFile.h"
+#include "XmlFileUtil.h"
 
 static const CString TRANSLATIONS_PATH = "Data/Translations.xml";
 static const CString ERASE_MARKER = "-erase-";
@@ -137,7 +138,7 @@ TitleSubst::TitleSubst(const CString &section)
 void TitleSubst::Load(const CString &filename, const CString &section)
 {
 	XNode xml;
-	if( !xml.LoadFromFile(filename) )
+	if( !XmlFileUtil::LoadFromFileShowErrors(xml,filename) )
 	{
 		// LoadFromFile will show its own error
 		//LOG->Trace("Error opening %s: %s", filename.c_str(), f.GetError().c_str() );

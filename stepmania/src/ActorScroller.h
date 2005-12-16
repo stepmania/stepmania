@@ -5,7 +5,7 @@
 
 #include "ActorFrame.h"
 #include "Quad.h"
-struct XNode;
+class XNode;
 #include "LuaExpressionTransform.h"
 
 class ActorScroller : public ActorFrame

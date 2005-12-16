@@ -17,7 +17,7 @@
 #include "StyleUtil.h"	// for StyleID
 #include "LuaReference.h" // for LuaData
 
-struct XNode;
+class XNode;
 struct lua_State;
 class Character;
 

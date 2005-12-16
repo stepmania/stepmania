@@ -7,7 +7,7 @@
 class Steps;
 class Song;
 class Profile;
-struct XNode;
+class XNode;
 
 namespace StepsUtil
 {

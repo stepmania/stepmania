@@ -1,5 +1,5 @@
 # Microsoft Developer Studio Project File - Name="StepMania" - Package Owner=<4>
-# Microsoft Developer Studio Generated Build File, Format Version 60000
+# Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** DO NOT EDIT **
 
 # TARGTYPE "Win32 (x86) Application" 0x0101
@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                                           	cl                                                                                   /Zl                                                                                   /nologo                                                                                   /c                                                                                   verstub.cpp                                                                                   /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                                            	cl                                                                                    /Zl                                                                                    /nologo                                                                                    /c                                                                                    verstub.cpp                                                                                    /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                     	cl                                      /Zl                                      /nologo                                      /c                                      verstub.cpp                                      /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                      	cl                                       /Zl                                       /nologo                                       /c                                       verstub.cpp                                       /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -1266,6 +1266,14 @@ SOURCE=.\XmlFile.cpp
 
 SOURCE=.\XmlFile.h
 # End Source File
+# Begin Source File
+
+SOURCE=.\XmlFileUtil.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\XmlFileUtil.h
+# End Source File
 # End Group
 # Begin Group "StepMania"
 
@@ -1371,6 +1379,14 @@ SOURCE=.\arch\ArchHooks\ArchHooks_Win32.cpp
 # Begin Source File
 
 SOURCE=.\arch\ArchHooks\ArchHooks_Win32.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\ArchHooks\ArchHooks_Win32Static.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\arch\ArchHooks\ArchHooksUtil.cpp
 # End Source File
 # End Group
 # Begin Group "InputHandler"
@@ -1647,6 +1663,10 @@ SOURCE=.\archutils\Win32\arch_setup.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\archutils\Win32\arch_time.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\archutils\Win32\Crash.cpp
 # End Source File
 # Begin Source File
@@ -1767,6 +1787,14 @@ SOURCE=.\global.h
 # Begin Source File
 
 SOURCE=.\ScreenDimensions.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SpecialFiles.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\SpecialFiles.h
 # End Source File
 # Begin Source File
 

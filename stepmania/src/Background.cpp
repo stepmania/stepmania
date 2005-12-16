@@ -21,6 +21,7 @@
 #include <set>
 #include <float.h>
 #include "XmlFile.h"
+#include "XmlFileUtil.h"
 #include "BackgroundUtil.h"
 #include "song.h"
 #include "AutoActor.h"
@@ -181,7 +182,7 @@ void BackgroundImpl::Init()
 			const CString &sName = vsNames[i];
 
 			XNode xml;
-			xml.LoadFromFile( sPath );
+			XmlFileUtil::LoadFromFileShowErrors(xml, sPath);
 			ASSERT( xml.m_sName == "BackgroundTransition" );
 			BackgroundTransition &bgt = m_mapNameToTransition[sName];
 

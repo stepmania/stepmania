@@ -10,7 +10,7 @@
 #include "AutoActor.h"
 #include "GameConstantsAndTypes.h"
 #include "ThemeMetric.h"
-struct XNode;
+class XNode;
 
 enum PaneTypes
 {

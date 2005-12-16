@@ -9,7 +9,7 @@
 #include "DateTime.h"
 #include "RageUtil_AutoPtr.h"
 
-struct XNode;
+class XNode;
 
 struct HighScoreImpl;
 struct HighScore

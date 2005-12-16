@@ -4,7 +4,7 @@
 #define AutoActor_H
 
 class Actor;
-struct XNode;
+class XNode;
 
 // creates the appropriate Actor derivitive on load and
 // automatically deletes Actor on deconstruction.

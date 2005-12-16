@@ -1,32 +1,21 @@
-#ifndef STYLEUTIL_H
-#define STYLEUTIL_H
+/* XmlFileUtil - A little graphic to the left of the song's text banner in the MusicWheel. */
 
-class Style;
-class Song;
+#ifndef XmlFileUtil_H
+#define XmlFileUtil_H
+
+class RageFileBasic;
 class XNode;
 
-class StyleID
+namespace XmlFileUtil
 {
-	CString sGame;
-	CString sStyle;
-
-public:
-	StyleID() { Unset(); }
-	void Unset() { FromStyle(NULL); }
-	void FromStyle( const Style *p );
-	const Style *ToStyle() const;
-	bool operator<( const StyleID &rhs ) const;
-
-	XNode* CreateNode() const;
-	void LoadFromNode( const XNode* pNode );
-	bool IsValid() const;
-	static void FlushCache( Song* pStaleSong );
-};
+	bool LoadFromFileShowErrors( XNode &xml, const RString &sFile );
+	bool LoadFromFileShowErrors( XNode &xml, RageFileBasic &f );
+}
 
 #endif
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+ * (c) 2001-2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

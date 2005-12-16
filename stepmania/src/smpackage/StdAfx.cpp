@@ -4,5 +4,3 @@
 
 #include "stdafx.h"
 
-
-

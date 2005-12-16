@@ -5,7 +5,7 @@
 
 #include "ActorFrame.h"
 
-struct XNode;
+class XNode;
 
 class BGAnimation : public ActorFrameAutoDeleteChildren
 {

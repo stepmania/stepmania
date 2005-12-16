@@ -1,32 +1,37 @@
-#ifndef STYLEUTIL_H
-#define STYLEUTIL_H
-
-class Style;
-class Song;
-class XNode;
-
-class StyleID
-{
-	CString sGame;
-	CString sStyle;
-
-public:
-	StyleID() { Unset(); }
-	void Unset() { FromStyle(NULL); }
-	void FromStyle( const Style *p );
-	const Style *ToStyle() const;
-	bool operator<( const StyleID &rhs ) const;
-
-	XNode* CreateNode() const;
-	void LoadFromNode( const XNode* pNode );
-	bool IsValid() const;
-	static void FlushCache( Song* pStaleSong );
-};
-
+#include "global.h"
+#include "arch_setup.h"
+#include "RageThreads.h"
+#include <time.h>
+#ifdef _WINDOWS
+#  include <windows.h>
 #endif
+#include "StepMania.h"
+
+struct tm *my_localtime_r( const time_t *timep, struct tm *result )
+{
+	static RageMutex mut("my_localtime_r");
+	LockMut(mut);
+
+	*result = *localtime( timep );
+	return result;
+}
+
+struct tm *my_gmtime_r( const time_t *timep, struct tm *result )
+{
+	static RageMutex mut("my_gmtime_r");
+	LockMut(mut);
+
+	*result = *gmtime( timep );
+	return result;
+}
+
+void my_usleep( unsigned long usec )
+{
+	Sleep( usec/1000 );
+}
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+ * (c) 2004 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

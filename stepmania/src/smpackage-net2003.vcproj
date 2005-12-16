@@ -15,7 +15,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="../Program"
-			IntermediateDirectory=".\Debug"
+			IntermediateDirectory=".\Debug-smpackage"
 			ConfigurationType="1"
 			UseOfMFC="2"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -24,7 +24,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS"
+				PreprocessorDefinitions="WIN32;_DEBUG;DEBUG;_WINDOWS;WINDOWS;SMPACKAGE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
@@ -42,8 +42,8 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="smpackage\ZipArchive\Release\ZipArchive.lib"
-				OutputFile="../../Program/tools-debug.exe"
-				LinkIncremental="1"
+				OutputFile="./../Program/tools-debug.exe"
+				LinkIncremental="0"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
 				ProgramDatabaseFile=".\../../Program/smpackage-debug.pdb"
@@ -81,7 +81,7 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="../Program"
-			IntermediateDirectory=".\Release"
+			IntermediateDirectory=".\Release-smpackage"
 			ConfigurationType="1"
 			UseOfMFC="2"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -90,8 +90,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories=";"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS"
+				AdditionalIncludeDirectories=".;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;WINDOWS;SMPACKAGE"
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
@@ -103,13 +103,14 @@
 				ProgramDataBaseFileName=".\../Release-smpackage/"
 				BrowseInformation="1"
 				WarningLevel="4"
-				SuppressStartupBanner="TRUE"/>
+				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="0"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="smpackage\ZipArchive\Release\ZipArchive.lib"
-				OutputFile=".\../../Program/tools.exe"
+				OutputFile="./../Program/tools.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				ProgramDatabaseFile=".\../../Program/smpackage.pdb"
@@ -215,9 +216,6 @@
 				RelativePath=".\smpackage\smpackageUtil.h">
 			</File>
 			<File
-				RelativePath=".\smpackage\StdAfx.cpp">
-			</File>
-			<File
 				RelativePath=".\smpackage\StdAfx.h">
 			</File>
 			<File
@@ -252,10 +250,10 @@
 				RelativePath="menu.bmp">
 			</File>
 			<File
-				RelativePath="smpackage.ICO">
+				RelativePath="res\smpackage.ico">
 			</File>
 			<File
-				RelativePath="res\smpackage.ico">
+				RelativePath="smpackage.ICO">
 			</File>
 			<File
 				RelativePath=".\smpackage\smpackage.rc">
@@ -288,10 +286,10 @@
 			<Filter
 				Name="system">
 				<File
-					RelativePath=".\archutils\Win32\Crash.cpp">
+					RelativePath=".\archutils\Win32\arch_setup.h">
 				</File>
 				<File
-					RelativePath=".\archutils\Win32\Crash.h">
+					RelativePath=".\archutils\Win32\arch_time.cpp">
 				</File>
 				<File
 					RelativePath=".\archutils\Win32\RegistryAccess.cpp">
@@ -306,10 +304,49 @@
 					RelativePath=".\archutils\Win32\SpecialDirs.h">
 				</File>
 			</Filter>
+			<Filter
+				Name="arch"
+				Filter="">
+				<Filter
+					Name="Threads"
+					Filter="">
+					<File
+						RelativePath=".\arch\Threads\Threads.h">
+					</File>
+					<File
+						RelativePath=".\arch\Threads\Threads_Win32.cpp">
+					</File>
+					<File
+						RelativePath=".\arch\Threads\Threads_Win32.h">
+					</File>
+				</Filter>
+				<Filter
+					Name="ArchHooks"
+					Filter="">
+					<File
+						RelativePath=".\arch\ArchHooks\ArchHooks.h">
+					</File>
+					<File
+						RelativePath=".\arch\ArchHooks\ArchHooks_Win32.h">
+					</File>
+					<File
+						RelativePath=".\arch\ArchHooks\ArchHooks_Win32Static.cpp">
+					</File>
+					<File
+						RelativePath=".\arch\ArchHooks\ArchHooksUtil.cpp">
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Rage"
 			Filter="">
+			<File
+				RelativePath=".\RageException.cpp">
+			</File>
+			<File
+				RelativePath=".\RageException.h">
+			</File>
 			<File
 				RelativePath=".\RageFile.cpp">
 			</File>
@@ -388,6 +425,32 @@
 			<File
 				RelativePath=".\RageUtil_FileDB.h">
 			</File>
+			<Filter
+				Name="Helpers"
+				Filter="">
+				<Filter
+					Name="pcre"
+					Filter="">
+					<File
+						RelativePath=".\pcre\get.c">
+					</File>
+					<File
+						RelativePath=".\pcre\internal.h">
+					</File>
+					<File
+						RelativePath=".\pcre\maketables.c">
+					</File>
+					<File
+						RelativePath=".\pcre\pcre.c">
+					</File>
+					<File
+						RelativePath=".\pcre\pcre.h">
+					</File>
+					<File
+						RelativePath=".\pcre\study.c">
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="File Types"
@@ -403,6 +466,16 @@
 			</File>
 			<File
 				RelativePath=".\XmlFile.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Data Structures"
+			Filter="">
+			<File
+				RelativePath=".\DateTime.cpp">
+			</File>
+			<File
+				RelativePath=".\DateTime.h">
 			</File>
 		</Filter>
 		<File

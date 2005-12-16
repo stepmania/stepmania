@@ -9,7 +9,6 @@ namespace Dialog
 	void Shutdown();
 
 	void SetWindowed( bool bWindowed );
-	bool IsShowingDialog();
 
 	enum Result { abort, retry, ignore };
 	void Error( CString sError, CString sID = "" );

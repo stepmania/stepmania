@@ -8,7 +8,7 @@ struct DateTime;
 class RageFileBasic;
 
 typedef map<CString,CString> XAttrs;
-struct XNode;
+class XNode;
 typedef multimap<CString,XNode*> XNodes;
 
 #define FOREACH_Attr( pNode, Var ) \
@@ -80,8 +80,9 @@ struct DISP_OPT
 };
 
 // XMLNode structure
-struct XNode
+class XNode
 {
+public:
 	CString m_sName;	// a duplicate of the m_sName in the parent's map
 	CString	m_sValue;
 	XNodes	m_childs;		// child node
@@ -106,8 +107,6 @@ struct XNode
 	bool GetAttrXML( RageFileBasic &f, DISP_OPT &opt, const CString &sName, const CString &sValue ) const;
 	CString GetXML() const;
 
-	bool LoadFromFile( const CString &sFile );
-	bool LoadFromFile( RageFileBasic &f );
 	bool SaveToFile( const CString &sFile, DISP_OPT &opt ) const;
 	bool SaveToFile( RageFileBasic &f, DISP_OPT &opt ) const;
 

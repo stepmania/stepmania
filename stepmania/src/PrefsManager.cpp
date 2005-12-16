@@ -11,6 +11,7 @@
 #include "Preference.h"
 #include "RageLog.h"
 
+
 const CString DEFAULTS_INI_PATH		= "Data/Defaults.ini";		// these can be overridden
 //PREFERENCES_INI_PATH	// overlay on Defaults.ini, contains the user's choices
 #include "SpecialFiles.h"
@@ -615,6 +616,29 @@ CString PrefsManager::GetLightsDriver()
 		return m_sLightsDriver;
 }
 
+bool PrefsManager::MessageIsIgnored( const CString &ID )
+{
+	vector<CString> list;
+	split( PREFSMAN->m_sIgnoredMessageWindows, ",", list );
+	for( unsigned i = 0; i < list.size(); ++i )
+		if( !ID.CompareNoCase(list[i]) )
+			return true;
+	return false;
+}
+
+void PrefsManager::IgnoreMessage( const CString &ID )
+{
+	if( ID == "" )
+
+	if( MessageIsIgnored(ID) )
+		return;
+
+	vector<CString> list;
+	split( PREFSMAN->m_sIgnoredMessageWindows, ",", list );
+	list.push_back( ID );
+	PREFSMAN->m_sIgnoredMessageWindows.Set( join(",",list) );
+	PREFSMAN->SavePrefsToDisk();
+}
 
 // lua start
 #include "LuaBinding.h"

@@ -45,6 +45,11 @@ public:
 	virtual void SetupConcurrentRenderingThread() { }
 
 	/*
+	 * Returns true if the user wants to quit (eg. ^C, or clicked a "close window" button).
+	 */
+	virtual bool UserQuit() { return false; }
+
+	/*
 	 * Return the amount of time since the program started.  (This may actually be
 	 * since the initialization of HOOKS.
 	 *
@@ -73,12 +78,7 @@ public:
 	/* 
 	 * Add file search paths, higher priority first. 
 	 */
-	virtual void MountInitialFilesystems( const CString &sDirOfExecutable ) = 0;
-
-	/*
-	 * Returns true if the user wants to quit (eg. ^C, or clicked a "close window" button).
-	 */
-	virtual bool UserQuit() { return false; }
+	static void MountInitialFilesystems( const CString &sDirOfExecutable );
 
 private:
 	/* This are helpers for GetMicrosecondsSinceStart on systems with a timer

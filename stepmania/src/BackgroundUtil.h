@@ -4,7 +4,7 @@
 #define BackgroundUtil_H
 
 class Song;
-struct XNode;
+class XNode;
 
 extern const CString RANDOM_BACKGROUND_FILE;
 extern const CString NO_SONG_BG_FILE;

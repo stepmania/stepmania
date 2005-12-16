@@ -13,7 +13,7 @@ CString argv0;
 
 namespace StepMania
 {
-	void HandleException( CString sErr ) { }
+	void HandleException( RString sErr ) { }
 }
 
 void test_handle_args( int argc, char *argv[] )

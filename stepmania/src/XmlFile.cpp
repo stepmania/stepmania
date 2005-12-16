@@ -12,7 +12,6 @@
 #include "RageUtil.h"
 #include "DateTime.h"
 #include "Foreach.h"
-#include "arch/Dialog/Dialog.h"
 #include "RageFileDriverMemory.h"
 
 static inline long XStr2Int( const char* str, long default_value = 0 )
@@ -653,50 +652,6 @@ void XNode::AppendAttr( const CString &sName, const CString &sValue )
 void XNode::AppendAttr( const CString &sName, float value ){ AppendAttr(sName,ssprintf("%f",value)); }
 void XNode::AppendAttr( const CString &sName, int value )	{ AppendAttr(sName,ssprintf("%d",value)); }
 void XNode::AppendAttr( const CString &sName, unsigned value )	{ AppendAttr(sName,ssprintf("%u",value)); }
-
-bool XNode::LoadFromFile( const CString &sFile )
-{
-	RageFile f;
-	if( !f.Open(sFile, RageFile::READ) )
-	{
-		LOG->Warn("Couldn't open %s for reading: %s", sFile.c_str(), f.GetError().c_str() );
-		return false;
-	}
-
-	bool bSuccess = LoadFromFile( f );
-	if( !bSuccess )
-	{
-		CString sWarning = ssprintf( "XML: LoadFromFile failed for file: %s", sFile.c_str() );
-		LOG->Warn( sWarning );
-		Dialog::OK( sWarning, "XML_PARSE_ERROR" );
-	}
-	return bSuccess;
-}
-
-bool XNode::LoadFromFile( RageFileBasic &f )
-{
-	PARSEINFO pi;
-	CString s;
-	if( f.Read( s ) == -1 )
-	{
-		pi.error_occur = true;
-		pi.error_pointer = NULL;
-		pi.error_code = PIE_READ_ERROR;
-		pi.error_string = f.GetError();
-		
-		goto error;
-	}
-	this->Load( s, &pi );
-	if( pi.error_occur )
-		goto error;
-	return true;
-
-error:
-	CString sWarning = ssprintf( "XML: LoadFromFile failed: %s", pi.error_string.c_str() );
-	LOG->Warn( sWarning );
-	Dialog::OK( sWarning, "XML_PARSE_ERROR" );
-	return false;
-}
 
 bool XNode::SaveToFile( RageFileBasic &f, DISP_OPT &opt ) const
 {

@@ -128,3 +128,12 @@ BOOL CSmpackageApp::InitInstance()
 	//  application, rather than start the application's message pump.
 	return FALSE;
 }
+
+namespace StepMania
+{
+	void NORETURN HandleException( RString sErr )
+	{
+		MessageBox( NULL, "exception", sErr, MB_ICONERROR );
+	}
+
+}

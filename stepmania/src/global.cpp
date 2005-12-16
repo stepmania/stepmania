@@ -1,9 +1,11 @@
 #include "global.h"
 
 #if defined(_WINDOWS)
-#  define _WIN32_WINDOWS 0x0410 // include Win98 stuff
-#  include "windows.h"
-#  include "archutils/Win32/Crash.h"
+#  if defined(CRASH_HANDLER)
+#    define _WIN32_WINDOWS 0x0410 // include Win98 stuff
+#    include "windows.h"
+#    include "archutils/Win32/Crash.h"
+#  endif
 #elif defined(_XBOX)
 #else
 #  include <unistd.h>
@@ -15,7 +17,7 @@
 
 void NORETURN sm_crash( const char *reason )
 {
-#if defined(_WINDOWS)
+#if defined(_WINDOWS) && defined(CRASH_HANDLER)
 	/* If we're being debugged, throw a debug break so it'll suspend the process. */
 	if( IsDebuggerPresent() )
 	{

@@ -18,6 +18,7 @@
 #include "crypto/CryptRand.h"
 #include "UnlockManager.h"
 #include "XmlFile.h"
+#include "XmlFileUtil.h"
 #include "Foreach.h"
 #include "CatalogXml.h"
 #include "Bookkeeper.h"
@@ -861,7 +862,7 @@ ProfileLoadResult Profile::LoadAllFromDir( CString sDir, bool bRequireSignature 
 
 	LOG->Trace( "Loading %s", fn.c_str() );
 	XNode xml;
-	if( !xml.LoadFromFile(fn) )
+	if( !XmlFileUtil::LoadFromFileShowErrors(xml, fn) )
 		return ProfileLoadResult_FailedTampered;
 	LOG->Trace( "Done." );
 

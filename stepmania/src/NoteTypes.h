@@ -4,7 +4,7 @@
 #define NOTE_TYPES_H
 
 #include "GameConstantsAndTypes.h"
-struct XNode;
+class XNode;
 
 struct TapNoteResult
 {

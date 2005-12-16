@@ -9,6 +9,7 @@
 #include "RageUtil.h"
 #include "EnumHelper.h"
 #include "XmlFile.h"
+#include "XmlFileUtil.h"
 #include "LuaManager.h"
 #include "Foreach.h"
 
@@ -368,7 +369,7 @@ Actor* ActorUtil::MakeActor( const CString &sPath_, const XNode *pParent )
 	case FT_Xml:
 		{
 			XNode xml;
-			if( !xml.LoadFromFile(sPath) )
+			if( !XmlFileUtil::LoadFromFileShowErrors(xml, sPath) )
 			{
 				// XNode will warn about the error
 				return new Actor;

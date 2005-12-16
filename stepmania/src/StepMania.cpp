@@ -261,7 +261,7 @@ void ShutdownGame()
 
 /* Cleanly shut down, show a dialog and exit the game.  We don't go back
  * up the call stack, to avoid having to use exceptions. */
-void StepMania::HandleException( CString error )
+void NORETURN StepMania::HandleException( RString error )
 {
 	if( g_bAutoRestart )
 		HOOKS->RestartProgram();

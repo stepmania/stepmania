@@ -128,7 +128,8 @@ Trail.cpp Trail.h TrailUtil.cpp TrailUtil.h TitleSubstitution.cpp TitleSubstitut
 
 FileTypes = IniFile.cpp IniFile.h \
 		MsdFile.cpp MsdFile.h \
-		XmlFile.cpp XmlFile.h
+		XmlFile.cpp XmlFile.h \
+		XmlFileUtil.cpp XmlFileUtil.h
 
 StepMania = StdString.h \
 		StepMania.cpp StepMania.h \
@@ -163,7 +164,8 @@ Sound += arch/Sound/ALSA9Dynamic.cpp arch/Sound/ALSA9Dynamic.h arch/Sound/ALSA9F
 AM_CXXFLAGS += $(ALSA_CFLAGS)
 endif
 
-ArchHooks = arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h
+ArchHooks = arch/ArchHooks/ArchHooks.cpp arch/ArchHooks/ArchHooks.h \
+	arch/ArchHooks/ArchHooksUtil.cpp
 
 InputHandler = arch/InputHandler/InputHandler.cpp arch/InputHandler/InputHandler.h \
 		arch/InputHandler/InputHandler_MonkeyKeyboard.cpp arch/InputHandler/InputHandler_MonkeyKeyboard.h

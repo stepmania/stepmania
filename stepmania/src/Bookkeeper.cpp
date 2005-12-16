@@ -8,6 +8,7 @@
 #include "SongManager.h"
 #include "RageFile.h"
 #include "XmlFile.h"
+#include "XmlFileUtil.h"
 #include <ctime>
 
 
@@ -122,7 +123,7 @@ void Bookkeeper::ReadFromDisk()
 		return;
 
 	XNode xml;
-	if( !xml.LoadFromFile(COINS_DAT) )
+	if( !XmlFileUtil::LoadFromFileShowErrors(xml, COINS_DAT) )
 		return;
 
 	LoadFromNode( &xml );

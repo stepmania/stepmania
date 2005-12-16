@@ -819,6 +819,9 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="DateTime.h">
 			</File>
 			<File
+				RelativePath=".\DateTimeLua.cpp">
+			</File>
+			<File
 				RelativePath="Difficulty.cpp">
 			</File>
 			<File
@@ -1185,6 +1188,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			<File
 				RelativePath="XmlFile.h">
 			</File>
+			<File
+				RelativePath=".\XmlFileUtil.cpp">
+			</File>
+			<File
+				RelativePath=".\XmlFileUtil.h">
+			</File>
 		</Filter>
 		<Filter
 			Name="StepMania"
@@ -1304,6 +1313,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					</File>
 					<File
 						RelativePath="arch\ArchHooks\ArchHooks_Win32.h">
+					</File>
+					<File
+						RelativePath=".\arch\ArchHooks\ArchHooks_Win32Static.cpp">
+					</File>
+					<File
+						RelativePath=".\arch\ArchHooks\ArchHooksUtil.cpp">
 					</File>
 				</Filter>
 				<Filter
@@ -1537,16 +1552,19 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath="archutils\Win32\arch_setup.h">
 				</File>
 				<File
+					RelativePath=".\archutils\Win32\arch_time.cpp">
+				</File>
+				<File
 					RelativePath="archutils\Win32\Crash.cpp">
 				</File>
 				<File
 					RelativePath="archutils\Win32\Crash.h">
 				</File>
 				<File
-					RelativePath="archutils\Win32\DebugInfoHunt.cpp">
+					RelativePath=".\archutils\Win32\DebugInfoHunt.cpp">
 				</File>
 				<File
-					RelativePath="archutils\Win32\DebugInfoHunt.h">
+					RelativePath=".\archutils\Win32\DebugInfoHunt.h">
 				</File>
 				<File
 					RelativePath="archutils\Win32\GetFileInformation.cpp">

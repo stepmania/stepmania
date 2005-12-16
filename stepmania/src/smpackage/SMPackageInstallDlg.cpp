@@ -302,7 +302,7 @@ void CSMPackageInstallDlg::OnOK()
 		//Initialize the progress bar and update the window 1 time (it's enough)
         if(!ProgressInit)
 		{
-			pProgress1->SetRange( 0, vs.size() );
+			pProgress1->SetRange( 0, (short)vs.size() );
             pProgress1->SetStep(1);
 			pProgress1->SetPos(0);
 			SendMessage( WM_PAINT );

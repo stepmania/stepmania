@@ -5,7 +5,7 @@
 
 #include "DateTime.h"
 #include <map>
-struct XNode;
+class XNode;
 
 class Bookkeeper
 {

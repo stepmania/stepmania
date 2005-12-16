@@ -7,7 +7,7 @@
 #include "RageUtil_AutoPtr.h"
 #include "ActorCommands.h"
 #include <map>
-struct XNode;
+class XNode;
 struct lua_State;
 class LuaReference;
 class LuaClass;

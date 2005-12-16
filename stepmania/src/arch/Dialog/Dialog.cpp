@@ -4,8 +4,8 @@
 #include "PrefsManager.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-
 #include "arch/arch.h"
+#include "RageThreads.h"
 
 #include "Selector_Dialog.h"
 DialogDriver *MakeDialogDriver()
@@ -53,7 +53,6 @@ DialogDriver *MakeDialogDriver()
 static DialogDriver *g_pImpl = NULL;
 static DialogDriver_Null g_NullDriver;
 static bool g_bWindowed = true;		// Start out true so that we'll show errors before DISPLAY is init'd.
-static bool g_bIsShowingDialog = false;
 
 void Dialog::Init()
 {
@@ -70,11 +69,6 @@ void Dialog::Shutdown()
 {
 	delete g_pImpl;
 	g_pImpl = NULL;
-}
-
-bool Dialog::IsShowingDialog()
-{
-	return g_bIsShowingDialog;
 }
 
 static bool MessageIsIgnored( CString sID )
@@ -121,11 +115,11 @@ void Dialog::Error( CString sMessage, CString sID )
 	if( sID != "" && MessageIsIgnored(sID) )
 		return;
 
-	g_bIsShowingDialog = true;
+	RageThread::SetIsShowingDialog( true );
 	
 	g_pImpl->Error( sMessage, sID );
 	
-	g_bIsShowingDialog = false;
+	RageThread::SetIsShowingDialog( false );
 }
 
 void Dialog::SetWindowed( bool bWindowed )
@@ -143,7 +137,7 @@ void Dialog::OK( CString sMessage, CString sID )
 	if( sID != "" && MessageIsIgnored(sID) )
 		return;
 
-	g_bIsShowingDialog = true;
+	RageThread::SetIsShowingDialog( true );
 	
 	// only show Dialog if windowed
 	if( !g_bWindowed )
@@ -151,7 +145,7 @@ void Dialog::OK( CString sMessage, CString sID )
 	else
 		g_pImpl->OK( sMessage, sID );	// call derived version
 	
-	g_bIsShowingDialog = false;
+	RageThread::SetIsShowingDialog( false );
 }
 
 Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString sID )
@@ -164,7 +158,7 @@ Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString sID )
 	if( sID != "" && MessageIsIgnored(sID) )
 		return g_NullDriver.AbortRetryIgnore( sMessage, sID );
 
-	g_bIsShowingDialog = true;
+	RageThread::SetIsShowingDialog( true );
 	
 	// only show Dialog if windowed
 	Dialog::Result ret;
@@ -173,7 +167,7 @@ Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString sID )
 	else
 		ret = g_pImpl->AbortRetryIgnore( sMessage, sID );	// call derived version
 	
-	g_bIsShowingDialog = false;
+	RageThread::SetIsShowingDialog( false );
 
 	return ret;
 }
@@ -188,7 +182,7 @@ Dialog::Result Dialog::AbortRetry( CString sMessage, CString sID )
 	if( sID != "" && MessageIsIgnored(sID) )
 		return g_NullDriver.AbortRetry( sMessage, sID );
 
-	g_bIsShowingDialog = true;
+	RageThread::SetIsShowingDialog( true );
 
 	// only show Dialog if windowed
 	Dialog::Result ret;
@@ -197,7 +191,7 @@ Dialog::Result Dialog::AbortRetry( CString sMessage, CString sID )
 	else
 		ret = g_pImpl->AbortRetry( sMessage, sID );	// call derived version
 	
-	g_bIsShowingDialog = false;
+	RageThread::SetIsShowingDialog( false );
 
 	return ret;
 }

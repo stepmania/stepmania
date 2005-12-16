@@ -31,7 +31,8 @@
 #endif
 
 /* Assume TLS doesn't work until told otherwise.  It's ArchHooks's job to set this. */
-bool RageThread::m_bSystemSupportsTLS = false;
+bool RageThread::s_bSystemSupportsTLS = false;
+bool RageThread::s_bIsShowingDialog = false;
 
 #define MAX_THREADS 128
 //static vector<RageMutex*> *g_MutexList = NULL; /* watch out for static initialization order problems */
@@ -743,7 +744,7 @@ retry:
 	if( m_pSema->Wait() )
 		return;
 
-	if( !bFailOnTimeout || Dialog::IsShowingDialog() )
+	if( !bFailOnTimeout || RageThread::GetIsShowingDialog() )
 		goto retry;
 
 	/* We waited too long.  We're probably deadlocked, though unlike mutexes, we can't

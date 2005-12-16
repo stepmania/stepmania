@@ -7,7 +7,7 @@
 
 class Course;
 class Profile;
-struct XNode;
+class XNode;
 class CourseEntry;
 
 namespace CourseUtil

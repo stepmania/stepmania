@@ -3,9 +3,8 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageThreads.h"
-#include "PrefsManager.h"
 #include "ProductInfo.h"
-
+#include "PrefsManager.h"
 #include "archutils/win32/AppInstance.h"
 #include "archutils/win32/crash.h"
 #include "archutils/win32/DebugInfoHunt.h"
@@ -13,11 +12,6 @@
 #include "archutils/win32/RestartProgram.h"
 #include "archutils/win32/VideoDriverInfo.h"
 #include "archutils/win32/WindowsResources.h"
-
-#include <mmsystem.h>
-#if defined(_MSC_VER)
-#pragma comment(lib, "winmm.lib") // for timeGetTime
-#endif
 
 static HANDLE g_hInstanceMutex;
 static bool g_bIsMultipleInstance = false;
@@ -150,30 +144,6 @@ static BOOL CALLBACK DriverWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 	return FALSE;
 }
 
-static bool MessageIsIgnored( CString ID )
-{
-	vector<CString> list;
-	split( PREFSMAN->m_sIgnoredMessageWindows, ",", list );
-	for( unsigned i = 0; i < list.size(); ++i )
-		if( !ID.CompareNoCase(list[i]) )
-			return true;
-	return false;
-}
-
-static void IgnoreMessage( CString ID )
-{
-	if( ID == "" )
-
-	if( MessageIsIgnored(ID) )
-		return;
-
-	vector<CString> list;
-	split( PREFSMAN->m_sIgnoredMessageWindows, ",", list );
-	list.push_back( ID );
-	PREFSMAN->m_sIgnoredMessageWindows.Set( join(",",list) );
-	PREFSMAN->SavePrefsToDisk();
-}
-
 /*
  * This simply does a few manual checks for known bad driver versions.  Only nag the
  * user if it's a driver that we receive many complaints about--we don't want to
@@ -181,7 +151,7 @@ static void IgnoreMessage( CString ID )
  */
 void ArchHooks_Win32::CheckVideoDriver()
 {
-	if( MessageIsIgnored( "OLD_DRIVER_WARNING" ) )
+	if( PREFSMAN->MessageIsIgnored( "OLD_DRIVER_WARNING" ) )
 		return;
 
 	CString sPrimaryDeviceName = GetPrimaryVideoName();
@@ -213,7 +183,7 @@ void ArchHooks_Win32::CheckVideoDriver()
 	bool bExit = !!DialogBox( AppInstance(), MAKEINTRESOURCE(IDD_DRIVER), NULL, DriverWndProc );
 
 	if( g_Hush )
-		IgnoreMessage( "OLD_DRIVER_WARNING" );
+		PREFSMAN->IgnoreMessage( "OLD_DRIVER_WARNING" );
 	if( bExit )
 		ExitProcess(0);
 }
@@ -381,71 +351,6 @@ void ArchHooks_Win32::UnBoostPriority()
 void ArchHooks_Win32::SetupConcurrentRenderingThread()
 {
 	SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL );
-}
-
-static bool g_bTimerInitialized;
-
-static void InitTimer()
-{
-	if( g_bTimerInitialized )
-		return;
-	g_bTimerInitialized = true;
-
-	timeBeginPeriod( 1 );
-}
-
-int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
-{
-	if( !g_bTimerInitialized )
-		InitTimer();
-
-	int64_t ret = timeGetTime() * int64_t(1000);
-	if( bAccurate )
-	{
-		ret = FixupTimeIfLooped( ret );
-		ret = FixupTimeIfBackwards( ret );
-	}
-	
-	return ret;
-}
-
-#include "archutils/Win32/RegistryAccess.h"
-#include "ProductInfo.h"
-#include "RageFileManager.h"
-#include <shlobj.h>
-
-void ArchHooks_Win32::MountInitialFilesystems( const CString &sDirOfExecutable )
-{
-	/* All Windows data goes in the directory one level above the executable. */
-	CHECKPOINT_M( ssprintf( "DOE \"%s\"", sDirOfExecutable.c_str()) );
-	vector<CString> parts;
-	split( sDirOfExecutable, "/", parts );
-	CHECKPOINT_M( ssprintf( "... %i parts", parts.size()) );
-	ASSERT_M( parts.size() > 1, ssprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );
-	CString Dir = join( "/", parts.begin(), parts.end()-1 );
-	FILEMAN->Mount( "dir", Dir, "/" );
-
-	CString sMyDocumentsDir;
-	{
-		bool bSuccess = RegistryAccess::GetRegValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders", "Personal", sMyDocumentsDir );
-		ASSERT( bSuccess );
-		sMyDocumentsDir.Replace( '\\', '/' );
-		sMyDocumentsDir += "/";
-	}
-
-	CString sApplicationDataDir;
-	{
-		TCHAR szDir[MAX_PATH] = "";
-		BOOL bResult = SHGetSpecialFolderPath( NULL, szDir, CSIDL_APPDATA, FALSE );
-		ASSERT( bResult );
-		sApplicationDataDir = szDir;
-		sApplicationDataDir += "/";
-	}	
-
-	// Mount everything game-writable (not counting the editor) to the user's directory.
-	FILEMAN->Mount( "dir", sApplicationDataDir + PRODUCT_ID + "/Cache", "/Cache" );
-	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Save", "/Save" );
-	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Screenshots", "/Screenshots" );
 }
 
 void ArchHooks_Win32::SetUserQuit()
