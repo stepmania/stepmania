@@ -137,7 +137,7 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 
 	case WM_CLOSE:
 		LOG->Trace("WM_CLOSE: shutting down");
-		ArchHooks_Win32::SetUserQuit();
+		ArchHooks::SetUserQuit();
 		return 0;
 
 	case WM_WINDOWPOSCHANGED:
