@@ -1299,7 +1299,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
 		{
 			// pressed Alt+F4
-			ExitGame();
+			ArchHooks::SetUserQuit();
 			return true;
 		}
 	}

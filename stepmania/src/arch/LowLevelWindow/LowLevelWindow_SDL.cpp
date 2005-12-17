@@ -4,7 +4,7 @@
 #include "RageLog.h"
 #include "RageDisplay.h" // for REFRESH_DEFAULT
 #include "StepMania.h"
-#include "GameLoop.h"
+#include "arch/ArchHooks/ArchHooks.h"
 #include "DisplayResolutions.h"
 
 #if defined(MACOSX)
@@ -220,7 +220,7 @@ void LowLevelWindow_SDL::Update()
 			break;
 		case SDL_QUIT:
 			LOG->Trace("SDL_QUIT: shutting down");
-			ExitGame();
+			ArchHooks::SetUserQuit();
 			break;
 		}
 	}

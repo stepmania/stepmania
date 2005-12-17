@@ -4,7 +4,7 @@
 
 #import <Cocoa/Cocoa.h>
 #include "ProductInfo.h"
-#include "GameLoop.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 // XXX remove this
 extern "C"
@@ -29,7 +29,7 @@ extern "C"
 // Invoked from the Quit menu item.
 - (void)terminate:(id)sender
 {
-    ExitGame();
+    ArchHooks::SetUserQuit();
 }
 
 - (void)sendEvent:(NSEvent *)event

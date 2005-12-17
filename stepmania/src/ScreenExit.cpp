@@ -5,7 +5,7 @@
 #include "GameSoundManager.h"
 #include "RageSound.h"
 #include "RageLog.h"
-#include "GameLoop.h"
+#include "arch/ArchHooks/ArchHooks.h"
 
 /* This screen used to wait for sounds to stop.  However, implementing GetPlayingSounds()
  * is annoying, because sounds might be deleted at any time; they aren't ours to have
@@ -20,7 +20,7 @@ void ScreenExit::Init()
 {
 	m_Exited = false;
 
-	ExitGame();
+	ArchHooks::SetUserQuit();
 
 	/* It'd be better for any previous screen playing music to fade it out as it fades
 	 * out the screen.  XXX: Check to see if it's fading out; if it'll stop playing in
@@ -58,7 +58,7 @@ void ScreenExit::Update( float fDelta )
 	{
 		m_Exited = true;
 		LOG->Trace("ScreenExit: shutting down");
-		ExitGame();
+		ArchHooks::SetUserQuit();
 	}
 #endif
 }
