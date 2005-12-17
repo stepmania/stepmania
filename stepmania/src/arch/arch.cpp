@@ -16,7 +16,8 @@ void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
 	vector<CString> DriversToTry;
 	split(drivers, ",", DriversToTry, true);
 
-	ASSERT( DriversToTry.size() != 0 );
+	if( DriversToTry.empty() )
+		RageException::Throw( "Input Handlers cannot be empty." );
 
 	CString Driver;
 
@@ -56,7 +57,7 @@ void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
 #endif
 
 		if( ret == NULL )
-			LOG->Warn( "Unknown Input Handler name: %s", s->c_str() );
+			LOG->Trace( "Unknown Input Handler name: %s", s->c_str() );
 		else
 			Add.push_back( ret );
 	}
@@ -84,7 +85,7 @@ void MakeLightsDrivers(CString driver, vector<LightsDriver *> &Add)
 #endif
 
 	if( ret == NULL && driver.CompareNoCase("Null") )
-		LOG->Warn( "Unknown lights driver name: %s", driver.c_str() );
+		LOG->Trace( "Unknown lights driver name: %s", driver.c_str() );
 	else if( ret != NULL )
 		Add.push_back( ret );
 
@@ -99,7 +100,7 @@ LoadingWindow *MakeLoadingWindow()
 
 	/* Don't load NULL by default.  On most systems, if we can't load the SDL
 	 * loading window, we won't be able to init OpenGL, either, so don't bother. */
-	CString drivers = "xbox,win32,cocoa,gtk";
+	const CString drivers = "xbox,win32,cocoa,gtk";
 	vector<CString> DriversToTry;
 	split(drivers, ",", DriversToTry, true);
 
@@ -174,15 +175,17 @@ MemoryCardDriver *MakeMemoryCardDriver()
 }
 
 #include "MovieTexture/Selector_MovieTexture.h"
-static void DumpAVIDebugInfo(CString);
+static void DumpAVIDebugInfo( const CString& fn );
 /* Try drivers in order of preference until we find one that works. */
-RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
+RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 {
 	DumpAVIDebugInfo( ID.filename );
 
 	vector<CString> DriversToTry;
-	split(PREFSMAN->GetMovieDrivers(), ",", DriversToTry, true);
-	ASSERT(DriversToTry.size() != 0);
+	split( PREFSMAN->GetMovieDrivers(), ",", DriversToTry, true );
+	
+	if( DriversToTry.empty() )
+		RageException::Throw( "Movie Drivers cannot be empty." );
 
 	CString Driver;
 	RageMovieTexture *ret = NULL;
@@ -190,7 +193,7 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 	for( unsigned i=0; ret==NULL && i<DriversToTry.size(); ++i )
 	{
 		Driver = DriversToTry[i];
-		LOG->Trace("Initializing driver: %s", Driver.c_str());
+		LOG->Trace( "Initializing driver: %s", Driver.c_str() );
 #ifdef USE_MOVIE_TEXTURE_THEORA
 		if( !Driver.CompareNoCase("Theora") ) ret = new MovieTexture_Theora(ID);
 #endif
@@ -205,7 +208,7 @@ RageMovieTexture *MakeRageMovieTexture(RageTextureID ID)
 #endif
 		if( ret == NULL )
 		{
-			LOG->Warn( "Unknown movie driver name: %s", Driver.c_str() );
+			LOG->Trace( "Unknown movie driver name: %s", Driver.c_str() );
 			continue;
 		}
 
@@ -230,7 +233,8 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 	vector<CString> DriversToTry;
 	split(drivers, ",", DriversToTry, true);
 
-	ASSERT( DriversToTry.size() != 0 );
+	if( DriversToTry.empty() )
+		RageException::Throw( "Sound Drivers cannot be empty." );
 
 	CString Driver;
 	RageSoundDriver *ret = NULL;
@@ -238,7 +242,7 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 	for(unsigned i = 0; ret == NULL && i < DriversToTry.size(); ++i)
 	{
 		Driver = DriversToTry[i];
-		LOG->Trace("Initializing driver: %s", DriversToTry[i].c_str());
+		LOG->Trace( "Initializing driver: %s", DriversToTry[i].c_str() );
 
 #ifdef USE_RAGE_SOUND_ALSA9
 		if(!DriversToTry[i].CompareNoCase("ALSA"))		ret = new RageSound_ALSA9;
@@ -283,13 +287,13 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 	}
 	
 	if(ret)
-		LOG->Info("Sound driver: %s", Driver.c_str());
+		LOG->Info( "Sound driver: %s", Driver.c_str() );
 	
 	return ret;
 }
 
 // Helper for MakeRageMovieTexture()
-static void DumpAVIDebugInfo( CString fn )
+static void DumpAVIDebugInfo( const CString& fn )
 {
 	CString type, handler;
 	if( !RageMovieTexture::GetFourCC( fn, handler, type ) )
