@@ -12,7 +12,6 @@ public:
 	int64_t GetMicrosecondsSinceStart();
 
 	void MountInitialFilesystems( const CString &sDirOfExecutable );
-	bool UserQuit();
 };
 
 #ifdef ARCH_HOOKS

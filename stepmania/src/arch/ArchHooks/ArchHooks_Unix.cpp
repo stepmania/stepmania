@@ -15,13 +15,6 @@
 #include "archutils/Unix/CrashHandler.h"
 #endif
 
-static bool g_bExitingGame = false;
-
-bool ArchHooks_Unix::UserQuit()
-{
-	return g_bExitingGame;
-}
-
 static bool IsFatalSignal( int signal )
 {
 	switch( signal )
@@ -41,7 +34,7 @@ static void DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 		return;
 
 	/* ^C. */
-	g_bExitingGame = true;
+	ArchHooks::SetUserQuit();
 }
 
 #if defined(CRASH_HANDLER)

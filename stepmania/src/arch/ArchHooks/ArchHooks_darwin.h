@@ -13,7 +13,6 @@ public:
 	CString GetPreferredLanguage();
 	void EnterTimeCriticalSection();
 	void ExitTimeCriticalSection();
-	void MountInitialFilesystems( const CString &sDirOfExecutable );
 
 protected:
 	//RageMutex *TimeCritMutex;

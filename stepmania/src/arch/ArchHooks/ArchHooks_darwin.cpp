@@ -41,7 +41,7 @@ static void DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 		return;
 
 	/* ^C. */
-	ExitGame();
+	ArchHooks::SetUserQuit();
 }
 
 static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
@@ -289,7 +289,7 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 
 #include "RageFileManager.h"
 
-void ArchHooks_darwin::MountInitialFilesystems( const CString &sDirOfExecutable )
+void ArchHooks::MountInitialFilesystems( const CString &sDirOfExecutable )
 {
 #if defined(MACOSX)
 	CHECKPOINT_M( ssprintf("DOE \"%s\"", sDirOfExecutable.c_str()) );

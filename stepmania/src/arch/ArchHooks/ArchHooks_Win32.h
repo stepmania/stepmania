@@ -23,10 +23,6 @@ public:
 	void BoostPriority();
 	void UnBoostPriority();
 	void SetupConcurrentRenderingThread();
-	bool UserQuit();
-
-	// Called by ArchHooks:
-	static void SetUserQuit();
 
 private:
 	void CheckVideoDriver();

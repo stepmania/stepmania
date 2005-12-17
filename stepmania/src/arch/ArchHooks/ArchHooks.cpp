@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ArchHooks.h"
 
+bool ArchHooks::g_bQuitting = false;
 ArchHooks *HOOKS = NULL;
 
 #include "Selector_ArchHooks.h"

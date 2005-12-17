@@ -15,8 +15,6 @@
 
 static HANDLE g_hInstanceMutex;
 static bool g_bIsMultipleInstance = false;
-bool g_bQuitting = false;
-
 
 ArchHooks_Win32::ArchHooks_Win32()
 {
@@ -36,8 +34,6 @@ ArchHooks_Win32::ArchHooks_Win32()
 	g_bIsMultipleInstance = false;
 	if( GetLastError() == ERROR_ALREADY_EXISTS )
 		g_bIsMultipleInstance = true;
-
-	g_bQuitting = false;
 }
 
 ArchHooks_Win32::~ArchHooks_Win32()
@@ -351,16 +347,6 @@ void ArchHooks_Win32::UnBoostPriority()
 void ArchHooks_Win32::SetupConcurrentRenderingThread()
 {
 	SetThreadPriority( GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL );
-}
-
-void ArchHooks_Win32::SetUserQuit()
-{
-	g_bQuitting = true;
-}
-
-bool ArchHooks_Win32::UserQuit()
-{
-	return g_bQuitting;
 }
 
 /*
