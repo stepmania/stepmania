@@ -190,7 +190,8 @@ static ThreadSlot *GetUnknownThreadSlot()
 	return g_pUnknownThreadSlot;
 }
 
-RageThread::RageThread()
+RageThread::RageThread():
+	m_bThisThread( false )
 {
 	m_pSlot = NULL;
 }
@@ -251,7 +252,7 @@ void RageThread::CreateThisThread()
 	ASSERT( m_pSlot == NULL );
 	
 	InitThreads();
-	
+	m_bThisThread = true;
 	LockMut( g_ThreadSlotsLock );
 	
 	int slotno = FindEmptyThreadSlot();
@@ -312,7 +313,7 @@ int RageThread::Wait()
 	ASSERT( m_pSlot->pImpl != NULL );
 	int ret;
 	
-	if( m_pSlot->id == GetThisThreadId() )
+	if( m_bThisThread )
 		ret = 0;
 	else
 		ret = m_pSlot->pImpl->Wait();

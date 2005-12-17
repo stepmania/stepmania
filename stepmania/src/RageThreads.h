@@ -9,6 +9,7 @@ class RageThread
 {
 	ThreadSlot *m_pSlot;
 	CString name;
+	bool m_bThisThread;
 
 	static bool s_bSystemSupportsTLS;
 	static bool s_bIsShowingDialog;
