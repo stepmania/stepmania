@@ -43,7 +43,7 @@ int ThreadImpl_Pthreads::Wait()
 	int *val;
 	int ret = pthread_join( thread, (void **) &val );
 	if( ret )
-		RageException::Throw( "pthread_join: %s", strerror(errno) );
+		RageException::Throw( "pthread_join: %s", strerror(ret) );
 
 	int iRet = *val;
 	delete val;
