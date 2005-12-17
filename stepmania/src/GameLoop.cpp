@@ -25,19 +25,12 @@
 static bool g_bQuitting = false;
 static RageTimer g_GameplayTimer;
 
-void ExitGame()
-{
-	g_bQuitting = true;
-}
-
 static bool UserQuit()
 {
-	return g_bQuitting || HOOKS->UserQuit();
+	return g_bQuitting || ArchHooks::UserQuit();
 }
 
 void HandleInputEvents( float fDeltaTime );
-
-
 
 static void CheckGameLoopTimerSkips( float fDeltaTime )
 {
