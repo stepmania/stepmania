@@ -2914,7 +2914,11 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				int iNewClipboardBeats = lrintf( iOldClipboardBeats * fScale );
 				int iDeltaBeats = iNewClipboardBeats - iOldClipboardBeats;
 				int iNewClipboardEndBeat = m_NoteFieldEdit.m_iBeginMarker + iNewClipboardBeats;
-				NoteDataUtil::ShiftRows( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, iDeltaBeats );
+				if( iDeltaBeats > 0 )
+					NoteDataUtil::InsertRows( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, iDeltaBeats );
+				else
+					NoteDataUtil::DeleteRows( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, -iDeltaBeats );
+
 				m_pSong->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 
 				HandleAreaMenuChoice( paste_at_begin_marker );
@@ -2958,10 +2962,10 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			TransitionEditState( STATE_RECORDING );
 			break;
 		case insert_and_shift:
-			NoteDataUtil::ShiftRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(1) );
+			NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(1) );
 			break;
 		case delete_and_shift:
-			NoteDataUtil::ShiftRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(-1) );
+			NoteDataUtil::DeleteRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(1) );
 			break;
 		case shift_pauses_forward:
 			m_pSong->m_Timing.ShiftRows( BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(+1) );
@@ -3034,7 +3038,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 					fStopLength *= fBPMatPause;
 					fStopLength /= 60;
 					// don't move the step from where it is, just move everything later
-					NoteDataUtil::ShiftRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopLength) );
+					NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopLength) );
 					m_pSong->m_Timing.ShiftRows( BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopLength) );
 				}
 			}
