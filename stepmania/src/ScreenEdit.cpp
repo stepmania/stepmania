@@ -2945,8 +2945,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 
 				float fOldBPM = m_pSong->GetBPMAtBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 				float fNewBPM = fOldBPM * fScale;
-				m_pSong->SetBPMAtBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker), fNewBPM );
-				m_pSong->SetBPMAtBeat( NoteRowToBeat(iNewClipboardEndBeat), fOldBPM );
+				m_pSong->m_Timing.SetBPMAtRow( m_NoteFieldEdit.m_iBeginMarker, fNewBPM );
+				m_pSong->m_Timing.SetBPMAtRow( iNewClipboardEndBeat, fOldBPM );
 			}
 			break;
 		case play:
@@ -2996,7 +2996,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				m_pSong->m_Timing.ShiftRows( m_NoteFieldEdit.m_iBeginMarker,
 										     -m_NoteFieldEdit.m_iEndMarker+m_NoteFieldEdit.m_iBeginMarker
 										   );
-				m_pSong->m_Timing.SetStopAtBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker), fStopLength );
+				m_pSong->m_Timing.SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
 				m_NoteFieldEdit.m_iBeginMarker = -1;
 				m_NoteFieldEdit.m_iEndMarker = -1;
 				break;
