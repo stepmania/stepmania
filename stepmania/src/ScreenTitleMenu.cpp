@@ -89,29 +89,6 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 			SCREENMAN->SystemMessage( "Announcer: "+sName );
 			SCREENMAN->SetNewScreen( m_sName );
 		}
-		if( CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_GAME) ||
-			CodeDetector::EnteredCode(input.GameI.controller,CODE_NEXT_GAME2) )
-		{
-			vector<const Game*> vGames;
-			GAMEMAN->GetEnabledGames( vGames );
-			ASSERT( !vGames.empty() );
-			vector<const Game*>::iterator iter = find(vGames.begin(),vGames.end(),GAMESTATE->m_pCurGame);
-			ASSERT( iter != vGames.end() );
-
-			iter++;	// move to the next game
-
-			// wrap
-			if( iter == vGames.end() )
-				iter = vGames.begin();
-
-			GAMESTATE->SetCurGame( *iter );
-
-			/* Reload the theme if it's changed, but don't back to the initial screen. */
-			StepMania::ResetGame();
-
-			SCREENMAN->SystemMessage( CString("Game: ") + GAMESTATE->GetCurrentGame()->m_szName );
-			SCREENMAN->SetNewScreen( m_sName );
-		}
 	}
 
 	ScreenSelectMaster::Input( input );

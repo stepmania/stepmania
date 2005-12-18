@@ -45,8 +45,6 @@ const CString CodeNames[] = {
 	"NextTheme2",
 	"NextAnnouncer",
 	"NextAnnouncer2",
-	"NextGame",
-	"NextGame2",
 	"NextBannerGroup",
 	"NextBannerGroup2",
 	"SaveScreenshot1",
