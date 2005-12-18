@@ -15,7 +15,7 @@ public:
 	~RageInput();
 
 	void LoadDrivers();
-	void Update( float fDeltaTime );
+	void Update();
 	bool DevicesChanged();
 	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vsDescriptionsOut );
 	void WindowReset();

@@ -38,7 +38,7 @@ void RageInput::LoadDrivers()
 		LOG->Warn( "No input devices were loaded." );
 }
 
-void RageInput::Update( float fDeltaTime )
+void RageInput::Update()
 {
 	/* Update optional devices. */
 	for( unsigned i = 0; i < m_pDevices.size(); ++i )

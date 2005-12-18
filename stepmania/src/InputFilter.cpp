@@ -167,7 +167,7 @@ void InputFilter::Update( float fDeltaTime )
 {
 	RageTimer now;
 
-	INPUTMAN->Update( fDeltaTime );
+	INPUTMAN->Update();
 
 	/* Make sure that nothing gets inserted while we do this, to prevent
 	 * things like "key pressed, key release, key repeat". */
