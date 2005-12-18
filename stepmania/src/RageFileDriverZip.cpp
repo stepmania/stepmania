@@ -36,16 +36,6 @@ RageFileDriverZip::RageFileDriverZip( RString sPath ):
 	Load( sPath );
 }
 
-/* deprecated */
-RageFileDriverZip::RageFileDriverZip( RageFileBasic *pFile ):
-	RageFileDriver( new NullFilenameDB ),
-	m_Mutex( "RageFileDriverZip" )
-{
-	m_bFileOwned = false;
-	m_pZip = NULL;
-	Load( pFile );
-}
-
 bool RageFileDriverZip::Load( const RString &sPath )
 {
 	ASSERT( m_pZip == NULL ); /* don't load twice */
