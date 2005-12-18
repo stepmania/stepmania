@@ -10,7 +10,6 @@ public:
 	InputHandler_Win32_MIDI();
 	~InputHandler_Win32_MIDI();
 
-	void Update( float fDeltaTime );
 	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );
 
 	void SetDev( DeviceInput key, bool pressed ) { ButtonPressed( key, pressed ); }

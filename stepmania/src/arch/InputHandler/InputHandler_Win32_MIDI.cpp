@@ -99,11 +99,6 @@ static void CALLBACK midiCallback( HMIDIIN device, UINT status, DWORD instancePt
     }
 }
 
-void InputHandler_Win32_MIDI::Update( float fDeltaTime )
-{
-
-}
-
 /*
  * Copyright (c) 2005 Charles Lohr
  * All rights reserved.
