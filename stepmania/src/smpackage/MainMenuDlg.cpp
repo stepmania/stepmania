@@ -15,6 +15,7 @@
 #include "archutils/Win32/SpecialDirs.h"
 #include "SpecialFiles.h"
 #include "ProductInfo.h"
+#include ".\mainmenudlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -56,6 +57,7 @@ BEGIN_MESSAGE_MAP(MainMenuDlg, CDialog)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BUTTON_LAUNCH_GAME, OnBnClickedButtonLaunchGame)
 	ON_BN_CLICKED(IDC_VIEW_STATISTICS, OnBnClickedViewStatistics)
+	ON_BN_CLICKED(IDC_CLEAR_CACHE, OnBnClickedClearCache)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -236,8 +238,8 @@ void MainMenuDlg::OnBnClickedClearPreferences()
 void MainMenuDlg::OnBnClickedButtonLaunchGame()
 {
 	// TODO: Add your control notification handler code here
-	SMPackageUtil::LaunchGame();
-	exit(0);
+	if( SMPackageUtil::LaunchGame() )
+		exit(0);
 }
 
 void MainMenuDlg::OnBnClickedViewStatistics()
@@ -247,4 +249,10 @@ void MainMenuDlg::OnBnClickedViewStatistics()
 	RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
 	if( NULL == ::ShellExecute( this->m_hWnd, "open", sFile, "", "", SW_SHOWNORMAL ) )
 		MessageBox( "Failed to open '" + sFile + "': " + GetLastErrorString() );
+}
+
+void MainMenuDlg::OnBnClickedClearCache()
+{
+	// TODO: Add your control notification handler code here
+	ASSERT(0);
 }

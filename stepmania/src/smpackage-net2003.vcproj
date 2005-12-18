@@ -41,7 +41,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="smpackage\ZipArchive\Release\ZipArchive.lib"
+				AdditionalDependencies="smpackage\ZipArchive\Debug\ZipArchive.lib"
 				OutputFile="./../Program/tools-debug.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="TRUE"
@@ -250,10 +250,10 @@
 				RelativePath="menu.bmp">
 			</File>
 			<File
-				RelativePath="res\smpackage.ico">
+				RelativePath="smpackage.ICO">
 			</File>
 			<File
-				RelativePath="smpackage.ICO">
+				RelativePath="res\smpackage.ico">
 			</File>
 			<File
 				RelativePath=".\smpackage\smpackage.rc">
@@ -490,13 +490,10 @@
 		<File
 			RelativePath=".\smpackage\smpackage.ICO">
 		</File>
-		<File
-			RelativePath=".\smpackage\ZipArchive\Release\ZipArchive.lib">
-		</File>
 	</Files>
 	<Globals>
 		<Global
 			Name="RESOURCE_FILE"
-			Value="smpackage.rc"/>
+			Value="smpackage\smpackage.rc"/>
 	</Globals>
 </VisualStudioProject>

@@ -161,7 +161,7 @@ bool SMPackageUtil::IsValidPackageDirectory( RString path )
 	return true;
 }
 
-void SMPackageUtil::LaunchGame()
+bool SMPackageUtil::LaunchGame()
 {
 	PROCESS_INFORMATION pi;
 	STARTUPINFO	si;
@@ -173,8 +173,8 @@ void SMPackageUtil::LaunchGame()
 		sFile = "Program\\" + sFile;
 		if( !DoesFileExist(sFile) )
 		{
-			MessageBox( NULL, "Error", "Could not find " PRODUCT_NAME ".exe", MB_ICONEXCLAMATION );
-			return;
+			MessageBox( NULL, "Could not find " PRODUCT_NAME ".exe", "Error", MB_ICONEXCLAMATION );
+			return false;
 		}
 	}
 
@@ -190,4 +190,5 @@ void SMPackageUtil::LaunchGame()
 		&si,  // pointer to STARTUPINFO
 		&pi  // pointer to PROCESS_INFORMATION
 	);
+	return true;
 }

@@ -52,6 +52,8 @@
 #define IDC_EDIT_DEFAULT                1029
 #define IDC_CLEAR_KEYMAPS               1029
 #define IDC_VIEW_STATISTICS             1030
+#define IDC_CLEAR_KEYMAPS2              1031
+#define IDC_CLEAR_CACHE                 1031
 #define IDC_BUTTON_REFRESH              1035
 #define IDC_BUTTON_SAVE                 1036
 #define IDC_BUTTON_OVERRIDE             1037

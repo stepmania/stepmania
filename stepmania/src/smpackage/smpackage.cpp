@@ -11,6 +11,7 @@
 #include "smpackageUtil.h"
 #include "MainMenuDlg.h"
 #include "RageFileManager.h"
+#include "arch/arch.h"
 
 
 #ifdef _DEBUG
@@ -44,27 +45,20 @@ CSmpackageApp theApp;
 
 /////////////////////////////////////////////////////////////////////////////
 // CSmpackageApp initialization
+#include "RageLog.h"
+#include "RageFileManager.h"
 
 BOOL CSmpackageApp::InitInstance()
 {
-	// Make sure the current directory is the root program directory
+	/* Almost everything uses this to read and write files.  Load this early. */
+	FILEMAN = new RageFileManager( "" );
+	FILEMAN->MountInitialFilesystems();
 
-	// change dir to path of the execuctable
-	TCHAR szFullAppPath[MAX_PATH];
-	GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
-		
-	// strip off executable name
-	LPSTR pLastBackslash = strrchr(szFullAppPath, '\\');
-	*pLastBackslash = '\0';	// terminate the string
+	/* Set this up next.  Do this early, since it's needed for RageException::Throw. */
+	LOG			= new RageLog();
 
-	/* If "Program" is the top-level directory, strip it off. */
-	pLastBackslash = strrchr( szFullAppPath, '\\' );
-	if( pLastBackslash && !stricmp(pLastBackslash, "\\Program") )
-		*pLastBackslash = '\0';
 
-	SetCurrentDirectory(szFullAppPath);
-
-	if( DoesFileExist("Songs") )	// this is a SM or DWI program directory
+	if( DoesFileExist("Songs") )	// this is a SM program directory
 	{
 		// make sure it's in the list of install directories
 		TCHAR szCurrentDirectory[MAX_PATH];

@@ -50,6 +50,7 @@ protected:
 public:
 	afx_msg void OnBnClickedButtonLaunchGame();
 	afx_msg void OnBnClickedViewStatistics();
+	afx_msg void OnBnClickedClearCache();
 };
 
 //{{AFX_INSERT_LOCATION}}

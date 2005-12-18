@@ -15,7 +15,7 @@ namespace SMPackageUtil
 	RString GetPackageDirectory(RString path);
 	bool IsValidPackageDirectory(RString path);
 
-	void LaunchGame();
+	bool LaunchGame();
 }
 
 #endif
