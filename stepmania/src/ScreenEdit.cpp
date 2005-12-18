@@ -2968,10 +2968,10 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			NoteDataUtil::DeleteRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(1) );
 			break;
 		case shift_pauses_forward:
-			m_pSong->m_Timing.ShiftRows( BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(+1) );
+			m_pSong->m_Timing.InsertRows( BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(1) );
 			break;
 		case shift_pauses_backward:
-			m_pSong->m_Timing.ShiftRows( BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(-1) );
+			m_pSong->m_Timing.DeleteRows( BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(1) );
 			break;
 		// MD 11/02/03 - Converting selected region to a pause of the same length.
 		case convert_beat_to_pause:
@@ -3018,7 +3018,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 					fStopLength /= 60;
 					// don't move the step from where it is, just move everything later
 					NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopLength) );
-					m_pSong->m_Timing.ShiftRows( BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopLength) );
+					m_pSong->m_Timing.InsertRows( BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopLength) );
 				}
 			}
 			break;
