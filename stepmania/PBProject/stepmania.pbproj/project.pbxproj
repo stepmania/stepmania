@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
 		1215D7A308C6559A00B87D8B /* ScreenGameplayNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */; };
+		AA0732730954358100F396C5 /* ArchHooksUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0732720954358100F396C5 /* ArchHooksUtil.cpp */; };
+		AA07328E0954381800F396C5 /* DateTimeLua.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07328A0954381800F396C5 /* DateTimeLua.cpp */; };
+		AA07328F0954381800F396C5 /* DisplayResolutions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07328B0954381800F396C5 /* DisplayResolutions.h */; };
+		AA0732900954381800F396C5 /* XmlFileUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07328C0954381800F396C5 /* XmlFileUtil.cpp */; };
+		AA0732910954381800F396C5 /* XmlFileUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07328D0954381800F396C5 /* XmlFileUtil.h */; };
 		AA07A55F0843E72B00E33D21 /* ScreenDebugOverlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A5550843E72B00E33D21 /* ScreenDebugOverlay.cpp */; };
 		AA07A5600843E72B00E33D21 /* ScreenDebugOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07A5560843E72B00E33D21 /* ScreenDebugOverlay.h */; };
 		AA07A5610843E72B00E33D21 /* ScreenGameplayMultiplayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07A5570843E72B00E33D21 /* ScreenGameplayMultiplayer.cpp */; };
@@ -765,7 +770,6 @@
 		AABE787A0591287100E8BF50 /* MemoryCardDriver_Null.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE78760591287100E8BF50 /* MemoryCardDriver_Null.h */; };
 		AABE788D05912B0600E8BF50 /* DualScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE788B05912B0600E8BF50 /* DualScrollBar.h */; };
 		AABE788E05912B0600E8BF50 /* DualScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE788C05912B0600E8BF50 /* DualScrollBar.cpp */; };
-		AAC6889B05D7F3C800964E6D /* XmlFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC6889905D7F3C800964E6D /* XmlFile.cpp */; };
 		AAC6889C05D7F3C800964E6D /* XmlFile.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC6889A05D7F3C800964E6D /* XmlFile.h */; };
 		AAC6DCE50567660A00B5D56F /* LightsManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC6DCE30567660A00B5D56F /* LightsManager.cpp */; };
 		AAC6DCE60567660A00B5D56F /* LightsManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC6DCE40567660A00B5D56F /* LightsManager.h */; };
@@ -990,6 +994,11 @@
 		1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenGameplayNormal.h; path = ../src/ScreenGameplayNormal.h; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		AA0732720954358100F396C5 /* ArchHooksUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ArchHooksUtil.cpp; path = ArchHooks/ArchHooksUtil.cpp; sourceTree = "<group>"; };
+		AA07328A0954381800F396C5 /* DateTimeLua.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DateTimeLua.cpp; path = ../src/DateTimeLua.cpp; sourceTree = "<group>"; };
+		AA07328B0954381800F396C5 /* DisplayResolutions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DisplayResolutions.h; path = ../src/DisplayResolutions.h; sourceTree = "<group>"; };
+		AA07328C0954381800F396C5 /* XmlFileUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = XmlFileUtil.cpp; path = ../src/XmlFileUtil.cpp; sourceTree = "<group>"; };
+		AA07328D0954381800F396C5 /* XmlFileUtil.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = XmlFileUtil.h; path = ../src/XmlFileUtil.h; sourceTree = "<group>"; };
 		AA07A5550843E72B00E33D21 /* ScreenDebugOverlay.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenDebugOverlay.cpp; path = ../src/ScreenDebugOverlay.cpp; sourceTree = "<group>"; };
 		AA07A5560843E72B00E33D21 /* ScreenDebugOverlay.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenDebugOverlay.h; path = ../src/ScreenDebugOverlay.h; sourceTree = "<group>"; };
 		AA07A5570843E72B00E33D21 /* ScreenGameplayMultiplayer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenGameplayMultiplayer.cpp; path = ../src/ScreenGameplayMultiplayer.cpp; sourceTree = "<group>"; };
@@ -2621,8 +2630,10 @@
 				AA77E74E08B64B5600FA24CA /* CourseWriterCRS.h */,
 				AA3D793106A279530064B980 /* DateTime.cpp */,
 				AA3D793206A279530064B980 /* DateTime.h */,
+				AA07328A0954381800F396C5 /* DateTimeLua.cpp */,
 				AAD6A712065E0FDF0042165A /* Difficulty.cpp */,
 				AAD6A713065E0FDF0042165A /* Difficulty.h */,
+				AA07328B0954381800F396C5 /* DisplayResolutions.h */,
 				AA8F136E0624BAB200C6A467 /* EnumHelper.cpp */,
 				AA8F136F0624BAB200C6A467 /* EnumHelper.h */,
 				AAE7808506081A000034E65F /* ezsockets.cpp */,
@@ -2735,6 +2746,8 @@
 				AA70E3660663112800DAE1FD /* Trail.h */,
 				AA70E3670663112800DAE1FD /* TrailUtil.cpp */,
 				AA70E3680663112800DAE1FD /* TrailUtil.h */,
+				AA07328C0954381800F396C5 /* XmlFileUtil.cpp */,
+				AA07328D0954381800F396C5 /* XmlFileUtil.h */,
 			);
 			name = DataStructures;
 			sourceTree = "<group>";
@@ -3015,6 +3028,7 @@
 				AADB4E9204D5288400D02EE9 /* ArchHooks_Unix.h */,
 				AADB4E8004D4FEC400D02EE9 /* ArchHooks_Win32.cpp */,
 				AADB4E8104D4FEC400D02EE9 /* ArchHooks_Win32.h */,
+				AA0732720954358100F396C5 /* ArchHooksUtil.cpp */,
 				AA80C70A07F2047200C99272 /* Selector_ArchHooks.h */,
 			);
 			name = ArchHooks;
@@ -3610,6 +3624,8 @@
 				AAFBEEEC094D807E000029DE /* ScreenOptionsManageEditSteps.h in Headers */,
 				AAFBEEEE094D807E000029DE /* ScreenOptionsMemoryCard.h in Headers */,
 				AAFBEEF0094D807E000029DE /* ScreenServiceAction.h in Headers */,
+				AA07328F0954381800F396C5 /* DisplayResolutions.h in Headers */,
+				AA0732910954381800F396C5 /* XmlFileUtil.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4011,7 +4027,6 @@
 				AAF4206705D63FA700056441 /* ModelManager.cpp in Sources */,
 				AAF4206B05D6400800056441 /* RageModelGeometry.cpp in Sources */,
 				AA50201F05D6D7B200ACEFD0 /* Profile.cpp in Sources */,
-				AAC6889B05D7F3C800964E6D /* XmlFile.cpp in Sources */,
 				AABBD80805D8E9FC00B44FC2 /* HighScore.cpp in Sources */,
 				AABD0B3A05DF3F22004F7929 /* CryptManager.cpp in Sources */,
 				AAA71EA105EE154E00D2E8FF /* global.cpp in Sources */,
@@ -4176,6 +4191,9 @@
 				AAFBEEEB094D807E000029DE /* ScreenOptionsManageEditSteps.cpp in Sources */,
 				AAFBEEED094D807E000029DE /* ScreenOptionsMemoryCard.cpp in Sources */,
 				AAFBEEEF094D807E000029DE /* ScreenServiceAction.cpp in Sources */,
+				AA0732730954358100F396C5 /* ArchHooksUtil.cpp in Sources */,
+				AA07328E0954381800F396C5 /* DateTimeLua.cpp in Sources */,
+				AA0732900954381800F396C5 /* XmlFileUtil.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
