@@ -1894,21 +1894,35 @@ void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, int iStartIndex, int
 	nd.CopyAll( temp1 );
 }
 
+// deprecated
 void NoteDataUtil::ShiftRows( NoteData &nd, int iStartIndex, int iRowsToShift )
 {
-	int iTakeFromRow = iStartIndex;
-	int iPasteAtRow = iStartIndex;
+	if( iRowsToShift > 0 )
+		InsertRows( nd, iStartIndex, iRowsToShift );
+	else
+		DeleteRows( nd, iStartIndex, -iRowsToShift );
+}
 
-	if( iRowsToShift > 0 )	// add blank rows
-		iPasteAtRow += iRowsToShift;
-	else	// delete rows
-		iTakeFromRow -= iRowsToShift;
+void NoteDataUtil::InsertRows( NoteData &nd, int iStartIndex, int iRowsToAdd )
+{
+	ASSERT( iRowsToAdd >= 0 );
 
 	NoteData temp;
 	temp.SetNumTracks( nd.GetNumTracks() );
-	temp.CopyRange( nd, iTakeFromRow, MAX_NOTE_ROW );
-	nd.ClearRange( min(iTakeFromRow,iPasteAtRow), MAX_NOTE_ROW );
-	nd.CopyRange( temp, 0, MAX_NOTE_ROW, iPasteAtRow );		
+	temp.CopyRange( nd, iStartIndex, MAX_NOTE_ROW );
+	nd.ClearRange( iStartIndex, MAX_NOTE_ROW );
+	nd.CopyRange( temp, 0, MAX_NOTE_ROW, iStartIndex + iRowsToAdd );		
+}
+
+void NoteDataUtil::DeleteRows( NoteData &nd, int iStartIndex, int iRowsToDelete )
+{
+	ASSERT( iRowsToDelete >= 0 );
+
+	NoteData temp;
+	temp.SetNumTracks( nd.GetNumTracks() );
+	temp.CopyRange( nd, iStartIndex + iRowsToDelete, MAX_NOTE_ROW );
+	nd.ClearRange( iStartIndex, MAX_NOTE_ROW );
+	nd.CopyRange( temp, 0, MAX_NOTE_ROW, iStartIndex );		
 }
 
 void NoteDataUtil::RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToRemove )

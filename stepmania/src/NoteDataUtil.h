@@ -100,6 +100,9 @@ namespace NoteDataUtil
 	void ScaleRegion( NoteData &nd, float fScale, int iStartIndex = 0, int iEndIndex = MAX_NOTE_ROW );
 	inline void Scale( NoteData &nd, float fScale ) { NoteDataUtil::ScaleRegion(nd, fScale); }
 
+	void InsertRows( NoteData &nd, int iStartIndex, int iRowsToShift );
+	void DeleteRows( NoteData &nd, int iStartIndex, int iRowsToShift );
+
 	// If iRowsToShift > 0, add blank rows.  If iRowsToShift < 0, delete rows
 	void ShiftRows( NoteData &nd, int iStartIndex, int iRowsToShift );
 
