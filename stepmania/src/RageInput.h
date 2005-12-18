@@ -14,6 +14,7 @@ public:
 	RageInput( CString sDriverList );
 	~RageInput();
 
+	void LoadDrivers();
 	void Update( float fDeltaTime );
 	bool DevicesChanged();
 	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vsDescriptionsOut );
@@ -27,6 +28,7 @@ public:
 
 private:
 	vector<InputHandler *> m_pDevices;
+	CString m_sDriverList;
 };
 
 extern RageInput*			INPUTMAN;	// global and accessable from anywhere in our program

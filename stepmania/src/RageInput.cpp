@@ -12,12 +12,9 @@ RageInput::RageInput( CString sDriverList )
 {
 	LOG->Trace( "RageInput::RageInput()" );
 
-	/* Init optional devices. */
-	MakeInputHandlers( sDriverList, m_pDevices );
+	m_sDriverList = sDriverList;
 
-	/* If no input devices are loaded, the user won't be able to input anything. */
-	if( m_pDevices.size() == 0 )
-		LOG->Warn( "No input devices were loaded." );
+	LoadDrivers();
 }
 
 RageInput::~RageInput()
@@ -25,6 +22,20 @@ RageInput::~RageInput()
 	/* Delete optional devices. */
 	for( unsigned i = 0; i < m_pDevices.size(); ++i )
 		delete m_pDevices[i];
+}
+
+void RageInput::LoadDrivers()
+{
+	for( unsigned i = 0; i < m_pDevices.size(); ++i )
+		delete m_pDevices[i];
+	m_pDevices.clear();
+
+	/* Init optional devices. */
+	MakeInputHandlers( m_sDriverList, m_pDevices );
+
+	/* If no input devices are loaded, the user won't be able to input anything. */
+	if( m_pDevices.size() == 0 )
+		LOG->Warn( "No input devices were loaded." );
 }
 
 void RageInput::Update( float fDeltaTime )

@@ -100,8 +100,7 @@ void GameLoop()
 
 		if( INPUTMAN->DevicesChanged() )
 		{
-			SAFE_DELETE( INPUTMAN );
-			INPUTMAN	= new RageInput( PREFSMAN->GetInputDrivers() );
+			INPUTMAN->LoadDrivers();
 			StepMania::CheckForChangedInputDevicesAndRemap();
 		}
 
