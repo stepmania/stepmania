@@ -336,6 +336,14 @@ void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 			continue;
 		stop.m_iStartRow += iRowsToAdd;
 	}
+
+	if( iStartRow == 0 )
+	{
+		/* If we're shifting up at the beginning, we just shifted up the first BPMSegment.  That
+		 * segment must always begin at 0. */
+		ASSERT( m_BPMSegments.size() > 0 );
+		m_BPMSegments[0].m_iStartIndex = 0;
+	}
 }
 
 /* Delete BPMChanges and StopSegments in [iStartRow,iRowsToDelete), and shift down. */
