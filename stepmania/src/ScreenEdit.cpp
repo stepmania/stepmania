@@ -477,7 +477,7 @@ static MenuDef g_AreaMenu(
 	MenuRowDef( ScreenEdit::delete_and_shift,		"Delete beat and shift up",			true, EditMode_Practice, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::shift_pauses_forward,	"Shift pauses and BPM changes down",true, EditMode_Full, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::shift_pauses_backward,	"Shift pauses and BPM changes up",	true, EditMode_Full, true, 0, NULL ),
-	MenuRowDef( ScreenEdit::convert_beat_to_pause,	"Convert beats to pause",			true, EditMode_Full, true, 0, NULL ),
+	MenuRowDef( ScreenEdit::convert_to_pause,		"Convert selection to pause",	true, EditMode_Full, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::convert_pause_to_beat,	"Convert pause to beats",			true, EditMode_Full, true, 0, NULL ),
 	MenuRowDef( ScreenEdit::undo,					"Undo",								true, EditMode_Practice, true, 0, NULL )
 );
@@ -1307,7 +1307,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			g_AreaMenu.rows[tempo].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[play].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[record].bEnabled = bAreaSelected;
-			g_AreaMenu.rows[convert_beat_to_pause].bEnabled = bAreaSelected;
+			g_AreaMenu.rows[convert_to_pause].bEnabled = bAreaSelected;
 			g_AreaMenu.rows[undo].bEnabled = m_bHasUndo;
 			EditMiniMenu( m_pAreaMenu, SM_BackFromAreaMenu, SM_None, &g_AreaMenu );
 		}
@@ -2726,7 +2726,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case delete_and_shift:
 		case shift_pauses_forward:
 		case shift_pauses_backward:
-		case convert_beat_to_pause:
+		case convert_to_pause:
 		case convert_pause_to_beat:
 			bSaveUndo = true;
 			break;
@@ -2973,8 +2973,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		case shift_pauses_backward:
 			m_pSong->m_Timing.DeleteRows( BeatToNoteRow(GAMESTATE->m_fSongBeat), BeatToNoteRow(1) );
 			break;
-		// MD 11/02/03 - Converting selected region to a pause of the same length.
-		case convert_beat_to_pause:
+		case convert_to_pause:
 			{
 				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 				float fMarkerStart = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
