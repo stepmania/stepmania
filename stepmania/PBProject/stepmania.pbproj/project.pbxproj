@@ -814,6 +814,7 @@
 		AAD36084062BB8AE00D0CED8 /* RageSoundPosMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD36082062BB8AE00D0CED8 /* RageSoundPosMap.cpp */; };
 		AAD36085062BB8AE00D0CED8 /* RageSoundPosMap.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD36083062BB8AE00D0CED8 /* RageSoundPosMap.h */; };
 		AAD3D5AC05B5AB4E00014FAC /* RageUtil_CircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD3D5AB05B5AB4E00014FAC /* RageUtil_CircularBuffer.h */; };
+		AAD5219C095513DA00073D86 /* XmlFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC6889905D7F3C800964E6D /* XmlFile.cpp */; };
 		AAD675F606795175006002B0 /* Dialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD675EF06795175006002B0 /* Dialog.cpp */; };
 		AAD675F706795175006002B0 /* Dialog.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD675F006795175006002B0 /* Dialog.h */; };
 		AAD675F806795175006002B0 /* DialogDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD675F106795175006002B0 /* DialogDriver.h */; };
@@ -4194,6 +4195,7 @@
 				AA0732730954358100F396C5 /* ArchHooksUtil.cpp in Sources */,
 				AA07328E0954381800F396C5 /* DateTimeLua.cpp in Sources */,
 				AA0732900954381800F396C5 /* XmlFileUtil.cpp in Sources */,
+				AAD5219C095513DA00073D86 /* XmlFile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
