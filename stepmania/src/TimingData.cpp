@@ -298,38 +298,34 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex )
 	ASSERT( iStartIndex >= 0 );
 	ASSERT( iStartIndex < iEndIndex );
 
-	unsigned ix = 0;
-
-	for ( ix = 0; ix < m_BPMSegments.size(); ix++ )
+	for ( unsigned i = 0; i < m_BPMSegments.size(); i++ )
 	{
-		const int iSegStart = m_BPMSegments[ix].m_iStartIndex;
+		const int iSegStart = m_BPMSegments[i].m_iStartIndex;
 		if( iSegStart < iStartIndex )
 			continue;
 		else if( iSegStart > iEndIndex )
-			m_BPMSegments[ix].m_iStartIndex += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
+			m_BPMSegments[i].m_iStartIndex += lrintf( (iEndIndex - iStartIndex) * (fScale - 1) );
 		else
-			m_BPMSegments[ix].m_iStartIndex = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
+			m_BPMSegments[i].m_iStartIndex = lrintf( (iSegStart - iStartIndex) * fScale ) + iStartIndex;
 	}
 
-	for( ix = 0; ix < m_StopSegments.size(); ix++ )
+	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
-		const int iSegStartRow = m_StopSegments[ix].m_iStartRow;
+		const int iSegStartRow = m_StopSegments[i].m_iStartRow;
 		if( iSegStartRow < iStartIndex )
 			continue;
 		else if( iSegStartRow > iEndIndex )
-			m_StopSegments[ix].m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
+			m_StopSegments[i].m_iStartRow += lrintf((iEndIndex - iStartIndex) * (fScale - 1));
 		else
-			m_StopSegments[ix].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
+			m_StopSegments[i].m_iStartRow = lrintf((iSegStartRow - iStartIndex) * fScale) + iStartIndex;
 	}
 }
 
 void TimingData::ShiftRows( int iStartRow, int iRowsToShift )
 {
-	unsigned ix = 0;
-
-	for( ix = 0; ix < m_BPMSegments.size(); ix++ )
+	for( unsigned i = 0; i < m_BPMSegments.size(); i++ )
 	{
-		int &iSegStart = m_BPMSegments[ix].m_iStartIndex;
+		int &iSegStart = m_BPMSegments[i].m_iStartIndex;
 		if( iSegStart < iStartRow )
 			continue;
 
@@ -337,9 +333,9 @@ void TimingData::ShiftRows( int iStartRow, int iRowsToShift )
 		iSegStart = max( iSegStart, iStartRow );
 	}
 
-	for( ix = 0; ix < m_StopSegments.size(); ix++ )
+	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
-		int &iSegStartRow = m_StopSegments[ix].m_iStartRow;
+		int &iSegStartRow = m_StopSegments[i].m_iStartRow;
 		if( iSegStartRow < iStartRow )
 			continue;
 		iSegStartRow += iRowsToShift;
