@@ -389,14 +389,6 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	this->SetBPMAtRow( iStartRow, fNewBPM );
 }
 
-void TimingData::ShiftRows( int iStartRow, int iRowsToShift )
-{
-	if( iRowsToShift > 0 )
-		InsertRows( iStartRow, iRowsToShift );
-	else
-		DeleteRows( iStartRow, -iRowsToShift );
-}
-
 bool TimingData::HasBpmChanges() const
 {
 	return m_BPMSegments.size()>1;

@@ -84,20 +84,9 @@ public:
 	}
 	bool operator!=( const TimingData &other ) { return !operator==(other); }
 
-	// used for editor fix - expand/contract needs to move BPMSegments
-	// and StopSegments that land during/after the edited range.
-	// in addition, we need to be able to shift them otherwise as well
-	// (for example, adding/removing rows should move all following 
-	// segments as necessary)
-	// NOTE: How do we want to handle deleting rows that have a BPM change
-	// or a stop?  I'd like to think we should move them to the first row
-	// of the range that was deleted (say if rows 1680-1728 are deleted, and
-	// a BPM change or a stop occurs at row 1704, we'll move it to row
-	// 1680).
 	void ScaleRegion( float fScale = 1, int iStartRow = 0, int iEndRow = MAX_NOTE_ROW );
 	void InsertRows( int iStartRow, int iRowsToAdd );
 	void DeleteRows( int iStartRow, int iRowsToDelete );
-	void ShiftRows( int iStartRow, int iRowsToShift );
 
 	CString						m_sFile;		// informational only
 	vector<BPMSegment>			m_BPMSegments;	// this must be sorted before gameplay
