@@ -8,21 +8,6 @@
 #include <fcntl.h>
 #include <dirent.h>
 
-template<class T>
-bool VectorsAreEqual( const T &a, const T &b )
-{
-	if( a.size() != b.size() )
-		return false;
-	
-	for( unsigned i=0; i<a.size(); i++ )
-	{
-		if( a[i] != b[i] )
-			return false;
-	}
-	
-	return true;
-}
-
 bool MemoryCardDriverThreaded_Linux::TestWrite( UsbStorageDevice* pDevice )
 {
 	if( access(pDevice->sOsMountDir, W_OK) == -1 )

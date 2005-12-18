@@ -94,6 +94,9 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		usbd.sDevice = sDrive;
 		usbd.sVolumeLabel = sVolumeLabel;
 
+		// TODO: fill in bus/level/port with this:
+		// http://www.codeproject.com/system/EnumDeviceProperties.asp
+
 		// find volume size
 		DWORD dwSectorsPerCluster;
 		DWORD dwBytesPerSector;

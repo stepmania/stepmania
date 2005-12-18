@@ -290,8 +290,6 @@ void StepMania::ResetGame()
 	}
 
 	PREFSMAN->SavePrefsToDisk();
-
-	CheckForChangedInputDevicesAndRemap();
 }
 
 void StepMania::CheckForChangedInputDevicesAndRemap()
@@ -300,20 +298,28 @@ void StepMania::CheckForChangedInputDevicesAndRemap()
 	// update last seen joysticks
 	//
 	vector<InputDevice> vDevices;
-	vector<CString> vDescriptions;
-	INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
-	CString sInputDevices = join( ",", vDescriptions );
+	vector<CString> vsDescriptions;
+	INPUTMAN->GetDevicesAndDescriptions( vDevices, vsDescriptions );
+	CString sInputDevices = join( ",", vsDescriptions );
 
 	if( PREFSMAN->m_sLastSeenInputDevices.Get() != sInputDevices )
 	{
-		CString sMessage = ssprintf(
-			"Input devices changed from '%s' to '%s'.", 
-			PREFSMAN->m_sLastSeenInputDevices.Get().c_str(), 
-			sInputDevices.c_str() );
+		vector<CString> vsLastSeen;
+		split( PREFSMAN->m_sLastSeenInputDevices, ",", vsLastSeen );
+
+		vector<CString> vsConnects, vsDisconnects;
+		GetConnectsDisconnects( vsLastSeen, vsDescriptions, vsDisconnects, vsConnects );
+
+		CString sMessage;
+		
+		if( !vsConnects.empty() )
+			sMessage += "Connected: " + join( "\n", vsConnects ) + "\n";
+		if( !vsDisconnects.empty() )
+			sMessage += "Disconnected: " + join( "\n", vsDisconnects ) + "\n";
 
 		if( PREFSMAN->m_bAutoMapOnJoyChange )
 		{
-			sMessage += "\nRemapping joysticks.";
+			sMessage += "Remapping all joysticks.";
 			INPUTMAPPER->AutoMapJoysticksForCurrentGame();
 			INPUTMAPPER->SaveMappingsToDisk();
 		}
@@ -1112,8 +1118,6 @@ int main(int argc, char* argv[])
 	 * dependencies on the SDL video subsystem, so it must be initialized after DISPLAY. */
 	INPUTMAN	= new RageInput( PREFSMAN->GetInputDrivers() );
 
-	StepMania::CheckForChangedInputDevicesAndRemap();
-
 	// These things depend on the TextureManager, so do them after!
 	FONT		= new FontManager;
 	SCREENMAN	= new ScreenManager;
@@ -1136,6 +1140,9 @@ int main(int argc, char* argv[])
 	 * overlay screens and global sounds), and load the initial screen. */
 	SCREENMAN->ThemeChanged();
 	SCREENMAN->SetNewScreen( CommonMetrics::INITIAL_SCREEN );
+
+	// Do this after ThemeChanged so that we can show a system message
+	StepMania::CheckForChangedInputDevicesAndRemap();
 
 	CodeDetector::RefreshCacheItems();
 

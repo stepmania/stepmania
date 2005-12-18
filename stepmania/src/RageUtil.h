@@ -464,6 +464,42 @@ void FileWrite( RageFileBasic& f, float fWrite );
 bool FileCopy( RString sSrcFile, RString sDstFile );
 bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bReadError = NULL );
 
+template<class T>
+bool VectorsAreEqual( const T &a, const T &b )
+{
+	if( a.size() != b.size() )
+		return false;
+	
+	for( unsigned i=0; i<a.size(); i++ )
+	{
+		if( a[i] != b[i] )
+			return false;
+	}
+	
+	return true;
+}
+
+template<class T>
+void GetAsNotInBs( const vector<T> &as, const vector<T> &bs, vector<T> &difference )
+{
+	vector<T> bsUnmatched = bs;
+	FOREACH_CONST( T, as, a )
+	{
+		vector<T>::iterator iter = find( bsUnmatched.begin(), bsUnmatched.end(), *a );
+		if( iter != bsUnmatched.end() )
+			bsUnmatched.erase( iter );
+		else
+			difference.push_back( *a );
+	}
+}
+
+template<class T>
+void GetConnectsDisconnects( const vector<T> &before, const vector<T> &after, vector<T> &disconnects, vector<T> &connects )
+{
+	GetAsNotInBs( before, after, disconnects );
+	GetAsNotInBs( after, before, connects );
+}
+
 #endif
 
 /*

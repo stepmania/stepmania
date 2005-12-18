@@ -6,6 +6,7 @@
 #include "RageLog.h"
 #include "archutils/Win32/AppInstance.h"
 #include "archutils/Win32/GraphicsWindow.h"
+#include "archutils/Win32/RegistryAccess.h"
 #include "InputFilter.h"
 #include "PrefsManager.h"
 
@@ -66,6 +67,14 @@ static void CheckForDirectInputDebugMode()
 	RegCloseKey(hkey);
 }
 
+static int GetNumUsbHidDevices()
+{
+	int i = 0;	
+	bool b = RegistryAccess::GetRegValue( "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\HidUsb\\Enum", "Count", i );
+	ASSERT( b );
+	return i;
+}
+
 InputHandler_DInput::InputHandler_DInput()
 {
 	LOG->Trace( "InputHandler_DInput::InputHandler_DInput()" );
@@ -73,7 +82,7 @@ InputHandler_DInput::InputHandler_DInput()
 	CheckForDirectInputDebugMode();
 	
 	shutdown = false;
-	m_bDevicesChanged = false;
+	m_iLastSeenNumUsbHid = GetNumUsbHidDevices();
 	g_NumJoysticks = 0;
 
 	AppInstance inst;	
@@ -462,7 +471,9 @@ void InputHandler_DInput::Update( float fDeltaTime )
 
 bool InputHandler_DInput::DevicesChanged()
 {
-	return m_bDevicesChanged;
+	int iOldNumUsbHid = m_iLastSeenNumUsbHid;
+	m_iLastSeenNumUsbHid = GetNumUsbHidDevices();
+	return iOldNumUsbHid != m_iLastSeenNumUsbHid;
 }
 
 void InputHandler_DInput::InputThreadMain()
