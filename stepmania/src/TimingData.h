@@ -95,6 +95,8 @@ public:
 	// a BPM change or a stop occurs at row 1704, we'll move it to row
 	// 1680).
 	void ScaleRegion( float fScale = 1, int iStartRow = 0, int iEndRow = MAX_NOTE_ROW );
+	void InsertRows( int iStartRow, int iRowsToAdd );
+	void DeleteRows( int iStartRow, int iRowsToDelete );
 	void ShiftRows( int iStartRow, int iRowsToShift );
 
 	CString						m_sFile;		// informational only

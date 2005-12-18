@@ -319,26 +319,71 @@ void TimingData::ScaleRegion( float fScale, int iStartIndex, int iEndIndex )
 	}
 }
 
-void TimingData::ShiftRows( int iStartRow, int iRowsToShift )
+void TimingData::InsertRows( int iStartRow, int iRowsToAdd )
 {
 	for( unsigned i = 0; i < m_BPMSegments.size(); i++ )
 	{
-		int &iSegStart = m_BPMSegments[i].m_iStartIndex;
-		if( iSegStart < iStartRow )
+		BPMSegment &bpm = m_BPMSegments[i];
+		if( bpm.m_iStartIndex < iStartRow )
 			continue;
-
-		iSegStart += iRowsToShift;
-		iSegStart = max( iSegStart, iStartRow );
+		bpm.m_iStartIndex += iRowsToAdd;
 	}
 
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
-		int &iSegStartRow = m_StopSegments[i].m_iStartRow;
-		if( iSegStartRow < iStartRow )
+		StopSegment &stop = m_StopSegments[i];
+		if( stop.m_iStartRow < iStartRow )
 			continue;
-		iSegStartRow += iRowsToShift;
-		iSegStartRow = max( iSegStartRow, iStartRow );
+		stop.m_iStartRow += iRowsToAdd;
 	}
+}
+
+/* Delete BPMChanges and StopSegments in [iStartRow,iRowsToDelete), and shift down. */
+void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
+{
+	/* Remember the BPM at the end of the region being deleted. */
+	float fNewBPM = this->GetBPMAtBeat( NoteRowToBeat(iStartRow+iRowsToDelete) );
+
+	/* We're moving rows up.  Delete any BPM changes and stops in the region being
+	 * deleted. */
+	for( unsigned i = 0; i < m_BPMSegments.size(); i++ )
+	{
+		BPMSegment &bpm = m_BPMSegments[i];
+		if( bpm.m_iStartIndex < iStartRow )
+			continue;
+
+		if( bpm.m_iStartIndex < iStartRow+iRowsToDelete )
+		{
+			m_BPMSegments.erase( m_BPMSegments.begin()+i, m_BPMSegments.begin()+i+1 );
+			--i;
+		}
+
+		bpm.m_iStartIndex -= iRowsToDelete;
+	}
+
+	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
+	{
+		StopSegment &stop = m_StopSegments[i];
+		if( stop.m_iStartRow < iStartRow )
+			continue;
+		if( stop.m_iStartRow < iStartRow+iRowsToDelete )
+		{
+			m_StopSegments.erase( m_StopSegments.begin()+i, m_StopSegments.begin()+i+1 );
+			--i;
+		}
+
+		stop.m_iStartRow -= iRowsToDelete;
+	}
+
+	this->SetBPMAtRow( iStartRow, fNewBPM );
+}
+
+void TimingData::ShiftRows( int iStartRow, int iRowsToShift )
+{
+	if( iRowsToShift > 0 )
+		InsertRows( iStartRow, iRowsToShift );
+	else
+		DeleteRows( iStartRow, -iRowsToShift );
 }
 
 bool TimingData::HasBpmChanges() const
