@@ -2978,9 +2978,9 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				float fStopLength = fMarkerEnd - fMarkerStart;
 				// be sure not to clobber the row at the start - a row at the end
 				// can be dropped safely, though
-				NoteDataUtil::ShiftRows( m_NoteDataEdit, 
+				NoteDataUtil::DeleteRows( m_NoteDataEdit, 
 										 m_NoteFieldEdit.m_iBeginMarker + 1,
-										 -m_NoteFieldEdit.m_iEndMarker+m_NoteFieldEdit.m_iBeginMarker
+										 m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
 									   );
 				m_pSong->m_Timing.ShiftRows( m_NoteFieldEdit.m_iBeginMarker + 1,
 										     -m_NoteFieldEdit.m_iEndMarker+m_NoteFieldEdit.m_iBeginMarker
@@ -3002,6 +3002,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 
 				if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no BPMSegment at the current beat
 					m_pSong->AddStopSegment( StopSegment(m_NoteFieldEdit.m_iBeginMarker, fStopLength) );
+				m_NoteFieldEdit.m_iBeginMarker = -1;
 				m_NoteFieldEdit.m_iEndMarker = -1;
 				break;
 			}
