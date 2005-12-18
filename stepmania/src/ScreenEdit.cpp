@@ -2979,33 +2979,24 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				ASSERT( m_NoteFieldEdit.m_iBeginMarker!=-1 && m_NoteFieldEdit.m_iEndMarker!=-1 );
 				float fMarkerStart = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 				float fMarkerEnd = m_pSong->m_Timing.GetElapsedTimeFromBeat( NoteRowToBeat(m_NoteFieldEdit.m_iEndMarker) );
+
+				// The length of the stop segment we're going to create.  This includes time spent in any
+				// stops in the selection, which will be deleted and subsumed into the new stop.
 				float fStopLength = fMarkerEnd - fMarkerStart;
+
 				// be sure not to clobber the row at the start - a row at the end
 				// can be dropped safely, though
 				NoteDataUtil::DeleteRows( m_NoteDataEdit, 
 										 m_NoteFieldEdit.m_iBeginMarker + 1,
 										 m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
 									   );
-				m_pSong->m_Timing.ShiftRows( m_NoteFieldEdit.m_iBeginMarker + 1,
+				// XXX: this will push any stops inside the region to the top of it; that's weird, but
+				// will be overwritten below anyway
+				// delete all stops in the region first
+				m_pSong->m_Timing.ShiftRows( m_NoteFieldEdit.m_iBeginMarker,
 										     -m_NoteFieldEdit.m_iEndMarker+m_NoteFieldEdit.m_iBeginMarker
 										   );
-				unsigned i;
-				for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
-				{
-					float fStart = m_pSong->m_Timing.GetElapsedTimeFromBeat(NoteRowToBeat(m_pSong->m_Timing.m_StopSegments[i].m_iStartRow));
-					float fEnd = fStart + m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds;
-					if( fStart > fMarkerEnd || fEnd < fMarkerStart )
-						continue;
-					else {
-						if( fStart > fMarkerStart )
-							m_pSong->m_Timing.m_StopSegments[i].m_iStartRow = m_NoteFieldEdit.m_iBeginMarker;
-						m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds = fStopLength;
-						break;
-					}
-				}
-
-				if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no BPMSegment at the current beat
-					m_pSong->AddStopSegment( StopSegment(m_NoteFieldEdit.m_iBeginMarker, fStopLength) );
+				m_pSong->m_Timing.SetStopAtBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker), fStopLength );
 				m_NoteFieldEdit.m_iBeginMarker = -1;
 				m_NoteFieldEdit.m_iEndMarker = -1;
 				break;
