@@ -349,29 +349,40 @@ void TimingData::DeleteRows( int iStartRow, int iRowsToDelete )
 	for( unsigned i = 0; i < m_BPMSegments.size(); i++ )
 	{
 		BPMSegment &bpm = m_BPMSegments[i];
+
+		/* Before deleted region: */
 		if( bpm.m_iStartIndex < iStartRow )
 			continue;
 
+		/* Inside deleted region: */
 		if( bpm.m_iStartIndex < iStartRow+iRowsToDelete )
 		{
 			m_BPMSegments.erase( m_BPMSegments.begin()+i, m_BPMSegments.begin()+i+1 );
 			--i;
+			continue;
 		}
 
+		/* After deleted region: */
 		bpm.m_iStartIndex -= iRowsToDelete;
 	}
 
 	for( unsigned i = 0; i < m_StopSegments.size(); i++ )
 	{
 		StopSegment &stop = m_StopSegments[i];
+
+		/* Before deleted region: */
 		if( stop.m_iStartRow < iStartRow )
 			continue;
+
+		/* Inside deleted region: */
 		if( stop.m_iStartRow < iStartRow+iRowsToDelete )
 		{
 			m_StopSegments.erase( m_StopSegments.begin()+i, m_StopSegments.begin()+i+1 );
 			--i;
+			continue;
 		}
 
+		/* After deleted region: */
 		stop.m_iStartRow -= iRowsToDelete;
 	}
 
