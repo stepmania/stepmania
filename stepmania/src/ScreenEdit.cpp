@@ -3001,14 +3001,6 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				m_NoteFieldEdit.m_iEndMarker = -1;
 				break;
 			}
-		// MD 11/02/03 - Converting a pause at the current beat into beats.
-		//    I know this will break holds that cross the pause.  Anyone who
-		//    wants to rewrite this to fix that behavior is welcome to - I'm
-		//    not sure how exactly to do it without making this a lot longer
-		//    than it is.
-		// NOTE: Fixed this so that holds aren't broken by it.  Working in 2s and
-		// 3s makes this work better, too. :-)  It sorta makes you wonder WHY we
-		// don't bring it into 2s and 3s when we bring up the editor.
 		case convert_pause_to_beat:
 			{
 				float fBPMatPause = m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat );
