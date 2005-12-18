@@ -512,6 +512,45 @@ void InputMapper::SaveMappingsToDisk()
 	ini.WriteFile( SpecialFiles::KEYMAPS_PATH );
 }
 
+bool InputMapper::CheckForChangedInputDevicesAndRemap( CString &sMessage )
+{
+	//
+	// update last seen joysticks
+	//
+	vector<InputDevice> vDevices;
+	vector<CString> vsDescriptions;
+	INPUTMAN->GetDevicesAndDescriptions( vDevices, vsDescriptions );
+	CString sInputDevices = join( ",", vsDescriptions );
+
+	if( PREFSMAN->m_sLastSeenInputDevices.Get() == sInputDevices )
+		return false;
+
+	vector<CString> vsLastSeen;
+	split( PREFSMAN->m_sLastSeenInputDevices, ",", vsLastSeen );
+
+	vector<CString> vsConnects, vsDisconnects;
+	GetConnectsDisconnects( vsLastSeen, vsDescriptions, vsDisconnects, vsConnects );
+
+	sMessage.clear();
+	if( !vsConnects.empty() )
+		sMessage += "Connected: " + join( "\n", vsConnects ) + "\n";
+	if( !vsDisconnects.empty() )
+		sMessage += "Disconnected: " + join( "\n", vsDisconnects ) + "\n";
+
+	if( PREFSMAN->m_bAutoMapOnJoyChange )
+	{
+		sMessage += "Remapping all joysticks.";
+		AutoMapJoysticksForCurrentGame();
+		SaveMappingsToDisk();
+	}
+
+	LOG->Info( sMessage );
+
+	PREFSMAN->m_sLastSeenInputDevices.Set( sInputDevices );
+	PREFSMAN->SavePrefsToDisk();
+
+	return true;
+}
 
 void InputMapper::SetInputMap( const DeviceInput &DeviceI, const GameInput &GameI, int iSlotIndex )
 {

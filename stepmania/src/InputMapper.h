@@ -28,6 +28,7 @@ public:
 
 	void AddDefaultMappingsForCurrentGameIfUnmapped();
 	void AutoMapJoysticksForCurrentGame();
+	bool CheckForChangedInputDevicesAndRemap( CString &sMessageOut );
 
 	bool IsMapped( const DeviceInput &DeviceI );
 	bool IsMapped( const GameInput &GameI );

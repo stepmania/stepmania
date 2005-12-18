@@ -292,47 +292,6 @@ void StepMania::ResetGame()
 	PREFSMAN->SavePrefsToDisk();
 }
 
-void StepMania::CheckForChangedInputDevicesAndRemap()
-{
-	//
-	// update last seen joysticks
-	//
-	vector<InputDevice> vDevices;
-	vector<CString> vsDescriptions;
-	INPUTMAN->GetDevicesAndDescriptions( vDevices, vsDescriptions );
-	CString sInputDevices = join( ",", vsDescriptions );
-
-	if( PREFSMAN->m_sLastSeenInputDevices.Get() != sInputDevices )
-	{
-		vector<CString> vsLastSeen;
-		split( PREFSMAN->m_sLastSeenInputDevices, ",", vsLastSeen );
-
-		vector<CString> vsConnects, vsDisconnects;
-		GetConnectsDisconnects( vsLastSeen, vsDescriptions, vsDisconnects, vsConnects );
-
-		CString sMessage;
-		
-		if( !vsConnects.empty() )
-			sMessage += "Connected: " + join( "\n", vsConnects ) + "\n";
-		if( !vsDisconnects.empty() )
-			sMessage += "Disconnected: " + join( "\n", vsDisconnects ) + "\n";
-
-		if( PREFSMAN->m_bAutoMapOnJoyChange )
-		{
-			sMessage += "Remapping all joysticks.";
-			INPUTMAPPER->AutoMapJoysticksForCurrentGame();
-			INPUTMAPPER->SaveMappingsToDisk();
-		}
-
-		LOG->Info( sMessage );
-		SCREENMAN->SystemMessage( sMessage );
-
-		PREFSMAN->m_sLastSeenInputDevices.Set( sInputDevices );
-	}
-
-	PREFSMAN->SavePrefsToDisk();
-}
-
 static bool ChangeAppPri()
 {
 	if( PREFSMAN->m_BoostAppPriority.Get() == PrefsManager::BOOST_NO )
@@ -1142,7 +1101,9 @@ int main(int argc, char* argv[])
 	SCREENMAN->SetNewScreen( CommonMetrics::INITIAL_SCREEN );
 
 	// Do this after ThemeChanged so that we can show a system message
-	StepMania::CheckForChangedInputDevicesAndRemap();
+	CString sMessage;
+	if( INPUTMAPPER->CheckForChangedInputDevicesAndRemap(sMessage) )
+		SCREENMAN->SystemMessage( sMessage );
 
 	CodeDetector::RefreshCacheItems();
 
