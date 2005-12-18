@@ -19,6 +19,7 @@
 #include "LightsManager.h"
 #include "NetworkSyncManager.h"
 #include "RageTimer.h"
+#include "RageInput.h"
 
 #include "StepMania.h"
 
@@ -96,6 +97,13 @@ void GameLoop()
 
 		/* Important:  Process input AFTER updating game logic, or input will be acting on song beat from last frame */
 		HandleInputEvents( fDeltaTime );
+
+		if( INPUTMAN->DevicesChanged() )
+		{
+			SAFE_DELETE( INPUTMAN );
+			INPUTMAN	= new RageInput( PREFSMAN->GetInputDrivers() );
+			StepMania::CheckForChangedInputDevicesAndRemap();
+		}
 
 		LIGHTSMAN->Update( fDeltaTime );
 

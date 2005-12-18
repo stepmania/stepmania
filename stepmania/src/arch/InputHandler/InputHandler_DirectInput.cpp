@@ -73,6 +73,7 @@ InputHandler_DInput::InputHandler_DInput()
 	CheckForDirectInputDebugMode();
 	
 	shutdown = false;
+	m_bDevicesChanged = false;
 	g_NumJoysticks = 0;
 
 	AppInstance inst;	
@@ -227,108 +228,116 @@ HRESULT GetDeviceState(LPDIRECTINPUTDEVICE2 dev, int size, void *ptr)
  * it out.  Be sure to call InputHandler::Update() between each poll. */
 void InputHandler_DInput::UpdatePolled(DIDevice &device, const RageTimer &tm)
 {
-	if( device.type == device.KEYBOARD )
+	switch( device.type )
 	{
-		unsigned char keys[256];
-
-		HRESULT hr = GetDeviceState(device.Device, 256, keys);
-		if ( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
-			return;
-
-		if ( hr != DI_OK )
+	default:
+		ASSERT(0);
+	case device.KEYBOARD:
 		{
-			LOG->MapLog( "UpdatePolled", hr_ssprintf(hr, "Failures on polled keyboard update") );
-			return;
-		}
+			unsigned char keys[256];
 
-		for( int k = 0; k < 256; ++k )
-		{
-			const int key = device.Inputs[k].num;
-			ButtonPressed(DeviceInput(device.dev, key), !!(keys[k] & 0x80));
-		}
-		return;
-	}
+			HRESULT hr = GetDeviceState(device.Device, 256, keys);
+			if ( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
+				return;
 
-	DIJOYSTATE state;
-
-	HRESULT hr = GetDeviceState(device.Device, sizeof(state), &state);
-	if ( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
-		return;
-
-	/* Set each known axis, button and POV. */
-	for(unsigned i = 0; i < device.Inputs.size(); ++i)
-	{
-		const input_t &in = device.Inputs[i];
-		const InputDevice dev = device.dev;
-
-		switch(in.type)
-		{
-		case in.BUTTON:
-		{
-			DeviceInput di(dev, JOY_BUTTON_1 + in.num, -1, tm);
-			ButtonPressed(di, !!state.rgbButtons[in.ofs - DIJOFS_BUTTON0]);
-			break;
-		}
-
-		case in.AXIS:
-		{
-			JoystickButton neg = NUM_JOYSTICK_BUTTONS, pos = NUM_JOYSTICK_BUTTONS;
-			int val = 0;
-			switch(in.ofs)
+			if ( hr != DI_OK )
 			{
-			case DIJOFS_X:  neg = JOY_LEFT; pos = JOY_RIGHT;
-							val = state.lX;
-							break;
-			case DIJOFS_Y:  neg = JOY_UP; pos = JOY_DOWN;
-							val = state.lY;
-							break;
-			case DIJOFS_Z:  neg = JOY_Z_UP; pos = JOY_Z_DOWN;
-							val = state.lZ;
-							break;
-			case DIJOFS_RX: neg = JOY_ROT_LEFT; pos = JOY_ROT_RIGHT;
-							val = state.lRx;
-							break;
-			case DIJOFS_RY: neg = JOY_ROT_UP; pos = JOY_ROT_DOWN;
-							val = state.lRy;
-							break;
-			case DIJOFS_RZ: neg = JOY_ROT_Z_UP; pos = JOY_ROT_Z_DOWN;
-							val = state.lRz;
-							break;
-			case DIJOFS_SLIDER(0):
-							neg = JOY_AUX_1; pos = JOY_AUX_2;
-							val = state.rglSlider[0];
-							break;
-			case DIJOFS_SLIDER(1):
-							neg = JOY_AUX_3; pos = JOY_AUX_4;
-							val = state.rglSlider[1];
-							break;
-			default: LOG->MapLog("unknown input", 
-							"Controller '%s' is returning an unknown joystick offset, %i",
-							device.JoystickInst.tszProductName, in.ofs );
-					 continue;
-			}
-			if( neg != NUM_JOYSTICK_BUTTONS )
-			{
-				float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
-				ButtonPressed(DeviceInput(dev, neg, max(-l,0), tm), val < -50);
-				ButtonPressed(DeviceInput(dev, pos, max(+l,0), tm), val > 50);
+				LOG->MapLog( "UpdatePolled", hr_ssprintf(hr, "Failures on polled keyboard update") );
+				return;
 			}
 
-			break;
-		}
-
-		case in.HAT:
-			if( in.num == 0 )
+			for( int k = 0; k < 256; ++k )
 			{
-				const int pos = TranslatePOV(state.rgdwPOV[in.ofs - DIJOFS_POV(0)]);
-				ButtonPressed(DeviceInput(dev, JOY_HAT_UP, -1, tm), !!(pos & HAT_UP_MASK));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, -1, tm), !!(pos & HAT_DOWN_MASK));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, -1, tm), !!(pos & HAT_LEFT_MASK));
-				ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, -1, tm), !!(pos & HAT_RIGHT_MASK));
+				const int key = device.Inputs[k].num;
+				ButtonPressed(DeviceInput(device.dev, key), !!(keys[k] & 0x80));
 			}
-
-			break;
 		}
+		break;
+	case device.JOYSTICK:
+		{
+			DIJOYSTATE state;
+
+			HRESULT hr = GetDeviceState(device.Device, sizeof(state), &state);
+			if ( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
+				return;
+
+			/* Set each known axis, button and POV. */
+			for(unsigned i = 0; i < device.Inputs.size(); ++i)
+			{
+				const input_t &in = device.Inputs[i];
+				const InputDevice dev = device.dev;
+
+				switch(in.type)
+				{
+				case in.BUTTON:
+				{
+					DeviceInput di(dev, JOY_BUTTON_1 + in.num, -1, tm);
+					ButtonPressed(di, !!state.rgbButtons[in.ofs - DIJOFS_BUTTON0]);
+					break;
+				}
+
+				case in.AXIS:
+				{
+					JoystickButton neg = NUM_JOYSTICK_BUTTONS, pos = NUM_JOYSTICK_BUTTONS;
+					int val = 0;
+					switch(in.ofs)
+					{
+					case DIJOFS_X:  neg = JOY_LEFT; pos = JOY_RIGHT;
+									val = state.lX;
+									break;
+					case DIJOFS_Y:  neg = JOY_UP; pos = JOY_DOWN;
+									val = state.lY;
+									break;
+					case DIJOFS_Z:  neg = JOY_Z_UP; pos = JOY_Z_DOWN;
+									val = state.lZ;
+									break;
+					case DIJOFS_RX: neg = JOY_ROT_LEFT; pos = JOY_ROT_RIGHT;
+									val = state.lRx;
+									break;
+					case DIJOFS_RY: neg = JOY_ROT_UP; pos = JOY_ROT_DOWN;
+									val = state.lRy;
+									break;
+					case DIJOFS_RZ: neg = JOY_ROT_Z_UP; pos = JOY_ROT_Z_DOWN;
+									val = state.lRz;
+									break;
+					case DIJOFS_SLIDER(0):
+									neg = JOY_AUX_1; pos = JOY_AUX_2;
+									val = state.rglSlider[0];
+									break;
+					case DIJOFS_SLIDER(1):
+									neg = JOY_AUX_3; pos = JOY_AUX_4;
+									val = state.rglSlider[1];
+									break;
+					default: LOG->MapLog("unknown input", 
+									"Controller '%s' is returning an unknown joystick offset, %i",
+									device.JoystickInst.tszProductName, in.ofs );
+							 continue;
+					}
+					if( neg != NUM_JOYSTICK_BUTTONS )
+					{
+						float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
+						ButtonPressed(DeviceInput(dev, neg, max(-l,0), tm), val < -50);
+						ButtonPressed(DeviceInput(dev, pos, max(+l,0), tm), val > 50);
+					}
+
+					break;
+				}
+
+				case in.HAT:
+					if( in.num == 0 )
+					{
+						const int pos = TranslatePOV(state.rgdwPOV[in.ofs - DIJOFS_POV(0)]);
+						ButtonPressed(DeviceInput(dev, JOY_HAT_UP, -1, tm), !!(pos & HAT_UP_MASK));
+						ButtonPressed(DeviceInput(dev, JOY_HAT_DOWN, -1, tm), !!(pos & HAT_DOWN_MASK));
+						ButtonPressed(DeviceInput(dev, JOY_HAT_LEFT, -1, tm), !!(pos & HAT_LEFT_MASK));
+						ButtonPressed(DeviceInput(dev, JOY_HAT_RIGHT, -1, tm), !!(pos & HAT_RIGHT_MASK));
+					}
+
+					break;
+				}
+			}
+		}
+		break;
 	}
 }
 
@@ -430,7 +439,7 @@ void InputHandler_DInput::PollAndAcquireDevices()
 	}
 }
 
-void InputHandler_DInput::Update(float fDeltaTime)
+void InputHandler_DInput::Update( float fDeltaTime )
 {
 	RageTimer zero;
 	zero.SetZero();
@@ -451,6 +460,10 @@ void InputHandler_DInput::Update(float fDeltaTime)
 	InputHandler::UpdateTimer();
 }
 
+bool InputHandler_DInput::DevicesChanged()
+{
+	return m_bDevicesChanged;
+}
 
 void InputHandler_DInput::InputThreadMain()
 {

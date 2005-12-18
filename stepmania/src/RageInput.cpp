@@ -34,6 +34,17 @@ void RageInput::Update( float fDeltaTime )
 		m_pDevices[i]->Update( fDeltaTime );
 }
 
+bool RageInput::DevicesChanged()
+{
+	/* Update optional devices. */
+	for( unsigned i = 0; i < m_pDevices.size(); ++i )
+	{
+		if( m_pDevices[i]->DevicesChanged() )
+			return true;
+	}
+	return false;
+}
+
 void RageInput::GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut )
 {
 	for( unsigned i = 0; i < m_pDevices.size(); ++i )

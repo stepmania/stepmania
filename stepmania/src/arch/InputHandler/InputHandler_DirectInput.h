@@ -12,11 +12,13 @@ public:
 	~InputHandler_DInput();
 	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );
 	void Update( float fDeltaTime );
+	bool DevicesChanged();
 	void WindowReset();
 
 private:
 	RageThread InputThread;
 	bool shutdown;
+	bool m_bDevicesChanged;
 
 	void UpdatePolled( DIDevice &device, const RageTimer &tm );
 	void UpdateBuffered( DIDevice &device, const RageTimer &tm );

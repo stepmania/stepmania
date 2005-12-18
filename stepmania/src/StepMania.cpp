@@ -289,6 +289,13 @@ void StepMania::ResetGame()
 		TEXTUREMAN->DoDelayedDelete();
 	}
 
+	PREFSMAN->SavePrefsToDisk();
+
+	CheckForChangedInputDevicesAndRemap();
+}
+
+void StepMania::CheckForChangedInputDevicesAndRemap()
+{
 	//
 	// update last seen joysticks
 	//
@@ -299,21 +306,26 @@ void StepMania::ResetGame()
 
 	if( PREFSMAN->m_sLastSeenInputDevices.Get() != sInputDevices )
 	{
-		LOG->Info( "Input devices changed from '%s' to '%s'.", PREFSMAN->m_sLastSeenInputDevices.Get().c_str(), sInputDevices.c_str() );
+		CString sMessage = ssprintf(
+			"Input devices changed from '%s' to '%s'.", 
+			PREFSMAN->m_sLastSeenInputDevices.Get().c_str(), 
+			sInputDevices.c_str() );
 
 		if( PREFSMAN->m_bAutoMapOnJoyChange )
 		{
-			LOG->Info( "Remapping joysticks." );
+			sMessage += "\nRemapping joysticks.";
 			INPUTMAPPER->AutoMapJoysticksForCurrentGame();
 			INPUTMAPPER->SaveMappingsToDisk();
 		}
+
+		LOG->Info( sMessage );
+		SCREENMAN->SystemMessage( sMessage );
 
 		PREFSMAN->m_sLastSeenInputDevices.Set( sInputDevices );
 	}
 
 	PREFSMAN->SavePrefsToDisk();
 }
-
 
 static bool ChangeAppPri()
 {
@@ -1099,6 +1111,8 @@ int main(int argc, char* argv[])
 	/* This initializes objects that change the SDL event mask, and has other
 	 * dependencies on the SDL video subsystem, so it must be initialized after DISPLAY. */
 	INPUTMAN	= new RageInput( PREFSMAN->GetInputDrivers() );
+
+	StepMania::CheckForChangedInputDevicesAndRemap();
 
 	// These things depend on the TextureManager, so do them after!
 	FONT		= new FontManager;

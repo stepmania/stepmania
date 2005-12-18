@@ -28,6 +28,7 @@ public:
 	InputHandler() { m_iInputsSinceUpdate = 0; }
 	virtual ~InputHandler() { }
 	virtual void Update( float fDeltaTime ) { }
+	virtual bool DevicesChanged() { return false; }
 	virtual void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut ) = 0;
 	
 	// Override to return a pretty string that's specific to the controller type.

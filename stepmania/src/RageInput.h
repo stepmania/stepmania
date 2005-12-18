@@ -15,6 +15,7 @@ public:
 	~RageInput();
 
 	void Update( float fDeltaTime );
+	bool DevicesChanged();
 	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vsDescriptionsOut );
 	void WindowReset();
 	void AddHandler( InputHandler *pHandler );

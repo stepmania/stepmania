@@ -16,6 +16,7 @@ namespace StepMania
 	void ApplyGraphicOptions();
 	void NORETURN HandleException( CString error );
 	void ResetGame();
+	void CheckForChangedInputDevicesAndRemap();
 	void ChangeCurrentGame( const Game* g );
 	void FocusChanged( bool bHasFocus );
 	bool AppHasFocus();
