@@ -10,7 +10,7 @@ class InputHandler_X11: public InputHandler
 public:
 	InputHandler_X11();
 	~InputHandler_X11();
-	void Update(float fDeltaTime);
+	void Update();
 	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
 };
 #define USE_INPUT_HANDLER_X11

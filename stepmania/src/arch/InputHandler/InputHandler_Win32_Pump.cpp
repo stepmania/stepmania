@@ -116,7 +116,7 @@ void InputHandler_Win32_Pump::InputThreadMain()
 	CHECKPOINT;
 }
 
-void InputHandler_Win32_Pump::Update( float fDeltaTime )
+void InputHandler_Win32_Pump::Update()
 {
 	if( !InputThread.IsCreated() )
 	{

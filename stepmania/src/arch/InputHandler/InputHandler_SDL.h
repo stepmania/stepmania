@@ -11,7 +11,7 @@ class InputHandler_SDL: public InputHandler
 	vector<SDL_Joystick *> Joysticks;
 
 public:
-	void Update(float fDeltaTime);
+	void Update();
 	InputHandler_SDL();
 	~InputHandler_SDL();
 	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);

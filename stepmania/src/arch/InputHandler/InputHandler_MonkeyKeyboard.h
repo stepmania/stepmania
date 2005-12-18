@@ -8,7 +8,7 @@
 class InputHandler_MonkeyKeyboard: public InputHandler
 {
 public:
-	void Update( float fDeltaTime );
+	void Update();
 	InputHandler_MonkeyKeyboard();
 	~InputHandler_MonkeyKeyboard();
 	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );

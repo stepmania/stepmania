@@ -9,7 +9,7 @@ class InputHandler_Linux_tty: public InputHandler
 	static void OnCrash(int);
 	
 public:
-	void Update(float fDeltaTime);
+	void Update();
 	InputHandler_Linux_tty();
 	~InputHandler_Linux_tty();
 	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);

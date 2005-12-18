@@ -27,7 +27,7 @@ class InputHandler
 public:
 	InputHandler() { m_iInputsSinceUpdate = 0; }
 	virtual ~InputHandler() { }
-	virtual void Update( float fDeltaTime ) { }
+	virtual void Update() { }
 	virtual bool DevicesChanged() { return false; }
 	virtual void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut ) = 0;
 	

@@ -56,7 +56,7 @@ int GetRandomKeyboadKey()
 }
 
 
-void InputHandler_MonkeyKeyboard::Update(float fDeltaTime)
+void InputHandler_MonkeyKeyboard::Update()
 {
 	if( !PREFSMAN->m_bMonkeyInput )
 	{

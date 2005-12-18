@@ -448,7 +448,7 @@ void InputHandler_DInput::PollAndAcquireDevices()
 	}
 }
 
-void InputHandler_DInput::Update( float fDeltaTime )
+void InputHandler_DInput::Update()
 {
 	RageTimer zero;
 	zero.SetZero();

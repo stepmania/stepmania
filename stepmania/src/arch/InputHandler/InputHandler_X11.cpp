@@ -140,7 +140,7 @@ InputHandler_X11::~InputHandler_X11()
 	X11Helper::Stop();
 }
 
-void InputHandler_X11::Update(float fDeltaTime)
+void InputHandler_X11::Update()
 {
 	XEvent event;
 

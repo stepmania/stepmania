@@ -54,7 +54,7 @@ InputHandler_Xbox::~InputHandler_Xbox()
 	}
 }
 
-void InputHandler_Xbox::Update(float fDeltaTime)
+void InputHandler_Xbox::Update()
 {
 	// check insertions and removals
 	DWORD dwInsert, dwRemove;

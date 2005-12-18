@@ -189,7 +189,7 @@ InputHandler_SDL::~InputHandler_SDL()
 		mySDL_EventState(Handled_SDL_Events[i], SDL_IGNORE);
 }
 
-void InputHandler_SDL::Update(float fDeltaTime)
+void InputHandler_SDL::Update()
 {
 	SDL_Event event;
 	while(SDL_GetEvent(event, SDL_EventMask))

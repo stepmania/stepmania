@@ -42,7 +42,7 @@ void RageInput::Update( float fDeltaTime )
 {
 	/* Update optional devices. */
 	for( unsigned i = 0; i < m_pDevices.size(); ++i )
-		m_pDevices[i]->Update( fDeltaTime );
+		m_pDevices[i]->Update();
 }
 
 bool RageInput::DevicesChanged()

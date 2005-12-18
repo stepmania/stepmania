@@ -11,7 +11,7 @@ public:
 	InputHandler_DInput();
 	~InputHandler_DInput();
 	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );
-	void Update( float fDeltaTime );
+	void Update();
 	bool DevicesChanged();
 	void WindowReset();
 

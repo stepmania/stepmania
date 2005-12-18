@@ -8,7 +8,7 @@ class USBDevice;
 class InputHandler_Win32_Pump: public InputHandler
 {
 public:
-	void Update( float fDeltaTime );
+	void Update();
 	InputHandler_Win32_Pump();
 	~InputHandler_Win32_Pump();
 	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );

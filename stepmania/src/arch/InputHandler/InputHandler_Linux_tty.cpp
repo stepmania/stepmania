@@ -161,7 +161,7 @@ InputHandler_Linux_tty::~InputHandler_Linux_tty()
 	handler = NULL;
 }
 
-void InputHandler_Linux_tty::Update(float fDeltaTime)
+void InputHandler_Linux_tty::Update()
 {
 	while (1)
 	{
