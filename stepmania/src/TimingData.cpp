@@ -67,9 +67,8 @@ void TimingData::AddStopSegment( const StopSegment &seg )
 }
 
 /* Change an existing BPM segment, merge identical segments together or insert a new one. */
-void TimingData::SetBPMAtBeat( float fBeat, float fBPM )
+void TimingData::SetBPMAtRow( int iNoteRow, float fBPM )
 {
-	int iNoteRow = BeatToNoteRow( fBeat );
 	float fBPS = fBPM / 60.0f;
 	unsigned i;
 	for( i=0; i<m_BPMSegments.size(); i++ )
@@ -93,9 +92,8 @@ void TimingData::SetBPMAtBeat( float fBeat, float fBPM )
 	}
 }
 
-void TimingData::SetStopAtBeat( float fBeat, float fSeconds )
+void TimingData::SetStopAtRow( int iRow, float fSeconds )
 {
-	int iRow = BeatToNoteRow( fBeat );
 	unsigned i;
 	for( i=0; i<m_StopSegments.size(); i++ )
 		if( m_StopSegments[i].m_iStartRow == iRow )

@@ -49,8 +49,10 @@ public:
 
 	void GetActualBPM( float &fMinBPMOut, float &fMaxBPMOut ) const;
 	float GetBPMAtBeat( float fBeat ) const;
-	void SetBPMAtBeat( float fBeat, float fBPM );
-	void SetStopAtBeat( float fBeat, float fSeconds );
+	void SetBPMAtRow( int iNoteRow, float fBPM );
+	void SetBPMAtBeat( float fBeat, float fBPM ) { SetBPMAtRow( BeatToNoteRow(fBeat), fBPM ); }
+	void SetStopAtRow( int iNoteRow, float fSeconds );
+	void SetStopAtBeat( float fBeat, float fSeconds ) { SetStopAtRow( BeatToNoteRow(fBeat), fSeconds ); }
 	void MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor );
 	void AddBPMSegment( const BPMSegment &seg );
 	void AddStopSegment( const StopSegment &seg );
