@@ -1894,15 +1894,6 @@ void NoteDataUtil::ScaleRegion( NoteData &nd, float fScale, int iStartIndex, int
 	nd.CopyAll( temp1 );
 }
 
-// deprecated
-void NoteDataUtil::ShiftRows( NoteData &nd, int iStartIndex, int iRowsToShift )
-{
-	if( iRowsToShift > 0 )
-		InsertRows( nd, iStartIndex, iRowsToShift );
-	else
-		DeleteRows( nd, iStartIndex, -iRowsToShift );
-}
-
 void NoteDataUtil::InsertRows( NoteData &nd, int iStartIndex, int iRowsToAdd )
 {
 	ASSERT( iRowsToAdd >= 0 );

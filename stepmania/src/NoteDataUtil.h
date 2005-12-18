@@ -103,9 +103,6 @@ namespace NoteDataUtil
 	void InsertRows( NoteData &nd, int iStartIndex, int iRowsToShift );
 	void DeleteRows( NoteData &nd, int iStartIndex, int iRowsToShift );
 
-	// If iRowsToShift > 0, add blank rows.  If iRowsToShift < 0, delete rows
-	void ShiftRows( NoteData &nd, int iStartIndex, int iRowsToShift );
-
 	void RemoveAllTapsOfType( NoteData& ndInOut, TapNote::Type typeToRemove );
 	void RemoveAllTapsExceptForType( NoteData& ndInOut, TapNote::Type typeToKeep );
 
