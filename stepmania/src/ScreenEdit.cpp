@@ -2990,12 +2990,8 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 										 m_NoteFieldEdit.m_iBeginMarker + 1,
 										 m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker
 									   );
-				// XXX: this will push any stops inside the region to the top of it; that's weird, but
-				// will be overwritten below anyway
-				// delete all stops in the region first
-				m_pSong->m_Timing.ShiftRows( m_NoteFieldEdit.m_iBeginMarker,
-										     -m_NoteFieldEdit.m_iEndMarker+m_NoteFieldEdit.m_iBeginMarker
-										   );
+				m_pSong->m_Timing.DeleteRows( m_NoteFieldEdit.m_iBeginMarker,
+										     m_NoteFieldEdit.m_iEndMarker-m_NoteFieldEdit.m_iBeginMarker );
 				m_pSong->m_Timing.SetStopAtRow( m_NoteFieldEdit.m_iBeginMarker, fStopLength );
 				m_NoteFieldEdit.m_iBeginMarker = -1;
 				m_NoteFieldEdit.m_iEndMarker = -1;
