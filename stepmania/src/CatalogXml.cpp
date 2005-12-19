@@ -16,7 +16,6 @@
 #include "GameManager.h"
 #include "StyleUtil.h"
 #include "ThemeManager.h"
-#include "PrefsManager.h"
 #include "Style.h"
 #include "CommonMetrics.h"
 #include "UnlockManager.h"

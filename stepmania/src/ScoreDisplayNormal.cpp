@@ -2,7 +2,6 @@
 #include "ScoreDisplayNormal.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "PrefsManager.h"
 #include "GameState.h"
 #include "ThemeManager.h"
 #include "PlayerState.h"

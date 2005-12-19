@@ -3,7 +3,6 @@
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
-#include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "Steps.h"
 #include "Course.h"

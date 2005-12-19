@@ -2,7 +2,6 @@
 #include "ModeSwitcher.h"
 #include "RageUtil.h"
 #include "GameState.h"
-#include "PrefsManager.h"
 #include "SongManager.h"
 #include "ThemeManager.h"
 #include "Style.h"

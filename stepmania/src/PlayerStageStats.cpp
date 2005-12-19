@@ -1,7 +1,6 @@
 #include "global.h"
 #include "PlayerStageStats.h"
 #include "RageLog.h"
-#include "PrefsManager.h"
 #include "ThemeManager.h"
 #include "Foreach.h"
 #include "LuaFunctions.h"

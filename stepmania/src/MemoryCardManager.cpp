@@ -3,7 +3,6 @@
 #include "arch/MemoryCard/MemoryCardDriver.h"	// for UsbStorageDevice
 #include "ScreenManager.h"
 #include "ThemeManager.h"
-#include "PrefsManager.h"
 #include "RageLog.h"
 #include "RageFileManager.h"
 #include "RageFileDriver.h"

@@ -3,7 +3,6 @@
 
 #include "global.h"
 #include "RageSoundReader_Preload.h"
-#include "PrefsManager.h"
 
 #define samplesize (2 * channels) /* 16-bit */
 

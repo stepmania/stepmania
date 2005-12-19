@@ -1,7 +1,6 @@
 #include "global.h"
 #include "ThemeManager.h"
 #include "RageLog.h"
-#include "PrefsManager.h"
 #include "RageException.h"
 #include "RageTimer.h"
 #include "RageUtil.h"

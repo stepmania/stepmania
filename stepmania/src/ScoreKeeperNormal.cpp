@@ -3,7 +3,6 @@
 #include "GameState.h"
 #include "PrefsManager.h"
 #include "Steps.h"
-#include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "GameState.h"
 #include "Course.h"

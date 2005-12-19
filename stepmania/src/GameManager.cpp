@@ -1,6 +1,5 @@
 #include "global.h"
 #include "GameManager.h"
-#include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
 #include "GameState.h"
 #include "GameInput.h"	// for GameButton constants

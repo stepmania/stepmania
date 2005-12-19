@@ -38,7 +38,6 @@ void NetworkSyncManager::GetListOfLANServers( vector<NetServerInfo>& AllServers 
 #include "GameState.h"
 #include "StatsManager.h"
 #include "Steps.h"
-#include "PrefsManager.h"
 #include "ProductInfo.h"
 #include "ScreenMessage.h"
 #include "GameManager.h"

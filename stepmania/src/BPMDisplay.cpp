@@ -2,7 +2,6 @@
 #include "BPMDisplay.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
 #include "GameState.h"
 #include "Course.h"
 #include "Style.h"

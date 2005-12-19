@@ -1,7 +1,6 @@
 #include "global.h"
 #include "Bookkeeper.h"
 #include "RageUtil.h"
-#include "PrefsManager.h"
 #include "RageLog.h"
 #include "IniFile.h"
 #include "GameConstantsAndTypes.h"

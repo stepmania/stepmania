@@ -5,7 +5,6 @@
 #include "ThemeMetric.h"
 #include "EnumHelper.h"
 #include "Foreach.h"
-#include "PrefsManager.h"
 #include "LuaManager.h"
 #include "GameManager.h"
 #include <float.h>
