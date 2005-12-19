@@ -2,7 +2,6 @@
 #include "DifficultyIcon.h"
 #include "RageUtil.h"
 #include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
 #include "RageLog.h"
 #include "Steps.h"
 #include "GameState.h"
