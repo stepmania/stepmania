@@ -49,6 +49,18 @@ private:
 	static bool s_bIsShowingDialog;
 };
 
+/* Register a thread created outside of RageThread.  This gives it a name for RageThread::GetCurThreadName,
+ * and allocates a slot for checkpoints. */
+class RageThreadRegister
+{
+public:
+	RageThreadRegister( const CString &sName );
+	~RageThreadRegister();
+
+private:
+	ThreadSlot *m_pSlot;
+};
+
 namespace Checkpoints
 {
 	void LogCheckpoints( bool yes=true );

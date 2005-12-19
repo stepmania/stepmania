@@ -277,6 +277,33 @@ void RageThread::CreateThisThread()
 	m_pSlot->pImpl = MakeThisThread();
 }
 
+RageThreadRegister::RageThreadRegister( const CString &sName )
+{
+	InitThreads();
+	LockMut( g_ThreadSlotsLock );
+	
+	int iSlot = FindEmptyThreadSlot();
+	
+	m_pSlot = &g_ThreadSlots[iSlot];
+	
+	strcpy( m_pSlot->name, sName );
+	sprintf( m_pSlot->ThreadFormattedOutput, "Thread: %s", sName.c_str() );
+
+	m_pSlot->id = GetThisThreadId();
+	m_pSlot->pImpl = MakeThisThread();
+
+}
+
+RageThreadRegister::~RageThreadRegister()
+{
+	LockMut( g_ThreadSlotsLock );
+
+	delete m_pSlot->pImpl;
+	m_pSlot->pImpl = NULL;
+	m_pSlot->Init();
+	m_pSlot = NULL;
+}
+
 const char *RageThread::GetCurThreadName()
 {
 	return GetThreadNameByID( GetCurrentThreadID() );
