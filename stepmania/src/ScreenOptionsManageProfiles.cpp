@@ -10,7 +10,6 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "OptionRowHandler.h"
-#include "PrefsManager.h"
 
 static ThemeMetric<CString> NEW_PROFILE_DEFAULT_NAME(	"ScreenOptionsManageProfiles", "NewProfileDefaultName" );
 

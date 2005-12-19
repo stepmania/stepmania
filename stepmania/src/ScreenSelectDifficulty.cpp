@@ -1,7 +1,6 @@
 #include "global.h"
 #include "ScreenSelectDifficulty.h"
 #include "ScreenManager.h"
-#include "PrefsManager.h"
 #include "GameSoundManager.h"
 #include "GameManager.h"
 #include "ThemeManager.h"

@@ -4,7 +4,6 @@
 #include "GameSoundManager.h"
 #include "NetworkSyncManager.h"
 #include "ThemeManager.h"
-#include "PrefsManager.h"
 #include "ScreenManager.h"
 #include "GameState.h"
 #include "AnnouncerManager.h"

@@ -3,7 +3,6 @@
 #include "ScreenManager.h"
 #include "PrefsManager.h"
 #include "GameConstantsAndTypes.h"
-#include "PrefsManager.h"
 #include "GameManager.h"
 #include "RageLog.h"
 #include "AnnouncerManager.h"
