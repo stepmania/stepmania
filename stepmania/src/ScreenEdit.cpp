@@ -2910,14 +2910,14 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 				default:		ASSERT(0);
 				}
 
-				int iOldClipboardBeats = m_NoteFieldEdit.m_iEndMarker - m_NoteFieldEdit.m_iBeginMarker;
-				int iNewClipboardBeats = lrintf( iOldClipboardBeats * fScale );
-				int iDeltaBeats = iNewClipboardBeats - iOldClipboardBeats;
-				int iNewClipboardEndBeat = m_NoteFieldEdit.m_iBeginMarker + iNewClipboardBeats;
-				if( iDeltaBeats > 0 )
-					NoteDataUtil::InsertRows( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, iDeltaBeats );
+				int iOldClipboardRow = m_NoteFieldEdit.m_iEndMarker - m_NoteFieldEdit.m_iBeginMarker;
+				int iNewClipboardRow = lrintf( iOldClipboardRow * fScale );
+				int iDeltaRows = iNewClipboardRow - iOldClipboardRow;
+				int iNewClipboardEndRow = m_NoteFieldEdit.m_iBeginMarker + iNewClipboardRow;
+				if( iDeltaRows > 0 )
+					NoteDataUtil::InsertRows( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, iDeltaRows );
 				else
-					NoteDataUtil::DeleteRows( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, -iDeltaBeats );
+					NoteDataUtil::DeleteRows( m_NoteDataEdit, m_NoteFieldEdit.m_iBeginMarker, -iDeltaRows );
 
 				m_pSong->m_Timing.ScaleRegion( fScale, m_NoteFieldEdit.m_iBeginMarker, m_NoteFieldEdit.m_iEndMarker );
 
@@ -2941,12 +2941,12 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 					sIter[i]->SetNoteData( ndTemp );
 				}
 
-				m_NoteFieldEdit.m_iEndMarker = iNewClipboardEndBeat;
+				m_NoteFieldEdit.m_iEndMarker = iNewClipboardEndRow;
 
 				float fOldBPM = m_pSong->GetBPMAtBeat( NoteRowToBeat(m_NoteFieldEdit.m_iBeginMarker) );
 				float fNewBPM = fOldBPM * fScale;
 				m_pSong->m_Timing.SetBPMAtRow( m_NoteFieldEdit.m_iBeginMarker, fNewBPM );
-				m_pSong->m_Timing.SetBPMAtRow( iNewClipboardEndBeat, fOldBPM );
+				m_pSong->m_Timing.SetBPMAtRow( iNewClipboardEndRow, fOldBPM );
 			}
 			break;
 		case play:
