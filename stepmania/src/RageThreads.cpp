@@ -190,8 +190,7 @@ static ThreadSlot *GetUnknownThreadSlot()
 	return g_pUnknownThreadSlot;
 }
 
-RageThread::RageThread():
-	m_bThisThread( false )
+RageThread::RageThread()
 {
 	m_pSlot = NULL;
 }
@@ -245,36 +244,6 @@ void RageThread::Create( int (*fn)(void *), void *data )
 	 * to make sure it's set before the thread actually starts.  (Otherwise, early
 	 * checkpoints might not have a completely set-up thread slot.) */
 	m_pSlot->pImpl = MakeThread( fn, data, &m_pSlot->id );
-}
-
-void RageThread::CreateThisThread()
-{
-	ASSERT( m_pSlot == NULL );
-	
-	InitThreads();
-	m_bThisThread = true;
-	LockMut( g_ThreadSlotsLock );
-	
-	int slotno = FindEmptyThreadSlot();
-	
-	m_pSlot = &g_ThreadSlots[slotno];
-	
-	if( name == "" )
-	{
-		if( LOG )
-			LOG->Warn( "Created a thread without naming it first." );
-		
-		/* If you don't name it, I will: */
-		strcpy( m_pSlot->name, "Jon" );
-	}
-	else
-	{
-		strcpy( m_pSlot->name, name.c_str() );
-	}
-	sprintf( m_pSlot->ThreadFormattedOutput, "Thread: %s", name.c_str() );
-
-	m_pSlot->id = GetThisThreadId();
-	m_pSlot->pImpl = MakeThisThread();
 }
 
 RageThreadRegister::RageThreadRegister( const CString &sName )
@@ -338,12 +307,7 @@ int RageThread::Wait()
 {
 	ASSERT( m_pSlot != NULL );
 	ASSERT( m_pSlot->pImpl != NULL );
-	int ret;
-	
-	if( m_bThisThread )
-		ret = 0;
-	else
-		ret = m_pSlot->pImpl->Wait();
+	int ret = m_pSlot->pImpl->Wait();
 
 	LockMut( g_ThreadSlotsLock );
 

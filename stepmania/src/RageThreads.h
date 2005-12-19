@@ -14,7 +14,6 @@ public:
 	void SetName( const CString &n ) { name = n; }
 	CString GetName() const { return name; }
 	void Create( int (*fn)(void *), void *data );
-	void CreateThisThread();
 
 	/* For crash handlers: kill or suspend all threads (except for
 	 * the running one) immediately. */ 
@@ -43,7 +42,6 @@ public:
 private:
 	ThreadSlot *m_pSlot;
 	CString name;
-	bool m_bThisThread;
 
 	static bool s_bSystemSupportsTLS;
 	static bool s_bIsShowingDialog;
