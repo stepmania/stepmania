@@ -114,6 +114,17 @@ void TimingData::SetStopAtRow( int iRow, float fSeconds )
 	}
 }
 
+float TimingData::GetStopAtRow( int iNoteRow ) const
+{
+	for( unsigned i=0; i<m_StopSegments.size(); i++ )
+	{
+		if( m_StopSegments[i].m_iStartRow == iNoteRow )
+			return m_StopSegments[i].m_fStopSeconds;
+	}
+
+	return 0;
+}
+
 /* Multiply the BPM in the range [fStartBeat,fEndBeat) by fFactor. */
 void TimingData::MultiplyBPMInBeatRange( int iStartIndex, int iEndIndex, float fFactor )
 {
