@@ -33,10 +33,7 @@ static int g_iNumIOProcCalls = 0;
 
 static void NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info )
 {
-	static RageThread HALNotificationThread;
-	
-	HALNotificationThread.SetName( "HAL notification thread" );
-	HALNotificationThread.CreateThisThread();
+	static RageThreadRegister HALNotificationThread( "HAL notification thread" );
 
 	// Remove and release the observer
 	CFRunLoopRef runLoopRef = CFRunLoopGetCurrent();
@@ -264,13 +261,11 @@ OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
 								const AudioTimeStamp *inOutputTime,
 								void *inClientData )
 {
-	static RageThread HALIOThread;
 	static bool bThreadCreated = false;
 	
 	if( !likely(bThreadCreated) )
 	{
-		HALIOThread.SetName( "HAL I/O thread" );
-		HALIOThread.CreateThisThread();
+		static RageThreadRegister HALNotificationThread( "HAL I/O thread" );
 		bThreadCreated = true;
 	}
 	
