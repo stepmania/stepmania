@@ -28,22 +28,6 @@ void ScreenTestInput::Init()
 	m_textDevices.SetDiffuse( RageColor(1,1,1,1) );
 	m_textDevices.SetZoom( 0.7f );
 	m_textDevices.SetHorizAlign( Actor::align_left );
-	{
-		vector<InputDevice> vDevices;
-		vector<CString> vDescriptions;
-		vector<CString> vs;
-		INPUTMAN->GetDevicesAndDescriptions( vDevices, vDescriptions );
-		ASSERT( vDevices.size() == vDescriptions.size() );
-		for( unsigned i=0; i<vDevices.size(); ++i )
-		{
-			const CString sDescription = vDescriptions[i];
-			InputDevice device = vDevices[i];
-			if( sDescription == "MonkeyKeyboard" )
-				continue;	// hide this
-			vs.push_back( ssprintf("%s (%s)", sDescription.c_str(), InputDeviceToString(device).c_str()) );
-		}
-		m_textDevices.SetText( join("\n",vs) );
-	}
 	this->AddChild( &m_textDevices );
 
 	m_textInputs.LoadFromFont( THEME->GetPathF("Common","normal") );
@@ -68,6 +52,29 @@ void ScreenTestInput::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
 
+	//
+	// Update devices text
+	//
+	{
+		vector<InputDevice> vDevices;
+		vector<CString> vDescriptions;
+		vector<CString> vs;
+		INPUTMAN->GetDevicesAndDescriptions( vDevices, vDescriptions );
+		ASSERT( vDevices.size() == vDescriptions.size() );
+		for( unsigned i=0; i<vDevices.size(); ++i )
+		{
+			const CString sDescription = vDescriptions[i];
+			InputDevice device = vDevices[i];
+			if( sDescription == "MonkeyKeyboard" )
+				continue;	// hide this
+			vs.push_back( ssprintf("%s (%s)", sDescription.c_str(), InputDeviceToString(device).c_str()) );
+		}
+		m_textDevices.SetText( join("\n",vs) );
+	}
+
+	//
+	// Update input texts
+	//
 	vector<CString> asInputs;
 
 	DeviceInput di;
