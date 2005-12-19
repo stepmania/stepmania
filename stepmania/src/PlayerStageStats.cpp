@@ -373,7 +373,7 @@ void PlayerStageStats::GetLifeRecord( float *fLifeOut, int iNumSamples, float fS
 	}
 }
 
-/* If "rollover" is true, we're being called before gameplay begins, so we can record
+/* If bRollover is true, we're being called before gameplay begins, so we can record
  * the amount of the first combo that comes from the previous song. */
 void PlayerStageStats::UpdateComboList( float fSecond, bool bRollover )
 {

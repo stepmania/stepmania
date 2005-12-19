@@ -43,9 +43,6 @@ const int FILE_CACHE_VERSION = 144;	// increment this to invalidate cache
 const float DEFAULT_MUSIC_SAMPLE_LENGTH = 12.f;
 
 
-//////////////////////////////
-// Song
-//////////////////////////////
 Song::Song()
 {
 	FOREACH_BackgroundLayer( i )
