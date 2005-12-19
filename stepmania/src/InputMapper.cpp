@@ -439,6 +439,8 @@ void InputMapper::AutoMapJoysticksForCurrentGame()
 	}
 }
 
+static const CString DEVICE_INPUT_SEPARATOR = ":";	// this isn't used in any key names
+
 void InputMapper::ReadMappingsFromDisk()
 {
 	ASSERT( GAMEMAN != NULL );
@@ -465,7 +467,7 @@ void InputMapper::ReadMappingsFromDisk()
 			GameI.fromString( pGame, name );
 
 			vector<CString> sDeviceInputStrings;
-			split( value, ",", sDeviceInputStrings, false );
+			split( value, DEVICE_INPUT_SEPARATOR, sDeviceInputStrings, false );
 
 			for( unsigned i=0; i<sDeviceInputStrings.size() && i<unsigned(NUM_GAME_TO_DEVICE_SLOTS); i++ )
 			{
@@ -479,7 +481,6 @@ void InputMapper::ReadMappingsFromDisk()
 
 	AddDefaultMappingsForCurrentGameIfUnmapped();
 }
-
 
 void InputMapper::SaveMappingsToDisk()
 {
@@ -506,7 +507,7 @@ void InputMapper::SaveMappingsToDisk()
 			while( asValues.size() && asValues.back() == "" )
 				asValues.erase( asValues.begin()+asValues.size()-1 );
 			
-			CString sValueString = join( ",", asValues );
+			CString sValueString = join( DEVICE_INPUT_SEPARATOR, asValues );
 
 			ini.SetValue( pGame->m_szName, sNameString, sValueString );
 		}
@@ -534,7 +535,7 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( CString &sMessage )
 	vector<CString> vsConnects, vsDisconnects;
 	GetConnectsDisconnects( vsLastSeen, vsDescriptions, vsDisconnects, vsConnects );
 
-	sMessage.clear();
+	sMessage = CString();
 	if( !vsConnects.empty() )
 		sMessage += "Connected: " + join( "\n", vsConnects ) + "\n";
 	if( !vsDisconnects.empty() )
