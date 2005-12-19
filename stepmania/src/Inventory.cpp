@@ -27,7 +27,7 @@ struct Item
 	int iCombo;
 	CString sModifier;
 };
-vector<Item>	g_Items;
+static vector<Item>	g_Items;
 
 void ReloadItems()
 {
