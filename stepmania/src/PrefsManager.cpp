@@ -317,7 +317,6 @@ PrefsManager::PrefsManager() :
 	m_bLockCourseDifficulties		( "LockCourseDifficulties",		true ),
 	m_ShowDancingCharacters			( "ShowDancingCharacters",		SDC_Random ),
 	m_bUseUnlockSystem				( "UseUnlockSystem",			false ),
-	m_bAutoMapOnJoyChange			( "AutoMapOnJoyChange",			true ),
 	m_fGlobalOffsetSeconds			( "GlobalOffsetSeconds",		0 ),
 	m_iProgressiveLifebar			( "ProgressiveLifebar",			0 ),
 	m_iProgressiveStageLifebar		( "ProgressiveStageLifebar",	0 ),
@@ -361,7 +360,6 @@ PrefsManager::PrefsManager() :
 	m_sAdditionalSongFolders		( "AdditionalSongFolders",		"" ),
 	m_sAdditionalFolders			( "AdditionalFolders",			"" ),
 	m_sLastSeenVideoDriver			( "LastSeenVideoDriver",		"" ),
-	m_sLastSeenInputDevices			( "LastSeenInputDevices",		"" ),
 #if defined(WIN32)
 	m_iLastSeenMemory				( "LastSeenMemory",				0 ),
 #endif

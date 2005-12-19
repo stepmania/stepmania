@@ -160,7 +160,6 @@ public:
 	enum ShowDancingCharacters { SDC_Off = 0, SDC_Random = 1, SDC_Select = 2};
 	Preference<ShowDancingCharacters,int>		m_ShowDancingCharacters;
 	Preference<bool>	m_bUseUnlockSystem;
-	Preference<bool>	m_bAutoMapOnJoyChange;
 	Preference<float>	m_fGlobalOffsetSeconds;
 	Preference<int>		m_iProgressiveLifebar;
 	Preference<int>		m_iProgressiveStageLifebar;
@@ -229,7 +228,6 @@ public:
 	Preference<CString>	m_sAdditionalFolders;
 
 	Preference<CString>	m_sLastSeenVideoDriver;
-	Preference<CString>	m_sLastSeenInputDevices;
 #if defined(WIN32)
 	Preference<int>		m_iLastSeenMemory;
 #endif

@@ -12,6 +12,9 @@
 #include "Style.h"
 #include "SpecialFiles.h"
 
+static Preference<CString> g_sLastSeenInputDevices( "LastSeenInputDevices", "" );
+static Preference<bool> g_bAutoMapOnJoyChange( "AutoMapOnJoyChange", true );
+
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
 
 InputMapper::InputMapper()
@@ -522,11 +525,11 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( CString &sMessage )
 	INPUTMAN->GetDevicesAndDescriptions( vDevices, vsDescriptions );
 	CString sInputDevices = join( ",", vsDescriptions );
 
-	if( PREFSMAN->m_sLastSeenInputDevices.Get() == sInputDevices )
+	if( g_sLastSeenInputDevices.Get() == sInputDevices )
 		return false;
 
 	vector<CString> vsLastSeen;
-	split( PREFSMAN->m_sLastSeenInputDevices, ",", vsLastSeen );
+	split( g_sLastSeenInputDevices, ",", vsLastSeen );
 
 	vector<CString> vsConnects, vsDisconnects;
 	GetConnectsDisconnects( vsLastSeen, vsDescriptions, vsDisconnects, vsConnects );
@@ -537,7 +540,7 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( CString &sMessage )
 	if( !vsDisconnects.empty() )
 		sMessage += "Disconnected: " + join( "\n", vsDisconnects ) + "\n";
 
-	if( PREFSMAN->m_bAutoMapOnJoyChange )
+	if( g_bAutoMapOnJoyChange )
 	{
 		sMessage += "Remapping all joysticks.";
 		AutoMapJoysticksForCurrentGame();
@@ -546,7 +549,7 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( CString &sMessage )
 
 	LOG->Info( sMessage );
 
-	PREFSMAN->m_sLastSeenInputDevices.Set( sInputDevices );
+	g_sLastSeenInputDevices.Set( sInputDevices );
 	PREFSMAN->SavePrefsToDisk();
 
 	return true;
