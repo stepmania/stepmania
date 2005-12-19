@@ -2998,27 +2998,14 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 			}
 		case convert_pause_to_beat:
 			{
-				float fBPMatPause = m_pSong->GetBPMAtBeat( GAMESTATE->m_fSongBeat );
-				unsigned i;
-				for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
-				{
-					if( m_pSong->m_Timing.m_StopSegments[i].m_iStartRow == BeatToNoteRow(GAMESTATE->m_fSongBeat) )
-						break;
-				}
+				float fStopSeconds = m_pSong->m_Timing.GetStopAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat) );
+				m_pSong->m_Timing.SetStopAtBeat( GAMESTATE->m_fSongBeat, 0 );
 
-				if( i == m_pSong->m_Timing.m_StopSegments.size() )	// there is no BPMSegment at the current beat
-					break;
-				else	// StopSegment being modified is m_Timing.m_StopSegments[i]
-				{
-					float fStopLength = m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds;
-					m_pSong->m_Timing.m_StopSegments.erase( m_pSong->m_Timing.m_StopSegments.begin()+i,
-												   m_pSong->m_Timing.m_StopSegments.begin()+i+1);
-					fStopLength *= fBPMatPause;
-					fStopLength /= 60;
-					// don't move the step from where it is, just move everything later
-					NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopLength) );
-					m_pSong->m_Timing.InsertRows( BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopLength) );
-				}
+				float fStopBeats = fStopSeconds * m_pSong->GetBPMAtBeat(GAMESTATE->m_fSongBeat) / 60;
+
+				// don't move the step from where it is, just move everything later
+				NoteDataUtil::InsertRows( m_NoteDataEdit, BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopBeats) );
+				m_pSong->m_Timing.InsertRows( BeatToNoteRow(GAMESTATE->m_fSongBeat) + 1, BeatToNoteRow(fStopSeconds) );
 			}
 			break;
 		case undo:
