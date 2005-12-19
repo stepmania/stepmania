@@ -87,7 +87,7 @@ void FontManager::UnloadFont( Font *fp )
 		return;
 	}
 	
-	RageException::Throw( "Unloaded an unknown font (%p)", fp );
+	FAIL_M( ssprintf("Unloaded an unknown font (%p)", fp) );
 }
 
 /*
