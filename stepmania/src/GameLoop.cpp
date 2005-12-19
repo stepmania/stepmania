@@ -15,6 +15,7 @@
 #include "MemoryCardManager.h"
 #include "ScreenManager.h"
 #include "InputFilter.h"
+#include "InputMapper.h"
 #include "RageFileManager.h"
 #include "LightsManager.h"
 #include "NetworkSyncManager.h"
@@ -101,7 +102,9 @@ void GameLoop()
 		if( INPUTMAN->DevicesChanged() )
 		{
 			INPUTMAN->LoadDrivers();
-			StepMania::CheckForChangedInputDevicesAndRemap();
+			CString sMessage;
+			if( INPUTMAPPER->CheckForChangedInputDevicesAndRemap(sMessage) )
+				SCREENMAN->SystemMessage( sMessage );
 		}
 
 		LIGHTSMAN->Update( fDeltaTime );
