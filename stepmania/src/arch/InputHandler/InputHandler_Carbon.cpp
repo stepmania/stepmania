@@ -36,7 +36,8 @@ static inline Boolean IntValue( const void *o, int *n )
 	return CFNumberGetValue( CFNumberRef(o), kCFNumberIntType, n );
 }
 
-/* This is just awful, these aren't objects, treating them as such leads
+/*
+ * This is just awful, these aren't objects, treating them as such leads
  * to: (*object)->function(object [, argument]...)
  * Instead, do: CALL(object, function [, argument]...)
  */
@@ -198,8 +199,8 @@ bool Device::Open( io_object_t device )
 	// open the interface
 	if( (ret = CALL(mInterface, open, 0)) != kIOReturnSuccess )
 	{
-		PrintIOErr(ret, "Failed to open the interface.");
-		CALL(mInterface, Release);
+		PrintIOErr( ret, "Failed to open the interface." );
+		CALL( mInterface, Release );
 		mInterface = NULL;
 		return false;
 	}
@@ -214,8 +215,8 @@ bool Device::Open( io_object_t device )
 	
 	if( (ret = CALL(mQueue, create, 0, 32)) != kIOReturnSuccess )
 	{
-		PrintIOErr(ret, "Failed to create the queue.");
-		CALL(mQueue, Release);
+		PrintIOErr( ret, "Failed to create the queue." );
+		CALL( mQueue, Release );
 		mQueue = NULL;
 		return false;
 	}
@@ -695,17 +696,17 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 
 static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *sem )
 {
-	CFRelease(o); // we don't need this any longer
+	CFRelease( o ); // we don't need this any longer
 	((RageSemaphore *)sem)->Post();
 }
 
-int InputHandler_Carbon::Run(void *data)
+int InputHandler_Carbon::Run( void *data )
 {
 	InputHandler_Carbon *This = (InputHandler_Carbon *)data;
 	CFRunLoopRef loopRef = CFRunLoopGetCurrent();
 	int n = 0;
 	
-	CFRetain(loopRef);
+	CFRetain( loopRef );
 	FOREACH( Device *, This->mDevices, i )
 		(*i)->StartQueue( loopRef, InputHandler_Carbon::QueueCallBack, This, n++ );
 	This->mLoopRef = loopRef;
@@ -770,7 +771,7 @@ static io_iterator_t GetDeviceIterator( mach_port_t mp, int usagePage, int usage
 	return iter;
 }
 
-InputHandler_Carbon::InputHandler_Carbon() : mMasterPort(0), mSem("Input thread started")
+InputHandler_Carbon::InputHandler_Carbon() : mMasterPort( 0 ), mSem( "Input thread started" )
 {
 	// Get a Mach port to initiate communication with I/O Kit.
 	mach_port_t masterPort;
@@ -785,7 +786,7 @@ InputHandler_Carbon::InputHandler_Carbon() : mMasterPort(0), mSem("Input thread 
 	mMasterPort = masterPort;
 
 	// Find the joysticks
-	io_iterator_t iter = GetDeviceIterator(masterPort, kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick );
+	io_iterator_t iter = GetDeviceIterator( masterPort, kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick );
 	
 	if( iter )
 	{
@@ -833,16 +834,16 @@ InputHandler_Carbon::InputHandler_Carbon() : mMasterPort(0), mSem("Input thread 
 		IOObjectRelease( iter );
 	}
 	
-	mInputThread.SetName( "InputThread" );
-	mInputThread.Create(InputHandler_Carbon::Run, this);
+	mInputThread.SetName( "Input thread" );
+	mInputThread.Create( InputHandler_Carbon::Run, this );
 	// Wait for the run loop to start before returning.
 	mSem.Wait();
 }
 
 void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<CString>& desc )
 {
-	dev.push_back(DEVICE_KEYBOARD);
-	desc.push_back("Keyboard");
+	dev.push_back( DEVICE_KEYBOARD );
+	desc.push_back( "Keyboard" );
 
 	FOREACH_CONST( Device *, mDevices, i )
 	{
