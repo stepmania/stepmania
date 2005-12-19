@@ -76,6 +76,12 @@ struct ThreadSlot
 		used = false;
 	}
 
+	void Release()
+	{
+		SAFE_DELETE( pImpl );
+		Init();
+	}
+
 	const char *GetThreadName() const;
 };
 
@@ -267,9 +273,7 @@ RageThreadRegister::~RageThreadRegister()
 {
 	LockMut( g_ThreadSlotsLock );
 
-	delete m_pSlot->pImpl;
-	m_pSlot->pImpl = NULL;
-	m_pSlot->Init();
+	m_pSlot->Release();
 	m_pSlot = NULL;
 }
 
@@ -311,9 +315,7 @@ int RageThread::Wait()
 
 	LockMut( g_ThreadSlotsLock );
 
-	delete m_pSlot->pImpl;
-	m_pSlot->pImpl = NULL;
-	m_pSlot->Init();
+	m_pSlot->Release();
 	m_pSlot = NULL;
 
 	return ret;
