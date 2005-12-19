@@ -416,10 +416,11 @@ void PlayerStageStats::UpdateComboList( float fSecond, bool bRollover )
 	}
 
 	Combo_t &combo = ComboList.back();
+	if( !bRollover && combo.fStartSecond == -9999 )
+		combo.fStartSecond = 0;
+
 	combo.fSizeSeconds = fSecond - combo.fStartSecond;
 	combo.cnt = cnt;
-	if( !bRollover && combo.fStartSecond == -9999 )
-		combo.fStartSecond = fSecond;
 
 	if( bRollover )
 		combo.rollover = cnt;
