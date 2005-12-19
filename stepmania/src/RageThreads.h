@@ -7,13 +7,6 @@ struct ThreadSlot;
 class RageTimer;
 class RageThread
 {
-	ThreadSlot *m_pSlot;
-	CString name;
-	bool m_bThisThread;
-
-	static bool s_bSystemSupportsTLS;
-	static bool s_bIsShowingDialog;
-
 public:
 	RageThread();
 	~RageThread();
@@ -46,6 +39,14 @@ public:
 
 	static bool GetIsShowingDialog() { return s_bIsShowingDialog; }
 	static void SetIsShowingDialog( bool b ) { s_bIsShowingDialog = b; }
+
+private:
+	ThreadSlot *m_pSlot;
+	CString name;
+	bool m_bThisThread;
+
+	static bool s_bSystemSupportsTLS;
+	static bool s_bIsShowingDialog;
 };
 
 namespace Checkpoints
