@@ -45,6 +45,7 @@ void ScreenSMOnlineLogin::Init()
 		FOREACH_PlayerNumber( pn )
 			g_ProfileLine[0].m_vEnabledForPlayers.insert( pn );
 
+		g_ProfileLine[0].m_bAllowThemeItems = false;
 		vector<OptionRowDefinition> vDefs( &g_ProfileLine[0], &g_ProfileLine[ARRAYSIZE(g_ProfileLine)] );
 		vector<OptionRowHandler*> vHands( vDefs.size(), NULL );
 
