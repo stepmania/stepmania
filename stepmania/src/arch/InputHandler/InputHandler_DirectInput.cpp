@@ -71,7 +71,8 @@ static int GetNumUsbHidDevices()
 {
 	int i = 0;	
 	bool b = RegistryAccess::GetRegValue( "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\HidUsb\\Enum", "Count", i );
-	ASSERT( b );
+	// The "Enum" key doesn't exist if no hid devices are attached, so it's expected that GetRegValue will sometimes fail.
+	// TODO: Does this work in Win98 and Win2K?
 	return i;
 }
 
