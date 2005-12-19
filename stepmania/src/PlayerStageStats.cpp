@@ -375,7 +375,7 @@ void PlayerStageStats::GetLifeRecord( float *fLifeOut, int iNumSamples, float fS
 
 /* If "rollover" is true, we're being called before gameplay begins, so we can record
  * the amount of the first combo that comes from the previous song. */
-void PlayerStageStats::UpdateComboList( float fSecond, bool rollover )
+void PlayerStageStats::UpdateComboList( float fSecond, bool bRollover )
 {
 	// Don't save combo stats in endless courses, or could run OOM in a few hours.
 	if( GAMESTATE->m_pCurCourse && GAMESTATE->m_pCurCourse->IsEndless() )
@@ -384,7 +384,7 @@ void PlayerStageStats::UpdateComboList( float fSecond, bool rollover )
 	if( fSecond < 0 )
 		return;
 
-	if( !rollover )
+	if( !bRollover )
 	{
 		fFirstSecond = min( fSecond, fFirstSecond );
 		fLastSecond = max( fSecond, fLastSecond );
@@ -408,7 +408,7 @@ void PlayerStageStats::UpdateComboList( float fSecond, bool rollover )
 		 * recording rollover, the combo hasn't started yet (within this song), so put
 		 * a placeholder in and set it on the next call.  (Otherwise, start will be less
 		 * than fFirstPos.) */
-		if( rollover )
+		if( bRollover )
 			NewCombo.fStartSecond = -9999;
 		else
 			NewCombo.fStartSecond = fSecond;
@@ -418,10 +418,10 @@ void PlayerStageStats::UpdateComboList( float fSecond, bool rollover )
 	Combo_t &combo = ComboList.back();
 	combo.fSizeSeconds = fSecond - combo.fStartSecond;
 	combo.cnt = cnt;
-	if( !rollover && combo.fStartSecond == -9999 )
+	if( !bRollover && combo.fStartSecond == -9999 )
 		combo.fStartSecond = fSecond;
 
-	if( rollover )
+	if( bRollover )
 		combo.rollover = cnt;
 }
 
