@@ -207,9 +207,6 @@ public:
 	// have the same key, or else the profile's data will be discarded.
 	Preference<bool>	m_bSignProfileData;
 	
-	/* Editor prefs: */
-	Preference<bool>	m_bEditorShowBGChangesPlay;
-
 	// course ranking
 	enum CourseSortOrders { COURSE_SORT_SONGS, COURSE_SORT_METER, COURSE_SORT_METER_SUM, COURSE_SORT_RANK };
 	Preference<CourseSortOrders,int>	m_CourseSortOrder;
@@ -312,7 +309,7 @@ protected:
 
 
 /* This is global, because it can be accessed by crash handlers and error handlers
- * that are run after PREFSMAN shuts down (and probably don't want to deref tht
+ * that are run after PREFSMAN shuts down (and probably don't want to deref that
  * pointer anyway). */
 extern bool			g_bAutoRestart;
 

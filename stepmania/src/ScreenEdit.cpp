@@ -35,6 +35,7 @@
 #include "NotesWriterSM.h"
 
 static Preference<float> g_iDefaultRecordLength( "DefaultRecordLength", 4 );
+static Preference<bool> g_bEditorShowBGChangesPlay( "EditorShowBGChangesPlay", false );
 
 //
 // Defines specific to ScreenEdit
@@ -2050,7 +2051,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		m_Player.Load( m_NoteDataEdit );
 		GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerController = PREFSMAN->m_AutoPlay;
 
-		if( PREFSMAN->m_bEditorShowBGChangesPlay )
+		if( g_bEditorShowBGChangesPlay )
 		{
 			/* FirstBeat affects backgrounds, so commit changes to memory (not to disk)
 			 * and recalc it. */
@@ -2089,7 +2090,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	m_sprOverlay->PlayCommand( EditStateToString(em) );
 	m_sprUnderlay->PlayCommand( EditStateToString(em) );
 
-	m_Background.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == STATE_EDITING );
+	m_Background.SetHidden( !g_bEditorShowBGChangesPlay || em == STATE_EDITING );
 	m_autoHeader->SetHidden( em != STATE_EDITING );
 	m_textInputTips.SetHidden( em != STATE_EDITING );
 	m_textInfo.SetHidden( em != STATE_EDITING );
@@ -2104,7 +2105,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 	m_NoteFieldEdit.SetHidden( em != STATE_EDITING );
 	m_NoteFieldRecord.SetHidden( em != STATE_RECORDING && em != STATE_RECORDING_PAUSED );
 	m_Player.SetHidden( em != STATE_PLAYING );
-	m_Foreground.SetHidden( !PREFSMAN->m_bEditorShowBGChangesPlay || em == STATE_EDITING );
+	m_Foreground.SetHidden( !g_bEditorShowBGChangesPlay || em == STATE_EDITING );
 
 	switch( em )
 	{

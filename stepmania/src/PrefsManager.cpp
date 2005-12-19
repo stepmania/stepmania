@@ -350,7 +350,6 @@ PrefsManager::PrefsManager() :
 	m_bAnisotropicFiltering			( "AnisotropicFiltering",		0 ),
 
 	m_bSignProfileData				( "SignProfileData",			false ),
-	m_bEditorShowBGChangesPlay		( "EditorShowBGChangesPlay",	false ),
 	m_CourseSortOrder				( "CourseSortOrder",			COURSE_SORT_SONGS ),
 	m_bMoveRandomToEnd				( "MoveRandomToEnd",			false ),
 	m_bSubSortByNumSteps			( "SubSortByNumSteps",			false ),
