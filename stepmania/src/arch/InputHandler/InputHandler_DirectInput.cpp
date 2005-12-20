@@ -211,19 +211,19 @@ static int TranslatePOV(DWORD value)
 	return HAT_VALS[value];
 }
 
-HRESULT GetDeviceState(LPDIRECTINPUTDEVICE2 dev, int size, void *ptr)
+static HRESULT GetDeviceState( LPDIRECTINPUTDEVICE2 dev, int size, void *ptr )
 {
-	HRESULT hr = IDirectInputDevice2_GetDeviceState(dev, size, ptr);
+	HRESULT hr = dev->GetDeviceState( size, ptr );
 	if( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
 	{
-		hr = IDirectInputDevice2_Acquire( dev );
-		if ( hr != DI_OK )
+		hr = dev->Acquire();
+		if( hr != DI_OK )
 		{
 			LOG->Trace( hr_ssprintf(hr, "?") );
 			return hr;
 		}
 
-		hr = IDirectInputDevice2_GetDeviceState(dev, size, ptr);
+		hr = dev->GetDeviceState( size, ptr );
 	}
 
 	return hr;
