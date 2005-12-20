@@ -3,6 +3,8 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 
+#include <windows.h>
+
 /* Given "HKEY_LOCAL_MACHINE\hardware\foo", return "hardware\foo", and place
  * the HKEY_LOCAL_MACHINE constant in key. */
 static bool GetRegKeyType( const RString &sIn, RString &sOut, HKEY &key )
