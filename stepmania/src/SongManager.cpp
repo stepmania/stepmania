@@ -102,6 +102,9 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 	LOG->Trace( "Found %d songs in %f seconds.", (int)m_pSongs.size(), tm.GetDeltaTime() );
 }
 
+
+static ThemeMetric<CString> FOLDER_CONTAINS_MUSIC_FILES( "SongManager", "The folder '%s' appears to be a song folder.  All song folders must reside in a group folder.  For example, 'Songs/Originals/My Song'." );
+
 void SongManager::SanityCheckGroupDir( CString sDir ) const
 {
 	// Check to see if they put a song directly inside the group folder.
@@ -110,14 +113,7 @@ void SongManager::SanityCheckGroupDir( CString sDir ) const
 	GetDirListing( sDir + "/*.ogg", arrayFiles );
 	GetDirListing( sDir + "/*.wav", arrayFiles );
 	if( !arrayFiles.empty() )
-		RageException::Throw( 
-			"The folder '%s' contains music files.\n\n"
-			"This means that you have a music outside of a song folder.\n"
-			"All song folders must reside in a group folder.  For example, 'Songs/Originals/MySong'.\n"
-			"See the StepMania readme for more info.",
-			sDir.c_str()
-		);
-	
+		RageException::Throw( FOLDER_CONTAINS_MUSIC_FILES.GetValue(), sDir.c_str() );	
 }
 
 void SongManager::AddGroup( CString sDir, CString sGroupDirName )

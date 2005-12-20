@@ -664,6 +664,13 @@ found_defaults:
 	LOG->Info( "Video renderers: '%s'", PREFSMAN->m_sVideoRenderers.Get().c_str() );
 }
 
+static ThemeMetric<CString> ERROR_INITIALIZING_CARD		( "StepMania", "There was an error while initializing your video card." );
+static ThemeMetric<CString> ERROR_DONT_FILE_BUG			( "StepMania", "Please do not file this error as a bug!  Use the web page below to troubleshoot this problem." );
+static ThemeMetric<CString> ERROR_VIDEO_DRIVER				( "StepMania", "Video Driver: %s" );
+static ThemeMetric<CString> ERROR_NO_VIDEO_RENDERERS		( "StepMania", "No video renderers attempted." );
+static ThemeMetric<CString> ERROR_INITIALIZING				( "StepMania", "Initializing %s..." );
+static ThemeMetric<CString> ERROR_UNKNOWN_VIDEO_RENDERER	( "StepMania", "Unknown video renderer value: %s" );
+
 RageDisplay *CreateDisplay()
 {
 	/* We never want to bother users with having to decide which API to use.
@@ -694,16 +701,16 @@ RageDisplay *CreateDisplay()
 	VideoModeParams params;
 	StepMania::GetPreferredVideoModeParams( params );
 
-	CString error = "There was an error while initializing your video card.\n\n"
-		"Please do not file this error as a bug!  Use the web page below to troubleshoot this problem.\n\n"
-		VIDEO_TROUBLESHOOTING_URL "\n\n"
-		"Video Driver: "+GetVideoDriverName()+"\n\n";
+	CString error = ERROR_INITIALIZING_CARD.GetValue()+"\n\n"+ 
+		ERROR_DONT_FILE_BUG.GetValue()+"\n\n"
+		VIDEO_TROUBLESHOOTING_URL "\n\n"+
+		ssprintf(ERROR_VIDEO_DRIVER.GetValue(), GetVideoDriverName().c_str())+"\n\n";
 
 	vector<CString> asRenderers;
 	split( PREFSMAN->m_sVideoRenderers, ",", asRenderers, true );
 
 	if( asRenderers.empty() )
-		RageException::Throw("No video renderers attempted.");
+		RageException::Throw( ERROR_NO_VIDEO_RENDERERS.GetValue() );
 
 	for( unsigned i=0; i<asRenderers.size(); i++ )
 	{
@@ -716,7 +723,7 @@ RageDisplay *CreateDisplay()
 			CString sError = pRet->Init( params, PREFSMAN->m_bAllowUnacceleratedRenderer );
 			if( sError == "" )
 				return pRet;
-			error += "Initializing OpenGL...\n" + sError;
+			error += ssprintf(ERROR_INITIALIZING.GetValue(),"OpenGL")+"\n" + sError;
 			delete pRet;
 #endif
 		}
@@ -727,14 +734,18 @@ RageDisplay *CreateDisplay()
 			CString sError = pRet->Init( params );
 			if( sError == "" )
 				return pRet;
-			error += "Initializing Direct3D...\n" + sError;
+			error += ssprintf(ERROR_INITIALIZING.GetValue(),"Direct3D")+"\n" + sError;
 			delete pRet;
 #endif
 		}
 		else if( sRenderer.CompareNoCase("null")==0 )
+		{
 			return new RageDisplay_Null( params );
+		}
 		else
-			RageException::Throw("Unknown video renderer value: %s", sRenderer.c_str() );
+		{
+			RageException::Throw( ERROR_UNKNOWN_VIDEO_RENDERER.GetValue(), sRenderer.c_str() );
+		}
 
 		error += "\n\n\n";
 	}
@@ -893,6 +904,9 @@ static void ApplyLogPreferences()
 	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
 }
 
+static ThemeMetric<CString> COULDNT_OPEN_LOADING_WINDOW( "StepMania", "Couldn't open any loading windows." );
+
+
 #ifdef _XBOX
 void __cdecl main()
 #else
@@ -997,7 +1011,7 @@ int main(int argc, char* argv[])
 	/* This requires PREFSMAN, for PREFSMAN->m_bShowLoadingWindow. */
 	LoadingWindow *loading_window = MakeLoadingWindow();
 	if( loading_window == NULL )
-		RageException::Throw( "Couldn't open any loading windows." );
+		RageException::Throw( COULDNT_OPEN_LOADING_WINDOW.GetValue() );
 
 	srand( time(NULL) );	// seed number generator	
 	

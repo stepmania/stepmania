@@ -9,15 +9,17 @@
 #include "arch.h"
 #include "arch_platform.h"
 #include "Foreach.h"
+#include "ThemeMetric.h"
 
 #include "InputHandler/Selector_InputHandler.h"
+static ThemeMetric<CString> INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
 void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
 {
 	vector<CString> DriversToTry;
 	split(drivers, ",", DriversToTry, true);
 
 	if( DriversToTry.empty() )
-		RageException::Throw( "Input Handlers cannot be empty." );
+		RageException::Throw( INPUT_HANDLERS_EMPTY.GetValue() );
 
 	CString Driver;
 
@@ -177,6 +179,8 @@ MemoryCardDriver *MakeMemoryCardDriver()
 #include "MovieTexture/Selector_MovieTexture.h"
 static void DumpAVIDebugInfo( const CString& fn );
 /* Try drivers in order of preference until we find one that works. */
+static ThemeMetric<CString> MOVIE_DRIVERS_EMPTY		( "Arch", "Movie Drivers cannot be empty." );
+static ThemeMetric<CString> COULDNT_CREATE_MOVIE_DRIVER( "Arch", "Couldn't create a movie driver." );
 RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 {
 	DumpAVIDebugInfo( ID.filename );
@@ -185,7 +189,7 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 	split( PREFSMAN->GetMovieDrivers(), ",", DriversToTry, true );
 	
 	if( DriversToTry.empty() )
-		RageException::Throw( "Movie Drivers cannot be empty." );
+		RageException::Throw( MOVIE_DRIVERS_EMPTY.GetValue() );
 
 	CString Driver;
 	RageMovieTexture *ret = NULL;
@@ -220,7 +224,7 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 		}
 	}
 	if (!ret)
-		RageException::Throw("Couldn't create a movie texture");
+		RageException::Throw( COULDNT_CREATE_MOVIE_DRIVER.GetValue() );
 
 	LOG->Trace("Created movie texture \"%s\" with driver \"%s\"",
 		ID.filename.c_str(), Driver.c_str() );
@@ -228,13 +232,14 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 }
 
 #include "Sound/Selector_RageSoundDriver.h"
+static ThemeMetric<CString> SOUND_DRIVERS_CANNOT_EMPTY( "Arch", "Sound Drivers cannot be empty." );
 RageSoundDriver *MakeRageSoundDriver(CString drivers)
 {
 	vector<CString> DriversToTry;
 	split(drivers, ",", DriversToTry, true);
 
 	if( DriversToTry.empty() )
-		RageException::Throw( "Sound Drivers cannot be empty." );
+		RageException::Throw( SOUND_DRIVERS_CANNOT_EMPTY.GetValue() );
 
 	CString Driver;
 	RageSoundDriver *ret = NULL;

@@ -218,6 +218,7 @@ void ArchHooks_Unix::SetTime( tm newtime )
 #include "RageFileManager.h"
 #include <sys/stat.h>
 
+static ThemeMetric<CString> COULDNT_FIND_SONGS( "ArchHooks_Unix", "Couldn't find 'Songs'" );
 void ArchHooks_Unix::MountInitialFilesystems( const CString &sDirOfExecutable )
 {
 #if defined(LINUX)
@@ -258,7 +259,7 @@ void ArchHooks_Unix::MountInitialFilesystems( const CString &sDirOfExecutable )
 	if( Root == "" && !stat( RageFileManagerUtil::sInitialWorkingDirectory + "/Songs", &st ) && st.st_mode&S_IFDIR )
 		Root = RageFileManagerUtil::sInitialWorkingDirectory;
 	if( Root == "" )
-		RageException::Throw( "Couldn't find \"Songs\"" );
+		RageException::Throw( COULDNT_FIND_SONGS );
 			
 	FILEMAN->Mount( "dir", Root, "/" );
 #else

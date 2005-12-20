@@ -20,7 +20,6 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "NoteData.h"
-#include "RageException.h"
 #include "GameManager.h"
 #include "NoteDataUtil.h"
 #include "NotesLoaderSM.h"
