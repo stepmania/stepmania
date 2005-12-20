@@ -501,7 +501,9 @@ void NetworkSyncManager::StartRequest(short position)
 	NetPlayerClient->blocking=false;
 
 }
-	
+
+static LocalizedString CONNECTION_SUCCESSFUL( "NetworkSyncManager", "Connection to '%s' successful." );
+static LocalizedString CONNECTION_FAILED	( "NetworkSyncManager", "Connection failed." );
 void NetworkSyncManager::DisplayStartupStatus()
 {
 	CString sMessage("");
@@ -512,13 +514,13 @@ void NetworkSyncManager::DisplayStartupStatus()
 		//Networking wasn't attepmpted
 		return;
 	case 1:
-		sMessage = "Connection to " + m_ServerName + " successful.";
+		sMessage = ssprintf( CONNECTION_SUCCESSFUL.GetValue(), m_ServerName.c_str() );
 		break;
 	case 2:
-		sMessage = "Connection failed.";
+		sMessage = CONNECTION_FAILED.GetValue();
 		break;
 	}
-	SCREENMAN->SystemMessage(sMessage);
+	SCREENMAN->SystemMessage( sMessage );
 }
 
 void NetworkSyncManager::Update(float fDeltaTime)
@@ -565,13 +567,14 @@ void NetworkSyncManager::Update(float fDeltaTime)
 	}
 }
 
+static LocalizedString CONNECTION_DROPPED( "NetworkSyncManager", "Connection to server dropped." );
 void NetworkSyncManager::ProcessInput()
 {
 	//If we're disconnected, just exit
 	if ((NetPlayerClient->state!=NetPlayerClient->skCONNECTED) || 
 			NetPlayerClient->IsError())
 	{
-		SCREENMAN->SystemMessageNoAnimate("Connection to server dropped.");
+		SCREENMAN->SystemMessageNoAnimate( CONNECTION_DROPPED );
 		useSMserver=false;
 		isSMOnline = false;
 		FOREACH_PlayerNumber(pn)

@@ -155,6 +155,8 @@ void ScreenSyncOverlay::UpdateText()
 	m_textStatus.SetText( s );
 }
 
+static LocalizedString CANT_SYNC_WHILE_PLAYING_A_COURSE	("ScreenSyncOverlay","Can't sync while playing a course.");
+static LocalizedString SYNC_CHANGES_REVERTED			("ScreenSyncOverlay","Sync changes reverted.");
 bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 {
 	if( !IsGameplay() )
@@ -172,7 +174,7 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 	case KEY_F12:
 		if( GAMESTATE->IsCourseMode() )
 		{
-			SCREENMAN->SystemMessage( "Can't sync while playing a course." );
+			SCREENMAN->SystemMessage( CANT_SYNC_WHILE_PLAYING_A_COURSE );
 			return true;
 		}
 		break;
@@ -183,7 +185,7 @@ bool ScreenSyncOverlay::OverlayInput( const InputEventPlus &input )
 	switch( input.DeviceI.button )
 	{
 	case KEY_F4:
-		SCREENMAN->SystemMessage( "Sync changes reverted." );
+		SCREENMAN->SystemMessage( SYNC_CHANGES_REVERTED );
 		GAMESTATE->RevertSyncChanges();
 		break;
 	case KEY_F9:

@@ -640,7 +640,7 @@ int CompareCStringsDesc(const void* str1, const void* str2)
 	return int(s1->CompareNoCase( LPCTSTR(s2) ) > 0);
 }
 
-void SortCStringArray( CStringArray &arrayCStrings, const bool bSortAscending )
+void SortRStringArray( CStringArray &arrayCStrings, const bool bSortAscending )
 {
 	/*sort( arrayCStrings.begin(), arrayCStrings.end(),
 			bSortAscending?CompareCStringsAsc:CompareCStringsDesc);*/

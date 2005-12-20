@@ -27,7 +27,7 @@ static bool CodePageConvert(CString &txt, int cp)
 	size = MultiByteToWideChar(cp, MB_ERR_INVALID_CHARS, txt.data(), txt.size(), (wchar_t *) out.data(), size);
 	ASSERT( size != 0 );
 
-	txt = WStringToCString(out);
+	txt = WStringToRString(out);
 	return true;
 }
 

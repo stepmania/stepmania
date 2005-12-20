@@ -218,7 +218,7 @@ void ArchHooks_Unix::SetTime( tm newtime )
 #include "RageFileManager.h"
 #include <sys/stat.h>
 
-static ThemeMetric<CString> COULDNT_FIND_SONGS( "ArchHooks_Unix", "Couldn't find 'Songs'" );
+static LocalizedString COULDNT_FIND_SONGS( "ArchHooks_Unix", "Couldn't find 'Songs'" );
 void ArchHooks_Unix::MountInitialFilesystems( const CString &sDirOfExecutable )
 {
 #if defined(LINUX)

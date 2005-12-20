@@ -28,6 +28,7 @@ ScreenSMOnlineLogin::ScreenSMOnlineLogin(CString sClassName) : ScreenOptions(sCl
 	LOG->Trace( "ScreenSMOnlineLogin::ScreenSMOnlineLogin()" );
 }
 
+static LocalizedString DEFINE_A_PROFILE( "ScreenSMOnlineLogin", "You must define a Profile." );
 void ScreenSMOnlineLogin::Init()
 {
 	ScreenOptions::Init();
@@ -37,7 +38,7 @@ void ScreenSMOnlineLogin::Init()
 
 	if( g_ProfileLine[0].m_vsChoices.empty() )
 	{
-		SCREENMAN->SystemMessage("You Must Define A Profile!");
+		SCREENMAN->SystemMessage( DEFINE_A_PROFILE );
 		SCREENMAN->SetNewScreen("ScreenProfileOptions");
 	}
     else
@@ -92,6 +93,7 @@ void ScreenSMOnlineLogin::ExportOptions( int iRow, const vector<PlayerNumber> &v
 	}
 }
 
+static LocalizedString UNIQUE_PROFILE( "ScreenSMOnlineLogin", "Each player needs a unique Profile." );
 void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 {
 	if( SM == SM_PasswordDone )
@@ -141,7 +143,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 		if(GAMESTATE->IsPlayerEnabled((PlayerNumber) 0) && GAMESTATE->IsPlayerEnabled((PlayerNumber) 1) &&
 			(GAMESTATE->GetPlayerDisplayName((PlayerNumber) 0) == GAMESTATE->GetPlayerDisplayName((PlayerNumber) 1)))
 		{
-			SCREENMAN->SystemMessage("Each Player Needs A Unique Profile!");
+			SCREENMAN->SystemMessage( UNIQUE_PROFILE );
 			SCREENMAN->SetNewScreen("ScreenSMOnlineLogin");
 		}
 		else

@@ -1151,10 +1151,10 @@ ProfileLoadResult Profile::LoadEditableDataFromDir( CString sDir )
 	ini.GetValue( "Editable", "WeightPounds",			m_iWeightPounds );
 
 	// This is data that the user can change, so we have to validate it.
-	wstring wstr = CStringToWstring(m_sDisplayName);
+	wstring wstr = RStringToWstring(m_sDisplayName);
 	if( wstr.size() > PROFILE_MAX_DISPLAY_NAME_LENGTH )
 		wstr = wstr.substr(0, PROFILE_MAX_DISPLAY_NAME_LENGTH);
-	m_sDisplayName = WStringToCString(wstr);
+	m_sDisplayName = WStringToRString(wstr);
 	// TODO: strip invalid chars?
 	if( m_iWeightPounds != 0 )
 		CLAMP( m_iWeightPounds, 20, 1000 );

@@ -102,7 +102,7 @@ static void GetVideoCodecDebugInfo()
 		CHECKPOINT;
 		if( ICGetInfo(hic, &info, sizeof(ICINFO)) )
 		{
-			CheckCodecVersion( FourCCToString(info.fccHandler), WStringToCString(info.szDescription) );
+			CheckCodecVersion( FourCCToString(info.fccHandler), WStringToRString(info.szDescription) );
 			CHECKPOINT;
 
 			LOG->Info( "    %s: %ls (%ls)",
@@ -311,7 +311,7 @@ CString MovieTexture_DShow::GetActiveFilterList()
 
 		if( ret != "" )
 			ret += ", ";
-		ret += WStringToCString(FilterInfo.achName);
+		ret += WStringToRString(FilterInfo.achName);
 
 		if( FilterInfo.pGraph )
 			FilterInfo.pGraph->Release();
@@ -347,7 +347,7 @@ CString MovieTexture_DShow::Create()
 
     // Add the source filter
     CComPtr<IBaseFilter>    pFSrc;          // Source Filter
-    wstring wFileName = CStringToWstring(actualID.filename);
+    wstring wFileName = RStringToWstring(actualID.filename);
 
 	// if this fails, it's probably because the user doesn't have DivX installed
 	/* No, it also happens if the movie can't be opened for some reason; for example,

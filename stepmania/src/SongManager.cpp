@@ -103,7 +103,7 @@ void SongManager::InitSongsFromDisk( LoadingWindow *ld )
 }
 
 
-static ThemeMetric<CString> FOLDER_CONTAINS_MUSIC_FILES( "SongManager", "The folder '%s' appears to be a song folder.  All song folders must reside in a group folder.  For example, 'Songs/Originals/My Song'." );
+static LocalizedString FOLDER_CONTAINS_MUSIC_FILES( "SongManager", "The folder '%s' appears to be a song folder.  All song folders must reside in a group folder.  For example, 'Songs/Originals/My Song'." );
 
 void SongManager::SanityCheckGroupDir( CString sDir ) const
 {
@@ -161,7 +161,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 	// Find all group directories in "Songs" folder
 	vector<CString> arrayGroupDirs;
 	GetDirListing( sDir+"*", arrayGroupDirs, true );
-	SortCStringArray( arrayGroupDirs );
+	SortRStringArray( arrayGroupDirs );
 	StripCvs( arrayGroupDirs );
 
 	FOREACH_CONST( CString, arrayGroupDirs, s )	// foreach dir in /Songs/
@@ -174,7 +174,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 		vector<CString> arraySongDirs;
 		GetDirListing( sDir+sGroupDirName + "/*", arraySongDirs, true, true );
 		StripCvs( arraySongDirs );
-		SortCStringArray( arraySongDirs );
+		SortRStringArray( arraySongDirs );
 
 		LOG->Trace("Attempting to load %i songs from \"%s\"", int(arraySongDirs.size()),
 				   (sDir+sGroupDirName).c_str() );
@@ -227,7 +227,7 @@ void SongManager::LoadGroupSymLinks(CString sDir, CString sGroupFolder)
 	// Find all symlink files in this folder
 	vector<CString> arraySymLinks;
 	GetDirListing( sDir+sGroupFolder+"/*.include", arraySymLinks, false );
-	SortCStringArray( arraySymLinks );
+	SortRStringArray( arraySymLinks );
 	for( unsigned s=0; s< arraySymLinks.size(); s++ )	// for each symlink in this dir, add it in as a song.
 	{
 		MsdFile		msdF;
@@ -524,14 +524,14 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 		vector<CString> vsCourseGroupNames;
 		GetDirListing( COURSES_DIR+"*", vsCourseGroupNames, true );
 		StripCvs( vsCourseGroupNames );
-		SortCStringArray( vsCourseGroupNames );
+		SortRStringArray( vsCourseGroupNames );
 		
 		FOREACH( CString, vsCourseGroupNames, sCourseGroup )	// for each dir in /Courses/
 		{
 			// Find all CRS files in this group directory
 			vector<CString> vsCoursePaths;
 			GetDirListing( COURSES_DIR + *sCourseGroup + "/*.crs", vsCoursePaths, false, true );
-			SortCStringArray( vsCoursePaths );
+			SortRStringArray( vsCoursePaths );
 
 			FOREACH_CONST( CString, vsCoursePaths, sCoursePath )
 			{

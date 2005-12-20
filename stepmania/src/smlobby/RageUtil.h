@@ -179,7 +179,7 @@ DWORD GetFileSizeInBytes( const CString &sFilePath );
 
 int CompareCStringsAsc(const void* str1, const void* str2);
 int CompareCStringsDesc(const void* str1, const void* str2);
-void SortCStringArray( CStringArray &AddTo, const bool bSortAcsending = true );
+void SortRStringArray( CStringArray &AddTo, const bool bSortAcsending = true );
 
 
 LONG GetRegKey(HKEY key, const char *subkey, LPTSTR retdata);

@@ -233,7 +233,7 @@ void ScreenNameEntryTraditional::Init()
 
 			/* Add letters to m_Keyboard. */
 			const CString fontpath = THEME->GetPathF(m_sName,"letters");
-			const wstring Chars = CStringToWstring(KEYBOARD_LETTERS);
+			const wstring Chars = RStringToWstring(KEYBOARD_LETTERS);
 			for( unsigned ch = 0; ch < Chars.size(); ++ch )
 			{
 				BitmapText *Letter = new BitmapText;
@@ -293,7 +293,7 @@ void ScreenNameEntryTraditional::Init()
 			const Profile* pProfile = PROFILEMAN->GetProfile(p);
 			if( pProfile && !pProfile->m_sLastUsedHighScoreName.empty() )
 			{
-				m_sSelection[p] = CStringToWstring( pProfile->m_sLastUsedHighScoreName );
+				m_sSelection[p] = RStringToWstring( pProfile->m_sLastUsedHighScoreName );
 				if( (int) m_sSelection[p].size() > MAX_RANKING_NAME_LENGTH )
 					m_sSelection[p].erase( MAX_RANKING_NAME_LENGTH );
 				ASSERT( (int) m_sSelection[p].size() <= MAX_RANKING_NAME_LENGTH );
@@ -578,7 +578,7 @@ void ScreenNameEntryTraditional::Finish( PlayerNumber pn )
 
 	UpdateSelectionText( pn ); /* hide NAME_ cursor */
 
-	CString selection = WStringToCString( m_sSelection[pn] );
+	CString selection = WStringToRString( m_sSelection[pn] );
 
 	// save last used ranking name
 	Profile* pProfile = PROFILEMAN->GetProfile(pn);
@@ -604,7 +604,7 @@ void ScreenNameEntryTraditional::UpdateSelectionText( int pn )
 	if( m_bStillEnteringName[pn] && (int) text.size() < MAX_RANKING_NAME_LENGTH )
 		text += L"_";
 
-	m_textSelection[pn].SetText( WStringToCString(text) );
+	m_textSelection[pn].SetText( WStringToRString(text) );
 }
 
 void ScreenNameEntryTraditional::MenuStart( const InputEventPlus &input )

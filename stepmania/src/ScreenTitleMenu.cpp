@@ -59,6 +59,8 @@ ScreenTitleMenu::~ScreenTitleMenu()
 	CHARMAN->UndemandGraphics();
 }
 
+static LocalizedString THEME_		("ScreenTitleMenu","Theme");
+static LocalizedString ANNOUNCER_	("ScreenTitleMenu","Announcer");
 void ScreenTitleMenu::Input( const InputEventPlus &input )
 {
 	LOG->Trace( "ScreenTitleMenu::Input( %d-%d )", input.DeviceI.device, input.DeviceI.button );	// debugging gameport joystick problem
@@ -76,7 +78,7 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 		{
 			THEME->NextTheme();
 			StepMania::ApplyGraphicOptions();	// update window title and icon
-			SCREENMAN->SystemMessage( "Theme: "+THEME->GetCurThemeName() );
+			SCREENMAN->SystemMessage( THEME_.GetValue()+": "+THEME->GetCurThemeName() );
 			SCREENMAN->SetNewScreen( m_sName );
 			TEXTUREMAN->DoDelayedDelete();
 		}
@@ -86,7 +88,7 @@ void ScreenTitleMenu::Input( const InputEventPlus &input )
 			ANNOUNCER->NextAnnouncer();
 			CString sName = ANNOUNCER->GetCurAnnouncerName();
 			if( sName=="" ) sName = "(none)";
-			SCREENMAN->SystemMessage( "Announcer: "+sName );
+			SCREENMAN->SystemMessage( ANNOUNCER_.GetValue()+": "+sName );
 			SCREENMAN->SetNewScreen( m_sName );
 		}
 	}

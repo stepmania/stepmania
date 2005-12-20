@@ -516,6 +516,9 @@ void InputMapper::SaveMappingsToDisk()
 	ini.WriteFile( SpecialFiles::KEYMAPS_PATH );
 }
 
+static LocalizedString CONNECTED				( "InputMapper", "Connected" );
+static LocalizedString DISCONNECTED				( "InputMapper", "Disconnected" );
+static LocalizedString REMAPPING_ALL_JOYSTICKS	( "InputMapper", "Remapping all joysticks." );
 bool InputMapper::CheckForChangedInputDevicesAndRemap( CString &sMessage )
 {
 	//
@@ -537,13 +540,13 @@ bool InputMapper::CheckForChangedInputDevicesAndRemap( CString &sMessage )
 
 	sMessage = CString();
 	if( !vsConnects.empty() )
-		sMessage += "Connected: " + join( "\n", vsConnects ) + "\n";
+		sMessage += CONNECTED.GetValue()+": " + join( "\n", vsConnects ) + "\n";
 	if( !vsDisconnects.empty() )
-		sMessage += "Disconnected: " + join( "\n", vsDisconnects ) + "\n";
+		sMessage += DISCONNECTED.GetValue()+": " + join( "\n", vsDisconnects ) + "\n";
 
 	if( g_bAutoMapOnJoyChange )
 	{
-		sMessage += "Remapping all joysticks.";
+		sMessage += REMAPPING_ALL_JOYSTICKS.GetValue();
 		AutoMapJoysticksForCurrentGame();
 		SaveMappingsToDisk();
 	}

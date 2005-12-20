@@ -1308,6 +1308,8 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 	}
 }
 
+static LocalizedString AUTOSYNC_CORRECTION_APPLIED		( "Player", "Autosync: Correction applied." );
+static LocalizedString AUTOSYNC_CORRECTION_NOT_APPLIED	( "Player", "Autosync: Correction NOT applied. Deviation too high." );
 void Player::HandleAutosync(float fNoteOffset)
 {
 	if( GAMESTATE->m_SongOptions.m_AutosyncType == SongOptions::AUTOSYNC_OFF )
@@ -1349,11 +1351,11 @@ void Player::HandleAutosync(float fNoteOffset)
 			ASSERT(0);
 		}
 
-		SCREENMAN->SystemMessage( "Autosync: Correction applied." );
+		SCREENMAN->SystemMessage( AUTOSYNC_CORRECTION_APPLIED.GetValue() );
 	}
 	else
 	{
-		SCREENMAN->SystemMessage( "Autosync: Correction NOT applied.\n     Timing deviation too high." );
+		SCREENMAN->SystemMessage( AUTOSYNC_CORRECTION_NOT_APPLIED.GetValue() );
 	}
 
 	m_iOffsetSample = 0;

@@ -360,7 +360,7 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 
 	if( iWrapWidthPixels == -1 )
 	{
-		split( CStringToWstring(m_sText), L"\n", m_wTextLines, false );
+		split( RStringToWstring(m_sText), L"\n", m_wTextLines, false );
 	}
 	else
 	{
@@ -386,7 +386,7 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 			for( unsigned i=0; i<asWords.size(); i++ )
 			{
 				const CString &sWord = asWords[i];
-				int iWidthWord = m_pFont->GetLineWidthInSourcePixels( CStringToWstring(sWord) );
+				int iWidthWord = m_pFont->GetLineWidthInSourcePixels( RStringToWstring(sWord) );
 
 				if( sCurLine.empty() )
 				{
@@ -404,12 +404,12 @@ void BitmapText::SetText( const CString& _sText, const CString& _sAlternateText,
 				}
 				else
 				{
-					m_wTextLines.push_back( CStringToWstring(sCurLine) );
+					m_wTextLines.push_back( RStringToWstring(sCurLine) );
 					sCurLine = sWord;
 					iCurLineWidth = iWidthWord;
 				}
 			}
-			m_wTextLines.push_back( CStringToWstring(sCurLine) );
+			m_wTextLines.push_back( RStringToWstring(sCurLine) );
 		}
 	}
 
@@ -471,11 +471,11 @@ bool BitmapText::StringWillUseAlternate( const CString& sText, const CString& sA
 		return false;
 
 	/* False if the alternate isn't needed. */
-	if( m_pFont->FontCompleteForString(CStringToWstring(sText)) )
+	if( m_pFont->FontCompleteForString(RStringToWstring(sText)) )
 		return false;
 
 	/* False if the alternate is also incomplete. */
-	if( !m_pFont->FontCompleteForString(CStringToWstring(sAlternateText)) )
+	if( !m_pFont->FontCompleteForString(RStringToWstring(sAlternateText)) )
 		return false;
 
 	return true;
@@ -654,7 +654,7 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 
 		CString curCStr = m_sText.substr( i, 1 );
 		char curChar = curCStr.c_str()[0];
-		int iCharLen = m_pFont->GetLineWidthInSourcePixels( CStringToWstring( curCStr ) );
+		int iCharLen = m_pFont->GetLineWidthInSourcePixels( RStringToWstring( curCStr ) );
 
 		switch( curChar )
 		{
@@ -673,7 +673,7 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 				SimpleAddLine( sCurrentLine, iLineWidth );
 				if( iWordWidth > 0 )
 					iLineWidth = iWordWidth +	//Add the width of a space
-						m_pFont->GetLineWidthInSourcePixels( CStringToWstring( " " ) );
+						m_pFont->GetLineWidthInSourcePixels( RStringToWstring( " " ) );
 				sCurrentLine = sCurrentWord + " ";
 				iWordWidth = 0;
 				sCurrentWord = "";
@@ -725,7 +725,7 @@ void ColorBitmapText::SetText( const CString& _sText, const CString& _sAlternate
 
 void ColorBitmapText::SimpleAddLine( const CString &sAddition, const int iWidthPixels) 
 {
-	m_wTextLines.push_back( CStringToWstring( sAddition ) );
+	m_wTextLines.push_back( RStringToWstring( sAddition ) );
 	m_iLineWidths.push_back( iWidthPixels );
 }
 

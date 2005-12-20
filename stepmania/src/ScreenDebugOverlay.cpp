@@ -345,16 +345,49 @@ void ChangeVolume( float fDelta )
 //
 #define DECLARE_ONE( x ) static x g_##x
 
+
+static LocalizedString AUTO_PLAY		( "ScreenDebugOverlay", "AutoPlay" );
+static LocalizedString ASSIST_TICK		( "ScreenDebugOverlay", "AssistTick" );
+static LocalizedString AUTOSYNC			( "ScreenDebugOverlay", "Autosync" );
+static LocalizedString COIN_MODE		( "ScreenDebugOverlay", "CoinMode" );
+static LocalizedString HALT				( "ScreenDebugOverlay", "Halt" );
+static LocalizedString LIGHTS_DEBUG		( "ScreenDebugOverlay", "Lights Debug" );
+static LocalizedString MONKEY_INPUT		( "ScreenDebugOverlay", "Monkey Input" );
+static LocalizedString RENDERING_STATS	( "ScreenDebugOverlay", "Rendering Stats" );
+static LocalizedString VSYNC			( "ScreenDebugOverlay", "Vsync" );
+static LocalizedString MULTITEXTURE		( "ScreenDebugOverlay", "Multitexture" );
+static LocalizedString SCREEN_TEST_MODE	( "ScreenDebugOverlay", "Screen Test Mode" );
+static LocalizedString CLEAR_MACHINE_STATS	( "ScreenDebugOverlay", "Clear Machine Stats" );
+static LocalizedString FILL_MACHINE_STATS	( "ScreenDebugOverlay", "Fill Machine Stats" );
+static LocalizedString SEND_NOTES_ENDED		( "ScreenDebugOverlay", "Send Notes Ended" );
+static LocalizedString RELOAD				( "ScreenDebugOverlay", "Reload" );
+static LocalizedString RELOAD_THEME_AND_TEXTURES	( "ScreenDebugOverlay", "Reload Theme and Textures" );
+static LocalizedString WRITE_PROFILES		( "ScreenDebugOverlay", "Write Profiles" );
+static LocalizedString WRITE_PREFERENCES	( "ScreenDebugOverlay", "Write Preferences" );
+static LocalizedString MENU_TIMER			( "ScreenDebugOverlay", "Menu Timer" );
+static LocalizedString FLUSH_LOG			( "ScreenDebugOverlay", "Flush Log" );
+static LocalizedString PULL_BACK_CAMERA		( "ScreenDebugOverlay", "Pull Back Camera" );
+static LocalizedString VOLUME_UP			( "ScreenDebugOverlay", "Volume Up" );
+static LocalizedString VOLUME_DOWN			( "ScreenDebugOverlay", "Volume Down" );
+static LocalizedString UPTIME				( "ScreenDebugOverlay", "Uptime" );
+static LocalizedString SLOW		( "ScreenDebugOverlay", "Slow" );
+static LocalizedString ON		( "ScreenDebugOverlay", "on" );
+static LocalizedString OFF		( "ScreenDebugOverlay", "off" );
+static LocalizedString CPU		( "ScreenDebugOverlay", "CPU" );
+static LocalizedString SONG		( "ScreenDebugOverlay", "Song" );
+static LocalizedString MACHINE	( "ScreenDebugOverlay", "Machine" );
+
+
 class DebugLineAutoplay : public IDebugLine
 {
-	virtual CString GetDescription() { return "AutoPlay"; }
+	virtual CString GetDescription() { return AUTO_PLAY; }
 	virtual CString GetValue()
 	{
 		switch( PREFSMAN->m_AutoPlay )
 		{
-		case PC_HUMAN:		return "off";	break;
-		case PC_AUTOPLAY:	return "on";	break;
-		case PC_CPU:		return "CPU";	break;
+		case PC_HUMAN:		return OFF;	break;
+		case PC_AUTOPLAY:	return ON;	break;
+		case PC_CPU:		return CPU;	break;
 		default:	ASSERT(0);	return NULL;
 		}
 	}
@@ -374,8 +407,8 @@ class DebugLineAutoplay : public IDebugLine
 
 class DebugLineAssistTick : public IDebugLine
 {
-	virtual CString GetDescription() { return "AssistTick"; }
-	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
+	virtual CString GetDescription() { return ASSIST_TICK; }
+	virtual CString GetValue() { return IsEnabled() ? ON:OFF; }
 	virtual bool IsEnabled() { return GAMESTATE->m_SongOptions.m_bAssistTick; }
 	virtual void Do( CString &sMessageOut )
 	{
@@ -389,14 +422,14 @@ class DebugLineAssistTick : public IDebugLine
 
 class DebugLineAutosync : public IDebugLine
 {
-	virtual CString GetDescription() { return "Autosync"; }
+	virtual CString GetDescription() { return AUTOSYNC; }
 	virtual CString GetValue()
 	{ 
 		switch( GAMESTATE->m_SongOptions.m_AutosyncType )
 		{
-		case SongOptions::AUTOSYNC_OFF:		return "off";		break;
-		case SongOptions::AUTOSYNC_SONG:	return "Song";		break;
-		case SongOptions::AUTOSYNC_MACHINE:	return "Machine";	break;
+		case SongOptions::AUTOSYNC_OFF:		return OFF;		break;
+		case SongOptions::AUTOSYNC_SONG:	return SONG;		break;
+		case SongOptions::AUTOSYNC_MACHINE:	return MACHINE;	break;
 		default:	ASSERT(0);
 		}
 	}
@@ -413,7 +446,7 @@ class DebugLineAutosync : public IDebugLine
 
 class DebugLineCoinMode : public IDebugLine
 {
-	virtual CString GetDescription() { return "CoinMode"; }
+	virtual CString GetDescription() { return COIN_MODE; }
 	virtual CString GetValue() { return CoinModeToString(PREFSMAN->m_CoinMode); }
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( CString &sMessageOut )
@@ -428,8 +461,8 @@ class DebugLineCoinMode : public IDebugLine
 
 class DebugLineSlow : public IDebugLine
 {
-	virtual CString GetDescription() { return "Slow"; }
-	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
+	virtual CString GetDescription() { return SLOW; }
+	virtual CString GetValue() { return IsEnabled() ? ON:OFF; }
 	virtual bool IsEnabled() { return g_bIsSlow; }
 	virtual void Do( CString &sMessageOut )
 	{
@@ -441,8 +474,8 @@ class DebugLineSlow : public IDebugLine
 
 class DebugLineHalt : public IDebugLine
 {
-	virtual CString GetDescription() { return "Halt"; }
-	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
+	virtual CString GetDescription() { return HALT; }
+	virtual CString GetValue() { return IsEnabled() ? ON:OFF; }
 	virtual bool IsEnabled() { return g_bIsHalt; }
 	virtual void Do( CString &sMessageOut )
 	{
@@ -455,8 +488,8 @@ class DebugLineHalt : public IDebugLine
 
 class DebugLineLightsDebug : public IDebugLine
 {
-	virtual CString GetDescription() { return "Lights Debug"; }
-	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
+	virtual CString GetDescription() { return LIGHTS_DEBUG; }
+	virtual CString GetValue() { return IsEnabled() ? ON:OFF; }
 	virtual bool IsEnabled() { return PREFSMAN->m_bDebugLights.Get(); }
 	virtual void Do( CString &sMessageOut )
 	{
@@ -467,8 +500,8 @@ class DebugLineLightsDebug : public IDebugLine
 
 class DebugLineMonkeyInput : public IDebugLine
 {
-	virtual CString GetDescription() { return "MonkeyInput"; }
-	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
+	virtual CString GetDescription() { return MONKEY_INPUT; }
+	virtual CString GetValue() { return IsEnabled() ? ON:OFF; }
 	virtual bool IsEnabled() { return PREFSMAN->m_bMonkeyInput.Get(); }
 	virtual void Do( CString &sMessageOut )
 	{
@@ -479,8 +512,8 @@ class DebugLineMonkeyInput : public IDebugLine
 
 class DebugLineStats : public IDebugLine
 {
-	virtual CString GetDescription() { return "Rendering Stats"; }
-	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
+	virtual CString GetDescription() { return RENDERING_STATS; }
+	virtual CString GetValue() { return IsEnabled() ? ON:OFF; }
 	virtual bool IsEnabled() { return PREFSMAN->m_bShowStats.Get(); }
 	virtual void Do( CString &sMessageOut )
 	{
@@ -491,8 +524,8 @@ class DebugLineStats : public IDebugLine
 
 class DebugLineVsync : public IDebugLine
 {
-	virtual CString GetDescription() { return "Vsync"; }
-	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
+	virtual CString GetDescription() { return VSYNC; }
+	virtual CString GetValue() { return IsEnabled() ? ON:OFF; }
 	virtual bool IsEnabled() { return PREFSMAN->m_bVsync.Get(); }
 	virtual void Do( CString &sMessageOut )
 	{
@@ -504,8 +537,8 @@ class DebugLineVsync : public IDebugLine
 
 class DebugLineAllowMultitexture : public IDebugLine
 {
-	virtual CString GetDescription() { return "Multitexture"; }
-	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
+	virtual CString GetDescription() { return MULTITEXTURE; }
+	virtual CString GetValue() { return IsEnabled() ? ON:OFF; }
 	virtual bool IsEnabled() { return PREFSMAN->m_bAllowMultitexture.Get(); }
 	virtual void Do( CString &sMessageOut )
 	{
@@ -516,8 +549,8 @@ class DebugLineAllowMultitexture : public IDebugLine
 
 class DebugLineScreenTestMode : public IDebugLine
 {
-	virtual CString GetDescription() { return "Screen Test Mode"; }
-	virtual CString GetValue() { return IsEnabled() ? "on":"off"; }
+	virtual CString GetDescription() { return SCREEN_TEST_MODE; }
+	virtual CString GetValue() { return IsEnabled() ? ON:OFF; }
 	virtual bool IsEnabled() { return PREFSMAN->m_bScreenTestMode.Get(); }
 	virtual void Do( CString &sMessageOut )
 	{
@@ -528,7 +561,7 @@ class DebugLineScreenTestMode : public IDebugLine
 
 class DebugLineClearMachineStats : public IDebugLine
 {
-	virtual CString GetDescription() { return "Clear Machine Stats"; }
+	virtual CString GetDescription() { return CLEAR_MACHINE_STATS; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( CString &sMessageOut )
@@ -542,7 +575,7 @@ class DebugLineClearMachineStats : public IDebugLine
 
 class DebugLineFillMachineStats : public IDebugLine
 {
-	virtual CString GetDescription() { return "Fill Machine Stats"; }
+	virtual CString GetDescription() { return FILL_MACHINE_STATS; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( CString &sMessageOut )
@@ -556,7 +589,7 @@ class DebugLineFillMachineStats : public IDebugLine
 
 class DebugLineSendNotesEnded : public IDebugLine
 {
-	virtual CString GetDescription() { return "Send Notes Ended"; }
+	virtual CString GetDescription() { return SEND_NOTES_ENDED; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( CString &sMessageOut )
@@ -568,7 +601,7 @@ class DebugLineSendNotesEnded : public IDebugLine
 
 class DebugLineReloadCurrentScreen : public IDebugLine
 {
-	virtual CString GetDescription() { return "Reload"; }
+	virtual CString GetDescription() { return RELOAD; }
 	virtual CString GetValue() { return SCREENMAN ? SCREENMAN->GetTopScreen()->GetName() : NULL; }
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( CString &sMessageOut )
@@ -583,7 +616,7 @@ class DebugLineReloadCurrentScreen : public IDebugLine
 
 class DebugLineReloadTheme : public IDebugLine
 {
-	virtual CString GetDescription() { return "Reload Theme and Textures"; }
+	virtual CString GetDescription() { return RELOAD_THEME_AND_TEXTURES; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( CString &sMessageOut )
@@ -600,7 +633,7 @@ class DebugLineReloadTheme : public IDebugLine
 
 class DebugLineWriteProfiles : public IDebugLine
 {
-	virtual CString GetDescription() { return "Write Profiles"; }
+	virtual CString GetDescription() { return WRITE_PROFILES; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( CString &sMessageOut )
@@ -639,7 +672,7 @@ class DebugLineWritePreferences : public IDebugLine
 
 class DebugLineMenuTimer : public IDebugLine
 {
-	virtual CString GetDescription() { return "Menu Timer"; }
+	virtual CString GetDescription() { return MENU_TIMER; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return PREFSMAN->m_bMenuTimer.Get(); }
 	virtual void Do( CString &sMessageOut )
@@ -651,7 +684,7 @@ class DebugLineMenuTimer : public IDebugLine
 
 class DebugLineFlushLog : public IDebugLine
 {
-	virtual CString GetDescription() { return "Flush Log"; }
+	virtual CString GetDescription() { return FLUSH_LOG; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( CString &sMessageOut )
@@ -663,7 +696,7 @@ class DebugLineFlushLog : public IDebugLine
 
 class DebugLinePullBackCamera : public IDebugLine
 {
-	virtual CString GetDescription() { return "Pull Back Camera"; }
+	virtual CString GetDescription() { return PULL_BACK_CAMERA; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return g_fImageScaleDestination != 1; }
 	virtual void Do( CString &sMessageOut )
@@ -678,7 +711,7 @@ class DebugLinePullBackCamera : public IDebugLine
 
 class DebugLineVolumeUp : public IDebugLine
 {
-	virtual CString GetDescription() { return "Volume Up"; }
+	virtual CString GetDescription() { return VOLUME_UP; }
 	virtual CString GetValue() { return ssprintf("%.0f%%",PREFSMAN->m_fSoundVolume.Get()*100); }
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( CString &sMessageOut )
@@ -690,7 +723,7 @@ class DebugLineVolumeUp : public IDebugLine
 
 class DebugLineVolumeDown : public IDebugLine
 {
-	virtual CString GetDescription() { return "Volume Down"; }
+	virtual CString GetDescription() { return VOLUME_DOWN; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( CString &sMessageOut )
@@ -702,7 +735,7 @@ class DebugLineVolumeDown : public IDebugLine
 
 class DebugLineUptime : public IDebugLine
 {
-	virtual CString GetDescription() { return "Uptime"; }
+	virtual CString GetDescription() { return UPTIME; }
 	virtual CString GetValue() { return SecondsToMMSSMsMsMs(RageTimer::GetTimeSinceStart()); }
 	virtual bool IsEnabled() { return false; }
 	virtual void Do( CString &sMessageOut ) {}

@@ -91,7 +91,8 @@ void ScreenNetworkOptions::Init()
 	m_pRows[PO_SCOREBOARD]->SetOneSharedSelection(PREFSMAN->m_bEnableScoreboard);
 }
 
-
+static LocalizedString SERVER_STARTED	( "ScreenNetworkOptions", "Server started." );
+static LocalizedString SERVER_FAILED	( "ScreenNetworkOptions", "Server failed: %s Code:%d" );
 void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_DoneConnecting )
@@ -115,17 +116,20 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 			if (NSMAN->LANserver->ServerStart())
 			{
 				NSMAN->isLanServer = true;
-				SCREENMAN->SystemMessage( "Server Started." );
+				SCREENMAN->SystemMessage( SERVER_STARTED );
 			}
 			else
-				SCREENMAN->SystemMessage( "Server failed: " + NSMAN->LANserver->lastError + ssprintf(" Code:%d",NSMAN->LANserver->lastErrorCode) );
+			{
+				SCREENMAN->SystemMessage( ssprintf(SERVER_FAILED.GetValue(),NSMAN->LANserver->lastError.c_str(),NSMAN->LANserver->lastErrorCode) );
+			}
 		}
 	}
 
 	ScreenOptions::HandleScreenMessage( SM );
 }
 
-
+static LocalizedString DISCONNECTED		( "ScreenNetworkOptions", "Disconnected from server." );
+static LocalizedString SERVER_STOPPED	( "ScreenNetworkOptions", "Server stopped." );
 void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 {
 #if defined( WITHOUT_NETWORKING )
@@ -140,7 +144,7 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 		else
 		{
 			NSMAN->CloseConnection();
-			SCREENMAN->SystemMessage("Disconnected from server.");
+			SCREENMAN->SystemMessage( DISCONNECTED );
 			UpdateConnectStatus( );
 		}
 		break;
@@ -156,7 +160,7 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 		case NO_STOP_SERVER:
 			if ( NSMAN->LANserver != NULL )
 				NSMAN->LANserver->ServerStop();
-			SCREENMAN->SystemMessage( "Server Stopped." );
+			SCREENMAN->SystemMessage( SERVER_STOPPED );
 			NSMAN->isLanServer = false;
 			break;
 		}

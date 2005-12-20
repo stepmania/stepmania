@@ -213,7 +213,7 @@ BOOL CSmlobbyDlg::OnInitDialog()
 	// Find all group directories in "Songs" folder
 	CStringArray arrayGroupDirs;
 	GetDirListing( sDir+"\\*.*", arrayGroupDirs, true );
-	SortCStringArray( arrayGroupDirs );
+	SortRStringArray( arrayGroupDirs );
 	
 	//FILE *fp = fopen("SongHashes.txt","wt");
 	//int k=1000;
@@ -227,7 +227,7 @@ BOOL CSmlobbyDlg::OnInitDialog()
 		// Find all Song folders in this group directory
 		CStringArray arraySongDirs;
 		GetDirListing( ssprintf("%s\\%s\\*.*", sDir, sGroupDirName), arraySongDirs, true );
-		SortCStringArray( arraySongDirs );
+		SortRStringArray( arraySongDirs );
 
 		for( unsigned j=0; j< arraySongDirs.GetSize(); j++ )	// for each song dir
 		{

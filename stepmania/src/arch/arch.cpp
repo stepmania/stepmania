@@ -9,10 +9,9 @@
 #include "arch.h"
 #include "arch_platform.h"
 #include "Foreach.h"
-#include "ThemeMetric.h"
 
 #include "InputHandler/Selector_InputHandler.h"
-static ThemeMetric<CString> INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
+static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
 void MakeInputHandlers(CString drivers, vector<InputHandler *> &Add)
 {
 	vector<CString> DriversToTry;
@@ -179,8 +178,8 @@ MemoryCardDriver *MakeMemoryCardDriver()
 #include "MovieTexture/Selector_MovieTexture.h"
 static void DumpAVIDebugInfo( const CString& fn );
 /* Try drivers in order of preference until we find one that works. */
-static ThemeMetric<CString> MOVIE_DRIVERS_EMPTY		( "Arch", "Movie Drivers cannot be empty." );
-static ThemeMetric<CString> COULDNT_CREATE_MOVIE_DRIVER( "Arch", "Couldn't create a movie driver." );
+static LocalizedString MOVIE_DRIVERS_EMPTY			( "Arch", "Movie Drivers cannot be empty." );
+static LocalizedString COULDNT_CREATE_MOVIE_DRIVER	( "Arch", "Couldn't create a movie driver." );
 RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 {
 	DumpAVIDebugInfo( ID.filename );
@@ -232,7 +231,7 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 }
 
 #include "Sound/Selector_RageSoundDriver.h"
-static ThemeMetric<CString> SOUND_DRIVERS_CANNOT_EMPTY( "Arch", "Sound Drivers cannot be empty." );
+static LocalizedString SOUND_DRIVERS_CANNOT_EMPTY( "Arch", "Sound Drivers cannot be empty." );
 RageSoundDriver *MakeRageSoundDriver(CString drivers)
 {
 	vector<CString> DriversToTry;

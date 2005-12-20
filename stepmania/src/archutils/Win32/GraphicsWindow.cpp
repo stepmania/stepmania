@@ -275,7 +275,7 @@ void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p )
 	{
 		if( m_bWideWindowClass )
 		{
-			if( SetWindowTextW( g_hWndMain, CStringToWstring(p.sWindowTitle).c_str() ) )
+			if( SetWindowTextW( g_hWndMain, RStringToWstring(p.sWindowTitle).c_str() ) )
 				break;
 		}
 
@@ -373,7 +373,7 @@ void GraphicsWindow::Initialize( bool bD3D )
 	AppInstance inst;
 	do
 	{
-		const wstring wsClassName = CStringToWstring( g_sClassName );
+		const wstring wsClassName = RStringToWstring( g_sClassName );
 		WNDCLASSW WindowClassW =
 		{
 			CS_OWNDC | CS_BYTEALIGNCLIENT,

@@ -90,7 +90,7 @@ static bool CompareSongPointersByBPM( const Song *pSong1, const Song *pSong2 )
 	if( bpms1.GetMax() > bpms2.GetMax() )
 		return false;
 	
-	return CompareCStringsAsc( pSong1->GetSongFilePath(), pSong2->GetSongFilePath() );
+	return CompareRStringsAsc( pSong1->GetSongFilePath(), pSong2->GetSongFilePath() );
 }
 
 void SongUtil::SortSongPointerArrayByBPM( vector<Song*> &vpSongsInOut )

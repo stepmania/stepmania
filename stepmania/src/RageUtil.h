@@ -276,9 +276,9 @@ wchar_t utf8_get_char( const RString &s );
 bool utf8_is_valid( const RString &s );
 void utf8_remove_bom( RString &s );
 
-RString WStringToCString( const wstring &sString );
+RString WStringToRString( const wstring &sString );
 RString WcharToUTF8( wchar_t c );
-wstring CStringToWstring( const RString &sString );
+wstring RStringToWstring( const RString &sString );
 
 RString GetLanguageNameFromISO639Code( RString sName );
 
@@ -311,9 +311,9 @@ unsigned int GetHashForFile( const RString &sPath );
 unsigned int GetHashForDirectory( const RString &sDir );	// a hash value that remains the same as long as nothing in the directory has changed
 bool DirectoryIsEmpty( const RString &sPath );
 
-bool CompareCStringsAsc( const RString &sStr1, const RString &sStr2 );
-bool CompareCStringsDesc( const RString &sStr1, const RString &sStr2 );
-void SortCStringArray( vector<RString> &asAddTo, const bool bSortAscending = true );
+bool CompareRStringsAsc( const RString &sStr1, const RString &sStr2 );
+bool CompareRStringsDesc( const RString &sStr1, const RString &sStr2 );
+void SortRStringArray( vector<RString> &asAddTo, const bool bSortAscending = true );
 
 /* Find the mean and standard deviation of all numbers in [start,end). */
 float calc_mean( const float *pStart, const float *pEnd );
@@ -502,6 +502,24 @@ void GetConnectsDisconnects( const vector<T> &before, const vector<T> &after, ve
 	GetAsNotInBs( before, after, disconnects );
 	GetAsNotInBs( after, before, connects );
 }
+
+// String localization
+void RegisterLocalizer( RString (*pfnLocalizer)(const RString&,const RString&) );
+void RefreshLocalizedStrings();
+
+class LocalizedString
+{
+public:
+	LocalizedString( const RString &sSection, const RString &sName );
+	~LocalizedString();
+	void Refresh();
+	operator const CString&();
+	const CString &GetValue();
+private:
+	RString m_sSection;
+	RString m_sName;
+	RString m_sValue;
+};
 
 #endif
 

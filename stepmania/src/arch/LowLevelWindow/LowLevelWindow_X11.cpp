@@ -19,7 +19,7 @@
 #include <X11/extensions/XTest.h>
 #endif
 
-static ThemeMetric<CString> FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server'" );
+static LocalizedString FAILED_CONNECTION_XSERVER( "LowLevelWindow_X11", "Failed to establish a connection with the X server'" );
 LowLevelWindow_X11::LowLevelWindow_X11()
 {
 	m_bWindowIsOpen = false;

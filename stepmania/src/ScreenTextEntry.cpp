@@ -133,7 +133,7 @@ ScreenTextEntry::~ScreenTextEntry()
 
 void ScreenTextEntry::BeginScreen()
 {
-	m_sAnswer = CStringToWstring( g_sInitialAnswer );
+	m_sAnswer = RStringToWstring( g_sInitialAnswer );
 
 	ScreenWithMenuElements::BeginScreen();
 
@@ -181,7 +181,7 @@ void ScreenTextEntry::UpdateKeyboardText()
 
 void ScreenTextEntry::UpdateAnswerText()
 {
-	CString s = WStringToCString(m_sAnswer);
+	CString s = WStringToRString(m_sAnswer);
 	if( g_bPassword )
 	{
 		int len = s.GetLength();
@@ -335,7 +335,7 @@ void ScreenTextEntry::MoveY( int iDir )
 
 void ScreenTextEntry::AppendToAnswer( CString s )
 {
-	wstring sNewAnswer = m_sAnswer+CStringToWstring(s);
+	wstring sNewAnswer = m_sAnswer+RStringToWstring(s);
 	if( (int)sNewAnswer.length() > g_iMaxInputLength )
 	{
 		SCREENMAN->PlayInvalidSound();
@@ -400,7 +400,7 @@ void ScreenTextEntry::End( bool bCancelled )
 	}
 	else
 	{
-		CString sAnswer = WStringToCString(m_sAnswer);
+		CString sAnswer = WStringToRString(m_sAnswer);
 		CString sError;
 		if ( g_pValidate != NULL )
 		{
@@ -414,7 +414,7 @@ void ScreenTextEntry::End( bool bCancelled )
 
 		if( g_pOnOK )
 		{
-			CString ret = WStringToCString(m_sAnswer);
+			CString ret = WStringToRString(m_sAnswer);
 			FontCharAliases::ReplaceMarkers(ret);
 			g_pOnOK( ret );
 		}
@@ -429,7 +429,7 @@ void ScreenTextEntry::End( bool bCancelled )
 	OFF_COMMAND( m_sprCursor );
 
 	s_bCancelledLast = bCancelled;
-	s_sLastAnswer = bCancelled ? CString("") : WStringToCString(m_sAnswer);
+	s_sLastAnswer = bCancelled ? CString("") : WStringToRString(m_sAnswer);
 }
 
 void ScreenTextEntry::MenuBack( PlayerNumber pn )

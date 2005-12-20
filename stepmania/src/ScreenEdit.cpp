@@ -1086,6 +1086,8 @@ static void ShiftToRightSide( int &iCol, int iNumTracks )
 	}
 }
 
+static LocalizedString SWITCHED_TO				( "ScreenEdit", "Switched to" );
+static LocalizedString NO_BACKGROUNDS_AVAILABLE	( "ScreenEdit", "No backgrounds available" );
 void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 {
 	if( input.type == IET_LEVEL_CHANGED )
@@ -1372,7 +1374,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			m_pSteps = pSteps;
 			pSteps->GetNoteData( m_NoteDataEdit );
 			CString s = ssprintf(
-				"Switched to %s %s '%s' (%d of %d)",
+				SWITCHED_TO.GetValue() + " %s %s '%s' (%d of %d)",
 				GAMEMAN->StepsTypeToString( pSteps->m_StepsType ).c_str(),
 				DifficultyToString( pSteps->GetDifficulty() ).c_str(),
 				pSteps->GetDescription().c_str(),
@@ -1670,7 +1672,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			if( sName.empty() )
 			{
 				SCREENMAN->PlayInvalidSound();
-				SCREENMAN->SystemMessage( "No backgrounds available" );
+				SCREENMAN->SystemMessage( NO_BACKGROUNDS_AVAILABLE );
 			}
 			else
 			{
@@ -2479,6 +2481,8 @@ static void ChangeArtistTranslit( const CString &sNew )
 
 // End helper functions
 
+static LocalizedString SAVED_AS_SM_AND_DWI	( "ScreenEdit", "Saved as SM and DWI." );
+static LocalizedString SAVED_AS_SM			( "ScreenEdit", "Saved as SM." );
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
 {
 	switch( c )
@@ -2591,9 +2595,9 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						// dance, it just looks tacky and people may be wondering where the
 						// DWI file is :-)
 						if ((int)pSteps->m_StepsType <= (int)STEPS_TYPE_DANCE_SOLO) 
-							SCREENMAN->SystemMessage( "Saved as SM and DWI." );
+							SCREENMAN->SystemMessage( SAVED_AS_SM_AND_DWI );
 						else
-							SCREENMAN->SystemMessage( "Saved as SM." );
+							SCREENMAN->SystemMessage( SAVED_AS_SM );
 
 						HandleScreenMessage( SM_Success );
 					}
@@ -3216,6 +3220,8 @@ void ScreenEdit::SaveUndo()
 	m_Undo.CopyAll( m_NoteDataEdit );
 }
 
+static LocalizedString UNDO			("ScreenEdit", "Undo");
+static LocalizedString CANT_UNDO	("ScreenEdit", "Can't undo - no undo data.");
 void ScreenEdit::Undo()
 {
 	if( m_bHasUndo )
@@ -3225,11 +3231,11 @@ void ScreenEdit::Undo()
 		m_NoteDataEdit.CopyAll( m_Undo );
 		m_Undo.CopyAll( temp );
 
-		SCREENMAN->SystemMessage( "Undo" );
+		SCREENMAN->SystemMessage( UNDO );
 	}
 	else
 	{
-		SCREENMAN->SystemMessage( "Can't undo - no undo data." );
+		SCREENMAN->SystemMessage( CANT_UNDO );
 		SCREENMAN->PlayInvalidSound();
 	}
 }

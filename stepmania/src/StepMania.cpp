@@ -106,6 +106,16 @@ void StepMania::GetPreferredVideoModeParams( VideoModeParams &paramsOut )
 	);
 }
 
+static LocalizedString COLOR			("StepMania","color");
+static LocalizedString TEXTURE			("StepMania","texture");
+static LocalizedString WINDOWED			("StepMania","Windowed");
+static LocalizedString FULLSCREEN		("StepMania","Fullscreen");
+static LocalizedString ANNOUNCER_		("StepMania","Announcer");
+static LocalizedString VSYNC			("StepMania","Vsync");
+static LocalizedString NO_VSYNC			("StepMania","NoVsync");
+static LocalizedString SMOOTH_LINES		("StepMania","SmoothLines");
+static LocalizedString NO_SMOOTH_LINES	("StepMania","NoSmoothLines");
+
 static void StoreActualGraphicOptions( bool initial )
 {
 	// find out what we actually have
@@ -116,16 +126,17 @@ static void StoreActualGraphicOptions( bool initial )
 	PREFSMAN->m_iRefreshRate		.Set( DISPLAY->GetActualVideoModeParams().rate );
 	PREFSMAN->m_bVsync				.Set( DISPLAY->GetActualVideoModeParams().vsync );
 
-	CString log = ssprintf("%s %s %dx%d %d color %d texture %dHz %s %s",
+	CString sFormat = "%s %s %dx%d %d "+COLOR.GetValue()+" %d "+TEXTURE.GetValue()+" %dHz %s %s";
+	CString log = ssprintf( sFormat,
 		DISPLAY->GetApiDescription().c_str(),
-		PREFSMAN->m_bWindowed ? "Windowed" : "Fullscreen",
+		(PREFSMAN->m_bWindowed ? WINDOWED : FULLSCREEN).GetValue().c_str(),
 		(int)PREFSMAN->m_iDisplayWidth, 
 		(int)PREFSMAN->m_iDisplayHeight, 
 		(int)PREFSMAN->m_iDisplayColorDepth, 
 		(int)PREFSMAN->m_iTextureColorDepth, 
 		(int)PREFSMAN->m_iRefreshRate,
-		PREFSMAN->m_bVsync ? "Vsync" : "NoVsync",
-		PREFSMAN->m_bSmoothLines? "AA" : "NoAA" );
+		(PREFSMAN->m_bVsync ? VSYNC : NO_VSYNC).GetValue().c_str(),
+		(PREFSMAN->m_bSmoothLines? SMOOTH_LINES : NO_SMOOTH_LINES).GetValue().c_str() );
 	if( initial )
 		LOG->Info( "%s", log.c_str() );
 	else
@@ -664,12 +675,12 @@ found_defaults:
 	LOG->Info( "Video renderers: '%s'", PREFSMAN->m_sVideoRenderers.Get().c_str() );
 }
 
-static ThemeMetric<CString> ERROR_INITIALIZING_CARD		( "StepMania", "There was an error while initializing your video card." );
-static ThemeMetric<CString> ERROR_DONT_FILE_BUG			( "StepMania", "Please do not file this error as a bug!  Use the web page below to troubleshoot this problem." );
-static ThemeMetric<CString> ERROR_VIDEO_DRIVER				( "StepMania", "Video Driver: %s" );
-static ThemeMetric<CString> ERROR_NO_VIDEO_RENDERERS		( "StepMania", "No video renderers attempted." );
-static ThemeMetric<CString> ERROR_INITIALIZING				( "StepMania", "Initializing %s..." );
-static ThemeMetric<CString> ERROR_UNKNOWN_VIDEO_RENDERER	( "StepMania", "Unknown video renderer value: %s" );
+static LocalizedString ERROR_INITIALIZING_CARD		( "StepMania", "There was an error while initializing your video card." );
+static LocalizedString ERROR_DONT_FILE_BUG			( "StepMania", "Please do not file this error as a bug!  Use the web page below to troubleshoot this problem." );
+static LocalizedString ERROR_VIDEO_DRIVER			( "StepMania", "Video Driver: %s" );
+static LocalizedString ERROR_NO_VIDEO_RENDERERS		( "StepMania", "No video renderers attempted." );
+static LocalizedString ERROR_INITIALIZING			( "StepMania", "Initializing %s..." );
+static LocalizedString ERROR_UNKNOWN_VIDEO_RENDERER	( "StepMania", "Unknown video renderer value: %s" );
 
 RageDisplay *CreateDisplay()
 {
@@ -904,8 +915,14 @@ static void ApplyLogPreferences()
 	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
 }
 
-static ThemeMetric<CString> COULDNT_OPEN_LOADING_WINDOW( "StepMania", "Couldn't open any loading windows." );
+static CString LocalizeString( const CString &sSection, const CString &s )
+{
+	CString sOut;
+	THEME->GetMetric( sSection, s, sOut );
+	return sOut;
+}
 
+static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "StepMania", "Couldn't open any loading windows." );
 
 #ifdef _XBOX
 void __cdecl main()
@@ -1044,6 +1061,10 @@ int main(int argc, char* argv[])
 			loading_window->SetIcon( pIcon );
 		delete pIcon;
 	}
+
+	RegisterLocalizer( LocalizeString );
+	RefreshLocalizedStrings();
+
 
 	if( PREFSMAN->m_iSoundWriteAhead )
 		LOG->Info( "Sound writeahead has been overridden to %i", PREFSMAN->m_iSoundWriteAhead.Get() );
@@ -1253,6 +1274,7 @@ void StepMania::InsertCredit()
 
 /* Returns true if the key has been handled and should be discarded, false if
  * the key should be sent on to screens. */
+static LocalizedString SERVICE_SWITCH_PRESED ( "StepMania", "Service switch pressed" );
 bool HandleGlobalInputs( const InputEventPlus &input )
 {
 	/* None of the globals keys act on types other than FIRST_PRESS */
@@ -1268,7 +1290,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		 * (to prevent quitting without storing changes). */
 		if( SCREENMAN->GetTopScreen()->GetScreenType() != system_menu )
 		{
-			SCREENMAN->SystemMessage( "Service switch pressed" );
+			SCREENMAN->SystemMessage( SERVICE_SWITCH_PRESED );
 			GAMESTATE->Reset();
 			SCREENMAN->PopAllScreens();
 			SCREENMAN->SetNewScreen( "ScreenOptionsService" );

@@ -10,7 +10,6 @@
 #include "RageTimer.h"
 #include "RageSoundReader_Preload.h"
 #include "Foreach.h"
-#include "ThemeMetric.h"
 
 #include "arch/Sound/RageSoundDriver.h"
 
@@ -36,7 +35,7 @@ RageSoundManager::RageSoundManager()
 	m_bPlayOnlyCriticalSounds = false;
 }
 
-static ThemeMetric<CString> COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't find a sound driver that works" );
+static LocalizedString COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't find a sound driver that works" );
 
 void RageSoundManager::Init( CString sDrivers )
 {

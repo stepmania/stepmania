@@ -538,7 +538,7 @@ void Font::LoadFontPageSettings( FontPageSettings &cfg, IniFile &ini, const CStr
 						ini.GetPath().c_str(), iFirstFrame, iNumFramesHigh );
 
 				/* Decode the string. */
-				const wstring wdata( CStringToWstring(sValue) );
+				const wstring wdata( RStringToWstring(sValue) );
 
 				if( int(wdata.size()) > iNumFramesWide )
 					RageException::Throw( "The font definition \"%s\" assigns %i characters to row %i (\"%ls\"), but the font only has %i characters wide",

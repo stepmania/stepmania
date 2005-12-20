@@ -157,6 +157,7 @@ void ScreenCenterImage::Input( const InputEventPlus &input )
 	m_fScale[axis] = fScale;
 }
 
+static LocalizedString CENTERING( "ScreenCenterImage", "Centering: x %d, y %d, width %d, height %d" );
 void ScreenCenterImage::Move( Axis axis, float fDelta )
 {
 	Preference<int> *piValues[4] =
@@ -176,7 +177,7 @@ void ScreenCenterImage::Move( Axis axis, float fDelta )
 		PREFSMAN->m_fCenterImageAddHeight );
 
 	CString sMessage = 
-		ssprintf( "Centering: x=%d, y=%d, width=%d, height=%d",
+		ssprintf( CENTERING.GetValue(),
 		PREFSMAN->m_iCenterImageTranslateX.Get(), 
 		PREFSMAN->m_iCenterImageTranslateY.Get(),
 		PREFSMAN->m_fCenterImageAddWidth.Get(),

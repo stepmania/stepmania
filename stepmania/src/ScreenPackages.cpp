@@ -253,11 +253,12 @@ void ScreenPackages::MenuRight( const InputEventPlus &input )
 	ScreenWithMenuElements::MenuRight( input );
 }
 
+static LocalizedString DOWNLOAD_CANCELLED( "ScreenPackages", "Download cancelled." );
 void ScreenPackages::MenuBack( PlayerNumber pn )
 {
 	if ( m_bIsDownloading )
 	{
-		SCREENMAN->SystemMessage( "Download Cancelled." );
+		SCREENMAN->SystemMessage( DOWNLOAD_CANCELLED );
 		CancelDownload( );
 		return;
 	}

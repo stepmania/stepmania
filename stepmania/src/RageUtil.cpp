@@ -81,7 +81,7 @@ int power_of_two(int input)
 	return value;
 }
 
-bool IsAnInt( const CString &s )
+bool IsAnInt( const RString &s )
 {
 	if( !s.size() )
 		return false;
@@ -93,7 +93,7 @@ bool IsAnInt( const CString &s )
 	return true;
 }
 
-bool IsHexVal( const CString &s )
+bool IsHexVal( const RString &s )
 {
 	if( !s.size() )
 		return false;
@@ -106,9 +106,9 @@ bool IsHexVal( const CString &s )
 	return true;
 }
 
-float HHMMSSToSeconds( const CString &sHHMMSS )
+float HHMMSSToSeconds( const RString &sHHMMSS )
 {
-	vector<CString> arrayBits;
+	vector<RString> arrayBits;
 	split( sHHMMSS, ":", arrayBits, false );
 
 	while( arrayBits.size() < 3 )
@@ -122,50 +122,50 @@ float HHMMSSToSeconds( const CString &sHHMMSS )
 	return fSeconds;
 }
 
-CString SecondsToHHMMSS( float fSecs )
+RString SecondsToHHMMSS( float fSecs )
 {
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
-	CString sReturn = ssprintf( "%02d:%02d:%02d", iMinsDisplay/60, iMinsDisplay%60, iSecsDisplay );
+	RString sReturn = ssprintf( "%02d:%02d:%02d", iMinsDisplay/60, iMinsDisplay%60, iSecsDisplay );
 	return sReturn;
 }
 
-CString SecondsToMMSSMsMs( float fSecs )
-{
-	const int iMinsDisplay = (int)fSecs/60;
-	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
-	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100 );
-	CString sReturn = ssprintf( "%02d:%02d.%02d", iMinsDisplay, iSecsDisplay, min(99,iLeftoverDisplay) );
-	return sReturn;
-}
-
-CString SecondsToMSSMsMs( float fSecs )
+RString SecondsToMMSSMsMs( float fSecs )
 {
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
 	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100 );
-	CString sReturn = ssprintf( "%01d:%02d.%02d", iMinsDisplay, iSecsDisplay, min(99,iLeftoverDisplay) );
+	RString sReturn = ssprintf( "%02d:%02d.%02d", iMinsDisplay, iSecsDisplay, min(99,iLeftoverDisplay) );
 	return sReturn;
 }
 
-CString SecondsToMMSSMsMsMs( float fSecs )
+RString SecondsToMSSMsMs( float fSecs )
+{
+	const int iMinsDisplay = (int)fSecs/60;
+	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
+	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 100 );
+	RString sReturn = ssprintf( "%01d:%02d.%02d", iMinsDisplay, iSecsDisplay, min(99,iLeftoverDisplay) );
+	return sReturn;
+}
+
+RString SecondsToMMSSMsMsMs( float fSecs )
 {
 	const int iMinsDisplay = (int)fSecs/60;
 	const int iSecsDisplay = (int)fSecs - iMinsDisplay*60;
 	const int iLeftoverDisplay = (int) ( (fSecs - iMinsDisplay*60 - iSecsDisplay) * 1000 );
-	CString sReturn = ssprintf( "%02d:%02d.%03d", iMinsDisplay, iSecsDisplay, min(999,iLeftoverDisplay) );
+	RString sReturn = ssprintf( "%02d:%02d.%03d", iMinsDisplay, iSecsDisplay, min(999,iLeftoverDisplay) );
 	return sReturn;
 }
 
-CString PrettyPercent( float fNumerator, float fDenominator)
+RString PrettyPercent( float fNumerator, float fDenominator)
 {
 	return ssprintf("%0.2f%%",fNumerator/fDenominator*100);
 }
 
-CString Commify( int iNum ) 
+RString Commify( int iNum ) 
 {
-	CString sNum = ssprintf("%d",iNum);
-	CString sReturn;
+	RString sNum = ssprintf("%d",iNum);
+	RString sReturn;
 	for( unsigned i=0; i<sNum.length(); i++ )
 	{
 		char cDigit = sNum[sNum.length()-1-i];
@@ -176,9 +176,9 @@ CString Commify( int iNum )
 	return sReturn;
 }
 
-CString FormatNumberAndSuffix( int i )
+RString FormatNumberAndSuffix( int i )
 {
-	CString sSuffix;
+	RString sSuffix;
 	switch( i%10 )
 	{
 	case 1:		sSuffix = "st"; break;
@@ -203,7 +203,7 @@ struct tm GetLocalTime()
 }
 
 
-CString ssprintf( const char *fmt, ...)
+RString ssprintf( const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
@@ -211,9 +211,9 @@ CString ssprintf( const char *fmt, ...)
 }
 
 
-CString vssprintf( const char *fmt, va_list argList)
+RString vssprintf( const char *fmt, va_list argList)
 {
-	CString str;
+	RString str;
 	str.FormatV(fmt, argList);
 	return str;
 }
@@ -230,11 +230,11 @@ CString vssprintf( const char *fmt, va_list argList)
 #  endif
 #endif
 
-CString hr_ssprintf( int hr, const char *fmt, ...)
+RString hr_ssprintf( int hr, const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
-    CString s = vssprintf( fmt, va );
+    RString s = vssprintf( fmt, va );
     va_end(va);
 
 #ifdef _XBOX
@@ -247,7 +247,7 @@ CString hr_ssprintf( int hr, const char *fmt, ...)
 	return s + ssprintf( " (%s)", szError );
 }
 
-CString werr_ssprintf( int err, const char *fmt, ...)
+RString werr_ssprintf( int err, const char *fmt, ...)
 {
 	char buf[1024] = "";
 #ifndef _XBOX
@@ -256,29 +256,29 @@ CString werr_ssprintf( int err, const char *fmt, ...)
 #endif
 
 	/* Why is FormatMessage returning text ending with \r\n? */
-	CString text = buf;
+	RString text = buf;
 	text.Replace( "\n", "" );
 	text.Replace( "\r", " " ); /* foo\r\nbar -> foo bar */
 	TrimRight( text ); /* "foo\r\n" -> "foo" */
 
 	va_list	va;
     va_start(va, fmt);
-    CString s = vssprintf( fmt, va );
+    RString s = vssprintf( fmt, va );
     va_end(va);
 
 	return s += ssprintf( " (%s)", text.c_str() );
 }
 
-CString ConvertWstringToACP( wstring s )
+RString ConvertWstringToACP( wstring s )
 {
 	if( s.empty() )
-		return CString();
+		return RString();
 
 	int iBytes = WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), 
 					NULL, 0, NULL, FALSE );
 	ASSERT_M( iBytes > 0, werr_ssprintf( GetLastError(), "WideCharToMultiByte" ).c_str() );
 
-	CString ret;
+	RString ret;
 	WideCharToMultiByte( CP_ACP, 0, s.data(), s.size(), 
 					ret.GetBuf( iBytes ), iBytes, NULL, FALSE );
 	ret.RelBuf( iBytes );
@@ -286,21 +286,21 @@ CString ConvertWstringToACP( wstring s )
 	return ret;
 }
 
-CString ConvertUTF8ToACP( CString s )
+RString ConvertUTF8ToACP( RString s )
 {
-	return ConvertWstringToACP( CStringToWstring(s) );
+	return ConvertWstringToACP( RStringToWstring(s) );
 }
 
 #endif
 
-static map<CString,CString> g_mapLangToName2Letter;
+static map<RString,RString> g_mapLangToName2Letter;
 void InitLanguages()
 {
 	if( !g_mapLangToName2Letter.empty() )
 		return;
 
 	{
-		map<CString,CString> &m = g_mapLangToName2Letter;
+		map<RString,RString> &m = g_mapLangToName2Letter;
 		m["AA"] = "Afar";
 		m["AB"] = "Abkhazian";
 		m["AF"] = "Afrikaans";
@@ -441,22 +441,22 @@ void InitLanguages()
 }
 
 /* We don't use 3-letter codes, so we don't bother supporting them. */
-CString GetLanguageNameFromISO639Code( CString sName )
+RString GetLanguageNameFromISO639Code( RString sName )
 {
 	InitLanguages();
 
-	map<CString,CString>::const_iterator it = g_mapLangToName2Letter.find(sName);
+	map<RString,RString>::const_iterator it = g_mapLangToName2Letter.find(sName);
 	if( it != g_mapLangToName2Letter.end() )
 		return it->second;
 	return "";
 }
 
-CString join( const CString &Deliminator, const vector<CString>& Source)
+RString join( const RString &Deliminator, const vector<RString>& Source)
 {
 	if( Source.empty() )
-		return CString();
+		return RString();
 
-	CString csTmp;
+	RString csTmp;
 
 	// Loop through the Array and Append the Deliminator
 	for( unsigned iNum = 0; iNum < Source.size()-1; iNum++ ) {
@@ -467,12 +467,12 @@ CString join( const CString &Deliminator, const vector<CString>& Source)
 	return csTmp;
 }
 
-CString join( const CString &Delimitor, vector<CString>::const_iterator begin, vector<CString>::const_iterator end )
+RString join( const RString &Delimitor, vector<RString>::const_iterator begin, vector<RString>::const_iterator end )
 {
 	if( begin == end )
-		return CString();
+		return RString();
 
-	CString ret;
+	RString ret;
 	while( begin != end )
 	{
 		ret += *begin;
@@ -524,8 +524,8 @@ void do_split( const S &Source, const C Delimitor, vector<S> &AddIt, const bool 
 				AddIt.push_back(Source);
 			else
 			{
-				const S AddCString = Source.substr(startpos, pos-startpos);
-				AddIt.push_back(AddCString);
+				const S AddRString = Source.substr(startpos, pos-startpos);
+				AddIt.push_back(AddRString);
 			}
 		}
 
@@ -534,7 +534,7 @@ void do_split( const S &Source, const C Delimitor, vector<S> &AddIt, const bool 
 }
 
 
-void split( const CString &Source, const CString &Delimitor, vector<CString> &AddIt, const bool bIgnoreEmpty )
+void split( const RString &Source, const RString &Delimitor, vector<RString> &AddIt, const bool bIgnoreEmpty )
 {
 	if( Delimitor.size() == 1 )
 		do_split( Source, Delimitor[0], AddIt, bIgnoreEmpty );
@@ -552,7 +552,7 @@ void split( const wstring &Source, const wstring &Delimitor, vector<wstring> &Ad
 
 /* Use:
 
-CString str="a,b,c";
+RString str="a,b,c";
 int start = 0, size = -1;
 while( 1 )
 {
@@ -596,7 +596,7 @@ void do_split( const S &Source, const S &Delimitor, int &begin, int &size, int l
 	size = pos - begin;
 }
 
-void split( const CString &Source, const CString &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty )
+void split( const RString &Source, const RString &Delimitor, int &begin, int &size, int len, const bool bIgnoreEmpty )
 {
 	do_split( Source, Delimitor, begin, size, len, bIgnoreEmpty );
 
@@ -607,7 +607,7 @@ void split( const wstring &Source, const wstring &Delimitor, int &begin, int &si
 	do_split( Source, Delimitor, begin, size, len, bIgnoreEmpty );
 }
 
-void split( const CString &Source, const CString &Delimitor, int &begin, int &size, const bool bIgnoreEmpty )
+void split( const RString &Source, const RString &Delimitor, int &begin, int &size, const bool bIgnoreEmpty )
 {
 	do_split( Source, Delimitor, begin, size, Source.size(), bIgnoreEmpty );
 }
@@ -624,11 +624,11 @@ void split( const wstring &Source, const wstring &Delimitor, int &begin, int &si
  * c:\foo\bar.txt    -> "c:\foo\", "bar", ".txt"
  * \\foo\fum         -> "\\foo\", "fum", ""
  */
-void splitpath( const CString &Path, CString& Dir, CString& Filename, CString& Ext )
+void splitpath( const RString &Path, RString& Dir, RString& Filename, RString& Ext )
 {
 	Dir = Filename = Ext = "";
 
-	vector<CString> mat;
+	vector<RString> mat;
 
 	/* One level of escapes for the regex, one for C. Ew. 
 	 * This is really:
@@ -638,7 +638,7 @@ void splitpath( const CString &Path, CString& Dir, CString& Filename, CString& E
 	ASSERT(check);
 
 	Dir = mat[0];
-	const CString Base = mat[1];
+	const RString Base = mat[1];
 
 	/* ^(.*)(\.[^\.]+)$ */
 	static Regex SplitExt("^(.*)(\\.[^\\.]+)$");
@@ -654,29 +654,29 @@ void splitpath( const CString &Path, CString& Dir, CString& Filename, CString& E
 /* "foo.bar", "baz" -> "foo.baz"
  * "foo", "baz" -> "foo.baz"
  * "foo.bar", "" -> "foo" */
-CString SetExtension( const CString &path, const CString &ext )
+RString SetExtension( const RString &path, const RString &ext )
 {
-	CString Dir, FName, OldExt;
+	RString Dir, FName, OldExt;
 	splitpath( path, Dir, FName, OldExt );
 	return Dir + FName + (ext.size()? ".":"") + ext;
 }
 
-CString GetExtension( const CString &sPath )
+RString GetExtension( const RString &sPath )
 {
 	size_t pos = sPath.rfind( '.' );
 	if( pos == sPath.npos )
-		return CString();
+		return RString();
 
 	size_t slash = sPath.find( '/', pos );
 	if( slash != sPath.npos )
-		return CString(); /* rare: path/dir.ext/fn */
+		return RString(); /* rare: path/dir.ext/fn */
 
 	return sPath.substr( pos+1, sPath.size()-pos+1 );
 }
 
-CString GetFileNameWithoutExtension( const CString &sPath )
+RString GetFileNameWithoutExtension( const RString &sPath )
 {
-	CString sThrowAway, sFName;
+	RString sThrowAway, sFName;
 	splitpath( sPath, sThrowAway, sFName, sThrowAway );
 	return sFName;
 }
@@ -697,16 +697,16 @@ void SetCommandlineArguments( int argc, char **argv )
  * common, general use, so having short options isn't currently needed.)
  * If argument is non-NULL, accept an argument.
  */
-bool GetCommandlineArgument( const CString &option, CString *argument, int iIndex )
+bool GetCommandlineArgument( const RString &option, RString *argument, int iIndex )
 {
-	const CString optstr = "--" + option;
+	const RString optstr = "--" + option;
 	
 	for( int arg = 1; arg < g_argc; ++arg )
 	{
-		const CString CurArgument = g_argv[arg];
+		const RString CurArgument = g_argv[arg];
 
 		const size_t i = CurArgument.find( "=" );
-		CString CurOption = CurArgument.substr(0,i);
+		RString CurOption = CurArgument.substr(0,i);
 		if( CurOption.CompareNoCase(optstr) )
 			continue; /* no match */
 
@@ -719,7 +719,7 @@ bool GetCommandlineArgument( const CString &option, CString *argument, int iInde
 
 		if( argument )
 		{
-			if( i != CString::npos )
+			if( i != RString::npos )
 				*argument = CurArgument.substr( i+1 );
 			else
 				*argument = "";
@@ -731,7 +731,7 @@ bool GetCommandlineArgument( const CString &option, CString *argument, int iInde
 	return false;
 }
 
-CString GetCwd()
+RString GetCwd()
 {
 #ifdef _XBOX
 	return SYS_BASE_PATH;
@@ -780,7 +780,7 @@ void CRC32( unsigned int &iCRC, const void *pVoidBuffer, size_t iSize )
 	iCRC ^= 0xFFFFFFFF;
 }
 
-unsigned int GetHashForString ( const CString &s )
+unsigned int GetHashForString ( const RString &s )
 {
 	unsigned crc = 0;
 	CRC32( crc, s.data(), s.size() );
@@ -789,32 +789,32 @@ unsigned int GetHashForString ( const CString &s )
 
 
 /* Return true if "dir" is empty or does not exist. */
-bool DirectoryIsEmpty( const CString &dir )
+bool DirectoryIsEmpty( const RString &dir )
 {
 	if(dir == "")
 		return true;
 	if(!DoesFileExist(dir))
 		return true;
 
-	vector<CString> asFileNames;
+	vector<RString> asFileNames;
 	GetDirListing( dir, asFileNames );
 	return asFileNames.empty();
 }
 
-bool CompareCStringsAsc(const CString &str1, const CString &str2)
+bool CompareRStringsAsc(const RString &str1, const RString &str2)
 {
 	return str1.CompareNoCase( str2 ) < 0;
 }
 
-bool CompareCStringsDesc(const CString &str1, const CString &str2)
+bool CompareRStringsDesc(const RString &str1, const RString &str2)
 {
 	return str1.CompareNoCase( str2 ) > 0;
 }
 
-void SortCStringArray( vector<CString> &arrayCStrings, const bool bSortAscending )
+void SortRStringArray( vector<RString> &arrayRStrings, const bool bSortAscending )
 {
-	sort( arrayCStrings.begin(), arrayCStrings.end(),
-			bSortAscending?CompareCStringsAsc:CompareCStringsDesc);
+	sort( arrayRStrings.begin(), arrayRStrings.end(),
+			bSortAscending?CompareRStringsAsc:CompareRStringsDesc);
 }
 
 float calc_mean(const float *start, const float *end)
@@ -837,7 +837,7 @@ float calc_stddev(const float *start, const float *end)
 	return dev;
 }
 
-void TrimLeft(CString &str, const char *s)
+void TrimLeft(RString &str, const char *s)
 {
 	int n = 0;
 	while(n < int(str.size()) && strchr(s, str[n]))
@@ -846,7 +846,7 @@ void TrimLeft(CString &str, const char *s)
 	str.erase(str.begin(), str.begin()+n);
 }
 
-void TrimRight(CString &str, const char *s)
+void TrimRight(RString &str, const char *s)
 {
 	int n = str.size();
 	while(n > 0 && strchr(s, str[n-1]))
@@ -857,19 +857,19 @@ void TrimRight(CString &str, const char *s)
 	str.erase(str.begin()+n, str.end());
 }
 
-void StripCrnl(CString &s)
+void StripCrnl(RString &s)
 {
 	while( s.size() && (s[s.size()-1] == '\r' || s[s.size()-1] == '\n') )
 		s.erase(s.size()-1);
 }
 
-bool BeginsWith( const CString &sTestThis, const CString &sBeginning )
+bool BeginsWith( const RString &sTestThis, const RString &sBeginning )
 {
 	ASSERT( !sBeginning.empty() );
 	return sTestThis.compare( 0, sBeginning.length(), sBeginning ) == 0;
 }
 
-bool EndsWith( const CString &sTestThis, const CString &sEnding )
+bool EndsWith( const RString &sTestThis, const RString &sEnding )
 {
 	ASSERT( !sEnding.empty() );
 	if( sTestThis.size() < sEnding.size() )
@@ -877,7 +877,7 @@ bool EndsWith( const CString &sTestThis, const CString &sEnding )
 	return sTestThis.compare( sTestThis.length()-sEnding.length(), sEnding.length(), sEnding ) == 0;
 }
 
-void StripCvs( vector<CString> &vs )
+void StripCvs( vector<RString> &vs )
 {
 	for( unsigned i=0; i<vs.size(); i++ )
 	{
@@ -887,9 +887,9 @@ void StripCvs( vector<CString> &vs )
 }
 
 /* path is a .redir pathname.  Read it and return the real one. */
-CString DerefRedir(const CString &_path)
+RString DerefRedir(const RString &_path)
 {
-	CString path = _path;
+	RString path = _path;
 
 	for( int i=0; i<100; i++ )
 	{
@@ -898,22 +898,22 @@ CString DerefRedir(const CString &_path)
 			return path;
 		}
 
-		CString sNewFileName;
+		RString sNewFileName;
 		GetFileContents( path, sNewFileName, true );
 
 		/* Empty is invalid. */
 		if( sNewFileName == "" )
-			return CString();
+			return RString();
 
 		FixSlashesInPlace( sNewFileName );
 
-		CString path2 = Dirname(path) + sNewFileName;
+		RString path2 = Dirname(path) + sNewFileName;
 
 		CollapsePath( path2 );
 
 		path2 += "*";
 
-		vector<CString> matches;
+		vector<RString> matches;
 		GetDirListing( path2, matches, false, true );
 
 		if( matches.empty() )
@@ -927,7 +927,7 @@ CString DerefRedir(const CString &_path)
 	RageException::Throw( "Circular redirect '%s'", path.c_str() );
 }
 
-bool GetFileContents( const CString &sPath, CString &sOut, bool bOneLine )
+bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine )
 {
 	/* Don't warn if the file doesn't exist, but do warn if it exists and fails to open. */
 	if( !IsAFile(sPath) )
@@ -940,7 +940,7 @@ bool GetFileContents( const CString &sPath, CString &sOut, bool bOneLine )
 		return false;
 	}
 	
-	CString sData;
+	RString sData;
 	int iGot;
 	if( bOneLine )
 		iGot = file.GetLine( sData );
@@ -979,7 +979,7 @@ void Regex::Compile()
     ASSERT(backrefs < 128);
 }
 
-void Regex::Set(const CString &str)
+void Regex::Set(const RString &str)
 {
 	Release();
     pattern=str;
@@ -993,7 +993,7 @@ void Regex::Release()
 	pattern = "";
 }
 
-Regex::Regex(const CString &str)
+Regex::Regex(const RString &str)
 {
 	reg = NULL;
 	Set(str);
@@ -1016,7 +1016,7 @@ Regex::~Regex()
     Release();
 }
 
-bool Regex::Compare(const CString &str)
+bool Regex::Compare(const RString &str)
 {
     int mat[128*3];
 	int ret = pcre_exec( (pcre *) reg, NULL,
@@ -1029,7 +1029,7 @@ bool Regex::Compare(const CString &str)
 	return ret >= 0;
 }
 
-bool Regex::Compare(const CString &str, vector<CString> &matches)
+bool Regex::Compare(const RString &str, vector<RString> &matches)
 {
     matches.clear();
 
@@ -1073,7 +1073,7 @@ void Regex::Compile()
     ASSERT(backrefs+1 < 128);
 }
 
-void Regex::Set(const CString &str)
+void Regex::Set(const RString &str)
 {
 	Release();
     pattern=str;
@@ -1087,7 +1087,7 @@ void Regex::Release()
 	pattern = "";
 }
 
-Regex::Regex(const CString &str)
+Regex::Regex(const RString &str)
 {
 	reg = NULL;
 	Set(str);
@@ -1110,12 +1110,12 @@ Regex::~Regex()
     Release();
 }
 
-bool Regex::Compare(const CString &str)
+bool Regex::Compare(const RString &str)
 {
     return regexec((regex_t *) reg, str.c_str(), 0, NULL, 0) != REG_NOMATCH;
 }
 
-bool Regex::Compare(const CString &str, vector<CString> &matches)
+bool Regex::Compare(const RString &str, vector<RString> &matches)
 {
     matches.clear();
 
@@ -1139,9 +1139,9 @@ bool Regex::Compare(const CString &str, vector<CString> &matches)
 
 // Arguments and behavior are the same are similar to
 // http://us3.php.net/manual/en/function.preg-replace.php
-bool Regex::Replace(const CString &replacement, const CString &subject, CString &out)
+bool Regex::Replace(const RString &replacement, const RString &subject, RString &out)
 {
-    vector<CString> matches;
+    vector<RString> matches;
 	if( !Compare(subject,matches) )
 		return false;
 
@@ -1150,8 +1150,8 @@ bool Regex::Replace(const CString &replacement, const CString &subject, CString 
 	// TODO: optimize me by iterating only once over the string
 	for( unsigned i=0; i<matches.size(); i++ )
 	{
-		CString sFrom = ssprintf( "\\${%d}", i );
-		CString sTo = matches[i];
+		RString sFrom = ssprintf( "\\${%d}", i );
+		RString sTo = matches[i];
 		out.Replace(sFrom, sTo);
 	}
 
@@ -1182,7 +1182,7 @@ static inline bool is_utf8_continuation_byte( char c )
 
 /* Decode one codepoint at start; advance start and place the result in ch.  If
  * the encoded string is invalid, false is returned. */
-bool utf8_to_wchar_ec( const CString &s, unsigned &start, wchar_t &ch )
+bool utf8_to_wchar_ec( const RString &s, unsigned &start, wchar_t &ch )
 {
 	if( start >= s.size() )
 		return false;
@@ -1244,7 +1244,7 @@ bool utf8_to_wchar_ec( const CString &s, unsigned &start, wchar_t &ch )
 }
 
 /* Like utf8_to_wchar_ec, but only does enough error checking to prevent crashing. */
-bool utf8_to_wchar( const CString &s, unsigned &start, wchar_t &ch )
+bool utf8_to_wchar( const RString &s, unsigned &start, wchar_t &ch )
 {
 	if( start >= s.size() )
 		return false;
@@ -1304,7 +1304,7 @@ bool utf8_to_wchar( const CString &s, unsigned &start, wchar_t &ch )
 
 
 /* UTF-8 encode ch and append to out. */
-void wchar_to_utf8( wchar_t ch, CString &out )
+void wchar_to_utf8( wchar_t ch, RString &out )
 {
 	if( ch < 0x80 ) { out.append( 1, (char) ch ); return; }
 
@@ -1329,7 +1329,7 @@ void wchar_to_utf8( wchar_t ch, CString &out )
 }
 
 
-wchar_t utf8_get_char( const CString &s )
+wchar_t utf8_get_char( const RString &s )
 {
 	unsigned start = 0;
 	wchar_t ret;
@@ -1341,9 +1341,9 @@ wchar_t utf8_get_char( const CString &s )
 
 
 /* Replace invalid sequences in s. */
-void utf8_sanitize( CString &s )
+void utf8_sanitize( RString &s )
 {
-	CString ret;
+	RString ret;
 	for( unsigned start = 0; start < s.size(); )
 	{
 		wchar_t ch;
@@ -1357,7 +1357,7 @@ void utf8_sanitize( CString &s )
 }
 
 
-bool utf8_is_valid( const CString &s )
+bool utf8_is_valid( const RString &s )
 {
 	for( unsigned start = 0; start < s.size(); )
 	{
@@ -1370,7 +1370,7 @@ bool utf8_is_valid( const CString &s )
 
 /* Windows tends to drop garbage BOM characters at the start of UTF-8 text files.
  * Remove them. */
-void utf8_remove_bom( CString &sLine )
+void utf8_remove_bom( RString &sLine )
 {
 	if( !sLine.compare(0, 3, "\xef\xbb\xbf") )
 		sLine.erase(0, 3);
@@ -1378,7 +1378,7 @@ void utf8_remove_bom( CString &sLine )
 
 const wchar_t INVALID_CHAR = 0xFFFD; /* U+FFFD REPLACEMENT CHARACTER */
 
-wstring CStringToWstring( const CString &s )
+wstring RStringToWstring( const RString &s )
 {
 	wstring ret;
 	ret.reserve( s.size() );
@@ -1402,9 +1402,9 @@ wstring CStringToWstring( const CString &s )
 	return ret;
 }
 
-CString WStringToCString(const wstring &str)
+RString WStringToRString(const wstring &str)
 {
-	CString ret;
+	RString ret;
 
 	for(unsigned i = 0; i < str.size(); ++i)
 		wchar_to_utf8( str[i], ret );
@@ -1413,17 +1413,17 @@ CString WStringToCString(const wstring &str)
 }
 
 
-CString WcharToUTF8( wchar_t c )
+RString WcharToUTF8( wchar_t c )
 {
-	CString ret;
+	RString ret;
 	wchar_to_utf8( c, ret );
 	return ret;
 }
 
 /* &a; -> a */
-void ReplaceEntityText( CString &sText, const map<CString,CString> &m )
+void ReplaceEntityText( RString &sText, const map<RString,RString> &m )
 {
-	CString sRet;
+	RString sRet;
 
 	size_t iOffset = 0;
 	while( iOffset != sText.size() )
@@ -1455,10 +1455,10 @@ void ReplaceEntityText( CString &sText, const map<CString,CString> &m )
 			continue;
 		}
 
-		CString sElement = sText.substr( iStart+1, iEnd-iStart-1 );
+		RString sElement = sText.substr( iStart+1, iEnd-iStart-1 );
 		sElement.MakeLower();
 
-		map<CString,CString>::const_iterator it = m.find( sElement );
+		map<RString,RString>::const_iterator it = m.find( sElement );
 		if( it == m.end() )
 		{
 			sRet.append( sText, iStart, iEnd-iStart+1 );
@@ -1466,7 +1466,7 @@ void ReplaceEntityText( CString &sText, const map<CString,CString> &m )
 			continue;
 		}
 
-		const CString &sTo = it->second;
+		const RString &sTo = it->second;
 		sRet.append( sTo );
 		iOffset = iEnd + 1;
 	}
@@ -1475,14 +1475,14 @@ void ReplaceEntityText( CString &sText, const map<CString,CString> &m )
 }
 
 /* abcd -> &a; &b; &c; &d; */
-void ReplaceEntityText( CString &sText, const map<char,CString> &m )
+void ReplaceEntityText( RString &sText, const map<char,RString> &m )
 {
-	CString sFind;
+	RString sFind;
 
-	FOREACHM_CONST( char, CString, m, c )
+	FOREACHM_CONST( char, RString, m, c )
 		sFind.append( 1, c->first );
 
-	CString sRet;
+	RString sRet;
 
 	size_t iOffset = 0;
 	while( iOffset != sText.size() )
@@ -1505,10 +1505,10 @@ void ReplaceEntityText( CString &sText, const map<char,CString> &m )
 
 		char sElement = sText[iStart];
 
-		map<char,CString>::const_iterator it = m.find( sElement );
+		map<char,RString>::const_iterator it = m.find( sElement );
 		ASSERT( it != m.end() );
 
-		const CString &sTo = it->second;
+		const RString &sTo = it->second;
 		sRet.append( 1, '&' );
 		sRet.append( sTo );
 		sRet.append( 1, ';' );
@@ -1519,7 +1519,7 @@ void ReplaceEntityText( CString &sText, const map<char,CString> &m )
 }
 
 /* Replace &#nnnn; (decimal) &xnnnn; (hex) with corresponding UTF-8 characters. */
-void Replace_Unicode_Markers( CString &Text )
+void Replace_Unicode_Markers( RString &Text )
 {
 	unsigned start = 0;
 	while(start < Text.size())
@@ -1563,9 +1563,9 @@ void Replace_Unicode_Markers( CString &Text )
 }
 
 /* Form a string to identify a wchar_t with ASCII. */
-CString WcharDisplayText(wchar_t c)
+RString WcharDisplayText(wchar_t c)
 {
-	CString chr;
+	RString chr;
 	chr = ssprintf("U+%4.4x", c);
 	if(c < 128) chr += ssprintf(" ('%c')", char(c));
 	return chr;
@@ -1575,11 +1575,11 @@ CString WcharDisplayText(wchar_t c)
  * a/b/c -> c
  * a/b/c/ -> c
  */
-CString Basename( const CString &dir )
+RString Basename( const RString &dir )
 {
 	size_t  end = dir.find_last_not_of( "/\\" );
 	if( end == dir.npos )
-		return CString();
+		return RString();
 
 	size_t  start = dir.find_last_of( "/\\", end );
 	if( start == dir.npos )
@@ -1597,7 +1597,7 @@ CString Basename( const CString &dir )
  * /foo -> /
  * / -> /
  */
-CString Dirname( const CString &dir )
+RString Dirname( const RString &dir )
 {
         /* Special case: "/" -> "/". */
         if( dir.size() == 1 && dir[0] == '/' )
@@ -1618,11 +1618,11 @@ CString Dirname( const CString &dir )
         return dir.substr(0, pos+1);
 }
 
-CString Capitalize( const CString &s )	
+RString Capitalize( const RString &s )	
 {
 	if( s.GetLength()==0 )
-		return CString();
-	CString s2 = s;
+		return RString();
+	RString s2 = s;
 	/* XXX: utf-8 */
 	if( !(s2[0] & 0x80) )
 		s2[0] = (char) toupper( s2[0] );
@@ -1649,14 +1649,14 @@ char char_traits_char_nocase::uptab[256] =
 	'\xF0','\xF1','\xF2','\xF3','\xF4','\xF5','\xF6','\xF7','\xF8','\xF9','\xFA','\xFB','\xFC','\xFD','\xFE','\xFF',
 };
 
-void FixSlashesInPlace( CString &sPath )
+void FixSlashesInPlace( RString &sPath )
 {
 	for( unsigned i = 0; i < sPath.size(); ++i )
 		if( sPath[i] == '\\' )
 			sPath[i] = '/';
 }
 
-CString FixSlashes( CString sPath )
+RString FixSlashes( RString sPath )
 {
 	FixSlashesInPlace( sPath );
     return sPath;
@@ -1678,9 +1678,9 @@ CString FixSlashes( CString sPath )
  * ./// -> ./
  */
 
-void CollapsePath( CString &sPath, bool bRemoveLeadingDot )
+void CollapsePath( RString &sPath, bool bRemoveLeadingDot )
 {
-	CString sOut;
+	RString sOut;
 	sOut.reserve( sPath.size() );
 
 	size_t iPos = 0;
@@ -1689,7 +1689,7 @@ void CollapsePath( CString &sPath, bool bRemoveLeadingDot )
 	{
 		/* Find the next slash. */
 		iNext = sPath.find( '/', iPos );
-		if( iNext == CString::npos )
+		if( iNext == RString::npos )
 			iNext = sPath.size();
 		else
 			++iNext;
@@ -1721,7 +1721,7 @@ void CollapsePath( CString &sPath, bool bRemoveLeadingDot )
 
 			/* Search backwards for the previous path element. */
 			size_t iPrev = sOut.rfind( '/', sOut.size()-2 );
-			if( iPrev == CString::npos )
+			if( iPrev == RString::npos )
 				iPrev = 0;
 			else
 				++iPrev;
@@ -1745,7 +1745,7 @@ void CollapsePath( CString &sPath, bool bRemoveLeadingDot )
 }
 
 
-bool FromString( const CString &sValue, int &out )
+bool FromString( const RString &sValue, int &out )
 {
 	if( sscanf( sValue.c_str(), "%d", &out ) == 1 )
 		return true;
@@ -1754,7 +1754,7 @@ bool FromString( const CString &sValue, int &out )
 	return false;
 }
 
-bool FromString( const CString &sValue, unsigned  &out )
+bool FromString( const RString &sValue, unsigned  &out )
 {
 	if( sscanf( sValue.c_str(), "%u", &out ) == 1 )
 		return true;
@@ -1763,14 +1763,14 @@ bool FromString( const CString &sValue, unsigned  &out )
 	return false;
 }
 
-bool FromString( const CString &sValue, float &out )
+bool FromString( const RString &sValue, float &out )
 {
 	const char *endptr = sValue.data() + sValue.size();
 	out = strtof( sValue, (char **) &endptr );
 	return endptr != sValue.data();
 }
 
-bool FromString( const CString &sValue, bool &out )
+bool FromString( const RString &sValue, bool &out )
 {
 	if( sValue.size() == 0 )
 		return false;
@@ -1779,22 +1779,22 @@ bool FromString( const CString &sValue, bool &out )
 	return true;
 }
 
-CString ToString( int value )
+RString ToString( int value )
 {
 	return ssprintf( "%i", value );
 }
 
-CString ToString( unsigned value )
+RString ToString( unsigned value )
 {
 	return ssprintf( "%u", value );
 }
 
-CString ToString( float value )
+RString ToString( float value )
 {
 	return ssprintf( "%f", value );
 }
 
-CString ToString( bool value )
+RString ToString( bool value )
 {
 	return ssprintf( "%i", value );
 }
@@ -1803,7 +1803,7 @@ CString ToString( bool value )
 //
 // Helper function for reading/writing scores
 //
-bool FileRead(RageFileBasic& f, CString& sOut)
+bool FileRead(RageFileBasic& f, RString& sOut)
 {
 	if (f.AtEOF())
 		return false;
@@ -1814,7 +1814,7 @@ bool FileRead(RageFileBasic& f, CString& sOut)
 
 bool FileRead(RageFileBasic& f, int& iOut)
 {
-	CString s;
+	RString s;
 	if (!FileRead(f, s))
 		return false;
 	iOut = atoi(s);
@@ -1823,7 +1823,7 @@ bool FileRead(RageFileBasic& f, int& iOut)
 
 bool FileRead(RageFileBasic& f, unsigned& uOut)
 {
-	CString s;
+	RString s;
 	if (!FileRead(f, s))
 		return false;
 	uOut = atoi(s);
@@ -1832,14 +1832,14 @@ bool FileRead(RageFileBasic& f, unsigned& uOut)
 
 bool FileRead(RageFileBasic& f, float& fOut)
 {
-	CString s;
+	RString s;
 	if (!FileRead(f, s))
 		return false;
 	fOut = strtof( s, NULL );
 	return true;
 }
 
-void FileWrite(RageFileBasic& f, const CString& sWrite)
+void FileWrite(RageFileBasic& f, const RString& sWrite)
 {
 	f.PutLine( sWrite );
 }
@@ -1859,7 +1859,7 @@ void FileWrite(RageFileBasic& f, float fWrite)
 	f.PutLine( ssprintf("%f", fWrite) );
 }
 
-bool FileCopy( CString sSrcFile, CString sDstFile )
+bool FileCopy( RString sSrcFile, RString sDstFile )
 {
 	if( !sSrcFile.CompareNoCase(sDstFile) )
 	{
@@ -1875,7 +1875,7 @@ bool FileCopy( CString sSrcFile, CString sDstFile )
 	if( !out.Open(sDstFile, RageFile::WRITE) )
 		return false;
 
-	CString sError;
+	RString sError;
 	if( !FileCopy(in, out, sError) )
 	{
 		LOG->Warn( "FileCopy(%s,%s): %s",
@@ -1886,11 +1886,11 @@ bool FileCopy( CString sSrcFile, CString sDstFile )
 	return true;
 }
 
-bool FileCopy( RageFileBasic &in, RageFileBasic &out, CString &sError, bool *bReadError )
+bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bReadError )
 {
 	while(1)
 	{
-		CString data;
+		RString data;
 		if( in.Read(data, 1024*32) == -1 )
 		{
 			sError = ssprintf( "read error: %s", in.GetError().c_str() );
@@ -1920,6 +1920,55 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, CString &sError, bool *bRe
 
 	return true;
 }
+
+static RString (*g_pfnLocalizer)(const RString&,const RString&) = NULL;
+
+void RegisterLocalizer( RString (*pfnLocalizer)(const RString&, const RString&) )
+{
+	g_pfnLocalizer = pfnLocalizer;
+}
+
+#include "SubscriptionManager.h"
+template<>
+set<LocalizedString*>* SubscriptionManager<LocalizedString>::s_pSubscribers = NULL;
+
+void RefreshLocalizedStrings()
+{
+	FOREACHS( LocalizedString*, *SubscriptionManager<LocalizedString>::s_pSubscribers, p )
+		(*p)->Refresh();
+}
+
+LocalizedString::LocalizedString( const RString &sSection, const RString &sName )
+{
+	m_sSection = sSection;
+	m_sName = sName;
+
+	SubscriptionManager<LocalizedString>::Subscribe( this );
+}
+
+
+LocalizedString::~LocalizedString()
+{
+	SubscriptionManager<LocalizedString>::Unsubscribe( this );
+}
+
+
+LocalizedString::operator const CString&()
+{
+	return GetValue();
+}
+
+const CString &LocalizedString::GetValue()
+{
+	ASSERT(!m_sValue.empty()); return m_sValue;
+}
+
+void LocalizedString::Refresh()
+{
+	ASSERT( g_pfnLocalizer );
+	m_sValue = g_pfnLocalizer( m_sSection, m_sName );
+}
+
 
 /*
  * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard

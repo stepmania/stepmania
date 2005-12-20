@@ -229,6 +229,7 @@ int ScreenSelectStyle::GetSelectionIndex( PlayerNumber pn )
 	return m_iSelection;
 }
 
+static LocalizedString NO_STYLES_ARE_SELECTABLE( "ScreenSMOnlineLogin", "No Styles are selectable." );
 void ScreenSelectStyle::UpdateSelectableChoices()
 {
 	for( unsigned i=0; i<m_aGameCommands.size(); i++ )
@@ -264,7 +265,7 @@ void ScreenSelectStyle::UpdateSelectableChoices()
 	if( iSwitchToStyleIndex == -1 )// no styles are enabled.  We're stuck!
 	{
 		DEBUG_ASSERT(0);
-		SCREENMAN->SystemMessage( "No Styles are selectable." );
+		SCREENMAN->SystemMessage( NO_STYLES_ARE_SELECTABLE );
 		this->PostScreenMessage( SM_GoToPrevScreen, 0 );
 		return;
 	}

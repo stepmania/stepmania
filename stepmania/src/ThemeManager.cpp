@@ -676,13 +676,14 @@ bool ThemeManager::HasMetric( const CString &sClassName, const CString &sValueNa
 	return GetMetricRawRecursive( sClassName, sValueName, sThrowAway );
 }
 
+static LocalizedString RELOADED_METRICS( "ThemeManager", "Reloaded metrics" );
 void ThemeManager::ReloadMetrics()
 {
 	// force a reload of the metrics cache
 	LoadThemeMetrics( g_vThemes, m_sCurThemeName, m_sCurLanguage );
 
 	if( SCREENMAN )
-		SCREENMAN->SystemMessage( "Reloaded metrics" );
+		SCREENMAN->SystemMessage( RELOADED_METRICS );
 
 	//
 	// clear theme path cache
