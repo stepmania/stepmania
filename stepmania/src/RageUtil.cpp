@@ -1953,12 +1953,12 @@ LocalizedString::~LocalizedString()
 }
 
 
-LocalizedString::operator const RString&() const
+LocalizedString::operator RString() const
 {
 	return GetValue();
 }
 
-const CString &LocalizedString::GetValue() const
+RString LocalizedString::GetValue() const
 {
 	ASSERT(!m_sValue.empty()); return m_sValue;
 }

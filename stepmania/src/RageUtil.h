@@ -513,8 +513,8 @@ public:
 	LocalizedString( const RString &sSection, const RString &sName );
 	~LocalizedString();
 	void Refresh();
-	operator const RString&() const;
-	const RString &GetValue() const;
+	operator RString() const;
+	RString GetValue() const;
 private:
 	RString m_sSection;
 	RString m_sName;
