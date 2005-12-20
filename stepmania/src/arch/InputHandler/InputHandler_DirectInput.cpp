@@ -52,19 +52,13 @@ static BOOL CALLBACK EnumDevices( const DIDEVICEINSTANCE *pdidInstance, void *pC
 
 static void CheckForDirectInputDebugMode()
 {
-	HKEY    hkey;
-	if (RegOpenKey(HKEY_LOCAL_MACHINE, "SOFTWARE\\Microsoft\\DirectInput", &hkey) != ERROR_SUCCESS)
-		return;
-
-	long val;
-	DWORD nSize = sizeof(val);
-	if( RegQueryValueEx(hkey, "emulation", NULL, NULL, (LPBYTE)&val, &nSize) == ERROR_SUCCESS ) 
+	int iVal;
+	if( RegistryAccess::GetRegValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\DirectInput", "emulation", iVal) )
 	{
-		if( val&0x8 )
+		if( iVal & 0x8 )
 			LOG->Warn("DirectInput keyboard debug mode appears to be enabled.  This reduces\n"
 			          "input timing accuracy significantly.  Disabling this is strongly recommended." );
 	}
-	RegCloseKey(hkey);
 }
 
 static int GetNumUsbHidDevices()
