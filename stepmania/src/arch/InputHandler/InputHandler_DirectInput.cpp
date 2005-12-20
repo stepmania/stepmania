@@ -15,7 +15,7 @@
 static vector<DIDevice> Devices;
 
 /* Number of joysticks found: */
-static int g_NumJoysticks;
+static int g_iNumJoysticks;
 
 static BOOL CALLBACK EnumDevices( const DIDEVICEINSTANCE *pdidInstance, void *pContext )
 {
@@ -33,11 +33,11 @@ static BOOL CALLBACK EnumDevices( const DIDEVICEINSTANCE *pdidInstance, void *pC
 	switch( device.type )
 	{
 	case device.JOYSTICK:
-		if( g_NumJoysticks == NUM_JOYSTICKS )
+		if( g_iNumJoysticks == NUM_JOYSTICKS )
 			return DIENUM_CONTINUE;
 
-		device.dev = InputDevice( DEVICE_JOY1 + g_NumJoysticks );
-		g_NumJoysticks++;
+		device.dev = InputDevice( DEVICE_JOY1 + g_iNumJoysticks );
+		g_iNumJoysticks++;
 		break;
 
 	case device.KEYBOARD:
@@ -76,9 +76,9 @@ InputHandler_DInput::InputHandler_DInput()
 
 	CheckForDirectInputDebugMode();
 	
-	shutdown = false;
+	m_bShutdown = false;
 	m_iLastSeenNumUsbHid = GetNumUsbHidDevices();
-	g_NumJoysticks = 0;
+	g_iNumJoysticks = 0;
 
 	AppInstance inst;	
 	HRESULT hr = DirectInputCreate(inst.Get(), DIRECTINPUT_VERSION, &dinput, NULL);
@@ -122,24 +122,24 @@ InputHandler_DInput::InputHandler_DInput()
 
 void InputHandler_DInput::StartThread()
 {
-	ASSERT( !InputThread.IsCreated() );
+	ASSERT( !m_Thread.IsCreated() );
 	if( PREFSMAN->m_bThreadedInput )
 	{
-		InputThread.SetName( "DirectInput thread" );
-		InputThread.Create( InputThread_Start, this );
+		m_Thread.SetName( "DirectInput thread" );
+		m_Thread.Create( InputThread_Start, this );
 	}
 }
 
 void InputHandler_DInput::ShutdownThread()
 {
-	if( !InputThread.IsCreated() )
+	if( !m_Thread.IsCreated() )
 		return;
 
-	shutdown = true;
+	m_bShutdown = true;
 	LOG->Trace("Shutting down DirectInput thread ...");
-	InputThread.Wait();
+	m_Thread.Wait();
 	LOG->Trace("DirectInput thread shut down.");
-	shutdown = false;
+	m_bShutdown = false;
 }
 
 InputHandler_DInput::~InputHandler_DInput()
@@ -197,7 +197,7 @@ static int TranslatePOV(DWORD value)
 	    HAT_UP_MASK   | HAT_LEFT_MASK
 	};
 
-	if(LOWORD(value) == 0xFFFF)
+	if( LOWORD(value) == 0xFFFF )
 	    return 0;
 
 	/* Round the value up: */
@@ -205,7 +205,7 @@ static int TranslatePOV(DWORD value)
 	value %= 36000;
 	value /= 4500;
 
-	if(value >= 8)
+	if( value >= 8 )
 	    return 0; /* shouldn't happen */
 	
 	return HAT_VALS[value];
@@ -214,8 +214,9 @@ static int TranslatePOV(DWORD value)
 HRESULT GetDeviceState(LPDIRECTINPUTDEVICE2 dev, int size, void *ptr)
 {
 	HRESULT hr = IDirectInputDevice2_GetDeviceState(dev, size, ptr);
-	if ( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED ) {
-		hr = IDirectInputDevice2_Acquire(dev);
+	if( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
+	{
+		hr = IDirectInputDevice2_Acquire( dev );
 		if ( hr != DI_OK )
 		{
 			LOG->Trace( hr_ssprintf(hr, "?") );
@@ -453,8 +454,10 @@ void InputHandler_DInput::Update()
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
 		if( !Devices[i].buffered )
+		{
 			UpdatePolled( Devices[i], zero );
-		else if( !InputThread.IsCreated() )
+		}
+		else if( !m_Thread.IsCreated() )
 		{
 			/* If we have an input thread, it'll handle buffered devices. */
 			UpdateBuffered( Devices[i], zero );
@@ -498,7 +501,7 @@ void InputHandler_DInput::InputThreadMain()
 		IDirectInputDevice2_Acquire(Devices[i].Device);
 	}
 
-	while(!shutdown)
+	while( !m_bShutdown )
 	{
 		CHECKPOINT;
 		if( BufferedDevices.size() )

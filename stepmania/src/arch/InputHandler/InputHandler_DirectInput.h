@@ -16,8 +16,8 @@ public:
 	void WindowReset();
 
 private:
-	RageThread InputThread;
-	bool shutdown;
+	RageThread m_Thread;
+	bool m_bShutdown;
 	int m_iLastSeenNumUsbHid;	// use this to figure out if a device was plugged/unplugged
 
 	void UpdatePolled( DIDevice &device, const RageTimer &tm );
