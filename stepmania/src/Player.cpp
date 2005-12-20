@@ -1310,6 +1310,8 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 
 static LocalizedString AUTOSYNC_CORRECTION_APPLIED		( "Player", "Autosync: Correction applied." );
 static LocalizedString AUTOSYNC_CORRECTION_NOT_APPLIED	( "Player", "Autosync: Correction NOT applied. Deviation too high." );
+static LocalizedString AUTOSYNC_SONG					( "Player", "Autosync Song" );
+static LocalizedString AUTOSYNC_MACHINE					( "Player", "Autosync Machine" );
 void Player::HandleAutosync(float fNoteOffset)
 {
 	if( GAMESTATE->m_SongOptions.m_AutosyncType == SongOptions::AUTOSYNC_OFF )
@@ -1328,10 +1330,10 @@ void Player::HandleAutosync(float fNoteOffset)
 	switch( GAMESTATE->m_SongOptions.m_AutosyncType )
 	{
 	case SongOptions::AUTOSYNC_SONG:
-		sAutosyncType = "Autosync Song";
+		sAutosyncType = AUTOSYNC_SONG;
 		break;
 	case SongOptions::AUTOSYNC_MACHINE:
-		sAutosyncType = "Autosync Machine";
+		sAutosyncType = AUTOSYNC_MACHINE;
 		break;
 	default:
 		ASSERT(0);

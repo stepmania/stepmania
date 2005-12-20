@@ -1373,6 +1373,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			GAMESTATE->m_pCurSteps[PLAYER_1].Set( pSteps );
 			m_pSteps = pSteps;
 			pSteps->GetNoteData( m_NoteDataEdit );
+
 			CString s = ssprintf(
 				SWITCHED_TO.GetValue() + " %s %s '%s' (%d of %d)",
 				GAMEMAN->StepsTypeToString( pSteps->m_StepsType ).c_str(),
@@ -2481,8 +2482,12 @@ static void ChangeArtistTranslit( const CString &sNew )
 
 // End helper functions
 
-static LocalizedString SAVED_AS_SM_AND_DWI	( "ScreenEdit", "Saved as SM and DWI." );
-static LocalizedString SAVED_AS_SM			( "ScreenEdit", "Saved as SM." );
+static LocalizedString SAVED_AS_SM_AND_DWI			( "ScreenEdit", "Saved as SM and DWI." );
+static LocalizedString SAVED_AS_SM					( "ScreenEdit", "Saved as SM." );
+static LocalizedString REVERT_LAST_SAVE				( "ScreenEdit", "Do you want to revert to your last save?" );
+static LocalizedString DESTROY_ALL_UNSAVED_CHANGES	( "ScreenEdit", "This will destroy all unsaved changes." );
+static LocalizedString REVERT_FROM_DISK				( "ScreenEdit", "Do you want to revert from disk?" );
+static LocalizedString SAVE_CHANGES_BEFORE_EXITING	( "ScreenEdit", "Do you want to save changes before exiting?" );
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
 {
 	switch( c )
@@ -2612,14 +2617,10 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			}
 			break;
 		case revert_to_last_save:
-			ScreenPrompt::Prompt( SM_DoRevertToLastSave,
-				"Do you want to revert to your last save?\n\nThis will destroy all unsaved changes.",
-				PROMPT_YES_NO, ANSWER_NO );
+			ScreenPrompt::Prompt( SM_DoRevertToLastSave, REVERT_LAST_SAVE.GetValue() + "\n\n" + DESTROY_ALL_UNSAVED_CHANGES.GetValue(), PROMPT_YES_NO, ANSWER_NO );
 			break;
 		case revert_from_disk:
-			ScreenPrompt::Prompt( SM_DoRevertFromDisk,
-				"Do you want to revert from disk?\n\nThis will destroy all unsaved changes.",
-				PROMPT_YES_NO, ANSWER_NO );
+			ScreenPrompt::Prompt( SM_DoRevertFromDisk, REVERT_FROM_DISK.GetValue() + "\n\n" + DESTROY_ALL_UNSAVED_CHANGES.GetValue(), PROMPT_YES_NO, ANSWER_NO );
 			break;
 		case options:
 			SCREENMAN->PushScreen( m_pScreenOptions, false, SM_BackFromOptions );
@@ -2684,16 +2685,9 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 			case EditMode_Full:
 			case EditMode_Home:
 				if( m_bHasUndo )
-				{
-					ScreenPrompt::Prompt(
-						SM_DoSaveAndExit,
-						"Do you want to save changes before exiting?",
-						PROMPT_YES_NO_CANCEL, ANSWER_CANCEL );
-				}
+					ScreenPrompt::Prompt( SM_DoSaveAndExit, SAVE_CHANGES_BEFORE_EXITING, PROMPT_YES_NO_CANCEL, ANSWER_CANCEL );
 				else
-				{
 					SCREENMAN->SendMessageToTopScreen( SM_DoExit );
-				}
 				break;
 			case EditMode_Practice:
 				SCREENMAN->SendMessageToTopScreen( SM_DoExit );
@@ -3245,6 +3239,10 @@ void ScreenEdit::ClearUndo()
 	m_bHasUndo = false;
 }
 
+static LocalizedString CREATES_MORE_THAN_NOTES	( "ScreenEdit", "This change creates more than %d notes in a measure." );
+static LocalizedString MORE_THAN_NOTES			( "ScreenEdit", "More than %d notes per measure is not allowed.  This change has been reverted." );
+static LocalizedString CREATES_NOTES_PAST_END	( "ScreenEdit", "This change creates notes past the end of the music and is not allowed." );
+static LocalizedString CHANGE_REVERTED			( "ScreenEdit", "The change has been reverted." );
 void ScreenEdit::CheckNumberOfNotesAndUndo()
 {
 	for( int row=0; row<=m_NoteDataEdit.GetLastRow(); row+=ROWS_PER_MEASURE )
@@ -3256,9 +3254,7 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 		{
 			Undo();
 			m_bHasUndo = false;
-			CString sError = ssprintf(
-				"This change creates more than %d notes in a measure.\n\nMore than %d notes per measure is not allowed.  This change has been reverted.", 
-				MAX_NOTES_PER_MEASURE, MAX_NOTES_PER_MEASURE );
+			CString sError = ssprintf( CREATES_MORE_THAN_NOTES.GetValue() + "\n\n" + MORE_THAN_NOTES.GetValue(), MAX_NOTES_PER_MEASURE, MAX_NOTES_PER_MEASURE );
 			ScreenPrompt::Prompt( SM_None, sError );
 			return;
 		}
@@ -3276,8 +3272,7 @@ void ScreenEdit::CheckNumberOfNotesAndUndo()
 		{
 			Undo();
 			m_bHasUndo = false;
-			CString sError = ssprintf(
-				"This change creates notes past the end of the music and is not allowed.\n\nThe change has been reverted." );
+			CString sError = CREATES_NOTES_PAST_END.GetValue() + "\n\n" + CHANGE_REVERTED.GetValue();
 			ScreenPrompt::Prompt( SM_None, sError );
 			return;
 		}

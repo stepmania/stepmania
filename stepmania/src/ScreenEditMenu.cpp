@@ -172,6 +172,7 @@ static void DeleteCurrentSteps()
 	GAMESTATE->m_pCurSteps[0].Set( NULL );
 }
 	
+static LocalizedString MISSING_MUSIC_FILE( "ScreenEditMenu", "This song is missing a music file and cannot be edited." );
 void ScreenEditMenu::MenuStart( PlayerNumber pn )
 {
 	if( IsTransitioning() )
@@ -203,7 +204,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 
 	if( !pSong->HasMusic() )
 	{
-		ScreenPrompt::Prompt( SM_None, "This song is missing a music file and cannot be edited" );
+		ScreenPrompt::Prompt( SM_None, MISSING_MUSIC_FILE );
 		return;
 	}
 
