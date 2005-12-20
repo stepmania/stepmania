@@ -4,14 +4,13 @@
 #include "RageLog.h"
 #include "RageTimer.h"
 #include "PrefsManager.h"
+#include "archutils/Darwin/DarwinThreadHelpers.h"
 
-#include <AudioToolbox/AudioConverter.h>
 #include "CAAudioHardwareSystem.h"
 #include "CAAudioHardwareDevice.h"
 #include "CAAudioHardwareStream.h"
 #include "CAStreamBasicDescription.h"
 #include "CAException.h"
-#include "archutils/Darwin/DarwinThreadHelpers.h"
 
 static const UInt32 kFramesPerPacket = 1;
 static const UInt32 kChannelsPerFrame = 2;
@@ -31,21 +30,12 @@ static float g_fLastMixTimes[NUM_MIX_TIMES];
 static int g_iLastMixTimePos = 0;
 static int g_iNumIOProcCalls = 0;
 
-static void NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info )
-{
-	static RageThreadRegister HALNotificationThread( "HAL notification thread" );
-
-	// Remove and release the observer
-	CFRunLoopRef runLoopRef = CFRunLoopGetCurrent();
-		
-	CFRunLoopRemoveObserver( runLoopRef, observer, kCFRunLoopDefaultMode );
-	CFRelease( observer );
-}
-
 RageSound_CA::RageSound_CA()
 {
 	m_pOutputDevice = NULL;
 	m_Converter = NULL;
+	m_pIOThread = NULL;
+	m_pNotificationThread = NULL;
 }
 
 CString RageSound_CA::Init()
@@ -65,10 +55,10 @@ CString RageSound_CA::Init()
 		CFRunLoopRef runLoopRef;
 		CFRunLoopObserverRef observerRef;
 		UInt32 size = sizeof( runLoopRef );
-		CFRunLoopObserverContext context = { 0, NULL, NULL, NULL, NULL }; // exciting context
+		CFRunLoopObserverContext context = { 0, this, NULL, NULL, NULL };
 		
 		CAAudioHardwareSystem::GetPropertyData( kAudioHardwarePropertyRunLoop, size, &runLoopRef );
-		observerRef = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry | kCFRunLoopExit,
+		observerRef = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
 											   false, 0, NameHALThread, &context );
 		CFRunLoopAddObserver( runLoopRef, observerRef, kCFRunLoopDefaultMode );
 	}
@@ -201,6 +191,8 @@ RageSound_CA::~RageSound_CA()
 			m_vPropertyListeners.pop_back();
 		}
 		delete m_pOutputDevice;
+		delete m_pIOThread;
+		delete m_pNotificationThread;
 	}
 
 	if( m_Converter != NULL )
@@ -253,6 +245,17 @@ int64_t RageSound_CA::GetPosition( const RageSoundBase *sound ) const
 	}
 }
 
+void RageSound_CA::NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info )
+{
+	RageSound_CA *This = (RageSound_CA *)info;
+	
+	This->m_pNotificationThread = new RageThreadRegister( "HAL notification thread" );
+	
+	// Remove and release the observer.
+	CFRunLoopObserverInvalidate( observer );
+	CFRelease( observer );
+}
+
 OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
 								const AudioTimeStamp *inNow,
 								const AudioBufferList *inInputData,
@@ -261,16 +264,12 @@ OSStatus RageSound_CA::GetData( AudioDeviceID inDevice,
 								const AudioTimeStamp *inOutputTime,
 								void *inClientData )
 {
-	static bool bThreadCreated = false;
-	
-	if( !likely(bThreadCreated) )
-	{
-		static RageThreadRegister HALNotificationThread( "HAL I/O thread" );
-		bThreadCreated = true;
-	}
-	
 	RageTimer tm;
 	RageSound_CA *This = (RageSound_CA *)inClientData;
+	
+	if( unlikely(This->m_pIOThread == NULL) )
+		This->m_pIOThread = new RageThreadRegister( "HAL I/O thread" );
+	
 	AudioBuffer& buf = outOutputData->mBuffers[0];
 	UInt32 dataPackets = buf.mDataByteSize >> 3; // 8 byes per packet
 	int64_t decodePos = int64_t( inOutputTime->mSampleTime );

@@ -3,21 +3,12 @@
 
 #include "RageSoundDriver_Generic_Software.h"
 #include <vector>
-#include <utility> // for pair
+#include <CoreFoundation/CoreFoundation.h>
+#include <AudioToolbox/AudioToolbox.h>
 
-struct AudioTimeStamp;
-struct AudioBufferList;
-struct OpaqueAudioConverter;
-typedef struct OpaqueAudioConverter *AudioConverterRef;
-typedef unsigned long UInt32;
-typedef UInt32 AudioDeviceID;
-typedef UInt32 AudioDevicePropertyID;
-typedef unsigned char Boolean;
-typedef long OSStatus;
-typedef OSStatus (*AudioDevicePropertyListenerProc)( long unsigned int, long unsigned int,
-													 unsigned char, long unsigned int, void * );
 class CAAudioHardwareDevice;
 class RageSoundBase;
+class RageThreadRegister;
 
 class RageSound_CA : public RageSound_Generic_Software
 {
@@ -36,6 +27,7 @@ private:
 	AudioConverterRef m_Converter;
 	int m_iSampleRate;
 	vector<pair<AudioDevicePropertyID, AudioDevicePropertyListenerProc> > m_vPropertyListeners;
+	RageThreadRegister *m_pIOThread, *m_pNotificationThread;
 	
 	void AddListener( AudioDevicePropertyID propertyID,
 					  AudioDevicePropertyListenerProc handler, const char *name );
@@ -47,6 +39,7 @@ private:
 							 const AudioTimeStamp *inOutputTime,
 							 void *inClientData );
     
+	static void NameHALThread( CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info );
     static OSStatus OverloadListener( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
 									  AudioDevicePropertyID inPropertyID, void *inData );
 	static OSStatus DeviceChanged( AudioDeviceID inDevice, UInt32 inChannel, Boolean isInput,
