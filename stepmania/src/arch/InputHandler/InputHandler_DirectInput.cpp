@@ -69,10 +69,10 @@ static void CheckForDirectInputDebugMode()
 
 static int GetNumUsbHidDevices()
 {
-	int i = 0;	
-	bool b = RegistryAccess::GetRegValue( "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\HidUsb\\Enum", "Count", i );
 	// The "Enum" key doesn't exist if no hid devices are attached, so it's expected that GetRegValue will sometimes fail.
 	// TODO: Does this work in Win98 and Win2K?
+	int i = 0;	
+	RegistryAccess::GetRegValue( "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\HidUsb\\Enum", "Count", i );
 	return i;
 }
 
