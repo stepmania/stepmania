@@ -3,7 +3,6 @@
 #ifdef _WINDOWS
 #  include <windows.h>
 #endif
-#include "StepMania.h"
 
 #if defined(WINDOWS)
 /* Ugh.  Windows doesn't give us the argv[] parser; all it gives is CommandLineToArgvW,
@@ -52,6 +51,7 @@ int GetWin32CmdLine( char** &argv )
 	return argc;
 }
 
+int main( int argc, char* argv[] );
 int __stdcall WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, char *pCmdLine, int nCmdShow )
 {
 	char **argv;
