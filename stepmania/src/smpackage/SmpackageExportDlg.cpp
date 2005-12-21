@@ -172,7 +172,7 @@ static bool ExportPackage( RString sPackageName, const vector<RString>& asDirect
 		RString buf = f.GetString();
 
 		CZipMemFile control;
-		control.Write( buf.GetBuffer(0), buf.GetLength() );
+		control.Write( buf.GetBuffer(0), buf.size() );
 
 		control.Seek( 0, CZipAbstractFile::begin );
 		zip.AddNewFile( control, "smzip.ctl" );
@@ -186,9 +186,9 @@ static bool ExportPackage( RString sPackageName, const vector<RString>& asDirect
 		RString sFilePath = asFilePaths[j];
 		
 		// don't export "thumbs.db" files or "CVS" folders
-		if( sFilePath.Find("CVS")!=-1 )
+		if( sFilePath.find("CVS") != string::npos )
 			continue;	// skip
-		if( sFilePath.Find("Thumbs.db")!=-1 )
+		if( sFilePath.find("Thumbs.db") != string::npos )
 			continue;	// skip
 
 		RString sExt = GetExtension( sFilePath );
@@ -499,7 +499,7 @@ void CSmpackageExportDlg::RefreshTree()
 		GetDirListing( "Courses\\*.crs", as1, false, false );
 		for( unsigned i=0; i<as1.size(); i++ )
 		{
-			as1[i] = as1[i].Left(as1[i].GetLength()-4);	// strip off ".crs"
+			as1[i] = as1[i].Left(as1[i].size()-4);	// strip off ".crs"
 			m_tree.InsertItem( as1[i], item1 );
 		}
 	}

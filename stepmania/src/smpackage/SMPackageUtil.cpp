@@ -117,7 +117,7 @@ bool SMPackageUtil::SetPref( RString name, bool val )
  * songs and note skins, this is the first three. */
 RString SMPackageUtil::GetPackageDirectory(RString path)
 {
-	if( path.Find("CVS") != -1 )
+	if( path.find("CVS") != string::npos )
 		return "";	// skip
 
 	vector<RString> Parts;

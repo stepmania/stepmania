@@ -206,15 +206,15 @@ bool CSMPackageInstallDlg::CheckPackages()
 	char cwd_[MAX_PATH];
 	_getcwd(cwd_, MAX_PATH);
 	RString cwd(cwd_);
-	if( cwd[cwd.GetLength()-1] != '\\' )
+	if( cwd[cwd.size()-1] != '\\' )
 		cwd += "\\";
 
 	for( i = 0; i < (int) Directories.size(); ++i )
 	{
 		RString path = cwd+Directories[i];
 		char buf[1024];
-		memcpy(buf, path, path.GetLength()+1);
-		buf[path.GetLength()+1] = 0;
+		memcpy( buf, path, path.size()+1 );
+		buf[path.size()+1] = 0;
 
 		SHFILEOPSTRUCT op;
 		memset(&op, 0, sizeof(op));
