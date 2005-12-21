@@ -175,11 +175,11 @@ inline float acosf(float x) CONST_FUNCTION { return float(acos(double(x))); }
 #endif
 
 #ifdef NEED_TRUNCF
-inline float truncf( float f ) CONST_FUNCTION { return float(int(f)); };
+inline float truncf( float f ) CONST_FUNCTION { return float(int(f)); }
 #endif
 
 #ifdef NEED_ROUNDF
-inline float roundf( float f ) CONST_FUNCTION { if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); };
+inline float roundf( float f ) CONST_FUNCTION { if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); }
 #endif
 
 #ifdef NEED_STRTOF
