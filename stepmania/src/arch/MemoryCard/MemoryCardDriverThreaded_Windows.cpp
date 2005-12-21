@@ -130,13 +130,6 @@ void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice )
 	// nothing to do here...
 }
 
-void MemoryCardDriverThreaded_Windows::Flush( UsbStorageDevice* pDevice )
-{
-	// Do we need anything here?  I don't lose data if ejecting 
-	// soon after a write.  From the activity LED, it looks like 
-	// Windows flushes automatically every ~2 seconds. -Chris
-}
-
 /*
  * (c) 2003-2004 Chris Danford
  * All rights reserved.

@@ -18,7 +18,7 @@ MemoryCardDriverThreaded_OSX::~MemoryCardDriverThreaded_OSX()
 	DarwinMCHelpers::Stop();
 }
 
-void MemoryCardDriverThreaded_OSX::Flush( UsbStorageDevice *pDevice )
+void MemoryCardDriverThreaded_OSX::Unmount( UsbStorageDevice *pDevice )
 {
 	if( pDevice->iRefNum == -1 )
 		return;

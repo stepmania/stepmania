@@ -12,7 +12,6 @@ public:
 
 	virtual bool Mount( UsbStorageDevice* pDevice );
 	virtual void Unmount( UsbStorageDevice* pDevice );
-	virtual void Flush( UsbStorageDevice* pDevice );
 
 private:
 	void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut );

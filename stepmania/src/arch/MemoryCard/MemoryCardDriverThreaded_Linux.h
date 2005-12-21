@@ -9,7 +9,6 @@ public:
 	virtual bool DoOneUpdate( bool bMount, vector<UsbStorageDevice>& vStorageDevicesOut );
 	virtual bool Mount( UsbStorageDevice* pDevice );
 	virtual void Unmount( UsbStorageDevice* pDevice );
-	virtual void Flush( UsbStorageDevice* pDevice );
 
 protected:
 	void GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut );

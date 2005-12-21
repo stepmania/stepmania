@@ -9,8 +9,7 @@ public:
 	MemoryCardDriverThreaded_OSX();
 	~MemoryCardDriverThreaded_OSX();
 	bool Mount( UsbStorageDevice *pDevice ) { return true; }
-	void Unmount( UsbStorageDevice *pDevice ) { }
-	void Flush( UsbStorageDevice *pDevice );
+	void Unmount( UsbStorageDevice *pDevice );
 	
 protected:
 	bool USBStorageDevicesChanged();

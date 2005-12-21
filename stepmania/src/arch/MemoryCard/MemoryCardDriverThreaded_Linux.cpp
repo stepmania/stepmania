@@ -308,16 +308,6 @@ void MemoryCardDriverThreaded_Linux::Unmount( UsbStorageDevice* pDevice )
 	ExecuteCommand( sCommand );
 }
 
-void MemoryCardDriverThreaded_Linux::Flush( UsbStorageDevice* pDevice )
-{
-	if( pDevice->sDevice.empty() )
-		return;
-	
-	// "sync" will only flush all file systems at the same time.  -Chris
-	// That's OK.
-	ExecuteCommand( "sync" );
-}
-
 /*
  * (c) 2003-2005 Chris Danford, Glenn Maynard
  * All rights reserved.

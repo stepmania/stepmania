@@ -81,7 +81,6 @@ public:
 	 * before any access to the device, and before TestWrite. */
 	virtual bool Mount( UsbStorageDevice* pDevice ) = 0;
 	virtual void Unmount( UsbStorageDevice* pDevice ) = 0;
-	virtual void Flush( UsbStorageDevice* pDevice ) = 0;
 
 	/* Poll for memory card changes.  If anything has changed, fill in vStorageDevicesOut
 	 * and return true. */
