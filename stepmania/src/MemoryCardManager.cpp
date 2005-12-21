@@ -613,8 +613,8 @@ bool MemoryCardManager::MountCard( PlayerNumber pn, const UsbStorageDevice &d )
 	return MountCard( pn );
 }
 
-/* Called in EndGame just after writing the profile.  Called by PlayersFinalized just after
- * reading the profile.  Should never block; use FlushAndReset to block until writes complete. */
+/* Called when finished accessing a memory card.  If writes have been performed,
+ * will block until flushed. */
 void MemoryCardManager::UnmountCard( PlayerNumber pn )
 {
 	LOG->Trace( "MemoryCardManager::UnmountCard(%i)", pn );
