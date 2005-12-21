@@ -43,7 +43,7 @@ bool RandomSample::LoadSoundDir( CString sDir, int iMaxToLoad )
 	 * so we'll look for eg. themes\Default\sounds\sDir\*.mp3.  Otherwise,
 	 * don't, so we'll look for all of the files starting with sDir,
 	 * eg. themes\Default\sounds\sDir*.mp3. */
-	if(IsADirectory(sDir) && sDir[sDir.GetLength()-1] != "/" )
+	if(IsADirectory(sDir) && sDir[sDir.size()-1] != "/" )
 		sDir += "/";
 #else
 	// make sure there's a slash at the end of this path

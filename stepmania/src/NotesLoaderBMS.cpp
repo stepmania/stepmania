@@ -302,7 +302,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNa
 		const CString &sNoteData = it->second;
 
 		vector<TapNote> vTapNotes;
-		for( int i=0; i+1<sNoteData.GetLength(); i+=2 )
+		for( size_t i=0; i+1<sNoteData.size(); i+=2 )
 		{
 			CString sNoteId = sNoteData.substr(i,2);
 			if( sNoteId != "00" )

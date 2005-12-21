@@ -20,7 +20,7 @@ void NotesLoader::GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CS
 		if( iBeginIndex == -1 )
 			continue;
 		sMainTitleOut = sFullTitle.Left( iBeginIndex );
-		sSubTitleOut = sFullTitle.substr( iBeginIndex+1, sFullTitle.GetLength()-iBeginIndex+1 );
+		sSubTitleOut = sFullTitle.substr( iBeginIndex+1, sFullTitle.size()-iBeginIndex+1 );
 		return;
 	}
 	sMainTitleOut = sFullTitle; 

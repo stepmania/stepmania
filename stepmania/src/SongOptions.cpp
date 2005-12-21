@@ -50,8 +50,8 @@ CString SongOptions::GetString() const
 	if( m_fMusicRate != 1 )
 	{
 		CString s = ssprintf( "%2.2f", m_fMusicRate );
-		if( s[s.GetLength()-1] == '0' )
-			s.erase(s.GetLength()-1);
+		if( s[s.size()-1] == '0' )
+			s.erase( s.size()-1 );
 		sReturn += s + "xMusic, ";
 	}
 
@@ -63,8 +63,8 @@ CString SongOptions::GetString() const
 	default:	ASSERT(0);
 	}
 
-	if( sReturn.GetLength() > 2 )
-		sReturn.erase( sReturn.GetLength()-2 );	// delete the trailing ", "
+	if( sReturn.size() > 2 )
+		sReturn.erase( sReturn.size()-2 );	// delete the trailing ", "
 	return sReturn;
 }
 

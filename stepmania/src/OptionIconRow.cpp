@@ -77,10 +77,11 @@ static const OptionColumnEntry g_OptionColumnEntries[] =
 int OptionToPreferredColumn( CString sOptionText )
 {
 	/* Speedups always go in column 0. digit ... x */
-	if(sOptionText.GetLength() > 1 &&
+	if( sOptionText.size() > 1 &&
 		isdigit(sOptionText[0])    &&
-		tolower(sOptionText[sOptionText.GetLength()-1]) == 'x') {
-			return 0;
+		tolower(sOptionText[sOptionText.size()-1]) == 'x' )
+	{
+		return 0;
 	}
 
 	for( unsigned i=0; i<ARRAYSIZE(g_OptionColumnEntries); i++ )

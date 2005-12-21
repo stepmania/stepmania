@@ -158,7 +158,8 @@ bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, con
 	bool bSuccess = true;
 	TCHAR sz[255];
 	
-	if (sVal.GetLength() > 254) return FALSE;
+	if( sVal.size() > 254 )
+		return false;
 
 	strcpy( sz, sVal.c_str() );
 	

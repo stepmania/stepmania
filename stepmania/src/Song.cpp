@@ -161,7 +161,7 @@ CString Song::GetCacheFilePath() const
  * be a cache file. */
 const CString &Song::GetSongFilePath() const
 {
-	ASSERT ( m_sSongFileName.GetLength() != 0 );
+	ASSERT( !m_sSongFileName.empty() );
 	return m_sSongFileName;
 }
 

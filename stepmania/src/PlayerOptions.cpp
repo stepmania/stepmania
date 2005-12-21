@@ -91,12 +91,14 @@ void PlayerOptions::GetMods( vector<CString> &AddTo ) const
 		{
 			/* -> 1.00 */
 			CString s = ssprintf( "%2.2f", m_fScrollSpeed );
-			if( s[s.GetLength()-1] == '0' ) {
+			if( s[s.size()-1] == '0' )
+			{
 				/* -> 1.0 */
-				s.erase(s.GetLength()-1);	// delete last char
-				if( s[s.GetLength()-1] == '0' ) {
+				s.erase( s.size()-1 );	// delete last char
+				if( s[s.size()-1] == '0' )
+				{
 					/* -> 1 */
-					s.erase(s.GetLength()-2);	// delete last 2 chars
+					s.erase( s.size()-2 );	// delete last 2 chars
 				}
 			}
 			AddTo.push_back( s + "x" );
