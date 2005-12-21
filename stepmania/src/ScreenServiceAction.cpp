@@ -79,25 +79,22 @@ static CString ClearMemoryCardEdits()
 	int iNumAttempted = 0;
 	int iNumSuccessful = 0;
 	
+	if( !MEMCARDMAN->IsMounted(pn) )
+		MEMCARDMAN->MountCard(pn);
+
+	CString sDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
+	vector<CString> vsEditFiles;
+	GetDirListing( sDir+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
+	GetDirListing( sDir+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
+	FOREACH_CONST( CString, vsEditFiles, i )
 	{
-		if( !MEMCARDMAN->IsMounted(pn) )
-			MEMCARDMAN->MountCard(pn);
-
-		CString sDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
-		vector<CString> vsEditFiles;
-		GetDirListing( sDir+EDIT_STEPS_SUBDIR+"*.edit", vsEditFiles, false, true );
-		GetDirListing( sDir+EDIT_COURSES_SUBDIR+"*.crs", vsEditFiles, false, true );
-		FOREACH_CONST( CString, vsEditFiles, i )
-		{
-			iNumAttempted++;
-			bool bSuccess = FILEMAN->Remove( *i );
-			if( bSuccess )
-				iNumSuccessful++;
-		}
-
-		MEMCARDMAN->UnmountCard(pn);
+		iNumAttempted++;
+		bool bSuccess = FILEMAN->Remove( *i );
+		if( bSuccess )
+			iNumSuccessful++;
 	}
 
+	MEMCARDMAN->UnmountCard(pn);
 	MEMCARDMAN->FlushAndReset();
 
 	return ssprintf("%d edits cleared, %d errors.",iNumSuccessful,iNumAttempted-iNumSuccessful);
@@ -189,23 +186,21 @@ static CString TransferStatsMachineToMemoryCard()
 	if( pn == PLAYER_INVALID )
 		return "Stats not saved - No memory cards ready.";
 
-	{
-		if( !MEMCARDMAN->IsMounted(pn) )
-			MEMCARDMAN->MountCard(pn);
+	if( !MEMCARDMAN->IsMounted(pn) )
+		MEMCARDMAN->MountCard(pn);
 
-		CString sDir = MEM_CARD_MOUNT_POINT[pn];
-		sDir += "MachineProfile/";
+	CString sDir = MEM_CARD_MOUNT_POINT[pn];
+	sDir += "MachineProfile/";
 
-		bool bSaved = PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
+	bool bSaved = PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
 
-		MEMCARDMAN->UnmountCard(pn);
-		MEMCARDMAN->FlushAndReset();
+	MEMCARDMAN->UnmountCard(pn);
+	MEMCARDMAN->FlushAndReset();
 
-		if( bSaved )
-			return ssprintf("Machine stats saved to P%d card.",pn+1);
-		else
-			return ssprintf("Error saving machine stats to P%d card.",pn+1);
-	}
+	if( bSaved )
+		return ssprintf("Machine stats saved to P%d card.",pn+1);
+	else
+		return ssprintf("Error saving machine stats to P%d card.",pn+1);
 }
 
 static CString TransferStatsMemoryCardToMachine()
@@ -214,36 +209,33 @@ static CString TransferStatsMemoryCardToMachine()
 	if( pn == PLAYER_INVALID )
 		return "Stats not loaded - No memory cards ready.";
 
+	if( !MEMCARDMAN->IsMounted(pn) )
+		MEMCARDMAN->MountCard(pn);
+
+	CString sDir = MEM_CARD_MOUNT_POINT[pn];
+	sDir += "MachineProfile/";
+
+	Profile backup = *PROFILEMAN->GetMachineProfile();
+
+	ProfileLoadResult lr = PROFILEMAN->GetMachineProfile()->LoadAllFromDir( sDir, PREFSMAN->m_bSignProfileData );
+	switch( lr )
 	{
-		if( !MEMCARDMAN->IsMounted(pn) )
-			MEMCARDMAN->MountCard(pn);
-
-		CString sDir = MEM_CARD_MOUNT_POINT[pn];
-		sDir += "MachineProfile/";
-
-		Profile backup = *PROFILEMAN->GetMachineProfile();
-
-		ProfileLoadResult lr = PROFILEMAN->GetMachineProfile()->LoadAllFromDir( sDir, PREFSMAN->m_bSignProfileData );
-		switch( lr )
-		{
-		case ProfileLoadResult_Success:
-			return ssprintf("Machine stats loaded from P%d card.",pn+1);
-			break;
-		case ProfileLoadResult_FailedNoProfile:
-			return ssprintf("There is no machine profile on P%d card.",pn+1);
-			*PROFILEMAN->GetMachineProfile() = backup;
-			break;
-		case ProfileLoadResult_FailedTampered:
-			return ssprintf("The profile on P%d card contains corrupt or tampered data.",pn+1);
-			*PROFILEMAN->GetMachineProfile() = backup;
-			break;
-		default:
-			ASSERT(0);
-		}
-
-		MEMCARDMAN->UnmountCard(pn);
+	case ProfileLoadResult_Success:
+		return ssprintf("Machine stats loaded from P%d card.",pn+1);
+		break;
+	case ProfileLoadResult_FailedNoProfile:
+		return ssprintf("There is no machine profile on P%d card.",pn+1);
+		*PROFILEMAN->GetMachineProfile() = backup;
+		break;
+	case ProfileLoadResult_FailedTampered:
+		return ssprintf("The profile on P%d card contains corrupt or tampered data.",pn+1);
+		*PROFILEMAN->GetMachineProfile() = backup;
+		break;
+	default:
+		ASSERT(0);
 	}
 
+	MEMCARDMAN->UnmountCard(pn);
 	MEMCARDMAN->FlushAndReset();
 
 	return "Stats transferred to machine.";
@@ -255,54 +247,52 @@ static CString CopyEditsMachineToMemoryCard()
 	if( pn == PLAYER_INVALID )
 		return "Edits not copied - No memory cards ready.";
 
+	if( !MEMCARDMAN->IsMounted(pn) )
+		MEMCARDMAN->MountCard(pn);
+
+	int iNumAttempted = 0;
+	int iNumSuccessful = 0;
+	int iNumOverwritten = 0;
+	
 	{
-		if( !MEMCARDMAN->IsMounted(pn) )
-			MEMCARDMAN->MountCard(pn);
+		CString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_STEPS_SUBDIR;
+		CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_STEPS_SUBDIR;
 
-		int iNumAttempted = 0;
-		int iNumSuccessful = 0;
-		int iNumOverwritten = 0;
-		
+		vector<CString> vsFiles;
+		GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
+		FOREACH_CONST( CString, vsFiles, i )
 		{
-			CString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_STEPS_SUBDIR;
-			CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_STEPS_SUBDIR;
-
-			vector<CString> vsFiles;
-			GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
-			FOREACH_CONST( CString, vsFiles, i )
-			{
-				iNumAttempted++;
-				if( DoesFileExist(sToDir+*i) )
-					iNumOverwritten++;
-				bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
-				if( bSuccess )
-					iNumSuccessful++;
-			}
+			iNumAttempted++;
+			if( DoesFileExist(sToDir+*i) )
+				iNumOverwritten++;
+			bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
+			if( bSuccess )
+				iNumSuccessful++;
 		}
-		
-		{
-			CString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_COURSES_SUBDIR;
-			CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_COURSES_SUBDIR;
-
-			vector<CString> vsFiles;
-			GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
-			FOREACH_CONST( CString, vsFiles, i )
-			{
-				iNumAttempted++;
-				if( DoesFileExist(sToDir+*i) )
-					iNumOverwritten++;
-				bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
-				if( bSuccess )
-					iNumSuccessful++;
-			}
-		}
-		
-		MEMCARDMAN->UnmountCard(pn);
-		MEMCARDMAN->FlushAndReset();
-
-		// TODO: Make string themable
-		return ssprintf("Copied to P%d card:\n%d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
 	}
+	
+	{
+		CString sFromDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_COURSES_SUBDIR;
+		CString sToDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_COURSES_SUBDIR;
+
+		vector<CString> vsFiles;
+		GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
+		FOREACH_CONST( CString, vsFiles, i )
+		{
+			iNumAttempted++;
+			if( DoesFileExist(sToDir+*i) )
+				iNumOverwritten++;
+			bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
+			if( bSuccess )
+				iNumSuccessful++;
+		}
+	}
+	
+	MEMCARDMAN->UnmountCard(pn);
+	MEMCARDMAN->FlushAndReset();
+
+	// TODO: Make string themable
+	return ssprintf("Copied to P%d card:\n%d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
 }
 
 static CString CopyEditsMemoryCardToMachine()
@@ -311,58 +301,56 @@ static CString CopyEditsMemoryCardToMachine()
 	if( pn == PLAYER_INVALID )
 		return "Edits not copied - No memory cards ready.";
 
+	if( !MEMCARDMAN->IsMounted(pn) )
+		MEMCARDMAN->MountCard(pn);
+
+	int iNumAttempted = 0;
+	int iNumSuccessful = 0;
+	int iNumOverwritten = 0;
+	
 	{
-		if( !MEMCARDMAN->IsMounted(pn) )
-			MEMCARDMAN->MountCard(pn);
+		CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_STEPS_SUBDIR;
+		CString sToDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_STEPS_SUBDIR;
 
-		int iNumAttempted = 0;
-		int iNumSuccessful = 0;
-		int iNumOverwritten = 0;
-		
+		vector<CString> vsFiles;
+		GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
+		FOREACH_CONST( CString, vsFiles, i )
 		{
-			CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_STEPS_SUBDIR;
-			CString sToDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_STEPS_SUBDIR;
-
-			vector<CString> vsFiles;
-			GetDirListing( sFromDir+"*.edit", vsFiles, false, false );
-			FOREACH_CONST( CString, vsFiles, i )
-			{
-				iNumAttempted++;
-				if( DoesFileExist(sToDir+*i) )
-					iNumOverwritten++;
-				bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
-				if( bSuccess )
-					iNumSuccessful++;
-			}
+			iNumAttempted++;
+			if( DoesFileExist(sToDir+*i) )
+				iNumOverwritten++;
+			bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
+			if( bSuccess )
+				iNumSuccessful++;
 		}
-		
-		{
-			CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_COURSES_SUBDIR;
-			CString sToDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_COURSES_SUBDIR;
-
-			vector<CString> vsFiles;
-			GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
-			FOREACH_CONST( CString, vsFiles, i )
-			{
-				iNumAttempted++;
-				if( DoesFileExist(sToDir+*i) )
-					iNumOverwritten++;
-				bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
-				if( bSuccess )
-					iNumSuccessful++;
-			}
-		}
-		
-		MEMCARDMAN->UnmountCard(pn);
-		MEMCARDMAN->FlushAndReset();
-
-		// reload the machine profile
-		PROFILEMAN->SaveMachineProfile();
-		PROFILEMAN->LoadMachineProfile();
-
-		// TODO: Make themeable
-		return ssprintf("Copied from P%d card:\n%d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
 	}
+	
+	{
+		CString sFromDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/" + EDIT_COURSES_SUBDIR;
+		CString sToDir = PROFILEMAN->GetProfileDir(ProfileSlot_Machine) + EDIT_COURSES_SUBDIR;
+
+		vector<CString> vsFiles;
+		GetDirListing( sFromDir+"*.crs", vsFiles, false, false );
+		FOREACH_CONST( CString, vsFiles, i )
+		{
+			iNumAttempted++;
+			if( DoesFileExist(sToDir+*i) )
+				iNumOverwritten++;
+			bool bSuccess = FileCopy( sFromDir+*i, sToDir+*i );
+			if( bSuccess )
+				iNumSuccessful++;
+		}
+	}
+	
+	MEMCARDMAN->UnmountCard(pn);
+	MEMCARDMAN->FlushAndReset();
+
+	// reload the machine profile
+	PROFILEMAN->SaveMachineProfile();
+	PROFILEMAN->LoadMachineProfile();
+
+	// TODO: Make themeable
+	return ssprintf("Copied from P%d card:\n%d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
 }
 
 static CString ResetPreferences()
