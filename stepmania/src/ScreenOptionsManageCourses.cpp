@@ -106,6 +106,7 @@ static MenuDef g_TempMenu(
 );
 
 
+static LocalizedString EDIT_NAME_CONFLICTS	( "ScreenOptionsManageCourses", "The name you chose conflicts with another edit. Please use a different name." );
 static bool ValidateEditCourseName( const CString &sAnswer, CString &sErrorOut )
 {
 	if( sAnswer.empty() )
@@ -120,7 +121,10 @@ static bool ValidateEditCourseName( const CString &sAnswer, CString &sErrorOut )
 			continue;	// don't comepare name against ourself
 
 		if( (*c)->GetDisplayFullTitle() == sAnswer )
+		{
+			sErrorOut = EDIT_NAME_CONFLICTS;
 			return false;
+		}
 	}
 
 	return true;
@@ -230,6 +234,8 @@ void ScreenOptionsManageCourses::BeginScreen()
 	AfterChangeRow( PLAYER_1 );
 }
 
+static LocalizedString COURSE_WILL_BE_LOST("ScreenOptionsManageCourses", "This course will be lost permanently.");
+static LocalizedString CONTINUE_WITH_DELETE("ScreenOptionsManageCourses", "Continue with delete?");
 void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_Success )
@@ -313,9 +319,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 				}
 				break;
 			case CourseAction_Delete:
-				{
-					ScreenPrompt::Prompt( SM_None, "This course will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
-				}
+				ScreenPrompt::Prompt( SM_None, COURSE_WILL_BE_LOST.GetValue()+"\n\n"+CONTINUE_WITH_DELETE.GetValue(), PROMPT_YES_NO, ANSWER_NO );
 				break;
 			}
 		}
@@ -343,6 +347,8 @@ void ScreenOptionsManageCourses::AfterChangeRow( PlayerNumber pn )
 	ScreenOptions::AfterChangeRow( pn );
 }
 
+static LocalizedString YOU_HAVE_MAXIMUM_EDITS_ALLOWED( "ScreenOptionsManageCourses", "You have %d course edits, the maximum number allowed." );
+static LocalizedString YOU_MUST_DELETE( "ScreenOptionsManageCourses", "You must delete an existing course edit before creating a new course edit." );
 void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
@@ -352,8 +358,7 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 		if( SONGMAN->GetNumEditCourses(ProfileSlot_Machine) >= MAX_EDIT_COURSES_PER_PROFILE )
 		{
 			CString s = ssprintf( 
-				"You have %d course edits, the maximum number allowed.\n\n"
-				"You must delete an existing course edit before creating a new course edit.",
+				YOU_HAVE_MAXIMUM_EDITS_ALLOWED.GetValue() + "\n\n" + YOU_MUST_DELETE.GetValue(),
 				MAX_EDIT_COURSES_PER_PROFILE );
 			ScreenPrompt::Prompt( SM_None, s );
 			return;

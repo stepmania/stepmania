@@ -142,19 +142,21 @@ static CString GetCopyDescription( const Steps *pSourceSteps )
 	return s;
 }
 
+static LocalizedString YOU_MUST_SUPPLY_NAME	( "ScreenEditMenu", "You must supply a name for your new edit." );
+static LocalizedString EDIT_NAME_CONFLICTS	( "ScreenEditMenu", "The name you chose conflicts with another edit. Please use a different name." );
 static bool ValidateCurrentStepsDescription( const CString &s, CString &sErrorOut )
 {
 	ASSERT( GAMESTATE->m_pCurSteps[0]->GetDifficulty() == DIFFICULTY_EDIT );
 
 	if( s.empty() )
 	{
-		sErrorOut = "You must supply a name for your new edit.";
+		sErrorOut = YOU_MUST_SUPPLY_NAME;
 		return false;
 	}
 
 	if( !GAMESTATE->m_pCurSong->IsEditDescriptionUnique(GAMESTATE->m_pCurSteps[0]->m_StepsType, s, GAMESTATE->m_pCurSteps[0]) )
 	{
-		sErrorOut = "The supplied name supplied conflicts with another edit.\n\nPlease use a different name.";
+		sErrorOut = EDIT_NAME_CONFLICTS;
 		return false;
 	}
 
@@ -172,7 +174,9 @@ static void DeleteCurrentSteps()
 	GAMESTATE->m_pCurSteps[0].Set( NULL );
 }
 	
-static LocalizedString MISSING_MUSIC_FILE( "ScreenEditMenu", "This song is missing a music file and cannot be edited." );
+static LocalizedString MISSING_MUSIC_FILE	( "ScreenEditMenu", "This song is missing a music file and cannot be edited." );
+static LocalizedString STEPS_WILL_BE_LOST	( "ScreenEditMenu", "These steps will be lost permanently." );
+static LocalizedString CONTINUE_WITH_DELETE	( "ScreenEditMenu", "Continue with delete?" );
 void ScreenEditMenu::MenuStart( PlayerNumber pn )
 {
 	if( IsTransitioning() )
@@ -218,7 +222,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 		break;
 	case EditMenuAction_Delete:
 		ASSERT( pSteps );
-		ScreenPrompt::Prompt( SM_None, "These steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
+		ScreenPrompt::Prompt( SM_None, STEPS_WILL_BE_LOST.GetValue() + "\n\n" + CONTINUE_WITH_DELETE.GetValue(), PROMPT_YES_NO, ANSWER_NO );
 		break;
 	case EditMenuAction_Create:
 		ASSERT( !pSteps );

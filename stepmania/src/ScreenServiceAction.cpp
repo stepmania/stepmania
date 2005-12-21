@@ -13,14 +13,15 @@
 #include "GameState.h"
 #include "PlayerState.h"
 
-
+static LocalizedString BOOKKEEPING_DATA_CLEARED( "ScreenServiceAction", "Bookkeeping data cleared." );
 static CString ClearBookkeepingData()
 {
 	BOOKKEEPER->ClearAll();
 	BOOKKEEPER->WriteToDisk();
-	return "Bookkeeping data cleared.";
+	return BOOKKEEPING_DATA_CLEARED;
 }
 
+static LocalizedString MACHINE_STATS_CLEARED( "ScreenServiceAction", "Machine stats cleared." );
 static CString ClearMachineStats()
 {
 	Profile* pProfile = PROFILEMAN->GetMachineProfile();
@@ -29,9 +30,10 @@ static CString ClearMachineStats()
 	pProfile->InitAll();
 	pProfile->m_sGuid = sGuid;
 	PROFILEMAN->SaveMachineProfile();
-	return "Machine stats cleared.";
+	return MACHINE_STATS_CLEARED;
 }
 
+static LocalizedString MACHINE_EDITS_CLEARED( "ScreenServiceAction", "%d edits cleared, %d errors." );
 static CString ClearMachineEdits()
 {
 	int iNumAttempted = 0;
@@ -52,7 +54,8 @@ static CString ClearMachineEdits()
 	PROFILEMAN->SaveMachineProfile();
 	PROFILEMAN->LoadMachineProfile();
 	
-	return ssprintf("%d edits cleared, %d errors.",iNumSuccessful,iNumAttempted-iNumSuccessful);
+	int iNumErrors = iNumAttempted-iNumSuccessful;
+	return ssprintf(MACHINE_EDITS_CLEARED.GetValue(),iNumSuccessful,iNumErrors);
 }
 
 static PlayerNumber GetFirstReadyMemoryCard()
@@ -70,11 +73,13 @@ static PlayerNumber GetFirstReadyMemoryCard()
 	return PLAYER_INVALID;
 }
 
+static LocalizedString MEMORY_CARD_EDITS_NOT_CLEARED( "ScreenServiceAction", "Edits not cleared - No memory cards ready." );
+static LocalizedString EDITS_CLEARED				( "ScreenServiceAction", "%d edits cleared, %d errors." );
 static CString ClearMemoryCardEdits()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return "Stats not cleared - No memory cards ready.";
+		return MEMORY_CARD_EDITS_NOT_CLEARED;
 
 	int iNumAttempted = 0;
 	int iNumSuccessful = 0;
@@ -96,7 +101,7 @@ static CString ClearMemoryCardEdits()
 
 	MEMCARDMAN->UnmountCard(pn);
 
-	return ssprintf("%d edits cleared, %d errors.",iNumSuccessful,iNumAttempted-iNumSuccessful);
+	return ssprintf(EDITS_CLEARED.GetValue(),iNumSuccessful,iNumAttempted-iNumSuccessful);
 }
 
 static HighScore MakeRandomHighScore( float fPercentDP )
@@ -170,20 +175,24 @@ static void FillProfile( Profile *pProfile )
 	}
 }
 
+static LocalizedString MACHINE_STATS_FILLED( "ScreenServiceAction", "Machine stats filled." );
 static CString FillMachineStats()
 {
 	Profile* pProfile = PROFILEMAN->GetMachineProfile();
 	FillProfile( pProfile );
 
 	PROFILEMAN->SaveMachineProfile();
-	return "Machine stats filled.";
+	return MACHINE_STATS_FILLED;
 }
 
+static LocalizedString STATS_NOT_SAVED				( "ScreenServiceAction", "Stats not saved - No memory cards ready." );
+static LocalizedString MACHINE_STATS_SAVED			( "ScreenServiceAction", "Machine stats saved to P%d card." );
+static LocalizedString ERROR_SAVING_MACHINE_STATS	( "ScreenServiceAction", "Error saving machine stats to P%d card." );
 static CString TransferStatsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return "Stats not saved - No memory cards ready.";
+		return STATS_NOT_SAVED;
 
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
@@ -196,16 +205,20 @@ static CString TransferStatsMachineToMemoryCard()
 	MEMCARDMAN->UnmountCard(pn);
 
 	if( bSaved )
-		return ssprintf("Machine stats saved to P%d card.",pn+1);
+		return ssprintf(MACHINE_STATS_SAVED.GetValue(),pn+1);
 	else
-		return ssprintf("Error saving machine stats to P%d card.",pn+1);
+		return ssprintf(ERROR_SAVING_MACHINE_STATS.GetValue(),pn+1);
 }
 
+static LocalizedString STATS_NOT_LOADED		( "ScreenServiceAction", "Stats not loaded - No memory cards ready." );
+static LocalizedString MACHINE_STATS_LOADED	( "ScreenServiceAction", "Machine stats loaded from P%d card." );
+static LocalizedString THERE_IS_NO_PROFILE	( "ScreenServiceAction", "There is no machine profile on P%d card." );
+static LocalizedString PROFILE_CORRUPT		( "ScreenServiceAction", "The profile on P%d card contains corrupt or tampered data." );
 static CString TransferStatsMemoryCardToMachine()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return "Stats not loaded - No memory cards ready.";
+		return STATS_NOT_LOADED;
 
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
@@ -216,18 +229,19 @@ static CString TransferStatsMemoryCardToMachine()
 	Profile backup = *PROFILEMAN->GetMachineProfile();
 
 	ProfileLoadResult lr = PROFILEMAN->GetMachineProfile()->LoadAllFromDir( sDir, PREFSMAN->m_bSignProfileData );
+	CString s;
 	switch( lr )
 	{
 	case ProfileLoadResult_Success:
-		return ssprintf("Machine stats loaded from P%d card.",pn+1);
+		s = ssprintf(MACHINE_STATS_LOADED.GetValue(),pn+1);
 		break;
 	case ProfileLoadResult_FailedNoProfile:
-		return ssprintf("There is no machine profile on P%d card.",pn+1);
 		*PROFILEMAN->GetMachineProfile() = backup;
+		s = ssprintf(THERE_IS_NO_PROFILE.GetValue(),pn+1);
 		break;
 	case ProfileLoadResult_FailedTampered:
-		return ssprintf("The profile on P%d card contains corrupt or tampered data.",pn+1);
 		*PROFILEMAN->GetMachineProfile() = backup;
+		s = ssprintf(PROFILE_CORRUPT.GetValue(),pn+1);
 		break;
 	default:
 		ASSERT(0);
@@ -235,7 +249,7 @@ static CString TransferStatsMemoryCardToMachine()
 
 	MEMCARDMAN->UnmountCard(pn);
 
-	return "Stats transferred to machine.";
+	return s;
 }
 
 static void CopyEdits( const CString &sFrom, const CString &sTo, int &iNumAttempted, int &iNumSuccessful, int &iNumOverwritten )
@@ -279,11 +293,13 @@ static void CopyEdits( const CString &sFrom, const CString &sTo, int &iNumAttemp
 	}
 }
 
+static LocalizedString EDITS_NOT_COPIED( "ScreenServiceAction", "Edits not copied - No memory cards ready." );
+static LocalizedString COPIED_TO_CARD( "ScreenServiceAction", "Copied to P%d card: %d/%d copies OK (%d overwritten)." );
 static CString CopyEditsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return "Edits not copied - No memory cards ready.";
+		return EDITS_NOT_COPIED;
 
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
@@ -299,14 +315,15 @@ static CString CopyEditsMachineToMemoryCard()
 	MEMCARDMAN->UnmountCard(pn);
 
 	// TODO: Make string themable
-	return ssprintf("Copied to P%d card:\n%d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
+	return ssprintf(COPIED_TO_CARD.GetValue(),pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
 }
 
+static LocalizedString COPIED_FROM_CARD( "ScreenServiceAction", "Copied from P%d card: %d/%d copies OK (%d overwritten)." );
 static CString CopyEditsMemoryCardToMachine()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return "Edits not copied - No memory cards ready.";
+		return EDITS_NOT_COPIED;
 
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
@@ -326,13 +343,14 @@ static CString CopyEditsMemoryCardToMachine()
 	PROFILEMAN->LoadMachineProfile();
 
 	// TODO: Make themeable
-	return ssprintf("Copied from P%d card:\n%d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
+	return ssprintf(COPIED_FROM_CARD.GetValue(),pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
 }
 
+static LocalizedString PREFERENCES_RESET( "ScreenServiceAction", "Preferences reset." );
 static CString ResetPreferences()
 {
 	PREFSMAN->ResetToFactoryDefaults();
-	return "Preferences reset.";
+	return PREFERENCES_RESET;
 }
 
 

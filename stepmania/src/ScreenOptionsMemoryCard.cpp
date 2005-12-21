@@ -118,6 +118,7 @@ void ScreenOptionsMemoryCard::ExportOptions( int iRow, const vector<PlayerNumber
 	}
 }
 
+static LocalizedString ERROR_MOUNTING_CARD ("ScreenOptionsMemoryCard", "Error mounting card: %s" );
 void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus &input )
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
@@ -135,7 +136,7 @@ void ScreenOptionsMemoryCard::ProcessMenuStart( const InputEventPlus &input )
 		}
 		else
 		{
-			CString s = ssprintf("error mounting card: %s", MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
+			CString s = ssprintf(ERROR_MOUNTING_CARD.GetValue(), MEMCARDMAN->GetCardError(PLAYER_1).c_str() );
 			ScreenPrompt::Prompt( SM_None, s );
 		}
 	}

@@ -176,22 +176,27 @@ RString Commify( int iNum )
 	return sReturn;
 }
 
+static LocalizedString NUM_PREFIX	( "RageUtil", "NumPrefix" );
+static LocalizedString NUM_ST		( "RageUtil", "NumSt" );
+static LocalizedString NUM_ND		( "RageUtil", "NumNd" );
+static LocalizedString NUM_RD		( "RageUtil", "NumRd" );
+static LocalizedString NUM_TH		( "RageUtil", "NumTh" );
 RString FormatNumberAndSuffix( int i )
 {
 	RString sSuffix;
 	switch( i%10 )
 	{
-	case 1:		sSuffix = "st"; break;
-	case 2:		sSuffix = "nd"; break;
-	case 3:		sSuffix = "rd"; break;
-	default:	sSuffix = "th"; break;
+	case 1:		sSuffix = NUM_ST; break;
+	case 2:		sSuffix = NUM_ND; break;
+	case 3:		sSuffix = NUM_RD; break;
+	default:	sSuffix = NUM_TH; break;
 	}
 
 	// "11th", "113th", etc.
 	if( ((i%100) / 10) == 1 )
-		sSuffix = "th";
+		sSuffix = NUM_TH;
 
-	return ssprintf("%i", i) + sSuffix;
+	return NUM_PREFIX.GetValue() + ssprintf("%i", i) + sSuffix;
 }
 
 struct tm GetLocalTime()
@@ -1939,6 +1944,7 @@ void RefreshLocalizedStrings()
 
 LocalizedString::LocalizedString( const RString &sSection, const RString &sName )
 {
+	m_bLoaded = false;
 	m_sSection = sSection;
 	m_sName = sName;
 
@@ -1959,13 +1965,15 @@ LocalizedString::operator RString() const
 
 RString LocalizedString::GetValue() const
 {
-	ASSERT(!m_sValue.empty()); return m_sValue;
+	ASSERT(m_bLoaded);
+	return m_sValue;
 }
 
 void LocalizedString::Refresh()
 {
 	ASSERT( g_pfnLocalizer );
 	m_sValue = g_pfnLocalizer( m_sSection, m_sName );
+	m_bLoaded = true;
 }
 
 

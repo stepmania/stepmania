@@ -108,6 +108,21 @@ void ScreenOptionsEditCourse::BeginScreen()
 	AfterChangeRow( GAMESTATE->m_MasterPlayerNumber );
 }
 
+static LocalizedString MAXIMUM_COURSE_ENTRIES	("ScreenOptionsEditCourse", "The maximum number of entries per course is %d.  This course already has %d entries.");
+static bool AreEntriesFull()
+{
+	Course *pCourse = GAMESTATE->m_pCurCourse;
+
+	if( pCourse->m_vEntries.size() >= size_t(MAX_ENTRIES_PER_COURSE) )
+	{
+		CString sError = ssprintf(MAXIMUM_COURSE_ENTRIES.GetValue(), MAX_ENTRIES_PER_COURSE, pCourse->m_vEntries.size() );
+		ScreenPrompt::Prompt( SM_None, sError );
+		return true;
+	}
+	return false;
+}
+
+static LocalizedString CANNOT_DELETE_LAST_ENTRY ("ScreenOptionsEditCourse", "You cannot delete the last entry in a course.");
 void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 {
 	Course *pCourse = GAMESTATE->m_pCurCourse;
@@ -136,12 +151,8 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case CourseEntryAction_InsertEntry:
 				{
-					if( pCourse->m_vEntries.size() >= size_t(MAX_ENTRIES_PER_COURSE) )
-					{
-						CString sError = "The maximum number of entries per course is %d.  This course already has %d entries.";
-						ScreenPrompt::Prompt( SM_None, sError );
+					if( AreEntriesFull() )
 						return;
-					}
 					CourseEntry ce;
 					CourseUtil::MakeDefaultEditCourseEntry( ce );
 					pCourse->m_vEntries.insert( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus(), ce );
@@ -152,8 +163,7 @@ void ScreenOptionsEditCourse::HandleScreenMessage( const ScreenMessage SM )
 				{
 					if( pCourse->m_vEntries.size() == 1 )
 					{
-						CString sError = "You cannot delete the last entry in a course.";
-						ScreenPrompt::Prompt( SM_None, sError );
+						ScreenPrompt::Prompt( SM_None, CANNOT_DELETE_LAST_ENTRY );
 						return;
 					}
 					pCourse->m_vEntries.erase( pCourse->m_vEntries.begin() + GetCourseEntryIndexWithFocus() );
@@ -249,12 +259,8 @@ void ScreenOptionsEditCourse::ProcessMenuStart( const InputEventPlus &input )
 	}
 	else if( iCurRow == (int)m_pRows.size()-2 )	// "create entry"
 	{
-		if( pCourse->m_vEntries.size() >= size_t(MAX_ENTRIES_PER_COURSE) )
-		{
-			CString sError = "The maximum number of entries per course is %d.  This course already has %d entries.";
-			ScreenPrompt::Prompt( SM_None, sError );
+		if( AreEntriesFull() )
 			return;
-		}
 		CourseEntry ce;
 		CourseUtil::MakeDefaultEditCourseEntry( ce );
 		pCourse->m_vEntries.push_back( ce );

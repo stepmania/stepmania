@@ -47,11 +47,13 @@ static MenuDef g_TempMenu(
 	"ScreenMiniMenuContext"
 );
 
+static LocalizedString PROFILE_NAME_BLANK		( "ScreenEditMenu", "Profile name cannot be blank." );
+static LocalizedString PROFILE_NAME_CONFLICTS	( "ScreenEditMenu", "The name you chose conflicts with another profile. Please use a different name." );
 static bool ValidateLocalProfileName( const CString &sAnswer, CString &sErrorOut )
 {
 	if( sAnswer == "" )
 	{
-		sErrorOut = "Profile name cannot be blank.";
+		sErrorOut = PROFILE_NAME_BLANK;
 		return false;
 	}
 
@@ -64,7 +66,7 @@ static bool ValidateLocalProfileName( const CString &sAnswer, CString &sErrorOut
 	bool bAlreadyAProfileWithThisName = find( vsProfileNames.begin(), vsProfileNames.end(), sAnswer ) != vsProfileNames.end();
 	if( bAlreadyAProfileWithThisName )
 	{
-		sErrorOut = "There is already another profile with this name.  Please choose a different name.";
+		sErrorOut = PROFILE_NAME_CONFLICTS;
 		return false;
 	}
 
@@ -165,6 +167,8 @@ void ScreenOptionsManageProfiles::BeginScreen()
 	AfterChangeRow( PLAYER_1 );
 }
 
+static LocalizedString CONFIRM_DELETE_PROFILE( "ScreenOptionsManageProfiles", "Are you sure you want to delete the profile '%s'?" );
+static LocalizedString CONFIRM_CLEAR_PROFILE( "ScreenOptionsManageProfiles", "Are you sure you want to clear all data in the profile '%s'?" );
 void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToNextScreen )
@@ -279,14 +283,14 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 			case ProfileAction_Delete:
 				{
 					CString sTitle = pProfile->m_sDisplayName;
-					CString sMessage = ssprintf( "Are you sure you want to delete the profile '%s'?", sTitle.c_str() );
+					CString sMessage = ssprintf( CONFIRM_DELETE_PROFILE.GetValue(), sTitle.c_str() );
 					ScreenPrompt::Prompt( SM_BackFromDeleteConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;
 			case ProfileAction_Clear:
 				{
 					CString sTitle = pProfile->m_sDisplayName;
-					CString sMessage = ssprintf( "Are you sure you want to clear all data in the profile '%s'?", sTitle.c_str() );
+					CString sMessage = ssprintf( CONFIRM_CLEAR_PROFILE.GetValue(), sTitle.c_str() );
 					ScreenPrompt::Prompt( SM_BackFromClearConfirm, sMessage, PROMPT_YES_NO );
 				}
 				break;

@@ -519,6 +519,7 @@ private:
 	RString m_sSection;
 	RString m_sName;
 	RString m_sValue;
+	bool m_bLoaded;
 };
 
 #endif

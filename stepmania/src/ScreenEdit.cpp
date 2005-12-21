@@ -2488,6 +2488,7 @@ static LocalizedString REVERT_LAST_SAVE				( "ScreenEdit", "Do you want to rever
 static LocalizedString DESTROY_ALL_UNSAVED_CHANGES	( "ScreenEdit", "This will destroy all unsaved changes." );
 static LocalizedString REVERT_FROM_DISK				( "ScreenEdit", "Do you want to revert from disk?" );
 static LocalizedString SAVE_CHANGES_BEFORE_EXITING	( "ScreenEdit", "Do you want to save changes before exiting?" );
+static LocalizedString SAVED						( "ScreenEdit", "Saved  '%s'" );
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
 {
 	switch( c )
@@ -2573,7 +2574,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						SCREENMAN->ZeroNextUpdate();
 
 						// TODO: make localizable
-						CString s = ssprintf( "Saved  \"%s\"", Basename(pSteps->GetFilename()).c_str() );
+						CString s = ssprintf( SAVED.GetValue(), Basename(pSteps->GetFilename()).c_str() );
 						ScreenPrompt::Prompt( SM_None, s );
 
 						/* FIXME

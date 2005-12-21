@@ -5,6 +5,15 @@
 #include "PrefsManager.h"
 
 
+static LocalizedString EARLIER					("ScreenSaveSync","earlier");
+static LocalizedString LATER					("ScreenSaveSync","later");
+static LocalizedString CHANGED_GLOBAL_OFFSET	("ScreenSaveSync","You have changed the Global Offset from %+.3f to %+.3f (change of %+.3f, making the notes %s).");
+static LocalizedString CHANGED_SONG_OFFSET		("ScreenSaveSync","You have changed the Song Offset from %+.3f to %+.3f (change of %+.3f, making the notes %s).");
+static LocalizedString CHANGED_BPM				("ScreenSaveSync","The BPM segment number #%d changed from %+.3f BPS to %+.3f BPS (change of %+.3f).");
+static LocalizedString CHANGED_STOP				("ScreenSaveSync","The stop segment #%d changed from %+.3f seconds to %+.3f seconds (change of %+.3f).");
+static LocalizedString CHANGED_TIMING_OF		("ScreenSaveSync","You have changed the timing of");
+static LocalizedString WOULD_YOU_LIKE_TO_SAVE	("ScreenSaveSync","Would you like to save these changes?");
+static LocalizedString CHOOSING_NO_WILL_DISCARD	("ScreenSaveSync","Choosing NO will discard your changes.");
 static CString GetPromptText()
 {
 	CString s;
@@ -17,11 +26,11 @@ static CString GetPromptText()
 		if( fabs(fDelta) > 0.00001 )
 		{
 			s += ssprintf( 
-				"You have changed the Global Offset\nfrom %+.3f to %+.3f (change of %+.3f, notes %s).\n\n",
+				CHANGED_GLOBAL_OFFSET.GetValue()+"\n\n",
 				fOld, 
 				fNew,
 				fDelta,
-				fDelta > 0 ? "earlier":"later"  );
+				(fDelta > 0 ? EARLIER:LATER).GetValue().c_str()  );
 		}
 	}
 
@@ -35,11 +44,11 @@ static CString GetPromptText()
 		if( fabs(fDelta) > 0.00001 )
 		{
 			vsSongChanges.push_back( ssprintf( 
-				"The song offset changed from %+.3f to %+.3f (change of %+.3f, notes %s).\n\n",
+				CHANGED_SONG_OFFSET.GetValue()+"\n\n",
 				fOld, 
 				fNew,
 				fDelta,
-				fDelta > 0 ? "earlier":"later" ) );
+				(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
 		}
 	}
 
@@ -52,8 +61,8 @@ static CString GetPromptText()
 		if( fabs(fDelta) > 0.00001 )
 		{
 			vsSongChanges.push_back( ssprintf( 
-				"The %s BPM segment changed from %+.3f BPS to %+.3f BPS (change of %+.3f).\n\n",
-				FormatNumberAndSuffix(i+1).c_str(),
+				CHANGED_BPM.GetValue()+"\n\n",
+				i+1,
 				fOld, 
 				fNew,
 				fDelta ) );
@@ -69,8 +78,8 @@ static CString GetPromptText()
 		if( fabs(fDelta) > 0.00001 )
 		{
 			vsSongChanges.push_back( ssprintf( 
-				"The %s Stop segment changed from %+.3f seconds to %+.3f seconds (change of %+.3f).\n\n",
-				FormatNumberAndSuffix(i+1).c_str(),
+				CHANGED_STOP.GetValue()+"\n\n",
+				i+1,
 				fOld, 
 				fNew,
 				fDelta ) );
@@ -81,7 +90,7 @@ static CString GetPromptText()
 	if( !vsSongChanges.empty() )
 	{
 		s += ssprintf( 
-			"You have changed the timing of\n"
+			CHANGED_TIMING_OF.GetValue()+"\n"
 			"%s:\n"
 			"\n", 
 			GAMESTATE->m_pCurSong->GetDisplayFullTitle().c_str() );
@@ -89,10 +98,9 @@ static CString GetPromptText()
 		s += join( "\n", vsSongChanges );
 	}
 
-	s +="\n\n"
-		"Would you like to save these changes?\n"
-		"Choosing NO will discard your changes.";
-
+	s +="\n\n"+
+		WOULD_YOU_LIKE_TO_SAVE.GetValue()+"\n"+
+		CHOOSING_NO_WILL_DISCARD.GetValue();
 	return s;
 }
 			

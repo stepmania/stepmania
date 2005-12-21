@@ -234,6 +234,7 @@ void ScreenJoinMultiplayer::MenuBack( PlayerNumber pn )
 	Cancel( SM_GoToPrevScreen );
 }
 
+static LocalizedString JOIN_2_OR_MORE_PLAYERS ("ScreenJoinMultiplayer", "You must join 2 or more players before continuing.");
 void ScreenJoinMultiplayer::MenuStart( PlayerNumber pn )
 {
 	int iNumJoinedPlayers = 0;
@@ -249,7 +250,7 @@ void ScreenJoinMultiplayer::MenuStart( PlayerNumber pn )
 
 	if( iNumJoinedPlayers < 2 )
 	{
-		ScreenPrompt::Prompt( SM_None, "You must join 2 or more players before continuing." );
+		ScreenPrompt::Prompt( SM_None, JOIN_2_OR_MORE_PLAYERS );
 		return;
 	}
 	

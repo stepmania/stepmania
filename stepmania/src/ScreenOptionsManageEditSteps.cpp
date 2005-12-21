@@ -129,6 +129,8 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 	AfterChangeRow( PLAYER_1 );
 }
 
+static LocalizedString THESE_STEPS_WILL_BE_LOST	("ScreenOptionsManageEditSteps", "These steps will be lost permanently.");
+static LocalizedString CONTINUE_WITH_DELETE		("ScreenOptionsManageEditSteps", "Continue with delete?");
 void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToNextScreen )
@@ -206,7 +208,7 @@ void ScreenOptionsManageEditSteps::HandleScreenMessage( const ScreenMessage SM )
 				break;
 			case StepsEditAction_Delete:
 				{
-					ScreenPrompt::Prompt( SM_BackFromDelete, "This Steps will be lost permanently.\n\nContinue with delete?", PROMPT_YES_NO, ANSWER_NO );
+					ScreenPrompt::Prompt( SM_BackFromDelete, THESE_STEPS_WILL_BE_LOST.GetValue()+"\n\n"+CONTINUE_WITH_DELETE.GetValue(), PROMPT_YES_NO, ANSWER_NO );
 				}
 				break;
 			}
@@ -235,6 +237,8 @@ void ScreenOptionsManageEditSteps::AfterChangeRow( PlayerNumber pn )
 	ScreenOptions::AfterChangeRow( pn );
 }
 
+static LocalizedString YOU_HAVE_MAX_STEP_EDITS( "ScreenOptionsManageEditSteps", "You have %d step edits, the maximum number allowed." );
+static LocalizedString YOU_MUST_DELETE( "ScreenOptionsManageEditSteps", "You must delete an existing steps edit before creating a new steps edit." );
 void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus &input )
 {
 	int iCurRow = m_iCurrentRow[GAMESTATE->m_MasterPlayerNumber];
@@ -245,10 +249,7 @@ void ScreenOptionsManageEditSteps::ProcessMenuStart( const InputEventPlus &input
 		SONGMAN->GetStepsLoadedFromProfile( v, ProfileSlot_Machine );
 		if( v.size() >= size_t(MAX_EDIT_STEPS_PER_PROFILE) )
 		{
-			CString s = ssprintf( 
-				"You have %d Steps edits, the maximum number allowed.\n\n"
-				"You must delete an existing Steps edit before creating a new Steps edit.",
-				MAX_EDIT_STEPS_PER_PROFILE );
+			CString s = ssprintf( YOU_HAVE_MAX_STEP_EDITS.GetValue()+"\n\n"+YOU_MUST_DELETE.GetValue(), MAX_EDIT_STEPS_PER_PROFILE );
 			ScreenPrompt::Prompt( SM_None, s );
 			return;
 		}

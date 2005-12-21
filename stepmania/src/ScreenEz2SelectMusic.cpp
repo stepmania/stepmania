@@ -447,11 +447,12 @@ void ScreenEz2SelectMusic::MenuLeft( const InputEventPlus &input )
 	MusicChanged();
 }
 
+static LocalizedString DOES_NOT_HAVE_MUSIC_FILE( "ScreenEz2SelectMusic", "This song does not have a music file\n and cannot be played." );
 void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 {
 	if( !m_MusicBannerWheel.GetSelectedSong()->HasMusic() )
 	{
-		ScreenPrompt::Prompt( SM_None, "ERROR:\n \nThis song does not have a music file\n and cannot be played." );
+		ScreenPrompt::Prompt( SM_None, DOES_NOT_HAVE_MUSIC_FILE );
 		return;
 	}
 
@@ -481,7 +482,7 @@ void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 	m_sprOptionsMessage.SetZoomY( 0 );
 }
 
-
+static LocalizedString NO_SONGS_AVAILABLE( "ScreenEz2SelectMusic", "There are no songs available for play." );
 void ScreenEz2SelectMusic::Update( float fDeltaTime )
 {
 	m_DifficultyRating.Update(fDeltaTime);
@@ -497,7 +498,7 @@ void ScreenEz2SelectMusic::Update( float fDeltaTime )
 	
 	if(m_MusicBannerWheel.CheckSongsExist() == 0 && ! i_ErrorDetected)
 	{
-		ScreenPrompt::Prompt( SM_NoSongs, "ERROR:\n \nThere are no songs available for play!" );
+		ScreenPrompt::Prompt( SM_NoSongs, NO_SONGS_AVAILABLE );
 		i_ErrorDetected=1;
 		this->PostScreenMessage( SM_NoSongs, 5.5f ); // timeout incase the user decides to do nothing :D
 	}
