@@ -686,7 +686,7 @@ void Sprite::SetState( int iNewState )
 	if( iNewState != 0 && (iNewState < 0  ||  iNewState >= (int)m_States.size()) )
 	{
 		// Don't warn about number of states in "_blank".
-		if( !m_pTexture || m_pTexture->GetID().filename.Find("_blank") == -1 )
+		if( !m_pTexture || m_pTexture->GetID().filename.find("_blank") == string::npos )
 		{
 			CString sError;
 			if( m_pTexture )
@@ -842,7 +842,7 @@ void Sprite::ScaleToClipped( float fWidth, float fHeight )
 		}
 		SetZoom( 1 );
 	}
-	else if( m_pTexture->GetID().filename.find("(was rotated)") != m_pTexture->GetID().filename.npos && 
+	else if( m_pTexture->GetID().filename.find("(was rotated)") != string::npos && 
 			 fWidth != -1 && fHeight != -1 )
 	{
 		/* Dumb hack.  Normally, we crop all sprites except for diagonal banners,

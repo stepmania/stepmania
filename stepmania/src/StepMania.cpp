@@ -320,7 +320,7 @@ static bool ChangeAppPri()
 		{
 			INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
 			CString sInputDevices = join( ",", vDescriptions );
-			if( sInputDevices.Find("NTPAD") != -1 )
+			if( sInputDevices.find("NTPAD") != string::npos )
 			{
 				LOG->Trace( "Using NTPAD.  Don't boost priority." );
 				return false;
