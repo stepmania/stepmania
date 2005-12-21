@@ -1,7 +1,6 @@
 #include "global.h"
 #include "archutils/Win32/GraphicsWindow.h"
 #include "LowLevelWindow_Win32.h"
-#include "StepMania.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageDisplay.h"

@@ -5,7 +5,6 @@
 #ifdef _WINDOWS
 #  include <windows.h>
 #endif
-#include "StepMania.h"
 
 struct tm *my_localtime_r( const time_t *timep, struct tm *result )
 {
