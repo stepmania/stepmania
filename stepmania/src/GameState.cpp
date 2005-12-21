@@ -435,11 +435,6 @@ void GameState::EndGame()
 
 	PROFILEMAN->SaveMachineProfile();
 
-	// Reset the USB storage device numbers -after- saving
-	CHECKPOINT;
-//	MEMCARDMAN->FlushAndReset();
-	CHECKPOINT;
-
 	// make sure we don't execute EndGame twice.
 	m_timeGameStarted.SetZero();
 }

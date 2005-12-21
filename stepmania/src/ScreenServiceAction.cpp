@@ -95,7 +95,6 @@ static CString ClearMemoryCardEdits()
 	}
 
 	MEMCARDMAN->UnmountCard(pn);
-	MEMCARDMAN->FlushAndReset();
 
 	return ssprintf("%d edits cleared, %d errors.",iNumSuccessful,iNumAttempted-iNumSuccessful);
 }
@@ -195,7 +194,6 @@ static CString TransferStatsMachineToMemoryCard()
 	bool bSaved = PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
 
 	MEMCARDMAN->UnmountCard(pn);
-	MEMCARDMAN->FlushAndReset();
 
 	if( bSaved )
 		return ssprintf("Machine stats saved to P%d card.",pn+1);
@@ -236,7 +234,6 @@ static CString TransferStatsMemoryCardToMachine()
 	}
 
 	MEMCARDMAN->UnmountCard(pn);
-	MEMCARDMAN->FlushAndReset();
 
 	return "Stats transferred to machine.";
 }
@@ -300,7 +297,6 @@ static CString CopyEditsMachineToMemoryCard()
 	CopyEdits( sFromDir, sToDir, iNumAttempted, iNumSuccessful, iNumOverwritten );
 	
 	MEMCARDMAN->UnmountCard(pn);
-	MEMCARDMAN->FlushAndReset();
 
 	// TODO: Make string themable
 	return ssprintf("Copied to P%d card:\n%d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
@@ -324,7 +320,6 @@ static CString CopyEditsMemoryCardToMachine()
 	CopyEdits( sFromDir, sToDir, iNumAttempted, iNumSuccessful, iNumOverwritten );
 	
 	MEMCARDMAN->UnmountCard(pn);
-	MEMCARDMAN->FlushAndReset();
 
 	// reload the machine profile
 	PROFILEMAN->SaveMachineProfile();
