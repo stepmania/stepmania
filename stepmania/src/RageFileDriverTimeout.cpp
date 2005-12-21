@@ -66,7 +66,7 @@ enum ThreadRequest
 };
 
 /* This is the class that does most of the work. */
-class ThreadedFileWorker: public WorkerThread
+class ThreadedFileWorker: public RageWorkerThread
 {
 public:
 	ThreadedFileWorker( CString sPath );
@@ -151,7 +151,7 @@ void RageFileDriverTimeout::SetTimeout( float fSeconds )
 
 
 ThreadedFileWorker::ThreadedFileWorker( CString sPath ):
-	WorkerThread( sPath ),
+	RageWorkerThread( sPath ),
 	m_DeletedFilesLock( sPath + "DeletedFilesLock" )
 {
 	/* Grab a reference to the child driver.  We'll operate on it directly. */

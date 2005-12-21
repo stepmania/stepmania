@@ -63,7 +63,7 @@ static const CString MEM_CARD_MOUNT_POINT_INTERNAL[NUM_PLAYERS] =
 };
 
 /* Only access the memory card driver in a timeout-safe thread. */
-class ThreadedMemoryCardWorker: public WorkerThread
+class ThreadedMemoryCardWorker: public RageWorkerThread
 {
 public:
 	ThreadedMemoryCardWorker();
@@ -132,7 +132,7 @@ bool ThreadedMemoryCardWorker::StorageDevicesChanged( vector<UsbStorageDevice> &
 
 
 ThreadedMemoryCardWorker::ThreadedMemoryCardWorker():
-	WorkerThread("ThreadedMemoryCardWorker"),
+	RageWorkerThread("MemoryCardWorker"),
 	UsbStorageDevicesMutex("UsbStorageDevicesMutex")
 {
 	m_pDriver = MakeMemoryCardDriver();

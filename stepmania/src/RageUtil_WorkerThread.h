@@ -1,4 +1,4 @@
-/* WorkerThread - a worker thread for operations that are allowed to time out. */
+/* RageWorkerThread - a worker thread for operations that are allowed to time out. */
 
 #ifndef RAGE_UTIL_WORKER_THREAD_H
 #define RAGE_UTIL_WORKER_THREAD_H
@@ -6,11 +6,11 @@
 #include "RageThreads.h"
 #include "RageTimer.h"
 
-class WorkerThread
+class RageWorkerThread
 {
 public:
-	WorkerThread( const CString &sName );
-	virtual ~WorkerThread();
+	RageWorkerThread( const CString &sName );
+	virtual ~RageWorkerThread();
 
 	/* Call SetTimeout(10) to start a timeout period of 10 seconds.  This is not a
 	 * per-request timeout; you have 10 seconds to do your work, at which point all
@@ -49,7 +49,7 @@ protected:
 	virtual void DoHeartbeat() { }
 
 private:
-	static int StartWorkerMain( void *pThis ) { ((WorkerThread *) (pThis))->WorkerMain(); return 0; }
+	static int StartWorkerMain( void *pThis ) { ((RageWorkerThread *) (pThis))->WorkerMain(); return 0; }
 	void WorkerMain();
 
 	enum { REQ_SHUTDOWN = -1, REQ_NONE = -2 };

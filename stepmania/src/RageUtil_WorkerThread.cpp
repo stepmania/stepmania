@@ -3,7 +3,7 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 
-WorkerThread::WorkerThread( const CString &sName ):
+RageWorkerThread::RageWorkerThread( const CString &sName ):
 	m_WorkerEvent( "\"" + sName + "\" worker event" ),
 	m_HeartbeatEvent( "\"" + sName + "\" heartbeat event" )
 {
@@ -14,16 +14,16 @@ WorkerThread::WorkerThread( const CString &sName ):
 	m_fHeartbeat = -1;
 	m_bRequestFinished = false;
 
-	m_WorkerThread.SetName( "WorkerThread (" + sName + ")" );
+	m_WorkerThread.SetName( "Worker thread (" + sName + ")" );
 }
 
-WorkerThread::~WorkerThread()
+RageWorkerThread::~RageWorkerThread()
 {
 	/* The worker thread must be stopped by the derived class. */
 	ASSERT( !m_WorkerThread.IsCreated() );
 }
 
-void WorkerThread::SetTimeout( float fSeconds )
+void RageWorkerThread::SetTimeout( float fSeconds )
 {
 	m_WorkerEvent.Lock();
 	if( fSeconds < 0 )
@@ -37,14 +37,14 @@ void WorkerThread::SetTimeout( float fSeconds )
 }
 
 
-void WorkerThread::StartThread()
+void RageWorkerThread::StartThread()
 {
 	ASSERT( !m_WorkerThread.IsCreated() );
 
 	m_WorkerThread.Create( StartWorkerMain, this );
 }
 
-void WorkerThread::StopThread()
+void RageWorkerThread::StopThread()
 {
 	/* If we're timed out, wait. */
 	m_WorkerEvent.Lock();
@@ -65,7 +65,7 @@ void WorkerThread::StopThread()
 	m_WorkerThread.Wait();
 }
 
-bool WorkerThread::DoRequest( int iRequest )
+bool RageWorkerThread::DoRequest( int iRequest )
 {
 	ASSERT( !m_bTimedOut );
 	ASSERT( m_iRequest == REQ_NONE );
@@ -107,7 +107,7 @@ bool WorkerThread::DoRequest( int iRequest )
 	return bRequestFinished;
 }
 
-void WorkerThread::WorkerMain()
+void RageWorkerThread::WorkerMain()
 {
 	while(1)
 	{
@@ -186,7 +186,7 @@ void WorkerThread::WorkerMain()
 	}
 }
 
-bool WorkerThread::WaitForOneHeartbeat()
+bool RageWorkerThread::WaitForOneHeartbeat()
 {
 	/* It doesn't make sense to wait for a heartbeat if there is no heartbeat. */
 	ASSERT( m_fHeartbeat != -1 );
