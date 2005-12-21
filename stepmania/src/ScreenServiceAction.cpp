@@ -294,7 +294,9 @@ static void CopyEdits( const CString &sFrom, const CString &sTo, int &iNumAttemp
 }
 
 static LocalizedString EDITS_NOT_COPIED( "ScreenServiceAction", "Edits not copied - No memory cards ready." );
-static LocalizedString COPIED_TO_CARD( "ScreenServiceAction", "Copied to P%d card: %d/%d copies OK (%d overwritten)." );
+static LocalizedString COPIED_TO_CARD( "ScreenServiceAction", "Copied to P%d card:" );
+static LocalizedString COPIED_AND_OVERWRITTEN( "ScreenServiceAction", "%d copied (%d overwritten)" );
+static LocalizedString COPIED_FAILED( "ScreenServiceAction", "(%d failed)" );
 static CString CopyEditsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
@@ -314,11 +316,14 @@ static CString CopyEditsMachineToMemoryCard()
 	
 	MEMCARDMAN->UnmountCard(pn);
 
-	// TODO: Make string themable
-	return ssprintf(COPIED_TO_CARD.GetValue(),pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
+	CString sRet = ssprintf( COPIED_TO_CARD.GetValue(), pn+1 ) + " ";
+	sRet += ssprintf( COPIED_AND_OVERWRITTEN.GetValue(), iNumSuccessful, iNumOverwritten );
+	if( iNumSuccessful < iNumAttempted )
+		sRet += CString(" ") + ssprintf( COPIED_FAILED.GetValue(), iNumAttempted-iNumSuccessful );
+	return sRet;
 }
 
-static LocalizedString COPIED_FROM_CARD( "ScreenServiceAction", "Copied from P%d card: %d/%d copies OK (%d overwritten)." );
+static LocalizedString COPIED_FROM_CARD( "ScreenServiceAction", "Copied from P%d card:" );
 static CString CopyEditsMemoryCardToMachine()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
@@ -342,8 +347,11 @@ static CString CopyEditsMemoryCardToMachine()
 	PROFILEMAN->SaveMachineProfile();
 	PROFILEMAN->LoadMachineProfile();
 
-	// TODO: Make themeable
-	return ssprintf(COPIED_FROM_CARD.GetValue(),pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
+	CString sRet = ssprintf( COPIED_FROM_CARD.GetValue(), pn+1 ) + " ";
+	sRet += ssprintf( COPIED_AND_OVERWRITTEN.GetValue(), iNumSuccessful, iNumOverwritten );
+	if( iNumSuccessful < iNumAttempted )
+		sRet += CString(" ") + ssprintf( COPIED_FAILED.GetValue(), iNumAttempted-iNumSuccessful );
+	return sRet;
 }
 
 static LocalizedString PREFERENCES_RESET( "ScreenServiceAction", "Preferences reset." );
