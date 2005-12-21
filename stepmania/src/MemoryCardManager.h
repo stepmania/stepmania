@@ -33,8 +33,6 @@ public:
 	void PauseMountingThread( int iTimeout = 20 );
 	void UnPauseMountingThread();
 	
-	void FlushAndReset();	// force all files to be flushed to mounted memory cards
-
 	bool GetCardsLocked() const { return m_bCardsLocked; }
 
 	bool PathIsMemCard( CString sDir ) const;

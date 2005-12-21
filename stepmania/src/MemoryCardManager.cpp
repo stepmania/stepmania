@@ -82,7 +82,6 @@ public:
 	/* These functions may time out. */
 	bool Mount( const UsbStorageDevice *pDevice );
 	bool Unmount( const UsbStorageDevice *pDevice );
-	bool Flush( const UsbStorageDevice *pDevice );
 
 	/* This function will not time out. */
 	bool StorageDevicesChanged( vector<UsbStorageDevice> &aOut );
@@ -113,7 +112,6 @@ private:
 	{
 		REQ_MOUNT,
 		REQ_UNMOUNT,
-		REQ_FLUSH,
 	};
 };
 
@@ -184,10 +182,6 @@ void ThreadedMemoryCardWorker::HandleRequest( int iRequest )
 			m_aMountedDevices.erase( it );
 		break;
 	}
-
-	case REQ_FLUSH:
-		m_pDriver->Flush( &m_RequestDevice );
-		break;
 	}
 }
 
@@ -246,21 +240,6 @@ bool ThreadedMemoryCardWorker::Unmount( const UsbStorageDevice *pDevice )
 
 	m_RequestDevice = *pDevice;
 	if( !DoRequest(REQ_UNMOUNT) )
-		return false;
-
-	return true;
-}
-
-bool ThreadedMemoryCardWorker::Flush( const UsbStorageDevice *pDevice )
-{
-	ASSERT( TimeoutEnabled() );
-
-	/* If we're currently in a timed-out state, fail. */
-	if( IsTimedOut() )
-		return false;
-
-	m_RequestDevice = *pDevice;
-	if( !DoRequest(REQ_FLUSH) )
 		return false;
 
 	return true;
@@ -640,25 +619,6 @@ void MemoryCardManager::UnmountCard( PlayerNumber pn )
 			bNeedUnpause = false;
 	if( bNeedUnpause )
 		this->UnPauseMountingThread();
-}
-
-void MemoryCardManager::FlushAndReset()
-{
-	/*
-	 * Disabled for now.  Currently, this is a no-op in Linux.  It's a little
-	 * tricky: we set the timeout period in Mount, and finish in Unmount, and
-	 * this is called outside that; currently, flushing is done by Unmount.
-	 * I think that's OK and this will probably go away, but I'm not sure yet.
-	FOREACH_PlayerNumber( p )
-	{
-		UsbStorageDevice &d = m_Device[p];
-		if( d.IsBlank() )	// no card assigned
-			continue;	// skip
-		if( d.m_State == UsbStorageDevice::STATE_WRITE_ERROR )
-			continue;	// skip
-		g_pWorker->Flush( &m_Device[p] );
-	}
-	*/
 }
 
 bool MemoryCardManager::PathIsMemCard( CString sDir ) const
