@@ -258,9 +258,8 @@ static CString TransferStatsMemoryCardToMachine()
 	return "Stats transferred to machine.";
 }
 
-static CString CopyEditsMachineToMemoryCard()
+static PlayerNumber GetFirstReadyMemoryCard()
 {
-	bool bTriedToCopy = false;
 	FOREACH_PlayerNumber( pn )
 	{
 		if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
@@ -268,8 +267,21 @@ static CString CopyEditsMachineToMemoryCard()
 
 		if( !MEMCARDMAN->IsMounted(pn) )
 			MEMCARDMAN->MountCard(pn);
+		return pn;
+	}
 
-		bTriedToCopy = true;
+	return PLAYER_INVALID;
+}
+
+static CString CopyEditsMachineToMemoryCard()
+{
+	PlayerNumber pn = GetFirstReadyMemoryCard();
+	if( pn == PLAYER_INVALID )
+		return "Edits not copied - No memory cards ready.";
+
+	{
+		if( !MEMCARDMAN->IsMounted(pn) )
+			MEMCARDMAN->MountCard(pn);
 
 		int iNumAttempted = 0;
 		int iNumSuccessful = 0;
@@ -313,11 +325,7 @@ static CString CopyEditsMachineToMemoryCard()
 
 		// TODO: Make string themable
 		return ssprintf("Copied to P%d card:\n%d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
-		break;
 	}
-
-	if( !bTriedToCopy )
-		return "Edits not copied - No memory cards ready.";
 
 	MEMCARDMAN->FlushAndReset();
 
@@ -326,16 +334,13 @@ static CString CopyEditsMachineToMemoryCard()
 
 static CString CopyEditsMemoryCardToMachine()
 {
-	bool bTriedToCopy = false;
-	FOREACH_PlayerNumber( pn )
-	{
-		if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
-			continue;	// skip
+	PlayerNumber pn = GetFirstReadyMemoryCard();
+	if( pn == PLAYER_INVALID )
+		return "Edits not copied - No memory cards ready.";
 
+	{
 		if( !MEMCARDMAN->IsMounted(pn) )
 			MEMCARDMAN->MountCard(pn);
-
-		bTriedToCopy = true;
 
 		int iNumAttempted = 0;
 		int iNumSuccessful = 0;
@@ -383,11 +388,7 @@ static CString CopyEditsMemoryCardToMachine()
 
 		// TODO: Make themeable
 		return ssprintf("Copied from P%d card:\n%d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
-		break;
 	}
-
-	if( !bTriedToCopy )
-		return "Edits not copied - No memory cards ready.";
 
 	MEMCARDMAN->FlushAndReset();
 
