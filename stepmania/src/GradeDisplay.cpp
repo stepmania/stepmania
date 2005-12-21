@@ -30,7 +30,7 @@ void GradeDisplay::Load( RageTextureID ID )
 	Sprite::StopAnimating();
 
 	bool bWarn = Sprite::GetNumStates() != 8 && Sprite::GetNumStates() != 16;
-	if( ID.filename.Find("_blank") != -1 )
+	if( ID.filename.find("_blank") != CString::npos )
 		bWarn = false;
 	if( bWarn )
 	{
@@ -74,7 +74,7 @@ void GradeDisplay::Update( float fDeltaTime )
 
 int GradeDisplay::GetFrameIndex( PlayerNumber pn, Grade g )
 {
-	if( this->m_pTexture->GetID().filename.Find("_blank") != -1 )
+	if( this->m_pTexture->GetID().filename.find("_blank") != string::npos )
 		return 0;
 
 	// either 8, or 16 states

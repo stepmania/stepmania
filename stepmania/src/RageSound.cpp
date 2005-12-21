@@ -897,7 +897,7 @@ RageSoundParams::StopMode_t RageSound::GetStopMode() const
 	if( m_Param.StopMode != RageSoundParams::M_AUTO )
 		return m_Param.StopMode;
 
-	if( m_sFilePath.Find("loop") != -1 )
+	if( m_sFilePath.find("loop") != string::npos )
 		return RageSoundParams::M_LOOP;
 	else
 		return RageSoundParams::M_STOP;

@@ -31,8 +31,8 @@ void AnimatedTexture::Load( CString sTexOrIniPath )
 {
 	ASSERT( vFrames.empty() );	// don't load more than once
 
-	m_bSphereMapped = sTexOrIniPath.Find("sphere") != -1;
-	if( sTexOrIniPath.Find("add") != -1 )
+	m_bSphereMapped = sTexOrIniPath.find("sphere") != CString::npos;
+	if( sTexOrIniPath.find("add") != string::npos )
 		m_BlendMode = BLEND_ADD;
 	else
 		m_BlendMode = BLEND_NORMAL;

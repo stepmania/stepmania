@@ -125,8 +125,8 @@ void NetworkSyncManager::PostStartUp(const CString& ServerIP)
 	CString sAddress;
 	short iPort;
 	
-	int cLoc = ServerIP.Find( ":" );
-	if ( ServerIP.Find( ":" ) > 0 )
+	size_t cLoc = ServerIP.find( ':' );
+	if( ServerIP.find( ':' ) != CString::npos )
 	{
 		iPort = (short) atoi( ServerIP.substr( cLoc + 1 ).c_str() );
 		sAddress = ServerIP.substr( 0, cLoc );
