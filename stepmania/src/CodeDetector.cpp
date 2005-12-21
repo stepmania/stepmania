@@ -96,8 +96,8 @@ bool CodeItem::Load( CString sButtonsNames )
 	const Game* pGame = GAMESTATE->GetCurrentGame();
 	vector<CString> asButtonNames;
 
-	bool bHasAPlus = sButtonsNames.Find( '+' ) != -1;
-	bool bHasADash = sButtonsNames.Find( '-' ) != -1;
+	bool bHasAPlus = sButtonsNames.find( '+' ) != string::npos;
+	bool bHasADash = sButtonsNames.find( '-' ) != string::npos;
 
 	if( bHasAPlus )
 	{
