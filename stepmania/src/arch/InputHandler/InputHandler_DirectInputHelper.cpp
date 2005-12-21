@@ -2,7 +2,6 @@
 #include "InputHandler_DirectInputHelper.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "StepMania.h"
 #include "archutils/Win32/GraphicsWindow.h"
 
 #if defined(_MSC_VER)
@@ -48,7 +47,7 @@ bool DIDevice::Open()
 
 	int coop = DISCL_NONEXCLUSIVE | DISCL_BACKGROUND;
 	if( type == KEYBOARD )
-		coop = DISCL_FOREGROUND|DISCL_NONEXCLUSIVE;
+		coop = DISCL_NONEXCLUSIVE | DISCL_FOREGROUND;
 
 	hr = Device->SetCooperativeLevel( GraphicsWindow::GetHwnd(), coop );
 	if ( hr != DI_OK )
