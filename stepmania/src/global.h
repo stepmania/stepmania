@@ -55,8 +55,8 @@
 
 /* Branch optimizations: */
 #if defined(__GNUC__)
-#define likely(x) (!!__builtin_expect((x), 1))
-#define unlikely(x) (!!__builtin_expect((x), 0))
+#define likely(x) (__builtin_expect(!!(x), 1))
+#define unlikely(x) (__builtin_expect(!!(x), 0))
 #else
 #define likely(x) (x)
 #define unlikely(x) (x)
@@ -141,9 +141,6 @@ typedef StdString::CStdString RString;
 typedef StdString::CStdString CString;
 #endif
 
-/* Include this here to make sure our assertion handler is always
- * used.  (This file is a dependency of most everything anyway,
- * so there's no real problem putting it here.) */
 #include "RageException.h"
 
 #if !defined(WIN32)
@@ -154,35 +151,35 @@ typedef StdString::CStdString CString;
 /* Define a few functions if necessary */
 #include <cmath>
 #ifdef NEED_POWF
-inline float powf (float x, float y) { return float(pow(double(x),double(y))); }
+inline float powf (float x, float y) CONST_FUNCTION { return float(pow(double(x),double(y))); }
 #endif
 
 #ifdef NEED_SQRTF
-inline float sqrtf(float x) { return float(sqrt(double(x))); }
+inline float sqrtf(float x) CONST_FUNCTION { return float(sqrt(double(x))); }
 #endif
 
 #ifdef NEED_SINF
-inline float sinf(float x) { return float(sin(double(x))); }
+inline float sinf(float x) CONST_FUNCTION { return float(sin(double(x))); }
 #endif
 
 #ifdef NEED_TANF
-inline float tanf(float x) { return float(tan(double(x))); }
+inline float tanf(float x) CONST_FUNCTION { return float(tan(double(x))); }
 #endif
 
 #ifdef NEED_COSF
-inline float cosf(float x) { return float(cos(double(x))); }
+inline float cosf(float x) CONST_FUNCTION { return float(cos(double(x))); }
 #endif
 
 #ifdef NEED_ACOSF
-inline float acosf(float x) { return float(acos(double(x))); }
+inline float acosf(float x) CONST_FUNCTION { return float(acos(double(x))); }
 #endif
 
 #ifdef NEED_TRUNCF
-inline float truncf( float f )	{ return float(int(f)); };
+inline float truncf( float f ) CONST_FUNCTION { return float(int(f)); };
 #endif
 
 #ifdef NEED_ROUNDF
-inline float roundf( float f )	{ if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); };
+inline float roundf( float f ) CONST_FUNCTION { if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); };
 #endif
 
 #ifdef NEED_STRTOF
