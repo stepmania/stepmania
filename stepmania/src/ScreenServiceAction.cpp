@@ -55,12 +55,8 @@ static CString ClearMachineEdits()
 	return ssprintf("%d edits cleared, %d errors.",iNumSuccessful,iNumAttempted-iNumSuccessful);
 }
 
-static CString ClearMemoryCardEdits()
+static PlayerNumber GetFirstReadyMemoryCard()
 {
-	int iNumAttempted = 0;
-	int iNumSuccessful = 0;
-	
-	bool bTriedToLoad = false;
 	FOREACH_PlayerNumber( pn )
 	{
 		if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
@@ -68,8 +64,24 @@ static CString ClearMemoryCardEdits()
 
 		if( !MEMCARDMAN->IsMounted(pn) )
 			MEMCARDMAN->MountCard(pn);
+		return pn;
+	}
 
-		bTriedToLoad = true;
+	return PLAYER_INVALID;
+}
+
+static CString ClearMemoryCardEdits()
+{
+	PlayerNumber pn = GetFirstReadyMemoryCard();
+	if( pn == PLAYER_INVALID )
+		return "Stats not cleared - No memory cards ready.";
+
+	int iNumAttempted = 0;
+	int iNumSuccessful = 0;
+	
+	{
+		if( !MEMCARDMAN->IsMounted(pn) )
+			MEMCARDMAN->MountCard(pn);
 
 		CString sDir = MEM_CARD_MOUNT_POINT[pn] + (CString)PREFSMAN->m_sMemoryCardProfileSubdir + "/";
 		vector<CString> vsEditFiles;
@@ -84,11 +96,7 @@ static CString ClearMemoryCardEdits()
 		}
 
 		MEMCARDMAN->UnmountCard(pn);
-		break;
 	}
-
-	if( !bTriedToLoad )
-		return "Stats not loaded - No memory cards ready.";
 
 	MEMCARDMAN->FlushAndReset();
 
@@ -177,16 +185,13 @@ static CString FillMachineStats()
 
 static CString TransferStatsMachineToMemoryCard()
 {
-	bool bTriedToSave = false;
-	FOREACH_PlayerNumber( pn )
-	{
-		if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
-			continue;	// skip
+	PlayerNumber pn = GetFirstReadyMemoryCard();
+	if( pn == PLAYER_INVALID )
+		return "Stats not saved - No memory cards ready.";
 
+	{
 		if( !MEMCARDMAN->IsMounted(pn) )
 			MEMCARDMAN->MountCard(pn);
-
-		bTriedToSave = true;
 
 		CString sDir = MEM_CARD_MOUNT_POINT[pn];
 		sDir += "MachineProfile/";
@@ -194,34 +199,24 @@ static CString TransferStatsMachineToMemoryCard()
 		bool bSaved = PROFILEMAN->GetMachineProfile()->SaveAllToDir( sDir, PREFSMAN->m_bSignProfileData );
 
 		MEMCARDMAN->UnmountCard(pn);
+		MEMCARDMAN->FlushAndReset();
 
 		if( bSaved )
 			return ssprintf("Machine stats saved to P%d card.",pn+1);
 		else
 			return ssprintf("Error saving machine stats to P%d card.",pn+1);
-		break;
 	}
-
-	if( !bTriedToSave )
-		return "Stats not saved - No memory cards ready.";
-
-	MEMCARDMAN->FlushAndReset();
-
-	return "Stats transferred to Memory Card";
 }
 
 static CString TransferStatsMemoryCardToMachine()
 {
-	bool bTriedToLoad = false;
-	FOREACH_PlayerNumber( pn )
-	{
-		if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
-			continue;	// skip
+	PlayerNumber pn = GetFirstReadyMemoryCard();
+	if( pn == PLAYER_INVALID )
+		return "Stats not loaded - No memory cards ready.";
 
+	{
 		if( !MEMCARDMAN->IsMounted(pn) )
 			MEMCARDMAN->MountCard(pn);
-
-		bTriedToLoad = true;
 
 		CString sDir = MEM_CARD_MOUNT_POINT[pn];
 		sDir += "MachineProfile/";
@@ -247,30 +242,11 @@ static CString TransferStatsMemoryCardToMachine()
 		}
 
 		MEMCARDMAN->UnmountCard(pn);
-		break;
 	}
-
-	if( !bTriedToLoad )
-		return "Stats not loaded - No memory cards ready.";
 
 	MEMCARDMAN->FlushAndReset();
 
 	return "Stats transferred to machine.";
-}
-
-static PlayerNumber GetFirstReadyMemoryCard()
-{
-	FOREACH_PlayerNumber( pn )
-	{
-		if( MEMCARDMAN->GetCardState(pn) != MemoryCardState_Ready )
-			continue;	// skip
-
-		if( !MEMCARDMAN->IsMounted(pn) )
-			MEMCARDMAN->MountCard(pn);
-		return pn;
-	}
-
-	return PLAYER_INVALID;
 }
 
 static CString CopyEditsMachineToMemoryCard()
@@ -381,6 +357,7 @@ static CString CopyEditsMemoryCardToMachine()
 		}
 		
 		MEMCARDMAN->UnmountCard(pn);
+		MEMCARDMAN->FlushAndReset();
 
 		// reload the machine profile
 		PROFILEMAN->SaveMachineProfile();
@@ -389,10 +366,6 @@ static CString CopyEditsMemoryCardToMachine()
 		// TODO: Make themeable
 		return ssprintf("Copied from P%d card:\n%d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
 	}
-
-	MEMCARDMAN->FlushAndReset();
-
-	return "Edits copied to memory card.";
 }
 
 static CString ResetPreferences()
