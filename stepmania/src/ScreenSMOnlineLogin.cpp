@@ -93,9 +93,14 @@ void ScreenSMOnlineLogin::ExportOptions( int iRow, const vector<PlayerNumber> &v
 	}
 }
 
-static LocalizedString UNIQUE_PROFILE( "ScreenSMOnlineLogin", "Each player needs a unique Profile." );
+static LocalizedString UNIQUE_PROFILE		( "ScreenSMOnlineLogin", "Each player needs a unique Profile." );
+static LocalizedString YOU_ARE_LOGGING_ON_AS	( "ScreenSMOnlineLogin", "You are logging on as:" );
+static LocalizedString ENTER_YOUR_PASSWORD	( "ScreenSMOnlineLogin", "Enter your password." );
+
 void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 {
+	CString sLoginQuestion = YOU_ARE_LOGGING_ON_AS.GetValue()+"\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\n"+ENTER_YOUR_PASSWORD.GetValue();
+
 	if( SM == SM_PasswordDone )
 	{
 		if(!ScreenTextEntry::s_bCancelledLast)
@@ -114,7 +119,9 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 				NSMAN->isSMOLoggedIn[m_iPlayer] = true;
 				m_iPlayer++;
 				if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) && m_iPlayer < NUM_PLAYERS )
-					ScreenTextEntry::Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter your password.", NULL );
+				{
+					ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, NULL );
+				}
 				else
 				{
 					SCREENMAN->SetNewScreen( THEME->GetMetric (m_sName,"NextScreen") );
@@ -123,7 +130,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			else
 			{
 				CString Responce = NSMAN->m_SMOnlinePacket.ReadNT();
-				ScreenTextEntry::Password( SM_PasswordDone, Responce + "\n\nYou are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter your password.", NULL );
+				ScreenTextEntry::Password( SM_PasswordDone, Responce + "\n\n"+sLoginQuestion, NULL );
 			}
 		}
 	}
@@ -151,7 +158,7 @@ void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 			m_iPlayer=0;
 			while(!GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer))
 				++m_iPlayer;
-			ScreenTextEntry::Password(SM_PasswordDone, "You are logging on as:\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\nPlease enter your password.", NULL );
+			ScreenTextEntry::Password(SM_PasswordDone, sLoginQuestion, NULL );
 		}
 		return;
 	}

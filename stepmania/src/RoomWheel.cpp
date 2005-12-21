@@ -87,6 +87,7 @@ void RoomWheel::AddPerminateItem(RoomWheelData* itemdata)
 	AddItem( itemdata );
 }
 
+static LocalizedString ENTER_ROOM_NAME( "RoomWheel", "Enter room name" );
 bool RoomWheel::Select()
 {
 	RetractInfoBox();
@@ -96,7 +97,7 @@ bool RoomWheel::Select()
 	{
 		// Since this is not actually an option outside of this wheel NULL is a good idea.
 		m_LastSelection = NULL;
-		ScreenTextEntry::TextEntry( SM_BackFromRoomName, "Enter Room Name:", "", 255 );
+		ScreenTextEntry::TextEntry( SM_BackFromRoomName, ENTER_ROOM_NAME, "", 255 );
 	}
 	return false;
 }

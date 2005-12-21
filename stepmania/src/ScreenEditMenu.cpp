@@ -174,9 +174,10 @@ static void DeleteCurrentSteps()
 	GAMESTATE->m_pCurSteps[0].Set( NULL );
 }
 	
-static LocalizedString MISSING_MUSIC_FILE	( "ScreenEditMenu", "This song is missing a music file and cannot be edited." );
-static LocalizedString STEPS_WILL_BE_LOST	( "ScreenEditMenu", "These steps will be lost permanently." );
-static LocalizedString CONTINUE_WITH_DELETE	( "ScreenEditMenu", "Continue with delete?" );
+static LocalizedString MISSING_MUSIC_FILE		( "ScreenEditMenu", "This song is missing a music file and cannot be edited." );
+static LocalizedString STEPS_WILL_BE_LOST		( "ScreenEditMenu", "These steps will be lost permanently." );
+static LocalizedString CONTINUE_WITH_DELETE		( "ScreenEditMenu", "Continue with delete?" );
+static LocalizedString ENTER_EDIT_DESCRIPTION	( "ScreenEditMenu", "Enter a description for this edit.");
 void ScreenEditMenu::MenuStart( PlayerNumber pn )
 {
 	if( IsTransitioning() )
@@ -290,7 +291,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			{
 				ScreenTextEntry::TextEntry( 
 					SM_BackFromEditDescription, 
-					"Name the new edit.", 
+					ENTER_EDIT_DESCRIPTION, 
 					GAMESTATE->m_pCurSteps[0]->GetDescription(), 
 					MAX_EDIT_STEPS_DESCRIPTION_LENGTH,
 					ValidateCurrentStepsDescription,

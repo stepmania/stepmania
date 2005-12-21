@@ -75,6 +75,7 @@ void ScreenNetRoom::Input( const InputEventPlus &input )
 	ScreenNetSelectBase::Input( input );
 }
 
+static LocalizedString ENTER_ROOM_DESCRIPTION ("ScreenNetRoom","Enter a description for the room:");
 void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToPrevScreen )
@@ -133,7 +134,7 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 		if ( !ScreenTextEntry::s_bCancelledLast )
 		{
 			m_newRoomName = ScreenTextEntry::s_sLastAnswer;
-			ScreenTextEntry::TextEntry( SM_BackFromRoomDesc, "Enter Room Description:", "", 255 );
+			ScreenTextEntry::TextEntry( SM_BackFromRoomDesc, ENTER_ROOM_DESCRIPTION, "", 255 );
 		}
 	}
 	else if( SM == SM_BackFromRoomDesc )

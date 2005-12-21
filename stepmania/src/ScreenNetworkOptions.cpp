@@ -128,8 +128,11 @@ void ScreenNetworkOptions::HandleScreenMessage( const ScreenMessage SM )
 	ScreenOptions::HandleScreenMessage( SM );
 }
 
-static LocalizedString DISCONNECTED		( "ScreenNetworkOptions", "Disconnected from server." );
-static LocalizedString SERVER_STOPPED	( "ScreenNetworkOptions", "Server stopped." );
+static LocalizedString DISCONNECTED				( "ScreenNetworkOptions", "Disconnected from server." );
+static LocalizedString SERVER_STOPPED			( "ScreenNetworkOptions", "Server stopped." );
+static LocalizedString ENTER_NETWORK_ADDRESS	("ScreenNetworkOptions","Enter a network address.");
+static LocalizedString CONNECT_TO_YOURSELF		("ScreenNetworkOptions","Use 127.0.0.1 to connect to yourself.");
+static LocalizedString ENTER_A_SERVER_NAME		("ScreenNetworkOptions","Enter a server name.");
 void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 {
 #if defined( WITHOUT_NETWORKING )
@@ -139,7 +142,7 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 	case PO_CONNECTION:
 		if ( !NSMAN->useSMserver )
 		{
-			ScreenTextEntry::TextEntry( SM_DoneConnecting, "Enter a Network Address\n127.0.0.1 to connect to yourself", g_sLastServer, 128 );
+			ScreenTextEntry::TextEntry( SM_DoneConnecting, ENTER_NETWORK_ADDRESS.GetValue()+"\n\n"+CONNECT_TO_YOURSELF.GetValue(), g_sLastServer, 128 );
 		}
 		else
 		{
@@ -154,7 +157,7 @@ void ScreenNetworkOptions::MenuStart( const InputEventPlus &input )
 		case NO_START_SERVER:
 			if (!NSMAN->isLanServer)
 			{
-				ScreenTextEntry::TextEntry( SM_ServerNameEnter, "Enter a server name...", "", 128);
+				ScreenTextEntry::TextEntry( SM_ServerNameEnter, ENTER_A_SERVER_NAME, "", 128);
 			}
 			break;
 		case NO_STOP_SERVER:

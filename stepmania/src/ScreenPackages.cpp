@@ -159,12 +159,13 @@ void ScreenPackages::Update( float fDeltaTime )
 	ScreenWithMenuElements::Update(fDeltaTime);
 }
 
+static LocalizedString ENTER_URL ("ScreenPackages","Enter URL");
 void ScreenPackages::MenuStart( PlayerNumber pn )
 {
 	if ( m_iDLorLST == 1 )
 	{
 		if ( m_iLinksPos == 0 )
-			ScreenTextEntry::TextEntry( SM_BackFromURL, "Enter URL:", "http://", 255 );
+			ScreenTextEntry::TextEntry( SM_BackFromURL, ENTER_URL, "http://", 255 );
 		else
 			EnterURL( m_Links[m_iLinksPos] );
 	}

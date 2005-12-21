@@ -167,8 +167,9 @@ void ScreenOptionsManageProfiles::BeginScreen()
 	AfterChangeRow( PLAYER_1 );
 }
 
-static LocalizedString CONFIRM_DELETE_PROFILE( "ScreenOptionsManageProfiles", "Are you sure you want to delete the profile '%s'?" );
-static LocalizedString CONFIRM_CLEAR_PROFILE( "ScreenOptionsManageProfiles", "Are you sure you want to clear all data in the profile '%s'?" );
+static LocalizedString CONFIRM_DELETE_PROFILE	( "ScreenOptionsManageProfiles", "Are you sure you want to delete the profile '%s'?" );
+static LocalizedString CONFIRM_CLEAR_PROFILE	( "ScreenOptionsManageProfiles", "Are you sure you want to clear all data in the profile '%s'?" );
+static LocalizedString ENTER_PROFILE_NAME		( "ScreenOptionsManageProfiles", "Enter a name for the profile." );
 void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_GoToNextScreen )
@@ -274,7 +275,7 @@ void ScreenOptionsManageProfiles::HandleScreenMessage( const ScreenMessage SM )
 				{
 					ScreenTextEntry::TextEntry( 
 						SM_BackFromRename, 
-						"Enter a name for the profile.", 
+						ENTER_PROFILE_NAME, 
 						pProfile->m_sDisplayName, 
 						PROFILE_MAX_DISPLAY_NAME_LENGTH, 
 						ValidateLocalProfileName );
@@ -328,7 +329,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus &input 
 		}
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromEnterNameForNew, 
-			"Enter a name for the new profile.", 
+			ENTER_PROFILE_NAME, 
 			sPotentialName, 
 			PROFILE_MAX_DISPLAY_NAME_LENGTH, 
 			ValidateLocalProfileName );

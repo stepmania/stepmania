@@ -2489,6 +2489,8 @@ static LocalizedString DESTROY_ALL_UNSAVED_CHANGES	( "ScreenEdit", "This will de
 static LocalizedString REVERT_FROM_DISK				( "ScreenEdit", "Do you want to revert from disk?" );
 static LocalizedString SAVE_CHANGES_BEFORE_EXITING	( "ScreenEdit", "Do you want to save changes before exiting?" );
 static LocalizedString SAVED						( "ScreenEdit", "Saved  '%s'" );
+static LocalizedString ENTER_BPM_VALUE				( "ScreenEdit", "Enter a new BPM value." );
+static LocalizedString ENTER_STOP_VALUE				( "ScreenEdit", "Enter a new Stop value." );
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
 {
 	switch( c )
@@ -2643,7 +2645,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 		case edit_bpm:
 			ScreenTextEntry::TextEntry( 
 				SM_BackFromBPMChange, 
-				"Enter new BPM value.", 
+				ENTER_BPM_VALUE, 
 				ssprintf( "%.4f", m_pSong->GetBPMAtBeat(GAMESTATE->m_fSongBeat) ),
 				10
 				);
@@ -2657,24 +2659,17 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 					if( m_pSong->m_Timing.m_StopSegments[i].m_iStartRow == BeatToNoteRow(GAMESTATE->m_fSongBeat) )
 						break;
 				}
+
+				float fStopSeconds = 0;
 				if ( i == m_pSong->m_Timing.m_StopSegments.size() )
-				{
-					ScreenTextEntry::TextEntry( 
-						SM_BackFromStopChange, 
-						"Enter new Stop value.", 
-						"0.00", 
-						10
-						);
-				}
-				else
-				{
-					ScreenTextEntry::TextEntry( 
-						SM_BackFromStopChange, 
-						"Enter new Stop value.", 
-						ssprintf( "%.4f", m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds ),
-						10
-						);
-				}
+					fStopSeconds = m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds;
+
+				ScreenTextEntry::TextEntry( 
+					SM_BackFromStopChange, 
+					ENTER_STOP_VALUE, 
+					ssprintf( "%.4f", fStopSeconds ),
+					10
+					);
 				break;
 			}
 		case play_preview_music:
@@ -3019,6 +3014,7 @@ void ScreenEdit::HandleAreaMenuChoice( AreaMenuChoice c, const vector<int> &iAns
 		CheckNumberOfNotesAndUndo();
 }
 
+static LocalizedString ENTER_NEW_DESCRIPTION( "ScreenEdit", "Enter a new description." );
 void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const vector<int> &iAnswers )
 {
 	Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
@@ -3032,7 +3028,7 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 	case description:
 		ScreenTextEntry::TextEntry( 
 			SM_None, 
-			"Enter a description.", 
+			ENTER_NEW_DESCRIPTION, 
 			m_pSteps->GetDescription(), 
 			(dc == DIFFICULTY_EDIT) ? MAX_EDIT_STEPS_DESCRIPTION_LENGTH : 255,
 			NULL,
@@ -3043,6 +3039,13 @@ void ScreenEdit::HandleStepsInformationChoice( StepsInformationChoice c, const v
 	}
 }
 
+static LocalizedString ENTER_MAIN_TITLE				("ScreenEdit","Enter a new main title.");
+static LocalizedString ENTER_SUB_TITLE				("ScreenEdit","Enter a new sub title.");
+static LocalizedString ENTER_ARTIST					("ScreenEdit","Enter a new artist.");
+static LocalizedString ENTER_CREDIT					("ScreenEdit","Enter a new credit.");
+static LocalizedString ENTER_MAIN_TITLE_TRANSLIT	("ScreenEdit","Enter a new main title transliteration.");
+static LocalizedString ENTER_SUB_TITLE_TRANSLIT		("ScreenEdit","Enter a new sub title transliteration.");
+static LocalizedString ENTER_ARTIST_TRANSLIT		("ScreenEdit","Enter a new artist transliteration.");
 void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vector<int> &iAnswers )
 {
 	Song* pSong = GAMESTATE->m_pCurSong;
@@ -3050,25 +3053,25 @@ void ScreenEdit::HandleSongInformationChoice( SongInformationChoice c, const vec
 	switch( c )
 	{
 	case main_title:
-		ScreenTextEntry::TextEntry( SM_None, "Edit main title.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sMainTitle, 100, NULL, ChangeMainTitle, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_MAIN_TITLE, pSong->m_sMainTitle, 100, NULL, ChangeMainTitle, NULL );
 		break;
 	case sub_title:
-		ScreenTextEntry::TextEntry( SM_None, "Edit sub title.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sSubTitle, 100, NULL, ChangeSubTitle, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_SUB_TITLE, pSong->m_sSubTitle, 100, NULL, ChangeSubTitle, NULL );
 		break;
 	case artist:
-		ScreenTextEntry::TextEntry( SM_None, "Edit artist.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtist, 100, NULL, ChangeArtist, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST, pSong->m_sArtist, 100, NULL, ChangeArtist, NULL );
 		break;
 	case credit:
-		ScreenTextEntry::TextEntry( SM_None, "Edit credit.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sCredit, 100, NULL, ChangeCredit, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_CREDIT, pSong->m_sCredit, 100, NULL, ChangeCredit, NULL );
 		break;
 	case main_title_transliteration:
-		ScreenTextEntry::TextEntry( SM_None, "Edit main title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sMainTitleTranslit, 100, NULL, ChangeMainTitleTranslit, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_MAIN_TITLE_TRANSLIT, pSong->m_sMainTitleTranslit, 100, NULL, ChangeMainTitleTranslit, NULL );
 		break;
 	case sub_title_transliteration:
-		ScreenTextEntry::TextEntry( SM_None, "Edit sub title transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sSubTitleTranslit, 100, NULL, ChangeSubTitleTranslit, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_SUB_TITLE_TRANSLIT, pSong->m_sSubTitleTranslit, 100, NULL, ChangeSubTitleTranslit, NULL );
 		break;
 	case artist_transliteration:
-		ScreenTextEntry::TextEntry( SM_None, "Edit artist transliteration.\nPress Enter to confirm,\nEscape to cancel.", pSong->m_sArtistTranslit, 100, NULL, ChangeArtistTranslit, NULL );
+		ScreenTextEntry::TextEntry( SM_None, ENTER_ARTIST_TRANSLIT, pSong->m_sArtistTranslit, 100, NULL, ChangeArtistTranslit, NULL );
 		break;
 	default:
 		ASSERT(0);

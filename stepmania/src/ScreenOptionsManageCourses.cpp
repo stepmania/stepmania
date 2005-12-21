@@ -234,8 +234,9 @@ void ScreenOptionsManageCourses::BeginScreen()
 	AfterChangeRow( PLAYER_1 );
 }
 
-static LocalizedString COURSE_WILL_BE_LOST("ScreenOptionsManageCourses", "This course will be lost permanently.");
-static LocalizedString CONTINUE_WITH_DELETE("ScreenOptionsManageCourses", "Continue with delete?");
+static LocalizedString COURSE_WILL_BE_LOST	("ScreenOptionsManageCourses", "This course will be lost permanently.");
+static LocalizedString CONTINUE_WITH_DELETE	("ScreenOptionsManageCourses", "Continue with delete?");
+static LocalizedString ENTER_COURSE_NAME	("ScreenOptionsManageCourses", "Enter a name for the course.");
 void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_Success )
@@ -312,7 +313,7 @@ void ScreenOptionsManageCourses::HandleScreenMessage( const ScreenMessage SM )
 				{
 					ScreenTextEntry::TextEntry( 
 						SM_BackFromRename, 
-						"Enter a name for the course.", 
+						ENTER_COURSE_NAME, 
 						GAMESTATE->m_pCurCourse->GetDisplayFullTitle(), 
 						MAX_EDIT_COURSE_TITLE_LENGTH, 
 						ValidateEditCourseName );
@@ -374,7 +375,7 @@ void ScreenOptionsManageCourses::ProcessMenuStart( const InputEventPlus &input )
 		}
 		ScreenTextEntry::TextEntry( 
 			SM_BackFromEnterNameForNew, 
-			"Enter a name for the new course.", 
+			ENTER_COURSE_NAME, 
 			sDefaultName, 
 			MAX_EDIT_COURSE_TITLE_LENGTH, 
 			ValidateEditCourseName );
