@@ -789,26 +789,26 @@ unsigned int GetHashForString ( const RString &s )
 
 
 /* Return true if "dir" is empty or does not exist. */
-bool DirectoryIsEmpty( const RString &dir )
+bool DirectoryIsEmpty( const RString &sDir )
 {
-	if(dir == "")
+	if( sDir.empty() )
 		return true;
-	if(!DoesFileExist(dir))
+	if( !DoesFileExist(sDir) )
 		return true;
 
 	vector<RString> asFileNames;
-	GetDirListing( dir, asFileNames );
+	GetDirListing( sDir, asFileNames );
 	return asFileNames.empty();
 }
 
-bool CompareRStringsAsc(const RString &str1, const RString &str2)
+bool CompareRStringsAsc( const RString &sStr1, const RString &sStr2 )
 {
-	return str1.CompareNoCase( str2 ) < 0;
+	return sStr1.CompareNoCase( sStr2 ) < 0;
 }
 
-bool CompareRStringsDesc(const RString &str1, const RString &str2)
+bool CompareRStringsDesc( const RString &sStr1, const RString &sStr2 )
 {
-	return str1.CompareNoCase( str2 ) > 0;
+	return sStr1.CompareNoCase( sStr2 ) > 0;
 }
 
 void SortRStringArray( vector<RString> &arrayRStrings, const bool bSortAscending )
@@ -817,50 +817,50 @@ void SortRStringArray( vector<RString> &arrayRStrings, const bool bSortAscending
 			bSortAscending?CompareRStringsAsc:CompareRStringsDesc);
 }
 
-float calc_mean(const float *start, const float *end)
+float calc_mean( const float *pStart, const float *pEnd )
 {
-	return accumulate(start, end, 0.f) / distance(start, end);
+	return accumulate( pStart, pEnd, 0.f ) / distance( pStart, pEnd );
 }
 
-float calc_stddev(const float *start, const float *end)
+float calc_stddev( const float *pStart, const float *pEnd )
 {
 	/* Calculate the mean. */
-	float mean = calc_mean(start, end);
+	float fMean = calc_mean( pStart, pEnd );
 
 	/* Calculate stddev. */
-	float dev = 0.0f;
-	for( const float *i=start; i != end; ++i )
-		dev += (*i - mean) * (*i - mean);
-	dev /= distance(start, end) - 1;
-	dev = sqrtf(dev);
+	float fDev = 0.0f;
+	for( const float *i=pStart; i != pEnd; ++i )
+		fDev += (*i - fMean) * (*i - fMean);
+	fDev /= distance( pStart, pEnd ) - 1;
+	fDev = sqrtf( fDev );
 
-	return dev;
+	return fDev;
 }
 
-void TrimLeft(RString &str, const char *s)
+void TrimLeft( RString &sStr, const char *s )
 {
 	int n = 0;
-	while(n < int(str.size()) && strchr(s, str[n]))
+	while( n < int(sStr.size()) && strchr(s, sStr[n]) )
 		n++;
 
-	str.erase(str.begin(), str.begin()+n);
+	sStr.erase( sStr.begin(), sStr.begin()+n );
 }
 
-void TrimRight(RString &str, const char *s)
+void TrimRight( RString &sStr, const char *s )
 {
-	int n = str.size();
-	while(n > 0 && strchr(s, str[n-1]))
+	int n = sStr.size();
+	while( n > 0 && strchr(s, sStr[n-1]) )
 		n--;
 
 	/* Delete from n to the end.  If n == str.size(), nothing is deleted;
 	 * if n == 0, the whole string is erased. */
-	str.erase(str.begin()+n, str.end());
+	sStr.erase( sStr.begin()+n, sStr.end() );
 }
 
-void StripCrnl(RString &s)
+void StripCrnl( RString &s )
 {
 	while( s.size() && (s[s.size()-1] == '\r' || s[s.size()-1] == '\n') )
-		s.erase(s.size()-1);
+		s.erase( s.size()-1 );
 }
 
 bool BeginsWith( const RString &sTestThis, const RString &sBeginning )
@@ -887,19 +887,17 @@ void StripCvs( vector<RString> &vs )
 }
 
 /* path is a .redir pathname.  Read it and return the real one. */
-RString DerefRedir(const RString &_path)
+RString DerefRedir( const RString &_path )
 {
-	RString path = _path;
+	RString sPath = _path;
 
 	for( int i=0; i<100; i++ )
 	{
-		if( GetExtension(path) != "redir" )
-		{
-			return path;
-		}
+		if( GetExtension(sPath) != "redir" )
+			return sPath;
 
 		RString sNewFileName;
-		GetFileContents( path, sNewFileName, true );
+		GetFileContents( sPath, sNewFileName, true );
 
 		/* Empty is invalid. */
 		if( sNewFileName == "" )
@@ -907,24 +905,24 @@ RString DerefRedir(const RString &_path)
 
 		FixSlashesInPlace( sNewFileName );
 
-		RString path2 = Dirname(path) + sNewFileName;
+		RString sPath2 = Dirname(sPath) + sNewFileName;
 
-		CollapsePath( path2 );
+		CollapsePath( sPath2 );
 
-		path2 += "*";
+		sPath2 += "*";
 
 		vector<RString> matches;
-		GetDirListing( path2, matches, false, true );
+		GetDirListing( sPath2, matches, false, true );
 
 		if( matches.empty() )
-			RageException::Throw( "The redirect '%s' references a file '%s' which doesn't exist.", path.c_str(), path2.c_str() );
+			RageException::Throw( "The redirect '%s' references a file '%s' which doesn't exist.", sPath.c_str(), sPath2.c_str() );
 		else if( matches.size() > 1 )
-			RageException::Throw( "The redirect '%s' references a file '%s' with multiple matches.", path.c_str(), path2.c_str() );
+			RageException::Throw( "The redirect '%s' references a file '%s' with multiple matches.", sPath.c_str(), sPath2.c_str() );
 
-		path = matches[0];
+		sPath = matches[0];
 	}
 
-	RageException::Throw( "Circular redirect '%s'", path.c_str() );
+	RageException::Throw( "Circular redirect '%s'", sPath.c_str() );
 }
 
 bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine )
@@ -1139,20 +1137,20 @@ bool Regex::Compare(const RString &str, vector<RString> &matches)
 
 // Arguments and behavior are the same are similar to
 // http://us3.php.net/manual/en/function.preg-replace.php
-bool Regex::Replace(const RString &replacement, const RString &subject, RString &out)
+bool Regex::Replace( const RString &sReplacement, const RString &sSubject, RString &sOut )
 {
-    vector<RString> matches;
-	if( !Compare(subject,matches) )
+    vector<RString> asMatches;
+	if( !Compare(sSubject, asMatches) )
 		return false;
 
-	out = replacement;
+	sOut = sReplacement;
 
 	// TODO: optimize me by iterating only once over the string
-	for( unsigned i=0; i<matches.size(); i++ )
+	for( unsigned i=0; i<asMatches.size(); i++ )
 	{
 		RString sFrom = ssprintf( "\\${%d}", i );
-		RString sTo = matches[i];
-		out.Replace(sFrom, sTo);
+		RString sTo = asMatches[i];
+		sOut.Replace(sFrom, sTo);
 	}
 
     return true;
@@ -1404,12 +1402,12 @@ wstring RStringToWstring( const RString &s )
 
 RString WStringToRString(const wstring &str)
 {
-	RString ret;
+	RString sRet;
 
-	for(unsigned i = 0; i < str.size(); ++i)
-		wchar_to_utf8( str[i], ret );
+	for( unsigned i = 0; i < str.size(); ++i )
+		wchar_to_utf8( str[i], sRet );
 
-	return ret;
+	return sRet;
 }
 
 
@@ -1563,31 +1561,32 @@ void Replace_Unicode_Markers( RString &Text )
 }
 
 /* Form a string to identify a wchar_t with ASCII. */
-RString WcharDisplayText(wchar_t c)
+RString WcharDisplayText( wchar_t c )
 {
-	RString chr;
-	chr = ssprintf("U+%4.4x", c);
-	if(c < 128) chr += ssprintf(" ('%c')", char(c));
-	return chr;
+	RString sChr;
+	sChr = ssprintf( "U+%4.4x", c );
+	if( c < 128 )
+		sChr += ssprintf( " ('%c')", char(c) );
+	return sChr;
 }
 
 /* Return the last named component of dir:
  * a/b/c -> c
  * a/b/c/ -> c
  */
-RString Basename( const RString &dir )
+RString Basename( const RString &sDir )
 {
-	size_t  end = dir.find_last_not_of( "/\\" );
-	if( end == dir.npos )
+	size_t iEnd = sDir.find_last_not_of( "/\\" );
+	if( iEnd == sDir.npos )
 		return RString();
 
-	size_t  start = dir.find_last_of( "/\\", end );
-	if( start == dir.npos )
-		start = 0;
+	size_t iStart = sDir.find_last_of( "/\\", iEnd );
+	if( iStart == sDir.npos )
+		iStart = 0;
 	else
-		++start;
+		++iStart;
 
-	return dir.substr( start, end-start+1 );
+	return sDir.substr( iStart, iEnd-iStart+1 );
 }
 
 /* Return all but the last named component of dir:
@@ -1620,7 +1619,7 @@ RString Dirname( const RString &dir )
 
 RString Capitalize( const RString &s )	
 {
-	if( s.GetLength()==0 )
+	if( s.empty() )
 		return RString();
 	RString s2 = s;
 	/* XXX: utf-8 */
