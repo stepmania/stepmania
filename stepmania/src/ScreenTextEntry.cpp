@@ -181,14 +181,11 @@ void ScreenTextEntry::UpdateKeyboardText()
 
 void ScreenTextEntry::UpdateAnswerText()
 {
-	CString s = WStringToRString(m_sAnswer);
+	CString s;
 	if( g_bPassword )
-	{
-		int len = s.GetLength();
-		s = "";
-		for( int i=0; i<len; ++i )
-			s += '*';
-	}
+		s = RString( m_sAnswer.size(), '*' );
+	else
+		s = WStringToRString(m_sAnswer);
 
 	bool bAnswerFull = (int) s.length() >= g_iMaxInputLength;
 	if( m_bShowAnswerCaret 	&&  !bAnswerFull )
