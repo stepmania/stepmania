@@ -51,7 +51,7 @@ bool CourseLoaderCRS::LoadFromMsd( const CString &sPath, const MsdFile &msd, Cou
 		{
 			CString str = sParams[1];
 			str.MakeLower();
-			if( str.Find("yes") != -1 )
+			if( str.find("yes") != string::npos )
 				out.m_bRepeat = true;
 		}
 

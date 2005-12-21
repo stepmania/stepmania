@@ -341,33 +341,33 @@ void ScreenPackages::HTMLParse()
 
 	//XXX: VERY DIRTY HTML PARSER!
 	//Only designed to find links on websites.
-	int i = m_sBUFFER.Find( "<A " );
-	int j = 0;
-	int k = 0;
-	int l = 0;
-	int m = 0;
+	size_t i = m_sBUFFER.find( "<A " );
+	size_t j = 0;
+	size_t k = 0;
+	size_t l = 0;
+	size_t m = 0;
 
 	for ( int mode = 0; mode < 2; mode++ )
 	{
-		while ( i>=0 )
+		while ( i != string::npos )
 		{
-			k = m_sBUFFER.Find( ">", i+1 );
-			l = m_sBUFFER.Find( "HREF", i+1);
-			m = m_sBUFFER.Find( "=", l );
+			k = m_sBUFFER.find( ">", i+1 );
+			l = m_sBUFFER.find( "HREF", i+1);
+			m = m_sBUFFER.find( "=", l );
 
-			if ( ( l > k ) || ( m > k ) )	//no "href" in this tag.
+			if( k == string::npos || l == string::npos || m == string::npos || l > k || m > k )	//no "href" in this tag.
 			{
 				if ( mode == 0 )
-					i = m_sBUFFER.Find( "<A ", i+1 );
+					i = m_sBUFFER.find( "<A ", i+1 );
 				else
-					i = m_sBUFFER.Find( "<a ", i+1 );
+					i = m_sBUFFER.find( "<a ", i+1 );
 				continue;
 			}
 
-			l = m_sBUFFER.Find( "</", m+1 );
+			l = m_sBUFFER.find( "</", m+1 );
 
 			//Special case: There is exactly one extra tag in the link.
-			j = m_sBUFFER.Find( ">", k+1 );
+			j = m_sBUFFER.find( ">", k+1 );
 			if ( j < l )
 				k = j;
 
@@ -381,12 +381,12 @@ void ScreenPackages::HTMLParse()
 			m_LinkTitles.push_back( TempTitle );
 
 			if ( mode == 0 )
-				i = m_sBUFFER.Find( "<A ", i+1 );
+				i = m_sBUFFER.find( "<A ", i+1 );
 			else
-				i = m_sBUFFER.Find( "<a ", i+1 );
+				i = m_sBUFFER.find( "<a ", i+1 );
 		}
 		if ( mode == 0 )
-			i = m_sBUFFER.Find( "<a " );
+			i = m_sBUFFER.find( "<a " );
 	}
 	UpdateLinksList();
 }

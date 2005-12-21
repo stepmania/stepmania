@@ -58,10 +58,10 @@ bool IniFile::ReadFile( RageFileBasic &f )
 		else
 		{
 			/* New value. */
-			int iEqualIndex = line.Find("=");
-			if( iEqualIndex != -1 )
+			size_t iEqualIndex = line.find("=");
+			if( iEqualIndex != string::npos )
 			{
-				RString valuename = line.Left(iEqualIndex);
+				RString valuename = line.Left( (int) iEqualIndex );
 				RString value = line.Right( line.size()-valuename.size()-1 );
 				if( keyname.size() && valuename.size() )
 					SetValue(keyname,valuename,value);

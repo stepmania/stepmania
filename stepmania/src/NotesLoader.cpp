@@ -16,10 +16,10 @@ void NotesLoader::GetMainAndSubTitlesFromFullTitle( const CString sFullTitle, CS
 
 	for( unsigned i=0; i<ARRAYSIZE(sLeftSeps); i++ )
 	{
-		int iBeginIndex = sFullTitle.Find( sLeftSeps[i] );
-		if( iBeginIndex == -1 )
+		size_t iBeginIndex = sFullTitle.find( sLeftSeps[i] );
+		if( iBeginIndex == string::npos )
 			continue;
-		sMainTitleOut = sFullTitle.Left( iBeginIndex );
+		sMainTitleOut = sFullTitle.Left( (int) iBeginIndex );
 		sSubTitleOut = sFullTitle.substr( iBeginIndex+1, sFullTitle.size()-iBeginIndex+1 );
 		return;
 	}

@@ -275,7 +275,7 @@ bool BMSLoader::LoadFromBMSFile( const CString &sPath, const NameToData_t &mapNa
 			sData = sData.substr( iOpenBracket+1, iCloseBracket-iOpenBracket-1 );
 
 		// if there's a 6 in the description, it's probably part of "6panel" or "6-panel"
-		if( sData.Find("6") != -1 )
+		if( sData.find("6") != string::npos )
 			out.m_StepsType = STEPS_TYPE_DANCE_SOLO;
 	}
 

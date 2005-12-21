@@ -58,11 +58,11 @@ void NoteDataUtil::LoadFromSMNoteDataString( NoteData &out, CString sSMNoteData 
 	out.SetNumTracks( iNumTracks );
 
 	// strip comments out of sSMNoteData
-	while( sSMNoteData.Find("//") != -1 )
+	while( sSMNoteData.find("//") != string::npos )
 	{
-		int iIndexCommentStart = sSMNoteData.Find("//");
-		int iIndexCommentEnd = sSMNoteData.Find("\n", iIndexCommentStart);
-		if( iIndexCommentEnd == -1 )	// comment doesn't have an end?
+		size_t iIndexCommentStart = sSMNoteData.find("//");
+		size_t iIndexCommentEnd = sSMNoteData.find("\n", iIndexCommentStart);
+		if( iIndexCommentEnd == string::npos )	// comment doesn't have an end?
 			sSMNoteData.erase( iIndexCommentStart, 2 );
 		else
 			sSMNoteData.erase( iIndexCommentStart, iIndexCommentEnd-iIndexCommentStart );
