@@ -298,14 +298,11 @@ static CString CopyEditsMachineToMemoryCard()
 		}
 		
 		MEMCARDMAN->UnmountCard(pn);
+		MEMCARDMAN->FlushAndReset();
 
 		// TODO: Make string themable
 		return ssprintf("Copied to P%d card:\n%d/%d copies OK (%d overwritten).",pn+1,iNumSuccessful,iNumAttempted,iNumOverwritten);
 	}
-
-	MEMCARDMAN->FlushAndReset();
-
-	return "Edits copied to machine.";
 }
 
 static CString CopyEditsMemoryCardToMachine()
