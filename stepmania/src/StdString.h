@@ -952,71 +952,12 @@ public:
 		return ssicmp(this->c_str(), szThat);
 	}
 
-	int Find(CT ch) const
-	{
-		MYSIZE nIdx	= this->find_first_of(ch);
-		return MYBASE::npos == nIdx  ? -1 : static_cast<int>(nIdx);
-	}
-
-	int Find(PCMYSTR szSub) const
-	{
-		MYSIZE nIdx	= this->find(szSub);
-		return MYBASE::npos == nIdx ? -1 : static_cast<int>(nIdx);
-	}
-
-	int Find(CT ch, int nStart) const
-	{
-		// CString::Find docs say add 1 to nStart when it's not zero
-		// CString::Find code doesn't do that however.  We'll stick
-		// with what the code does
-
-		MYSIZE nIdx	= this->find_first_of(ch, static_cast<MYSIZE>(nStart));
-		return MYBASE::npos == nIdx ? -1 : static_cast<int>(nIdx);
-	}
-
-	int Find(PCMYSTR szSub, int nStart) const
-	{
-		// CString::Find docs say add 1 to nStart when it's not zero
-		// CString::Find code doesn't do that however.  We'll stick
-		// with what the code does
-
-		MYSIZE nIdx	= this->find(szSub, static_cast<MYSIZE>(nStart));
-		return MYBASE::npos == nIdx ? -1 : static_cast<int>(nIdx);
-	}
-
 	// -------------------------------------------------------------------------
 	// GetXXXX -- Direct access to character buffer
 	// -------------------------------------------------------------------------
 	CT* GetBuffer(int nMinLen=-1)
 	{
 		return GetBuf(nMinLen);
-	}
-
-	// GetLength() -- MFC docs say this is the # of BYTES but
-	// in truth it is the number of CHARACTERs (chars or wchar_ts)
-	int GetLength() const
-	{
-		return static_cast<int>(this->length());
-	}
-
-	
-	int Insert(int nIdx, CT ch)
-	{
-		if ( static_cast<MYSIZE>(nIdx) > this->size() -1 )
-			this->append(1, ch);
-		else
-			this->insert(static_cast<MYSIZE>(nIdx), 1, ch);
-
-		return GetLength();
-	}
-	int Insert(int nIdx, PCMYSTR sz)
-	{
-		if ( nIdx >= this->size() )
-			this->append(sz, sslen(sz));
-		else
-			this->insert(static_cast<MYSIZE>(nIdx), sz);
-
-		return GetLength();
 	}
 
 	MYTYPE Left(int nCount) const
@@ -1045,18 +986,6 @@ public:
 	void ReleaseBuffer(int nNewLen=-1)
 	{
 		RelBuf(nNewLen);
-	}
-
-	int Remove(CT ch)
-	{
-		MYSIZE nIdx		= 0;
-		int nRemoved	= 0;
-		while ( (nIdx=this->find_first_of(ch)) != MYBASE::npos )
-		{
-			this->erase(nIdx, 1);
-			nRemoved++;
-		}
-		return nRemoved;
 	}
 
 	int Replace(CT chOld, CT chNew)
@@ -1204,53 +1133,6 @@ CStdStr<char> operator+(PCSTR pA, const  CStdStr<char>& str)
 //	Now typedef our class names based upon this humongous template
 
 typedef CStdStr<char>		CStdStringA;	// a better std::string
-
-
-
-// -----------------------------------------------------------------------------
-// HOW TO EXPORT CSTDSTRING FROM A DLL
-//
-// If you want to export CStdStringA and CStdStringW from a DLL, then all you
-// need to
-//		1.	make sure that all components link to the same DLL version
-//			of the CRT (not the static one).
-//		2.	Uncomment the 3 lines of code below
-//		3.	#define 2 macros per the instructions in MS KnowledgeBase
-//			article Q168958.  The macros are:
-//
-//		MACRO		DEFINTION WHEN EXPORTING		DEFINITION WHEN IMPORTING
-//		-----		------------------------		-------------------------
-//		SSDLLEXP	(nothing, just #define it)		extern
-//		SSDLLSPEC	__declspec(dllexport)			__declspec(dllimport)
-//
-//		Note that these macros must be available to ALL clients who want to 
-//		link to the DLL and use the class.  If they 
-// -----------------------------------------------------------------------------
-//#pragma warning(disable:4231) // non-standard extension ("extern template")
-//	SSDLLEXP template class SSDLLSPEC CStdStr<char>;
-//	SSDLLEXP template class SSDLLSPEC CStdStr<wchar_t>;
-
-
-// In MFC builds, define some global serialization operators
-// Special operators that allow us to serialize CStdStrings to CArchives.
-// Note that we use an intermediate CString object in order to ensure that
-// we use the exact same format.
-
-#ifdef _MFC_VER
-	inline CArchive& AFXAPI operator<<(CArchive& ar, const CStdStringA& strA)
-	{
-		CString strTemp	= strA;
-		return ar << strTemp;
-	}
-
-	inline CArchive& AFXAPI operator>>(CArchive& ar, CStdStringA& strA)
-	{
-		CString strTemp;
-		ar >> strTemp;
-		strA = strTemp;
-		return ar;
-	}
-#endif	// #ifdef _MFC_VER -- (i.e. is this MFC?)
 
 // Define friendly names for some of these functions
 
