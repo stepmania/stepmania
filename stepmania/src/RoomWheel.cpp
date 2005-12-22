@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "ScreenTextEntry.h"
+#include "LocalizedString.h"
 
 AutoScreenMessage( SM_BackFromRoomName )
 

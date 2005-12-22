@@ -13,7 +13,7 @@ class Style;
 #include "ScreenPrompt.h"
 #include "ScreenManager.h"
 #include "InputEventPlus.h"
-
+#include "LocalizedString.h"
 
 static const CString MultiPlayerStatusNames[] = {
 	"Joined",

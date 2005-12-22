@@ -11,6 +11,7 @@
 #include "WheelItemBase.h"
 //#include "RageLog.h"
 #include "InputEventPlus.h"
+#include "LocalizedString.h"
 
 #define TITLEBG_WIDTH				THEME->GetMetricF(m_sName,"TitleBGWidth")
 #define TITLEBG_HEIGHT				THEME->GetMetricF(m_sName,"TitleBGHeight")

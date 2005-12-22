@@ -13,6 +13,7 @@
 #include "NetworkSyncManager.h"
 #include "ScreenTextEntry.h"
 #include "Profile.h"
+#include "LocalizedString.h"
 
 REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 

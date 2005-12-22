@@ -10,6 +10,7 @@
 #include "RageTimer.h"
 #include "RageSoundReader_Preload.h"
 #include "Foreach.h"
+#include "LocalizedString.h"
 
 #include "arch/Sound/RageSoundDriver.h"
 
@@ -36,7 +37,6 @@ RageSoundManager::RageSoundManager()
 }
 
 static LocalizedString COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't find a sound driver that works" );
-
 void RageSoundManager::Init( CString sDrivers )
 {
 	m_pDriver = MakeRageSoundDriver( sDrivers );

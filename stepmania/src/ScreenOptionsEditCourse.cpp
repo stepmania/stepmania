@@ -10,6 +10,7 @@
 #include "ScreenMiniMenu.h"
 #include "ScreenPrompt.h"
 #include "CourseUtil.h"
+#include "LocalizedString.h"
 
 enum EditCourseRow
 {

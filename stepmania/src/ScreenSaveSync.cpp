@@ -3,6 +3,7 @@
 #include "GameState.h"
 #include "song.h"
 #include "PrefsManager.h"
+#include "LocalizedString.h"
 
 
 static LocalizedString EARLIER					("ScreenSaveSync","earlier");

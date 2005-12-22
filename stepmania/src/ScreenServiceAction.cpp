@@ -13,6 +13,7 @@
 #include "MemoryCardManager.h"
 #include "GameState.h"
 #include "PlayerState.h"
+#include "LocalizedString.h"
 
 static LocalizedString BOOKKEEPING_DATA_CLEARED( "ScreenServiceAction", "Bookkeeping data cleared." );
 static CString ClearBookkeepingData()

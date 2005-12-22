@@ -15,6 +15,7 @@
 #include "RageMath.h"
 #include "RageDisplay.h"
 #include "RageThreads.h"
+#include "LocalizedString.h"
 
 #include "arch/ArchHooks/ArchHooks.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
@@ -1062,8 +1063,8 @@ int main(int argc, char* argv[])
 		delete pIcon;
 	}
 
-	RegisterLocalizer( LocalizeString );
-	RefreshLocalizedStrings();
+	LocalizedString::RegisterLocalizer( LocalizeString );
+	LocalizedString::RefreshLocalizedStrings();
 
 
 	if( PREFSMAN->m_iSoundWriteAhead )

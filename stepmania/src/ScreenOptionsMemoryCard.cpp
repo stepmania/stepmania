@@ -6,6 +6,7 @@
 #include "GameState.h"
 #include "ScreenManager.h"
 #include "ScreenPrompt.h"
+#include "LocalizedString.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenOptionsMemoryCard );

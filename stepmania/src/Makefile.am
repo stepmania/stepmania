@@ -103,7 +103,10 @@ GameConstantsAndTypes.cpp GameConstantsAndTypes.h \
 GameInput.cpp GameInput.h Grade.cpp Grade.h \
 HighScore.cpp HighScore.h \
 InputEventPlus.h \
-Inventory.cpp Inventory.h LuaFunctions.h \
+Inventory.cpp Inventory.h \
+LocalizedString.cpp LocalizedString.h \
+LocalizedStringLua.cpp \
+LuaFunctions.h \
 LuaReference.cpp LuaReference.h \
 LuaExpressionTransform.cpp LuaExpressionTransform.h \
 LyricsLoader.cpp LyricsLoader.h MenuInput.h \

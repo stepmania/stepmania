@@ -11,6 +11,7 @@
 #include "GameManager.h"
 #include "Difficulty.h"
 #include "CourseUtil.h"
+#include "LocalizedString.h"
 
 static void RefreshTrail()
 {

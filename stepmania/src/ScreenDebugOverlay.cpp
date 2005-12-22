@@ -20,6 +20,7 @@
 #include "RageInput.h"
 #include "RageDisplay.h"
 #include "InputEventPlus.h"
+#include "LocalizedString.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;

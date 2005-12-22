@@ -4,6 +4,7 @@
 #include "RageLog.h"
 #include "RageFile.h"
 #include "Foreach.h"
+#include "LocalizedString.h"
 
 #include <numeric>
 #include <ctime>
@@ -1924,58 +1925,6 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 
 	return true;
 }
-
-static RString (*g_pfnLocalizer)(const RString&,const RString&) = NULL;
-
-void RegisterLocalizer( RString (*pfnLocalizer)(const RString&, const RString&) )
-{
-	g_pfnLocalizer = pfnLocalizer;
-}
-
-#include "SubscriptionManager.h"
-template<>
-set<LocalizedString*>* SubscriptionManager<LocalizedString>::s_pSubscribers = NULL;
-
-void RefreshLocalizedStrings()
-{
-	FOREACHS( LocalizedString*, *SubscriptionManager<LocalizedString>::s_pSubscribers, p )
-		(*p)->Refresh();
-}
-
-LocalizedString::LocalizedString( const RString &sSection, const RString &sName )
-{
-	m_bLoaded = false;
-	m_sSection = sSection;
-	m_sName = sName;
-
-	SubscriptionManager<LocalizedString>::Subscribe( this );
-}
-
-
-LocalizedString::~LocalizedString()
-{
-	SubscriptionManager<LocalizedString>::Unsubscribe( this );
-}
-
-
-LocalizedString::operator RString() const
-{
-	return GetValue();
-}
-
-RString LocalizedString::GetValue() const
-{
-	ASSERT(m_bLoaded);
-	return m_sValue;
-}
-
-void LocalizedString::Refresh()
-{
-	ASSERT( g_pfnLocalizer );
-	m_sValue = g_pfnLocalizer( m_sSection, m_sName );
-	m_bLoaded = true;
-}
-
 
 /*
  * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard

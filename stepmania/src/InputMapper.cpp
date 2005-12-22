@@ -11,6 +11,7 @@
 #include "Game.h"
 #include "Style.h"
 #include "SpecialFiles.h"
+#include "LocalizedString.h"
 
 static Preference<CString> g_sLastSeenInputDevices( "LastSeenInputDevices", "" );
 static Preference<bool> g_bAutoMapOnJoyChange( "AutoMapOnJoyChange", true );

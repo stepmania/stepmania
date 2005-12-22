@@ -906,6 +906,15 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="Inventory.h">
 			</File>
 			<File
+				RelativePath=".\LocalizedString.cpp">
+			</File>
+			<File
+				RelativePath=".\LocalizedString.h">
+			</File>
+			<File
+				RelativePath=".\LocalizedStringLua.cpp">
+			</File>
+			<File
 				RelativePath="LuaBinding.cpp">
 			</File>
 			<File

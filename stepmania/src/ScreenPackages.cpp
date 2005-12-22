@@ -12,6 +12,7 @@
 #include "ScreenTextEntry.h"
 #include "ScreenManager.h"
 #include <cstdlib>
+#include "LocalizedString.h"
 
 #define EXISTINGBG_WIDTH			THEME->GetMetricF(m_sName,"PackagesBGWidth")
 #define WEBBG_WIDTH					THEME->GetMetricF(m_sName,"WebBGWidth")

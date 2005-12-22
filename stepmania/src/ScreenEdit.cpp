@@ -33,6 +33,7 @@
 #include <float.h>
 #include "InputEventPlus.h"
 #include "NotesWriterSM.h"
+#include "LocalizedString.h"
 
 static Preference<float> g_iDefaultRecordLength( "DefaultRecordLength", 4 );
 static Preference<bool> g_bEditorShowBGChangesPlay( "EditorShowBGChangesPlay", false );

@@ -11,6 +11,7 @@
 #include "ScreenTextEntry.h"
 #include "ScreenPrompt.h"
 #include "NetworkSyncServer.h"
+#include "LocalizedString.h"
 
 enum {
 	PO_CONNECTION,

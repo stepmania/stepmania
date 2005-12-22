@@ -22,7 +22,7 @@
 #include "RageLog.h"
 #include "song.h"
 #include "InputEventPlus.h"
-
+#include "LocalizedString.h"
 
 #define PREV_SCREEN				THEME->GetMetric ("ScreenEz2SelectMusic","PrevScreen")
 #define SCROLLING_LIST_X		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListX")

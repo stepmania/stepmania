@@ -11,6 +11,7 @@
 #include "ScreenMiniMenu.h"
 #include "RageUtil.h"
 #include "RageFileManager.h"
+#include "LocalizedString.h"
 
 AutoScreenMessage( SM_BackFromRename )
 AutoScreenMessage( SM_BackFromDelete )

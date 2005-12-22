@@ -11,6 +11,7 @@
 #include "LightsManager.h"
 #include "CommonMetrics.h"
 #include "Command.h"
+#include "LocalizedString.h"
 
 
 #define ICON_GAIN_FOCUS_COMMAND		THEME->GetMetricA(m_sName,"IconGainFocusCommand")

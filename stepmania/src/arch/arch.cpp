@@ -9,6 +9,7 @@
 #include "arch.h"
 #include "arch_platform.h"
 #include "Foreach.h"
+#include "LocalizedString.h"
 
 #include "InputHandler/Selector_InputHandler.h"
 static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );

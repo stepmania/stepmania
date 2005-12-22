@@ -503,24 +503,6 @@ void GetConnectsDisconnects( const vector<T> &before, const vector<T> &after, ve
 	GetAsNotInBs( after, before, connects );
 }
 
-// String localization
-void RegisterLocalizer( RString (*pfnLocalizer)(const RString&,const RString&) );
-void RefreshLocalizedStrings();
-
-class LocalizedString
-{
-public:
-	LocalizedString( const RString &sSection, const RString &sName );
-	~LocalizedString();
-	void Refresh();
-	operator RString() const;
-	RString GetValue() const;
-private:
-	RString m_sSection;
-	RString m_sName;
-	RString m_sValue;
-	bool m_bLoaded;
-};
 
 #endif
 

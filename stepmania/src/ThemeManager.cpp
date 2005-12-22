@@ -16,6 +16,7 @@
 #include "LuaManager.h"
 #include "ScreenDimensions.h"
 #include "Command.h"
+#include "LocalizedString.h"
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program

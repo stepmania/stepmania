@@ -4,6 +4,7 @@
 #include "LuaManager.h"
 #include "LuaFunctions.h"
 #include "crypto/CryptMD5.h"
+#include "LocalizedString.h"
 
 NetworkSyncManager *NSMAN;
 

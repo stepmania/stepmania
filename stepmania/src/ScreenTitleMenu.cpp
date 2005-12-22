@@ -18,6 +18,7 @@
 #include "ProfileManager.h"
 #include "CharacterManager.h"
 #include "InputEventPlus.h"
+#include "LocalizedString.h"
 
 #define COIN_MODE_CHANGE_SCREEN		THEME->GetMetric (m_sName,"CoinModeChangeScreen")
 

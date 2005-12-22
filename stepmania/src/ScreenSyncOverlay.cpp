@@ -6,6 +6,7 @@
 #include "song.h"
 #include "PrefsManager.h"
 #include "InputEventPlus.h"
+#include "LocalizedString.h"
 
 static bool IsGameplay()
 {
