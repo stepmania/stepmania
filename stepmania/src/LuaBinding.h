@@ -176,8 +176,8 @@ private:
 		}
 		else
 		{
-			void *pData1 = get( L, 1 );
-			void *pData2 = get( L, 2 );
+			const void *pData1 = get( L, 1 );
+			const void *pData2 = get( L, 2 );
 			lua_pushboolean( L, pData1 != NULL && pData1 == pData2 );
 		}
 
@@ -193,7 +193,7 @@ private:
 	static int tostring_T( lua_State *L )
 	{
 		char buff[32];
-		void *pData = check( L, 1 );
+		const void *pData = check( L, 1 );
 		sprintf( buff, "%p", pData );
 		lua_pushfstring( L, "%s (%s)", m_sClassName, buff );
 		return 1;
