@@ -133,9 +133,8 @@ static void ZoomSurface( const RageSurface * src, RageSurface * dst )
 
 void RageSurfaceUtils::Zoom( RageSurface *&src, int dstwidth, int dstheight )
 {
-	// Is 0 a valid width/height?
-	ASSERT( dstwidth >= 0 );
-	ASSERT( dstheight >= 0 );
+	ASSERT_M( dstwidth > 0, ssprintf("%i",dstwidth) );
+	ASSERT_M( dstheight > 0, ssprintf("%i",dstheight) );
     if( src == NULL )
 		return;
 
