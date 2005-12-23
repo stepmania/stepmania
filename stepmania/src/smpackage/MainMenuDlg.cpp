@@ -67,7 +67,7 @@ void MainMenuDlg::OnExportPackages()
 {
 	// TODO: Add your control notification handler code here
 	CSmpackageExportDlg dlg;
-	int nResponse = dlg.DoModal();
+	dlg.DoModal();
 //	if (nResponse == IDOK)	
 }
 
@@ -75,7 +75,7 @@ void MainMenuDlg::OnEditInstallations()
 {
 	// TODO: Add your control notification handler code here
 	EditInsallations dlg;
-	int nResponse = dlg.DoModal();	
+	dlg.DoModal();	
 }
 
 RString GetLastErrorString()
@@ -200,7 +200,7 @@ void MainMenuDlg::OnBnClickedChangePreferences()
 {
 	// TODO: Add your control notification handler code here
 	ChangeGameSettings dlg;
-	int nResponse = dlg.DoModal();	
+	dlg.DoModal();	
 }
 
 void MainMenuDlg::OnBnClickedOpenPreferences()
