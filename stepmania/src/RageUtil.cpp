@@ -300,7 +300,7 @@ RString ConvertUTF8ToACP( RString s )
 #endif
 
 static map<RString,RString> g_mapLangToName2Letter;
-void InitLanguages()
+static void InitLanguages()
 {
 	if( !g_mapLangToName2Letter.empty() )
 		return;
@@ -457,37 +457,37 @@ RString GetLanguageNameFromISO639Code( RString sName )
 	return "";
 }
 
-RString join( const RString &Deliminator, const vector<RString>& Source)
+RString join( const RString &sDeliminator, const vector<RString> &sSource)
 {
-	if( Source.empty() )
+	if( sSource.empty() )
 		return RString();
 
-	RString csTmp;
+	RString sTmp;
 
-	// Loop through the Array and Append the Deliminator
-	for( unsigned iNum = 0; iNum < Source.size()-1; iNum++ ) {
-		csTmp += Source[iNum];
-		csTmp += Deliminator;
+	for( unsigned iNum = 0; iNum < sSource.size()-1; iNum++ )
+	{
+		sTmp += sSource[iNum];
+		sTmp += sDeliminator;
 	}
-	csTmp += Source.back();
-	return csTmp;
+	sTmp += sSource.back();
+	return sTmp;
 }
 
-RString join( const RString &Delimitor, vector<RString>::const_iterator begin, vector<RString>::const_iterator end )
+RString join( const RString &sDelimitor, vector<RString>::const_iterator begin, vector<RString>::const_iterator end )
 {
 	if( begin == end )
 		return RString();
 
-	RString ret;
+	RString sRet;
 	while( begin != end )
 	{
-		ret += *begin;
+		sRet += *begin;
 		++begin;
 		if( begin != end )
-			ret += Delimitor;
+			sRet += sDelimitor;
 	}
 
-	return ret;
+	return sRet;
 }
 
 template <class S>
@@ -964,8 +964,6 @@ bool GetFileContents( const RString &sPath, RString &sOut, bool bOneLine )
 	return true;
 }
 
-#if 1
-/* PCRE */
 #include "pcre/pcre.h"
 void Regex::Compile()
 {
@@ -1059,87 +1057,6 @@ bool Regex::Compare(const RString &str, vector<RString> &matches)
 
     return true;
 }
-#else
-/* GNU regex */
-#include "regex.h"
-void Regex::Compile()
-{
-    reg = new regex_t;
-
-    int ret = regcomp((regex_t *) reg, pattern.c_str(), REG_EXTENDED|REG_ICASE);
-    if(ret != 0)
-		RageException::Throw("Invalid regex: '%s'", pattern.c_str());
-
-    /* Count the number of backreferences. */
-    backrefs = 0;
-    for(int i = 0; i < int(pattern.size()); ++i)
-        if(pattern[i] == '(') backrefs++;
-    ASSERT(backrefs+1 < 128);
-}
-
-void Regex::Set(const RString &str)
-{
-	Release();
-    pattern=str;
-	Compile();
-}
-
-void Regex::Release()
-{
-    delete (regex_t *)reg;
-	reg = NULL;
-	pattern = "";
-}
-
-Regex::Regex(const RString &str)
-{
-	reg = NULL;
-	Set(str);
-}
-
-Regex::Regex(const Regex &rhs)
-{
-	reg = NULL;
-    Set(rhs.pattern);
-}
-
-Regex &Regex::operator=(const Regex &rhs)
-{
-	if(this != &rhs) Set(rhs.pattern);
-	return *this;
-}
-
-Regex::~Regex()
-{
-    Release();
-}
-
-bool Regex::Compare(const RString &str)
-{
-    return regexec((regex_t *) reg, str.c_str(), 0, NULL, 0) != REG_NOMATCH;
-}
-
-bool Regex::Compare(const RString &str, vector<RString> &matches)
-{
-    matches.clear();
-
-    regmatch_t mat[128];
-    int ret = regexec((regex_t *) reg, str.c_str(), 128, mat, 0);
-
-	if(ret == REG_NOMATCH)
-        return false;
-
-    for(unsigned i = 1; i < backrefs+1; ++i)
-    {
-        if(mat[i].rm_so == -1)
-            matches.push_back(""); /* no match */
-        else
-            matches.push_back(str.substr(mat[i].rm_so, mat[i].rm_eo - mat[i].rm_so));
-    }
-
-    return true;
-}
-#endif
 
 // Arguments and behavior are the same are similar to
 // http://us3.php.net/manual/en/function.preg-replace.php
@@ -1522,7 +1439,7 @@ void ReplaceEntityText( RString &sText, const map<char,RString> &m )
 	sText = sRet;
 }
 
-/* Replace &#nnnn; (decimal) &xnnnn; (hex) with corresponding UTF-8 characters. */
+/* Replace &#nnnn; (decimal) and &xnnnn; (hex) with corresponding UTF-8 characters. */
 void Replace_Unicode_Markers( RString &Text )
 {
 	unsigned start = 0;
@@ -1808,58 +1725,58 @@ RString ToString( bool value )
 //
 // Helper function for reading/writing scores
 //
-bool FileRead(RageFileBasic& f, RString& sOut)
+bool FileRead( RageFileBasic& f, RString& sOut )
 {
-	if (f.AtEOF())
+	if( f.AtEOF() )
 		return false;
 	if( f.GetLine(sOut) == -1 )
 		return false;
 	return true;
 }
 
-bool FileRead(RageFileBasic& f, int& iOut)
+bool FileRead( RageFileBasic& f, int& iOut )
 {
 	RString s;
-	if (!FileRead(f, s))
+	if( !FileRead(f, s) )
 		return false;
 	iOut = atoi(s);
 	return true;
 }
 
-bool FileRead(RageFileBasic& f, unsigned& uOut)
+bool FileRead( RageFileBasic& f, unsigned& uOut )
 {
 	RString s;
-	if (!FileRead(f, s))
+	if( !FileRead(f, s) )
 		return false;
 	uOut = atoi(s);
 	return true;
 }
 
-bool FileRead(RageFileBasic& f, float& fOut)
+bool FileRead( RageFileBasic& f, float& fOut )
 {
 	RString s;
-	if (!FileRead(f, s))
+	if( !FileRead(f, s) )
 		return false;
 	fOut = strtof( s, NULL );
 	return true;
 }
 
-void FileWrite(RageFileBasic& f, const RString& sWrite)
+void FileWrite( RageFileBasic& f, const RString& sWrite )
 {
 	f.PutLine( sWrite );
 }
 
-void FileWrite(RageFileBasic& f, int iWrite)
+void FileWrite( RageFileBasic& f, int iWrite )
 {
 	f.PutLine( ssprintf("%d", iWrite) );
 }
 
-void FileWrite(RageFileBasic& f, size_t uWrite)
+void FileWrite( RageFileBasic& f, size_t uWrite )
 {
 	f.PutLine( ssprintf("%i", (int)uWrite) );
 }
 
-void FileWrite(RageFileBasic& f, float fWrite)
+void FileWrite( RageFileBasic& f, float fWrite )
 {
 	f.PutLine( ssprintf("%f", fWrite) );
 }
