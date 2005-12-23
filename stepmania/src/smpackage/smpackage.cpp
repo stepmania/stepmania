@@ -32,6 +32,9 @@ CSmpackageApp theApp;
 
 #include "RageLog.h"
 #include "RageFileManager.h"
+#include "archutils/Win32/SpecialDirs.h"
+#include "ProductInfo.h"
+extern RString GetLastErrorString();
 
 BOOL CSmpackageApp::InitInstance()
 {
@@ -54,6 +57,20 @@ BOOL CSmpackageApp::InitInstance()
 
 	// check if there's a .smzip command line argument
 	vector<RString> arrayCommandLineBits;
+	split( ::GetCommandLine(), " ", arrayCommandLineBits );
+	for( unsigned i=0; i<arrayCommandLineBits.size(); i++ )
+	{
+		CString sArg = arrayCommandLineBits[i];
+		if( sArg == "--machine-profile-stats" )
+		{
+			RString sPersonalDir = GetMyDocumentsDir();
+			RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
+			if( NULL == ::ShellExecute( NULL, "open", sFile, "", "", SW_SHOWNORMAL ) )
+				AfxMessageBox( "Failed to open '" + sFile + "': " + GetLastErrorString() );
+			exit(0);
+		}
+	}
+	
 	split( ::GetCommandLine(), "\"", arrayCommandLineBits );
 	for( unsigned i=0; i<arrayCommandLineBits.size(); i++ )
 	{
