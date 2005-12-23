@@ -539,12 +539,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="ScreenPlayerOptions.h">
 			</File>
 			<File
-				RelativePath="ScreenProfileOptions.cpp">
-			</File>
-			<File
-				RelativePath="ScreenProfileOptions.h">
-			</File>
-			<File
 				RelativePath="ScreenPrompt.cpp">
 			</File>
 			<File
@@ -1610,6 +1604,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				</File>
 				<File
 					RelativePath="archutils\Win32\RestartProgram.h">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\SpecialDirs.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\SpecialDirs.h">
 				</File>
 				<File
 					RelativePath="archutils\Win32\StepMania.ico">
