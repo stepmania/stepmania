@@ -116,7 +116,6 @@ public:
 	void StopPlaying();
 
 	CString GetError() const { return m_sError; }
-	bool Error() const { return !m_sError.empty(); }
 
 	RageSound *Play( const RageSoundParams *params=NULL );
 	void Stop();
