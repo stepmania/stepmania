@@ -1348,17 +1348,13 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		StepMania::SaveScreenshot( "Screenshots/", bSaveCompressed, false );
 		return true;	// handled
 	}
-
-	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_ENTER) )
+	
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_ENTER) &&
+		(INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
+		 INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT))) )
 	{
-		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_RALT)) ||
-			INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT)) )
-		{
-			/* alt-enter */
-			PREFSMAN->m_bWindowed.Set( !PREFSMAN->m_bWindowed );
-			StepMania::ApplyGraphicOptions();
-			return true;
-		}
+		/* alt-enter */
+		ArchHooks::SetToggleWindowed();
 	}
 
 	return false;
@@ -1446,6 +1442,12 @@ void HandleInputEvents(float fDeltaTime)
 
 		SCREENMAN->Input( input );
 	}
+	
+	if( ArchHooks::GetAndClearToggleWindowed() )
+	{
+		PREFSMAN->m_bWindowed.Set( !PREFSMAN->m_bWindowed );
+		StepMania::ApplyGraphicOptions();
+	}	
 }
 
 void StepMania::FocusChanged( bool bHasFocus )

@@ -1,8 +1,27 @@
 #include "global.h"
 #include "ArchHooks.h"
+#include "RageThreads.h"
 
 bool ArchHooks::s_bQuitting = false;
+bool ArchHooks::s_bToggleWindowed = false;
+// Keep from pulling RageThreads.h into ArchHooks.h
+static RageMutex s_AHLock( "ArchHooks lock" );
 ArchHooks *HOOKS = NULL;
+
+bool ArchHooks::GetAndClearToggleWindowed()
+{
+	LockMut( s_AHLock );
+	bool bToggle = s_bToggleWindowed;
+	
+	s_bToggleWindowed = false;
+	return bToggle;
+}
+
+void ArchHooks::SetToggleWindowed()
+{
+	LockMut( s_AHLock );
+	s_bToggleWindowed = true;
+}
 
 #include "Selector_ArchHooks.h"
 ArchHooks *MakeArchHooks()

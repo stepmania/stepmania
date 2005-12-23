@@ -4,6 +4,7 @@
 class ArchHooks
 {
 	static bool s_bQuitting;
+	static bool s_bToggleWindowed;
 public:
 	virtual ~ArchHooks() { }
 
@@ -50,6 +51,13 @@ public:
 	 */
 	static bool UserQuit() { return s_bQuitting; }
 	static void SetUserQuit() { s_bQuitting = true; }
+	
+	/*
+	 * Returns true if the user wants to toggle windowed mode and atomically clears
+	 * the boolean.
+	 */
+	static bool GetAndClearToggleWindowed();
+	static void SetToggleWindowed();
 
 	/*
 	 * Return the amount of time since the program started.  (This may actually be
