@@ -116,23 +116,26 @@ void ShowWarning( const char *file, int line, const char *message ); // don't pu
 #define DEBUG_ASSERT_M(x,y)
 #endif
 
-/* Define a macro to tell the compiler that a function has printf() semantics, to
- * aid warning output. */
 #if defined(__GNUC__)
-#define PRINTF(a,b) __attribute__((format(__printf__,a,b)))
+/*
+ * Define a macro to tell the compiler that a function has printf() semantics, to
+ * aid warning output.
+ */
+# define PRINTF(a,b) __attribute__((format(__printf__,a,b)))
+# define CONST_FUNCTION __attribute__((const))
 #else
-#define PRINTF(a,b)
+# define PRINTF(a,b)
+# define CONST_FUNCTION
 #endif
 
 #if !defined(ALIGN)
-#if defined(__GNUC__)
-#define ALIGN(n) __attribute__((aligned(n)))
-#define CONST_FUNCTION __attribute__((const))
-#else
-#define ALIGN(n)
-#define CONST_FUNCTION
+# if defined(__GNUC__)
+#  define ALIGN(n) __attribute__((aligned(n)))
+# else
+#  define ALIGN(n)
+# endif
 #endif
-#endif
+
 
 /* Use CStdString: */
 #include "StdString.h"
@@ -151,35 +154,43 @@ typedef StdString::CStdString CString;
 /* Define a few functions if necessary */
 #include <cmath>
 #ifdef NEED_POWF
-inline float powf (float x, float y) CONST_FUNCTION { return float(pow(double(x),double(y))); }
+inline float powf( float x, float y ) CONST_FUNCTION;
+float powf( float x, float y ) { return float( pow(double(x), double(y)) ); }
 #endif
 
 #ifdef NEED_SQRTF
-inline float sqrtf(float x) CONST_FUNCTION { return float(sqrt(double(x))); }
+inline float sqrtf( float x ) CONST_FUNCTION;
+float sqrtf( float x ) { return float( sqrt(double(x)) ); }
 #endif
 
 #ifdef NEED_SINF
-inline float sinf(float x) CONST_FUNCTION { return float(sin(double(x))); }
+inline float sinf( float x ) CONST_FUNCTION;
+float sinf( float x ) { return float( sin(double(x)) ); }
 #endif
 
 #ifdef NEED_TANF
-inline float tanf(float x) CONST_FUNCTION { return float(tan(double(x))); }
+inline float tanf( float x ) CONST_FUNCTION;
+float tanf( float x ) { return float( tan(double(x)) ); }
 #endif
 
 #ifdef NEED_COSF
-inline float cosf(float x) CONST_FUNCTION { return float(cos(double(x))); }
+inline float cosf( float x ) CONST_FUNCTION;
+float cosf( float x ){ return float( cos(double(x)) ); }
 #endif
 
 #ifdef NEED_ACOSF
-inline float acosf(float x) CONST_FUNCTION { return float(acos(double(x))); }
+inline float acosf( float x ) CONST_FUNCTION;
+float acosf( float x ) { return float( acos(double(x)) ); }
 #endif
 
 #ifdef NEED_TRUNCF
-inline float truncf( float f ) CONST_FUNCTION { return float(int(f)); }
+inline float truncf( float f ) CONST_FUNCTION;
+float truncf( float f ) { return float( int(f) ); }
 #endif
 
 #ifdef NEED_ROUNDF
-inline float roundf( float f ) CONST_FUNCTION { if(f < 0) return truncf(f-0.5f); return truncf(f+0.5f); }
+inline float roundf( float f ) CONST_FUNCTION;
+float roundf( float f ) { if( f < 0.0f ) return truncf( f-0.5f ); return truncf( f+0.5f ); }
 #endif
 
 #ifdef NEED_STRTOF
