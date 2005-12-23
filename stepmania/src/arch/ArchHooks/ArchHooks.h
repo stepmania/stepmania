@@ -3,7 +3,7 @@
 
 class ArchHooks
 {
-	static bool g_bQuitting;
+	static bool s_bQuitting;
 public:
 	virtual ~ArchHooks() { }
 
@@ -48,8 +48,8 @@ public:
 	/*
 	 * Returns true if the user wants to quit (eg. ^C, or clicked a "close window" button).
 	 */
-	static bool UserQuit() { return g_bQuitting; }
-	static void SetUserQuit() { g_bQuitting = true; }
+	static bool UserQuit() { return s_bQuitting; }
+	static void SetUserQuit() { s_bQuitting = true; }
 
 	/*
 	 * Return the amount of time since the program started.  (This may actually be
