@@ -837,7 +837,6 @@ bool RageSound::SetPositionFrames( int iFrames )
 
 	if( iRet == -1 )
 	{
-		/* XXX untested */
 		Fail( m_pSource->GetError() );
 		return false; /* failed */
 	}
