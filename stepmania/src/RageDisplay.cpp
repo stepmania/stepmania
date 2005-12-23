@@ -635,13 +635,8 @@ bool RageDisplay::SaveScreenshot( CString sPath, GraphicsFileFormat format )
 	if( format != SAVE_LOSSLESS )
 	{
 		/* Maintain the DAR. */
-		float fDAR = GetActualVideoModeParams().fDisplayAspectRatio;
-		
-		// -1 seems to be a sentinel
-		if( fDAR < 0.0f )
-			fDAR = 4.0f/3.0f;
-		int iHeight = lrintf( 640 / fDAR );
-		LOG->Trace( "%ix%i -> %ix%i (%.3f)", surface->w, surface->h, 640, iHeight, fDAR );
+		int iHeight = lrintf( 640 / GetActualVideoModeParams().fDisplayAspectRatio );
+		LOG->Trace( "%ix%i -> %ix%i (%.3f)", surface->w, surface->h, 640, iHeight, GetActualVideoModeParams().fDisplayAspectRatio );
 		RageSurfaceUtils::Zoom( surface, 640, iHeight );
 	}
 
