@@ -133,7 +133,7 @@ ArchHooks_Xbox::~ArchHooks_Xbox()
 	XLaunchNewImage( NULL, NULL );
 }
 
-#inlcude "RageFileManager.h"
+#include "RageFileManager.h"
 
 void ArchHooks_Xbox::MountInitialFilesystems( const CString &sDirOfExecutable )
 {
