@@ -1355,6 +1355,7 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 	{
 		/* alt-enter */
 		ArchHooks::SetToggleWindowed();
+		return true;
 	}
 
 	return false;
