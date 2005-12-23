@@ -310,7 +310,6 @@
 		AA29CD1B0558741A00961A51 /* BeginnerHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = AAC28BBA04F758E500D02EE9 /* BeginnerHelper.h */; };
 		AA29CD1C0558741A00961A51 /* RageSoundDriver_CA.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7D404604FC3C270020E02B /* RageSoundDriver_CA.h */; };
 		AA29CD1D0558741A00961A51 /* MovieTexture_FFMpeg.h in Headers */ = {isa = PBXBuildFile; fileRef = AA14ED100509F40000E3FAD7 /* MovieTexture_FFMpeg.h */; };
-		AA29CD1E0558741A00961A51 /* ScreenProfileOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1C6553050D23200073A143 /* ScreenProfileOptions.h */; };
 		AA29CD1F0558741A00961A51 /* ProfileManager.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1C6557050D234B0073A143 /* ProfileManager.h */; };
 		AA29CD200558741A00961A51 /* RageSoundReader_WAV.h in Headers */ = {isa = PBXBuildFile; fileRef = AA1C65A7050FD21F0073A143 /* RageSoundReader_WAV.h */; };
 		AA29CD210558741A00961A51 /* RageSoundReader_MP3.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFC7FF20513A67700D02EE9 /* RageSoundReader_MP3.h */; };
@@ -522,7 +521,6 @@
 		AA29CE1E0558741A00961A51 /* BeginnerHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAC28BB904F758E500D02EE9 /* BeginnerHelper.cpp */; };
 		AA29CE1F0558741A00961A51 /* RageSoundDriver_CA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA7D404704FC3C270020E02B /* RageSoundDriver_CA.cpp */; };
 		AA29CE200558741A00961A51 /* MovieTexture_FFMpeg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA14ED0F0509F40000E3FAD7 /* MovieTexture_FFMpeg.cpp */; };
-		AA29CE210558741A00961A51 /* ScreenProfileOptions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1C6552050D23200073A143 /* ScreenProfileOptions.cpp */; };
 		AA29CE220558741A00961A51 /* ProfileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1C6556050D234B0073A143 /* ProfileManager.cpp */; };
 		AA29CE230558741A00961A51 /* RageSoundReader_WAV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA1C65A6050FD21F0073A143 /* RageSoundReader_WAV.cpp */; };
 		AA29CE240558741A00961A51 /* RageSoundReader_FileReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFC7FF00513A67700D02EE9 /* RageSoundReader_FileReader.cpp */; };
@@ -825,6 +823,9 @@
 		AAD6A714065E0FDF0042165A /* Difficulty.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAD6A712065E0FDF0042165A /* Difficulty.cpp */; };
 		AAD6A715065E0FDF0042165A /* Difficulty.h in Headers */ = {isa = PBXBuildFile; fileRef = AAD6A713065E0FDF0042165A /* Difficulty.h */; };
 		AADBA563062007BA005D4FC2 /* arch_platform.h in Headers */ = {isa = PBXBuildFile; fileRef = AADBA562062007BA005D4FC2 /* arch_platform.h */; };
+		AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */; };
+		AADD1CC6095C233F0088C9DF /* LocalizedString.h in Headers */ = {isa = PBXBuildFile; fileRef = AADD1CC3095C233F0088C9DF /* LocalizedString.h */; };
+		AADD1CC7095C233F0088C9DF /* LocalizedStringLua.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADD1CC4095C233F0088C9DF /* LocalizedStringLua.cpp */; };
 		AAE66F740657634D002E3AD9 /* CryptMD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE66F650657634D002E3AD9 /* CryptMD5.cpp */; };
 		AAE66F750657634D002E3AD9 /* CryptMD5.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE66F660657634D002E3AD9 /* CryptMD5.h */; };
 		AAE66F790657634D002E3AD9 /* CryptRand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE66F6A0657634D002E3AD9 /* CryptRand.cpp */; };
@@ -1078,8 +1079,6 @@
 		AA1B083A0762532800835464 /* GameCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = GameCommand.h; path = ../src/GameCommand.h; sourceTree = "<group>"; };
 		AA1B083B0762532800835464 /* Preference.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = Preference.cpp; path = ../src/Preference.cpp; sourceTree = "<group>"; };
 		AA1C6550050D21AB0073A143 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
-		AA1C6552050D23200073A143 /* ScreenProfileOptions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = ScreenProfileOptions.cpp; path = ../src/ScreenProfileOptions.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
-		AA1C6553050D23200073A143 /* ScreenProfileOptions.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = ScreenProfileOptions.h; path = ../src/ScreenProfileOptions.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA1C6556050D234B0073A143 /* ProfileManager.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = ProfileManager.cpp; path = ../src/ProfileManager.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA1C6557050D234B0073A143 /* ProfileManager.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = ProfileManager.h; path = ../src/ProfileManager.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AA1C65A4050FD21F0073A143 /* RageSoundReader_Vorbisfile.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = RageSoundReader_Vorbisfile.cpp; path = ../src/RageSoundReader_Vorbisfile.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
@@ -1809,6 +1808,9 @@
 		AADBE363053D5F8A00D02EE9 /* ScreenNameEntryTraditional.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = ScreenNameEntryTraditional.h; path = ../src/ScreenNameEntryTraditional.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AADBE368053DA38C00D02EE9 /* Bookkeeper.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = Bookkeeper.cpp; path = ../src/Bookkeeper.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AADBE369053DA38C00D02EE9 /* Bookkeeper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = Bookkeeper.h; path = ../src/Bookkeeper.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
+		AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LocalizedString.cpp; path = ../src/LocalizedString.cpp; sourceTree = "<group>"; };
+		AADD1CC3095C233F0088C9DF /* LocalizedString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = LocalizedString.h; path = ../src/LocalizedString.h; sourceTree = "<group>"; };
+		AADD1CC4095C233F0088C9DF /* LocalizedStringLua.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LocalizedStringLua.cpp; path = ../src/LocalizedStringLua.cpp; sourceTree = "<group>"; };
 		AAE443EB04B0F9F600D02EE9 /* CombinedLifeMeterTug.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = CombinedLifeMeterTug.cpp; path = ../src/CombinedLifeMeterTug.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AAE443EC04B0F9F600D02EE9 /* CombinedLifeMeterTug.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = CombinedLifeMeterTug.h; path = ../src/CombinedLifeMeterTug.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AAE443F304B0FEB700D02EE9 /* ScoreKeeperRave.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = ScoreKeeperRave.cpp; path = ../src/ScoreKeeperRave.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
@@ -2217,8 +2219,6 @@
 				AA1145DA075DFADF0050A3D1 /* ScreenPackages.h */,
 				AA6E004F047711F3005F316C /* ScreenPlayerOptions.cpp */,
 				AA6E0050047711F3005F316C /* ScreenPlayerOptions.h */,
-				AA1C6552050D23200073A143 /* ScreenProfileOptions.cpp */,
-				AA1C6553050D23200073A143 /* ScreenProfileOptions.h */,
 				AA6E0051047711F3005F316C /* ScreenPrompt.cpp */,
 				AA6E0052047711F3005F316C /* ScreenPrompt.h */,
 				AA6E0053047711F3005F316C /* ScreenRanking.cpp */,
@@ -2663,6 +2663,9 @@
 				AA6EFDE104770C79005F316C /* Inventory.cpp */,
 				AA6EFDE204770C79005F316C /* Inventory.h */,
 				AA2FB638091212AF000FD574 /* LifeMeter.cpp */,
+				AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */,
+				AADD1CC3095C233F0088C9DF /* LocalizedString.h */,
+				AADD1CC4095C233F0088C9DF /* LocalizedStringLua.cpp */,
 				AACFBE6108E7DBA8005087FC /* LuaExpressionTransform.cpp */,
 				AACFBE6208E7DBA8005087FC /* LuaExpressionTransform.h */,
 				AAEA090605E23DF900D38622 /* LuaFunctions.h */,
@@ -3386,7 +3389,6 @@
 				AA29CD1B0558741A00961A51 /* BeginnerHelper.h in Headers */,
 				AA29CD1C0558741A00961A51 /* RageSoundDriver_CA.h in Headers */,
 				AA29CD1D0558741A00961A51 /* MovieTexture_FFMpeg.h in Headers */,
-				AA29CD1E0558741A00961A51 /* ScreenProfileOptions.h in Headers */,
 				AA29CD1F0558741A00961A51 /* ProfileManager.h in Headers */,
 				AA29CD200558741A00961A51 /* RageSoundReader_WAV.h in Headers */,
 				AA29CD210558741A00961A51 /* RageSoundReader_MP3.h in Headers */,
@@ -3627,6 +3629,7 @@
 				AAFBEEF0094D807E000029DE /* ScreenServiceAction.h in Headers */,
 				AA07328F0954381800F396C5 /* DisplayResolutions.h in Headers */,
 				AA0732910954381800F396C5 /* XmlFileUtil.h in Headers */,
+				AADD1CC6095C233F0088C9DF /* LocalizedString.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3980,7 +3983,6 @@
 				AA29CE1E0558741A00961A51 /* BeginnerHelper.cpp in Sources */,
 				AA29CE1F0558741A00961A51 /* RageSoundDriver_CA.cpp in Sources */,
 				AA29CE200558741A00961A51 /* MovieTexture_FFMpeg.cpp in Sources */,
-				AA29CE210558741A00961A51 /* ScreenProfileOptions.cpp in Sources */,
 				AA29CE220558741A00961A51 /* ProfileManager.cpp in Sources */,
 				AA29CE230558741A00961A51 /* RageSoundReader_WAV.cpp in Sources */,
 				AA29CE240558741A00961A51 /* RageSoundReader_FileReader.cpp in Sources */,
@@ -4196,6 +4198,8 @@
 				AA07328E0954381800F396C5 /* DateTimeLua.cpp in Sources */,
 				AA0732900954381800F396C5 /* XmlFileUtil.cpp in Sources */,
 				AAD5219C095513DA00073D86 /* XmlFile.cpp in Sources */,
+				AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */,
+				AADD1CC7095C233F0088C9DF /* LocalizedStringLua.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
