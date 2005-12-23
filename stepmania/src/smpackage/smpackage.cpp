@@ -1,6 +1,3 @@
-// smpackage.cpp : Defines the class behaviors for the application.
-//
-
 #define CO_EXIST_WITH_MFC
 #include "global.h"
 #include "stdafx.h"
@@ -20,31 +17,19 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-/////////////////////////////////////////////////////////////////////////////
-// CSmpackageApp
-
 BEGIN_MESSAGE_MAP(CSmpackageApp, CWinApp)
 	//{{AFX_MSG_MAP(CSmpackageApp)
 	//}}AFX_MSG_MAP
 	ON_COMMAND(ID_HELP, CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// CSmpackageApp construction
-
 CSmpackageApp::CSmpackageApp()
 {
-	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// The one and only CSmpackageApp object
-
 CSmpackageApp theApp;
 
-/////////////////////////////////////////////////////////////////////////////
-// CSmpackageApp initialization
 #include "RageLog.h"
 #include "RageFileManager.h"
 
