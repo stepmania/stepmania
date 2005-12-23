@@ -11,6 +11,7 @@
 #include "GameLoop.h"
 #include "ProductInfo.h"
 #include <Carbon/Carbon.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include <mach/thread_act.h>
 #include <mach/mach.h>
 #include <mach/host_info.h>
@@ -291,17 +292,29 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 
 void ArchHooks::MountInitialFilesystems( const CString &sDirOfExecutable )
 {
-#if defined(MACOSX)
-	CHECKPOINT_M( ssprintf("DOE \"%s\"", sDirOfExecutable.c_str()) );
-	vector<CString> parts;
-	split( sDirOfExecutable, "/", parts );
-	ASSERT( parts.size() > 3 );
-	CString Dir = '/' + join( "/", parts.begin(), parts.end()-3 );
-	FILEMAN->Mount( "dir", Dir, "/" );
-#else
-	/* Paths relative to the CWD: */
-	FILEMAN->Mount( "dir", ".", "/" );
-#endif
+	CFBundleRef bundle = CFBundleGetMainBundle();
+	CFURLRef bundleURL = CFBundleCopyBundleURL( bundle );
+	CFURLRef dirURL = CFURLCreateCopyDeletingLastPathComponent( kCFAllocatorDefault, bundleURL );
+	char dir[PATH_MAX];
+	
+	if( !CFURLGetFileSystemRepresentation(dirURL, true, (UInt8 *)dir, sizeof(dir)) )
+		FAIL_M( "CFURLGetFileSystemRepresentation() failed." );
+	CFRelease( bundleURL );
+	CFRelease( dirURL );
+	FILEMAN->Mount( "dir", dir, "/" );
+	
+	FSRef fs; // This does not need to be "released" by the file manager
+	
+	// This returns the absolute path for ~/Library/Application Support
+	if( FSFindFolder(kUserDomain, kApplicationSupportFolderType, kDontCreateFolder, &fs) )
+		FAIL_M( "FSFindFolder() failed." );
+	if( FSRefMakePath(&fs, (UInt8 *)dir, sizeof(dir)) )
+		FAIL_M( "FSRefMakePath() failed." );
+	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Save", dir), "/Save" );
+	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Screenshots", dir), "/Screenshots" );
+	/* The Cache directory should probably go in ~/Library/Caches/bundle_identifier/Cache but
+	 * why bother we're already using ~/Library/Application Support/PRODUCT_ID. */
+	FILEMAN->Mount( "dir", ssprintf("%s/" PRODUCT_ID "/Cache", dir), "/Cache" );
 }
 
 /*
