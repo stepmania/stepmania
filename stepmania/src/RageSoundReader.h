@@ -8,8 +8,8 @@ class SoundReader
 public:
 	virtual int GetLength() const = 0; /* ms */
 	virtual int GetLength_Fast() const { return GetLength(); } /* ms */
-	virtual int SetPosition_Accurate(int ms) = 0;
-	virtual int SetPosition_Fast(int ms) { return SetPosition_Accurate(ms); }
+	virtual int SetPosition_Accurate( int ms ) = 0;
+	virtual int SetPosition_Fast( int ms ) { return SetPosition_Accurate(ms); }
 	virtual int Read(char *buf, unsigned len) = 0;
 	virtual ~SoundReader() { }
 	virtual SoundReader *Copy() const = 0;
@@ -17,14 +17,13 @@ public:
 	virtual unsigned GetNumChannels() const { return 2; } /* 1 or 2 */
 	virtual bool IsStreamingFromDisk() const = 0;
 
-	bool Error() const { return !error.empty(); }
-	string GetError() const { return error; }
+	string GetError() const { return m_sError; }
 
 protected:
-	void SetError(string e) const { error = e; }
+	void SetError( CString sError ) const { m_sError = sError; }
 
 private:
-	mutable string error;
+	mutable CString m_sError;
 };
 
 #endif
