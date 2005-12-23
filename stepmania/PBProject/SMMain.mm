@@ -13,6 +13,7 @@ extern "C"
 }
 
 @interface SMApplication : NSApplication
+- (void)fullscreen:(id)sender;
 @end
 
 @interface SMMain : NSObject
@@ -26,6 +27,10 @@ extern "C"
 
 
 @implementation SMApplication
+- (void)fullscreen:(id)sender
+{
+	ArchHooks::SetToggleWindowed();
+}
 // Invoked from the Quit menu item.
 - (void)terminate:(id)sender
 {
@@ -98,7 +103,12 @@ static void setupMenus( void )
 	
 	[windowMenu addItem:MenuItem( "Minimize", @selector(performMiniaturize:), @"m" )];
 	[windowMenu addItem:[NSMenuItem separatorItem]];
-	[windowMenu addItem:MenuItem( "Full Screen", @selector(fullscreen:), @"" )];
+	
+	// Add a Full Screen item.
+	NSMenuItem *item = MenuItem( "Full Screen", @selector(fullscreen:), @"\n" );
+	
+	[item setKeyEquivalentModifierMask:NSAlternateKeyMask]; // opt-enter
+	[windowMenu addItem:item];
 
     [[mainMenu addItemWithTitle:[appMenu title] action:NULL keyEquivalent:@""] setSubmenu:appMenu];
     [[mainMenu addItemWithTitle:[windowMenu title] action:NULL keyEquivalent:@""] setSubmenu:windowMenu];
@@ -110,10 +120,7 @@ static void setupMenus( void )
 
 int main( int argc, char **argv )
 {
-	RageThread guiThread;
-	
-	guiThread.SetName( "GUIThread" );
-	guiThread.CreateThisThread();
+	RageThreadRegister guiThread( "GUI thread" );
 	
     [SMApplication poseAsClass:[NSApplication class]];
 	
