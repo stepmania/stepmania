@@ -34,15 +34,15 @@
 #include "RageSoundReader_Resample.h"
 #include "RageSoundReader_FileReader.h"
 
-const int channels = 2;
-const int framesize = 2 * channels; /* 16-bit */
+static const int channels = 2;
+static const int framesize = 2 * channels; /* 16-bit */
 #define samplerate() m_pSource->GetSampleRate()
 
 /* The most data to buffer when streaming. */
-const int internal_buffer_size = 1024*1;
+static const int internal_buffer_size = 1024*1;
 
 /* The amount of data to read at once. */
-const unsigned read_block_size = 1024;
+static const unsigned read_block_size = 1024;
 
 RageSoundParams::RageSoundParams():
 	m_StartTime( RageZeroTimer )
@@ -55,7 +55,6 @@ RageSoundParams::RageSoundParams():
 	speed_input_samples = speed_output_samples = 1;
 	m_bAccurateSync = false;
 	StopMode = M_AUTO;
-
 	m_bIsCriticalSound = false;
 }
 
