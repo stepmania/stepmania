@@ -1,12 +1,12 @@
 #include "global.h"
 #include "ArchHooks.h"
 #include "RageUtil.h"
-#include "archutils/Win32/RegistryAccess.h"
+#include "archutils/Win32/SpecialDirs.h"
 #include "ProductInfo.h"
 #include "RageFileManager.h"
-#include <shlobj.h>
 
 // for timeGetTime
+#include <windows.h>
 #include <mmsystem.h>
 #if defined(_MSC_VER)
 #pragma comment(lib, "winmm.lib")
@@ -50,22 +50,8 @@ void ArchHooks::MountInitialFilesystems( const CString &sDirOfExecutable )
 	CString Dir = join( "/", parts.begin(), parts.end()-1 );
 	FILEMAN->Mount( "dir", Dir, "/" );
 
-	CString sMyDocumentsDir;
-	{
-		bool bSuccess = RegistryAccess::GetRegValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders", "Personal", sMyDocumentsDir );
-		ASSERT( bSuccess );
-		sMyDocumentsDir.Replace( '\\', '/' );
-		sMyDocumentsDir += "/";
-	}
-
-	CString sApplicationDataDir;
-	{
-		TCHAR szDir[MAX_PATH] = "";
-		BOOL bResult = SHGetSpecialFolderPath( NULL, szDir, CSIDL_APPDATA, FALSE );
-		ASSERT( bResult );
-		sApplicationDataDir = szDir;
-		sApplicationDataDir += "/";
-	}	
+	CString sMyDocumentsDir = GetMyDocumentsDir();
+	CString sApplicationDataDir = GetApplicationDataDir();
 
 	// Mount everything game-writable (not counting the editor) to the user's directory.
 	FILEMAN->Mount( "dir", sApplicationDataDir + PRODUCT_ID + "/Cache", "/Cache" );
