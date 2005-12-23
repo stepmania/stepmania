@@ -117,23 +117,20 @@ void ShowWarning( const char *file, int line, const char *message ); // don't pu
 #endif
 
 #if defined(__GNUC__)
-/*
- * Define a macro to tell the compiler that a function has printf() semantics, to
- * aid warning output.
- */
-# define PRINTF(a,b) __attribute__((format(__printf__,a,b)))
-# define CONST_FUNCTION __attribute__((const))
+/* Define a macro to tell the compiler that a function has printf() semantics, to aid warning output. */
+#define PRINTF(a,b) __attribute__((format(__printf__,a,b)))
+#define CONST_FUNCTION __attribute__((const))
 #else
-# define PRINTF(a,b)
-# define CONST_FUNCTION
+#define PRINTF(a,b)
+#define CONST_FUNCTION
 #endif
 
 #if !defined(ALIGN)
-# if defined(__GNUC__)
-#  define ALIGN(n) __attribute__((aligned(n)))
-# else
-#  define ALIGN(n)
-# endif
+#if defined(__GNUC__)
+#define ALIGN(n) __attribute__((aligned(n)))
+#else
+#define ALIGN(n)
+#endif
 #endif
 
 
