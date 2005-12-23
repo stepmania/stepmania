@@ -102,7 +102,7 @@ void DWILoader::DWIcharToNoteCol( char c, GameController i, int &col1Out, int &c
  * it's most likely a jump.  Search for a 0 before the next >: */
 bool DWILoader::Is192( const CString &sStepData, size_t pos )
 {
-	while( pos < (int) sStepData.size() )
+	while( pos < sStepData.size() )
 	{
 		if( sStepData[pos] == '>' )
 			return false;

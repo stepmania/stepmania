@@ -127,7 +127,7 @@ bool KSFLoader::LoadFromKSFFile( const CString &sPath, Steps &out, const Song &s
 		out.m_StepsType = STEPS_TYPE_PUMP_SINGLE;
 
 		/* Check for "halfdouble" before "double". */
-		if( sFName.find("halfdouble") != -1 || sFName.find("h_double") != string::npos )
+		if( sFName.find("halfdouble") != string::npos || sFName.find("h_double") != string::npos )
 			out.m_StepsType = STEPS_TYPE_PUMP_HALFDOUBLE;
 		else if( sFName.find("double") != string::npos )
 			out.m_StepsType = STEPS_TYPE_PUMP_DOUBLE;
