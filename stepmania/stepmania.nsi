@@ -318,7 +318,7 @@ Section "Main Section" SecMain
 !ifdef MAKE_OPEN_PROGRAM_FOLDER_SHORTCUT
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Open ${PRODUCT_NAME} Program Folder.lnk" "$WINDIR\explorer.exe" "$INSTDIR\"
 !endif
-	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Statistics.lnk" "$INSTDIR\Save\MachineProfile\Stats.xml"
+	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\View Statistics.lnk" "$INSTDIR\Program\tools.exe" "--machine-profile-stats"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Tools.lnk" "$INSTDIR\Program\tools.exe"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\${PRODUCT_NAME} Documentation.lnk" "$INSTDIR\README-FIRST.html"
 	CreateShortCut "$SMPROGRAMS\${PRODUCT_ID}\Uninstall ${PRODUCT_NAME_VER}.lnk" "$INSTDIR\uninstall.exe"
