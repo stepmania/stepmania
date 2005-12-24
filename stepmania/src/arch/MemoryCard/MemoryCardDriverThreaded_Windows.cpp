@@ -153,7 +153,7 @@ void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice )
 	/* Try to flush the device before returning.  This requires administrator priviliges. */
 	HANDLE hDevice = CreateFile( "\\\\.\\" + pDevice->sDevice, GENERIC_WRITE,
 		FILE_SHARE_READ | FILE_SHARE_WRITE,
-		NULL, OPEN_EXISTING, 0, NULL );
+		NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL );
 
 	if( hDevice == INVALID_HANDLE_VALUE )
 	{
