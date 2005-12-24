@@ -33,7 +33,7 @@ XNode* RadarValues::CreateNode() const
 	// TRICKY: Don't print a remainder for the integer values.
 	FOREACH_RadarCategory( rc )
 	{
-		if( rc >= RADAR_NUM_TAPS_AND_HOLDS )
+		if( rc >= RadarCategory_TapsAndHolds )
 		{
 			if( WRITE_SIMPLE_VALUES )
 				pNode->AppendChild( RadarCategoryToString(rc),	(int)m_Values.f[rc] );

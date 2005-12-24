@@ -580,17 +580,17 @@ void NoteDataUtil::CalculateRadarValues( const NoteData &in, float fSongSeconds,
 	{
 		switch( rc )
 		{
-		case RADAR_STREAM:				out[rc] = GetStreamRadarValue( in, fSongSeconds );	break;	
-		case RADAR_VOLTAGE:				out[rc] = GetVoltageRadarValue( in, fSongSeconds );	break;
-		case RADAR_AIR:					out[rc] = GetAirRadarValue( in, fSongSeconds );		break;
-		case RADAR_FREEZE:				out[rc] = GetFreezeRadarValue( in, fSongSeconds );	break;
-		case RADAR_CHAOS:				out[rc] = GetChaosRadarValue( in, fSongSeconds );	break;
-		case RADAR_NUM_TAPS_AND_HOLDS:	out[rc] = (float) in.GetNumRowsWithTapOrHoldHead();	break;
-		case RADAR_NUM_JUMPS:			out[rc] = (float) in.GetNumJumps();					break;
-		case RADAR_NUM_HOLDS:			out[rc] = (float) in.GetNumHoldNotes();				break;
-		case RADAR_NUM_MINES:			out[rc] = (float) in.GetNumMines();					break;
-		case RADAR_NUM_HANDS:			out[rc] = (float) in.GetNumHands();					break;
-		case RADAR_NUM_ROLLS:			out[rc] = (float) in.GetNumRolls();					break;
+		case RadarCategory_Stream:				out[rc] = GetStreamRadarValue( in, fSongSeconds );	break;	
+		case RadarCategory_Voltage:				out[rc] = GetVoltageRadarValue( in, fSongSeconds );	break;
+		case RadarCategory_Air:					out[rc] = GetAirRadarValue( in, fSongSeconds );		break;
+		case RadarCategory_Freeze:				out[rc] = GetFreezeRadarValue( in, fSongSeconds );	break;
+		case RadarCategory_Chaos:				out[rc] = GetChaosRadarValue( in, fSongSeconds );	break;
+		case RadarCategory_TapsAndHolds:	out[rc] = (float) in.GetNumRowsWithTapOrHoldHead();	break;
+		case RadarCategory_Jumps:			out[rc] = (float) in.GetNumJumps();					break;
+		case RadarCategory_Holds:			out[rc] = (float) in.GetNumHoldNotes();				break;
+		case RadarCategory_Mines:			out[rc] = (float) in.GetNumMines();					break;
+		case RadarCategory_Hands:			out[rc] = (float) in.GetNumHands();					break;
+		case RadarCategory_Rolls:			out[rc] = (float) in.GetNumRolls();					break;
 		default:	ASSERT(0);
 		}
 	}

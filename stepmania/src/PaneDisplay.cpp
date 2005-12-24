@@ -152,17 +152,17 @@ void PaneDisplay::SetContent( PaneContents c )
 		switch( c )
 		{
 		case COURSE_NUM_STEPS:
-		case SONG_NUM_STEPS:				val = rv[RADAR_NUM_TAPS_AND_HOLDS]; break;
+		case SONG_NUM_STEPS:				val = rv[RadarCategory_TapsAndHolds]; break;
 		case COURSE_JUMPS:
-		case SONG_JUMPS:					val = rv[RADAR_NUM_JUMPS]; break;
+		case SONG_JUMPS:					val = rv[RadarCategory_Jumps]; break;
 		case COURSE_HOLDS:
-		case SONG_HOLDS:					val = rv[RADAR_NUM_HOLDS]; break;
+		case SONG_HOLDS:					val = rv[RadarCategory_Holds]; break;
 		case COURSE_ROLLS:
-		case SONG_ROLLS:					val = rv[RADAR_NUM_ROLLS]; break;
+		case SONG_ROLLS:					val = rv[RadarCategory_Rolls]; break;
 		case COURSE_MINES:
-		case SONG_MINES:					val = rv[RADAR_NUM_MINES]; break;
+		case SONG_MINES:					val = rv[RadarCategory_Mines]; break;
 		case COURSE_HANDS:
-		case SONG_HANDS:					val = rv[RADAR_NUM_HANDS]; break;
+		case SONG_HANDS:					val = rv[RadarCategory_Hands]; break;
 		case SONG_PROFILE_HIGH_SCORE:
 			val = PROFILEMAN->GetProfile(m_PlayerNumber)->GetStepsHighScoreList(pSong,pSteps).GetTopScore().GetPercentDP();
 			break;

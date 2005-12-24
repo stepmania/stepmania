@@ -42,13 +42,13 @@ static StageStats AccumStageStats( const vector<StageStats>& vss )
 	if( uNumSongs == 0 )
 		return ssreturn;	// don't divide by 0 below
 
-	/* Scale radar percentages back down to roughly 0..1.  Don't scale RADAR_NUM_TAPS_AND_HOLDS
+	/* Scale radar percentages back down to roughly 0..1.  Don't scale RadarCategory_TapsAndHolds
 	 * and the rest, which are counters. */
 	// FIXME: Weight each song by the number of stages it took to account for 
 	// long, marathon.
 	FOREACH_EnabledPlayer( p )
 	{
-		for( int r = 0; r < RADAR_NUM_TAPS_AND_HOLDS; r++)
+		for( int r = 0; r < RadarCategory_TapsAndHolds; r++)
 		{
 			ssreturn.m_player[p].radarPossible[r] /= uNumSongs;
 			ssreturn.m_player[p].radarActual[r] /= uNumSongs;
@@ -56,7 +56,7 @@ static StageStats AccumStageStats( const vector<StageStats>& vss )
 	}
 	FOREACH_EnabledMultiPlayer( p )
 	{
-		for( int r = 0; r < RADAR_NUM_TAPS_AND_HOLDS; r++)
+		for( int r = 0; r < RadarCategory_TapsAndHolds; r++)
 		{
 			ssreturn.m_multiPlayer[p].radarPossible[r] /= uNumSongs;
 			ssreturn.m_multiPlayer[p].radarActual[r] /= uNumSongs;
@@ -151,12 +151,12 @@ void StatsManager::CommitStatsToProfiles()
 	//
 	FOREACH_HumanPlayer( pn )
 	{
-		int iNumTapsAndHolds	= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_TAPS_AND_HOLDS];
-		int iNumJumps			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_JUMPS];
-		int iNumHolds			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HOLDS];
-		int iNumRolls			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_ROLLS];
-		int iNumMines			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_MINES];
-		int iNumHands			= (int) m_CurStageStats.m_player[pn].radarActual[RADAR_NUM_HANDS];
+		int iNumTapsAndHolds	= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_TapsAndHolds];
+		int iNumJumps			= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Jumps];
+		int iNumHolds			= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Holds];
+		int iNumRolls			= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Rolls];
+		int iNumMines			= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Mines];
+		int iNumHands			= (int) m_CurStageStats.m_player[pn].radarActual[RadarCategory_Hands];
 		float fCaloriesBurned	= m_CurStageStats.m_player[pn].fCaloriesBurned;
 		PROFILEMAN->AddStepTotals( pn, iNumTapsAndHolds, iNumJumps, iNumHolds, iNumRolls, iNumMines, iNumHands, fCaloriesBurned );
 	}

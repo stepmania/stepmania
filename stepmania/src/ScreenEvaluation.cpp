@@ -540,7 +540,7 @@ void ScreenEvaluation::Init()
 
 			static const int indeces[NUM_StatLine] =
 			{
-				RADAR_NUM_JUMPS, RADAR_NUM_HOLDS, RADAR_NUM_MINES, RADAR_NUM_HANDS, RADAR_NUM_ROLLS
+				RadarCategory_Jumps, RadarCategory_Holds, RadarCategory_Mines, RadarCategory_Hands, RadarCategory_Rolls
 			};
 			const int ind = indeces[l];
 			const int iActual = (int) roundf(STATSMAN->m_CurStageStats.m_player[p].radarActual[ind]);

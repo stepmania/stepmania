@@ -575,17 +575,17 @@ bool PlayerOptions::IsEasierForSongAndSteps( Song* pSong, Steps* pSteps )
 {
 	if( m_fTimeSpacing && pSong->HasSignificantBpmChangesOrStops() )
 		return true;
-	if( m_bTransforms[TRANSFORM_NOHOLDS] && pSteps->GetRadarValues()[RADAR_NUM_HOLDS]>0 )
+	if( m_bTransforms[TRANSFORM_NOHOLDS] && pSteps->GetRadarValues()[RadarCategory_Holds]>0 )
 		return true;
-	if( m_bTransforms[TRANSFORM_NOROLLS] && pSteps->GetRadarValues()[RADAR_NUM_ROLLS]>0 )
+	if( m_bTransforms[TRANSFORM_NOROLLS] && pSteps->GetRadarValues()[RadarCategory_Rolls]>0 )
 		return true;
-	if( m_bTransforms[TRANSFORM_NOMINES] && pSteps->GetRadarValues()[RADAR_NUM_MINES]>0 )
+	if( m_bTransforms[TRANSFORM_NOMINES] && pSteps->GetRadarValues()[RadarCategory_Mines]>0 )
 		return true;
-	if( m_bTransforms[TRANSFORM_NOHANDS] && pSteps->GetRadarValues()[RADAR_NUM_HANDS]>0 )
+	if( m_bTransforms[TRANSFORM_NOHANDS] && pSteps->GetRadarValues()[RadarCategory_Hands]>0 )
 		return true;
-	if( m_bTransforms[TRANSFORM_NOQUADS] && pSteps->GetRadarValues()[RADAR_NUM_HANDS]>0 )
+	if( m_bTransforms[TRANSFORM_NOQUADS] && pSteps->GetRadarValues()[RadarCategory_Hands]>0 )
 		return true;
-	if( m_bTransforms[TRANSFORM_NOJUMPS] && pSteps->GetRadarValues()[RADAR_NUM_JUMPS]>0 )
+	if( m_bTransforms[TRANSFORM_NOJUMPS] && pSteps->GetRadarValues()[RadarCategory_Jumps]>0 )
 		return true;
 	if( m_bTransforms[TRANSFORM_NOSTRETCH] )
 		return true;

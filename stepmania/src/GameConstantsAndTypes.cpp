@@ -21,7 +21,7 @@ static const CString RadarCategoryNames[] = {
 	"Air",
 	"Freeze",
 	"Chaos",
-	"Taps",
+	"TapsAndHolds",
 	"Jumps",
 	"Holds",
 	"Mines",
@@ -37,8 +37,7 @@ static void LuaRadarCategory(lua_State* L)
 	FOREACH_RadarCategory( rc )
 	{
 		CString s = RadarCategoryToString( rc );
-		s.MakeUpper();
-		LUA->SetGlobal( "RADAR_CATEGORY_"+s, rc );
+		LUA->SetGlobal( "RadarCategory_"+s, rc );
 	}
 }
 REGISTER_WITH_LUA_FUNCTION( LuaRadarCategory );

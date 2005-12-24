@@ -444,9 +444,9 @@ int ScoreKeeperNormal::GetPossibleDancePoints( const RadarValues& radars )
 	/* Note that, if W1 timing is disabled or not active (not course mode),
 	 * W2 will be used instead. */
 
-	int NumTaps = int(radars[RADAR_NUM_TAPS_AND_HOLDS]);
-	int NumHolds = int(radars[RADAR_NUM_HOLDS]); 
-	int NumRolls = int(radars[RADAR_NUM_ROLLS]); 
+	int NumTaps = int(radars[RadarCategory_TapsAndHolds]);
+	int NumHolds = int(radars[RadarCategory_Holds]); 
+	int NumRolls = int(radars[RadarCategory_Rolls]); 
 	return 
 		NumTaps*TapNoteScoreToDancePoints(TNS_W1, false)+
 		NumHolds*HoldNoteScoreToDancePoints(HNS_Held, false) +
@@ -469,9 +469,9 @@ int ScoreKeeperNormal::GetPossibleGradePoints( const RadarValues& radars )
 	/* Note that, if W1 timing is disabled or not active (not course mode),
 	 * W2 will be used instead. */
 
-	int NumTaps = int(radars[RADAR_NUM_TAPS_AND_HOLDS]);
-	int NumHolds = int(radars[RADAR_NUM_HOLDS]); 
-	int NumRolls = int(radars[RADAR_NUM_ROLLS]); 
+	int NumTaps = int(radars[RadarCategory_TapsAndHolds]);
+	int NumHolds = int(radars[RadarCategory_Holds]); 
+	int NumRolls = int(radars[RadarCategory_Rolls]); 
 	return 
 		NumTaps*TapNoteScoreToGradePoints(TNS_W1, false)+
 		NumHolds*HoldNoteScoreToGradePoints(HNS_Held, false) +

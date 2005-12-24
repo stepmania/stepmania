@@ -119,8 +119,8 @@ float Steps::PredictMeter() const
 	pMeter += DifficultyCoeffs[this->GetDifficulty()];
 	
 	// Init non-radar values
-	const float SV = this->GetRadarValues()[RADAR_STREAM] * this->GetRadarValues()[RADAR_VOLTAGE];
-	const float ChaosSquare = this->GetRadarValues()[RADAR_CHAOS] * this->GetRadarValues()[RADAR_CHAOS];
+	const float SV = this->GetRadarValues()[RadarCategory_Stream] * this->GetRadarValues()[RadarCategory_Voltage];
+	const float ChaosSquare = this->GetRadarValues()[RadarCategory_Chaos] * this->GetRadarValues()[RadarCategory_Chaos];
 	pMeter += -6.35f * SV;
 	pMeter += -2.58f * ChaosSquare;
 	if (pMeter < 1) pMeter = 1;	

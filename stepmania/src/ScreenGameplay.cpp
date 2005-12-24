@@ -2239,8 +2239,8 @@ void ScreenGameplay::SongFinished()
 	// save any statistics
     FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
-		/* Note that adding stats is only meaningful for the counters (eg. RADAR_NUM_JUMPS),
-		 * not for the percentages (RADAR_AIR). */
+		/* Note that adding stats is only meaningful for the counters (eg. RadarCategory_Jumps),
+		 * not for the percentages (RadarCategory_Air). */
 		RadarValues v;
 		
 		NoteDataUtil::CalculateRadarValues( pi->m_pPlayer->m_NoteData, GAMESTATE->m_pCurSong->m_fMusicLengthSeconds, v );

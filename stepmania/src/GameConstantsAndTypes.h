@@ -18,17 +18,17 @@ const int MIN_METER = 1;
  * in the radar. */
 enum RadarCategory
 {
-	RADAR_STREAM = 0,
-	RADAR_VOLTAGE,
-	RADAR_AIR,
-	RADAR_FREEZE,
-	RADAR_CHAOS,
-	RADAR_NUM_TAPS_AND_HOLDS,
-	RADAR_NUM_JUMPS,
-	RADAR_NUM_HOLDS,
-	RADAR_NUM_MINES,
-	RADAR_NUM_HANDS,
-	RADAR_NUM_ROLLS,
+	RadarCategory_Stream = 0,
+	RadarCategory_Voltage,
+	RadarCategory_Air,
+	RadarCategory_Freeze,
+	RadarCategory_Chaos,
+	RadarCategory_TapsAndHolds,
+	RadarCategory_Jumps,
+	RadarCategory_Holds,
+	RadarCategory_Mines,
+	RadarCategory_Hands,
+	RadarCategory_Rolls,
 	NUM_RADAR_CATEGORIES	// leave this at the end
 };
 #define FOREACH_RadarCategory( rc ) FOREACH_ENUM( RadarCategory, NUM_RADAR_CATEGORIES, rc )
