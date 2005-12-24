@@ -20,17 +20,19 @@ static bool TestReady( const CString &sDrive, CString &sVolumeLabelOut )
 	DWORD lpFileSystemFlags;
 	TCHAR szFileSystemNameBuffer[MAX_PATH];
 
-	bool bRet = !!GetVolumeInformation( 
-		sDrive,
+	if( !GetVolumeInformation( 
+		"j:",
 		szVolumeNameBuffer,
 		sizeof(szVolumeNameBuffer),
 		&dwVolumeSerialNumber,
 		&dwMaximumComponentLength,
 		&lpFileSystemFlags,
 		szFileSystemNameBuffer,
-		sizeof(szFileSystemNameBuffer) );
+		sizeof(szFileSystemNameBuffer)) )
+		return false;
+
 	sVolumeLabelOut = szVolumeNameBuffer;
-	return bRet;
+	return true;
 }
 
 bool MemoryCardDriverThreaded_Windows::TestWrite( UsbStorageDevice* pDevice )
