@@ -28,6 +28,8 @@ static bool g_bD3D = false;
 static DEVMODE g_FullScreenDevMode;
 static bool g_bRecreatingVideoMode = false;
 
+static UINT g_iQueryCancelAutoPlayMessage = 0;
+
 static CString GetNewWindow()
 {
 	HWND h = GetForegroundWindow();
@@ -47,6 +49,10 @@ static CString GetNewWindow()
 
 LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
+	/* Suppress autorun. */
+	if( msg == g_iQueryCancelAutoPlayMessage )
+		return true;
+
 	switch( msg )
 	{
 	case WM_ACTIVATE:
@@ -410,6 +416,8 @@ void GraphicsWindow::Initialize( bool bD3D )
 		if( !RegisterClassA( &WindowClassA ) )
 			RageException::Throw( "%s", werr_ssprintf( GetLastError(), "RegisterClass" ).c_str() );
 	} while(0);
+
+	g_iQueryCancelAutoPlayMessage = RegisterWindowMessage( "QueryCancelAutoPlay" );
 }
 
 void GraphicsWindow::Shutdown()
