@@ -9,6 +9,7 @@ public:
 	void Error( CString sError, CString sID );
 	void OK( CString sMessage, CString sID );
 	Dialog::Result AbortRetryIgnore( CString sMessage, CString sID );
+	Dialog::Result AbortRetry( CString sMessage, CString sID );
 };
 #define USE_DIALOG_DRIVER_COCOA
     

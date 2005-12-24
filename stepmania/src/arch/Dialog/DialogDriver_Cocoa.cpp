@@ -1,60 +1,69 @@
 #include "global.h"
+#include "RageUtil.h"
 #include "DialogDriver_Cocoa.h"
 #include "RageThreads.h"
 #include "ProductInfo.h"
 #include <Carbon/Carbon.h>
 
-static CFOptionFlags ShowAlert( CFOptionFlags flags, CFStringRef message,
-								CFStringRef OK, CFStringRef cancel = NULL )
+static CFOptionFlags ShowAlert( CFOptionFlags flags, const CString& sMessage, CFStringRef OK,
+								CFStringRef alt = NULL, CFStringRef other = NULL)
 {
 	CFOptionFlags result;
+	CFStringRef text = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingUTF8 );
 	
 	CFUserNotificationDisplayAlert( 0.0, flags, NULL, NULL, NULL, CFSTR(PRODUCT_NAME),
-									message, OK, cancel, NULL, &result );
+									text, OK, alt, other, &result );
+	CFRelease( text );
 	return result;
 }
 
 void DialogDriver_Cocoa::OK( CString sMessage, CString sID )
 {
-	CFStringRef message = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingASCII );
-	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, message,
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage,
 									  CFSTR("OK"), CFSTR("Don't show again") );
 
-	CFRelease( message );
 	if( result == kCFUserNotificationAlternateResponse )
 		Dialog::IgnoreMessage( sID );
 }
 
 void DialogDriver_Cocoa::Error( CString sError, CString sID )
 {
-	CFStringRef error = CFStringCreateWithCString( NULL, sError, kCFStringEncodingASCII );
-	ShowAlert( kCFUserNotificationStopAlertLevel, error, CFSTR("OK") );
-
-	CFRelease( error );
+	ShowAlert( kCFUserNotificationStopAlertLevel, sError, CFSTR("OK") );
 }
 
 Dialog::Result DialogDriver_Cocoa::AbortRetryIgnore( CString sMessage, CString sID )
 {
-	CFStringRef error = CFStringCreateWithCString( NULL, sMessage, kCFStringEncodingASCII );
-	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, error, CFSTR("Retry"), CFSTR("Ignore") );
-	Dialog::Result ret;
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage, CFSTR("Ignore"),
+									  CFSTR("Retry"), CFSTR("Abort") );
 
-	CFRelease( error );
 	switch( result )
 	{
 	case kCFUserNotificationDefaultResponse:
-		ret = Dialog::retry;
-		break;
+		Dialog::IgnoreMessage( sID );
+		return Dialog::ignore;
 	case kCFUserNotificationAlternateResponse:
-	case kCFUserNotificationCancelResponse:
-		ret = Dialog::ignore;
-		break;
+		return Dialog::retry;
+	case kCFUserNotificationOtherResponse:
+		return Dialog::abort;
 	default:
-		ASSERT(0);
-		ret = Dialog::ignore;
+		FAIL_M( ssprintf("Invalid response: %d.", int(result)) );
 	}
-    
-    return ret;
+}
+
+Dialog::Result DialogDriver_Cocoa::AbortRetry( CString sMessage, CString sID )
+{
+	CFOptionFlags result = ShowAlert( kCFUserNotificationNoteAlertLevel, sMessage,
+									  CFSTR("Abort"), CFSTR("Retry") );
+	
+	switch( result )
+	{
+	case kCFUserNotificationDefaultResponse:
+		return Dialog::abort;
+	case kCFUserNotificationAlternateResponse:
+		return Dialog::retry;
+	default:
+		FAIL_M( ssprintf("Invalid response: %d.", int(result)) );
+	}
 }
 
 /*
