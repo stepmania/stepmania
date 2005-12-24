@@ -47,10 +47,10 @@ bool MemoryCardDriverThreaded_Windows::TestWrite( UsbStorageDevice* pDevice )
 		if( hFile == INVALID_HANDLE_VALUE )
 		{
 			DWORD iError = GetLastError();
-			if( iError == ERROR_ALREADY_EXISTS )
-				continue;
-
 			LOG->Warn( werr_ssprintf(iError, "Couldn't write to %s", pDevice->sOsMountDir.c_str()) );
+
+			if( iError == ERROR_FILE_EXISTS )
+				continue;
 			break;
 		}
 
