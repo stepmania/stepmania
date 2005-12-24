@@ -21,7 +21,7 @@ static bool TestReady( const CString &sDrive, CString &sVolumeLabelOut )
 	TCHAR szFileSystemNameBuffer[MAX_PATH];
 
 	if( !GetVolumeInformation( 
-		"j:",
+		sDrive,
 		szVolumeNameBuffer,
 		sizeof(szVolumeNameBuffer),
 		&dwVolumeSerialNumber,
