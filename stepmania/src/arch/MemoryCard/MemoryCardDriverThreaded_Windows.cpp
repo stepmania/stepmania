@@ -49,11 +49,11 @@ bool MemoryCardDriverThreaded_Windows::TestWrite( UsbStorageDevice* pDevice )
 	return true;
 }
 
-static bool IsFloppyDrive( char c )
+static bool IsFloppyDrive( const CString &sDrive )
 {
 	char szBuf[1024];
 
-	QueryDosDevice( ssprintf("%c:", c), szBuf, 1024 );
+	QueryDosDevice( sDrive, szBuf, 1024 );
 
 	char *p = szBuf;
 	while( *p )
@@ -77,10 +77,11 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		DWORD mask = (1 << i);
 		if( !(m_dwLastLogicalDrives & mask) )
 			continue; // drive letter is invalid
-		if( IsFloppyDrive((char)i+'a') )
-			continue;
 
 		CString sDrive = ssprintf( "%c:", 'a'+i%26 );
+		if( IsFloppyDrive(sDrive) )
+			continue;
+
 		if( GetDriveType(sDrive + "\\") != DRIVE_REMOVABLE )	// is a removable drive
 			continue;
 
