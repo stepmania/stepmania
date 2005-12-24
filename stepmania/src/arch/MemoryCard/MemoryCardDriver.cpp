@@ -1,7 +1,5 @@
 #include "global.h"
 #include "MemoryCardDriver.h"
-#include "PrefsManager.h"
-#include "MemoryCardDriver_Null.h"
 #include "RageFileManager.h"
 #include "RageLog.h"
 #include "Foreach.h"
@@ -9,7 +7,7 @@
 
 #include "Selector_MemoryCardDriver.h"
 
-const CString TEMP_MOUNT_POINT = "/@mctemptimeout/";
+static const CString TEMP_MOUNT_POINT = "/@mctemptimeout/";
 
 bool UsbStorageDevice::operator==(const UsbStorageDevice& other) const
 {
