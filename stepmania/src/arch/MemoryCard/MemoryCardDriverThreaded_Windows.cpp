@@ -53,9 +53,18 @@ static bool IsFloppyDrive( const CString &sDrive )
 {
 	char szBuf[1024];
 
-	QueryDosDevice( sDrive, szBuf, 1024 );
+	int iRet = QueryDosDevice( sDrive, szBuf, 1024 );
+	if( iRet == 0 )
+	{
+		LOG->Warn( werr_ssprintf(GetLastError(), "QueryDosDevice(%s)", sDrive.c_str()) );
+		return false;
+	}
 
-	char *p = szBuf;
+	// Make sure szBuf is terminated with two nulls.  This only may be needed if the buffer filled.
+	szBuf[iRet-2] = 0;
+	szBuf[iRet-1] = 0;
+
+	const char *p = szBuf;
 	while( *p )
 	{
 		if( BeginsWith(p, "\\Device\\Floppy") )
