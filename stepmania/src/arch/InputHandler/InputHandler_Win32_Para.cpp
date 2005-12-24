@@ -1,7 +1,6 @@
 #include "global.h"
 #include "InputHandler_Win32_Para.h"
 
-#include "PrefsManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageInputDevice.h"
