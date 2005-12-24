@@ -80,17 +80,17 @@ void MemoryCardDriverThreaded_Windows::GetUSBStorageDevices( vector<UsbStorageDe
 		if( IsFloppyDrive((char)i+'a') )
 			continue;
 
-		CString sDrive = ssprintf( "%c:\\", 'a'+i%26 );
-		if( GetDriveType(sDrive) != DRIVE_REMOVABLE )	// is a removable drive
+		CString sDrive = ssprintf( "%c:", 'a'+i%26 );
+		if( GetDriveType(sDrive + "\\") != DRIVE_REMOVABLE )	// is a removable drive
 			continue;
 
 		CString sVolumeLabel;
-		if( !TestReady(sDrive, sVolumeLabel) )
+		if( !TestReady(sDrive + "\\", sVolumeLabel) )
 			continue;
 
 		vDevicesOut.push_back( UsbStorageDevice() );
 		UsbStorageDevice &usbd = vDevicesOut.back();
-		usbd.SetOsMountDir( sDrive );
+		usbd.SetOsMountDir( sDrive + "\\" );
 		usbd.sDevice = sDrive;
 		usbd.sVolumeLabel = sVolumeLabel;
 
@@ -127,7 +127,20 @@ bool MemoryCardDriverThreaded_Windows::Mount( UsbStorageDevice* pDevice )
 
 void MemoryCardDriverThreaded_Windows::Unmount( UsbStorageDevice* pDevice )
 {
-	// nothing to do here...
+	/* Try to flush the device before returning.  This requires administrator priviliges. */
+	HANDLE hDevice = CreateFile( "\\\\.\\" + pDevice->sDevice, GENERIC_WRITE,
+		FILE_SHARE_READ | FILE_SHARE_WRITE,
+		NULL, OPEN_EXISTING, 0, NULL );
+
+	if( hDevice == INVALID_HANDLE_VALUE )
+	{
+		LOG->Warn( werr_ssprintf(GetLastError(), "Couldn't open memory card device to flush: CreateFile") );
+		return;
+	}
+
+	if( !FlushFileBuffers(hDevice) )
+		LOG->Warn( werr_ssprintf(GetLastError(), "Couldn't flush memory card device: FlushFileBuffers") );
+	CloseHandle( hDevice );
 }
 
 /*
