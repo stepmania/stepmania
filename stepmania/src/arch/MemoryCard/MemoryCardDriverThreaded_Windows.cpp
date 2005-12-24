@@ -35,18 +35,31 @@ static bool TestReady( const CString &sDrive, CString &sVolumeLabelOut )
 
 bool MemoryCardDriverThreaded_Windows::TestWrite( UsbStorageDevice* pDevice )
 {
-	// Try to write a file.
-	CString sFile = pDevice->sOsMountDir + "temp";
-	FILE* fp = fopen( sFile, "w" );
-	if( fp == NULL )
+	/* Try to write a file, to check if the device is writable and that we have write permission.
+	 * Use FILE_ATTRIBUTE_TEMPORARY to try to avoid actually writing to the device.  This reduces
+	 * the chance of corruption if the user removes the device immediately, without doing anything. */
+	for( int i = 0; i < 10; ++i )
 	{
-		pDevice->SetError( "TestFailed" );
-		return false;
-	}
-	fclose( fp );
-	remove( sFile );
+		HANDLE hFile = CreateFile( ssprintf( "%stmp%i", pDevice->sOsMountDir.c_str(), rand() % 100000),
+			GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+			NULL, CREATE_NEW, FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, NULL );
 
-	return true;
+		if( hFile == INVALID_HANDLE_VALUE )
+		{
+			DWORD iError = GetLastError();
+			if( iError == ERROR_ALREADY_EXISTS )
+				continue;
+
+			LOG->Warn( werr_ssprintf(iError, "Couldn't write to %s", pDevice->sOsMountDir.c_str()) );
+			break;
+		}
+
+		CloseHandle( hFile );
+		return true;
+	}
+
+	pDevice->SetError( "TestFailed" );
+	return false;
 }
 
 static bool IsFloppyDrive( const CString &sDrive )
