@@ -919,7 +919,7 @@ static void ApplyLogPreferences()
 static CString LocalizeString( const CString &sSection, const CString &s )
 {
 	CString sOut;
-	THEME->GetMetric( sSection, s, sOut );
+	THEME->GetString( sSection, s, sOut );
 	return sOut;
 }
 

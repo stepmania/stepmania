@@ -81,6 +81,8 @@ public:
 	void	GetMetric( const CString &sClassName, const CString &sValueName, LuaExpression &valueOut );
 	void	GetMetric( const CString &sClassName, const CString &sValueName, apActorCommands &valueOut );
 
+	void	GetString( const CString &sClassName, const CString &sValueName, CString &valueOut );
+
 	void GetMetricsThatBeginWith( const CString &sClassName, const CString &sValueName, set<CString> &vsValueNamesOut );
 
 	static CString GetBlankGraphicPath();
