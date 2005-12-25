@@ -899,10 +899,10 @@ void ThemeManager::GetMetric( const CString &sClassName, const CString &sValueNa
 	valueOut.SetFromExpression( "function(self) " + sValue + "end" );
 }
 
-void ThemeManager::GetString( const CString &sClassName, const CString &sValueName, CString &valueOut )
+CString ThemeManager::GetString( const CString &sClassName, const CString &sValueName )
 {
 	// TODO: Change this to GetMetricRaw and write stubs for missing strings into every language file.
-	valueOut = GetMetric( sClassName, sValueName );
+	return GetMetric( sClassName, sValueName );
 }
 
 void ThemeManager::GetMetricsThatBeginWith( const CString &sClassName_, const CString &sValueName, set<CString> &vsValueNamesOut )
@@ -948,7 +948,7 @@ public:
 	LunaThemeManager() { LUA->Register( Register ); }
 
 	static int GetMetric( T* p, lua_State *L )			{ lua_pushstring(L, p->GetMetric(SArg(1),SArg(2)) ); return 1; }
-	static int GetString( T* p, lua_State *L )			{ CString s; p->GetString(SArg(1),SArg(2),s); lua_pushstring(L,s); return 1; }
+	static int GetString( T* p, lua_State *L )			{ lua_pushstring(L, p->GetString(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathG( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathG(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }

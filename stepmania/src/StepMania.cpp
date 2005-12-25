@@ -918,9 +918,7 @@ static void ApplyLogPreferences()
 
 static CString LocalizeString( const CString &sSection, const CString &s )
 {
-	CString sOut;
-	THEME->GetString( sSection, s, sOut );
-	return sOut;
+	return THEME->GetString( sSection, s );
 }
 
 static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "StepMania", "Couldn't open any loading windows." );
