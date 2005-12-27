@@ -17,6 +17,7 @@ enum PlayerNumber
 	PLAYER_INVALID
 };
 const CString& PlayerNumberToString( PlayerNumber pn );
+const CString& PlayerNumberToThemedString( PlayerNumber pn );
 
 #define FOREACH_PlayerNumber( pn ) FOREACH_ENUM( PlayerNumber, NUM_PLAYERS, pn )
 #define FOREACH_HumanPlayer( pn ) for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID; pn=GetNextHumanPlayer(pn) )
@@ -46,6 +47,7 @@ enum MultiPlayer
 	MultiPlayer_INVALID
 };
 const CString& MultiPlayerToString( MultiPlayer mp );
+const CString& MultiPlayerToThemedString( MultiPlayer mp );
 
 #define FOREACH_MultiPlayer( pn ) FOREACH_ENUM( MultiPlayer, NUM_MultiPlayer, pn )
 

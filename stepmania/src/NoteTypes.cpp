@@ -28,7 +28,7 @@ static const CString NoteTypeNames[] = {
 };
 XToString( NoteType, NUM_NOTE_TYPES );
 LuaXToString( NoteType )
-LuaXType( NoteType, NUM_NOTE_TYPES , "NOTE_TYPE_" )
+LuaXType( NoteType, NUM_NOTE_TYPES , "NOTE_TYPE_", true )
 
 float NoteTypeToBeat( NoteType nt )
 {

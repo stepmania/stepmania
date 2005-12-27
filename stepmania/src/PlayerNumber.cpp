@@ -2,12 +2,22 @@
 #include "PlayerNumber.h"
 #include "GameState.h"
 #include "LuaManager.h"
+#include "ThemeMetric.h"
 
 static const CString PlayerNumberNames[] = {
 	"P1",
 	"P2",
 };
 XToString( PlayerNumber, NUM_PLAYERS );
+XToThemedString( PlayerNumber, NUM_PLAYERS );
+
+void LuaPlayerNumber(lua_State* L)
+{
+	FOREACH_PlayerNumber( pn )
+		LUA->SetGlobal( ssprintf("PLAYER_%d",pn+1), pn );
+	LUA->SetGlobal( "NUM_PLAYERS", NUM_PLAYERS );
+}
+REGISTER_WITH_LUA_FUNCTION( LuaPlayerNumber );
 
 
 static const CString MultiPlayerNames[] = {
@@ -21,6 +31,7 @@ static const CString MultiPlayerNames[] = {
 	"P8",
 };
 XToString( MultiPlayer, NUM_MultiPlayer );
+XToThemedString( MultiPlayer, NUM_MultiPlayer );
 
 
 PlayerNumber GetNextHumanPlayer( PlayerNumber pn )
@@ -72,16 +83,6 @@ MultiPlayer GetNextEnabledMultiPlayer( MultiPlayer mp )
 	}
 	return MultiPlayer_INVALID;
 }
-
-
-void LuaPlayerNumber(lua_State* L)
-{
-	FOREACH_PlayerNumber( pn )
-		LUA->SetGlobal( ssprintf("PLAYER_%d",pn+1), pn );
-	LUA->SetGlobal( "NUM_PLAYERS", NUM_PLAYERS );
-}
-REGISTER_WITH_LUA_FUNCTION( LuaPlayerNumber );
-
 
 /*
  * (c) 2001-2004 Chris Danford, Chris Gomez

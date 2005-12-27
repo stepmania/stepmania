@@ -79,7 +79,7 @@ LuaFunction( X##ToString, X##ToString( (X) IArg(1) ) );
 #define LuaStringToX(X)	\
 LuaFunction( StringTo##X, (X) StringTo##X( SArg(1) ) );
 
-#define LuaXType(X, CNT, Prefix)	\
+#define LuaXType(X, CNT, Prefix, bCapitalize)	\
 static void Lua##X(lua_State* L) \
 { \
 	FOREACH_ENUM( X, CNT, i ) \
@@ -89,7 +89,8 @@ static void Lua##X(lua_State* L) \
 		LUA->SetGlobal( Prefix+s, i ); \
 	} \
 	CString sType = "NUM" #X "S" ; \
-	sType.MakeUpper(); \
+	if( bCapitalize ) \
+		sType.MakeUpper(); \
 	LUA->SetGlobal( sType, CNT ); \
 	LUA->SetGlobal( Prefix "INVALID", CNT+1 ); \
 } \
