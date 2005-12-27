@@ -6,15 +6,17 @@
 #include "ThemeManager.h"
 #include "ThemeMetric.h"
 
-#define SCREEN_WIDTH ScreenWidth()
-#define SCREEN_HEIGHT ScreenHeight()
-float ScreenAspectRatio();
-float ThemeAspectRatio();
-float ScreenWidth();
-float ScreenHeight();
+namespace ScreenDimensions
+{
+	float GetScreenAspectRatio();
+	float GetThemeAspectRatio();
+	float GetScreenWidth();
+	float GetScreenHeight();
+	void ReloadMetricsAndUpdateLua();
+};
 
-extern ThemeMetric<float> THEME_SCREEN_WIDTH;
-extern ThemeMetric<float> THEME_SCREEN_HEIGHT;
+#define SCREEN_WIDTH	ScreenDimensions::GetScreenWidth()
+#define SCREEN_HEIGHT	ScreenDimensions::GetScreenHeight()
 
 #define		SCREEN_LEFT		(0)
 #define		SCREEN_RIGHT	(SCREEN_WIDTH)

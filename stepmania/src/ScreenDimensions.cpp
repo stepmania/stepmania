@@ -1,9 +1,10 @@
 #include "global.h"
 #include "ScreenDimensions.h"
 #include "PrefsManager.h"
+#include "LuaManager.h"
 
-ThemeMetric<float> THEME_SCREEN_WIDTH("Common","ScreenWidth");
-ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
+static ThemeMetric<float> THEME_SCREEN_WIDTH("Common","ScreenWidth");
+static ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
 
 //
 // The theme's logical resolution specifies the minimum screen width
@@ -21,7 +22,7 @@ ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
  */
 #define THEME_NATIVE_ASPECT (THEME_SCREEN_WIDTH/THEME_SCREEN_HEIGHT)
 
-float ScreenAspectRatio()
+float ScreenDimensions::GetScreenAspectRatio()
 {
 	float fAspect = PREFSMAN->m_fDisplayAspectRatio;
 	if( fAspect == ASPECT_AUTO )
@@ -37,14 +38,14 @@ float ScreenAspectRatio()
 	return fAspect;
 }
 
-float ThemeAspectRatio()
+float ScreenDimensions::GetThemeAspectRatio()
 {
 	return THEME_NATIVE_ASPECT;
 }
 
-float ScreenWidth()
+float ScreenDimensions::GetScreenWidth()
 {
-	float fAspect = ScreenAspectRatio();
+	float fAspect = GetScreenAspectRatio();
 	float fScale = 1;
 	if( fAspect > THEME_NATIVE_ASPECT )
 		fScale = fAspect / THEME_NATIVE_ASPECT;
@@ -52,9 +53,9 @@ float ScreenWidth()
 	return THEME_SCREEN_WIDTH * fScale;
 }
 
-float ScreenHeight()
+float ScreenDimensions::GetScreenHeight()
 {
-	float fAspect = ScreenAspectRatio();
+	float fAspect = GetScreenAspectRatio();
 	float fScale = 1;
 	if( fAspect < THEME_NATIVE_ASPECT )
 		fScale = THEME_NATIVE_ASPECT / fAspect;
@@ -62,6 +63,21 @@ float ScreenHeight()
 	return THEME_SCREEN_HEIGHT * fScale;
 }
 
+void ScreenDimensions::ReloadMetricsAndUpdateLua()
+{
+	/* Important: explicitly refresh cached metrics that we use. */
+	THEME_SCREEN_WIDTH.Read();
+	THEME_SCREEN_HEIGHT.Read();
+
+	LUA->SetGlobal( "SCREEN_WIDTH", (int) SCREEN_WIDTH );
+	LUA->SetGlobal( "SCREEN_HEIGHT", (int) SCREEN_HEIGHT );
+	LUA->SetGlobal( "SCREEN_LEFT", (int) SCREEN_LEFT );
+	LUA->SetGlobal( "SCREEN_RIGHT", (int) SCREEN_RIGHT );
+	LUA->SetGlobal( "SCREEN_TOP", (int) SCREEN_TOP );
+	LUA->SetGlobal( "SCREEN_BOTTOM", (int) SCREEN_BOTTOM );
+	LUA->SetGlobal( "SCREEN_CENTER_X", (int) SCREEN_CENTER_X );
+	LUA->SetGlobal( "SCREEN_CENTER_Y", (int) SCREEN_CENTER_Y );
+}
 
 /*
  * (c) 2001-2002 Chris Danford

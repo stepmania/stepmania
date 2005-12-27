@@ -349,17 +349,7 @@ void ThemeManager::UpdateLuaGlobals()
 	LUA->ResetState();
 
 	/* Important: explicitly refresh cached metrics that we use. */
-	THEME_SCREEN_WIDTH.Read();
-	THEME_SCREEN_HEIGHT.Read();
-
-	LUA->SetGlobal( "SCREEN_WIDTH", (int) SCREEN_WIDTH );
-	LUA->SetGlobal( "SCREEN_HEIGHT", (int) SCREEN_HEIGHT );
-	LUA->SetGlobal( "SCREEN_LEFT", (int) SCREEN_LEFT );
-	LUA->SetGlobal( "SCREEN_RIGHT", (int) SCREEN_RIGHT );
-	LUA->SetGlobal( "SCREEN_TOP", (int) SCREEN_TOP );
-	LUA->SetGlobal( "SCREEN_BOTTOM", (int) SCREEN_BOTTOM );
-	LUA->SetGlobal( "SCREEN_CENTER_X", (int) SCREEN_CENTER_X );
-	LUA->SetGlobal( "SCREEN_CENTER_Y", (int) SCREEN_CENTER_Y );
+	ScreenDimensions::ReloadMetricsAndUpdateLua();
 
 	RunLuaScripts( "*.lua" );
 }
@@ -952,8 +942,8 @@ public:
 	static int GetPathG( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathG(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
-	static int GetScreenAspectRatio( T* p, lua_State *L ) { lua_pushnumber( L, ScreenAspectRatio() ); return 1; }
-	static int GetThemeAspectRatio( T* p, lua_State *L ) { lua_pushnumber( L, ThemeAspectRatio() ); return 1; }
+	static int GetScreenAspectRatio( T* p, lua_State *L ) { lua_pushnumber( L, ScreenDimensions::GetScreenAspectRatio() ); return 1; }
+	static int GetThemeAspectRatio( T* p, lua_State *L ) { lua_pushnumber( L, ScreenDimensions::GetThemeAspectRatio() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
