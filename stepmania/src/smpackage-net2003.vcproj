@@ -23,7 +23,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;"
+				AdditionalIncludeDirectories=".;lua-5.0\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;DEBUG;_WINDOWS;WINDOWS;SMPACKAGE"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -250,10 +250,10 @@
 				RelativePath="menu.bmp">
 			</File>
 			<File
-				RelativePath="smpackage.ICO">
+				RelativePath="res\smpackage.ico">
 			</File>
 			<File
-				RelativePath="res\smpackage.ico">
+				RelativePath="smpackage.ICO">
 			</File>
 			<File
 				RelativePath=".\smpackage\smpackage.rc">
@@ -476,6 +476,34 @@
 			</File>
 			<File
 				RelativePath=".\DateTime.h">
+			</File>
+			<File
+				RelativePath=".\LocalizedString.cpp">
+			</File>
+			<File
+				RelativePath=".\LocalizedString.h">
+			</File>
+			<File
+				RelativePath=".\LuaReference.cpp">
+			</File>
+			<File
+				RelativePath=".\LuaReference.h">
+			</File>
+		</Filter>
+		<Filter
+			Name="Global Singletons"
+			Filter="">
+			<File
+				RelativePath=".\LuaManager.cpp">
+			</File>
+			<File
+				RelativePath=".\LuaManager.h">
+			</File>
+			<File
+				RelativePath=".\ThemeManager.cpp">
+			</File>
+			<File
+				RelativePath=".\ThemeManager.h">
 			</File>
 		</Filter>
 		<File
