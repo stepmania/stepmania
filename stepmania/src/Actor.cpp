@@ -280,7 +280,7 @@ bool Actor::IsType( const CString &sType )
 {
 	Lua *L = LUA->Get();
 	this->PushSelf( L );
-	bool bRet = CheckLuaObjectType( L, lua_gettop(L), sType, false );
+	bool bRet = LuaBinding::CheckLuaObjectType( L, lua_gettop(L), sType, false );
 	lua_pop( L, 1 );
 	LUA->Release( L );
 

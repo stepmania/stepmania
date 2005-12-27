@@ -8,7 +8,7 @@
 // types (eg. "Actor.x(GAMESTATE, 10)"), which will crash or cause corruption.
 // #define FAST_LUA
 
-void CreateMethodsTable( lua_State *L, const CString &sName )
+void LuaBinding::CreateMethodsTable( lua_State *L, const CString &sName )
 {
 	lua_pushlstring( L, sName.data(), sName.size() );
 	lua_rawget( L, LUA_GLOBALSINDEX );
@@ -26,7 +26,7 @@ void CreateMethodsTable( lua_State *L, const CString &sName )
  * Get a userdata, and check that it's either szType or a type
  * derived from szType, by walking the __index chain.
  */
-bool CheckLuaObjectType( lua_State *L, int narg, const char *szType, bool bOptional )
+bool LuaBinding::CheckLuaObjectType( lua_State *L, int narg, const char *szType, bool bOptional )
 {
 #if defined(FAST_LUA)
 	if( bOptional )
@@ -77,7 +77,7 @@ bool CheckLuaObjectType( lua_State *L, int narg, const char *szType, bool bOptio
 	}
 }
 
-bool GetGlobalTable( Lua *L, bool bCreate )
+static bool GetGlobalTable( Lua *L, bool bCreate )
 {
 	lua_pushstring( L, "userdatas" );
 	lua_rawget( L, LUA_REGISTRYINDEX );
@@ -99,7 +99,7 @@ bool GetGlobalTable( Lua *L, bool bCreate )
 /* The object is on the stack.  It's either a table or a userdata.
  * If needed, associate the metatable; if a table, also add it to
  * the userdata table. */
-void ApplyDerivedType( Lua *L, const CString &sClassName, void *pSelf )
+void LuaBinding::ApplyDerivedType( Lua *L, const CString &sClassName, void *pSelf )
 {
 	int iTable = lua_gettop( L );
 
@@ -147,7 +147,7 @@ LuaClass::LuaClass()
 	m_pSelf = NULL;
 }
 
-void *GetUserdataFromGlobalTable( Lua *L, const char *szType, int iArg )
+void *LuaBinding::GetUserdataFromGlobalTable( Lua *L, const char *szType, int iArg )
 {
 	if( !GetGlobalTable(L, false) )
 		luaL_error( L, "stale %s referenced (object used but no longer exists)", szType );
@@ -256,7 +256,7 @@ void LuaClass::Register()
 	{
 		Lua *L = LUA->Get();
 		this->PushSelf(L);
-		ApplyDerivedType( L, m_sClassName, m_pSelf );
+		LuaBinding::ApplyDerivedType( L, m_sClassName, m_pSelf );
 		LUA->Release( L );
 
 		/* To conserve memory, clear the class name.  We only need it while restoring. */

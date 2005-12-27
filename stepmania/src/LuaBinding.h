@@ -6,10 +6,13 @@
 #include "LuaManager.h"
 class LuaReference;
 
-void CreateMethodsTable( lua_State *L, const CString &szName );
-bool CheckLuaObjectType( lua_State *L, int narg, const char *szType, bool bOptional=false );
-void *GetUserdataFromGlobalTable( Lua *L, const char *szType, int iArg );
-void ApplyDerivedType( Lua *L, const CString &sClassname, void *pSelf );
+namespace LuaBinding
+{
+	void CreateMethodsTable( lua_State *L, const CString &szName );
+	bool CheckLuaObjectType( lua_State *L, int narg, const char *szType, bool bOptional=false );
+	void *GetUserdataFromGlobalTable( Lua *L, const char *szType, int iArg );
+	void ApplyDerivedType( Lua *L, const CString &sClassname, void *pSelf );
+};
 
 template <typename Type>
 class Luna 
@@ -27,7 +30,7 @@ public:
 	static void Register( Lua *L )
 	{
 		/* Create the methods table, if it doesn't already exist. */
-		CreateMethodsTable( L, m_sClassName );
+		LuaBinding::CreateMethodsTable( L, m_sClassName );
 
 		int methods = lua_gettop( L );
 		
@@ -79,7 +82,7 @@ public:
 			// were called before the Register() of the base class; we'll fill
 			// it in when we get to it.
 			lua_pushliteral( L, "__index" );
-			CreateMethodsTable( L, m_sBaseClassName );
+			LuaBinding::CreateMethodsTable( L, m_sBaseClassName );
 			lua_settable( L, methods_metatable );
 		}
 
@@ -96,7 +99,7 @@ public:
 	// Get userdata from the Lua stack and return a pointer to T object.
 	static T *check( lua_State *L, int narg, bool bIsSelf = false )
 	{
-		if( !CheckLuaObjectType(L, narg, m_sClassName, true) )
+		if( !LuaBinding::CheckLuaObjectType(L, narg, m_sClassName, true) )
 		{
 			if( bIsSelf )
 				luaL_typerror( L, narg, m_sClassName );
@@ -112,7 +115,7 @@ public:
 		/* The stack has a userdata or a table.  If it's a table, look up the associated userdata. */
 		if( lua_istable(L, narg) )
 		{
-			return (T *) GetUserdataFromGlobalTable( L, m_sClassName, narg );
+			return (T *) LuaBinding::GetUserdataFromGlobalTable( L, m_sClassName, narg );
 		}
 		else if( lua_isuserdata(L, narg) )
 		{
@@ -169,8 +172,8 @@ private:
 			return 1;
 		}
 
-		if( !CheckLuaObjectType(L, 1, m_sClassName) ||
-			!CheckLuaObjectType(L, 2, m_sClassName) )
+		if( !LuaBinding::CheckLuaObjectType(L, 1, m_sClassName) ||
+			!LuaBinding::CheckLuaObjectType(L, 2, m_sClassName) )
 		{
 			lua_pushboolean( L, false );
 		}
@@ -228,17 +231,17 @@ protected:
 #define LUA_REGISTER_INSTANCED_BASE_CLASS( T ) \
 	LUA_REGISTER_CLASS_BASIC( T, none ) \
 	template<> void Luna<T>::PushObject( Lua *L, T* p ) { p->m_pLuaInstance->PushSelf( L ); } \
-	void T::PushSelf( lua_State *L ) { Luna<T>::PushObject( L, this ); ApplyDerivedType( L, #T, this ); }
+	void T::PushSelf( lua_State *L ) { Luna<T>::PushObject( L, this ); LuaBinding::ApplyDerivedType( L, #T, this ); }
 
 #define LUA_REGISTER_CLASS( T ) \
 	LUA_REGISTER_CLASS_BASIC( T, none ) \
 	template<> void Luna<T>::PushObject( Lua *L, T* p ) { void **pData = (void **) lua_newuserdata( L, sizeof(void *) ); *pData = p; } \
-	void T::PushSelf( lua_State *L ) { Luna<T>::PushObject( L, this ); ApplyDerivedType( L, #T, this ); }
+	void T::PushSelf( lua_State *L ) { Luna<T>::PushObject( L, this ); LuaBinding::ApplyDerivedType( L, #T, this ); }
 
 #define LUA_REGISTER_DERIVED_CLASS( T, B ) \
 	LUA_REGISTER_CLASS_BASIC( T, B ) \
 	template<> void Luna<T>::PushObject( Lua *L, T* p ) { Luna<B>::PushObject( L, p ); } \
-	void T::PushSelf( lua_State *L ) { Luna<B>::PushObject( L, this ); ApplyDerivedType( L, #T, this ); }
+	void T::PushSelf( lua_State *L ) { Luna<B>::PushObject( L, this ); LuaBinding::ApplyDerivedType( L, #T, this ); }
 
 #define LUA_REGISTER_CLASS_BASIC( T, B ) \
 	template<> const char *Luna<T>::m_sClassName = #T; \
