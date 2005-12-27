@@ -179,7 +179,6 @@ CString HourInDayToString( int iHourInDayIndex )
 	return ssprintf("Hour%02d", iHourInDayIndex);
 }
 
-enum Month {};
 static const CString MonthNames[] =
 {
 	"January",

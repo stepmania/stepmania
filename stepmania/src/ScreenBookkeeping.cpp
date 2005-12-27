@@ -139,7 +139,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 				iTotalLast += coins[i];
 			}
 
-			sTitle += ALL_TIME.GetString()+"\n";
+			sTitle += ALL_TIME.GetValue()+"\n";
 			sData += ssprintf("%i\n", iTotalLast);
 			
 			m_textData[0].SetText( "" );
@@ -152,7 +152,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 		break;
 	case VIEW_LAST_WEEKS:
 		{
-			m_textTitle.SetText( ssprintf(LAST_WEEKS, NUM_LAST_WEEKS) );
+			m_textTitle.SetText( ssprintf(LAST_WEEKS.GetValue(), NUM_LAST_WEEKS) );
 
 			int coins[NUM_LAST_WEEKS];
 			BOOKKEEPER->GetCoinsLastWeeks( coins );

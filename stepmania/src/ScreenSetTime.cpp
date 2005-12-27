@@ -99,12 +99,12 @@ void ScreenSetTime::Update( float fDelta )
 		iPrettyHour = 12;
 	CString sPrettyHour = ssprintf( "%d %s", iPrettyHour, now.tm_hour>=12 ? "pm" : "am" );
 
-	m_textValue[hour].SetText(	sPrettyHour );
-	m_textValue[minute].SetText( ssprintf("%02d",now.tm_min) );
-	m_textValue[second].SetText( ssprintf("%02d",now.tm_sec) );
-	m_textValue[year].SetText(	ssprintf("%02d",now.tm_year+1900) );
-	m_textValue[month].SetText(	MonthToString(now.tm_mon) );
-	m_textValue[day].SetText(	ssprintf("%02d",now.tm_mday) );
+	m_textValue[hour]	.SetText( sPrettyHour );
+	m_textValue[minute]	.SetText( ssprintf("%02d",now.tm_min) );
+	m_textValue[second]	.SetText( ssprintf("%02d",now.tm_sec) );
+	m_textValue[year]	.SetText( ssprintf("%02d",now.tm_year+1900) );
+	m_textValue[month]	.SetText( MonthToString((Month)now.tm_mon) );
+	m_textValue[day]	.SetText( ssprintf("%02d",now.tm_mday) );
 }
 
 void ScreenSetTime::Input( const InputEventPlus &input )
