@@ -13,8 +13,9 @@
 #include <Carbon/Carbon.h>
 
 #include "InputHandler_Carbon.h"
-#include "ForEach.h"
+#include "Foreach.h"
 #include "RageUtil.h"
+#include "PrefsManager.h"
 #include "archutils/Darwin/DarwinThreadHelpers.h"
 
 using namespace std;
@@ -105,12 +106,8 @@ Device::~Device()
 			CALL( mQueue, stop );
 		if( (runLoopSource = CALL(mQueue, getAsyncEventSource)) )
 		{
-			CFRunLoopRef ref;
-			
-			ref = CFRunLoopRef( GetCFRunLoopFromEventLoop(GetMainEventLoop()) );
-			
-			if( CFRunLoopContainsSource(ref, runLoopSource, kCFRunLoopDefaultMode) )
-				CFRunLoopRemoveSource( ref, runLoopSource, kCFRunLoopDefaultMode );
+			mach_port_deallocate( mach_task_self(), CALL(mQueue, getAsyncPort) );
+			CFRunLoopSourceInvalidate( runLoopSource );
 			CFRelease( runLoopSource );
 		}
 		
@@ -228,6 +225,7 @@ bool Device::Open( io_object_t device )
 void Device::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback, void *target, int refCon )
 {
 	CFRunLoopSourceRef runLoopSource;
+	// This creates a run loop source and a mach port. They are released in the dtor.
 	IOReturn ret = CALL( mQueue, createAsyncEventSource, &runLoopSource );
 	
 	if( ret != kIOReturnSuccess )
@@ -236,12 +234,8 @@ void Device::StartQueue( CFRunLoopRef loopRef, IOHIDCallbackFunction callback, v
 		return;
 	}
 	
-	CFRunLoopRef runLoop;
-	
-	runLoop = CFRunLoopRef( GetCFRunLoopFromEventLoop(GetMainEventLoop()) );
-	
-	if( !CFRunLoopContainsSource(runLoop, runLoopSource, kCFRunLoopDefaultMode) )
-		CFRunLoopAddSource( runLoop, runLoopSource, kCFRunLoopDefaultMode );
+	if( !CFRunLoopContainsSource(loopRef, runLoopSource, kCFRunLoopDefaultMode) )
+		CFRunLoopAddSource( loopRef, runLoopSource, kCFRunLoopDefaultMode );
 	
 	CALL( mQueue, setEventCallout, callback, target, (void *)refCon );
 	
@@ -696,6 +690,7 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 
 static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *sem )
 {
+	CFRunLoopObserverInvalidate( o );
 	CFRelease( o ); // we don't need this any longer
 	((RageSemaphore *)sem)->Post();
 }
@@ -703,14 +698,11 @@ static void RunLoopStarted( CFRunLoopObserverRef o, CFRunLoopActivity a, void *s
 int InputHandler_Carbon::Run( void *data )
 {
 	InputHandler_Carbon *This = (InputHandler_Carbon *)data;
-	CFRunLoopRef loopRef = CFRunLoopGetCurrent();
-	int n = 0;
 	
-	CFRetain( loopRef );
-	FOREACH( Device *, This->mDevices, i )
-		(*i)->StartQueue( loopRef, InputHandler_Carbon::QueueCallBack, This, n++ );
-	This->mLoopRef = loopRef;
+	This->mLoopRef = CFRunLoopGetCurrent();
+	CFRetain( This->mLoopRef );
 	
+	This->StartDevices();
 	SetThreadPrecedence( 100 );
 
 	/*
@@ -720,17 +712,33 @@ int InputHandler_Carbon::Run( void *data )
 	CFRunLoopObserverContext context = { 0, &This->mSem, NULL, NULL, NULL };
 	CFRunLoopObserverRef o = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
 													  false, 0, RunLoopStarted, &context);
-	CFRunLoopAddObserver( loopRef, o, kCFRunLoopDefaultMode );
+	CFRunLoopAddObserver( This->mLoopRef, o, kCFRunLoopDefaultMode );
 	CFRunLoopRun();
+	LOG->Trace( "Shutting down input handler thread..." );
 	return 0;
+}
+
+// mLoopRef needs to be set before this is called
+void InputHandler_Carbon::StartDevices()
+{
+	int n = 0;
+	
+	ASSERT( mLoopRef );
+	FOREACH( Device *, mDevices, i )
+		(*i)->StartQueue( mLoopRef, InputHandler_Carbon::QueueCallBack, this, n++ );
 }
 
 InputHandler_Carbon::~InputHandler_Carbon()
 {
-	CFRunLoopStop( CFRunLoopRef(mLoopRef) );
-	mInputThread.Wait();
 	FOREACH( Device *, mDevices, i )
 		delete *i;
+	if( PREFSMAN->m_bThreadedInput )
+	{
+		CFRunLoopStop( mLoopRef );
+		CFRelease( mLoopRef );
+		mInputThread.Wait();
+		LOG->Trace( "Input handler thread shut down." );
+	}
 	if( mMasterPort )
 		mach_port_deallocate( mach_task_self(), mMasterPort );
 }
@@ -833,11 +841,19 @@ InputHandler_Carbon::InputHandler_Carbon() : mMasterPort( 0 ), mSem( "Input thre
 		}
 		IOObjectRelease( iter );
 	}
-	
-	mInputThread.SetName( "Input thread" );
-	mInputThread.Create( InputHandler_Carbon::Run, this );
-	// Wait for the run loop to start before returning.
-	mSem.Wait();
+		
+	if( PREFSMAN->m_bThreadedInput )
+	{
+		mInputThread.SetName( "Input thread" );
+		mInputThread.Create( InputHandler_Carbon::Run, this );
+		// Wait for the run loop to start before returning.
+		mSem.Wait();
+	}
+	else
+	{
+		mLoopRef = CFRunLoopRef( GetCFRunLoopFromEventLoop(GetMainEventLoop()) );
+		StartDevices();
+	}
 }
 
 void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, vector<CString>& desc )
@@ -850,8 +866,7 @@ void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, v
 		const JoystickDevice *jd = dynamic_cast<const JoystickDevice *>(*i);
 		
 		/* This could be break since right now KeyboardDevices follow
-		 * the JoystickDevices, but that is brittle.
-		 */
+		 * the JoystickDevices, but that is brittle. */
 		if (!jd)
 			continue;
 		

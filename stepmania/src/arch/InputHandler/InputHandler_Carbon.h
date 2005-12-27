@@ -2,6 +2,7 @@
 #define JOYSTICK_H
 
 #include <vector>
+#include <CoreFoundation/CoreFoundation.h>
 #include "InputHandler.h"
 #include "RageThreads.h"
 
@@ -14,9 +15,10 @@ private:
 	std::vector<Device *> mDevices;
 	RageThread mInputThread;
 	RageSemaphore mSem;
-	void *mLoopRef;
+	CFRunLoopRef mLoopRef;
 	
-	static int Run(void *data);
+	static int Run( void *data );
+	void StartDevices();
 
 public:
 	InputHandler_Carbon();
