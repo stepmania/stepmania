@@ -12,14 +12,15 @@ const int MONTHS_IN_YEAR = 12;
 
 CString DayInYearToString( int iDayInYearIndex );
 CString LastDayToString( int iLastDayIndex );
+CString LastDayToThemedString( int iLastDayIndex );
 CString DayOfWeekToString( int iDayOfWeekIndex );
+CString DayOfWeekToThemedString( int iDayOfWeekIndex );
 CString HourInDayToString( int iHourIndex );
+CString HourInDayToThemedString( int iHourIndex );
 CString MonthToString( int iMonthIndex );
+CString MonthToThemedString( int iMonthIndex );
 CString LastWeekToString( int iLastWeekIndex );
-
-CString LastDayToDisplayString( int iLastDayIndex );
-CString LastWeekToDisplayString( int iLastWeekIndex );
-CString HourInDayToDisplayString( int iHourIndex );
+CString LastWeekToThemedString( int iLastWeekIndex );
 
 tm AddDays( tm start, int iDaysToMove );
 tm GetYesterday( tm start );

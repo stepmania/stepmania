@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 
 LuaFunction( MonthToString, MonthToString( IArg(1) ) );
+LuaFunction( MonthToThemedString, MonthToThemedString( IArg(1) ) );
 LuaFunction( MonthOfYear, GetLocalTime().tm_mon );
 LuaFunction( DayOfMonth, GetLocalTime().tm_mday );
 LuaFunction( Hour, GetLocalTime().tm_hour );

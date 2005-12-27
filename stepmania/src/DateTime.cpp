@@ -1,6 +1,8 @@
 #include "global.h"
 #include "DateTime.h"
 #include "RageUtil.h"
+#include "EnumHelper.h"
+#include "ThemeMetric.h"
 
 
 DateTime::DateTime()
@@ -177,7 +179,8 @@ CString HourInDayToString( int iHourInDayIndex )
 	return ssprintf("Hour%02d", iHourInDayIndex);
 }
 
-static const CString MONTH_TO_NAME[MONTHS_IN_YEAR] =
+enum Month {};
+static const CString MonthNames[] =
 {
 	"January",
 	"February",
@@ -192,13 +195,8 @@ static const CString MONTH_TO_NAME[MONTHS_IN_YEAR] =
 	"November",
 	"December",
 };
-
-CString MonthToString( int iMonthIndex )
-{
-	if( iMonthIndex < 0 || iMonthIndex >= (int) sizeof(MONTH_TO_NAME) )
-		return CString();
-	return MONTH_TO_NAME[iMonthIndex];
-}
+XToString( Month, MONTHS_IN_YEAR );
+XToThemedString( Month, MONTHS_IN_YEAR );
 
 CString LastWeekToString( int iLastWeekIndex )
 {
@@ -210,7 +208,7 @@ CString LastWeekToString( int iLastWeekIndex )
 	}
 }
 
-CString LastDayToDisplayString( int iLastDayIndex )
+CString LastDayToThemedString( int iLastDayIndex )
 {
 	CString s = LastDayToString( iLastDayIndex );
 	s.Replace( "Day", "" );
@@ -218,7 +216,7 @@ CString LastDayToDisplayString( int iLastDayIndex )
 	return s;
 }
 
-CString LastWeekToDisplayString( int iLastWeekIndex )
+CString LastWeekToThemedString( int iLastWeekIndex )
 {
 	CString s = LastWeekToString( iLastWeekIndex );
 	s.Replace( "Week", "" );
@@ -226,7 +224,7 @@ CString LastWeekToDisplayString( int iLastWeekIndex )
 	return s;
 }
 
-CString HourInDayToDisplayString( int iHourIndex )
+CString HourInDayToThemedString( int iHourIndex )
 {
 	int iBeginHour = iHourIndex;
 	iBeginHour--;
