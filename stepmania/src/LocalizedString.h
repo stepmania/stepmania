@@ -8,7 +8,7 @@ class LocalizedString
 public:
 	static void RegisterLocalizer( RString (*pfnLocalizer)(const RString&,const RString&) );
 	static void RefreshLocalizedStrings();
-	static CString LocalizeString( const CString &sSection, const CString &sName );
+	static RString LocalizeString( const RString &sSection, const RString &sName );
 
 
 	LocalizedString( const RString &sSection, const RString &sName );

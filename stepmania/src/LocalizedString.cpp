@@ -19,7 +19,7 @@ void LocalizedString::RefreshLocalizedStrings()
 		(*p)->Refresh();
 }
 
-CString LocalizedString::LocalizeString( const CString &sSection, const CString &sName )
+RString LocalizedString::LocalizeString( const RString &sSection, const RString &sName )
 {
 	ASSERT( g_pfnLocalizer );
 	return g_pfnLocalizer( sSection, sName );

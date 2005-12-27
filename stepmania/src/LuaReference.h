@@ -58,14 +58,14 @@ private:
 class LuaExpression: public LuaReference
 {
 public:
-	LuaExpression( const CString &sExpression = "" ) { if( sExpression != "" ) SetFromExpression( sExpression ); }
-	void SetFromExpression( const CString &sExpression );
+	LuaExpression( const RString &sExpression = "" ) { if( sExpression != "" ) SetFromExpression( sExpression ); }
+	void SetFromExpression( const RString &sExpression );
 
 protected:
 	virtual void Register();
 
 private:
-	CString m_sExpression;
+	RString m_sExpression;
 };
 
 /* Reference a trivially restorable Lua object (any object that Serialize can handle).
@@ -73,14 +73,14 @@ private:
 class LuaData: public LuaReference
 {
 public:
-	virtual CString Serialize() const;
-	virtual void LoadFromString( const CString &s );
+	virtual RString Serialize() const;
+	virtual void LoadFromString( const RString &s );
 
 protected:
 	virtual void BeforeReset();
 	virtual void Register();
 
-	CString m_sSerializedData;
+	RString m_sSerializedData;
 	bool m_bWasSet;
 };
 
@@ -91,10 +91,10 @@ public:
 
 	/* Set a key by the given name to a value on the stack, and pop the value
 	 * off the stack. */
-	void Set( Lua *L, const CString &sKey );
+	void Set( Lua *L, const RString &sKey );
 
 	/* Unset the given key (set it to nil). */
-	void Unset( Lua *L, const CString &sKey );
+	void Unset( Lua *L, const RString &sKey );
 
 	/* Set a key on the stack to a value on the stack; push the key first.  Pop
 	 * both the key and the value off the stack. */
