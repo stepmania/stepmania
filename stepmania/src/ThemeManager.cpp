@@ -21,7 +21,7 @@
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
-static const CString ElementCategoryNames[] = {
+static const RString ElementCategoryNames[] = {
 	"BGAnimations",
 	"Fonts",
 	"Graphics",
@@ -32,16 +32,16 @@ XToString( ElementCategory, NUM_ElementCategory );
 StringToX( ElementCategory );
 
 
-const CString BASE_THEME_NAME = "default";
-const CString LANGUAGES_SUBDIR = "Languages/";
-const CString BASE_LANGUAGE = "english";
-const CString THEMES_DIR  = "Themes/";
-const CString METRICS_FILE = "metrics.ini";
+const RString BASE_THEME_NAME = "default";
+const RString LANGUAGES_SUBDIR = "Languages/";
+const RString BASE_LANGUAGE = "english";
+const RString THEMES_DIR  = "Themes/";
+const RString METRICS_FILE = "metrics.ini";
 
 
 struct Theme
 {
-	CString sThemeName;
+	RString sThemeName;
 };
 // When looking for a metric or an element, search these from head to tail.
 static deque<Theme> g_vThemes;
@@ -74,14 +74,14 @@ void ThemeManager::Unsubscribe( IThemeMetric *p )
 
 
 /* We spend a lot of time doing redundant theme path lookups.  Cache results. */
-static map<CString, CString> g_ThemePathCache[NUM_ElementCategory];
+static map<RString, RString> g_ThemePathCache[NUM_ElementCategory];
 void ThemeManager::ClearThemePathCache()
 {
 	for( int i = 0; i < NUM_ElementCategory; ++i )
 		g_ThemePathCache[i].clear();
 }
 
-static void FileNameToClassAndElement( const CString &sFileName, CString &sClassNameOut, CString &sElementOut )
+static void FileNameToClassAndElement( const RString &sFileName, RString &sClassNameOut, RString &sElementOut )
 {
 	// split into class name and file name
 	unsigned iIndexOfFirstSpace = sFileName.find(" ");
@@ -98,7 +98,7 @@ static void FileNameToClassAndElement( const CString &sFileName, CString &sClass
 }
 
 
-static CString ClassAndElementToFileName( const CString &sClassName, const CString &sElement )
+static RString ClassAndElementToFileName( const RString &sClassName, const RString &sElement )
 {
 	if( sClassName.empty() )
 		return sElement;
@@ -113,7 +113,7 @@ ThemeManager::ThemeManager()
 	/* We don't have any theme loaded until SwitchThemeAndLanguage is called. */
 	m_sCurThemeName = "";
 	
-	vector<CString> arrayThemeNames;
+	vector<RString> arrayThemeNames;
 	GetThemeNames( arrayThemeNames );
 }
 
@@ -123,15 +123,15 @@ ThemeManager::~ThemeManager()
 	SAFE_DELETE( g_pIniMetrics );
 }
 
-void ThemeManager::GetThemeNames( vector<CString>& AddTo )
+void ThemeManager::GetThemeNames( vector<RString>& AddTo )
 {
 	GetDirListing( THEMES_DIR + "*", AddTo, true );
 	StripCvs( AddTo );
 }
 
-bool ThemeManager::DoesThemeExist( const CString &sThemeName )
+bool ThemeManager::DoesThemeExist( const RString &sThemeName )
 {
-	vector<CString> asThemeNames;	
+	vector<RString> asThemeNames;	
 	GetThemeNames( asThemeNames );
 	for( unsigned i=0; i<asThemeNames.size(); i++ )
 	{
@@ -141,7 +141,7 @@ bool ThemeManager::DoesThemeExist( const CString &sThemeName )
 	return false;
 }
 
-void ThemeManager::GetLanguages( vector<CString>& AddTo )
+void ThemeManager::GetLanguages( vector<RString>& AddTo )
 {
 	AddTo.clear();
 
@@ -150,13 +150,13 @@ void ThemeManager::GetLanguages( vector<CString>& AddTo )
 
 	// remove dupes
 	sort( AddTo.begin(), AddTo.end() );
-	vector<CString>::iterator it = unique( AddTo.begin(), AddTo.end() );
+	vector<RString>::iterator it = unique( AddTo.begin(), AddTo.end() );
 	AddTo.erase(it, AddTo.end());
 }
 
-bool ThemeManager::DoesLanguageExist( const CString &sLanguage )
+bool ThemeManager::DoesLanguageExist( const RString &sLanguage )
 {
-	vector<CString> asLanguages;
+	vector<RString> asLanguages;
 	GetLanguages( asLanguages );
 
 	for( unsigned i=0; i<asLanguages.size(); i++ )
@@ -190,7 +190,7 @@ static void MergeIniUnder( XNode *pFrom, XNode *pTo )
 		{
 			/* map::insert will not overwrite existing nodes. */
 			XNode *pFrom = it->second;
-			FOREACHM( CString, CString, pFrom->m_attrs, it )
+			FOREACHM( RString, RString, pFrom->m_attrs, it )
 				pChildNode->m_attrs.insert( *it );
 		}
 
@@ -198,14 +198,14 @@ static void MergeIniUnder( XNode *pFrom, XNode *pTo )
 	}
 }
 
-void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const CString &sThemeName_, const CString &sLanguage_ )
+void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeName_, const RString &sLanguage_ )
 {
 	delete g_pIniMetrics;
 	g_pIniMetrics = new IniFile;
 	g_vThemes.clear();
 
-	CString sThemeName(sThemeName_);
-	CString sLanguage(sLanguage_);
+	RString sThemeName(sThemeName_);
+	RString sLanguage(sLanguage_);
 
 	m_sCurThemeName = sThemeName;
 	m_sCurLanguage = sLanguage;
@@ -233,7 +233,7 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const CString &sThemeN
 		/* Read the fallback theme.  If no fallback theme is specified, and we havn't
 		 * already loaded it, fall back on BASE_THEME_NAME.  That way, default theme
 		 * fallbacks can be disabled with "FallbackTheme=". */
-		CString sFallback;
+		RString sFallback;
 		if( !ini.GetValue("Global","FallbackTheme",sFallback) )
 		{
 			if( sThemeName.CompareNoCase( BASE_THEME_NAME ) && !bLoadedBase )
@@ -253,14 +253,14 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const CString &sThemeN
 	}
 
 	/* Overlay metrics from the command line. */
-	CString sMetric;
+	RString sMetric;
 	for( int i = 0; GetCommandlineArgument( "metric", &sMetric, i ); ++i )
 	{
 		/* sMetric must be "foo::bar=baz".  "foo" and "bar" never contain "=", so in
 		 * "foo::bar=1+1=2", "baz" is always "1+1=2".  Neither foo nor bar may be
 		 * empty, but baz may be. */
 		Regex re( "^([^=]+)::([^=]+)=(.*)$" );
-		vector<CString> sBits;
+		vector<RString> sBits;
 		if( !re.Compare( sMetric, sBits ) )
 			RageException::Throw( "Invalid argument \"--metric=%s\"", sMetric.c_str() );
 
@@ -271,16 +271,16 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const CString &sThemeN
 	LOG->MapLog( "language", "Language: %s", m_sCurLanguage.c_str() );
 }
 
-CString ThemeManager::GetDefaultLanguage()
+RString ThemeManager::GetDefaultLanguage()
 {
-	CString sLangCode = HOOKS->GetPreferredLanguage();
+	RString sLangCode = HOOKS->GetPreferredLanguage();
 	return GetLanguageNameFromISO639Code( sLangCode );
 }
 
-void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName_, const CString &sLanguage_ )
+void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RString &sLanguage_ )
 {
-	CString sThemeName = sThemeName_;
-	CString sLanguage = sLanguage_;
+	RString sThemeName = sThemeName_;
+	RString sLanguage = sLanguage_;
 	if( !DoesThemeExist(sThemeName) )
 		sThemeName = BASE_THEME_NAME;
 
@@ -320,7 +320,7 @@ void ThemeManager::SwitchThemeAndLanguage( const CString &sThemeName_, const CSt
 		(*p)->Read();
 }
 
-void ThemeManager::RunLuaScripts( const CString &sMask )
+void ThemeManager::RunLuaScripts( const RString &sMask )
 {
 	/* Run all script files with the given mask in Lua for all themes.  Start
 	 * from the deepest fallback theme and work outwards. */
@@ -328,12 +328,12 @@ void ThemeManager::RunLuaScripts( const CString &sMask )
 	do
 	{
 		--iter;
-		const CString &sThemeDir = GetThemeDirFromName( iter->sThemeName );
-		vector<CString> asElementPaths;
+		const RString &sThemeDir = GetThemeDirFromName( iter->sThemeName );
+		vector<RString> asElementPaths;
 		GetDirListing( sThemeDir + "Scripts/" + sMask, asElementPaths, false, true );
 		for( unsigned i = 0; i < asElementPaths.size(); ++i )
 		{
-			const CString &sPath = asElementPaths[i];
+			const RString &sPath = asElementPaths[i];
 			LOG->Trace( "Loading \"%s\" ...", sPath.c_str() );
 			LuaHelpers::RunScriptFile( sPath );
 		}
@@ -364,44 +364,44 @@ void ThemeManager::UpdateLuaGlobals()
 	RunLuaScripts( "*.lua" );
 }
 
-CString ThemeManager::GetThemeDirFromName( const CString &sThemeName )
+RString ThemeManager::GetThemeDirFromName( const RString &sThemeName )
 {
 	return THEMES_DIR + sThemeName + "/";
 }
 
 struct CompareLanguageTag
 {
-	CString m_sLanguageString;
-	CompareLanguageTag( const CString &sLang )
+	RString m_sLanguageString;
+	CompareLanguageTag( const RString &sLang )
 	{
-		m_sLanguageString = CString("(lang ") + sLang + ")";
+		m_sLanguageString = RString("(lang ") + sLang + ")";
 		LOG->Trace( "try \"%s\"", sLang.c_str() );
 		m_sLanguageString.ToLower();
 	}
 
-	bool operator()( const CString &sFile ) const
+	bool operator()( const RString &sFile ) const
 	{
-		CString sLower( sFile );
+		RString sLower( sFile );
 		sLower.ToLower();
 		size_t iPos = sLower.find( m_sLanguageString );
-		return iPos != CString::npos;
+		return iPos != RString::npos;
 	}
 };
 
-CString ThemeManager::GetPathToRaw( const CString &sThemeName_, ElementCategory category, const CString &sClassName_, const CString &sElement_ ) 
+RString ThemeManager::GetPathToRaw( const RString &sThemeName_, ElementCategory category, const RString &sClassName_, const RString &sElement_ ) 
 {
 	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
 	 * else that might suddenly go away when we call ReloadMetrics. */
-	const CString sThemeName = sThemeName_;
-	const CString sClassName = sClassName_;
-	const CString sElement = sElement_;
+	const RString sThemeName = sThemeName_;
+	const RString sClassName = sClassName_;
+	const RString sElement = sElement_;
 
 try_element_again:
 
-	const CString sThemeDir = GetThemeDirFromName( sThemeName );
-	const CString &sCategory = ElementCategoryToString(category);
+	const RString sThemeDir = GetThemeDirFromName( sThemeName );
+	const RString &sCategory = ElementCategoryToString(category);
 
-	vector<CString> asElementPaths;
+	vector<RString> asElementPaths;
 
 	// If sFileName already has an extension, we're looking for a specific file
 	bool bLookingForSpecificFile = sElement.find_last_of('.') != sElement.npos;
@@ -412,7 +412,7 @@ try_element_again:
 	}
 	else	// look for all files starting with sFileName that have types we can use
 	{
-		vector<CString> asPaths;
+		vector<RString> asPaths;
 		GetDirListing( sThemeDir + sCategory + "/" + ClassAndElementToFileName(sClassName,sElement) + "*",
 						asPaths, false, true );
 
@@ -427,7 +427,7 @@ try_element_again:
 			};		
 			const char **asset_masks = masks[category];
 
-			const CString ext = GetExtension( asPaths[p] );
+			const RString ext = GetExtension( asPaths[p] );
 
 			for( int i = 0; asset_masks[i]; ++i )
 			{
@@ -440,7 +440,7 @@ try_element_again:
 #ifdef DEBUG
 					// Ignore empty directories so that we don't have to wait to test changes until 
 					// CVS is updated and prunes the empties.
-					vector<CString> vs;
+					vector<RString> vs;
 					GetDirListing( asPaths[p]+"/*", vs, false, false );
 					StripCvs( vs );
 					bool bDirIsEmpty = vs.empty();
@@ -473,7 +473,7 @@ try_element_again:
 	 */
 	if( asElementPaths.size() > 1 )
 	{
-		vector<CString>::iterator it =
+		vector<RString>::iterator it =
 			partition( asElementPaths.begin(), asElementPaths.end(), CompareLanguageTag(m_sCurLanguage) );
 
 		int iDist = distance( asElementPaths.begin(), it );
@@ -497,7 +497,7 @@ try_element_again:
 		FlushDirCache();
 		g_ThemePathCache[category].clear();
 
-		CString message = ssprintf( 
+		RString message = ssprintf( 
 			"ThemeManager:  There is more than one theme element element that matches "
 			"'%s/%s/%s'.  Please remove all but one of these matches.",
 			sThemeName.c_str(), sCategory.c_str(), ClassAndElementToFileName(sClassName,sElement).c_str() );
@@ -517,16 +517,16 @@ try_element_again:
 	}
 
 
-	CString sPath = asElementPaths[0];
+	RString sPath = asElementPaths[0];
 	bool bIsARedirect = GetExtension(sPath).CompareNoCase("redir")==0;
 
 	if( !bIsARedirect )
 		return sPath;
 
-	CString sNewFileName;
+	RString sNewFileName;
 	GetFileContents( sPath, sNewFileName, true );
 
-	CString sNewClassName, sNewFile;
+	RString sNewClassName, sNewFile;
 	FileNameToClassAndElement(sNewFileName, sNewClassName, sNewFile);
 	
 	/* Search again.  For example, themes/default/Fonts/foo might redir
@@ -537,7 +537,7 @@ try_element_again:
 	 * up resolving to the overridden background. */
 	/* Use GetPathToOptional because we don't want report that there's an element
 	 * missing.  Instead we want to report that the redirect is invalid. */
-	CString sNewPath = GetPath(category, sNewClassName, sNewFile, true);
+	RString sNewPath = GetPath(category, sNewClassName, sNewFile, true);
 
 	if( !sNewPath.empty() )
 	{
@@ -545,7 +545,7 @@ try_element_again:
 	}
 	else
 	{
-		CString message = ssprintf(
+		RString message = ssprintf(
 				"ThemeManager:  The redirect '%s' points to the file '%s', which does not exist. "
 				"Verify that this redirect is correct.",
 				sPath.c_str(), sNewFileName.c_str());
@@ -561,9 +561,9 @@ try_element_again:
 	}
 }
 
-CString ThemeManager::GetPathToAndFallback( ElementCategory category, const CString &sClassName_, const CString &sElement ) 
+RString ThemeManager::GetPathToAndFallback( ElementCategory category, const RString &sClassName_, const RString &sElement ) 
 {
-	CString sClassName( sClassName_ );
+	RString sClassName( sClassName_ );
 
 	int n = 100;
 	while( n-- )
@@ -571,18 +571,18 @@ CString ThemeManager::GetPathToAndFallback( ElementCategory category, const CStr
 		FOREACHD_CONST( Theme, g_vThemes, iter )
 		{
 			// search with requested name
-			CString sRet = GetPathToRaw( iter->sThemeName, category, sClassName, sElement );
+			RString sRet = GetPathToRaw( iter->sThemeName, category, sClassName, sElement );
 			if( !sRet.empty() )
 				return sRet;
 		}
 
 		if( sClassName.empty() )
-			return CString();
+			return RString();
 
 		// search fallback name (if any)
-		CString sFallback;
+		RString sFallback;
 		if( !GetMetricRawRecursive(sClassName, "Fallback", sFallback) )
-			return CString();
+			return RString();
 		sClassName = sFallback;
 	}
 
@@ -590,18 +590,18 @@ CString ThemeManager::GetPathToAndFallback( ElementCategory category, const CStr
 		ClassAndElementToFileName(sClassName, sElement).c_str() );
 }
 
-CString ThemeManager::GetPath( ElementCategory category, const CString &sClassName_, const CString &sElement_, bool bOptional ) 
+RString ThemeManager::GetPath( ElementCategory category, const RString &sClassName_, const RString &sElement_, bool bOptional ) 
 {
 	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
 	 * else that might suddenly go away when we call ReloadMetrics. */
-	const CString sClassName = sClassName_;
-	const CString sElement = sElement_;
+	const RString sClassName = sClassName_;
+	const RString sElement = sElement_;
 
-	CString sFileName = ClassAndElementToFileName( sClassName, sElement );
+	RString sFileName = ClassAndElementToFileName( sClassName, sElement );
 
-	map<CString, CString> &Cache = g_ThemePathCache[category];
+	map<RString, RString> &Cache = g_ThemePathCache[category];
 	{
-		map<CString, CString>::const_iterator i;
+		map<RString, RString>::const_iterator i;
 		
 		i = Cache.find( sFileName );
 		if( i != Cache.end() )
@@ -611,7 +611,7 @@ CString ThemeManager::GetPath( ElementCategory category, const CString &sClassNa
 try_element_again:
 	
 	// search the current theme
-	CString ret = GetPathToAndFallback( category, sClassName, sElement );
+	RString ret = GetPathToAndFallback( category, sClassName, sElement );
 	if( !ret.empty() )	// we found something
 	{
 		Cache[sFileName] = ret;
@@ -624,10 +624,10 @@ try_element_again:
 		return NULL;
 	}
 
-	const CString &sCategory = ElementCategoryToString(category);
+	const RString &sCategory = ElementCategoryToString(category);
 
 	/* We can't fall back on _missing in Other: the file types are unknown. */
-	CString sMessage = "The theme element \"" + sCategory + "/" + sFileName +"\" is missing.";
+	RString sMessage = "The theme element \"" + sCategory + "/" + sFileName +"\" is missing.";
 	Dialog::Result res;
 	if( category != EC_OTHER )
 		res = Dialog::AbortRetryIgnore(sMessage, "MissingThemeElement");
@@ -666,14 +666,14 @@ try_element_again:
 }
 
 
-CString ThemeManager::GetMetricsIniPath( const CString &sThemeName )
+RString ThemeManager::GetMetricsIniPath( const RString &sThemeName )
 {
 	return GetThemeDirFromName( sThemeName ) + METRICS_FILE;
 }
 
-bool ThemeManager::HasMetric( const CString &sClassName, const CString &sValueName )
+bool ThemeManager::HasMetric( const RString &sClassName, const RString &sValueName )
 {
-	CString sThrowAway;
+	RString sThrowAway;
 	return GetMetricRawRecursive( sClassName, sValueName, sThrowAway );
 }
 
@@ -694,10 +694,10 @@ void ThemeManager::ReloadMetrics()
 }
 
 
-bool ThemeManager::GetMetricRawRecursive( const CString &sClassName_, const CString &sValueName, CString &sOut )
+bool ThemeManager::GetMetricRawRecursive( const RString &sClassName_, const RString &sValueName, RString &sOut )
 {
 	ASSERT( sValueName != "" );
-	CString sClassName( sClassName_ );
+	RString sClassName( sClassName_ );
 
 	int n = 100;
 	while( n-- )
@@ -708,7 +708,7 @@ bool ThemeManager::GetMetricRawRecursive( const CString &sClassName_, const CStr
 		if( !sValueName.compare("Fallback") )
 			return false;
 
-		CString sFallback;
+		RString sFallback;
 		if( !GetMetricRawRecursive(sClassName,"Fallback",sFallback) )
 			return false;
 
@@ -718,21 +718,21 @@ bool ThemeManager::GetMetricRawRecursive( const CString &sClassName_, const CStr
 	RageException::Throw( "Infinite recursion looking up theme metric \"%s::%s\"", sClassName.c_str(), sValueName.c_str() );
 }
 
-CString ThemeManager::GetMetricRaw( const CString &sClassName_, const CString &sValueName_ )
+RString ThemeManager::GetMetricRaw( const RString &sClassName_, const RString &sValueName_ )
 {
 	/* Ugly: the parameters to this function may be a reference into g_vThemes, or something
 	 * else that might suddenly go away when we call ReloadMetrics. */
-	const CString sClassName = sClassName_;
-	const CString sValueName = sValueName_;
+	const RString sClassName = sClassName_;
+	const RString sValueName = sValueName_;
 
 try_metric_again:
 
-	CString ret;
+	RString ret;
 	if( ThemeManager::GetMetricRawRecursive( sClassName, sValueName, ret ) )
 		return ret;
 
 
-	CString sMessage = ssprintf( "The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
+	RString sMessage = ssprintf( "The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
 	switch( Dialog::AbortRetryIgnore(sMessage) )
 	{
 	case Dialog::abort:
@@ -747,10 +747,10 @@ try_metric_again:
 		ASSERT(0);
 	}
 
-	CString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
-	CString sDefaultMetricPath = GetMetricsIniPath(BASE_THEME_NAME);
+	RString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
+	RString sDefaultMetricPath = GetMetricsIniPath(BASE_THEME_NAME);
 
-	CString sError = ssprintf( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
+	RString sError = ssprintf( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
 		sClassName.c_str(),
 		sValueName.c_str(),
 		sCurMetricPath.c_str(), 
@@ -760,16 +760,16 @@ try_metric_again:
 }
 
 /* Get a string metric. */
-CString ThemeManager::GetMetric( const CString &sClassName, const CString &sValueName )
+RString ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName )
 {
-	CString sValue = GetMetricRaw(sClassName,sValueName);
+	RString sValue = GetMetricRaw(sClassName,sValueName);
 
 	EvaluateString( sValue );
 
 	return sValue;
 }
 
-void ThemeManager::EvaluateString( CString &sText )
+void ThemeManager::EvaluateString( RString &sText )
 {
 	/* If the string begins with an @, then this is a Lua expression
 	 * that should be evaluated immediately.
@@ -783,18 +783,18 @@ void ThemeManager::EvaluateString( CString &sText )
 	FontCharAliases::ReplaceMarkers( sText );
 }
 
-int ThemeManager::GetMetricI( const CString &sClassName, const CString &sValueName )
+int ThemeManager::GetMetricI( const RString &sClassName, const RString &sValueName )
 {
-	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
+	RString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
 
 	LuaHelpers::PrepareExpression( sValue );
 
 	return LuaHelpers::RunExpressionI( sValue );
 }
 
-float ThemeManager::GetMetricF( const CString &sClassName, const CString &sValueName )
+float ThemeManager::GetMetricF( const RString &sClassName, const RString &sValueName )
 {
-	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
+	RString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
 
 	LuaHelpers::PrepareExpression( sValue );
 
@@ -802,9 +802,9 @@ float ThemeManager::GetMetricF( const CString &sClassName, const CString &sValue
 }
 
 // #include "LuaManager.h"
-bool ThemeManager::GetMetricB( const CString &sClassName, const CString &sValueName )
+bool ThemeManager::GetMetricB( const RString &sClassName, const RString &sValueName )
 {
-	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
+	RString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
 
 	/* Watch out: "0" and "1" are not false and true in Lua (all string values are
 	 * true).  Make sure that we catch all values that are supposed to be simple
@@ -821,9 +821,9 @@ bool ThemeManager::GetMetricB( const CString &sClassName, const CString &sValueN
 	return LuaHelpers::RunExpressionB( sValue );
 }
 
-RageColor ThemeManager::GetMetricC( const CString &sClassName, const CString &sValueName )
+RageColor ThemeManager::GetMetricC( const RString &sClassName, const RString &sValueName )
 {
-	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
+	RString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
 
 	RageColor ret(1,1,1,1);
 	if( !ret.FromString(sValue) )
@@ -831,21 +831,21 @@ RageColor ThemeManager::GetMetricC( const CString &sClassName, const CString &sV
 	return ret;
 }
 
-Commands ThemeManager::GetMetricM( const CString &sClassName, const CString &sValueName )
+Commands ThemeManager::GetMetricM( const RString &sClassName, const RString &sValueName )
 {
-	CString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
+	RString sValue = GetMetric( sClassName, sValueName );	// Use non-raw so that Lua expressions are allowed
 	return ParseCommands( sValue );
 }
 
-apActorCommands ThemeManager::GetMetricA( const CString &sClassName, const CString &sValueName )
+apActorCommands ThemeManager::GetMetricA( const RString &sClassName, const RString &sValueName )
 {
-	CString sValue = GetMetricRaw( sClassName, sValueName );
+	RString sValue = GetMetricRaw( sClassName, sValueName );
 	return apActorCommands( new ActorCommands( sValue ) );
 }
 
 void ThemeManager::NextTheme()
 {
-	vector<CString> as;
+	vector<RString> as;
 	GetThemeNames( as );
 	unsigned i;
 	for( i=0; i<as.size(); i++ )
@@ -855,10 +855,10 @@ void ThemeManager::NextTheme()
 	SwitchThemeAndLanguage( as[iNewIndex], m_sCurLanguage );
 }
 
-void ThemeManager::GetLanguagesForTheme( const CString &sThemeName, vector<CString>& asLanguagesOut )
+void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RString>& asLanguagesOut )
 {
-	CString sLanguageDir = GetThemeDirFromName(sThemeName) + LANGUAGES_SUBDIR;
-	vector<CString> as;
+	RString sLanguageDir = GetThemeDirFromName(sThemeName) + LANGUAGES_SUBDIR;
+	vector<RString> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
 	
 	// stip out metrics.ini
@@ -873,12 +873,12 @@ void ThemeManager::GetLanguagesForTheme( const CString &sThemeName, vector<CStri
 	asLanguagesOut.insert( asLanguagesOut.end(), as.begin(), as.end() );
 }
 
-CString ThemeManager::GetLanguageIniPath( const CString &sThemeName, const CString &sLanguage )
+RString ThemeManager::GetLanguageIniPath( const RString &sThemeName, const RString &sLanguage )
 {
 	return GetThemeDirFromName(sThemeName) + LANGUAGES_SUBDIR + sLanguage + ".ini";
 }
 
-void ThemeManager::GetModifierNames( vector<CString>& AddTo )
+void ThemeManager::GetModifierNames( vector<RString>& AddTo )
 {
 	const XNode *cur = g_pIniMetrics->GetChild( "OptionNames" );
 	if( cur )
@@ -888,26 +888,26 @@ void ThemeManager::GetModifierNames( vector<CString>& AddTo )
 	}
 }
 
-void ThemeManager::GetMetric( const CString &sClassName, const CString &sValueName, apActorCommands &valueOut )
+void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, apActorCommands &valueOut )
 {
 	valueOut = GetMetricA( sClassName, sValueName ); 
 }
 
-void ThemeManager::GetMetric( const CString &sClassName, const CString &sValueName, LuaExpression &valueOut )
+void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, LuaExpression &valueOut )
 {
-	CString sValue = GetMetricRaw( sClassName, sValueName );
+	RString sValue = GetMetricRaw( sClassName, sValueName );
 	valueOut.SetFromExpression( "function(self) " + sValue + "end" );
 }
 
-CString ThemeManager::GetString( const CString &sClassName, const CString &sValueName )
+RString ThemeManager::GetString( const RString &sClassName, const RString &sValueName )
 {
 	// TODO: Change this to GetMetricRaw and write stubs for missing strings into every language file.
 	return GetMetric( sClassName, sValueName );
 }
 
-void ThemeManager::GetMetricsThatBeginWith( const CString &sClassName_, const CString &sValueName, set<CString> &vsValueNamesOut )
+void ThemeManager::GetMetricsThatBeginWith( const RString &sClassName_, const RString &sValueName, set<RString> &vsValueNamesOut )
 {
-	CString sClassName( sClassName_ );
+	RString sClassName( sClassName_ );
 	while( !sClassName.empty() )
 	{
 		const XNode *cur = g_pIniMetrics->GetChild( sClassName );
@@ -916,7 +916,7 @@ void ThemeManager::GetMetricsThatBeginWith( const CString &sClassName_, const CS
 			// Iterate over all metrics that match.
 			for( XAttrs::const_iterator j = cur->m_attrs.lower_bound( sValueName ); j != cur->m_attrs.end(); ++j )
 			{
-				const CString &sv = j->first;
+				const RString &sv = j->first;
 				if( sv.Left(sValueName.size()) == sValueName )
 					vsValueNamesOut.insert( sv );
 				else	// we passed the last metric that matched sValueName
@@ -925,7 +925,7 @@ void ThemeManager::GetMetricsThatBeginWith( const CString &sClassName_, const CS
 		}
 
 		// put the fallback (if any) in sClassName
-		CString sFallback;
+		RString sFallback;
 		if( GetMetricRawRecursive( sClassName, "Fallback", sFallback ) )
 			sClassName = sFallback;
 		else
@@ -934,7 +934,7 @@ void ThemeManager::GetMetricsThatBeginWith( const CString &sClassName_, const CS
 }
 
 
-CString ThemeManager::GetBlankGraphicPath()
+RString ThemeManager::GetBlankGraphicPath()
 {
 	return THEMES_DIR + BASE_THEME_NAME + "/" + ElementCategoryToString(EC_GRAPHICS) + "/_blank.png";
 }
