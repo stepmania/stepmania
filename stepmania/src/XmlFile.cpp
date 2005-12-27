@@ -27,8 +27,8 @@ static const char chXMLExclamation	= '!';
 static const char chXMLDash			= '-';
 
 
-static map<CString,CString> g_mapEntitiesToChars;
-static map<char,CString> g_mapCharsToEntities;
+static map<RString,RString> g_mapEntitiesToChars;
+static map<char,RString> g_mapCharsToEntities;
 
 static void InitEntities()
 {
@@ -52,7 +52,7 @@ static void InitEntities()
 	for( unsigned i = 0; i < ARRAYSIZE(EntityTable); ++i )
 	{
 		const Entity &ent = EntityTable[i];
-		g_mapEntitiesToChars[ent.pEntity] = CString(1, ent.c);
+		g_mapEntitiesToChars[ent.pEntity] = RString(1, ent.c);
 		g_mapCharsToEntities[ent.c] = ent.pEntity;
 	}
 }
@@ -63,18 +63,18 @@ static struct RunInitEntities
 } g_RunInitEntities;
 
 // skip spaces
-static void tcsskip( const CString &s, unsigned &i )
+static void tcsskip( const RString &s, unsigned &i )
 {
 	i = s.find_first_not_of( " \t\r\n", i );
 }
 
-static bool XIsEmptyString( const CString &s )
+static bool XIsEmptyString( const RString &s )
 {
 	return s.find_first_not_of( "\r\n\t " ) == s.npos;
 }
 
 // put string of (psz~end) on ps string
-static void SetString( const CString &s, int iStart, int iEnd, CString* ps, bool trim = false )
+static void SetString( const RString &s, int iStart, int iEnd, RString* ps, bool trim = false )
 {
 	if( trim )
 	{
@@ -119,7 +119,7 @@ void XNode::Clear()
 // Param  : pszAttrs - xml of attributes
 //          pi = parser information
 // Return : advanced string pointer. (error return npos)
-unsigned XNode::LoadAttributes( const CString &xml, PARSEINFO *pi, unsigned iOffset )
+unsigned XNode::LoadAttributes( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 {
 	while( iOffset < xml.size() )
 	{
@@ -148,13 +148,13 @@ unsigned XNode::LoadAttributes( const CString &xml, PARSEINFO *pi, unsigned iOff
 		}
 		
 		// XML Attr Name
-		CString sName;
+		RString sName;
 		SetString( xml, iOffset, iEnd, &sName );
 		
 		// add new attribute
 		DEBUG_ASSERT( sName.size() );
-		pair<XAttrs::iterator,bool> it = m_attrs.insert( make_pair(sName, CString()) );
-		CString &sValue = it.first->second;
+		pair<XAttrs::iterator,bool> it = m_attrs.insert( make_pair(sName, RString()) );
+		RString &sValue = it.first->second;
 		iOffset = iEnd;
 		
 		// XML Attr Value
@@ -221,7 +221,7 @@ unsigned XNode::LoadAttributes( const CString &xml, PARSEINFO *pi, unsigned iOff
 // Param  : pszXml - plain xml text
 //          pi = parser information
 // Return : advanced string pointer  (error return npos)
-unsigned XNode::Load( const CString &xml, PARSEINFO *pi, unsigned iOffset )
+unsigned XNode::Load( const RString &xml, PARSEINFO *pi, unsigned iOffset )
 {
 	Clear();
 
@@ -380,7 +380,7 @@ unsigned XNode::Load( const CString &xml, PARSEINFO *pi, unsigned iOffset )
 				return string::npos;
 			}
 
-			CString closename;
+			RString closename;
 			SetString( xml, iOffset, iEnd, &closename );
 			iOffset = iEnd+1;
 			if( closename == this->m_sName )
@@ -437,9 +437,9 @@ unsigned XNode::Load( const CString &xml, PARSEINFO *pi, unsigned iOffset )
 
 // Desc   : convert plain xml text from parsed xml attirbute
 // Return : converted plain string
-bool XNode::GetAttrXML( RageFileBasic &f, DISP_OPT &opt, const CString &sName, const CString &sValue ) const
+bool XNode::GetAttrXML( RageFileBasic &f, DISP_OPT &opt, const RString &sName, const RString &sValue ) const
 {
-	CString s(sValue);
+	RString s(sValue);
 	if( opt.reference_value )
 		ReplaceEntityText( s, g_mapCharsToEntities );
 	return f.Write(sName + "='" + s + "' ") != -1;
@@ -506,7 +506,7 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT &opt ) const
 						if( f.Write("\t") == -1 )
 							return false;
 			}
-			CString s( m_sValue );
+			RString s( m_sValue );
 			if( opt.reference_value )
 					ReplaceEntityText( s, g_mapCharsToEntities );
 			if( f.Write(s) == -1 )
@@ -537,7 +537,7 @@ bool XNode::GetXML( RageFileBasic &f, DISP_OPT &opt ) const
 
 // Desc   : convert plain xml text from parsed xml node
 // Return : converted plain string
-CString XNode::GetXML() const
+RString XNode::GetXML() const
 {
 	RageFileObjMem f;
 	DISP_OPT opt;
@@ -545,19 +545,19 @@ CString XNode::GetXML() const
 	return f.GetString();
 }
 
-void XNode::GetValue( CString &out ) const	{ out = m_sValue; }
+void XNode::GetValue( RString &out ) const	{ out = m_sValue; }
 void XNode::GetValue( int &out ) const		{ out = atoi(m_sValue); }
 void XNode::GetValue( float &out ) const	{ out = strtof(m_sValue, NULL); }
 void XNode::GetValue( bool &out ) const		{ out = atoi(m_sValue) != 0; }
 void XNode::GetValue( unsigned &out ) const	{ out = 0; sscanf(m_sValue,"%u",&out); }
 void XNode::GetValue( DateTime &out ) const	{ out.FromString( m_sValue ); }
 
-bool XNode::GetAttrValue( const CString &sName, CString &out ) const	{ const CString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = *pAttr; return true; }
-bool XNode::GetAttrValue( const CString &sName, int &out ) const		{ const CString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = atoi(*pAttr); return true; }
-bool XNode::GetAttrValue( const CString &sName, float &out ) const	{ const CString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = strtof(*pAttr, NULL); return true; }
-bool XNode::GetAttrValue( const CString &sName, bool &out ) const		{ const CString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = atoi(*pAttr) != 0; return true; }
-bool XNode::GetAttrValue( const CString &sName, unsigned &out ) const	{ const CString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = 0; sscanf(*pAttr,"%u",&out); return true; }
-bool XNode::GetAttrValue( const CString &sName, DateTime &out ) const	{ const CString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out.FromString( *pAttr ); return true; }
+bool XNode::GetAttrValue( const RString &sName, RString &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = *pAttr; return true; }
+bool XNode::GetAttrValue( const RString &sName, int &out ) const		{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = atoi(*pAttr); return true; }
+bool XNode::GetAttrValue( const RString &sName, float &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = strtof(*pAttr, NULL); return true; }
+bool XNode::GetAttrValue( const RString &sName, bool &out ) const		{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = atoi(*pAttr) != 0; return true; }
+bool XNode::GetAttrValue( const RString &sName, unsigned &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out = 0; sscanf(*pAttr,"%u",&out); return true; }
+bool XNode::GetAttrValue( const RString &sName, DateTime &out ) const	{ const RString* pAttr=GetAttr(sName); if(pAttr==NULL) return false; out.FromString( *pAttr ); return true; }
 
 void XNode::SetValue( int v )				{ m_sValue = ssprintf("%d",v); }
 void XNode::SetValue( float v )				{ m_sValue = ssprintf("%f",v); }
@@ -565,17 +565,17 @@ void XNode::SetValue( bool v )				{ m_sValue = ssprintf("%d",v); }
 void XNode::SetValue( unsigned v )			{ m_sValue = ssprintf("%u",v); }
 void XNode::SetValue( const DateTime &v )	{ m_sValue = v.GetString(); }
 
-const CString *XNode::GetAttr( const CString &attrname ) const
+const RString *XNode::GetAttr( const RString &attrname ) const
 {
-	map<CString, CString>::const_iterator it = m_attrs.find( attrname );
+	map<RString, RString>::const_iterator it = m_attrs.find( attrname );
 	if( it != m_attrs.end() )
 		return &it->second;
 	return NULL;
 }
 
-CString *XNode::GetAttr( const CString &attrname )
+RString *XNode::GetAttr( const RString &attrname )
 {
-	map<CString, CString>::iterator it = m_attrs.find( attrname );
+	map<RString, RString>::iterator it = m_attrs.find( attrname );
 	if( it != m_attrs.end() )
 		return &it->second;
 	return NULL;
@@ -583,9 +583,9 @@ CString *XNode::GetAttr( const CString &attrname )
 
 // Desc   : Find child with name and return child
 // Return : NULL return if no child.
-XNode *XNode::GetChild( const CString &sName )
+XNode *XNode::GetChild( const RString &sName )
 {
-	multimap<CString, XNode*>::iterator it = m_childs.find( sName );
+	multimap<RString, XNode*>::iterator it = m_childs.find( sName );
 	if( it != m_childs.end() )
 	{
 		DEBUG_ASSERT( sName == it->second->m_sName );
@@ -594,9 +594,9 @@ XNode *XNode::GetChild( const CString &sName )
 	return NULL;
 }
 
-const XNode *XNode::GetChild( const CString &sName ) const
+const XNode *XNode::GetChild( const RString &sName ) const
 {
-	multimap<CString, XNode*>::const_iterator it = m_childs.find( sName );
+	multimap<RString, XNode*>::const_iterator it = m_childs.find( sName );
 	if( it != m_childs.end() )
 	{
 		DEBUG_ASSERT( sName == it->second->m_sName );
@@ -605,25 +605,25 @@ const XNode *XNode::GetChild( const CString &sName ) const
 	return NULL;
 }
 
-XNode *XNode::AppendChild( const CString &sName, const CString &value )		{ XNode *p = new XNode; p->m_sName = sName; p->m_sValue = value; return AppendChild( p ); }
-XNode *XNode::AppendChild( const CString &sName, float value )				{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
-XNode *XNode::AppendChild( const CString &sName, int value )				{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
-XNode *XNode::AppendChild( const CString &sName, unsigned value )			{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
-XNode *XNode::AppendChild( const CString &sName, const DateTime &value )	{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
+XNode *XNode::AppendChild( const RString &sName, const RString &value )		{ XNode *p = new XNode; p->m_sName = sName; p->m_sValue = value; return AppendChild( p ); }
+XNode *XNode::AppendChild( const RString &sName, float value )				{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
+XNode *XNode::AppendChild( const RString &sName, int value )				{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
+XNode *XNode::AppendChild( const RString &sName, unsigned value )			{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
+XNode *XNode::AppendChild( const RString &sName, const DateTime &value )	{ XNode *p = new XNode; p->m_sName = sName; p->SetValue( value ); return AppendChild( p ); }
 
 XNode *XNode::AppendChild( XNode *node )
 {
 	DEBUG_ASSERT( node->m_sName.size() );
 
 	/* Hinted insert: optimize for alphabetical inserts, for the copy ctor. */
-	m_childs.insert( m_childs.end(), pair<CString,XNode*>(node->m_sName,node) );
+	m_childs.insert( m_childs.end(), pair<RString,XNode*>(node->m_sName,node) );
 	return node;
 }
 
 // detach node and delete object
 bool XNode::RemoveChild( XNode *node )
 {
-	FOREACHMM( CString, XNode*, m_childs, p )
+	FOREACHMM( RString, XNode*, m_childs, p )
 	{
 		if( p->second == node )
 		{
@@ -637,21 +637,21 @@ bool XNode::RemoveChild( XNode *node )
 
 
 // detach attribute
-bool XNode::RemoveAttr( const CString &sName )
+bool XNode::RemoveAttr( const RString &sName )
 {
 	return m_attrs.erase(sName) > 0;
 }
 
-void XNode::AppendAttr( const CString &sName, const CString &sValue )
+void XNode::AppendAttr( const RString &sName, const RString &sValue )
 {
 	pair<XAttrs::iterator,bool> ret = m_attrs.insert( make_pair(sName,sValue) );
 	if( !ret.second )
 		ret.first->second = sValue; // already existed
 }
 
-void XNode::AppendAttr( const CString &sName, float value ){ AppendAttr(sName,ssprintf("%f",value)); }
-void XNode::AppendAttr( const CString &sName, int value )	{ AppendAttr(sName,ssprintf("%d",value)); }
-void XNode::AppendAttr( const CString &sName, unsigned value )	{ AppendAttr(sName,ssprintf("%u",value)); }
+void XNode::AppendAttr( const RString &sName, float value ){ AppendAttr(sName,ssprintf("%f",value)); }
+void XNode::AppendAttr( const RString &sName, int value )	{ AppendAttr(sName,ssprintf("%d",value)); }
+void XNode::AppendAttr( const RString &sName, unsigned value )	{ AppendAttr(sName,ssprintf("%u",value)); }
 
 bool XNode::SaveToFile( RageFileBasic &f, DISP_OPT &opt ) const
 {
@@ -665,7 +665,7 @@ bool XNode::SaveToFile( RageFileBasic &f, DISP_OPT &opt ) const
 	return true;
 }
 
-bool XNode::SaveToFile( const CString &sFile, DISP_OPT &opt ) const
+bool XNode::SaveToFile( const RString &sFile, DISP_OPT &opt ) const
 {
 	RageFile f;
 	if( !f.Open(sFile, RageFile::WRITE) )
