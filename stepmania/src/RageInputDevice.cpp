@@ -177,18 +177,6 @@ static const CString InputDeviceNames[] = {
 XToString( InputDevice, NUM_INPUT_DEVICES );
 StringToX( InputDevice );
 
-
-// XXX remove
-CString DeviceButtonToString( InputDevice device, DeviceButton i )
-{
-	return DeviceButtonToString( i );
-}
-
-DeviceButton StringToDeviceButton( InputDevice device, const CString& s )
-{
-	return StringToDeviceButton( s );
-}
-
 int GetNumDeviceButtons( InputDevice device )
 {
 	return NUM_DeviceButton;
@@ -199,7 +187,7 @@ CString DeviceInput::ToString() const
 	if( device == DEVICE_NONE )
 		return CString();
 
-	CString s = InputDeviceToString(device) + "_" + DeviceButtonToString(device,button);
+	CString s = InputDeviceToString(device) + "_" + DeviceButtonToString(button);
 	return s;
 }
 
@@ -215,7 +203,7 @@ bool DeviceInput::FromString( const CString &s )
 	}
 
 	device = StringToInputDevice( szDevice );
-	button = StringToDeviceButton( device, szButton );
+	button = StringToDeviceButton( szButton );
 	return true;
 }
 

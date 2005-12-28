@@ -257,8 +257,6 @@ enum DeviceButton
 
 CString DeviceButtonToString( DeviceButton i );
 DeviceButton StringToDeviceButton( const CString& s );
-CString DeviceButtonToString( InputDevice device, DeviceButton i );
-DeviceButton StringToDeviceButton( InputDevice device, const CString& s );
 
 int GetNumDeviceButtons( InputDevice device );
 
