@@ -38,6 +38,7 @@ struct InputEvent : public DeviceInput
 typedef vector<InputEvent> InputEventArray;
 
 class RageMutex;
+struct ButtonState;
 class InputFilter
 {
 public:
@@ -59,24 +60,9 @@ public:
 	CString GetButtonComment( const DeviceInput &di ) const;
 	
 	void GetInputEvents( InputEventArray &array );
+	void GetPressedButtons( vector<DeviceInput> &array );
 
 private:
-	struct ButtonState
-	{
-		ButtonState();
-		bool m_BeingHeld; // actual current state
-		bool m_bLastReportedHeld; // last state reported by Update()
-		CString m_sComment;
-		float m_fSecsHeld;
-		float m_Level, m_LastLevel;
-
-		// Timestamp of m_BeingHeld changing.
-		RageTimer m_BeingHeldTime;
-
-		// The time that we actually reported the last event (used for debouncing).
-		RageTimer m_LastReportTime;
-	};
-	ButtonState m_ButtonState[NUM_INPUT_DEVICES][NUM_DeviceButton];
 	void CheckButtonChange( ButtonState &bs, DeviceInput di, const RageTimer &now );
 
 	InputEventArray queue;
