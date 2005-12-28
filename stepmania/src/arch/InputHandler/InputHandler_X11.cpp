@@ -8,10 +8,10 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
-static RageKeySym XSymToKeySym( int key )
+static DeviceButton XSymToDeviceButton( int key )
 {
-#define KEY_INV KEY_INVALID
-	const RageKeySym ASCIIKeySyms[] =
+#define KEY_INV DeviceButton_Invalid
+	const DeviceButton ASCIIKeySyms[] =
 	{
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_INV     , KEY_INV      , /* 0 - 4 */
 		KEY_INV       , KEY_INV     , KEY_INV      , KEY_BACK    , KEY_TAB      , /* 5 - 9 */
@@ -47,7 +47,7 @@ static RageKeySym XSymToKeySym( int key )
 
 	/* XK_KP_0 ... XK_KP_9 to KEY_KP_C0 ... KEY_KP_C9 */
 	if( key >= XK_KP_0 && key <= XK_KP_9 )
-		return (RageKeySym) (key - XK_KP_0 + KEY_KP_C0);
+		return enum_add2(KEY_KP_C0, key - XK_KP_0);
 	
 	switch( key )
 	{
@@ -118,7 +118,7 @@ static RageKeySym XSymToKeySym( int key )
 	if( key - 0xFF00 < 0x20 )
 		return ASCIIKeySyms[key - 0xFF00];
 
-	return KEY_INVALID;
+	return DeviceButton_Invalid;
 }
 
 InputHandler_X11::InputHandler_X11()
@@ -150,18 +150,18 @@ void InputHandler_X11::Update()
 		while( XCheckTypedWindowEvent(X11Helper::Dpy, X11Helper::Win, KeyPress, &event) )
 		{
 			LOG->Trace( "key: sym %i, key %i, state true",
-				XLookupKeysym(&event.xkey,0), XSymToKeySym(XLookupKeysym(&event.xkey,0)) );
+				XLookupKeysym(&event.xkey,0), XSymToDeviceButton(XLookupKeysym(&event.xkey,0)) );
 
-			DeviceInput di( DEVICE_KEYBOARD, XSymToKeySym(XLookupKeysym(&event.xkey,0)) );
+			DeviceInput di( DEVICE_KEYBOARD, XSymToDeviceButton(XLookupKeysym(&event.xkey,0)) );
 			ButtonPressed(di, true);
 		}
 
 		while( XCheckTypedWindowEvent(X11Helper::Dpy, X11Helper::Win, KeyRelease, &event) )
 		{
 			LOG->Trace( "key: sym %i, key %i, state false",
-				XLookupKeysym(&event.xkey,0), XSymToKeySym(XLookupKeysym(&event.xkey,0)) );
+				XLookupKeysym(&event.xkey,0), XSymToDeviceButton(XLookupKeysym(&event.xkey,0)) );
 
-			DeviceInput di( DEVICE_KEYBOARD, XSymToKeySym(XLookupKeysym(&event.xkey,0)) );
+			DeviceInput di( DEVICE_KEYBOARD, XSymToDeviceButton(XLookupKeysym(&event.xkey,0)) );
 			ButtonPressed( di, false );
 		}
 	}

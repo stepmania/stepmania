@@ -153,13 +153,13 @@ void InputHandler_Linux_Joystick::InputThread()
 				// In 2.6.11 using an EMS USB2, the event number for P1 Tri (the first button)
 				// is being reported as 32 instead of 0.  Correct for this.
 				wrap( iNum, 32 );	// max number of joystick buttons.  Make this a constant?
-				ButtonPressed( DeviceInput(id, JOY_BUTTON_1 + iNum, 0, now), event.value );
+				ButtonPressed( DeviceInput(id, enum_add2(JOY_BUTTON_1, iNum), 0, now), event.value );
 				break;
 			}
 				
 			case JS_EVENT_AXIS: {
-				JoystickButton neg = (JoystickButton)(JOY_LEFT+2*event.number);
-				JoystickButton pos = (JoystickButton)(JOY_RIGHT+2*event.number);
+				DeviceButton neg = enum_add2(JOY_LEFT, 2*event.number);
+				DeviceButton pos = enum_add2(JOY_RIGHT, 2*event.number);
 				ButtonPressed(DeviceInput(id, neg, 0, now), event.value < -16000);
 				ButtonPressed(DeviceInput(id, pos, 0, now), event.value > +16000);
 				break;
