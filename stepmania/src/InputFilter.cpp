@@ -131,9 +131,14 @@ void InputFilter::SetButtonComment( const DeviceInput &di, const CString &sComme
 /* Release all buttons on the given device. */
 void InputFilter::ResetDevice( InputDevice device )
 {
+	LockMut(*queuemutex);
 	RageTimer now;
-	FOREACH_ENUM2( DeviceButton, button )
-		ButtonPressed( DeviceInput(device, button, -1, now), false );
+	set<Button> Buttons( g_ButtonsToProcess );
+	FOREACHS( Button, Buttons, b )
+	{
+		if( b->first == device )
+			ButtonPressed( DeviceInput(device, b->second, -1, now), false );
+	}
 }
 
 /* Check for reportable presses. */
