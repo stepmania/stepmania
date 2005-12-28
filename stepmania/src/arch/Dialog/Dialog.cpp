@@ -1,7 +1,9 @@
 #include "global.h"
 #include "Dialog.h"
 #include "DialogDriver.h"
+#if !defined(SMPACKAGE)
 #include "PrefsManager.h"
+#endif
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "arch/arch.h"
@@ -73,22 +75,24 @@ void Dialog::Shutdown()
 
 static bool MessageIsIgnored( CString sID )
 {
+#if !defined(SMPACKAGE)
 	vector<CString> asList;
 	split( PREFSMAN->m_sIgnoredMessageWindows, ",", asList );
 	for( unsigned i = 0; i < asList.size(); ++i )
 		if( !sID.CompareNoCase(asList[i]) )
 			return true;
+#endif
 	return false;
 }
 
 void Dialog::IgnoreMessage( CString sID )
 {
 	/* We can't ignore messages before PREFSMAN is around. */
+#if !defined(SMPACKAGE)
 	if( PREFSMAN == NULL )
 	{
 		if( sID != "" && LOG )
-			LOG->Warn( "Dialog: message \"%s\" set ID too early for ignorable messages", sID.c_str() );
-			
+			LOG->Warn( "Dialog: message \"%s\" set ID too early for ignorable messages", sID.c_str() );		
 		return;
 	}
 
@@ -103,6 +107,7 @@ void Dialog::IgnoreMessage( CString sID )
 	asList.push_back( sID );
 	PREFSMAN->m_sIgnoredMessageWindows.Set( join(",",asList) );
 	PREFSMAN->SavePrefsToDisk();
+#endif
 }
 
 void Dialog::Error( CString sMessage, CString sID )

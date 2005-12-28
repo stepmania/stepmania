@@ -1,7 +1,9 @@
 #include "global.h"
 #include "DialogDriver_Win32.h"
 #include "RageUtil.h"
-#include "CommonMetrics.h"	// for WINDOW_TITLE
+#if !defined(SMPACKAGE)
+#include "CommonMetrics.h"
+#endif
 #include "ThemeManager.h"
 #include "ProductInfo.h"
 
@@ -9,7 +11,9 @@
 #include "archutils/win32/GotoURL.h"
 #include "archutils/win32/RestartProgram.h"
 #include "archutils/win32/WindowsResources.h"
+#if !defined(SMPACKAGE)
 #include "archutils/win32/GraphicsWindow.h"
+#endif
 
 static bool g_bHush;
 static CString g_sMessage;
@@ -65,17 +69,35 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 	return FALSE;
 }
 
+static HWND GetHwnd()
+{
+#if !defined(SMPACKAGE)
+	return GraphicsWindow::GetHwnd();
+#else
+	return NULL;
+#endif
+}
+
+static CString GetWindowTitle()
+{
+#if !defined(SMPACKAGE)
+	return CommonMetrics::WINDOW_TITLE.IsLoaded() ? CommonMetrics::WINDOW_TITLE.GetValue() : PRODUCT_NAME;
+#else
+	return PRODUCT_NAME;
+#endif
+}
 
 void DialogDriver_Win32::OK( CString sMessage, CString sID )
 {
 	g_bAllowHush = sID != "";
 	g_sMessage = sMessage;
 	AppInstance handle;
-	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_OK), GraphicsWindow::GetHwnd(), OKWndProc );
+	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_OK), ::GetHwnd(), OKWndProc );
 	if( g_bAllowHush && g_bHush )
 		Dialog::IgnoreMessage( sID );
 }
 
+#if !defined(SMPACKAGE)
 static CString g_sErrorString;
 
 static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
@@ -131,21 +153,22 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 	}
 	return FALSE;
 }
+#endif
 
 void DialogDriver_Win32::Error( CString sError, CString sID )
 {
+#if !defined(SMPACKAGE)
 	g_sErrorString = sError;
 
 	// throw up a pretty error dialog
 	AppInstance handle;
 	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_ERROR_DIALOG), NULL, ErrorWndProc );
+#endif
 }
 
 Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString ID )
 {
-	CString sWindowTitle = CommonMetrics::WINDOW_TITLE.IsLoaded() ? CommonMetrics::WINDOW_TITLE.GetValue() : "";
-
-	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, sWindowTitle, MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
+	switch( MessageBox(::GetHwnd(), sMessage, ::GetWindowTitle(), MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
 	{
 	case IDABORT:	return Dialog::abort;
 	case IDRETRY:	return Dialog::retry;
@@ -156,9 +179,7 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString I
 
 Dialog::Result DialogDriver_Win32::AbortRetry( CString sMessage, CString sID )
 {
-	CString sWindowTitle = CommonMetrics::WINDOW_TITLE.IsLoaded() ? CommonMetrics::WINDOW_TITLE.GetValue() : "";
-
-	switch( MessageBox(GraphicsWindow::GetHwnd(), sMessage, sWindowTitle, MB_RETRYCANCEL) )
+	switch( MessageBox(::GetHwnd(), sMessage, ::GetWindowTitle(), MB_RETRYCANCEL) )
 	{
 	case IDRETRY:	return Dialog::retry;
 	default:	ASSERT(0);
