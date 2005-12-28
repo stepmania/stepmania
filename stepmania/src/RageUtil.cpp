@@ -300,8 +300,9 @@ RString ConvertUTF8ToACP( RString s )
 
 #endif
 
-// native forms: http://people.w3.org/rishida/names/languages.html
-/* We don't use 3-letter codes, so we don't bother supporting them. */
+/* ISO-639-1 codes: http://www.loc.gov/standards/iso639-2/langcodes.html
+ * native forms: http://people.w3.org/rishida/names/languages.html
+ * We don't use 3-letter codes, so we don't bother supporting them. */
 static const LanguageInfo g_langs[] =
 {
 	{"AA", "Afar", ""},
@@ -345,19 +346,21 @@ static const LanguageInfo g_langs[] =
 	{"GN", "Guarani", ""},
 	{"GU", "Gujarati", ""},
 	{"HA", "Hausa", "Hausa"},
+	{"HE", "Hebrew", "עברית"},
 	{"HI", "Hindi", "हिंदी"},
 	{"HR", "Croatian", "Hrvatski"},
 	{"HU", "Hungarian", "Magyar"},
 	{"HY", "Armenian", "Հայերեն"},
 	{"IA", "Interlingua", ""},
+	{"ID", "Indonesian", "Bahasa indonesia"},
 	{"IE", "Interlingue", ""},
 	{"IK", "Inupiak", ""},
-	{"IN", "Indonesian", "Bahasa indonesia"},	//"ID"?
+	{"IN", "Indonesian", "Bahasa indonesia"}, // compatibility
 	{"IS", "Icelandic", "Íslenska"},
 	{"IT", "Italian", "italiano"},
-	{"IW", "Hebrew", "עברית"},	//"HE"?
+	{"IW", "Hebrew", "עברית"}, // compatibility
 	{"JA", "Japanese", "日本語"},
-	{"JI", "Yiddish", ""},
+	{"JI", "Yiddish", ""}, // compatibility
 	{"JW", "Javanese", ""},
 	{"KA", "Georgian", ""},
 	{"KK", "Kazakh", "Қазақ"},
@@ -436,7 +439,8 @@ static const LanguageInfo g_langs[] =
 	{"VI", "Vietnamese", "Tiếng Việt"},
 	{"VO", "Volapuk", ""},
 	{"WO", "Wolof", "Wolof"},
-	{"XH", "Xhosa", "isiXhosa"},	//"XS"?
+	{"XH", "Xhosa", "isiXhosa"},
+	{"YI", "Yiddish", ""},
 	{"YO", "Yoruba", "Yorùbá"},
 	{"ZH", "Chinese", "中文"},
 	{"ZU", "Zulu", "isiZulu"},
