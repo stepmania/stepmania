@@ -258,8 +258,6 @@ enum DeviceButton
 CString DeviceButtonToString( DeviceButton i );
 DeviceButton StringToDeviceButton( const CString& s );
 
-const int MAX_DEVICE_BUTTONS = NUM_DeviceButton;
-
 struct DeviceInput
 {
 public:
