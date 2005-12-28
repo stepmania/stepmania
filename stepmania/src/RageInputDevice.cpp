@@ -25,7 +25,7 @@ CString DeviceButtonToString( DeviceButton key )
 
 	if( key >= JOY_BUTTON_1 && key <= JOY_BUTTON_32 )
 	{
-		return ssprintf( "%i", key-JOY_BUTTON_1+1 );
+		return ssprintf( "B%i", key-JOY_BUTTON_1+1 );
 	}
 
 	if( key >= MIDI_FIRST && key <= MIDI_LAST )
