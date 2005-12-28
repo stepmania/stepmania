@@ -12,10 +12,10 @@
 struct FileSet;
 struct File
 {
-	CString name;
-	CString lname;
+	RString name;
+	RString lname;
 
-	void SetName( const CString &fn )
+	void SetName( const RString &fn )
 	{
 		name = fn;
 		lname = name;
@@ -36,7 +36,7 @@ struct File
 	const FileSet *dirp;
 
 	File() { dir=false; dirp=NULL; size=-1; hash=-1; priv=NULL;}
-	File( const CString &fn )
+	File( const RString &fn )
 	{
 		SetName( fn );
 		dir=false; size=-1; hash=-1; priv=NULL;
@@ -46,9 +46,9 @@ struct File
 	bool operator< (const File &rhs) const { return lname<rhs.lname; }
 
 	bool equal(const File &rhs) const { return lname == rhs.lname; }
-	bool equal(const CString &rhs) const
+	bool equal(const RString &rhs) const
 	{
-		CString l = rhs;
+		RString l = rhs;
 		l.MakeLower();
 		return lname == l;
 	}
@@ -70,13 +70,13 @@ struct FileSet
 	FileSet() { m_bFilled = true; }
 
 	void GetFilesMatching(
-		const CString &sBeginning, const CString &sContaining, const CString &sEnding,
-		vector<CString> &asOut, bool bOnlyDirs ) const;
-	void GetFilesEqualTo( const CString &pat, vector<CString> &out, bool bOnlyDirs ) const;
+		const RString &sBeginning, const RString &sContaining, const RString &sEnding,
+		vector<RString> &asOut, bool bOnlyDirs ) const;
+	void GetFilesEqualTo( const RString &pat, vector<RString> &out, bool bOnlyDirs ) const;
 
-	RageFileManager::FileType GetFileType( const CString &sPath ) const;
-	int GetFileSize( const CString &sPath ) const;
-	int GetFileHash( const CString &sPath ) const;
+	RageFileManager::FileType GetFileType( const RString &sPath ) const;
+	int GetFileSize( const RString &sPath ) const;
+	int GetFileHash( const RString &sPath ) const;
 };
 
 class FilenameDB
@@ -86,47 +86,47 @@ public:
 		m_Mutex("FilenameDB"), ExpireSeconds( -1 ) { }
 	virtual FilenameDB::~FilenameDB() { FlushDirCache(); }
 
-	void AddFile( const CString &sPath, int iSize, int iHash, void *pPriv=NULL );
-	void DelFile( const CString &sPath );
-	const File *GetFile( const CString &sPath );
-	const void *GetFilePriv( const CString &sPath );
+	void AddFile( const RString &sPath, int iSize, int iHash, void *pPriv=NULL );
+	void DelFile( const RString &sPath );
+	const File *GetFile( const RString &sPath );
+	const void *GetFilePriv( const RString &sPath );
 
 	/* This handles at most two * wildcards.  If we need anything more complicated,
 	 * we'll need to use fnmatch or regex. */
-	void GetFilesSimpleMatch( const CString &sDir, const CString &sFile, vector<CString> &asOut, bool bOnlyDirs );
+	void GetFilesSimpleMatch( const RString &sDir, const RString &sFile, vector<RString> &asOut, bool bOnlyDirs );
 
 	/* Search for "path" case-insensitively and replace it with the correct
 	 * case.  If only a portion of the path exists, resolve as much as possible.
 	 * Return true if the entire path was matched. */
-	bool ResolvePath( CString &sPath );
+	bool ResolvePath( RString &sPath );
 
-	RageFileManager::FileType GetFileType( const CString &sPath );
-	int GetFileSize( const CString &sPath );
-	int GetFileHash( const CString &sFilePath );
-	void GetDirListing( CString sPath, vector<CString> &asAddTo, bool bOnlyDirs, bool bReturnPathToo );
+	RageFileManager::FileType GetFileType( const RString &sPath );
+	int GetFileSize( const RString &sPath );
+	int GetFileHash( const RString &sFilePath );
+	void GetDirListing( const RString &sPath, vector<RString> &asAddTo, bool bOnlyDirs, bool bReturnPathToo );
 
 	void FlushDirCache();
 
-	void GetFileSetCopy( CString dir, FileSet &out );
+	void GetFileSetCopy( const RString &dir, FileSet &out );
 
 protected:
 	RageEvent m_Mutex;
 
-	FileSet *GetFileSet( CString sDir, bool create=true );
+	FileSet *GetFileSet( const RString &sDir, bool create=true );
 
 	/* Directories we have cached: */
-	map<CString, FileSet *> dirs;
+	map<RString, FileSet *> dirs;
 
 	int ExpireSeconds;
 
-	void GetFilesEqualTo( const CString &sDir, const CString &sName, vector<CString> &asOut, bool bOnlyDirs );
-	void GetFilesMatching( const CString &sDir,
-		const CString &sBeginning, const CString &sContaining, const CString &sEnding, 
-		vector<CString> &asOut, bool bOnlyDirs );
-	void DelFileSet( map<CString, FileSet *>::iterator dir );
+	void GetFilesEqualTo( const RString &sDir, const RString &sName, vector<RString> &asOut, bool bOnlyDirs );
+	void GetFilesMatching( const RString &sDir,
+		const RString &sBeginning, const RString &sContaining, const RString &sEnding, 
+		vector<RString> &asOut, bool bOnlyDirs );
+	void DelFileSet( map<RString, FileSet *>::iterator dir );
 
 	/* The given path wasn't cached.  Cache it. */
-	virtual void PopulateFileSet( FileSet &fs, const CString &sPath ) { }
+	virtual void PopulateFileSet( FileSet &fs, const RString &sPath ) { }
 };
 
 /* This FilenameDB must be populated in advance. */
@@ -136,7 +136,7 @@ public:
 	NullFilenameDB() { ExpireSeconds = -1; }
 
 protected:
-	void PopulateFileSet( FileSet &fs, const CString &sPath ) { }
+	void PopulateFileSet( FileSet &fs, const RString &sPath ) { }
 };
 
 #endif
