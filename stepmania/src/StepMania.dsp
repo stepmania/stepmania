@@ -788,6 +788,10 @@ SOURCE=.\DateTime.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\DateTimeLua.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Difficulty.cpp
 # End Source File
 # Begin Source File
@@ -1141,6 +1145,10 @@ SOURCE=.\ScoreKeeperRave.h
 # Begin Source File
 
 SOURCE=.\ScreenDimensions.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\ScreenDimensions.h
 # End Source File
 # Begin Source File
 
@@ -1803,10 +1811,6 @@ SOURCE=.\global.cpp
 # Begin Source File
 
 SOURCE=.\global.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\ScreenDimensions.h
 # End Source File
 # Begin Source File
 
