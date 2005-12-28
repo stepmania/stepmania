@@ -22,7 +22,7 @@ private:
 
 	void UpdatePolled( DIDevice &device, const RageTimer &tm );
 	void UpdateBuffered( DIDevice &device, const RageTimer &tm );
-	void PollAndAcquireDevices();
+	void PollAndAcquireDevices( bool bBuffered );
 
 	static int InputThread_Start( void *p ) { ((InputHandler_DInput *) p)->InputThreadMain();  return 0; }
 	void InputThreadMain();

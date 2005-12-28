@@ -426,10 +426,13 @@ void InputHandler_DInput::UpdateBuffered(DIDevice &device, const RageTimer &tm)
 }
 
 
-void InputHandler_DInput::PollAndAcquireDevices()
+void InputHandler_DInput::PollAndAcquireDevices( bool bBuffered )
 {
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
+		if( Devices[i].buffered != bBuffered )
+			continue;
+
 		HRESULT hr = IDirectInputDevice2_Poll( Devices[i].Device );
 		if ( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
 		{
@@ -449,8 +452,11 @@ void InputHandler_DInput::Update()
 	RageTimer zero;
 	zero.SetZero();
 
-	/* Handle polled devices. */
-	PollAndAcquireDevices();
+	/* Handle polled devices.  Handle buffered, too, if there's no input thread to do it. */
+	PollAndAcquireDevices( false );
+	if( !m_Thread.IsCreated() )
+		PollAndAcquireDevices( true );
+
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
 		if( !Devices[i].buffered )
@@ -504,7 +510,7 @@ void InputHandler_DInput::InputThreadMain()
 		if( BufferedDevices.size() )
 		{
 			/* Update buffered devices. */
-			PollAndAcquireDevices();
+			PollAndAcquireDevices( true );
 
 			int ret = WaitForSingleObjectEx( Handle, 50, true );
 			if( ret == -1 )
