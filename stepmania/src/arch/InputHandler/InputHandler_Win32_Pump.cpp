@@ -47,7 +47,7 @@ InputHandler_Win32_Pump::~InputHandler_Win32_Pump()
 
 void InputHandler_Win32_Pump::HandleInput( int iDevice, int iEvent )
 {
-	static const int bits[NUM_PUMP_PAD_BUTTONS] = {
+	static const int bits[] = {
 	/* P1 */	(1<<9), (1<<12), (1<<13), (1<<11), (1<<10),
 	/* ESC */	(1<<16),
 	/* P1 */	(1<<17), (1<<20), (1<<21), (1<<19), (1<<18),
@@ -55,9 +55,9 @@ void InputHandler_Win32_Pump::HandleInput( int iDevice, int iEvent )
 
 	InputDevice id = InputDevice( DEVICE_PUMP1 + iDevice );
 
-	for( int iButton = 0; iButton < NUM_PUMP_PAD_BUTTONS; ++iButton )
+	for( int iButton = 0; iButton < ARRAYSIZE(bits); ++iButton )
 	{
-		DeviceInput di( id, iButton );
+		DeviceInput di( id, enum_add2(JOY_BUTTON_1, iButton) );
 		
 		/* If we're in a thread, our timestamp is accurate. */
 		if( InputThread.IsCreated() )
@@ -65,6 +65,26 @@ void InputHandler_Win32_Pump::HandleInput( int iDevice, int iEvent )
 
 		ButtonPressed( di, !(iEvent & bits[iButton]) );
 	}
+}
+
+CString InputHandler_Win32_Pump::GetDeviceSpecificInputString( const DeviceInput &di )
+{
+	switch( di.button )
+	{
+	case JOY_BUTTON_1:  return "UL";
+	case JOY_BUTTON_2:  return "UR";
+	case JOY_BUTTON_3:  return "MID";
+	case JOY_BUTTON_4:  return "DL";
+	case JOY_BUTTON_5:  return "DR";
+	case JOY_BUTTON_6:  return "Esc";
+	case JOY_BUTTON_7:  return "P2 UL";
+	case JOY_BUTTON_8:  return "P2 UR";
+	case JOY_BUTTON_9:  return "P2 MID";
+	case JOY_BUTTON_10: return "P2 DL";
+	case JOY_BUTTON_11: return "P2 DR";
+	}
+
+	return InputHandler::GetDeviceSpecificInputString( di );
 }
 
 void InputHandler_Win32_Pump::GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut)

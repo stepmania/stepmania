@@ -88,7 +88,7 @@ static void CALLBACK midiCallback( HMIDIIN device, UINT status, DWORD instancePt
 
 		if( iType == 144 )
 		{
-			DeviceInput di = DeviceInput( DEVICE_MIDI, iChannel );
+			DeviceInput di = DeviceInput( DEVICE_MIDI, enum_add2(MIDI_FIRST, iChannel) );
 			di.ts.Touch();
 			if( iValue > 0 )
 				((InputHandler_Win32_MIDI *)instancePtr)->SetDev( di, true );

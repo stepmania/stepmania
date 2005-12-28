@@ -253,7 +253,7 @@ void InputHandler_DInput::UpdatePolled(DIDevice &device, const RageTimer &tm)
 
 			for( int k = 0; k < 256; ++k )
 			{
-				const int key = device.Inputs[k].num;
+				const DeviceButton key = (DeviceButton) device.Inputs[k].num;
 				ButtonPressed(DeviceInput(device.dev, key), !!(keys[k] & 0x80));
 			}
 		}
@@ -276,14 +276,14 @@ void InputHandler_DInput::UpdatePolled(DIDevice &device, const RageTimer &tm)
 				{
 				case in.BUTTON:
 				{
-					DeviceInput di(dev, JOY_BUTTON_1 + in.num, -1, tm);
+					DeviceInput di(dev, (DeviceButton) (JOY_BUTTON_1 + in.num), -1, tm);
 					ButtonPressed(di, !!state.rgbButtons[in.ofs - DIJOFS_BUTTON0]);
 					break;
 				}
 
 				case in.AXIS:
 				{
-					JoystickButton neg = NUM_JOYSTICK_BUTTONS, pos = NUM_JOYSTICK_BUTTONS;
+					DeviceButton neg = DeviceButton_Invalid, pos = DeviceButton_Invalid;
 					int val = 0;
 					switch(in.ofs)
 					{
@@ -318,7 +318,7 @@ void InputHandler_DInput::UpdatePolled(DIDevice &device, const RageTimer &tm)
 									device.JoystickInst.tszProductName, in.ofs );
 							 continue;
 					}
-					if( neg != NUM_JOYSTICK_BUTTONS )
+					if( neg != DeviceButton_Invalid )
 					{
 						float l = SCALE( int(val), 0.0f, 100.0f, 0.0f, 1.0f );
 						ButtonPressed(DeviceInput(dev, neg, max(-l,0), tm), val < -50);
@@ -381,16 +381,16 @@ void InputHandler_DInput::UpdateBuffered(DIDevice &device, const RageTimer &tm)
 			switch(in.type)
 			{
 			case in.KEY:
-				ButtonPressed(DeviceInput(dev, in.num, -1, tm), !!(evtbuf[i].dwData & 0x80));
+				ButtonPressed(DeviceInput(dev, (DeviceButton) in.num, -1, tm), !!(evtbuf[i].dwData & 0x80));
 				break;
 
 			case in.BUTTON:
-				ButtonPressed(DeviceInput(dev, JOY_BUTTON_1 + in.num, -1, tm), !!evtbuf[i].dwData);
+				ButtonPressed(DeviceInput(dev, (DeviceButton) (JOY_BUTTON_1 + in.num), -1, tm), !!evtbuf[i].dwData);
 				break;
 
 			case in.AXIS:
 			{
-				int up = 0, down = 0;
+				DeviceButton up = DeviceButton_Invalid, down = DeviceButton_Invalid;
 				switch(in.ofs)
 				{
 				case DIJOFS_X:  up = JOY_LEFT; down = JOY_RIGHT; break;

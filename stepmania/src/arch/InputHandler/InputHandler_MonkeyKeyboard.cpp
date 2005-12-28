@@ -18,7 +18,7 @@ void InputHandler_MonkeyKeyboard::GetDevicesAndDescriptions(vector<InputDevice>&
 	vDescriptionsOut.push_back( "MonkeyKeyboard" );
 }
 
-static const int g_keys[] =
+static const DeviceButton g_keys[] =
 {
 	// Some of the default keys for the dance game type
 	KEY_LEFT,				// DANCE_BUTTON_LEFT,
@@ -49,7 +49,7 @@ static const int g_keys[] =
 	KEY_KP_PLUS,			// DANCE_BUTTON_MENUDOWN
 };
 
-static int GetRandomKeyboardKey()
+static DeviceButton GetRandomKeyboardKey()
 {
 	int index = rand()%ARRAYSIZE(g_keys);
 	return g_keys[index];
