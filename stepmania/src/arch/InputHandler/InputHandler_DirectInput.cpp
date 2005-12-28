@@ -352,7 +352,7 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 	DIDEVICEOBJECTDATA evtbuf[INPUT_QSIZE];
 
 	numevents = INPUT_QSIZE;
-	HRESULT hr = device.Device->GetDeviceData( sizeof(DIDEVICEOBJECTDATA), evtbuf, &numevents, 0);
+	HRESULT hr = device.Device->GetDeviceData( sizeof(DIDEVICEOBJECTDATA), evtbuf, &numevents, 0 );
 	if( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
 		return;
 
