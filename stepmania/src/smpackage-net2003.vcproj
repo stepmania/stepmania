@@ -177,6 +177,12 @@
 				RelativePath=".\smpackage\EnterName.h">
 			</File>
 			<File
+				RelativePath=".\smpackage\LanguagesDlg.cpp">
+			</File>
+			<File
+				RelativePath=".\smpackage\LanguagesDlg.h">
+			</File>
+			<File
 				RelativePath=".\smpackage\MainMenuDlg.cpp">
 			</File>
 			<File
@@ -250,10 +256,10 @@
 				RelativePath="menu.bmp">
 			</File>
 			<File
-				RelativePath="res\smpackage.ico">
+				RelativePath="smpackage.ICO">
 			</File>
 			<File
-				RelativePath="smpackage.ICO">
+				RelativePath="res\smpackage.ico">
 			</File>
 			<File
 				RelativePath=".\smpackage\smpackage.rc">
@@ -372,6 +378,18 @@
 				RelativePath=".\RageFileDriverDeflate.h">
 			</File>
 			<File
+				RelativePath=".\RageFileDriverDirect.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverDirect.h">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverDirectHelpers.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverDirectHelpers.h">
+			</File>
+			<File
 				RelativePath=".\RageFileDriverMemory.cpp">
 			</File>
 			<File
@@ -382,6 +400,12 @@
 			</File>
 			<File
 				RelativePath=".\RageFileDriverSlice.h">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverTimeout.cpp">
+			</File>
+			<File
+				RelativePath=".\RageFileDriverTimeout.h">
 			</File>
 			<File
 				RelativePath=".\RageFileDriverZip.cpp">
@@ -424,6 +448,12 @@
 			</File>
 			<File
 				RelativePath=".\RageUtil_FileDB.h">
+			</File>
+			<File
+				RelativePath=".\RageUtil_WorkerThread.cpp">
+			</File>
+			<File
+				RelativePath=".\RageUtil_WorkerThread.h">
 			</File>
 			<Filter
 				Name="Helpers"
@@ -498,12 +528,6 @@
 			</File>
 			<File
 				RelativePath=".\LuaManager.h">
-			</File>
-			<File
-				RelativePath=".\ThemeManager.cpp">
-			</File>
-			<File
-				RelativePath=".\ThemeManager.h">
 			</File>
 		</Filter>
 		<File

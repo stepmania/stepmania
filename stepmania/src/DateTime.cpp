@@ -2,8 +2,9 @@
 #include "DateTime.h"
 #include "RageUtil.h"
 #include "EnumHelper.h"
+#if !defined(SMPACKAGE)
 #include "ThemeMetric.h"
-
+#endif
 
 DateTime::DateTime()
 {
@@ -195,7 +196,9 @@ static const CString MonthNames[] =
 	"December",
 };
 XToString( Month, MONTHS_IN_YEAR );
+#if !defined(SMPACKAGE)
 XToThemedString( Month, MONTHS_IN_YEAR );
+#endif
 
 CString LastWeekToString( int iLastWeekIndex )
 {

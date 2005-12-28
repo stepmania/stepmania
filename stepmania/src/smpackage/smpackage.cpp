@@ -9,6 +9,7 @@
 #include "MainMenuDlg.h"
 #include "RageFileManager.h"
 #include "arch/arch.h"
+#include "LuaManager.h"
 
 
 #ifdef _DEBUG
@@ -38,8 +39,11 @@ extern RString GetLastErrorString();
 
 BOOL CSmpackageApp::InitInstance()
 {
+	TCHAR szCurrentDirectory[MAX_PATH];
+	GetCurrentDirectory( ARRAYSIZE(szCurrentDirectory), szCurrentDirectory );
+
 	/* Almost everything uses this to read and write files.  Load this early. */
-	FILEMAN = new RageFileManager( "" );
+	FILEMAN = new RageFileManager( szCurrentDirectory );
 	FILEMAN->MountInitialFilesystems();
 
 	/* Set this up next.  Do this early, since it's needed for RageException::Throw. */
@@ -47,12 +51,7 @@ BOOL CSmpackageApp::InitInstance()
 
 
 	if( DoesFileExist("Songs") )	// this is a SM program directory
-	{
-		// make sure it's in the list of install directories
-		TCHAR szCurrentDirectory[MAX_PATH];
-		GetCurrentDirectory( MAX_PATH, szCurrentDirectory );
-		SMPackageUtil::AddStepManiaInstallDir( szCurrentDirectory );
-	}
+		SMPackageUtil::AddStepManiaInstallDir( szCurrentDirectory );	// add this if it doesn't already exist
 	
 
 	// check if there's a .smzip command line argument
@@ -109,6 +108,7 @@ BOOL CSmpackageApp::InitInstance()
 	}
 
 	FILEMAN = new RageFileManager( "" );
+	LUA = new LuaManager();
 
 
 	// Show the Manager Dialog
@@ -117,6 +117,7 @@ BOOL CSmpackageApp::InitInstance()
 //	if (nResponse == IDOK)
 
 
+	SAFE_DELETE( LUA );
 	SAFE_DELETE( FILEMAN );
 
 

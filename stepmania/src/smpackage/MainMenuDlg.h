@@ -51,6 +51,7 @@ public:
 	afx_msg void OnBnClickedButtonLaunchGame();
 	afx_msg void OnBnClickedViewStatistics();
 	afx_msg void OnBnClickedClearCache();
+	afx_msg void OnBnClickedLanguages();
 };
 
 //{{AFX_INSERT_LOCATION}}

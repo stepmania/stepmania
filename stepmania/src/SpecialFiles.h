@@ -7,6 +7,9 @@ namespace SpecialFiles
 {
 	extern const RString KEYMAPS_PATH;
 	extern const RString PREFERENCES_INI_PATH;
+	extern const RString THEMES_DIR;
+	extern const RString LANGUAGES_SUBDIR;
+
 }
 
 #endif

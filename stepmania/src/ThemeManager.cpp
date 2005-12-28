@@ -17,6 +17,7 @@
 #include "ScreenDimensions.h"
 #include "Command.h"
 #include "LocalizedString.h"
+#include "SpecialFiles.h"
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
@@ -33,9 +34,7 @@ StringToX( ElementCategory );
 
 
 const RString BASE_THEME_NAME = "default";
-const RString LANGUAGES_SUBDIR = "Languages/";
 const RString BASE_LANGUAGE = "english";
-const RString THEMES_DIR  = "Themes/";
 const RString METRICS_FILE = "metrics.ini";
 
 
@@ -125,7 +124,7 @@ ThemeManager::~ThemeManager()
 
 void ThemeManager::GetThemeNames( vector<RString>& AddTo )
 {
-	GetDirListing( THEMES_DIR + "*", AddTo, true );
+	GetDirListing( SpecialFiles::THEMES_DIR + "*", AddTo, true );
 	StripCvs( AddTo );
 }
 
@@ -356,7 +355,7 @@ void ThemeManager::UpdateLuaGlobals()
 
 RString ThemeManager::GetThemeDirFromName( const RString &sThemeName )
 {
-	return THEMES_DIR + sThemeName + "/";
+	return SpecialFiles::THEMES_DIR + sThemeName + "/";
 }
 
 struct CompareLanguageTag
@@ -847,7 +846,7 @@ void ThemeManager::NextTheme()
 
 void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RString>& asLanguagesOut )
 {
-	RString sLanguageDir = GetThemeDirFromName(sThemeName) + LANGUAGES_SUBDIR;
+	RString sLanguageDir = GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR;
 	vector<RString> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
 	
@@ -865,7 +864,7 @@ void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RStri
 
 RString ThemeManager::GetLanguageIniPath( const RString &sThemeName, const RString &sLanguage )
 {
-	return GetThemeDirFromName(sThemeName) + LANGUAGES_SUBDIR + sLanguage + ".ini";
+	return GetThemeDirFromName(sThemeName) + SpecialFiles::LANGUAGES_SUBDIR + sLanguage + ".ini";
 }
 
 void ThemeManager::GetModifierNames( vector<RString>& AddTo )
@@ -926,7 +925,7 @@ void ThemeManager::GetMetricsThatBeginWith( const RString &sClassName_, const RS
 
 RString ThemeManager::GetBlankGraphicPath()
 {
-	return THEMES_DIR + BASE_THEME_NAME + "/" + ElementCategoryToString(EC_GRAPHICS) + "/_blank.png";
+	return SpecialFiles::THEMES_DIR + BASE_THEME_NAME + "/" + ElementCategoryToString(EC_GRAPHICS) + "/_blank.png";
 }
 
 // lua start

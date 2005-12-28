@@ -17,6 +17,7 @@
 #define IDD_SHOW_COMMENT                147
 #define IDD_UNINSTALL_OLD_PACKAGES      148
 #define IDD_CHANGE_GAME_SETTINGS        149
+#define IDD_THEMES                      150
 #define IDC_LIST_SONGS                  1000
 #define IDC_LIST                        1000
 #define IDC_BUTTON_PLAY                 1001
@@ -54,6 +55,7 @@
 #define IDC_VIEW_STATISTICS             1030
 #define IDC_CLEAR_KEYMAPS2              1031
 #define IDC_CLEAR_CACHE                 1031
+#define IDC_LANGUAGES                   1032
 #define IDC_BUTTON_REFRESH              1035
 #define IDC_BUTTON_SAVE                 1036
 #define IDC_BUTTON_OVERRIDE             1037
@@ -63,8 +65,10 @@
 #define IDC_DONTSHOW                    1042
 #define IDC_PACKAGES                    1044
 #define IDC_BUTTON1                     1045
+#define IDC_BUTTON_DELETE               1046
 #define IDC_PROGRESS1                   1047
 #define IDC_RADIO_DEFAULT               1048
+#define IDC_BUTTON_IMPORT               1048
 #define IDC_RADIO_OPENGL                1049
 #define IDC_RADIO_DIRECT3D              1050
 #define IDC_RADIO_SOUND_DEFAULT         1051
@@ -76,14 +80,19 @@
 #define IDC_BUTTON_LAUNCH_GAME          1055
 #define IDC_RADIO_SOUND_DIRECTSOUND_HARDWARE 1056
 #define IDC_RADIO_SOUND_WAVEOUT         1057
+#define IDC_BUTTON_CREATE               1057
+#define IDC_LIST_LANGUAGES              1058
+#define IDC_STATIC_TOTAL_STRINGS        1060
+#define IDC_STATIC_NEED_TRANSLATION     1061
+#define IDC_STATIC_TOTAL_STRINGS2       1062
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        150
+#define _APS_NEXT_RESOURCE_VALUE        151
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1056
+#define _APS_NEXT_CONTROL_VALUE         1062
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

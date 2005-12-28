@@ -6,8 +6,14 @@
 #include "RageLog.h"
 #include "RageFile.h"
 #include "RageThreads.h"
-#include "arch/Dialog/Dialog.h"
 #include "Foreach.h"
+
+#if !defined(SMPACKAGE)
+#include "arch/Dialog/Dialog.h"
+#define DIALOG_OK Dialog::OK
+#else
+#define DIALOG_OK __noop
+#endif
 
 #include <csetjmp>
 #include <cassert>
@@ -268,7 +274,7 @@ bool LuaHelpers::RunScriptFile( const CString &sFile )
 	if( !f.Open( sFile ) )
 	{
 		CString sError = ssprintf( "Couldn't open Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
-		Dialog::OK( sError, "LUA_ERROR" );
+		DIALOG_OK( sError, "LUA_ERROR" );
 		return false;
 	}
 
@@ -276,7 +282,7 @@ bool LuaHelpers::RunScriptFile( const CString &sFile )
 	if( f.Read( sScript ) == -1 )
 	{
 		CString sError = ssprintf( "Error reading Lua script \"%s\": %s", sFile.c_str(), f.GetError().c_str() );
-		Dialog::OK( sError, "LUA_ERROR" );
+		DIALOG_OK( sError, "LUA_ERROR" );
 		return false;
 	}
 
@@ -287,7 +293,7 @@ bool LuaHelpers::RunScriptFile( const CString &sFile )
 	{
 		LUA->Release(L);
 		sError = ssprintf( "Lua runtime error: %s", sError.c_str() );
-		Dialog::OK( sError, "LUA_ERROR" );
+		DIALOG_OK( sError, "LUA_ERROR" );
 		return false;
 	}
 	LUA->Release(L);
@@ -330,7 +336,7 @@ bool LuaHelpers::RunScript( Lua *L, const CString &sExpression, const CString &s
 	if( !LuaHelpers::RunScript( L, sExpression, sName.size()? sName:CString("in"), sError, iReturnValues ) )
 	{
 		sError = ssprintf( "Lua runtime error parsing \"%s\": %s", sName.size()? sName.c_str():sExpression.c_str(), sError.c_str() );
-		Dialog::OK( sError, "LUA_ERROR" );
+		DIALOG_OK( sError, "LUA_ERROR" );
 		return false;
 	}
 

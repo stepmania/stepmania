@@ -15,7 +15,8 @@
 #include "archutils/Win32/SpecialDirs.h"
 #include "SpecialFiles.h"
 #include "ProductInfo.h"
-#include ".\mainmenudlg.h"
+#include "mainmenudlg.h"
+#include "LanguagesDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -58,6 +59,7 @@ BEGIN_MESSAGE_MAP(MainMenuDlg, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_LAUNCH_GAME, OnBnClickedButtonLaunchGame)
 	ON_BN_CLICKED(IDC_VIEW_STATISTICS, OnBnClickedViewStatistics)
 	ON_BN_CLICKED(IDC_CLEAR_CACHE, OnBnClickedClearCache)
+	ON_BN_CLICKED(IDC_LANGUAGES, OnBnClickedLanguages)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -255,6 +257,13 @@ void MainMenuDlg::OnBnClickedClearCache()
 {
 	// TODO: Add your control notification handler code here
 	ASSERT(0);
+}
+
+void MainMenuDlg::OnBnClickedLanguages()
+{
+	// TODO: Add your control notification handler code here
+	LanguagesDlg dlg;
+	dlg.DoModal();	
 }
 
 /*

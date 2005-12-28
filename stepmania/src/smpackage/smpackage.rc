@@ -155,23 +155,23 @@ BEGIN
                     IDC_STATIC,18,144,196,17
 END
 
-IDD_MENU DIALOGEX 0, 0, 334, 303
+IDD_MENU DIALOGEX 0, 0, 332, 325
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "StepMania Tools Main Menu"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Exit",IDOK,277,282,50,14
+    DEFPUSHBUTTON   "Exit",IDOK,275,304,50,14
     CONTROL         140,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
-    GROUPBOX        "Installation",IDC_STATIC,7,41,320,28
+    GROUPBOX        "Installation",IDC_STATIC,7,41,318,28
     PUSHBUTTON      "Edit Installations",IDC_EDIT_INSTALLATIONS,241,49,75,15
-    GROUPBOX        "Create and Share",IDC_STATIC,7,219,320,57
+    GROUPBOX        "Create and Share",IDC_STATIC,7,219,318,79
     PUSHBUTTON      "Export Packages",IDC_EXPORT_PACKAGES,15,234,75,15
     LTEXT           "Create .smzip package files to share with other users.  Packages can contain songs, courses, themes, backgrounds, and more.",
                     IDC_STATIC,104,233,215,18
     PUSHBUTTON      "Create Song",IDC_CREATE_SONG,15,255,75,15
-    LTEXT           "Create a new song in StepMania from your favorite mp3 or ogg music file.",
+    LTEXT           "Create a new song in from your favorite mp3 or ogg music file.",
                     IDC_STATIC,103,254,215,20
-    GROUPBOX        "Troubleshooting",IDC_STATIC,7,109,320,109
+    GROUPBOX        "Troubleshooting",IDC_STATIC,7,109,318,109
     PUSHBUTTON      "Change Preferences",IDC_CHANGE_PREFERENCES,16,120,75,15
     PUSHBUTTON      "Open Preferences",IDC_OPEN_PREFERENCES,16,152,75,15
     LTEXT           "Using this feature, you can:\n - Change the graphics API that the game will use.\n - Change the sound API that the game will use.\n - Clear all preferences if the game won't start.\n - Open the preferences file to make changes by hand.",
@@ -182,14 +182,17 @@ BEGIN
                     ES_READONLY
     LTEXT           "Erase all of your keyboard and joystick mappings if you've made a mistake.",
                     IDC_STATIC,104,174,214,18
-    PUSHBUTTON      "Launch Game",IDC_BUTTON_LAUNCH_GAME,189,282,70,14
+    PUSHBUTTON      "Launch Game",IDC_BUTTON_LAUNCH_GAME,189,304,70,14
     PUSHBUTTON      "View Statistics",IDC_VIEW_STATISTICS,16,85,75,15
     LTEXT           "View high scores and usage statistics and other data saved from your play.",
                     IDC_STATIC,103,84,215,20
-    GROUPBOX        "Statistics",IDC_STATIC,7,72,320,35
+    GROUPBOX        "Statistics",IDC_STATIC,7,72,318,35
     PUSHBUTTON      "Clear Cache",IDC_CLEAR_CACHE,16,196,75,15
     LTEXT           "Erase the song and course cache.  Use this if you change a song file and the change isn't showing in-game.",
                     IDC_STATIC,104,196,214,18
+    PUSHBUTTON      "Languages",IDC_LANGUAGES,15,276,75,15
+    LTEXT           "Create a new or manage existing language translations.",
+                    IDC_STATIC,103,275,215,20
 END
 
 IDD_ENTER_COMMENT DIALOGEX 0, 0, 312, 202
@@ -269,6 +272,32 @@ BEGIN
                     BS_AUTOCHECKBOX | WS_TABSTOP,26,213,106,10
     LTEXT           "Tip: Change these only if you experience problems when using the default settings.",
                     IDC_STATIC,7,234,147,26
+END
+
+IDD_THEMES DIALOGEX 0, 0, 329, 194
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
+CAPTION "Language Translations"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "Close",IDOK,272,173,50,14
+    LISTBOX         IDC_LIST_THEMES,7,18,102,121,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Themes",IDC_STATIC,7,7,101,10
+    LISTBOX         IDC_LIST_LANGUAGES,116,17,100,121,LBS_SORT | 
+                    LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Languages",IDC_STATIC,118,7,98,10
+    PUSHBUTTON      "Create Language",IDC_BUTTON_CREATE,232,45,85,15
+    PUSHBUTTON      "Delete Language",IDC_BUTTON_DELETE,232,67,85,15
+    PUSHBUTTON      "Export CSV",IDC_BUTTON_EXPORT,232,89,85,15
+    PUSHBUTTON      "Import CSV",IDC_BUTTON_IMPORT,232,111,85,15
+    LTEXT           "Create a new language, export the theme strings to a CSV, edit the CSV using Excel or a text editor, then import the CSV file back into the same language.",
+                    IDC_STATIC,7,144,315,25
+    LTEXT           "Selection details",IDC_STATIC,222,7,100,9
+    LTEXT           "Total Strings:",IDC_STATIC,225,17,62,10
+    LTEXT           "Need translation:",IDC_STATIC,225,28,69,10
+    LTEXT           "",IDC_STATIC_TOTAL_STRINGS,296,18,26,10
+    LTEXT           "",IDC_STATIC_NEED_TRANSLATION,296,27,26,10
 END
 
 
@@ -353,9 +382,9 @@ BEGIN
     IDD_MENU, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 327
+        RIGHTMARGIN, 325
         TOPMARGIN, 7
-        BOTTOMMARGIN, 296
+        BOTTOMMARGIN, 318
     END
 
     IDD_ENTER_COMMENT, DIALOG
@@ -388,6 +417,14 @@ BEGIN
         RIGHTMARGIN, 154
         TOPMARGIN, 7
         BOTTOMMARGIN, 274
+    END
+
+    IDD_THEMES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 322
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 187
     END
 END
 #endif    // APSTUDIO_INVOKED
