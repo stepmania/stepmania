@@ -49,7 +49,7 @@ static const int g_keys[] =
 	KEY_KP_PLUS,			// DANCE_BUTTON_MENUDOWN
 };
 
-int GetRandomKeyboadKey()
+static int GetRandomKeyboardKey()
 {
 	int index = rand()%ARRAYSIZE(g_keys);
 	return g_keys[index];
@@ -78,7 +78,7 @@ void InputHandler_MonkeyKeyboard::Update()
 		ButtonPressed(m_diLast, false);
 
 		// Choose a new key and send it.
-		m_diLast = DeviceInput(DEVICE_KEYBOARD,GetRandomKeyboadKey());
+		m_diLast = DeviceInput(DEVICE_KEYBOARD,GetRandomKeyboardKey());
 		ButtonPressed(m_diLast, true);
 
 		m_timerPressButton.Touch();
