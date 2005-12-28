@@ -9,7 +9,8 @@ namespace SpecialFiles
 	extern const RString PREFERENCES_INI_PATH;
 	extern const RString THEMES_DIR;
 	extern const RString LANGUAGES_SUBDIR;
-
+	extern const RString BASE_LANGUAGE;
+	extern const RString METRICS_FILE;
 }
 
 #endif

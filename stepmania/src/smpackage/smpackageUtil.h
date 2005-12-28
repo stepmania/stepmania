@@ -1,6 +1,8 @@
 #ifndef SMPackageUtil_H
 #define SMPackageUtil_H
 
+struct LanguageInfo;
+
 namespace SMPackageUtil
 {
 	void WriteStepManiaInstallDirs( const vector<RString>& asInstallDirsToWrite );
@@ -16,6 +18,9 @@ namespace SMPackageUtil
 	bool IsValidPackageDirectory(RString path);
 
 	bool LaunchGame();
+
+	RString GetLanguageDisplayString( const RString &sIsoCode );
+	RString GetLanguageCodeFromDisplayString( const RString &sDisplayString );
 }
 
 #endif

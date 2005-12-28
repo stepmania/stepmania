@@ -25,4 +25,6 @@ protected:
 public:
 	CListBox m_listThemes;
 	CListBox m_listLanguages;
+	afx_msg void OnBnClickedButtonCreate();
+	afx_msg void OnBnClickedButtonDelete();
 };

@@ -193,6 +193,22 @@ bool SMPackageUtil::LaunchGame()
 	return true;
 }
 
+RString SMPackageUtil::GetLanguageDisplayString( const RString &sIsoCode )
+{
+	const LanguageInfo *li = GetLanguageInfo( sIsoCode );
+	return ssprintf( "%s (%s)", li ? li->szIsoCode:sIsoCode.c_str(), li ? li->szNativeName:"???" );
+}
+
+RString SMPackageUtil::GetLanguageCodeFromDisplayString( const RString &sDisplayString )
+{
+	RString s = sDisplayString;
+	// strip the space and everything after
+	size_t iSpace = s.find(' ');
+	ASSERT( iSpace != s.npos ); 
+	s.erase( s.begin()+iSpace, s.end() );
+	return s;
+}
+
 /*
  * (c) 2002-2005 Chris Danford
  * All rights reserved.

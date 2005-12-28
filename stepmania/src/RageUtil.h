@@ -282,11 +282,12 @@ wstring RStringToWstring( const RString &sString );
 
 struct LanguageInfo
 {
-	const char *szIso639Code;
+	const char *szIsoCode;
 	const char *szEnglishName;
 	const char *szNativeName;	// empty string if not available
 };
-void GetLanguageInfos( vector<LanguageInfo> &vAddTo );
+void GetLanguageInfos( vector<const LanguageInfo*> &vAddTo );
+const LanguageInfo *GetLanguageInfo( const RString &sIsoCode );
 RString GetLanguageNameFromISO639Code( RString sName );
 
 // Splits a RString into an vector<RString> according the Delimitor.

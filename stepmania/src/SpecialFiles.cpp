@@ -5,7 +5,8 @@ const RString SpecialFiles::KEYMAPS_PATH = "Save/Keymaps.ini";
 const RString SpecialFiles::PREFERENCES_INI_PATH	= "Save/Preferences.ini";
 const RString SpecialFiles::THEMES_DIR  = "Themes/";
 const RString SpecialFiles::LANGUAGES_SUBDIR = "Languages/";
-
+const RString SpecialFiles::BASE_LANGUAGE = "en";
+const RString SpecialFiles::METRICS_FILE = "metrics.ini";
 
 /*
  * (c) 2003-2005 Chris Danford

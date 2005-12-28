@@ -446,7 +446,7 @@ static const LanguageInfo g_langs[] =
 	{"ZU", "Zulu", "isiZulu"},
 };
 
-void GetLanguageInfos( vector<LanguageInfo> &vAddTo )
+void GetLanguageInfos( vector<const LanguageInfo*> &vAddTo )
 {
 	for( int i=0; i<ARRAYSIZE(g_langs); i++ )
 	{
@@ -456,8 +456,23 @@ void GetLanguageInfos( vector<LanguageInfo> &vAddTo )
 		// smtools UI.
 		if( g_langs[i].szNativeName == RString() )
 			continue;
-		vAddTo.push_back( g_langs[i] );
+		vAddTo.push_back( &g_langs[i] );
 	}
+}
+
+const LanguageInfo *GetLanguageInfo( const RString &sIsoCode )
+{
+	for( int i=0; i<ARRAYSIZE(g_langs); i++ )
+	{
+		// Only use languages in the intersection of Windows languages
+		// and languages that had native forms on the site listed above.
+		// Obscure languages are dropped so that they don't clutter up the 
+		// smtools UI.
+		if( sIsoCode.CompareNoCase(g_langs[i].szIsoCode) == 0 )
+			return &g_langs[i];
+	}
+
+	return NULL;
 }
 
 RString join( const RString &sDeliminator, const vector<RString> &sSource)

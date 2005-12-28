@@ -159,6 +159,12 @@
 				RelativePath=".\smpackage\ChangeGameSettings.h">
 			</File>
 			<File
+				RelativePath=".\smpackage\CreateLanguageDlg.cpp">
+			</File>
+			<File
+				RelativePath=".\smpackage\CreateLanguageDlg.h">
+			</File>
+			<File
 				RelativePath=".\smpackage\EditInsallations.cpp">
 			</File>
 			<File

@@ -34,8 +34,7 @@ StringToX( ElementCategory );
 
 
 const RString BASE_THEME_NAME = "default";
-const RString BASE_LANGUAGE = "english";
-const RString METRICS_FILE = "metrics.ini";
+// TODO: A theme should be able to specify a base language.
 
 
 struct Theme
