@@ -6,6 +6,7 @@
 #include "GameInput.h"
 #include "MenuInput.h"
 #include "GameConstantsAndTypes.h"
+#include "RageInputDevice.h"
 
 struct lua_State;
 
@@ -34,7 +35,7 @@ const int MAX_STYLES_PER_GAME = 10;
 
 class Style;
 
-#define NO_DEFAULT_KEY -1
+#define NO_DEFAULT_KEY DeviceButton_Invalid
 
 class Game
 {
@@ -49,7 +50,7 @@ public:
 	char	m_szButtonNames[MAX_GAME_BUTTONS][60];	// The name used by the button graphics system.  e.g. "left", "right", "middle C", "snare"
 	GameButton	m_DedicatedMenuButton[NUM_MENU_BUTTONS];
 	GameButton	m_SecondaryMenuButton[NUM_MENU_BUTTONS];
-	int		m_iDefaultKeyboardKey[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];	// default keyboard keys only have an effect the current game is this game
+	DeviceButton m_iDefaultKeyboardKey[MAX_GAME_CONTROLLERS][MAX_GAME_BUTTONS];	// default keyboard keys only have an effect the current game is this game
 
 	GameButton ButtonNameToIndex( const CString &sButtonName ) const;
 	MenuInput GameInputToMenuInput( GameInput GameI ) const;	// looks up current style in GAMESTATE.  Yuck.

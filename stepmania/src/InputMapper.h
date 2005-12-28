@@ -58,7 +58,7 @@ public:
 		bool IsEndMarker() const { return iSlotIndex==-1; }
 
 		int iSlotIndex;	// -1 == end marker
-		int deviceButton;
+		DeviceButton deviceButton;
 		GameButton gb;
 		/* If this is true, this is an auxilliary mapping assigned to the second
 		* player.  If two of the same device are found, and the device has secondary

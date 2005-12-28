@@ -53,7 +53,7 @@ enum InputDeviceState
  * other keys are mapped to KEY_OTHER_0 and up.  (If we want to support real international
  * input, stick a wchar_t in DeviceInput.)  */
  
-enum RageKeySym
+enum DeviceButton
 {
 	KEY_SPACE	= 32,
 	KEY_EXCL	= 33,
@@ -222,28 +222,17 @@ enum RageKeySym
 
 	KEY_OTHER_0,
 	/* ... */
-	KEY_LAST_OTHER=512,
+	KEY_LAST_OTHER=511,
 
-	NUM_KEYS,
-	KEY_INVALID
-};
-CString RageKeySymToString( RageKeySym i );
-RageKeySym StringToRageKeySym( const CString& s );
-
-
-/* Joystick inputs.  We try to have enough input names so any input on a reasonable
- * joystick has an obvious mapping, but keep it generic and don't try to handle odd
- * special cases.  For example, many controllers have two sticks, so the JOY_LEFT_2, etc.
- * pairs are useful for many types of sticks. */
-enum JoystickButton
-{
+	/* Joystick inputs.  We try to have enough input names so any input on a reasonable
+	 * joystick has an obvious mapping, but keep it generic and don't try to handle odd
+	 * special cases.  For example, many controllers have two sticks, so the JOY_LEFT_2, etc.
+	 * pairs are useful for many types of sticks. */
 	/* Standard axis: */
-	JOY_LEFT = 0, JOY_RIGHT, 
-	JOY_UP, JOY_DOWN,
+	JOY_LEFT, JOY_RIGHT, JOY_UP, JOY_DOWN,
 
 	/* Secondary sticks: */
-	JOY_LEFT_2, JOY_RIGHT_2,
-	JOY_UP_2, JOY_DOWN_2,
+	JOY_LEFT_2, JOY_RIGHT_2, JOY_UP_2, JOY_DOWN_2,
 
 	JOY_Z_UP, JOY_Z_DOWN,
 	JOY_ROT_UP, JOY_ROT_DOWN, JOY_ROT_LEFT, JOY_ROT_RIGHT, JOY_ROT_Z_UP, JOY_ROT_Z_DOWN,
@@ -259,47 +248,21 @@ enum JoystickButton
 	JOY_BUTTON_26,	JOY_BUTTON_27,	JOY_BUTTON_28,	JOY_BUTTON_29,	JOY_BUTTON_30,
 	JOY_BUTTON_31,	JOY_BUTTON_32,
 
-	NUM_JOYSTICK_BUTTONS,
-	JOYSTICK_BUTTON_INVALID
+	MIDI_FIRST = 600,
+	MIDI_LAST = 699,
+
+	NUM_DeviceButton,
+	DeviceButton_Invalid
 };
-const CString& JoystickButtonToString( JoystickButton i );
-JoystickButton StringToJoystickButton( const CString& s );
 
-
-enum PumpPadButton
-{
-	PUMP_UL,
-	PUMP_UR,
-	PUMP_MID,
-	PUMP_DL,
-	PUMP_DR,
-	PUMP_ESCAPE,
-
-	/* These buttons are for slave pads, attached to the first pad; they don't have
-	 * their own USB device, and they have no escape button. */
-	PUMP_2P_UL,
-	PUMP_2P_UR,
-	PUMP_2P_MID,
-	PUMP_2P_DL,
-	PUMP_2P_DR,
-
-	NUM_PUMP_PAD_BUTTONS,
-	PUMP_PAD_BUTTON_INVALID
-};
-const CString& PumpPadButtonToString( PumpPadButton i );
-PumpPadButton StringToPumpPadButton( const CString& s );
-
-#define NUM_MIDI_CHANNELS		100
-
-
-typedef int DeviceButton;
+CString DeviceButtonToString( DeviceButton i );
+DeviceButton StringToDeviceButton( const CString& s );
 CString DeviceButtonToString( InputDevice device, DeviceButton i );
 DeviceButton StringToDeviceButton( InputDevice device, const CString& s );
 
 int GetNumDeviceButtons( InputDevice device );
 
-const int MAX_DEVICE_BUTTONS = NUM_KEYS;
-const DeviceButton DEVICE_BUTTON_INVALID = MAX_DEVICE_BUTTONS+1;
+const int MAX_DEVICE_BUTTONS = NUM_DeviceButton;
 
 struct DeviceInput
 {
@@ -313,9 +276,9 @@ public:
 
 	RageTimer ts;
 
-	DeviceInput(): device(DEVICE_NONE), button(-1), level(0), ts(RageZeroTimer) { }
-	DeviceInput( InputDevice d, int b, float l=0 ): device(d), button(b), level(l), ts(RageZeroTimer) { }
-	DeviceInput( InputDevice d, int b, float l, const RageTimer &t ):
+	DeviceInput(): device(DEVICE_NONE), button(DeviceButton_Invalid), level(0), ts(RageZeroTimer) { }
+	DeviceInput( InputDevice d, DeviceButton b, float l=0 ): device(d), button(b), level(l), ts(RageZeroTimer) { }
+	DeviceInput( InputDevice d, DeviceButton b, float l, const RageTimer &t ):
 		device(d), button(b), level(l), ts(t) { }
 
 	bool operator==( const DeviceInput &other ) const

@@ -9,7 +9,7 @@
 #include "EnumHelper.h"
 
 
-CString RageKeySymToString( RageKeySym key )
+CString DeviceButtonToString( DeviceButton key )
 {
 	if( key >= 33 && key < 127 &&
 		!(key >= 'A' && key <= 'Z' ) )
@@ -21,7 +21,16 @@ CString RageKeySymToString( RageKeySym key )
 	if( key >= KEY_OTHER_0 && key < KEY_LAST_OTHER )
 	{
 		return ssprintf( "unk %i", key-KEY_OTHER_0 );
-		
+	}
+
+	if( key >= JOY_BUTTON_1 && key <= JOY_BUTTON_32 )
+	{
+		return ssprintf( "%i", key-JOY_BUTTON_1+1 );
+	}
+
+	if( key >= MIDI_FIRST && key <= MIDI_LAST )
+	{
+		return ssprintf( "Midi %d", key-MIDI_FIRST );
 	}
 
 	switch( key )
@@ -97,18 +106,49 @@ CString RageKeySymToString( RageKeySym key )
 	case KEY_KP_PERIOD:		return "KP ."; 
 	case KEY_KP_EQUAL:		return "KP ="; 
 	case KEY_KP_ENTER:		return "KP enter"; 
+
+	case JOY_LEFT:			return "Left1";
+	case JOY_RIGHT:			return "Right1";
+	case JOY_UP:			return "Up1";
+	case JOY_DOWN:			return "Down1";
+
+	/* Secondary sticks: */
+	case JOY_LEFT_2:		return "Left2";
+	case JOY_RIGHT_2:		return "Right2";
+	case JOY_UP_2:			return "Up2";
+	case JOY_DOWN_2:		return "Down2";
+
+
+	case JOY_Z_UP:			return "Z-Up";
+	case JOY_Z_DOWN:		return "Z-Down";
+	case JOY_ROT_UP:		return "R-Up";
+	case JOY_ROT_DOWN:		return "R-Down";
+	case JOY_ROT_LEFT:		return "R-Left";
+	case JOY_ROT_RIGHT:		return "R-Right";
+	case JOY_ROT_Z_UP:		return "ZR-Up";
+	case JOY_ROT_Z_DOWN:	return "ZR-Down";
+	case JOY_HAT_LEFT:		return "H-Left";
+	case JOY_HAT_RIGHT:		return "H-Right";
+	case JOY_HAT_UP:		return "H-Up";
+	case JOY_HAT_DOWN:		return "H-Down";
+	case JOY_AUX_1:			return "Aux1";
+	case JOY_AUX_2:			return "Aux2";
+	case JOY_AUX_3:			return "Aux3";
+	case JOY_AUX_4:			return "Aux4";
+
 	default:				return "unknown";
 	}
 }
 
-RageKeySym StringToRageKeySym( const CString& s )
+DeviceButton StringToDeviceButton( const CString& s )
 {
-	for( int i=0; i<NUM_KEYS; i++ )
+	for( int i=0; i<NUM_DeviceButton; i++ )
 	{
-		if( RageKeySymToString((RageKeySym)i) == s )
-			return (RageKeySym)i;
+		// XXX: yuck
+		if( DeviceButtonToString((DeviceButton)i) == s )
+			return (DeviceButton)i;
 	}
-	return KEY_INVALID;
+	return DeviceButton_Invalid;
 }
 
 	
@@ -138,88 +178,9 @@ XToString( InputDevice, NUM_INPUT_DEVICES );
 StringToX( InputDevice );
 
 
-static const CString JoystickButtonNames[] = {
-	"Left",
-	"Right",
-	"Up",
-	"Down",
-	"Left2",
-	"Right2",	
-	"Up2",		
-	"Down2",		
-	"Z-Up",		
-	"Z-Down",	
-	"R-Up",		
-	"R-Down",	
-	"R-Left",	
-	"R-Right",	
-	"ZR-Up",		
-	"ZR-Down",	
-	"H-Left",	
-	"H-Right",	
-	"H-Up",		
-	"H-Down",	
-	"Aux1",		
-	"Aux2",	
-	"Aux3",	
-	"Aux4",	
-	"1",		
-	"2",		
-	"3",		
-	"4",		
-	"5",		
-	"6",		
-	"7",		
-	"8",		
-	"9",		
-	"10",	
-	"11",	
-	"12",	
-	"13",	
-	"14",	
-	"15",	
-	"16",	
-	"17",	
-	"18",	
-	"19",	
-	"20",	
-	"21",	
-	"22",	
-	"23",	
-	"24",	
-	"25",	
-	"26",	
-	"27",	
-	"28",	
-	"29",	
-	"30",	
-	"31",	
-	"32",
-};
-XToString( JoystickButton, NUM_JOYSTICK_BUTTONS );
-StringToX( JoystickButton );
-	
-	
-static const CString PumpPadButtonNames[] = {
-	"UL",
-	"UR",
-	"MID",
-	"DL",
-	"DR",
-	"Esc",
-	"P2 UL",
-	"P2 UR",
-	"P2 MID",
-	"P2 DL",
-	"P2 DR"
-};
-XToString( PumpPadButton, NUM_PUMP_PAD_BUTTONS );
-StringToX( PumpPadButton );
-
-
 CString MidiButtonToString( DeviceButton i )
 {
-	return ssprintf( "Midi %d", i );
+	return ssprintf( "Midi %d", i-MIDI_FIRST );
 }
 
 DeviceButton StringToMidiButton( const CString &s )
@@ -229,90 +190,20 @@ DeviceButton StringToMidiButton( const CString &s )
 	return ret;
 }
 
+// XXX remove
 CString DeviceButtonToString( InputDevice device, DeviceButton i )
 {
-	switch( device )
-	{
-	case DEVICE_KEYBOARD:	return RageKeySymToString( (RageKeySym)i );
-	case DEVICE_JOY1:
-	case DEVICE_JOY2:
-	case DEVICE_JOY3:
-	case DEVICE_JOY4:
-	case DEVICE_JOY5:
-	case DEVICE_JOY6:
-	case DEVICE_JOY7:
-	case DEVICE_JOY8:
-	case DEVICE_JOY9:
-	case DEVICE_JOY10:
-	case DEVICE_JOY11:
-	case DEVICE_JOY12:
-	case DEVICE_JOY13:
-	case DEVICE_JOY14:
-	case DEVICE_JOY15:
-	case DEVICE_JOY16:		return JoystickButtonToString( (JoystickButton)i );
-	case DEVICE_PUMP1:
-	case DEVICE_PUMP2:		return PumpPadButtonToString( (PumpPadButton)i );
-	case DEVICE_MIDI:		return MidiButtonToString( i );
-	case DEVICE_NONE:		return CString();
-	default:	ASSERT(0);	return CString();
-	}
+	return DeviceButtonToString( i );
 }
 
 DeviceButton StringToDeviceButton( InputDevice device, const CString& s )
 {
-	switch( device )
-	{
-	case DEVICE_KEYBOARD:	return (DeviceButton)StringToRageKeySym( s );
-	case DEVICE_JOY1:
-	case DEVICE_JOY2:
-	case DEVICE_JOY3:
-	case DEVICE_JOY4:
-	case DEVICE_JOY5:
-	case DEVICE_JOY6:
-	case DEVICE_JOY7:
-	case DEVICE_JOY8:
-	case DEVICE_JOY9:
-	case DEVICE_JOY10:
-	case DEVICE_JOY11:
-	case DEVICE_JOY12:
-	case DEVICE_JOY13:
-	case DEVICE_JOY14:
-	case DEVICE_JOY15:
-	case DEVICE_JOY16:		return (DeviceButton)StringToJoystickButton( s );
-	case DEVICE_PUMP1:
-	case DEVICE_PUMP2:		return (DeviceButton)StringToPumpPadButton( s );
-	case DEVICE_MIDI:		return (DeviceButton)StringToMidiButton( s );
-	case DEVICE_NONE:		return DEVICE_BUTTON_INVALID;
-	default:	ASSERT(0);	return DEVICE_BUTTON_INVALID;
-	}
+	return StringToDeviceButton( s );
 }
 
 int GetNumDeviceButtons( InputDevice device )
 {
-	switch( device )
-	{
-	case DEVICE_KEYBOARD:	return NUM_KEYS;
-	case DEVICE_JOY1:
-	case DEVICE_JOY2:
-	case DEVICE_JOY3:
-	case DEVICE_JOY4:
-	case DEVICE_JOY5:
-	case DEVICE_JOY6:
-	case DEVICE_JOY7:
-	case DEVICE_JOY8:
-	case DEVICE_JOY9:
-	case DEVICE_JOY10:
-	case DEVICE_JOY11:
-	case DEVICE_JOY12:
-	case DEVICE_JOY13:
-	case DEVICE_JOY14:
-	case DEVICE_JOY15:
-	case DEVICE_JOY16:	return NUM_JOYSTICK_BUTTONS;
-	case DEVICE_PUMP1:
-	case DEVICE_PUMP2:	return NUM_PUMP_PAD_BUTTONS;
-	case DEVICE_MIDI:	return NUM_MIDI_CHANNELS;
-	default:	ASSERT_M(0,ssprintf("%d",device));	return 0;
-	}
+	return NUM_DeviceButton;
 };
 
 CString DeviceInput::ToString() const
@@ -343,29 +234,23 @@ bool DeviceInput::FromString( const CString &s )
 
 char DeviceInput::ToChar() const
 {
-	switch( device )
+	if( button < 127 )
+		return (char) button;
+
+	if( button >= KEY_KP_C0 && button <= KEY_KP_C9 )
+		return (char) (button - KEY_KP_C0) + '0';
+
+	switch( button )
 	{
-	case DEVICE_KEYBOARD:
-		if( button < 127 )
-			return (char) button;
-
-		if( button >= KEY_KP_C0 && button <= KEY_KP_C9 )
-			return (char) (button - KEY_KP_C0) + '0';
-
-		switch( button )
-		{
-		case KEY_KP_SLASH: return '/';
-		case KEY_KP_ASTERISK: return '*';
-		case KEY_KP_HYPHEN: return '-';
-		case KEY_KP_PLUS: return '+';
-		case KEY_KP_PERIOD: return '.';
-		case KEY_KP_EQUAL: return '=';
-		}
-
-		return '\0';
-	default:
-		return '\0';
+	case KEY_KP_SLASH: return '/';
+	case KEY_KP_ASTERISK: return '*';
+	case KEY_KP_HYPHEN: return '-';
+	case KEY_KP_PLUS: return '+';
+	case KEY_KP_PERIOD: return '.';
+	case KEY_KP_EQUAL: return '=';
 	}
+
+	return '\0';
 }
 
 /*

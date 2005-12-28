@@ -29,7 +29,7 @@ enum InputEventType
 struct InputEvent : public DeviceInput
 {
 	InputEvent() { type=IET_FIRST_PRESS; };
-	InputEvent( InputDevice d, int b, InputEventType t ): DeviceInput(d, b) { type=t; };
+	InputEvent( InputDevice d, DeviceButton b, InputEventType t ): DeviceInput(d, b) { type=t; };
 	InputEvent( DeviceInput di, InputEventType t ): DeviceInput(di) { type=t; };
 
 	InputEventType type;

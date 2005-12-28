@@ -140,7 +140,7 @@ void InputFilter::SetButtonComment( const DeviceInput &di, const CString &sComme
 void InputFilter::ResetDevice( InputDevice device )
 {
 	RageTimer now;
-	for( int button = 0; button < GetNumDeviceButtons(device); ++button )
+	FOREACH_ENUM2( DeviceButton, button )
 		ButtonPressed( DeviceInput(device, button, -1, now), false );
 }
 
@@ -173,7 +173,7 @@ void InputFilter::Update( float fDeltaTime )
 	 * things like "key pressed, key release, key repeat". */
 	LockMut(*queuemutex);
 
-	DeviceInput di( (InputDevice)0,0,1.0f,now);
+	DeviceInput di( (InputDevice)0,DeviceButton_Invalid,1.0f,now);
 
 	set<Button> Buttons( g_ButtonsToProcess );
 	FOREACHS( Button, Buttons, b )

@@ -49,7 +49,7 @@ void InputMapper::AddDefaultMappingsForCurrentGameIfUnmapped()
 	{
 		for( int b=0; b<pGame->m_iButtonsPerController; b++ )
 		{
-			int key = pGame->m_iDefaultKeyboardKey[c][b];
+			DeviceButton key = pGame->m_iDefaultKeyboardKey[c][b];
 			if( key == NO_DEFAULT_KEY )
 				continue;
 			DeviceInput DeviceI( DEVICE_KEYBOARD, key );
@@ -67,7 +67,7 @@ struct AutoJoyMapping
 	const char *szControllerName;	// the product name of the controller
 	struct InputMapper::Mapping maps[32];
 };
-#define END_MARKER	{-1, -1, -1, false },	// end marker
+#define END_MARKER	{-1, DeviceButton_Invalid, -1, false },	// end marker
 const AutoJoyMapping g_AutoJoyMappings[] = 
 {
 	{
@@ -324,17 +324,17 @@ const AutoJoyMapping g_AutoJoyMappings[] =
 		"Pump USB",
 		"Pump USB pad",
 		{
-			{ 0, PUMP_UL,		PUMP_BUTTON_UPLEFT,		false },
-			{ 0, PUMP_UR,		PUMP_BUTTON_UPRIGHT,	false },
-			{ 0, PUMP_MID,		PUMP_BUTTON_CENTER,		false },
-			{ 0, PUMP_DL,		PUMP_BUTTON_DOWNLEFT,	false },
-			{ 0, PUMP_DR,		PUMP_BUTTON_DOWNRIGHT,	false },
-			{ 0, PUMP_ESCAPE,	PUMP_BUTTON_BACK,		false },
-			{ 0, PUMP_2P_UL,	PUMP_BUTTON_UPLEFT,		true },
-			{ 0, PUMP_2P_UR,	PUMP_BUTTON_UPRIGHT,	true },
-			{ 0, PUMP_2P_MID,	PUMP_BUTTON_CENTER,		true },
-			{ 0, PUMP_2P_DL,	PUMP_BUTTON_DOWNLEFT,	true },
-			{ 0, PUMP_2P_DR,	PUMP_BUTTON_DOWNRIGHT,	true },
+			{ 0, JOY_BUTTON_1,	PUMP_BUTTON_UPLEFT,		false },
+			{ 0, JOY_BUTTON_2,	PUMP_BUTTON_UPRIGHT,	false },
+			{ 0, JOY_BUTTON_3,	PUMP_BUTTON_CENTER,		false },
+			{ 0, JOY_BUTTON_4,	PUMP_BUTTON_DOWNLEFT,	false },
+			{ 0, JOY_BUTTON_5,	PUMP_BUTTON_DOWNRIGHT,	false },
+			{ 0, JOY_BUTTON_6,	PUMP_BUTTON_BACK,		false },
+			{ 0, JOY_BUTTON_7,	PUMP_BUTTON_UPLEFT,		true },
+			{ 0, JOY_BUTTON_8,	PUMP_BUTTON_UPRIGHT,	true },
+			{ 0, JOY_BUTTON_9,	PUMP_BUTTON_CENTER,		true },
+			{ 0, JOY_BUTTON_10,	PUMP_BUTTON_DOWNLEFT,	true },
+			{ 0, JOY_BUTTON_11,	PUMP_BUTTON_DOWNRIGHT,	true },
 			END_MARKER
 		}
 	},

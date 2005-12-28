@@ -81,7 +81,7 @@ void ScreenTestInput::Update( float fDeltaTime )
 
 	FOREACH_InputDevice( d )
 	{
-		for( int b=0; b<GetNumDeviceButtons(d); b++ )
+		FOREACH_ENUM2( DeviceButton, b )
 		{
 			di.device = d;
 			di.button = b;
