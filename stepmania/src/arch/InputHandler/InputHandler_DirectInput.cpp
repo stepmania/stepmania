@@ -36,12 +36,12 @@ static BOOL CALLBACK EnumDevices( const DIDEVICEINSTANCE *pdidInstance, void *pC
 		if( g_iNumJoysticks == NUM_JOYSTICKS )
 			return DIENUM_CONTINUE;
 
-		device.dev = InputDevice( DEVICE_JOY1 + g_iNumJoysticks );
+		device.dev = enum_add2( DEVICE_JOY1, g_iNumJoysticks );
 		g_iNumJoysticks++;
 		break;
 
 	case device.KEYBOARD:
-		device.dev = InputDevice( DEVICE_KEYBOARD );
+		device.dev = DEVICE_KEYBOARD;
 		break;
 	}
 
