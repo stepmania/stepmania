@@ -73,13 +73,14 @@ float fmodfp(float x, float y)
 	return x;
 }
 
-int power_of_two(int input)
+int power_of_two( int iInput )
 {
-    int value = 1;
+    int iValue = 1;
 
-	while ( value < input ) value <<= 1;
+	while ( iValue < iInput )
+		iValue <<= 1;
 
-	return value;
+	return iValue;
 }
 
 bool IsAnInt( const RString &s )
@@ -217,11 +218,11 @@ RString ssprintf( const char *fmt, ...)
 }
 
 
-RString vssprintf( const char *fmt, va_list argList)
+RString vssprintf( const char *fmt, va_list argList )
 {
-	RString str;
-	str.FormatV(fmt, argList);
-	return str;
+	RString sStr;
+	sStr.FormatV( fmt, argList );
+	return sStr;
 }
 
 #ifdef WIN32
@@ -538,20 +539,20 @@ void do_split( const S &Source, const C Delimitor, vector<S> &AddIt, const bool 
 }
 
 
-void split( const RString &Source, const RString &Delimitor, vector<RString> &AddIt, const bool bIgnoreEmpty )
+void split( const RString &sSource, const RString &sDelimitor, vector<RString> &asAddIt, const bool bIgnoreEmpty )
 {
-	if( Delimitor.size() == 1 )
-		do_split( Source, Delimitor[0], AddIt, bIgnoreEmpty );
+	if( sDelimitor.size() == 1 )
+		do_split( sSource, sDelimitor[0], asAddIt, bIgnoreEmpty );
 	else
-		do_split( Source, Delimitor, AddIt, bIgnoreEmpty );
+		do_split( sSource, sDelimitor, asAddIt, bIgnoreEmpty );
 }
 
-void split( const wstring &Source, const wstring &Delimitor, vector<wstring> &AddIt, const bool bIgnoreEmpty )
+void split( const wstring &sSource, const wstring &sDelimitor, vector<wstring> &asAddIt, const bool bIgnoreEmpty )
 {
-	if( Delimitor.size() == 1 )
-		do_split( Source, Delimitor[0], AddIt, bIgnoreEmpty );
+	if( sDelimitor.size() == 1 )
+		do_split( sSource, sDelimitor[0], asAddIt, bIgnoreEmpty );
 	else
-		do_split( Source, Delimitor, AddIt, bIgnoreEmpty );
+		do_split( sSource, sDelimitor, asAddIt, bIgnoreEmpty );
 }
 
 /* Use:
@@ -818,7 +819,7 @@ bool CompareRStringsDesc( const RString &sStr1, const RString &sStr2 )
 void SortRStringArray( vector<RString> &arrayRStrings, const bool bSortAscending )
 {
 	sort( arrayRStrings.begin(), arrayRStrings.end(),
-			bSortAscending?CompareRStringsAsc:CompareRStringsDesc);
+			bSortAscending?CompareRStringsAsc:CompareRStringsDesc );
 }
 
 float calc_mean( const float *pStart, const float *pEnd )
@@ -856,7 +857,7 @@ void TrimRight( RString &sStr, const char *s )
 	while( n > 0 && strchr(s, sStr[n-1]) )
 		n--;
 
-	/* Delete from n to the end.  If n == str.size(), nothing is deleted;
+	/* Delete from n to the end.  If n == sStr.size(), nothing is deleted;
 	 * if n == 0, the whole string is erased. */
 	sStr.erase( sStr.begin()+n, sStr.end() );
 }
@@ -967,47 +968,48 @@ void Regex::Compile()
 {
 	const char *error;
 	int offset;
-	reg = pcre_compile(pattern.c_str(), PCRE_CASELESS, &error, &offset, NULL);
+	m_pReg = pcre_compile( m_sPattern.c_str(), PCRE_CASELESS, &error, &offset, NULL );
 
-    if(reg == NULL)
-		RageException::Throw("Invalid regex: '%s' (%s)", pattern.c_str(), error);
+    if( m_pReg == NULL )
+		RageException::Throw( "Invalid regex: \"%s\" (%s)", m_sPattern.c_str(), error );
 
-	int ret = pcre_fullinfo( (pcre *) reg, NULL, PCRE_INFO_CAPTURECOUNT, &backrefs);
-	ASSERT(ret >= 0);
+	int iRet = pcre_fullinfo( (pcre *) m_pReg, NULL, PCRE_INFO_CAPTURECOUNT, &m_iBackrefs );
+	ASSERT( iRet >= 0 );
 
-	backrefs++;
-    ASSERT(backrefs < 128);
+	++m_iBackrefs;
+    ASSERT( m_iBackrefs < 128 );
 }
 
-void Regex::Set(const RString &str)
+void Regex::Set( const RString &sStr )
 {
 	Release();
-    pattern=str;
+    m_sPattern = sStr;
 	Compile();
 }
 
 void Regex::Release()
 {
-    pcre_free(reg);
-	reg = NULL;
-	pattern = "";
+    pcre_free( m_pReg );
+	m_pReg = NULL;
+	m_sPattern.clear();
 }
 
-Regex::Regex(const RString &str)
+Regex::Regex( const RString &sStr )
 {
-	reg = NULL;
-	Set(str);
+	m_pReg = NULL;
+	Set( sStr );
 }
 
-Regex::Regex(const Regex &rhs)
+Regex::Regex( const Regex &rhs )
 {
-	reg = NULL;
-    Set(rhs.pattern);
+	m_pReg = NULL;
+    Set( rhs.m_sPattern );
 }
 
-Regex &Regex::operator=(const Regex &rhs)
+Regex &Regex::operator=( const Regex &rhs )
 {
-	if(this != &rhs) Set(rhs.pattern);
+	if( this != &rhs )
+		Set( rhs.m_sPattern );
 	return *this;
 }
 
@@ -1016,41 +1018,37 @@ Regex::~Regex()
     Release();
 }
 
-bool Regex::Compare(const RString &str)
+bool Regex::Compare( const RString &sStr )
 {
-    int mat[128*3];
-	int ret = pcre_exec( (pcre *) reg, NULL,
-		str.data(), str.size(), 0, 0, mat, 128*3);
+    int iMat[128*3];
+	int iRet = pcre_exec( (pcre *) m_pReg, NULL, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
 
-	if( ret < -1 )
-		RageException::Throw("Unexpected return from pcre_exec('%s'): %i",
-			pattern.c_str(), ret);
+	if( iRet < -1 )
+		RageException::Throw( "Unexpected return from pcre_exec('%s'): %i", m_sPattern.c_str(), iRet );
 
-	return ret >= 0;
+	return iRet >= 0;
 }
 
-bool Regex::Compare(const RString &str, vector<RString> &matches)
+bool Regex::Compare( const RString &sStr, vector<RString> &asMatches )
 {
-    matches.clear();
+    asMatches.clear();
 
-    int mat[128*3];
-	int ret = pcre_exec( (pcre *) reg, NULL,
-		str.data(), str.size(), 0, 0, mat, 128*3);
+    int iMat[128*3];
+	int iRet = pcre_exec( (pcre *) m_pReg, NULL, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
 
-	if( ret < -1 )
-		RageException::Throw("Unexpected return from pcre_exec('%s'): %i",
-			pattern.c_str(), ret);
+	if( iRet < -1 )
+		RageException::Throw( "Unexpected return from pcre_exec('%s'): %i", m_sPattern.c_str(), iRet );
 
-	if(ret == -1)
+	if( iRet == -1 )
 		return false;
 
-    for(unsigned i = 1; i < backrefs; ++i)
+    for( unsigned i = 1; i < m_iBackrefs; ++i )
     {
-		const int start = mat[i*2], end = mat[i*2+1];
-        if(start == -1)
-            matches.push_back(""); /* no match */
+		const int iStart = iMat[i*2], end = iMat[i*2+1];
+        if( iStart == -1 )
+            asMatches.push_back( RString() ); /* no match */
         else
-            matches.push_back(str.substr(start, end - start));
+            asMatches.push_back( sStr.substr(iStart, end - iStart) );
     }
 
     return true;
@@ -1321,12 +1319,12 @@ wstring RStringToWstring( const RString &s )
 	return ret;
 }
 
-RString WStringToRString(const wstring &str)
+RString WStringToRString( const wstring &sStr )
 {
 	RString sRet;
 
-	for( unsigned i = 0; i < str.size(); ++i )
-		wchar_to_utf8( str[i], sRet );
+	for( unsigned i = 0; i < sStr.size(); ++i )
+		wchar_to_utf8( sStr[i], sRet );
 
 	return sRet;
 }
@@ -1438,46 +1436,54 @@ void ReplaceEntityText( RString &sText, const map<char,RString> &m )
 }
 
 /* Replace &#nnnn; (decimal) and &xnnnn; (hex) with corresponding UTF-8 characters. */
-void Replace_Unicode_Markers( RString &Text )
+void Replace_Unicode_Markers( RString &sText )
 {
-	unsigned start = 0;
-	while(start < Text.size())
+	unsigned iStart = 0;
+	while( iStart < sText.size() )
 	{
 		/* Look for &#digits; */
-		bool hex = false;
-		size_t pos = Text.find("&#", start);
-		if(pos == Text.npos) {
-			hex = true;
-			pos = Text.find("&x", start);
+		bool bHex = false;
+		size_t iPos = sText.find( "&#", iStart );
+		if( iPos == sText.npos )
+		{
+			bHex = true;
+			iPos = sText.find( "&x", iStart );
 		}
 
-		if(pos == Text.npos) break;
-		start = pos+1;
+		if( iPos == sText.npos )
+			break;
+		iStart = iPos+1;
 
-		unsigned p = pos;
+		unsigned p = iPos;
 		p += 2;
 
 		/* Found &# or &x.  Is it followed by digits and a semicolon? */
-		if(p >= Text.size()) continue;
+		if( p >= sText.size() )
+			continue;
 
-		int numdigits = 0;
-		while(p < Text.size() &&
-			(hex && isxdigit(Text[p])) || (!hex && isdigit(Text[p])))
+		int iNumDigits = 0;
+		while( p < sText.size() &&
+			(bHex && isxdigit(sText[p])) || (!bHex && isdigit(sText[p])) )
 		{
 		   p++;
-		   numdigits++;
+		   iNumDigits++;
 		}
-		if(!numdigits) continue; /* must have at least one digit */
-		if(p >= Text.size() || Text[p] != ';') continue;
+
+		if( !iNumDigits )
+			continue; /* must have at least one digit */
+		if( p >= sText.size() || sText[p] != ';' )
+			continue;
 		p++;
 
-		int num;
-		if(hex) sscanf(Text.c_str()+pos, "&x%x;", &num);
-		else sscanf(Text.c_str()+pos, "&#%i;", &num);
-		if(num > 0xFFFF)
-			num = INVALID_CHAR;
+		int iNum;
+		if( bHex )
+			sscanf( sText.c_str()+iPos, "&x%x;", &iNum );
+		else
+			sscanf( sText.c_str()+iPos, "&#%i;", &iNum );
+		if( iNum > 0xFFFF )
+			iNum = INVALID_CHAR;
 
-		Text.replace(pos, p-pos, WcharToUTF8(wchar_t(num)));
+		sText.replace( iPos, p-iPos, WcharToUTF8(wchar_t(iNum)) );
 	}
 }
 
@@ -1510,7 +1516,9 @@ RString Basename( const RString &sDir )
 	return sDir.substr( iStart, iEnd-iStart+1 );
 }
 
-/* Return all but the last named component of dir:
+/*
+ * Return all but the last named component of dir:
+ *
  * a/b/c -> a/b/
  * a/b/c/ -> a/b/
  * c/ -> ./
