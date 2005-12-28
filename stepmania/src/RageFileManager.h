@@ -15,28 +15,28 @@ class RageFileBasic;
 class RageFileManager
 {
 public:
-	RageFileManager( RString argv0 );
+	RageFileManager( const RString &argv0 );
 	~RageFileManager();
 	void MountInitialFilesystems();
 
-	void GetDirListing( RString sPath, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo );
-	bool Move( RString sOldPath, RString sNewPath );
-	bool Remove( RString sPath );
-	void CreateDir( RString sDir );
+	void GetDirListing( const RString &sPath, vector<RString> &AddTo, bool bOnlyDirs, bool bReturnPathToo );
+	bool Move( const RString &sOldPath, const RString &sNewPath );
+	bool Remove( const RString &sPath );
+	void CreateDir( const RString &sDir );
 	
 	enum FileType { TYPE_FILE, TYPE_DIR, TYPE_NONE };
-	FileType GetFileType( RString sPath );
+	FileType GetFileType( const RString &sPath );
 
 	bool IsAFile( const RString &sPath );
 	bool IsADirectory( const RString &sPath );
 	bool DoesFileExist( const RString &sPath );
 
-	int GetFileSizeInBytes( RString sPath );
-	int GetFileHash( RString sPath );
+	int GetFileSizeInBytes( const RString &sPath );
+	int GetFileHash( const RString &sPath );
 
-	bool Mount( RString sType, RString sRealPath, RString sMountPoint, bool bAddToEnd = true );
-	void Mount( RageFileDriver *pDriver, RString sMountPoint, bool bAddToEnd = true );
-	void Unmount( RString sType, RString sRoot, RString sMountPoint );
+	bool Mount( const RString &sType, const RString &sRealPath, const RString &sMountPoint, bool bAddToEnd = true );
+	void Mount( RageFileDriver *pDriver, const RString &sMountPoint, bool bAddToEnd = true );
+	void Unmount( const RString &sType, const RString &sRoot, const RString &sMountPoint );
 
 	/* Change the root of a filesystem.  Only a couple drivers support this; it's
 	 * used to change memory card mountpoints without having to actually unmount
@@ -49,18 +49,18 @@ public:
 	};
 	void GetLoadedDrivers( vector<DriverLocation> &asMounts );
 
-	void FlushDirCache( RString sPath );
+	void FlushDirCache( const RString &sPath );
 
 	/* Used only by RageFile: */
-	RageFileBasic *Open( RString sPath, int iMode, int &iError );
+	RageFileBasic *Open( const RString &sPath, int iMode, int &iError );
 
 	/* Retrieve or release a reference to the low-level driver for a mountpoint. */
 	RageFileDriver *GetFileDriver( RString sMountpoint );
 	void ReleaseFileDriver( RageFileDriver *pDriver );
 
 private:
-	RageFileBasic *OpenForReading( RString sPath, int iMode, int &iError );
-	RageFileBasic *OpenForWriting( RString sPath, int iMode, int &iError );
+	RageFileBasic *OpenForReading( const RString &sPath, int iMode, int &iError );
+	RageFileBasic *OpenForWriting( const RString &sPath, int iMode, int &iError );
 };
 
 extern RageFileManager *FILEMAN;
