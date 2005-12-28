@@ -178,18 +178,6 @@ XToString( InputDevice, NUM_INPUT_DEVICES );
 StringToX( InputDevice );
 
 
-CString MidiButtonToString( DeviceButton i )
-{
-	return ssprintf( "Midi %d", i-MIDI_FIRST );
-}
-
-DeviceButton StringToMidiButton( const CString &s )
-{
-	DeviceButton ret;
-	sscanf( s, "Midi %d", &ret );
-	return ret;
-}
-
 // XXX remove
 CString DeviceButtonToString( InputDevice device, DeviceButton i )
 {
