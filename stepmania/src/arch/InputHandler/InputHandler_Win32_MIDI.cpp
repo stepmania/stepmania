@@ -34,14 +34,14 @@ InputHandler_Win32_MIDI::InputHandler_Win32_MIDI()
 	MMRESULT result = midiInOpen( &g_device, device_id, (DWORD) &midiCallback, (DWORD) this, CALLBACK_FUNCTION );
 	if( result != MMSYSERR_NOERROR )
 	{
-		LOG->Warn( "Error with MIDI Opening: %s", GetMidiError(result).c_str() );
+		LOG->Warn( "Error opening MIDI device: %s", GetMidiError(result).c_str() );
 		return;
 	}
 
 	result = midiInStart(g_device);
 	if( result != MMSYSERR_NOERROR )
 	{
-		LOG->Warn( "Error with MIDI Starting: %s", GetMidiError(result).c_str() );
+		LOG->Warn( "Error starting MIDI device: %s", GetMidiError(result).c_str() );
 		return;
 	}
 }
@@ -53,14 +53,14 @@ InputHandler_Win32_MIDI::~InputHandler_Win32_MIDI()
 	result = midiInReset( g_device );
 	if( result != MMSYSERR_NOERROR )
 	{
-		LOG->Warn( "Error with MIDI Reset: %s", GetMidiError(result).c_str() );
+		LOG->Warn( "Error resetting MIDI device: %s", GetMidiError(result).c_str() );
 		return;
 	}
 
 	result = midiInClose( g_device );
 	if( result != MMSYSERR_NOERROR )
 	{
-		LOG->Warn( "Error with MIDI Close: %s", GetMidiError(result).c_str() );
+		LOG->Warn( "Error closing MIDI device: %s", GetMidiError(result).c_str() );
 		return;
 	}
 }
