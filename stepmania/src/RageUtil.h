@@ -359,18 +359,19 @@ public:
 	Regex( const Regex &rhs );
 	Regex &operator=( const Regex &rhs );
 	~Regex();
-	bool IsSet() const { return !pattern.empty(); }
+	bool IsSet() const { return !m_sPattern.empty(); }
 	void Set( const RString &str );
 	bool Compare( const RString &sStr );
 	bool Compare( const RString &sStr, vector<RString> &asMatches );
 	bool Replace( const RString &sReplacement, const RString &sSubject, RString &sOut );
 
 private:
-	void *reg;
-	unsigned backrefs;
-    RString pattern;
     void Compile();
     void Release();
+
+	void *m_pReg;
+	unsigned m_iBackrefs;
+    RString m_sPattern;
 };
 
 
