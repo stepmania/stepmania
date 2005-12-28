@@ -385,7 +385,7 @@ void InputHandler_DInput::UpdateBuffered(DIDevice &device, const RageTimer &tm)
 				break;
 
 			case in.BUTTON:
-				ButtonPressed(DeviceInput(dev, (DeviceButton) (JOY_BUTTON_1 + in.num), -1, tm), !!evtbuf[i].dwData);
+				ButtonPressed(DeviceInput(dev, enum_add2(JOY_BUTTON_1, in.num), -1, tm), !!evtbuf[i].dwData);
 				break;
 
 			case in.AXIS:
