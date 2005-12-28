@@ -177,7 +177,7 @@ bool RageFileDriverMem::Remove( const RString &sPath )
 static struct FileDriverEntry_MEM: public FileDriverEntry
 {
 	FileDriverEntry_MEM(): FileDriverEntry( "MEM" ) { }
-	RageFileDriver *Create( RString Root ) const { return new RageFileDriverMem(); }
+	RageFileDriver *Create( const RString &sRoot ) const { return new RageFileDriverMem(); }
 } const g_RegisterDriver;
 
 /*

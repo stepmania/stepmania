@@ -24,7 +24,7 @@
 static struct FileDriverEntry_DIR: public FileDriverEntry
 {
 	FileDriverEntry_DIR(): FileDriverEntry( "DIR" ) { }
-	RageFileDriver *Create( CString Root ) const { return new RageFileDriverDirect( Root ); }
+	RageFileDriver *Create( const RString &sRoot ) const { return new RageFileDriverDirect( sRoot ); }
 } const g_RegisterDriver;
 
 /* This driver handles direct file access. */
@@ -32,14 +32,14 @@ static struct FileDriverEntry_DIR: public FileDriverEntry
 class RageFileObjDirect: public RageFileObj
 {
 public:
-	RageFileObjDirect( const CString &sPath, int iFD, int iMode );
+	RageFileObjDirect( const RString &sPath, int iFD, int iMode );
 	virtual ~RageFileObjDirect();
 	virtual int ReadInternal( void *pBuffer, size_t iBytes );
 	virtual int WriteInternal( const void *pBuffer, size_t iBytes );
 	virtual int FlushInternal();
 	virtual int SeekInternal( int offset );
 	virtual RageFileBasic *Copy() const;
-	virtual CString GetDisplayPath() const { return m_sPath; }
+	virtual RString GetDisplayPath() const { return m_sPath; }
 	virtual int GetFileSize() const;
 
 private:
@@ -47,8 +47,8 @@ private:
 
 	int m_iFD;
 	int m_iMode;
-	CString m_sPath; /* for Copy */
-	CString m_sWriteBuf;
+	RString m_sPath; /* for Copy */
+	RString m_sWriteBuf;
 	
 	/*
 	 * When not streaming to disk, we write to a temporary file, and rename to the
@@ -60,14 +60,14 @@ private:
 };
 
 
-RageFileDriverDirect::RageFileDriverDirect( CString sRoot ):
+RageFileDriverDirect::RageFileDriverDirect( const RString &sRoot ):
 	RageFileDriver( new DirectFilenameDB(sRoot) )
 {
 	Remount( sRoot );
 }
 
 
-static CString MakeTempFilename( const CString &sPath )
+static RString MakeTempFilename( const RString &sPath )
 {
 	/* "Foo/bar/baz" -> "Foo/bar/new.baz.new".  Both prepend and append: we don't
 	 * want a wildcard search for the filename to match (foo.txt.new matches foo.txt*),
@@ -76,7 +76,7 @@ static CString MakeTempFilename( const CString &sPath )
 	return Dirname(sPath) + "new." + Basename(sPath) + ".new";
 }
 
-RageFileObj *MakeFileObjDirect( CString sPath, int iMode, int &iError )
+RageFileObj *MakeFileObjDirect( RString sPath, int iMode, int &iError )
 {
 	int iFD;
 	if( iMode & RageFile::READ )
@@ -89,7 +89,7 @@ RageFileObj *MakeFileObjDirect( CString sPath, int iMode, int &iError )
 	}
 	else
 	{
-		CString sOut;
+		RString sOut;
 		if( iMode & RageFile::STREAMED )
 			sOut = sPath;
 		else
@@ -108,9 +108,9 @@ RageFileObj *MakeFileObjDirect( CString sPath, int iMode, int &iError )
 	return new RageFileObjDirect( sPath, iFD, iMode );
 }
 
-RageFileBasic *RageFileDriverDirect::Open( const CString &sPath_, int iMode, int &iError )
+RageFileBasic *RageFileDriverDirect::Open( const RString &sPath_, int iMode, int &iError )
 {
-	CString sPath = sPath_;
+	RString sPath = sPath_;
 	ASSERT( sPath.size() && sPath[0] == '/' );
 
 	/* This partially resolves.  For example, if "abc/def" exists, and we're opening
@@ -120,7 +120,7 @@ RageFileBasic *RageFileDriverDirect::Open( const CString &sPath_, int iMode, int
 
 	if( iMode & RageFile::WRITE )
 	{
-		const CString dir = Dirname(sPath);
+		const RString dir = Dirname(sPath);
 		if( this->GetFileType(dir) != RageFileManager::TYPE_DIR )
 			CreateDirectories( m_sRoot + dir );
 	}
@@ -128,10 +128,10 @@ RageFileBasic *RageFileDriverDirect::Open( const CString &sPath_, int iMode, int
 	return MakeFileObjDirect( m_sRoot + sPath, iMode, iError );
 }
 
-bool RageFileDriverDirect::Move( const CString &sOldPath_, const CString &sNewPath_ )
+bool RageFileDriverDirect::Move( const RString &sOldPath_, const RString &sNewPath_ )
 {
-	CString sOldPath = sOldPath_;
-	CString sNewPath = sNewPath_;
+	RString sOldPath = sOldPath_;
+	RString sNewPath = sNewPath_;
 	FDB->ResolvePath( sOldPath );
 	FDB->ResolvePath( sNewPath );
 
@@ -139,7 +139,7 @@ bool RageFileDriverDirect::Move( const CString &sOldPath_, const CString &sNewPa
 		return false;
 
 	{
-		const CString sDir = Dirname(sNewPath);
+		const RString sDir = Dirname(sNewPath);
 		CreateDirectories( m_sRoot + sDir );
 	}
 
@@ -153,9 +153,9 @@ bool RageFileDriverDirect::Move( const CString &sOldPath_, const CString &sNewPa
 	return true;
 }
 
-bool RageFileDriverDirect::Remove( const CString &sPath_ )
+bool RageFileDriverDirect::Remove( const RString &sPath_ )
 {
-	CString sPath = sPath_;
+	RString sPath = sPath_;
 	FDB->ResolvePath( sPath );
 	switch( this->GetFileType(sPath) )
 	{
@@ -197,7 +197,7 @@ RageFileBasic *RageFileObjDirect::Copy() const
 	return ret;
 }
 
-bool RageFileDriverDirect::Remount( const CString &sPath )
+bool RageFileDriverDirect::Remount( const RString &sPath )
 {
 	m_sRoot = sPath;
 	((DirectFilenameDB *) FDB)->SetRoot( sPath );
@@ -209,7 +209,7 @@ bool RageFileDriverDirect::Remount( const CString &sPath )
 }
 
 static const unsigned int BUFSIZE = 1024*64;
-RageFileObjDirect::RageFileObjDirect( const CString &sPath, int iFD, int iMode )
+RageFileObjDirect::RageFileObjDirect( const RString &sPath, int iFD, int iMode )
 {
 	m_sPath = sPath;
 	m_iFD = iFD;
@@ -299,8 +299,8 @@ RageFileObjDirect::~RageFileObjDirect()
 		 * file.
 		 */
 
-		CString sOldPath = MakeTempFilename(m_sPath);
-		CString sNewPath = m_sPath;
+		RString sOldPath = MakeTempFilename(m_sPath);
+		RString sNewPath = m_sPath;
 
 #if defined(WIN32)
 		if( WinMoveFile(DoPathReplace(sOldPath), DoPathReplace(sNewPath)) )
@@ -308,7 +308,7 @@ RageFileObjDirect::~RageFileObjDirect()
 
 		/* We failed. */
 		int err = GetLastError();
-		const CString error = werr_ssprintf( err, "Error renaming \"%s\" to \"%s\"", sOldPath.c_str(), sNewPath.c_str() );
+		const RString error = werr_ssprintf( err, "Error renaming \"%s\" to \"%s\"", sOldPath.c_str(), sNewPath.c_str() );
 		LOG->Warn( "%s", error.c_str() );
 		SetError( error );
 		break;

@@ -34,14 +34,14 @@ public:
 /* This is used to register the driver, so RageFileManager can see it. */
 struct FileDriverEntry
 {
-	FileDriverEntry( RString sType );
+	FileDriverEntry( const RString &sType );
 	virtual ~FileDriverEntry();
-	virtual RageFileDriver *Create( RString sRoot ) const = 0;
+	virtual RageFileDriver *Create( const RString &sRoot ) const = 0;
 
 	RString m_sType;
 	const FileDriverEntry *m_pLink;
 };
-RageFileDriver *MakeFileDriver( RString Type, RString Root );
+RageFileDriver *MakeFileDriver( const RString &Type, const RString &Root );
 
 #endif
 

@@ -20,45 +20,45 @@
 
 #if defined(_XBOX)
 /* Wrappers for low-level file functions, to work around Xbox issues: */
-int DoMkdir( const CString &sPath, int perm )
+int DoMkdir( const RString &sPath, int perm )
 {
 	return mkdir( DoPathReplace(sPath), perm );
 }
 
-int DoOpen( const CString &sPath, int flags, int perm )
+int DoOpen( const RString &sPath, int flags, int perm )
 {
 	return open( DoPathReplace(sPath), flags, perm );
 }
 
-int DoStat( const CString &sPath, struct stat *st )
+int DoStat( const RString &sPath, struct stat *st )
 {
 	return stat( DoPathReplace(sPath), st );
 }
 
-int DoRename( const CString &sOldPath, const CString &sNewPath )
+int DoRename( const RString &sOldPath, const RString &sNewPath )
 {
 	return rename( DoPathReplace(sOldPath), DoPathReplace(sNewPath) );
 }
 
-int DoRemove( const CString &sPath )
+int DoRemove( const RString &sPath )
 {
 	return remove( DoPathReplace(sPath) );
 }
 
-int DoRmdir( const CString &sPath )
+int DoRmdir( const RString &sPath )
 {
 	return rmdir( DoPathReplace(sPath) );
 }
 
-HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd )
+HANDLE DoFindFirstFile( const RString &sPath, WIN32_FIND_DATA *fd )
 {
 	return FindFirstFile( DoPathReplace(sPath), fd );
 }
 
 #endif
-CString DoPathReplace(const CString &sPath)
+RString DoPathReplace(const RString &sPath)
 {
-	CString TempPath = sPath;
+	RString TempPath = sPath;
 #if defined(XBOX)
 	TempPath.Replace( "//", "\\" );
 	TempPath.Replace( "/", "\\" );
@@ -68,7 +68,7 @@ CString DoPathReplace(const CString &sPath)
 
 
 #if defined(WIN32)
-static bool WinMoveFileInternal( const CString &sOldPath, const CString &sNewPath )
+static bool WinMoveFileInternal( const RString &sOldPath, const RString &sNewPath )
 {
 	static bool Win9x = false;
 
@@ -102,7 +102,7 @@ static bool WinMoveFileInternal( const CString &sOldPath, const CString &sNewPat
 	return !!MoveFile( sOldPath, sNewPath );
 }
 
-bool WinMoveFile( CString sOldPath, CString sNewPath )
+bool WinMoveFile( RString sOldPath, RString sNewPath )
 {
 	if( WinMoveFileInternal( DoPathReplace(sOldPath), DoPathReplace(sNewPath) ) )
 		return true;
@@ -116,11 +116,11 @@ bool WinMoveFile( CString sOldPath, CString sNewPath )
 #endif
 
 /* mkdir -p.  Doesn't fail if Path already exists and is a directory. */
-bool CreateDirectories( CString Path )
+bool CreateDirectories( RString Path )
 {
 	/* XXX: handle "//foo/bar" paths in Windows */
-	vector<CString> parts;
-	CString curpath;
+	vector<RString> parts;
+	RString curpath;
 
 	/* If Path is absolute, add the initial slash ("ignore empty" will remove it). */
 	if( Path.Left(1) == "/" )
@@ -176,14 +176,14 @@ bool CreateDirectories( CString Path )
 	return true;
 }
 
-DirectFilenameDB::DirectFilenameDB( CString root_ )
+DirectFilenameDB::DirectFilenameDB( RString root_ )
 {
 	ExpireSeconds = 30;
 	SetRoot( root_ );
 }
 
 
-void DirectFilenameDB::SetRoot( CString root_ )
+void DirectFilenameDB::SetRoot( RString root_ )
 {
 	root = root_;
 
@@ -196,9 +196,9 @@ void DirectFilenameDB::SetRoot( CString root_ )
 }
 
 
-void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
+void DirectFilenameDB::PopulateFileSet( FileSet &fs, const RString &path )
 {
-	CString sPath = path;
+	RString sPath = path;
 
 #if defined(XBOX)
 	/* Xbox doesn't handle path names which end with ".", which are used when using an
@@ -293,21 +293,21 @@ void DirectFilenameDB::PopulateFileSet( FileSet &fs, const CString &path )
 	 * performance-critical situations.  To avoid incurring some of the overheard 
 	 * due to ignore markers, delete the file instead instead of using an ignore marker.
 	 */
-	static const CString IGNORE_MARKER_BEGINNING = "ignore-";
+	static const RString IGNORE_MARKER_BEGINNING = "ignore-";
 
-	vector<CString> vsFilesToRemove;
+	vector<RString> vsFilesToRemove;
 	for( set<File>::iterator iter = fs.files.lower_bound(IGNORE_MARKER_BEGINNING); 
 		 iter != fs.files.end(); 
 		 iter++ )
 	{
 		if( !BeginsWith( iter->lname, IGNORE_MARKER_BEGINNING ) )
 			break;
-		CString sFileLNameToIgnore = iter->lname.Right( iter->lname.length() - IGNORE_MARKER_BEGINNING.length() );
+		RString sFileLNameToIgnore = iter->lname.Right( iter->lname.length() - IGNORE_MARKER_BEGINNING.length() );
 		vsFilesToRemove.push_back( iter->name );
 		vsFilesToRemove.push_back( sFileLNameToIgnore );
 	}
 	
-	FOREACH_CONST( CString, vsFilesToRemove, iter )
+	FOREACH_CONST( RString, vsFilesToRemove, iter )
 	{
 		// Erase the file corresponding to the ignore marker
 		File fileToDelete;

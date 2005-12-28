@@ -15,7 +15,7 @@
 static struct FileDriverEntry_ZIP: public FileDriverEntry
 {
 	FileDriverEntry_ZIP(): FileDriverEntry( "ZIP" ) { }
-	RageFileDriver *Create( RString Root ) const { return new RageFileDriverZip( Root ); }
+	RageFileDriver *Create( const RString &sRoot ) const { return new RageFileDriverZip( sRoot ); }
 } const g_RegisterDriver;
 
 
@@ -27,7 +27,7 @@ RageFileDriverZip::RageFileDriverZip():
 	m_pZip = NULL;
 }
 
-RageFileDriverZip::RageFileDriverZip( RString sPath ):
+RageFileDriverZip::RageFileDriverZip( const RString &sPath ):
 	RageFileDriver( new NullFilenameDB ),
 	m_Mutex( "RageFileDriverZip" )
 {

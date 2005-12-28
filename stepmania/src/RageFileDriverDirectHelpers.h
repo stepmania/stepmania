@@ -6,13 +6,13 @@
 #include <fcntl.h>
 
 #if defined(_XBOX)
-int DoMkdir( const CString &sPath, int perm );
-int DoOpen( const CString &sPath, int flags, int perm );
-int DoStat( const CString &sPath, struct stat *st );
-int DoRename( const CString &sOldPath, const CString &sNewPath );
-int DoRemove( const CString &sPath );
-int DoRmdir( const CString &sPath );
-HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd );
+int DoMkdir( const RString &sPath, int perm );
+int DoOpen( const RString &sPath, int flags, int perm );
+int DoStat( const RString &sPath, struct stat *st );
+int DoRename( const RString &sOldPath, const RString &sNewPath );
+int DoRemove( const RString &sPath );
+int DoRmdir( const RString &sPath );
+HANDLE DoFindFirstFile( const RString &sPath, WIN32_FIND_DATA *fd );
 #else
 #define DoOpen open
 #define DoStat stat
@@ -22,28 +22,28 @@ HANDLE DoFindFirstFile( const CString &sPath, WIN32_FIND_DATA *fd );
 #define DoRemove remove
 #define DoRmdir rmdir
 #endif
-CString DoPathReplace( const CString &sPath );
+RString DoPathReplace( const RString &sPath );
 
 #if defined(WIN32)
-bool WinMoveFile( CString sOldPath, CString sNewPath );
+bool WinMoveFile( RString sOldPath, RString sNewPath );
 #endif
 
 #if !defined(O_BINARY)
 #define O_BINARY 0
 #endif
 
-bool CreateDirectories( CString sPath );
+bool CreateDirectories( RString sPath );
 
 #include "RageUtil_FileDB.h"
 class DirectFilenameDB: public FilenameDB
 {
 public:
-	DirectFilenameDB( CString root );
-	void SetRoot( CString root );
+	DirectFilenameDB( RString root );
+	void SetRoot( RString root );
 
 protected:
-	virtual void PopulateFileSet( FileSet &fs, const CString &sPath );
-	CString root;
+	virtual void PopulateFileSet( FileSet &fs, const RString &sPath );
+	RString root;
 };
 
 #endif
