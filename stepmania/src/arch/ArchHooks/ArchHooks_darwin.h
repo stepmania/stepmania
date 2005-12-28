@@ -10,7 +10,7 @@ public:
     ArchHooks_darwin();
     ~ArchHooks_darwin();
     void DumpDebugInfo();
-	CString GetPreferredLanguage();
+	RString GetPreferredLanguage();
 	void EnterTimeCriticalSection();
 	void ExitTimeCriticalSection();
 

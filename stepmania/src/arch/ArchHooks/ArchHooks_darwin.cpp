@@ -215,7 +215,7 @@ extern "C"
 	extern char *GetPreferredLanguage();
 }
 
-CString ArchHooks_darwin::GetPreferredLanguage()
+RString ArchHooks::GetPreferredLanguage()
 {
 	char *lang = ::GetPreferredLanguage();
 	CString ret = lang;

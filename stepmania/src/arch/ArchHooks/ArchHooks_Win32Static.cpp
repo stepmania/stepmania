@@ -39,24 +39,117 @@ int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 	return ret;
 }
 
-void ArchHooks::MountInitialFilesystems( const CString &sDirOfExecutable )
+void ArchHooks::MountInitialFilesystems( const RString &sDirOfExecutable )
 {
 	/* All Windows data goes in the directory one level above the executable. */
 	CHECKPOINT_M( ssprintf( "DOE \"%s\"", sDirOfExecutable.c_str()) );
-	vector<CString> parts;
+	vector<RString> parts;
 	split( sDirOfExecutable, "/", parts );
 	CHECKPOINT_M( ssprintf( "... %i parts", parts.size()) );
 	ASSERT_M( parts.size() > 1, ssprintf("Strange sDirOfExecutable: %s", sDirOfExecutable.c_str()) );
-	CString Dir = join( "/", parts.begin(), parts.end()-1 );
+	RString Dir = join( "/", parts.begin(), parts.end()-1 );
 	FILEMAN->Mount( "dir", Dir, "/" );
 
-	CString sMyDocumentsDir = GetMyDocumentsDir();
-	CString sApplicationDataDir = GetApplicationDataDir();
+	RString sMyDocumentsDir = GetMyDocumentsDir();
+	RString sApplicationDataDir = GetApplicationDataDir();
 
 	// Mount everything game-writable (not counting the editor) to the user's directory.
 	FILEMAN->Mount( "dir", sApplicationDataDir + PRODUCT_ID + "/Cache", "/Cache" );
 	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Save", "/Save" );
 	FILEMAN->Mount( "dir", sMyDocumentsDir + PRODUCT_ID + "/Screenshots", "/Screenshots" );
+}
+
+static CString LangIdToString( LANGID l )
+{
+	switch( PRIMARYLANGID(l) )
+	{
+	case LANG_ARABIC: return "AR";
+	case LANG_BULGARIAN: return "BG";
+	case LANG_CATALAN: return "CA";
+	case LANG_CHINESE: return "ZH";
+	case LANG_CZECH: return "CS";
+	case LANG_DANISH: return "DA";
+	case LANG_GERMAN: return "DE";
+	case LANG_GREEK: return "EL";
+	case LANG_SPANISH: return "ES";
+	case LANG_FINNISH: return "FI";
+	case LANG_FRENCH: return "FR";
+	case LANG_HEBREW: return "IW";
+	case LANG_HUNGARIAN: return "HU";
+	case LANG_ICELANDIC: return "IS";
+	case LANG_ITALIAN: return "IT";
+	case LANG_JAPANESE: return "JA";
+	case LANG_KOREAN: return "KO";
+	case LANG_DUTCH: return "NL";
+	case LANG_NORWEGIAN: return "NO";
+	case LANG_POLISH: return "PL";
+	case LANG_PORTUGUESE: return "PT";
+	case LANG_ROMANIAN: return "RO";
+	case LANG_RUSSIAN: return "RU";
+	case LANG_CROATIAN: return "HR";
+	// case LANG_SERBIAN: return "SR"; // same as LANG_CROATIAN?
+	case LANG_SLOVAK: return "SK";
+	case LANG_ALBANIAN: return "SQ";
+	case LANG_SWEDISH: return "SV";
+	case LANG_THAI: return "TH";
+	case LANG_TURKISH: return "TR";
+	case LANG_URDU: return "UR";
+	case LANG_INDONESIAN: return "IN";
+	case LANG_UKRAINIAN: return "UK";
+	case LANG_SLOVENIAN: return "SL";
+	case LANG_ESTONIAN: return "ET";
+	case LANG_LATVIAN: return "LV";
+	case LANG_LITHUANIAN: return "LT";
+	case LANG_VIETNAMESE: return "VI";
+	case LANG_ARMENIAN: return "HY";
+	case LANG_BASQUE: return "EU";
+	case LANG_MACEDONIAN: return "MK";
+	case LANG_AFRIKAANS: return "AF";
+	case LANG_GEORGIAN: return "KA";
+	case LANG_FAEROESE: return "FO";
+	case LANG_HINDI: return "HI";
+	case LANG_MALAY: return "MS";
+	case LANG_KAZAK: return "KK";
+	case LANG_SWAHILI: return "SW";
+	case LANG_UZBEK: return "UZ";
+	case LANG_TATAR: return "TT";
+	case LANG_PUNJABI: return "PA";
+	case LANG_GUJARATI: return "GU";
+	case LANG_TAMIL: return "TA";
+	case LANG_KANNADA: return "KN";
+	case LANG_MARATHI: return "MR";
+	case LANG_SANSKRIT: return "SA";
+	// These aren't present in the VC6 headers. We'll never have translations to these languages anyway. -C
+	//case LANG_MONGOLIAN: return "MN";
+	//case LANG_GALICIAN: return "GL";
+	default:
+	case LANG_ENGLISH: return "EN";
+	}
+}
+
+static LANGID GetLanguageID()
+{
+	HINSTANCE hDLL = LoadLibrary( "kernel32.dll" );
+	if( hDLL )
+	{
+		typedef LANGID(GET_USER_DEFAULT_UI_LANGUAGE)(void);
+
+		GET_USER_DEFAULT_UI_LANGUAGE *pGetUserDefaultUILanguage = (GET_USER_DEFAULT_UI_LANGUAGE*) GetProcAddress( hDLL, "GetUserDefaultUILanguage" );
+		if( pGetUserDefaultUILanguage )
+		{
+			LANGID ret = pGetUserDefaultUILanguage();
+			FreeLibrary( hDLL );
+			return ret;
+		}
+		FreeLibrary( hDLL );
+	}
+
+	return GetUserDefaultLangID();
+}
+
+RString ArchHooks::GetPreferredLanguage()
+{
+	return LangIdToString( GetLanguageID() );
 }
 
 /*
