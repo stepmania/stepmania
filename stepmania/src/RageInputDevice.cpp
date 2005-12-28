@@ -177,11 +177,6 @@ static const CString InputDeviceNames[] = {
 XToString( InputDevice, NUM_INPUT_DEVICES );
 StringToX( InputDevice );
 
-int GetNumDeviceButtons( InputDevice device )
-{
-	return NUM_DeviceButton;
-};
-
 CString DeviceInput::ToString() const
 {
 	if( device == DEVICE_NONE )

@@ -103,9 +103,9 @@ void InputFilter::ButtonPressed( const DeviceInput &di, bool Down )
 		LOG->Warn( "Invalid device %i,%i", di.device, NUM_INPUT_DEVICES );
 		return;
 	}
-	if( di.button >= GetNumDeviceButtons(di.device) )
+	if( di.button >= NUM_DeviceButton )
 	{
-		LOG->Warn( "Invalid button %i,%i", di.button, GetNumDeviceButtons(di.device) );
+		LOG->Warn( "Invalid button %i,%i", di.button, NUM_DeviceButton );
 		return;
 	}
 
