@@ -285,6 +285,14 @@ public:
 	{
 		return ! operator==( other );
 	}
+	bool operator<( const DeviceInput &other ) const
+	{ 
+		/* Return true if we represent the same button on the same device.  Don't
+		 * compare level or ts. */
+		if( device != other.device )
+			return device < other.device;
+		return button < other.button;
+	};
 	
 	CString ToString() const;
 	bool FromString( const CString &s );
