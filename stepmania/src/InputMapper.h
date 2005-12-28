@@ -82,7 +82,7 @@ protected:
 
 	// lookup for efficiency from a DeviceInput to a GameInput
 	// This is repopulated every time m_PItoDI changes by calling UpdateTempDItoPI().
-	GameInput m_tempDItoGI[NUM_INPUT_DEVICES][MAX_DEVICE_BUTTONS];
+	GameInput m_tempDItoGI[NUM_INPUT_DEVICES][NUM_DeviceButton];
 	void UpdateTempDItoGI();
 };
 

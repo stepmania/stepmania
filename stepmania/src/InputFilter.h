@@ -76,7 +76,7 @@ private:
 		// The time that we actually reported the last event (used for debouncing).
 		RageTimer m_LastReportTime;
 	};
-	ButtonState m_ButtonState[NUM_INPUT_DEVICES][MAX_DEVICE_BUTTONS];
+	ButtonState m_ButtonState[NUM_INPUT_DEVICES][NUM_DeviceButton];
 	void CheckButtonChange( ButtonState &bs, DeviceInput di, const RageTimer &now );
 
 	InputEventArray queue;
