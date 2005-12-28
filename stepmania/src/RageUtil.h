@@ -280,6 +280,13 @@ RString WStringToRString( const wstring &sString );
 RString WcharToUTF8( wchar_t c );
 wstring RStringToWstring( const RString &sString );
 
+struct LanguageInfo
+{
+	const char *szIso639Code;
+	const char *szEnglishName;
+	const char *szNativeName;	// empty string if not available
+};
+void GetLanguageInfos( vector<LanguageInfo> &vAddTo );
 RString GetLanguageNameFromISO639Code( RString sName );
 
 // Splits a RString into an vector<RString> according the Delimitor.

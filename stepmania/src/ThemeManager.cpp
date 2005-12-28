@@ -273,7 +273,7 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeN
 RString ThemeManager::GetDefaultLanguage()
 {
 	RString sLangCode = HOOKS->GetPreferredLanguage();
-	return GetLanguageNameFromISO639Code( sLangCode );
+	return sLangCode;
 }
 
 void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RString &sLanguage_ )
