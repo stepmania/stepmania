@@ -16,10 +16,10 @@ void RageException::Throw(const char *fmt, ...)
 {
     va_list	va;
     va_start(va, fmt);
-    CString error = vssprintf( fmt, va );
+    RString error = vssprintf( fmt, va );
     va_end(va);
 
-    CString msg = ssprintf(
+    RString msg = ssprintf(
 				"\n"
 				"//////////////////////////////////////////////////////\n"
 				"Exception: %s\n"
