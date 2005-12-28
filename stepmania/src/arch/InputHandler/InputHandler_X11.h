@@ -1,7 +1,7 @@
+/* InputHandler_X11 - X-based keyboard input handler. */
+
 #ifndef INPUT_HANDLER_X11_H
 #define INPUT_HANDLER_X11_H
-
-/* Get keyboard (and possibly pointer in the future) input through X. */
 
 #include "InputHandler.h"
 
@@ -11,7 +11,7 @@ public:
 	InputHandler_X11();
 	~InputHandler_X11();
 	void Update();
-	void GetDevicesAndDescriptions(vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut);
+	void GetDevicesAndDescriptions( vector<InputDevice>& vDevicesOut, vector<CString>& vDescriptionsOut );
 };
 #define USE_INPUT_HANDLER_X11
 
