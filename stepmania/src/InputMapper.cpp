@@ -16,6 +16,13 @@
 static Preference<CString> g_sLastSeenInputDevices( "LastSeenInputDevices", "" );
 static Preference<bool> g_bAutoMapOnJoyChange( "AutoMapOnJoyChange", true );
 
+namespace
+{
+	// lookup for efficiency from a DeviceInput to a GameInput
+	// This is repopulated every time m_PItoDI changes by calling UpdateTempDItoPI().
+	map<DeviceInput, GameInput> g_tempDItoGI;
+};
+
 InputMapper*	INPUTMAPPER = NULL;	// global and accessable from anywhere in our program
 
 InputMapper::InputMapper()
@@ -27,6 +34,7 @@ InputMapper::InputMapper()
 InputMapper::~InputMapper()
 {
 	SaveMappingsToDisk();
+	g_tempDItoGI.clear();
 }
 
 void InputMapper::ClearAllMappings()
@@ -607,7 +615,7 @@ bool InputMapper::ClearFromInputMap( const GameInput &GameI, int iSlotIndex )
 
 bool InputMapper::IsMapped( const DeviceInput &DeviceI )
 {
-	return m_tempDItoGI[DeviceI.device][DeviceI.button].IsValid();
+	return g_tempDItoGI.find(DeviceI) != g_tempDItoGI.end();
 }
 
 bool InputMapper::IsMapped( const GameInput &GameI )
@@ -622,17 +630,8 @@ bool InputMapper::IsMapped( const GameInput &GameI )
 
 void InputMapper::UpdateTempDItoGI()
 {
-	// clear out m_tempDItoGI
-	FOREACH_InputDevice( d )
-	{
-		for( int b=0; b<NUM_DeviceButton; b++ )
-		{
-			m_tempDItoGI[d][b].MakeInvalid();
-		}
-	}
-
-
-	// repopulate m_tempDItoGI
+	// repopulate g_tempDItoGI
+	g_tempDItoGI.clear();
 	for( int n=0; n<MAX_GAME_CONTROLLERS; n++ )
 	{
 		for( int b=0; b<MAX_GAME_BUTTONS; b++ )
@@ -643,7 +642,7 @@ void InputMapper::UpdateTempDItoGI()
 				DeviceInput DeviceI = m_GItoDI[n][b][s];
 
 				if( DeviceI.IsValid() )
-					m_tempDItoGI[DeviceI.device][DeviceI.button] = GameI;
+					g_tempDItoGI[DeviceI] = GameI;
 			}
 		}
 	}
@@ -651,7 +650,7 @@ void InputMapper::UpdateTempDItoGI()
 
 bool InputMapper::DeviceToGame( const DeviceInput &DeviceI, GameInput& GameI ) // return true if there is a mapping from device to pad
 {
-	GameI = m_tempDItoGI[DeviceI.device][DeviceI.button];
+	GameI = g_tempDItoGI[DeviceI];
 	return GameI.controller != GAME_CONTROLLER_INVALID;
 }
 
