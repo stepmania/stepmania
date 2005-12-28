@@ -482,15 +482,12 @@ void InputHandler_DInput::InputThreadMain()
 	/* Enable priority boosting. */
 	SetThreadPriorityBoost( GetCurrentThread(), FALSE );
 
-	vector<DIDevice*> BufferedDevices, UnbufferedDevices;
+	vector<DIDevice*> BufferedDevices;
 	HANDLE Handle = CreateEvent(NULL, FALSE, FALSE, NULL);
 	for( unsigned i = 0; i < Devices.size(); ++i )
 	{
 		if( !Devices[i].buffered )
-		{
-			UnbufferedDevices.push_back( &Devices[i] );
 			continue;
-		}
         
 		BufferedDevices.push_back( &Devices[i] );
 
