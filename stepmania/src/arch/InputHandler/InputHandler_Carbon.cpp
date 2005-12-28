@@ -48,7 +48,7 @@ struct Joystick
 {
 	InputDevice id;
 	// map cookie to button
-	hash_map<int, int> mapping;
+	hash_map<int, DeviceButton> mapping;
 	int x_axis, y_axis, z_axis;
 	int x_min, y_min, z_min;
 	int x_max, y_max, z_max;
@@ -412,9 +412,9 @@ void JoystickDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 	{
 		// button n has usage = n, subtract 1 to ensure 
 		// button 1 = JOY_BUTTON_1
-		const int buttonID = usage + JOY_BUTTON_1 - 1;
+		const DeviceButton buttonID = enum_add2( JOY_BUTTON_1, usage - 1 );
 		
-		if( buttonID < NUM_JOYSTICK_BUTTONS )
+		if( buttonID <= JOY_BUTTON_32 )
 			js.mapping[cookie] = buttonID;
 		break;
 	}
@@ -437,7 +437,7 @@ void JoystickDevice::Open()
 		if( js.z_axis )
 			AddElementToQueue( js.z_axis );
 
-		for( hash_map<int,int>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
+		for( hash_map<int,DeviceButton>::const_iterator j = js.mapping.begin(); j != js.mapping.end(); ++j )
 			AddElementToQueue( j->first );
 	}
 }
@@ -452,7 +452,7 @@ int JoystickDevice::AssignJoystickIDs( int startID )
 class KeyboardDevice : public Device
 {
 private:
-	hash_map<int, int> mMapping;
+	hash_map<int,DeviceButton> mMapping;
 	
 protected:
 	bool AddLogicalDevice( int usagePage, int usage );
@@ -610,7 +610,7 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 
 void KeyboardDevice::Open()
 {
-	for (hash_map<int, int>::const_iterator i = mMapping.begin(); i != mMapping.end(); ++i)
+	for (hash_map<int,DeviceButton>::const_iterator i = mMapping.begin(); i != mMapping.end(); ++i)
 		AddElementToQueue( i->first );
 }
 
@@ -637,7 +637,7 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 		
 		if( kd )
 		{
-			hash_map<int, int>::const_iterator iter = kd->mMapping.find( cookie );
+			hash_map<int,DeviceButton>::const_iterator iter = kd->mMapping.find( cookie );
 			
 			if( iter != kd->mMapping.end() )
 				This->ButtonPressed( DeviceInput(DEVICE_KEYBOARD, iter->second, value, now), value );
@@ -675,7 +675,7 @@ void InputHandler_Carbon::QueueCallBack( void *target, int result, void *refcon,
 			else
 			{
 				// hash_map<T,U>::operator[] is not const
-				hash_map<int, int>::const_iterator iter;
+				hash_map<int,DeviceButton>::const_iterator iter;
 
 				iter = js.mapping.find( cookie );
 				if( iter != js.mapping.end() )
