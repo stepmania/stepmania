@@ -16,10 +16,10 @@
 #include "RageDisplay.h"
 
 
-static RageKeySym SDLSymToKeySym( SDLKey key )
+static DeviceButton SDLSymToDeviceButton( SDLKey key )
 {
-#define KEY_INV KEY_INVALID
-	const RageKeySym ASCIIKeySyms[] =
+#define KEY_INV DeviceButton_Invalid
+	const DeviceButton ASCIIKeySyms[] =
 	{
 		KEY_INV,	KEY_INV,	KEY_INV,	KEY_INV,	/* 0-3 */
 		KEY_INV,	KEY_INV,	KEY_INV,	KEY_INV,	/* 4-7 */
@@ -54,11 +54,11 @@ static RageKeySym SDLSymToKeySym( SDLKey key )
 
 	/* SDLK_WORLD_0 ... SDLK_WORLD_95 to KEY_OTHER_0 ... KEY_OTHER_0 + 95 */
 	if( key >= SDLK_WORLD_0 && key <= SDLK_WORLD_95 )
-		return (RageKeySym) (key - SDLK_WORLD_0 + KEY_OTHER_0);
+		return enum_add2( KEY_OTHER_0, key - SDLK_WORLD_0 );
 
 	/* SDLK_KP0 ... SDLK_KP9 to KEY_KP_C0 ... KEY_KP_C9 */
 	if( key >= SDLK_KP0 && key <= SDLK_KP9 )
-		return (RageKeySym) (key - SDLK_KP0 + KEY_KP_C0);
+		return enum_add2( KEY_KP_C0, key - SDLK_KP0 );
 	
 	switch( key )
 	{
@@ -114,7 +114,7 @@ static RageKeySym SDLSymToKeySym( SDLKey key )
 
 	/* Map anything else to key+KEY_OTHER_0+95. */
 	if( key+KEY_OTHER_0+95 < KEY_LAST_OTHER )
-		return (RageKeySym) (key+KEY_OTHER_0+95);
+		return enum_add2( KEY_OTHER_0, key+95 );
 
 	return KEY_INVALID;
 }
@@ -200,8 +200,8 @@ void InputHandler_SDL::Update()
 		case SDL_KEYUP:
 			{
 			LOG->Trace("key: sym %i, key %i, state %i",
-				event.key.keysym.sym, SDLSymToKeySym(event.key.keysym.sym), event.key.state );
-			DeviceInput di( DEVICE_KEYBOARD, SDLSymToKeySym(event.key.keysym.sym) );
+				event.key.keysym.sym, DeviceButton(event.key.keysym.sym), event.key.state );
+			DeviceInput di( DEVICE_KEYBOARD, DeviceButton(event.key.keysym.sym) );
 			ButtonPressed(di, event.key.state == SDL_PRESSED);
 			}
 			continue;
@@ -210,8 +210,8 @@ void InputHandler_SDL::Update()
 		case SDL_JOYBUTTONUP:
 		{
 			InputDevice i = InputDevice(DEVICE_JOY1 + event.jbutton.which);
-			JoystickButton Button = JoystickButton(JOY_BUTTON_1 + event.jbutton.button);
-			if(Button >= NUM_JOYSTICK_BUTTONS)
+			DeviceButton Button = enum_add2(JOY_BUTTON_1, key - event.jbutton.button);
+			if(Button > JOY_BUTTON_32)
 			{
 				LOG->Warn("Ignored joystick event (button too high)");
 				continue;
@@ -224,8 +224,8 @@ void InputHandler_SDL::Update()
 		case SDL_JOYAXISMOTION:
 		{
 			InputDevice i = InputDevice(DEVICE_JOY1 + event.jaxis.which);
-			JoystickButton neg = (JoystickButton)(JOY_LEFT+2*event.jaxis.axis);
-			JoystickButton pos = (JoystickButton)(JOY_RIGHT+2*event.jaxis.axis);
+			DeviceButton neg = enum_add2(JOY_LEFT, 2*event.jaxis.axis);
+			DeviceButton pos = enum_add2(JOY_RIGHT, 2*event.jaxis.axis);
 			float l = SCALE( event.jaxis.value, 0.0f, 32768.0f, 0.0f, 1.0f );
 			ButtonPressed(DeviceInput(i, neg,max(-l,0),RageZeroTimer), event.jaxis.value < -16000);
 			ButtonPressed(DeviceInput(i, pos,max(+l,0),RageZeroTimer), event.jaxis.value > +16000);
