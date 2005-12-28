@@ -231,8 +231,8 @@ void ScreenTextEntry::Input( const InputEventPlus &input )
 		else if( input.DeviceI.ToChar() >= ' ' ) 
 		{
 			bool bIsHoldingShift = 
-					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RSHIFT)) ||
-					INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LSHIFT));
+					INPUTFILTER->IsBeingPressed( DeviceInput(input.DeviceI.device, KEY_RSHIFT)) ||
+					INPUTFILTER->IsBeingPressed( DeviceInput(input.DeviceI.device, KEY_LSHIFT));
 			if ( bIsHoldingShift )
 			{
 
