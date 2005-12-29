@@ -13,7 +13,7 @@ public:
 	virtual ~CreateLanguageDlg();
 
 // Dialog Data
-	enum { IDD = IDD_DIALOG1 };
+	enum { IDD = IDD_CREATE_LANGUAGE };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

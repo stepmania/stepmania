@@ -13,7 +13,7 @@ public:
 	virtual ~LanguagesDlg();
 
 // Dialog Data
-	enum { IDD = IDD_THEMES };
+	enum { IDD = IDD_LANGUAGES };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
@@ -29,4 +29,5 @@ public:
 	afx_msg void OnBnClickedButtonDelete();
 	afx_msg void OnBnClickedButtonExport();
 	afx_msg void OnBnClickedButtonImport();
+	CButton m_buttonExportAlreadyTranslated;
 };

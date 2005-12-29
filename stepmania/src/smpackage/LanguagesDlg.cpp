@@ -35,6 +35,7 @@ void LanguagesDlg::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST_THEMES, m_listThemes);
 	DDX_Control(pDX, IDC_LIST_LANGUAGES, m_listLanguages);
+	DDX_Control(pDX, IDC_CHECK_EXPORT_ALREADY_TRANSLATED, m_buttonExportAlreadyTranslated);
 }
 
 BOOL LanguagesDlg::OnInitDialog()
@@ -173,6 +174,7 @@ void LanguagesDlg::OnSelchangeListLanguages()
 	GetDlgItem(IDC_BUTTON_DELETE)->EnableWindow( !sLanguage.empty() ); 
 	GetDlgItem(IDC_BUTTON_EXPORT)->EnableWindow( !sLanguage.empty() ); 
 	GetDlgItem(IDC_BUTTON_IMPORT)->EnableWindow( !sLanguage.empty() );
+	GetDlgItem(IDC_CHECK_EXPORT_ALREADY_TRANSLATED)->EnableWindow( !sLanguage.empty() ); 
 }
 
 
@@ -223,6 +225,11 @@ void LanguagesDlg::OnBnClickedButtonDelete()
 	sLanguage = SMPackageUtil::GetLanguageCodeFromDisplayString( sLanguage );
 
 	RString sLanguageFile = GetLanguageFile( sTheme, sLanguage );
+
+	int iRet = MessageBox( ssprintf("This will permanently delete '%s'. Continue?",sLanguageFile.c_str()), NULL, MB_OKCANCEL );
+	if( iRet != IDOK )
+		return;
+
 	FILEMAN->Remove( sLanguageFile );
 	FlushDirCache();
 
@@ -246,11 +253,14 @@ void LanguagesDlg::OnBnClickedButtonExport()
 	RString sBaseLanguageFile = GetLanguageFile( sTheme, SpecialFiles::BASE_LANGUAGE );
 	RString sLanguageFile = GetLanguageFile( sTheme, sLanguage );
 
+	bool bExportAlreadyTranslated = !!m_buttonExportAlreadyTranslated.GetCheck();
+
 	CsvFile csv;
 	IniFile ini1;
 	ini1.ReadFile( sBaseLanguageFile );
 	IniFile ini2;
 	ini2.ReadFile( sLanguageFile );
+	int iNumExpored = 0;
 	FOREACH_CONST_Child( &ini1, key )
 	{
 		FOREACH_CONST_Attr( key, value )
@@ -261,16 +271,25 @@ void LanguagesDlg::OnBnClickedButtonExport()
 			tl.sBaseLanguage = value->second;
 			ini2.GetValue( tl.sSection, tl.sID, tl.sCurrentLanguage );
 
-			vector<RString> vs;
-			vs.push_back( tl.sSection );
-			vs.push_back( tl.sID );
-			vs.push_back( tl.sBaseLanguage );
-			vs.push_back( tl.sCurrentLanguage );
-			csv.m_vvs.push_back( vs );			
+			if( tl.sCurrentLanguage.empty() || bExportAlreadyTranslated )
+			{
+				vector<RString> vs;
+				vs.push_back( tl.sSection );
+				vs.push_back( tl.sID );
+				vs.push_back( tl.sBaseLanguage );
+				vs.push_back( tl.sCurrentLanguage );
+				csv.m_vvs.push_back( vs );
+				iNumExpored++;
+			}
 		}
 	}
 	RString sFile = sTheme+"-"+sLanguage+".csv";
 	RString sFullFile = "Desktop/"+sFile;
+	if( iNumExpored == 0 )
+	{
+		MessageBox( "There are no strings to export for this language." );	
+		return;
+	}
 	if( csv.WriteFile(sFullFile) )
 		MessageBox( ssprintf("Exported to your Desktop as '%s'.",sFile.c_str()) );
 	else
@@ -320,25 +339,41 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	}
 
 	IniFile ini;
+	if( !ini.ReadFile(sLanguageFile) )
+	{
+		MessageBox( ssprintf("Error reading '%s'.",sLanguageFile.c_str()) );
+		return;
+	}
 
+	int iNumImported = 0;
+	int iNumIgnored = 0;
 	FOREACH_CONST( CsvFile::StringVector, csv.m_vvs, line ) 
 	{
 		TranslationLine tl;
-		if( line->size() != 3 && line->size() != 4 )
+		int iNumValues = line->size();
+		if( iNumValues != 3 && iNumValues != 4 )
 		{
-			MessageBox( ssprintf("Error reading '%s': Each line must have either 3 or 4 values.  This row has %d values",sCsvFile.c_str(),(int)line->size()) );
+			MessageBox( ssprintf("Error reading '%s': Each line must have either 3 or 4 values.  This row has %d values",sCsvFile.c_str(),iNumValues) );
 			return;
 		}
 		tl.sSection = (*line)[0];
 		tl.sID = (*line)[1];
 		tl.sBaseLanguage = (*line)[2];
-		tl.sCurrentLanguage = line->size() == 4 ? (*line)[3] : RString();
+		tl.sCurrentLanguage = iNumValues == 4 ? (*line)[3] : RString();
 
-		ini.SetValue( tl.sSection, tl.sID, tl.sCurrentLanguage );
+		if( tl.sCurrentLanguage.empty() )
+		{
+			iNumIgnored++;
+		}
+		else
+		{
+			ini.SetValue( tl.sSection, tl.sID, tl.sCurrentLanguage );
+			iNumImported++;
+		}
 	}
 
 	if( ini.WriteFile(sLanguageFile) )
-		MessageBox( ssprintf("Saved '%s'.",sLanguageFile.c_str()) );
+		MessageBox( ssprintf("Imported %d strings into '%s'. %d empty strings were ignored.",iNumImported,sLanguageFile.c_str(),iNumIgnored) );
 	else
 		MessageBox( ssprintf("Failed to save '%s'.",sLanguageFile.c_str()) );
 }

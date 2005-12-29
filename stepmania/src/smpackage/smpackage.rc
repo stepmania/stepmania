@@ -274,21 +274,21 @@ BEGIN
                     IDC_STATIC,7,234,147,26
 END
 
-IDD_THEMES DIALOGEX 0, 0, 329, 194
+IDD_LANGUAGES DIALOGEX 0, 0, 329, 188
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 CAPTION "Language Translations"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Close",IDOK,272,173,50,14
+    DEFPUSHBUTTON   "Close",IDOK,272,167,50,14
     LTEXT           "Themes",IDC_STATIC,7,7,101,10
     LTEXT           "Languages",IDC_STATIC,118,7,98,10
-    PUSHBUTTON      "Create Language",IDC_BUTTON_CREATE,232,45,85,15
-    PUSHBUTTON      "Delete Language",IDC_BUTTON_DELETE,232,67,85,15
-    PUSHBUTTON      "Export CSV",IDC_BUTTON_EXPORT,232,89,85,15
-    PUSHBUTTON      "Import CSV",IDC_BUTTON_IMPORT,232,111,85,15
-    LTEXT           "Create a new language, export the theme strings to a CSV, edit the CSV using Excel or a text editor, then import the CSV file back into the same language.",
-                    IDC_STATIC,7,144,315,25
+    PUSHBUTTON      "Create Language",IDC_BUTTON_CREATE,226,41,91,15
+    PUSHBUTTON      "Delete Language",IDC_BUTTON_DELETE,226,62,91,15
+    PUSHBUTTON      "Export CSV",IDC_BUTTON_EXPORT,226,83,91,15
+    PUSHBUTTON      "Import CSV",IDC_BUTTON_IMPORT,226,123,91,15
+    LTEXT           "- Create a new language\n- Export the theme strings to a CSV\n- Edit the CSV using Excel or a text editor\n- Import the CSV file back into the same language",
+                    IDC_STATIC,7,144,240,37
     LTEXT           "Selection details",IDC_STATIC,222,7,100,9
     LTEXT           "Total Strings:",IDC_STATIC,225,17,62,10
     LTEXT           "Need translation:",IDC_STATIC,225,28,69,10
@@ -298,9 +298,13 @@ BEGIN
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     LISTBOX         IDC_LIST_LANGUAGES,116,17,100,121,LBS_SORT | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Export already translated strings",
+                    IDC_CHECK_EXPORT_ALREADY_TRANSLATED,"Button",
+                    BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,220,100,109,
+                    16
 END
 
-IDD_DIALOG1 DIALOGEX 0, 0, 186, 47
+IDD_CREATE_LANGUAGE DIALOGEX 0, 0, 186, 47
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 CAPTION "Create Language"
@@ -432,15 +436,15 @@ BEGIN
         BOTTOMMARGIN, 274
     END
 
-    IDD_THEMES, DIALOG
+    IDD_LANGUAGES, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 322
         TOPMARGIN, 7
-        BOTTOMMARGIN, 187
+        BOTTOMMARGIN, 181
     END
 
-    IDD_DIALOG1, DIALOG
+    IDD_CREATE_LANGUAGE, DIALOG
     BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 179
