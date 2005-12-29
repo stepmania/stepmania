@@ -264,6 +264,7 @@ void splitpath( const RString &Path, RString &Dir, RString &Filename, RString &E
 RString SetExtension( const RString &path, const RString &ext );
 RString GetExtension( const RString &sPath );
 RString GetFileNameWithoutExtension( const RString &sPath );
+void MakeValidFilename( CString &sName );
 
 typedef int longchar;
 extern const wchar_t INVALID_CHAR;

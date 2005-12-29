@@ -705,6 +705,44 @@ RString GetFileNameWithoutExtension( const RString &sPath )
 	return sFName;
 }
 
+void MakeValidFilename( CString &sName )
+{
+	wstring wsName = RStringToWstring( sName );
+	wstring wsInvalid = L"/\\:*?\"<>|";
+	for( unsigned i = 0; i < wsName.size(); ++i )
+	{
+		wchar_t w = wsName[i];
+		if( w >= 32 &&
+			w < 126 &&
+			wsInvalid.find_first_of(w) == wsInvalid.npos )
+			continue;
+
+		if( w == L'"' )
+		{
+			wsName[i] = L'\'';
+			continue;
+		}
+
+		/*
+		 * We could replace with closest matches in ASCII: convert the character to UTF-8
+		 * NFD (decomposed) (maybe NFKD?), and see if the first character is ASCII.
+		 *
+		 * This is useless for non-Western languages, since we'll replace the whole filename.
+		 */
+		wsName[i] = '_';
+	}
+
+	sName = WStringToRString( wsName );
+	if( Basename(sName).size() > 128 )
+	{
+		/* The filename is too long.  Truncate it, but leave the extension alone. */
+		RString sExt = GetExtension( sName );
+		SetExtension( sName, "" );
+		sName.erase( 128 );
+		SetExtension( sName, sExt );
+	}
+}
+
 int g_argc = 0;
 char **g_argv = NULL;
 
