@@ -293,7 +293,7 @@ public:
 	/* Projection and View matrix stack functions. */
 	void CameraPushMatrix();
 	void CameraPopMatrix();
-	void LoadMenuPerspective( float fovDegrees, float fVanishPointX, float fVanishPointY );
+	void LoadMenuPerspective( float fFOVDegrees, float fWidth, float fHeight, float fVanishPointX, float fVanishPointY );
 	void LoadLookAt( float fov, const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up );
 
 	/* Centering matrix */

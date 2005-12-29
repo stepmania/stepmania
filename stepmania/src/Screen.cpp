@@ -59,6 +59,8 @@ bool Screen::SortMessagesByDelayRemaining(const Screen::QueuedScreenMessage &m1,
 
 void Screen::Init()
 {
+	SetFOV( 0 );
+
 	m_smSendOnPop = SM_None;
 
 	ActorUtil::LoadAllCommandsFromName( *this, m_sName, "Screen" );

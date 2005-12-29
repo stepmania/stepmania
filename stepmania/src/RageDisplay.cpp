@@ -10,7 +10,6 @@
 #include "RageSurfaceUtils_Zoom.h"
 #include "RageSurface.h"
 #include "Preference.h"
-#include "ScreenDimensions.h"
 
 //
 // Statistics stuff
@@ -206,7 +205,7 @@ void RageDisplay::SetDefaultRenderStates()
 	SetBlendMode( BLEND_NORMAL );
 	SetTextureFiltering( true );
 	SetZBias( 0 );
-	LoadMenuPerspective(0, SCREEN_CENTER_X, SCREEN_CENTER_Y);	// 0 FOV = ortho
+	LoadMenuPerspective( 0, 640, 480, 320, 240 ); // 0 FOV = ortho
 	ChangeCentering(0,0,0,0);
 }
 
@@ -459,12 +458,12 @@ void RageDisplay::TextureTranslate( float x, float y )
 }
 
 
-void RageDisplay::LoadMenuPerspective( float fovDegrees, float fVanishPointX, float fVanishPointY )
+void RageDisplay::LoadMenuPerspective( float fovDegrees, float fWidth, float fHeight, float fVanishPointX, float fVanishPointY )
 {
 	/* fovDegrees == 0 gives ortho projection. */
 	if( fovDegrees == 0 )
 	{
- 		float left = 0, right = SCREEN_WIDTH, bottom = SCREEN_HEIGHT, top = 0;
+ 		float left = 0, right = fWidth, bottom = fHeight, top = 0;
 		g_ProjectionStack.LoadMatrix( GetOrthoMatrix(left, right, bottom, top, -1000, +1000) );
  		g_ViewStack.LoadIdentity();
 	}
@@ -473,29 +472,29 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fVanishPointX, fl
 		CLAMP( fovDegrees, 0.1f, 179.9f );
 		float fovRadians = fovDegrees / 180.f * PI;
 		float theta = fovRadians/2;
-		float fDistCameraFromImage = SCREEN_WIDTH/2 / tanf( theta );
+		float fDistCameraFromImage = fWidth/2 / tanf( theta );
 
-		fVanishPointX = SCALE( fVanishPointX, SCREEN_LEFT, SCREEN_RIGHT, SCREEN_RIGHT, SCREEN_LEFT );
-		fVanishPointY = SCALE( fVanishPointY, SCREEN_TOP, SCREEN_BOTTOM, SCREEN_BOTTOM, SCREEN_TOP );
+		fVanishPointX = SCALE( fVanishPointX, 0, fWidth, fWidth, 0 );
+		fVanishPointY = SCALE( fVanishPointY, 0, fHeight, fHeight, 0 );
 
-		fVanishPointX -= SCREEN_CENTER_X;
-		fVanishPointY -= SCREEN_CENTER_Y;
+		fVanishPointX -= fWidth/2;
+		fVanishPointY -= fHeight/2;
 
 
 		/* It's the caller's responsibility to push first. */
 		g_ProjectionStack.LoadMatrix(
 			GetFrustumMatrix(
-			  (fVanishPointX-SCREEN_WIDTH/2)/fDistCameraFromImage,
-			  (fVanishPointX+SCREEN_WIDTH/2)/fDistCameraFromImage,
-			  (fVanishPointY+SCREEN_HEIGHT/2)/fDistCameraFromImage,
-			  (fVanishPointY-SCREEN_HEIGHT/2)/fDistCameraFromImage,
+			  (fVanishPointX-fWidth/2)/fDistCameraFromImage,
+			  (fVanishPointX+fWidth/2)/fDistCameraFromImage,
+			  (fVanishPointY+fHeight/2)/fDistCameraFromImage,
+			  (fVanishPointY-fHeight/2)/fDistCameraFromImage,
 			  1,
 			  fDistCameraFromImage+1000	) );
 
 		g_ViewStack.LoadMatrix( 
 			RageLookAt(
-				-fVanishPointX+SCREEN_CENTER_X, -fVanishPointY+SCREEN_CENTER_Y, fDistCameraFromImage,
-				-fVanishPointX+SCREEN_CENTER_X, -fVanishPointY+SCREEN_CENTER_Y, 0,
+				-fVanishPointX+fWidth/2, -fVanishPointY+fHeight/2, fDistCameraFromImage,
+				-fVanishPointX+fWidth/2, -fVanishPointY+fHeight/2, 0,
 				0.0f, 1.0f, 0.0f) );
 	}
 }

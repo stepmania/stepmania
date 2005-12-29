@@ -176,7 +176,7 @@ void ActorFrame::DrawPrimitives()
 	if( m_fFOV != -1 )
 	{
 		DISPLAY->CameraPushMatrix();
-		DISPLAY->LoadMenuPerspective( m_fFOV, m_fVanishX, m_fVanishY );
+		DISPLAY->LoadMenuPerspective( m_fFOV, SCREEN_WIDTH, SCREEN_HEIGHT, m_fVanishX, m_fVanishY );
 	}
 
 	if( m_bOverrideLighting )
