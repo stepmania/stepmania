@@ -21,8 +21,10 @@
 
 #include "Banner.h"
 
-const CString BANNER_CACHE_INDEX = SpecialFiles::CACHE_DIR + "banners.cache";
-
+/* Neither a global or a file scope static can be used for this because
+ * the order of initialization of nonlocal objects is unspecified. */
+//const CString BANNER_CACHE_INDEX = SpecialFiles::CACHE_DIR + "banners.cache";
+#define BANNER_CACHE_INDEX (SpecialFiles::CACHE_DIR + "banners.cache")
 
 /* Call CacheBanner to cache a banner by path.  If the banner is already
  * cached, it'll be recreated.  This is efficient if the banner hasn't changed,
