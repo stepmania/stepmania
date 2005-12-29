@@ -10,6 +10,7 @@
 #include "RageSurfaceUtils_Zoom.h"
 #include "RageSurface.h"
 #include "Preference.h"
+#include "PrefsManager.h"
 #include "ScreenDimensions.h"
 
 //
@@ -524,7 +525,7 @@ void RageDisplay::CameraPopMatrix()
  * post-multiplied. */
 void RageDisplay::LoadLookAt( float fFOV, const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up )
 {
-	float fAspect = SCREEN_WIDTH/(float)SCREEN_HEIGHT;
+	float fAspect = PREFSMAN->m_fDisplayAspectRatio;
 	g_ProjectionStack.LoadMatrix( GetPerspectiveMatrix(fFOV, fAspect, 1, 1000) );
 
 	/* Flip the Y coordinate, so positive numbers go down. */
