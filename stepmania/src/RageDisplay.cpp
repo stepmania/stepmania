@@ -550,20 +550,19 @@ RageSurface *RageDisplay::CreateSurfaceFromPixfmt( PixelFormat pixfmt,
 	return surf;
 }
 
-PixelFormat RageDisplay::FindPixelFormat( 
-	int bpp, int Rmask, int Gmask, int Bmask, int Amask, bool realtime )
+PixelFormat RageDisplay::FindPixelFormat( int iBPP, int iRmask, int iGmask, int iBmask, int iAmask, bool bRealtime )
 {
-	PixelFormatDesc tmp = { bpp, { Rmask, Gmask, Bmask, Amask } };
+	PixelFormatDesc tmp = { iBPP, { iRmask, iGmask, iBmask, iAmask } };
 
-	for(int pixfmt = 0; pixfmt < NUM_PixelFormat; ++pixfmt)
+	FOREACH_ENUM2( PixelFormat, iPixFmt )
 	{
-		const PixelFormatDesc *pf = GetPixelFormatDesc(PixelFormat(pixfmt));
-		if(!SupportsTextureFormat( PixelFormat(pixfmt), realtime ))
+		const PixelFormatDesc *pf = GetPixelFormatDesc( PixelFormat(iPixFmt) );
+		if( !SupportsTextureFormat(PixelFormat(iPixFmt), bRealtime) )
 			continue;
 
-		if(memcmp(pf, &tmp, sizeof(tmp)))
+		if( memcmp(pf, &tmp, sizeof(tmp)) )
 			continue;
-		return PixelFormat(pixfmt);
+		return iPixFmt;
 	}
 
 	return PixelFormat_INVALID;
