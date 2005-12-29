@@ -33,7 +33,7 @@ CString SongCacheIndex::GetCacheFilePath( const CString &sGroup, const CString &
 {
 	/* Use GetHashForString, not ForFile, since we don't want to spend time
 	 * checking the file size and date. */
-	return ssprintf( "%s/%s/%u", CACHE_DIR, sGroup.c_str(), GetHashForString(sPath) );
+	return ssprintf( "%s/%s/%u", SpecialFiles::CACHE_DIR.c_str(), sGroup.c_str(), GetHashForString(sPath) );
 }
 
 SongCacheIndex::SongCacheIndex()
@@ -69,10 +69,10 @@ void SongCacheIndex::ReadCacheIndex()
 		return; /* OK */
 
 	LOG->Trace( "Cache format is out of date.  Deleting all cache files." );
-	EmptyDir( CACHE_DIR );
-	EmptyDir( CACHE_DIR "Banners/" );
-	EmptyDir( CACHE_DIR "Songs/" );
-	EmptyDir( CACHE_DIR "Courses/" );
+	EmptyDir( SpecialFiles::CACHE_DIR );
+	EmptyDir( SpecialFiles::CACHE_DIR+"Banners/" );
+	EmptyDir( SpecialFiles::CACHE_DIR+"Songs/" );
+	EmptyDir( SpecialFiles::CACHE_DIR+"Courses/" );
 
 	CacheIndex.Clear();
 }

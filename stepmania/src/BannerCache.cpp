@@ -21,7 +21,7 @@
 
 #include "Banner.h"
 
-#define BANNER_CACHE_INDEX CACHE_DIR "banners.cache"
+const CString BANNER_CACHE_INDEX = SpecialFiles::CACHE_DIR + "banners.cache";
 
 
 /* Call CacheBanner to cache a banner by path.  If the banner is already
