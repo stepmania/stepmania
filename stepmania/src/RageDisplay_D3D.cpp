@@ -1,7 +1,6 @@
 #include "global.h"
 #include "RageDisplay.h"
 #include "RageDisplay_D3D.h"
-#include "D3D8.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageTimer.h"
@@ -10,16 +9,15 @@
 #include "RageTextureManager.h"
 #include "RageMath.h"
 #include "RageTypes.h"
-#include "GameConstantsAndTypes.h"
 #include "StepMania.h"
-#include "RageUtil.h"
-#include "D3dx8math.h"
-#include "D3DX8Core.h"
-#include "PrefsManager.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "EnumHelper.h"
 #include "DisplayResolutions.h"
+
+#include <D3D8.h>
+#include <D3dx8math.h>
+#include <D3DX8Core.h>
 
 #if !defined(XBOX)
 #include "archutils/Win32/GraphicsWindow.h"
