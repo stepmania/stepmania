@@ -219,8 +219,8 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeN
 
 		IniFile ini;
 		ini.ReadFile( GetMetricsIniPath(sThemeName) );
-		ini.ReadFile( GetLanguageIniPath(sThemeName,BASE_LANGUAGE) );
-		if( sLanguage.CompareNoCase(BASE_LANGUAGE) )
+		ini.ReadFile( GetLanguageIniPath(sThemeName,SpecialFiles::BASE_LANGUAGE) );
+		if( sLanguage.CompareNoCase(SpecialFiles::BASE_LANGUAGE) )
 			ini.ReadFile( GetLanguageIniPath(sThemeName,sLanguage) );
 
 		bool bIsBaseTheme = !sThemeName.CompareNoCase(BASE_THEME_NAME);
@@ -468,7 +468,7 @@ try_element_again:
 		if( iDist == 0 )
 		{
 			/* We didn't find any for the current language.  Try BASE_LANGUAGE. */
-			it = partition( asElementPaths.begin(), asElementPaths.end(), CompareLanguageTag(BASE_LANGUAGE) );
+			it = partition( asElementPaths.begin(), asElementPaths.end(), CompareLanguageTag(SpecialFiles::BASE_LANGUAGE) );
 			iDist = distance( asElementPaths.begin(), it );
 		}
 
@@ -656,7 +656,7 @@ try_element_again:
 
 RString ThemeManager::GetMetricsIniPath( const RString &sThemeName )
 {
-	return GetThemeDirFromName( sThemeName ) + METRICS_FILE;
+	return GetThemeDirFromName( sThemeName ) + SpecialFiles::METRICS_FILE;
 }
 
 bool ThemeManager::HasMetric( const RString &sClassName, const RString &sValueName )
@@ -852,7 +852,7 @@ void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RStri
 	// stip out metrics.ini
 	for( int i=as.size()-1; i>=0; i-- )
 	{
-		if( as[i].CompareNoCase(METRICS_FILE)==0 )
+		if( as[i].CompareNoCase(SpecialFiles::METRICS_FILE)==0 )
 			as.erase( as.begin()+i );
 		// strip ".ini"
 		as[i] = as[i].Left( as[i].size()-4 );
