@@ -525,7 +525,9 @@ void RageDisplay::CameraPopMatrix()
  * post-multiplied. */
 void RageDisplay::LoadLookAt( float fFOV, const RageVector3 &Eye, const RageVector3 &At, const RageVector3 &Up )
 {
-	float fAspect = PREFSMAN->m_fDisplayAspectRatio;
+	// XXX
+	float fAspect = ScreenDimensions::GetScreenAspectRatio();
+	// PREFSMAN->m_fDisplayAspectRatio;
 	g_ProjectionStack.LoadMatrix( GetPerspectiveMatrix(fFOV, fAspect, 1, 1000) );
 
 	/* Flip the Y coordinate, so positive numbers go down. */
