@@ -27,4 +27,6 @@ public:
 	CListBox m_listLanguages;
 	afx_msg void OnBnClickedButtonCreate();
 	afx_msg void OnBnClickedButtonDelete();
+	afx_msg void OnBnClickedButtonExport();
+	afx_msg void OnBnClickedButtonImport();
 };

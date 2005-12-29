@@ -21,7 +21,19 @@ namespace SMPackageUtil
 
 	RString GetLanguageDisplayString( const RString &sIsoCode );
 	RString GetLanguageCodeFromDisplayString( const RString &sDisplayString );
+
+	bool GetFileContentsOsAbsolute( const RString &sAbsoluteOsFile, RString &sOut );
 }
+
+#include "RageFile.h"
+
+class RageFileOsAbsolute : public RageFile
+{
+public:
+	bool Open( const RString& path, int mode = READ );
+private:
+	RString m_sOsDir;
+};
 
 #endif
 

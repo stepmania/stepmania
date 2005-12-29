@@ -17,10 +17,10 @@
 #include "RageSurfaceUtils_Palettize.h"
 #include "RageSurfaceUtils_Dither.h"
 #include "RageSurfaceUtils_Zoom.h"
+#include "SpecialFiles.h"
 
 #include "Banner.h"
 
-#define CACHE_DIR "Cache/"
 #define BANNER_CACHE_INDEX CACHE_DIR "banners.cache"
 
 

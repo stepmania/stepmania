@@ -23,6 +23,7 @@
 #include "Foreach.h"
 #include "UnlockManager.h"
 #include "BackgroundUtil.h"
+#include "SpecialFiles.h"
 
 #include "NotesLoaderSM.h"
 #include "NotesLoaderDWI.h"
@@ -35,8 +36,6 @@
 
 #include <set>
 #include <float.h>
-
-#define CACHE_DIR "Cache/"
 
 const int FILE_CACHE_VERSION = 144;	// increment this to invalidate cache
 

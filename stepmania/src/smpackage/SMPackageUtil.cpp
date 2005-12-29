@@ -5,6 +5,7 @@
 #include "archutils/Win32/RegistryAccess.h"
 #include "ProductInfo.h"	
 #include "RageUtil.h"	
+#include "RageFileManager.h"	
 
 void SMPackageUtil::WriteStepManiaInstallDirs( const vector<RString>& asInstallDirsToWrite )
 {
@@ -207,6 +208,29 @@ RString SMPackageUtil::GetLanguageCodeFromDisplayString( const RString &sDisplay
 	ASSERT( iSpace != s.npos ); 
 	s.erase( s.begin()+iSpace, s.end() );
 	return s;
+}
+
+static const RString TEMP_MOUNT_POINT = "/@package/";
+
+RageFileOsAbsolute::~RageFileOsAbsolute()
+{
+	if( !m_sOsDir.empty() )
+		FILEMAN->Unmount( "dir", m_sOsDir, TEMP_MOUNT_POINT );
+}
+
+bool RageFileOsAbsolute::Open( const RString& path, int mode )
+{
+	if( !m_sOsDir.empty() )
+		FILEMAN->Unmount( "dir", m_sOsDir, TEMP_MOUNT_POINT );
+
+	m_sOsDir = path;
+	size_t iStart = m_sOsDir.find_last_of( "/\\" );
+	ASSERT( iStart != m_sOsDir.npos );
+	m_sOsDir.erase( m_sOsDir.begin()+iStart, m_sOsDir.end() );
+
+	FILEMAN->Mount( "dir", m_sOsDir, TEMP_MOUNT_POINT );	
+	RString sFileName = path.Right( path.size()-m_sOsDir.size() );
+	return RageFile::Open( TEMP_MOUNT_POINT+sFileName, mode );
 }
 
 /*

@@ -62,7 +62,7 @@ BOOL CSmpackageApp::InitInstance()
 		CString sArg = arrayCommandLineBits[i];
 		if( sArg == "--machine-profile-stats" )
 		{
-			RString sPersonalDir = GetMyDocumentsDir();
+			RString sPersonalDir = SpecialDirs::GetMyDocumentsDir();
 			RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
 			if( NULL == ::ShellExecute( NULL, "open", sFile, "", "", SW_SHOWNORMAL ) )
 				AfxMessageBox( "Failed to open '" + sFile + "': " + GetLastErrorString() );

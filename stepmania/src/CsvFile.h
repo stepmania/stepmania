@@ -1,18 +1,35 @@
-#include "global.h"
-#include "SpecialFiles.h"
+/* IniFile - Reading and writing .CSV files. */
 
-const RString SpecialFiles::KEYMAPS_PATH = "Save/Keymaps.ini";
-const RString SpecialFiles::PREFERENCES_INI_PATH	= "Save/Preferences.ini";
-const RString SpecialFiles::THEMES_DIR  = "Themes/";
-const RString SpecialFiles::LANGUAGES_SUBDIR = "Languages/";
-const RString SpecialFiles::BASE_LANGUAGE = "en";
-const RString SpecialFiles::METRICS_FILE = "metrics.ini";
-const RString SpecialFiles::CACHE_DIR = "Cache/";
+#ifndef CsvFile_H
+#define CsvFile_H
+
+class RageFileBasic;
+
+class CsvFile
+{
+public:
+	CsvFile();
+
+	bool ReadFile( const RString &sPath );
+	bool ReadFile( RageFileBasic &sFile );
+	bool WriteFile( const RString &sPath ) const;
+	bool WriteFile( RageFileBasic &sFile ) const;
+
+	typedef vector<RString> StringVector;
+	vector<StringVector> m_vvs;
+
+private:
+	RString m_sPath;
+	mutable RString m_sError;
+};
+
+#endif
 
 /*
- * (c) 2003-2005 Chris Danford
- * All rights reserved.
+ * (c) 2001-2004 Adam Clauss, Chris Danford
  *
+ * All rights reserved.
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -22,7 +39,7 @@ const RString SpecialFiles::CACHE_DIR = "Cache/";
  * copyright notice(s) and this permission notice appear in all copies of
  * the Software and that both the above copyright notice(s) and this
  * permission notice appear in supporting documentation.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF
@@ -33,4 +50,3 @@ const RString SpecialFiles::CACHE_DIR = "Cache/";
  * OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
  * PERFORMANCE OF THIS SOFTWARE.
  */
-

@@ -5,6 +5,7 @@
 #include "RageUtil.h"
 #include "RageFileManager.h"
 #include "song.h"
+#include "SpecialFiles.h"
 
 /*
  * A quick explanation of song cache hashes: Each song has two hashes; a hash of the
@@ -23,8 +24,7 @@
  * path; we don't have to actually look in the directory (to find out the directory hash)
  * in order to find the cache file.
  */
-#define CACHE_DIR "Cache/"
-#define CACHE_INDEX CACHE_DIR "index.cache"
+#define CACHE_INDEX SpecialFiles::CACHE_DIR + "index.cache"
 
 
 SongCacheIndex *SONGINDEX;

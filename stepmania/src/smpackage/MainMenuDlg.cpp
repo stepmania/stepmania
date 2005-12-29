@@ -247,7 +247,7 @@ void MainMenuDlg::OnBnClickedButtonLaunchGame()
 void MainMenuDlg::OnBnClickedViewStatistics()
 {
 	// TODO: Add your control notification handler code here
-	RString sPersonalDir = GetMyDocumentsDir();
+	RString sPersonalDir = SpecialDirs::GetMyDocumentsDir();
 	RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
 	if( NULL == ::ShellExecute( this->m_hWnd, "open", sFile, "", "", SW_SHOWNORMAL ) )
 		MessageBox( "Failed to open '" + sFile + "': " + GetLastErrorString() );
@@ -256,7 +256,19 @@ void MainMenuDlg::OnBnClickedViewStatistics()
 void MainMenuDlg::OnBnClickedClearCache()
 {
 	// TODO: Add your control notification handler code here
-	ASSERT(0);
+	if( DoesFileExist(SpecialFiles::CACHE_DIR) )
+	{
+		if( DeleteRecursive(SpecialFiles::CACHE_DIR) )
+			MessageBox( "The cache has been cleared." );
+		else
+			MessageBox( "There was an error clearing the cache." );
+	}
+	else
+	{
+		MessageBox( "The cache is already cleared." );
+	}
+
+	FlushDirCache();
 }
 
 void MainMenuDlg::OnBnClickedLanguages()

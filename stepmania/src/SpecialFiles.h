@@ -11,6 +11,7 @@ namespace SpecialFiles
 	extern const RString LANGUAGES_SUBDIR;
 	extern const RString BASE_LANGUAGE;
 	extern const RString METRICS_FILE;
+	extern const RString CACHE_DIR;
 }
 
 #endif

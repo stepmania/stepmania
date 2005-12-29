@@ -492,6 +492,12 @@
 			Name="File Types"
 			Filter="">
 			<File
+				RelativePath=".\CsvFile.cpp">
+			</File>
+			<File
+				RelativePath=".\CsvFile.h">
+			</File>
+			<File
 				RelativePath=".\IniFile.cpp">
 			</File>
 			<File

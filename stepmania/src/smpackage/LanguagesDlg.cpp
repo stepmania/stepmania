@@ -15,7 +15,8 @@
 #include "RageFile.h"
 #include "languagesdlg.h"
 #include "RageFileManager.h"
-
+#include ".\languagesdlg.h"
+#include "CsvFile.h"
 
 // LanguagesDlg dialog
 
@@ -180,6 +181,8 @@ BEGIN_MESSAGE_MAP(LanguagesDlg, CDialog)
 	ON_LBN_SELCHANGE(IDC_LIST_LANGUAGES, OnSelchangeListLanguages)
 	ON_BN_CLICKED(IDC_BUTTON_CREATE, OnBnClickedButtonCreate)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, OnBnClickedButtonDelete)
+	ON_BN_CLICKED(IDC_BUTTON_EXPORT, OnBnClickedButtonExport)
+	ON_BN_CLICKED(IDC_BUTTON_IMPORT, OnBnClickedButtonImport)
 END_MESSAGE_MAP()
 
 
@@ -224,4 +227,118 @@ void LanguagesDlg::OnBnClickedButtonDelete()
 	FlushDirCache();
 
 	OnSelchangeListThemes();
+}
+
+struct TranslationLine
+{
+	RString sSection, sID, sBaseLanguage, sCurrentLanguage;
+};
+
+void LanguagesDlg::OnBnClickedButtonExport()
+{
+	// TODO: Add your control notification handler code here
+	RString sTheme = GetCurrentString( m_listThemes );
+	ASSERT( !sTheme.empty() );
+	RString sLanguage = GetCurrentString( m_listLanguages );
+	ASSERT( !sLanguage.empty() );
+	sLanguage = SMPackageUtil::GetLanguageCodeFromDisplayString( sLanguage );
+
+	RString sBaseLanguageFile = GetLanguageFile( sTheme, SpecialFiles::BASE_LANGUAGE );
+	RString sLanguageFile = GetLanguageFile( sTheme, sLanguage );
+
+	CsvFile csv;
+	IniFile ini1;
+	ini1.ReadFile( sBaseLanguageFile );
+	IniFile ini2;
+	ini2.ReadFile( sLanguageFile );
+	FOREACH_CONST_Child( &ini1, key )
+	{
+		FOREACH_CONST_Attr( key, value )
+		{
+			TranslationLine tl;
+			tl.sSection = key->m_sName;
+			tl.sID = value->first;
+			tl.sBaseLanguage = value->second;
+			ini2.GetValue( tl.sSection, tl.sID, tl.sCurrentLanguage );
+
+			vector<RString> vs;
+			vs.push_back( tl.sSection );
+			vs.push_back( tl.sID );
+			vs.push_back( tl.sBaseLanguage );
+			vs.push_back( tl.sCurrentLanguage );
+			csv.m_vvs.push_back( vs );			
+		}
+	}
+	RString sFile = sTheme+"-"+sLanguage+".csv";
+	RString sFullFile = "Desktop/"+sFile;
+	if( csv.WriteFile(sFullFile) )
+		MessageBox( ssprintf("Exported to your Desktop as '%s'.",sFile.c_str()) );
+	else
+		MessageBox( ssprintf("Failed to save '%s'.",sFullFile.c_str()) );
+}
+
+void LanguagesDlg::OnBnClickedButtonImport()
+{
+	// TODO: Add your control notification handler code here
+	CFileDialog dialog (
+		TRUE,	// file open?
+		NULL,	// default file extension
+		NULL,	// default file name
+		OFN_HIDEREADONLY | OFN_NOCHANGEDIR,		// flags
+		"CSV file (*.csv)|*.csv|||"
+		);
+	int iRet = dialog.DoModal();
+	RString sCsvFile = dialog.GetPathName();
+	if( iRet != IDOK )
+		return;
+
+	RString sTheme = GetCurrentString( m_listThemes );
+	ASSERT( !sTheme.empty() );
+	RString sLanguage = GetCurrentString( m_listLanguages );
+	ASSERT( !sLanguage.empty() );
+	sLanguage = SMPackageUtil::GetLanguageCodeFromDisplayString( sLanguage );
+
+	RageFileOsAbsolute cvsFile;
+	if( !cvsFile.Open(sCsvFile) )
+	{
+		MessageBox( ssprintf("Error reading file '%s'.",sCsvFile.c_str()) );
+		return;
+	}
+	CsvFile csv;
+	if( !csv.ReadFile(cvsFile) )
+	{
+		MessageBox( ssprintf("Error parsing file '%s'.",sCsvFile.c_str()) );
+		return;
+	}
+
+	RString sLanguageFile = GetLanguageFile( sTheme, sLanguage );
+
+	{
+		int iRet = MessageBox( ssprintf("Importing these strings will override all data in '%s'. Continue?",sLanguageFile.c_str()), NULL, MB_OKCANCEL );
+		if( iRet != IDOK )
+			return;
+	}
+
+	IniFile ini;
+
+	FOREACH_CONST( CsvFile::StringVector, csv.m_vvs, line ) 
+	{
+		TranslationLine tl;
+		if( line->size() != 3 && line->size() != 4 )
+		{
+			MessageBox( ssprintf("Error reading '%s': Each line must have either 3 or 4 values.  This row has %d values",sCsvFile.c_str(),(int)line->size()) );
+			return;
+		}
+		tl.sSection = (*line)[0];
+		tl.sID = (*line)[1];
+		tl.sBaseLanguage = (*line)[2];
+		tl.sCurrentLanguage = line->size() == 4 ? (*line)[3] : RString();
+
+		ini.SetValue( tl.sSection, tl.sID, tl.sCurrentLanguage );
+	}
+
+	if( ini.WriteFile(sLanguageFile) )
+		MessageBox( ssprintf("Saved '%s'.",sLanguageFile.c_str()) );
+	else
+		MessageBox( ssprintf("Failed to save '%s'.",sLanguageFile.c_str()) );
 }

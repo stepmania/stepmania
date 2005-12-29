@@ -14,6 +14,7 @@
 #include "EditInsallations.h"	
 #include "IniFile.h"	
 #include "RageFileDriverMemory.h"
+#include "archutils/Win32/SpecialDirs.h"
 
 #include <vector>
 #include <algorithm>
@@ -92,31 +93,6 @@ RString ReplaceInvalidFileNameChars( RString sOldFileName )
 	return sNewFileName;
 }
 
-RString GetDesktopPath()
-{
-    static TCHAR strNull[2] = _T("");
-    static TCHAR strPath[MAX_PATH];
-    DWORD dwType;
-    DWORD dwSize = MAX_PATH;
-    HKEY  hKey;
-
-    // Open the appropriate registry key
-    LONG lResult = RegOpenKeyEx( HKEY_CURRENT_USER,
-                                _T("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"),
-                                0, KEY_READ, &hKey );
-    if( ERROR_SUCCESS != lResult )
-        return strNull;
-
-    lResult = RegQueryValueEx( hKey, _T("Desktop"), NULL,
-                              &dwType, (BYTE*)strPath, &dwSize );
-    RegCloseKey( hKey );
-
-    if( ERROR_SUCCESS != lResult )
-        return strNull;
-
-    return strPath;
-}
-
 static bool ExportPackage( RString sPackageName, const vector<RString>& asDirectoriesToExport, RString sComment )	
 {
 	CZipArchive zip;
@@ -124,7 +100,7 @@ static bool ExportPackage( RString sPackageName, const vector<RString>& asDirect
 	//
 	// Create the package zip file
 	//
-	const RString sPackagePath = GetDesktopPath() + "\\" + sPackageName;
+	const RString sPackagePath = "Desktop/" + sPackageName;
 	try
 	{
 		zip.Open( sPackagePath, CZipArchive::zipCreate );
