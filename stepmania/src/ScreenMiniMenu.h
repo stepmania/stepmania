@@ -47,6 +47,12 @@ struct MenuRowDef
 #undef PUSH
 	}
 
+	void SetOneUnthemedChoice( const CString &sChoice )
+	{
+		choices.resize(1);
+		choices[0] = "|" + sChoice;
+	}
+
 	bool SetDefaultChoiceIfPresent( CString sChoice )
 	{
 		iDefaultChoice = 0;
