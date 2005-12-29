@@ -448,7 +448,7 @@ static const LanguageInfo g_langs[] =
 
 void GetLanguageInfos( vector<const LanguageInfo*> &vAddTo )
 {
-	for( int i=0; i<ARRAYSIZE(g_langs); i++ )
+	for( unsigned i=0; i<ARRAYSIZE(g_langs); ++i )
 	{
 		// Only use languages in the intersection of Windows languages
 		// and languages that had native forms on the site listed above.
@@ -462,7 +462,7 @@ void GetLanguageInfos( vector<const LanguageInfo*> &vAddTo )
 
 const LanguageInfo *GetLanguageInfo( const RString &sIsoCode )
 {
-	for( int i=0; i<ARRAYSIZE(g_langs); i++ )
+	for( unsigned i=0; i<ARRAYSIZE(g_langs); ++i )
 	{
 		// Only use languages in the intersection of Windows languages
 		// and languages that had native forms on the site listed above.
