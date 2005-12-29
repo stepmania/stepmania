@@ -10,7 +10,6 @@
 #include "RageSurfaceUtils_Zoom.h"
 #include "RageSurface.h"
 #include "Preference.h"
-#include "PrefsManager.h"
 #include "ScreenDimensions.h"
 
 //
