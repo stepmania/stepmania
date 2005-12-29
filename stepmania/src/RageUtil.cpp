@@ -736,10 +736,10 @@ void MakeValidFilename( CString &sName )
 	if( Basename(sName).size() > 128 )
 	{
 		/* The filename is too long.  Truncate it, but leave the extension alone. */
-		RString sExt = GetExtension( sName );
-		SetExtension( sName, "" );
+		const RString& sExt = GetExtension( sName );
+		sName = SetExtension( sName, "" );
 		sName.erase( 128 );
-		SetExtension( sName, sExt );
+		sName = sName + "." + sExt;
 	}
 }
 
