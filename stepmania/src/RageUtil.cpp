@@ -733,14 +733,6 @@ void MakeValidFilename( CString &sName )
 	}
 
 	sName = WStringToRString( wsName );
-	if( Basename(sName).size() > 128 )
-	{
-		/* The filename is too long.  Truncate it, but leave the extension alone. */
-		const RString& sExt = GetExtension( sName );
-		sName = SetExtension( sName, "" );
-		sName.erase( 128 );
-		sName = sName + "." + sExt;
-	}
 }
 
 int g_argc = 0;
