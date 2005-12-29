@@ -57,7 +57,7 @@ static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *u
 
 ArchHooks_darwin::ArchHooks_darwin()
 {
-    CrashHandlerHandleArgs(g_argc, g_argv);
+    CrashHandlerHandleArgs( g_argc, g_argv );
 
     /* First, handle non-fatal termination signals. */
     SignalHandler::OnClose( DoCleanShutdown );
