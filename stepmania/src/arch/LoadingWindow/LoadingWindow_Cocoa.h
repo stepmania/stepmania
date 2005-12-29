@@ -21,8 +21,8 @@ public:
 		RageFile f;
 		CString data;
 		
-		f.Open( "Data/splash.png" );
-		f.Read( data );
+		if( f.Open("Data/splash.png") )
+			f.Read( data );
 		MakeNewCocoaWindow( data.data(), data.length() );
 	}
 	~LoadingWindow_Cocoa() { DisposeOfCocoaWindow(); }

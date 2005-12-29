@@ -7,8 +7,14 @@ static NSTextView *text;
 void MakeNewCocoaWindow( const void *data, unsigned length )
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-	NSData *d = [NSData dataWithBytes:data length:length];
-	NSImage *image = [[[NSImage alloc] initWithData:d] autorelease];
+	NSImage *image = nil;
+	
+	if( length )
+	{
+		NSData *d = [NSData dataWithBytes:data length:length];
+		
+		image = [[[NSImage alloc] initWithData:d] autorelease];
+	}
 	
 	if( !image )
 		image = [NSImage imageNamed:@"splash.png"];
