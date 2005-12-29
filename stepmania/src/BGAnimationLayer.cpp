@@ -12,6 +12,7 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "LuaManager.h"
 #include "AutoActor.h"
+#include "ThemeManager.h"
 
 
 const float PARTICLE_SPEED = 300;
