@@ -287,12 +287,14 @@ template<> inline word32 rotrMod<word32>(word32 x, unsigned int y)
 # include <ppc_intrinsics.h>
 #endif
 
+template<> inline word32 rotlFixed<word32>(word32 x, const unsigned int y) __attribute__((always_inline));
 template<> inline word32 rotlFixed<word32>(word32 x, const unsigned int y)
 {
 	assert(y < 32);
 	return y ? __rlwinm(x,y,0,31) : x;
 }
 
+template<> inline word32 rotrFixed<word32>(word32 x, const unsigned int y) __attribute__((always_inline));
 template<> inline word32 rotrFixed<word32>(word32 x, const unsigned int y)
 {
 	assert(y < 32);
