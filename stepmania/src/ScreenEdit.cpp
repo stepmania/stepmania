@@ -2605,8 +2605,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						if( !w.WriteEditFileToMachine(pSong, pSteps) )
 							break;
 
-						pSteps->SetSavedToDisk( true );
-						CopyToLastSave();
 						ClearUndo();
 
 						SCREENMAN->ZeroNextUpdate();
@@ -2614,6 +2612,8 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						// TODO: make localizable
 						CString s = ssprintf( SAVED.GetValue(), Basename(pSteps->GetFilename()).c_str() );
 						ScreenPrompt::Prompt( SM_None, s );
+
+						HandleScreenMessage( SM_Success );
 
 						/* FIXME
 						CString s;
@@ -2629,9 +2629,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 					break;
 				case EditMode_Full: 
 					{
-						pSteps->SetSavedToDisk( true );
-						CopyToLastSave();
-
 						pSong->Save();
 						SCREENMAN->ZeroNextUpdate();
 
