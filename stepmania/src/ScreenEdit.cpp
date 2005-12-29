@@ -74,6 +74,8 @@ AutoScreenMessage( SM_BackFromBPMChange )
 AutoScreenMessage( SM_BackFromStopChange )
 AutoScreenMessage( SM_DoSaveAndExit )
 AutoScreenMessage( SM_DoExit )
+AutoScreenMessage( SM_SaveSuccessful );
+AutoScreenMessage( SM_SaveFailed );
 
 static const CString EditStateNames[] = {
 	"Edit",
@@ -2197,6 +2199,8 @@ void ScreenEdit::ScrollTo( float fDestinationBeat )
 	m_soundChangeLine.Play();
 }
 
+static LocalizedString SAVE_SUCCESSFUL				( "ScreenEdit", "Save successful." );
+
 void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM != SM_UpdateTextInfo )
@@ -2350,7 +2354,7 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 		switch( ScreenPrompt::s_LastAnswer )
 		{
 		case ANSWER_YES:
-			// This will send SM_Success or SM_Failure.
+			// This will send SM_SaveSuccessful or SM_SaveFailed.
 			HandleMainMenuChoice( ScreenEdit::save_on_exit );
 			return;
 		case ANSWER_NO:
@@ -2361,16 +2365,18 @@ void ScreenEdit::HandleScreenMessage( const ScreenMessage SM )
 			break; // do nothing
 		}
 	}
-	else if( SM == SM_Success )
+	else if( SM == SM_SaveSuccessful )
 	{
 		LOG->Trace( "Save successful." );
 		m_pSteps->SetSavedToDisk( true );
 		CopyToLastSave();
 
 		if( m_CurrentAction == save_on_exit )
-			HandleScreenMessage( SM_DoExit );
+			ScreenPrompt::Prompt( SM_DoExit, SAVE_SUCCESSFUL );
+		else
+			SCREENMAN->SystemMessage( SAVE_SUCCESSFUL );
 	}
-	else if( SM == SM_Failure ) // save failed; stay in the editor
+	else if( SM == SM_SaveFailed ) // save failed; stay in the editor
 	{
 		/* We committed the steps to SongManager.  Revert to the last save, and
 		 * recommit the reversion to SongManager. */
@@ -2518,12 +2524,10 @@ static void ChangeArtistTranslit( const CString &sNew )
 
 // End helper functions
 
-static LocalizedString SAVE_SUCCESSFUL				( "ScreenEdit", "Save successful." );
 static LocalizedString REVERT_LAST_SAVE				( "ScreenEdit", "Do you want to revert to your last save?" );
 static LocalizedString DESTROY_ALL_UNSAVED_CHANGES	( "ScreenEdit", "This will destroy all unsaved changes." );
 static LocalizedString REVERT_FROM_DISK				( "ScreenEdit", "Do you want to revert from disk?" );
 static LocalizedString SAVE_CHANGES_BEFORE_EXITING	( "ScreenEdit", "Do you want to save changes before exiting?" );
-static LocalizedString SAVED						( "ScreenEdit", "Saved  '%s'" );
 static LocalizedString ENTER_BPM_VALUE				( "ScreenEdit", "Enter a new BPM value." );
 static LocalizedString ENTER_STOP_VALUE				( "ScreenEdit", "Enter a new Stop value." );
 void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAnswers )
@@ -2608,10 +2612,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 
 						SCREENMAN->ZeroNextUpdate();
 
-						CString s = ssprintf( SAVED.GetValue(), Basename(pSteps->GetFilename()).c_str() );
-						ScreenPrompt::Prompt( SM_None, s );
-
-						HandleScreenMessage( SM_Success );
+						HandleScreenMessage( SM_SaveSuccessful );
 
 						/* FIXME
 						CString s;
@@ -2630,9 +2631,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						pSong->Save();
 						SCREENMAN->ZeroNextUpdate();
 
-						SCREENMAN->SystemMessage( SAVE_SUCCESSFUL );
-
-						HandleScreenMessage( SM_Success );
+						HandleScreenMessage( SM_SaveSuccessful );
 					}
 					break;
 				case EditMode_Practice:
