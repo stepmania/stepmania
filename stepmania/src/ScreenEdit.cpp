@@ -1331,8 +1331,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 	case EDIT_BUTTON_OPEN_PREV_STEPS:
 		{
 			// don't keep undo when changing Steps
-			m_bHasUndo = false;
-			m_Undo.ClearAll();
+			ClearUndo();
 
 			// save current steps
 			Steps* pSteps = GAMESTATE->m_pCurSteps[PLAYER_1];
@@ -3265,6 +3264,7 @@ void ScreenEdit::Undo()
 void ScreenEdit::ClearUndo()
 {
 	m_bHasUndo = false;
+	m_Undo.ClearAll();
 }
 
 static LocalizedString CREATES_MORE_THAN_NOTES	( "ScreenEdit", "This change creates more than %d notes in a measure." );
