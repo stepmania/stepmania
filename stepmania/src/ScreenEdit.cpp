@@ -2518,8 +2518,7 @@ static void ChangeArtistTranslit( const CString &sNew )
 
 // End helper functions
 
-static LocalizedString SAVED_AS_SM_AND_DWI			( "ScreenEdit", "Saved as SM and DWI." );
-static LocalizedString SAVED_AS_SM					( "ScreenEdit", "Saved as SM." );
+static LocalizedString SAVE_SUCCESSFUL				( "ScreenEdit", "Save successful." );
 static LocalizedString REVERT_LAST_SAVE				( "ScreenEdit", "Do you want to revert to your last save?" );
 static LocalizedString DESTROY_ALL_UNSAVED_CHANGES	( "ScreenEdit", "This will destroy all unsaved changes." );
 static LocalizedString REVERT_FROM_DISK				( "ScreenEdit", "Do you want to revert from disk?" );
@@ -2632,13 +2631,7 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						pSong->Save();
 						SCREENMAN->ZeroNextUpdate();
 
-						// we shouldn't say we're saving a DWI if we're on any game besides
-						// dance, it just looks tacky and people may be wondering where the
-						// DWI file is :-)
-						if ((int)pSteps->m_StepsType <= (int)STEPS_TYPE_DANCE_SOLO) 
-							SCREENMAN->SystemMessage( SAVED_AS_SM_AND_DWI );
-						else
-							SCREENMAN->SystemMessage( SAVED_AS_SM );
+						SCREENMAN->SystemMessage( SAVE_SUCCESSFUL );
 
 						HandleScreenMessage( SM_Success );
 					}
