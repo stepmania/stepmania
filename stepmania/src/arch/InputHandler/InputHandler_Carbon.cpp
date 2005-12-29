@@ -57,9 +57,9 @@ struct Joystick
 };
 
 Joystick::Joystick() : id( DEVICE_NONE ),
-					   x_axis( JOYSTICK_BUTTON_INVALID ),
-					   y_axis( JOYSTICK_BUTTON_INVALID ),
-					   z_axis( JOYSTICK_BUTTON_INVALID ),
+					   x_axis( DeviceButton_Invalid ),
+					   y_axis( DeviceButton_Invalid ),
+					   z_axis( DeviceButton_Invalid ),
 					   x_min( 0 ), y_min( 0 ), z_min( 0 ),
 					   x_max( 0 ), y_max( 0 ), z_max( 0 )
 {
@@ -477,56 +477,56 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 
 	if( usage <= kHIDUsage_KeyboardZ )
 	{
-		mMapping[cookie] = usage - kHIDUsage_KeyboardA + KEY_Ca;
+		mMapping[cookie] = enum_add2( KEY_Ca, usage - kHIDUsage_KeyboardA );
 		return;
 	}
 	
 	// KEY_C0 = KEY_C1 - 1, kHIDUsage_Keyboard0 = kHIDUsage_Keyboard9 + 1
 	if( usage <= kHIDUsage_Keyboard9 )
 	{
-		mMapping[cookie] = usage - kHIDUsage_Keyboard1 + KEY_C1;
+		mMapping[cookie] = enum_add2( KEY_C1, usage - kHIDUsage_Keyboard1 );
 		return;
 	}
 	
 	if( usage >= kHIDUsage_KeyboardF1 && usage <= kHIDUsage_KeyboardF12 )
 	{
-		mMapping[cookie] = usage - kHIDUsage_KeyboardF1 + KEY_F1;
+		mMapping[cookie] = enum_add2( KEY_F1, usage - kHIDUsage_KeyboardF1 );
 		return;
 	}
 	
 	if( usage >= kHIDUsage_KeyboardF13 && usage <= kHIDUsage_KeyboardF16 )
 	{
-		mMapping[cookie] = usage - kHIDUsage_KeyboardF13 + KEY_F13;
+		mMapping[cookie] = enum_add2( KEY_F13, usage - kHIDUsage_KeyboardF13 );
 		return;
 	}
 	
 	// keypad 0 is again backward
 	if( usage >= kHIDUsage_Keypad1 && usage <= kHIDUsage_Keypad9 )
 	{
-		mMapping[cookie] = usage - kHIDUsage_Keypad1 + KEY_KP_C1;
+		mMapping[cookie] = enum_add2( KEY_KP_C1, usage - kHIDUsage_Keypad1 );
 		return;
 	}
 	
-#define OTHER(n) (KEY_OTHER_0 + (n))
+#define OTHER(n) (enum_add2(KEY_OTHER_0, (n)))
 	
 	// [0, 8]
 	if( usage >= kHIDUsage_KeyboardF17 && usage <= kHIDUsage_KeyboardExecute )
 	{
-		mMapping[cookie] = usage - kHIDUsage_KeyboardF17 + OTHER(0);
+		mMapping[cookie] = OTHER( 0 + usage - kHIDUsage_KeyboardF17 );
 		return;
 	}
 	
 	// [9, 19]
 	if( usage >= kHIDUsage_KeyboardSelect && usage <= kHIDUsage_KeyboardVolumeDown )
 	{
-		mMapping[cookie] = usage - kHIDUsage_KeyboardSelect + OTHER(9);
+		mMapping[cookie] = OTHER( 9 + usage - kHIDUsage_KeyboardSelect );
 		return;
 	}
 	
-	// [10, 31]
+	// [20, 31]
 	if( usage >= kHIDUsage_KeypadEqualSignAS400 && usage <= kHIDUsage_KeyboardCancel )
 	{
-		mMapping[cookie] = usage - kHIDUsage_KeypadEqualSignAS400 + OTHER(10);
+		mMapping[cookie] = OTHER( 20 + usage - kHIDUsage_KeypadEqualSignAS400 );
 		return;
 	}
 
@@ -534,7 +534,7 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 	// XXX kHIDUsage_KeyboardClearOrAgain
 	if( usage >= kHIDUsage_KeyboardSeparator && usage <= kHIDUsage_KeyboardExSel )
 	{
-		mMapping[cookie] = usage - kHIDUsage_KeyboardSeparator + OTHER(32);
+		mMapping[cookie] = OTHER( 32 + usage - kHIDUsage_KeyboardSeparator );
 		return;
 	}
 	
@@ -565,7 +565,7 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 		X( kHIDUsage_KeyboardCapsLock, KEY_CAPSLOCK );
 		X( kHIDUsage_KeyboardPrintScreen, KEY_PRTSC );
 		X( kHIDUsage_KeyboardScrollLock, KEY_SCRLLOCK );
-		X( kHIDUsage_KeyboardPause, OTHER(0) );
+		X( kHIDUsage_KeyboardPause, OTHER(38) );
 		X( kHIDUsage_KeyboardInsert, KEY_INSERT );
 		X( kHIDUsage_KeyboardHome, KEY_HOME );
 		X( kHIDUsage_KeyboardPageUp, KEY_PGUP );
@@ -584,8 +584,8 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 		X( kHIDUsage_KeypadPlus, KEY_KP_PLUS );
 		X( kHIDUsage_KeypadEnter, KEY_KP_ENTER );
 		X( kHIDUsage_KeypadPeriod, KEY_KP_PERIOD );
-		X( kHIDUsage_KeyboardNonUSBackslash, OTHER(38) );
-		X( kHIDUsage_KeyboardApplication, OTHER(39) );
+		X( kHIDUsage_KeyboardNonUSBackslash, OTHER(39) );
+		X( kHIDUsage_KeyboardApplication, OTHER(40) );
 		X( kHIDUsage_KeyboardClear, KEY_NUMLOCK ); // XXX
 		X( kHIDUsage_KeyboardHelp, KEY_INSERT );
 		X( kHIDUsage_KeyboardMenu, KEY_MENU );
@@ -594,15 +594,15 @@ void KeyboardDevice::AddElement( int usagePage, int usage, int cookie, const CFD
 		// XXX kHIDUsage_KeyboardLockingScrollLock
 		X( kHIDUsage_KeypadComma, KEY_KP_PERIOD ); // XXX
 		X( kHIDUsage_KeyboardReturn, KEY_ENTER );
-		X( kHIDUsage_KeyboardPrior, OTHER(40) );
+		X( kHIDUsage_KeyboardPrior, OTHER(41) );
 		X( kHIDUsage_KeyboardLeftControl, KEY_LCTRL );
 		X( kHIDUsage_KeyboardLeftShift, KEY_LSHIFT );
 		X( kHIDUsage_KeyboardLeftAlt, KEY_LALT );
-		X( kHIDUsage_KeyboardLeftGUI, KEY_LMETA ); // XXX GUI??
+		X( kHIDUsage_KeyboardLeftGUI, KEY_LMETA );
 		X( kHIDUsage_KeyboardRightControl, KEY_RCTRL );
 		X( kHIDUsage_KeyboardRightShift, KEY_RSHIFT );
 		X( kHIDUsage_KeyboardRightAlt, KEY_RALT );
-		X( kHIDUsage_KeyboardRightGUI, KEY_RMETA ); // XXX
+		X( kHIDUsage_KeyboardRightGUI, KEY_RMETA );
 	}
 #undef X
 #undef OTHER
