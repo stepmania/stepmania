@@ -615,6 +615,8 @@ void RageDisplay_OGL::ResolutionChanged()
 	/* Clear any junk that's in the framebuffer. */
 	if( BeginFrame() )
 		EndFrame();
+
+	RageDisplay::ResolutionChanged();
 }
 
 // Return true if mode change was successful.

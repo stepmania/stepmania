@@ -659,6 +659,8 @@ void RageDisplay_D3D::ResolutionChanged()
 	g_pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER,
 						 D3DCOLOR_XRGB(0,0,0), 1.0f, 0x00000000 );
 #endif
+
+	RageDisplay::ResolutionChanged();
 }
 
 int RageDisplay_D3D::GetMaxTextureSize() const
