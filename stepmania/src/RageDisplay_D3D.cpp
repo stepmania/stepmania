@@ -412,7 +412,7 @@ CString SetD3DParams( bool &bNewDeviceOut )
 }
 
 /* If the given parameters have failed, try to lower them. */
-bool D3DReduceParams( D3DPRESENT_PARAMETERS	*pp )
+static bool D3DReduceParams( D3DPRESENT_PARAMETERS *pp )
 {
 	D3DDISPLAYMODE current;
 	current.Format = pp->BackBufferFormat;

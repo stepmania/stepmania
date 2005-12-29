@@ -356,10 +356,10 @@ public:
 };
 
 
-MatrixStack	g_ProjectionStack;
-MatrixStack	g_ViewStack;
-MatrixStack	g_WorldStack;
-MatrixStack	g_TextureStack;
+static MatrixStack g_ProjectionStack;
+static MatrixStack g_ViewStack;
+static MatrixStack g_WorldStack;
+static MatrixStack g_TextureStack;
 
 const RageMatrix* RageDisplay::GetProjectionTop()
 {
