@@ -313,6 +313,7 @@ protected:
 	// Matrix that adjusts position and scale of image on the screen
 	//
 	RageMatrix m_Centering;
+	void UpdateCentering();
 
 	// Called by the RageDisplay derivitives
 	const RageMatrix* GetCentering() { return &m_Centering; }

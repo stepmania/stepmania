@@ -29,6 +29,8 @@ static int			g_iFramesRenderedSinceLastCheck,
 					g_iNumChecksSinceLastReset;
 static RageTimer g_LastFrameEndedAt( RageZeroTimer );
 
+static int g_iTranslateX = 0, g_iTranslateY = 0, g_iAddWidth = 0, g_iAddHeight = 0;
+
 RageDisplay*		DISPLAY	= NULL;
 
 Preference<bool>  LOG_FPS( "LogFPS", true );
@@ -602,13 +604,25 @@ RageMatrix RageDisplay::GetFrustumMatrix( float l, float r, float b, float t, fl
 	return m;
 }
 
-void RageDisplay::ChangeCentering( int trans_x, int trans_y, int add_width, int add_height )
+void RageDisplay::ChangeCentering( int iTranslateX, int iTranslateY, int iAddWidth, int iAddHeight )
+{
+	g_iTranslateX = iTranslateX;
+	g_iTranslateY = iTranslateY;
+	g_iAddWidth = iAddWidth;
+	g_iAddHeight = iAddHeight;
+
+	UpdateCentering();
+}
+
+void RageDisplay::UpdateCentering()
 {
 	// in screen space, left edge = -1, right edge = 1, bottom edge = -1. top edge = 1
-	float fPercentShiftX = SCALE( trans_x, 0, SCREEN_WIDTH, 0, +2.0f );
-	float fPercentShiftY = SCALE( trans_y, 0, SCREEN_HEIGHT, 0, -2.0f );
-	float fPercentScaleX = SCALE( add_width, 0, SCREEN_WIDTH, 1.0f, 2.0f );
-	float fPercentScaleY = SCALE( add_height, 0, SCREEN_HEIGHT, 1.0f, 2.0f );
+	float fWidth = (float) GetActualVideoModeParams().width;
+	float fHeight = (float) GetActualVideoModeParams().height;
+	float fPercentShiftX = SCALE( g_iTranslateX, 0, fWidth, 0, +2.0f );
+	float fPercentShiftY = SCALE( g_iTranslateY, 0, fHeight, 0, -2.0f );
+	float fPercentScaleX = SCALE( g_iAddWidth, 0, fWidth, 1.0f, 2.0f );
+	float fPercentScaleY = SCALE( g_iAddHeight, 0, fHeight, 1.0f, 2.0f );
 
 	RageMatrix m1;
 	RageMatrix m2;
