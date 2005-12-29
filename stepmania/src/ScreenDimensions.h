@@ -3,9 +3,6 @@
 #ifndef SCREEN_DIMENSIONS_H
 #define SCREEN_DIMENSIONS_H
 
-#include "ThemeManager.h"
-#include "ThemeMetric.h"
-
 namespace ScreenDimensions
 {
 	float GetScreenAspectRatio();

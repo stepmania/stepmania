@@ -3,6 +3,8 @@
 #include "PrefsManager.h"
 #include "LuaManager.h"
 #include "LuaFunctions.h"
+#include "ThemeManager.h"
+#include "ThemeMetric.h"
 
 static ThemeMetric<float> THEME_SCREEN_WIDTH("Common","ScreenWidth");
 static ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
