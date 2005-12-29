@@ -461,13 +461,7 @@ void RageDisplay::TextureTranslate( float x, float y )
 
 void RageDisplay::LoadMenuPerspective( float fovDegrees, float fVanishPointX, float fVanishPointY )
 {
-	/* fovDegrees == 0 looks the same as an ortho projection.  However,
-	 * we don't want to mess with the ModelView stack because 
-	 * EnterPerspectiveMode's preserve location feature expectes there 
-	 * not to be any camera transforms.  So, do a true ortho projection
-	 * if fovDegrees == 0.  Perhaps it would be more convenient to keep 
-	 * separate model and view stacks like D3D?
-	 */
+	/* fovDegrees == 0 gives ortho projection. */
 	if( fovDegrees == 0 )
 	{
  		float left = 0, right = SCREEN_WIDTH, bottom = SCREEN_HEIGHT, top = 0;
