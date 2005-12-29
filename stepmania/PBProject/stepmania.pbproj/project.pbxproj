@@ -3796,6 +3796,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA29CD520558741A00961A51 /* RageUtil.cpp in Sources */,
 				AA29CD420558741A00961A51 /* RageBitmapTexture.cpp in Sources */,
 				AA29CD430558741A00961A51 /* RageDisplay.cpp in Sources */,
 				AA29CD440558741A00961A51 /* RageException.cpp in Sources */,
@@ -3812,7 +3813,6 @@
 				AA29CD4F0558741A00961A51 /* RageTextureManager.cpp in Sources */,
 				AA29CD500558741A00961A51 /* RageThreads.cpp in Sources */,
 				AA29CD510558741A00961A51 /* RageTimer.cpp in Sources */,
-				AA29CD520558741A00961A51 /* RageUtil.cpp in Sources */,
 				AA29CD560558741A00961A51 /* Character.cpp in Sources */,
 				AA29CD570558741A00961A51 /* CodeDetector.cpp in Sources */,
 				AA29CD580558741A00961A51 /* Course.cpp in Sources */,
@@ -4233,6 +4233,149 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		AA0AA8FE0963CF7700427F4D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = NO;
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_STYLE = Bundle;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				PRODUCT_NAME = version;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		AA0AA8FF0963CF7700427F4D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = AA8B8C49091F48C000D14C5F /* product.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEAD_CODE_STRIPPING = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks",
+				);
+				FULL_NAME = "$(PRODUCT_NAME).$(WRAPPER_EXTENSION)";
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_FAST_OBJC_DISPATCH = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INPUT_FILETYPE = automatic;
+				GCC_MODEL_TUNING = G4;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					PBBUILD,
+					"SM_PCH=TRUE",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_USE_GCC3_PFE_SUPPORT = NO;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_ALLOW_INCOMPLETE_PROTOCOL = NO;
+				GCC_WARN_CHECK_SWITCH_STATEMENTS = NO;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_MISSING_PARENTHESES = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SHADOW = NO;
+				GCC_WARN_SIGN_COMPARE = YES;
+				GCC_WARN_TYPECHECK_CALLS_TO_PRINTF = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_LABEL = YES;
+				GCC_WARN_UNUSED_PARAMETER = NO;
+				GCC_WARN_UNUSED_VALUE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../src",
+					"$(SRCROOT)/Frameworks/SDL.framework/Headers",
+					"$(SRCROOT)/Frameworks/ffmpeg.framework/Headers",
+					"$(SRCROOT)/Frameworks/mad.framework/Headers",
+					"$(SRCROOT)/Frameworks/resample.framework/Headers",
+					"$(SRCROOT)/../src/lua-5.0/include",
+					"$(SRCROOT)/../src/vorbis",
+					"$(SRCROOT)/../src/libjpeg",
+					"$(SRCROOT)/../src/libpng/include",
+					"$(SRCROOT)/../src/archutils/Darwin/PublicUtility",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/CoreServices.framework/Versions/Current/Frameworks/CarbonCore.framework/Versions/A/Headers",
+					"$(SDKROOT)/usr/include",
+				);
+				INFOPLIST_FILE = "Info-StepMania.plist";
+				INFOPLIST_PREFIX_HEADER = "$(SRCROOT)/../src/ProductInfo.h";
+				INFOPLIST_PREPROCESS = YES;
+				INFOPLIST_PREPROCESSOR_DEFINITIONS = "EXECUTABLE_NAME=\"$(PRODUCT_NAME)\"";
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = (
+					"$(SDKROOT)/usr/lib",
+					"$(SRCROOT)/../src/libresample",
+					"$(SRCROOT)/Libraries",
+				);
+				LIBRARY_STYLE = Bundle;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				OBJROOT = "$(SRCROOT)/build";
+				OTHER_CFLAGS = "";
+				OTHER_CPLUSPLUSFLAGS = (
+					"-finline-limit=450",
+					"-fconstant-cfstrings",
+					"-fgcse-sm",
+					"-fprefetch-loop-arrays",
+					"-fsingle-precision-constant",
+					"-falign-jumps",
+					"-falign-loops",
+				);
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-lstdc++",
+					"-bind_at_load",
+					"-L$(SRCROOT)/Libraries",
+				);
+				PRODUCT_NAME = "$(value)";
+				SECTORDER_FLAGS = "";
+				SYMROOT = "$(SRCROOT)/..";
+				WARNING_CFLAGS = "";
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		AA0AA9000963CF7700427F4D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_VARIANTS = normal;
+				GCC_FAST_MATH = YES;
+				GCC_FAST_OBJC_DISPATCH = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_STRICT_ALIASING = YES;
+				GCC_UNROLL_LOOPS = YES;
+				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
+				GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.2.8.sdk;
+			};
+			name = Debug;
+		};
 		AAC8450D0856A19700A9FEAB /* . */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4362,7 +4505,7 @@
 			buildSettings = {
 				BUILD_VARIANTS = normal;
 				GCC_FAST_MATH = YES;
-				GCC_FAST_OBJC_DISPATCH = YES;
+				GCC_FAST_OBJC_DISPATCH = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
@@ -4383,6 +4526,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAC8450D0856A19700A9FEAB /* . */,
+				AA0AA8FE0963CF7700427F4D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = .;
@@ -4391,6 +4535,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAC845110856A19700A9FEAB /* . */,
+				AA0AA8FF0963CF7700427F4D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = .;
@@ -4399,6 +4544,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				AAC845150856A19700A9FEAB /* . */,
+				AA0AA9000963CF7700427F4D /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = .;
