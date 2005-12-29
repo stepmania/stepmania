@@ -67,14 +67,14 @@ ArchHooks_darwin::ArchHooks_darwin()
 	
 	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
 	CFStringRef key = CFSTR( "ApplicationBundlePath" );
-	CFStringRef appID = CFSTR( "com." PRODUCT_NAME );
-	CFStringRef version = CFSTR( PRODUCT_VER );
 	
-	CFURLRef path = CFBundleCopyBundleURL( CFBundleGetMainBundle() );
+	CFBundleRef bundle = CFBundleGetMainBundle();
+	CFStringRef appID = CFBundleGetIdentifier( bundle );
+	CFStringRef version = CFStringRef( CFBundleGetValueForInfoDictionaryKey(bundle, kCFBundleVersionKey) );
+	CFURLRef path = CFBundleCopyBundleURL( bundle );
 	CFPropertyListRef value = CFURLCopyPath( path );
 	CFPropertyListRef old = CFPreferencesCopyAppValue( key, appID );
 	CFMutableDictionaryRef newDict = NULL;
-	bool changed = false;
 	
 	if( old && CFGetTypeID(old) != CFDictionaryGetTypeID() )
 	{
@@ -87,7 +87,6 @@ ArchHooks_darwin::ArchHooks_darwin()
 		newDict = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,
 											 &kCFTypeDictionaryValueCallBacks );
 		CFDictionaryAddValue( newDict, version, value );
-		changed = true;
 	}
 	else
 	{
@@ -99,12 +98,11 @@ ArchHooks_darwin::ArchHooks_darwin()
 			// The value is either not present or it is but it is different
 			newDict = CFDictionaryCreateMutableCopy( kCFAllocatorDefault, 0, dict );
 			CFDictionaryAddValue( newDict, version, value );
-			changed = true;
 		}
 		CFRelease( old );
 	}
 	
-	if( changed )
+	if( newDict )
 	{
 		CFPreferencesSetAppValue( key, newDict, appID );
 		if( !CFPreferencesAppSynchronize(appID) )
