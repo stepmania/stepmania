@@ -257,8 +257,19 @@ void NotesWriterSM::GetEditFileContents( const Song *pSong, const Steps *pSteps,
 
 CString NotesWriterSM::GetEditFileName( const Song *pSong, const Steps *pSteps )
 {
-	// guaranteed to be a unique name
-	return pSong->GetTranslitFullTitle() + " - " + pSteps->GetDescription() + ".edit";
+	/* Try to make a unique name.  This isn't guaranteed.  Edit descriptions are
+	 * case-sensitive, filenames on disk are usually not, and we decimate certain
+	 * characters for FAT filesystems. */
+	CString sFile = pSong->GetTranslitFullTitle() + " - " + pSteps->GetDescription();
+
+	// HACK:
+	if( pSteps->m_StepsType == STEPS_TYPE_DANCE_DOUBLE )
+		sFile += " (doubles)";
+	
+	sFile += ".edit";
+
+	MakeValidFilename( sFile );
+	return sFile;
 }
 
 bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
