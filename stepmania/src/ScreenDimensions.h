@@ -28,9 +28,6 @@ namespace ScreenDimensions
 
 #define FullScreenRectF RectF(SCREEN_LEFT,SCREEN_TOP,SCREEN_RIGHT,SCREEN_BOTTOM)
 
-#define	SCREEN_NEAR		(-1000)
-#define	SCREEN_FAR		(1000)
-
 #define	ARROW_SIZE		(64)
 
 #endif

@@ -472,7 +472,7 @@ void RageDisplay::LoadMenuPerspective( float fovDegrees, float fVanishPointX, fl
 	if( fovDegrees == 0 )
 	{
  		float left = 0, right = SCREEN_WIDTH, bottom = SCREEN_HEIGHT, top = 0;
-		g_ProjectionStack.LoadMatrix( GetOrthoMatrix(left, right, bottom, top, SCREEN_NEAR, SCREEN_FAR) );
+		g_ProjectionStack.LoadMatrix( GetOrthoMatrix(left, right, bottom, top, -1000, +1000) );
  		g_ViewStack.LoadIdentity();
 	}
 	else
