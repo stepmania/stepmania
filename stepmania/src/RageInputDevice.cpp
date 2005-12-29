@@ -8,146 +8,163 @@
 #include "RageUtil.h"
 #include "EnumHelper.h"
 
+static map<DeviceButton,RString> g_mapNamesToString;
+static map<RString,DeviceButton> g_mapStringToNames;
+static void InitNames()
+{
+	if( !g_mapNamesToString.empty() )
+		return;
+
+	g_mapNamesToString[KEY_SPACE] = "space"; 
+	g_mapNamesToString[KEY_DEL] = "delete"; 
+
+	g_mapNamesToString[KEY_BACK] = "backspace"; 
+	g_mapNamesToString[KEY_TAB] = "tab"; 
+	g_mapNamesToString[KEY_ENTER] = "enter"; 
+	g_mapNamesToString[KEY_PAUSE] = "pause"; 
+	g_mapNamesToString[KEY_ESC] = "escape"; 
+
+	g_mapNamesToString[KEY_F1] = "F1"; 
+	g_mapNamesToString[KEY_F2] = "F2"; 
+	g_mapNamesToString[KEY_F3] = "F3"; 
+	g_mapNamesToString[KEY_F4] = "F4"; 
+	g_mapNamesToString[KEY_F5] = "F5"; 
+	g_mapNamesToString[KEY_F6] = "F6"; 
+	g_mapNamesToString[KEY_F7] = "F7"; 
+	g_mapNamesToString[KEY_F8] = "F8"; 
+	g_mapNamesToString[KEY_F9] = "F9"; 
+	g_mapNamesToString[KEY_F10] = "F10"; 
+	g_mapNamesToString[KEY_F11] = "F11"; 
+	g_mapNamesToString[KEY_F12] = "F12"; 
+	g_mapNamesToString[KEY_F13] = "F13"; 
+	g_mapNamesToString[KEY_F14] = "F14"; 
+	g_mapNamesToString[KEY_F15] = "F15"; 
+	g_mapNamesToString[KEY_F16] = "F16"; 
+
+	g_mapNamesToString[KEY_LCTRL] = "left ctrl"; 
+	g_mapNamesToString[KEY_RCTRL] = "right ctrl"; 
+	g_mapNamesToString[KEY_LSHIFT] = "left shift"; 
+	g_mapNamesToString[KEY_RSHIFT] = "right shift"; 
+	g_mapNamesToString[KEY_LALT] = "left alt"; 
+	g_mapNamesToString[KEY_RALT] = "right alt"; 
+	g_mapNamesToString[KEY_LMETA] = "left meta"; 
+	g_mapNamesToString[KEY_RMETA] = "right meta"; 
+	g_mapNamesToString[KEY_LSUPER] = "left wnd"; 
+	g_mapNamesToString[KEY_RSUPER] = "right wnd"; 
+	g_mapNamesToString[KEY_MENU] = "menu"; 
+
+	g_mapNamesToString[KEY_NUMLOCK] = "num lock"; 
+	g_mapNamesToString[KEY_SCRLLOCK] = "scroll lock"; 
+	g_mapNamesToString[KEY_CAPSLOCK] = "caps lock"; 
+	g_mapNamesToString[KEY_PRTSC] = "prtsc"; 
+
+	g_mapNamesToString[KEY_UP] = "up"; 
+	g_mapNamesToString[KEY_DOWN] = "down"; 
+	g_mapNamesToString[KEY_LEFT] = "left"; 
+	g_mapNamesToString[KEY_RIGHT] = "right"; 
+
+	g_mapNamesToString[KEY_INSERT] = "insert"; 
+	g_mapNamesToString[KEY_HOME] = "home"; 
+	g_mapNamesToString[KEY_END] = "end"; 
+	g_mapNamesToString[KEY_PGUP] = "pgup"; 
+	g_mapNamesToString[KEY_PGDN] = "pgdn"; 
+
+	g_mapNamesToString[KEY_KP_C0] = "KP 0"; 
+	g_mapNamesToString[KEY_KP_C1] = "KP 1"; 
+	g_mapNamesToString[KEY_KP_C2] = "KP 2"; 
+	g_mapNamesToString[KEY_KP_C3] = "KP 3"; 
+	g_mapNamesToString[KEY_KP_C4] = "KP 4"; 
+	g_mapNamesToString[KEY_KP_C5] = "KP 5"; 
+	g_mapNamesToString[KEY_KP_C6] = "KP 6"; 
+	g_mapNamesToString[KEY_KP_C7] = "KP 7"; 
+	g_mapNamesToString[KEY_KP_C8] = "KP 8"; 
+	g_mapNamesToString[KEY_KP_C9] = "KP 9"; 
+	g_mapNamesToString[KEY_KP_SLASH] = "KP /"; 
+	g_mapNamesToString[KEY_KP_ASTERISK] = "KP *"; 
+	g_mapNamesToString[KEY_KP_HYPHEN] = "KP -"; 
+	g_mapNamesToString[KEY_KP_PLUS] = "KP +"; 
+	g_mapNamesToString[KEY_KP_PERIOD] = "KP ."; 
+	g_mapNamesToString[KEY_KP_EQUAL] = "KP ="; 
+	g_mapNamesToString[KEY_KP_ENTER] = "KP enter"; 
+
+	g_mapNamesToString[JOY_LEFT] = "Left1";
+	g_mapNamesToString[JOY_RIGHT] = "Right1";
+	g_mapNamesToString[JOY_UP] = "Up1";
+	g_mapNamesToString[JOY_DOWN] = "Down1";
+
+	/* Secondary sticks: */
+	g_mapNamesToString[JOY_LEFT_2] = "Left2";
+	g_mapNamesToString[JOY_RIGHT_2] = "Right2";
+	g_mapNamesToString[JOY_UP_2] = "Up2";
+	g_mapNamesToString[JOY_DOWN_2] = "Down2";
+
+
+	g_mapNamesToString[JOY_Z_UP] = "Z-Up";
+	g_mapNamesToString[JOY_Z_DOWN] = "Z-Down";
+	g_mapNamesToString[JOY_ROT_UP] = "R-Up";
+	g_mapNamesToString[JOY_ROT_DOWN] = "R-Down";
+	g_mapNamesToString[JOY_ROT_LEFT] = "R-Left";
+	g_mapNamesToString[JOY_ROT_RIGHT] = "R-Right";
+	g_mapNamesToString[JOY_ROT_Z_UP] = "ZR-Up";
+	g_mapNamesToString[JOY_ROT_Z_DOWN] = "ZR-Down";
+	g_mapNamesToString[JOY_HAT_LEFT] = "H-Left";
+	g_mapNamesToString[JOY_HAT_RIGHT] = "H-Right";
+	g_mapNamesToString[JOY_HAT_UP] = "H-Up";
+	g_mapNamesToString[JOY_HAT_DOWN] = "H-Down";
+	g_mapNamesToString[JOY_AUX_1] = "Aux1";
+	g_mapNamesToString[JOY_AUX_2] = "Aux2";
+	g_mapNamesToString[JOY_AUX_3] = "Aux3";
+	g_mapNamesToString[JOY_AUX_4] = "Aux4";
+	FOREACHM( DeviceButton, RString, g_mapNamesToString, m )
+		g_mapStringToNames[m->second] = m->first;
+}
 
 CString DeviceButtonToString( DeviceButton key )
 {
+	InitNames();
+
+	/* All printable ASCII except for uppercase alpha characters line up. */
 	if( key >= 33 && key < 127 &&
 		!(key >= 'A' && key <= 'Z' ) )
-	{
-		/* All printable ASCII except for uppercase alpha characters line up. */
 		return ssprintf( "%c", key );
-	}
 
 	if( key >= KEY_OTHER_0 && key < KEY_LAST_OTHER )
-	{
 		return ssprintf( "unk %i", key-KEY_OTHER_0 );
-	}
 
 	if( key >= JOY_BUTTON_1 && key <= JOY_BUTTON_32 )
-	{
 		return ssprintf( "B%i", key-JOY_BUTTON_1+1 );
-	}
 
 	if( key >= MIDI_FIRST && key <= MIDI_LAST )
-	{
 		return ssprintf( "Midi %d", key-MIDI_FIRST );
-	}
 
-	switch( key )
-	{
-	case KEY_SPACE:			return "space"; 
-	case KEY_DEL:			return "delete"; 
+	map<DeviceButton,RString>::const_iterator it = g_mapNamesToString.find( key );
+	if( it != g_mapNamesToString.end() )
+		return it->second;
 
-	case KEY_BACK:			return "backspace"; 
-	case KEY_TAB:			return "tab"; 
-	case KEY_ENTER:			return "enter"; 
-	case KEY_PAUSE:			return "pause"; 
-	case KEY_ESC:			return "escape"; 
-
-	case KEY_F1:			return "F1"; 
-	case KEY_F2:			return "F2"; 
-	case KEY_F3:			return "F3"; 
-	case KEY_F4:			return "F4"; 
-	case KEY_F5:			return "F5"; 
-	case KEY_F6:			return "F6"; 
-	case KEY_F7:			return "F7"; 
-	case KEY_F8:			return "F8"; 
-	case KEY_F9:			return "F9"; 
-	case KEY_F10:			return "F10"; 
-	case KEY_F11:			return "F11"; 
-	case KEY_F12:			return "F12"; 
-	case KEY_F13:			return "F13"; 
-	case KEY_F14:			return "F14"; 
-	case KEY_F15:			return "F15"; 
-	case KEY_F16:			return "F16"; 
-
-	case KEY_LCTRL:			return "left ctrl"; 
-	case KEY_RCTRL:			return "right ctrl"; 
-	case KEY_LSHIFT:		return "left shift"; 
-	case KEY_RSHIFT:		return "right shift"; 
-	case KEY_LALT:			return "left alt"; 
-	case KEY_RALT:			return "right alt"; 
-	case KEY_LMETA:			return "left meta"; 
-	case KEY_RMETA:			return "right meta"; 
-	case KEY_LSUPER:		return "left wnd"; 
-	case KEY_RSUPER:		return "right wnd"; 
-	case KEY_MENU:			return "menu"; 
-
-	case KEY_NUMLOCK:		return "num lock"; 
-	case KEY_SCRLLOCK:		return "scroll lock"; 
-	case KEY_CAPSLOCK:		return "caps lock"; 
-	case KEY_PRTSC:			return "prtsc"; 
-
-	case KEY_UP:			return "up"; 
-	case KEY_DOWN:			return "down"; 
-	case KEY_LEFT:			return "left"; 
-	case KEY_RIGHT:			return "right"; 
-
-	case KEY_INSERT:		return "insert"; 
-	case KEY_HOME:			return "home"; 
-	case KEY_END:			return "end"; 
-	case KEY_PGUP:			return "pgup"; 
-	case KEY_PGDN:			return "pgdn"; 
-
-	case KEY_KP_C0:			return "KP 0"; 
-	case KEY_KP_C1:			return "KP 1"; 
-	case KEY_KP_C2:			return "KP 2"; 
-	case KEY_KP_C3:			return "KP 3"; 
-	case KEY_KP_C4:			return "KP 4"; 
-	case KEY_KP_C5:			return "KP 5"; 
-	case KEY_KP_C6:			return "KP 6"; 
-	case KEY_KP_C7:			return "KP 7"; 
-	case KEY_KP_C8:			return "KP 8"; 
-	case KEY_KP_C9:			return "KP 9"; 
-	case KEY_KP_SLASH:		return "KP /"; 
-	case KEY_KP_ASTERISK:	return "KP *"; 
-	case KEY_KP_HYPHEN:		return "KP -"; 
-	case KEY_KP_PLUS:		return "KP +"; 
-	case KEY_KP_PERIOD:		return "KP ."; 
-	case KEY_KP_EQUAL:		return "KP ="; 
-	case KEY_KP_ENTER:		return "KP enter"; 
-
-	case JOY_LEFT:			return "Left1";
-	case JOY_RIGHT:			return "Right1";
-	case JOY_UP:			return "Up1";
-	case JOY_DOWN:			return "Down1";
-
-	/* Secondary sticks: */
-	case JOY_LEFT_2:		return "Left2";
-	case JOY_RIGHT_2:		return "Right2";
-	case JOY_UP_2:			return "Up2";
-	case JOY_DOWN_2:		return "Down2";
-
-
-	case JOY_Z_UP:			return "Z-Up";
-	case JOY_Z_DOWN:		return "Z-Down";
-	case JOY_ROT_UP:		return "R-Up";
-	case JOY_ROT_DOWN:		return "R-Down";
-	case JOY_ROT_LEFT:		return "R-Left";
-	case JOY_ROT_RIGHT:		return "R-Right";
-	case JOY_ROT_Z_UP:		return "ZR-Up";
-	case JOY_ROT_Z_DOWN:	return "ZR-Down";
-	case JOY_HAT_LEFT:		return "H-Left";
-	case JOY_HAT_RIGHT:		return "H-Right";
-	case JOY_HAT_UP:		return "H-Up";
-	case JOY_HAT_DOWN:		return "H-Down";
-	case JOY_AUX_1:			return "Aux1";
-	case JOY_AUX_2:			return "Aux2";
-	case JOY_AUX_3:			return "Aux3";
-	case JOY_AUX_4:			return "Aux4";
-
-	default:				return "unknown";
-	}
+	return "unknown";
 }
 
 DeviceButton StringToDeviceButton( const CString& s )
 {
-	for( int i=0; i<NUM_DeviceButton; i++ )
-	{
-		// XXX: yuck
-		if( DeviceButtonToString((DeviceButton)i) == s )
-			return (DeviceButton)i;
-	}
+	InitNames();
+
+	if( s.size() == 1 )
+		return (DeviceButton) s[0];
+
+	int i;
+	if( sscanf(s, "unk %i", &i) == 1 )
+		return enum_add2( KEY_OTHER_0, i );
+
+	if( sscanf(s, "B%i", &i) == 1 )
+		return enum_add2( JOY_BUTTON_1, i+1 );
+
+	if( sscanf(s, "Midi %i", &i) == 1 )
+		return enum_add2( MIDI_FIRST, i );
+
+	map<RString,DeviceButton>::const_iterator it = g_mapStringToNames.find( s );
+	if( it != g_mapStringToNames.end() )
+		return it->second;
+
 	return DeviceButton_Invalid;
 }
 
