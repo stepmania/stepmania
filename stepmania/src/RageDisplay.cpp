@@ -604,6 +604,12 @@ RageMatrix RageDisplay::GetFrustumMatrix( float l, float r, float b, float t, fl
 	return m;
 }
 
+void RageDisplay::ResolutionChanged()
+{
+	/* The centering matrix depends on the resolution. */
+	UpdateCentering();
+}
+
 void RageDisplay::ChangeCentering( int iTranslateX, int iTranslateY, int iAddWidth, int iAddHeight )
 {
 	g_iTranslateX = iTranslateX;

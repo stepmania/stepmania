@@ -144,7 +144,7 @@ public:
 	CString SetVideoMode( VideoModeParams p, bool &bNeedReloadTextures );
 
 	/* Call this when the resolution has been changed externally: */
-	virtual void ResolutionChanged() { }
+	virtual void ResolutionChanged();
 
 	virtual bool BeginFrame() = 0;	
 	virtual void EndFrame();
