@@ -1040,7 +1040,7 @@ void Regex::Release()
 {
     pcre_free( m_pReg );
 	m_pReg = NULL;
-	m_sPattern.clear();
+	m_sPattern = RString();
 }
 
 Regex::Regex( const RString &sStr )
