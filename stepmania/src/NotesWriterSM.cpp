@@ -281,12 +281,10 @@ bool NotesWriterSM::WriteEditFileToMachine( const Song *pSong, Steps *pSteps )
 	/* Flush dir cache when writing steps, so the old size isn't cached. */
 	FILEMAN->FlushDirCache( Dirname(sPath) );
 
-	int flags = RageFile::WRITE | RageFile::SLOW_FLUSH;
-
 	// TODO: Check to make sure that we're not clobering an existing file before opening.
 
 	RageFile f;
-	if( !f.Open( sPath, flags ) )
+	if( !f.Open(sPath, RageFile::WRITE | RageFile::SLOW_FLUSH) )
 	{
 		LOG->Warn( "Error opening song file '%s' for writing: %s", sPath.c_str(), f.GetError().c_str() );
 		return false;
