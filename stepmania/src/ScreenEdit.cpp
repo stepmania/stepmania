@@ -2608,7 +2608,6 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 
 						SCREENMAN->ZeroNextUpdate();
 
-						// TODO: make localizable
 						CString s = ssprintf( SAVED.GetValue(), Basename(pSteps->GetFilename()).c_str() );
 						ScreenPrompt::Prompt( SM_None, s );
 
