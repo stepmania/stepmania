@@ -2607,6 +2607,9 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 						if( !w.WriteEditFileToMachine(pSong, pSteps) )
 							break;
 
+						// HACK: clear undo, so "exit" below knows we don't need to save.
+						// This only works because important non-steps data can't be changed in
+						// home mode (BPMs, stops).
 						ClearUndo();
 
 						SCREENMAN->ZeroNextUpdate();
