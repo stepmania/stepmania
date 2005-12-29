@@ -540,7 +540,7 @@ void InputHandler_DInput::InputThreadMain()
 		if( !Devices[i].buffered )
 			continue;
 
-		Devices[i].Device->IDirectInputDevice2_Unacquire();
+		Devices[i].Device->Unacquire();
 		Devices[i].Device->SetEventNotification( NULL );
 	}
 
