@@ -10,7 +10,6 @@ public:
 
 	virtual CString GetApiDescription() const { return "Null"; }
 	virtual void GetDisplayResolutions( DisplayResolutions &out ) const;
-	void ResolutionChanged() { }
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
 	bool BeginFrame() { return true; }
