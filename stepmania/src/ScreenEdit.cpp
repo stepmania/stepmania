@@ -2677,27 +2677,13 @@ void ScreenEdit::HandleMainMenuChoice( MainMenuChoice c, const vector<int> &iAns
 				);
 			break;
 		case edit_stop:
-			{
-				unsigned i;
-				for( i=0; i<m_pSong->m_Timing.m_StopSegments.size(); i++ )
-				{
-					// XXX
-					if( m_pSong->m_Timing.m_StopSegments[i].m_iStartRow == BeatToNoteRow(GAMESTATE->m_fSongBeat) )
-						break;
-				}
-
-				float fStopSeconds = 0;
-				if ( i == m_pSong->m_Timing.m_StopSegments.size() )
-					fStopSeconds = m_pSong->m_Timing.m_StopSegments[i].m_fStopSeconds;
-
-				ScreenTextEntry::TextEntry( 
-					SM_BackFromStopChange, 
-					ENTER_STOP_VALUE, 
-					ssprintf( "%.4f", fStopSeconds ),
-					10
-					);
-				break;
-			}
+			ScreenTextEntry::TextEntry( 
+				SM_BackFromStopChange, 
+				ENTER_STOP_VALUE, 
+				ssprintf( "%.4f", m_pSong->m_Timing.GetStopAtRow( BeatToNoteRow(GAMESTATE->m_fSongBeat) ) ),
+				10
+				);
+			break;
 		case play_preview_music:
 			PlayPreviewMusic();
 			break;
