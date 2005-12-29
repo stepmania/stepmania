@@ -376,4 +376,6 @@ void LanguagesDlg::OnBnClickedButtonImport()
 		MessageBox( ssprintf("Imported %d strings into '%s'. %d empty strings were ignored.",iNumImported,sLanguageFile.c_str(),iNumIgnored) );
 	else
 		MessageBox( ssprintf("Failed to save '%s'.",sLanguageFile.c_str()) );
+
+	OnSelchangeListThemes();
 }

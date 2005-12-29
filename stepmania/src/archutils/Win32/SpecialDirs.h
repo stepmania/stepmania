@@ -1,8 +1,12 @@
 #ifndef SpecialDirs_H
 #define SpecialDirs_H
 
-RString GetMyDocumentsDir();
-RString GetApplicationDataDir();
+namespace SpecialDirs
+{
+	RString GetMyDocumentsDir();
+	RString GetApplicationDataDir();
+	RString GetDesktopDir();
+};
 
 #endif
 

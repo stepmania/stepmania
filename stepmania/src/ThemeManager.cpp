@@ -10,7 +10,9 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "arch/Dialog/Dialog.h"
 #include "RageFile.h"
+#if !defined(SMPACKAGE)
 #include "ScreenManager.h"
+#endif
 #include "Foreach.h"
 #include "ThemeMetric.h"
 #include "LuaManager.h"
@@ -18,6 +20,7 @@
 #include "Command.h"
 #include "LocalizedString.h"
 #include "SpecialFiles.h"
+#include "EnumHelper.h"
 
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
@@ -34,7 +37,6 @@ StringToX( ElementCategory );
 
 
 const RString BASE_THEME_NAME = "default";
-// TODO: A theme should be able to specify a base language.
 
 
 struct Theme
@@ -303,9 +305,11 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 		for( int i = 0; i < NUM_ElementCategory; ++i )
 			g_ThemePathCache[i].clear();
 
+#if !defined(SMPACKAGE)
 		// reload common sounds
 		if( SCREENMAN != NULL )
 			SCREENMAN->ThemeChanged();
+#endif
 
 		/* Lua globals can use metrics which are cached, and vice versa.  Update Lua
 		 * globals first; it's Lua's job to explicitly update cached metrics that it
@@ -346,8 +350,10 @@ void ThemeManager::UpdateLuaGlobals()
 	RunLuaScripts( "Serialize.lua" );
 	LUA->ResetState();
 
-	/* Important: explicitly refresh cached metrics that we use. */
+#if !defined(SMPACKAGE)
+	/* explicitly refresh cached metrics that we use. */
 	ScreenDimensions::ReloadMetricsAndUpdateLua();
+#endif
 
 	RunLuaScripts( "*.lua" );
 }
@@ -671,8 +677,10 @@ void ThemeManager::ReloadMetrics()
 	// force a reload of the metrics cache
 	LoadThemeMetrics( g_vThemes, m_sCurThemeName, m_sCurLanguage );
 
+#if !defined(SMPACKAGE)
 	if( SCREENMAN )
 		SCREENMAN->SystemMessage( RELOADED_METRICS );
+#endif
 
 	//
 	// clear theme path cache
@@ -825,11 +833,13 @@ Commands ThemeManager::GetMetricM( const RString &sClassName, const RString &sVa
 	return ParseCommands( sValue );
 }
 
+#if !defined(SMPACKAGE)
 apActorCommands ThemeManager::GetMetricA( const RString &sClassName, const RString &sValueName )
 {
 	RString sValue = GetMetricRaw( sClassName, sValueName );
 	return apActorCommands( new ActorCommands( sValue ) );
 }
+#endif
 
 void ThemeManager::NextTheme()
 {
@@ -876,10 +886,12 @@ void ThemeManager::GetModifierNames( vector<RString>& AddTo )
 	}
 }
 
+#if !defined(SMPACKAGE)
 void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, apActorCommands &valueOut )
 {
 	valueOut = GetMetricA( sClassName, sValueName ); 
 }
+#endif
 
 void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueName, LuaExpression &valueOut )
 {
@@ -940,8 +952,6 @@ public:
 	static int GetPathG( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathG(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathB( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathB(SArg(1),SArg(2)) ); return 1; }
 	static int GetPathS( T* p, lua_State *L )			{ lua_pushstring(L, p->GetPathS(SArg(1),SArg(2)) ); return 1; }
-	static int GetScreenAspectRatio( T* p, lua_State *L ) { lua_pushnumber( L, ScreenDimensions::GetScreenAspectRatio() ); return 1; }
-	static int GetThemeAspectRatio( T* p, lua_State *L ) { lua_pushnumber( L, ScreenDimensions::GetThemeAspectRatio() ); return 1; }
 
 	static void Register(lua_State *L)
 	{
@@ -950,8 +960,6 @@ public:
 		ADD_METHOD( GetPathG );
 		ADD_METHOD( GetPathB );
 		ADD_METHOD( GetPathS );
-		ADD_METHOD( GetScreenAspectRatio );
-		ADD_METHOD( GetThemeAspectRatio );
 
 		Luna<T>::Register( L );
 

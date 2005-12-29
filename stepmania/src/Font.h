@@ -134,8 +134,6 @@ public:
 
 	void SetDefaultGlyph( FontPage *pPage );
 
-	static const wchar_t DEFAULT_GLYPH;
-
 	bool IsRightToLeft() const { return m_bRightToLeft; };
 
 private:
@@ -162,6 +160,10 @@ private:
 	static void GetFontPaths( const CString &sFontOrTextureFilePath, vector<CString> &sTexturePaths );
 	CString GetPageNameFromFileName( const CString &sFilename );
 };
+
+/* Last private-use Unicode character: */
+/* This is in the header to reduce file dependencies. */
+const wchar_t FONT_DEFAULT_GLYPH = 0xF8FF;
 
 #endif
 

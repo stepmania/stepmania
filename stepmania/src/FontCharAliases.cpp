@@ -67,7 +67,7 @@ static void InitCharAliases()
 	if(!CharAliases.empty())
 		return;
 
-	CharAliases["default"]		= Font::DEFAULT_GLYPH;	/* ? */
+	CharAliases["default"]		= FONT_DEFAULT_GLYPH;	/* ? */
 	CharAliases["invalid"]		= INVALID_CHAR;			/* 0xFFFD */
 
 	/* The comments here are UTF-8; they won't show up in VC6 (use your

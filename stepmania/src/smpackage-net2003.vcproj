@@ -298,6 +298,12 @@
 			<Filter
 				Name="system">
 				<File
+					RelativePath=".\archutils\Win32\AppInstance.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\AppInstance.h">
+				</File>
+				<File
 					RelativePath=".\archutils\Win32\arch_setup.h">
 				</File>
 				<File
@@ -346,6 +352,28 @@
 					</File>
 					<File
 						RelativePath=".\arch\ArchHooks\ArchHooksUtil.cpp">
+					</File>
+				</Filter>
+				<Filter
+					Name="Dialog"
+					Filter="">
+					<File
+						RelativePath=".\arch\Dialog\Dialog.cpp">
+					</File>
+					<File
+						RelativePath=".\arch\Dialog\Dialog.h">
+					</File>
+					<File
+						RelativePath=".\arch\Dialog\DialogDriver.h">
+					</File>
+					<File
+						RelativePath=".\arch\Dialog\DialogDriver_Win32.cpp">
+					</File>
+					<File
+						RelativePath=".\arch\Dialog\DialogDriver_Win32.h">
+					</File>
+					<File
+						RelativePath=".\arch\Dialog\Selector_Dialog.h">
 					</File>
 				</Filter>
 			</Filter>
@@ -514,16 +542,34 @@
 			Name="Data Structures"
 			Filter="">
 			<File
+				RelativePath=".\Command.cpp">
+			</File>
+			<File
+				RelativePath=".\Command.h">
+			</File>
+			<File
 				RelativePath=".\DateTime.cpp">
 			</File>
 			<File
 				RelativePath=".\DateTime.h">
 			</File>
 			<File
+				RelativePath=".\FontCharAliases.cpp">
+			</File>
+			<File
+				RelativePath=".\FontCharAliases.h">
+			</File>
+			<File
 				RelativePath=".\LocalizedString.cpp">
 			</File>
 			<File
 				RelativePath=".\LocalizedString.h">
+			</File>
+			<File
+				RelativePath=".\LuaBinding.cpp">
+			</File>
+			<File
+				RelativePath=".\LuaBinding.h">
 			</File>
 			<File
 				RelativePath=".\LuaReference.cpp">
@@ -540,6 +586,12 @@
 			</File>
 			<File
 				RelativePath=".\LuaManager.h">
+			</File>
+			<File
+				RelativePath=".\ThemeManager.cpp">
+			</File>
+			<File
+				RelativePath=".\ThemeManager.h">
 			</File>
 		</Filter>
 		<File

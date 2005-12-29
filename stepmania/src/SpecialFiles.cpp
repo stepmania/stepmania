@@ -5,6 +5,7 @@ const RString SpecialFiles::KEYMAPS_PATH = "Save/Keymaps.ini";
 const RString SpecialFiles::PREFERENCES_INI_PATH	= "Save/Preferences.ini";
 const RString SpecialFiles::THEMES_DIR  = "Themes/";
 const RString SpecialFiles::LANGUAGES_SUBDIR = "Languages/";
+// TODO: A theme should be able to specify a base language.
 const RString SpecialFiles::BASE_LANGUAGE = "en";
 const RString SpecialFiles::METRICS_FILE = "metrics.ini";
 const RString SpecialFiles::CACHE_DIR = "Cache/";

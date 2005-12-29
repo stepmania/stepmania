@@ -3,7 +3,7 @@
 #include "RegistryAccess.h"
 #include <shlobj.h>
 
-RString GetMyDocumentsDir()
+RString SpecialDirs::GetMyDocumentsDir()
 {
 	CString sMyDocumentsDir;
 	bool bSuccess = RegistryAccess::GetRegValue( "HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders", "Personal", sMyDocumentsDir );
@@ -13,16 +13,29 @@ RString GetMyDocumentsDir()
 	return sMyDocumentsDir;
 }
 
-RString GetApplicationDataDir()
+RString SpecialDirs::GetApplicationDataDir()
 {
-	CString sApplicationDataDir;
+	CString sDir;
 	TCHAR szDir[MAX_PATH] = "";
 	BOOL bResult = SHGetSpecialFolderPath( NULL, szDir, CSIDL_APPDATA, FALSE );
 	ASSERT( bResult );
-	sApplicationDataDir = szDir;
-	sApplicationDataDir += "/";
-	return sApplicationDataDir;
+	sDir = szDir;
+	sDir += "/";
+	return sDir;
 }
+
+RString SpecialDirs::GetDesktopDir()
+{
+	CString sDir;
+	TCHAR szDir[MAX_PATH] = "";
+	BOOL bResult = SHGetSpecialFolderPath( NULL, szDir, CSIDL_DESKTOP, FALSE );
+	ASSERT( bResult );
+	sDir = szDir;
+	sDir += "/";
+	return sDir;
+}
+
+
 
 /*
  * (c) 2002-2004 Chris Danford

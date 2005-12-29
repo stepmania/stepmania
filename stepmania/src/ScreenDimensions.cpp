@@ -2,6 +2,7 @@
 #include "ScreenDimensions.h"
 #include "PrefsManager.h"
 #include "LuaManager.h"
+#include "LuaFunctions.h"
 
 static ThemeMetric<float> THEME_SCREEN_WIDTH("Common","ScreenWidth");
 static ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
@@ -78,6 +79,10 @@ void ScreenDimensions::ReloadMetricsAndUpdateLua()
 	LUA->SetGlobal( "SCREEN_CENTER_X", (int) SCREEN_CENTER_X );
 	LUA->SetGlobal( "SCREEN_CENTER_Y", (int) SCREEN_CENTER_Y );
 }
+
+LuaFunction_NoArgs( GetScreenAspectRatio,	ScreenDimensions::GetScreenAspectRatio() );
+LuaFunction_NoArgs( GetThemeAspectRatio,	ScreenDimensions::GetThemeAspectRatio() );
+
 
 /*
  * (c) 2001-2002 Chris Danford

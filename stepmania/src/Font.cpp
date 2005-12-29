@@ -13,9 +13,6 @@
 #include "FontCharmaps.h"
 #include "FontCharAliases.h"
 
-/* Last private-use Unicode character: */
-const wchar_t Font::DEFAULT_GLYPH = 0xF8FF;
-
 FontPage::FontPage()
 {
 	m_pTexture = NULL;
@@ -285,7 +282,7 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 	map<longchar,glyph*>::const_iterator it = m_iCharToGlyph.find(c);
 
 	/* If that's missing, use the default glyph. */
-	if(it == m_iCharToGlyph.end()) it = m_iCharToGlyph.find(DEFAULT_GLYPH);
+	if(it == m_iCharToGlyph.end()) it = m_iCharToGlyph.find(FONT_DEFAULT_GLYPH);
 
 	if(it == m_iCharToGlyph.end()) 
 		RageException::Throw( "The default glyph is missing from the font '%s'", path.c_str() );
@@ -295,7 +292,7 @@ const glyph &Font::GetGlyph( wchar_t c ) const
 
 bool Font::FontCompleteForString( const wstring &str ) const
 {
-	map<longchar,glyph*>::const_iterator m_pDefault = m_iCharToGlyph.find( DEFAULT_GLYPH );
+	map<longchar,glyph*>::const_iterator m_pDefault = m_iCharToGlyph.find( FONT_DEFAULT_GLYPH );
 	if( m_pDefault == m_iCharToGlyph.end() )
 		RageException::Throw( "The default glyph is missing from the font '%s'", path.c_str() );
 
