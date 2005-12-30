@@ -17,8 +17,6 @@ namespace StepMania
 	void NORETURN HandleException( CString error );
 	void ResetGame();
 	void ChangeCurrentGame( const Game* g );
-	void FocusChanged( bool bHasFocus );
-	bool AppHasFocus();
 
 	// If successful, return filename of screenshot in sDir, else return ""
 	CString SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex = -1 );

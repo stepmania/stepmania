@@ -81,7 +81,6 @@
 
 #define ZIPS_DIR "Packages/"
 
-static bool g_bHasFocus = true;
 static Preference<bool> g_bAllowMultipleInstances( "AllowMultipleInstances", false );
 
 void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame );
@@ -302,41 +301,6 @@ void StepMania::ResetGame()
 	}
 
 	PREFSMAN->SavePrefsToDisk();
-}
-
-static bool ChangeAppPri()
-{
-	if( PREFSMAN->m_BoostAppPriority.Get() == PrefsManager::BOOST_NO )
-		return false;
-
-	// if using NTPAD don't boost or else input is laggy
-#if defined(_WINDOWS)
-	if( PREFSMAN->m_BoostAppPriority == PrefsManager::BOOST_AUTO )
-	{
-		vector<InputDevice> vDevices;
-		vector<CString> vDescriptions;
-
-		// This can get called before INPUTMAN is constructed.
-		if( INPUTMAN )
-		{
-			INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
-			CString sInputDevices = join( ",", vDescriptions );
-			if( sInputDevices.find("NTPAD") != string::npos )
-			{
-				LOG->Trace( "Using NTPAD.  Don't boost priority." );
-				return false;
-			}
-		}
-	}
-#endif
-
-	/* If -1 and this is a debug build, don't.  It makes the debugger sluggish. */
-#ifdef DEBUG
-	if( PREFSMAN->m_BoostAppPriority == PrefsManager::BOOST_AUTO )
-		return false;
-#endif
-
-	return true;
 }
 
 static void CheckSettings()
@@ -1120,11 +1084,6 @@ int main(int argc, char* argv[])
 	// we re-run scripts that may add to them.
 	THEME->UpdateLuaGlobals();
 
-	/* People may want to do something else while songs are loading, so do
-	 * this after loading songs. */
-	if( ChangeAppPri() )
-		HOOKS->BoostPriority();
-
 	StepMania::ResetGame();
 
 	/* Now that GAMESTATE is reset, tell SCREENMAN to update the theme (load
@@ -1375,7 +1334,7 @@ void HandleInputEvents(float fDeltaTime)
 	INPUTFILTER->GetInputEvents( ieArray );
 
 	/* If we don't have focus, discard input. */
-	if( !g_bHasFocus )
+	if( !HOOKS->AppHasFocus() )
 		return;
 
 	for( unsigned i=0; i<ieArray.size(); i++ )
@@ -1447,32 +1406,6 @@ void HandleInputEvents(float fDeltaTime)
 		PREFSMAN->m_bWindowed.Set( !PREFSMAN->m_bWindowed );
 		StepMania::ApplyGraphicOptions();
 	}	
-}
-
-void StepMania::FocusChanged( bool bHasFocus )
-{
-	if( g_bHasFocus == bHasFocus )
-		return;
-
-	g_bHasFocus = bHasFocus;
-
-	LOG->Trace( "App %s focus", g_bHasFocus? "has":"doesn't have" );
-
-	/* If we lose focus, we may lose input events, especially key releases. */
-	INPUTFILTER->Reset();
-
-	if( ChangeAppPri() )
-	{
-		if( g_bHasFocus )
-			HOOKS->BoostPriority();
-		else
-			HOOKS->UnBoostPriority();
-	}
-}
-
-bool StepMania::AppHasFocus()
-{
-	return g_bHasFocus;
 }
 
 /*

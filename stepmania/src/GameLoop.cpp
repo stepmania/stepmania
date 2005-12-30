@@ -22,8 +22,6 @@
 #include "RageTimer.h"
 #include "RageInput.h"
 
-#include "StepMania.h"
-
 static bool g_bQuitting = false;
 static RageTimer g_GameplayTimer;
 
@@ -57,8 +55,69 @@ static void CheckGameLoopTimerSkips( float fDeltaTime )
 			iThisFPS, fExpectedTime, fDeltaTime, fDifference );
 }
 
+static bool ChangeAppPri()
+{
+	if( PREFSMAN->m_BoostAppPriority.Get() == PrefsManager::BOOST_NO )
+		return false;
+
+	// if using NTPAD don't boost or else input is laggy
+#if defined(_WINDOWS)
+	if( PREFSMAN->m_BoostAppPriority == PrefsManager::BOOST_AUTO )
+	{
+		vector<InputDevice> vDevices;
+		vector<CString> vDescriptions;
+
+		// This can get called before INPUTMAN is constructed.
+		if( INPUTMAN )
+		{
+			INPUTMAN->GetDevicesAndDescriptions(vDevices,vDescriptions);
+			CString sInputDevices = join( ",", vDescriptions );
+			if( sInputDevices.find("NTPAD") != string::npos )
+			{
+				LOG->Trace( "Using NTPAD.  Don't boost priority." );
+				return false;
+			}
+		}
+	}
+#endif
+
+	/* If -1 and this is a debug build, don't.  It makes the debugger sluggish. */
+#ifdef DEBUG
+	if( PREFSMAN->m_BoostAppPriority == PrefsManager::BOOST_AUTO )
+		return false;
+#endif
+
+	return true;
+}
+
+static void CheckFocus()
+{
+	static bool bHasFocus = true;
+	
+	bool bHasFocusNow = HOOKS->AppHasFocus();
+	if( bHasFocus == bHasFocusNow )
+		return;
+	bHasFocus = bHasFocusNow;
+
+	/* If we lose focus, we may lose input events, especially key releases. */
+	INPUTFILTER->Reset();
+
+	if( ChangeAppPri() )
+	{
+		if( bHasFocus )
+			HOOKS->BoostPriority();
+		else
+			HOOKS->UnBoostPriority();
+	}
+}
+
 void GameLoop()
 {
+	/* People may want to do something else while songs are loading, so do
+	 * this after loading songs. */
+	if( ChangeAppPri() )
+		HOOKS->BoostPriority();
+
 	while( !UserQuit() )
 	{
 		/*
@@ -82,6 +141,8 @@ void GameLoop()
 		{
 			fDeltaTime /= 4;
 		}
+
+		CheckFocus();
 
 		/* Update SOUNDMAN early (before any RageSound::GetPosition calls), to flush position data. */
 		SOUNDMAN->Update( fDeltaTime );
@@ -117,7 +178,7 @@ void GameLoop()
 
 		/* If we don't have focus, give up lots of CPU. */
 		// XXX: do this in DISPLAY EndFrame?
-		if( !StepMania::AppHasFocus() )
+		if( !HOOKS->AppHasFocus() )
 			usleep( 10000 );// give some time to other processes and threads
 #if defined(_WINDOWS)
 		/* In Windows, we want to give up some CPU for other threads.  Most OS's do
