@@ -90,6 +90,16 @@ public:
 	 */
 	static void MountInitialFilesystems( const RString &sDirOfExecutable );
 
+	/*
+	 * Platform-specific code calls this to indicate focus changes.
+	 */
+	void SetHasFocus( bool bAppHasFocus );
+
+	/*
+	 * Return true if the application has input focus.
+	 */
+	bool AppHasFocus();
+
 private:
 	/* This are helpers for GetMicrosecondsSinceStart on systems with a timer
 	 * that may loop or move backwards. */

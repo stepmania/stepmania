@@ -1,9 +1,11 @@
 #include "global.h"
 #include "ArchHooks.h"
+#include "RageLog.h"
 #include "RageThreads.h"
 
 bool ArchHooks::s_bQuitting = false;
 bool ArchHooks::s_bToggleWindowed = false;
+static bool g_bHasFocus = true;
 // Keep from pulling RageThreads.h into ArchHooks.h
 static RageMutex s_AHLock( "ArchHooks lock" );
 ArchHooks *HOOKS = NULL;
@@ -27,6 +29,20 @@ void ArchHooks::SetToggleWindowed()
 ArchHooks *MakeArchHooks()
 {
 	return new ARCH_HOOKS;
+}
+
+void ArchHooks::SetHasFocus( bool bHasFocus )
+{
+	if( bHasFocus == g_bHasFocus )
+		return;
+	g_bHasFocus = bHasFocus;
+
+	LOG->Trace( "App %s focus", bHasFocus? "has":"doesn't have" );
+}
+
+bool ArchHooks::AppHasFocus()
+{
+	return g_bHasFocus;
 }
 
 /*
