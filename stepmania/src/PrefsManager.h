@@ -187,10 +187,6 @@ public:
 	Preference<bool>	m_bCelShadeModels;
 	Preference<bool>	m_bPreferredSortUsesGroups;
 
-	/* experimental: force a specific update rate.  This prevents big 
-	 * animation jumps on frame skips. */
-	Preference<float>	m_fConstantUpdateDeltaSeconds;	// 0 to disable
-
 	// Number of seconds it takes for a button on the controller to release
 	// after pressed.
 	Preference<float>	m_fPadStickSeconds;
@@ -217,9 +213,6 @@ public:
 
 	enum ScoringType { SCORING_NEW, SCORING_OLD };
 	Preference<ScoringType,int>	m_ScoringType;
-
-	enum BoostAppPriority { BOOST_NO, BOOST_YES, BOOST_AUTO };	/* auto = do whatever is appropriate for the arch. */
-	Preference<BoostAppPriority,int>	m_BoostAppPriority;
 
 	Preference<CString>	m_sAdditionalSongFolders;
 	Preference<CString>	m_sAdditionalFolders;

@@ -25,6 +25,13 @@
 static bool g_bQuitting = false;
 static RageTimer g_GameplayTimer;
 
+enum BoostAppPriority { BOOST_NO, BOOST_YES, BOOST_AUTO };	/* auto = do whatever is appropriate for the arch. */
+static Preference<BoostAppPriority,int> g_BoostAppPriority( "BoostAppPriority", BOOST_AUTO );
+
+/* experimental: force a specific update rate.  This prevents big 
+ * animation jumps on frame skips.  0 to disable. */
+static Preference<float> g_fConstantUpdateDeltaSeconds( "ConstantUpdateDeltaSeconds", 0 );
+
 static bool UserQuit()
 {
 	return g_bQuitting || ArchHooks::UserQuit();
@@ -57,12 +64,12 @@ static void CheckGameLoopTimerSkips( float fDeltaTime )
 
 static bool ChangeAppPri()
 {
-	if( PREFSMAN->m_BoostAppPriority.Get() == PrefsManager::BOOST_NO )
+	if( g_BoostAppPriority.Get() == BOOST_NO )
 		return false;
 
 	// if using NTPAD don't boost or else input is laggy
 #if defined(_WINDOWS)
-	if( PREFSMAN->m_BoostAppPriority == PrefsManager::BOOST_AUTO )
+	if( g_BoostAppPriority == BOOST_AUTO )
 	{
 		vector<InputDevice> vDevices;
 		vector<CString> vDescriptions;
@@ -83,7 +90,7 @@ static bool ChangeAppPri()
 
 	/* If -1 and this is a debug build, don't.  It makes the debugger sluggish. */
 #ifdef DEBUG
-	if( PREFSMAN->m_BoostAppPriority == PrefsManager::BOOST_AUTO )
+	if( g_BoostAppPriority == BOOST_AUTO )
 		return false;
 #endif
 
@@ -125,8 +132,8 @@ void GameLoop()
 		 */
 		float fDeltaTime = g_GameplayTimer.GetDeltaTime();
 
-		if( PREFSMAN->m_fConstantUpdateDeltaSeconds > 0 )
-			fDeltaTime = PREFSMAN->m_fConstantUpdateDeltaSeconds;
+		if( g_fConstantUpdateDeltaSeconds > 0 )
+			fDeltaTime = g_fConstantUpdateDeltaSeconds;
 		
 		CheckGameLoopTimerSkips( fDeltaTime );
 

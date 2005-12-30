@@ -343,7 +343,6 @@ PrefsManager::PrefsManager() :
 	m_bCelShadeModels						( "CelShadeModels",						false ),	// Work-In-Progress.. disable by default.
 	m_bPreferredSortUsesGroups				( "PreferredSortUsesGroups",			true ),
 
-	m_fConstantUpdateDeltaSeconds	( "ConstantUpdateDeltaSeconds",	0 ),
 	m_fPadStickSeconds				( "PadStickSeconds",			0 ),
 	m_bForceMipMaps					( "ForceMipMaps",				0 ),
 	m_bTrilinearFiltering			( "TrilinearFiltering",			0 ),
@@ -355,7 +354,6 @@ PrefsManager::PrefsManager() :
 	m_bSubSortByNumSteps			( "SubSortByNumSteps",			false ),
 	m_GetRankingName				( "GetRankingName",				RANKING_ON ),
 	m_ScoringType					( "ScoringType",				SCORING_NEW ),
-	m_BoostAppPriority				( "BoostAppPriority",			BOOST_AUTO ),
 	m_sAdditionalSongFolders		( "AdditionalSongFolders",		"" ),
 	m_sAdditionalFolders			( "AdditionalFolders",			"" ),
 	m_sLastSeenVideoDriver			( "LastSeenVideoDriver",		"" ),
