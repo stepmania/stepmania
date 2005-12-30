@@ -126,15 +126,6 @@ BOOL CSmpackageApp::InitInstance()
 	return FALSE;
 }
 
-namespace StepMania
-{
-	void NORETURN HandleException( RString sErr )
-	{
-		MessageBox( NULL, "exception", sErr, MB_ICONERROR );
-	}
-
-}
-
 /*
  * (c) 2002-2005 Chris Danford
  * All rights reserved.
