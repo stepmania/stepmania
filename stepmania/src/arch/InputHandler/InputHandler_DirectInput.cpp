@@ -1,7 +1,6 @@
 #include "global.h"
 #include "InputHandler_DirectInput.h"
 
-#include "StepMania.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "archutils/Win32/AppInstance.h"
@@ -354,19 +353,23 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 	numevents = INPUT_QSIZE;
 	HRESULT hr = device.Device->GetDeviceData( sizeof(DIDEVICEOBJECTDATA), evtbuf, &numevents, 0 );
 	if( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
+	{
+		INPUTFILTER->ResetDevice( device.dev );
 		return;
+	}
 
-	/* Handle the events */
 	if( hr != DI_OK )
 	{
 		LOG->Trace( hr_ssprintf(hr, "UpdateBuffered: IDirectInputDevice2_GetDeviceData") );
 		return;
 	}
 
-	/* XXX: We should check GetConsoleWindow(), to allow input while the console window
-	 * is focused. */
 	if( GetForegroundWindow() != GraphicsWindow::GetHwnd() )
+	{
+		/* Discard input when not focused, and release all keys. */
+		INPUTFILTER->ResetDevice( device.dev );
 		return;
+	}
 
 	for( int i = 0; i < (int) numevents; ++i )
 	{
@@ -436,6 +439,8 @@ void InputHandler_DInput::PollAndAcquireDevices( bool bBuffered )
 		HRESULT hr = IDirectInputDevice2_Poll( Devices[i].Device );
 		if( hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED )
 		{
+			INPUTFILTER->ResetDevice( Devices[i].dev );
+
 			/* This will fail with "access denied" on the keyboard if we don't
 			 * have focus. */
 			hr = Devices[i].Device->Acquire();
@@ -519,12 +524,11 @@ void InputHandler_DInput::InputThreadMain()
 				continue;
 			}
 
-			if( ret == WAIT_OBJECT_0 )
-			{
-				RageTimer now;
-				for( unsigned i = 0; i < BufferedDevices.size(); ++i )
-					UpdateBuffered( *BufferedDevices[i], now );
-			}
+			/* Update devices even if no event was triggered, since this also checks for focus
+			 * loss. */
+			RageTimer now;
+			for( unsigned i = 0; i < BufferedDevices.size(); ++i )
+				UpdateBuffered( *BufferedDevices[i], now );
 		}
 		CHECKPOINT;
 
