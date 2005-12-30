@@ -58,8 +58,6 @@ public:
 	RageSound *PlaySound( RageSound &snd, const RageSoundParams *params = NULL );
 	RageSound *PlayCopyOfSound( RageSound &snd, const RageSoundParams *params = NULL );
 
-	static void AttenuateBuf( int16_t *pBuf, int iSamples, float fVolume );
-
 private:
 	/* Set of sounds that we've taken over (and are responsible for deleting
 	 * when they're finished playing): */

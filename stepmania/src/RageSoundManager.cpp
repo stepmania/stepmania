@@ -1,5 +1,13 @@
-/* Handle and provide an interface to the sound driver.  Delete sounds that
- * have been detached from their owner when they're finished playing. */
+/*
+ * This manager has several distinct purposes:
+ *
+ * Load and handle with the sound driver.
+ * Handle most communication between the sound driver and RageSound.
+ * Factory and reference count RageSoundReader objects for RageSound.
+ * User-level:
+ *  - global volume management
+ *  - sound detaching ("play and delete when done playing")
+ */
 
 #include "global.h"
 #include "RageSoundManager.h"
@@ -345,16 +353,6 @@ void RageSoundManager::SetPlayOnlyCriticalSounds( bool bPlayOnlyCriticalSounds )
 	g_SoundManMutex.Lock(); /* lock for access to m_bPlayOnlyCriticalSounds */
 	m_bPlayOnlyCriticalSounds = bPlayOnlyCriticalSounds;
 	g_SoundManMutex.Unlock(); /* finished with m_bPlayOnlyCriticalSounds */
-}
-
-/* Standalone helpers: */
-void RageSoundManager::AttenuateBuf( int16_t *pBuf, int iSamples, float fVolume )
-{
-	while( iSamples-- )
-	{
-		*pBuf = int16_t( (*pBuf) * fVolume );
-		++pBuf;
-	}
 }
 
 /*

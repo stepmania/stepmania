@@ -5,6 +5,15 @@
 /* Some of these functions assume a channel count: */
 static const int channels = 2;
 
+void RageSoundUtil::Attenuate( int16_t *pBuf, int iSamples, float fVolume )
+{
+	while( iSamples-- )
+	{
+		*pBuf = int16_t( (*pBuf) * fVolume );
+		++pBuf;
+	}
+}
+
 /* Pan buffer left or right; fPos is -1...+1.  Buffer is assumed to be stereo. */
 void RageSoundUtil::Pan( int16_t *buffer, int frames, float fPos )
 {

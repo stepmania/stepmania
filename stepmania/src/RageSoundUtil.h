@@ -5,6 +5,7 @@
 
 namespace RageSoundUtil
 {
+	void Attenuate( int16_t *pBuf, int iSamples, float fVolume );
 	void Pan( int16_t *pBuffer, int iFrames, float fPos );
 	void Fade( int16_t *pBuffer, int iFrames, float fStartVolume, float fEndVolume  );
 	void ConvertMonoToStereoInPlace( int16_t *pBuffer, int iFrames );
