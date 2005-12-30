@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "RageThreads.h"
+#include "LocalizedString.h"
 #include "archutils/Unix/SignalHandler.h"
 #include "archutils/Unix/GetSysInfo.h"
 #include "archutils/Unix/LinuxThreadHelpers.h"
@@ -259,7 +260,7 @@ void ArchHooks_Unix::MountInitialFilesystems( const CString &sDirOfExecutable )
 	if( Root == "" && !stat( RageFileManagerUtil::sInitialWorkingDirectory + "/Songs", &st ) && st.st_mode&S_IFDIR )
 		Root = RageFileManagerUtil::sInitialWorkingDirectory;
 	if( Root == "" )
-		RageException::Throw( COULDNT_FIND_SONGS );
+		RageException::Throw( COULDNT_FIND_SONGS.GetValue() );
 			
 	FILEMAN->Mount( "dir", Root, "/" );
 #else
