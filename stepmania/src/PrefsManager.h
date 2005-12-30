@@ -5,7 +5,6 @@
 
 #include "PlayerNumber.h"
 #include "GameConstantsAndTypes.h"
-#include "Grade.h"	// for NUM_GRADE_TIERS
 #include "Preference.h"
 class IniFile;
 

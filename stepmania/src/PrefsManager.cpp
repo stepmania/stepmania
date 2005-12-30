@@ -1,7 +1,6 @@
 #include "global.h"
 #include "PrefsManager.h"
 #include "IniFile.h"
-#include "GameState.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
 #include "arch/arch_default.h"
