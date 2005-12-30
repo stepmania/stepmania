@@ -2,7 +2,11 @@
 #include "LocalizedString.h"
 #include "Foreach.h"
 
-static RString (*g_pfnLocalizer)(const RString&,const RString&) = NULL;
+static RString DefaultLocalizer( const RString &sSection, const RString &sName )
+{
+	return sName;
+}
+static RString (*g_pfnLocalizer)(const RString&,const RString&) = DefaultLocalizer;
 
 void LocalizedString::RegisterLocalizer( RString (*pfnLocalizer)(const RString&, const RString&) )
 {
@@ -21,20 +25,18 @@ void LocalizedString::RefreshLocalizedStrings()
 
 RString LocalizedString::LocalizeString( const RString &sSection, const RString &sName )
 {
-	ASSERT( g_pfnLocalizer );
 	return g_pfnLocalizer( sSection, sName );
 }
 
 LocalizedString::LocalizedString( const RString &sSection, const RString &sName )
 {
-	m_bLoaded = false;
 	m_sSection = sSection;
 	m_sName = sName;
+	m_sValue = sName;
 
 	SubscriptionManager<LocalizedString>::Subscribe( this );
 
-	if( g_pfnLocalizer != NULL )
-		Refresh();
+	Refresh();
 }
 
 
@@ -51,14 +53,12 @@ LocalizedString::operator RString() const
 
 const RString &LocalizedString::GetValue() const
 {
-	ASSERT(m_bLoaded);
 	return m_sValue;
 }
 
 void LocalizedString::Refresh()
 {
 	m_sValue = LocalizeString( m_sSection, m_sName );
-	m_bLoaded = true;
 }
 
 
