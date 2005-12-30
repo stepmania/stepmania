@@ -735,8 +735,6 @@ void StepMania::ChangeCurrentGame( const Game* g )
 {
 	ASSERT( g );
 
-	INPUTMAPPER->SaveMappingsToDisk();	// save mappings before switching the game
-
 	GAMESTATE->SetCurGame( g );
 
 	/* Save the newly-selected game. */
