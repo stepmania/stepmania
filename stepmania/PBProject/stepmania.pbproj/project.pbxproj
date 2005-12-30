@@ -10,7 +10,6 @@
 		1215D7A208C6559A00B87D8B /* ScreenGameplayNormal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1215D7A008C6559A00B87D8B /* ScreenGameplayNormal.cpp */; };
 		1215D7A308C6559A00B87D8B /* ScreenGameplayNormal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1215D7A108C6559A00B87D8B /* ScreenGameplayNormal.h */; };
 		AA0732730954358100F396C5 /* ArchHooksUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA0732720954358100F396C5 /* ArchHooksUtil.cpp */; };
-		AA07328E0954381800F396C5 /* DateTimeLua.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07328A0954381800F396C5 /* DateTimeLua.cpp */; };
 		AA07328F0954381800F396C5 /* DisplayResolutions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07328B0954381800F396C5 /* DisplayResolutions.h */; };
 		AA0732900954381800F396C5 /* XmlFileUtil.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA07328C0954381800F396C5 /* XmlFileUtil.cpp */; };
 		AA0732910954381800F396C5 /* XmlFileUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA07328D0954381800F396C5 /* XmlFileUtil.h */; };
@@ -997,7 +996,6 @@
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		AA0732720954358100F396C5 /* ArchHooksUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ArchHooksUtil.cpp; path = ArchHooks/ArchHooksUtil.cpp; sourceTree = "<group>"; };
-		AA07328A0954381800F396C5 /* DateTimeLua.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = DateTimeLua.cpp; path = ../src/DateTimeLua.cpp; sourceTree = "<group>"; };
 		AA07328B0954381800F396C5 /* DisplayResolutions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = DisplayResolutions.h; path = ../src/DisplayResolutions.h; sourceTree = "<group>"; };
 		AA07328C0954381800F396C5 /* XmlFileUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = XmlFileUtil.cpp; path = ../src/XmlFileUtil.cpp; sourceTree = "<group>"; };
 		AA07328D0954381800F396C5 /* XmlFileUtil.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = XmlFileUtil.h; path = ../src/XmlFileUtil.h; sourceTree = "<group>"; };
@@ -2631,7 +2629,6 @@
 				AA77E74E08B64B5600FA24CA /* CourseWriterCRS.h */,
 				AA3D793106A279530064B980 /* DateTime.cpp */,
 				AA3D793206A279530064B980 /* DateTime.h */,
-				AA07328A0954381800F396C5 /* DateTimeLua.cpp */,
 				AAD6A712065E0FDF0042165A /* Difficulty.cpp */,
 				AAD6A713065E0FDF0042165A /* Difficulty.h */,
 				AA07328B0954381800F396C5 /* DisplayResolutions.h */,
@@ -4195,7 +4192,6 @@
 				AAFBEEED094D807E000029DE /* ScreenOptionsMemoryCard.cpp in Sources */,
 				AAFBEEEF094D807E000029DE /* ScreenServiceAction.cpp in Sources */,
 				AA0732730954358100F396C5 /* ArchHooksUtil.cpp in Sources */,
-				AA07328E0954381800F396C5 /* DateTimeLua.cpp in Sources */,
 				AA0732900954381800F396C5 /* XmlFileUtil.cpp in Sources */,
 				AAD5219C095513DA00073D86 /* XmlFile.cpp in Sources */,
 				AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */,
