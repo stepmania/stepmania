@@ -46,7 +46,7 @@ LocalizedString::operator RString() const
 	return GetValue();
 }
 
-RString LocalizedString::GetValue() const
+const RString &LocalizedString::GetValue() const
 {
 	ASSERT(m_bLoaded);
 	return m_sValue;

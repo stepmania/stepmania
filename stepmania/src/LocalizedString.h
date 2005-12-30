@@ -15,7 +15,7 @@ public:
 	~LocalizedString();
 	void Refresh();
 	operator RString() const;
-	RString GetValue() const;
+	const RString &GetValue() const;
 private:
 	RString m_sSection;
 	RString m_sName;
