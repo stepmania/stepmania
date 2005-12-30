@@ -68,6 +68,17 @@ static const CString EMPTY_STRING;
 		return g_##X##Name[x];  \
 	}
 
+#define XToLocalizedString(X)      \
+	const CString &X##ToLocalizedString( X x ) \
+	{       \
+		static auto_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
+		if( g_##X##Name[0].get() == NULL ) { \
+			for( unsigned i = 0; i < NUM_##X; ++i ) \
+				g_##X##Name[i].reset( new LocalizedString(#X, X##ToString((X)i)) ); \
+		} \
+		return g_##X##Name[x]->GetValue();  \
+	}
+
 #define StringToX(X)	\
 	X StringTo##X( const CString& s ) \
 	{	\

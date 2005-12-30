@@ -2,10 +2,8 @@
 #include "DateTime.h"
 #include "RageUtil.h"
 #include "EnumHelper.h"
-#if !defined(SMPACKAGE)
-#include "ThemeMetric.h"
-#endif
 #include "LuaFunctions.h"
+#include "LocalizedString.h"
 
 DateTime::DateTime()
 {
@@ -196,10 +194,8 @@ static const CString MonthNames[] =
 	"November",
 	"December",
 };
-XToString( Month, MONTHS_IN_YEAR );
-#if !defined(SMPACKAGE)
-XToThemedString( Month, MONTHS_IN_YEAR );
-#endif
+XToString( Month, NUM_Month );
+XToLocalizedString( Month );
 
 CString LastWeekToString( int iLastWeekIndex )
 {
@@ -308,9 +304,7 @@ tm GetDayInYearAndYear( int iDayInYearIndex, int iYear )
 }
 
 LuaFunction( MonthToString, MonthToString( (Month)IArg(1) ) );
-#if !defined(SMPACKAGE)
-LuaFunction( MonthToThemedString, MonthToThemedString( (Month)IArg(1) ) );
-#endif
+LuaFunction( MonthToLocalizedString, MonthToLocalizedString( (Month)IArg(1) ) );
 LuaFunction( MonthOfYear, GetLocalTime().tm_mon );
 LuaFunction( DayOfMonth, GetLocalTime().tm_mday );
 LuaFunction( Hour, GetLocalTime().tm_hour );

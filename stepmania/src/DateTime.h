@@ -8,7 +8,7 @@ const int NUM_LAST_WEEKS = 52;
 const int DAYS_IN_YEAR = 366; // maximum (leap years)
 const int HOURS_IN_DAY = 24;
 const int DAYS_IN_WEEK = 7;
-enum Month { MONTHS_IN_YEAR = 12 };
+enum Month { NUM_Month = 12 };
 
 CString DayInYearToString( int iDayInYearIndex );
 CString LastDayToString( int iLastDayIndex );
@@ -18,7 +18,7 @@ CString DayOfWeekToThemedString( int iDayOfWeekIndex );
 CString HourInDayToString( int iHourIndex );
 CString HourInDayToThemedString( int iHourIndex );
 const CString &MonthToString( Month month );
-const CString &MonthToThemedString( Month month );
+const CString &MonthToLocalizedString( Month month );
 CString LastWeekToString( int iLastWeekIndex );
 CString LastWeekToThemedString( int iLastWeekIndex );
 
