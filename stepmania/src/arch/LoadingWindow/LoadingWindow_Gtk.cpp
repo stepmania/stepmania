@@ -1,6 +1,5 @@
 #include "global.h"
 #include "RageLog.h"
-#include "StepMania.h"
 #include "RageFileManager.h"
 #include "RageUtil.h"
 #include "LoadingWindow_Gtk.h"
@@ -21,7 +20,7 @@ CString LoadingWindow_Gtk::Init()
 {
 	ASSERT( Handle == NULL );
 	
-	Handle = dlopen( DirOfExecutable + "/" + "GtkModule.so", RTLD_NOW );
+	Handle = dlopen( RageFileManagerUtil::sDirOfExecutable + "/" + "GtkModule.so", RTLD_NOW );
 	if( Handle == NULL )
 		return ssprintf( "dlopen(): %s", dlerror() );
 
