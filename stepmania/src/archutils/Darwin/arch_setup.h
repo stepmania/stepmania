@@ -10,7 +10,10 @@ typedef signed long        SInt32;
 typedef signed long long   SInt64;
 typedef unsigned long long UInt64;
 
-#include <CarbonCore/Endian.h>
+// We cannot include MacTypes.h here because it defines Style which conflicts with struct Style.
+#define __MACTYPES__
+#include <libkern/OSByteOrder.h>
+#undef __MACTYPES__
 
 #define HAVE_VERSION_INFO
 #define HAVE_CXA_DEMANGLE
@@ -42,54 +45,46 @@ typedef unsigned long long UInt64;
 # define __MACOSX__
 #endif
 
-// EndianX_Swap() will use the constant swapper macro if n is a compile time constant
-#define ArchSwap32(n) Endian32_Swap(n)
-#define ArchSwap24(n) (Endian32_Swap(n) >> 8)
-#define ArchSwap16(n) Endian16_Swap(n)
+#define ArchSwap32(n) (__builtin_constant_p(n) ? OSSwapConstInt32(n) : OSSwapInt32(n))
+#define ArchSwap24(n) (ArchSwap32(n) >> 8)
+#define ArchSwap16(n) (__builtin_constant_p(n) ? OSSwapConstInt16(n) : OSSwapInt16(n))
 #define HAVE_BYTE_SWAPS
 
 #include <bits/c++config.h>
 // This is very annoying. The 10.2.8 SDK uses GLIBCPP but the 10.4u SDK uses GLIBCXX
-#if __GLIBCPP__
-# define GLIB_PREFIX _GLIBCPP_
-#elif __GLIBCXX__
-# define GLIB_PREFIX _GLIBCXX_
-#else
-# error Neither __GLIBCPP__ nor __GLIBCXX__ was defined.
-#endif
-#define CHECK(x) (GLIB_PREFIX ## x)
+#define _GLIB_CHECK(x) (_GLIBCPP_ ## x || _GLIBCXX_ ## x)
 
-#if ! CHECK(HAVE_POWF)
+#if ! _GLIB_CHECK(HAVE_POWF)
 # define NEED_POWF
 #endif
 
-#if ! CHECK(HAVE_SQRTF)
+#if ! _GLIB_CHECK(HAVE_SQRTF)
 # define NEED_SQRTF
 #endif
 
-#if ! CHECK(HAVE_SINF)
+#if ! _GLIB_CHECK(HAVE_SINF)
 # define NEED_SINF
 #endif
 
-#if ! CHECK(HAVE_TANF)
+#if ! _GLIB_CHECK(HAVE_TANF)
 # define NEED_TANF
 #endif
 
-#if ! CHECK(HAVE_COSF)
+#if ! _GLIB_CHECK(HAVE_COSF)
 # define NEED_COSF
 #endif
 
-#if ! CHECK(HAVE_ACOSF)
+#if ! _GLIB_CHECK(HAVE_ACOSF)
 # define NEED_ACOSF
 #endif
 
-#if ! CHECK(HAVE_STRTOF)
+#if ! _GLIB_CHECK(HAVE_STRTOF)
 # define NEED_STRTOF
 #endif
 
 // Define the work around if needed.
 #include <stdint.h>
-#if CHECK(USE_C99)
+#if _GLIB_CHECK(USE_C99)
 # define NEED_CSTDLIB_WORKAROUND
 #else
 inline int64_t llabs( int64_t x ) { return x < 0LL ? -x : x; }
@@ -119,7 +114,7 @@ typedef int socklen_t;
                       __isnan  ( x ) )
 #endif
 
-#if ! CHECK(USE_WCHAR_T)
+#if ! _GLIB_CHECK(USE_WCHAR_T)
 #include <string>
 
 extern "C"
@@ -190,9 +185,8 @@ namespace std
 }
 #endif
 
-// Cleanup macros
-#undef GLIB_PREFIX
-#undef CHECK
+// Cleanup macro
+#undef _GLIB_CHECK
 
 #endif
 
