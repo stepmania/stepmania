@@ -16,6 +16,26 @@
 #include "Steps.h"
 
 
+static void LifePercentChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, float &defaultValueOut )
+{
+	sNameOut = "LifePercentChange" + ScoreEventToString( (ScoreEvent)i );
+	switch( i )
+	{
+	default:	ASSERT(0);
+	case SE_W1:			defaultValueOut = +0.008f;	break;
+	case SE_W2:			defaultValueOut = +0.008f;	break;
+	case SE_W3:			defaultValueOut = +0.004f;	break;
+	case SE_W4:			defaultValueOut = +0.000f;	break;
+	case SE_W5:			defaultValueOut = -0.040f;	break;
+	case SE_Miss:		defaultValueOut = -0.080f;	break;
+	case SE_HitMine:	defaultValueOut = -0.160f;	break;
+	case SE_Held:		defaultValueOut = +0.008f;	break;
+	case SE_LetGo:		defaultValueOut = -0.080f;	break;
+	}
+}
+
+static Preference1D<float> g_fLifePercentChange( LifePercentChangeInit, NUM_ScoreEvent );
+
 static ThemeMetric<float> METER_WIDTH		("LifeMeterBar","MeterWidth");
 static ThemeMetric<float> METER_HEIGHT		("LifeMeterBar","MeterHeight");
 static ThemeMetric<float> DANGER_THRESHOLD	("LifeMeterBar","DangerThreshold");
@@ -125,13 +145,13 @@ void LifeMeterBar::ChangeLife( TapNoteScore score )
 	switch( score )
 	{
 	default:	ASSERT(0);
-	case TNS_W1:		fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_W1];			break;
-	case TNS_W2:		fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_W2];			break;
-	case TNS_W3:		fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_W3];			break;
-	case TNS_W4:		fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_W4];			break;
-	case TNS_W5:		fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_W5];			break;
-	case TNS_Miss:		fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_Miss];		break;
-	case TNS_HitMine:	fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_HitMine];	break;
+	case TNS_W1:		fDeltaLife = g_fLifePercentChange[SE_W1];			break;
+	case TNS_W2:		fDeltaLife = g_fLifePercentChange[SE_W2];			break;
+	case TNS_W3:		fDeltaLife = g_fLifePercentChange[SE_W3];			break;
+	case TNS_W4:		fDeltaLife = g_fLifePercentChange[SE_W4];			break;
+	case TNS_W5:		fDeltaLife = g_fLifePercentChange[SE_W5];			break;
+	case TNS_Miss:		fDeltaLife = g_fLifePercentChange[SE_Miss];		break;
+	case TNS_HitMine:	fDeltaLife = g_fLifePercentChange[SE_HitMine];	break;
 	}
 	if( IsHot()  &&  score < TNS_W4 )
 		fDeltaLife = -0.10f;		// make it take a while to get back to "hot"
@@ -164,8 +184,8 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 	case SongOptions::DRAIN_NORMAL:
 		switch( score )
 		{
-		case HNS_Held:	fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_Held];	break;
-		case HNS_LetGo:	fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_LetGo];	break;
+		case HNS_Held:	fDeltaLife = g_fLifePercentChange[SE_Held];	break;
+		case HNS_LetGo:	fDeltaLife = g_fLifePercentChange[SE_LetGo];	break;
 		default:
 			ASSERT(0);
 		}
@@ -176,7 +196,7 @@ void LifeMeterBar::ChangeLife( HoldNoteScore score, TapNoteScore tscore )
 		switch( score )
 		{
 		case HNS_Held:	fDeltaLife = +0.000f;	break;
-		case HNS_LetGo:	fDeltaLife = PREFSMAN->m_fLifePercentChange[SE_LetGo];	break;
+		case HNS_LetGo:	fDeltaLife = g_fLifePercentChange[SE_LetGo];	break;
 		default:
 			ASSERT(0);
 		}

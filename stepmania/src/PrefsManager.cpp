@@ -102,42 +102,6 @@ void TimingWindowSecondsInit( size_t /*TimingWindow*/ i, CString &sNameOut, floa
 	}
 }
 
-void LifePercentChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, float &defaultValueOut )
-{
-	sNameOut = "LifePercentChange" + ScoreEventToString( (ScoreEvent)i );
-	switch( i )
-	{
-	default:	ASSERT(0);
-	case SE_W1:			defaultValueOut = +0.008f;	break;
-	case SE_W2:			defaultValueOut = +0.008f;	break;
-	case SE_W3:			defaultValueOut = +0.004f;	break;
-	case SE_W4:			defaultValueOut = +0.000f;	break;
-	case SE_W5:			defaultValueOut = -0.040f;	break;
-	case SE_Miss:		defaultValueOut = -0.080f;	break;
-	case SE_HitMine:	defaultValueOut = -0.160f;	break;
-	case SE_Held:		defaultValueOut = +0.008f;	break;
-	case SE_LetGo:		defaultValueOut = -0.080f;	break;
-	}
-}
-
-void TugMeterPercentChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, float &defaultValueOut )
-{
-	sNameOut = "TugMeterPercentChange" + ScoreEventToString( (ScoreEvent)i );
-	switch( i )
-	{
-	default:	ASSERT(0);
-	case SE_W1:			defaultValueOut = +0.010f;	break;
-	case SE_W2:			defaultValueOut = +0.008f;	break;
-	case SE_W3:			defaultValueOut = +0.004f;	break;
-	case SE_W4:			defaultValueOut = +0.000f;	break;
-	case SE_W5:			defaultValueOut = -0.010f;	break;
-	case SE_Miss:		defaultValueOut = -0.020f;	break;
-	case SE_HitMine:	defaultValueOut = -0.040f;	break;
-	case SE_Held:		defaultValueOut = +0.008f;	break;
-	case SE_LetGo:		defaultValueOut = -0.020f;	break;
-	}
-}
-
 void PercentScoreWeightInit( size_t /*ScoreEvent*/ i, CString &sNameOut, int &defaultValueOut )
 {
 	sNameOut = "PercentScoreWeight" + ScoreEventToString( (ScoreEvent)i );
@@ -255,8 +219,6 @@ PrefsManager::PrefsManager() :
 	m_fTimingWindowSeconds(	TimingWindowSecondsInit, NUM_TimingWindow ),
 
 	m_fLifeDifficultyScale				( "LifeDifficultyScale",				1.0f ),
-	m_fLifePercentChange( LifePercentChangeInit, NUM_ScoreEvent ),
-	m_fTugMeterPercentChange( TugMeterPercentChangeInit, NUM_ScoreEvent ),
 
 
 	m_iRegenComboAfterFail			( "RegenComboAfterFail",			10 ),

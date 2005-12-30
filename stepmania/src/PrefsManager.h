@@ -86,11 +86,7 @@ public:
 	Preference1D<float>	m_fTimingWindowSeconds;
 
 	Preference<float>	m_fLifeDifficultyScale;
-	Preference1D<float>	m_fLifePercentChange;
 
-	// tug meter used in rave
-	Preference1D<float>	m_fTugMeterPercentChange;
-	
 	// Whoever added these: Please add a comment saying what they do. -Chris
 	Preference<int>		m_iRegenComboAfterFail;
 	Preference<int>		m_iRegenComboAfterMiss;

@@ -8,6 +8,25 @@
 
 ThemeMetric<float> METER_WIDTH		("CombinedLifeMeterTug","MeterWidth");
 
+static void TugMeterPercentChangeInit( size_t /*ScoreEvent*/ i, CString &sNameOut, float &defaultValueOut )
+{
+	sNameOut = "TugMeterPercentChange" + ScoreEventToString( (ScoreEvent)i );
+	switch( i )
+	{
+	default:	ASSERT(0);
+	case SE_W1:			defaultValueOut = +0.010f;	break;
+	case SE_W2:			defaultValueOut = +0.008f;	break;
+	case SE_W3:			defaultValueOut = +0.004f;	break;
+	case SE_W4:			defaultValueOut = +0.000f;	break;
+	case SE_W5:			defaultValueOut = -0.010f;	break;
+	case SE_Miss:		defaultValueOut = -0.020f;	break;
+	case SE_HitMine:	defaultValueOut = -0.040f;	break;
+	case SE_Held:		defaultValueOut = +0.008f;	break;
+	case SE_LetGo:		defaultValueOut = -0.020f;	break;
+	}
+}
+
+static Preference1D<float> g_fTugMeterPercentChange( TugMeterPercentChangeInit, NUM_ScoreEvent );
 
 CombinedLifeMeterTug::CombinedLifeMeterTug() 
 {
@@ -47,13 +66,13 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, TapNoteScore score )
 	float fPercentToMove = 0;
 	switch( score )
 	{
-	case TNS_W1:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_W1];		break;
-	case TNS_W2:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_W2];		break;
-	case TNS_W3:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_W3];		break;
-	case TNS_W4:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_W4];		break;
-	case TNS_W5:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_W5];		break;
-	case TNS_Miss:		fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_Miss];	break;
-	case TNS_HitMine:	fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_HitMine]; break;
+	case TNS_W1:		fPercentToMove = g_fTugMeterPercentChange[SE_W1];		break;
+	case TNS_W2:		fPercentToMove = g_fTugMeterPercentChange[SE_W2];		break;
+	case TNS_W3:		fPercentToMove = g_fTugMeterPercentChange[SE_W3];		break;
+	case TNS_W4:		fPercentToMove = g_fTugMeterPercentChange[SE_W4];		break;
+	case TNS_W5:		fPercentToMove = g_fTugMeterPercentChange[SE_W5];		break;
+	case TNS_Miss:		fPercentToMove = g_fTugMeterPercentChange[SE_Miss];	break;
+	case TNS_HitMine:	fPercentToMove = g_fTugMeterPercentChange[SE_HitMine]; break;
 	default:	ASSERT(0);	break;
 	}
 
@@ -65,8 +84,8 @@ void CombinedLifeMeterTug::ChangeLife( PlayerNumber pn, HoldNoteScore score, Tap
 	float fPercentToMove = 0;
 	switch( score )
 	{
-	case HNS_Held:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_Held];	break;
-	case HNS_LetGo:			fPercentToMove = PREFSMAN->m_fTugMeterPercentChange[SE_LetGo];	break;
+	case HNS_Held:			fPercentToMove = g_fTugMeterPercentChange[SE_Held];	break;
+	case HNS_LetGo:			fPercentToMove = g_fTugMeterPercentChange[SE_LetGo];	break;
 	default:	ASSERT(0);	break;
 	}
 
