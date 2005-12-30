@@ -187,6 +187,9 @@ void GameLoop()
 			usleep( 1000 );	// give some time to other processes and threads
 #endif
 	}
+
+	if( ChangeAppPri() )
+		HOOKS->UnBoostPriority();
 }
 
 class ConcurrentRenderer
