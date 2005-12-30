@@ -1,8 +1,7 @@
 /*
  * This manager has several distinct purposes:
  *
- * Load and handle with the sound driver.
- * Handle most communication between the sound driver and RageSound.
+ * Load the sound driver, and handle most communication between it and RageSound.
  * Factory and reference count RageSoundReader objects for RageSound.
  * User-level:
  *  - global volume management
