@@ -441,7 +441,7 @@ void PrefsManager::RestoreGamePrefs()
 {
 	ASSERT( !m_sCurrentGame.Get().empty() )
 
-	// save off old values
+	// load prefs
 	map<CString, GamePrefs>::const_iterator iter = m_mapGameNameToGamePrefs.find( m_sCurrentGame );
 	if( iter == m_mapGameNameToGamePrefs.end() )
 		return;
