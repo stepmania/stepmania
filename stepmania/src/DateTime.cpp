@@ -18,7 +18,7 @@ void DateTime::Init()
 
 bool DateTime::operator<( const DateTime& other ) const
 {
-#define COMPARE( v ) if(v<other.v) return true; if(v>other.v) return false;
+#define COMPARE( v ) if(v!=other.v) return v<other.v;
 	COMPARE( tm_year );
 	COMPARE( tm_mon );
 	COMPARE( tm_mday );
