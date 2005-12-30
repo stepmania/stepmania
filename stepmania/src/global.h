@@ -29,6 +29,8 @@
 /* Define standard endianness macros, if they're missing. */
 #if defined(HAVE_ENDIAN_H)
 #include <endian.h>
+#elif defined(HAVE_MACHINE_ENDIAN_H)
+#include <machine/endian.h>
 #else
 #define LITTLE_ENDIAN 1234
 #define BIG_ENDIAN 4321

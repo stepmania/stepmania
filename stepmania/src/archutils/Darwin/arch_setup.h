@@ -10,11 +10,8 @@ typedef signed long        SInt32;
 typedef signed long long   SInt64;
 typedef unsigned long long UInt64;
 
-#define __MACTYPES__
-#include <libkern/OSByteOrder.h>
-#undef __MACTYPES__
-#define BACKTRACE_LOOKUP_METHOD_DARWIN_DYLD
-#define BACKTRACE_METHOD_POWERPC_DARWIN
+#include <CarbonCore/Endian.h>
+
 #define HAVE_VERSION_INFO
 #define HAVE_CXA_DEMANGLE
 #define HAVE_CRYPTOPP
@@ -22,14 +19,21 @@ typedef unsigned long long UInt64;
 #define HAVE_FFMPEG
 #define HAVE_SDL
 #define HAVE_PTHREAD_COND_TIMEDWAIT
-#define CRASH_HANDLER
+
+/* We have <machine/endian.h> which gets pulled in when we use gcc 4.0's <cstdlib>
+ * but no <endian.h>. The definitions of LITTLE_ENDIAN, BIG_ENDIAN and end up conflicting
+ * even though they resolve to the same thing (bug in gcc?). */
+#define HAVE_MACHINE_ENDIAN_H
+
 // Looking ahead to "Universal binaries."
-#ifdef __BIG_ENDIAN__
+#ifdef __ppc__
 # define ENDIAN_BIG
+# define BACKTRACE_LOOKUP_METHOD_DARWIN_DYLD
+# define BACKTRACE_METHOD_POWERPC_DARWIN
+# define CRASH_HANDLER
 #else
 # define ENDIAN_LITTLE
 #endif
-#define ENDIAN_BIG
 
 #ifndef MACOSX
 # define MACOSX
@@ -37,43 +41,55 @@ typedef unsigned long long UInt64;
 #ifndef __MACOSX__
 # define __MACOSX__
 #endif
-#define ArchSwap32(n) OSSwapInt32((n))
-#define ArchSwap24(n) (OSSwapInt32((n)) >> 8)
-#define ArchSwap16(n) OSSwapInt16((n))
+
+// EndianX_Swap() will use the constant swapper macro if n is a compile time constant
+#define ArchSwap32(n) Endian32_Swap(n)
+#define ArchSwap24(n) (Endian32_Swap(n) >> 8)
+#define ArchSwap16(n) Endian16_Swap(n)
 #define HAVE_BYTE_SWAPS
 
 #include <bits/c++config.h>
-#if ! _GLIBCPP_HAVE_POWF
+// This is very annoying. The 10.2.8 SDK uses GLIBCPP but the 10.4u SDK uses GLIBCXX
+#if __GLIBCPP__
+# define GLIB_PREFIX _GLIBCPP_
+#elif __GLIBCXX__
+# define GLIB_PREFIX _GLIBCXX_
+#else
+# error Neither __GLIBCPP__ nor __GLIBCXX__ was defined.
+#endif
+#define CHECK(x) (GLIB_PREFIX ## x)
+
+#if ! CHECK(HAVE_POWF)
 # define NEED_POWF
 #endif
 
-#if ! _GLIBCPP_HAVE_SQRTF
+#if ! CHECK(HAVE_SQRTF)
 # define NEED_SQRTF
 #endif
 
-#if ! _GLIBCPP_HAVE_SINF
+#if ! CHECK(HAVE_SINF)
 # define NEED_SINF
 #endif
 
-#if ! _GLIBCPP_HAVE_TANF
+#if ! CHECK(HAVE_TANF)
 # define NEED_TANF
 #endif
 
-#if ! _GLIBCPP_HAVE_COSF
+#if ! CHECK(HAVE_COSF)
 # define NEED_COSF
 #endif
 
-#if ! _GLIBCPP_HAVE_ACOSF
+#if ! CHECK(HAVE_ACOSF)
 # define NEED_ACOSF
 #endif
 
-#if ! _GLIBCPP_HAVE_STRTOF
+#if ! CHECK(HAVE_STRTOF)
 # define NEED_STRTOF
 #endif
 
 // Define the work around if needed.
 #include <stdint.h>
-#if _GLIBCPP_USE_C99
+#if CHECK(USE_C99)
 # define NEED_CSTDLIB_WORKAROUND
 #else
 inline int64_t llabs( int64_t x ) { return x < 0LL ? -x : x; }
@@ -103,7 +119,7 @@ typedef int socklen_t;
                       __isnan  ( x ) )
 #endif
 
-#if ! _GLIBCPP_USE_WCHAR_T
+#if ! CHECK(USE_WCHAR_T)
 #include <string>
 
 extern "C"
@@ -173,6 +189,10 @@ namespace std
 	typedef basic_string<wchar_t> wstring;
 }
 #endif
+
+// Cleanup macros
+#undef GLIB_PREFIX
+#undef CHECK
 
 #endif
 
