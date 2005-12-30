@@ -64,7 +64,7 @@ void ScreenJukebox::SetSong()
 		}
 	}
 
-	ASSERT( !vDifficultiesToShow.empty() )
+	ASSERT( !vDifficultiesToShow.empty() );
 
 	//
 	// Search for a Song and Steps to play during the demo

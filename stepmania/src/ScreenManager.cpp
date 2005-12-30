@@ -466,7 +466,7 @@ Screen* ScreenManager::MakeNewScreen( const CString &sScreenName )
 	CString sClassName = THEME->GetMetric(sScreenName,"Class");
 	
 	map<CString,CreateScreenFn>::iterator iter = g_pmapRegistrees->find( sClassName );
-	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Screen '%s' has an invalid class '%s'",sScreenName.c_str(),sClassName.c_str()) )
+	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Screen '%s' has an invalid class '%s'",sScreenName.c_str(),sClassName.c_str()) );
 
 	this->ZeroNextUpdate();
 

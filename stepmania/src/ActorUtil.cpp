@@ -38,7 +38,7 @@ void ActorUtil::Register( const CString& sClassName, CreateActorFn pfn )
 Actor* ActorUtil::Create( const CString& sClassName, const CString& sDir, const XNode* pNode )
 {
 	map<CString,CreateActorFn>::iterator iter = g_pmapRegistrees->find( sClassName );
-	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Actor '%s' is not registered.",sClassName.c_str()) )
+	ASSERT_M( iter != g_pmapRegistrees->end(), ssprintf("Actor '%s' is not registered.",sClassName.c_str()) );
 
 	CreateActorFn pfn = iter->second;
 	return (*pfn)( sDir, pNode );

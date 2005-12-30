@@ -275,7 +275,7 @@ static void FlushGLErrors()
 #define AssertNoGLError() \
 { \
 	GLenum error = glGetError(); \
-	ASSERT_M( error == GL_NO_ERROR, GLToString(error) ) \
+	ASSERT_M( error == GL_NO_ERROR, GLToString(error) ); \
 }
 
 static void TurnOffHardwareVBO()

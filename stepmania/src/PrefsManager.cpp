@@ -428,7 +428,7 @@ void PrefsManager::SetCurrentGame( const CString &sGame )
 
 void PrefsManager::StoreGamePrefs()
 {	
-	ASSERT( !m_sCurrentGame.Get().empty() )
+	ASSERT( !m_sCurrentGame.Get().empty() );
 
 	// save off old values
 	GamePrefs &gp = m_mapGameNameToGamePrefs[m_sCurrentGame];
@@ -439,7 +439,7 @@ void PrefsManager::StoreGamePrefs()
 
 void PrefsManager::RestoreGamePrefs()
 {
-	ASSERT( !m_sCurrentGame.Get().empty() )
+	ASSERT( !m_sCurrentGame.Get().empty() );
 
 	// load prefs
 	map<CString, GamePrefs>::const_iterator iter = m_mapGameNameToGamePrefs.find( m_sCurrentGame );

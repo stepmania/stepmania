@@ -211,7 +211,7 @@ static void GetFilterToFileNames( const CString sBaseDir, const Song *pSong, set
 	if( pSong->m_sGenre.empty() )
 		return;
 
-	ASSERT( !pSong->m_sGroupName.empty() )
+	ASSERT( !pSong->m_sGroupName.empty() );
 	IniFile ini;
 	CString sPath = sBaseDir+pSong->m_sGroupName+"/"+"BackgroundMapping.ini";
 	ini.ReadFile( sPath );
