@@ -3,15 +3,14 @@
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageTextureManager.h"
-#include "RageException.h"
 #include "RageDisplay.h"
 #include "RageTypes.h"
-#include "arch/Dialog/Dialog.h"
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "RageSurfaceUtils_Zoom.h"
 #include "RageSurfaceUtils_Dither.h"
 #include "RageSurface_Load.h"
+#include "arch/Dialog/Dialog.h"
 
 static void GetResolutionFromFileName( CString sPath, int &iWidth, int &iHeight )
 {
@@ -197,8 +196,7 @@ void RageBitmapTexture::Create()
 		case 32:
 			pixfmt = PixelFormat_RGBA8;
 			break;
-		default:
-			RageException::Throw( "Invalid color depth: %d bits", actualID.iColorDepth );
+		default: FAIL_M( ssprintf("%i", actualID.iColorDepth) );
 		}
 	}
 
