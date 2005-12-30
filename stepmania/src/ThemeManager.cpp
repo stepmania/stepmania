@@ -52,12 +52,11 @@ static IniFile *g_pIniMetrics;
 // For self-registering metrics
 //
 #include "SubscriptionManager.h"
-template<>
-set<IThemeMetric*>* SubscriptionManager<IThemeMetric>::s_pSubscribers = NULL;
+static SubscriptionHandler<IThemeMetric> g_Subscribers;
 
 void ThemeManager::Subscribe( IThemeMetric *p )
 {
-	SubscriptionManager<IThemeMetric>::Subscribe( p );
+	g_Subscribers.Subscribe( p );
 
 	// It's ThemeManager's responsibility to make sure all of it's subscribers
 	// are updated with current data.  If a metric is created after 
@@ -69,7 +68,7 @@ void ThemeManager::Subscribe( IThemeMetric *p )
 
 void ThemeManager::Unsubscribe( IThemeMetric *p )
 {
-	SubscriptionManager<IThemeMetric>::Unsubscribe( p );
+	g_Subscribers.Unsubscribe( p );
 }
 
 
@@ -318,7 +317,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	}
 
 	// reload subscribers
-	FOREACHS_CONST( IThemeMetric*, *SubscriptionManager<IThemeMetric>::s_pSubscribers, p )
+	FOREACHS_CONST( IThemeMetric*, *g_Subscribers.m_pSubscribers, p )
 		(*p)->Read();
 }
 
