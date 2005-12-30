@@ -21,9 +21,10 @@
 #include "NoteField.h"
 #include "NoteFieldPositioning.h"
 #include "NoteDataUtil.h"
-#include "ScreenGameplay.h" /* for SM_ComboStopped */
+#include "ScreenMessage.h"
 #include "ScreenManager.h"
 #include "StageStats.h"
+#include "ActorUtil.h"
 #include "ArrowEffects.h"
 #include "Game.h"
 #include "NetworkSyncManager.h"	//used for sending timing offset
@@ -38,6 +39,7 @@
 #include "ProfileManager.h"
 #include "Profile.h"
 #include "StatsManager.h"
+#include "song.h"
 #include "Steps.h"
 #include "GameCommand.h"
 #include "LocalizedString.h"
