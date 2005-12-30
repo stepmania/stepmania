@@ -1,6 +1,5 @@
 #include "global.h"
 #include "RageUtil.h"
-#include "StepMania.h"
 #include "archutils/Unix/EmergencyShutdown.h"
 #include <unistd.h>
 #include <assert.h>

@@ -1,6 +1,5 @@
 #include "global.h"
 #include "archutils/Xbox/GraphicsWindow.h"
-#include "StepMania.h"
 #include "ProductInfo.h"
 #include "RageLog.h"
 #include "RageUtil.h"
