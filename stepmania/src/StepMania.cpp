@@ -293,10 +293,9 @@ void StepMania::ResetGame()
 	if( !THEME->DoesThemeExist( THEME->GetCurThemeName() ) )
 	{
 		CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
-		if( THEME->DoesThemeExist( sGameName ) )
-			THEME->SwitchThemeAndLanguage( sGameName, THEME->GetCurLanguage() );
-		else
-			THEME->SwitchThemeAndLanguage( "default", THEME->GetCurLanguage() );
+		if( !THEME->DoesThemeExist(sGameName) )
+			sGameName = "default";
+		THEME->SwitchThemeAndLanguage( "default", THEME->GetCurLanguage() );
 		TEXTUREMAN->DoDelayedDelete();
 	}
 
