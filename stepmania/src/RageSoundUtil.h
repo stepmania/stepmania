@@ -1,4 +1,4 @@
-/* RageSoundUtil - simple utilities that operate on sound buffers */
+/* RageSoundUtil - simple utilities that operate on sound buffers. */
 
 #ifndef RAGE_SOUND_UTIL_H
 #define RAGE_SOUND_UTIL_H
