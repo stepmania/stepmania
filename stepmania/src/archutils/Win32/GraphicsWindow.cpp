@@ -6,7 +6,7 @@
 #include "RageUtil.h"
 #include "RageDisplay.h"
 #include "DisplayResolutions.h"
-#include "arch/ArchHooks/ArchHooks_Win32.h"
+#include "arch/ArchHooks/ArchHooks.h"
 #include "archutils/Win32/AppInstance.h"
 #include "archutils/Win32/WindowIcon.h"
 #include "archutils/Win32/GetFileInformation.h"
@@ -60,9 +60,8 @@ LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WP
 		const bool bInactive = (LOWORD(wParam) == WA_INACTIVE);
 		const bool bMinimized = (HIWORD(wParam) != 0);
 		const bool bHadFocus = g_bHasFocus;
-		LOG->Trace("WM_ACTIVATE (%i, %i)",
-			bInactive, bMinimized );
 		g_bHasFocus = !bInactive && !bMinimized;
+		LOG->Trace( "WM_ACTIVATE (%i, %i): %s", bInactive, bMinimized, g_bHasFocus? "has focus":"doesn't have focus" );
 		if( !g_bHasFocus )
 		{
 			CString sName = GetNewWindow();
@@ -457,7 +456,7 @@ void GraphicsWindow::Update()
 		DispatchMessage( &msg );
 	}
 
-	StepMania::FocusChanged( g_bHasFocus );
+	HOOKS->SetHasFocus( g_bHasFocus );
 
 	if( g_bResolutionChanged && DISPLAY != NULL )
 	{

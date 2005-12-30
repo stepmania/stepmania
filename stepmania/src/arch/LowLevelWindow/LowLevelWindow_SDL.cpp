@@ -3,7 +3,6 @@
 #include "SDL_utils.h"
 #include "RageLog.h"
 #include "RageDisplay.h" // for REFRESH_DEFAULT
-#include "StepMania.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "DisplayResolutions.h"
 
@@ -215,7 +214,7 @@ void LowLevelWindow_SDL::Update()
 			{
 				uint8_t i = SDL_GetAppState();
 				LOG->Trace( "SDL_GetAppState: %i", i );
-				StepMania::FocusChanged( i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE );
+				HOOKS->SetHasFocus( i&SDL_APPINPUTFOCUS && i&SDL_APPACTIVE );
 			}
 			break;
 		case SDL_QUIT:
