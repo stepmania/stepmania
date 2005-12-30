@@ -2,13 +2,18 @@
 #include "RageException.h"
 #include "RageUtil.h"
 #include "RageLog.h"
-#include "StepMania.h"
 
 #include <cstdarg>
 
 #if defined(_WINDOWS) && defined(DEBUG)
 #include <windows.h>
 #endif
+
+static void (*g_CleanupHandler)( const RString &sError ) = NULL;
+void RageException::SetCleanupHandler( void (*pHandler)(const RString &sError) )
+{
+	g_CleanupHandler = pHandler;
+}
 
 /* This is no longer actually implemented by throwing an exception, but it acts
  * the same way to code in practice. */
@@ -42,7 +47,10 @@ void RageException::Throw(const char *fmt, ...)
 		DebugBreak();
 #endif
 
-	StepMania::HandleException( error );
+	if( g_CleanupHandler != NULL )
+		g_CleanupHandler( error );
+
+	exit(1);
 }
 
 /*

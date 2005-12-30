@@ -270,9 +270,7 @@ void ShutdownGame()
 	SAFE_DELETE( HOOKS );
 }
 
-/* Cleanly shut down, show a dialog and exit the game.  We don't go back
- * up the call stack, to avoid having to use exceptions. */
-void NORETURN StepMania::HandleException( RString error )
+static void HandleException( const RString &sError )
 {
 	if( g_bAutoRestart )
 		HOOKS->RestartProgram();
@@ -281,9 +279,7 @@ void NORETURN StepMania::HandleException( RString error )
 	ShutdownGame();
 
 	/* Throw up a pretty error dialog. */
-	Dialog::Error( error );
-
-	exit(1);
+	Dialog::Error( sError );
 }
 	
 void StepMania::ResetGame()
@@ -896,6 +892,7 @@ int main(int argc, char* argv[])
 #endif
 	
 	RageThreadRegister thread( "Main thread" );
+	RageException::SetCleanupHandler( HandleException );
 	
 	SetCommandlineArguments( argc, argv );
 

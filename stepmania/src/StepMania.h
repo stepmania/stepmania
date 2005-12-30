@@ -14,7 +14,6 @@ int main( int argc, char* argv[] );
 namespace StepMania
 {
 	void ApplyGraphicOptions();
-	void NORETURN HandleException( CString error );
 	void ResetGame();
 	void ChangeCurrentGame( const Game* g );
 
