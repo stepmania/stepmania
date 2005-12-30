@@ -32,6 +32,9 @@ LocalizedString::LocalizedString( const RString &sSection, const RString &sName 
 	m_sName = sName;
 
 	SubscriptionManager<LocalizedString>::Subscribe( this );
+
+	if( g_pfnLocalizer != NULL )
+		Refresh();
 }
 
 
