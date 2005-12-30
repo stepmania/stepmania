@@ -7,8 +7,6 @@
 #include "archutils/Darwin/Crash.h"
 #include "archutils/Unix/CrashHandler.h"
 #include "archutils/Unix/SignalHandler.h"
-#include "StepMania.h"
-#include "GameLoop.h"
 #include "ProductInfo.h"
 #include <Carbon/Carbon.h>
 #include <CoreFoundation/CoreFoundation.h>
