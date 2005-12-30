@@ -65,7 +65,6 @@
 #include "PrefsManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
-#include "GameState.h"
 #include "GameSoundManager.h"
 #include "RageDisplay.h"
 #include "SongManager.h"
