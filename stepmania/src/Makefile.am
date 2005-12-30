@@ -434,6 +434,7 @@ all_test_SOURCES = \
 		DateTime.cpp DateTime.h \
 		PrefsManager.cpp PrefsManager.h \
 		Preference.cpp Preference.h \
+		LocalizedString.cpp LocalizedString.h \
 		LuaBinding.cpp LuaBinding.h \
 		LuaFunctions.h \
 		LuaManager.cpp LuaManager.h \
