@@ -50,7 +50,7 @@ void test_init()
 	FILEMAN->Mount( "dir", RageFileManagerUtil::sInitialWorkingDirectory, "/" );
 	FILEMAN->Mount( g_Driver, g_Root, "/" );
 
-	LOG = new RageLog();
+	LOG = new RageLog;
 	LOG->SetLogToDisk( false );
 	LOG->SetShowLogOutput( true );
 	LOG->SetFlushing( true );
