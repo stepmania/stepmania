@@ -49,12 +49,6 @@ static const CString ScoreEventNames[] = {
 XToString( ScoreEvent, NUM_ScoreEvent );
 
 
-// XXX deprecated
-IPreference *PrefsManager::GetPreferenceByName( const CString &sName )
-{
-	return IPreference::GetPreferenceByName( sName );
-}
-
 bool g_bAutoRestart = false;
 #ifdef DEBUG
 # define TRUE_IF_DEBUG true
@@ -582,7 +576,7 @@ public:
 	static int GetPreference( T* p, lua_State *L )
 	{
 		CString sName = SArg(1);
-		IPreference *pPref = PREFSMAN->GetPreferenceByName( sName );
+		IPreference *pPref = IPreference::GetPreferenceByName( sName );
 		if( pPref == NULL )
 		{
 			LOG->Warn( "GetPreference: unknown preference \"%s\"", sName.c_str() );
@@ -598,7 +592,7 @@ public:
 	{
 		CString sName = SArg(1);
 
-		IPreference *pPref = PREFSMAN->GetPreferenceByName( sName );
+		IPreference *pPref = IPreference::GetPreferenceByName( sName );
 		if( pPref == NULL )
 		{
 			LOG->Warn( "GetPreference: unknown preference \"%s\"", sName.c_str() );
