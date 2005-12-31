@@ -4,14 +4,10 @@
 #include "RageLog.h"
 #include "RageThreads.h"
 #include "ProductInfo.h"
-#include "PrefsManager.h"
 #include "archutils/win32/AppInstance.h"
 #include "archutils/win32/crash.h"
 #include "archutils/win32/DebugInfoHunt.h"
-#include "archutils/win32/GotoURL.h"
 #include "archutils/win32/RestartProgram.h"
-#include "archutils/win32/VideoDriverInfo.h"
-#include "archutils/win32/WindowsResources.h"
 
 static HANDLE g_hInstanceMutex;
 static bool g_bIsMultipleInstance = false;
@@ -47,8 +43,6 @@ void ArchHooks_Win32::DumpDebugInfo()
 	/* This is a good time to do the debug search: before we actually
 	 * start OpenGL (in case something goes wrong). */
 	SearchForDebugInfo();
-
-	CheckVideoDriver();
 }
 
 struct CallbackData
@@ -101,89 +95,6 @@ bool ArchHooks_Win32::CheckForMultipleInstances()
 
 	return true;
 }
-
-static CString g_sDriverVersion, g_sURL;
-static bool g_Hush;
-static BOOL CALLBACK DriverWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
-{
-	switch( msg )
-	{
-	case WM_INITDIALOG:
-		{
-			g_Hush = false;
-			CString sMessage = ssprintf(
-				"The graphics drivers you are running, %s, are very old and are known "
-				"to cause problems.  Upgrading to the latest drivers is recommended.\n",
-					g_sDriverVersion.c_str() );
-
-			sMessage.Replace( "\n", "\r\n" );
-
-			SendDlgItemMessage( hWnd, IDC_MESSAGE, WM_SETTEXT, 
-				0, (LPARAM)(LPCTSTR)sMessage );
-		}
-		break;
-	case WM_COMMAND:
-		switch (LOWORD(wParam))
-		{
-		case IDOK:
-			g_Hush = !!IsDlgButtonChecked(hWnd, IDC_HUSH);
-			GotoURL( g_sURL );
-			EndDialog( hWnd, 1 );
-			break;
-
-		case IDCANCEL:
-			g_Hush = !!IsDlgButtonChecked(hWnd, IDC_HUSH);
-			EndDialog( hWnd, 0 );
-			break;
-		}
-	}
-	return FALSE;
-}
-
-/*
- * This simply does a few manual checks for known bad driver versions.  Only nag the
- * user if it's a driver that we receive many complaints about--we don't want to
- * tell users to upgrade if there's no problem, since it's likely to cause new problems.
- */
-void ArchHooks_Win32::CheckVideoDriver()
-{
-	if( PREFSMAN->MessageIsIgnored( "OLD_DRIVER_WARNING" ) )
-		return;
-
-	CString sPrimaryDeviceName = GetPrimaryVideoName();
-	if( sPrimaryDeviceName == "" )
-		return;
-
-	g_sDriverVersion = "";
-	for( int i=0; true; i++ )
-	{
-		VideoDriverInfo info;
-		if( !GetVideoDriverInfo(i, info) )
-			break;
-		if( info.sDescription != sPrimaryDeviceName )
-			continue;
-
-		/* "IntelR 810 Chipset Graphics Driver PV 2.1".  There are a lot of crash reports
-		 * with people using this version. */
-		if( Regex( "Intel.* 810 Chipset Graphics Driver PV 2.1").Compare( info.sDescription ) )
-		{
-			g_sDriverVersion = info.sDescription;
-			g_sURL = "http://www.intel.com/design/software/drivers/platform/810.htm";
-			break;
-		}
-	}
-
-	if( g_sDriverVersion == "" )
-		return;
-
-	bool bExit = !!DialogBox( AppInstance(), MAKEINTRESOURCE(IDD_DRIVER), NULL, DriverWndProc );
-
-	if( g_Hush )
-		PREFSMAN->IgnoreMessage( "OLD_DRIVER_WARNING" );
-	if( bExit )
-		ExitProcess(0);
-}
-
 
 void ArchHooks_Win32::RestartProgram()
 {
