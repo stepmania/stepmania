@@ -49,32 +49,10 @@ static const CString ScoreEventNames[] = {
 XToString( ScoreEvent, NUM_ScoreEvent );
 
 
-//
-// For self-registering prefs
-//
-#include "SubscriptionManager.h"
-template<>
-set<IPreference*>* SubscriptionManager<IPreference>::s_pSubscribers = NULL;
-
-void PrefsManager::Subscribe( IPreference *p )
-{
-	SubscriptionManager<IPreference>::Subscribe( p );
-}
-
-void PrefsManager::Unsubscribe( IPreference *p )
-{
-	SubscriptionManager<IPreference>::Unsubscribe( p );
-}
-
+// XXX deprecated
 IPreference *PrefsManager::GetPreferenceByName( const CString &sName )
 {
-	FOREACHS( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
-	{
-		if( !(*p)->GetName().CompareNoCase( sName ) )
-			return *p;
-	}
-
-	return NULL;
+	return IPreference::GetPreferenceByName( sName );
 }
 
 bool g_bAutoRestart = false;
@@ -364,8 +342,7 @@ PrefsManager::PrefsManager() :
 
 void PrefsManager::Init()
 {
-	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
-		(*p)->LoadDefault();
+	IPreference::LoadAllDefaults();
 
 	m_mapGameNameToGamePrefs.clear();
 }
@@ -466,8 +443,7 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const CString &sSection
 	//	}
 	//	pPref->FromString( sVal );
 
-	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
-		(*p)->ReadFrom( ini, sSection );
+	IPreference::ReadAllPrefsFromIni( ini, sSection );
 
 	// validate
 	m_iSongsPerPlay.Set( clamp(m_iSongsPerPlay.Get(),0,MAX_SONGS_PER_PLAY) );
@@ -506,8 +482,7 @@ void PrefsManager::SavePrefsToIni( IniFile &ini )
 	if( !m_sCurrentGame.Get().empty() )
 		StoreGamePrefs();
 
-	FOREACHS_CONST( IPreference*, *SubscriptionManager<IPreference>::s_pSubscribers, p )
-		(*p)->WriteTo( ini );
+	IPreference::SavePrefsToIni( ini );
 
 	FOREACHM_CONST( CString, GamePrefs, m_mapGameNameToGamePrefs, iter )
 	{

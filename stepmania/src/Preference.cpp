@@ -1,21 +1,52 @@
 #include "global.h"
 #include "Preference.h"
-#include "PrefsManager.h"
 #include "IniFile.h"
 #include "RageLog.h"
 #include "LuaFunctions.h"
 #include "LuaManager.h"
 #include "MessageManager.h"
+#include "SubscriptionManager.h"
+
+static SubscriptionHandler<IPreference> m_Subscribers;
 
 IPreference::IPreference( const CString& sName ):
 	m_sName( sName )
 {
-	PrefsManager::Subscribe( this );
+	m_Subscribers.Subscribe( this );
 }
 
 IPreference::~IPreference()
 {
-	PrefsManager::Unsubscribe( this );
+	m_Subscribers.Unsubscribe( this );
+}
+
+IPreference *IPreference::GetPreferenceByName( const CString &sName )
+{
+	FOREACHS( IPreference*, *m_Subscribers.m_pSubscribers, p )
+	{
+		if( !(*p)->GetName().CompareNoCase( sName ) )
+			return *p;
+	}
+
+	return NULL;
+}
+
+void IPreference::LoadAllDefaults()
+{
+	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
+		(*p)->LoadDefault();
+}
+
+void IPreference::ReadAllPrefsFromIni( const IniFile &ini, const CString &sSection )
+{
+	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
+		(*p)->ReadFrom( ini, sSection );
+}
+
+void IPreference::SavePrefsToIni( IniFile &ini )
+{
+	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
+		(*p)->WriteTo( ini );
 }
 
 void IPreference::PushValue( lua_State *L ) const

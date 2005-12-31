@@ -278,13 +278,6 @@ public:
 	bool MessageIsIgnored( const CString &ID );
 	void IgnoreMessage( const CString &ID );
 
-	//
-	// For self-registering prefs
-	//
-	static void Subscribe( IPreference *p );
-	static void Unsubscribe( IPreference *p );
-
-
 	// Lua
 	void PushSelf( lua_State *L );
 

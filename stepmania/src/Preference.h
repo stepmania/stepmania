@@ -26,6 +26,11 @@ public:
 
 	const CString &GetName() const { return m_sName; }
 
+	static IPreference *GetPreferenceByName( const CString &sName );
+	static void LoadAllDefaults();
+	static void ReadAllPrefsFromIni( const IniFile &ini, const CString &sSection );
+	static void SavePrefsToIni( IniFile &ini );
+
 protected:
 	CString		m_sName;
 };
