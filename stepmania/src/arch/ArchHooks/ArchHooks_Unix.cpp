@@ -220,7 +220,7 @@ void ArchHooks_Unix::SetTime( tm newtime )
 #include <sys/stat.h>
 
 static LocalizedString COULDNT_FIND_SONGS( "ArchHooks_Unix", "Couldn't find 'Songs'" );
-void ArchHooks_Unix::MountInitialFilesystems( const CString &sDirOfExecutable )
+void ArchHooks::MountInitialFilesystems( const CString &sDirOfExecutable )
 {
 #if defined(LINUX)
 	/* Mount the root filesystem, so we can read files in /proc, /etc, and so on.
