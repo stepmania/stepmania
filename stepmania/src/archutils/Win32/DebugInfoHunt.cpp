@@ -8,7 +8,7 @@
 #include <mmsystem.h>
 
 
-void LogVideoDriverInfo( VideoDriverInfo info )
+static void LogVideoDriverInfo( VideoDriverInfo info )
 {
 	LOG->Info( "Video driver: %s [%s]", info.sDescription.c_str(), info.sProvider.c_str() );
 	LOG->Info( "              %s, %s [%s]", info.sVersion.c_str(), info.sDate.c_str(), info.sDeviceID.c_str() );
