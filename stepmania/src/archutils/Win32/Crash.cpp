@@ -164,7 +164,7 @@ bool VDDebugInfoInitFromFile( VDDebugInfoContext *pctx );
 void VDDebugInfoDeinit( VDDebugInfoContext *pctx );
 
 
-long __stdcall CrashHandler( EXCEPTION_POINTERS *pExc )
+long __stdcall CrashHandler::ExceptionHandler( EXCEPTION_POINTERS *pExc )
 {
 	/* Flush the log it isn't cut off at the end. */
 	/* 1. We can't do regular file access in the crash handler.
@@ -659,7 +659,7 @@ static bool PointsToValidCall( unsigned long ptr )
 	return IsValidCall(buf+7, len);
 }
 
-void do_backtrace( const void **buf, size_t size, 
+void CrashHandler::do_backtrace( const void **buf, size_t size, 
 						 HANDLE hProcess, HANDLE hThread, const CONTEXT *pContext )
 {
 	// Retrieve stack pointers.
@@ -949,20 +949,20 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 	return FALSE;
 }
 
-void NORETURN debug_crash()
+void NORETURN CrashHandler::debug_crash()
 {
 	__try {
 		__asm xor ebx,ebx
 		__asm mov eax,dword ptr [ebx]
 //		__asm mov dword ptr [ebx],eax
 //		__asm lock add dword ptr cs:[00000000h], 12345678h
-	} __except(CrashHandler((EXCEPTION_POINTERS*)_exception_info())) {
+	} __except(ExceptionHandler((EXCEPTION_POINTERS*)_exception_info())) {
 	}
 }
 
 /* Get a stack trace of the current thread and the specified thread.  If
  * iID == GetInvalidThreadId(), then output a stack trace for every thread. */
-void ForceCrashHandlerDeadlock( CString reason, uint64_t iID )
+void CrashHandler::ForceDeadlock( CString reason, uint64_t iID )
 {
 	strncpy( g_CrashInfo.m_CrashReason, reason, sizeof(g_CrashInfo.m_CrashReason) );
 	g_CrashInfo.m_CrashReason[ sizeof(g_CrashInfo.m_CrashReason)-1 ] = 0;
@@ -1024,7 +1024,7 @@ void ForceCrashHandlerDeadlock( CString reason, uint64_t iID )
 	debug_crash();
 }
 
-void ForceCrashHandler( const char *reason )
+void CrashHandler::ForceCrash( const char *reason )
 {
 	strncpy( g_CrashInfo.m_CrashReason, reason, sizeof(g_CrashInfo.m_CrashReason) );
 	g_CrashInfo.m_CrashReason[ sizeof(g_CrashInfo.m_CrashReason)-1 ] = 0;

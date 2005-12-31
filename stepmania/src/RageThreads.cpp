@@ -593,7 +593,7 @@ void RageMutex::Lock()
 		g_ThreadSlotsLock.Unlock();
 
 		/* Pass the crash handle of the other thread, so it can backtrace that thread. */
-		ForceCrashHandlerDeadlock( sReason, CrashHandle );
+		CrashHandler::ForceDeadlock( sReason, CrashHandle );
 #else
 		FAIL_M( sReason );
 #endif
@@ -747,7 +747,7 @@ retry:
 	const CString sReason = ssprintf( "Semaphore timeout on mutex %s on thread %s",
 		GetName().c_str(), ThisSlot? ThisSlot->GetThreadName(): "(???" ")" ); // stupid trigraph warnings
 #if defined(CRASH_HANDLER)
-	ForceCrashHandlerDeadlock( sReason, GetInvalidThreadId() );
+	CrashHandler::ForceDeadlock( sReason, GetInvalidThreadId() );
 #else
 	RageException::Throw( "%s", sReason.c_str() );
 #endif

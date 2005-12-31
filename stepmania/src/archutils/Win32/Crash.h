@@ -3,16 +3,18 @@
 #ifndef CRASH_H
 #define CRASH_H
 #include <windows.h>
-extern long __stdcall CrashHandler(struct _EXCEPTION_POINTERS *ExceptionInfo);
+namespace CrashHandler
+{
+	extern long __stdcall ExceptionHandler(struct _EXCEPTION_POINTERS *ExceptionInfo);
 
-/* Exactly as advertised.  (This will bring up the crash handler even
- * in the debugger.) */
-void NORETURN debug_crash();
+	/* Trigger the crash handler.  This works even in the debugger. */
+	void NORETURN debug_crash();
 
-void do_backtrace( const void **buf, size_t size, HANDLE hProcess, HANDLE hThread, const CONTEXT *pContext );
-void SymLookup( const void *ptr, char *buf );
-void ForceCrashHandler( const char *reason );
-void ForceCrashHandlerDeadlock( CString reason, uint64_t iID );
+	void do_backtrace( const void **buf, size_t size, HANDLE hProcess, HANDLE hThread, const CONTEXT *pContext );
+	void SymLookup( const void *ptr, char *buf );
+	void ForceCrash( const char *reason );
+	void ForceDeadlock( CString reason, uint64_t iID );
+};
 
 #endif
 /*
