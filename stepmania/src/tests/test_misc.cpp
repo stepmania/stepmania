@@ -47,7 +47,6 @@ void test_init()
 	HOOKS = MakeArchHooks();
 
 	FILEMAN = new RageFileManager( argv0 );
-	FILEMAN->Mount( "dir", RageFileManagerUtil::sInitialWorkingDirectory, "/" );
 	FILEMAN->Mount( g_Driver, g_Root, "/" );
 
 	LOG = new RageLog;
