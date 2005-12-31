@@ -7,12 +7,12 @@ bool ArchHooks::s_bQuitting = false;
 bool ArchHooks::s_bToggleWindowed = false;
 static bool g_bHasFocus = true;
 // Keep from pulling RageThreads.h into ArchHooks.h
-static RageMutex s_AHLock( "ArchHooks lock" );
+static RageMutex g_Mutex( "ArchHooks" );
 ArchHooks *HOOKS = NULL;
 
 bool ArchHooks::GetAndClearToggleWindowed()
 {
-	LockMut( s_AHLock );
+	LockMut( g_Mutex );
 	bool bToggle = s_bToggleWindowed;
 	
 	s_bToggleWindowed = false;
@@ -21,7 +21,7 @@ bool ArchHooks::GetAndClearToggleWindowed()
 
 void ArchHooks::SetToggleWindowed()
 {
-	LockMut( s_AHLock );
+	LockMut( g_Mutex );
 	s_bToggleWindowed = true;
 }
 
