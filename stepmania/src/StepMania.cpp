@@ -1065,7 +1065,7 @@ int main(int argc, char* argv[])
 
 	/* This initializes objects that change the SDL event mask, and has other
 	 * dependencies on the SDL video subsystem, so it must be initialized after DISPLAY. */
-	INPUTMAN	= new RageInput( PREFSMAN->GetInputDrivers() );
+	INPUTMAN	= new RageInput;
 
 	// These things depend on the TextureManager, so do them after!
 	FONT		= new FontManager;

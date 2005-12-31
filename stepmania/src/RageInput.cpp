@@ -4,15 +4,21 @@
 #include "RageException.h"
 #include "arch/InputHandler/InputHandler.h"
 #include "arch/arch.h"
+#include "arch/arch_default.h"
 #include "Foreach.h"
+#include "Preference.h"
 
 RageInput*		INPUTMAN	= NULL;		// globally accessable input device
 
-RageInput::RageInput( CString sDriverList )
+static Preference<CString> g_sInputDrivers( "InputDrivers", "" ); // "" == DEFAULT_INPUT_DRIVER_LIST
+
+RageInput::RageInput()
 {
 	LOG->Trace( "RageInput::RageInput()" );
 
-	m_sDriverList = sDriverList;
+	m_sDriverList = g_sInputDrivers;
+	if( m_sDriverList.empty() )
+		m_sDriverList = DEFAULT_INPUT_DRIVER_LIST;
 
 	LoadDrivers();
 }

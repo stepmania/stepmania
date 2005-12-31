@@ -298,7 +298,6 @@ PrefsManager::PrefsManager() :
 	m_iSoundWriteAhead				( "SoundWriteAhead",			0 ),
 	m_iSoundDevice					( "SoundDevice",				"" ),
 	m_iSoundPreferredSampleRate		( "SoundPreferredSampleRate",	44100 ),
-	m_sInputDrivers					( "InputDrivers",				"" ),
 	m_sLightsStepsDifficulty		( "LightsStepsDifficulty",		"medium" ),
 	m_bBlinkGameplayButtonLightsOnNote	( "BlinkGameplayButtonLightsOnNote",false ),
 	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",	false ),
@@ -512,13 +511,6 @@ float PrefsManager::GetSoundVolume()
 {
 	// return a resonable volume to that users of this method don't have to handle invalid values
 	return clamp(m_fSoundVolume.Get(),0.0f,1.0f);
-}
-
-CString PrefsManager::GetInputDrivers()	{
-	if( m_sInputDrivers.Get().empty() )
-		return (CString)DEFAULT_INPUT_DRIVER_LIST;
-	else
-		return m_sInputDrivers;
 }
 
 bool PrefsManager::MessageIsIgnored( const CString &ID )

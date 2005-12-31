@@ -11,7 +11,7 @@ class InputHandler;
 class RageInput
 {
 public:
-	RageInput( CString sDriverList );
+	RageInput();
 	~RageInput();
 
 	void LoadDrivers();

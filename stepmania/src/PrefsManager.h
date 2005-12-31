@@ -224,8 +224,6 @@ public:
 	Preference<int>		m_iSoundWriteAhead;
 	Preference<CString>	m_iSoundDevice;	
 	Preference<int>		m_iSoundPreferredSampleRate;
-private:
-	Preference<CString>	m_sInputDrivers;	// "" == default
 public:
 	Preference<CString>	m_sLightsStepsDifficulty;
 	Preference<bool>	m_bBlinkGameplayButtonLightsOnNote;
@@ -256,7 +254,6 @@ public:
 	CString GetVideoRenderers();
 	CString GetSoundDrivers();
 	float GetSoundVolume();
-	CString GetInputDrivers();
 
 
 	void ReadPrefsFromIni( const IniFile &ini, const CString &sSection );
