@@ -19,8 +19,6 @@ const CString TYPE_TXT_FILE			= "Data/Type.txt";
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
-const CString DEFAULT_LIGHTS_DRIVER = "Null";
-
 static const CString TimingWindowNames[] = {
 	"W1",
 	"W2",
@@ -301,7 +299,6 @@ PrefsManager::PrefsManager() :
 	m_iSoundDevice					( "SoundDevice",				"" ),
 	m_iSoundPreferredSampleRate		( "SoundPreferredSampleRate",	44100 ),
 	m_sInputDrivers					( "InputDrivers",				"" ),
-	m_sLightsDriver					( "LightsDriver",				"" ),
 	m_sMovieDrivers					( "MovieDrivers",				"" ),
 	m_sLightsStepsDifficulty		( "LightsStepsDifficulty",		"medium" ),
 	m_bBlinkGameplayButtonLightsOnNote	( "BlinkGameplayButtonLightsOnNote",false ),
@@ -531,14 +528,6 @@ CString PrefsManager::GetMovieDrivers()
 		return (CString)DEFAULT_MOVIE_DRIVER_LIST;
 	else
 		return m_sMovieDrivers; 
-}
-
-CString PrefsManager::GetLightsDriver()	
-{ 
-	if ( m_sLightsDriver.Get().empty() )
-		return (CString)DEFAULT_LIGHTS_DRIVER;
-	else
-		return m_sLightsDriver;
 }
 
 bool PrefsManager::MessageIsIgnored( const CString &ID )

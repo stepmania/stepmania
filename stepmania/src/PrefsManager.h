@@ -226,7 +226,6 @@ public:
 	Preference<int>		m_iSoundPreferredSampleRate;
 private:
 	Preference<CString>	m_sInputDrivers;	// "" == default
-	Preference<CString>	m_sLightsDriver;	// "" == default
 public:
 	Preference<CString>	m_sMovieDrivers;	// "" == default
 	Preference<CString>	m_sLightsStepsDifficulty;
@@ -260,7 +259,6 @@ public:
 	float GetSoundVolume();
 	CString GetInputDrivers();
 	CString GetMovieDrivers();
-	CString GetLightsDriver();
 
 
 	void ReadPrefsFromIni( const IniFile &ini, const CString &sSection );

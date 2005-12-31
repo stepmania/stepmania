@@ -17,6 +17,8 @@
 
 #include "arch/arch.h"
 
+const CString DEFAULT_LIGHTS_DRIVER = "Null";
+static Preference<CString> g_sLightsDriver( "LightsDriver", "" ); // "" == DEFAULT_LIGHTS_DRIVER
 Preference<float>	g_fLightsFalloffSeconds( "LightsFalloffSeconds", 0.1f );
 Preference<float>	g_fLightsAheadSeconds( "LightsAheadSeconds", 0.05f );
 
@@ -78,7 +80,7 @@ static void GetUsedGameInputs( vector<GameInput> &vGameInputsOut )
 
 LightsManager*	LIGHTSMAN = NULL;	// global and accessable from anywhere in our program
 
-LightsManager::LightsManager(CString sDriver)
+LightsManager::LightsManager()
 {
 	ZERO( m_fSecsLeftInCabinetLightBlink );
 	ZERO( m_fSecsLeftInGameButtonBlink );
@@ -86,6 +88,9 @@ LightsManager::LightsManager(CString sDriver)
 	ZERO( m_fSecsLeftInActorLightBlink );
 
 	m_LightsMode = LIGHTSMODE_JOINING;
+	CString sDriver = g_sLightsDriver.Get();
+	if( sDriver.empty() )
+		sDriver = DEFAULT_LIGHTS_DRIVER;
 	MakeLightsDrivers( sDriver, m_vpDrivers );
 	m_fTestAutoCycleCurrentIndex = 0;
 	m_clTestManualCycleCurrent = LIGHT_INVALID;
