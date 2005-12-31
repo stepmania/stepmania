@@ -299,7 +299,6 @@ PrefsManager::PrefsManager() :
 	m_iSoundDevice					( "SoundDevice",				"" ),
 	m_iSoundPreferredSampleRate		( "SoundPreferredSampleRate",	44100 ),
 	m_sInputDrivers					( "InputDrivers",				"" ),
-	m_sMovieDrivers					( "MovieDrivers",				"" ),
 	m_sLightsStepsDifficulty		( "LightsStepsDifficulty",		"medium" ),
 	m_bBlinkGameplayButtonLightsOnNote	( "BlinkGameplayButtonLightsOnNote",false ),
 	m_bAllowUnacceleratedRenderer	( "AllowUnacceleratedRenderer",	false ),
@@ -520,14 +519,6 @@ CString PrefsManager::GetInputDrivers()	{
 		return (CString)DEFAULT_INPUT_DRIVER_LIST;
 	else
 		return m_sInputDrivers;
-}
-
-CString PrefsManager::GetMovieDrivers()
-{ 
-	if ( m_sMovieDrivers.Get().empty() )
-		return (CString)DEFAULT_MOVIE_DRIVER_LIST;
-	else
-		return m_sMovieDrivers; 
 }
 
 bool PrefsManager::MessageIsIgnored( const CString &ID )

@@ -10,6 +10,7 @@
 #include "arch_platform.h"
 #include "Foreach.h"
 #include "LocalizedString.h"
+#include "arch/arch_default.h"
 
 #include "InputHandler/Selector_InputHandler.h"
 static LocalizedString INPUT_HANDLERS_EMPTY( "Arch", "Input Handlers cannot be empty." );
@@ -176,6 +177,7 @@ MemoryCardDriver *MakeMemoryCardDriver()
 	return ret;
 }
 
+static Preference<CString> g_sMovieDrivers( "MovieDrivers", "" ); // "" == default
 #include "MovieTexture/Selector_MovieTexture.h"
 static void DumpAVIDebugInfo( const CString& fn );
 /* Try drivers in order of preference until we find one that works. */
@@ -185,8 +187,12 @@ RageMovieTexture *MakeRageMovieTexture( RageTextureID ID )
 {
 	DumpAVIDebugInfo( ID.filename );
 
+	RString sDrivers = g_sMovieDrivers;
+	if( sDrivers.empty() )
+		sDrivers = DEFAULT_MOVIE_DRIVER_LIST;
+
 	vector<CString> DriversToTry;
-	split( PREFSMAN->GetMovieDrivers(), ",", DriversToTry, true );
+	split( sDrivers, ",", DriversToTry, true );
 	
 	if( DriversToTry.empty() )
 		RageException::Throw( MOVIE_DRIVERS_EMPTY.GetValue() );
