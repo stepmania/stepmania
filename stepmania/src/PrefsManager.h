@@ -217,14 +217,10 @@ public:
 #endif
 	Preference<CString>	m_sVideoRenderers;		// StepMania.cpp sets these on first run based on the card
 	Preference<bool>	m_bSmoothLines;
-private:
-	Preference<CString>	m_sSoundDrivers;	// "" == default
-public:
 	Preference<float>	m_fSoundVolume;
 	Preference<int>		m_iSoundWriteAhead;
 	Preference<CString>	m_iSoundDevice;	
 	Preference<int>		m_iSoundPreferredSampleRate;
-public:
 	Preference<CString>	m_sLightsStepsDifficulty;
 	Preference<bool>	m_bBlinkGameplayButtonLightsOnNote;
 	Preference<bool>	m_bAllowUnacceleratedRenderer;
@@ -251,7 +247,6 @@ public:
 
 
 	// wrappers
-	CString GetSoundDrivers();
 	float GetSoundVolume();
 
 

@@ -3,7 +3,6 @@
 #include "IniFile.h"
 #include "RageDisplay.h"
 #include "RageUtil.h"
-#include "arch/arch_default.h"
 #include "RageFile.h"
 #include "ProductInfo.h"
 #include "Foreach.h"
@@ -293,7 +292,6 @@ PrefsManager::PrefsManager() :
 #endif
 	m_sVideoRenderers				( "VideoRenderers",				"" ),	// StepMania.cpp sets these on first run:
 	m_bSmoothLines					( "SmoothLines",				false ),
-	m_sSoundDrivers					( "SoundDrivers",				"" ),
 	m_fSoundVolume					( "SoundVolume",				1.0f ),
 	m_iSoundWriteAhead				( "SoundWriteAhead",			0 ),
 	m_iSoundDevice					( "SoundDevice",				"" ),
@@ -499,14 +497,6 @@ CString PrefsManager::GetPreferencesSection() const
 
 
 // wrappers
-CString PrefsManager::GetSoundDrivers()	
-{
-	if ( m_sSoundDrivers.Get().empty() )
-		return (CString)DEFAULT_SOUND_DRIVER_LIST;
-	else
-		return m_sSoundDrivers;
-}
-
 float PrefsManager::GetSoundVolume()
 {
 	// return a resonable volume to that users of this method don't have to handle invalid values

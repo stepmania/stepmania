@@ -18,10 +18,12 @@
 #include "RageSoundReader_Preload.h"
 #include "Foreach.h"
 #include "LocalizedString.h"
+#include "Preference.h"
 
 #include "arch/Sound/RageSoundDriver.h"
 
 #include "arch/arch.h"
+#include "arch/arch_default.h"
 
 /*
  * The lock ordering requirements are:
@@ -33,6 +35,7 @@
  */
 
 static RageMutex g_SoundManMutex("SoundMan");
+static Preference<CString> g_sSoundDrivers( "SoundDrivers", "" ); // "" == DEFAULT_SOUND_DRIVER_LIST
 
 RageSoundManager *SOUNDMAN = NULL;
 
@@ -44,8 +47,12 @@ RageSoundManager::RageSoundManager()
 }
 
 static LocalizedString COULDNT_FIND_SOUND_DRIVER( "RageSoundManager", "Couldn't find a sound driver that works" );
-void RageSoundManager::Init( CString sDrivers )
+void RageSoundManager::Init()
 {
+	CString sDrivers = g_sSoundDrivers;
+	if( sDrivers.empty() )
+		sDrivers = DEFAULT_SOUND_DRIVER_LIST;
+
 	m_pDriver = MakeRageSoundDriver( sDrivers );
 	if( m_pDriver == NULL )
 		RageException::Throw( COULDNT_FIND_SOUND_DRIVER.GetValue() );
