@@ -8,6 +8,7 @@
 #include "DisplayResolutions.h"
 #include "arch/ArchHooks/ArchHooks.h"
 #include "archutils/Win32/AppInstance.h"
+#include "archutils/Win32/Crash.h"
 #include "archutils/Win32/WindowIcon.h"
 #include "archutils/Win32/GetFileInformation.h"
 
@@ -241,6 +242,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p )
 	if( g_hWndMain == NULL )
 		RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
 
+	CrashHandler::SetForegroundWindow( g_hWndMain );
 	//SetForegroundWindow( g_hWndMain );
 
 	g_HDC = GetDC( g_hWndMain );
@@ -266,6 +268,7 @@ void GraphicsWindow::RecreateGraphicsWindow( const VideoModeParams &p )
 	DestroyGraphicsWindow();
 
 	g_hWndMain = hWnd;
+	CrashHandler::SetForegroundWindow( g_hWndMain );
 	g_HDC = GetDC( g_hWndMain );
 }
 
@@ -353,6 +356,7 @@ void GraphicsWindow::DestroyGraphicsWindow()
 	{
 		DestroyWindow( g_hWndMain );
 		g_hWndMain = NULL;
+		CrashHandler::SetForegroundWindow( g_hWndMain );
 	}
 
 	if( g_hIcon != NULL )

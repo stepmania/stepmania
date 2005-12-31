@@ -11,6 +11,11 @@ namespace CrashHandler
 	void SymLookup( const void *ptr, char *buf );
 	void ForceCrash( const char *reason );
 	void ForceDeadlock( CString reason, uint64_t iID );
+
+	/* Inform the crash handler of a foreground window that may be fullscreen.  If
+	 * set, the crash handler will attempt to hide the window or reset the video
+	 * mode. */
+	void SetForegroundWindow( HWND hWnd );
 };
 
 #endif
