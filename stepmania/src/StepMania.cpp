@@ -917,7 +917,7 @@ int main(int argc, char* argv[])
 	FILEMAN->MountInitialFilesystems();
 
 	/* Set this up next.  Do this early, since it's needed for RageException::Throw. */
-	LOG			= new RageLog();
+	LOG			= new RageLog;
 
 	/* Whew--we should be able to crash safely now! */
 
