@@ -9,6 +9,10 @@
 #include "arch/arch.h"
 #include "RageThreads.h"
 
+#if !defined(SMPACKAGE)
+static Preference<CString> g_sIgnoredDialogs( "IgnoredDialogs", "" );
+#endif
+
 #include "Selector_Dialog.h"
 DialogDriver *MakeDialogDriver()
 {
@@ -77,7 +81,7 @@ static bool MessageIsIgnored( CString sID )
 {
 #if !defined(SMPACKAGE)
 	vector<CString> asList;
-	split( PREFSMAN->m_sIgnoredMessageWindows, ",", asList );
+	split( g_sIgnoredDialogs, ",", asList );
 	for( unsigned i = 0; i < asList.size(); ++i )
 		if( !sID.CompareNoCase(asList[i]) )
 			return true;
@@ -103,9 +107,9 @@ void Dialog::IgnoreMessage( CString sID )
 		return;
 
 	vector<CString> asList;
-	split( PREFSMAN->m_sIgnoredMessageWindows, ",", asList );
+	split( g_sIgnoredDialogs, ",", asList );
 	asList.push_back( sID );
-	PREFSMAN->m_sIgnoredMessageWindows.Set( join(",",asList) );
+	g_sIgnoredDialogs.Set( join(",",asList) );
 	PREFSMAN->SavePrefsToDisk();
 #endif
 }
