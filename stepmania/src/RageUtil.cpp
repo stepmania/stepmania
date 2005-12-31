@@ -5,6 +5,7 @@
 #include "RageFile.h"
 #include "Foreach.h"
 #include "LocalizedString.h"
+#include "LuaFunctions.h"
 
 #include <numeric>
 #include <ctime>
@@ -1897,6 +1898,10 @@ bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bRe
 
 	return true;
 }
+
+LuaFunction( SecondsToMSSMsMs, SecondsToMSSMsMs( FArg(1) ) )
+LuaFunction( FormatNumberAndSuffix, FormatNumberAndSuffix( IArg(1) ) )
+LuaFunction( Basename, Basename( SArg(1) ) )
 
 /*
  * Copyright (c) 2001-2005 Chris Danford, Glenn Maynard

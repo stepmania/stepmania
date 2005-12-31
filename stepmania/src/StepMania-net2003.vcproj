@@ -900,9 +900,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath=".\LocalizedString.h">
 			</File>
 			<File
-				RelativePath=".\LocalizedStringLua.cpp">
-			</File>
-			<File
 				RelativePath="LuaBinding.cpp">
 			</File>
 			<File
@@ -2500,9 +2497,6 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="RageUtil_WorkerThread.h">
-			</File>
-			<File
-				RelativePath=".\RageUtilLua.cpp">
 			</File>
 			<Filter
 				Name="Helpers"
