@@ -1,6 +1,8 @@
 #include "global.h"
 #include "LocalizedString.h"
 #include "Foreach.h"
+#include "LuaFunctions.h"
+#include "LuaManager.h"
 
 static RString DefaultLocalizer( const RString &sSection, const RString &sName )
 {
@@ -61,6 +63,7 @@ void LocalizedString::Refresh()
 	m_sValue = LocalizeString( m_sSection, m_sName );
 }
 
+LuaFunction( LocalizeString, LocalizedString::LocalizeString( SArg(1), SArg(2) ) )
 
 /*
  * Copyright (c) 2001-2005 Chris Danford
