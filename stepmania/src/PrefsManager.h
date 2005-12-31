@@ -212,9 +212,6 @@ public:
 	Preference<CString>	m_sAdditionalFolders;
 
 	Preference<CString>	m_sLastSeenVideoDriver;
-#if defined(WIN32)
-	Preference<int>		m_iLastSeenMemory;
-#endif
 	Preference<CString>	m_sVideoRenderers;		// StepMania.cpp sets these on first run based on the card
 	Preference<bool>	m_bSmoothLines;
 	Preference<float>	m_fSoundVolume;
@@ -230,7 +227,6 @@ public:
 	Preference<bool>	m_bDebugLights;
 	Preference<bool>	m_bMonkeyInput;
 	Preference<CString>	m_sMachineName;
-	Preference<CString>	m_sIgnoredMessageWindows;
 	Preference<CString>	m_sCoursesToShowRanking;
 
 	/* Debug: */

@@ -298,6 +298,10 @@ void StepMania::ResetGame()
 	PREFSMAN->SavePrefsToDisk();
 }
 
+#if defined(WIN32)
+static Preference<int> g_iLastSeenMemory( "LastSeenMemory", 0 );
+#endif
+
 static void CheckSettings()
 {
 #if defined(WIN32)
@@ -307,11 +311,11 @@ static void CheckSettings()
 
 	const int Memory = mem.dwTotalPhys / (1024*1024);
 
-	if( PREFSMAN->m_iLastSeenMemory == Memory )
+	if( g_iLastSeenMemory == Memory )
 		return;
 	
-	LOG->Trace( "Memory changed from %i to %i; settings changed", PREFSMAN->m_iLastSeenMemory.Get(), Memory );
-	PREFSMAN->m_iLastSeenMemory.Set( Memory );
+	LOG->Trace( "Memory changed from %i to %i; settings changed", g_iLastSeenMemory.Get(), Memory );
+	g_iLastSeenMemory.Set( Memory );
 
 	/* Let's consider 128-meg systems low-memory, and 256-meg systems high-memory.
 	 * Cut off at 192.  This is somewhat conservative; many 128-meg systems can

@@ -287,9 +287,6 @@ PrefsManager::PrefsManager() :
 	m_sAdditionalSongFolders		( "AdditionalSongFolders",		"" ),
 	m_sAdditionalFolders			( "AdditionalFolders",			"" ),
 	m_sLastSeenVideoDriver			( "LastSeenVideoDriver",		"" ),
-#if defined(WIN32)
-	m_iLastSeenMemory				( "LastSeenMemory",				0 ),
-#endif
 	m_sVideoRenderers				( "VideoRenderers",				"" ),	// StepMania.cpp sets these on first run:
 	m_bSmoothLines					( "SmoothLines",				false ),
 	m_fSoundVolume					( "SoundVolume",				1.0f ),
@@ -305,7 +302,6 @@ PrefsManager::PrefsManager() :
 	m_bDebugLights					( "DebugLights",				false ),
 	m_bMonkeyInput					( "MonkeyInput",				false ),
 	m_sMachineName					( "MachineName",				"" ),
-	m_sIgnoredMessageWindows		( "IgnoredMessageWindows",		"" ),
 	m_sCoursesToShowRanking			( "CoursesToShowRanking",		"" ),
 
 	/* Debug: */
