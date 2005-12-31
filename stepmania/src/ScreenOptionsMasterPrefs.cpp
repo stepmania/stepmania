@@ -95,7 +95,7 @@ static void MoveMap( int &sel, IPreference &opt, bool ToSel, const T *mapping, u
 template <class T>
 static void MoveMap( int &sel, const ConfOption *pConfOption, bool ToSel, const T *mapping, unsigned cnt )
 {
-	IPreference *pPref = PREFSMAN->GetPreferenceByName( pConfOption->name );
+	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->name );
 	ASSERT_M( pPref != NULL, pConfOption->name );
 
 	MoveMap( sel, *pPref, ToSel, mapping, cnt );
@@ -104,7 +104,7 @@ static void MoveMap( int &sel, const ConfOption *pConfOption, bool ToSel, const 
 /* "iSel" is the selection in the menu. */
 static void MovePref( int &iSel, bool bToSel, const ConfOption *pConfOption )
 {
-	IPreference *pPref = PREFSMAN->GetPreferenceByName( pConfOption->name );
+	IPreference *pPref = IPreference::GetPreferenceByName( pConfOption->name );
 	ASSERT_M( pPref != NULL, pConfOption->name );
 
 	if( bToSel )
