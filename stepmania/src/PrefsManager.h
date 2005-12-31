@@ -251,7 +251,6 @@ public:
 
 
 	// wrappers
-	CString GetVideoRenderers();
 	CString GetSoundDrivers();
 	float GetSoundVolume();
 
