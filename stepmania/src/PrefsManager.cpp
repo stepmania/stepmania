@@ -503,30 +503,6 @@ float PrefsManager::GetSoundVolume()
 	return clamp(m_fSoundVolume.Get(),0.0f,1.0f);
 }
 
-bool PrefsManager::MessageIsIgnored( const CString &ID )
-{
-	vector<CString> list;
-	split( PREFSMAN->m_sIgnoredMessageWindows, ",", list );
-	for( unsigned i = 0; i < list.size(); ++i )
-		if( !ID.CompareNoCase(list[i]) )
-			return true;
-	return false;
-}
-
-void PrefsManager::IgnoreMessage( const CString &ID )
-{
-	if( ID == "" )
-
-	if( MessageIsIgnored(ID) )
-		return;
-
-	vector<CString> list;
-	split( PREFSMAN->m_sIgnoredMessageWindows, ",", list );
-	list.push_back( ID );
-	PREFSMAN->m_sIgnoredMessageWindows.Set( join(",",list) );
-	PREFSMAN->SavePrefsToDisk();
-}
-
 // lua start
 #include "LuaBinding.h"
 

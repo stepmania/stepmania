@@ -261,9 +261,6 @@ public:
 
 	CString GetPreferencesSection() const;
 
-	bool MessageIsIgnored( const CString &ID );
-	void IgnoreMessage( const CString &ID );
-
 	// Lua
 	void PushSelf( lua_State *L );
 
