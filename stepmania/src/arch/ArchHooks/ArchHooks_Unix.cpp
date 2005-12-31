@@ -45,7 +45,7 @@ static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *u
 	if( !IsFatalSignal(signal) )
 		return;
 
-	CrashSignalHandler( signal, si, uc );
+	CrashHandler::CrashSignalHandler( signal, si, uc );
 }
 #endif
 
@@ -151,8 +151,8 @@ ArchHooks_Unix::ArchHooks_Unix()
 	SignalHandler::OnClose( DoCleanShutdown );
 
 #if defined(CRASH_HANDLER)
-	CrashHandlerHandleArgs( g_argc, g_argv );
-	InitializeCrashHandler();
+	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
+	CrashHandler::InitializeCrashHandler();
 	SignalHandler::OnClose( DoCrashSignalHandler );
 #endif
 

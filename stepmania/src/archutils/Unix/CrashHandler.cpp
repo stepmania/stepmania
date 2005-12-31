@@ -352,7 +352,7 @@ static void RunCrashHandler( const CrashData *crash )
 	}
 }
 
-void ForceCrashHandler( const char *reason )
+void CrashHandler::ForceCrash( const char *reason )
 {
 	CrashData crash;
 	memset( &crash, 0, sizeof(crash) );
@@ -366,7 +366,7 @@ void ForceCrashHandler( const char *reason )
 	RunCrashHandler( &crash );
 }
 
-void ForceCrashHandlerDeadlock( CString reason, uint64_t iID )
+void CrashHandler::ForceDeadlock( CString reason, uint64_t iID )
 {
 	CrashData crash;
 	memset( &crash, 0, sizeof(crash) );
@@ -417,7 +417,7 @@ void ForceCrashHandlerDeadlock( CString reason, uint64_t iID )
 
 /* XXX test for recursive crashes here (eg. GetBacktrace crashing) */
 
-void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
+void CrashHandler::CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
 	CrashData crash;
 	memset( &crash, 0, sizeof(crash) );
@@ -435,7 +435,7 @@ void CrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 	RunCrashHandler( &crash );
 }
 
-void InitializeCrashHandler()
+void CrashHandler::InitializeCrashHandler()
 {
 	InitializeBacktrace();
 }

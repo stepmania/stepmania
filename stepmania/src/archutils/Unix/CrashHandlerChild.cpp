@@ -366,7 +366,7 @@ static void child_process()
 }
 
 
-void CrashHandlerHandleArgs( int argc, char* argv[] )
+void CrashHandler::CrashHandlerHandleArgs( int argc, char* argv[] )
 {
 	g_pCrashHandlerArgv0 = argv[0];
 	if( argc == 2 && !strcmp(argv[1], CHILD_MAGIC_PARAMETER) )
