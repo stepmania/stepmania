@@ -27,7 +27,7 @@ void NORETURN sm_crash( const char *reason )
 #endif
 
 #if defined(CRASH_HANDLER)
-	ForceCrashHandler( reason );
+	CrashHandler::ForceCrash( reason );
 #else
 	*(char*)0=0;
 
