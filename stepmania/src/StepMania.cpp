@@ -1071,8 +1071,7 @@ int main(int argc, char* argv[])
 	FONT		= new FontManager;
 	SCREENMAN	= new ScreenManager;
 
-	// UGLY: Now that all global singletons are constructed so that they, let them
-	// all register with Lua.
+	// UGLY: Now that all global singletons are constructed, let them all register with Lua.
 	//
 	// ResetState wipes out method tables.   We need to call UpdateLuaGlobals, so
 	// we re-run scripts that may add to them.
