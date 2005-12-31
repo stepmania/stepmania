@@ -24,18 +24,9 @@ static HFONT hFontMono = NULL;
 
 static void DoSave();
 
-///////////////////////////////////////////////////////////////////////////
-
-#define CODE_WINDOW (256)
-
-///////////////////////////////////////////////////////////////////////////
-
 extern HINSTANCE g_hInstance;
 extern unsigned long version_num;
 extern const char *version_time;
-
-
-
 extern HINSTANCE g_hInstance;
 #define BACKTRACE_MAX_SIZE 100
 
