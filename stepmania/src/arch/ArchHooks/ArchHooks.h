@@ -3,8 +3,6 @@
 
 class ArchHooks
 {
-	static bool s_bQuitting;
-	static bool s_bToggleWindowed;
 public:
 	virtual ~ArchHooks() { }
 
@@ -105,6 +103,9 @@ private:
 	 * that may loop or move backwards. */
 	static int64_t FixupTimeIfLooped( int64_t usecs );
 	static int64_t FixupTimeIfBackwards( int64_t usecs );
+
+	static bool s_bQuitting;
+	static bool s_bToggleWindowed;
 };
 
 #endif
