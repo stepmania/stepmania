@@ -161,10 +161,10 @@ static void GetReason( const EXCEPTION_RECORD *pRecord, CrashInfo *crash )
 long VDDebugInfoLookupRVA(VDDebugInfoContext *pctx, unsigned rva, char *buf, int buflen);
 bool VDDebugInfoInitFromMemory(VDDebugInfoContext *pctx, const void *_src);
 bool VDDebugInfoInitFromFile( VDDebugInfoContext *pctx );
-void VDDebugInfoDeinit(VDDebugInfoContext *pctx);
+void VDDebugInfoDeinit( VDDebugInfoContext *pctx );
 
 
-long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
+long __stdcall CrashHandler( EXCEPTION_POINTERS *pExc )
 {
 	/* Flush the log it isn't cut off at the end. */
 	/* 1. We can't do regular file access in the crash handler.
@@ -236,8 +236,8 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 			"Lucida Console"
 			);
 
-	if (!hFontMono)
-		hFontMono = (HFONT)GetStockObject(ANSI_FIXED_FONT);
+	if( !hFontMono )
+		hFontMono = (HFONT) GetStockObject( ANSI_FIXED_FONT );
 
 	// Attempt to read debug file.
 
@@ -264,7 +264,7 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 		/* A different thread crashed.  Simply kill all other windows.  We can't safely
 		 * call ShowWindow; the main thread might be deadlocked. */
 		RageThread::HaltAllThreads( true );
-		ChangeDisplaySettings(NULL, 0);
+		ChangeDisplaySettings( NULL, 0 );
 	}
 
 	if( g_bAutoRestart )
@@ -273,17 +273,17 @@ long __stdcall CrashHandler(EXCEPTION_POINTERS *pExc)
 	/* Little trick to get an HINSTANCE of ourself without having access to the hwnd ... */
 	{
 		TCHAR szFullAppPath[MAX_PATH];
-		GetModuleFileName(NULL, szFullAppPath, MAX_PATH);
-		HINSTANCE handle = LoadLibrary(szFullAppPath);
+		GetModuleFileName( NULL, szFullAppPath, MAX_PATH );
+		HINSTANCE hHandle = LoadLibrary( szFullAppPath );
 
-		DialogBoxParam(handle, MAKEINTRESOURCE(IDD_DISASM_CRASH), NULL, CrashDlgProc, (LPARAM)pExc);
+		DialogBoxParam( hHandle, MAKEINTRESOURCE(IDD_DISASM_CRASH), NULL, CrashDlgProc, (LPARAM) pExc );
 	}
 
-	VDDebugInfoDeinit(&g_debugInfo);
+	VDDebugInfoDeinit( &g_debugInfo );
 
 	InHere = false;
 
-	SetUnhandledExceptionFilter(NULL);
+	SetUnhandledExceptionFilter( NULL );
 
 	/* Forcibly terminate; if we keep going, we'll try to shut down threads and do other
 	 * things that may deadlock, which is confusing for users. */
