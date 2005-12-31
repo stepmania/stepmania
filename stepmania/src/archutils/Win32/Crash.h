@@ -7,9 +7,6 @@ namespace CrashHandler
 {
 	extern long __stdcall ExceptionHandler(struct _EXCEPTION_POINTERS *ExceptionInfo);
 
-	/* Trigger the crash handler.  This works even in the debugger. */
-	void NORETURN debug_crash();
-
 	void do_backtrace( const void **buf, size_t size, HANDLE hProcess, HANDLE hThread, const CONTEXT *pContext );
 	void SymLookup( const void *ptr, char *buf );
 	void ForceCrash( const char *reason );

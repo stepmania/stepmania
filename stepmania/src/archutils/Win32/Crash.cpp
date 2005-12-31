@@ -949,14 +949,15 @@ BOOL APIENTRY CrashDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 	return FALSE;
 }
 
-void NORETURN CrashHandler::debug_crash()
+/* Trigger the crash handler.  This works even in the debugger. */
+static void NORETURN debug_crash()
 {
 	__try {
 		__asm xor ebx,ebx
 		__asm mov eax,dword ptr [ebx]
 //		__asm mov dword ptr [ebx],eax
 //		__asm lock add dword ptr cs:[00000000h], 12345678h
-	} __except(ExceptionHandler((EXCEPTION_POINTERS*)_exception_info())) {
+	} __except( CrashHandler::ExceptionHandler((EXCEPTION_POINTERS*)_exception_info()) ) {
 	}
 }
 
