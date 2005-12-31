@@ -1,6 +1,6 @@
 #include "global.h"
 #include "Preference.h"
-#include "IniFile.h"
+#include "XmlFile.h"
 #include "RageLog.h"
 #include "LuaFunctions.h"
 #include "LuaManager.h"
@@ -37,16 +37,18 @@ void IPreference::LoadAllDefaults()
 		(*p)->LoadDefault();
 }
 
-void IPreference::ReadAllPrefsFromIni( const IniFile &ini, const CString &sSection )
+void IPreference::ReadAllPrefsFromNode( const XNode* pNode )
 {
+	if( pNode == NULL )
+		return;
 	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->ReadFrom( ini, sSection );
+		(*p)->ReadFrom( pNode );
 }
 
-void IPreference::SavePrefsToIni( IniFile &ini )
+void IPreference::SavePrefsToNode( XNode* pNode )
 {
 	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
-		(*p)->WriteTo( ini );
+		(*p)->WriteTo( pNode );
 }
 
 void IPreference::PushValue( lua_State *L ) const
@@ -87,16 +89,16 @@ READFROM_AND_WRITETO( float )
 READFROM_AND_WRITETO( bool )
 READFROM_AND_WRITETO( CString )
 
-void IPreference::ReadFrom( const IniFile &ini, const CString &sSection )
+void IPreference::ReadFrom( const XNode* pNode )
 {
 	CString sVal;
-	if( ini.GetValue( sSection, m_sName, sVal ) )
+	if( pNode->GetAttrValue(m_sName, sVal) )
 		FromString( sVal );
 }
 
-void IPreference::WriteTo( IniFile &ini ) const
+void IPreference::WriteTo( XNode* pNode ) const
 {
-	ini.SetValue( "Options", m_sName, ToString() );
+	pNode->AppendAttr( m_sName, ToString() );
 }
 
 void BroadcastPreferenceChanged( const CString& sPreferenceName )

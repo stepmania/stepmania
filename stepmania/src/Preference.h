@@ -5,7 +5,7 @@
 
 #include "EnumHelper.h"
 #include "RageUtil.h"
-class IniFile;
+class XNode;
 
 struct lua_State;
 class IPreference
@@ -15,8 +15,8 @@ public:
 	virtual ~IPreference();
 
 	virtual void LoadDefault() = 0;
-	virtual void ReadFrom( const IniFile &ini, const CString &sSection );
-	virtual void WriteTo( IniFile &ini ) const;
+	virtual void ReadFrom( const XNode* pNode );
+	virtual void WriteTo( XNode* pNode ) const;
 
 	virtual CString ToString() const = 0;
 	virtual void FromString( const CString &s ) = 0;
@@ -28,8 +28,8 @@ public:
 
 	static IPreference *GetPreferenceByName( const CString &sName );
 	static void LoadAllDefaults();
-	static void ReadAllPrefsFromIni( const IniFile &ini, const CString &sSection );
-	static void SavePrefsToIni( IniFile &ini );
+	static void ReadAllPrefsFromNode( const XNode* pNode );
+	static void SavePrefsToNode( XNode* pNode );
 
 protected:
 	CString		m_sName;

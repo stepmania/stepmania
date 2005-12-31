@@ -419,7 +419,7 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const CString &sSection
 	CString sFallback;
 	if( ini.GetValue(sSection,"Fallback",sFallback) )
 	{
-		ReadPrefsFromIni( ini, sFallback );
+		IPreference::ReadAllPrefsFromNode( ini.GetChild(sFallback) );
 	}
 
 	//IPreference *pPref = PREFSMAN->GetPreferenceByName( *sName );
@@ -430,7 +430,7 @@ void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const CString &sSection
 	//	}
 	//	pPref->FromString( sVal );
 
-	IPreference::ReadAllPrefsFromIni( ini, sSection );
+	IPreference::ReadAllPrefsFromNode( ini.GetChild(sSection) );
 
 	// validate
 	m_iSongsPerPlay.Set( clamp(m_iSongsPerPlay.Get(),0,MAX_SONGS_PER_PLAY) );
@@ -469,7 +469,10 @@ void PrefsManager::SavePrefsToIni( IniFile &ini )
 	if( !m_sCurrentGame.Get().empty() )
 		StoreGamePrefs();
 
-	IPreference::SavePrefsToIni( ini );
+	XNode* pNode = ini.GetChild( "Options" );
+	if( pNode == NULL )
+		pNode = ini.AppendChild( "Options" );
+	IPreference::SavePrefsToNode( pNode );
 
 	FOREACHM_CONST( CString, GamePrefs, m_mapGameNameToGamePrefs, iter )
 	{
