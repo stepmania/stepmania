@@ -71,6 +71,7 @@
 #include "RageTextureManager.h"
 #include "ThemeManager.h"
 #include "Screen.h"
+#include "ScreenDimensions.h"
 #include "Foreach.h"
 #include "ActorUtil.h"
 #include "GameLoop.h"
@@ -419,7 +420,10 @@ void ScreenManager::Draw()
 	if( !DISPLAY->BeginFrame() )
 		return;
 
+	DISPLAY->CameraPushMatrix();
+	DISPLAY->LoadMenuPerspective( 0, SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_CENTER_X, SCREEN_CENTER_Y );
 	g_pSharedBGA->Draw();
+	DISPLAY->CameraPopMatrix();
 
 	for( unsigned i=0; i<g_ScreenStack.size(); i++ )	// Draw all screens bottom to top
 		g_ScreenStack[i].m_pScreen->Draw();
