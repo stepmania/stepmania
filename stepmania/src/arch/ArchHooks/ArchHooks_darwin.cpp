@@ -49,13 +49,13 @@ static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *u
 	if( !IsFatalSignal(signal) )
 		return;
 
-	CrashSignalHandler( signal, si, uc );
+	CrashHandler::CrashSignalHandler( signal, si, uc );
 	/* not reached */
 }
 
 ArchHooks_darwin::ArchHooks_darwin()
 {
-    CrashHandlerHandleArgs( g_argc, g_argv );
+	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
 
     /* First, handle non-fatal termination signals. */
     SignalHandler::OnClose( DoCleanShutdown );
