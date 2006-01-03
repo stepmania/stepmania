@@ -89,30 +89,41 @@ template <class T>
 class Preference1D
 {
 	typedef Preference<T> PreferenceT;
+	typedef void (*pfn_t)(size_t, CString&, T&);
 	vector<PreferenceT*> m_v;
-
-public:
-	Preference1D( void (pfn)(size_t i, CString &sNameOut, T &defaultValueOut ), size_t N )
+	bool m_bInited;
+	pfn_t m_pFn;
+	size_t m_iNum;
+	
+	void Init()
 	{
-		for( unsigned i=0; i<N; i++ )
+		for( size_t i=0; i<m_iNum; ++i )
 		{
 			CString sName;
 			T defaultValue;
-			pfn( i, sName, defaultValue );
-			m_v.push_back( new Preference<T>(sName,defaultValue) );
+			m_pFn( i, sName, defaultValue );
+			m_v.push_back( new Preference<T>(sName, defaultValue) );
 		}
+		m_bInited = true;
 	}
+
+public:
+	Preference1D( pfn_t pfn, size_t N) : m_bInited( false ), m_pFn( pfn ), m_iNum( N ) { }
 	~Preference1D()
 	{
-		for( unsigned i=0; i<m_v.size(); i++ )
+		for( size_t i=0; i<m_v.size(); ++i )
 			SAFE_DELETE( m_v[i] );
 	}
 	const Preference<T>& operator[]( size_t i ) const
 	{
+		if( !m_bInited )
+			Init();
 		return *m_v[i];
 	}
 	Preference<T>& operator[]( size_t i )
 	{
+		if( !m_bInited )
+			Init();
 		return *m_v[i];
 	}
 };
