@@ -6,6 +6,7 @@
 #include "PrefsManager.h" // XXX
 #include "RageDisplay.h" // VideoModeParams
 #include "DisplayResolutions.h"
+#include "LocalizedString.h"
 
 #include <stack>
 #include <math.h>	// ceil()
@@ -24,7 +25,7 @@ LowLevelWindow_X11::LowLevelWindow_X11()
 {
 	m_bWindowIsOpen = false;
 	if( !X11Helper::Go() )
-		RageException::Throw( FAILED_CONNECTION_XSERVER );
+		RageException::Throw( FAILED_CONNECTION_XSERVER.GetValue() );
 
 	const int iScreen = DefaultScreen( X11Helper::Dpy );
 
