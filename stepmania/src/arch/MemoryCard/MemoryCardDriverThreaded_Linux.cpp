@@ -19,7 +19,7 @@ bool MemoryCardDriverThreaded_Linux::TestWrite( UsbStorageDevice* pDevice )
 	return true;
 }
 
-static bool ExecuteCommand( CCStringRef sCommand )
+static bool ExecuteCommand( const CString &sCommand )
 {
 	LOG->Trace( "executing '%s'", sCommand.c_str() );
 	int ret = system(sCommand);
