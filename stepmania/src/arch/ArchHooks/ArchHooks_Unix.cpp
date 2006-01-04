@@ -121,6 +121,11 @@ namespace
 	}
 };
 
+RString ArchHooks::GetPreferredLanguage()
+{
+		return "EN";
+}
+
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
 {
 	OpenGetTime();
