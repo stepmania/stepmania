@@ -394,57 +394,57 @@ const MapEditToDI *ScreenEdit::GetCurrentMap() const
 static MenuDef g_EditHelp(
 	"ScreenMiniMenuEditHelp",
 #if defined(XBOX)
-	MenuRowDef( -1, "L + Up/Down: Change zoom",						false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "R + Up/Down: Drag area marker",					false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "L + Select: Play selection",						false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "R + Start: Play whole song",						false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "R + Select: Record",								false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "L + Black: Toggle assist tick",					false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "R + White: Insert beat and shift down",			false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "R + Black: Delete beat and shift up",				false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "R + button: Lay mine",							false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "L + button: Add to/remove from right half",		false, EditMode_Practice, 0, NULL )
+	MenuRowDef( -1, "L + Up/Down: Change zoom",						false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "R + Up/Down: Drag area marker",					false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "L + Select: Play selection",						false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "R + Start: Play whole song",						false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "R + Select: Record",								false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "L + Black: Toggle assist tick",					false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "R + White: Insert beat and shift down",			false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "R + Black: Delete beat and shift up",				false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "R + button: Lay mine",							false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "L + button: Add to/remove from right half",		false, EditMode_Practice, true, 0, NULL )
 #else
-	MenuRowDef( -1, "PgUp/PgDn: jump measure",							false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Home/End: jump to first/last beat",				false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Ctrl + Up/Down: Change zoom",						false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Shift + Up/Down: Drag area marker",				false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "P: Play selection",								false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Ctrl + P: Play whole song",						false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Shift + P: Play current beat to end",				false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Ctrl + R: Record",								false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "F4: Toggle assist tick",							false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "F5/F6: Next/prev steps of same StepsType",		false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "F7/F8: Decrease/increase BPM at cur beat",		false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "F9/F10: Decrease/increase stop at cur beat",		false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "F11/F12: Decrease/increase music offset",			false, EditMode_Practice, 0, NULL ),
+	MenuRowDef( -1, "PgUp/PgDn: jump measure",							false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Home/End: jump to first/last beat",				false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Ctrl + Up/Down: Change zoom",						false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Shift + Up/Down: Drag area marker",				false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "P: Play selection",								false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Ctrl + P: Play whole song",						false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Shift + P: Play current beat to end",				false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Ctrl + R: Record",								false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "F4: Toggle assist tick",							false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "F5/F6: Next/prev steps of same StepsType",		false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "F7/F8: Decrease/increase BPM at cur beat",		false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "F9/F10: Decrease/increase stop at cur beat",		false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "F11/F12: Decrease/increase music offset",			false, EditMode_Practice, true, 0, NULL ),
 			/* XXX: This would be better as a single submenu, to let people tweak
 			* and play the sample several times (without having to re-enter the
 			* menu each time), so it doesn't use a whole bunch of hotkeys. */
-	MenuRowDef( -1, "[ and ]: Decrease/increase sample music start",	false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "{ and }: Decrease/increase sample music length",	false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "M: Play sample music",							false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "B: Add/Edit Background Change",					false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Insert: Insert beat and shift down",				false, EditMode_Practice, 0, NULL ),
+	MenuRowDef( -1, "[ and ]: Decrease/increase sample music start",	false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "{ and }: Decrease/increase sample music length",	false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "M: Play sample music",							false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "B: Add/Edit Background Change",					false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Insert: Insert beat and shift down",				false, EditMode_Practice, true, 0, NULL ),
 	MenuRowDef( -1, "Ctrl + Insert: Shift BPM changes and stops down one beat",
-																	false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Delete: Delete beat and shift up",				false, EditMode_Practice, 0, NULL ),
+																	false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Delete: Delete beat and shift up",				false, EditMode_Practice, true, 0, NULL ),
 	MenuRowDef( -1, "Ctrl + Delete: Shift BPM changes and stops up one beat",
-																	false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Shift + number: Lay mine",						false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Alt + number: Add to/remove from right half",		false, EditMode_Practice, 0, NULL )
+																	false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Shift + number: Lay mine",						false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Alt + number: Add to/remove from right half",		false, EditMode_Practice, true, 0, NULL )
 #endif
 );
 
 static MenuDef g_PracticeHelp(
 	"ScreenMiniMenuPracticeHelp",
-	MenuRowDef( -1, "Up, Down: Move cursor",						false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "PgUp, PgDn: Jump measure",						false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Home, End: Jump to first/last beat",			false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Hold Shift: Select region",					false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Left, Right: Zoom",							false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "Enter: Play selection",						false, EditMode_Practice, 0, NULL ),
-	MenuRowDef( -1, "P: Play from cursor",							false, EditMode_Practice, 0, NULL )
+	MenuRowDef( -1, "Up, Down: Move cursor",						false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "PgUp, PgDn: Jump measure",						false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Home, End: Jump to first/last beat",			false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Hold Shift: Select region",					false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Left, Right: Zoom",							false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "Enter: Play selection",						false, EditMode_Practice, true, 0, NULL ),
+	MenuRowDef( -1, "P: Play from cursor",							false, EditMode_Practice, true, 0, NULL )
 );
 
 static MenuDef g_MainMenu(
