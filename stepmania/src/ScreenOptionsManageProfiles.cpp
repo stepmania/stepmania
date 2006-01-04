@@ -32,7 +32,7 @@ enum ProfileAction
 	ProfileAction_Clear,
 	NUM_ProfileAction
 };
-static const CString ProfileActionNames[] = {
+static const char *ProfileActionNames[] = {
 	"SetDefaultP1",
 	"SetDefaultP2",
 	"Edit",

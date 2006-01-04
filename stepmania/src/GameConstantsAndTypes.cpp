@@ -15,7 +15,7 @@ const CString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS] = {"#P1#","#P2#"};
 
 extern const CString GROUP_ALL = "---Group All---";
 
-static const CString RadarCategoryNames[] = {
+static const char *RadarCategoryNames[] = {
 	"Stream",
 	"Voltage",
 	"Air",
@@ -56,7 +56,7 @@ static void LuaStepsType(lua_State* L)
 REGISTER_WITH_LUA_FUNCTION( LuaStepsType );
 
 
-static const CString PlayModeNames[] = {
+static const char *PlayModeNames[] = {
 	"Regular",
 	"Nonstop",
 	"Oni",
@@ -80,7 +80,7 @@ RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
 }
 
 
-static const CString RankingCategoryNames[] = {
+static const char *RankingCategoryNames[] = {
 	"a",
 	"b",
 	"c",
@@ -90,7 +90,7 @@ XToString( RankingCategory, NUM_RANKING_CATEGORIES );
 StringToX( RankingCategory );
 
 
-static const CString PlayerControllerNames[] = {
+static const char *PlayerControllerNames[] = {
 	"Human",
 	"Autoplay",
 	"Cpu",
@@ -98,7 +98,7 @@ static const CString PlayerControllerNames[] = {
 XToString( PlayerController, NUM_PLAYER_CONTROLLERS );
 
 
-static const CString CoinModeNames[] = {
+static const char *CoinModeNames[] = {
 	"home",
 	"pay",
 	"free",
@@ -116,7 +116,7 @@ static void LuaCoinMode(lua_State* L)
 REGISTER_WITH_LUA_FUNCTION( LuaCoinMode );
 
 
-static const CString PremiumNames[] = {
+static const char *PremiumNames[] = {
 	"none",
 	"double",
 	"joint",
@@ -134,7 +134,7 @@ static void LuaPremium(lua_State* L)
 REGISTER_WITH_LUA_FUNCTION( LuaPremium );
 
 
-static const CString SortOrderNames[] = {
+static const char *SortOrderNames[] = {
 	"Preferred",
 	"Group",
 	"Title",
@@ -180,7 +180,7 @@ static void LuaSortOrder(lua_State* L)
 REGISTER_WITH_LUA_FUNCTION( LuaSortOrder );
 
 
-static const CString TapNoteScoreNames[] = {
+static const char *TapNoteScoreNames[] = {
 	"None",
 	"HitMine",
 	"AvoidMine",
@@ -227,7 +227,7 @@ static void LuaTapNoteScores( lua_State* L )
 REGISTER_WITH_LUA_FUNCTION( LuaTapNoteScores );
 
 
-static const CString HoldNoteScoreNames[] = {
+static const char *HoldNoteScoreNames[] = {
 	"None",
 	"LetGo",
 	"Held",
@@ -258,7 +258,7 @@ static void LuaHoldNoteScores( lua_State* L )
 REGISTER_WITH_LUA_FUNCTION( LuaHoldNoteScores );
 
 
-static const CString MemoryCardStateNames[] = {
+static const char *MemoryCardStateNames[] = {
 	"ready",
 	"checking",
 	"late",
@@ -269,7 +269,7 @@ static const CString MemoryCardStateNames[] = {
 XToString( MemoryCardState, NUM_MemoryCardState );
 
 
-static const CString PerDifficultyAwardNames[] = {
+static const char *PerDifficultyAwardNames[] = {
 	"FullComboW3",
 	"SingleDigitW3",
 	"OneW3",
@@ -296,7 +296,7 @@ REGISTER_WITH_LUA_FUNCTION( LuaPerDifficultyAward );
 // strings can be used as XML entity names.
 // Numbers are intentially not at the back so that "1000" and "10000" don't 
 // conflict when searching for theme elements.
-static const CString PeakComboAwardNames[] = {
+static const char *PeakComboAwardNames[] = {
 	"Peak1000Combo",
 	"Peak2000Combo",
 	"Peak3000Combo",
@@ -368,7 +368,7 @@ bool DisplayBpms::IsSecret() const
 	return false;
 }
 
-static const CString StyleTypeNames[] = {
+static const char *StyleTypeNames[] = {
 	"OnePlayerOneSide",
 	"TwoPlayersTwoSides",
 	"OnePlayerTwoSides",
@@ -377,7 +377,7 @@ XToString( StyleType, NUM_STYLE_TYPES );
 StringToX( StyleType );
 
 
-static const CString MenuDirNames[] = {
+static const char *MenuDirNames[] = {
 	"Up",
 	"Down",
 	"Left",
@@ -387,7 +387,7 @@ static const CString MenuDirNames[] = {
 XToString( MenuDir, NUM_MENU_DIRS );
 
 
-static const CString GoalTypeNames[] = {
+static const char *GoalTypeNames[] = {
 	"Calories",
 	"Time",
 	"None",
@@ -406,7 +406,7 @@ static void LuaGoalType(lua_State* L)
 REGISTER_WITH_LUA_FUNCTION( LuaGoalType );
 
 
-static const CString StageNames[] = {
+static const char *StageNames[] = {
 	"1",
 	"2",
 	"3",

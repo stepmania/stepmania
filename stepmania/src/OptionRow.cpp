@@ -11,7 +11,7 @@
 #include "Style.h"
 #include "ActorUtil.h"
 
-static const CString SelectTypeNames[] = {
+static const char *SelectTypeNames[] = {
 	"SelectOne",
 	"SelectMultiple",
 	"SelectNone",
@@ -19,7 +19,7 @@ static const CString SelectTypeNames[] = {
 XToString( SelectType, NUM_SELECT_TYPES );
 StringToX( SelectType );
 
-static const CString LayoutTypeNames[] = {
+static const char *LayoutTypeNames[] = {
 	"ShowAllInRow",
 	"ShowOneInRow",
 };

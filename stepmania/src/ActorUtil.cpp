@@ -497,7 +497,7 @@ void ActorUtil::SortByZPosition( vector<Actor*> &vActors )
 	stable_sort( vActors.begin(), vActors.end(), CompareActorsByZPosition );
 }
 
-static const CString FileTypeNames[] = {
+static const char *FileTypeNames[] = {
 	"Bitmap", 
 	"Movie", 
 	"Directory", 

@@ -15,7 +15,7 @@
 const CString& NoteNotePartToString( NotePart i );
 #define FOREACH_NotePart( i ) FOREACH_ENUM( NotePart, NUM_NotePart, i )
 
-static const CString NotePartNames[] = {
+static const char *NotePartNames[] = {
 	"TapNote",
 	"TapAddition",
 	"TapMine",
@@ -222,13 +222,13 @@ void NoteColorSprite::Load( const CString &sButton, const CString &sElement )
 }
 
 
-static const CString HoldTypeNames[] = {
+static const char *HoldTypeNames[] = {
 	"hold",
 	"roll",
 };
 XToString( HoldType, NUM_HOLD_TYPES );
 
-static const CString ActiveTypeNames[] = {
+static const char *ActiveTypeNames[] = {
 	"active",
 	"inactive",
 };

@@ -14,7 +14,7 @@
 #include "PercentageDisplay.h"
 
 
-static const CString MultiplayerJudgeLineNames[] = {
+static const char *MultiplayerJudgeLineNames[] = {
 	"W1",
 	"W2",
 	"W3",

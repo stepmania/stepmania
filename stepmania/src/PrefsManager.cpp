@@ -18,7 +18,7 @@ const CString TYPE_TXT_FILE			= "Data/Type.txt";
 
 PrefsManager*	PREFSMAN = NULL;	// global and accessable from anywhere in our program
 
-static const CString TimingWindowNames[] = {
+static const char *TimingWindowNames[] = {
 	"W1",
 	"W2",
 	"W3",
@@ -32,7 +32,7 @@ static const CString TimingWindowNames[] = {
 XToString( TimingWindow, NUM_TimingWindow );
 
 
-static const CString ScoreEventNames[] = {
+static const char *ScoreEventNames[] = {
 	"W1",
 	"W2",
 	"W3",

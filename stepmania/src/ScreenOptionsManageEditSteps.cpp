@@ -24,7 +24,7 @@ enum StepsEditAction
 	StepsEditAction_Delete,
 	NUM_StepsEditAction
 };
-static const CString StepsEditActionNames[] = {
+static const char *StepsEditActionNames[] = {
 	"Edit",
 	"Rename",
 	"Delete",

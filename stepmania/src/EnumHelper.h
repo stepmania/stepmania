@@ -45,14 +45,23 @@ static inline T enum_add2( T val, int iAmt )
 
 static const CString EMPTY_STRING;
 
+// TypeName[] must be an array of const char *, not RString, to
+// avoid initialization order problems when calling XToString.
+static void CheckXToStringParamType( const char **p ) { }
 #define XToString(X, CNT)	\
 	const CString& X##ToString( X x ) \
 	{	\
+		CheckXToStringParamType( X##Names ); \
+		static auto_ptr<CString> as_##X##Name[CNT]; \
+		if( as_##X##Name[0].get() == NULL ) { \
+			for( unsigned i = 0; i < CNT; ++i ) \
+				as_##X##Name[i].reset( new CString(X##Names[i]) ); \
+		} \
 		ASSERT( CNT == ARRAYSIZE(X##Names) );	\
 		if( x == CNT+1 ) 	\
 			return EMPTY_STRING;	\
 		ASSERT( x < CNT );	\
-		return X##Names[x];	\
+		return *as_##X##Name[x];	\
 	}
 
 #define XToThemedString(X, CNT)      \

@@ -39,14 +39,14 @@ const int NUM_SCORE_DIGITS	=	9;
 // metrics that are common to all ScreenEvaluation classes
 #define BANNER_WIDTH						THEME->GetMetricF(m_sName,"BannerWidth")
 #define BANNER_HEIGHT						THEME->GetMetricF(m_sName,"BannerHeight")
-static const CString JudgeLineNames[] =
+static const char *JudgeLineNames[] =
 {
 	"W1", "W2", "W3", "W4", "W5", "Miss", "Held", "MaxCombo", "TotalError"
 };
 XToString( JudgeLine, NUM_JudgeLine );
 #define FOREACH_JudgeLine( rc ) FOREACH_ENUM( JudgeLine, NUM_JudgeLine, rc )
 
-static const CString StatLineNames[NUM_StatLine] =
+static const char *StatLineNames[NUM_StatLine] =
 {
 	"Jumps", "Holds", "Mines", "Hands", "Rolls",
 };

@@ -35,7 +35,7 @@ RageDisplay*		DISPLAY	= NULL;
 Preference<bool>  LOG_FPS( "LogFPS", true );
 Preference<float> g_fFrameLimitPercent( "FrameLimitPercent", 0.0f );
 
-static const CString PixelFormatNames[] = {
+static const char *PixelFormatNames[] = {
 	"RGBA8",
 	"RGBA4",
 	"RGB5A1",

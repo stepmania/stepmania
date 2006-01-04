@@ -16,7 +16,7 @@
 #include "ScreenDimensions.h"
 #include "PercentageDisplay.h"
 
-static const CString PageTypeNames[] = {
+static const char *PageTypeNames[] = {
 	"Category",
 	"Course",
 	"AllSteps",

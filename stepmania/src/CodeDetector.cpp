@@ -11,7 +11,7 @@
 #include "RageUtil.h"
 #include "PlayerState.h"
 
-const CString CodeNames[] = {
+const char *CodeNames[] = {
 	"Easier1",
 	"Easier2",
 	"Harder1",

@@ -25,7 +25,7 @@
 
 ThemeManager*	THEME = NULL;	// global object accessable from anywhere in the program
 
-static const RString ElementCategoryNames[] = {
+static const char *ElementCategoryNames[] = {
 	"BGAnimations",
 	"Fonts",
 	"Graphics",

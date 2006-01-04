@@ -11,7 +11,7 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "InputEventPlus.h"
 
-static const CString SetTimeSelectionNames[] = {
+static const char *SetTimeSelectionNames[] = {
 	"Year", 
 	"Month", 
 	"Day",

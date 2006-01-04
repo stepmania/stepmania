@@ -6,7 +6,7 @@
 #include "LuaFunctions.h"
 
 
-static const CString DifficultyNames[] = {
+static const char *DifficultyNames[] = {
 	"Beginner",
 	"Easy",
 	"Medium",
@@ -60,7 +60,7 @@ REGISTER_WITH_LUA_FUNCTION( LuaDifficulty );
 
 
 
-static const CString CourseDifficultyNames[] =
+static const char *CourseDifficultyNames[] =
 {
 	"Beginner",
 	"Easy",

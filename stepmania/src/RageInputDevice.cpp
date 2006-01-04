@@ -169,7 +169,7 @@ DeviceButton StringToDeviceButton( const CString& s )
 }
 
 	
-static const CString InputDeviceNames[] = {
+static const char *InputDeviceNames[] = {
 	"Key",
 	"Joy1",
 	"Joy2",

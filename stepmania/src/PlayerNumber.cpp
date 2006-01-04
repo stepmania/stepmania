@@ -4,7 +4,7 @@
 #include "LuaManager.h"
 #include "ThemeMetric.h"
 
-static const CString PlayerNumberNames[] = {
+static const char *PlayerNumberNames[] = {
 	"P1",
 	"P2",
 };
@@ -20,7 +20,7 @@ void LuaPlayerNumber(lua_State* L)
 REGISTER_WITH_LUA_FUNCTION( LuaPlayerNumber );
 
 
-static const CString MultiPlayerNames[] = {
+static const char *MultiPlayerNames[] = {
 	"P1",
 	"P2",
 	"P3",

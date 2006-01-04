@@ -24,7 +24,7 @@
 #include "LuaFunctions.h"
 
 
-static const CString CourseTypeNames[] = {
+static const char *CourseTypeNames[] = {
 	"Nonstop",
 	"Oni",
 	"Endless",
@@ -36,7 +36,7 @@ XToThemedString( CourseType, NUM_CourseType );
 LuaFunction( CourseTypeToThemedString, CourseTypeToThemedString((CourseType) IArg(1)) );
 
 
-static const CString SongSortNames[] = {
+static const char *SongSortNames[] = {
 	"Randomize",
 	"MostPlays",
 	"FewestPlays",

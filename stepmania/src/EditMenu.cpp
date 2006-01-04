@@ -15,7 +15,7 @@
 #include "SongUtil.h"
 
 
-static const CString EditMenuRowNames[] = {
+static const char *EditMenuRowNames[] = {
 	"Group",
 	"Song",
 	"StepsType",
@@ -27,7 +27,7 @@ static const CString EditMenuRowNames[] = {
 XToString( EditMenuRow, NUM_EDIT_MENU_ROWS );
 XToThemedString( EditMenuRow, NUM_EDIT_MENU_ROWS );
 
-static const CString EditMenuActionNames[] = {
+static const char *EditMenuActionNames[] = {
 	"Edit",
 	"Delete",
 	"Create",

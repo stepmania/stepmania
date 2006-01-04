@@ -158,7 +158,7 @@ CString LastDayToString( int iLastDayIndex )
 	return LAST_DAYS_NAME[iLastDayIndex];
 }
 
-static const CString DAY_OF_WEEK_TO_NAME[DAYS_IN_WEEK] =
+static const char *DAY_OF_WEEK_TO_NAME[DAYS_IN_WEEK] =
 {
 	"Sunday",
 	"Monday",
@@ -179,7 +179,7 @@ CString HourInDayToString( int iHourInDayIndex )
 	return ssprintf("Hour%02d", iHourInDayIndex);
 }
 
-static const CString MonthNames[] =
+static const char *MonthNames[] =
 {
 	"January",
 	"February",

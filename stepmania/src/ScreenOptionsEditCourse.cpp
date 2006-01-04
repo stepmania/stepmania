@@ -28,7 +28,7 @@ enum CourseEntryAction
 	CourseEntryAction_Delete,
 	NUM_CourseEntryAction
 };
-static const CString CourseEntryActionNames[] = {
+static const char *CourseEntryActionNames[] = {
 	"Edit",
 	"Insert Entry",
 	"Delete",

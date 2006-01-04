@@ -5,7 +5,7 @@
 #include "Game.h"
 
 
-static const CString GameControllerNames[] = {
+static const char *GameControllerNames[] = {
 	"Controller1",
 	"Controller2",
 };

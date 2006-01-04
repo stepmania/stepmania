@@ -23,7 +23,7 @@ Preference<float>	g_fLightsFalloffSeconds( "LightsFalloffSeconds", 0.1f );
 Preference<float>	g_fLightsAheadSeconds( "LightsAheadSeconds", 0.05f );
 
 
-static const CString CabinetLightNames[] = {
+static const char *CabinetLightNames[] = {
 	"MarqueeUpLeft",
 	"MarqueeUpRight",
 	"MarqueeLrLeft",
@@ -36,7 +36,7 @@ static const CString CabinetLightNames[] = {
 XToString( CabinetLight, NUM_CABINET_LIGHTS );
 StringToX( CabinetLight );
 
-static const CString LightsModeNames[] = {
+static const char *LightsModeNames[] = {
 	"Attract",
 	"Joining",
 	"Menu",

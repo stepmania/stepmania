@@ -15,7 +15,7 @@ class Style;
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 
-static const CString MultiPlayerStatusNames[] = {
+static const char *MultiPlayerStatusNames[] = {
 	"Joined",
 	"NotJoined",
 	"Unplugged",

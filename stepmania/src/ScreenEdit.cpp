@@ -77,7 +77,7 @@ AutoScreenMessage( SM_DoExit )
 AutoScreenMessage( SM_SaveSuccessful );
 AutoScreenMessage( SM_SaveFailed );
 
-static const CString EditStateNames[] = {
+static const char *EditStateNames[] = {
 	"Edit",
 	"Record",
 	"RecordPaused",
