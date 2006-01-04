@@ -447,7 +447,7 @@ void ScreenEz2SelectMusic::MenuLeft( const InputEventPlus &input )
 	MusicChanged();
 }
 
-static LocalizedString DOES_NOT_HAVE_MUSIC_FILE( "ScreenEz2SelectMusic", "This song does not have a music file\n and cannot be played." );
+static LocalizedString DOES_NOT_HAVE_MUSIC_FILE( "ScreenEz2SelectMusic", "This song does not have a music file and cannot be played." );
 void ScreenEz2SelectMusic::MenuStart( PlayerNumber pn )
 {
 	if( !m_MusicBannerWheel.GetSelectedSong()->HasMusic() )
