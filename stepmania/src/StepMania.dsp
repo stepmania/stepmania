@@ -59,10 +59,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /verbose /profile /pdb:none /incremental:no /nodefaultlib
 # Begin Special Build Tool
 IntDir=.\../Debug6
-TargetDir=\cvs\stepmania\Program
+TargetDir=\SM Source\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                                              	cl                                                                                      /Zl                                                                                      /nologo                                                                                      /c                                                                                      verstub.cpp                                                                                      /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                                               	cl                                                                                       /Zl                                                                                       /nologo                                                                                       /c                                                                                       verstub.cpp                                                                                       /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -96,10 +96,10 @@ LINK32=link.exe
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 IntDir=.\../Release6
-TargetDir=\cvs\stepmania\Program
+TargetDir=\SM Source\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                        	cl                                         /Zl                                         /nologo                                         /c                                         verstub.cpp                                         /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                         	cl                                          /Zl                                          /nologo                                          /c                                          verstub.cpp                                          /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -788,10 +788,6 @@ SOURCE=.\DateTime.h
 # End Source File
 # Begin Source File
 
-SOURCE=.\DateTimeLua.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\Difficulty.cpp
 # End Source File
 # Begin Source File
@@ -905,10 +901,6 @@ SOURCE=.\LocalizedString.cpp
 # Begin Source File
 
 SOURCE=.\LocalizedString.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\LocalizedStringLua.cpp
 # End Source File
 # Begin Source File
 
