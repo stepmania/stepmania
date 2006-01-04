@@ -35,8 +35,11 @@ AC_DEFUN([SM_X_WITH_OPENGL],
 	# Check for Xrandr
 	# Can someone fix this for me? This is producing bizarre warnings from
 	# configure... I have no clue what I'm doing -Ben
-	AC_CHECK_LIB(Xrandr, XRRSizes, have_xrandr=yes, have_xrandr=no)
-	AC_CHECK_HEADER(X11/extensions/Xrandr.h, have_xrandr_header=yes, have_xrandr_header=no)
+	AC_CHECK_LIB(Xrandr, XRRSizes,
+		have_xrandr=yes,
+		have_xrandr=no,
+		[$XLIBS])
+	AC_CHECK_HEADER(X11/extensions/Xrandr.h, have_xrandr_header=yes, have_xrandr_header=no, [#include <X11/Xlib.h>])
 
 	if test "$have_xrandr_header" = "no"; then
 		have_xrandr=no
@@ -47,7 +50,7 @@ AC_DEFUN([SM_X_WITH_OPENGL],
 		echo "*** Couldn't find needed headers. Continuing without X11 backend."
 		$no_x = yes
 	else
-		LIBS="$LIBS -lXrandr"
+		XLIBS="$XLIBS -lXrandr"
 	fi
 
 	AM_CONDITIONAL(HAVE_X11, test "$no_x" != "yes")
