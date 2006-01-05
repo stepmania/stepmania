@@ -95,7 +95,14 @@ bool IniFile::WriteFile( RageFileBasic &f ) const
 
 		FOREACH_CONST_Attr( pKey, pAttr )
 		{
-			if( f.PutLine( ssprintf("%s=%s", pAttr->first.c_str(), pAttr->second.c_str()) ) == -1 )
+			const RString &sName = pAttr->first;
+			const RString &sValue = pAttr->second;
+
+			// TODO: Are there esacpe rules for these?
+			DEBUG_ASSERT( sName.find('\n') == sName.npos );
+			DEBUG_ASSERT( sName.find('=') == sName.npos );
+
+			if( f.PutLine( ssprintf("%s=%s", sName.c_str(), sValue.c_str()) ) == -1 )
 			{
 				m_sError = f.GetError();
 				return false;
