@@ -47,11 +47,12 @@ static const CString EMPTY_STRING;
 
 // TypeName[] must be an array of const char *, not RString, to
 // avoid initialization order problems when calling XToString.
-static void CheckXToStringParamType( const char **p ) { }
+// Use Check##X##ToStringParamType to enforce that.
 #define XToString(X, CNT)	\
+	static void Check##X##ToStringParamType( const char **p ) { } \
 	const CString& X##ToString( X x ) \
 	{	\
-		CheckXToStringParamType( X##Names ); \
+		Check##X##ToStringParamType( X##Names ); \
 		static auto_ptr<CString> as_##X##Name[CNT]; \
 		if( as_##X##Name[0].get() == NULL ) { \
 			for( unsigned i = 0; i < CNT; ++i ) \
