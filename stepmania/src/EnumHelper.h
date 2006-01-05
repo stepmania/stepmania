@@ -55,7 +55,10 @@ static void CheckXToStringParamType( const char **p ) { }
 		static auto_ptr<CString> as_##X##Name[CNT]; \
 		if( as_##X##Name[0].get() == NULL ) { \
 			for( unsigned i = 0; i < CNT; ++i ) \
-				as_##X##Name[i] = auto_ptr<CString> ( new CString( X##Names[i] ) ); \
+			{ \
+				auto_ptr<CString> ap( new CString( X##Names[i] ) ); \
+				as_##X##Name[i] = ap; \
+			} \
 		} \
 		ASSERT( CNT == ARRAYSIZE(X##Names) );	\
 		if( x == CNT+1 ) 	\
@@ -83,7 +86,10 @@ static void CheckXToStringParamType( const char **p ) { }
 		static auto_ptr<LocalizedString> g_##X##Name[NUM_##X]; \
 		if( g_##X##Name[0].get() == NULL ) { \
 			for( unsigned i = 0; i < NUM_##X; ++i ) \
-				g_##X##Name[i] = auto_ptr<LocalizedString> ( new LocalizedString(#X, X##ToString((X)i)) ); \
+			{ \
+				auto_ptr<LocalizedString> ap( new LocalizedString(#X, X##ToString((X)i)) ); \
+				g_##X##Name[i] = ap; \
+			} \
 		} \
 		return g_##X##Name[x]->GetValue();  \
 	}
