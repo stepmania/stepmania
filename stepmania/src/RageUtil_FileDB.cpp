@@ -357,7 +357,9 @@ FileSet *FilenameDB::GetFileSet( const RString &sDir_, bool bCreate )
 		}
 	}
 	else
+	{
 		m_Mutex.Lock();
+	}
 
 	if( pParentDirp != NULL )
 		*pParentDirp = pRet;
