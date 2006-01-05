@@ -195,9 +195,6 @@
 				RelativePath=".\smpackage\MainMenuDlg.h">
 			</File>
 			<File
-				RelativePath=".\smpackage\resource.h">
-			</File>
-			<File
 				RelativePath=".\smpackage\ShowComment.cpp">
 			</File>
 			<File
@@ -262,10 +259,13 @@
 				RelativePath="menu.bmp">
 			</File>
 			<File
-				RelativePath="smpackage.ICO">
+				RelativePath=".\smpackage\resource.h">
 			</File>
 			<File
 				RelativePath="res\smpackage.ico">
+			</File>
+			<File
+				RelativePath="smpackage.ICO">
 			</File>
 			<File
 				RelativePath=".\smpackage\smpackage.rc">

@@ -6,6 +6,7 @@
 #include "ProductInfo.h"	
 #include "RageUtil.h"	
 #include "RageFileManager.h"	
+#include "ThemeManager.h"	
 
 void SMPackageUtil::WriteStepManiaInstallDirs( const vector<RString>& asInstallDirsToWrite )
 {
@@ -209,6 +210,23 @@ RString SMPackageUtil::GetLanguageCodeFromDisplayString( const RString &sDisplay
 	s.erase( s.begin()+iSpace, s.end() );
 	return s;
 }
+
+void SMPackageUtil::LocalizeDialogAndContents( CDialog &dlg )
+{
+	CString s1;
+	dlg.GetWindowText( s1 );
+	RString sGroup = "Tools-"+s1;
+	dlg.SetWindowText( THEME->GetString(sGroup,"DialogCaption") );
+
+	for( CWnd *pChild = dlg.GetTopWindow(); pChild != NULL; pChild = pChild->GetNextWindow() )
+	{
+		pChild->GetWindowText( s1 );
+		if( s1.IsEmpty() )
+			continue;
+		pChild->SetWindowText( THEME->GetString(sGroup,RString(s1)) );
+	}
+}
+
 
 static const RString TEMP_MOUNT_POINT = "/@package/";
 

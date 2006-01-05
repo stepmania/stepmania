@@ -23,6 +23,8 @@ namespace SMPackageUtil
 	RString GetLanguageCodeFromDisplayString( const RString &sDisplayString );
 
 	bool GetFileContentsOsAbsolute( const RString &sAbsoluteOsFile, RString &sOut );
+
+	void LocalizeDialogAndContents( CDialog &dlg );
 }
 
 #include "RageFile.h"

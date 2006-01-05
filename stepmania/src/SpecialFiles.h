@@ -12,6 +12,7 @@ namespace SpecialFiles
 	extern const RString BASE_LANGUAGE;
 	extern const RString METRICS_FILE;
 	extern const RString CACHE_DIR;
+	extern const RString BASE_THEME_NAME;
 }
 
 #endif

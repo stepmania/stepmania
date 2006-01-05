@@ -10,6 +10,8 @@
 #include "RageFileManager.h"
 #include "arch/arch.h"
 #include "LuaManager.h"
+#include "ThemeManager.h"
+#include "SpecialFiles.h"
 
 
 #ifdef _DEBUG
@@ -109,6 +111,8 @@ BOOL CSmpackageApp::InitInstance()
 
 	FILEMAN = new RageFileManager( "" );
 	LUA = new LuaManager();
+	THEME = new ThemeManager();
+	THEME->SwitchThemeAndLanguage( SpecialFiles::BASE_THEME_NAME, SpecialFiles::BASE_LANGUAGE );
 
 
 	// Show the Manager Dialog
@@ -117,6 +121,7 @@ BOOL CSmpackageApp::InitInstance()
 //	if (nResponse == IDOK)
 
 
+	SAFE_DELETE( THEME );
 	SAFE_DELETE( LUA );
 	SAFE_DELETE( FILEMAN );
 

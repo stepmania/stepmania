@@ -9,6 +9,8 @@ const RString SpecialFiles::LANGUAGES_SUBDIR = "Languages/";
 const RString SpecialFiles::BASE_LANGUAGE = "en";
 const RString SpecialFiles::METRICS_FILE = "metrics.ini";
 const RString SpecialFiles::CACHE_DIR = "Cache/";
+const RString SpecialFiles::BASE_THEME_NAME = "default";
+
 
 /*
  * (c) 2003-2005 Chris Danford

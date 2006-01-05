@@ -42,6 +42,8 @@ BOOL LanguagesDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
+	SMPackageUtil::LocalizeDialogAndContents( *this );
+
 	vector<RString> vs;
 	GetDirListing( SpecialFiles::THEMES_DIR+"*", vs, true );
 	StripCvs( vs );

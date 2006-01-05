@@ -15,6 +15,10 @@
 #endif
 #include "Foreach.h"
 #include "ThemeMetric.h"
+#include "SubscriptionManager.h"
+template<>
+set<IThemeMetric*>* SubscriptionManager<IThemeMetric>::s_pSubscribers = NULL;
+
 #include "LuaManager.h"
 #include "ScreenDimensions.h"
 #include "Command.h"
@@ -34,9 +38,6 @@ static const char *ElementCategoryNames[] = {
 };
 XToString( ElementCategory, NUM_ElementCategory );
 StringToX( ElementCategory );
-
-
-const RString BASE_THEME_NAME = "default";
 
 
 struct Theme
@@ -224,19 +225,19 @@ void ThemeManager::LoadThemeMetrics( deque<Theme> &theme, const RString &sThemeN
 		if( sLanguage.CompareNoCase(SpecialFiles::BASE_LANGUAGE) )
 			ini.ReadFile( GetLanguageIniPath(sThemeName,sLanguage) );
 
-		bool bIsBaseTheme = !sThemeName.CompareNoCase(BASE_THEME_NAME);
+		bool bIsBaseTheme = !sThemeName.CompareNoCase(SpecialFiles::BASE_THEME_NAME);
 		ini.GetValue( "Global", "IsBaseTheme", bIsBaseTheme );
 		if( bIsBaseTheme )
 			bLoadedBase = true;
 
 		/* Read the fallback theme.  If no fallback theme is specified, and we havn't
-		 * already loaded it, fall back on BASE_THEME_NAME.  That way, default theme
+		 * already loaded it, fall back on SpecialFiles::BASE_THEME_NAME.  That way, default theme
 		 * fallbacks can be disabled with "FallbackTheme=". */
 		RString sFallback;
 		if( !ini.GetValue("Global","FallbackTheme",sFallback) )
 		{
-			if( sThemeName.CompareNoCase( BASE_THEME_NAME ) && !bLoadedBase )
-				sFallback = BASE_THEME_NAME;
+			if( sThemeName.CompareNoCase( SpecialFiles::BASE_THEME_NAME ) && !bLoadedBase )
+				sFallback = SpecialFiles::BASE_THEME_NAME;
 		}
 
 		/* We actually want to load themes bottom-to-top, loading fallback themes
@@ -281,7 +282,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	RString sThemeName = sThemeName_;
 	RString sLanguage = sLanguage_;
 	if( !DoesThemeExist(sThemeName) )
-		sThemeName = BASE_THEME_NAME;
+		sThemeName = SpecialFiles::BASE_THEME_NAME;
 
 	/* We havn't actually loaded the theme yet, so we can't check whether sLanguage
 	 * exists.  Just check for empty. */
@@ -317,8 +318,11 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	}
 
 	// reload subscribers
-	FOREACHS_CONST( IThemeMetric*, *g_Subscribers.m_pSubscribers, p )
-		(*p)->Read();
+	if( SubscriptionManager<IThemeMetric>::s_pSubscribers )
+	{
+		FOREACHS_CONST( IThemeMetric*, *g_Subscribers.m_pSubscribers, p )
+			(*p)->Read();
+	}
 }
 
 void ThemeManager::RunLuaScripts( const RString &sMask )
@@ -638,11 +642,11 @@ try_element_again:
 			sCategory.c_str(),
 			sFileName.c_str(), 
 			GetThemeDirFromName(m_sCurThemeName).c_str(), 
-			GetThemeDirFromName(BASE_THEME_NAME).c_str() );
+			GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
 
 		/* Err? */
 		if(sFileName == "_missing")
-			RageException::Throw("'_missing' isn't present in '%s%s'", GetThemeDirFromName(BASE_THEME_NAME).c_str(), sCategory.c_str() );
+			RageException::Throw("'_missing' isn't present in '%s%s'", GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str(), sCategory.c_str() );
 
 		Cache[sFileName] = GetPath( category, "", "_missing" );
 		return Cache[sFileName];
@@ -651,7 +655,7 @@ try_element_again:
 			sCategory.c_str(),
 			sFileName.c_str(), 
 			GetThemeDirFromName(m_sCurThemeName).c_str(), 
-			GetThemeDirFromName(BASE_THEME_NAME).c_str() );
+			GetThemeDirFromName(SpecialFiles::BASE_THEME_NAME).c_str() );
 	default:
 		ASSERT(0);
 		return NULL;
@@ -693,6 +697,8 @@ bool ThemeManager::GetMetricRawRecursive( const RString &sClassName_, const RStr
 {
 	ASSERT( sValueName != "" );
 	RString sClassName( sClassName_ );
+
+	ASSERT( g_pIniMetrics );
 
 	int n = 100;
 	while( n-- )
@@ -743,7 +749,7 @@ try_metric_again:
 	}
 
 	RString sCurMetricPath = GetMetricsIniPath(m_sCurThemeName);
-	RString sDefaultMetricPath = GetMetricsIniPath(BASE_THEME_NAME);
+	RString sDefaultMetricPath = GetMetricsIniPath(SpecialFiles::BASE_THEME_NAME);
 
 	RString sError = ssprintf( "Theme metric '%s : %s' could not be found in '%s' or '%s'.", 
 		sClassName.c_str(),
@@ -900,8 +906,23 @@ void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueNa
 
 RString ThemeManager::GetString( const RString &sClassName, const RString &sValueName )
 {
+	// TODO: Are there esacpe rules for this?
+	DEBUG_ASSERT( sValueName.find('=') == sValueName.npos );
+
 	// TODO: Change this to GetMetricRaw and write stubs for missing strings into every language file.
-	return GetMetric( sClassName, sValueName );
+	RString s = GetMetric( sClassName, sValueName );
+	
+	// Language strings may not be empty.  Empty strings are considered to need translation
+	if( s.empty() )
+	{
+		RString sFile = GetLanguageIniPath( m_sCurThemeName, m_sCurLanguage );
+		IniFile ini;
+		ini.ReadFile( sFile );
+		s = sValueName;
+		ini.SetValue( sClassName, sValueName, s );
+		ini.WriteFile( sFile );
+	}
+	return s;
 }
 
 void ThemeManager::GetMetricsThatBeginWith( const RString &sClassName_, const RString &sValueName, set<RString> &vsValueNamesOut )
@@ -935,7 +956,7 @@ void ThemeManager::GetMetricsThatBeginWith( const RString &sClassName_, const RS
 
 RString ThemeManager::GetBlankGraphicPath()
 {
-	return SpecialFiles::THEMES_DIR + BASE_THEME_NAME + "/" + ElementCategoryToString(EC_GRAPHICS) + "/_blank.png";
+	return SpecialFiles::THEMES_DIR + SpecialFiles::BASE_THEME_NAME + "/" + ElementCategoryToString(EC_GRAPHICS) + "/_blank.png";
 }
 
 // lua start

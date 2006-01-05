@@ -173,6 +173,8 @@ BOOL MainMenuDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 	
 	// TODO: Add extra initialization here
+	SMPackageUtil::LocalizeDialogAndContents( *this );
+
 	TCHAR szCurDir[MAX_PATH];
 	GetCurrentDirectory( ARRAYSIZE(szCurDir), szCurDir );
 	GetDlgItem( IDC_EDIT_INSTALLATION )->SetWindowText( szCurDir );
