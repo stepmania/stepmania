@@ -7,7 +7,7 @@
 #include "MessageManager.h"
 #include "SubscriptionManager.h"
 
-static SubscriptionHandler<IPreference> m_Subscribers;
+static SubscriptionManager<IPreference> m_Subscribers;
 
 IPreference::IPreference( const CString& sName ):
 	m_sName( sName )

@@ -50,7 +50,7 @@ static IniFile *g_pIniMetrics;
 // For self-registering metrics
 //
 #include "SubscriptionManager.h"
-static SubscriptionHandler<IThemeMetric> g_Subscribers;
+static SubscriptionManager<IThemeMetric> g_Subscribers;
 
 void ThemeManager::Subscribe( IThemeMetric *p )
 {

@@ -8,7 +8,7 @@
 // Since this class has only POD types and no constructor, there's no 
 // initialize order problem.
 template<class T>
-class SubscriptionHandler
+class SubscriptionManager
 {
 public:
 	// TRICKY: If we make this a global instead of a global pointer,
