@@ -53,7 +53,7 @@ BOOL EditInsallations::OnInitDialog()
 	CDialog::OnInitDialog();
 	
 	// TODO: Add extra initialization here
-	
+	SMPackageUtil::LocalizeDialogAndContents( *this );	
 
 	vector<RString> vs;
 	SMPackageUtil::GetStepManiaInstallDirs( vs );
