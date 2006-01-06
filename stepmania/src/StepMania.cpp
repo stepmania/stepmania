@@ -794,6 +794,7 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
 	THEME->SwitchThemeAndLanguage( sTheme, PREFSMAN->m_sLanguage );
+	THEME->SetPseudoLocalilze( PREFSMAN->m_bPseudoLocalize );
 }
 
 

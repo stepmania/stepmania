@@ -12,6 +12,7 @@
 #include "LuaManager.h"
 #include "ThemeManager.h"
 #include "SpecialFiles.h"
+#include "IniFile.h"
 
 
 #ifdef _DEBUG
@@ -112,7 +113,18 @@ BOOL CSmpackageApp::InitInstance()
 	FILEMAN = new RageFileManager( "" );
 	LUA = new LuaManager();
 	THEME = new ThemeManager();
-	THEME->SwitchThemeAndLanguage( SpecialFiles::BASE_THEME_NAME, SpecialFiles::BASE_LANGUAGE );
+
+	// TODO: Use PrefsManager to get the current language instead?  PrefsManager would 
+	// need to be split up to reduce dependencies
+	IniFile ini;
+	ini.ReadFile( SpecialFiles::PREFERENCES_INI_PATH );
+	RString sLanguage;
+	ini.GetValue( "Preferences", "Language", sLanguage );
+	bool bPseudoLocalize;
+	ini.GetValue( "PseudoLocalize", "Language", bPseudoLocalize );
+
+	THEME->SwitchThemeAndLanguage( SpecialFiles::BASE_THEME_NAME, sLanguage );
+	THEME->SetPseudoLocalilze( bPseudoLocalize );
 
 
 	// Show the Manager Dialog
