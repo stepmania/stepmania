@@ -16,7 +16,6 @@ void LocalizedString::RegisterLocalizer( RString (*pfnLocalizer)(const RString&,
 }
 
 #include "SubscriptionManager.h"
-template<>
 SubscriptionManager<LocalizedString> g_Subscribers;
 
 void LocalizedString::RefreshLocalizedStrings()
