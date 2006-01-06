@@ -237,11 +237,7 @@ void SMPackageUtil::LocalizeDialogAndContents( CDialog &dlg )
 		RString s = sTemp;
 		if( s.empty() )
 			continue;
-		vector<RString> vsBits;
-		split( s, "\n", vsBits, true );
-		FOREACH( RString, vsBits, iter )
-			*iter = THEME->GetString(sGroup,RString(*iter));
-		s = join("\n",vsBits);
+		s = THEME->GetString( sGroup, s );
 		pChild->SetWindowText( s );
 	}
 }

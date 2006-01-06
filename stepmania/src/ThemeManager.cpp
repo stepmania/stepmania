@@ -356,9 +356,9 @@ void ThemeManager::UpdateLuaGlobals()
 #if !defined(SMPACKAGE)
 	/* explicitly refresh cached metrics that we use. */
 	ScreenDimensions::ReloadMetricsAndUpdateLua();
-#endif
 
 	RunLuaScripts( "*.lua" );
+#endif
 }
 
 RString ThemeManager::GetThemeDirFromName( const RString &sThemeName )
@@ -904,14 +904,19 @@ void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueNa
 	valueOut.SetFromExpression( "function(self) " + sValue + "end" );
 }
 
-RString ThemeManager::GetString( const RString &sClassName, const RString &sValueName )
+RString ThemeManager::GetString( const RString &sClassName, const RString &sValueName_ )
 {
+	RString sValueName = sValueName_;
+
 	// TODO: Are there esacpe rules for this?
 	DEBUG_ASSERT( sValueName.find('=') == sValueName.npos );
 
-	// TODO: Change this to GetMetricRaw and write stubs for missing strings into every language file.
+	// TODO: Move this escaping into IniFile?
+	sValueName.Replace( "\n", "\\n" );
+
 	RString s = GetMetric( sClassName, sValueName );
 	
+	// Write stubs for missing strings into every language file.
 	// Language strings may not be empty.  Empty strings are considered to need translation
 	if( s.empty() )
 	{
@@ -922,6 +927,9 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 		ini.SetValue( sClassName, sValueName, s );
 		ini.WriteFile( sFile );
 	}
+
+	s.Replace( "\\n", "\n" );
+
 	return s;
 }
 

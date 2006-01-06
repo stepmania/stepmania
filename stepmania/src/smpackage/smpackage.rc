@@ -157,41 +157,37 @@ BEGIN
                     IDC_STATIC,18,144,196,17
 END
 
-IDD_MENU DIALOGEX 0, 0, 332, 303
+IDD_MENU DIALOGEX 0, 0, 332, 265
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "StepMania Tools Main Menu"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Exit",IDOK,275,282,50,14
+    DEFPUSHBUTTON   "Exit",IDOK,275,244,50,14
     CONTROL         1045,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     GROUPBOX        "Installation",IDC_STATIC,7,41,318,28
     PUSHBUTTON      "Edit Installations",IDC_EDIT_INSTALLATIONS,241,49,75,15
-    GROUPBOX        "Create and Share",IDC_STATIC,7,198,318,79
-    PUSHBUTTON      "Export Packages",IDC_EXPORT_PACKAGES,15,213,75,15
+    GROUPBOX        "Create and Share",IDC_STATIC,7,161,318,79
+    PUSHBUTTON      "Export Packages",IDC_EXPORT_PACKAGES,15,176,75,15
     LTEXT           "Create .smzip package files to share with other users.  Packages can contain songs, courses, themes, backgrounds, and more.",
-                    IDC_STATIC,104,212,215,18
-    PUSHBUTTON      "Create Song",IDC_CREATE_SONG,15,234,75,15
+                    IDC_STATIC,104,175,215,18
+    PUSHBUTTON      "Create Song",IDC_CREATE_SONG,15,197,75,15
     LTEXT           "Create a new song in from your favorite mp3 or ogg music file.",
-                    IDC_STATIC,103,233,215,20
-    GROUPBOX        "Troubleshooting",IDC_STATIC,7,109,318,87
-    PUSHBUTTON      "Change Preferences",IDC_CHANGE_PREFERENCES,16,120,75,15
-    PUSHBUTTON      "Open Preferences",IDC_OPEN_PREFERENCES,16,152,75,15
+                    IDC_STATIC,103,196,215,20
+    GROUPBOX        "Troubleshooting",IDC_STATIC,7,72,318,87
+    PUSHBUTTON      "Change Preferences",IDC_CHANGE_PREFERENCES,16,83,75,15
+    PUSHBUTTON      "Open Preferences",IDC_OPEN_PREFERENCES,16,115,75,15
     LTEXT           "Using this feature, you can:\n - Change the graphics API that the game will use.\n - Change the sound API that the game will use.\n - Clear all preferences if the game won't start.\n - Open the preferences file to make changes by hand.",
-                    IDC_STATIC,104,123,215,45
-    PUSHBUTTON      "Clear Preferences",IDC_CLEAR_PREFERENCES,16,136,75,15
-    PUSHBUTTON      "Clear Mappings",IDC_CLEAR_KEYMAPS,16,175,75,15
+                    IDC_STATIC,104,86,215,45
+    PUSHBUTTON      "Clear Preferences",IDC_CLEAR_PREFERENCES,16,99,75,15
+    PUSHBUTTON      "Clear Mappings",IDC_CLEAR_KEYMAPS,16,138,75,15
     EDITTEXT        IDC_EDIT_INSTALLATION,16,51,219,12,ES_AUTOHSCROLL | 
                     ES_READONLY
     LTEXT           "Erase all of your keyboard and joystick mappings if you've made a mistake.",
-                    IDC_STATIC,104,174,214,18
-    PUSHBUTTON      "Launch Game",IDC_BUTTON_LAUNCH_GAME,189,282,70,14
-    PUSHBUTTON      "View Statistics",IDC_VIEW_STATISTICS,16,85,75,15
-    LTEXT           "View high scores and usage statistics and other data saved from your play.",
-                    IDC_STATIC,103,84,215,20
-    GROUPBOX        "Statistics",IDC_STATIC,7,72,318,35
-    PUSHBUTTON      "Languages",IDC_LANGUAGES,15,255,75,15
+                    IDC_STATIC,104,137,214,18
+    PUSHBUTTON      "Launch Game",IDC_BUTTON_LAUNCH_GAME,189,244,70,14
+    PUSHBUTTON      "Languages",IDC_LANGUAGES,15,218,75,15
     LTEXT           "Create a new or manage existing language translations.",
-                    IDC_STATIC,103,254,215,20
+                    IDC_STATIC,103,217,215,20
     LTEXT           "StepMania Tools Main Menu",IDC_STATIC_HEADER_TEXT,5,2,
                     280,24
 END
@@ -402,7 +398,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 325
         TOPMARGIN, 7
-        BOTTOMMARGIN, 296
+        BOTTOMMARGIN, 258
     END
 
     IDD_ENTER_COMMENT, DIALOG

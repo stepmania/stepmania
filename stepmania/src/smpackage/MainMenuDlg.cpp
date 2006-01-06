@@ -58,7 +58,6 @@ BEGIN_MESSAGE_MAP(MainMenuDlg, CDialog)
 	ON_BN_CLICKED(IDC_CLEAR_PREFERENCES, OnBnClickedClearPreferences)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BUTTON_LAUNCH_GAME, OnBnClickedButtonLaunchGame)
-	ON_BN_CLICKED(IDC_VIEW_STATISTICS, OnBnClickedViewStatistics)
 	ON_BN_CLICKED(IDC_LANGUAGES, OnBnClickedLanguages)
 END_MESSAGE_MAP()
 
@@ -245,15 +244,6 @@ void MainMenuDlg::OnBnClickedButtonLaunchGame()
 	// TODO: Add your control notification handler code here
 	if( SMPackageUtil::LaunchGame() )
 		exit(0);
-}
-
-void MainMenuDlg::OnBnClickedViewStatistics()
-{
-	// TODO: Add your control notification handler code here
-	RString sPersonalDir = SpecialDirs::GetMyDocumentsDir();
-	RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
-	if( NULL == ::ShellExecute( this->m_hWnd, "open", sFile, "", "", SW_SHOWNORMAL ) )
-		MessageBox( "Failed to open '" + sFile + "': " + GetLastErrorString() );
 }
 
 void MainMenuDlg::OnBnClickedLanguages()

@@ -8,9 +8,9 @@
 #define BITMAP_LOADING                  117
 #define BITMAP_CRASH                    121
 #define BITMAP_ERROR                    129
-#define IDD_OK                          129
-#define IDD_DRIVER                      130
-#define IDD_DISASM_CRASH                199
+#define IDD_OK                          118
+#define IDD_DRIVER                      119
+#define IDD_DISASM_CRASH                120
 #define IDC_SHOCKWAVEFLASH1             1000
 #define IDC_BUTTON_RESTART              1001
 #define IDM_TOGGLEFULLSCREEN            1002
