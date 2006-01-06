@@ -10,15 +10,16 @@
 #include "archutils/win32/AppInstance.h"
 #include "archutils/win32/GotoURL.h"
 #include "archutils/win32/RestartProgram.h"
-#include "archutils/win32/WindowsResources.h"
 #if !defined(SMPACKAGE)
+#include "archutils/win32/WindowsResources.h"
 #include "archutils/win32/GraphicsWindow.h"
 #endif
 
 static bool g_bHush;
-static CString g_sMessage;
+static RString g_sMessage;
 static bool g_bAllowHush;
 
+#if !defined(SMPACKAGE)
 static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	switch( msg )
@@ -40,7 +41,7 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 	        SetWindowLong( hHushButton, GWL_STYLE, iStyle );
 
 			// Set static text.
-			CString sMessage = g_sMessage;
+			RString sMessage = g_sMessage;
 			sMessage.Replace( "\n", "\r\n" );
 			SetWindowText( GetDlgItem(hWnd, IDC_MESSAGE), sMessage );
 			
@@ -68,6 +69,7 @@ static BOOL CALLBACK OKWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 	}
 	return FALSE;
 }
+#endif
 
 static HWND GetHwnd()
 {
@@ -78,7 +80,7 @@ static HWND GetHwnd()
 #endif
 }
 
-static CString GetWindowTitle()
+static RString GetWindowTitle()
 {
 #if !defined(SMPACKAGE)
 	return CommonMetrics::WINDOW_TITLE.IsLoaded() ? CommonMetrics::WINDOW_TITLE.GetValue() : PRODUCT_NAME;
@@ -87,18 +89,22 @@ static CString GetWindowTitle()
 #endif
 }
 
-void DialogDriver_Win32::OK( CString sMessage, CString sID )
+void DialogDriver_Win32::OK( RString sMessage, RString sID )
 {
 	g_bAllowHush = sID != "";
 	g_sMessage = sMessage;
 	AppInstance handle;
+#if !defined(SMPACKAGE)
 	DialogBox( handle.Get(), MAKEINTRESOURCE(IDD_OK), ::GetHwnd(), OKWndProc );
+#else
+	::MessageBox( NULL, sMessage, GetWindowTitle(), MB_OK );
+#endif
 	if( g_bAllowHush && g_bHush )
 		Dialog::IgnoreMessage( sID );
 }
 
 #if !defined(SMPACKAGE)
-static CString g_sErrorString;
+static RString g_sErrorString;
 
 static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
@@ -107,7 +113,7 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 	case WM_INITDIALOG:
 		{
 			// Set static text
-			CString sMessage = g_sErrorString;
+			RString sMessage = g_sErrorString;
 			sMessage.Replace( "\n", "\r\n" );
 			SetWindowText( GetDlgItem(hWnd, IDC_EDIT_ERROR), sMessage );
 		}
@@ -155,7 +161,7 @@ static BOOL CALLBACK ErrorWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 }
 #endif
 
-void DialogDriver_Win32::Error( CString sError, CString sID )
+void DialogDriver_Win32::Error( RString sError, RString sID )
 {
 #if !defined(SMPACKAGE)
 	g_sErrorString = sError;
@@ -166,7 +172,7 @@ void DialogDriver_Win32::Error( CString sError, CString sID )
 #endif
 }
 
-Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString ID )
+Dialog::Result DialogDriver_Win32::AbortRetryIgnore( RString sMessage, RString ID )
 {
 	switch( MessageBox(::GetHwnd(), sMessage, ::GetWindowTitle(), MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
 	{
@@ -177,7 +183,7 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( CString sMessage, CString I
 	}
 } 
 
-Dialog::Result DialogDriver_Win32::AbortRetry( CString sMessage, CString sID )
+Dialog::Result DialogDriver_Win32::AbortRetry( RString sMessage, RString sID )
 {
 	switch( MessageBox(::GetHwnd(), sMessage, ::GetWindowTitle(), MB_RETRYCANCEL) )
 	{

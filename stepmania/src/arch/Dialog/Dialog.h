@@ -11,13 +11,13 @@ namespace Dialog
 	void SetWindowed( bool bWindowed );
 
 	enum Result { abort, retry, ignore };
-	void Error( CString sError, CString sID = "" );
-	void OK( CString sMessage, CString sID = "" );
-	Result AbortRetryIgnore( CString sMessage, CString sID = "" );
-	Result AbortRetry( CString sMessage, CString sID = "" );
+	void Error( RString sError, RString sID = "" );
+	void OK( RString sMessage, RString sID = "" );
+	Result AbortRetryIgnore( RString sMessage, RString sID = "" );
+	Result AbortRetry( RString sMessage, RString sID = "" );
 
 	/* for DialogDrivers */
-	void IgnoreMessage( CString sID );
+	void IgnoreMessage( RString sID );
 };
 
 #endif

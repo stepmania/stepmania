@@ -10,19 +10,19 @@
 #include "RageThreads.h"
 
 #if !defined(SMPACKAGE)
-static Preference<CString> g_sIgnoredDialogs( "IgnoredDialogs", "" );
+static Preference<RString> g_sIgnoredDialogs( "IgnoredDialogs", "" );
 #endif
 
 #include "Selector_Dialog.h"
 DialogDriver *MakeDialogDriver()
 {
-	CString sDrivers = "win32,cocoa,null";
-	vector<CString> asDriversToTry;
+	RString sDrivers = "win32,cocoa,null";
+	vector<RString> asDriversToTry;
 	split( sDrivers, ",", asDriversToTry, true );
 
 	ASSERT( asDriversToTry.size() != 0 );
 
-	CString sDriver;
+	RString sDriver;
 	DialogDriver *pRet = NULL;
 
 	for( unsigned i = 0; pRet == NULL && i < asDriversToTry.size(); ++i )
@@ -44,7 +44,7 @@ DialogDriver *MakeDialogDriver()
 			continue;
 		}
 
-		CString sError = pRet->Init();
+		RString sError = pRet->Init();
 		if( sError != "" )
 		{
 			if( LOG )
@@ -77,10 +77,10 @@ void Dialog::Shutdown()
 	g_pImpl = NULL;
 }
 
-static bool MessageIsIgnored( CString sID )
+static bool MessageIsIgnored( RString sID )
 {
 #if !defined(SMPACKAGE)
-	vector<CString> asList;
+	vector<RString> asList;
 	split( g_sIgnoredDialogs, ",", asList );
 	for( unsigned i = 0; i < asList.size(); ++i )
 		if( !sID.CompareNoCase(asList[i]) )
@@ -89,7 +89,7 @@ static bool MessageIsIgnored( CString sID )
 	return false;
 }
 
-void Dialog::IgnoreMessage( CString sID )
+void Dialog::IgnoreMessage( RString sID )
 {
 	/* We can't ignore messages before PREFSMAN is around. */
 #if !defined(SMPACKAGE)
@@ -106,7 +106,7 @@ void Dialog::IgnoreMessage( CString sID )
 	if( MessageIsIgnored(sID) )
 		return;
 
-	vector<CString> asList;
+	vector<RString> asList;
 	split( g_sIgnoredDialogs, ",", asList );
 	asList.push_back( sID );
 	g_sIgnoredDialogs.Set( join(",",asList) );
@@ -114,7 +114,7 @@ void Dialog::IgnoreMessage( CString sID )
 #endif
 }
 
-void Dialog::Error( CString sMessage, CString sID )
+void Dialog::Error( RString sMessage, RString sID )
 {
 	Dialog::Init();
 
@@ -136,7 +136,7 @@ void Dialog::SetWindowed( bool bWindowed )
 	g_bWindowed = bWindowed;
 }
 
-void Dialog::OK( CString sMessage, CString sID )
+void Dialog::OK( RString sMessage, RString sID )
 {
 	Dialog::Init();
 
@@ -157,7 +157,7 @@ void Dialog::OK( CString sMessage, CString sID )
 	RageThread::SetIsShowingDialog( false );
 }
 
-Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString sID )
+Dialog::Result Dialog::AbortRetryIgnore( RString sMessage, RString sID )
 {
 	Dialog::Init();
 
@@ -181,7 +181,7 @@ Dialog::Result Dialog::AbortRetryIgnore( CString sMessage, CString sID )
 	return ret;
 }
 
-Dialog::Result Dialog::AbortRetry( CString sMessage, CString sID )
+Dialog::Result Dialog::AbortRetry( RString sMessage, RString sID )
 {
 	Dialog::Init();
 

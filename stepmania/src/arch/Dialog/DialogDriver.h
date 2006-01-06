@@ -6,12 +6,12 @@
 class DialogDriver
 {
 public:
-	virtual void Error( CString sMessage, CString sID ) { printf("Error: %s\n", sMessage.c_str()); }
-	virtual void OK( CString sMessage, CString sID ) {}
-	virtual Dialog::Result AbortRetryIgnore( CString sMessage, CString sID ) { return Dialog::ignore; } 
-	virtual Dialog::Result AbortRetry( CString sMessage, CString sID ) { return Dialog::abort; } 
+	virtual void Error( RString sMessage, RString sID ) { printf("Error: %s\n", sMessage.c_str()); }
+	virtual void OK( RString sMessage, RString sID ) {}
+	virtual Dialog::Result AbortRetryIgnore( RString sMessage, RString sID ) { return Dialog::ignore; } 
+	virtual Dialog::Result AbortRetry( RString sMessage, RString sID ) { return Dialog::abort; } 
 
-	virtual CString Init() { return CString(); }
+	virtual RString Init() { return RString(); }
 	virtual ~DialogDriver() { }
 };
 
