@@ -39,6 +39,7 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(EnterName)
 	virtual void OnOK();
+	virtual BOOL OnInitDialog();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

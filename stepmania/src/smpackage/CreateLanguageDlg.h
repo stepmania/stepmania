@@ -17,8 +17,11 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnInitDialog();
 
+	// Generated message map functions
+	//{{AFX_MSG(CreateLanguageDlg)
+	virtual BOOL OnInitDialog();
+	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 public:
 	CComboBox m_comboLanguages;

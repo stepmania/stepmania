@@ -43,6 +43,7 @@ void MainMenuDlg::DoDataExchange(CDataExchange* pDX)
 	//{{AFX_DATA_MAP(MainMenuDlg)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
+	DDX_Control(pDX, IDC_STATIC_HEADER_TEXT, m_staticHeaderText);
 }
 
 
@@ -58,7 +59,6 @@ BEGIN_MESSAGE_MAP(MainMenuDlg, CDialog)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BUTTON_LAUNCH_GAME, OnBnClickedButtonLaunchGame)
 	ON_BN_CLICKED(IDC_VIEW_STATISTICS, OnBnClickedViewStatistics)
-	ON_BN_CLICKED(IDC_CLEAR_CACHE, OnBnClickedClearCache)
 	ON_BN_CLICKED(IDC_LANGUAGES, OnBnClickedLanguages)
 END_MESSAGE_MAP()
 
@@ -174,6 +174,7 @@ BOOL MainMenuDlg::OnInitDialog()
 	
 	// TODO: Add extra initialization here
 	SMPackageUtil::LocalizeDialogAndContents( *this );
+	SMPackageUtil::SetHeaderFont( *this );
 
 	TCHAR szCurDir[MAX_PATH];
 	GetCurrentDirectory( ARRAYSIZE(szCurDir), szCurDir );
@@ -253,24 +254,6 @@ void MainMenuDlg::OnBnClickedViewStatistics()
 	RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
 	if( NULL == ::ShellExecute( this->m_hWnd, "open", sFile, "", "", SW_SHOWNORMAL ) )
 		MessageBox( "Failed to open '" + sFile + "': " + GetLastErrorString() );
-}
-
-void MainMenuDlg::OnBnClickedClearCache()
-{
-	// TODO: Add your control notification handler code here
-	if( DoesFileExist(SpecialFiles::CACHE_DIR) )
-	{
-		if( DeleteRecursive(SpecialFiles::CACHE_DIR) )
-			MessageBox( "The cache has been cleared." );
-		else
-			MessageBox( "There was an error clearing the cache." );
-	}
-	else
-	{
-		MessageBox( "The cache is already cleared." );
-	}
-
-	FlushDirCache();
 }
 
 void MainMenuDlg::OnBnClickedLanguages()

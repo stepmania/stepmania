@@ -7,6 +7,8 @@
 // MainMenuDlg.h : header file
 //
 
+#include "TransparentStatic.h"
+
 /////////////////////////////////////////////////////////////////////////////
 // MainMenuDlg dialog
 
@@ -32,6 +34,7 @@ public:
 
 // Implementation
 protected:
+	CTransparentStatic	m_staticHeaderText;
 
 	// Generated message map functions
 	//{{AFX_MSG(MainMenuDlg)
@@ -50,7 +53,6 @@ protected:
 public:
 	afx_msg void OnBnClickedButtonLaunchGame();
 	afx_msg void OnBnClickedViewStatistics();
-	afx_msg void OnBnClickedClearCache();
 	afx_msg void OnBnClickedLanguages();
 };
 

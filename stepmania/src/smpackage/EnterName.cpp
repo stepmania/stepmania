@@ -6,6 +6,7 @@
 #include "stdafx.h"
 #include "smpackage.h"
 #include "EnterName.h"
+#include "SMPackageUtil.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -25,7 +26,6 @@ EnterName::EnterName(CWnd* pParent /*=NULL*/)
 	//}}AFX_DATA_INIT
 }
 
-
 void EnterName::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -34,6 +34,16 @@ void EnterName::DoDataExchange(CDataExchange* pDX)
 	//}}AFX_DATA_MAP
 }
 
+BOOL EnterName::OnInitDialog() 
+{
+	CDialog::OnInitDialog();
+	
+	// TODO: Add extra initialization here
+	SMPackageUtil::LocalizeDialogAndContents( *this );
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	              // EXCEPTION: OCX Property Pages should return FALSE
+}
 
 BEGIN_MESSAGE_MAP(EnterName, CDialog)
 	//{{AFX_MSG_MAP(EnterName)

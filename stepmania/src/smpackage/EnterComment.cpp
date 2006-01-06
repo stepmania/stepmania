@@ -6,6 +6,7 @@
 #include "stdafx.h"
 #include "smpackage.h"
 #include "EnterComment.h"
+#include "SMPackageUtil.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -36,6 +37,16 @@ void EnterComment::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_DONTASK, m_bDontAsk);
 }
 
+BOOL EnterComment::OnInitDialog() 
+{
+	CDialog::OnInitDialog();
+	
+	// TODO: Add extra initialization here
+	SMPackageUtil::LocalizeDialogAndContents( *this );
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+	              // EXCEPTION: OCX Property Pages should return FALSE
+}
 
 BEGIN_MESSAGE_MAP(EnterComment, CDialog)
 	//{{AFX_MSG_MAP(EnterComment)

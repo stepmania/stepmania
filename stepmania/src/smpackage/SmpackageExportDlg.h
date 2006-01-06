@@ -6,6 +6,7 @@
 #endif // _MSC_VER > 1000
 
 #include "afxtempl.h"
+#include "TransparentStatic.h"
 
 // SmpackageExportDlg.h : header file
 //
@@ -44,6 +45,8 @@ protected:
 	void GetCheckedTreeItems( CArray<HTREEITEM,HTREEITEM>& aCheckedItemsOut );
 	void GetCheckedPaths( vector<RString>& aCheckedItemsOut );
 	bool MakeComment( RString &comment );
+
+	CTransparentStatic	m_staticHeaderText;
 
 	// Generated message map functions
 	//{{AFX_MSG(CSmpackageExportDlg)

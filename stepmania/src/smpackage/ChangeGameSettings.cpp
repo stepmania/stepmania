@@ -50,6 +50,9 @@ BOOL ChangeGameSettings::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
+	// TODO: Add extra initialization here
+	SMPackageUtil::LocalizeDialogAndContents( *this );
+
 	//
 	// Fill the radio buttons
 	//

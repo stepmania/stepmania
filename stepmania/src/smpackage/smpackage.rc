@@ -75,7 +75,7 @@ IDR_MAINFRAME           ICON                    "smpackage.ICO"
 
 IDD_INSTALL DIALOGEX 0, 0, 332, 234
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
-CAPTION "Stepmania Package Manager"
+CAPTION "StepMania Tools"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     EDITTEXT        IDC_EDIT_MESSAGE1,7,42,320,45,ES_MULTILINE | 
@@ -84,7 +84,7 @@ BEGIN
     DEFPUSHBUTTON   "Finish >",IDOK,200,215,55,15
     PUSHBUTTON      "Cancel",IDCANCEL,275,215,50,15
     PUSHBUTTON      "< Back",IDC_BUTTON_BACK,145,215,55,15,WS_DISABLED
-    CONTROL         133,IDC_STATIC,"Static",SS_BITMAP,0,0,258,37
+    CONTROL         1045,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     EDITTEXT        IDC_EDIT_MESSAGE3,5,180,320,13,ES_MULTILINE | 
                     ES_AUTOHSCROLL | ES_READONLY | NOT WS_BORDER | NOT 
                     WS_TABSTOP
@@ -96,19 +96,20 @@ BEGIN
     PUSHBUTTON      "Edit Installations",IDC_BUTTON_EDIT,233,194,59,14
     CONTROL         "",IDC_PROGRESS1,"msctls_progress32",NOT WS_VISIBLE | 
                     WS_BORDER,7,60,318,14
+    LTEXT           "Install a package",IDC_STATIC_HEADER_TEXT,5,2,280,24
 END
 
 IDD_EXPORTER DIALOGEX 0, 0, 332, 234
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
     WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
-CAPTION "Stepmania Package Manager"
+CAPTION "StepMania Tools"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,255,215,69,14
     PUSHBUTTON      "Launch Game",IDC_BUTTON_PLAY,5,215,70,15
     PUSHBUTTON      "Export As One",IDC_BUTTON_EXPORT_AS_ONE,255,104,69,15
-    CONTROL         135,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
+    CONTROL         1045,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     PUSHBUTTON      "Export As Individual",IDC_BUTTON_EXPORT_AS_INDIVIDUAL,
                     255,137,69,15
     CONTROL         "Tree2",IDC_TREE,"SysTreeView32",TVS_HASBUTTONS | 
@@ -119,6 +120,7 @@ BEGIN
     PUSHBUTTON      "Edit Installations",IDC_BUTTON_EDIT,253,39,71,14
     LTEXT           "Select Installation:",IDC_STATIC,7,42,66,11
     PUSHBUTTON      "Open Program Folder",IDC_BUTTON_OPEN,83,215,79,15
+    LTEXT           "Export Packages",IDC_STATIC_HEADER_TEXT,5,2,280,24
 END
 
 IDD_DIALOG_NAME DIALOG  0, 0, 261, 58
@@ -155,23 +157,23 @@ BEGIN
                     IDC_STATIC,18,144,196,17
 END
 
-IDD_MENU DIALOGEX 0, 0, 332, 325
+IDD_MENU DIALOGEX 0, 0, 332, 303
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "StepMania Tools Main Menu"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Exit",IDOK,275,304,50,14
-    CONTROL         140,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
+    DEFPUSHBUTTON   "Exit",IDOK,275,282,50,14
+    CONTROL         1045,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     GROUPBOX        "Installation",IDC_STATIC,7,41,318,28
     PUSHBUTTON      "Edit Installations",IDC_EDIT_INSTALLATIONS,241,49,75,15
-    GROUPBOX        "Create and Share",IDC_STATIC,7,219,318,79
-    PUSHBUTTON      "Export Packages",IDC_EXPORT_PACKAGES,15,234,75,15
+    GROUPBOX        "Create and Share",IDC_STATIC,7,198,318,79
+    PUSHBUTTON      "Export Packages",IDC_EXPORT_PACKAGES,15,213,75,15
     LTEXT           "Create .smzip package files to share with other users.  Packages can contain songs, courses, themes, backgrounds, and more.",
-                    IDC_STATIC,104,233,215,18
-    PUSHBUTTON      "Create Song",IDC_CREATE_SONG,15,255,75,15
+                    IDC_STATIC,104,212,215,18
+    PUSHBUTTON      "Create Song",IDC_CREATE_SONG,15,234,75,15
     LTEXT           "Create a new song in from your favorite mp3 or ogg music file.",
-                    IDC_STATIC,103,254,215,20
-    GROUPBOX        "Troubleshooting",IDC_STATIC,7,109,318,109
+                    IDC_STATIC,103,233,215,20
+    GROUPBOX        "Troubleshooting",IDC_STATIC,7,109,318,87
     PUSHBUTTON      "Change Preferences",IDC_CHANGE_PREFERENCES,16,120,75,15
     PUSHBUTTON      "Open Preferences",IDC_OPEN_PREFERENCES,16,152,75,15
     LTEXT           "Using this feature, you can:\n - Change the graphics API that the game will use.\n - Change the sound API that the game will use.\n - Clear all preferences if the game won't start.\n - Open the preferences file to make changes by hand.",
@@ -182,17 +184,16 @@ BEGIN
                     ES_READONLY
     LTEXT           "Erase all of your keyboard and joystick mappings if you've made a mistake.",
                     IDC_STATIC,104,174,214,18
-    PUSHBUTTON      "Launch Game",IDC_BUTTON_LAUNCH_GAME,189,304,70,14
+    PUSHBUTTON      "Launch Game",IDC_BUTTON_LAUNCH_GAME,189,282,70,14
     PUSHBUTTON      "View Statistics",IDC_VIEW_STATISTICS,16,85,75,15
     LTEXT           "View high scores and usage statistics and other data saved from your play.",
                     IDC_STATIC,103,84,215,20
     GROUPBOX        "Statistics",IDC_STATIC,7,72,318,35
-    PUSHBUTTON      "Clear Cache",IDC_CLEAR_CACHE,16,196,75,15
-    LTEXT           "Erase the song and course cache.  Use this if you change a song file and the change isn't showing in-game.",
-                    IDC_STATIC,104,196,214,18
-    PUSHBUTTON      "Languages",IDC_LANGUAGES,15,276,75,15
+    PUSHBUTTON      "Languages",IDC_LANGUAGES,15,255,75,15
     LTEXT           "Create a new or manage existing language translations.",
-                    IDC_STATIC,103,275,215,20
+                    IDC_STATIC,103,254,215,20
+    LTEXT           "StepMania Tools Main Menu",IDC_STATIC_HEADER_TEXT,5,2,
+                    280,24
 END
 
 IDD_ENTER_COMMENT DIALOGEX 0, 0, 312, 202
@@ -401,7 +402,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 325
         TOPMARGIN, 7
-        BOTTOMMARGIN, 318
+        BOTTOMMARGIN, 296
     END
 
     IDD_ENTER_COMMENT, DIALOG
@@ -460,9 +461,7 @@ END
 // Bitmap
 //
 
-INSTALL                 BITMAP                  "install.bmp"
-MANAGE                  BITMAP                  "manage.bmp"
-MENU                    BITMAP                  "menu.bmp"
+IDB_HEADER              BITMAP                  "header.bmp"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

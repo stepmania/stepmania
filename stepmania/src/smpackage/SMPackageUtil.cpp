@@ -7,6 +7,7 @@
 #include "RageUtil.h"	
 #include "RageFileManager.h"	
 #include "ThemeManager.h"	
+#include "resource.h"	
 
 void SMPackageUtil::WriteStepManiaInstallDirs( const vector<RString>& asInstallDirsToWrite )
 {
@@ -211,22 +212,39 @@ RString SMPackageUtil::GetLanguageCodeFromDisplayString( const RString &sDisplay
 	return s;
 }
 
+void SMPackageUtil::SetHeaderFont( CDialog &dlg )
+{
+	CWnd *pWnd = dlg.GetDlgItem( IDC_STATIC_HEADER_TEXT );
+	ASSERT( pWnd );
+	CFont *pFont = new CFont; 
+	const int FONT_POINTS = 16;
+	pFont->CreatePointFont( FONT_POINTS*10, "Arial Black" );
+	pWnd->SetFont( pFont );
+}
+
 void SMPackageUtil::LocalizeDialogAndContents( CDialog &dlg )
 {
-	CString s1;
-	dlg.GetWindowText( s1 );
-	RString sGroup = "Tools-"+s1;
-	dlg.SetWindowText( THEME->GetString(sGroup,"DialogCaption") );
+	CString sTemp;
+	dlg.GetWindowText( sTemp );
+	RString sGroup = "Tools-"+sTemp;
+	dlg.GetWindowText( sTemp );
+	RString s = sTemp;
+	dlg.SetWindowText( THEME->GetString(sGroup,s) );
 
 	for( CWnd *pChild = dlg.GetTopWindow(); pChild != NULL; pChild = pChild->GetNextWindow() )
 	{
-		pChild->GetWindowText( s1 );
-		if( s1.IsEmpty() )
+		pChild->GetWindowText( sTemp );
+		RString s = sTemp;
+		if( s.empty() )
 			continue;
-		pChild->SetWindowText( THEME->GetString(sGroup,RString(s1)) );
+		vector<RString> vsBits;
+		split( s, "\n", vsBits, true );
+		FOREACH( RString, vsBits, iter )
+			*iter = THEME->GetString(sGroup,RString(*iter));
+		s = join("\n",vsBits);
+		pChild->SetWindowText( s );
 	}
 }
-
 
 static const RString TEMP_MOUNT_POINT = "/@package/";
 

@@ -24,6 +24,7 @@ namespace SMPackageUtil
 
 	bool GetFileContentsOsAbsolute( const RString &sAbsoluteOsFile, RString &sOut );
 
+	void SetHeaderFont( CDialog &dlg );
 	void LocalizeDialogAndContents( CDialog &dlg );
 }
 

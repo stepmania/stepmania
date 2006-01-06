@@ -6,6 +6,7 @@
 #include "stdafx.h"
 #include "smpackage.h"
 #include "ShowComment.h"
+#include "SMPackageUtil.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -36,7 +37,6 @@ void ShowComment::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_DONTSHOW, m_bDontShow);
 }
 
-
 BEGIN_MESSAGE_MAP(ShowComment, CDialog)
 	//{{AFX_MSG_MAP(ShowComment)
 	//}}AFX_MSG_MAP
@@ -50,6 +50,7 @@ BOOL ShowComment::OnInitDialog()
 	CDialog::OnInitDialog();
 	
 	// TODO: Add extra initialization here
+	SMPackageUtil::LocalizeDialogAndContents( *this );
 	
 	m_edit.SetWindowText( m_sComment );
 

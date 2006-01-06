@@ -7,6 +7,8 @@
 // SMPackageInstallDlg.h : header file
 //
 
+#include "TransparentStatic.h"
+
 /////////////////////////////////////////////////////////////////////////////
 // CSMPackageInstallDlg dialog
 
@@ -38,6 +40,7 @@ protected:
 
 	HICON m_hIcon;
 	RString m_sPackagePath;
+	CTransparentStatic	m_staticHeaderText;
 
 	// Generated message map functions
 	//{{AFX_MSG(CSMPackageInstallDlg)

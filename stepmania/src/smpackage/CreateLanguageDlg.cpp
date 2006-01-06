@@ -32,6 +32,9 @@ BOOL CreateLanguageDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
+	// TODO: Add extra initialization here
+	SMPackageUtil::LocalizeDialogAndContents( *this );
+
 	vector<const LanguageInfo*> v;
 	GetLanguageInfos( v );
 	FOREACH_CONST( const LanguageInfo*, v, i )

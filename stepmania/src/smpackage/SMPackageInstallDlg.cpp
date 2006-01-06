@@ -48,6 +48,7 @@ void CSMPackageInstallDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_EDIT, m_buttonEdit);
 	DDX_Control(pDX, IDC_COMBO_DIR, m_comboDir);
 	//}}AFX_DATA_MAP
+	DDX_Control(pDX, IDC_STATIC_HEADER_TEXT, m_staticHeaderText);
 }
 
 
@@ -77,6 +78,8 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	SMPackageUtil::LocalizeDialogAndContents( *this );
+	SMPackageUtil::SetHeaderFont( *this );
 
 	// mount the zip
 	if( !FILEMAN->Mount( "zip", m_sPackagePath, TEMP_MOUNT_POINT ) )

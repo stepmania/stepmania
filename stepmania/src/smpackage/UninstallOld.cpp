@@ -6,7 +6,7 @@
 #include "stdafx.h"
 #include "smpackage.h"
 #include "UninstallOld.h"
-
+#include "SMPackageUtil.h"
 
 // UninstallOld dialog
 
@@ -29,6 +29,9 @@ void UninstallOld::DoDataExchange(CDataExchange* pDX)
 BOOL UninstallOld::OnInitDialog()
 {
 	CDialog::OnInitDialog();
+
+	SMPackageUtil::LocalizeDialogAndContents( *this );
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 

@@ -49,6 +49,7 @@ void CSmpackageExportDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_EXPORT_AS_ONE, m_buttonExportAsOne);
 	DDX_Control(pDX, IDC_TREE, m_tree);
 	//}}AFX_DATA_MAP
+	DDX_Control(pDX, IDC_STATIC_HEADER_TEXT, m_staticHeaderText);
 }
 
 
@@ -71,7 +72,8 @@ BOOL CSmpackageExportDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 	
 	// TODO: Add extra initialization here
-	//
+	SMPackageUtil::LocalizeDialogAndContents( *this );
+	SMPackageUtil::SetHeaderFont( *this );
 
 	RefreshInstallationList();
 	

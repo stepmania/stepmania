@@ -7,12 +7,9 @@
 #define IDR_MAINFRAME                   128
 #define IDD_INSTALL                     129
 #define IDD_EXPORTER                    130
-#define INSTALL                         133
-#define MANAGE                          135
 #define IDD_DIALOG_NAME                 137
 #define IDD_EDIT_INSTALLATIONS          138
 #define IDD_MENU                        139
-#define MENU                            140
 #define IDD_ENTER_COMMENT               146
 #define IDD_SHOW_COMMENT                147
 #define IDD_UNINSTALL_OLD_PACKAGES      148
@@ -66,6 +63,7 @@
 #define IDC_DONTSHOW                    1042
 #define IDC_PACKAGES                    1044
 #define IDC_BUTTON1                     1045
+#define IDB_HEADER                      1045
 #define IDC_BUTTON_DELETE               1046
 #define IDC_PROGRESS1                   1047
 #define IDC_RADIO_DEFAULT               1048
@@ -87,15 +85,15 @@
 #define IDC_STATIC_NEED_TRANSLATION     1061
 #define IDC_COMBO_LANGUAGES             1065
 #define IDC_CHECK_EXPORT_ALREADY_TRANSLATED 1066
-#define IDC_CHECK1                      1066
+#define IDC_STATIC_HEADER_TEXT          1067
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        152
+#define _APS_NEXT_RESOURCE_VALUE        153
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1067
+#define _APS_NEXT_CONTROL_VALUE         1068
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif
