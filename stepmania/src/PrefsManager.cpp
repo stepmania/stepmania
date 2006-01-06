@@ -310,7 +310,8 @@ PrefsManager::PrefsManager() :
 	m_bShowLogOutput				( "ShowLogOutput",				false ),
 	m_bLogSkips						( "LogSkips",					false ),
 	m_bLogCheckpoints				( "LogCheckpoints",				false ),
-	m_bShowLoadingWindow			( "ShowLoadingWindow",			true )
+	m_bShowLoadingWindow			( "ShowLoadingWindow",			true ),
+	m_bPseudoLocalize				( "PseudoLocalize",				false )
 
 #if !defined(WITHOUT_NETWORKING)
 	,

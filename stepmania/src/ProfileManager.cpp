@@ -56,8 +56,8 @@ struct DirAndProfile
 static vector<DirAndProfile> g_vLocalProfile;
 
 
-static ThemeMetric<bool>	FIXED_PROFILES(				"ProfileManager", "FixedProfiles" );
-static ThemeMetric<int>		NUM_FIXED_PROFILES(			"ProfileManager", "NumFixedProfiles" );
+static ThemeMetric<bool>	FIXED_PROFILES		( "ProfileManager", "FixedProfiles" );
+static ThemeMetric<int>		NUM_FIXED_PROFILES	( "ProfileManager", "NumFixedProfiles" );
 #define FIXED_PROFILE_CHARACTER_ID( i ) THEME->GetMetric( "ProfileManager", ssprintf("FixedProfileCharacterID%d",int(i+1)) )
 
 

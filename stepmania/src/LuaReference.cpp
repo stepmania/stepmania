@@ -9,24 +9,23 @@
 
 REGISTER_CLASS_TRAITS( LuaReference, new LuaReference(*pCopy) )
 
-template<>
-set<LuaReference*>* SubscriptionManager<LuaReference>::s_pSubscribers = NULL;
+SubscriptionHandler<LuaReference> g_Subscribers;
 
 LuaReference::LuaReference()
 {
 	m_iReference = LUA_NOREF;
-	SubscriptionManager<LuaReference>::Subscribe( this );
+	g_Subscribers.Subscribe( this );
 }
 
 LuaReference::~LuaReference()
 {
 	Unregister();
-	SubscriptionManager<LuaReference>::Unsubscribe( this );
+	g_Subscribers.Unsubscribe( this );
 }
 
 LuaReference::LuaReference( const LuaReference &cpy )
 {
-	SubscriptionManager<LuaReference>::Subscribe( this );
+	g_Subscribers.Subscribe( this );
 
 	if( cpy.m_iReference == LUA_NOREF )
 		m_iReference = LUA_NOREF;
@@ -135,17 +134,17 @@ void LuaReference::Unregister()
 
 void LuaReference::BeforeResetAll()
 {
-	if( SubscriptionManager<LuaReference>::s_pSubscribers == NULL )
+	if( g_Subscribers.m_pSubscribers == NULL )
 		return;
-	FOREACHS( LuaReference*, *SubscriptionManager<LuaReference>::s_pSubscribers, p )
+	FOREACHS( LuaReference*, *g_Subscribers.m_pSubscribers, p )
 		(*p)->BeforeReset();
 }
 
 void LuaReference::AfterResetAll()
 {
-	if( SubscriptionManager<LuaReference>::s_pSubscribers == NULL )
+	if( g_Subscribers.m_pSubscribers == NULL )
 		return;
-	FOREACHS( LuaReference*, *SubscriptionManager<LuaReference>::s_pSubscribers, p )
+	FOREACHS( LuaReference*, *g_Subscribers.m_pSubscribers, p )
 		(*p)->ReRegister();
 }
 

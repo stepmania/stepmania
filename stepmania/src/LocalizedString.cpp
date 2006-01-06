@@ -17,11 +17,11 @@ void LocalizedString::RegisterLocalizer( RString (*pfnLocalizer)(const RString&,
 
 #include "SubscriptionManager.h"
 template<>
-set<LocalizedString*>* SubscriptionManager<LocalizedString>::s_pSubscribers = NULL;
+SubscriptionHandler<LocalizedString> g_Subscribers;
 
 void LocalizedString::RefreshLocalizedStrings()
 {
-	FOREACHS( LocalizedString*, *SubscriptionManager<LocalizedString>::s_pSubscribers, p )
+	FOREACHS( LocalizedString*, *g_Subscribers.m_pSubscribers, p )
 		(*p)->Refresh();
 }
 
@@ -36,7 +36,7 @@ LocalizedString::LocalizedString( const RString &sSection, const RString &sName 
 	m_sName = sName;
 	m_sValue = sName;
 
-	SubscriptionManager<LocalizedString>::Subscribe( this );
+	g_Subscribers.Subscribe( this );
 
 	Refresh();
 }
@@ -44,7 +44,7 @@ LocalizedString::LocalizedString( const RString &sSection, const RString &sName 
 
 LocalizedString::~LocalizedString()
 {
-	SubscriptionManager<LocalizedString>::Unsubscribe( this );
+	g_Subscribers.Unsubscribe( this );
 }
 
 

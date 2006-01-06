@@ -4,37 +4,9 @@
 #define SubscriptionManager_H
 
 #include <set>
-template<class T>
-class SubscriptionManager
-{
-public:
-	// TRICKY: If we make this a global instead of a global pointer,
-	// then we'd have to be careful that the static constructors of all
-	// subscribers are called before the collection constructor.  It's
-	// impossible to enfore that in C++.  Instead, we'll allocate the 
-	// collection ourself on first use.
-	static set<T*>* s_pSubscribers;
 
-	static void Subscribe( T* p )
-	{
-		if( s_pSubscribers == NULL )
-			s_pSubscribers = new set<T*>;
-#if _DEBUG
-		typename set<T*>::iterator iter = s_pSubscribers->find( p );
-		ASSERT_M( iter == s_pSubscribers->end(), "already subscribed" );
-#endif
-		s_pSubscribers->insert( p );
-	}
-
-	static void Unsubscribe( T* p )
-	{
-		typename set<T*>::iterator iter = s_pSubscribers->find( p );
-		ASSERT( iter != s_pSubscribers->end() );
-		s_pSubscribers->erase( iter );
-	}
-	
-};
-
+// Since this class has only POD types and no constructor, there's no 
+// initialize order problem.
 template<class T>
 class SubscriptionHandler
 {

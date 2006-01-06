@@ -16,9 +16,6 @@
 #include "Foreach.h"
 #include "ThemeMetric.h"
 #include "SubscriptionManager.h"
-template<>
-set<IThemeMetric*>* SubscriptionManager<IThemeMetric>::s_pSubscribers = NULL;
-
 #include "LuaManager.h"
 #include "ScreenDimensions.h"
 #include "Command.h"
@@ -112,6 +109,7 @@ ThemeManager::ThemeManager()
 
 	/* We don't have any theme loaded until SwitchThemeAndLanguage is called. */
 	m_sCurThemeName = "";
+	m_bPseudoLocalilze = false;
 	
 	vector<RString> arrayThemeNames;
 	GetThemeNames( arrayThemeNames );
@@ -318,7 +316,7 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	}
 
 	// reload subscribers
-	if( SubscriptionManager<IThemeMetric>::s_pSubscribers )
+	if( g_Subscribers.m_pSubscribers )
 	{
 		FOREACHS_CONST( IThemeMetric*, *g_Subscribers.m_pSubscribers, p )
 			(*p)->Read();
@@ -904,6 +902,11 @@ void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueNa
 	valueOut.SetFromExpression( "function(self) " + sValue + "end" );
 }
 
+void ThemeManager::SetPseudoLocalilze( bool b )
+{
+	m_bPseudoLocalilze = b;
+}
+
 RString ThemeManager::GetString( const RString &sClassName, const RString &sValueName_ )
 {
 	RString sValueName = sValueName_;
@@ -929,6 +932,28 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 	}
 
 	s.Replace( "\\n", "\n" );
+
+	if( m_bPseudoLocalilze )
+	{
+		s.Replace( "a", "‡·" );
+		s.Replace( "A", "¿¿" );
+		s.Replace( "e", "ÈÈ" );
+		s.Replace( "E", "……" );
+		s.Replace( "i", "ÌÌ" );
+		s.Replace( "I", "ÕÕ" );
+		s.Replace( "o", "ÛÛ" );
+		s.Replace( "O", "””" );
+		s.Replace( "u", "¸¸" );
+		s.Replace( "U", "‹‹" );
+		s.Replace( "n", "Ò" );
+		s.Replace( "N", "—" );
+		s.Replace( "c", "Á" );
+		s.Replace( "C", "«" );
+		// transformations that helpexpose punctuation assumptions
+		s.Replace( ":", " :" );
+		s.Replace( "?", " ?" );
+		s.Replace( "!", " !" );
+	}
 
 	return s;
 }

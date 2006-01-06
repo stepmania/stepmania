@@ -88,6 +88,8 @@ public:
 	void	GetMetric( const RString &sClassName, const RString &sValueName, apActorCommands &valueOut );
 #endif
 
+	// Languages
+	void SetPseudoLocalilze( bool b );
 	RString		GetString( const RString &sClassName, const RString &sValueName );
 
 	void GetMetricsThatBeginWith( const RString &sClassName, const RString &sValueName, set<RString> &vsValueNamesOut );
@@ -118,6 +120,7 @@ protected:
 
 	RString m_sCurThemeName;
 	RString m_sCurLanguage;
+	bool m_bPseudoLocalilze;
 };
 
 extern ThemeManager*	THEME;	// global and accessable from anywhere in our program

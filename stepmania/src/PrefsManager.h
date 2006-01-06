@@ -236,6 +236,7 @@ public:
 	Preference<bool>	m_bLogSkips;
 	Preference<bool>	m_bLogCheckpoints;
 	Preference<bool>	m_bShowLoadingWindow;
+	Preference<bool>	m_bPseudoLocalize;
 
 #if !defined(WITHOUT_NETWORKING)
 	Preference<bool>	m_bEnableScoreboard;  //Alows disabling of scoreboard in network play
