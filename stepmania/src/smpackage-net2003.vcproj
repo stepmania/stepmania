@@ -228,6 +228,12 @@
 				RelativePath=".\smpackage\StdAfx.h">
 			</File>
 			<File
+				RelativePath=".\smpackage\TransparentStatic.cpp">
+			</File>
+			<File
+				RelativePath=".\smpackage\TransparentStatic.h">
+			</File>
+			<File
 				RelativePath=".\smpackage\TreeCtrlEx.cpp">
 			</File>
 			<File
@@ -244,28 +250,13 @@
 			Name="Resources"
 			Filter="">
 			<File
-				RelativePath="converttheme.bmp">
-			</File>
-			<File
-				RelativePath="editmetrics.bmp">
-			</File>
-			<File
-				RelativePath="install.bmp">
-			</File>
-			<File
-				RelativePath="manage.bmp">
-			</File>
-			<File
-				RelativePath="menu.bmp">
-			</File>
-			<File
 				RelativePath=".\smpackage\resource.h">
 			</File>
 			<File
-				RelativePath="res\smpackage.ico">
+				RelativePath="smpackage.ICO">
 			</File>
 			<File
-				RelativePath="smpackage.ICO">
+				RelativePath="res\smpackage.ico">
 			</File>
 			<File
 				RelativePath=".\smpackage\smpackage.rc">
@@ -594,6 +585,9 @@
 				RelativePath=".\ThemeManager.h">
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\smpackage\header.bmp">
+		</File>
 		<File
 			RelativePath=".\smpackage\install.bmp">
 		</File>
