@@ -32,12 +32,15 @@ RString LocalizedString::LocalizeString( const RString &sSection, const RString 
 LocalizedString::LocalizedString()
 {
 	g_Subscribers.Subscribe( this );
+	m_bValueLoaded = false;
 }
 
 LocalizedString::LocalizedString( const RString &sSection, const RString &sName )
 {
-	Load( sSection, sName );
 	g_Subscribers.Subscribe( this );
+	m_bValueLoaded = false;
+
+	Load( sSection, sName );
 	Refresh();
 }
 
@@ -70,11 +73,12 @@ const RString &LocalizedString::GetValue() const
 void LocalizedString::Refresh()
 {
 	m_sValue = LocalizeString( m_sSection, m_sName );
+	m_bValueLoaded = true;
 }
 
 bool LocalizedString::IsLoaded() const
 {
-	return !m_sSection.empty() && !m_sName.empty();
+	return m_bValueLoaded;
 }
 
 LuaFunction( LocalizeString, LocalizedString::LocalizeString( SArg(1), SArg(2) ) )
