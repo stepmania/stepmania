@@ -71,12 +71,13 @@ void SongManager::InitAll( LoadingWindow *ld )
 	InitAutogenCourses();
 }
 
+static LocalizedString RELOADING ( "SongManager", "Reloading..." );
 void SongManager::Reload( LoadingWindow *ld )
 {
 	FlushDirCache();
 
 	if( ld )
-		ld->SetText( "Reloading ..." );
+		ld->SetText( RELOADING );
 
 	// save scores before unloading songs, of the scores will be lost
 	PROFILEMAN->SaveMachineProfile();
@@ -152,6 +153,7 @@ void SongManager::AddGroup( CString sDir, CString sGroupDirName )
 	m_sSongGroupBannerPaths.push_back( sBannerPath );
 }
 
+static LocalizedString LOADING_SONGS ( "SongManager", "Loading songs..." );
 void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 {
 	/* Make sure sDir has a trailing slash. */
@@ -187,7 +189,7 @@ void SongManager::LoadStepManiaSongDir( CString sDir, LoadingWindow *ld )
 			// this is a song directory.  Load a new song!
 			if( ld )
 			{
-				ld->SetText( ssprintf("Loading songs...\n%s\n%s",
+				ld->SetText( LOADING_SONGS.GetValue()+ssprintf("\n%s\n%s",
 									  Basename(sGroupDirName).c_str(),
 									  Basename(sSongDirName).c_str()));
 				ld->Paint();
@@ -491,6 +493,7 @@ int SongManager::GetNumStagesForSong( const Song* pSong )
 		return 1;
 }
 
+static LocalizedString LOADING_COURSES ( "SongManager", "Loading courses..." );
 void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 {
 	LOG->Trace( "Loading courses." );
@@ -510,7 +513,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 
 			if( ld )
 			{
-				ld->SetText( ssprintf("Loading courses...\n%s\n%s",
+				ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
 					"Courses",
 					Basename(saCourseFiles[i]).c_str()));
 				ld->Paint();
@@ -537,7 +540,7 @@ void SongManager::InitCoursesFromDisk( LoadingWindow *ld )
 			{
 				if( ld )
 				{
-					ld->SetText( ssprintf("Loading courses...\n%s\n%s",
+					ld->SetText( LOADING_COURSES.GetValue()+ssprintf("\n%s\n%s",
 						Basename(*sCourseGroup).c_str(),
 						Basename(*sCoursePath).c_str()));
 					ld->Paint();

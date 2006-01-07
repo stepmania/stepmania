@@ -51,7 +51,9 @@ void LocalizedString::Load( const RString &sSection, const RString &sName )
 {
 	m_sSection = sSection;
 	m_sName = sName;
-	m_sValue = sName;
+	m_sValue = "????";
+
+	Refresh();
 }
 
 LocalizedString::operator RString() const

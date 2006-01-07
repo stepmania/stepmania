@@ -56,6 +56,8 @@ int NetworkSyncManager::GetSMOnlineSalt()
 	return m_iSalt;
 }
 
+static LocalizedString INITIALIZING_SERVER			( "NetworkSyncManager", "Initializing server..." );
+static LocalizedString INITIALIZING_CLIENT_NETWORK	( "NetworkSyncManager", "Initializing Client Network..." );
 NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 {
 	LANserver = NULL;	//So we know if it has been created yet
@@ -63,7 +65,7 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 
 	if( GetCommandlineArgument( "runserver" ))
 	{
-		ld->SetText("Initializing server...");
+		ld->SetText( INITIALIZING_SERVER );
 		LANserver = new StepManiaLanServer;
 		isLanServer = true;
 		GetCommandlineArgument( "runserver", &LANserver->servername );
@@ -71,7 +73,7 @@ NetworkSyncManager::NetworkSyncManager( LoadingWindow *ld )
 	else
 		isLanServer = false;
 	
-	ld->SetText("Initializing Client Network...");
+	ld->SetText( INITIALIZING_CLIENT_NETWORK );
     NetPlayerClient = new EzSockets;
 	NetPlayerClient->blocking = false;
 	m_ServerVersion = 0;

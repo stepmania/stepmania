@@ -10,6 +10,7 @@
 #include "RageSurface.h"
 #include "RageSurfaceUtils.h"
 #include "ProductInfo.h"
+#include "LocalizedString.h"
 
 #include "RageSurfaceUtils_Zoom.h"
 static HBITMAP g_hBitmap = NULL;
@@ -102,13 +103,14 @@ void LoadingWindow_Win32::SetIcon( const RageSurface *pIcon )
 		SetClassLong( hwnd, GCL_HICON, (LONG) m_hIcon );
 }
 
+static LocalizedString ENTER_MAIN_TITLE	("LoadingWindow_Win32","Initializing hardware...");
 LoadingWindow_Win32::LoadingWindow_Win32()
 {
 	m_hIcon = NULL;
 	hwnd = CreateDialog( handle.Get(), MAKEINTRESOURCE(IDD_LOADING_DIALOG), NULL, WndProc );
 	for( unsigned i = 0; i < 3; ++i )
 		text[i] = "ABC"; /* always set on first call */
-	SetText( "Initializing hardware..." );
+	SetText( ENTER_MAIN_TITLE );
 	Paint();
 }
 
