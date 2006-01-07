@@ -935,20 +935,20 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 
 	if( m_bPseudoLocalilze )
 	{
-		s.Replace( "a", "‡·" );
-		s.Replace( "A", "¿¿" );
-		s.Replace( "e", "ÈÈ" );
-		s.Replace( "E", "……" );
-		s.Replace( "i", "ÌÌ" );
-		s.Replace( "I", "ÕÕ" );
-		s.Replace( "o", "ÛÛ" );
-		s.Replace( "O", "””" );
-		s.Replace( "u", "¸¸" );
-		s.Replace( "U", "‹‹" );
-		s.Replace( "n", "Ò" );
-		s.Replace( "N", "—" );
-		s.Replace( "c", "Á" );
-		s.Replace( "C", "«" );
+		s.Replace( "a", "√†√°" );
+		s.Replace( "A", "√Ä√Ä" );
+		s.Replace( "e", "√©√©" );
+		s.Replace( "E", "√â√â" );
+		s.Replace( "i", "√≠√≠" );
+		s.Replace( "I", "√ç√ç" );
+		s.Replace( "o", "√≥√≥" );
+		s.Replace( "O", "√ì√ì" );
+		s.Replace( "u", "√º√º" );
+		s.Replace( "U", "√ú√ú" );
+		s.Replace( "n", "√±" );
+		s.Replace( "N", "√ë" );
+		s.Replace( "c", "√ß" );
+		s.Replace( "C", "√á" );
 		// transformations that helpexpose punctuation assumptions
 		s.Replace( ":", " :" );
 		s.Replace( "?", " ?" );
