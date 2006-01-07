@@ -9,7 +9,7 @@
 
 REGISTER_CLASS_TRAITS( LuaReference, new LuaReference(*pCopy) )
 
-SubscriptionManager<LuaReference> g_Subscribers;
+static SubscriptionManager<LuaReference> g_Subscribers;
 
 LuaReference::LuaReference()
 {
