@@ -21,11 +21,11 @@ function FindSelection( list )
 end
 
 -- Look up each value in a table, returning a table with the resulting strings.
-function TableMetricLookup( t, group )
+function TableStringLookup( t, group )
 	local ret = { }
 	for key, val in t do
 		Trace(val)
-		ret[key] = THEME:GetMetric(group,val)
+		ret[key] = THEME:GetString(group,val)
 	end
 	return ret
 end
