@@ -8,7 +8,7 @@ static const char *PlayerNumberNames[] = {
 	"P1",
 	"P2",
 };
-XToString( PlayerNumber, NUM_PLAYERS );
+XToString( PlayerNumber, NUM_PlayerNumber );
 XToLocalizedString( PlayerNumber );
 
 void LuaPlayerNumber(lua_State* L)
