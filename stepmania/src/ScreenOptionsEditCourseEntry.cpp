@@ -91,7 +91,7 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	def.m_vsChoices.clear();
 	def.m_vsChoices.push_back( "(any)" );
 	FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
-		def.m_vsChoices.push_back( DifficultyToThemedString(*dc) );
+		def.m_vsChoices.push_back( DifficultyToLocalizedString(*dc) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 
@@ -114,7 +114,7 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	def.m_sName = "Sort";
 	def.m_vsChoices.clear();
 	FOREACH_SongSort( i )
-		def.m_vsChoices.push_back( SongSortToThemedString(i) );
+		def.m_vsChoices.push_back( SongSortToLocalizedString(i) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 

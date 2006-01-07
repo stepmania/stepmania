@@ -76,8 +76,8 @@ protected:
 
 	// bonus area
 	AutoActor			m_sprBonusFrame[NUM_PLAYERS];
-	Sprite				m_sprPossibleBar[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
-	Sprite				m_sprActualBar[NUM_PLAYERS][NUM_RADAR_CATEGORIES];
+	Sprite				m_sprPossibleBar[NUM_PLAYERS][NUM_RadarCategory];
+	Sprite				m_sprActualBar[NUM_PLAYERS][NUM_RadarCategory];
 
 	// survived area
 	AutoActor			m_sprSurvivedFrame[NUM_PLAYERS];

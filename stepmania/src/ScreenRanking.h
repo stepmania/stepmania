@@ -83,7 +83,7 @@ protected:
 	ThemeMetric<bool>			SHOW_ONLY_MOST_RECENT_SCORES;
 	ThemeMetric<float>			SECONDS_PER_PAGE;
 	ThemeMetric<float>			PAGE_FADE_SECONDS;
-	ThemeMetric<CString>		NO_SCORE_NAME;
+	LocalizedString				NO_SCORE_NAME;
 	ThemeMetric<bool>			MANUAL_SCROLLING;
 };
 
@@ -128,7 +128,7 @@ protected:
 	ThemeMetric<float>			SCORE_OFFSET_START_X;
 	ThemeMetric<float>			SCORE_OFFSET_Y;
 	ThemeMetric<bool>			SHOW_SURVIVAL_TIME;
-	ThemeMetric<CString>		NO_SCORE_NAME;
+	LocalizedString				NO_SCORE_NAME;
 	ThemeMetric<float>			COL_SPACING_X;
 	ThemeMetric<float>			SONG_SCORE_SECONDS_PER_ROW;
 	ThemeMetric<int>			m_metricSongScoreRowsToDraw;
@@ -151,7 +151,7 @@ private:
 
 	ScoreScroller m_ListScoreRowItems;
 
-	AutoActor  m_sprDifficulty[NUM_DIFFICULTIES];	// for all_steps
+	AutoActor  m_sprDifficulty[NUM_Difficulty];	// for all_steps
 
 	ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;
 	ThemeMetric<float>			COL_SPACING_X;

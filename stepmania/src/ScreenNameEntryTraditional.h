@@ -14,6 +14,7 @@
 #include "ThemeMetric.h"
 #include "DifficultyMeter.h"
 #include "RageSound.h"
+#include "LocalizedString.h"
 
 
 class HighScoreWheelItem : public ActorFrame
@@ -70,7 +71,7 @@ private:
 	ThemeMetric<int> NUM_ALPHABET_DISPLAYED;
 	ThemeMetric<int> MAX_RANKING_NAME_LENGTH;
 	ThemeMetric<float> FEAT_INTERVAL;
-	ThemeMetric<CString> KEYBOARD_LETTERS;
+	LocalizedString KEYBOARD_LETTERS;
 
 	ActorFrame		m_Keyboard[NUM_PLAYERS];
 	Sprite			m_sprCursor[NUM_PLAYERS];

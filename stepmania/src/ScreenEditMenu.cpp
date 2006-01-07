@@ -139,7 +139,7 @@ static CString GetCopyDescription( const Steps *pSourceSteps )
 	if( pSourceSteps->GetDifficulty() == DIFFICULTY_EDIT )
 		s = pSourceSteps->GetDescription();
 	else
-		s = DifficultyToThemedString( pSourceSteps->GetDifficulty() );
+		s = DifficultyToLocalizedString( pSourceSteps->GetDifficulty() );
 	return s;
 }
 

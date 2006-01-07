@@ -196,7 +196,7 @@ float ScreenRanking::SetPage( const PageToShow &pts )
 	//
 	// init page
 	//
-	m_textStepsType.SetText( GameManager::StepsTypeToThemedString(pts.st) );
+	m_textStepsType.SetText( GameManager::StepsTypeToLocalizedString(pts.st) );
 
 	return 0;
 }
@@ -351,7 +351,7 @@ void ScoreScroller::Load(
 		ItemTemplate.m_textTitle.LoadFromFont( THEME->GetPathF(sClassName,"list title") );
 		ActorUtil::LoadAllCommands( ItemTemplate.m_textTitle, sClassName );
 
-		ItemTemplate.m_textScore.resize( NUM_DIFFICULTIES );
+		ItemTemplate.m_textScore.resize( NUM_Difficulty );
 		FOREACH_CONST( Difficulty, m_DifficultiesToShow, d )
 		{
 			ItemTemplate.m_textScore[*d].SetName( "Score" );

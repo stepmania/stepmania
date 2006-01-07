@@ -11,6 +11,7 @@
 #include "GameConstantsAndTypes.h"
 #include "ThemeMetric.h"
 class XNode;
+#include "LocalizedString.h"
 
 enum PaneTypes
 {
@@ -75,8 +76,8 @@ private:
 	PaneTypes		m_CurPane;
 	PlayerNumber	m_PlayerNumber;
 
-	ThemeMetric<CString> EMPTY_MACHINE_HIGH_SCORE_NAME;
-	ThemeMetric<CString> NOT_AVAILABLE;
+	LocalizedString EMPTY_MACHINE_HIGH_SCORE_NAME;
+	LocalizedString NOT_AVAILABLE;
 };
 
 #endif

@@ -31,7 +31,7 @@ enum CourseType
 };
 #define FOREACH_CourseType( i ) FOREACH_ENUM( CourseType, NUM_CourseType, i )
 const CString& CourseTypeToString( CourseType i );
-const CString& CourseTypeToThemedString( CourseType i );
+const CString& CourseTypeToLocalizedString( CourseType i );
 
 inline PlayMode CourseTypeToPlayMode( CourseType ct ) { return (PlayMode)(PLAY_MODE_NONSTOP+ct); }
 inline CourseType PlayModeToCourseType( PlayMode pm ) { return (CourseType)(pm-PLAY_MODE_NONSTOP); }
@@ -48,7 +48,7 @@ enum SongSort
 };
 #define FOREACH_SongSort( i ) FOREACH_ENUM( SongSort, NUM_SongSort, i )
 const CString& SongSortToString( SongSort ss );
-const CString& SongSortToThemedString( SongSort ss );
+const CString& SongSortToLocalizedString( SongSort ss );
 
 class CourseEntry
 {
@@ -125,7 +125,7 @@ public:
 	bool		m_bRepeat;	// repeat after last song?  "Endless"
 	bool		m_bShuffle;	// play the songs in a random order
 	int			m_iLives;	// -1 means use bar life meter
-	int			m_iCustomMeter[NUM_DIFFICULTIES];	// -1 = no meter specified
+	int			m_iCustomMeter[NUM_Difficulty];	// -1 = no meter specified
 	bool		m_bSortByMeter;
 
 	vector<CourseEntry> m_vEntries;

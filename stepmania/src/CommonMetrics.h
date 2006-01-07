@@ -7,6 +7,7 @@
 #include "PlayerNumber.h"
 #include "Difficulty.h"
 #include "GameConstantsAndTypes.h"
+#include "LocalizedString.h"
 
 
 //
@@ -54,7 +55,7 @@ namespace CommonMetrics
 	extern ThemeMetric<CString>					DEFAULT_MODIFIERS;
 	extern ThemeMetric<CString>					DEFAULT_CPU_MODIFIERS;
 	extern ThemeMetric1D<apActorCommands>		PLAYER_COLOR;
-	extern ThemeMetric<CString>					WINDOW_TITLE;
+	extern LocalizedString						WINDOW_TITLE;
 	extern ThemeMetric<int>						MAX_COURSE_ENTRIES_BEFORE_VARIOUS;
 	extern ThemeMetric<float>					TICK_EARLY_SECONDS;
 	extern ThemeMetricDifficultiesToShow		DIFFICULTIES_TO_SHOW;

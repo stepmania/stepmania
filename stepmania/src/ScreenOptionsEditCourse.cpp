@@ -71,7 +71,7 @@ void ScreenOptionsEditCourse::BeginScreen()
 	def.m_sName = "Type";
 	def.m_vsChoices.clear();
 	FOREACH_CourseType( i )
-		def.m_vsChoices.push_back( CourseTypeToThemedString(i) );
+		def.m_vsChoices.push_back( CourseTypeToLocalizedString(i) );
 	vDefs.push_back( def );
 	vHands.push_back( NULL );
 

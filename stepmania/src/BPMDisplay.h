@@ -8,6 +8,7 @@
 #include "Quad.h"
 #include "AutoActor.h"
 #include "ThemeMetric.h"
+#include "LocalizedString.h"
 class Song;
 class Course;
 struct DisplayBpms;
@@ -34,8 +35,8 @@ protected:
 	ThemeMetric<RageColor> CHANGE_COLOR;
 	ThemeMetric<RageColor> EXTRA_COLOR;
 	ThemeMetric<bool> CYCLE;
-	ThemeMetric<CString> SEPARATOR;
-	ThemeMetric<CString> NO_BPM_TEXT;
+	LocalizedString SEPARATOR;
+	LocalizedString NO_BPM_TEXT;
 	
 	BitmapText m_textBPM;
 	AutoActor m_sprLabel;

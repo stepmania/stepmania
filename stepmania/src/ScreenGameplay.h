@@ -119,8 +119,8 @@ public:
 
 protected:
 	ThemeMetric<CString> PLAYER_TYPE;
-	ThemeMetric<CString> GIVE_UP_TEXT;
-	ThemeMetric<CString> GIVE_UP_ABORTED_TEXT;
+	LocalizedString GIVE_UP_TEXT;
+	LocalizedString GIVE_UP_ABORTED_TEXT;
 	ThemeMetric<float> MUSIC_FADE_OUT_SECONDS;
 	ThemeMetric<bool> START_GIVES_UP;
 	ThemeMetric<bool> BACK_GIVES_UP;

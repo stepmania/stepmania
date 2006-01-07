@@ -49,7 +49,7 @@ static inline CString GradeToString( Grade g )
 }
 
 CString GradeToOldString( Grade g );	// "AAA", "B", etc for backward compatibility.  Used in announcer
-CString GradeToThemedString( Grade g );
+CString GradeToLocalizedString( Grade g );
 Grade StringToGrade( const CString &s );
 #define FOREACH_Grade( g ) FOREACH_ENUM( Grade, NUM_Grade, g )
 #define FOREACH_UsedGrade( g ) FOREACH_ENUM( Grade, THEME->GetMetricI("PlayerStageStats","NumGradeTiersUsed"), g )

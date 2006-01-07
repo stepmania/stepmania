@@ -223,7 +223,7 @@ void ScreenSelectMusic::Init()
 		this->AddChild( &m_sprDifficultyFrame[p] );
 
 		m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
-		m_DifficultyIcon[p].Load( THEME->GetPathG(m_sName,ssprintf("difficulty icons 1x%d",NUM_DIFFICULTIES)) );
+		m_DifficultyIcon[p].Load( THEME->GetPathG(m_sName,ssprintf("difficulty icons 1x%d",NUM_Difficulty)) );
 		SET_XY( m_DifficultyIcon[p] );
 		this->AddChild( &m_DifficultyIcon[p] );
 

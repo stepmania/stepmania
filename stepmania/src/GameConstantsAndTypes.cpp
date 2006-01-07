@@ -10,6 +10,7 @@
 #include <float.h>
 
 #include "LuaFunctions.h"
+#include "LocalizedString.h"
 
 const CString RANKING_TO_FILL_IN_MARKER[NUM_PLAYERS] = {"#P1#","#P2#"};
 
@@ -28,9 +29,9 @@ static const char *RadarCategoryNames[] = {
 	"Hands",
 	"Rolls"
 };
-XToString( RadarCategory, NUM_RADAR_CATEGORIES );
-XToThemedString( RadarCategory, NUM_RADAR_CATEGORIES );
-LuaFunction( RadarCategoryToThemedString, RadarCategoryToThemedString((RadarCategory) IArg(1)) );
+XToString( RadarCategory, NUM_RadarCategory );
+XToLocalizedString( RadarCategory );
+LuaFunction( RadarCategoryToLocalizedString, RadarCategoryToLocalizedString((RadarCategory) IArg(1)) );
 
 static void LuaRadarCategory(lua_State* L)
 {
@@ -64,12 +65,12 @@ static const char *PlayModeNames[] = {
 	"Battle",
 	"Rave",
 };
-XToString( PlayMode, NUM_PLAY_MODES );
-XToThemedString( PlayMode, NUM_PLAY_MODES );
+XToString( PlayMode, NUM_PlayMode );
+XToLocalizedString( PlayMode );
 StringToX( PlayMode );
 LuaXToString( PlayMode );
-LuaFunction( PlayModeToThemedString, PlayModeToThemedString((PlayMode) IArg(1)) );
-LuaXType( PlayMode, NUM_PLAY_MODES, "PLAY_MODE_", true )
+LuaFunction( PlayModeToLocalizedString, PlayModeToLocalizedString((PlayMode) IArg(1)) );
+LuaXType( PlayMode, NUM_PlayMode, "PLAY_MODE_", true )
 
 RankingCategory AverageMeterToRankingCategory( int iAverageMeter )
 {
@@ -214,8 +215,8 @@ TapNoteScore StringToTapNoteScore( const CString &s )
 
 	return TNS_INVALID;
 }
-XToThemedString( TapNoteScore, NUM_TapNoteScore );
-LuaFunction( TapNoteScoreToThemedString, TapNoteScoreToThemedString((TapNoteScore) IArg(1)) );
+XToLocalizedString( TapNoteScore );
+LuaFunction( TapNoteScoreToLocalizedString, TapNoteScoreToLocalizedString((TapNoteScore) IArg(1)) );
 static void LuaTapNoteScores( lua_State* L )
 {
 	FOREACH_TapNoteScore( i )
@@ -246,7 +247,7 @@ HoldNoteScore StringToHoldNoteScore( const CString &s )
 
 	return HNS_INVALID;
 }
-XToThemedString( HoldNoteScore, NUM_HoldNoteScore );
+XToLocalizedString( HoldNoteScore );
 static void LuaHoldNoteScores( lua_State* L )
 {
 	FOREACH_HoldNoteScore( i )
@@ -281,10 +282,10 @@ static const char *PerDifficultyAwardNames[] = {
 	"Percent90W3",
 	"Percent100W3",
 };
-XToString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );
-XToThemedString( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS );
+XToString( PerDifficultyAward, NUM_PerDifficultyAward );
+XToLocalizedString( PerDifficultyAward );
 StringToX( PerDifficultyAward );
-LuaFunction( PerDifficultyAwardToThemedString, PerDifficultyAwardToThemedString((PerDifficultyAward) IArg(1)) );
+LuaFunction( PerDifficultyAwardToLocalizedString, PerDifficultyAwardToLocalizedString((PerDifficultyAward) IArg(1)) );
 static void LuaPerDifficultyAward( lua_State* L )
 {
 	FOREACH_PerDifficultyAward( i )
@@ -308,10 +309,10 @@ static const char *PeakComboAwardNames[] = {
 	"Peak9000Combo",
 	"Peak10000Combo",
 };
-XToString( PeakComboAward, NUM_PEAK_COMBO_AWARDS );
-XToThemedString( PeakComboAward, NUM_PEAK_COMBO_AWARDS );
+XToString( PeakComboAward, NUM_PeakComboAward );
+XToLocalizedString( PeakComboAward );
 StringToX( PeakComboAward );
-LuaFunction( PeakComboAwardToThemedString, PeakComboAwardToThemedString((PeakComboAward) IArg(1)) );
+LuaFunction( PeakComboAwardToLocalizedString, PeakComboAwardToLocalizedString((PeakComboAward) IArg(1)) );
 static void LuaPeakComboAward( lua_State* L )
 {
 	FOREACH_PeakComboAward( i )

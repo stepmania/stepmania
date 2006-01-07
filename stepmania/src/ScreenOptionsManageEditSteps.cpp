@@ -104,7 +104,7 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Edit Steps";
 		def.m_vsChoices.clear();
-		CString sType = GAMEMAN->StepsTypeToThemedString( (*s)->m_StepsType );
+		CString sType = GAMEMAN->StepsTypeToLocalizedString( (*s)->m_StepsType );
 		def.m_vsChoices.push_back( sType );
 		def.m_bAllowThemeItems = false;	// already themed
 		vDefs.push_back( def );

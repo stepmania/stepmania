@@ -198,7 +198,7 @@ void ScreenOptionsManageCourses::BeginScreen()
 			ASSERT(0);
 		case EditMode_Practice:
 		case EditMode_Home:
-			def.m_sName = CourseTypeToThemedString( (*c)->GetCourseType() );
+			def.m_sName = CourseTypeToLocalizedString( (*c)->GetCourseType() );
 			break;
 		case EditMode_Full:
 			if( (*c)->IsAnEdit() )

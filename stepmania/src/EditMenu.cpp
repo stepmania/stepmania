@@ -24,8 +24,8 @@ static const char *EditMenuRowNames[] = {
 	"SourceSteps",
 	"Action"
 };
-XToString( EditMenuRow, NUM_EDIT_MENU_ROWS );
-XToThemedString( EditMenuRow, NUM_EDIT_MENU_ROWS );
+XToString( EditMenuRow, NUM_EditMenuRow );
+XToLocalizedString( EditMenuRow );
 
 static const char *EditMenuActionNames[] = {
 	"Edit",
@@ -34,7 +34,7 @@ static const char *EditMenuActionNames[] = {
 	"Practice",
 };
 XToString( EditMenuAction, NUM_EditMenuAction );
-XToThemedString( EditMenuAction, NUM_EditMenuAction );
+XToLocalizedString( EditMenuAction );
 StringToX( EditMenuAction );
 
 static CString ARROWS_X_NAME( size_t i )	{ return ssprintf("Arrows%dX",int(i+1)); }
@@ -109,9 +109,9 @@ void EditMenu::Load( const CString &sType )
 	GROUP_BANNER_HEIGHT.Load(sType,"GroupBannerHeight");
 	ROW_LABELS_X.Load(sType,"RowLabelsX");
 	ROW_LABEL_ON_COMMAND.Load(sType,"RowLabelOnCommand");
-	ROW_VALUE_X.Load(sType,ROW_VALUE_X_NAME,NUM_EDIT_MENU_ROWS);
+	ROW_VALUE_X.Load(sType,ROW_VALUE_X_NAME,NUM_EditMenuRow);
 	ROW_VALUE_ON_COMMAND.Load(sType,"RowValueOnCommand");
-	ROW_Y.Load(sType,ROW_Y_NAME,NUM_EDIT_MENU_ROWS);
+	ROW_Y.Load(sType,ROW_Y_NAME,NUM_EditMenuRow);
 	EDIT_MODE.Load(sType,"EditMode");
 
 	for( int i=0; i<2; i++ )
@@ -130,7 +130,7 @@ void EditMenu::Load( const CString &sType )
 	{
 		m_textLabel[r].LoadFromFont( THEME->GetPathF(sType,"title") );
 		m_textLabel[r].SetXY( ROW_LABELS_X, ROW_Y.GetValue(r) );
-		m_textLabel[r].SetText( EditMenuRowToThemedString(r) );
+		m_textLabel[r].SetText( EditMenuRowToLocalizedString(r) );
 		m_textLabel[r].RunCommands( ROW_LABEL_ON_COMMAND );
 		m_textLabel[r].SetHorizAlign( Actor::align_left );
 		this->AddChild( &m_textLabel[r] );
@@ -238,7 +238,7 @@ bool EditMenu::CanGoUp()
 
 bool EditMenu::CanGoDown()
 {
-	return m_SelectedRow != NUM_EDIT_MENU_ROWS-1;
+	return m_SelectedRow != NUM_EditMenuRow-1;
 }
 
 bool EditMenu::CanGoLeft()
@@ -359,7 +359,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		m_SongTextBanner.LoadFromSong( GetSelectedSong() );
 		// fall through
 	case ROW_STEPS_TYPE:
-		m_textValue[ROW_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToThemedString(GetSelectedStepsType()) );
+		m_textValue[ROW_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToLocalizedString(GetSelectedStepsType()) );
 
 		m_vpSteps.clear();
 		
@@ -437,11 +437,11 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 					 s += "-no name-";
 				else
 					s += pSteps->GetDescription();
-				s += " (" + DifficultyToThemedString(DIFFICULTY_EDIT) + ")";
+				s += " (" + DifficultyToLocalizedString(DIFFICULTY_EDIT) + ")";
 			}
 			else
 			{
-				s = DifficultyToThemedString(GetSelectedDifficulty());
+				s = DifficultyToLocalizedString(GetSelectedDifficulty());
 
 				// UGLY.  "Edit" -> "New Edit"
 				switch( EDIT_MODE.GetValue() )
@@ -466,7 +466,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 	case ROW_SOURCE_STEPS_TYPE:
 		m_textLabel[ROW_SOURCE_STEPS_TYPE].SetHidden( GetSelectedSteps() ? true : false );
 		m_textValue[ROW_SOURCE_STEPS_TYPE].SetHidden( GetSelectedSteps() ? true : false );
-		m_textValue[ROW_SOURCE_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToThemedString(GetSelectedSourceStepsType()) );
+		m_textValue[ROW_SOURCE_STEPS_TYPE].SetText( GAMEMAN->StepsTypeToLocalizedString(GetSelectedSourceStepsType()) );
 
 		m_vpSourceSteps.clear();
 		m_vpSourceSteps.push_back( StepsAndDifficulty(NULL,DIFFICULTY_INVALID) );	// "blank"
@@ -501,9 +501,9 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				if( GetSelectedSourceDifficulty() == DIFFICULTY_INVALID )
 					s = "Blank";
 				else if( pSourceSteps  &&  GetSelectedSourceDifficulty() == DIFFICULTY_EDIT )
-					s = pSourceSteps->GetDescription() + " (" + DifficultyToThemedString(DIFFICULTY_EDIT) + ")";
+					s = pSourceSteps->GetDescription() + " (" + DifficultyToLocalizedString(DIFFICULTY_EDIT) + ")";
 				else
-					s = DifficultyToThemedString(GetSelectedSourceDifficulty());
+					s = DifficultyToLocalizedString(GetSelectedSourceDifficulty());
 				m_textValue[ROW_SOURCE_STEPS].SetText( s );
 			}
 			bool bHideMeter = false;
@@ -540,7 +540,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 		}
 		// fall through
 	case ROW_ACTION:
-		m_textValue[ROW_ACTION].SetText( EditMenuActionToThemedString(GetSelectedAction()) );
+		m_textValue[ROW_ACTION].SetText( EditMenuActionToLocalizedString(GetSelectedAction()) );
 		break;
 	default:
 		ASSERT(0);	// invalid row

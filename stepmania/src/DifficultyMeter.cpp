@@ -64,7 +64,7 @@ void DifficultyMeter::Load( const CString &sType )
 		CString Feet;
 		if( !m_bAutoColorFeet )
 		{
-			for( unsigned i = 0; i < NUM_DIFFICULTIES; ++i )
+			for( unsigned i = 0; i < NUM_Difficulty; ++i )
 				Feet += char(i + '0'); // 01234
 			Feet += 'X'; // Off
 		}

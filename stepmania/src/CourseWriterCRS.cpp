@@ -60,7 +60,7 @@ bool CourseWriterCRS::Write( const Course &course, RageFileBasic &f, bool bSavin
 
 			vector<CString> asRadarValues;
 			const RadarValues &rv = it->second;
-			for( int r=0; r < NUM_RADAR_CATEGORIES; r++ )
+			for( int r=0; r < NUM_RadarCategory; r++ )
 				asRadarValues.push_back( ssprintf("%.3f", rv[r]) );
 			CString sLine = ssprintf( "#RADAR:%i:%i:", st, cd );
 			sLine += join( ",", asRadarValues ) + ";";

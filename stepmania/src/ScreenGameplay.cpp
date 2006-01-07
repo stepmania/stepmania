@@ -702,7 +702,7 @@ void ScreenGameplay::Init()
 	{
 		ASSERT( pi->m_pDifficultyIcon == NULL );
 		pi->m_pDifficultyIcon = new DifficultyIcon;
-		pi->m_pDifficultyIcon->Load( THEME->GetPathG(m_sName,ssprintf("difficulty icons %dx%d",NUM_PLAYERS,NUM_DIFFICULTIES)) );
+		pi->m_pDifficultyIcon->Load( THEME->GetPathG(m_sName,ssprintf("difficulty icons %dx%d",NUM_PLAYERS,NUM_Difficulty)) );
 		/* Position it in LoadNextSong. */
 		this->AddChild( pi->m_pDifficultyIcon );
 

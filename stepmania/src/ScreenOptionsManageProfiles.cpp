@@ -41,7 +41,7 @@ static const char *ProfileActionNames[] = {
 	"Clear",
 };
 XToString( ProfileAction, NUM_ProfileAction );
-XToThemedString( ProfileAction, NUM_ProfileAction );
+XToLocalizedString( ProfileAction );
 #define FOREACH_ProfileAction( i ) FOREACH_ENUM( ProfileAction, NUM_ProfileAction, i )
 
 static MenuDef g_TempMenu(
@@ -344,7 +344,7 @@ void ScreenOptionsManageProfiles::ProcessMenuStart( const InputEventPlus &input 
 		g_TempMenu.rows.clear();
 
 #define ADD_ACTION( i )	\
-		g_TempMenu.rows.push_back( MenuRowDef( i, ProfileActionToThemedString(i), true, EditMode_Home, true, 0, "" ) );
+		g_TempMenu.rows.push_back( MenuRowDef( i, ProfileActionToLocalizedString(i), true, EditMode_Home, true, 0, "" ) );
 
 		ADD_ACTION( ProfileAction_SetDefaultP1 );
 		ADD_ACTION( ProfileAction_SetDefaultP2 );

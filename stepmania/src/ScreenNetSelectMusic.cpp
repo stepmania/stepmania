@@ -61,7 +61,7 @@ void ScreenNetSelectMusic::Init()
 		m_DifficultyIcon[p].SetName( ssprintf("DifficultyIconP%d",p+1) );
 		m_DifficultyIcon[p].Load( THEME->GetPathG( "ScreenSelectMusic",
 												   ssprintf("difficulty icons 1x%d",
-															NUM_DIFFICULTIES)) );
+															NUM_Difficulty)) );
 		SET_XY( m_DifficultyIcon[p] );
 		this->AddChild( &m_DifficultyIcon[p] );
 		ON_COMMAND( m_DifficultyIcon[p] );
@@ -365,20 +365,20 @@ void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 	vector <Steps *> MultiSteps;
 	MultiSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
 	if (MultiSteps.size() == 0)
-		m_DC[pn] = NUM_DIFFICULTIES;
+		m_DC[pn] = NUM_Difficulty;
 	else
 	{
 		int i;
 
-		bool dcs[NUM_DIFFICULTIES];
+		bool dcs[NUM_Difficulty];
 
-		for ( i=0; i<NUM_DIFFICULTIES; ++i )
+		for ( i=0; i<NUM_Difficulty; ++i )
 			dcs[i] = false;
 
 		for ( i=0; i<(int)MultiSteps.size(); ++i )
 			dcs[MultiSteps[i]->GetDifficulty()] = true;
 
-		for ( i=0; i<NUM_DIFFICULTIES; ++i )
+		for ( i=0; i<NUM_Difficulty; ++i )
 		{
 			if ( (dcs[i]) && (i > m_DC[pn]) )
 			{
@@ -387,8 +387,8 @@ void ScreenNetSelectMusic::MenuDown( const InputEventPlus &input )
 			}
 		}
 		//If failed to go up, loop
-		if ( i == NUM_DIFFICULTIES )
-			for (i = 0;i<NUM_DIFFICULTIES;i++)
+		if ( i == NUM_Difficulty )
+			for (i = 0;i<NUM_Difficulty;i++)
 			if (dcs[i])
 			{
 				m_DC[pn] = (Difficulty)i;
@@ -499,7 +499,7 @@ void ScreenNetSelectMusic::UpdateDifficulties( PlayerNumber pn )
 	Steps * pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( st, m_DC[pn] );
 	GAMESTATE->m_pCurSteps[pn].Set( pSteps );
 
-	if ( ( m_DC[pn] < NUM_DIFFICULTIES ) && ( m_DC[pn] >= DIFFICULTY_BEGINNER ) )
+	if ( ( m_DC[pn] < NUM_Difficulty ) && ( m_DC[pn] >= DIFFICULTY_BEGINNER ) )
 		m_DifficultyMeters[pn].SetFromSteps( pSteps );
 	else
 		m_DifficultyMeters[pn].SetFromMeterAndDifficulty( 0, DIFFICULTY_BEGINNER ); 
@@ -525,21 +525,21 @@ void ScreenNetSelectMusic::MusicChanged()
 		vector <Steps *> MultiSteps;
 		MultiSteps = GAMESTATE->m_pCurSong->GetStepsByStepsType( st );
 		if (MultiSteps.size() == 0)
-			m_DC[pn] = NUM_DIFFICULTIES;
+			m_DC[pn] = NUM_Difficulty;
 		else
 		{
 			int i;
 			Difficulty Target = DIFFICULTY_EASY;
 
-			bool dcs[NUM_DIFFICULTIES];
+			bool dcs[NUM_Difficulty];
 
-			for ( i=0; i<NUM_DIFFICULTIES; ++i )
+			for ( i=0; i<NUM_Difficulty; ++i )
 				dcs[i] = false;
 
 			for ( i=0; i<(int)MultiSteps.size(); ++i )
 				dcs[MultiSteps[i]->GetDifficulty()] = true;
 
-			for ( i=0; i<NUM_DIFFICULTIES; ++i )
+			for ( i=0; i<NUM_Difficulty; ++i )
 				if ( dcs[i] )
 				{
 					Target = (Difficulty)i;
@@ -550,7 +550,7 @@ void ScreenNetSelectMusic::MusicChanged()
 					}
 				}
 
-			if ( i == NUM_DIFFICULTIES )
+			if ( i == NUM_Difficulty )
 				m_DC[pn] = Target;
 		}
 		UpdateDifficulties( pn );

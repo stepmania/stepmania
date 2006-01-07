@@ -16,7 +16,7 @@ public:
 	void UnsetDifficulties();
 
 protected:
-	Sprite m_difficulty[NUM_DIFFICULTIES];
+	Sprite m_difficulty[NUM_Difficulty];
 };
 
 #endif

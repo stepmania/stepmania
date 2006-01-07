@@ -4,6 +4,7 @@
 #include "ThemeMetric.h"
 #include "LuaManager.h"
 #include "LuaFunctions.h"
+#include "LocalizedString.h"
 
 
 static const char *DifficultyNames[] = {
@@ -14,10 +15,10 @@ static const char *DifficultyNames[] = {
 	"Challenge",
 	"Edit",
 };
-XToString( Difficulty, NUM_DIFFICULTIES );
-XToThemedString( Difficulty, NUM_DIFFICULTIES );
+XToString( Difficulty, NUM_Difficulty );
+XToLocalizedString( Difficulty );
 
-LuaFunction( DifficultyToThemedString, DifficultyToThemedString((Difficulty) IArg(1)) );
+LuaFunction( DifficultyToLocalizedString, DifficultyToLocalizedString((Difficulty) IArg(1)) );
 
 /* We prefer the above names; recognize a number of others, too.  (They'l
  * get normalized when written to SMs, etc.) */
@@ -54,7 +55,7 @@ static void LuaDifficulty(lua_State* L)
 		s.MakeUpper();
 		LUA->SetGlobal( "DIFFICULTY_"+s, d );
 	}
-	LUA->SetGlobal( "NUM_DIFFICULTIES", NUM_DIFFICULTIES );
+	LUA->SetGlobal( "NUM_Difficulty", NUM_Difficulty );
 }
 REGISTER_WITH_LUA_FUNCTION( LuaDifficulty );
 
@@ -69,15 +70,15 @@ static const char *CourseDifficultyNames[] =
 	"Challenge",
 	"Edit",
 };
-XToString( CourseDifficulty, NUM_DIFFICULTIES );
-XToThemedString( CourseDifficulty, NUM_DIFFICULTIES );
+XToString( CourseDifficulty, NUM_Difficulty );
+XToLocalizedString( CourseDifficulty );
 StringToX( CourseDifficulty );
 
-LuaFunction( CourseDifficultyToThemedString, CourseDifficultyToThemedString((CourseDifficulty)IArg(1)) );
+LuaFunction( CourseDifficultyToLocalizedString, CourseDifficultyToLocalizedString((CourseDifficulty)IArg(1)) );
 
 CourseDifficulty GetNextShownCourseDifficulty( CourseDifficulty cd )
 {
-	for( CourseDifficulty d=(CourseDifficulty)(cd+1); d<NUM_DIFFICULTIES; ((int&)d)++ )
+	for( CourseDifficulty d=(CourseDifficulty)(cd+1); d<NUM_Difficulty; ((int&)d)++ )
 	{
 		if( GAMESTATE->IsCourseDifficultyShown(d) )
 			return d;
@@ -93,7 +94,7 @@ static void LuaCourseDifficulty(lua_State* L)
 		s.MakeUpper();
 		LUA->SetGlobal( "COURSE_DIFFICULTY_"+s, d );
 	}
-	LUA->SetGlobal( "NUM_COURSE_DIFFICULTIES", NUM_COURSE_DIFFICULTIES );
+	LUA->SetGlobal( "NUM_CourseDifficulty", NUM_CourseDifficulty );
 }
 REGISTER_WITH_LUA_FUNCTION( LuaCourseDifficulty );
 

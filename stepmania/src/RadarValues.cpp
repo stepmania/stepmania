@@ -63,8 +63,8 @@ void RadarValues::LoadFromNode( const XNode* pNode )
 CString RadarValues::ToString( int iMaxValues ) const
 {
 	if( iMaxValues == -1 )
-		iMaxValues = NUM_RADAR_CATEGORIES;
-	iMaxValues = min( iMaxValues, (int)NUM_RADAR_CATEGORIES );
+		iMaxValues = NUM_RadarCategory;
+	iMaxValues = min( iMaxValues, (int)NUM_RadarCategory );
 
 	vector<CString> asRadarValues;
 	for( int r=0; r < iMaxValues; r++ )
@@ -78,7 +78,7 @@ void RadarValues::FromString( CString sRadarValues )
 	vector<CString> saValues;
 	split( sRadarValues, ",", saValues, true );
 
-	if( saValues.size() != NUM_RADAR_CATEGORIES )
+	if( saValues.size() != NUM_RadarCategory )
 	{
 		MakeUnknown();
 		return;

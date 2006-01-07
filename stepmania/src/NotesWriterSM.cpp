@@ -169,7 +169,7 @@ CString NotesWriterSM::GetSMNotesTag( const Song &song, const Steps &in, bool bS
 	lines.push_back( ssprintf( "     %s:", DifficultyToString(in.GetDifficulty()).c_str() ) );
 	lines.push_back( ssprintf( "     %d:", in.GetMeter() ) );
 	
-	int MaxRadar = bSavingCache? NUM_RADAR_CATEGORIES:5;
+	int MaxRadar = bSavingCache? NUM_RadarCategory:5;
 	vector<CString> asRadarValues;
 	for( int r=0; r < MaxRadar; r++ )
 		asRadarValues.push_back( ssprintf("%.3f", in.GetRadarValues()[r]) );

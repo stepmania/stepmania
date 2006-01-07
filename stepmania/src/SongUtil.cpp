@@ -12,9 +12,10 @@
 #include "Foreach.h"
 #include "UnlockManager.h"
 #include "ThemeMetric.h"
+#include "LocalizedString.h"
 
-static ThemeMetric<CString> SORT_NOT_AVAILABLE( "Sort", "NotAvailable" );
-static ThemeMetric<CString> SORT_OTHER        ( "Sort", "Other" );
+static LocalizedString SORT_NOT_AVAILABLE( "Sort", "NotAvailable" );
+static LocalizedString SORT_OTHER        ( "Sort", "Other" );
 
 /////////////////////////////////////
 // Sorting
@@ -273,9 +274,9 @@ CString SongUtil::GetSectionNameFromSongAndSort( const Song* pSong, SortOrder so
 			{
 				Grade g = (Grade)i;
 				if( iCounts[i] > 0 )
-					return ssprintf( "%4s x %d", GradeToThemedString(g).c_str(), iCounts[i] );
+					return ssprintf( "%4s x %d", GradeToLocalizedString(g).c_str(), iCounts[i] );
 			}
-			return GradeToThemedString( Grade_NoData );
+			return GradeToLocalizedString( Grade_NoData );
 		}
 	case SORT_EASY_METER:
 		{

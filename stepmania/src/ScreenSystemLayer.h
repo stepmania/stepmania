@@ -8,6 +8,7 @@
 #include "Quad.h"
 #include "ThemeMetric.h"
 #include "AutoActor.h"
+#include "LocalizedString.h"
 
 class ScreenSystemLayer : public Screen
 {
@@ -28,18 +29,18 @@ private:
 
 	CString GetCreditsMessage( PlayerNumber pn ) const;
 
-	ThemeMetric<CString> CREDITS_PRESS_START;
-	ThemeMetric<CString> CREDITS_INSERT_CARD;
-	ThemeMetric<CString> CREDITS_CARD_TOO_LATE;
-	ThemeMetric<CString> CREDITS_CARD_NO_NAME;
-	ThemeMetric<CString> CREDITS_CARD_READY;
-	ThemeMetric<CString> CREDITS_CARD_CHECKING;
-	ThemeMetric<CString> CREDITS_CARD_REMOVED;
-	ThemeMetric<CString> CREDITS_FREE_PLAY;
-	ThemeMetric<CString> CREDITS_CREDITS;
-	ThemeMetric<CString> CREDITS_NOT_PRESENT;
-	ThemeMetric<CString> CREDITS_LOAD_FAILED;
-	ThemeMetric<CString> CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
+	LocalizedString CREDITS_PRESS_START;
+	LocalizedString CREDITS_INSERT_CARD;
+	LocalizedString CREDITS_CARD_TOO_LATE;
+	LocalizedString CREDITS_CARD_NO_NAME;
+	LocalizedString CREDITS_CARD_READY;
+	LocalizedString CREDITS_CARD_CHECKING;
+	LocalizedString CREDITS_CARD_REMOVED;
+	LocalizedString CREDITS_FREE_PLAY;
+	LocalizedString CREDITS_CREDITS;
+	LocalizedString CREDITS_NOT_PRESENT;
+	LocalizedString CREDITS_LOAD_FAILED;
+	LocalizedString CREDITS_LOADED_FROM_LAST_GOOD_APPEND;
 	ThemeMetric<bool> CREDITS_JOIN_ONLY;
 };
 

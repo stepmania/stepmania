@@ -9,7 +9,7 @@
 
 LuaFunction( GradeToString,			GradeToString((Grade)IArg(1)) )
 
-CString GradeToThemedString( Grade g )
+CString GradeToLocalizedString( Grade g )
 {
 	CString s = GradeToString(g);
 	if( !THEME->HasMetric("Grade",s) )

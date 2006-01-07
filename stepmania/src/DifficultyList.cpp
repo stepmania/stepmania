@@ -14,7 +14,7 @@
 #include "Command.h"
 #include "Foreach.h"
 
-#define MAX_METERS NUM_DIFFICULTIES + MAX_EDITS_PER_SONG
+#define MAX_METERS NUM_Difficulty + MAX_EDITS_PER_SONG
 
 DifficultyList::DifficultyList()
 {

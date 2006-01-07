@@ -2750,7 +2750,7 @@ CString GameManager::StepsTypeToString( StepsType st )
 	return StepsTypes[st].name;
 }
 
-CString GameManager::StepsTypeToThemedString( StepsType st )
+CString GameManager::StepsTypeToLocalizedString( StepsType st )
 {
 	CString s = StepsTypeToString( st );
 	if( THEME->HasMetric( "StepsType", s ) )
@@ -2759,7 +2759,7 @@ CString GameManager::StepsTypeToThemedString( StepsType st )
 		return s;
 }
 
-CString GameManager::StyleToThemedString( const Style* style )
+CString GameManager::StyleToLocalizedString( const Style* style )
 {
 	CString s = style->m_szName;
 	s = Capitalize( s );
@@ -2854,7 +2854,7 @@ class LunaGameManager: public Luna<GameManager>
 public:
 	LunaGameManager() { LUA->Register( Register ); }
 
-	static int StepsTypeToThemedString( T* p, lua_State *L )	{ lua_pushstring(L, p->StepsTypeToThemedString((StepsType)IArg(1)) ); return 1; }
+	static int StepsTypeToLocalizedString( T* p, lua_State *L )	{ lua_pushstring(L, p->StepsTypeToLocalizedString((StepsType)IArg(1)) ); return 1; }
 	static int GetFirstStepsTypeForCurrentGame( T* p, lua_State *L )
 	{
 		vector<StepsType> vstAddTo;
@@ -2867,7 +2867,7 @@ public:
 
 	static void Register(lua_State *L)
 	{
-		ADD_METHOD( StepsTypeToThemedString );
+		ADD_METHOD( StepsTypeToLocalizedString );
 		ADD_METHOD( GetFirstStepsTypeForCurrentGame );
 
 		Luna<T>::Register( L );

@@ -22,7 +22,7 @@ bool DifficultyIcon::Load( CString sPath )
 {
 	Sprite::Load( sPath );
 	int iStates = GetNumStates();
-	bool bWarn = iStates != NUM_DIFFICULTIES  &&  iStates != NUM_DIFFICULTIES*2;
+	bool bWarn = iStates != NUM_Difficulty  &&  iStates != NUM_Difficulty*2;
 	if( sPath.find("_blank") != string::npos )
 		bWarn = false;
 	if( bWarn )
@@ -30,8 +30,8 @@ bool DifficultyIcon::Load( CString sPath )
 		CString sError = ssprintf(
 			"The difficulty icon graphic '%s' must have %d or %d frames.  It has %d states.", 
 			sPath.c_str(), 
-			NUM_DIFFICULTIES,
-			NUM_DIFFICULTIES*2,
+			NUM_Difficulty,
+			NUM_Difficulty*2,
 			iStates );
 		Dialog::OK( sError );
 	}
@@ -75,8 +75,8 @@ void DifficultyIcon::SetFromDifficulty( PlayerNumber pn, Difficulty dc )
 	m_bBlank = false;
 	switch( GetNumStates() )
 	{
-	case NUM_DIFFICULTIES:		SetState( dc );			break;
-	case NUM_DIFFICULTIES*2:	SetState( dc*2+pn );	break;
+	case NUM_Difficulty:		SetState( dc );			break;
+	case NUM_Difficulty*2:	SetState( dc*2+pn );	break;
 	default:					m_bBlank = true;		break;
 	}	
 }

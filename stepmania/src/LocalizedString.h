@@ -11,11 +11,14 @@ public:
 	static RString LocalizeString( const RString &sSection, const RString &sName );
 
 
+	LocalizedString();
 	LocalizedString( const RString &sSection, const RString &sName );
 	~LocalizedString();
+	void Load( const RString &sSection, const RString &sName );
 	void Refresh();
 	operator RString() const;
 	const RString &GetValue() const;
+	bool IsLoaded() const;
 private:
 	RString m_sSection;
 	RString m_sName;

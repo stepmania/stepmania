@@ -206,7 +206,7 @@ void ScreenEvaluation::Init()
 	//
 	{
 		FOREACH_PlayerNumber( p )	// foreach line
-			for( int r=0; r<NUM_RADAR_CATEGORIES; r++ )	// foreach line
+			for( int r=0; r<NUM_RadarCategory; r++ )	// foreach line
 			{
 				STATSMAN->m_CurStageStats.radarPossible[p][r] = 0.5f + r/10.0f;
 				STATSMAN->m_CurStageStats.radarActual[p][r] = 0.5f + r/10.0f;

@@ -27,7 +27,7 @@ struct RadarValues
 			float fNumHands;
 			float fNumRolls;
 		} v;
-		float f[NUM_RADAR_CATEGORIES];
+		float f[NUM_RadarCategory];
 	} m_Values;
 
     operator const float* () const	{ return m_Values.f; };

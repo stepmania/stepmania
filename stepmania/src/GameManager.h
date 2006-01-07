@@ -31,10 +31,10 @@ public:
 	static int StepsTypeToNumTracks( StepsType st );
 	static StepsType StringToStepsType( CString sStepsType );
 	static CString StepsTypeToString( StepsType st );
-	static CString StepsTypeToThemedString( StepsType st );
+	static CString StepsTypeToLocalizedString( StepsType st );
 	static const Game* StringToGameType( CString sGameType );
 	const Style* GameAndStringToStyle( const Game* pGame, CString sStyle );
-	static CString StyleToThemedString( const Style* s );
+	static CString StyleToLocalizedString( const Style* s );
 	CString GetMenuButtonSecondaryFunction( const Game *pGame, GameButton gb ) const;
 
 	// Lua

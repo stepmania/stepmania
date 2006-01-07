@@ -29,14 +29,15 @@ RString LocalizedString::LocalizeString( const RString &sSection, const RString 
 	return g_pfnLocalizer( sSection, sName );
 }
 
+LocalizedString::LocalizedString()
+{
+	g_Subscribers.Subscribe( this );
+}
+
 LocalizedString::LocalizedString( const RString &sSection, const RString &sName )
 {
-	m_sSection = sSection;
-	m_sName = sName;
-	m_sValue = sName;
-
+	Load( sSection, sName );
 	g_Subscribers.Subscribe( this );
-
 	Refresh();
 }
 
@@ -46,6 +47,12 @@ LocalizedString::~LocalizedString()
 	g_Subscribers.Unsubscribe( this );
 }
 
+void LocalizedString::Load( const RString &sSection, const RString &sName )
+{
+	m_sSection = sSection;
+	m_sName = sName;
+	m_sValue = sName;
+}
 
 LocalizedString::operator RString() const
 {
@@ -54,12 +61,18 @@ LocalizedString::operator RString() const
 
 const RString &LocalizedString::GetValue() const
 {
+	ASSERT( IsLoaded() );
 	return m_sValue;
 }
 
 void LocalizedString::Refresh()
 {
 	m_sValue = LocalizeString( m_sSection, m_sName );
+}
+
+bool LocalizedString::IsLoaded() const
+{
+	return !m_sSection.empty() && !m_sName.empty();
 }
 
 LuaFunction( LocalizeString, LocalizedString::LocalizeString( SArg(1), SArg(2) ) )

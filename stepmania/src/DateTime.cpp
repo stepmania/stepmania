@@ -207,7 +207,7 @@ CString LastWeekToString( int iLastWeekIndex )
 	}
 }
 
-CString LastDayToThemedString( int iLastDayIndex )
+CString LastDayToLocalizedString( int iLastDayIndex )
 {
 	CString s = LastDayToString( iLastDayIndex );
 	s.Replace( "Day", "" );
@@ -215,7 +215,7 @@ CString LastDayToThemedString( int iLastDayIndex )
 	return s;
 }
 
-CString LastWeekToThemedString( int iLastWeekIndex )
+CString LastWeekToLocalizedString( int iLastWeekIndex )
 {
 	CString s = LastWeekToString( iLastWeekIndex );
 	s.Replace( "Week", "" );
@@ -223,7 +223,7 @@ CString LastWeekToThemedString( int iLastWeekIndex )
 	return s;
 }
 
-CString HourInDayToThemedString( int iHourIndex )
+CString HourInDayToLocalizedString( int iHourIndex )
 {
 	int iBeginHour = iHourIndex;
 	iBeginHour--;

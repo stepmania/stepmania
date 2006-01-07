@@ -317,7 +317,7 @@ public:
 			{
 				Trail* pTrail = vTrails[i];
 
-				CString s = CourseDifficultyToThemedString( pTrail->m_CourseDifficulty );
+				CString s = CourseDifficultyToLocalizedString( pTrail->m_CourseDifficulty );
 				s += ssprintf( " %d", pTrail->GetMeter() );
 				defOut.m_vsChoices.push_back( s );
 				GameCommand mc;
@@ -340,7 +340,7 @@ public:
 				if( pSteps->GetDifficulty() == DIFFICULTY_EDIT )
 					s = pSteps->GetDescription();
 				else
-					s = DifficultyToThemedString( pSteps->GetDifficulty() );
+					s = DifficultyToLocalizedString( pSteps->GetDifficulty() );
 				s += ssprintf( " %d", pSteps->GetMeter() );
 				defOut.m_vsChoices.push_back( s );
 				GameCommand mc;
@@ -401,7 +401,7 @@ public:
 		ASSERT( vStyles.size() );
 		FOREACH_CONST( const Style*, vStyles, s )
 		{
-			defOut.m_vsChoices.push_back( GAMEMAN->StyleToThemedString(*s) ); 
+			defOut.m_vsChoices.push_back( GAMEMAN->StyleToLocalizedString(*s) ); 
 			GameCommand mc;
 			mc.m_pStyle = *s;
 			ListEntries.push_back( mc );
@@ -463,7 +463,7 @@ public:
 
 		FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), d )
 		{
-			CString s = DifficultyToThemedString( *d );
+			CString s = DifficultyToLocalizedString( *d );
 
 			defOut.m_vsChoices.push_back( s ); 
 			GameCommand mc;
@@ -950,7 +950,7 @@ public:
 
 		FOREACH_CONST( StepsType, m_vStepsTypesToShow, st )
 		{
-			CString s = GAMEMAN->StepsTypeToThemedString( *st );
+			CString s = GAMEMAN->StepsTypeToLocalizedString( *st );
 			defOut.m_vsChoices.push_back( s );
 		}
 
@@ -1085,7 +1085,7 @@ public:
 				}
 				else
 				{
-					s = DifficultyToThemedString( dc );
+					s = DifficultyToLocalizedString( dc );
 				}
 				defOut.m_vsChoices.push_back( s );
 			}

@@ -45,15 +45,15 @@ protected:
 
 		bool m_bValuesVisible;
 		float m_PercentTowardNew;
-		float m_fValuesNew[NUM_RADAR_CATEGORIES];
-		float m_fValuesOld[NUM_RADAR_CATEGORIES];
+		float m_fValuesNew[NUM_RadarCategory];
+		float m_fValuesOld[NUM_RadarCategory];
 
 		PlayerNumber m_PlayerNumber;
 	};
 
 	Sprite m_sprRadarBase;
 	GrooveRadarValueMap m_GrooveRadarValueMap[NUM_PLAYERS];
-	Sprite m_sprRadarLabels[NUM_RADAR_CATEGORIES];
+	Sprite m_sprRadarLabels[NUM_RadarCategory];
 	ActorFrame m_Frame;
 };
 

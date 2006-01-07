@@ -23,11 +23,11 @@ enum EditMenuRow
 	ROW_SOURCE_STEPS_TYPE, 
 	ROW_SOURCE_STEPS, 
 	ROW_ACTION, 
-	NUM_EDIT_MENU_ROWS 
+	NUM_EditMenuRow 
 };
-#define FOREACH_EditMenuRow( r ) FOREACH_ENUM( EditMenuRow, NUM_EDIT_MENU_ROWS, r )
+#define FOREACH_EditMenuRow( r ) FOREACH_ENUM( EditMenuRow, NUM_EditMenuRow, r )
 const CString& EditMenuRowToString( EditMenuRow r );
-const CString& EditMenuRowToThemedString( EditMenuRow r );
+const CString& EditMenuRowToLocalizedString( EditMenuRow r );
 
 enum EditMenuAction
 {
@@ -39,7 +39,7 @@ enum EditMenuAction
 };
 #define FOREACH_EditMenuAction( ema ) FOREACH_ENUM( EditMenuAction, NUM_EditMenuAction, ema )
 const CString& EditMenuActionToString( EditMenuAction ema );
-const CString& EditMenuActionToThemedString( EditMenuAction ema );
+const CString& EditMenuActionToLocalizedString( EditMenuAction ema );
 
 const int NUM_ARROWS = 2;
 
@@ -84,9 +84,9 @@ private:
 	EditMenuRow m_SelectedRow;
 	EditMenuRow GetFirstRow() const { return SHOW_GROUPS.GetValue()? ROW_GROUP:ROW_SONG; }
 	int GetRowSize( EditMenuRow er ) const;
-	int			m_iSelection[NUM_EDIT_MENU_ROWS];
-	BitmapText	m_textLabel[NUM_EDIT_MENU_ROWS];
-	BitmapText	m_textValue[NUM_EDIT_MENU_ROWS];
+	int			m_iSelection[NUM_EditMenuRow];
+	BitmapText	m_textLabel[NUM_EditMenuRow];
+	BitmapText	m_textValue[NUM_EditMenuRow];
 
 	FadingBanner	m_GroupBanner;
 	FadingBanner	m_SongBanner;

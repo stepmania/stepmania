@@ -1519,7 +1519,7 @@ void GameState::GetRankingFeats( PlayerNumber pn, vector<RankingFeat> &asFeatsOu
 					feat.pCourse = pCourse;
 					feat.Feat = ssprintf("MR #%d in %s", i+1, pCourse->GetDisplayFullTitle().c_str() );
 					if( cd != DIFFICULTY_MEDIUM )
-						feat.Feat += " " + CourseDifficultyToThemedString(cd);
+						feat.Feat += " " + CourseDifficultyToLocalizedString(cd);
 					feat.pStringToFill = hs.GetNameMutable();
 					feat.grade = Grade_NoData;
 					feat.iScore = hs.GetScore();
@@ -1735,7 +1735,7 @@ bool GameState::ChangePreferredDifficulty( PlayerNumber pn, int dir )
 	while( 1 )
 	{
 		d = (Difficulty)(d+dir);
-		if( d < 0 || d >= NUM_DIFFICULTIES )
+		if( d < 0 || d >= NUM_Difficulty )
 			return false;
 		if( find(v.begin(), v.end(), d) != v.end() )
 			break; // found
@@ -1767,7 +1767,7 @@ bool GameState::ChangePreferredCourseDifficulty( PlayerNumber pn, int dir )
 	while( 1 )
 	{
 		cd = (CourseDifficulty)(cd+dir);
-		if( cd < 0 || cd >= NUM_DIFFICULTIES )
+		if( cd < 0 || cd >= NUM_Difficulty )
 			return false;
 		if( find(v.begin(),v.end(),cd) == v.end() )
 			continue; /* not available */
@@ -2103,7 +2103,7 @@ public:
 		for( unsigned i=0; i<vpStepsToShow.size(); i++ )
 		{
 			const Steps* pSteps = vpStepsToShow[i];
-			CString sDifficulty = DifficultyToThemedString( pSteps->GetDifficulty() );
+			CString sDifficulty = DifficultyToLocalizedString( pSteps->GetDifficulty() );
 			
 			// HACK: reset capitalization
 			sDifficulty.MakeLower();

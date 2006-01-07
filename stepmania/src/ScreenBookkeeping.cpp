@@ -134,7 +134,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 			CString sTitle, sData;
 			for( int i=0; i<NUM_LAST_DAYS; i++ )
 			{
-				sTitle += LastDayToThemedString(i) + "\n";
+				sTitle += LastDayToLocalizedString(i) + "\n";
 				sData += ssprintf("%d",coins[i]) + "\n";
 				iTotalLast += coins[i];
 			}
@@ -164,7 +164,7 @@ void ScreenBookkeeping::ChangeView( View newView )
 				for( int row=0; row<52/4; row++ )
 				{
 					int week = row*4+col;
-					sTemp += LastWeekToThemedString(week) + ssprintf(": %d",coins[week]) + "\n";
+					sTemp += LastWeekToLocalizedString(week) + ssprintf(": %d",coins[week]) + "\n";
 				}
 
 				m_textData[col].SetHorizAlign( Actor::align_left );
@@ -204,14 +204,14 @@ void ScreenBookkeeping::ChangeView( View newView )
 			CString sTitle1, sData1;
 			for( int i=0; i<HOURS_IN_DAY/2; i++ )
 			{
-				sTitle1 += HourInDayToThemedString(i) + "\n";
+				sTitle1 += HourInDayToLocalizedString(i) + "\n";
 				sData1 += ssprintf("%d",coins[i]) + "\n";
 			}
 			
 			CString sTitle2, sData2;
 			for( int i=(HOURS_IN_DAY/2); i<HOURS_IN_DAY; i++ )
 			{
-				sTitle2 += HourInDayToThemedString(i) + "\n";
+				sTitle2 += HourInDayToLocalizedString(i) + "\n";
 				sData2 += ssprintf("%d",coins[i]) + "\n";
 			}
 			

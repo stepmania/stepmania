@@ -75,7 +75,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 				XNode* p3 = p2->AppendChild( "StepsType" );
 				p3->AppendAttr( "StepsType", GAMEMAN->StepsTypeToString(*st) );
 
-				int iNumStepsInGroupAndStepsType[NUM_DIFFICULTIES];
+				int iNumStepsInGroupAndStepsType[NUM_Difficulty];
 				ZERO( iNumStepsInGroupAndStepsType );
 				FOREACH_CONST( Song*, vpSongsInGroup, i )
 				{
@@ -250,7 +250,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 			FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), iter )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "Difficulty", DifficultyToString(*iter) );
-				pNode3->AppendAttr( "DisplayAs", DifficultyToThemedString(*iter) );
+				pNode3->AppendAttr( "DisplayAs", DifficultyToLocalizedString(*iter) );
 			}
 		}
 
@@ -259,7 +259,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 			FOREACH_CONST( CourseDifficulty, CommonMetrics::COURSE_DIFFICULTIES_TO_SHOW.GetValue(), iter )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "CourseDifficulty", CourseDifficultyToString(*iter) );
-				pNode3->AppendAttr( "DisplayAs", CourseDifficultyToThemedString(*iter) );
+				pNode3->AppendAttr( "DisplayAs", CourseDifficultyToLocalizedString(*iter) );
 			}
 		}
 
@@ -268,7 +268,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 			FOREACH_CONST( StepsType, vStepsTypesToShow, iter )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "StepsType", GAMEMAN->StepsTypeToString(*iter) );
-				pNode3->AppendAttr( "DisplayAs", GAMEMAN->StepsTypeToThemedString(*iter) );
+				pNode3->AppendAttr( "DisplayAs", GAMEMAN->StepsTypeToLocalizedString(*iter) );
 			}
 		}
 
@@ -279,7 +279,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 				if( !SHOW_PLAY_MODE(pm) )
 					continue;
 				XNode* pNode3 = pNode2->AppendChild( "PlayMode", PlayModeToString(pm) );
-				pNode3->AppendAttr( "DisplayAs", PlayModeToThemedString(pm) );
+				pNode3->AppendAttr( "DisplayAs", PlayModeToLocalizedString(pm) );
 			}
 		}
 
@@ -294,7 +294,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 				StyleID sID;
 				sID.FromStyle( (*pStyle) );
 				XNode* pNode3 = pNode2->AppendChild( sID.CreateNode() );
-				pNode3->AppendAttr( "DisplayAs", GAMEMAN->StyleToThemedString(*pStyle) );
+				pNode3->AppendAttr( "DisplayAs", GAMEMAN->StyleToLocalizedString(*pStyle) );
 			}
 		}
 
@@ -312,7 +312,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 			FOREACH_UsedGrade( g )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "Grade", GradeToString(g) );
-				pNode3->AppendAttr( "DisplayAs", GradeToThemedString(g) );
+				pNode3->AppendAttr( "DisplayAs", GradeToLocalizedString(g) );
 			}
 		}
 
@@ -321,7 +321,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 			FOREACH_TapNoteScore( tns )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "TapNoteScore", TapNoteScoreToString(tns) );
-				pNode3->AppendAttr( "DisplayAs", TapNoteScoreToThemedString(tns) );
+				pNode3->AppendAttr( "DisplayAs", TapNoteScoreToLocalizedString(tns) );
 			}
 		}
 
@@ -330,7 +330,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 			FOREACH_HoldNoteScore( hns )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "HoldNoteScore", HoldNoteScoreToString(hns) );
-				pNode3->AppendAttr( "DisplayAs", HoldNoteScoreToThemedString(hns) );
+				pNode3->AppendAttr( "DisplayAs", HoldNoteScoreToLocalizedString(hns) );
 			}
 		}
 
@@ -339,7 +339,7 @@ void SaveCatalogXml( LoadingWindow *loading_window )
 			FOREACH_RadarCategory( rc )
 			{
 				XNode* pNode3 = pNode2->AppendChild( "RadarValue", RadarCategoryToString(rc) );
-				pNode3->AppendAttr( "DisplayAs", RadarCategoryToThemedString(rc) );
+				pNode3->AppendAttr( "DisplayAs", RadarCategoryToLocalizedString(rc) );
 			}
 		}
 

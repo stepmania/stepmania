@@ -22,6 +22,7 @@
 #include <limits.h>
 #include "CourseLoaderCRS.h"
 #include "LuaFunctions.h"
+#include "LocalizedString.h"
 
 
 static const char *CourseTypeNames[] = {
@@ -31,9 +32,9 @@ static const char *CourseTypeNames[] = {
 	"Survival",
 };
 XToString( CourseType, NUM_CourseType );
-XToThemedString( CourseType, NUM_CourseType );
+XToLocalizedString( CourseType );
 
-LuaFunction( CourseTypeToThemedString, CourseTypeToThemedString((CourseType) IArg(1)) );
+LuaFunction( CourseTypeToLocalizedString, CourseTypeToLocalizedString((CourseType) IArg(1)) );
 
 
 static const char *SongSortNames[] = {
@@ -44,7 +45,7 @@ static const char *SongSortNames[] = {
 	"LowestGrades",
 };
 XToString( SongSort, NUM_SongSort );
-XToThemedString( SongSort, NUM_SongSort );
+XToLocalizedString( SongSort );
 
 
 /* Maximum lower value of ranges when difficult: */
@@ -67,13 +68,13 @@ CString CourseEntry::GetTextDescription() const
 	if( !sSongGroup.empty() )
 		vsEntryDescription.push_back( sSongGroup );
 	if( baseDifficulty != DIFFICULTY_INVALID && baseDifficulty != DIFFICULTY_MEDIUM )
-		vsEntryDescription.push_back( DifficultyToThemedString(baseDifficulty) );
+		vsEntryDescription.push_back( DifficultyToLocalizedString(baseDifficulty) );
 	if( iLowMeter != -1 )
 		vsEntryDescription.push_back( ssprintf("Low meter: %d", iLowMeter) );
 	if( iHighMeter != -1 )
 		vsEntryDescription.push_back( ssprintf("High meter: %d", iHighMeter) );
 	if( songSort != SongSort_Randomize )
-		vsEntryDescription.push_back( "Sort: %d" + SongSortToThemedString(songSort) );
+		vsEntryDescription.push_back( "Sort: %d" + SongSortToLocalizedString(songSort) );
 	if( songSort != SongSort_Randomize && iChooseIndex != 0 )
 		vsEntryDescription.push_back( "Choose " + FormatNumberAndSuffix(iChooseIndex) + " match" );
 	int iNumModChanges = GetNumModChanges();

@@ -12,15 +12,15 @@ enum Month { NUM_Month = 12 };
 
 CString DayInYearToString( int iDayInYearIndex );
 CString LastDayToString( int iLastDayIndex );
-CString LastDayToThemedString( int iLastDayIndex );
+CString LastDayToLocalizedString( int iLastDayIndex );
 CString DayOfWeekToString( int iDayOfWeekIndex );
-CString DayOfWeekToThemedString( int iDayOfWeekIndex );
+CString DayOfWeekToLocalizedString( int iDayOfWeekIndex );
 CString HourInDayToString( int iHourIndex );
-CString HourInDayToThemedString( int iHourIndex );
+CString HourInDayToLocalizedString( int iHourIndex );
 const CString &MonthToString( Month month );
 const CString &MonthToLocalizedString( Month month );
 CString LastWeekToString( int iLastWeekIndex );
-CString LastWeekToThemedString( int iLastWeekIndex );
+CString LastWeekToLocalizedString( int iLastWeekIndex );
 
 tm AddDays( tm start, int iDaysToMove );
 tm GetYesterday( tm start );

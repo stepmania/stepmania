@@ -49,7 +49,7 @@ void SMLoader::LoadFromSMTokens(
 	out.SetMeter(atoi(sMeter));
 	vector<CString> saValues;
 	split( sRadarValues, ",", saValues, true );
-	if( saValues.size() == NUM_RADAR_CATEGORIES )
+	if( saValues.size() == NUM_RadarCategory )
 	{
 		RadarValues v;
 		FOREACH_RadarCategory(rc)

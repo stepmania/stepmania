@@ -2,14 +2,14 @@
 #include "PlayerNumber.h"
 #include "GameState.h"
 #include "LuaManager.h"
-#include "ThemeMetric.h"
+#include "LocalizedString.h"
 
 static const char *PlayerNumberNames[] = {
 	"P1",
 	"P2",
 };
 XToString( PlayerNumber, NUM_PLAYERS );
-XToThemedString( PlayerNumber, NUM_PLAYERS );
+XToLocalizedString( PlayerNumber );
 
 void LuaPlayerNumber(lua_State* L)
 {
@@ -31,7 +31,7 @@ static const char *MultiPlayerNames[] = {
 	"P8",
 };
 XToString( MultiPlayer, NUM_MultiPlayer );
-XToThemedString( MultiPlayer, NUM_MultiPlayer );
+XToLocalizedString( MultiPlayer );
 
 
 PlayerNumber GetNextHumanPlayer( PlayerNumber pn )

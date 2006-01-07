@@ -29,11 +29,11 @@ enum RadarCategory
 	RadarCategory_Mines,
 	RadarCategory_Hands,
 	RadarCategory_Rolls,
-	NUM_RADAR_CATEGORIES	// leave this at the end
+	NUM_RadarCategory	// leave this at the end
 };
-#define FOREACH_RadarCategory( rc ) FOREACH_ENUM( RadarCategory, NUM_RADAR_CATEGORIES, rc )
+#define FOREACH_RadarCategory( rc ) FOREACH_ENUM( RadarCategory, NUM_RadarCategory, rc )
 const CString& RadarCategoryToString( RadarCategory cat );
-const CString& RadarCategoryToThemedString( RadarCategory cat );
+const CString& RadarCategoryToLocalizedString( RadarCategory cat );
 
 
 enum StepsType
@@ -82,12 +82,12 @@ enum PlayMode
 	PLAY_MODE_ENDLESS,
 	PLAY_MODE_BATTLE,	// manually launched attacks
 	PLAY_MODE_RAVE,		// automatically launched attacks
-	NUM_PLAY_MODES,
+	NUM_PlayMode,
 	PLAY_MODE_INVALID
 };
-#define FOREACH_PlayMode( pm ) FOREACH_ENUM( PlayMode, NUM_PLAY_MODES, pm )
+#define FOREACH_PlayMode( pm ) FOREACH_ENUM( PlayMode, NUM_PlayMode, pm )
 const CString& PlayModeToString( PlayMode pm );
-const CString& PlayModeToThemedString( PlayMode pm );
+const CString& PlayModeToLocalizedString( PlayMode pm );
 PlayMode StringToPlayMode( const CString& s );
 
 
@@ -142,7 +142,7 @@ enum TapNoteScore {
 };
 #define FOREACH_TapNoteScore( tns ) FOREACH_ENUM( TapNoteScore, NUM_TapNoteScore, tns )
 const CString& TapNoteScoreToString( TapNoteScore tns );
-const CString& TapNoteScoreToThemedString( TapNoteScore tns );
+const CString& TapNoteScoreToLocalizedString( TapNoteScore tns );
 TapNoteScore StringToTapNoteScore( const CString& str );
 
 
@@ -156,7 +156,7 @@ enum HoldNoteScore
 };
 #define FOREACH_HoldNoteScore( hns ) FOREACH_ENUM( HoldNoteScore, NUM_HoldNoteScore, hns )
 const CString& HoldNoteScoreToString( HoldNoteScore hns );
-const CString& HoldNoteScoreToThemedString( HoldNoteScore hns );
+const CString& HoldNoteScoreToLocalizedString( HoldNoteScore hns );
 HoldNoteScore StringToHoldNoteScore( const CString& str );
 
 
@@ -333,12 +333,12 @@ enum PerDifficultyAward
 	AWARD_PERCENT_80_W3,
 	AWARD_PERCENT_90_W3,
 	AWARD_PERCENT_100_W3,
-	NUM_PER_DIFFICULTY_AWARDS,
+	NUM_PerDifficultyAward,
 	PER_DIFFICULTY_AWARD_INVALID,
 };
-#define FOREACH_PerDifficultyAward( pma ) FOREACH_ENUM( PerDifficultyAward, NUM_PER_DIFFICULTY_AWARDS, pma )
+#define FOREACH_PerDifficultyAward( pma ) FOREACH_ENUM( PerDifficultyAward, NUM_PerDifficultyAward, pma )
 const CString& PerDifficultyAwardToString( PerDifficultyAward pma );
-const CString& PerDifficultyAwardToThemedString( PerDifficultyAward pma );
+const CString& PerDifficultyAwardToLocalizedString( PerDifficultyAward pma );
 PerDifficultyAward StringToPerDifficultyAward( const CString& pma );
 
 
@@ -354,12 +354,12 @@ enum PeakComboAward
 	AWARD_8000_PEAK_COMBO,
 	AWARD_9000_PEAK_COMBO,
 	AWARD_10000_PEAK_COMBO,
-	NUM_PEAK_COMBO_AWARDS,
+	NUM_PeakComboAward,
 	PEAK_COMBO_AWARD_INVALID,
 };
-#define FOREACH_PeakComboAward( pca ) FOREACH_ENUM( PeakComboAward, NUM_PEAK_COMBO_AWARDS, pca )
+#define FOREACH_PeakComboAward( pca ) FOREACH_ENUM( PeakComboAward, NUM_PeakComboAward, pca )
 const CString& PeakComboAwardToString( PeakComboAward pma );
-const CString& PeakComboAwardToThemedString( PeakComboAward pma );
+const CString& PeakComboAwardToLocalizedString( PeakComboAward pma );
 PeakComboAward StringToPeakComboAward( const CString& pma );
 
 

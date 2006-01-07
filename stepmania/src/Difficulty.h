@@ -14,22 +14,22 @@ enum Difficulty
 	DIFFICULTY_HARD,
 	DIFFICULTY_CHALLENGE,
 	DIFFICULTY_EDIT,
-	NUM_DIFFICULTIES,
+	NUM_Difficulty,
 	DIFFICULTY_INVALID
 };
-#define FOREACH_Difficulty( dc ) FOREACH_ENUM( Difficulty, NUM_DIFFICULTIES, dc )
+#define FOREACH_Difficulty( dc ) FOREACH_ENUM( Difficulty, NUM_Difficulty, dc )
 const CString& DifficultyToString( Difficulty dc );
-const CString& DifficultyToThemedString( Difficulty dc );
+const CString& DifficultyToLocalizedString( Difficulty dc );
 Difficulty StringToDifficulty( const CString& sDC );
 
 
 typedef Difficulty CourseDifficulty;
-#define NUM_COURSE_DIFFICULTIES NUM_DIFFICULTIES
+#define NUM_CourseDifficulty NUM_Difficulty
 #define FOREACH_CourseDifficulty FOREACH_Difficulty
 #define FOREACH_ShownCourseDifficulty( cd ) for( Difficulty cd=GetNextShownCourseDifficulty((CourseDifficulty)-1); cd!=DIFFICULTY_INVALID; cd=GetNextShownCourseDifficulty(cd) )
 
 const CString& CourseDifficultyToString( Difficulty dc );
-const CString& CourseDifficultyToThemedString( Difficulty dc );
+const CString& CourseDifficultyToLocalizedString( Difficulty dc );
 Difficulty StringToCourseDifficulty( const CString& sDC );
 
 Difficulty GetNextShownCourseDifficulty( Difficulty pn );
