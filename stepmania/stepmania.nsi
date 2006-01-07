@@ -239,6 +239,9 @@ Section "Main Section" SecMain
 	File /r "NoteSkins\pump\Classic" ; what the heck, they're tiny
 	File /r "NoteSkins\pump\default"
 
+	SetOutPath "$INSTDIR\NoteSkins\para"
+	File /r "NoteSkins\para\default"
+
 	; temporarily disabled--noteskin needs updating
 	;SetOutPath "$INSTDIR\NoteSkins\ez2"
 	;File /r "NoteSkins\ez2\original"
@@ -593,9 +596,7 @@ Section "Uninstall"
 	RMDir /r "$INSTDIR\NoteSkins\pump\classic"
 	RMDir /r "$INSTDIR\NoteSkins\pump\default"
 	RMDir "$INSTDIR\NoteSkins\pump"
-	RMDir /r "$INSTDIR\NoteSkins\ez2\original"
-	RMDir "$INSTDIR\NoteSkins\ez2"
-	RMDir /r "$INSTDIR\NoteSkins\para\original"
+	RMDir /r "$INSTDIR\NoteSkins\para\default"
 	RMDir "$INSTDIR\NoteSkins\para"
 	RMDir "$INSTDIR\NoteSkins"
 
