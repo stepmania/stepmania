@@ -156,7 +156,7 @@ DeviceButton StringToDeviceButton( const CString& s )
 		return enum_add2( KEY_OTHER_0, i );
 
 	if( sscanf(s, "B%i", &i) == 1 )
-		return enum_add2( JOY_BUTTON_1, i+1 );
+		return enum_add2( JOY_BUTTON_1, i-1 );
 
 	if( sscanf(s, "Midi %i", &i) == 1 )
 		return enum_add2( MIDI_FIRST, i );
