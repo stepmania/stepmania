@@ -123,7 +123,7 @@ namespace
 
 RString ArchHooks::GetPreferredLanguage()
 {
-		return "EN";
+	return "EN";
 }
 
 int64_t ArchHooks::GetMicrosecondsSinceStart( bool bAccurate )
