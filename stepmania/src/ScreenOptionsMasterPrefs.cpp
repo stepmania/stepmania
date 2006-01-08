@@ -127,7 +127,6 @@ static void GameChoices( vector<CString> &out )
 	FOREACH( const Game*, aGames, g )
 	{
 		CString sGameName = (*g)->m_szName;
-		sGameName.MakeUpper();
 		out.push_back( sGameName );
 	}
 }
