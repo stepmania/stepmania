@@ -761,20 +761,23 @@ int GameState::GetCourseSongIndex() const
 	return iSongIndex;
 }
 
+static LocalizedString PLAYER1	("GameState","Player 1");
+static LocalizedString PLAYER2	("GameState","Player 2");
+static LocalizedString CPU		("GameState","CPU");
 CString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 {
 	ASSERT( IsPlayerEnabled(pn) );
-	const CString defaultnames[] = { "Player 1", "Player 2" };
+	const LocalizedString *pDefaultNames[] = { &PLAYER1, &PLAYER2 };
 	if( IsHumanPlayer(pn) )
 	{
 		if( !PROFILEMAN->GetPlayerName(pn).empty() )
 			return PROFILEMAN->GetPlayerName(pn);
 		else
-			return defaultnames[pn];
+			return *pDefaultNames[pn];
 	}
 	else
 	{
-		return "CPU";
+		return CPU;
 	}
 }
 
