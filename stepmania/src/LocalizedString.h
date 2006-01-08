@@ -3,27 +3,20 @@
 #ifndef LocalizedString_H
 #define LocalizedString_H
 
+class LocalizedStringImpl;
+
 class LocalizedString
 {
 public:
-	static void RegisterLocalizer( RString (*pfnLocalizer)(const RString&,const RString&) );
-	static void RefreshLocalizedStrings();
-	static RString LocalizeString( const RString &sSection, const RString &sName );
 
-
-	LocalizedString();
-	LocalizedString( const RString &sSection, const RString &sName );
+	LocalizedString( const RString& sGroup = "", const RString& sName = "" );
 	~LocalizedString();
-	void Load( const RString &sSection, const RString &sName );
-	void Refresh();
-	operator RString() const;
+	void Load( const RString& sGroup, const RString& sName );
+	operator const RString &() const { return GetValue(); }
 	const RString &GetValue() const;
 	bool IsLoaded() const;
 private:
-	RString m_sSection;
-	RString m_sName;
-	RString m_sValue;
-	bool m_bValueLoaded;
+	LocalizedStringImpl *m_pImpl;
 };
 
 #endif

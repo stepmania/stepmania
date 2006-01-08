@@ -3,85 +3,52 @@
 #include "Foreach.h"
 #include "LuaFunctions.h"
 #include "LuaManager.h"
+#include "ThemeMetric.h"
+#include "RageUtil.h"
 
-static RString DefaultLocalizer( const RString &sSection, const RString &sName )
+class LocalizedStringImpl : public ThemeMetric<RString>
 {
-	return sName;
-}
-static RString (*g_pfnLocalizer)(const RString&,const RString&) = DefaultLocalizer;
+public:
+	LocalizedStringImpl( const RString& sGroup, const RString& sName ) :
+		ThemeMetric<RString>( sGroup, sName )
+	{
+	}
 
-void LocalizedString::RegisterLocalizer( RString (*pfnLocalizer)(const RString&, const RString&) )
+	virtual void Read()
+	{
+		if( m_sName != ""  &&  THEME  &&   THEME->IsThemeLoaded() )
+		{
+			THEME->GetString( m_sGroup, m_sName, m_currentValue );
+			m_bIsLoaded = true;
+		}
+	}
+
+};
+
+LocalizedString::LocalizedString( const RString& sGroup, const RString& sName )
 {
-	g_pfnLocalizer = pfnLocalizer;
+	m_pImpl = new LocalizedStringImpl(sGroup,sName);
 }
-
-#include "SubscriptionManager.h"
-static SubscriptionManager<LocalizedString> g_Subscribers;
-
-void LocalizedString::RefreshLocalizedStrings()
-{
-	FOREACHS( LocalizedString*, *g_Subscribers.m_pSubscribers, p )
-		(*p)->Refresh();
-}
-
-RString LocalizedString::LocalizeString( const RString &sSection, const RString &sName )
-{
-	return g_pfnLocalizer( sSection, sName );
-}
-
-LocalizedString::LocalizedString()
-{
-	g_Subscribers.Subscribe( this );
-	m_bValueLoaded = false;
-}
-
-LocalizedString::LocalizedString( const RString &sSection, const RString &sName )
-{
-	g_Subscribers.Subscribe( this );
-	m_bValueLoaded = false;
-
-	Load( sSection, sName );
-	Refresh();
-}
-
 
 LocalizedString::~LocalizedString()
 {
-	g_Subscribers.Unsubscribe( this );
+	SAFE_DELETE( m_pImpl );
 }
 
-void LocalizedString::Load( const RString &sSection, const RString &sName )
+void LocalizedString::Load( const RString& sGroup, const RString& sName )
 {
-	m_sSection = sSection;
-	m_sName = sName;
-	m_sValue = "????";
-
-	Refresh();
-}
-
-LocalizedString::operator RString() const
-{
-	return GetValue();
+	m_pImpl->Load( sGroup, sName );
 }
 
 const RString &LocalizedString::GetValue() const
 {
-	ASSERT( IsLoaded() );
-	return m_sValue;
-}
-
-void LocalizedString::Refresh()
-{
-	m_sValue = LocalizeString( m_sSection, m_sName );
-	m_bValueLoaded = true;
+	return m_pImpl->GetValue();
 }
 
 bool LocalizedString::IsLoaded() const
 {
-	return m_bValueLoaded;
+	return m_pImpl->IsLoaded();
 }
-
-LuaFunction( LocalizeString, LocalizedString::LocalizeString( SArg(1), SArg(2) ) )
 
 /*
  * Copyright (c) 2001-2005 Chris Danford
