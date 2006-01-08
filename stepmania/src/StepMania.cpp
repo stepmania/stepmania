@@ -291,7 +291,7 @@ void StepMania::ResetGame()
 		CString sGameName = GAMESTATE->GetCurrentGame()->m_szName;
 		if( !THEME->DoesThemeExist(sGameName) )
 			sGameName = "default";
-		THEME->SwitchThemeAndLanguage( sGameName, THEME->GetCurLanguage() );
+		THEME->SwitchThemeAndLanguage( sGameName, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
 		TEXTUREMAN->DoDelayedDelete();
 	}
 
@@ -793,8 +793,7 @@ void ReadGamePrefsFromDisk( bool bSwitchToLastPlayedGame )
 
 	// it's OK to call these functions with names that don't exist.
 	ANNOUNCER->SwitchAnnouncer( sAnnouncer );
-	THEME->SwitchThemeAndLanguage( sTheme, PREFSMAN->m_sLanguage );
-	THEME->SetPseudoLocalilze( PREFSMAN->m_bPseudoLocalize );
+	THEME->SwitchThemeAndLanguage( sTheme, PREFSMAN->m_sLanguage, PREFSMAN->m_bPseudoLocalize );
 }
 
 
@@ -876,11 +875,6 @@ static void ApplyLogPreferences()
 	LOG->SetInfoToDisk( true );
 	LOG->SetFlushing( PREFSMAN->m_bForceLogFlush );
 	Checkpoints::LogCheckpoints( PREFSMAN->m_bLogCheckpoints );
-}
-
-static CString LocalizeString( const CString &sSection, const CString &s )
-{
-	return THEME->GetString( sSection, s );
 }
 
 static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "StepMania", "Couldn't open any loading windows." );
@@ -1023,9 +1017,6 @@ int main(int argc, char* argv[])
 			loading_window->SetIcon( pIcon );
 		delete pIcon;
 	}
-
-	LocalizedString::RegisterLocalizer( LocalizeString );
-	LocalizedString::RefreshLocalizedStrings();
 
 
 	if( PREFSMAN->m_iSoundWriteAhead )

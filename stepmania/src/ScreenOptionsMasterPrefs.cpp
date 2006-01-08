@@ -171,7 +171,7 @@ static void Language( int &sel, bool ToSel, const ConfOption *pConfOption )
 		const CString sNewLanguage = choices[sel];
 		
 		if( THEME->GetCurLanguage() != sNewLanguage )
-			THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), sNewLanguage );
+			THEME->SwitchThemeAndLanguage( THEME->GetCurThemeName(), sNewLanguage, PREFSMAN->m_bPseudoLocalize );
 	}
 }
 
@@ -206,7 +206,7 @@ static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 	} else {
 		const CString sNewTheme = choices[sel];
 		if( THEME->GetCurThemeName() != sNewTheme )
-			THEME->SwitchThemeAndLanguage( sNewTheme, THEME->GetCurLanguage() );
+			THEME->SwitchThemeAndLanguage( sNewTheme, THEME->GetCurLanguage(), PREFSMAN->m_bPseudoLocalize );
 	}
 }
 
