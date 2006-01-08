@@ -23,7 +23,7 @@
 #include "PlayerState.h"
 
 #define NUM_WHEEL_ITEMS		((int)ceil(NUM_WHEEL_ITEMS_TO_DRAW+2))
-#define WHEEL_TEXT(s)             THEME->GetMetric( "MusicWheel", ssprintf("%sText",s.c_str()) );
+#define WHEEL_TEXT(s)             THEME->GetString( "MusicWheel", ssprintf("%sText",s.c_str()) );
 
 static CString SECTION_COLORS_NAME( size_t i )	{ return ssprintf("SectionColor%d",int(i+1)); }
 static CString CHOICE_NAME( CString s )			{ return ssprintf("Choice%s",s.c_str()); }

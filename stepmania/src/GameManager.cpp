@@ -2754,7 +2754,7 @@ CString GameManager::StepsTypeToLocalizedString( StepsType st )
 {
 	CString s = StepsTypeToString( st );
 	if( THEME->HasMetric( "StepsType", s ) )
-		return THEME->GetMetric( "StepsType", s );
+		return THEME->GetString( "StepsType", s );
 	else
 		return s;
 }
@@ -2764,7 +2764,7 @@ CString GameManager::StyleToLocalizedString( const Style* style )
 	CString s = style->m_szName;
 	s = Capitalize( s );
 	if( THEME->HasMetric( "Style", s ) )
-		return THEME->GetMetric( "Style", s );
+		return THEME->GetString( "Style", s );
 	else
 		return s;
 }

@@ -69,7 +69,7 @@ static CString EXPLANATION_ON_COMMAND_NAME( size_t p )	{ return ssprintf("Explan
 
 static CString OPTION_EXPLANATION( CString s )
 {
-	return THEME->GetMetric("OptionExplanations",s);
+	return THEME->GetString("OptionExplanations",s);
 }
 
 //REGISTER_SCREEN_CLASS( ScreenOptions );	// can't be instantiated

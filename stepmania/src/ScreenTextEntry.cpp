@@ -172,7 +172,7 @@ void ScreenTextEntry::UpdateKeyboardText()
 		{
 			CString s = g_szKeys[r][x];
 			if( !s.empty()  &&  r == KEYBOARD_ROW_SPECIAL )
-				s = THEME->GetMetric( "ScreenTextEntry", s );
+				s = THEME->GetString( "ScreenTextEntry", s );
 			BitmapText &bt = *m_ptextKeys[r][x];
 			bt.SetText( s );
 		}

@@ -20,6 +20,7 @@
 #include "CommonMetrics.h"
 #include "UnlockManager.h"
 #include "arch/LoadingWindow/LoadingWindow.h"
+#include "LocalizedString.h"
 
 #define SHOW_PLAY_MODE(pm)				THEME->GetMetricB("CatalogXml",ssprintf("ShowPlayMode%s",PlayModeToString(pm).c_str()))
 #define SHOW_STYLE(ps)					THEME->GetMetricB("CatalogXml",ssprintf("ShowStyle%s",Capitalize((ps)->m_szName).c_str()))
@@ -34,13 +35,14 @@ const CString CATALOG_XML       = "Catalog.xml";
 const CString CATALOG_XSL       = "Catalog.xsl";
 const CString CATALOG_XML_FILE  = "Save/" + CATALOG_XML;
 
+static LocalizedString SAVING_CATALOG_XML( "CatalogXml", "Saving Catalog.xml ..." );
 void SaveCatalogXml( LoadingWindow *loading_window )
 {
 	ASSERT( SONGMAN );
 	ASSERT( UNLOCKMAN );
 
 	if( loading_window )
-		loading_window->SetText( "Saving Catalog.xml ..." );
+		loading_window->SetText( SAVING_CATALOG_XML );
 
 	CString fn = CATALOG_XML_FILE;
 

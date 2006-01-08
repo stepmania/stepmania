@@ -96,7 +96,8 @@ static const char *PlayerControllerNames[] = {
 	"Autoplay",
 	"Cpu",
 };
-XToString( PlayerController, NUM_PLAYER_CONTROLLERS );
+XToString( PlayerController, NUM_PlayerController );
+XToLocalizedString( PlayerController );
 
 
 static const char *CoinModeNames[] = {

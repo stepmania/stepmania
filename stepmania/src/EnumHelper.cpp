@@ -5,7 +5,7 @@
 
 CString GetThemedString( const CString &sClass, const CString &sValue )
 {
-	return THEME->GetMetric( sClass, sValue );
+	return THEME->GetString( sClass, sValue );
 }
 
 /*

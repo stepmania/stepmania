@@ -100,14 +100,16 @@ struct MapDebugToDI
 };
 static MapDebugToDI g_Mappings;
 
+static LocalizedString IN_GAMEPLAY( "ScreenDebugOverlay", "%s in gameplay" );
+static LocalizedString OR( "ScreenDebugOverlay", "or" );
 static CString GetDebugButtonName( int i )
 {
 	vector<CString> v;
 	if( g_Mappings.debugButton[i].IsValid() )
 		v.push_back( INPUTMAN->GetDeviceSpecificInputString(g_Mappings.debugButton[i]) );
 	if( g_Mappings.gameplayButton[i].IsValid() )
-		v.push_back( INPUTMAN->GetDeviceSpecificInputString(g_Mappings.gameplayButton[i])+" in gameplay" );
-	return join( " or ", v );
+		v.push_back( ssprintf(IN_GAMEPLAY.GetValue(),INPUTMAN->GetDeviceSpecificInputString(g_Mappings.gameplayButton[i]).c_str()) );
+	return join( " "+OR.GetValue()+" ", v );
 }
 
 void ScreenDebugOverlay::Init()
@@ -396,7 +398,7 @@ class DebugLineAutoplay : public IDebugLine
 	virtual void Do( CString &sMessageOut )
 	{
 		PlayerController pc = (PlayerController)(PREFSMAN->m_AutoPlay+1);
-		wrap( (int&)pc, NUM_PLAYER_CONTROLLERS );
+		wrap( (int&)pc, NUM_PlayerController );
 		PREFSMAN->m_AutoPlay.Set( pc );
 		FOREACH_HumanPlayer(p)
 			GAMESTATE->m_pPlayerState[p]->m_PlayerController = PREFSMAN->m_AutoPlay;
@@ -661,7 +663,7 @@ class DebugLineWriteProfiles : public IDebugLine
 
 class DebugLineWritePreferences : public IDebugLine
 {
-	virtual CString GetDescription() { return "Write Preferences"; }
+	virtual CString GetDescription() { return WRITE_PREFERENCES; }
 	virtual CString GetValue() { return NULL; }
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( CString &sMessageOut )

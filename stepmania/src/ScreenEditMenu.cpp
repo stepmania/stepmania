@@ -16,7 +16,7 @@
 #include "ScreenPrompt.h"
 #include "LocalizedString.h"
 
-#define EXPLANATION_TEXT( row )	THEME->GetMetric(m_sName,"Explanation"+EditMenuRowToString(row))
+#define EXPLANATION_TEXT( row )	THEME->GetString(m_sName,"Explanation"+EditMenuRowToString(row))
 #define EDIT_MENU_TYPE			THEME->GetMetric(m_sName,"EditMenuType")
 
 AutoScreenMessage( SM_RefreshSelector )

@@ -54,7 +54,7 @@ const float RECORD_HOLD_SECONDS = 0.3f;
 #define RECORD_X			(SCREEN_CENTER_X)
 #define RECORD_Y			(SCREEN_CENTER_Y)
 
-#define PLAY_RECORD_HELP_TEXT	THEME->GetMetric(m_sName,"PlayRecordHelpText")
+#define PLAY_RECORD_HELP_TEXT	THEME->GetString(m_sName,"PlayRecordHelpText")
 
 AutoScreenMessage( SM_UpdateTextInfo )
 AutoScreenMessage( SM_BackFromMainMenu )

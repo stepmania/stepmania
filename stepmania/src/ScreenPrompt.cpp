@@ -13,7 +13,7 @@
 PromptAnswer ScreenPrompt::s_LastAnswer = ANSWER_YES;
 bool ScreenPrompt::s_bCancelledLast = false;
 
-#define ANSWER_TEXT( elem )		THEME->GetMetric(m_sName,elem+"Text")
+#define ANSWER_TEXT( elem )		THEME->GetString(m_sName,elem+"Text")
 
 /* Settings: */
 namespace

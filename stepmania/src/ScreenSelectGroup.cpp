@@ -16,6 +16,7 @@
 #include "UnlockManager.h"
 #include "MenuTimer.h"
 #include "SongUtil.h"
+#include "LocalizedString.h"
 
 #define BANNER_WIDTH					THEME->GetMetricF("ScreenSelectGroup","BannerWidth")
 #define BANNER_HEIGHT					THEME->GetMetricF("ScreenSelectGroup","BannerHeight")
@@ -149,13 +150,14 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 	Screen::HandleScreenMessage( SM );
 }
 
+static LocalizedString ALL_MUSIC_STRING( "ScreenSelectGroup", "ALL MUSIC" );
 void ScreenSelectGroup::AfterChange()
 {
 	int sel = m_GroupList.GetSelection();
 	m_MusicList.SetGroupNo(sel);
 
 	CString sSelectedGroupName = m_GroupList.GetSelectionName();
-	if( sSelectedGroupName == "ALL MUSIC" )
+	if( sSelectedGroupName == ALL_MUSIC_STRING.GetValue() )
 		m_Banner.LoadAllMusic();
 	else 
 		m_Banner.LoadFromSongGroup( sSelectedGroupName );
@@ -210,7 +212,7 @@ void ScreenSelectGroup::MenuStart( PlayerNumber pn )
 	m_bChosen = true;
 
 	GAMESTATE->m_pCurSong.Set( NULL );
-	GAMESTATE->m_sPreferredSongGroup.Set( m_GroupList.GetSelectionName()=="ALL MUSIC" ? GROUP_ALL : m_GroupList.GetSelectionName() );
+	GAMESTATE->m_sPreferredSongGroup.Set( m_GroupList.GetSelectionName()==ALL_MUSIC_STRING.GetValue() ? GROUP_ALL : m_GroupList.GetSelectionName() );
 
 	if( GAMESTATE->m_sPreferredSongGroup == GROUP_ALL )
        	SOUND->PlayOnceFromAnnouncer( "select group comment all music" );

@@ -15,6 +15,7 @@
 #include "Foreach.h"
 #include "GameConstantsAndTypes.h"
 #include "DisplayResolutions.h"
+#include "LocalizedString.h"
 
 static void GetPrefsDefaultModifiers( PlayerOptions &po, SongOptions &so )
 {
@@ -210,10 +211,11 @@ static void Theme( int &sel, bool ToSel, const ConfOption *pConfOption )
 	}
 }
 
+static LocalizedString OFF ("ScreenOptionsMasterPrefs","Off");
 static void AnnouncerChoices( vector<CString> &out )
 {
 	ANNOUNCER->GetAnnouncerNames( out );
-	out.insert( out.begin(), "Off" );
+	out.insert( out.begin(), OFF );
 }
 
 static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
@@ -236,8 +238,6 @@ static void Announcer( int &sel, bool ToSel, const ConfOption *pConfOption )
 static void DefaultNoteSkinChoices( vector<CString> &out )
 {
 	NOTESKIN->GetNoteSkinNames( out );
-	for( unsigned i = 0; i < out.size(); ++i )
-		out[i].MakeUpper();
 }
 
 static void DefaultNoteSkin( int &sel, bool ToSel, const ConfOption *pConfOption )

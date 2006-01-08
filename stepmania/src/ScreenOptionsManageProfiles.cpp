@@ -12,7 +12,7 @@
 #include "OptionRowHandler.h"
 #include "LocalizedString.h"
 
-static ThemeMetric<CString> NEW_PROFILE_DEFAULT_NAME(	"ScreenOptionsManageProfiles", "NewProfileDefaultName" );
+static LocalizedString NEW_PROFILE_DEFAULT_NAME(	"ScreenOptionsManageProfiles", "NewProfileDefaultName" );
 
 #define SHOW_CREATE_NEW (!PROFILEMAN->FixedProfiles())
 

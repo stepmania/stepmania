@@ -125,7 +125,7 @@ CString CommonMetrics::ThemeOptionItem( CString s, bool bOptional )
 {
 	if( bOptional && !THEME->HasMetric("OptionNames",s) )
 		return s;
-	return THEME->GetMetric( "OptionNames", s );
+	return THEME->GetString( "OptionNames", s );
 }
 
 

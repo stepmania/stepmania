@@ -13,12 +13,10 @@
 #include "Command.h"
 #include "InputEventPlus.h"
 
-#define BUTTONS_TO_MAP              THEME->GetMetric( m_sName, "ButtonsToMap" )
-#define INVALID_BUTTON              THEME->GetMetric( m_sName, "InvalidButton" )
+#define BUTTONS_TO_MAP              THEME->GetMetric ( m_sName, "ButtonsToMap" )
+#define INVALID_BUTTON              THEME->GetMetric ( m_sName, "InvalidButton" )
 #define MAPPED_TO_COMMAND(gc,slot)  THEME->GetMetricA( m_sName, ssprintf("MappedToP%iS%iCommand", gc+1, slot+1) )
-#define THEME_BUTTON_NAMES          THEME->GetMetricB( m_sName, "ThemeButtonNames" )
-#define THEME_SECONDARY_NAMES       THEME->GetMetricB( m_sName, "ThemeSecondaryNames" )
-#define BUTTON_NAME(s)              THEME->GetMetric ( m_sName, ssprintf("Button%s",s) )
+#define BUTTON_NAME(s)              THEME->GetString ( m_sName, s )
 
 static const float g_fSecondsToWaitForInput = 0.05f;
 
@@ -70,8 +68,7 @@ void ScreenMapControllers::Init()
 		pName->SetName( "Title" );
 		pName->LoadFromFont( THEME->GetPathF("Common","title") );
 		CString sText = GAMESTATE->GetCurrentGame()->m_szButtonNames[pKey->m_GameButton];
-		if( THEME_BUTTON_NAMES )
-			sText  = BUTTON_NAME(sText.c_str());
+		sText  = BUTTON_NAME(sText.c_str());
 		pName->SetText( sText );
 		ActorUtil::LoadAllCommands( *pName, m_sName );
 		m_Line[b].AddChild( pName );
@@ -80,8 +77,7 @@ void ScreenMapControllers::Init()
 		pSecondary->SetName( "Secondary" );
 		pSecondary->LoadFromFont( THEME->GetPathF("Common","title") );
 		sText = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
-		if( THEME_SECONDARY_NAMES )
-			sText  = BUTTON_NAME(sText.c_str());
+		sText  = BUTTON_NAME(sText.c_str());
 		ActorUtil::LoadAllCommands( *pSecondary, m_sName );
 		pSecondary->SetText( sText );
 		m_Line[b].AddChild( pSecondary );

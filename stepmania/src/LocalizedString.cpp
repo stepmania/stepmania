@@ -12,6 +12,9 @@ public:
 	LocalizedStringImpl( const RString& sGroup, const RString& sName ) :
 		ThemeMetric<RString>( sGroup, sName )
 	{
+		// Ugly.  Our virtual method Read() isn't yet set up when Read gets
+		// called through the constructor.  Read again explicitly.
+		Read();
 	}
 
 	virtual void Read()

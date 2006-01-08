@@ -66,7 +66,7 @@ CString OptionRow::OptionTitle( CString s ) const
 	if( s.empty() )
 		return s;
 
-	return bTheme ? THEME->GetMetric("OptionTitles",s) : s;
+	return bTheme ? THEME->GetString("OptionTitles",s) : s;
 }
 
 CString ITEMS_LONG_ROW_X_NAME( size_t p )		{ return ssprintf("ItemsLongRowP%dX",int(p+1)); }

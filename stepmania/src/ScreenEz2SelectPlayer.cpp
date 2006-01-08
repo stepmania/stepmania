@@ -18,7 +18,7 @@
 #define JOIN_FRAME_Y( i )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("JoinFrameP%dY",i+1))
 #define JOIN_MESSAGE_X( p )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("JoinMessageP%dX",p+1))
 #define JOIN_MESSAGE_Y( i )		THEME->GetMetricF("ScreenEz2SelectPlayer",ssprintf("JoinMessageP%dY",i+1))
-#define HELP_TEXT				THEME->GetMetric("ScreenEz2SelectPlayer","HelpText")
+#define HELP_TEXT				THEME->GetString("ScreenEz2SelectPlayer","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenEz2SelectPlayer","TimerSeconds")
 #define SILENT_WAIT				THEME->GetMetricB("ScreenEz2SelectPlayer","SilentWait")
 #define BOUNCE_JOIN_MESSAGE		THEME->GetMetricB("ScreenEz2SelectPlayer","BounceJoinMessage")

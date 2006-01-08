@@ -214,17 +214,17 @@ void MusicWheelItem::LoadFromWheelItemData( WheelItemData* pWID, bool bExpanded 
 		}
 		break;
 	case TYPE_ROULETTE:
-		m_textRoulette.SetText( THEME->GetMetric("MusicWheel","Roulette") );
+		m_textRoulette.SetText( THEME->GetString("MusicWheel","Roulette") );
 		m_textRoulette.SetHidden( false );
 		break;
 
 	case TYPE_RANDOM:
-		m_textRoulette.SetText( THEME->GetMetric("MusicWheel","Random") );
+		m_textRoulette.SetText( THEME->GetString("MusicWheel","Random") );
 		m_textRoulette.SetHidden( false );
 		break;
 
 	case TYPE_PORTAL:
-		m_textRoulette.SetText( THEME->GetMetric("MusicWheel","Portal") );
+		m_textRoulette.SetText( THEME->GetString("MusicWheel","Portal") );
 		m_textRoulette.SetHidden( false );
 		break;
 

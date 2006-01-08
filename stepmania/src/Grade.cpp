@@ -14,7 +14,7 @@ CString GradeToLocalizedString( Grade g )
 	CString s = GradeToString(g);
 	if( !THEME->HasMetric("Grade",s) )
 		return "???";
-	return THEME->GetMetric( "Grade",s );
+	return THEME->GetString( "Grade",s );
 }
 
 CString GradeToOldString( Grade g )

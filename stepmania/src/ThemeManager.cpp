@@ -734,7 +734,7 @@ try_metric_again:
 		return ret;
 
 
-	RString sMessage = ssprintf( "The theme metric '%s-%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
+	RString sMessage = ssprintf( "The theme metric '%s' - '%s' is missing.  Correct this and click Retry, or Cancel to break.",sClassName.c_str(),sValueName.c_str() );
 	switch( Dialog::AbortRetryIgnore(sMessage) )
 	{
 	case Dialog::abort:

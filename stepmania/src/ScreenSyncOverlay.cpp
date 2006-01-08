@@ -78,82 +78,88 @@ void ScreenSyncOverlay::Update( float fDeltaTime )
 	UpdateText();
 }
 
+static LocalizedString AUTO_PLAY			( "ScreenSyncOverlay", "AutoPlay" );
+static LocalizedString AUTO_PLAY_CPU		( "ScreenSyncOverlay", "AutoPlayCPU" );
+static LocalizedString AUTO_SYNC_SONG		( "ScreenSyncOverlay", "AutoSync Song" );
+static LocalizedString AUTO_SYNC_MACHINE	( "ScreenSyncOverlay", "AutoSync Machine" );
+static LocalizedString EARLIER				( "ScreenSyncOverlay", "earlier" );
+static LocalizedString LATER				( "ScreenSyncOverlay", "later" );
+static LocalizedString GLOBAL_OFFSET_FROM	( "ScreenSyncOverlay", "Global Offset from %+.3f to %+.3f (notes %s)" );
+static LocalizedString SONG_OFFSET_FROM		( "ScreenSyncOverlay", "Song offset from %+.3f to %+.3f (notes %s)" );
+static LocalizedString TEMPO_SEGMENT_FROM	( "ScreenSyncOverlay", "%s tempo segment from %+.3f BPM to %+.3f BPM." );
 void ScreenSyncOverlay::UpdateText()
 {
-	CString s;
+	vector<CString> vs;
 
 	switch( PREFSMAN->m_AutoPlay )
 	{
-	case PC_HUMAN:							break;
-	case PC_AUTOPLAY:	s+="AutoPlay\n";	break;
-	case PC_CPU:		s+="AutoPlayCPU\n";	break;
+	case PC_HUMAN:										break;
+	case PC_AUTOPLAY:	vs.push_back(AUTO_PLAY);		break;
+	case PC_CPU:		vs.push_back(AUTO_PLAY_CPU);	break;
 	default:	ASSERT(0);
 	}
 
 	switch( GAMESTATE->m_SongOptions.m_AutosyncType )
 	{
-	case SongOptions::AUTOSYNC_OFF:								break;
-	case SongOptions::AUTOSYNC_SONG:	s+="AutoSync Song\n";	break;
-	case SongOptions::AUTOSYNC_MACHINE:	s+="AutoSync Machine\n";break;
+	case SongOptions::AUTOSYNC_OFF:											break;
+	case SongOptions::AUTOSYNC_SONG:	vs.push_back(AUTO_SYNC_SONG);		break;
+	case SongOptions::AUTOSYNC_MACHINE:	vs.push_back(AUTO_SYNC_MACHINE);	break;
 	default:	ASSERT(0);
 	}
 
-	if( GAMESTATE->m_pCurSong == NULL  ||  GAMESTATE->IsCourseMode() )	// sync controls not available
+	if( GAMESTATE->m_pCurSong != NULL  &&  !GAMESTATE->IsCourseMode() )	// sync controls not available
 	{
-		m_textStatus.SetText( s );
-		return;
-	}
 	
-	{
-		float fOld = GAMESTATE->m_fGlobalOffsetSecondsOriginal;
-		float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
-		float fDelta = fNew - fOld;
-
-		if( fabsf(fDelta) > 0.00001f )
 		{
-			s += ssprintf( 
-				"Global Offset from %+.3f to %+.3f (notes %s)\n",
-				fOld, 
-				fNew,
-				fDelta > 0 ? "earlier":"later" );
+			float fOld = GAMESTATE->m_fGlobalOffsetSecondsOriginal;
+			float fNew = PREFSMAN->m_fGlobalOffsetSeconds;
+			float fDelta = fNew - fOld;
+
+			if( fabsf(fDelta) > 0.00001f )
+			{
+				vs.push_back( ssprintf( 
+					GLOBAL_OFFSET_FROM.GetValue(),
+					fOld, 
+					fNew,
+					fDelta > 0 ? EARLIER:LATER ).c_str() );
+			}
 		}
-	}
 
-	{
-		float fOld = GAMESTATE->m_pTimingDataOriginal->m_fBeat0OffsetInSeconds;
-		float fNew = GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds;
-		float fDelta = fNew - fOld;
-
-		if( fabsf(fDelta) > 0.00001f )
 		{
-			s += ssprintf( 
-				"Song offset from %+.3f to %+.3f (notes %s)\n",
-				fOld, 
-				fNew,
-				fDelta > 0 ? "earlier":"later" );
+			float fOld = GAMESTATE->m_pTimingDataOriginal->m_fBeat0OffsetInSeconds;
+			float fNew = GAMESTATE->m_pCurSong->m_Timing.m_fBeat0OffsetInSeconds;
+			float fDelta = fNew - fOld;
+
+			if( fabsf(fDelta) > 0.00001f )
+			{
+				vs.push_back( ssprintf( 
+					SONG_OFFSET_FROM.GetValue(),
+					fOld, 
+					fNew,
+					fDelta > 0 ? EARLIER:LATER ).c_str() );
+			}
 		}
-	}
 
-	ASSERT( GAMESTATE->m_pTimingDataOriginal->m_BPMSegments.size() == GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size() );
+		ASSERT( GAMESTATE->m_pTimingDataOriginal->m_BPMSegments.size() == GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size() );
 
-	for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size(); i++ )
-	{
-		float fOld = GAMESTATE->m_pTimingDataOriginal->m_BPMSegments[i].m_fBPS;
-		float fNew = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS;
-		float fDelta = fNew - fOld;
-
-		if( fabsf(fDelta) > 0.00001f )
+		for( unsigned i=0; i<GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments.size(); i++ )
 		{
-			s += ssprintf( 
-				"%s tempo segment from %+.3f BPS to %+.3f BPS\n",
-				FormatNumberAndSuffix(i+1).c_str(),
-				fOld, 
-				fNew );
-		}
+			float fOldBpm = GAMESTATE->m_pTimingDataOriginal->m_BPMSegments[i].m_fBPS;
+			float fNewBpm = GAMESTATE->m_pCurSong->m_Timing.m_BPMSegments[i].m_fBPS;
+			float fDelta = fNewBpm - fOldBpm;
+
+			if( fabsf(fDelta) > 0.00001f )
+			{
+				vs.push_back( ssprintf( 
+					TEMPO_SEGMENT_FROM.GetValue(),
+					FormatNumberAndSuffix(i+1).c_str(),
+					fOldBpm, 
+					fNewBpm ) );
+			}
+		}	
 	}	
-	
 
-	m_textStatus.SetText( s );
+	m_textStatus.SetText( join("\n",vs) );
 }
 
 static LocalizedString CANT_SYNC_WHILE_PLAYING_A_COURSE	("ScreenSyncOverlay","Can't sync while playing a course.");

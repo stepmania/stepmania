@@ -54,6 +54,7 @@ static int GetOneSelection( const vector<bool> &vbSelected )
 	return iRet;
 }
 
+static LocalizedString OFF ( "OptionRowHandler", "Off" );
 
 class OptionRowHandlerList : public OptionRowHandler
 {
@@ -281,8 +282,6 @@ public:
 		NOTESKIN->GetNoteSkinNames( arraySkinNames );
 		for( unsigned skin=0; skin<arraySkinNames.size(); skin++ )
 		{
-			arraySkinNames[skin].MakeUpper();
-
 			GameCommand mc;
 			mc.m_sModifiers = arraySkinNames[skin];
 			ListEntries.push_back( mc );
@@ -364,7 +363,7 @@ public:
 		Default.m_pCharacter = CHARMAN->GetDefaultCharacter();
 
 		{
-			defOut.m_vsChoices.push_back( "Off" );
+			defOut.m_vsChoices.push_back( OFF );
 			GameCommand mc;
 			mc.m_pCharacter = NULL;
 			ListEntries.push_back( mc );

@@ -30,7 +30,7 @@
 #define SCROLLING_LIST_ROT		THEME->GetMetricF("ScreenEz2SelectMusic","ScrollingListRotation")
 #define PUMP_DIFF_X				THEME->GetMetricF("ScreenEz2SelectMusic","PumpDifficultyX")
 #define PUMP_DIFF_Y				THEME->GetMetricF("ScreenEz2SelectMusic","PumpDifficultyY")
-#define HELP_TEXT				THEME->GetMetric("ScreenSelectMusic","HelpText")
+#define HELP_TEXT				THEME->GetString("ScreenSelectMusic","HelpText")
 #define TIMER_SECONDS			THEME->GetMetricI("ScreenSelectMusic","TimerSeconds")
 #define METER_X( p )			THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("MeterP%dX",p+1))
 #define METER_Y( p )			THEME->GetMetricF("ScreenEz2SelectMusic",ssprintf("MeterP%dY",p+1))
