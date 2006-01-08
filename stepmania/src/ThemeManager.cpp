@@ -109,7 +109,7 @@ ThemeManager::ThemeManager()
 
 	/* We don't have any theme loaded until SwitchThemeAndLanguage is called. */
 	m_sCurThemeName = "";
-	m_bPseudoLocalilze = false;
+	m_bPseudoLocalize = false;
 	
 	vector<RString> arrayThemeNames;
 	GetThemeNames( arrayThemeNames );
@@ -275,7 +275,7 @@ RString ThemeManager::GetDefaultLanguage()
 	return sLangCode;
 }
 
-void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RString &sLanguage_ )
+void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RString &sLanguage_, bool bPseudoLocalize )
 {
 	RString sThemeName = sThemeName_;
 	RString sLanguage = sLanguage_;
@@ -289,8 +289,11 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 	LOG->Trace("ThemeManager::SwitchThemeAndLanguage: \"%s\", \"%s\"",
 		sThemeName.c_str(), sLanguage.c_str() );
 
-	if( sThemeName == m_sCurThemeName && sLanguage == m_sCurLanguage )
+	bool bNothingChanging = sThemeName == m_sCurThemeName && sLanguage == m_sCurLanguage && m_bPseudoLocalize == bPseudoLocalize;
+	if( bNothingChanging )
 		return;
+
+	m_bPseudoLocalize = bPseudoLocalize;
 
 	// Load theme metrics.  If only the language is changing, this is all
 	// we need to reload.
@@ -853,7 +856,7 @@ void ThemeManager::NextTheme()
 		if( as[i].CompareNoCase(m_sCurThemeName)==0 )
 			break;
 	int iNewIndex = (i+1)%as.size();
-	SwitchThemeAndLanguage( as[iNewIndex], m_sCurLanguage );
+	SwitchThemeAndLanguage( as[iNewIndex], m_sCurLanguage, m_bPseudoLocalize );
 }
 
 void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RString>& asLanguagesOut )
@@ -902,11 +905,6 @@ void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueNa
 	valueOut.SetFromExpression( "function(self) " + sValue + "end" );
 }
 
-void ThemeManager::SetPseudoLocalilze( bool b )
-{
-	m_bPseudoLocalilze = b;
-}
-
 RString ThemeManager::GetString( const RString &sClassName, const RString &sValueName_ )
 {
 	RString sValueName = sValueName_;
@@ -933,7 +931,7 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 
 	s.Replace( "\\n", "\n" );
 
-	if( m_bPseudoLocalilze )
+	if( m_bPseudoLocalize )
 	{
 		s.Replace( "a", "àá" );
 		s.Replace( "A", "ÀÀ" );

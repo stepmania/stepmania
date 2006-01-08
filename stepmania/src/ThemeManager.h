@@ -41,7 +41,7 @@ public:
 	bool DoesThemeExist( const RString &sThemeName );
 	void GetLanguages( vector<RString>& AddTo );
 	bool DoesLanguageExist( const RString &sLanguage );
-	void SwitchThemeAndLanguage( const RString &sThemeName, const RString &sLanguage );
+	void SwitchThemeAndLanguage( const RString &sThemeName, const RString &sLanguage, bool bPseudoLocalize );
 	void UpdateLuaGlobals();
 	RString GetCurThemeName() const { return m_sCurThemeName; };
 	bool IsThemeLoaded() const { return !m_sCurThemeName.empty(); };
@@ -89,8 +89,8 @@ public:
 #endif
 
 	// Languages
-	void SetPseudoLocalilze( bool b );
-	RString		GetString( const RString &sClassName, const RString &sValueName );
+	RString	GetString( const RString &sClassName, const RString &sValueName );
+	void	GetString( const RString &sClassName, const RString &sValueName, RString &valueOut )		{ valueOut = GetString( sClassName, sValueName ); }
 
 	void GetMetricsThatBeginWith( const RString &sClassName, const RString &sValueName, set<RString> &vsValueNamesOut );
 
@@ -120,7 +120,7 @@ protected:
 
 	RString m_sCurThemeName;
 	RString m_sCurLanguage;
-	bool m_bPseudoLocalilze;
+	bool m_bPseudoLocalize;
 };
 
 extern ThemeManager*	THEME;	// global and accessable from anywhere in our program
