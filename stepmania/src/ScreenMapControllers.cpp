@@ -12,11 +12,11 @@
 #include "ScreenDimensions.h"
 #include "Command.h"
 #include "InputEventPlus.h"
+#include "LocalizedString.h"
 
-#define BUTTONS_TO_MAP              THEME->GetMetric ( m_sName, "ButtonsToMap" )
-#define INVALID_BUTTON              THEME->GetMetric ( m_sName, "InvalidButton" )
-#define MAPPED_TO_COMMAND(gc,slot)  THEME->GetMetricA( m_sName, ssprintf("MappedToP%iS%iCommand", gc+1, slot+1) )
-#define BUTTON_NAME(s)              THEME->GetString ( m_sName, s )
+#define BUTTONS_TO_MAP					THEME->GetMetric ( m_sName, "ButtonsToMap" )
+static LocalizedString INVALID_BUTTON   ( "ScreenMapControllers", "InvalidButton" );
+#define MAPPED_TO_COMMAND(gc,slot)		THEME->GetMetricA( m_sName, ssprintf("MappedToP%iS%iCommand", gc+1, slot+1) )
 
 static const float g_fSecondsToWaitForInput = 0.05f;
 
@@ -67,8 +67,7 @@ void ScreenMapControllers::Init()
 		BitmapText *pName = new BitmapText;
 		pName->SetName( "Title" );
 		pName->LoadFromFont( THEME->GetPathF("Common","title") );
-		CString sText = GAMESTATE->GetCurrentGame()->m_szButtonNames[pKey->m_GameButton];
-		sText  = BUTTON_NAME(sText.c_str());
+		CString sText = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
 		pName->SetText( sText );
 		ActorUtil::LoadAllCommands( *pName, m_sName );
 		m_Line[b].AddChild( pName );
@@ -76,8 +75,9 @@ void ScreenMapControllers::Init()
 		BitmapText *pSecondary = new BitmapText;
 		pSecondary->SetName( "Secondary" );
 		pSecondary->LoadFromFont( THEME->GetPathF("Common","title") );
-		sText = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
-		sText  = BUTTON_NAME(sText.c_str());
+		MenuButton mb = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), pKey->m_GameButton );
+		if( mb != MenuButton_INVALID )
+			sText = MenuButtonToLocalizedString( mb );
 		ActorUtil::LoadAllCommands( *pSecondary, m_sName );
 		pSecondary->SetText( sText );
 		m_Line[b].AddChild( pSecondary );

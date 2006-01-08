@@ -2794,7 +2794,7 @@ const Style* GameManager::GameAndStringToStyle( const Game *game, CString sStyle
 }
 
 
-CString GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameButton gb ) const
+MenuButton GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameButton gb ) const
 {
 	/*
 	 * Each GameButton can be used in gameplay (if any gameplay style maps to
@@ -2821,28 +2821,16 @@ CString GameManager::GetMenuButtonSecondaryFunction( const Game *pGame, GameButt
 		}
 	}
 
-	static const char *szSecondaryNames[] =
-	{
-		"MenuLeft",
-		"MenuRight",
-		"MenuUp",
-		"MenuDown",
-		"MenuStart",
-		"MenuSelect",
-		"MenuBack",
-		"Coin",
-		"Operator"
-	};
 
 	FOREACH_MenuButton(m)
 	{
 		if( !bUsedInGameplay && pGame->m_DedicatedMenuButton[m] == gb )
-			return CString();
+			return MenuButton_INVALID;
 		else if( bUsedInGameplay && pGame->m_SecondaryMenuButton[m] == gb )
-			return szSecondaryNames[m];
+			return m;
 	}
 
-	return CString(); // only used in gameplay
+	return MenuButton_INVALID; // only used in gameplay
 }
 
 

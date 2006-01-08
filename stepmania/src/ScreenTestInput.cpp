@@ -11,6 +11,7 @@
 #include "PrefsManager.h"
 #include "RageInput.h"
 #include "InputEventPlus.h"
+#include "LocalizedString.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenTestInput );
@@ -47,7 +48,9 @@ ScreenTestInput::~ScreenTestInput()
 	LOG->Trace( "ScreenTestInput::~ScreenTestInput()" );
 }
 
-
+static LocalizedString CONTROLLER	( "ScreenTestInput", "Controller" );
+static LocalizedString SECONDARY	( "ScreenTestInput", "secondary" );
+static LocalizedString NOT_MAPPED	( "ScreenTestInput", "not mapped" );
 void ScreenTestInput::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
@@ -88,19 +91,19 @@ void ScreenTestInput::Update( float fDeltaTime )
 		GameInput gi;
 		if( INPUTMAPPER->DeviceToGame(*di,gi) )
 		{
-			CString sName = GAMESTATE->GetCurrentGame()->m_szButtonNames[gi.button];
-			sTemp += ssprintf(" - Controller %d %s", gi.controller+1, sName.c_str() );
+			CString sName = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), gi.button );
+			sTemp += ssprintf(" - "+CONTROLLER.GetValue()+" %d %s", gi.controller+1, sName.c_str() );
 
 			if( !PREFSMAN->m_bOnlyDedicatedMenuButtons )
 			{
-				CString sSecondary = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), gi.button );
-				if( !sSecondary.empty() )
-					sTemp += ssprintf(" - (%s secondary)", sSecondary.c_str() );
+				MenuButton mb = GAMEMAN->GetMenuButtonSecondaryFunction( GAMESTATE->GetCurrentGame(), gi.button );
+				if( mb != MenuButton_INVALID )
+					sTemp += ssprintf( " - (%s %s)", MenuButtonToLocalizedString(mb).c_str(), SECONDARY.GetValue().c_str() );
 			}
 		}
 		else
 		{
-			sTemp += " - not mapped";
+			sTemp += " - "+NOT_MAPPED.GetValue();
 		}
 
 		CString sComment = INPUTFILTER->GetButtonComment( *di );

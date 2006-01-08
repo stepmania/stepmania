@@ -80,7 +80,7 @@ void ScreenTestLights::Update( float fDeltaTime )
 	}
 	else
 	{
-		CString sGameButton = GAMESTATE->GetCurrentGame()->m_szButtonNames[gb];
+		CString sGameButton = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), gb );
 		s += ssprintf( "controller light: P%d %d %s\n", gc+1, gb, sGameButton.c_str() );
 	}
 

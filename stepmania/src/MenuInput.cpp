@@ -1,48 +1,27 @@
-/* MenuInput - An input event specific to a menu navigation.  This is generated based on a Game. */
+#include "global.h"
+#include "MenuInput.h"
+#include "EnumHelper.h"
+#include "RageUtil.h"
+#include "LocalizedString.h"
 
-#ifndef MENUINPUT_H
-#define MENUINPUT_H
-
-#include "PlayerNumber.h"
-
-enum MenuButton
+static const char *MenuButtonNames[] =
 {
-	MENU_BUTTON_LEFT = 0,
-	MENU_BUTTON_RIGHT,
-	MENU_BUTTON_UP,
-	MENU_BUTTON_DOWN,
-	MENU_BUTTON_START,
-	MENU_BUTTON_SELECT,
-	MENU_BUTTON_BACK,
-	MENU_BUTTON_COIN,
-	MENU_BUTTON_OPERATOR,
-	NUM_MenuButton,		// leave this at the end
-	MenuButton_INVALID
+	"MenuLeft",
+	"MenuRight",
+	"MenuUp",
+	"MenuDown",
+	"MenuStart",
+	"MenuSelect",
+	"MenuBack",
+	"Coin",
+	"Operator"
 };
-#define FOREACH_MenuButton( m ) FOREACH_ENUM( MenuButton, NUM_MenuButton, m )
+XToString( MenuButton, NUM_MenuButton );
+XToLocalizedString( MenuButton );
 
-const CString &MenuButtonToString( MenuButton mb );
-const CString &MenuButtonToLocalizedString( MenuButton mb );
-
-struct MenuInput
-{
-	MenuInput() { MakeInvalid(); };
-	MenuInput( PlayerNumber pn, MenuButton b ) { player = pn; button = b; };
-
-	PlayerNumber	player;
-	MenuButton		button;
-
-	bool operator==( const MenuInput &other ) { return player == other.player && button == other.button; };
-	bool operator!=( const MenuInput &other ) { return !operator==(other); };
-
-	inline bool IsValid() const { return player != PLAYER_INVALID; };
-	inline void MakeInvalid() { player = PLAYER_INVALID; button = MenuButton_INVALID; };
-};
-
-#endif
 
 /*
- * (c) 2001-2004 Chris Danford, Glenn Maynard
+ * (c) 2006 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

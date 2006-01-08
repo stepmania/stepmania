@@ -3,6 +3,7 @@
 #include "RageLog.h"
 #include "RageUtil.h"
 #include "Game.h"
+#include "ThemeManager.h"
 
 
 static const char *GameControllerNames[] = {
@@ -16,6 +17,11 @@ StringToX( GameController );
 CString GameButtonToString( const Game* pGame, GameButton i )
 {
 	return pGame->m_szButtonNames[i];
+}
+
+CString GameButtonToLocalizedString( const Game* pGame, GameButton i )
+{
+	return THEME->GetString( "GameButton", GameButtonToString(pGame,i) );
 }
 
 GameButton StringToGameButton( const Game* pGame, const CString& s )

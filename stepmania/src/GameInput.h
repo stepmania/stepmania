@@ -17,7 +17,8 @@ enum GameController
 #define FOREACH_GameController( gc ) FOREACH_ENUM( GameController, MAX_GAME_CONTROLLERS, gc )
 
 typedef int GameButton;
-CString GameButtonToString( GameButton i );
+CString GameButtonToString( const Game* pGame, GameButton i );
+CString GameButtonToLocalizedString( const Game* pGame, GameButton i );
 GameButton StringToGameButton( const Game* pGame, const CString& s );
 
 const GameButton MAX_GAME_BUTTONS = 20;
