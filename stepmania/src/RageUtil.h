@@ -244,7 +244,6 @@ RString FormatNumberAndSuffix( int i );
 
 struct tm GetLocalTime();
 
-RString ssprintf( const RString &fmt, ...) PRINTF(1,2);
 RString ssprintf( const char *fmt, ...) PRINTF(1,2);
 RString vssprintf( const char *fmt, va_list argList );
 
