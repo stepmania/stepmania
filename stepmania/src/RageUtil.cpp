@@ -211,6 +211,13 @@ struct tm GetLocalTime()
 }
 
 
+RString ssprintf( const RString &fmt, ...)
+{
+    va_list	va;
+    va_start(va, fmt);
+	return vssprintf(fmt, va);
+}
+
 RString ssprintf( const char *fmt, ...)
 {
     va_list	va;
