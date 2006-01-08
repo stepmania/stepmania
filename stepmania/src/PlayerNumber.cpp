@@ -3,6 +3,7 @@
 #include "GameState.h"
 #include "LuaManager.h"
 #include "LocalizedString.h"
+#include "LuaFunctions.h"
 
 static const char *PlayerNumberNames[] = {
 	"P1",
@@ -10,6 +11,7 @@ static const char *PlayerNumberNames[] = {
 };
 XToString( PlayerNumber, NUM_PlayerNumber );
 XToLocalizedString( PlayerNumber );
+LuaFunction( PlayerNumberToString, PlayerNumberToString((PlayerNumber) IArg(1)) );
 
 void LuaPlayerNumber(lua_State* L)
 {
@@ -32,6 +34,7 @@ static const char *MultiPlayerNames[] = {
 };
 XToString( MultiPlayer, NUM_MultiPlayer );
 XToLocalizedString( MultiPlayer );
+LuaFunction( MultiPlayerToLocalizedString, MultiPlayerToLocalizedString((MultiPlayer) IArg(1)) );
 
 
 PlayerNumber GetNextHumanPlayer( PlayerNumber pn )
