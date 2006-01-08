@@ -921,12 +921,14 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 	// Language strings may not be empty.  Empty strings are considered to need translation
 	if( s.empty() )
 	{
-		RString sFile = GetLanguageIniPath( m_sCurThemeName, m_sCurLanguage );
+		RString sFile = GetLanguageIniPath( SpecialFiles::BASE_THEME_NAME, m_sCurLanguage );
 		IniFile ini;
 		ini.ReadFile( sFile );
 		s = sValueName;
 		ini.SetValue( sClassName, sValueName, s );
 		ini.WriteFile( sFile );
+
+		LoadThemeMetrics( g_vThemes, m_sCurThemeName, m_sCurLanguage );
 	}
 
 	s.Replace( "\\n", "\n" );
