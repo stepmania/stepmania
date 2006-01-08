@@ -196,7 +196,7 @@ ScreenWithMenuElements::~ScreenWithMenuElements()
 void ScreenWithMenuElements::LoadHelpText()
 {
 	vector<CString> vs;
-	CString s = THEME->GetMetric(m_sName,"HelpText");
+	CString s = THEME->GetString(m_sName,"HelpText");
 	split( s, "\n", vs );
 
 	// hack to get newlines in a tip
