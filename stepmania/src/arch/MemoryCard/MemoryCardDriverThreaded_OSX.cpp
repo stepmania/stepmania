@@ -1,21 +1,46 @@
 #include "global.h"
 #include "MemoryCardDriverThreaded_OSX.h"
-#include "archutils/Darwin/DarwinMCHelpers.h"
 #include "Foreach.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 
-#include <unistd.h>
 #include <Carbon/Carbon.h>
+#include <IOKit/IOKitLib.h>
+#include <IOKit/storage/IOMedia.h>
+#include <IOKit/usb/USBSpec.h>
+#include <IOKit/usb/IOUSBLib.h>
+#include <sys/param.h>
+#include <sys/ucred.h>
+#include <sys/mount.h>
+#include <paths.h>
+#include <unistd.h>
 
-MemoryCardDriverThreaded_OSX::MemoryCardDriverThreaded_OSX()
+OSStatus MemoryCardDriverThreaded_OSX::VolumeChanged( EventHandlerCallRef ref, EventRef event, void *p )
 {
-	DarwinMCHelpers::Start();
+	MemoryCardDriverThreaded_OSX *This = (MemoryCardDriverThreaded_OSX *)p;
+	LockMut( This->m_ChangedLock );
+	
+	This->m_bChanged = true;
+	return eventNotHandledErr; // let others do something
+}
+
+MemoryCardDriverThreaded_OSX::MemoryCardDriverThreaded_OSX() : m_ChangedLock( "MC changed lock" )
+{
+	m_bChanged = true;
+	m_HandlerUPP = NewEventHandlerUPP( VolumeChanged );
+	
+	EventTypeSpec types[] = { { kEventClassVolume, kEventVolumeMounted },
+	{ kEventClassVolume, kEventVolumeUnmounted } };
+	UInt32 numTypes = sizeof(types)/sizeof(types[0]);
+	OSStatus ret = InstallApplicationEventHandler( m_HandlerUPP, numTypes, types, this, &m_Handler );
+	
+	ASSERT( ret == noErr );
 }
 
 MemoryCardDriverThreaded_OSX::~MemoryCardDriverThreaded_OSX()
 {
-	DarwinMCHelpers::Stop();
+	RemoveEventHandler( m_Handler );
+	DisposeEventHandlerUPP( m_HandlerUPP );
 }
 
 void MemoryCardDriverThreaded_OSX::Unmount( UsbStorageDevice *pDevice )
@@ -35,46 +60,186 @@ void MemoryCardDriverThreaded_OSX::Unmount( UsbStorageDevice *pDevice )
 
 bool MemoryCardDriverThreaded_OSX::USBStorageDevicesChanged()
 {
-	return DarwinMCHelpers::DevicesChanged();
+	LockMut( m_ChangedLock );
+	return m_bChanged;
+}
+
+static int GetIntProperty( io_registry_entry_t entry, CFStringRef key )
+{
+	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, NULL, 0 );
+	
+	if( !t )
+		return -1;
+	if( CFGetTypeID( t ) != CFNumberGetTypeID() )
+	{
+		CFRelease( t );
+		return -1;
+	}
+	int num;
+	
+	if( !CFNumberGetValue(CFNumberRef(t), kCFNumberIntType, &num) )
+		num = -1;
+	CFRelease( t );
+	return num;
+}
+
+static CString GetStringProperty( io_registry_entry_t entry, CFStringRef key )
+{
+	CFTypeRef t = IORegistryEntryCreateCFProperty( entry, key, NULL, 0 );
+	
+	if( !t )
+		return CString();
+	if( CFGetTypeID( t ) != CFStringGetTypeID() )
+	{
+		CFRelease( t );
+		return CString();
+	}
+	
+	CFStringRef s = CFStringRef( t );
+	CString ret;
+	const size_t len = CFStringGetMaximumSizeForEncoding( CFStringGetLength(s), kCFStringEncodingUTF8 );
+	char *buf = new char[len + 1];
+		
+	if( CFStringGetCString( s, buf, len + 1, kCFStringEncodingUTF8 ) )
+		ret = buf;
+	delete[] buf;
+	CFRelease( t );
+	return ret;
 }
 
 void MemoryCardDriverThreaded_OSX::GetUSBStorageDevices( vector<UsbStorageDevice>& vDevicesOut )
 {
 	LOG->Trace( "GetUSBStorageDevices." );
-	vector<CString> vDevicePaths;
+	LockMut( m_ChangedLock );
+	// First, get all device paths
+	struct statfs *fs;
+	int num = getfsstat( NULL, 0, MNT_NOWAIT );
 	
-	DarwinMCHelpers::GetRemovableDevicePaths( vDevicePaths );
-	FOREACH( CString, vDevicePaths, i )
+	fs = new struct statfs[num];
+	
+	num = getfsstat( fs, num * sizeof(struct statfs), MNT_NOWAIT );
+	ASSERT( num != -1 );
+	
+	for( int i = 0; i < num; ++i )
 	{
-		vDevicesOut.push_back( UsbStorageDevice() );
+		if( strncmp(fs[i].f_mntfromname, _PATH_DEV, strlen(_PATH_DEV)) )
+			continue;
 		
-		const CString& path = *i;
-		UsbStorageDevice& usbd = vDevicesOut.back();
+		const CString& sDevicePath = fs[i].f_mntfromname;
+		const CString& sDisk = Basename( sDevicePath ); // disk#[[s#] ...]
 		
-		LOG->Trace( "Found memory card at path: %s.", path.c_str() );
-		usbd.SetOsMountDir( path );
-				
-		// Find volume size.
-		XVolumeParam param;
-		Str255 name; // A pascal string.
-		const CString& base = Basename(path);
+		// Now that we have the disk name, look up the IOServices associated with it.
+		CFMutableDictionaryRef dict;
 		
-		memset( &param, 0, sizeof(param) );
-		name[0] = min( base.length(), size_t(255) );
-		strncpy( (char *)&name[1], base, name[0] );
-		param.ioNamePtr = name;
-		param.ioVolIndex = -1; // Use ioNamePtr to find the volume.
+		if( !(dict = IOBSDNameMatching(kIOMasterPortDefault, 0, sDisk)) )
+			continue;
 		
-		if( PBXGetVolInfoSync(&param) == noErr )
+		// Look for certain properties: Leaf, Ejectable, Writable.
+		CFDictionarySetValue( dict, CFSTR(kIOMediaLeafKey), kCFBooleanTrue );
+		CFDictionarySetValue( dict, CFSTR(kIOMediaEjectableKey), kCFBooleanTrue );
+		CFDictionarySetValue( dict, CFSTR(kIOMediaWritableKey), kCFBooleanTrue );
+		
+		// Get the matching iterator. As always, this consumes a reference to dict.
+		io_iterator_t iter;
+		kern_return_t ret = IOServiceGetMatchingServices( kIOMasterPortDefault, dict, &iter );
+		
+		if( ret != KERN_SUCCESS || iter == 0 )
+			continue;
+		
+		// I'm not quite sure what it means to have two services with this device.
+		// Iterate over them all. If one contains what we want, stop.
+		io_registry_entry_t entry; // This is the same as an io_object_t.
+		
+		while( (entry = IOIteratorNext(iter)) )
 		{
-			usbd.iVolumeSizeMB = param.ioVTotalBytes >> 20;
-			usbd.iRefNum = param.ioVRefNum;
+			// Get the path in the IOService plane.
+			io_string_t path; // Some c string.
+			
+			ret = IORegistryEntryGetPath( entry, kIOServicePlane, path );
+			IOObjectRelease( entry );
+			
+			if( ret != KERN_SUCCESS )
+			{
+				// XXX maybe I should just walk back myself.
+				LOG->Warn( "Device \"%s\" (%s) has an IORegistry path that is too long.",
+						   fs[i].f_mntfromname, fs[i].f_mntonname );
+				continue;
+			}
+			const CString& sRegistryPath = path;
+			CString::size_type pos = sRegistryPath.rfind( "/IOUSBMassStorageClass" );
+			
+			if( pos == CString::npos )
+				continue; // Probably not a USB device.
+			// The path does not start with / so pos - 1 >= 0.
+			pos = sRegistryPath.rfind( '/', pos - 1 );
+			if( pos == CString::npos )
+				continue; // Something is horribly wrong at this point.
+			path[pos] = '\0';
+			
+			io_registry_entry_t device = IORegistryEntryFromPath( kIOMasterPortDefault, path );
+			
+			// MACH_PORT_NULL?
+			if( device == MACH_PORT_NULL )
+			{
+				LOG->Warn( "Couldn't create IORegistry entry from: %s", path );
+				continue;
+			}
+			
+			// At this point, it is pretty safe to say that we've found a USB device.
+			vDevicesOut.push_back( UsbStorageDevice() );
+			
+			UsbStorageDevice& usbd = vDevicesOut.back();
+			
+			LOG->Trace( "Found memory card at path: %s.", fs[i].f_mntonname );
+			usbd.SetOsMountDir( fs[i].f_mntonname );
+			
+			// Find volume reference number for flushing.
+			XVolumeParam param;
+			Str255 name; // A pascal string.
+			const CString& base = Basename( fs[i].f_mntonname );
+			
+			memset( &param, 0, sizeof(param) );
+			name[0] = min( base.length(), size_t(255) );
+			strncpy( (char *)&name[1], base, name[0] );
+			param.ioNamePtr = name;
+			param.ioVolIndex = -1; // Use ioNamePtr to find the volume.
+
+			/* At this point, we have 3 methods available to get the volume size.
+			 * we can use:
+			 * param.ioVTotalBytes,
+			 * IORegistryEntryCreateCFProperty( entry, CFSTR(kIOMediaSizeKey), NULL, 0 ),
+			 * or fs[i].f_blocks * fs[i].f_bsize, however, we released entry already. */
+			
+			if( PBXGetVolInfoSync(&param) == noErr )
+			{
+				usbd.iRefNum = param.ioVRefNum;
+				usbd.iVolumeSizeMB = param.ioVTotalBytes >> 20;
+			}
+			else
+			{
+				/* We could fall back on one of the other methods but if we can't
+				 * get the volume info then something is wrong so give up. */
+				usbd.SetError( "Failed to get volume info." );
+				IOObjectRelease( device );
+				break;
+			}
+			
+			// Now we can get some more information from the registry tree.
+			usbd.iBus = GetIntProperty( device, CFSTR("USB Address") );
+			usbd.iPort = GetIntProperty( device, CFSTR("PortNum") );
+			// usbd.iLevel ?
+			usbd.sSerial = GetStringProperty( device, CFSTR("USB Serial Number") );
+			usbd.sDevice = fs[i].f_mntfromname;
+			usbd.idVendor = GetIntProperty( device, CFSTR(kUSBVendorID) );
+			usbd.idProduct = GetIntProperty( device, CFSTR(kUSBProductID) );
+			usbd.sVendor = GetStringProperty( device, CFSTR("USB Vendor Name") );
+			usbd.sProduct = GetStringProperty( device, CFSTR("USB Product Name") );
+			IOObjectRelease( device );
+			break; // We found what we wanted
 		}
-		else
-		{
-			usbd.SetError( "Failed to get volume info." );
-		}
-	}		
+		IOObjectRelease( iter );
+	}
+	m_bChanged = false;
 }
 
 bool MemoryCardDriverThreaded_OSX::TestWrite( UsbStorageDevice *pDevice )
@@ -88,7 +253,7 @@ bool MemoryCardDriverThreaded_OSX::TestWrite( UsbStorageDevice *pDevice )
 }
 
 /*
- * (c) 2005 Steve Checkoway
+ * (c) 2005-2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

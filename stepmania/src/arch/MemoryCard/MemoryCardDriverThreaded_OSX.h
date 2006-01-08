@@ -2,6 +2,17 @@
 #define MEMORY_CARD_DRIVER_THREADED_OSX
 
 #include "MemoryCardDriver.h"
+#include "RageThreads.h"
+
+
+// I can't include <Carbon/Carbon.h> because Style conflicts.
+typedef struct OpaqueEventHandlerRef *EventHandlerRef;
+typedef struct OpaqueEventHandlerCallRef *EventHandlerCallRef;
+typedef struct OpaqueEventRef *EventRef;
+typedef long int OSStatus;
+typedef OSStatus (*EventHandlerProcPtr)( EventHandlerCallRef inHandlerCallRef,
+										 EventRef inEvent, void * inUserData );
+typedef EventHandlerProcPtr EventHandlerUPP;
 
 class MemoryCardDriverThreaded_OSX : public MemoryCardDriver
 {
@@ -15,10 +26,18 @@ protected:
 	bool USBStorageDevicesChanged();
 	void GetUSBStorageDevices( vector<UsbStorageDevice>& vStorageDevicesOut );
 	bool TestWrite( UsbStorageDevice *pDevice );
+	
+private:
+	static OSStatus VolumeChanged( EventHandlerCallRef ref, EventRef event, void *p );
+	
+	bool m_bChanged;
+	RageMutex m_ChangedLock;
+	EventHandlerUPP m_HandlerUPP;
+	EventHandlerRef m_Handler;
 };
 
 #ifdef ARCH_MEMORY_CARD_DRIVER
-#error "More than one MemoryCardDriver selected!"
+#error "More than one MemoryCardDriver selected."
 #endif
 #define ARCH_MEMORY_CARD_DRIVER MemoryCardDriverThreaded_OSX
 
@@ -26,7 +45,7 @@ protected:
 #endif
 
 /*
- * (c) 2005 Steve Checkoway
+ * (c) 2005-2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

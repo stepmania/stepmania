@@ -793,8 +793,6 @@
 		AACF47B20949A24F0011B9F3 /* Selector_MemoryCardDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47B10949A24F0011B9F3 /* Selector_MemoryCardDriver.h */; };
 		AACF47B9094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47B7094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h */; };
 		AACF47BA094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */; };
-		AACF47EF094A6E290011B9F3 /* DarwinMCHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = AACF47ED094A6E290011B9F3 /* DarwinMCHelpers.h */; };
-		AACF47F0094A6E290011B9F3 /* DarwinMCHelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = AACF47EE094A6E290011B9F3 /* DarwinMCHelpers.mm */; };
 		AACFBE2808E7D793005087FC /* ActorSound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AACFBE2608E7D793005087FC /* ActorSound.cpp */; };
 		AACFBE2908E7D793005087FC /* ActorSound.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE2708E7D793005087FC /* ActorSound.h */; };
 		AACFBE3A08E7D832005087FC /* InputEventPlus.h in Headers */ = {isa = PBXBuildFile; fileRef = AACFBE3908E7D832005087FC /* InputEventPlus.h */; };
@@ -824,7 +822,6 @@
 		AADBA563062007BA005D4FC2 /* arch_platform.h in Headers */ = {isa = PBXBuildFile; fileRef = AADBA562062007BA005D4FC2 /* arch_platform.h */; };
 		AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */; };
 		AADD1CC6095C233F0088C9DF /* LocalizedString.h in Headers */ = {isa = PBXBuildFile; fileRef = AADD1CC3095C233F0088C9DF /* LocalizedString.h */; };
-		AADD1CC7095C233F0088C9DF /* LocalizedStringLua.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AADD1CC4095C233F0088C9DF /* LocalizedStringLua.cpp */; };
 		AAE66F740657634D002E3AD9 /* CryptMD5.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE66F650657634D002E3AD9 /* CryptMD5.cpp */; };
 		AAE66F750657634D002E3AD9 /* CryptMD5.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE66F660657634D002E3AD9 /* CryptMD5.h */; };
 		AAE66F790657634D002E3AD9 /* CryptRand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE66F6A0657634D002E3AD9 /* CryptRand.cpp */; };
@@ -879,7 +876,6 @@
 		AAFAB5CE08890B5200767BF7 /* GameLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFAB5CC08890B5200767BF7 /* GameLoop.h */; };
 		AAFBEED1094D7FCB000029DE /* SpecialFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEECF094D7FCB000029DE /* SpecialFiles.cpp */; };
 		AAFBEED2094D7FCB000029DE /* SpecialFiles.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEED0094D7FCB000029DE /* SpecialFiles.h */; };
-		AAFBEEE2094D8042000029DE /* RageUtilLua.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE1094D8042000029DE /* RageUtilLua.cpp */; };
 		AAFBEEEB094D807E000029DE /* ScreenOptionsManageEditSteps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE5094D807E000029DE /* ScreenOptionsManageEditSteps.cpp */; };
 		AAFBEEEC094D807E000029DE /* ScreenOptionsManageEditSteps.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFBEEE6094D807E000029DE /* ScreenOptionsManageEditSteps.h */; };
 		AAFBEEED094D807E000029DE /* ScreenOptionsMemoryCard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAFBEEE7094D807E000029DE /* ScreenOptionsMemoryCard.cpp */; };
@@ -1754,8 +1750,6 @@
 		AACF47B10949A24F0011B9F3 /* Selector_MemoryCardDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Selector_MemoryCardDriver.h; sourceTree = "<group>"; };
 		AACF47B7094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryCardDriverThreaded_OSX.h; sourceTree = "<group>"; };
 		AACF47B8094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryCardDriverThreaded_OSX.cpp; sourceTree = "<group>"; };
-		AACF47ED094A6E290011B9F3 /* DarwinMCHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DarwinMCHelpers.h; sourceTree = "<group>"; };
-		AACF47EE094A6E290011B9F3 /* DarwinMCHelpers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DarwinMCHelpers.mm; sourceTree = "<group>"; };
 		AACFBE2608E7D793005087FC /* ActorSound.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ActorSound.cpp; path = ../src/ActorSound.cpp; sourceTree = "<group>"; };
 		AACFBE2708E7D793005087FC /* ActorSound.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ActorSound.h; path = ../src/ActorSound.h; sourceTree = "<group>"; };
 		AACFBE3908E7D832005087FC /* InputEventPlus.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = InputEventPlus.h; path = ../src/InputEventPlus.h; sourceTree = "<group>"; };
@@ -1808,7 +1802,6 @@
 		AADBE369053DA38C00D02EE9 /* Bookkeeper.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; name = Bookkeeper.h; path = ../src/Bookkeeper.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LocalizedString.cpp; path = ../src/LocalizedString.cpp; sourceTree = "<group>"; };
 		AADD1CC3095C233F0088C9DF /* LocalizedString.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = LocalizedString.h; path = ../src/LocalizedString.h; sourceTree = "<group>"; };
-		AADD1CC4095C233F0088C9DF /* LocalizedStringLua.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = LocalizedStringLua.cpp; path = ../src/LocalizedStringLua.cpp; sourceTree = "<group>"; };
 		AAE443EB04B0F9F600D02EE9 /* CombinedLifeMeterTug.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = CombinedLifeMeterTug.cpp; path = ../src/CombinedLifeMeterTug.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AAE443EC04B0F9F600D02EE9 /* CombinedLifeMeterTug.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = CombinedLifeMeterTug.h; path = ../src/CombinedLifeMeterTug.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		AAE443F304B0FEB700D02EE9 /* ScoreKeeperRave.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 30; indentWidth = 4; name = ScoreKeeperRave.cpp; path = ../src/ScoreKeeperRave.cpp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
@@ -1895,7 +1888,6 @@
 		AAFAB5CC08890B5200767BF7 /* GameLoop.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = GameLoop.h; sourceTree = "<group>"; };
 		AAFBEECF094D7FCB000029DE /* SpecialFiles.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SpecialFiles.cpp; sourceTree = "<group>"; };
 		AAFBEED0094D7FCB000029DE /* SpecialFiles.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SpecialFiles.h; sourceTree = "<group>"; };
-		AAFBEEE1094D8042000029DE /* RageUtilLua.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = RageUtilLua.cpp; path = ../src/RageUtilLua.cpp; sourceTree = "<group>"; };
 		AAFBEEE5094D807E000029DE /* ScreenOptionsManageEditSteps.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenOptionsManageEditSteps.cpp; path = ../src/ScreenOptionsManageEditSteps.cpp; sourceTree = "<group>"; };
 		AAFBEEE6094D807E000029DE /* ScreenOptionsManageEditSteps.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ScreenOptionsManageEditSteps.h; path = ../src/ScreenOptionsManageEditSteps.h; sourceTree = "<group>"; };
 		AAFBEEE7094D807E000029DE /* ScreenOptionsMemoryCard.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenOptionsMemoryCard.cpp; path = ../src/ScreenOptionsMemoryCard.cpp; sourceTree = "<group>"; };
@@ -2591,7 +2583,6 @@
 				AAF580A804B3E2DC00D02EE9 /* RageUtil_FileDB.h */,
 				AACA592D07B5E23400763545 /* RageUtil_WorkerThread.cpp */,
 				AACA592E07B5E23400763545 /* RageUtil_WorkerThread.h */,
-				AAFBEEE1094D8042000029DE /* RageUtilLua.cpp */,
 				AA6EFDC004770AEA005F316C /* SDL_utils.cpp */,
 				AA6EFDC104770AEA005F316C /* SDL_utils.h */,
 			);
@@ -2662,7 +2653,6 @@
 				AA2FB638091212AF000FD574 /* LifeMeter.cpp */,
 				AADD1CC2095C233E0088C9DF /* LocalizedString.cpp */,
 				AADD1CC3095C233F0088C9DF /* LocalizedString.h */,
-				AADD1CC4095C233F0088C9DF /* LocalizedStringLua.cpp */,
 				AACFBE6108E7DBA8005087FC /* LuaExpressionTransform.cpp */,
 				AACFBE6208E7DBA8005087FC /* LuaExpressionTransform.h */,
 				AAEA090605E23DF900D38622 /* LuaFunctions.h */,
@@ -3123,8 +3113,6 @@
 				AA4B5CC40573AD81005FB5DB /* wchar.cpp */,
 				AA2FB62909120FC5000FD574 /* PreferredLanguage.m */,
 				AAA130C60914ACB600497146 /* WindowHelper.m */,
-				AACF47ED094A6E290011B9F3 /* DarwinMCHelpers.h */,
-				AACF47EE094A6E290011B9F3 /* DarwinMCHelpers.mm */,
 			);
 			path = Darwin;
 			sourceTree = "<group>";
@@ -3619,7 +3607,6 @@
 				AAA372D70909934500141131 /* MovieTexture_Theora.h in Headers */,
 				AACF47B20949A24F0011B9F3 /* Selector_MemoryCardDriver.h in Headers */,
 				AACF47B9094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.h in Headers */,
-				AACF47EF094A6E290011B9F3 /* DarwinMCHelpers.h in Headers */,
 				AAFBEED2094D7FCB000029DE /* SpecialFiles.h in Headers */,
 				AAFBEEEC094D807E000029DE /* ScreenOptionsManageEditSteps.h in Headers */,
 				AAFBEEEE094D807E000029DE /* ScreenOptionsMemoryCard.h in Headers */,
@@ -4185,9 +4172,7 @@
 				AA2FB639091212B0000FD574 /* LifeMeter.cpp in Sources */,
 				AAA130C70914ACB600497146 /* WindowHelper.m in Sources */,
 				AACF47BA094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp in Sources */,
-				AACF47F0094A6E290011B9F3 /* DarwinMCHelpers.mm in Sources */,
 				AAFBEED1094D7FCB000029DE /* SpecialFiles.cpp in Sources */,
-				AAFBEEE2094D8042000029DE /* RageUtilLua.cpp in Sources */,
 				AAFBEEEB094D807E000029DE /* ScreenOptionsManageEditSteps.cpp in Sources */,
 				AAFBEEED094D807E000029DE /* ScreenOptionsMemoryCard.cpp in Sources */,
 				AAFBEEEF094D807E000029DE /* ScreenServiceAction.cpp in Sources */,
@@ -4195,7 +4180,6 @@
 				AA0732900954381800F396C5 /* XmlFileUtil.cpp in Sources */,
 				AAD5219C095513DA00073D86 /* XmlFile.cpp in Sources */,
 				AADD1CC5095C233F0088C9DF /* LocalizedString.cpp in Sources */,
-				AADD1CC7095C233F0088C9DF /* LocalizedStringLua.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
