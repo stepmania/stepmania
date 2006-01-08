@@ -9,7 +9,7 @@
 #include "Game.h"
 #include "ScreenDimensions.h"
 #include "InputEventPlus.h"
-
+#include "LocalizedString.h"
 
 REGISTER_SCREEN_CLASS( ScreenTestLights );
 ScreenTestLights::ScreenTestLights( CString sClassName ) : ScreenWithMenuElements( sClassName )
@@ -39,7 +39,10 @@ ScreenTestLights::~ScreenTestLights()
 	LOG->Trace( "ScreenTestLights::~ScreenTestLights()" );
 }
 
-
+static LocalizedString AUTO_CYCLE	( "ScreenTestLights", "Auto Cycle" );
+static LocalizedString MANUAL_CYCLE	( "ScreenTestLights", "Manual Cycle" );
+static LocalizedString CABINET_LIGHT( "ScreenTestLights", "cabinet light" );
+static LocalizedString CONTROLLER_LIGHT( "ScreenTestLights", "controller light" );
 void ScreenTestLights::Update( float fDeltaTime )
 {
 	Screen::Update( fDeltaTime );
@@ -62,26 +65,27 @@ void ScreenTestLights::Update( float fDeltaTime )
 	switch( LIGHTSMAN->GetLightsMode() )
 	{
 	case LIGHTSMODE_TEST_AUTO_CYCLE:
-		s += "Auto Cycle\n";
+		s += AUTO_CYCLE.GetValue()+"\n";
 		break;
 	case LIGHTSMODE_TEST_MANUAL_CYCLE:
-		s += "Manual Cycle\n";
+		s += MANUAL_CYCLE.GetValue()+"\n";
 		break;
 	}
 
 	if( cl == LIGHT_INVALID )
-		s += "cabinet light: -----\n";
+		s += CABINET_LIGHT.GetValue()+": -----\n";
 	else
-		s += ssprintf( "cabinet light: %d %s\n", cl, CabinetLightToString(cl).c_str() );
+		s += ssprintf( CABINET_LIGHT.GetValue()+": %d %s\n", cl, CabinetLightToString(cl).c_str() );
 
 	if( gc == GAME_CONTROLLER_INVALID )
 	{
-		s += ssprintf( "controller light: -----\n" );
+		s += ssprintf( CONTROLLER_LIGHT.GetValue()+": -----\n" );
 	}
 	else
 	{
 		CString sGameButton = GameButtonToLocalizedString( GAMESTATE->GetCurrentGame(), gb );
-		s += ssprintf( "controller light: P%d %d %s\n", gc+1, gb, sGameButton.c_str() );
+		PlayerNumber pn = (PlayerNumber)(gc+1);
+		s += ssprintf( CONTROLLER_LIGHT.GetValue()+": %s %d %s\n", PlayerNumberToString(pn).c_str(), gb, sGameButton.c_str() );
 	}
 
 	m_textInputs.SetText( s );
