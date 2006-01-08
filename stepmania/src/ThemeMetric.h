@@ -18,9 +18,9 @@ public:
 template <class T>
 class ThemeMetric : public IThemeMetric
 {
-private:
-	CString		m_sGroup;
-	CString		m_sName;
+protected:
+	RString		m_sGroup;
+	RString		m_sName;
 	T			m_currentValue;
 	bool		m_bIsLoaded;
 
@@ -34,7 +34,7 @@ public:
 	 * call Load() to set them.  This is done to allow initializing cached metrics
 	 * in one place for classes that don't receive their m_sName in the constructor
 	 * (everything except screens). */
-	ThemeMetric( const CString& sGroup = "", const CString& sName = "", bool bAlwaysReload = false ):
+	ThemeMetric( const RString& sGroup = "", const RString& sName = "", bool bAlwaysReload = false ):
 		m_sGroup( sGroup ),
 		m_sName( sName ),
 		m_bIsLoaded( false ),
@@ -60,14 +60,14 @@ public:
 		ThemeManager::Unsubscribe( this );
 	}
 
-	void Load( const CString &sGroup, const CString& sName )
+	void Load( const RString &sGroup, const RString& sName )
 	{
 		m_sGroup = sGroup;
 		m_sName = sName;
 		Read();
 	}
 
-	void ChangeGroup( const CString &sGroup )
+	void ChangeGroup( const RString &sGroup )
 	{
 		m_sGroup = sGroup;
 		Read();
@@ -112,7 +112,7 @@ public:
 	bool operator == ( const T& input ) const { return GetValue() == input; }
 };
 
-typedef CString (*MetricName1D)(size_t N);
+typedef RString (*MetricName1D)(size_t N);
 
 template <class T>
 class ThemeMetric1D : public IThemeMetric
@@ -121,15 +121,15 @@ class ThemeMetric1D : public IThemeMetric
 	vector<ThemeMetricT> m_metric;
 
 public:
-	ThemeMetric1D( const CString& sGroup, MetricName1D pfn, size_t N )
+	ThemeMetric1D( const RString& sGroup, MetricName1D pfn, size_t N )
 	{
 		Load( sGroup, pfn, N );
 	}
 	ThemeMetric1D()
 	{
-		Load( CString(), NULL, 0 );
+		Load( RString(), NULL, 0 );
 	}
-	void Load( const CString& sGroup, MetricName1D pfn, size_t N )
+	void Load( const RString& sGroup, MetricName1D pfn, size_t N )
 	{
 		m_metric.resize( N );
 		for( unsigned i=0; i<N; i++ )
@@ -146,7 +146,7 @@ public:
 	}
 };
 
-typedef CString (*MetricName2D)(size_t N, size_t M);
+typedef RString (*MetricName2D)(size_t N, size_t M);
 
 template <class T>
 class ThemeMetric2D : public IThemeMetric
@@ -156,11 +156,11 @@ class ThemeMetric2D : public IThemeMetric
 	vector<ThemeMetricTVector> m_metric;
 
 public:
-	ThemeMetric2D( const CString& sGroup = "", MetricName2D pfn = NULL, size_t N = 0, size_t M = 0 )
+	ThemeMetric2D( const RString& sGroup = "", MetricName2D pfn = NULL, size_t N = 0, size_t M = 0 )
 	{
 		Load( sGroup, pfn, N, M );
 	}
-	void Load( const CString& sGroup, MetricName2D pfn, size_t N, size_t M )
+	void Load( const RString& sGroup, MetricName2D pfn, size_t N, size_t M )
 	{
 		m_metric.resize( N );
 		for( unsigned i=0; i<N; i++ )
@@ -182,37 +182,37 @@ public:
 	}
 };
 
-typedef CString (*MetricNameMap)(CString s);
+typedef RString (*MetricNameMap)(RString s);
 
 template <class T>
 class ThemeMetricMap : public IThemeMetric
 {
 	typedef ThemeMetric<T> ThemeMetricT;
-	map<CString,ThemeMetricT> m_metric;
+	map<RString,ThemeMetricT> m_metric;
 
 public:
-	ThemeMetricMap( const CString& sGroup = "", MetricNameMap pfn = NULL, const vector<CString> vsValueNames = vector<CString>() )
+	ThemeMetricMap( const RString& sGroup = "", MetricNameMap pfn = NULL, const vector<RString> vsValueNames = vector<RString>() )
 	{
 		Load( sGroup, pfn, vsValueNames );
 	}
-	void Load( const CString& sGroup, MetricNameMap pfn, const vector<CString> vsValueNames )
+	void Load( const RString& sGroup, MetricNameMap pfn, const vector<RString> vsValueNames )
 	{
 		m_metric.clear();
-		FOREACH_CONST( CString, vsValueNames, s )
+		FOREACH_CONST( RString, vsValueNames, s )
 			m_metric[*s].Load( sGroup, pfn(*s) );
 	}
 	void Read()
 	{
 		// HACK: GCC (3.4) takes this and pretty much nothing else.
 		// I don't know why.
-		for( typename map<CString,ThemeMetric<T> >::iterator m = m_metric.begin(); m != m_metric.end(); ++m )
+		for( typename map<RString,ThemeMetric<T> >::iterator m = m_metric.begin(); m != m_metric.end(); ++m )
 			m->second.Read();
 	}
-	const T& GetValue( CString s ) const
+	const T& GetValue( RString s ) const
 	{
 		// HACK: GCC (3.4) takes this and pretty much nothing else.
 		// I don't know why.
-		typename map<CString,ThemeMetric<T> >::const_iterator iter = m_metric.find(s);
+		typename map<RString,ThemeMetric<T> >::const_iterator iter = m_metric.find(s);
 		ASSERT( iter != m_metric.end() );
 		return iter->second.GetValue();
 	}
@@ -223,7 +223,7 @@ class ThemeMetricEnum : public ThemeMetric<int>
 {
 public:
 	ThemeMetricEnum() : ThemeMetric<int>() {}
-	ThemeMetricEnum( const CString& sGroup, const CString& sName ) : ThemeMetric<int>(sGroup,sName) {}
+	ThemeMetricEnum( const RString& sGroup, const RString& sName ) : ThemeMetric<int>(sGroup,sName) {}
 	T GetValue() const { return (T)ThemeMetric<int>::GetValue(); }
 	bool operator ==( T other ) const { return GetValue() == other; }
 };
@@ -242,9 +242,9 @@ public:
 template <class T>
 class DynamicThemeMetric : public IThemeMetric
 {
-private:
-	CString		m_sGroup;
-	CString		m_sName;
+protected:
+	RString		m_sGroup;
+	RString		m_sName;
 	mutable T	m_currentValue;
 	bool		m_bIsLoaded;
 	LuaReference m_Value;
@@ -254,7 +254,7 @@ public:
 	 * call Load() to set them.  This is done to allow initializing cached metrics
 	 * in one place for classes that don't receive their m_sName in the constructor
 	 * (everything except screens). */
-	DynamicThemeMetric( const CString& sGroup = "", const CString& sName = "" ):
+	DynamicThemeMetric( const RString& sGroup = "", const RString& sName = "" ):
 		m_sGroup( sGroup ),
 		m_sName( sName ),
 		m_bIsLoaded( false )
@@ -279,14 +279,14 @@ public:
 		ThemeManager::Unsubscribe( this );
 	}
 
-	void Load( const CString &sGroup, const CString& sName )
+	void Load( const RString &sGroup, const RString& sName )
 	{
 		m_sGroup = sGroup;
 		m_sName = sName;
 		Read();
 	}
 
-	void ChangeGroup( const CString &sGroup )
+	void ChangeGroup( const RString &sGroup )
 	{
 		m_sGroup = sGroup;
 		Read();
@@ -296,7 +296,7 @@ public:
 	{
 		if( m_sName != ""  &&  THEME  &&   THEME->IsThemeLoaded() )
 		{
-			CString sExpression;
+			RString sExpression;
 			THEME->GetMetric( m_sGroup, m_sName, sExpression );
 
 			Lua *L = LUA->Get();
