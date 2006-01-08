@@ -240,6 +240,7 @@ void MemoryCardDriverThreaded_OSX::GetUSBStorageDevices( vector<UsbStorageDevice
 		IOObjectRelease( iter );
 	}
 	m_bChanged = false;
+	delete[] fs;
 }
 
 bool MemoryCardDriverThreaded_OSX::TestWrite( UsbStorageDevice *pDevice )
