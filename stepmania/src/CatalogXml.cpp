@@ -35,14 +35,14 @@ const CString CATALOG_XML       = "Catalog.xml";
 const CString CATALOG_XSL       = "Catalog.xsl";
 const CString CATALOG_XML_FILE  = "Save/" + CATALOG_XML;
 
-static LocalizedString SAVING_CATALOG_XML( "CatalogXml", "Saving Catalog.xml ..." );
+static LocalizedString SAVING_CATALOG_XML( "CatalogXml", "Saving %s ..." );
 void SaveCatalogXml( LoadingWindow *loading_window )
 {
 	ASSERT( SONGMAN );
 	ASSERT( UNLOCKMAN );
 
 	if( loading_window )
-		loading_window->SetText( SAVING_CATALOG_XML );
+		loading_window->SetText( ssprintf(SAVING_CATALOG_XML.GetValue(),CATALOG_XML.c_str()) );
 
 	CString fn = CATALOG_XML_FILE;
 
