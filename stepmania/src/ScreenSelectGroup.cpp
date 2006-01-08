@@ -28,6 +28,7 @@ ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuEleme
 	LOG->Trace( "ScreenSelectGroup::ScreenSelectGroup()" );	
 }
 
+static LocalizedString ALL_MUSIC_STRING( "ScreenSelectGroup", "ALL MUSIC" );
 void ScreenSelectGroup::Init()
 {
 	ScreenWithMenuElements::Init();
@@ -62,7 +63,7 @@ void ScreenSelectGroup::Init()
 
 	// copy group names into a vector
 	vector<CString> asGroupNames;
-	asGroupNames.push_back( "ALL MUSIC" );	// special group
+	asGroupNames.push_back( ALL_MUSIC_STRING );	// special group
 	for( map<CString, CString>::const_iterator iter = mapGroupNames.begin(); iter != mapGroupNames.end(); ++iter )
 		asGroupNames.push_back( iter->first );
 
@@ -150,7 +151,6 @@ void ScreenSelectGroup::HandleScreenMessage( const ScreenMessage SM )
 	Screen::HandleScreenMessage( SM );
 }
 
-static LocalizedString ALL_MUSIC_STRING( "ScreenSelectGroup", "ALL MUSIC" );
 void ScreenSelectGroup::AfterChange()
 {
 	int sel = m_GroupList.GetSelection();
