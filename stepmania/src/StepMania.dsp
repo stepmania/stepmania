@@ -62,7 +62,7 @@ IntDir=.\../Debug6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania-debug
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                                                	cl                                                                                        /Zl                                                                                        /nologo                                                                                        /c                                                                                        verstub.cpp                                                                                        /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                                                                                                                                                                                                                 	cl                                                                                         /Zl                                                                                         /nologo                                                                                         /c                                                                                         verstub.cpp                                                                                         /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -99,7 +99,7 @@ IntDir=.\../Release6
 TargetDir=\cvs\stepmania\Program
 TargetName=StepMania
 SOURCE="$(InputPath)"
-PreLink_Cmds=archutils\Win32\verinc                                          	cl                                           /Zl                                           /nologo                                           /c                                           verstub.cpp                                           /Fo$(IntDir)\ 
+PreLink_Cmds=archutils\Win32\verinc                                           	cl                                            /Zl                                            /nologo                                            /c                                            verstub.cpp                                            /Fo$(IntDir)\ 
 PostBuild_Cmds=archutils\Win32\mapconv $(IntDir)\$(TargetName).map $(TargetDir)\StepMania.vdi
 # End Special Build Tool
 
@@ -1696,6 +1696,14 @@ SOURCE=.\archutils\Win32\DebugInfoHunt.cpp
 # Begin Source File
 
 SOURCE=.\archutils\Win32\DebugInfoHunt.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\DialogUtil.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\DialogUtil.h
 # End Source File
 # Begin Source File
 
@@ -3697,11 +3705,23 @@ SOURCE=.\cursor1.cur
 # End Source File
 # Begin Source File
 
+SOURCE=.\archutils\Win32\DialogCrashHeader.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\DialogErrorHeader.bmp
+# End Source File
+# Begin Source File
+
 SOURCE=.\error.bmp
 # End Source File
 # Begin Source File
 
 SOURCE=.\error2.bmp
+# End Source File
+# Begin Source File
+
+SOURCE=.\archutils\Win32\header.bmp
 # End Source File
 # Begin Source File
 

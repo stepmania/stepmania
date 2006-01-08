@@ -6,8 +6,8 @@
 #include "ProductInfo.h"	
 #include "RageUtil.h"	
 #include "RageFileManager.h"	
-#include "ThemeManager.h"	
 #include "resource.h"	
+#include "LocalizedString.h"
 
 void SMPackageUtil::WriteStepManiaInstallDirs( const vector<RString>& asInstallDirsToWrite )
 {
@@ -164,19 +164,22 @@ bool SMPackageUtil::IsValidPackageDirectory( RString path )
 	return true;
 }
 
+static LocalizedString COULD_NOT_FIND( "SMPackageUtil", "Could not find '%s'." );
 bool SMPackageUtil::LaunchGame()
 {
 	PROCESS_INFORMATION pi;
 	STARTUPINFO	si;
 	ZeroMemory( &si, sizeof(si) );
 
-	RString sFile = PRODUCT_NAME ".exe";
+	RString sExe = PRODUCT_NAME ".exe";
+	RString sFile = sExe;
 	if( !DoesFileExist(sFile) )
 	{
 		sFile = "Program\\" + sFile;
 		if( !DoesFileExist(sFile) )
 		{
-			MessageBox( NULL, "Could not find " PRODUCT_NAME ".exe", "Error", MB_ICONEXCLAMATION );
+			RString sError = ssprintf( COULD_NOT_FIND.GetValue(), sExe.c_str() );
+			::MessageBox( NULL, sError, NULL, MB_OK|MB_ICONEXCLAMATION );
 			return false;
 		}
 	}
@@ -210,36 +213,6 @@ RString SMPackageUtil::GetLanguageCodeFromDisplayString( const RString &sDisplay
 	ASSERT( iSpace != s.npos ); 
 	s.erase( s.begin()+iSpace, s.end() );
 	return s;
-}
-
-void SMPackageUtil::SetHeaderFont( CDialog &dlg )
-{
-	CWnd *pWnd = dlg.GetDlgItem( IDC_STATIC_HEADER_TEXT );
-	ASSERT( pWnd );
-	CFont *pFont = new CFont; 
-	const int FONT_POINTS = 16;
-	pFont->CreatePointFont( FONT_POINTS*10, "Arial Black" );
-	pWnd->SetFont( pFont );
-}
-
-void SMPackageUtil::LocalizeDialogAndContents( CDialog &dlg )
-{
-	CString sTemp;
-	dlg.GetWindowText( sTemp );
-	RString sGroup = "Tools-"+sTemp;
-	dlg.GetWindowText( sTemp );
-	RString s = sTemp;
-	dlg.SetWindowText( THEME->GetString(sGroup,s) );
-
-	for( CWnd *pChild = dlg.GetTopWindow(); pChild != NULL; pChild = pChild->GetNextWindow() )
-	{
-		pChild->GetWindowText( sTemp );
-		RString s = sTemp;
-		if( s.empty() )
-			continue;
-		s = THEME->GetString( sGroup, s );
-		pChild->SetWindowText( s );
-	}
 }
 
 static const RString TEMP_MOUNT_POINT = "/@package/";

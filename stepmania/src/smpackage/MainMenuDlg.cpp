@@ -17,6 +17,9 @@
 #include "ProductInfo.h"
 #include "mainmenudlg.h"
 #include "LanguagesDlg.h"
+#include ".\mainmenudlg.h"
+#include "archutils/Win32/DialogUtil.h"
+#include "LocalizedString.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -43,7 +46,6 @@ void MainMenuDlg::DoDataExchange(CDataExchange* pDX)
 	//{{AFX_DATA_MAP(MainMenuDlg)
 		// NOTE: the ClassWizard will add DDX and DDV calls here
 	//}}AFX_DATA_MAP
-	DDX_Control(pDX, IDC_STATIC_HEADER_TEXT, m_staticHeaderText);
 }
 
 
@@ -59,6 +61,8 @@ BEGIN_MESSAGE_MAP(MainMenuDlg, CDialog)
 	//}}AFX_MSG_MAP
 	ON_BN_CLICKED(IDC_BUTTON_LAUNCH_GAME, OnBnClickedButtonLaunchGame)
 	ON_BN_CLICKED(IDC_LANGUAGES, OnBnClickedLanguages)
+	ON_WM_CTLCOLOR()
+	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -103,15 +107,23 @@ RString GetLastErrorString()
 	return s;
 }
 
+static LocalizedString MUSIC_FILE						( "MainMenuDlg", "Music file" );
+static LocalizedString FAILED_TO_CREATE_DIRECTORY		( "MainMenuDlg", "Failed to create directory '%s': %s" );
+static LocalizedString FAILED_TO_CREATE_SONG_DIRECTORY	( "MainMenuDlg", "Failed to create song directory '%s': %s" );
+static LocalizedString FAILED_TO_COPY_MUSIC_FILE		( "MainMenuDlg", "Failed to copy music file '%s' to '%s': %s" );
+static LocalizedString FAILED_TO_CREATE_THE_SONG_FILE	( "MainMenuDlg", "Failed to create the song file '%s'" );
+static LocalizedString SUCCESS_CREATED_THE_SONG		( "MainMenuDlg", "Success.  Created the song '%s'" );
 void MainMenuDlg::OnCreateSong() 
 {
 	// TODO: Add your control notification handler code here
+	ASSERT(0);
+	// fix compile
 	CFileDialog dialog (
 		TRUE,	// file open?
 		NULL,	// default file extension
 		NULL,	// default file name
 		OFN_HIDEREADONLY | OFN_NOCHANGEDIR,		// flags
-		"Music file (*.mp3;*.ogg)|*.mp3;*.ogg|||"
+		""//MUSIC_FILE.GetValue()+" (*.mp3;*.ogg)|*.mp3;*.ogg|||"
 		);
 	int iRet = dialog.DoModal();
 	RString sMusicFile = dialog.GetPathName();
@@ -131,7 +143,7 @@ void MainMenuDlg::OnCreateSong()
 			// This failure is ok.  We probably created this directory already while importing another song.
 			break;
 		default:
-			MessageBox( "Failed to create directory '" + sSongDirectory + "': " + GetLastErrorString() );
+			MessageBox( ssprintf(FAILED_TO_CREATE_DIRECTORY.GetValue(),sSongDirectory.c_str(),GetLastErrorString().c_str()) );
 			return;
 		}
 	}
@@ -140,7 +152,7 @@ void MainMenuDlg::OnCreateSong()
 	bSuccess = CreateDirectory( sSongDirectory, NULL );	// CreateDirectory doesn't like a trailing slash
 	if( !bSuccess )
 	{
-		MessageBox( "Failed to create song directory '" + sSongDirectory + "': " + GetLastErrorString() );
+		MessageBox( ssprintf(FAILED_TO_CREATE_SONG_DIRECTORY.GetValue(),sSongDirectory.c_str(),GetLastErrorString().c_str()) );
 		return;
 	}
 	sSongDirectory += "\\";
@@ -149,7 +161,7 @@ void MainMenuDlg::OnCreateSong()
 	bSuccess = CopyFile( sMusicFile, sNewMusicFile, TRUE );
 	if( !bSuccess )
 	{
-		MessageBox( "Failed to copy music file to '" + sNewMusicFile + "': " + GetLastErrorString() );
+		MessageBox( ssprintf(FAILED_TO_COPY_MUSIC_FILE.GetValue(),sMusicFile.c_str(),sNewMusicFile.c_str(),GetLastErrorString().c_str()) );
 		return;
 	}
 
@@ -159,12 +171,12 @@ void MainMenuDlg::OnCreateSong()
 	FILE *fp = fopen( sNewSongFile, "w" );
 	if( fp == NULL )
 	{
-		MessageBox( "Failed to create the song file '" + sNewSongFile + "'" );
+		MessageBox( ssprintf(FAILED_TO_CREATE_THE_SONG_FILE.GetValue(),sNewSongFile.c_str()) );
 		return;
 	}
 	fclose( fp );
 
-	MessageBox( "Success.  Created the song '" + sSongDirectory + "'" );
+	MessageBox( ssprintf(SUCCESS_CREATED_THE_SONG.GetValue(),sSongDirectory.c_str()) );
 }
 
 BOOL MainMenuDlg::OnInitDialog() 
@@ -172,8 +184,8 @@ BOOL MainMenuDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 	
 	// TODO: Add extra initialization here
-	SMPackageUtil::LocalizeDialogAndContents( *this );
-	SMPackageUtil::SetHeaderFont( *this );
+	DialogUtil::LocalizeDialogAndContents( *this );
+	DialogUtil::SetHeaderFont( *this, IDC_STATIC_HEADER_TEXT );
 
 	TCHAR szCurDir[MAX_PATH];
 	GetCurrentDirectory( ARRAYSIZE(szCurDir), szCurDir );
@@ -185,18 +197,20 @@ BOOL MainMenuDlg::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
+static LocalizedString FAILED_TO_DELETE_FILE	( "MainMenuDlg", "Failed to delete file '%s'." ); 
+static LocalizedString IS_ALREADY_CLEARED		( "MainMenuDlg", "'%s' is already cleared." ); 
 void MainMenuDlg::OnBnClickedClearKeymaps()
 {
 	// TODO: Add your control notification handler code here
 	
 	if( !DoesFileExist( SpecialFiles::KEYMAPS_PATH ) )
 	{
-		MessageBox( SpecialFiles::KEYMAPS_PATH + " is already cleared." );
+		MessageBox( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::KEYMAPS_PATH.c_str()) );
 	}
 	else
 	{
 		if( !DeleteFile( SpecialFiles::KEYMAPS_PATH ) )
-			MessageBox( "Failed to delete file " + SpecialFiles::KEYMAPS_PATH + "." );
+			MessageBox( ssprintf(FAILED_TO_DELETE_FILE.GetValue(), SpecialFiles::KEYMAPS_PATH.c_str()) );
 	}
 }
 
@@ -207,36 +221,39 @@ void MainMenuDlg::OnBnClickedChangePreferences()
 	dlg.DoModal();	
 }
 
+static LocalizedString DOESNT_EXIST_IT_WILL_BE_CREATED	( "MainMenuDlg", "'%s' doesn't exist.  It will be created next time you start the game." );
+static LocalizedString FAILED_TO_OPEN					( "MainMenuDlg", "Failed to open '%s': %s" );
 void MainMenuDlg::OnBnClickedOpenPreferences()
 {
 	// TODO: Add your control notification handler code here
 	if( !DoesFileExist( SpecialFiles::PREFERENCES_INI_PATH ) )
 	{
-		MessageBox( SpecialFiles::PREFERENCES_INI_PATH + " doesn't exist.  It will be created next time you start the game." );
+		MessageBox( ssprintf(DOESNT_EXIST_IT_WILL_BE_CREATED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
 	}
 	else
 	{
 		if( NULL == ::ShellExecute( this->m_hWnd, "open", SpecialFiles::PREFERENCES_INI_PATH, "", "", SW_SHOWNORMAL ) )
-			MessageBox( "Failed to open " + SpecialFiles::PREFERENCES_INI_PATH + ": " + GetLastErrorString() );
+			MessageBox( ssprintf(FAILED_TO_OPEN.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str(),GetLastErrorString().c_str()) );
 	}
 }
 
+static LocalizedString CLEARED( "MainMenuDlg", "'%s' cleared" );
 void MainMenuDlg::OnBnClickedClearPreferences()
 {
 	// TODO: Add your control notification handler code here
 	if( !DoesFileExist( SpecialFiles::PREFERENCES_INI_PATH ) )
 	{
-		MessageBox( SpecialFiles::PREFERENCES_INI_PATH + " is already cleared." );
+		MessageBox( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
 		return;
 	}
 
 	if( !DeleteFile( SpecialFiles::PREFERENCES_INI_PATH ) )
 	{
-		MessageBox( "Failed to delete file " + SpecialFiles::PREFERENCES_INI_PATH + "." );
+		MessageBox( ssprintf(FAILED_TO_DELETE_FILE.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
 		return;
 	}
 
-	MessageBox( SpecialFiles::PREFERENCES_INI_PATH + " cleared." );
+	MessageBox( ssprintf(CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
 }
 
 void MainMenuDlg::OnBnClickedButtonLaunchGame()
@@ -251,6 +268,21 @@ void MainMenuDlg::OnBnClickedLanguages()
 	// TODO: Add your control notification handler code here
 	LanguagesDlg dlg;
 	dlg.DoModal();	
+}
+
+HBRUSH MainMenuDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	// TODO:  Change any attributes of the DC here
+	if( pWnd->GetDlgCtrlID() == IDC_STATIC_HEADER_TEXT )
+	{
+        hbr = (HBRUSH)::GetStockObject(HOLLOW_BRUSH); 
+        pDC->SetBkMode(TRANSPARENT); 
+	}
+
+	// TODO:  Return a different brush if the default is not desired
+	return hbr;
 }
 
 /*

@@ -99,62 +99,62 @@ BEGIN
     LTEXT           "Install a package",IDC_STATIC_HEADER_TEXT,5,2,280,24
 END
 
-IDD_EXPORTER DIALOGEX 0, 0, 332, 234
+IDD_EXPORTER DIALOGEX 0, 0, 349, 222
 STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | 
     WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
-CAPTION "StepMania Tools"
+CAPTION "Export Packages"
 FONT 8, "MS Sans Serif", 0, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Close",IDOK,255,215,69,14
-    PUSHBUTTON      "Launch Game",IDC_BUTTON_PLAY,5,215,70,15
-    PUSHBUTTON      "Export As One",IDC_BUTTON_EXPORT_AS_ONE,255,104,69,15
-    CONTROL         1045,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
+    DEFPUSHBUTTON   "Close",IDOK,284,201,57,14
+    PUSHBUTTON      "Launch Game",IDC_BUTTON_PLAY,7,200,70,15
+    PUSHBUTTON      "Export As One",IDC_BUTTON_EXPORT_AS_ONE,255,87,86,15
     PUSHBUTTON      "Export As Individual",IDC_BUTTON_EXPORT_AS_INDIVIDUAL,
-                    255,137,69,15
+                    255,120,86,15
     CONTROL         "Tree2",IDC_TREE,"SysTreeView32",TVS_HASBUTTONS | 
                     TVS_HASLINES | TVS_LINESATROOT | TVS_CHECKBOXES | 
-                    WS_BORDER | WS_TABSTOP,7,61,239,151
-    COMBOBOX        IDC_COMBO_DIR,74,40,170,105,CBS_DROPDOWNLIST | 
+                    WS_BORDER | WS_TABSTOP,7,43,239,151
+    COMBOBOX        IDC_COMBO_DIR,16,17,229,105,CBS_DROPDOWNLIST | 
                     WS_VSCROLL | WS_TABSTOP
-    PUSHBUTTON      "Edit Installations",IDC_BUTTON_EDIT,253,39,71,14
-    LTEXT           "Select Installation:",IDC_STATIC,7,42,66,11
-    PUSHBUTTON      "Open Program Folder",IDC_BUTTON_OPEN,83,215,79,15
-    LTEXT           "Export Packages",IDC_STATIC_HEADER_TEXT,5,2,280,24
+    PUSHBUTTON      "Edit Installations",IDC_BUTTON_EDIT,250,16,85,14
+    PUSHBUTTON      "Open Program Folder",IDC_BUTTON_OPEN,88,200,93,15
+    GROUPBOX        "Installation",IDC_STATIC,7,7,334,29
 END
 
-IDD_DIALOG_NAME DIALOG  0, 0, 261, 58
+IDD_DIALOG_NAME DIALOGEX 0, 0, 261, 58
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Name Your Package"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    LTEXT           "Please enter a name for your new package:",IDC_STATIC,7,
-                    7,179,12
+    LTEXT           "Enter a name for your new package:",IDC_STATIC,7,7,188,
+                    12
     EDITTEXT        IDC_EDIT,17,20,178,13,ES_AUTOHSCROLL
-    DEFPUSHBUTTON   "OK",IDOK,204,7,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,204,24,50,14
+    DEFPUSHBUTTON   "OK",IDOK,200,7,54,14
+    PUSHBUTTON      "Cancel",IDCANCEL,200,24,54,14
     LTEXT           "NOTE: (leave off the "".smzip"" extension)",IDC_STATIC,
                     18,38,179,12
 END
 
-IDD_EDIT_INSTALLATIONS DIALOG  0, 0, 233, 220
+IDD_EDIT_INSTALLATIONS DIALOGEX 0, 0, 243, 221
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Edit Installations"
-FONT 8, "MS Sans Serif"
+FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,117,198,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,175,198,50,14
-    LISTBOX         IDC_LIST,17,21,136,89,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
+    DEFPUSHBUTTON   "OK",IDOK,125,199,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,185,199,50,14
+    LISTBOX         IDC_LIST,17,30,136,80,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | 
                     WS_TABSTOP
-    EDITTEXT        IDC_EDIT,19,168,136,13,ES_AUTOHSCROLL
-    PUSHBUTTON      "Add",IDC_BUTTON_ADD,165,168,50,14
-    PUSHBUTTON      "Remove",IDC_BUTTON_REMOVE,164,44,50,15
-    PUSHBUTTON      "Make Default",IDC_BUTTON_MAKE_DEFAULT,164,24,50,15
-    GROUPBOX        "Add New Installation",IDC_STATIC,7,130,218,59
-    GROUPBOX        "Current Installations (the top installation is the default)",
-                    IDC_STATIC,7,7,218,114
+    EDITTEXT        IDC_EDIT,19,167,136,13,ES_AUTOHSCROLL
+    PUSHBUTTON      "Add",IDC_BUTTON_ADD,165,167,50,14
+    PUSHBUTTON      "Remove",IDC_BUTTON_REMOVE,160,54,68,15,WS_DISABLED
+    PUSHBUTTON      "Make Default",IDC_BUTTON_MAKE_DEFAULT,160,34,68,15,
+                    WS_DISABLED
+    GROUPBOX        "Add New Installation",IDC_STATIC,7,130,228,59
+    GROUPBOX        "Current Installations",IDC_STATIC,7,7,228,114
     LTEXT           "Enter the complete path to a StepMania or DWI installation\r\ne.g. ""C:\\Program Files\\StepMania""",
                     IDC_STATIC,18,144,196,17
+    LTEXT           "The top installation is the default.",IDC_STATIC,19,17,
+                    196,12
 END
 
 IDD_MENU DIALOGEX 0, 0, 332, 284
@@ -165,35 +165,35 @@ BEGIN
     DEFPUSHBUTTON   "Exit",IDOK,275,263,50,14
     CONTROL         1045,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     GROUPBOX        "Installation",IDC_STATIC,7,41,318,28
-    PUSHBUTTON      "Edit Installations",IDC_EDIT_INSTALLATIONS,241,49,75,15
+    PUSHBUTTON      "Edit Installations",IDC_EDIT_INSTALLATIONS,233,49,83,15
     GROUPBOX        "Create and Share",IDC_STATIC,7,176,318,78
-    PUSHBUTTON      "Export Packages",IDC_EXPORT_PACKAGES,14,190,83,15
-    LTEXT           "Create .smzip package files to share with other users.  Packages can contain songs, courses, themes, backgrounds, and more.",
-                    IDC_STATIC,106,190,215,18
-    PUSHBUTTON      "Create Song",IDC_CREATE_SONG,14,211,83,15
+    PUSHBUTTON      "Export Packages",IDC_EXPORT_PACKAGES,14,190,91,15
+    LTEXT           "Create .smzip package files to share with other users.",
+                    IDC_STATIC,109,190,213,18
+    PUSHBUTTON      "Create Song",IDC_CREATE_SONG,14,211,91,15
     LTEXT           "Create a new song in from your favorite mp3 or ogg music file.",
-                    IDC_STATIC,106,211,215,20
+                    IDC_STATIC,109,211,213,20
     GROUPBOX        "Troubleshooting",IDC_STATIC,7,73,318,99
-    PUSHBUTTON      "Change Preferences",IDC_CHANGE_PREFERENCES,15,85,83,15
-    PUSHBUTTON      "Open Preferences",IDC_OPEN_PREFERENCES,15,127,83,15
+    PUSHBUTTON      "Change Preferences",IDC_CHANGE_PREFERENCES,14,85,91,15
+    PUSHBUTTON      "Open Preferences",IDC_OPEN_PREFERENCES,14,127,91,15
     LTEXT           "Change the graphics API, sound API, and other settings that the game will use.",
-                    IDC_STATIC,106,85,215,18
-    PUSHBUTTON      "Clear Preferences",IDC_CLEAR_PREFERENCES,15,106,83,15
-    PUSHBUTTON      "Clear Mappings",IDC_CLEAR_KEYMAPS,15,148,83,15
-    EDITTEXT        IDC_EDIT_INSTALLATION,16,51,219,12,ES_AUTOHSCROLL | 
+                    IDC_STATIC,110,85,213,18
+    PUSHBUTTON      "Clear Preferences",IDC_CLEAR_PREFERENCES,14,106,91,15
+    PUSHBUTTON      "Clear Mappings",IDC_CLEAR_KEYMAPS,14,148,91,15
+    EDITTEXT        IDC_EDIT_INSTALLATION,16,51,210,12,ES_AUTOHSCROLL | 
                     ES_READONLY
     LTEXT           "Erase all of your keyboard and joystick mappings if you've made a mistake.",
-                    IDC_STATIC,106,148,214,18
-    PUSHBUTTON      "Launch Game",IDC_BUTTON_LAUNCH_GAME,189,263,70,14
-    PUSHBUTTON      "Languages",IDC_LANGUAGES,14,232,83,15
+                    IDC_STATIC,109,148,213,18
+    PUSHBUTTON      "Launch Game",IDC_BUTTON_LAUNCH_GAME,183,263,76,14
+    PUSHBUTTON      "Languages",IDC_LANGUAGES,14,232,91,15
     LTEXT           "Create a new or manage existing language translations.",
-                    IDC_STATIC,106,232,215,20
+                    IDC_STATIC,109,232,213,20
     LTEXT           "StepMania Tools Main Menu",IDC_STATIC_HEADER_TEXT,5,2,
                     280,24
     LTEXT           "Open the preferences file to make changes by hand.",
-                    IDC_STATIC,106,127,214,18
+                    IDC_STATIC,109,127,213,18
     LTEXT           "Clear all preferences if you've made changes and the game won't start.",
-                    IDC_STATIC,106,106,214,18
+                    IDC_STATIC,109,106,213,18
 END
 
 IDD_ENTER_COMMENT DIALOGEX 0, 0, 312, 202
@@ -239,80 +239,80 @@ BEGIN
     CTEXT           "Delete old packages?",IDC_STATIC,55,119,166,12
 END
 
-IDD_CHANGE_GAME_SETTINGS DIALOGEX 0, 0, 162, 282
+IDD_CHANGE_GAME_SETTINGS DIALOGEX 0, 0, 162, 287
 STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Change Game Settings"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,49,260,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,104,260,50,14
+    DEFPUSHBUTTON   "OK",IDOK,49,265,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,104,265,50,14
     GROUPBOX        "Graphics API",IDC_STATIC,7,7,147,66
     CONTROL         "Default (recommended)",IDC_RADIO_DEFAULT,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP,25,22,105,12
-    CONTROL         "OpenGL",IDC_RADIO_OPENGL,"Button",BS_AUTORADIOBUTTON,25,
-                    38,105,12
+                    BS_AUTORADIOBUTTON | WS_GROUP,21,22,129,12
+    CONTROL         "OpenGL",IDC_RADIO_OPENGL,"Button",BS_AUTORADIOBUTTON,21,
+                    38,129,12
     CONTROL         "Direct3D",IDC_RADIO_DIRECT3D,"Button",
-                    BS_AUTORADIOBUTTON,25,54,105,12
+                    BS_AUTORADIOBUTTON,21,54,129,12
     GROUPBOX        "Sound API",IDC_STATIC,7,77,147,100
     CONTROL         "Default (recommended)",IDC_RADIO_SOUND_DEFAULT,"Button",
-                    BS_AUTORADIOBUTTON | WS_GROUP,25,92,105,12
+                    BS_AUTORADIOBUTTON | WS_GROUP,21,92,129,12
     CONTROL         "DirectSound Hardware",
                     IDC_RADIO_SOUND_DIRECTSOUND_HARDWARE,"Button",
-                    BS_AUTORADIOBUTTON,25,108,105,12
+                    BS_AUTORADIOBUTTON,21,108,129,12
     CONTROL         "DirectSound Software",
                     IDC_RADIO_SOUND_DIRECTSOUND_SOFTWARE,"Button",
-                    BS_AUTORADIOBUTTON,25,124,105,12
+                    BS_AUTORADIOBUTTON,21,124,129,12
     CONTROL         "WaveOut",IDC_RADIO_SOUND_WAVEOUT,"Button",
-                    BS_AUTORADIOBUTTON,25,140,105,12
+                    BS_AUTORADIOBUTTON,21,140,129,12
     CONTROL         "Null (no sound)",IDC_RADIO_SOUND_NULL,"Button",
-                    BS_AUTORADIOBUTTON,25,156,105,12
+                    BS_AUTORADIOBUTTON,21,156,129,12
     GROUPBOX        "Logging",IDC_STATIC,7,181,147,50
     CONTROL         "Log to Disk",IDC_CHECK_LOG_TO_DISK,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,26,197,106,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,21,197,129,10
     CONTROL         "Show Log Window",IDC_CHECK_SHOW_LOG_WINDOW,"Button",
-                    BS_AUTOCHECKBOX | WS_TABSTOP,26,213,106,10
+                    BS_AUTOCHECKBOX | WS_TABSTOP,21,213,129,10
     LTEXT           "Tip: Change these only if you experience problems when using the default settings.",
                     IDC_STATIC,7,234,147,26
 END
 
-IDD_LANGUAGES DIALOGEX 0, 0, 329, 188
+IDD_LANGUAGES DIALOGEX 0, 0, 337, 189
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 CAPTION "Language Translations"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "Close",IDOK,272,167,50,14
+    DEFPUSHBUTTON   "Close",IDOK,280,168,50,14
     LTEXT           "Themes",IDC_STATIC,7,7,101,10
     LTEXT           "Languages",IDC_STATIC,118,7,98,10
-    PUSHBUTTON      "Create Language",IDC_BUTTON_CREATE,226,41,91,15
-    PUSHBUTTON      "Delete Language",IDC_BUTTON_DELETE,226,62,91,15
-    PUSHBUTTON      "Export CSV",IDC_BUTTON_EXPORT,226,83,91,15
-    PUSHBUTTON      "Import CSV",IDC_BUTTON_IMPORT,226,123,91,15
+    PUSHBUTTON      "Create Language",IDC_BUTTON_CREATE,230,41,91,15
+    PUSHBUTTON      "Delete Language",IDC_BUTTON_DELETE,230,62,91,15
+    PUSHBUTTON      "Export CSV",IDC_BUTTON_EXPORT,230,83,91,15
+    PUSHBUTTON      "Import CSV",IDC_BUTTON_IMPORT,230,123,91,15
     LTEXT           "- Create a new language\n- Export the theme strings to a CSV\n- Edit the CSV using Excel or a text editor\n- Import the CSV file back into the same language",
-                    IDC_STATIC,7,144,240,37
-    LTEXT           "Selection details",IDC_STATIC,222,7,100,9
-    LTEXT           "Total Strings:",IDC_STATIC,225,17,62,10
-    LTEXT           "Need translation:",IDC_STATIC,225,28,69,10
-    LTEXT           "",IDC_STATIC_TOTAL_STRINGS,296,18,26,10
-    LTEXT           "",IDC_STATIC_NEED_TRANSLATION,296,27,26,10
+                    IDC_STATIC,7,145,258,37
+    LTEXT           "Selection details",IDC_STATIC,230,7,100,9
+    LTEXT           "Total Strings:",IDC_STATIC,221,17,89,10
+    LTEXT           "Need translation:",IDC_STATIC,221,28,89,10
+    LTEXT           "",IDC_STATIC_TOTAL_STRINGS,307,18,26,10
+    LTEXT           "",IDC_STATIC_NEED_TRANSLATION,307,27,26,10
     LISTBOX         IDC_LIST_THEMES,7,18,102,121,LBS_SORT | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     LISTBOX         IDC_LIST_LANGUAGES,116,17,100,121,LBS_SORT | 
                     LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
     CONTROL         "Export already translated strings",
                     IDC_CHECK_EXPORT_ALREADY_TRANSLATED,"Button",
-                    BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,220,100,109,
+                    BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,221,100,109,
                     16
 END
 
-IDD_CREATE_LANGUAGE DIALOGEX 0, 0, 186, 47
+IDD_CREATE_LANGUAGE DIALOGEX 0, 0, 191, 47
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 CAPTION "Create Language"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "OK",IDOK,129,7,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,129,27,50,14
+    DEFPUSHBUTTON   "OK",IDOK,128,7,56,14
+    PUSHBUTTON      "Cancel",IDCANCEL,128,27,56,14
     LTEXT           "Choose a language",IDC_STATIC,7,7,110,11
     COMBOBOX        IDC_COMBO_LANGUAGES,17,24,100,110,CBS_DROPDOWNLIST | 
                     CBS_SORT | WS_VSCROLL | WS_TABSTOP
@@ -376,9 +376,9 @@ BEGIN
     IDD_EXPORTER, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 324
+        RIGHTMARGIN, 341
         TOPMARGIN, 7
-        BOTTOMMARGIN, 227
+        BOTTOMMARGIN, 215
     END
 
     IDD_DIALOG_NAME, DIALOG
@@ -392,9 +392,9 @@ BEGIN
     IDD_EDIT_INSTALLATIONS, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 225
+        RIGHTMARGIN, 235
         TOPMARGIN, 7
-        BOTTOMMARGIN, 212
+        BOTTOMMARGIN, 213
     END
 
     IDD_MENU, DIALOG
@@ -434,21 +434,21 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 154
         TOPMARGIN, 7
-        BOTTOMMARGIN, 274
+        BOTTOMMARGIN, 279
     END
 
     IDD_LANGUAGES, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 322
+        RIGHTMARGIN, 330
         TOPMARGIN, 7
-        BOTTOMMARGIN, 181
+        BOTTOMMARGIN, 182
     END
 
     IDD_CREATE_LANGUAGE, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 179
+        RIGHTMARGIN, 184
         TOPMARGIN, 7
         BOTTOMMARGIN, 40
     END

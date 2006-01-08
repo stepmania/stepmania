@@ -142,14 +142,17 @@ void LoadingWindow_Win32::SetText( CString sText )
 	while( asMessageLines.size() < 3 )
 		asMessageLines.push_back( "" );
 	
-	const int msgs[] = { IDC_STATIC_MESSAGE1, IDC_STATIC_MESSAGE2, IDC_STATIC_MESSAGE3 };
+	const int msgid[] = { IDC_STATIC_MESSAGE1, IDC_STATIC_MESSAGE2, IDC_STATIC_MESSAGE3 };
 	for( unsigned i = 0; i < 3; ++i )
 	{
 		if( text[i] == asMessageLines[i] )
 			continue;
 		text[i] = asMessageLines[i];
 
-		SendDlgItemMessage( hwnd, msgs[i], WM_SETTEXT, 0, (LPARAM)asMessageLines[i].c_str());
+		HWND hwndItem = ::GetDlgItem( hwnd, msgid[i] );
+		
+		wstring w = RStringToWstring( asMessageLines[i] );
+		::SetWindowTextW( hwndItem, w.c_str() );
 	}
 }
 

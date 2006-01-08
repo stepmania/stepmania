@@ -16,6 +16,8 @@
 #define IDD_CHANGE_GAME_SETTINGS        149
 #define IDD_LANGUAGES                   150
 #define IDD_CREATE_LANGUAGE             151
+#define IDB_BITMAP1                     153
+#define IDB_BITMAP2                     154
 #define IDC_LIST_SONGS                  1000
 #define IDC_LIST                        1000
 #define IDC_BUTTON_PLAY                 1001
@@ -91,7 +93,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        153
+#define _APS_NEXT_RESOURCE_VALUE        155
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1068
 #define _APS_NEXT_SYMED_VALUE           104

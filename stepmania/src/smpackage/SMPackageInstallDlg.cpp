@@ -15,6 +15,8 @@
 #include <algorithm>	
 #include "RageFileManager.h"	
 #include "RageFileDriverZip.h"	
+#include "archutils/Win32/DialogUtil.h"
+#include "LocalizedString.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -48,7 +50,6 @@ void CSMPackageInstallDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_EDIT, m_buttonEdit);
 	DDX_Control(pDX, IDC_COMBO_DIR, m_comboDir);
 	//}}AFX_DATA_MAP
-	DDX_Control(pDX, IDC_STATIC_HEADER_TEXT, m_staticHeaderText);
 }
 
 
@@ -57,6 +58,7 @@ BEGIN_MESSAGE_MAP(CSMPackageInstallDlg, CDialog)
 	ON_WM_PAINT()
 	ON_BN_CLICKED(IDC_BUTTON_EDIT, OnButtonEdit)
 	//}}AFX_MSG_MAP
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 
@@ -68,6 +70,7 @@ static bool CompareStringNoCase( const RString &s1, const RString &s2 )
 	return s1.CompareNoCase( s2 ) < 0;
 }
 
+static LocalizedString IS_NOT_A_VALID_ZIP( "CSMPackageInstallDlg", "'%s' is not a valid zip archive." );
 BOOL CSMPackageInstallDlg::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
@@ -78,13 +81,13 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	SMPackageUtil::LocalizeDialogAndContents( *this );
-	SMPackageUtil::SetHeaderFont( *this );
+	DialogUtil::LocalizeDialogAndContents( *this );
+	DialogUtil::SetHeaderFont( *this, IDC_STATIC_HEADER_TEXT );
 
 	// mount the zip
 	if( !FILEMAN->Mount( "zip", m_sPackagePath, TEMP_MOUNT_POINT ) )
 	{
-		AfxMessageBox( ssprintf("'%s' is not a valid zip archive.", m_sPackagePath), MB_ICONSTOP );
+		AfxMessageBox( ssprintf(IS_NOT_A_VALID_ZIP.GetValue(), m_sPackagePath), MB_ICONSTOP );
 		exit( 1 );
 	}
 
@@ -161,6 +164,7 @@ void CSMPackageInstallDlg::OnPaint()
 	}
 }
 #include <direct.h>
+#include ".\smpackageinstalldlg.h"
 
 bool CSMPackageInstallDlg::CheckPackages()
 {
@@ -236,6 +240,9 @@ bool CSMPackageInstallDlg::CheckPackages()
 	return true;
 }
 
+static LocalizedString NO_INSTALLATIONS		("CSMPackageInstallDlg", "No Installations found.  Exiting.");
+static LocalizedString ERROR_COPYING_FILE	("CSMPackageInstallDlg", "Error copying file '%s'");
+static LocalizedString PACKAGE_INSTALLED_SUCCESSFULLY ("CSMPackageInstallDlg","Package installed successfully!");
 void CSMPackageInstallDlg::OnOK() 
 {
 	// TODO: Add extra validation here
@@ -255,7 +262,7 @@ void CSMPackageInstallDlg::OnOK()
 	int iSelectedInstallDirIndex = m_comboDir.GetCurSel();
 	if( iSelectedInstallDirIndex == -1 )
 	{
-		MessageBox( "No Installations", "Error", MB_OK|MB_ICONEXCLAMATION );
+		MessageBox( NO_INSTALLATIONS.GetValue(), NULL, MB_OK|MB_ICONEXCLAMATION );
 		return;
 	}
 
@@ -326,8 +333,8 @@ retry_unzip:
 		RString sTo = sInstallDir + sTo;
 		if( !FileCopy( sFile, sTo ) )
 		{
-			RString sError = ssprintf( "Error copying file '%s'", sBareFile.c_str() );
-			switch( MessageBox( sError, "Error Extracting File", MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION ) )
+			RString sError = ssprintf( ERROR_COPYING_FILE.GetValue(), sBareFile.c_str() );
+			switch( MessageBox( sError, NULL, MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION ) )
 			{
 			case IDABORT:
 				exit(1);
@@ -344,7 +351,7 @@ retry_unzip:
 		pProgress1->StepIt(); //increase the progress bar of 1 step
 	}
 
-	AfxMessageBox( "Package installed successfully!" );
+	AfxMessageBox( PACKAGE_INSTALLED_SUCCESSFULLY.GetValue() );
 
 	// close the dialog
 	CDialog::OnOK();
@@ -373,6 +380,21 @@ void CSMPackageInstallDlg::RefreshInstallationList()
 	for( unsigned i=0; i<asInstallDirs.size(); i++ )
 		m_comboDir.AddString( asInstallDirs[i] );
 	m_comboDir.SetCurSel( 0 );	// guaranteed to be at least one item
+}
+
+HBRUSH CSMPackageInstallDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	// TODO:  Change any attributes of the DC here
+	if( pWnd->GetDlgCtrlID() == IDC_STATIC_HEADER_TEXT )
+	{
+        hbr = (HBRUSH)::GetStockObject(HOLLOW_BRUSH); 
+        pDC->SetBkMode(TRANSPARENT); 
+	}
+
+	// TODO:  Return a different brush if the default is not desired
+	return hbr;
 }
 
 /*

@@ -9,6 +9,7 @@
 #include "RageUtil.h"
 #include "SMPackageUtil.h"
 #include ".\createlanguagedlg.h"
+#include "archutils/Win32/DialogUtil.h"
 
 // CreateLanguageDlg dialog
 
@@ -33,7 +34,7 @@ BOOL CreateLanguageDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	// TODO: Add extra initialization here
-	SMPackageUtil::LocalizeDialogAndContents( *this );
+	DialogUtil::LocalizeDialogAndContents( *this );
 
 	vector<const LanguageInfo*> v;
 	GetLanguageInfos( v );

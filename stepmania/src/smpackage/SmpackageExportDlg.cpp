@@ -15,10 +15,13 @@
 #include "IniFile.h"	
 #include "RageFileDriverMemory.h"
 #include "archutils/Win32/SpecialDirs.h"
+#include "archutils/Win32/DialogUtil.h"
+#include "LocalizedString.h"
 
 #include <vector>
 #include <algorithm>
 #include <set>
+#include ".\smpackageexportdlg.h"
 using namespace std;
 
 #ifdef _DEBUG
@@ -49,7 +52,6 @@ void CSmpackageExportDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_EXPORT_AS_ONE, m_buttonExportAsOne);
 	DDX_Control(pDX, IDC_TREE, m_tree);
 	//}}AFX_DATA_MAP
-	DDX_Control(pDX, IDC_STATIC_HEADER_TEXT, m_staticHeaderText);
 }
 
 
@@ -62,6 +64,7 @@ BEGIN_MESSAGE_MAP(CSmpackageExportDlg, CDialog)
 	ON_CBN_SELCHANGE(IDC_COMBO_DIR, OnSelchangeComboDir)
 	ON_BN_CLICKED(IDC_BUTTON_OPEN, OnButtonOpen)
 	//}}AFX_MSG_MAP
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -72,8 +75,7 @@ BOOL CSmpackageExportDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 	
 	// TODO: Add extra initialization here
-	SMPackageUtil::LocalizeDialogAndContents( *this );
-	SMPackageUtil::SetHeaderFont( *this );
+	DialogUtil::LocalizeDialogAndContents( *this );
 
 	RefreshInstallationList();
 	
@@ -95,6 +97,7 @@ RString ReplaceInvalidFileNameChars( RString sOldFileName )
 	return sNewFileName;
 }
 
+static LocalizedString ERROR_ADDING_FILE ( "SmpackageExportDlg", "Error adding file '%s'." );
 static bool ExportPackage( RString sPackageName, const vector<RString>& asDirectoriesToExport, RString sComment )	
 {
 	CZipArchive zip;
@@ -187,7 +190,7 @@ static bool ExportPackage( RString sPackageName, const vector<RString>& asDirect
 		}
 		catch (CException* e)
 		{
-			AfxMessageBox( ssprintf("Error adding file '%s'.", sFilePath) );
+			AfxMessageBox( ssprintf(ERROR_ADDING_FILE.GetValue(), sFilePath.c_str()) );
 			zip.Close();
 			e->Delete();
 			return false;
@@ -219,14 +222,16 @@ bool CSmpackageExportDlg::MakeComment( RString &comment )
 	return true;
 }
 
+static LocalizedString NO_ITEMS_ARE_CHECKED	( "CSmpackageExportDlg", "No items are checked." );
+static LocalizedString SUCCESSFULLY_EXPORTED( "CSmpackageExportDlg", "Successfully exported package '%s' to your Desktop." );
 void CSmpackageExportDlg::OnButtonExportAsOne() 
 {
 	vector<RString> asPaths;
 	GetCheckedPaths( asPaths );
 
-	if( asPaths.size() == 0 )
+	if( asPaths.size() >= 0 )
 	{
-		AfxMessageBox( "No items are checked" );
+		AfxMessageBox( NO_ITEMS_ARE_CHECKED.GetValue() );
 		return;
 	}
 	else if( asPaths.size() == 1 )
@@ -250,9 +255,11 @@ void CSmpackageExportDlg::OnButtonExportAsOne()
 		return;		// cancelled
 
 	if( ExportPackage( sPackageName, asPaths, sComment ) )
-		AfxMessageBox( ssprintf("Successfully exported package '%s' to your Desktop.",sPackageName) );
+		AfxMessageBox( ssprintf(SUCCESSFULLY_EXPORTED.GetValue(),sPackageName.c_str()) );
 }
 
+static LocalizedString THE_FOLLOWING_PACKAGES_WERE_EXPORTED ("CSmpackageExportDlg","The following packages were exported to your Desktop:");
+static LocalizedString THE_FOLLOWING_PACKAGES_FAILED ("CSmpackageExportDlg","The following packages failed to export:");
 void CSmpackageExportDlg::OnButtonExportAsIndividual() 
 {
 	vector<RString> asPaths;
@@ -260,7 +267,7 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 
 	if( asPaths.size() == 0 )
 	{
-		AfxMessageBox( "No items are checked" );
+		AfxMessageBox( NO_ITEMS_ARE_CHECKED.GetValue() );
 		return;
 	}
 	
@@ -292,10 +299,15 @@ void CSmpackageExportDlg::OnButtonExportAsIndividual()
 	}
 
 	RString sMessage;
-	if( asFailedPackages.size() == 0 )
-		sMessage = ssprintf("Successfully exported the package%s '%s' to your Desktop.", asFailedPackages.size()>1?"s":"", join("', '",asExportedPackages) );
-	else
-		sMessage = ssprintf("  The packages %s failed to export.", join(", ",asFailedPackages) );
+	if( asExportedPackages.size() > 0 )
+		sMessage += THE_FOLLOWING_PACKAGES_WERE_EXPORTED.GetValue()+"\n\n"+join( "\n", asExportedPackages );
+	
+	if( asFailedPackages.size() > 0 )
+	{
+		if( !sMessage.empty() )
+			sMessage += "\n\n";
+		sMessage += THE_FOLLOWING_PACKAGES_FAILED.GetValue()+"\n\n"+join( "\n", asFailedPackages );
+	}
 	AfxMessageBox( sMessage );
 }
 

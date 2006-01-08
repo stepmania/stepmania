@@ -1,44 +1,18 @@
-#ifndef SMPackageUtil_H
-#define SMPackageUtil_H
+#ifndef DialogUtil_H
+#define DialogUtil_H
 
-struct LanguageInfo;
+#include <windows.h>
 
-namespace SMPackageUtil
+namespace DialogUtil
 {
-	void WriteStepManiaInstallDirs( const vector<RString>& asInstallDirsToWrite );
-	void GetStepManiaInstallDirs( vector<RString>& asInstallDirsOut );
-	void AddStepManiaInstallDir( RString sNewInstallDir );
-	void SetDefaultInstallDir( int iInstallDirIndex );
-	void SetDefaultInstallDir( RString sInstallDir );
-
-	bool GetPref( RString name, bool &val );
-	bool SetPref( RString name, bool val );
-
-	RString GetPackageDirectory(RString path);
-	bool IsValidPackageDirectory(RString path);
-
-	bool LaunchGame();
-
-	RString GetLanguageDisplayString( const RString &sIsoCode );
-	RString GetLanguageCodeFromDisplayString( const RString &sDisplayString );
-
-	bool GetFileContentsOsAbsolute( const RString &sAbsoluteOsFile, RString &sOut );
-}
-
-#include "RageFile.h"
-
-class RageFileOsAbsolute : public RageFile
-{
-public:
-	bool Open( const RString& path, int mode = READ );
-private:
-	RString m_sOsDir;
+	void SetHeaderFont( HWND hdlg, int nID );
+	void LocalizeDialogAndContents( HWND hdlg );
 };
 
 #endif
 
 /*
- * (c) 2002-2005 Chris Danford
+ * (c) 2002-2004 Glenn Maynard
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

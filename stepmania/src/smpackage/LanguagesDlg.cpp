@@ -17,6 +17,8 @@
 #include "RageFileManager.h"
 #include ".\languagesdlg.h"
 #include "CsvFile.h"
+#include "archutils/Win32/DialogUtil.h"
+#include "LocalizedString.h"
 
 // LanguagesDlg dialog
 
@@ -42,7 +44,7 @@ BOOL LanguagesDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	SMPackageUtil::LocalizeDialogAndContents( *this );
+	DialogUtil::LocalizeDialogAndContents( *this );
 
 	vector<RString> vs;
 	GetDirListing( SpecialFiles::THEMES_DIR+"*", vs, true );
@@ -217,6 +219,7 @@ void LanguagesDlg::OnBnClickedButtonCreate()
 	OnSelchangeListLanguages();
 }
 
+static LocalizedString THIS_WILL_PERMANENTLY_DELETE( "LanguagesDlg", "This will permanently delete '%s'. Continue?" );
 void LanguagesDlg::OnBnClickedButtonDelete()
 {
 	// TODO: Add your control notification handler code here
@@ -228,7 +231,7 @@ void LanguagesDlg::OnBnClickedButtonDelete()
 
 	RString sLanguageFile = GetLanguageFile( sTheme, sLanguage );
 
-	int iRet = MessageBox( ssprintf("This will permanently delete '%s'. Continue?",sLanguageFile.c_str()), NULL, MB_OKCANCEL );
+	int iRet = MessageBox( ssprintf(THIS_WILL_PERMANENTLY_DELETE.GetValue(),sLanguageFile.c_str()), NULL, MB_OKCANCEL );
 	if( iRet != IDOK )
 		return;
 
@@ -243,6 +246,9 @@ struct TranslationLine
 	RString sSection, sID, sBaseLanguage, sCurrentLanguage;
 };
 
+static LocalizedString FAILED_TO_SAVE					( "LanguagesDlg", "Failed to save '%s'." );
+static LocalizedString THERE_ARE_NO_STRINGS_TO_EXPORT	( "LanguagesDlg", "There are no strings to export for this language." );
+static LocalizedString EXPORTED_TO_YOUR_DESKTOP			( "LanguagesDlg", "Exported to your Desktop as '%s'." );
 void LanguagesDlg::OnBnClickedButtonExport()
 {
 	// TODO: Add your control notification handler code here
@@ -289,15 +295,22 @@ void LanguagesDlg::OnBnClickedButtonExport()
 	RString sFullFile = "Desktop/"+sFile;
 	if( iNumExpored == 0 )
 	{
-		MessageBox( "There are no strings to export for this language." );	
+		MessageBox( THERE_ARE_NO_STRINGS_TO_EXPORT.GetValue() );	
 		return;
 	}
+
 	if( csv.WriteFile(sFullFile) )
-		MessageBox( ssprintf("Exported to your Desktop as '%s'.",sFile.c_str()) );
+		MessageBox( ssprintf(EXPORTED_TO_YOUR_DESKTOP.GetValue(),sFile.c_str()) );
 	else
-		MessageBox( ssprintf("Failed to save '%s'.",sFullFile.c_str()) );
+		MessageBox( ssprintf(FAILED_TO_SAVE.GetValue(),sFullFile.c_str()) );
 }
 
+static LocalizedString ERROR_READING_FILE					( "LanguagesDlg", "Error reading file '%s'." );
+static LocalizedString ERROR_PARSING_FILE					( "LanguagesDlg", "Error parsing file '%s'." );
+static LocalizedString IMPORTING_THESE_STRINGS_WILL_OVERRIDE( "LanguagesDlg", "Importing these strings will override all data in '%s'. Continue?" );
+static LocalizedString ERROR_READING						( "LanguagesDlg", "Error reading '%s'." );
+static LocalizedString ERROR_READING_EACH_LINE_MUST_HAVE	( "LanguagesDlg", "Error reading '%s': Each line must have either 3 or 4 values.  This row has %d values." );
+static LocalizedString IMPORTED_STRINGS_INTO				( "LanguagesDlg", "Imported %d strings into '%s'. %d empty strings were ignored." );
 void LanguagesDlg::OnBnClickedButtonImport()
 {
 	// TODO: Add your control notification handler code here
@@ -322,20 +335,20 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	RageFileOsAbsolute cvsFile;
 	if( !cvsFile.Open(sCsvFile) )
 	{
-		MessageBox( ssprintf("Error reading file '%s'.",sCsvFile.c_str()) );
+		MessageBox( ssprintf(ERROR_READING_FILE.GetValue(),sCsvFile.c_str()) );
 		return;
 	}
 	CsvFile csv;
 	if( !csv.ReadFile(cvsFile) )
 	{
-		MessageBox( ssprintf("Error parsing file '%s'.",sCsvFile.c_str()) );
+		MessageBox( ssprintf(ERROR_PARSING_FILE.GetValue(),sCsvFile.c_str()) );
 		return;
 	}
 
 	RString sLanguageFile = GetLanguageFile( sTheme, sLanguage );
 
 	{
-		int iRet = MessageBox( ssprintf("Importing these strings will override all data in '%s'. Continue?",sLanguageFile.c_str()), NULL, MB_OKCANCEL );
+		int iRet = MessageBox( ssprintf(IMPORTING_THESE_STRINGS_WILL_OVERRIDE.GetValue(),sLanguageFile.c_str()), NULL, MB_OKCANCEL );
 		if( iRet != IDOK )
 			return;
 	}
@@ -343,7 +356,7 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	IniFile ini;
 	if( !ini.ReadFile(sLanguageFile) )
 	{
-		MessageBox( ssprintf("Error reading '%s'.",sLanguageFile.c_str()) );
+		MessageBox( ssprintf(ERROR_READING.GetValue(),sLanguageFile.c_str()) );
 		return;
 	}
 
@@ -355,7 +368,7 @@ void LanguagesDlg::OnBnClickedButtonImport()
 		int iNumValues = line->size();
 		if( iNumValues != 3 && iNumValues != 4 )
 		{
-			MessageBox( ssprintf("Error reading '%s': Each line must have either 3 or 4 values.  This row has %d values",sCsvFile.c_str(),iNumValues) );
+			MessageBox( ssprintf(ERROR_READING_EACH_LINE_MUST_HAVE.GetValue(),sCsvFile.c_str(),iNumValues) );
 			return;
 		}
 		tl.sSection = (*line)[0];
@@ -375,9 +388,9 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	}
 
 	if( ini.WriteFile(sLanguageFile) )
-		MessageBox( ssprintf("Imported %d strings into '%s'. %d empty strings were ignored.",iNumImported,sLanguageFile.c_str(),iNumIgnored) );
+		MessageBox( ssprintf(IMPORTED_STRINGS_INTO.GetValue(),iNumImported,sLanguageFile.c_str(),iNumIgnored) );
 	else
-		MessageBox( ssprintf("Failed to save '%s'.",sLanguageFile.c_str()) );
+		MessageBox( ssprintf(FAILED_TO_SAVE.GetValue(),sLanguageFile.c_str()) );
 
 	OnSelchangeListThemes();
 }

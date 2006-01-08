@@ -7,6 +7,7 @@
 #include "smpackage.h"
 #include "UninstallOld.h"
 #include "SMPackageUtil.h"
+#include "archutils/Win32/DialogUtil.h"
 
 // UninstallOld dialog
 
@@ -30,7 +31,7 @@ BOOL UninstallOld::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	SMPackageUtil::LocalizeDialogAndContents( *this );
+	DialogUtil::LocalizeDialogAndContents( *this );
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }

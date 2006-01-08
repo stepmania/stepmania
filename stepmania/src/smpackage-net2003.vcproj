@@ -228,12 +228,6 @@
 				RelativePath=".\smpackage\StdAfx.h">
 			</File>
 			<File
-				RelativePath=".\smpackage\TransparentStatic.cpp">
-			</File>
-			<File
-				RelativePath=".\smpackage\TransparentStatic.h">
-			</File>
-			<File
 				RelativePath=".\smpackage\TreeCtrlEx.cpp">
 			</File>
 			<File
@@ -299,6 +293,12 @@
 				</File>
 				<File
 					RelativePath=".\archutils\Win32\arch_time.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\DialogUtil.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\DialogUtil.h">
 				</File>
 				<File
 					RelativePath=".\archutils\Win32\RegistryAccess.cpp">
@@ -567,6 +567,9 @@
 			</File>
 			<File
 				RelativePath=".\LuaReference.h">
+			</File>
+			<File
+				RelativePath=".\ThemeMetric.h">
 			</File>
 		</Filter>
 		<Filter

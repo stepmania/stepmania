@@ -1,4 +1,4 @@
-// Microsoft Visual C++ generated resource script.
+//Microsoft Developer Studio generated resource script.
 //
 #include "WindowsResources.h"
 
@@ -26,10 +26,10 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Dialog
 //
 
-IDD_ERROR_DIALOG DIALOGEX 0, 0, 332, 234
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
+IDD_ERROR_DIALOG DIALOG DISCARDABLE  0, 0, 332, 234
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION
 CAPTION "Error"
-FONT 8, "MS Sans Serif", 0, 0, 0x0
+FONT 8, "MS Sans Serif"
 BEGIN
     DEFPUSHBUTTON   "Close",IDOK,265,215,60,15
     EDITTEXT        IDC_EDIT_ERROR,5,80,320,130,ES_MULTILINE | ES_READONLY | 
@@ -37,13 +37,13 @@ BEGIN
     PUSHBUTTON      "View Log",IDC_BUTTON_VIEW_LOG,8,215,74,15
     PUSHBUTTON      "Report the Error",IDC_BUTTON_REPORT,90,215,76,15
     PUSHBUTTON      "Restart Game",IDC_BUTTON_RESTART,175,215,80,15
-    CONTROL         129,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
+    CONTROL         131,IDC_STATIC,"Static",SS_BITMAP,0,0,332,38
     LTEXT           "Sorry!  A fatal error has occurred.\r\n\r\nSpecific details about the error may be shown in the box below:",
                     IDC_STATIC,7,46,298,28
 END
 
-IDD_LOADING_DIALOG DIALOG  0, 0, 312, 82
-STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE
+IDD_LOADING_DIALOG DIALOG DISCARDABLE  0, 0, 312, 82
+STYLE DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_VISIBLE
 FONT 8, "MS Sans Serif"
 BEGIN
     CTEXT           "line1",IDC_STATIC_MESSAGE1,0,41,310,10,SS_NOPREFIX | 
@@ -55,11 +55,13 @@ BEGIN
     CONTROL         "",IDC_SPLASH,"Static",SS_BITMAP,0,0,310,25
 END
 
-IDD_DISASM_CRASH DIALOGEX 0, 0, 399, 151
-STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION
+IDD_DISASM_CRASH DIALOG DISCARDABLE  0, 0, 399, 151
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
 CAPTION "Error"
-FONT 8, "MS Sans Serif", 0, 0, 0x1
+FONT 8, "MS Sans Serif"
 BEGIN
+    CONTROL         131,IDC_STATIC,"Static",SS_BITMAP,1,0,332,38
+    CONTROL         131,IDC_STATIC,"Static",SS_BITMAP,66,0,332,38
     PUSHBUTTON      "&View crash dump",IDC_CRASH_SAVE,1,135,70,15
     PUSHBUTTON      "View &Log",IDC_VIEW_LOG,75,135,70,15
     PUSHBUTTON      "Report the &Error",IDC_BUTTON_REPORT,210,135,76,15
@@ -69,15 +71,13 @@ BEGIN
                     WS_VSCROLL | WS_TABSTOP
     LTEXT           "crash reason: programmer needs good whack on head",
                     IDC_STATIC_BOMBREASON,8,120,219,8
-    CONTROL         121,IDC_STATIC,"Static",SS_BITMAP,1,2,396,36
     LTEXT           "A fatal error has occurred.  Diagnostic information has been saved to a file called ""crashinfo.txt"" in the game program directory.  Hit ""View crash dump"" to view it.  Please include this file in all bug reports.",
                     IDC_STATIC,8,41,382,19
     LTEXT           "Estimated call stack",IDC_STATIC,7,64,64,8
 END
 
-IDD_OK DIALOG  0, 0, 318, 87
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | 
-    WS_CAPTION
+IDD_OK DIALOG DISCARDABLE  0, 0, 318, 87
+STYLE DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION
 CAPTION "Prompt"
 FONT 8, "MS Shell Dlg"
 BEGIN
@@ -90,8 +90,8 @@ BEGIN
 END
 
 IDD_DRIVER DIALOGEX 0, 0, 286, 125
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | 
-    WS_CAPTION | WS_SYSMENU
+STYLE DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | 
+    WS_SYSMENU
 CAPTION "Outdated Drivers"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
@@ -109,7 +109,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO MOVEABLE PURE 
 BEGIN
     IDD_LOADING_DIALOG, DIALOG
     BEGIN
@@ -152,18 +152,18 @@ END
 // TEXTINCLUDE
 //
 
-1 TEXTINCLUDE 
+1 TEXTINCLUDE MOVEABLE PURE 
 BEGIN
     "WindowsResources.h\0"
 END
 
-2 TEXTINCLUDE 
+2 TEXTINCLUDE MOVEABLE PURE 
 BEGIN
     "#include ""afxres.h""\r\n"
     "\0"
 END
 
-3 TEXTINCLUDE 
+3 TEXTINCLUDE MOVEABLE PURE 
 BEGIN
     "\r\n"
     "\0"
@@ -179,8 +179,9 @@ END
 
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
-IDI_ICON                ICON                    "StepMania.ICO"
+IDI_ICON                ICON    DISCARDABLE     "StepMania.ICO"
 
+#ifndef _MAC
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
@@ -203,14 +204,14 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "http://www.stepmania.com"
-            VALUE "FileDescription", "StepMania"
-            VALUE "FileVersion", "1, 0, 0, 1"
-            VALUE "InternalName", "StepMania"
-            VALUE "LegalCopyright", "Copyright © 2001-2002"
-            VALUE "OriginalFilename", "StepMania.exe"
-            VALUE "ProductName", "  StepMania"
-            VALUE "ProductVersion", "1, 0, 0, 1"
+            VALUE "CompanyName", "http://www.stepmania.com\0"
+            VALUE "FileDescription", "StepMania\0"
+            VALUE "FileVersion", "1, 0, 0, 1\0"
+            VALUE "InternalName", "StepMania\0"
+            VALUE "LegalCopyright", "Copyright © 2001-2002\0"
+            VALUE "OriginalFilename", "StepMania.exe\0"
+            VALUE "ProductName", "  StepMania\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
         END
     END
     BLOCK "VarFileInfo"
@@ -219,14 +220,15 @@ BEGIN
     END
 END
 
+#endif    // !_MAC
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
 //
 
-BITMAP_ERROR            BITMAP                  "DialogCrashHeader.bmp"
-BITMAP_CRASH            BITMAP                  "DialogErrorHeader.bmp"
+IDB_HEADER              BITMAP  DISCARDABLE     "header.bmp"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

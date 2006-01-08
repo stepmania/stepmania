@@ -13,7 +13,7 @@
 #include "ThemeManager.h"
 #include "SpecialFiles.h"
 #include "IniFile.h"
-
+#include "LocalizedString.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -40,6 +40,8 @@ CSmpackageApp theApp;
 #include "ProductInfo.h"
 extern RString GetLastErrorString();
 
+static LocalizedString FAILED_TO_OPEN			( "CSmpackageApp", "Failed to open '%s': %s" );
+static LocalizedString THE_FILE_DOES_NOT_EXIST	( "CSmpackageApp", "The file '%s' does not exist.  Aborting installation." );
 BOOL CSmpackageApp::InitInstance()
 {
 	TCHAR szCurrentDirectory[MAX_PATH];
@@ -68,7 +70,7 @@ BOOL CSmpackageApp::InitInstance()
 			RString sPersonalDir = SpecialDirs::GetMyDocumentsDir();
 			RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
 			if( NULL == ::ShellExecute( NULL, "open", sFile, "", "", SW_SHOWNORMAL ) )
-				AfxMessageBox( "Failed to open '" + sFile + "': " + GetLastErrorString() );
+				AfxMessageBox( ssprintf(FAILED_TO_OPEN.GetValue(),sFile.c_str(),GetLastErrorString().c_str()) );
 			exit(0);
 		}
 	}
@@ -87,7 +89,7 @@ BOOL CSmpackageApp::InitInstance()
 		{
 			if( !FILEMAN->DoesFileExist(sPath) )
 			{
-				AfxMessageBox( ssprintf("The file '%s' does not exist.  Aborting installation.",sPath), MB_ICONERROR );
+				AfxMessageBox( ssprintf(THE_FILE_DOES_NOT_EXIST.GetValue(),sPath.c_str()), MB_ICONERROR );
 				exit(0);
 			}
 
@@ -123,8 +125,7 @@ BOOL CSmpackageApp::InitInstance()
 	bool bPseudoLocalize;
 	ini.GetValue( "PseudoLocalize", "Language", bPseudoLocalize );
 
-	THEME->SwitchThemeAndLanguage( SpecialFiles::BASE_THEME_NAME, sLanguage );
-	THEME->SetPseudoLocalilze( bPseudoLocalize );
+	THEME->SwitchThemeAndLanguage( SpecialFiles::BASE_THEME_NAME, sLanguage, bPseudoLocalize );
 
 
 	// Show the Manager Dialog

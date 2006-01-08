@@ -1,16 +1,17 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
+// Microsoft Developer Studio generated include file.
 // Used by WindowsResources.rc
 //
 #define IDC_CRASH_SAVE                  16
 #define IDD_ERROR_DIALOG                111
 #define IDD_LOADING_DIALOG              116
 #define BITMAP_LOADING                  117
-#define BITMAP_CRASH                    121
-#define BITMAP_ERROR                    129
 #define IDD_OK                          118
 #define IDD_DRIVER                      119
 #define IDD_DISASM_CRASH                120
+#define BITMAP_CRASH                    121
+#define BITMAP_ERROR                    129
+#define IDB_HEADER                      131
 #define IDC_SHOCKWAVEFLASH1             1000
 #define IDC_BUTTON_RESTART              1001
 #define IDM_TOGGLEFULLSCREEN            1002
@@ -44,7 +45,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        131
+#define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         40009
 #define _APS_NEXT_CONTROL_VALUE         1021
 #define _APS_NEXT_SYMED_VALUE           101

@@ -7,8 +7,6 @@
 // SMPackageInstallDlg.h : header file
 //
 
-#include "TransparentStatic.h"
-
 /////////////////////////////////////////////////////////////////////////////
 // CSMPackageInstallDlg dialog
 
@@ -40,7 +38,6 @@ protected:
 
 	HICON m_hIcon;
 	RString m_sPackagePath;
-	CTransparentStatic	m_staticHeaderText;
 
 	// Generated message map functions
 	//{{AFX_MSG(CSMPackageInstallDlg)
@@ -50,6 +47,8 @@ protected:
 	afx_msg void OnButtonEdit();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 };
 
 //{{AFX_INSERT_LOCATION}}

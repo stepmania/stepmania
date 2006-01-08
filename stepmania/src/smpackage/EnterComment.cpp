@@ -6,7 +6,7 @@
 #include "stdafx.h"
 #include "smpackage.h"
 #include "EnterComment.h"
-#include "SMPackageUtil.h"
+#include "archutils/Win32/DialogUtil.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -42,7 +42,7 @@ BOOL EnterComment::OnInitDialog()
 	CDialog::OnInitDialog();
 	
 	// TODO: Add extra initialization here
-	SMPackageUtil::LocalizeDialogAndContents( *this );
+	DialogUtil::LocalizeDialogAndContents( *this );
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE

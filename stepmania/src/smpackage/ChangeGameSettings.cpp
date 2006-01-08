@@ -9,6 +9,8 @@
 #include "IniFile.h"
 #include "SMPackageUtil.h"
 #include "SpecialFiles.h"
+#include ".\changegamesettings.h"
+#include "archutils/Win32/DialogUtil.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -41,6 +43,7 @@ void ChangeGameSettings::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(ChangeGameSettings, CDialog)
 	//{{AFX_MSG_MAP(ChangeGameSettings)
 	//}}AFX_MSG_MAP
+	ON_WM_CTLCOLOR()
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -51,7 +54,7 @@ BOOL ChangeGameSettings::OnInitDialog()
 	CDialog::OnInitDialog();
 	
 	// TODO: Add extra initialization here
-	SMPackageUtil::LocalizeDialogAndContents( *this );
+	DialogUtil::LocalizeDialogAndContents( *this );
 
 	//
 	// Fill the radio buttons
@@ -137,6 +140,21 @@ void ChangeGameSettings::OnOK()
 	ini.WriteFile( SpecialFiles::PREFERENCES_INI_PATH );
 	
 	CDialog::OnOK();
+}
+
+HBRUSH ChangeGameSettings::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+	HBRUSH hbr = CDialog::OnCtlColor(pDC, pWnd, nCtlColor);
+
+	// TODO:  Change any attributes of the DC here
+	if( pWnd->GetDlgCtrlID() == IDC_STATIC_HEADER_TEXT )
+	{
+        hbr = (HBRUSH)::GetStockObject(HOLLOW_BRUSH); 
+        pDC->SetBkMode(TRANSPARENT); 
+	}
+
+	// TODO:  Return a different brush if the default is not desired
+	return hbr;
 }
 
 /*

@@ -6,7 +6,10 @@
 #include "stdafx.h"
 #include "smpackage.h"
 #include "EditInsallations.h"
-#include "smpackageUtil.h"
+#include "SMPackageUtil.h"
+#include "archutils/Win32/DialogUtil.h"
+#include ".\editinsallations.h"
+#include "LocalizedString.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -43,6 +46,7 @@ BEGIN_MESSAGE_MAP(EditInsallations, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON_MAKE_DEFAULT, OnButtonMakeDefault)
 	ON_BN_CLICKED(IDC_BUTTON_ADD, OnButtonAdd)
 	//}}AFX_MSG_MAP
+	ON_LBN_SELCHANGE(IDC_LIST, OnLbnSelchangeList)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -53,7 +57,7 @@ BOOL EditInsallations::OnInitDialog()
 	CDialog::OnInitDialog();
 	
 	// TODO: Add extra initialization here
-	SMPackageUtil::LocalizeDialogAndContents( *this );	
+	DialogUtil::LocalizeDialogAndContents( *this );	
 
 	vector<RString> vs;
 	SMPackageUtil::GetStepManiaInstallDirs( vs );
@@ -69,17 +73,8 @@ BOOL EditInsallations::OnInitDialog()
 void EditInsallations::OnButtonRemove() 
 {
 	// TODO: Add your control notification handler code here
-	if( m_list.GetCount() == 1 )
-	{
-		AfxMessageBox( "You cannot remove the list item in the list." );
-		return;
-	}
-
-	if( m_list.GetCurSel() == LB_ERR )
-	{
-		AfxMessageBox( "You must select an item from the list first." );
-		return;
-	}
+	ASSERT( m_list.GetCount() > 1 );	// cannot remove the list item in the list
+	ASSERT( m_list.GetCurSel() != LB_ERR );
 
 	m_list.DeleteString( m_list.GetCurSel() );
 }
@@ -87,11 +82,7 @@ void EditInsallations::OnButtonRemove()
 void EditInsallations::OnButtonMakeDefault() 
 {
 	// TODO: Add your control notification handler code here
-	if( m_list.GetCurSel() == LB_ERR )
-	{
-		AfxMessageBox( "You must select an item from the list first." );
-		return;
-	}
+	ASSERT( m_list.GetCurSel() != LB_ERR );
 	
 	CString sText;
 	m_list.GetText( m_list.GetCurSel(), sText );
@@ -99,6 +90,7 @@ void EditInsallations::OnButtonMakeDefault()
 	m_list.InsertString( 0, sText );
 }
 
+static LocalizedString YOU_MUST_TYPE_IN ("EditInstallations","You must type a program directory before clicking Add.");
 void EditInsallations::OnButtonAdd() 
 {
 	// TODO: Add your control notification handler code here
@@ -107,7 +99,7 @@ void EditInsallations::OnButtonAdd()
 	
 	if( sText == "" )
 	{
-		AfxMessageBox( "You must type a SM or DWI program directory before clicking add." );
+		AfxMessageBox( YOU_MUST_TYPE_IN.GetValue() );
 		return;
 	}
 
@@ -127,6 +119,16 @@ void EditInsallations::OnOK()
 	}
 
 	CDialog::OnOK();
+}
+
+void EditInsallations::OnLbnSelchangeList()
+{
+	// TODO: Add your control notification handler code here
+	bool bSomethingSelected = m_list.GetCurSel() != LB_ERR;
+	bool bMoreThanOne = m_list.GetCurSel() != LB_ERR;
+
+	this->GetDlgItem(IDC_BUTTON_MAKE_DEFAULT)->EnableWindow( bSomethingSelected );
+	this->GetDlgItem(IDC_BUTTON_REMOVE)->EnableWindow( bMoreThanOne );
 }
 
 /*

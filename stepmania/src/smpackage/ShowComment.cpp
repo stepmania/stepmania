@@ -6,7 +6,7 @@
 #include "stdafx.h"
 #include "smpackage.h"
 #include "ShowComment.h"
-#include "SMPackageUtil.h"
+#include "archutils/Win32/DialogUtil.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -50,7 +50,7 @@ BOOL ShowComment::OnInitDialog()
 	CDialog::OnInitDialog();
 	
 	// TODO: Add extra initialization here
-	SMPackageUtil::LocalizeDialogAndContents( *this );
+	DialogUtil::LocalizeDialogAndContents( *this );
 	
 	m_edit.SetWindowText( m_sComment );
 
