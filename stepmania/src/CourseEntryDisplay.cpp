@@ -132,15 +132,29 @@ void CourseEntryDisplay::SetFromGameState( int iCourseEntryIndex )
 			int iLow = ce->iLowMeter;
 			int iHigh = ce->iHighMeter;
 
+			bool bLowIsSet = iLow != -1;
+			bool bHighIsSet = iHigh != -1;
+
 			CString s;
-			if( iLow == -1  &&  iHigh != -1 )
-				s = ssprintf( "%d+", iHigh );
-			else if( iLow != -1  &&  iHigh == -1 )
-				s = ssprintf( "%d-", iLow );
-			else if( iLow != -1  &&  iHigh != -1 )
-				s = ssprintf( "%d-%d", iLow, iHigh );
-			else
+			if( !bLowIsSet  &&  !bHighIsSet )
+			{
 				s = "?";
+			}
+			if( !bLowIsSet  &&  bHighIsSet )
+			{
+				s = ssprintf( ">=%d", iHigh );
+			}
+			else if( bLowIsSet  &&  !bHighIsSet )
+			{
+				s = ssprintf( "<=%d", iLow );
+			}
+			else if( bLowIsSet  &&  bHighIsSet )
+			{
+				if( iLow == iHigh )
+					s = ssprintf( "%d", iLow );
+				else
+					s = ssprintf( "%d-%d", iLow, iHigh );
+			}
 
 			Difficulty dc = te->dc;
 			if( dc == DIFFICULTY_INVALID )
