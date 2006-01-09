@@ -238,7 +238,6 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 
 	if( SHOW_EXIT_ROW )
 	{
-		// TRICKY:  Add "EXIT" item
 		m_pRows.push_back( new OptionRow(&m_OptionRowType) );
 		OptionRow &row = *m_pRows.back();
 		row.LoadExit();
