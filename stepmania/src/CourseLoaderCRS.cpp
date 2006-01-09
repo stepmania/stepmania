@@ -142,11 +142,11 @@ bool CourseLoaderCRS::LoadFromMsd( const CString &sPath, const MsdFile &msd, Cou
 			}
 			else if( sParams[1] == "*" )
 			{
-				new_entry.bSecret = true;
+				//new_entry.bSecret = true;
 			}
 			else if( sParams[1].Right(1) == "*" )
 			{
-				new_entry.bSecret = true;
+				//new_entry.bSecret = true;
 				CString sSong = sParams[1];
 				sSong.Replace( "\\", "/" );
 				vector<CString> bits;
