@@ -195,6 +195,104 @@ void CourseUtil::MakeDefaultEditCourseEntry( CourseEntry& out )
 	out.baseDifficulty = DIFFICULTY_MEDIUM;
 }
 
+//////////////////////////////////
+// Autogen
+//////////////////////////////////
+
+void CourseUtil::AutogenEndlessFromGroup( const CString &sGroupName, Difficulty diff, Course &out )
+{
+	out.m_bIsAutogen = true;
+	out.m_bRepeat = true;
+	out.m_bShuffle = true;
+	out.m_iLives = -1;
+	FOREACH_Difficulty(dc)
+		out.m_iCustomMeter[dc] = -1;
+
+	if( sGroupName == "" )
+	{
+		out.m_sMainTitle = "All Songs";
+		// m_sBannerPath = ""; // XXX
+	}
+	else
+	{
+		out.m_sMainTitle = SONGMAN->ShortenGroupName( sGroupName );
+		out.m_sBannerPath = SONGMAN->GetSongGroupBannerPath( sGroupName );
+	}
+
+	// We want multiple songs, so we can try to prevent repeats during
+	// gameplay. (We might still get a repeat at the repeat boundary,
+	// but that'd be rare.) -glenn
+	CourseEntry e;
+	e.sSongGroup = sGroupName;
+	e.baseDifficulty = diff;
+	e.bSecret = true;
+
+	vector<Song*> vSongs;
+	SONGMAN->GetSongs( vSongs, e.sSongGroup );
+	for( unsigned i = 0; i < vSongs.size(); ++i)
+		out.m_vEntries.push_back( e );
+}
+
+void CourseUtil::AutogenNonstopFromGroup( const CString &sGroupName, Difficulty diff, Course &out )
+{
+	AutogenEndlessFromGroup( sGroupName, diff, out );
+
+	out.m_bRepeat = false;
+
+	out.m_sMainTitle += " Random";	
+
+	// resize to 4
+	while( out.m_vEntries.size() < 4 )
+		out.m_vEntries.push_back( out.m_vEntries[0] );
+	while( out.m_vEntries.size() > 4 )
+		out.m_vEntries.pop_back();
+}
+
+void CourseUtil::AutogenOniFromArtist( const CString &sArtistName, CString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc, Course &out )
+{
+	out.m_bIsAutogen = true;
+	out.m_bRepeat = false;
+	out.m_bShuffle = true;
+	out.m_bSortByMeter = true;
+
+	out.m_iLives = 4;
+	FOREACH_Difficulty(cd)
+		out.m_iCustomMeter[cd] = -1;
+
+	ASSERT( sArtistName != "" );
+	ASSERT( aSongs.size() > 0 );
+
+	/* "Artist Oni" is a little repetitive; "by Artist" stands out less, and lowercasing
+	 * "by" puts more emphasis on the artist's name.  It also sorts them together. */
+	out.m_sMainTitle = "by " + sArtistName;
+	if( sArtistNameTranslit != sArtistName )
+		out.m_sMainTitleTranslit = "by " + sArtistNameTranslit;
+
+
+	// m_sBannerPath = ""; // XXX
+
+	/* Shuffle the list to determine which songs we'll use.  Shuffle it deterministically,
+	 * so we always get the same set of songs unless the song set changes. */
+	{
+		RandomGen rng( GetHashForString( sArtistName ) + aSongs.size() );
+		random_shuffle( aSongs.begin(), aSongs.end(), rng );
+	}
+
+	/* Only use up to four songs. */
+	if( aSongs.size() > 4 )
+		aSongs.erase( aSongs.begin()+4, aSongs.end() );
+
+	CourseEntry e;
+	e.baseDifficulty = dc;
+
+	for( unsigned i = 0; i < aSongs.size(); ++i )
+	{
+		e.pSong = aSongs[i];
+		out.m_vEntries.push_back( e );
+	}
+}
+
+
 
 //////////////////////////////////
 // CourseID

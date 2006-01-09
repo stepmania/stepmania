@@ -171,9 +171,6 @@ public:
 
 	void RevertFromDisk();
 	void Init();
-	void AutogenEndlessFromGroup( CString sGroupName, Difficulty dc );
-	void AutogenNonstopFromGroup( CString sGroupName, Difficulty dc );
-	void AutogenOniFromArtist( CString sArtistName, CString sArtistNameTranslit, vector<Song*> aSongs, Difficulty dc );
 
 	// sorting values
 	int		m_SortOrder_TotalDifficulty;
