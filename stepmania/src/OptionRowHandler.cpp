@@ -21,9 +21,9 @@
 #include "CharacterManager.h"
 #include "ScreenManager.h"
 
-#define ENTRY(s)					THEME->GetMetric ("ScreenOptionsMaster",s)
-#define ENTRY_MODE(s,i)				THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
-#define ENTRY_DEFAULT(s)			THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
+#define ENTRY(s)			THEME->GetMetric ("ScreenOptionsMaster",s)
+#define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
+#define ENTRY_DEFAULT(s)	THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
 
 void OptionRowHandler::GetIconTextAndGameCommand( const OptionRowDefinition &def, int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const
 {
