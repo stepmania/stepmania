@@ -197,11 +197,7 @@ void ScreenWithMenuElements::LoadHelpText()
 {
 	vector<CString> vs;
 	CString s = THEME->GetString(m_sName,"HelpText");
-	split( s, "\n", vs );
-
-	// hack to get newlines in a tip
-	FOREACH( CString, vs, s )
-		s->Replace( "\\n", "\n" );
+	split( s, "::", vs );
 
 	m_textHelp->SetTips( vs );
 	m_textHelp->PlayCommand( "Changed" );

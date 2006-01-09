@@ -778,10 +778,6 @@ void ThemeManager::EvaluateString( RString &sText )
 	 * Still do font aliases on the resulting string. */
 	LuaHelpers::RunAtExpressionS( sText );
 
-	// "::" means newline since you can't use line breaks in an ini file.
-	// XXX: this makes it impossible to put a colon at the end of a line, eg: "Color:\nRed"
-	sText.Replace("::","\n");
-
 	FontCharAliases::ReplaceMarkers( sText );
 }
 
