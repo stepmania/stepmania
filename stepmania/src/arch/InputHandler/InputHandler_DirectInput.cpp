@@ -65,7 +65,7 @@ static int GetNumUsbHidDevices()
 	// The "Enum" key doesn't exist if no hid devices are attached, so it's expected that GetRegValue will sometimes fail.
 	// TODO: Does this work in Win98 and Win2K?
 	int i = 0;	
-	RegistryAccess::GetRegValue( "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\HidUsb\\Enum", "Count", i );
+	RegistryAccess::GetRegValue( "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\HidUsb\\Enum", "Count", i, false );	// don't warn on error
 	return i;
 }
 
@@ -384,7 +384,28 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 			switch( in.type )
 			{
 			case in.KEY:
-				ButtonPressed( DeviceInput(dev, (DeviceButton) in.num, -1, tm), !!(evtbuf[i].dwData & 0x80)) ;
+				/*	// "Joystick with keyboard" hack
+				switch( in.num )
+				{
+				case 115:	//s
+					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_UP, -1, tm), !!(evtbuf[i].dwData & 0x80) );
+					break;
+				case 120:	//x
+					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_DOWN, -1, tm), !!(evtbuf[i].dwData & 0x80) );
+					break;
+				case 122:	//z
+					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_LEFT, -1, tm), !!(evtbuf[i].dwData & 0x80) );
+					break;
+				case 99:	//c
+					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_RIGHT, -1, tm), !!(evtbuf[i].dwData & 0x80) );
+					break;
+				default:
+				*/
+					ButtonPressed( DeviceInput(dev, (DeviceButton) in.num, -1, tm), !!(evtbuf[i].dwData & 0x80)) ;
+				/*
+					break;
+				}
+				*/
 				break;
 
 			case in.BUTTON:

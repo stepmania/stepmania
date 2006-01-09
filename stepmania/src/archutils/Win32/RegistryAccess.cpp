@@ -36,7 +36,7 @@ static bool GetRegKeyType( const RString &sIn, RString &sOut, HKEY &key )
 
 /* Given a full key, eg. "HKEY_LOCAL_MACHINE\hardware\foo", open it and return it.
  * On error, return NULL. */
-static HKEY OpenRegKey( const RString &sKey )
+static HKEY OpenRegKey( const RString &sKey, bool bWarnOnError = true )
 {
 	RString sSubkey;
 	HKEY hType;
@@ -47,7 +47,8 @@ static HKEY OpenRegKey( const RString &sKey )
 	LONG retval = RegOpenKeyEx( hType, sSubkey, 0, KEY_READ, &hRetKey );
 	if ( retval != ERROR_SUCCESS )
 	{
-		LOG->Warn( werr_ssprintf(retval, "RegOpenKeyEx(%x,%s) error", hType, sSubkey.c_str()) );
+		if( bWarnOnError )
+			LOG->Warn( werr_ssprintf(retval, "RegOpenKeyEx(%x,%s) error", hType, sSubkey.c_str()) );
 		return NULL;
 	}
 
@@ -80,9 +81,9 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, RSt
 	return true;
 }
 
-bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, int &iVal )
+bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, int &iVal, bool bWarnOnError )
 {
-	HKEY hKey = OpenRegKey( sKey );
+	HKEY hKey = OpenRegKey( sKey, bWarnOnError );
 	if( hKey == NULL )
 		return false;
 
