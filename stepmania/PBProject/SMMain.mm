@@ -77,35 +77,44 @@ static void HandleNSException( NSException *exception )
 	FAIL_M( ssprintf("%s raised: %s", [[exception name] UTF8String], [[exception reason] UTF8String]) );
 }
 
-static NSMenuItem *MenuItem( const char *title, SEL action, NSString *code )
+static NSMenuItem *MenuItem( NSString *title, SEL action, NSString *code )
 {
 	// Autorelease these because they'll be retained by the NSMenu.
-	return [[[NSMenuItem alloc] initWithTitle:[NSString stringWithUTF8String:title]
-									   action:action keyEquivalent:code] autorelease];
+	return [[[NSMenuItem alloc] initWithTitle:title action:action keyEquivalent:code] autorelease];
 }
 
 static void setupMenus( void )
 {
+	// Get the localized strings from the file.
+	NSString *sWindow =          NSLocalizedString( @"Window",              @"Menu title" );
+	NSString *sHideOthers =      NSLocalizedString( @"Hide Others",         @"Menu item" );
+	NSString *sAbout =           NSLocalizedString( @"About " PRODUCT_NAME, @"Menu item" );
+	NSString *sHide =            NSLocalizedString( @"Hide " PRODUCT_NAME,  @"Menu item" );
+	NSString *sShowAll =         NSLocalizedString( @"Show All",            @"Menu item" );
+	NSString *sQuit =            NSLocalizedString( @"Quit " PRODUCT_NAME,  @"Menu item" );
+	NSString *sMinimize =        NSLocalizedString( @"Minimize",            @"Menu item" );
+	NSString *sEnterFullScreen = NSLocalizedString( @"Enter Full Screen",   @"Menu item" );
+	
 	NSMenu *mainMenu = [[[NSMenu alloc] initWithTitle:@""] autorelease];
 	NSMenu *appMenu = [[[NSMenu alloc] initWithTitle:@PRODUCT_NAME] autorelease];
-	NSMenu *windowMenu = [[[NSMenu alloc] initWithTitle:@"Window"] autorelease];
-	NSMenuItem *hideOthers = MenuItem( "Hide Others", @selector(hideOtherApplications:), @"h" );
+	NSMenu *windowMenu = [[[NSMenu alloc] initWithTitle:sWindow] autorelease];
+	NSMenuItem *hideOthers = MenuItem( sHideOthers, @selector(hideOtherApplications:), @"h" );
 	
 	[hideOthers setKeyEquivalentModifierMask:NSAlternateKeyMask | NSCommandKeyMask ];
 	
-	[appMenu addItem:MenuItem( "About " PRODUCT_NAME, @selector(orderFrontStandardAboutPanel:), @"" )];
+	[appMenu addItem:MenuItem( sAbout, @selector(orderFrontStandardAboutPanel:), @"" )];
 	[appMenu addItem:[NSMenuItem separatorItem]];
-	[appMenu addItem:MenuItem( "Hide " PRODUCT_NAME, @selector(hide:), @"h" )];
+	[appMenu addItem:MenuItem( sHide, @selector(hide:), @"h" )];
 	[appMenu addItem:hideOthers];
-	[appMenu addItem:MenuItem( "Show All", @selector(unhideAllApplications:), @"" )];
+	[appMenu addItem:MenuItem( sShowAll, @selector(unhideAllApplications:), @"" )];
 	[appMenu addItem:[NSMenuItem separatorItem]];
-	[appMenu addItem:MenuItem( "Quit " PRODUCT_NAME, @selector(terminate:), @"q" )];
+	[appMenu addItem:MenuItem( sQuit, @selector(terminate:), @"q" )];
 	
-	[windowMenu addItem:MenuItem( "Minimize", @selector(performMiniaturize:), @"m" )];
+	[windowMenu addItem:MenuItem( sMinimize, @selector(performMiniaturize:), @"m" )];
 	[windowMenu addItem:[NSMenuItem separatorItem]];
 	
 	// Add a Full Screen item.
-	NSMenuItem *item = MenuItem( "Full Screen", @selector(fullscreen:), @"\n" );
+	NSMenuItem *item = MenuItem( sEnterFullScreen, @selector(fullscreen:), @"\n" );
 	
 	[item setKeyEquivalentModifierMask:NSAlternateKeyMask]; // opt-enter
 	[windowMenu addItem:item];
