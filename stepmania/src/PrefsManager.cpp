@@ -411,12 +411,12 @@ static const CString GAME_SECTION_PREFIX = "Game-";
 
 void PrefsManager::ReadPrefsFromIni( const IniFile &ini, const CString &sSection )
 {
-	// Apply our fallback (if any) before applying ourself.
+	// Apply our fallback recursively (if any) before applying ourself.
 	// TODO: detect circular?
 	CString sFallback;
 	if( ini.GetValue(sSection,"Fallback",sFallback) )
 	{
-		IPreference::ReadAllPrefsFromNode( ini.GetChild(sFallback) );
+		ReadPrefsFromIni( ini, sFallback );
 	}
 
 	//IPreference *pPref = PREFSMAN->GetPreferenceByName( *sName );
