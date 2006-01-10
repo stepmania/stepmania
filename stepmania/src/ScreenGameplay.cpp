@@ -2172,27 +2172,11 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 
 	if( GAMESTATE->m_bMultiplayer )
 	{
-		MultiPlayer mp = MultiPlayer_INVALID;
-
-		// Translate input and sent to the appropriate player.  Assume that all 
-		// joystick devices are mapped the same as the master player.
-		if( input.DeviceI.IsJoystick() )
+		if( input.mp != MultiPlayer_INVALID  &&  
+			input.StyleI.IsValid() && 
+			GAMESTATE->IsMultiPlayerEnabled(input.mp) )
 		{
-			DeviceInput _DeviceI = input.DeviceI;
-			_DeviceI.device = DEVICE_JOY1;
-			GameInput _GameI;
-			INPUTMAPPER->DeviceToGame( _DeviceI, _GameI );
-
-			if( input.GameI.IsValid() )
-			{
-				StyleInput _StyleI;
-				INPUTMAPPER->GameToStyle( _GameI, _StyleI );
-
-				mp = InputMapper::InputDeviceToMultiPlayer( input.DeviceI.device );
-
-				if( mp>=0 && mp<NUM_MultiPlayer )
-					m_vPlayerInfo[mp].m_pPlayer->Step( _StyleI.col, input.DeviceI.ts );
-			}
+			m_vPlayerInfo[input.mp].m_pPlayer->Step( input.StyleI.col, input.DeviceI.ts );
 		}
 	}
 	else

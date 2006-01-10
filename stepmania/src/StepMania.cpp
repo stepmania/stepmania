@@ -1332,6 +1332,17 @@ void HandleInputEvents(float fDeltaTime)
 		input.DeviceI = (DeviceInput)ieArray[i];
 		input.type = ieArray[i].type;
 
+		// hack for testing with only one joytick
+		if( input.DeviceI.IsJoystick() )
+		{
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LSHIFT) ) )
+				input.DeviceI.device = (InputDevice)(input.DeviceI.device + 1);
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL) ) )
+				input.DeviceI.device = (InputDevice)(input.DeviceI.device + 2);
+			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LALT) ) )
+				input.DeviceI.device = (InputDevice)(input.DeviceI.device + 4);
+		}
+
 		INPUTMAPPER->DeviceToGame( input.DeviceI, input.GameI );
 		
 		if( input.GameI.IsValid()  &&  input.type == IET_FIRST_PRESS )
@@ -1342,37 +1353,31 @@ void HandleInputEvents(float fDeltaTime)
 			INPUTMAPPER->GameToStyle( input.GameI, input.StyleI );
 		}
 
-		if( !GAMESTATE->m_bMultiplayer )
-		{
-			input.mp = MultiPlayer_INVALID;
-		}
-		else
+		input.mp = MultiPlayer_INVALID;
+		
+		if( GAMESTATE->m_bMultiplayer )
 		{
 			// Translate input and sent to the appropriate player.  Assume that all 
 			// joystick devices are mapped the same as the master player.
 			if( input.DeviceI.IsJoystick() )
 			{
-				DeviceInput _DeviceI = input.DeviceI;
-				_DeviceI.device = DEVICE_JOY1;
-				GameInput _GameI;
-				INPUTMAPPER->DeviceToGame( _DeviceI, _GameI );
+				DeviceInput diTemp = input.DeviceI;
+				diTemp.device = DEVICE_JOY1;
 
-				if( input.GameI.IsValid() )
+				//LOG->Trace( "device %d, %d", diTemp.device, diTemp.button );
+				if( INPUTMAPPER->DeviceToGame(diTemp, input.GameI) )
 				{
-					StyleInput _StyleI;
-					INPUTMAPPER->GameToStyle( _GameI, _StyleI );
-					input.mp = InputMapper::InputDeviceToMultiPlayer( input.DeviceI.device );
-				}
+					//LOG->Trace( "game %d %d", input.GameI.controller, input.GameI.button );
+					INPUTMAPPER->GameToStyle( input.GameI, input.StyleI );
+					INPUTMAPPER->GameToMenu( input.GameI, input.MenuI );
 
-				/*
-				// hack for testing with only one joytick
-				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LSHIFT) ) )
-					p = (MultiPlayer)(p + 1);
-				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL) ) )
-					p = (MultiPlayer)(p + 2);
-				if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LALT) ) )
-					p = (MultiPlayer)(p + 4);
-				*/
+					//LOG->Trace( "style %d %d", input.StyleI.player, input.StyleI.col );
+					//LOG->Trace( "menu %d %d", input.MenuI.player, input.MenuI.button );
+
+					input.mp = InputMapper::InputDeviceToMultiPlayer( input.DeviceI.device );
+					//LOG->Trace( "multiplayer %d", input.mp );
+					ASSERT( input.mp >= 0 && input.mp < NUM_MultiPlayer );					
+				}
 			}
 		}
 

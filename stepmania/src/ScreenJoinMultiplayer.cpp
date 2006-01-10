@@ -45,7 +45,6 @@ void ScreenJoinMultiplayer::Init()
 	GAMEMAN->GetStylesForGame( GAMESTATE->m_pCurGame, v, false );
 	GAMESTATE->m_pCurStyle.Set( v[0] );
 
-	GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
 	GAMESTATE->m_bTemporaryEventMode = true;
 	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 
@@ -106,57 +105,35 @@ void ScreenJoinMultiplayer::Input( const InputEventPlus &input )
 	// joystick devices are mapped the same as the master player.
 	if( input.type == IET_FIRST_PRESS  &&
 		input.DeviceI.device >= DEVICE_JOY1  &&  
-		input.DeviceI.device < DEVICE_JOY1 + NUM_MultiPlayer )
-	{
-		DeviceInput di = input.DeviceI;
-		di.device = DEVICE_JOY1;
-		GameInput gi;
-		INPUTMAPPER->DeviceToGame( di, gi );
+		input.DeviceI.device < DEVICE_JOY1 + NUM_MultiPlayer &&
+		input.MenuI.IsValid() )
+	{			
+		MultiPlayerStatus old = m_MultiPlayerStatus[input.mp];
 
-		if( gi.IsValid() )
+		switch( input.MenuI.button )
 		{
-			MenuInput mi;
-			INPUTMAPPER->GameToMenu( gi, mi );
-
-			MultiPlayer p = InputMapper::InputDeviceToMultiPlayer( input.DeviceI.device );
-
-			// testing hack
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LSHIFT) ) )
-				p = (MultiPlayer)(p + 1);
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LCTRL) ) )
-				p = (MultiPlayer)(p + 2);
-			if( INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD,KEY_LALT) ) )
-				p = (MultiPlayer)(p + 4);
-
-			ASSERT( p>=0 && p<NUM_MultiPlayer );
-			
-			MultiPlayerStatus old = m_MultiPlayerStatus[p];
-
-			switch( mi.button )
+		case MENU_BUTTON_UP:
+			if( old == MultiPlayerStatus_NotJoined )
 			{
-			case MENU_BUTTON_UP:
-				if( old == MultiPlayerStatus_NotJoined )
-				{
-					m_soundJoin.Play();
-					m_MultiPlayerStatus[p] = MultiPlayerStatus_Joined;
-					m_sprPlayer[p]->PlayCommand( MultiPlayerStatusToString(m_MultiPlayerStatus[p]) );
-				}
-				return;	// input handled
-			case MENU_BUTTON_DOWN:
-				if( old == MultiPlayerStatus_Joined )
-				{
-					m_soundUnjoin.Play();
-					m_MultiPlayerStatus[p] = MultiPlayerStatus_NotJoined;
-					m_sprPlayer[p]->PlayCommand( MultiPlayerStatusToString(m_MultiPlayerStatus[p]) );
-				}
-				return;	// input handled
-			case MENU_BUTTON_BACK:
-				MenuBack( GAMESTATE->m_MasterPlayerNumber );
-				return;	// input handled
-			case MENU_BUTTON_START:
-				MenuStart( GAMESTATE->m_MasterPlayerNumber );
-				return;	// input handled
+				m_soundJoin.Play();
+				m_MultiPlayerStatus[input.mp] = MultiPlayerStatus_Joined;
+				m_sprPlayer[input.mp]->PlayCommand( MultiPlayerStatusToString(m_MultiPlayerStatus[input.mp]) );
 			}
+			return;	// input handled
+		case MENU_BUTTON_DOWN:
+			if( old == MultiPlayerStatus_Joined )
+			{
+				m_soundUnjoin.Play();
+				m_MultiPlayerStatus[input.mp] = MultiPlayerStatus_NotJoined;
+				m_sprPlayer[input.mp]->PlayCommand( MultiPlayerStatusToString(m_MultiPlayerStatus[input.mp]) );
+			}
+			return;	// input handled
+		case MENU_BUTTON_BACK:
+			//MenuBack( GAMESTATE->m_MasterPlayerNumber );
+			return;	// input handled
+		case MENU_BUTTON_START:
+			MenuStart( GAMESTATE->m_MasterPlayerNumber );
+			return;	// input handled
 		}
 	}
 
@@ -183,8 +160,10 @@ void ScreenJoinMultiplayer::UpdatePlayerStatus( bool bFirstUpdate )
 	
 		InputDeviceState idsOld = m_InputDeviceState[p];
 		bool bWasConnected = idsOld == InputDeviceState_Connected;
-		
-		InputDeviceState idsNew = INPUTMAN->GetInputDeviceState(id);
+
+		// DEBUG
+		//InputDeviceState idsNew = INPUTMAN->GetInputDeviceState(id);
+		InputDeviceState idsNew = InputDeviceState_Connected; 
 		if( INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD,KEY_RSHIFT)) )
 			idsNew = InputDeviceState_Disconnected;
 		bool bIsConnected = idsNew == InputDeviceState_Connected;
@@ -235,8 +214,15 @@ void ScreenJoinMultiplayer::MenuBack( PlayerNumber pn )
 }
 
 static LocalizedString JOIN_2_OR_MORE_PLAYERS ("ScreenJoinMultiplayer", "You must join 2 or more players before continuing.");
+static LocalizedString ONLY_PLAYER_1_CAN_START ("ScreenJoinMultiplayer", "Only Player 1 can start the game.");
 void ScreenJoinMultiplayer::MenuStart( PlayerNumber pn )
 {
+	if( pn != PLAYER_1 )
+	{
+		ScreenPrompt::Prompt( SM_None, ONLY_PLAYER_1_CAN_START );
+		return;
+	}
+
 	int iNumJoinedPlayers = 0;
 	FOREACH_MultiPlayer( p )
 	{
