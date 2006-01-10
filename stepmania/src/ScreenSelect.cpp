@@ -93,6 +93,9 @@ void ScreenSelect::BeginScreen()
 
 	m_bTimeToFinalizePlayers = false;
 
+	m_timerIdleComment.GetDeltaTime();
+	m_timerIdleTimeout.GetDeltaTime();
+
 	// derived classes can override if they want
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 }
