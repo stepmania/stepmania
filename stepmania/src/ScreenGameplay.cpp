@@ -2105,7 +2105,8 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 
 	if( input.MenuI.IsValid()  &&  
 		m_DancingState != STATE_OUTRO  &&
-		GAMESTATE->IsHumanPlayer(input.MenuI.player) &&
+		GAMESTATE->IsHumanPlayer(input.MenuI.player)  &&
+		(!GAMESTATE->m_bMultiplayer || input.mp == MultiPlayer_1)  &&
 		!m_Cancel.IsTransitioning() )
 	{
 		/* Allow bailing out by holding the START button of all active players.  This
