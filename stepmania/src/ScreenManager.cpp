@@ -693,6 +693,7 @@ void ScreenManager::LoadDelayedScreen()
 	if( bWasOnSystemMenu && !bIsOnSystemMenu )
 		PREFSMAN->SavePrefsToDisk();
 
+	bTimeToDeleteScreens = (g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end());
 	if( bTimeToDeleteScreens )
 		DeletePreparedScreens();
 
