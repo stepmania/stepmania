@@ -102,8 +102,6 @@ void ScreenJoinMultiplayer::Input( const InputEventPlus &input )
 	if( this->IsTransitioning() )
 		return;
 
-	// Translate input and sent to the appropriate player.  Assume that all 
-	// joystick devices are mapped the same as the master player.
 	if( input.type == IET_FIRST_PRESS  &&
 		input.DeviceI.device >= DEVICE_JOY1  &&  
 		input.DeviceI.device < DEVICE_JOY1 + NUM_MultiPlayer &&
