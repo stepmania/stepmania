@@ -12,7 +12,9 @@
 #include "song.h"
 #include "ScoreKeeperNormal.h"
 #include "PercentageDisplay.h"
-
+#include "LocalizedString.h"
+#include "InputEventPlus.h"
+#include "ScreenManager.h"
 
 static const char *MultiplayerJudgeLineNames[] = {
 	"W1",
@@ -260,11 +262,33 @@ void ScreenEvaluationMultiplayer::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
+static LocalizedString ONLY_PLAYER_1_CAN_CONTINUE ("ScreenJoinMultiplayer", "Only Player 1 can continue.");
 void ScreenEvaluationMultiplayer::Input( const InputEventPlus &input )
 {
 	if( this->IsTransitioning() )
 		return;
 
+	if( input.type == IET_FIRST_PRESS  &&
+		input.DeviceI.device >= DEVICE_JOY1  &&  
+		input.DeviceI.device < DEVICE_JOY1 + NUM_MultiPlayer &&
+		input.MenuI.IsValid() )
+	{
+		switch( input.MenuI.button )
+		{
+		case MENU_BUTTON_START:
+			if( input.mp != MultiPlayer_1 )
+			{
+				SCREENMAN->SystemMessage( ONLY_PLAYER_1_CAN_CONTINUE );
+				SCREENMAN->PlayInvalidSound();
+			}
+			else
+			{
+				MenuStart( GAMESTATE->m_MasterPlayerNumber );
+			}
+			return;	// input handled
+		}
+	}
+	
 	ScreenWithMenuElements::Input( input );
 }
 
