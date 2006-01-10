@@ -136,7 +136,7 @@ protected:
 	bool IsLastSong();
 	void SetupSong( int iSongIndex );
 	void ReloadCurrentSong();
-	void LoadNextSong();
+	virtual void LoadNextSong();
 	void LoadCourseSongNumber( int SongNumber );
 	float StartPlayingSong(float MinTimeToNotes, float MinTimeToMusic);
 	void LoadLights();

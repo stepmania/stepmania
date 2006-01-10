@@ -1,5 +1,6 @@
 #include "global.h"
 #include "ScreenGameplayMultiplayer.h"
+#include "GameState.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenGameplayMultiplayer );
@@ -23,7 +24,17 @@ void ScreenGameplayMultiplayer::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoO
 	pi.LoadDummyP1();	// dummy autoplay NoteField
 };
 
-// lua end
+void ScreenGameplayMultiplayer::LoadNextSong()
+{
+	ScreenGameplay::LoadNextSong();
+
+	ASSERT( !m_vPlayerInfo.empty() );
+	int iIndex = m_vPlayerInfo.size()-1;
+	PlayerInfo &pi = m_vPlayerInfo[iIndex];
+	//pi.LoadDummyP1();	// dummy autoplay NoteField
+	pi.m_PlayerStateDummy = *GAMESTATE->m_pPlayerState[PLAYER_1];
+}
+
 
 /*
  * (c) 2005 Chris Danford
