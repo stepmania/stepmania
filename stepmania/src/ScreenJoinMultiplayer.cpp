@@ -96,6 +96,7 @@ void ScreenJoinMultiplayer::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
+static LocalizedString ONLY_PLAYER_1_CAN_START ("ScreenJoinMultiplayer", "Only Player 1 can start the game.");
 void ScreenJoinMultiplayer::Input( const InputEventPlus &input )
 {
 	if( this->IsTransitioning() )
@@ -132,7 +133,15 @@ void ScreenJoinMultiplayer::Input( const InputEventPlus &input )
 			//MenuBack( GAMESTATE->m_MasterPlayerNumber );
 			return;	// input handled
 		case MENU_BUTTON_START:
-			MenuStart( GAMESTATE->m_MasterPlayerNumber );
+			if( input.mp != MultiPlayer_1 )
+			{
+				SCREENMAN->SystemMessage( ONLY_PLAYER_1_CAN_START );
+				SCREENMAN->PlayInvalidSound();
+			}
+			else
+			{
+				MenuStart( GAMESTATE->m_MasterPlayerNumber );
+			}
 			return;	// input handled
 		}
 	}
@@ -214,15 +223,8 @@ void ScreenJoinMultiplayer::MenuBack( PlayerNumber pn )
 }
 
 static LocalizedString JOIN_2_OR_MORE_PLAYERS ("ScreenJoinMultiplayer", "You must join 2 or more players before continuing.");
-static LocalizedString ONLY_PLAYER_1_CAN_START ("ScreenJoinMultiplayer", "Only Player 1 can start the game.");
 void ScreenJoinMultiplayer::MenuStart( PlayerNumber pn )
 {
-	if( pn != PLAYER_1 )
-	{
-		ScreenPrompt::Prompt( SM_None, ONLY_PLAYER_1_CAN_START );
-		return;
-	}
-
 	int iNumJoinedPlayers = 0;
 	FOREACH_MultiPlayer( p )
 	{
