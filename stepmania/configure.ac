@@ -198,7 +198,7 @@ AC_CHECK_DECL(truncf, , AC_DEFINE([NEED_TRUNCF],1,[Need truncf]), [#include <mat
 # This doesn't work on glibc math functions:
 # AC_CHECK_FUNCS([sqrtf sinf tanf cosf acosf roundf truncf])
 
-AC_CHECK_DECLS([SIGPWR],,,[#include <signal.h>])
+AC_CHECK_DECLS([SIGPWR SIGUSR1],,,[#include <signal.h>])
 
 AC_ARG_ENABLE(tests, AC_HELP_STRING([--enable-tests], [Build test programs]), enable_tests=$enableval, enable_tests=no)
 AM_CONDITIONAL(BUILD_TESTS, test "$enable_tests" = "yes" )
