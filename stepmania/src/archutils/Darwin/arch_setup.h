@@ -22,6 +22,7 @@ typedef unsigned long long UInt64;
 #define HAVE_FFMPEG
 #define HAVE_SDL
 #define HAVE_PTHREAD_COND_TIMEDWAIT
+#define HAVE_DECL_SIGUSR1
 
 /* We have <machine/endian.h> which gets pulled in when we use gcc 4.0's <cstdlib>
  * but no <endian.h>. The definitions of LITTLE_ENDIAN, BIG_ENDIAN and end up conflicting
