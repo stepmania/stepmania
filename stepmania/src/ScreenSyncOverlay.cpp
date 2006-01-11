@@ -121,7 +121,7 @@ void ScreenSyncOverlay::UpdateText()
 					GLOBAL_OFFSET_FROM.GetValue(),
 					fOld, 
 					fNew,
-					fDelta > 0 ? EARLIER:LATER ).c_str() );
+					(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
 			}
 		}
 
@@ -136,7 +136,7 @@ void ScreenSyncOverlay::UpdateText()
 					SONG_OFFSET_FROM.GetValue(),
 					fOld, 
 					fNew,
-					fDelta > 0 ? EARLIER:LATER ).c_str() );
+					(fDelta > 0 ? EARLIER:LATER).GetValue().c_str() ) );
 			}
 		}
 
