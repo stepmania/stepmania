@@ -634,10 +634,23 @@ void ScreenManager::LoadDelayedScreen()
 	 * loaded, then do this cleanup later; otherwise we'll delete the prepared
 	 * screen.) */
 	bool bTimeToDeleteScreens = (g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end());
-	if( bTimeToDeleteScreens && PREFSMAN->m_bDelayedScreenLoad && !ScreenIsPrepped(sScreenName) )
+	vector<Actor*> apActorsToDelete;
+	if( bTimeToDeleteScreens && !ScreenIsPrepped(sScreenName) )
 	{
-		bTimeToDeleteScreens = false;
-		DeletePreparedScreens();
+		if( PREFSMAN->m_bDelayedScreenLoad )
+		{
+			DeletePreparedScreens();
+		}
+		else
+		{
+			/* Since DelayedScreenLoad is false, we want to keep the
+			 * old screens in memory until we finish loading the new
+			 * ones, in order to prevent unloading assets and then
+			 * immediately reloading them.  However, since the
+			 * screen isn't in the current group, we must remove
+			 * it from the pool before loading the new screen. */
+			GrabPreparedActors( apActorsToDelete );
+		}
 	}
 
 	// Load the screen, if it's not already prepared.
@@ -702,9 +715,13 @@ void ScreenManager::LoadDelayedScreen()
 	if( bWasOnSystemMenu && !bIsOnSystemMenu )
 		PREFSMAN->SavePrefsToDisk();
 
-	bTimeToDeleteScreens = (g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end());
-	if( bTimeToDeleteScreens )
-		DeletePreparedScreens();
+	if( !apActorsToDelete.empty() )
+	{
+		BeforeDeleteScreen();
+		FOREACH( Actor*, apActorsToDelete, a )
+			SAFE_DELETE( *a );
+		AfterDeleteScreen();
+	}
 
 	LOG->Trace("... PushScreen");
 	PushLoadedScreen( ls );
