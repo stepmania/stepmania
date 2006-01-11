@@ -90,6 +90,12 @@ Player::Player( bool bShowNoteField, bool bShowJudgment )
 		this->AddChild( m_pJudgment );
 	}
 
+	m_pControllerStateDisplay = NULL;
+	if( bShowJudgment )
+	{
+		m_pControllerStateDisplay = new ControllerStateDisplay;
+	}
+
 	m_pCombo = NULL;
 	if( bShowNoteField )
 	{
@@ -118,6 +124,7 @@ Player::Player( bool bShowNoteField, bool bShowJudgment )
 Player::~Player()
 {
 	SAFE_DELETE( m_pJudgment );
+	SAFE_DELETE( m_pControllerStateDisplay );
 	SAFE_DELETE( m_pCombo );
 	SAFE_DELETE( m_pAttackDisplay );
 	SAFE_DELETE( m_pNoteField );
@@ -234,6 +241,16 @@ void Player::Init(
 			this->AddChild( m_sprJudgmentFrame );
 		}
 	}
+
+	// Load CSD
+	// TODO: Don't reload every song
+	if( GAMESTATE->m_bMultiplayer  &&  m_pControllerStateDisplay  &&  !m_pControllerStateDisplay->IsLoaded() )	// only load the first time
+	{
+		m_pControllerStateDisplay->Load( pPlayerState->m_mp );
+		this->AddChild( m_pControllerStateDisplay );
+	}
+
+	this->SortByDrawOrder();
 
 	m_pPlayerState = pPlayerState;
 	m_pPlayerStageStats = pPlayerStageStats;
@@ -495,6 +512,13 @@ void Player::Update( float fDeltaTime )
 		Actor::TweenState::MakeWeightedAverage( m_pJudgment->DestTweenState(), ts1, ts2, fPercentCentered );
 		if( m_sprJudgmentFrame.IsLoaded() )
 			Actor::TweenState::MakeWeightedAverage( m_sprJudgmentFrame->DestTweenState(), ts1, ts2, fPercentCentered );
+		if( m_pControllerStateDisplay->IsLoaded() )
+		{
+			Actor::TweenState::MakeWeightedAverage( m_pControllerStateDisplay->DestTweenState(), ts1, ts2, fPercentCentered );
+	
+			// temp hack
+			m_pControllerStateDisplay->DestTweenState().pos.x *= 1.35f;
+		}
 	}
 
 
@@ -840,6 +864,8 @@ void Player::DrawTapJudgments()
 
 	if( m_sprJudgmentFrame.IsLoaded() )
 		m_sprJudgmentFrame->Draw();
+	if( m_pControllerStateDisplay )
+		m_pControllerStateDisplay->Draw();
 	if( m_pJudgment )
 		m_pJudgment->Draw();
 }

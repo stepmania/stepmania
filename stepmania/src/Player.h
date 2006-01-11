@@ -11,6 +11,7 @@
 #include "RageSound.h"
 #include "AttackDisplay.h"
 #include "NoteData.h"
+#include "ControllerStateDisplay.h"
 
 class ScoreDisplay;
 class LifeMeter;
@@ -93,6 +94,8 @@ protected:
 
 	Judgment		*m_pJudgment;
 	AutoActor		m_sprJudgmentFrame;
+	
+	ControllerStateDisplay		*m_pControllerStateDisplay;
 	
 	Combo			*m_pCombo;
 

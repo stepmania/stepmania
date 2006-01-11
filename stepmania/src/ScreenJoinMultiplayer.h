@@ -3,6 +3,7 @@
 
 #include "ScreenWithMenuElements.h"
 #include "RageSound.h"
+#include "ControllerStateDisplay.h"
 
 enum MultiPlayerStatus
 {
@@ -38,6 +39,7 @@ protected:
 	MultiPlayerStatus m_MultiPlayerStatus[NUM_MultiPlayer];
 
 	AutoActor m_sprPlayer[NUM_MultiPlayer];
+	ControllerStateDisplay m_ControllerState[NUM_MultiPlayer];
 
 	LuaExpression m_exprOnCommandFunction;	// params: self,itemIndex,numItems
 

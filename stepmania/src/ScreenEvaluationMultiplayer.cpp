@@ -15,6 +15,7 @@
 #include "LocalizedString.h"
 #include "InputEventPlus.h"
 #include "ScreenManager.h"
+#include "ControllerStateDisplay.h"
 
 static const char *MultiplayerJudgeLineNames[] = {
 	"W1",
@@ -46,6 +47,7 @@ protected:
 	AutoActor m_sprFrame;
 	PercentageDisplay	m_score;
 	BitmapText	m_textJudgmentNumber[NUM_MultiplayerJudgeLine];
+	ControllerStateDisplay m_ControllerStateDisplay;
 
 public:
 	MultiplayerEvalScoreRow( MultiPlayer mp, int iRankIndex )
@@ -93,6 +95,10 @@ public:
 
 			PositionItem( expr, &text, i, NUM_MultiplayerJudgeLine );
 		}
+
+		m_ControllerStateDisplay.Load( mp );
+		this->AddChild( &m_ControllerStateDisplay );
+		PositionItem( expr, &m_ControllerStateDisplay, NUM_MultiplayerJudgeLine, NUM_MultiplayerJudgeLine );
 	}
 };
 

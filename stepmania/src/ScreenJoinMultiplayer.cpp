@@ -62,6 +62,8 @@ void ScreenJoinMultiplayer::Init()
 		this->AddChild( m_sprPlayer[p] );
 
 		LUA->UnsetGlobal( "ThisGameCommand" );
+
+		m_ControllerState[p].Load( p );
 	}
 
 	m_exprOnCommandFunction.SetFromExpression( THEME->GetMetric(m_sName,"TranformFunction") );
@@ -69,6 +71,11 @@ void ScreenJoinMultiplayer::Init()
 	FOREACH_MultiPlayer( p )
 	{
 		PositionItem( m_sprPlayer[p], p, NUM_MultiPlayer );
+		PositionItem( &m_ControllerState[p], p, NUM_MultiPlayer );
+		m_ControllerState[p].AddX( -30 );
+		m_ControllerState[p].AddY( 30 );
+
+		this->AddChild( &m_ControllerState[p] );
 	}
 
 	m_soundPlugIn.Load(	THEME->GetPathS(m_sName,"PlugIn") );
