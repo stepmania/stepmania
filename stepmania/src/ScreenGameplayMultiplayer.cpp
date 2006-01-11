@@ -33,6 +33,7 @@ void ScreenGameplayMultiplayer::LoadNextSong()
 	PlayerInfo &pi = m_vPlayerInfo[iIndex];
 	//pi.LoadDummyP1();	// dummy autoplay NoteField
 	pi.m_PlayerStateDummy = *GAMESTATE->m_pPlayerState[PLAYER_1];
+	pi.m_PlayerStateDummy.m_PlayerController = PC_AUTOPLAY;
 }
 
 
