@@ -1053,6 +1053,10 @@ void ScreenGameplay::LoadNextSong()
 			pi->m_ptextCourseSongNumber->SetText( ssprintf("%d", pi->GetPlayerStageStats()->iSongsPassed+1) );
 	}
 
+	// super hack
+	if( GAMESTATE->m_bMultiplayer )
+		STATSMAN->m_CurStageStats.m_player[GAMESTATE->m_MasterPlayerNumber].iSongsPlayed++;
+
 	LoadCourseSongNumber( GAMESTATE->GetCourseSongIndex() );
 
 	int iPlaySongIndex = GAMESTATE->GetCourseSongIndex();
