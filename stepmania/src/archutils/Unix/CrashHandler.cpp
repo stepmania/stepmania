@@ -238,8 +238,11 @@ const char *SignalName( int signo )
 	X(SIGQUIT)
 	case SIGSEGV: return "Segmentation fault";
 	X(SIGTRAP) X(SIGTERM) X(SIGVTALRM) X(SIGXCPU) X(SIGXFSZ)
-#if defined(HAVE_DECL_SIGPWR) && HAVE_DECL_SIGPWR
+#if defined(HAVE_DECL_SIGPWR)
 	X(SIGPWR)
+#endif
+#if defined(HAVE_DECL_SIGUSR1)
+	case SIGUSR1: return "Forced crash";
 #endif
 	default:
 	{
@@ -352,6 +355,28 @@ static void RunCrashHandler( const CrashData *crash )
 	}
 }
 
+static void BacktraceAllThreads( CrashData& crash )
+{
+	int iCnt = 1;
+	uint64_t iID;
+	
+	for( int i = 0; RageThread::EnumThreadIDs(i, iID); ++i )
+	{
+		if( iID == GetInvalidThreadId() || iID == RageThread::GetCurrentThreadID() )
+			continue;
+		
+		BacktraceContext ctx;
+		if( GetThreadBacktraceContext( iID, &ctx ) )
+			GetBacktrace( crash.BacktracePointers[iCnt], BACKTRACE_MAX_SIZE, &ctx );
+		strncpy( crash.m_ThreadName[iCnt], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
+		
+		++iCnt;
+		
+		if( iCnt == CrashData::MAX_BACKTRACE_THREADS )
+			break;
+	}
+}
+
 void CrashHandler::ForceCrash( const char *reason )
 {
 	CrashData crash;
@@ -378,22 +403,7 @@ void CrashHandler::ForceDeadlock( CString reason, uint64_t iID )
 	if( iID == GetInvalidThreadId() )
 	{
 		/* Backtrace all threads. */
-		int iCnt = 1;
-		for( int i = 0; RageThread::EnumThreadIDs(i, iID); ++i )
-		{
-			if( iID == GetInvalidThreadId() || iID == RageThread::GetCurrentThreadID() )
-				continue;
-
-			BacktraceContext ctx;
-			if( GetThreadBacktraceContext( iID, &ctx ) )
-				GetBacktrace( crash.BacktracePointers[iCnt], BACKTRACE_MAX_SIZE, &ctx );
-			strncpy( crash.m_ThreadName[iCnt], RageThread::GetThreadNameByID(iID), sizeof(crash.m_ThreadName[0])-1 );
-
-			++iCnt;
-
-			if( iCnt == CrashData::MAX_BACKTRACE_THREADS )
-				break;
-		}
+		BacktraceAllThreads( crash );
 	}
 	else
 	{
@@ -429,6 +439,10 @@ void CrashHandler::CrashSignalHandler( int signal, siginfo_t *si, const ucontext
 	BacktraceContext ctx;
 	GetSignalBacktraceContext( &ctx, uc );
 	GetBacktrace( crash.BacktracePointers[0], BACKTRACE_MAX_SIZE, &ctx );
+#if defined(HAVE_DECL_SIGUSR1)
+	if( signal == SIGUSR1 )
+		BacktraceAllThreads( crash );
+#endif
 
 	strncpy( crash.m_ThreadName[0], RageThread::GetCurThreadName(), sizeof(crash.m_ThreadName[0])-1 );
 
