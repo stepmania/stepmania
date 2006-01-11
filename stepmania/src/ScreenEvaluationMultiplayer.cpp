@@ -16,6 +16,9 @@
 #include "InputEventPlus.h"
 #include "ScreenManager.h"
 #include "ControllerStateDisplay.h"
+#include "InputMapper.h"
+#include "StepMania.h"
+#include "CommonMetrics.h"
 
 static const char *MultiplayerJudgeLineNames[] = {
 	"W1",
@@ -289,6 +292,13 @@ void ScreenEvaluationMultiplayer::Input( const InputEventPlus &input )
 			}
 			else
 			{
+				if( INPUTMAPPER->IsButtonDown( MenuInput(PLAYER_1,MENU_BUTTON_LEFT) ) &&
+					INPUTMAPPER->IsButtonDown( MenuInput(PLAYER_1,MENU_BUTTON_DOWN) ) )
+				{
+					StepMania::ResetGame();
+					SCREENMAN->SetNewScreen( CommonMetrics::INITIAL_SCREEN );
+				}
+
 				MenuStart( GAMESTATE->m_MasterPlayerNumber );
 			}
 			return;	// input handled
