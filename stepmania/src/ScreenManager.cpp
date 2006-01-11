@@ -173,25 +173,34 @@ namespace
 		SONGMAN->Cleanup();
 	}
 
-	/* Called when changing screen groups.  Delete all prepared screens,
-	 * reset the screen group and list of persistant screens. */
-	void DeletePreparedScreens()
+	/* Take ownership of all screens and backgrounds that are owned by
+	 * us (this excludes screens where m_bDeleteWhenDone is false).
+	 * Clear the prepared lists.  The contents of apOut must be
+	 * freed by the caller. */
+	void GrabPreparedActors( vector<Actor*> &apOut )
 	{
-		BeforeDeleteScreen();
-
 		FOREACH( LoadedScreen, g_vPreparedScreens, s )
-		{
 			if( s->m_bDeleteWhenDone )
-				SAFE_DELETE( s->m_pScreen );
-		}
+				apOut.push_back( s->m_pScreen );
 		g_vPreparedScreens.clear();
 		FOREACH( Actor*, g_vPreparedBackgrounds, a )
-			SAFE_DELETE( *a );
+			apOut.push_back( *a );
 		g_vPreparedBackgrounds.clear();
 
 		g_setGroupedScreens.clear();
 		g_setPersistantScreens.clear();
+	}
+	
+	/* Called when changing screen groups.  Delete all prepared screens,
+	 * reset the screen group and list of persistant screens. */
+	void DeletePreparedScreens()
+	{
+		vector<Actor*> apActorsToDelete;
+		GrabPreparedActors( apActorsToDelete );
 
+		BeforeDeleteScreen();
+		FOREACH( Actor*, apActorsToDelete, a )
+			SAFE_DELETE( *a );
 		AfterDeleteScreen();
 	}
 };
