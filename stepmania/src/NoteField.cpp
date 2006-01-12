@@ -77,12 +77,8 @@ void NoteField::CacheNoteSkin( const CString &sNoteSkin_ )
 
 void NoteField::CacheAllUsedNoteSkins()
 {
-	/* Cache all note skins that we might need for the whole song, course or battle
-	 * play, so we don't have to load them later (such as between course songs). */
-	vector<CString> skins;
-	GAMESTATE->GetAllUsedNoteSkins( skins );
-	for( unsigned i=0; i < skins.size(); ++i )
-		CacheNoteSkin( skins[i] );
+	CString sNoteSkin = m_pPlayerState->m_PlayerOptions.m_sNoteSkin;
+	CacheNoteSkin( sNoteSkin );
 }
 
 void NoteField::Init( const PlayerState* pPlayerState, float fYReverseOffsetPixels )

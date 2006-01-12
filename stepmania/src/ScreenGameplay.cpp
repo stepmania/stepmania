@@ -981,6 +981,27 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		NoteData ndTransformed;
 		pStyle->GetTransformedNoteDataForStyle( pi->GetStepsAndTrailIndex(), originalNoteData, ndTransformed );
 
+		// HACK: Apply NoteSkins from global course options.  Do this before Player::Load,
+		// since it needs to know which note skin to load.
+		pi->GetPlayerState()->m_ModsToApply.clear();
+		for( unsigned i=0; i<pi->m_asModifiersQueue[iSongIndex].size(); ++i )
+		{
+			Attack a = pi->m_asModifiersQueue[iSongIndex][i];
+			if( a.fStartSecond != 0 )
+				continue;
+			a.fStartSecond = -1;	// now
+
+			PlayerOptions po;
+			po.FromString( a.sModifiers );
+			if( po.m_sNoteSkin.empty() )
+				continue;
+			a.sModifiers = po.m_sNoteSkin;
+
+			GAMESTATE->LaunchAttack( pi->GetPlayerStateAndStageStatsIndex(), a );
+			GAMESTATE->m_SongOptions.FromString( a.sModifiers );
+		}
+
+
 		// load player
 		{
 			NoteData nd = ndTransformed;
