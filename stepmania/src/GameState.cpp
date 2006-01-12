@@ -1116,45 +1116,17 @@ void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
 	{
 		out.push_back( m_pPlayerState[pn]->m_PlayerOptions.m_sNoteSkin );
 
-		switch( this->m_PlayMode )
-		{
-		case PLAY_MODE_BATTLE:
-		case PLAY_MODE_RAVE:
-			for( int al=0; al<NUM_ATTACK_LEVELS; al++ )
-			{
-				const Character *ch = this->m_pCurCharacters[pn];
-				ASSERT( ch );
-				const CString* asAttacks = ch->m_sAttacks[al];
-				for( int att = 0; att < NUM_ATTACKS_PER_LEVEL; ++att )
-				{
-					PlayerOptions po;
-					po.FromString( asAttacks[att] );
-					out.push_back( po.m_sNoteSkin );
-				}
-			}
-		}
-
 		/* Add note skins that are used in courses. */
 		if( this->IsCourseMode() )
 		{
-			FOREACH_EnabledPlayer(pn)
+			const Trail *pTrail = this->m_pCurTrail[pn];
+			ASSERT( pTrail );
+
+			FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
 			{
-				const Trail *pTrail = this->m_pCurTrail[pn];
-				ASSERT( pTrail );
-
-				FOREACH_CONST( TrailEntry, pTrail->m_vEntries, e )
-				{
-					AttackArray a;
-					e->GetAttackArray( a );
-
-					for( unsigned j=0; j<a.size(); j++ )
-					{
-						const Attack &mod = a[j];
-						PlayerOptions po;
-						po.FromString( mod.sModifiers );
-						out.push_back( po.m_sNoteSkin );
-					}
-				}
+				PlayerOptions po;
+				po.FromString( e->Modifiers );
+				out.push_back( po.m_sNoteSkin );
 			}
 		}
 	}
@@ -1162,17 +1134,6 @@ void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
 	/* Remove duplicates. */
 	sort( out.begin(), out.end() );
 	out.erase( unique( out.begin(), out.end() ), out.end() );
-
-	/* Hack: NoteSkin "default" is never applied as an attack, so don't
-	 * waste memory preloading it. */
-	for( unsigned i = 0; i < out.size(); ++i )
-	{
-		if( !out[i].CompareNoCase("default") || out[i] == "" )
-		{
-			out.erase( out.begin()+i, out.begin()+i+1 );
-			--i;
-		}
-	}
 }
 
 /* From NoteField: */
