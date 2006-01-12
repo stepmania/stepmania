@@ -773,11 +773,11 @@ CString GameState::GetPlayerDisplayName( PlayerNumber pn ) const
 		if( !PROFILEMAN->GetPlayerName(pn).empty() )
 			return PROFILEMAN->GetPlayerName(pn);
 		else
-			return *pDefaultNames[pn];
+			return pDefaultNames[pn]->GetValue();
 	}
 	else
 	{
-		return CPU;
+		return CPU.GetValue();
 	}
 }
 
