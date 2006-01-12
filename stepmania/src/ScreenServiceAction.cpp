@@ -20,7 +20,7 @@ static CString ClearBookkeepingData()
 {
 	BOOKKEEPER->ClearAll();
 	BOOKKEEPER->WriteToDisk();
-	return BOOKKEEPING_DATA_CLEARED;
+	return BOOKKEEPING_DATA_CLEARED.GetValue();
 }
 
 static LocalizedString MACHINE_STATS_CLEARED( "ScreenServiceAction", "Machine stats cleared." );
@@ -32,7 +32,7 @@ static CString ClearMachineStats()
 	pProfile->InitAll();
 	pProfile->m_sGuid = sGuid;
 	PROFILEMAN->SaveMachineProfile();
-	return MACHINE_STATS_CLEARED;
+	return MACHINE_STATS_CLEARED.GetValue();
 }
 
 static LocalizedString MACHINE_EDITS_CLEARED( "ScreenServiceAction", "%d edits cleared, %d errors." );
@@ -81,7 +81,7 @@ static CString ClearMemoryCardEdits()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return MEMORY_CARD_EDITS_NOT_CLEARED;
+		return MEMORY_CARD_EDITS_NOT_CLEARED.GetValue();
 
 	int iNumAttempted = 0;
 	int iNumSuccessful = 0;
@@ -184,7 +184,7 @@ static CString FillMachineStats()
 	FillProfile( pProfile );
 
 	PROFILEMAN->SaveMachineProfile();
-	return MACHINE_STATS_FILLED;
+	return MACHINE_STATS_FILLED.GetValue();
 }
 
 static LocalizedString STATS_NOT_SAVED				( "ScreenServiceAction", "Stats not saved - No memory cards ready." );
@@ -194,7 +194,7 @@ static CString TransferStatsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return STATS_NOT_SAVED;
+		return STATS_NOT_SAVED.GetValue();
 
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
@@ -220,7 +220,7 @@ static CString TransferStatsMemoryCardToMachine()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return STATS_NOT_LOADED;
+		return STATS_NOT_LOADED.GetValue();
 
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
@@ -357,7 +357,7 @@ static CString CopyEditsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return EDITS_NOT_COPIED;
+		return EDITS_NOT_COPIED.GetValue();
 
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
@@ -383,7 +383,7 @@ static CString SyncEditsMachineToMemoryCard()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return EDITS_NOT_COPIED;
+		return EDITS_NOT_COPIED.GetValue();
 
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
@@ -413,7 +413,7 @@ static CString CopyEditsMemoryCardToMachine()
 {
 	PlayerNumber pn = GetFirstReadyMemoryCard();
 	if( pn == PLAYER_INVALID )
-		return EDITS_NOT_COPIED;
+		return EDITS_NOT_COPIED.GetValue();
 
 	if( !MEMCARDMAN->IsMounted(pn) )
 		MEMCARDMAN->MountCard(pn);
@@ -443,7 +443,7 @@ static LocalizedString PREFERENCES_RESET( "ScreenServiceAction", "Preferences re
 static CString ResetPreferences()
 {
 	PREFSMAN->ResetToFactoryDefaults();
-	return PREFERENCES_RESET;
+	return PREFERENCES_RESET.GetValue();
 }
 
 
