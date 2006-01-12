@@ -15,6 +15,8 @@ static void InitNames()
 	if( !g_mapNamesToString.empty() )
 		return;
 
+	g_mapNamesToString[KEY_PERIOD] = "period"; 
+	g_mapNamesToString[KEY_COMMA] = "comma"; 
 	g_mapNamesToString[KEY_SPACE] = "space"; 
 	g_mapNamesToString[KEY_DEL] = "delete"; 
 
