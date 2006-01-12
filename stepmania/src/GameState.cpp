@@ -1878,6 +1878,8 @@ bool GameState::IsSyncDataChanged()
 
 void GameState::SaveSyncChanges()
 {
+	if( IsCourseMode() )
+		return;
 	GAMESTATE->m_pCurSong->Save();
 	PREFSMAN->SavePrefsToDisk();
 	ResetOriginalSyncData();
@@ -1885,6 +1887,8 @@ void GameState::SaveSyncChanges()
 
 void GameState::RevertSyncChanges()
 {
+	if( IsCourseMode() )
+		return;
 	PREFSMAN->m_fGlobalOffsetSeconds.Set( GAMESTATE->m_fGlobalOffsetSecondsOriginal );
 	GAMESTATE->m_pCurSong->m_Timing = *GAMESTATE->m_pTimingDataOriginal;
 }
