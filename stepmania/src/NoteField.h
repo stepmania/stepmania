@@ -75,10 +75,7 @@ protected:
 
 	/* All loaded note displays, mapped by their name. */
 	map<CString, NoteDisplayCols *> m_NoteDisplays;
-
-	NoteDisplayCols *SearchForSongBeat();
-
-	NoteDisplayCols *LastDisplay;
+	NoteDisplayCols *m_pCurDisplay;
 
 	// used in MODE_EDIT
 	Sprite			m_sprBars;	// 4 frames: Measure, 4th, 8th, 16th

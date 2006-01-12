@@ -24,6 +24,7 @@
 NoteField::NoteField()
 {	
 	m_pNoteData = NULL;
+	m_pCurDisplay = NULL;
 
 	m_textMeasureNumber.LoadFromFont( THEME->GetPathF("Common","normal") );
 	m_textMeasureNumber.SetZoom( 1.0f );
@@ -38,7 +39,6 @@ NoteField::NoteField()
 	m_iBeginMarker = m_iEndMarker = -1;
 
 	m_fPercentFadeToFail = -1;
-	LastDisplay = NULL;
 }
 
 NoteField::~NoteField()
@@ -52,7 +52,7 @@ void NoteField::Unload()
 		it != m_NoteDisplays.end(); ++it )
 		delete it->second;
 	m_NoteDisplays.clear();
-	LastDisplay = NULL;
+	m_pCurDisplay = NULL;
 }
 
 void NoteField::CacheNoteSkin( const CString &sNoteSkin_ )
@@ -114,7 +114,7 @@ void NoteField::Load(
 	// The note skin may have changed at the beginning of a new course song.
 	map<CString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
 	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
-	LastDisplay = it->second;
+	m_pCurDisplay = it->second;
 }
 
 void NoteField::Update( float fDeltaTime )
@@ -123,7 +123,7 @@ void NoteField::Update( float fDeltaTime )
 
 	m_rectMarkerBar.Update( fDeltaTime );
 
-	NoteDisplayCols *cur = LastDisplay;
+	NoteDisplayCols *cur = m_pCurDisplay;
 
 	cur->m_ReceptorArrowRow.Update( fDeltaTime );
 	cur->m_GhostArrowRow.Update( fDeltaTime );
@@ -133,7 +133,7 @@ void NoteField::Update( float fDeltaTime )
 
 
 	// Update fade to failed
-	LastDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_fPercentFadeToFail );
+	m_pCurDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_fPercentFadeToFail );
 
 
 	/*
@@ -150,11 +150,11 @@ void NoteField::ProcessMessages( float fDeltaTime )
 {
 	ActorFrame::ProcessMessages( fDeltaTime );
 
-	/* If LastDisplay is NULL, we're receiving a message before Load() was called. */
-	if( LastDisplay != NULL )
+	/* If m_pCurDisplay is NULL, we're receiving a message before Load() was called. */
+	if( m_pCurDisplay != NULL )
 	{
-		LastDisplay->m_ReceptorArrowRow.ProcessMessages( fDeltaTime );
-		LastDisplay->m_GhostArrowRow.ProcessMessages( fDeltaTime );
+		m_pCurDisplay->m_ReceptorArrowRow.ProcessMessages( fDeltaTime );
+		m_pCurDisplay->m_GhostArrowRow.ProcessMessages( fDeltaTime );
 	}
 }
 
@@ -306,11 +306,6 @@ void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
 	m_textMeasureNumber.Draw();
 }
 
-NoteField::NoteDisplayCols *NoteField::SearchForSongBeat()
-{
-	return LastDisplay;
-}
-
 // CPU OPTIMIZATION OPPORTUNITY:
 // change this probing to binary search
 float FindFirstDisplayedBeat( const PlayerState* pPlayerState, int iFirstPixelToDraw )
@@ -400,11 +395,11 @@ void NoteField::DrawPrimitives()
 	//LOG->Trace( "NoteField::DrawPrimitives()" );
 
 	/* This should be filled in on the first update. */
-	ASSERT( LastDisplay != NULL );
+	ASSERT( m_pCurDisplay != NULL );
 
 	ArrowEffects::Update();
 
-	NoteDisplayCols *cur = LastDisplay;
+	NoteDisplayCols *cur = m_pCurDisplay;
 	cur->m_ReceptorArrowRow.Draw();
 
 	const PlayerOptions &current_po = m_pPlayerState->m_CurrentPlayerOptions;
@@ -657,7 +652,7 @@ void NoteField::DrawPrimitives()
 				const bool bIsActive = tn.HoldResult.bActive;
 				const bool bIsHoldingNote = tn.HoldResult.bHeld;
 				if( bIsActive )
-					SearchForSongBeat()->m_GhostArrowRow.SetHoldIsActive( c );
+					m_pCurDisplay->m_GhostArrowRow.SetHoldIsActive( c );
 				
 				ASSERT_M( NoteRowToBeat(iStartRow) > -2000, ssprintf("%i %i %i", iStartRow, iEndRow, c) );
 
@@ -665,7 +660,7 @@ void NoteField::DrawPrimitives()
 				if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
 					bIsInSelectionRange = (m_iBeginMarker <= iStartRow && iEndRow < m_iEndMarker);
 
-				LastDisplay->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels, (float) iFirstPixelToDraw, (float) iLastPixelToDraw );
+				m_pCurDisplay->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels, (float) iFirstPixelToDraw, (float) iLastPixelToDraw );
 			}
 
 		}
@@ -706,7 +701,7 @@ void NoteField::DrawPrimitives()
 			// See if there is a hold step that begins on this index.  Only do this
 			// if the note skin cares.
 			bool bHoldNoteBeginsOnThisBeat = false;
-			if( LastDisplay->display[c].DrawHoldHeadForTapsOnSameRow() )
+			if( m_pCurDisplay->display[c].DrawHoldHeadForTapsOnSameRow() )
 			{
 				for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
 				{
@@ -731,11 +726,11 @@ void NoteField::DrawPrimitives()
 				Sprite sprite;
 				sprite.Load( THEME->GetPathG("NoteField","attack "+tn.sAttackModifiers) );
 				float fBeat = NoteRowToBeat(i);
-				LastDisplay->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false, NotePart_Tap );
+				m_pCurDisplay->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false, NotePart_Tap );
 			}
 			else
 			{
-				LastDisplay->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
+				m_pCurDisplay->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
 			}
 		}
 
@@ -752,10 +747,10 @@ void NoteField::FadeToFail()
 		// don't fade all over again if this is called twice
 }
 
-void NoteField::Step( int iCol, TapNoteScore score ) { SearchForSongBeat()->m_ReceptorArrowRow.Step( iCol, score ); }
-void NoteField::SetPressed( int iCol ) { SearchForSongBeat()->m_ReceptorArrowRow.SetPressed( iCol ); }
-void NoteField::DidTapNote( int iCol, TapNoteScore score, bool bBright ) { SearchForSongBeat()->m_GhostArrowRow.DidTapNote( iCol, score, bBright ); }
-void NoteField::DidHoldNote( int iCol, HoldNoteScore score, bool bBright ) { SearchForSongBeat()->m_GhostArrowRow.DidHoldNote( iCol, score, bBright ); }
+void NoteField::Step( int iCol, TapNoteScore score ) { m_pCurDisplay->m_ReceptorArrowRow.Step( iCol, score ); }
+void NoteField::SetPressed( int iCol ) { m_pCurDisplay->m_ReceptorArrowRow.SetPressed( iCol ); }
+void NoteField::DidTapNote( int iCol, TapNoteScore score, bool bBright ) { m_pCurDisplay->m_GhostArrowRow.DidTapNote( iCol, score, bBright ); }
+void NoteField::DidHoldNote( int iCol, HoldNoteScore score, bool bBright ) { m_pCurDisplay->m_GhostArrowRow.DidHoldNote( iCol, score, bBright ); }
 
 /*
  * (c) 2001-2004 Chris Danford
