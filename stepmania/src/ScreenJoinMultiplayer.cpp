@@ -170,8 +170,6 @@ void ScreenJoinMultiplayer::UpdatePlayerStatus( bool bFirstUpdate )
 {
 	FOREACH_MultiPlayer( p )
 	{
-		InputDevice id = InputMapper::MultiPlayerToInputDevice( p );
-	
 		InputDeviceState idsOld = m_InputDeviceState[p];
 		bool bWasConnected = idsOld == InputDeviceState_Connected;
 
