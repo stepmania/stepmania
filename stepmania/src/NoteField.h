@@ -39,7 +39,6 @@ public:
 	void DidHoldNote( int iCol, HoldNoteScore score, bool bBright );
 
 	const PlayerState *GetPlayerState() const { return m_pPlayerState; }
-	void RefreshBeatToNoteSkin();
 
 protected:
 	void CacheAllUsedNoteSkins();
@@ -77,15 +76,7 @@ protected:
 	/* All loaded note displays, mapped by their name. */
 	map<CString, NoteDisplayCols *> m_NoteDisplays;
 
-	int m_LastSeenBeatToNoteSkinRev;
-
-	/* Map of beat->NoteDisplayCols.  This is updated whenever GAMESTATE-> changes. */
-	typedef map<float, NoteDisplayCols *> NDMap;
-	void SearchForBeat( NDMap::iterator &cur, NDMap::iterator &next, float Beat );
-	NoteDisplayCols *SearchForBeat( float Beat );
 	NoteDisplayCols *SearchForSongBeat();
-
-	NDMap m_BeatToNoteDisplays;
 
 	NoteDisplayCols *LastDisplay;
 

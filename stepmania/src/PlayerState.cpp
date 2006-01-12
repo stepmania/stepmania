@@ -2,12 +2,6 @@
 #include "PlayerState.h"
 #include "GameState.h"
 
-void PlayerState::ResetNoteSkins()
-{
-	m_BeatToNoteSkin.clear();
-	m_BeatToNoteSkin[-1000] = m_PlayerOptions.m_sNoteSkin;
-}
-
 void PlayerState::Update( float fDelta )
 {
 	m_CurrentPlayerOptions.Approach( m_PlayerOptions, fDelta );

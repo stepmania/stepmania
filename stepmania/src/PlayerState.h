@@ -25,7 +25,6 @@ public:
 		m_StagePlayerOptions.Init();
 		m_StoredPlayerOptions.Init();
 
-		m_BeatToNoteSkin.clear();
 		m_fLastDrawnBeat = -100;
 
 		m_HealthState = ALIVE;
@@ -48,7 +47,6 @@ public:
 			m_Inventory[i].MakeBlank();
 	}
 
-	void ResetNoteSkins();
 	void Update( float fDelta );
 
 	// TODO: Remove use of PlayerNumber.  All data about the player should live 
@@ -66,7 +64,6 @@ public:
 	//
 	// Used in Gameplay
 	//
-	map<float,CString> m_BeatToNoteSkin;
 	mutable float	m_fLastDrawnBeat; // Set by NoteField.  Used to push NoteSkin-changing modifers back so that the NoteSkin doesn't pop.
 
 	enum HealthState { HOT, ALIVE, DANGER, DEAD };

@@ -196,7 +196,6 @@ void GameState::Reset()
 	m_bJukeboxUsesModifiers = false;
 	m_iCurrentStageIndex = 0;
 	m_bGameplayLeadIn.Set( false );
-	m_BeatToNoteSkinRev = 0;
 	m_iNumStagesOfThisSong = 0;
 
 	NOTESKIN->RefreshNoteSkinData( this->m_pCurGame );
@@ -1095,21 +1094,6 @@ bool GameState::IsDisqualified( PlayerNumber pn )
 	}
 }
 
-void GameState::ResetNoteSkins()
-{
-	FOREACH_PlayerNumber( pn )
-		ResetNoteSkinsForPlayer( m_pPlayerState[pn] );
-
-	++m_BeatToNoteSkinRev;
-}
-
-void GameState::ResetNoteSkinsForPlayer( PlayerState *ps )
-{
-	ps->ResetNoteSkins();
-
-	++m_BeatToNoteSkinRev;
-}
-
 void GameState::GetAllUsedNoteSkins( vector<CString> &out ) const
 {
 	FOREACH_EnabledPlayer( pn )
@@ -1150,24 +1134,6 @@ void GameState::GetUndisplayedBeats( const PlayerState* pPlayerState, float Tota
 	EndBeat = truncf(EndBeat)+1;
 }
 
-
-void GameState::SetNoteSkinForBeatRange( PlayerState* pPlayerState, const CString& sNoteSkin, float StartBeat, float EndBeat )
-{
-	map<float,CString> &BeatToNoteSkin = pPlayerState->m_BeatToNoteSkin;
-
-	/* Erase any other note skin settings in this range. */
-	map<float,CString>::iterator begin = BeatToNoteSkin.lower_bound( StartBeat );
-	map<float,CString>::iterator end = BeatToNoteSkin.upper_bound( EndBeat );
-	BeatToNoteSkin.erase( begin, end );
-
-	/* Add the skin to m_BeatToNoteSkin.  */
-	BeatToNoteSkin[StartBeat] = sNoteSkin;
-
-	/* Return to the default note skin after the duration. */
-	BeatToNoteSkin[EndBeat] = pPlayerState->m_StagePlayerOptions.m_sNoteSkin;
-
-	++m_BeatToNoteSkinRev;
-}
 
 /* This is called to launch an attack, or to queue an attack if a.fStartSecond
  * is set.  This is also called by GameState::Update when activating a queued attack. */

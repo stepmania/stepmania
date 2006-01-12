@@ -77,6 +77,12 @@ void NoteField::CacheNoteSkin( const CString &sNoteSkin_ )
 
 void NoteField::CacheAllUsedNoteSkins()
 {
+	/* Cache all note skins that we might need for the whole song, course or battle
+	 * play, so we don't have to load them later (such as between course songs). */
+	vector<CString> skins;
+	GAMESTATE->GetAllUsedNoteSkins( skins );
+	for( unsigned i=0; i < skins.size(); ++i )
+		CacheNoteSkin( skins[i] );
 	CString sNoteSkin = m_pPlayerState->m_PlayerOptions.m_sNoteSkin;
 	CacheNoteSkin( sNoteSkin );
 }
@@ -98,7 +104,6 @@ void NoteField::Load(
 	m_iEndDrawingPixel = iLastPixelToDraw;
 
 	m_fPercentFadeToFail = -1;
-	m_LastSeenBeatToNoteSkinRev = -1;
 
 	//int i1 = m_pNoteData->GetNumTracks();
 	//int i2 = GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer;
@@ -106,46 +111,10 @@ void NoteField::Load(
 	ASSERT_M( m_pNoteData->GetNumTracks() == GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer, 
 		ssprintf("%d = %d",m_pNoteData->GetNumTracks(), GAMESTATE->GetCurrentStyle()->m_iColsPerPlayer) );
 
-	RefreshBeatToNoteSkin();
-}
-
-
-void NoteField::RefreshBeatToNoteSkin()
-{
-	if( GAMESTATE->m_BeatToNoteSkinRev == m_LastSeenBeatToNoteSkinRev )
-		return;
-	m_LastSeenBeatToNoteSkinRev = GAMESTATE->m_BeatToNoteSkinRev;
-
-	/* Set by GameState::ResetNoteSkins(): */
-	ASSERT( !m_pPlayerState->m_BeatToNoteSkin.empty() );
-
-	m_BeatToNoteDisplays.clear();
-
-	/* GAMESTATE->m_BeatToNoteSkin[pn] maps from song beats to note skins.  Maintain
-	 * m_BeatToNoteDisplays, to map from song beats to NoteDisplay*s, so we don't
-	 * have to do it while rendering. */
-	
-	for( map<float,CString>::const_iterator it = m_pPlayerState->m_BeatToNoteSkin.begin(); 
-		 it != m_pPlayerState->m_BeatToNoteSkin.end(); 
-		 ++it )
-	{
-		const float Beat = it->first;
-		const CString &Skin = it->second;
-
-		map<CString, NoteDisplayCols *>::iterator display = m_NoteDisplays.find( Skin );
-		if( display == m_NoteDisplays.end() )
-		{
-			/* Skins should always be loaded by CacheAllUsedNoteSkins. */
-			LOG->Warn( "NoteField::RefreshBeatToNoteSkin: need note skin \"%s\" which should have been loaded already", Skin.c_str() );
-			this->CacheNoteSkin( Skin );
-			display = m_NoteDisplays.find( Skin );
-		}
-
-		ASSERT_M( display != m_NoteDisplays.end(), ssprintf("Couldn't find %s", Skin.c_str()) );
-
-		NoteDisplayCols *cols = display->second;
-		m_BeatToNoteDisplays[Beat] = cols;
-	}
+	// The note skin may have changed at the beginning of a new course song.
+	map<CString, NoteDisplayCols *>::iterator it = m_NoteDisplays.find( m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
+	ASSERT_M( it != m_NoteDisplays.end(), m_pPlayerState->m_PlayerOptions.m_sNoteSkin );
+	LastDisplay = it->second;
 }
 
 void NoteField::Update( float fDeltaTime )
@@ -154,10 +123,7 @@ void NoteField::Update( float fDeltaTime )
 
 	m_rectMarkerBar.Update( fDeltaTime );
 
-	NoteDisplayCols *cur = SearchForSongBeat();
-
-	if( cur != LastDisplay )
-		LastDisplay = cur;
+	NoteDisplayCols *cur = LastDisplay;
 
 	cur->m_ReceptorArrowRow.Update( fDeltaTime );
 	cur->m_GhostArrowRow.Update( fDeltaTime );
@@ -167,13 +133,8 @@ void NoteField::Update( float fDeltaTime )
 
 
 	// Update fade to failed
-	FOREACHM( CString, NoteDisplayCols*, m_NoteDisplays, iter )
-	{
-		iter->second->m_ReceptorArrowRow.SetFadeToFailPercent( m_fPercentFadeToFail );
-	}
+	LastDisplay->m_ReceptorArrowRow.SetFadeToFailPercent( m_fPercentFadeToFail );
 
-
-	RefreshBeatToNoteSkin();
 
 	/*
 	 * Update all NoteDisplays.  Hack: We need to call this once per frame, not
@@ -189,13 +150,11 @@ void NoteField::ProcessMessages( float fDeltaTime )
 {
 	ActorFrame::ProcessMessages( fDeltaTime );
 
-	/* If m_BeatToNoteDisplays isn't filled yet, we're receiving a message
-	 * before Load() was called. */
-	if( !m_BeatToNoteDisplays.empty() )
+	/* If LastDisplay is NULL, we're receiving a message before Load() was called. */
+	if( LastDisplay != NULL )
 	{
-		NoteDisplayCols *pCur = SearchForSongBeat();
-		pCur->m_ReceptorArrowRow.ProcessMessages( fDeltaTime );
-		pCur->m_GhostArrowRow.ProcessMessages( fDeltaTime );
+		LastDisplay->m_ReceptorArrowRow.ProcessMessages( fDeltaTime );
+		LastDisplay->m_GhostArrowRow.ProcessMessages( fDeltaTime );
 	}
 }
 
@@ -347,46 +306,9 @@ void NoteField::DrawBGChangeText( const float fBeat, const CString sNewBGName )
 	m_textMeasureNumber.Draw();
 }
 
-/* cur is an iterator within m_NoteDisplays.  next is ++cur.  Advance or rewind cur to
- * point to the block that contains beat.  We maintain next as an optimization, as this
- * is called for every tap. */
-void NoteField::SearchForBeat( NDMap::iterator &cur, NDMap::iterator &next, float Beat )
-{
-	/* cur is too far ahead: */
-	while( cur != m_BeatToNoteDisplays.begin() && cur->first > Beat )
-	{
-		next = cur;
-		--cur;
-	}
-
-	/* cur is too far behind: */
-	while( next != m_BeatToNoteDisplays.end() && next->first < Beat )
-	{
-		cur = next;
-		++next;
-	}
-}
-
 NoteField::NoteDisplayCols *NoteField::SearchForSongBeat()
 {
-	return SearchForBeat( GAMESTATE->m_fSongBeat );
-}
-
-NoteField::NoteDisplayCols *NoteField::SearchForBeat( float Beat )
-{
-	NDMap::iterator it = m_BeatToNoteDisplays.lower_bound( Beat );
-	/* The first entry should always be lower than any Beat we might receive. */
-	// This assert is firing with Beat = -7408. -Chris
-	// Again with Beat = -7254 and GAMESTATE->m_fMusicSeconds = -3043.61
-	// Again with Beat = -9806 and GAMESTATE->m_fMusicSeconds = -3017.22
-	// Again with Beat = -9806 and GAMESTATE->m_fMusicSeconds = -3017.22
-	// Again in the middle of Remember December in Hardcore Galore:
-	//    Beat = -9373.56 and GAMESTATE->m_fMusicSeconds = -2923.48
- 	ASSERT_M( it != m_BeatToNoteDisplays.begin(), ssprintf("%f",Beat) );
-	--it;
-	ASSERT_M( it != m_BeatToNoteDisplays.end(), ssprintf("%f",Beat) );
-
-	return it->second;
+	return LastDisplay;
 }
 
 // CPU OPTIMIZATION OPPORTUNITY:
@@ -478,11 +400,11 @@ void NoteField::DrawPrimitives()
 	//LOG->Trace( "NoteField::DrawPrimitives()" );
 
 	/* This should be filled in on the first update. */
-	ASSERT( !m_BeatToNoteDisplays.empty() );
+	ASSERT( LastDisplay != NULL );
 
 	ArrowEffects::Update();
 
-	NoteDisplayCols *cur = SearchForSongBeat();
+	NoteDisplayCols *cur = LastDisplay;
 	cur->m_ReceptorArrowRow.Draw();
 
 	const PlayerOptions &current_po = m_pPlayerState->m_CurrentPlayerOptions;
@@ -696,10 +618,6 @@ void NoteField::DrawPrimitives()
 		//
 		// Draw all HoldNotes in this column (so that they appear under the tap notes)
 		//	
-		NDMap::iterator CurDisplay = m_BeatToNoteDisplays.begin();
-		ASSERT( CurDisplay != m_BeatToNoteDisplays.end() );
-		NDMap::iterator NextDisplay = CurDisplay; ++NextDisplay;
-
 		{
 			NoteData::TrackMap::const_iterator begin, end;
 			m_pNoteData->GetTapNoteRangeInclusive( c, iFirstIndexToDraw, iLastIndexToDraw+1, begin, end );
@@ -742,14 +660,12 @@ void NoteField::DrawPrimitives()
 					SearchForSongBeat()->m_GhostArrowRow.SetHoldIsActive( c );
 				
 				ASSERT_M( NoteRowToBeat(iStartRow) > -2000, ssprintf("%i %i %i", iStartRow, iEndRow, c) );
-				SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(iStartRow) );
 
 				bool bIsInSelectionRange = false;
 				if( m_iBeginMarker!=-1 && m_iEndMarker!=-1 )
 					bIsInSelectionRange = (m_iBeginMarker <= iStartRow && iEndRow < m_iEndMarker);
 
-				const NoteDisplayCols *nd = CurDisplay->second;
-				nd->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels, (float) iFirstPixelToDraw, (float) iLastPixelToDraw );
+				LastDisplay->display[c].DrawHold( tn, c, iStartRow, bIsHoldingNote, bIsActive, Result, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, false, m_fYReverseOffsetPixels, (float) iFirstPixelToDraw, (float) iLastPixelToDraw );
 			}
 
 		}
@@ -758,8 +674,6 @@ void NoteField::DrawPrimitives()
 		//
 		// Draw all TapNotes in this column
 		//
-		CurDisplay = m_BeatToNoteDisplays.begin();
-		NextDisplay = CurDisplay; ++NextDisplay;
 
 		// draw notes from furthest to closest
 
@@ -788,13 +702,11 @@ void NoteField::DrawPrimitives()
 				continue;	// skip
 
 			ASSERT_M( NoteRowToBeat(i) > -2000, ssprintf("%i %i %i, %f %f", i, iLastIndexToDraw, iFirstIndexToDraw, GAMESTATE->m_fSongBeat, GAMESTATE->m_fMusicSeconds) );
-			SearchForBeat( CurDisplay, NextDisplay, NoteRowToBeat(i) );
-			const NoteDisplayCols *nd = CurDisplay->second;
 
 			// See if there is a hold step that begins on this index.  Only do this
 			// if the note skin cares.
 			bool bHoldNoteBeginsOnThisBeat = false;
-			if( nd->display[c].DrawHoldHeadForTapsOnSameRow() )
+			if( LastDisplay->display[c].DrawHoldHeadForTapsOnSameRow() )
 			{
 				for( int c2=0; c2<m_pNoteData->GetNumTracks(); c2++ )
 				{
@@ -819,11 +731,11 @@ void NoteField::DrawPrimitives()
 				Sprite sprite;
 				sprite.Load( THEME->GetPathG("NoteField","attack "+tn.sAttackModifiers) );
 				float fBeat = NoteRowToBeat(i);
-				nd->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false, NotePart_Tap );
+				LastDisplay->display[c].DrawActor( &sprite, c, fBeat, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels, false, NotePart_Tap );
 			}
 			else
 			{
-				nd->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
+				LastDisplay->display[c].DrawTap( c, NoteRowToBeat(i), bHoldNoteBeginsOnThisBeat, bIsAddition, bIsMine, bIsInSelectionRange ? fSelectedRangeGlow : m_fPercentFadeToFail, 1, m_fYReverseOffsetPixels );
 			}
 		}
 

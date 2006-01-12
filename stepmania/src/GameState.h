@@ -164,9 +164,6 @@ public:
 	RageTimer	m_LastBeatUpdate; // time of last m_fSongBeat, etc. update
 	BroadcastOnChange<bool> m_bGameplayLeadIn;
 
-	int			m_BeatToNoteSkinRev; /* hack: incremented whenever m_BeatToNoteSkin changes */
-	void ResetNoteSkins();
-	void ResetNoteSkinsForPlayer( PlayerState *ps );
 	void GetAllUsedNoteSkins( vector<CString> &out ) const;
 
 	static const float MUSIC_SECONDS_INVALID;
@@ -182,9 +179,6 @@ public:
 	bool AllAreDead() const;
 	bool AllHumanHaveComboOf30OrMoreMisses() const;
 	bool OneIsHot() const;
-
-	// used in PLAY_MODE_BATTLE and PLAY_MODE_RAVE
-	void SetNoteSkinForBeatRange( PlayerState* pPlayerState, const CString& sNoteSkin, float StartBeat, float EndBeat );
 
 	// used in PLAY_MODE_BATTLE
 	float	m_fOpponentHealthPercent;

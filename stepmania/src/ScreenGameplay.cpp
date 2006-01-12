@@ -998,7 +998,9 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 			a.sModifiers = po.m_sNoteSkin;
 
 			GAMESTATE->LaunchAttack( pi->GetPlayerStateAndStageStatsIndex(), a );
-			GAMESTATE->m_SongOptions.FromString( a.sModifiers );
+
+			/* Update attack bOn flags. */
+			pi->GetPlayerState()->Update(0);
 		}
 
 
