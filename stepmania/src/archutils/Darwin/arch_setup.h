@@ -22,7 +22,9 @@ typedef unsigned long long UInt64;
 #define HAVE_FFMPEG
 #define HAVE_SDL
 #define HAVE_PTHREAD_COND_TIMEDWAIT
-#define HAVE_DECL_SIGUSR1
+/* This must be defined to 1 because autoconf's AC_CHECK_DECLS macro decides to define
+ * this in all cases. If only they could be consistent... */
+#define HAVE_DECL_SIGUSR1 1
 
 /* We have <machine/endian.h> which gets pulled in when we use gcc 4.0's <cstdlib>
  * but no <endian.h>. The definitions of LITTLE_ENDIAN, BIG_ENDIAN and end up conflicting

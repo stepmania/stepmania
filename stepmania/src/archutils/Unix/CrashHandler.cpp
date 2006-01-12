@@ -238,10 +238,10 @@ const char *SignalName( int signo )
 	X(SIGQUIT)
 	case SIGSEGV: return "Segmentation fault";
 	X(SIGTRAP) X(SIGTERM) X(SIGVTALRM) X(SIGXCPU) X(SIGXFSZ)
-#if defined(HAVE_DECL_SIGPWR)
+#if defined(HAVE_DECL_SIGPWR) && HAVE_DECL_SIGPWR
 	X(SIGPWR)
 #endif
-#if defined(HAVE_DECL_SIGUSR1)
+#if defined(HAVE_DECL_SIGUSR1) && HAVE_DECL_SIGUSR1
 	case SIGUSR1: return "Forced crash";
 #endif
 	default:
