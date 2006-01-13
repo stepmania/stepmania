@@ -48,11 +48,6 @@ const RString &LocalizedString::GetValue() const
 	return m_pImpl->GetValue();
 }
 
-bool LocalizedString::IsLoaded() const
-{
-	return m_pImpl->IsLoaded();
-}
-
 /*
  * Copyright (c) 2001-2005 Chris Danford
  * All rights reserved.
