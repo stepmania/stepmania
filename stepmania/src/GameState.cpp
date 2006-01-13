@@ -618,7 +618,8 @@ void GameState::ResetStageStatistics()
 	}
 
 	RemoveAllActiveAttacks();
-	RemoveAllInventory();
+	FOREACH_PlayerNumber( p )
+		m_pPlayerState[p]->RemoveAllInventory();
 	m_fOpponentHealthPercent = 1;
 	m_fTugLifePercentP1 = 0.5f;
 	FOREACH_PlayerNumber( p )
@@ -1135,31 +1136,10 @@ void GameState::GetUndisplayedBeats( const PlayerState* pPlayerState, float Tota
 }
 
 
-void GameState::LaunchAttack( MultiPlayer target, const Attack& a )
-{
-	m_pPlayerState[target]->LaunchAttack( a );
-}
-
-void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al )
-{
-	m_pPlayerState[pn]->RemoveActiveAttacks( al );
-}
-
-void GameState::EndActiveAttacksForPlayer( PlayerNumber pn )
-{
-	m_pPlayerState[pn]->EndActiveAttacks();
-}
-
-void GameState::RemoveAllInventory()
-{
-	FOREACH_PlayerNumber( p )
-		m_pPlayerState[p]->RemoveAllInventory();
-}
-
 void GameState::RemoveAllActiveAttacks()	// called on end of song
 {
 	FOREACH_PlayerNumber( p )
-		RemoveActiveAttacksForPlayer( p );
+		m_pPlayerState[p]->RemoveActiveAttacks();
 }
 
 template<class T>
