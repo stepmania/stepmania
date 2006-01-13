@@ -332,8 +332,6 @@ void Player::Load( const NoteData& noteData )
 	// TODO: Remove use of PlayerNumber.
 	PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
 
-	GAMESTATE->ResetNoteSkinsForPlayer( m_pPlayerState );
-
 	// init steps
 	m_NoteData.Init();
 	bool bOniDead = GAMESTATE->m_SongOptions.m_LifeType == SongOptions::LIFE_BATTERY  &&  
@@ -776,16 +774,10 @@ void Player::ApplyWaitingTransforms()
 
 		LOG->Trace( "Applying transform '%s' from %f to %f to '%s'", mod.sModifiers.c_str(), fStartBeat, fEndBeat,
 			GAMESTATE->m_pCurSong->GetTranslitMainTitle().c_str() );
-		if( po.m_sNoteSkin != "" )
-			GAMESTATE->SetNoteSkinForBeatRange( m_pPlayerState, po.m_sNoteSkin, fStartBeat, fEndBeat );
 
 		NoteDataUtil::TransformNoteData( m_NoteData, po, GAMESTATE->GetCurrentStyle()->m_StepsType, BeatToNoteRow(fStartBeat), BeatToNoteRow(fEndBeat) );
 	}
 	m_pPlayerState->m_ModsToApply.clear();
-
-	// Cache used NoteSkins now, not on the next update.
-	if( m_pNoteField )
-		m_pNoteField->RefreshBeatToNoteSkin();
 }
 
 void Player::DrawPrimitives()
