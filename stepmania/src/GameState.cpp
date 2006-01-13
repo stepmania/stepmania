@@ -1135,54 +1135,25 @@ void GameState::GetUndisplayedBeats( const PlayerState* pPlayerState, float Tota
 }
 
 
-/* This is called to launch an attack, or to queue an attack if a.fStartSecond
- * is set.  This is also called by GameState::Update when activating a queued attack. */
 void GameState::LaunchAttack( MultiPlayer target, const Attack& a )
 {
-	LOG->Trace( "Launch attack '%s' against P%d at %f", a.sModifiers.c_str(), target+1, a.fStartSecond );
-
-	Attack attack = a;
-
-	/* If fStartSecond is -1, it means "launch as soon as possible".  For m_ActiveAttacks,
-	 * mark the real time it's starting (now), so Update() can know when the attack started
-	 * so it can be removed later.  For m_ModsToApply, leave the -1 in, so Player::Update
-	 * knows to apply attack transforms correctly.  (yuck) */
-	m_pPlayerState[target]->m_ModsToApply.push_back( attack );
-	if( attack.fStartSecond == -1 )
-		attack.fStartSecond = this->m_fMusicSeconds;
-	m_pPlayerState[target]->m_ActiveAttacks.push_back( attack );
-
-	m_pPlayerState[target]->RebuildPlayerOptionsFromActiveAttacks();
+	m_pPlayerState[target]->LaunchAttack( a );
 }
 
 void GameState::RemoveActiveAttacksForPlayer( PlayerNumber pn, AttackLevel al )
 {
-	for( unsigned s=0; s<m_pPlayerState[pn]->m_ActiveAttacks.size(); s++ )
-	{
-		if( al != NUM_ATTACK_LEVELS && al != m_pPlayerState[pn]->m_ActiveAttacks[s].level )
-			continue;
-		m_pPlayerState[pn]->m_ActiveAttacks.erase( m_pPlayerState[pn]->m_ActiveAttacks.begin()+s, m_pPlayerState[pn]->m_ActiveAttacks.begin()+s+1 );
-		--s;
-	}
-	m_pPlayerState[pn]->RebuildPlayerOptionsFromActiveAttacks();
+	m_pPlayerState[pn]->RemoveActiveAttacks( al );
 }
 
 void GameState::EndActiveAttacksForPlayer( PlayerNumber pn )
 {
-	FOREACH( Attack, m_pPlayerState[pn]->m_ActiveAttacks, a )
-		a->fSecsRemaining = 0;
+	m_pPlayerState[pn]->EndActiveAttacks();
 }
 
 void GameState::RemoveAllInventory()
 {
 	FOREACH_PlayerNumber( p )
-	{
-		for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
-		{
-			m_pPlayerState[p]->m_Inventory[s].fSecsRemaining = 0;
-			m_pPlayerState[p]->m_Inventory[s].sModifiers = "";
-		}
-	}
+		m_pPlayerState[p]->RemoveAllInventory();
 }
 
 void GameState::RemoveAllActiveAttacks()	// called on end of song

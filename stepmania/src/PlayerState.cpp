@@ -1,6 +1,7 @@
 #include "global.h"
 #include "PlayerState.h"
 #include "GameState.h"
+#include "RageLog.h"
 
 PlayerState::PlayerState()
 {
@@ -82,6 +83,53 @@ void PlayerState::Update( float fDelta )
 
 	if( m_fSecondsUntilAttacksPhasedOut > 0 )
 		m_fSecondsUntilAttacksPhasedOut = max( 0, m_fSecondsUntilAttacksPhasedOut - fDelta );
+}
+
+/* This is called to launch an attack, or to queue an attack if a.fStartSecond
+ * is set.  This is also called by GameState::Update when activating a queued attack. */
+void PlayerState::LaunchAttack( const Attack& a )
+{
+	LOG->Trace( "Launch attack '%s' against P%d at %f", a.sModifiers.c_str(), m_mp+1, a.fStartSecond );
+
+	Attack attack = a;
+
+	/* If fStartSecond is -1, it means "launch as soon as possible".  For m_ActiveAttacks,
+	 * mark the real time it's starting (now), so Update() can know when the attack started
+	 * so it can be removed later.  For m_ModsToApply, leave the -1 in, so Player::Update
+	 * knows to apply attack transforms correctly.  (yuck) */
+	m_ModsToApply.push_back( attack );
+	if( attack.fStartSecond == -1 )
+		attack.fStartSecond = GAMESTATE->m_fMusicSeconds;
+	m_ActiveAttacks.push_back( attack );
+
+	RebuildPlayerOptionsFromActiveAttacks();
+}
+
+void PlayerState::RemoveActiveAttacks( AttackLevel al )
+{
+	for( unsigned s=0; s<m_ActiveAttacks.size(); s++ )
+	{
+		if( al != NUM_ATTACK_LEVELS && al != m_ActiveAttacks[s].level )
+			continue;
+		m_ActiveAttacks.erase( m_ActiveAttacks.begin()+s, m_ActiveAttacks.begin()+s+1 );
+		--s;
+	}
+	RebuildPlayerOptionsFromActiveAttacks();
+}
+
+void PlayerState::EndActiveAttacks()
+{
+	FOREACH( Attack, m_ActiveAttacks, a )
+		a->fSecsRemaining = 0;
+}
+
+void PlayerState::RemoveAllInventory()
+{
+	for( int s=0; s<NUM_INVENTORY_SLOTS; s++ )
+	{
+		m_Inventory[s].fSecsRemaining = 0;
+		m_Inventory[s].sModifiers = "";
+	}
 }
 
 void PlayerState::RebuildPlayerOptionsFromActiveAttacks()

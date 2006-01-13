@@ -40,6 +40,9 @@ public:
 	//
 	// Used in Battle and Rave
 	//
+	void LaunchAttack( const Attack& a );
+	void RemoveActiveAttacks( AttackLevel al=NUM_ATTACK_LEVELS /*all*/ );
+	void EndActiveAttacks();
 	void RebuildPlayerOptionsFromActiveAttacks();
 	int GetSumOfActiveAttackLevels() const;
 	int		m_iCpuSkill;	// only used when m_PlayerController is PC_CPU
@@ -61,6 +64,7 @@ public:
 	//
 	// Used in Battle
 	//
+	void RemoveAllInventory();
 	Attack	m_Inventory[NUM_INVENTORY_SLOTS];
 
 	// Lua
