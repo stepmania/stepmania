@@ -18,7 +18,6 @@
 #include "RageTimer.h"
 #include "ScoreKeeperNormal.h"
 #include "ScoreKeeperRave.h"
-#include "NoteFieldPositioning.h"
 #include "LyricsLoader.h"
 #include "ActorUtil.h"
 #include "RageTextureManager.h"

@@ -1,7 +1,6 @@
 #include "global.h"
 #include "ReceptorArrow.h"
 #include "GameState.h"
-#include "NoteFieldPositioning.h"
 #include "NoteSkinManager.h"
 #include "RageLog.h"
 #include "RageUtil.h"
