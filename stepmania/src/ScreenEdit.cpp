@@ -2021,7 +2021,7 @@ void ScreenEdit::TransitionEditState( EditState em )
 		GAMESTATE->ResetOriginalSyncData();
 
 		/* Stop displaying course attacks, if any, and return to the player's defaults. */
-		GAMESTATE->RemoveAllActiveAttacks();
+		GAMESTATE->m_pPlayerState[PLAYER_1]->RemoveActiveAttacks();
 		GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
 
 		/* Snap to current options. */
