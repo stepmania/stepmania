@@ -694,7 +694,14 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 			GAMESTATE->m_pCurCharacters[*pn] = m_pCharacter;
 	for( map<CString,CString>::const_iterator i = m_SetEnv.begin(); i != m_SetEnv.end(); i++ )
-		GAMESTATE->m_mapEnv[ i->first ] = i->second;
+	{
+		Lua *L = LUA->Get();
+		GAMESTATE->m_Environment->PushSelf(L);
+		lua_pushstring( L, i->first );
+		lua_pushstring( L, i->second );
+		lua_settable( L, -3 );
+		LUA->Release(L);
+	}
 	if( !m_sSongGroup.empty() )
 		GAMESTATE->m_sPreferredSongGroup.Set( m_sSongGroup );
 	if( m_SortOrder != SORT_INVALID )

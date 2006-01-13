@@ -178,7 +178,7 @@ void GameState::Reset()
 //	m_iCoins = 0;	// don't reset coin count!
 	m_MasterPlayerNumber = PLAYER_INVALID;
 	m_bMultiplayer = false;
-	m_mapEnv.clear();
+	*m_Environment = LuaTable();
 	m_sPreferredSongGroup.Set( GROUP_ALL );
 	m_sPreferredCourseGroup.Set( GROUP_ALL );
 	m_bChangedFailTypeOnScreenSongOptions = false;
@@ -726,6 +726,7 @@ Stage GameState::GetCurrentStage() const
 	else										return (Stage)(STAGE_1+m_iCurrentStageIndex);
 }
 
+// Return true if it's possible for GetCurrentStage() to return the given stage.
 bool GameState::IsStagePossible( Stage s ) const
 {
 	/* HACK: Find out what the stage would be without long or marathon.
@@ -1883,14 +1884,21 @@ public:
 	}
 	static int SetTemporaryEventMode( T* p, lua_State *L )	{ p->m_bTemporaryEventMode = BArg(1); return 0; }
 	static int Env( T* p, lua_State *L )	{ p->m_Environment->PushSelf(L); return 1; }
-	static int SetEnv( T* p, lua_State *L )	{ p->m_mapEnv[SArg(1)] = SArg(2); return 0; }
+	static int SetEnv( T* p, lua_State *L )
+	{
+		int iTop = lua_gettop(L);
+		p->m_Environment->PushSelf(L);
+		lua_pushvalue( L, iTop-1 );
+		lua_pushvalue( L, iTop );
+		lua_settable( L, -3 );
+		return 0;
+	}
 	static int GetEnv( T* p, lua_State *L )
 	{
-		map<CString,CString>::const_iterator iter = p->m_mapEnv.find(SArg(1));
-		if( iter != p->m_mapEnv.end() )
-			lua_pushstring(L,iter->second);
-		else
-			lua_pushnil(L);
+		int iTop = lua_gettop(L);
+		p->m_Environment->PushSelf(L);
+		lua_pushvalue( L, iTop );
+		lua_gettable( L, -2 );
 		return 1;
 	}
 	static int GetEditSourceSteps( T* p, lua_State *L )
