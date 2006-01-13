@@ -52,6 +52,34 @@ static IniFile *g_pIniMetrics;
 #include "SubscriptionManager.h"
 static SubscriptionManager<IThemeMetric> g_Subscribers;
 
+class LocalizedStringImplThemeMetric : public ILocalizedStringImpl, public ThemeMetric<RString>
+{
+public:
+	static ILocalizedStringImpl *Create() { return new LocalizedStringImplThemeMetric; }
+
+	void ILocalizedStringImpl::Load( const RString& sGroup, const RString& sName )
+	{
+		ThemeMetric<RString>::Load( sGroup, sName );
+	}
+
+	virtual void Read()
+	{
+		if( m_sName != ""  &&  THEME  &&   THEME->IsThemeLoaded() )
+		{
+			THEME->GetString( m_sGroup, m_sName, m_currentValue );
+			m_bIsLoaded = true;
+		}
+	}
+
+	const RString &GetLocalized() const
+	{
+		if( IsLoaded() )
+			return GetValue();
+		else
+			return m_sName;
+	}
+};
+
 void ThemeManager::Subscribe( IThemeMetric *p )
 {
 	g_Subscribers.Subscribe( p );
@@ -317,6 +345,9 @@ void ThemeManager::SwitchThemeAndLanguage( const RString &sThemeName_, const RSt
 		 * uses. */
 		UpdateLuaGlobals();
 	}
+
+	// Use theme metrics for localization.
+	LocalizedString::RegisterLocalizer( LocalizedStringImplThemeMetric::Create );
 
 	// reload subscribers
 	if( g_Subscribers.m_pSubscribers )

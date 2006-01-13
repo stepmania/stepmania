@@ -1,51 +1,74 @@
 #include "global.h"
 #include "LocalizedString.h"
 #include "Foreach.h"
-#include "LuaFunctions.h"
-#include "LuaManager.h"
-#include "ThemeMetric.h"
 #include "RageUtil.h"
+#include "SubscriptionManager.h"
 
-class LocalizedStringImpl : public ThemeMetric<RString>
+static SubscriptionManager<LocalizedString> m_Subscribers;
+
+class LocalizedStringImplDefault: public ILocalizedStringImpl
 {
 public:
-	LocalizedStringImpl( const RString& sGroup, const RString& sName ) :
-		ThemeMetric<RString>( sGroup, sName )
+	static ILocalizedStringImpl *Create() { return new LocalizedStringImplDefault; }
+
+	void ILocalizedStringImpl::Load( const RString& sGroup, const RString& sName )
 	{
-		// Ugly.  Our virtual method Read() isn't yet set up when Read gets
-		// called through the constructor.  Read again explicitly.
-		Read();
+		m_sValue = sName;
 	}
 
-	virtual void Read()
-	{
-		if( m_sName != ""  &&  THEME  &&   THEME->IsThemeLoaded() )
-		{
-			THEME->GetString( m_sGroup, m_sName, m_currentValue );
-			m_bIsLoaded = true;
-		}
-	}
+	const RString &GetLocalized() const { return m_sValue; }
 
+private:
+	CString m_sValue;
 };
+
+static LocalizedString::MakeLocalizer g_pMakeLocalizedStringImpl = LocalizedStringImplDefault::Create;
+
+void LocalizedString::RegisterLocalizer( MakeLocalizer pFunc )
+{
+	g_pMakeLocalizedStringImpl = pFunc;
+	FOREACHS( LocalizedString*, *m_Subscribers.m_pSubscribers, l )
+	{
+		LocalizedString *pLoc = *l;
+		pLoc->CreateImpl();
+	}
+}
 
 LocalizedString::LocalizedString( const RString& sGroup, const RString& sName )
 {
-	m_pImpl = new LocalizedStringImpl(sGroup,sName);
+	m_Subscribers.Subscribe( this );
+
+	m_sGroup = sGroup;
+	m_sName = sName;
+	m_pImpl = NULL;
+
+	CreateImpl();
 }
 
 LocalizedString::~LocalizedString()
 {
+	m_Subscribers.Unsubscribe( this );
+
 	SAFE_DELETE( m_pImpl );
+}
+
+void LocalizedString::CreateImpl()
+{
+	SAFE_DELETE( m_pImpl );
+	m_pImpl = g_pMakeLocalizedStringImpl();
+	m_pImpl->Load(  m_sGroup, m_sName );
 }
 
 void LocalizedString::Load( const RString& sGroup, const RString& sName )
 {
-	m_pImpl->Load( sGroup, sName );
+	m_sGroup = sGroup;
+	m_sName = sName;
+	CreateImpl();
 }
 
 const RString &LocalizedString::GetValue() const
 {
-	return m_pImpl->GetValue();
+	return m_pImpl->GetLocalized();
 }
 
 /*

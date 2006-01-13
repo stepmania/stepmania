@@ -3,7 +3,13 @@
 #ifndef LocalizedString_H
 #define LocalizedString_H
 
-class LocalizedStringImpl;
+class ILocalizedStringImpl
+{
+public:
+	virtual ~ILocalizedStringImpl() { }
+	virtual void Load( const RString& sGroup, const RString& sName ) = 0;
+	virtual const RString &GetLocalized() const = 0;
+};
 
 class LocalizedString
 {
@@ -14,8 +20,13 @@ public:
 	operator const RString &() const { return GetValue(); }
 	const RString &GetValue() const;
 
+	typedef ILocalizedStringImpl *(*MakeLocalizer)();
+	static void RegisterLocalizer( MakeLocalizer pFunc );
+
 private:
-	LocalizedStringImpl *m_pImpl;
+	void CreateImpl();
+	CString m_sGroup, m_sName;
+	ILocalizedStringImpl *m_pImpl;
 };
 
 #endif
