@@ -2,6 +2,42 @@
 #include "PlayerState.h"
 #include "GameState.h"
 
+PlayerState::PlayerState()
+{
+	m_PlayerNumber = PLAYER_INVALID;
+	m_mp = MultiPlayer_INVALID;
+	Reset();
+}
+
+void PlayerState::Reset()
+{
+	m_CurrentPlayerOptions.Init();
+	m_PlayerOptions.Init();
+	m_StagePlayerOptions.Init();
+	m_StoredPlayerOptions.Init();
+
+	m_fLastDrawnBeat = -100;
+
+	m_HealthState = ALIVE;
+
+	m_PlayerController = PC_HUMAN;
+	
+	m_iCpuSkill = 5;
+
+	m_iLastPositiveSumOfAttackLevels = 0;
+	m_fSecondsUntilAttacksPhasedOut = 0;
+	m_bAttackBeganThisUpdate = false;
+	m_bAttackEndedThisUpdate = false;
+	m_ActiveAttacks.clear();
+	m_ModsToApply.clear();
+
+	m_fSuperMeter = 0;	// between 0 and NUM_ATTACK_LEVELS
+	m_fSuperMeterGrowthScale = 1;
+
+	for( int i=0; i<NUM_INVENTORY_SLOTS; i++ )
+		m_Inventory[i].MakeBlank();
+}
+
 void PlayerState::Update( float fDelta )
 {
 	m_CurrentPlayerOptions.Approach( m_PlayerOptions, fDelta );
