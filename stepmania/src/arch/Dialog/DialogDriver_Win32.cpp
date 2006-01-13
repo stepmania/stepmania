@@ -83,7 +83,7 @@ static HWND GetHwnd()
 static RString GetWindowTitle()
 {
 #if !defined(SMPACKAGE)
-	return CommonMetrics::WINDOW_TITLE.IsLoaded() ? CommonMetrics::WINDOW_TITLE.GetValue() : PRODUCT_NAME;
+	return CommonMetrics::WINDOW_TITLE.GetValue();
 #else
 	return PRODUCT_NAME;
 #endif
