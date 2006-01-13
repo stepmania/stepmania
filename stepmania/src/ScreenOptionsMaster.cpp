@@ -129,7 +129,7 @@ void ScreenOptionsMaster::ExportOptions( int r, const vector<PlayerNumber> &vpns
 void ScreenOptionsMaster::BeginFadingOut()
 {
 	/* If the selection is on a LIST, and the selected LIST option sets the screen,
-	* honor it. */
+	 * honor it. */
 	m_bExportWillSetANewScreen = false;
 
 	int iCurRow = this->GetCurrentRow();
