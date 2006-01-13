@@ -997,7 +997,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 				continue;
 			a.sModifiers = po.m_sNoteSkin;
 
-			GAMESTATE->LaunchAttack( pi->GetPlayerStateAndStageStatsIndex(), a );
+			pi->GetPlayerState()->LaunchAttack( a );
 
 			/* Update attack bOn flags. */
 			pi->GetPlayerState()->Update(0);
@@ -1028,7 +1028,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 			if( a.fStartSecond == 0 )
 				a.fStartSecond = -1;	// now
 			
-			GAMESTATE->LaunchAttack( pi->GetPlayerStateAndStageStatsIndex(), a );
+			pi->GetPlayerState()->LaunchAttack( a );
 			GAMESTATE->m_SongOptions.FromString( a.sModifiers );
 		}
 
