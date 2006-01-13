@@ -432,9 +432,6 @@ void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 {
 	OptionRow &row = *m_pRows[iRow];
 	
-	if( row.GetRowType() == OptionRow::RowType_Exit )
-		return;	// skip
-
 	const OptionRowDefinition &def = row.GetRowDef();
 
 	// find first selection and whether multiple are selected
