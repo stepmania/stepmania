@@ -140,6 +140,7 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 	}
 
   	PlayerNumber pnToAttack = OPPOSITE_PLAYER[pn];
+	PlayerState *pPlayerStateToAttack = GAMESTATE->m_pPlayerState[pnToAttack];
 
 	Attack a;
 	a.level = al;
@@ -147,10 +148,10 @@ void ScoreKeeperRave::LaunchAttack( AttackLevel al )
 	a.sModifiers = sAttackToGive;
 
 	// remove current attack (if any)
-	GAMESTATE->RemoveActiveAttacksForPlayer( pnToAttack );
+	pPlayerStateToAttack->RemoveActiveAttacks();
 
 	// apply new attack
-	GAMESTATE->LaunchAttack( (MultiPlayer)pnToAttack, a );
+	pPlayerStateToAttack->LaunchAttack( a );
 
 //	SCREENMAN->SystemMessage( ssprintf( "attacking %d with %s", pnToAttack, sAttackToGive.c_str() ) );
 }
