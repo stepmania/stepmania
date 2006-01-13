@@ -12,7 +12,6 @@
 #include "HighScore.h"
 #include "NoteSkinManager.h"
 #include "GameCommand.h"
-#include "NoteFieldPositioning.h"
 #include "Character.h"
 #include "UnlockManager.h"
 #include "AnnouncerManager.h"
@@ -1694,11 +1693,6 @@ Premium	GameState::GetPremium()
 		return PREMIUM_NONE; 
 	else 
 		return PREFSMAN->m_Premium; 
-}
-
-bool GameState::IsPlayerHot( const PlayerState *pPlayerState ) const
-{
-	return pPlayerState->m_HealthState == PlayerState::HOT;
 }
 
 bool GameState::IsPlayerInDanger( const PlayerState *pPlayerState ) const

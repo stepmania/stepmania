@@ -14,7 +14,6 @@
 #include "ThemeManager.h"
 #include "NoteSkinManager.h"
 #include "Steps.h"
-#include "NoteFieldPositioning.h"
 #include "NoteDataUtil.h"
 #include "SongUtil.h"
 #include "StepsUtil.h"
