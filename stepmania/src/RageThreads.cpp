@@ -124,11 +124,15 @@ struct ThreadSlot *g_pUnknownThreadSlot = NULL;
 
 /* Lock this mutex before using or modifying pImpl.  Other values are just identifiers,
  * so possibly racing over them is harmless (simply using a stale thread ID, etc). */
-static RageMutex g_ThreadSlotsLock( "ThreadSlots" );
+static RageMutex &GetThreadSlotsLock()
+{
+	static RageMutex *pLock = new RageMutex( "ThreadSlots" );
+	return *pLock;
+}
 
 static int FindEmptyThreadSlot()
 {
-	LockMut( g_ThreadSlotsLock );
+	LockMut( GetThreadSlotsLock() );
 	for( int entry = 0; entry < MAX_THREADS; ++entry )
 	{
 		if( g_ThreadSlots[entry].used )
@@ -149,13 +153,13 @@ static void InitThreads()
 	if( bInitialized )
 		return;
 
-	g_ThreadSlotsLock.Lock();
+	GetThreadSlotsLock().Lock();
 
 	/* Libraries might start threads on their own, which might call user callbacks,
 	 * which could come back here.  Make sure we don't accidentally initialize twice. */
 	if( bInitialized )
 	{
-		g_ThreadSlotsLock.Unlock();
+		GetThreadSlotsLock().Unlock();
 		return;
 	}
 
@@ -168,7 +172,7 @@ static void InitThreads()
 	sprintf( g_ThreadSlots[slot].ThreadFormattedOutput, "Unknown thread" );
 	g_pUnknownThreadSlot = &g_ThreadSlots[slot];
 
-	g_ThreadSlotsLock.Unlock();
+	GetThreadSlotsLock().Unlock();
 }
 
 
@@ -224,7 +228,7 @@ void RageThread::Create( int (*fn)(void *), void *data )
 	InitThreads();
 
 	/* Lock unused slots, so nothing else uses our slot before we mark it used. */
-	LockMut(g_ThreadSlotsLock);
+	LockMut(GetThreadSlotsLock());
 
 	int slotno = FindEmptyThreadSlot();
 	m_pSlot = &g_ThreadSlots[slotno];
@@ -255,7 +259,7 @@ void RageThread::Create( int (*fn)(void *), void *data )
 RageThreadRegister::RageThreadRegister( const CString &sName )
 {
 	InitThreads();
-	LockMut( g_ThreadSlotsLock );
+	LockMut( GetThreadSlotsLock() );
 	
 	int iSlot = FindEmptyThreadSlot();
 	
@@ -271,7 +275,7 @@ RageThreadRegister::RageThreadRegister( const CString &sName )
 
 RageThreadRegister::~RageThreadRegister()
 {
-	LockMut( g_ThreadSlotsLock );
+	LockMut( GetThreadSlotsLock() );
 
 	m_pSlot->Release();
 	m_pSlot = NULL;
@@ -296,7 +300,7 @@ bool RageThread::EnumThreadIDs( int n, uint64_t &iID )
 	if( n >= MAX_THREADS )
 		return false;
 
-	LockMut(g_ThreadSlotsLock);
+	LockMut(GetThreadSlotsLock());
 	const ThreadSlot *slot = &g_ThreadSlots[n];
 
 	if( slot->used )
@@ -313,7 +317,7 @@ int RageThread::Wait()
 	ASSERT( m_pSlot->pImpl != NULL );
 	int ret = m_pSlot->pImpl->Wait();
 
-	LockMut( g_ThreadSlotsLock );
+	LockMut( GetThreadSlotsLock() );
 
 	m_pSlot->Release();
 	m_pSlot = NULL;
@@ -587,10 +591,10 @@ void RageMutex::Lock()
 			GetName().c_str(), ThisSlotName.c_str(), OtherSlotName.c_str() );
 
 #if defined(CRASH_HANDLER)
-		/* Don't leave g_ThreadSlotsLock when we call ForceCrashHandlerDeadlock. */
-		g_ThreadSlotsLock.Lock();
+		/* Don't leave GetThreadSlotsLock() locked when we call ForceCrashHandlerDeadlock. */
+		GetThreadSlotsLock().Lock();
 		uint64_t CrashHandle = OtherSlot? OtherSlot->id:0;
-		g_ThreadSlotsLock.Unlock();
+		GetThreadSlotsLock().Unlock();
 
 		/* Pass the crash handle of the other thread, so it can backtrace that thread. */
 		CrashHandler::ForceDeadlock( sReason, CrashHandle );
