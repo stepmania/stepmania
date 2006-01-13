@@ -1205,9 +1205,9 @@ void Player::HandleStep( int col, const RageTimer &tm, bool bHeld )
 				);
 
 			// TODO: Remove use of PlayerNumber
-			PlayerNumber pn = m_pPlayerState->m_PlayerNumber;
-
-			GAMESTATE->LaunchAttack( (MultiPlayer)OPPOSITE_PLAYER[pn], attack );
+			PlayerNumber pnToAttack = OPPOSITE_PLAYER[m_pPlayerState->m_PlayerNumber];
+			PlayerState *pPlayerStateToAttack = GAMESTATE->m_pPlayerState[pnToAttack];
+			pPlayerStateToAttack->LaunchAttack( attack );
 
 			// remove all TapAttacks on this row
 			for( int t=0; t<m_NoteData.GetNumTracks(); t++ )
