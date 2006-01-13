@@ -2034,7 +2034,8 @@ void ScreenEdit::TransitionEditState( EditState em )
 		GAMESTATE->m_bGameplayLeadIn.Set( false );
 
 		/* Reset the note skin, in case preferences have changed. */
-		GAMESTATE->ResetNoteSkins();
+		// XXX
+		// GAMESTATE->ResetNoteSkins();
 
 		break;
 	}
