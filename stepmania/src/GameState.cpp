@@ -1473,35 +1473,30 @@ bool GameState::AnyPlayerHasRankingFeats() const
 	return false;
 }
 
-/*bool GameState::IsNameBlacklisted( CString name )
+void GameState::StoreRankingName( PlayerNumber pn, CString sName )
 {
-
-}*/
-
-void GameState::StoreRankingName( PlayerNumber pn, CString name )
-{
-	name.MakeUpper();
+	sName.MakeUpper();
 
 	if( USE_NAME_BLACKLIST )
 	{
 		RageFile file;
 		if( file.Open(NAME_BLACKLIST_FILE) )
 		{
-			CString line;
+			CString sLine;
 			
-			while (!file.AtEOF())
+			while( !file.AtEOF() )
 			{
-				if( file.GetLine( line ) == -1 )
+				if( file.GetLine(sLine) == -1 )
 				{
 					LOG->Warn( "Error reading \"%s\": %s", NAME_BLACKLIST_FILE, file.GetError().c_str() );
 					break;
 				}
 
-				line.MakeUpper();
-				if( !line.empty() && name.find(line) != string::npos )	// name contains a bad word
+				sLine.MakeUpper();
+				if( !sLine.empty() && sName.find(sLine) != string::npos )	// name contains a bad word
 				{
-					LOG->Trace( "entered '%s' matches blacklisted item '%s'", name.c_str(), line.c_str() );
-					name = "";
+					LOG->Trace( "entered '%s' matches blacklisted item '%s'", sName.c_str(), sLine.c_str() );
+					sName = "";
 					break;
 				}
 			}
@@ -1513,7 +1508,7 @@ void GameState::StoreRankingName( PlayerNumber pn, CString name )
 
 	for( unsigned i=0; i<aFeats.size(); i++ )
 	{
-		*aFeats[i].pStringToFill = name;
+		*aFeats[i].pStringToFill = sName;
 
 		// save name pointers as we fill them
 		m_vpsNamesThatWereFilled.push_back( aFeats[i].pStringToFill );
