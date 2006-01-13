@@ -650,7 +650,6 @@ void ScreenEdit::Init()
 	GAMESTATE->m_fSongBeat = 0;
 	m_fTrailingBeat = GAMESTATE->m_fSongBeat;
 
-	GAMESTATE->ResetNoteSkins();
 	GAMESTATE->StoreSelectedOptions();
 
 	m_iShiftAnchor = -1;
@@ -671,7 +670,6 @@ void ScreenEdit::Init()
 		m_PlayerStateEdit.m_PlayerOptions.m_sNoteSkin = "note";	// change noteskin before loading all of the edit Actors
 	m_PlayerStateEdit.m_PlayerNumber = PLAYER_1;
 	m_PlayerStateEdit.m_PlayerOptions.m_sNoteSkin = GAMESTATE->m_pPlayerState[PLAYER_1]->m_PlayerOptions.m_sNoteSkin;
-	m_PlayerStateEdit.ResetNoteSkins();
 
 	m_pSteps->GetNoteData( m_NoteDataEdit );
 	m_NoteFieldEdit.SetXY( EDIT_X, EDIT_Y );
@@ -3169,7 +3167,7 @@ void ScreenEdit::SetupCourseAttacks()
 
 	// Put course options into effect.
 	GAMESTATE->m_pPlayerState[PLAYER_1]->m_ModsToApply.clear();
-	GAMESTATE->RemoveActiveAttacksForPlayer( PLAYER_1 );
+	GAMESTATE->m_pPlayerState[PLAYER_1]->RemoveActiveAttacks();
 
 
 	if( GAMESTATE->m_pCurCourse )
@@ -3187,7 +3185,7 @@ void ScreenEdit::SetupCourseAttacks()
 		}
 
 		for( unsigned i=0; i<Attacks.size(); ++i )
-			GAMESTATE->LaunchAttack( (MultiPlayer)PLAYER_1, Attacks[i] );
+			GAMESTATE->m_pPlayerState[PLAYER_1]->LaunchAttack( Attacks[i] );
 	}
 	GAMESTATE->m_pPlayerState[PLAYER_1]->RebuildPlayerOptionsFromActiveAttacks();
 }
