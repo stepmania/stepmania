@@ -118,7 +118,7 @@ void ScoreKeeperRave::AddSuperMeterDelta( float fUnscaledPercentChange )
 		default:	ASSERT(0);
 		}
 		if( !bWinning )
-			GAMESTATE->EndActiveAttacksForPlayer( m_pPlayerState->m_PlayerNumber );
+			m_pPlayerState->EndActiveAttacks();
 	}
 }
 
