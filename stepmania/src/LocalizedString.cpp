@@ -11,7 +11,7 @@ class LocalizedStringImplDefault: public ILocalizedStringImpl
 public:
 	static ILocalizedStringImpl *Create() { return new LocalizedStringImplDefault; }
 
-	void ILocalizedStringImpl::Load( const RString& sGroup, const RString& sName )
+	void Load( const RString& sGroup, const RString& sName )
 	{
 		m_sValue = sName;
 	}
