@@ -314,20 +314,20 @@ void OptionRow::InitText()
 		// init text
 		FOREACH_PlayerNumber( p )
 		{
-			BitmapText *bt = new BitmapText( m_pParentType->m_textItemParent );
-			m_textItems.push_back( bt );
+			BitmapText *pText = new BitmapText( m_pParentType->m_textItemParent );
+			m_textItems.push_back( pText );
 
-			bt->RunCommands( m_pParentType->ITEMS_ON_COMMAND );
-			bt->SetShadowLength( 0 );
+			pText->RunCommands( m_pParentType->ITEMS_ON_COMMAND );
+			pText->SetShadowLength( 0 );
 
 			if( m_RowDef.m_bOneChoiceForAllPlayers )
 			{
-				bt->SetX( m_pParentType->ITEMS_LONG_ROW_SHARED_X );
+				pText->SetX( m_pParentType->ITEMS_LONG_ROW_SHARED_X );
 				break;	// only initialize one item since it's shared
 			}
 			else
 			{
-				bt->SetX( m_pParentType->ITEMS_LONG_ROW_X.GetValue(p) );
+				pText->SetX( m_pParentType->ITEMS_LONG_ROW_X.GetValue(p) );
 			}
 		}
 
@@ -336,16 +336,16 @@ void OptionRow::InitText()
 		{
 			FOREACH_PlayerNumber( p )
 			{
-				OptionsCursor *ul = new OptionsCursor( m_pParentType->m_UnderlineParent );
-				m_Underline[p].push_back( ul );
+				OptionsCursor *pCursor = new OptionsCursor( m_pParentType->m_UnderlineParent );
+				m_Underline[p].push_back( pCursor );
 
-				ul->Set( p );
+				pCursor->Set( p );
 				int iWidth, iX, iY;
 				GetWidthXY( p, 0, iWidth, iX, iY );
-				ul->SetX( float(iX) );
-				ul->SetWidth( float(iWidth) );
+				pCursor->SetX( float(iX) );
+				pCursor->SetWidth( float(iWidth) );
 				if( GetRowType() == OptionRow::RowType_Exit )
-					ul->SetHidden( true );
+					pCursor->SetHidden( true );
 			}
 		}
 		break;
