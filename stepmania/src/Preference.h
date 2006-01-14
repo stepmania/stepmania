@@ -13,10 +13,10 @@ class IPreference
 public:
 	IPreference( const CString& sName );
 	virtual ~IPreference();
+	void ReadFrom( const XNode* pNode );
+	void WriteTo( XNode* pNode ) const;
 
 	virtual void LoadDefault() = 0;
-	virtual void ReadFrom( const XNode* pNode );
-	virtual void WriteTo( XNode* pNode ) const;
 
 	virtual CString ToString() const = 0;
 	virtual void FromString( const CString &s ) = 0;
