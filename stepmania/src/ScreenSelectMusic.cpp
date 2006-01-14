@@ -87,7 +87,7 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 
 void ScreenSelectMusic::Init()
 {
-	m_bSelectIsDown = false; // used by LoadHelpText which is called by ScreenWithMenuElements::Init()
+	m_bSelectIsDown = false; // used by UpdateSelectButton
 
 	ScreenWithMenuElements::Init();
 
@@ -715,7 +715,7 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	if( m_bMadeChoice )
 		return;		// ignore
 
-	LoadHelpText();
+	UpdateSelectButton();
 
 	if( input.MenuI.button == MENU_BUTTON_SELECT )
 	{
@@ -893,10 +893,8 @@ void ScreenSelectMusic::Input( const InputEventPlus &input )
 	}
 }
 
-void ScreenSelectMusic::LoadHelpText()
+void ScreenSelectMusic::UpdateSelectButton()
 {
-	ScreenWithMenuElements::LoadHelpText();
-
 	bool bSelectIsDown = false;
 	FOREACH_EnabledPlayer( p )
 		bSelectIsDown |= INPUTMAPPER->IsButtonDown( MenuInput(p, MENU_BUTTON_SELECT) );
@@ -1448,7 +1446,6 @@ void ScreenSelectMusic::AfterMusicChange()
 	if( GAMESTATE->m_SortOrder != s_lastSortOrder )
 	{
 		// Reload to let Lua metrics have a chance to change the help text.
-		LoadHelpText();
 		s_lastSortOrder = GAMESTATE->m_SortOrder;
 	}
 

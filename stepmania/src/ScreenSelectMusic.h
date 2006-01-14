@@ -61,7 +61,7 @@ protected:
 	void TweenCoursePartsOffScreen( bool Final );
 	void SkipSongPartTweens();
 	void SkipCoursePartTweens();
-	virtual void LoadHelpText();
+	void UpdateSelectButton();
 
 	void ChangeDifficulty( PlayerNumber pn, int dir );
 
