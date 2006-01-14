@@ -530,7 +530,7 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 		int iWidth, iX, iY;
 		GetWidthXY( pn, iChoiceWithFocus, iWidth, iX, iY );
 		ul.SetGlobalX( (float)iX );
-		ul.SetGlobalDiffuseColor( RageColor(1,1,1, 1.0f) );
+		ul.SetGlobalDiffuseColor( RageColor(1,1,1,1) );
 
 		ASSERT( m_vbSelected[pnTakeSelectedFrom].size() == m_RowDef.m_vsChoices.size() );
 
