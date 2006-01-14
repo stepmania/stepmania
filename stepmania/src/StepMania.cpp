@@ -1266,6 +1266,16 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 			return true;
 		}
 	}
+#else
+	if( input.DeviceI == DeviceInput(DEVICE_KEYBOARD, KEY_Cq) &&
+	    (INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_LMETA) ) ||
+	     INPUTFILTER->IsBeingPressed( DeviceInput(DEVICE_KEYBOARD, KEY_RMETA) )) )
+	{
+		/* The user quit is handled by the menu item so we don't need to set it here;
+		 * however, we do want to return that it has been handled since this will happen
+		 * first. */
+		return true;
+	}
 #endif
 
 	bool bDoScreenshot = 
@@ -1300,7 +1310,14 @@ bool HandleGlobalInputs( const InputEventPlus &input )
 		 INPUTFILTER->IsBeingPressed(DeviceInput(DEVICE_KEYBOARD, KEY_LALT))) )
 	{
 		/* alt-enter */
+		/* In OS X, this is a menu item and will be handled as such. This will happen
+		 * first and then the lower priority GUI thread will happen second causing the
+		 * window to toggle twice. Another solution would be to put a timer in
+		 * ArchHooks::SetToggleWindowed() and just not set the bool it if it's been less
+		 * than, say, half a second. */
+#if !defined(MACOSX)
 		ArchHooks::SetToggleWindowed();
+#endif
 		return true;
 	}
 
