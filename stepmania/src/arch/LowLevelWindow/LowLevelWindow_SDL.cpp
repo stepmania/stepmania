@@ -6,16 +6,6 @@
 #include "arch/ArchHooks/ArchHooks.h"
 #include "DisplayResolutions.h"
 
-#if defined(MACOSX)
-extern "C"
-{
-	extern void SetupWindow();
-	extern void SM_ShowCursor( bool b );
-}
-// SDL_ShowCursor doesn't seem to work on OS X any longer
-#define SDL_ShowCursor(x) SM_ShowCursor( (x) == SDL_ENABLE )
-#endif
-
 LowLevelWindow_SDL::LowLevelWindow_SDL()
 {
 	/* By default, ignore all SDL events.  We'll enable them as we need them.
@@ -148,11 +138,6 @@ CString LowLevelWindow_SDL::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		const SDL_version *ver = SDL_Linked_Version();
 		LOG->Info( "SDL version: %i.%i.%i", ver->major, ver->minor, ver->patch );
 	}
-
-#if defined(MACOSX)
-	if (p.windowed)
-		SetupWindow();
-#endif
 
 	{
 		/* Find out what we really got. */
