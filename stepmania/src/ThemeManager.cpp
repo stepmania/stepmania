@@ -936,7 +936,7 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 {
 	RString sValueName = sValueName_;
 
-	// TODO: Are there esacpe rules for this?
+	// TODO: Are there escape rules for this?
 	DEBUG_ASSERT( sValueName.find('=') == sValueName.npos );
 
 	// TODO: Move this escaping into IniFile?
