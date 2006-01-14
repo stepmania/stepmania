@@ -745,9 +745,6 @@ void OptionRow::SetOptionIcon( PlayerNumber pn, const CString &sText, GameComman
 
 BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow )
 {
-	if( m_RowType == OptionRow::RowType_Exit )
-		return *m_textItems[0];
-
 	bool bOneChoice = m_RowDef.m_bOneChoiceForAllPlayers;
 	int index = -1;
 	switch( m_RowDef.m_layoutType )
