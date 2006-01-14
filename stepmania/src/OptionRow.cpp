@@ -279,7 +279,7 @@ void OptionRow::InitText()
 		}
 	}
 
-	// If the items will go off the edge of the screen, then re-init with the "long row" style.
+	// If the items will go off the edge of the screen, then force LAYOUT_SHOW_ONE_IN_ROW.
 	{
 		BitmapText bt( m_pParentType->m_textItemParent );
 		bt.RunCommands( m_pParentType->ITEMS_ON_COMMAND );
