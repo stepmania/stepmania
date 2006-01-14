@@ -700,6 +700,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		lua_pushstring( L, i->first );
 		lua_pushstring( L, i->second );
 		lua_settable( L, -3 );
+		lua_pop( L, 1 );
 		LUA->Release(L);
 	}
 	if( !m_sSongGroup.empty() )
