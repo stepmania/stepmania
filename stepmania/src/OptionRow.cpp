@@ -396,18 +396,17 @@ void OptionRow::InitText()
 			m_Frame.AddChild( m_Underline[p][c] );
 	m_Frame.SortByDrawOrder();
 
+	m_textTitle->SetText( GetRowTitle() );
+	m_textTitle->SetX( m_pParentType->TITLE_X );
+	m_textTitle->RunCommands( m_pParentType->TITLE_ON_COMMAND );
+
 	switch( GetRowType() )
 	{
 	case OptionRow::RowType_Normal:
-		m_textTitle->SetText( GetRowTitle() );
-		m_textTitle->SetX( m_pParentType->TITLE_X );
-		m_textTitle->RunCommands( m_pParentType->TITLE_ON_COMMAND );
-
 		m_sprBullet->SetX( m_pParentType->BULLET_X );
 		m_sprBullet->RunCommands( m_pParentType->BULLET_ON_COMMAND );
 		break;
 	case OptionRow::RowType_Exit:
-		m_textTitle->SetHidden( true );
 		m_sprBullet->SetHidden( true );
 		break;
 	}
