@@ -31,6 +31,7 @@ public:
 private:
 	void ShutDownFullScreen();
 	int ChangeDisplayMode( const VideoModeParams& p );
+	void SetActualParamsFromMode( CFDictionaryRef mode );
 };
 
 #ifdef ARCH_LOW_LEVEL_WINDOW
