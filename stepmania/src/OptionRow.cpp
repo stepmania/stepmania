@@ -543,9 +543,6 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 
 void OptionRow::PositionIcons()
 {
-	if( m_RowType == OptionRow::RowType_Exit )
-		return;
-
 	FOREACH_HumanPlayer( p )	// foreach player
 	{
 		OptionIcon *pIcon = m_OptionIcons[p];
