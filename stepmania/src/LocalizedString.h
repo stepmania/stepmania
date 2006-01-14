@@ -25,7 +25,7 @@ public:
 
 private:
 	void CreateImpl();
-	CString m_sGroup, m_sName;
+	RString m_sGroup, m_sName;
 	ILocalizedStringImpl *m_pImpl;
 };
 
