@@ -41,21 +41,21 @@ static void output_stack_trace( FILE *out, const void **BacktracePointers )
 		return;
 	}
 	
-    for( int i = 0; BacktracePointers[i]; ++i)
-    {
-        BacktraceNames bn;
-        bn.FromAddr( BacktracePointers[i] );
-        bn.Demangle();
+	for( int i = 0; BacktracePointers[i]; ++i)
+	{
+		BacktraceNames bn;
+		bn.FromAddr( BacktracePointers[i] );
+		bn.Demangle();
 		
 		/* Don't show the main module name. */
-        if( bn.File == g_pCrashHandlerArgv0 )
-            bn.File = "";
+		if( bn.File == g_pCrashHandlerArgv0 )
+			bn.File = "";
 		
-        if( bn.Symbol == "__libc_start_main" )
-            break;
+		if( bn.Symbol == "__libc_start_main" )
+			break;
 		
-        fprintf( out, "%s\n", bn.Format().c_str() );
-    }
+		fprintf( out, "%s\n", bn.Format().c_str() );
+	}
 }
 
 #if !defined(MACOSX)
@@ -189,78 +189,78 @@ bool child_read( int fd, void *p, int size )
 * heavyweights like malloc and CString are OK. (Don't crash!) */
 static void child_process()
 {
-    /* 1. Read the CrashData. */
-    CrashData crash;
-    if( !child_read(3, &crash, sizeof(CrashData)) )
+	/* 1. Read the CrashData. */
+	CrashData crash;
+	if( !child_read(3, &crash, sizeof(CrashData)) )
 		return;
 	
-    /* 2. Read info. */
-    int size;
-    if( !child_read(3, &size, sizeof(size)) )
+	/* 2. Read info. */
+	int size;
+	if( !child_read(3, &size, sizeof(size)) )
 		return;
-    char *Info = new char [size];
-    if( !child_read(3, Info, size) )
-		return;
-	
-    /* 3. Read AdditionalLog. */
-    if( !child_read(3, &size, sizeof(size)) )
+	char *Info = new char [size];
+	if( !child_read(3, Info, size) )
 		return;
 	
-    char *AdditionalLog = new char [size];
-    if( !child_read(3, AdditionalLog, size) )
+	/* 3. Read AdditionalLog. */
+	if( !child_read(3, &size, sizeof(size)) )
 		return;
 	
-    /* 4. Read RecentLogs. */
-    int cnt = 0;
-    if( !child_read(3, &cnt, sizeof(cnt)) )
+	char *AdditionalLog = new char [size];
+	if( !child_read(3, AdditionalLog, size) )
 		return;
-    char *Recent[1024];
-    for( int i = 0; i < cnt; ++i )
-    {
-        if( !child_read(3, &size, sizeof(size)) )
+	
+	/* 4. Read RecentLogs. */
+	int cnt = 0;
+	if( !child_read(3, &cnt, sizeof(cnt)) )
+		return;
+	char *Recent[1024];
+	for( int i = 0; i < cnt; ++i )
+	{
+		if( !child_read(3, &size, sizeof(size)) )
 			return;
-        Recent[i] = new char [size];
-        if( !child_read(3, Recent[i], size) )
+		Recent[i] = new char [size];
+		if( !child_read(3, Recent[i], size) )
 			return;
-    }
+	}
 	
-    /* 5. Read CHECKPOINTs. */
-    if( !child_read(3, &size, sizeof(size)) )
+	/* 5. Read CHECKPOINTs. */
+	if( !child_read(3, &size, sizeof(size)) )
 		return;
 	
-    char *temp = new char [size];
-    if( !child_read(3, temp, size) )
+	char *temp = new char [size];
+	if( !child_read(3, temp, size) )
 		return;
 	
-    vector<CString> Checkpoints;
-    split(temp, "$$", Checkpoints);
-    delete [] temp;
+	vector<CString> Checkpoints;
+	split(temp, "$$", Checkpoints);
+	delete [] temp;
 	
-    /* 6. Read the crashed thread's name. */
-    if( !child_read(3, &size, sizeof(size)) )
+	/* 6. Read the crashed thread's name. */
+	if( !child_read(3, &size, sizeof(size)) )
 		return;
-    temp = new char [size];
-    if( !child_read(3, temp, size) )
+	temp = new char [size];
+	if( !child_read(3, temp, size) )
 		return;
-    const CString CrashedThread(temp);
-    delete[] temp;
+	const CString CrashedThread(temp);
+	delete[] temp;
 	
-    /* Wait for the child to either finish cleaning up or die.  XXX:
-        * This should time out, in case something deadlocks. */
+	/* Wait for the child to either finish cleaning up or die.  XXX:
+		* This should time out, in case something deadlocks. */
 	
-    char x;
-    int ret = read( 3, &x, sizeof(x) );
-    if( ret > 0 )
-    {
-        fprintf( stderr, "Unexpected child read() result: %i\n", ret );
-        /* keep going */
-    }
+	char x;
+	int ret = read( 3, &x, sizeof(x) );
+	if( ret > 0 )
+	{
+		fprintf( stderr, "Unexpected child read() result: %i\n", ret );
+		/* keep going */
+	}
 	else if( (ret == -1 && errno != EPIPE) || ret != 0 )
-    {
-        /* We expect an EOF or EPIPE.  What happened? */
-        fprintf( stderr, "Unexpected child read() result: %i (%s)\n", ret, strerror(errno) );
-        /* keep going */
-    }
+	{
+		/* We expect an EOF or EPIPE.  What happened? */
+		fprintf( stderr, "Unexpected child read() result: %i (%s)\n", ret, strerror(errno) );
+		/* keep going */
+	}
 	
 	const char *home = getenv( "HOME" );
 	CString sCrashInfoPath = "/tmp";
@@ -275,17 +275,17 @@ static void child_process()
 		exit(1);
 	}
 	
-    fprintf( CrashDump, "%s crash report", PRODUCT_NAME_VER );
+	fprintf( CrashDump, "%s crash report", PRODUCT_NAME_VER );
 #if defined(HAVE_VERSION_INFO)
-    fprintf( CrashDump, " (build %u)", version_num);
+	fprintf( CrashDump, " (build %u)", version_num);
 #endif
-    fprintf( CrashDump, "\n" );
-    fprintf( CrashDump, "--------------------------------------\n" );
-    fprintf( CrashDump, "\n" );
+	fprintf( CrashDump, "\n" );
+	fprintf( CrashDump, "--------------------------------------\n" );
+	fprintf( CrashDump, "\n" );
 	
-    CString reason;
-    switch( crash.type )
-    {
+	CString reason;
+	switch( crash.type )
+	{
 	case CrashData::SIGNAL:
 	{
 		CString Signal = SignalName( crash.signal );
@@ -317,56 +317,56 @@ static void child_process()
 		crash.reason[ sizeof(crash.reason)-1] = 0;
 		reason = crash.reason;
 		break;
-    }
+	}
 	
-    fprintf( CrashDump, "Crash reason: %s\n", reason.c_str() );
-    fprintf( CrashDump, "Crashed thread: %s\n\n", CrashedThread.c_str() );
+	fprintf( CrashDump, "Crash reason: %s\n", reason.c_str() );
+	fprintf( CrashDump, "Crashed thread: %s\n\n", CrashedThread.c_str() );
 	
-    fprintf(CrashDump, "Checkpoints:\n");
-    for( unsigned i=0; i<Checkpoints.size(); ++i )
-        fprintf( CrashDump, Checkpoints[i] );
-    fprintf( CrashDump, "\n" );
+	fprintf(CrashDump, "Checkpoints:\n");
+	for( unsigned i=0; i<Checkpoints.size(); ++i )
+		fprintf( CrashDump, Checkpoints[i] );
+	fprintf( CrashDump, "\n" );
 	
-    for( int i = 0; i < CrashData::MAX_BACKTRACE_THREADS; ++i )
-    {
-	    if( !crash.BacktracePointers[i][0] )
-		    break;
-	    fprintf( CrashDump, "Thread: %s\n", crash.m_ThreadName[i] );
-	    output_stack_trace( CrashDump, crash.BacktracePointers[i] );
-	    fprintf( CrashDump, "\n" );
-    }
+	for( int i = 0; i < CrashData::MAX_BACKTRACE_THREADS; ++i )
+	{
+		if( !crash.BacktracePointers[i][0] )
+			break;
+		fprintf( CrashDump, "Thread: %s\n", crash.m_ThreadName[i] );
+		output_stack_trace( CrashDump, crash.BacktracePointers[i] );
+		fprintf( CrashDump, "\n" );
+	}
 	
-    fprintf( CrashDump, "Static log:\n" );
-    fprintf( CrashDump, "%s", Info );
-    fprintf(  CrashDump, "%s", AdditionalLog );
-    fprintf(CrashDump, "\nPartial log:\n" );
-    for( int i = 0; i < cnt; ++i )
-        fprintf( CrashDump, "%s\n", Recent[i] );
-    fprintf( CrashDump, "\n" );
-    fprintf( CrashDump, "-- End of report\n" );
-    fclose( CrashDump) ;
+	fprintf( CrashDump, "Static log:\n" );
+	fprintf( CrashDump, "%s", Info );
+	fprintf(  CrashDump, "%s", AdditionalLog );
+	fprintf(CrashDump, "\nPartial log:\n" );
+	for( int i = 0; i < cnt; ++i )
+		fprintf( CrashDump, "%s\n", Recent[i] );
+	fprintf( CrashDump, "\n" );
+	fprintf( CrashDump, "-- End of report\n" );
+	fclose( CrashDump) ;
 	
 #if defined(MACOSX)
-    /* Forcibly kill our parent. */
-    kill( getppid(), SIGKILL );
-    InformUserOfCrash( sCrashInfoPath );
+	/* Forcibly kill our parent. */
+	kill( getppid(), SIGKILL );
+	InformUserOfCrash( sCrashInfoPath );
 #else
-    /* stdout may have been inadvertently closed by the crash in the parent;
+	/* stdout may have been inadvertently closed by the crash in the parent;
 	* write to /dev/tty instead. */
-    FILE *tty = fopen( "/dev/tty", "w" );
-    if( tty == NULL )
-        tty = stderr;
+	FILE *tty = fopen( "/dev/tty", "w" );
+	if( tty == NULL )
+		tty = stderr;
 	
-    fprintf( tty,
-			 "\n"
-			 PRODUCT_NAME " has crashed.  Debug information has been output to\n"
-			 "\n"
-			 "    " + sCrashInfoPath + "\n"
-			 "\n"
-			 "Please report a bug at:\n"
-			 "\n"
-			 "    " REPORT_BUG_URL "\n"
-			 "\n" );
+	fprintf( tty,
+		 "\n"
+		 PRODUCT_NAME " has crashed.  Debug information has been output to\n"
+		 "\n"
+		 "    " + sCrashInfoPath + "\n"
+		 "\n"
+		 "Please report a bug at:\n"
+		 "\n"
+		 "    " REPORT_BUG_URL "\n"
+		 "\n" );
 #endif
 }
 
