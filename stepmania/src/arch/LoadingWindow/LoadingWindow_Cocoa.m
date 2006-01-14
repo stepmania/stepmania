@@ -39,9 +39,9 @@ void MakeNewCocoaWindow( const void *data, unsigned length )
 
 	windowRect = NSMakeRect(0, 0, size.width, height + height);
 	window = [[NSWindow alloc] initWithContentRect:windowRect
-										 styleMask:NSTitledWindowMask
-										   backing:NSBackingStoreBuffered
-											 defer:YES];
+					     styleMask:NSTitledWindowMask
+					       backing:NSBackingStoreBuffered
+						 defer:YES];
 	[window setOneShot:YES];
 	[window setReleasedWhenClosed:YES];
 	[window center];
