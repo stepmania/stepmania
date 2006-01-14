@@ -554,7 +554,7 @@ public:
 		IPreference *pPref = IPreference::GetPreferenceByName( sName );
 		if( pPref == NULL )
 		{
-			LOG->Warn( "GetPreference: unknown preference \"%s\"", sName.c_str() );
+			LOG->Warn( "SetPreference: unknown preference \"%s\"", sName.c_str() );
 			return 0;
 		}
 
@@ -562,11 +562,27 @@ public:
 		pPref->SetFromStack( L );
 		return 0;
 	}
+	static int SetPreferenceToDefault( T* p, lua_State *L )
+	{
+		CString sName = SArg(1);
+
+		IPreference *pPref = IPreference::GetPreferenceByName( sName );
+		if( pPref == NULL )
+		{
+			LOG->Warn( "SetPreferenceToDefault: unknown preference \"%s\"", sName.c_str() );
+			return 0;
+		}
+
+		pPref->LoadDefault();
+		LOG->Trace( "Restored preference \"%s\" to default \"%s\"", sName.c_str(), pPref->ToString().c_str() );
+		return 0;
+	}
 
 	static void Register(lua_State *L)
 	{
 		ADD_METHOD( GetPreference );
 		ADD_METHOD( SetPreference );
+		ADD_METHOD( SetPreferenceToDefault );
 
 		Luna<T>::Register( L );
 
