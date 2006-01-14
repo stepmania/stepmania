@@ -121,7 +121,12 @@ namespace
 		// Be sure to push the screen first, so GetTopScreen returns the screen
 		// during BeginScreen.
 		g_ScreenStack.push_back( ls );
+
+		/* Set the name of the loading screen. */
+		ActorUtil::ActorParam LoadingScreen( "LoadingScreen", ls.m_pScreen->GetName() );
 		ls.m_pScreen->BeginScreen();
+
+		LoadingScreen.Release();
 
 		SCREENMAN->RefreshCreditsMessages();
 
