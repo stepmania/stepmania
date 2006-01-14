@@ -3,6 +3,7 @@
 #import "DisplayResolutions.h"
 #import "RageLog.h"
 #import "RageUtil.h"
+#import "arch/ArchHooks/ArchHooks.h"
 
 #import <Cocoa/Cocoa.h>
 #import <OpenGl/OpenGl.h>
@@ -24,6 +25,32 @@ public:
 #define POOL2(x) AutoreleasePool pool ## x
 #define POOL1(x) POOL2(x)
 #define POOL POOL1(__LINE__)
+
+// Window delegate class
+@interface SMWindowDelegate : NSObject
+- (void) windowDidBecomeKey:(NSNotification *)aNotification;
+- (void) windowDidResignKey:(NSNotification *)aNotification;
+- (void) windowWillClose:(NSNotification *)aNotification;
+// XXX maybe use whichever screen contains the window? Hard for me to test though.
+//- (void) windowDidChangeScreen:(NSNotification *)aNotification;
+@end
+
+@implementation SMWindowDelegate
+- (void) windowDidBecomeKey:(NSNotification *)aNotification
+{
+	HOOKS->SetHasFocus( true );
+}
+
+- (void) windowDidResignKey:(NSNotification *)aNotification
+{
+	HOOKS->SetHasFocus( false );
+}
+
+- (void) windowWillClose:(NSNotification *)aNotification
+{
+	ArchHooks::SetUserQuit();
+}
+@end
 
 static NSOpenGLPixelFormat *CreatePixelFormat( int bbp, bool windowed )
 {
@@ -48,8 +75,12 @@ LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : mView(nil), mFullScreenContext(ni
 					      styleMask:g_iStyleMask
 						backing:NSBackingStoreNonretained
 						  defer:YES];
+	ASSERT( mWindow != nil );
 	[mWindow setExcludedFromWindowsMenu:YES];
 	[mWindow useOptimizedDrawing:YES];
+	[mWindow setReleasedWhenClosed:NO];
+	// setDelegate: does not retain the delegate; however, we didn't (auto)release it.
+	[mWindow setDelegate:[[SMWindowDelegate alloc] init]];
 	mCurrentParams.windowed = true; // We are essentially windowed to begin with.
 }
 
@@ -57,20 +88,13 @@ LowLevelWindow_Cocoa::~LowLevelWindow_Cocoa()
 {
 	POOL;
 	ShutDownFullScreen();
-	if( mWindow )
-	{
-		[mWindow orderOut:nil];
-		[mWindow release];
-	}
-	if( mFullScreenContext )
-	{
-		if( !mCurrentParams.windowed )
-		{
-			[mFullScreenContext clearDrawable]; // Exit full screen.
-			CGReleaseAllDisplays();
-		}
-		[mFullScreenContext release];
-	}
+	// We need to release the window's delegate now.
+	// Autorelease to prevent a race condition.
+	[[mWindow delegate] autorelease];
+	[mWindow setDelegate:nil];
+	[mWindow orderOut:nil];
+	[mWindow release];
+	[mFullScreenContext release];
 }
 
 void *LowLevelWindow_Cocoa::GetProcAddress( CString s )
