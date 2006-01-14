@@ -724,11 +724,9 @@ void ScreenOptions::PositionRows()
 		LuaExpressionTransform *pExpr = NULL;
 		pExpr = &m_exprRowPositionTransformFunction;
 
-		if( i < first_start )		fPos = -0.5f;
-		else if( i < first_end )	; 
-		else if( i < second_start )	fPos = ((int)NUM_ROWS_SHOWN)/2-0.5f;
-		else if( i < second_end )	; 
-		else						fPos = ((int)NUM_ROWS_SHOWN)-0.5f;
+		if( i < first_start )				fPos = -0.5f;
+		else if( i >= first_end && i < second_start )	fPos = ((int)NUM_ROWS_SHOWN)/2-0.5f;
+		else if( i >= second_end )			fPos = ((int)NUM_ROWS_SHOWN)-0.5f;
 
 		row.m_tsDestination = m_exprRowPositionTransformFunction.GetPosition( (float) fPos, i, min( (int)Rows.size(), (int)NUM_ROWS_SHOWN ) );
 
