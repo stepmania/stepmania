@@ -43,6 +43,17 @@ function GetCoursesToShowRanking()
 	return "Courses/Samples/Tournamix 4 Sample.crs,Courses/Samples/StaminaTester.crs,Courses/Samples/PlayersBest1-4.crs"
 end
 
+-- Get a metric from the currently-loading screen.  This is only valid while loading
+-- an actor, such as from File or InitCommand attributes; not from commands.
+function ScreenMetric( sName )
+	local sClass = P.LoadingScreen;
+	return THEME:GetMetric( sClass, sName )
+end
+
+function ScreenString( sName )
+	local sClass = P.LoadingScreen;
+        return THEME:GetString( sClass, sName )
+end
 
 -- (c) 2005 Chris Danford
 -- All rights reserved.
