@@ -428,12 +428,15 @@ void OptionRow::AfterImportOptions()
 		if( m_RowDef.m_layoutType == LAYOUT_SHOW_ONE_IN_ROW &&
 			!m_RowDef.m_bOneChoiceForAllPlayers )
 			m_textItems[p]->SetHidden( !GAMESTATE->IsHumanPlayer(p) );
+	}
 
-		if( m_RowType != OptionRow::RowType_Exit )
-		{
-			for( unsigned c=0; c<m_Underline[p].size(); c++ )
-				m_Underline[p][c]->SetHidden( !GAMESTATE->IsHumanPlayer(p) );
-		}
+	// Hide underlines for disabled players.
+	FOREACH_PlayerNumber( p )
+	{
+		if( GAMESTATE->IsHumanPlayer(p) )
+			continue;
+		for( unsigned c=0; c<m_Underline[p].size(); c++ )
+			m_Underline[p][c]->SetHidden( true );
 	}
 
 	// Make all selections the same if bOneChoiceForAllPlayers
