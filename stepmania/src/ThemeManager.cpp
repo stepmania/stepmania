@@ -942,11 +942,10 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 	// TODO: Move this escaping into IniFile?
 	sValueName.Replace( "\n", "\\n" );
 
-	RString s = GetMetric( sClassName, sValueName );
 	
 	// Write stubs for missing strings into every language file.
-	// Language strings may not be empty.  Empty strings are considered to need translation
-	if( s.empty() )
+	RString s;
+	if( !ThemeManager::GetMetricRawRecursive( sClassName, sValueName, s ) )
 	{
 		RString sFile = GetLanguageIniPath( SpecialFiles::BASE_THEME_NAME, m_sCurLanguage );
 		IniFile ini;
@@ -957,6 +956,7 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 
 		LoadThemeMetrics( g_vThemes, m_sCurThemeName, m_sCurLanguage );
 	}
+	EvaluateString( s );
 
 	s.Replace( "\\n", "\n" );
 
