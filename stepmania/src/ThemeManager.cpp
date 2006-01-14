@@ -892,7 +892,7 @@ void ThemeManager::GetLanguagesForTheme( const RString &sThemeName, vector<RStri
 	vector<RString> as;
 	GetDirListing( sLanguageDir + "*.ini", as );
 	
-	// stip out metrics.ini
+	// strip out metrics.ini
 	for( int i=as.size()-1; i>=0; i-- )
 	{
 		if( as[i].CompareNoCase(SpecialFiles::METRICS_FILE)==0 )
