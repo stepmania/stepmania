@@ -181,6 +181,8 @@ void GraphicsWindow::SetVideoModeParams( const VideoModeParams &p )
 	g_CurrentParams = p;
 }
 
+/* Set the display mode to the given size, bit depth and refresh.  The refresh
+ * setting may be ignored. */
 CString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 {
 	if( p.windowed )
@@ -222,9 +224,9 @@ CString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 	return CString();
 }
 
-static int GetWindowStyle( const VideoModeParams &p )
+static int GetWindowStyle( bool bWindowed )
 {
-	if( p.windowed )
+	if( bWindowed )
 		return WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
 	else
 		return WS_POPUP;
@@ -234,7 +236,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p )
 {
 	ASSERT( g_hWndMain == NULL );
 
-	int iWindowStyle = GetWindowStyle(p);
+	int iWindowStyle = GetWindowStyle( p.windowed );
 
 	AppInstance inst;
 	g_hWndMain = CreateWindow( g_sClassName, "app", iWindowStyle,
@@ -252,7 +254,7 @@ void GraphicsWindow::RecreateGraphicsWindow( const VideoModeParams &p )
 {
 	ASSERT( g_hWndMain != NULL );
 
-	int iWindowStyle = GetWindowStyle(p);
+	int iWindowStyle = GetWindowStyle( p.windowed );
 
 	AppInstance inst;
 	HWND hWnd = CreateWindow( g_sClassName, "app", iWindowStyle,
@@ -303,7 +305,7 @@ void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p )
 
 	/* The window style may change as a result of switching to or from fullscreen;
 	 * apply it.  Don't change the WS_VISIBLE bit. */
-	int iWindowStyle = GetWindowStyle(p);
+	int iWindowStyle = GetWindowStyle( p.windowed );
 	if( GetWindowLong( g_hWndMain, GWL_STYLE ) & WS_VISIBLE )
 		iWindowStyle |= WS_VISIBLE;
 	SetWindowLong( g_hWndMain, GWL_STYLE, iWindowStyle );
