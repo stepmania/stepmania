@@ -797,13 +797,12 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 		int iCurrentRow = m_iCurrentRow[pn];
 		OptionRow &row = *m_pRows[iCurrentRow];
 		const bool bExitSelected = row.GetRowType() == OptionRow::RowType_Exit;
-		if( p == pn || GAMESTATE->GetNumHumanPlayers() == 1 )
+		if( GAMESTATE->GetNumHumanPlayers() != 1 && p != pn )
+			continue;
+		if( m_bWasOnExit[p] != bExitSelected )
 		{
-			if( m_bWasOnExit[p] != bExitSelected )
-			{
-				m_bWasOnExit[p] = bExitSelected;
-				COMMAND( m_sprMore, ssprintf("Exit%sP%i", bExitSelected? "Selected":"Unselected", p+1) );
-			}
+			m_bWasOnExit[p] = bExitSelected;
+			COMMAND( m_sprMore, ssprintf("Exit%sP%i", bExitSelected? "Selected":"Unselected", p+1) );
 		}
 	}
 
