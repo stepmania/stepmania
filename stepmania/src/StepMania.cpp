@@ -119,12 +119,13 @@ static LocalizedString NO_SMOOTH_LINES	("StepMania","NoSmoothLines");
 static void StoreActualGraphicOptions( bool initial )
 {
 	// find out what we actually have
-	PREFSMAN->m_bWindowed			.Set( DISPLAY->GetActualVideoModeParams().windowed );
-	PREFSMAN->m_iDisplayWidth		.Set( DISPLAY->GetActualVideoModeParams().width );
-	PREFSMAN->m_iDisplayHeight		.Set( DISPLAY->GetActualVideoModeParams().height );
-	PREFSMAN->m_iDisplayColorDepth	.Set( DISPLAY->GetActualVideoModeParams().bpp );
-	PREFSMAN->m_iRefreshRate		.Set( DISPLAY->GetActualVideoModeParams().rate );
-	PREFSMAN->m_bVsync				.Set( DISPLAY->GetActualVideoModeParams().vsync );
+	const VideoModeParams &params = DISPLAY->GetActualVideoModeParams();
+	PREFSMAN->m_bWindowed			.Set( params.windowed );
+	PREFSMAN->m_iDisplayWidth		.Set( params.width );
+	PREFSMAN->m_iDisplayHeight		.Set( params.height );
+	PREFSMAN->m_iDisplayColorDepth		.Set( params.bpp );
+	PREFSMAN->m_iRefreshRate		.Set( params.rate );
+	PREFSMAN->m_bVsync			.Set( params.vsync );
 
 	CString sFormat = "%s %s %dx%d %d "+COLOR.GetValue()+" %d "+TEXTURE.GetValue()+" %dHz %s %s";
 	CString log = ssprintf( sFormat,
@@ -142,7 +143,7 @@ static void StoreActualGraphicOptions( bool initial )
 	else
 		SCREENMAN->SystemMessage( log );
 
-	Dialog::SetWindowed( DISPLAY->GetActualVideoModeParams().windowed );
+	Dialog::SetWindowed( params.windowed );
 }
 
 RageDisplay *CreateDisplay();
