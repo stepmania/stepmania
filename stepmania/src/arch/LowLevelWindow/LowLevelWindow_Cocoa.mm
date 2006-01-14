@@ -7,7 +7,6 @@
 #import <Cocoa/Cocoa.h>
 #import <mach-o/dyld.h>
 
-
 static const int g_iStyleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
 
 // Simple helper class
@@ -41,16 +40,17 @@ static NSOpenGLPixelFormat *CreatePixelFormat( int bbp, bool windowed )
 }
 
 
-LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : mView(nil), mFullScreenContext(nil)
+LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : mView(nil), mFullScreenContext(nil), mCurrentDisplayMode(NULL)
 {
 	POOL;
 	NSRect rect = { {0, 0}, {0, 0} };
 	mWindow = [[NSWindow alloc] initWithContentRect:rect
-										  styleMask:g_iStyleMask
-											backing:NSBackingStoreNonretained
-											  defer:YES];
+					      styleMask:g_iStyleMask
+						backing:NSBackingStoreNonretained
+						  defer:YES];
 	[mWindow setExcludedFromWindowsMenu:YES];
 	[mWindow useOptimizedDrawing:YES];
+	mCurrentParams.windowed = true; // We are essentially windowed to begin with.
 }
 
 LowLevelWindow_Cocoa::~LowLevelWindow_Cocoa()
@@ -74,6 +74,7 @@ LowLevelWindow_Cocoa::~LowLevelWindow_Cocoa()
 
 void *LowLevelWindow_Cocoa::GetProcAddress( CString s )
 {
+	CHECKPOINT;
 	// http://developer.apple.com/qa/qa2001/qa1188.html
 	const CString& symbolName( '_' + s );
 	NSSymbol symbol = NULL;
@@ -85,313 +86,174 @@ void *LowLevelWindow_Cocoa::GetProcAddress( CString s )
 
 CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
 {
+	CHECKPOINT;
 	POOL;
-	
 	newDeviceOut = false;
 	
 	NSRect contentRect = { { 0, 0 }, { p.width, p.height } };
-	const bool changedWindowed = p.windowed != mCurrentParams.windowed;
-	const bool changedView = p.bpp != mCurrentParams.bpp || !mView;
 	
-	LOG->Trace( "changedWindowed = %d; changedView = %d;", int(changedWindowed), int(changedView) );
+	// Change the window and the title
+	[mWindow setContentSize:contentRect.size];
+	[mWindow setTitle:[NSString stringWithUTF8String:p.sWindowTitle.c_str()]];
 	
-	if( changedWindowed )
-	{
-		if( p.windowed )
-		{
-			// No need to reset the size if it changes here.
-			[mWindow setContentSize:contentRect.size];
-			[mWindow setTitle:[NSString stringWithUTF8String:p.sWindowTitle.c_str()]];
-			
-			if( changedView )
-			{
-				// Create view.
-				NSOpenGLPixelFormat *pixelFormat = CreatePixelFormat( p.bpp, true );
-				
-				if( pixelFormat == nil )
-					return "Failed to set Pixel Format";
-				id nextView = [[NSOpenGLView alloc] initWithFrame:contentRect pixelFormat:pixelFormat];
-				if( nextView == nil )
-					return "Failed to create OGL context.";
-				mView = nextView;
-				[mWindow setContentView:mView]; // This retains the view and releases the old one.
-				[mView release];
-				newDeviceOut = true;
-			}
-			// Shut down full screen. Nothing else should fail.
-			if( mFullScreenContext )
-			{
-				[mFullScreenContext clearDrawable];
-				CGDisplayErr err = CGReleaseAllDisplays();
-				
-				ASSERT( err = kCGErrorSuccess );
-				if( changedView )
-				{
-					[mFullScreenContext release];
-					mFullScreenContext = nil;
-				}
-				newDeviceOut = !mSharingContexts;
-			}
-			// Set the current context
-			[[mView openGLContext] makeCurrentContext];
-			[mWindow center];
-			[mWindow performSelectorOnMainThread:@selector(makeKeyAndOrderFront:)
-									  withObject:nil waitUntilDone:YES];		
-			return CString();
-		}
-		// Okay, we're going full screen here.
-		// If the bpp has changed (or nothing has been created) we need to recreate everything.
-		id nextView = changedView ? nil : mView;
-		if( changedView )
-		{
-			NSOpenGLPixelFormat *pixelFormat = CreatePixelFormat( p.bpp, true );
-			
-			if( pixelFormat == nil )
-				return "Failed to set pixel format.";
-			nextView = [[NSOpenGLView alloc] initWithFrame:contentRect pixelFormat:pixelFormat];
-			if( nextView == nil )
-				return "Failed to create OGL context.";
-			newDeviceOut = true;
-			// We need to recreate the full screen context.
-			[mFullScreenContext release];
-			mFullScreenContext = nil;
-			
-			// Autorelease nextView in case we fail later on.
-			[nextView autorelease];
-		}
-		id newContext = mFullScreenContext;
-		
-		if( newContext == nil )
-		{
-			NSOpenGLPixelFormat *pixelFormat = CreatePixelFormat( p.bpp, false );
-			
-			if( pixelFormat == nil )
-				return "Failed to set pixel format.";
-				
-			newContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat
-													shareContext:[nextView openGLContext]];
-			if( !(mSharingContexts = newContext != nil) )
-			{
-				LOG->Warn( "Failed to share openGL contexts." );
-				newContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
-				if( !mFullScreenContext )
-					return "Failed to create full screen openGL context.";
-				newDeviceOut = true;
-			}
-			// Autorelease to aid cleanup in case of failure
-			[newContext autorelease];
-		}
-		// Now we need to actually go full screen.
-		CGDisplayErr err = CGCaptureAllDisplays();
-		
-		if( err != kCGErrorSuccess )
-			return ssprintf( "Failed to capture all displays: %d.", int(err) );
-		// We have the display, change the screen size if possible.
-		CFDictionaryRef params;
-		
-		if( p.rate == REFRESH_DEFAULT )
-			params = CGDisplayBestModeForParameters( kCGDirectMainDisplay, p.bpp, p.width, p.height, NULL );
-		else
-			params = CGDisplayBestModeForParametersAndRefreshRate( kCGDirectMainDisplay, p.bpp,
-																   p.width, p.height, p.rate, NULL );
-		err = CGDisplaySwitchToMode( kCGDirectMainDisplay, params );
-		// XXX the docs don't show releasing params...
-
-		if( err != kCGErrorSuccess )
-		{
-			CGDisplayErr e = CGReleaseAllDisplays();
-			
-			ASSERT( e == kCGErrorSuccess );
-			return ssprintf( "Failed to switch mode: %d.", int(err) );
-		}
-		
-		// We've succeeded!
-		mView = nextView;
-		[mWindow setContentView:mView];
-		if( !mFullScreenContext )
-			mFullScreenContext = [newContext retain]; // We autoreleased above so retain here.
-		[mFullScreenContext setFullScreen];
-		[mFullScreenContext makeCurrentContext];
-		return CString();
-	}
-	// We're not changing windowed here
-	if( p.windowed )
-	{
-		if( changedView )
-		{
-			// Create view.
-			NSOpenGLPixelFormat *pixelFormat = CreatePixelFormat( p.bpp, true );
-			
-			if( pixelFormat == nil )
-				return "Failed to set Pixel Format";
-			id nextView = [[NSOpenGLView alloc] initWithFrame:contentRect pixelFormat:pixelFormat];
-			if( nextView == nil )
-				return "Failed to create OGL context.";
-			mView = [nextView autorelease];
-			newDeviceOut = true;
-			[mFullScreenContext release];
-			mFullScreenContext = nil;
-		}
-		[mWindow setContentSize:contentRect.size];
-		[mWindow setTitle:[NSString stringWithUTF8String:p.sWindowTitle.c_str()]];
-		[mWindow setContentView:mView]; // This retains the view and releases the old one.
-		[[mView openGLContext] makeCurrentContext];
-		[mWindow center];
-		[mWindow performSelectorOnMainThread:@selector(makeKeyAndOrderFront:)
-								  withObject:nil waitUntilDone:YES];		
-		return CString();
-	}
-	// Just full screen left here.
-	// If the bpp has changed (or nothing has been created) we need to recreate everything.
-	id nextView = changedView ? nil : mView;
-	if( changedView )
+	mCurrentParams.width = p.width;
+	mCurrentParams.height = p.height;
+	mCurrentParams.sWindowTitle = p.sWindowTitle;
+	
+	ASSERT( p.bpp == 16 || p.bpp == 32 );
+	
+	if( p.bpp != mCurrentParams.bpp || !mView )
 	{
 		NSOpenGLPixelFormat *pixelFormat = CreatePixelFormat( p.bpp, true );
 		
 		if( pixelFormat == nil )
-			return "Failed to set pixel format.";
-		nextView = [[NSOpenGLView alloc] initWithFrame:contentRect pixelFormat:pixelFormat];
+			return "Failed to set the windowed pixel format.";
+		id nextView = [[NSOpenGLView alloc] initWithFrame:contentRect pixelFormat:pixelFormat];
 		if( nextView == nil )
-			return "Failed to create OGL context.";
+			return "Failed to create windowed OGL context.";
 		newDeviceOut = true;
-		// We need to recreate the full screen context.
+		mView = nextView;
+		[mWindow setContentView:mView];
+
+		// We need to recreate the full screen context as well.
 		[mFullScreenContext release];
 		mFullScreenContext = nil;
-		
-		// Autorelease nextView in case we fail later on.
-		[nextView autorelease];
+		mCurrentParams.bpp = p.bpp;
 	}
-	id newContext = mFullScreenContext;
+	if( p.windowed )
+	{
+		id context = [mView openGLContext];
+		
+		ShutDownFullScreen();
+		[mWindow center];
+		[mWindow makeKeyAndOrderFront:nil];
+		
+		[context update];
+		[context makeCurrentContext];
+		// Copy the rest of the state
+		mCurrentParams = p;
+		
+		newDeviceOut = !mSharingContexts;
+		return CString();
+	}
+	int result = ChangeDisplayMode( p );
 	
-	if( newContext == nil )
+	if( result )
+	{
+		return ssprintf( "Failed to switch to full screen:%d x %d @ %d. Error %d.",
+				 p.width, p.height, p.rate, result );
+	}
+	if( mFullScreenContext == nil )
 	{
 		NSOpenGLPixelFormat *pixelFormat = CreatePixelFormat( p.bpp, false );
 		
 		if( pixelFormat == nil )
-			return "Failed to set pixel format.";
+		{
+			ShutDownFullScreen(); // If this fails, we need to leave full screen.
+			return "Failed to set full screen pixel format.";
+		}
 		
-		newContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat
-												shareContext:[nextView openGLContext]];
-		if( !(mSharingContexts = newContext != nil) )
+		mFullScreenContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat
+							shareContext:[mView openGLContext]];
+		if( !(mSharingContexts = mFullScreenContext != nil) )
 		{
 			LOG->Warn( "Failed to share openGL contexts." );
-			newContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
-			if( !mFullScreenContext )
-				return "Failed to create full screen openGL context.";
-			newDeviceOut = true;
-		}
-		// Autorelease to aid cleanup in case of failure
-		[newContext autorelease];
-	}
-	CFDictionaryRef params;
-	
-	if( p.rate == REFRESH_DEFAULT )
-		params = CGDisplayBestModeForParameters( kCGDirectMainDisplay, p.bpp, p.width, p.height, NULL );
-	else
-		params = CGDisplayBestModeForParametersAndRefreshRate( kCGDirectMainDisplay, p.bpp,
-															   p.width, p.height, p.rate, NULL );
-	CGDisplayErr err = CGDisplaySwitchToMode( kCGDirectMainDisplay, params );
-	// XXX the docs don't show releasing params...
-	
-	if( err != kCGErrorSuccess )
-		return ssprintf( "Failed to switch mode: %d.", int(err) );
-	
-	// We've succeeded!
-	mView = nextView;
-	[mWindow setContentSize:contentRect.size];
-	[mWindow setContentView:mView];
-	if( !mFullScreenContext )
-	{
-		mFullScreenContext = [newContext retain]; // We autoreleased above so retain here.
-		[mFullScreenContext setFullScreen];
-		[mFullScreenContext makeCurrentContext];
-	}
-	else
-	{
-		[mFullScreenContext update];
-	}
-	return CString();
-}
-#if 0
-
-	if( changedBpp )
-	{
-		mView = nil; // Create a new one, setContentView: will release it
-		if( mFullScreenContext )
-		{
-			[mFullScreenContext clearDrawable];
-			[mFullScreenContext release];
-			mFullScreenContext = nil;
-			CGReleaseAllDisplays();
-		}
-	}
-	
-	
-	if( p.windowed )
-	{
-		if( !mCurrentParams.windowed )
-		{
-			[mFullScreenContext clearDrawable];
-			CGReleaseAllDisplays();
-		}
-		[[mView openGLContext] makeCurrentContext];
-		[mWindow setTitle:[NSString stringWithUTF8String:p.sWindowTitle.c_str()]];
-		[mWindow center];
-		[mWindow performSelectorOnMainThread:@selector(makeKeyAndOrderFront:)
-								  withObject:nil waitUntilDone:YES];		
-	}
-	else
-	{
-		if( !mFullScreenContext )
-		{
-			NSOpenGLPixelFormat *pixelFormat = CreatePixelFormat( p.bpp, false );
-			
-			ASSERT( pixelFormat );
-			mFullScreenContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat
-															shareContext:[mView openGLContext]];
+			mFullScreenContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
 			if( !mFullScreenContext )
 			{
-				LOG->Warn( "Failed to share openGL contexts." );
-				mFullScreenContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
-				ASSERT( mFullScreenContext );
-				newDeviceOut = true;
+				ShutDownFullScreen(); // Same here.
+				return "Failed to create full screen openGL context.";
 			}
 		}
-		else if( changedSize )
-		{
-			[mFullScreenContext update];
-		}
-		if( mCurrentParams.windowed )
-		{
-			CGCaptureAllDisplays(); // Do not notify other apps of any changes.
-			[mFullScreenContext setFullScreen];
-			[mFullScreenContext makeCurrentContext];
-		}
+	}
+	[mFullScreenContext setFullScreen];
+	[mFullScreenContext update];
+	[mFullScreenContext makeCurrentContext];
+	// Copy the rest of the state
+	mCurrentParams = p;
+	
+	newDeviceOut = !mSharingContexts;
+	return CString();
+}
+
+void LowLevelWindow_Cocoa::ShutDownFullScreen()
+{
+	if( mCurrentParams.windowed )
+		return;
+	ASSERT( mCurrentDisplayMode );
+	[mFullScreenContext clearDrawable];
+	
+	CGDisplayErr err = CGDisplaySwitchToMode( kCGDirectMainDisplay, mCurrentDisplayMode );
+	
+	ASSERT( err == kCGErrorSuccess );
+	err = CGReleaseAllDisplays();
+	ASSERT( err == kCGErrorSuccess );
+	// We don't own this so we cannot release it.
+	mCurrentDisplayMode = NULL;
+	mCurrentParams.windowed = true;
+}
+
+int LowLevelWindow_Cocoa::ChangeDisplayMode( const VideoModeParams& p )
+{
+	CFDictionaryRef mode = NULL;
+	CFDictionaryRef newMode;
+	CGDisplayErr err;
+#define X(x) p.x == mCurrentParams.x
+	if( !mCurrentParams.windowed && X(bpp) && X(width) && X(height) && X(rate) )
+		return 0;
+#undef X
+	
+	if( mCurrentParams.windowed )
+	{
+		err = CGCaptureAllDisplays();
+	
+		if( err != kCGErrorSuccess )
+			return int(err);
+	
+		mode = CGDisplayCurrentMode( kCGDirectMainDisplay );
 	}
 	
-	mCurrentParams = p;
-	return "";
+
+	if( p.rate == REFRESH_DEFAULT )
+		newMode = CGDisplayBestModeForParameters( kCGDirectMainDisplay, p.bpp, p.width, p.height, NULL );
+	else
+		newMode = CGDisplayBestModeForParametersAndRefreshRate( kCGDirectMainDisplay, p.bpp,
+									p.width, p.height, p.rate, NULL );
+	err = CGDisplaySwitchToMode( kCGDirectMainDisplay, newMode );
+	
+	if( err != kCGErrorSuccess )
+		return err; // We don't own mode, don't release it.
+	if( mCurrentParams.windowed )
+	{
+		mCurrentDisplayMode = mode;
+		mCurrentParams.windowed = false;
+	}
+	mCurrentParams.bpp = p.bpp;
+	mCurrentParams.width = p.width;
+	mCurrentParams.height = p.height;
+	mCurrentParams.rate = p.rate;
+	
+	return 0;
 }
-#endif
 
 void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 {
 	CFArrayRef modes = CGDisplayAvailableModes( kCGDirectMainDisplay );
 	ASSERT( modes );
-    const CFIndex count = CFArrayGetCount( modes );
+	const CFIndex count = CFArrayGetCount( modes );
 	
-    for( CFIndex i = 0; i < count; ++i )
-    {
-        CFDictionaryRef dict = (CFDictionaryRef)CFArrayGetValueAtIndex( modes, i );
-        CFNumberRef num = (CFNumberRef)CFDictionaryGetValue( dict, CFSTR("Width") );
+	for( CFIndex i = 0; i < count; ++i )
+	{
+		CFDictionaryRef dict = (CFDictionaryRef)CFArrayGetValueAtIndex( modes, i );
+		CFNumberRef num = (CFNumberRef)CFDictionaryGetValue( dict, CFSTR("Width") );
 		SInt32 width, height;
-
-        if( !num || !CFNumberGetValue(num, kCFNumberSInt32Type, &width) )
-            continue;
-        num = (CFNumberRef)CFDictionaryGetValue( dict, CFSTR("Height") );
-        if( !num || !CFNumberGetValue(num, kCFNumberSInt32Type, &height) )
-            continue;
-
+		
+		if( !num || !CFNumberGetValue(num, kCFNumberSInt32Type, &width) )
+			continue;
+		num = (CFNumberRef)CFDictionaryGetValue( dict, CFSTR("Height") );
+		if( !num || !CFNumberGetValue(num, kCFNumberSInt32Type, &height) )
+			continue;
+		
 		DisplayResolution res = { width, height };
 		dr.s.insert( res );
 	}
@@ -401,6 +263,6 @@ void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 void LowLevelWindow_Cocoa::SwapBuffers()
 {
 	// XXX I'm not sure if this is needed yet.
-	//POOL;
+	POOL;
 	[[NSOpenGLContext currentContext] flushBuffer];
 }

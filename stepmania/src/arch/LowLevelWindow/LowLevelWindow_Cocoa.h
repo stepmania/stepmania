@@ -8,6 +8,8 @@
 typedef void *id;
 #endif
 
+typedef const struct __CFDictionary *CFDictionaryRef;
+
 class LowLevelWindow_Cocoa : public LowLevelWindow
 {
 	VideoModeParams mCurrentParams;
@@ -15,6 +17,7 @@ class LowLevelWindow_Cocoa : public LowLevelWindow
 	id mView;
 	id mFullScreenContext;
 	bool mSharingContexts;
+	CFDictionaryRef mCurrentDisplayMode;
 	
 public:
 	LowLevelWindow_Cocoa();
@@ -25,6 +28,9 @@ public:
 	void SwapBuffers();
 	
 	VideoModeParams GetActualVideoModeParams() const { return mCurrentParams; }
+private:
+	void ShutDownFullScreen();
+	int ChangeDisplayMode( const VideoModeParams& p );
 };
 
 #ifdef ARCH_LOW_LEVEL_WINDOW
