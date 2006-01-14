@@ -541,11 +541,10 @@ public:
 		{
 			LOG->Warn( "GetPreference: unknown preference \"%s\"", sName.c_str() );
 			lua_pushnil( L );
+			return 1;
 		}
-		else
-		{
-			pPref->PushValue( L );
-		}
+
+		pPref->PushValue( L );
 		return 1;
 	}
 	static int SetPreference( T* p, lua_State *L )
@@ -556,13 +555,11 @@ public:
 		if( pPref == NULL )
 		{
 			LOG->Warn( "GetPreference: unknown preference \"%s\"", sName.c_str() );
-		}
-		else
-		{
-			lua_pushvalue( L, 2 );
-			pPref->SetFromStack( L );
+			return 0;
 		}
 
+		lua_pushvalue( L, 2 );
+		pPref->SetFromStack( L );
 		return 0;
 	}
 
