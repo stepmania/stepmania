@@ -425,6 +425,38 @@
 			outputFiles = (
 			);
 		};
+		AAD5214A0954F8B500073D86 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.3_3;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		AAD5214B0954F8C000073D86 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.3_3;
+			fileType = sourcecode.asm;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		AAD521660954FBA600073D86 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.3_3;
+			fileType = sourcecode.c;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
+		AAD521670954FBAC00073D86 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.gcc.3_3;
+			fileType = sourcecode.asm;
+			isEditable = 1;
+			outputFiles = (
+			);
+		};
 /* End PBXBuildRule section */
 
 /* Begin PBXBuildStyle section */
@@ -687,7 +719,6 @@
 		AAA3730E090994F500141131 /* mad.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = mad.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAA3730F090994F500141131 /* mad-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "mad-Info.plist"; sourceTree = "<group>"; };
 		AAA37354090998C400141131 /* resample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = resample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		AAA37355090998C500141131 /* resample-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "resample-Info.plist"; sourceTree = "<group>"; };
 		AAA37365090998F700141131 /* libresample.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = libresample.h; sourceTree = "<group>"; };
 		AAA3736D090998F700141131 /* config.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		AAA3736F090998F700141131 /* filterkit.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = filterkit.c; sourceTree = "<group>"; };
@@ -913,7 +944,6 @@
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DDFF38A45A11DB9C8B /* Products */,
 				AAA3730F090994F500141131 /* mad-Info.plist */,
-				AAA37355090998C500141131 /* resample-Info.plist */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1910,6 +1940,8 @@
 				AAA3730C090994F500141131 /* Frameworks */,
 			);
 			buildRules = (
+				AAD521670954FBAC00073D86 /* PBXBuildRule */,
+				AAD521660954FBA600073D86 /* PBXBuildRule */,
 			);
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1977,6 +2009,8 @@
 				AAA37352090998C400141131 /* Frameworks */,
 			);
 			buildRules = (
+				AAD5214B0954F8C000073D86 /* PBXBuildRule */,
+				AAD5214A0954F8B500073D86 /* PBXBuildRule */,
 			);
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -2396,10 +2430,14 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
+				GCC_FAST_MATH = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = FPM_PPC;
+				GCC_UNROLL_LOOPS = YES;
 				GCC_USE_GCC3_PFE_SUPPORT = YES;
 				INFOPLIST_FILE = "mad-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
@@ -2433,11 +2471,6 @@
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
 				INFOPLIST_FILE = "resample-Info.plist";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/libresample",
-					"$(SRCROOT)/libresample/xboxresample/Debug",
-					"$(SRCROOT)/libresample/xboxresample/Release",
-				);
 				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
