@@ -284,7 +284,6 @@ void ScreenOptions::BeginScreen()
 
 	ON_COMMAND( m_framePage );
 
-	m_bMoreShown = false;
 	FOREACH_PlayerNumber( p )
 	{
 		m_iCurrentRow[p] = -1;
@@ -347,8 +346,6 @@ void ScreenOptions::TweenOnScreen()
 		ON_COMMAND( m_sprLineHighlight[p] );
 	}
 
-	COMMAND( m_sprMore, m_bMoreShown? "ShowMore":"HideMore" );
-	m_sprMore->FinishTweening();
 	ON_COMMAND( m_sprMore );
 
 	FOREACH_PlayerNumber( p )
@@ -777,15 +774,6 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 		if( m_pRows.size() > 1 )
 			fPercent = m_iCurrentRow[pn] / float(m_pRows.size()-1);
 		m_ScrollBar.SetPercentage( pn, fPercent );
-	}
-
-
-	/* If the last row is hidden, show MORE. */
-	const bool bShowMore = m_pRows.back()->GetRowHidden();
-	if( m_bMoreShown != bShowMore )
-	{
-		m_bMoreShown = bShowMore;
-		COMMAND( m_sprMore, m_bMoreShown? "ShowMore":"HideMore" );
 	}
 
 	/* Update all players, since changing one player can move both cursors. */

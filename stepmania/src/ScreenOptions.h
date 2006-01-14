@@ -126,7 +126,7 @@ protected:
 	DualScrollBar	m_ScrollBar;
 
 	AutoActor		m_sprMore;
-	bool			m_bMoreShown, m_bWasOnExit[NUM_PLAYERS];
+	bool			m_bWasOnExit[NUM_PLAYERS];
 
 	// show if the current selections will disqualify a high score
 	AutoActor		m_sprDisqualify[NUM_PLAYERS];
