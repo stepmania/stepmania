@@ -8,9 +8,9 @@ class RageMutex;
 
 extern "C"
 {
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
+#include <lua-5.0/include/lua.h>
+#include <lua-5.0/include/lualib.h>
+#include <lua-5.0/include/lauxlib.h>
 }
 
 class LuaManager;
