@@ -780,8 +780,8 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 	}
 
 
-	/* If the last row is EXIT, and is hidden, then show MORE. */
-	const bool bShowMore = m_pRows.back()->GetRowType() == OptionRow::RowType_Exit && m_pRows.back()->GetRowHidden();
+	/* If the last row is hidden, show MORE. */
+	const bool bShowMore = m_pRows.back()->GetRowHidden();
 	if( m_bMoreShown != bShowMore )
 	{
 		m_bMoreShown = bShowMore;
