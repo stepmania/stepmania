@@ -2,6 +2,7 @@
 #define LOW_LEVEL_WINDOW_COCOA_H
 
 #include "LowLevelWindow.h"
+#include "RageDisplay.h"
 
 #ifndef __OBJC__
 typedef void *id;
@@ -9,25 +10,32 @@ typedef void *id;
 
 class LowLevelWindow_Cocoa : public LowLevelWindow
 {
-	RageDisplay::VideoModeParams mCurrentParams;
+	VideoModeParams mCurrentParams;
 	id mWindow;
+	id mView;
 	id mFullScreenContext;
+	bool mSharingContexts;
 	
 public:
 	LowLevelWindow_Cocoa();
 	~LowLevelWindow_Cocoa();
 	void *GetProcAddress( CString s );
-	CString TryVideoMode( RageDisplay::VideoModeParams p, bool& newDeviceOut );	
+	CString TryVideoMode( const VideoModeParams& p, bool& newDeviceOut );	
+	void GetDisplayResolutions( DisplayResolutions &dr ) const;
 	void SwapBuffers();
-	void Update();
 	
-	RageDisplay::VideoModeParams GetVideoModeParams() const { return mCurrentParams; }
+	VideoModeParams GetActualVideoModeParams() const { return mCurrentParams; }
 };
+
+#ifdef ARCH_LOW_LEVEL_WINDOW
+#error "More than one LowLevelWindow selected!"
+#endif
+#define ARCH_LOW_LEVEL_WINDOW LowLevelWindow_Cocoa
 
 #endif
 
 /*
- * (c) 2005 Steve Checkoway
+ * (c) 2005-2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
