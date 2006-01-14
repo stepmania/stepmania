@@ -19,10 +19,6 @@
 #include "CrashHandler.h"
 #include "CrashHandlerInternal.h"
 
-#if defined(MACOSX)
-# include "../Darwin/DarwinThreadHelpers.h"
-#endif
-
 extern uint64_t GetInvalidThreadId();
 extern const char *g_pCrashHandlerArgv0;
 
