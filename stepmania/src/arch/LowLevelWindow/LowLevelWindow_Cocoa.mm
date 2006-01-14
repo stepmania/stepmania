@@ -118,8 +118,15 @@ static void SetOGLParameters( NSOpenGLContext *context )
 
 CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
 {
+	// Always set these params.
+	mCurrentParams.bSmoothLines = p.bSmoothLines;
+	mCurrentParams.bTrilinearFiltering = p.bTrilinearFiltering;
+	mCurrentParams.bAnisotropicFiltering = p.bAnisotropicFiltering;
+	mCurrentParams.interlaced = p.interlaced;
+	mCurrentParams.PAL = p.PAL;
+	
 #define X(x) p.x == mCurrentParams.x
-	if( X(windowed) && X(bpp) && X(width) && X(height) && X(rate) )
+	if( X(windowed) && X(bpp) && X(width) && X(height) && X(rate) && X(vsync) )
 		return 0;
 #undef X
 	
@@ -231,11 +238,13 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 		}
 		SetOGLParameters( mFullScreenContext );
 	}
+	long swap = p.vsync ? 1 : 0;
+	
+	[mFullScreenContext setValues:&swap forParameter:NSOpenGLCPSwapInterval];
 	[mFullScreenContext setFullScreen];
 	[mFullScreenContext update];
 	[mFullScreenContext makeCurrentContext];
-	// Copy the rest of the state
-	mCurrentParams = p;
+	mCurrentParams.vsync = p.vsync;
 	
 	newDeviceOut = newDeviceOut || !mSharingContexts;
 	return CString();

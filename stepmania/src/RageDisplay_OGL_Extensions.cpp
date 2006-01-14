@@ -14,7 +14,6 @@
 #else
 # include <OpenGL/gl.h>
 # include <OpenGL/glu.h>
-# include "VSync.h"
 #endif
 
 #undef __glext_h_
@@ -89,8 +88,6 @@ void GLExt_t::Load( LowLevelWindow *pWind )
 #if defined(WIN32)
 	if( HasExtension("WGL_EXT_swap_control") )
 		wglSwapIntervalEXT = (PWSWAPINTERVALEXTPROC) pWind->GetProcAddress("wglSwapIntervalEXT");
-#elif defined(MACOSX)
-	wglSwapIntervalEXT = OSXSwapIntervalEXT;
 #endif
 
 	if( HasExtension("GL_EXT_paletted_texture") )
