@@ -51,6 +51,14 @@ void IPreference::SavePrefsToNode( XNode* pNode )
 		(*p)->WriteTo( pNode );
 }
 
+void IPreference::ReadAllDefaultsFromNode( const XNode* pNode )
+{
+	if( pNode == NULL )
+		return;
+	FOREACHS_CONST( IPreference*, *m_Subscribers.m_pSubscribers, p )
+		(*p)->ReadDefaultFrom( pNode );
+}
+
 void IPreference::PushValue( lua_State *L ) const
 {
 	if( LOG )
@@ -99,6 +107,15 @@ void IPreference::ReadFrom( const XNode* pNode )
 void IPreference::WriteTo( XNode* pNode ) const
 {
 	pNode->AppendAttr( m_sName, ToString() );
+}
+
+/* Load our value from the node, and make it the new default. */
+void IPreference::ReadDefaultFrom( const XNode* pNode )
+{
+	CString sVal;
+	if( !pNode->GetAttrValue(m_sName, sVal) )
+		return;
+	SetDefaultFromString( sVal );
 }
 
 void BroadcastPreferenceChanged( const CString& sPreferenceName )

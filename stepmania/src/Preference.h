@@ -15,8 +15,10 @@ public:
 	virtual ~IPreference();
 	void ReadFrom( const XNode* pNode );
 	void WriteTo( XNode* pNode ) const;
+	void ReadDefaultFrom( const XNode* pNode );
 
 	virtual void LoadDefault() = 0;
+	virtual void SetDefaultFromString( const CString &s ) = 0;
 
 	virtual CString ToString() const = 0;
 	virtual void FromString( const CString &s ) = 0;
@@ -30,6 +32,7 @@ public:
 	static void LoadAllDefaults();
 	static void ReadAllPrefsFromNode( const XNode* pNode );
 	static void SavePrefsToNode( XNode* pNode );
+	static void ReadAllDefaultsFromNode( const XNode* pNode );
 
 protected:
 	CString		m_sName;
@@ -62,6 +65,10 @@ public:
 	void LoadDefault()
 	{
 		m_currentValue = m_defaultValue;
+	}
+	void SetDefaultFromString( const CString &s )
+	{
+		PrefFromString( s, (BasicType &)m_defaultValue  );
 	}
 
 	const T &Get() const

@@ -379,7 +379,9 @@ void PrefsManager::RestoreGamePrefs()
 
 void PrefsManager::ReadPrefsFromDisk()
 {
-	ReadPrefsFromFile( DEFAULTS_INI_PATH, GetPreferencesSection() );
+	ReadDefaultsFromFile( DEFAULTS_INI_PATH, GetPreferencesSection() );
+	IPreference::LoadAllDefaults();
+
 	ReadPrefsFromFile( SpecialFiles::PREFERENCES_INI_PATH, "Options" );
 	ReadGamePrefsFromIni( SpecialFiles::PREFERENCES_INI_PATH );
 	ReadPrefsFromFile( STATIC_INI_PATH, GetPreferencesSection() );
@@ -392,7 +394,7 @@ void PrefsManager::ResetToFactoryDefaults()
 {
 	// clobber the users prefs by initing then applying defaults
 	Init();
-	ReadPrefsFromFile( DEFAULTS_INI_PATH, GetPreferencesSection() );
+	IPreference::LoadAllDefaults();
 	ReadPrefsFromFile( STATIC_INI_PATH, GetPreferencesSection() );
 	
 	SavePrefsToDisk();
@@ -452,6 +454,26 @@ void PrefsManager::ReadGamePrefsFromIni( const CString &sIni )
 		ini.GetValue( section->m_sName, "Theme",			gp.m_sTheme );
 		ini.GetValue( section->m_sName, "DefaultModifiers",	gp.m_sDefaultModifiers );
 	}
+}
+
+void PrefsManager::ReadDefaultsFromFile( const CString &sIni, const CString &sSection )
+{
+	IniFile ini;
+	if( !ini.ReadFile(sIni) )
+		return;
+
+	ReadDefaultsFromIni( ini, sSection );
+}
+
+void PrefsManager::ReadDefaultsFromIni( const IniFile &ini, const CString &sSection )
+{
+	// Apply our fallback recursively (if any) before applying ourself.
+	// TODO: detect circular?
+	CString sFallback;
+	if( ini.GetValue(sSection,"Fallback",sFallback) )
+		ReadDefaultsFromIni( ini, sFallback );
+
+	IPreference::ReadAllDefaultsFromNode( ini.GetChild(sSection) );
 }
 
 void PrefsManager::SavePrefsToDisk()

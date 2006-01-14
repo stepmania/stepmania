@@ -249,6 +249,7 @@ public:
 
 	void ReadPrefsFromIni( const IniFile &ini, const CString &sSection );
 	void ReadGamePrefsFromIni( const CString &sIni );
+	void ReadDefaultsFromIni( const IniFile &ini, const CString &sSection );
 	void SavePrefsToIni( IniFile &ini );
 
 	void ReadPrefsFromDisk();
@@ -263,7 +264,7 @@ public:
 
 protected:
 	void ReadPrefsFromFile( const CString &sIni, const CString &sSection );
-
+	void ReadDefaultsFromFile( const CString &sIni, const CString &sSection );
 };
 
 
