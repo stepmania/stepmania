@@ -47,11 +47,11 @@ function split( delimiter, text )
 end
 
 function join( delimiter, list )
-	local ret = ""
-	for i = 1,table.getn(list) do 
-		ret = ret .. delimiter .. list[i] 
+	local ret = list[1]
+	for i = 2,table.getn(list) do
+	ret = ret .. delimiter .. list[i]
 	end
-	return ret
+	return ret or ""
 end
 
 function wrap(val,n)
