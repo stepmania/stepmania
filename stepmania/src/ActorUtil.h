@@ -77,6 +77,17 @@ namespace ActorUtil
 
 	void SetParamFromStack( Lua *L, CString sName, LuaReference *pOld=NULL );
 	void GetParam( Lua *L, const CString &sName );
+
+	struct ActorParam
+	{
+		ActorParam( CString sName, CString sValue );
+		~ActorParam();
+		void Release();
+
+	private:
+		CString m_sName;
+		LuaReference *m_pOld;
+	};
 };
 
 #define SET_XY( actor )			ActorUtil::SetXY( actor, m_sName )

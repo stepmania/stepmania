@@ -20,23 +20,9 @@
 void Screen::InitScreen( Screen *pScreen )
 {
 	/* Set the name of the loading screen. */
-	LuaReference Old;
-	{
-		Lua *L = LUA->Get();
-		LuaHelpers::Push( pScreen->GetName(), L );
-		ActorUtil::SetParamFromStack( L, "LoadingScreen", &Old );
-		LUA->Release( L );
-	}
+	ActorUtil::ActorParam LoadingScreen( "LoadingScreen", pScreen->GetName() );
 
 	pScreen->Init();
-
-	/* Restore the old value. */
-	{
-		Lua *L = LUA->Get();
-		Old.PushSelf( L );
-		ActorUtil::SetParamFromStack( L, "LoadingScreen" );
-		LUA->Release( L );
-	}
 }
 
 Screen::Screen( CString sName )
