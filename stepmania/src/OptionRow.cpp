@@ -332,7 +332,7 @@ void OptionRow::InitText()
 		}
 
 		// init underlines
-		if( m_pParentType->SHOW_UNDERLINES )
+		if( m_pParentType->SHOW_UNDERLINES && GetRowType() != OptionRow::RowType_Exit )
 		{
 			FOREACH_PlayerNumber( p )
 			{
@@ -344,8 +344,6 @@ void OptionRow::InitText()
 				GetWidthXY( p, 0, iWidth, iX, iY );
 				pCursor->SetX( float(iX) );
 				pCursor->SetWidth( float(iWidth) );
-				if( GetRowType() == OptionRow::RowType_Exit )
-					pCursor->SetHidden( true );
 			}
 		}
 		break;
@@ -509,9 +507,6 @@ void OptionRow::LoadExit()
 
 void OptionRow::PositionUnderlines( PlayerNumber pn )
 {
-	if( m_RowType == RowType_Exit )
-		return;
-
 	vector<OptionsCursor*> &vpUnderlines = m_Underline[pn];
 	if( vpUnderlines.empty() )
 		return;
