@@ -28,10 +28,6 @@
 #include <set>
 #include <sstream>
 
-#if defined(MACOSX)
-#include "archutils/Darwin/Vsync.h"
-#endif
-
 #include "RageDisplay.h"
 #include "RageDisplay_OGL.h"
 #include "RageDisplay_OGL_Extensions.h"
