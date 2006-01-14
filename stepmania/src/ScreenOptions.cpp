@@ -789,11 +789,11 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 	}
 
 	/* Update all players, since changing one player can move both cursors. */
+	FOREACH_HumanPlayer( p )
+		TweenCursor( p );
+
 	FOREACH_PlayerNumber( p )
 	{
-		if( GAMESTATE->IsHumanPlayer(p) )
-			TweenCursor( p );
-
 		int iCurrentRow = m_iCurrentRow[pn];
 		OptionRow &row = *m_pRows[iCurrentRow];
 		const bool bExitSelected = row.GetRowType() == OptionRow::RowType_Exit;
