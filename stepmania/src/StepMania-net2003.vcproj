@@ -927,7 +927,10 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 				RelativePath="LyricsLoader.h">
 			</File>
 			<File
-				RelativePath="MenuInput.h">
+				RelativePath=".\MenuInput.cpp">
+			</File>
+			<File
+				RelativePath=".\MenuInput.h">
 			</File>
 			<File
 				RelativePath="NoteData.cpp">
@@ -1694,6 +1697,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 			</File>
 			<File
 				RelativePath="ComboGraph.h">
+			</File>
+			<File
+				RelativePath=".\ControllerStateDisplay.cpp">
+			</File>
+			<File
+				RelativePath=".\ControllerStateDisplay.h">
 			</File>
 			<File
 				RelativePath="CourseContentsList.cpp">
