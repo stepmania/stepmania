@@ -136,7 +136,6 @@ void ScreenOptionsMaster::BeginFadingOut()
 	ASSERT( iCurRow >= 0 && iCurRow < (int)m_pRows.size() );
 	OptionRow &row = *m_pRows[iCurRow];
 
-	if( row.GetRowType() != OptionRow::RowType_Exit )
 	{
 		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
 		if( row.GetFirstItemGoesDown() )
@@ -144,7 +143,8 @@ void ScreenOptionsMaster::BeginFadingOut()
 		if( iChoice != -1 )	// not the "goes down" item
 		{
 			OptionRowHandler *pHand = m_OptionRowHandlers[iCurRow];
-			m_bExportWillSetANewScreen = pHand->HasScreen( iChoice );
+			if( pHand != NULL )
+				m_bExportWillSetANewScreen = pHand->HasScreen( iChoice );
 		}
 	}
 
