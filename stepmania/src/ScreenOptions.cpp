@@ -649,11 +649,11 @@ void ScreenOptions::PositionRows()
 	int P2Choice = GAMESTATE->IsHumanPlayer(PLAYER_2)? m_iCurrentRow[PLAYER_2]: m_iCurrentRow[PLAYER_1];
 
 	vector<OptionRow*> Rows( m_pRows );
-	OptionRow *ExitRow = NULL;
+	OptionRow *pSeparateExitRow = NULL;
 
 	if( (bool)SEPARATE_EXIT_ROW && !Rows.empty() && Rows.back()->GetRowType() == OptionRow::RowType_Exit )
 	{
-		ExitRow = &*Rows.back();
+		pSeparateExitRow = &*Rows.back();
 
 		/* Remove the exit row for purposes of positioning everything else. */
 		if( P1Choice == (int) Rows.size()-1 )
@@ -739,10 +739,10 @@ void ScreenOptions::PositionRows()
 		row.SetRowHidden( bHidden );
 	}
 
-	if( ExitRow )
+	if( pSeparateExitRow )
 	{
-		ExitRow->m_tsDestination.pos.y = SEPARATE_EXIT_ROW_Y;
-		ExitRow->SetRowHidden( second_end != (int) Rows.size() );
+		pSeparateExitRow->m_tsDestination.pos.y = SEPARATE_EXIT_ROW_Y;
+		pSeparateExitRow->SetRowHidden( second_end != (int) Rows.size() );
 	}
 }
 
