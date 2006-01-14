@@ -541,8 +541,8 @@ ActorUtil::ActorParam::ActorParam( CString sName, CString sValue )
 
 ActorUtil::ActorParam::~ActorParam()
 {
-	delete m_pOld;
 	Release();
+	delete m_pOld;
 }
 
 void ActorUtil::ActorParam::Release()
