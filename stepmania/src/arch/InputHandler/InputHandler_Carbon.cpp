@@ -705,10 +705,8 @@ int InputHandler_Carbon::Run( void *data )
 	This->StartDevices();
 	SetThreadPrecedence( 100 );
 
-	/*
-	 * The function copies the information out of the structure, so the memory pointed
-	 * to by context does not need to persist beyond the function call.
-	 */
+	/* The function copies the information out of the structure, so the memory pointed
+	 * to by context does not need to persist beyond the function call. */
 	CFRunLoopObserverContext context = { 0, &This->mSem, NULL, NULL, NULL };
 	CFRunLoopObserverRef o = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
 													  false, 0, RunLoopStarted, &context);
@@ -739,11 +737,9 @@ InputHandler_Carbon::~InputHandler_Carbon()
 		mInputThread.Wait();
 		LOG->Trace( "Input handler thread shut down." );
 	}
-	if( mMasterPort )
-		mach_port_deallocate( mach_task_self(), mMasterPort );
 }
 
-static io_iterator_t GetDeviceIterator( mach_port_t mp, int usagePage, int usage )
+static io_iterator_t GetDeviceIterator( int usagePage, int usage )
 {
 	// Build the matching dictionary.
 	CFMutableDictionaryRef dict;
@@ -767,11 +763,9 @@ static io_iterator_t GetDeviceIterator( mach_port_t mp, int usagePage, int usage
 	// Find the HID devices.
 	io_iterator_t iter;
 	
-	/* Get an iterator to the matching devies
-	 * This consumes a reference to the dictionary so we should retain it
-	 * have to Release() later.
-	 */
-	if( IOServiceGetMatchingServices(mp, dict, &iter) != kIOReturnSuccess )
+	/* Get an iterator to the matching devies. This consumes a reference to the dictionary
+	 * so we do not have to release it later. */
+	if( IOServiceGetMatchingServices(kIOMasterPortDefault, dict, &iter) != kIOReturnSuccess )
 	{
 		LOG->Warn( "Couldn't get matching services" );
 		return NULL;
@@ -779,22 +773,10 @@ static io_iterator_t GetDeviceIterator( mach_port_t mp, int usagePage, int usage
 	return iter;
 }
 
-InputHandler_Carbon::InputHandler_Carbon() : mMasterPort( 0 ), mSem( "Input thread started" )
+InputHandler_Carbon::InputHandler_Carbon() : mSem( "Input thread started" )
 {
-	// Get a Mach port to initiate communication with I/O Kit.
-	mach_port_t masterPort;
-
-	IOReturn ret = IOMasterPort( MACH_PORT_NULL, &masterPort );
-
-	if( ret != kIOReturnSuccess )
-	{
-		PrintIOErr( ret, "Couldn't create a master I/O Kit port." );
-		return;
-	}
-	mMasterPort = masterPort;
-
 	// Find the joysticks
-	io_iterator_t iter = GetDeviceIterator( masterPort, kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick );
+	io_iterator_t iter = GetDeviceIterator( kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick );
 	
 	if( iter )
 	{
@@ -822,7 +804,7 @@ InputHandler_Carbon::InputHandler_Carbon() : mMasterPort( 0 ), mSem( "Input thre
 		IOObjectRelease( iter );
 	}
 	// Now find the keyboards
-	iter = GetDeviceIterator( masterPort, kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard );
+	iter = GetDeviceIterator( kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard );
 	
 	if( iter )
 	{
@@ -879,7 +861,7 @@ void InputHandler_Carbon::GetDevicesAndDescriptions( vector<InputDevice>& dev, v
 }
 
 /*
- * (c) 2005 Steve Checkoway
+ * (c) 2005, 2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

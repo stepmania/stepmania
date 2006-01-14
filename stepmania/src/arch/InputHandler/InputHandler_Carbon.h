@@ -11,7 +11,6 @@ class Device;
 class InputHandler_Carbon : public InputHandler
 {
 private:
-	int mMasterPort;
 	std::vector<Device *> mDevices;
 	RageThread mInputThread;
 	RageSemaphore mSem;
