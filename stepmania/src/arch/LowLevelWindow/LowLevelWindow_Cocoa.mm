@@ -108,6 +108,14 @@ void *LowLevelWindow_Cocoa::GetProcAddress( CString s )
 	return symbol ? NSAddressOfSymbol( symbol ) : NULL;
 }
 
+static void SetOGLParameters( NSOpenGLContext *context )
+{
+	long val = 64;
+	
+	[context setValues:&val forParameter:NSOpenGLContextParameter(280)];
+	[context setValues:&val forParameter:NSOpenGLContextParameter(284)];
+}
+
 CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
 {
 #define X(x) p.x == mCurrentParams.x
@@ -150,9 +158,11 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 		[pixelFormat release];
 		if( nextView == nil )
 			return "Failed to create windowed OGL context.";
+		SetOGLParameters( [mView openGLContext] );
 		newDeviceOut = true;
 		mView = nextView;
 		[mWindow setContentView:mView];
+		[mView release];
 
 		// We need to recreate the full screen context as well.
 		[mFullScreenContext clearDrawable];
@@ -219,6 +229,7 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 				return "Failed to create full screen openGL context.";
 			}
 		}
+		SetOGLParameters( mFullScreenContext );
 	}
 	[mFullScreenContext setFullScreen];
 	[mFullScreenContext update];
