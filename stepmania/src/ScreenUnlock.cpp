@@ -27,6 +27,10 @@
 REGISTER_SCREEN_CLASS( ScreenUnlock );
 ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 {
+}
+
+void ScreenUnlock::Init()
+{
 	unsigned iNumUnlocks = UNLOCKMAN->m_UnlockEntries.size();
 
 	if( !PREFSMAN->m_bUseUnlockSystem || iNumUnlocks == 0 )
@@ -34,10 +38,7 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 		this->PostScreenMessage( SM_GoToNextScreen, 0 );
 		return;
 	}
-}
 
-void ScreenUnlock::Init()
-{
 	ScreenAttract::Init();
 
 	unsigned NumUnlocks = UNLOCKMAN->m_UnlockEntries.size();

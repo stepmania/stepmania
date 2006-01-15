@@ -379,21 +379,21 @@ void ScoreScroller::Load(
 // PAGE_TYPE_ONI_COURSES:
 // PAGE_TYPE_SURVIVAL_COURSES:
 ScreenRankingScroller::ScreenRankingScroller( CString sName ):
-	ScreenRanking( sName ),
-	DIFFICULTIES_TO_SHOW		(m_sName,"DifficultiesToShow"),
-
-	COL_SPACING_X				(m_sName,"ColSpacingX"),
-	COL_SPACING_Y				(m_sName,"ColSpacingY"),
-	
-	DIFFICULTY_START_X			(m_sName,"DifficultyStartX"),
-	DIFFICULTY_Y				(m_sName,"DifficultyY"),
-	NUM_MOST_RECENT_SCORES_TO_SHOW	(m_sName,"NumMostRecentScoresToShow")
+	ScreenRanking( sName )
 {
-
 }
 
 void ScreenRankingScroller::Init()
 {
+	DIFFICULTIES_TO_SHOW.Load( m_sName, "DifficultiesToShow" );
+
+	COL_SPACING_X.Load( m_sName, "ColSpacingX" );
+	COL_SPACING_Y.Load( m_sName, "ColSpacingY" );
+	
+	DIFFICULTY_START_X.Load( m_sName, "DifficultyStartX" );
+	DIFFICULTY_Y.Load( m_sName, "DifficultyY" );
+	NUM_MOST_RECENT_SCORES_TO_SHOW.Load( m_sName, "NumMostRecentScoresToShow" );
+
 	ScreenRanking::Init();
 
 	FOREACH_CONST( Difficulty, DIFFICULTIES_TO_SHOW.GetValue(), d )
@@ -477,17 +477,7 @@ float ScreenRankingScroller::SetPage( const PageToShow &pts )
 // PAGE_TYPE_CATEGORY:
 // PAGE_TYPE_TRAIL:
 ScreenRankingLines::ScreenRankingLines( CString sName ):
-	ScreenRanking( sName ),
-	BULLET_START_X				(m_sName,"BulletStartX"),
-	BULLET_START_Y				(m_sName,"BulletStartY"),
-	NAME_START_X				(m_sName,"NameStartX"),
-	NAME_START_Y				(m_sName,"NameStartY"),
-	SCORE_START_X				(m_sName,"ScoreStartX"),
-	SCORE_START_Y				(m_sName,"ScoreStartY"),
-	POINTS_START_X				(m_sName,"PointsStartX"),
-	POINTS_START_Y				(m_sName,"PointsStartY"),
-	TIME_START_X				(m_sName,"TimeStartX"),
-	TIME_START_Y				(m_sName,"TimeStartY")
+	ScreenRanking( sName )
 {
 }
 
@@ -504,6 +494,17 @@ ScreenRankingLines::ScreenRankingLines( CString sName ):
 
 void ScreenRankingLines::Init()
 {
+	BULLET_START_X.Load( m_sName, "BulletStartX" );
+	BULLET_START_Y.Load( m_sName, "BulletStartY" );
+	NAME_START_X.Load( m_sName, "NameStartX" );
+	NAME_START_Y.Load( m_sName, "NameStartY" );
+	SCORE_START_X.Load( m_sName, "ScoreStartX" );
+	SCORE_START_Y.Load( m_sName, "ScoreStartY" );
+	POINTS_START_X.Load( m_sName, "PointsStartX" );
+	POINTS_START_Y.Load( m_sName, "PointsStartY" );
+	TIME_START_X.Load( m_sName, "TimeStartX" );
+	TIME_START_Y.Load( m_sName, "TimeStartY" );
+
 	ScreenRanking::Init();
 
 	if( m_PageType == PAGE_TYPE_CATEGORY )
