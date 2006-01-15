@@ -28,8 +28,6 @@ void Screen::InitScreen( Screen *pScreen )
 Screen::Screen( CString sName )
 {
 	SetName( sName );
-
-	ALLOW_OPERATOR_MENU_BUTTON.Load( sName, "AllowOperatorMenuButton" );
 }
 
 Screen::~Screen()
@@ -45,6 +43,8 @@ bool Screen::SortMessagesByDelayRemaining(const Screen::QueuedScreenMessage &m1,
 
 void Screen::Init()
 {
+	ALLOW_OPERATOR_MENU_BUTTON.Load( m_sName, "AllowOperatorMenuButton" );
+
 	SetFOV( 0 );
 
 	m_smSendOnPop = SM_None;
