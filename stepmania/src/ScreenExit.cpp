@@ -18,6 +18,8 @@ ScreenExit::ScreenExit( CString sName ): Screen( sName )
 
 void ScreenExit::Init()
 {
+	Screen::Init();
+
 	m_Exited = false;
 
 	ArchHooks::SetUserQuit();
