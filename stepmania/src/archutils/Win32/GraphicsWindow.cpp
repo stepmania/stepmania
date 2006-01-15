@@ -260,12 +260,18 @@ void GraphicsWindow::RecreateGraphicsWindow( const VideoModeParams &p )
 	if( hWnd == NULL )
 		RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
 
-	/* While we change to the new window, don't do ChangeDisplaySettings in WM_ACTIVATE. */
-	g_bRecreatingVideoMode = true;
-	SetForegroundWindow( hWnd );
-	g_bRecreatingVideoMode = false;
+	/* If an old window exists, transfer focus to the new window before deleting
+	 * it, or some other window may temporarily get focus, which can cause it
+	 * to be resized. */
+	if( g_hWndMain != NULL )
+	{
+		/* While we change to the new window, don't do ChangeDisplaySettings in WM_ACTIVATE. */
+		g_bRecreatingVideoMode = true;
+		SetForegroundWindow( hWnd );
+		g_bRecreatingVideoMode = false;
 
-	DestroyGraphicsWindow();
+		DestroyGraphicsWindow();
+	}
 
 	g_hWndMain = hWnd;
 	CrashHandler::SetForegroundWindow( g_hWndMain );
