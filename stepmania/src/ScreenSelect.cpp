@@ -55,6 +55,7 @@ void ScreenSelect::Init()
 			CString sChoiceName = asChoiceNames[c];
 
 			GameCommand mc;
+			mc.ApplyCommitsScreens( false );
 			mc.m_sName = sChoiceName;
 			mc.Load( c, CHOICE(sChoiceName) );
 			m_aGameCommands.push_back( mc );
@@ -202,12 +203,10 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			}
 		}
 
-		/* When applying, do make a copy of the GameCommand.  That way,
-		 * GetAndClearScreen doesn't mangle m_sScreen on our real copy. */
 		if( bAllPlayersChoseTheSame )
 		{
-			GameCommand gc = m_aGameCommands[iMastersIndex];
-			CString sThisScreen = gc.GetAndClearScreen();
+			const GameCommand &gc = m_aGameCommands[iMastersIndex];
+			CString sThisScreen = gc.m_sScreen;
 			if( m_sNextScreen == "" )
 				m_sNextScreen = sThisScreen;
 			gc.ApplyToAllPlayers();
@@ -217,8 +216,8 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			FOREACH_HumanPlayer( p )
 			{
 				int iIndex = this->GetSelectionIndex(p);
-				GameCommand gc = m_aGameCommands[iIndex];
-				CString sThisScreen = gc.GetAndClearScreen();
+				const GameCommand &gc = m_aGameCommands[iIndex];
+				CString sThisScreen = gc.m_sScreen;
 				if( m_sNextScreen == "" )
 					m_sNextScreen = sThisScreen;
 				gc.Apply( p );
