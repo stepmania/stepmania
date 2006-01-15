@@ -632,8 +632,6 @@ CString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 	 * resolution or set the window position. */
 	GraphicsWindow::ConfigureGraphicsWindow( p );
 
-	GraphicsWindow::SetVideoModeParams( p );
-
 	ResolutionChanged();
 
 	this->SetDefaultRenderStates();

@@ -184,8 +184,6 @@ CString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 	 * reconfigure it. */
 	GraphicsWindow::ConfigureGraphicsWindow( p, bNewDeviceOut );
 
-	GraphicsWindow::SetVideoModeParams( p );
-
 	if( bNeedToSetPixelFormat )
 	{
 		/* Set the pixel format. */
