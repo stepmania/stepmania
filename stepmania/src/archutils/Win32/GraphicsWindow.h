@@ -23,8 +23,6 @@ namespace GraphicsWindow
 
 	void GetDisplayResolutions( DisplayResolutions &out );
 
-	LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
-
 	void GetParams( VideoModeParams &paramsOut );
 	HDC GetHDC();
 	void Update();

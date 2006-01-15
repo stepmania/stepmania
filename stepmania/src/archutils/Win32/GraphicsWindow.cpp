@@ -48,7 +48,7 @@ static CString GetNewWindow()
 	return sName;
 }
 
-LRESULT CALLBACK GraphicsWindow::GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
 	/* Suppress autorun. */
 	if( msg == g_iQueryCancelAutoPlayMessage )
