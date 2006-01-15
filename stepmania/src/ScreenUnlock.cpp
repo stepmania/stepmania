@@ -31,6 +31,8 @@ ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 
 void ScreenUnlock::Init()
 {
+	ScreenAttract::Init();
+
 	unsigned iNumUnlocks = UNLOCKMAN->m_UnlockEntries.size();
 
 	if( !PREFSMAN->m_bUseUnlockSystem || iNumUnlocks == 0 )
@@ -38,8 +40,6 @@ void ScreenUnlock::Init()
 		this->PostScreenMessage( SM_GoToNextScreen, 0 );
 		return;
 	}
-
-	ScreenAttract::Init();
 
 	unsigned NumUnlocks = UNLOCKMAN->m_UnlockEntries.size();
 
