@@ -47,13 +47,12 @@ void MakeNewCocoaWindow( const void *data, unsigned length )
 						 defer:YES];
 	
 	SMMainThread *mt = [[SMMainThread alloc] init];
-	NSNumber *bYES = [NSNumber numberWithBool:YES];
 	view = [window contentView];
 
 	// Set some properties.
-	ADD_ACTION1( mt, window, setOneShot:, bYES );
-	ADD_ACTION1( mt, window, setExcludedFromWindowsMenu:, bYES );
-	ADD_ACTION1( mt, window, useOptimizedDrawing:, bYES );
+	ADD_ACTIONb( mt, window, setOneShot:, YES );
+	ADD_ACTIONb( mt, window, setExcludedFromWindowsMenu:, YES );
+	ADD_ACTIONb( mt, window, useOptimizedDrawing:, YES );
 	ADD_ACTION1( mt, window, setTitle:, [NSString stringWithUTF8String:PRODUCT_NAME] );
 	ADD_ACTION0( mt, window, center );
 	// Set subviews.
