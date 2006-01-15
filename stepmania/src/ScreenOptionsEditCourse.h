@@ -7,8 +7,6 @@
 class ScreenOptionsEditCourse : public ScreenOptionsEditCourseSubMenu
 {
 public:
-	ScreenOptionsEditCourse( CString sName );
-
 	void Init();
 	virtual void BeginScreen();
 

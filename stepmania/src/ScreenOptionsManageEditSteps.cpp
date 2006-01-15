@@ -64,10 +64,7 @@ static bool ValidateEditStepsDescription( const CString &sAnswer, CString &sErro
 }
 
 
-REGISTER_SCREEN_CLASS( ScreenOptionsManageEditSteps );
-ScreenOptionsManageEditSteps::ScreenOptionsManageEditSteps( CString sName ) : ScreenOptions( sName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenOptionsManageEditSteps );
 
 void ScreenOptionsManageEditSteps::Init()
 {

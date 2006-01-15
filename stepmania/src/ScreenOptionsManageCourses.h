@@ -9,8 +9,6 @@ class Course;
 class ScreenOptionsEditCourseSubMenu : public ScreenOptions
 {
 public:
-	ScreenOptionsEditCourseSubMenu( CString sName );
-
 protected:
 	virtual void MenuSelect( const InputEventPlus &input );
 };
@@ -18,8 +16,6 @@ protected:
 class ScreenOptionsManageCourses : public ScreenOptionsEditCourseSubMenu
 {
 public:
-	ScreenOptionsManageCourses( CString sName );
-
 	void Init();
 	virtual void BeginScreen();
 

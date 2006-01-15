@@ -73,7 +73,7 @@ static CString OPTION_EXPLANATION( CString s )
 }
 
 //REGISTER_SCREEN_CLASS( ScreenOptions );	// can't be instantiated
-ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName)
+ScreenOptions::ScreenOptions()
 {
 	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 	

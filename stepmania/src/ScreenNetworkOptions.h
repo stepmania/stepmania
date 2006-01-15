@@ -6,7 +6,6 @@
 class ScreenNetworkOptions : public ScreenOptions
 {
 public:
-	ScreenNetworkOptions( CString sName );
 	virtual void Init();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );

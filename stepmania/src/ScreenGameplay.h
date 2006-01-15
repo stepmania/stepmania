@@ -99,7 +99,7 @@ public:
 class ScreenGameplay : public ScreenWithMenuElements
 {
 public:
-	ScreenGameplay( CString sName );
+	ScreenGameplay();
 	virtual void Init();
 	virtual ~ScreenGameplay();
 

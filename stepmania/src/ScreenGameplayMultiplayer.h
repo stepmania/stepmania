@@ -9,7 +9,6 @@ class LyricsLoader;
 class ScreenGameplayMultiplayer : public ScreenGameplay
 {
 public:
-	ScreenGameplayMultiplayer( CString sName );
 	void Init();
 	virtual void FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut );
 	virtual void ScreenGameplayMultiplayer::LoadNextSong();

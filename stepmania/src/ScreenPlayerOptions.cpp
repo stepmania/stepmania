@@ -15,11 +15,7 @@
 #include "Foreach.h"
 #include "InputEventPlus.h"
 
-REGISTER_SCREEN_CLASS( ScreenPlayerOptions );
-ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
-	ScreenOptionsMaster( sClassName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenPlayerOptions );
 
 void ScreenPlayerOptions::Init()
 {

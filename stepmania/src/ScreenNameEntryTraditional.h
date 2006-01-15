@@ -43,7 +43,7 @@ public:
 class ScreenNameEntryTraditional : public ScreenWithMenuElements
 {
 public:
-	ScreenNameEntryTraditional( CString sName );
+	ScreenNameEntryTraditional();
 	virtual void Init();
 	virtual ~ScreenNameEntryTraditional();
 

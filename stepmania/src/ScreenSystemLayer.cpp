@@ -14,8 +14,8 @@
 #include "ScreenDimensions.h"
 
 
-REGISTER_SCREEN_CLASS( ScreenSystemLayer );
-ScreenSystemLayer::ScreenSystemLayer( const CString &sName ) : Screen(sName)
+REGISTER_SCREEN_CLASS_NEW( ScreenSystemLayer );
+ScreenSystemLayer::ScreenSystemLayer()
 {
 	SubscribeToMessage( "RefreshCreditText" );
 	SubscribeToMessage( "SystemMessage" );

@@ -9,8 +9,6 @@ class Steps;
 class ScreenOptionsManageEditSteps : public ScreenOptions
 {
 public:
-	ScreenOptionsManageEditSteps( CString sName );
-
 	void Init();
 	virtual void BeginScreen();
 

@@ -16,12 +16,7 @@ enum EditProfileRow
 	ROW_CHARACTER,
 };
 
-REGISTER_SCREEN_CLASS( ScreenOptionsEditProfile );
-ScreenOptionsEditProfile::ScreenOptionsEditProfile( CString sName ) : 
-	ScreenOptions( sName )
-{
-
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenOptionsEditProfile );
 
 void ScreenOptionsEditProfile::Init()
 {

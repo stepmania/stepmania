@@ -7,7 +7,6 @@
 class ScreenOptionsEditProfile : public ScreenOptions
 {
 public:
-	ScreenOptionsEditProfile( CString sName );
 	virtual ~ScreenOptionsEditProfile();
 
 	virtual void Init();

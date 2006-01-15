@@ -17,7 +17,8 @@ vector<int>	ScreenMiniMenu::s_viLastAnswers;
 
 void ScreenMiniMenu::MiniMenu( MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenMessage SM_SendOnCancel, float fX, float fY )
 {
-	ScreenMiniMenu *pNewScreen = new ScreenMiniMenu( pDef->sClassName );
+	ScreenMiniMenu *pNewScreen = new ScreenMiniMenu;
+	pNewScreen->SetName( pDef->sClassName );
 	pNewScreen->Init();
 	pNewScreen->LoadMenu( pDef );
 	pNewScreen->SetOKMessage( SM_SendOnOK );
@@ -28,9 +29,6 @@ void ScreenMiniMenu::MiniMenu( MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenM
 }
 
 //REGISTER_SCREEN_CLASS( ScreenMiniMenu );
-ScreenMiniMenu::ScreenMiniMenu( CString sClassName ) :ScreenOptions( sClassName )
-{
-}
 
 void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 {

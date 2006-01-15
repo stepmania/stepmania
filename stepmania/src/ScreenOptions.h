@@ -29,7 +29,7 @@ enum InputMode
 class ScreenOptions : public ScreenWithMenuElements
 {
 public:
-	ScreenOptions( CString sClassName );
+	ScreenOptions();
 	virtual void Init();
 	virtual void BeginScreen();
 	void InitMenu( const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands );

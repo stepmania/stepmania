@@ -15,8 +15,8 @@
 #define SECONDS_TO_SHOW			THEME->GetMetricF(m_sName,"SecondsToShow")
 #define ALLOW_STYLE_TYPES		THEME->GetMetric (m_sName,"AllowStyleTypes")
 
-REGISTER_SCREEN_CLASS( ScreenDemonstration );
-ScreenDemonstration::ScreenDemonstration( CString sName ) : ScreenJukebox( sName )
+REGISTER_SCREEN_CLASS_NEW( ScreenDemonstration );
+ScreenDemonstration::ScreenDemonstration()
 {
 	m_bDemonstration = true;
 	SOUNDMAN->SetPlayOnlyCriticalSounds( !GAMESTATE->IsTimeToPlayAttractSounds() );  // mute attract sounds

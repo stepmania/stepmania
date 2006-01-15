@@ -334,7 +334,7 @@ GetNextVisiblePlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> 
 }
 
 
-ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
+ScreenGameplay::ScreenGameplay()
 {
 	m_pPlayerScoreList = NULL;
 }

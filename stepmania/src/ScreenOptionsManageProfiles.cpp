@@ -74,10 +74,7 @@ static bool ValidateLocalProfileName( const CString &sAnswer, CString &sErrorOut
 	return true;
 }
 
-REGISTER_SCREEN_CLASS( ScreenOptionsManageProfiles );
-ScreenOptionsManageProfiles::ScreenOptionsManageProfiles( CString sName ) : ScreenOptions( sName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenOptionsManageProfiles );
 
 ScreenOptionsManageProfiles::~ScreenOptionsManageProfiles()
 {
@@ -96,7 +93,8 @@ void ScreenOptionsManageProfiles::Init()
 	SetNavigation( NAV_THREE_KEY_MENU );
 	SetInputMode( INPUTMODE_SHARE_CURSOR );
 
-	m_pContextMenu = new ScreenMiniMenu( g_TempMenu.sClassName );
+	m_pContextMenu = new ScreenMiniMenu;
+	m_pContextMenu->SetName( g_TempMenu.sClassName );
 	m_pContextMenu->Init();
 	m_pContextMenu->LoadMenu( &g_TempMenu );
 }

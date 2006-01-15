@@ -6,7 +6,6 @@
 class ScreenSMOnlineLogin : public ScreenOptions
 {
 public:
-	ScreenSMOnlineLogin(CString sName);
 	virtual void Init();
 	virtual void HandleScreenMessage(const ScreenMessage SM);
 	virtual void MenuStart( const InputEventPlus &input );

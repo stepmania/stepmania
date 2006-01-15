@@ -40,10 +40,7 @@ static MenuDef g_TempMenu(
 	"ScreenMiniMenuContext"
 );
 
-REGISTER_SCREEN_CLASS( ScreenOptionsEditCourse );
-ScreenOptionsEditCourse::ScreenOptionsEditCourse( CString sName ) : ScreenOptionsEditCourseSubMenu( sName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenOptionsEditCourse );
 
 void ScreenOptionsEditCourse::Init()
 {

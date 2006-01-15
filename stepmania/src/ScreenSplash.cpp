@@ -7,10 +7,7 @@
 AutoScreenMessage( SM_PrepScreen )
 
 
-REGISTER_SCREEN_CLASS( ScreenSplash );
-ScreenSplash::ScreenSplash( CString sClassName ) : ScreenWithMenuElements( sClassName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenSplash );
 
 void ScreenSplash::Init()
 {

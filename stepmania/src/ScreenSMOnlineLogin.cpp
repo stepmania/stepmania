@@ -15,7 +15,7 @@
 #include "Profile.h"
 #include "LocalizedString.h"
 
-REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
+REGISTER_SCREEN_CLASS_NEW(ScreenSMOnlineLogin);
 
 AutoScreenMessage( SM_SMOnlinePack )
 AutoScreenMessage( SM_PasswordDone )
@@ -23,10 +23,6 @@ AutoScreenMessage( SM_PasswordDone )
 OptionRowDefinition g_ProfileLine[1] = {
 	OptionRowDefinition("Profile",false)
 };
-
-ScreenSMOnlineLogin::ScreenSMOnlineLogin(CString sClassName) : ScreenOptions(sClassName)
-{
-}
 
 static LocalizedString DEFINE_A_PROFILE( "ScreenSMOnlineLogin", "You must define a Profile." );
 void ScreenSMOnlineLogin::Init()

@@ -2,12 +2,7 @@
 #include "ScreenGameplayNormal.h"
 
 
-REGISTER_SCREEN_CLASS( ScreenGameplayNormal );
-
-ScreenGameplayNormal::ScreenGameplayNormal( CString sName ) : ScreenGameplay(sName)
-{
-
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenGameplayNormal );
 
 void ScreenGameplayNormal::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 {

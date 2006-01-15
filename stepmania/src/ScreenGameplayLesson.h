@@ -9,7 +9,7 @@ class CourseEntry;
 class ScreenGameplayLesson : public ScreenGameplayNormal
 {
 public:
-	ScreenGameplayLesson( CString sName );
+	ScreenGameplayLesson();
 	virtual void Init();
 
 	virtual void Input( const InputEventPlus &input );

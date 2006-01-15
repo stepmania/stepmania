@@ -9,7 +9,6 @@ class Course;
 class ScreenOptionsManageProfiles : public ScreenOptions
 {
 public:
-	ScreenOptionsManageProfiles( CString sName );
 	~ScreenOptionsManageProfiles();
 
 	void Init();

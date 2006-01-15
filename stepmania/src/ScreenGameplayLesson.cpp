@@ -5,8 +5,8 @@
 #include "PrefsManager.h"
 #include "StatsManager.h"
 
-REGISTER_SCREEN_CLASS( ScreenGameplayLesson );
-ScreenGameplayLesson::ScreenGameplayLesson( CString sName ) : ScreenGameplayNormal( sName )
+REGISTER_SCREEN_CLASS_NEW( ScreenGameplayLesson );
+ScreenGameplayLesson::ScreenGameplayLesson()
 {
 	m_iCurrentPageIndex = 0;
 	m_Try = Try_1;

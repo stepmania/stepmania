@@ -8,8 +8,6 @@ class Song;
 class ScreenOptionsEditCourseEntry : public ScreenOptionsEditCourseSubMenu
 {
 public:
-	ScreenOptionsEditCourseEntry( CString sName );
-
 	void Init();
 	void BeginScreen();
 

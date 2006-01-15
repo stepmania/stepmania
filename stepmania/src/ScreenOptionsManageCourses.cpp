@@ -63,11 +63,6 @@ static void SetNextCombination()
 	RefreshTrail();
 }
 
-ScreenOptionsEditCourseSubMenu::ScreenOptionsEditCourseSubMenu( CString sName ) : ScreenOptions( sName )
-{
-
-}
-
 void ScreenOptionsEditCourseSubMenu::MenuSelect( const InputEventPlus &input )
 {
 	if( input.type == IET_FIRST_PRESS )
@@ -132,10 +127,7 @@ static bool ValidateEditCourseName( const CString &sAnswer, CString &sErrorOut )
 }
 
 
-REGISTER_SCREEN_CLASS( ScreenOptionsManageCourses );
-ScreenOptionsManageCourses::ScreenOptionsManageCourses( CString sName ) : ScreenOptionsEditCourseSubMenu( sName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenOptionsManageCourses );
 
 void ScreenOptionsManageCourses::Init()
 {

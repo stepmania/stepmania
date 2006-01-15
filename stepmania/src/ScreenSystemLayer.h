@@ -13,7 +13,7 @@
 class ScreenSystemLayer : public Screen
 {
 public:
-	ScreenSystemLayer( const CString &sName );
+	ScreenSystemLayer();
 	virtual ~ScreenSystemLayer();
 	virtual void Init();
 	void HandleMessage( const CString &sCommandName );

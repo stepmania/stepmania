@@ -9,7 +9,6 @@ struct lua_State;
 class ScreenPlayerOptions : public ScreenOptionsMaster
 {
 public:
-	ScreenPlayerOptions( CString sName );
 	virtual void Init();
 	virtual void BeginScreen();
 

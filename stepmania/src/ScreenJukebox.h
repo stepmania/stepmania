@@ -9,7 +9,7 @@ class CourseEntry;
 class ScreenJukebox : public ScreenGameplayNormal
 {
 public:
-	ScreenJukebox( CString sName );
+	ScreenJukebox();
 	virtual void Init();
 
 	virtual void Input( const InputEventPlus &input );

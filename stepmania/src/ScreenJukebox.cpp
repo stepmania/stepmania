@@ -22,7 +22,7 @@
 
 #define SHOW_COURSE_MODIFIERS_PROBABILITY	THEME->GetMetricF(m_sName,"ShowCourseModifiersProbability")
 
-REGISTER_SCREEN_CLASS( ScreenJukebox );
+REGISTER_SCREEN_CLASS_NEW( ScreenJukebox );
 void ScreenJukebox::SetSong()
 {
 	ThemeMetric<bool>				ALLOW_ADVANCED_MODIFIERS(m_sName,"AllowAdvancedModifiers");
@@ -167,7 +167,7 @@ void ScreenJukebox::SetSong()
 	return;	// didn't find a song
 }
 
-ScreenJukebox::ScreenJukebox( CString sName ) : ScreenGameplayNormal( sName )
+ScreenJukebox::ScreenJukebox()
 {
 	m_bDemonstration = false;
 
