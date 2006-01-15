@@ -10,7 +10,6 @@
 #include "ThemeManager.h"
 #include "LightsManager.h"
 
-#define NEXT_SCREEN				THEME->GetMetric (m_sName,"NextScreen")
 #define MINIMUM_DELAY			THEME->GetMetricF(m_sName,"MinimumDelay")
 
 AutoScreenMessage( SM_PrepScreen )
@@ -59,7 +58,7 @@ void ScreenStage::HandleScreenMessage( const ScreenMessage SM )
 	if( SM == SM_PrepScreen )
 	{
 		RageTimer length;
-		SCREENMAN->PrepareScreen( NEXT_SCREEN );
+		SCREENMAN->PrepareScreen( GetNextScreen() );
 		float fScreenLoadSeconds = length.GetDeltaTime();
 
 		/* The screen load took fScreenLoadSeconds.  Move on to the next screen after
@@ -87,7 +86,7 @@ void ScreenStage::Update( float fDeltaTime )
 {
 	if( this->IsFirstUpdate() )
 	{
-		if( SCREENMAN->ConcurrentlyPrepareScreen(NEXT_SCREEN, SM_BeginFadingOut) )
+		if( SCREENMAN->ConcurrentlyPrepareScreen(GetNextScreen(), SM_BeginFadingOut) )
 		{
 			/* Continue when both the screen finishes loading and the tween finishes. */
 			this->PostScreenMessage( SM_BeginFadingOut, m_sprOverlay->GetTweenTimeLeft() );
