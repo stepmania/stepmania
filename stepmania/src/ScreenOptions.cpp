@@ -388,13 +388,6 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 	return OPTION_EXPLANATION(sExplanationName);
 }
 
-BitmapText &ScreenOptions::GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow )
-{
-	ASSERT_M( iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
-	OptionRow &row = *m_pRows[iRow];
-	return row.GetTextItemForRow( pn, iChoiceOnRow );
-}
-
 void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut )
 {
 	ASSERT_M( iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );

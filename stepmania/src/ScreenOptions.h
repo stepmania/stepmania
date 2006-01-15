@@ -50,7 +50,6 @@ protected:
 	void InitOptionsText();
 	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );
 	CString GetExplanationText( int iRow ) const;
-	BitmapText &GetTextItemForRow( PlayerNumber pn, int iRow, int iChoiceOnRow );
 	void PositionUnderlines( int iRow, PlayerNumber pn );
 	void PositionAllUnderlines();
 	void PositionIcons();
