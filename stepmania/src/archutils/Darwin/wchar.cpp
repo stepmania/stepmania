@@ -1,69 +1,69 @@
 #include <bits/c++config.h>
 #include <string>
+#include <sys/cdefs.h>
 
 // This is very annoying. The 10.2.8 SDK uses GLIBCPP but the 10.4u SDK uses GLIBCXX
 #define _GLIB_CHECK(x) (_GLIBCPP_ ## x || _GLIBCXX_ ## x)
 
-extern "C"
-{
-#if ! _GLIB_CHECK(HAVE_WCLEN)
+__BEGIN_DECLS
+#if ! _GLIB_CHECK(HAVE_WCSLEN)
 size_t wcslen( const wchar_t *ws )
 {
-		size_t n = 0;
-		
-		while( *(ws++) != L'\0' )
-			++n;
-		return n;
+	size_t n = 0;
+	
+	while( *(ws++) != L'\0' )
+		++n;
+	return n;
 }
 #endif
 
 #if ! _GLIB_CHECK(HAVE_WMEMCHR)
 wchar_t *wmemchr( const wchar_t *ws, wchar_t wc, size_t n )
 {
-    for( unsigned i=0; i<n; ++i, ++ws )
-        if( *ws == wc )
-            return (wchar_t *)ws;
-    return NULL;
+	for( unsigned i=0; i<n; ++i, ++ws )
+		if( *ws == wc )
+			return (wchar_t *)ws;
+	return NULL;
 }
 #endif
 
 #if ! _GLIB_CHECK(HAVE_WMEMCMP)
 int wmemcmp( const wchar_t *ws1, const wchar_t *ws2, size_t n )
 {
-    for( unsigned i=0; i<n; ++i, ++ws1, ++ws2 )
-        if( *ws1 != *ws2 )
-            return *ws1 - *ws2;
-    return 0;
+	for( unsigned i=0; i<n; ++i, ++ws1, ++ws2 )
+		if( *ws1 != *ws2 )
+			return *ws1 - *ws2;
+	return 0;
 }
 #endif
 
 #if ! _GLIB_CHECK(HAVE_WMEMCPY)
 wchar_t *wmemcpy( wchar_t *ws1, const wchar_t *ws2, size_t n )
 {
-    return (wchar_t *)memcpy( ws1, ws2, n * sizeof(wchar_t) );
+	return (wchar_t *)memcpy( ws1, ws2, n * sizeof(wchar_t) );
 }
 #endif
 
 #if ! _GLIB_CHECK(HAVE_WMEMMOVE)
 wchar_t *wmemmove( wchar_t *ws1, const wchar_t *ws2, size_t n )
 {
-    return (wchar_t *)memmove( ws1, ws2, n * sizeof(wchar_t) );
+	return (wchar_t *)memmove( ws1, ws2, n * sizeof(wchar_t) );
 }
 #endif
 
 #if ! _GLIB_CHECK(HAVE_WMEMSET)
 wchar_t *wmemset( wchar_t *ws , wchar_t wc, size_t n )
 {
-    wchar_t *temp = ws;
-    for( unsigned i=0; i<n; ++i, ++temp )
-        *temp = wc;
-    return ws;
+	wchar_t *temp = ws;
+	for( unsigned i=0; i<n; ++i, ++temp )
+		*temp = wc;
+	return ws;
 }
 #endif
-}
+__END_DECLS
 
 /*
- * (c) 2003-2005 Steve Checkoway
+ * (c) 2003-2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
