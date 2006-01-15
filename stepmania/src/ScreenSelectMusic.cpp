@@ -51,24 +51,8 @@ static bool g_bSampleMusicWaiting = false;
 static RageTimer g_StartedLoadingAt(RageZeroTimer);
 
 REGISTER_SCREEN_CLASS( ScreenSelectMusic );
-ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuElements( sClassName ),
-	BANNER_WIDTH( m_sName, "BannerWidth" ),
-	BANNER_HEIGHT( m_sName, "BannerHeight" ),
-	SAMPLE_MUSIC_DELAY( m_sName, "SampleMusicDelay" ),
-	SHOW_RADAR( m_sName, "ShowRadar" ),
-	SHOW_PANES( m_sName, "ShowPanes" ),
-	SHOW_DIFFICULTY_LIST( m_sName, "ShowDifficultyList" ),
-	SHOW_COURSE_CONTENTS( m_sName, "ShowCourseContents" ),
-	DO_ROULETTE_ON_MENU_TIMER( m_sName, "DoRouletteOnMenuTimer" ),
-	ALIGN_MUSIC_BEATS( m_sName, "AlignMusicBeat" ),
-	CODES( m_sName, "Codes" ),
-	MUSIC_WHEEL_TYPE( m_sName, "MusicWheelType" ),
-	OPTIONS_MENU_AVAILABLE( m_sName, "OptionsMenuAvailable" ),
-	SELECT_MENU_AVAILABLE( m_sName, "SelectMenuAvailable" ),
-	MODE_MENU_AVAILABLE( m_sName, "ModeMenuAvailable" )
+ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
-
 	if( PREFSMAN->m_bScreenTestMode )
 	{
 		GAMESTATE->m_PlayMode.Set( PLAY_MODE_REGULAR );
@@ -76,15 +60,32 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;
 		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 	}
-
-	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. 
-	 * Do this before anything that might look at GAMESTATE->m_iCurrentStageIndex. */
-	GAMESTATE->FinishStage();
 }
 
 
 void ScreenSelectMusic::Init()
 {
+	BANNER_WIDTH.Load( m_sName, "BannerWidth" );
+	BANNER_HEIGHT.Load( m_sName, "BannerHeight" );
+	SAMPLE_MUSIC_DELAY.Load( m_sName, "SampleMusicDelay" );
+	SHOW_RADAR.Load( m_sName, "ShowRadar" );
+	SHOW_PANES.Load( m_sName, "ShowPanes" );
+	SHOW_DIFFICULTY_LIST.Load( m_sName, "ShowDifficultyList" );
+	SHOW_COURSE_CONTENTS.Load( m_sName, "ShowCourseContents" );
+	DO_ROULETTE_ON_MENU_TIMER.Load( m_sName, "DoRouletteOnMenuTimer" );
+	ALIGN_MUSIC_BEATS.Load( m_sName, "AlignMusicBeat" );
+	CODES.Load( m_sName, "Codes" );
+	MUSIC_WHEEL_TYPE.Load( m_sName, "MusicWheelType" );
+	OPTIONS_MENU_AVAILABLE.Load( m_sName, "OptionsMenuAvailable" );
+	SELECT_MENU_AVAILABLE.Load( m_sName, "SelectMenuAvailable" );
+	MODE_MENU_AVAILABLE.Load( m_sName, "ModeMenuAvailable" );
+
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
+
+	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. 
+	 * Do this before anything that might look at GAMESTATE->m_iCurrentStageIndex. */
+	GAMESTATE->FinishStage();
+
 	m_bSelectIsDown = false; // used by UpdateSelectButton
 
 	ScreenWithMenuElements::Init();

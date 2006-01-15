@@ -21,20 +21,6 @@ ScreenSystemLayer::ScreenSystemLayer( const CString &sName ) : Screen(sName)
 	SubscribeToMessage( "SystemMessage" );
 	SubscribeToMessage( "SystemMessageNoAnimate" );
 	SubscribeToMessage( "HideSystemMessage" );
-
-	CREDITS_PRESS_START		.Load(m_sName,"CreditsPressStart");
-	CREDITS_INSERT_CARD		.Load(m_sName,"CreditsInsertCard");
-	CREDITS_CARD_TOO_LATE	.Load(m_sName,"CreditsCardTooLate");
-	CREDITS_CARD_NO_NAME	.Load(m_sName,"CreditsCardNoName");
-	CREDITS_CARD_READY		.Load(m_sName,"CreditsCardReady");
-	CREDITS_CARD_CHECKING	.Load(m_sName,"CreditsCardChecking");
-	CREDITS_CARD_REMOVED	.Load(m_sName,"CreditsCardRemoved");
-	CREDITS_FREE_PLAY		.Load(m_sName,"CreditsFreePlay");
-	CREDITS_CREDITS			.Load(m_sName,"CreditsCredits");
-	CREDITS_NOT_PRESENT		.Load(m_sName,"CreditsNotPresent");
-	CREDITS_LOAD_FAILED		.Load(m_sName,"CreditsLoadFailed");
-	CREDITS_LOADED_FROM_LAST_GOOD_APPEND.Load(m_sName,"CreditsLoadedFromLastGoodAppend");
-	CREDITS_JOIN_ONLY		.Load( m_sName, "CreditsJoinOnly" );
 }
 
 ScreenSystemLayer::~ScreenSystemLayer()
@@ -43,6 +29,20 @@ ScreenSystemLayer::~ScreenSystemLayer()
 
 void ScreenSystemLayer::Init()
 {
+	CREDITS_PRESS_START		.Load(m_sName,"CreditsPressStart");
+	CREDITS_INSERT_CARD		.Load(m_sName,"CreditsInsertCard");
+	CREDITS_CARD_TOO_LATE		.Load(m_sName,"CreditsCardTooLate");
+	CREDITS_CARD_NO_NAME		.Load(m_sName,"CreditsCardNoName");
+	CREDITS_CARD_READY		.Load(m_sName,"CreditsCardReady");
+	CREDITS_CARD_CHECKING		.Load(m_sName,"CreditsCardChecking");
+	CREDITS_CARD_REMOVED		.Load(m_sName,"CreditsCardRemoved");
+	CREDITS_FREE_PLAY		.Load(m_sName,"CreditsFreePlay");
+	CREDITS_CREDITS			.Load(m_sName,"CreditsCredits");
+	CREDITS_NOT_PRESENT		.Load(m_sName,"CreditsNotPresent");
+	CREDITS_LOAD_FAILED		.Load(m_sName,"CreditsLoadFailed");
+	CREDITS_LOADED_FROM_LAST_GOOD_APPEND.Load(m_sName,"CreditsLoadedFromLastGoodAppend");
+	CREDITS_JOIN_ONLY		.Load( m_sName, "CreditsJoinOnly" );
+
 	Screen::Init();
 
 	this->AddChild(&m_textMessage);

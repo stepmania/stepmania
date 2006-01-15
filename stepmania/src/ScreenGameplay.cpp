@@ -337,22 +337,22 @@ GetNextVisiblePlayerInfo( vector<PlayerInfo>::iterator iter, vector<PlayerInfo> 
 ScreenGameplay::ScreenGameplay( CString sName ) : ScreenWithMenuElements(sName)
 {
 	m_pPlayerScoreList = NULL;
-
-	PLAYER_TYPE.Load( sName, "PlayerType" );
-	GIVE_UP_TEXT.Load( sName, "GiveUpText" );
-	GIVE_UP_ABORTED_TEXT.Load( sName, "GiveUpAbortedText" );
-	MUSIC_FADE_OUT_SECONDS.Load( sName, "MusicFadeOutSeconds" );
-	START_GIVES_UP.Load( sName, "StartGivesUp" );
-	BACK_GIVES_UP.Load( sName, "BackGivesUp" );
-	GIVING_UP_GOES_TO_PREV_SCREEN.Load( sName, "GivingUpGoesToPrevScreen" );
-	GIVING_UP_GOES_TO_NEXT_SCREEN.Load( sName, "GivingUpGoesToNextScreen" );
-	FAIL_AFTER_30_MISSES.Load( sName, "FailAfter30Misses" );
-	USE_FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "UseForcedModifiersInBeginner" );
-	FORCED_MODIFIERS_IN_BEGINNER.Load( sName, "ForcedModifiersInBeginner" );
 }
 
 void ScreenGameplay::Init()
 {
+	PLAYER_TYPE.Load( m_sName, "PlayerType" );
+	GIVE_UP_TEXT.Load( m_sName, "GiveUpText" );
+	GIVE_UP_ABORTED_TEXT.Load( m_sName, "GiveUpAbortedText" );
+	MUSIC_FADE_OUT_SECONDS.Load( m_sName, "MusicFadeOutSeconds" );
+	START_GIVES_UP.Load( m_sName, "StartGivesUp" );
+	BACK_GIVES_UP.Load( m_sName, "BackGivesUp" );
+	GIVING_UP_GOES_TO_PREV_SCREEN.Load( m_sName, "GivingUpGoesToPrevScreen" );
+	GIVING_UP_GOES_TO_NEXT_SCREEN.Load( m_sName, "GivingUpGoesToNextScreen" );
+	FAIL_AFTER_30_MISSES.Load( m_sName, "FailAfter30Misses" );
+	USE_FORCED_MODIFIERS_IN_BEGINNER.Load( m_sName, "UseForcedModifiersInBeginner" );
+	FORCED_MODIFIERS_IN_BEGINNER.Load( m_sName, "ForcedModifiersInBeginner" );
+
 	this->FillPlayerInfo( m_vPlayerInfo );
 	ASSERT_M( !m_vPlayerInfo.empty(), "m_vPlayerInfo must be filled by FillPlayerInfo" );
 

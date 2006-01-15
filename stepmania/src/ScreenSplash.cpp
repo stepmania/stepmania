@@ -8,15 +8,16 @@ AutoScreenMessage( SM_PrepScreen )
 
 
 REGISTER_SCREEN_CLASS( ScreenSplash );
-ScreenSplash::ScreenSplash( CString sClassName ) : ScreenWithMenuElements( sClassName ),
-	ALLOW_START_TO_SKIP			(m_sName,"AllowStartToSkip"),
-	MINIMUM_LOAD_DELAY_SECONDS	(m_sName,"MinimumLoadDelaySeconds"),
-	PREPARE_SCREEN				(m_sName,"PrepareScreen")
+ScreenSplash::ScreenSplash( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
 }
 
 void ScreenSplash::Init()
 {
+	ALLOW_START_TO_SKIP.Load( m_sName, "AllowStartToSkip" );
+	MINIMUM_LOAD_DELAY_SECONDS.Load( m_sName, "MinimumLoadDelaySeconds" );
+	PREPARE_SCREEN.Load( m_sName, "PrepareScreen" );
+
 	ScreenWithMenuElements::Init();
 
 	/* Prep the new screen once m_sprOverlay is complete. */ 	 
