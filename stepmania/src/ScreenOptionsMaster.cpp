@@ -19,6 +19,7 @@
 #define LINE_NAMES					THEME->GetMetric (m_sName,"LineNames")
 #define OPTION_MENU_FLAGS			THEME->GetMetric (m_sName,"OptionMenuFlags")
 #define LINE(sLineName)				THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
+#define FORCE_ALL_PLAYERS			THEME->GetMetricB(m_sName,"ForceAllPlayers")
 
 
 REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
@@ -35,6 +36,13 @@ void ScreenOptionsMaster::Init()
 	split( OPTION_MENU_FLAGS, ";", Flags, true );
 	InputMode im = INPUTMODE_INDIVIDUAL;
 	
+	if( FORCE_ALL_PLAYERS )
+	{
+		FOREACH_PlayerNumber( pn )
+			GAMESTATE->m_bSideIsJoined[pn] = true;
+		GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
+	}
+
 	for( unsigned i = 0; i < Flags.size(); ++i )
 	{
 		CString sFlag = Flags[i];
@@ -42,12 +50,6 @@ void ScreenOptionsMaster::Init()
 
 		if( sFlag == "together" )
 			im = INPUTMODE_SHARE_CURSOR;
-		else if( sFlag == "forceallplayers" )
-		{
-			FOREACH_PlayerNumber( pn )
-				GAMESTATE->m_bSideIsJoined[pn] = true;
-			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
-		}
 		else if( sFlag == "smnavigation" )
 			SetNavigation( NAV_THREE_KEY_MENU );
 		else if( sFlag == "toggle" )
