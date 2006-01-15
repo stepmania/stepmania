@@ -261,9 +261,9 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p )
 
 /* Set the final window size, set the window text and icon, and then unhide the
  * window. */
-void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p )
+void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p, bool bForceRecreateWindow )
 {
-	if( g_hWndMain == NULL )
+	if( g_hWndMain == NULL || bForceRecreateWindow )
 		CreateGraphicsWindow( p );
 
 	ASSERT( g_hWndMain );
