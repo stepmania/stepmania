@@ -241,8 +241,8 @@ void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p, bool bFo
 			RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
 
 		/* If an old window exists, transfer focus to the new window before deleting
-		* it, or some other window may temporarily get focus, which can cause it
-		* to be resized. */
+		 * it, or some other window may temporarily get focus, which can cause it
+		 * to be resized. */
 		if( g_hWndMain != NULL )
 		{
 			/* While we change to the new window, don't do ChangeDisplaySettings in WM_ACTIVATE. */
