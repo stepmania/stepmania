@@ -259,11 +259,6 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p )
 	g_HDC = GetDC( g_hWndMain );
 }
 
-void GraphicsWindow::RecreateGraphicsWindow( const VideoModeParams &p )
-{
-	CreateGraphicsWindow(p);
-}
-
 /* Set the final window size, set the window text and icon, and then unhide the
  * window. */
 void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p )
