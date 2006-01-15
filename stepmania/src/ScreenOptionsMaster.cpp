@@ -58,7 +58,7 @@ void ScreenOptionsMaster::Init()
 		}
 		else if( sFlag == "smnavigation" )
 			SetNavigation( NAV_THREE_KEY_MENU );
-		else if( sFlag == "toggle" || sFlag == "firstchoicegoesdown" )
+		else if( sFlag == "toggle" )
 			SetNavigation( PREFSMAN->m_bArcadeOptionsNavigation? NAV_TOGGLE_THREE_KEY:NAV_TOGGLE_FIVE_KEY );
 		else
 			RageException::Throw( "Unknown flag \"%s\"", sFlag.c_str() );
