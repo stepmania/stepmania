@@ -16,8 +16,8 @@ namespace GraphicsWindow
 	void Shutdown();
 
 	CString SetScreenMode( const VideoModeParams &p );
+	void CreateGraphicsWindow( const VideoModeParams &p, bool bForceRecreateWindow = false );
 	void DestroyGraphicsWindow();
-	void ConfigureGraphicsWindow( const VideoModeParams &p, bool bForceRecreateWindow = false );
 
 	void GetDisplayResolutions( DisplayResolutions &out );
 

@@ -506,7 +506,7 @@ CString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 	/* Set up and display the window before setting up D3D.  If we don't do this,
 	 * then setting up a fullscreen window (when we're not coming from windowed)
 	 * causes all other windows on the system to be resized to the new resolution. */
-	GraphicsWindow::ConfigureGraphicsWindow( p );
+	GraphicsWindow::CreateGraphicsWindow( p );
 
 	ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
 
@@ -630,7 +630,7 @@ CString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 	/* Call this again after changing the display mode.  If we're going to a window
 	 * from fullscreen, the first call can't set a larger window than the old fullscreen
 	 * resolution or set the window position. */
-	GraphicsWindow::ConfigureGraphicsWindow( p );
+	GraphicsWindow::CreateGraphicsWindow( p );
 
 	ResolutionChanged();
 

@@ -226,7 +226,7 @@ static int GetWindowStyle( bool bWindowed )
 
 /* Set the final window size, set the window text and icon, and then unhide the
  * window. */
-void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p, bool bForceRecreateWindow )
+void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForceRecreateWindow )
 {
 	g_CurrentParams = p;
 

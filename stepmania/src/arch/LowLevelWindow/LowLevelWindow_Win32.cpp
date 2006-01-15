@@ -119,7 +119,7 @@ CString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		/* No.  Always create and show the window before changing the video mode.
 		 * Otherwise, some other window may have focus, and changing the video mode will
 		 * cause that window to be resized. */
-		GraphicsWindow::ConfigureGraphicsWindow( p );
+		GraphicsWindow::CreateGraphicsWindow( p );
 	} else {
 		/* We already have a window.  Assume that it's pixel format has already been
 		 * set. */
@@ -182,7 +182,7 @@ CString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 
 	/* If we deleted the OpenGL context above, also recreate the window.  Otherwise, just
 	 * reconfigure it. */
-	GraphicsWindow::ConfigureGraphicsWindow( p, bNewDeviceOut );
+	GraphicsWindow::CreateGraphicsWindow( p, bNewDeviceOut );
 
 	if( bNeedToSetPixelFormat )
 	{
