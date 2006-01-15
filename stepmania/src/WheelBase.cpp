@@ -10,7 +10,6 @@
 #include "RageMath.h"
 #include "ThemeManager.h"
 #include "RageTextureManager.h"
-#include "GameCommand.h"
 #include "ActorUtil.h"
 #include "Foreach.h"
 #include "Style.h"
