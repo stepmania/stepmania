@@ -104,9 +104,9 @@ public:
 	float GetX() const				{ return m_current.pos.x; };
 	float GetY() const				{ return m_current.pos.y; };
 	float GetZ() const				{ return m_current.pos.z; };
-	float GetDestX()				{ return DestTweenState().pos.x; };
-	float GetDestY()				{ return DestTweenState().pos.y; };
-	float GetDestZ()				{ return DestTweenState().pos.z; };
+	float GetDestX() const				{ return DestTweenState().pos.x; };
+	float GetDestY() const				{ return DestTweenState().pos.y; };
+	float GetDestZ() const				{ return DestTweenState().pos.z; };
 	void  SetX( float x )			{ DestTweenState().pos.x = x; };
 	void  SetY( float y )			{ DestTweenState().pos.y = y; };
 	void  SetZ( float z )			{ DestTweenState().pos.z = z; };
@@ -116,10 +116,10 @@ public:
 	void  AddZ( float z )			{ SetZ( GetDestZ()+z ); }
 
 	// height and width vary depending on zoom
-	float GetUnzoomedWidth()		{ return m_size.x; }
-	float GetUnzoomedHeight()		{ return m_size.y; }
-	float GetZoomedWidth()			{ return m_size.x * m_baseScale.x * DestTweenState().scale.x; }
-	float GetZoomedHeight()			{ return m_size.y * m_baseScale.y * DestTweenState().scale.y; }
+	float GetUnzoomedWidth() const		{ return m_size.x; }
+	float GetUnzoomedHeight() const		{ return m_size.y; }
+	float GetZoomedWidth() const 		{ return m_size.x * m_baseScale.x * DestTweenState().scale.x; }
+	float GetZoomedHeight() const		{ return m_size.y * m_baseScale.y * DestTweenState().scale.y; }
 	void  SetWidth( float width )	{ m_size.x = width; }
 	void  SetHeight( float height )	{ m_size.y = height; }
 
@@ -208,7 +208,7 @@ public:
 	virtual void HurryTweening( float factor );
 	// Let ActorFrame and BGAnimation override
 	virtual float GetTweenTimeLeft() const;	// Amount of time until all tweens have stopped
-	TweenState& DestTweenState()	// where Actor will end when its tween finish
+	TweenState& DestTweenState() // where Actor will end when its tween finish
 	{
 		if( m_pTempState != NULL ) // effect_lua running
 			return *m_pTempState;
@@ -217,6 +217,7 @@ public:
 		else
 			return m_Tweens.back()->state;
 	}
+	const TweenState& DestTweenState() const { return const_cast<Actor*>(this)->DestTweenState(); }
 
 	
 	enum StretchType { fit_inside, cover };

@@ -740,7 +740,7 @@ void OptionRow::SetOptionIcon( PlayerNumber pn, const CString &sText, GameComman
 	LUA->UnsetGlobal( "ThisGameCommand" );
 }
 
-BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow )
+const BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow ) const
 {
 	bool bOneChoice = m_RowDef.m_bOneChoiceForAllPlayers;
 	int index = -1;
@@ -763,9 +763,9 @@ BitmapText &OptionRow::GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow )
 	return *m_textItems[index];
 }
 
-void OptionRow::GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut )
+void OptionRow::GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut ) const
 {
-	BitmapText &text = GetTextItemForRow( pn, iChoiceOnRow );
+	const BitmapText &text = GetTextItemForRow( pn, iChoiceOnRow );
 
 	iWidthOut = int(roundf( text.GetZoomedWidth() ));
 	iXOut = int(roundf( text.GetDestX() ));

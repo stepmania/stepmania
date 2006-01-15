@@ -188,12 +188,12 @@ public:
 	RowType GetRowType() const { return m_RowType; }
 	OptionRowHandler *GetHandler() { return m_pHand; }
 
-	BitmapText &GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow );
-	void GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );
+	const BitmapText &GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow ) const;
+	void GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut ) const;
 
 	// ScreenOptions calls positions m_FrameDestination, then m_Frame tween to that same TweenState.
 	void SetRowHidden( bool bRowHidden )	{ m_bHidden = bRowHidden; }
-	bool GetRowHidden()						{ return m_bHidden; }
+	bool GetRowHidden() const		{ return m_bHidden; }
 	unsigned GetTextItemsSize() const { return m_textItems.size(); }
 	bool GetFirstItemGoesDown() const { return m_bFirstItemGoesDown; }
 
