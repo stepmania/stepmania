@@ -22,11 +22,12 @@
 REGISTER_SCREEN_CLASS( ScreenSelectStyle );
 ScreenSelectStyle::ScreenSelectStyle( CString sClassName ) : ScreenSelect( sClassName )
 {
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 }
 
 void ScreenSelectStyle::Init()
 {
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
+
 	ScreenSelect::Init();
 
 	m_iSelection = 0;

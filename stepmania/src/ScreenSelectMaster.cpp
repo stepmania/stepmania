@@ -22,33 +22,34 @@ CString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dO
 CString OPTION_ORDER_NAME( size_t dir )							{ return "OptionOrder"+MenuDirToString((MenuDir)dir); }
 
 REGISTER_SCREEN_CLASS( ScreenSelectMaster );
-ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName ),
-	SHOW_ICON(m_sName,"ShowIcon"),
-	SHOW_SCROLLER(m_sName,"ShowScroller"),
-	SHOW_CURSOR(m_sName,"ShowCursor"),
-	SHARED_SELECTION(m_sName,"SharedSelection"),
-	NUM_CHOICES_ON_PAGE_1(m_sName,"NumChoicesOnPage1"),
-	CURSOR_OFFSET_X_FROM_ICON(m_sName,CURSOR_OFFSET_X_FROM_ICON_NAME,NUM_PLAYERS),
-	CURSOR_OFFSET_Y_FROM_ICON(m_sName,CURSOR_OFFSET_Y_FROM_ICON_NAME,NUM_PLAYERS),
-	OVERRIDE_LOCK_INPUT_SECONDS(m_sName,"OverrideLockInputSeconds"),
-	LOCK_INPUT_SECONDS(m_sName,"LockInputSeconds"),
-	PRE_SWITCH_PAGE_SECONDS(m_sName,"PreSwitchPageSeconds"),
-	POST_SWITCH_PAGE_SECONDS(m_sName,"PostSwitchPageSeconds"),
-	OPTION_ORDER(m_sName,OPTION_ORDER_NAME,NUM_MENU_DIRS),
-	WRAP_CURSOR(m_sName,"WrapCursor"),
-	WRAP_SCROLLER(m_sName,"WrapScroller"),
-	LOOP_SCROLLER(m_sName,"LoopScroller"),
-	ALLOW_REPEATING_INPUT(m_sName,"AllowRepeatingInput"),
-	SCROLLER_SECONDS_PER_ITEM(m_sName,"ScrollerSecondsPerItem"),
-	SCROLLER_NUM_ITEMS_TO_DRAW(m_sName,"ScrollerNumItemsToDraw"),
-	SCROLLER_TRANSFORM(m_sName,"ScrollerTransform"),
-	SCROLLER_SUBDIVISIONS(m_sName,"ScrollerSubdivisions"),
-	DEFAULT_CHOICE(m_sName,"DefaultChoice")
+ScreenSelectMaster::ScreenSelectMaster( CString sClassName ) : ScreenSelect( sClassName )
 {
 }
 
 void ScreenSelectMaster::Init()
 {
+	SHOW_ICON.Load( m_sName, "ShowIcon" );
+	SHOW_SCROLLER.Load( m_sName, "ShowScroller" );
+	SHOW_CURSOR.Load( m_sName, "ShowCursor" );
+	SHARED_SELECTION.Load( m_sName, "SharedSelection" );
+	NUM_CHOICES_ON_PAGE_1.Load( m_sName, "NumChoicesOnPage1" );
+	CURSOR_OFFSET_X_FROM_ICON.Load( m_sName, CURSOR_OFFSET_X_FROM_ICON_NAME, NUM_PLAYERS );
+	CURSOR_OFFSET_Y_FROM_ICON.Load( m_sName, CURSOR_OFFSET_Y_FROM_ICON_NAME, NUM_PLAYERS );
+	OVERRIDE_LOCK_INPUT_SECONDS.Load( m_sName, "OverrideLockInputSeconds" );
+	LOCK_INPUT_SECONDS.Load( m_sName, "LockInputSeconds" );
+	PRE_SWITCH_PAGE_SECONDS.Load( m_sName, "PreSwitchPageSeconds" );
+	POST_SWITCH_PAGE_SECONDS.Load( m_sName, "PostSwitchPageSeconds" );
+	OPTION_ORDER.Load( m_sName, OPTION_ORDER_NAME, NUM_MENU_DIRS );
+	WRAP_CURSOR.Load( m_sName, "WrapCursor" );
+	WRAP_SCROLLER.Load( m_sName, "WrapScroller" );
+	LOOP_SCROLLER.Load( m_sName, "LoopScroller" );
+	ALLOW_REPEATING_INPUT.Load( m_sName, "AllowRepeatingInput" );
+	SCROLLER_SECONDS_PER_ITEM.Load( m_sName, "ScrollerSecondsPerItem" );
+	SCROLLER_NUM_ITEMS_TO_DRAW.Load( m_sName, "ScrollerNumItemsToDraw" );
+	SCROLLER_TRANSFORM.Load( m_sName, "ScrollerTransform" );
+	SCROLLER_SUBDIVISIONS.Load( m_sName, "ScrollerSubdivisions" );
+	DEFAULT_CHOICE.Load( m_sName, "DefaultChoice" );
+
 	ScreenSelect::Init();
 
 	m_TrackingRepeatingInput.MakeInvalid();

@@ -29,11 +29,12 @@
 REGISTER_SCREEN_CLASS( ScreenSelectDifficulty );
 ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSelect( sClassName )
 {
-	m_CurrentPage = PAGE_1;
 }
 
 void ScreenSelectDifficulty::Init()
 {
+	m_CurrentPage = PAGE_1;
+
 	ScreenSelect::Init();
 
 	FOREACH_PlayerNumber( p )

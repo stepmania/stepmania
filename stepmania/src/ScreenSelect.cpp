@@ -20,15 +20,16 @@
 #define UPDATE_ON_MESSAGE		THEME->GetMetric (m_sName,"UpdateOnMessage")
 
 ScreenSelect::ScreenSelect( CString sClassName ) : 
-	ScreenWithMenuElements(sClassName),
-	IDLE_COMMENT_SECONDS(m_sName,"IdleCommentSeconds"),
-	IDLE_TIMEOUT_SECONDS(m_sName,"IdleTimeoutSeconds"),
-	ALLOW_DISABLED_PLAYER_INPUT(m_sName,"AllowDisabledPlayerInput")
+	ScreenWithMenuElements(sClassName)
 {
 }
 
 void ScreenSelect::Init()
 {
+	IDLE_COMMENT_SECONDS.Load( m_sName, "IdleCommentSeconds" );
+	IDLE_TIMEOUT_SECONDS.Load( m_sName, "IdleTimeoutSeconds" );
+	ALLOW_DISABLED_PLAYER_INPUT.Load( m_sName, "AllowDisabledPlayerInput" );
+
 	ScreenWithMenuElements::Init();
 
 	//
