@@ -1,5 +1,6 @@
 #import <Cocoa/Cocoa.h>
 #import "ProductInfo.h"
+#import "archutils/Darwin/SMMainThread.h"
 
 static NSWindow *window;
 static NSTextView *text;
@@ -31,6 +32,8 @@ void MakeNewCocoaWindow( const void *data, unsigned length )
 	[text setDrawsBackground:YES];
 	[text setBackgroundColor:[NSColor lightGrayColor]];
 	[text setAlignment:NSCenterTextAlignment];
+	[text setFont:[NSFont systemFontOfSize:12]];
+	[text setString:@"Initializing Hardware..."];
 
 	viewRect = NSMakeRect(0, height, size.width, height);
 	NSImageView *iView = [[[NSImageView alloc] initWithFrame:viewRect] autorelease];
@@ -42,31 +45,53 @@ void MakeNewCocoaWindow( const void *data, unsigned length )
 					     styleMask:NSTitledWindowMask
 					       backing:NSBackingStoreBuffered
 						 defer:YES];
+	
+	SMMainThread *mt = [[SMMainThread alloc] init];
+	NSNumber *bYES = [NSNumber numberWithBool:YES];
+	view = [window contentView];
+
+	// Set some properties.
+	[mt addAction:@selector(setOneShot:) withTarget:window andObject:bYES];
+	[mt addAction:@selector(setReleasedWhenClosed:) withTarget:window andObject:bYES];
+	[mt addAction:@selector(setExcludedFromWindowsMenu:) withTarget:window andObject:bYES];
+	[mt addAction:@selector(useOptimizedDrawing:) withTarget:window andObject:bYES];
+	[mt addAction:@selector(center) withTarget:window];
+	[mt addAction:@selector(setTitle:) withTarget:window andObject:[NSString stringWithUTF8String:PRODUCT_NAME]];
+	// Set subviews.
+	[mt addAction:@selector(addSubview:) withTarget:view andObject:text];
+	[mt addAction:@selector(addSubview:) withTarget:view andObject:iView];
+	// Make key and order front.
+	[mt addAction:@selector(makeKeyAndOrderFront:) withTarget:window andObject:nil];
+	// Perform all of the actions in order on the main thread.
+	[mt performOnMainThread];
+	[mt release];
+	
+#if 0
 	[window setOneShot:YES];
 	[window setReleasedWhenClosed:YES];
-	[window center];
 	[window useOptimizedDrawing:YES];
-	[window setTitle:[NSString stringWithUTF8String:PRODUCT_NAME_VER]];
+	[window center];
+	[window setTitle:[NSString stringWithUTF8String:PRODUCT_NAME]];
 	
 	// There's only one window ever so don't display in the menu.
 	[window setExcludedFromWindowsMenu:YES];
-
+	
 	view = [window contentView];
 	[view addSubview:text]; // This retains text.
 	[view addSubview:iView]; // This retains iView.
-	[text setFont:[NSFont systemFontOfSize:12]];
-	[text setString:@"Initializing Hardware..."];
 	
 	[window makeKeyAndOrderFront:nil];
+#endif
 	[pool release];
 }
 
 void DisposeOfCocoaWindow()
 {
-	// Just in case [window close] needs an autorelease pool.
+	// Just in case performSelectorOnMainThread:withObject:waitUntilDone: needs an autorelease pool.
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	
-	[window close]; // Released when closed as controlled by setReleasedWhenClosed.
+	 // Released when closed as controlled by setReleasedWhenClosed.
+	[window performSelectorOnMainThread:@selector(close) withObject:nil waitUntilDone:NO];
 	[pool release];
 }
 
@@ -79,7 +104,7 @@ void SetCocoaWindowText(const char *s)
 }
 
 /*
- * (c) 2003-2005 Steve Checkoway
+ * (c) 2003-2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
