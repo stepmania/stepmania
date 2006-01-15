@@ -25,6 +25,7 @@ public:
 	}
 	virtual void Load( OptionRowDefinition &defOut, const Commands &cmds )
 	{
+		Init();
 		m_cmds = cmds;
 		this->LoadInternal( defOut, cmds );
 	}

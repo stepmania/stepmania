@@ -81,7 +81,6 @@ public:
 		ASSERT( command.m_vsArgs.size() == 2 );
 		ASSERT( sParam.size() );
 
-		Init();
 		defOut.Init();
 
 		if(		 sParam.CompareNoCase("NoteSkins")==0 )		{ FillNoteSkins( defOut, sParam );		return; }
@@ -898,7 +897,6 @@ public:
 		ASSERT( command.m_vsArgs.size() == 2 );
 		ASSERT( sParam.size() );
 
-		Init();
 		defOut.Init();
 
 		if( sParam == "EditStepsType" )
@@ -1000,7 +998,6 @@ public:
 		ASSERT( command.m_vsArgs.size() == 2 );
 		ASSERT( sParam.size() );
 
-		Init();
 		defOut.Init();
 
 		if( sParam == "EditSteps" )
@@ -1151,7 +1148,6 @@ public:
 	{
 		ASSERT( cmds.v.size() > 1 );
 
-		Init();
 		defOut.Init();
 
 		Commands temp = cmds;
