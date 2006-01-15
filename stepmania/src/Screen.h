@@ -43,8 +43,6 @@ class Screen : public ActorFrame
 public:
 	static void InitScreen( Screen *pScreen );
 
-	Screen();
-	Screen( CString sName );	// enforce that all screens have m_sName filled in
 	virtual ~Screen();
 
 	/* This is called immediately after construction, to allow initializing after all

@@ -30,15 +30,6 @@ ScreenWithMenuElements::ScreenWithMenuElements()
 	m_MenuTimer = NULL;
 }
 
-ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( sClassName )
-{
-	m_MenuTimer = NULL;
-	m_textHelp = new HelpDisplay;
-	FOREACH_PlayerNumber( p )
-		m_MemoryCardDisplay[p] = NULL;
-	m_MenuTimer = NULL;
-}
-
 void ScreenWithMenuElements::Init()
 {
 	LOG->Trace( "ScreenWithMenuElements::Init()" );
