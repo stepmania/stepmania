@@ -14,6 +14,9 @@
 - (void) performOnMainThread;
 @end
 
+#define ADD_ACTION0(mt, t, s)    [mt addAction:@selector(s) withTarget:(t)]
+#define ADD_ACTION1(mt, t, s, o) [mt addAction:@selector(s) withTarget:(t) andObject:(o)]
+
 /*
  * (c) 2006 Steve Checkoway
  * All rights reserved.
