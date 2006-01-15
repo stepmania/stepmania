@@ -37,15 +37,13 @@ const CString AllGroups			= "[ALL MUSIC]";
 #define DIFFBG_WIDTH				THEME->GetMetricF(m_sName,"DiffBGWidth")
 #define DIFFBG_HEIGHT				THEME->GetMetricF(m_sName,"DiffBGHeight")
 
-REGISTER_SCREEN_CLASS( ScreenNetSelectMusic );
-ScreenNetSelectMusic::ScreenNetSelectMusic( const CString& sName ) : ScreenNetSelectBase( sName )
-{
-	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */
-	GAMESTATE->FinishStage();
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenNetSelectMusic );
 
 void ScreenNetSelectMusic::Init()
 {
+	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */
+	GAMESTATE->FinishStage();
+
 	ScreenNetSelectBase::Init();
 
 	//Diff Icon background

@@ -21,10 +21,7 @@
 
 AutoScreenMessage( SM_BackFromURL )
 
-REGISTER_SCREEN_CLASS( ScreenPackages );
-ScreenPackages::ScreenPackages( CString sClassName ) : ScreenWithMenuElements( sClassName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenPackages );
 
 void ScreenPackages::Init()
 {

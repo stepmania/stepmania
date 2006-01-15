@@ -25,7 +25,6 @@ private:
 class ScreenNetRoom : public ScreenNetSelectBase
 {
 public:
-	ScreenNetRoom( const CString& sName );
 	virtual void Init();
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );

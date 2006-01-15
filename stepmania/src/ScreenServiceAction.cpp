@@ -448,9 +448,11 @@ static CString ResetPreferences()
 
 
 
-REGISTER_SCREEN_CLASS( ScreenServiceAction );
-ScreenServiceAction::ScreenServiceAction( CString sClassName ) : ScreenPrompt( sClassName )
+REGISTER_SCREEN_CLASS_NEW( ScreenServiceAction );
+void ScreenServiceAction::Init()
 {
+	ScreenPrompt::Init();
+
 	CString sAction = THEME->GetMetric(m_sName,"Action");
 
 	CString (*pfn)() = NULL;

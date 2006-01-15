@@ -18,7 +18,6 @@ enum SetTimeSelection
 class ScreenSetTime : public ScreenWithMenuElements
 {
 public:
-	ScreenSetTime( CString sName );
 	virtual void Init();
 
 	virtual void Update( float fDelta );

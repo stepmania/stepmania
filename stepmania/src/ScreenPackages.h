@@ -12,7 +12,6 @@
 class ScreenPackages : public ScreenWithMenuElements
 {
 public:
-	ScreenPackages( CString sName );
 	virtual void Init();
 
 	virtual void Input( const InputEventPlus &input );

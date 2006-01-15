@@ -14,10 +14,7 @@
 #include "LocalizedString.h"
 
 
-REGISTER_SCREEN_CLASS( ScreenTestInput );
-ScreenTestInput::ScreenTestInput( CString sClassName ) : ScreenWithMenuElements( sClassName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenTestInput );
 
 void ScreenTestInput::Init()
 {

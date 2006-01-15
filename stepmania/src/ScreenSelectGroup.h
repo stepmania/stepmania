@@ -14,7 +14,6 @@
 class ScreenSelectGroup : public ScreenWithMenuElements
 {
 public:
-	ScreenSelectGroup( CString sName );
 	virtual void Init();
 
 	virtual void Input( const InputEventPlus &input );

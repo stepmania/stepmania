@@ -28,14 +28,12 @@ AutoScreenMessage( SM_SMOnlinePack )
 AutoScreenMessage( SM_BackFromRoomName )
 AutoScreenMessage( SM_BackFromRoomDesc )
 
-REGISTER_SCREEN_CLASS( ScreenNetRoom );
-ScreenNetRoom::ScreenNetRoom( const CString& sName ) : ScreenNetSelectBase( sName )
-{
-	GAMESTATE->FinishStage();
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenNetRoom );
 
 void ScreenNetRoom::Init()
 {
+	GAMESTATE->FinishStage();
+
 	ScreenNetSelectBase::Init();
 
 	m_soundChangeSel.Load( THEME->GetPathS("ScreenNetRoom","change sel"));

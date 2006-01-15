@@ -16,7 +16,6 @@
 class ScreenSelectCharacter : public ScreenWithMenuElements
 {
 public:
-	ScreenSelectCharacter( CString sName );
 	virtual void Init();
 	virtual ~ScreenSelectCharacter();
 

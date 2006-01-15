@@ -32,10 +32,7 @@ AutoScreenMessage( SM_AddToChat )
 AutoScreenMessage( SM_UsersUpdate )
 AutoScreenMessage( SM_SMOnlinePack )
 
-REGISTER_SCREEN_CLASS( ScreenNetSelectBase );
-ScreenNetSelectBase::ScreenNetSelectBase( const CString& sName ) : ScreenWithMenuElements( sName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenNetSelectBase );
 
 void ScreenNetSelectBase::Init()
 {

@@ -41,7 +41,6 @@ public:
 		TextEntry( smSendOnPop, sQuestion, "", 255, NULL, OnOK, OnCanel, true );
 	}
 
-	ScreenTextEntry( CString sName );
 	~ScreenTextEntry();
 	virtual void Init();
 	virtual void BeginScreen();

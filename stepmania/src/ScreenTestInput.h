@@ -10,7 +10,6 @@
 class ScreenTestInput : public ScreenWithMenuElements
 {
 public:
-	ScreenTestInput( CString sName );
 	virtual void Init();
 	virtual ~ScreenTestInput();
 

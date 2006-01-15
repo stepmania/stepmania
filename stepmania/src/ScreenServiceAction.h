@@ -8,7 +8,7 @@
 class ScreenServiceAction : public ScreenPrompt
 {
 public:
-	ScreenServiceAction( CString sName );
+	virtual void Init();
 };
 
 

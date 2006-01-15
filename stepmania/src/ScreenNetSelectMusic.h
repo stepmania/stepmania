@@ -21,7 +21,6 @@
 class ScreenNetSelectMusic : public ScreenNetSelectBase
 {
 public:
-	ScreenNetSelectMusic( const CString& sName );
 	virtual void Init();
 
 	virtual void Input( const InputEventPlus &input );

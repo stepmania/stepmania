@@ -11,14 +11,12 @@
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 
-REGISTER_SCREEN_CLASS( ScreenTestLights );
-ScreenTestLights::ScreenTestLights( CString sClassName ) : ScreenWithMenuElements( sClassName )
-{
-	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_AUTO_CYCLE );
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenTestLights );
 
 void ScreenTestLights::Init()
 {
+	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_AUTO_CYCLE );
+
 	ScreenWithMenuElements::Init();
 
 	m_textInputs.SetName( "Text" );

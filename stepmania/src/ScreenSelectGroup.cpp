@@ -22,10 +22,7 @@
 #define BANNER_HEIGHT					THEME->GetMetricF("ScreenSelectGroup","BannerHeight")
 
 
-REGISTER_SCREEN_CLASS( ScreenSelectGroup );
-ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuElements( sClassName )
-{	
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenSelectGroup );
 
 static LocalizedString ALL_MUSIC_STRING( "ScreenSelectGroup", "ALL MUSIC" );
 void ScreenSelectGroup::Init()

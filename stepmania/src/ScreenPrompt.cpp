@@ -45,11 +45,7 @@ void ScreenPrompt::Prompt( ScreenMessage smSendOnPop, const CString &sText, Prom
 
 
 
-REGISTER_SCREEN_CLASS( ScreenPrompt );
-ScreenPrompt::ScreenPrompt( const CString &sScreenName ):
-	ScreenWithMenuElements( sScreenName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenPrompt );
 
 void ScreenPrompt::Init()
 {

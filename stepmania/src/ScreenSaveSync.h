@@ -8,7 +8,7 @@
 class ScreenSaveSync : public ScreenPrompt
 {
 public:
-	ScreenSaveSync( CString sName );
+	virtual void Init();
 
 	static void PromptSaveSync();
 };

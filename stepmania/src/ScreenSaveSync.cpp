@@ -115,9 +115,11 @@ static void RevertSyncChanges( void* pThrowAway )
 	GAMESTATE->RevertSyncChanges();
 }
 
-REGISTER_SCREEN_CLASS( ScreenSaveSync );
-ScreenSaveSync::ScreenSaveSync( CString sClassName ) : ScreenPrompt( sClassName )
+REGISTER_SCREEN_CLASS_NEW( ScreenSaveSync );
+void ScreenSaveSync::Init()
 {
+	ScreenPrompt::Init();
+
 	ScreenPrompt::SetPromptSettings(
 		GetPromptText(), 
 		PROMPT_YES_NO, 
