@@ -145,7 +145,7 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 		(PREFSMAN->m_GetRankingName == PrefsManager::RANKING_LIST && !IsOnRanking) )
 	{
 		// don't collect score due to ranking setting
-		HandleScreenMessage( SM_GoToNextScreen );
+		PostScreenMessage( SM_GoToNextScreen, 0 );
 		return;
 	}
 
