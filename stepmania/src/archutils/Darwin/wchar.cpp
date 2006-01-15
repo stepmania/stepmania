@@ -1,9 +1,12 @@
 #include <bits/c++config.h>
 #include <string>
 
+// This is very annoying. The 10.2.8 SDK uses GLIBCPP but the 10.4u SDK uses GLIBCXX
+#define _GLIB_CHECK(x) (_GLIBCPP_ ## x || _GLIBCXX_ ## x)
+
 extern "C"
 {
-#if ! _GLIBCPP_HAVE_WCLEN
+#if ! _GLIB_CHECK(HAVE_WCLEN)
 size_t wcslen( const wchar_t *ws )
 {
 		size_t n = 0;
@@ -14,7 +17,7 @@ size_t wcslen( const wchar_t *ws )
 }
 #endif
 
-#if ! _GLIBCPP_HAVE_WMEMCHR
+#if ! _GLIB_CHECK(HAVE_WMEMCHR)
 wchar_t *wmemchr( const wchar_t *ws, wchar_t wc, size_t n )
 {
     for( unsigned i=0; i<n; ++i, ++ws )
@@ -24,7 +27,7 @@ wchar_t *wmemchr( const wchar_t *ws, wchar_t wc, size_t n )
 }
 #endif
 
-#if ! _GLIBCPP_HAVE_WMEMCMP
+#if ! _GLIB_CHECK(HAVE_WMEMCMP)
 int wmemcmp( const wchar_t *ws1, const wchar_t *ws2, size_t n )
 {
     for( unsigned i=0; i<n; ++i, ++ws1, ++ws2 )
@@ -34,21 +37,21 @@ int wmemcmp( const wchar_t *ws1, const wchar_t *ws2, size_t n )
 }
 #endif
 
-#if ! _GLIBCPP_HAVE_WMEMCPY
+#if ! _GLIB_CHECK(HAVE_WMEMCPY)
 wchar_t *wmemcpy( wchar_t *ws1, const wchar_t *ws2, size_t n )
 {
     return (wchar_t *)memcpy( ws1, ws2, n * sizeof(wchar_t) );
 }
 #endif
 
-#if ! _GLIBCPP_HAVE_WMEMMOVE
+#if ! _GLIB_CHECK(HAVE_WMEMMOVE)
 wchar_t *wmemmove( wchar_t *ws1, const wchar_t *ws2, size_t n )
 {
     return (wchar_t *)memmove( ws1, ws2, n * sizeof(wchar_t) );
 }
 #endif
 
-#if ! _GLIBCPP_HAVE_WMEMSET
+#if ! _GLIB_CHECK(HAVE_WMEMSET)
 wchar_t *wmemset( wchar_t *ws , wchar_t wc, size_t n )
 {
     wchar_t *temp = ws;
