@@ -27,8 +27,6 @@
 REGISTER_SCREEN_CLASS( ScreenUnlock );
 ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
 {
-	LOG->Trace("ScreenUnlock::ScreenUnlock()");
-
 	unsigned iNumUnlocks = UNLOCKMAN->m_UnlockEntries.size();
 
 	if( !PREFSMAN->m_bUseUnlockSystem || iNumUnlocks == 0 )
