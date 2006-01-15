@@ -74,6 +74,11 @@ void Screen::Init()
 
 void Screen::BeginScreen()
 {
+	/* Screens set these when they determine their next screen dynamically.  Reset them
+	 * here, so a reused screen doesn't inherit these from the last time it was used. */
+	m_sNextScreen = RString();
+	m_sPrevScreen = RString();
+	
 	this->RunCommands( THEME->GetMetricA(m_sName, "ScreenOnCommand") );
 }
 
