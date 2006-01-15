@@ -231,7 +231,7 @@ static int GetWindowStyle( bool bWindowed )
 		return WS_POPUP;
 }
 
-void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p )
+static void CreateGraphicsWindow( const VideoModeParams &p )
 {
 	int iWindowStyle = GetWindowStyle( p.windowed );
 
@@ -251,7 +251,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p )
 		SetForegroundWindow( hWnd );
 		g_bRecreatingVideoMode = false;
 
-		DestroyGraphicsWindow();
+		GraphicsWindow::DestroyGraphicsWindow();
 	}
 
 	g_hWndMain = hWnd;
