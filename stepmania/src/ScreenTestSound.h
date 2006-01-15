@@ -10,7 +10,6 @@ const int nsounds = 5;
 class ScreenTestSound : public Screen
 {
 public:
-	ScreenTestSound( CString sName );
 	virtual void Init();
 	~ScreenTestSound();
 

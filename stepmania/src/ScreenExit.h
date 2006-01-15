@@ -7,7 +7,6 @@
 class ScreenExit: public Screen
 {
 public:
-	ScreenExit( CString sName );
 	void Init();
 	void Update( float fDelta );
 

@@ -13,10 +13,7 @@
 #include "RageLog.h"
 
 
-REGISTER_SCREEN_CLASS( ScreenSandbox );
-ScreenSandbox::ScreenSandbox( CString sClassName ) : Screen( sClassName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenSandbox );
 
 void ScreenSandbox::HandleScreenMessage( const ScreenMessage SM )
 {

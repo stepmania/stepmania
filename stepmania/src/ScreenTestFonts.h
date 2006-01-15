@@ -10,7 +10,6 @@
 class ScreenTestFonts: public Screen
 {
 public:
-	ScreenTestFonts( CString sName );
 	virtual void Init();
 
 	void Input( const InputEventPlus &input );

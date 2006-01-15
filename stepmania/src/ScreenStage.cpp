@@ -14,10 +14,7 @@
 
 AutoScreenMessage( SM_PrepScreen )
 
-REGISTER_SCREEN_CLASS( ScreenStage );
-ScreenStage::ScreenStage( CString sClassName ) : Screen( sClassName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenStage );
 
 void ScreenStage::Init()
 {

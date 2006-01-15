@@ -85,8 +85,8 @@ float GetClosestCharYPos( float fFakeBeat )
 }
 
 
-REGISTER_SCREEN_CLASS( ScreenNameEntry );
-ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
+REGISTER_SCREEN_CLASS_NEW( ScreenNameEntry );
+ScreenNameEntry::ScreenNameEntry()
 {
 		// DEBUGGING STUFF
 //	GAMESTATE->m_CurGame = GAME_DANCE;

@@ -13,7 +13,7 @@
 class ScreenNameEntry : public Screen
 {
 public:
-	ScreenNameEntry( CString sName );
+	ScreenNameEntry();
 	void Init();
 	virtual ~ScreenNameEntry();
 

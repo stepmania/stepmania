@@ -11,7 +11,6 @@
 class ScreenStage : public Screen
 {
 public:
-	ScreenStage( CString sName );
 	virtual void Init();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );

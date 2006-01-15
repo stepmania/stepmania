@@ -12,8 +12,6 @@ const int NUM_SKIPS_TO_SHOW = 5;
 class ScreenStatsOverlay : public Screen
 {
 public:
-	ScreenStatsOverlay( const CString &sName );
-	virtual ~ScreenStatsOverlay();
 	virtual void Init();
 	
 	void Update( float fDeltaTime );

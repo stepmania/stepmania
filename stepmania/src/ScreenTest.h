@@ -6,7 +6,7 @@
 class ScreenTest : public Screen
 {
 public:
-	ScreenTest( CString sName );
+	ScreenTest();
 	~ScreenTest();
 	virtual void Init();
 

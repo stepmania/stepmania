@@ -6,8 +6,6 @@
 class ScreenSandbox : public Screen
 {
 public:
-	ScreenSandbox( CString sName );
-
 	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 	virtual void Update(float f);

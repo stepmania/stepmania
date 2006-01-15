@@ -44,10 +44,7 @@ public:
  * this for the initial load, since we don't want to start up the display
  * until we finish loading songs; that way, people can continue to use their
  * computer while songs load. */
-REGISTER_SCREEN_CLASS( ScreenReloadSongs );
-ScreenReloadSongs::ScreenReloadSongs( CString sClassName ): Screen(sClassName)
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenReloadSongs );
 
 void ScreenReloadSongs::Init()
 {

@@ -10,7 +10,6 @@
 class ScreenDebugOverlay : public Screen
 {
 public:
-	ScreenDebugOverlay( const CString &sName );
 	virtual ~ScreenDebugOverlay();
 	virtual void Init();
 	

@@ -30,10 +30,7 @@ void ScreenTestFonts::HandleScreenMessage( const ScreenMessage SM )
 		SetText( g_sCustomText );
 }
 
-REGISTER_SCREEN_CLASS( ScreenTestFonts );
-ScreenTestFonts::ScreenTestFonts( CString sClassName ) : Screen( sClassName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenTestFonts );
 
 void ScreenTestFonts::Init()
 {

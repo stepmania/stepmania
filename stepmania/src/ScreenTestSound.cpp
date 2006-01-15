@@ -7,10 +7,7 @@
 #include "RageUtil.h"
 #include "InputEventPlus.h"
 
-REGISTER_SCREEN_CLASS( ScreenTestSound );
-ScreenTestSound::ScreenTestSound( CString sClassName ) : Screen( sClassName )
-{	
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenTestSound );
 
 void ScreenTestSound::Init()
 {

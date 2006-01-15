@@ -13,14 +13,7 @@ static bool IsGameplay()
 	return SCREENMAN && SCREENMAN->GetTopScreen() && SCREENMAN->GetTopScreen()->GetScreenType() == gameplay;
 }
 
-REGISTER_SCREEN_CLASS( ScreenSyncOverlay );
-ScreenSyncOverlay::ScreenSyncOverlay( const CString &sName ) : Screen(sName)
-{
-}
-
-ScreenSyncOverlay::~ScreenSyncOverlay()
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenSyncOverlay );
 
 void ScreenSyncOverlay::Init()
 {

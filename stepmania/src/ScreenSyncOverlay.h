@@ -10,8 +10,6 @@
 class ScreenSyncOverlay : public Screen
 {
 public:
-	ScreenSyncOverlay( const CString &sName );
-	virtual ~ScreenSyncOverlay();
 	virtual void Init();
 	
 	bool OverlayInput( const InputEventPlus &input );
