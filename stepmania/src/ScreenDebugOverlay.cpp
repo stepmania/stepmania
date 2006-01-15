@@ -43,6 +43,7 @@ public:
 			g_pvpSubscribers = new vector<IDebugLine*>;
 		g_pvpSubscribers->push_back( this );
 	}
+	virtual ~IDebugLine() { }
 	virtual CString GetDescription() = 0;
 	virtual CString GetValue() = 0;
 	virtual bool IsEnabled() = 0;
