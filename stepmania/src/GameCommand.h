@@ -39,7 +39,6 @@ public:
 	bool DescribesCurrentModeForAllPlayers() const;
 	bool IsPlayable( CString *why = NULL ) const;
 	bool IsZero() const;
-	CString GetAndClearScreen();
 	
 	/* If true, Apply() will apply m_sScreen.  If false, it won't, and you need
 	 * to do it yourself. */

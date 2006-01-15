@@ -14,7 +14,6 @@ public:
 
 protected:
 	int m_iChangeMask;
-	bool m_bExportWillSetANewScreen;	// from an OptionRowHandler
 
 	vector<OptionRowHandler*> m_OptionRowHandlers;
 	

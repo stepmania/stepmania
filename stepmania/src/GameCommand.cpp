@@ -561,28 +561,6 @@ void GameCommand::Apply( PlayerNumber pn ) const
 	Apply( vpns );
 }
 
-
-/* Hack: if this GameCommand would set the screen, clear the setting and return
- * the screen that would have been set. */
-CString GameCommand::GetAndClearScreen()
-{
-	CString sRet;
-	FOREACH( Command, m_Commands.v, cmd )
-	{
-		CString sName = cmd->GetName();
-		if( sName == "screen" )
-		{
-			sRet = CString( cmd->GetArg(1) );
-			m_Commands.v.erase( cmd );
-			break;
-		}
-	}
-
-	m_sScreen = "";
-
-	return sRet;
-}
-
 void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 {
 	if( m_Commands.v.size() )
