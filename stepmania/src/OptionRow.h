@@ -151,7 +151,7 @@ public:
 	void PositionUnderlines( PlayerNumber pn );
 	void PositionIcons();
 	void UpdateText();
-	void SetRowFocus( bool bRowHasFocus[NUM_PLAYERS] );
+	void SetRowHasFocus( PlayerNumber pn, bool bRowHasFocus );
 	void UpdateEnabledDisabled();
 
 	int GetOneSelection( PlayerNumber pn, bool bAllowFail=false ) const;

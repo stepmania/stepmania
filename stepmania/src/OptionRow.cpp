@@ -579,10 +579,9 @@ void OptionRow::UpdateText()
 	}
 }
 
-void OptionRow::SetRowFocus( bool bRowHasFocus[NUM_PLAYERS] )
+void OptionRow::SetRowHasFocus( PlayerNumber pn, bool bRowHasFocus )
 {
-	FOREACH_PlayerNumber( p )
-		m_bRowHasFocus[p] = bRowHasFocus[p];
+	m_bRowHasFocus[pn] = bRowHasFocus;
 }
 
 void OptionRow::UpdateEnabledDisabled()
