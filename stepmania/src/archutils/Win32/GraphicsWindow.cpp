@@ -301,8 +301,8 @@ void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p, bool bFo
 	int x = 0, y = 0;
 	if( p.windowed )
 	{
-        x = GetSystemMetrics(SM_CXSCREEN)/2-iWidth/2;
-        y = GetSystemMetrics(SM_CYSCREEN)/2-iHeight/2;
+		x = GetSystemMetrics(SM_CXSCREEN)/2-iWidth/2;
+		y = GetSystemMetrics(SM_CYSCREEN)/2-iHeight/2;
 	}
 
 	/* Move and resize the window.  SWP_FRAMECHANGED causes the above SetWindowLong
