@@ -194,8 +194,8 @@ public:
 	// ScreenOptions calls positions m_FrameDestination, then m_Frame tween to that same TweenState.
 	void SetRowHidden( bool bRowHidden )	{ m_bHidden = bRowHidden; }
 	bool GetRowHidden()						{ return m_bHidden; }
-	unsigned GetTextItemsSize() { return m_textItems.size(); }
-	bool GetFirstItemGoesDown() { return m_bFirstItemGoesDown; }
+	unsigned GetTextItemsSize() const { return m_textItems.size(); }
+	bool GetFirstItemGoesDown() const { return m_bFirstItemGoesDown; }
 
 	void PrepareItemText( CString &s ) const;
 	CString OptionTitle( CString s ) const;
