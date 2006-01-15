@@ -1,16 +1,21 @@
-SDL-1.2.7
+Frameworks:
 ffmpeg-0.4.9-pre1
-jpeg-6b
 libmad-0.1.5.1b
+libresample
+
+Static Libraries:
+jpeg-6b
 libogg-1.1
 libpng-1.2.7
 libvorbis-1.0.1
 lua-5.0
 
 Directions:
-1. Decompress all of those in the Libraries directory.
+1. Decompress all of those in the Libraries directory (libresample can be
+copied from stepmania/src/libresample).
 2. Some of these need to have ./configure run before they will build. I know
 that ffmpeg does. Others might as well. ffmpeg's configure needs to be run as
 ./configure --disable-vhook
-3. Build frameworks from those libraries using xcode.
-4. Hope I haven't missed anything else...
+3. Build the frameworks listed above from those libraries using Xcode 2.2.1.
+4. Build static libraries with ./configure && make of the static libraries
+and move them into the Libraries directory.
