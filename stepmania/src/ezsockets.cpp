@@ -6,6 +6,8 @@
 |   UDP/NON-TCP Support by Adam Lowman.                             |
 \*******************************************************************/
 
+#include "global.h"
+
 #include "ezsockets.h"
 
 #if defined(_MSC_VER) && !defined(_XBOX) // We need the WinSock32 Library on Windows
