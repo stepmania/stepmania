@@ -106,8 +106,8 @@ public:
 };
 
 
-REGISTER_SCREEN_CLASS( ScreenEvaluationMultiplayer );
-ScreenEvaluationMultiplayer::ScreenEvaluationMultiplayer( CString sClassName ) : ScreenWithMenuElements( sClassName )
+REGISTER_SCREEN_CLASS_NEW( ScreenEvaluationMultiplayer );
+ScreenEvaluationMultiplayer::ScreenEvaluationMultiplayer()
 {
 	//
 	// debugging

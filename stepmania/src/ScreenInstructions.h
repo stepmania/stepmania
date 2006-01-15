@@ -6,7 +6,6 @@
 class ScreenInstructions : public ScreenWithMenuElements
 {
 public:
-	ScreenInstructions( CString sName );
 	virtual void Init();
 
 	virtual void Input( const InputEventPlus &input );

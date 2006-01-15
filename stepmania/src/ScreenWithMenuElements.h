@@ -15,6 +15,7 @@ class MemoryCardDisplay;
 class ScreenWithMenuElements : public Screen
 {
 public:
+	ScreenWithMenuElements();
 	ScreenWithMenuElements( CString sName );
 	virtual void Init();
 	virtual void BeginScreen();

@@ -10,7 +10,6 @@
 class ScreenCenterImage : public ScreenWithMenuElements
 {
 public:
-	ScreenCenterImage( CString sName );
 	void Init();
 	virtual ~ScreenCenterImage();
 

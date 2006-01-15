@@ -11,7 +11,6 @@ const int NUM_BOOKKEEPING_COLS = 4;
 class ScreenBookkeeping : public ScreenWithMenuElements
 {
 public:
-	ScreenBookkeeping( CString sName );
 	virtual void Init();
 	virtual ~ScreenBookkeeping();
 

@@ -21,6 +21,15 @@
 #define WAIT_FOR_CHILDREN_BEFORE_TWEENING_OUT		THEME->GetMetricB(m_sName,"WaitForChildrenBeforeTweeningOut")
 
 //REGISTER_SCREEN_CLASS( ScreenWithMenuElements );
+ScreenWithMenuElements::ScreenWithMenuElements()
+{
+	m_MenuTimer = NULL;
+	m_textHelp = new HelpDisplay;
+	FOREACH_PlayerNumber( p )
+		m_MemoryCardDisplay[p] = NULL;
+	m_MenuTimer = NULL;
+}
+
 ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( sClassName )
 {
 	m_MenuTimer = NULL;
@@ -28,16 +37,14 @@ ScreenWithMenuElements::ScreenWithMenuElements( CString sClassName ) : Screen( s
 	FOREACH_PlayerNumber( p )
 		m_MemoryCardDisplay[p] = NULL;
 	m_MenuTimer = NULL;
-
-	// Needs to be in the constructor in case a derivitive decides to skip 
-	// itself and sends SM_GoToNextScreen to ScreenAttract.
-	PLAY_MUSIC		.Load( m_sName, "PlayMusic" );
-	TIMER_SECONDS	.Load( m_sName, "TimerSeconds" );
 }
 
 void ScreenWithMenuElements::Init()
 {
 	LOG->Trace( "ScreenWithMenuElements::Init()" );
+
+	PLAY_MUSIC.Load( m_sName, "PlayMusic" );
+	TIMER_SECONDS.Load( m_sName, "TimerSeconds" );
 
 	Screen::Init();
 

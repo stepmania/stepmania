@@ -22,16 +22,14 @@
 AutoScreenMessage( SM_RefreshSelector )
 AutoScreenMessage( SM_BackFromEditDescription )
 
-REGISTER_SCREEN_CLASS( ScreenEditMenu );
-ScreenEditMenu::ScreenEditMenu( CString sName ) : ScreenWithMenuElements( sName )
+REGISTER_SCREEN_CLASS_NEW( ScreenEditMenu );
+
+void ScreenEditMenu::Init()
 {
 	/* Enable all players. */
 	FOREACH_PlayerNumber( pn )
 		GAMESTATE->m_bSideIsJoined[pn] = true;
-}
 
-void ScreenEditMenu::Init()
-{
 	ScreenWithMenuElements::Init();
 
 	m_Selector.SetName( "EditMenu" );

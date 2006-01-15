@@ -8,7 +8,6 @@
 class ScreenEditMenu : public ScreenWithMenuElements
 {
 public:
-	ScreenEditMenu( CString sName );
 	virtual void Init();
 
 	virtual void HandleScreenMessage( const ScreenMessage SM );

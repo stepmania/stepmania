@@ -19,10 +19,7 @@ const int NUM_SCORE_DIGITS	=	9;
 
 AutoScreenMessage( SM_GotEval ) 
 
-REGISTER_SCREEN_CLASS( ScreenNetEvaluation );
-ScreenNetEvaluation::ScreenNetEvaluation (const CString & sClassName) : ScreenEvaluation( sClassName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenNetEvaluation );
 
 void ScreenNetEvaluation::Init()
 {

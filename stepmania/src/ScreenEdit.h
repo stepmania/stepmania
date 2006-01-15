@@ -148,7 +148,6 @@ struct MapEditToDI
 class ScreenEdit : public ScreenWithMenuElements
 {
 public:
-	ScreenEdit( CString sName );
 	virtual void Init();
 	virtual ~ScreenEdit();
 	virtual void Update( float fDeltaTime );

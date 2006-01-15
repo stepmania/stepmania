@@ -69,15 +69,13 @@ const float TWEEN_TIME		= 0.5f;
 
 AutoScreenMessage( SM_NoSongs )
 
-REGISTER_SCREEN_CLASS( ScreenEz2SelectMusic );
-ScreenEz2SelectMusic::ScreenEz2SelectMusic( CString sName ) : ScreenWithMenuElements( sName )
-{
-	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */
-	GAMESTATE->FinishStage();
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenEz2SelectMusic );
 
 void ScreenEz2SelectMusic::Init()
 {
+	/* Finish any previous stage.  It's OK to call this when we havn't played a stage yet. */
+	GAMESTATE->FinishStage();
+
 	ScreenWithMenuElements::Init();
 
 	i_SkipAheadOffset = 0;

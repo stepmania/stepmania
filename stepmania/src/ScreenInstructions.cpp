@@ -2,10 +2,7 @@
 #include "ScreenInstructions.h"
 
 
-REGISTER_SCREEN_CLASS( ScreenInstructions );
-ScreenInstructions::ScreenInstructions( CString sName ) : ScreenWithMenuElements( sName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenInstructions );
 
 void ScreenInstructions::Init()
 {

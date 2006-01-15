@@ -20,7 +20,7 @@ const CString& MultiPlayerStatusToString( MultiPlayerStatus i );
 class ScreenJoinMultiplayer : public ScreenWithMenuElements
 {
 public:
-	ScreenJoinMultiplayer( CString sName );
+	ScreenJoinMultiplayer();
 	virtual void Init();
 
 	virtual void Input( const InputEventPlus &input );

@@ -612,15 +612,13 @@ static int g_iLastInsertTapAttackTrack = -1;
 static float g_fLastInsertAttackDurationSeconds = -1;
 static BackgroundLayer g_CurrentBGChangeLayer = BACKGROUND_LAYER_INVALID;
 
-REGISTER_SCREEN_CLASS( ScreenEdit );
-ScreenEdit::ScreenEdit( CString sName ) : ScreenWithMenuElements( sName )
-{
-	ASSERT( GAMESTATE->m_pCurSong );
-	ASSERT( GAMESTATE->m_pCurSteps[0] );
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenEdit );
 
 void ScreenEdit::Init()
 {
+	ASSERT( GAMESTATE->m_pCurSong );
+	ASSERT( GAMESTATE->m_pCurSteps[0] );
+
 	EDIT_MODE.Load(m_sName,"EditMode");
 	ScreenWithMenuElements::Init();
 

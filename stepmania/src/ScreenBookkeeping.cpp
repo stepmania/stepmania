@@ -10,10 +10,7 @@
 #include "LocalizedString.h"
 
 
-REGISTER_SCREEN_CLASS( ScreenBookkeeping );
-ScreenBookkeeping::ScreenBookkeeping( CString sClassName ) : ScreenWithMenuElements( sClassName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenBookkeeping );
 
 void ScreenBookkeeping::Init()
 {

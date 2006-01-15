@@ -15,7 +15,6 @@
 class ScreenEz2SelectMusic : public ScreenWithMenuElements
 {
 public:
-	ScreenEz2SelectMusic( CString sName );
 	virtual void Init();
 
 	virtual void Update( float fDeltaTime );

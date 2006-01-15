@@ -10,7 +10,6 @@
 class ScreenEz2SelectPlayer : public ScreenWithMenuElements
 {
 public:
-	ScreenEz2SelectPlayer( CString sName );
 	virtual void Init();
 	virtual ~ScreenEz2SelectPlayer();
 	

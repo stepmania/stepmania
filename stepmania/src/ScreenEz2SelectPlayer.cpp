@@ -27,23 +27,14 @@
 const float TWEEN_TIME		= 0.35f;
 
 
-/************************************
-ScreenEz2SelectPlayer (Constructor)
-Desc: Sets up the screen display
-************************************/
-
-REGISTER_SCREEN_CLASS( ScreenEz2SelectPlayer );
-ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : ScreenWithMenuElements( sName )
-{
-	// Unjoin the players, then let them join back in on this screen
-//	GAMESTATE->m_bPlayersCanJoin = true;
-	FOREACH_PlayerNumber( p )
-		GAMESTATE->m_bSideIsJoined[p] = false;
-}
-
+REGISTER_SCREEN_CLASS_NEW( ScreenEz2SelectPlayer );
 
 void ScreenEz2SelectPlayer::Init()
 {
+	// Unjoin the players, then let them join back in on this screen
+	FOREACH_PlayerNumber( p )
+		GAMESTATE->m_bSideIsJoined[p] = false;
+
 	ScreenWithMenuElements::Init();
 
 	FOREACH_PlayerNumber( p )

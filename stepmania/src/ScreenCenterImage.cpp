@@ -13,14 +13,12 @@
 
 static ThemeMetric<bool>	ALLOW_RESIZE("ScreenCenterImage","AllowResize");
 
-REGISTER_SCREEN_CLASS( ScreenCenterImage );
-ScreenCenterImage::ScreenCenterImage( CString sClassName ) : ScreenWithMenuElements( sClassName )
-{
-	ZERO( m_fScale );
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenCenterImage );
 
 void ScreenCenterImage::Init()
 {
+	ZERO( m_fScale );
+
 	ScreenWithMenuElements::Init();
 
 #if defined(XBOX)

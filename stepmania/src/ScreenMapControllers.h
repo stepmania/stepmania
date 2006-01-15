@@ -14,7 +14,6 @@ enum { NUM_SHOWN_GAME_TO_DEVICE_SLOTS = 3 };
 class ScreenMapControllers : public ScreenWithMenuElements
 {
 public:
-	ScreenMapControllers( CString sName );
 	virtual void Init();
 	virtual void BeginScreen();
 

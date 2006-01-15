@@ -2,10 +2,7 @@
 #include "ScreenEditCourseMods.h"
 #include "RageLog.h"
 
-REGISTER_SCREEN_CLASS( ScreenEditCourseMods );
-ScreenEditCourseMods::ScreenEditCourseMods( CString sName ) : ScreenEdit( sName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenEditCourseMods );
 
 void ScreenEditCourseMods::Init()
 {

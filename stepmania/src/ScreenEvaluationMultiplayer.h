@@ -21,7 +21,7 @@ enum MultiplayerJudgeLine
 class ScreenEvaluationMultiplayer : public ScreenWithMenuElements
 {
 public:
-	ScreenEvaluationMultiplayer( CString sName );
+	ScreenEvaluationMultiplayer();
 	~ScreenEvaluationMultiplayer();
 	virtual void Init();
 

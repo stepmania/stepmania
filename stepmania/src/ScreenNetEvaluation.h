@@ -7,7 +7,6 @@
 class ScreenNetEvaluation: public ScreenEvaluation
 {
 public:
-	ScreenNetEvaluation (const CString& sClassName);
 	virtual void Init();
 
 protected:

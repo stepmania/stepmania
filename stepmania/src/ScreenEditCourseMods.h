@@ -6,8 +6,6 @@
 class ScreenEditCourseMods : public ScreenEdit
 {
 public:
-	ScreenEditCourseMods( CString sName );
-
 	void Init();
 
 protected:
