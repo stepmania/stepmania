@@ -53,21 +53,6 @@ public:
 }
 @end
 
-static NSOpenGLPixelFormat *CreatePixelFormat( int bbp, bool windowed )
-{
-	NSOpenGLPixelFormatAttribute attrs[] = {
-		NSOpenGLPFANoRecovery, // so we can share with the full screen context
-		NSOpenGLPFADoubleBuffer,
-		NSOpenGLPFAAccelerated,
-		NSOpenGLPFADepthSize, NSOpenGLPixelFormatAttribute(16),
-		NSOpenGLPFAColorSize, NSOpenGLPixelFormatAttribute(bbp == 16 ? 16 : 24),
-		NSOpenGLPixelFormatAttribute(0)
-	};
-	
-	return [[[NSOpenGLPixelFormat alloc] initWithAttributes:attrs] autorelease];
-}
-
-
 LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : mView(nil), mFullScreenContext(nil), mCurrentDisplayMode(NULL)
 {
 	POOL;
