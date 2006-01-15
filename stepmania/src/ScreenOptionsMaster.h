@@ -24,8 +24,6 @@ protected:
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 
 	virtual void BeginFadingOut();
-
-	virtual void RefreshIcons( int row, PlayerNumber pn );
 };
 
 #endif

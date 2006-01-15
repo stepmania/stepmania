@@ -154,11 +154,6 @@ void ScreenOptionsMaster::BeginFadingOut()
 		ScreenOptions::BeginFadingOut();
 }
 
-void ScreenOptionsMaster::RefreshIcons( int r, PlayerNumber pn )
-{
-	ScreenOptions::RefreshIcons( r, pn );
-}
-
 void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_ExportOptions )
