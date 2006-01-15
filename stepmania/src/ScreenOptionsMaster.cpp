@@ -20,8 +20,6 @@
 #define OPTION_MENU_FLAGS			THEME->GetMetric (m_sName,"OptionMenuFlags")
 #define LINE(sLineName)				THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
 
-#define NEXT_SCREEN					THEME->GetMetric (m_sName,"NextScreen")
-
 
 REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
 ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
@@ -130,8 +128,6 @@ void ScreenOptionsMaster::BeginFadingOut()
 {
 	/* If the selection is on a LIST, and the selected LIST option sets the screen,
 	 * honor it. */
-	m_bExportWillSetANewScreen = false;
-
 	int iCurRow = this->GetCurrentRow();
 	ASSERT( iCurRow >= 0 && iCurRow < (int)m_pRows.size() );
 	const OptionRow &row = *m_pRows[iCurRow];
@@ -145,12 +141,16 @@ void ScreenOptionsMaster::BeginFadingOut()
 		{
 			const OptionRowHandler *pHand = m_OptionRowHandlers[iCurRow];
 			if( pHand != NULL )
-				m_bExportWillSetANewScreen = pHand->HasScreen( iChoice );
+			{
+				CString sThisScreen = pHand->GetScreen( iChoice );
+				if( sThisScreen != "" )
+					m_sNextScreen = sThisScreen;
+			}
 		}
 	}
 
 	// If options set a NextScreen or one is specified in metrics, then fade out
-	if( m_bExportWillSetANewScreen || NEXT_SCREEN != "" )
+	if( GetNextScreen() != "" )
 		ScreenOptions::BeginFadingOut();
 }
 
@@ -205,8 +205,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		if( m_iChangeMask & OPT_RESET_GAME )
 		{
 			StepMania::ResetGame();
-			SCREENMAN->SetNewScreen( CommonMetrics::INITIAL_SCREEN );
-			m_bExportWillSetANewScreen = false;
+			m_sNextScreen = CommonMetrics::INITIAL_SCREEN;
 		}
 
 		if( m_iChangeMask & OPT_APPLY_SOUND )
@@ -218,18 +217,7 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			SONGMAN->SetPreferences();
 
 		CHECKPOINT;
-		if( !(m_iChangeMask & OPT_RESET_GAME) )
-			this->HandleScreenMessage( SM_GoToNextScreen );
-		return;
-	}
-	else if( SM == SM_GoToNextScreen )
-	{
-		if( SCREENMAN->IsStackedScreen(this) )
-			SCREENMAN->PopTopScreen( SM_None );
-		else if( m_bExportWillSetANewScreen )
-			;	// Do nothing.  Let Export set the screen.
-		else if( NEXT_SCREEN != "" )
-			SCREENMAN->SetNewScreen( NEXT_SCREEN );
+		this->HandleScreenMessage( SM_GoToNextScreen );
 		return;
 	}
 	else

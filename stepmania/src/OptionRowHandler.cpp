@@ -145,6 +145,7 @@ public:
 			for( int col = 0; col < NumCols; ++col )
 			{
 				GameCommand mc;
+				mc.ApplyCommitsScreens( false );
 				mc.Load( 0, ParseCommands(ENTRY_MODE(sParam, col)) );
 				/* If the row has just one entry, use the name of the row as the name of the
 				 * entry.  If it has more than one, each one must be specified explicitly. */
@@ -261,10 +262,10 @@ public:
 
 		gcOut = ListEntries[iFirstSelection];
 	}
-	virtual bool HasScreen( int iChoice ) const
+	virtual RString GetScreen( int iChoice ) const
 	{ 
 		const GameCommand &gc = ListEntries[iChoice];
-		return !gc.m_sScreen.empty();
+		return gc.m_sScreen;
 	}
 
 	void FillNoteSkins( OptionRowDefinition &defOut, CString sParam )
@@ -1165,6 +1166,7 @@ public:
 	void Init()
 	{
 		m_gc.Init();
+		m_gc.ApplyCommitsScreens( false );
 	}
 	virtual void LoadInternal( OptionRowDefinition &defOut, const Commands &cmds )
 	{
@@ -1197,9 +1199,9 @@ public:
 		sIconTextOut = "";
 		gcOut = m_gc;
 	}
-	virtual bool HasScreen( int iChoice ) const
+	virtual RString GetScreen( int iChoice ) const
 	{ 
-		return !m_gc.m_sScreen.empty();
+		return m_gc.m_sScreen;
 	}
 };
 
