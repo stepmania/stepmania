@@ -51,17 +51,17 @@ void MakeNewCocoaWindow( const void *data, unsigned length )
 	view = [window contentView];
 
 	// Set some properties.
-	[mt addAction:@selector(setOneShot:) withTarget:window andObject:bYES];
-	[mt addAction:@selector(setReleasedWhenClosed:) withTarget:window andObject:bYES];
-	[mt addAction:@selector(setExcludedFromWindowsMenu:) withTarget:window andObject:bYES];
-	[mt addAction:@selector(useOptimizedDrawing:) withTarget:window andObject:bYES];
-	[mt addAction:@selector(center) withTarget:window];
-	[mt addAction:@selector(setTitle:) withTarget:window andObject:[NSString stringWithUTF8String:PRODUCT_NAME]];
+	ADD_ACTION1( mt, window, setOneShot:, bYES );
+	ADD_ACTION1( mt, window, setExcludedFromWindowsMenu:, bYES );
+	ADD_ACTION1( mt, window, useOptimizedDrawing:, bYES );
+	ADD_ACTION1( mt, window, setTitle:, [NSString stringWithUTF8String:PRODUCT_NAME] );
+	ADD_ACTION0( mt, window, center );
 	// Set subviews.
-	[mt addAction:@selector(addSubview:) withTarget:view andObject:text];
-	[mt addAction:@selector(addSubview:) withTarget:view andObject:iView];
+	ADD_ACTION1( mt, view, addSubview:, text );
+	ADD_ACTION1( mt, view, addSubview:, iView );
 	// Make key and order front.
-	[mt addAction:@selector(makeKeyAndOrderFront:) withTarget:window andObject:nil];
+	ADD_ACTION1( mt, window, makeKeyAndOrderFront:, nil );
+	
 	// Perform all of the actions in order on the main thread.
 	[mt performOnMainThread];
 	[mt release];
