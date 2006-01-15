@@ -3,7 +3,7 @@
 #include "GameState.h"
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenGameplayMultiplayer );
+REGISTER_SCREEN_CLASS( ScreenGameplayMultiplayer );
 
 void ScreenGameplayMultiplayer::Init()
 {

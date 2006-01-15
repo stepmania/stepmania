@@ -448,7 +448,7 @@ static CString ResetPreferences()
 
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenServiceAction );
+REGISTER_SCREEN_CLASS( ScreenServiceAction );
 void ScreenServiceAction::Init()
 {
 	ScreenPrompt::Init();

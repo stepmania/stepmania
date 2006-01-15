@@ -32,7 +32,7 @@ AutoScreenMessage( SM_AddToChat )
 AutoScreenMessage( SM_UsersUpdate )
 AutoScreenMessage( SM_SMOnlinePack )
 
-REGISTER_SCREEN_CLASS_NEW( ScreenNetSelectBase );
+REGISTER_SCREEN_CLASS( ScreenNetSelectBase );
 
 void ScreenNetSelectBase::Init()
 {

@@ -85,7 +85,7 @@ float GetClosestCharYPos( float fFakeBeat )
 }
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenNameEntry );
+REGISTER_SCREEN_CLASS( ScreenNameEntry );
 ScreenNameEntry::ScreenNameEntry()
 {
 		// DEBUGGING STUFF

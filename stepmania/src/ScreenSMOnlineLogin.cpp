@@ -15,7 +15,7 @@
 #include "Profile.h"
 #include "LocalizedString.h"
 
-REGISTER_SCREEN_CLASS_NEW(ScreenSMOnlineLogin);
+REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 
 AutoScreenMessage( SM_SMOnlinePack )
 AutoScreenMessage( SM_PasswordDone )

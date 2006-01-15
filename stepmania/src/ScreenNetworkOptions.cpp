@@ -44,7 +44,7 @@ AutoScreenMessage( SM_ServerNameEnter )
 
 Preference<CString> g_sLastServer( "LastConnectedServer",	"" );
 
-REGISTER_SCREEN_CLASS_NEW( ScreenNetworkOptions );
+REGISTER_SCREEN_CLASS( ScreenNetworkOptions );
 
 void ScreenNetworkOptions::Init()
 {

@@ -11,7 +11,7 @@
  * is annoying, because sounds might be deleted at any time; they aren't ours to have
  * references to.  Also, it's better to quit on command instead of waiting several seconds
  * for a sound to stop. */
-REGISTER_SCREEN_CLASS_NEW( ScreenExit );
+REGISTER_SCREEN_CLASS( ScreenExit );
 
 void ScreenExit::Init()
 {

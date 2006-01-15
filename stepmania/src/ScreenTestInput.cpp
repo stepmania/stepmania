@@ -14,7 +14,7 @@
 #include "LocalizedString.h"
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenTestInput );
+REGISTER_SCREEN_CLASS( ScreenTestInput );
 
 void ScreenTestInput::Init()
 {

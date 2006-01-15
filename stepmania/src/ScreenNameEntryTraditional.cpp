@@ -131,7 +131,7 @@ float HighScoreWheel::Scroll()
 	return GetTweenTimeLeft();
 }
 
-REGISTER_SCREEN_CLASS_NEW( ScreenNameEntryTraditional );
+REGISTER_SCREEN_CLASS( ScreenNameEntryTraditional );
 ScreenNameEntryTraditional::ScreenNameEntryTraditional():
 	CHANGE_COMMAND("stoptweening;decelerate,.12")
 {

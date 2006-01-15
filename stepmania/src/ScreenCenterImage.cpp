@@ -13,7 +13,7 @@
 
 static ThemeMetric<bool>	ALLOW_RESIZE("ScreenCenterImage","AllowResize");
 
-REGISTER_SCREEN_CLASS_NEW( ScreenCenterImage );
+REGISTER_SCREEN_CLASS( ScreenCenterImage );
 
 void ScreenCenterImage::Init()
 {

@@ -22,7 +22,7 @@
 
 #define SHOW_COURSE_MODIFIERS_PROBABILITY	THEME->GetMetricF(m_sName,"ShowCourseModifiersProbability")
 
-REGISTER_SCREEN_CLASS_NEW( ScreenJukebox );
+REGISTER_SCREEN_CLASS( ScreenJukebox );
 void ScreenJukebox::SetSong()
 {
 	ThemeMetric<bool>				ALLOW_ADVANCED_MODIFIERS(m_sName,"AllowAdvancedModifiers");

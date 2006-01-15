@@ -14,7 +14,7 @@
 #include "ScreenDimensions.h"
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenSystemLayer );
+REGISTER_SCREEN_CLASS( ScreenSystemLayer );
 void ScreenSystemLayer::Init()
 {
 	SubscribeToMessage( "RefreshCreditText" );

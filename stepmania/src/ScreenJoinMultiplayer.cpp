@@ -24,7 +24,7 @@ static const char *MultiPlayerStatusNames[] = {
 XToString( MultiPlayerStatus, NUM_MultiPlayerStatus );
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenJoinMultiplayer );
+REGISTER_SCREEN_CLASS( ScreenJoinMultiplayer );
 ScreenJoinMultiplayer::ScreenJoinMultiplayer()
 {
 	FOREACH_MultiPlayer( p )

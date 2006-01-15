@@ -20,7 +20,7 @@
 
 ThemeMetric<bool>	BACK_GOES_TO_START_SCREEN( "ScreenAttract", "BackGoesToStartScreen" );
 
-REGISTER_SCREEN_CLASS_NEW( ScreenAttract );
+REGISTER_SCREEN_CLASS( ScreenAttract );
 ScreenAttract::ScreenAttract( bool bResetGameState )
 {
 	if( bResetGameState )

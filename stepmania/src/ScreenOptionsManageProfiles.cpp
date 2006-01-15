@@ -74,7 +74,7 @@ static bool ValidateLocalProfileName( const CString &sAnswer, CString &sErrorOut
 	return true;
 }
 
-REGISTER_SCREEN_CLASS_NEW( ScreenOptionsManageProfiles );
+REGISTER_SCREEN_CLASS( ScreenOptionsManageProfiles );
 
 ScreenOptionsManageProfiles::~ScreenOptionsManageProfiles()
 {

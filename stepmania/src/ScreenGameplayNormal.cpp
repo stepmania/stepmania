@@ -2,7 +2,7 @@
 #include "ScreenGameplayNormal.h"
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenGameplayNormal );
+REGISTER_SCREEN_CLASS( ScreenGameplayNormal );
 
 void ScreenGameplayNormal::FillPlayerInfo( vector<PlayerInfo> &vPlayerInfoOut )
 {

@@ -23,7 +23,7 @@ static const float g_fSecondsToWaitForInput = 0.05f;
 // reserve the 3rd slot for hard-coded keys
 static const int NUM_CHANGABLE_SLOTS = NUM_SHOWN_GAME_TO_DEVICE_SLOTS-1;
 
-REGISTER_SCREEN_CLASS_NEW( ScreenMapControllers );
+REGISTER_SCREEN_CLASS( ScreenMapControllers );
 
 void ScreenMapControllers::Init()
 {

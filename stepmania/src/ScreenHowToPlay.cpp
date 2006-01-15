@@ -65,7 +65,7 @@ static bool HaveAllCharAnimations()
 	return true;
 }
 
-REGISTER_SCREEN_CLASS_NEW( ScreenHowToPlay );
+REGISTER_SCREEN_CLASS( ScreenHowToPlay );
 ScreenHowToPlay::ScreenHowToPlay()
 {
 	m_iW2s = 0;

@@ -2,7 +2,7 @@
 #include "ScreenInstructions.h"
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenInstructions );
+REGISTER_SCREEN_CLASS( ScreenInstructions );
 
 void ScreenInstructions::Init()
 {

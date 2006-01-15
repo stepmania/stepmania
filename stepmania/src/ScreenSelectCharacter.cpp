@@ -46,7 +46,7 @@ const PlayerNumber	CPU_PLAYER[NUM_PLAYERS] = { PLAYER_2, PLAYER_1 };
 
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenSelectCharacter );
+REGISTER_SCREEN_CLASS( ScreenSelectCharacter );
 
 
 void ScreenSelectCharacter::Init()

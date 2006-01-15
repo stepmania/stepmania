@@ -11,7 +11,7 @@
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
 
-REGISTER_SCREEN_CLASS_NEW( ScreenTestLights );
+REGISTER_SCREEN_CLASS( ScreenTestLights );
 
 void ScreenTestLights::Init()
 {

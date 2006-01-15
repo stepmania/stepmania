@@ -5,7 +5,7 @@
 #include "PrefsManager.h"
 #include "StatsManager.h"
 
-REGISTER_SCREEN_CLASS_NEW( ScreenGameplayLesson );
+REGISTER_SCREEN_CLASS( ScreenGameplayLesson );
 ScreenGameplayLesson::ScreenGameplayLesson()
 {
 	m_iCurrentPageIndex = 0;

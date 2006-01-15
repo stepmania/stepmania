@@ -69,7 +69,7 @@ const float TWEEN_TIME		= 0.5f;
 
 AutoScreenMessage( SM_NoSongs )
 
-REGISTER_SCREEN_CLASS_NEW( ScreenEz2SelectMusic );
+REGISTER_SCREEN_CLASS( ScreenEz2SelectMusic );
 
 void ScreenEz2SelectMusic::Init()
 {

@@ -22,7 +22,7 @@
 
 #define COIN_MODE_CHANGE_SCREEN		THEME->GetMetric (m_sName,"CoinModeChangeScreen")
 
-REGISTER_SCREEN_CLASS_NEW( ScreenTitleMenu );
+REGISTER_SCREEN_CLASS( ScreenTitleMenu );
 ScreenTitleMenu::ScreenTitleMenu()
 {
 	/* XXX We really need two common calls: 1, something run when exiting from gameplay

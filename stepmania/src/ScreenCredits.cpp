@@ -4,7 +4,7 @@
 #include "AnnouncerManager.h"
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenCredits );
+REGISTER_SCREEN_CLASS( ScreenCredits );
 
 void ScreenCredits::Init()
 {

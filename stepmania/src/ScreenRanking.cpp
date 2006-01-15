@@ -84,9 +84,9 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, bool bSh
 
 static CString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
 
-REGISTER_SCREEN_CLASS_NEW( ScreenRanking );
-REGISTER_SCREEN_CLASS_NEW( ScreenRankingScroller );
-REGISTER_SCREEN_CLASS_NEW( ScreenRankingLines );
+REGISTER_SCREEN_CLASS( ScreenRanking );
+REGISTER_SCREEN_CLASS( ScreenRankingScroller );
+REGISTER_SCREEN_CLASS( ScreenRankingLines );
 
 ScreenRanking::ScreenRanking():
 	ScreenAttract( false /*dont reset GAMESTATE*/ )

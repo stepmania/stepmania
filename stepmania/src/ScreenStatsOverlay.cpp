@@ -6,7 +6,7 @@
 #include "RageLog.h"
 #include "ScreenDimensions.h"
 
-REGISTER_SCREEN_CLASS_NEW( ScreenStatsOverlay );
+REGISTER_SCREEN_CLASS( ScreenStatsOverlay );
 
 void ScreenStatsOverlay::Init()
 {

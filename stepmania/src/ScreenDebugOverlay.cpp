@@ -64,7 +64,7 @@ static bool IsGameplay()
 }
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenDebugOverlay );
+REGISTER_SCREEN_CLASS( ScreenDebugOverlay );
 
 ScreenDebugOverlay::~ScreenDebugOverlay()
 {

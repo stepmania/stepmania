@@ -28,7 +28,7 @@ AutoScreenMessage( SM_SMOnlinePack )
 AutoScreenMessage( SM_BackFromRoomName )
 AutoScreenMessage( SM_BackFromRoomDesc )
 
-REGISTER_SCREEN_CLASS_NEW( ScreenNetRoom );
+REGISTER_SCREEN_CLASS( ScreenNetRoom );
 
 void ScreenNetRoom::Init()
 {

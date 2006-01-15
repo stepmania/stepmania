@@ -10,7 +10,7 @@
 #include "LocalizedString.h"
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenBookkeeping );
+REGISTER_SCREEN_CLASS( ScreenBookkeeping );
 
 void ScreenBookkeeping::Init()
 {

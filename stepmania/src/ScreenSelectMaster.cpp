@@ -21,7 +21,7 @@ CString CURSOR_OFFSET_Y_FROM_ICON_NAME( size_t p ) { return ssprintf("CursorP%dO
 /* e.g. "OptionOrderLeft=0:1,1:2,2:3,3:4" */
 CString OPTION_ORDER_NAME( size_t dir )							{ return "OptionOrder"+MenuDirToString((MenuDir)dir); }
 
-REGISTER_SCREEN_CLASS_NEW( ScreenSelectMaster );
+REGISTER_SCREEN_CLASS( ScreenSelectMaster );
 
 void ScreenSelectMaster::Init()
 {

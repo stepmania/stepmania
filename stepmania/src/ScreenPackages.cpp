@@ -21,7 +21,7 @@
 
 AutoScreenMessage( SM_BackFromURL )
 
-REGISTER_SCREEN_CLASS_NEW( ScreenPackages );
+REGISTER_SCREEN_CLASS( ScreenPackages );
 
 void ScreenPackages::Init()
 {

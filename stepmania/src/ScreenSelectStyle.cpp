@@ -19,7 +19,7 @@
 #define DISABLED_COMMAND			THEME->GetMetricA(m_sName,"DisabledCommand")
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenSelectStyle );
+REGISTER_SCREEN_CLASS( ScreenSelectStyle );
 
 void ScreenSelectStyle::Init()
 {

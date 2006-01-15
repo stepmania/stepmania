@@ -31,7 +31,7 @@ ScreenSelectMode (Constructor)
 Desc: Sets up the screen display
 ************************************/
 
-REGISTER_SCREEN_CLASS_NEW( ScreenSelectMode );
+REGISTER_SCREEN_CLASS( ScreenSelectMode );
 
 void ScreenSelectMode::Init()
 {

@@ -37,7 +37,7 @@ static float GetTitleY( SetTimeSelection s ) { return g_Y[s]; }
 static float GetValueX( SetTimeSelection s ) { return g_X[s] + 80; }
 static float GetValueY( SetTimeSelection s ) { return g_Y[s]; }
 
-REGISTER_SCREEN_CLASS_NEW( ScreenSetTime );
+REGISTER_SCREEN_CLASS( ScreenSetTime );
 
 void ScreenSetTime::Init()
 {

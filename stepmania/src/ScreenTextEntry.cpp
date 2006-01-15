@@ -71,7 +71,7 @@ bool ScreenTextEntry::s_bCancelledLast = false;
  * XXX: Don't allow internal-use codepoints (above 0xFFFF); those are
  * subject to change and shouldn't be written to disk.
  */
-REGISTER_SCREEN_CLASS_NEW( ScreenTextEntry );
+REGISTER_SCREEN_CLASS( ScreenTextEntry );
 
 void ScreenTextEntry::Init()
 {

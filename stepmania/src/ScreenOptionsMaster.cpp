@@ -21,7 +21,7 @@
 #define LINE(sLineName)				THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenOptionsMaster );
+REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
 
 void ScreenOptionsMaster::Init()
 {

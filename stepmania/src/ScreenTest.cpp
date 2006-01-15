@@ -25,7 +25,7 @@ void ScreenTest::SetScreen(int num)
 		current=SCREENMAN->MakeNewScreen("ScreenTestFonts");
 }
 
-REGISTER_SCREEN_CLASS_NEW( ScreenTest );
+REGISTER_SCREEN_CLASS( ScreenTest );
 ScreenTest::ScreenTest()
 {
 	current = NULL;

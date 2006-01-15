@@ -106,7 +106,7 @@ public:
 };
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenEvaluationMultiplayer );
+REGISTER_SCREEN_CLASS( ScreenEvaluationMultiplayer );
 ScreenEvaluationMultiplayer::ScreenEvaluationMultiplayer()
 {
 	//

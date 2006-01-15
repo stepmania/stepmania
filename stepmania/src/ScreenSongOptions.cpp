@@ -5,7 +5,7 @@
 #include "ThemeManager.h"
 #include "PrefsManager.h"
 
-REGISTER_SCREEN_CLASS_NEW( ScreenSongOptions );
+REGISTER_SCREEN_CLASS( ScreenSongOptions );
 
 void ScreenSongOptions::Init()
 {

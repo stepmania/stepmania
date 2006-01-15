@@ -7,7 +7,7 @@
 AutoScreenMessage( SM_PrepScreen )
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenSplash );
+REGISTER_SCREEN_CLASS( ScreenSplash );
 
 void ScreenSplash::Init()
 {

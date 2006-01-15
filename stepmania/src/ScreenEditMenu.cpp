@@ -22,7 +22,7 @@
 AutoScreenMessage( SM_RefreshSelector )
 AutoScreenMessage( SM_BackFromEditDescription )
 
-REGISTER_SCREEN_CLASS_NEW( ScreenEditMenu );
+REGISTER_SCREEN_CLASS( ScreenEditMenu );
 
 void ScreenEditMenu::Init()
 {

@@ -81,7 +81,7 @@ static const int NUM_SHOWN_RADAR_CATEGORIES = 5;
 AutoScreenMessage( SM_PlayCheer )
 AutoScreenMessage( SM_AddBonus )
 
-REGISTER_SCREEN_CLASS_NEW( ScreenEvaluation );
+REGISTER_SCREEN_CLASS( ScreenEvaluation );
 ScreenEvaluation::ScreenEvaluation()
 {
 	//

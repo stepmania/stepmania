@@ -27,7 +27,7 @@
 const float TWEEN_TIME		= 0.35f;
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenEz2SelectPlayer );
+REGISTER_SCREEN_CLASS( ScreenEz2SelectPlayer );
 
 void ScreenEz2SelectPlayer::Init()
 {

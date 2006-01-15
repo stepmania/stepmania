@@ -126,7 +126,7 @@ CString GetStatsLineValue( PlayerNumber pn, EndingStatsLine line )
 }
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenEnding );
+REGISTER_SCREEN_CLASS( ScreenEnding );
 ScreenEnding::ScreenEnding() : ScreenAttract( false/*dont reset GAMESTATE*/ )
 {
 	if( PREFSMAN->m_bScreenTestMode )

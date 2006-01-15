@@ -21,7 +21,7 @@ const CString CREDIT_LINES[] =
 const unsigned NUM_CREDIT_LINES = sizeof(CREDIT_LINES) / sizeof(CString);
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenMusicScroll );
+REGISTER_SCREEN_CLASS( ScreenMusicScroll );
 
 void ScreenMusicScroll::Init()
 {

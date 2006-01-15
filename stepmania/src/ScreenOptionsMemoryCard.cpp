@@ -9,7 +9,7 @@
 #include "LocalizedString.h"
 
 
-REGISTER_SCREEN_CLASS_NEW( ScreenOptionsMemoryCard );
+REGISTER_SCREEN_CLASS( ScreenOptionsMemoryCard );
 
 void ScreenOptionsMemoryCard::Init()
 {

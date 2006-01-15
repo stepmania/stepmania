@@ -37,7 +37,7 @@ const CString AllGroups			= "[ALL MUSIC]";
 #define DIFFBG_WIDTH				THEME->GetMetricF(m_sName,"DiffBGWidth")
 #define DIFFBG_HEIGHT				THEME->GetMetricF(m_sName,"DiffBGHeight")
 
-REGISTER_SCREEN_CLASS_NEW( ScreenNetSelectMusic );
+REGISTER_SCREEN_CLASS( ScreenNetSelectMusic );
 
 void ScreenNetSelectMusic::Init()
 {
