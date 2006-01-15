@@ -364,11 +364,11 @@ void PrefsManager::RestoreGamePrefs()
 	ASSERT( !m_sCurrentGame.Get().empty() );
 
 	// load prefs
+	GamePrefs gp;
 	map<CString, GamePrefs>::const_iterator iter = m_mapGameNameToGamePrefs.find( m_sCurrentGame );
-	if( iter == m_mapGameNameToGamePrefs.end() )
-		return;
+	if( iter != m_mapGameNameToGamePrefs.end() )
+		gp = iter->second;
 
-	const GamePrefs &gp = iter->second;
 	m_sAnnouncer		.Set( gp.m_sAnnouncer );
 	m_sTheme			.Set( gp.m_sTheme );
 	m_sDefaultModifiers	.Set( gp.m_sDefaultModifiers );
