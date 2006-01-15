@@ -73,41 +73,42 @@ static CString OPTION_EXPLANATION( CString s )
 }
 
 //REGISTER_SCREEN_CLASS( ScreenOptions );	// can't be instantiated
-ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName),
-	NUM_ROWS_SHOWN					(m_sName,"NumRowsShown"),
-	ROW_INIT_COMMAND				(m_sName,"RowInitCommand"),
-	ROW_ON_COMMAND					(m_sName,"RowOnCommand"),
-	ROW_OFF_COMMAND					(m_sName,"RowOffCommand"),
-	EXPLANATION_X					(m_sName,EXPLANATION_X_NAME,NUM_PLAYERS),
-	EXPLANATION_Y					(m_sName,EXPLANATION_Y_NAME,NUM_PLAYERS),
-	EXPLANATION_ON_COMMAND			(m_sName,EXPLANATION_ON_COMMAND_NAME,NUM_PLAYERS),
-	EXPLANATION_TOGETHER_X			(m_sName,"ExplanationTogetherX"),
-	EXPLANATION_TOGETHER_Y			(m_sName,"ExplanationTogetherY"),
-	EXPLANATION_TOGETHER_ON_COMMAND	(m_sName,"ExplanationTogetherOnCommand"),
-	SHOW_SCROLL_BAR					(m_sName,"ShowScrollBar"),
-	SCROLL_BAR_HEIGHT				(m_sName,"ScrollBarHeight"),
-	SCROLL_BAR_TIME					(m_sName,"ScrollBarTime"),
-	LINE_HIGHLIGHT_X				(m_sName,"LineHighlightX"),
-	SHOW_EXIT_ROW					(m_sName,"ShowExitRow"),
-	SEPARATE_EXIT_ROW				(m_sName,"SeparateExitRow"),
-	SEPARATE_EXIT_ROW_Y				(m_sName,"SeparateExitRowY"),
-	SHOW_EXPLANATIONS				(m_sName,"ShowExplanations"),
-	ALLOW_REPEATING_CHANGE_VALUE_INPUT(m_sName,"AllowRepeatingChangeValueInput"),
-	CURSOR_TWEEN_SECONDS			(m_sName,"CursorTweenSeconds"),
-	WRAP_VALUE_IN_ROW				(m_sName,"WrapValueInRow")
+ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sClassName)
 {
 	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 	
 	// These can be overridden in a derived Init().
 	m_OptionsNavigation = PREFSMAN->m_bArcadeOptionsNavigation? NAV_THREE_KEY:NAV_FIVE_KEY;
 	m_InputMode = INPUTMODE_SHARE_CURSOR;
-
-	m_exprRowPositionTransformFunction.SetFromExpression( THEME->GetMetric(m_sName,"RowPositionTransformFunction") );
 }
 
 
 void ScreenOptions::Init()
 {
+	NUM_ROWS_SHOWN.Load( m_sName, "NumRowsShown" );
+	ROW_INIT_COMMAND.Load( m_sName, "RowInitCommand" );
+	ROW_ON_COMMAND.Load( m_sName, "RowOnCommand" );
+	ROW_OFF_COMMAND.Load( m_sName, "RowOffCommand" );
+	EXPLANATION_X.Load( m_sName, EXPLANATION_X_NAME, NUM_PLAYERS );
+	EXPLANATION_Y.Load( m_sName, EXPLANATION_Y_NAME, NUM_PLAYERS );
+	EXPLANATION_ON_COMMAND.Load( m_sName, EXPLANATION_ON_COMMAND_NAME, NUM_PLAYERS );
+	EXPLANATION_TOGETHER_X.Load( m_sName, "ExplanationTogetherX" );
+	EXPLANATION_TOGETHER_Y.Load( m_sName, "ExplanationTogetherY" );
+	EXPLANATION_TOGETHER_ON_COMMAND.Load( m_sName, "ExplanationTogetherOnCommand" );
+	SHOW_SCROLL_BAR.Load( m_sName, "ShowScrollBar" );
+	SCROLL_BAR_HEIGHT.Load( m_sName, "ScrollBarHeight" );
+	SCROLL_BAR_TIME.Load( m_sName, "ScrollBarTime" );
+	LINE_HIGHLIGHT_X.Load( m_sName, "LineHighlightX" );
+	SHOW_EXIT_ROW.Load( m_sName, "ShowExitRow" );
+	SEPARATE_EXIT_ROW.Load( m_sName, "SeparateExitRow" );
+	SEPARATE_EXIT_ROW_Y.Load( m_sName, "SeparateExitRowY" );
+	SHOW_EXPLANATIONS.Load( m_sName, "ShowExplanations" );
+	ALLOW_REPEATING_CHANGE_VALUE_INPUT.Load( m_sName, "AllowRepeatingChangeValueInput" );
+	CURSOR_TWEEN_SECONDS.Load( m_sName, "CursorTweenSeconds" );
+	WRAP_VALUE_IN_ROW.Load( m_sName, "WrapValueInRow" );
+
+	m_exprRowPositionTransformFunction.SetFromExpression( THEME->GetMetric(m_sName,"RowPositionTransformFunction") );
+
 	ScreenWithMenuElements::Init();
 
 	m_SoundChangeCol.Load( THEME->GetPathS(m_sName,"change"), true );

@@ -8,7 +8,7 @@
 class ScreenTitleMenu : public ScreenSelectMaster
 {
 public:
-	ScreenTitleMenu( CString sName );
+	ScreenTitleMenu();
 	virtual void Init();
 	virtual ~ScreenTitleMenu();
 

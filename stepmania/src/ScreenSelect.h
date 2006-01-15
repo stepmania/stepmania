@@ -11,7 +11,6 @@
 class ScreenSelect : public ScreenWithMenuElements
 {
 public:
-	ScreenSelect( CString sClassName );
 	virtual void Init();
 	virtual void BeginScreen();
 	virtual ~ScreenSelect();

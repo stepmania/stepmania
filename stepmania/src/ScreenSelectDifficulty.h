@@ -14,7 +14,6 @@
 class ScreenSelectDifficulty : public ScreenSelect
 {
 public:
-	ScreenSelectDifficulty( CString sName );
 	virtual void Init();
 	virtual void BeginScreen();
 

@@ -19,11 +19,6 @@
 #define IDLE_TIMEOUT_SCREEN		THEME->GetMetric (m_sName,"IdleTimeoutScreen")
 #define UPDATE_ON_MESSAGE		THEME->GetMetric (m_sName,"UpdateOnMessage")
 
-ScreenSelect::ScreenSelect( CString sClassName ) : 
-	ScreenWithMenuElements(sClassName)
-{
-}
-
 void ScreenSelect::Init()
 {
 	IDLE_COMMENT_SECONDS.Load( m_sName, "IdleCommentSeconds" );

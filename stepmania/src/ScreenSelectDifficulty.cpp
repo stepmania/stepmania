@@ -26,10 +26,7 @@
 
 #define IGNORED_ELEMENT_COMMAND				THEME->GetMetricA(m_sName,"IgnoredElementOnCommand")
 
-REGISTER_SCREEN_CLASS( ScreenSelectDifficulty );
-ScreenSelectDifficulty::ScreenSelectDifficulty( CString sClassName ) : ScreenSelect( sClassName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenSelectDifficulty );
 
 void ScreenSelectDifficulty::Init()
 {

@@ -22,7 +22,6 @@
 class ScreenSelectMode : public ScreenSelect
 {
 public:
-	ScreenSelectMode( CString sName ); // Constructor
 	virtual void Init();
 	virtual ~ScreenSelectMode(); // Destructor
 	virtual void MenuLeft( PlayerNumber pn );

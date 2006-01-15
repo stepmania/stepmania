@@ -22,9 +22,8 @@
 
 #define COIN_MODE_CHANGE_SCREEN		THEME->GetMetric (m_sName,"CoinModeChangeScreen")
 
-REGISTER_SCREEN_CLASS( ScreenTitleMenu );
-ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) : 
-	ScreenSelectMaster( sScreenName )
+REGISTER_SCREEN_CLASS_NEW( ScreenTitleMenu );
+ScreenTitleMenu::ScreenTitleMenu()
 {
 	/* XXX We really need two common calls: 1, something run when exiting from gameplay
 	 * (to do this reset), and 2, something run when entering gameplay, to apply default
