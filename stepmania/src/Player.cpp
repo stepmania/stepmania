@@ -1417,7 +1417,7 @@ void Player::OnRowCompletelyJudged( int iIndexThatWasSteppedOn )
 	
 	/* Find the minimum score of the row.  This will never be TNS_None, since this
 	 * function is only called when a row is completed. */
-	/* Instead, use the last tap score.
+	/* Instead, use the last tap score. */
 	/* I'm not sure this is right, either.  Can you really jump a W5 and a W1
 	 * and get scored for an W1?  (That's so loose, you can gallop jumps.) -glenn */
 	/* Instead of grading individual columns, maybe set a "was pressed recently" 
