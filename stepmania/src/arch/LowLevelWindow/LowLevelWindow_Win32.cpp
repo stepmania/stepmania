@@ -176,7 +176,7 @@ CString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 			g_HGLRC = NULL;
 		}
 
-		GraphicsWindow::RecreateGraphicsWindow(p);
+		GraphicsWindow::CreateGraphicsWindow( p );
 //		DestroyGraphicsWindowAndOpenGLContext();
 //		GraphicsWindow::CreateGraphicsWindow( p );
 		bNewDeviceOut = true;
