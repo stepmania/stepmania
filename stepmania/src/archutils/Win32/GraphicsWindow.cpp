@@ -263,6 +263,8 @@ static void CreateGraphicsWindow( const VideoModeParams &p )
  * window. */
 void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p, bool bForceRecreateWindow )
 {
+	g_CurrentParams = p;
+
 	if( g_hWndMain == NULL || bForceRecreateWindow )
 		CreateGraphicsWindow( p );
 
