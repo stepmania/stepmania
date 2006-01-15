@@ -81,6 +81,9 @@ public:
 		ASSERT( command.m_vsArgs.size() == 2 );
 		ASSERT( sParam.size() );
 
+		Init();
+		defOut.Init();
+
 		if(		 sParam.CompareNoCase("NoteSkins")==0 )		{ FillNoteSkins( defOut, sParam );		return; }
 		else if( sParam.CompareNoCase("Steps")==0 )			{ FillSteps( defOut, sParam, false );	return; }
 		else if( sParam.CompareNoCase("StepsLocked")==0 )	{ FillSteps( defOut, sParam, true );	return; }
@@ -89,9 +92,6 @@ public:
 		else if( sParam.CompareNoCase("Groups")==0 )		{ FillGroups( defOut, sParam );			return; }
 		else if( sParam.CompareNoCase("Difficulties")==0 )	{ FillDifficulties( defOut, sParam );	return; }
 		else if( sParam.CompareNoCase("SongsInCurrentSongGroup")==0 )	{ FillSongsInCurrentSongGroup( defOut, sParam );	return; }
-
-		Init();
-		defOut.Init();
 
 		m_bUseModNameForIcon = true;
 			
@@ -270,9 +270,6 @@ public:
 
 	void FillNoteSkins( OptionRowDefinition &defOut, CString sParam )
 	{
-		Init();
-		defOut.Init();
-
 		ASSERT( sParam.size() );
 
 		defOut.m_sName = "NoteSkins";
@@ -292,9 +289,6 @@ public:
 
 	void FillSteps( OptionRowDefinition &defOut, CString sParam, bool bLockedTogether )
 	{
-		Init();
-		defOut.Init();
-
 		ASSERT( sParam.size() );
 
 		defOut.m_sName = "Steps";
@@ -353,9 +347,6 @@ public:
 
 	void FillCharacters( OptionRowDefinition &defOut, CString sParam )
 	{
-		Init();
-		defOut.Init();
-
 		ASSERT( sParam.size() );
 
 		defOut.m_bOneChoiceForAllPlayers = false;
@@ -387,9 +378,6 @@ public:
 
 	void FillStyles( OptionRowDefinition &defOut, CString sParam )
 	{
-		Init();
-		defOut.Init();
-
 		ASSERT( sParam.size() );
 
 		defOut.m_bOneChoiceForAllPlayers = true;
@@ -412,9 +400,6 @@ public:
 
 	void FillGroups( OptionRowDefinition &defOut, CString sParam )
 	{
-		Init();
-		defOut.Init();
-
 		ASSERT( sParam.size() );
 
 		defOut.m_bOneChoiceForAllPlayers = true;
@@ -444,9 +429,6 @@ public:
 
 	void FillDifficulties( OptionRowDefinition &defOut, CString sParam )
 	{
-		Init();
-		defOut.Init();
-
 		ASSERT( sParam.size() );
 
 		defOut.m_bOneChoiceForAllPlayers = true;
@@ -474,9 +456,6 @@ public:
 
 	void FillSongsInCurrentSongGroup( OptionRowDefinition &defOut, CString sParam )
 	{
-		Init();
-		defOut.Init();
-
 		ASSERT( sParam.size() );
 
 		vector<Song*> vpSongs;
