@@ -23,6 +23,13 @@ void RegisterScreenClass( const CString& sClassName, CreateScreenFn pfn );
 	}; \
 	static Register##className register_##className;
 
+#define REGISTER_SCREEN_CLASS_NEW( className ) \
+	static Screen* Create##className( const CString &sName ) { Screen *pRet = new className; pRet->SetName( sName ); Screen::InitScreen( pRet ); return pRet; } \
+	struct Register##className { \
+		Register##className() { RegisterScreenClass( #className,Create##className); } \
+	}; \
+	static Register##className register_##className;
+
 enum ScreenType
 {
 	attract,
@@ -36,6 +43,7 @@ class Screen : public ActorFrame
 public:
 	static void InitScreen( Screen *pScreen );
 
+	Screen();
 	Screen( CString sName );	// enforce that all screens have m_sName filled in
 	virtual ~Screen();
 

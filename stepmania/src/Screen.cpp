@@ -25,6 +25,10 @@ void Screen::InitScreen( Screen *pScreen )
 	pScreen->Init();
 }
 
+Screen::Screen()
+{
+}
+
 Screen::Screen( CString sName )
 {
 	SetName( sName );
