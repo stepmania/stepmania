@@ -600,13 +600,11 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_ExportOptions )
 	{
+		vector<PlayerNumber> vpns;
+		FOREACH_HumanPlayer( p )
+			vpns.push_back( p );
 		for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
-		{
-			vector<PlayerNumber> vpns;
-			FOREACH_HumanPlayer( p )
-				vpns.push_back( p );
 			this->ExportOptions( r, vpns );
-		}
 		this->HandleScreenMessage( SM_GoToNextScreen );
 	}
 	else if( SM == SM_BeginFadingOut )
