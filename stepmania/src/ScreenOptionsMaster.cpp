@@ -54,7 +54,7 @@ void ScreenOptionsMaster::Init()
 		{
 			FOREACH_PlayerNumber( pn )
 				GAMESTATE->m_bSideIsJoined[pn] = true;
-			GAMESTATE->m_MasterPlayerNumber = PlayerNumber(0);
+			GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 		}
 		else if( sFlag == "smnavigation" )
 			SetNavigation( NAV_THREE_KEY_MENU );

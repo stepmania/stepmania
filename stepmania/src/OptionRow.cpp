@@ -790,7 +790,7 @@ int OptionRow::GetOneSelection( PlayerNumber pn, bool bAllowFail ) const
 
 int OptionRow::GetOneSharedSelection( bool bAllowFail ) const
 {
-	return GetOneSelection( (PlayerNumber)0, bAllowFail );
+	return GetOneSelection( PLAYER_1, bAllowFail );
 }
 
 void OptionRow::SetOneSelection( PlayerNumber pn, int iChoice )
@@ -832,7 +832,7 @@ int OptionRow::GetChoiceInRowWithFocus( PlayerNumber pn ) const
 
 int OptionRow::GetChoiceInRowWithFocusShared() const
 {
-	return GetChoiceInRowWithFocus( (PlayerNumber)0 );
+	return GetChoiceInRowWithFocus( PLAYER_1 );
 }
 
 void OptionRow::SetChoiceInRowWithFocus( PlayerNumber pn, int iChoice )

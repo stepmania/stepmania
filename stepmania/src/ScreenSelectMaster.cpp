@@ -56,7 +56,7 @@ void ScreenSelectMaster::Init()
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
 	{
-		vpns.push_back( (PlayerNumber)0 );
+		vpns.push_back( PLAYER_1 );
 	}
 	else
 	{
@@ -230,7 +230,7 @@ void ScreenSelectMaster::BeginScreen()
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
 	{
-		vpns.push_back( (PlayerNumber)0 );
+		vpns.push_back( PLAYER_1 );
 	}
 	else
 	{
@@ -261,7 +261,7 @@ void ScreenSelectMaster::HandleScreenMessage( const ScreenMessage SM )
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
 	{
-		vpns.push_back( (PlayerNumber)0 );
+		vpns.push_back( PLAYER_1 );
 	}
 	else
 	{
@@ -304,7 +304,7 @@ void ScreenSelectMaster::UpdateSelectableChoices()
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
 	{
-		vpns.push_back( (PlayerNumber)0 );
+		vpns.push_back( PLAYER_1 );
 	}
 	else
 	{
@@ -470,7 +470,7 @@ bool ScreenSelectMaster::ChangePage( int iNewChoice )
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
 	{
-		vpns.push_back( (PlayerNumber)0 );
+		vpns.push_back( PLAYER_1 );
 	}
 	else
 	{
@@ -570,7 +570,7 @@ bool ScreenSelectMaster::ChangeSelection( PlayerNumber pn, MenuDir dir, int iNew
 			if( SHARED_SELECTION )
 			{
 				COMMAND( m_sprCursor[0], "Change" );
-				m_sprCursor[0]->SetXY( GetCursorX((PlayerNumber)0), GetCursorY((PlayerNumber)0) );
+				m_sprCursor[0]->SetXY( GetCursorX(PLAYER_1), GetCursorY(PLAYER_1) );
 			}
 			else
 			{
@@ -753,7 +753,7 @@ void ScreenSelectMaster::TweenOnScreen()
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
 	{
-		vpns.push_back( (PlayerNumber)0 );
+		vpns.push_back( PLAYER_1 );
 	}
 	else
 	{
@@ -820,7 +820,7 @@ void ScreenSelectMaster::TweenOffScreen()
 	vector<PlayerNumber> vpns;
 	if( SHARED_SELECTION )
 	{
-		vpns.push_back( (PlayerNumber)0 );
+		vpns.push_back( PLAYER_1 );
 	}
 	else
 	{
