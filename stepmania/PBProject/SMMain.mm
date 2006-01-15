@@ -6,6 +6,10 @@
 #include "ProductInfo.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
+@interface NSApplication (PrivateShutUpWarning)
+- (void) setAppleMenu:(NSMenu *)menu;
+@end
+
 @interface SMApplication : NSApplication
 - (void)fullscreen:(id)sender;
 @end
