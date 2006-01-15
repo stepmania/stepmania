@@ -28,7 +28,7 @@
 // Invoked from the Quit menu item.
 - (void)terminate:(id)sender
 {
-    ArchHooks::SetUserQuit();
+	ArchHooks::SetUserQuit();
 }
 
 - (void)sendEvent:(NSEvent *)event
@@ -110,13 +110,13 @@ static void setupMenus( void )
 	
 	[item setKeyEquivalentModifierMask:NSAlternateKeyMask]; // opt-enter
 	[windowMenu addItem:item];
-
-    [[mainMenu addItemWithTitle:[appMenu title] action:NULL keyEquivalent:@""] setSubmenu:appMenu];
-    [[mainMenu addItemWithTitle:[windowMenu title] action:NULL keyEquivalent:@""] setSubmenu:windowMenu];
+	
+	[[mainMenu addItemWithTitle:[appMenu title] action:NULL keyEquivalent:@""] setSubmenu:appMenu];
+	[[mainMenu addItemWithTitle:[windowMenu title] action:NULL keyEquivalent:@""] setSubmenu:windowMenu];
 	
 	[NSApp setMainMenu:mainMenu];
 	[NSApp setAppleMenu:appMenu]; // This isn't the apple menu, but it doesn't work without this.
-    [NSApp setWindowsMenu:windowMenu];
+	[NSApp setWindowsMenu:windowMenu];
 }
 
 #undef main
@@ -125,27 +125,27 @@ int main( int argc, char **argv )
 {
 	RageThreadRegister guiThread( "GUI thread" );
 	
-    [SMApplication poseAsClass:[NSApplication class]];
+	[SMApplication poseAsClass:[NSApplication class]];
 	
-    NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
-    SMMain				*sm;
+	NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
+	SMMain				*sm;
 	
-    // Ensure the application object is initialised, this sets NSApp.
-    [SMApplication sharedApplication];
+	// Ensure the application object is initialised, this sets NSApp.
+	[SMApplication sharedApplication];
 	
 	// Set up NSException handler.
 	NSSetUncaughtExceptionHandler( HandleNSException );
 	
-    // Set up the menubar.
-    setupMenus();
-    
-    // Create SDLMain and make it the app delegate.
-    sm = [[SMMain alloc] initWithArgc:argc argv:argv];
-    [NSApp setDelegate:sm];
-    
-    [pool release];
-    // Start the main event loop.
-    [NSApp run];
+	// Set up the menubar.
+	setupMenus();
+	
+	// Create SDLMain and make it the app delegate.
+	sm = [[SMMain alloc] initWithArgc:argc argv:argv];
+	[NSApp setDelegate:sm];
+	
+	[pool release];
+	// Start the main event loop.
+	[NSApp run];
 	[sm release];
-    return 0;
+	return 0;
 }
