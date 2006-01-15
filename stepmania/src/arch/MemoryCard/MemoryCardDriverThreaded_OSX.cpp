@@ -209,7 +209,7 @@ void MemoryCardDriverThreaded_OSX::GetUSBStorageDevices( vector<UsbStorageDevice
 			 * param.ioVTotalBytes,
 			 * IORegistryEntryCreateCFProperty( entry, CFSTR(kIOMediaSizeKey), NULL, 0 ),
 			 * or fs[i].f_blocks * fs[i].f_bsize, however, we released entry already. */
-			
+			// XXX PBXGetVolInfoSync is apparently deprecated.
 			if( PBXGetVolInfoSync(&param) == noErr )
 			{
 				usbd.iRefNum = param.ioVRefNum;
