@@ -263,6 +263,9 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p )
  * window. */
 void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p )
 {
+	if( g_hWndMain == NULL )
+		CreateGraphicsWindow( p );
+
 	ASSERT( g_hWndMain );
 
 	/* Update the window title. */
