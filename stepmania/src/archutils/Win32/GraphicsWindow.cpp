@@ -233,25 +233,6 @@ static int GetWindowStyle( bool bWindowed )
 
 void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p )
 {
-	ASSERT( g_hWndMain == NULL );
-
-	int iWindowStyle = GetWindowStyle( p.windowed );
-
-	AppInstance inst;
-	HWND hWnd = CreateWindow( g_sClassName, "app", iWindowStyle,
-					0, 0, 0, 0, NULL, NULL, inst, NULL );
-	if( hWnd == NULL )
-		RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
-
-	g_hWndMain = hWnd;
-	CrashHandler::SetForegroundWindow( g_hWndMain );
-	g_HDC = GetDC( g_hWndMain );
-}
-
-void GraphicsWindow::RecreateGraphicsWindow( const VideoModeParams &p )
-{
-	ASSERT( g_hWndMain != NULL );
-
 	int iWindowStyle = GetWindowStyle( p.windowed );
 
 	AppInstance inst;
@@ -276,6 +257,11 @@ void GraphicsWindow::RecreateGraphicsWindow( const VideoModeParams &p )
 	g_hWndMain = hWnd;
 	CrashHandler::SetForegroundWindow( g_hWndMain );
 	g_HDC = GetDC( g_hWndMain );
+}
+
+void GraphicsWindow::RecreateGraphicsWindow( const VideoModeParams &p )
+{
+	CreateGraphicsWindow(p);
 }
 
 /* Set the final window size, set the window text and icon, and then unhide the
