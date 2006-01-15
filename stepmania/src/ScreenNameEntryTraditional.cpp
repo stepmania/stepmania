@@ -182,16 +182,16 @@ ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : S
 		}
 
 	}
+}
 
+void ScreenNameEntryTraditional::Init()
+{
 	ALPHABET_GAP_X.Load( m_sName, "AlphabetGapX" );
 	NUM_ALPHABET_DISPLAYED.Load( m_sName, "NumAlphabetDisplayed" );
 	MAX_RANKING_NAME_LENGTH.Load( m_sName, "MaxRankingNameLength" );
 	FEAT_INTERVAL.Load( m_sName, "FeatInterval" );
 	KEYBOARD_LETTERS.Load( m_sName, "KeyboardLetters" );
-}
 
-void ScreenNameEntryTraditional::Init()
-{
 	ScreenWithMenuElements::Init();
 
 	// Find out if players deserve to enter their name
