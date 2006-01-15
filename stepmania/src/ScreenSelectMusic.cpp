@@ -67,8 +67,6 @@ ScreenSelectMusic::ScreenSelectMusic( CString sClassName ) : ScreenWithMenuEleme
 	SELECT_MENU_AVAILABLE( m_sName, "SelectMenuAvailable" ),
 	MODE_MENU_AVAILABLE( m_sName, "ModeMenuAvailable" )
 {
-	LOG->Trace( "ScreenSelectMusic::ScreenSelectMusic()" );
-
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_MENU );
 
 	if( PREFSMAN->m_bScreenTestMode )

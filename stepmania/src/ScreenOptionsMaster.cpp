@@ -25,7 +25,6 @@ REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
 ScreenOptionsMaster::ScreenOptionsMaster( CString sClassName ):
 	ScreenOptions( sClassName )
 {
-	LOG->Trace("ScreenOptionsMaster::ScreenOptionsMaster(%s)", m_sName.c_str() );
 }
 
 void ScreenOptionsMaster::Init()

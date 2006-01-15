@@ -39,8 +39,6 @@ ScreenEz2SelectPlayer::ScreenEz2SelectPlayer( CString sName ) : ScreenWithMenuEl
 //	GAMESTATE->m_bPlayersCanJoin = true;
 	FOREACH_PlayerNumber( p )
 		GAMESTATE->m_bSideIsJoined[p] = false;
-
-	LOG->Trace( "ScreenEz2SelectPlayer::ScreenEz2SelectPlayer()" );
 }
 
 

@@ -96,8 +96,6 @@ ScreenOptions::ScreenOptions( CString sClassName ) : ScreenWithMenuElements(sCla
 	CURSOR_TWEEN_SECONDS			(m_sName,"CursorTweenSeconds"),
 	WRAP_VALUE_IN_ROW				(m_sName,"WrapValueInRow")
 {
-	LOG->Trace( "ScreenOptions::ScreenOptions()" );
-	
 	m_fLockInputSecs = 0.0001f;	// always lock for a tiny amount of time so that we throw away any queued inputs during the load.
 	
 	// These can be overridden in a derived Init().

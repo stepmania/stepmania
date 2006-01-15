@@ -26,8 +26,6 @@ REGISTER_SCREEN_CLASS( ScreenTitleMenu );
 ScreenTitleMenu::ScreenTitleMenu( CString sScreenName ) : 
 	ScreenSelectMaster( sScreenName )
 {
-	LOG->Trace( "ScreenTitleMenu::ScreenTitleMenu()" );
-
 	/* XXX We really need two common calls: 1, something run when exiting from gameplay
 	 * (to do this reset), and 2, something run when entering gameplay, to apply default
 	 * options.  Having special cases in attract screens and the title menu to reset

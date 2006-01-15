@@ -12,7 +12,6 @@
 REGISTER_SCREEN_CLASS( ScreenOptionsMemoryCard );
 ScreenOptionsMemoryCard::ScreenOptionsMemoryCard( CString sClassName ) : ScreenOptions( sClassName )
 {
-	LOG->Trace( "ScreenOptionsMemoryCard::ScreenOptionsMemoryCard()" );
 }
 
 void ScreenOptionsMemoryCard::Init()

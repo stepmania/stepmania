@@ -135,8 +135,6 @@ REGISTER_SCREEN_CLASS( ScreenNameEntryTraditional );
 ScreenNameEntryTraditional::ScreenNameEntryTraditional( CString sClassName ) : ScreenWithMenuElements( sClassName ),
 	CHANGE_COMMAND("stoptweening;decelerate,.12")
 {
-	LOG->Trace( "ScreenNameEntryTraditional::ScreenNameEntryTraditional()" );
-
 	if( PREFSMAN->m_bScreenTestMode )
 	{
 		GAMESTATE->m_bSideIsJoined[PLAYER_1] = true;

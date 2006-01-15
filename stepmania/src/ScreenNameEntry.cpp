@@ -88,9 +88,6 @@ float GetClosestCharYPos( float fFakeBeat )
 REGISTER_SCREEN_CLASS( ScreenNameEntry );
 ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 {
-	LOG->Trace( "ScreenNameEntry::ScreenNameEntry()" );
-
-
 	// update cache
 	g_fCharsZoomSmall = CHARS_ZOOM_SMALL;
 	g_fCharsZoomLarge = CHARS_ZOOM_LARGE;

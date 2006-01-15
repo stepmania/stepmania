@@ -77,7 +77,6 @@ static bool ValidateLocalProfileName( const CString &sAnswer, CString &sErrorOut
 REGISTER_SCREEN_CLASS( ScreenOptionsManageProfiles );
 ScreenOptionsManageProfiles::ScreenOptionsManageProfiles( CString sName ) : ScreenOptions( sName )
 {
-	LOG->Trace( "ScreenOptionsManageProfiles::ScreenOptionsManageProfiles()" );
 }
 
 ScreenOptionsManageProfiles::~ScreenOptionsManageProfiles()

@@ -19,7 +19,6 @@ REGISTER_SCREEN_CLASS( ScreenPlayerOptions );
 ScreenPlayerOptions::ScreenPlayerOptions( CString sClassName ) :
 	ScreenOptionsMaster( sClassName )
 {
-	LOG->Trace( "ScreenPlayerOptions::ScreenPlayerOptions()" );
 }
 
 void ScreenPlayerOptions::Init()

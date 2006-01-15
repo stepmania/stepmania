@@ -25,7 +25,6 @@
 REGISTER_SCREEN_CLASS( ScreenSelectGroup );
 ScreenSelectGroup::ScreenSelectGroup( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {	
-	LOG->Trace( "ScreenSelectGroup::ScreenSelectGroup()" );	
 }
 
 static LocalizedString ALL_MUSIC_STRING( "ScreenSelectGroup", "ALL MUSIC" );

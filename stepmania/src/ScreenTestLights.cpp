@@ -14,8 +14,6 @@
 REGISTER_SCREEN_CLASS( ScreenTestLights );
 ScreenTestLights::ScreenTestLights( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
-	LOG->Trace( "ScreenTestLights::ScreenTestLights()" );
-
 	LIGHTSMAN->SetLightsMode( LIGHTSMODE_TEST_AUTO_CYCLE );
 }
 

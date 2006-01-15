@@ -26,7 +26,6 @@ OptionRowDefinition g_ProfileLine[1] = {
 
 ScreenSMOnlineLogin::ScreenSMOnlineLogin(CString sClassName) : ScreenOptions(sClassName)
 {
-	LOG->Trace( "ScreenSMOnlineLogin::ScreenSMOnlineLogin()" );
 }
 
 static LocalizedString DEFINE_A_PROFILE( "ScreenSMOnlineLogin", "You must define a Profile." );
