@@ -618,7 +618,7 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_BeginFadingOut )
 	{
-		if(IsTransitioning())
+		if( IsTransitioning() )
 			return; /* already transitioning */
 		StartTransitioningScreen( SM_ExportOptions );
 
