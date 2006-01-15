@@ -243,7 +243,7 @@ void LuaClass::BeforeReset()
 	lua_rawget( L, LUA_REGISTRYINDEX );
 	ASSERT( !lua_isnil(L, -1) );
 	m_sClassName = lua_tostring( L, -1 );
-	lua_pop( L, 1 );
+	lua_pop( L, 2 );
 
 	LUA->Release( L );
 }
@@ -257,6 +257,7 @@ void LuaClass::Register()
 		Lua *L = LUA->Get();
 		this->PushSelf(L);
 		LuaBinding::ApplyDerivedType( L, m_sClassName, m_pSelf );
+		lua_pop( L, 1 );
 		LUA->Release( L );
 
 		/* To conserve memory, clear the class name.  We only need it while restoring. */
