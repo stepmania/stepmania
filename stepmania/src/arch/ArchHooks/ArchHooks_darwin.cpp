@@ -56,12 +56,12 @@ static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *u
 ArchHooks_darwin::ArchHooks_darwin()
 {
 	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
-
-    /* First, handle non-fatal termination signals. */
-    SignalHandler::OnClose( DoCleanShutdown );
-
-    SignalHandler::OnClose( DoCrashSignalHandler );
-    //TimeCritMutex = new RageMutex("TimeCritMutex");
+	
+	/* First, handle non-fatal termination signals. */
+	SignalHandler::OnClose( DoCleanShutdown );
+	
+	SignalHandler::OnClose( DoCrashSignalHandler );
+	//TimeCritMutex = new RageMutex("TimeCritMutex");
 	
 	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
 	CFStringRef key = CFSTR( "ApplicationBundlePath" );
@@ -83,7 +83,7 @@ ArchHooks_darwin::ArchHooks_darwin()
 	if( !old )
 	{
 		newDict = CFDictionaryCreateMutable( kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks,
-											 &kCFTypeDictionaryValueCallBacks );
+						     &kCFTypeDictionaryValueCallBacks );
 		CFDictionaryAddValue( newDict, version, value );
 	}
 	else
@@ -118,48 +118,48 @@ ArchHooks_darwin::~ArchHooks_darwin()
 
 void ArchHooks_darwin::DumpDebugInfo()
 {
-    CString systemVersion;
-    OSErr err;
-    long code;
-
-    /* Get system version */
-    err = Gestalt( gestaltSystemVersion, &code );
-    if( err == noErr )
-    {
+	CString systemVersion;
+	OSErr err;
+	long code;
+	
+	/* Get system version */
+	err = Gestalt( gestaltSystemVersion, &code );
+	if( err == noErr )
+	{
 		int major = ( (code >> 12) & 0xF ) * 10 + (code >> 8) & 0xF;
 		int minor = (code >> 4) & 0xF;
 		int revision = code & 0xF;
 		
-        systemVersion = ssprintf( "Mac OS X %d.%d.%d", major, minor, revision );
-    }
-    else
-        systemVersion = "Unknown system version";
-
-    /* Get memory */
-	long ram;
-    long vRam;
+		systemVersion = ssprintf( "Mac OS X %d.%d.%d", major, minor, revision );
+	}
+	else
+		systemVersion = "Unknown system version";
 	
-    err = Gestalt( gestaltLogicalRAMSize, &vRam );
-    if (err != noErr)
-        vRam = 0;
-    err = Gestalt( gestaltPhysicalRAMSize, &ram );
-    if( err == noErr )
-    {
-        vRam -= ram;
-        if( vRam < 0 )
-            vRam = 0;
-        ram >>= 20;
-        vRam >>= 20;
-    }
-    else
-    {
-        ram = 0;
-        vRam = 0;
-    }
+	/* Get memory */
+	long ram;
+	long vRam;
+	
+	err = Gestalt( gestaltLogicalRAMSize, &vRam );
+	if (err != noErr)
+		vRam = 0;
+	err = Gestalt( gestaltPhysicalRAMSize, &ram );
+	if( err == noErr )
+	{
+		vRam -= ram;
+		if( vRam < 0 )
+			vRam = 0;
+		ram >>= 20;
+		vRam >>= 20;
+	}
+	else
+	{
+		ram = 0;
+		vRam = 0;
+	}
 	
 	/* Get processor information */
-    CString processor;
-    int numProcessors;	
+	CString processor;
+	int numProcessors;	
 	struct host_basic_info info;
 	mach_port_t host = mach_host_self();
 	mach_msg_type_number_t size = HOST_BASIC_INFO_COUNT;
@@ -178,11 +178,11 @@ void ArchHooks_darwin::DumpDebugInfo()
 		slot_name( info.cpu_type, info.cpu_subtype, &cpu_type, &cpu_subtype );
 		processor = cpu_subtype;
 	}
-
+	
 	/* Get processor speed */
 	err = Gestalt( gestaltProcClkSpeed, &code );
-    if( err != noErr )
-        code = 0;
+	if( err != noErr )
+		code = 0;
 	
 	float speed;
 	char power;
@@ -197,12 +197,12 @@ void ArchHooks_darwin::DumpDebugInfo()
 		speed = code / 1000000.0f;
 		power = 'M';
 	}
-    
-    /* Send all of the information to the log */
-    LOG->Info( "Processor: %s (%d)", processor.c_str(), numProcessors );
+	
+	/* Send all of the information to the log */
+	LOG->Info( "Processor: %s (%d)", processor.c_str(), numProcessors );
 	LOG->Info( "Clock speed %.2f %cHz", speed, power );
-    LOG->Info( "%s", systemVersion.c_str());
-    LOG->Info( "Memory: %ld MB total, %ld MB swap", ram, vRam );
+	LOG->Info( "%s", systemVersion.c_str());
+	LOG->Info( "Memory: %ld MB total, %ld MB swap", ram, vRam );
 }
 
 // In archutils/darwin/PreferredLanguage.m
