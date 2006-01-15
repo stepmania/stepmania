@@ -174,13 +174,6 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 		return DefWindowProcA( hWnd, msg, wParam, lParam );
 }
 
-void GraphicsWindow::SetVideoModeParams( const VideoModeParams &p )
-{
-	//LOG->Warn( "GraphicsWindow::SetVideoModeParams %d %d", p.width, p.height );
-
-	g_CurrentParams = p;
-}
-
 /* Set the display mode to the given size, bit depth and refresh.  The refresh
  * setting may be ignored. */
 CString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
