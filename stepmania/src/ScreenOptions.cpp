@@ -598,15 +598,6 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	{
 		this->BeginFadingOut();
 	}
-	else if( SM == SM_ExportOptions )
-	{
-		vector<PlayerNumber> vpns;
-		FOREACH_HumanPlayer( p )
-			vpns.push_back( p );
-		for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
-			this->ExportOptions( r, vpns );
-		this->HandleScreenMessage( SM_GoToNextScreen );
-	}
 	else if( SM == SM_BeginFadingOut )
 	{
 		if( IsTransitioning() )
@@ -614,6 +605,16 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 		StartTransitioningScreen( SM_ExportOptions );
 
 		SCREENMAN->PlayStartSound();
+	}
+	else if( SM == SM_ExportOptions )
+	{
+		vector<PlayerNumber> vpns;
+		FOREACH_HumanPlayer( p )
+			vpns.push_back( p );
+		for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
+			this->ExportOptions( r, vpns );
+
+		this->HandleScreenMessage( SM_GoToNextScreen );
 	}
 	else if( SM == SM_GainFocus )
 	{
