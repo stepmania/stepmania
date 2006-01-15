@@ -224,34 +224,6 @@ static int GetWindowStyle( bool bWindowed )
 		return WS_POPUP;
 }
 
-static void CreateGraphicsWindow( const VideoModeParams &p )
-{
-	int iWindowStyle = GetWindowStyle( p.windowed );
-
-	AppInstance inst;
-	HWND hWnd = CreateWindow( g_sClassName, "app", iWindowStyle,
-					0, 0, 0, 0, NULL, NULL, inst, NULL );
-	if( hWnd == NULL )
-		RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
-
-	/* If an old window exists, transfer focus to the new window before deleting
-	 * it, or some other window may temporarily get focus, which can cause it
-	 * to be resized. */
-	if( g_hWndMain != NULL )
-	{
-		/* While we change to the new window, don't do ChangeDisplaySettings in WM_ACTIVATE. */
-		g_bRecreatingVideoMode = true;
-		SetForegroundWindow( hWnd );
-		g_bRecreatingVideoMode = false;
-
-		GraphicsWindow::DestroyGraphicsWindow();
-	}
-
-	g_hWndMain = hWnd;
-	CrashHandler::SetForegroundWindow( g_hWndMain );
-	g_HDC = GetDC( g_hWndMain );
-}
-
 /* Set the final window size, set the window text and icon, and then unhide the
  * window. */
 void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p, bool bForceRecreateWindow )
@@ -259,9 +231,32 @@ void GraphicsWindow::ConfigureGraphicsWindow( const VideoModeParams &p, bool bFo
 	g_CurrentParams = p;
 
 	if( g_hWndMain == NULL || bForceRecreateWindow )
-		CreateGraphicsWindow( p );
+	{
+		int iWindowStyle = GetWindowStyle( p.windowed );
 
-	ASSERT( g_hWndMain );
+		AppInstance inst;
+		HWND hWnd = CreateWindow( g_sClassName, "app", iWindowStyle,
+						0, 0, 0, 0, NULL, NULL, inst, NULL );
+		if( hWnd == NULL )
+			RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
+
+		/* If an old window exists, transfer focus to the new window before deleting
+		* it, or some other window may temporarily get focus, which can cause it
+		* to be resized. */
+		if( g_hWndMain != NULL )
+		{
+			/* While we change to the new window, don't do ChangeDisplaySettings in WM_ACTIVATE. */
+			g_bRecreatingVideoMode = true;
+			SetForegroundWindow( hWnd );
+			g_bRecreatingVideoMode = false;
+
+			GraphicsWindow::DestroyGraphicsWindow();
+		}
+
+		g_hWndMain = hWnd;
+		CrashHandler::SetForegroundWindow( g_hWndMain );
+		g_HDC = GetDC( g_hWndMain );
+	}
 
 	/* Update the window title. */
 	do
