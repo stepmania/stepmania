@@ -101,7 +101,7 @@ void DumpPixelFormat( const PIXELFORMATDESCRIPTOR &pfd )
 
 /* This function does not reset the video mode if it fails, because we might be trying
  * yet another video mode, so we'd just thrash the display.  On fatal error,
- * LowLevelWindow_Win32::~LowLevelWindow_Win32 will call Shutdown(). */
+ * LowLevelWindow_Win32::~LowLevelWindow_Win32 will call GraphicsWindow::Shutdown(). */
 CString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
 	//LOG->Warn( "LowLevelWindow_Win32::TryVideoMode" );
