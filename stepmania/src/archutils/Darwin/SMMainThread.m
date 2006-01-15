@@ -22,6 +22,7 @@
 
 - (void) dealloc
 {
+	[self performOnMainThread];
 	[actions release];
 	[super dealloc];
 }
@@ -58,6 +59,8 @@
 
 - (void) performOnMainThread
 {
+	if( ![actions count] )
+		return;
 	/* This can be done with an NSInvocation without the need for - (void) perform
 	 * but it just makes this complex and confusing. */
 	[self performSelectorOnMainThread:@selector(perform) withObject:nil waitUntilDone:YES];
