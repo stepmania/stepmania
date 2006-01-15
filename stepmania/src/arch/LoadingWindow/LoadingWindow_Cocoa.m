@@ -66,22 +66,6 @@ void MakeNewCocoaWindow( const void *data, unsigned length )
 	[mt performOnMainThread];
 	[mt release];
 	
-#if 0
-	[window setOneShot:YES];
-	[window setReleasedWhenClosed:YES];
-	[window useOptimizedDrawing:YES];
-	[window center];
-	[window setTitle:[NSString stringWithUTF8String:PRODUCT_NAME]];
-	
-	// There's only one window ever so don't display in the menu.
-	[window setExcludedFromWindowsMenu:YES];
-	
-	view = [window contentView];
-	[view addSubview:text]; // This retains text.
-	[view addSubview:iView]; // This retains iView.
-	
-	[window makeKeyAndOrderFront:nil];
-#endif
 	[pool release];
 }
 
