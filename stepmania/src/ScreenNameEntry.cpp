@@ -88,18 +88,6 @@ float GetClosestCharYPos( float fFakeBeat )
 REGISTER_SCREEN_CLASS( ScreenNameEntry );
 ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 {
-	// update cache
-	g_fCharsZoomSmall = CHARS_ZOOM_SMALL;
-	g_fCharsZoomLarge = CHARS_ZOOM_LARGE;
-	g_fCharsSpacingY = CHARS_SPACING_Y;
-	g_fReceptorArrowsY = GRAY_ARROWS_Y;
-	g_iNumCharsToDrawBehind = NUM_CHARS_TO_DRAW_BEHIND;
-	g_iNumCharsToDrawTotal = NUM_CHARS_TO_DRAW_TOTAL;
-	g_fFakeBeatsPerSec = FAKE_BEATS_PER_SEC;
-
-
-
-
 		// DEBUGGING STUFF
 //	GAMESTATE->m_CurGame = GAME_DANCE;
 //	GAMESTATE->m_CurStyle = STYLE_DANCE_SINGLE;
@@ -108,7 +96,20 @@ ScreenNameEntry::ScreenNameEntry( CString sClassName ) : Screen( sClassName )
 //	GAMESTATE->m_MasterPlayerNumber = PLAYER_1;
 //	GAMESTATE->m_RankingCategory[PLAYER_1] = RANKING_A;
 //	GAMESTATE->m_iRankingIndex[PLAYER_1] = 0;
+}
 
+void ScreenNameEntry::Init()
+{
+	Screen::Init();
+
+	// update cache
+	g_fCharsZoomSmall = CHARS_ZOOM_SMALL;
+	g_fCharsZoomLarge = CHARS_ZOOM_LARGE;
+	g_fCharsSpacingY = CHARS_SPACING_Y;
+	g_fReceptorArrowsY = GRAY_ARROWS_Y;
+	g_iNumCharsToDrawBehind = NUM_CHARS_TO_DRAW_BEHIND;
+	g_iNumCharsToDrawTotal = NUM_CHARS_TO_DRAW_TOTAL;
+	g_fFakeBeatsPerSec = FAKE_BEATS_PER_SEC;
 
 	/* Save options.  We'll reset them to display letters, and we must put them
 	 * back when we're done. */
