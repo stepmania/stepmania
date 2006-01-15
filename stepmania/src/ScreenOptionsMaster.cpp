@@ -140,7 +140,8 @@ void ScreenOptionsMaster::BeginFadingOut()
 		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
 		if( row.GetFirstItemGoesDown() )
 			iChoice--;
-		if( iChoice != -1 )	// not the "goes down" item
+		// not the "goes down" item
+		if( iChoice != -1 && iCurRow < (int) m_OptionRowHandlers.size() )
 		{
 			OptionRowHandler *pHand = m_OptionRowHandlers[iCurRow];
 			if( pHand != NULL )
