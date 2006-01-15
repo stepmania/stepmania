@@ -165,13 +165,12 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 	
 		CHECKPOINT;
 
+		vector<PlayerNumber> vpns;
+		FOREACH_OptionsPlayer( p )
+			vpns.push_back( p );
 		for( unsigned r = 0; r < m_OptionRowHandlers.size(); ++r )
 		{
 			CHECKPOINT_M( ssprintf("%i/%i", r, int(m_OptionRowHandlers.size())) );
-
-			vector<PlayerNumber> vpns;
-			FOREACH_OptionsPlayer( p )
-				vpns.push_back( p );
 			ExportOptions( r, vpns );
 		}
 
