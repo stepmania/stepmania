@@ -1,8 +1,5 @@
 #include "global.h"
 #include "ScreenTest.h"
-#include "ScreenSandbox.h"
-#include "ScreenTestSound.h"
-#include "ScreenTestFonts.h"
 #include "ScreenManager.h"
 #include "GameSoundManager.h"
 #include "ThemeManager.h"
@@ -21,11 +18,11 @@ void ScreenTest::SetScreen(int num)
 	delete current;
 	if(num > 2) num = 0;
 	if(num == 0)
-		current=new ScreenSandbox("ScreenSandbox");
+		current=SCREENMAN->MakeNewScreen("ScreenSandbox");
 	else if(num == 1)
-		current=new ScreenTestSound("ScreenTestSound");
+		current=SCREENMAN->MakeNewScreen("ScreenTestSound");
 	else if(num == 2)
-		current=new ScreenTestFonts("ScreenTestFonts");
+		current=SCREENMAN->MakeNewScreen("ScreenTestFonts");
 }
 
 REGISTER_SCREEN_CLASS( ScreenTest );
