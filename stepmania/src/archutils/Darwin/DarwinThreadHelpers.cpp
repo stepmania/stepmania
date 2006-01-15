@@ -25,6 +25,7 @@ bool GetThreadBacktraceContext( uint64_t iID, BacktraceContext *ctx )
 	/* Can't GetThreadBacktraceContext the current thread. */
 	ASSERT( iID != GetCurrentThreadId() );
 
+#if defined(__ppc__)
 	SuspendThread( iID );
 
 	thread_act_t thread = thread_act_t( iID );
@@ -36,17 +37,20 @@ bool GetThreadBacktraceContext( uint64_t iID, BacktraceContext *ctx )
 	ctx->FramePtr = (void *)state.r1;
 	ctx->PC = (void *)state.srr0;
 	return true;
+#else
+	return false;
+#endif
 }
 
 void SetThreadPrecedence( int prec )
 {
 	thread_precedence_policy po = { prec };
 	kern_return_t ret = thread_policy_set( mach_thread_self(), THREAD_PRECEDENCE_POLICY,
-										   (int *)&po, THREAD_PRECEDENCE_POLICY_COUNT );
+					       (int *)&po, THREAD_PRECEDENCE_POLICY_COUNT );
 	
 	if( ret != KERN_SUCCESS )
 		LOG->Warn( "Couldn't set the precedence for the input thread: %s",
-				   mach_error_string(ret) );
+			   mach_error_string(ret) );
 }
 	
 /*
