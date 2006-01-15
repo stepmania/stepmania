@@ -499,10 +499,7 @@ CString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 	if( FindBackBufferType( p.windowed, p.bpp ) == D3DFMT_UNKNOWN )	// no possible back buffer formats
 		return ssprintf( "FindBackBufferType(%i,%i) failed", p.windowed, p.bpp );	// failed to set mode
 
-#if !defined(XBOX)
-	if( GraphicsWindow::GetHwnd() == NULL )
-		GraphicsWindow::CreateGraphicsWindow( p );
-#else
+#if defined(XBOX)
 	p.windowed = false;
 #endif
 
