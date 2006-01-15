@@ -99,11 +99,14 @@ LowLevelWindow_Cocoa::~LowLevelWindow_Cocoa()
 void *LowLevelWindow_Cocoa::GetProcAddress( CString s )
 {
 	// http://developer.apple.com/qa/qa2001/qa1188.html
+	// Both functions mentioned in there are deprecated in 10.4.
 	const CString& symbolName( '_' + s );
+	const uint32_t count = _dyld_image_count();
 	NSSymbol symbol = NULL;
+	const uint32_t options = NSLOOKUPSYMBOLINIMAGE_OPTION_RETURN_ON_ERROR;
 	
-	if( NSIsSymbolNameDefined(symbolName) )
-		symbol = NSLookupAndBindSymbol( symbolName );
+	for( uint32_t i = 0; i < count && !symbol; ++i )
+		symbol = NSLookupSymbolInImage( _dyld_get_image_header(i), symbolName, options );
 	return symbol ? NSAddressOfSymbol( symbol ) : NULL;
 }
 
