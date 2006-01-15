@@ -238,14 +238,13 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p )
 	int iWindowStyle = GetWindowStyle( p.windowed );
 
 	AppInstance inst;
-	g_hWndMain = CreateWindow( g_sClassName, "app", iWindowStyle,
+	HWND hWnd = CreateWindow( g_sClassName, "app", iWindowStyle,
 					0, 0, 0, 0, NULL, NULL, inst, NULL );
-	if( g_hWndMain == NULL )
+	if( hWnd == NULL )
 		RageException::Throw( "%s", werr_ssprintf( GetLastError(), "CreateWindow" ).c_str() );
 
+	g_hWndMain = hWnd;
 	CrashHandler::SetForegroundWindow( g_hWndMain );
-	//SetForegroundWindow( g_hWndMain );
-
 	g_HDC = GetDC( g_hWndMain );
 }
 
