@@ -296,10 +296,10 @@ ScoreScroller::ScoreRowItem::ScoreRowItem()
 }
 
 ScoreScroller::ScoreRowItem::ScoreRowItem( const ScoreRowItem &cpy ):
+	ActorFrame( cpy ),
 	m_sprFrame( cpy.m_sprFrame ),
 	m_textTitle( cpy.m_textTitle ),
-	m_textScore( cpy.m_textScore ),
-	ActorFrame( cpy )
+	m_textScore( cpy.m_textScore )
 {
 	if( m_sprFrame.IsLoaded() )
 		this->AddChild( m_sprFrame );
