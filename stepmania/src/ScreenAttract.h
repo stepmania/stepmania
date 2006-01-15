@@ -10,7 +10,8 @@ AutoScreenMessage( SM_GoToStartScreen )
 class ScreenAttract : public ScreenWithMenuElements
 {
 public:
-	ScreenAttract( CString sName, bool bResetGameState=true );
+	ScreenAttract( bool bResetGameState=true );
+	virtual void Init();
 
 	static void AttractInput( const InputEventPlus &input, ScreenWithMenuElements *pScreen );
 	static void GoToStartScreen( CString sScreenName );

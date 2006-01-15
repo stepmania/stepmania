@@ -23,7 +23,7 @@ enum EndingStatsLine
 class ScreenEnding : public ScreenAttract
 {
 public:
-	ScreenEnding( CString sName );
+	ScreenEnding();
 	virtual void Init();
 	virtual void Input( const InputEventPlus &input );
 

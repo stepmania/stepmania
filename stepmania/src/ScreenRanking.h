@@ -35,7 +35,7 @@ PageType StringToPageType( const CString& s );
 class ScreenRanking : public ScreenAttract
 {
 public:
-	ScreenRanking( CString sName );
+	ScreenRanking();
 	virtual void Init();
 	virtual void BeginScreen();
 
@@ -137,7 +137,6 @@ protected:
 class ScreenRankingScroller: public ScreenRanking 
 {
 public:
-	ScreenRankingScroller( CString sName );
 	virtual void Init();
 	virtual void BeginScreen();
 
@@ -167,7 +166,6 @@ static const int NUM_RANKING_LINES = 5;
 class ScreenRankingLines: public ScreenRanking 
 {
 public:
-	ScreenRankingLines( CString sName );
 	virtual void Init();
 	virtual void BeginScreen();
 

@@ -12,7 +12,7 @@
 class ScreenHowToPlay : public ScreenAttract
 {
 public:
-	ScreenHowToPlay( CString sName );
+	ScreenHowToPlay();
 	virtual void Init();
 	~ScreenHowToPlay();
 	

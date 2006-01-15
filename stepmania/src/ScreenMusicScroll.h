@@ -9,7 +9,6 @@
 class ScreenMusicScroll : public ScreenAttract
 {
 public:
-	ScreenMusicScroll( CString sName );
 	virtual void Init();
 	virtual ~ScreenMusicScroll();
 

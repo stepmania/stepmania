@@ -84,12 +84,12 @@ static void GetAllCoursesToShow( vector<Course*> &vpOut, CourseType ct, bool bSh
 
 static CString STEPS_TYPE_COLOR_NAME( size_t i ) { return ssprintf("StepsTypeColor%d",int(i+1)); }
 
-REGISTER_SCREEN_CLASS( ScreenRanking );
-REGISTER_SCREEN_CLASS( ScreenRankingScroller );
-REGISTER_SCREEN_CLASS( ScreenRankingLines );
+REGISTER_SCREEN_CLASS_NEW( ScreenRanking );
+REGISTER_SCREEN_CLASS_NEW( ScreenRankingScroller );
+REGISTER_SCREEN_CLASS_NEW( ScreenRankingLines );
 
-ScreenRanking::ScreenRanking( CString sClassName ):
-	ScreenAttract( sClassName, false /*dont reset GAMESTATE*/ )
+ScreenRanking::ScreenRanking():
+	ScreenAttract( false /*dont reset GAMESTATE*/ )
 {
 }
 
@@ -378,11 +378,6 @@ void ScoreScroller::Load(
 // PAGE_TYPE_NONSTOP_COURSES:
 // PAGE_TYPE_ONI_COURSES:
 // PAGE_TYPE_SURVIVAL_COURSES:
-ScreenRankingScroller::ScreenRankingScroller( CString sName ):
-	ScreenRanking( sName )
-{
-}
-
 void ScreenRankingScroller::Init()
 {
 	DIFFICULTIES_TO_SHOW.Load( m_sName, "DifficultiesToShow" );
@@ -476,11 +471,6 @@ float ScreenRankingScroller::SetPage( const PageToShow &pts )
 
 // PAGE_TYPE_CATEGORY:
 // PAGE_TYPE_TRAIL:
-ScreenRankingLines::ScreenRankingLines( CString sName ):
-	ScreenRanking( sName )
-{
-}
-
 #define BULLET_X(row)				(BULLET_START_X+ROW_SPACING_X*row)
 #define BULLET_Y(row)				(BULLET_START_Y+ROW_SPACING_Y*row)
 #define NAME_X(row)					(NAME_START_X+ROW_SPACING_X*row)

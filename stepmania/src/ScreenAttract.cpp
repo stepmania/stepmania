@@ -20,16 +20,22 @@
 
 ThemeMetric<bool>	BACK_GOES_TO_START_SCREEN( "ScreenAttract", "BackGoesToStartScreen" );
 
-REGISTER_SCREEN_CLASS( ScreenAttract );
-ScreenAttract::ScreenAttract( CString sName, bool bResetGameState ) : ScreenWithMenuElements( sName )
+REGISTER_SCREEN_CLASS_NEW( ScreenAttract );
+ScreenAttract::ScreenAttract( bool bResetGameState )
 {
 	if( bResetGameState )
 		GAMESTATE->Reset();
-
-	GAMESTATE->VisitAttractScreen( sName );
-	SOUNDMAN->SetPlayOnlyCriticalSounds( !GAMESTATE->IsTimeToPlayAttractSounds() );	// mute attract sounds
 }
 
+
+void ScreenAttract::Init()
+{
+	SOUNDMAN->SetPlayOnlyCriticalSounds( !GAMESTATE->IsTimeToPlayAttractSounds() );	// mute attract sounds
+
+	GAMESTATE->VisitAttractScreen( m_sName );
+
+	ScreenWithMenuElements::Init();
+}
 
 void ScreenAttract::Input( const InputEventPlus &input )
 {

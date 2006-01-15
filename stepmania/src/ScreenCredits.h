@@ -9,7 +9,6 @@
 class ScreenCredits : public ScreenAttract
 {
 public:
-	ScreenCredits( CString sName );
 	virtual void Init();
 };
 

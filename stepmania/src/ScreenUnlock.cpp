@@ -24,10 +24,7 @@
 #define TIME_TO_DISPLAY					THEME->GetMetricF("ScreenUnlock", "TimeToDisplay")
 #define POINTS_ZOOM						THEME->GetMetricF("ScreenUnlock","PointsZoom")
 
-REGISTER_SCREEN_CLASS( ScreenUnlock );
-ScreenUnlock::ScreenUnlock( CString sClassName ) : ScreenAttract( sClassName )
-{
-}
+REGISTER_SCREEN_CLASS_NEW( ScreenUnlock );
 
 void ScreenUnlock::Init()
 {

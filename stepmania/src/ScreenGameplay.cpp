@@ -469,6 +469,7 @@ void ScreenGameplay::Init()
 			fPlayerX = SCREEN_CENTER_X;
 
 		pi->m_pPlayer->SetXY( fPlayerX, SCREEN_CENTER_Y );
+		ON_COMMAND( pi->m_pPlayer );
 		this->AddChild( pi->m_pPlayer );
 	}
 	
@@ -1033,6 +1034,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 
 		// UGLY: Force updating the BeatToNoteSkin mapping and cache NoteSkins now, or else 
 		// we'll do it on the first update and skip.
+		// XXX remove?
 		pi->m_pPlayer->ApplyWaitingTransforms();
 
 		/* Update attack bOn flags. */
