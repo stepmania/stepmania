@@ -4,6 +4,7 @@
 #import "RageLog.h"
 #import "RageUtil.h"
 #import "arch/ArchHooks/ArchHooks.h"
+#import "archutils/Darwin/SMMainThread.h"
 
 #import <Cocoa/Cocoa.h>
 #import <OpenGl/OpenGl.h>
@@ -71,16 +72,22 @@ LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : mView(nil), mFullScreenContext(ni
 {
 	POOL;
 	NSRect rect = { {0, 0}, {0, 0} };
+	SMMainThread *mt = [[SMMainThread alloc] init];
+	
 	mWindow = [[NSWindow alloc] initWithContentRect:rect
 					      styleMask:g_iStyleMask
 						backing:NSBackingStoreNonretained
 						  defer:YES];
 	ASSERT( mWindow != nil );
-	[mWindow setExcludedFromWindowsMenu:YES];
-	[mWindow useOptimizedDrawing:YES];
-	[mWindow setReleasedWhenClosed:NO];
-	// setDelegate: does not retain the delegate; however, we didn't (auto)release it.
-	[mWindow setDelegate:[[SMWindowDelegate alloc] init]];
+	
+	ADD_ACTIONb( mt, mWindow, setExcludedFromWindowsMenu:, YES );
+	ADD_ACTIONb( mt, mWindow, useOptimizedDrawing:, YES );
+	ADD_ACTIONb( mt, mWindow, setReleasedWhenClosed:, NO );
+	// setDelegate: does not retain the delegate; however, we don't (auto)release it.
+	ADD_ACTION1( mt, mWindow, setDelegate:, [[SMWindowDelegate alloc] init] );
+	
+	[mt performOnMainThread];
+	[mt release];
 	mCurrentParams.windowed = true; // We are essentially windowed to begin with.
 }
 
@@ -88,12 +95,19 @@ LowLevelWindow_Cocoa::~LowLevelWindow_Cocoa()
 {
 	POOL;
 	ShutDownFullScreen();
+	
+	SMMainThread *mt = [[SMMainThread alloc] init];
+	
 	// We need to release the window's delegate now.
-	// Autorelease to prevent a race condition.
-	[[mWindow delegate] autorelease];
-	[mWindow setDelegate:nil];
-	[mWindow orderOut:nil];
-	[mWindow release];
+	id delegate = [mWindow delegate];
+	
+	ADD_ACTION1( mt, mWindow, setDelegate:, nil );
+	ADD_ACTION1( mt, mWindow, orderOut:, nil );
+	ADD_ACTION0( mt, mWindow, release );
+	
+	[mt performOnMainThread];
+	[delegate release];
+	[mt release];
 	[mFullScreenContext release];
 }
 
@@ -134,11 +148,12 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 	newDeviceOut = false;
 	
 	NSRect contentRect = { { 0, 0 }, { p.width, p.height } };
+	SMMainThread *mt = [[[SMMainThread alloc] init] autorelease];
 	
 	// Change the window and the title
-	[mWindow setContentSize:contentRect.size];
-	[mWindow setTitle:[NSString stringWithUTF8String:p.sWindowTitle.c_str()]];
-	
+	ADD_ACTIONn( mt, mWindow, setContentSize:, 1, &contentRect.size );
+	ADD_ACTION1( mt, mWindow, setTitle:, [NSString stringWithUTF8String:p.sWindowTitle.c_str()] );
+		
 	mCurrentParams.width = p.width;
 	mCurrentParams.height = p.height;
 	
@@ -160,16 +175,21 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 		pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
 		
 		if( pixelFormat == nil )
+		{
+			[mt performOnMainThread];
 			return "Failed to set the windowed pixel format.";
-		nextView = [[NSOpenGLView alloc] initWithFrame:contentRect pixelFormat:pixelFormat];
+		}
+		nextView = [[[NSOpenGLView alloc] initWithFrame:contentRect pixelFormat:pixelFormat] autorelease];
 		[pixelFormat release];
 		if( nextView == nil )
+		{
+			[mt performOnMainThread];
 			return "Failed to create windowed OGL context.";
+		}
 		SetOGLParameters( [mView openGLContext] );
 		newDeviceOut = true;
 		mView = nextView;
-		[mWindow setContentView:mView];
-		[mView release];
+		ADD_ACTION1( mt, mWindow, setContentView:, mView );
 
 		// We need to recreate the full screen context as well.
 		[mFullScreenContext clearDrawable];
@@ -182,9 +202,11 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 		id context = [mView openGLContext];
 		
 		ShutDownFullScreen();
-		[mWindow center];
-		[mWindow makeKeyAndOrderFront:nil];
 		
+		ADD_ACTION0( mt, mWindow, center );
+		ADD_ACTION1( mt, mWindow, makeKeyAndOrderFront:, nil );
+		
+		[mt performOnMainThread];
 		[context update];
 		[context makeCurrentContext];
 		mCurrentParams.windowed = true;
@@ -193,6 +215,7 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 		newDeviceOut = newDeviceOut || !mSharingContexts;
 		return CString();
 	}
+	[mt performOnMainThread];
 	int result = ChangeDisplayMode( p );
 	
 	if( result )
@@ -361,7 +384,5 @@ void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 
 void LowLevelWindow_Cocoa::SwapBuffers()
 {
-	// XXX I'm not sure if this is needed yet.
-	POOL;
 	[[NSOpenGLContext currentContext] flushBuffer];
 }
