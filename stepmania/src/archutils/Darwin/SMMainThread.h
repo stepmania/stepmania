@@ -9,6 +9,7 @@
 - (void) dealloc;
 - (void) addAction:(SEL)sel withTarget:(id)target;
 - (void) addAction:(SEL)sel withTarget:(id)target andObject:(id)object;
+- (void) addAction:(SEL)sel withTarget:(id)target andBool:(BOOL)b;
 // You must pass pointers to the objects to this method.
 - (void) addAction:(SEL)sel withTarget:(id)target andNumObjects:(int)num, ...;
 - (void) performOnMainThread;
@@ -16,6 +17,9 @@
 
 #define ADD_ACTION0(mt, t, s)    [mt addAction:@selector(s) withTarget:(t)]
 #define ADD_ACTION1(mt, t, s, o) [mt addAction:@selector(s) withTarget:(t) andObject:(o)]
+#define ADD_ACTIONb(mt, t, s, b) [mt addAction:@selector(s) withTarget:(t) andBool:(b)]
+#define ADD_ACTIONn(mt, t, s, n, ...) \
+[mt addAction:@selector(s) withTarget:(t) andNumObjects:(n), ## __VA_ARGS__]
 
 /*
  * (c) 2006 Steve Checkoway

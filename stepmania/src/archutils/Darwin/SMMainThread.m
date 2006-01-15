@@ -36,6 +36,11 @@
 	[self addAction:sel withTarget:target andNumObjects:1, &object];
 }
 
+- (void) addAction:(SEL)sel withTarget:(id)target andBool:(BOOL)b
+{
+	[self addAction:sel withTarget:target andNumObjects:1, &b];
+}
+
 - (void) addAction:(SEL)sel withTarget:(id)target andNumObjects:(int)num, ...
 {
 	NSMethodSignature *sig = [target methodSignatureForSelector:sel];
