@@ -22,7 +22,6 @@
 
 - (void) dealloc
 {
-	[self performOnMainThread];
 	[actions release];
 	[super dealloc];
 }
