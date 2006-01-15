@@ -25,7 +25,6 @@ ScreenSelect::ScreenSelect( CString sClassName ) :
 	IDLE_TIMEOUT_SECONDS(m_sName,"IdleTimeoutSeconds"),
 	ALLOW_DISABLED_PLAYER_INPUT(m_sName,"AllowDisabledPlayerInput")
 {
-	LOG->Trace( "ScreenSelect::ScreenSelect()" );
 }
 
 void ScreenSelect::Init()

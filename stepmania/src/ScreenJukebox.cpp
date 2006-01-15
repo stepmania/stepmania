@@ -169,7 +169,6 @@ void ScreenJukebox::SetSong()
 
 ScreenJukebox::ScreenJukebox( CString sName ) : ScreenGameplayNormal( sName )
 {
-	LOG->Trace( "ScreenJukebox::ScreenJukebox()" );
 	m_bDemonstration = false;
 
 	m_pCourseEntry = NULL;

@@ -615,8 +615,6 @@ static BackgroundLayer g_CurrentBGChangeLayer = BACKGROUND_LAYER_INVALID;
 REGISTER_SCREEN_CLASS( ScreenEdit );
 ScreenEdit::ScreenEdit( CString sName ) : ScreenWithMenuElements( sName )
 {
-	LOG->Trace( "ScreenEdit::ScreenEdit()" );
-
 	ASSERT( GAMESTATE->m_pCurSong );
 	ASSERT( GAMESTATE->m_pCurSteps[0] );
 }

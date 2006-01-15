@@ -135,7 +135,6 @@ static bool ValidateEditCourseName( const CString &sAnswer, CString &sErrorOut )
 REGISTER_SCREEN_CLASS( ScreenOptionsManageCourses );
 ScreenOptionsManageCourses::ScreenOptionsManageCourses( CString sName ) : ScreenOptionsEditCourseSubMenu( sName )
 {
-	LOG->Trace( "ScreenOptionsManageCourses::ScreenOptionsManageCourses()" );
 }
 
 void ScreenOptionsManageCourses::Init()

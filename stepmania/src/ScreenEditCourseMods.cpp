@@ -5,7 +5,6 @@
 REGISTER_SCREEN_CLASS( ScreenEditCourseMods );
 ScreenEditCourseMods::ScreenEditCourseMods( CString sName ) : ScreenEdit( sName )
 {
-	LOG->Trace( "ScreenEditCourseMods::ScreenEditCourseMods()" );
 }
 
 void ScreenEditCourseMods::Init()

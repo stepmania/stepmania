@@ -25,8 +25,6 @@ AutoScreenMessage( SM_BackFromEditDescription )
 REGISTER_SCREEN_CLASS( ScreenEditMenu );
 ScreenEditMenu::ScreenEditMenu( CString sName ) : ScreenWithMenuElements( sName )
 {
-	LOG->Trace( "ScreenEditMenu::ScreenEditMenu()" );
-
 	/* Enable all players. */
 	FOREACH_PlayerNumber( pn )
 		GAMESTATE->m_bSideIsJoined[pn] = true;

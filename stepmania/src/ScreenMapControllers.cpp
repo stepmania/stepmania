@@ -26,7 +26,6 @@ static const int NUM_CHANGABLE_SLOTS = NUM_SHOWN_GAME_TO_DEVICE_SLOTS-1;
 REGISTER_SCREEN_CLASS( ScreenMapControllers );
 ScreenMapControllers::ScreenMapControllers( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
-	LOG->Trace( "ScreenMapControllers::ScreenMapControllers()" );
 }
 
 void ScreenMapControllers::Init()

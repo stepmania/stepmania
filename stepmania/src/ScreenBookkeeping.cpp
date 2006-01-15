@@ -13,7 +13,6 @@
 REGISTER_SCREEN_CLASS( ScreenBookkeeping );
 ScreenBookkeeping::ScreenBookkeeping( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
-	LOG->Trace( "ScreenBookkeeping::ScreenBookkeeping()" );
 }
 
 void ScreenBookkeeping::Init()

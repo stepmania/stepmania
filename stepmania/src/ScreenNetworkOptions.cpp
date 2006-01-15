@@ -47,7 +47,6 @@ Preference<CString> g_sLastServer( "LastConnectedServer",	"" );
 REGISTER_SCREEN_CLASS( ScreenNetworkOptions );
 ScreenNetworkOptions::ScreenNetworkOptions( CString sClassName ) : ScreenOptions( sClassName )
 {
-	LOG->Trace( "ScreenNetworkOptions::ScreenNetworkOptions()" );
 }
 
 void ScreenNetworkOptions::Init()

@@ -16,8 +16,6 @@ static ThemeMetric<bool>	ALLOW_RESIZE("ScreenCenterImage","AllowResize");
 REGISTER_SCREEN_CLASS( ScreenCenterImage );
 ScreenCenterImage::ScreenCenterImage( CString sClassName ) : ScreenWithMenuElements( sClassName )
 {
-	LOG->Trace( "ScreenCenterImage::ScreenCenterImage()" );
-
 	ZERO( m_fScale );
 }
 

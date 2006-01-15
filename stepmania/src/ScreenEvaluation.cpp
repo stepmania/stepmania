@@ -84,8 +84,6 @@ AutoScreenMessage( SM_AddBonus )
 REGISTER_SCREEN_CLASS( ScreenEvaluation );
 ScreenEvaluation::ScreenEvaluation( CString sClassName ) : ScreenWithMenuElements(sClassName)
 {
-	LOG->Trace( "ScreenEvaluation::ScreenEvaluation" );
-
 	//
 	// debugging
 	//

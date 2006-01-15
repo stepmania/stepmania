@@ -8,8 +8,6 @@
 REGISTER_SCREEN_CLASS( ScreenGameplayLesson );
 ScreenGameplayLesson::ScreenGameplayLesson( CString sName ) : ScreenGameplayNormal( sName )
 {
-	LOG->Trace( "ScreenGameplayLesson::ScreenGameplayLesson()" );
-
 	m_iCurrentPageIndex = 0;
 	m_Try = Try_1;
 }

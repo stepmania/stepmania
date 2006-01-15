@@ -43,7 +43,6 @@ static MenuDef g_TempMenu(
 REGISTER_SCREEN_CLASS( ScreenOptionsEditCourse );
 ScreenOptionsEditCourse::ScreenOptionsEditCourse( CString sName ) : ScreenOptionsEditCourseSubMenu( sName )
 {
-	LOG->Trace( "ScreenOptionsEditCourse::ScreenOptionsEditCourse()" );
 }
 
 void ScreenOptionsEditCourse::Init()

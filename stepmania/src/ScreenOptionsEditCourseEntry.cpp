@@ -48,7 +48,6 @@ static void FillSongsAndChoices( const CString &sSongGroup, vector<Song*> &vpSon
 REGISTER_SCREEN_CLASS( ScreenOptionsEditCourseEntry );
 ScreenOptionsEditCourseEntry::ScreenOptionsEditCourseEntry( CString sName ) : ScreenOptionsEditCourseSubMenu( sName )
 {
-	LOG->Trace( "ScreenOptionsEditCourseEntry::ScreenOptionsEditCourseEntry()" );
 }
 
 void ScreenOptionsEditCourseEntry::Init()
