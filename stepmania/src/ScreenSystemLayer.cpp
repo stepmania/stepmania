@@ -15,20 +15,13 @@
 
 
 REGISTER_SCREEN_CLASS_NEW( ScreenSystemLayer );
-ScreenSystemLayer::ScreenSystemLayer()
+void ScreenSystemLayer::Init()
 {
 	SubscribeToMessage( "RefreshCreditText" );
 	SubscribeToMessage( "SystemMessage" );
 	SubscribeToMessage( "SystemMessageNoAnimate" );
 	SubscribeToMessage( "HideSystemMessage" );
-}
 
-ScreenSystemLayer::~ScreenSystemLayer()
-{
-}
-
-void ScreenSystemLayer::Init()
-{
 	CREDITS_PRESS_START		.Load(m_sName,"CreditsPressStart");
 	CREDITS_INSERT_CARD		.Load(m_sName,"CreditsInsertCard");
 	CREDITS_CARD_TOO_LATE		.Load(m_sName,"CreditsCardTooLate");
