@@ -40,6 +40,10 @@ public:
 	bool IsPlayable( CString *why = NULL ) const;
 	bool IsZero() const;
 	CString GetAndClearScreen();
+	
+	/* If true, Apply() will apply m_sScreen.  If false, it won't, and you need
+	 * to do it yourself. */
+	void ApplyCommitsScreens( bool bOn ) { m_bApplyCommitsScreens = bOn; }
 
 	// Same as what was passed to Load.  We need to keep the original commands
 	// so that we know the order of commands when it comes time to Apply.
@@ -82,6 +86,9 @@ public:
 
 	// Lua
 	void PushSelf( lua_State *L );
+
+private:
+	bool		m_bApplyCommitsScreens;
 };
 
 #endif

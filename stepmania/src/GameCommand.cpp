@@ -23,6 +23,7 @@
 
 void GameCommand::Init()
 {
+	m_bApplyCommitsScreens = true;
 	m_sName = "";
 	m_sText = "";
 	m_bInvalid = true;
@@ -591,6 +592,7 @@ void GameCommand::Apply( const vector<PlayerNumber> &vpns ) const
 		{
 			GameCommand gc;
 			gc.m_bInvalid = false;
+			gc.m_bApplyCommitsScreens = m_bApplyCommitsScreens;
 			gc.LoadOne( *cmd );
 			gc.ApplySelf( vpns );
 		}
@@ -669,7 +671,7 @@ void GameCommand::ApplySelf( const vector<PlayerNumber> &vpns ) const
 		}
 		LUA->Release(L);
 	}
-	if( m_sScreen != "" )
+	if( m_sScreen != "" && m_bApplyCommitsScreens )
 		SCREENMAN->SetNewScreen( m_sScreen );
 	if( m_pSong )
 	{
