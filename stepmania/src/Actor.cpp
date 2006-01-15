@@ -126,7 +126,8 @@ Actor::~Actor()
 	UnsubcribeAndClearCommands();
 }
 
-Actor::Actor( const Actor &cpy )
+Actor::Actor( const Actor &cpy ):
+	IMessageSubscriber( cpy )
 {
 	/* Don't copy an Actor in the middle of rendering. */
 	ASSERT( cpy.m_pTempState == NULL );
