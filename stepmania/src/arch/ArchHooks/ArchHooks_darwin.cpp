@@ -43,6 +43,7 @@ static void DoCleanShutdown( int signal, siginfo_t *si, const ucontext_t *uc )
 	ArchHooks::SetUserQuit();
 }
 
+#if defined(CRASH_HANDLER)
 static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *uc )
 {
 	/* Don't dump a debug file if the user just hit ^C. */
@@ -52,15 +53,18 @@ static void DoCrashSignalHandler( int signal, siginfo_t *si, const ucontext_t *u
 	CrashHandler::CrashSignalHandler( signal, si, uc );
 	/* not reached */
 }
+#endif
 
 ArchHooks_darwin::ArchHooks_darwin()
 {
-	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
-	
 	/* First, handle non-fatal termination signals. */
 	SignalHandler::OnClose( DoCleanShutdown );
 	
+#if defined(CRASH_HANDLER)
+	CrashHandler::CrashHandlerHandleArgs( g_argc, g_argv );
 	SignalHandler::OnClose( DoCrashSignalHandler );
+#endif
+	
 	//TimeCritMutex = new RageMutex("TimeCritMutex");
 	
 	// CF*Copy* functions' return values need to be released, CF*Get* functions' do not.
@@ -314,7 +318,7 @@ void ArchHooks::MountInitialFilesystems( const CString &sDirOfExecutable )
 }
 
 /*
- * (c) 2003-2005 Steve Checkoway
+ * (c) 2003-2006 Steve Checkoway
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a
