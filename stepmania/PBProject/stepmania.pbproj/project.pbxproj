@@ -121,7 +121,6 @@
 		AA29CC370558741A00961A51 /* RageTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD9004770A7C005F316C /* RageTimer.h */; };
 		AA29CC380558741A00961A51 /* RageTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD9104770A7C005F316C /* RageTypes.h */; };
 		AA29CC390558741A00961A51 /* RageUtil.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFD9304770A7C005F316C /* RageUtil.h */; };
-		AA29CC3C0558741A00961A51 /* SDL_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDC104770AEA005F316C /* SDL_utils.h */; };
 		AA29CC3E0558741A00961A51 /* Character.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDCC04770C79005F316C /* Character.h */; };
 		AA29CC3F0558741A00961A51 /* CodeDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDCE04770C79005F316C /* CodeDetector.h */; };
 		AA29CC400558741A00961A51 /* Course.h in Headers */ = {isa = PBXBuildFile; fileRef = AA6EFDD004770C79005F316C /* Course.h */; };
@@ -315,7 +314,6 @@
 		AA29CD290558741A00961A51 /* RageSoundReader_Resample_Fast.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAE28F3052254A900D02EE9 /* RageSoundReader_Resample_Fast.h */; };
 		AA29CD2A0558741A00961A51 /* RageSoundReader_Resample_Good.h in Headers */ = {isa = PBXBuildFile; fileRef = AAAE28F5052254A900D02EE9 /* RageSoundReader_Resample_Good.h */; };
 		AA29CD2B0558741A00961A51 /* ScreenExit.h in Headers */ = {isa = PBXBuildFile; fileRef = AAECF8C005265DB600D02EE9 /* ScreenExit.h */; };
-		AA29CD2C0558741A00961A51 /* Vsync.h in Headers */ = {isa = PBXBuildFile; fileRef = AABE7D3E051F07E900D02EE9 /* Vsync.h */; };
 		AA29CD2D0558741A00961A51 /* ScreenOptionsMaster.h in Headers */ = {isa = PBXBuildFile; fileRef = AA53D28505277DAF00D02EE9 /* ScreenOptionsMaster.h */; };
 		AA29CD2E0558741A00961A51 /* ScreenOptionsMasterPrefs.h in Headers */ = {isa = PBXBuildFile; fileRef = AA53D28705277DAF00D02EE9 /* ScreenOptionsMasterPrefs.h */; };
 		AA29CD2F0558741A00961A51 /* ScreenReloadSongs.h in Headers */ = {isa = PBXBuildFile; fileRef = AA53D28905277DAF00D02EE9 /* ScreenReloadSongs.h */; };
@@ -508,7 +506,6 @@
 		AA29CE0D0558741A00961A51 /* ArchHooks_darwin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B38004C3F48700D02EE9 /* ArchHooks_darwin.cpp */; };
 		AA29CE0E0558741A00961A51 /* MovieTexture_Null.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB3B39004C5921800D02EE9 /* MovieTexture_Null.cpp */; };
 		AA29CE100558741A00961A51 /* RageFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA272C3004CD757100D02EE9 /* RageFile.cpp */; };
-		AA29CE120558741A00961A51 /* SDL_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6EFDC004770AEA005F316C /* SDL_utils.cpp */; };
 		AA29CE140558741A00961A51 /* CrashHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA76D15404D9D2D200D02EE9 /* CrashHandler.cpp */; };
 		AA29CE150558741A00961A51 /* CrashHandlerChild.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA76D15504D9D2D200D02EE9 /* CrashHandlerChild.cpp */; };
 		AA29CE170558741A00961A51 /* ver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA52E9BD04DBBCF400D02EE9 /* ver.cpp */; };
@@ -525,7 +522,6 @@
 		AA29CE270558741A00961A51 /* RageSoundReader_Resample_Fast.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAE28F2052254A900D02EE9 /* RageSoundReader_Resample_Fast.cpp */; };
 		AA29CE280558741A00961A51 /* RageSoundReader_Resample_Good.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAAE28F4052254A900D02EE9 /* RageSoundReader_Resample_Good.cpp */; };
 		AA29CE290558741A00961A51 /* ScreenExit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAECF8BF05265DB600D02EE9 /* ScreenExit.cpp */; };
-		AA29CE2A0558741A00961A51 /* Vsync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABE7D3F051F07E900D02EE9 /* Vsync.cpp */; };
 		AA29CE2B0558741A00961A51 /* ScreenOptionsMaster.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA53D28405277DAF00D02EE9 /* ScreenOptionsMaster.cpp */; };
 		AA29CE2C0558741A00961A51 /* ScreenOptionsMasterPrefs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA53D28605277DAF00D02EE9 /* ScreenOptionsMasterPrefs.cpp */; };
 		AA29CE2D0558741A00961A51 /* ScreenReloadSongs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA53D28805277DAF00D02EE9 /* ScreenReloadSongs.cpp */; };
@@ -581,11 +577,9 @@
 		AA42F5E9067068D30013509E /* ScreenNetworkOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = AA42F5E7067068D30013509E /* ScreenNetworkOptions.h */; };
 		AA4B425D05733D71005FB5DB /* mad.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA4B425805733D71005FB5DB /* mad.framework */; };
 		AA4B4738057396D3005FB5DB /* ffmpeg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA4B4737057396D3005FB5DB /* ffmpeg.framework */; };
-		AA4B4786057396F8005FB5DB /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA4B4784057396F8005FB5DB /* SDL.framework */; };
 		AA4B47AD0573970A005FB5DB /* mad.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA4B425805733D71005FB5DB /* mad.framework */; };
 		AA4B47B005739711005FB5DB /* mad.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = AA4B425805733D71005FB5DB /* mad.framework */; };
 		AA4B47B405739711005FB5DB /* ffmpeg.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = AA4B4737057396D3005FB5DB /* ffmpeg.framework */; };
-		AA4B47B605739711005FB5DB /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = AA4B4784057396F8005FB5DB /* SDL.framework */; };
 		AA4B59EF0573AA5B005FB5DB /* SMMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA4B59EE0573AA5B005FB5DB /* SMMain.mm */; };
 		AA50201F05D6D7B200ACEFD0 /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA50201D05D6D7B200ACEFD0 /* Profile.cpp */; };
 		AA50202005D6D7B200ACEFD0 /* Profile.h in Headers */ = {isa = PBXBuildFile; fileRef = AA50201E05D6D7B200ACEFD0 /* Profile.h */; };
@@ -704,7 +698,6 @@
 		AA9D236D0561B6CF00FC7F14 /* CombinedLifeMeter.h in Headers */ = {isa = PBXBuildFile; fileRef = AA9D236C0561B6CE00FC7F14 /* CombinedLifeMeter.h */; };
 		AA9EC2F2055F5126007E5098 /* RageTextureID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA9EC2F0055F5126007E5098 /* RageTextureID.cpp */; };
 		AA9EC2F3055F5126007E5098 /* RageTextureID.h in Headers */ = {isa = PBXBuildFile; fileRef = AA9EC2F1055F5126007E5098 /* RageTextureID.h */; };
-		AAA130C70914ACB600497146 /* WindowHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = AAA130C60914ACB600497146 /* WindowHelper.m */; };
 		AAA372D40909934500141131 /* MovieTexture_Generic.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D00909934500141131 /* MovieTexture_Generic.cpp */; };
 		AAA372D50909934500141131 /* MovieTexture_Generic.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA372D10909934500141131 /* MovieTexture_Generic.h */; };
 		AAA372D60909934500141131 /* MovieTexture_Theora.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA372D20909934500141131 /* MovieTexture_Theora.cpp */; };
@@ -952,7 +945,6 @@
 				AA8E5635090B910C00D8CD2D /* resample.framework in CopyFiles */,
 				AA4B47B005739711005FB5DB /* mad.framework in CopyFiles */,
 				AA4B47B405739711005FB5DB /* ffmpeg.framework in CopyFiles */,
-				AA4B47B605739711005FB5DB /* SDL.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1102,7 +1094,6 @@
 		AA42F5E7067068D30013509E /* ScreenNetworkOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ScreenNetworkOptions.h; path = ../src/ScreenNetworkOptions.h; sourceTree = "<group>"; };
 		AA4B425805733D71005FB5DB /* mad.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = mad.framework; path = Frameworks/mad.framework; sourceTree = SOURCE_ROOT; };
 		AA4B4737057396D3005FB5DB /* ffmpeg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ffmpeg.framework; path = Frameworks/ffmpeg.framework; sourceTree = SOURCE_ROOT; };
-		AA4B4784057396F8005FB5DB /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = Frameworks/SDL.framework; sourceTree = SOURCE_ROOT; };
 		AA4B59EE0573AA5B005FB5DB /* SMMain.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = SMMain.mm; sourceTree = SOURCE_ROOT; };
 		AA4B5CC40573AD81005FB5DB /* wchar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; path = wchar.cpp; sourceTree = "<group>"; };
 		AA4F38C004E2D0B700D02EE9 /* NoteDataUtil.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; name = NoteDataUtil.cpp; path = ../src/NoteDataUtil.cpp; sourceTree = "<group>"; };
@@ -1586,7 +1577,6 @@
 		AAA0F7CE047AC7BF005F316C /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		AAA0F7D0047AC7EA005F316C /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		AAA0F7D2047ACBC9005F316C /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
-		AAA130C60914ACB600497146 /* WindowHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WindowHelper.m; sourceTree = "<group>"; };
 		AAA372D00909934500141131 /* MovieTexture_Generic.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MovieTexture_Generic.cpp; path = MovieTexture/MovieTexture_Generic.cpp; sourceTree = "<group>"; };
 		AAA372D10909934500141131 /* MovieTexture_Generic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MovieTexture_Generic.h; path = MovieTexture/MovieTexture_Generic.h; sourceTree = "<group>"; };
 		AAA372D20909934500141131 /* MovieTexture_Theora.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = MovieTexture_Theora.cpp; path = MovieTexture/MovieTexture_Theora.cpp; sourceTree = "<group>"; };
@@ -1682,8 +1672,6 @@
 		AABE78760591287100E8BF50 /* MemoryCardDriver_Null.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; path = MemoryCardDriver_Null.h; sourceTree = "<group>"; };
 		AABE788B05912B0600E8BF50 /* DualScrollBar.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; name = DualScrollBar.h; path = ../src/DualScrollBar.h; sourceTree = "<group>"; };
 		AABE788C05912B0600E8BF50 /* DualScrollBar.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; name = DualScrollBar.cpp; path = ../src/DualScrollBar.cpp; sourceTree = "<group>"; };
-		AABE7D3E051F07E900D02EE9 /* Vsync.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; path = Vsync.h; sourceTree = "<group>"; };
-		AABE7D3F051F07E900D02EE9 /* Vsync.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; path = Vsync.cpp; sourceTree = "<group>"; };
 		AAC23F7C0485E68D005F316C /* RageDisplay_OGL.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; name = RageDisplay_OGL.cpp; path = ../src/RageDisplay_OGL.cpp; sourceTree = "<group>"; };
 		AAC23F7D0485E68D005F316C /* RageDisplay_OGL.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; name = RageDisplay_OGL.h; path = ../src/RageDisplay_OGL.h; sourceTree = "<group>"; };
 		AAC23F7E0485E68D005F316C /* RageUtil_CharConversions.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; name = RageUtil_CharConversions.cpp; path = ../src/RageUtil_CharConversions.cpp; sourceTree = "<group>"; };
@@ -1895,7 +1883,6 @@
 				AA29CE420558741A00961A51 /* CoreFoundation.framework in Frameworks */,
 				AA4B425D05733D71005FB5DB /* mad.framework in Frameworks */,
 				AA4B4738057396D3005FB5DB /* ffmpeg.framework in Frameworks */,
-				AA4B4786057396F8005FB5DB /* SDL.framework in Frameworks */,
 				AA4B47AD0573970A005FB5DB /* mad.framework in Frameworks */,
 				AA230EB006043704002672F3 /* AudioToolbox.framework in Frameworks */,
 				AA230EB106043704002672F3 /* AudioUnit.framework in Frameworks */,
@@ -1932,7 +1919,6 @@
 				AA8DD84904A2E51400D02EE9 /* OpenGL.framework */,
 				AAA0F7D2047ACBC9005F316C /* QuickTime.framework */,
 				AA8E5629090B90D200D8CD2D /* resample.framework */,
-				AA4B4784057396F8005FB5DB /* SDL.framework */,
 				AA77E8A108B6ABD500FA24CA /* vecLib.framework */,
 			);
 			name = "Linked Frameworks";
@@ -3087,11 +3073,8 @@
 				AA8A3EC806EDDAE4002F25AB /* DarwinThreadHelpers.h */,
 				AAF744A306116B0500B19AD1 /* PublicUtility */,
 				AAD64AA10603FE7300EF8CDE /* StepMania.pch */,
-				AABE7D3F051F07E900D02EE9 /* Vsync.cpp */,
-				AABE7D3E051F07E900D02EE9 /* Vsync.h */,
 				AA4B5CC40573AD81005FB5DB /* wchar.cpp */,
 				AA2FB62909120FC5000FD574 /* PreferredLanguage.m */,
-				AAA130C60914ACB600497146 /* WindowHelper.m */,
 			);
 			path = Darwin;
 			sourceTree = "<group>";
@@ -3165,7 +3148,6 @@
 				AA29CC370558741A00961A51 /* RageTimer.h in Headers */,
 				AA29CC380558741A00961A51 /* RageTypes.h in Headers */,
 				AA29CC390558741A00961A51 /* RageUtil.h in Headers */,
-				AA29CC3C0558741A00961A51 /* SDL_utils.h in Headers */,
 				AA29CC3E0558741A00961A51 /* Character.h in Headers */,
 				AA29CC3F0558741A00961A51 /* CodeDetector.h in Headers */,
 				AA29CC400558741A00961A51 /* Course.h in Headers */,
@@ -3359,7 +3341,6 @@
 				AA29CD290558741A00961A51 /* RageSoundReader_Resample_Fast.h in Headers */,
 				AA29CD2A0558741A00961A51 /* RageSoundReader_Resample_Good.h in Headers */,
 				AA29CD2B0558741A00961A51 /* ScreenExit.h in Headers */,
-				AA29CD2C0558741A00961A51 /* Vsync.h in Headers */,
 				AA29CD2D0558741A00961A51 /* ScreenOptionsMaster.h in Headers */,
 				AA29CD2E0558741A00961A51 /* ScreenOptionsMasterPrefs.h in Headers */,
 				AA29CD2F0558741A00961A51 /* ScreenReloadSongs.h in Headers */,
@@ -3933,7 +3914,6 @@
 				AA29CE0D0558741A00961A51 /* ArchHooks_darwin.cpp in Sources */,
 				AA29CE0E0558741A00961A51 /* MovieTexture_Null.cpp in Sources */,
 				AA29CE100558741A00961A51 /* RageFile.cpp in Sources */,
-				AA29CE120558741A00961A51 /* SDL_utils.cpp in Sources */,
 				AA29CE140558741A00961A51 /* CrashHandler.cpp in Sources */,
 				AA29CE150558741A00961A51 /* CrashHandlerChild.cpp in Sources */,
 				AA29CE170558741A00961A51 /* ver.cpp in Sources */,
@@ -3950,7 +3930,6 @@
 				AA29CE270558741A00961A51 /* RageSoundReader_Resample_Fast.cpp in Sources */,
 				AA29CE280558741A00961A51 /* RageSoundReader_Resample_Good.cpp in Sources */,
 				AA29CE290558741A00961A51 /* ScreenExit.cpp in Sources */,
-				AA29CE2A0558741A00961A51 /* Vsync.cpp in Sources */,
 				AA29CE2B0558741A00961A51 /* ScreenOptionsMaster.cpp in Sources */,
 				AA29CE2C0558741A00961A51 /* ScreenOptionsMasterPrefs.cpp in Sources */,
 				AA29CE2D0558741A00961A51 /* ScreenReloadSongs.cpp in Sources */,
@@ -4145,7 +4124,6 @@
 				AAA372D60909934500141131 /* MovieTexture_Theora.cpp in Sources */,
 				AA2FB62A09120FC5000FD574 /* PreferredLanguage.m in Sources */,
 				AA2FB639091212B0000FD574 /* LifeMeter.cpp in Sources */,
-				AAA130C70914ACB600497146 /* WindowHelper.m in Sources */,
 				AACF47BA094A497F0011B9F3 /* MemoryCardDriverThreaded_OSX.cpp in Sources */,
 				AAFBEED1094D7FCB000029DE /* SpecialFiles.cpp in Sources */,
 				AAFBEEEB094D807E000029DE /* ScreenOptionsManageEditSteps.cpp in Sources */,

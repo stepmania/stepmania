@@ -1,6 +1,10 @@
 #ifndef ARCH_SETUP_DARWIN_H
 #define ARCH_SETUP_DARWIN_H
 
+// Replace the main function.
+extern "C" int SM_main( int argc, char *argv[] );
+#define main(x,y) SM_main(x,y)
+
 typedef unsigned char      UInt8;
 typedef signed char        SInt8;
 typedef unsigned short     UInt16;
@@ -20,7 +24,6 @@ typedef unsigned long long UInt64;
 #define HAVE_CRYPTOPP
 #define HAVE_THEORA
 #define HAVE_FFMPEG
-#define HAVE_SDL
 #define HAVE_PTHREAD_COND_TIMEDWAIT
 /* This must be defined to 1 because autoconf's AC_CHECK_DECLS macro decides to define
  * this in all cases. If only they could be consistent... */

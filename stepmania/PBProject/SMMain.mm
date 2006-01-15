@@ -6,12 +6,6 @@
 #include "ProductInfo.h"
 #include "arch/ArchHooks/ArchHooks.h"
 
-// XXX remove this
-extern "C"
-{
-	extern int SDL_main(int, char **);
-}
-
 @interface SMApplication : NSApplication
 - (void)fullscreen:(id)sender;
 @end
@@ -59,10 +53,8 @@ extern "C"
 
 - (void) startGame:(id)sender
 {
-	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	// Hand off to main application code.
-    exit( SDL_main(mArgc, mArgv) );
-	[pool release]; // not really needed, but shuts gcc up.
+	exit( SM_main(mArgc, mArgv) );
 }
 
 // Called when the internal event loop has just started running.
@@ -126,6 +118,8 @@ static void setupMenus( void )
 	[NSApp setAppleMenu:appMenu]; // This isn't the apple menu, but it doesn't work without this.
     [NSApp setWindowsMenu:windowMenu];
 }
+
+#undef main
 
 int main( int argc, char **argv )
 {
