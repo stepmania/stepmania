@@ -188,8 +188,7 @@ CString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
 	if( p.windowed )
 	{
 		/* We're going windowed.  If we were previously fullscreen, reset. */
-		if( !g_CurrentParams.windowed )
-			ChangeDisplaySettings( NULL, 0 );
+		ChangeDisplaySettings( NULL, 0 );
 
 		return CString();
 	}
