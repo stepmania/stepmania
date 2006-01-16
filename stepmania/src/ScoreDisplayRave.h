@@ -7,6 +7,7 @@
 #include "GameConstantsAndTypes.h"
 #include "Sprite.h"
 #include "BitmapText.h"
+#include "AutoActor.h"
 
 
 class ScoreDisplayRave : public ScoreDisplay
@@ -18,9 +19,9 @@ public:
 	virtual void Update( float fDelta );
 
 protected:
-	Sprite m_sprFrameBase;
+	AutoActor m_sprFrameBase;
 	Sprite m_sprMeter[NUM_ATTACK_LEVELS];
-	Sprite m_sprFrameOverlay;
+	AutoActor m_sprFrameOverlay;
 	BitmapText	m_textLevel;
 
 	AttackLevel	m_lastLevelSeen;

@@ -15,7 +15,7 @@ ScoreDisplayRave::ScoreDisplayRave()
 
 	m_lastLevelSeen = ATTACK_LEVEL_1;
 
-	this->AddChild( &m_sprFrameBase );
+	this->AddChild( m_sprFrameBase );
 
 	for( int i=0; i<NUM_ATTACK_LEVELS; i++ )	
 	{
@@ -24,7 +24,7 @@ ScoreDisplayRave::ScoreDisplayRave()
 		this->AddChild( &m_sprMeter[i] );
 	}
 
-	this->AddChild( &m_sprFrameOverlay );
+	this->AddChild( m_sprFrameOverlay );
 
 	m_textLevel.LoadFromFont( THEME->GetPathF("ScoreDisplayRave","level") );
 	m_textLevel.SetText( "1" );
