@@ -92,39 +92,39 @@ public:
 	void Load( const CString &sType );
 
 private:
-	CString		m_sType;
+	CString				m_sType;
 
-	BitmapText				m_textItemParent;
+	BitmapText			m_textItemParent;
 	OptionsCursor			m_UnderlineParent;
-	Actor					*m_sprBullet;
-	BitmapText				m_textTitle;
-	OptionIcon				m_OptionIcon;
+	Actor				*m_sprBullet;
+	BitmapText			m_textTitle;
+	OptionIcon			m_OptionIcon;
 
 	// metrics
-	ThemeMetric<float>				BULLET_X;
+	ThemeMetric<float>		BULLET_X;
 	ThemeMetric<apActorCommands>	BULLET_ON_COMMAND;
-	ThemeMetric<float>				TITLE_X;
+	ThemeMetric<float>		TITLE_X;
 	ThemeMetric<apActorCommands>	TITLE_ON_COMMAND;
 	ThemeMetric<apActorCommands>	TITLE_GAIN_FOCUS_COMMAND;
 	ThemeMetric<apActorCommands>	TITLE_LOSE_FOCUS_COMMAND;
-	ThemeMetric<float>				ITEMS_START_X;
-	ThemeMetric<float>				ITEMS_END_X;
-	ThemeMetric<float>				ITEMS_GAP_X;
-	ThemeMetric1D<float>			ITEMS_LONG_ROW_X;
-	ThemeMetric<float>				ITEMS_LONG_ROW_SHARED_X;
+	ThemeMetric<float>		ITEMS_START_X;
+	ThemeMetric<float>		ITEMS_END_X;
+	ThemeMetric<float>		ITEMS_GAP_X;
+	ThemeMetric1D<float>		ITEMS_LONG_ROW_X;
+	ThemeMetric<float>		ITEMS_LONG_ROW_SHARED_X;
 	ThemeMetric<apActorCommands>	ITEMS_ON_COMMAND;
 	ThemeMetric<apActorCommands>	ITEM_GAIN_FOCUS_COMMAND;
 	ThemeMetric<apActorCommands>	ITEM_LOSE_FOCUS_COMMAND;
-	ThemeMetric1D<float>			ICONS_X;
+	ThemeMetric1D<float>		ICONS_X;
 	ThemeMetric<apActorCommands>	ICONS_ON_COMMAND;
-	ThemeMetric<RageColor>			COLOR_SELECTED;
-	ThemeMetric<RageColor>			COLOR_NOT_SELECTED;
-	ThemeMetric<RageColor>			COLOR_DISABLED;
-	ThemeMetric<bool>				CAPITALIZE_ALL_OPTION_NAMES;
-	ThemeMetric<float>				TWEEN_SECONDS;
-	ThemeMetric<bool>				SHOW_BPM_IN_SPEED_TITLE;
-	ThemeMetric<bool>				SHOW_OPTION_ICONS;
-	ThemeMetric<bool>				SHOW_UNDERLINES;
+	ThemeMetric<RageColor>		COLOR_SELECTED;
+	ThemeMetric<RageColor>		COLOR_NOT_SELECTED;
+	ThemeMetric<RageColor>		COLOR_DISABLED;
+	ThemeMetric<bool>		CAPITALIZE_ALL_OPTION_NAMES;
+	ThemeMetric<float>		TWEEN_SECONDS;
+	ThemeMetric<bool>		SHOW_BPM_IN_SPEED_TITLE;
+	ThemeMetric<bool>		SHOW_OPTION_ICONS;
+	ThemeMetric<bool>		SHOW_UNDERLINES;
 
 	friend class OptionRow;
 };
@@ -215,24 +215,24 @@ protected:
 
 	const OptionRowType		*m_pParentType;
 	OptionRowDefinition		m_RowDef;
-	RowType					m_RowType;
+	RowType				m_RowType;
 	OptionRowHandler*		m_pHand;
 
-	ActorFrame				m_Frame;
+	ActorFrame			m_Frame;
 
-	vector<BitmapText *>	m_textItems;				// size depends on m_bRowIsLong and which players are joined
-	vector<OptionsCursor *>	m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
+	vector<BitmapText *>		m_textItems;			// size depends on m_bRowIsLong and which players are joined
+	vector<OptionsCursor *>		m_Underline[NUM_PLAYERS];	// size depends on m_bRowIsLong and which players are joined
 
-	Actor					*m_sprBullet;
-	BitmapText				*m_textTitle;
-	OptionIcon				*m_OptionIcons[NUM_PLAYERS];
+	Actor				*m_sprBullet;
+	BitmapText			*m_textTitle;
+	OptionIcon			*m_OptionIcons[NUM_PLAYERS];
 
-	bool					m_bFirstItemGoesDown;
-	bool					m_bRowHasFocus[NUM_PLAYERS];
+	bool				m_bFirstItemGoesDown;
+	bool				m_bRowHasFocus[NUM_PLAYERS];
 
-	int m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
+	int				m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
 	// Only one will true at a time if m_RowDef.bMultiSelect
-	vector<bool> m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size()
+	vector<bool>			m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size()
 
 public:
 	Actor::TweenState m_tsDestination;	// this should approach m_tsDestination.
