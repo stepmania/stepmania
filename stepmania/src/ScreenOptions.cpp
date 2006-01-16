@@ -960,30 +960,32 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 		m_iCurrentRow[pn], row.GetChoiceInRowWithFocus(pn), m_iFocusX[pn]);
 }
 
+CString ScreenOptions::GetNextScreenForSelection( PlayerNumber pn ) const
+{
+	int iCurRow = this->GetCurrentRow( pn );
+	ASSERT( iCurRow >= 0 && iCurRow < (int)m_pRows.size() );
+	const OptionRow *pRow = m_pRows[iCurRow];
+
+	int iChoice = pRow->GetChoiceInRowWithFocus( pn );
+	if( pRow->GetFirstItemGoesDown() )
+		iChoice--;
+
+	// not the "goes down" item
+	if( iChoice == -1 )
+		return RString();
+
+	const OptionRowHandler *pHand = pRow->GetHandler();
+	if( pHand == NULL )
+		return RString();
+	return pHand->GetScreen( iChoice );
+}
+
 void ScreenOptions::BeginFadingOut()
 {
-	/* If the selection is on a LIST, and the selected LIST option sets the screen,
-	 * honor it. */
-	int iCurRow = this->GetCurrentRow();
-	ASSERT( iCurRow >= 0 && iCurRow < (int)m_pRows.size() );
-	const OptionRow &row = *m_pRows[iCurRow];
-
-	{
-		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-		if( row.GetFirstItemGoesDown() )
-			iChoice--;
-		// not the "goes down" item
-		if( iChoice != -1 )
-		{
-			const OptionRowHandler *pHand = row.GetHandler();
-			if( pHand != NULL )
-			{
-				CString sThisScreen = pHand->GetScreen( iChoice );
-				if( sThisScreen != "" )
-					m_sNextScreen = sThisScreen;
-			}
-		}
-	}
+	/* If the selected option sets a screen, honor it. */
+	CString sThisScreen = GetNextScreenForSelection( GAMESTATE->m_MasterPlayerNumber );
+	if( sThisScreen != "" )
+		m_sNextScreen = sThisScreen;
 
 	// If options set a NextScreen or one is specified in metrics, then fade out
 	if( GetNextScreen() != "" )

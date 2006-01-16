@@ -63,6 +63,7 @@ protected:
 	void StoreFocus( PlayerNumber pn );
 
 	void BeginFadingOut();
+	CString GetNextScreenForSelection( PlayerNumber pn ) const;
 
 	void ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDelta, bool bRepeat );
 	void ChangeValueInRowAbsolute( int iRow, PlayerNumber pn, int iChoiceIndex, bool bRepeat );
