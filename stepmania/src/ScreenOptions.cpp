@@ -812,17 +812,11 @@ void ScreenOptions::MenuBack( PlayerNumber pn )
 	Cancel( SM_GoToPrevScreen );
 }
 
-bool ScreenOptions::IsOnLastRow( PlayerNumber pn ) const
-{
-	int iCurRow = m_iCurrentRow[pn];
-	return iCurRow == (int)(m_pRows.size()-1);
-}
-
 bool ScreenOptions::AllAreOnLastRow() const
 {
 	FOREACH_HumanPlayer( p )
 	{
-		if( !IsOnLastRow(p) )
+		if( m_iCurrentRow[p] != (int)(m_pRows.size()-1) )
 			return false;
 	}
 	return true;

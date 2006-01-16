@@ -87,7 +87,6 @@ protected:
 
 	/* Returns -1 if on a row with no OptionRowDefinition (eg. EXIT). */
 	int GetCurrentRow(PlayerNumber pn = PLAYER_1) const;
-	bool IsOnLastRow( PlayerNumber pn ) const;
 	bool AllAreOnLastRow() const;
 
 public:
