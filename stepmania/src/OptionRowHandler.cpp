@@ -64,7 +64,7 @@ public:
 	bool m_bUseModNameForIcon;
 	vector<CString> m_vsBroadcastOnExport;
 
-	OptionRowHandlerList::OptionRowHandlerList() { Init(); }
+	OptionRowHandlerList() { Init(); }
 	virtual void Init()
 	{
 		OptionRowHandler::Init();
@@ -741,7 +741,7 @@ public:
 
 		LUA->Release(L);
 	}
-    virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		Lua *L = LUA->Get();
 
@@ -802,7 +802,7 @@ class OptionRowHandlerConfig : public OptionRowHandler
 public:
 	const ConfOption *opt;
 
-	OptionRowHandlerConfig::OptionRowHandlerConfig() { Init(); }
+	OptionRowHandlerConfig() { Init(); }
 	void Init()
 	{
 		OptionRowHandler::Init();
@@ -881,7 +881,7 @@ public:
 	BroadcastOnChange<StepsType> *m_pstToFill;
 	vector<StepsType> m_vStepsTypesToShow;
 
-	OptionRowHandlerStepsType::OptionRowHandlerStepsType() { Init(); }
+	OptionRowHandlerStepsType() { Init(); }
 	void Init()
 	{
 		OptionRowHandler::Init();
@@ -980,7 +980,7 @@ public:
 	vector<Steps*> m_vSteps;
 	vector<Difficulty> m_vDifficulties;
 
-	OptionRowHandlerSteps::OptionRowHandlerSteps() { Init(); }
+	OptionRowHandlerSteps() { Init(); }
 	void Init()
 	{
 		OptionRowHandler::Init();
@@ -1138,7 +1138,7 @@ class OptionRowHandlerGameCommand : public OptionRowHandler
 public:
 	GameCommand m_gc;
 
-	OptionRowHandlerGameCommand::OptionRowHandlerGameCommand() { Init(); }
+	OptionRowHandlerGameCommand() { Init(); }
 	void Init()
 	{
 		m_gc.Init();
