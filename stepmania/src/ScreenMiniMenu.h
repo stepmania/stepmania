@@ -10,13 +10,13 @@ typedef bool (*MenuRowUpdateEnabled)();
 
 struct MenuRowDef
 {
-	int				iRowCode;
+	int			iRowCode;
 	CString			sName;
 	bool			bEnabled;
-	MenuRowUpdateEnabled pfnEnabled;	// if ! NULL, used to fill bEnabled
+	MenuRowUpdateEnabled	pfnEnabled;	// if ! NULL, used to fill bEnabled
 	EditMode		emShowIn;
-	int				iDefaultChoice;
-	vector<CString> choices;
+	int			iDefaultChoice;
+	vector<CString>		choices;
 	bool			bThemeItems;
 
 	MenuRowDef() {}
@@ -102,11 +102,11 @@ protected:
 	ScreenMessage		m_SMSendOnOK;
 	ScreenMessage		m_SMSendOnCancel;
 
-	vector<MenuRowDef> m_vMenuRows;
+	vector<MenuRowDef>	m_vMenuRows;
 
 public:
-	static bool s_bCancelled;
-	static int	s_iLastRowCode;
+	static bool		s_bCancelled;
+	static int		s_iLastRowCode;
 	static vector<int>	s_viLastAnswers;
 };
 
