@@ -78,8 +78,6 @@ struct OptionRowDefinition
 		Init();
 		m_sName=n;
 		m_bOneChoiceForAllPlayers=b;
-		m_selectType=SELECT_ONE;
-		m_layoutType=LAYOUT_SHOW_ALL_IN_ROW;
 #define PUSH( c )	if(c) m_vsChoices.push_back(c);
 		PUSH(c0);PUSH(c1);PUSH(c2);PUSH(c3);PUSH(c4);PUSH(c5);PUSH(c6);PUSH(c7);PUSH(c8);PUSH(c9);PUSH(c10);PUSH(c11);PUSH(c12);PUSH(c13);PUSH(c14);PUSH(c15);PUSH(c16);PUSH(c17);PUSH(c18);PUSH(c19);
 #undef PUSH
