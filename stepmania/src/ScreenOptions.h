@@ -55,7 +55,7 @@ protected:
 	void PositionUnderlines( int iRow, PlayerNumber pn );
 	void PositionAllUnderlines();
 	void PositionIcons();
-	virtual void RefreshIcons( int iRow, PlayerNumber pn );
+	void RefreshIcons( int iRow, PlayerNumber pn );
 	void RefreshAllIcons();
 	void PositionCursors();
 	void PositionRows();
