@@ -360,7 +360,7 @@ ScreenOptions::~ScreenOptions()
 
 CString ScreenOptions::GetExplanationText( int iRow ) const
 {
-	OptionRow &row = *m_pRows[iRow];
+	const OptionRow &row = *m_pRows[iRow];
 
 	bool bAllowExplanation = row.GetRowDef().m_bAllowExplanation;
 	bool bShowExplanations = bAllowExplanation && SHOW_EXPLANATIONS.GetValue();
@@ -375,10 +375,10 @@ CString ScreenOptions::GetExplanationText( int iRow ) const
 	return OPTION_EXPLANATION(sExplanationName);
 }
 
-void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut )
+void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut ) const
 {
 	ASSERT_M( iRow < (int)m_pRows.size(), ssprintf("%i < %i", iRow, (int)m_pRows.size() ) );
-	OptionRow &row = *m_pRows[iRow];
+	const OptionRow &row = *m_pRows[iRow];
 	row.GetWidthXY( pn, iChoiceOnRow, iWidthOut, iXOut, iYOut );
 }
 
