@@ -416,11 +416,7 @@ void ScreenOptions::PositionAllUnderlines()
 void ScreenOptions::PositionIcons()
 {
 	for( unsigned i=0; i<m_pRows.size(); i++ )	// foreach options line
-	{
-		OptionRow &row = *m_pRows[i];
-		row.PositionIcons();
-			continue;
-	}
+		m_pRows[i]->PositionIcons();
 }
 
 void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
