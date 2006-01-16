@@ -108,11 +108,17 @@ protected:
 	vector<OptionRow*>	m_pRows;
 
 	Navigation		m_OptionsNavigation;
+	InputMode		m_InputMode;
 
 	int			m_iCurrentRow[NUM_PLAYERS];
 	int			m_iFocusX[NUM_PLAYERS];
+	bool			m_bWasOnExit[NUM_PLAYERS];
+	float			m_fLockInputSecs;
 
-	InputMode		m_InputMode;
+	// TRICKY: People hold Start to get to PlayerOptions, then 
+	// the repeat events cause them to zip to the bottom.  So, ignore
+	// Start repeat events until we've seen one first pressed event.
+	bool			m_bGotAtLeastOneStartPressed[NUM_PLAYERS];
 
 	ActorFrame		m_framePage;
 	AutoActor		m_sprPage;
@@ -125,16 +131,9 @@ protected:
 	DualScrollBar		m_ScrollBar;
 
 	AutoActor		m_sprMore;
-	bool			m_bWasOnExit[NUM_PLAYERS];
-	float			m_fLockInputSecs;
 
 	// show if the current selections will disqualify a high score
 	AutoActor		m_sprDisqualify[NUM_PLAYERS];
-
-	// TRICKY: People hold Start to get to PlayerOptions, then 
-	// the repeat events cause them to zip to the bottom.  So, ignore
-	// Start repeat events until we've seen one first pressed event.
-	bool			m_bGotAtLeastOneStartPressed[NUM_PLAYERS];
 
 	RageSound		m_SoundChangeCol;
 	RageSound		m_SoundNextRow;
