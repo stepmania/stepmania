@@ -62,7 +62,7 @@ protected:
 	void UpdateEnabledDisabled( int iRow );
 	void StoreFocus( PlayerNumber pn );
 
-	virtual void BeginFadingOut() { this->PostScreenMessage( SM_BeginFadingOut, 0 ); }
+	void BeginFadingOut();
 
 	void ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDelta, bool bRepeat );
 	void ChangeValueInRowAbsolute( int iRow, PlayerNumber pn, int iChoiceIndex, bool bRepeat );

@@ -960,6 +960,36 @@ void ScreenOptions::StoreFocus( PlayerNumber pn )
 		m_iCurrentRow[pn], row.GetChoiceInRowWithFocus(pn), m_iFocusX[pn]);
 }
 
+void ScreenOptions::BeginFadingOut()
+{
+	/* If the selection is on a LIST, and the selected LIST option sets the screen,
+	 * honor it. */
+	int iCurRow = this->GetCurrentRow();
+	ASSERT( iCurRow >= 0 && iCurRow < (int)m_pRows.size() );
+	const OptionRow &row = *m_pRows[iCurRow];
+
+	{
+		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
+		if( row.GetFirstItemGoesDown() )
+			iChoice--;
+		// not the "goes down" item
+		if( iChoice != -1 )
+		{
+			const OptionRowHandler *pHand = row.GetHandler();
+			if( pHand != NULL )
+			{
+				CString sThisScreen = pHand->GetScreen( iChoice );
+				if( sThisScreen != "" )
+					m_sNextScreen = sThisScreen;
+			}
+		}
+	}
+
+	// If options set a NextScreen or one is specified in metrics, then fade out
+	if( GetNextScreen() != "" )
+		this->PostScreenMessage( SM_BeginFadingOut, 0 );
+}
+
 /* Left/right */
 void ScreenOptions::ChangeValueInRowAbsolute( int iRow, PlayerNumber pn, int iChoiceIndex, bool bRepeat )
 {

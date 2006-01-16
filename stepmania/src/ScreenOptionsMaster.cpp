@@ -102,36 +102,6 @@ void ScreenOptionsMaster::ExportOptions( int r, const vector<PlayerNumber> &vpns
 	m_iChangeMask |= row.ExportOptions( vpns, bRowHasFocus );
 }
 
-void ScreenOptionsMaster::BeginFadingOut()
-{
-	/* If the selection is on a LIST, and the selected LIST option sets the screen,
-	 * honor it. */
-	int iCurRow = this->GetCurrentRow();
-	ASSERT( iCurRow >= 0 && iCurRow < (int)m_pRows.size() );
-	const OptionRow &row = *m_pRows[iCurRow];
-
-	{
-		int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-		if( row.GetFirstItemGoesDown() )
-			iChoice--;
-		// not the "goes down" item
-		if( iChoice != -1 )
-		{
-			const OptionRowHandler *pHand = row.GetHandler();
-			if( pHand != NULL )
-			{
-				CString sThisScreen = pHand->GetScreen( iChoice );
-				if( sThisScreen != "" )
-					m_sNextScreen = sThisScreen;
-			}
-		}
-	}
-
-	// If options set a NextScreen or one is specified in metrics, then fade out
-	if( GetNextScreen() != "" )
-		ScreenOptions::BeginFadingOut();
-}
-
 void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 {
 	if( SM == SM_ExportOptions )

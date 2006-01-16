@@ -21,8 +21,6 @@ protected:
 
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
-
-	virtual void BeginFadingOut();
 };
 
 #endif
