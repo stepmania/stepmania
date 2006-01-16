@@ -1,0 +1,23 @@
+diff -ru ffmpeg-0.4.9-pre1/libavcodec/mpeg12.c ffmpeg-0.4.9-pre1-sm/libavcodec/mpeg12.c
+--- ffmpeg-0.4.9-pre1/libavcodec/mpeg12.c	Wed Jun 30 19:12:21 2004
++++ ffmpeg-0.4.9-pre1-sm/libavcodec/mpeg12.c	Mon Jan 24 23:45:27 2005
+@@ -2769,12 +2769,14 @@
+     MpegEncContext *s2 = &s->mpeg_enc_ctx;
+     dprintf("fill_buffer\n");
+ 
+-    /* special case for last picture */
+-    if (buf_size == 0 && s2->low_delay==0 && s2->next_picture_ptr) {
+-        *picture= *(AVFrame*)s2->next_picture_ptr;
+-        s2->next_picture_ptr= NULL;
++    if (buf_size == 0) {
++	/* special case for last picture */
++	if (s2->low_delay==0 && s2->next_picture_ptr) {
++	    *picture= *(AVFrame*)s2->next_picture_ptr;
++	    s2->next_picture_ptr= NULL;
+ 
+-        *data_size = sizeof(AVFrame);
++	    *data_size = sizeof(AVFrame);
++	}
+         return 0;
+     }
+ 

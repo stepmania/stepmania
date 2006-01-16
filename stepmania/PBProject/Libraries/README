@@ -13,6 +13,7 @@ lua-5.0
 Directions:
 1. Decompress all of those in the Libraries directory (libresample can be
 copied from stepmania/src/libresample).
+1.5. Patch ffmpeg using ffmpeg-0.4.9-pre1-sm.patch.
 2. Some of these need to have ./configure run before they will build. I know
 that ffmpeg does. Others might as well. ffmpeg's configure needs to be run as
 ./configure --disable-vhook
