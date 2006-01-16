@@ -457,7 +457,7 @@ void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 void ScreenOptions::RefreshAllIcons()
 {
 	FOREACH_HumanPlayer( p )
-        for( unsigned r=0; r<m_pRows.size(); ++r )
+		for( unsigned r=0; r<m_pRows.size(); ++r )
 			this->RefreshIcons( r, p );
 }
 
