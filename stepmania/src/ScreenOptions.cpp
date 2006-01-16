@@ -72,6 +72,12 @@ static CString OPTION_EXPLANATION( CString s )
 	return THEME->GetString("OptionExplanations",s);
 }
 
+static const char *InputModeNames[] = {
+	"Individual",
+	"Together"
+};
+StringToX( InputMode );
+
 //REGISTER_SCREEN_CLASS( ScreenOptions );	// can't be instantiated
 ScreenOptions::ScreenOptions()
 {

@@ -20,8 +20,11 @@ AutoScreenMessage( SM_ExportOptions )
 enum InputMode 
 { 
 	INPUTMODE_INDIVIDUAL, 	// each player controls their own cursor
-	INPUTMODE_SHARE_CURSOR		// both players control the same cursor
+	INPUTMODE_SHARE_CURSOR,		// both players control the same cursor
+	NUM_InputMode,
+	InputMode_Invalid
 };
+InputMode StringToInputMode( const CString& str );
 
 #define FOREACH_OptionsPlayer( pn ) \
 	for( PlayerNumber pn=GetNextHumanPlayer((PlayerNumber)-1); pn!=PLAYER_INVALID && (m_InputMode==INPUTMODE_INDIVIDUAL || pn==0); pn=GetNextHumanPlayer(pn) )
