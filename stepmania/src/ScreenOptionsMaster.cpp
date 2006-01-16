@@ -73,10 +73,6 @@ void ScreenOptionsMaster::Init()
 	InitMenu( OptionRowDefs, OptionRowHandlers );
 }
 
-ScreenOptionsMaster::~ScreenOptionsMaster()
-{
-}
-
 void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns )
 {
 	FOREACH_CONST( PlayerNumber, vpns, pn )

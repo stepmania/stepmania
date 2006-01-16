@@ -9,9 +9,8 @@ class ScreenOptionsMaster : public ScreenOptions
 {
 public:
 	virtual void Init();
-	virtual ~ScreenOptionsMaster();
 
-protected:
+private:
 	int m_iChangeMask;
 	
 protected:
