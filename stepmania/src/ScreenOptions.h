@@ -50,7 +50,6 @@ protected:
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns ) = 0;
 
-	void InitOptionsText();
 	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut );
 	CString GetExplanationText( int iRow ) const;
 	void PositionUnderlines( int iRow, PlayerNumber pn );
