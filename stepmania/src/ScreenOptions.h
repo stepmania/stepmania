@@ -128,9 +128,6 @@ protected:
 
 	AutoActor		m_sprMore;
 
-	// show if the current selections will disqualify a high score
-	AutoActor		m_sprDisqualify[NUM_PLAYERS];
-
 	RageSound		m_SoundChangeCol;
 	RageSound		m_SoundNextRow;
 	RageSound		m_SoundPrevRow;

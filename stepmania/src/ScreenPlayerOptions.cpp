@@ -21,6 +21,16 @@ void ScreenPlayerOptions::Init()
 {
 	ScreenOptionsMaster::Init();
 
+	FOREACH_PlayerNumber( p )
+	{
+		m_sprDisqualify[p].Load( THEME->GetPathG(m_sName,"disqualify") );
+		m_sprDisqualify[p]->SetName( ssprintf("DisqualifyP%i",p+1) );
+		SET_XY( m_sprDisqualify[p] );
+		m_sprDisqualify[p]->SetHidden( true );	// unhide later if handicapping options are discovered
+		m_sprDisqualify[p]->SetDrawOrder( 2 );
+		m_framePage.AddChild( m_sprDisqualify[p] );
+	}
+
 	m_bAskOptionsMessage =
 		!GAMESTATE->IsEditing() && PREFSMAN->m_ShowSongOptions == PrefsManager::ASK;
 
@@ -61,6 +71,9 @@ void ScreenPlayerOptions::Init()
 
 void ScreenPlayerOptions::BeginScreen()
 {
+	FOREACH_PlayerNumber( p )
+		ON_COMMAND( m_sprDisqualify[p] );
+
 	ScreenOptionsMaster::BeginScreen();
 
 	FOREACH_HumanPlayer( p )
