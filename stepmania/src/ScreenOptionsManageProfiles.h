@@ -28,8 +28,6 @@ protected:
 
 	vector<CString> m_vsLocalProfileID;
 
-	vector<OptionRowHandler*> m_OptionRowHandlers;
-
 	ScreenMiniMenu *m_pContextMenu;
 };
 

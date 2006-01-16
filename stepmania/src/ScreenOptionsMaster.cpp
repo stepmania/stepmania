@@ -51,6 +51,7 @@ void ScreenOptionsMaster::Init()
 
 	vector<OptionRowDefinition> OptionRowDefs;
 	OptionRowDefs.resize( asLineNames.size() );
+	vector<OptionRowHandler*> OptionRowHandlers;
 	for( unsigned i = 0; i < asLineNames.size(); ++i )
 	{
 		CString sLineName = asLineNames[i];
@@ -63,22 +64,17 @@ void ScreenOptionsMaster::Init()
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds, def );
 		if( pHand == NULL )
 			RageException::Throw( "Invalid OptionRowHandler '%s' in %s::Line%i", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), i );
-		m_OptionRowHandlers.push_back( pHand );
+		OptionRowHandlers.push_back( pHand );
 	}
 
-	ASSERT( m_OptionRowHandlers.size() == asLineNames.size() );
+	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
 
 
-	InitMenu( OptionRowDefs, m_OptionRowHandlers );
+	InitMenu( OptionRowDefs, OptionRowHandlers );
 }
 
 ScreenOptionsMaster::~ScreenOptionsMaster()
 {
-	FOREACH( OptionRow*, m_pRows, r )
-		(*r)->DetachHandler();
-	FOREACH( OptionRowHandler*, m_OptionRowHandlers, h )
-		SAFE_DELETE( *h );
-	m_OptionRowHandlers.clear();
 }
 
 void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns )
@@ -91,7 +87,7 @@ void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns
 
 void ScreenOptionsMaster::ExportOptions( int r, const vector<PlayerNumber> &vpns )
 {
-	CHECKPOINT_M( ssprintf("%i/%i", r, int(m_OptionRowHandlers.size())) );
+	CHECKPOINT_M( ssprintf("%i/%i", r, int(m_pRows.size())) );
 
 	OptionRow &row = *m_pRows[r];
 	bool bRowHasFocus[NUM_PLAYERS];

@@ -103,21 +103,16 @@ void OptionRow::Clear()
 	FOREACH_PlayerNumber( p )
 		m_Underline[p].clear();
 
-	ASSERT( m_pHand == NULL );
-
-	m_bFirstItemGoesDown = false;
-	ZERO( m_bRowHasFocus );
-	ZERO( m_iChoiceInRowWithFocus );
-}
-
-void OptionRow::DetachHandler()
-{
 	if( m_pHand )
 	{
 		FOREACH_CONST( CString, m_pHand->m_vsReloadRowMessages, m )
 			MESSAGEMAN->Unsubscribe( this, *m );
 	}
-	m_pHand = NULL;
+	SAFE_DELETE( m_pHand );
+
+	m_bFirstItemGoesDown = false;
+	ZERO( m_bRowHasFocus );
+	ZERO( m_iChoiceInRowWithFocus );
 }
 
 void OptionRowType::Load( const CString &sType )

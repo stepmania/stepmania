@@ -144,7 +144,6 @@ public:
 
 	void InitText();
 	void AfterImportOptions();
-	void DetachHandler();
 
 	void PositionUnderlines( PlayerNumber pn );
 	void PositionIcons();

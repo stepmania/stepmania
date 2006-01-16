@@ -78,11 +78,6 @@ REGISTER_SCREEN_CLASS( ScreenOptionsManageProfiles );
 
 ScreenOptionsManageProfiles::~ScreenOptionsManageProfiles()
 {
-	FOREACH( OptionRow*, m_pRows, r )
-		(*r)->DetachHandler();
-	FOREACH( OptionRowHandler*, m_OptionRowHandlers, h )
-		SAFE_DELETE( *h );
-	m_OptionRowHandlers.clear();
 	SAFE_DELETE( m_pContextMenu );
 }
 
@@ -101,12 +96,6 @@ void ScreenOptionsManageProfiles::Init()
 
 void ScreenOptionsManageProfiles::BeginScreen()
 {
-	FOREACH( OptionRow*, m_pRows, r )
-		(*r)->DetachHandler();
-	for( unsigned i = 0; i < m_OptionRowHandlers.size(); ++i )
-		delete m_OptionRowHandlers[i];
-	m_OptionRowHandlers.clear();
-
 	OptionRowDefinition def;
 	def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
 	def.m_bAllowThemeTitle = false;
@@ -114,13 +103,14 @@ void ScreenOptionsManageProfiles::BeginScreen()
 
 	int iIndex = 0;
 	vector<OptionRowDefinition> vDefs;
+	vector<OptionRowHandler*> OptionRowHandlers;
 
 	if( SHOW_CREATE_NEW )
 	{
 		OptionRowDefinition def;
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands("gamecommand;screen,ScreenOptionsEditProfile;name,Create New"), def );
 		vDefs.push_back( def );
-		m_OptionRowHandlers.push_back( pHand );
+		OptionRowHandlers.push_back( pHand );
 
 		// FIXME
 		// gc.Load( iIndex++,  );
@@ -138,13 +128,13 @@ void ScreenOptionsManageProfiles::BeginScreen()
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand), def );
 		def.m_sName = ssprintf( "%d", iIndex );
 		vDefs.push_back( def );
-		m_OptionRowHandlers.push_back( pHand );
+		OptionRowHandlers.push_back( pHand );
 
 		// FIXME
 		// gc.Load( iIndex++,  );
 	}
 
-	ScreenOptions::InitMenu( vDefs, m_OptionRowHandlers );
+	ScreenOptions::InitMenu( vDefs, OptionRowHandlers );
 
 	ScreenOptions::BeginScreen();
 	

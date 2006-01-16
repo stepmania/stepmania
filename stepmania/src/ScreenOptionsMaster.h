@@ -13,8 +13,6 @@ public:
 
 protected:
 	int m_iChangeMask;
-
-	vector<OptionRowHandler*> m_OptionRowHandlers;
 	
 protected:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
