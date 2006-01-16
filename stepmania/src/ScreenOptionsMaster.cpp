@@ -20,6 +20,7 @@
 #define OPTION_MENU_FLAGS			THEME->GetMetric (m_sName,"OptionMenuFlags")
 #define LINE(sLineName)				THEME->GetMetric (m_sName,ssprintf("Line%s",sLineName.c_str()))
 #define FORCE_ALL_PLAYERS			THEME->GetMetricB(m_sName,"ForceAllPlayers")
+#define INPUT_MODE				THEME->GetMetric (m_sName,"InputMode")
 
 
 REGISTER_SCREEN_CLASS( ScreenOptionsMaster );
@@ -34,7 +35,6 @@ void ScreenOptionsMaster::Init()
 
 	vector<CString> Flags;
 	split( OPTION_MENU_FLAGS, ";", Flags, true );
-	InputMode im = INPUTMODE_INDIVIDUAL;
 	
 	if( FORCE_ALL_PLAYERS )
 	{
@@ -48,9 +48,7 @@ void ScreenOptionsMaster::Init()
 		CString sFlag = Flags[i];
 		sFlag.MakeLower();
 
-		if( sFlag == "together" )
-			im = INPUTMODE_SHARE_CURSOR;
-		else if( sFlag == "smnavigation" )
+		if( sFlag == "smnavigation" )
 			SetNavigation( NAV_THREE_KEY_MENU );
 		else if( sFlag == "toggle" )
 			SetNavigation( PREFSMAN->m_bArcadeOptionsNavigation? NAV_TOGGLE_THREE_KEY:NAV_TOGGLE_FIVE_KEY );
@@ -58,7 +56,7 @@ void ScreenOptionsMaster::Init()
 			RageException::Throw( "Unknown flag \"%s\"", sFlag.c_str() );
 	}
 
-	SetInputMode( im );
+	SetInputMode( StringToInputMode(INPUT_MODE) );
 
 	// Call this after enabling players, if any.
 	ScreenOptions::Init();
