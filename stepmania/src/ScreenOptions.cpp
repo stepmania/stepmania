@@ -753,7 +753,7 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 
 	/* Do positioning. */
 	PositionAllUnderlines();
-	this->RefreshIcons( iCurRow, pn );
+	RefreshIcons( iCurRow, pn );
 	PositionIcons();
 	UpdateEnabledDisabled();
 
