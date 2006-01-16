@@ -83,12 +83,13 @@ void ScreenMiniMenu::AfterChangeValueOrRow( PlayerNumber pn )
 	for( unsigned i=0; i<m_pRows.size(); i++ )
 		ExportOptions( i, vpns );
 
+	// Changing one option can affect whether other options are available.
 	for( unsigned i=0; i<m_pRows.size(); i++ )
 	{
-		MenuRowDef &mr = m_vMenuRows[i];
-		OptionRow &optrow = *m_pRows[i];
+		const MenuRowDef &mr = m_vMenuRows[i];
 		if( mr.pfnEnabled )
 		{
+			OptionRow &optrow = *m_pRows[i];
 			optrow.GetRowDef().m_vEnabledForPlayers.clear();
 			if( mr.pfnEnabled() )
 				optrow.GetRowDef().m_vEnabledForPlayers.insert( GAMESTATE->m_MasterPlayerNumber );
@@ -100,7 +101,7 @@ void ScreenMiniMenu::AfterChangeValueOrRow( PlayerNumber pn )
 void ScreenMiniMenu::ImportOptions( int r, const vector<PlayerNumber> &vpns )
 {
 	OptionRow &optrow = *m_pRows[r];
-	MenuRowDef &mr = m_vMenuRows[r];
+	const MenuRowDef &mr = m_vMenuRows[r];
 	if( !mr.choices.empty() )
 		optrow.SetOneSharedSelection( mr.iDefaultChoice );
 }
