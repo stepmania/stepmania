@@ -206,11 +206,6 @@ void ScreenOptions::Init()
 	m_OptionRowType.Load( m_sName );
 }
 
-void ScreenOptions::SetOptionIcon( PlayerNumber pn, int iRow, CString sText, GameCommand &gc )
-{
-	m_pRows[iRow]->SetOptionIcon( pn, sText, gc );
-}
-
 void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands )
 {
 	LOG->Trace( "ScreenOptions::InitMenu()" );
@@ -451,7 +446,7 @@ void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 	if( def.m_bOneChoiceForAllPlayers )
 		sIcon = "";
 
-	SetOptionIcon( pn, iRow, sIcon, gc );
+	m_pRows[iRow]->SetOptionIcon( pn, sIcon, gc );
 }
 
 void ScreenOptions::RefreshAllIcons()
