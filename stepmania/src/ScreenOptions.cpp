@@ -953,9 +953,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 				ChangeValueInRowRelative( m_iCurrentRow[pn], pn, 0, input.type != IET_FIRST_PRESS );
 			break;
 		case NAV_THREE_KEY_MENU:
-			/* Don't accept START to go to the next screen if we're still transitioning in. */
-			if( input.type == IET_FIRST_PRESS && !IsTransitioning() )
-				this->BeginFadingOut();
+			ASSERT(0); // unreachable
 			break;
 		case NAV_FIVE_KEY:
 			/* Jump to the exit row.  (If everyone's already on the exit row, then
