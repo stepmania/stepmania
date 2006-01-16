@@ -583,6 +583,19 @@ void ScreenOptions::HandleScreenMessage( const ScreenMessage SM )
 	{
 		if( IsTransitioning() )
 			return; /* already transitioning */
+
+		/* If the selected option sets a screen, honor it. */
+		CString sThisScreen = GetNextScreenForSelection( GAMESTATE->m_MasterPlayerNumber );
+		if( sThisScreen != "" )
+			m_sNextScreen = sThisScreen;
+
+		// If options set a NextScreen or one is specified in metrics, then fade out
+		if( GetNextScreen() == "" )
+		{
+			LOG->Warn( "%s::HandleScreenMessage: Tried to fade out, but we have no next screen", m_sName.c_str() );
+			return;
+		}
+
 		StartTransitioningScreen( SM_ExportOptions );
 
 		SCREENMAN->PlayStartSound();
@@ -1000,14 +1013,7 @@ CString ScreenOptions::GetNextScreenForSelection( PlayerNumber pn ) const
 
 void ScreenOptions::BeginFadingOut()
 {
-	/* If the selected option sets a screen, honor it. */
-	CString sThisScreen = GetNextScreenForSelection( GAMESTATE->m_MasterPlayerNumber );
-	if( sThisScreen != "" )
-		m_sNextScreen = sThisScreen;
-
-	// If options set a NextScreen or one is specified in metrics, then fade out
-	if( GetNextScreen() != "" )
-		this->PostScreenMessage( SM_BeginFadingOut, 0 );
+	this->PostScreenMessage( SM_BeginFadingOut, 0 );
 }
 
 /* Left/right */
