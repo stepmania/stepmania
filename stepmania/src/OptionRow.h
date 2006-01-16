@@ -184,7 +184,7 @@ public:
 	const OptionRowDefinition &GetRowDef() const { return m_RowDef; }
 	OptionRowDefinition &GetRowDef() { return m_RowDef; }
 	RowType GetRowType() const { return m_RowType; }
-	OptionRowHandler *GetHandler() { return m_pHand; }
+	const OptionRowHandler *GetHandler() const { return m_pHand; }
 
 	const BitmapText &GetTextItemForRow( PlayerNumber pn, int iChoiceOnRow ) const;
 	void GetWidthXY( PlayerNumber pn, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut ) const;
