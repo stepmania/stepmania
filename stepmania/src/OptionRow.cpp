@@ -663,12 +663,15 @@ void OptionRow::UpdateEnabledDisabled()
 		{
 			bool bRowEnabled = m_RowDef.m_vEnabledForPlayers.find(pn) != m_RowDef.m_vEnabledForPlayers.end();
 			
-			if( m_bRowHasFocus[pn] )	color = m_pParentType->COLOR_SELECTED;
-			else if( bRowEnabled )		color = m_pParentType->COLOR_NOT_SELECTED;
-			else						color = m_pParentType->COLOR_DISABLED;
+			if( !m_RowDef.m_bOneChoiceForAllPlayers )
+			{
+				if( m_bRowHasFocus[pn] )	color = m_pParentType->COLOR_SELECTED;
+				else if( bRowEnabled )		color = m_pParentType->COLOR_NOT_SELECTED;
+				else				color = m_pParentType->COLOR_DISABLED;
 
-			if( m_bHidden )
-				color.a = 0;
+				if( m_bHidden )
+					color.a = 0;
+			}
 
 			unsigned item_no = m_RowDef.m_bOneChoiceForAllPlayers ? 0 : pn;
 
