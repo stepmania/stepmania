@@ -1100,8 +1100,9 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 
 	UpdateText( iRow );
 
+	// XXX: What was this NAV_THREE_KEY_MENU special case for?
 	if( bOneChanged )
-		if( m_OptionsNavigation != NAV_THREE_KEY_MENU )
+		// if( m_OptionsNavigation != NAV_THREE_KEY_MENU )
 			m_SoundChangeCol.Play();
 
 	if( row.GetRowDef().m_bExportOnChange )
