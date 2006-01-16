@@ -91,6 +91,8 @@ void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns
 
 void ScreenOptionsMaster::ExportOptions( int r, const vector<PlayerNumber> &vpns )
 {
+	CHECKPOINT_M( ssprintf("%i/%i", r, int(m_OptionRowHandlers.size())) );
+
 	OptionRow &row = *m_pRows[r];
 	bool bRowHasFocus[NUM_PLAYERS];
 	ZERO( bRowHasFocus );
@@ -116,11 +118,8 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 		vector<PlayerNumber> vpns;
 		FOREACH_OptionsPlayer( p )
 			vpns.push_back( p );
-		for( unsigned r = 0; r < m_OptionRowHandlers.size(); ++r )
-		{
-			CHECKPOINT_M( ssprintf("%i/%i", r, int(m_OptionRowHandlers.size())) );
+		for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
 			ExportOptions( r, vpns );
-		}
 
 		if( m_iChangeMask & OPT_APPLY_ASPECT_RATIO )
 		{
