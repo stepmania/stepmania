@@ -101,6 +101,8 @@ void ScreenOptionsManageProfiles::Init()
 
 void ScreenOptionsManageProfiles::BeginScreen()
 {
+	FOREACH( OptionRow*, m_pRows, r )
+		(*r)->DetachHandler();
 	for( unsigned i = 0; i < m_OptionRowHandlers.size(); ++i )
 		delete m_OptionRowHandlers[i];
 	m_OptionRowHandlers.clear();
