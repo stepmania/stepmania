@@ -65,10 +65,6 @@ protected:
 	void UpdateEnabledDisabled( int iRow );
 	void StoreFocus( PlayerNumber pn );
 
-	virtual void MenuBack( PlayerNumber pn );
-	virtual void MenuStart( const InputEventPlus &input );
-	virtual void ProcessMenuStart( const InputEventPlus &input );
-
 	virtual void BeginFadingOut() { this->PostScreenMessage( SM_BeginFadingOut, 0 ); }
 
 	void ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDelta, bool bRepeat );
@@ -79,6 +75,9 @@ protected:
 	virtual void AfterChangeRow( PlayerNumber pn );	// override this to detect when the row has changed
 	virtual void AfterChangeValueOrRow( PlayerNumber pn );
 
+	virtual void MenuBack( PlayerNumber pn );
+	virtual void MenuStart( const InputEventPlus &input );
+	virtual void ProcessMenuStart( const InputEventPlus &input );
 	virtual void MenuLeft( const InputEventPlus &input )		{ ChangeValueInRowRelative(m_iCurrentRow[input.MenuI.player],input.MenuI.player,-1, input.type != IET_FIRST_PRESS); }
 	virtual void MenuRight( const InputEventPlus &input )	{ ChangeValueInRowRelative(m_iCurrentRow[input.MenuI.player], input.MenuI.player,+1, input.type != IET_FIRST_PRESS); }
 	virtual void MenuUp( const InputEventPlus &input );
