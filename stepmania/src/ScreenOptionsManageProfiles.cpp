@@ -101,7 +101,6 @@ void ScreenOptionsManageProfiles::Init()
 
 void ScreenOptionsManageProfiles::BeginScreen()
 {
-	vector<OptionRowDefinition> vDefs;
 	for( unsigned i = 0; i < m_OptionRowHandlers.size(); ++i )
 		delete m_OptionRowHandlers[i];
 	m_OptionRowHandlers.clear();
@@ -112,6 +111,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 	def.m_bAllowThemeItems = false;
 
 	int iIndex = 0;
+	vector<OptionRowDefinition> vDefs;
 
 	if( SHOW_CREATE_NEW )
 	{
