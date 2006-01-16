@@ -858,6 +858,22 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 	{
 		bool bEndThisScreen = false;
 
+		if( m_OptionsNavigation == NAV_THREE_KEY_MENU )
+		{
+			/* In NAV_THREE_KEY_MENU mode, if a row doesn't set a screen, it does
+			 * something.  Apply it now. */
+			CString sScreen = GetNextScreenForSelection( input.MenuI.player );
+			if( sScreen.empty() )
+			{
+				vector<PlayerNumber> vpns;
+				vpns.push_back( input.MenuI.player );
+				ExportOptions( iCurRow, vpns );
+				return;
+			}
+
+			bEndThisScreen = true;
+		}
+
 		// If there's no exit row, then pressing Start on any row ends the screen.
 		if( !SHOW_EXIT_ROW )
 			bEndThisScreen = true;
