@@ -115,9 +115,9 @@ void ScreenOptionsMaster::BeginFadingOut()
 		if( row.GetFirstItemGoesDown() )
 			iChoice--;
 		// not the "goes down" item
-		if( iChoice != -1 && iCurRow < (int) m_OptionRowHandlers.size() )
+		if( iChoice != -1 )
 		{
-			const OptionRowHandler *pHand = m_OptionRowHandlers[iCurRow];
+			const OptionRowHandler *pHand = row.GetHandler();
 			if( pHand != NULL )
 			{
 				CString sThisScreen = pHand->GetScreen( iChoice );
