@@ -68,9 +68,7 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 			FontCharAliases::ReplaceMarkers( *c );	// Allow special characters
 	}
 
-	vector<OptionRowHandler*> vHands;
-	vHands.resize( vDefs.size(), NULL );
-
+	vector<OptionRowHandler*> vHands( vDefs.size(), NULL );
 	ScreenOptions::InitMenu( vDefs, vHands );
 }
 
