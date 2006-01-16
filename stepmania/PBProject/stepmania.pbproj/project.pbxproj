@@ -675,7 +675,6 @@
 		AA8E4BC709787C9400765149 /* ControllerStateDisplay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8E4BC409787C9400765149 /* ControllerStateDisplay.cpp */; };
 		AA8E4BC809787C9500765149 /* ControllerStateDisplay.h in Headers */ = {isa = PBXBuildFile; fileRef = AA8E4BC509787C9400765149 /* ControllerStateDisplay.h */; };
 		AA8E4BC909787C9500765149 /* MenuInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA8E4BC609787C9400765149 /* MenuInput.cpp */; };
-		AA8E55AC090B7F3800D8CD2D /* libvorbisfile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3791509099AE200141131 /* libvorbisfile.a */; };
 		AA8E55AD090B7F3C00D8CD2D /* libvorbis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3791409099AE200141131 /* libvorbis.a */; };
 		AA8E55AE090B7F4000D8CD2D /* libogg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA378E809099AE100141131 /* libogg.a */; };
 		AA8E562E090B90D200D8CD2D /* resample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA8E5629090B90D200D8CD2D /* resample.framework */; };
@@ -701,7 +700,6 @@
 		AAA372D70909934500141131 /* MovieTexture_Theora.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA372D30909934500141131 /* MovieTexture_Theora.h */; };
 		AAA3833809099AEC00141131 /* libjpeg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3789309099AE100141131 /* libjpeg.a */; };
 		AAA3833909099AEC00141131 /* liblua.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3789409099AE100141131 /* liblua.a */; };
-		AAA3833A09099AEC00141131 /* liblualib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3789509099AE100141131 /* liblualib.a */; };
 		AAA3838B09099AEC00141131 /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA378E909099AE100141131 /* libpng.a */; };
 		AAA383AA09099AEC00141131 /* libtheora.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AAA3791309099AE200141131 /* libtheora.a */; };
 		AAA6BFEC0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAA6BFEA0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp */; };
@@ -1581,12 +1579,10 @@
 		AAA372D30909934500141131 /* MovieTexture_Theora.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = MovieTexture_Theora.h; path = MovieTexture/MovieTexture_Theora.h; sourceTree = "<group>"; };
 		AAA3789309099AE100141131 /* libjpeg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libjpeg.a; sourceTree = "<group>"; };
 		AAA3789409099AE100141131 /* liblua.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = liblua.a; sourceTree = "<group>"; };
-		AAA3789509099AE100141131 /* liblualib.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = liblualib.a; sourceTree = "<group>"; };
 		AAA378E809099AE100141131 /* libogg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libogg.a; sourceTree = "<group>"; };
 		AAA378E909099AE100141131 /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libpng.a; sourceTree = "<group>"; };
 		AAA3791309099AE200141131 /* libtheora.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libtheora.a; sourceTree = "<group>"; };
 		AAA3791409099AE200141131 /* libvorbis.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libvorbis.a; sourceTree = "<group>"; };
-		AAA3791509099AE200141131 /* libvorbisfile.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libvorbisfile.a; sourceTree = "<group>"; };
 		AAA6BFEA0644AB3700AFBBC8 /* ScreenWithMenuElements.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; name = ScreenWithMenuElements.cpp; path = ../src/ScreenWithMenuElements.cpp; sourceTree = "<group>"; };
 		AAA6BFEB0644AB3700AFBBC8 /* ScreenWithMenuElements.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; name = ScreenWithMenuElements.h; path = ../src/ScreenWithMenuElements.h; sourceTree = "<group>"; };
 		AAA71EA005EE154E00D2E8FF /* global.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; path = global.cpp; sourceTree = "<group>"; };
@@ -1889,10 +1885,8 @@
 				AA77E8B108B6ABD500FA24CA /* vecLib.framework in Frameworks */,
 				AAA3833809099AEC00141131 /* libjpeg.a in Frameworks */,
 				AAA3833909099AEC00141131 /* liblua.a in Frameworks */,
-				AAA3833A09099AEC00141131 /* liblualib.a in Frameworks */,
 				AAA3838B09099AEC00141131 /* libpng.a in Frameworks */,
 				AAA383AA09099AEC00141131 /* libtheora.a in Frameworks */,
-				AA8E55AC090B7F3800D8CD2D /* libvorbisfile.a in Frameworks */,
 				AA8E55AD090B7F3C00D8CD2D /* libvorbis.a in Frameworks */,
 				AA8E55AE090B7F4000D8CD2D /* libogg.a in Frameworks */,
 				AA8E562E090B90D200D8CD2D /* resample.framework in Frameworks */,
@@ -2963,12 +2957,10 @@
 			children = (
 				AAA3789309099AE100141131 /* libjpeg.a */,
 				AAA3789409099AE100141131 /* liblua.a */,
-				AAA3789509099AE100141131 /* liblualib.a */,
 				AAA378E809099AE100141131 /* libogg.a */,
 				AAA378E909099AE100141131 /* libpng.a */,
 				AAA3791309099AE200141131 /* libtheora.a */,
 				AAA3791409099AE200141131 /* libvorbis.a */,
-				AAA3791509099AE200141131 /* libvorbisfile.a */,
 			);
 			path = Libraries;
 			sourceTree = "<group>";
