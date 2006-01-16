@@ -83,14 +83,14 @@ public:
 
 		defOut.Init();
 
-		if(		 sParam.CompareNoCase("NoteSkins")==0 )		{ FillNoteSkins( defOut, sParam );		return; }
-		else if( sParam.CompareNoCase("Steps")==0 )			{ FillSteps( defOut, sParam, false );	return; }
+		if(	 sParam.CompareNoCase("NoteSkins")==0 )		{ FillNoteSkins( defOut, sParam );	return; }
+		else if( sParam.CompareNoCase("Steps")==0 )		{ FillSteps( defOut, sParam, false );	return; }
 		else if( sParam.CompareNoCase("StepsLocked")==0 )	{ FillSteps( defOut, sParam, true );	return; }
-		else if( sParam.CompareNoCase("Characters")==0 )	{ FillCharacters( defOut, sParam );		return; }
-		else if( sParam.CompareNoCase("Styles")==0 )		{ FillStyles( defOut, sParam );			return; }
-		else if( sParam.CompareNoCase("Groups")==0 )		{ FillGroups( defOut, sParam );			return; }
+		else if( sParam.CompareNoCase("Characters")==0 )	{ FillCharacters( defOut, sParam );	return; }
+		else if( sParam.CompareNoCase("Styles")==0 )		{ FillStyles( defOut, sParam );		return; }
+		else if( sParam.CompareNoCase("Groups")==0 )		{ FillGroups( defOut, sParam );		return; }
 		else if( sParam.CompareNoCase("Difficulties")==0 )	{ FillDifficulties( defOut, sParam );	return; }
-		else if( sParam.CompareNoCase("SongsInCurrentSongGroup")==0 )	{ FillSongsInCurrentSongGroup( defOut, sParam );	return; }
+		else if( sParam.CompareNoCase("SongsInCurrentSongGroup")==0 )	{ FillSongsInCurrentSongGroup( defOut, sParam ); return; }
 
 		m_bUseModNameForIcon = true;
 			
@@ -111,11 +111,11 @@ public:
 				const Command &cmd = cmds.v[i];
 				CString sName = cmd.GetName();
 
-				if(		 sName == "together" )			defOut.m_bOneChoiceForAllPlayers = true;
+				if(		 sName == "together" )	defOut.m_bOneChoiceForAllPlayers = true;
 				else if( sName == "selectmultiple" )	defOut.m_selectType = SELECT_MULTIPLE;
-				else if( sName == "selectone" )			defOut.m_selectType = SELECT_ONE;
-				else if( sName == "selectnone" )		defOut.m_selectType = SELECT_NONE;
-				else if( sName == "showoneinrow" )		defOut.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+				else if( sName == "selectone" )		defOut.m_selectType = SELECT_ONE;
+				else if( sName == "selectnone" )	defOut.m_selectType = SELECT_NONE;
+				else if( sName == "showoneinrow" )	defOut.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 				else if( sName == "reloadrowmessages" )
 				{
 					for( unsigned a=1; a<cmd.m_vsArgs.size(); a++ )
