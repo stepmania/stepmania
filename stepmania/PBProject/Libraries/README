@@ -15,6 +15,7 @@ Directions:
 1. Decompress all of those in the Libraries directory (libresample can be
 copied from stepmania/src/libresample).
 2. Patch ffmpeg using ffmpeg-0.4.9-pre1-sm.patch.
-3. Build the frameworks listed above from those libraries using Xcode 2.2.1.
-4. Build static libraries with ./configure && make of the static libraries
-and move them into the Libraries directory.
+3. Open Libraries.xcode and build target all.
+4. Copy the frameworks (except for ffmpeg-i386.framework) to
+stepmania/PBProject/Frameworks and the static libraries to
+stepmania/PBProject/Libraries
