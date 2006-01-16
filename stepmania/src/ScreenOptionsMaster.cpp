@@ -158,10 +158,9 @@ void ScreenOptionsMaster::HandleScreenMessage( const ScreenMessage SM )
 			SCREENMAN->ThemeChanged();	// recreate ScreenSystemLayer and SharedBGA
 		}
 
-		/* If the theme changes, we need to reset RageDisplay to apply new theme 
-		 * window title and icon. */
-		/* If the aspect ratio changes, we need to reset RageDisplay so that the 
-		 * projection matrix is re-created using the new screen dimensions. */
+		/* If the theme changes, we need to reset RageDisplay to apply the new window
+		 * title and icon.  If the aspect ratio changes, we need to reset RageDisplay
+		 * so that the projection matrix is re-created using the new screen dimensions. */
 		if( (m_iChangeMask & OPT_APPLY_THEME) || 
 			(m_iChangeMask & OPT_APPLY_GRAPHICS) ||
 			(m_iChangeMask & OPT_APPLY_ASPECT_RATIO) )
