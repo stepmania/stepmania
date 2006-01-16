@@ -14,7 +14,6 @@ class ScreenPackages : public ScreenWithMenuElements
 public:
 	virtual void Init();
 
-	virtual void Input( const InputEventPlus &input );
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 	virtual void MenuStart( PlayerNumber pn );

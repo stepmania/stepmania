@@ -134,11 +134,6 @@ void ScreenPackages::HandleScreenMessage( const ScreenMessage SM )
 	ScreenWithMenuElements::HandleScreenMessage( SM );
 }
 
-void ScreenPackages::Input( const InputEventPlus &input )
-{
-	ScreenWithMenuElements::Input( input );
-}
-
 void ScreenPackages::Update( float fDeltaTime )
 {
 	HTTPUpdate();
