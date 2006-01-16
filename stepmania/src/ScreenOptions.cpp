@@ -883,8 +883,9 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 			bEndThisScreen = true;
 
 		/* Don't accept START to go to the next screen if we're still transitioning in. */
-		if( input.type != IET_FIRST_PRESS || IsTransitioning() )
-			bEndThisScreen = false;
+		if( bEndThisScreen &&
+			(input.type != IET_FIRST_PRESS || IsTransitioning()) )
+			return;
 		
 		if( bEndThisScreen )
 		{
