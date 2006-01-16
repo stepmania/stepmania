@@ -939,19 +939,19 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 			break;
 		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
-			if( row.GetRowDef().m_selectType != SELECT_MULTIPLE )
-			{
-				int iChoiceInRow = row.GetChoiceInRowWithFocus(pn);
-				if( row.GetRowDef().m_bOneChoiceForAllPlayers )
-					row.SetOneSharedSelection( iChoiceInRow );
-				else
-					row.SetOneSelection( pn, iChoiceInRow );
-			}
+		{
+			int iChoiceInRow = row.GetChoiceInRowWithFocus(pn);
+			if( row.GetRowDef().m_bOneChoiceForAllPlayers )
+				row.SetOneSharedSelection( iChoiceInRow );
+			else
+				row.SetOneSelection( pn, iChoiceInRow );
+
 			if( row.GetFirstItemGoesDown() )
 				ChangeValueInRowRelative( m_iCurrentRow[pn], pn, -row.GetChoiceInRowWithFocus(pn), input.type != IET_FIRST_PRESS );	// move to the first choice
 			else
 				ChangeValueInRowRelative( m_iCurrentRow[pn], pn, 0, input.type != IET_FIRST_PRESS );
 			break;
+		}
 		case NAV_THREE_KEY_MENU:
 			ASSERT(0); // unreachable
 			break;
