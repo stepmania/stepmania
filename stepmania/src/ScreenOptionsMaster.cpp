@@ -51,21 +51,19 @@ void ScreenOptionsMaster::Init()
 
 	vector<OptionRowDefinition> OptionRowDefs;
 	OptionRowDefs.resize( asLineNames.size() );
-	m_OptionRowHandlers.resize( asLineNames.size() );
 	for( unsigned i = 0; i < asLineNames.size(); ++i )
 	{
 		CString sLineName = asLineNames[i];
-		OptionRowDefinition &def = OptionRowDefs[i];
 		CString sRowCommands = LINE(sLineName);
-		OptionRowHandler* &pHand = m_OptionRowHandlers[i];
-		pHand = NULL;
 		
 		Commands cmds;
 		ParseCommands( sRowCommands, cmds );
 
-		pHand = OptionRowHandlerUtil::Make( cmds, def );
+		OptionRowDefinition &def = OptionRowDefs[i];
+		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds, def );
 		if( pHand == NULL )
 			RageException::Throw( "Invalid OptionRowHandler '%s' in %s::Line%i", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), i );
+		m_OptionRowHandlers.push_back( pHand );
 	}
 
 	ASSERT( m_OptionRowHandlers.size() == asLineNames.size() );
