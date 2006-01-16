@@ -63,6 +63,7 @@ protected:
 	void UpdateText( int iRow );
 	void UpdateEnabledDisabled();
 	void UpdateEnabledDisabled( int iRow );
+	void StoreFocus( PlayerNumber pn );
 
 	virtual void MenuBack( PlayerNumber pn );
 	virtual void MenuStart( const InputEventPlus &input );
@@ -108,9 +109,8 @@ protected:
 
 	Navigation		m_OptionsNavigation;
 
-	int				m_iCurrentRow[NUM_PLAYERS];
-	int				m_iFocusX[NUM_PLAYERS];
-	void StoreFocus( PlayerNumber pn );
+	int			m_iCurrentRow[NUM_PLAYERS];
+	int			m_iFocusX[NUM_PLAYERS];
 
 	InputMode		m_InputMode;
 
@@ -122,10 +122,11 @@ protected:
 
 	BitmapText		m_textPlayerName[NUM_PLAYERS];
 	BitmapText		m_textExplanation[NUM_PLAYERS];
-	DualScrollBar	m_ScrollBar;
+	DualScrollBar		m_ScrollBar;
 
 	AutoActor		m_sprMore;
 	bool			m_bWasOnExit[NUM_PLAYERS];
+	float			m_fLockInputSecs;
 
 	// show if the current selections will disqualify a high score
 	AutoActor		m_sprDisqualify[NUM_PLAYERS];
@@ -142,30 +143,28 @@ protected:
 	RageSound		m_SoundToggleOff;
 
 	// metrics
-	ThemeMetric<int>				NUM_ROWS_SHOWN;
+	ThemeMetric<int>		NUM_ROWS_SHOWN;
 	ThemeMetric<apActorCommands>	ROW_INIT_COMMAND;
 	ThemeMetric<apActorCommands>	ROW_ON_COMMAND;
 	ThemeMetric<apActorCommands>	ROW_OFF_COMMAND;
 	LuaExpressionTransform m_exprRowPositionTransformFunction;		// params: self,positionIndex,itemIndex,numItems
-	ThemeMetric1D<float>			EXPLANATION_X;
-	ThemeMetric1D<float>			EXPLANATION_Y;
+	ThemeMetric1D<float>		EXPLANATION_X;
+	ThemeMetric1D<float>		EXPLANATION_Y;
 	ThemeMetric1D<apActorCommands>	EXPLANATION_ON_COMMAND;
-	ThemeMetric<float>				EXPLANATION_TOGETHER_X;
-	ThemeMetric<float>				EXPLANATION_TOGETHER_Y;
+	ThemeMetric<float>		EXPLANATION_TOGETHER_X;
+	ThemeMetric<float>		EXPLANATION_TOGETHER_Y;
 	ThemeMetric<apActorCommands>	EXPLANATION_TOGETHER_ON_COMMAND;
-	ThemeMetric<bool>				SHOW_SCROLL_BAR;
-	ThemeMetric<float>				SCROLL_BAR_HEIGHT;
-	ThemeMetric<float>				SCROLL_BAR_TIME;
-	ThemeMetric<float>				LINE_HIGHLIGHT_X;
-	ThemeMetric<bool>				SHOW_EXIT_ROW;
-	ThemeMetric<bool>				SEPARATE_EXIT_ROW;
-	ThemeMetric<float>				SEPARATE_EXIT_ROW_Y;
-	ThemeMetric<bool>				SHOW_EXPLANATIONS;
-	ThemeMetric<bool>				ALLOW_REPEATING_CHANGE_VALUE_INPUT;
-	ThemeMetric<float>				CURSOR_TWEEN_SECONDS;
-	ThemeMetric<bool>				WRAP_VALUE_IN_ROW;
-
-	float m_fLockInputSecs;
+	ThemeMetric<bool>		SHOW_SCROLL_BAR;
+	ThemeMetric<float>		SCROLL_BAR_HEIGHT;
+	ThemeMetric<float>		SCROLL_BAR_TIME;
+	ThemeMetric<float>		LINE_HIGHLIGHT_X;
+	ThemeMetric<bool>		SHOW_EXIT_ROW;
+	ThemeMetric<bool>		SEPARATE_EXIT_ROW;
+	ThemeMetric<float>		SEPARATE_EXIT_ROW_Y;
+	ThemeMetric<bool>		SHOW_EXPLANATIONS;
+	ThemeMetric<bool>		ALLOW_REPEATING_CHANGE_VALUE_INPUT;
+	ThemeMetric<float>		CURSOR_TWEEN_SECONDS;
+	ThemeMetric<bool>		WRAP_VALUE_IN_ROW;
 };
 
 #endif
