@@ -4,7 +4,6 @@
 #define SCREENOPTIONS_H
 
 #include "ScreenWithMenuElements.h"
-#include "Sprite.h"
 #include "DualScrollBar.h"
 #include "ThemeMetric.h"
 #include "OptionRow.h"
