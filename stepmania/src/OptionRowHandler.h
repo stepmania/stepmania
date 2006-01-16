@@ -23,7 +23,7 @@ public:
 		m_cmds.v.clear();
 		m_vsReloadRowMessages.clear();
 	}
-	virtual void Load( OptionRowDefinition &defOut, const Commands &cmds )
+	void Load( OptionRowDefinition &defOut, const Commands &cmds )
 	{
 		Init();
 		m_cmds = cmds;
