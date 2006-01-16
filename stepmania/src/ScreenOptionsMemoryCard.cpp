@@ -87,11 +87,6 @@ void ScreenOptionsMemoryCard::HandleMessage( const CString& sMessage )
 	}
 }
 
-void ScreenOptionsMemoryCard::MenuStart( const InputEventPlus &input )
-{
-	ScreenOptions::MenuStart( input );
-}
-
 void ScreenOptionsMemoryCard::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )
 {
 

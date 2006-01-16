@@ -42,8 +42,6 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
-	OptionRowType m_OptionRowType;
-
 	virtual void TweenOnScreen();
 	virtual void TweenOffScreen();
 
@@ -104,6 +102,7 @@ protected:	// derived classes need access to these
 protected:
 	/* Map menu lines to m_OptionRow entries. */
 	vector<OptionRow*>	m_pRows;
+	OptionRowType		m_OptionRowType;
 
 	Navigation		m_OptionsNavigation;
 	InputMode		m_InputMode;
