@@ -12,6 +12,7 @@
 #include "RageUtil.h"
 #include "RageFileManager.h"
 #include "LocalizedString.h"
+#include "OptionRowHandler.h"
 
 AutoScreenMessage( SM_BackFromRename )
 AutoScreenMessage( SM_BackFromDelete )
@@ -76,19 +77,18 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
 
-	OptionRowDefinition def;
-	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-	def.m_bOneChoiceForAllPlayers = true;
-
 	int iIndex = 0;
 	
 	{
+		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
+		OptionRowDefinition &def = vHands.back()->m_Def;
+		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		def.m_bOneChoiceForAllPlayers = true;
 		def.m_sName = "Create New Edit Steps";
 		def.m_sExplanationName = "Create New Edit Steps";
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( "" );
 		vDefs.push_back( def );
-		vHands.push_back( NULL );
 		iIndex++;
 	}
 
@@ -96,6 +96,8 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 
 	FOREACH_CONST( Steps*, m_vpSteps, s )
 	{
+		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
+		OptionRowDefinition &def = vHands.back()->m_Def;
 		def.m_sName = (*s)->GetDescription();
 		def.m_bAllowThemeTitle = false;	// not themable
 		def.m_sExplanationName = "Edit Steps";
@@ -104,7 +106,6 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 		def.m_vsChoices.push_back( sType );
 		def.m_bAllowThemeItems = false;	// already themed
 		vDefs.push_back( def );
-		vHands.push_back( NULL );
 		iIndex++;
 	}
 

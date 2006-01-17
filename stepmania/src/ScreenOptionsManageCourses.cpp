@@ -12,6 +12,7 @@
 #include "Difficulty.h"
 #include "CourseUtil.h"
 #include "LocalizedString.h"
+#include "OptionRowHandler.h"
 
 static void RefreshTrail()
 {
@@ -148,17 +149,16 @@ void ScreenOptionsManageCourses::BeginScreen()
 	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
 
-	OptionRowDefinition def;
-	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-
 	int iIndex = 0;
 	
 	{
+		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
+		OptionRowDefinition &def = vHands.back()->m_Def;
+		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		def.m_sName = "";
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( "Create New" );
 		vDefs.push_back( def );
-		vHands.push_back( NULL );
 		iIndex++;
 	}
 
@@ -183,6 +183,9 @@ void ScreenOptionsManageCourses::BeginScreen()
 
 	FOREACH_CONST( Course*, m_vpCourses, c )
 	{
+		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
+		OptionRowDefinition &def = vHands.back()->m_Def;
+
 		switch( EDIT_MODE.GetValue() )
 		{
 		default:
@@ -200,11 +203,10 @@ void ScreenOptionsManageCourses::BeginScreen()
 		}
 
 		def.m_sName = ssprintf("%d",iIndex) + " " + def.m_sName;
-
+		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( (*c)->GetDisplayFullTitle() );
 		vDefs.push_back( def );
-		vHands.push_back( NULL );
 		iIndex++;
 	}
 
