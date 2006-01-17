@@ -126,6 +126,7 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 	mCurrentParams.bAnisotropicFiltering = p.bAnisotropicFiltering;
 	mCurrentParams.interlaced = p.interlaced;
 	mCurrentParams.PAL = p.PAL;
+	mCurrentParams.fDisplayAspectRatio = p.fDisplayAspectRatio;
 	
 #define X(x) p.x == mCurrentParams.x
 	if( X(windowed) && X(bpp) && X(width) && X(height) && X(rate) && X(vsync) )
@@ -342,8 +343,6 @@ void LowLevelWindow_Cocoa::SetActualParamsFromMode( CFDictionaryRef mode )
 	}
 	mCurrentParams.bpp = bpp;
 	mCurrentParams.rate = rate;
-	// XXX should this be the actual DAR of the display or of the window, if windowed?
-	mCurrentParams.fDisplayAspectRatio = float(mCurrentParams.width)/mCurrentParams.height;
 }
 
 void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
