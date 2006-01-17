@@ -14,15 +14,12 @@
 #include "ScreenTextEntry.h"
 #include "Profile.h"
 #include "LocalizedString.h"
+#include "OptionRowHandler.h"
 
 REGISTER_SCREEN_CLASS(ScreenSMOnlineLogin);
 
 AutoScreenMessage( SM_SMOnlinePack )
 AutoScreenMessage( SM_PasswordDone )
-
-OptionRowDefinition g_ProfileLine[1] = {
-	OptionRowDefinition("Profile",false)
-};
 
 static LocalizedString DEFINE_A_PROFILE( "ScreenSMOnlineLogin", "You must define a Profile." );
 void ScreenSMOnlineLogin::Init()
@@ -30,28 +27,30 @@ void ScreenSMOnlineLogin::Init()
 	ScreenOptions::Init();
 	m_iPlayer = 0;
 
-	g_ProfileLine[0].m_vsChoices.clear();
-	PROFILEMAN->GetLocalProfileDisplayNames( g_ProfileLine[0].m_vsChoices );
-
-	if( g_ProfileLine[0].m_vsChoices.empty() )
+	vector<OptionRowDefinition> vDefs;
+	vector<OptionRowHandler*> vHands;
+	vHands.push_back( OptionRowHandlerUtil::MakeNull() );
+	OptionRowDefinition &def = vHands.back()->m_Def;
+	def.m_sName = "Profile";
+	def.m_bOneChoiceForAllPlayers = false;
+	def.m_bAllowThemeItems = false;
+	def.m_vEnabledForPlayers.clear();
+	FOREACH_PlayerNumber( pn )
+		def.m_vEnabledForPlayers.insert( pn );
+	def.m_vsChoices.clear();
+	PROFILEMAN->GetLocalProfileDisplayNames( def.m_vsChoices );
+	if( def.m_vsChoices.empty() )
 	{
 		SCREENMAN->SystemMessage( DEFINE_A_PROFILE );
 		SCREENMAN->SetNewScreen("ScreenProfileOptions");
 	}
-    else
-	{
-		FOREACH_PlayerNumber( pn )
-			g_ProfileLine[0].m_vEnabledForPlayers.insert( pn );
 
-		g_ProfileLine[0].m_bAllowThemeItems = false;
-		vector<OptionRowDefinition> vDefs( &g_ProfileLine[0], &g_ProfileLine[ARRAYSIZE(g_ProfileLine)] );
-		vector<OptionRowHandler*> vHands( vDefs.size(), NULL );
+	vDefs.push_back( def );	
 
-		InitMenu( vDefs, vHands );
-  		SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions", "music"));
-		OptionRow &row = *m_pRows.back();
-		row.SetExitText("Login");
-	}
+	InitMenu( vDefs, vHands );
+  	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions", "music"));
+	OptionRow &row = *m_pRows.back();
+	row.SetExitText("Login");
 }
 
 void ScreenSMOnlineLogin::ImportOptions( int iRow, const vector<PlayerNumber> &vpns )

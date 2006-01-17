@@ -11,6 +11,7 @@
 #include "ScreenPrompt.h"
 #include "CourseUtil.h"
 #include "LocalizedString.h"
+#include "OptionRowHandler.h"
 
 enum EditCourseRow
 {
@@ -59,42 +60,49 @@ void ScreenOptionsEditCourse::BeginScreen()
 	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
 
-	OptionRowDefinition def;
-	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-	def.m_bExportOnChange = true;
-
-
-	def.m_sName = "Type";
-	def.m_vsChoices.clear();
+	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_sName = "Type";
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bExportOnChange = true;
+	pHand->m_Def.m_vsChoices.clear();
 	FOREACH_CourseType( i )
-		def.m_vsChoices.push_back( CourseTypeToLocalizedString(i) );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
+		pHand->m_Def.m_vsChoices.push_back( CourseTypeToLocalizedString(i) );
+	vDefs.push_back( pHand->m_Def );
+	vHands.push_back( pHand );
 
-	def.m_sName = "Meter";
-	def.m_vsChoices.clear();
-	def.m_vsChoices.push_back( "Auto" );
+	pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_sName = "Meter";
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bExportOnChange = true;
+	pHand->m_Def.m_vsChoices.clear();
+	pHand->m_Def.m_vsChoices.push_back( "Auto" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
-		def.m_vsChoices.push_back( ssprintf("%d",i) );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
+		pHand->m_Def.m_vsChoices.push_back( ssprintf("%d",i) );
+	vDefs.push_back( pHand->m_Def );
+	vHands.push_back( pHand );
 
 	FOREACH_CONST( CourseEntry, pCourse->m_vEntries, ce )
 	{
+		pHand = OptionRowHandlerUtil::MakeNull();
 		int iEntryIndex = ce - pCourse->m_vEntries.begin();
-		def.m_sName = ssprintf( "Entry %d", iEntryIndex+1 );
-		def.m_vsChoices.clear();
+		pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		pHand->m_Def.m_bExportOnChange = true;
+		pHand->m_Def.m_sName = ssprintf( "Entry %d", iEntryIndex+1 );
+		pHand->m_Def.m_vsChoices.clear();
 		FOREACH_CONST( Song*, m_vpDisplayedSongs, s )
-			def.m_vsChoices.push_back( (*s)->GetTranslitFullTitle() );
-		vDefs.push_back( def );
-		vHands.push_back( NULL );
+			pHand->m_Def.m_vsChoices.push_back( (*s)->GetTranslitFullTitle() );
+		vDefs.push_back( pHand->m_Def );
+		vHands.push_back( pHand );
 	}
 
-	def.m_sName = "";
-	def.m_vsChoices.clear();
-	def.m_vsChoices.push_back( "Insert Entry" );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
+	pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_sName = "";
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bExportOnChange = true;
+	pHand->m_Def.m_vsChoices.clear();
+	pHand->m_Def.m_vsChoices.push_back( "Insert Entry" );
+	vDefs.push_back( pHand->m_Def );
+	vHands.push_back( pHand );
 
 	ScreenOptions::InitMenu( vDefs, vHands );
 

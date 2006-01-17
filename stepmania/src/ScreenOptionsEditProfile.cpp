@@ -10,6 +10,7 @@
 #include "Profile.h"
 #include "Character.h"
 #include "CharacterManager.h"
+#include "OptionRowHandler.h"
 
 enum EditProfileRow
 {
@@ -30,18 +31,18 @@ void ScreenOptionsEditProfile::BeginScreen()
 	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
 
-	OptionRowDefinition def;
-	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-	def.m_bOneChoiceForAllPlayers = true;
-	def.m_bAllowThemeItems = false;
-	def.m_bAllowThemeTitle = false;
-	def.m_bAllowExplanation = false;
-	def.m_bExportOnChange = true;
-	
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
 	ASSERT( pProfile );
 
 	{
+		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
+		OptionRowDefinition &def = vHands.back()->m_Def;
+		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		def.m_bOneChoiceForAllPlayers = true;
+		def.m_bAllowThemeItems = false;
+		def.m_bAllowThemeTitle = false;
+		def.m_bAllowExplanation = false;
+		def.m_bExportOnChange = true;
 		def.m_sName = "Character";
 		def.m_vsChoices.clear();
 		vector<Character*> vpCharacters;
@@ -49,7 +50,6 @@ void ScreenOptionsEditProfile::BeginScreen()
 		FOREACH_CONST( Character*, vpCharacters, c )
 			def.m_vsChoices.push_back( (*c)->GetDisplayName() );
 		vDefs.push_back( def );
-		vHands.push_back( NULL );
 	}
 
 	InitMenu( vDefs, vHands );

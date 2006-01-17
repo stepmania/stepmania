@@ -8,6 +8,7 @@
 #include "GameManager.h"
 #include "song.h"
 #include "Steps.h"
+#include "OptionRowHandler.h"
 
 enum EditCourseEntryRow
 {
@@ -63,70 +64,91 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
 
-	OptionRowDefinition def;
-	def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-	def.m_bExportOnChange = true;
-	
-	def.m_sName = "Song Group";
-	def.m_vsChoices.clear();
+	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
+	vHands.push_back( OptionRowHandlerUtil::MakeNull() );
+	pHand->m_Def.m_sName = "Song Group";
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bExportOnChange = true;
+	pHand->m_Def.m_vsChoices.clear();
 	vector<CString> vsSongGroups;
 	SONGMAN->GetSongGroupNames( vsSongGroups );
-	def.m_vsChoices.push_back( "(any)" );
+	pHand->m_Def.m_vsChoices.push_back( "(any)" );
 	FOREACH_CONST( CString, vsSongGroups, song )
-		def.m_vsChoices.push_back( *song );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
+		pHand->m_Def.m_vsChoices.push_back( *song );
+	vDefs.push_back( pHand->m_Def );
+	vHands.push_back( pHand );
 
-	def.m_sName = "Song";
-	def.m_vsChoices.clear();
-	FillSongsAndChoices( ce.sSongGroup, m_vpDisplayedSongs, def.m_vsChoices );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
+	pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_sName = "Song";
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bExportOnChange = true;
+	pHand->m_Def.m_vsChoices.clear();
+	FillSongsAndChoices( ce.sSongGroup, m_vpDisplayedSongs, pHand->m_Def.m_vsChoices );
+	vDefs.push_back( pHand->m_Def );
+	vHands.push_back( pHand );
 
-	def.m_sName = "Base Difficulty";
-	def.m_vsChoices.clear();
-	def.m_vsChoices.push_back( "(any)" );
+	pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_sName = "Base Difficulty";
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bExportOnChange = true;
+	pHand->m_Def.m_vsChoices.clear();
+	pHand->m_Def.m_vsChoices.push_back( "(any)" );
 	FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
-		def.m_vsChoices.push_back( DifficultyToLocalizedString(*dc) );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
+		pHand->m_Def.m_vsChoices.push_back( DifficultyToLocalizedString(*dc) );
+	vDefs.push_back( pHand->m_Def );
+	vHands.push_back( pHand );
 
-	def.m_sName = "Low Meter";
-	def.m_vsChoices.clear();
-	def.m_vsChoices.push_back( "(any)" );
+	pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_sName = "Low Meter";
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bExportOnChange = true;
+	pHand->m_Def.m_vsChoices.clear();
+	pHand->m_Def.m_vsChoices.push_back( "(any)" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
-		def.m_vsChoices.push_back( ssprintf("%i",i) );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
+		pHand->m_Def.m_vsChoices.push_back( ssprintf("%i",i) );
+	vDefs.push_back( pHand->m_Def );
+	vHands.push_back( pHand );
 
-	def.m_sName = "High Meter";
-	def.m_vsChoices.clear();
-	def.m_vsChoices.push_back( "(any)" );
+	pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_sName = "High Meter";
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bExportOnChange = true;
+	pHand->m_Def.m_vsChoices.clear();
+	pHand->m_Def.m_vsChoices.push_back( "(any)" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
-		def.m_vsChoices.push_back( ssprintf("%i",i) );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
+		pHand->m_Def.m_vsChoices.push_back( ssprintf("%i",i) );
+	vDefs.push_back( pHand->m_Def );
+	vHands.push_back( pHand );
 
-	def.m_sName = "Sort";
-	def.m_vsChoices.clear();
+	pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_sName = "Sort";
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bExportOnChange = true;
+	pHand->m_Def.m_vsChoices.clear();
 	FOREACH_SongSort( i )
-		def.m_vsChoices.push_back( SongSortToLocalizedString(i) );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
+		pHand->m_Def.m_vsChoices.push_back( SongSortToLocalizedString(i) );
+	vDefs.push_back( pHand->m_Def );
+	vHands.push_back( pHand );
 
-	def.m_sName = "Choose";
-	def.m_vsChoices.clear();
+	pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_sName = "Choose";
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bExportOnChange = true;
+	pHand->m_Def.m_vsChoices.clear();
 	for( int i=0; i<20; i++ )
-		def.m_vsChoices.push_back( FormatNumberAndSuffix(i+1) );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
+		pHand->m_Def.m_vsChoices.push_back( FormatNumberAndSuffix(i+1) );
+	vDefs.push_back( pHand->m_Def );
+	vHands.push_back( pHand );
 
-	def.m_sName = "Set Mods";
-	def.m_vsChoices.clear();
+	pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_sName = "Set Mods";
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bExportOnChange = true;
+	pHand->m_Def.m_vsChoices.clear();
 	CString s = ssprintf( "%d mod changes", ce.GetNumModChanges() );
-	def.m_vsChoices.push_back( s );
-	vDefs.push_back( def );
-	vHands.push_back( NULL );
+	pHand->m_Def.m_vsChoices.push_back( s );
+	vDefs.push_back( pHand->m_Def );
+	vHands.push_back( pHand );
 
 	ScreenOptions::InitMenu( vDefs, vHands );
 

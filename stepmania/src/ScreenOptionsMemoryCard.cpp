@@ -7,6 +7,7 @@
 #include "ScreenManager.h"
 #include "ScreenPrompt.h"
 #include "LocalizedString.h"
+#include "OptionRowHandler.h"
 
 
 REGISTER_SCREEN_CLASS( ScreenOptionsMemoryCard );
@@ -14,6 +15,8 @@ REGISTER_SCREEN_CLASS( ScreenOptionsMemoryCard );
 void ScreenOptionsMemoryCard::Init()
 {
 	ScreenOptions::Init();
+
+	vector<OptionRowHandler*> vHands;
 
 	FOREACH_CONST( UsbStorageDevice, MEMCARDMAN->GetStorageDevices(), iter )
 	{
@@ -33,8 +36,12 @@ void ScreenOptionsMemoryCard::Init()
 		else
 			vs.push_back( ssprintf("%dMB",iter->iVolumeSizeMB) );
 
+		vHands.push_back( OptionRowHandlerUtil::MakeNull() );
+
+		OptionRowDefinition &def = vHands.back()->m_Def;
 		CString sDescription = join(", ", vs);
-		OptionRowDefinition def( sDescription, true, "" );
+		def.m_sName = sDescription;
+		def.m_vsChoices.push_back( "" );
 		def.m_sExplanationName = "Memory Card";
 		def.m_bAllowThemeTitle = false;
 		def.m_bOneChoiceForAllPlayers = true;
@@ -47,8 +54,6 @@ void ScreenOptionsMemoryCard::Init()
 		m_vDefs.push_back( def );	
 	}
 	
-	vector<OptionRowHandler*> vHands( m_vDefs.size(), NULL );
-
 	InitMenu( m_vDefs, vHands );
 }
 
