@@ -70,11 +70,13 @@ void *LowLevelWindow_X11::GetProcAddress( CString s )
 CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDeviceOut )
 {
 #if defined(LINUX)
-	/* nVidia cards:
+	/*
+	 * nVidia cards:
 	 *
 	 * This only works the first time we set up a window; after that, the
 	 * drivers appear to cache the value, so you have to actually restart
-	 * the program to change it again. */
+	 * the program to change it again.
+	 */
 	static char buf[128];
 	strcpy( buf, "__GL_SYNC_TO_VBLANK=" );
 	strcat( buf, p.vsync?"1":"0" );
