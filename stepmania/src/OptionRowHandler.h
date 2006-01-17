@@ -31,7 +31,7 @@ public:
 		this->LoadInternal( m_Def, cmds );
 	}
 	virtual void LoadInternal( OptionRowDefinition &defOut, const Commands &cmds ) = 0;
-	virtual void Reload( OptionRowDefinition &defOut ) { this->Load(m_cmds); defOut = m_Def; }
+	virtual void Reload() { this->Load(m_cmds); }
 	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const = 0;
 	/* Returns an OPT mask. */
 	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const = 0;

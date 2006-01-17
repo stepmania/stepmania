@@ -878,7 +878,8 @@ void OptionRow::Reload( const OptionRowDefinition &def )
 			if( m_pHand == NULL )
 				m_RowDef = def;
 			else
-				m_pHand->Reload( m_RowDef );
+				m_pHand->Reload();
+			m_RowDef = m_pHand->m_Def;
 			ASSERT( !m_RowDef.m_vsChoices.empty() );
 
 			FOREACH_PlayerNumber( p )
