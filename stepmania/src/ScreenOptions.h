@@ -57,7 +57,6 @@ protected:
 	void PositionCursors();
 	void PositionRows();
 	void TweenCursor( PlayerNumber pn );
-	void UpdateText( int iRow );
 	void UpdateEnabledDisabled();
 	void UpdateEnabledDisabled( int iRow );
 	void StoreFocus( PlayerNumber pn );

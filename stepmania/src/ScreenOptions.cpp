@@ -507,18 +507,6 @@ void ScreenOptions::TweenCursor( PlayerNumber pn )
 	}
 }
 
-/* For "long row-style" rows, update the text on screen to contain the currently-
- * focused options. 
- *
- * This used to update a single player, but it's not always clear what that means
- * when dealing with bOneChoiceForAllPlayers and disabled players, which was brittle.
- * Update the whole row. */
-void ScreenOptions::UpdateText( int iRow )
-{
-	OptionRow &row = *m_pRows[iRow];
-	row.UpdateText();
-}
-
 void ScreenOptions::UpdateEnabledDisabled( int r )
 {
 	OptionRow &row = *m_pRows[r];
@@ -1131,7 +1119,9 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 		}
 	}
 
-	UpdateText( iRow );
+	/* For "long row-style" rows, update the text on screen to contain the newly-
+	 * focused options. */
+	m_pRows[iRow]->UpdateText();
 
 	// XXX: What was this NAV_THREE_KEY_MENU special case for?
 	if( bOneChanged )
