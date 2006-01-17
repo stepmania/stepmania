@@ -14,6 +14,9 @@ public:
 	bool IsSoftwareRenderer( CString &sError );
 	void SwapBuffers();
 	void Update();
+	bool SupportsThreadedRendering();
+	void BeginConcurrentRendering();
+	void EndConcurrentRendering();
 
 	VideoModeParams GetActualVideoModeParams() const;
 };

@@ -9,6 +9,7 @@
 
 static PIXELFORMATDESCRIPTOR g_CurrentPixelFormat;
 static HGLRC g_HGLRC = NULL;
+static HGLRC g_HGLRC_Background = NULL;
 
 void DestroyGraphicsWindowAndOpenGLContext()
 {
@@ -17,6 +18,12 @@ void DestroyGraphicsWindowAndOpenGLContext()
 		wglMakeCurrent( NULL, NULL );
 		wglDeleteContext( g_HGLRC );
 		g_HGLRC = NULL;
+	}
+
+	if( g_HGLRC_Background != NULL )
+	{
+		wglDeleteContext( g_HGLRC_Background );
+		g_HGLRC_Background = NULL;
 	}
 
 	ZERO( g_CurrentPixelFormat );
@@ -36,6 +43,7 @@ void *LowLevelWindow_Win32::GetProcAddress( CString s )
 LowLevelWindow_Win32::LowLevelWindow_Win32()
 {
 	ASSERT( g_HGLRC == NULL );
+	ASSERT( g_HGLRC_Background == NULL );
 
 	GraphicsWindow::Initialize( false );
 }
@@ -173,6 +181,8 @@ CString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 			wglMakeCurrent( NULL, NULL );
 			wglDeleteContext( g_HGLRC );
 			g_HGLRC = NULL;
+			wglDeleteContext( g_HGLRC_Background );
+			g_HGLRC_Background = NULL;
 		}
 
 		bNewDeviceOut = true;
@@ -207,6 +217,20 @@ CString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 			return hr_ssprintf( GetLastError(), "wglCreateContext" );
 		}
 
+		g_HGLRC_Background = wglCreateContext( GraphicsWindow::GetHDC() );
+		if( g_HGLRC_Background == NULL )
+		{
+			DestroyGraphicsWindowAndOpenGLContext();
+			return hr_ssprintf( GetLastError(), "wglCreateContext" );
+		}
+
+		if( !wglShareLists(g_HGLRC, g_HGLRC_Background) )
+		{
+			LOG->Warn( werr_ssprintf(GetLastError(), "wglShareLists failed") );
+			wglDeleteContext( g_HGLRC_Background );
+			g_HGLRC_Background = NULL;
+		}
+
 		if( !wglMakeCurrent( GraphicsWindow::GetHDC(), g_HGLRC ) )
 		{
 			DestroyGraphicsWindowAndOpenGLContext();
@@ -214,6 +238,25 @@ CString LowLevelWindow_Win32::TryVideoMode( const VideoModeParams &p, bool &bNew
 		}
 	}
 	return CString();	// we set the video mode successfully
+}
+
+bool LowLevelWindow_Win32::SupportsThreadedRendering()
+{
+	return g_HGLRC_Background != NULL;
+}
+	
+void LowLevelWindow_Win32::BeginConcurrentRendering()
+{
+	if( !wglMakeCurrent( GraphicsWindow::GetHDC(), g_HGLRC_Background ) )
+	{
+		LOG->Warn( hr_ssprintf(GetLastError(), "wglMakeCurrent") );
+		FAIL_M( hr_ssprintf(GetLastError(), "wglMakeCurrent") );
+	}
+}
+
+void LowLevelWindow_Win32::EndConcurrentRendering()
+{
+	wglMakeCurrent( NULL, NULL );
 }
 
 bool LowLevelWindow_Win32::IsSoftwareRenderer( CString &sError )
