@@ -151,8 +151,7 @@ void LoadingWindow_Win32::SetText( CString sText )
 
 		HWND hwndItem = ::GetDlgItem( hwnd, msgid[i] );
 		
-		wstring w = RStringToWstring( asMessageLines[i] );
-		::SetWindowTextW( hwndItem, w.c_str() );
+		::SetWindowText( hwndItem, ConvertUTF8ToACP(asMessageLines[i]).c_str() );
 	}
 }
 

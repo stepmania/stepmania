@@ -55,8 +55,6 @@ void DialogUtil::SetHeaderFont( HWND hdlg, int nID )
 
 void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 {
-	// TODO: No SetWindowTextW on Win9x
-
 	const int LARGE_STRING = 256;
 	char szTemp[LARGE_STRING] = "";
 	RString sGroup;
@@ -66,8 +64,7 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 		RString s = szTemp;
 		sGroup = "Tools-"+s;
 		s = THEME->GetString( sGroup, s );
-		wstring w = RStringToWstring( s );
-		::SetWindowTextW( hdlg, w.c_str() );
+		::SetWindowText( hdlg, ConvertUTF8ToACP(s).c_str() );
 	}
 
 	for( HWND hwndChild = ::GetTopWindow(hdlg); hwndChild != NULL; hwndChild = ::GetNextWindow(hwndChild,GW_HWNDNEXT) )
@@ -77,8 +74,7 @@ void DialogUtil::LocalizeDialogAndContents( HWND hdlg )
 		if( s.empty() )
 			continue;
 		s = THEME->GetString( sGroup, s );
-		wstring w = RStringToWstring( s );
-		::SetWindowTextW( hwndChild, w.c_str() );
+		::SetWindowText( hwndChild, ConvertUTF8ToACP(s).c_str() );
 	}
 }
 

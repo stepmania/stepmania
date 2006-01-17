@@ -80,7 +80,7 @@ static HWND GetHwnd()
 #endif
 }
 
-static wstring GetWindowTitle()
+static RString GetWindowTitle()
 {
 	RString s;
 #if !defined(SMPACKAGE)
@@ -88,7 +88,7 @@ static wstring GetWindowTitle()
 #else
 	s = PRODUCT_NAME;
 #endif
-	return RStringToWstring( s );
+	return s;
 }
 
 void DialogDriver_Win32::OK( RString sMessage, RString sID )
@@ -176,8 +176,7 @@ void DialogDriver_Win32::Error( RString sError, RString sID )
 
 Dialog::Result DialogDriver_Win32::AbortRetryIgnore( RString sMessage, RString ID )
 {
-	wstring wsMessage = RStringToWstring(sMessage);
-	switch( MessageBoxW(::GetHwnd(), wsMessage.c_str(), ::GetWindowTitle().c_str(), MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
+	switch( MessageBox(::GetHwnd(), ConvertUTF8ToACP(sMessage).c_str(), ConvertUTF8ToACP(::GetWindowTitle()).c_str(), MB_ABORTRETRYIGNORE|MB_DEFBUTTON3 ) )
 	{
 	case IDABORT:	return Dialog::abort;
 	case IDRETRY:	return Dialog::retry;
@@ -188,8 +187,7 @@ Dialog::Result DialogDriver_Win32::AbortRetryIgnore( RString sMessage, RString I
 
 Dialog::Result DialogDriver_Win32::AbortRetry( RString sMessage, RString sID )
 {
-	wstring wsMessage = RStringToWstring(sMessage);
-	switch( MessageBoxW(::GetHwnd(), wsMessage.c_str(), ::GetWindowTitle().c_str(), MB_RETRYCANCEL) )
+	switch( MessageBox(::GetHwnd(), ConvertUTF8ToACP(sMessage).c_str(), ConvertUTF8ToACP(::GetWindowTitle()).c_str(), MB_RETRYCANCEL) )
 	{
 	case IDRETRY:	return Dialog::retry;
 	default:	ASSERT(0);

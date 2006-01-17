@@ -302,7 +302,7 @@ void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForce
 	{
 		if( m_bWideWindowClass )
 		{
-			if( SetWindowTextW( g_hWndMain, RStringToWstring(p.sWindowTitle).c_str() ) )
+			if( SetWindowText( g_hWndMain, ConvertUTF8ToACP(p.sWindowTitle).c_str() ) )
 				break;
 		}
 
