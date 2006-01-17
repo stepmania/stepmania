@@ -196,11 +196,6 @@ void ScreenOptions::Init()
 	m_OptionRowType.Load( m_sName );
 }
 
-void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands )
-{
-	InitMenu( vHands );
-}
-
 void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 {
 	LOG->Trace( "ScreenOptions::InitMenu()" );
