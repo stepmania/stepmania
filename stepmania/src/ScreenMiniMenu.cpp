@@ -7,6 +7,7 @@
 #include "ScreenDimensions.h"
 #include "GameState.h"
 #include "FontCharAliases.h"
+#include "OptionRowHandler.h"
 
 AutoScreenMessage( SM_GoToOK )
 AutoScreenMessage( SM_GoToCancel )
@@ -35,12 +36,13 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 	m_vMenuRows = pDef->rows;
 
 	// Convert from m_vMenuRows to vector<OptionRowDefinition>
-	vector<OptionRowDefinition> vDefs;
-	vDefs.resize( m_vMenuRows.size() );
+	vector<OptionRowHandler*> vHands;
 	for( unsigned r=0; r<m_vMenuRows.size(); r++ )
 	{
+		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
+
 		const MenuRowDef &mr = m_vMenuRows[r];
-		OptionRowDefinition &def = vDefs[r];
+		OptionRowDefinition &def = pHand->m_Def;
 
 		def.m_sName = mr.sName;
 		FontCharAliases::ReplaceMarkers( def.m_sName );	// Allow special characters
@@ -56,7 +58,7 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 			def.m_vEnabledForPlayers.clear();
 		}
 
-		def.m_bOneChoiceForAllPlayers = true;
+		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 		def.m_selectType = SELECT_ONE;
 		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		def.m_bExportOnChange = false;
@@ -68,8 +70,7 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 			FontCharAliases::ReplaceMarkers( *c );	// Allow special characters
 	}
 
-	vector<OptionRowHandler*> vHands( vDefs.size(), NULL );
-	ScreenOptions::InitMenu( vDefs, vHands );
+	ScreenOptions::InitMenu( vHands );
 }
 
 void ScreenMiniMenu::AfterChangeValueOrRow( PlayerNumber pn )

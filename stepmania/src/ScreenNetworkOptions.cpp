@@ -12,6 +12,7 @@
 #include "ScreenPrompt.h"
 #include "NetworkSyncServer.h"
 #include "LocalizedString.h"
+#include "OptionRowHandler.h"
 
 enum {
 	PO_CONNECTION,
@@ -32,13 +33,6 @@ enum
 	NO_SCOREBOARD_ON
 };
 
-OptionRowDefinition g_NetworkOptionsLines[NUM_NETWORK_OPTIONS_LINES] = {
-	OptionRowDefinition( "Connection",	true, "Press Start" ),
-	OptionRowDefinition( "Server",		true, "Press Start" ),
-	OptionRowDefinition( "Scoreboard",	true, "Press Start" ),
-	OptionRowDefinition( "Servers",		true, "Press Start" )
-};
-
 AutoScreenMessage( SM_DoneConnecting )
 AutoScreenMessage( SM_ServerNameEnter )
 
@@ -50,40 +44,48 @@ void ScreenNetworkOptions::Init()
 {
 	ScreenOptions::Init();
 
-	g_NetworkOptionsLines[PO_CONNECTION].m_vsChoices.clear();
-	if ( NSMAN->useSMserver )
-		g_NetworkOptionsLines[PO_CONNECTION].m_vsChoices.push_back("Disconnect");
-	else
-		g_NetworkOptionsLines[PO_CONNECTION].m_vsChoices.push_back("Connect");
+	vector<OptionRowHandler*> vHands;
+	{
+		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
+		vHands.push_back( pHand );
+		pHand->m_Def.m_sName = "Connection";
+		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
+		if ( NSMAN->useSMserver )
+			pHand->m_Def.m_vsChoices.push_back("Disconnect");
+		else
+			pHand->m_Def.m_vsChoices.push_back("Connect");
+	}
+	{
+		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
+		vHands.push_back( pHand );
+		pHand->m_Def.m_bAllowThemeItems = false;
+		pHand->m_Def.m_sName = "Server";
+		pHand->m_Def.m_vsChoices.push_back("Stop");
+		pHand->m_Def.m_vsChoices.push_back("Start");
+	}
+	{
+		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
+		vHands.push_back( pHand );
+		pHand->m_Def.m_sName = "Scoreboard";
+		pHand->m_Def.m_vsChoices.clear();
+		pHand->m_Def.m_vsChoices.push_back("Off");
+		pHand->m_Def.m_vsChoices.push_back("On");
+	}
+	{
+		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
+		vHands.push_back( pHand );
+		pHand->m_Def.m_sName = "Servers";
 
-	g_NetworkOptionsLines[PO_SERVER].m_vsChoices.clear();
-	g_NetworkOptionsLines[PO_SERVER].m_vsChoices.push_back("Stop");
-	g_NetworkOptionsLines[PO_SERVER].m_vsChoices.push_back("Start");
+		// Get info on all received servers from NSMAN.
+		NSMAN->GetListOfLANServers( AllServers );
+		if( AllServers.size() == 0 )
+			pHand->m_Def.m_vsChoices.push_back( "-none-" );
 
-	g_NetworkOptionsLines[PO_SCOREBOARD].m_vsChoices.clear();
-	g_NetworkOptionsLines[PO_SCOREBOARD].m_vsChoices.push_back("Off");
-	g_NetworkOptionsLines[PO_SCOREBOARD].m_vsChoices.push_back("On");
-	
-	//Get info on all received servers from NSMAN.
-	g_NetworkOptionsLines[PO_SERVERS].m_vsChoices.clear();
-	g_NetworkOptionsLines[PO_SERVERS].m_bAllowThemeItems = false;
+		for( unsigned int j = 0; j < AllServers.size(); j++ )
+			pHand->m_Def.m_vsChoices.push_back( AllServers[j].Name );
+	}
 
-	NSMAN->GetListOfLANServers( AllServers );
-	if ( AllServers.size() == 0 )
-		g_NetworkOptionsLines[PO_SERVERS].m_vsChoices.push_back( "-none-" );
-
-	for ( unsigned int j = 0; j < AllServers.size(); j++ )
-		g_NetworkOptionsLines[PO_SERVERS].m_vsChoices.push_back( AllServers[j].Name );
-
-	//Enable all lines for all players
-	for ( unsigned int i = 0; i < NUM_NETWORK_OPTIONS_LINES; i++ )
-		FOREACH_PlayerNumber( pn )
-			g_NetworkOptionsLines[i].m_vEnabledForPlayers.insert( pn );
-
-	vector<OptionRowDefinition> vDefs( &g_NetworkOptionsLines[0], &g_NetworkOptionsLines[ARRAYSIZE(g_NetworkOptionsLines)] );
-	vector<OptionRowHandler*> vHands( vDefs.size(), NULL );
-
-	InitMenu( vDefs, vHands );
+	InitMenu( vHands );
 
 	m_pRows[PO_SCOREBOARD]->SetOneSharedSelection(PREFSMAN->m_bEnableScoreboard);
 }
