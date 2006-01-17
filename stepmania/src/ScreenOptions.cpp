@@ -214,12 +214,9 @@ void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
 		row.SetDrawOrder( 1 );
 		m_framePage.AddChild( &row );
 
-		OptionRowHandler* hand = vHands[r];
-		const OptionRowDefinition &def = vHands[r]->m_Def;
-		
 		bool bFirstRowGoesDown = m_OptionsNavigation==NAV_TOGGLE_THREE_KEY;
 
-		row.LoadNormal( def, hand, bFirstRowGoesDown );
+		row.LoadNormal( vHands[r], bFirstRowGoesDown );
 		row.InitText();
 	}
 

@@ -153,9 +153,9 @@ void OptionRowType::Load( const CString &sType )
 		m_OptionIcon.Load( sType );
 }
 
-void OptionRow::LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown )
+void OptionRow::LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown )
 {
-	m_RowDef = def;
+	m_RowDef = pHand->m_Def;
 	m_RowType = OptionRow::RowType_Normal;
 	m_pHand = pHand;
 	m_bFirstItemGoesDown = bFirstItemGoesDown;

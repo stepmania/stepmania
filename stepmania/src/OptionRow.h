@@ -134,7 +134,7 @@ public:
 	~OptionRow();
 
 	void Clear();
-	void LoadNormal( const OptionRowDefinition &def, OptionRowHandler *pHand, bool bFirstItemGoesDown );
+	void LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown );
 	void LoadExit();
 
 	void SetOptionIcon( PlayerNumber pn, const CString &sText, GameCommand &gc );
