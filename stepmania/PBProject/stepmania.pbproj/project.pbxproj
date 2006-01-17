@@ -4336,7 +4336,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -4396,7 +4396,6 @@
 					"-finline-limit=450",
 					"-fconstant-cfstrings",
 					"-fgcse-sm",
-					"-fprefetch-loop-arrays",
 					"-fsingle-precision-constant",
 					"-falign-jumps",
 					"-falign-loops",
