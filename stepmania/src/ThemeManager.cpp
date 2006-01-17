@@ -944,7 +944,8 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 
 	
 	// Write stubs for missing strings into every language file.
-	RString s;
+	RString s = ThemeManager::GetMetric( sClassName, sValueName );
+	/*
 	if( !ThemeManager::GetMetricRawRecursive( sClassName, sValueName, s ) )
 	{
 		RString sFile = GetLanguageIniPath( SpecialFiles::BASE_THEME_NAME, m_sCurLanguage );
@@ -956,6 +957,7 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 
 		LoadThemeMetrics( g_vThemes, m_sCurThemeName, m_sCurLanguage );
 	}
+	*/
 	EvaluateString( s );
 
 	s.Replace( "\\n", "\n" );
@@ -977,7 +979,7 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 		s.Replace( "c", "ç" );
 		s.Replace( "C", "Ç" );
 		// transformations that helpexpose punctuation assumptions
-		s.Replace( ":", " :" );
+		//s.Replace( ":", " :" );	// this messes up "::" help text tip separator markers
 		s.Replace( "?", " ?" );
 		s.Replace( "!", " !" );
 	}
