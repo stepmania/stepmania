@@ -1208,11 +1208,11 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 
 #define MAKE( type )	{ type *p = new type; p->Load( cmds ); pHand = p; }
 
-	if(		 name == "list" )			MAKE( OptionRowHandlerList )
-	else if( name == "lua" )			MAKE( OptionRowHandlerLua )
-	else if( name == "conf" )			MAKE( OptionRowHandlerConfig )
+	if(	 name == "list" )		MAKE( OptionRowHandlerList )
+	else if( name == "lua" )		MAKE( OptionRowHandlerLua )
+	else if( name == "conf" )		MAKE( OptionRowHandlerConfig )
 	else if( name == "stepstype" )		MAKE( OptionRowHandlerStepsType )
-	else if( name == "steps" )			MAKE( OptionRowHandlerSteps )
+	else if( name == "steps" )		MAKE( OptionRowHandlerSteps )
 	else if( name == "gamecommand" )	MAKE( OptionRowHandlerGameCommand )
 
 	return pHand;
