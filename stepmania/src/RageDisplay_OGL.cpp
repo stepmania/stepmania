@@ -680,8 +680,7 @@ void RageDisplay_OGL::EndFrame()
 
 	FrameLimitBeforeVsync( g_pWind->GetActualVideoModeParams().rate );
 	g_pWind->SwapBuffers();
-	if( iRefreshRate > 0 )
-		FrameLimitAfterVsync();
+	FrameLimitAfterVsync();
 
 	g_pWind->Update();
 
