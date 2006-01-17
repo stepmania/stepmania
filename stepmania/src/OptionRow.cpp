@@ -391,7 +391,9 @@ void OptionRow::InitText()
 			m_Frame.AddChild( m_Underline[p][c] );
 	m_Frame.SortByDrawOrder();
 
-	m_textTitle->SetText( GetRowTitle() );
+	// This is set in OptionRow::AfterImportOptions, so if we're reused with a different
+	// song selected, SHOW_BPM_IN_SPEED_TITLE will show the new BPM.
+	//m_textTitle->SetText( GetRowTitle() );
 	m_textTitle->SetX( m_pParentType->TITLE_X );
 	m_textTitle->RunCommands( m_pParentType->TITLE_ON_COMMAND );
 
@@ -481,6 +483,8 @@ void OptionRow::AfterImportOptions()
 			m_iChoiceInRowWithFocus[p] = 0;	
 
 	UpdateText();
+
+	m_textTitle->SetText( GetRowTitle() );
 }
 
 void OptionRow::LoadExit()
