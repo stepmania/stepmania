@@ -162,26 +162,16 @@ public:
 	void SetChoiceInRowWithFocus( PlayerNumber pn, int iChoice );
 	void SetChoiceInRowWithFocusShared( int iChoice );
 
-	bool GetSelected( PlayerNumber pn, int iChoice ) const
-	{
-		if( m_RowDef.m_bOneChoiceForAllPlayers )
-			pn = PLAYER_1;
-		return m_vbSelected[pn][iChoice];
-	}
-	void SetSelected( PlayerNumber pn, int iChoice, bool b )
-	{
-		if( m_RowDef.m_bOneChoiceForAllPlayers )
-			pn = PLAYER_1;
-		m_vbSelected[pn][iChoice] = b;
-	}
+	bool GetSelected( PlayerNumber pn, int iChoice ) const;
+	void SetSelected( PlayerNumber pn, int iChoice, bool b );
 
 	enum RowType
 	{
 		RowType_Normal,
 		RowType_Exit
 	};
-	const OptionRowDefinition &GetRowDef() const { return m_RowDef; }
-	OptionRowDefinition &GetRowDef() { return m_RowDef; }
+	const OptionRowDefinition &GetRowDef() const;
+	OptionRowDefinition &GetRowDef();
 	RowType GetRowType() const { return m_RowType; }
 	const OptionRowHandler *GetHandler() const { return m_pHand; }
 
@@ -211,7 +201,6 @@ protected:
 	CString GetRowTitle() const;
 
 	const OptionRowType		*m_pParentType;
-	OptionRowDefinition		m_RowDef;
 	RowType				m_RowType;
 	OptionRowHandler*		m_pHand;
 
@@ -228,8 +217,8 @@ protected:
 	bool				m_bRowHasFocus[NUM_PLAYERS];
 
 	int				m_iChoiceInRowWithFocus[NUM_PLAYERS];	// this choice has input focus
-	// Only one will true at a time if m_RowDef.bMultiSelect
-	vector<bool>			m_vbSelected[NUM_PLAYERS];	// size = m_RowDef.choices.size()
+	// Only one will true at a time if m_pHand->m_Def.bMultiSelect
+	vector<bool>			m_vbSelected[NUM_PLAYERS];	// size = m_pHand->m_Def.choices.size()
 
 public:
 	Actor::TweenState m_tsDestination;	// this should approach m_tsDestination.
