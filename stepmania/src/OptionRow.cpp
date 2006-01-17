@@ -103,11 +103,8 @@ void OptionRow::Clear()
 	FOREACH_PlayerNumber( p )
 		m_Underline[p].clear();
 
-	if( m_pHand )
-	{
-		FOREACH_CONST( CString, m_pHand->m_vsReloadRowMessages, m )
-			MESSAGEMAN->Unsubscribe( this, *m );
-	}
+	FOREACH_CONST( CString, m_pHand->m_vsReloadRowMessages, m )
+		MESSAGEMAN->Unsubscribe( this, *m );
 	SAFE_DELETE( m_pHand );
 
 	m_bFirstItemGoesDown = false;
@@ -160,11 +157,8 @@ void OptionRow::LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown )
 	m_pHand = pHand;
 	m_bFirstItemGoesDown = bFirstItemGoesDown;
 
-	if( m_pHand )
-	{
-		FOREACH_CONST( CString, m_pHand->m_vsReloadRowMessages, m )
-			MESSAGEMAN->Subscribe( this, *m );
-	}
+	FOREACH_CONST( CString, m_pHand->m_vsReloadRowMessages, m )
+		MESSAGEMAN->Subscribe( this, *m );
 
 	FOREACH_PlayerNumber( p )
 	{
@@ -965,9 +959,6 @@ void OptionRow::HandleMessage( const CString& sMessage )
 
 void OptionRow::ImportOptions( const vector<PlayerNumber> &vpns )
 {
-	if( m_pHand == NULL )
-		return;
-
 	ASSERT( m_RowDef.m_vsChoices.size() > 0 );
 
 	FOREACH_CONST( PlayerNumber, vpns, iter )
@@ -994,9 +985,6 @@ void OptionRow::ImportOptions( const vector<PlayerNumber> &vpns )
 
 int OptionRow::ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] )
 {
-	if( m_pHand == NULL )
-		return 0;
-
 	ASSERT( m_RowDef.m_vsChoices.size() > 0 );
 
 	int iChangeMask = 0;
