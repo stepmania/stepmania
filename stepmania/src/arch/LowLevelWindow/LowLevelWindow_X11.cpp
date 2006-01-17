@@ -87,10 +87,9 @@ CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	XEvent ev;
 	stack<XEvent> otherEvs;
 
-	// XXX: LLW_SDL allows the window to be resized. Do we really want to?
-	hints.flags = PMinSize | PMaxSize | PBaseSize;
-	hints.min_width = hints.max_width = hints.base_width = p.width;
-	hints.min_height = hints.max_height = hints.base_height = p.height;
+	hints.flags = PBaseSize;
+	hints.base_width = p.width;
+	hints.base_height = p.height;
 
 	if( !m_bWindowIsOpen || p.bpp != CurrentParams.bpp || ( m_bWasWindowed != p.windowed ) )
 	{
