@@ -1141,6 +1141,7 @@ public:
 	OptionRowHandlerGameCommand() { Init(); }
 	void Init()
 	{
+		OptionRowHandler::Init();
 		m_gc.Init();
 		m_gc.ApplyCommitsScreens( false );
 	}
