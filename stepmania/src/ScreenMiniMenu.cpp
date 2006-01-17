@@ -42,31 +42,30 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 		OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
 
 		const MenuRowDef &mr = m_vMenuRows[r];
-		OptionRowDefinition &def = pHand->m_Def;
 
-		def.m_sName = mr.sName;
-		FontCharAliases::ReplaceMarkers( def.m_sName );	// Allow special characters
+		pHand->m_Def.m_sName = mr.sName;
+		FontCharAliases::ReplaceMarkers( pHand->m_Def.m_sName );	// Allow special characters
 		
 		if( mr.bEnabled )
 		{
-			def.m_vEnabledForPlayers.clear();
+			pHand->m_Def.m_vEnabledForPlayers.clear();
 			FOREACH_EnabledPlayer( pn )
-				def.m_vEnabledForPlayers.insert( pn );
+				pHand->m_Def.m_vEnabledForPlayers.insert( pn );
 		}
 		else
 		{
-			def.m_vEnabledForPlayers.clear();
+			pHand->m_Def.m_vEnabledForPlayers.clear();
 		}
 
 		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
-		def.m_selectType = SELECT_ONE;
-		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-		def.m_bExportOnChange = false;
+		pHand->m_Def.m_selectType = SELECT_ONE;
+		pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		pHand->m_Def.m_bExportOnChange = false;
 			
-		def.m_vsChoices = mr.choices;
-		def.m_bAllowThemeItems = mr.bThemeItems;
+		pHand->m_Def.m_vsChoices = mr.choices;
+		pHand->m_Def.m_bAllowThemeItems = mr.bThemeItems;
 
-		FOREACH( CString, def.m_vsChoices, c )
+		FOREACH( CString, pHand->m_Def.m_vsChoices, c )
 			FontCharAliases::ReplaceMarkers( *c );	// Allow special characters
 
 		vHands.push_back( pHand );
