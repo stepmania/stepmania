@@ -384,9 +384,10 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 			switch( in.type )
 			{
 			case in.KEY:
-				/*	// "Joystick with keyboard" hack
+				/*
 				switch( in.num )
 				{
+					// "Joystick with Keyboard" hack
 				case 115:	//s
 					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_UP, -1, tm), !!(evtbuf[i].dwData & 0x80) );
 					break;
@@ -399,10 +400,13 @@ void InputHandler_DInput::UpdateBuffered( DIDevice &device, const RageTimer &tm 
 				case 99:	//c
 					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_RIGHT, -1, tm), !!(evtbuf[i].dwData & 0x80) );
 					break;
+				case 100:	//d
+					ButtonPressed( DeviceInput(DEVICE_JOY1, JOY_BUTTON_1, -1, tm), !!(evtbuf[i].dwData & 0x80) );
+					break;
 				default:
-				*/
+					*/
 					ButtonPressed( DeviceInput(dev, (DeviceButton) in.num, -1, tm), !!(evtbuf[i].dwData & 0x80)) ;
-				/*
+					/*
 					break;
 				}
 				*/
