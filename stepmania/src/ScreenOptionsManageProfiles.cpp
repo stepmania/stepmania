@@ -96,11 +96,6 @@ void ScreenOptionsManageProfiles::Init()
 
 void ScreenOptionsManageProfiles::BeginScreen()
 {
-	OptionRowDefinition def;
-	def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
-	def.m_bAllowThemeTitle = false;
-	def.m_bAllowThemeItems = false;
-
 	int iIndex = 0;
 	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> OptionRowHandlers;
