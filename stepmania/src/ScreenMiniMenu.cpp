@@ -68,6 +68,8 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 
 		FOREACH( CString, def.m_vsChoices, c )
 			FontCharAliases::ReplaceMarkers( *c );	// Allow special characters
+
+		vHands.push_back( pHand );
 	}
 
 	ScreenOptions::InitMenu( vHands );
