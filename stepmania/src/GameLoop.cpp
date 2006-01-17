@@ -231,6 +231,7 @@ void ConcurrentRenderer::RenderThread()
 {
 	ASSERT( SCREENMAN != NULL );
 
+	DISPLAY->BeginConcurrentRendering();
 	HOOKS->SetupConcurrentRenderingThread();
 
 	LOG->Trace( "ConcurrentRenderer::RenderThread start" );
@@ -245,6 +246,7 @@ void ConcurrentRenderer::RenderThread()
 		float fDeltaTime = g_GameplayTimer.GetDeltaTime();
 		SCREENMAN->Update( fDeltaTime );
 	}
+	DISPLAY->EndConcurrentRendering();
 
 	LOG->Trace( "ConcurrentRenderer::RenderThread done" );
 }
