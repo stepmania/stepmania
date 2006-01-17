@@ -11,7 +11,7 @@ static PIXELFORMATDESCRIPTOR g_CurrentPixelFormat;
 static HGLRC g_HGLRC = NULL;
 static HGLRC g_HGLRC_Background = NULL;
 
-void DestroyGraphicsWindowAndOpenGLContext()
+static void DestroyGraphicsWindowAndOpenGLContext()
 {
 	if( g_HGLRC != NULL )
 	{
