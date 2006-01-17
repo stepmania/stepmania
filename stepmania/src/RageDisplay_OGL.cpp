@@ -678,7 +678,10 @@ void RageDisplay_OGL::EndFrame()
 	// Gog-knows-what.
 	glFlush();
 
+	FrameLimitBeforeVsync( g_pWind->GetActualVideoModeParams().rate );
 	g_pWind->SwapBuffers();
+	if( iRefreshRate > 0 )
+		FrameLimitAfterVsync();
 
 	g_pWind->Update();
 
