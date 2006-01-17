@@ -590,6 +590,7 @@
 		AA60E0C1067992D7008ADC41 /* Threads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BC067992D7008ADC41 /* Threads.h */; };
 		AA60E0C2067992D7008ADC41 /* Threads_Pthreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA60E0BD067992D7008ADC41 /* Threads_Pthreads.cpp */; };
 		AA60E0C3067992D7008ADC41 /* Threads_Pthreads.h in Headers */ = {isa = PBXBuildFile; fileRef = AA60E0BE067992D7008ADC41 /* Threads_Pthreads.h */; };
+		AA61665F097CB1770007E532 /* mad.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = AABAAE95097A82C1009D1ED3 /* mad.framework */; };
 		AA64218806EC606F00C21584 /* RageFileDriverMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA64218606EC606F00C21584 /* RageFileDriverMemory.cpp */; };
 		AA64218906EC606F00C21584 /* RageFileDriverMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = AA64218706EC606F00C21584 /* RageFileDriverMemory.h */; };
 		AA6E6E0A07F518E800C3EBB4 /* Quad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA6E6E0907F518E800C3EBB4 /* Quad.cpp */; };
@@ -940,6 +941,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				AA61665F097CB1770007E532 /* mad.framework in CopyFiles */,
 				AA8E5635090B910C00D8CD2D /* resample.framework in CopyFiles */,
 				AA4B47B405739711005FB5DB /* ffmpeg.framework in CopyFiles */,
 			);
@@ -4478,7 +4480,7 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../src/archutils/Darwin/StepMania.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -4535,10 +4537,9 @@
 				OBJROOT = "$(SRCROOT)/build";
 				OTHER_CFLAGS = "";
 				OTHER_CPLUSPLUSFLAGS = (
-					"-finline-limit=450",
+					"-finline-limit=300",
 					"-fconstant-cfstrings",
 					"-fgcse-sm",
-					"-fprefetch-loop-arrays",
 					"-fsingle-precision-constant",
 					"-falign-jumps",
 					"-falign-loops",
