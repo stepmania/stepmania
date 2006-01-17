@@ -581,22 +581,19 @@ void ScreenManager::RunConcurrentlyPrepareScreen()
 	m_OnDonePreparingScreen = SM_None;
 
 	/* If the screen is already prepared, we're all set. */
-	if( ScreenIsPrepped(sScreenName) )
+	if( !ScreenIsPrepped(sScreenName) )
 	{
-		SendMessageToTopScreen( SM );
-		return;
+		g_bIsConcurrentlyLoading = true;
+		StartConcurrentRendering();
+
+		if( g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end() )
+			DeletePreparedScreens();
+		PrepareScreen( sScreenName );
+		FinishConcurrentRendering();
+		g_bIsConcurrentlyLoading = false;
+
+		LOG->Trace( "Concurrent prepare of %s finished", sScreenName.c_str() );
 	}
-
-	g_bIsConcurrentlyLoading = true;
-	StartConcurrentRendering();
-
-	if( g_setGroupedScreens.find(sScreenName) == g_setGroupedScreens.end() )
-		DeletePreparedScreens();
-	PrepareScreen( sScreenName );
-	FinishConcurrentRendering();
-	g_bIsConcurrentlyLoading = false;
-
-	LOG->Trace( "Concurrent prepare of %s finished", sScreenName.c_str() );
 
 	/* We're done.  Send the message.  The screen is allowed to start
 	 * another concurrent prepare from this message. */
