@@ -951,21 +951,6 @@ void OptionRow::Reload( const OptionRowDefinition &def )
 	}
 }
 
-void OptionRow::SetEnabledRowForAllPlayers( bool bEnabledForAllPlayers )
-{
-	OptionRowDefinition def = m_pHand->m_Def;
-	if( bEnabledForAllPlayers )
-	{
-		OptionRowDefinition temp; 
-		def.m_vEnabledForPlayers = temp.m_vEnabledForPlayers;
-	}
-	else
-	{
-		def.m_vEnabledForPlayers.clear();
-	}
-	Reload( def );
-}
-
 void OptionRow::HandleMessage( const CString& sMessage )
 {
 	Reload( m_pHand->m_Def );

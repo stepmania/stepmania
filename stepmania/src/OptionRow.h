@@ -190,7 +190,6 @@ public:
 	void SetExitText( CString sExitText );
 
 	void Reload( const OptionRowDefinition &def );
-	void SetEnabledRowForAllPlayers( bool bEnabledForAllPlayers );
 
 	//
 	// Messages
