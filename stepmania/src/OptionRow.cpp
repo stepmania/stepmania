@@ -489,17 +489,19 @@ void OptionRow::AfterImportOptions()
 
 void OptionRow::LoadExit()
 {
+	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_selectType  = SELECT_NONE;
+	pHand->m_Def.m_sName = EXIT_NAME;
+	pHand->m_Def.m_vsChoices.push_back( "Exit" );
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
 	m_RowType = OptionRow::RowType_Exit;
-	m_RowDef.m_sName = EXIT_NAME;
-	m_RowDef.m_vsChoices.push_back( "Exit" );
-	m_RowDef.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-	m_RowDef.m_bOneChoiceForAllPlayers = true;
-
+	m_pHand = pHand;
+	m_RowDef = m_pHand->m_Def;
 	FOREACH_PlayerNumber( p )
 	{
 		vector<bool> &vbSelected = m_vbSelected[p];
-		vbSelected.resize( m_RowDef.m_vsChoices.size(), false );
-		vbSelected[0] = true;
+		vbSelected.resize( m_pHand->m_Def.m_vsChoices.size(), false );
 	}
 }
 
