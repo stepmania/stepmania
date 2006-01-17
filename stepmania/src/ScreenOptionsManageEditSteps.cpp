@@ -74,7 +74,6 @@ void ScreenOptionsManageEditSteps::Init()
 
 void ScreenOptionsManageEditSteps::BeginScreen()
 {
-	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
 
 	int iIndex = 0;
@@ -88,7 +87,6 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 		def.m_sExplanationName = "Create New Edit Steps";
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( "" );
-		vDefs.push_back( def );
 		iIndex++;
 	}
 
@@ -105,11 +103,10 @@ void ScreenOptionsManageEditSteps::BeginScreen()
 		CString sType = GAMEMAN->StepsTypeToLocalizedString( (*s)->m_StepsType );
 		def.m_vsChoices.push_back( sType );
 		def.m_bAllowThemeItems = false;	// already themed
-		vDefs.push_back( def );
 		iIndex++;
 	}
 
-	ScreenOptions::InitMenu( vDefs, vHands );
+	ScreenOptions::InitMenu( vHands );
 
 	ScreenOptions::BeginScreen();
 	

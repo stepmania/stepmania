@@ -34,6 +34,7 @@ public:
 	ScreenOptions();
 	virtual void Init();
 	virtual void BeginScreen();
+	void InitMenu( const vector<OptionRowHandler*> &vHands );
 	void InitMenu( const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands );
 	virtual ~ScreenOptions();
 	virtual void Update( float fDeltaTime );

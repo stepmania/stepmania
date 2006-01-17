@@ -61,7 +61,6 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	m_Original = ce;
 
 
-	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
 
 	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
@@ -75,7 +74,6 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	pHand->m_Def.m_vsChoices.push_back( "(any)" );
 	FOREACH_CONST( CString, vsSongGroups, song )
 		pHand->m_Def.m_vsChoices.push_back( *song );
-	vDefs.push_back( pHand->m_Def );
 	vHands.push_back( pHand );
 
 	pHand = OptionRowHandlerUtil::MakeNull();
@@ -84,7 +82,6 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	pHand->m_Def.m_bExportOnChange = true;
 	pHand->m_Def.m_vsChoices.clear();
 	FillSongsAndChoices( ce.sSongGroup, m_vpDisplayedSongs, pHand->m_Def.m_vsChoices );
-	vDefs.push_back( pHand->m_Def );
 	vHands.push_back( pHand );
 
 	pHand = OptionRowHandlerUtil::MakeNull();
@@ -95,7 +92,6 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	pHand->m_Def.m_vsChoices.push_back( "(any)" );
 	FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), dc )
 		pHand->m_Def.m_vsChoices.push_back( DifficultyToLocalizedString(*dc) );
-	vDefs.push_back( pHand->m_Def );
 	vHands.push_back( pHand );
 
 	pHand = OptionRowHandlerUtil::MakeNull();
@@ -106,7 +102,6 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	pHand->m_Def.m_vsChoices.push_back( "(any)" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
 		pHand->m_Def.m_vsChoices.push_back( ssprintf("%i",i) );
-	vDefs.push_back( pHand->m_Def );
 	vHands.push_back( pHand );
 
 	pHand = OptionRowHandlerUtil::MakeNull();
@@ -117,7 +112,6 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	pHand->m_Def.m_vsChoices.push_back( "(any)" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
 		pHand->m_Def.m_vsChoices.push_back( ssprintf("%i",i) );
-	vDefs.push_back( pHand->m_Def );
 	vHands.push_back( pHand );
 
 	pHand = OptionRowHandlerUtil::MakeNull();
@@ -127,7 +121,6 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	pHand->m_Def.m_vsChoices.clear();
 	FOREACH_SongSort( i )
 		pHand->m_Def.m_vsChoices.push_back( SongSortToLocalizedString(i) );
-	vDefs.push_back( pHand->m_Def );
 	vHands.push_back( pHand );
 
 	pHand = OptionRowHandlerUtil::MakeNull();
@@ -137,7 +130,6 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	pHand->m_Def.m_vsChoices.clear();
 	for( int i=0; i<20; i++ )
 		pHand->m_Def.m_vsChoices.push_back( FormatNumberAndSuffix(i+1) );
-	vDefs.push_back( pHand->m_Def );
 	vHands.push_back( pHand );
 
 	pHand = OptionRowHandlerUtil::MakeNull();
@@ -147,10 +139,9 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	pHand->m_Def.m_vsChoices.clear();
 	CString s = ssprintf( "%d mod changes", ce.GetNumModChanges() );
 	pHand->m_Def.m_vsChoices.push_back( s );
-	vDefs.push_back( pHand->m_Def );
 	vHands.push_back( pHand );
 
-	ScreenOptions::InitMenu( vDefs, vHands );
+	ScreenOptions::InitMenu( vHands );
 
 	ScreenOptions::BeginScreen();
 }

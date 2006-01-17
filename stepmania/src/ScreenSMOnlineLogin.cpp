@@ -27,7 +27,6 @@ void ScreenSMOnlineLogin::Init()
 	ScreenOptions::Init();
 	m_iPlayer = 0;
 
-	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
 	vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 	OptionRowDefinition &def = vHands.back()->m_Def;
@@ -45,9 +44,7 @@ void ScreenSMOnlineLogin::Init()
 		SCREENMAN->SetNewScreen("ScreenProfileOptions");
 	}
 
-	vDefs.push_back( def );	
-
-	InitMenu( vDefs, vHands );
+	InitMenu( vHands );
   	SOUND->PlayMusic( THEME->GetPathS("ScreenMachineOptions", "music"));
 	OptionRow &row = *m_pRows.back();
 	row.SetExitText("Login");

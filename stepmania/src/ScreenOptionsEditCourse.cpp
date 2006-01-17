@@ -57,7 +57,6 @@ void ScreenOptionsEditCourse::BeginScreen()
 	SONGMAN->GetSongs( m_vpDisplayedSongs );
 
 
-	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
 
 	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
@@ -67,7 +66,6 @@ void ScreenOptionsEditCourse::BeginScreen()
 	pHand->m_Def.m_vsChoices.clear();
 	FOREACH_CourseType( i )
 		pHand->m_Def.m_vsChoices.push_back( CourseTypeToLocalizedString(i) );
-	vDefs.push_back( pHand->m_Def );
 	vHands.push_back( pHand );
 
 	pHand = OptionRowHandlerUtil::MakeNull();
@@ -78,7 +76,6 @@ void ScreenOptionsEditCourse::BeginScreen()
 	pHand->m_Def.m_vsChoices.push_back( "Auto" );
 	for( int i=MIN_METER; i<=MAX_METER; i++ )
 		pHand->m_Def.m_vsChoices.push_back( ssprintf("%d",i) );
-	vDefs.push_back( pHand->m_Def );
 	vHands.push_back( pHand );
 
 	FOREACH_CONST( CourseEntry, pCourse->m_vEntries, ce )
@@ -91,7 +88,6 @@ void ScreenOptionsEditCourse::BeginScreen()
 		pHand->m_Def.m_vsChoices.clear();
 		FOREACH_CONST( Song*, m_vpDisplayedSongs, s )
 			pHand->m_Def.m_vsChoices.push_back( (*s)->GetTranslitFullTitle() );
-		vDefs.push_back( pHand->m_Def );
 		vHands.push_back( pHand );
 	}
 
@@ -101,10 +97,9 @@ void ScreenOptionsEditCourse::BeginScreen()
 	pHand->m_Def.m_bExportOnChange = true;
 	pHand->m_Def.m_vsChoices.clear();
 	pHand->m_Def.m_vsChoices.push_back( "Insert Entry" );
-	vDefs.push_back( pHand->m_Def );
 	vHands.push_back( pHand );
 
-	ScreenOptions::InitMenu( vDefs, vHands );
+	ScreenOptions::InitMenu( vHands );
 
 	ScreenOptions::BeginScreen();
 

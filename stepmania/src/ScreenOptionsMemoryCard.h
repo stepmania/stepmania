@@ -18,8 +18,6 @@ private:
 	void HandleMessage( const CString& sMessage );
 
 	void ProcessMenuStart( const InputEventPlus &input );
-
-	vector<OptionRowDefinition> m_vDefs;
 };
 
 #endif

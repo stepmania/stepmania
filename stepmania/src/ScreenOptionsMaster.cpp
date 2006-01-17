@@ -49,7 +49,6 @@ void ScreenOptionsMaster::Init()
 	// Call this after enabling players, if any.
 	ScreenOptions::Init();
 
-	vector<OptionRowDefinition> OptionRowDefs;
 	vector<OptionRowHandler*> OptionRowHandlers;
 	for( unsigned i = 0; i < asLineNames.size(); ++i )
 	{
@@ -63,13 +62,12 @@ void ScreenOptionsMaster::Init()
 		if( pHand == NULL )
 			RageException::Throw( "Invalid OptionRowHandler '%s' in %s::Line%i", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), i );
 		OptionRowHandlers.push_back( pHand );
-		OptionRowDefs.push_back( pHand->m_Def );
 	}
 
 	ASSERT( OptionRowHandlers.size() == asLineNames.size() );
 
 
-	InitMenu( OptionRowDefs, OptionRowHandlers );
+	InitMenu( OptionRowHandlers );
 }
 
 void ScreenOptionsMaster::ImportOptions( int r, const vector<PlayerNumber> &vpns )

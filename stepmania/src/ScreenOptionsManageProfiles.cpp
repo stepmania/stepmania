@@ -97,7 +97,6 @@ void ScreenOptionsManageProfiles::Init()
 void ScreenOptionsManageProfiles::BeginScreen()
 {
 	int iIndex = 0;
-	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> OptionRowHandlers;
 
 	if( SHOW_CREATE_NEW )
@@ -107,7 +106,6 @@ void ScreenOptionsManageProfiles::BeginScreen()
 		pHand->m_Def.m_bAllowThemeTitle = false;
 		pHand->m_Def.m_bAllowThemeItems = false;
 		OptionRowHandlers.push_back( pHand );
-		vDefs.push_back( pHand->m_Def );
 
 		// FIXME
 		// gc.Load( iIndex++,  );
@@ -127,13 +125,12 @@ void ScreenOptionsManageProfiles::BeginScreen()
 		pHand->m_Def.m_bAllowThemeItems = false;
 		pHand->m_Def.m_sName = ssprintf( "%d", iIndex );
 		OptionRowHandlers.push_back( pHand );
-		vDefs.push_back( pHand->m_Def );
 
 		// FIXME
 		// gc.Load( iIndex++,  );
 	}
 
-	ScreenOptions::InitMenu( vDefs, OptionRowHandlers );
+	ScreenOptions::InitMenu( OptionRowHandlers );
 
 	ScreenOptions::BeginScreen();
 	

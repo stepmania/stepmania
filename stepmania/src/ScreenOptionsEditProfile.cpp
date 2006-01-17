@@ -28,7 +28,6 @@ void ScreenOptionsEditProfile::BeginScreen()
 {
 	m_Original = *GAMESTATE->GetEditLocalProfile();
 
-	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
 
 	Profile *pProfile = PROFILEMAN->GetLocalProfile( GAMESTATE->m_sEditLocalProfileID );
@@ -49,10 +48,9 @@ void ScreenOptionsEditProfile::BeginScreen()
 		CHARMAN->GetCharacters( vpCharacters );
 		FOREACH_CONST( Character*, vpCharacters, c )
 			def.m_vsChoices.push_back( (*c)->GetDisplayName() );
-		vDefs.push_back( def );
 	}
 
-	InitMenu( vDefs, vHands );
+	InitMenu( vHands );
 
 	ScreenOptions::BeginScreen();
 }

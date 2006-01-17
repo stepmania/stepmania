@@ -146,7 +146,6 @@ void ScreenOptionsManageCourses::BeginScreen()
 	}
 
 
-	vector<OptionRowDefinition> vDefs;
 	vector<OptionRowHandler*> vHands;
 
 	int iIndex = 0;
@@ -158,7 +157,6 @@ void ScreenOptionsManageCourses::BeginScreen()
 		def.m_sName = "";
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( "Create New" );
-		vDefs.push_back( def );
 		iIndex++;
 	}
 
@@ -206,11 +204,10 @@ void ScreenOptionsManageCourses::BeginScreen()
 		def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 		def.m_vsChoices.clear();
 		def.m_vsChoices.push_back( (*c)->GetDisplayFullTitle() );
-		vDefs.push_back( def );
 		iIndex++;
 	}
 
-	ScreenOptions::InitMenu( vDefs, vHands );
+	ScreenOptions::InitMenu( vHands );
 
 	ScreenOptions::BeginScreen();
 	

@@ -45,16 +45,14 @@ void ScreenOptionsMemoryCard::Init()
 		def.m_sExplanationName = "Memory Card";
 		def.m_bAllowThemeTitle = false;
 		def.m_bOneChoiceForAllPlayers = true;
-		m_vDefs.push_back( def );	
 	}
 
 	if( MEMCARDMAN->GetStorageDevices().empty() )
 	{
 		OptionRowDefinition def( "No memory cards detected", true, "" );
-		m_vDefs.push_back( def );	
 	}
 	
-	InitMenu( m_vDefs, vHands );
+	InitMenu( vHands );
 }
 
 void ScreenOptionsMemoryCard::BeginScreen()

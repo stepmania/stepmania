@@ -198,9 +198,12 @@ void ScreenOptions::Init()
 
 void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const vector<OptionRowHandler*> &vHands )
 {
-	LOG->Trace( "ScreenOptions::InitMenu()" );
+	InitMenu( vHands );
+}
 
-	ASSERT( vDefs.size() == vHands.size() );
+void ScreenOptions::InitMenu( const vector<OptionRowHandler*> &vHands )
+{
+	LOG->Trace( "ScreenOptions::InitMenu()" );
 
 	for( unsigned i=0; i<m_pRows.size(); i++ )
 	{
@@ -209,15 +212,15 @@ void ScreenOptions::InitMenu( const vector<OptionRowDefinition> &vDefs, const ve
 	}
 	m_pRows.clear();
 
-	for( unsigned r=0; r<vDefs.size(); r++ )		// foreach row
+	for( unsigned r=0; r<vHands.size(); r++ )		// foreach row
 	{
 		m_pRows.push_back( new OptionRow(&m_OptionRowType) );
 		OptionRow &row = *m_pRows.back();
 		row.SetDrawOrder( 1 );
 		m_framePage.AddChild( &row );
 
-		const OptionRowDefinition &def = vDefs[r];
 		OptionRowHandler* hand = vHands[r];
+		const OptionRowDefinition &def = vHands[r]->m_Def;
 		
 		bool bFirstRowGoesDown = m_OptionsNavigation==NAV_TOGGLE_THREE_KEY;
 
