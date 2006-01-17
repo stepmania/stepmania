@@ -59,8 +59,8 @@ static LocalizedString OFF ( "OptionRowHandler", "Off" );
 class OptionRowHandlerList : public OptionRowHandler
 {
 public:
-	vector<GameCommand> ListEntries;
-	GameCommand Default;
+	vector<GameCommand> m_aListEntries;
+	GameCommand m_Default;
 	bool m_bUseModNameForIcon;
 	vector<CString> m_vsBroadcastOnExport;
 
@@ -68,8 +68,8 @@ public:
 	virtual void Init()
 	{
 		OptionRowHandler::Init();
-		ListEntries.clear();
-		Default.Init();
+		m_aListEntries.clear();
+		m_Default.Init();
 		m_bUseModNameForIcon = false;
 		m_vsBroadcastOnExport.clear();
 	}
@@ -96,7 +96,7 @@ public:
 			
 		defOut.m_sName = sParam;
 
-		Default.Load( -1, ParseCommands(ENTRY_DEFAULT(sParam)) );
+		m_Default.Load( -1, ParseCommands(ENTRY_DEFAULT(sParam)) );
 
 		{
 			/* Parse the basic configuration metric. */
@@ -159,7 +159,7 @@ public:
 					continue;
 				}
 
-				ListEntries.push_back( mc );
+				m_aListEntries.push_back( mc );
 
 				CString sName = mc.m_sName;
 				CString sChoice = mc.m_sName;
@@ -177,9 +177,9 @@ public:
 			PlayerNumber p = *pn;
 			vector<bool> &vbSelOut = vbSelectedOut[p];
 
-			for( unsigned e = 0; e < ListEntries.size(); ++e )
+			for( unsigned e = 0; e < m_aListEntries.size(); ++e )
 			{
-				const GameCommand &mc = ListEntries[e];
+				const GameCommand &mc = m_aListEntries[e];
 
 				vbSelOut[e] = false;
 
@@ -241,11 +241,11 @@ public:
 			PlayerNumber p = *pn;
 			const vector<bool> &vbSel = vbSelected[p];
 		
-			Default.Apply( p );
+			m_Default.Apply( p );
 			for( unsigned i=0; i<vbSel.size(); i++ )
 			{
 				if( vbSel[i] )
-					ListEntries[i].Apply( p );
+					m_aListEntries[i].Apply( p );
 			}
 		}
 		FOREACH_CONST( CString, m_vsBroadcastOnExport, s )
@@ -256,14 +256,14 @@ public:
 	virtual void GetIconTextAndGameCommand( const OptionRowDefinition &def, int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const
 	{
 		sIconTextOut = m_bUseModNameForIcon ?
-			ListEntries[iFirstSelection].m_sModifiers :
+			m_aListEntries[iFirstSelection].m_sModifiers :
 			def.m_vsChoices[iFirstSelection];
 
-		gcOut = ListEntries[iFirstSelection];
+		gcOut = m_aListEntries[iFirstSelection];
 	}
 	virtual RString GetScreen( int iChoice ) const
 	{ 
-		const GameCommand &gc = ListEntries[iChoice];
+		const GameCommand &gc = m_aListEntries[iChoice];
 		return gc.m_sScreen;
 	}
 
@@ -281,7 +281,7 @@ public:
 		{
 			GameCommand mc;
 			mc.m_sModifiers = arraySkinNames[skin];
-			ListEntries.push_back( mc );
+			m_aListEntries.push_back( mc );
 			defOut.m_vsChoices.push_back( arraySkinNames[skin] );
 		}
 	}
@@ -298,7 +298,7 @@ public:
 		if( GAMESTATE->IsEditing() )
 		{
 			defOut.m_vsChoices.push_back( "" );
-			ListEntries.push_back( GameCommand() );
+			m_aListEntries.push_back( GameCommand() );
 		}
 		else if( GAMESTATE->IsCourseMode() )   // playing a course
 		{
@@ -315,7 +315,7 @@ public:
 				defOut.m_vsChoices.push_back( s );
 				GameCommand mc;
 				mc.m_pTrail = pTrail;
-				ListEntries.push_back( mc );
+				m_aListEntries.push_back( mc );
 			}
 		}
 		else // !GAMESTATE->IsCourseMode(), playing a song
@@ -339,7 +339,7 @@ public:
 				GameCommand mc;
 				mc.m_pSteps = pSteps;
 				mc.m_dc = pSteps->GetDifficulty();
-				ListEntries.push_back( mc );
+				m_aListEntries.push_back( mc );
 			}
 		}
 	}
@@ -351,13 +351,13 @@ public:
 		defOut.m_bOneChoiceForAllPlayers = false;
 		defOut.m_bAllowThemeItems = false;
 		defOut.m_sName = "Characters";
-		Default.m_pCharacter = CHARMAN->GetDefaultCharacter();
+		m_Default.m_pCharacter = CHARMAN->GetDefaultCharacter();
 
 		{
 			defOut.m_vsChoices.push_back( OFF );
 			GameCommand mc;
 			mc.m_pCharacter = NULL;
-			ListEntries.push_back( mc );
+			m_aListEntries.push_back( mc );
 		}
 
 		vector<Character*> vpCharacters;
@@ -371,7 +371,7 @@ public:
 			defOut.m_vsChoices.push_back( s ); 
 			GameCommand mc;
 			mc.m_pCharacter = pCharacter;
-			ListEntries.push_back( mc );
+			m_aListEntries.push_back( mc );
 		}
 	}
 
@@ -391,10 +391,10 @@ public:
 			defOut.m_vsChoices.push_back( GAMEMAN->StyleToLocalizedString(*s) ); 
 			GameCommand mc;
 			mc.m_pStyle = *s;
-			ListEntries.push_back( mc );
+			m_aListEntries.push_back( mc );
 		}
 
-		Default.m_pStyle = vStyles[0];
+		m_Default.m_pStyle = vStyles[0];
 	}
 
 	void FillGroups( OptionRowDefinition &defOut, CString sParam )
@@ -404,7 +404,7 @@ public:
 		defOut.m_bOneChoiceForAllPlayers = true;
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 		defOut.m_sName = "Group";
-		Default.m_sSongGroup = GROUP_ALL;
+		m_Default.m_sSongGroup = GROUP_ALL;
 
 		vector<CString> vSongGroups;
 		SONGMAN->GetSongGroupNames( vSongGroups );
@@ -414,7 +414,7 @@ public:
 			defOut.m_vsChoices.push_back( "AllGroups" );
 			GameCommand mc;
 			mc.m_sSongGroup = GROUP_ALL;
-			ListEntries.push_back( mc );
+			m_aListEntries.push_back( mc );
 		}
 
 		FOREACH_CONST( CString, vSongGroups, g )
@@ -422,7 +422,7 @@ public:
 			defOut.m_vsChoices.push_back( *g ); 
 			GameCommand mc;
 			mc.m_sSongGroup = *g;
-			ListEntries.push_back( mc );
+			m_aListEntries.push_back( mc );
 		}
 	}
 
@@ -432,14 +432,14 @@ public:
 
 		defOut.m_bOneChoiceForAllPlayers = true;
 		defOut.m_sName = "Difficulty";
-		Default.m_dc = DIFFICULTY_INVALID;
+		m_Default.m_dc = DIFFICULTY_INVALID;
 		defOut.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		{
 			defOut.m_vsChoices.push_back( "AllDifficulties" );
 			GameCommand mc;
 			mc.m_dc = DIFFICULTY_INVALID;
-			ListEntries.push_back( mc );
+			m_aListEntries.push_back( mc );
 		}
 
 		FOREACH_CONST( Difficulty, CommonMetrics::DIFFICULTIES_TO_SHOW.GetValue(), d )
@@ -449,7 +449,7 @@ public:
 			defOut.m_vsChoices.push_back( s ); 
 			GameCommand mc;
 			mc.m_dc = *d;
-			ListEntries.push_back( mc );
+			m_aListEntries.push_back( mc );
 		}
 	}
 
@@ -473,7 +473,7 @@ public:
 			defOut.m_vsChoices.push_back( (*p)->GetTranslitFullTitle() ); 
 			GameCommand mc;
 			mc.m_pSong = *p;
-			ListEntries.push_back( mc );
+			m_aListEntries.push_back( mc );
 		}
 	}
 };
