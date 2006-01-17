@@ -1181,6 +1181,23 @@ public:
 	}
 };
 
+class OptionRowHandlerNull: public OptionRowHandler
+{
+public:
+	OptionRowHandlerNull() { Init(); }
+	virtual void LoadInternal( OptionRowDefinition &defOut, const Commands &cmds )
+	{
+	}
+	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	{
+	}
+	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	{
+		return 0;
+	}
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////////
 
 OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
@@ -1201,6 +1218,13 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 	return pHand;
 }
 
+OptionRowHandler* OptionRowHandlerUtil::MakeNull()
+{
+	OptionRowHandler* pHand = NULL;
+	Commands cmds;
+	MAKE( OptionRowHandlerNull )
+	return pHand;
+}
 
 /*
  * (c) 2002-2004 Chris Danford

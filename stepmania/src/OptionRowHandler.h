@@ -43,6 +43,7 @@ public:
 namespace OptionRowHandlerUtil
 {
 	OptionRowHandler* Make( const Commands &cmds );
+	OptionRowHandler* MakeNull();
 }
 
 inline void VerifySelected( SelectType st, const vector<bool> &vbSelected, const CString &sName )
