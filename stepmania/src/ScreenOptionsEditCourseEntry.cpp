@@ -64,7 +64,6 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 	vector<OptionRowHandler*> vHands;
 
 	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
-	vHands.push_back( OptionRowHandlerUtil::MakeNull() );
 	pHand->m_Def.m_sName = "Song Group";
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
 	pHand->m_Def.m_bExportOnChange = true;
