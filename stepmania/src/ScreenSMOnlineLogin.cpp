@@ -97,8 +97,8 @@ static LocalizedString ENTER_YOUR_PASSWORD	( "ScreenSMOnlineLogin", "Enter your 
 void ScreenSMOnlineLogin::HandleScreenMessage(const ScreenMessage SM)
 {
 	CString sLoginQuestion;
-	if ( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) )
-		sLoginQuestion = YOU_ARE_LOGGING_ON_AS.GetValue()+"\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n\n"+ENTER_YOUR_PASSWORD.GetValue();
+	if( GAMESTATE->IsPlayerEnabled((PlayerNumber) m_iPlayer) )
+		sLoginQuestion = YOU_ARE_LOGGING_ON_AS.GetValue() + "\n" + GAMESTATE->GetPlayerDisplayName((PlayerNumber) m_iPlayer) + "\n" + ENTER_YOUR_PASSWORD.GetValue();
 
 	if( SM == SM_PasswordDone )
 	{
