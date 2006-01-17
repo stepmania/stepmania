@@ -27,13 +27,13 @@ struct TrailEntry
 	Song*		pSong;
 	Steps*		pSteps;
 	CString		Modifiers;
-	AttackArray Attacks;
+	AttackArray	Attacks;
 	bool		bSecret;	// show "???"
 
 	/* These represent the meter and difficulty used by the course to pick the
 	 * steps; if you want the real difficulty and meter, look at pSteps. */
-	int			iLowMeter;
-	int			iHighMeter;
+	int		iLowMeter;
+	int		iHighMeter;
 	Difficulty	dc;
 	bool operator== ( const TrailEntry &rhs ) const;
 	bool operator!= ( const TrailEntry &rhs ) const { return !(*this==rhs); }
@@ -43,10 +43,10 @@ struct TrailEntry
 class Trail
 {
 public:
-	StepsType			m_StepsType;
+	StepsType		m_StepsType;
 	CourseDifficulty	m_CourseDifficulty;
-	vector<TrailEntry>  m_vEntries;
-	int					m_iSpecifiedMeter;	// == -1 if no meter specified
+	vector<TrailEntry>	m_vEntries;
+	int			m_iSpecifiedMeter;	// == -1 if no meter specified
 	mutable bool		m_bRadarValuesCached;
 	mutable RadarValues	m_CachedRadarValues;
 
