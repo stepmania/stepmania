@@ -3,6 +3,7 @@
 #import "DisplayResolutions.h"
 #import "RageLog.h"
 #import "RageUtil.h"
+#import "RageThreads.h"
 #import "arch/ArchHooks/ArchHooks.h"
 #import "archutils/Darwin/SMMainThread.h"
 
@@ -10,7 +11,12 @@
 #import <OpenGl/OpenGl.h>
 #import <mach-o/dyld.h>
 
-static const int g_iStyleMask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask;
+static const unsigned int g_iStyleMask = NSTitledWindowMask | NSClosableWindowMask |
+					 NSMiniaturizableWindowMask | NSResizableWindowMask;
+static bool g_bResized;
+static int g_iWidth;
+static int g_iHeight;
+static RageMutex g_ResizeLock( "Window resize lock." );
 
 // Simple helper class
 class AutoreleasePool
@@ -32,6 +38,7 @@ public:
 - (void) windowDidBecomeKey:(NSNotification *)aNotification;
 - (void) windowDidResignKey:(NSNotification *)aNotification;
 - (void) windowWillClose:(NSNotification *)aNotification;
+- (void) windowDidResize:(NSNotification *)aNotification;
 // XXX maybe use whichever screen contains the window? Hard for me to test though.
 //- (void) windowDidChangeScreen:(NSNotification *)aNotification;
 @end
@@ -51,9 +58,21 @@ public:
 {
 	ArchHooks::SetUserQuit();
 }
+
+- (void) windowDidResize:(NSNotification *)aNotification
+{
+	id window = [aNotification object];
+	NSSize size = [NSWindow contentRectForFrameRect:[window frame] styleMask:g_iStyleMask].size;
+	
+	LockMut( g_ResizeLock );
+	g_bResized = true;
+	g_iWidth = int( size.width );
+	g_iHeight = int( size.height );
+}
+	
 @end
 
-LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : mView(nil), mFullScreenContext(nil), mCurrentDisplayMode(NULL)
+LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : mWindowContext(nil), mFullScreenContext(nil), mCurrentDisplayMode(NULL)
 {
 	POOL;
 	NSRect rect = { {0, 0}, {0, 0} };
@@ -61,9 +80,8 @@ LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : mView(nil), mFullScreenContext(ni
 	
 	mWindow = [[NSWindow alloc] initWithContentRect:rect
 					      styleMask:g_iStyleMask
-						backing:NSBackingStoreNonretained
+						backing:NSBackingStoreBuffered
 						  defer:YES];
-	ASSERT( mWindow != nil );
 	
 	ADD_ACTIONb( mt, mWindow, setExcludedFromWindowsMenu:, YES );
 	ADD_ACTIONb( mt, mWindow, useOptimizedDrawing:, YES );
@@ -90,9 +108,11 @@ LowLevelWindow_Cocoa::~LowLevelWindow_Cocoa()
 	ADD_ACTION1( mt, mWindow, orderOut:, nil );
 	ADD_ACTION0( mt, mWindow, release );
 	
+	[mWindowContext clearDrawable];
 	[mt performOnMainThread];
 	[delegate release];
 	[mt release];
+	[mWindowContext release];
 	[mFullScreenContext release];
 }
 
@@ -148,7 +168,7 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 	
 	ASSERT( p.bpp == 16 || p.bpp == 32 );
 	
-	if( p.bpp != mCurrentParams.bpp || !mView )
+	if( p.bpp != mCurrentParams.bpp || !mWindowContext )
 	{
 		NSOpenGLPixelFormat *pixelFormat;
 		NSOpenGLPixelFormatAttribute attrs[] = {
@@ -159,7 +179,6 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 			NSOpenGLPFAColorSize, NSOpenGLPixelFormatAttribute(p.bpp == 16 ? 16 : 24),
 			NSOpenGLPixelFormatAttribute(0)
 		};
-		id nextView;
 		
 		pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
 		
@@ -168,36 +187,37 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 			[mt performOnMainThread];
 			return "Failed to set the windowed pixel format.";
 		}
-		nextView = [[[NSOpenGLView alloc] initWithFrame:contentRect pixelFormat:pixelFormat] autorelease];
+		id nextContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
 		[pixelFormat release];
-		if( nextView == nil )
+		if( nextContext == nil )
 		{
 			[mt performOnMainThread];
 			return "Failed to create windowed OGL context.";
 		}
-		SetOGLParameters( [mView openGLContext] );
+		SetOGLParameters( nextContext );
 		newDeviceOut = true;
-		mView = nextView;
-		ADD_ACTION1( mt, mWindow, setContentView:, mView );
+		[mWindowContext clearDrawable];
+		[mWindowContext release];
+		mWindowContext = nextContext;
 
 		// We need to recreate the full screen context as well.
 		[mFullScreenContext clearDrawable];
 		[mFullScreenContext release];
 		mFullScreenContext = nil;
 		mCurrentParams.bpp = p.bpp;
+		mSharingContexts = false;
 	}
 	if( p.windowed )
-	{
-		id context = [mView openGLContext];
-		
+	{		
 		ShutDownFullScreen();
 		
 		ADD_ACTION0( mt, mWindow, center );
 		ADD_ACTION1( mt, mWindow, makeKeyAndOrderFront:, nil );
 		
 		[mt performOnMainThread];
-		[context update];
-		[context makeCurrentContext];
+		[mWindowContext setView:[mWindow contentView]];
+		[mWindowContext update];
+		[mWindowContext makeCurrentContext];
 		mCurrentParams.windowed = true;
 		SetActualParamsFromMode( CGDisplayCurrentMode(kCGDirectMainDisplay) );
 		
@@ -236,8 +256,7 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 			return "Failed to set full screen pixel format.";
 		}
 		
-		mFullScreenContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat
-							shareContext:[mView openGLContext]];
+		mFullScreenContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:mWindowContext];
 		if( !(mSharingContexts = mFullScreenContext != nil) )
 		{
 			LOG->Warn( "Failed to share openGL contexts." );
@@ -371,5 +390,21 @@ void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 
 void LowLevelWindow_Cocoa::SwapBuffers()
 {
-	[[NSOpenGLContext currentContext] flushBuffer];
+	[(mCurrentParams.windowed ? mWindowContext : mFullScreenContext) flushBuffer];
+}
+
+void LowLevelWindow_Cocoa::Update()
+{
+	LockMutex lock( g_ResizeLock );
+	if( likely(!g_bResized) )
+		return;
+	LOG->Trace( "LLW_Cocoa::Update(): %d x %d", mCurrentParams.width, mCurrentParams.height );
+	if( mCurrentParams.width == g_iWidth && mCurrentParams.height == g_iHeight )
+		return;
+	mCurrentParams.width = g_iWidth;
+	mCurrentParams.height = g_iHeight;
+	g_bResized = false;
+	lock.Unlock(); // Unlock before calling ResolutionChanged().
+	[mWindowContext update];
+	DISPLAY->ResolutionChanged();
 }

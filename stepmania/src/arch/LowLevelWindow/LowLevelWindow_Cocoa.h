@@ -14,7 +14,7 @@ class LowLevelWindow_Cocoa : public LowLevelWindow
 {
 	VideoModeParams mCurrentParams;
 	id mWindow;
-	id mView;
+	id mWindowContext;
 	id mFullScreenContext;
 	bool mSharingContexts;
 	CFDictionaryRef mCurrentDisplayMode;
@@ -26,6 +26,7 @@ public:
 	CString TryVideoMode( const VideoModeParams& p, bool& newDeviceOut );	
 	void GetDisplayResolutions( DisplayResolutions &dr ) const;
 	void SwapBuffers();
+	void Update();
 	
 	VideoModeParams GetActualVideoModeParams() const { return mCurrentParams; }
 private:
