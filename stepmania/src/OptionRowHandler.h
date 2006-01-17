@@ -14,6 +14,7 @@ class OptionRowHandler
 {
 public:
 	Commands m_cmds;
+	OptionRowDefinition m_Def;
 	vector<CString> m_vsReloadRowMessages;	// refresh this row on on these messages
 	
 	OptionRowHandler::OptionRowHandler() { Init(); }
@@ -27,7 +28,8 @@ public:
 	{
 		Init();
 		m_cmds = cmds;
-		this->LoadInternal( defOut, cmds );
+		this->LoadInternal( m_Def, cmds );
+		defOut = m_Def;
 	}
 	virtual void LoadInternal( OptionRowDefinition &defOut, const Commands &cmds ) = 0;
 	virtual void Reload( OptionRowDefinition &defOut ) { this->Load(defOut,m_cmds); }
