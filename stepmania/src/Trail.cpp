@@ -134,7 +134,7 @@ float Trail::GetLengthSeconds() const
 	return fSecs;
 }
 
-void Trail::GetDisplayBpms( DisplayBpms &AddTo )
+void Trail::GetDisplayBpms( DisplayBpms &AddTo ) const
 {
 	FOREACH_CONST( TrailEntry, m_vEntries, e )
 	{

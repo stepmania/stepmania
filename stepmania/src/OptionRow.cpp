@@ -198,7 +198,7 @@ CString OptionRow::GetRowTitle() const
 
 		if( GAMESTATE->m_pCurCourse )
 		{
-			Trail* pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
+			const Trail* pTrail = GAMESTATE->m_pCurTrail[GAMESTATE->m_MasterPlayerNumber];
 			ASSERT( pTrail != NULL );
 			const int iNumCourseEntries = pTrail->m_vEntries.size();
 			if( iNumCourseEntries > CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS )
@@ -210,14 +210,14 @@ CString OptionRow::GetRowTitle() const
 			DisplayBpms bpms;
 			if( GAMESTATE->m_pCurSong )
 			{
-				Song* pSong = GAMESTATE->m_pCurSong;
+				const Song* pSong = GAMESTATE->m_pCurSong;
 				pSong->GetDisplayBpms( bpms );
 			}
 			else if( GAMESTATE->m_pCurCourse )
 			{
-				Course *pCourse = GAMESTATE->m_pCurCourse;
+				const Course *pCourse = GAMESTATE->m_pCurCourse;
 				StepsType st = GAMESTATE->GetCurrentStyle()->m_StepsType;
-				Trail* pTrail = pCourse->GetTrail( st );
+				const Trail* pTrail = pCourse->GetTrail( st );
 				ASSERT( pTrail );
 				pTrail->GetDisplayBpms( bpms );
 			}
