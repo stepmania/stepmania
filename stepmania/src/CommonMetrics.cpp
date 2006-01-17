@@ -15,7 +15,7 @@ ThemeMetric<CString>				CommonMetrics::FIRST_ATTRACT_SCREEN				("Common","FirstA
 ThemeMetric<CString>				CommonMetrics::DEFAULT_MODIFIERS				("Common","DefaultModifiers" );
 ThemeMetric<CString>				CommonMetrics::DEFAULT_CPU_MODIFIERS			("Common","DefaultCpuModifiers" );
 ThemeMetric1D<apActorCommands>		CommonMetrics::PLAYER_COLOR						("Common",PLAYER_COLOR_NAME,NUM_PLAYERS);
-LocalizedString						CommonMetrics::WINDOW_TITLE						("Common",PRODUCT_NAME);
+LocalizedString						CommonMetrics::WINDOW_TITLE						("Common","WindowTitle");
 ThemeMetric<int>					CommonMetrics::MAX_COURSE_ENTRIES_BEFORE_VARIOUS("Common","MaxCourseEntriesBeforeShowVarious");
 ThemeMetric<float>					CommonMetrics::TICK_EARLY_SECONDS				("ScreenGameplay","TickEarlySeconds");
 ThemeMetricDifficultiesToShow		CommonMetrics::DIFFICULTIES_TO_SHOW				("Common","DifficultiesToShow");
