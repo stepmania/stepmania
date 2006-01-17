@@ -569,7 +569,7 @@ void ScreenGameplay::Init()
 	{
 		m_bShowScoreboard = PREFSMAN->m_bEnableScoreboard.Get();
 		PlayerNumber pn = GAMESTATE->GetFirstDisabledPlayer();
-		if( ( pn != PLAYER_INVALID ) && ( m_bShowScoreboard ) )
+		if( pn != PLAYER_INVALID && m_bShowScoreboard )
 		{
 			FOREACH_NSScoreBoardColumn( col )
 			{
