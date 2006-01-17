@@ -220,7 +220,8 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 		[mWindowContext makeCurrentContext];
 		mCurrentParams.windowed = true;
 		SetActualParamsFromMode( CGDisplayCurrentMode(kCGDirectMainDisplay) );
-		
+		mCurrentParams.vsync = p.vsync; // hack
+
 		newDeviceOut = newDeviceOut || !mSharingContexts;
 		return CString();
 	}
@@ -347,11 +348,7 @@ void LowLevelWindow_Cocoa::SetActualParamsFromMode( CFDictionaryRef mode )
 	X( "RefreshRate", rate );
 	X( "BitsPerPixel", bpp );
 #undef X
-	if( mCurrentParams.windowed )
-	{
-		mCurrentParams.vsync = false;
-	}
-	else
+	if( !mCurrentParams.windowed )
 	{
 		long swap;
 		
