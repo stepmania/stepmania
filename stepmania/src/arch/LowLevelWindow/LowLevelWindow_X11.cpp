@@ -50,9 +50,9 @@ LowLevelWindow_X11::~LowLevelWindow_X11()
 	// Reset the display
 	if( !m_bWasWindowed )
 	{
-		XRRScreenConfiguration *screenConfig = XRRGetScreenInfo( X11Helper::Dpy, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ) );
-		XRRSetScreenConfig( X11Helper::Dpy, screenConfig, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ), 0, 1, CurrentTime );
-		XRRFreeScreenConfigInfo( screenConfig );
+		XRRScreenConfiguration *pScreenConfig = XRRGetScreenInfo( X11Helper::Dpy, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ) );
+		XRRSetScreenConfig( X11Helper::Dpy, pScreenConfig, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ), 0, 1, CurrentTime );
+		XRRFreeScreenConfigInfo( pScreenConfig );
 		
 		XUngrabKeyboard( X11Helper::Dpy, CurrentTime );
 	}
@@ -121,9 +121,7 @@ CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		XVisualInfo *xvi = glXChooseVisual( X11Helper::Dpy, DefaultScreen(X11Helper::Dpy), visAttribs );
 
 		if( xvi == NULL )
-		{
 			return "No visual available for that depth.";
-		}
 
 		/* Enable StructureNotifyMask, so we receive a MapNotify for the following XMapWindow. */
 		X11Helper::OpenMask( StructureNotifyMask );
@@ -131,16 +129,15 @@ CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// I get strange behavior if I add override redirect after creating the window.
 		// So, let's recreate the window when changing that state.
 		if( !X11Helper::MakeWindow(xvi->screen, xvi->depth, xvi->visual, p.width, p.height, !p.windowed) )
-		{
 			return "Failed to create the window.";
-		}
+
 		m_bWindowIsOpen = true;
 
 		char *szWindowTitle = const_cast<char *>( p.sWindowTitle.c_str() );
 		XChangeProperty( X11Helper::Dpy, X11Helper::Win, XA_WM_NAME, XA_STRING, 8, PropModeReplace,
 				reinterpret_cast<unsigned char*>(szWindowTitle), strlen(szWindowTitle) );
 
-		GLXContext ctxt = glXCreateContext(X11Helper::Dpy, xvi, NULL, True);
+		GLXContext ctxt = glXCreateContext( X11Helper::Dpy, xvi, NULL, True );
 
 		glXMakeCurrent( X11Helper::Dpy, X11Helper::Win, ctxt );
 
@@ -151,13 +148,13 @@ CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// events. Do this by grabbing all events, remembering
 		// uninteresting events, and putting them back on the queue
 		// after MapNotify arrives.
-		while(true)
+		while(1)
 		{
-			XNextEvent(X11Helper::Dpy, &ev);
+			XNextEvent( X11Helper::Dpy, &ev );
 			if( ev.type == MapNotify )
 				break;
 
-			otherEvs.push(ev);
+			otherEvs.push( ev );
 		}
 
 		while( !otherEvs.empty() )
@@ -174,36 +171,34 @@ CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		// We're remodeling the existing window, and not touching the
 		// context.
 		bNewDeviceOut = false;
-		
 	}
 	
-	XRRScreenConfiguration *screenConfig = XRRGetScreenInfo( X11Helper::Dpy, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ) );
+	XRRScreenConfiguration *pScreenConfig = XRRGetScreenInfo( X11Helper::Dpy, RootWindow( X11Helper::Dpy, DefaultScreen(X11Helper::Dpy) ) );
 	
 	if( !p.windowed )
 	{
 		// Find a matching mode.
-		int sizesXct;
-		XRRScreenSize *sizesX = XRRSizes( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ), &sizesXct );
-		ASSERT_M( sizesXct != 0, "Couldn't get resolution list from X server" );
+		int iSizesXct;
+		XRRScreenSize *pSizesX = XRRSizes( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ), &iSizesXct );
+		ASSERT_M( iSizesXct != 0, "Couldn't get resolution list from X server" );
 	
-		int sizeMatch = -1;
-		int i = 0;
-		while(i < sizesXct)
+		int iSizeMatch = -1;
+		
+		for( int i = 0; i < iSizesXct; ++i )
 		{
-			if(sizesX[i].width == p.width && sizesX[i].height == p.height)
+			if( pSizesX[i].width == p.width && pSizesX[i].height == p.height )
 			{
-				sizeMatch = i;
+				iSizeMatch = i;
 				break;
 			}
-			i++;
 		}
+
 		// Set this mode.
 		// XXX: This doesn't handle if the config has changed since we queried it (see man Xrandr)
-		XRRSetScreenConfig( X11Helper::Dpy, screenConfig, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ), sizeMatch, 1, CurrentTime );
+		XRRSetScreenConfig( X11Helper::Dpy, pScreenConfig, RootWindow( X11Helper::Dpy, DefaultScreen(X11Helper::Dpy) ), iSizeMatch, 1, CurrentTime );
 		
 		// Move the window to the corner that the screen focuses in on.
 		XMoveWindow( X11Helper::Dpy, X11Helper::Win, 0, 0 );
-		
 		
 		XRaiseWindow( X11Helper::Dpy, X11Helper::Win );
 		
@@ -219,7 +214,7 @@ CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 	{
 		if( !m_bWasWindowed )
 		{
-			XRRSetScreenConfig( X11Helper::Dpy, screenConfig, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ), 0, 1, CurrentTime );
+			XRRSetScreenConfig( X11Helper::Dpy, pScreenConfig, RootWindow( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ) ), 0, 1, CurrentTime );
 			// In windowed mode, we actually want the WM to function normally.
 			// Release any previous grab.
 			XUngrabKeyboard( X11Helper::Dpy, CurrentTime );
@@ -227,7 +222,7 @@ CString LowLevelWindow_X11::TryVideoMode( const VideoModeParams &p, bool &bNewDe
 		}
 	}
 
-	XRRFreeScreenConfigInfo( screenConfig );
+	XRRFreeScreenConfigInfo( pScreenConfig );
 
 	// Do this before resizing the window so that pane-style WMs (Ion,
 	// ratpoison) don't resize us back inappropriately.
@@ -290,18 +285,14 @@ void LowLevelWindow_X11::SwapBuffers()
 
 void LowLevelWindow_X11::GetDisplayResolutions( DisplayResolutions &out ) const
 {
-	// This _NEEDS_ Xrandr to be present, but feck, who doesn't have it?
+	int iSizesXct;
+	XRRScreenSize *pSizesX = XRRSizes( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ), &iSizesXct );
+	ASSERT_M( iSizesXct != 0, "Couldn't get resolution list from X server" );
 	
-	int sizesXct;
-	XRRScreenSize *sizesX = XRRSizes( X11Helper::Dpy, DefaultScreen( X11Helper::Dpy ), &sizesXct );
-	ASSERT_M( sizesXct != 0, "Couldn't get resolution list from X server" );
-	
-	int i = 0;
-	while(i < sizesXct)
+	for( int i = 0; i < iSizesXct; ++i )
 	{
-		DisplayResolution res = { sizesX[i].width, sizesX[i].height };
+		DisplayResolution res = { pSizesX[i].width, pSizesX[i].height };
 		out.s.insert( res );
-		i++;
 	}
 }
 
