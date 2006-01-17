@@ -102,8 +102,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 
 	if( SHOW_CREATE_NEW )
 	{
-		OptionRowDefinition def;
-		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands("gamecommand;screen,ScreenOptionsEditProfile;name,Create New"), def );
+		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands("gamecommand;screen,ScreenOptionsEditProfile;name,Create New") );
 		pHand->m_Def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
 		pHand->m_Def.m_bAllowThemeTitle = false;
 		pHand->m_Def.m_bAllowThemeItems = false;
@@ -121,9 +120,8 @@ void ScreenOptionsManageProfiles::BeginScreen()
 		Profile *pProfile = PROFILEMAN->GetLocalProfile( *s );
 		ASSERT( pProfile );
 
-		OptionRowDefinition def;
 		CString sCommand = ssprintf( "gamecommand;screen,ScreenOptionsEditProfile;profileid,%s;name,%s", s->c_str(), pProfile->m_sDisplayName.c_str() );
-		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand), def );
+		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands(sCommand) );
 		pHand->m_Def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
 		pHand->m_Def.m_bAllowThemeTitle = false;
 		pHand->m_Def.m_bAllowThemeItems = false;

@@ -24,15 +24,14 @@ public:
 		m_cmds.v.clear();
 		m_vsReloadRowMessages.clear();
 	}
-	void Load( OptionRowDefinition &defOut, const Commands &cmds )
+	void Load( const Commands &cmds )
 	{
 		Init();
 		m_cmds = cmds;
 		this->LoadInternal( m_Def, cmds );
-		defOut = m_Def;
 	}
 	virtual void LoadInternal( OptionRowDefinition &defOut, const Commands &cmds ) = 0;
-	virtual void Reload( OptionRowDefinition &defOut ) { this->Load(defOut,m_cmds); }
+	virtual void Reload( OptionRowDefinition &defOut ) { this->Load(m_cmds); defOut = m_Def; }
 	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const = 0;
 	/* Returns an OPT mask. */
 	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const = 0;
@@ -43,7 +42,7 @@ public:
 
 namespace OptionRowHandlerUtil
 {
-	OptionRowHandler* Make( const Commands &cmds, OptionRowDefinition &defOut );
+	OptionRowHandler* Make( const Commands &cmds );
 }
 
 inline void VerifySelected( SelectType st, const vector<bool> &vbSelected, const CString &sName )

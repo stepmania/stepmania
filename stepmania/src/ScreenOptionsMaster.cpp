@@ -59,8 +59,7 @@ void ScreenOptionsMaster::Init()
 		Commands cmds;
 		ParseCommands( sRowCommands, cmds );
 
-		OptionRowDefinition def;
-		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds, def );
+		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( cmds );
 		if( pHand == NULL )
 			RageException::Throw( "Invalid OptionRowHandler '%s' in %s::Line%i", cmds.GetOriginalCommandString().c_str(), m_sName.c_str(), i );
 		OptionRowHandlers.push_back( pHand );

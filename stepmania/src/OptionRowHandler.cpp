@@ -1183,13 +1183,13 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds, OptionRowDefinition &defOut )
+OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 {
 	OptionRowHandler* pHand = NULL;
 
 	const CString &name = cmds.v[0].GetName();
 
-#define MAKE( type )	{ type *p = new type; p->Load( defOut, cmds ); pHand = p; }
+#define MAKE( type )	{ type *p = new type; p->Load( cmds ); pHand = p; }
 
 	if(		 name == "list" )			MAKE( OptionRowHandlerList )
 	else if( name == "lua" )			MAKE( OptionRowHandlerLua )
