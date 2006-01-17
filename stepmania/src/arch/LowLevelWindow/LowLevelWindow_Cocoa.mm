@@ -72,8 +72,13 @@ public:
 	
 @end
 
-LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : mWindowContext(nil), mFullScreenContext(nil), mCurrentDisplayMode(NULL)
+LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : mWindowContext(nil), mFullScreenContext(nil),
+	 mSharingContexts(false), mCurrentDisplayMode(NULL)
 {
+#if CONCURRENT_RENDERING
+	mConcurrentWindowContext = nil;
+	mConcurrentFullScreenContext = nil;
+#endif
 	POOL;
 	NSRect rect = { {0, 0}, {0, 0} };
 	SMMainThread *mt = [[SMMainThread alloc] init];
@@ -180,7 +185,7 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 			NSOpenGLPixelFormatAttribute(0)
 		};
 		
-		pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+		pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attrs] autorelease];
 		
 		if( pixelFormat == nil )
 		{
@@ -188,7 +193,7 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 			return "Failed to set the windowed pixel format.";
 		}
 		id nextContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
-		[pixelFormat release];
+
 		if( nextContext == nil )
 		{
 			[mt performOnMainThread];
@@ -199,6 +204,14 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 		[mWindowContext clearDrawable];
 		[mWindowContext release];
 		mWindowContext = nextContext;
+		
+#if CONCURRENT_RENDERING
+		[mConcurrentWindowContext release];
+		mConcurrentWindowContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat
+								      shareContext:mWindowContext];
+		if( mConcurrentWindowContext )
+			SetOGLParameters( mConcurrentWindowContext );
+#endif
 
 		// We need to recreate the full screen context as well.
 		[mFullScreenContext clearDrawable];
@@ -269,6 +282,14 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 			}
 		}
 		SetOGLParameters( mFullScreenContext );
+		
+#if CONCURRENT_RENDERING
+		[mConcurrentFullScreenContext release];
+		mConcurrentFullScreenContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat
+									  shareContext:mWindowContext];
+		if( mConcurrentFullScreenContext )
+			SetOGLParameters( mConcurrentFullScreenContext );
+#endif
 	}
 	long swap = p.vsync ? 1 : 0;
 	
@@ -289,6 +310,10 @@ void LowLevelWindow_Cocoa::ShutDownFullScreen()
 	ASSERT( mCurrentDisplayMode );
 	[mFullScreenContext clearDrawable];
 	
+#if CONCURRENT_RENDERING
+	[mConcurrentFullScreenContext clearDrawable];
+#endif
+	
 	CGDisplayErr err = CGDisplaySwitchToMode( kCGDirectMainDisplay, mCurrentDisplayMode );
 	
 	ASSERT( err == kCGErrorSuccess );
@@ -300,6 +325,34 @@ void LowLevelWindow_Cocoa::ShutDownFullScreen()
 	mCurrentDisplayMode = NULL;
 	mCurrentParams.windowed = true;
 }
+
+#if CONCURRENT_RENDERING
+bool LowLevelWindow_Cocoa::SupportsThreadedRendering()
+{
+	return mCurrentParams.windowed ? mConcurrentWindowContext : mConcurrentFullScreenContext;
+}
+
+void LowLevelWindow_Cocoa::BeginConcurrentRendering()
+{
+	if( mCurrentParams.windowed )
+	{
+		[mConcurrentWindowContext setView:[mWindow contentView]];
+		[mConcurrentWindowContext update];
+		[mConcurrentWindowContext makeCurrentContext];
+	}
+	else
+	{
+		[mConcurrentFullScreenContext setFullScreen];
+		[mConcurrentFullScreenContext update];
+		[mConcurrentFullScreenContext makeCurrentContext];
+	}
+}
+
+void LowLevelWindow_Cocoa::EndConcurrentRendering()
+{
+	[NSOpenGLContext clearCurrentContext];
+}
+#endif
 
 int LowLevelWindow_Cocoa::ChangeDisplayMode( const VideoModeParams& p )
 {	
@@ -395,12 +448,11 @@ void LowLevelWindow_Cocoa::Update()
 	LockMutex lock( g_ResizeLock );
 	if( likely(!g_bResized) )
 		return;
-	LOG->Trace( "LLW_Cocoa::Update(): %d x %d", mCurrentParams.width, mCurrentParams.height );
+	g_bResized = false;
 	if( mCurrentParams.width == g_iWidth && mCurrentParams.height == g_iHeight )
 		return;
 	mCurrentParams.width = g_iWidth;
 	mCurrentParams.height = g_iHeight;
-	g_bResized = false;
 	lock.Unlock(); // Unlock before calling ResolutionChanged().
 	[mWindowContext update];
 	DISPLAY->ResolutionChanged();
