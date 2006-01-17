@@ -58,7 +58,6 @@ D3DDISPLAYMODE			g_DesktopMode;
 D3DPRESENT_PARAMETERS	g_d3dpp;
 int						g_ModelMatrixCnt=0;
 TextureUnit				g_currentTextureUnit = TextureUnit_1;
-static int				g_iActualRefreshRateInHz = 60;
 static bool				g_bSphereMapping[NUM_TextureUnit] = { false, false };
 
 /* Direct3D doesn't associate a palette with textures.
@@ -589,43 +588,6 @@ CString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 		else
 			p.rate = g_d3dpp.FullScreen_RefreshRateInHz;
 	}
-#ifndef _XBOX
-
-	/* Find the refresh rate. */
-	{
-		DEVMODE dm;
-		ZERO( dm );
-		dm.dmSize = sizeof(dm);
-		if( EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm) )
-		{
-			/*
-			 * On a nForce 2 IGP on Windows 98, dm.dmDisplayFrequency sometimes 
-			 * (but not always) is 0.
-			 *
-			 * MSDN: When you call the EnumDisplaySettings function, the 
-			 * dmDisplayFrequency member may return with the value 0 or 1. 
-			 * These values represent the display hardware's default refresh rate. 
-			 * This default rate is typically set by switches on a display card or 
-			 * computer motherboard, or by a configuration program that does not 
-			 * use Win32 display functions such as ChangeDisplaySettings.
-			 */
-			if( dm.dmDisplayFrequency == 0 || dm.dmDisplayFrequency == 1 )
-			{
-				g_iActualRefreshRateInHz = 60;
-				LOG->Warn( "EnumDisplaySettings doesn't know what the refresh rate is. %d %d %d", dm.dmPelsWidth, dm.dmPelsHeight, dm.dmBitsPerPel );
-			}
-			else
-			{
-				g_iActualRefreshRateInHz = dm.dmDisplayFrequency;
-			}
-		}
-		else
-		{
-			g_iActualRefreshRateInHz = 60;
-			LOG->Warn( "%s", werr_ssprintf(GetLastError(), "EnumDisplaySettings failed").c_str() );
-		}
-	}
-#endif
 
 	/* Call this again after changing the display mode.  If we're going to a window
 	 * from fullscreen, the first call can't set a larger window than the old fullscreen
@@ -695,7 +657,7 @@ void RageDisplay_D3D::EndFrame()
 {
 	g_pd3dDevice->EndScene();
 
-	FrameLimitBeforeVsync( g_iActualRefreshRateInHz );
+	FrameLimitBeforeVsync( GetActualVideoModeParams().rate );
 	g_pd3dDevice->Present( 0, 0, 0, 0 );
 	FrameLimitAfterVsync();
 
