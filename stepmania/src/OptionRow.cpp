@@ -103,8 +103,11 @@ void OptionRow::Clear()
 	FOREACH_PlayerNumber( p )
 		m_Underline[p].clear();
 
-	FOREACH_CONST( CString, m_pHand->m_vsReloadRowMessages, m )
-		MESSAGEMAN->Unsubscribe( this, *m );
+	if( m_pHand != NULL )
+	{
+		FOREACH_CONST( CString, m_pHand->m_vsReloadRowMessages, m )
+			MESSAGEMAN->Unsubscribe( this, *m );
+	}
 	SAFE_DELETE( m_pHand );
 
 	m_bFirstItemGoesDown = false;
