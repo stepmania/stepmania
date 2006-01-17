@@ -31,6 +31,16 @@ void ScreenMiniMenu::MiniMenu( MenuDef* pDef, ScreenMessage SM_SendOnOK, ScreenM
 
 //REGISTER_SCREEN_CLASS( ScreenMiniMenu );
 
+void ScreenMiniMenu::BeginScreen()
+{
+	ScreenOptions::BeginScreen();
+
+	/* HACK: An OptionRow exits if a screen is set.  ScreenMiniMenu is always pushed, so we
+	 * don't set screens to load.  Set a dummy screen, so ScreenOptions::GetNextScreenForSelection
+	 * will know to move on. */
+	m_sNextScreen = "xxx";
+}
+
 void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 {
 	m_vMenuRows = pDef->rows;
