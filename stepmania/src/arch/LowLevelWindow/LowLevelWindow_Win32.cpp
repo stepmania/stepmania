@@ -65,10 +65,10 @@ int ChooseWindowPixelFormat( const VideoModeParams &p, PIXELFORMATDESCRIPTOR *Pi
 	ASSERT( GraphicsWindow::GetHDC() != NULL );
 
 	ZERO( *PixelFormat );
-	PixelFormat->nSize			= sizeof(PIXELFORMATDESCRIPTOR);
+	PixelFormat->nSize		= sizeof(PIXELFORMATDESCRIPTOR);
 	PixelFormat->nVersion		= 1;
-    PixelFormat->dwFlags		= PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL;
-    PixelFormat->iPixelType		= PFD_TYPE_RGBA;
+	PixelFormat->dwFlags		= PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER | PFD_SUPPORT_OPENGL;
+	PixelFormat->iPixelType		= PFD_TYPE_RGBA;
 	PixelFormat->cColorBits		= p.bpp == 16? 16:24;
 	PixelFormat->cDepthBits		= 16;
 
