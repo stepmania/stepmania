@@ -174,6 +174,42 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 		return DefWindowProcA( hWnd, msg, wParam, lParam );
 }
 
+static void AdjustVideoModeParams( VideoModeParams &p )
+{
+	DEVMODE dm;
+	ZERO( dm );
+	dm.dmSize = sizeof(dm);
+	if( !EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm) )
+	{
+		p.rate = 60;
+		LOG->Warn( "%s", werr_ssprintf(GetLastError(), "EnumDisplaySettings failed").c_str() );
+		return;
+	}
+
+	/*
+	 * On a nForce 2 IGP on Windows 98, dm.dmDisplayFrequency sometimes 
+	 * (but not always) is 0.
+	 *
+	 * MSDN: When you call the EnumDisplaySettings function, the 
+	 * dmDisplayFrequency member may return with the value 0 or 1. 
+	 * These values represent the display hardware's default refresh rate. 
+	 * This default rate is typically set by switches on a display card or 
+	 * computer motherboard, or by a configuration program that does not 
+	 * use Win32 display functions such as ChangeDisplaySettings.
+	 */
+	if( !(dm.dmFields & DM_DISPLAYFREQUENCY) ||
+		dm.dmDisplayFrequency == 0 ||
+		dm.dmDisplayFrequency == 1 )
+	{
+		p.rate = 60;
+		LOG->Warn( "EnumDisplaySettings doesn't know what the refresh rate is. %d %d %d", dm.dmPelsWidth, dm.dmPelsHeight, dm.dmBitsPerPel );
+	}
+	else
+	{
+		p.rate = dm.dmDisplayFrequency;
+	}
+}
+
 /* Set the display mode to the given size, bit depth and refresh.  The refresh
  * setting may be ignored. */
 CString GraphicsWindow::SetScreenMode( const VideoModeParams &p )
@@ -229,6 +265,9 @@ static int GetWindowStyle( bool bWindowed )
 void GraphicsWindow::CreateGraphicsWindow( const VideoModeParams &p, bool bForceRecreateWindow )
 {
 	g_CurrentParams = p;
+
+	// Adjust g_CurrentParams to reflect the actual display settings.
+	AdjustVideoModeParams( g_CurrentParams );
 
 	if( g_hWndMain == NULL || bForceRecreateWindow )
 	{
