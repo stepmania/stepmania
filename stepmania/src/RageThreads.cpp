@@ -376,7 +376,10 @@ void Checkpoints::SetCheckpoint( const char *file, int line, const char *message
 		sm_crash( "GetUnknownThreadSlot() returned NULL" );
 	
 	/* Ignore everything before the first "src/". */
-	file = strstr( file, "src/" ) ? strstr( file, "src/" ) : file;
+	//file = strstr( file, "src/" ) ? strstr( file, "src/" ) : file;
+	const char *temp = strstr( file, "src/" );
+	if (temp)
+		file = temp;
 	slot->Checkpoints[slot->CurCheckpoint].Set( file, line, message );
 
 	if( g_LogCheckpoints )
