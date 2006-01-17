@@ -15,6 +15,10 @@ public:
 	void ResolutionChanged();
 	const PixelFormatDesc *GetPixelFormatDesc(PixelFormat pf) const;
 
+	bool SupportsThreadedRendering();
+	void BeginConcurrentRendering();
+	void EndConcurrentRendering();
+
 	bool BeginFrame();	
 	void EndFrame();
 	VideoModeParams GetActualVideoModeParams() const;

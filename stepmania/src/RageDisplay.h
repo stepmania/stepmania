@@ -157,6 +157,11 @@ public:
 	virtual bool SupportsThreadedRendering() { return false; }
 	virtual bool SupportsPerVertexMatrixScale() = 0;
 
+	// If threaded rendering is supported, these will be called from the rendering
+	// thread before and after rendering.
+	virtual void BeginConcurrentRendering() { }
+	virtual void EndConcurrentRendering() { }
+
 	/* return 0 if failed or internal texture resource handle 
 	 * (unsigned in OpenGL, texture pointer in D3D) */
 	virtual unsigned CreateTexture( 

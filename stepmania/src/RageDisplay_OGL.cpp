@@ -1606,6 +1606,21 @@ const RageDisplay::PixelFormatDesc *RageDisplay_OGL::GetPixelFormatDesc(PixelFor
 	return &PIXEL_FORMAT_DESC[pf];
 }
 
+bool RageDisplay_OGL::SupportsThreadedRendering()
+{
+	return g_pWind->SupportsThreadedRendering();
+}
+
+void RageDisplay_OGL::BeginConcurrentRendering()
+{
+	g_pWind->BeginConcurrentRendering();
+}
+
+void RageDisplay_OGL::EndConcurrentRendering()
+{
+	g_pWind->EndConcurrentRendering();
+}
+
 void RageDisplay_OGL::DeleteTexture( unsigned uTexHandle )
 {
 	unsigned int uTexID = uTexHandle;

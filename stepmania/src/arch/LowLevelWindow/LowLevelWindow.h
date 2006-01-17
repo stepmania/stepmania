@@ -25,6 +25,10 @@ public:
 	virtual void Update() { }
 
 	virtual VideoModeParams GetActualVideoModeParams() const = 0;
+
+	virtual bool SupportsThreadedRendering() { return false; }
+	virtual void BeginConcurrentRendering() { }
+	virtual void EndConcurrentRendering() { }
 };
 
 #endif
