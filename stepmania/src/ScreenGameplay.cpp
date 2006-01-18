@@ -707,6 +707,15 @@ void ScreenGameplay::Init()
 		pi->m_pDifficultyMeter->Load( m_sName + ssprintf(" DifficultyMeter%s",pi->GetName().c_str()) );
 		/* Position it in LoadNextSong. */
 		this->AddChild( pi->m_pDifficultyMeter );
+
+//		switch( GAMESTATE->m_PlayMode )
+//		{
+//		case PLAY_MODE_BATTLE:
+//			pi->m_pInventory = new Inventory;
+//			pi->m_pInventory->Load( p );
+//			this->AddChild( pi->m_pInventory );
+//			break;
+//		}
 	}
 
 
@@ -719,18 +728,6 @@ void ScreenGameplay::Init()
 	SET_XY( m_BPMDisplay );
 	this->AddChild( &m_BPMDisplay );
 	m_fLastBPS = 0;
-
-	FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
-	{
-//		switch( GAMESTATE->m_PlayMode )
-//		{
-//		case PLAY_MODE_BATTLE:
-//			pi->m_pInventory = new Inventory;
-//			pi->m_pInventory->Load( p );
-//			this->AddChild( pi->m_pInventory );
-//			break;
-//		}
-	}
 
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
