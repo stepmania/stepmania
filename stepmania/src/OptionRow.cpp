@@ -900,7 +900,15 @@ void OptionRow::Reload()
 			ASSERT( !m_pHand->m_Def.m_vsChoices.empty() );
 
 			FOREACH_PlayerNumber( p )
-				m_vbSelected[p].resize( m_pHand->m_Def.m_vsChoices.size(), false );
+			{
+				vector<bool> &vbSelected = m_vbSelected[p];
+				vbSelected.resize( 0 );
+				vbSelected.resize( m_pHand->m_Def.m_vsChoices.size(), false );
+
+				// set select the first item if a SELECT_ONE row
+				if( vbSelected.size() && m_pHand->m_Def.m_selectType == SELECT_ONE )
+					vbSelected[0] = true;
+			}
 
 			// TRICKY:  Insert a down arrow as the first choice in the row.
 			if( m_bFirstItemGoesDown )
