@@ -50,7 +50,7 @@ public:
 	MultiPlayer GetPlayerStateAndStageStatsIndex()	{ return m_pn == PLAYER_INVALID ? m_mp : (MultiPlayer)m_pn; }
 	PlayerState *GetPlayerState();
 	PlayerStageStats *GetPlayerStageStats();
-	PlayerNumber GetStepsAndTrailIndex()			{ return m_pn == PLAYER_INVALID ? PLAYER_1 : m_pn; }
+	PlayerNumber GetStepsAndTrailIndex()		{ return m_pn == PLAYER_INVALID ? PLAYER_1 : m_pn; }
 	bool IsEnabled();
 	bool IsMultiPlayer() { return m_mp != MultiPlayer_INVALID; }
 	CString GetName()
@@ -63,35 +63,35 @@ public:
 			return PlayerNumberToString( m_pn );
 	}
 
-	PlayerNumber m_pn;
-	MultiPlayer m_mp;
-	bool m_bIsDummy;
-	PlayerState	m_PlayerStateDummy;
-	PlayerStageStats m_PlayerStageStatsDummy;
+	PlayerNumber		m_pn;
+	MultiPlayer		m_mp;
+	bool			m_bIsDummy;
+	PlayerState		m_PlayerStateDummy;
+	PlayerStageStats	m_PlayerStageStatsDummy;
 
 	vector<Steps*>		m_vpStepsQueue;	// size may be >1 if playing a course
 	vector<AttackArray>	m_asModifiersQueue;// size may be >1 if playing a course
 
-	LifeMeter			*m_pLifeMeter;
-	BitmapText			*m_ptextCourseSongNumber;
-	BitmapText			*m_ptextStepsDescription;
+	LifeMeter		*m_pLifeMeter;
+	BitmapText		*m_ptextCourseSongNumber;
+	BitmapText		*m_ptextStepsDescription;
 
 	ScoreDisplay		*m_pPrimaryScoreDisplay;
 	ScoreDisplay		*m_pSecondaryScoreDisplay;
-	ScoreKeeper			*m_pPrimaryScoreKeeper;
-	ScoreKeeper			*m_pSecondaryScoreKeeper;
-	BitmapText			*m_ptextPlayerOptions;
+	ScoreKeeper		*m_pPrimaryScoreKeeper;
+	ScoreKeeper		*m_pSecondaryScoreKeeper;
+	BitmapText		*m_ptextPlayerOptions;
 	ActiveAttackList	*m_pActiveAttackList;
 
-	Player				*m_pPlayer;
+	Player			*m_pPlayer;
 
 	// used in PLAY_MODE_BATTLE
-	Inventory			*m_pInventory;
+	Inventory		*m_pInventory;
 	
 	DifficultyIcon		*m_pDifficultyIcon;
 	DifficultyMeter		*m_pDifficultyMeter;
 
-	AutoActor			m_sprOniGameOver;
+	AutoActor		m_sprOniGameOver;
 };
 
 class ScreenGameplay : public ScreenWithMenuElements
@@ -159,52 +159,52 @@ protected:
 		STATE_OUTRO,	// not allowed to press Back
 		NUM_DANCING_STATES
 	} m_DancingState;
-	bool				m_bPaused;
+	bool			m_bPaused;
 
-	GameController			m_PauseController;
+	GameController		m_PauseController;
 	vector<Song*>		m_apSongsQueue;					// size may be >1 if playing a course
 
-	float				m_fTimeSinceLastDancingComment;	// this counter is only running while STATE_DANCING
+	float			m_fTimeSinceLastDancingComment;	// this counter is only running while STATE_DANCING
 
 	LyricDisplay		m_LyricDisplay;
 
-	Background			m_SongBackground;
-	Foreground			m_SongForeground;
+	Background		m_SongBackground;
+	Foreground		m_SongForeground;
 
-	Transition	m_NextSong;	// shows between songs in a course
-	Transition	m_SongFinished;	// shows after each song, course or not
+	Transition		m_NextSong;	// shows between songs in a course
+	Transition		m_SongFinished;	// shows after each song, course or not
 
-	AutoActor			m_sprLifeFrame;
+	AutoActor		m_sprLifeFrame;
 	CombinedLifeMeter*	m_pCombinedLifeMeter;
-	Sprite				m_sprCourseSongNumber;
+	Sprite			m_sprCourseSongNumber;
 
-	BPMDisplay			m_BPMDisplay;
-	float				m_fLastBPS;
+	BPMDisplay		m_BPMDisplay;
+	float			m_fLastBPS;
 
-	Sprite				m_sprScoreFrame;
-	BitmapText			m_textSongOptions;
-	BitmapText			m_Scoreboard[NUM_NSSB_CATEGORIES];	// for NSMAN, so we can have a scoreboard
+	Sprite			m_sprScoreFrame;
+	BitmapText		m_textSongOptions;
+	BitmapText		m_Scoreboard[NUM_NSSB_CATEGORIES];	// for NSMAN, so we can have a scoreboard
 
-	bool				m_bShowScoreboard;
+	bool			m_bShowScoreboard;
 
-	BitmapText			m_textDebug;
+	BitmapText		m_textDebug;
 
-	RageTimer			m_GiveUpTimer;
+	RageTimer		m_GiveUpTimer;
 	void AbortGiveUp( bool bShowText );
 
-	BitmapText			m_MaxCombo;		// TODO: move this into an overlay
+	BitmapText		m_MaxCombo;		// TODO: move this into an overlay
 
 	PlayerScoreList		*m_pPlayerScoreList;
 
-	Transition	m_Ready;
-	Transition	m_Go;
-	Transition	m_Failed;
-	Transition	m_Toasty;	// easter egg
+	Transition		m_Ready;
+	Transition		m_Go;
+	Transition		m_Failed;
+	Transition		m_Toasty;	// easter egg
 
-	BitmapText			m_textSurviveTime;	// used in extra stage.  TODO: Move this into a BGA
+	BitmapText		m_textSurviveTime;	// used in extra stage.  TODO: Move this into a BGA
 
 
-	AutoKeysounds	m_AutoKeysounds;
+	AutoKeysounds		m_AutoKeysounds;
 
 	RageSound		m_soundBattleTrickLevel1;
 	RageSound		m_soundBattleTrickLevel2;
@@ -215,7 +215,7 @@ protected:
 	RageSound		m_soundAssistTick;
 	RageSound		*m_pSoundMusic;
 
-	BeginnerHelper	m_BeginnerHelper;
+	BeginnerHelper		m_BeginnerHelper;
 
 	NoteData		m_CabinetLightsNoteData;
 
