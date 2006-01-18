@@ -496,8 +496,6 @@ public:
 		CString sLuaFunction = command.m_vsArgs[1];
 		ASSERT( sLuaFunction.size() );
 
-		Init();
-
 		m_Def.m_bAllowThemeItems = false;	// Lua options are always dynamic and can theme themselves.
 
 		Lua *L = LUA->Get();
