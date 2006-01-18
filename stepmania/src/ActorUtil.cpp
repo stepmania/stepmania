@@ -185,6 +185,7 @@ Actor* ActorUtil::LoadFromNode( const CString& sDir, const XNode* pNode )
 	}
 
 	// Load Params
+	map<CString, LuaReference> setOldParams;
 	{
 		FOREACH_CONST_Child( pNode, pChild )
 		{
@@ -204,7 +205,8 @@ Actor* ActorUtil::LoadFromNode( const CString& sDir, const XNode* pNode )
 					Lua *L = LUA->Get();
 					LuaHelpers::RunScript( L, "return " + s, "", 1 );
 
-					SetParamFromStack( L, sName, NULL );
+					
+					SetParamFromStack( L, sName, &setOldParams[sName] );
 					LUA->Release(L);
 				}
 				else
@@ -272,19 +274,13 @@ all_done:
 
 	// Unload Params
 	{
-		FOREACH_CONST_Child( pNode, pChild )
+		Lua *L = LUA->Get();
+		FOREACHM( CString, LuaReference, setOldParams, old )
 		{
-			if( pChild->m_sName == "Param" )
-			{
-				CString sName;
-				if( !pChild->GetAttrValue( "Name", sName ) )
-				{
-					RageException::Throw( ssprintf("Param node in '%s' is missing the attribute 'Name'", sDir.c_str()) );
-				}
-
-				LUA->UnsetGlobal( sName );
-			}
+			old->second.PushSelf( L );
+			SetParamFromStack( L, old->first, NULL );
 		}
+		LUA->Release(L);
 	}
 
 	return pReturn;
