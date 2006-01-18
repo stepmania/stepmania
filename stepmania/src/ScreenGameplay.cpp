@@ -669,30 +669,10 @@ void ScreenGameplay::Init()
 		pi->m_ptextPlayerOptions->SetName( ssprintf("PlayerOptions%s",pi->GetName().c_str()) );
 		SET_XY( pi->m_ptextPlayerOptions );
 		this->AddChild( pi->m_ptextPlayerOptions );
-	}
 
-	m_textSongOptions.LoadFromFont( THEME->GetPathF(m_sName,"song options") );
-	m_textSongOptions.SetShadowLength( 0 );
-	m_textSongOptions.SetName( "SongOptions" );
-	SET_XY( m_textSongOptions );
-	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
-	this->AddChild( &m_textSongOptions );
-
-	FOREACH_VisiblePlayerInfo( m_vPlayerInfo, pi )
-	{
-		ASSERT( pi->m_pActiveAttackList == NULL );
-		pi->m_pActiveAttackList = new ActiveAttackList;
-		pi->m_pActiveAttackList->LoadFromFont( THEME->GetPathF(m_sName,"ActiveAttackList") );
-		pi->m_pActiveAttackList->Init( pi->GetPlayerState() );
-		pi->m_pActiveAttackList->SetName( ssprintf("ActiveAttackList%s",pi->GetName().c_str()) );
-		SET_XY( pi->m_pActiveAttackList );
-		this->AddChild( pi->m_pActiveAttackList );
-	}
-
-
-
-	FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
-	{
+		//
+		// Difficulty icon and meter
+		//
 		ASSERT( pi->m_pDifficultyIcon == NULL );
 		pi->m_pDifficultyIcon = new DifficultyIcon;
 		pi->m_pDifficultyIcon->Load( THEME->GetPathG(m_sName,ssprintf("difficulty icons %dx%d",NUM_PLAYERS,NUM_Difficulty)) );
@@ -714,6 +694,26 @@ void ScreenGameplay::Init()
 //			break;
 //		}
 	}
+
+	m_textSongOptions.LoadFromFont( THEME->GetPathF(m_sName,"song options") );
+	m_textSongOptions.SetShadowLength( 0 );
+	m_textSongOptions.SetName( "SongOptions" );
+	SET_XY( m_textSongOptions );
+	m_textSongOptions.SetText( GAMESTATE->m_SongOptions.GetString() );
+	this->AddChild( &m_textSongOptions );
+
+	FOREACH_VisiblePlayerInfo( m_vPlayerInfo, pi )
+	{
+		ASSERT( pi->m_pActiveAttackList == NULL );
+		pi->m_pActiveAttackList = new ActiveAttackList;
+		pi->m_pActiveAttackList->LoadFromFont( THEME->GetPathF(m_sName,"ActiveAttackList") );
+		pi->m_pActiveAttackList->Init( pi->GetPlayerState() );
+		pi->m_pActiveAttackList->SetName( ssprintf("ActiveAttackList%s",pi->GetName().c_str()) );
+		SET_XY( pi->m_pActiveAttackList );
+		this->AddChild( pi->m_pActiveAttackList );
+	}
+
+
 
 
 	if( PREFSMAN->m_bShowLyrics )
