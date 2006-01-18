@@ -21,6 +21,8 @@
 #include "RageDisplay.h"
 #include "InputEventPlus.h"
 #include "LocalizedString.h"
+#include "Profile.h"
+#include "SongManager.h"
 
 static bool g_bIsDisplayed = false;
 static bool g_bIsSlow = false;
@@ -574,6 +576,77 @@ class DebugLineClearMachineStats : public IDebugLine
 	}
 };
 
+static HighScore MakeRandomHighScore( float fPercentDP )
+{
+	HighScore hs;
+	hs.SetName( "FAKE" );
+	hs.SetGrade( (Grade)SCALE( rand()%5, 0, 4, Grade_Tier01, Grade_Tier05 ) );
+	hs.SetScore( rand()%100*1000 );
+	hs.SetPercentDP( fPercentDP );
+	hs.SetSurviveSeconds( randomf(30.0f, 100.0f) );
+	PlayerOptions po;
+	po.ChooseRandomModifiers();
+	hs.SetModifiers( po.GetString() );
+	hs.SetDateTime( DateTime::GetNowDateTime() );
+	hs.SetPlayerGuid( Profile::MakeGuid() );
+	hs.SetMachineGuid( Profile::MakeGuid() );
+	hs.SetProductID( rand()%10 );
+	FOREACH_TapNoteScore( tns )
+		hs.SetTapNoteScore( tns, rand() % 100 );
+	FOREACH_HoldNoteScore( hns )
+		hs.SetHoldNoteScore( hns, rand() % 100 );
+	RadarValues rv;
+	FOREACH_RadarCategory( rc )
+		rv.m_Values.f[rc] = randomf( 0, 1 );
+	hs.SetRadarValues( rv );
+
+	return hs;
+}
+
+static void FillProfile( Profile *pProfile )
+{
+	// Choose a percent for all scores.  This is useful for testing unlocks
+	// where some elements are unlocked at a certain percent complete
+	float fPercentDP = randomf( 0.6f, 1.2f );
+	CLAMP( fPercentDP, 0.0f, 1.0f );
+
+	int iCount = pProfile->IsMachine()? 
+		PREFSMAN->m_iMaxHighScoresPerListForMachine.Get():
+		PREFSMAN->m_iMaxHighScoresPerListForPlayer.Get();
+
+	vector<Song*> vpAllSongs = SONGMAN->GetAllSongs();
+	FOREACH( Song*, vpAllSongs, pSong )
+	{
+		vector<Steps*> vpAllSteps = (*pSong)->GetAllSteps();
+		FOREACH( Steps*, vpAllSteps, pSteps )
+		{
+			pProfile->IncrementStepsPlayCount( *pSong, *pSteps );
+			for( int i=0; i<iCount; i++ )
+			{
+				int iIndex = 0;
+				pProfile->AddStepsHighScore( *pSong, *pSteps, MakeRandomHighScore(fPercentDP), iIndex );
+			}
+		}
+	}
+	
+	vector<Course*> vpAllCourses;
+	SONGMAN->GetAllCourses( vpAllCourses, true );
+	FOREACH( Course*, vpAllCourses, pCourse )
+	{
+		vector<Trail*> vpAllTrails;
+		(*pCourse)->GetAllTrails( vpAllTrails );
+		FOREACH( Trail*, vpAllTrails, pTrail )
+		{
+			pProfile->IncrementCoursePlayCount( *pCourse, *pTrail );
+			for( int i=0; i<iCount; i++ )
+			{
+				int iIndex = 0;
+				pProfile->AddCourseHighScore( *pCourse, *pTrail, MakeRandomHighScore(fPercentDP), iIndex );
+			}
+		}
+	}
+}
+
 class DebugLineFillMachineStats : public IDebugLine
 {
 	virtual CString GetDescription() { return FILL_MACHINE_STATS.GetValue(); }
@@ -581,9 +654,9 @@ class DebugLineFillMachineStats : public IDebugLine
 	virtual bool IsEnabled() { return true; }
 	virtual void Do( CString &sMessageOut )
 	{
-		GameCommand gc;
-		gc.Load( 0, ParseCommands("FillMachineStats") );
-		gc.ApplyToAllPlayers();
+		Profile* pProfile = PROFILEMAN->GetMachineProfile();
+		FillProfile( pProfile );
+		PROFILEMAN->SaveMachineProfile();
 		IDebugLine::Do( sMessageOut );
 	}
 };
