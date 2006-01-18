@@ -85,11 +85,14 @@ static LRESULT CALLBACK GraphicsWindow_WndProc( HWND hWnd, UINT msg, WPARAM wPar
 				// Set the video mode through DISPLAY instead of ChangeDisplaySettings 
 				// so that the viewport is correctly reset.
 
-				//ChangeDisplaySettings( &g_FullScreenDevMode, CDS_FULLSCREEN );
+#if 1
+				ChangeDisplaySettings( &g_FullScreenDevMode, CDS_FULLSCREEN );
+#else
 				bool bNewDevice;
 				VideoModeParams p;
 				StepMania::GetPreferredVideoModeParams( p );
 				DISPLAY->SetVideoMode( p, bNewDevice );
+#endif
 
 				ShowWindow( g_hWndMain, SW_SHOWNORMAL );
 			}
