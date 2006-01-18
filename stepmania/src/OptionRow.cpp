@@ -180,6 +180,8 @@ void OptionRow::LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown )
 		FOREACH_PlayerNumber( p )
 			m_vbSelected[p].insert( m_vbSelected[p].begin(), false );
 	}
+
+	InitText();
 }
 
 CString OptionRow::GetRowTitle() const
@@ -498,6 +500,8 @@ void OptionRow::LoadExit()
 		vector<bool> &vbSelected = m_vbSelected[p];
 		vbSelected.resize( m_pHand->m_Def.m_vsChoices.size(), false );
 	}
+
+	InitText();
 }
 
 void OptionRow::PositionUnderlines( PlayerNumber pn )
