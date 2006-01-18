@@ -184,6 +184,25 @@ void OptionRow::LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown )
 	InitText();
 }
 
+void OptionRow::LoadExit()
+{
+	m_RowType = OptionRow::RowType_Exit;
+	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_selectType  = SELECT_NONE;
+	pHand->m_Def.m_sName = EXIT_NAME;
+	pHand->m_Def.m_vsChoices.push_back( "Exit" );
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
+	m_pHand = pHand;
+	FOREACH_PlayerNumber( p )
+	{
+		vector<bool> &vbSelected = m_vbSelected[p];
+		vbSelected.resize( m_pHand->m_Def.m_vsChoices.size(), false );
+	}
+
+	InitText();
+}
+
 CString OptionRow::GetRowTitle() const
 {
 	CString sLineName = m_pHand->m_Def.m_sName;
@@ -484,25 +503,6 @@ void OptionRow::AfterImportOptions()
 	UpdateText();
 
 	m_textTitle->SetText( GetRowTitle() );
-}
-
-void OptionRow::LoadExit()
-{
-	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
-	pHand->m_Def.m_selectType  = SELECT_NONE;
-	pHand->m_Def.m_sName = EXIT_NAME;
-	pHand->m_Def.m_vsChoices.push_back( "Exit" );
-	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
-	m_RowType = OptionRow::RowType_Exit;
-	m_pHand = pHand;
-	FOREACH_PlayerNumber( p )
-	{
-		vector<bool> &vbSelected = m_vbSelected[p];
-		vbSelected.resize( m_pHand->m_Def.m_vsChoices.size(), false );
-	}
-
-	InitText();
 }
 
 void OptionRow::PositionUnderlines( PlayerNumber pn )
