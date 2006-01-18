@@ -763,9 +763,6 @@ void Player::ApplyWaitingTransforms()
 	{
 		const Attack &mod = m_pPlayerState->m_ModsToApply[j];
 		PlayerOptions po;
-		/* Should this default to "" always? need it blank so we know if mod.sModifier
-		 * changes the note skin. */
-		po.m_sNoteSkin = "";
 		po.FromString( mod.sModifiers );
 
 		float fStartBeat, fEndBeat;
