@@ -8,21 +8,13 @@
 typedef void *id;
 #endif
 
-#define CONCURRENT_RENDERING 0 // This seems to crash the computer...
-
 typedef const struct __CFDictionary *CFDictionaryRef;
 
 class LowLevelWindow_Cocoa : public LowLevelWindow
 {
 	VideoModeParams m_CurrentParams;
 	id m_Window;
-	id m_WindowContext;
-	id m_FullScreenContext;
-#if CONCURRENT_RENDERING
-	id m_ConcurrentWindowContext;
-	id m_ConcurrentFullScreenContext;
-#endif
-	bool m_bSharingContexts;
+	id m_Context;
 	CFDictionaryRef m_CurrentDisplayMode;
 	
 public:
@@ -34,12 +26,6 @@ public:
 	void SwapBuffers();
 	void Update();
 	
-#if CONCURRENT_RENDERING
-	bool SupportsThreadedRendering();
-	void BeginConcurrentRendering();
-	void EndConcurrentRendering();
-#endif
-
 	VideoModeParams GetActualVideoModeParams() const { return m_CurrentParams; }
 private:
 	void ShutDownFullScreen();

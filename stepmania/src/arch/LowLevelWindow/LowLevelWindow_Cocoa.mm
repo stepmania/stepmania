@@ -9,6 +9,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <OpenGl/OpenGl.h>
+#import <OpenGL/gl.h>
 #import <mach-o/dyld.h>
 
 static const unsigned int g_iStyleMask = NSTitledWindowMask | NSClosableWindowMask |
@@ -72,13 +73,8 @@ public:
 	
 @end
 
-LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : m_WindowContext(nil), m_FullScreenContext(nil),
-	 m_bSharingContexts(false), m_CurrentDisplayMode(NULL)
+LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : m_Context(nil), m_CurrentDisplayMode(NULL)
 {
-#if CONCURRENT_RENDERING
-	m_ConcurrentWindowContext = nil;
-	m_ConcurrentFullScreenContext = nil;
-#endif
 	POOL;
 	NSRect rect = { {0, 0}, {0, 0} };
 	SMMainThread *mt = [[SMMainThread alloc] init];
@@ -113,12 +109,11 @@ LowLevelWindow_Cocoa::~LowLevelWindow_Cocoa()
 	ADD_ACTION1( mt, m_Window, orderOut:, nil );
 	ADD_ACTION0( mt, m_Window, release );
 	
-	[m_WindowContext clearDrawable];
+	[m_Context clearDrawable];
+	[m_Context release];
 	[mt performOnMainThread];
 	[delegate release];
 	[mt release];
-	[m_WindowContext release];
-	[m_FullScreenContext release];
 }
 
 void *LowLevelWindow_Cocoa::GetProcAddress( CString s )
@@ -135,13 +130,61 @@ void *LowLevelWindow_Cocoa::GetProcAddress( CString s )
 	return symbol ? NSAddressOfSymbol( symbol ) : NULL;
 }
 
-static void SetOGLParameters( NSOpenGLContext *context )
+static NSOpenGLContext *CreateOGLContext( int iColorDepth, bool bWindowed, NSOpenGLContext *share, bool &bShared )
 {
-	long val = 64;
+	NSOpenGLPixelFormat *pixelFormat;
 	
-	[context setValues:&val forParameter:NSOpenGLContextParameter(280)];
-	[context setValues:&val forParameter:NSOpenGLContextParameter(284)];
-}
+	if( bWindowed )
+	{
+		NSOpenGLPixelFormatAttribute attrs[] = {
+			NSOpenGLPFANoRecovery, // so we can share with the full screen context
+			NSOpenGLPFADoubleBuffer,
+			NSOpenGLPFAAccelerated,
+			NSOpenGLPFADepthSize, NSOpenGLPixelFormatAttribute(16),
+			NSOpenGLPFAColorSize, NSOpenGLPixelFormatAttribute(iColorDepth == 16 ? 16 : 24),
+			NSOpenGLPixelFormatAttribute(0)
+		};
+		
+		pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+	}
+	else
+	{
+		NSOpenGLPixelFormatAttribute attrs[] = {
+			NSOpenGLPFAFullScreen,
+			// Choose which screen to use: the main one.
+			NSOpenGLPFAScreenMask,
+			NSOpenGLPixelFormatAttribute( CGDisplayIDToOpenGLDisplayMask(kCGDirectMainDisplay) ),
+			
+			NSOpenGLPFADoubleBuffer,
+			NSOpenGLPFAAccelerated,
+			NSOpenGLPFADepthSize, NSOpenGLPixelFormatAttribute(16),
+			NSOpenGLPFAColorSize, NSOpenGLPixelFormatAttribute(iColorDepth == 16 ? 16 : 24),
+			NSOpenGLPixelFormatAttribute(0)
+		};
+		pixelFormat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attrs];
+	}
+	
+	if( !pixelFormat )
+		return nil;
+	
+	NSOpenGLContext *context = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:share];
+	
+	bShared = share && context;
+	if( !context )
+		context = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
+	
+	[pixelFormat release];
+	
+	if( !context )
+		return nil;
+	
+	//long val = 64;
+	
+	//[context setValues:&val forParameter:NSOpenGLContextParameter(280)];
+	//[context setValues:&val forParameter:NSOpenGLContextParameter(284)];
+	
+	return context;
+}		
 
 CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
 {
@@ -162,83 +205,46 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 	newDeviceOut = false;
 	
 	NSRect contentRect = { { 0, 0 }, { p.width, p.height } };
-	SMMainThread *mt = [[[SMMainThread alloc] init] autorelease];
+	const bool bRebuildContext = p.bpp != m_CurrentParams.bpp ||
+		!m_Context || p.windowed != m_CurrentParams.windowed;
 	
-	// Change the window and the title
-	ADD_ACTIONn( mt, m_Window, setContentSize:, 1, &contentRect.size );
-	ADD_ACTION1( mt, m_Window, setTitle:, [NSString stringWithUTF8String:p.sWindowTitle.c_str()] );
-		
-	m_CurrentParams.width = p.width;
-	m_CurrentParams.height = p.height;
 	
 	ASSERT( p.bpp == 16 || p.bpp == 32 );
 	
-	if( p.bpp != m_CurrentParams.bpp || !m_WindowContext )
-	{
-		NSOpenGLPixelFormat *pixelFormat;
-		NSOpenGLPixelFormatAttribute attrs[] = {
-			NSOpenGLPFANoRecovery, // so we can share with the full screen context
-			NSOpenGLPFADoubleBuffer,
-			NSOpenGLPFAAccelerated,
-			NSOpenGLPFADepthSize, NSOpenGLPixelFormatAttribute(16),
-			NSOpenGLPFAColorSize, NSOpenGLPixelFormatAttribute(p.bpp == 16 ? 16 : 24),
-			NSOpenGLPixelFormatAttribute(0)
-		};
-		
-		pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attrs] autorelease];
-		
-		if( pixelFormat == nil )
-		{
-			[mt performOnMainThread];
-			return "Failed to set the windowed pixel format.";
-		}
-		id nextContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
-
-		if( nextContext == nil )
-		{
-			[mt performOnMainThread];
-			return "Failed to create windowed OGL context.";
-		}
-		SetOGLParameters( nextContext );
-		newDeviceOut = true;
-		[m_WindowContext clearDrawable];
-		[m_WindowContext release];
-		m_WindowContext = nextContext;
-		
-#if CONCURRENT_RENDERING
-		[m_ConcurrentWindowContext release];
-		m_ConcurrentWindowContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat
-								      shareContext:m_WindowContext];
-		if( m_ConcurrentWindowContext )
-			SetOGLParameters( m_ConcurrentWindowContext );
-#endif
-
-		// We need to recreate the full screen context as well.
-		[m_FullScreenContext clearDrawable];
-		[m_FullScreenContext release];
-		m_FullScreenContext = nil;
-		m_CurrentParams.bpp = p.bpp;
-		m_bSharingContexts = false;
-	}
 	if( p.windowed )
 	{		
-		ShutDownFullScreen();
+		if( bRebuildContext )
+		{
+			bool bShared;
+			NSOpenGLContext *newContext = CreateOGLContext( p.bpp, true, m_Context, bShared );
+			
+			if( !newContext )
+				return "Failed to create OGL context.";
+			ShutDownFullScreen();
+			[m_Context release];
+			m_Context = newContext;
+			newDeviceOut = !bShared;
+			m_CurrentParams.bpp = p.bpp;
+		}
+		SMMainThread *mt = [[SMMainThread alloc] init];
 		
+		// Change the window and the title
+		ADD_ACTIONn( mt, m_Window, setContentSize:, 1, &contentRect.size );
+		ADD_ACTION1( mt, m_Window, setTitle:, [NSString stringWithUTF8String:p.sWindowTitle.c_str()] );		
 		ADD_ACTION0( mt, m_Window, center );
 		ADD_ACTION1( mt, m_Window, makeKeyAndOrderFront:, nil );
 		
 		[mt performOnMainThread];
-		[m_WindowContext setView:[m_Window contentView]];
-		[m_WindowContext update];
-		[m_WindowContext makeCurrentContext];
+		[mt release];
+		[m_Context setView:[m_Window contentView]];
+		[m_Context update];
+		[m_Context makeCurrentContext];
 		m_CurrentParams.windowed = true;
 		SetActualParamsFromMode( CGDisplayCurrentMode(kCGDirectMainDisplay) );
 		m_CurrentParams.vsync = p.vsync; // hack
 
-		newDeviceOut = newDeviceOut || !m_bSharingContexts;
 		return CString();
 	}
-	[mt performOnMainThread];
 	int result = ChangeDisplayMode( p );
 	
 	if( result )
@@ -246,60 +252,33 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 		return ssprintf( "Failed to switch to full screen:%d x %d @ %d. Error %d.",
 				 p.width, p.height, p.rate, result );
 	}
-	if( m_FullScreenContext == nil )
-	{
-		NSOpenGLPixelFormatAttribute attrs[] = {
-			NSOpenGLPFAFullScreen,
-			// Choose which screen to use: the main one.
-			NSOpenGLPFAScreenMask,
-			NSOpenGLPixelFormatAttribute( CGDisplayIDToOpenGLDisplayMask(kCGDirectMainDisplay) ),
-			
-			NSOpenGLPFADoubleBuffer,
-			NSOpenGLPFAAccelerated,
-			NSOpenGLPFADepthSize, NSOpenGLPixelFormatAttribute(16),
-			NSOpenGLPFAColorSize, NSOpenGLPixelFormatAttribute(p.bpp == 16 ? 16 : 24),
-			NSOpenGLPixelFormatAttribute(0)
-		};
-		NSOpenGLPixelFormat *pixelFormat;
-		
-		// Autorelease to simplify logic.
-		pixelFormat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attrs] autorelease];
-		if( pixelFormat == nil )
-		{
-			ShutDownFullScreen(); // If this fails, we need to leave full screen.
-			return "Failed to set full screen pixel format.";
-		}
-		
-		m_FullScreenContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:m_WindowContext];
-		if( !(m_bSharingContexts = m_FullScreenContext != nil) )
-		{
-			LOG->Warn( "Failed to share openGL contexts." );
-			m_FullScreenContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat shareContext:nil];
-			if( !m_FullScreenContext )
-			{
-				ShutDownFullScreen(); // Same here.
-				return "Failed to create full screen openGL context.";
-			}
-		}
-		SetOGLParameters( m_FullScreenContext );
-		
-#if CONCURRENT_RENDERING
-		[m_ConcurrentFullScreenContext release];
-		m_ConcurrentFullScreenContext = [[NSOpenGLContext alloc] initWithFormat:pixelFormat
-									  shareContext:m_WindowContext];
-		if( m_ConcurrentFullScreenContext )
-			SetOGLParameters( m_ConcurrentFullScreenContext );
-#endif
-	}
-	long swap = p.vsync ? 1 : 0;
 	
-	[m_FullScreenContext setValues:&swap forParameter:NSOpenGLCPSwapInterval];
-	[m_FullScreenContext setFullScreen];
-	[m_FullScreenContext update];
-	[m_FullScreenContext makeCurrentContext];
+	if( bRebuildContext )
+	{
+		bool bShared;
+		NSOpenGLContext *newContext = CreateOGLContext( p.bpp, false, m_Context, bShared );
+		
+		if( !newContext )
+		{
+			ShutDownFullScreen();
+			return "Failed to create full screen OGL context.";
+		}
+		[m_Context clearDrawable];
+		[m_Context release];
+		m_Context = newContext;
+		newDeviceOut = !bShared;
+		m_CurrentParams.bpp = p.bpp;
+	}
+	
+	[m_Context setFullScreen];
+	[m_Context update];
+	[m_Context makeCurrentContext];
+	
+	long swap = p.vsync ? 1 : 0;
+
+	[m_Context setValues:&swap forParameter:NSOpenGLCPSwapInterval];
 	m_CurrentParams.vsync = p.vsync;
 	
-	newDeviceOut = newDeviceOut || !m_bSharingContexts;
 	return CString();
 }
 
@@ -308,11 +287,17 @@ void LowLevelWindow_Cocoa::ShutDownFullScreen()
 	if( m_CurrentParams.windowed )
 		return;
 	ASSERT( m_CurrentDisplayMode );
-	[m_FullScreenContext clearDrawable];
 	
-#if CONCURRENT_RENDERING
-	[m_ConcurrentFullScreenContext clearDrawable];
-#endif
+	// Clear the front and back framebuffers before switching out of FullScreen mode.
+	// (This is not strictly necessary, but avoids an untidy flash of garbage.)
+	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+	glClear( GL_COLOR_BUFFER_BIT );
+	[m_Context flushBuffer];
+	glClear( GL_COLOR_BUFFER_BIT );
+	[m_Context flushBuffer];	
+	
+	[NSOpenGLContext clearCurrentContext];
+	[m_Context clearDrawable];
 	
 	CGDisplayErr err = CGDisplaySwitchToMode( kCGDirectMainDisplay, m_CurrentDisplayMode );
 	
@@ -326,41 +311,13 @@ void LowLevelWindow_Cocoa::ShutDownFullScreen()
 	m_CurrentParams.windowed = true;
 }
 
-#if CONCURRENT_RENDERING
-bool LowLevelWindow_Cocoa::SupportsThreadedRendering()
-{
-	return m_CurrentParams.windowed ? m_ConcurrentWindowContext : m_ConcurrentFullScreenContext;
-}
-
-void LowLevelWindow_Cocoa::BeginConcurrentRendering()
-{
-	if( m_CurrentParams.windowed )
-	{
-		[m_ConcurrentWindowContext setView:[m_Window contentView]];
-		[m_ConcurrentWindowContext update];
-		[m_ConcurrentWindowContext makeCurrentContext];
-	}
-	else
-	{
-		[m_ConcurrentFullScreenContext setFullScreen];
-		[m_ConcurrentFullScreenContext update];
-		[m_ConcurrentFullScreenContext makeCurrentContext];
-	}
-}
-
-void LowLevelWindow_Cocoa::EndConcurrentRendering()
-{
-	[NSOpenGLContext clearCurrentContext];
-}
-#endif
-
 int LowLevelWindow_Cocoa::ChangeDisplayMode( const VideoModeParams& p )
 {	
 	CFDictionaryRef mode = NULL;
 	CFDictionaryRef newMode;
 	CGDisplayErr err;
 	
-	if( m_CurrentParams.windowed )
+	if( !m_CurrentDisplayMode )
 	{
 		if( (err = CGCaptureAllDisplays()) != kCGErrorSuccess )
 			return err;
@@ -380,38 +337,40 @@ int LowLevelWindow_Cocoa::ChangeDisplayMode( const VideoModeParams& p )
 	
 	if( err != kCGErrorSuccess )
 		return err; // We don't own mode, don't release it.
-	SetActualParamsFromMode( newMode );
 	
-	if( m_CurrentParams.windowed )
-	{
+	if( !m_CurrentDisplayMode )
 		m_CurrentDisplayMode = mode;
-		m_CurrentParams.windowed = false;
-	}
+	m_CurrentParams.windowed = false;
+	SetActualParamsFromMode( newMode );
 	
 	return 0;
 }
 
 void LowLevelWindow_Cocoa::SetActualParamsFromMode( CFDictionaryRef mode )
 {
-	SInt32 width, height, rate, bpp;
+	SInt32 rate;
 	
-#define X(prop,var) CFNumberGetValue( CFNumberRef(CFDictionaryGetValue(mode, CFSTR(prop))), kCFNumberSInt32Type, &var )
-	X( "Width", width );
-	X( "Height", height );
-	X( "RefreshRate", rate );
-	X( "BitsPerPixel", bpp );
-#undef X
+	if( CFNumberGetValue( (CFNumberRef)CFDictionaryGetValue(mode, CFSTR("RefreshRate")), kCFNumberSInt32Type, &rate) )
+		m_CurrentParams.rate = rate;
+
 	if( !m_CurrentParams.windowed )
 	{
 		long swap;
-		
-		m_CurrentParams.width = width;
-		m_CurrentParams.height = height;
+
+		m_CurrentParams.width = CGDisplayPixelsWide( kCGDirectMainDisplay );
+		m_CurrentParams.height = CGDisplayPixelsHigh( kCGDirectMainDisplay );
 		CGLGetParameter( CGLGetCurrentContext(), kCGLCPSwapInterval, &swap );
 		m_CurrentParams.vsync = swap != 0;
 	}
-	m_CurrentParams.bpp = bpp;
-	m_CurrentParams.rate = rate;
+	else
+	{
+		NSSize size = [[m_Window contentView] frame].size;
+		
+		m_CurrentParams.width = int(size.width);
+		m_CurrentParams.height = int(size.height);
+	}
+
+	m_CurrentParams.bpp = CGDisplayBitsPerPixel( kCGDirectMainDisplay );
 }
 
 void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
@@ -440,7 +399,7 @@ void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 
 void LowLevelWindow_Cocoa::SwapBuffers()
 {
-	[(m_CurrentParams.windowed ? m_WindowContext : m_FullScreenContext) flushBuffer];
+	[m_Context flushBuffer];
 }
 
 void LowLevelWindow_Cocoa::Update()
@@ -454,6 +413,6 @@ void LowLevelWindow_Cocoa::Update()
 	m_CurrentParams.width = g_iWidth;
 	m_CurrentParams.height = g_iHeight;
 	lock.Unlock(); // Unlock before calling ResolutionChanged().
-	[m_WindowContext update];
+	[m_Context update];
 	DISPLAY->ResolutionChanged();
 }
