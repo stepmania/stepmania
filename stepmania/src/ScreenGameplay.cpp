@@ -2523,12 +2523,16 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		}
 		
 		if( GAMESTATE->IsCourseMode() )
+		{
 			if( GAMESTATE->GetCourseSongIndex() >= int(m_apSongsQueue.size() / 2) )
 				SOUND->PlayOnceFromAnnouncer( "gameplay oni failed halfway" );
 			else
 				SOUND->PlayOnceFromAnnouncer( "gameplay oni failed" );
+		}
 		else
+		{
 			SOUND->PlayOnceFromAnnouncer( "gameplay failed" );
+		}
 	}
 	else if( SM == SM_Pause )
 	{
