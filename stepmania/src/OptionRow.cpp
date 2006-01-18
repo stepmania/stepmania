@@ -450,17 +450,15 @@ void OptionRow::AfterImportOptions()
 		case SELECT_ONE:
 			{
 				/* Make sure the row actually has a selection. */
-				bool bHasASelection = false;
-				for( unsigned i=0; i<m_vbSelected[p].size(); i++ )
+				int iSelection = GetOneSelection(p, true) != -1;
+				if( iSelection == -1 )
 				{
-					if( m_vbSelected[p][i] )
-						bHasASelection = true;
-				}
-
-				if( !bHasASelection && !m_vbSelected[p].empty() )
+					ASSERT( !m_vbSelected[p].empty() );
 					m_vbSelected[p][0] = true;
+					iSelection = 0;
+				}
 				
-				m_iChoiceInRowWithFocus[p] = GetOneSelection(p, true);	// focus on the selection we just set
+				m_iChoiceInRowWithFocus[p] = iSelection;	// focus on the selection we just set
 			}
 			break;
 		case SELECT_MULTIPLE:
@@ -929,10 +927,19 @@ void OptionRow::Reload()
 				switch( m_pHand->m_Def.m_selectType )
 				{
 				case SELECT_ONE:
-					m_iChoiceInRowWithFocus[p] = GetOneSelection(p, true);
-					if( m_iChoiceInRowWithFocus[p] == -1 )
-						m_iChoiceInRowWithFocus[p] = 0;
+				{
+					/* Make sure the row actually has a selection. */
+					int iSelection = GetOneSelection(p, true) != -1;
+					if( iSelection == -1 )
+					{
+						ASSERT( !m_vbSelected[p].empty() );
+						m_vbSelected[p][0] = true;
+						iSelection = 0;
+					}
+					
+					m_iChoiceInRowWithFocus[p] = iSelection;	// focus on the selection we just set
 					break;
+				}
 				case SELECT_MULTIPLE:
 				case SELECT_NONE:
 					m_iChoiceInRowWithFocus[p] = 0;
