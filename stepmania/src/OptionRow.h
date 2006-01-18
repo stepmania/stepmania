@@ -145,6 +145,7 @@ public:
 	void InitText();
 	void AfterImportOptions();
 
+	void ChoicesChanged();
 	void PositionUnderlines( PlayerNumber pn );
 	void PositionIcons();
 	void UpdateText();

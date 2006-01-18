@@ -162,6 +162,27 @@ void OptionRow::LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown )
 	FOREACH_CONST( CString, m_pHand->m_vsReloadRowMessages, m )
 		MESSAGEMAN->Subscribe( this, *m );
 
+	ChoicesChanged();
+}
+
+void OptionRow::LoadExit()
+{
+	m_RowType = OptionRow::RowType_Exit;
+	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
+	pHand->m_Def.m_selectType  = SELECT_NONE;
+	pHand->m_Def.m_sName = EXIT_NAME;
+	pHand->m_Def.m_vsChoices.push_back( "Exit" );
+	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
+	m_pHand = pHand;
+
+	ChoicesChanged();
+}
+
+void OptionRow::ChoicesChanged()
+{
+	ASSERT( !m_pHand->m_Def.m_vsChoices.empty() );
+
 	FOREACH_PlayerNumber( p )
 	{
 		vector<bool> &vbSelected = m_vbSelected[p];
@@ -179,25 +200,6 @@ void OptionRow::LoadNormal( OptionRowHandler *pHand, bool bFirstItemGoesDown )
 		m_pHand->m_Def.m_vsChoices.insert( m_pHand->m_Def.m_vsChoices.begin(), NEXT_ROW_NAME );
 		FOREACH_PlayerNumber( p )
 			m_vbSelected[p].insert( m_vbSelected[p].begin(), false );
-	}
-
-	InitText();
-}
-
-void OptionRow::LoadExit()
-{
-	m_RowType = OptionRow::RowType_Exit;
-	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
-	pHand->m_Def.m_selectType  = SELECT_NONE;
-	pHand->m_Def.m_sName = EXIT_NAME;
-	pHand->m_Def.m_vsChoices.push_back( "Exit" );
-	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-	pHand->m_Def.m_bOneChoiceForAllPlayers = true;
-	m_pHand = pHand;
-	FOREACH_PlayerNumber( p )
-	{
-		vector<bool> &vbSelected = m_vbSelected[p];
-		vbSelected.resize( m_pHand->m_Def.m_vsChoices.size(), false );
 	}
 
 	InitText();
@@ -888,10 +890,6 @@ void OptionRow::Reload()
 	{
 	case OptionRow::RowType_Normal:
 		{
-			vector<PlayerNumber> vpns;
-			FOREACH_HumanPlayer( p )
-				vpns.push_back( p );
-
 			// TODO: Nothing uses this yet and it causes skips when changing options.
 			//if( m_pHand->m_Def.m_bExportOnChange )
 			//{
@@ -902,30 +900,12 @@ void OptionRow::Reload()
 
 			if( !m_pHand->Reload() )
 				break;
-			ASSERT( !m_pHand->m_Def.m_vsChoices.empty() );
 
-			FOREACH_PlayerNumber( p )
-			{
-				vector<bool> &vbSelected = m_vbSelected[p];
-				vbSelected.resize( 0 );
-				vbSelected.resize( m_pHand->m_Def.m_vsChoices.size(), false );
+			ChoicesChanged();
 
-				// set select the first item if a SELECT_ONE row
-				if( vbSelected.size() && m_pHand->m_Def.m_selectType == SELECT_ONE )
-					vbSelected[0] = true;
-			}
-
-			// TRICKY:  Insert a down arrow as the first choice in the row.
-			if( m_bFirstItemGoesDown )
-			{
-				m_pHand->m_Def.m_vsChoices.insert( m_pHand->m_Def.m_vsChoices.begin(), NEXT_ROW_NAME );
-				FOREACH_PlayerNumber( p )
-					m_vbSelected[p].insert( m_vbSelected[p].begin(), false );
-			}
-
-			/* Update the text to show the options we just updated. */
-			InitText();
-
+			vector<PlayerNumber> vpns;
+			FOREACH_HumanPlayer( p )
+				vpns.push_back( p );
 			ImportOptions( vpns );
 			AfterImportOptions();
 
