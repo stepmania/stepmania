@@ -302,7 +302,6 @@ void ScreenOptions::BeginScreen()
 	CHECKPOINT;
 
 	PositionRows();
-	PositionAllUnderlines();
 	PositionIcons();
 	RefreshAllIcons();
 	PositionCursors();
