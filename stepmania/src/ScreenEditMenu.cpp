@@ -171,9 +171,10 @@ static void DeleteCurrentSteps()
 	GAMESTATE->m_pCurSteps[0].Set( NULL );
 }
 	
-static LocalizedString MISSING_MUSIC_FILE		( "ScreenEditMenu", "This song is missing a music file and cannot be edited." );
-static LocalizedString STEPS_WILL_BE_LOST		( "ScreenEditMenu", "These steps will be lost permanently." );
-static LocalizedString CONTINUE_WITH_DELETE		( "ScreenEditMenu", "Continue with delete?" );
+static LocalizedString MISSING_MUSIC_FILE	( "ScreenEditMenu", "This song is missing a music file and cannot be edited." );
+static LocalizedString STEPS_WILL_BE_LOST	( "ScreenEditMenu", "These steps will be lost permanently." );
+static LocalizedString CONTINUE_WITH_DELETE	( "ScreenEditMenu", "Continue with delete?" );
+static LocalizedString BLANK			( "ScreenEditMenu", "Blank" );
 static LocalizedString ENTER_EDIT_DESCRIPTION	( "ScreenEditMenu", "Enter a description for this edit.");
 void ScreenEditMenu::MenuStart( PlayerNumber pn )
 {
@@ -253,7 +254,7 @@ void ScreenEditMenu::MenuStart( PlayerNumber pn )
 			{
 				pSteps->CreateBlank( st );
 				pSteps->SetMeter( 1 );
-				sEditName = "Blank";
+				sEditName = BLANK;
 			}
 
 			pSteps->SetDifficulty( dc );	// override difficulty with the user's choice

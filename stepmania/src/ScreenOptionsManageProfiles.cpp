@@ -103,7 +103,7 @@ void ScreenOptionsManageProfiles::BeginScreen()
 	{
 		OptionRowHandler *pHand = OptionRowHandlerUtil::Make( ParseCommands("gamecommand;screen,ScreenOptionsEditProfile;name,Create New") );
 		pHand->m_Def.m_layoutType = LAYOUT_SHOW_ALL_IN_ROW;
-		pHand->m_Def.m_bAllowThemeTitle = false;
+		pHand->m_Def.m_bAllowThemeTitle = true;
 		pHand->m_Def.m_bAllowThemeItems = false;
 		OptionRowHandlers.push_back( pHand );
 

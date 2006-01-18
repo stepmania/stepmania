@@ -335,6 +335,7 @@ void EditMenu::UpdateArrows()
 	m_sprArrows[1].EnableAnimation( CanGoRight() );
 }
 
+static LocalizedString BLANK ( "EditMenu", "Blank" );
 void EditMenu::OnRowValueChanged( EditMenuRow row )
 {
 	UpdateArrows();
@@ -499,7 +500,7 @@ void EditMenu::OnRowValueChanged( EditMenuRow row )
 				CString s;
 				Steps *pSourceSteps = GetSelectedSourceSteps();
 				if( GetSelectedSourceDifficulty() == DIFFICULTY_INVALID )
-					s = "Blank";
+					s = BLANK;
 				else if( pSourceSteps  &&  GetSelectedSourceDifficulty() == DIFFICULTY_EDIT )
 					s = pSourceSteps->GetDescription() + " (" + DifficultyToLocalizedString(DIFFICULTY_EDIT) + ")";
 				else
