@@ -83,8 +83,6 @@ public:
 	BitmapText			*m_ptextPlayerOptions;
 	ActiveAttackList	*m_pActiveAttackList;
 
-	Transition			*m_pWin;
-
 	Player				*m_pPlayer;
 
 	// used in PLAY_MODE_BATTLE
@@ -202,9 +200,7 @@ protected:
 	Transition	m_Go;
 	Transition	m_Cleared;
 	Transition	m_Failed;
-	Transition	m_Extra;
 	Transition	m_Toasty;	// easter egg
-	Transition	m_Draw;
 
 	BitmapText			m_textSurviveTime;	// used in extra stage.  TODO: Move this into a BGA
 

@@ -95,7 +95,6 @@ PlayerInfo::PlayerInfo()
 	m_pSecondaryScoreKeeper = NULL;
 	m_ptextPlayerOptions = NULL;
 	m_pActiveAttackList = NULL;
-	m_pWin = NULL;
 	m_pPlayer = NULL;
 	m_pInventory = NULL;
 	m_pDifficultyIcon = NULL;
@@ -175,7 +174,6 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 	{
 	case PLAY_MODE_BATTLE:
 	case PLAY_MODE_RAVE:
-		m_pWin = new Transition;
 		break;
 	}
 
@@ -218,7 +216,6 @@ PlayerInfo::~PlayerInfo()
 	SAFE_DELETE( m_pSecondaryScoreKeeper );
 	SAFE_DELETE( m_ptextPlayerOptions );
 	SAFE_DELETE( m_pActiveAttackList );
-	SAFE_DELETE( m_pWin );
 	SAFE_DELETE( m_pPlayer );
 	SAFE_DELETE( m_pInventory );
 	SAFE_DELETE( m_pDifficultyIcon );
@@ -750,27 +747,6 @@ void ScreenGameplay::Init()
 		m_Failed.Load( THEME->GetPathB(m_sName,"failed") );
 		m_Failed.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 ); // on top of everything else
 		this->AddChild( &m_Failed );
-
-		if( PREFSMAN->m_bAllowExtraStage && GAMESTATE->IsFinalStage() )	// only load if we're going to use it
-			m_Extra.Load( THEME->GetPathB(m_sName,"extra1") );
-		if( PREFSMAN->m_bAllowExtraStage && GAMESTATE->IsExtraStage() )	// only load if we're going to use it
-			m_Extra.Load( THEME->GetPathB(m_sName,"extra2") );
-		this->AddChild( &m_Extra );
-
-		// only load if we're going to use it
-		switch( GAMESTATE->m_PlayMode )
-		{
-		case PLAY_MODE_BATTLE:
-		case PLAY_MODE_RAVE:
-			FOREACH_EnabledPlayerInfoNotDummy( m_vPlayerInfo, pi )
-			{
-				pi->m_pWin->Load( THEME->GetPathB(m_sName,ssprintf("win %s",pi->GetName().c_str())) );
-				this->AddChild( pi->m_pWin );
-			}
-			m_Draw.Load( THEME->GetPathB(m_sName,"draw") );
-			this->AddChild( &m_Draw );
-			break;
-		}
 
 		m_textDebug.LoadFromFont( THEME->GetPathF("Common","normal") );
 		m_textDebug.SetName( "Debug" );
@@ -2415,39 +2391,13 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		TweenOffScreen();
 
+		m_Cleared.StartTransitioning( SM_GoToNextScreen );
+
 		// do they deserve an extra stage?
 		if( GAMESTATE->HasEarnedExtraStage() )
-		{
-			m_Extra.StartTransitioning( SM_GoToNextScreen );
 			SOUND->PlayOnceFromAnnouncer( "gameplay extra" );
-		}
 		else
-		{
-			switch( GAMESTATE->m_PlayMode )
-			{
-			case PLAY_MODE_BATTLE:
-			case PLAY_MODE_RAVE:
-				{
-					PlayerNumber winner = GAMESTATE->GetBestPlayer();
-					switch( winner )
-					{
-					case PLAYER_INVALID:
-						m_Draw.StartTransitioning( SM_GoToNextScreen );
-						break;
-					default:
-						m_vPlayerInfo[winner].m_pWin->StartTransitioning( SM_GoToNextScreen );
-						break;
-					}
-				}
-				break;
-			default:
-				m_Cleared.StartTransitioning( SM_GoToNextScreen );
-				break;
-			}
-			
 			SOUND->PlayOnceFromAnnouncer( "gameplay cleared" );
-		}
-
 	}
 	else if( SM == SM_StartLoadingNextSong )
 	{	
