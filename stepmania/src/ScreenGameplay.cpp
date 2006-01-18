@@ -2375,18 +2375,18 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 	else if( SM == SM_LeaveGameplay )
 	{
 		// update dancing characters for win / lose
-		DancingCharacters *Dancers = m_SongBackground.GetDancingCharacters();
-		if( Dancers )
+		DancingCharacters *pDancers = m_SongBackground.GetDancingCharacters();
+		if( pDancers )
 		{
 			FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
 			{
 				/* XXX: In battle modes, switch( GAMESTATE->GetStageResult(p) ). */
 				if( pi->GetPlayerStageStats()->bFailed )
-					Dancers->Change2DAnimState( pi->m_pn, AS2D_FAIL ); // fail anim
+					pDancers->Change2DAnimState( pi->m_pn, AS2D_FAIL ); // fail anim
 				else if( pi->m_pLifeMeter && pi->m_pLifeMeter->GetLife() == 1.0f ) // full life
-					Dancers->Change2DAnimState( pi->m_pn, AS2D_WINFEVER ); // full life pass anim
+					pDancers->Change2DAnimState( pi->m_pn, AS2D_WINFEVER ); // full life pass anim
 				else
-					Dancers->Change2DAnimState( pi->m_pn, AS2D_WIN ); // pass anim
+					pDancers->Change2DAnimState( pi->m_pn, AS2D_WIN ); // pass anim
 			}
 		}
 
