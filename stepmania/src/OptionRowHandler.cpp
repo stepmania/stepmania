@@ -285,6 +285,17 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 		m_Def.m_sName = "Steps";
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
 
+		Reload();
+
+		// don't call default
+		// OptionRowHandlerList::LoadInternal( cmds );
+	}
+
+	virtual bool Reload()
+	{
+		m_Def.m_vsChoices.clear();
+		m_aListEntries.clear();
+
 		// fill in difficulty names
 		if( GAMESTATE->IsEditing() )
 		{
@@ -309,7 +320,7 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				m_aListEntries.push_back( mc );
 			}
 		}
-		else // !GAMESTATE->IsCourseMode(), playing a song
+		else if( GAMESTATE->m_pCurSong ) // playing a song
 		{
 			vector<Steps*> vpSteps;
 			Song *pSong = GAMESTATE->m_pCurSong;
@@ -333,9 +344,15 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 				m_aListEntries.push_back( mc );
 			}
 		}
+		else
+		{
+			/* We have neither a song nor a course.  We may be preloading the screen
+			 * for future use. */
+			m_Def.m_vsChoices.push_back( "n/a" );
+			m_aListEntries.push_back( GameCommand() );
+		}
 
-		// don't call default
-		// OptionRowHandlerList::LoadInternal( cmds );
+		return true;
 	}
 };
 
