@@ -339,6 +339,169 @@ class OptionRowHandlerListSteps : public OptionRowHandlerList
 	}
 };
 
+class OptionRowHandlerSteps : public OptionRowHandler
+{
+public:
+	BroadcastOnChangePtr<Steps> *m_ppStepsToFill;
+	BroadcastOnChange<Difficulty> *m_pDifficultyToFill;
+	const BroadcastOnChange<StepsType> *m_pst;
+	vector<Steps*> m_vSteps;
+	vector<Difficulty> m_vDifficulties;
+
+	OptionRowHandlerSteps() { Init(); }
+	void Init()
+	{
+		OptionRowHandler::Init();
+		m_ppStepsToFill = NULL;
+		m_pDifficultyToFill = NULL;
+		m_vSteps.clear();
+		m_vDifficulties.clear();
+	}
+
+	virtual void LoadInternal( const Commands &cmds )
+	{
+		ASSERT( cmds.v.size() == 1 );
+		const Command &command = cmds.v[0];
+		CString sParam = command.GetArg(1);
+		ASSERT( command.m_vsArgs.size() == 2 );
+		ASSERT( sParam.size() );
+
+		if( sParam == "EditSteps" )
+		{
+			m_ppStepsToFill = &GAMESTATE->m_pCurSteps[0];
+			m_pDifficultyToFill = &GAMESTATE->m_PreferredDifficulty[0];
+			m_pst = &GAMESTATE->m_stEdit;
+			m_vsReloadRowMessages.push_back( MessageToString(Message_EditStepsTypeChanged) );
+		}
+		else if( sParam == "EditSourceSteps" )
+		{
+			m_ppStepsToFill = &GAMESTATE->m_pEditSourceSteps;
+			m_pst = &GAMESTATE->m_stEditSource;
+			m_vsReloadRowMessages.push_back( MessageToString(Message_EditSourceStepsTypeChanged) );
+			if( GAMESTATE->m_pCurSteps[0].Get() != NULL )
+				m_Def.m_vEnabledForPlayers.clear();	// hide row
+		}
+		else
+		{
+			RageException::Throw( "invalid StepsType param \"%s\"", sParam.c_str() );
+		}
+		
+		m_Def.m_sName = sParam;
+		m_Def.m_bOneChoiceForAllPlayers = true;
+		m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		m_Def.m_bExportOnChange = true;
+		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
+		m_vsReloadRowMessages.push_back( MessageToString(Message_CurrentSongChanged) );
+
+		m_vDifficulties.clear();
+		m_vSteps.clear();
+
+		if( GAMESTATE->m_pCurSong )
+		{
+			FOREACH_Difficulty( dc )
+			{
+				if( dc == DIFFICULTY_EDIT )
+					continue;
+				m_vDifficulties.push_back( dc );
+				Steps* pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( *m_pst, dc );
+				m_vSteps.push_back( pSteps );
+			}
+			GAMESTATE->m_pCurSong->GetSteps( m_vSteps, *m_pst, DIFFICULTY_EDIT );
+			m_vDifficulties.resize( m_vSteps.size(), DIFFICULTY_EDIT );
+
+			if( sParam == "EditSteps" )
+			{
+				m_vSteps.push_back( NULL );
+				m_vDifficulties.push_back( DIFFICULTY_EDIT );
+			}
+
+			for( unsigned i=0; i<m_vSteps.size(); i++ )
+			{
+				Steps* pSteps = m_vSteps[i];
+				Difficulty dc = m_vDifficulties[i];
+
+				CString s;
+				if( dc == DIFFICULTY_EDIT )
+				{
+					if( pSteps )
+						s = pSteps->GetDescription();
+					else
+						s = "NewEdit";
+				}
+				else
+				{
+					s = DifficultyToLocalizedString( dc );
+				}
+				m_Def.m_vsChoices.push_back( s );
+			}
+		}
+		else
+		{
+			m_vDifficulties.push_back( DIFFICULTY_EDIT );
+			m_vSteps.push_back( NULL );
+			m_Def.m_vsChoices.push_back( "none" );
+		}
+
+		if( m_pDifficultyToFill )
+			m_pDifficultyToFill->Set( m_vDifficulties[0] );
+		m_ppStepsToFill->Set( m_vSteps[0] );
+	}
+	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	{
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+		{
+			PlayerNumber p = *pn;
+			vector<bool> &vbSelOut = vbSelectedOut[p];
+
+			ASSERT( m_vSteps.size() == vbSelOut.size() );
+
+			// look for matching steps
+			vector<Steps*>::const_iterator iter = find( m_vSteps.begin(), m_vSteps.end(), m_ppStepsToFill->Get() );
+			if( iter != m_vSteps.end() )
+			{
+				unsigned i = iter - m_vSteps.begin();
+				vbSelOut[i] = true;
+				return;
+			}
+			// look for matching difficulty
+			if( m_pDifficultyToFill )
+			{
+				FOREACH_CONST( Difficulty, m_vDifficulties, d )
+				{
+					unsigned i = d - m_vDifficulties.begin();
+					if( *d == GAMESTATE->m_PreferredDifficulty[0] )
+					{
+						vbSelOut[i] = true;
+						vector<PlayerNumber> v;
+						v.push_back( p );
+						ExportOption( def, v, vbSelectedOut );	// current steps changed
+						continue;
+					}
+				}
+			}
+			// default to 1st
+			vbSelOut[0] = true;
+		}
+	}
+	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	{
+		FOREACH_CONST( PlayerNumber, vpns, pn )
+		{
+			PlayerNumber p = *pn;
+			const vector<bool> &vbSel = vbSelected[p];
+
+			int index = OptionRowHandlerUtil::GetOneSelection( vbSel );
+			Difficulty dc = m_vDifficulties[index];
+			Steps *pSteps = m_vSteps[index];
+			if( m_pDifficultyToFill )
+				m_pDifficultyToFill->Set( dc );
+			m_ppStepsToFill->Set( pSteps );
+		}
+
+		return 0;
+	}
+};
+
 class OptionRowHandlerListCharacters: public OptionRowHandlerList
 {
 	virtual void LoadInternal( const Commands &cmds )
@@ -966,169 +1129,6 @@ public:
 	}
 };
 
-
-class OptionRowHandlerSteps : public OptionRowHandler
-{
-public:
-	BroadcastOnChangePtr<Steps> *m_ppStepsToFill;
-	BroadcastOnChange<Difficulty> *m_pDifficultyToFill;
-	const BroadcastOnChange<StepsType> *m_pst;
-	vector<Steps*> m_vSteps;
-	vector<Difficulty> m_vDifficulties;
-
-	OptionRowHandlerSteps() { Init(); }
-	void Init()
-	{
-		OptionRowHandler::Init();
-		m_ppStepsToFill = NULL;
-		m_pDifficultyToFill = NULL;
-		m_vSteps.clear();
-		m_vDifficulties.clear();
-	}
-
-	virtual void LoadInternal( const Commands &cmds )
-	{
-		ASSERT( cmds.v.size() == 1 );
-		const Command &command = cmds.v[0];
-		CString sParam = command.GetArg(1);
-		ASSERT( command.m_vsArgs.size() == 2 );
-		ASSERT( sParam.size() );
-
-		if( sParam == "EditSteps" )
-		{
-			m_ppStepsToFill = &GAMESTATE->m_pCurSteps[0];
-			m_pDifficultyToFill = &GAMESTATE->m_PreferredDifficulty[0];
-			m_pst = &GAMESTATE->m_stEdit;
-			m_vsReloadRowMessages.push_back( MessageToString(Message_EditStepsTypeChanged) );
-		}
-		else if( sParam == "EditSourceSteps" )
-		{
-			m_ppStepsToFill = &GAMESTATE->m_pEditSourceSteps;
-			m_pst = &GAMESTATE->m_stEditSource;
-			m_vsReloadRowMessages.push_back( MessageToString(Message_EditSourceStepsTypeChanged) );
-			if( GAMESTATE->m_pCurSteps[0].Get() != NULL )
-				m_Def.m_vEnabledForPlayers.clear();	// hide row
-		}
-		else
-		{
-			RageException::Throw( "invalid StepsType param \"%s\"", sParam.c_str() );
-		}
-		
-		m_Def.m_sName = sParam;
-		m_Def.m_bOneChoiceForAllPlayers = true;
-		m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-		m_Def.m_bExportOnChange = true;
-		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
-		m_vsReloadRowMessages.push_back( MessageToString(Message_CurrentSongChanged) );
-
-		m_vDifficulties.clear();
-		m_vSteps.clear();
-
-		if( GAMESTATE->m_pCurSong )
-		{
-			FOREACH_Difficulty( dc )
-			{
-				if( dc == DIFFICULTY_EDIT )
-					continue;
-				m_vDifficulties.push_back( dc );
-				Steps* pSteps = GAMESTATE->m_pCurSong->GetStepsByDifficulty( *m_pst, dc );
-				m_vSteps.push_back( pSteps );
-			}
-			GAMESTATE->m_pCurSong->GetSteps( m_vSteps, *m_pst, DIFFICULTY_EDIT );
-			m_vDifficulties.resize( m_vSteps.size(), DIFFICULTY_EDIT );
-
-			if( sParam == "EditSteps" )
-			{
-				m_vSteps.push_back( NULL );
-				m_vDifficulties.push_back( DIFFICULTY_EDIT );
-			}
-
-			for( unsigned i=0; i<m_vSteps.size(); i++ )
-			{
-				Steps* pSteps = m_vSteps[i];
-				Difficulty dc = m_vDifficulties[i];
-
-				CString s;
-				if( dc == DIFFICULTY_EDIT )
-				{
-					if( pSteps )
-						s = pSteps->GetDescription();
-					else
-						s = "NewEdit";
-				}
-				else
-				{
-					s = DifficultyToLocalizedString( dc );
-				}
-				m_Def.m_vsChoices.push_back( s );
-			}
-		}
-		else
-		{
-			m_vDifficulties.push_back( DIFFICULTY_EDIT );
-			m_vSteps.push_back( NULL );
-			m_Def.m_vsChoices.push_back( "none" );
-		}
-
-		if( m_pDifficultyToFill )
-			m_pDifficultyToFill->Set( m_vDifficulties[0] );
-		m_ppStepsToFill->Set( m_vSteps[0] );
-	}
-	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
-	{
-		FOREACH_CONST( PlayerNumber, vpns, pn )
-		{
-			PlayerNumber p = *pn;
-			vector<bool> &vbSelOut = vbSelectedOut[p];
-
-			ASSERT( m_vSteps.size() == vbSelOut.size() );
-
-			// look for matching steps
-			vector<Steps*>::const_iterator iter = find( m_vSteps.begin(), m_vSteps.end(), m_ppStepsToFill->Get() );
-			if( iter != m_vSteps.end() )
-			{
-				unsigned i = iter - m_vSteps.begin();
-				vbSelOut[i] = true;
-				return;
-			}
-			// look for matching difficulty
-			if( m_pDifficultyToFill )
-			{
-				FOREACH_CONST( Difficulty, m_vDifficulties, d )
-				{
-					unsigned i = d - m_vDifficulties.begin();
-					if( *d == GAMESTATE->m_PreferredDifficulty[0] )
-					{
-						vbSelOut[i] = true;
-						vector<PlayerNumber> v;
-						v.push_back( p );
-						ExportOption( def, v, vbSelectedOut );	// current steps changed
-						continue;
-					}
-				}
-			}
-			// default to 1st
-			vbSelOut[0] = true;
-		}
-	}
-	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
-	{
-		FOREACH_CONST( PlayerNumber, vpns, pn )
-		{
-			PlayerNumber p = *pn;
-			const vector<bool> &vbSel = vbSelected[p];
-
-			int index = OptionRowHandlerUtil::GetOneSelection( vbSel );
-			Difficulty dc = m_vDifficulties[index];
-			Steps *pSteps = m_vSteps[index];
-			if( m_pDifficultyToFill )
-				m_pDifficultyToFill->Set( dc );
-			m_ppStepsToFill->Set( pSteps );
-		}
-
-		return 0;
-	}
-};
 
 class OptionRowHandlerGameCommand : public OptionRowHandler
 {
