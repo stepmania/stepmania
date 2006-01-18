@@ -46,23 +46,61 @@ static void FillSongsAndChoices( const CString &sSongGroup, vector<Song*> &vpSon
 }
 
 
+class OptionRowHandlerSongChoices: public OptionRowHandler
+{
+public:
+	// corresponds with m_vsChoices:
+	vector<Song*> m_vpDisplayedSongs;
+	CString m_sSongGroup;
+
+	OptionRowHandlerSongChoices() { Init(); }
+	void Init()
+	{
+		OptionRowHandler::Init();
+		m_vpDisplayedSongs.clear();
+	}
+	virtual void LoadInternal( const Commands &cmds )
+	{
+		FillSongsAndChoices( m_sSongGroup, m_vpDisplayedSongs, m_Def.m_vsChoices );
+	}
+
+	virtual bool Reload()
+	{
+		FillSongsAndChoices( m_sSongGroup, m_vpDisplayedSongs, m_Def.m_vsChoices );
+		return true;
+	}
+
+	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	{
+		vector<Song*>::const_iterator iter = find( m_vpDisplayedSongs.begin(), m_vpDisplayedSongs.end(), GAMESTATE->m_pCurSong );
+		int iChoice = 0;
+		if( iter != m_vpDisplayedSongs.end() )
+			iChoice = iter - m_vpDisplayedSongs.begin();
+		FOREACH_PlayerNumber(pn)
+			vbSelectedOut[pn][iChoice] = true;
+	}
+	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	{
+		for( size_t iChoice = 0; iChoice < vbSelected[PLAYER_1].size(); ++iChoice  )
+		{
+			if( vbSelected[PLAYER_1][iChoice] )
+			{
+				GAMESTATE->m_pCurSong.Set( m_vpDisplayedSongs[iChoice] );
+				return 0;
+			}
+		}
+
+		return 0;
+	}
+};
+
 REGISTER_SCREEN_CLASS( ScreenOptionsEditCourseEntry );
 
 void ScreenOptionsEditCourseEntry::Init()
 {
 	ScreenOptions::Init();
-}
-
-void ScreenOptionsEditCourseEntry::BeginScreen()
-{
-	// save a backup that we'll use if we revert.
-	Course *pCourse = GAMESTATE->m_pCurCourse;
-	const CourseEntry &ce = pCourse->m_vEntries[ GAMESTATE->m_iEditCourseEntryIndex ];
-	m_Original = ce;
-
 
 	vector<OptionRowHandler*> vHands;
-
 	OptionRowHandler *pHand = OptionRowHandlerUtil::MakeNull();
 	pHand->m_Def.m_sName = "Song Group";
 	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
@@ -75,13 +113,15 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 		pHand->m_Def.m_vsChoices.push_back( *song );
 	vHands.push_back( pHand );
 
-	pHand = OptionRowHandlerUtil::MakeNull();
-	pHand->m_Def.m_sName = "Song";
-	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-	pHand->m_Def.m_bExportOnChange = true;
-	pHand->m_Def.m_vsChoices.clear();
-	FillSongsAndChoices( ce.sSongGroup, m_vpDisplayedSongs, pHand->m_Def.m_vsChoices );
-	vHands.push_back( pHand );
+	{
+		m_pSongHandler = new OptionRowHandlerSongChoices;
+	//	m_pSongHandler->m_sSongGroup = ce.sSongGroup;
+		m_pSongHandler->Load( Commands() );
+		m_pSongHandler->m_Def.m_sName = "Song";
+		m_pSongHandler->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+		m_pSongHandler->m_Def.m_bExportOnChange = true;
+		vHands.push_back( m_pSongHandler );
+	}
 
 	pHand = OptionRowHandlerUtil::MakeNull();
 	pHand->m_Def.m_sName = "Base Difficulty";
@@ -131,16 +171,29 @@ void ScreenOptionsEditCourseEntry::BeginScreen()
 		pHand->m_Def.m_vsChoices.push_back( FormatNumberAndSuffix(i+1) );
 	vHands.push_back( pHand );
 
-	pHand = OptionRowHandlerUtil::MakeNull();
-	pHand->m_Def.m_sName = "Set Mods";
-	pHand->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
-	pHand->m_Def.m_bExportOnChange = true;
-	pHand->m_Def.m_vsChoices.clear();
-	CString s = ssprintf( "%d mod changes", ce.GetNumModChanges() );
-	pHand->m_Def.m_vsChoices.push_back( s );
-	vHands.push_back( pHand );
+	m_pModChangesHandler = OptionRowHandlerUtil::MakeNull();
+	m_pModChangesHandler->m_Def.m_sName = "Set Mods";
+	m_pModChangesHandler->m_Def.m_layoutType = LAYOUT_SHOW_ONE_IN_ROW;
+	m_pModChangesHandler->m_Def.m_bExportOnChange = true;
+	m_pModChangesHandler->m_Def.m_vsChoices.clear();
+	m_pModChangesHandler->m_Def.m_vsChoices.push_back( "" );
+	vHands.push_back( m_pModChangesHandler );
 
 	ScreenOptions::InitMenu( vHands );
+}
+
+void ScreenOptionsEditCourseEntry::BeginScreen()
+{
+	// save a backup that we'll use if we revert.
+	const Course *pCourse = GAMESTATE->m_pCurCourse;
+	const CourseEntry &ce = pCourse->m_vEntries[ GAMESTATE->m_iEditCourseEntryIndex ];
+	m_Original = ce;
+
+
+	m_pSongHandler->m_sSongGroup = ce.sSongGroup;
+
+	CString s = ssprintf( "%d mod changes", ce.GetNumModChanges() );
+	m_pModChangesHandler->m_Def.m_vsChoices[0] = s;
 
 	ScreenOptions::BeginScreen();
 }
@@ -214,22 +267,12 @@ void ScreenOptionsEditCourseEntry::AfterChangeValueInRow( int iRow, PlayerNumber
 			vpns.push_back( PLAYER_1 );
 			ExportOptions( ROW_SONG_GROUP, vpns );
 
+			m_pSongHandler->m_sSongGroup = ce.sSongGroup;
+
 			OptionRow &row = *m_pRows[ROW_SONG];
-			OptionRowDefinition def = row.GetRowDef();
-			FillSongsAndChoices( ce.sSongGroup, m_vpDisplayedSongs, def.m_vsChoices );
-
-			row.Reload( def );
-
-			vector<Song*>::const_iterator iter = find( m_vpDisplayedSongs.begin(), m_vpDisplayedSongs.end(), ce.pSong );
-			if( iter == m_vpDisplayedSongs.end() )
-			{
-				this->ChangeValueInRowAbsolute( ROW_SONG, PLAYER_1, 0, false );
-			}
-			else
-			{
-				int iSongIndex = iter - m_vpDisplayedSongs.begin();
-				this->ChangeValueInRowAbsolute( ROW_SONG, PLAYER_1, iSongIndex, false );
-			}
+			row.Reload();
+			ImportOptions( ROW_SONG, vpns );
+			row.AfterImportOptions();
 		}
 		break;
 	}
@@ -266,12 +309,13 @@ void ScreenOptionsEditCourseEntry::ImportOptions( int iRow, const vector<PlayerN
 		break;
 	case ROW_SONG:
 		{
-			vector<Song*>::const_iterator iter = find( m_vpDisplayedSongs.begin(), m_vpDisplayedSongs.end(), ce.pSong );
-			int iChoice = 0;
-			if( iter != m_vpDisplayedSongs.end() )
-				iChoice = iter - m_vpDisplayedSongs.begin();
-			OptionRow &row = *m_pRows[ROW_SONG];
-			row.SetOneSharedSelection( iChoice );
+			GAMESTATE->m_pCurSong.Set( ce.pSong );
+
+			// XXX: copy and pasted from ScreenOptionsMaster
+			FOREACH_CONST( PlayerNumber, vpns, pn )
+				ASSERT( GAMESTATE->IsHumanPlayer(*pn) );
+			OptionRow &row = *m_pRows[iRow];
+			row.ImportOptions( vpns );
 		}
 		break;
 	case ROW_BASE_DIFFICULTY:
@@ -339,9 +383,18 @@ void ScreenOptionsEditCourseEntry::ExportOptions( int iRow, const vector<PlayerN
 		break;
 	case ROW_SONG:
 		{
-			OptionRow &row = *m_pRows[ROW_SONG];
-			int iChoice = row.GetChoiceInRowWithFocus( GAMESTATE->m_MasterPlayerNumber );
-			ce.pSong = m_vpDisplayedSongs[iChoice];
+			// XXX: copy and pasted from ScreenOptionsMaster
+			OptionRow &row = *m_pRows[iRow];
+			bool bRowHasFocus[NUM_PLAYERS];
+			ZERO( bRowHasFocus );
+			FOREACH_CONST( PlayerNumber, vpns, p )
+			{
+				int iCurRow = m_iCurrentRow[*p];
+				bRowHasFocus[*p] = iCurRow == iRow;
+			}
+			row.ExportOptions( vpns, bRowHasFocus );
+
+			ce.pSong = GAMESTATE->m_pCurSong;
 		}
 		break;
 	case ROW_BASE_DIFFICULTY:

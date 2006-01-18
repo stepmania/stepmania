@@ -877,7 +877,7 @@ void OptionRow::SetExitText( CString sExitText )
 	bt->SetText( sExitText );
 }
 
-void OptionRow::Reload( const OptionRowDefinition &def )
+void OptionRow::Reload()
 {
 	switch( GetRowType() )
 	{
@@ -895,10 +895,8 @@ void OptionRow::Reload( const OptionRowDefinition &def )
 			//	ExportOptions( vpns, bRowHasFocus );
 			//}
 
-			if( m_pHand == NULL )
-				m_pHand->m_Def = def;
-			else
-				m_pHand->Reload();
+			if( !m_pHand->Reload() )
+				break;
 			m_pHand->m_Def = m_pHand->m_Def;
 			ASSERT( !m_pHand->m_Def.m_vsChoices.empty() );
 
@@ -953,7 +951,7 @@ void OptionRow::Reload( const OptionRowDefinition &def )
 
 void OptionRow::HandleMessage( const CString& sMessage )
 {
-	Reload( m_pHand->m_Def );
+	Reload();
 }
 
 

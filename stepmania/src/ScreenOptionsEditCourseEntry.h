@@ -5,6 +5,8 @@
 #include "Course.h"
 class Song;
 
+class OptionRowHandler;
+class OptionRowHandlerSongChoices;
 class ScreenOptionsEditCourseEntry : public ScreenOptionsEditCourseSubMenu
 {
 public:
@@ -14,14 +16,14 @@ public:
 	virtual void HandleScreenMessage( const ScreenMessage SM );
 
 protected:
+	OptionRowHandler *m_pModChangesHandler;
+	OptionRowHandlerSongChoices *m_pSongHandler;
 
 	virtual void ImportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	virtual void ExportOptions( int iRow, const vector<PlayerNumber> &vpns );
 	
 	virtual void AfterChangeValueInRow( int iRow, PlayerNumber pn );
 	virtual void ProcessMenuStart( const InputEventPlus &input );
-
-	vector<Song*>	m_vpDisplayedSongs;	// corresponds with the choices in the Song row
 
 	CourseEntry m_Original;	// use this to revert when cancelling
 };

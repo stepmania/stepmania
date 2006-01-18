@@ -32,7 +32,19 @@ public:
 		this->LoadInternal( cmds );
 	}
 	virtual void LoadInternal( const Commands &cmds ) = 0;
-	virtual void Reload() { this->Load(m_cmds); }
+
+	/*
+	 * We may re-use OptionRowHandlers.  This is called before each
+	 * use.  If the contents of the row are dependent on external
+	 * state (for example, the current song), clear the row contents
+	 * and reinitialize them.  As an optimization, rows which do not
+	 * change can be initialized just once and left alone.
+	 *
+	 * If the row has been reinitialized, return true, and the graphic
+	 * elements will also be reinitialized.  If the row is static, and
+	 * nothing has changed, return false.
+	 */
+	virtual bool Reload() { return false; }
 	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const = 0;
 	/* Returns an OPT mask. */
 	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const = 0;
