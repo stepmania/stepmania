@@ -151,7 +151,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 		m_pSecondaryScoreDisplay->Init( GetPlayerState(), GetPlayerStageStats() );
 	}
 
-    switch( PREFSMAN->m_ScoringType )
+	switch( PREFSMAN->m_ScoringType )
 	{
 	default: ASSERT(0);
 	case PrefsManager::SCORING_NEW:
@@ -396,8 +396,8 @@ void ScreenGameplay::Init()
 
 
 	// fill in difficulty of CPU players with that of the first human player
-    FOREACH_PotentialCpuPlayer(p)
-        GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
+	FOREACH_PotentialCpuPlayer(p)
+	GAMESTATE->m_pCurSteps[p].Set( GAMESTATE->m_pCurSteps[ GAMESTATE->GetFirstHumanPlayer() ] );
 
 	/* Increment the course play count. */
 	if( GAMESTATE->IsCourseMode() && !GAMESTATE->m_bDemonstrationOrJukebox )
@@ -450,7 +450,7 @@ void ScreenGameplay::Init()
 		this->AddChild( &m_Toasty );
 	}
 
-    FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		pi->m_pPlayer->SetName( ssprintf("Player%s", pi->GetName().c_str()) );
 		// If pi->m_pn is set, then the player will be visible.  If not, then it's not 
@@ -472,7 +472,7 @@ void ScreenGameplay::Init()
 		this->AddChild( pi->m_pPlayer );
 	}
 	
-    FOREACH_EnabledPlayerInfoNotDummy( m_vPlayerInfo, pi )
+	FOREACH_EnabledPlayerInfoNotDummy( m_vPlayerInfo, pi )
 	{
 		if( pi->m_pPlayer->HasNoteField() )
 		{
@@ -1795,9 +1795,9 @@ void ScreenGameplay::Update( float fDeltaTime )
 						continue;
 
 					SOUND->PlayOnceFromDir( THEME->GetPathS(m_sName,"oni die") );
-                    pi->ShowOniGameOver();
-                    pi->m_pPlayer->m_NoteData.Init();		// remove all notes and scoring
-                    pi->m_pPlayer->FadeToFail();	// tell the NoteField to fade to white
+					pi->ShowOniGameOver();
+					pi->m_pPlayer->m_NoteData.Init(); // remove all notes and scoring
+					pi->m_pPlayer->FadeToFail(); // tell the NoteField to fade to white
 				}
 			}
 		}
@@ -2248,7 +2248,7 @@ void ScreenGameplay::Input( const InputEventPlus &input )
 void ScreenGameplay::SongFinished()
 {
 	// save any statistics
-    FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
 		/* Note that adding stats is only meaningful for the counters (eg. RadarCategory_Jumps),
 		 * not for the percentages (RadarCategory_Air). */
@@ -2264,7 +2264,7 @@ void ScreenGameplay::SongFinished()
 	/* Extremely important: if we don't remove attacks before moving on to the next
 	 * screen, they'll still be turned on eventually. */
 	GAMESTATE->RemoveAllActiveAttacks();
-    FOREACH_VisiblePlayerInfo( m_vPlayerInfo, pi )
+	FOREACH_VisiblePlayerInfo( m_vPlayerInfo, pi )
 		pi->m_pActiveAttackList->Refresh();
 }
 
@@ -2278,7 +2278,7 @@ void ScreenGameplay::StageFinished( bool bBackedOut )
 		{
 			LOG->Trace("Running stats for %i", i );
 			SetupSong( i );
-		    FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+			FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 				pi->m_pPlayer->ApplyWaitingTransforms();
 			SongFinished();
 		}
@@ -2321,7 +2321,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		 * m_NextSong finishes. */
 		// GAMESTATE->RemoveAllActiveAttacks();
 
-	    FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
+		FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 		{
 			/* If either player's passmark is enabled, check it. */
 			if( pi->GetPlayerState()->m_PlayerOptions.m_fPassmark > 0 &&
@@ -2570,8 +2570,8 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 		if( GAMESTATE->IsExtraStage()  ||  GAMESTATE->IsExtraStage2() )
 		{
 			float fMaxSurviveSeconds = 0;
-            FOREACH_EnabledPlayer(p)
-                fMaxSurviveSeconds = max( fMaxSurviveSeconds, STATSMAN->m_CurStageStats.m_player[p].fAliveSeconds );
+			FOREACH_EnabledPlayer(p)
+				fMaxSurviveSeconds = max( fMaxSurviveSeconds, STATSMAN->m_CurStageStats.m_player[p].fAliveSeconds );
 			m_textSurviveTime.SetText( "TIME: " + SecondsToMMSSMsMs(fMaxSurviveSeconds) );
 			SET_XY_AND_ON_COMMAND( m_textSurviveTime );
 		}
