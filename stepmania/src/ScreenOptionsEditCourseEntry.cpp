@@ -72,7 +72,7 @@ public:
 
 	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
-		vector<Song*>::const_iterator iter = find( m_vpDisplayedSongs.begin(), m_vpDisplayedSongs.end(), GAMESTATE->m_pCurSong );
+		vector<Song*>::const_iterator iter = find( m_vpDisplayedSongs.begin(), m_vpDisplayedSongs.end(), GAMESTATE->m_pCurSong.Get() );
 		int iChoice = 0;
 		if( iter != m_vpDisplayedSongs.end() )
 			iChoice = iter - m_vpDisplayedSongs.begin();
