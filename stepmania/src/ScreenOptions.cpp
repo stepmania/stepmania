@@ -255,12 +255,14 @@ void ScreenOptions::BeginScreen()
 
 	for( unsigned r=0; r<m_pRows.size(); r++ )		// foreach row
 	{
+		OptionRow *pRow = m_pRows[r];
+		pRow->Reload();
+
 		vector<PlayerNumber> vpns;
 		FOREACH_HumanPlayer( p )
 			vpns.push_back( p );
 		this->ImportOptions( r, vpns );
 	
-		OptionRow *pRow = m_pRows[r];
 		pRow->AfterImportOptions();
 	}
 
