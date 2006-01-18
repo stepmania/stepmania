@@ -658,13 +658,10 @@ void ScreenGameplay::Init()
 		pi->m_ptextStepsDescription->SetName( ssprintf("StepsDescription%s",pi->GetName().c_str()) );
 		SET_XY( pi->m_ptextStepsDescription );
 		this->AddChild( pi->m_ptextStepsDescription );
-	}
 
-	//
-	// Player/Song options
-	//
-	FOREACH_EnabledPlayerNumberInfo( m_vPlayerInfo, pi )
-	{
+		//
+		// Player/Song options
+		//
 		ASSERT( pi->m_ptextPlayerOptions == NULL );
 		pi->m_ptextPlayerOptions = new BitmapText;
 		pi->m_ptextPlayerOptions->LoadFromFont( THEME->GetPathF(m_sName,"player options") );
