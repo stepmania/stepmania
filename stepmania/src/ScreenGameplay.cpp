@@ -989,10 +989,6 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 			GAMESTATE->m_SongOptions.FromString( a.sModifiers );
 		}
 
-		// UGLY: Force updating the BeatToNoteSkin mapping and cache NoteSkins now, or else 
-		// we'll do it on the first update and skip.
-		pi->m_pPlayer->ApplyWaitingTransforms();
-
 		/* Update attack bOn flags. */
 		GAMESTATE->Update(0);
 		pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
