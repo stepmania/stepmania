@@ -31,7 +31,7 @@ void OptionRowHandler::GetIconTextAndGameCommand( const OptionRowDefinition &def
 	gcOut.Init();
 }
 
-static void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
+void OptionRowHandlerUtil::SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
 {
 	ASSERT_M( iSelection >= 0  &&  iSelection < (int) vbSelectedOut.size(),
 			  ssprintf("%d/%u",iSelection, unsigned(vbSelectedOut.size())) );
@@ -39,7 +39,7 @@ static void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut )
 		vbSelectedOut[i] = i==iSelection;
 }
 
-static int GetOneSelection( const vector<bool> &vbSelected )
+int OptionRowHandlerUtil::GetOneSelection( const vector<bool> &vbSelected )
 {
 	int iRet = -1;
 	for( unsigned i=0; i<vbSelected.size(); i++ )
@@ -197,7 +197,7 @@ public:
 					{
 						bUseFallbackOption = false;
 						if( def.m_selectType != SELECT_MULTIPLE )
-							SelectExactlyOne( e, vbSelOut );
+							OptionRowHandlerUtil::SelectExactlyOne( e, vbSelOut );
 						else
 							vbSelOut[e] = true;
 					}
@@ -208,7 +208,7 @@ public:
 					{
 						bUseFallbackOption = false;
 						if( def.m_selectType != SELECT_MULTIPLE )
-							SelectExactlyOne( e, vbSelOut );
+							OptionRowHandlerUtil::SelectExactlyOne( e, vbSelOut );
 						else
 							vbSelOut[e] = true;
 					}
@@ -225,7 +225,7 @@ public:
 					iFallbackOption = 0;
 				}
 
-				SelectExactlyOne( iFallbackOption, vbSelOut );
+				OptionRowHandlerUtil::SelectExactlyOne( iFallbackOption, vbSelOut );
 			}
 
 			VerifySelected( def.m_selectType, vbSelOut, def.m_sName );
@@ -837,7 +837,7 @@ public:
 			vector<bool> &vbSelOut = vbSelectedOut[p];
 
 			int iSelection = opt->Get();
-			SelectExactlyOne( iSelection, vbSelOut );
+			OptionRowHandlerUtil::SelectExactlyOne( iSelection, vbSelOut );
 		}
 	}
 	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
@@ -849,7 +849,7 @@ public:
 			PlayerNumber p = *pn;
 			const vector<bool> &vbSel = vbSelected[p];
 
-			int sel = GetOneSelection(vbSel);
+			int sel = OptionRowHandlerUtil::GetOneSelection(vbSel);
 
 			/* Get the original choice. */
 			int Original = opt->Get();
@@ -954,7 +954,7 @@ public:
 			PlayerNumber p = *pn;
 			const vector<bool> &vbSel = vbSelected[p];
 
-			int index = GetOneSelection( vbSel );
+			int index = OptionRowHandlerUtil::GetOneSelection( vbSel );
 			m_pstToFill->Set( m_vStepsTypesToShow[index] );
 		}
 
@@ -1111,7 +1111,7 @@ public:
 			PlayerNumber p = *pn;
 			const vector<bool> &vbSel = vbSelected[p];
 
-			int index = GetOneSelection( vbSel );
+			int index = OptionRowHandlerUtil::GetOneSelection( vbSel );
 			Difficulty dc = m_vDifficulties[index];
 			Steps *pSteps = m_vSteps[index];
 			if( m_pDifficultyToFill )

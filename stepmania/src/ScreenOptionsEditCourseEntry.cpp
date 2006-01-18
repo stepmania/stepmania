@@ -77,19 +77,12 @@ public:
 		if( iter != m_vpDisplayedSongs.end() )
 			iChoice = iter - m_vpDisplayedSongs.begin();
 		FOREACH_PlayerNumber(pn)
-			vbSelectedOut[pn][iChoice] = true;
+			OptionRowHandlerUtil::SelectExactlyOne( iChoice, vbSelectedOut[pn] );
 	}
 	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
-		for( size_t iChoice = 0; iChoice < vbSelected[PLAYER_1].size(); ++iChoice  )
-		{
-			if( vbSelected[PLAYER_1][iChoice] )
-			{
-				GAMESTATE->m_pCurSong.Set( m_vpDisplayedSongs[iChoice] );
-				return 0;
-			}
-		}
-
+		int iChoice = OptionRowHandlerUtil::GetOneSelection( vbSelected[PLAYER_1] );
+		GAMESTATE->m_pCurSong.Set( m_vpDisplayedSongs[iChoice] );
 		return 0;
 	}
 };

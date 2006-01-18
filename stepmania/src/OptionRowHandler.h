@@ -57,6 +57,9 @@ namespace OptionRowHandlerUtil
 {
 	OptionRowHandler* Make( const Commands &cmds );
 	OptionRowHandler* MakeNull();
+
+	void SelectExactlyOne( int iSelection, vector<bool> &vbSelectedOut );
+	int GetOneSelection( const vector<bool> &vbSelected );
 }
 
 inline void VerifySelected( SelectType st, const vector<bool> &vbSelected, const CString &sName )
