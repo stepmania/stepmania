@@ -142,6 +142,7 @@ void PlayerInfo::Load( PlayerNumber pn, MultiPlayer mp, bool bShowNoteField )
 	{
 	case PLAY_MODE_RAVE:
 		m_pSecondaryScoreDisplay = new ScoreDisplayRave;
+		m_pSecondaryScoreDisplay->SetName( "ScoreDisplayRave" );
 		break;
 	}
 

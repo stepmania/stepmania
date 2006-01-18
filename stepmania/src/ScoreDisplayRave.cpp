@@ -11,8 +11,6 @@ ScoreDisplayRave::ScoreDisplayRave()
 {
 	LOG->Trace( "ScoreDisplayRave::ScoreDisplayRave()" );
 	
-	this->SetName( "ScoreDisplayRave" );
-
 	m_lastLevelSeen = ATTACK_LEVEL_1;
 
 	for( int i=0; i<NUM_ATTACK_LEVELS; i++ )	
