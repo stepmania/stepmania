@@ -52,8 +52,8 @@ public:
 	PlayerStageStats *GetPlayerStageStats();
 	PlayerNumber GetStepsAndTrailIndex()		{ return m_pn == PLAYER_INVALID ? PLAYER_1 : m_pn; }
 	bool IsEnabled();
-	bool IsMultiPlayer() { return m_mp != MultiPlayer_INVALID; }
-	CString GetName()
+	bool IsMultiPlayer() const { return m_mp != MultiPlayer_INVALID; }
+	CString GetName() const
 	{
 		if( m_bIsDummy )
 			return "Dummy";
