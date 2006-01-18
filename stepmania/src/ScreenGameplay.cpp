@@ -355,7 +355,7 @@ void ScreenGameplay::Init()
 
 	ScreenWithMenuElements::Init();
 
-	/* Pause MEMCARDMAN.  If a memory card is remove, we don't want to interrupt the
+	/* Pause MEMCARDMAN.  If a memory card is removed, we don't want to interrupt the
 	 * player by making a noise until the game finishes. */
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )
 		MEMCARDMAN->PauseMountingThread();
@@ -761,14 +761,14 @@ void ScreenGameplay::Init()
 			m_textSurviveTime.SetDiffuse( RageColor(1,1,1,0) );
 			this->AddChild( &m_textSurviveTime );
 		}
+
+		m_soundAssistTick.Load(	THEME->GetPathS(m_sName,"assist tick"), true );
 	}
 	
 	m_SongBackground.Init();
 
 	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
 	{
-		m_soundAssistTick.Load(	THEME->GetPathS(m_sName,"assist tick"), true );
-
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_BATTLE:
