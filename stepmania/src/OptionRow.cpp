@@ -886,46 +886,34 @@ void OptionRow::SetExitText( CString sExitText )
 
 void OptionRow::Reload()
 {
-	switch( GetRowType() )
-	{
-	case OptionRow::RowType_Normal:
-		{
-			// TODO: Nothing uses this yet and it causes skips when changing options.
-			//if( m_pHand->m_Def.m_bExportOnChange )
-			//{
-			//	bool bRowHasFocus[NUM_PLAYERS];
-			//	ZERO( bRowHasFocus );
-			//	ExportOptions( vpns, bRowHasFocus );
-			//}
+	// TODO: Nothing uses this yet and it causes skips when changing options.
+	//if( m_pHand->m_Def.m_bExportOnChange )
+	//{
+	//	bool bRowHasFocus[NUM_PLAYERS];
+	//	ZERO( bRowHasFocus );
+	//	ExportOptions( vpns, bRowHasFocus );
+	//}
 
-			if( !m_pHand->Reload() )
-				break;
+	if( !m_pHand->Reload() )
+		return;
 
-			ChoicesChanged();
+	ChoicesChanged();
 
-			vector<PlayerNumber> vpns;
-			FOREACH_HumanPlayer( p )
-				vpns.push_back( p );
-			ImportOptions( vpns );
-			AfterImportOptions();
+	vector<PlayerNumber> vpns;
+	FOREACH_HumanPlayer( p )
+		vpns.push_back( p );
+	ImportOptions( vpns );
+	AfterImportOptions();
 
-			// TODO: Nothing uses this yet and it causes skips when changing options.
-			//if( m_pHand->m_Def.m_bExportOnChange )
-			//{
-			//	bool bRowHasFocus[NUM_PLAYERS];
-			//	ZERO( bRowHasFocus );
-			//	ExportOptions( vpns, bRowHasFocus );
-			//}
+	// TODO: Nothing uses this yet and it causes skips when changing options.
+	//if( m_pHand->m_Def.m_bExportOnChange )
+	//{
+	//	bool bRowHasFocus[NUM_PLAYERS];
+	//	ZERO( bRowHasFocus );
+	//	ExportOptions( vpns, bRowHasFocus );
+	//}
 
-			UpdateEnabledDisabled();
-		}
-		break;
-	case OptionRow::RowType_Exit:
-		// nothing to do
-		break;
-	default:
-		ASSERT(0);
-	}
+	UpdateEnabledDisabled();
 }
 
 void OptionRow::HandleMessage( const CString& sMessage )
