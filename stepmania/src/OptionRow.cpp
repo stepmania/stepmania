@@ -923,34 +923,11 @@ void OptionRow::Reload()
 					m_vbSelected[p].insert( m_vbSelected[p].begin(), false );
 			}
 
-			ImportOptions( vpns );
+			/* Update the text to show the options we just updated. */
+			InitText();
 
-			FOREACH_HumanPlayer( p )
-			{
-				switch( m_pHand->m_Def.m_selectType )
-				{
-				case SELECT_ONE:
-				{
-					/* Make sure the row actually has a selection. */
-					int iSelection = GetOneSelection(p, true) != -1;
-					if( iSelection == -1 )
-					{
-						ASSERT( !m_vbSelected[p].empty() );
-						m_vbSelected[p][0] = true;
-						iSelection = 0;
-					}
-					
-					m_iChoiceInRowWithFocus[p] = iSelection;	// focus on the selection we just set
-					break;
-				}
-				case SELECT_MULTIPLE:
-				case SELECT_NONE:
-					m_iChoiceInRowWithFocus[p] = 0;
-					break;
-				default:
-					ASSERT(0);
-				}
-			}
+			ImportOptions( vpns );
+			AfterImportOptions();
 
 			// TODO: Nothing uses this yet and it causes skips when changing options.
 			//if( m_pHand->m_Def.m_bExportOnChange )
@@ -961,12 +938,6 @@ void OptionRow::Reload()
 			//}
 
 			UpdateEnabledDisabled();
-
-			/* Update the text to show the options we just updated. */
-			InitText();
-
-			FOREACH_HumanPlayer( p )
-				PositionUnderlines( p );
 		}
 		break;
 	case OptionRow::RowType_Exit:
