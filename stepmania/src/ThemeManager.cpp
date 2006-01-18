@@ -932,6 +932,30 @@ void ThemeManager::GetMetric( const RString &sClassName, const RString &sValueNa
 	valueOut.SetFromExpression( "function(self) " + sValue + "end" );
 }
 
+static RString PseudoLocalize( RString s )
+{
+	s.Replace( "a", "àá" );
+	s.Replace( "A", "ÀÀ" );
+	s.Replace( "e", "éé" );
+	s.Replace( "E", "ÉÉ" );
+	s.Replace( "i", "íí" );
+	s.Replace( "I", "ÍÍ" );
+	s.Replace( "o", "óó" );
+	s.Replace( "O", "ÓÓ" );
+	s.Replace( "u", "üü" );
+	s.Replace( "U", "ÜÜ" );
+	s.Replace( "n", "ñ" );
+	s.Replace( "N", "Ñ" );
+	s.Replace( "c", "ç" );
+	s.Replace( "C", "Ç" );
+	// transformations that helpexpose punctuation assumptions
+	//s.Replace( ":", " :" );	// this messes up "::" help text tip separator markers
+	s.Replace( "?", " ?" );
+	s.Replace( "!", " !" );
+
+	return s;
+}
+
 RString ThemeManager::GetString( const RString &sClassName, const RString &sValueName_ )
 {
 	RString sValueName = sValueName_;
@@ -964,24 +988,30 @@ RString ThemeManager::GetString( const RString &sClassName, const RString &sValu
 
 	if( m_bPseudoLocalize )
 	{
-		s.Replace( "a", "àá" );
-		s.Replace( "A", "ÀÀ" );
-		s.Replace( "e", "éé" );
-		s.Replace( "E", "ÉÉ" );
-		s.Replace( "i", "íí" );
-		s.Replace( "I", "ÍÍ" );
-		s.Replace( "o", "óó" );
-		s.Replace( "O", "ÓÓ" );
-		s.Replace( "u", "üü" );
-		s.Replace( "U", "ÜÜ" );
-		s.Replace( "n", "ñ" );
-		s.Replace( "N", "Ñ" );
-		s.Replace( "c", "ç" );
-		s.Replace( "C", "Ç" );
-		// transformations that helpexpose punctuation assumptions
-		//s.Replace( ":", " :" );	// this messes up "::" help text tip separator markers
-		s.Replace( "?", " ?" );
-		s.Replace( "!", " !" );
+		// pseudolocalize ignoring replace markers.  e.g.: "%{steps} steps: %{author}"
+		RString sTranslated;
+
+		for( ; true; )
+		{
+			RString::size_type pos = s.find( "%{" );
+			if( pos == s.npos )
+			{
+				sTranslated += PseudoLocalize( s );
+				s = RString();
+				break;
+			}
+			else
+			{
+				sTranslated += PseudoLocalize( s.substr(0,pos) );
+				s.erase( s.begin(), s.begin()+pos );
+			}
+			
+			pos = s.find( "}" );
+			sTranslated += s.substr(0,pos+1);
+			s.erase( s.begin(), s.begin()+pos+1 );
+		}
+
+		s = sTranslated;
 	}
 
 	return s;
