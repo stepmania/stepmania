@@ -195,8 +195,8 @@ void Actor::LoadFromNode( const CString& sDir, const XNode* pNode )
 {
 	FOREACH_CONST_Child( pNode, pChild )
 	{
-        if( pChild->m_sName == "Input" )
-        {
+		if( pChild->m_sName == "Input" )
+		{
 			/* If parameters are specified here, save their values to the actor. */
 			CString sName;
 			if( !pChild->GetAttrValue( "Name", sName ) )
