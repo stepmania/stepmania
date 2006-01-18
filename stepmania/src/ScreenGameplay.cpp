@@ -747,6 +747,7 @@ void ScreenGameplay::Init()
 		m_textDebug.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 );	// just under transitions, over the foreground
 		this->AddChild( &m_textDebug );
 
+		m_soundAssistTick.Load(	THEME->GetPathS(m_sName,"assist tick"), true );
 
 		if( GAMESTATE->IsExtraStage() || GAMESTATE->IsExtraStage2() )	// only load if we're going to use it
 		{
@@ -759,13 +760,6 @@ void ScreenGameplay::Init()
 			this->AddChild( &m_textSurviveTime );
 		}
 
-		m_soundAssistTick.Load(	THEME->GetPathS(m_sName,"assist tick"), true );
-	}
-	
-	m_SongBackground.Init();
-
-	if( !GAMESTATE->m_bDemonstrationOrJukebox )	// only load if we're going to use it
-	{
 		switch( GAMESTATE->m_PlayMode )
 		{
 		case PLAY_MODE_BATTLE:
@@ -775,6 +769,8 @@ void ScreenGameplay::Init()
 			break;
 		}
 	}
+
+	m_SongBackground.Init();
 
 	FOREACH_EnabledPlayerInfo( m_vPlayerInfo, pi )
 	{
