@@ -990,7 +990,7 @@ void ScreenGameplay::SetupSong( int iSongIndex )
 		}
 
 		/* Update attack bOn flags. */
-		GAMESTATE->Update(0);
+		pi->GetPlayerState()->Update(0);
 		pi->GetPlayerState()->RebuildPlayerOptionsFromActiveAttacks();
 
 		/* Hack: Course modifiers that are set to start immediately shouldn't tween on. */
