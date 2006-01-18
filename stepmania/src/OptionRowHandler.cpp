@@ -81,15 +81,6 @@ public:
 		ASSERT( command.m_vsArgs.size() == 2 );
 		ASSERT( sParam.size() );
 
-		if(	 sParam.CompareNoCase("NoteSkins")==0 )		{ FillNoteSkins( sParam );	return; }
-		else if( sParam.CompareNoCase("Steps")==0 )		{ FillSteps( sParam, false );	return; }
-		else if( sParam.CompareNoCase("StepsLocked")==0 )	{ FillSteps( sParam, true );	return; }
-		else if( sParam.CompareNoCase("Characters")==0 )	{ FillCharacters( sParam );	return; }
-		else if( sParam.CompareNoCase("Styles")==0 )		{ FillStyles( sParam );		return; }
-		else if( sParam.CompareNoCase("Groups")==0 )		{ FillGroups( sParam );		return; }
-		else if( sParam.CompareNoCase("Difficulties")==0 )	{ FillDifficulties( sParam );	return; }
-		else if( sParam.CompareNoCase("SongsInCurrentSongGroup")==0 )	{ FillSongsInCurrentSongGroup( sParam ); return; }
-
 		m_bUseModNameForIcon = true;
 			
 		m_Def.m_sName = sParam;
@@ -264,11 +255,12 @@ public:
 		const GameCommand &gc = m_aListEntries[iChoice];
 		return gc.m_sScreen;
 	}
+};
 
-	void FillNoteSkins( CString sParam )
+class OptionRowHandlerListNoteSkins : public OptionRowHandlerList
+{
+	virtual void LoadInternal( const Commands &cmds )
 	{
-		ASSERT( sParam.size() );
-
 		m_Def.m_sName = "NoteSkins";
 		m_Def.m_bOneChoiceForAllPlayers = false;
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
@@ -283,13 +275,14 @@ public:
 			m_Def.m_vsChoices.push_back( arraySkinNames[skin] );
 		}
 	}
+};
 
-	void FillSteps( CString sParam, bool bLockedTogether )
+// XXX: very similar to OptionRowHandlerSteps
+class OptionRowHandlerListSteps : public OptionRowHandlerList
+{
+	virtual void LoadInternal( const Commands &cmds )
 	{
-		ASSERT( sParam.size() );
-
 		m_Def.m_sName = "Steps";
-		m_Def.m_bOneChoiceForAllPlayers = bLockedTogether;
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
 
 		// fill in difficulty names
@@ -340,12 +333,16 @@ public:
 				m_aListEntries.push_back( mc );
 			}
 		}
+
+		// don't call default
+		// OptionRowHandlerList::LoadInternal( cmds );
 	}
+};
 
-	void FillCharacters( CString sParam )
+class OptionRowHandlerListCharacters: public OptionRowHandlerList
+{
+	virtual void LoadInternal( const Commands &cmds )
 	{
-		ASSERT( sParam.size() );
-
 		m_Def.m_bOneChoiceForAllPlayers = false;
 		m_Def.m_bAllowThemeItems = false;
 		m_Def.m_sName = "Characters";
@@ -372,11 +369,12 @@ public:
 			m_aListEntries.push_back( mc );
 		}
 	}
+};
 
-	void FillStyles( CString sParam )
+class OptionRowHandlerListStyles: public OptionRowHandlerList
+{
+	virtual void LoadInternal( const Commands &cmds )
 	{
-		ASSERT( sParam.size() );
-
 		m_Def.m_bOneChoiceForAllPlayers = true;
 		m_Def.m_sName = "Style";
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
@@ -394,11 +392,12 @@ public:
 
 		m_Default.m_pStyle = vStyles[0];
 	}
+};
 
-	void FillGroups( CString sParam )
+class OptionRowHandlerListGroups: public OptionRowHandlerList
+{
+	virtual void LoadInternal( const Commands &cmds )
 	{
-		ASSERT( sParam.size() );
-
 		m_Def.m_bOneChoiceForAllPlayers = true;
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
 		m_Def.m_sName = "Group";
@@ -423,11 +422,12 @@ public:
 			m_aListEntries.push_back( mc );
 		}
 	}
+};
 
-	void FillDifficulties( CString sParam )
+class OptionRowHandlerListDifficulties: public OptionRowHandlerList
+{
+	virtual void LoadInternal( const Commands &cmds )
 	{
-		ASSERT( sParam.size() );
-
 		m_Def.m_bOneChoiceForAllPlayers = true;
 		m_Def.m_sName = "Difficulty";
 		m_Default.m_dc = DIFFICULTY_INVALID;
@@ -450,11 +450,13 @@ public:
 			m_aListEntries.push_back( mc );
 		}
 	}
+};
 
-	void FillSongsInCurrentSongGroup( CString sParam )
+// XXX: very similar to OptionRowHandlerSongChoices
+class OptionRowHandlerListSongsInCurrentSongGroup: public OptionRowHandlerList
+{
+	virtual void LoadInternal( const Commands &cmds )
 	{
-		ASSERT( sParam.size() );
-
 		vector<Song*> vpSongs;
 		SONGMAN->GetSongs( vpSongs, GAMESTATE->m_sPreferredSongGroup );
 
@@ -917,6 +919,7 @@ public:
 		// calculate which StepsTypes to show
 		m_vStepsTypesToShow = CommonMetrics::STEPS_TYPES_TO_SHOW.GetValue();
 
+		m_Def.m_vsChoices.clear();
 		FOREACH_CONST( StepsType, m_vStepsTypesToShow, st )
 		{
 			CString s = GAMEMAN->StepsTypeToLocalizedString( *st );
@@ -926,6 +929,7 @@ public:
 		if( *m_pstToFill == STEPS_TYPE_INVALID )
 			m_pstToFill->Set( m_vStepsTypesToShow[0] );
 	}
+
 	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		FOREACH_CONST( PlayerNumber, vpns, pn )
@@ -1016,6 +1020,9 @@ public:
 		m_Def.m_bExportOnChange = true;
 		m_Def.m_bAllowThemeItems = false;	// we theme the text ourself
 		m_vsReloadRowMessages.push_back( MessageToString(Message_CurrentSongChanged) );
+
+		m_vDifficulties.clear();
+		m_vSteps.clear();
 
 		if( GAMESTATE->m_pCurSong )
 		{
@@ -1196,7 +1203,29 @@ OptionRowHandler* OptionRowHandlerUtil::Make( const Commands &cmds )
 
 #define MAKE( type )	{ type *p = new type; p->Load( cmds ); pHand = p; }
 
-	if(	 name == "list" )		MAKE( OptionRowHandlerList )
+	// XXX: merge these, and merge "Steps" and "list,Steps"
+	if( name == "list" )
+	{
+		ASSERT( cmds.v.size() == 1 );
+		const Command &command = cmds.v[0];
+		CString sParam = command.GetArg(1);
+		ASSERT( command.m_vsArgs.size() == 2 );
+		ASSERT( sParam.size() );
+
+		if(	 sParam.CompareNoCase("NoteSkins")==0 )		MAKE( OptionRowHandlerListNoteSkins )
+		else if( sParam.CompareNoCase("Steps")==0 )		MAKE( OptionRowHandlerListSteps )
+		else if( sParam.CompareNoCase("StepsLocked")==0 )
+		{
+			MAKE( OptionRowHandlerListSteps ); 
+			pHand->m_Def.m_bOneChoiceForAllPlayers = true;
+		}
+		else if( sParam.CompareNoCase("Characters")==0 )	MAKE( OptionRowHandlerListCharacters )
+		else if( sParam.CompareNoCase("Styles")==0 )		MAKE( OptionRowHandlerListStyles )
+		else if( sParam.CompareNoCase("Groups")==0 )		MAKE( OptionRowHandlerListGroups )
+		else if( sParam.CompareNoCase("Difficulties")==0 )	MAKE( OptionRowHandlerListDifficulties )
+		else if( sParam.CompareNoCase("SongsInCurrentSongGroup")==0 )	MAKE( OptionRowHandlerListSongsInCurrentSongGroup )
+		else MAKE( OptionRowHandlerList )
+	}
 	else if( name == "lua" )		MAKE( OptionRowHandlerLua )
 	else if( name == "conf" )		MAKE( OptionRowHandlerConfig )
 	else if( name == "stepstype" )		MAKE( OptionRowHandlerStepsType )
