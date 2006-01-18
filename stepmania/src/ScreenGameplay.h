@@ -198,7 +198,6 @@ protected:
 
 	Transition	m_Ready;
 	Transition	m_Go;
-	Transition	m_Cleared;
 	Transition	m_Failed;
 	Transition	m_Toasty;	// easter egg
 

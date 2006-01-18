@@ -740,10 +740,6 @@ void ScreenGameplay::Init()
 		m_Go.Load( THEME->GetPathB(m_sName,"go") );
 		this->AddChild( &m_Go );
 
-		m_Cleared.Load( THEME->GetPathB(m_sName,"cleared") );
-		m_Cleared.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 ); // on top of everything else
-		this->AddChild( &m_Cleared );
-
 		m_Failed.Load( THEME->GetPathB(m_sName,"failed") );
 		m_Failed.SetDrawOrder( DRAW_ORDER_TRANSITIONS-1 ); // on top of everything else
 		this->AddChild( &m_Failed );
@@ -2391,7 +2387,7 @@ void ScreenGameplay::HandleScreenMessage( const ScreenMessage SM )
 
 		TweenOffScreen();
 
-		m_Cleared.StartTransitioning( SM_GoToNextScreen );
+		m_Out.StartTransitioning( SM_GoToNextScreen );
 
 		// do they deserve an extra stage?
 		if( GAMESTATE->HasEarnedExtraStage() )
