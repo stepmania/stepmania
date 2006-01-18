@@ -846,7 +846,7 @@ void ScreenGameplay::InitSongQueues()
 				pi->m_asModifiersQueue.push_back( a );
 			}
 
-			// In a survuval course, override stored mods
+			// In a survival course, override stored mods
 			if( pCourse->GetCourseType() == COURSE_TYPE_SURVIVAL )
 			{
 				pi->GetPlayerState()->m_StagePlayerOptions.FromString( "clearall,"+CommonMetrics::DEFAULT_MODIFIERS.GetValue(), true );
