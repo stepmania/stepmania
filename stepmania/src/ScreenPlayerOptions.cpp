@@ -115,7 +115,7 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 			vector<PlayerNumber> v;
 			v.push_back( pn );
 			this->ImportOptions( r, v );
-			this->PositionUnderlines( r, pn );
+			m_pRows[r]->PositionUnderlines( pn );
 			this->UpdateDisqualified( r, pn );
 		}
 	}

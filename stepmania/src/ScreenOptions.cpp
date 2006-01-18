@@ -375,17 +375,11 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int
 	row.GetWidthXY( pn, iChoiceOnRow, iWidthOut, iXOut, iYOut );
 }
 
-void ScreenOptions::PositionUnderlines( int r, PlayerNumber pn )
-{
-	OptionRow &row = *m_pRows[r];
-	row.PositionUnderlines( pn );
-}
-
 void ScreenOptions::PositionAllUnderlines()
 {
 	for( unsigned r=0; r<m_pRows.size(); r++ )
 		FOREACH_HumanPlayer( p )
-			PositionUnderlines( r, p );
+			m_pRows[r]->PositionUnderlines( p );
 }
 
 void ScreenOptions::PositionIcons()
@@ -912,7 +906,7 @@ void ScreenOptions::ProcessMenuStart( const InputEventPlus &input )
 		else
 			m_SoundToggleOff.Play();
 
-		PositionUnderlines( iCurRow, pn );
+		m_pRows[iCurRow]->PositionUnderlines( pn );
 		RefreshIcons( iCurRow, pn );
 
 		if( row.GetFirstItemGoesDown() )
