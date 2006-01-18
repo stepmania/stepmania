@@ -100,6 +100,7 @@ public:
 	ScreenGameplay();
 	virtual void Init();
 	virtual ~ScreenGameplay();
+	virtual void BeginScreen();
 
 	virtual void Update( float fDeltaTime );
 	virtual void Input( const InputEventPlus &input );

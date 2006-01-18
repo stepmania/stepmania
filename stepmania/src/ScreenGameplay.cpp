@@ -806,10 +806,6 @@ void ScreenGameplay::Init()
 	this->SortByDrawOrder();
 
 	m_GiveUpTimer.SetZero();
-
-	// Get the transitions rolling on the first update.
-	// We can't do this in the constructor because ScreenGameplay is constructed 
-	// in the middle of ScreenStage.
 }
 
 //
@@ -1470,6 +1466,63 @@ void ScreenGameplay::UpdateSongPosition( float fDeltaTime )
 	GAMESTATE->UpdateSongPosition( fSeconds+fAdjust, GAMESTATE->m_pCurSong->m_Timing, tm+fAdjust );
 }
 
+void ScreenGameplay::BeginScreen()
+{
+	ScreenWithMenuElements::BeginScreen();
+
+	if( GAMESTATE->m_pCurSong == NULL  )
+		return;
+
+	SOUND->PlayOnceFromAnnouncer( "gameplay intro" );	// crowd cheer
+
+	//
+	// Get the transitions rolling
+	//
+	if( GAMESTATE->m_bDemonstrationOrJukebox )
+	{
+		StartPlayingSong( 0, 0 );	// *kick* (no transitions)
+	}
+	else if( NSMAN->useSMserver )
+	{
+		//If we're using networking, we must not have any
+		//delay.  If we do this can cause inconsistancy
+		//on different computers and differet themes
+
+		StartPlayingSong( 0, 0 );
+		m_pSoundMusic->Stop();
+
+		float startOffset = g_fNetStartOffset;
+
+		NSMAN->StartRequest(1); 
+
+		RageSoundParams p;
+		p.m_bAccurateSync = true;
+		p.SetPlaybackRate( 1.0 );	//Force 1.0 playback speed
+		p.StopMode = RageSoundParams::M_CONTINUE;
+		p.m_StartSecond = startOffset;
+		m_pSoundMusic->Play( &p );
+
+		UpdateSongPosition(0);
+	}
+	else
+	{
+		float fMinTimeToMusic = m_In.GetLengthSeconds();	// start of m_Ready
+		float fMinTimeToNotes = fMinTimeToMusic + m_Ready.GetLengthSeconds() + m_Go.GetLengthSeconds()+2;	// end of Go
+
+		/*
+		 * Tell the music to start, but don't actually make any noise for
+		 * at least 2.5 (or 1.5) seconds.  (This is so we scroll on screen smoothly.)
+		 *
+		 * This is only a minimum: the music might be started later, to meet
+		 * the minimum-time-to-notes value.  If you're writing song data,
+		 * and you want to make sure we get ideal timing here, make sure there's
+		 * a bit of space at the beginning of the music with no steps. 
+		 */
+
+		/*float delay =*/ StartPlayingSong( fMinTimeToNotes, fMinTimeToMusic );
+	}
+}
+
 void ScreenGameplay::Update( float fDeltaTime )
 {
 	if( GAMESTATE->m_pCurSong == NULL  )
@@ -1480,59 +1533,6 @@ void ScreenGameplay::Update( float fDeltaTime )
 		Screen::Update( fDeltaTime );
 		return;
 	}
-
-	if( m_bFirstUpdate )
-	{
-		SOUND->PlayOnceFromAnnouncer( "gameplay intro" );	// crowd cheer
-
-		//
-		// Get the transitions rolling
-		//
-		if( GAMESTATE->m_bDemonstrationOrJukebox )
-		{
-			StartPlayingSong( 0, 0 );	// *kick* (no transitions)
-		}
-		else if ( NSMAN->useSMserver )
-		{
-			//If we're using networking, we must not have any
-			//delay.  If we do this can cause inconsistancy
-			//on different computers and differet themes
-
-			StartPlayingSong( 0, 0 );
-			m_pSoundMusic->Stop();
-
-			float startOffset = g_fNetStartOffset;
-
-			NSMAN->StartRequest(1); 
-
-			RageSoundParams p;
-			p.m_bAccurateSync = true;
-			p.SetPlaybackRate( 1.0 );	//Force 1.0 playback speed
-			p.StopMode = RageSoundParams::M_CONTINUE;
-			p.m_StartSecond = startOffset;
-			m_pSoundMusic->Play( &p );
-
-			UpdateSongPosition(0);
-		}
-		else
-		{
-			float fMinTimeToMusic = m_In.GetLengthSeconds();	// start of m_Ready
-			float fMinTimeToNotes = fMinTimeToMusic + m_Ready.GetLengthSeconds() + m_Go.GetLengthSeconds()+2;	// end of Go
-
-			/*
-			 * Tell the music to start, but don't actually make any noise for
-			 * at least 2.5 (or 1.5) seconds.  (This is so we scroll on screen smoothly.)
-			 *
-			 * This is only a minimum: the music might be started later, to meet
-			 * the minimum-time-to-notes value.  If you're writing song data,
-			 * and you want to make sure we get ideal timing here, make sure there's
-			 * a bit of space at the beginning of the music with no steps. 
-			 */
-
-			/*float delay =*/ StartPlayingSong( fMinTimeToNotes, fMinTimeToMusic );
-		}
-	}
-
 
 	UpdateSongPosition( fDeltaTime );
 
