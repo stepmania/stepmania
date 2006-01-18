@@ -57,11 +57,11 @@ struct Joystick
 };
 
 Joystick::Joystick() : id( DEVICE_NONE ),
-					   x_axis( DeviceButton_Invalid ),
-					   y_axis( DeviceButton_Invalid ),
-					   z_axis( DeviceButton_Invalid ),
-					   x_min( 0 ), y_min( 0 ), z_min( 0 ),
-					   x_max( 0 ), y_max( 0 ), z_max( 0 )
+	x_axis( DeviceButton_Invalid ),
+	y_axis( DeviceButton_Invalid ),
+	z_axis( DeviceButton_Invalid ),
+	x_min( 0 ), y_min( 0 ), z_min( 0 ),
+	x_max( 0 ), y_max( 0 ), z_max( 0 )
 {
 }
 
@@ -82,7 +82,9 @@ protected:
 	virtual void Open() = 0;
 	
 	inline void AddElementToQueue( int cookie )
-	{ CALL( mQueue, addElement, IOHIDElementCookie(cookie), 0 ); }
+	{
+		CALL( mQueue, addElement, IOHIDElementCookie(cookie), 0 );
+	}
 public:
 	Device();
 	virtual ~Device();
@@ -709,7 +711,7 @@ int InputHandler_Carbon::Run( void *data )
 	 * to by context does not need to persist beyond the function call. */
 	CFRunLoopObserverContext context = { 0, &This->mSem, NULL, NULL, NULL };
 	CFRunLoopObserverRef o = CFRunLoopObserverCreate( kCFAllocatorDefault, kCFRunLoopEntry,
-													  false, 0, RunLoopStarted, &context);
+							  false, 0, RunLoopStarted, &context);
 	CFRunLoopAddObserver( This->mLoopRef, o, kCFRunLoopDefaultMode );
 	CFRunLoopRun();
 	LOG->Trace( "Shutting down input handler thread..." );
