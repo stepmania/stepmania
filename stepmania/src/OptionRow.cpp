@@ -924,22 +924,22 @@ void OptionRow::Reload()
 
 			ImportOptions( vpns );
 
-			switch( m_pHand->m_Def.m_selectType )
+			FOREACH_HumanPlayer( p )
 			{
-			case SELECT_ONE:
-				FOREACH_HumanPlayer( p )
+				switch( m_pHand->m_Def.m_selectType )
 				{
+				case SELECT_ONE:
 					m_iChoiceInRowWithFocus[p] = GetOneSelection(p, true);
 					if( m_iChoiceInRowWithFocus[p] == -1 )
 						m_iChoiceInRowWithFocus[p] = 0;
+					break;
+				case SELECT_MULTIPLE:
+				case SELECT_NONE:
+					m_iChoiceInRowWithFocus[p] = 0;
+					break;
+				default:
+					ASSERT(0);
 				}
-				break;
-			case SELECT_MULTIPLE:
-				FOREACH_HumanPlayer( p )
-					CLAMP( m_iChoiceInRowWithFocus[p], 0, m_pHand->m_Def.m_vsChoices.size()-1 );
-				break;
-			default:
-				ASSERT(0);
 			}
 
 			// TODO: Nothing uses this yet and it causes skips when changing options.
