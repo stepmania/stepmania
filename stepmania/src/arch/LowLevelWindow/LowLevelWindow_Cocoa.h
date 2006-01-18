@@ -14,16 +14,16 @@ typedef const struct __CFDictionary *CFDictionaryRef;
 
 class LowLevelWindow_Cocoa : public LowLevelWindow
 {
-	VideoModeParams mCurrentParams;
-	id mWindow;
-	id mWindowContext;
-	id mFullScreenContext;
+	VideoModeParams m_CurrentParams;
+	id m_Window;
+	id m_WindowContext;
+	id m_FullScreenContext;
 #if CONCURRENT_RENDERING
-	id mConcurrentWindowContext;
-	id mConcurrentFullScreenContext;
+	id m_ConcurrentWindowContext;
+	id m_ConcurrentFullScreenContext;
 #endif
-	bool mSharingContexts;
-	CFDictionaryRef mCurrentDisplayMode;
+	bool m_bSharingContexts;
+	CFDictionaryRef m_CurrentDisplayMode;
 	
 public:
 	LowLevelWindow_Cocoa();
@@ -40,7 +40,7 @@ public:
 	void EndConcurrentRendering();
 #endif
 
-	VideoModeParams GetActualVideoModeParams() const { return mCurrentParams; }
+	VideoModeParams GetActualVideoModeParams() const { return m_CurrentParams; }
 private:
 	void ShutDownFullScreen();
 	int ChangeDisplayMode( const VideoModeParams& p );
