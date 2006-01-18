@@ -474,7 +474,7 @@ void OptionRow::AfterImportOptions()
 		case SELECT_ONE:
 			{
 				/* Make sure the row actually has a selection. */
-				int iSelection = GetOneSelection(p, true) != -1;
+				int iSelection = GetOneSelection(p, true);
 				if( iSelection == -1 )
 				{
 					ASSERT( !m_vbSelected[p].empty() );
