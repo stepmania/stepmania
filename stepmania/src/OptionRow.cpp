@@ -897,14 +897,20 @@ void OptionRow::Reload()
 
 			if( !m_pHand->Reload() )
 				break;
-			m_pHand->m_Def = m_pHand->m_Def;
 			ASSERT( !m_pHand->m_Def.m_vsChoices.empty() );
 
 			FOREACH_PlayerNumber( p )
 				m_vbSelected[p].resize( m_pHand->m_Def.m_vsChoices.size(), false );
 
-			// TODO: Nothing uses this yet and it causes skips when changing options.
-			//ImportOptions( vpns );
+			// TRICKY:  Insert a down arrow as the first choice in the row.
+			if( m_bFirstItemGoesDown )
+			{
+				m_pHand->m_Def.m_vsChoices.insert( m_pHand->m_Def.m_vsChoices.begin(), NEXT_ROW_NAME );
+				FOREACH_PlayerNumber( p )
+					m_vbSelected[p].insert( m_vbSelected[p].begin(), false );
+			}
+
+			ImportOptions( vpns );
 
 			switch( m_pHand->m_Def.m_selectType )
 			{
