@@ -21,6 +21,7 @@
 }
 - (id) initWithArgc:(int)argc argv:(char **)argv;
 - (void) startGame:(id)sender;
+- (NSApplicationTerminateReply) applicationShouldTerminate:(NSApplication *)sender;
 @end
 
 
@@ -28,11 +29,6 @@
 - (void)fullscreen:(id)sender
 {
 	ArchHooks::SetToggleWindowed();
-}
-// Invoked from the Quit menu item.
-- (void)terminate:(id)sender
-{
-	ArchHooks::SetUserQuit();
 }
 
 - (void)sendEvent:(NSEvent *)event
@@ -65,6 +61,12 @@
 - (void) applicationDidFinishLaunching: (NSNotification *) note
 {
 	[NSThread detachNewThreadSelector:@selector(startGame:) toTarget:self withObject:nil];
+}
+
+- (NSApplicationTerminateReply) applicationShouldTerminate:(NSApplication *)sender
+{
+	ArchHooks::SetUserQuit();
+	return NSTerminateCancel;
 }
 @end
 
@@ -132,7 +134,7 @@ int main( int argc, char **argv )
 	[SMApplication poseAsClass:[NSApplication class]];
 	
 	NSAutoreleasePool	*pool = [[NSAutoreleasePool alloc] init];
-	SMMain				*sm;
+	SMMain			*sm;
 	
 	// Ensure the application object is initialised, this sets NSApp.
 	[SMApplication sharedApplication];
