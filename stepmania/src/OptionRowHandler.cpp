@@ -81,8 +81,6 @@ public:
 		ASSERT( command.m_vsArgs.size() == 2 );
 		ASSERT( sParam.size() );
 
-		m_Def.Init();
-
 		if(	 sParam.CompareNoCase("NoteSkins")==0 )		{ FillNoteSkins( sParam );	return; }
 		else if( sParam.CompareNoCase("Steps")==0 )		{ FillSteps( sParam, false );	return; }
 		else if( sParam.CompareNoCase("StepsLocked")==0 )	{ FillSteps( sParam, true );	return; }
@@ -499,7 +497,6 @@ public:
 		ASSERT( sLuaFunction.size() );
 
 		Init();
-		m_Def.Init();
 
 		m_Def.m_bAllowThemeItems = false;	// Lua options are always dynamic and can theme themselves.
 
@@ -817,7 +814,6 @@ public:
 		ASSERT( sParam.size() );
 
 		Init();
-		m_Def.Init();
 
 		/* Configuration values are never per-player. */
 		m_Def.m_bOneChoiceForAllPlayers = true;
@@ -896,8 +892,6 @@ public:
 		CString sParam = command.GetArg(1);
 		ASSERT( command.m_vsArgs.size() == 2 );
 		ASSERT( sParam.size() );
-
-		m_Def.Init();
 
 		if( sParam == "EditStepsType" )
 		{
@@ -997,8 +991,6 @@ public:
 		CString sParam = command.GetArg(1);
 		ASSERT( command.m_vsArgs.size() == 2 );
 		ASSERT( sParam.size() );
-
-		m_Def.Init();
 
 		if( sParam == "EditSteps" )
 		{
@@ -1148,8 +1140,6 @@ public:
 	virtual void LoadInternal( const Commands &cmds )
 	{
 		ASSERT( cmds.v.size() > 1 );
-
-		m_Def.Init();
 
 		Commands temp = cmds;
 		temp.v.erase( temp.v.begin() );

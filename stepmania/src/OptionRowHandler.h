@@ -22,6 +22,7 @@ public:
 	virtual void Init()
 	{
 		m_cmds.v.clear();
+		m_Def.Init();
 		m_vsReloadRowMessages.clear();
 	}
 	void Load( const Commands &cmds )
