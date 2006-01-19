@@ -547,6 +547,7 @@ void OptionRow::PositionIcons()
 	}
 }
 
+/* This is called when the focus changes, to update "long row" text. */
 void OptionRow::UpdateText( PlayerNumber p )
 {
 	switch( m_pHand->m_Def.m_layoutType )
