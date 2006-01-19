@@ -486,9 +486,7 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 
 	PlayerNumber pnTakeSelectedFrom = m_pHand->m_Def.m_bOneChoiceForAllPlayers ? PLAYER_1 : pn;
 
-	const int iNumUnderlines = (m_pHand->m_Def.m_layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? 1 : vpUnderlines.size();
-	
-	for( int i=0; i<iNumUnderlines; i++ )
+	for( int i=0; i<(int)vpUnderlines.size(); i++ )
 	{
 		OptionsCursor& ul = *vpUnderlines[i];
 
