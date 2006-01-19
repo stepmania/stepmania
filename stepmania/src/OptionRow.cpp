@@ -456,9 +456,6 @@ void OptionRow::AfterImportOptions()
 			m_Underline[p][c]->SetHidden( true );
 	}
 
-	FOREACH_HumanPlayer( p )
-		PositionUnderlines( p );
-
 	// Make all selections the same if bOneChoiceForAllPlayers
 	// Hack: we only import active players, so if only player 2 is imported,
 	// we need to copy p2 to p1, not p1 to p2.
@@ -491,6 +488,9 @@ void OptionRow::AfterImportOptions()
 
 	FOREACH_PlayerNumber( p )
 		ResetFocusFromSelection( p );
+
+	FOREACH_HumanPlayer( p )
+		PositionUnderlines( p );
 
 	UpdateText();
 
