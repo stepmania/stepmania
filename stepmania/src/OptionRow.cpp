@@ -349,12 +349,9 @@ void OptionRow::InitText()
 			{
 				pText->SetX( m_pParentType->ITEMS_LONG_ROW_X.GetValue(p) );
 			}
-		}
 
-		// init underlines
-		if( m_pParentType->SHOW_UNDERLINES && GetRowType() != OptionRow::RowType_Exit )
-		{
-			FOREACH_PlayerNumber( p )
+			// init underlines
+			if( m_pParentType->SHOW_UNDERLINES && GetRowType() != OptionRow::RowType_Exit )
 			{
 				OptionsCursor *pCursor = new OptionsCursor( m_pParentType->m_UnderlineParent );
 				m_Underline[p].push_back( pCursor );
