@@ -860,8 +860,7 @@ void OptionRow::ResetFocusFromSelection( PlayerNumber pn )
 	// HACK: Set focus to one item in the row, which is "go down"
 	//
 	if( m_bFirstItemGoesDown )
-		FOREACH_PlayerNumber( p )
-			SetChoiceInRowWithFocus( p, 0 );
+		SetChoiceInRowWithFocus( pn, 0 );
 }
 
 bool OptionRow::GetSelected( PlayerNumber pn, int iChoice ) const
