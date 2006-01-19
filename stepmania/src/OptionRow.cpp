@@ -207,6 +207,8 @@ void OptionRow::ChoicesChanged()
 	/* When choices change, the old focus position is meaningless; reset it. */
 	FOREACH_PlayerNumber( p )
 		SetChoiceInRowWithFocus( p, 0 );
+
+	m_textTitle->SetText( GetRowTitle() );
 }
 
 CString OptionRow::GetRowTitle() const
@@ -491,8 +493,6 @@ void OptionRow::AfterImportOptions()
 
 	FOREACH_HumanPlayer( p )
 		PositionUnderlines( p );
-
-	m_textTitle->SetText( GetRowTitle() );
 }
 
 void OptionRow::PositionUnderlines( PlayerNumber pn )
