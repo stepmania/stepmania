@@ -405,7 +405,7 @@ void ScreenOptions::RefreshIcons( int iRow, PlayerNumber pn )
 		if( pHand )
 		{
 			int iSelection = iFirstSelection+(m_OptionsNavigation==NAV_TOGGLE_THREE_KEY?-1:0);
-			pHand->GetIconTextAndGameCommand( def, iSelection, sIcon, gc );
+			pHand->GetIconTextAndGameCommand( iSelection, sIcon, gc );
 		}
 	}
 	

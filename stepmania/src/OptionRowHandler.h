@@ -45,10 +45,10 @@ public:
 	 * nothing has changed, return false.
 	 */
 	virtual bool Reload() { return false; }
-	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const = 0;
+	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const = 0;
 	/* Returns an OPT mask. */
-	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const = 0;
-	virtual void GetIconTextAndGameCommand( const OptionRowDefinition &def, int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const;
+	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const = 0;
+	virtual void GetIconTextAndGameCommand( int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const;
 	virtual RString GetScreen( int iChoice ) const { return RString(); }
 };
 

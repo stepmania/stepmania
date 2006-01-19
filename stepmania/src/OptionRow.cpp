@@ -944,7 +944,7 @@ void OptionRow::ImportOptions( const vector<PlayerNumber> &vpns )
 		ERASE_ONE_BOOL_AT_FRONT_IF_NEEDED( m_vbSelected[p] );
 	}
 	
-	m_pHand->ImportOption( m_pHand->m_Def, vpns, m_vbSelected );
+	m_pHand->ImportOption( vpns, m_vbSelected );
 
 	FOREACH_CONST( PlayerNumber, vpns, iter )
 	{
@@ -977,7 +977,7 @@ int OptionRow::ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocu
 			m_vbSelected[p][iChoice] = true;
 	}
 
-	iChangeMask |= m_pHand->ExportOption( m_pHand->m_Def, vpns, m_vbSelected );
+	iChangeMask |= m_pHand->ExportOption( vpns, m_vbSelected );
 	
 	FOREACH_CONST( PlayerNumber, vpns, iter )
 	{

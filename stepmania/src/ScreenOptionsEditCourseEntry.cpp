@@ -70,7 +70,7 @@ public:
 		return true;
 	}
 
-	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		vector<Song*>::const_iterator iter = find( m_vpDisplayedSongs.begin(), m_vpDisplayedSongs.end(), GAMESTATE->m_pCurSong.Get() );
 		int iChoice = 0;
@@ -79,7 +79,7 @@ public:
 		FOREACH_PlayerNumber(pn)
 			OptionRowHandlerUtil::SelectExactlyOne( iChoice, vbSelectedOut[pn] );
 	}
-	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		int iChoice = OptionRowHandlerUtil::GetOneSelection( vbSelected[PLAYER_1] );
 		GAMESTATE->m_pCurSong.Set( m_vpDisplayedSongs[iChoice] );

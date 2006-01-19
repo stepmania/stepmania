@@ -25,7 +25,7 @@
 #define ENTRY_MODE(s,i)		THEME->GetMetric ("ScreenOptionsMaster",ssprintf("%s,%i",(s).c_str(),(i+1)))
 #define ENTRY_DEFAULT(s)	THEME->GetMetric ("ScreenOptionsMaster",(s) + "Default")
 
-void OptionRowHandler::GetIconTextAndGameCommand( const OptionRowDefinition &def, int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const
+void OptionRowHandler::GetIconTextAndGameCommand( int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const
 {
 	sIconTextOut = "";
 	gcOut.Init();
@@ -156,7 +156,7 @@ public:
 			}
 		}
 	}
-	void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		int iFallbackOption = -1;
 		bool bUseFallbackOption = true;
@@ -223,7 +223,7 @@ public:
 		}
 	}
 
-	int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
@@ -242,7 +242,7 @@ public:
 		return 0;
 	}
 
-	virtual void GetIconTextAndGameCommand( const OptionRowDefinition &def, int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const
+	virtual void GetIconTextAndGameCommand( int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const
 	{
 		sIconTextOut = m_bUseModNameForIcon ?
 			m_aListEntries[iFirstSelection].m_sModifiers :
@@ -463,7 +463,7 @@ public:
 			m_pDifficultyToFill->Set( m_vDifficulties[0] );
 		m_ppStepsToFill->Set( m_vSteps[0] );
 	}
-	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
@@ -491,7 +491,7 @@ public:
 						vbSelOut[i] = true;
 						vector<PlayerNumber> v;
 						v.push_back( p );
-						ExportOption( def, v, vbSelectedOut );	// current steps changed
+						ExportOption( v, vbSelectedOut );	// current steps changed
 						continue;
 					}
 				}
@@ -500,7 +500,7 @@ public:
 			vbSelOut[0] = true;
 		}
 	}
-	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
@@ -862,7 +862,7 @@ public:
 
 		LUA->Release(L);
 	}
-	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		Lua *L = LUA->Get();
 
@@ -918,7 +918,7 @@ public:
 
 		LUA->Release(L);
 	}
-	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		Lua *L = LUA->Get();
 
@@ -945,7 +945,7 @@ public:
 			lua_pushstring( L, "SaveSelections" );
 			lua_gettable( L, -2 );
 			if( !lua_isfunction( L, -1 ) )
-				RageException::Throw( "\"%s\" \"SaveSelections\" entry is not a function", def.m_sName.c_str() );
+				RageException::Throw( "\"%s\" \"SaveSelections\" entry is not a function", m_Def.m_sName.c_str() );
 
 			/* Argument 1 (self): */
 			m_pLuaTable->PushSelf( L );
@@ -1011,7 +1011,7 @@ public:
 
 		m_Def.m_sName = opt->name;
 	}
-	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
@@ -1022,7 +1022,7 @@ public:
 			OptionRowHandlerUtil::SelectExactlyOne( iSelection, vbSelOut );
 		}
 	}
-	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		bool bChanged = false;
 
@@ -1110,7 +1110,7 @@ public:
 			m_pstToFill->Set( m_vStepsTypesToShow[0] );
 	}
 
-	virtual void ImportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
@@ -1131,7 +1131,7 @@ public:
 			vbSelOut[0] = true;
 		}
 	}
-	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		FOREACH_CONST( PlayerNumber, vpns, pn )
 		{
@@ -1173,16 +1173,16 @@ public:
 		m_Def.m_selectType = SELECT_NONE;
 		m_Def.m_vsChoices.push_back( "" );
 	}
-	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 	}
-	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		if( vbSelected[PLAYER_1][0] )
 			m_gc.ApplyToAllPlayers();
 		return 0;
 	}
-	virtual void GetIconTextAndGameCommand( const OptionRowDefinition &def, int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const
+	virtual void GetIconTextAndGameCommand( int iFirstSelection, CString &sIconTextOut, GameCommand &gcOut ) const
 	{
 		sIconTextOut = "";
 		gcOut = m_gc;
@@ -1200,10 +1200,10 @@ public:
 	virtual void LoadInternal( const Commands &cmds )
 	{
 	}
-	virtual void ImportOption( const OptionRowDefinition &row, const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
+	virtual void ImportOption( const vector<PlayerNumber> &vpns, vector<bool> vbSelectedOut[NUM_PLAYERS] ) const
 	{
 	}
-	virtual int ExportOption( const OptionRowDefinition &def, const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
+	virtual int ExportOption( const vector<PlayerNumber> &vpns, const vector<bool> vbSelected[NUM_PLAYERS] ) const
 	{
 		return 0;
 	}
