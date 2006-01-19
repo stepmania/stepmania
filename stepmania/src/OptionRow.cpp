@@ -483,28 +483,14 @@ void OptionRow::AfterImportOptions()
 				{
 					ASSERT( !m_vbSelected[p].empty() );
 					m_vbSelected[p][0] = true;
-					iSelection = 0;
 				}
-				
-				m_iChoiceInRowWithFocus[p] = iSelection;	// focus on the selection we just set
 			}
 			break;
-		case SELECT_MULTIPLE:
-		case SELECT_NONE:
-			m_iChoiceInRowWithFocus[p] = 0;
-			break;
-		default:
-			ASSERT(0);
 		}
 	}
 
-
-	//
-	// HACK: Set focus to one item in the row, which is "go down"
-	//
-	if( m_bFirstItemGoesDown )
-		FOREACH_PlayerNumber( p )
-			m_iChoiceInRowWithFocus[p] = 0;	
+	FOREACH_PlayerNumber( p )
+		ResetFocusFromSelection( p );
 
 	UpdateText();
 
@@ -856,6 +842,25 @@ void OptionRow::SetChoiceInRowWithFocusShared( int iChoice )
 {
 	FOREACH_PlayerNumber( pn )
 		SetChoiceInRowWithFocus( pn, iChoice );
+}
+
+void OptionRow::ResetFocusFromSelection( PlayerNumber pn )
+{
+	switch( m_pHand->m_Def.m_selectType )
+	{
+		case SELECT_ONE:
+			/* Import the focus from the selected option. */
+			int iSelection = GetOneSelection( pn, true );
+			m_iChoiceInRowWithFocus[pn] = iSelection;	// focus on the selection we just set
+			break;
+	}
+
+	//
+	// HACK: Set focus to one item in the row, which is "go down"
+	//
+	if( m_bFirstItemGoesDown )
+		FOREACH_PlayerNumber( p )
+			m_iChoiceInRowWithFocus[p] = 0;	
 }
 
 bool OptionRow::GetSelected( PlayerNumber pn, int iChoice ) const
