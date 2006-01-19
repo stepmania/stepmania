@@ -1072,24 +1072,13 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 				StoreFocus( p );
 			}
 		}
-
-		FOREACH_PlayerNumber( p )
-		{
-			if( m_OptionsNavigation==NAV_TOGGLE_THREE_KEY || m_OptionsNavigation==NAV_TOGGLE_FIVE_KEY )
-			{
-				;	// do nothing
-			}
-			else
-			{
-				if( row.GetRowDef().m_selectType == SELECT_MULTIPLE )
-					;	// do nothing.  User must press Start to toggle the selection.
-				else
-					row.SetOneSelection( p, iNewChoiceWithFocus );			
-			}
-		}
 	}
-	else
+
+	FOREACH_PlayerNumber( p )
 	{
+		if( !row.GetRowDef().m_bOneChoiceForAllPlayers && p != pn )
+			continue;
+
 		if( m_OptionsNavigation==NAV_TOGGLE_THREE_KEY || m_OptionsNavigation==NAV_TOGGLE_FIVE_KEY )
 		{
 			;	// do nothing
@@ -1099,7 +1088,7 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 			if( row.GetRowDef().m_selectType == SELECT_MULTIPLE )
 				;	// do nothing.  User must press Start to toggle the selection.
 			else
-				row.SetOneSelection( pn, iNewChoiceWithFocus );
+				row.SetOneSelection( p, iNewChoiceWithFocus );
 		}
 	}
 
