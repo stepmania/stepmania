@@ -848,11 +848,11 @@ void OptionRow::ResetFocusFromSelection( PlayerNumber pn )
 {
 	switch( m_pHand->m_Def.m_selectType )
 	{
-		case SELECT_ONE:
-			/* Import the focus from the selected option. */
-			int iSelection = GetOneSelection( pn, true );
-			m_iChoiceInRowWithFocus[pn] = iSelection;	// focus on the selection we just set
-			break;
+	case SELECT_ONE:
+		/* Import the focus from the selected option. */
+		int iSelection = GetOneSelection( pn, true );
+		m_iChoiceInRowWithFocus[pn] = iSelection;	// focus on the selection we just set
+		break;
 	}
 
 	//
