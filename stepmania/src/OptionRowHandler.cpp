@@ -177,17 +177,17 @@ public:
 					/* The entry has no effect.  This is usually a default "none of the
 					 * above" entry.  It will always return true for DescribesCurrentMode().
 					 * It's only the selected choice if nothing else matches. */
-					if( def.m_selectType != SELECT_MULTIPLE )
+					if( m_Def.m_selectType != SELECT_MULTIPLE )
 						iFallbackOption = e;
 					continue;
 				}
 
-				if( def.m_bOneChoiceForAllPlayers )
+				if( m_Def.m_bOneChoiceForAllPlayers )
 				{
 					if( mc.DescribesCurrentModeForAllPlayers() )
 					{
 						bUseFallbackOption = false;
-						if( def.m_selectType != SELECT_MULTIPLE )
+						if( m_Def.m_selectType != SELECT_MULTIPLE )
 							OptionRowHandlerUtil::SelectExactlyOne( e, vbSelOut );
 						else
 							vbSelOut[e] = true;
@@ -198,7 +198,7 @@ public:
 					if( mc.DescribesCurrentMode( p) )
 					{
 						bUseFallbackOption = false;
-						if( def.m_selectType != SELECT_MULTIPLE )
+						if( m_Def.m_selectType != SELECT_MULTIPLE )
 							OptionRowHandlerUtil::SelectExactlyOne( e, vbSelOut );
 						else
 							vbSelOut[e] = true;
@@ -206,7 +206,7 @@ public:
 				}
 			}
 
-			if( def.m_selectType == SELECT_ONE && bUseFallbackOption )
+			if( m_Def.m_selectType == SELECT_ONE && bUseFallbackOption )
 			{
 				if( iFallbackOption == -1 )
 				{
@@ -219,7 +219,7 @@ public:
 				OptionRowHandlerUtil::SelectExactlyOne( iFallbackOption, vbSelOut );
 			}
 
-			VerifySelected( def.m_selectType, vbSelOut, def.m_sName );
+			VerifySelected( m_Def.m_selectType, vbSelOut, m_Def.m_sName );
 		}
 	}
 
@@ -246,7 +246,7 @@ public:
 	{
 		sIconTextOut = m_bUseModNameForIcon ?
 			m_aListEntries[iFirstSelection].m_sModifiers :
-			def.m_vsChoices[iFirstSelection];
+			m_Def.m_vsChoices[iFirstSelection];
 
 		gcOut = m_aListEntries[iFirstSelection];
 	}
@@ -891,7 +891,7 @@ public:
 			lua_pushstring( L, "LoadSelections" );
 			lua_gettable( L, -2 );
 			if( !lua_isfunction( L, -1 ) )
-				RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function", def.m_sName.c_str() );
+				RageException::Throw( "\"%s\" \"LoadSelections\" entry is not a function", m_Def.m_sName.c_str() );
 
 			/* Argument 1 (self): */
 			m_pLuaTable->PushSelf( L );
