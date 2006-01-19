@@ -492,7 +492,8 @@ void OptionRow::AfterImportOptions()
 	FOREACH_HumanPlayer( p )
 		PositionUnderlines( p );
 
-	UpdateText();
+	FOREACH_HumanPlayer( p )
+		UpdateText();
 
 	m_textTitle->SetText( GetRowTitle() );
 }
@@ -546,17 +547,16 @@ void OptionRow::PositionIcons()
 	}
 }
 
-void OptionRow::UpdateText()
+void OptionRow::UpdateText( PlayerNumber p )
 {
 	switch( m_pHand->m_Def.m_layoutType )
 	{
 	case LAYOUT_SHOW_ONE_IN_ROW:
-		FOREACH_HumanPlayer( p )
 		{
 			unsigned pn = m_pHand->m_Def.m_bOneChoiceForAllPlayers ? 0 : p;
 			int iChoiceWithFocus = m_iChoiceInRowWithFocus[pn];
 			if( iChoiceWithFocus == -1 )
-				continue;
+				break;
 
 			CString sText = m_pHand->m_Def.m_vsChoices[iChoiceWithFocus];
 			PrepareItemText( sText );
