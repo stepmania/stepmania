@@ -470,22 +470,20 @@ void OptionRow::AfterImportOptions()
 			m_vbSelected[p] = m_vbSelected[pnCopyFrom];
 	}
 
-	FOREACH_PlayerNumber( p )
+	switch( m_pHand->m_Def.m_selectType )
 	{
-		switch( m_pHand->m_Def.m_selectType )
+	case SELECT_ONE:
+		FOREACH_PlayerNumber( p )
 		{
-		case SELECT_ONE:
+			/* Make sure the row actually has a selection. */
+			int iSelection = GetOneSelection(p, true);
+			if( iSelection == -1 )
 			{
-				/* Make sure the row actually has a selection. */
-				int iSelection = GetOneSelection(p, true);
-				if( iSelection == -1 )
-				{
-					ASSERT( !m_vbSelected[p].empty() );
-					m_vbSelected[p][0] = true;
-				}
+				ASSERT( !m_vbSelected[p].empty() );
+				m_vbSelected[p][0] = true;
 			}
-			break;
 		}
+		break;
 	}
 
 	FOREACH_PlayerNumber( p )
