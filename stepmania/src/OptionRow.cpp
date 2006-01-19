@@ -482,7 +482,7 @@ void OptionRow::AfterImportOptions( PlayerNumber pn )
 }
 
 void OptionRow::PositionUnderlines( PlayerNumber pn )
-									{
+{
 	vector<OptionsCursor*> &vpUnderlines = m_Underline[pn];
 	if( vpUnderlines.empty() )
 		return;
