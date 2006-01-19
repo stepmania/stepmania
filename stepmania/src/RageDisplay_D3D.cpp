@@ -49,21 +49,21 @@ CString GetErrorString( HRESULT hr )
 // Globals
 //
 #if !defined(XBOX)
-HMODULE					g_D3D8_Module = NULL;
+HMODULE				g_D3D8_Module = NULL;
 #endif
-LPDIRECT3D8				g_pd3d = NULL;
+LPDIRECT3D8			g_pd3d = NULL;
 LPDIRECT3DDEVICE8		g_pd3dDevice = NULL;
-D3DCAPS8				g_DeviceCaps;
+D3DCAPS8			g_DeviceCaps;
 D3DDISPLAYMODE			g_DesktopMode;
-D3DPRESENT_PARAMETERS	g_d3dpp;
-int						g_ModelMatrixCnt=0;
-TextureUnit				g_currentTextureUnit = TextureUnit_1;
-static bool				g_bSphereMapping[NUM_TextureUnit] = { false, false };
+D3DPRESENT_PARAMETERS		g_d3dpp;
+int				g_ModelMatrixCnt=0;
+TextureUnit			g_currentTextureUnit = TextureUnit_1;
+static bool			g_bSphereMapping[NUM_TextureUnit] = { false, false };
 
 /* Direct3D doesn't associate a palette with textures.
  * Instead, we load a palette into a slot.  We need to keep track
  * of which texture's palette is stored in what slot. */
-map<unsigned,int>	g_TexResourceToPaletteIndex;
+map<unsigned,int>		g_TexResourceToPaletteIndex;
 list<int>			g_PaletteIndex;
 struct TexturePalette { PALETTEENTRY p[256]; };
 map<unsigned,TexturePalette>	g_TexResourceToTexturePalette;
