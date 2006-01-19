@@ -193,7 +193,7 @@ void NoteField::DrawBeatBar( const float fBeat )
 		switch( nt )
 		{
 		default:	ASSERT(0);
-		case NOTE_TYPE_4TH:	fAlpha = 1;										iState = 1;	break;
+		case NOTE_TYPE_4TH:	fAlpha = 1;					iState = 1;	break;
 		case NOTE_TYPE_8TH:	fAlpha = SCALE(fScrollSpeed,1.f,2.f,0.f,1.f);	iState = 2;	break;
 		case NOTE_TYPE_16TH:fAlpha = SCALE(fScrollSpeed,2.f,4.f,0.f,1.f);	iState = 3;	break;
 		}
@@ -257,12 +257,12 @@ void NoteField::DrawAreaHighlight( int iStartBeat, int iEndBeat )
 void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
-	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+	const float fYPos	= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 
 	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(1,0,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.2f", fBPM) );
+	m_textMeasureNumber.SetText( ssprintf("%.3f", fBPM) );
 	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 60, fYPos );
 	m_textMeasureNumber.Draw();
 }
@@ -270,12 +270,12 @@ void NoteField::DrawBPMText( const float fBeat, const float fBPM )
 void NoteField::DrawFreezeText( const float fBeat, const float fSecs )
 {
 	const float fYOffset	= ArrowEffects::GetYOffset( m_pPlayerState, 0, fBeat );
- 	const float fYPos		= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
+ 	const float fYPos	= ArrowEffects::GetYPos(	m_pPlayerState, 0, fYOffset, m_fYReverseOffsetPixels );
 
 	m_textMeasureNumber.SetHorizAlign( Actor::align_right );
 	m_textMeasureNumber.SetDiffuse( RageColor(0.8f,0.8f,0,1) );
 	m_textMeasureNumber.SetGlow( RageColor(1,1,1,RageFastCos(RageTimer::GetTimeSinceStartFast()*2)/2+0.5f) );
-	m_textMeasureNumber.SetText( ssprintf("%.2f", fSecs) );
+	m_textMeasureNumber.SetText( ssprintf("%.3f", fSecs) );
 	m_textMeasureNumber.SetXY( -GetWidth()/2.f - 10, fYPos );
 	m_textMeasureNumber.Draw();
 }

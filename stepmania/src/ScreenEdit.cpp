@@ -1009,8 +1009,8 @@ void ScreenEdit::UpdateTextInfo()
 		break;
 	case EditMode_Full:
 		sText += ssprintf( "Beat 0 Offset:\n  %.3f secs\n",	m_pSong->m_Timing.m_fBeat0OffsetInSeconds );
-		sText += ssprintf( "Preview Start:\n  %.2f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
-		sText += ssprintf( "Preview Length:\n  %.2f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
+		sText += ssprintf( "Preview Start:\n  %.3f secs\n",	m_pSong->m_fMusicSampleStartSeconds );
+		sText += ssprintf( "Preview Length:\n  %.3f secs\n",m_pSong->m_fMusicSampleLengthSeconds );
 		break;
 	default:
 		ASSERT(0);
