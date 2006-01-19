@@ -490,7 +490,7 @@ void OptionRow::PositionUnderlines( PlayerNumber pn )
 	{
 		OptionsCursor& ul = *vpUnderlines[i];
 
-		int iChoiceWithFocus = (m_pHand->m_Def.m_layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? m_iChoiceInRowWithFocus[pnTakeSelectedFrom] : i;
+		int iChoiceWithFocus = (m_pHand->m_Def.m_layoutType == LAYOUT_SHOW_ONE_IN_ROW) ? GetChoiceInRowWithFocus(pn) : i;
 
 		/* Don't tween X movement and color changes. */
 		int iWidth, iX, iY;
