@@ -847,12 +847,12 @@ void OptionRow::SetChoiceInRowWithFocusShared( int iChoice )
 
 void OptionRow::ResetFocusFromSelection( PlayerNumber pn )
 {
+	int iSelection = -1;
 	switch( m_pHand->m_Def.m_selectType )
 	{
 	case SELECT_ONE:
 		/* Import the focus from the selected option. */
-		int iSelection = GetOneSelection( pn, true );
-		SetChoiceInRowWithFocus( pn, iSelection );
+		iSelection = GetOneSelection( pn, true );
 		break;
 	}
 
@@ -860,7 +860,10 @@ void OptionRow::ResetFocusFromSelection( PlayerNumber pn )
 	// HACK: Set focus to one item in the row, which is "go down"
 	//
 	if( m_bFirstItemGoesDown )
-		SetChoiceInRowWithFocus( pn, 0 );
+		iSelection = 0;
+
+	if( iSelection != -1 )
+		SetChoiceInRowWithFocus( pn, iSelection );
 }
 
 bool OptionRow::GetSelected( PlayerNumber pn, int iChoice ) const
