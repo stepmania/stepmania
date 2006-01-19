@@ -1139,7 +1139,6 @@ void ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 
 		wrap( r, m_pRows.size() );
 
-		const unsigned iOldSelection = row.GetChoiceInRowWithFocus(p);
 		if( m_iCurrentRow[p] == r )
 			continue;
 
@@ -1150,7 +1149,6 @@ void ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 
 		switch( m_OptionsNavigation )
 		{
-		case NAV_TOGGLE_THREE_KEY:
 		case NAV_TOGGLE_FIVE_KEY:
 			if( row.GetRowDef().m_layoutType != LAYOUT_SHOW_ONE_IN_ROW )
 			{
@@ -1166,7 +1164,6 @@ void ScreenOptions::MoveRowRelative( PlayerNumber pn, int iDir, bool Repeat )
 						row.SetChoiceInRowWithFocus( p, i );
 					}
 				}
-				row.SetChoiceInRowWithFocus( p, min( iOldSelection, row.GetTextItemsSize()-1 ) );
 			}
 		}
 
