@@ -202,6 +202,10 @@ void OptionRow::ChoicesChanged()
 			m_vbSelected[p].insert( m_vbSelected[p].begin(), false );
 	}
 
+	/* When choices change, the old focus position is meaningless; reset it. */
+	FOREACH_PlayerNumber( p )
+		m_iChoiceInRowWithFocus[p] = 0;
+
 	InitText();
 }
 
