@@ -192,7 +192,7 @@ void ScreenOptionsEditCourse::AfterChangeValueInRow( int iRow, PlayerNumber pn )
 	
 	Course *pCourse = GAMESTATE->m_pCurCourse;
 	
-	// Regemerate Trails so that the new values propagate
+	// Regenerate Trails so that the new values propagate
 	GAMESTATE->m_pCurTrail[PLAYER_1].Set( NULL );
 	Trail *pTrail = pCourse->GetTrailForceRegenCache( GAMESTATE->m_stEdit, GAMESTATE->m_PreferredCourseDifficulty[PLAYER_1] );
 
