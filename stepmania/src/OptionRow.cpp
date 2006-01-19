@@ -204,7 +204,7 @@ void OptionRow::ChoicesChanged()
 
 	/* When choices change, the old focus position is meaningless; reset it. */
 	FOREACH_PlayerNumber( p )
-		m_iChoiceInRowWithFocus[p] = 0;
+		SetChoiceInRowWithFocus( p, 0 );
 
 	InitText();
 }
