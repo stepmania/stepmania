@@ -1394,7 +1394,7 @@ void ScreenEdit::InputEdit( const InputEventPlus &input, EditButton EditB )
 			}
 			if( EditIsBeingPressed( EDIT_BUTTON_ADJUST_FINE ) )
 			{
-				fDeltaBPM /= 2;
+				fDeltaBPM /= 20;	// .001 bpm
 			}
 			else 
 			{
