@@ -407,6 +407,9 @@ CString SetD3DParams( bool &bNewDeviceOut )
 
 	g_pd3dDevice->SetRenderState( D3DRS_NORMALIZENORMALS, TRUE );	
 
+	/* Palettes were lost by Reset(), so mark them unloaded. */
+	g_TexResourceToPaletteIndex.clear();
+
 	return CString();
 }
 
@@ -604,9 +607,6 @@ CString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 
 	this->SetDefaultRenderStates();
 	
-	/* Palettes were lost by Reset(), so mark them unloaded. */
-	g_TexResourceToPaletteIndex.clear();
-
 	return CString();	// mode change successful
 }
 
