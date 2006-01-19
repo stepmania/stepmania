@@ -143,7 +143,7 @@ public:
 	int ExportOptions( const vector<PlayerNumber> &vpns, bool bRowHasFocus[NUM_PLAYERS] );
 
 	void InitText();
-	void AfterImportOptions();
+	void AfterImportOptions( PlayerNumber pn );
 
 	void ChoicesChanged();
 	void PositionUnderlines( PlayerNumber pn );

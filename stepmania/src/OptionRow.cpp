@@ -437,26 +437,19 @@ void OptionRow::InitText()
 }
 
 /* After importing options, choose which item is focused. */
-void OptionRow::AfterImportOptions()
+void OptionRow::AfterImportOptions( PlayerNumber pn )
 {
 	/* We load items for both players on start, since we don't know at that point
 	 * which players will be joined when we're displayed.  Hide items for inactive
 	 * players. */
-	FOREACH_PlayerNumber( p )
-	{
-		if( m_pHand->m_Def.m_layoutType == LAYOUT_SHOW_ONE_IN_ROW &&
-			!m_pHand->m_Def.m_bOneChoiceForAllPlayers )
-			m_textItems[p]->SetHidden( !GAMESTATE->IsHumanPlayer(p) );
-	}
+	if( m_pHand->m_Def.m_layoutType == LAYOUT_SHOW_ONE_IN_ROW &&
+		!m_pHand->m_Def.m_bOneChoiceForAllPlayers )
+		m_textItems[pn]->SetHidden( !GAMESTATE->IsHumanPlayer(pn) );
 
 	// Hide underlines for disabled players.
-	FOREACH_PlayerNumber( p )
-	{
-		if( GAMESTATE->IsHumanPlayer(p) )
-			continue;
-		for( unsigned c=0; c<m_Underline[p].size(); c++ )
-			m_Underline[p][c]->SetHidden( true );
-	}
+	if( !GAMESTATE->IsHumanPlayer(pn) )
+		for( unsigned c=0; c<m_Underline[pn].size(); c++ )
+			m_Underline[pn][c]->SetHidden( true );
 
 	// Make all selections the same if bOneChoiceForAllPlayers
 	// Hack: we only import active players, so if only player 2 is imported,
@@ -473,24 +466,19 @@ void OptionRow::AfterImportOptions()
 	switch( m_pHand->m_Def.m_selectType )
 	{
 	case SELECT_ONE:
-		FOREACH_PlayerNumber( p )
+		/* Make sure the row actually has a selection. */
+		int iSelection = GetOneSelection(pn, true);
+		if( iSelection == -1 )
 		{
-			/* Make sure the row actually has a selection. */
-			int iSelection = GetOneSelection(p, true);
-			if( iSelection == -1 )
-			{
-				ASSERT( !m_vbSelected[p].empty() );
-				m_vbSelected[p][0] = true;
-			}
+			ASSERT( !m_vbSelected[pn].empty() );
+			m_vbSelected[pn][0] = true;
 		}
 		break;
 	}
 
-	FOREACH_PlayerNumber( p )
-		ResetFocusFromSelection( p );
+	ResetFocusFromSelection( pn );
 
-	FOREACH_HumanPlayer( p )
-		PositionUnderlines( p );
+	PositionUnderlines( pn );
 }
 
 void OptionRow::PositionUnderlines( PlayerNumber pn )
@@ -912,7 +900,8 @@ void OptionRow::Reload()
 	FOREACH_HumanPlayer( p )
 		vpns.push_back( p );
 	ImportOptions( vpns );
-	AfterImportOptions();
+	FOREACH_HumanPlayer( p )
+		AfterImportOptions( p );
 
 	// TODO: Nothing uses this yet and it causes skips when changing options.
 	//if( m_pHand->m_Def.m_bExportOnChange )

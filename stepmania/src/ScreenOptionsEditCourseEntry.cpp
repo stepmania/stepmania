@@ -265,7 +265,7 @@ void ScreenOptionsEditCourseEntry::AfterChangeValueInRow( int iRow, PlayerNumber
 			OptionRow &row = *m_pRows[ROW_SONG];
 			row.Reload();
 			ImportOptions( ROW_SONG, vpns );
-			row.AfterImportOptions();
+			row.AfterImportOptions( PLAYER_1 );
 		}
 		break;
 	}

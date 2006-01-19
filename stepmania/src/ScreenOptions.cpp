@@ -263,7 +263,8 @@ void ScreenOptions::BeginScreen()
 			vpns.push_back( p );
 		this->ImportOptions( r, vpns );
 	
-		pRow->AfterImportOptions();
+		FOREACH_HumanPlayer( p )
+			pRow->AfterImportOptions( p );
 	}
 
 	ON_COMMAND( m_framePage );
