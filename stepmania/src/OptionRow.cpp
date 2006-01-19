@@ -852,7 +852,7 @@ void OptionRow::ResetFocusFromSelection( PlayerNumber pn )
 	case SELECT_ONE:
 		/* Import the focus from the selected option. */
 		int iSelection = GetOneSelection( pn, true );
-		m_iChoiceInRowWithFocus[pn] = iSelection;	// focus on the selection we just set
+		SetChoiceInRowWithFocus( pn, iSelection );
 		break;
 	}
 
@@ -861,7 +861,7 @@ void OptionRow::ResetFocusFromSelection( PlayerNumber pn )
 	//
 	if( m_bFirstItemGoesDown )
 		FOREACH_PlayerNumber( p )
-			m_iChoiceInRowWithFocus[p] = 0;	
+			SetChoiceInRowWithFocus( p, 0 );
 }
 
 bool OptionRow::GetSelected( PlayerNumber pn, int iChoice ) const
