@@ -488,6 +488,63 @@ static bool D3DReduceParams( D3DPRESENT_PARAMETERS *pp )
 }
 
 
+static void SetPresentParametersFromVideoModeParams( const VideoModeParams &p, D3DPRESENT_PARAMETERS *pD3Dpp )
+{
+	ZERO( *pD3Dpp );
+
+	pD3Dpp->BackBufferWidth		= p.width;
+	pD3Dpp->BackBufferHeight	= p.height;
+	pD3Dpp->BackBufferFormat	= FindBackBufferType( p.windowed, p.bpp );
+	pD3Dpp->BackBufferCount		= 1;
+	pD3Dpp->MultiSampleType		= D3DMULTISAMPLE_NONE;
+	pD3Dpp->SwapEffect		= D3DSWAPEFFECT_DISCARD;
+#if !defined(XBOX)
+	pD3Dpp->hDeviceWindow		= GraphicsWindow::GetHwnd();
+#else
+	pD3Dpp->hDeviceWindow		= NULL;
+#endif
+	pD3Dpp->Windowed		= p.windowed;
+	pD3Dpp->EnableAutoDepthStencil	= TRUE;
+	pD3Dpp->AutoDepthStencilFormat	= D3DFMT_D16;
+
+	if( p.windowed )
+		pD3Dpp->FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
+	else
+		pD3Dpp->FullScreen_PresentationInterval = p.vsync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
+
+#if !defined(XBOX)
+	pD3Dpp->FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	if( !p.windowed && p.rate != REFRESH_DEFAULT )
+		pD3Dpp->FullScreen_RefreshRateInHz = p.rate;
+#else
+	if( XGetVideoStandard() == XC_VIDEO_STANDARD_PAL_I )
+	{
+		/* Get supported video flags. */
+		DWORD VideoFlags = XGetVideoFlags();
+		
+		/* Set pal60 if available. */
+		if( VideoFlags & XC_VIDEO_FLAGS_PAL_60Hz )
+			pD3Dpp->FullScreen_RefreshRateInHz = 60;
+		else
+			pD3Dpp->FullScreen_RefreshRateInHz = 50;
+	}
+	else
+		pD3Dpp->FullScreen_RefreshRateInHz = 60;
+#endif
+
+	pD3Dpp->Flags = 0;
+
+
+	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
+		pD3Dpp->BackBufferWidth, pD3Dpp->BackBufferHeight, pD3Dpp->BackBufferFormat,
+		pD3Dpp->BackBufferCount,
+		pD3Dpp->MultiSampleType, pD3Dpp->SwapEffect, pD3Dpp->hDeviceWindow,
+		pD3Dpp->Windowed, pD3Dpp->EnableAutoDepthStencil, pD3Dpp->AutoDepthStencilFormat,
+		pD3Dpp->Flags, pD3Dpp->FullScreen_RefreshRateInHz,
+		pD3Dpp->FullScreen_PresentationInterval
+	);
+}
+
 /* Set the video mode. */
 CString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDeviceOut )
 {
@@ -507,58 +564,7 @@ CString RageDisplay_D3D::TryVideoMode( const VideoModeParams &_p, bool &bNewDevi
 	 * causes all other windows on the system to be resized to the new resolution. */
 	GraphicsWindow::CreateGraphicsWindow( p );
 
-	ZeroMemory( &g_d3dpp, sizeof(g_d3dpp) );
-
-	g_d3dpp.BackBufferWidth		= p.width;
-	g_d3dpp.BackBufferHeight	= p.height;
-	g_d3dpp.BackBufferFormat	= FindBackBufferType( p.windowed, p.bpp );
-	g_d3dpp.BackBufferCount		= 1;
-	g_d3dpp.MultiSampleType		= D3DMULTISAMPLE_NONE;
-	g_d3dpp.SwapEffect		= D3DSWAPEFFECT_DISCARD;
-#if !defined(XBOX)
-	g_d3dpp.hDeviceWindow		= GraphicsWindow::GetHwnd();
-#else
-	g_d3dpp.hDeviceWindow		= NULL;
-#endif
-	g_d3dpp.Windowed		= p.windowed;
-	g_d3dpp.EnableAutoDepthStencil	= TRUE;
-	g_d3dpp.AutoDepthStencilFormat	= D3DFMT_D16;
-
-	if( p.windowed )
-		g_d3dpp.FullScreen_PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
-	else
-		g_d3dpp.FullScreen_PresentationInterval = p.vsync ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
-
-#if !defined(XBOX)
-	g_d3dpp.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-	if( !p.windowed && p.rate != REFRESH_DEFAULT )
-		g_d3dpp.FullScreen_RefreshRateInHz = p.rate;
-#else
-	if( XGetVideoStandard() == XC_VIDEO_STANDARD_PAL_I )
-	{
-		/* Get supported video flags. */
-		DWORD VideoFlags = XGetVideoFlags();
-		
-		/* Set pal60 if available. */
-		if( VideoFlags & XC_VIDEO_FLAGS_PAL_60Hz )
-			g_d3dpp.FullScreen_RefreshRateInHz = 60;
-		else
-			g_d3dpp.FullScreen_RefreshRateInHz = 50;
-	}
-	else
-		g_d3dpp.FullScreen_RefreshRateInHz = 60;
-#endif
-
-	g_d3dpp.Flags = 0;
-
-	LOG->Trace( "Present Parameters: %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d", 
-		g_d3dpp.BackBufferWidth, g_d3dpp.BackBufferHeight, g_d3dpp.BackBufferFormat,
-		g_d3dpp.BackBufferCount,
-		g_d3dpp.MultiSampleType, g_d3dpp.SwapEffect, g_d3dpp.hDeviceWindow,
-		g_d3dpp.Windowed, g_d3dpp.EnableAutoDepthStencil, g_d3dpp.AutoDepthStencilFormat,
-		g_d3dpp.Flags, g_d3dpp.FullScreen_RefreshRateInHz,
-		g_d3dpp.FullScreen_PresentationInterval
-	);
+	SetPresentParametersFromVideoModeParams( p, &g_d3dpp );
 
 #if defined(XBOX)
 	if( D3D__pDevice )
