@@ -73,6 +73,11 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 		pHand->m_Def.m_bExportOnChange = false;
 			
 		pHand->m_Def.m_vsChoices = mr.choices;
+
+		// Each row must have at least one choice.
+		if( pHand->m_Def.m_vsChoices.empty() )
+			pHand->m_Def.m_vsChoices.push_back( "" );
+		
 		pHand->m_Def.m_bAllowThemeItems = mr.bThemeItems;
 
 		FOREACH( CString, pHand->m_Def.m_vsChoices, c )
