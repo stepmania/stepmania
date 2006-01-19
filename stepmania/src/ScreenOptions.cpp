@@ -1104,7 +1104,8 @@ void ScreenOptions::ChangeValueInRowRelative( int iRow, PlayerNumber pn, int iDe
 
 	/* For "long row-style" rows, update the text on screen to contain the newly-
 	 * focused options. */
-	m_pRows[iRow]->UpdateText();
+	FOREACH_HumanPlayer( p )
+		m_pRows[iRow]->UpdateText( p );
 
 	// XXX: What was this NAV_THREE_KEY_MENU special case for?
 	if( bOneChanged )

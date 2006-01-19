@@ -493,7 +493,7 @@ void OptionRow::AfterImportOptions()
 		PositionUnderlines( p );
 
 	FOREACH_HumanPlayer( p )
-		UpdateText();
+		UpdateText( p );
 
 	m_textTitle->SetText( GetRowTitle() );
 }
