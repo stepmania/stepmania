@@ -375,13 +375,6 @@ void ScreenOptions::GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int
 	row.GetWidthXY( pn, iChoiceOnRow, iWidthOut, iXOut, iYOut );
 }
 
-void ScreenOptions::PositionAllUnderlines()
-{
-	for( unsigned r=0; r<m_pRows.size(); r++ )
-		FOREACH_HumanPlayer( p )
-			m_pRows[r]->PositionUnderlines( p );
-}
-
 void ScreenOptions::PositionIcons()
 {
 	for( unsigned i=0; i<m_pRows.size(); i++ )	// foreach options line
@@ -722,7 +715,9 @@ void ScreenOptions::AfterChangeValueOrRow( PlayerNumber pn )
 	PositionRows();
 
 	/* Do positioning. */
-	PositionAllUnderlines();
+	for( unsigned r=0; r<m_pRows.size(); r++ )
+		FOREACH_HumanPlayer( p )
+			m_pRows[r]->PositionUnderlines( p );
 	RefreshIcons( iCurRow, pn );
 	PositionIcons();
 	UpdateEnabledDisabled();

@@ -49,7 +49,6 @@ protected:
 
 	void GetWidthXY( PlayerNumber pn, int iRow, int iChoiceOnRow, int &iWidthOut, int &iXOut, int &iYOut ) const;
 	CString GetExplanationText( int iRow ) const;
-	void PositionAllUnderlines();
 	void PositionIcons();
 	void RefreshIcons( int iRow, PlayerNumber pn );
 	void RefreshAllIcons();
