@@ -202,11 +202,11 @@ void OptionRow::ChoicesChanged()
 			m_vbSelected[p].insert( m_vbSelected[p].begin(), false );
 	}
 
+	InitText();
+
 	/* When choices change, the old focus position is meaningless; reset it. */
 	FOREACH_PlayerNumber( p )
 		SetChoiceInRowWithFocus( p, 0 );
-
-	InitText();
 }
 
 CString OptionRow::GetRowTitle() const
@@ -491,9 +491,6 @@ void OptionRow::AfterImportOptions()
 
 	FOREACH_HumanPlayer( p )
 		PositionUnderlines( p );
-
-	FOREACH_HumanPlayer( p )
-		UpdateText( p );
 
 	m_textTitle->SetText( GetRowTitle() );
 }
@@ -837,6 +834,8 @@ void OptionRow::SetChoiceInRowWithFocus( PlayerNumber pn, int iChoice )
 		pn = PLAYER_1;
 	ASSERT(iChoice >= 0 && iChoice < (int)m_pHand->m_Def.m_vsChoices.size());
 	m_iChoiceInRowWithFocus[pn] = iChoice;
+
+	UpdateText( pn );
 }
 
 void OptionRow::SetChoiceInRowWithFocusShared( int iChoice )
