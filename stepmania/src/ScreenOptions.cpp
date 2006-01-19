@@ -263,7 +263,8 @@ void ScreenOptions::BeginScreen()
 			vpns.push_back( p );
 		this->ImportOptions( r, vpns );
 	
-		FOREACH_HumanPlayer( p )
+		// HACK: Process disabled players, too, to hide inactive underlines.
+		FOREACH_PlayerNumber( p )
 			pRow->AfterImportOptions( p );
 	}
 
