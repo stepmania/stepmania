@@ -114,9 +114,11 @@ void ScreenPlayerOptions::Input( const InputEventPlus &input )
 		{
 			vector<PlayerNumber> v;
 			v.push_back( pn );
+			int iOldFocus = m_pRows[r]->GetChoiceInRowWithFocus( pn );
 			this->ImportOptions( r, v );
-			m_pRows[r]->PositionUnderlines( pn );
+			m_pRows[r]->AfterImportOptions( pn );
 			this->UpdateDisqualified( r, pn );
+			m_pRows[r]->SetChoiceInRowWithFocus( pn, iOldFocus );
 		}
 	}
 
