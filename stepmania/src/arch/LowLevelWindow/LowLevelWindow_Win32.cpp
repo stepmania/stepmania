@@ -281,9 +281,7 @@ void LowLevelWindow_Win32::Update()
 
 VideoModeParams LowLevelWindow_Win32::GetActualVideoModeParams() const
 {
-	VideoModeParams p;
-	GraphicsWindow::GetParams( p );
-	return p;
+		return GraphcsWindow::GetParams();
 }
 
 /*

@@ -16,7 +16,7 @@ namespace GraphicsWindow
 	void RecreateGraphicsWindow( const VideoModeParams &p );
 	void DestroyGraphicsWindow();
 	void ConfigureGraphicsWindow( const VideoModeParams &p );
-	void GetParams( VideoModeParams &paramsOut );
+	const VideoModeParams &GetParams();
 	void Update();
 };
 

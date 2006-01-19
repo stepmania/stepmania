@@ -24,7 +24,7 @@ public:
 	virtual void SwapBuffers() = 0;
 	virtual void Update() { }
 
-	virtual VideoModeParams GetActualVideoModeParams() const = 0;
+	virtual const VideoModeParams &GetActualVideoModeParams() const = 0;
 
 	virtual bool SupportsThreadedRendering() { return false; }
 	virtual void BeginConcurrentRendering() { }

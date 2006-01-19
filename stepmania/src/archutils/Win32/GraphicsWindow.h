@@ -21,7 +21,7 @@ namespace GraphicsWindow
 
 	void GetDisplayResolutions( DisplayResolutions &out );
 
-	void GetParams( VideoModeParams &paramsOut );
+	const VideoModeParams &GetParams();
 	HDC GetHDC();
 	void Update();
 

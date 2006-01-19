@@ -17,9 +17,9 @@ void GraphicsWindow::SetVideoModeParams( const VideoModeParams &params )
 	g_CurrentParams = params;
 }
 
-void GraphicsWindow::GetParams( VideoModeParams &paramsOut )
+const VideoModeParams &GraphicsWindow::GetParams()
 {
-	paramsOut = g_CurrentParams;
+	return g_CurrentParams;
 }
 
 void GraphicsWindow::Update()

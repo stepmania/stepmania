@@ -17,7 +17,7 @@ public:
 	bool IsSoftwareRenderer( CString &sError );
 	void SwapBuffers();
 
-	VideoModeParams GetActualVideoModeParams() const { return CurrentParams; }
+	const VideoModeParams &GetActualVideoModeParams() const { return CurrentParams; }
 	
 	void GetDisplayResolutions( DisplayResolutions &out ) const;
 

@@ -18,7 +18,7 @@ public:
 	void BeginConcurrentRendering();
 	void EndConcurrentRendering();
 
-	VideoModeParams GetActualVideoModeParams() const;
+	const VideoModeParams &GetActualVideoModeParams() const;
 };
 
 #ifdef ARCH_LOW_LEVEL_WINDOW

@@ -26,7 +26,7 @@ public:
 	void SwapBuffers();
 	void Update();
 	
-	VideoModeParams GetActualVideoModeParams() const { return m_CurrentParams; }
+	const VideoModeParams &GetActualVideoModeParams() const { return m_CurrentParams; }
 private:
 	void ShutDownFullScreen();
 	int ChangeDisplayMode( const VideoModeParams& p );
