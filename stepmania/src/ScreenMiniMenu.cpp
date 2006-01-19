@@ -56,15 +56,11 @@ void ScreenMiniMenu::LoadMenu( const MenuDef* pDef )
 		pHand->m_Def.m_sName = mr.sName;
 		FontCharAliases::ReplaceMarkers( pHand->m_Def.m_sName );	// Allow special characters
 		
+		pHand->m_Def.m_vEnabledForPlayers.clear();
 		if( mr.bEnabled )
 		{
-			pHand->m_Def.m_vEnabledForPlayers.clear();
 			FOREACH_EnabledPlayer( pn )
 				pHand->m_Def.m_vEnabledForPlayers.insert( pn );
-		}
-		else
-		{
-			pHand->m_Def.m_vEnabledForPlayers.clear();
 		}
 
 		pHand->m_Def.m_bOneChoiceForAllPlayers = true;
