@@ -1153,14 +1153,14 @@ void Actor::SetDiffuseColor( RageColor c )
 
 void Actor::TweenState::Init()
 {
-	pos	= RageVector3( 0, 0, 0 );
+	pos = RageVector3( 0, 0, 0 );
 	rotation = RageVector3( 0, 0, 0 );
 	quat = RageVector4( 0, 0, 0, 1 );
 	scale = RageVector3( 1, 1, 1 );
 	fSkewX = 0;
 	crop = RectF( 0,0,0,0 );
 	fade = RectF( 0,0,0,0 );
-	for(int i=0; i<4; i++) 
+	for( int i=0; i<4; i++ )
 		diffuse[i] = RageColor( 1, 1, 1, 1 );
 	glow = RageColor( 1, 1, 1, 0 );
 	aux = 0;
