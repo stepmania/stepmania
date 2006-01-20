@@ -29,8 +29,6 @@ struct TitleTrans
 	void LoadFromNode( const XNode* pNode );
 };
 
-vector<TitleTrans> ttab;
-
 bool TitleTrans::Matches( const TitleFields &from, TitleFields &to )
 {
 	if( !TitleFrom.Replace(Replacement.Title, from.Title, to.Title) )
