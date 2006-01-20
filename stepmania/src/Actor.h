@@ -14,10 +14,10 @@ class LuaClass;
 #include "MessageManager.h"
 
 
-#define DRAW_ORDER_BEFORE_EVERYTHING	-200
-#define DRAW_ORDER_UNDERLAY				-100
+#define DRAW_ORDER_BEFORE_EVERYTHING		-200
+#define DRAW_ORDER_UNDERLAY			-100
 // normal screen elements go here
-#define DRAW_ORDER_OVERLAY				+100
+#define DRAW_ORDER_OVERLAY			+100
 #define DRAW_ORDER_TRANSITIONS			+110
 #define DRAW_ORDER_AFTER_EVERYTHING		+200
 
@@ -46,12 +46,12 @@ public:
 		TWEEN_SPRING,
 	};
 	enum Effect { no_effect, effect_lua,
-				diffuse_blink,	diffuse_shift,	diffuse_ramp,
-				glow_blink,		glow_shift,
-				rainbow,
-				wag,	bounce,		bob,	pulse,
-				spin,	vibrate
-				};
+			diffuse_blink, diffuse_shift, diffuse_ramp,
+			glow_blink, glow_shift,
+			rainbow,
+			wag, bounce, bob, pulse,
+			spin, vibrate
+	};
 
 	struct TweenState
 	{
@@ -61,15 +61,15 @@ public:
 		bool operator!=( const TweenState &other ) const { return !operator==(other); }
 
 		// start and end position for tweening
-		RageVector3 pos;
-		RageVector3 rotation;
-		RageVector4 quat;
-		RageVector3 scale;
+		RageVector3	pos;
+		RageVector3	rotation;
+		RageVector4	quat;
+		RageVector3	scale;
 		float		fSkewX;
 		RectF		crop;	// 0 = no cropping, 1 = fully cropped
 		RectF		fade;	// 0 = no fade
-		RageColor   diffuse[4];
-		RageColor   glow;
+		RageColor	diffuse[4];
+		RageColor	glow;
 		float		aux;
 	};
 
@@ -85,11 +85,11 @@ public:
 
 	void Draw();						// calls, EarlyAbortDraw, BeginDraw, DrawPrimitives, EndDraw
 	virtual bool EarlyAbortDraw() const { return false; }	// return true to early abort drawing of this Actor
-	void BeginDraw();			// pushes transform onto world matrix stack
-	virtual void SetGlobalRenderStates();		// Actor should call this at beginning of their DrawPrimitives()
-	virtual void SetTextureRenderStates();		// Actor should call this after setting a texture
-	virtual void DrawPrimitives() {};	// Derivatives should override
-	void EndDraw();				// pops transform from world matrix stack
+	void BeginDraw();					// pushes transform onto world matrix stack
+	virtual void SetGlobalRenderStates();			// Actor should call this at beginning of their DrawPrimitives()
+	virtual void SetTextureRenderStates();			// Actor should call this after setting a texture
+	virtual void DrawPrimitives() {};			// Derivatives should override
+	void EndDraw();						// pops transform from world matrix stack
 	
 	// TODO: make Update non virtual and change all classes to override UpdateInternal 
 	// instead.
@@ -98,8 +98,8 @@ public:
 	virtual void UpdateInternal( float fDeltaTime );	// override this
 	void UpdateTweening( float fDeltaTime );
 
-	const CString &GetName() const		{ return m_sName; }
-	virtual void SetName( const CString &sName ) { m_sName = sName; }
+	const CString &GetName() const			{ return m_sName; }
+	virtual void SetName( const CString &sName )	{ m_sName = sName; }
 
 	float GetX() const				{ return m_current.pos.x; };
 	float GetY() const				{ return m_current.pos.y; };
@@ -107,79 +107,79 @@ public:
 	float GetDestX() const				{ return DestTweenState().pos.x; };
 	float GetDestY() const				{ return DestTweenState().pos.y; };
 	float GetDestZ() const				{ return DestTweenState().pos.z; };
-	void  SetX( float x )			{ DestTweenState().pos.x = x; };
-	void  SetY( float y )			{ DestTweenState().pos.y = y; };
-	void  SetZ( float z )			{ DestTweenState().pos.z = z; };
-	void  SetXY( float x, float y )	{ DestTweenState().pos.x = x; DestTweenState().pos.y = y; };
-	void  AddX( float x )			{ SetX( GetDestX()+x ); }
-	void  AddY( float y )			{ SetY( GetDestY()+y ); }
-	void  AddZ( float z )			{ SetZ( GetDestZ()+z ); }
+	void  SetX( float x )				{ DestTweenState().pos.x = x; };
+	void  SetY( float y )				{ DestTweenState().pos.y = y; };
+	void  SetZ( float z )				{ DestTweenState().pos.z = z; };
+	void  SetXY( float x, float y )			{ DestTweenState().pos.x = x; DestTweenState().pos.y = y; };
+	void  AddX( float x )				{ SetX( GetDestX()+x ); }
+	void  AddY( float y )				{ SetY( GetDestY()+y ); }
+	void  AddZ( float z )				{ SetZ( GetDestZ()+z ); }
 
 	// height and width vary depending on zoom
-	float GetUnzoomedWidth() const		{ return m_size.x; }
-	float GetUnzoomedHeight() const		{ return m_size.y; }
-	float GetZoomedWidth() const 		{ return m_size.x * m_baseScale.x * DestTweenState().scale.x; }
-	float GetZoomedHeight() const		{ return m_size.y * m_baseScale.y * DestTweenState().scale.y; }
-	void  SetWidth( float width )	{ m_size.x = width; }
-	void  SetHeight( float height )	{ m_size.y = height; }
+	float GetUnzoomedWidth() const			{ return m_size.x; }
+	float GetUnzoomedHeight() const			{ return m_size.y; }
+	float GetZoomedWidth() const 			{ return m_size.x * m_baseScale.x * DestTweenState().scale.x; }
+	float GetZoomedHeight() const			{ return m_size.y * m_baseScale.y * DestTweenState().scale.y; }
+	void  SetWidth( float width )			{ m_size.x = width; }
+	void  SetHeight( float height )			{ m_size.y = height; }
 
 	// Base
-	float GetBaseZoomX()				{ return m_baseScale.x;	}
-	void  SetBaseZoomX( float zoom )	{ m_baseScale.x = zoom;	}
-	void  SetBaseZoomY( float zoom )	{ m_baseScale.y = zoom; }
-	void  SetBaseZoomZ( float zoom )	{ m_baseScale.z = zoom; }
-	void  SetBaseZoom( const RageVector3 &zoom ) { m_baseScale = zoom; }
-	void  SetBaseRotationX( float rot )	{ m_baseRotation.x = rot; }
-	void  SetBaseRotationY( float rot )	{ m_baseRotation.y = rot; }
-	void  SetBaseRotationZ( float rot )	{ m_baseRotation.z = rot; }
+	float GetBaseZoomX() const			{ return m_baseScale.x;	}
+	void  SetBaseZoomX( float zoom )		{ m_baseScale.x = zoom;	}
+	void  SetBaseZoomY( float zoom )		{ m_baseScale.y = zoom; }
+	void  SetBaseZoomZ( float zoom )		{ m_baseScale.z = zoom; }
+	void  SetBaseZoom( const RageVector3 &zoom )	{ m_baseScale = zoom; }
+	void  SetBaseRotationX( float rot )		{ m_baseRotation.x = rot; }
+	void  SetBaseRotationY( float rot )		{ m_baseRotation.y = rot; }
+	void  SetBaseRotationZ( float rot )		{ m_baseRotation.z = rot; }
 	void  SetBaseRotation( const RageVector3 &rot )	{ m_baseRotation = rot; }
 	virtual void  SetBaseAlpha( float fAlpha )	{ m_fBaseAlpha = fAlpha; }
 
 
-	float GetZoom()					{ return DestTweenState().scale.x; }	// not accurate in some cases
-	float GetZoomX()				{ return DestTweenState().scale.x; }
-	float GetZoomY()				{ return DestTweenState().scale.y; }
-	float GetZoomZ()				{ return DestTweenState().scale.z; }
-	void  SetZoom( float zoom )		{ DestTweenState().scale.x = zoom;	DestTweenState().scale.y = zoom; DestTweenState().scale.z = zoom; }
-	void  SetZoomX( float zoom )	{ DestTweenState().scale.x = zoom;	}
-	void  SetZoomY( float zoom )	{ DestTweenState().scale.y = zoom; }
-	void  SetZoomZ( float zoom )	{ DestTweenState().scale.z = zoom; }
-	void  ZoomTo( float fX, float fY )	{ ZoomToWidth(fX); ZoomToHeight(fY); }
-	void  ZoomToWidth( float zoom )	{ SetZoomX( zoom / GetUnzoomedWidth() ); }
-	void  ZoomToHeight( float zoom ){ SetZoomY( zoom / GetUnzoomedHeight() ); }
+	float GetZoom() const				{ return DestTweenState().scale.x; }	// not accurate in some cases
+	float GetZoomX() const				{ return DestTweenState().scale.x; }
+	float GetZoomY() const				{ return DestTweenState().scale.y; }
+	float GetZoomZ() const				{ return DestTweenState().scale.z; }
+	void  SetZoom( float zoom )			{ DestTweenState().scale.x = zoom; DestTweenState().scale.y = zoom; DestTweenState().scale.z = zoom; }
+	void  SetZoomX( float zoom )			{ DestTweenState().scale.x = zoom; }
+	void  SetZoomY( float zoom )			{ DestTweenState().scale.y = zoom; }
+	void  SetZoomZ( float zoom )			{ DestTweenState().scale.z = zoom; }
+	void  ZoomTo( float fX, float fY )		{ ZoomToWidth(fX); ZoomToHeight(fY); }
+	void  ZoomToWidth( float zoom )			{ SetZoomX( zoom / GetUnzoomedWidth() ); }
+	void  ZoomToHeight( float zoom )		{ SetZoomY( zoom / GetUnzoomedHeight() ); }
 
-	float GetRotationX()			{ return DestTweenState().rotation.x; }
-	float GetRotationY()			{ return DestTweenState().rotation.y; }
-	float GetRotationZ()			{ return DestTweenState().rotation.z; }
-	void  SetRotationX( float rot )	{ DestTweenState().rotation.x = rot; }
-	void  SetRotationY( float rot )	{ DestTweenState().rotation.y = rot; }
-	void  SetRotationZ( float rot )	{ DestTweenState().rotation.z = rot; }
+	float GetRotationX() const			{ return DestTweenState().rotation.x; }
+	float GetRotationY() const			{ return DestTweenState().rotation.y; }
+	float GetRotationZ() const			{ return DestTweenState().rotation.z; }
+	void  SetRotationX( float rot )			{ DestTweenState().rotation.x = rot; }
+	void  SetRotationY( float rot )			{ DestTweenState().rotation.y = rot; }
+	void  SetRotationZ( float rot )			{ DestTweenState().rotation.z = rot; }
 	void  AddRotationH( float rot );
 	void  AddRotationP( float rot );
 	void  AddRotationR( float rot );
 
-	void SetSkewX( float fAmount )	{ DestTweenState().fSkewX = fAmount; }
-	float GetSkewX( float fAmount )	{ return DestTweenState().fSkewX; }
+	void SetSkewX( float fAmount )			{ DestTweenState().fSkewX = fAmount; }
+	float GetSkewX( float fAmount ) const		{ return DestTweenState().fSkewX; }
 
-	float GetCropLeft()					{ return DestTweenState().crop.left; }
-	float GetCropTop()					{ return DestTweenState().crop.top;	}
-	float GetCropRight()				{ return DestTweenState().crop.right;}
-	float GetCropBottom()				{ return DestTweenState().crop.bottom;}
-	void  SetCropLeft( float percent )	{ DestTweenState().crop.left = percent; }
-	void  SetCropTop( float percent )	{ DestTweenState().crop.top = percent;	}
-	void  SetCropRight( float percent )	{ DestTweenState().crop.right = percent;}
-	void  SetCropBottom( float percent ){ DestTweenState().crop.bottom = percent;}
+	float GetCropLeft() const			{ return DestTweenState().crop.left; }
+	float GetCropTop() const			{ return DestTweenState().crop.top; }
+	float GetCropRight() const			{ return DestTweenState().crop.right; }
+	float GetCropBottom() const			{ return DestTweenState().crop.bottom; }
+	void  SetCropLeft( float percent )		{ DestTweenState().crop.left = percent; }
+	void  SetCropTop( float percent	) 		{ DestTweenState().crop.top = percent;	}
+	void  SetCropRight( float percent )		{ DestTweenState().crop.right = percent;}
+	void  SetCropBottom( float percent )		{ DestTweenState().crop.bottom = percent;}
 
-	void  SetFadeLeft( float percent )	{ DestTweenState().fade.left = percent; }
-	void  SetFadeTop( float percent )	{ DestTweenState().fade.top = percent;	}
-	void  SetFadeRight( float percent )	{ DestTweenState().fade.right = percent;}
-	void  SetFadeBottom( float percent ){ DestTweenState().fade.bottom = percent;}
+	void  SetFadeLeft( float percent )		{ DestTweenState().fade.left = percent; }
+	void  SetFadeTop( float percent )		{ DestTweenState().fade.top = percent;	}
+	void  SetFadeRight( float percent )		{ DestTweenState().fade.right = percent;}
+	void  SetFadeBottom( float percent )		{ DestTweenState().fade.bottom = percent;}
 
 	void SetGlobalDiffuseColor( RageColor c );
 	void SetGlobalX( float x );
 
-	virtual void SetDiffuse( RageColor c ) { for(int i=0; i<4; i++) DestTweenState().diffuse[i] = c; };
-	virtual void SetDiffuseAlpha( float f ) { for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = f; SetDiffuses( i, c ); } }
+	virtual void SetDiffuse( RageColor c )		{ for(int i=0; i<4; i++) DestTweenState().diffuse[i] = c; };
+	virtual void SetDiffuseAlpha( float f )		{ for(int i = 0; i < 4; ++i) { RageColor c = GetDiffuses( i ); c.a = f; SetDiffuses( i, c ); } }
 	void SetDiffuseColor( RageColor c );
 	void SetDiffuses( int i, RageColor c )		{ DestTweenState().diffuse[i] = c; };
 	void SetDiffuseUpperLeft( RageColor c )		{ DestTweenState().diffuse[0] = c; };
@@ -190,14 +190,14 @@ public:
 	void SetDiffuseRightEdge( RageColor c )		{ DestTweenState().diffuse[1] = DestTweenState().diffuse[3] = c; };
 	void SetDiffuseBottomEdge( RageColor c )	{ DestTweenState().diffuse[2] = DestTweenState().diffuse[3] = c; };
 	void SetDiffuseLeftEdge( RageColor c )		{ DestTweenState().diffuse[0] = DestTweenState().diffuse[2] = c; };
-	RageColor GetDiffuse()						{ return DestTweenState().diffuse[0]; };
-	RageColor GetDiffuses( int i )				{ return DestTweenState().diffuse[i]; };
-	float GetDiffuseAlpha()						{ return DestTweenState().diffuse[0].a; };
-	void SetGlow( RageColor c )					{ DestTweenState().glow = c; };
-	RageColor GetGlow()							{ return DestTweenState().glow; };
+	RageColor GetDiffuse() const			{ return DestTweenState().diffuse[0]; };
+	RageColor GetDiffuses( int i ) const		{ return DestTweenState().diffuse[i]; };
+	float GetDiffuseAlpha() const			{ return DestTweenState().diffuse[0].a; };
+	void SetGlow( RageColor c )			{ DestTweenState().glow = c; };
+	RageColor GetGlow() const			{ return DestTweenState().glow; };
 
-	void SetAux( float f )						{ DestTweenState().aux = f; }
-	float GetAux() const						{ return m_current.aux; }
+	void SetAux( float f )				{ DestTweenState().aux = f; }
+	float GetAux() const				{ return m_current.aux; }
 
 	void BeginTweening( float time, TweenType tt = TWEEN_LINEAR );
 	void StopTweening();
@@ -244,17 +244,17 @@ public:
 	//
 	// effects
 	//
-	void StopEffect()						{ m_Effect = no_effect; }
-	Effect GetEffect() const					{ return m_Effect; }
-	float GetSecsIntoEffect() const				{ return m_fSecsIntoEffect; }
-	float GetEffectDelta() const				{ return m_fEffectDelta; }
+	void StopEffect()				{ m_Effect = no_effect; }
+	Effect GetEffect() const			{ return m_Effect; }
+	float GetSecsIntoEffect() const			{ return m_fSecsIntoEffect; }
+	float GetEffectDelta() const			{ return m_fEffectDelta; }
 
-	void SetEffectColor1( RageColor c )			{ m_effectColor1 = c; }
-	void SetEffectColor2( RageColor c )			{ m_effectColor2 = c; }
+	void SetEffectColor1( RageColor c )		{ m_effectColor1 = c; }
+	void SetEffectColor2( RageColor c )		{ m_effectColor2 = c; }
 	void SetEffectPeriod( float fTime );
 	float GetEffectPeriod();
 	void SetEffectTiming( float fRampUp, float fAtHalf, float fRampDown, float fAtZero );
-	void SetEffectOffset( float fTime )			{ m_fEffectOffset = fTime; }
+	void SetEffectOffset( float fTime )		{ m_fEffectOffset = fTime; }
 	void SetEffectClock( EffectClock c )		{ m_EffectClock = c; }
 	void SetEffectClockString( const CString &s );	// convenience
 
@@ -294,10 +294,8 @@ public:
 		float fPeriod = 2.f,
 		float fMinZoom = 0.5f,
 		float fMaxZoom = 1.f );
-	void SetEffectSpin( 
-		RageVector3 vect = RageVector3(0,0,180) );
-	void SetEffectVibrate( 
-		RageVector3 vect = RageVector3(10,10,10) );
+	void SetEffectSpin( RageVector3 vect = RageVector3(0,0,180) );
+	void SetEffectVibrate( RageVector3 vect = RageVector3(10,10,10) );
 
 
 	//
@@ -309,27 +307,27 @@ public:
 	void SetHidden( bool b )			{ m_bVisible = !b; }
 	void SetShadowLength( float fLength );
 	// TODO: Implement hibernate as a tween type?
-	void SetHibernate( float fSecs )	{ m_fHibernateSecondsLeft = fSecs; }
-	void SetDrawOrder( int iOrder )		{ m_iDrawOrder = iOrder; }
+	void SetHibernate( float fSecs )		{ m_fHibernateSecondsLeft = fSecs; }
+	void SetDrawOrder( int iOrder )			{ m_iDrawOrder = iOrder; }
 	int GetDrawOrder() const			{ return m_iDrawOrder; }
 
 	virtual void EnableAnimation( bool b ) 		{ m_bIsAnimating = b; }	// Sprite needs to overload this
-	void StartAnimating()		{ this->EnableAnimation(true); };
-	void StopAnimating()		{ this->EnableAnimation(false); };
+	void StartAnimating()				{ this->EnableAnimation(true); };
+	void StopAnimating()				{ this->EnableAnimation(false); };
 
 
 	//
 	// render states
 	//
-	void SetBlendMode( BlendMode mode )			{ m_BlendMode = mode; } 
+	void SetBlendMode( BlendMode mode )		{ m_BlendMode = mode; } 
 	void SetBlendModeString( const CString &s );	// convenience
-	void SetTextureWrapping( bool b ) 			{ m_bTextureWrapping = b; } 
-	void SetClearZBuffer( bool b ) 				{ m_bClearZBuffer = b; } 
-	void SetUseZBuffer( bool b ) 				{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); } 
-	virtual void SetZTestMode( ZTestMode mode ) { m_ZTestMode = mode; } 
+	void SetTextureWrapping( bool b ) 		{ m_bTextureWrapping = b; } 
+	void SetClearZBuffer( bool b ) 			{ m_bClearZBuffer = b; } 
+	void SetUseZBuffer( bool b ) 			{ SetZTestMode(b?ZTEST_WRITE_ON_PASS:ZTEST_OFF); SetZWrite(b); } 
+	virtual void SetZTestMode( ZTestMode mode )	{ m_ZTestMode = mode; } 
 	void SetZTestModeString( const CString &s );	// convenience
-	virtual void SetZWrite( bool b ) 			{ m_bZWrite = b; } 
-	void SetZBias( float f )					{ m_fZBias = f; }
+	virtual void SetZWrite( bool b ) 		{ m_bZWrite = b; } 
+	void SetZBias( float f )			{ m_fZBias = f; }
 	virtual void SetCullMode( CullMode mode ) 	{ m_CullMode = mode; } 
 	void SetCullModeString( const CString &s );	// convenience
 
@@ -431,20 +429,20 @@ protected:
 
 	/* This can be used in lieu of the fDeltaTime parameter to Update() to
 	 * follow the effect clock.  Actor::Update must be called first. */
-	float GetEffectDeltaTime() const { return m_fEffectDelta; }
+	float GetEffectDeltaTime() const		{ return m_fEffectDelta; }
 
-	RageColor   m_effectColor1;
-	RageColor   m_effectColor2;
-	RageVector3 m_vEffectMagnitude;
+	RageColor	m_effectColor1;
+	RageColor	m_effectColor2;
+	RageVector3	m_vEffectMagnitude;
 
 
 	//
 	// other properties
 	//
-	bool	m_bVisible;
-	float	m_fHibernateSecondsLeft;
-	float	m_fShadowLength;	// 0 == no shadow
-	bool	m_bIsAnimating;
+	bool		m_bVisible;
+	float		m_fHibernateSecondsLeft;
+	float		m_fShadowLength;	// 0 == no shadow
+	bool		m_bIsAnimating;
 	int		m_iDrawOrder;
 
 	//
