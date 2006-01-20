@@ -1,6 +1,7 @@
 #include "global.h"
 #include "ScreenDimensions.h"
 #include "PrefsManager.h"
+#include "Preference.h"
 #include "LuaManager.h"
 #include "LuaFunctions.h"
 #include "ThemeManager.h"
@@ -25,9 +26,12 @@ static ThemeMetric<float> THEME_SCREEN_HEIGHT("Common","ScreenHeight");
  */
 #define THEME_NATIVE_ASPECT (THEME_SCREEN_WIDTH/THEME_SCREEN_HEIGHT)
 
+#define ASPECT_AUTO -1
+static Preference<float> g_fDisplayAspectRatio( "DisplayAspectRatio", ASPECT_AUTO );
+
 float ScreenDimensions::GetScreenAspectRatio()
 {
-	float fAspect = PREFSMAN->m_fDisplayAspectRatio;
+	float fAspect = g_fDisplayAspectRatio;
 	if( fAspect == ASPECT_AUTO )
 	{
 		/* Most PC monitor resolutions have square pixels (PAR 1:1), so the DAR
