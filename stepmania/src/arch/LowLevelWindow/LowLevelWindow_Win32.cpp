@@ -1,6 +1,6 @@
 #include "global.h"
-#include "archutils/Win32/GraphicsWindow.h"
 #include "LowLevelWindow_Win32.h"
+#include "archutils/Win32/GraphicsWindow.h"
 #include "RageUtil.h"
 #include "RageLog.h"
 #include "RageDisplay.h"
@@ -279,9 +279,9 @@ void LowLevelWindow_Win32::Update()
 	GraphicsWindow::Update();
 }
 
-VideoModeParams LowLevelWindow_Win32::GetActualVideoModeParams() const
+const VideoModeParams &LowLevelWindow_Win32::GetActualVideoModeParams() const
 {
-		return GraphcsWindow::GetParams();
+	return GraphicsWindow::GetParams();
 }
 
 /*

@@ -762,8 +762,7 @@ RageSurface* RageDisplay_D3D::CreateScreenshot()
 
 VideoModeParams RageDisplay_D3D::GetActualVideoModeParams() const 
 {
-	VideoModeParams p; 
-	GraphicsWindow::GetParams( p ); 
+	VideoModeParams p = GraphicsWindow::GetParams(); 
 	return p; 
 }
 
