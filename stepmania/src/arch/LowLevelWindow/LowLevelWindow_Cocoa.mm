@@ -246,17 +246,14 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 			return ssprintf( "Failed to switch to full screen:%d x %d @ %d. Error %d.",
 					 p.width, p.height, p.rate, result );
 	}
-	
+
 	if( bRebuildContext )
 	{
 		bool bShared;
 		NSOpenGLContext *newContext = CreateOGLContext( p.bpp, false, m_Context, bShared );
 		
 		if( !newContext )
-		{
-			ShutDownFullScreen();
 			return "Failed to create full screen OGL context.";
-		}
 		[m_Context clearDrawable];
 		[m_Context release];
 		m_Context = newContext;
