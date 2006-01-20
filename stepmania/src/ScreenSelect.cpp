@@ -201,9 +201,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		if( bAllPlayersChoseTheSame )
 		{
 			const GameCommand &gc = m_aGameCommands[iMastersIndex];
-			CString sThisScreen = gc.m_sScreen;
-			if( m_sNextScreen == "" )
-				m_sNextScreen = sThisScreen;
+			m_sNextScreen = gc.m_sScreen;
 			gc.ApplyToAllPlayers();
 		}
 		else
@@ -212,9 +210,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 			{
 				int iIndex = this->GetSelectionIndex(p);
 				const GameCommand &gc = m_aGameCommands[iIndex];
-				CString sThisScreen = gc.m_sScreen;
-				if( m_sNextScreen == "" )
-					m_sNextScreen = sThisScreen;
+				m_sNextScreen = gc.m_sScreen;
 				gc.Apply( p );
 			}
 		}
@@ -239,7 +235,7 @@ void ScreenSelect::HandleScreenMessage( const ScreenMessage SM )
 		if( !IsTransitioning() )
 			StartTransitioningScreen( SM_GoToNextScreen );
 
-		SCREENMAN->ConcurrentlyPrepareScreen( m_sNextScreen );
+		SCREENMAN->ConcurrentlyPrepareScreen( GetNextScreen() );
 	}
 	else if( SM == SM_GoToNextScreen )
 	{
