@@ -23,16 +23,10 @@ void RoomWheel::Load( CString sType )
 	for( int i=0; i<NUM_WHEEL_ITEMS; i++ )
 		m_WheelBaseItems.push_back( new RoomWheelItem );
 
-	m_roomInfo.SetName("InfoBox");
-	m_roomInfo.SetWidth( THEME->GetMetricF(m_sName,"InfoBoxWidth") );
-	m_roomInfo.SetHeight( THEME->GetMetricF(m_sName,"InfoBoxHeight") );
-	SET_XY( m_roomInfo );
-	m_roomInfo.SetHidden( true );
-	OFF_COMMAND( m_roomInfo );
+	m_roomInfo.Load("RoomInfoDisplay");
 	this->AddChild(&m_roomInfo);
 
 	m_WheelState = STATE_SELECTING;
-	m_RoomInfoState = LOCKED;
 
 	AddPerminateItem( new RoomWheelData(TYPE_GENERIC, "Create Room", "Create a new game room", THEME->GetMetricC( m_sName, "CreateRoomColor")) );
 
@@ -91,12 +85,12 @@ void RoomWheel::AddPerminateItem(RoomWheelData* itemdata)
 static LocalizedString ENTER_ROOM_NAME( "RoomWheel", "Enter room name" );
 bool RoomWheel::Select()
 {
-	RetractInfoBox();
+	m_roomInfo.RetractInfoBox();
 	if( m_iSelection > 0 )
 		return WheelBase::Select();
 	else if( m_iSelection == 0 )
 	{
-		// Since this is not actually an option outside of this wheel NULL is a good idea.
+		// Since this is not actually an option outside of this wheel, NULL is a good idea.
 		m_LastSelection = NULL;
 		ScreenTextEntry::TextEntry( SM_BackFromRoomName, ENTER_ROOM_NAME, "", 255 );
 	}
@@ -115,25 +109,14 @@ void RoomWheelItem::LoadFromWheelItemBaseData( WheelItemBaseData* pWID )
 void RoomWheel::Update( float fDeltaTime )
 {
 	WheelBase::Update(fDeltaTime);
-
-	if ((m_deployDelay.PeekDeltaTime() >= 1.5) && (m_deployDelay.PeekDeltaTime() < (1.5 + 5)))
-		DeployInfoBox();
-	else if (m_deployDelay.PeekDeltaTime() >= 1.5 + 5)
-		RetractInfoBox();
 }
 
 void RoomWheel::Move(int n)
 {
 	if ((n == 0) && (m_iSelection >= m_offset))
-	{
-		m_RoomInfoState = CLOSED;
-		m_deployDelay.Touch();
-
-		if (m_roomInfo.GetHidden())
-			m_roomInfo.SetHidden(false);
-	}
+		m_roomInfo.SetRoom( GetItem(m_iSelection) );
 	else
-		RetractInfoBox();
+		m_roomInfo.RetractInfoBox();
 
 	WheelBase::Move(n);
 }
@@ -148,21 +131,56 @@ void RoomWheel::RemoveItem( int index )
 	WheelBase::RemoveItem(index + m_offset);
 }
 
-void RoomWheel::DeployInfoBox()
+void RoomInfoDisplay::DeployInfoBox()
 {
-	if (m_RoomInfoState == CLOSED)
+	if (m_state == CLOSED)
 	{
-		SET_XY_AND_ON_COMMAND( m_roomInfo );
-		m_RoomInfoState = OPEN;
+		LOG->Info("OPEN");
+		SET_XY_AND_ON_COMMAND( this );
+		m_state = OPEN;
 	}
 }
 	
-void RoomWheel::RetractInfoBox()
+void RoomInfoDisplay::RetractInfoBox()
 {
-	if (m_RoomInfoState == OPEN)
-		OFF_COMMAND( m_roomInfo );
+	if (m_state == OPEN)
+		OFF_COMMAND( this );
 	
-	m_RoomInfoState = LOCKED;
+	m_state = LOCKED;
+}
+
+void RoomInfoDisplay::Load( CString sType )
+{
+	SetName(sType);
+	DEPLOY_DELAY.Load(sType, "DeployDelay");
+	RETRACT_DELAY.Load(sType, "RetractDelay");
+
+	m_state = LOCKED;
+
+	m_bg.SetName("Background");
+	m_bg.SetWidth( THEME->GetMetricF(sType,"BackgroundWidth") );
+	m_bg.SetHeight( THEME->GetMetricF(sType,"BackgroundHeight") );
+	this->AddChild(&m_bg);
+
+	SET_XY_AND_ON_COMMAND( this );
+	OFF_COMMAND(this);
+	StopTweening();
+}
+
+void RoomInfoDisplay::SetRoom( const RoomWheelData* roomData )
+{
+	m_state = CLOSED;
+	m_deployDelay.Touch();
+}
+
+void RoomInfoDisplay::Update( float fDeltaTime )
+{
+	if ((m_deployDelay.PeekDeltaTime() >= DEPLOY_DELAY) && (m_deployDelay.PeekDeltaTime() < (DEPLOY_DELAY + RETRACT_DELAY)))
+		DeployInfoBox();
+	else if (m_deployDelay.PeekDeltaTime() >= DEPLOY_DELAY + RETRACT_DELAY)
+		RetractInfoBox();
+
+	ActorFrame::Update(fDeltaTime);
 }
 
 /*

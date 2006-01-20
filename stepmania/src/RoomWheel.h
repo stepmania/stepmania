@@ -34,6 +34,35 @@ private:
 	ThemeMetric<apActorCommands>	DESC_ON_COMMAND;
 };
 
+class RoomInfoDisplay : public ActorFrame
+{
+public:
+	virtual void Load( CString sType );
+	virtual void Update( float fDeltaTime );
+	void SetRoom( const RoomWheelData* roomData );
+	void DeployInfoBox();
+	void RetractInfoBox();
+private:
+	enum RoomInfoDisplayState
+	{
+		OPEN = 0,
+		CLOSED,
+		LOCKED
+	};
+
+	RoomInfoDisplayState m_state;
+	Quad m_bg;
+	BitmapText m_sTitle;
+	BitmapText m_sDesc;
+
+	RageTimer m_deployDelay;
+
+	ThemeMetric<float>	X;
+	ThemeMetric<float>	Y;
+	ThemeMetric<float>	DEPLOY_DELAY;
+	ThemeMetric<float>	RETRACT_DELAY;
+};
+
 class RoomWheel : public WheelBase {
 public:
 	virtual void Load( CString sType );
@@ -50,22 +79,7 @@ public:
 private:
 	int m_offset;
 
-	enum RoomInfoState
-	{
-		OPEN = 0,
-		CLOSED,
-		LOCKED
-	};
-
-	Quad m_roomInfo;
-
-	RageTimer m_deployDelay;
-//	RageTimer m_retractDelay;
-
-	RoomInfoState m_RoomInfoState;
-
-	void DeployInfoBox();
-	void RetractInfoBox();
+	RoomInfoDisplay m_roomInfo;
 };
 
 #endif
