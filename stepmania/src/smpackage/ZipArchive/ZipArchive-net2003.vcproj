@@ -25,7 +25,7 @@
 				Optimization="0"
 				PreprocessorDefinitions="_DEBUG;ZLIB_DLL;WIN32;_WINDOWS;ZIP_ARCHIVE_MFC_PROJ;PKZIP_BUG_WORKAROUND"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="stdafx.h"
 				PrecompiledHeaderFile=".\Debug/ZipArchive.pch"

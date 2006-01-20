@@ -14,12 +14,23 @@
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
+// prevent windows includes from pulling in debug CRTs:
+#if defined(_DEBUG)
+#undef _DEBUG
+#define RESTORE_DEBUG
+#endif
+
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
 #include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
 #ifndef _AFX_NO_AFXCMN_SUPPORT
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 #endif // _AFX_NO_AFXCMN_SUPPORT
+
+#if defined(RESTORE_DEBUG)
+#undef RESTORE_DEBUG
+#define _DEBUG
+#endif
 
 #include <vector>
 using namespace std;

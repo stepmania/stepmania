@@ -38,9 +38,19 @@
 
 #define ZIP_ARCHIVE_MFC
 
+#if defined(_DEBUG)
+#undef _DEBUG
+#define RESTORE_DEBUG
+#endif
+
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 #include <afx.h>
 #include <afxwin.h>
+
+#if defined(RESTORE_DEBUG)
+#undef RESTORE_DEBUG
+#define _DEBUG
+#endif
 
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
