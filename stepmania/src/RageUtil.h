@@ -45,7 +45,7 @@ inline unsigned long max( unsigned long a, unsigned int b ) { return a > b? a:b;
 template<typename T, typename U>
 inline U interp( T x, U l, U h )
 {
-        return U(x * (h - l) + l);
+	return U(x * (h - l) + l);
 }
 
 inline bool CLAMP( int &x, int l, int h )
@@ -187,7 +187,7 @@ public:
 // Simple function for generating random numbers
 inline float randomf( const float low=-1.0f, const float high=1.0f )
 {
-    return RandomFloat( low, high );
+	return RandomFloat( low, high );
 }
 
 /* return f rounded to the nearest multiple of fRoundInterval */
@@ -375,12 +375,12 @@ public:
 	bool Replace( const RString &sReplacement, const RString &sSubject, RString &sOut );
 
 private:
-    void Compile();
-    void Release();
+	void Compile();
+	void Release();
 
 	void *m_pReg;
 	unsigned m_iBackrefs;
-    RString m_sPattern;
+	RString m_sPattern;
 };
 
 

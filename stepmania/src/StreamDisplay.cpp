@@ -260,8 +260,8 @@ void StreamDisplay::DrawMask( float fPercent )
 	rect.right	= -m_fMeterWidth/2 + fChamberRightPercent*m_fMeterWidth+1;
 	rect.bottom	= -m_fMeterHeight/2 + fHeightPercent*m_fMeterHeight;
 
-	rect.left  = MIN( rect.left,  + m_fMeterWidth/2 );
-	rect.right = MIN( rect.right, + m_fMeterWidth/2 );
+	rect.left  = min( rect.left,  + m_fMeterWidth/2 );
+	rect.right = min( rect.right, + m_fMeterWidth/2 );
 
 	m_quadMask.StretchTo( rect );
 	m_quadMask.Draw();
@@ -272,8 +272,8 @@ void StreamDisplay::DrawMask( float fPercent )
 	rect.right	= +m_fMeterWidth/2;
 	rect.bottom	= +m_fMeterHeight/2;
 
-	rect.left  = MIN( rect.left,  + m_fMeterWidth/2 );
-	rect.right = MIN( rect.right, + m_fMeterWidth/2 );
+	rect.left  = min( rect.left,  + m_fMeterWidth/2 );
+	rect.right = min( rect.right, + m_fMeterWidth/2 );
 
 	m_quadMask.StretchTo( rect );
 	m_quadMask.Draw();
