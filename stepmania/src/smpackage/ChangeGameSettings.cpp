@@ -11,6 +11,8 @@
 #include "SpecialFiles.h"
 #include ".\changegamesettings.h"
 #include "archutils/Win32/DialogUtil.h"
+#include "LocalizedString.h"
+#include "RageUtil.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -106,6 +108,7 @@ BOOL ChangeGameSettings::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
+static LocalizedString ERROR_WRITING_FILE( "ChangeGameSettings", "Error writing file '%s': %s" );
 void ChangeGameSettings::OnOK() 
 {
 	// TODO: Add extra validation here
@@ -137,7 +140,11 @@ void ChangeGameSettings::OnOK()
 	ini.SetValue( "Options", "ShowLogWindow",	BST_CHECKED == IsDlgButtonChecked(IDC_CHECK_SHOW_LOG_WINDOW) );
 	
 
-	ini.WriteFile( SpecialFiles::PREFERENCES_INI_PATH );
+	if( !ini.WriteFile(SpecialFiles::PREFERENCES_INI_PATH) )
+	{
+		RString sError = ssprintf( ERROR_WRITING_FILE.GetValue(), SpecialFiles::PREFERENCES_INI_PATH.c_str(), ini.GetError().c_str() );
+		AfxMessageBox( sError );
+	}
 	
 	CDialog::OnOK();
 }

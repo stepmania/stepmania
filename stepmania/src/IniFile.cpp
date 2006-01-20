@@ -80,7 +80,9 @@ bool IniFile::WriteFile( const RString &sPath ) const
 		return false;
 	}
 
-	return IniFile::WriteFile( f );
+	bool bSuccess = IniFile::WriteFile( f );
+	f.Close();
+	return bSuccess && !f.GetError().empty();
 }
 
 bool IniFile::WriteFile( RageFileBasic &f ) const
