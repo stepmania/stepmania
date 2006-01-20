@@ -175,14 +175,6 @@ static NSOpenGLContext *CreateOGLContext( int iColorDepth, bool bWindowed, NSOpe
 	
 	[pixelFormat release];
 	
-	if( !context )
-		return nil;
-	
-	//long val = 64;
-	
-	//[context setValues:&val forParameter:NSOpenGLContextParameter(280)];
-	//[context setValues:&val forParameter:NSOpenGLContextParameter(284)];
-	
 	return context;
 }		
 
