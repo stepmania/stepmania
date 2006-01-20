@@ -641,12 +641,11 @@ bool RageDisplay_D3D::BeginFrame()
 	case D3DERR_DEVICENOTRESET:
 		{
 			bool bIgnore = false;
-			VideoModeParams params;
-			StepMania::GetPreferredVideoModeParams( params );
-
-			CString sError = SetVideoMode( params, bIgnore );
+			CString sError = SetD3DParams( bIgnore );
 			if( sError != "" )
 				RageException::Throw( sError );
+
+			this->SetDefaultRenderStates();
 			break;
 		}
 	}
