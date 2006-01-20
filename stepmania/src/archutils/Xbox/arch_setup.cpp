@@ -1,5 +1,6 @@
 #include "global.h"
 
+int main( int argc, char* argv[] );
 void __cdecl main()
 {
 	int argc = 1;
