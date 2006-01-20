@@ -25,16 +25,6 @@ inline unsigned long min( unsigned long a, unsigned int b ) { return a < b? a:b;
 inline unsigned long max( unsigned int a, unsigned long b ) { return a > b? a:b; }
 inline unsigned long max( unsigned long a, unsigned int b ) { return a > b? a:b; }
 
-/* Traditional defines.  Only use this if you absolutely need
- * a constant value. */
-#ifndef MAX
-#define MAX(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef MIN
-#define MIN(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
-
 #define clamp(val,low,high)		( max( (low), min((val),(high)) ) )
 
 // Scales x so that l1 corresponds to l2 and h1 corresponds to h2.  Does not modify x, MUST assign the result to something!
