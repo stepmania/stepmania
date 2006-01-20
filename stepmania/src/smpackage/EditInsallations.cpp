@@ -60,7 +60,7 @@ BOOL EditInsallations::OnInitDialog()
 	DialogUtil::LocalizeDialogAndContents( *this );	
 
 	vector<RString> vs;
-	SMPackageUtil::GetStepManiaInstallDirs( vs );
+	SMPackageUtil::GetGameInstallDirs( vs );
 	for( unsigned i=0; i<vs.size(); i++ )
 		m_list.AddString( vs[i] );
 

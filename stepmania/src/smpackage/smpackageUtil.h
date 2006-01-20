@@ -5,14 +5,14 @@ struct LanguageInfo;
 
 namespace SMPackageUtil
 {
-	void WriteStepManiaInstallDirs( const vector<RString>& asInstallDirsToWrite );
-	void GetStepManiaInstallDirs( vector<RString>& asInstallDirsOut );
-	void AddStepManiaInstallDir( RString sNewInstallDir );
+	void WriteGameInstallDirs( const vector<RString>& asInstallDirsToWrite );
+	void GetGameInstallDirs( vector<RString>& asInstallDirsOut );
+	void AddGameInstallDir( RString sNewInstallDir );
 	void SetDefaultInstallDir( int iInstallDirIndex );
 	void SetDefaultInstallDir( RString sInstallDir );
 
-	bool GetPref( RString name, bool &val );
-	bool SetPref( RString name, bool val );
+	bool GetPref( const RString &name, bool &val );
+	bool SetPref( const RString &name, bool val );
 
 	RString GetPackageDirectory(RString path);
 	bool IsValidPackageDirectory(RString path);

@@ -81,8 +81,9 @@ bool IniFile::WriteFile( const RString &sPath ) const
 	}
 
 	bool bSuccess = IniFile::WriteFile( f );
-	f.Close();
-	return bSuccess && !f.GetError().empty();
+	int iFlush = f.Flush();
+	bSuccess &= (iFlush != -1);
+	return bSuccess;
 }
 
 bool IniFile::WriteFile( RageFileBasic &f ) const

@@ -60,7 +60,7 @@ BOOL CSmpackageApp::InitInstance()
 	{
 		TCHAR szCurrentDirectory[MAX_PATH];
 		GetCurrentDirectory( ARRAYSIZE(szCurrentDirectory), szCurrentDirectory );
-		SMPackageUtil::AddStepManiaInstallDir( szCurrentDirectory );	// add this if it doesn't already exist
+		SMPackageUtil::AddGameInstallDir( szCurrentDirectory );	// add this if it doesn't already exist
 	}	
 
 	// check if there's a .smzip command line argument

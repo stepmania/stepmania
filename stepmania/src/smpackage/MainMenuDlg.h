@@ -40,7 +40,7 @@ protected:
 	afx_msg void OnChangeApi();
 	afx_msg void OnCreateSong();
 	virtual BOOL OnInitDialog();
-	afx_msg void OnOpenStepmaniaIni();
+	afx_msg void OnOpenPreferencesIni();
 	afx_msg void OnBnClickedClearKeymaps();
 	afx_msg void OnBnClickedChangePreferences();
 	afx_msg void OnBnClickedOpenPreferences();

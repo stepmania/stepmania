@@ -386,7 +386,7 @@ void CSmpackageExportDlg::OnButtonEdit()
 	int nResponse = dlg.DoModal();
 	if( nResponse == IDOK )
 	{
-		SMPackageUtil::WriteStepManiaInstallDirs( dlg.m_vsReturnedInstallDirs );
+		SMPackageUtil::WriteGameInstallDirs( dlg.m_vsReturnedInstallDirs );
 		RefreshInstallationList();
 		RefreshTree();
 	}
@@ -397,7 +397,7 @@ void CSmpackageExportDlg::RefreshInstallationList()
 	m_comboDir.ResetContent();
 
 	vector<RString> asInstallDirs;
-	SMPackageUtil::GetStepManiaInstallDirs( asInstallDirs );
+	SMPackageUtil::GetGameInstallDirs( asInstallDirs );
 	for( unsigned i=0; i<asInstallDirs.size(); i++ )
 	{
 		m_comboDir.AddString( asInstallDirs[i] );

@@ -9,39 +9,36 @@
 #include "resource.h"	
 #include "LocalizedString.h"
 
-void SMPackageUtil::WriteStepManiaInstallDirs( const vector<RString>& asInstallDirsToWrite )
+static const RString SMPACKAGE_KEY = "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage";
+static const RString INSTALLATIONS_KEY = "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage\\Installations";
+
+void SMPackageUtil::WriteGameInstallDirs( const vector<RString>& asInstallDirsToWrite )
 {
-	RString sKey = "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage\\Installations";
-
-	unsigned i;
-
-	for( i=0; i<100; i++ )
+	for( unsigned i=0; i<100; i++ )
 	{
 		RString sName = ssprintf("%d",i);
 //		Reg.DeleteKey( sName );	// delete key is broken in this library, so just write over it with ""
-		RegistryAccess::SetRegValue( sKey, sName, RString() );
+		RegistryAccess::SetRegValue( INSTALLATIONS_KEY, sName, RString() );
 	}
 
-	for( i=0; i<asInstallDirsToWrite.size(); i++ )
+	for( unsigned i=0; i<asInstallDirsToWrite.size(); i++ )
 	{
 		RString sName = ssprintf("%d",i);
-		RegistryAccess::SetRegValue( sKey, sName, asInstallDirsToWrite[i] );
+		RegistryAccess::SetRegValue( INSTALLATIONS_KEY, sName, asInstallDirsToWrite[i] );
 	}
 
 }
 
-void SMPackageUtil::GetStepManiaInstallDirs( vector<RString>& asInstallDirsOut )
+void SMPackageUtil::GetGameInstallDirs( vector<RString>& asInstallDirsOut )
 {
 	asInstallDirsOut.clear();
-
-	RString sKey = "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage\\Installations";
 
 	for( int i=0; i<100; i++ )
 	{
 		RString sName = ssprintf("%d",i);
 
 		RString sPath;
-		if( !RegistryAccess::GetRegValue(sKey, sName, sPath) )
+		if( !RegistryAccess::GetRegValue(INSTALLATIONS_KEY, sName, sPath) )
 			continue;
 
 		if( sPath == "" )	// read failed
@@ -55,13 +52,13 @@ void SMPackageUtil::GetStepManiaInstallDirs( vector<RString>& asInstallDirsOut )
 	} 
 
 	// while we're at it, write to clean up stale entries
-	WriteStepManiaInstallDirs( asInstallDirsOut );
+	WriteGameInstallDirs( asInstallDirsOut );
 }
 
-void SMPackageUtil::AddStepManiaInstallDir( RString sNewInstallDir )
+void SMPackageUtil::AddGameInstallDir( RString sNewInstallDir )
 {
 	vector<RString> asInstallDirs;
-	GetStepManiaInstallDirs( asInstallDirs );
+	GetGameInstallDirs( asInstallDirs );
 
 	bool bAlreadyInList = false;
 	for( unsigned i=0; i<asInstallDirs.size(); i++ )
@@ -76,25 +73,25 @@ void SMPackageUtil::AddStepManiaInstallDir( RString sNewInstallDir )
 	if( !bAlreadyInList )
 		asInstallDirs.push_back( sNewInstallDir );
 
-	WriteStepManiaInstallDirs( asInstallDirs );
+	WriteGameInstallDirs( asInstallDirs );
 }
 
 void SMPackageUtil::SetDefaultInstallDir( int iInstallDirIndex )
 {
 	// move the specified index to the top of the list
 	vector<RString> asInstallDirs;
-	GetStepManiaInstallDirs( asInstallDirs );
+	GetGameInstallDirs( asInstallDirs );
 	ASSERT( iInstallDirIndex >= 0  &&  iInstallDirIndex < (int)asInstallDirs.size() );
 	RString sDefaultInstallDir = asInstallDirs[iInstallDirIndex];
 	asInstallDirs.erase( asInstallDirs.begin()+iInstallDirIndex );
 	asInstallDirs.insert( asInstallDirs.begin(), sDefaultInstallDir );
-	WriteStepManiaInstallDirs( asInstallDirs );
+	WriteGameInstallDirs( asInstallDirs );
 }
 
 void SMPackageUtil::SetDefaultInstallDir( RString sInstallDir )
 {
 	vector<RString> asInstallDirs;
-	GetStepManiaInstallDirs( asInstallDirs );
+	GetGameInstallDirs( asInstallDirs );
 
 	for( unsigned i=0; i<asInstallDirs.size(); i++ )
 	{
@@ -106,14 +103,14 @@ void SMPackageUtil::SetDefaultInstallDir( RString sInstallDir )
 	}
 }
 
-bool SMPackageUtil::GetPref( RString name, bool &val )
+bool SMPackageUtil::GetPref( const RString &name, bool &val )
 {
-	return RegistryAccess::GetRegValue( "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage", name, val );
+	return RegistryAccess::GetRegValue( SMPACKAGE_KEY, name, val );
 }
 
-bool SMPackageUtil::SetPref( RString name, bool val )
+bool SMPackageUtil::SetPref( const RString &name, bool val )
 {
-	return RegistryAccess::SetRegValue( "HKEY_LOCAL_MACHINE\\Software\\StepMania\\smpackage", name, val );
+	return RegistryAccess::SetRegValue( SMPACKAGE_KEY, name, val );
 }
 
 /* Get a package directory.  For most paths, this is the first two components.  For

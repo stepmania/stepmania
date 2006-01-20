@@ -70,7 +70,10 @@ static bool CompareStringNoCase( const RString &s1, const RString &s2 )
 	return s1.CompareNoCase( s2 ) < 0;
 }
 
-static LocalizedString IS_NOT_A_VALID_ZIP( "CSMPackageInstallDlg", "'%s' is not a valid zip archive." );
+static LocalizedString IS_NOT_A_VALID_ZIP		( "CSMPackageInstallDlg", "'%s' is not a valid zip archive." );
+static LocalizedString YOU_HAVE_CHOSEN_TO_INSTALL	( "CSMPackageInstallDlg", "You have chosen to install the package:" );
+static LocalizedString THIS_PACKAGE_CONTAINS		( "CSMPackageInstallDlg", "This package contains the following files:" );
+static LocalizedString THE_PACKAGE_WILL_BE_INSTALLED	( "CSMPackageInstallDlg", "The package will be installed in the following program folder:" );
 BOOL CSMPackageInstallDlg::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
@@ -95,11 +98,11 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	// Set the text of the first Edit box
 	//
 	RString sMessage1 = ssprintf(
-		"You have chosen to install the Stepmania package:\r\n"
+		YOU_HAVE_CHOSEN_TO_INSTALL.GetValue()+"\r\n"
 		"\r\n"
 		"\t%s\r\n"
-		"\r\n"
-		"This package contains the following files:\r\n",
+		"\r\n" +
+		THIS_PACKAGE_CONTAINS.GetValue()+"\r\n",
 		m_sPackagePath
 	);
 	CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE1);
@@ -121,7 +124,7 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	//
 	// Set the text of the third Edit box
 	//
-	RString sMessage3 = "The package will be installed in the following Stepmania program folder:\r\n";
+	RString sMessage3 = THE_PACKAGE_WILL_BE_INSTALLED.GetValue()+"\r\n";
 
 	// Set the message
 	CEdit* pEdit3 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE3);
@@ -241,6 +244,7 @@ bool CSMPackageInstallDlg::CheckPackages()
 }
 
 static LocalizedString NO_INSTALLATIONS		("CSMPackageInstallDlg", "No Installations found.  Exiting.");
+static LocalizedString INSTALLING_PLEASE_WAIT	("CSMPackageInstallDlg", "Installing '%s'.  Please wait...");
 static LocalizedString ERROR_COPYING_FILE	("CSMPackageInstallDlg", "Error copying file '%s'");
 static LocalizedString PACKAGE_INSTALLED_SUCCESSFULLY ("CSMPackageInstallDlg","Package installed successfully!");
 void CSMPackageInstallDlg::OnOK() 
@@ -291,32 +295,32 @@ void CSMPackageInstallDlg::OnOK()
 		return;	// cancelled
 
 
-	// Unzip the SMzip package into the Stepmania installation folder
+	// Unzip the SMzip package into the installation folder
 	vector<RString> vs;
 	GetDirListingRecursive( TEMP_MOUNT_POINT, "*.*", vs );
 	for( unsigned i=0; i<vs.size(); i++ )
 	{
 		// Throw some text up so the user has something to look at during the long pause.
 		CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE1);
-		pEdit1->SetWindowText( ssprintf("Installing '%s'.  Please wait...", m_sPackagePath) );
+		pEdit1->SetWindowText( ssprintf(INSTALLING_PLEASE_WAIT.GetValue(), m_sPackagePath) );
 		CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE2);
 		pEdit2->SetWindowText( "" );
 		CEdit* pEdit3 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE3);
 		pEdit3->SetWindowText( "" );
 		CProgressCtrl* pProgress1 = (CProgressCtrl*)GetDlgItem(IDC_PROGRESS1);
 		//Show the hided progress bar
-	    if(!pProgress1->IsWindowVisible())
-        {
+		if(!pProgress1->IsWindowVisible())
+		{
 			pProgress1->ShowWindow(SW_SHOWNORMAL);
-        }
+		}
 		//Initialize the progress bar and update the window 1 time (it's enough)
-        if(!ProgressInit)
+		if(!ProgressInit)
 		{
 			pProgress1->SetRange( 0, (short)vs.size() );
-            pProgress1->SetStep(1);
+			pProgress1->SetStep(1);
 			pProgress1->SetPos(0);
 			SendMessage( WM_PAINT );
-		    UpdateWindow();		// Force the silly thing to hadle WM_PAINT now!
+			UpdateWindow();		// Force the silly thing to hadle WM_PAINT now!
 			ProgressInit = 1;
 		}
 
@@ -365,7 +369,7 @@ void CSMPackageInstallDlg::OnButtonEdit()
 	int nResponse = dlg.DoModal();
 	if( nResponse == IDOK )
 	{
-		SMPackageUtil::WriteStepManiaInstallDirs( dlg.m_vsReturnedInstallDirs );
+		SMPackageUtil::WriteGameInstallDirs( dlg.m_vsReturnedInstallDirs );
 		RefreshInstallationList();
 	}
 }
@@ -376,7 +380,7 @@ void CSMPackageInstallDlg::RefreshInstallationList()
 	m_comboDir.ResetContent();
 
 	vector<RString> asInstallDirs;
-	SMPackageUtil::GetStepManiaInstallDirs( asInstallDirs );
+	SMPackageUtil::GetGameInstallDirs( asInstallDirs );
 	for( unsigned i=0; i<asInstallDirs.size(); i++ )
 		m_comboDir.AddString( asInstallDirs[i] );
 	m_comboDir.SetCurSel( 0 );	// guaranteed to be at least one item
