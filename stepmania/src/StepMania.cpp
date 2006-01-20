@@ -880,17 +880,8 @@ static void ApplyLogPreferences()
 
 static LocalizedString COULDNT_OPEN_LOADING_WINDOW( "StepMania", "Couldn't open any loading windows." );
 
-#ifdef _XBOX
-void __cdecl main()
-#else
 int main(int argc, char* argv[])
-#endif
-{
-#if defined(XBOX)
-	int argc = 1;
-	char *argv[] = {"default.xbe"};
-#endif
-	
+{	
 	RageThreadRegister thread( "Main thread" );
 	RageException::SetCleanupHandler( HandleException );
 	
@@ -933,9 +924,7 @@ int main(int argc, char* argv[])
 	if( !g_bAllowMultipleInstances.Get() && HOOKS->CheckForMultipleInstances() )
 	{
 		ShutdownGame();
-#if !defined(XBOX)
 		return 0;
-#endif
 	}
 
 	ApplyLogPreferences();
@@ -1113,9 +1102,7 @@ int main(int argc, char* argv[])
 	}
 #endif
 	
-#ifndef _XBOX
 	return 0;
-#endif
 }
 
 CString StepMania::SaveScreenshot( CString sDir, bool bSaveCompressed, bool bMakeSignature, int iIndex )
