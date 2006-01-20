@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="smpackage\ZipArchive\Debug\ZipArchive.lib"
-				OutputFile="./../Program/tools-debug.exe"
+				OutputFile="../Program/tools-debug.exe"
 				LinkIncremental="0"
 				SuppressStartupBanner="TRUE"
 				GenerateDebugInformation="TRUE"
@@ -293,6 +293,12 @@
 				</File>
 				<File
 					RelativePath=".\archutils\Win32\arch_time.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\CommandLine.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\CommandLine.h">
 				</File>
 				<File
 					RelativePath=".\archutils\Win32\DialogUtil.cpp">

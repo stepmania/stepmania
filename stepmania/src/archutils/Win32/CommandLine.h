@@ -1,23 +1,12 @@
-#include "global.h"
-#include "arch_setup.h"
-#ifdef _WINDOWS
-#  include <windows.h>
-#endif
-#include "CommandLine.h"
+#ifndef CommandLine_H
+#define CommandLine_H
 
-#if defined(WINDOWS)
-int main( int argc, char* argv[] );
-int __stdcall WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, char *pCmdLine, int nCmdShow )
-{
-	char **argv;
-	int argc = GetWin32CmdLine( argv );
+int GetWin32CmdLine( char** &argv );
 
-	return main( argc, argv );
-}
 #endif
 
 /*
- * (c) 2004 Glenn Maynard
+ * (c) 2002-2004 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

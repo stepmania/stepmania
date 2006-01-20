@@ -38,17 +38,18 @@ CSmpackageApp theApp;
 #include "RageFileManager.h"
 #include "archutils/Win32/SpecialDirs.h"
 #include "ProductInfo.h"
+#include "archutils/Win32/CommandLine.h"
 extern RString GetLastErrorString();
 
 static LocalizedString FAILED_TO_OPEN			( "CSmpackageApp", "Failed to open '%s': %s" );
 static LocalizedString THE_FILE_DOES_NOT_EXIST	( "CSmpackageApp", "The file '%s' does not exist.  Aborting installation." );
 BOOL CSmpackageApp::InitInstance()
 {
-	TCHAR szCurrentDirectory[MAX_PATH];
-	GetCurrentDirectory( ARRAYSIZE(szCurrentDirectory), szCurrentDirectory );
+	char **argv;
+	int argc = GetWin32CmdLine( argv );
 
 	/* Almost everything uses this to read and write files.  Load this early. */
-	FILEMAN = new RageFileManager( szCurrentDirectory );
+	FILEMAN = new RageFileManager( argv[0] );
 	FILEMAN->MountInitialFilesystems();
 
 	/* Set this up next.  Do this early, since it's needed for RageException::Throw. */
@@ -56,8 +57,11 @@ BOOL CSmpackageApp::InitInstance()
 
 
 	if( DoesFileExist("Songs") )	// this is a SM program directory
+	{
+		TCHAR szCurrentDirectory[MAX_PATH];
+		GetCurrentDirectory( ARRAYSIZE(szCurrentDirectory), szCurrentDirectory );
 		SMPackageUtil::AddStepManiaInstallDir( szCurrentDirectory );	// add this if it doesn't already exist
-	
+	}	
 
 	// check if there's a .smzip command line argument
 	vector<RString> arrayCommandLineBits;
@@ -119,12 +123,13 @@ BOOL CSmpackageApp::InitInstance()
 	// TODO: Use PrefsManager to get the current language instead?  PrefsManager would 
 	// need to be split up to reduce dependencies
 	IniFile ini;
-	ini.ReadFile( SpecialFiles::PREFERENCES_INI_PATH );
 	RString sLanguage;
-	ini.GetValue( "Preferences", "Language", sLanguage );
-	bool bPseudoLocalize;
-	ini.GetValue( "PseudoLocalize", "Language", bPseudoLocalize );
-
+	bool bPseudoLocalize = false;
+	if( ini.ReadFile(SpecialFiles::PREFERENCES_INI_PATH) )
+	{
+		ini.GetValue( "Preferences", "Language", sLanguage );
+		ini.GetValue( "PseudoLocalize", "Language", bPseudoLocalize );
+	}
 	THEME->SwitchThemeAndLanguage( SpecialFiles::BASE_THEME_NAME, sLanguage, bPseudoLocalize );
 
 

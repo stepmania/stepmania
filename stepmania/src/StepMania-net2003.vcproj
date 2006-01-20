@@ -1561,6 +1561,12 @@ cl /Zl /nologo /c verstub.cpp /Fo&quot;$(IntDir)&quot;\
 					RelativePath=".\archutils\Win32\arch_time.cpp">
 				</File>
 				<File
+					RelativePath=".\archutils\Win32\CommandLine.cpp">
+				</File>
+				<File
+					RelativePath=".\archutils\Win32\CommandLine.h">
+				</File>
+				<File
 					RelativePath="archutils\Win32\Crash.cpp">
 				</File>
 				<File

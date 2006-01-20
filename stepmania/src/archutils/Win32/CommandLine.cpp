@@ -1,23 +1,55 @@
 #include "global.h"
-#include "arch_setup.h"
-#ifdef _WINDOWS
-#  include <windows.h>
-#endif
 #include "CommandLine.h"
+#include <windows.h>
 
-#if defined(WINDOWS)
-int main( int argc, char* argv[] );
-int __stdcall WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, char *pCmdLine, int nCmdShow )
+/* Ugh.  Windows doesn't give us the argv[] parser; all it gives is CommandLineToArgvW,
+ * which is NT-only, so we have to do this ourself.  Don't be fancy; only handle double
+ * quotes. */
+int GetWin32CmdLine( char** &argv )
 {
-	char **argv;
-	int argc = GetWin32CmdLine( argv );
+	char *pCmdLine = GetCommandLine();
+	int argc = 0;
+	argv = NULL;
 
-	return main( argc, argv );
+	int i = 0;
+	while( pCmdLine[i] )
+	{
+		argv = (char **) realloc( argv, (argc+1) * sizeof(char *) );
+		argv[argc] = pCmdLine+i;
+		++argc;
+
+		/* Skip to the end of this argument. */
+		while( pCmdLine[i] && pCmdLine[i] != ' ' )
+		{
+			if( pCmdLine[i] == '"' )
+			{
+				/* Erase the quote. */
+				memmove( pCmdLine+i, pCmdLine+i+1, strlen(pCmdLine+i+1)+1 );
+
+				/* Skip to the close quote. */
+				while( pCmdLine[i] && pCmdLine[i] != '"' )
+					++i;
+
+				/* Erase the close quote. */
+				if( pCmdLine[i] == '"' )
+					memmove( pCmdLine+i, pCmdLine+i+1, strlen(pCmdLine+i+1)+1 );
+			}
+			else
+				++i;
+		}
+
+		if( pCmdLine[i] == ' ' )
+		{
+			pCmdLine[i] = '\0';
+			++i;
+		}
+	}
+
+	return argc;
 }
-#endif
 
 /*
- * (c) 2004 Glenn Maynard
+ * (c) 2006 Chris Danford
  * All rights reserved.
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a

@@ -209,7 +209,7 @@ static RString GetDirOfExecutable( RString argv0 )
 #endif
 }
 
-static void ChangeToDirOfExecutable( RString argv0 )
+static void ChangeToDirOfExecutable( const RString &argv0 )
 {
 	RageFileManagerUtil::sInitialWorkingDirectory = GetCwd();
 	RageFileManagerUtil::sDirOfExecutable = GetDirOfExecutable( argv0 );
