@@ -76,7 +76,7 @@ float fmodfp(float x, float y)
 
 int power_of_two( int iInput )
 {
-    int iValue = 1;
+	int iValue = 1;
 
 	while ( iValue < iInput )
 		iValue <<= 1;
@@ -213,8 +213,8 @@ struct tm GetLocalTime()
 
 RString ssprintf( const char *fmt, ...)
 {
-    va_list	va;
-    va_start(va, fmt);
+	va_list	va;
+	va_start(va, fmt);
 	return vssprintf(fmt, va);
 }
 
@@ -240,10 +240,10 @@ RString vssprintf( const char *fmt, va_list argList )
 
 RString hr_ssprintf( int hr, const char *fmt, ...)
 {
-    va_list	va;
-    va_start(va, fmt);
-    RString s = vssprintf( fmt, va );
-    va_end(va);
+	va_list	va;
+	va_start(va, fmt);
+	RString s = vssprintf( fmt, va );
+	va_end(va);
 
 #ifdef _XBOX
 	char szError[1024] = "";
@@ -270,9 +270,9 @@ RString werr_ssprintf( int err, const char *fmt, ...)
 	TrimRight( text ); /* "foo\r\n" -> "foo" */
 
 	va_list	va;
-    va_start(va, fmt);
-    RString s = vssprintf( fmt, va );
-    va_end(va);
+	va_start(va, fmt);
+	RString s = vssprintf( fmt, va );
+	va_end(va);
 
 	return s += ssprintf( " (%s)", text.c_str() );
 }
@@ -655,9 +655,11 @@ void splitpath( const RString &Path, RString& Dir, RString& Filename, RString& E
 
 	vector<RString> mat;
 
-	/* One level of escapes for the regex, one for C. Ew. 
+	/*
+	 * One level of escapes for the regex, one for C. Ew. 
 	 * This is really:
-	 * ^(.*[\\/])?(.*)$    */
+	 * ^(.*[\\/])?(.*)$ 
+	 */
 	static Regex sep("^(.*[\\\\/])?(.*)$");
 	bool check = sep.Compare(Path, mat);
 	ASSERT(check);
@@ -1020,26 +1022,26 @@ void Regex::Compile()
 	int offset;
 	m_pReg = pcre_compile( m_sPattern.c_str(), PCRE_CASELESS, &error, &offset, NULL );
 
-    if( m_pReg == NULL )
+	if( m_pReg == NULL )
 		RageException::Throw( "Invalid regex: \"%s\" (%s)", m_sPattern.c_str(), error );
 
 	int iRet = pcre_fullinfo( (pcre *) m_pReg, NULL, PCRE_INFO_CAPTURECOUNT, &m_iBackrefs );
 	ASSERT( iRet >= 0 );
 
 	++m_iBackrefs;
-    ASSERT( m_iBackrefs < 128 );
+	ASSERT( m_iBackrefs < 128 );
 }
 
 void Regex::Set( const RString &sStr )
 {
 	Release();
-    m_sPattern = sStr;
+	m_sPattern = sStr;
 	Compile();
 }
 
 void Regex::Release()
 {
-    pcre_free( m_pReg );
+	pcre_free( m_pReg );
 	m_pReg = NULL;
 	m_sPattern = RString();
 }
@@ -1053,7 +1055,7 @@ Regex::Regex( const RString &sStr )
 Regex::Regex( const Regex &rhs )
 {
 	m_pReg = NULL;
-    Set( rhs.m_sPattern );
+	Set( rhs.m_sPattern );
 }
 
 Regex &Regex::operator=( const Regex &rhs )
@@ -1065,12 +1067,12 @@ Regex &Regex::operator=( const Regex &rhs )
 
 Regex::~Regex()
 {
-    Release();
+	Release();
 }
 
 bool Regex::Compare( const RString &sStr )
 {
-    int iMat[128*3];
+	int iMat[128*3];
 	int iRet = pcre_exec( (pcre *) m_pReg, NULL, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
 
 	if( iRet < -1 )
@@ -1081,9 +1083,9 @@ bool Regex::Compare( const RString &sStr )
 
 bool Regex::Compare( const RString &sStr, vector<RString> &asMatches )
 {
-    asMatches.clear();
+	asMatches.clear();
 
-    int iMat[128*3];
+	int iMat[128*3];
 	int iRet = pcre_exec( (pcre *) m_pReg, NULL, sStr.data(), sStr.size(), 0, 0, iMat, 128*3 );
 
 	if( iRet < -1 )
@@ -1092,23 +1094,23 @@ bool Regex::Compare( const RString &sStr, vector<RString> &asMatches )
 	if( iRet == -1 )
 		return false;
 
-    for( unsigned i = 1; i < m_iBackrefs; ++i )
-    {
+	for( unsigned i = 1; i < m_iBackrefs; ++i )
+	{
 		const int iStart = iMat[i*2], end = iMat[i*2+1];
-        if( iStart == -1 )
-            asMatches.push_back( RString() ); /* no match */
-        else
-            asMatches.push_back( sStr.substr(iStart, end - iStart) );
-    }
+		if( iStart == -1 )
+			asMatches.push_back( RString() ); /* no match */
+		else
+			asMatches.push_back( sStr.substr(iStart, end - iStart) );
+	}
 
-    return true;
+	return true;
 }
 
 // Arguments and behavior are the same are similar to
 // http://us3.php.net/manual/en/function.preg-replace.php
 bool Regex::Replace( const RString &sReplacement, const RString &sSubject, RString &sOut )
 {
-    vector<RString> asMatches;
+	vector<RString> asMatches;
 	if( !Compare(sSubject, asMatches) )
 		return false;
 
@@ -1122,7 +1124,7 @@ bool Regex::Replace( const RString &sReplacement, const RString &sSubject, RStri
 		sOut.Replace(sFrom, sTo);
 	}
 
-    return true;
+	return true;
 }
 
 
@@ -1577,23 +1579,23 @@ RString Basename( const RString &sDir )
  */
 RString Dirname( const RString &dir )
 {
-        /* Special case: "/" -> "/". */
-        if( dir.size() == 1 && dir[0] == '/' )
-                return "/";
+	/* Special case: "/" -> "/". */
+	if( dir.size() == 1 && dir[0] == '/' )
+		return "/";
 
-        int pos = dir.size()-1;
-        /* Skip trailing slashes. */
-        while( pos >= 0 && dir[pos] == '/' )
-                --pos;
+	int pos = dir.size()-1;
+	/* Skip trailing slashes. */
+	while( pos >= 0 && dir[pos] == '/' )
+		--pos;
 
-        /* Skip the last component. */
-        while( pos >= 0 && dir[pos] != '/' )
-                --pos;
+	/* Skip the last component. */
+	while( pos >= 0 && dir[pos] != '/' )
+		--pos;
 
-        if( pos < 0 )
-                return "./";
+	if( pos < 0 )
+		return "./";
 
-        return dir.substr(0, pos+1);
+	return dir.substr(0, pos+1);
 }
 
 RString Capitalize( const RString &s )	
@@ -1637,7 +1639,7 @@ void FixSlashesInPlace( RString &sPath )
 RString FixSlashes( RString sPath )
 {
 	FixSlashesInPlace( sPath );
-    return sPath;
+	return sPath;
 }
 
 /*
