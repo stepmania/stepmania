@@ -285,7 +285,7 @@ RageDisplay_D3D::~RageDisplay_D3D()
 		g_pd3dDevice->Release();
 
 	if( g_pd3d )
-	    g_pd3d->Release();
+		g_pd3d->Release();
 
 #if !defined(XBOX)
 	if( g_D3D8_Module )
@@ -318,7 +318,7 @@ D3DFORMAT FindBackBufferType(bool bWindowed, int iBPP)
 	HRESULT hr;
 
 	// If windowed, then bpp is ignored.  Use whatever works.
-    vector<D3DFORMAT> vBackBufferFormats;		// throw all possibilities in here
+	vector<D3DFORMAT> vBackBufferFormats;		// throw all possibilities in here
 	
 	/* When windowed, add all formats; otherwise add only formats that match dwBPP. */
 	if( iBPP == 16 || bWindowed )
@@ -686,7 +686,7 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 	if( pixfmt == PixelFormat_PAL  &&  !(g_DeviceCaps.TextureCaps & D3DPTEXTURECAPS_ALPHAPALETTE) )
 		return false;
 
-	if(	D3DFORMATS[pixfmt] == D3DFMT_UNKNOWN )
+	if( D3DFORMATS[pixfmt] == D3DFMT_UNKNOWN )
 		return false;
 
 	D3DFORMAT d3dfmt = D3DFORMATS[pixfmt];
@@ -698,7 +698,7 @@ bool RageDisplay_D3D::SupportsTextureFormat( PixelFormat pixfmt, bool realtime )
 		D3DRTYPE_TEXTURE,
 		d3dfmt);
 
-    return SUCCEEDED( hr );
+	return SUCCEEDED( hr );
 }
 
 bool RageDisplay_D3D::SupportsThreadedRendering()
@@ -808,7 +808,7 @@ void RageDisplay_D3D::SendCurrentMatrices()
 
 			// Tell D3D to use transformed reflection vectors as texture co-ordinate 0
 			// and then transform this coordinate by the specified texture matrix.
-			g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR );    
+			g_pd3dDevice->SetTextureStageState( tu, D3DTSS_TEXCOORDINDEX, D3DTSS_TCI_CAMERASPACEREFLECTIONVECTOR );
 		}
 		else
 		{
@@ -1082,7 +1082,7 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, RageTexture* pTexture )
 	if( pTexture == NULL )
 	{
 		g_pd3dDevice->SetTexture( g_currentTextureUnit, NULL );
-		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_DISABLE );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP, D3DTOP_DISABLE );
 	}
 	else
 	{
@@ -1090,7 +1090,7 @@ void RageDisplay_D3D::SetTexture( TextureUnit tu, RageTexture* pTexture )
 		IDirect3DTexture8* pTex = (IDirect3DTexture8*)uTexHandle;
 		g_pd3dDevice->SetTexture( g_currentTextureUnit, pTex );
 		
-		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP,   D3DTOP_MODULATE );
+		g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_COLOROP, D3DTOP_MODULATE );
 
 		// Set palette (if any)
 		SetPalette(uTexHandle);
@@ -1200,7 +1200,7 @@ void RageDisplay_D3D::SetZWrite( bool b )
 
 void RageDisplay_D3D::SetZTestMode( ZTestMode mode )
 {
-	g_pd3dDevice->SetRenderState( D3DRS_ZENABLE,      D3DZB_TRUE );
+	g_pd3dDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_TRUE );
 	DWORD dw;
 	switch( mode )
 	{
@@ -1223,8 +1223,8 @@ void RageDisplay_D3D::SetTextureWrapping( bool b )
 		return;
 
 	int mode = b ? D3DTADDRESS_WRAP : D3DTADDRESS_CLAMP;
-    g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ADDRESSU, mode );
-    g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ADDRESSV, mode );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ADDRESSU, mode );
+	g_pd3dDevice->SetTextureStageState( g_currentTextureUnit, D3DTSS_ADDRESSV, mode );
 }
 
 void RageDisplay_D3D::SetMaterial( 
@@ -1443,8 +1443,8 @@ void RageDisplay_D3D::UpdateTexture(
 
 void RageDisplay_D3D::SetAlphaTest( bool b )
 {
-	g_pd3dDevice->SetRenderState( D3DRS_ALPHATESTENABLE,  b );
-	g_pd3dDevice->SetRenderState( D3DRS_ALPHAREF,         0 );
+	g_pd3dDevice->SetRenderState( D3DRS_ALPHATESTENABLE, b );
+	g_pd3dDevice->SetRenderState( D3DRS_ALPHAREF, 0 );
 	g_pd3dDevice->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATER );
 }
 
