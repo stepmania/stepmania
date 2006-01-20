@@ -188,18 +188,19 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 	m_CurrentParams.PAL = p.PAL;
 	m_CurrentParams.fDisplayAspectRatio = p.fDisplayAspectRatio;
 	
-#define X(x) p.x == m_CurrentParams.x
-	if( X(windowed) && X(bpp) && X(width) && X(height) && X(rate) && X(vsync) )
-		return 0;
+#define X(x) p.x != m_CurrentParams.x
+	const bool bRebuildContext = X(bpp) || X(windowed) || !m_Context;
+	const bool bChangeMode = X(bpp) || X(width) || X(height) || X(rate);
+	const bool bChangeVsync = X(vsync);
 #undef X
+	
+	if( !bRebuildContext && !bChangeMode && !bChangeVsync )
+		return CString();
 	
 	POOL;
 	newDeviceOut = false;
 	
-	NSRect contentRect = { { 0, 0 }, { p.width, p.height } };
-	const bool bRebuildContext = p.bpp != m_CurrentParams.bpp ||
-		!m_Context || p.windowed != m_CurrentParams.windowed;
-	
+	NSRect contentRect = { { 0, 0 }, { p.width, p.height } };	
 	
 	ASSERT( p.bpp == 16 || p.bpp == 32 );
 	
@@ -237,12 +238,13 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 
 		return CString();
 	}
-	int result = ChangeDisplayMode( p );
-	
-	if( result )
+	if( bChangeMode )
 	{
-		return ssprintf( "Failed to switch to full screen:%d x %d @ %d. Error %d.",
-				 p.width, p.height, p.rate, result );
+		int result = ChangeDisplayMode( p );
+	
+		if( result )
+			return ssprintf( "Failed to switch to full screen:%d x %d @ %d. Error %d.",
+					 p.width, p.height, p.rate, result );
 	}
 	
 	if( bRebuildContext )
@@ -266,10 +268,13 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 	[m_Context update];
 	[m_Context makeCurrentContext];
 	
-	long swap = p.vsync ? 1 : 0;
+	if( bChangeVsync )
+	{
+		long swap = p.vsync ? 1 : 0;
 
-	[m_Context setValues:&swap forParameter:NSOpenGLCPSwapInterval];
-	m_CurrentParams.vsync = p.vsync;
+		[m_Context setValues:&swap forParameter:NSOpenGLCPSwapInterval];
+		m_CurrentParams.vsync = p.vsync;
+	}
 	
 	return CString();
 }
