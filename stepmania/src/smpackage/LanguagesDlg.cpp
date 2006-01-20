@@ -269,6 +269,14 @@ void LanguagesDlg::OnBnClickedButtonExport()
 	IniFile ini2;
 	ini2.ReadFile( sLanguageFile );
 	int iNumExpored = 0;
+
+	vector<RString> vs;
+	vs.push_back( "Section" );
+	vs.push_back( "ID" );
+	vs.push_back( "Base Language Value" );
+	vs.push_back( "Localized Value" );
+	csv.m_vvs.push_back( vs );
+
 	FOREACH_CONST_Child( &ini1, key )
 	{
 		FOREACH_CONST_Attr( key, value )
@@ -364,6 +372,10 @@ void LanguagesDlg::OnBnClickedButtonImport()
 	int iNumIgnored = 0;
 	FOREACH_CONST( CsvFile::StringVector, csv.m_vvs, line ) 
 	{
+		// Skip the header row
+		if( line == csv.m_vvs.begin() )
+			continue;
+
 		TranslationLine tl;
 		int iNumValues = line->size();
 		if( iNumValues != 3 && iNumValues != 4 )
