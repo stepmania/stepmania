@@ -85,8 +85,6 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	DialogUtil::LocalizeDialogAndContents( *this );
 	DialogUtil::SetHeaderFont( *this, IDC_STATIC_HEADER_TEXT );
 
-	ASSERT(0);	// TEST ME
-
 	// mount the zip
 	RageFileDriverZip fileDriver;
 	int iErr;
