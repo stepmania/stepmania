@@ -416,8 +416,11 @@ Server SMOnline packets:
 
 003:  Room Info
   Size:
-    NT	Last Song
+    NT	Last Song Title
+    NT  Last Song Subtitle
+    NT  Last Song Artist
     1		Num Players
     1		Max Players
     NT	Player1 Name
 	...
+    NT  PlayerN Name
