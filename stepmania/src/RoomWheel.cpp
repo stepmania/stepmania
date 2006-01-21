@@ -138,10 +138,10 @@ void RoomWheel::RemoveItem( int index )
 
 RoomInfoDisplay::~RoomInfoDisplay()
 {
-	for (int i = 0; i < m_playersList.size(); i++)
+	for (int i = 0; i < m_playerList.size(); i++)
 	{
-		this->RemoveChild(m_playersList[i]);
-		SAFE_DELETE(m_playersList[i]);
+		this->RemoveChild(m_playerList[i]);
+		SAFE_DELETE(m_playerList[i]);
 	}
 }
 
@@ -174,7 +174,6 @@ void RoomInfoDisplay::Load( CString sType )
 	PLAYERLISTOFFSETY.Load(sType, "PlayerListElementOffsetY");
 
 	m_state = LOCKED;
-	m_numPlayers = m_maxPlayers = 0;
 
 	m_bg.SetName("Background");
 	m_bg.SetWidth( THEME->GetMetricF(sType,"BackgroundWidth") );
@@ -238,15 +237,10 @@ void RoomInfoDisplay::Load( CString sType )
 
 void RoomInfoDisplay::SetRoom( const RoomWheelData* roomData )
 {
-	m_state = CLOSED;
-	m_deployDelay.Touch();
+	RequestRoomInfo(roomData->m_sText);
 
 	m_Title.SetText(ssprintf("Name: %s", roomData->m_sText.c_str()));
 	m_Desc.SetText(ssprintf("Description: %s", roomData->m_sDesc.c_str()));
-	m_songTitle.SetText(ssprintf("Title: %s", NULL));
-	m_songSub.SetText(ssprintf("Subtitle: %s", NULL));
-	m_songArtist.SetText(ssprintf("Artist: %s", NULL));
-	m_players.SetText(ssprintf("Players (%d/%d):", m_numPlayers, m_maxPlayers));
 }
 
 void RoomInfoDisplay::Update( float fDeltaTime )
@@ -259,55 +253,56 @@ void RoomInfoDisplay::Update( float fDeltaTime )
 	ActorFrame::Update(fDeltaTime);
 }
 
-void RoomInfoDisplay::RequestRoomInfo()
+void RoomInfoDisplay::RequestRoomInfo(const CString& name)
 {
 	NSMAN->m_SMOnlinePacket.ClearPacket();
 	NSMAN->m_SMOnlinePacket.Write1((uint8_t)3); //Request Room Info
-	NSMAN->m_SMOnlinePacket.WriteNT(m_Title.GetText());
+	NSMAN->m_SMOnlinePacket.WriteNT(name);
 	NSMAN->SendSMOnline( );
 }
 
 void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
 {
-	m_songTitle.SetText(info.songTitle);
-	m_songSub.SetText(info.songSubTitle);
-	m_songArtist.SetText(info.songArtist);
-	m_numPlayers = info.numPlayers;
-	m_maxPlayers = info.maxPlayers;
-	vector<CString> players;
+	m_songTitle.SetText(ssprintf("Title: %s", info.songTitle.c_str()));
+	m_songSub.SetText(ssprintf("Subtitle: %s", info.songSubTitle.c_str()));
+	m_songArtist.SetText(ssprintf("Artist: %s", info.songArtist.c_str()));
+	m_players.SetText(ssprintf("Players (%d/%d):", info.numPlayers, info.maxPlayers));
 
-	if (m_playersList.size() > info.players.size())
+	if (m_playerList.size() > info.players.size())
 	{
-		for (int i = info.players.size(); i < m_playersList.size(); i++)
+		for (int i = info.players.size(); i < m_playerList.size(); i++)
 		{
 			//if our old list is larger remove some elements
-			this->RemoveChild(m_playersList[i]);
-			SAFE_DELETE(m_playersList[i]);
+			this->RemoveChild(m_playerList[i]);
+			SAFE_DELETE(m_playerList[i]);
 		}
-		m_playersList.resize(info.players.size());
+		m_playerList.resize(info.players.size());
 	}
-	else if (m_playersList.size() < info.players.size())
+	else if (m_playerList.size() < info.players.size())
 	{
 		//add elements if our old list is smaller
-		int oldsize = m_playersList.size();
-		m_playersList.resize(info.players.size());
-		for (int i = oldsize; i < m_playersList.size(); i++)
+		int oldsize = m_playerList.size();
+		m_playerList.resize(info.players.size());
+		for (int i = oldsize; i < m_playerList.size(); i++)
 		{
-			m_playersList[i] = new BitmapText;
-			m_playersList[i]->LoadFromFont( THEME->GetPathF(GetName(),"text") );
-			m_playersList[i]->SetName("PlayersListElement");
-			m_playersList[i]->SetShadowLength( 0 );
-			m_playersList[i]->SetHorizAlign( align_left );
-			m_playersList[i]->SetX(PLAYERLISTX + (i * PLAYERLISTOFFSETX));
-			m_playersList[i]->SetY(PLAYERLISTY + (i * PLAYERLISTOFFSETY));
-			ON_COMMAND(m_playersList[i]);
-			this->AddChild(&m_players);
+			m_playerList[i] = new BitmapText;
+			m_playerList[i]->LoadFromFont( THEME->GetPathF(GetName(),"text") );
+			m_playerList[i]->SetName("PlayerListElement");
+			m_playerList[i]->SetShadowLength( 0 );
+			m_playerList[i]->SetHorizAlign( align_left );
+			m_playerList[i]->SetX(PLAYERLISTX + (i * PLAYERLISTOFFSETX));
+			m_playerList[i]->SetY(PLAYERLISTY + (i * PLAYERLISTOFFSETY));
+			ON_COMMAND(m_playerList[i]);
+			this->AddChild(m_playerList[i]);
 		}
 
 	}
 
-	for (int i = 0; i < m_playersList.size(); i++)
-		m_playersList[i]->SetText(info.players[i]);
+	for (int i = 0; i < m_playerList.size(); i++)
+		m_playerList[i]->SetText(info.players[i]);
+
+	m_state = CLOSED;
+	m_deployDelay.Touch();
 }
 
 /*

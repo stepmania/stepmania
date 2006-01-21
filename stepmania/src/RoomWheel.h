@@ -55,7 +55,7 @@ public:
 	void DeployInfoBox();
 	void RetractInfoBox();
 private:
-	void RequestRoomInfo();
+	void RequestRoomInfo(const CString& name);
 	enum RoomInfoDisplayState
 	{
 		OPEN = 0,
@@ -73,10 +73,8 @@ private:
 	BitmapText m_songSub;
 	BitmapText m_songArtist;
 
-	int m_numPlayers;
-	int m_maxPlayers;
 	BitmapText m_players;
-	vector<BitmapText*> m_playersList;
+	vector<BitmapText*> m_playerList;
 
 	RageTimer m_deployDelay;
 
@@ -103,6 +101,7 @@ public:
 	inline RoomWheelData* GetItem(unsigned int i) { return (RoomWheelData*)WheelBase::GetItem(i + m_offset); }
 	void AddPerminateItem(RoomWheelData* itemdata);
 	int GetCurrentIndex() const { return m_iSelection; }
+	inline void SetRoomInfo( const RoomInfo& info) { m_roomInfo.SetRoomInfo(info); }
 private:
 	int m_offset;
 

@@ -87,8 +87,9 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 	}
 	else if( SM == SM_SMOnlinePack )
 	{
-		if ( NSMAN->m_SMOnlinePacket.Read1() == 1 )
+		switch(NSMAN->m_SMOnlinePacket.Read1())
 		{
+		case 1:
 			switch ( NSMAN->m_SMOnlinePacket.Read1() )
 			{
 			case 0: //Room title Change
@@ -126,6 +127,20 @@ void ScreenNetRoom::HandleScreenMessage( const ScreenMessage SM )
 					UpdateRoomsList();
 				}
 			}
+			break;
+		case 3:
+			RoomInfo info;
+			info.songTitle = NSMAN->m_SMOnlinePacket.ReadNT();
+			info.songSubTitle = NSMAN->m_SMOnlinePacket.ReadNT();
+			info.songArtist = NSMAN->m_SMOnlinePacket.ReadNT();
+			info.numPlayers = NSMAN->m_SMOnlinePacket.Read1();
+			info.maxPlayers = NSMAN->m_SMOnlinePacket.Read1();
+			info.players.resize(info.numPlayers);
+			for (int i = 0; i < info.numPlayers; i++)
+				info.players[i] = NSMAN->m_SMOnlinePacket.ReadNT();
+
+			m_RoomWheel.SetRoomInfo(info);
+			break;
 		}
 	}
 	else if ( SM == SM_BackFromRoomName )
