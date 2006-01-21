@@ -341,7 +341,7 @@ OSStatus RageSound_CA::JackChanged( AudioDeviceID inDevice, UInt32 inChannel, Bo
 void RageSound_CA::SetupDecodingThread()
 {
 	/* Increase the scheduling precedence of the decoder thread. */
-	SetThreadPrecedence( 50 );
+	SetThreadPrecedence( 0.75f );
 }
 
 /*

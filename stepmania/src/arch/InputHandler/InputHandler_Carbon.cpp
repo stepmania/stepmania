@@ -705,7 +705,7 @@ int InputHandler_Carbon::Run( void *data )
 	CFRetain( This->mLoopRef );
 	
 	This->StartDevices();
-	SetThreadPrecedence( 100 );
+	SetThreadPrecedence( 1.0f );
 
 	/* The function copies the information out of the structure, so the memory pointed
 	 * to by context does not need to persist beyond the function call. */
