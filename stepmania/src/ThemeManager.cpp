@@ -387,7 +387,7 @@ void ThemeManager::UpdateLuaGlobals()
 
 #if !defined(SMPACKAGE)
 	/* explicitly refresh cached metrics that we use. */
-	ScreenDimensions::ReloadMetricsAndUpdateLua();
+	ScreenDimensions::ReloadScreenDimensions();
 
 	RunLuaScripts( "*.lua" );
 #endif

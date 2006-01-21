@@ -9,7 +9,7 @@ namespace ScreenDimensions
 	float GetThemeAspectRatio();
 	float GetScreenWidth();
 	float GetScreenHeight();
-	void ReloadMetricsAndUpdateLua();
+	void ReloadScreenDimensions();
 };
 
 #define SCREEN_WIDTH	ScreenDimensions::GetScreenWidth()

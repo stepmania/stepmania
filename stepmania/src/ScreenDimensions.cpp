@@ -70,7 +70,7 @@ float ScreenDimensions::GetScreenHeight()
 	return THEME_SCREEN_HEIGHT * fScale;
 }
 
-void ScreenDimensions::ReloadMetricsAndUpdateLua()
+void ScreenDimensions::ReloadScreenDimensions()
 {
 	/* Important: explicitly refresh cached metrics that we use. */
 	THEME_SCREEN_WIDTH.Read();
