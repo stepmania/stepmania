@@ -190,11 +190,11 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 	
 #define X(x) p.x != m_CurrentParams.x
 	const bool bRebuildContext = X(bpp) || X(windowed) || !m_Context;
-	const bool bChangeMode = X(bpp) || X(width) || X(height) || X(rate);
-	const bool bChangeVsync = X(vsync);
+	const bool bChangeMode = X(width) || X(height) || X(rate) || bRebuildContext;
+	const bool bChangeVsync = X(vsync) || bRebuildContext;
 #undef X
 	
-	if( !bRebuildContext && !bChangeMode && !bChangeVsync )
+	if( !bChangeMode && !bChangeVsync )
 		return CString();
 	
 	POOL;
