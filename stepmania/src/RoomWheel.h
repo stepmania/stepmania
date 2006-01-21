@@ -34,15 +34,28 @@ private:
 	ThemeMetric<apActorCommands>	DESC_ON_COMMAND;
 };
 
+struct RoomInfo
+{
+	CString songTitle;
+	CString songSubTitle;
+	CString songArtist;
+	int numPlayers;
+	int maxPlayers;
+	vector<CString> players;
+};
+
 class RoomInfoDisplay : public ActorFrame
 {
 public:
+	~RoomInfoDisplay();
 	virtual void Load( CString sType );
 	virtual void Update( float fDeltaTime );
 	void SetRoom( const RoomWheelData* roomData );
+	void SetRoomInfo( const RoomInfo& info);
 	void DeployInfoBox();
 	void RetractInfoBox();
 private:
+	void RequestRoomInfo();
 	enum RoomInfoDisplayState
 	{
 		OPEN = 0,
@@ -52,8 +65,18 @@ private:
 
 	RoomInfoDisplayState m_state;
 	Quad m_bg;
-	BitmapText m_sTitle;
-	BitmapText m_sDesc;
+	BitmapText m_Title;
+	BitmapText m_Desc;
+
+	BitmapText m_lastRound;
+	BitmapText m_songTitle;
+	BitmapText m_songSub;
+	BitmapText m_songArtist;
+
+	int m_numPlayers;
+	int m_maxPlayers;
+	BitmapText m_players;
+	vector<BitmapText*> m_playersList;
 
 	RageTimer m_deployDelay;
 
@@ -61,6 +84,10 @@ private:
 	ThemeMetric<float>	Y;
 	ThemeMetric<float>	DEPLOY_DELAY;
 	ThemeMetric<float>	RETRACT_DELAY;
+	ThemeMetric<float>	PLAYERLISTX;
+	ThemeMetric<float>	PLAYERLISTY;
+	ThemeMetric<float>	PLAYERLISTOFFSETX;
+	ThemeMetric<float>	PLAYERLISTOFFSETY;
 };
 
 class RoomWheel : public WheelBase {

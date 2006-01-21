@@ -4,6 +4,7 @@
 #include "RageUtil.h"
 #include "ScreenTextEntry.h"
 #include "LocalizedString.h"
+#include "NetworkSyncManager.h"
 
 AutoScreenMessage( SM_BackFromRoomName )
 
@@ -114,7 +115,11 @@ void RoomWheel::Update( float fDeltaTime )
 void RoomWheel::Move(int n)
 {
 	if ((n == 0) && (m_iSelection >= m_offset))
-		m_roomInfo.SetRoom( GetItem(m_iSelection) );
+	{
+		const RoomWheelData* data = GetItem(m_iSelection-m_offset);
+		if (data != NULL)
+			m_roomInfo.SetRoom( data );
+	}
 	else
 		m_roomInfo.RetractInfoBox();
 
@@ -129,6 +134,15 @@ unsigned int RoomWheel::GetNumItems() const
 void RoomWheel::RemoveItem( int index )
 {
 	WheelBase::RemoveItem(index + m_offset);
+}
+
+RoomInfoDisplay::~RoomInfoDisplay()
+{
+	for (int i = 0; i < m_playersList.size(); i++)
+	{
+		this->RemoveChild(m_playersList[i]);
+		SAFE_DELETE(m_playersList[i]);
+	}
 }
 
 void RoomInfoDisplay::DeployInfoBox()
@@ -154,13 +168,68 @@ void RoomInfoDisplay::Load( CString sType )
 	SetName(sType);
 	DEPLOY_DELAY.Load(sType, "DeployDelay");
 	RETRACT_DELAY.Load(sType, "RetractDelay");
+	PLAYERLISTX.Load(sType, "PlayerListElementX");
+	PLAYERLISTY.Load(sType, "PlayerListElementY");
+	PLAYERLISTOFFSETX.Load(sType, "PlayerListElementOffsetX");
+	PLAYERLISTOFFSETY.Load(sType, "PlayerListElementOffsetY");
 
 	m_state = LOCKED;
+	m_numPlayers = m_maxPlayers = 0;
 
 	m_bg.SetName("Background");
 	m_bg.SetWidth( THEME->GetMetricF(sType,"BackgroundWidth") );
 	m_bg.SetHeight( THEME->GetMetricF(sType,"BackgroundHeight") );
 	this->AddChild(&m_bg);
+
+	m_Title.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_Title.SetName("RoomTitle");
+	m_Title.SetShadowLength( 0 );
+	m_Title.SetHorizAlign( align_left );
+	SET_XY_AND_ON_COMMAND(m_Title);
+	this->AddChild(&m_Title);
+
+	m_Desc.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_Desc.SetName("RoomDesc");
+	m_Desc.SetShadowLength( 0 );
+	m_Desc.SetHorizAlign( align_left );
+	SET_XY_AND_ON_COMMAND(m_Desc);
+	this->AddChild(&m_Desc);
+
+	m_lastRound.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_lastRound.SetName("LastRound");
+	m_lastRound.SetText("Last Round Info:");
+	m_lastRound.SetShadowLength( 0 );
+	m_lastRound.SetHorizAlign( align_left );
+	SET_XY_AND_ON_COMMAND(m_lastRound);
+	this->AddChild(&m_lastRound);
+
+	m_songTitle.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_songTitle.SetName("SongTitle");
+	m_songTitle.SetShadowLength( 0 );
+	m_songTitle.SetHorizAlign( align_left );
+	SET_XY_AND_ON_COMMAND(m_songTitle);
+	this->AddChild(&m_songTitle);
+
+	m_songSub.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_songSub.SetName("SongSubTitle");
+	m_songSub.SetShadowLength( 0 );
+	m_songSub.SetHorizAlign( align_left );
+	SET_XY_AND_ON_COMMAND(m_songSub);
+	this->AddChild(&m_songSub);
+
+	m_songArtist.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_songArtist.SetName("SongArtist");
+	m_songArtist.SetShadowLength( 0 );
+	m_songArtist.SetHorizAlign( align_left );
+	SET_XY_AND_ON_COMMAND(m_songArtist);
+	this->AddChild(&m_songArtist);
+
+	m_players.LoadFromFont( THEME->GetPathF(sType,"text") );
+	m_players.SetName("Players");
+	m_players.SetShadowLength( 0 );
+	m_players.SetHorizAlign( align_left );
+	SET_XY_AND_ON_COMMAND(m_players);
+	this->AddChild(&m_players);
 
 	SET_XY_AND_ON_COMMAND( this );
 	OFF_COMMAND(this);
@@ -171,6 +240,13 @@ void RoomInfoDisplay::SetRoom( const RoomWheelData* roomData )
 {
 	m_state = CLOSED;
 	m_deployDelay.Touch();
+
+	m_Title.SetText(ssprintf("Name: %s", roomData->m_sText.c_str()));
+	m_Desc.SetText(ssprintf("Description: %s", roomData->m_sDesc.c_str()));
+	m_songTitle.SetText(ssprintf("Title: %s", NULL));
+	m_songSub.SetText(ssprintf("Subtitle: %s", NULL));
+	m_songArtist.SetText(ssprintf("Artist: %s", NULL));
+	m_players.SetText(ssprintf("Players (%d/%d):", m_numPlayers, m_maxPlayers));
 }
 
 void RoomInfoDisplay::Update( float fDeltaTime )
@@ -181,6 +257,57 @@ void RoomInfoDisplay::Update( float fDeltaTime )
 		RetractInfoBox();
 
 	ActorFrame::Update(fDeltaTime);
+}
+
+void RoomInfoDisplay::RequestRoomInfo()
+{
+	NSMAN->m_SMOnlinePacket.ClearPacket();
+	NSMAN->m_SMOnlinePacket.Write1((uint8_t)3); //Request Room Info
+	NSMAN->m_SMOnlinePacket.WriteNT(m_Title.GetText());
+	NSMAN->SendSMOnline( );
+}
+
+void RoomInfoDisplay::SetRoomInfo( const RoomInfo& info)
+{
+	m_songTitle.SetText(info.songTitle);
+	m_songSub.SetText(info.songSubTitle);
+	m_songArtist.SetText(info.songArtist);
+	m_numPlayers = info.numPlayers;
+	m_maxPlayers = info.maxPlayers;
+	vector<CString> players;
+
+	if (m_playersList.size() > info.players.size())
+	{
+		for (int i = info.players.size(); i < m_playersList.size(); i++)
+		{
+			//if our old list is larger remove some elements
+			this->RemoveChild(m_playersList[i]);
+			SAFE_DELETE(m_playersList[i]);
+		}
+		m_playersList.resize(info.players.size());
+	}
+	else if (m_playersList.size() < info.players.size())
+	{
+		//add elements if our old list is smaller
+		int oldsize = m_playersList.size();
+		m_playersList.resize(info.players.size());
+		for (int i = oldsize; i < m_playersList.size(); i++)
+		{
+			m_playersList[i] = new BitmapText;
+			m_playersList[i]->LoadFromFont( THEME->GetPathF(GetName(),"text") );
+			m_playersList[i]->SetName("PlayersListElement");
+			m_playersList[i]->SetShadowLength( 0 );
+			m_playersList[i]->SetHorizAlign( align_left );
+			m_playersList[i]->SetX(PLAYERLISTX + (i * PLAYERLISTOFFSETX));
+			m_playersList[i]->SetY(PLAYERLISTY + (i * PLAYERLISTOFFSETY));
+			ON_COMMAND(m_playersList[i]);
+			this->AddChild(&m_players);
+		}
+
+	}
+
+	for (int i = 0; i < m_playersList.size(); i++)
+		m_playersList[i]->SetText(info.players[i]);
 }
 
 /*
