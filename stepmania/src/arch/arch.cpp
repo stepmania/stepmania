@@ -276,9 +276,6 @@ RageSoundDriver *MakeRageSoundDriver(CString drivers)
 #ifdef USE_RAGE_SOUND_OSS
 		if(!DriversToTry[i].CompareNoCase("OSS"))		ret = new RageSound_OSS;
 #endif
-#ifdef USE_RAGE_SOUND_QT1
-		if(!DriversToTry[i].CompareNoCase("QT1"))		ret = new RageSound_QT1;
-#endif
 #ifdef USE_RAGE_SOUND_WAVE_OUT
 		if(!DriversToTry[i].CompareNoCase("WaveOut"))		ret = new RageSound_WaveOut;
 #endif

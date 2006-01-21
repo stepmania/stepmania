@@ -11,12 +11,12 @@
 /* InputHandler drivers */
 #if defined (HAVE_XDK)
  #define DEFAULT_INPUT_DRIVER_LIST "Xbox"
-#elif defined(HAVE_DIRECTX) && !defined(HAVE_XDK)
+#elif defined(HAVE_DIRECTX)
  #define DEFAULT_INPUT_DRIVER_LIST "DirectInput,Pump,Para"
 #elif defined(HAVE_X11) // Prefer X11 over SDL
  #define DEFAULT_INPUT_DRIVER_LIST "X11,Joystick"
 #elif defined(MACOSX)
-# define DEFAULT_INPUT_DRIVER_LIST "Carbon,SDL"
+# define DEFAULT_INPUT_DRIVER_LIST "Carbon"
 #elif defined(HAVE_SDL)
  #define DEFAULT_INPUT_DRIVER_LIST "SDL"
 #elif defined(LINUX)
@@ -29,7 +29,7 @@
 #define DEFAULT_MOVIE_DRIVER_LIST "Theora,FFMpeg,DShow,Null"
 
 /* RageSoundDrivers */
-#define DEFAULT_SOUND_DRIVER_LIST "ALSA,DirectSound,ALSA-sw,DirectSound-sw,CoreAudio,OSS,QT1,WaveOut,Null"
+#define DEFAULT_SOUND_DRIVER_LIST "ALSA,DirectSound,ALSA-sw,DirectSound-sw,CoreAudio,OSS,WaveOut,Null"
 
 #endif
 
