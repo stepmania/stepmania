@@ -33,7 +33,7 @@ inline unsigned long max( unsigned long a, unsigned int b ) { return a > b? a:b;
 
 // Like SCALE(x, 0, 1, L, H); interpolate between L and H.
 template<typename T, typename U>
-inline U interp( T x, U l, U h )
+inline U lerp( T x, U l, U h )
 {
 	return U(x * (h - l) + l);
 }
