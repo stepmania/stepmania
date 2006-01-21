@@ -68,6 +68,7 @@ static bool CompareStringNoCase( const RString &s1, const RString &s2 )
 	return s1.CompareNoCase( s2 ) < 0;
 }
 
+static LocalizedString COULD_NOT_OPEN_FILE		( "CSMPackageInstallDlg", "Could not open file '%s'." );
 static LocalizedString IS_NOT_A_VALID_ZIP		( "CSMPackageInstallDlg", "'%s' is not a valid zip archive." );
 static LocalizedString YOU_HAVE_CHOSEN_TO_INSTALL	( "CSMPackageInstallDlg", "You have chosen to install the package:" );
 static LocalizedString THIS_PACKAGE_CONTAINS		( "CSMPackageInstallDlg", "This package contains the following files:" );
@@ -86,12 +87,18 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	DialogUtil::SetHeaderFont( *this, IDC_STATIC_HEADER_TEXT );
 
 	// mount the zip
-	RageFileDriverZip fileDriver;
-	int iErr;
-	if( !fileDriver.Open(m_sPackagePath, RageFile::READ, iErr) )
+	RageFileOsAbsolute file;
+	if( !file.Open(m_sPackagePath) )
 	{
-		AfxMessageBox( ssprintf(IS_NOT_A_VALID_ZIP.GetValue(), m_sPackagePath), MB_ICONSTOP );
-		exit( 1 );
+		MessageBox( ssprintf(COULD_NOT_OPEN_FILE.GetValue(),m_sPackagePath.c_str()) );
+		return FALSE;
+	}
+
+	RageFileDriverZip zip;
+	if( zip.Load(&file) );
+	{
+		MessageBox( ssprintf(IS_NOT_A_VALID_ZIP.GetValue(),m_sPackagePath.c_str()) );
+		return FALSE;
 	}
 
 	//
@@ -114,7 +121,7 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	//
 	{
 		vector<RString> vs;
-		GetDirListingRecursive( &fileDriver, "", "*", vs );
+		GetDirListingRecursive( &zip, "", "*", vs );
 		CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE2);
 		RString sText = "\t" + join( "\r\n\t", vs );
 		pEdit2->SetWindowText( sText );
