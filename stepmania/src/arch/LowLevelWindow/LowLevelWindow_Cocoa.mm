@@ -73,7 +73,7 @@ public:
 	
 @end
 
-LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : m_Context(nil), m_CurrentDisplayMode(NULL)
+LowLevelWindow_Cocoa::LowLevelWindow_Cocoa() : m_Context(nil), m_BGContext(nil), m_CurrentDisplayMode(NULL)
 {
 	POOL;
 	NSRect rect = { {0, 0}, {0, 0} };
@@ -218,6 +218,14 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 			m_Context = newContext;
 			newDeviceOut = !bShared;
 			m_CurrentParams.bpp = p.bpp;
+			[m_BGContext release];
+			m_BGContext = CreateOGLContext( p.bpp, true, m_Context, bShared );
+			
+			if( m_BGContext && !bShared )
+			{
+				[m_BGContext release];
+				m_BGContext = nil;
+			}
 		}
 		SMMainThread *mt = [[SMMainThread alloc] init];
 		
@@ -259,6 +267,14 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 		m_Context = newContext;
 		newDeviceOut = !bShared;
 		m_CurrentParams.bpp = p.bpp;
+		[m_BGContext release];
+		m_BGContext = CreateOGLContext( p.bpp, false, m_Context, bShared );
+		
+		if( m_BGContext && !bShared )
+		{
+			[m_BGContext release];
+			m_BGContext = nil;
+		}
 	}
 	
 	[m_Context setFullScreen];
@@ -393,7 +409,8 @@ void LowLevelWindow_Cocoa::GetDisplayResolutions( DisplayResolutions &dr ) const
 
 void LowLevelWindow_Cocoa::SwapBuffers()
 {
-	[m_Context flushBuffer];
+	// XXX don't use Obj-C here, use CG.
+	[[NSOpenGLContext currentContext] flushBuffer];
 }
 
 void LowLevelWindow_Cocoa::Update()
@@ -409,4 +426,21 @@ void LowLevelWindow_Cocoa::Update()
 	lock.Unlock(); // Unlock before calling ResolutionChanged().
 	[m_Context update];
 	DISPLAY->ResolutionChanged();
+}
+
+void LowLevelWindow_Cocoa::BeginConcurrentRendering()
+{
+	LOG->Trace( __func__ );
+	if( m_CurrentParams.windowed )
+		[m_BGContext setView:[m_Window contentView]];
+	else
+		[m_BGContext setFullScreen];
+	[m_BGContext makeCurrentContext];
+}
+
+void LowLevelWindow_Cocoa::EndConcurrentRendering()
+{
+	LOG->Trace( __func__ );
+	[NSOpenGLContext clearCurrentContext];
+	[m_BGContext clearDrawable];
 }

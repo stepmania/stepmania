@@ -4,10 +4,7 @@
 #include "LowLevelWindow.h"
 #include "RageDisplay.h"
 
-#ifndef __OBJC__
-typedef void *id;
-#endif
-
+typedef struct objc_object *id;
 typedef const struct __CFDictionary *CFDictionaryRef;
 
 class LowLevelWindow_Cocoa : public LowLevelWindow
@@ -15,6 +12,7 @@ class LowLevelWindow_Cocoa : public LowLevelWindow
 	VideoModeParams m_CurrentParams;
 	id m_Window;
 	id m_Context;
+	id m_BGContext;
 	CFDictionaryRef m_CurrentDisplayMode;
 	
 public:
@@ -27,6 +25,11 @@ public:
 	void Update();
 	
 	const VideoModeParams &GetActualVideoModeParams() const { return m_CurrentParams; }
+	
+	bool SupportsThreadedRendering() { return m_BGContext; }
+	void BeginConcurrentRendering();
+	void EndConcurrentRendering();
+	
 private:
 	void ShutDownFullScreen();
 	int ChangeDisplayMode( const VideoModeParams& p );
