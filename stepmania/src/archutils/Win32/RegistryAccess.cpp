@@ -36,7 +36,8 @@ static bool GetRegKeyType( const RString &sIn, RString &sOut, HKEY &key )
 
 /* Given a full key, eg. "HKEY_LOCAL_MACHINE\hardware\foo", open it and return it.
  * On error, return NULL. */
-static HKEY OpenRegKey( const RString &sKey, bool bWarnOnError = true )
+enum RegKeyMode { READ, WRITE };
+static HKEY OpenRegKey( const RString &sKey, RegKeyMode mode, bool bWarnOnError = true )
 {
 	RString sSubkey;
 	HKEY hType;
@@ -44,7 +45,7 @@ static HKEY OpenRegKey( const RString &sKey, bool bWarnOnError = true )
 		return NULL;
 
 	HKEY hRetKey;
-	LONG retval = RegOpenKeyEx( hType, sSubkey, 0, KEY_READ, &hRetKey );
+	LONG retval = RegOpenKeyEx( hType, sSubkey, 0, (mode==READ) ? KEY_READ:KEY_WRITE, &hRetKey );
 	if ( retval != ERROR_SUCCESS )
 	{
 		if( bWarnOnError )
@@ -57,7 +58,7 @@ static HKEY OpenRegKey( const RString &sKey, bool bWarnOnError = true )
 
 bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, RString &sVal )
 {
-	HKEY hKey = OpenRegKey( sKey );
+	HKEY hKey = OpenRegKey( sKey, READ );
 	if( hKey == NULL )
 		return false;
 
@@ -83,7 +84,7 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, RSt
 
 bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, int &iVal, bool bWarnOnError )
 {
-	HKEY hKey = OpenRegKey( sKey, bWarnOnError );
+	HKEY hKey = OpenRegKey( sKey, READ, bWarnOnError );
 	if( hKey == NULL )
 		return false;
 
@@ -112,7 +113,7 @@ bool RegistryAccess::GetRegValue( const RString &sKey, const RString &sName, boo
 
 bool RegistryAccess::GetRegSubKeys( const RString &sKey, vector<RString> &lst, const RString &regex, bool bReturnPathToo )
 {
-	HKEY hKey = OpenRegKey( sKey );
+	HKEY hKey = OpenRegKey( sKey, READ );
 	if( hKey == NULL )
 		return false;
 
@@ -152,7 +153,7 @@ bool RegistryAccess::GetRegSubKeys( const RString &sKey, vector<RString> &lst, c
 
 bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, const RString &sVal )
 {
-	HKEY hKey = OpenRegKey( sKey );
+	HKEY hKey = OpenRegKey( sKey, WRITE );
 	if( hKey == NULL )
 		return false;
 
@@ -164,9 +165,8 @@ bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, con
 
 	strcpy( sz, sVal.c_str() );
 	
-	if (::RegSetValueEx(hKey, LPCTSTR(sName), 0,
-		REG_SZ, (LPBYTE)sz, strlen(sz) + 1)
-		 != ERROR_SUCCESS) 
+	LONG lResult = ::RegSetValueEx(hKey, LPCTSTR(sName), 0, REG_SZ, (LPBYTE)sz, strlen(sz) + 1);
+	if( lResult != ERROR_SUCCESS ) 
 		 bSuccess = false;
 
 	::RegCloseKey(hKey);
@@ -175,7 +175,7 @@ bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, con
 
 bool RegistryAccess::SetRegValue( const RString &sKey, const RString &sName, bool bVal )
 {
-	HKEY hKey = OpenRegKey( sKey );
+	HKEY hKey = OpenRegKey( sKey, WRITE );
 	if( hKey == NULL )
 		return false;
 

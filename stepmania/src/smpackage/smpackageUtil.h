@@ -7,15 +7,16 @@ namespace SMPackageUtil
 {
 	void WriteGameInstallDirs( const vector<RString>& asInstallDirsToWrite );
 	void GetGameInstallDirs( vector<RString>& asInstallDirsOut );
-	void AddGameInstallDir( RString sNewInstallDir );
+	void AddGameInstallDir( const RString &sNewInstallDir );
 	void SetDefaultInstallDir( int iInstallDirIndex );
-	void SetDefaultInstallDir( RString sInstallDir );
+	void SetDefaultInstallDir( const RString &sInstallDir );
+	bool IsValidInstallDir( const RString &sInstallDir );
 
 	bool GetPref( const RString &name, bool &val );
 	bool SetPref( const RString &name, bool val );
 
-	RString GetPackageDirectory(RString path);
-	bool IsValidPackageDirectory(RString path);
+	RString GetPackageDirectory( const RString &path );
+	bool IsValidPackageDirectory( const RString &path );
 
 	bool LaunchGame();
 
@@ -23,6 +24,8 @@ namespace SMPackageUtil
 	RString GetLanguageCodeFromDisplayString( const RString &sDisplayString );
 
 	bool GetFileContentsOsAbsolute( const RString &sAbsoluteOsFile, RString &sOut );
+
+	bool DoesOsAbsoluteFileExist( const RString &sOsAbsoluteFile ); 
 }
 
 #include "RageFile.h"

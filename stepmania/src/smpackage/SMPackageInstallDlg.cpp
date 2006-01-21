@@ -24,13 +24,11 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const RString TEMP_MOUNT_POINT = "/@package/";
-
 /////////////////////////////////////////////////////////////////////////////
 // CSMPackageInstallDlg dialog
 
 
-CSMPackageInstallDlg::CSMPackageInstallDlg(CString sPackagePath, CWnd* pParent /*=NULL*/)
+CSMPackageInstallDlg::CSMPackageInstallDlg(RString sPackagePath, CWnd* pParent /*=NULL*/)
 	: CDialog(CSMPackageInstallDlg::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(CSMPackageInstallDlg)
@@ -87,8 +85,12 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	DialogUtil::LocalizeDialogAndContents( *this );
 	DialogUtil::SetHeaderFont( *this, IDC_STATIC_HEADER_TEXT );
 
+	ASSERT(0);	// TEST ME
+
 	// mount the zip
-	if( !FILEMAN->Mount( "zip", m_sPackagePath, TEMP_MOUNT_POINT ) )
+	RageFileDriverZip fileDriver;
+	int iErr;
+	if( !fileDriver.Open(m_sPackagePath, RageFile::READ, iErr) )
 	{
 		AfxMessageBox( ssprintf(IS_NOT_A_VALID_ZIP.GetValue(), m_sPackagePath), MB_ICONSTOP );
 		exit( 1 );
@@ -114,7 +116,7 @@ BOOL CSMPackageInstallDlg::OnInitDialog()
 	//
 	{
 		vector<RString> vs;
-		GetDirListingRecursive( TEMP_MOUNT_POINT, "*.*", vs );
+		GetDirListingRecursive( &fileDriver, "", "*", vs );
 		CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_EDIT_MESSAGE2);
 		RString sText = "\t" + join( "\r\n\t", vs );
 		pEdit2->SetWindowText( sText );
@@ -169,11 +171,15 @@ void CSMPackageInstallDlg::OnPaint()
 #include <direct.h>
 #include ".\smpackageinstalldlg.h"
 
-bool CSMPackageInstallDlg::CheckPackages()
+static bool CheckPackages( RageFileDriverZip &fileDriver )
 {
-	IniFile ini;
-	if( !ini.ReadFile(TEMP_MOUNT_POINT + "smzip.ctl") )
+	int iErr;
+	RageFileBasic *pFile = fileDriver.Open( "smzip.ctl", RageFile::READ, iErr );
+	if( pFile == NULL )
 		return true;
+
+	IniFile ini;
+	ini.ReadFile( *pFile );
 
 	int version = 0;
 	ini.GetValue( "SMZIP", "Version", version );
@@ -221,23 +227,11 @@ bool CSMPackageInstallDlg::CheckPackages()
 
 	for( i = 0; i < (int) Directories.size(); ++i )
 	{
-		RString path = cwd+Directories[i];
-		char buf[1024];
-		memcpy( buf, path, path.size()+1 );
-		buf[path.size()+1] = 0;
-
-		SHFILEOPSTRUCT op;
-		memset(&op, 0, sizeof(op));
-
-		op.wFunc = FO_DELETE;
-		op.pFrom = buf;
-		op.pTo = NULL;
-		op.fFlags = FOF_NOCONFIRMATION;
-		if( !SHFileOperation(&op) )
-			continue;
-
-		/* Something failed.  SHFileOperation displayed the error dialog, so just cancel. */
-		return false;
+		RString sDir = Directories[i];
+		if( !DeleteRecursive(sDir) )	// error deleting
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -262,7 +256,8 @@ void CSMPackageInstallDlg::OnOK()
 		m_comboDir.GetWindowText( s );
 		sInstallDir = s;
 	}
-	
+
+	// selected install dir becomes the new default
 	int iSelectedInstallDirIndex = m_comboDir.GetCurSel();
 	if( iSelectedInstallDirIndex == -1 )
 	{
@@ -272,11 +267,20 @@ void CSMPackageInstallDlg::OnOK()
 
 	SMPackageUtil::SetDefaultInstallDir( iSelectedInstallDirIndex );
 
+
+	// mount the zip
+	RageFileDriverZip fileDriver;
+	int iErr;
+	if( !fileDriver.Open(m_sPackagePath, RageFile::READ, iErr) )
+	{
+		AfxMessageBox( ssprintf(IS_NOT_A_VALID_ZIP.GetValue(), m_sPackagePath), MB_ICONSTOP );
+		exit( 1 );
+	}
+
+
 	// Show comment (if any)
 	{
-		RageFileDriverZip zip;
-		zip.Load( m_sPackagePath );
-		RString sComment = zip.GetGlobalComment();
+		RString sComment = fileDriver.GetGlobalComment();
 		bool DontShowComment;
 		if( sComment != "" && (!SMPackageUtil::GetPref("DontShowComment", DontShowComment) || !DontShowComment) )
 		{
@@ -291,13 +295,13 @@ void CSMPackageInstallDlg::OnOK()
 	}
 
 	/* Check for installed packages that should be deleted before installing. */
-	if( !CheckPackages() )
+	if( !CheckPackages(fileDriver) )
 		return;	// cancelled
 
 
 	// Unzip the SMzip package into the installation folder
 	vector<RString> vs;
-	GetDirListingRecursive( TEMP_MOUNT_POINT, "*.*", vs );
+	GetDirListingRecursive( &fileDriver, "/", "*", vs );
 	for( unsigned i=0; i<vs.size(); i++ )
 	{
 		// Throw some text up so the user has something to look at during the long pause.
@@ -332,12 +336,31 @@ retry_unzip:
 		if( Basename(sFile).CompareNoCase("thumbs.db") == 0 )
 			continue;
 
-		RString sBareFile = sFile;
-		sBareFile.erase( sBareFile.begin(), sBareFile.begin()+TEMP_MOUNT_POINT.length() );
-		RString sTo = sInstallDir + sTo;
-		if( !FileCopy( sFile, sTo ) )
+		bool bSuccess = true;
+		RString sError;
+
+		int iErr;
+		RageFileBasic *pFileFrom = fileDriver.Open( sFile, RageFile::READ, iErr );
+		if( pFileFrom == NULL )
 		{
-			RString sError = ssprintf( ERROR_COPYING_FILE.GetValue(), sBareFile.c_str() );
+			bSuccess = false;
+		}
+
+		RageFile fileTo;		
+		if( !fileTo.Open(sFile, RageFile::WRITE) )
+		{
+			bSuccess = false;
+			sError = fileTo.GetError();
+		}
+
+		if( bSuccess )
+		{
+			bSuccess = FileCopy(*pFileFrom, fileTo, sError);
+		}
+
+		if( !bSuccess )
+		{
+			RString sError = ssprintf( ERROR_COPYING_FILE.GetValue(), sFile.c_str() );
 			switch( MessageBox( sError, NULL, MB_ABORTRETRYIGNORE|MB_ICONEXCLAMATION ) )
 			{
 			case IDABORT:
@@ -369,7 +392,6 @@ void CSMPackageInstallDlg::OnButtonEdit()
 	int nResponse = dlg.DoModal();
 	if( nResponse == IDOK )
 	{
-		SMPackageUtil::WriteGameInstallDirs( dlg.m_vsReturnedInstallDirs );
 		RefreshInstallationList();
 	}
 }

@@ -14,7 +14,7 @@ class CSMPackageInstallDlg : public CDialog
 {
 // Construction
 public:
-	CSMPackageInstallDlg(CString sPackagePath, CWnd* pParent = NULL);   // standard constructor
+	CSMPackageInstallDlg(RString sPackagePath, CWnd* pParent = NULL);   // standard constructor
 
 // Dialog Data
 	//{{AFX_DATA(CSMPackageInstallDlg)
@@ -34,7 +34,6 @@ public:
 // Implementation
 protected:
 	void RefreshInstallationList();
-	bool CheckPackages();
 
 	HICON m_hIcon;
 	RString m_sPackagePath;

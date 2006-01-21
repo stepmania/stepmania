@@ -1839,7 +1839,7 @@ void FileWrite( RageFileBasic& f, float fWrite )
 	f.PutLine( ssprintf("%f", fWrite) );
 }
 
-bool FileCopy( RString sSrcFile, RString sDstFile )
+bool FileCopy( const RString &sSrcFile, const RString &sDstFile )
 {
 	if( !sSrcFile.CompareNoCase(sDstFile) )
 	{

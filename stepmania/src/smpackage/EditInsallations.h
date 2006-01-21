@@ -16,8 +16,6 @@ class EditInsallations : public CDialog
 public:
 	EditInsallations(CWnd* pParent = NULL);   // standard constructor
 
-	vector<RString>	m_vsReturnedInstallDirs;
-
 // Dialog Data
 	//{{AFX_DATA(EditInsallations)
 	enum { IDD = IDD_EDIT_INSTALLATIONS };

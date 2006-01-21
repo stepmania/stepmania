@@ -10,6 +10,7 @@
 #include "archutils/Win32/DialogUtil.h"
 #include ".\editinsallations.h"
 #include "LocalizedString.h"
+#include "RageUtil.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -64,11 +65,9 @@ BOOL EditInsallations::OnInitDialog()
 	for( unsigned i=0; i<vs.size(); i++ )
 		m_list.AddString( vs[i] );
 
-
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
-
 
 void EditInsallations::OnButtonRemove() 
 {
@@ -90,33 +89,54 @@ void EditInsallations::OnButtonMakeDefault()
 	m_list.InsertString( 0, sText );
 }
 
-static LocalizedString YOU_MUST_TYPE_IN ("EditInstallations","You must type a program directory before clicking Add.");
+static LocalizedString YOU_MUST_TYPE_IN			("EditInstallations","You must type a program directory before clicking Add.");
+static LocalizedString NOT_A_VALID_INSTALLATION_DIR	("EditInstallations","'%s' is not a valid installation directory.");
 void EditInsallations::OnButtonAdd() 
 {
 	// TODO: Add your control notification handler code here
-	CString sText;
-	m_edit.GetWindowText( sText );
+	RString sNewDir;
+	{
+		CString s;
+		m_edit.GetWindowText( s );
+		sNewDir = s;
+	}
 	
-	if( sText == "" )
+	if( sNewDir == "" )
 	{
 		AfxMessageBox( YOU_MUST_TYPE_IN.GetValue() );
 		return;
 	}
 
-	m_list.AddString( sText );
+	bool bAlreadyInList = false;
+	for( int i=0; i<m_list.GetCount(); i++ )
+	{
+		CString sDir;
+		m_list.GetText( i, sDir );
+		if( sDir.CompareNoCase(sNewDir)==0 )
+			return;
+	}
+
+	if( !SMPackageUtil::IsValidInstallDir(sNewDir) )
+	{
+		AfxMessageBox( ssprintf(NOT_A_VALID_INSTALLATION_DIR.GetValue(),sNewDir.c_str()) );
+		return;
+	}
+
+	m_list.AddString( sNewDir );
 }
 
 void EditInsallations::OnOK() 
 {
-	m_vsReturnedInstallDirs.clear();
+	vector<RString> vs;
 
 	for( int i=0; i<m_list.GetCount(); i++ )
 	{
 		CString sDir;
 		m_list.GetText( i, sDir );
 		RString s = sDir;
-		m_vsReturnedInstallDirs.push_back( s );
+		vs.push_back( s );
 	}
+	SMPackageUtil::WriteGameInstallDirs( vs );
 
 	CDialog::OnOK();
 }

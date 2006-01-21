@@ -25,6 +25,8 @@
 #define VIDEO_TROUBLESHOOTING_URL "http://www.stepmania.com/stepmania/mediawiki.php?title=Video_Driver_Troubleshooting"
 #define REPORT_BUG_URL "http://sourceforge.net/tracker/?func=add&group_id=37892&atid=421366"
 
+#define CAN_INSTALL_PACKAGES true
+
 #endif
 
 /*

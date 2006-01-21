@@ -44,6 +44,7 @@ protected:
 	void GetCheckedTreeItems( CArray<HTREEITEM,HTREEITEM>& aCheckedItemsOut );
 	void GetCheckedPaths( vector<RString>& aCheckedItemsOut );
 	bool MakeComment( RString &comment );
+	RString GetCurrentInstallDir();
 
 	// Generated message map functions
 	//{{AFX_MSG(CSmpackageExportDlg)

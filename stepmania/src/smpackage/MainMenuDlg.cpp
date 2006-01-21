@@ -20,6 +20,7 @@
 #include ".\mainmenudlg.h"
 #include "archutils/Win32/DialogUtil.h"
 #include "LocalizedString.h"
+#include "RageFileManager.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -107,12 +108,11 @@ RString GetLastErrorString()
 	return s;
 }
 
-static LocalizedString MUSIC_FILE						( "MainMenuDlg", "Music file" );
-static LocalizedString FAILED_TO_CREATE_DIRECTORY		( "MainMenuDlg", "Failed to create directory '%s': %s" );
-static LocalizedString FAILED_TO_CREATE_SONG_DIRECTORY	( "MainMenuDlg", "Failed to create song directory '%s': %s" );
+static LocalizedString MUSIC_FILE				( "MainMenuDlg", "Music file" );
+static LocalizedString THE_SONG_DIRECTORY_ALREADY_EXISTS	( "MainMenuDlg", "The song directory '%s' already exists.  You cannot override an existing song." );
 static LocalizedString FAILED_TO_COPY_MUSIC_FILE		( "MainMenuDlg", "Failed to copy music file '%s' to '%s': %s" );
-static LocalizedString FAILED_TO_CREATE_THE_SONG_FILE	( "MainMenuDlg", "Failed to create the song file '%s'" );
-static LocalizedString SUCCESS_CREATED_THE_SONG		( "MainMenuDlg", "Success.  Created the song '%s'" );
+static LocalizedString FAILED_TO_CREATE_THE_SONG_FILE		( "MainMenuDlg", "Failed to create the song file '%s'" );
+static LocalizedString SUCCESS_CREATED_THE_SONG			( "MainMenuDlg", "Success.  Created the song '%s'" );
 void MainMenuDlg::OnCreateSong() 
 {
 	// TODO: Add your control notification handler code here
@@ -123,58 +123,44 @@ void MainMenuDlg::OnCreateSong()
 		NULL,	// default file extension
 		NULL,	// default file name
 		OFN_HIDEREADONLY | OFN_NOCHANGEDIR,		// flags
-		""//MUSIC_FILE.GetValue()+" (*.mp3;*.ogg)|*.mp3;*.ogg|||"
+		ConvertUTF8ToACP(MUSIC_FILE.GetValue()+" (*.mp3;*.ogg)|*.mp3;*.ogg|||").c_str()
 		);
 	int iRet = dialog.DoModal();
 	RString sMusicFile = dialog.GetPathName();
 	if( iRet != IDOK )
 		return;
 
-	BOOL bSuccess;
+	RString sSongDirectory = "Songs/My Creations/" + GetFileNameWithoutExtension(sMusicFile) + "/";
+	RString sNewMusicFile = sSongDirectory + Basename(sMusicFile);
 
-	RString sSongDirectory = "Songs\\My Creations\\";
-	bSuccess = CreateDirectory( sSongDirectory, NULL );
-	if( !bSuccess )
+	if( DoesFileExist(sSongDirectory) )
 	{
-		DWORD dwError = ::GetLastError();
-		switch( dwError )
-		{
-		case ERROR_ALREADY_EXISTS:
-			// This failure is ok.  We probably created this directory already while importing another song.
-			break;
-		default:
-			MessageBox( ssprintf(FAILED_TO_CREATE_DIRECTORY.GetValue(),sSongDirectory.c_str(),GetLastErrorString().c_str()) );
-			return;
-		}
-	}
-
-	sSongDirectory += Basename( sMusicFile );
-	bSuccess = CreateDirectory( sSongDirectory, NULL );	// CreateDirectory doesn't like a trailing slash
-	if( !bSuccess )
-	{
-		MessageBox( ssprintf(FAILED_TO_CREATE_SONG_DIRECTORY.GetValue(),sSongDirectory.c_str(),GetLastErrorString().c_str()) );
+		MessageBox( ssprintf(THE_SONG_DIRECTORY_ALREADY_EXISTS.GetValue(),sSongDirectory.c_str()) );
 		return;
 	}
-	sSongDirectory += "\\";
 
-	RString sNewMusicFile = sSongDirectory + Basename(sMusicFile);
-	bSuccess = CopyFile( sMusicFile, sNewMusicFile, TRUE );
+	RageFileOsAbsolute fileIn;
+	fileIn.Open( sMusicFile, RageFile::READ );
+	RageFile fileOut;
+	fileOut.Open( sNewMusicFile, RageFile::WRITE );
+	RString sError;
+	bool bSuccess = FileCopy( fileIn, fileOut, sError );
 	if( !bSuccess )
 	{
-		MessageBox( ssprintf(FAILED_TO_COPY_MUSIC_FILE.GetValue(),sMusicFile.c_str(),sNewMusicFile.c_str(),GetLastErrorString().c_str()) );
+		MessageBox( ssprintf(FAILED_TO_COPY_MUSIC_FILE.GetValue(),sMusicFile.c_str(),sNewMusicFile.c_str(),sError.c_str()) );
 		return;
 	}
 
 	// create a blank .sm file
 	RString sNewSongFile = sMusicFile;
 	SetExtension( sNewSongFile, "sm" );
-	FILE *fp = fopen( sNewSongFile, "w" );
-	if( fp == NULL )
+	RageFile file;
+	if( file.Open(sNewSongFile, RageFile::WRITE) )
 	{
 		MessageBox( ssprintf(FAILED_TO_CREATE_THE_SONG_FILE.GetValue(),sNewSongFile.c_str()) );
 		return;
 	}
-	fclose( fp );
+	file.Close();
 
 	MessageBox( ssprintf(SUCCESS_CREATED_THE_SONG.GetValue(),sSongDirectory.c_str()) );
 }
@@ -197,8 +183,9 @@ BOOL MainMenuDlg::OnInitDialog()
 	              // EXCEPTION: OCX Property Pages should return FALSE
 }
 
-static LocalizedString FAILED_TO_DELETE_FILE	( "MainMenuDlg", "Failed to delete file '%s'." ); 
-static LocalizedString IS_ALREADY_CLEARED		( "MainMenuDlg", "'%s' is already cleared." ); 
+static LocalizedString FAILED_TO_DELETE_FILE	( "MainMenuDlg", "Failed to delete file '%s'." );
+static LocalizedString IS_ALREADY_CLEARED	( "MainMenuDlg", "'%s' is already cleared." );
+static LocalizedString CLEARED( "MainMenuDlg", "'%s' cleared" );
 void MainMenuDlg::OnBnClickedClearKeymaps()
 {
 	// TODO: Add your control notification handler code here
@@ -206,12 +193,13 @@ void MainMenuDlg::OnBnClickedClearKeymaps()
 	if( !DoesFileExist( SpecialFiles::KEYMAPS_PATH ) )
 	{
 		MessageBox( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::KEYMAPS_PATH.c_str()) );
+		return;
 	}
-	else
-	{
-		if( !DeleteFile( SpecialFiles::KEYMAPS_PATH ) )
-			MessageBox( ssprintf(FAILED_TO_DELETE_FILE.GetValue(), SpecialFiles::KEYMAPS_PATH.c_str()) );
-	}
+
+	if( !FILEMAN->Remove(SpecialFiles::KEYMAPS_PATH) )
+		MessageBox( ssprintf(FAILED_TO_DELETE_FILE.GetValue(), SpecialFiles::KEYMAPS_PATH.c_str()) );
+
+	MessageBox( ssprintf(CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
 }
 
 void MainMenuDlg::OnBnClickedChangePreferences()
@@ -237,17 +225,16 @@ void MainMenuDlg::OnBnClickedOpenPreferences()
 	}
 }
 
-static LocalizedString CLEARED( "MainMenuDlg", "'%s' cleared" );
 void MainMenuDlg::OnBnClickedClearPreferences()
 {
 	// TODO: Add your control notification handler code here
-	if( !DoesFileExist( SpecialFiles::PREFERENCES_INI_PATH ) )
+	if( !DoesFileExist(SpecialFiles::PREFERENCES_INI_PATH) )
 	{
 		MessageBox( ssprintf(IS_ALREADY_CLEARED.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
 		return;
 	}
 
-	if( !DeleteFile( SpecialFiles::PREFERENCES_INI_PATH ) )
+	if( !FILEMAN->Remove(SpecialFiles::PREFERENCES_INI_PATH) )
 	{
 		MessageBox( ssprintf(FAILED_TO_DELETE_FILE.GetValue(),SpecialFiles::PREFERENCES_INI_PATH.c_str()) );
 		return;

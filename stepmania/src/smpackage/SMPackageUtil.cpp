@@ -26,7 +26,6 @@ void SMPackageUtil::WriteGameInstallDirs( const vector<RString>& asInstallDirsTo
 		RString sName = ssprintf("%d",i);
 		RegistryAccess::SetRegValue( INSTALLATIONS_KEY, sName, asInstallDirsToWrite[i] );
 	}
-
 }
 
 void SMPackageUtil::GetGameInstallDirs( vector<RString>& asInstallDirsOut )
@@ -41,11 +40,10 @@ void SMPackageUtil::GetGameInstallDirs( vector<RString>& asInstallDirsOut )
 		if( !RegistryAccess::GetRegValue(INSTALLATIONS_KEY, sName, sPath) )
 			continue;
 
-		if( sPath == "" )	// read failed
+		if( sPath == "" )	// blank entry
 			continue;	// skip
 
-		RString sProgramDir = sPath+"\\Program";
-		if( !DoesFileExist(sProgramDir) )
+		if( !IsValidInstallDir(sPath) )
 			continue;	// skip
 
 		asInstallDirsOut.push_back( sPath );
@@ -55,7 +53,7 @@ void SMPackageUtil::GetGameInstallDirs( vector<RString>& asInstallDirsOut )
 	WriteGameInstallDirs( asInstallDirsOut );
 }
 
-void SMPackageUtil::AddGameInstallDir( RString sNewInstallDir )
+void SMPackageUtil::AddGameInstallDir( const RString &sNewInstallDir )
 {
 	vector<RString> asInstallDirs;
 	GetGameInstallDirs( asInstallDirs );
@@ -88,7 +86,7 @@ void SMPackageUtil::SetDefaultInstallDir( int iInstallDirIndex )
 	WriteGameInstallDirs( asInstallDirs );
 }
 
-void SMPackageUtil::SetDefaultInstallDir( RString sInstallDir )
+void SMPackageUtil::SetDefaultInstallDir( const RString &sInstallDir )
 {
 	vector<RString> asInstallDirs;
 	GetGameInstallDirs( asInstallDirs );
@@ -103,6 +101,11 @@ void SMPackageUtil::SetDefaultInstallDir( RString sInstallDir )
 	}
 }
 
+bool SMPackageUtil::IsValidInstallDir( const RString &sInstallDir )
+{
+	return DoesOsAbsoluteFileExist( sInstallDir + "/Songs" );
+}
+
 bool SMPackageUtil::GetPref( const RString &name, bool &val )
 {
 	return RegistryAccess::GetRegValue( SMPACKAGE_KEY, name, val );
@@ -115,7 +118,7 @@ bool SMPackageUtil::SetPref( const RString &name, bool val )
 
 /* Get a package directory.  For most paths, this is the first two components.  For
  * songs and note skins, this is the first three. */
-RString SMPackageUtil::GetPackageDirectory(RString path)
+RString SMPackageUtil::GetPackageDirectory(const RString &path)
 {
 	if( path.find("CVS") != string::npos )
 		return "";	// skip
@@ -137,7 +140,7 @@ RString SMPackageUtil::GetPackageDirectory(RString path)
 	return ret;
 }
 
-bool SMPackageUtil::IsValidPackageDirectory( RString path )
+bool SMPackageUtil::IsValidPackageDirectory( const RString &path )
 {
 	/* Make sure the path contains only second-level directories, and doesn't
 	 * contain any ".", "..", "...", etc. dirs. */
@@ -211,6 +214,15 @@ RString SMPackageUtil::GetLanguageCodeFromDisplayString( const RString &sDisplay
 	s.erase( s.begin()+iSpace, s.end() );
 	return s;
 }
+
+bool SMPackageUtil::DoesOsAbsoluteFileExist( const RString &sOsAbsoluteFile )
+{
+#if defined(WIN32)
+	DWORD dwAttr = ::GetFileAttributes( sOsAbsoluteFile );
+	return bool(dwAttr != (DWORD)-1);
+#endif
+}
+
 
 static const RString TEMP_MOUNT_POINT = "/@package/";
 

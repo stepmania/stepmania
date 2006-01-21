@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 #include "Foreach.h"
+class RageFileDriver;
 
 #define SAFE_DELETE(p)       { delete (p);     (p)=NULL; }
 #define SAFE_DELETE_ARRAY(p) { delete[] (p);   (p)=NULL; }
@@ -435,6 +436,7 @@ typedef basic_string<char,char_traits_char_nocase> istring;
  * declared here since they're used in many places. */
 void GetDirListing( const RString &sPath, vector<RString> &AddTo, bool bOnlyDirs=false, bool bReturnPathToo=false );
 void GetDirListingRecursive( const RString &sDir, const RString &sMatch, vector<RString> &AddTo );	/* returns path too */
+void GetDirListingRecursive( RageFileDriver *prfd, const RString &sDir, const RString &sMatch, vector<RString> &AddTo );	/* returns path too */
 bool DeleteRecursive( const RString &sDir );	/* delete the dir and all files/subdirs inside it */
 bool DoesFileExist( const RString &sPath );
 bool IsAFile( const RString &sPath );
@@ -470,7 +472,7 @@ void FileWrite( RageFileBasic& f, int iWrite );
 void FileWrite( RageFileBasic& f, size_t uWrite );
 void FileWrite( RageFileBasic& f, float fWrite );
 
-bool FileCopy( RString sSrcFile, RString sDstFile );
+bool FileCopy( const RString &sSrcFile, const RString &sDstFile );
 bool FileCopy( RageFileBasic &in, RageFileBasic &out, RString &sError, bool *bReadError = NULL );
 
 template<class T>

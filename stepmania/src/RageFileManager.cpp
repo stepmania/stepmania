@@ -871,6 +871,23 @@ void GetDirListingRecursive( const RString &sDir, const RString &sMatch, vector<
 	}
 }
 
+void GetDirListingRecursive( RageFileDriver *prfd, const RString &sDir, const RString &sMatch, vector<RString> &AddTo )
+{
+	ASSERT( sDir.Right(1) == "/" );
+	prfd->GetDirListing( sDir+sMatch, AddTo, false, true );
+	prfd->GetDirListing( sDir+"*",	AddTo, true,  true );
+	for( unsigned i=0; i<AddTo.size(); i++ )
+	{
+		if( prfd->GetFileType(AddTo[i]) == RageFileManager::TYPE_DIR )
+		{
+			prfd->GetDirListing( AddTo[i]+"/"+sMatch, AddTo, false, true );
+			prfd->GetDirListing( AddTo[i]+"/*",		AddTo, true,  true );
+			AddTo.erase( AddTo.begin()+i );
+			i--;
+		}
+	}
+}
+
 bool DeleteRecursive( const RString &sDir )
 {
 	ASSERT( sDir.Right(1) == "/" );

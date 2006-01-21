@@ -56,65 +56,13 @@ BOOL CSmpackageApp::InitInstance()
 	LOG			= new RageLog();
 
 
-	if( DoesFileExist("Songs") )	// this is a SM program directory
+	TCHAR szCurrentDirectory[MAX_PATH];
+	GetCurrentDirectory( ARRAYSIZE(szCurrentDirectory), szCurrentDirectory );
+	if( CAN_INSTALL_PACKAGES && SMPackageUtil::IsValidInstallDir(szCurrentDirectory) )
 	{
-		TCHAR szCurrentDirectory[MAX_PATH];
-		GetCurrentDirectory( ARRAYSIZE(szCurrentDirectory), szCurrentDirectory );
 		SMPackageUtil::AddGameInstallDir( szCurrentDirectory );	// add this if it doesn't already exist
 	}	
 
-	// check if there's a .smzip command line argument
-	vector<RString> arrayCommandLineBits;
-	split( ::GetCommandLine(), " ", arrayCommandLineBits );
-	for( unsigned i=0; i<arrayCommandLineBits.size(); i++ )
-	{
-		CString sArg = arrayCommandLineBits[i];
-		if( sArg == "--machine-profile-stats" )
-		{
-			RString sPersonalDir = SpecialDirs::GetMyDocumentsDir();
-			RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
-			if( NULL == ::ShellExecute( NULL, "open", sFile, "", "", SW_SHOWNORMAL ) )
-				AfxMessageBox( ssprintf(FAILED_TO_OPEN.GetValue(),sFile.c_str(),GetLastErrorString().c_str()) );
-			exit(0);
-		}
-	}
-	
-	split( ::GetCommandLine(), "\"", arrayCommandLineBits );
-	for( unsigned i=0; i<arrayCommandLineBits.size(); i++ )
-	{
-		RString sPath = arrayCommandLineBits[i];
-		TrimLeft( sPath );
-		TrimRight( sPath );
-		RString sPathLower = sPath;
-		sPathLower.MakeLower();
-
-		// test to see if this is a smzip file
-		if( sPathLower.Right(3) == "zip" )
-		{
-			if( !FILEMAN->DoesFileExist(sPath) )
-			{
-				AfxMessageBox( ssprintf(THE_FILE_DOES_NOT_EXIST.GetValue(),sPath.c_str()), MB_ICONERROR );
-				exit(0);
-			}
-
-			// We found a zip package.  Prompt the user to install it!
-			CSMPackageInstallDlg dlg( CString(sPath.c_str()) );
-			int nResponse = dlg.DoModal();
-			if( nResponse == IDOK )
-			{
-				CSmpackageExportDlg dlg;
-				int nResponse = dlg.DoModal();
-				// Since the dialog has been closed, return FALSE so that we exit the
-				//  application, rather than start the application's message pump.
-				return FALSE;
-			}
-			else if (nResponse == IDCANCEL)
-			{
-				// the user cancelled.  Don't fall through to the Manager.
-				exit(0);
-			}
-		}
-	}
 
 	FILEMAN = new RageFileManager( "" );
 	LUA = new LuaManager();
@@ -133,11 +81,63 @@ BOOL CSmpackageApp::InitInstance()
 	THEME->SwitchThemeAndLanguage( SpecialFiles::BASE_THEME_NAME, sLanguage, bPseudoLocalize );
 
 
-	// Show the Manager Dialog
-	MainMenuDlg dlg;
-	int nResponse = dlg.DoModal();
-//	if (nResponse == IDOK)
 
+	// check for --machine-profile-stats and launch Stats.xml
+	for( int i=0; i<argc; i++ )
+	{
+		CString sArg = argv[i];
+		if( sArg == "--machine-profile-stats" )
+		{
+			RString sPersonalDir = SpecialDirs::GetMyDocumentsDir();
+			RString sFile = sPersonalDir + PRODUCT_ID +"/Save/MachineProfile/Stats.xml";
+			if( NULL == ::ShellExecute( NULL, "open", sFile, "", "", SW_SHOWNORMAL ) )
+				AfxMessageBox( ssprintf(FAILED_TO_OPEN.GetValue(),sFile.c_str(),GetLastErrorString().c_str()) );
+			goto command_line_handled;
+		}
+	}
+	
+	// check if there's a .smzip command line argument and install it
+	for( int i=0; i<argc; i++ )
+	{
+		RString sPath = argv[i];
+		TrimLeft( sPath );
+		TrimRight( sPath );
+		RString sPathLower = sPath;
+		sPathLower.MakeLower();
+
+		// test to see if this is a smzip file
+		if( sPathLower.Right(3) == "zip" )
+		{
+			if( !SMPackageUtil::DoesOsAbsoluteFileExist(sPath) )
+			{
+				AfxMessageBox( ssprintf(THE_FILE_DOES_NOT_EXIST.GetValue(),sPath.c_str()), MB_ICONERROR );
+				goto command_line_handled;
+			}
+
+			// We found a zip package.  Prompt the user to install it!
+			CSMPackageInstallDlg dlg( sPath );
+			int nResponse = dlg.DoModal();
+			if( nResponse == IDOK )
+			{
+				CSmpackageExportDlg dlg;
+				int nResponse = dlg.DoModal();
+				// Since the dialog has been closed, return FALSE so that we exit the
+				//  application, rather than start the application's message pump.
+				goto command_line_handled;
+			}
+			else if (nResponse == IDCANCEL)
+			{
+				// the user cancelled.  Don't fall through to the Manager.
+				goto command_line_handled;
+			}
+		}
+	}
+
+	{
+		MainMenuDlg dlg;
+		int nResponse = dlg.DoModal();
+	}
+command_line_handled:
 
 	SAFE_DELETE( THEME );
 	SAFE_DELETE( LUA );
