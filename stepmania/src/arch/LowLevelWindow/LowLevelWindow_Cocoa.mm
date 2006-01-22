@@ -116,11 +116,11 @@ LowLevelWindow_Cocoa::~LowLevelWindow_Cocoa()
 	[mt release];
 }
 
-void *LowLevelWindow_Cocoa::GetProcAddress( CString s )
+void *LowLevelWindow_Cocoa::GetProcAddress( RString s )
 {
 	// http://developer.apple.com/qa/qa2001/qa1188.html
 	// Both functions mentioned in there are deprecated in 10.4.
-	const CString& symbolName( '_' + s );
+	const RString& symbolName( '_' + s );
 	const uint32_t count = _dyld_image_count();
 	NSSymbol symbol = NULL;
 	const uint32_t options = NSLOOKUPSYMBOLINIMAGE_OPTION_RETURN_ON_ERROR;
@@ -178,7 +178,7 @@ static NSOpenGLContext *CreateOGLContext( int iColorDepth, bool bWindowed, NSOpe
 	return context;
 }		
 
-CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
+RString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newDeviceOut )
 {
 	// Always set these params.
 	m_CurrentParams.bSmoothLines = p.bSmoothLines;
@@ -195,7 +195,7 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 #undef X
 	
 	if( !bChangeMode && !bChangeVsync )
-		return CString();
+		return RString();
 	
 	POOL;
 	newDeviceOut = false;
@@ -244,7 +244,7 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 		SetActualParamsFromMode( CGDisplayCurrentMode(kCGDirectMainDisplay) );
 		m_CurrentParams.vsync = p.vsync; // hack
 
-		return CString();
+		return RString();
 	}
 	if( bChangeMode )
 	{
@@ -289,7 +289,7 @@ CString LowLevelWindow_Cocoa::TryVideoMode( const VideoModeParams& p, bool& newD
 		m_CurrentParams.vsync = p.vsync;
 	}
 	
-	return CString();
+	return RString();
 }
 
 void LowLevelWindow_Cocoa::ShutDownFullScreen()
